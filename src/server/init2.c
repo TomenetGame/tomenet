@@ -2683,16 +2683,17 @@ static bool indepthrange(byte depth, byte type) {
 static byte getiddctype(byte depth, byte last) {
 	byte pool[MAX_D_IDX];
 	byte n = 0, i;
-	
+
 	//Scan d_info[] for dungeons
 	for (i = 0; i < MAX_D_IDX; i++) {
 		//Disqualify some dungeons...
 		if (!indepthrange(depth, i) //Out of range
 		    //Hardcoded exclusions from d_info.txt indices:
 		    || (i == 0) //Wilderness
-		    || (i == 6) //Nether Realm (paranoia, too deep anyhow!)
-		    || (i == 28) //Death Fate
-		    || (i == 31) //Valinor (more paranoia)
+		    || (i == DI_NETHER_REALM) //Nether Realm (paranoia, too deep anyhow!)
+		    || (i == DI_DEATH_FATE) //Death Fate
+		    || (i == DI_VALINOR) //Valinor (more paranoia)
+		    || (i == DI_HALLS_OF_MANDOS) //Problem: Halls of Mandos doesn't allow any unique monsters(!)
 		    || (i == last)) //Exclude the previous dungeon type?
 			continue;
 		else {
