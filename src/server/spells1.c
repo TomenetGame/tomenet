@@ -4703,7 +4703,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	   For this reason, add is_basic_potion: It determines whether smash effect is applied. */
 	is_potion = ((k_info[o_ptr->k_idx].tval == TV_POTION) || (k_info[o_ptr->k_idx].tval == TV_POTION2));
 	is_basic_potion = (k_info[o_ptr->k_idx].tval == TV_POTION);
-	is_meltable = (k_info[o_ptr->k_idx].tval == TV_BOTTLE);
+	is_meltable = (k_info[o_ptr->k_idx].tval == TV_BOTTLE || (k_info[o_ptr->k_idx].tval == TV_GAME && k_info[o_ptr->k_idx].sval == SV_SNOWBALL));
 
 	/* Analyze the type */
 	switch (typ) {
