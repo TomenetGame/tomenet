@@ -549,10 +549,10 @@ void check_Pumpkin(void) {
 		m_ptr = &m_list[m_idx];
 		/* Excise "dead" monsters */
 		if (!m_ptr->r_idx) {
-		        /* Excise the monster */
+			/* Excise the monster */
 			m_fast[k] = m_fast[--m_top];
-		        /* Skip */
-		        continue;
+			/* Skip */
+			continue;
 		}
 
 		/* Players of too high level cannot participate in killing attemps (anti-cheeze) */
@@ -614,6 +614,7 @@ void check_Morgoth(int Ind) {
 	monster_type *m_ptr;
 
 
+	/* Also check for Pumpkin while we're at it.. */
 	if (season_halloween) check_Pumpkin();
 
 
@@ -628,10 +629,10 @@ void check_Morgoth(int Ind) {
 		m_ptr = &m_list[m_idx];
 		/* Excise "dead" monsters */
 		if (!m_ptr->r_idx) {
-		        /* Excise the monster */
+			/* Excise the monster */
 			m_fast[k] = m_fast[--m_top];
-		        /* Skip */
-		        continue;
+			/* Skip */
+			continue;
 		}
 
 		/* search for Morgy */
@@ -685,7 +686,7 @@ void check_Morgoth(int Ind) {
 						dun_level *l_ptr = getfloor(wpos);
 
 						/* remove morgy here */
-						delete_monster_idx(k, TRUE); /* careful, 'wpos' is now zero'ed */
+						delete_monster_idx(m_idx, TRUE); /* careful, 'wpos' is now zero'ed */
 						l_ptr->flags1 &= ~LF1_NO_GHOST;
 
 						/* notifications */
@@ -752,7 +753,7 @@ void check_Morgoth(int Ind) {
 					/* log */
 					s_printf("Morgoth left level due to %s\n", p_ptr->name);
 					/* remove morgy here */
-					delete_monster_idx(k, TRUE);
+					delete_monster_idx(m_idx, TRUE);
 
 					/* place replacement monster (clone): Death Orb (Star-Spawn, GB, GWoP) */
 					summon_override_checks = SO_ALL; /* needed? */
@@ -2177,11 +2178,11 @@ byte get_trap_color(int Ind, int t_idx, int feat)
 byte get_monster_trap_color(int Ind, int o_idx, int feat) {
 	byte a;
 	object_type *kit_o_ptr;
-//	object_type *load_o_ptr;
+	//object_type *load_o_ptr;
 
 	/* Get the trap objects */
 	kit_o_ptr = &o_list[o_idx];
-//	load_o_ptr = &o_list[kit_o_ptr->next_o_idx];
+	//load_o_ptr = &o_list[kit_o_ptr->next_o_idx];
 
 	/* Get attr */
 	a = k_info[kit_o_ptr->k_idx].d_attr;
