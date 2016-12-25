@@ -3269,6 +3269,15 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(j, "\377oYou slap yourself.");
 				msg_format_near(j, "\377y%s slaps %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
+
+			//unsnow
+			if (Players[j]->dummy_option_8) {
+				Players[j]->dummy_option_8 = FALSE;
+				note_spot(j, Players[j]->py, Players[j]->px);
+				update_player(j); //may return to being invisible
+				everyone_lite_spot(&Players[j]->wpos, Players[j]->py, Players[j]->px);
+			}
+
 			return;
 		}
 		else if (prefix(message, "/pat")) { /* Counterpart to /slap :-p */
@@ -6253,6 +6262,14 @@ void do_slash_cmd(int Ind, char *message) {
 				bypass_invuln = TRUE;
 				take_hit(j, Players[j]->chp / 2, "", 0);
 				bypass_invuln = FALSE;
+
+				//unsnow
+				if (Players[j]->dummy_option_8) {
+					Players[j]->dummy_option_8 = FALSE;
+					note_spot(j, Players[j]->py, Players[j]->px);
+					update_player(j); //may return to being invisible
+					everyone_lite_spot(&Players[j]->wpos, Players[j]->py, Players[j]->px);
+				}
 				return;
 			}
 			else if (prefix(message, "/apat")) { /* Counterpart to /slap :-p */
