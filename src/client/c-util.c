@@ -4123,10 +4123,8 @@ void interact_macros(void) {
 			get_macro_trigger(buf);
 
 			/* Re-using 'i' here shouldn't matter anymore */
-			for (i = 0; i < macro__num; i++)
-			{
-				if (streq(macro__pat[i], buf))
-				{
+			for (i = 0; i < macro__num; i++) {
+				if (streq(macro__pat[i], buf)) {
 					strncpy(macro__buf, macro__act[i], 159);
 					macro__buf[159] = '\0';
 
