@@ -2947,8 +2947,8 @@ void store_stole(int Ind, int item) {
 
 	/* shopkeeper watches expensive items carefully */
 	tcadd = 100;
-	tbest = object_value(Ind, o_ptr);/* Note- object_value_real would not take
-					    into account the discount of the item */
+	tbest = object_value(0, o_ptr); /* Note- object_value_real would not take
+					   into account the discount of the item */
 	if (tbest < 1) tbest = 1; /* shops shouldn't offer items worth less,
 				     but maybe this object_value call returns <= 0,
 				     at least we had a panic save in ../tbest somewhere below */
