@@ -8059,12 +8059,17 @@ bool create_snowball(int Ind, cave_type *c_ptr) {
 		forge.discount = 0;
 		forge.level = 1; //not 0 :)
 		forge.ident |= ID_MENTAL;
+
 		/* Can melt: We don't use o_ptr->timeout because
 		    a) it needs too many extra checks everywhere and
 		    b) timeout is shown while pval is hidden, which is nice! */
 		forge.pval = 150 + rand_int(51);
 		inven_carry(Ind, &forge);
 		msg_print(Ind, "You pick up some snow and form a snowball.");
+
+		/* Take a turn */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+
 		return TRUE;
 	}
 	return FALSE;
