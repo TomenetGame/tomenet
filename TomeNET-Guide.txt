@@ -19012,7 +19012,8 @@ SOLUTION:   A rare problem that is not caused by TomeNET really, but usually
             it will be unable to open its font files for that reason, resulting
             in the lack of any text on the screen.
             What to do is restart your MS Windows system and the text should be
-            visible again.
+            visible again. Instead of restarting you can also try just logging
+            your Windows user account out and then back in right away.
             (This usually only happens once, after updating the client.)
 
 PROBLEM 04: All windows _except for the main window_ stay empty.
