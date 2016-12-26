@@ -44,7 +44,7 @@ guide_class = {
 
 --don't count magic schools as skills for searching purpose
 --guide_skills = 71
-guide_skills = 74 - 1 - 11 - 15 - 1
+guide_skills = 74 - 1 - 11 - 15 - 6 - 1
 guide_skill = {
     "+Combat",
     "+Weaponmastery",
@@ -99,13 +99,14 @@ guide_skill = {
     ".Mental Intrusion",
 ]]--
     "+Runecraft",
+--[[
     ".Light",
     ".Dark",
     ".Nexus",
     ".Nether",
     ".Chaos",
-    ".Mana",
---[[
+    ".Mana ",
+
     ".Astral Knowledge",
 ]]--
     "+Blood Magic",
@@ -163,7 +164,7 @@ guide_school = {
     "Astral Knowledge -",
 }
 
-guide_spells = 161
+guide_spells = 163
 guide_spell = {
     "Manathrust",
     "Recharge",
