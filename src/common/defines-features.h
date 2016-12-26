@@ -258,7 +258,11 @@
  #define MAX_MERCHANT_MAILS 100
  /* <this> x (MAX_MERCHANT_MAILS / cfg.fps) seconds  [36 -> 1 min] */
  #define MERCHANT_MAIL_DURATION 36
- #define MERCHANT_MAIL_TIMEOUT (36 * 60 * 24 * 7)
+ #ifdef TEST_SERVER
+  #define MERCHANT_MAIL_TIMEOUT 36
+ #else
+  #define MERCHANT_MAIL_TIMEOUT (36 * 60 * 24 * 7)
+ #endif
 #endif
 
 /* Make staves stack the same way as wands; enable improved way of rod-stacking */

@@ -6951,6 +6951,9 @@ static void process_merchant_mail(void) {
 					if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
 						if (strcmp(Players[j]->name, mail_target[i])) {
 							msg_print(j, "\374\377yThe merchant guild has mail for another character of yours!");
+ #ifndef MERCHANT_MAIL_INFINITE
+							if (erase) msg_print(j, "\374\377yWarning - if you don't pick it up in time, the guild bureau will confiscate it!");
+ #endif
  #ifdef USE_SOUND_2010
 							sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
  #endif
@@ -6962,6 +6965,9 @@ static void process_merchant_mail(void) {
 								merchant_mail_delivery(j);
 							} else {
 								msg_print(j, "\374\377yThe merchant guild has mail for you!");
+ #ifndef MERCHANT_MAIL_INFINITE
+								if (erase) msg_print(j, "\374\377yWarning - if you don't pick it up in time, the guild bureau will confiscate it!");
+ #endif
  #ifdef USE_SOUND_2010
 								sound(j, "store_doorbell_leave", NULL, SFX_TYPE_MISC, FALSE);
  #endif
