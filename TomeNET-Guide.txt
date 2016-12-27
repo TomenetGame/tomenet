@@ -1190,6 +1190,16 @@ They all start with a slash '/' hence they're called slash commands:
             For example do:  /info Want to team up for Mordor!
             If you type /info without a message, it clears your info message.
 
+/kifu <email>
+            Use this command after you played Go in the casino in Minas Anor.
+            It will send all your new Go game records as SGF files to the email
+            specified. If you're using a Microsoft-related email address, eg
+            outlook.com, note that Microsoft is notorious for blocking email
+            from the email-provider used by TomeNET, so you might not get it.
+            The /kifu command works per character name, not per account name,
+            so you only get those kifus emailed that the character played on
+            which you used the command. (SGF is the 'Smart Game Format'.)
+
 /leave      Leaves the game, same as pressing CTRL+Q.
  (/exit, /quit)
 
@@ -5881,7 +5891,8 @@ The 1..9 are standard shops, namely..
         Casino          Minas Anor has a casino. Go and try your luck!
                         (There are various gambling opportunities, and also
                         the ancient board game 'Go' which can be played on a
-                        9x9 board for a one-time fee on each difficulty level.)
+                        9x9 board for a one-time fee on each difficulty level.
+                        Get your Go game records emailed to you via "/kifu".)
                         For details about the gambling rules of the casino, see
                         subsequent (4.5a2) paragraph.
         Mass Identify Service
@@ -6209,6 +6220,8 @@ Strategy:
 -Usually Go is played on a 19x19 board, which allows for a huge amount of
  strategy. Smaller boards are used for non-serious games, 9x9 somewhat common,
  whereby the games become purely tactical and lack much of the 19x19 strategy.
+
+You can use the /kifu command to have the game email you your Go game records!
 
 Enjoy!
 
