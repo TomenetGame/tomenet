@@ -7681,7 +7681,7 @@ void player_death(int Ind) {
 			if (!true_artifact_p(o_ptr)) continue;
 
 			/* hack -- total winners do not drop artifacts when they suicide */
-			//		if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i]))
+			//if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i]))
 
 			/* Artifacts cannot be dropped after all */
 			/* Don't litter Valinor -- Ring of Phasing must be destroyed anyways */
@@ -7829,7 +7829,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 		} else {
 			/* Tell him */
 			msg_print(Ind, "\374\377RYou die.");
-	//		msg_print(Ind, NULL);
+			//msg_print(Ind, NULL);
 #ifdef MORGOTH_FUNKY_KILL_MSGS /* Might add some atmosphere? (lol) - C. Blue */
 			if (!strcmp(p_ptr->died_from, "Morgoth, Lord of Darkness")) {
 				char funky_msg[20];
