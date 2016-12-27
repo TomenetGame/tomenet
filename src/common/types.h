@@ -790,6 +790,8 @@ struct object_type {
 	bool changed;			/* dummy flag to refresh item if o_name changed, but memory copy didn't */
 	bool NR_tradable;		/* for ALLOW_NR_CROSS_ITEMS */
 	byte temp;			/* any local hacks */
+	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
+	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
 };
 
 /*
@@ -2931,6 +2933,8 @@ struct player_type {
 	bool IDDC_found_rndtown;	/* prevent multiple random towns within one 'interval' */
 	bool IDDC_logscum;		/* prevent log-scumming instead of proceeding downwards */
 	byte IDDC_flags;		/* added for IDDC special hack: Make it easier to find up to two speed rings */
+	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
+	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
 
 	bool insta_res;			/* Instant resurrection */
 	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever */
