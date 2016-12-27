@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. December 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 27. December 2016 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.0b - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9466,7 +9466,9 @@ ANTIMAGIC ('Anti-magic field')
         The anti-magic field's radius caps at range 9.
 BLESSED ('It has been blessed by the gods')
         These weapons resist cursing. Priests can use blessed weapons
-        without penalties, even if they are not blunt.
+        without penalties, even if they are not blunt. They will get their
+        'Blunt-mastery' skill applied to any blessed weapon, even if it isn't
+        actually blunt-type but a sword, axe or polearm instead.
 VAMPIRIC ('It drains life from your foes')
         Drains life from your victim, which heals you slightly.
         For details see '(5.15) Vampirism'.
@@ -13527,9 +13529,11 @@ create a character!):
 
 - Priest
     Priests use certain divine magic, uttered as prayers. Unlike mages they
-    have a fair fighting potential with blunt or blessed weapons. Priests
-    can learn many spells that are helpful to their party members. They use
-    mainly wisdom for their prayers, determining the amount of mana and how
+    have a fair fighting potential with blunt or blessed weapons. If a priest
+    wields a blessed weapon he will get his 'Blunt-mastery' skill applied to it
+    even if it's not actually a blunt-type weapon.
+    Priests can learn many spells that are helpful to their party members. They
+    use mainly wisdom for their prayers, determining the amount of mana and how
     low their failure rate is.
     A Priest is a character of holy devotion. They explore the dungeon only
     to destroy the evil that lurks within, and if treasure just happens to
