@@ -6812,6 +6812,7 @@ void do_slash_cmd(int Ind, char *message) {
 				struct account acc;
 				byte tmpm;
 				char colour_sequence[3 + 1]; /* colour + dedicated slot marker */
+				struct worldpos wpos;
 
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /acclist <account name>");
@@ -6826,6 +6827,7 @@ void do_slash_cmd(int Ind, char *message) {
 //unused huh					u16b ptype = lookup_player_type(id_list[i]);
 						/* do not change protocol here */
 						tmpm = lookup_player_mode(id_list[i]);
+						wpos = lookup_player_wpos(id_list[i]);
 						if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377B");
 						else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
 						else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
@@ -6833,7 +6835,7 @@ void do_slash_cmd(int Ind, char *message) {
 						else strcpy(colour_sequence, "\377W");
 						if (tmpm & MODE_DED_IDDC) strcat(colour_sequence, "*");
 						if (tmpm & MODE_DED_PVP) strcat(colour_sequence, "*");
-						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
+						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d) (%d,%d,%d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i], wpos.wx, wpos.wy, wpos.wz);
 					}
 					if (n) C_KILL(id_list, n, int);
 					WIPE(&acc, struct account);
