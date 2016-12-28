@@ -5890,7 +5890,7 @@ The 1..9 are standard shops, namely..
                         and a mail service that allows you to send money or an
                         item to other players.
                         Several towns have a subsidiary, you can globally
-                        access your deposited money from any of those.
+                        access your bank account and mail from any of those.
         Rune Repository
                         Sells and buys runes used by Runemasters.
         Casino          Minas Anor has a casino. Go and try your luck!
