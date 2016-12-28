@@ -19,7 +19,7 @@ F:a:74:3:0:0:0:0:0:58
 # Soothsayer
 F:h:74:3:0:0:0:0:0:12
 
-# Merchant Guild
+# Merchants Guild
 F:d:74:3:0:0:0:0:0:56
 
 # The Mathom-house

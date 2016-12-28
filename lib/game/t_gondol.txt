@@ -124,7 +124,7 @@ F:m:74:3:0:0:0:0:0:37
 # Draconian's Hide
 F:n:74:3:0:0:0:0:0:22
 
-# Merchant guild
+# Merchants guild
 F:o:74:3:0:0:0:0:0:56
 
 F:+:231:3

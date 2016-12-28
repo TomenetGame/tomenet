@@ -57,7 +57,7 @@ F:l:74:3:0:0:0:0:0:22
 # Castle: Plot Minas Anor
 F:B:75:3:0:0:0:0:0:5
 
-# Merchant guild
+# Merchants guild
 F:m:74:3:0:0:0:0:0:56
 
 # Expensive Black Market

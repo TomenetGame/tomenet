@@ -5883,9 +5883,14 @@ The 1..9 are standard shops, namely..
                         (see (4.13) about those).
                         Last but not least you can check out a list of
                         noteworthy occurances that may happened lately.
-        The Bank        Several towns have a bank where you can deposit and
-                        withdraw money, so you won't lose it accidentally on a
-                        dungeon trip.
+        The Merchants Guild
+                        An NPC run guild that offers two services,
+                        a bank account to deposit your money in so you won't
+                        lose it accidentally on a dungeon trip,
+                        and a mail service that allows you to send money or an
+                        item to other players.
+                        Several towns have a subsidiary, you can globally
+                        access your deposited money from any of those.
         Rune Repository
                         Sells and buys runes used by Runemasters.
         Casino          Minas Anor has a casino. Go and try your luck!
