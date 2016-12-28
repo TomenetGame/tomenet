@@ -1086,6 +1086,12 @@ static bool guild_name_legal(int Ind, char *name) {
 		return FALSE;
 	}
 
+	/* Specific 'Merchants Guild' collision? */
+	if (my_strcasestr(name, "Merchant") || my_strcasestr(name, "Mercant")) { //catch silyl typoing :p
+		msg_print(Ind, "\377yA guild by a too similar name already exists."); //..and it's run by NPCs :)
+		return FALSE;
+	}
+
 	/* Check for already existing guild by that name */
 	if ((index = guild_lookup(name) != -1)) {
 		/* Admin can actually create a duplicate 'spare' key this way */
