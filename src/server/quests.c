@@ -5007,6 +5007,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					if (pInd) {
 						o_ptr->owner = Players[pInd]->id;
 						o_ptr->mode = Players[pInd]->mode;
+						o_ptr->iron_trade = Players[pInd]->iron_trade;
 						if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &wpos);
 					}
 #endif
@@ -5023,6 +5024,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					if (pInd) {
 						o_ptr->owner = Players[pInd]->id;
 						o_ptr->mode = Players[pInd]->mode;
+						o_ptr->iron_trade = Players[pInd]->iron_trade;
 						if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &wpos);
 					}
 #endif
@@ -5961,6 +5963,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->level = 0;
 			o_ptr->owner = Players[Ind]->id;
 			o_ptr->mode = Players[Ind]->mode;
+			o_ptr->iron_trade = Players[Ind]->iron_trade;
 			if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, wpos);
 #endif
 		} else {
@@ -5975,6 +5978,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->level = 0;
 			o_ptr->owner = Players[Ind]->id;
 			o_ptr->mode = Players[Ind]->mode;
+			o_ptr->iron_trade = Players[Ind]->iron_trade;
 			if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, wpos);
 #endif
 		}

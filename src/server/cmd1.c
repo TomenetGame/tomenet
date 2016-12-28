@@ -1896,16 +1896,16 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		if (compat_pomode(Ind, o_ptr)) {
 			/* Make an exception for WoR scrolls in case of rescue missions (become 100% off tho) */
 			if (exceptionally_shareable_item(o_ptr)) {
-//				o_ptr->number = 1;
+				//o_ptr->number = 1;
 				o_ptr->discount = 100;
 				if (o_ptr->level <= p_ptr->lev) {
-//					o_ptr->owner = p_ptr->id;
+					//o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 				}
 			/* Game pieces are free to be used */
 			} else if (o_ptr->tval == TV_GAME) {
 				if (o_ptr->level <= p_ptr->lev) {
-//					o_ptr->owner = p_ptr->id;
+					//o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
 				}
 			/* exception for amulet of the highlands for tournaments */
@@ -2053,7 +2053,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 
 			/* Delete original */
-//			delete_object(wpos, p_ptr->py, p_ptr->px);
+			//delete_object(wpos, p_ptr->py, p_ptr->px);
 			delete_object_idx(c_ptr->o_idx, FALSE);
 
 			/* Hack -- tell the player of the next object on the pile */
@@ -2307,6 +2307,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 				/* Check whether this item was requested by an item-retrieval quest */
 				if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
+
+				o_ptr->iron_trade = p_ptr->iron_trade;
 
 				/* Own it */
 				if (!o_ptr->owner) {

@@ -1463,10 +1463,14 @@ int party_create(int Ind, cptr name) {
 	/* Set mode to normal */
 	parties[index].mode = PA_NORMAL;
 	parties[index].cmode = p_ptr->mode;
+	/* For IDDC (if normal parties are actually allowed) */
+	parties[index].iron_trade = (u32b)rand_int(0xFFFF) << 16;
+	parties[index].iron_trade += rand_int(0xFFFF);
 
 	/* Add the owner as a member */
 	p_ptr->party = index;
 	parties[index].members = 1;
+	p_ptr->iron_trade = parties[index].iron_trade;
 	clockin(Ind, 2);
 
 	/* Set the "creation time" */
@@ -1589,6 +1593,8 @@ int party_create_ironteam(int Ind, cptr name) {
 	/* Set mode to iron team */
 	parties[index].mode = PA_IRONTEAM;
 	parties[index].cmode = p_ptr->mode;
+	parties[index].iron_trade = (u32b)rand_int(0xFFFF) << 16;
+	parties[index].iron_trade += rand_int(0xFFFF);
 
 	/* Initialize max exp */
 	parties[index].experience = 0;
@@ -1596,6 +1602,7 @@ int party_create_ironteam(int Ind, cptr name) {
 	/* Add the owner as a member */
 	p_ptr->party = index;
 	parties[index].members = 1;
+	p_ptr->iron_trade = parties[index].iron_trade;
 	clockin(Ind, 2);
 
 	/* Set the "creation time" */
@@ -1981,6 +1988,7 @@ int party_add(int adder, cptr name) {
 
 	/* Set his party number */
 	p_ptr->party = party_id;
+	p_ptr->iron_trade = parties[party_id].iron_trade;
 	clockin(Ind, 2);
 
 	/* Resend info */
@@ -2092,6 +2100,7 @@ int party_add_self(int Ind, cptr party) {
 
 	/* Set his party number */
 	p_ptr->party = party_id;
+	p_ptr->iron_trade = parties[party_id].iron_trade;
 	clockin(Ind, 2);
 
 	/* Resend info */
@@ -2559,7 +2568,10 @@ int party_remove(int remover, cptr name) {
 
 	/* Set his party number back to "neutral" */
 	p_ptr->party = 0;
+	p_ptr->iron_trade = 0;
 	clockin(Ind, 2);
+	for (i = 0; i < INVEN_TOTAL; i++)
+		p_ptr->inventory[i].iron_trade = 0;
 
 	/* Re-check house permissions, to display doors in correct colour */
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;
@@ -2642,7 +2654,7 @@ void guild_leave(int Ind, bool voluntarily) {
  */
 void party_leave(int Ind, bool voluntarily) {
 	player_type *p_ptr = Players[Ind];
-	int party_id = p_ptr->party;
+	int party_id = p_ptr->party, i;
 
 	/* Make sure he belongs to a party */
 	if (!party_id) {
@@ -2665,7 +2677,10 @@ void party_leave(int Ind, bool voluntarily) {
 
 	/* Set him back to "neutral" */
 	p_ptr->party = 0;
+	p_ptr->iron_trade = 0;
 	clockin(Ind, 2);
+	for (i = 0; i < INVEN_TOTAL; i++)
+		p_ptr->inventory[i].iron_trade = 0;
 
 	/* Re-check house permissions, to display doors in correct colour */
 	if (!p_ptr->wpos.wz) p_ptr->redraw |= PR_MAP;

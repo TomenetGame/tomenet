@@ -5756,6 +5756,7 @@ if (cfg.unikill_format) {
 					qq_ptr->level = 0;
 					qq_ptr->owner = p_ptr->id;
 					qq_ptr->mode = p_ptr->mode;
+					qq_ptr->iron_trade = p_ptr->iron_trade;
 					determine_artifact_timeout(a_idx, wpos);
 				}
 #endif
@@ -5789,6 +5790,7 @@ if (cfg.unikill_format) {
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
+			qq_ptr->iron_trade = p_ptr->iron_trade;
 			if (true_artifact_p(qq_ptr)) determine_artifact_timeout(qq_ptr->name1, wpos);
 #endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
@@ -6020,6 +6022,7 @@ if (cfg.unikill_format) {
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
+			qq_ptr->iron_trade = p_ptr->iron_trade;
 #endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
@@ -6226,6 +6229,7 @@ if (cfg.unikill_format) {
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
+			qq_ptr->iron_trade = p_ptr->iron_trade;
 #endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
@@ -6303,6 +6307,7 @@ if (cfg.unikill_format) {
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
+			qq_ptr->iron_trade = p_ptr->iron_trade;
 #endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
@@ -6429,6 +6434,7 @@ if (cfg.unikill_format) {
 					qq_ptr->level = 0;
 					qq_ptr->owner = p_ptr->id;
 					qq_ptr->mode = p_ptr->mode;
+					qq_ptr->iron_trade = p_ptr->iron_trade;
 					determine_artifact_timeout(a_idx, wpos);
 #endif
 					drop_near(0, qq_ptr, -1, wpos, y, x);
@@ -7608,6 +7614,7 @@ void player_death(int Ind) {
 		/* Change the mode of the gold accordingly */
 		p_ptr->inventory[INVEN_PACK].mode = p_ptr->mode;
 		p_ptr->inventory[INVEN_PACK].owner = p_ptr->id; /* hack */
+		p_ptr->inventory[INVEN_PACK].iron_trade = p_ptr->iron_trade;
 
 		/* Drop no more than 32000 gold */
 		//if (p_ptr->au > 32000) p_ptr->au = 32000;
@@ -8302,6 +8309,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		object_aware(Ind, o_ptr);
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
+		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->level = 0;
 		o_ptr->note = quark_add(format("# of %s", p_ptr->name));
 		/* o_ptr->note = quark_add(format("#of %s", p_ptr->name));
@@ -8332,6 +8340,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		object_aware(Ind, o_ptr);
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
+		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 	}
