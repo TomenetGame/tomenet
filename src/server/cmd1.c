@@ -1667,14 +1667,16 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 #ifdef IDDC_IRON_COOP
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
-		    && (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
+		    //&& (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
+		    && o_ptr->iron_trade != p_ptr->iron_trade) {
 			msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
 			if (!is_admin(p_ptr)) return;
 		}
 #endif
 #ifdef IRON_IRON_TEAM
 		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
-		    && lookup_player_party(o_ptr->owner) != p_ptr->party) {
+		    //&& lookup_player_party(o_ptr->owner) != p_ptr->party) {
+		    && o_ptr->iron_trade != p_ptr->iron_trade) {
 			msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
 			if (!is_admin(p_ptr)) return;
 		}
@@ -1841,14 +1843,16 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 #ifdef IDDC_IRON_COOP
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
-		    && (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
+		    //&& (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
+		    && o_ptr->iron_trade != p_ptr->iron_trade) {
 			msg_print(Ind, "\377yYou cannot pick up items from outsiders.");
 			if (!is_admin(p_ptr)) return;
 		}
 #endif
 #ifdef IRON_IRON_TEAM
 		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
-		    && lookup_player_party(o_ptr->owner) != p_ptr->party) {
+		    //&& lookup_player_party(o_ptr->owner) != p_ptr->party) {
+		    && o_ptr->iron_trade != p_ptr->iron_trade) {
 			msg_print(Ind, "\377yYou cannot pick up items from outsiders.");
 			if (!is_admin(p_ptr)) return;
 		}
