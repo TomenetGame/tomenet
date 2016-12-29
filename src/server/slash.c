@@ -1343,6 +1343,8 @@ void do_slash_cmd(int Ind, char *message) {
 		else if (prefix(message, "/help") || prefix(message, "/he") || prefix(message, "/?")) {
 			char    path[MAX_PATH_LENGTH];
 
+			do_slash_brief_help(Ind);
+
 #if 0 /* this invokes the old slash command help */
 			/* Build the filename */
 			if (admin && !tk) path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "slash_ad.hlp");
@@ -9840,8 +9842,8 @@ static void do_slash_brief_help(int Ind){
 		msg_print(Ind, "  /dis \377rdestroys \377wall the uninscribed items in your inventory!");
 #else
 #endif
-	msg_print(Ind, "Common commands: afk page ex feel rec tag untag dis me fill ignore bug rfe");
-	msg_print(Ind, "  please type '/help' for detailed help.");
+	msg_print(Ind, "Common commands: \377yex fe rec fill cough afk page note undoskills t ut dis bug rfe\377w."); //xo,que,ic,ig,shout,seen,time,tym,tip,s,me
+	msg_print(Ind, " Press '\377y?\377w' key to see a list of command keys. Press \377y~g\377w for the TomeNET Guide.");
 }
 
 
