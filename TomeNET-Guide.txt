@@ -920,7 +920,7 @@ CTRL+D      Delete character under the cursor.
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
 
-/help       get a help about slash-commands.
+/help       view a list of all command keys (same as pressing '?' key).
 
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing.
