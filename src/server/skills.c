@@ -647,9 +647,16 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 #endif
 	case SKILL_HEALTH:
-		if (old_value < 100 && new_value >= 100) p_ptr->sanity_bar = 1;
-		else if (old_value < 200 && new_value >= 200) p_ptr->sanity_bar = 2;
-		else if (old_value < 400 && new_value >= 400) p_ptr->sanity_bar = 3;
+		if (old_value < 100 && new_value >= 100) {
+			p_ptr->sanity_bar = 1;
+			msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
+		} else if (old_value < 200 && new_value >= 200) {
+			p_ptr->sanity_bar = 2;
+			msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
+		} else if (old_value < 400 && new_value >= 400) {
+			p_ptr->sanity_bar = 3;
+			msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
+		}
 		break;
 	case SKILL_ANTIMAGIC:
 		if (!new_value) break; //paranoia..
