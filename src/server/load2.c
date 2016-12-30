@@ -728,6 +728,13 @@ static void rd_item(object_type *o_ptr) {
 		}
 	}
 
+	/* Make old non-zero-level potions of learning unusable */
+#ifdef EXPAND_TV_POTION
+	if (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_LEARNING && o_ptr->level) o_ptr->xtra1 = 1;
+#else
+	if (o_ptr->tval == TV_POTION2 && o_ptr->sval == SV_POTION2_LEARNING && o_ptr->level) o_ptr->xtra1 = 1;
+#endif
+
 #ifdef USE_NEW_SHIELDS
 	/* Cap all old shields' +ac - C. Blue */
 	if (o_ptr->tval == TV_SHIELD)

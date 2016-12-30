@@ -1026,22 +1026,22 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION_CURE_SERIOUS_SANITY:
-//			if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
 			if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION_CURE_CRITICAL_SANITY:
-//			if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
 			if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION_CURE_SANITY:
-//			if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
 			if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION_CHAUVE_SOURIS:
-//			apply_morph(Ind, 100, "Potion of Chauve-Souris");
+			//apply_morph(Ind, 100, "Potion of Chauve-Souris");
 			if (!p_ptr->fruit_bat) {
 				/* FRUIT BAT!!!!!! */
 				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
@@ -1088,22 +1088,22 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION2_CURE_SERIOUS_SANITY:
-//			if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
 			if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION2_CURE_CRITICAL_SANITY:
-//			if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
 			if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION2_CURE_SANITY:
-//			if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
 			if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION2_CHAUVE_SOURIS:
-//			apply_morph(Ind, 100, "Potion of Chauve-Souris");
+			//apply_morph(Ind, 100, "Potion of Chauve-Souris");
 			if (!p_ptr->fruit_bat) {
 				/* FRUIT BAT!!!!!! */
 				if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
@@ -1199,6 +1199,12 @@ void do_cmd_quaff_potion(int Ind, int item) {
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	/* For outdated learning potions */
+	if (o_ptr->xtra1) {
+		msg_print(Ind, "This potion seems to have crystallized and cannot be consumed anymore.");
+		return;
+	}
 
 	/* Not identified yet */
 	ident = FALSE;
