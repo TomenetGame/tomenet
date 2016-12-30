@@ -1075,7 +1075,8 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			p_ptr->skill_points += i;
 			p_ptr->update |= PU_SKILL_MOD;
 			if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
-			msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
+			msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1) ? "" : "s");
+			s_printf("LEARNING: %s gained %d more skill point%s.\n", p_ptr->name, i, (i == 1) ? "" : "s");
 			break;
 #endif
 		}
@@ -1137,6 +1138,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			p_ptr->update |= PU_SKILL_MOD;
 			if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) p_ptr->redraw |= PR_STUDY;
 			msg_format(Ind, "You gained %d more skill point%s.", i, (i == 1)?"":"s");
+			s_printf("LEARNING: %s gained %d more skill point%s.\n", p_ptr->name, i, (i == 1) ? "" : "s");
 			break;
 		case SV_POTION2_AMBER:
 			ident = TRUE;
