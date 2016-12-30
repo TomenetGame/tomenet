@@ -6225,12 +6225,12 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 
 			/* Drop it in the dungeon */
-#ifdef PRE_OWN_DROP_CHOSEN
+//#ifdef PRE_OWN_DROP_CHOSEN -- learning potion must always be level 0
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade;
-#endif
+//#endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		} else if (m_ptr->r_idx == RI_DOR) {
@@ -6303,12 +6303,12 @@ if (cfg.unikill_format) {
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
 			/* Drop it in the dungeon */
-#ifdef PRE_OWN_DROP_CHOSEN
+//#ifdef PRE_OWN_DROP_CHOSEN -- learning potion must always be level 0
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade;
-#endif
+//#endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		} else if (!pvp) {
