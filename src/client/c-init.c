@@ -629,7 +629,8 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 }
 const char *mon_flags2highlight[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POIS", "IM_WATER", ""};
 const char *mon_flags2highlight2[] = {"SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC", "SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", ""};
-const char *mon_flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", "NONLIVING", ""};//omitting DRAGONRIDER, NONLIVING, SPIDER
+//omitting SPIDER; note: DRAGON and DRAGONRIDER occur mutually exclusively, so we don't have to do extra string checks
+const char *mon_flags2highlight3[] = {"ANIMAL", "ORC", "TROLL", "GIANT", "DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD", "EVIL", "GOOD", "NONLIVING", ""};
 const char *mon_flags2highlight4[] = {"UNIQUE", "NAZGUL", "PSEUDO_UNIQUE", "NO_DEATH", ""};//no hints about dungeon/game boss status available or used
 const char *mon_flags2highlight5[] = {"NEUTRAL", "FRIENDLY", "PET", "QUESTOR", ""};//currently unavailable
 const char *mon_flags2highlight6[] = {"AQUATIC", ""};
@@ -1924,6 +1925,7 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 }
 const char *obj_flags2highlight[] = {"SPECIAL_GENE", ""};
 const char *obj_flags2highlight2[] = {"WINNERS_ONLY", ""};
+//collisions requiring extra string checks: SUST_xxx, REGEN_mana, HOLD_life
 const char *obj_flags2highlight3[] = {"STR", "INT", "WIS", "DEX", "CON", "CHR", "STEALTH", "BLOWS", "CRIT", "MANA", "SEARCH", "INFRA", "TUNNEL", "SPEED", "LIFE", "LUCK", "DISARM", ""};//flags affected by (b)pval
 const char *obj_flags2highlight4[] = {"NO_TELE", "DRAIN_MANA", "DRAIN_HP", "DRAIN_EXP", "AGGRAVATE", "NEVER_BLOW", "BLACK_BREATH", "CLONE", "PERMA_CURSE", "HEAVY_CURSE", "TY_CURSE", "DG_CURSE", "CURSE_NO_DROP", "AUTO_CURSE", "CURSED", ""};
 const char *obj_flags2highlight5[] = {"ACTIVATE", ""};
@@ -1932,6 +1934,8 @@ static int obj_highlit_flags(char *line) {
 	const char **f = obj_flags2highlight;
 	char *p2;
 	int i = 0;
+
+	char prefixed[9] = { ' ', 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	while (*f[0]) {
 		if ((p2 = strstr(line, *f)) &&
@@ -1953,6 +1957,11 @@ static int obj_highlit_flags(char *line) {
 		if ((p2 = strstr(line, *f)) &&
 		    (p2 == line || *(p2 - 1) == ' ' || *(p2 - 2) == '\377'))//make sure the string is not just part of a different, longer flag string
 			i += 4;
+		else {
+			strcpy(prefixed + 1, *f);
+			if ((p2 = strstr(line, prefixed)))//make sure the string is not just part of a different, longer flag string
+				i += 4;
+		}
 		f++;
 	}
 
@@ -1986,6 +1995,8 @@ static void obj_highlight_flags(char *info, bool minus) {
 	const char **f = obj_flags2highlight, a_flag = 's';
 	char info_tmp[MSG_LEN], *p2;
 
+	char prefixed[9] = { ' ', 0, 0, 0, 0, 0, 0, 0, 0 };
+
 	while (*f[0]) {
 		if ((p2 = strstr(info, *f)) && (p2 == info || *(p2 - 1) == ' ')) {
 			strcpy(info_tmp, info);
@@ -2015,6 +2026,14 @@ static void obj_highlight_flags(char *info, bool minus) {
 			sprintf(info_tmp + (p2 - info), "\377R%s\377%c", *f, a_flag);
 			strcat(info_tmp, p2 + strlen(*f));
 			strcpy(info, info_tmp);
+		} else {
+			strcpy(prefixed + 1, *f);
+			if ((p2 = strstr(info, prefixed))) {
+				strcpy(info_tmp, info);
+				sprintf(info_tmp + (p2 - info), "\377R%s\377%c", prefixed, a_flag);
+				strcat(info_tmp, p2 + strlen(prefixed));
+				strcpy(info, info_tmp);
+			}
 		}
 		f++;
 	}
@@ -2024,6 +2043,14 @@ static void obj_highlight_flags(char *info, bool minus) {
 			sprintf(info_tmp + (p2 - info), "\377G%s\377%c", *f, a_flag);
 			strcat(info_tmp, p2 + strlen(*f));
 			strcpy(info, info_tmp);
+		} else {
+			strcpy(prefixed + 1, *f);
+			if ((p2 = strstr(info, prefixed))) {
+				strcpy(info_tmp, info);
+				sprintf(info_tmp + (p2 - info), "\377G%s\377%c", prefixed, a_flag);
+				strcat(info_tmp, p2 + strlen(prefixed));
+				strcpy(info, info_tmp);
+			}
 		}
 		f++;
 	}
