@@ -6159,6 +6159,12 @@ static void process_various(void) {
 		exec_lua(0, format("cron_24h(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), h, m, s, dwd, dd, dm, dy));
 
 		/* bbs_add_line("--- new day line ---"); */
+
+		/* notify admins? */
+		for (i = 1; i <= NumPlayers; i++) {
+			if (!is_admin(Players[i])) continue;
+			msg_format(i, "\374\377y[24-h maintenance/cron finished - %s]", showtime());
+		}
 	}
 
 #if 0 /* disable for now - mikaelh */
