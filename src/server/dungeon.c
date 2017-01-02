@@ -456,22 +456,22 @@ static void sense_inventory(int Ind) {
 		if (!o_ptr->k_idx) continue;
 		/* It is fully known, no information needed */
 		if (object_known_p(Ind, o_ptr)) continue;
+		/* We know about it already, do not tell us again */
+		if (o_ptr->ident & ID_SENSE_HEAVY) continue;
+		else if (o_ptr->ident & ID_SENSE) fail = TRUE;
 		/* Occasional failure on inventory items */
 		if ((i < INVEN_WIELD) &&
 		    (magik(80) || UNAWARENESS(p_ptr))) {
 			/* usually fail, except if we're forced to insta-sense a curse */
-			if (!force_curse) continue;
+			if (!force_curse || fail) continue;
 			/* if we're forced to insta-sense a curse, do just that */
 			ok_magic = ok_combat = ok_archery = FALSE;
 		}
-		/* We know about it already, do not tell us again */
-		if (o_ptr->ident & ID_SENSE_HEAVY) continue;
-		else if (o_ptr->ident & ID_SENSE) fail = TRUE;
 
 		feel = NULL;
 		felt_heavy = FALSE;
 
-		if (ok_curse && cursed_p(o_ptr)) feel = value_check_aux1(o_ptr);
+		if (ok_curse && !fail && cursed_p(o_ptr)) feel = value_check_aux1(o_ptr);
 
 		/* Valid "tval" codes */
 		switch (o_ptr->tval) {
