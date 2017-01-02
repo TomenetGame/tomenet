@@ -2541,7 +2541,7 @@ void do_cmd_check_server_settings(int Ind) {
 		fprintf(fff, "Bree dungeon: baselevel(%d) depth(%d)\n", cfg.dun_base, cfg.dun_max);
 
 		if (cfg.auto_purge)
-			fprintf(fff, "Non-used monsters/objects are purged every 24H.\n");
+			fprintf(fff, "Non-used monsters/objects are purged every 24h.\n");
 
 #if 0
 		if (cfg.mage_hp_bonus)
