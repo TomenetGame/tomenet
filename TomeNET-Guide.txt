@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. December 2016 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 4. January 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.0b - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7562,7 +7562,8 @@ Ironman Deep Dive Challenge (IDDC)
 
     Also, starting at dungeon level 8, a hidden library may appear randomly
     (that's a book store with a red '9' for entrance), allowing you to purchase
-    magic spells you might be missing.
+    magic spells you might be missing. It also offers a special service to
+    identify all items you are carrying.
     On very deep floors after Nargothrond, a seasoned alchemist store may
     appear, allowing you to resupply.
 
