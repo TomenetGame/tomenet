@@ -1685,8 +1685,7 @@ static void player_outfit(int Ind) {
 		do_player_outfit();
 	}
 
-	if (!strcmp(p_ptr->name, "Moltor"))
-	{
+	if (!strcmp(p_ptr->name, "Moltor")) {
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_PINT_OF_ALE));
 		o_ptr->name2 = 188;	// Bud ;)
 		o_ptr->number = 9;
