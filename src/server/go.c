@@ -775,6 +775,7 @@ void go_engine_terminate(void) {
 void go_challenge(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	char challenge_req[20];
+	int wager;
 
 	Send_store_special_clr(Ind, 4, 18);
 
@@ -805,7 +806,9 @@ void go_challenge(int Ind) {
 
 	/* Owner talk about how you suck..or not!
 	   And making a new proposal accordingly. */
-	strcpy(challenge_req, format("Bet %d Au?", wager_lvl[p_ptr->go_level / 2]));
+	wager = wager_lvl[p_ptr->go_level / 2];
+	if (in_irondeepdive(&p_ptr->wpos)) wager /= 10; //anti-cheeze: shouldn't have a big advantage from knowing Go..
+	strcpy(challenge_req, format("Bet %d Au?", wager));
 	switch (p_ptr->go_level) {
 	case 0:
 		Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "So you think you're any good at this huh?");
@@ -923,6 +926,7 @@ void go_challenge_accept(int Ind, bool new_wager) {
 	if (new_wager) {
 		/* Prepare to deduct wager */
 		wager = wager_lvl[p_ptr->go_level / 2];
+		if (in_irondeepdive(&p_ptr->wpos)) wager /= 10; //anti-cheeze: shouldn't have a big advantage from knowing Go..
 		if (p_ptr->au < wager) {
 			Send_store_special_str(Ind, 8, 5, TERM_RED, "You don't have the money!");
 
@@ -2290,6 +2294,7 @@ static void go_engine_move_result(int move_result) {
 		}
 
 		/* earn winnings */
+		if (in_irondeepdive(&p_ptr->wpos)) wager /= 10; //anti-cheeze: shouldn't have a big advantage from knowing Go..
 		if (wager) {
 			/* double return */
 			wager *= 2;
