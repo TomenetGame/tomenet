@@ -7567,9 +7567,9 @@ Ironman Deep Dive Challenge (IDDC)
     On very deep floors after Nargothrond, a seasoned alchemist store may
     appear, allowing you to resupply.
 
-    Rogues should be aware that it's quite hard to steal from shops in IDDC,
-    some of the shops that you might expect to have it do not even offer a
-    steal function.
+    Rogues should be aware that it's not possible to steal from general store,
+    weaponsmith, armoury, temple, magic shop, black market and the special
+    potion store in the dungeon towns.
 
     Inside the challenge dungeon you can acquire an extermination order via
     /xorder command at level 1 already, instead of the usual minimum level 5.
