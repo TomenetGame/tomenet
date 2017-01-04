@@ -3032,6 +3032,7 @@ void store_stole(int Ind, int item) {
 
 		/* Let the player carry it (as if he picked it up) */
 		can_use(Ind, &sell_obj);//##UNH
+		sell_obj.iron_trade = p_ptr->iron_trade;
 		item_new = inven_carry(Ind, &sell_obj);
 
 		/* Describe the final result */
@@ -3469,6 +3470,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				/* Let the player carry it (as if he picked it up) */
 				//note regarding quests: The item here gets owned first, then inven-carried, so it doesn't give credit!
 				can_use(Ind, &sell_obj);//##UNH
+				sell_obj.iron_trade = p_ptr->iron_trade;
 				item_new = inven_carry(Ind, &sell_obj);
 
 				/* Describe the final result */
@@ -4346,6 +4348,7 @@ void do_cmd_store(int Ind) {
 			object_known(&forge);
 			forge.ident |= ID_MENTAL;
 			forge.note = quark_add(format("%s Delivery", st_name + st_info[p_ptr->item_order_store - 1].name));
+			forge.iron_trade = p_ptr->iron_trade;
 			slot = inven_carry(Ind, &forge);
 			if (slot != -1) {
 				object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);
@@ -4392,6 +4395,11 @@ bool merchant_mail_carry(int Ind, int i) {
 		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
  #endif
 		s_printf("MERCHANT_MAIL: <%s> from <%s> received: %d Au.\n", p_ptr->name, mail_sender[i], mail_forge[i].pval);
+
+		if (!p_ptr->max_exp) {
+			msg_print(Ind, "You gain a tiny bit of experience from exchanging money.");
+			gain_exp(Ind, 1);
+		}
 	} else {
 		int slot;
 		char o_name[ONAME_LEN];
@@ -4408,6 +4416,11 @@ bool merchant_mail_carry(int Ind, int i) {
 		sound_item(Ind, mail_forge[i].tval, mail_forge[i].sval, "pickup_");
  #endif
 		s_printf("MERCHANT_MAIL: <%s> from <%s> received: %s.\n", p_ptr->name, mail_sender[i], o_name);
+
+		if (!p_ptr->max_exp) {
+			msg_print(Ind, "You gain a tiny bit of experience from trading a used item.");
+			gain_exp(Ind, 1);
+		}
 	}
 
 	/* reset mail slot */

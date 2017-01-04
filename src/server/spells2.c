@@ -8176,6 +8176,7 @@ void rune_combine_aux(int Ind, int item) {
 	byte discount = o_ptr->discount;
 	byte number = o_ptr->number;
 	s16b note = o_ptr->note; //keep the incription of the initial rune
+	s32b iron_trade = o_ptr->iron_trade;
 
 	/* Rune Preservation? */
 	if (check_guard_inscription(o_ptr->note, 'R')) {
@@ -8249,6 +8250,7 @@ void rune_combine_aux(int Ind, int item) {
 	q_ptr->discount = discount;
 	q_ptr->number = number;
 	q_ptr->note = note;
+	q_ptr->iron_trade = iron_trade;
 
 	/* Create the rune stack */
 	inven_carry(Ind, q_ptr);
@@ -8407,6 +8409,7 @@ void tome_creation_aux(int Ind, int item) {
 		/* Unstack the used item */
 		o_ptr->number--;
 		p_ptr->total_weight -= tmp_obj.weight;
+		tmp_obj.iron_trade = o_ptr->iron_trade;
 		item = inven_carry(Ind, &tmp_obj);
 	}
 

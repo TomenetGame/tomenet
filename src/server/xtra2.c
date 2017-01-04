@@ -5731,7 +5731,7 @@ if (cfg.unikill_format) {
 				qq_ptr->to_d = a_ptr->to_d;
 				qq_ptr->weight = a_ptr->weight;
 
-			    	object_desc(Ind, o_name, qq_ptr, TRUE, 3);
+				object_desc(Ind, o_name, qq_ptr, TRUE, 3);
 				s_printf(" '%s'", o_name);
 
 				handle_art_inum(a_idx);
@@ -6026,7 +6026,7 @@ if (cfg.unikill_format) {
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
-			qq_ptr->iron_trade = p_ptr->iron_trade;
+			qq_ptr->iron_trade = p_ptr->iron_trade; //not sure if Nazgul rings should really be tradeable in IDDC..
 #endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
@@ -6060,7 +6060,16 @@ if (cfg.unikill_format) {
 			qq_ptr->name3 += rand_int(0xFFFF);
 
 			apply_magic(wpos, qq_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
+
 			qq_ptr->level = 0;
+#if 0 /* Stormbringer not pre-owned? hm. */
+#ifdef PRE_OWN_DROP_CHOSEN
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->mode = p_ptr->mode;
+			qq_ptr->iron_trade = p_ptr->iron_trade;
+#endif
+#endif
 
 			qq_ptr->ident |= ID_CURSED;
 
@@ -6233,7 +6242,8 @@ if (cfg.unikill_format) {
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
-			qq_ptr->iron_trade = p_ptr->iron_trade;
+			//learning potion must never be tradeable. for non-IDDC_IRON_COOP it actually would be, if any mob dropped it - which none does, fortunately:
+			//qq_ptr->iron_trade = p_ptr->iron_trade;
 //#endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
@@ -6311,7 +6321,8 @@ if (cfg.unikill_format) {
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
-			qq_ptr->iron_trade = p_ptr->iron_trade;
+			//learning potion must never be tradeable. for non-IDDC_IRON_COOP it actually would be, if any mob dropped it - which none does, fortunately:
+			//qq_ptr->iron_trade = p_ptr->iron_trade;
 //#endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
@@ -8667,10 +8678,12 @@ void kill_xorder(int Ind) {
 		create_reward(Ind, o_ptr, getlevel(&p_ptr->wpos), getlevel(&p_ptr->wpos), great, verygreat, resf, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add(temp);
 		o_ptr->note_utag = strlen(temp);
+		o_ptr->iron_trade = p_ptr->iron_trade;
 		inven_carry(Ind, o_ptr);
 #else
 		acquirement_direct(o_ptr, &p_ptr->wpos, great, verygreat, resf);
 		//s_printf("object rewarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
+		o_ptr->iron_trade = p_ptr->iron_trade;
 		inven_carry(Ind, o_ptr);
 #endif
 		unique_quark = 0;
@@ -11404,6 +11417,19 @@ void telekinesis_aux(int Ind, int item) {
 		return;
 	}
 
+#ifdef IDDC_IRON_COOP
+	if (in_irondeepdive(&p_ptr->wpos) && (!p_ptr->party || p_ptr->party != p2_ptr->party)) {
+		msg_print(Ind, "\377yYou cannot contact outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+#ifdef IRON_IRON_TEAM
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && p_ptr->party != p2_ptr->party) {
+		msg_print(Ind, "\377yYou cannot contact outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+
 	/* prevent winners picking up true arts accidentally */
 	if (true_artifact_p(q_ptr) && !winner_artifact_p(q_ptr) &&
 	    p2_ptr->total_winner && cfg.kings_etiquette) {
@@ -11473,12 +11499,12 @@ void telekinesis_aux(int Ind, int item) {
 		if (!inarea(&p_ptr->wpos, &p2_ptr->wpos) && !is_admin(p_ptr)) {
 			dungeon_type *d_ptr;
 			d_ptr = getdungeon(&p_ptr->wpos);
-			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))){
+			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
 				msg_print(Ind, "You are unable to contact that player");
 				return;
 			}
 			d_ptr = getdungeon(&p2_ptr->wpos);
-			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))){
+			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
 				msg_print(Ind, "You are unable to contact that player");
 				return;
 			}

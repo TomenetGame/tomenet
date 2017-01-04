@@ -1845,7 +1845,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    //&& (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
 		    && o_ptr->iron_trade != p_ptr->iron_trade) {
-			msg_print(Ind, "\377yYou cannot pick up items from outsiders.");
+			msg_print(Ind, "\377yYou cannot pick up starter items or items from outsiders.");
 			if (!is_admin(p_ptr)) return;
 		}
 #endif
@@ -1853,7 +1853,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    //&& lookup_player_party(o_ptr->owner) != p_ptr->party) {
 		    && o_ptr->iron_trade != p_ptr->iron_trade) {
-			msg_print(Ind, "\377yYou cannot pick up items from outsiders.");
+			msg_print(Ind, "\377yYou cannot pick up starter items or items from outsiders.");
 			if (!is_admin(p_ptr)) return;
 		}
 #endif
@@ -2312,12 +2312,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				/* Check whether this item was requested by an item-retrieval quest */
 				if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, o_ptr);
 
-				o_ptr->iron_trade = p_ptr->iron_trade;
-
 				/* Own it */
 				if (!o_ptr->owner) {
 					o_ptr->owner = p_ptr->id;
 					o_ptr->mode = p_ptr->mode;
+					/* Actually only imprint iron_trade on newly owned items. This allows us to have stolen items be unexchangeable in IDDC if we want that: */
+					o_ptr->iron_trade = p_ptr->iron_trade;
+
 					if (true_artifact_p(o_ptr)) {
 						a_info[o_ptr->name1].carrier = p_ptr->id;
 						determine_artifact_timeout(o_ptr->name1, wpos);

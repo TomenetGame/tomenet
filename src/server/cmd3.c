@@ -160,7 +160,7 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 #endif
 
 	/* Check if item gave WRAITH form */
-	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith)
+	if ((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith)
 		p_ptr->tim_wraith = 1;
 
 	/* Artifacts */
@@ -2060,7 +2060,7 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 		return;
 	}
 
-#if 0
+ #if 0
 	/* not in WRAITHFORM */
 	if (p_ptr->tim_wraith) {
 		msg_print("You can't grab anything!");
@@ -2124,7 +2124,7 @@ void do_cmd_steal_from_monster(int Ind, int dir) {
 			break;
 		}
 	}
-#endif	// 0
+ #endif	// 0
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
@@ -2276,6 +2276,19 @@ void do_cmd_steal(int Ind, int dir) {
 		msg_format(Ind, "You cannot steal from %s players.", compat_pmode(Ind, 0 - c_ptr->m_idx, FALSE));
 		return;
 	}
+
+#ifdef IDDC_IRON_COOP
+	if (in_irondeepdive(&p_ptr->wpos) && (!p_ptr->party || p_ptr->party != q_ptr->party)) {
+		msg_print(Ind, "\377yYou cannot take items from outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+#ifdef IRON_IRON_TEAM
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && p_ptr->party != q_ptr->party) {
+		msg_print(Ind, "\377yYou cannot take items from outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
 
 	/* Small delay to prevent crazy steal-spam */
 	if (p_ptr->pstealing) {
@@ -2733,6 +2746,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 			/* Unstack the used item */
 			o_ptr->number--;
 			p_ptr->total_weight -= tmp_obj.weight;
+			tmp_obj.iron_trade = o_ptr->iron_trade;
 			item = inven_carry(Ind, &tmp_obj);
 
 			/* Message */

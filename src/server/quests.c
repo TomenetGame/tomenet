@@ -2160,6 +2160,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 			/* own it */
 			o_ptr->owner = Players[py]->id;
 			o_ptr->mode = Players[py]->mode;
+			o_ptr->iron_trade = Players[py]->iron_trade;
 			inven_carry(py, o_ptr);
 			q_ptr->objects_registered++;
 			continue;
@@ -4750,6 +4751,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
+		o_ptr->iron_trade = Players[pInd]->iron_trade;
 		inven_carry(pInd, o_ptr);
 		return;
 	}
@@ -4773,6 +4775,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
+		o_ptr->iron_trade = Players[i]->iron_trade;
 		inven_carry(i, o_ptr);
 	}
 }
