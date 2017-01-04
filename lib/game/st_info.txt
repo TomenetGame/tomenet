@@ -1083,7 +1083,8 @@ T:6:111:56
 T:6:111:61
 T:100:111:255
 T:1:111:100
-A:27:0:1:2:3:0
+#A:27:0:1:2:3:0	(removed for IDDC_IRON_COOP)
+A:27:0:1:2:3:4
 O:42:43:44:45:4:58
 G:9:r
 #deeper store -> higher level books
@@ -1174,7 +1175,8 @@ T:100:46:256
 #mummy wrapping, climbing set
 T:5:12:7
 T:5:12:0
-A:0:0:1:2:3:4
+#A:0:0:1:2:3:4	(removed for IDDC_IRON_COOP)
+A:0:0:1:2:3:0
 O:0:5:6:7:1:35
 G:1:U
 W:60
@@ -1202,7 +1204,8 @@ T:100:36:256
 T:100:37:256
 T:100:37:256
 T:100:37:256
-A:0:0:1:2:3:4
+#A:0:0:1:2:3:4	(removed for IDDC_IRON_COOP)
+A:0:0:1:2:3:0
 O:8:9:10:11:38:20
 G:2:s
 #W:24
@@ -1227,7 +1230,8 @@ T:100:21:256
 T:100:22:256
 T:100:23:256
 T:100:24:256
-A:0:0:1:2:3:4
+#A:0:0:1:2:3:4	(removed for IDDC_IRON_COOP)
+A:0:0:1:2:3:0
 O:12:13:14:15:44:68
 G:3:w
 #W:24
@@ -1365,7 +1369,7 @@ O:30:31:32:33:30:33
 G:5:b
 #W:24
 W:36
-F:HARD_STEAL
+#F:HARD_STEAL	(removed for IDDC_IRON_COOP)
 
 # less tele/perc/cantrips, more mage staves
 N:75:Magic Shop
@@ -1422,7 +1426,8 @@ I:100:Ready Wit
 I:100:Cunningness
 I:100:Toughness
 I:100:Mana-charging
-A:0:0:1:2:3:4
+#A:0:0:1:2:3:4	(removed for IDDC_IRON_COOP)
+A:0:0:1:2:3:0
 #O:34:35:36:37:31:44 need more keepers first in ow_info
 #O:34:35:36:37:36:37
 O:34:35:36:37:46:49
@@ -1505,7 +1510,7 @@ W:96
 # more fireproof spell scrolls and codices:
 #F:GOOD
 F:GREAT
-F:HARD_STEAL
+#F:HARD_STEAL	(removed for IDDC_IRON_COOP)
 
 #N:79:Pet Shop
 #I:100:Egg
@@ -1538,7 +1543,7 @@ A:0:0:1:2:3:4
 O:46:47:48:46:47:48
 G:+:B
 F:MEDIUM_LEVEL
-F:HARD_STEAL
+#F:HARD_STEAL	(removed for IDDC_IRON_COOP)
 W:24
 
 # End of pseudo town stores
