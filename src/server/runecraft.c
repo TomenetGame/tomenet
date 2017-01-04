@@ -950,8 +950,7 @@ s_printf("Duration: %d\n", duration);
  * This otherwise behaves like a normal "glyph of warding".
  * Minimal runecraft parameters are stored.
  */
-bool warding_rune(int Ind, byte projection, byte imperative, byte skill)
-{
+bool warding_rune(int Ind, byte projection, byte imperative, byte skill) {
 	player_type *p_ptr = Players[Ind];
 	int y = p_ptr->py, x = p_ptr->px;
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -969,9 +968,9 @@ bool warding_rune(int Ind, byte projection, byte imperative, byte skill)
 	if (!in_bounds(y, x)) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
 	c_ptr = &zcave[y][x];
 
+//CHECK: Is this buggy as in allowing cross-mode rune trading?
 	/* 'Disarm' old runes */
-	if ((cs_ptr = GetCS(c_ptr, CS_RUNE)))
-	{
+	if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
 		/* Restore the original cave feature */
 		cave_set_feat_live(wpos, y, x, cs_ptr->sc.rune.feat);
 
@@ -982,6 +981,7 @@ bool warding_rune(int Ind, byte projection, byte imperative, byte skill)
 		o_ptr->owner = cs_ptr->sc.rune.id;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->note = cs_ptr->sc.rune.note;
+		o_ptr->iron_trade = p_ptr->iron_trade;
 		//drop_near(0, o_ptr, -1, wpos, y, x);
 		inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
 		//refund cost too? - Kurzel
@@ -1083,8 +1083,7 @@ bool warding_rune(int Ind, byte projection, byte imperative, byte skill)
  * This otherwise behaves like a normal "glyph of warding".
  * Stored parameters are used here.
  */
-bool warding_rune_break(int m_idx)
-{
+bool warding_rune_break(int m_idx) {
 	monster_type *m_ptr = &m_list[m_idx];
 	object_type forge;
 	object_type *o_ptr = &forge;
@@ -1163,6 +1162,7 @@ bool warding_rune_break(int m_idx)
 		o_ptr->level = cs_ptr->sc.rune.level;
 		o_ptr->owner = cs_ptr->sc.rune.id;
 		o_ptr->mode = lookup_player_mode(cs_ptr->sc.rune.id); //Ew, what if they're dead? - Kurzel
+		//o_ptr->iron_trade = ...; todo
 		o_ptr->note = cs_ptr->sc.rune.note;
 		drop_near(0, o_ptr, -1, wpos, my, mx);
 	}
