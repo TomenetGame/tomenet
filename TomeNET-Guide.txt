@@ -12507,7 +12507,9 @@ Note that not every skill is available to every profession (class).
                                 Also, if you still get caught on such an item,
                                 the blacklist time will be much shorter too.
                                 Some potion/scroll break points regarding this:
+                                ?Identify: 50 Au.
                                 !Cure Critical Wounds: 100 Au.
+                                ?Enchant Weapon/Armour: 125 Au.
                                 !Speed: 200 Au.
                                 !Restore stat: 300 Au.
                                 !Healing, ?Teleportation: 400 Au.
