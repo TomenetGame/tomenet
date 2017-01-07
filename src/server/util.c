@@ -3243,7 +3243,7 @@ void use_ability_blade(int Ind) {
 
 void check_parryblock(int Ind) {
 #ifdef ENABLE_NEW_MELEE
-	char msg[80];
+	char msg[MAX_CHARS];
 	player_type *p_ptr = Players[Ind];
 	int apc = apply_parry_chance(p_ptr, p_ptr->weapon_parry), abc = apply_block_chance(p_ptr, p_ptr->shield_deflect);
 
@@ -6255,7 +6255,7 @@ cptr compat_mode(byte mode1, byte mode2) {
    save resulting string in s2,
    save highest found pseudo-id string in psid. - C. Blue */
 void note_crop_pseudoid(char *s2, char *psid, cptr s) {
-	char *p, s0[80];
+	char *p, s0[ONAME_LEN];
 	int id = -1; /* assume no pseudo-id inscription */
 
 	if (s == NULL) return;
@@ -6403,7 +6403,7 @@ void note_crop_pseudoid(char *s2, char *psid, cptr s) {
 /* For when an item re-curses itself on equipping:
    Remove any 'uncursed' part in its inscription. */
 void note_toggle_cursed(object_type *o_ptr, bool cursed) {
-	char *cn, note2[MAX_CHARS_WIDE], *cnp;
+	char *cn, note2[ONAME_LEN], *cnp;
 
 	if (!o_ptr->note) {
 		if (cursed) o_ptr->note = quark_add("cursed");
@@ -6462,7 +6462,7 @@ void note_toggle_cursed(object_type *o_ptr, bool cursed) {
 
 /* Wands/staves: Add/crop 'empty' inscription. */
 void note_toggle_empty(object_type *o_ptr, bool empty) {
-	char *cn, note2[MAX_CHARS_WIDE], *cnp;
+	char *cn, note2[ONAME_LEN], *cnp;
 
 	/* If no inscription, object_desc() will handle this by adding a pseudo-inscription 'empty'. */
 	if (!o_ptr->note) return;
