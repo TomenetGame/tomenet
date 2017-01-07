@@ -3419,7 +3419,7 @@ void do_slash_cmd(int Ind, char *message) {
 			q_ptr = Players[j];
 
 #ifdef IDDC_IRON_COOP
-			if (in_irondeepdive(wpos) && (!q_ptr->party || q_ptr->party != p_ptr->party)) {
+			if (in_irondeepdive(&q_ptr->wpos) && (!q_ptr->party || q_ptr->party != p_ptr->party)) {
 				msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
 				if (!is_admin(p_ptr)) return;
 			}
