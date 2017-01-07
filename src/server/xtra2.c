@@ -101,6 +101,9 @@
  #define SHOW_REALLY_DIED_FROM_INSANITY
 #endif
 
+/* Killing a dungeon boss in IDDC will colour the asterisks l-dark instead of l-umber? */
+//#define IDDC_BOSS_COL
+
 /* Do player-kill messages of "Morgoth, Lord of Darkness" get some
    special flavour? - C. Blue */
 #define MORGOTH_FUNKY_KILL_MSGS
@@ -5561,8 +5564,11 @@ if (cfg.unikill_format) {
 			snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s %s.\377x**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 #endif
 		else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
+#ifdef IDDC_BOSS_COL
 			if (in_irondeepdive(wpos)) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s %s.\377D**", r_name_get(m_ptr), titlebuf, p_ptr->name);
-			else snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
+			else
+#endif
+			snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 		} else
 			snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s %s.\377b**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 } else {
@@ -5577,8 +5583,11 @@ if (cfg.unikill_format) {
 				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s.\377x**", r_name_get(m_ptr), p_ptr->name);
 #endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
+#ifdef IDDC_BOSS_COL
 				if (in_irondeepdive(wpos)) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s.\377D**", r_name_get(m_ptr), p_ptr->name);
-				else snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s.\377U**", r_name_get(m_ptr), p_ptr->name);
+				else
+#endif
+				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s.\377U**", r_name_get(m_ptr), p_ptr->name);
 			} else
 				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s.\377b**", r_name_get(m_ptr), p_ptr->name);
 		} else {
@@ -5589,8 +5598,11 @@ if (cfg.unikill_format) {
 				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by fusion %s-%s.\377x**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 #endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
+#ifdef IDDC_BOSS_COL
 				if (in_irondeepdive(wpos)) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by fusion %s-%s.\377D**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
-				else snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by fusion %s-%s.\377U**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+				else
+#endif
+				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by fusion %s-%s.\377U**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 			} else
 				snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by fusion %s-%s.\377b**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 		}
@@ -5608,8 +5620,11 @@ if (cfg.unikill_format) {
 						snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s of %s.\377x**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 #endif
 					else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
+#ifdef IDDC_BOSS_COL
 						if (in_irondeepdive(wpos)) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s of %s.\377D**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
-						else snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s of %s.\377U**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+						else
+#endif
+						snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s of %s.\377U**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					} else
 						snprintf(buf, sizeof(buf), "\374\377b**\377c%s was slain by %s of %s.\377b**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 					break;
