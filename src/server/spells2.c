@@ -6828,10 +6828,14 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
  * Cast a bolt spell, or rarely, a beam spell
  */
 bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker) {
+#if 0 /* too dangerous in case it wakes up more monsters? */
 	if (rand_int(100) < prob)
 		return (fire_beam(Ind, typ, dir, dam, attacker));
 	else
 		return (fire_bolt(Ind, typ, dir, dam, attacker));
+#else
+	return (fire_bolt(Ind, typ, dir, dam, attacker));
+#endif
 }
 
 /* Target bolt-like, but able to pass 'over' untargetted enemies to hit target grid,
