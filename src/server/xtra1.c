@@ -9112,6 +9112,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		byte w;
 		bool total_winner, once_winner;
 		char o_name[ONAME_LEN];
+		dungeon_type *d_ptr;
 
 		if (!o_ptr->k_idx) {
 			msg_print(Ind, "Invalid item.");
@@ -9144,6 +9145,28 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
 			return;
 		}
+
+		/* These anti-ironman checks take care of possible IDDC_IRON_COOP too */
+		d_ptr = getdungeon(&p_ptr->wpos);
+		if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+			msg_print(Ind, "Sorry, we are unable to ship from this location.");
+			return;
+		}
+		d_ptr = getdungeon(&p2_ptr->wpos);
+		if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+			msg_print(Ind, "Sorry, we are unable to ship to that player's location.");
+			return;
+		}
+
+#ifdef IRON_IRON_TEAM
+		if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && o_ptr->owner != pid
+		    //&& o_ptr->iron_trade != lookup_player_iron_trade(pid) {  --currently no lookup_player_iron_trade() function :-p just use this for now:
+		    && p_ptr->party != i) {
+			msg_print(Ind, "\377yUnfortunately we cannot ship to that person.");
+			return;
+		}
+#endif
+
 		/* true artifact restrictions */
 		if (true_artifact_p(o_ptr)) {
 			if (cfg.anti_arts_hoard || p_ptr->total_winner) {
@@ -9213,6 +9236,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		cptr comp;
 		cptr acc;
 		u32b pid, total = p_ptr->mail_gold;
+		dungeon_type *d_ptr;
 
 		if (total > p_ptr->au) {
 			//someone steal from us while we're in the store dialogue? =P
@@ -9243,6 +9267,27 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
 			return;
 		}
+
+		/* These anti-ironman checks take care of possible IDDC_IRON_COOP too */
+		d_ptr = getdungeon(&p_ptr->wpos);
+		if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+			msg_print(Ind, "Sorry, we are unable to transfer from this location.");
+			return;
+		}
+		d_ptr = getdungeon(&p2_ptr->wpos);
+		if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+			msg_print(Ind, "Sorry, we are unable to transfer to that player's location.");
+			return;
+		}
+
+#ifdef IRON_IRON_TEAM
+		if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && o_ptr->owner != pid
+		    //&& o_ptr->iron_trade != lookup_player_iron_trade(pid) {  --currently no lookup_player_iron_trade() function :-p just use this for now:
+		    && p_ptr->party != i) {
+			msg_print(Ind, "\377yUnfortunately we cannot transfer to that person.");
+			return;
+		}
+#endif
 
 		/* le paranoid double-check */
 		for (i = 0; i < MAX_MERCHANT_MAILS; i++)
