@@ -3418,6 +3418,19 @@ void do_slash_cmd(int Ind, char *message) {
 
 			q_ptr = Players[j];
 
+#ifdef IDDC_IRON_COOP
+			if (in_irondeepdive(wpos) && (!q_ptr->party || q_ptr->party != p_ptr->party)) {
+				msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
+				if (!is_admin(p_ptr)) return;
+			}
+#endif
+#ifdef IRON_IRON_TEAM
+			if (q_ptr->party && (parties[q_ptr->party].mode & PA_IRONTEAM) && q_ptr->party != p_ptr->party) {
+				msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
+				if (!is_admin(p_ptr)) return;
+			}
+#endif
+
 			if (q_ptr->ghost) {
 				msg_print(Ind, "Ghosts cannot be tipped.");
 				return;
