@@ -11418,13 +11418,13 @@ void telekinesis_aux(int Ind, int item) {
 	}
 
 #ifdef IDDC_IRON_COOP
-	if (in_irondeepdive(&p_ptr->wpos) && (!p_ptr->party || p_ptr->party != p2_ptr->party)) {
+	if (in_irondeepdive(&p2_ptr->wpos) && (!p2_ptr->party || p2_ptr->party != p_ptr->party)) {
 		msg_print(Ind, "\377yYou cannot contact outsiders.");
 		if (!is_admin(p_ptr)) return;
 	}
 #endif
 #ifdef IRON_IRON_TEAM
-	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && p_ptr->party != p2_ptr->party) {
+	if (p2_ptr->party && (parties[p2_ptr->party].mode & PA_IRONTEAM) && p2_ptr->party != p_ptr->party) {
 		msg_print(Ind, "\377yYou cannot contact outsiders.");
 		if (!is_admin(p_ptr)) return;
 	}
