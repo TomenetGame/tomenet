@@ -11499,12 +11499,12 @@ void telekinesis_aux(int Ind, int item) {
 		if (!inarea(&p_ptr->wpos, &p2_ptr->wpos) && !is_admin(p_ptr)) {
 			dungeon_type *d_ptr;
 			d_ptr = getdungeon(&p_ptr->wpos);
-			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+			if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
 				msg_print(Ind, "You are unable to contact that player");
 				return;
 			}
 			d_ptr = getdungeon(&p2_ptr->wpos);
-			if(d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+			if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
 				msg_print(Ind, "You are unable to contact that player");
 				return;
 			}

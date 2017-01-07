@@ -1478,7 +1478,7 @@ void teleport_players_level(struct worldpos *wpos) {
 	    !(wpos->wz > 0 && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON))
 	    || (can_go_up_simple(wpos))) {
 		new_wpos.wz++;
-		msg = "Some arcane magic suddenly makes You rise up through the ceiling.";
+		msg = "Some arcane magic suddenly makes you rise up through the ceiling.";
 		method = (new_wpos.wz || (istown(&new_wpos)) ? LEVEL_RAND : LEVEL_OUTSIDE_RAND);
 	} else {
 		msg = "There is a large magical discharge in the air.";
