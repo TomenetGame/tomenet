@@ -3440,6 +3440,10 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "You may not tip players who have zero experience points.");
 				return;
 			}
+			if (p_ptr->mode & MODE_DED_IDDC || q_ptr->mode & MODE_DED_IDDC) {
+				msg_print(Ind, "You may not tip players in IDDC mode.");
+				return;
+			}
 
 			if (p_ptr->au < p_ptr->lev * p_ptr->lev) tip = p_ptr->au;
 			else tip = p_ptr->lev * p_ptr->lev;
