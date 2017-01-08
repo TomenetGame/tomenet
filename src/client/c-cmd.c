@@ -1415,6 +1415,7 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 void cmd_the_guide(void) {
 	static int line = 0, line_before_search = 0;
 	static char lastsearch[MAX_CHARS] = "";
+	static char lastchapter[MAX_CHARS] = "";
 
 	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
@@ -1740,13 +1741,20 @@ void cmd_the_guide(void) {
 		case 'c':
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter chapter to jump to: ");
+#if 0
 			buf[0] = 0;
+#else
+			strcpy(buf, lastchapter); //a small life hack
+#endif
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
 			//askfor_aux(buf, 7, 0)); //was: numerical chapters only
 			askfor_aux(buf, MAX_CHARS, 0); //allow entering chapter terms too
 			inkey_msg = inkey_msg_old;
 			if (!buf[0]) continue;
+
+			strcpy(lastchapter, buf); //a small life hack for remembering our chapter search term for subsequent normal searching
+			strcpy(lastsearch, buf); //further small life hack - not sure if a great idea or not..
 
 			/* abuse chapter searching for extra functionality: search for chapter about a specific main term? */
 			if (isalpha(buf[0])) {
@@ -2026,7 +2034,18 @@ void cmd_the_guide(void) {
 		case 's':
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search string: ");
+#if 0
 			search[0] = 0;
+#else
+			/* life hack: if we searched for a non-numerical chapter string, make it auto-search target
+			   for a (possibly happening subsequently to the chapter search) normal search too */
+ #if 0
+			if (lastchapter[0] != '(') strcpy(search, lastchapter);
+			else search[0] = 0;
+ #else
+			strcpy(search, lastchapter);
+ #endif
+#endif
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
 			askfor_aux(search, MAX_CHARS, 0);
