@@ -4030,7 +4030,7 @@ static int Receive_login(int ind) {
 		   Don't prevent already existing accounts from logging in though. */
 		if (!Admin_GetAccount(&acc, connp->nick) && lookup_similar_account(connp->nick, NULL)) {
 			//Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case."); //<- if not doing any 'similar' checks, it makes sense to point out case-sensitivity
-			Destroy_connection(ind, "A too similar name is already in use. Please choose a different name.");
+			Destroy_connection(ind, "A too similar name is already in use, or you made a typo in the name or password.");
 			return -1;
 		}
 		WIPE(&acc, struct account);
