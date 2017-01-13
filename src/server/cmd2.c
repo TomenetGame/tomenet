@@ -2116,10 +2116,25 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
    Note == FALSE -> no message will be printed. - C. Blue */
 bool access_door(int Ind, struct dna_type *dna, bool note) {
 	player_type *p_ptr = Players[Ind];
+
 	if (!dna->owner) return(FALSE); /* house doesn't belong to anybody */
+
 	/*if (is_admin(p_ptr))
 		return(TRUE); - moved to allow more overview for admins when looking at
 				house door colours on the world surface - C. Blue */
+
+	/* house belongs to someone of incompatible mode!
+	   in that case, no further checking is required,
+	   since won't ever be able to access it.
+	   (Added for PLAYER_STORES especially.)
+	   This check was previously only in access_door_colour() but was necessary here too,
+	   because of new way to access houses of own characters account-wide. */
+	if (p_ptr->mode & MODE_PVP) {
+		if (!(dna->mode & MODE_PVP)) return(FALSE);
+	} else if (p_ptr->mode & MODE_EVERLASTING) {
+		if (!(dna->mode & MODE_EVERLASTING)) return(FALSE);
+	} else if (dna->mode & MODE_PVP) return(FALSE);
+	else if (dna->mode & MODE_EVERLASTING) return(FALSE);
 
 	/* Test for cumulative restrictions */
 	if (p_ptr->dna != dna->creator) {
@@ -2214,18 +2229,11 @@ int access_door_colour(int Ind, struct dna_type *dna) {
 	   since won't ever be able to access it.
 	   (Added for PLAYER_STORES especially.) */
 	if (p_ptr->mode & MODE_PVP) {
-		if (!(dna->mode & MODE_PVP)) {
-			return(DOOR_COLOUR_INCOMPATIBLE);
-		}
+		if (!(dna->mode & MODE_PVP)) return(DOOR_COLOUR_INCOMPATIBLE);
 	} else if (p_ptr->mode & MODE_EVERLASTING) {
-		if (!(dna->mode & MODE_EVERLASTING)) {
-			return(DOOR_COLOUR_INCOMPATIBLE);
-		}
-	} else if (dna->mode & MODE_PVP) {
-		return(DOOR_COLOUR_INCOMPATIBLE);
-	} else if (dna->mode & MODE_EVERLASTING) {
-		return(DOOR_COLOUR_INCOMPATIBLE);
-	}
+		if (!(dna->mode & MODE_EVERLASTING)) return(DOOR_COLOUR_INCOMPATIBLE);
+	} else if (dna->mode & MODE_PVP) return(DOOR_COLOUR_INCOMPATIBLE);
+	else if (dna->mode & MODE_EVERLASTING) return(DOOR_COLOUR_INCOMPATIBLE);
 
 	/* test house access permissions */
 	switch (dna->owner_type) {
