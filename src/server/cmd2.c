@@ -222,7 +222,7 @@ void do_cmd_go_up(int Ind) {
 	}
 #endif
 
-/*	if (dungeon && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON){*/
+/*	if (dungeon && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) {*/
 	if (dungeon && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
 	     wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
 	     (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
@@ -285,7 +285,7 @@ void do_cmd_go_up(int Ind) {
 	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
  #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
-		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
+		//if(d_ptr->baselevel-p_ptr->max_dlv>2) {
 		//if ((!d_ptr->type && d_ptr->baselevel - p_ptr->max_dlv > 10) ||
 		if ((!d_ptr->type && d_ptr->baselevel <= (p_ptr->lev * 3) / 2 + 7) ||
 		    (d_ptr->type && d_info[d_ptr->type].min_plev > p_ptr->lev))
@@ -980,7 +980,7 @@ void do_cmd_go_down(int Ind) {
 		if (!is_admin(p_ptr)) return;
 	}
 
-/*	if (tower && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON){*/
+/*	if (tower && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) {*/
 	if (tower && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
 	     wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
 	    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)) {
@@ -1044,7 +1044,7 @@ void do_cmd_go_down(int Ind) {
 	if (surface) {
 		dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
  #ifdef OBEY_DUNGEON_LEVEL_REQUIREMENTS
-		//if(d_ptr->baselevel-p_ptr->max_dlv>2){
+		//if(d_ptr->baselevel-p_ptr->max_dlv>2) {
 		//if(d_ptr->baselevel-p_ptr->max_dlv>2 ||
 		//    d_info[d_ptr->type].min_plev > p_ptr->lev)
 		//if((!d_ptr->type && d_ptr->baselevel-p_ptr->max_dlv > 10) ||
@@ -1696,7 +1696,7 @@ bool inside_inn(player_type *p_ptr, cave_type *c_ptr) {
 /* Door change permissions
  * args example: ynn1 -> Party, Class, Race, MinLevel
  */
-static bool chmod_door(int Ind, struct dna_type *dna, char *args){
+static bool chmod_door(int Ind, struct dna_type *dna, char *args) {
 	player_type *p_ptr = Players[Ind];
 	if (!is_admin(p_ptr)) {
 		if(dna->creator != p_ptr->dna) {
@@ -2200,7 +2200,7 @@ bool access_door(int Ind, struct dna_type *dna, bool note) {
 #else
  #define DOOR_COLOUR_INCOMPATIBLE TERM_SLATE
 #endif
-int access_door_colour(int Ind, struct dna_type *dna){
+int access_door_colour(int Ind, struct dna_type *dna) {
 	player_type *p_ptr = Players[Ind];
 
 	/* paranoia: for when the poly-house door bug occurred */
@@ -2235,7 +2235,7 @@ int access_door_colour(int Ind, struct dna_type *dna){
 		/* allow access to houses owned by other characters of your own account as if they were yours (as long as mode is compatible) */
 		if (p_ptr->account == lookup_player_account(dna->owner)) return TERM_GREEN;
 		/* party access with possible restrictions */
-		if (dna->a_flags & ACF_PARTY){
+		if (dna->a_flags & ACF_PARTY) {
 			if (!p_ptr->party) return(TERM_SLATE);
 			/* exploit fix: create party houses, then promote someone else to leader */
 			if (!strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
@@ -2694,9 +2694,9 @@ void do_cmd_open(int Ind, int dir) {
 				}
 				return;
 			}
-			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))){
+			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) {
 				struct key_type *key = cs_ptr->sc.ptr;
-				for ( j = 0; j < INVEN_PACK; j++){
+				for ( j = 0; j < INVEN_PACK; j++) {
 					object_type *o_ptr = &p_ptr->inventory[j];
 					if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
 						c_ptr->feat = FEAT_HOME_OPEN;
@@ -4623,21 +4623,21 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			}
 
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
-				p_ptr->easy_open &&
-				(c_ptr->feat >= FEAT_DOOR_HEAD) &&
-				(c_ptr->feat <= FEAT_DOOR_TAIL) &&
-				!p_ptr->ghost && !p_ptr->tim_wraith && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) /* players in WRAITHFORM can't open doors - mikaelh */
+			    p_ptr->easy_open &&
+			    (c_ptr->feat >= FEAT_DOOR_HEAD) &&
+			    (c_ptr->feat <= FEAT_DOOR_TAIL) &&
+			    !p_ptr->ghost && !p_ptr->tim_wraith && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
 				do_cmd_open(Ind, dir);
 				return;
 			}
 			else
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
-				p_ptr->easy_open &&
-				(c_ptr->feat == FEAT_HOME_HEAD) &&
-				!p_ptr->ghost && !p_ptr->tim_wraith && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) /* players in WRAITHFORM can't open doors - mikaelh */
+			    p_ptr->easy_open &&
+			    (c_ptr->feat == FEAT_HOME_HEAD) &&
+			    !p_ptr->ghost && !p_ptr->tim_wraith && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) /* players in WRAITHFORM can't open doors - mikaelh */
 			{
-				if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))){ /* orig house failure */
+				if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) { /* orig house failure */
 					if ((!(cfg.door_bump_open & BUMP_OPEN_HOUSE) ||
 					    !access_door(Ind, cs_ptr->sc.ptr, FALSE)) &&
 					    !admin_p(Ind)) {
@@ -7310,10 +7310,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	/* Potions smash open */
 	/* BTW, why not o_ptr->tval ? :) */
 	if (k_info[o_ptr->k_idx].tval == TV_POTION ||
-		k_info[o_ptr->k_idx].tval == TV_POTION2 ||
-		k_info[o_ptr->k_idx].tval == TV_FLASK ||
-		k_info[o_ptr->k_idx].tval == TV_BOTTLE)
-	{
+	    k_info[o_ptr->k_idx].tval == TV_POTION2 ||
+	    k_info[o_ptr->k_idx].tval == TV_FLASK ||
+	    k_info[o_ptr->k_idx].tval == TV_BOTTLE) {
 		if ((hit_body) || (hit_wall) || (randint(100) < j)) {
 			/* hack: shatter _on_ the wall grid, not _before_ it */
 			if (hit_wall) {
@@ -7397,7 +7396,7 @@ static void destroy_house(int Ind, struct dna_type *dna) {
 	}
 }
 
-void house_admin(int Ind, int dir, char *args){
+void house_admin(int Ind, int dir, char *args) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	int x,y;
