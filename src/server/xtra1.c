@@ -2367,6 +2367,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		immunity[immunities] = 6;
 		p_ptr->resist_water = TRUE; csheet_boni->cb[3] |= CB4_RWATR;
 	}
+	/* (RF4_BR_PLAS implies IM_FIRE, done in init1.c) */
 
 	/* gain not more than 1 immunities at the same time from a form */
 	if (immunities == 1) {
@@ -2462,9 +2463,10 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if (r_ptr->flags4 & RF4_BR_TIME) { p_ptr->resist_time = TRUE; csheet_boni->cb[3] |= CB4_RTIME; }
 	if (r_ptr->flags4 & RF4_BR_MANA) { p_ptr->resist_mana = TRUE; csheet_boni->cb[3] |= CB4_RMANA; }
 	if (r_ptr->flags4 & RF4_BR_PLAS) {
-		p_ptr->immune_fire = TRUE; csheet_boni->cb[0] |= CB1_IFIRE;
 		p_ptr->resist_elec = TRUE; csheet_boni->cb[0] |= CB1_RELEC;
 		p_ptr->resist_sound = TRUE; csheet_boni->cb[2] |= CB3_RSOUN;
+		/* handled in the immunity selection code above!
+		p_ptr->immune_fire = TRUE; csheet_boni->cb[0] |= CB1_IFIRE; */
 	}
 	if (r_ptr->flags4 & RF4_BR_NUKE) {
 		p_ptr->resist_acid = TRUE; csheet_boni->cb[1] |= CB2_RACID;
