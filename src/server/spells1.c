@@ -7267,10 +7267,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " is unaffected";
 				dam = 0;
 			} else {
-				int chance = 100 - (r_ptr->level >> 1);
+				int chance = 100;
 
-				if (r_ptr->flags3 & RF3_GOOD) chance >>= 1;
-				if (rand_int(100) >= chance) {
+				if (!quiet) chance += p_ptr->lev * 2;
+				if (r_ptr->flags3 & RF3_EVIL) chance <<= 1; //reverse pseudo-savingthrow vs 'neutral' monsters (aka 'non-evil')
+				if (r_ptr->flags3 & RF3_GOOD) chance >>= 1; //pseudo-savingthrow especially for 'good' monsters
+				if (rand_int(chance) >= r_ptr->level) {
 					note = " resists the effect";
 					dam = 0;
 				}
@@ -12633,8 +12635,10 @@ int approx_damage(int m_idx, int dam, int typ) {
 			if (r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT))
 				dam = 0;
 			else {
-				dam = (dam * (100 - r_ptr->level / 2)) / 100;
-				if (r_ptr->flags3 & RF3_GOOD) dam /= 2;
+				k = 200; //assume level 50 player
+				if (r_ptr->flags3 & RF3_EVIL) k *= 2;
+				if (r_ptr->flags3 & RF3_GOOD) k /= 2;
+				dam = (dam * (100 - (r_ptr->level * 100) / k)) / 100;
 			}
 			break;
 
