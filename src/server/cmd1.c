@@ -2319,6 +2319,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					/* Actually only imprint iron_trade on newly owned items. This allows us to have stolen items be unexchangeable in IDDC if we want that: */
 					o_ptr->iron_trade = p_ptr->iron_trade;
 
+#if CHEEZELOG_LEVEL > 2
+					if (k_info[o_ptr->k_idx].cost >= 150000)
+						s_printf("Expensive item: %s found by %s(lv %d) at %d,%d,%d%s%s\n",
+						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "");
+#endif
+
 					if (true_artifact_p(o_ptr)) {
 						a_info[o_ptr->name1].carrier = p_ptr->id;
 						determine_artifact_timeout(o_ptr->name1, wpos);
@@ -2336,7 +2342,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					}
 #if CHEEZELOG_LEVEL > 2
 					else if (o_ptr->name1 == ART_RANDART) s_printf("%s Randart found by %s(lv %d) at %d,%d,%d%s%s : %s\n",
-									    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
+					    showtime(), p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "", o_name_real);
 
 #endif
 					/* log the encounters of players with special heavy armour, just for informative purpose */
@@ -2348,7 +2354,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				 * TODO: ignore cheap items (like cure critical pot) */
  #if 0
 				else if (p_ptr->id != o_ptr->owner &&
-				        !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) /* Heavy ball */ )
+				    !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) /* Heavy ball */ )
  #else
 				else if (p_ptr->id != o_ptr->owner)
  #endif
