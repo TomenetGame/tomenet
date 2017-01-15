@@ -22,10 +22,10 @@ HEALINGCLOUD_I = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD_I, 12)), (1 + get_level(Ind, HEALINGCLOUD_I, 5)), (5 + get_level(Ind, HEALINGCLOUD_I, 10)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (4 + get_level(Ind, HEALINGCLOUD_I, 20)), (1 + get_level(Ind, HEALINGCLOUD_I, 5)), (7 + get_level(Ind, HEALINGCLOUD_I, 9)), 10, " calls the spirits")
 			end,
 	["info"] = 	function()
-			return "heals " .. (get_level(Ind, HEALINGCLOUD_I, 12) + 1) .. " rad " .. (1 + get_level(Ind, HEALINGCLOUD_I, 5)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD_I, 10))
+			return "heals " .. (4 + get_level(Ind, HEALINGCLOUD_I, 20)) .. " rad " .. (1 + get_level(Ind, HEALINGCLOUD_I, 5)) .. " dur " .. (7 + get_level(Ind, HEALINGCLOUD_I, 9))
 			end,
 	["desc"] = 	{ "Continuously heals you and those around you.",
 			  "Damages undead creatures.", }
@@ -41,10 +41,10 @@ HEALINGCLOUD_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD_I, 22)), (1 + get_level(Ind, HEALINGCLOUD_I, 5)), (5 + get_level(Ind, HEALINGCLOUD_I, 10)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (4 + get_level(Ind, HEALINGCLOUD_I, 35)), (1 + get_level(Ind, HEALINGCLOUD_I, 5)), (7 + get_level(Ind, HEALINGCLOUD_I, 9)), 10, " calls the spirits")
 			end,
 	["info"] = 	function()
-			return "heals " .. (get_level(Ind, HEALINGCLOUD_I, 22) + 1) .. " rad " .. (1 + get_level(Ind, HEALINGCLOUD_I, 5)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD_I, 10))
+			return "heals " .. (4 + get_level(Ind, HEALINGCLOUD_I, 35)) .. " rad " .. (1 + get_level(Ind, HEALINGCLOUD_I, 5)) .. " dur " .. (7 + get_level(Ind, HEALINGCLOUD_I, 9))
 			end,
 	["desc"] = 	{ "Continuously heals you and those around you.",
 			  "Damages undead creatures.", }
@@ -60,10 +60,10 @@ HEALINGCLOUD_III = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HEALINGCLOUD_I, 42)), (1 + get_level(Ind, HEALINGCLOUD_I, 5)), (5 + get_level(Ind, HEALINGCLOUD_I, 10)), 10, " calls the spirits")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (4 + get_level(Ind, HEALINGCLOUD_I, 50)), (1 + get_level(Ind, HEALINGCLOUD_I, 5)), (7 + get_level(Ind, HEALINGCLOUD_I, 9)), 10, " calls the spirits")
 			end,
 	["info"] = 	function()
-			return "heals " .. (get_level(Ind, HEALINGCLOUD_I, 42) + 1) .. " rad " .. (1 + get_level(Ind, HEALINGCLOUD_I, 5)) .. " dur " .. (5 + get_level(Ind, HEALINGCLOUD_I, 10))
+			return "heals " .. (4 + get_level(Ind, HEALINGCLOUD_I, 50)) .. " rad " .. (1 + get_level(Ind, HEALINGCLOUD_I, 5)) .. " dur " .. (7 + get_level(Ind, HEALINGCLOUD_I, 9))
 			end,
 	["desc"] = 	{ "Continuously heals you and those around you.",
 			  "Damages undead creatures.", }

@@ -289,10 +289,10 @@ HHEALING2_I = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 12)), (1 + get_level(Ind, HHEALING2_I, 8)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " recites purification rites")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (4 + get_level(Ind, HHEALING2_I, 20)), (1 + get_level(Ind, HHEALING2_I, 7)), (7 + get_level(Ind, HHEALING2_I, 9)), 10, " recites purification rites")
 			end,
 	["info"] = 	function()
-			return "heals " .. (get_level(Ind, HHEALING2_I, 12) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 8)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
+			return "heals " .. (4 + get_level(Ind, HHEALING2_I, 20)) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 7)) .. " dur " .. (7 + get_level(Ind, HHEALING2_I, 9))
 			end,
 	["desc"] = 	{ "Continuously heals you and those around you.",
 			  "Damages undead creatures.", }
@@ -309,10 +309,10 @@ HHEALING2_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 22)), (1 + get_level(Ind, HHEALING2_I, 8)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " recites purification rites")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (4 + get_level(Ind, HHEALING2_I, 35)), (1 + get_level(Ind, HHEALING2_I, 7)), (7 + get_level(Ind, HHEALING2_I, 9)), 10, " recites purification rites")
 			end,
 	["info"] = 	function()
-			return "heals " .. (get_level(Ind, HHEALING2_I, 22) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 8)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
+			return "heals " .. (4 + get_level(Ind, HHEALING2_I, 35)) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 7)) .. " dur " .. (7 + get_level(Ind, HHEALING2_I, 9))
 			end,
 	["desc"] = 	{ "Continuously heals you and those around you.",
 			  "Damages undead creatures.", }
@@ -329,10 +329,10 @@ HHEALING2_III = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (1 + get_level(Ind, HHEALING2_I, 42)), (1 + get_level(Ind, HHEALING2_I, 8)), (5 + get_level(Ind, HHEALING2_I, 16)), 10, " recites purification rites")
+			fire_cloud(Ind, GF_HEALINGCLOUD, 0, (4 + get_level(Ind, HHEALING2_I, 50)), (1 + get_level(Ind, HHEALING2_I, 7)), (7 + get_level(Ind, HHEALING2_I, 9)), 10, " recites purification rites")
 			end,
 	["info"] = 	function()
-			return "heals " .. (get_level(Ind, HHEALING2_I, 42) + 1) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 8)) .. " dur " .. (5 + get_level(Ind, HHEALING2_I, 16))
+			return "heals " .. (4 + get_level(Ind, HHEALING2_I, 50)) .. " rad " .. (1 + get_level(Ind, HHEALING2_I, 7)) .. " dur " .. (7 + get_level(Ind, HHEALING2_I, 9))
 			end,
 	["desc"] = 	{ "Continuously heals you and those around you.",
 			  "Damages undead creatures.", }
