@@ -261,7 +261,9 @@ function get_darkbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, DARKBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 5 + (lev / 2), 7 + ((lev * 2) / 3) + 1
+	--return 5 + (lev / 2), 7 + ((lev * 2) / 3) + 1
+	--..since spirit was buffed:
+	return 5 + ((lev * 3) / 5), 7 + ((lev * 2) / 3)
 end
 DARKBOLT_I = add_spell {
 	["name"] = 	"Shadow Bolt I",
@@ -310,8 +312,8 @@ DARKBOLT_III = add_spell {
 	["school"] = 	SCHOOL_OSHADOW,
 	["spell_power"] = 0,
 	["level"] = 	40,
-	["mana"] = 	12,
-	["mana_max"] = 	12,
+	["mana"] = 	13,
+	["mana_max"] = 	13,
 	["fail"] = 	-70,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
@@ -395,7 +397,7 @@ function get_chaosbolt_dam(Ind)
 	--lev = get_level(Ind, CHAOSBOLT, 50) + 20
 	--slightly more damage:
 	lev = get_level(Ind, CHAOSBOLT, 50) + 21
-	return (lev * 3) / 5, lev
+	return 2 + (lev * 3) / 5, 2 + lev
 end
 CHAOSBOLT = add_spell {
 	["name"] = 	"Chaos Bolt",
@@ -403,7 +405,7 @@ CHAOSBOLT = add_spell {
 	["spell_power"] = 0,
 	["level"] = 	30,
 	["mana"] = 	18,
-	["mana_max"] = 	18,
+	["mana_max"] = 	20,
 	["fail"] = 	-55,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
@@ -425,16 +427,16 @@ function get_netherbolt_dam(Ind)
 	--same damage as shadow bolt iii at 50:
 	--lev = get_level(Ind, NETHERBOLT, 50) + 20
 	--slightly more damage:
-	lev = get_level(Ind, NETHERBOLT, 50) + 20
-	return (lev * 3) / 5, lev
+	lev = get_level(Ind, NETHERBOLT, 50) + 21
+	return 2 + (lev * 3) / 5, 2 + lev
 end
 NETHERBOLT = add_spell {
 	["name"] = 	"Nether Bolt",
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_NECROMANCY},
 	["spell_power"] = 0,
 	["level"] = 	30,
-	["mana"] = 	15,
-	["mana_max"] = 	15,
+	["mana"] = 	16,
+	["mana_max"] = 	18,
 	["fail"] = 	-55,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
