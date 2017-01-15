@@ -152,6 +152,7 @@ DETECTINVIS = add_spell {
 	["desc"] = 	{ "Detects all nearby invisible creatures.", }
 }
 
+--[[
 POISONFOG_I = add_spell {
 	["name"] = 	"Poisonous Fog I",
 	["school"] = 	{SCHOOL_OSHADOW},
@@ -212,6 +213,7 @@ POISONFOG_III = add_spell {
 		"living beings from breathing. The cloud will persist for some turns.",
 	}
 }
+]]--
 
 OSLEEP_I = add_spell {
 	["name"] = 	"Veil of Night I",
