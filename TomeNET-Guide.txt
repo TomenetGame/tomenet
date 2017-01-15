@@ -15291,7 +15291,7 @@ school.
                     Genocide-type spells do not yield experience or loot.)
                     Required skill level for first spell level: 25.
 
-    Wraithform      Temporarily turns your form immaterial.    (auto-project)
+    Wraithform      Temporarily turns your form immaterial.
                     Required skill level for first spell level: 35.
     Stop Wraithform Turns you back to material form immediately.
 
