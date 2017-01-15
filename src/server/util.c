@@ -1380,6 +1380,73 @@ void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alte
 #endif
 	}
 }
+/* send sound to all players nearby a certain location, and allow to specify
+   a player to exclude, same as msg_print_near_site() for messages. - C. Blue */
+void sound_near_site_vol(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable, int vol) {
+	int i, d;
+	player_type *p_ptr;
+	int val = -1, val2 = -1;
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
+		}
+	}
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Skip specified player, if any */
+		if (i == Ind) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Can player see the site via LOS? */
+		if (viewable && !(p_ptr->cave_flag[y][x] & CAVE_VIEW)) continue;
+
+		/* within audible range? */
+		d = distance(y, x, Players[i]->py, Players[i]->px);
+		/* NOTE: should be consistent with msg_print_near_site() */
+		if (d > MAX_SIGHT) continue;
+
+#if 0
+		/* limit for volume calc */
+		if (d > 20) d = 20;
+		d += 3;
+		d /= 3;
+		Send_sound(i, val, val2, type, ((100 / d) * vol) / 100, 0);
+#else
+		/* limit for volume calc */
+		Send_sound(i, val, val2, type, ((100 - (d * 50) / 11) * vol) / 100, 0);
+#endif
+	}
+}
 /* Play sfx at full volume to everyone in a house, and at normal-distance volume to
    everyone near the door (as sound_near_site() would). */
 void sound_house_knock(int h_idx, int dx, int dy) {

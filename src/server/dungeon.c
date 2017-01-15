@@ -4567,7 +4567,7 @@ static bool process_player_end_aux(int Ind) {
 			monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 			msg_format(Ind, "Lightning strikes %s.", m_name);
 #ifdef USE_SOUND_2010
-			sound_near_site(y, x, &p_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE); //don't overlap, too silyl?
+			sound_near_site_vol(y, x, &p_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE, 50); //don't overlap, too silyl?
 #endif
 			project(0 - Ind, 0, &p_ptr->wpos, y, x, dam, GF_THUNDER, PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO, "");
 			thunderstorm_visual(&p_ptr->wpos, x, y);
