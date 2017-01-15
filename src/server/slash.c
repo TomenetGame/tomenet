@@ -8227,6 +8227,21 @@ void do_slash_cmd(int Ind, char *message) {
 				Send_music(Ind, k, -4);
 				return;
 			}
+			else if (prefix(message, "/ppmus")) { /* play specific music for specific player */
+				if (!__audio_mus_max) {
+					msg_print(Ind, "No music available.");
+					return;
+				}
+				if (tk < 2 || k < 0 || k >= __audio_mus_max) {
+					msg_format(Ind, "Usage: /ppmus <music number 0..%d> <name>", __audio_mus_max - 1);
+					return;
+				}
+				j = name_lookup_loose(Ind, strchr(message3, ' ') + 1, FALSE, FALSE, FALSE);
+				if (!j) return;
+				msg_format(Ind, "Playing <%d> for player %s.", k, Players[j]->name);
+				Send_music(j, k, -4);
+				return;
+			}
 #endif
 			else if (prefix(message, "/towea")) { /* teleport player to a sector with weather going */
 				int x, y;
