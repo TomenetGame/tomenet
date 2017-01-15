@@ -5940,7 +5940,7 @@ void do_cmd_fire(int Ind, int dir) {
 								/* XXX confusion arrow is not handled right
 								 * in do_arrow_brand_effect */
 								if (!boomerang && p_ptr->bow_brand_t
-										&& p_ptr->bow_brand_t != BRAND_CHAO) 
+								    && p_ptr->bow_brand_t != BRAND_CHAO)
 									do_arrow_brand_effect(Ind, y, x);
 
 								if (!boomerang && !magic && o_ptr->pval)
@@ -6248,20 +6248,24 @@ void do_cmd_fire(int Ind, int dir) {
 #endif
 		}
 
+	    /* Extra (exploding) hack: */
 #ifdef DOUBLE_LOS_SAFETY
 	    /* skip checks if we already used projectable..() routines to test. */
 	    if (dir != 5) {
 #endif
 		/* server crashed here when ny was 66, dir was 10 but then became 3, odd stuff.. */
-		if (in_bounds_array(ny, nx))
-
-			/* Extra (exploding) hack: */
-			if (!cave_contact(zcave, ny, nx)/* Stopped by walls/doors ?*/
-			    || (dir == 5 && !target_ok)) { /* fired 'at oneself'? */
-				if (!boomerang && !magic && o_ptr->pval) {
-					do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
-				}
-			}
+		if (in_bounds_array(ny, nx) &&
+		    !boomerang && !magic && o_ptr->pval) {
+			if (!cave_contact(zcave, ny, nx)) /* Stopped by walls/doors ?*/
+#ifndef PY_FIRE_ON_WALL
+				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+#else
+				/* important: explode BEFORE wall, or we could target a wall grid and hit stuff beyond it */
+				do_arrow_explode(Ind, o_ptr, wpos, prev_y, prev_x, tmul);
+#endif
+			else if (dir == 5 && !target_ok) /* fired 'at oneself'? */
+				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+		}
 #ifdef DOUBLE_LOS_SAFETY
 	    } else {
 		if (!target_ok) { /* fired 'at oneself'? */
