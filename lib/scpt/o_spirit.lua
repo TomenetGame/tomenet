@@ -193,7 +193,7 @@ function get_litebeam_dam(Ind, limit_lev)
 	lev = get_level(Ind, LITEBEAM_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 5 + (lev / 2), 7 + ((lev * 2) / 3) + 1
+	return 5 + ((lev * 2) / 5), 7 + ((lev * 3) / 3) + 1
 end
 LITEBEAM_I = add_spell {
 	["name"] = 	"Spear of Light I",
@@ -221,8 +221,8 @@ LITEBEAM_II = add_spell {
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	25,
-	["mana"] = 	8,
-	["mana_max"] = 	8,
+	["mana"] = 	12,
+	["mana_max"] = 	12,
 	["fail"] = 	-40,
 	["direction"] = TRUE,
 	["ftk"] = 1,
@@ -242,8 +242,8 @@ LITEBEAM_III = add_spell {
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	40,
-	["mana"] = 	17,
-	["mana_max"] = 	17,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
 	["fail"] = 	-75,
 	["direction"] = TRUE,
 	["ftk"] = 1,
@@ -266,7 +266,7 @@ function get_olightningbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, OLIGHTNINGBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 3 + ((lev * 3) / 5), 5 + ((lev * 2) / 3) - 1
+	return 3 + ((lev * 4) / 5), 7 + ((lev * 2) / 3)
 end
 OLIGHTNINGBOLT_I = add_spell {
 	["name"] = 	"Lightning I",
@@ -294,8 +294,8 @@ OLIGHTNINGBOLT_II = add_spell {
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	25,
-	["mana"] = 	6,
-	["mana_max"] = 	6,
+	["mana"] = 	8,
+	["mana_max"] = 	8,
 	["fail"] = 	-40,
 	["direction"] = TRUE,
 	["ftk"] = 1,
@@ -315,8 +315,8 @@ OLIGHTNINGBOLT_III = add_spell {
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	40,
-	["mana"] = 	11,
-	["mana_max"] = 	11,
+	["mana"] = 	21,
+	["mana_max"] = 	21,
 	["fail"] = 	-80,
 	["direction"] = TRUE,
 	["ftk"] = 1,
