@@ -3462,13 +3462,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_SPELL,
 			'+', 0,
 			'+', 500, },
+ #ifndef ENABLE_OCCULT /* Occult */
 		{ SKILL_MANA,
- #ifdef ENABLE_OCCULT /* Occult */
-			'+', 0,
- #else
 			'+', 1000,
- #endif
 			'+', 700, },//600
+ #endif /* else: was +0,+700 */
 		{ SKILL_FIRE,
 			'+', 0,
 			'+', 1000, },
@@ -3592,13 +3590,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_SPELL,
 			'+', 0,
 			'+', 500, },
+ #ifndef ENABLE_OCCULT /* Occult */
 		{ SKILL_MANA,
- #ifdef ENABLE_OCCULT /* Occult */
-			'+', 0,
- #else
 			'+', 1000,
- #endif
 			'+', 800, },
+ #endif /* else: was +0,+800 */
 		{ SKILL_FIRE,
 			'+', 0,
 			'+', 1000, },
