@@ -6336,7 +6336,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				//note = " cringes from the light";
 				//note_dies = " shrivels away in the light";
 				dam *= 2;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
+				if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
+			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
 				//note = " resists";
 				k_lite *= 2;
 				k_lite /= (randint(6) + 6);
@@ -6898,6 +6899,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				/* Special effect */
 				note = " cringes from the light";
 				note_dies = " shrivels away in the light";
+
+				/* Specialty: Reflecting monsters take reduced damage from light, even if it was a ball or beam style attack! */
+				if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
 			}
 			/* Normally no damage */
 			else {
@@ -6927,7 +6931,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " cringes from the light";
 				note_dies = " shrivels away in the light";
 				dam *= 2;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
+				if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
+			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
 				note = " resists";
 				dam *= 3; dam /= (randint(6) + 6);
 				do_blind = 0;
@@ -12407,7 +12412,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 				//do_blind = 0;
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 				k_lite *= 2;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
+				if (r_ptr->flags2 & RF2_REFLECTING) k_lite /= 2;
+			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
 				k_lite /= 4;
 				//do_blind = 0;
 			}
@@ -12574,6 +12580,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_LITE_WEAK:
 			if (!(r_ptr->flags3 & RF3_HURT_LITE))
 				dam = 0;
+			else if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
 			break;
 
 		case GF_STARLITE:
@@ -12584,11 +12591,12 @@ int approx_damage(int m_idx, int dam, int typ) {
 				//do_blind = 0;
 				if (r_ptr->flags3 & RF3_EVIL) break;
 				dam = 0;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE)) {
+			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
 				dam /= 3;
 				//do_blind = 0;
 			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 				dam *= 2;
+				if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
 			}
 			break;
 
