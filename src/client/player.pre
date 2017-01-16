@@ -128,10 +128,11 @@ struct player_type
 	bool death;		/* Have we died */
 	s16b ghost;		/* Are we a ghost */
 	s16b fruit_bat;		/* Are we a fruit bat */
-	byte lives;         /* number of times we have ressurected */
+	byte lives;		/* number of times we have ressurected */
 
 	byte prace;			/* Race index */
-	byte pclass;		/* Class index */
+	byte pclass;			/* Class index */
+	byte ptrait;			/* Trait index */
 	byte male;			/* Sex of character */
 	byte oops;			/* Unused */
 
