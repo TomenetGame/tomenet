@@ -1643,7 +1643,7 @@ void calc_hitpoints(int Ind) {
 
 	/* cap it at +30% HP and at -100% HP */
 	if (to_life > 3 && !is_admin(p_ptr)) to_life = 3;
-	if (to_life < -10) to_life = -10;
+	if (to_life < -9) to_life = -9;
 
 	/* new hack (see below): if life bonus is negative, dont apply player form hp */
 	if (to_life > 0) {
