@@ -1666,10 +1666,7 @@ extern bool do_xtra_stats(int Ind, int p, int v);
 extern bool do_focus_shot(int Ind, int p, int v);
 
 extern void divine_vengeance(int Ind, int power);
-extern void divine_empowerment(int Ind, int level);
-extern void divine_intensify(int Ind, int level);
 extern void divine_gateway(int Ind);
-
 extern bool do_divine_xtra_res_time(int Ind, int p);
 extern bool do_divine_hp(int Ind, int p, int v);
 extern bool do_divine_crit(int Ind, int p, int v);

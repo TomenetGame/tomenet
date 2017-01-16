@@ -3077,12 +3077,7 @@ bool set_spirit_shield(int Ind, int power, int v) {
 #endif
 
 #ifdef ENABLE_MAIA
-/* timed hp bonus for RACE_MAIA.
-   *fastest* path (SKILL_ASTRAL = lvl+2):
-   +1 at lvl 39
-   +2 at lvl 54
-   +3 at lvl 60
-*/
+/* timed hp bonus for RACE_MAIA */
 bool do_divine_hp(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = (FALSE);
@@ -3128,11 +3123,7 @@ bool do_divine_hp(int Ind, int v, int p) {
 	return (TRUE);
 }
 
-/*
-   timed crit bonus for RACE_MAIA.
-   *fastest* path (SKILL_ASTRAL = lvl+2):
-   +2 at lvl 44, +2 per 5 levels thereafter
-*/
+/* timed crit bonus for RACE_MAIA. */
 bool do_divine_crit(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = (FALSE);
@@ -3178,9 +3169,7 @@ bool do_divine_crit(int Ind, int v, int p) {
 	return (TRUE);
 }
 
-/*
-   timed time and mana res bonus for RACE_MAIA.
-*/
+/* timed time and mana res bonus for RACE_MAIA. */
 bool do_divine_xtra_res_time(int Ind, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = (FALSE);
@@ -3220,6 +3209,16 @@ bool do_divine_xtra_res_time(int Ind, int v) {
 
 	/* Result */
 	return (TRUE);
+}
+#else
+bool do_divine_hp(int Ind, int v, int p) {
+	return FALSE;
+}
+bool do_divine_crit(int Ind, int v, int p) {
+	return FALSE;
+}
+bool do_divine_xtra_res_time(int Ind, int v) {
+	return FALSE;
 }
 #endif
 

@@ -142,43 +142,6 @@ void divine_vengeance(int Ind, int power) {
 	}
 }
 
-/* A: fury
- * D: +hp (does not stack with +LIFE)
- */
-void divine_empowerment(int Ind, int level) {
-	player_type *p_ptr = Players[Ind];
-	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
-		set_fury(Ind, 20 + level / 10);
-	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
-		int bonus = 0;
-		if (level >= 55) {
-			bonus = 3;
-		} else if (level >= 52) {
-			bonus = 2;
-		} else if (level >= 40) {
-			bonus = 1;
-		}
-		(void)do_divine_hp(Ind, (level * 3) / 2, bonus);
-	}
-	return;
-}
-
-/* A: aoe slow, time/mana res
- * D: +crit
- */
-void divine_intensify(int Ind, int level) {
-	player_type *p_ptr = Players[Ind];
-	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
-		//aoe divine_xtra_res_time
-		project_los(Ind, GF_OLD_SLOW, level * 3, "");
-		(void)do_divine_xtra_res_time(Ind, (level * 3) / 2);
-		return;
-	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
-		int bonus = 2 + ((level - 45) / 5) * 2;
-		(void)do_divine_crit(Ind, (level * 3) / 2, bonus);
-	}
-}
-
 int py_create_gateway(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &(p_ptr->wpos);
@@ -262,12 +225,6 @@ void divine_gateway(int Ind) {
 
 #else /*lol, shared .pkg*/
 void divine_vengeance(int Ind, int power) {
-	return;
-}
-void divine_empowerment(int Ind, int power) {
-	return;
-}
-void divine_intensify(int Ind, int power) {
 	return;
 }
 void divine_gateway(int Ind) {
