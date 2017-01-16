@@ -7268,6 +7268,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* mimic spell 'Cause Wounds' aka monsters' 'Curse' */
 		case GF_CAUSE:
+			/* Obvious */
+			if (seen) obvious = TRUE;
+
 			if (r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT)) {
 				note = " is unaffected";
 				dam = 0;
@@ -7277,7 +7280,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (!quiet) chance += p_ptr->lev * 2;
 				if (r_ptr->flags3 & RF3_EVIL) chance <<= 1; //reverse pseudo-savingthrow vs 'neutral' monsters (aka 'non-evil')
 				if (r_ptr->flags3 & RF3_GOOD) chance >>= 1; //pseudo-savingthrow especially for 'good' monsters
-				if (rand_int(chance) >= r_ptr->level) {
+				if (rand_int(chance) < r_ptr->level) {
 					note = " resists the effect";
 					dam = 0;
 				}
