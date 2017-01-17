@@ -28,15 +28,9 @@ function get_veng_power(Ind)
 end
 
 function get_astral_bonus_hp(Ind)
-	if (players(Ind).ptrait == TRAIT_ENLIGHTNED) then
-		return 0
-	end
-
-	if (get_astral_lev(Ind) >= 55) then
-		return 3
-	elseif (get_astral_lev(Ind) > 52) then
+	if (get_astral_lev(Ind) >= 53) then
 		return 2
-	elseif (get_astral_lev(Ind) > 40) then
+	elseif (get_astral_lev(Ind) >= 40) then
 		return 1
 	end
 	return 0
@@ -231,7 +225,7 @@ POWERBALL_I = add_spell {
 	["level"] = 	10,
 	["mana"] = 	8,
 	["mana_max"] = 	8,
-	["fail"] = 	15,
+	["fail"] = 	0,
 	["stat"] = 	A_INT,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
@@ -371,10 +365,25 @@ EMPOWERMENT = add_spell {
 	["am"] = 	33,
 	["blind"] = 	0,
 	["spell"] = 	function(args)
-				divine_empowerment(Ind, get_astral_lev(Ind));
+			local alev = get_astral_lev(Ind)
+
+			-- A: fury
+			-- D: +hp (stacks with +LIFE, up to +3 total cap)
+
+			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
+				set_fury(Ind, 15 + rand_int(alev / 10))
+			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
+				do_divine_hp(Ind, (alev * 2) / 3, get_astral_bonus_hp(Ind))
+			end
 	end,
 	["info"] = 	function()
-				return "dur "..(20 + get_astral_lev(Ind) / 10)
+			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
+				return "dur 15+d"..(get_astral_lev(Ind) / 10)
+			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
+				return "dur "..((get_astral_lev(Ind) * 2) / 3).." pow +"..get_astral_bonus_hp(Ind).."0%"
+			else
+				return ""
+			end
 	end,
 	["desc"] = 	{
 			"Enlightened: incite self fury.",
@@ -393,16 +402,33 @@ INTENSIFY = add_spell {
 	["direction"] = FALSE,
 	["am"] = 	67,
 	["spell"] = 	function(args)
-				divine_intensify(Ind, get_astral_lev(Ind));
+			local alev = get_astral_lev(Ind)
+
+			-- A: aoe slow, time/mana res
+			-- D: +crit
+
+			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
+				project_los(Ind, GF_OLD_SLOW, alev * 3, "")
+				do_divine_xtra_res_time(Ind, alev)
+			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
+				do_divine_crit(Ind, (alev * 2) / 3, 2 + ((alev - 45) / 5))
+			end
 	end,
 	["info"] = 	function()
-				return "dur "..(20 + get_astral_lev(Ind) / 10)
+			local alev = get_astral_lev(Ind)
+
+			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
+				return "pow "..(alev * 3).." / dur "..alev
+			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
+				return "dur "..((alev * 2) / 3).." pow +"..(2 + ((alev - 45) / 5))
+			else
+				return ""
+			end
 	end,
 	["desc"] = 	{
 			"Enlightened: slows down monsters in sight and",
 			"             grants temporary time resistance.",
-			"Corrupted: increases your critical chance (+2 base",
-			"           +2 per 5 astral levels thereafter)."
+			"Corrupted: increases your critical chance.",
 		}
 }
 
