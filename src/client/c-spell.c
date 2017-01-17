@@ -857,7 +857,11 @@ bool get_item_hook_find_spell(int *item, int mode) {
 			}
 
 			/* get the spell's spell array index */
+#if 0 /* old method: doesn't allow two spells of similar name (eg when in different schools), and is redundant as we already know item+pos of spell -> no need to search for it again */
 			sprintf(buf2, "return find_spell(\"%s\")", sname);
+#else
+			sprintf(buf2, "return find_spell_from_item(%d, %d)", i, spos);
+#endif
 			spell = exec_lua(0, buf2);
 			if (spell == -1) return FALSE; /* paranoia - can't happen */
 

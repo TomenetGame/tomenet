@@ -106,6 +106,43 @@ function find_spell(name)
 	end
 	return -1
 end
+-- Find a spell by item+position
+function find_spell_from_item(inven_slot, s_ind)
+	local s, book, i
+
+	s = get_inven_pval(Ind, inven_slot)
+	book = get_inven_sval(Ind, inven_slot)
+
+	if book == 255 then
+		-- spell scrolls only have 1 spell (index 1)
+		if s_ind == 1 then
+			return s
+		else
+			return -1
+		end
+	end
+
+	-- custom tomes
+	if book == 100 or book == 101 or book == 102 then
+		if s_ind > 9 then
+			return -1
+		end
+
+		s = get_inven_xtra(Ind, inven_slot, s_ind) - 1
+		if s ~= -1 then
+			return s
+		end
+		return -1
+	end
+
+	-- static books aka handbooks and tomes
+	for i, s in school_book[book] do
+		if i == s_ind then
+			return s
+		end
+	end
+	return -1
+end
 
 -- Find if the school is under the influence of a god, returns nil or the level
 --
