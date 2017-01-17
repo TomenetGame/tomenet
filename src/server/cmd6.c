@@ -1748,8 +1748,33 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	if (!o_ptr->k_idx) return;
 
 	tval = o_ptr->tval;
+
+	/* specialty: empty brass lanterns, just to make them stack and sell later */
+	if (tval == TV_LITE && o_ptr->sval == SV_LITE_LANTERN) {
+		if (o_ptr->number == 1) msg_print(Ind, "You empty the lantern.");
+		else msg_print(Ind, "You empty the stack of lanterns.");
+
+		o_ptr->timeout = 0;
+#if 0 /* currently the /empty command translates all slots to lower-case/inventory-only */
+		if (slot <= INVEN_PACK) p_ptr->window |= PW_INVEN;
+		else {
+			disturb(Ind, 0, 0);
+			p_ptr->window |= PW_EQUIP;
+			p_ptr->update |= (PU_TORCH | PU_BONUS);
+		}
+#else
+		p_ptr->window |= PW_INVEN;
+#endif
+		return;
+	}
+
+	if (tval == TV_FLASK) {
+		msg_print(Ind, "\377oYou cannot use flasks for making potions.");
+		return;
+	}
+
 	if (tval != TV_POTION && tval != TV_POTION2) {
-		msg_print(Ind, "\377oThat's not a potion!");
+		msg_print(Ind, "\377oYou cannot empty that.");
 		return;
 	}
 
