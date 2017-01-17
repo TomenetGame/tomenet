@@ -174,20 +174,20 @@ SAPLIFE = add_spell {
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
 
-HELLFIRE_II = add_spell {
-	["name"] = 	"Hellfire II",
+HELLFIRE_III = add_spell {
+	["name"] = 	"Hellfire III",
 	["school"] = 	{SCHOOL_OHERETICISM},
-	["level"] = 	40,
+	["level"] = 	42,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
 	["fail"] = 	-75,
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_HELL_FIRE, args.dir, 20 + 250 + get_level(Ind, HELLFIRE_II, 250), 2 + 1 + get_level(Ind, HELLFIRE_II, 2), " casts a ball of hellfire for")
+			fire_ball(Ind, GF_HELL_FIRE, args.dir, 300 + get_level(Ind, HELLFIRE_III, 400), 2 + 1 + get_level(Ind, HELLFIRE_II, 2), " casts a ball of hellfire for")
 		end,
 	["info"] = 	function()
-			return "dam "..(20 + 250 + get_level(Ind, HELLFIRE_II, 250)).." rad "..(2 + 1 + get_level(Ind, HELLFIRE_II, 2))
+			return "dam "..(300 + get_level(Ind, HELLFIRE_II, 400)).." rad "..(2 + 1 + get_level(Ind, HELLFIRE_II, 2))
 		end,
 	["desc"] = 	{ "Conjures a ball of hellfire to burn your foes to ashes.", }
 }
