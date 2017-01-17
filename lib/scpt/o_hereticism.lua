@@ -192,7 +192,7 @@ HELLFIRE_III = add_spell {
 	["desc"] = 	{ "Conjures a ball of hellfire to burn your foes to ashes.", }
 }
 
---similar to martyr, duration-wise
+--martyr's twin
 BLOODSACRIFICE = add_spell {
 	["name"] = 	"Blood Sacrifice",
 	["school"] = 	{SCHOOL_OHERETICISM},
