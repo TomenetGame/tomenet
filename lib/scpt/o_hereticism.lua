@@ -211,6 +211,6 @@ BLOODSACRIFICE = add_spell {
 	["info"] = 	function()
 			return "dur "..(50 + get_level(BLOODSACRIFICE, 30)).."+d15"
 	end,
-	["desc"] = 	{ "Inflict a mortal wound on yourself, causing the warped powers",
-			  "of chaos to temporarily change your form into a terrifying Bloodthirster.", }
+	["desc"] = 	{ "Inflict a mortal wound on yourself, causing the warped powers of chaos",
+			  "to temporarily change your form into a terrifying Bloodthirster.", }
 }
