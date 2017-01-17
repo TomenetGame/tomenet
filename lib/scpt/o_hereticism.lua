@@ -11,9 +11,10 @@ TERROR_I = add_spell {
 	["mana"] = 	5,
 	["mana_max"] = 	5,
 	["fail"] = 	10,
+	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-				fire_grid_bolt(Ind, GF_TERROR, args.dir, 5 + get_level(Ind, TERROR_I, 100), "focusses on your mind")
+				fire_grid_bolt(Ind, GF_TERROR, args.dir, 5 + get_level(Ind, TERROR_I, 100), " gazes at you")
 			end,
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, TERROR_I, 100))
@@ -29,8 +30,8 @@ TERROR_II = add_spell {
 	["mana"] = 	16,
 	["mana_max"] = 	16,
 	["fail"] = 	-20,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
 				fire_ball(Ind, GF_TERROR, 0, 5 + get_level(Ind, TERROR_I, 100), 1, " screams disturbingly")
 			end,
 	["info"] = 	function()
@@ -42,6 +43,7 @@ TERROR_II = add_spell {
 FIREBOLT_I = add_spell {
 	["name"] = 	"Fire Bolt I",
 	["school"] = 	SCHOOL_OHERETICISM,
+	["spell_power"] = 0,
 	["level"] = 	10,
 	["mana"] = 	3,
 	["mana_max"] = 	3,
@@ -62,6 +64,7 @@ FIREBOLT_I = add_spell {
 FIREBOLT_II = add_spell {
 	["name"] = 	"Fire Bolt II",
 	["school"] = 	SCHOOL_OHERETICISM,
+	["spell_power"] = 0,
 	["level"] = 	25,
 	["mana"] = 	6,
 	["mana_max"] = 	6,
@@ -82,6 +85,7 @@ FIREBOLT_II = add_spell {
 FIREBOLT_III = add_spell {
 	["name"] = 	"Fire Bolt III",
 	["school"] = 	SCHOOL_OHERETICISM,
+	["spell_power"] = 0,
 	["level"] = 	40,
 	["mana"] = 	12,
 	["mana_max"] = 	12,
@@ -108,6 +112,7 @@ FIRERES = add_spell {
 	["mana"] = 	15,
 	["mana_max"] = >15,
 	["fail"] = 	0,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 		local dur
 		dur = randint(15) + 20 + get_level(Ind, FIRERES, 25)
@@ -174,9 +179,29 @@ SAPLIFE = add_spell {
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
 
+HFIRESTORM = add_spell {
+	["name"] = 	"Robes of Havoc",
+	["school"] = 	{SCHOOL_OHERETICISM},
+	["spell_power"] = 0,
+	["level"] = 	42,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	-75,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function(args)
+			fire_wave(Ind, GF_HELL_FIRE, 0, 80 + get_level(Ind, HFIRESTORM, 200), 1, 25 + get_level(Ind, HFIRESTORM, 47), 5, EFF_STORM, " conjures hellfire for")
+		end,
+	["info"] = 	function()
+			return "dam "..(80 + get_level(Ind, HFIRESTORM, 200)).." rad 1 dur "..(25 + get_level(Ind, HFIRESTORM, 47))
+		end,
+	["desc"] = 	{ "Envelops you in hellfire, burning your opponents to ashes.", }
+}
+
+--[[
 HELLFIRE_III = add_spell {
 	["name"] = 	"Hellfire III",
 	["school"] = 	{SCHOOL_OHERETICISM},
+	["spell_power"] = 0,
 	["level"] = 	42,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
@@ -191,6 +216,7 @@ HELLFIRE_III = add_spell {
 		end,
 	["desc"] = 	{ "Conjures a ball of hellfire to burn your foes to ashes.", }
 }
+]]--
 
 --martyr's twin
 BLOODSACRIFICE = add_spell {
