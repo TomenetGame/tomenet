@@ -1889,7 +1889,6 @@ static void player_outfit(int Ind) {
 		if (tv == 255 && sv == 255) {
 			/* nothing */
 		} else {
-
 			k_idx = lookup_kind(tv, sv);
 			if (k_idx < 2) { /* '1' is 'something' */
 				j = rand_int(BARD_INIT_NUM);
@@ -1903,6 +1902,15 @@ static void player_outfit(int Ind) {
 				/* hack: prevent newbie archers from wasting their
 				   only arrow by a flare missile technique */
 				if (is_ammo(tv)) o_ptr->note = quark_add("!k");
+#endif
+
+#ifdef ENABLE_HELLKNIGHT
+				if (tv == TV_AMULET && sv == SV_AMULET_DOOM) {
+					o_ptr->pval = 0;
+					o_ptr->bpval = pv;
+					o_ptr->to_a = pv;
+					o_ptr->ident |= (ID_CURSED);
+				}
 #endif
 
 				do_player_outfit();
