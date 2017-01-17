@@ -7215,7 +7215,27 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				if (tdam < 0) tdam = 0;
 
 				/* Snowballs deal no damage */
-				if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) tdam = 0;
+				if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) {
+					tdam = 0;
+
+					/* Target dummy "snowiness" hack */
+					if ((m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2) &&
+					    m_ptr->extra < 60) {
+						m_ptr->extra += 6;
+						if (m_ptr->r_idx == RI_TARGET_DUMMY1 && m_ptr->extra >= 30) {
+							m_ptr->r_idx = RI_TARGET_DUMMY2;
+							everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+						}
+					}
+					if ((m_ptr->r_idx == RI_TARGET_DUMMYA1 || m_ptr->r_idx == RI_TARGET_DUMMYA2) &&
+					    m_ptr->extra < 60) {
+						m_ptr->extra += 6;
+						if (m_ptr->r_idx == RI_TARGET_DUMMYA1 && m_ptr->extra >= 30) {
+							m_ptr->r_idx = RI_TARGET_DUMMYA2;
+							everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+						}
+					}
+				}
 
 				if (p_ptr->admin_godly_strike) {
 					p_ptr->admin_godly_strike--;
