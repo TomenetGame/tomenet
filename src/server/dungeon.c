@@ -5473,7 +5473,14 @@ static void process_player_end(int Ind) {
 		if (p_ptr->martyr) (void)set_martyr(Ind, p_ptr->martyr - 1);
 		if (p_ptr->martyr_timeout) {
 			p_ptr->martyr_timeout--;
-			if (!p_ptr->martyr_timeout) msg_print(Ind, "\376The heavens are ready to accept your martyrium.");
+			if (!p_ptr->martyr_timeout) {
+#ifdef ENABLE_HELLKNIGHT
+				if (p_ptr->ptrait == TRAIT_CORRUPTED)
+					msg_print(Ind, "\376The maelstrom of chaos is ready to accept your sacrifice.");
+				else
+#endif
+				msg_print(Ind, "\376The heavens are ready to accept your martyrium.");
+			}
 		}
 	}
 
