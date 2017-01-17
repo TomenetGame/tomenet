@@ -3886,7 +3886,8 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_OLD_SLOW:
 	case GF_OLD_CONF:
 	case GF_OLD_SLEEP:
-	case GF_TURN_ALL:
+	case GF_TURN_ALL: //fear
+	case GF_TERROR:
 
 	/* For priest spell (Doomed Grounds) -- carries hack (9999) or percentual damage (2%) */
 	case GF_OLD_DRAIN:
@@ -6632,8 +6633,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				(r_ptr->flags3 & RF3_NO_SLEEP) ||
-				RES_OLD(r_ptr->level, dam))
+			    (r_ptr->flags3 & RF3_NO_SLEEP) ||
+			    RES_OLD(r_ptr->level, dam))
 			{
 				note = " resists";
 				if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
@@ -6667,8 +6668,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			/* Attempt a saving throw */
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				(r_ptr->flags3 & RF3_NO_CONF) ||
-				RES_OLD(r_ptr->level, dam))
+			    (r_ptr->flags3 & RF3_NO_CONF) ||
+			    RES_OLD(r_ptr->level, dam))
 			{
 				/* No obvious effect */
 				note = " resists";
@@ -6686,6 +6687,35 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 				/* Resist */
 				do_conf = 0;
+			}
+
+			/* No "real" damage */
+			dam = 0;
+			quiet_dam = TRUE;
+			break;
+
+		case GF_TERROR:
+			if (seen) obvious = TRUE;
+
+			/* Apply some fear */
+			do_fear = damroll(3, (dam / 2)) + 1;
+			/* Get confused later */
+			do_conf = damroll(3, (dam / 2)) + 1;
+
+			/* Attempt a saving throw */
+			if ((r_ptr->flags1 & RF1_UNIQUE) ||
+			    ((r_ptr->flags3 & RF3_NO_CONF) && (r_ptr->flags3 & RF3_NO_FEAR))) {
+				/* No obvious effect */
+				note = " is unaffected";
+				obvious = FALSE;
+				do_fear = do_conf = 0;
+			} else if (RES_OLD(r_ptr->level, dam)) {
+				note = " resists the effect";
+				obvious = FALSE;
+				do_fear = do_conf = 0;
+			} else {
+				if (r_ptr->flags3 & RF3_NO_CONF) do_conf = 0;
+				if (r_ptr->flags3 & RF3_NO_FEAR) do_fear = 0;
 			}
 
 			/* No "real" damage */
@@ -10209,6 +10239,28 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			set_mindboost(Ind, dam, 15 + randint(6));
 			break;
 
+	case GF_TERROR:
+		if (fuzzy || self) msg_print(Ind, "You hear terrifying noises!");
+		else msg_format(Ind, "%^s creates a disturbing illusion!", killer);
+
+		if (p_ptr->resist_conf ||
+		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+			msg_print(Ind, "You disbelieve the feeble spell.");
+		else if (rand_int(100 + dam*6) < p_ptr->skill_sav)
+			msg_print(Ind, "You disbelieve the feeble spell.");
+		//else set_confused(Ind, p_ptr->confused + dam); too much for pvp
+		else set_confused(Ind, p_ptr->confused + 2 + rand_int(3));
+
+		if (p_ptr->resist_fear) msg_print(Ind, "You refuse to be frightened.");
+		else if (rand_int(100 + dam*6) < p_ptr->skill_sav) msg_print(Ind, "You refuse to be frightened.");
+		else {
+			//(void)set_afraid(Ind, p_ptr->afraid + dam);  too much for pvp
+			(void)set_afraid(Ind, p_ptr->afraid + 2 + rand_int(3));
+		}
+
+		dam = 0;
+		break;
+
 	case GF_OLD_CONF:
 		if (fuzzy || self) msg_print(Ind, "You hear puzzling noises!");
 		else msg_format(Ind, "%^s creates a mesmerising illusion!", killer);
@@ -12499,6 +12551,15 @@ int approx_damage(int m_idx, int dam, int typ) {
 			    (r_ptr->flags3 & RF3_NO_CONF) ||
 			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) /* RES_OLD() */
 				{}//do_conf = 0;
+			dam = 0;
+			break;
+
+		case GF_TERROR:
+			//do_conf = damroll(3, (dam / 2)) + 1;
+			if ((r_ptr->flags1 & RF1_UNIQUE) ||
+			    ((r_ptr->flags3 & RF3_NO_CONF) && (r_ptr->flags3 & RF3_NO_FEAR)) ||
+			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) /* RES_OLD() */
+				{}//do_conf = do_fear = 0;
 			dam = 0;
 			break;
 

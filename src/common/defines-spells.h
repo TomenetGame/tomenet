@@ -98,6 +98,7 @@
 #define GF_REMCURSE_PLAYER	84
 #define GF_KILL_GLYPH		85
 #define GF_STARLITE		86
+#define GF_TERROR		87
 
 #define GF_INFERNO		89 /* damage-wise like GF_ROCKET, but no special sfx and doesn't hurt terrain (could be changed, dunno) */
 #define GF_DETONATION		90 /* damage-wise like GF_ROCKET, but different sfx */
