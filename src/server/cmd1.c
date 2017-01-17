@@ -2103,6 +2103,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 #ifdef VAMPIRES_INV_CURSED
 				if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+				else if (p_ptr->pclass == CLASS_HELLKNIGHT) inverse_cursed(o_ptr); //them too!
+ #endif
 #endif
 
 				/* Note the curse */
@@ -2181,6 +2184,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 #ifdef VAMPIRES_INV_CURSED
 				if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+				else if (p_ptr->pclass == CLASS_HELLKNIGHT) inverse_cursed(o_ptr); //them too!
+ #endif
 #endif
 
 				/* Note the curse */

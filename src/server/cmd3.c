@@ -50,6 +50,9 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 
 #ifdef VAMPIRES_INV_CURSED
 	if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+	else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+ #endif
 #endif
 
 	/* Sigil (reset it) */
@@ -266,6 +269,9 @@ void inven_drop(int Ind, int item, int amt) {
 
 #ifdef VAMPIRES_INV_CURSED
 	if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+	else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+ #endif
 #endif
 
 	/* Make a "fake" object */
@@ -1204,6 +1210,9 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 #ifdef VAMPIRES_INV_CURSED
 			if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+			else if (p_ptr->pclass == CLASS_HELLKNIGHT) inverse_cursed(o_ptr); //them too!
+ #endif
 #endif
 
 			note_toggle_cursed(o_ptr, TRUE);
