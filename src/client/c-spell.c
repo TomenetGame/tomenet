@@ -809,7 +809,7 @@ bool get_item_hook_find_spell(int *item, int mode) {
 
 	(void) mode; /* suppress compiler warning */
 
-	strcpy(buf, "Manathrust");
+	strcpy(buf, "");
 	if (!get_string("Spell name? ", buf, 79))
 		return FALSE;
 
