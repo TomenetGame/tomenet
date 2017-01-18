@@ -110,7 +110,7 @@ FIRERES = add_spell {
 	["spell_power"] = 0,
 	["level"] = 	12,
 	["mana"] = 	15,
-	["mana_max"] = >15,
+	["mana_max"] = 	15,
 	["fail"] = 	0,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
@@ -139,6 +139,7 @@ HCHAOSBOLT = add_spell {
 	["mana_max"] = 	16,
 	["fail"] = 	-55,
 	["direction"] = TRUE,
+	["stat"] = 	A_WIS,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
 		local x, y
@@ -187,7 +188,7 @@ HFIRESTORM = add_spell {
 	["mana"] = 	25,
 	["mana_max"] = 	25,
 	["fail"] = 	-75,
-	["stat"] = 	A_WIS,
+--	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
 			fire_wave(Ind, GF_HELL_FIRE, 0, 80 + get_level(Ind, HFIRESTORM, 200), 1, 25 + get_level(Ind, HFIRESTORM, 47), 5, EFF_STORM, " conjures hellfire for")
 		end,
@@ -230,7 +231,7 @@ BLOODSACRIFICE = add_spell {
 	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			p_ptr->martyr_timeout = 1000 --abuse martyr for this =p
+			player.martyr_timeout = 1000 --abuse martyr for this =p
 			msg_print(Ind, "You feel the warped powers of chaos possess your body and mind!")
 			set_mimic(randint(15) + 50 + get_level(BLOODSACRIFICE, 30), 758)
 	end,
