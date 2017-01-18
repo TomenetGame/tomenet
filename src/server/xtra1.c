@@ -1986,7 +1986,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
  #else
 	/* Base skill -- searching ability */
 	p_ptr->skill_srh += r_ptr->aaf / 20 - 5;
-y
+
 	/* Base skill -- searching frequency */
 	p_ptr->skill_fos += r_ptr->aaf / 20 - 5;
  #endif
@@ -2377,7 +2377,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		if (r_ptr->flags3 & RF3_IM_COLD) { p_ptr->immune_cold = TRUE; csheet_boni->cb[0] |= CB1_ICOLD; }
 		if (r_ptr->flags3 & RF3_IM_POIS) { p_ptr->immune_poison = TRUE; csheet_boni->cb[1] |= CB2_IPOIS; }
 		if (r_ptr->flags9 & RF9_IM_WATER) { p_ptr->immune_water = TRUE; csheet_boni->cb[3] |= CB4_IWATR; }
-	} else {
+	} else if (immunities) {
 		immrand = 1 + rand_int(immunities);
 
 		switch (p_ptr->mimic_immunity) {
