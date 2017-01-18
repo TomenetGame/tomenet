@@ -1082,6 +1082,7 @@ static errr init_r_info(void) {
 #ifdef MONS_PRE_SORT /* generate sorted-by-level mapping */
 	/* init */
 	memset(radix_buf_cnt, 0, sizeof(int) * 10);
+	radix_key[0] = 0; //valgrind warning
 	/* Build radix key, forged from 2 digits of tval and 2 digits of sval */
 	z = 1;
 	for (i = 1; i < MAX_R_IDX - 1; i++) {
