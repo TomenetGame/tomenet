@@ -1112,12 +1112,11 @@ void browse_school_spell(int item, int book, int pval) {
 #endif
 
 	sprintf(out_val, "return book_spells_num2(%d, %d)", item, sval);
-        num = exec_lua(0, out_val);
+	num = exec_lua(0, out_val);
 
 	/* Build a prompt (accept all spells) */
 	if (num)
-		strnfmt(out_val2, 78, "(Spells %c-%c, ESC=exit) which spell? ",
-	    	    I2A(0), I2A(num - 1));
+		strnfmt(out_val2, 78, "(Spells %c-%c, ESC=exit) which spell? ", I2A(0), I2A(num - 1));
 	else
 		strnfmt(out_val2, 78, "No spells available - ESC=exit");
 
@@ -1161,7 +1160,6 @@ void browse_school_spell(int item, int book, int pval) {
 		sprintf(out_val, "print_spell_desc(spell_x2(%d, %d, %d, %d), %d)", item, sval, pval, i, where);
 		exec_lua(0, out_val);
 	}
-
 
 	/* Restore the screen */
 	Term_load();
