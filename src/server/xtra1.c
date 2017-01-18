@@ -2400,6 +2400,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 			if (r_ptr->flags9 & RF9_IM_WATER) immunity[immrand] = 6;
 			break;
 		}
+s_printf("MIMIC_IMMUNITY_CALC (%s): %s(%d) having %d sets imm[%d] to %d\n", showtime(), p_ptr->name, p_ptr->body_monster, p_ptr->mimic_immunity, immrand, immunity[immrand]);
 
 		if (immunity[immrand] == 1) { p_ptr->immune_acid = TRUE; csheet_boni->cb[1] |= CB2_IACID; }
 		if (immunity[immrand] == 2) { p_ptr->immune_elec = TRUE; csheet_boni->cb[1] |= CB2_IELEC; }
