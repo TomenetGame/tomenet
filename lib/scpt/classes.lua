@@ -115,7 +115,7 @@ __classes_diz = {
     "at times. They have an outstanding saving throw",
     "but are rather poor at magic devices, stealth and",
     "perception.",
-    "There're rumours of perished paladins who have",
+    "There are rumours of perished paladins who have",
     "risen again as undead warriors, and also those who",
     "became corrupted by chaos, utilizing unholy magic.",},
 
