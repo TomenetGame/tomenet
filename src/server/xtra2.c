@@ -3654,52 +3654,132 @@ static void do_Maia_skill(int Ind, int s, int m) {
 	/* Update it after the re-increasing has been finished */
 	Send_skill_info(Ind, s, FALSE);
 }
+#ifdef ENABLE_HELLKNIGHT
+/* Don't multiply but set a skill's base value and modifier to a fixed value */
+static void do_Maia_skill2(int Ind, int s, int v, int m) {
+	/* Save old skill value */
+	s32b val = Players[Ind]->s_info[s].value, tmp_val = Players[Ind]->s_info[s].mod;
+
+	/* Release invested points */
+	respec_skill(Ind, s, FALSE, FALSE);
+
+	/* Modify skill, avoiding overflow (mod is u16b) */
+	Players[Ind]->s_info[s].value = v;
+	/* Cap to 2.0 */
+	if (m > 2000) m = 2000;
+	Players[Ind]->s_info[s].mod = m;
+
+	/* Reinvest some of the points until old skill value is reached again */
+	tmp_val = -1;
+ #if 0
+	while (((Players[Ind]->s_info[s].value / 1000 < val / 1000 && /* smooth: avoid "overskilling" */
+	    (Players[Ind]->s_info[s].value + Players[Ind]->s_info[s].mod) / 1000 <= val / 1000) ||
+	    Players[Ind]->s_info[s].value + Players[Ind]->s_info[s].mod <= val) /* no "underskilling" */
+ #else
+	while (Players[Ind]->s_info[s].value + Players[Ind]->s_info[s].mod <= val /* no "overskilling" */
+ #endif
+	    /* avoid game maximum overflow - paranoia: */
+	    && Players[Ind]->s_info[s].value < 50000
+	    /* avoid cap overflow - extreme cases only (maxed auras): */
+	    && Players[Ind]->s_info[s].value / 1000 < Players[Ind]->max_plv + 2
+	    /* avoid getting stuck - paranoia (could waste 1 point actually if it really happened): */
+	    && Players[Ind]->s_info[s].value != tmp_val) {
+		/* make sure we don't loop forever in case we can't go higher */
+		tmp_val = Players[Ind]->s_info[s].value;
+		/* invest a point */
+		increase_skill(Ind, s, TRUE);
+	}
+
+	/* Update it after the re-increasing has been finished */
+	Send_skill_info(Ind, s, FALSE);
+}
+#endif
 /* Change Maia skill chart after initiation */
 void shape_Maia_skills(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	switch (p_ptr->ptrait) {
 	case TRAIT_CORRUPTED:
-		/* Doh! */
-#if 0
-		respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
-		respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
-		respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
-		respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
+#ifdef ENABLE_HELLKNIGHT
+		if (p_ptr->pclass == CLASS_PALADIN) {
+			respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
+			Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
+			respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
+			Send_skill_info(Ind, SKILL_HCURING, FALSE);
+			respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
+			p_ptr->s_info[SKILL_HDEFENSE].value = 0; //Paladin starts with +1000 in this skill
+			Send_skill_info(Ind, SKILL_HDEFENSE, FALSE);
+			respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
+			Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
+
+			/* Fix some skills that have changed from the Paladin template:
+			   hereticism; axe, polearm, blunt; all bloodmagic */
+ #ifdef ENABLE_OHERETICISM
+			p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE; //expand Occultism, to ensure the player notices it on the skill chart
+			do_Maia_skill2(Ind, SKILL_OHERETICISM, 0, ((700 * 7) / 10 * 21) / 10);
+ #endif
+			respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
+			p_ptr->s_info[SKILL_BLUNT].mod = 0;
+			Send_skill_info(Ind, SKILL_BLUNT, FALSE);
+			do_Maia_skill2(Ind, SKILL_AXE, 0, (700 * 13) / 10);
+			do_Maia_skill2(Ind, SKILL_POLEARM, 0, 700);
+
+			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
+			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1500 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1300 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1400 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1400 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3);
+			Send_reliable(p_ptr->conn);
+		}
 #endif
+
 		p_ptr->s_info[SKILL_HOFFENSE].mod = 0;
 		p_ptr->s_info[SKILL_HCURING].mod = 0;
 		p_ptr->s_info[SKILL_HDEFENSE].mod = 0;
 		p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
 
 #ifdef ENABLE_OCCULT
-		p_ptr->s_info[SKILL_OSPIRIT].mod = 0;
 		do_Maia_skill(Ind, SKILL_OSHADOW, 21);
-#endif
-
-#if 0
-		respec_skill(Ind, SKILL_DRUID_ARCANE, FALSE, FALSE);
-		respec_skill(Ind, SKILL_DRUID_PHYSICAL, FALSE, FALSE);
-#endif
-#if 0
-		p_ptr->s_info[SKILL_DRUID_ARCANE].mod = 0;
-		p_ptr->s_info[SKILL_DRUID_PHYSICAL].mod = 0;
+		//respec_skill(Ind, SKILL_OSPIRIT, FALSE, FALSE);
+		p_ptr->s_info[SKILL_OSPIRIT].mod = 0;
+ #ifdef ENABLE_OHERETICISM
+  #ifdef ENABLE_HELLKNIGHT
+		if (p_ptr->pclass != CLASS_PALADIN) do_Maia_skill(Ind, SKILL_OHERETICISM, 21); //for Paladins it's been handled above already
+  #endif
+ #endif
 #endif
 
 		/* Yay */
-		do_Maia_skill(Ind, SKILL_AXE, 13);
-		do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 13);
 		do_Maia_skill(Ind, SKILL_FIRE, 17);
 		do_Maia_skill(Ind, SKILL_AIR, 17);
 		do_Maia_skill(Ind, SKILL_CONVEYANCE, 17);
 		do_Maia_skill(Ind, SKILL_UDUN, 20);
+#ifdef ENABLE_HELLKNIGHT
+	    if (p_ptr->pclass != CLASS_PALADIN) {
+#endif
 		do_Maia_skill(Ind, SKILL_TRAUMATURGY, 30);
 		do_Maia_skill(Ind, SKILL_NECROMANCY, 30);
 		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
 		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
 		do_Maia_skill(Ind, SKILL_AURA_DEATH, 30);
+		do_Maia_skill(Ind, SKILL_AXE, 13);
+#ifdef ENABLE_HELLKNIGHT
+	    }
+#endif
+		do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 13);
 		do_Maia_skill(Ind, SKILL_R_DARK, 17);
 		do_Maia_skill(Ind, SKILL_R_NETH, 17);
+
+#ifdef ENABLE_HELLKNIGHT
+		if (p_ptr->pclass == CLASS_PALADIN) {
+			p_ptr->pclass = CLASS_HELLKNIGHT;
+			p_ptr->cp_ptr = &class_info[p_ptr->pclass];
+			p_ptr->redraw |= PR_BASIC; //PR_TITLE;
+			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		}
+#endif
+
 		break;
 
 	case TRAIT_ENLIGHTENED:
@@ -3716,6 +3796,9 @@ void shape_Maia_skills(int Ind) {
 #ifdef ENABLE_OCCULT
 		p_ptr->s_info[SKILL_OSHADOW].mod = 0;
 		do_Maia_skill(Ind, SKILL_OSPIRIT, 21);
+ #ifdef ENABLE_OHERETICISM
+		p_ptr->s_info[SKILL_OHERETICISM].mod = 0;
+ #endif
 #endif
 
 		/* Yay */
@@ -4273,7 +4356,7 @@ void check_experience(int Ind) {
 			if (p_ptr->r_killed[RI_CANDLEBEARER] == 0
 			    && p_ptr->r_killed[RI_DARKLING] == 0) {
 				/* Threshold level has been overstepped -> die */
-				if (old_lev == 19) {
+				if (old_lev <= 19 && p_ptr->lev >= 20) {
 					//msg_print(Ind, "\377RYou don't deserve to live.");
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 					strcpy(p_ptr->died_from, "indecisiveness");

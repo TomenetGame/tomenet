@@ -1525,6 +1525,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "ENABLE_OCCULT") && negation) invalid = TRUE;
 #endif
+#ifndef ENABLE_OHERETICISM
+		if (streq(m, "ENABLE_OHERETICISM") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_OHERETICISM") && negation) invalid = TRUE;
+#endif
 
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
@@ -1541,11 +1546,12 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_STANCES") &&
 		    strcmp(m, "ENABLE_MCRAFT") &&
 		    strcmp(m, "NEW_TOMES") &&
-//		    strcmp(m, "PRECIOUS_STONES") &&
+		    //strcmp(m, "PRECIOUS_STONES") &&
 		    strcmp(m, "EXPAND_TV_POTION") &&
 		    strcmp(m, "AC30") &&
 		    strcmp(m, "ENABLE_ITEM_ORDER") &&
 		    strcmp(m, "ENABLE_OCCULT") &&
+		    strcmp(m, "ENABLE_OHERETICISM") &&
 			TRUE)
 			invalid = TRUE;
 	}

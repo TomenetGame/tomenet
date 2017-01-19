@@ -91,6 +91,9 @@
 #ifdef ENABLE_DEATHKNIGHT
  #define CLASS_DEATHKNIGHT	13
 #endif
+#ifdef ENABLE_HELLKNIGHT
+ #define CLASS_HELLKNIGHT	14
+#endif
 
 /* for spell-casting */
 #define TRAIT_ENLIGHTENED	14	/* Maiar */
@@ -197,6 +200,9 @@
  #define SKILL_OSPIRIT		88
  /* and the dummy skill for sorting: */
  #define SKILL_SCHOOL_OCCULT	89
+ //#ifdef ENABLE_OHERETICISM
+  #define SKILL_OHERETICISM	94
+ //#endif
 //#endif
 
 /* additional ones */
@@ -204,6 +210,7 @@
 #define SKILL_LEVITATE		91
 #define SKILL_FREEACT		92
 #define SKILL_RESCONF		93
+//94 defined above
 #if 0	/* skills to come	- Jir - */
  #define SKILL_INNATE_POWER	/* in mimicry tree */
  #define SKILL_EGO_POWER

@@ -2112,7 +2112,11 @@ player_race race_info[MAX_RACE] = {
 		66,  8, 130, 40,
 		10,
 		/* Plan is to disable warrior and archer since they do not have SP */
+#ifdef ENABLE_HELLKNIGHT
+		(CF_ALL&~CFW&~CFA)|CFH,
+#else
 		CF_ALL&~CFW&~CFA,
+#endif
 		125,
 
 		{
@@ -2144,6 +2148,11 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
 		{ SKILL_OSPIRIT,
 			'+', 0,
 			'%', 70, },
+ #ifdef ENABLE_OHERETICISM /* unused actually, can't get this skill at birth */
+		{ SKILL_OHERETICISM,
+			'+', 0,
+			'%', 70, },
+ #endif
 #endif
 		{ SKILL_SNEAKINESS,
 			'+', 0,
@@ -3266,6 +3275,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_OSPIRIT,
 			'+', 0,
 			'+', 450, },
+ #ifdef ENABLE_OHERETICISM
+		{ SKILL_OHERETICISM,
+			'+', 0,
+			'+', 450, },
+ #endif
 #endif
 		{ SKILL_R_LITE,
 			'+', 0,
@@ -3544,10 +3558,10 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1400, },
 		{ SKILL_AURA_SHIVER,
 			'+', 0,
-			'+', 1400, },
+			'+', 1300, },
 		{ SKILL_AURA_DEATH,
 			'+', 0,
-			'+', 1400, },
+			'+', 1200, },
 		{ SKILL_HEALTH,
 			'+', 1000,
 			'+', 1000, },
@@ -3673,10 +3687,10 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1400, },
 		{ SKILL_AURA_SHIVER,
 			'+', 0,
-			'+', 1400, },
+			'+', 1300, },
 		{ SKILL_AURA_DEATH,
 			'+', 0,
-			'+', 1400, },
+			'+', 1200, },
 		{ SKILL_HEALTH,
 			'+', 1000,
 			'+', 1000, },
@@ -3853,12 +3867,12 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			//'+', 650,
 			'+', 750, },
-#if 1 /* savage axes distract their mind..well, or maybe not? */
+ #if 1 /* savage axes distract their mind..well, or maybe not? */
 		{ SKILL_AXE,
 			'+', 0,
 			//'+', 600,
 			'+', 700, },
-#endif
+ #endif
 		{ SKILL_BLUNT,
 			'+', 0,
 			//'+', 650,
@@ -3914,11 +3928,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_INTERCEPT,
 			'+', 0,
 			'+', 600, },
-#ifdef EXP_NECRO
+ #ifdef EXP_NECRO
 		{ SKILL_NECROMANCY,
 			'+', 0,
 			'+', 700, },
-#endif
+ #endif
 		{ SKILL_TRAUMATURGY,
 			'+', 0,
 			'+', 800, },
@@ -3962,19 +3976,19 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_TECHNIQUE,
 			'+', 1000,
 			'+', 0, },
-#ifdef ENABLE_STANCES
+ #ifdef ENABLE_STANCES
 		{ SKILL_STANCE,
 			'+', 1000,
 			'+', 0, },
-#endif
+ #endif
 		{ SKILL_SWORD,
 			'+', 0,
 			'+', 750, },
-#if 1 /* offer it at all? */
+ #if 1 /* offer it at all? */
 		{ SKILL_AXE,
 			'+', 0,
 			'+', 600, },//savage^^
-#endif
+ #endif
 		{ SKILL_POLEARM,
 			'+', 0,
 			'+', 700, },
@@ -3984,11 +3998,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_XBOW,
 			'+', 0,
 			'+', 300, },
-#if 0 /* same as paladin */
+ #if 0 /* same as paladin */
 		{  SKILL_MARTIAL_ARTS, /* let's keep it low for now - offbalancing */
 			'+', 0,
 			'+', 500, },
-#endif
+ #endif
 		{ SKILL_MAGIC,
 			'+', 1000,
 			'+', 600, },
@@ -3997,11 +4011,11 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000,
 			'+', 700, },
  #endif
-#if 0
+ #if 0
 		{ SKILL_SPELL,
 			'+', 0,
 			'+', 350, },
-#endif
+ #endif
 		{ SKILL_NECROMANCY,
 			'+', 0,
 			'+', 1500, },
@@ -4019,6 +4033,120 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1500, },
 		{ SKILL_DEVICE,
 			'+', 1500,
+			'+', 800, },
+		{ SKILL_SNEAKINESS,
+			'+', 1000,
+			'+', 500, }, //650,
+		{ SKILL_DISARM,
+			'+', 1000,
+			'+', 600, },
+		{ SKILL_DODGE,
+			'+', 0,/*1000*/
+			'+', 600, },
+		{ SKILL_STEALTH,
+			'+', 0,
+			'+', 500, },
+		{ SKILL_HEALTH,
+			'+', 2000,
+			'+', 1000, },
+		{ SKILL_DIG,
+			'+', 1000,
+			'+', 700, },
+		{ SKILL_CALMNESS,
+			'+', 0,
+			'+', 600, },
+		{ SKILL_INTERCEPT,
+			'+', 1000,
+			'+', 800, },
+		}, },
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	{ "Hell Knight",
+		TERM_L_DARK,
+		{ 3, -3, 1, 0, 2, 2},
+		{20+100, 0, 0+100, 10, 0, 0},
+/*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
+ *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
+ *   HD, Exp*/
+		10, 21, 54, 1,  13, 16, 60, 40,
+		2, 8,  10, 0,  0,  2,  35, 10,
+		8, 30,
+
+		// --- Lots of skills that differ from Paladin template are HARDCODED in shape_Maia_skills()! :( ---
+		{{  SKILL_COMBAT,
+			'+', 2700,
+			'+', 1400, },
+		{ SKILL_MASTERY,
+			'+', 1800,
+			'+', 900, },
+		{ SKILL_TECHNIQUE,
+			'+', 1000,
+			'+', 0, },
+ #ifdef ENABLE_STANCES
+		{ SKILL_STANCE,
+			'+', 1000,
+			'+', 0, },
+ #endif
+		{ SKILL_SWORD,
+			'+', 0,
+			'+', 750, },
+		{ SKILL_AXE,
+			'+', 0,
+			'+', 700, },
+		{ SKILL_POLEARM,
+			'+', 0,
+			'+', 700, },
+		{ SKILL_BOW,
+			'+', 0,
+			'+', 300, },
+		{ SKILL_XBOW,
+			'+', 0,
+			'+', 300, },
+ #if 0 /* same as paladin */
+		{  SKILL_MARTIAL_ARTS, /* let's keep it low for now - offbalancing */
+			'+', 0,
+			'+', 500, },
+ #endif
+		{ SKILL_MAGIC,
+			'+', 1000,
+			'+', 600, },
+ #ifdef ENABLE_OCCULT /* Occult */
+  #ifdef ENABLE_OHERETICISM
+		{ SKILL_OHERETICISM,
+			'+', 0,
+			'+', 700, },
+  #else
+		{ SKILL_OSHADOW, /* emergency replacement skill if Hereticism isn't available for some reason */
+			'+', 0,
+			'+', 700, },
+  #endif
+ #endif
+ #if 0
+		{ SKILL_SPELL,
+			'+', 0,
+			'+', 350, },
+ #endif
+ #if 1
+		{ SKILL_NECROMANCY,
+			'+', 0,
+			'+', 1300, },
+ #endif
+		{ SKILL_TRAUMATURGY,
+			'+', 0,
+			'+', 1500, },
+		{ SKILL_AURA_FEAR,
+			'+', 0,
+			'+', 1400, },
+		{ SKILL_AURA_SHIVER,
+			'+', 0,
+			'+', 1400, },
+ #if 1
+		{ SKILL_AURA_DEATH,
+			'+', 0,
+			'+', 1300, },
+ #endif
+		{ SKILL_DEVICE,
+			'+', 1000,
 			'+', 800, },
 		{ SKILL_SNEAKINESS,
 			'+', 1000,
@@ -4407,20 +4535,46 @@ cptr player_title[MAX_CLASS][11][4] = {
 #ifdef ENABLE_DEATHKNIGHT
 	/* Death Knight (Vampire Paladin) */
 	{
-		{"Faithless", "Faithless", "Faithless", "Faithless", }, //neutral, could also be hellish
+		{"Faithless", "Faithless", "Faithless", "Faithless", }, //neutral
 		{"Forfeit", "Forfeit", "Forfeit", "Forfeit", }, //maybe hellish
-		//{"Heretic", "Heretic", "Heretic", "Heretic", }, //hellish
 		{"Unresting", "Unresting", "Unresting", "Unresting", },
 		{"Hungering", "Hungering", "Hungering", "Hungering", },
 		{"Tainted", "Tainted", "Tainted", "Tainted", }, //maybe hellish
 		{"Unhallowed", "Unhallowed", "Unhallowed", "Unhallowed", },
-		//{"Cultist", "Cultist", "Cultist", "Cultist", }, //hellish
 		{"Dark Adept", "Dark Adept", "Dark Adept", "Dark Adept", },
 		{"Crypt Keeper", "Crypt Keeper", "Crypt Keeper", "Crpyt Keeper", },
-		//{"Sacrificer", "Sacrificer", "Sacricifer", "Sacrificer", }, //hellish
-		{"Unholy Zealot", "Unholy Zealot", "U.Zealot", "U.Zealot", }, //neutral, could also be hellish
-		{"Antipaladin", "Antipaladin", "A.Paladin", "A.Paladin", }, //maybe hellish?
+		{"Fallen Champion", "Fallen Champion", "F.Champion", "F.Champion", },
+		{"Antipaladin", "Antipaladin", "A.Paladin", "A.Paladin", },
 		{"Death Knight", "Death Knight", "Death Knight", "Death Knight", },
+	},
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	/* Hell Knight (Corrupted Paladin) */
+	{
+		{"Faithless", "Faithless", "Faithless", "Faithless", },
+		{"Traitor", "Traitor", "Traitor", "Traitor", },
+		{"Fanatic", "Fanatic", "Fanatic", "Fanatic", },
+		{"Cultist", "Cultist", "Cultist", "Cultist", },
+	//note that the first four titles will never be used since 'Hell Knight' career starts at level 20 on initiation
+ #if 0
+		{"Tainted", "Tainted", "Tainted", "Tainted", },
+		{"Heretic", "Heretic", "Heretic", "Heretic", },
+		{"Dark Adept", "Dark Adept", "Dark Adept", "Dark Adept", },
+		//{"Sacrificer", "Sacrificer", "Sacricifer", "Sacrificer", },
+		{"Chosen", "Chosen", "Chosen", "Chosen", },
+		//{"Corruptor", "Corruptor", "Corruptor", "Corruptor", },
+		{"Unholy Zealot", "Unholy Zealot", "U.Zealot", "U.Zealot", },
+		{"Antipaladin", "Antipaladin", "A.Paladin", "A.Paladin", },
+		{"Hell Knight", "Hell Knight", "Hell Knight", "Hell Knight", },
+ #else /* re-use up to the first four titles */
+		{"Traitor", "Traitor", "Traitor", "Traitor", },
+		{"Fanatic", "Fanatic", "Fanatic", "Fanatic", },
+		{"Cultist", "Cultist", "Cultist", "Cultist", },
+		{"Heretic", "Heretic", "Heretic", "Heretic", },
+		{"Chosen", "Chosen", "Chosen", "Chosen", },
+		{"Unholy Zealot", "Unholy Zealot", "U.Zealot", "U.Zealot", },
+		{"Hell Knight", "Hell Knight", "Hell Knight", "Hell Knight", },
+ #endif
 	},
 #endif
 };
@@ -4579,12 +4733,19 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 	{
 		{"Dark Legate", "Dark Legate", "Dark Legate", "Dark Legate", },
 		{"Crypt Lord", "Crypt Lord", "Crypt Lord", "Crypt Lord", },
-		//{"Avenger", "Avenger", "Avenger", "Avenger", },
-		{"Unholy Avenger", "Unholy Avenger", "Unholy Avenger", "Unholy Avenger", },
-		//{"Holy Defender", "Holy Defender", }, defender comes before avenger if at all;
-		//DF and HA are old 'good' ego mods from predecessors.
+		{"Unholy Avenger", "Unholy Avenger", "Unh. Avenger", "Unh. Avenger", },
 		{"Unholy King", "Unholy Queen", "Unholy King", "Unholy Queen", },
 		{"Death's Hand", "Death's Hand", "Death's Hand", "Death's Hand", },
+	},
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	/* Hell Knight (Corrupted Paladin) */
+	{
+		{"Grand Tormentor", "Grand Tormentor", "Gr.Tormentor", "Gr.Tormentor", },
+		{"Champion of Chaos", "Champion of Chaos", "Chaos Champ.", "Chaos Champ.", },
+		{"Bringer of Ruin", "Bringer of Ruin", "Ruin Bringer", "Ruin Bringer", },
+		{"Demon King", "Demon Queen", "Demon King", "Demon Queen", },
+		{"Devil's Hand", "Devil's Hand", "Devil's Hand", "Devil's Hand", },
 	},
 #endif
 };

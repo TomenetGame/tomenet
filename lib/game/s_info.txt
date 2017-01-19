@@ -529,6 +529,12 @@ F:MAX_1
 #I:1000:0
 #F:MAX_1
 
+$ENABLE_OHERETICISM$N:94:Hereticism
+$ENABLE_OHERETICISM$D:Ability to learn and use spells from the Hereticism school.
+$ENABLE_OHERETICISM$D:Most spells use the wisdom stat, very few use intelligence.
+$ENABLE_OHERETICISM$A:11:Cast a spell
+$ENABLE_OHERETICISM$I:1000:111
+
 N:95:Runecraft
 D:
 I:1000:0
@@ -822,6 +828,7 @@ $ENABLE_MCRAFT$T:Mindcraft:Mental Intrusion
 
 $ENABLE_OCCULT$T:Occultism:Shadow
 $ENABLE_OCCULT$T:Occultism:Spirit
+$ENABLE_OHERETICISM$T:Occultism:Hereticism
 
 T:Runecraft:Light
 T:Runecraft:Darkness

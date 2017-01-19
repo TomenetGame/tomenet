@@ -36,36 +36,29 @@ void set_server_features();
 lua_State* L = NULL;
 
 /* PernAngband Lua error message handler */
-static int pern_errormessage(lua_State *L)
-{
-        char buf[200];
-        cptr str = luaL_check_string(L, 1);
-        int i = 0, j = 0;
+static int pern_errormessage(lua_State *L) {
+	char buf[200];
+	cptr str = luaL_check_string(L, 1);
+	int i = 0, j = 0;
 
-        while (str[i])
-        {
-                if (str[i] != '\n')
-                {
-                        buf[j++] = str[i];
-                }
-                else
-                {
-                        buf[j] = '\0';
-//                        msg_broadcast_format(0, "\377vLUA: %s", buf);
-                        msg_admin("\377vLUA: %s", buf);
-                        j = 0;
-                }
-                i++;
-        }
-        buf[j] = '\0';
-//        msg_broadcast_format(0, "\377vLUA: %s", buf);
-        msg_admin("\377vLUA: %s", buf);
-        return (0);
+	while (str[i]) {
+		if (str[i] != '\n') buf[j++] = str[i];
+		else {
+			buf[j] = '\0';
+			//msg_broadcast_format(0, "\377vLUA: %s", buf);
+			msg_admin("\377vLUA: %s", buf);
+			j = 0;
+		}
+		i++;
+	}
+	buf[j] = '\0';
+	//msg_broadcast_format(0, "\377vLUA: %s", buf);
+	msg_admin("\377vLUA: %s", buf);
+	return (0);
 }
 
-static struct luaL_reg pern_iolib[] =
-{
-        {"_ALERT", pern_errormessage},
+static struct luaL_reg pern_iolib[] = {
+	{"_ALERT", pern_errormessage},
 };
 
 #define luaL_check_bit(L, n)  ((long)luaL_check_number(L, n))
@@ -84,7 +77,7 @@ static struct luaL_reg pern_iolib[] =
 #define MONADIC(name, op) \
     s32b name(s32b b); \
     s32b name(s32b b) { \
-		return (op b); \
+	return (op b); \
     }
 
 
@@ -101,8 +94,7 @@ MONADIC(intBitNot,  ~ )
  * Monadic bit nagation operation
  * MONADIC(not,     ~)
  */
-static int int_not(lua_State* L)
-{
+static int int_not(lua_State* L) {
 	lua_pushnumber(L, ~luaL_check_bit(L, 1));
 	return 1;
 }
@@ -112,10 +104,9 @@ static int int_not(lua_State* L)
  * Dyadic integer modulus operation
  * DYADIC(mod,      %)
  */
-static int int_mod(lua_State* L)
-{
+static int int_mod(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) % luaL_check_bit(L, 2));
-    return 1;
+	return 1;
 }
 
 
@@ -123,8 +114,7 @@ static int int_mod(lua_State* L)
  * Variable length bitwise AND operation
  * VARIADIC(and,    &)
  */
-static int int_and(lua_State *L)
-{
+static int int_and(lua_State *L) {
 	int n = lua_gettop(L), i;
 	long w = luaL_check_bit(L, 1);
 
@@ -139,15 +129,14 @@ static int int_and(lua_State *L)
  * Variable length bitwise OR operation
  * VARIADIC(or,     |)
  */
-static int int_or(lua_State *L)
-{
+static int int_or(lua_State *L) {
 	int n = lua_gettop(L), i;
 	long w = luaL_check_bit(L, 1);
 
 	for (i = 2; i <= n; i++) w |= luaL_check_bit(L, i);
-    lua_pushnumber(L, w);
+	lua_pushnumber(L, w);
 
-    return 1;
+	return 1;
 }
 
 
@@ -155,15 +144,14 @@ static int int_or(lua_State *L)
  * Variable length bitwise XOR operation
  * VARIADIC(xor,    ^)
  */
-static int int_xor(lua_State *L)
-{
+static int int_xor(lua_State *L) {
 	int n = lua_gettop(L), i;
 	long w = luaL_check_bit(L, 1);
 
 	for (i = 2; i <= n; i++) w ^= luaL_check_bit(L, i);
-    lua_pushnumber(L, w);
+	lua_pushnumber(L, w);
 
-    return 1;
+	return 1;
 }
 
 
@@ -171,18 +159,16 @@ static int int_xor(lua_State *L)
  * Binary left shift operation
  * TDYADIC(lshift,  <<, , u)
  */
-static int int_lshift(lua_State* L)
-{
+static int int_lshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) << luaL_check_ubit(L, 2));
-    return 1;
+	return 1;
 }
 
 /*
  * Binary logical right shift operation
  * TDYADIC(rshift,  >>, u, u)
  */
-static int int_rshift(lua_State* L)
-{
+static int int_rshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_ubit(L, 1) >> luaL_check_ubit(L, 2));
 	return 1;
 }
@@ -191,30 +177,27 @@ static int int_rshift(lua_State* L)
  * Binary arithmetic right shift operation
  * TDYADIC(arshift, >>, , u)
  */
-static int int_arshift(lua_State* L)
-{
+static int int_arshift(lua_State* L) {
 	lua_pushnumber(L, luaL_check_bit(L, 1) >> luaL_check_ubit(L, 2));
 	return 1;
 }
 
 
-static const struct luaL_reg bitlib[] =
-{
-        {"bnot",    int_not},
-        {"imod",    int_mod},  /* "mod" already in Lua math library */
-        {"band",    int_and},
-        {"bor",     int_or},
-        {"bxor",    int_xor},
-        {"lshift",  int_lshift},
-        {"rshift",  int_rshift},
-        {"arshift", int_arshift},
+static const struct luaL_reg bitlib[] = {
+	{"bnot",    int_not},
+	{"imod",    int_mod},  /* "mod" already in Lua math library */
+	{"band",    int_and},
+	{"bor",     int_or},
+	{"bxor",    int_xor},
+	{"lshift",  int_lshift},
+	{"rshift",  int_rshift},
+	{"arshift", int_arshift},
 };
 
 
 /* Set global lua variables that define the server type */
-void set_server_features()
-{
-        int oldtop = lua_gettop(L);
+void set_server_features() {
+	int oldtop = lua_gettop(L);
 
 	/* Server flags */
 
@@ -280,9 +263,14 @@ void set_server_features()
 	lua_settop(L, oldtop);
 #endif
 
-//	sflags_TEMP |= 0x00000008;
+#ifdef ENABLE_OHERETICISM
+	sflags_TEMP |= 0x00000008;
+	lua_dostring(L, "TEMP3 = 1");
+	lua_settop(L, oldtop);
+#else
 	lua_dostring(L, "TEMP3 = 0");
 	lua_settop(L, oldtop);
+#endif
 
 //	sflags_TEMP |= 0x00000010;
 	lua_dostring(L, "TEMP4 = 0");
@@ -303,8 +291,7 @@ void set_server_features()
 
 
 /* Initialize lua scripting */
-void init_lua()
-{
+void init_lua() {
 	int i, max;
 
 	/* Start the interpreter with default stack size */
@@ -352,6 +339,9 @@ void init_lua()
 #ifdef ENABLE_OCCULT /* Occult */
 	SCHOOL_OSHADOW = exec_lua(0, "return SCHOOL_OSHADOW");
 	SCHOOL_OSPIRIT = exec_lua(0, "return SCHOOL_OSPIRIT");
+ #ifdef ENABLE_OHERETICISM
+	SCHOOL_OHERETICISM = exec_lua(0, "return SCHOOL_OHERETICISM");
+ #endif
 #endif
 
 	/* Finish up the spells */
@@ -380,8 +370,7 @@ void init_lua()
 	ID_spell4 = exec_lua(0, "return BAGIDENTIFY");
 }
 
-void reinit_lua()
-{
+void reinit_lua() {
 	int i;
 
 	/* Close the old Lua state */
@@ -404,127 +393,112 @@ void reinit_lua()
 	init_lua();
 }
 
-bool pern_dofile(int Ind, char *file)
-{
+bool pern_dofile(int Ind, char *file) {
 	char buf[MAX_PATH_LENGTH];
 	int error;
-        int oldtop = lua_gettop(L);
-        char ind[80];
+	int oldtop = lua_gettop(L);
+	char ind[80];
 
 	/* Build the filename */
-        path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
+	path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, file);
 
-        sprintf(ind, "Ind = %d; player = Players_real[Ind + 1]", Ind);
-        lua_dostring(L, ind);
-        lua_settop(L, oldtop);
+	sprintf(ind, "Ind = %d; player = Players_real[Ind + 1]", Ind);
+	lua_dostring(L, ind);
+	lua_settop(L, oldtop);
 
-        error = lua_dofile(L, buf);
-        lua_settop(L, oldtop);
+	error = lua_dofile(L, buf);
+	lua_settop(L, oldtop);
 
-        return (error?TRUE:FALSE);
+	return (error?TRUE:FALSE);
 }
 
-int exec_lua(int Ind, char *file)
-{
+int exec_lua(int Ind, char *file) {
 	int oldtop = lua_gettop(L);
-        int res;
-        char ind[80];
+	int res;
+	char ind[80];
 
-        sprintf(ind, "Ind = %d; player = Players_real[Ind + 1]", Ind);
-        lua_dostring(L, ind);
-        lua_settop(L, oldtop);
+	sprintf(ind, "Ind = %d; player = Players_real[Ind + 1]", Ind);
+	lua_dostring(L, ind);
+	lua_settop(L, oldtop);
 
-        if (!lua_dostring(L, file))
-        {
-                int size = lua_gettop(L) - oldtop;
+	if (!lua_dostring(L, file)) {
+		int size = lua_gettop(L) - oldtop;
 		if (size != 0)
-	                res = tolua_getnumber(L, -size, 0);
+			res = tolua_getnumber(L, -size, 0);
 		else
 			res = 0;
-        }
+	}
 	else
-                res = 0;
+		res = 0;
 
-        lua_settop(L, oldtop);
+	lua_settop(L, oldtop);
 	return (res);
 }
 
-cptr string_exec_lua(int Ind, char *file)
-{
+cptr string_exec_lua(int Ind, char *file) {
 	int oldtop = lua_gettop(L);
 	cptr res;
-        char ind[80];
+	char ind[80];
 
-        sprintf(ind, "Ind = %d; player = Players_real[Ind + 1]", Ind);
-        lua_dostring(L, ind);
-        lua_settop(L, oldtop);
+	sprintf(ind, "Ind = %d; player = Players_real[Ind + 1]", Ind);
+	lua_dostring(L, ind);
+	lua_settop(L, oldtop);
 
-	if (!lua_dostring(L, file))
-        {
-                int size = lua_gettop(L) - oldtop;
+	if (!lua_dostring(L, file)) {
+		int size = lua_gettop(L) - oldtop;
 		if (size != 0)
-	                res = tolua_getstring(L, -size, "");
+			res = tolua_getstring(L, -size, "");
 		else
 			res = 0;
-        }
-	else
-		res = "";
-        lua_settop(L, oldtop);
+	} else res = "";
+
+	lua_settop(L, oldtop);
 	return (res);
 }
 
 static FILE *lua_file;
-void master_script_begin(char *name, char mode)
-{
+void master_script_begin(char *name, char mode) {
 	char buf[MAX_PATH_LENGTH];
 
 	/* Build the filename */
-        path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, name);
+	path_build(buf, MAX_PATH_LENGTH, ANGBAND_DIR_SCPT, name);
 
-        switch (mode)
-        {
-        case MASTER_SCRIPTB_W:
-                lua_file = my_fopen(buf, "w");
-                break;
-        case MASTER_SCRIPTB_A:
-                lua_file = my_fopen(buf, "a");
-                break;
-        }
-        if (!lua_file)
-                plog(format("ERROR: creating lua file %s in mode %c", buf, mode));
-        else
-                plog(format("Creating lua file %s in mode %c", buf, mode));
-
+	switch (mode) {
+	case MASTER_SCRIPTB_W:
+		lua_file = my_fopen(buf, "w");
+		break;
+	case MASTER_SCRIPTB_A:
+		lua_file = my_fopen(buf, "a");
+		break;
+	}
+	if (!lua_file)
+		plog(format("ERROR: creating lua file %s in mode %c", buf, mode));
+	else
+		plog(format("Creating lua file %s in mode %c", buf, mode));
 }
 
-void master_script_end()
-{
-        my_fclose(lua_file);
+void master_script_end() {
+	my_fclose(lua_file);
 }
 
-void master_script_line(char *buf)
-{
-        fprintf(lua_file, "%s\n", buf);
+void master_script_line(char *buf) {
+	fprintf(lua_file, "%s\n", buf);
 }
 
-void master_script_exec(int Ind, char *buf)
-{
-        exec_lua(Ind, buf);
+void master_script_exec(int Ind, char *buf) {
+	exec_lua(Ind, buf);
 }
 
-void cat_script(int Ind, char *name)
-{
-        char buf[1025];
-        FILE *fff;
+void cat_script(int Ind, char *name) {
+	char buf[1025];
+	FILE *fff;
 
-        /* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_SCPT, name);
-        fff = my_fopen(buf, "rb");
-        if (fff == NULL) return;
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_SCPT, name);
+	fff = my_fopen(buf, "rb");
+	if (fff == NULL) return;
 
-        /* Process the file */
-        while (0 == my_fgets(fff, buf, 1024, FALSE))
-        {
-                msg_print(Ind, buf);
-        }
+	/* Process the file */
+	while (0 == my_fgets(fff, buf, 1024, FALSE))
+		msg_print(Ind, buf);
 }

@@ -4470,6 +4470,10 @@ static int Receive_play(int ind) {
 		/* Unhack duplicate class slot usage (Paladin/Death Knight) */
 		if (race == RACE_VAMPIRE && class == CLASS_PALADIN) class = CLASS_DEATHKNIGHT;
 #endif
+#ifdef ENABLE_HELLKNIGHT
+		/* Unhack duplicate class slot usage (Paladin/Hell Knight) */
+		if (race == RACE_MAIA && trait == TRAIT_CORRUPTED && class == CLASS_PALADIN) class = CLASS_HELLKNIGHT;
+#endif
 
 		/* hacks for forcibly dedicated characters */
 		if ((connp->sex & MODE_DED_PVP) &&

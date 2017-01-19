@@ -115,9 +115,9 @@ __classes_diz = {
     "at times. They have an outstanding saving throw",
     "but are rather poor at magic devices, stealth and",
     "perception.",
-    "There are rumours of perished paladins who have",
-    "risen again as undead warriors. These are called",
-    "Death Knights and utilize unholy magic.",},
+    "There're rumours of perished paladins who have",
+    "risen again as undead warriors, and also those who",
+    "became corrupted by chaos, utilizing unholy magic.",},
 
 "Ranger",
     {"\255uRangers\255U are very versatile, able to fight in",

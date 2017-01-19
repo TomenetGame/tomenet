@@ -1198,6 +1198,8 @@ extern int Send_martyr(int ind);
 extern int Send_confirm(int Ind, int confirmed_command);
 extern int Send_item_newest(int Ind, int item);
 
+extern int Send_reliable(int ind);
+
 
 /* object1.c */
 /* object2.c */
@@ -2441,7 +2443,7 @@ extern int SCHOOL_HOFFENSE, SCHOOL_HSUPPORT;
 extern int SCHOOL_DRUID_ARCANE, SCHOOL_DRUID_PHYSICAL;
 extern int SCHOOL_ASTRAL;
 extern int SCHOOL_PPOWER, SCHOOL_MINTRUSION;
-extern int SCHOOL_OSHADOW, SCHOOL_OSPIRIT;
+extern int SCHOOL_OSHADOW, SCHOOL_OSPIRIT, SCHOOL_OHERETICISM;
 
 /* For !X handling on spellbooks */
 extern int spell, ID_spell1, ID_spell1a, ID_spell1b, ID_spell2, ID_spell3, ID_spell4;

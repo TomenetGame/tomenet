@@ -556,7 +556,11 @@
  * Maximum number of player "class" types (see "table.c", etc)
  */
 #ifdef ENABLE_DEATHKNIGHT
- #define MAX_CLASS	14
+ #ifdef ENABLE_HELLKNIGHT
+  #define MAX_CLASS	15
+ #else
+  #define MAX_CLASS	14
+ #endif
 #else
  #define MAX_CLASS	13
 #endif
@@ -1839,6 +1843,9 @@
 #define CLASS_MINDCRAFTER	12
 #ifdef ENABLE_DEATHKNIGHT
  #define CLASS_DEATHKNIGHT	13
+ #ifdef ENABLE_HELLKNIGHT
+  #define CLASS_HELLKNIGHT	14
+ #endif
 #endif
 
 /*
@@ -1846,7 +1853,7 @@
  * (must be same order as according CLASS_.. constants!)
  */
 #define CF_NONE	0x0000
-#define CF_ALL	0x1FFF	/* Note: Death Knight is left out intentionally, since it shares a slot with Paladin */
+#define CF_ALL	0x1FFF	/* Note: Death/Hell Knights are left out intentionally, since they share a slot with Paladin */
 
 #define CFW	0x0001	/* Warrior */
 #define CFI	0x0002	/* Istar */
@@ -1866,6 +1873,9 @@
 #define CFC	0x1000	/* Mindcrafter */
 #ifdef ENABLE_DEATHKNIGHT
  #define CFK	0x2000	/* Death Knight */
+#endif
+#ifdef ENABLE_HELLKNIGHT
+ #define CFH	0x4000	/* Hell Knight */
 #endif
 
 /*
@@ -7550,8 +7560,13 @@ extern int PlayerUID;
  #define is_fighter(p_ptr) \
 	((p_ptr->pclass == CLASS_WARRIOR) || (p_ptr->pclass == CLASS_PALADIN) || (p_ptr->pclass == CLASS_RANGER) || (p_ptr->pclass == CLASS_MIMIC))
 #else
- #define is_fighter(p_ptr) \
+ #ifndef ENABLE_HELLKNIGHT
+  #define is_fighter(p_ptr) \
 	((p_ptr->pclass == CLASS_WARRIOR) || (p_ptr->pclass == CLASS_PALADIN) || (p_ptr->pclass == CLASS_RANGER) || (p_ptr->pclass == CLASS_MIMIC) || (p_ptr->pclass == CLASS_DEATHKNIGHT))
+ #else
+  #define is_fighter(p_ptr) \
+	((p_ptr->pclass == CLASS_WARRIOR) || (p_ptr->pclass == CLASS_PALADIN) || (p_ptr->pclass == CLASS_RANGER) || (p_ptr->pclass == CLASS_MIMIC) || (p_ptr->pclass == CLASS_DEATHKNIGHT) || (p_ptr->pclass == CLASS_HELLKNIGHT))
+ #endif
 #endif
 
 #define is_admin(p_ptr) (p_ptr->admin_wiz || p_ptr->admin_dm)
@@ -7858,6 +7873,9 @@ extern int PlayerUID;
  #define SKILL_OSPIRIT		88
  /* and the dummy skill for sorting: */
  #define SKILL_SCHOOL_OCCULT	89
+ //#ifdef ENABLE_OHERETICISM
+  #define SKILL_OHERETICISM	94
+ //#endif
 //#endif
 
 /* additional ones */
@@ -7865,6 +7883,7 @@ extern int PlayerUID;
 #define SKILL_LEVITATE		91
 #define SKILL_FREEACT		92
 #define SKILL_RESCONF		93
+//94 defined above
 #if 0	/* skills to come	- Jir - */
  #define SKILL_INNATE_POWER	/* in mimicry tree */
  #define SKILL_EGO_POWER

@@ -1043,6 +1043,9 @@ static void get_money(int Ind) {
    #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
    #endif
+   #ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:	//cannot happen here
+   #endif
 	case CLASS_PALADIN:     p_ptr->au += 200; break;
 	case CLASS_DRUID:	p_ptr->au += 200; break;
 	case CLASS_MIMIC:	p_ptr->au += 100; break;
@@ -1061,6 +1064,9 @@ static void get_money(int Ind) {
 	case CLASS_RANGER:      p_ptr->au += 600; break;
    #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
+   #endif
+   #ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:	//cannot happen here
    #endif
 	case CLASS_PALADIN:     p_ptr->au += 600; break;
 	case CLASS_ROGUE:	p_ptr->au += 600; break;
@@ -1307,6 +1313,17 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ 255, 255, 0 },
 	},
 #endif
+#ifdef ENABLE_HELLKNIGHT
+	{
+		/* Hell Knight (Corrupted Paladin) */
+		{ TV_SWORD, SV_LONG_SWORD, 0 },
+		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
+		//{ TV_SCROLL, SV_SCROLL_ICE, 0 },
+		{ TV_AMULET, SV_AMULET_DOOM, -1 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_TERROR */
+		{ 255, 255, 0 },
+	},
+#endif
     },
     { /* Fruit bat body */
 	{
@@ -1438,6 +1455,17 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ 255, 255, 0 },
 	},
 #endif
+#ifdef ENABLE_HELLKNIGHT
+	{
+		/* Hell Knight (Corrupted Paladin) */
+		{ TV_HELM, SV_METAL_CAP, 0 },
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		//{ TV_SCROLL, SV_SCROLL_ICE, 0 },
+		{ TV_AMULET, SV_AMULET_DOOM, -1 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_TERROR */
+		{ 255, 255, 0 },
+	},
+#endif
     }
 };
 void init_player_outfits(void) {
@@ -1445,16 +1473,24 @@ void init_player_outfits(void) {
 	   actually this could be done once in init_lua,
 	   but since the array player_init is static, we
 	   just do it here. - C. Blue */
+
 	   //player_init[0][CLASS_PRIEST][2][2] = __lua_HHEALING;
 	   player_init[0][CLASS_PALADIN][3][2] = __lua_HBLESSING;
 #ifdef ENABLE_DEATHKNIGHT
 	   player_init[0][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
 #endif
+#ifdef ENABLE_HELLKNIGHT
+	   player_init[0][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+#endif
 	   player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
+
 	   //player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
 	   player_init[1][CLASS_PALADIN][3][2] = __lua_HBLESSING;
 #ifdef ENABLE_DEATHKNIGHT
 	   player_init[1][CLASS_DEATHKNIGHT][3][2] = __lua_OFEAR;
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	   player_init[1][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
 #endif
 	   player_init[1][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
 }
@@ -1811,6 +1847,9 @@ static void player_outfit(int Ind) {
 			case CLASS_PALADIN:
 #ifdef ENABLE_DEATHKNIGHT
 			case CLASS_DEATHKNIGHT:
+#endif
+#ifdef ENABLE_HELLKNIGHT
+			case CLASS_HELLKNIGHT:	//cannot happen here
 #endif
 			case CLASS_MINDCRAFTER:
 			//case CLASS_PRIEST:
@@ -2776,9 +2815,12 @@ void disable_specific_warnings(player_type *p_ptr) {
 #ifdef ENABLE_DEATHKNIGHT
 	    || p_ptr->pclass == CLASS_DEATHKNIGHT
 #endif
+#ifdef ENABLE_HELLKNIGHT
+	    || p_ptr->pclass == CLASS_HELLKNIGHT
+#endif
 	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
-//	    || p_ptr->pclass == CLASS_RUNEMASTER
-//	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER
+	    //|| p_ptr->pclass == CLASS_RUNEMASTER
+	    //|| p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER
 	    )) {
 		p_ptr->warning_bpr2 = 1;
 	}
@@ -2787,9 +2829,12 @@ void disable_specific_warnings(player_type *p_ptr) {
 #ifdef ENABLE_DEATHKNIGHT
 	    || p_ptr->pclass == CLASS_DEATHKNIGHT
 #endif
+#ifdef ENABLE_HELLKNIGHT
+	    || p_ptr->pclass == CLASS_HELLKNIGHT
+#endif
 	    || p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_MIMIC
-//	    || p_ptr->pclass == CLASS_RUNEMASTER
-//	    || p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER
+	    //|| p_ptr->pclass == CLASS_RUNEMASTER
+	    //|| p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_MINDCRAFTER
 	    )) {
 		p_ptr->warning_bpr3 = 1;
 	}
@@ -2806,6 +2851,9 @@ void disable_specific_warnings(player_type *p_ptr) {
 	    p_ptr->pclass == CLASS_RANGER || p_ptr->pclass == CLASS_PALADIN ||
 #ifdef ENABLE_DEATHKNIGHT
 	    p_ptr->pclass == CLASS_DEATHKNIGHT ||
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	    p_ptr->pclass == CLASS_HELLKNIGHT ||
 #endif
 	    p_ptr->pclass == CLASS_MIMIC || p_ptr->pclass == CLASS_ROGUE ||
 	    p_ptr->pclass == CLASS_ADVENTURER || p_ptr->pclass == CLASS_RUNEMASTER ||
@@ -2968,6 +3016,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 #ifdef ENABLE_DEATHKNIGHT
 	/* Unhack the artificial duplicate slot usage of Paladin/Death Knight class */
 	if (class == CLASS_PALADIN && race == RACE_VAMPIRE) class = CLASS_DEATHKNIGHT;
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	/* Unhack the artificial duplicate slot usage of Paladin/Hell Knight class */
+	if (class == CLASS_PALADIN && trait == TRAIT_CORRUPTED) class = CLASS_HELLKNIGHT; //cannot actually happen here
 #endif
 
 	/* To find out which characters crash the server */

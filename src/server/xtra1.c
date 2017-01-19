@@ -474,6 +474,9 @@ static void prt_bpr(int Ind) {
 #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
 #endif
+#ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:
+#endif
 	case CLASS_PALADIN:
 	case CLASS_RANGER:
 	case CLASS_ROGUE:
@@ -1116,6 +1119,9 @@ void calc_mana(int Ind) {
 #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
 #endif
+#ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:
+#endif
 	case CLASS_PALADIN:
 		/* few Int, much Wis --140 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
@@ -1197,6 +1203,9 @@ void calc_mana(int Ind) {
 		break;
 #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:
 #endif
 	case CLASS_PALADIN:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
@@ -1306,6 +1315,9 @@ void calc_mana(int Ind) {
 	case CLASS_PRIEST: max_wgt = 250 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:
 #endif
 	case CLASS_PALADIN: max_wgt = 300 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_DRUID: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
@@ -2650,6 +2662,9 @@ int calc_blows_obj(int Ind, object_type *o_ptr) {
 		case CLASS_ARCHER: num = 3; wgt = 35; mul = 4; break;
 #ifdef ENABLE_DEATHKNIGHT
 		case CLASS_DEATHKNIGHT:
+#endif
+#ifdef ENABLE_HELLKNIGHT
+		case CLASS_HELLKNIGHT:
 #endif
 		case CLASS_PALADIN: num = 5; wgt = 35; mul = 5; break;//mul4
 		case CLASS_RANGER: num = 5; wgt = 35; mul = 4; break;//mul4
@@ -5127,6 +5142,9 @@ void calc_boni(int Ind) {
  #ifdef ENABLE_DEATHKNIGHT
 		case CLASS_DEATHKNIGHT:
  #endif
+ #ifdef ENABLE_HELLKNIGHT
+		case CLASS_HELLKNIGHT:
+ #endif
 		case CLASS_PALADIN: p_ptr->shield_deflect = p_ptr->shield_deflect; break;
 		case CLASS_SHAMAN: p_ptr->shield_deflect = (p_ptr->shield_deflect * 3 + 3) / 6; break;
 		case CLASS_DRUID: p_ptr->shield_deflect = (p_ptr->shield_deflect * 3 + 3) / 6; break;
@@ -5179,6 +5197,9 @@ void calc_boni(int Ind) {
 		case CLASS_RANGER: p_ptr->weapon_parry = p_ptr->weapon_parry; break;
  #ifdef ENABLE_DEATHKNIGHT
 		case CLASS_DEATHKNIGHT:
+ #endif
+ #ifdef ENABLE_HELLKNIGHT
+		case CLASS_HELLKNIGHT:
  #endif
 		case CLASS_PALADIN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 5 + 1) / 6; break;
 		case CLASS_SHAMAN: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3 + 3) / 6; break;
@@ -5785,6 +5806,10 @@ void calc_boni(int Ind) {
 		p_ptr->resist_chaos = TRUE; csheet_boni[14].cb[3] |= CB4_RCHAO;
 	}
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 30) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
+ #ifdef ENABLE_OHERETICISM
+	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 30) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
+	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 45) { p_ptr->resist_chaos = TRUE; csheet_boni[14].cb[3] |= CB4_RCHAO; }
+ #endif
 #endif
 	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50) { p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }
 
@@ -6491,6 +6516,11 @@ void calc_boni(int Ind) {
 #ifdef ENABLE_DEATHKNIGHT
 			case CLASS_DEATHKNIGHT:
 				msg_print(Ind, "\374\377y    Death Knights should try either a dagger, spear or cleaver.");
+				break;
+#endif
+#ifdef ENABLE_HELLKNIGHT
+			case CLASS_HELLKNIGHT:
+				msg_print(Ind, "\374\377y    Hell Knights should try either a dagger, spear or cleaver.");
 				break;
 #endif
 			case CLASS_MIMIC:

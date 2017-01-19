@@ -356,6 +356,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 #ifdef ENABLE_DEATHKNIGHT
 		case CLASS_DEATHKNIGHT:
 #endif
+#ifdef ENABLE_HELLKNIGHT
+		case CLASS_HELLKNIGHT:
+#endif
 			if (old_value < 50 && new_value >= 50) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('\377gm\377G' key)");
 			if (old_value < 200 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
@@ -593,6 +596,18 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		} if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\374\377GYour soul escapes less quickly on death.");
 		}
+		break;
+ #ifdef ENABLE_OHERETICISM
+	case SKILL_OHERETICISM:
+		if (old_value < 300 && new_value >= 300) {
+			msg_print(Ind, "\374\377GYou feel resistant against fire.");
+		}
+  #if 0
+		if (old_value < 500 && new_value >= 500) {
+			msg_print(Ind, "\374\377GYou feel resistant against chaos.");
+		}
+  #endif
+ #endif
 		break;
 #endif
 

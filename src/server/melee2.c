@@ -6994,6 +6994,9 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 #ifdef ENABLE_DEATHKNIGHT
 				case CLASS_DEATHKNIGHT:
 #endif
+#ifdef ENABLE_HELLKNIGHT
+				case CLASS_HELLKNIGHT:
+#endif
 				case CLASS_PALADIN:
 				case CLASS_MIMIC:
 					target_toughness = 2;

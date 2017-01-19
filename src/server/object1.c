@@ -3746,6 +3746,9 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
  #ifdef ENABLE_DEATHKNIGHT
 		case CLASS_DEATHKNIGHT:
  #endif
+ #ifdef ENABLE_HELLKNIGHT
+		case CLASS_HELLKNIGHT:
+ #endif
 		case CLASS_RANGER:
 		case CLASS_ROGUE:
 		case CLASS_MINDCRAFTER:
@@ -6234,7 +6237,11 @@ byte get_book_name_color(object_type *o_ptr) {
 		else if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return TERM_YELLOW;
 #ifdef ENABLE_OCCULT
 		/* Occult */
+ #ifdef ENABLE_OHERETICISM
+		else if (o_ptr->sval >= 22 && o_ptr->sval <= 24) return TERM_BLUE;
+ #else
 		else if (o_ptr->sval >= 22 && o_ptr->sval <= 23) return TERM_BLUE;
+ #endif
 #endif
 		/* mages (default) */
 		else return TERM_L_BLUE;
@@ -6280,7 +6287,11 @@ byte get_spellbook_name_colour(int pval) {
 	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return TERM_YELLOW;
 #ifdef ENABLE_OCCULT
 	/* blue for Occult */
+ #ifdef ENABLE_OHERETICISM
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OHERETICISM) return TERM_BLUE;
+ #else
 	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return TERM_BLUE;
+ #endif
 #endif
 	/* light blue for the rest (istari schools) */
 	return TERM_L_BLUE;

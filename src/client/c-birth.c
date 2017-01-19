@@ -770,12 +770,13 @@ static bool choose_class(void) {
 	int i, j, l, m, n, sel = 0;
 	char c = '\0';
 	char out_val[160];
-	bool hazard = FALSE, dk = FALSE;
+	bool hazard = FALSE, dk = FALSE, hk = FALSE;
 
-	/* ENABLE_DEATHKNIGHT duplicate slot hack (Paladin/Death Knight) */
-	if (Setup.max_class == 14) {
-		Setup.max_class = 13;
+	/* ENABLE_DEATHKNIGHT/ENABLE_HELLKNIGHT duplicate slot hack (Paladin vs Death Knight/Hell Knight) */
+	if (Setup.max_class == 14 || Setup.max_class == 15) {
+		if (Setup.max_class == 15) hk = TRUE;
 		dk = TRUE;
+		Setup.max_class = 13;
 	}
 
 	/* Prepare to list */
@@ -938,7 +939,8 @@ class_redraw:
 	}
 
 	/* Unhack */
-	if (dk) Setup.max_class = 14;
+	if (hk) Setup.max_class = 15;
+	else if (dk) Setup.max_class = 14;
 
 	clear_diz();
 	clear_from(n - 3); /* -3 so beginner-warnings are also cleared */
