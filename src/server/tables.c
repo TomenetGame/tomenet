@@ -4731,9 +4731,9 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 #ifdef ENABLE_DEATHKNIGHT
 	/* Death Knight (Vampire Paladin) */
 	{
+		{"Crypt Lord", "Crypt Lady", "Crypt Lord", "Crypt Lady", },
+		{"Herald of Ruin", "Herald of Ruin", "Herald o.R.", "Herald o.R.", },
 		{"Dark Legate", "Dark Legate", "Dark Legate", "Dark Legate", },
-		{"Crypt Lord", "Crypt Lord", "Crypt Lord", "Crypt Lord", },
-		{"Unholy Avenger", "Unholy Avenger", "Unh. Avenger", "Unh. Avenger", },
 		{"Unholy King", "Unholy Queen", "Unholy King", "Unholy Queen", },
 		{"Death's Hand", "Death's Hand", "Death's Hand", "Death's Hand", },
 	},
@@ -4741,9 +4741,9 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 #ifdef ENABLE_HELLKNIGHT
 	/* Hell Knight (Corrupted Paladin) */
 	{
+		{"Plague Champion", "Plague Champion", "Pl. Champion", "Pl. Champion", },
 		{"Grand Tormentor", "Grand Tormentor", "Gr.Tormentor", "Gr.Tormentor", },
-		{"Champion of Chaos", "Champion of Chaos", "Chaos Champ.", "Chaos Champ.", },
-		{"Bringer of Ruin", "Bringer of Ruin", "Ruin Bringer", "Ruin Bringer", },
+		{"Vizier of Chaos", "Vizier of Chaos", "Vizier o.C.", "Vizier o.C.", },
 		{"Demon King", "Demon Queen", "Demon King", "Demon Queen", },
 		{"Devil's Hand", "Devil's Hand", "Devil's Hand", "Devil's Hand", },
 	},
