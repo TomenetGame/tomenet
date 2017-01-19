@@ -295,10 +295,12 @@
 #ifdef ENABLE_OCCULT
  #define ENABLE_DEATHKNIGHT
 
+#ifdef TEST_SERVER
  #define ENABLE_HELLKNIGHT	/* Allow 'Corrupted Paladins' aka Hell Knights. Requires ENABLE_OCCULT. */
  #ifdef ENABLE_HELLKNIGHT
   #define ENABLE_OHERETICISM	/* Enable 'Hereticism' occult school for Hell Knights */
  #endif
+#endif
 #endif
 
 
