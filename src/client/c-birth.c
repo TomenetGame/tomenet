@@ -878,6 +878,7 @@ class_redraw:
 		if (c == '8' || c == '<') {//h
 			//note that this going in jumps only really works ifdef CLASS_BEFORE_RACE -_-
 			if (sel - 5 < 0) {
+#if 0 /*later*/
 				//also go back to previus "column"
 				if (sel > 0) sel--;
 				else {
@@ -886,7 +887,7 @@ class_redraw:
 					while (sel > Setup.max_class) sel -= 5;
 					goto class_redraw;
 				}
-
+#endif
 				sel = sel + ((Setup.max_class - 1 - sel) / 5) * 5;
 			}
 			else sel -= 5;
@@ -902,9 +903,11 @@ class_redraw:
 			//note that this going in jumps only really works ifdef CLASS_BEFORE_RACE -_-
 			if (sel + 5 >= Setup.max_class) {
 				sel = sel % 5;
+#if 0 /*later*/
 				//also advance to next "column"
 				if (sel < 4) sel++;
 				else sel = 0; //or wrap around completely
+#endif
 			}
 			else sel += 5;
 #ifndef CLASS_BEFORE_RACE
