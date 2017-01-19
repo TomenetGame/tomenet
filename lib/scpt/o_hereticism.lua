@@ -40,6 +40,26 @@ TERROR_II = add_spell {
 	["desc"] = 	{ "Invades the minds of all adjacent enemies, confusing and scaring them.", }
 }
 
+ODELFEAR2 = add_spell {
+	["name"] = 	"Ignore Fear",
+	["school"] = 	{SCHOOL_OHERETICISM},
+	["spell_power"] = 0,
+	["am"] = 	0,
+	["level"] = 	7,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
+	["fail"] = 	10,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			set_afraid(Ind, 0)
+			set_res_fear(Ind, get_level(Ind, ODELFEAR2, 30))
+			end,
+	["info"] = 	function()
+			return "dur "..get_level(Ind, ODELFEAR2, 30)
+			end,
+	["desc"] = 	{ "Removes the ignorant weakness that is fear, for a while.", }
+}
+
 FIREBOLT_I = add_spell {
 	["name"] = 	"Fire Bolt I",
 	["school"] = 	SCHOOL_OHERETICISM,
@@ -130,11 +150,30 @@ FIRERES = add_spell {
 	}
 }
 
-HCHAOSBOLT = add_spell {
-	["name"] = 	"Chaos Bolt",
+OEXTRASTATS = add_spell {
+	["name"] = 	"Demonic Strength",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	30,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
+	["fail"] = 	-30,
+	["stat"] = 	A_WIS,
+	["direction"] = FALSE,
+	["spell"] = 	function()
+			do_xtra_stats(Ind, 20 + get_level(Ind, OEXTRASTATS, 50), get_level(Ind, OEXTRASTATS, 50))
+			end,
+	["info"] = 	function()
+			return "+" .. ((get_level(Ind, OEXTRASTATS, 50) / 10) + 2) .. " dur " .. (20 + get_level(Ind, OEXTRASTATS, 50))
+			end,
+	["desc"] = 	{ "Temporarily increases and sustains strength and constitution.", }
+}
+
+CHAOSBOLT2 = add_spell {
+	["name"] = 	"Chaos Bolt",
+	["school"] = 	{SCHOOL_OHERETICISM},
+	["spell_power"] = 0,
+	["level"] = 	32,
 	["mana"] = 	16,
 	["mana_max"] = 	16,
 	["fail"] = 	-55,
@@ -158,7 +197,32 @@ HCHAOSBOLT = add_spell {
 	["desc"] = 	{ "Channels the powers of chaos into a bolt.", }
 }
 
-SAPLIFE = add_spell {
+ORESTORING = add_spell {
+	["name"] = 	"Dark Meditation",
+	["school"] = 	{SCHOOL_OHERETICISM},
+	["spell_power"] = 0,
+	["am"] = 	75,
+	["level"] = 	35,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	-35,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+			do_res_stat(Ind, A_STR)
+			do_res_stat(Ind, A_CON)
+			do_res_stat(Ind, A_DEX)
+			do_res_stat(Ind, A_WIS)
+			do_res_stat(Ind, A_INT)
+			do_res_stat(Ind, A_CHR)
+			restore_level(Ind)
+			end,
+	["info"] = 	function()
+			return ""
+			end,
+	["desc"] = 	{ "Restores drained stats and lost experience.", }
+}
+
+--[[SAPLIFE = add_spell {
 	["name"] = 	"Sap Life",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
@@ -178,9 +242,27 @@ SAPLIFE = add_spell {
 		return (14 + get_level(Ind, ODRAINLIFE, 22)).."% (max 900), 25% heal"
 	end,
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
+}]]--
+
+LEVITATION = add_spell {
+	["name"] = 	"Levitation",
+	["school"] = 	{SCHOOL_OHERETICISM},
+	["level"] = 	39,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	70,
+	["spell"] = 	function()
+			set_tim_lev(Ind, randint(10) + 5 + get_level(Ind, LEVITATION, 25))
+	end,
+	["info"] = 	function()
+			return "dur "..(5 + get_level(Ind, LEVITATION, 25)).."+d10"
+	end,
+	["desc"] = 	{
+			"Grants the power of levitation."
+	}
 }
 
-HFIRESTORM = add_spell {
+FIRESTORM = add_spell {
 	["name"] = 	"Robes of Havoc",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
@@ -190,10 +272,10 @@ HFIRESTORM = add_spell {
 	["fail"] = 	-75,
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			fire_wave(Ind, GF_HELL_FIRE, 0, 80 + get_level(Ind, HFIRESTORM, 200), 1, 25 + get_level(Ind, HFIRESTORM, 47), 5, EFF_STORM, " conjures hellfire for")
+			fire_wave(Ind, GF_HELL_FIRE, 0, 80 + get_level(Ind, FIRESTORM, 200), 1, 25 + get_level(Ind, FIRESTORM, 47), 5, EFF_STORM, " conjures hellfire for")
 		end,
 	["info"] = 	function()
-			return "dam "..(80 + get_level(Ind, HFIRESTORM, 200)).." rad 1 dur "..(25 + get_level(Ind, HFIRESTORM, 47))
+			return "dam "..(80 + get_level(Ind, FIRESTORM, 200)).." rad 1 dur "..(25 + get_level(Ind, FIRESTORM, 47))
 		end,
 	["desc"] = 	{ "Envelops you in hellfire, burning your opponents to ashes.", }
 }
@@ -233,10 +315,10 @@ BLOODSACRIFICE = add_spell {
 	["spell"] = 	function()
 			player.martyr_timeout = 1000 --abuse martyr for this =p
 			msg_print(Ind, "You feel the warped powers of chaos possess your body and mind!")
-			set_mimic(randint(15) + 50 + get_level(BLOODSACRIFICE, 30), 758)
+			set_mimic(randint(15) + 50 + get_level(Ind, BLOODSACRIFICE, 30), 758)
 	end,
 	["info"] = 	function()
-			return "dur "..(50 + get_level(BLOODSACRIFICE, 30)).."+d15"
+			return "dur "..(50 + get_level(Ind, BLOODSACRIFICE, 30)).."+d15"
 	end,
 	["desc"] = 	{ "Inflict a mortal wound on yourself, causing the warped powers of chaos",
 			  "to temporarily change your form into a terrifying Bloodthirster.", }

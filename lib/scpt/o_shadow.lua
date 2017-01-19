@@ -515,7 +515,7 @@ ODRAINLIFE = add_spell {
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
 }
 
-ODARKBALL = add_spell {
+DARKBALL = add_spell {
 	["name"] = 	"Darkness Storm",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["level"] = 	42,
@@ -525,10 +525,10 @@ ODARKBALL = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 515 + get_level(Ind, ODARKBALL, 750), 2 + get_level(Ind, ODARKBALL, 8), " conjures up a darkness storm for")
+			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 515 + get_level(Ind, DARKBALL, 750), 2 + get_level(Ind, DARKBALL, 8), " conjures up a darkness storm for")
 	end,
 	["info"] = 	function()
-		return "dam d100+"..(515 + get_level(Ind, ODARKBALL, 750)).." rad "..(2 + get_level(Ind, ODARKBALL, 8))
+		return "dam d100+"..(515 + get_level(Ind, DARKBALL, 750)).." rad "..(2 + get_level(Ind, DARKBALL, 8))
 	end,
 	["desc"] = 	{ "Conjures up a storm of darkness.", }
 }
