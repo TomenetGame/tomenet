@@ -1511,7 +1511,11 @@ static void fix_equip(void) {
 		Term_activate(old);
 	}
 
-	if (showing_equip) show_equip();
+	if (showing_equip) {
+		item_tester_full = TRUE; //hack for live_timeouts when pressing 'e' to look at equipment!
+		show_equip();
+		item_tester_full = FALSE; //unhack
+	}
 }
 
 
