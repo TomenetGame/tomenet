@@ -8517,6 +8517,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 		/* no anti-undead items for vampires */
 		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr)) continue;
+#ifdef ENABLE_HELLKNIGHT
+		/* no anti-demon items for hell knights */
+		if (p_ptr->pclass == CLASS_HELLKNIGHT && anti_demon(o_ptr)) continue;
+#endif
 
 		/* Don't generate NO_MAGIC or DRAIN_MANA items if we do use magic */
 		if (caster) {
@@ -10866,6 +10870,39 @@ bool anti_undead(object_type *o_ptr) {
 
 	return(FALSE);
 }
+#ifdef ENABLE_HELLKNIGHT
+/* Check whether an item causes HP drain on a demonic player (hell knight) who wears/wields it */
+bool anti_demon(object_type *o_ptr) {
+	u32b f1, f2, f3, f4, f5, f6, esp;
+	int l = 0;
+
+	/* only concerns wearable items */
+	if (wield_slot(0, o_ptr) == -1) return FALSE;
+
+	if (cursed_p(o_ptr)) return(FALSE);
+
+	/* hack: it's carried by the wight-king! */
+	if (o_ptr->name1 == ART_STONE_LORE) return FALSE;
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	if (f3 & TR3_LITE1) l++;
+	if (f4 & TR4_LITE2) l += 2;
+	if (f4 & TR4_LITE3) l += 3;
+	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
+
+	/* powerful lights and anti-undead/evil items damage vampires */
+	if (l) { /* light sources, or other items that provide light */
+		if ((l > 2) || o_ptr->name1 || (f3 & TR3_BLESSED) ||
+		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON))
+			return(TRUE);
+	} else {
+		if ((f3 & TR3_BLESSED) || (f1 & TR1_KILL_DEMON))
+			return(TRUE);
+	}
+
+	return(FALSE);
+}
+#endif
 
 /*
  * Generate default item-generation restriction flags for a given player - C. Blue

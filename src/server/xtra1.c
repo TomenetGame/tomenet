@@ -4059,6 +4059,12 @@ void calc_boni(int Ind) {
 			/* then again, spectral weapons don't hurt them */
 			if (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL) p_ptr->drain_life--; /* hack: cancel out the life-drain applied by spectral'ity */
 		}
+#ifdef ENABLE_HELLKNIGHT
+		if (p_ptr->pclass == CLASS_HELLKNIGHT) {
+			/* powerful lights and anti-demon/evil items damage hell knights */
+			if (anti_demon(o_ptr)) p_ptr->drain_life++;
+		}
+#endif
 
 		/* Immunity flags */
 		if (f2 & TR2_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_IFIRE; }
