@@ -7861,9 +7861,8 @@ extern int PlayerUID;
 #define SKILL_MIND		59
 #define SKILL_UDUN		60
 
-//hole 61
-
 /* for future use, if we ever can get these balanced in a sensible manner (seems unlikely without heavy changes to all other game elements oO) */
+#define SKILL_SCHOOL_CRAFTING	61	/* dummy skill for clustering */
 #define SKILL_WEAPONSMITHING	62
 #define SKILL_ARMOURSMITHING	63
 #define SKILL_FLETCHING		64
