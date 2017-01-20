@@ -1246,6 +1246,9 @@
 #define RI_VAMPIRE_BAT		391
 #define RI_BLOODLETTER		523
 #define RI_SANTA1		733	/* terror santa from hell */
+#ifdef ENABLE_OHERETICISM
+ #define RI_BLOODTHIRSTER	758
+#endif
 #define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
 #define RI_OREMORJ		843	/* note: jokeangband */
 #define RI_SAURON		860

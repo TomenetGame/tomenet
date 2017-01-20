@@ -1379,7 +1379,16 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 	if (cursed_p(o_ptr)) {
 		object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
 		if (!(is_admin(p_ptr) ||
-		    (p_ptr->ptrait == TRAIT_CORRUPTED && !(f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE))))) {
+		    (p_ptr->ptrait == TRAIT_CORRUPTED && !(f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE)))
+#ifdef ENABLE_HELLKNIGHT
+		    /* note: only for corrupted priests/paladins: */
+		    || ((p_ptr->pclass == CLASS_HELLKNIGHT
+ #ifdef ENABLE_CPRIEST
+		    || p_ptr->pclass == CLASS_CPRIEST
+ #endif
+		    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE))
+#endif
+		    )) {
 			/* Oops */
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
 			/* Nope */

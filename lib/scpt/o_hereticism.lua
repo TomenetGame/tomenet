@@ -315,11 +315,12 @@ BLOODSACRIFICE = add_spell {
 	["spell"] = 	function()
 			player.martyr_timeout = 1000 --abuse martyr for this =p
 			msg_print(Ind, "You feel the warped powers of chaos possess your body and mind!")
-			set_mimic(randint(15) + 50 + get_level(Ind, BLOODSACRIFICE, 30), 758)
+			set_mimic(randint(15) + 50 + get_level(Ind, BLOODSACRIFICE, 30), 758) --RI_BLOODTHIRSTER
 	end,
 	["info"] = 	function()
 			return "dur "..(50 + get_level(Ind, BLOODSACRIFICE, 30)).."+d15"
 	end,
 	["desc"] = 	{ "Inflict a mortal wound on yourself, causing the warped powers of chaos",
-			  "to temporarily change your form into a terrifying Bloodthirster.", }
+			  "to temporarily change your form into a terrifying Bloodthirster.",
+			  "--- This spell is only usable by corrupted priests and hell knights. ---", }
 }
