@@ -1635,7 +1635,8 @@ void do_cmd_fill_bottle(int Ind) {
 			object_aware(Ind, q_ptr);
 			object_known(q_ptr);
 			q_ptr->iron_trade = p_ptr->iron_trade;
-			inven_carry(Ind, q_ptr);
+			item = inven_carry(Ind, q_ptr);
+			if (item >= 0) inven_item_describe(Ind, item);
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			return;
 		}
@@ -1714,7 +1715,8 @@ void do_cmd_fill_bottle(int Ind) {
 	if (q_ptr->sval == SV_POTION_BLOOD) q_ptr->timeout = 1750 + rand_int(501);//goes bad after a while!
 #endif
 	q_ptr->iron_trade = p_ptr->iron_trade;
-	inven_carry(Ind, q_ptr);
+	item = inven_carry(Ind, q_ptr);
+	if (item >= 0) inven_item_describe(Ind, item);
 
 	cs_ptr->sc.fountain.rest--;
 
@@ -1792,7 +1794,8 @@ void do_cmd_empty_potion(int Ind, int slot) {
 
 	/* let the player carry the bottle */
 	q_ptr->iron_trade = p_ptr->iron_trade;
-	inven_carry(Ind, q_ptr);
+	slot = inven_carry(Ind, q_ptr);
+	if (slot >= 0) inven_item_describe(Ind, slot);
 
 	/* S(he) is no longer afk */
 	un_afk_idle(Ind);
