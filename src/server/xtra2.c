@@ -3736,7 +3736,7 @@ void shape_Maia_skills(int Ind) {
 		}
 #endif
 #ifdef ENABLE_CPRIEST
-		if (p_ptr->pclass == CLASS_CPRIEST) {
+		if (p_ptr->pclass == CLASS_PRIEST) {
 			respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
 			Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
 			respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
@@ -3803,7 +3803,7 @@ void shape_Maia_skills(int Ind) {
 #ifdef ENABLE_HELLKNIGHT /* blood magic skills were already converted above; this code here is just for 'normal' classes */
 	    if (p_ptr->pclass != CLASS_PALADIN
  #ifdef ENABLE_CPRIEST
-	     && p_ptr->pclass != CLASS_CPRIEST
+	     && p_ptr->pclass != CLASS_PRIEST
  #endif
 	     ) {
 #endif
