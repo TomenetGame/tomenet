@@ -2273,7 +2273,7 @@ char *special_prace_lookup[MAX_RACE] = {
 
 player_class class_info[MAX_CLASS] = {
 	{ "Warrior",
-		TERM_UMBER,
+		TERM_UMBER, FALSE, 0,
 		{ 5, -2, -2, 2, 2, -1},
 		{ 22+100, 0, 0, 10+100, 0, 0},
 		20, 18, 18, 1,  14, 2, 70, 55,
@@ -2378,7 +2378,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Istar",
-		TERM_RED,
+		TERM_RED, FALSE, 0,
 		{-5, 3, 0, 1, -2, 1},
 		{0, 0+100, 0, 0, 0, 0},
 		30, 36, 30, 2,  16, 20, 34, 20,
@@ -2482,7 +2482,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Priest",
-		TERM_GREEN,
+		TERM_GREEN, FALSE, 0,
 		{-1, -3, 3, -1, 0, 2},
 #if 0 /* disabled recommendations for STR/DEX because STR cannot even be reached by dwarven priests.. */
 		{19, 0, 0+100, 10, 0, 0},
@@ -2571,7 +2571,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Rogue",
-		TERM_BLUE,
+		TERM_BLUE, FALSE, 0,
 		{ 2, 1, -2, 3, 1, -1},
 		{15, 0, 0, 19+100, 0, 0},
 		45, 28, 28, 5, 32, 24, 60, 66,
@@ -2699,7 +2699,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Mimic",
-		 TERM_L_WHITE, //confusing
+		 TERM_L_WHITE, FALSE, 0, //confusing colour
 		// TERM_ORANGE, <- more confusing since they're supposed to use a monster form
 		{ 1, 0, 0, 1, 1, -4},
 		{19+100, 0, 0, 10+100, 0, 0},//21,19
@@ -2804,7 +2804,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Archer",
-		TERM_ORANGE,
+		TERM_ORANGE, FALSE, 0,
 		{ 1, 0, 2, 3, 1, -1},
 		{0, 0, 0, 18+100, 0, 0},
 		30, 22, 28, 2,  24, 20, 56, 72,
@@ -2892,7 +2892,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Paladin",
-		TERM_YELLOW,
+		TERM_YELLOW, FALSE, 0,
 		{ 3, -3, 1, 0, 2, 2},
 		{20+100, 0, 0+100, 10, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -2998,7 +2998,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Ranger",
-		TERM_L_UMBER,
+		TERM_L_UMBER, FALSE, 0,
 		{ 2, 2, -1, 1, 2, 0},
 		{19+100, 0+100, 0, 10+100, 0, 0},//21,19
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -3139,7 +3139,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Adventurer",
-		TERM_VIOLET,
+		TERM_VIOLET, FALSE, 0,
 		{ 0, 0, 0, 0, 0, 0},
 		{19, 0, 0, 10, 0, 0},//20,10
 		30, 22, 20, 3,  15, 15, 50, 50,
@@ -3353,7 +3353,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Druid",	/* by the_sandman -- w00t w00t -- a shapechanger+magical class */
-		TERM_L_GREEN,
+		TERM_L_GREEN, FALSE, 0,
 		{ 1, 0, 2, -2, -2, 1},
 		{0, 0, 0+100, 0, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -3446,7 +3446,7 @@ player_class class_info[MAX_CLASS] = {
 		}, },
 
 	{ "Shaman", /* by C. Blue -- Minor shapechange (restrictions), Necromancy/Praying/Magic */
-		TERM_L_RED,
+		TERM_L_RED, FALSE, 0,
 		{ 0, 1, 2, -2, 0, 0},
 		{0, 0, 0, 0, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -3706,8 +3706,9 @@ player_class class_info[MAX_CLASS] = {
 
 	{ "Runemaster",	/* A mage/rogue class, more caster than fighter, but with high spell damage / low durability.
 			 * Intended to be the 'warrior' of the magic classes, but with allowed hybridization.
+			 * Initial design by Relsiet, modified by Adam, redesign by Kurzel.
 			 */
-		TERM_L_BLUE,
+		TERM_L_BLUE, FALSE, 0,
 		{ 0, 2, -2, 2, -2, 0}, //More towards rogue for STR/WIS, but more like an istar for CON. - Kurzel
 		{15, 0+100, 0, 19+100, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -3835,7 +3836,7 @@ player_class class_info[MAX_CLASS] = {
 	{ "Mindcrafter", /* old mindcrafter idea reincarnated in slightly different design - C. Blue:
 			  At first made them a 'caster with melee ability', but now changed mind ;) to
 			  actually view them as 'fighters with psi abilities' instead, improving vitality. */
-		TERM_SLATE,
+		TERM_SLATE, FALSE, 0,
 		//{ -1, 3, 0, -1, -1, 1},
 		{ 2, 2, 0, 0, 0, 1},
 		//{21+100, 0+100, 0, 19+100, 0, 0}, 18/30;10 pretty unreachable with {0,2,0,0,0,1}
@@ -3954,7 +3955,7 @@ player_class class_info[MAX_CLASS] = {
 
 #ifdef ENABLE_DEATHKNIGHT
 	{ "Death Knight",
-		TERM_L_DARK,
+		TERM_L_DARK, TRUE, 6,
 		{ 3, -3, 1, 0, 2, 2},
 		{20+100, 0, 0+100, 10, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -4059,7 +4060,7 @@ player_class class_info[MAX_CLASS] = {
 #endif
 #ifdef ENABLE_HELLKNIGHT
 	{ "Hell Knight",
-		TERM_L_DARK,
+		TERM_L_DARK, TRUE, 6,
 		{ 3, -3, 1, 0, 2, 2},
 		{20+100, 0, 0+100, 10, 0, 0},
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
@@ -4173,7 +4174,7 @@ player_class class_info[MAX_CLASS] = {
 #endif
 #ifdef ENABLE_CPRIEST
 	{ "Priest", /* Corrupted Priest (Maia) */
-		TERM_GREEN,
+		TERM_GREEN, TRUE, 2,
 		{-1, -3, 3, -1, 0, 2},
 #if 0 /* disabled recommendations for STR/DEX because STR cannot even be reached by dwarven priests.. */
 		{19, 0, 0+100, 10, 0, 0},

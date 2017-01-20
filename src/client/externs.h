@@ -294,9 +294,10 @@ extern player_race *race_info;
 extern player_class *class_info;
 extern player_trait *trait_info;
 
-extern char race_diz[MAX_RACE][12][61];
-extern char class_diz[MAX_CLASS][12][61];
-extern char trait_diz[MAX_TRAIT][12][61];
+//the +16 are just for some future-proofing, to avoid needing to update the client
+extern char race_diz[MAX_RACE + 16][12][61];
+extern char class_diz[MAX_CLASS + 16][12][61];
+extern char trait_diz[MAX_TRAIT + 16][12][61];
 
 extern cptr ANGBAND_DIR;
 extern cptr ANGBAND_DIR_TEXT;

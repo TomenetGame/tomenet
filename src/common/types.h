@@ -1483,8 +1483,9 @@ struct player_race {
 typedef struct player_class player_class;
 struct player_class {
 	cptr title;			/* Type of class */
-
-        byte color;                     /* @ color */
+	byte color;                     /* @ color */
+	bool hidden;			/* Class isn't displayed in the 'Choose class' screen? */
+	byte base_class;		/* Used if 'hidden': From which base class does this class result? */
 
 	s16b c_adj[6];			/* Class stat modifier */
 	s16b min_recommend[6];		/* Recommended minimum stat just for informing the user */
@@ -1508,17 +1509,17 @@ struct player_class {
 	s16b x_thb;			/* extra to hit (bows) */
 
 	s16b c_mhp;			/* Class hit-dice adjustment */
-        s16b c_exp;			/* Class experience factor */
+	s16b c_exp;			/* Class experience factor */
 
-        struct {
-                s16b skill;
+	struct {
+		s16b skill;
 
-                char vmod;
-                s32b value;
+		char vmod;
+		s32b value;
 
-                char mmod;
-                s16b mod;
-        } skills[MAX_SKILLS];
+		char mmod;
+		s16b mod;
+	} skills[MAX_SKILLS];
 };
 
 

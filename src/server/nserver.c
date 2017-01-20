@@ -1858,7 +1858,11 @@ static int Handle_setup(int ind) {
 			b4 = class_info[i].c_adj[3]+50;
 			b5 = class_info[i].c_adj[4]+50;
 			b6 = class_info[i].c_adj[5]+50;
-			Packet_printf(&connp->c, "%c%c%c%c%c%c%s", b1, b2, b3, b4, b5, b6, class_info[i].title);
+			/* for ENABLE_HELLKNIGHT/ENABLE_CPRIEST too: de-hardcode the hiding of classes */
+			if (is_newer_than(&connp->version, 4, 7, 0, 2, 0, 0))
+				Packet_printf(&connp->c, "%c%c%c%c%c%c%s", b1, b2, b3, b4, b5, b6, class_info[i].hidden ? format("%02d%s", class_info[i].base_class, class_info[i].title) : class_info[i].title);
+			else
+				Packet_printf(&connp->c, "%c%c%c%c%c%c%s", b1, b2, b3, b4, b5, b6, class_info[i].title);
 			if (is_newer_than(&connp->version, 4, 4, 3, 1, 0, 0))
 				for (j = 0; j < 6; j++)
 					Packet_printf(&connp->c, "%c", class_info[i].min_recommend[j]);

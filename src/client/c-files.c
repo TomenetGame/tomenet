@@ -2149,12 +2149,11 @@ void load_birth_file(cptr name) {
 	dna_class = (s16b)tmp;
 
 	dna_class_title = class_info[dna_class].title;
-	/* Unhack for ENABLE_DEATHKNIGHT: Share slot with Paladin class choice */
-	if (dna_class == CLASS_DEATHKNIGHT) dna_class = CLASS_PALADIN;
-	/* Unhack for ENABLE_HELLKNIGHT: Share slot with Paladin class choice */
-	if (dna_class == CLASS_HELLKNIGHT) dna_class = CLASS_PALADIN;
-	/* Unhack for ENABLE_CPRIEST: Share slot with Priest class choice */
-	if (dna_class == CLASS_CPRIEST) dna_class = CLASS_PRIEST;
+	/* Hack class names of 'hidden' classes to reflect their base class from which they stem */
+	if (!is_newer_than(&server_version, 4, 7, 0, 2, 0, 0)) { //old way: hardcoded
+		/* Unhack for ENABLE_DEATHKNIGHT: Share slot with Paladin class choice */
+		if (dna_class == CLASS_DEATHKNIGHT) dna_class = CLASS_PALADIN;
+	} else if (class_info[dna_class].hidden) dna_class = class_info[dna_class].base_class;
 
 	r = fscanf(fp, "\n%d", &tmp); //Race
 	if (r == EOF || r == 0) return; // Failed to read from file

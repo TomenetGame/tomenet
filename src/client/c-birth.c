@@ -767,18 +767,27 @@ static bool choose_class(void) {
 	player_race *rp_ptr = &race_info[race];
 	bool sel_ok = FALSE;
 #endif
-	int i, j, l, m, n, sel = 0;
+	int i, j = 0, l, m, n, sel = 0, hidden = 0, cmap[MAX_CLASS + 16]; //+16 for future-proofing reserve..
 	char c = '\0';
 	char out_val[160];
-	bool hazard = FALSE, dk = FALSE, hk = FALSE, cp = FALSE;
+	bool hazard = FALSE;
 
 	/* ENABLE_DEATHKNIGHT/ENABLE_HELLKNIGHT/ENABLE_CPRIEST duplicate slot hack (Paladin vs Death Knight/Hell Knight vs Corrupted Priest) */
-	if (Setup.max_class >= 14) {
-		if (Setup.max_class >= 16) cp = TRUE;
-		if (Setup.max_class >= 15) hk = TRUE;
-		dk = TRUE;
-		Setup.max_class = 13;
+	if (!is_newer_than(&server_version, 4, 7, 0, 2, 0, 0)) {
+		//old server: hardcoded
+		if (Setup.max_class >= 14) {
+			hidden = Setup.max_class - 13;
+		}
+	} else {
+		for (i = 0; i < Setup.max_class; i++) {
+			if (class_info[i].hidden) hidden++;
+			else {
+				cmap[j] = i;
+				j++;
+			}
+		}
 	}
+	Setup.max_class -= hidden;
 
 	/* Prepare to list */
 	l = 2;
@@ -798,11 +807,11 @@ class_redraw:
 
 	/* Display the legal choices */
 	for (j = 0; j < Setup.max_class; j++) {
-		cp_ptr = &class_info[j];
+		cp_ptr = &class_info[cmap[j]];
 		sprintf(out_val, "%c) %s", I2A(j), cp_ptr->title);
 
 #ifndef CLASS_BEFORE_RACE
-		if (!(rp_ptr->choice & BITS(j))) {
+		if (!(rp_ptr->choice & BITS(cmap[j]))) {
 			c_put_str(TERM_L_DARK, out_val, m, l);
 			if (!sel_ok) sel++;
 		} else
@@ -823,10 +832,10 @@ class_redraw:
 	}
 #ifndef CLASS_BEFORE_RACE
 	c_put_str(TERM_L_BLUE, "                    ", 7, CHAR_COL);
-	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, dna_class_title, 7, CHAR_COL);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class + hidden)) c_put_str(TERM_SLATE, dna_class_title, 7, CHAR_COL);
 #else
 	c_put_str(TERM_L_BLUE, "                    ", 5, CHAR_COL);
-	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) c_put_str(TERM_SLATE, dna_class_title, 5, CHAR_COL);
+	if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class + hidden)) c_put_str(TERM_SLATE, dna_class_title, 5, CHAR_COL);
 #endif
 
 	if (auto_reincarnation) {
@@ -926,8 +935,23 @@ class_redraw:
 		else j = (islower(c) ? A2I(c) : -1);
 		
 		if (c == '#') {
-			if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class)) j = dna_class;
-			else {
+			if (valid_dna && (dna_class >= 0 && dna_class < Setup.max_class + hidden)) {
+#if 0
+				j = dna_class;
+#else
+				for (i = 0; i < Setup.max_class; i++) {
+					if (cmap[i] != dna_class) continue;
+					j = i;
+					break;
+				}
+				if (i == Setup.max_class) {
+					valid_dna = 0;
+					hazard = FALSE,
+					auto_reincarnation = FALSE;
+					continue;
+				}
+#endif
+			} else {
 				valid_dna = 0;
 				hazard = FALSE;
 				auto_reincarnation = FALSE;
@@ -942,11 +966,11 @@ class_redraw:
 
 		if ((j < Setup.max_class) && (j >= 0)) {
 #ifndef CLASS_BEFORE_RACE
-			if (!(rp_ptr->choice & BITS(j))) continue;
+			if (!(rp_ptr->choice & BITS(cmap[j]))) continue;
 #endif
 
-			class = j;
-			cp_ptr = &class_info[j];
+			class = cmap[j];
+			cp_ptr = &class_info[class];
 #ifndef CLASS_BEFORE_RACE
 			c_put_str(TERM_L_BLUE, "                    ", 7, CHAR_COL);
 			c_put_str(TERM_L_BLUE, (char*)cp_ptr->title, 7, CHAR_COL);
@@ -961,9 +985,7 @@ class_redraw:
 	}
 
 	/* Unhack */
-	if (cp) Setup.max_class = 16;
-	else if (hk) Setup.max_class = 15;
-	else if (dk) Setup.max_class = 14;
+	Setup.max_class += hidden;
 
 	clear_diz();
 	clear_from(n - 3); /* -3 so beginner-warnings are also cleared */
@@ -1758,9 +1780,10 @@ void get_char_info(void) {
 
 	/* Load tables from LUA into memory --
 	   could just request it from LUA on demand instead. - C. Blue */
-	memset(race_diz, 0, sizeof(char) * MAX_RACE * 12 * 61);
-	memset(class_diz, 0, sizeof(char) * MAX_CLASS * 12 * 61);
-	memset(trait_diz, 0, sizeof(char) * MAX_TRAIT * 12 * 61);
+	   //the +16 are just for some future-proofing, to avoid needing to update the client
+	memset(race_diz, 0, sizeof(char) * (MAX_RACE + 16) * 12 * 61);
+	memset(class_diz, 0, sizeof(char) * (MAX_CLASS + 16) * 12 * 61);
+	memset(trait_diz, 0, sizeof(char) * (MAX_TRAIT + 16) * 12 * 61);
 	if (is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) {
 		for (j = 0; j < 12; j++) {
 			for (i = 0; i < Setup.max_race; i++) {

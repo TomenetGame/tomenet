@@ -815,7 +815,15 @@ int Net_setup(void) {
 
 				for (i = 0; i < Setup.max_class; i++) {
 					Packet_scanf(&cbuf, "%c%c%c%c%c%c%s", &b1, &b2, &b3, &b4, &b5, &b6, str);
-					class_info[i].title = string_make(str);
+
+					/* Servers > 4.7.0.2 can start class name with a number to indicate extra info: 'hidden' classes. */
+					if (isdigit(str[0])) {
+						class_info[i].hidden = TRUE;
+						class_info[i].base_class = atoi(str);
+						class_info[i].title = string_make(str + 2);
+					}
+					else class_info[i].title = string_make(str);
+
 					class_info[i].c_adj[0] = b1 - 50;
 					class_info[i].c_adj[1] = b2 - 50;
 					class_info[i].c_adj[2] = b3 - 50;
