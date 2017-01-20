@@ -2111,16 +2111,9 @@ player_race race_info[MAX_RACE] = {
 		72,  16, 150, 55,
 		66,  8, 130, 40,
 		10,
-		/* Plan is to disable warrior and archer since they do not have SP */
-#ifdef ENABLE_HELLKNIGHT
- #ifdef ENABLE_CPRIEST
-		(CF_ALL&~CFW&~CFA)|CFH|CFE,
- #else
-		(CF_ALL&~CFW&~CFA)|CFH,
- #endif
-#else
+		/* Warrior and archer are disabled since they do not have MP */
+		/* ENABLE_HELLKNIGHT/ENABLE_CPRIEST note: These shouldn't have flags to be allowed, since they cannot be 'created' on birth: */
 		CF_ALL&~CFW&~CFA,
-#endif
 		125,
 
 		{
