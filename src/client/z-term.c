@@ -734,7 +734,7 @@ void flicker() {
 #endif
 
 #ifdef ATMOSPHERIC_INTRO
-				if (attr == TERM_FIRE || attr == TERM_FIRETHIN)
+				if (!in_game && (attr == TERM_FIRE || attr == TERM_FIRETHIN))
 					switch (ch) {
 					case '^':
 						switch (rand_int(4)) {
