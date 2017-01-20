@@ -1884,11 +1884,13 @@
 #ifdef ENABLE_DEATHKNIGHT
  #define CFK	0x2000	/* Death Knight */
 #endif
-#ifdef ENABLE_HELLKNIGHT
- #define CFH	0x4000	/* Hell Knight */
-#endif
-#ifdef ENABLE_CPRIEST
- #define CFE	0x8000	/* Corrupted 'Priest' */
+#if 0 /* not needed, since these cannot be created on birth! -- so we can save the flags for something else in the future */
+ #ifdef ENABLE_HELLKNIGHT
+  #define CFH	0x4000	/* Hell Knight */
+ #endif
+ #ifdef ENABLE_CPRIEST
+  #define CFE	0x8000	/* Corrupted 'Priest' */
+ #endif
 #endif
 
 /*
