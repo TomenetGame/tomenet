@@ -322,5 +322,5 @@ BLOODSACRIFICE = add_spell {
 	end,
 	["desc"] = 	{ "Inflict a mortal wound on yourself, causing the warped powers of chaos",
 			  "to temporarily change your form into a terrifying Bloodthirster.",
-			  "--- This spell is only usable by corrupted priests and hell knights. ---", }
+			  "--- This spell is only usable by Maia Priests and Hell Knights. ---", }
 }
