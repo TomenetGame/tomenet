@@ -557,7 +557,11 @@
  */
 #ifdef ENABLE_DEATHKNIGHT
  #ifdef ENABLE_HELLKNIGHT
-  #define MAX_CLASS	15
+  #ifdef ENABLE_CPRIEST
+   #define MAX_CLASS	16
+  #else
+   #define MAX_CLASS	15
+  #endif
  #else
   #define MAX_CLASS	14
  #endif
@@ -1848,6 +1852,9 @@
  #define CLASS_DEATHKNIGHT	13
  #ifdef ENABLE_HELLKNIGHT
   #define CLASS_HELLKNIGHT	14
+  #ifdef ENABLE_CPRIEST
+   #define CLASS_CPRIEST	15
+  #endif
  #endif
 #endif
 
@@ -1879,6 +1886,9 @@
 #endif
 #ifdef ENABLE_HELLKNIGHT
  #define CFH	0x4000	/* Hell Knight */
+#endif
+#ifdef ENABLE_CPRIEST
+ #define CFE	0x8000	/* Corrupted 'Priest' */
 #endif
 
 /*

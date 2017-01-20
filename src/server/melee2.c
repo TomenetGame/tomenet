@@ -7055,6 +7055,11 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 					else
 						target_toughness = 0;
 					break;
+#ifdef ENABLE_CPRIEST
+				case CLASS_CPRIEST:
+					target_toughness = 0; //we're definitely not a healer, but still zero probably
+					break;
+#endif
 				}
 
 				/* Note: Leaving out 'protection from evil' scroll/prayer for now, since that one is primarily effective

@@ -83,8 +83,11 @@ static s16b spell_chance(int Ind, int realm, magic_type *s_ptr)
 
 	/* Non mage/sorceror/priest characters never get too good */
 #if 0 // NEED to find a good way to do that without class
-	if ((p_ptr->pclass != CLASS_MAGE) && (p_ptr->pclass != CLASS_PRIEST) && (p_ptr->pclass != CLASS_SORCERER))
-	{
+	if ((p_ptr->pclass != CLASS_MAGE) && (p_ptr->pclass != CLASS_PRIEST)
+ #ifdef ENABLE_CPRIEST
+	    && (p_ptr->pclass != CLASS_CPRIEST)
+ #endif
+	    && (p_ptr->pclass != CLASS_SORCERER)) {
 		if (minfail < 5) minfail = 5;
 	}
 #else

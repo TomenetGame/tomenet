@@ -770,11 +770,12 @@ static bool choose_class(void) {
 	int i, j, l, m, n, sel = 0;
 	char c = '\0';
 	char out_val[160];
-	bool hazard = FALSE, dk = FALSE, hk = FALSE;
+	bool hazard = FALSE, dk = FALSE, hk = FALSE, cp = FALSE;
 
-	/* ENABLE_DEATHKNIGHT/ENABLE_HELLKNIGHT duplicate slot hack (Paladin vs Death Knight/Hell Knight) */
-	if (Setup.max_class == 14 || Setup.max_class == 15) {
-		if (Setup.max_class == 15) hk = TRUE;
+	/* ENABLE_DEATHKNIGHT/ENABLE_HELLKNIGHT/ENABLE_CPRIEST duplicate slot hack (Paladin vs Death Knight/Hell Knight vs Corrupted Priest) */
+	if (Setup.max_class >= 14) {
+		if (Setup.max_class >= 16) cp = TRUE;
+		if (Setup.max_class >= 15) hk = TRUE;
 		dk = TRUE;
 		Setup.max_class = 13;
 	}
@@ -960,7 +961,8 @@ class_redraw:
 	}
 
 	/* Unhack */
-	if (hk) Setup.max_class = 15;
+	if (cp) Setup.max_class = 16;
+	else if (hk) Setup.max_class = 15;
 	else if (dk) Setup.max_class = 14;
 
 	clear_diz();

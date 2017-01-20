@@ -487,6 +487,9 @@ static void prt_bpr(int Ind) {
 	case CLASS_SHAMAN:
 	case CLASS_ADVENTURER:
 	case CLASS_RUNEMASTER:
+#ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:
+#endif
 	case CLASS_PRIEST:
 	case CLASS_DRUID:
 		if (p_ptr->num_blow == 1) attr = TERM_YELLOW;
@@ -1104,6 +1107,9 @@ void calc_mana(int Ind) {
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels +
 			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels) / 5000;
 		break;
+#ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:
+#endif
 	case CLASS_PRIEST:
 		/* few Int, much Wis --170 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
@@ -1198,6 +1204,9 @@ void calc_mana(int Ind) {
 	case CLASS_SHAMAN:
 	case CLASS_DRUID:
 	/* in theory these actually don't use 'magic mana' at all?: */
+#ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:
+#endif
 	case CLASS_PRIEST: /* maybe Shamans are treated too good in comparison here */
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 130;
 		break;
@@ -1312,6 +1321,9 @@ void calc_mana(int Ind) {
 	switch (p_ptr->pclass) {
 	case CLASS_MAGE: max_wgt = 150 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 	case CLASS_RANGER: max_wgt = 240 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+#ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:
+#endif
 	case CLASS_PRIEST: max_wgt = 250 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
 #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
@@ -2651,6 +2663,9 @@ int calc_blows_obj(int Ind, object_type *o_ptr) {
 		case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
 		case CLASS_MAGE: num = 1; wgt = 40; mul = 2; break;
 //was num = 3; ; 
+#ifdef ENABLE_CPRIEST
+		case CLASS_CPRIEST:
+#endif
 		case CLASS_PRIEST: num = 4; wgt = 35; mul = 4; break;//mul3
 //was num = 5; ; 
 		case CLASS_ROGUE: num = 5; wgt = 30; mul = 4; break; /* was mul = 3 - C. Blue - EXPERIMENTAL */
@@ -5133,6 +5148,9 @@ void calc_boni(int Ind) {
 		switch (p_ptr->pclass) {
 		case CLASS_ADVENTURER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
 		case CLASS_WARRIOR: p_ptr->shield_deflect = p_ptr->shield_deflect; break;
+#ifdef ENABLE_CPRIEST
+		case CLASS_CPRIEST:
+#endif
 		case CLASS_PRIEST: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
 		case CLASS_MAGE: p_ptr->shield_deflect = (p_ptr->shield_deflect * 2 + 4) / 6; break;
 		case CLASS_ARCHER: p_ptr->shield_deflect = (p_ptr->shield_deflect * 4 + 2) / 6; break;
@@ -5189,6 +5207,9 @@ void calc_boni(int Ind) {
 		switch (p_ptr->pclass) {
 		case CLASS_ADVENTURER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4 + 2) / 6; break;
 		case CLASS_WARRIOR: p_ptr->weapon_parry = p_ptr->weapon_parry; break;
+ #ifdef ENABLE_CPRIEST
+		case CLASS_CPRIEST:
+ #endif
 		case CLASS_PRIEST: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4 + 2) / 6; break;
 		case CLASS_MAGE: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2 + 4) / 6; break;
 		case CLASS_ARCHER: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4 + 2) / 6; break;
@@ -5517,10 +5538,16 @@ void calc_boni(int Ind) {
 	}
 
 	/* Priest weapon penalty for non-blessed edged weapons (assumes priests cannot dual-wield) */
-	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
-	    (p_ptr->pclass == CLASS_PRIEST) && (!p_ptr->bless_blade) &&
-	    ((o_ptr->tval == TV_SWORD) || (o_ptr->tval == TV_POLEARM) ||
-	    (o_ptr->tval == TV_AXE))) {
+	if (p_ptr->inventory[INVEN_WIELD].k_idx && (
+	    (p_ptr->pclass == CLASS_PRIEST && !p_ptr->bless_blade &&
+	    (o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM || o_ptr->tval == TV_AXE))
+#ifdef ENABLE_CPRIEST
+	    || (p_ptr->pclass == CLASS_CPRIEST && p_ptr->bless_blade)
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	    || (p_ptr->pclass == CLASS_HELLKNIGHT && p_ptr->bless_blade)
+#endif
+	    )) {
 		/* Reduce the real bonuses */
 		/*p_ptr->to_h -= 2;
 		p_ptr->to_d -= 2;*/

@@ -372,22 +372,8 @@ static void sense_inventory(int Ind) {
 	/* No sensing when confused */
 	if (p_ptr->confused) return;
 
-#if 0 /* no more linear ;) */
-	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_COMBAT, 130))) ok_combat = TRUE;
-	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_ARCHERY, 130))) ok_archery = TRUE;
-	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_MAGIC, 130))) {
-		ok_magic = TRUE;
-		ok_curse = TRUE;
-	}
-	if (!rand_int(133 - get_skill_scale(p_ptr, SKILL_PRAY, 130))) ok_curse = TRUE;
-#else
      /* instead, allow more use at lower SKILL_COMBAT levels already,
 	otherwise huge stacks of ID scrolls will remain mandatory for maybe too long a time - C. Blue */
-//	if (!rand_int(399 / (get_skill_scale(p_ptr, SKILL_COMBAT, 97) + 3))) ok_combat = TRUE;
-//	if (!rand_int(2 * (101 - (get_skill_scale(p_ptr, SKILL_COMBAT, 70) + 30)))) ok_combat = TRUE;
-//	if (!rand_int(102 - (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20))) ok_combat = TRUE;
-//	if (!rand_int(102 - (get_skill_scale(p_ptr, SKILL_COMBAT, 70) + 30))) ok_combat = TRUE;
-//	if (!rand_int(2000 / (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20) - 18)) ok_combat = TRUE;
 	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20) - 28)) ok_combat = TRUE;
 	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_ARCHERY, 80) + 20) - 28)) ok_archery = TRUE;
 	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_MAGIC, 80) + 20) - 28)) {
@@ -396,7 +382,6 @@ static void sense_inventory(int Ind) {
 	}
 	/* note: SKILL_PRAY is currently unused */
 	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse = TRUE;
-#endif
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
@@ -417,26 +402,15 @@ static void sense_inventory(int Ind) {
 	}
 
 	/* extra class-specific boni */
-#if 0
-	i = 150 - ((p_ptr->lev <= 50) ? (p_ptr->lev * 2) : (p_ptr->lev + 50));
-	if ((p_ptr->pclass == CLASS_PRIEST) && !rand_int(i)) ok_curse = TRUE;
- #if 0 /* out of line? */
-	if ((p_ptr->pclass == CLASS_ISTAR ||
-	    p_ptr->pclass == CLASS_SHAMAN) && !rand_int(i)) ok_magic = TRUE;
-	if ((p_ptr->pclass == CLASS_MINDCRAFTER) && !rand_int(i)) {
-		ok_curse = TRUE;
-		ok_magic = TRUE;
-		ok_combat = TRUE;
-	}
- #endif
-#endif
-#if 1
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) force_curse = ok_curse = TRUE;
-	else if (p_ptr->pclass == CLASS_PRIEST) {
+	else if (p_ptr->pclass == CLASS_PRIEST
+ #ifdef ENABLE_CPRIEST
+	    || p_ptr->pclass == CLASS_CPRIEST
+ #endif
+	    ) {
 		//i = (p_ptr->lev < 35) ? (135 - (p_ptr->lev + 10) * 3) : 1;
 		if (p_ptr->lev >= 35 || !rand_int(3000 / (p_ptr->lev * 2 + 30) - 29)) force_curse = ok_curse = TRUE;
 	}
-#endif
 
 	/* nothing to feel? exit */
 	if (!ok_combat && !ok_magic && !ok_archery && !ok_curse) return;
@@ -769,8 +743,7 @@ int pseudo_id_result(object_type *o_ptr) {
 /*
  * Regenerate hit points				-RAK-
  */
-static void regenhp(int Ind, int percent)
-{
+static void regenhp(int Ind, int percent) {
 	player_type *p_ptr = Players[Ind];
 
 	s32b        new_chp, new_chp_frac;
@@ -851,8 +824,7 @@ static void regenmana(int Ind, int percent) {
 #ifdef pelpel
 
 /* Wipeout the effects	- Jir - */
-static void erase_effects(int effect)
-{
+static void erase_effects(int effect) {
 	int i, j, l;
 	effect_type *e_ptr = &effects[effect];
 	worldpos *wpos = &e_ptr->wpos;
@@ -5475,7 +5447,12 @@ static void process_player_end(int Ind) {
 			p_ptr->martyr_timeout--;
 			if (!p_ptr->martyr_timeout) {
 #ifdef ENABLE_HELLKNIGHT
-				if (p_ptr->ptrait == TRAIT_CORRUPTED)
+				if (p_ptr->ptrait == TRAIT_CORRUPTED && (
+				    p_ptr->pclass == CLASS_HELLKNIGHT
+ #ifdef ENABLE_CPRIEST
+				    || p_ptr->pclass == CLASS_CPRIEST
+ #endif
+				    ))
 					msg_print(Ind, "\376The maelstrom of chaos is ready to accept your sacrifice.");
 				else
 #endif

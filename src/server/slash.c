@@ -908,7 +908,7 @@ void do_slash_cmd(int Ind, char *message) {
 				bool found = FALSE;
 
 				c[1] = ((p_ptr->pclass == CLASS_PRIEST) ||
-				    (p_ptr->pclass == CLASS_PALADIN)? 'p':'m'); //CLASS_DEATHKNIGHT
+				    (p_ptr->pclass == CLASS_PALADIN)? 'p':'m'); //CLASS_DEATHKNIGHT, CLASS_HELLKNIGHT, CLASS_CPRIEST
 				if (p_ptr->pclass == CLASS_WARRIOR) c[1] = 'n';
 				c[2] = *token[1];
 				c[3] = '\0';
@@ -2034,7 +2034,12 @@ void do_slash_cmd(int Ind, char *message) {
 		}
 		else if (prefix(message, "/martyr") || prefix(message, "/mar")) {
 #ifdef ENABLE_HELLKNIGHT
-			if (p_ptr->ptrait == TRAIT_CORRUPTED) {
+			if (p_ptr->ptrait == TRAIT_CORRUPTED && (
+			    p_ptr->pclass == CLASS_HELLKNIGHT
+ #ifdef ENABLE_CPRIEST
+			    || p_ptr->pclass == CLASS_CPRIEST
+ #endif
+			    )) {
 				if (exec_lua(0, format("return get_level(%d, BLOODSACRIFICE, 50, 0)", Ind)) < 1) {
 					msg_print(Ind, "You know not how to open the maelstrom of chaos.");
 					return;

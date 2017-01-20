@@ -4474,6 +4474,10 @@ static int Receive_play(int ind) {
 		/* Unhack duplicate class slot usage (Paladin/Hell Knight) */
 		if (race == RACE_MAIA && trait == TRAIT_CORRUPTED && class == CLASS_PALADIN) class = CLASS_HELLKNIGHT;
 #endif
+#ifdef ENABLE_CPRIEST
+		/* Unhack duplicate class slot usage (Priest/Corrupted Priest) */
+		if (race == RACE_MAIA && trait == TRAIT_CORRUPTED && class == CLASS_PRIEST) class = CLASS_CPRIEST;
+#endif
 
 		/* hacks for forcibly dedicated characters */
 		if ((connp->sex & MODE_DED_PVP) &&
@@ -5355,6 +5359,9 @@ int Send_stamina(int Ind, int mst, int cst) {
 	/* can we use stamina at all? */
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
 	    (p_ptr->pclass == CLASS_MAGE || p_ptr->pclass == CLASS_PRIEST ||
+#ifdef ENABLE_CPRIEST
+	    p_ptr->pclass == CLASS_CPRIEST ||
+#endif
 	    p_ptr->pclass == CLASS_SHAMAN)
 #ifdef ENABLE_DRACONIAN_TRAITS
 	    /* may breathe elements for stamina */

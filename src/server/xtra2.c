@@ -3654,7 +3654,7 @@ static void do_Maia_skill(int Ind, int s, int m) {
 	/* Update it after the re-increasing has been finished */
 	Send_skill_info(Ind, s, FALSE);
 }
-#ifdef ENABLE_HELLKNIGHT
+#ifdef ENABLE_HELLKNIGHT /* and also for ENABLE_CPRIEST */
 /* Don't multiply but set a skill's base value and modifier to a fixed value */
 static void do_Maia_skill2(int Ind, int s, int v, int m) {
 	/* Save old skill value */
@@ -3712,6 +3712,8 @@ void shape_Maia_skills(int Ind) {
 			respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
 			Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
 
+			//hardcoded skill modifiers below...ugh (keep consistent with class template in tables.c)
+
 			/* Fix some skills that have changed from the Paladin template:
 			   hereticism; axe, polearm, blunt; all bloodmagic */
  #ifdef ENABLE_OHERETICISM
@@ -3733,6 +3735,44 @@ void shape_Maia_skills(int Ind) {
 			Send_reliable(p_ptr->conn);
 		}
 #endif
+#ifdef ENABLE_CPRIEST
+		if (p_ptr->pclass == CLASS_CPRIEST) {
+			respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
+			Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
+			respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
+			Send_skill_info(Ind, SKILL_HCURING, FALSE);
+			respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
+			p_ptr->s_info[SKILL_HDEFENSE].value = 0; //Paladin starts with +1000 in this skill
+			Send_skill_info(Ind, SKILL_HDEFENSE, FALSE);
+			respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
+			Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
+
+			//hardcoded skill modifiers below...ugh (keep consistent with class template in tables.c)
+
+			/* Fix some skills that have changed from the Paladin template:
+			   hereticism; axe, polearm, blunt; all bloodmagic */
+ #ifdef ENABLE_OHERETICISM /* (should actually always be defined if Corrupted Priests are enabled) */
+			p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE; //expand Occultism, to ensure the player notices it on the skill chart
+			do_Maia_skill2(Ind, SKILL_OHERETICISM, 0, ((1150 * 7) / 10 * 21) / 10);
+ #endif
+			respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
+			p_ptr->s_info[SKILL_BLUNT].mod = 0;
+			Send_skill_info(Ind, SKILL_BLUNT, FALSE);
+			/* Note: Corrupted trait doesn't give sword bonus but axe,
+			   but since Enlightened trait gives priests melee bonus (blunt), we need Corrupted Priests to be on par,
+			   as if their Blunt skill was just transferred to become Sword.. a bit inconsistent :/ */
+			//do_Maia_skill2(Ind, SKILL_SWORD, 0, 600);
+			do_Maia_skill2(Ind, SKILL_SWORD, 0, (600 * 13) / 10);
+
+			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
+			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1400 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1400 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1500 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1300 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3);
+			Send_reliable(p_ptr->conn);
+		}
+#endif
 
 		p_ptr->s_info[SKILL_HOFFENSE].mod = 0;
 		p_ptr->s_info[SKILL_HCURING].mod = 0;
@@ -3745,7 +3785,12 @@ void shape_Maia_skills(int Ind) {
 		p_ptr->s_info[SKILL_OSPIRIT].mod = 0;
  #ifdef ENABLE_OHERETICISM
   #ifdef ENABLE_HELLKNIGHT
-		if (p_ptr->pclass != CLASS_PALADIN) do_Maia_skill(Ind, SKILL_OHERETICISM, 21); //for Paladins it's been handled above already
+		if (p_ptr->pclass != CLASS_PALADIN
+   #ifdef ENABLE_CPRIEST
+		    && p_ptr->pclass != CLASS_PRIEST
+   #endif
+		    )
+			do_Maia_skill(Ind, SKILL_OHERETICISM, 21); //for Paladins/Priests it's been handled above already
   #endif
  #endif
 #endif
@@ -3755,8 +3800,12 @@ void shape_Maia_skills(int Ind) {
 		do_Maia_skill(Ind, SKILL_AIR, 17);
 		do_Maia_skill(Ind, SKILL_CONVEYANCE, 17);
 		do_Maia_skill(Ind, SKILL_UDUN, 20);
-#ifdef ENABLE_HELLKNIGHT
-	    if (p_ptr->pclass != CLASS_PALADIN) {
+#ifdef ENABLE_HELLKNIGHT /* blood magic skills were already converted above; this code here is just for 'normal' classes */
+	    if (p_ptr->pclass != CLASS_PALADIN
+ #ifdef ENABLE_CPRIEST
+	     && p_ptr->pclass != CLASS_CPRIEST
+ #endif
+	     ) {
 #endif
 		do_Maia_skill(Ind, SKILL_TRAUMATURGY, 30);
 		do_Maia_skill(Ind, SKILL_NECROMANCY, 30);
@@ -3774,6 +3823,14 @@ void shape_Maia_skills(int Ind) {
 #ifdef ENABLE_HELLKNIGHT
 		if (p_ptr->pclass == CLASS_PALADIN) {
 			p_ptr->pclass = CLASS_HELLKNIGHT;
+			p_ptr->cp_ptr = &class_info[p_ptr->pclass];
+			p_ptr->redraw |= PR_BASIC; //PR_TITLE;
+			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		}
+#endif
+#ifdef ENABLE_CPRIEST
+		if (p_ptr->pclass == CLASS_PRIEST) {
+			p_ptr->pclass = CLASS_CPRIEST;
 			p_ptr->cp_ptr = &class_info[p_ptr->pclass];
 			p_ptr->redraw |= PR_BASIC; //PR_TITLE;
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);

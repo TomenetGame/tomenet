@@ -2153,6 +2153,8 @@ void load_birth_file(cptr name) {
 	if (dna_class == CLASS_DEATHKNIGHT) dna_class = CLASS_PALADIN;
 	/* Unhack for ENABLE_HELLKNIGHT: Share slot with Paladin class choice */
 	if (dna_class == CLASS_HELLKNIGHT) dna_class = CLASS_PALADIN;
+	/* Unhack for ENABLE_CPRIEST: Share slot with Priest class choice */
+	if (dna_class == CLASS_CPRIEST) dna_class = CLASS_PRIEST;
 
 	r = fscanf(fp, "\n%d", &tmp); //Race
 	if (r == EOF || r == 0) return; // Failed to read from file

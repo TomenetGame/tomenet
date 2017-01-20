@@ -94,6 +94,10 @@
 #ifdef ENABLE_HELLKNIGHT
  #define CLASS_HELLKNIGHT	14
 #endif
+#ifdef ENABLE_CPRIEST
+ #define CLASS_CPRIEST		15
+#endif
+
 
 /* for spell-casting */
 #define TRAIT_ENLIGHTENED	14	/* Maiar */
@@ -176,10 +180,10 @@
 /* for future use, if we ever can get these balanced in a sensible manner (seems unlikely without heavy changes to all other game elements oO) */
 #define SKILL_WEAPONSMITHING	62
 #define SKILL_ARMOURSMITHING	63
-#define SKILL_FLETCHING>	64
+#define SKILL_FLETCHING		64
 #define SKILL_JEWELCRAFT	65
-#define SKILL_TOOLCRAFT>	66
-#define SKILL_TAILORING>	67
+#define SKILL_TOOLCRAFT		66
+#define SKILL_TAILORING		67
 #define SKILL_ALCHEMY		68
 #define SKILL_ENCHANTING	69
 
@@ -236,7 +240,7 @@
 
 /* for future use, so no client update will be required */
 #define SKILL_SOULFEASTING	102	/* could switch with SKILL_NECROMANCY if ever needed */
-#define SKILL_SUMMONING>	103
+#define SKILL_SUMMONING		103
 #define SKILL_TAMING		104
 
 #define SKILL_BLOOD_MAGIC	109 /* dummy */

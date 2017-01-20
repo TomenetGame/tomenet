@@ -7865,6 +7865,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_DRUID:
 			melee_choice = 5;
 		case CLASS_ADVENTURER:
+#ifdef ENABLE_CPRIEST
+		case CLASS_CPRIEST:
+#endif
 		case CLASS_PRIEST:
 			mha = TRUE;
 			break;
@@ -8373,6 +8376,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	case CLASS_MAGE:
 	case CLASS_RUNEMASTER:
 	case CLASS_MINDCRAFTER:
+#ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:
+#endif
 	case CLASS_PRIEST:
 	case CLASS_PALADIN:
 #ifdef ENABLE_DEATHKNIGHT
@@ -8437,6 +8443,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case CLASS_RANGER:
 			case CLASS_ROGUE:
 			case CLASS_MINDCRAFTER:
+#ifdef ENABLE_CPRIEST
+			case CLASS_CPRIEST:
+#endif
 			case CLASS_PRIEST:
 			case CLASS_PALADIN:
 #ifdef ENABLE_DEATHKNIGHT
@@ -8481,6 +8490,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_MINDCRAFTER:
 			if (o_ptr->name2 == EGO_WISDOM && !o_ptr->name2b) continue;
 			break;
+#ifdef ENABLE_CPRIEST
+		case CLASS_CPRIEST:
+#endif
 		case CLASS_PRIEST:
 			if (!melee_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue;
 		case CLASS_PALADIN:

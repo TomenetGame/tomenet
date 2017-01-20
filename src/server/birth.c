@@ -1032,6 +1032,9 @@ static void get_money(int Ind) {
   #if STARTEQ_TREATMENT < 3
 	switch(p_ptr->pclass){
 	case CLASS_MAGE:        p_ptr->au += 850; break;
+ #ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:
+ #endif
 	case CLASS_PRIEST:      p_ptr->au += 600; break;
 	case CLASS_SHAMAN:	p_ptr->au += 550; break;
 	case CLASS_RUNEMASTER:  p_ptr->au += 500; break;
@@ -1057,6 +1060,9 @@ static void get_money(int Ind) {
 	case CLASS_MAGE:        p_ptr->au += 1000; break;
 	case CLASS_SHAMAN:	p_ptr->au += 1000; break;
 	case CLASS_MINDCRAFTER:	p_ptr->au += 900; break;
+ #ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:
+ #endif
 	case CLASS_PRIEST:      p_ptr->au += 800; break;
 	case CLASS_RUNEMASTER:  p_ptr->au += 800; break;
 	case CLASS_ADVENTURER:	p_ptr->au += 700; break;
@@ -1324,6 +1330,16 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ 255, 255, 0 },
 	},
 #endif
+#ifdef ENABLE_CPRIEST
+	{
+		/* Corrupted Priest */
+		{ TV_BLUNT, SV_MACE, 0 },
+		{ TV_POTION, SV_POTION_HEALING, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_TERROR?.. */
+		{ TV_SOFT_ARMOR, SV_FROCK, 0},
+		{ 255, 255, 0 },
+	},
+#endif
     },
     { /* Fruit bat body */
 	{
@@ -1466,6 +1482,16 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ 255, 255, 0 },
 	},
 #endif
+#ifdef ENABLE_CPRIEST
+	{
+		/* Corrupted Priest */
+		{ TV_HELM, SV_CLOTH_CAP, 0 },
+		{ TV_POTION, SV_POTION_HEALING, 0 },
+		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_TERROR?.. */
+		{ TV_CLOAK, SV_CLOAK, 0 },
+		{ 255, 255, 0 },
+	},
+#endif
     }
 };
 void init_player_outfits(void) {
@@ -1482,6 +1508,9 @@ void init_player_outfits(void) {
 #ifdef ENABLE_HELLKNIGHT
 	   player_init[0][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
 #endif
+#ifdef ENABLE_CPRIEST
+	   player_init[0][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+#endif
 	   player_init[0][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
 
 	   //player_init[1][CLASS_PRIEST][2][2] = __lua_HHEALING;
@@ -1491,6 +1520,9 @@ void init_player_outfits(void) {
 #endif
 #ifdef ENABLE_HELLKNIGHT
 	   player_init[1][CLASS_HELLKNIGHT][3][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
+#endif
+#ifdef ENABLE_CPRIEST
+	   player_init[1][CLASS_CPRIEST][2][2] = __lua_OFEAR; //just placeholder, since class can't be "created"
 #endif
 	   player_init[1][CLASS_MINDCRAFTER][0][2] = __lua_MSCARE;
 }
@@ -3020,6 +3052,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 #ifdef ENABLE_HELLKNIGHT
 	/* Unhack the artificial duplicate slot usage of Paladin/Hell Knight class */
 	if (class == CLASS_PALADIN && trait == TRAIT_CORRUPTED) class = CLASS_HELLKNIGHT; //cannot actually happen here
+#endif
+#ifdef ENABLE_CPRIEST
+	/* Unhack the artificial duplicate slot usage of Priest/Corrupted Priest class */
+	if (class == CLASS_PRIEST && trait == TRAIT_CORRUPTED) class = CLASS_CPRIEST; //cannot actually happen here
 #endif
 
 	/* To find out which characters crash the server */

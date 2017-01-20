@@ -2113,7 +2113,11 @@ player_race race_info[MAX_RACE] = {
 		10,
 		/* Plan is to disable warrior and archer since they do not have SP */
 #ifdef ENABLE_HELLKNIGHT
+ #ifdef ENABLE_CPRIEST
+		(CF_ALL&~CFW&~CFA)|CFH|CFE,
+ #else
 		(CF_ALL&~CFW&~CFA)|CFH,
+ #endif
 #else
 		CF_ALL&~CFW&~CFA,
 #endif
@@ -2522,7 +2526,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 500, },
 #endif
-			/*{ SKILL_DIVINATION,
+		/*{ SKILL_DIVINATION,
 			'+', 1000,
 			'+', 500, },
 		{ SKILL_CONVEYANCE,
@@ -4174,6 +4178,104 @@ player_class class_info[MAX_CLASS] = {
 			'+', 800, },
 		}, },
 #endif
+#ifdef ENABLE_CPRIEST
+	{ "Priest", /* Corrupted Priest (Maia) */
+		TERM_GREEN,
+		{-1, -3, 3, -1, 0, 2},
+#if 0 /* disabled recommendations for STR/DEX because STR cannot even be reached by dwarven priests.. */
+		{19, 0, 0+100, 10, 0, 0},
+#else
+		{0, 0, 0+100, 0, 0, 0},
+#endif
+		25, 25, 32, 2,  16, 8, 48, 35,
+		7,   9, 12, 0,  0,  0, 20, 15,
+		5, 20, //2, 20,//4,20
+		//7, 20,
+
+		{{ SKILL_COMBAT,
+			'+', 0,
+			'+', 750,}, //x1.5
+		{ SKILL_MASTERY,
+			'+', 0,
+			'+', 400, },//800
+		{ SKILL_SWORD, //instead of blunt
+			'+', 0,
+			'+', 600, },
+		{ SKILL_MARTIAL_ARTS,
+			'+', 0,
+			'+', 500, }, //450
+		{ SKILL_MAGIC,
+			'+', 2000,
+			'+', 900, },
+#if 0
+		{ SKILL_SPELL,
+			'+', 0,
+			'+', 500, },
+#endif
+		/*{ SKILL_DIVINATION,
+			'+', 1000,
+			'+', 500, },
+		{ SKILL_CONVEYANCE,
+			'+', 0,
+			'+', 900,
+			},,*/
+#ifdef ENABLE_OCCULT
+		{ SKILL_OSHADOW,
+			'+', 0,
+			'+', 1150, },
+ #ifdef ENABLE_OHERETICISM
+		{ SKILL_OHERETICISM,
+			'+', 0,
+			'+', 1150, },
+ #endif
+#endif
+		{ SKILL_DEVICE,
+			'+', 1000,
+			'+', 900, },
+		{ SKILL_SNEAKINESS,
+			'+', 1000,
+			'+', 600, },//770,
+		{ SKILL_STEALTH,
+			'+', 0,
+			'+', 500, },
+		{ SKILL_DODGE,
+			'+', 0,
+			'+', 550, },
+			/* Health tree */
+		{ SKILL_HEALTH,
+			'+', 1000,
+			'+', 1000, },
+		{ SKILL_DIG,
+			'+', 0,
+			'+', 700, },
+		{ SKILL_CALMNESS,
+			'+', 0,
+			'+', 900, },
+		{ SKILL_INTERCEPT,
+			'+', 1000,
+			'+', 600, }, //400
+
+ #if 1
+		{ SKILL_NECROMANCY,
+			'+', 0,
+			'+', 1400, },
+ #endif
+		{ SKILL_TRAUMATURGY,
+			'+', 0,
+			'+', 1400, },
+		{ SKILL_AURA_FEAR,
+			'+', 0,
+			'+', 1500, },
+		{ SKILL_AURA_SHIVER,
+			'+', 0,
+			'+', 1300, },
+ #if 1
+		{ SKILL_AURA_DEATH,
+			'+', 0,
+			'+', 1300, },
+ #endif
+		}, },
+#endif
 };
 
 
@@ -4577,6 +4679,25 @@ cptr player_title[MAX_CLASS][11][4] = {
  #endif
 	},
 #endif
+#ifdef ENABLE_CPRIEST
+	/* Corrupted Priest */
+	{
+		//{"Sinner", "Sinner", "Sinner", "Sinner", },
+		{"Acolyte", "Acolyte", "Acolyte", "Acolyte", },
+		{"Adept", "Adept", "Adept", "Adept", },
+		{"Curate", "Curate", "Curate", "Curate", },
+		{"Canon", "Canon", "Canon", "Canon", },
+		//{"Fiend", "Fiend", "Fiend", "Fiend", },
+		{"Priest", "Priestess", "Priest", "Priestess", },
+		//{"Heretic", "Heretic", "Heretic", "Heretic", },
+		{"Execrator", "Execrator", "Execrator", "Execrator", },
+		{"Bishop", "Bishop", "Bishop", "Bishop", },
+		{"Arch-Bishop", "Arch-Bishop", "Arch-Bishop", "Arch-Bishop", },
+		{"Cardinal", "Cardinal", "Cardinal", "Cardinal", },
+		{"High Priest", "High Priestess", "High Priest", "H.Priestess", },
+		{"Patriarch", "Matriarch", "Patriarch", "Matriarch", },
+	},
+#endif
 };
 
 /*
@@ -4746,6 +4867,16 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 		{"Vizier of Chaos", "Vizier of Chaos", "Vizier o.C.", "Vizier o.C.", },
 		{"Demon King", "Demon Queen", "Demon King", "Demon Queen", },
 		{"Devil's Hand", "Devil's Hand", "Devil's Hand", "Devil's Hand", },
+	},
+#endif
+#ifdef ENABLE_CPRIEST
+	/* Corrupted Priest */
+	{
+		{"Protonotary", "Protonotary", "Protonotary", "Protonotary", },
+		{"Great Deceiver", "Great Deceiver", "Gr.Deceiver", "Gr.Deceiver", },
+		{"Ascended", "Ascended", "Ascended", "Ascended", },
+		{"Demi", "Demi", "Demi", "Demi", },
+		{"Chaos God", "Chaos God", "Chaos God", "Chaos God", },
 	},
 #endif
 };
