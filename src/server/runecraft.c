@@ -970,19 +970,31 @@ bool warding_rune(int Ind, byte projection, byte imperative, byte skill) {
 
 	/* 'Disarm' old runes */
 	if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
+		byte mode = lookup_player_mode(cs_ptr->sc.rune.id);
+
 		/* Restore the original cave feature */
 		cave_set_feat_live(wpos, y, x, cs_ptr->sc.rune.feat);
 
-		/* Drop rune */
+		/* Owner no longer exists? Pouf! (Because we cannot figure out the correct o_ptr->mode anymore.) */
+		if (mode == 255) {
+			/* Cleanup */
+			cs_erase(c_ptr, cs_ptr);
+			return FALSE;
+		}
+
+		/* Recover the rune */
 		invcopy(o_ptr, lookup_kind(TV_RUNE, cs_ptr->sc.rune.typ));
 		o_ptr->discount = cs_ptr->sc.rune.discount;
 		o_ptr->level = cs_ptr->sc.rune.level;
 		o_ptr->owner = cs_ptr->sc.rune.id;
-		o_ptr->mode = p_ptr->mode;
+		o_ptr->mode = mode;
 		o_ptr->note = cs_ptr->sc.rune.note;
 		o_ptr->iron_trade = p_ptr->iron_trade;
-		if (compat_pomode(Ind, o_ptr)) drop_near(0, o_ptr, -1, wpos, y, x);
-		else inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
+		if (compat_mode(p_ptr->mode, mode)) drop_near(0, o_ptr, -1, wpos, y, x);
+		else {
+			x = inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
+			if (x >= 0) inven_item_describe(Ind, x);
+		}
 		//refund cost too? - Kurzel
 
 		/* Combine and update the pack */

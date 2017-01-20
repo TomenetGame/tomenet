@@ -3785,7 +3785,7 @@ byte lookup_player_mode(int id) {
 		return ptr->mode;
 
 	/* Not found */
-	return -1L;
+	return 255;
 }
 
 /*
