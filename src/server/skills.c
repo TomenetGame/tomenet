@@ -599,11 +599,14 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
  #ifdef ENABLE_OHERETICISM
 	case SKILL_OHERETICISM:
-		if (old_value < 300 && new_value >= 300) {
+		if (old_value < 300 && new_value >= 300
+		    && p_ptr->ptrait != TRAIT_CORRUPTED
+		    && p_ptr->ptrait != TRAIT_RED && p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_GOLD) {
 			msg_print(Ind, "\374\377GYou feel resistant against fire.");
 		}
-  #if 0
-		if (old_value < 500 && new_value >= 500) {
+  #if 1
+		if (old_value < 450 && new_value >= 450
+		    && p_ptr->ptrait != TRAIT_CHAOS) {
 			msg_print(Ind, "\374\377GYou feel resistant against chaos.");
 		}
   #endif

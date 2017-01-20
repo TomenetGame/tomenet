@@ -15446,9 +15446,6 @@ school.
                     monsters of higher level.
                     (This effect does not stack with the spell/scroll, but
                     overrides them.)
-                    If both Holy Defense and Shadow school are at least 45,
-                    chaos resistance is granted. (Note that chaos resistance
-                    also always implies confusion resistance.)
 
 
 - Holy Curing
@@ -15631,9 +15628,6 @@ school.
     BONI:           At 30 grants darkness resistance.
                     At 35 and higher it will also grant a stealth bonus that
                     increases by +1 every five skill points, up to +4 at 50.
-                    If both Holy Defense and Shadow school are at least 45,
-                    chaos resistance is granted. (Note that chaos resistance
-                    also always implies confusion resistance.)
 
 
 - Spirit

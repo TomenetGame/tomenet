@@ -5835,9 +5835,11 @@ void calc_boni(int Ind) {
 		p_ptr->skill_stl += (get_skill(p_ptr, SKILL_OSHADOW) - 30) / 5;
 		csheet_boni[14].slth += (get_skill(p_ptr, SKILL_OSHADOW) - 30) / 5;
 	}
+ #if 0
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 45 && get_skill(p_ptr, SKILL_HDEFENSE) >= 45) {
 		p_ptr->resist_chaos = TRUE; csheet_boni[14].cb[3] |= CB4_RCHAO;
 	}
+ #endif
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 30) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
  #ifdef ENABLE_OHERETICISM
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 30) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
