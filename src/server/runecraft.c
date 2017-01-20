@@ -968,7 +968,6 @@ bool warding_rune(int Ind, byte projection, byte imperative, byte skill) {
 	if (!in_bounds(y, x)) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
 	c_ptr = &zcave[y][x];
 
-//CHECK: Is this buggy as in allowing cross-mode rune trading?
 	/* 'Disarm' old runes */
 	if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
 		/* Restore the original cave feature */
@@ -982,8 +981,8 @@ bool warding_rune(int Ind, byte projection, byte imperative, byte skill) {
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->note = cs_ptr->sc.rune.note;
 		o_ptr->iron_trade = p_ptr->iron_trade;
-		//drop_near(0, o_ptr, -1, wpos, y, x);
-		inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
+		if (compat_pomode(Ind, o_ptr)) drop_near(0, o_ptr, -1, wpos, y, x);
+		else inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
 		//refund cost too? - Kurzel
 
 		/* Combine and update the pack */
