@@ -2434,6 +2434,23 @@ s_printf("MIMIC_IMMUNITY_CALC (%s): %s(%d) having %d sets imm[%d] to %d\n", show
 		if (immunity[immrand] == 6) { p_ptr->immune_water = TRUE; csheet_boni->cb[3] |= CB4_IWATR; }
 	}
 
+#if defined(ENABLE_OHERETICISM) && defined(ENABLE_HELLKNIGHT)
+	/* Hack: Blood Sacrifice form may give double-immunity!
+	   Reason is that the player gains IM_FIRE at 50 intrinsically, so he'd like IM_POIS from the form, not a redundant IM_FIRE.
+	   But the spell is already learnt at 45, when the player doesn't IM_FIRE yet. Now, it'd be weird if the form gave IM_POIS or even a choice instead,
+	   especially since the player cannot use 'Select preferred immunity' function due to missing Mimicry skill.
+	   So we'll just be generous at levels 45 to 49 and give IM_FIRE for free :-p as at 50 it'll not matter anymore. */
+	if (p_ptr->body_monster == RI_BLOODTHIRSTER
+	    && (p_ptr->pclass == CLASS_HELLKNIGHT
+ #ifdef CLASS_CPRIEST
+	    || p_ptr->pclass == CLASS_CPRIEST
+ #endif
+	    )) {
+		p_ptr->immune_fire = TRUE; csheet_boni->cb[0] |= CB1_IFIRE;
+		p_ptr->immune_poison = TRUE; csheet_boni->cb[1] |= CB2_IPOIS;
+	}
+#endif
+
 	if (r_ptr->flags9 & RF9_RES_LITE) { p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE; }
 	if (r_ptr->flags9 & RF9_RES_DARK) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
 	if (r_ptr->flags9 & RF9_RES_BLIND) { p_ptr->resist_blind = TRUE; csheet_boni->cb[1] |= CB2_RBLND; }
