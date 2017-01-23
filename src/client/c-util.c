@@ -7923,11 +7923,11 @@ static void print_tomb(cptr reason) {
 		c_put_str(TERM_L_UMBER, buf, 13-1, STONE_COL);
 
 		if (location_name2[0])
-			sprintf(tmp, format("%s", location_name2));
+			sprintf(tmp, "%s", location_name2);
 		else if (p_ptr->wpos.wx == 127)
 			sprintf(tmp, "an unknown location");
 		else
-			sprintf(tmp, format("world map region (%d,%d)", p_ptr->wpos.wx, p_ptr->wpos.wy));
+			sprintf(tmp, "world map region (%d,%d)", p_ptr->wpos.wx, p_ptr->wpos.wy);
 		center_string(buf, tmp);
 		c_put_str(TERM_L_UMBER, buf, 14-1, STONE_COL);
 
