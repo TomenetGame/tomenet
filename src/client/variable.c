@@ -22,9 +22,9 @@ char message_history[MSG_HISTORY_MAX][MSG_LEN];			/* history for chat, slash-cmd
 char message_history_chat[MSG_HISTORY_MAX][MSG_LEN];		/* history for chat, slash-cmd etc. */
 char message_history_msgnochat[MSG_HISTORY_MAX][MSG_LEN];	/* history for chat, slash-cmd etc. */
 char message_history_impscroll[MSG_HISTORY_MAX][MSG_LEN];	/* history for chat, slash-cmd etc. */
-byte hist_end = 0;
+int hist_end = 0;
 bool hist_looped = FALSE;
-byte hist_chat_end = 0;
+int hist_chat_end = 0;
 bool hist_chat_looped = FALSE;
 
 object_type inventory[INVEN_TOTAL];	/* The client-side copy of the inventory */
