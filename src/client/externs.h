@@ -137,9 +137,9 @@ extern char message_history_chat[MSG_HISTORY_MAX][MSG_LEN];
 extern char message_history_msgnochat[MSG_HISTORY_MAX][MSG_LEN];
 extern char message_history_impscroll[MSG_HISTORY_MAX][MSG_LEN];
 /*extern byte hist_start; */
-extern byte hist_end;
+extern int hist_end;
 extern bool hist_looped;
-extern byte hist_chat_end;
+extern int hist_chat_end;
 extern bool hist_chat_looped;
 
 extern object_type inventory[INVEN_TOTAL];

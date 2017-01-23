@@ -1547,7 +1547,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 	/* Hack -- if short, don't use history */
 	bool nohist = (mode & ASKFOR_PRIVATE) || len < 20;
-	byte cur_hist;
+	int cur_hist;
 
 	if (mode & ASKFOR_CHATTING) {
 		cur_hist = hist_chat_end;
