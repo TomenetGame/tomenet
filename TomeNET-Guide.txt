@@ -10461,7 +10461,7 @@ Blunt               x               x
 Polearms            x               x
 
 Leather caps/Hats   x               x
-Metal caps/Helms    x
+Metal caps/Helmets  x
 Crowns              x
 Leather shields     x               x
 Shields             x
@@ -10550,7 +10550,7 @@ Blunt                       x
 Polearms                    x
 
 Leather caps/Hats   x       x
-Metal caps/Helms    x               x
+Metal caps/Helmets  x               x
 Iron crowns         x               x
 Crowns
 Leather shields     x       x
@@ -17489,7 +17489,7 @@ Higher characters (up to 35)
 + Get Nexus Resistance. Nexus attacks can scramble your body, swapping your
   stats, which can mess up your character. (See (5.6).)
 + Try to get Blindness Resistance, so you can always read teleport scrolls!
-  Helms or Caps of seeing give this!
+  Helmets or Caps of seeing give this!
 + Before venturing into Mordor you should have basic (fire/cold/lightning/acid)
   and poison resistance and 'free action' (paralysis resistance).
   Confusion resistance and nexus resistance are a plus.
@@ -18454,7 +18454,7 @@ Gloves
         Hit point bonus (+LIFE)   (*)
         Extra +AC bonus (less common than on other items)
         +hit and +dam bonus
-Caps and helms
+Caps and helmets
         Resist blindness
         Auto-ID
         All possible ESP mods (including ESP_ALL)
