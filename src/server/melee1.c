@@ -2631,6 +2631,12 @@ bool make_attack_melee(int Ind, int m_idx)
 					if (rand_int(p_ptr->skill_thn) * (p_ptr->heavy_wield ? 1 : 3)
 					    < (rlev + damage + UNAWARENESS(p_ptr))) {
 						if (!p_ptr->dual_wield || magik(90)) {
+							/* For 'Arena Monster Challenge' event: */
+							if (safe_area(Ind)) {
+								msg_print(Ind, "\377wYou thought you'd lose the grip of your weapon but it didn't really happen.");
+								break;
+							}
+
 							msg_print(Ind, "\376\377rYou lose the grip of your weapon!");
 #ifdef USE_SOUND_2010
 							sound(Ind, "disarm_weapon", "", SFX_TYPE_ATTACK, FALSE);
@@ -2655,6 +2661,12 @@ bool make_attack_melee(int Ind, int m_idx)
 								if (slot == INVEN_ARM) dis_sec = TRUE;
 							}
 						} else { /* dual-wield "feature".. get dual-disarmed :-p */
+							/* For 'Arena Monster Challenge' event: */
+							if (safe_area(Ind)) {
+								msg_print(Ind, "\377wYou thought you'd lose the grip of your weapons but it didn't really happen.");
+								break;
+							}
+
 							msg_print(Ind, "\376\377rYou lose the grip of your weapons!");
 #ifdef USE_SOUND_2010
 							sound(Ind, "disarm_weapon", "", SFX_TYPE_ATTACK, FALSE);

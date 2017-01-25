@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. January 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 25. January 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.0b - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7419,12 +7419,8 @@ Arena Monster Challenge (no losses or gains, for testing your abilities)
     Note that you cannot die or suffer various hazardous effects in the arena,
     and monsters cannot summon. Hint: If you want to spice a monster up, try
     the /scream command while it's in your line of sight.
-    Note: Be careful about monsters that can disarm you. If your weapon drops
-    to the floor right the moment the event finally ends, you will lose it
-    because everyone gets teleported to town automatically and the arena is
-    removed (and your weapon with it).
-    Apart from that, inventory and equipment cannot be damaged/destroyed or
-    disenchanted in this event.
+    Inventory and equipment cannot be damaged/destroyed or disenchanted in this
+    event, and you cannot get disarmed either.
 
 Dungeon Keeper (everyone can win, 1+ participants)
     (You should enable 'easy_open' option in  = 6  for this event, which is
@@ -12865,7 +12861,7 @@ Here is a list of detailed information about miscellaneous abilities:
 Fighting
     How well you can fight (hit chance; further boni like skills or +hit from
     equipment are added to the ability) or how easily you get disarmed
-    ("You lose the grip of your weapon!").
+    ("You lose the grip of your weapon(s)!").
     (Note that any +tohit bonus increases the displayed Fighting ability:
     The displayed value is the sum of your actual ability and your hit boni.)
 Bows/Throw
