@@ -3467,10 +3467,11 @@ void process_pending_commands(int ind) {
 		}
 		connp->r.state |= SOCKBUF_LOCK; /* needed for rollbacks to work properly */
 		result = (*receive_tbl[type])(ind);
-		connp->r.state &= ~SOCKBUF_LOCK;
 
 		/* Check that the player wasn't disconnected - mikaelh */
 		if (!Conn[ind]) return;
+
+		connp->r.state &= ~SOCKBUF_LOCK;
 
 		/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
 		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
