@@ -2708,11 +2708,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 		case SV_SCROLL_CHAOS:
 			sprintf(p_ptr->attacker, " is enveloped by raw chaos for");
-#if 0 // GF_CHAOS == teleporting/polymorphing stuff around...
 			fire_ball(Ind, GF_CHAOS, 0, 500, 4, p_ptr->attacker);
-#else
-			call_chaos(Ind, 0, 0);
-#endif
 			if (!p_ptr->resist_chaos)
 				take_hit(Ind, 111+randint(111), o_ptr ? "a Scroll of Chaos" : "chaos", 0);
 			ident = TRUE;
@@ -4782,19 +4778,12 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		break;
 
 	case SV_ROD_HAVOC:
-#if 0
-		call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
-		ident = TRUE;
-		o_ptr->pval += 90; //50% faster recharge here -> too powerful, perhaps?
-		break;
-#else			//Nerf the initial damage spam.
-		//pfft. the third argument here is the extra damage.
 		sprintf(p_ptr->attacker, " invokes havoc for");
-		call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 675));
+		fire_ball(Ind, GF_HAVOC, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
+		fire_cloud(Ind, GF_HAVOC, dir, 40 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 4, get_skill_scale(p_ptr, SKILL_DEVICE, 3) + 12, 10, p_ptr->attacker); //max 1350 dam total
 		ident = TRUE;
-		o_ptr->pval += 45 - get_skill_scale(p_ptr, SKILL_DEVICE, 23);
+		o_ptr->pval += 105 - get_skill_scale(p_ptr, SKILL_DEVICE, 23);
 		break;
-#endif
 
 	case SV_ROD_NOTHING:
 		break;
@@ -5092,7 +5081,6 @@ bool rod_requires_direction(int Ind, object_type *o_ptr) {
 
 	if ((sval >= SV_ROD_MIN_DIRECTION) &&
 	    !(sval == SV_ROD_DETECT_TRAP) &&
-	    //!(sval == SV_ROD_HAVOC) &&
 	    !(sval == SV_ROD_HOME))
 		return TRUE;
 
@@ -6771,11 +6759,80 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			fire_ball(Ind, GF_DISENCHANT, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
 			break;
 		case SV_DRAGON_POWER:
-			msg_print(Ind, "You breathe havoc.");
-			sprintf(p_ptr->attacker, " breathes havoc for");
-			//fire_ball(Ind, GF_MISSILE, dir, 300, 4, p_ptr->attacker);
-			//Increased from 1k to 2k since base dmg from call_chaos was lowered (havoc rods rebalancing)
-			call_chaos(Ind, dir, get_skill_scale(p_ptr, SKILL_DEVICE, 1000));
+			/* redux (blend out 'weaker' types that monsters may be immune to etc)
+			   Even GF_NETHER isn't breathed for now, since it might be too bad vs undead.
+				GF_SHARDS,	GF_INERTIA,	GF_SOUND,	GF_GRAVITY,
+				GF_NEXUS,	GF_TIME,	GF_FORCE,	GF_MANA,
+				GF_CHAOS,	GF_NUKE,	GF_PLASMA,	GF_DISINTEGRATE,
+				GF_DISENCHANT,
+			*/
+			switch (rand_int(13)) {
+			case 0:
+				msg_print(Ind, "You breathe shards.");
+				sprintf(p_ptr->attacker, " breathes shards for");
+				fire_ball(Ind, GF_SHARDS, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
+				break;
+			case 1:
+				msg_print(Ind, "You breathe sound.");
+				sprintf(p_ptr->attacker, " breathes sound for");
+				fire_ball(Ind, GF_SOUND, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
+				break;
+			case 2:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_FORCE, dir, 375 + get_skill_scale(p_ptr, SKILL_DEVICE, 375), 4, p_ptr->attacker);
+				break;
+			case 3:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_INERTIA, dir, 375 + get_skill_scale(p_ptr, SKILL_DEVICE, 375), 4, p_ptr->attacker);
+				break;
+			case 4:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_GRAVITY, dir, 350 + get_skill_scale(p_ptr, SKILL_DEVICE, 350), 4, p_ptr->attacker); //extra-boosted damage
+				break;
+			case 5:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_NEXUS, dir, 375 + get_skill_scale(p_ptr, SKILL_DEVICE, 375), 4, p_ptr->attacker);
+				break;
+			case 6:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_TIME, dir, 350 + get_skill_scale(p_ptr, SKILL_DEVICE, 350), 4, p_ptr->attacker); //extra-boosted damage
+				break;
+			case 7:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_MANA, dir, 450 + get_skill_scale(p_ptr, SKILL_DEVICE, 450), 4, p_ptr->attacker);
+				break;
+			case 8:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_PLASMA, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
+				break;
+			case 9:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_NUKE, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
+				break;
+			case 10:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_CHAOS, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
+				break;
+			case 11:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_DISENCHANT, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
+				break;
+			case 12:
+				msg_print(Ind, "You breathe .");
+				sprintf(p_ptr->attacker, " breathes  for");
+				fire_ball(Ind, GF_DISINTEGRATE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
+				break;
+			}
 			break;
 		case SV_DRAGON_DEATH:
 			msg_print(Ind, "You breathe nether.");
@@ -6823,7 +6880,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 				break;
 			case 2:	msg_print(Ind, "You breathe gravity.");
 				sprintf(p_ptr->attacker, " breathes gravity for");
-				fire_ball(Ind, GF_GRAVITY, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
+				fire_ball(Ind, GF_GRAVITY, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker); //extra-boosted damage
 				break;
 			}
 			break;

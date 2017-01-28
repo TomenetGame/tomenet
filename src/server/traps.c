@@ -3530,7 +3530,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 		flg &= ~(PROJECT_NODF);
 		break;
 	case SV_ROD_HAVOC:
-		typ = GF_CHAOS;
+		typ = GF_HAVOC;
 		dam = 200;
 		rad = 5;
 		flg &= ~(PROJECT_LODF);

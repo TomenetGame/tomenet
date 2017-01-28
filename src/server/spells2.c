@@ -7970,89 +7970,6 @@ void golem_creation(int Ind, int max) {
 	p_ptr->window |= (PW_INVEN);
 }
 
-/* pernAngband Additions	- Jir - */
-//note: average total damage is 2.333 x (damage+extra_damage), so ~3150 for (675+675)
-void call_chaos(int Ind, int dir, int extra_damage) {
-	player_type *p_ptr = Players[Ind];
-	int Chaos_type, dummy;
-	int plev = p_ptr->lev;
-	bool line_chaos = FALSE;
-
-	/* determine damage type */
-#if 0 /* traditional */
-	int hurt_types[29] = { // 30
-		GF_ELEC,      GF_POIS,    GF_ACID,    GF_COLD,
-		GF_FIRE,      GF_MISSILE, GF_ARROW,   GF_PLASMA,
-//		GF_HOLY_FIRE,
-		GF_WATER,     GF_LITE,    GF_DARK,
-		GF_FORCE,     GF_INERTIA, GF_MANA,    GF_METEOR,
-		GF_ICE,       GF_CHAOS,   GF_NETHER,  GF_DISENCHANT,
-		GF_SHARDS,    GF_SOUND,   GF_NEXUS,   GF_CONFUSION,
-		GF_TIME,      GF_GRAVITY, GF_ROCKET,  GF_NUKE,
-		GF_DISINTEGRATE,
-		GF_HELL_FIRE,
-	};
-	Chaos_type = hurt_types[rand_int(29)];
-#endif
-#if 0 /* redux (blend out 'weaker' types that monsters may be immune to etc) */
-	int hurt_types[17] = {
-		/* not that much of chaos */
-		GF_MISSILE,	GF_SHARDS,	GF_INERTIA,	GF_SOUND,	GF_GRAVITY,
-		/* pretty chaossy */
-		GF_NEXUS,	GF_TIME,	GF_FORCE,	GF_MANA,
-		/* truly chaos */
-		GF_CHAOS,	GF_NUKE,	GF_METEOR,	GF_ROCKET,
-		GF_INFERNO,	GF_PLASMA,	GF_HELL_FIRE,	GF_DISINTEGRATE,
-	};
-	Chaos_type = hurt_types[rand_int(17)];
-#endif
-#if 1 /* redux^2 (only use damage types that deserve to be called chaos (hah)) */
-	int hurt_types[12] = {
-		/* pretty chaossy */
-		GF_NEXUS,	GF_TIME,	GF_FORCE,	GF_MANA,
-		/* truly chaos */
-		GF_CHAOS,	GF_NUKE,	GF_METEOR,	GF_ROCKET,
-		GF_INFERNO,	GF_PLASMA,	GF_HELL_FIRE,	GF_DISINTEGRATE,
-	};
-	Chaos_type = hurt_types[rand_int(12)];
-#endif
-
-	/* determine shape */
-	if (randint(4) == 1) line_chaos = TRUE;
-
-#if 0
-	/* Probably a meaningless line, a remnant from earlier code */
-	while (Chaos_type > GF_GRAVITY && Chaos_type < GF_ROCKET);
-#endif
-
-	if (randint(6) == 1) {
-		for (dummy = 1; dummy < 10; dummy++) {
-			if (dummy - 5) {
-				if (line_chaos) {
-//					fire_beam(Ind, Chaos_type, dummy, 1500 + extra_damage, p_ptr->attacker);
-					fire_beam(Ind, Chaos_type, dummy, 675 + extra_damage, p_ptr->attacker);
-				} else {
-//					fire_ball(Ind, Chaos_type, dummy, 1500 + extra_damage, 2, p_ptr->attacker);
-					fire_ball(Ind, Chaos_type, dummy, 675 + extra_damage, 2, p_ptr->attacker);
-				}
-			}
-		}
-	}
-	else if (randint(3) == 1) {
-//		fire_ball(Ind, Chaos_type, 0, 1500 + extra_damage, 8, p_ptr->attacker);
-		fire_ball(Ind, Chaos_type, 0, 675 + extra_damage, 8, p_ptr->attacker);
-	} else {
-//		if (!get_aim_dir(Ind) return;
-		if (line_chaos) {
-//			fire_beam(Ind, Chaos_type, dir, 1500 + extra_damage, p_ptr->attacker);
-			fire_beam(Ind, Chaos_type, dir, 675 + extra_damage, p_ptr->attacker);
-		} else {
-//			fire_ball(Ind, Chaos_type, dir, 1500 + extra_damage, 3 + (plev/35), p_ptr->attacker);
-			fire_ball(Ind, Chaos_type, dir, 675 + extra_damage, 3 + (plev/35), p_ptr->attacker);
-		}
-	}
-}
-
 bool summon_cyber(int Ind, int s_clone, int clone_summoning) {
 	player_type *p_ptr = Players[Ind];
 	int i;
@@ -8465,6 +8382,7 @@ u32b mod_ball_spell_flags(int typ, u32b flags) {
 	/* very powerful 'force' stuff */
 	case GF_FORCE:
 	case GF_METEOR:
+	case GF_HAVOC:
 	case GF_INFERNO:
 	case GF_DETONATION:
 	case GF_ROCKET:

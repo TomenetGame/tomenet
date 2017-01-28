@@ -1585,6 +1585,7 @@ byte spell_color(int type) {
 	case GF_PLASMA:		return (randint(5) == 1? TERM_RED : TERM_L_RED);
 	case GF_METEOR:		return (randint(3) == 1? TERM_RED : TERM_UMBER);
 	case GF_ICE:		return (randint(4) == 1? TERM_L_BLUE : TERM_WHITE);
+	//case GF_HAVOC: --too much hassle, this is just replacement code anyway
 	case GF_INFERNO:
 	case GF_DETONATION:
 	case GF_ROCKET:		return (randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
@@ -1651,6 +1652,7 @@ bool spell_color_animation(int type) {
 	case GF_PLASMA:		return TRUE;//(randint(5)==1?TERM_RED:TERM_L_RED);
 	case GF_METEOR:		return TRUE;//(randint(3)==1?TERM_RED:TERM_UMBER);
 	case GF_ICE:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_WHITE);
+	case GF_HAVOC:		return TRUE;//--complex shits
 	case GF_INFERNO:
 	case GF_DETONATION:
 	case GF_ROCKET:		return TRUE;//(randint(6)<4?TERM_L_RED:(randint(4)==1?TERM_RED:TERM_L_UMBER));
@@ -1719,6 +1721,7 @@ byte spell_color(int type) {
 	case GF_PLASMA:		return (TERM_PLAS);
 	case GF_METEOR:		return (TERM_METEOR);
 	case GF_ICE:		return (TERM_ICE);
+	case GF_HAVOC:		return TERM_HAVOC;
 	case GF_INFERNO:
 	case GF_DETONATION:
 	case GF_ROCKET:		return (TERM_DETO);
@@ -4071,6 +4074,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 			break;
 
+		case GF_HAVOC:
 		case GF_FIRE:
 		case GF_METEOR:
 		case GF_PLASMA:
@@ -4947,6 +4951,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 
+		case GF_HAVOC:
 		case GF_INFERNO:
 		case GF_DETONATION:
 		case GF_ROCKET:
@@ -6056,7 +6061,46 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			break;
 
+		case GF_HAVOC: {
+			/* Inferno/Mana/Chaos */
+			int res1 = 0, res2 = 0, res3 = 0, res4 = 0, res5 = 0; //shard,sound,fire,mana,chaos
+
+			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
+				res1 = 2;
+			//RF8_NO_CUT doesn't help here
+			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
+				res2 = 2;
+			if (r_ptr->flags3 & RF3_IM_FIRE)
+				res3 = 4;
+			else if (r_ptr->flags9 & RF9_RES_FIRE)
+				res3 = 2;
+			//no SUSCEP_FIRE check
+			if ((r_ptr->flags4 & RF4_BR_MANA) || (r_ptr->flags9 & RF9_RES_MANA))
+				res4 = 3;
+			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
+				res5 = 3;
+
+			switch (res1 + res2 + res3 + res4 + res5) {
+			case 0: case 1: case 2: case 3: break;
+			case 4: case 5: case 6: case 7:
+				note = " resists somewhat";
+				dam = (dam * 3 + 3) / 4;
+				//do_cut = 0;
+				break;
+			case 8: case 9: case 10:
+				note = " resists";
+				dam /= 2;
+				break;
+			default: //11,12,13,14
+				note = " resists a lot";
+				dam /= 3;
+				break;
+			}
+			if (seen) obvious = TRUE;
+			break; }
+
 		/* Rocket: Shard resistance helps (PernA) */
+		//(Note that the sound part doesn't cause any stun effect. - intended) */
 		case GF_INFERNO:
 		case GF_DETONATION:
 		case GF_ROCKET: {
@@ -10320,13 +10364,47 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 
-		/* PernA ones */
-		/* Rocket -- stun, cut, fire, raw impact */
+	case GF_HAVOC:
+		{
+			bool ignore_heat = (p_ptr->resist_fire && p_ptr->oppose_fire) || p_ptr->immune_fire;
+
+			if (p_ptr->resist_shard) dam = (dam * 5) / 6;
+			if (p_ptr->resist_sound) dam = (dam * 5) / 6;
+			if (p_ptr->immune_fire) dam = (dam * 4) / 5;
+			else if (p_ptr->resist_fire || p_ptr->oppose_fire) dam = (dam * 5) / 6;
+			if (p_ptr->resist_mana) dam = (dam * 5) / 6;
+			if (p_ptr->resist_chaos) dam = (dam * 5) / 6;
+
+			if (fuzzy) msg_format(Ind, "There is a shockwave around you of \377%c%d \377wdamage!", damcol, dam);
+			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+
+			if (!p_ptr->resist_shard && !p_ptr->no_cut)
+				(void)set_cut(Ind, p_ptr->cut + ( dam / 2), -who );
+			if (!p_ptr->resist_sound)
+				(void)set_stun(Ind, p_ptr->stun + randint(20));
+
+			if (!p_ptr->resist_shard || !p_ptr->resist_sound || !ignore_heat) {
+				/* Don't kill inventory in bloodbond... */
+				int breakable = 1;
+				if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
+				if (breakable) {
+					if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
+					else if (ignore_heat) inven_damage(Ind, set_impact_destroy, 3);
+					else inven_damage(Ind, set_rocket_destroy, 4);
+				}
+			}
+
+			take_hit(Ind, dam, killer, -who);
+			break;
+		}
+
+	/* Rocket -- stun, cut, fire, raw impact */
 	case GF_INFERNO:
 	case GF_DETONATION:
 	case GF_ROCKET:
 		{
 			bool ignore_heat = (p_ptr->resist_fire && p_ptr->oppose_fire) || p_ptr->immune_fire;
+
 			if (p_ptr->resist_shard) dam = (dam * 5) / 6;
 			if (p_ptr->resist_sound) dam = (dam * 5) / 6;
 			if (p_ptr->immune_fire) dam = (dam * 3) / 4;
@@ -12315,11 +12393,48 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags8 & RF8_NO_CUT)
 				dam /= 2;
 			break;
+
+		case GF_HAVOC:
+		{
+			int res1 = 0, res2 = 0, res3 = 0, res4 = 0, res5 = 0; //shard,sound,fire,mana,chaos
+
+			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
+				res1 = 2;
+			//RF8_NO_CUT doesn't help here
+			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
+				res2 = 2;
+			if (r_ptr->flags3 & RF3_IM_FIRE)
+				res3 = 4;
+			else if (r_ptr->flags9 & RF9_RES_FIRE)
+				res3 = 2;
+			//No SUSCEP_FIRE check
+			if ((r_ptr->flags4 & RF4_BR_MANA) || (r_ptr->flags9 & RF9_RES_MANA))
+				res4 = 3;
+			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
+				res5 = 3;
+
+			switch (res1 + res2 + res3 + res4 + res5) {
+			case 0: case 1: case 2: case 3: break;
+			case 4: case 5: case 6: case 7:
+				dam = (dam * 3 + 3) / 4;
+				//do_cut = 0;
+				break;
+			case 8: case 9: case 10:
+				dam /= 2;
+				break;
+			default: //11,12,13,14
+				dam /= 3;
+				break;
+			}
+		}
+			break;
+
 		case GF_INFERNO:
 		case GF_DETONATION:
 		case GF_ROCKET:
 		{
 			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
+
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				res1 = 1;
 			//RF8_NO_CUT doesn't help here

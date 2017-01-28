@@ -87,6 +87,7 @@
  #endif
 
  #define TERM_STARLITE	57
+ #define TERM_HAVOC	58
 
  #ifdef EXTENDED_BG_COLOURS
   #define TERM2_BLUE	63

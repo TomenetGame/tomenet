@@ -4470,7 +4470,7 @@
 #define GF_KILL_GLYPH		85
 #define GF_STARLITE		86
 #define GF_TERROR		87
-
+#define GF_HAVOC		88
 #define GF_INFERNO		89 /* damage-wise like GF_ROCKET, but no special sfx and doesn't hurt terrain (could be changed, dunno) */
 #define GF_DETONATION		90 /* damage-wise like GF_ROCKET, but different sfx */
 #define GF_ROCKET		91
@@ -7080,6 +7080,7 @@ extern int PlayerUID;
  #endif
 
  #define TERM_STARLITE	57
+ #define TERM_HAVOC	58
 
  #ifdef EXTENDED_BG_COLOURS
   #define TERM2_BLUE	63

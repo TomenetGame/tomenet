@@ -1679,7 +1679,6 @@ extern bool do_divine_crit(int Ind, int p, int v);
 extern void do_autokinesis_to(int Ind, int dis);
 extern bool do_res_stat_temp(int Ind, int stat);
 extern bool swap_position(int Ind, int lty, int ltx);
-extern void call_chaos(int Ind, int dir, int extra_damage);
 extern bool turn_monsters(int Ind, int dam);
 extern void wizard_lock(int Ind, int dir);
 extern bool do_mstopcharm(int Ind);

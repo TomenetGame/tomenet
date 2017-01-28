@@ -116,6 +116,7 @@ int color_char_to_attr(char c) {
 		//case '': return TERM_LAMP_DARK; //this is just static l_umber
 		case 'Z': return TERM_EMBER;
 		case '0': return TERM_STARLITE;
+		case '1': return TERM_HAVOC;
 	}
 
 	return (-1);
@@ -189,6 +190,7 @@ char color_attr_to_char(int a) {
 		//case TERM_LAMP_DARK: return ''; //this is just static l_umber
 		case TERM_EMBER: return 'Z'; //this was the final free letter ;) no more colour letters available now!
 		case TERM_STARLITE: return '0'; //:-p
+		case TERM_HAVOC: return '1';
 	}
 
 	return 'w';

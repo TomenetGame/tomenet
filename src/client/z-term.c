@@ -533,8 +533,9 @@ static char get_shimmer_color()
 }
 #endif
 
-byte flick_colour(byte attr){
+byte flick_colour(byte attr) {
 	byte flags = attr;//(remember flags) obsolete: & 0xE0;
+
 #ifdef EXTENDED_TERM_COLOURS
 	if (!is_newer_than(&server_version, 4, 5, 1, 1, 0, 0)) {
 		if (flags & TERM_OLD_PVP) {
@@ -596,7 +597,7 @@ byte flick_colour(byte attr){
 		case 5: return (TERM_WHITE);
 */		}
 	}
-	switch(attr) {
+	switch (attr) {
 		case TERM_MULTI:
 			return(randint(15));
 		case TERM_FIRE:
@@ -682,6 +683,19 @@ byte flick_colour(byte attr){
 
 		case TERM_STARLITE:
 			return (rand_int(16) ? TERM_WHITE : (rand_int(4) ? TERM_BLUE : TERM_L_BLUE));
+
+		case TERM_HAVOC: //inferno(deto) but fire looks better/mana/chaos ^^
+			switch (rand_int(9)) {
+			case 0: case 1:
+			//case 2:
+				return TERM_VIOLET;//(mana) omit the light blue part
+			//case 3: return flick_colour(TERM_MULTI);//(chaos) omit completely, too colourful, the other colours will no longer have much effect
+			case 3: return TERM_ORANGE; //a little bit more fiery
+			case 4: return TERM_L_DARK; //some ash/hellishness?
+			default:
+				return flick_colour(TERM_DETO);//(inferno aka deto)
+				//return flick_colour(TERM_FIRE);//(inferno aka deto) instead use fire
+			}
 
  #ifdef ATMOSPHERIC_INTRO
 		case TERM_FIRETHIN: /* for ascii-art in client login screen */
