@@ -9029,8 +9029,16 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			}
 		} else *str2 = 0;
 		if (*str2) {
-			for (i = 0; i < max_spells; i++)
+			for (i = 0; i < max_spells; i++) {
+				/* Check for full name */
 				if (!strcasecmp(school_spells[i].name, str2)) break;
+
+				/* Additionally check for '... I' tier 1 spell version, assuming the player omitted the 'I' */
+				j = strlen(school_spells[i].name) - 2;
+				//assume spell names are at least 3 characters long(!)
+				if (school_spells[i].name[j] == ' ' //assume the final character must be 'I'
+				    && !strncasecmp(school_spells[i].name, str2, j)) break;
+			}
 			if (i == max_spells) {
 				msg_print(Ind, "Sorry, I have never heard of such a spell.");
 				return;
@@ -9058,12 +9066,24 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			    p_ptr->store_num == STORE_LIBRARY ||
 			    p_ptr->store_num == STORE_HIDDENLIBRARY ||
 			    p_ptr->store_num == STORE_FORBIDDENLIBRARY) {
-				for (i = 0; i < max_spells; i++)
+				for (i = 0; i < max_spells; i++) {
 					if (!strcasecmp(school_spells[i].name, str)) break;
+
+					/* Additionally check for '... I' tier 1 spell version, assuming the player omitted the 'I' */
+					j = strlen(school_spells[i].name) - 2;
+					//assume spell names are at least 3 characters long(!)
+					if (school_spells[i].name[j] == ' ' //assume the final character must be 'I'
+					    && !strncasecmp(school_spells[i].name, str, j)) break;
+				}
 				if (i < max_spells) {
 					extra = i;
 					i = lookup_kind(TV_BOOK, SV_SPELLBOOK);
 					invcopy(&forge, i);
+				}
+				/* still failure */
+				if (i == max_k_idx) {
+					msg_print(Ind, "Sorry, I don't know of such an item or spell.");
+					return;
 				}
 			}
 			/* assume player maybe just entered a rune element, if this is the rune repository. */
@@ -9074,14 +9094,19 @@ void handle_request_return_str(int Ind, int id, char *str) {
 					if (!strcasecmp(k_name + k_info[i].name, str)) break;
 				}
 				if (i < max_k_idx) invcopy(&forge, i);
+				/* still failure */
+				if (i == max_k_idx) {
+					msg_print(Ind, "Sorry, I don't know of such an item or rune.");
+					return;
+				}
 			}
 			/* still failure */
 			if (i == max_k_idx) {
-				msg_print(Ind, "Sorry, I have never heard of an item like that.");
+				msg_print(Ind, "Sorry, I don't know of such an item.");
 				return;
 			}
 #else
-			msg_print(Ind, "Sorry, I have never heard of an item like that.");
+			msg_print(Ind, "Sorry, I don't know of such an item.");
 			return;
 #endif
 		}
