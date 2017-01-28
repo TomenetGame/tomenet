@@ -1721,7 +1721,13 @@ byte spell_color(int type) {
 	case GF_PLASMA:		return (TERM_PLAS);
 	case GF_METEOR:		return (TERM_METEOR);
 	case GF_ICE:		return (TERM_ICE);
-	case GF_HAVOC:		return TERM_HAVOC;
+	case GF_HAVOC:
+ /* just until next server update keep some compat code for exactly the current version */
+ #if VERSION_MAJOR == 4 && VERSION_MINOR == 7 && VERSION_PATCH == 0 && VERSION_EXTRA == 2
+				return TERM_DETO;
+ #else
+				return TERM_HAVOC;
+ #endif
 	case GF_INFERNO:
 	case GF_DETONATION:
 	case GF_ROCKET:		return (TERM_DETO);
