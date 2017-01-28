@@ -7645,9 +7645,9 @@ void player_death(int Ind) {
 			/* Lose some experience */
 			loss_factor = INSTANT_RES_XP_LOST;
 			if (get_skill(p_ptr, SKILL_HCURING) >= 50
-#ifdef ENABLE_OCCULT /* Occult */
+ #ifdef ENABLE_OCCULT /* Occult */
 			    || get_skill(p_ptr, SKILL_OSPIRIT) >= 50
-#endif
+ #endif
 			    ) loss_factor -= 5;
 
 			reduce = p_ptr->max_exp;
@@ -7728,9 +7728,9 @@ void player_death(int Ind) {
 							a_info[p_ptr->inventory[j].name1].winner = FALSE;
 				}
 
-#ifdef SOLO_REKING
+ #ifdef SOLO_REKING
 				p_ptr->solo_reking = p_ptr->solo_reking_au = SOLO_REKING;
-#endif
+ #endif
 			}
 
  #ifndef FALLEN_WINNERSONLY
@@ -7870,6 +7870,7 @@ void player_death(int Ind) {
 			}
 		}
 
+		/* Drop/scatter an item? */
 		if (!is_admin(p_ptr) && !p_ptr->inval &&
 		    /* actually do drop the untradable starter items, to reduce newbie frustration */
 		    (p_ptr->max_plv >= cfg.newbies_cannot_drop || !o_ptr->level)
@@ -7879,6 +7880,10 @@ void player_death(int Ind) {
 		    && !(in_iddc && o_ptr->NR_tradable)
 #endif
 		    ) {
+#ifdef VAMPIRES_INV_CURSED
+			if (i >= INVEN_WIELD) reverse_cursed(o_ptr);
+#endif
+
 #ifdef DEATH_ITEM_SCATTER
 			/* Apply penalty of death */
 			if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER))
@@ -7891,13 +7896,13 @@ void player_death(int Ind) {
 				else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 
 				/* Drop this one */
-				away = drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px)
-					<= 0 ? TRUE : FALSE;
+				away = (drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px) <= 0);
 			}
 
 			if (away) {
 				int o_idx = 0, x1, y1, try = 500;
 				cave_type **zcave;
+
 				if ((zcave = getcave(&p_ptr->wpos))) /* this should never.. */
 					while (o_idx <= 0 && try--) {
 						x1 = rand_int(p_ptr->cur_wid);
