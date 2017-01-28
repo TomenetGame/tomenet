@@ -1585,7 +1585,7 @@ byte spell_color(int type) {
 	case GF_PLASMA:		return (randint(5) == 1? TERM_RED : TERM_L_RED);
 	case GF_METEOR:		return (randint(3) == 1? TERM_RED : TERM_UMBER);
 	case GF_ICE:		return (randint(4) == 1? TERM_L_BLUE : TERM_WHITE);
-	//case GF_HAVOC: --too much hassle, this is just replacement code anyway
+	case GF_HAVOC: //too much hassle to simulate the correct colours, this is just replacement code anyway
 	case GF_INFERNO:
 	case GF_DETONATION:
 	case GF_ROCKET:		return (randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
