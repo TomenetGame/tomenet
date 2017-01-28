@@ -5975,8 +5975,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k *= 2;
 			/* 25% force */
 			k_sound = (dam + 3) / 4;
-			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound = (k + 1) / 2;
-			else do_stun = randint(15) / div;
+			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound = (k + 1) / 2;
+			else if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(15) / div;
 
 			k += k_elec + k_sound;
 			if (k < dam / 4) note = " resists a lot";
@@ -6073,8 +6073,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				res1 = 2;
-			//RF8_NO_CUT doesn't help here
-			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
+			//RF8_NO_CUT/RF3_NO_STUN don't help here
+			if ((r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
 				res2 = 2;
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 				res3 = 4;
@@ -6114,8 +6114,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				res1 = 1;
-			//RF8_NO_CUT doesn't help here
-			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
+			//RF8_NO_CUT/RF3_NO_STUN don't help here
+			if ((r_ptr->flags4 & RF4_BR_SOUN)  || (r_ptr->flags9 & RF9_RES_SOUND))
 				res2 = 1;
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 				res3 = 3;
@@ -6146,13 +6146,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Sound -- Sound breathers resist */
 		case GF_SOUND:
 			if (seen) obvious = TRUE;
-			do_stun = randint(15) / div;
+			do_stun = randint(15) / div; //RF3_NO_STUN is checked later
 			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
 				note = " resists";
 				dam *= 3; dam /= (randint(6) + 6);
-			} else if (r_ptr->flags3 & RF3_NO_STUN) {
-				note = " resists somewhat";
-				dam /= 2;
 			}
 			break;
 
@@ -12341,7 +12338,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k_elec *= 2;
 			/* 25% force */
 			k_sound = dam / 4;
-			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound /= 2;
+			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound /= 2;
 			//else do_stun = randint(15) / div;
 
 			dam = k + k_elec + k_sound;
@@ -12406,8 +12403,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				res1 = 2;
-			//RF8_NO_CUT doesn't help here
-			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
+			//RF8_NO_CUT/RF3_NO_STUN doesn't help here
+			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
 				res2 = 2;
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 				res3 = 4;
@@ -12443,8 +12440,8 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 				res1 = 1;
-			//RF8_NO_CUT doesn't help here
-			if ((r_ptr->flags3 & RF3_NO_STUN) || (r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
+			//RF8_NO_CUT/RF3_NO_STUN don't help here
+			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND))
 				res2 = 1;
 			if (r_ptr->flags3 & RF3_IM_FIRE)
 				res3 = 3;
