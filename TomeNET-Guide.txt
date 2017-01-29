@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. January 2017 - written by C. Blue (c_blue@gmx.net)
-| for TomeNET version v4.7.0b - official websites are:
+| Latest update: 29. January 2017 - written by C. Blue (c_blue@gmx.net)
+| for TomeNET version v4.7.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 |
@@ -8918,6 +8918,8 @@ Rocket          Rockets combine fire, shard & sound effects and can also damage
                 (Technically, rockets are similar to breath attacks.)
 Detonation      Same as rocket.
 Inferno         Same as detonation, except it does not destroy walls.
+Havoc           A terrible mixture of wrecking Inferno, blasts of uncontrolled
+                mana and waves of raw chaos.
 
 There is also a special 'Teleportation Resistance', giving the self-knowledge
 line: "You resist incoming teleportation effects.".
@@ -13563,6 +13565,9 @@ create a character!):
     If you're a team player and want to support your team right from the
     beginning, get the spell 'Cure Wounds' as soon as possible and macro it.
 
+    There are rumours of ultimately corrupted priests which have lost all their
+    holiness and serve the powers of hell instead.
+
 - Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
     fighting their way out of a tight spot. The master of traps and locks, no
@@ -13721,6 +13726,15 @@ create a character!):
     able to utilize any kind of prayers and are susceptible to holy effects,
     instead they command unholy blood and shadow magic.
     Death knights resist fear intrinsically.
+
+- Hell Knight
+    This ultimately corrupted paladin can only be brought into existance when
+    an astral spirit forsakes enlightenment and turns demonic instead.
+    Imbued by the powers of chaos and hellflame, these warriors represent
+    absolute treason without remorse.
+    They have the same abilities as paladins in all regards but they are not
+    able to utilize any kind of prayers and are susceptible to holy effects,
+    instead they command blood magic and heretic magic of flame and chaos.
 
 - Ranger
     Second only to adventurers regarding versatility rangers excel at a lot of
@@ -15664,8 +15678,8 @@ school.
 
     Possess         Tries to manipulate the mind of a monster to make it ignore
                     you.
-                    At level 9 it turns into a ball.
-                    At level 17 it affects all monsters in sight.
+                    Lv9: Turns into a ball.
+                    Lv17: Affects all monsters in sight.
                     Required skill level for first spell level: 23.
     Stop Possess    Stops active possession of monster minds.
 
@@ -15673,14 +15687,58 @@ school.
                     Invokes your guardian spirit, guiding and protecting you.
                     Your saving throw is maximised and you are protected from
                     evil.
-                    At level 21 all physical attacks have a chance to miss you,
-                    at the cost of your mana.
+                    Lv21: All physical attacks have a chance to miss you,
+                          at the cost of your mana.
                     Required skill level for first spell level: 25.
 
     BONI:           At 30 grants a firm hold on your life force.
                     Adds slay undead to all your physical attacks at 40.
                     -5% experience loss on getting revived (by whatever means,
                     but never goes below 30% total exp loss) at 50.
+
+
+- Hereticism
+    Terror          Casts fear and confusion into the hearts of others.
+                    Required skill level for first spell level: 3.
+
+    Ignore Fear     Temporarily removes the ignorant weakness known as fear.
+                    Required skill level for first spell level: 7.
+
+    Fire Bolt       Conjures up fire into a powerful bolt.
+                    Required skill level for first spell level: 10.
+
+    Wrathflame      It temporarily brands your weapons with unholy fire.
+                    Lv7: Grants temporary fire resistance.
+                    Required skill level for first spell level: 12.
+
+    Demonic Strength
+                    Temporarily increases and sustains strength and
+                    constitution.
+                    Required skill level for first spell level: 30.
+
+    Chaos Bolt      Channels the powers of chaos into a bolt.
+                    Required skill level for first spell level: 32.
+
+    Dark Meditation
+                    Restores drained stats and lost experience.
+                    Required skill level for first spell level: 35.
+
+    Levitation      Grants the power of levitation.
+                    Required skill level for first spell level: 39.
+
+    Robes of Havoc  Envelops you in hellfire, burning your opponents to ashes.
+                    Required skill level for first spell level: 42.
+
+    Blood Sacrifice
+                    Inflict a mortal wound on yourself, causing the warped
+                    powers of chaos to temporarily change your form into a
+                    terrifying Bloodthirster.
+                    --- This spell is only usable by Corrupted
+                        Maia Priests and Hell Knights! ---
+                    Required skill level for first spell level: 45.
+
+    BONI:           At 30 grants resistance to fire.
+                    At 45 grants resistance to chaos.
 
 
 - Druidism -

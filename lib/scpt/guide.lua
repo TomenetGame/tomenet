@@ -34,6 +34,7 @@ guide_class = {
     "Archer",
     "Paladin",
     "Death Knight",
+    "Hell Knight",
     "Ranger",
     "Adventurer",
     "Druid",
@@ -300,6 +301,17 @@ guide_spell = {
     "Ethereal Eye",
     "Possess",
     "Guardian Spirit",
+
+    "Terror",
+    "Ignore Fear",
+    "Fire Bolt",
+    "Wrathflame",
+    "Demonic Strength",
+    --"Chaos Bolt", --duplicate (Shadow)
+    "Dark Meditation",
+    "Levitation",
+    "Robes of Havoc",
+    "Blood Sacrifice",
 
     "Nature's Call",
     "Toxic Moisture",
