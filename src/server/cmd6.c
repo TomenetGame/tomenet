@@ -7222,6 +7222,10 @@ void do_cmd_fletchery(int Ind) {
 				msg_print(Ind, "You can't pick up rubble in incorporeal form!");
 				return;
 			}
+			if (p_ptr->IDDC_logscum) {
+				msg_print(Ind, "\377RThis floor has become stale, take a staircase to move on!");
+				return;
+			}
 
 			for (dir = 1; dir <= 9; dir++) {
 				y = p_ptr->py + ddy[dir];
