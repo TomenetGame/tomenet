@@ -5725,7 +5725,7 @@
 #define RF0_RAND_5			0x00001000	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
 #define RF0_DROP_2			0x00002000	/* Drop exactly 2 items/gold piles */
 
-#define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT | RF0_NO_NEST)
+#define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
 
 #define RF0_PLAYER_SPELLS (0L)
 /* monster spells are currently RF4+RF5+RF6 only (todo: add RF0)
