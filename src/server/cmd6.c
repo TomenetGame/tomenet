@@ -4779,8 +4779,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 
 	case SV_ROD_HAVOC:
 		sprintf(p_ptr->attacker, " invokes havoc for");
-		fire_ball(Ind, GF_HAVOC, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
-		fire_cloud(Ind, GF_HAVOC, dir, 40 + get_skill_scale(p_ptr, SKILL_DEVICE, 60), 4, get_skill_scale(p_ptr, SKILL_DEVICE, 3) + 12, 10, p_ptr->attacker); //max 1350 dam total
+		fire_ball(Ind, GF_HAVOC, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
+		fire_cloud(Ind, GF_HAVOC, dir, 50 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 4, get_skill_scale(p_ptr, SKILL_DEVICE, 3) + 12, 10, p_ptr->attacker); //max 1350 dam total
 		ident = TRUE;
 		o_ptr->pval += 105 - get_skill_scale(p_ptr, SKILL_DEVICE, 23);
 		break;
