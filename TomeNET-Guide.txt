@@ -12324,8 +12324,20 @@ Note that not every skill is available to every profession (class).
                                 aura is active.
 
     .Mimicry                    Ability to shapechange into a monster!
+                                To learn a monster form you must kill an amount
+                                of it equal to its level, while your Mimicry
+                                skill must be at least half as high as the
+                                monster level for you to get credit.
+
+                                Example: To learn Uruk form, you need to kill
+                                16 Uruks because Uruk is a level 16 monster
+                                (see ~7 for monster lore to check level) and
+                                your Mimicry skill must be at least 8 while you
+                                kill them, or you won't gain any knowledge.
+
                                 You also inherit the monsters abilities,
                                 weaknesses and resistances!
+
                                 See section (6.7) for more info.
                                 To find out details about a monster form,
                                 press  ~ 7  in game or consult a spoiler file.
@@ -13623,24 +13635,23 @@ create a character!):
     Intelligence is not of primary importance but it can help somewhat to
     increase the mana pool for making use of monster spells/breaths, and it
     also affects the success chance when attempting to use a monster power.
-    Mimics learn forms by killing as many of a certain monster type as that
-    monster has high a level. Further, their 'Mimicry' skill must be at least
-    1/2 of the monster level.
-    If mimics kill monsters whose level is higher than twice their mimicry
-    skill those kills will nevertheless be counted in case the skill is raised
-    to the appropriate level later, so those kills won't be 'lost'.
+    Mimics learn forms by killing an amount of that monster type that is the
+    same as the monster's level. Further, their 'Mimicry' skill must be at
+    least 1/2 of the monster level or you won't gain knowledge from the kills.
+
     Example: To use the form of an Ancient Bronze Dragon (level 40) the
     mimic has to kill 40 of them and have a mimicry skill of at least 20.
 
+    To find out the level and special abilities of a monster form, press '~'
+    followed by '7' and look it up, then consult section (6.7) for how the
+    monster details translate into mimic abilities.
     To find out how many monsters you already killed and how many you need
     in total to learn a form, press the '~' key followed by '2'.
     To polymorph into a form, press 'm' key, like casting a magic spell.
     (Forms that have DISBELIEVE ability are skipped when using the normal
     'Polymorph Self' spell. You have to use 'Polymorph Self Into..' if you
     want to use these forms.)
-    To find out the special abilities of a monster form, press '~' followed by
-    '7' and look it up, then consult section (6.7) for how the monster details
-    translate into mimic abilities.
+
     A list of useful low-level humanoid forms for weapon-using mimics is given
     in (6.7c) because weapon-using mimics have a somewhat harder time to find
     usable forms early on than martial artists who might just utilize
