@@ -3373,7 +3373,7 @@ void recall_player(int Ind, char *message) {
 			else j = 13;
 			for (i = 1; i < max_r_idx; i++) {
 				if ((r_info[i].flags1 & RF1_UNIQUE)) continue;
-				p_ptr->r_killed[i] = (p_ptr->r_killed[i] * 5) / j;
+				p_ptr->r_mimicry[i] = (p_ptr->r_mimicry[i] * 5) / j;
 			}
 			/* In case he can no longer use his current form */
 			do_mimic_change(Ind, 0, TRUE);
@@ -4659,7 +4659,7 @@ static bool process_player_end_aux(int Ind) {
 				msg_print(Ind, "\376\377LYour ring disintegrates!");
 
 				if ((p_ptr->body_monster == o_ptr->pval) &&
-				    ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
+				    ((p_ptr->r_mimicry[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 				    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))) {
 					/* If player hasn't got high enough kill count anymore now, poly back to player form! */
 					msg_print(Ind, "You polymorph back to your normal form.");

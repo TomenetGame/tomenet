@@ -2573,7 +2573,7 @@ void do_cmd_check_server_settings(int Ind) {
 void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 	player_type *p_ptr = Players[Ind];
 
-	int i, j, num, total = 0, forms = 0, forms_learnt = 0;
+	int i, j, num, numf, total = 0, forms = 0, forms_learnt = 0;
 #ifdef MONS_PRE_SORT
 	int i0;
 #endif
@@ -2627,6 +2627,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 		if (r_ptr->level < minlev) continue;
 
 		num = p_ptr->r_killed[i];
+		numf = p_ptr->r_mimicry[i];
 
 		/* Hack for druid */
 		druid_form = FALSE;
@@ -2669,7 +2670,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 				continue;
 
 			/* check if we have learned or infused it */
-			j = r_ptr->level - num;
+			j = r_ptr->level - numf;
 			if (!r_ptr->level) j++; //fix it for townies
 			/* not learnt? then infusable-only at this time */
 			if ((j > 0) && !druid_form && !vampire_form) {
@@ -2690,7 +2691,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 		    !(p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(i)))
 		{
 			forms++;
-			j = r_ptr->level - num;
+			j = r_ptr->level - numf;
 			if (!r_ptr->level) j++; //fix it for townies
 
 			if ((j > 0) && !druid_form && !vampire_form) {

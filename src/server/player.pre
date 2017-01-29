@@ -682,6 +682,7 @@ struct player_type
 	s16b pspeed;		/* Current speed */
 
 	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
+	s16b r_mimicry[MAX_R_IDX];	/* Monster kill count for mimicry */
 
 	s32b melee_techniques; /* for weaponmastery */
 	s32b ranged_techniques; /* for archery */

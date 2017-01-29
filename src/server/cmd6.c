@@ -6275,7 +6275,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				return;
 			/* Yes, this can be activated but at the cost of it's destruction */
 			case SV_RING_TELEPORTATION:
-//				if (!get_check("This will destroy the ring, do you want to continue ?")) break;
+				//if (!get_check("This will destroy the ring, do you want to continue ?")) break;
 				msg_print(Ind, "The ring explode into a space distorsion.");
 				teleport_player(Ind, 200, FALSE);
 
@@ -6301,7 +6301,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				/* If never used before, then set to the player form,
 				 * otherwise set the player form*/
 				if (!o_ptr->pval) {
-					if ((p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
+					if ((p_ptr->r_mimicry[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
 					    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))
 						msg_print(Ind, "Nothing happens");
 					else if (r_info[p_ptr->body_monster].level == 0)
@@ -6318,11 +6318,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 								rand_int(3001 - get_skill_scale(p_ptr, SKILL_DEVICE, 2000));
 
 						msg_print(Ind, "Your knowledge is absorbed by the ring!");
-						p_ptr->r_killed[p_ptr->body_monster] = 0;
+						p_ptr->r_mimicry[p_ptr->body_monster] = 0;
 
-						/* If player hasn't got high enough kill count anymore now, poly back to player form! */
-						if (p_ptr->r_killed[p_ptr->body_monster] < r_info[p_ptr->body_monster].level)
-							do_mimic_change(Ind, 0, TRUE);
+						do_mimic_change(Ind, 0, TRUE);
 
 						object_aware(Ind, o_ptr);
 						object_known(o_ptr);

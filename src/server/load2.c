@@ -1857,19 +1857,36 @@ static bool rd_extra(int Ind) {
 		s_printf("Too many (%u) monster races!\n", tmp16u);
 		return (22);
 	}
-	for (i = 0; i < tmp16u; i++) {
-		rd_s16b(&p_ptr->r_killed[i]);
+	if (older_than(4, 7, 2))
+		for (i = 0; i < tmp16u; i++) {
+			rd_s16b(&p_ptr->r_killed[i]);
+			p_ptr->r_mimicry[i] = p_ptr->r_killed[i]; //translate, for backward-compatibility
 
-		/* Hack -- try to fix the unique list */
-		r_ptr = &r_info[i];
+			/* Hack -- try to fix the unique list */
+			r_ptr = &r_info[i];
 
-		if (p_ptr->r_killed[i] && !r_ptr->r_tkills &&
-		    !is_admin(p_ptr) &&
-		    (r_ptr->flags1 & RF1_UNIQUE)) {
-			r_ptr->r_tkills = r_ptr->r_sights = 1;
-			s_printf("TKILL FIX: Player %s assisted for/killed unique %d\n", p_ptr->name, i);
+			if (p_ptr->r_killed[i] && !r_ptr->r_tkills &&
+			    !is_admin(p_ptr) &&
+			    (r_ptr->flags1 & RF1_UNIQUE)) {
+				r_ptr->r_tkills = r_ptr->r_sights = 1;
+				s_printf("TKILL FIX: Player %s assisted for/killed unique %d\n", p_ptr->name, i);
+			}
 		}
-	}
+	else
+		for (i = 0; i < tmp16u; i++) {
+			rd_s16b(&p_ptr->r_killed[i]);
+			rd_s16b(&p_ptr->r_mimicry[i]);
+
+			/* Hack -- try to fix the unique list */
+			r_ptr = &r_info[i];
+
+			if (p_ptr->r_killed[i] && !r_ptr->r_tkills &&
+			    !is_admin(p_ptr) &&
+			    (r_ptr->flags1 & RF1_UNIQUE)) {
+				r_ptr->r_tkills = r_ptr->r_sights = 1;
+				s_printf("TKILL FIX: Player %s assisted for/killed unique %d\n", p_ptr->name, i);
+			}
+		}
 
 	if (!older_than(4, 4, 24)) rd_u32b(&p_ptr->gold_picked_up);
 	else strip_bytes(4);

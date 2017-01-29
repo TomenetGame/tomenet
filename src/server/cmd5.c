@@ -1478,10 +1478,10 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			if (r_info[j].level > skill_mimic) continue;
 			if (r_info[j].flags1 & RF1_UNIQUE) continue;
 			if (r_info[j].flags8 & RF8_PSEUDO_UNIQUE) continue;
-			if (p_ptr->r_killed[j] < r_info[j].level) continue;
-			if (p_ptr->r_killed[j] < 1 && j) continue;
+			if (p_ptr->r_mimicry[j] < r_info[j].level) continue;
+			if (p_ptr->r_mimicry[j] < 1 && j) continue;
 			if (strlen(r_info[j].name + r_name) <= 1) continue;
-//			if (!r_info[j].level && !mon_allowed(&r_info[j])) continue;
+			//if (!r_info[j].level && !mon_allowed(&r_info[j])) continue;
 			if (!mon_allowed_chance(&r_info[j])) continue;
 			if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))) continue;
 
@@ -1569,7 +1569,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				msg_print(Ind, "That form is unlearnable!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
-			} else if (j && p_ptr->r_killed[j] < 1
+			} else if (j && p_ptr->r_mimicry[j] < 1
 			    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
 			    && !admin) {
 				if (!p_ptr->free_mimic) {
@@ -1577,7 +1577,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 					Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 					return;
 				} else using_free_mimic = TRUE;
-			} else if (p_ptr->r_killed[j] < r_info[j].level
+			} else if (p_ptr->r_mimicry[j] < r_info[j].level
 			    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
 			    && !admin) {
 				if (!p_ptr->free_mimic) {
@@ -1611,7 +1611,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			if (j && using_free_mimic) p_ptr->free_mimic--;
 
 			/* Activation tax */
-			else if (j && p_ptr->r_killed[j] < r_info[j].level
+			else if (j && p_ptr->r_mimicry[j] < r_info[j].level
 			    && p_ptr->tim_mimic_what == j && p_ptr->tim_mimic > 10)
 				p_ptr->tim_mimic -= 10;
 

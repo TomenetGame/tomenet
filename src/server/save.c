@@ -878,7 +878,10 @@ static void wr_extra(int Ind) {
 	/* Dump the monster lore */
 	tmp16u = MAX_R_IDX;
 	wr_u16b(tmp16u);
-	for (i = 0; i < tmp16u; i++) wr_s16b(p_ptr->r_killed[i]);
+	for (i = 0; i < tmp16u; i++) {
+		wr_s16b(p_ptr->r_killed[i]);
+		wr_s16b(p_ptr->r_mimicry[i]);
+	}
 
 	wr_u32b(p_ptr->gold_picked_up);
 	wr_byte(p_ptr->insta_res);

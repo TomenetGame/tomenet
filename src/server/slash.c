@@ -1440,7 +1440,7 @@ void do_slash_cmd(int Ind, char *message) {
 		}
 		else if (prefix(message, "/monster") ||	/* syntax: /mon [<char>] [+minlev] */
 		    prefix(message, "/mon")) {
-			int r_idx, num;
+			int r_idx, num, numf;
 			monster_race *r_ptr;
 			if (!tk) {
 				do_cmd_show_monster_killed_letter(Ind, NULL, 0);
@@ -1466,6 +1466,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 			r_ptr = &r_info[r_idx];
 			num = p_ptr->r_killed[r_idx];
+			numf = p_ptr->r_mimicry[r_idx];
 
 			if (r_ptr->flags1 & RF1_UNIQUE) {
 				if (!num) msg_format(Ind, "%s : not slain.", r_name + r_ptr->name);
@@ -1476,7 +1477,7 @@ void do_slash_cmd(int Ind, char *message) {
 			    !((p_ptr->prace == RACE_VAMPIRE) && !mimic_vampire(r_idx, p_ptr->lev)) &&
 			    !((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(r_idx)))
 			{
-				i = r_ptr->level - num;
+				i = r_ptr->level - numf;
 				if (p_ptr->tim_mimic && r_idx == p_ptr->tim_mimic_what) {
 					if (r_idx == p_ptr->body_monster)
 						msg_format(Ind, "%s : %4d slain (%d more to go)  ** Infused %d turns **",

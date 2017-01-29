@@ -4991,6 +4991,7 @@ bool monster_death(int Ind, int m_idx) {
 	bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
 	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
+	int r_idx = m_ptr->r_idx;
 	//bool visible = (p_ptr->mon_vis[m_idx] || (r_ptr->flags1 & RF1_UNIQUE));
 
 	bool good = (r_ptr->flags1 & RF1_DROP_GOOD) ? TRUE : FALSE;
@@ -5613,67 +5614,77 @@ bool monster_death(int Ind, int m_idx) {
 		}
 	/* Get kill credit for non-uniques (important for mimics) */
 	//HACK: added test for m_ptr->r_idx to suppress bad msgs about 0 forms learned (exploders?)
-	} else if (credit_idx && p_ptr->r_killed[credit_idx] < 1000 && !m_ptr->questor) {
-		int before = p_ptr->r_killed[credit_idx];
-		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
+	} else {
 
-		/* get +1 bonus credit in Ironman Deep Dive Challenge */
-		if (in_irondeepdive(wpos))
+		/* Normal kill count */
+		if (p_ptr->r_killed[r_idx] < 10000) p_ptr->r_killed[r_idx]++;
+
+		/* Mimicry kill count */
+		i = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
+		if (credit_idx
+#if 1 /* New: Can only gain form knowledge while Mimicry skill is actually sufficient? */
+		    && i >= r_info[credit_idx].level
+#endif
+		    && p_ptr->r_mimicry[credit_idx] < 10000 && !m_ptr->questor) {
+			int before = p_ptr->r_mimicry[credit_idx];
+
+			/* get +1 bonus credit in Ironman Deep Dive Challenge */
+			if (in_irondeepdive(wpos))
 #ifndef IDDC_MIMICRY_BOOST
-			p_ptr->r_killed[credit_idx]++;
+				p_ptr->r_mimicry[credit_idx]++;
 #else /* give a possibly greater boost than just +1 */
-			p_ptr->r_killed[credit_idx] += IDDC_MIMICRY_BOOST;
+				p_ptr->r_mimicry[credit_idx] += IDDC_MIMICRY_BOOST;
 #endif
 
 #ifdef RPG_SERVER
-		/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away
-		 * to make it easier (at least statistically) getting forms in the iron server. Plus,
-		 * mimicked speed and hp are lowered already anyway.	- the_sandman */
-		if ( ( r_info[m_ptr->r_idx].level - p_ptr->r_killed[credit_idx] > 0 ) &&
-		     ( (randint((r_info[m_ptr->r_idx].level - p_ptr->r_killed[credit_idx]) *
-		     	     	(r_info[m_ptr->r_idx].level - p_ptr->r_killed[credit_idx])) == 1))) {
-			p_ptr->r_killed[credit_idx] = r_info[credit_idx].level;
-		} else { /* Badluck */
-			p_ptr->r_killed[credit_idx]++;
+			/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away
+			 * to make it easier (at least statistically) getting forms in the iron server. Plus,
+			 * mimicked speed and hp are lowered already anyway.	- the_sandman */
+			if ( ( r_info[m_ptr->r_idx].level - p_ptr->r_mimicry[credit_idx] > 0 ) &&
+			     ( (randint((r_info[m_ptr->r_idx].level - p_ptr->r_mimicry[credit_idx]) *
+			    (r_info[m_ptr->r_idx].level - p_ptr->r_mimicry[credit_idx])) == 1))) {
+			    p_ptr->r_mimicry[credit_idx] = r_info[credit_idx].level;
+			} else { /* Badluck */
+				p_ptr->r_mimicry[credit_idx]++;
 
-			/* Shamans have a chance to learn E forms very quickly */
-			if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X'))
-				p_ptr->r_killed[credit_idx] += 2;
-		}
+				/* Shamans have a chance to learn E forms very quickly */
+				if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X'))
+					p_ptr->r_mimicry[credit_idx] += 2;
+			}
 #else
-		if (pvp) {
-			/* PvP mode chars learn forms very quickly! */
-			p_ptr->r_killed[credit_idx] += 3;
-		} else {
-			p_ptr->r_killed[credit_idx]++;
+			if (pvp) {
+				/* PvP mode chars learn forms very quickly! */
+				p_ptr->r_mimicry[credit_idx] += 3;
+			} else {
+				p_ptr->r_mimicry[credit_idx]++;
 
-			/* Shamans have a chance to learn E forms very quickly */
-			if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X'))
-				p_ptr->r_killed[credit_idx] += 2;
-		}
+				/* Shamans have a chance to learn E forms very quickly */
+				if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X'))
+					p_ptr->r_mimicry[credit_idx] += 2;
+			}
 #endif
 
-		if (p_ptr->r_killed[credit_idx] > 1000)
-			p_ptr->r_killed[credit_idx] = 1000;
+			if (p_ptr->r_mimicry[credit_idx] > 10000)
+				p_ptr->r_mimicry[credit_idx] = 10000;
 
-		if (i && i >= r_info[credit_idx].level &&
-		    (before == 0 || /* <- for level 0 townspeople */
-		     before < r_info[credit_idx].level) &&
-		    (p_ptr->r_killed[credit_idx] >= r_info[credit_idx].level ||
-		    /* for level 0 townspeople: */
-		    r_info[credit_idx].level == 0))
-		{
-			if (!((r_ptr->flags1 & RF1_UNIQUE) || (p_ptr->pclass == CLASS_DRUID) ||
-			    ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(credit_idx)) ||
-			    (p_ptr->prace == RACE_VAMPIRE))) {
-				msg_format(Ind, "\374\377UYou have learned the form of %s! (%d)",
-				    r_info[credit_idx].name + r_name, credit_idx);
-				/* smooth transition from poly ring form to known form */
-				if (p_ptr->body_monster == credit_idx) p_ptr->tim_mimic = p_ptr->tim_mimic_what = 0;
-				if (!p_ptr->warning_mimic) {
-					p_ptr->warning_mimic = 1;
-					msg_print(Ind, "\374\377U(Press '\377ym\377U' key and choose '\377yuse innate power\377U' to polymorph.)");
-					s_printf("warning_mimic: %s\n", p_ptr->name);
+			if (i && i >= r_info[credit_idx].level &&
+			    (before == 0 || /* <- for level 0 townspeople */
+			     before < r_info[credit_idx].level) &&
+			    (p_ptr->r_mimicry[credit_idx] >= r_info[credit_idx].level ||
+			    /* for level 0 townspeople: */
+			    r_info[credit_idx].level == 0)) {
+				if (!((r_ptr->flags1 & RF1_UNIQUE) || (p_ptr->pclass == CLASS_DRUID) ||
+				    ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(credit_idx)) ||
+				    (p_ptr->prace == RACE_VAMPIRE))) {
+					msg_format(Ind, "\374\377UYou have learned the form of %s! (%d)",
+					    r_info[credit_idx].name + r_name, credit_idx);
+					/* smooth transition from poly ring form to known form */
+					if (p_ptr->body_monster == credit_idx) p_ptr->tim_mimic = p_ptr->tim_mimic_what = 0;
+					if (!p_ptr->warning_mimic) {
+						p_ptr->warning_mimic = 1;
+						msg_print(Ind, "\374\377U(Press '\377ym\377U' key and choose '\377yuse innate power\377U' to polymorph.)");
+						s_printf("warning_mimic: %s\n", p_ptr->name);
+					}
 				}
 			}
 		}

@@ -515,12 +515,13 @@ struct player_type
 	byte tval_ammo;		/* Correct ammo tval */
 
 	s16b pspeed;		/* Current speed */
-	
+
  	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
+ 	s16b r_mimicry[MAX_R_IDX];	/* Monster kill count for mimicry */
 
 	s32b innate_spells[3]; /* Monster spells */
 	bool body_changed;
-	
+
 	bool anti_magic;	/* Can the player resist magic */
 
         player_list_type *blood_bond; /* Norc is now happy :) */
