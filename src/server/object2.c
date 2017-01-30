@@ -4779,11 +4779,11 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 					r_ptr = &r_info[i];
 
 					if (!r_ptr->name) continue;
+					if (!r_ptr->rarity) continue;
 					// if (r_ptr->flags1 & RF1_UNIQUE) continue;
 					// if (r_ptr->level >= level + (power * 5)) continue;
-//						if (!mon_allowed(r_ptr)) continue;
+					//if (!mon_allowed(r_ptr)) continue;
 					if (!mon_allowed_chance(r_ptr)) continue;
-					if (r_ptr->rarity == 255) continue;
 
 					break;
 				}
@@ -4899,11 +4899,11 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 					r_ptr = &r_info[i];
 
 					if (!r_ptr->name) continue;
+					if (!r_ptr->rarity) continue;
 					if (r_ptr->flags1 & RF1_UNIQUE) continue;
 					if (r_ptr->level >= level + (power * 5)) continue;
-//							if (!mon_allowed(r_ptr)) continue;
+					//if (!mon_allowed(r_ptr)) continue;
 					if (!mon_allowed_chance(r_ptr)) continue;
-					if (r_ptr->rarity == 255) continue;
 
 					break;
 				}

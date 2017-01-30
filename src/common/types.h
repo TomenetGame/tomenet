@@ -192,39 +192,39 @@ struct feature_type {
 
 typedef struct object_kind object_kind;
 struct object_kind {
-	u16b name;			/* Name (offset) */
-	u16b text;			/* Text (offset) */
+	u16b name;		/* Name (offset) */
+	u16b text;		/* Text (offset) */
 
-	byte tval;			/* Object type */
-	byte sval;			/* Object sub type */
+	byte tval;		/* Object type */
+	byte sval;		/* Object sub type */
 
-	s16b pval;			/* Object extra info */
+	s16b pval;		/* Object extra info */
 
-	s16b to_h;			/* Bonus to hit */
-	s16b to_d;			/* Bonus to damage */
-	s16b to_a;			/* Bonus to armor */
+	s16b to_h;		/* Bonus to hit */
+	s16b to_d;		/* Bonus to damage */
+	s16b to_a;		/* Bonus to armor */
 
-	s16b ac;			/* Base armor */
+	s16b ac;		/* Base armor */
 
 	byte dd, ds;		/* Damage dice/sides */
 
 	s16b weight;		/* Weight */
 
-	s32b cost;			/* Object "base cost" */
+	s32b cost;		/* Object "base cost" */
 
 	u32b flags1;		/* Flags, set 1 */
 	u32b flags2;		/* Flags, set 2 */
 	u32b flags3;		/* Flags, set 3 */
-        u32b flags4;            /* Flags, set 4 */
-        u32b flags5;            /* Flags, set 5 */
-        u32b flags6;            /* Flags, set 6 */
+	u32b flags4;		/* Flags, set 4 */
+	u32b flags5;		/* Flags, set 5 */
+	u32b flags6;		/* Flags, set 6 */
 
 
 	byte locale[4];		/* Allocation level(s) */
-	byte chance[4];		/* Allocation chance(s) */
+	u16b chance[4];		/* Allocation chance(s) */
 
-	byte level;			/* Level */
-	byte extra;			/* Something */
+	byte level;		/* Level */
+	byte extra;		/* Something */
 
 
 	byte k_attr;		/* Standard object attribute */
@@ -248,12 +248,12 @@ struct object_kind {
 
 /*	bool tried;	*/		/* The player has "tried" one of the items */
 
-        u32b esp;                       /* ESP flags */
+	u32b esp;		/* ESP flags */
 #if 0
-        byte btval;                     /* Become Object type */
-        byte bsval;                     /* Become Object sub type */
+	byte btval;		/* Become Object type */
+	byte bsval;		/* Become Object sub type */
 
-        s16b power;                     /* Power granted(if any) */
+	s16b power;		/* Power granted(if any) */
 #endif
 };
 

@@ -2933,9 +2933,6 @@ static errr init_alloc(void) {
 		for (j = 0; j < 4; j++) {
 			/* Count the "legal" entries */
 			if (k_ptr->chance[j]) {
-				/* Hack - Don't include zero probability entries in the table */
-				if (k_ptr->chance[j] == 255) continue;
-
 				/* Count the entries */
 				alloc_kind_size++;
 
@@ -2972,9 +2969,6 @@ static errr init_alloc(void) {
 			/* Count the "legal" entries */
 			if (k_ptr->chance[j]) {
 				int p, x, y, z;
-
-				/* Hack - 255 means zero probability */
-				if (k_ptr->chance[j] == 255) continue;
 
 				/* Extract the base level */
 				x = k_ptr->locale[j];
@@ -3024,15 +3018,12 @@ static errr init_alloc(void) {
 		/* Get the i'th race */
 		r_ptr = &r_info[i];
 
-		/* Legal monsters */
+		/* Legal monsters. Hack - 0 means zero probability */
 		if (r_ptr->rarity) {
 			int p;
 
 			/* Extract the base probability */
 			p = (10000 / r_ptr->rarity);
-
-			/* Hack - 255 means zero probability */
-			if (r_ptr->rarity == 255) p = 0;
 
 			/* Adjust based on server settings - mikaelh */
 			p = p * mon_allowed_chance(r_ptr) / 100;
@@ -3074,7 +3065,7 @@ static errr init_alloc(void) {
 		/* Get the i'th race */
 		r_ptr = &r_info[i];
 
-		/* Count valid pairs */
+		/* Count valid pairs. Hack - 0 means zero probability */
 		if (r_ptr->rarity) {
 			int p, q, x, y, z;
 
@@ -3083,9 +3074,6 @@ static errr init_alloc(void) {
 
 			/* Extract the base probability */
 			p = (10000 / r_ptr->rarity);
-
-			/* Hack - 255 means zero probability */
-			if (r_ptr->rarity == 255) p = 0;
 
 			/* Adjust based on server settings - mikaelh */
 			p = p * mon_allowed_chance(r_ptr) / 100;

@@ -2710,7 +2710,8 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 				/* If the slash is "nearby", use it */
 				if (t && (!s || t < s)) {
 					int chance = atoi(t+1);
-					if (chance > 0) k_ptr->chance[i] = chance;
+
+					k_ptr->chance[i] = chance;
 				}
 			}
 
@@ -4257,8 +4258,8 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			/* Save the values */
 			r_ptr->level = lev;
 			r_ptr->rarity = rar;
-//			r_ptr->extra = pad;
-#if 1	//
+			//r_ptr->extra = pad;
+#if 1
 			r_ptr->extra = 0;
 			/* MEGA HACK */
 			if(!pad) pad = 100;

@@ -455,7 +455,7 @@ static bool lua_mon_hook_bounty(int r_idx) {
 	monster_race* r_ptr = &r_info[r_idx];
 
 	/* Reject 'non-spawning' monsters */
-	if (r_ptr->rarity == 255) return (FALSE);
+	if (!r_ptr->rarity) return (FALSE);
 
 	/* Reject uniques */
 	if ((r_ptr->flags1 & RF1_UNIQUE)) return (FALSE);

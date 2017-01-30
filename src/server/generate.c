@@ -3257,7 +3257,7 @@ bool xorder_aux(int r_idx) {
 		return FALSE;
 
 	/* Reject 'non-spawning' monsters */
-	if (r_ptr->rarity == 255) return (FALSE);
+	if (!r_ptr->rarity) return (FALSE);
 
 	return TRUE;
 }

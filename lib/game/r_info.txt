@@ -19377,7 +19377,7 @@ N:1086:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:30d100:15:20:20
 $RPG_SERVER$I:120:20d100:15:20:20
-W:127:255:500:50
+W:127:0:500:50
 E:0:0:0:0:0:0
 O:0:0:0:0
 #B:GAZE:PARALYZE
@@ -19403,7 +19403,7 @@ N:1087:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:60d100:15:20:20
 $RPG_SERVER$I:120:40d100:15:20:20
-W:127:255:500:50
+W:127:0:500:50
 E:0:0:0:0:0:0
 O:0:0:0:0
 #B:GAZE:PARALYZE
@@ -19429,7 +19429,7 @@ N:1088:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:100d100:15:20:20
 $RPG_SERVER$I:120:66d100:15:20:20
-W:127:255:500:50
+W:127:0:500:50
 E:0:0:0:0:0:0
 O:0:0:0:0
 #B:GAZE:PARALYZE
@@ -19599,7 +19599,7 @@ D:probably lasts a cosmos' lifetime, its paycheck remains unknown.
 N:1098:Orome, The Hunter
 G:P:v
 I:180:500d200:200:200:0
-W:200:255:0:2000000
+W:200:0:0:2000000
 E:0:0:0:0:0:0
 O:0:0:0:0
 #F:UNIQUE -- hack: He isn't technically one.
@@ -19633,7 +19633,7 @@ D:around the metallic surface, the tearless retina tracing everything you do.
 N:1100:Brightlance
 G:A:w
 I:150:250d100:200:200:0
-W:99:255:3200:100000
+W:99:0:3200:100000
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:GAZE:TERRIFY:10d10
@@ -19660,7 +19660,7 @@ D:let alone fighting it!
 N:1101:Target dummy
 G:p:D
 I:110:10d2:0:50:0
-W:50:255:500:0
+W:50:0:500:0
 E:1:1:2:0:1:0
 O:0:0:0:0
 F:BLUEBAND | NEVER_ACT | NO_DEATH | NONLIVING | EMPTY_MIND | COLD_BLOOD |
@@ -19675,7 +19675,7 @@ D:assisting you without complaining in assessing your combat prowess.
 N:1102:Santa Claus
 G:h:r
 I:140:50d100:200:100:10
-W:127:255:2600:0
+W:127:0:2600:0
 E:1:1:2:2:1:2
 O:20:20:20:20
 B:GAZE:PARALYZE
@@ -19720,7 +19720,7 @@ $ENABLE_MAIA$N:1104:Candlebearer
 $ENABLE_MAIA$G:h:L
 $ENABLE_MAIA$#G:h:w (unused!)
 $ENABLE_MAIA$I:100:25d10:20:30:20
-$ENABLE_MAIA$W:15:255:150:150
+$ENABLE_MAIA$W:15:0:150:150
 $ENABLE_MAIA$E:1:1:2:2:1:2
 $ENABLE_MAIA$O:0:0:0:0
 $ENABLE_MAIA$B:HIT:CONFUSE:1d3
@@ -19737,7 +19737,7 @@ $ENABLE_MAIA$D:Lesser herald of light, which must be slain to walk the path of c
 $ENABLE_MAIA$N:1105:Darkling
 $ENABLE_MAIA$G:u:a
 $ENABLE_MAIA$I:100:25d10:20:30:20
-$ENABLE_MAIA$W:15:255:150:150
+$ENABLE_MAIA$W:15:0:150:150
 $ENABLE_MAIA$E:1:1:2:2:1:2
 $ENABLE_MAIA$O:0:0:0:0
 $ENABLE_MAIA$B:HIT:CONFUSE:1d3
@@ -19875,7 +19875,7 @@ $ARCADE_SERVER$D:powerful blow as it stalks towards you.
 N:1112:Dragon of Bad Luck
 G:d:a
 I:115:30d100:200:150:0
-W:44:255:100000:1
+W:44:0:100000:1
 E:0:1:2:6:1:2
 O:0:0:0:0
 B:CLAW:UN_BONUS:2d12
@@ -19895,7 +19895,7 @@ D:the very stones of the dungeon - what could it do to you?
 N:1113:Great Dragon of Bad Luck
 G:D:a
 I:130:50d100:200:150:0
-W:71:255:100000:1
+W:71:0:100000:1
 E:0:1:2:6:1:2
 O:0:0:0:0
 B:CLAW:UN_BONUS:4d12
@@ -19915,7 +19915,7 @@ D:the very stones of the dungeon - what could it do to you?
 N:1114:Bad Luck Bat from Hell
 G:b:a
 I:200:50d100:200:500:0
-W:44:255:100:1
+W:44:0:100:1
 E:0:1:0:6:1:2
 O:0:100:0:0
 B:CLAW:UN_BONUS:1d2
@@ -19935,7 +19935,7 @@ D:straight at you like lightning.
 N:1115:Test Blob
 G:j:R
 I:110:100d10:0:50:0
-W:99:255:500:0
+W:99:0:500:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*
@@ -20047,7 +20047,7 @@ $ARCADE_SERVER$D:For blob war game.
 N:1126:Snow-covered target dummy
 G:p:W
 I:110:10d2:0:50:0
-W:50:255:500:0
+W:50:0:500:0
 E:1:1:2:0:1:0
 O:0:0:0:0
 F:BLUEBAND | NEVER_ACT | NO_DEATH | NONLIVING | EMPTY_MIND | COLD_BLOOD |
@@ -20152,7 +20152,7 @@ D:rarely encountered it inhabits swamps, mountains and caves.
 N:1132:Invisible Dummy
 G:.:w
 I:110:1d1:0:0:0
-W:127:255:0:0
+W:127:0:0:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 F:CHAR_CLEAR | NO_DEATH | NO_AUTORET | NO_TARGET | IM_TELE | BLUEBAND
@@ -20163,7 +20163,7 @@ D:to means such as teleport.
 N:1133:Susceptible Test Blob
 G:j:Z
 I:110:100d10:0:75:0
-W:1:255:500:0
+W:1:0:500:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*
@@ -20176,7 +20176,7 @@ D:For testing
 N:1134:White wolf cub
 G:c:w
 I:120:2d2:30:0:0
-W:1:255:700:30
+W:1:0:700:30
 E:0:1:0:2:1:4
 O:0:0:0:0
 B:BITE:HURT:1d1
@@ -20190,7 +20190,7 @@ D:icy and its fur coated in frost.
 N:1135:Panda
 G:q:D
 I:110:6d6:10:35:10
-W:5:255:1600:25
+W:5:0:1600:25
 E:0:1:0:2:1:0
 O:0:0:0:0
 #B:CLAW:HURT:1d4
@@ -20206,7 +20206,7 @@ D:A black and white spotted bear that doesn't seem overly agressive.
 N:1136:Black Horse
 G:q:D
 I:110:6d6:10:35:10
-W:5:255:1600:25
+W:5:0:1600:25
 E:0:1:0:2:1:0
 O:0:0:0:0
 F:ALLOW_RUNNING
@@ -20217,7 +20217,7 @@ D:A domesticated black horse.
 N:1137:Grullo
 G:q:s
 I:110:6d6:10:35:10
-W:5:255:1600:25
+W:5:0:1600:25
 E:0:1:0:2:1:0
 O:0:0:0:0
 F:ALLOW_RUNNING
@@ -20228,7 +20228,7 @@ D:A domesticated grullo horse.
 N:1138:Grey Horse
 G:q:W
 I:110:6d6:10:35:10
-W:5:255:1600:25
+W:5:0:1600:25
 E:0:1:0:2:1:0
 O:0:0:0:0
 F:ALLOW_RUNNING
@@ -20239,7 +20239,7 @@ D:A domesticated grey horse.
 N:1139:Chestnut Horse
 G:q:u
 I:110:6d6:10:35:10
-W:5:255:1600:25
+W:5:0:1600:25
 E:0:1:0:2:1:0
 O:0:0:0:0
 F:ALLOW_RUNNING
@@ -20250,7 +20250,7 @@ D:A domesticated chestnut horse.
 N:1140:Palomino
 G:q:U
 I:110:6d6:10:35:10
-W:5:255:1600:25
+W:5:0:1600:25
 E:0:1:0:2:1:0
 O:0:0:0:0
 F:ALLOW_RUNNING
@@ -20262,7 +20262,7 @@ D:A domesticated palomino horse.
 N:1141:Charged Test Blob
 G:j:M
 I:120:100d10:50:50:0
-W:1:255:500:0
+W:1:0:500:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*
@@ -20275,7 +20275,7 @@ D:For testing
 N:1142:Robin
 G:B:u
 I:110:1d1:255:1:10
-W:1:255:30:0
+W:1:0:30:0
 E:0:1:0:2:1:0
 O:0:0:0:0
 F:ALLOW_RUNNING | BASH_DOOR | FORCE_MAXHP | FORCE_SLEEP | DROP_CORPSE | NO_FEAR
@@ -20307,7 +20307,7 @@ D:A whirling anomaly of nether mists that will drain your life force.
 N:1144:Armoured target dummy
 G:p:D
 I:110:10d2:0:170:0
-W:50:255:500:0
+W:50:0:500:0
 E:1:1:2:0:1:0
 O:0:0:0:0
 F:BLUEBAND | NEVER_ACT | NO_DEATH | NONLIVING | EMPTY_MIND | COLD_BLOOD |
@@ -20322,7 +20322,7 @@ D:assisting you without complaining in assessing your combat prowess.
 N:1145:Snow-covered armoured target dummy
 G:p:W
 I:110:10d2:0:170:0
-W:50:255:500:0
+W:50:0:500:0
 E:1:1:2:0:1:0
 O:0:0:0:0
 F:BLUEBAND | NEVER_ACT | NO_DEATH | NONLIVING | EMPTY_MIND | COLD_BLOOD |
@@ -20338,7 +20338,7 @@ D:assisting you without complaining in assessing your combat prowess.
 N:1146:Horned Reaper
 G:U:B
 I:111:50d100:200:140:0
-W:72:255:7500:18000
+W:72:0:7500:18000
 E:1:1:2:2:1:2
 O:0:100:0:0
 B:HIT:HURT:11d11
@@ -20378,7 +20378,7 @@ D:and electrical discharges into all directions.
 N:1148:Star Test Blob
 G:j:p
 I:110:1d1:200:0:0
-W:127:255:0:0
+W:127:0:0:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*
@@ -20390,7 +20390,7 @@ D:For testing
 N:1149:Blinky Star Test Blob
 G:j:k
 I:110:1d1:200:0:0
-W:127:255:0:0
+W:127:0:0:0
 E:0:0:0:0:0:0
 O:0:0:0:0
 B:TOUCH:*
@@ -20405,7 +20405,7 @@ D:For testing
 N:1150:Loot Test Blob
 G:j:y
 I:110:1d1:1:0:0
-W:127:255:0:0
+W:127:0:0:0
 E:0:0:0:0:0:0
 O:20:20:20:20
 B:TOUCH:*

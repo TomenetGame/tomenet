@@ -4870,7 +4870,7 @@ bool multiply_monster(int m_idx) {
 	    /* No questors */
 	    || m_ptr->questor
 	    /* No non-spawning monsters */
-	    || r_ptr->rarity == 255)
+	    || !r_ptr->rarity)
 		return FALSE;
 
 	/* Try up to 18 times */
