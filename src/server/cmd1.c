@@ -2329,6 +2329,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					if (k_info[o_ptr->k_idx].cost >= 150000)
 						s_printf("Expensive item: %s found by %s(lv %d) at %d,%d,%d%s%s\n",
 						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "");
+					else if (o_ptr->tval == TV_AMULET && k_info[o_ptr->k_idx].cost >= 30000)
+						s_printf("Expensive item(amulet): %s found by %s(lv %d) at %d,%d,%d%s%s\n",
+						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "");
+					else if (o_ptr->tval == TV_RING && k_info[o_ptr->k_idx].cost >= 30000)
+						s_printf("Expensive item(ring): %s found by %s(lv %d) at %d,%d,%d%s%s\n",
+						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "");
 #endif
 
 					if (true_artifact_p(o_ptr)) {
