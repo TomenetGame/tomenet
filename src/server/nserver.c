@@ -835,6 +835,16 @@ static bool forbidden_name(char *cname) {
 	if (!strcmp(name, "indecisiveness")) return TRUE;
 #endif
 	if (!strcmp(name, "indetermination")) return TRUE;
+	if (!strcmp(name, "life draining")) return TRUE;
+	if (!strcmp(name, "Quitting")) return TRUE;
+	if (!strcmp(name, "Interrupting")) return TRUE;
+	/* not that important (just for in-game death msg design) */
+	if (strstr(name, "Farmer Maggot's dog")) return TRUE;
+	if (!strcmp(name, "Morgoth, Lord of Darkness")) return TRUE;
+	if (!strcmp(name, "It")) return TRUE; //only for log file actually?
+	if (!strcmp(name, "starvation")) return TRUE;
+	if (!strcmp(name, "poisonous food")) return TRUE;
+	/* ..and there are a couple of unimportant death causes, which aren't checked, just set. */
 
 	/* Hardcode some not so important ones */
 	if (!strcmp(name, "tbot")) return TRUE; /* Sandman's internal chat bot */

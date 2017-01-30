@@ -1769,16 +1769,18 @@ bool bypass_invuln = FALSE;
 void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	char hit_from_real[MNAME_LEN];
 	player_type *p_ptr = Players[Ind];
+	bool drain = !strcmp(hit_from, "life draining");
 
 	// The "number" that the character is displayed as before the hit
 	int old_num, new_num;
+
 
 	/* Amulet of Immortality */
 	if (p_ptr->admin_invuln) return;
 
 	/* Heavenly invulnerability? */
 	if (p_ptr->martyr && !bypass_invuln) {
-		break_cloaking(Ind, 0); /* still notice! paranoia though, rogues can't use martyr */
+		if (-Ind_attacker != PROJECTOR_TERRAIN && !drain) break_cloaking(Ind, 0); /* still notice! paranoia though, rogues can't use martyr */
 		return;
 	}
 
@@ -1861,7 +1863,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 
 	/* Silyl admin games -- only in totally safe environment! */
 	if (p_ptr->admin_set_defeat &&
-	    -Ind_attacker != PROJECTOR_TERRAIN &&
+	    -Ind_attacker != PROJECTOR_TERRAIN && !drain &&
 	    ge_special_sector &&
 	    in_arena(&p_ptr->wpos)) {
 		p_ptr->admin_set_defeat--;
@@ -1872,8 +1874,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	}
 
 	/* Disturb - except when in PvP! */
-	if (strcmp(hit_from, "life draining") &&
-	    !IS_PLAYER(Ind_attacker)
+	if (!drain && !IS_PLAYER(Ind_attacker)
 	    /* hack: no longer disturb on crossing terrain that we're immune to: */
 	    && (damage || -Ind_attacker != PROJECTOR_TERRAIN))
 		disturb(Ind, 1, 0);
@@ -1883,7 +1884,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		/* 1 in 2 chance to fully deflect the damage */
 		if (magik(40)) {
 			msg_print(Ind, "The attack is fully deflected by a magic shield.");
-			if (-Ind_attacker != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
+			if (-Ind_attacker != PROJECTOR_TERRAIN && !drain) break_cloaking(Ind, 0);
 			return;
 		}
 
@@ -1949,7 +1950,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	/* for cloaking as well as shadow running:
 	   floor damage (like in nether realm) ain't supposed to break it! - C. Blue */
 //both ifs should work properly.
-	if (-Ind_attacker != PROJECTOR_TERRAIN) break_cloaking(Ind, 0);
+	if (-Ind_attacker != PROJECTOR_TERRAIN && !drain) break_cloaking(Ind, 0);
 	//if (strcmp(hit_from, "hazardous environment")) break_cloaking(Ind, 0);
 
 destined_defeat:
@@ -2224,7 +2225,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from) {
 /* Decrease player's exp. This is another copy of the function above.
  * if mode is 'TRUE', it's permanent.
  * if fatal, player dies if runs out of exp.
- * 
+ *
  * if not permanent nor fatal, use lose_exp instead.
  * - Jir -
  */
