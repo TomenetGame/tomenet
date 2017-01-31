@@ -13006,8 +13006,8 @@ create a character!):
     Half-elves are slightly better at searching, disarming, saving throws,
     stealth, bows, and magic, but they are not as good at hand weapons.
     Half-elves resist light intrinsically.
-    They get bonus on 'Bow-mastery' and 'Interception' and a small bonus on
-    the 'Nature' and 'Spirit' magic schools.
+    They get bonus on 'Bow-mastery' and 'Interception', a small bonus on
+    the 'Nature' and 'Spirit' and a small malus on the 'Shadow' school.
 
 - Elf
     Elves resist light effects intrinsically and see invisible creatures.
@@ -13017,8 +13017,8 @@ create a character!):
     Elves are better at searching, disarming, perception, stealth, bows, and
     magic, but they are not as good at hand weapons.
     Elves get bonus on 'Bow-mastery', 'Magic', 'Stealth', 'Dodging',
-    'Calmness', 'Sneakiness' and the magic 'Water' and occult 'Spirit' schools
-    and a large bonus on the magic 'Nature' school.
+    'Calmness', 'Sneakiness' and the magic 'Water' and occult 'Spirit' schools,
+    a large bonus on the magic 'Nature' school and a malus on 'Shadow'.
 
 - Hobbit
     Hobbits have their dexterity sustained. Further, they get a dexterity bonus
@@ -13071,7 +13071,7 @@ create a character!):
     have great constitutions and lots of hit points.
     They get a slight bonus on 'Backstabbing', a large bonus on 'Weaponmastery'
     and a bonus on 'Necromancy' and occult 'Shadow' magic and receive penalties
-    on 'Magic' and 'Sorcery' and a slight penalty on 'Swimming'.
+    on 'Magic', 'Sorcery' and 'Spirit' and a slight penalty on 'Swimming'.
 
 - Half-Troll
     Half-trolls have their strength sustained. They are very strong, but also
@@ -13101,8 +13101,8 @@ create a character!):
     There are few things that they have not seen already, and experience is
     hard for them to gain.
     High-Elves receive boni on 'Bow-mastery', 'Magic', 'Stealth', 'Dodging'
-    and the magic 'Nature' school, a large bonus on 'Calmness' and a slight
-    bonus on 'Swimming' and on occult 'Spirit' magic.
+    and the magic 'Nature' school, a large bonus on 'Calmness', a slight
+    bonus on 'Swimming' and on occult 'Spirit' magic and a malus on 'Shadow'.
 
 - Yeek
     Being weak and losing many childhood fights, they have learned the
@@ -13127,7 +13127,7 @@ create a character!):
     making them good fighters, rogues, and mimics. Being creatures of the
     night, Goblins have natural resistance to darkness.
     They receive bonus on 'Boomerang-mastery', 'Stealing' and occult 'Shadow'
-    magic.
+    magic and a malus to 'Spirit' and all four holy schools.
 
 - Ent
     The Ents are a powerful race dating from the beginning of the world,
@@ -13149,10 +13149,10 @@ create a character!):
     potions that provide nourishment. They can never be gorged though.
     Ents intrinsically resist the force of unleashed water and their bark skin
     provides a small bonus to armour class.
-    They get bonus to 'Health' and a large bonus on 'Calmness' and on the magic
-    schools 'Earth', 'Water' and 'Nature'. They receive a large penalty on
-    'Fire' school, a penalty on 'Axe-mastery' and a small penalty on
-    'Sword-mastery'. They cannot train 'Climbing' at all.
+    They get bonus to 'Health', a slight bonus to 'Spirit' and a large bonus on
+    'Calmness' and on the magic schools 'Earth', 'Water' and 'Nature'. They
+    receive a large penalty on 'Fire' school, a penalty on 'Axe-mastery' and a
+    small penalty on 'Sword-mastery'. They cannot train 'Climbing' at all.
 
 - Draconian
     These humanoid half-breeds of dragon and man surpass common humans in all
@@ -13230,8 +13230,9 @@ create a character!):
     Dark-Elves are good fighters and sorcerors, but also decent priests.
     Dark-Elves intrinsically resist darkness, but are susceptible to light.
     At level 20 they learn to see the invisible.
-    They get bonus on 'Stealth', 'Dodging', 'Sneakiness', 'Backstabbing' and
-    occult 'Shadow' magic.
+    They get bonus on 'Stealth', 'Dodging', 'Sneakiness', 'Backstabbing', a
+    large bonnus on occult 'Shadow' magic and a malus on all four holy schools
+    and the occult 'Spirit' school.
 
 - Vampire
     These powerful undead creatues move out in the night to hunt living prey
@@ -13302,7 +13303,7 @@ create a character!):
     this any further.
     Vampires hate 'Blunt' weapons, are bad at 'Swimming', get a penalty on
     'Divination' magic school, but receive a bonus on 'Mental Intrusion' and
-    'Shadow', a large bonus on 'Necromancy' and all aura skills and a small
+    a large bonus on 'Shadow', 'Necromancy' and all aura skills and a small
     bonus on 'Traumaturgy'. They cannot use certain magic schools at all as
     described above. As undead, Vampires gain a moderate skill bonus for
     'Nether' runes but in turn find it hard to improve in 'Light' runes.
