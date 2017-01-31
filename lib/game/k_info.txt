@@ -1643,14 +1643,14 @@ G:?:d
 I:70:46:0
 W:20:0:5:50000
 A:20/8
-D:Creates a random great item, quality depending on depth where it's read.
+D:Creates a random equipment piece, quality depending on depth where it's read.
 
 N:199:*Acquirement*
 G:?:d
 I:70:47:0
 W:60:0:5:100000
 A:60/16
-D:Creates 2 or 3 random great items, quality depending on depth where it's read.
+D:Creates 2 or 3 random equippables, quality depending on depth where it's read.
 
 N:200:Obliteration
 G:?:d
