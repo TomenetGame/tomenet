@@ -9037,6 +9037,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				j = strlen(school_spells[i].name) - 2;
 				//assume spell names are at least 3 characters long(!)
 				if (school_spells[i].name[j] == ' ' //assume the final character must be 'I'
+				    && j == strlen(str2)
 				    && !strncasecmp(school_spells[i].name, str2, j)) break;
 			}
 			if (i == max_spells) {
@@ -9073,6 +9074,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 					j = strlen(school_spells[i].name) - 2;
 					//assume spell names are at least 3 characters long(!)
 					if (school_spells[i].name[j] == ' ' //assume the final character must be 'I'
+					    && j == strlen(str)
 					    && !strncasecmp(school_spells[i].name, str, j)) break;
 				}
 				if (i < max_spells) {
