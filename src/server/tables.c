@@ -1460,9 +1460,14 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_NATURE,
 			'+', 0,
 			'%', 105, },
+#ifdef ENABLE_OCCULT
 		{ SKILL_OSPIRIT,
 			'+', 0,
 			'%', 105, },
+		{ SKILL_OSHADOW,
+			'+', 0,
+			'%', 95, },
+#endif
 		{ SKILL_SWIM,
 			'+', 0,
 			'+', 50, },
@@ -1494,9 +1499,14 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_WATER,
 			'+', 0,
 			'%', 110, },
+#ifdef ENABLE_OCCULT
 		{ SKILL_OSPIRIT,
 			'+', 0,
 			'%', 110, },
+		{ SKILL_OSHADOW,
+			'+', 0,
+			'%', 90, },
+#endif
 		{ SKILL_STEALTH,
 			'+', 0,
 			'%', 110, },
@@ -1637,9 +1647,14 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_MASTERY,
 			'+', 0,
 			'%', 115, },
+#ifdef ENABLE_OCCULT
 		{ SKILL_OSHADOW,
 			'+', 0,
 			'%', 110, },
+		{ SKILL_OSPIRIT,
+			'+', 0,
+			'%', 90, },
+#endif
 		{ SKILL_NECROMANCY,
 			'+', 0,
 			'%', 110, },
@@ -1755,9 +1770,14 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_NATURE,
 			'+', 0,
 			'%', 110, },
+#ifdef ENABLE_OCCULT
 		{ SKILL_OSPIRIT,
 			'+', 0,
 			'%', 105, },
+		{ SKILL_OSHADOW,
+			'+', 0,
+			'%', 90, },
+#endif
 		{ SKILL_STEALTH,
 			'+', 0,
 			'%', 110, },
@@ -1822,9 +1842,26 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_STEALING,
 			'+', 0,
 			'%', 110, },
+#ifdef ENABLE_OCCULT
 		{ SKILL_OSHADOW,
 			'+', 0,
 			'%', 110, },
+		{ SKILL_OSPIRIT,
+			'+', 0,
+			'%', 90, },
+#endif
+		{ SKILL_HOFFENSE,
+			'+', 0,
+			'%', 90, },
+		{ SKILL_HDEFENSE,
+			'+', 0,
+			'%', 90, },
+		{ SKILL_HCURING,
+			'+', 0,
+			'%', 90, },
+		{ SKILL_HSUPPORT,
+			'+', 0,
+			'%', 90, },
 		{ SKILL_CLIMB,
 			'+', 0,
 			'+', 40, },
@@ -1870,6 +1907,11 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_NATURE,
 			'+', 0,
 			'%', 120, },
+#ifdef ENABLE_OCCULT
+		{ SKILL_OSPIRIT,
+			'+', 0,
+			'%', 105, },
+#endif
 		{ SKILL_FIRE, /* But hates fire */
 			'+', 0,
 			'%', 60, },
@@ -1977,9 +2019,26 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_STEALTH,
 			'+', 0,
 			'%', 110, },
+#ifdef ENABLE_OCCULT
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'%', 110, },
+			'%', 115, },
+		{ SKILL_OSPIRIT,
+			'+', 0,
+			'%', 90, },
+#endif
+		{ SKILL_HOFFENSE,
+			'+', 0,
+			'%', 90, },
+		{ SKILL_HDEFENSE,
+			'+', 0,
+			'%', 90, },
+		{ SKILL_HCURING,
+			'+', 0,
+			'%', 90, },
+		{ SKILL_HSUPPORT,
+			'+', 0,
+			'%', 90, },
 		{ SKILL_DODGE,
 			'+', 0,/*1000,*/
 			'%', 110, },
@@ -2044,7 +2103,7 @@ player_race race_info[MAX_RACE] = {
 #ifdef ENABLE_OCCULT
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'%', 110, },
+			'%', 115, },
 		{ SKILL_OSPIRIT,
 			'+', 0,
 			'%', 0, },
@@ -2541,7 +2600,7 @@ player_class class_info[MAX_CLASS] = {
 #ifdef ENABLE_OCCULT
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'+', 1150, },
+			'+', 800, },
 #endif
 		{ SKILL_DEVICE,
 			'+', 1000,
@@ -3529,7 +3588,7 @@ player_class class_info[MAX_CLASS] = {
  #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'+', 900, },
+			'+', 800, },
 		{ SKILL_OSPIRIT,
 			'+', 1000,
 			'+', 900, },
@@ -3658,7 +3717,7 @@ player_class class_info[MAX_CLASS] = {
  #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'+', 900, },
+			'+', 800, },
 		{ SKILL_OSPIRIT,
 			'+', 1000,
 			'+', 900, },
@@ -4216,11 +4275,11 @@ player_class class_info[MAX_CLASS] = {
 #ifdef ENABLE_OCCULT
 		{ SKILL_OSHADOW,
 			'+', 0,
-			'+', 1150, },
+			'+', 800, },
  #ifdef ENABLE_OHERETICISM
 		{ SKILL_OHERETICISM,
 			'+', 0,
-			'+', 1150, },
+			'+', 800, },
  #endif
 #endif
 		{ SKILL_DEVICE,
