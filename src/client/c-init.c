@@ -2583,6 +2583,75 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 static void init_guide(void) {
 	int i;
 
+	FILE *fff;
+	char path[1024], buf[MAX_CHARS * 2 + 1], *c, *c2;
+	byte contents = 0;
+
+
+	path_build(path, 1024, "", "TomeNET-Guide.txt");
+	fff = my_fopen(path, "r");
+	if (!fff) return;
+
+	/* count lines */
+	while (fgets(buf, 81 , fff)) {
+		guide_lastline++;
+
+		/* and also remember chapter titles */
+		buf[strlen(buf) - 1] = 0; /* remove trailing newline */
+		switch (contents) {
+		case 0: /* beginning of contents */
+			if (!strcmp(buf, "Contents")) contents = 1;
+			continue;
+		case 1:
+			switch (buf[0]) {
+			case 0: /* end of contents */
+				contents = 2;
+				guide_endofcontents = guide_lastline;
+				continue;
+			case '(': /* main chapter */
+				/* confirm chapter number */
+				c = strchr(buf, ')');
+				if (!c) continue; //paranoia
+				*c = 0;
+
+				/* confirm chapter title */
+				c++;
+				while (*c) if (*c == ' ') c++; else break;
+				if (*c == 0) continue; //paranoia
+
+				strcpy(guide_chapter_no[guide_chapters], buf + 1);
+				strcpy(guide_chapter[guide_chapters], c);
+				guide_chapters++;
+				continue;
+			case ' ': /* sub-chapter */
+				/* confirm chapter existance (paranoia if convention is obeyed) */
+				c2 = strchr(buf, '(');
+				if (!c2) continue; //paranoia
+				/* confirm chapter number */
+				c = strchr(c2, ')');
+				if (!c) continue; //paranoia
+				*c = 0;
+
+				/* confirm chapter title */
+				c++;
+				while (*c) if (*c == ' ') c++; else break;
+				if (*c == 0) continue; //paranoia
+
+				strcpy(guide_chapter_no[guide_chapters], c2 + 1);
+				strcpy(guide_chapter[guide_chapters], c);
+				guide_chapters++;
+				continue;
+			}
+			continue;
+		}
+	}
+
+
+	/* empty file? */
+	if (guide_lastline == -1) return;
+	my_fclose(fff);
+
+
 	guide_races = exec_lua(0, "return guide_races");
 	for (i = 0; i < guide_races; i++)
 		strcpy(guide_race[i], string_exec_lua(0, format("return guide_race[%d]", i + 1)));

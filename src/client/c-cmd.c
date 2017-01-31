@@ -1419,32 +1419,32 @@ void cmd_the_guide(void) {
 
 	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
-	int lastline = -1, searchline = -1, within_cnt = 0, c, n, line_presearch = line;
+	int searchline = -1, within_cnt = 0, c, n, line_presearch = line;
 	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, bufdummy[MAX_CHARS + 1];
 	char search[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
 	FILE *fff;
 	int i;
 	char *res;
 
+	/* empty file? */
+	if (guide_lastline == -1) return;
+
 	path_build(path, 1024, "", "TomeNET-Guide.txt");
 	fff = my_fopen(path, "r");
+	/* mysteriously can't open file anymore? */
 	if (!fff) return;
 
 	/* init searches */
 	chapter[0] = 0;
 	search[0] = 0;
 	//lastsearch[0] = 0;
-	/* initially count lines */
-	while (fgets(buf, 81 , fff)) lastline++;
-	/* empty file? */
-	if (lastline == -1) return;
 
 	Term_save();
 
 	while (TRUE) {
 		if (!skip_redraw) Term_clear();
-		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
-		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
+		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
 		//Term_putstr(1, bottomline, -1, TERM_L_BLUE, "Up,Down,PgUp,PgDn,End navigate; s/d/c/# search/next/chapter/line; ESC to exit");
 		Term_putstr(0, bottomline, -1, TERM_L_BLUE, " Space/n,p,Enter,Back; s,S/d,D/f,c,# search,next,prev,chapter,line; ESC to exit");
 		Term_putstr(0, bottomline, -1, TERM_L_BLUE, " Space/n,p,Enter,Back; s,d,D/f,S,c,# srch,nxt,prv,reset,chapter,line; ESC exits");
@@ -1481,6 +1481,7 @@ void cmd_the_guide(void) {
 					if (*cp == '(') {
 						switch (*(cp + 1)) {
 						case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+							/* sub chapter aka (x,yza) */
 							if (*(cp + 2) == '.') {
 								switch (*(cp + 3)) {
 								case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
@@ -1491,6 +1492,13 @@ void cmd_the_guide(void) {
 										within = TRUE;
 									}
 								}
+							}
+							/* main chapter aka (x) */
+							else if (*(cp + 2) == ')') {
+								/* begin of colourizing */
+								*cp2++ = '\377';
+								*cp2++ = 'G';
+								within = TRUE;
 							}
 						}
 					}
@@ -1536,8 +1544,8 @@ void cmd_the_guide(void) {
 						chapter[0] = 0;
 						line = searchline;
 						/* Redraw line number display */
-						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
-						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
+						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
 					} else {
 						/* Skip all lines until we find the desired chapter */
 						n--;
@@ -1548,12 +1556,13 @@ void cmd_the_guide(void) {
 				else if (chapter[0]) {
 					searchline++;
 					/* Found it? Accomodate for colour code and '.' must not follow after the chapter marker */
-					if (strstr(buf2, chapter) == buf2 + 2 && !strchr(strchr(buf2, ')'), '.')) {
+					if (searchline >= guide_endofcontents &&
+					    strstr(buf2, chapter) == buf2 + 2 && !strchr(strchr(buf2, ')'), '.')) {
 						chapter[0] = 0;
 						line = searchline;
 						/* Redraw line number display */
-						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (lastline - line) + 1, lastline + 1));
-						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
+						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
 					} else {
 						/* Skip all lines until we find the desired chapter */
 						n--;
@@ -1584,7 +1593,7 @@ void cmd_the_guide(void) {
 						/* Reverse again to normal direction/location */
 						if (backwards) {
 							backwards = FALSE;
-							searchline = lastline - searchline;
+							searchline = guide_lastline - searchline;
 							/* Skip end of line, advancing to next line */
 							fseek(fff, 1, SEEK_CUR);
 							/* This line has already been read too, by fgets_inverse(), so skip too */
@@ -1596,7 +1605,7 @@ void cmd_the_guide(void) {
 						searchwrap = FALSE;
 						line = searchline;
 						/* Redraw line number display */
-						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, lastline + 1));
+						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
 					/* Still searching */
 					} else {
 						/* Skip all lines until we find the desired string */
@@ -1671,7 +1680,7 @@ void cmd_the_guide(void) {
 		/* Reverse again to normal direction/location */
 		if (backwards) {
 			backwards = FALSE;
-			line = lastline - line;
+			line = guide_lastline - line;
 			line++;
 		}
 
@@ -1707,23 +1716,23 @@ void cmd_the_guide(void) {
 		/* navigate (up/down) */
 		case '8': case '\010': case 0x7F: //rl:'k'
 			line--;
-			if (line < 0) line = lastline - maxlines;
+			if (line < 0) line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 			continue;
 		case '2': case '\r': case '\n': //rl:'j'
 			line++;
-			if (line > lastline - maxlines) line = 0;
+			if (line > guide_lastline - maxlines) line = 0;
 			continue;
 		/* page up/down */
 		case '9': case 'p': //rl:?
-			if (line == 0) line = lastline - maxlines;
+			if (line == 0) line = guide_lastline - maxlines;
 			else line -= maxlines;
 			if (line < 0) line = 0;
 			continue;
 		case '3': case 'n': case ' ': //rl:?
-			if (line < lastline - maxlines) {
+			if (line < guide_lastline - maxlines) {
 				line += maxlines;
-				if (line > lastline - maxlines) line = lastline - maxlines;
+				if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 				if (line < 0) line = 0;
 			} else line = 0;
 			continue;
@@ -1733,7 +1742,7 @@ void cmd_the_guide(void) {
 			continue;
 		/* support end key too.. */
 		case '1': //rl:?
-			line = lastline - maxlines;
+			line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 			continue;
 
@@ -1996,12 +2005,34 @@ void cmd_the_guide(void) {
 					continue;
 				}
 
+				/* If not matched, lastly try to (partially) match chapter titles */
+				/* First try to match beginning of title */
+				for (i = 0; i < guide_chapters; i++) {
+					if (my_strcasestr(guide_chapter[i], buf) == guide_chapter[i]) {
+						strcpy(chapter, "(");
+						strcat(chapter, guide_chapter_no[i]);
+						strcat(chapter, ")");
+						break;
+					}
+				}
+				if (chapter[0]) continue;
+				/* If no match, try to match anywhere in title */
+				for (i = 0; i < guide_chapters; i++) {
+					if (!my_strcasestr(guide_chapter[i], buf)) continue;
+					strcpy(chapter, "(");
+					strcat(chapter, guide_chapter_no[i]);
+					strcat(chapter, ")");
+					break;
+				}
+				if (chapter[0]) continue;
+
+				/* Continue with failure (empty chapter[] string) */
 				continue;
 			}
 			/* the original use of 'chapter' meant numerical chapters, which can have up to 8 characters, processed below */
 			buf[8] = 0;
 
-			/* search for numerical chapter, aka (nn.nnc) */
+			/* search for numerical chapter, aka (x.yza) */
 			memset(chapter, 0, sizeof(char) * 8);
 			cp = buf;
 			cp2 = chapter;
@@ -2009,6 +2040,14 @@ void cmd_the_guide(void) {
 			*cp2++ = '(';
 			*cp2++ = *cp++;
 			*cp2++ = *cp++;
+
+			/* enable main chapters too? -> '(n)' */
+			if (*(cp2 - 1) == ')') continue;
+			else if (*(cp2 - 1) == 0) {
+				*(cp2 - 1) = ')';
+				continue;
+			}
+
 			*cp2++ = *cp++;
 			*cp2++ = *cp++;
 			if (*(cp2 - 1) == ')') continue; // (x.y)
@@ -2056,7 +2095,7 @@ void cmd_the_guide(void) {
 			line_presearch = line;
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
-			if (line > lastline - maxlines) line = lastline - maxlines;
+			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 
 			strcpy(lastsearch, search);
@@ -2074,7 +2113,7 @@ void cmd_the_guide(void) {
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
 #if 0
-			if (line > lastline - maxlines) line = lastline - maxlines;
+			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 #endif
 
@@ -2089,12 +2128,12 @@ void cmd_the_guide(void) {
 			line_presearch = line;
 			/* Inverse location/direction */
 			backwards = TRUE;
-			line = lastline - line;
+			line = guide_lastline - line;
 			/* Skip the line we're currently in, start with the next line actually */
 			line++;
 
 #if 0
-			if (line > lastline - maxlines) line = lastline - maxlines;
+			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 #endif
 			strcpy(search, lastsearch);
@@ -2114,7 +2153,7 @@ void cmd_the_guide(void) {
 			inkey_msg = inkey_msg_old;
 
 			line = atoi(buf) - 1;
-			if (line > lastline - maxlines) line = lastline - maxlines;
+			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 			continue;
 

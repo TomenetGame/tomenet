@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. January 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 30. January 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2964,7 +2964,7 @@ By pressing the '=' key in game, you can access the options menu where you can
 tweak your client in some ways. Some of these options that aren't
 self-explaining or that are especially important are listed in detail here:
 
-(1, 2, 3) User Interface Options
+ (1, 2, 3) User Interface Options
     Rogue-like commands (rogue_like_commands)
         Toggles between normal key set and traditional rogue-like key set.
 
@@ -3037,7 +3037,7 @@ self-explaining or that are especially important are listed in detail here:
 
         view_lite_extra (lights up a few additional wall/floor types)
 
-(4) Audio Options
+ (4) Audio Options
     (See (2.1a) for more information about sound and music.)
 
     A bunch of stuff here, mostly you might want to look at attack-sound effect
@@ -3046,7 +3046,7 @@ self-explaining or that are especially important are listed in detail here:
 
     no_shriek_sfx and no_house_sfx might be especially interesting too.
 
-(5, 6) Game-Play Options
+ (5, 6) Game-Play Options
     Use old target by default (use_old_target)
         If this is on, a ranged attack via *t5 or *t- will not pick a new
         (ie closer) target if the previously acquired target is still okay.
@@ -3125,15 +3125,15 @@ self-explaining or that are especially important are listed in detail here:
     Get kicked out automatically by the game when starving and idle for 30
         seconds. (idle_starve_kick)
 
-(8) Check Server Options
+ (8) Check Server Options
     Displays a list of the server rules and configuration.
 
-(A) Account options
+ (A) Account options
     Here you can see if your account is valid. Invalid accounts are also
     indicated by a yellow 'I' in the players list you get with '@' key.
     Also, you can change your password here!
 
-(W) Window flags
+ (W) Window flags
     Here you can configure each of the program windows in detail.
     It is recommended that you have one dedicated window for 'Display chat',
     so you don't miss important messages during combat.

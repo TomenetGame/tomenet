@@ -994,11 +994,14 @@ extern byte rl_connection_state;
 extern bool player_pref_files_loaded;
 #endif
 
+extern int guide_lastline;
 extern char guide_race[64][MAX_CHARS];
 extern char guide_class[64][MAX_CHARS];
 extern char guide_skill[128][MAX_CHARS];
 extern char guide_school[64][MAX_CHARS];
 extern char guide_spell[256][MAX_CHARS];
 extern int guide_races, guide_classes, guide_skills, guide_schools, guide_spells;
+extern char guide_chapter[256][MAX_CHARS], guide_chapter_no[256][8];
+extern int guide_chapters, guide_endofcontents;
 
 extern bool showing_inven, showing_equip;
