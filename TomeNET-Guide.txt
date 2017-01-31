@@ -13579,7 +13579,7 @@ create a character!):
     beginning, get the spell 'Cure Wounds' as soon as possible and macro it.
 
     There are rumours of ultimately corrupted priests which have lost all their
-    holiness and serve the powers of hell instead.
+    holiness and align with the forces of hell instead.
 
 - Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
