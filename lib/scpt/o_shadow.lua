@@ -37,7 +37,6 @@ OCURSEDD = add_spell {
 	["school"] = 	{SCHOOL_},
 	["spell_power"] = 0,
 	["am"] = 	75,
-	["spell_power"] = 0,
 	["level"] = 	5,
 	["mana"] = 	1,
 	["mana_max"] = 	20,
@@ -518,6 +517,7 @@ ODRAINLIFE = add_spell {
 DARKBALL = add_spell {
 	["name"] = 	"Darkness Storm",
 	["school"] = 	{SCHOOL_OSHADOW},
+	["spell_power"] = 0,
 	["level"] = 	42,
 	["mana"] = 	35,
 	["mana_max"] = 	35,
@@ -525,10 +525,10 @@ DARKBALL = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 373 + get_level(Ind, DARKBALL, 1100), 2 + get_level(Ind, DARKBALL, 8), " conjures up a darkness storm for")
+			fire_ball(Ind, GF_DARK, args.dir, rand_int(100) + 340 + get_level(Ind, DARKBALL, 1400), 2 + get_level(Ind, DARKBALL, 8), " conjures up a darkness storm for")
 	end,
 	["info"] = 	function()
-		return "dam d100+"..(373 + get_level(Ind, DARKBALL, 1100)).." rad "..(2 + get_level(Ind, DARKBALL, 8))
+		return "dam d100+"..(340 + get_level(Ind, DARKBALL, 1400)).." rad "..(2 + get_level(Ind, DARKBALL, 8))
 	end,
 	["desc"] = 	{ "Conjures up a storm of darkness.", }
 }

@@ -161,7 +161,7 @@ OEXTRASTATS = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			do_xtra_stats(Ind, 20 + get_level(Ind, OEXTRASTATS, 50), get_level(Ind, OEXTRASTATS, 50))
+			do_xtra_stats(Ind, get_level(Ind, OEXTRASTATS, 50), 20 + get_level(Ind, OEXTRASTATS, 50))
 			end,
 	["info"] = 	function()
 			return "+" .. ((get_level(Ind, OEXTRASTATS, 50) / 10) + 2) .. " dur " .. (20 + get_level(Ind, OEXTRASTATS, 50))
@@ -247,6 +247,7 @@ ORESTORING = add_spell {
 LEVITATION = add_spell {
 	["name"] = 	"Levitation",
 	["school"] = 	{SCHOOL_OHERETICISM},
+	["spell_power"] = 0,
 	["level"] = 	39,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
