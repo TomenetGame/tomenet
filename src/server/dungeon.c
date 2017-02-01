@@ -4375,17 +4375,17 @@ static bool process_player_end_aux(int Ind) {
 
 #ifdef ENABLE_MAIA
 	if (p_ptr->divine_crit)
-		(void)do_divine_crit(Ind, p_ptr->divine_crit - minus_magic, p_ptr->divine_crit_mod);
+		(void)do_divine_crit(Ind, p_ptr->divine_crit_mod, p_ptr->divine_crit - minus_magic);
 
 	if (p_ptr->divine_hp)
-		(void)do_divine_hp(Ind, p_ptr->divine_hp - minus_magic, p_ptr->divine_hp_mod);
+		(void)do_divine_hp(Ind, p_ptr->divine_hp_mod, p_ptr->divine_hp - minus_magic);
 
 	if (p_ptr->divine_xtra_res_time)
 		(void)do_divine_xtra_res_time(Ind, p_ptr->divine_xtra_res_time - minus_magic);
 #endif
 	/* xtra shot? - the_sandman */
 	if (p_ptr->focus_time)
-		(void)do_focus_shot(Ind, p_ptr->focus_time - minus_magic, p_ptr->focus_val);
+		(void)do_focus_shot(Ind, p_ptr->focus_val, p_ptr->focus_time - minus_magic);
 
 	/* xtra stats? - the_sandman */
 	if (p_ptr->xtrastat_tim)

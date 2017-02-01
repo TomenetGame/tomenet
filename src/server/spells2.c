@@ -388,7 +388,7 @@ bool create_garden(int Ind, int chance) {
  * spell_lvl/2
  * Yep. More druidry. - the_sandman
  */
-bool do_focus_shot(int Ind, int v, int p) {
+bool do_focus_shot(int Ind, int p, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -433,7 +433,7 @@ bool do_focus_shot(int Ind, int v, int p) {
 #if 0
 //Buggy with another set_fast
 	/* Decrease speed */
-	if (p_ptr->focus_time != 0) set_fast(Ind, v, -(p/5));
+	if (p_ptr->focus_time != 0) set_fast(Ind, v, -(p / 5));
 #endif
 
 	/* Nothing to notice */

@@ -3078,7 +3078,7 @@ bool set_spirit_shield(int Ind, int power, int v) {
 
 #ifdef ENABLE_MAIA
 /* timed hp bonus for RACE_MAIA */
-bool do_divine_hp(int Ind, int v, int p) {
+bool do_divine_hp(int Ind, int p, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = (FALSE);
 
@@ -3124,7 +3124,7 @@ bool do_divine_hp(int Ind, int v, int p) {
 }
 
 /* timed crit bonus for RACE_MAIA. */
-bool do_divine_crit(int Ind, int v, int p) {
+bool do_divine_crit(int Ind, int p, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = (FALSE);
 
@@ -3211,10 +3211,10 @@ bool do_divine_xtra_res_time(int Ind, int v) {
 	return (TRUE);
 }
 #else
-bool do_divine_hp(int Ind, int v, int p) {
+bool do_divine_hp(int Ind, int p, int v) {
 	return FALSE;
 }
-bool do_divine_crit(int Ind, int v, int p) {
+bool do_divine_crit(int Ind, int p, int v) {
 	return FALSE;
 }
 bool do_divine_xtra_res_time(int Ind, int v) {

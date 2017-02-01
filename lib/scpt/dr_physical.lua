@@ -208,10 +208,10 @@ FOCUSSHOT = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			do_focus_shot(Ind, get_level(Ind, FOCUSSHOT, 100), get_level(Ind, FOCUSSHOT, 25))
+			do_focus_shot(Ind, get_level(Ind, FOCUSSHOT, 25), rand_int(5) + 10 + get_level(Ind, FOCUSSHOT, 20))
 			end,
 	["info"] = 	function()
-			return "+" .. get_level(Ind, FOCUSSHOT, 25) .. " dur " .. get_level(Ind, FOCUSSHOT, 100)
+			return "+" .. get_level(Ind, FOCUSSHOT, 25) .. " dur d5+" .. (10 + get_level(Ind, FOCUSSHOT, 20))
 			end,
 	["desc"] = 	{ "Increases your accuracy.", }
 }

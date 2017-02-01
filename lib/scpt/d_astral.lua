@@ -373,14 +373,14 @@ EMPOWERMENT = add_spell {
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
 				set_fury(Ind, 15 + rand_int(alev / 10))
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				do_divine_hp(Ind, (alev * 2) / 3, get_astral_bonus_hp(Ind))
+				do_divine_hp(Ind, get_astral_bonus_hp(Ind), randint(5) + (alev * 2) / 3)
 			end
 	end,
 	["info"] = 	function()
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
 				return "dur 15+d"..(get_astral_lev(Ind) / 10)
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				return "dur "..((get_astral_lev(Ind) * 2) / 3).." pow +"..get_astral_bonus_hp(Ind).."0%"
+				return "pow +"..(get_astral_bonus_hp(Ind) * 10).."% dur d5+"..((get_astral_lev(Ind) * 2) / 3)
 			else
 				return ""
 			end
@@ -409,18 +409,18 @@ INTENSIFY = add_spell {
 
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
 				project_los(Ind, GF_OLD_SLOW, alev * 3, "")
-				do_divine_xtra_res_time(Ind, alev)
+				do_divine_xtra_res_time(Ind, randint(10) + alev)
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				do_divine_crit(Ind, (alev * 2) / 3, 2 + ((alev - 45) / 5))
+				do_divine_crit(Ind, 2 + ((alev - 45) / 5), randint(5) + (alev * 2) / 3)
 			end
 	end,
 	["info"] = 	function()
 			local alev = get_astral_lev(Ind)
 
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
-				return "pow "..(alev * 3).." / dur "..alev
+				return "pow "..(alev * 3).." dur d10+"..alev
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
-				return "dur "..((alev * 2) / 3).." pow +"..(2 + ((alev - 45) / 5))
+				return "pow +"..(2 + ((alev - 45) / 5)).." dur d5+"..((alev * 2) / 3)
 			else
 				return ""
 			end
