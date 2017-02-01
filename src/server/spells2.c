@@ -61,6 +61,7 @@ static void proj_dam_wraith(int typ, int *dam) {
 	case GF_RESTORE_PLAYER:
 	case GF_CURE_PLAYER:
 	case GF_CURING:
+	case GF_EXTRA_STATS:
 		return;
 	case GF_HEAL_PLAYER:
 		*dam = (*dam & 0x3C00) + (*dam & 0x03FF) / 2;
@@ -456,7 +457,7 @@ bool do_focus_shot(int Ind, int v, int p) {
  * At the moment it is +1 for every 7.
  * Druidry. - the_sandman
  */
-bool do_xtra_stats(int Ind, int v, int p) {
+bool do_xtra_stats(int Ind, int s, int p, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = (FALSE);
 
@@ -465,43 +466,30 @@ bool do_xtra_stats(int Ind, int v, int p) {
 
 	/* Open */
 	if (v) {
-		if (!p_ptr->xtrastat || p_ptr->statval < p) {
+		if (!p_ptr->xtrastat_tim || p_ptr->xtrastat_pow < p) {
 			msg_format_near(Ind, "%s seems to be more powerful!", p_ptr->name);
 			msg_print(Ind, "You feel... powerful!");
 
-			p_ptr->xstr = 0;
-			p_ptr->xint = 0;
-			p_ptr->xdex = 0;
-			p_ptr->xcon = 0;
-
-			p_ptr->statval = p;
-			p = (p / 10) + 2;
-			switch (p_ptr->statval / 5) {
-				default: p_ptr->xint = p;
-				case 3:
-				case 2: p_ptr->xcon = p;
-				case 1: p_ptr->xdex = p;
-				case 0: p_ptr->xstr = p;
-			}
+			p_ptr->xtrastat_pow = p;
+			p_ptr->xtrastat_which = s;
 
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
-	else {	//v = 0;
-		if (p_ptr->xtrastat) {
+	else {
+		if (p_ptr->xtrastat_tim) {
 			msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
 			msg_print(Ind, "You somehow feel weak.");
 
-			p_ptr->xtrastat = 0;
-			p_ptr->statval = 0;
+			p_ptr->xtrastat_pow = 0;
+			p_ptr->xtrastat_which = 0;
 
 			notice = TRUE;
 		}
 	}
 
-	p_ptr->xtrastat = v;
+	p_ptr->xtrastat_tim = v;
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
@@ -6165,6 +6153,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
+		    (typ != GF_EXTRA_STATS) &&
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
@@ -6234,6 +6223,7 @@ bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker)
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
+		    (typ != GF_EXTRA_STATS) &&
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
@@ -6320,6 +6310,7 @@ bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker) {
 			    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 			    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 			    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
+			    (typ != GF_EXTRA_STATS) &&
 			    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 			    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 			    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */

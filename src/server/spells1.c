@@ -3909,6 +3909,7 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_RESTORE_PLAYER:
 	case GF_CURING:
 	case GF_RESURRECT_PLAYER:
+	case GF_EXTRA_STATS:
 	//case GF_ZEAL_PLAYER:
 
 		return (dam);
@@ -8675,6 +8676,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 		    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) || (typ == GF_PUSH) ||
 		    (typ == GF_HEALINGCLOUD) || /* Also not a hostile spell */
+		    (typ == GF_EXTRA_STATS) ||
 		    (typ == GF_MINDBOOST_PLAYER) || (typ == GF_IDENTIFY) ||
 		    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
 		    (typ == GF_OLD_POLY)) /* may (un)polymorph himself */
@@ -8720,6 +8722,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
+		    (typ != GF_EXTRA_STATS) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may (un)polymorph each other */
 		{ /* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind)) {
@@ -8832,6 +8835,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	    (typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
+	    (typ == GF_EXTRA_STATS) ||
 	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
 	    (typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))
 	    ||
@@ -8857,6 +8861,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	    (typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
 	    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
+	    (typ == GF_EXTRA_STATS) ||
 	    (typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))
 	{ /* No effect on ghosts / admins */
 #if 0 //redundant?
@@ -10103,17 +10108,17 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)set_fast(Ind, 10 + (dam * 5), dam); /* removed stacking */
 			break;
 
-	case GF_EXTRA_STATS:
-			do_xtra_stats(Ind, 10 + (dam * 5), (int)(dam/10));
+	case GF_EXTRA_STATS: //unused
+			do_xtra_stats(Ind, dam / 100, dam % 100, 10 + rand_int(5) + (dam % 100) * 2);
 			break;
 
-	case GF_EXTRA_SPR:
+	case GF_EXTRA_SPR: //unused
 			dam = dam - 30;
 			if (dam < 0) break;
 			do_focus_shot(Ind, 200 + dam * 5, (dam/6));
 			break;
 
-	case GF_SHIELD_PLAYER:
+	case GF_SHIELD_PLAYER: //unused
 			if (dam > 10) dam = 10; /* cap AC bonus for others - Kurzel */
 			if (fuzzy) msg_print(Ind, "You feel protected!");
 			else msg_format(Ind, "%^s shields you!", killer);

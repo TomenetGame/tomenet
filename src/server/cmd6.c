@@ -1143,7 +1143,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 		case SV_POTION2_AMBER:
 			ident = TRUE;
 			msg_print(Ind, "Your muscles bulge, and your skin turns to amber!");
-			do_xtra_stats(Ind, 20, 20);
+			do_xtra_stats(Ind, 4, 8, 20 + rand_int(5));
 			set_shero(Ind, 20); /* -AC cancelled by blessing below */
 			p_ptr->blessed_power = 35;
 			set_blessed(Ind, 20);

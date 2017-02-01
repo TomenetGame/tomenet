@@ -1667,7 +1667,7 @@ extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);
 extern bool do_banish_undead(int Ind, int chance);
 extern bool do_banish_dragons(int Ind, int chance);
-extern bool do_xtra_stats(int Ind, int p, int v);
+extern bool do_xtra_stats(int Ind, int s, int p, int v);
 extern bool do_focus_shot(int Ind, int p, int v);
 
 extern void divine_vengeance(int Ind, int power);

@@ -159,13 +159,14 @@ EXTRASTATS_I = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			local x
-			x = get_level(Ind, EXTRASTATS_I, 50)
-			if x > 9 then x = 9 end
-			do_xtra_stats(Ind, 20 + get_level(Ind, EXTRASTATS_I, 50), x)
+			if (get_level(Ind, EXTRASTATS_I, 50) >= 5) then
+				do_xtra_stats(Ind, 1, 2 + get_level(Ind, EXTRASTATS_I, 5), rand_int(5) + 25 + get_level(Ind, EXTRASTATS_I, 15))
+			else
+				do_xtra_stats(Ind, 0, 2 + get_level(Ind, EXTRASTATS_I, 5), rand_int(5) + 25 + get_level(Ind, EXTRASTATS_I, 15))
+			end
 			end,
 	["info"] = 	function()
-			return "+" .. ((get_level(Ind, EXTRASTATS_I, 50) / 10) + 2) .. " dur " .. (20 + get_level(Ind, EXTRASTATS_I, 50))
+			return "+" .. (2 + get_level(Ind, EXTRASTATS_I, 5)) .. " dur d5+" .. (25 + get_level(Ind, EXTRASTATS_I, 15))
 			end,
 	["desc"] = 	{ "At level 1 increases your strength.",
 			  "At level 5 also increases your dexterity.", }
@@ -181,10 +182,14 @@ EXTRASTATS_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			do_xtra_stats(Ind, 20 + get_level(Ind, EXTRASTATS_I, 50), get_level(Ind, EXTRASTATS_I, 50))
+			if (get_level(Ind, EXTRASTATS_II, 50) >= 11) then
+				do_xtra_stats(Ind, 3, 2 + get_level(Ind, EXTRASTATS_I, 5), rand_int(5) + 25 + get_level(Ind, EXTRASTATS_I, 15))
+			else
+				do_xtra_stats(Ind, 2, 2 + get_level(Ind, EXTRASTATS_I, 5), rand_int(5) + 25 + get_level(Ind, EXTRASTATS_I, 15))
+			end
 			end,
 	["info"] = 	function()
-			return "+" .. ((get_level(Ind, EXTRASTATS_I, 50) / 10) + 2) .. " dur " .. (20 + get_level(Ind, EXTRASTATS_I, 50))
+			return "+" .. (2 + get_level(Ind, EXTRASTATS_I, 5)) .. " dur d5+" .. (25 + get_level(Ind, EXTRASTATS_I, 15))
 			end,
 	["desc"] = 	{ "Increases strength, dexterity, constitution.",
 			  "At level 11 also increases your intelligence.", }

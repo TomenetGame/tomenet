@@ -4388,8 +4388,8 @@ static bool process_player_end_aux(int Ind) {
 		(void)do_focus_shot(Ind, p_ptr->focus_time - minus_magic, p_ptr->focus_val);
 
 	/* xtra stats? - the_sandman */
-	if (p_ptr->xtrastat)
-		(void)do_xtra_stats(Ind, p_ptr->xtrastat - minus_magic, p_ptr->statval);
+	if (p_ptr->xtrastat_tim)
+		(void)do_xtra_stats(Ind, p_ptr->xtrastat_which, p_ptr->xtrastat_pow, p_ptr->xtrastat_tim - minus_magic);
 
 	/* Protection from evil */
 	if (p_ptr->protevil)

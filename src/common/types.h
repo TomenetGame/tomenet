@@ -2269,13 +2269,9 @@ struct player_type {
 	int cut_attacker;		/* Who cut the player - used for blood bond */
 	s16b stun;			/* Timed -- Stun */
 
-	s16b xtrastat;			/* timed temp +stats */
-	s16b statval;			/* which */
-	byte xstr;
-	byte xint;
-	byte xdex;
-	byte xcon;
-	byte xchr;
+	byte xtrastat_tim;		/* timed temp +stats */
+	byte xtrastat_pow;		/* power */
+	s16b xtrastat_which;		/* which */
 
 	s16b focus_time;		/* focus shot */
 	s16b focus_val;

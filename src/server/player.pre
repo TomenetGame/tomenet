@@ -431,7 +431,7 @@ struct player_type
 	int cut_attacker;		/* Who cut the player - used for blood bond */
 	s16b stun;			/* Timed -- Stun */
 
-	s16b xtrastat;		/* Timed temp +stats */
+	s16b xtrastat_tim;		/* Timed temp +stats */
 	s16b focus_time;		/* Timed temp +spr */
 
 	s16b protevil;		/* Timed -- Protection */

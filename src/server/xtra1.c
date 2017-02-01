@@ -3001,13 +3001,22 @@ void calc_boni(int Ind) {
 	for (i = 0; i < 6; i++) p_ptr->stat_add[i] = 0;
 
 	/* Druidism bonuses */
-	if (p_ptr->xtrastat > 0) {
-		p_ptr->stat_add[A_STR] = p_ptr->xstr;
-		p_ptr->stat_add[A_INT] = p_ptr->xint;
-		p_ptr->stat_add[A_DEX] = p_ptr->xdex;
-		p_ptr->stat_add[A_CON] = p_ptr->xcon;
-		p_ptr->stat_add[A_CHR] = p_ptr->xchr;
-	}
+	if (p_ptr->xtrastat_tim)
+		switch (p_ptr->xtrastat_which) {
+#ifdef ENABLE_HELLKNIGHT
+		case 4: /* Hell Knight's Demonic Strength */
+			p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow;
+			p_ptr->stat_add[A_CON] = p_ptr->xtrastat_pow;
+			p_ptr->sustain_str = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSSTR;
+			p_ptr->sustain_con = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSCON;
+			break;
+#endif
+		/* Druid's Extra Growth */
+		case 3: p_ptr->stat_add[A_INT] = p_ptr->xtrastat_pow;
+		case 2: p_ptr->stat_add[A_CON] = p_ptr->xtrastat_pow;
+		case 1: p_ptr->stat_add[A_DEX] = p_ptr->xtrastat_pow;
+		case 0: p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow;
+		}
 
 	/* Clear the Displayed/Real armor class */
 	p_ptr->dis_ac = p_ptr->ac = 0;
