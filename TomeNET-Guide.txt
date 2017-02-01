@@ -15745,6 +15745,7 @@ school.
                     Inflict a mortal wound on yourself, causing the warped
                     powers of chaos to temporarily change your form into a
                     terrifying Bloodthirster.
+                    It includes the effects of the 'Demonic Strength' spell.
                     --- This spell is only usable by Corrupted
                         Maia Priests and Hell Knights! ---
                     Required skill level for first spell level: 45.
