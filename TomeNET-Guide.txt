@@ -1207,7 +1207,7 @@ They all start with a slash '/' hence they're called slash commands:
 /lite a..w  Refills your light source with an item from your inventory.
             Usually it's easier to just press 'F' instead.
 
-/mar        Tells a prayer-user if he may use the prayer 'Martyrdom'.
+/mar        Tells a holy-defense-user if he may use the prayer 'Martyrdom'.
  (/martyr)
 
 /me         Write an emote. Example: /me hides.
@@ -1287,6 +1287,9 @@ They all start with a slash '/' hence they're called slash commands:
             chars. See (6.13) for details about PvP mode.
 
 /roll and /r are same as /dice and /d respectively (roll some dice).
+
+/sac        Tells a hereticism-user if he may use the spell 'Blood Sacrifice'.
+ (/sacrifice)
 
 /xo         gives you an extermination order! It needs to be carried out before
             a certain period of time passes (continues to expire even while not
@@ -15746,6 +15749,10 @@ school.
                     powers of chaos to temporarily change your form into a
                     terrifying Bloodthirster.
                     It includes the effects of the 'Demonic Strength' spell.
+                    The hells won't accept another blood sacrifice until 1000
+                    seconds have passed.
+                    Note: To check whether you can use the spell again,
+                    use the /sacrifice (or /sac) command.
                     --- This spell is only usable by Corrupted
                         Maia Priests and Hell Knights! ---
                     Required skill level for first spell level: 45.

@@ -2034,27 +2034,7 @@ void do_slash_cmd(int Ind, char *message) {
 			return;
 		}
 		else if (prefix(message, "/martyr") || prefix(message, "/mar")) {
-#ifdef ENABLE_HELLKNIGHT
-			if (p_ptr->ptrait == TRAIT_CORRUPTED && (
-			    p_ptr->pclass == CLASS_HELLKNIGHT
- #ifdef ENABLE_CPRIEST
-			    || p_ptr->pclass == CLASS_CPRIEST
- #endif
-			    )) {
-				if (exec_lua(0, format("return get_level(%d, BLOODSACRIFICE, 50, 0)", Ind)) < 1) {
-					msg_print(Ind, "You know not how to open the maelstrom of chaos.");
-					return;
-				}
-				if (Players[Ind]->martyr_timeout)
-					msg_print(Ind, "\377yThe maelstrom of chaos doesn't favour your blood sacrifice yet.");
-				else
-					msg_print(Ind, "The maelstrom of chaos is tempting you to sacrifice your blood.");
-				return;
-			}
-#endif
-
 			/* we cannot cast 'martyr' spell at all? */
-			//if (lua_get_level(Ind, exec_lua(0, "return HMARTYR"), s32b lvl, 50, 0, 0) < 1)
 			if (exec_lua(0, format("return get_level(%d, HMARTYR, 50, 0)", Ind)) < 1) {
 				msg_print(Ind, "You know not how to open the heavens.");
 				return;
@@ -2066,6 +2046,24 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "The heavens are willing to accept your martyrium.");
 			return;
 		}
+#ifdef ENABLE_HELLKNIGHT
+		else if (prefix(message, "/sacrifice") || prefix(message, "/sac")) {
+			if ((p_ptr->pclass != CLASS_HELLKNIGHT
+ #ifdef ENABLE_CPRIEST
+			    && p_ptr->pclass != CLASS_CPRIEST
+ #endif
+			    ) || exec_lua(0, format("return get_level(%d, BLOODSACRIFICE, 50, 0)", Ind)) < 1) {
+				msg_print(Ind, "You know not how to open the maelstrom of chaos.");
+				return;
+			}
+
+			if (Players[Ind]->martyr_timeout)
+				msg_print(Ind, "\377yThe maelstrom of chaos doesn't favour your blood sacrifice yet.");
+			else
+				msg_print(Ind, "The maelstrom of chaos is tempting you to sacrifice your blood.");
+			return;
+		}
+#endif
 		else if (prefix(message, "/pnote")) {
 			j = 0;
 			if (!p_ptr->party) {
