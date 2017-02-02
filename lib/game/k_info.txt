@@ -7705,7 +7705,7 @@ D:Read a cheque like you would read a scroll, to cash it in.
 N:1032:& Battered Pick~
 G:\:D
 I:20:8:1
-W:10:10:150:2500
+W:10:10:150:5000
 P:0:1d4:9:12:0
 F:INSTA_ART | TUNNEL
 
