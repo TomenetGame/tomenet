@@ -1380,13 +1380,15 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 		object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
 		if (!(is_admin(p_ptr) ||
 		    (p_ptr->ptrait == TRAIT_CORRUPTED && !(f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE)))
-#ifdef ENABLE_HELLKNIGHT
+#if 0 /* unfair for Death Knight and too much maybe */
+ #ifdef ENABLE_HELLKNIGHT
 		    /* note: only for corrupted priests/paladins: */
 		    || ((p_ptr->pclass == CLASS_HELLKNIGHT
- #ifdef ENABLE_CPRIEST
+  #ifdef ENABLE_CPRIEST
 		    || p_ptr->pclass == CLASS_CPRIEST
- #endif
+  #endif
 		    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE))
+ #endif
 #endif
 		    )) {
 			/* Oops */
