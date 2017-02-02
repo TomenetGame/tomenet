@@ -263,7 +263,7 @@ F:SHOW_MODS | TUNNEL
 N:29:& Blue Stone~
 G:":e
 I:40:18:0
-W:60:0:3:90000
+W:60:0:3:70000
 F:INSTA_ART
 
 
@@ -3989,7 +3989,7 @@ F:INSTA_ART
 N:477:& Elfstone~
 G:":g
 I:40:19:0
-W:60:0:3:50000
+W:60:0:3:170000
 F:INSTA_ART
 
 # The Jewel 'Evenstar' -- see artifact list
@@ -3997,7 +3997,7 @@ F:INSTA_ART
 N:478:& Jewel~
 G:":w
 I:40:20:0
-W:50:0:3:35000
+W:50:0:3:135000
 F:INSTA_ART
 
 # The Ring of Durin -- see artifact list
@@ -4005,7 +4005,7 @@ F:INSTA_ART
 N:479:& Ring~
 G:=:b
 I:45:57:0
-W:70:0:2:65000
+W:70:0:2:225000
 F:INSTA_ART
 
 
@@ -4171,7 +4171,7 @@ F:INSTA_ART
 N:500:& Phial~
 G:~:y
 I:39:100:0
-W:20:0:10:10000
+W:20:0:10:15000
 P:0:1d1:0:0:0
 F:INSTA_ART
 
@@ -4180,7 +4180,7 @@ F:INSTA_ART
 N:501:& Star~
 G:~:y
 I:39:101:0
-W:30:0:5:25000
+W:30:0:5:60000
 P:0:1d1:0:0:0
 F:INSTA_ART
 
@@ -4189,7 +4189,7 @@ F:INSTA_ART
 N:502:& Arkenstone~
 G:~:R
 I:39:102:0
-W:60:0:5:60000
+W:60:0:5:175000
 P:0:1d1:0:0:0
 F:INSTA_ART
 
@@ -4199,7 +4199,7 @@ F:INSTA_ART
 N:503:& Amulet~
 G:":Z
 I:40:10:0
-W:40:0:3:60000
+W:40:0:3:150000
 F:INSTA_ART
 
 # The Amulet of Ingwe -- see artifact list
@@ -4207,7 +4207,7 @@ F:INSTA_ART
 N:504:& Amulet~
 G:":d
 I:40:11:0
-W:50:0:3:90000
+W:50:0:3:150000
 F:INSTA_ART
 
 # The Necklace 'Nauglamir' -- see artifact list
@@ -4215,7 +4215,7 @@ F:INSTA_ART
 N:505:& Necklace~
 G:":m
 I:40:12:0
-W:60:0:3:75000
+W:60:0:3:175000
 F:INSTA_ART
 
 
@@ -4224,7 +4224,7 @@ F:INSTA_ART
 N:506:& Ring~
 G:=:g
 I:45:32:0
-W:50:0:2:65000
+W:50:0:2:100000
 F:INSTA_ART
 
 # The Ring of Tulkas -- see artifact list
@@ -4240,7 +4240,7 @@ F:INSTA_ART
 N:508:& Ring~
 G:=:R
 I:45:34:0
-W:70:0:2:100000
+W:70:0:2:150000
 F:INSTA_ART
 
 # The Ring of Power 'Nenya' -- see artifact list
@@ -5226,7 +5226,7 @@ F:RES_FIRE | RES_COLD | IGNORE_WATER
 N:647:& Stone~
 G:~:g
 I:39:106:0
-W:15:0:15:20000
+W:15:0:15:25000
 F:INSTA_ART
 
 # Here are the boomerangs
@@ -5329,7 +5329,7 @@ F:INSTA_ART
 N:675:& Palantir~
 G:~:y
 I:39:104:0
-W:75:0:200:100000
+W:75:0:200:75000
 P:0:10d10:0:0:0
 F:INSTA_ART
 
@@ -5830,7 +5830,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE
 N:770:& Ring~
 G:=:d
 I:45:55:0
-W:127:0:2:300000
+W:127:0:2:3000000
 #A:110/5
 F:INSTA_ART
 
