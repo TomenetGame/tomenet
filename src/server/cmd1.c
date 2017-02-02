@@ -2332,7 +2332,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					else if (o_ptr->tval == TV_AMULET && k_info[o_ptr->k_idx].cost >= 30000)
 						s_printf("Expensive item(amulet): %s found by %s(lv %d) at %d,%d,%d%s%s\n",
 						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "");
-					else if (o_ptr->tval == TV_RING && k_info[o_ptr->k_idx].cost >= 30000)
+					else if (o_ptr->tval == TV_RING && (k_info[o_ptr->k_idx].cost >= 30000 || o_ptr->sval == SV_RING_SPEED || o_ptr->sval == SV_RING_CRIT || o_ptr->sval == SV_RING_ATTACKS))
 						s_printf("Expensive item(ring): %s found by %s(lv %d) at %d,%d,%d%s%s\n",
 						    o_name_real, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, (c_ptr->info & CAVE_STCK) ? "N" : (c_ptr->info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 & ITEM_REMOVAL_NEVER) ? "G" : "");
 #endif
