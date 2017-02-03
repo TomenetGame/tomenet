@@ -321,7 +321,7 @@ BLOODSACRIFICE = add_spell {
 				msg_print(Ind, "\255yThe maelstrom of chaos doesn't favour your blood sacrifice yet.")
 			else
 				player.martyr_timeout = 1000
-				msg_print(Ind, "You feel the warped powers of chaos possess your body and mind!")
+				msg_print(Ind, "You feel the warped powers of chaos possess your body and mind..")
 				do_mimic_change(Ind, 758, TRUE); --RI_BLOODTHIRSTER
 				player.tim_mimic_what = 758; --RI_BLOODTHIRSTER
 				player.tim_mimic = randint(15) + 50 + get_level(Ind, BLOODSACRIFICE, 30);
