@@ -1253,6 +1253,7 @@
 #ifdef ENABLE_OHERETICISM
  #define RI_BLOODTHIRSTER	758
 #endif
+#define RI_UNMAKER		815	/* prevent live spawn */
 #define RI_DOL_GULDUR		819	/* 'easy' version of sauron */
 #define RI_OREMORJ		843	/* note: jokeangband */
 #define RI_SAURON		860

@@ -2991,10 +2991,12 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 		return 6;
 
 	/* new: no Darkling/Candlebearer live spawns (not needed because of granted spawn on level generation;
-	        and no dungeon boss live spawn either (experimental)? */
+	        and no dungeon boss live spawn either (experimental)?
+	        and no unmakers, hm! */
 	if (!level_generation_time && !(summon_override_checks & SO_BOSS_MONSTERS) &&
 	    (r_idx == RI_DARKLING || r_idx == RI_CANDLEBEARER
 	    || (r_ptr->flags0 & RF0_FINAL_GUARDIAN)
+	    || r_idx == RI_UNMAKER
 	    )) return 50;
 
 #ifdef PMO_DEBUG
