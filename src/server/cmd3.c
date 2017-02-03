@@ -1380,7 +1380,7 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 		object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
 		if (!(is_admin(p_ptr) ||
 		    (p_ptr->ptrait == TRAIT_CORRUPTED && !(f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE)))
-#if 0 /* unfair for Death Knight and too much maybe */
+#if 1 /* allow Bloodthirster to take off/drop heavily cursed items? */
  #ifdef ENABLE_HELLKNIGHT
 		    /* note: only for corrupted priests/paladins: */
 		    || ((p_ptr->pclass == CLASS_HELLKNIGHT
@@ -1454,7 +1454,19 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	};
 
 	/* Cannot remove cursed items */
-	if (cursed_p(o_ptr) && !is_admin(p_ptr)) { /* Hack -- DM can */
+	if (cursed_p(o_ptr)
+	    && !(is_admin(p_ptr) /* Hack -- DM can */
+#if 1 /* allow Bloodthirster to take off/drop heavily cursed items? */
+ #ifdef ENABLE_HELLKNIGHT
+	    /* note: only for corrupted priests/paladins: */
+	    || ((p_ptr->pclass == CLASS_HELLKNIGHT
+  #ifdef ENABLE_CPRIEST
+	    || p_ptr->pclass == CLASS_CPRIEST
+  #endif
+	    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE))
+ #endif
+#endif
+	    )) {
 		if ((item >= INVEN_WIELD) ) {
 			/* Oops */
 			msg_print(Ind, "Hmmm, it seems to be cursed.");
@@ -1688,15 +1700,30 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-	if ((((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) ||
-	    (o_ptr->questor && o_ptr->questor_invincible))
-	    && !is_admin(p_ptr)) {
+	if (o_ptr->questor && o_ptr->questor_invincible) {
+		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
+		return FALSE;
+	}
+	if (((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
+	    && !(is_admin(p_ptr)
+#if 1 /* allow Bloodthirster to take off/drop heavily cursed items? */
+ #ifdef ENABLE_HELLKNIGHT
+	    /* note: only for corrupted priests/paladins: */
+	    || ((p_ptr->pclass == CLASS_HELLKNIGHT
+  #ifdef ENABLE_CPRIEST
+	    || p_ptr->pclass == CLASS_CPRIEST
+  #endif
+	    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE))
+ #endif
+#endif
+	    )) {
 		/* Oops */
 		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
 
 		/* Nope */
 		return FALSE;
 	}
+
 #ifndef FUN_SERVER /* while server is being hacked, allow this (while /wish is also allowed) - C. Blue */
 	/* Artifacts cannot be destroyed */
 	if (like_artifact_p(o_ptr) && !is_admin(p_ptr)) {

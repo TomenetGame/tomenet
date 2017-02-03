@@ -15751,6 +15751,8 @@ school.
                     It includes the effects of the 'Demonic Strength' spell.
                     The hells won't accept another blood sacrifice until 1000
                     seconds have passed.
+                    The Bloodthirster's power is enough to rip even heavily
+                    cursed items from its body or toss them away.
                     Note: To check whether you can use the spell again,
                     use the /sacrifice (or /sac) command.
                     --- This spell is only usable by Corrupted
