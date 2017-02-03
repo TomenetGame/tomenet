@@ -8285,6 +8285,11 @@ static void process_global_event(int ge_id) {
 #else
 			for (i = 1; i <= NumPlayers; i++)
 				if (inarea(&Players[i]->wpos, &wpos)) {
+					/* Give him his hit points back */
+					Players[i]->chp = Players[i]->mhp;
+					Players[i]->chp_frac = 0;
+					Players[i]->redraw |= PR_HP;
+
 					Players[i]->new_level_method = (Players[i]->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 					Players[i]->recall_pos.wx = wpos.wx;
 					Players[i]->recall_pos.wy = wpos.wy;
