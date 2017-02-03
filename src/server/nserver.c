@@ -3685,8 +3685,8 @@ void Handle_input(int fd, int arg) {
 			if (p_ptr->update) update_stuff(player);
 
 			/* Redraw stuff */
-			if (p_ptr->redraw) redraw_stuff(player);
 			if (p_ptr->redraw2) redraw2_stuff(player);
+			if (p_ptr->redraw) redraw_stuff(player);
 
 			/* Window stuff */
 			if (p_ptr->window) window_stuff(player);

@@ -7023,6 +7023,7 @@ void redraw_stuff(int Ind) {
 		}
 	}
 }
+/* Note that this should be called before redraw_stuff() for BIGMAP_MINDLINK_HACK to work. */
 void redraw2_stuff(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
@@ -7100,8 +7101,8 @@ void handle_stuff(int Ind) {
 	if (p_ptr->update) update_stuff(Ind);
 
 	/* Redraw stuff */
-	if (p_ptr->redraw) redraw_stuff(Ind);
 	if (p_ptr->redraw2) redraw2_stuff(Ind);
+	if (p_ptr->redraw) redraw_stuff(Ind);
 
 	/* Window stuff */
 	if (p_ptr->window) window_stuff(Ind);
