@@ -3510,6 +3510,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 #ifdef EXEMPT_VSHORT_COMBINED
  #define VSHORT_STEALTH_CHECK		/* Perform a check if the swear word is masked by things like 'the', 'you', 'a(n)'.. */
 #endif
+#define SMARTER_NONSWEARING		/* Match single spaces inside nonswearing words with any amount of consecutive insignificant characters in the chat */
 static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce) {
 	int i, j, k, offset, cc[MSG_LEN], pos, eff_len;
 	char line[MSG_LEN];
@@ -3540,6 +3541,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			is_leet = TRUE;//(i != 0);//meaning 'i > 0', for efficiency
 #endif
 
+			/* keep table of leet chars consistent with the one in censor() */
 			switch (lcopy[i]) {
 			case '@': lcopy[i] = 'a'; break;
 			case '<': lcopy[i] = 'c'; break;
@@ -3559,7 +3561,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 
 			/* important characters that are usually not leet speek but must be turned
 			   into characters that will not get filtered out later, because these
-			   characters listed here could actually break words and there by break
+			   characters listed here could actually break words and thereby cause
 			   false positives. Eg 'headless (h, l27, 427)' would otherwise wrongly turn
 			   into 'headlesshltxaxtx' and trigger false 'shit' positive. */
 			case '(': lcopy[i] = 'c'; break; //all of these could be c,i,l I guess.. pick the least problematic one (i)
@@ -3932,6 +3934,13 @@ static int censor(char *line) {
 	char tmp1[MSG_LEN], tmp2[MSG_LEN], tmp3[MSG_LEN], tmp4[MSG_LEN];
 	char *word;
 
+#ifdef SMARTER_NONSWEARING
+	/* non-swearing extra check (reduces insignificant characters) */
+	bool reduce;
+	char ccns[MSG_LEN];
+#endif
+
+
 	strcpy(lcopy, line);
 
 	/* special expressions to exempt: '@S...<.>blabla': '@S-.shards' -> '*****hards' :-p */
@@ -4044,16 +4053,23 @@ static int censor(char *line) {
 		if ((lcopy[i] >= '0' && lcopy[i] <= '9') || (lcopy[i] >= 'a' && lcopy[i] <= 'z')
 		    || lcopy[i] == '@' || lcopy[i] == '$' || lcopy[i] == '!' || lcopy[i] == '|' || lcopy[i] == '+'
 		    ) {
+			/* keep table of leet chars consistent with the one in censor_aux() */
 			switch (lcopy[i]) {
 			case '@': lcopy2[j] = 'a'; break;
-			case '4': lcopy2[j] = 'a'; break;
-			case '$': lcopy2[j] = 's'; break;
-			case '5': lcopy2[j] = 's'; break;
-			case '0': lcopy2[j] = 'o'; break;
+			case '<': lcopy2[j] = 'c'; break;
 			case '!': lcopy2[j] = 'i'; break;
-			case '|': lcopy2[j] = 'l'; break;
-			case '3': lcopy2[j] = 'e'; break;
+			case '|': lcopy2[j] = 'l'; break;//hm, could be i too :/
+			case '$': lcopy2[j] = 's'; break;
 			case '+': lcopy2[j] = 't'; break;
+			case '1': lcopy2[j] = 'i'; break;
+			case '3': lcopy2[j] = 'e'; break;
+			case '4': lcopy2[j] = 'a'; break;
+			case '5': lcopy2[j] = 's'; break;
+			case '6': lcopy2[j] = 'g'; break;
+			case '7': lcopy2[j] = 't'; break;
+			case '8': lcopy2[j] = 'b'; break;
+			case '9': lcopy2[j] = 'g'; break;
+			case '0': lcopy2[j] = 'o'; break;
 			default: lcopy2[j] = lcopy[i];
 			}
 			cc_pre[j] = i;
@@ -4083,9 +4099,46 @@ static int censor(char *line) {
 
 	/* check for legal words first */
 	//TODO: could be moved into censor_aux and after leet speek conversion, to allow leet speeking of non-swear words (eg "c00k")
-	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words */
+	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words --- since we copy it below anyway, we don't need to create a working copy here */
 	/*TODO!!! non-split swear words should take precedence over split-up non-swear words: "was shit" -> "as sh" is 'fine'.. BEEP!
 	  however, this can be done by disabling HIGHLY_EFFECTIVE_CENSORING and enabling EXEMPT_BROKEN_SWEARWORDS as a workaround. */
+#ifdef SMARTER_NONSWEARING
+	/* Replace insignificant symbols by spaces and reduce consecutive spaces to one */
+	reduce = FALSE;
+	j = 0;
+	for (i = 0; i < strlen(lcopy2); i++) {
+		ccns[j] = i;
+		switch (lcopy2[i]) {
+		case ' ':
+			if (reduce) continue;
+			reduce = TRUE;
+			lcopy[j] = lcopy2[i];
+			j++;
+			continue;
+		/* insignificant characters only, that won't break leet speak detection in censor_aux() if we filter them out here */
+		case '"':
+		case '\'':
+ #if 1 /* need better way, but perfect solution impossible? ^^ -- for now benefit of doubt (these COULD be part of swearing): */
+		case '(':
+		case ')':
+		case '/':
+		case '\\':
+ #endif
+			if (reduce) continue;
+			reduce = TRUE;
+			lcopy[j] = ' ';
+			j++;
+			continue;
+		/* normal characters */
+		default:
+			lcopy[j] = lcopy2[i];
+			ccns[j] = i;
+			j++;
+			reduce = FALSE;
+		}
+	}
+	lcopy[j] = 0;
+#endif
 	for (i = 0; nonswear[i][0]; i++) {
 #ifndef HIGHLY_EFFECTIVE_CENSOR
 		/* hack! If HIGHLY_EFFECTIVE_CENSOR is NOT enabled, skip all nonswearing-words that contain spaces!
@@ -4117,8 +4170,15 @@ static int censor(char *line) {
 			}
 
 			/* prevent it from getting tested for swear words */
+#ifdef SMARTER_NONSWEARING
+			im = ccns[word - lcopy];
+			jm = ccns[word - lcopy + strlen(nonswear[i]) - 1];
+			for (j = im; j <= jm; j++)
+				lcopy2[j] = 'Z';
+#else
 			for (j = 0; j < strlen(nonswear[i]); j++)
 				lcopy2[(word - lcopy) + j] = 'Z';
+#endif
 		}
 	}
 
