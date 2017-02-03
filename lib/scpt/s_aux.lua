@@ -251,7 +251,7 @@ function is_ok_spell2(i, s)
 		return nil
 	end
 
-	if __tmp_spells[s].priority then lev = lev + __tmp_spells[s].priority
+	if __tmp_spells[s].priority then lev = lev + __tmp_spells[s].priority end
 
 	return lev
 end
