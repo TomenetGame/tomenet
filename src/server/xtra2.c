@@ -3745,9 +3745,9 @@ void shape_Maia_skills(int Ind) {
 			respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
 			Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
 			respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
+			p_ptr->s_info[SKILL_HCURING].value = 0; //Priest starts with +1000 in this skill
 			Send_skill_info(Ind, SKILL_HCURING, FALSE);
 			respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
-			p_ptr->s_info[SKILL_HDEFENSE].value = 0; //Paladin starts with +1000 in this skill
 			Send_skill_info(Ind, SKILL_HDEFENSE, FALSE);
 			respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
 			Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
