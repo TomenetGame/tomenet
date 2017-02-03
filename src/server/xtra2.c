@@ -705,43 +705,43 @@ bool set_brand(int Ind, int v, int t, int p) {
 		    (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield..*/
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
 			switch (t) {
-				case BRAND_BALL_ACID: //not used
-				case BRAND_ACID:
+				case TBRAND_BALL_ACID: //not used
+				case TBRAND_ACID:
 					if (plural) msg_format(Ind, "%s are branded with acid!", weapons);
 					else msg_format(Ind, "%s is branded with acid!", weapons);
 				break;
-				case BRAND_BALL_ELEC: //not used
-				case BRAND_ELEC:
+				case TBRAND_BALL_ELEC: //not used
+				case TBRAND_ELEC:
 					if (plural) msg_format(Ind, "%s are branded with lightning!", weapons);
 					else msg_format(Ind, "%s is branded with lightning!", weapons);
 				break;
-				case BRAND_BALL_FIRE: //not used
-				case BRAND_FIRE:
+				case TBRAND_BALL_FIRE: //not used
+				case TBRAND_FIRE:
 					if (plural) msg_format(Ind, "%s are branded with fire!", weapons);
 					else msg_format(Ind, "%s is branded with fire!", weapons);
 				break;
-				case BRAND_BALL_COLD: //not used
-				case BRAND_COLD:
+				case TBRAND_BALL_COLD: //not used
+				case TBRAND_COLD:
 					if (plural) msg_format(Ind, "%s are branded with frost!", weapons);
 					else msg_format(Ind, "%s is branded with frost!", weapons);
 				break;
-				case BRAND_POIS:
+				case TBRAND_POIS:
 					if (plural) msg_format(Ind, "%s are branded with poison!", weapons);
 					else msg_format(Ind, "%s is branded with poison!", weapons);
 				break;
-				case BRAND_BASE:
+				case TBRAND_BASE:
 					if (plural) msg_format(Ind, "%s glow in many colours!", weapons); //not used
 					else msg_format(Ind, "%s glows in many colours!", weapons); //not used
 				break;
-				case BRAND_CHAO:
+				case TBRAND_CHAO:
 					if (plural) msg_format(Ind, "%s seem to twist and warp!", weapons); //not used
 					else msg_format(Ind, "%s seems to twist and warp!", weapons); //not used
 				break;
-				case BRAND_VORP:
+				case TBRAND_VORP:
 					if (plural) msg_format(Ind, "%s sharpen!", weapons); //not used
 					else msg_format(Ind, "%s sharpens!", weapons); //not used
 				break;
-				case BRAND_BALL_SOUN:
+				case TBRAND_BALL_SOUN:
 					if (plural) msg_format(Ind, "%s vibrate!", weapons); //not used
 					else msg_format(Ind, "%s vibrates!", weapons); //not used
 				break;
@@ -754,23 +754,27 @@ bool set_brand(int Ind, int v, int t, int p) {
 	else {
 		if (p_ptr->brand) {
 			switch (t) {
-				case BRAND_ACID:
+				case TBRAND_BALL_ACID: //not used
+				case TBRAND_ACID:
 					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377sacid.");
 					else msg_format(Ind, "\377WYour weapon is no longer branded with \377sacid.");
 				break;
-				case BRAND_ELEC:
+				case TBRAND_BALL_ELEC: //not used
+				case TBRAND_ELEC:
 					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377blightning.");
 					else msg_format(Ind, "\377WYour weapon is no longer branded with \377blightning.");
 				break;
-				case BRAND_FIRE:
+				case TBRAND_BALL_FIRE: //not used
+				case TBRAND_FIRE:
 					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rfire.");
 					else msg_format(Ind, "\377WYour weapon is no longer branded with \377rfire.");
 				break;
-				case BRAND_COLD:
+				case TBRAND_BALL_COLD: //not used
+				case TBRAND_COLD:
 					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377wfrost.");
 					else msg_format(Ind, "\377WYour weapon is no longer branded with \377wfrost.");
 				break;
-				case BRAND_POIS:
+				case TBRAND_POIS:
 					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377gpoison.");
 					else msg_format(Ind, "\377WYour weapon is no longer branded with \377gpoison.");
 				break;
@@ -831,35 +835,35 @@ bool set_bow_brand(int Ind, int v, int t, int p) {
 	if (v) {
 		if (!p_ptr->bow_brand) {
 			switch (t) {
-			case BRAND_ELEC:
-			case BRAND_BALL_ELEC:
+			case TBRAND_ELEC:
+			case TBRAND_BALL_ELEC:
 				msg_print(Ind, "\377oYour ammunition sparkles with lightnings!");
 				break;
-			case BRAND_BALL_COLD:
-			case BRAND_COLD:
+			case TBRAND_BALL_COLD:
+			case TBRAND_COLD:
 				msg_print(Ind, "\377oYour ammunition freezes!");
 				break;
-			case BRAND_BALL_FIRE:
-			case BRAND_FIRE:
+			case TBRAND_BALL_FIRE:
+			case TBRAND_FIRE:
 				msg_print(Ind, "\377oYour ammunition burns!");
 				break;
-			case BRAND_BALL_ACID:
-			case BRAND_ACID:
+			case TBRAND_BALL_ACID:
+			case TBRAND_ACID:
 				msg_print(Ind, "\377oYour ammunition drips acid!");
 				break;
-			case BRAND_POIS:
+			case TBRAND_POIS:
 				msg_print(Ind, "\377oYour ammunition is covered with venom!");
 				break;
-			case BRAND_BASE:
+			case TBRAND_BASE:
 				msg_print(Ind, "\377oYour ammunition glows in many colours!");
 				break;
-			case BRAND_CHAO:
+			case TBRAND_CHAO:
 				msg_print(Ind, "\377oYour ammunition seems to twist and warp!");
 				break;
-			case BRAND_VORP:
+			case TBRAND_VORP:
 				msg_print(Ind, "\377oYour ammunition sharpens!");
 				break;
-			case BRAND_BALL_SOUN:
+			case TBRAND_BALL_SOUN:
 				msg_print(Ind, "\377oYour ammunition vibrates!");
 				break;
 			}

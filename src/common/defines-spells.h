@@ -13,9 +13,21 @@
 #define EFF_STORM	0x00000004      /* The area follows the player */
 
 
-/* Added melee weapons for temp weapon brands */
-/* Generic weapon branding */
-#define BRAND_POIS	4
+/* Generic temporary weapon branding, currently only used for melee weapons */
+#define TBRAND_ELEC		0
+#define TBRAND_COLD		1
+#define TBRAND_FIRE		2
+#define TBRAND_ACID		3
+#define TBRAND_POIS		4
+//unused/not fully implemented:
+#define TBRAND_BASE		5
+#define TBRAND_CHAO		6
+#define TBRAND_VORP		7
+#define TBRAND_BALL_FIRE	8
+#define TBRAND_BALL_COLD	9
+#define TBRAND_BALL_ELEC	10
+#define TBRAND_BALL_ACID	11
+#define TBRAND_BALL_SOUN	12
 
 
 /*

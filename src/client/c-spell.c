@@ -801,17 +801,21 @@ bool get_item_hook_find_spell(int *item, int mode) {
 	return FALSE;
 }
 #else /* new method that allows to enter partial spell names, for comfortable 'I/II/III..' handling */
+#define ALLOW_DUPLICATE_NAMES /* Allow multiple spells of the same name? (in different schools). It picks the spell with highest level. */
 bool get_item_hook_find_spell(int *item, int mode) {
 	int i, spos, highest = 0, current, spell;
+#ifdef ALLOW_DUPLICATE_NAMES
+	int slev, slev_max = 0;
+#endif
 	char buf[80], buf2[100], sname[40], *bufptr;
 	object_type *o_ptr;
 	bool exact_match = FALSE, combo_spell, found_something = FALSE;
 
 	(void) mode; /* suppress compiler warning */
 
+
 	strcpy(buf, "");
-	if (!get_string("Spell name? ", buf, 79))
-		return FALSE;
+	if (!get_string("Spell name? ", buf, 79)) return FALSE;
 
 	if (strlen(buf) >= 4) {
 		bufptr = buf + strlen(buf);
@@ -857,10 +861,10 @@ bool get_item_hook_find_spell(int *item, int mode) {
 			}
 
 			/* get the spell's spell array index */
-#if 0 /* old method: doesn't allow two spells of similar name (eg when in different schools), and is redundant as we already know item+pos of spell -> no need to search for it again */
+#ifndef ALLOW_DUPLICATE_NAMES /* old method: doesn't allow two spells of similar name (when in different schools), and is redundant as we already know item+pos of spell -> no need to search for it again */
 			sprintf(buf2, "return find_spell(\"%s\")", sname);
 #else
-			sprintf(buf2, "return find_spell_from_item(%d, %d)", i, spos);
+			sprintf(buf2, "return find_spell_from_item(%d, %d, \"%s\")", i, spos, buf);
 #endif
 			spell = exec_lua(0, buf2);
 			if (spell == -1) return FALSE; /* paranoia - can't happen */
@@ -875,8 +879,20 @@ bool get_item_hook_find_spell(int *item, int mode) {
 					found_something = TRUE;
 				}
 
+#ifndef ALLOW_DUPLICATE_NAMES /* old method: doesn't allow two spells of similar name (when in different schools) */
 				sprintf(buf2, "return is_ok_spell(0, %d)", spell);
 				if (!exec_lua(0, buf2)) continue;
+#else
+				sprintf(buf2, "return is_ok_spell2(0, %d)", spell);
+				if (!(slev = exec_lua(0, buf2))) continue;
+				if (slev > slev_max && current == highest) {
+					slev_max = slev;
+					/* the highest spell we found so far that we can cast -
+					   it's same tier, but from a different school and actually of higher spell-level! */
+					*item = i;
+					hack_force_spell = spell;
+				}
+#endif
 
 				if (current > highest) {
 					/* the highest spell we found so far that we can cast */
@@ -889,6 +905,7 @@ bool get_item_hook_find_spell(int *item, int mode) {
 				continue;
 			}
 
+#ifndef ALLOW_DUPLICATE_NAMES /* old method: doesn't allow two spells of similar name (when in different schools) */
 			/* assume that we can probably cast this spell */
 			*item = i;
 			hack_force_spell = spell;
@@ -897,11 +914,23 @@ bool get_item_hook_find_spell(int *item, int mode) {
 			/* Ok, we found a spell that we can use, or we didn't find
 			   an alternative compound-spell's sub-spell variant. */
 			return TRUE;
+#else
+			sprintf(buf2, "return is_ok_spell2(0, %d)", spell);
+			if (!(slev = exec_lua(0, buf2))) continue;
+			if (slev > slev_max) {
+				slev_max = slev;
+				/* the highest spell we found so far that we can cast -
+				   it's same tier, but from a different school and actually of higher spell-level! */
+				*item = i;
+				hack_force_spell = spell;
+				found_something = TRUE;
+			}
+			//continue searching, maybe we find a spell of higher level and same name from another school..
+#endif
 		} while (TRUE);
 	}
 
 	if (found_something) return TRUE;
-
 	return FALSE;
 }
 #endif

@@ -345,19 +345,19 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		/* Hack -- extract temp branding */
 		if (p_ptr && p_ptr->bow_brand) {
 			switch (p_ptr->bow_brand_t) {
-			case BRAND_ELEC:
+			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
 				break;
-			case BRAND_COLD:
+			case TBRAND_COLD:
 				f1 |= TR1_BRAND_COLD;
 				break;
-			case BRAND_FIRE:
+			case TBRAND_FIRE:
 				f1 |= TR1_BRAND_FIRE;
 				break;
-			case BRAND_ACID:
+			case TBRAND_ACID:
 				f1 |= TR1_BRAND_ACID;
 				break;
-			case BRAND_POIS:
+			case TBRAND_POIS:
 				f1 |= TR1_BRAND_POIS;
 				break;
 			}
@@ -484,25 +484,25 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		/* Temporary weapon branding */
 		if (p_ptr->brand && o_ptr->k_idx) {
 			switch (p_ptr->brand_t) {
-			case BRAND_ELEC:
+			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
 				break;
-			case BRAND_COLD:
+			case TBRAND_COLD:
 				f1 |= TR1_BRAND_COLD;
 				break;
-			case BRAND_FIRE:
+			case TBRAND_FIRE:
 				f1 |= TR1_BRAND_FIRE;
 				break;
-			case BRAND_ACID:
+			case TBRAND_ACID:
 				f1 |= TR1_BRAND_ACID;
 				break;
-			case BRAND_POIS:
+			case TBRAND_POIS:
 				f1 |= TR1_BRAND_POIS;
 				break;
-			case BRAND_BASE:
+			case TBRAND_BASE:
 				f1 |= (TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID);
 				break;
-			case BRAND_CHAO:
+			case TBRAND_CHAO:
 				f5 |= TR5_CHAOTIC;
 				break;
 			}
@@ -1034,25 +1034,25 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		/* Temporary weapon branding */
 		if (p_ptr->brand && o_ptr->k_idx) {
 			switch (p_ptr->brand_t) {
-			case BRAND_ELEC:
+			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
 				break;
-			case BRAND_COLD:
+			case TBRAND_COLD:
 				f1 |= TR1_BRAND_COLD;
 				break;
-			case BRAND_FIRE:
+			case TBRAND_FIRE:
 				f1 |= TR1_BRAND_FIRE;
 				break;
-			case BRAND_ACID:
+			case TBRAND_ACID:
 				f1 |= TR1_BRAND_ACID;
 				break;
-			case BRAND_POIS:
+			case TBRAND_POIS:
 				f1 |= TR1_BRAND_POIS;
 				break;
-			case BRAND_BASE:
+			case TBRAND_BASE:
 				f1 |= (TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_ELEC | TR1_BRAND_ACID);
 				break;
-			case BRAND_CHAO:
+			case TBRAND_CHAO:
 				f5 |= TR5_CHAOTIC;
 				break;
 			}

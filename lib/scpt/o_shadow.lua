@@ -266,7 +266,7 @@ function get_darkbolt_dam(Ind, limit_lev)
 end
 DARKBOLT_I = add_spell {
 	["name"] = 	"Shadow Bolt I",
-	["school"] = 	SCHOOL_OSHADOW,
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	10,
 	["mana"] = 	3,
@@ -287,7 +287,7 @@ DARKBOLT_I = add_spell {
 }
 DARKBOLT_II = add_spell {
 	["name"] = 	"Shadow Bolt II",
-	["school"] = 	SCHOOL_OSHADOW,
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	25,
 	["mana"] = 	6,
@@ -308,7 +308,7 @@ DARKBOLT_II = add_spell {
 }
 DARKBOLT_III = add_spell {
 	["name"] = 	"Shadow Bolt III",
-	["school"] = 	SCHOOL_OSHADOW,
+	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	40,
 	["mana"] = 	13,
@@ -339,7 +339,7 @@ POISONRES = add_spell {
 	["spell"] = 	function()
 		local dur
 		dur = randint(15) + 20 + get_level(Ind, POISONRES, 25)
-		set_brand(Ind, dur, BRAND_POIS, 10)
+		set_brand(Ind, dur, TBRAND_POIS, 10)
 		if get_level(Ind, POISONRES, 50) >= 10 then
 			set_oppose_pois(Ind, dur)
 		end

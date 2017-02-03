@@ -4903,25 +4903,22 @@ static void do_arrow_brand_effect(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 
 	switch (p_ptr->bow_brand_t) {
-	case BRAND_BALL_FIRE:
+	case TBRAND_BALL_FIRE:
 		project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
-	case BRAND_BALL_COLD:
+	case TBRAND_BALL_COLD:
 		project(0 - Ind, 2, &p_ptr->wpos, y, x, 35, GF_COLD, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
-	case BRAND_BALL_ELEC:
+	case TBRAND_BALL_ELEC:
 		project(0 - Ind, 2, &p_ptr->wpos, y, x, 40, GF_ELEC, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
-	case BRAND_BALL_ACID:
+	case TBRAND_BALL_ACID:
 		project(0 - Ind, 2, &p_ptr->wpos, y, x, 45, GF_ACID, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
-	case BRAND_BALL_SOUN:
+	case TBRAND_BALL_SOUN:
 		project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_SOUND, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
-	case BRAND_VORP:
-		/* Nothing here */
-		break;
-	case BRAND_CHAO:
+	case TBRAND_CHAO:
 		/* XXX This allows the target player to 'dodge' the effect... */
 		project(0 - Ind, 0, &p_ptr->wpos, y, x, 1, GF_CONFUSION, PROJECT_NORF | PROJECT_JUMP | PROJECT_KILL | PROJECT_NODO | PROJECT_NODF, "");
 		break;
@@ -5719,7 +5716,7 @@ void do_cmd_fire(int Ind, int dir) {
 			if (zcave[y][x].m_idx < 0) {
 				if (cfg.use_pk_rules == PK_RULES_NEVER) {
 					/* Stop looking */
-					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_VORP)) break;
+					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != TBRAND_VORP)) break;
 				} else {
 					cave_type *c_ptr = &zcave[y][x];
 					q_ptr = Players[0 - c_ptr->m_idx];
@@ -5927,7 +5924,7 @@ void do_cmd_fire(int Ind, int dir) {
 								}
 //less spam for now - C. Blue					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CHAO)) && !q_ptr->resist_conf && !boomerang)
+								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == TBRAND_CHAO)) && !q_ptr->resist_conf && !boomerang)
 									(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + 5);
 
 								if (p_ptr->ranged_barrage)
@@ -5940,14 +5937,14 @@ void do_cmd_fire(int Ind, int dir) {
 								/* XXX confusion arrow is not handled right
 								 * in do_arrow_brand_effect */
 								if (!boomerang && p_ptr->bow_brand_t
-								    && p_ptr->bow_brand_t != BRAND_CHAO)
+								    && p_ptr->bow_brand_t != TBRAND_CHAO)
 									do_arrow_brand_effect(Ind, y, x);
 
 								if (!boomerang && !magic && o_ptr->pval)
 									do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 								/* Stop looking */
-								if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_VORP) || boomerang) break;
+								if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != TBRAND_VORP) || boomerang) break;
 							}
 						}
 
@@ -6102,7 +6099,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 #if 0
 					/* XXX consider using project() with GF_CONF */
-					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == BRAND_CHAO)) &&
+					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == TBRAND_CHAO)) &&
 					    !(r_ptr->flags3 & RF3_NO_CONF) &&
 					    !(r_ptr->flags4 & RF4_BR_CONF) &&
 					    !(r_ptr->flags4 & RF4_BR_CHAO) && !boomerang) {
@@ -6229,7 +6226,7 @@ void do_cmd_fire(int Ind, int dir) {
 						do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 					/* Stop looking */
-					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != BRAND_VORP) || boomerang) break;
+					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != TBRAND_VORP) || boomerang) break;
 				}
 			}
 

@@ -7766,7 +7766,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 				inven_item_describe(Ind, i);
 				inven_item_optimize(Ind, i);
 				msg_print(Ind, "You apply the poisonous essence to your weapon..");
-				set_brand(Ind, 50 + randint(20), BRAND_POIS, 0);
+				set_brand(Ind, 50 + randint(20), TBRAND_POIS, 0);
 				break;
 			}
 		if (i == INVEN_WIELD) {

@@ -376,9 +376,9 @@ HCURING_II = add_spell {
 	["mana_max"] = 	10,
 	["fail"] = 	0,
 	["stat"] = 	A_WIS,
-	-- Unnafected by blindness
+	-- Unaffected by blindness
 	["blind"] = 	FALSE,
-	-- Unnafected by confusion
+	-- Unaffected by confusion
 	--["confusion"] =	FALSE,
 	["spell"] = 	function()
 			if (player.food >= PY_FOOD_MAX) then
@@ -409,9 +409,9 @@ HCURING_III = add_spell {
 	["mana_max"] = 	25,
 	["fail"] = 	-31,
 	["stat"] = 	A_WIS,
-	-- Unnafected by blindness
+	-- Unaffected by blindness
 	["blind"] = 	FALSE,
-	-- Unnafected by confusion
+	-- Unaffected by confusion
 	["confusion"] =	FALSE,
 	["spell"] = 	function()
 			if (player.food >= PY_FOOD_MAX) then

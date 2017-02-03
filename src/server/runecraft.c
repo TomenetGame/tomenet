@@ -767,14 +767,14 @@ s_printf("Duration: %d\n", duration);
 						set_oppose_elec(Ind, duration/2+randint(duration/2));
 						if (r_imperatives[imperative].flag == I_EXPA)
 							fire_ball(Ind, GF_RESELEC_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
-						set_brand(Ind, duration/2+randint(duration/2), BRAND_ELEC, 0);
+						set_brand(Ind, duration/2+randint(duration/2), TBRAND_ELEC, 0);
 					break; }
 
 					case SV_R_FIRE: { //Fire Infusion
 						set_oppose_fire(Ind, duration/2+randint(duration/2));
 						if (r_imperatives[imperative].flag == I_EXPA)
 							fire_ball(Ind, GF_RESFIRE_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
-						set_brand(Ind, duration/2+randint(duration/2), BRAND_FIRE, 0);
+						set_brand(Ind, duration/2+randint(duration/2), TBRAND_FIRE, 0);
 					break; }
 
 					case SV_R_WATE: { //Quench Thirst
@@ -796,21 +796,21 @@ s_printf("Duration: %d\n", duration);
 						set_oppose_cold(Ind, duration/2+randint(duration/2));
 						if (r_imperatives[imperative].flag == I_EXPA)
 							fire_ball(Ind, GF_RESCOLD_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
-						set_brand(Ind, duration/2+randint(duration/2), BRAND_COLD, 0);
+						set_brand(Ind, duration/2+randint(duration/2), TBRAND_COLD, 0);
 					break; }
 
 					case SV_R_ACID: { //Acid Infusion
 						set_oppose_acid(Ind, duration/2+randint(duration/2));
 						if (r_imperatives[imperative].flag == I_EXPA)
 							fire_ball(Ind, GF_RESACID_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
-						set_brand(Ind, duration/2+randint(duration/2), BRAND_ACID, 0);
+						set_brand(Ind, duration/2+randint(duration/2), TBRAND_ACID, 0);
 					break; }
 
 					case SV_R_POIS: { //Poison Infusion
 						set_oppose_pois(Ind, duration/2+randint(duration/2));
 						if (r_imperatives[imperative].flag == I_EXPA)
 							fire_ball(Ind, GF_RESPOIS_PLAYER, 0, duration/2+randint(duration/2), RCRAFT_PJ_RADIUS, "");
-						set_brand(Ind, duration/2+randint(duration/2), BRAND_POIS, 0);
+						set_brand(Ind, duration/2+randint(duration/2), TBRAND_POIS, 0);
 						break; }
 
 					case SV_R_SHAR: { //Dig

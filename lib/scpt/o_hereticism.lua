@@ -60,7 +60,7 @@ ODELFEAR2 = add_spell {
 	["desc"] = 	{ "Removes the ignorant weakness that is fear, for a while.", }
 }
 
-FIREBOLT_I = add_spell {
+OFIREBOLT_I = add_spell {
 	["name"] = 	"Fire Bolt I",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
@@ -81,7 +81,7 @@ FIREBOLT_I = add_spell {
 	end,
 	["desc"] = 	{ "Conjures up fire into a powerful bolt.", }
 }
-FIREBOLT_II = add_spell {
+OFIREBOLT_II = add_spell {
 	["name"] = 	"Fire Bolt II",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
@@ -102,7 +102,7 @@ FIREBOLT_II = add_spell {
 	end,
 	["desc"] = 	{ "Conjures up fire into a powerful bolt.", }
 }
-FIREBOLT_III = add_spell {
+OFIREBOLT_III = add_spell {
 	["name"] = 	"Fire Bolt III",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
@@ -136,7 +136,7 @@ FIRERES = add_spell {
 	["spell"] = 	function()
 		local dur
 		dur = randint(15) + 20 + get_level(Ind, FIRERES, 25)
-		set_brand(Ind, dur, BRAND_FIRE, 10)
+		set_brand(Ind, dur, TBRAND_FIRE, 10)
 		if get_level(Ind, FIRERES, 50) >= 7 then
 			set_oppose_fire(Ind, dur)
 		end
@@ -169,11 +169,18 @@ OEXTRASTATS = add_spell {
 	["desc"] = 	{ "Temporarily increases and sustains strength and constitution.", }
 }
 
+function get_chaosbolt2_dam(Ind)
+	local lev
+	--must at same level have at least same damage as identically named CHAOSBOLT to make 'priority' work
+	lev = get_level(Ind, CHAOSBOLT2, 50) + 21
+	return 0 + (lev * 3) / 5 + 1, 1 + lev + 1
+end
 CHAOSBOLT2 = add_spell {
 	["name"] = 	"Chaos Bolt",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
-	["level"] = 	32,
+	["level"] = 	29,
+	["priority"] = 	1, --vs CHAOSBOLT: actually same damage at same level, but lower mana cost
 	["mana"] = 	16,
 	["mana_max"] = 	16,
 	["fail"] = 	-55,
@@ -181,17 +188,12 @@ CHAOSBOLT2 = add_spell {
 	["stat"] = 	A_WIS,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-		local x, y
-		x, y = get_chaosbolt_dam(Ind)
-		x = x + 2
-		y = y + 2
-		fire_bolt(Ind, GF_CHAOS, args.dir, damroll(x, y), " casts a chaos bolt for")
+		fire_bolt(Ind, GF_CHAOS, args.dir, damroll(get_chaosbolt2_dam(Ind)), " casts a chaos bolt for")
 	end,
 	["info"] = 	function()
 		local x, y
-		x, y = get_chaosbolt_dam(Ind)
-		x = x + 2
-		y = y + 2
+
+		x, y = get_chaosbolt2_dam(Ind)
 		return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Channels the powers of chaos into a bolt.", }

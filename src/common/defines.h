@@ -7182,21 +7182,21 @@ extern int PlayerUID;
 /* Kings/Queens abilities */
 #define KING_OWN	0
 
-/* Added melee weapons for temp weapon brands */
-/* Generic weapon branding */
-#define BRAND_ELEC		0
-#define BRAND_COLD		1
-#define BRAND_FIRE		2
-#define BRAND_ACID		3
-#define BRAND_POIS		4
-#define BRAND_BASE		5
-#define BRAND_CHAO		6
-#define BRAND_VORP		7
-#define BRAND_BALL_FIRE		8
-#define BRAND_BALL_COLD		9
-#define BRAND_BALL_ELEC		10
-#define BRAND_BALL_ACID		11
-#define BRAND_BALL_SOUN		12
+/* Generic temporary weapon branding, currently only used for melee weapons */
+#define TBRAND_ELEC		0
+#define TBRAND_COLD		1
+#define TBRAND_FIRE		2
+#define TBRAND_ACID		3
+#define TBRAND_POIS		4
+//unused/not fully implemented:
+#define TBRAND_BASE		5
+#define TBRAND_CHAO		6
+#define TBRAND_VORP		7
+#define TBRAND_BALL_FIRE	8
+#define TBRAND_BALL_COLD	9
+#define TBRAND_BALL_ELEC	10
+#define TBRAND_BALL_ACID	11
+#define TBRAND_BALL_SOUN	12
 
 /* Client modes (e) */
 #define CLIENT_NORMAL		0x0000

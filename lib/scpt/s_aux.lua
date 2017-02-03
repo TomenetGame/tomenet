@@ -107,7 +107,7 @@ function find_spell(name)
 	return -1
 end
 -- Find a spell by item+position
-function find_spell_from_item(inven_slot, s_ind)
+function find_spell_from_item(inven_slot, s_ind, school_name)
 	local s, book, i
 
 	s = get_inven_pval(Ind, inven_slot)
@@ -241,6 +241,19 @@ function is_ok_spell(i, s)
 		return nil
 	end
 	return 1
+end
+--New: Allow spells of identical name; use 'priority' to figure out which one is better
+function is_ok_spell2(i, s)
+	local lev = get_level(i, s, 50, 0)
+
+	if lev == 0 then return nil end
+	if (s == FIREFLASH_I or s == FIREFLASH_II) and player.prace == RACE_VAMPIRE then
+		return nil
+	end
+
+	if __tmp_spells[s].priority then lev = lev + __tmp_spells[s].priority
+
+	return lev
 end
 
 -- Get the amount of mana(or power) needed
