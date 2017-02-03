@@ -1061,13 +1061,13 @@ function fixs(name)
 end
 --automatically fix old chars for DUAL_WIELD / SKILL_DUAL
 function fix_dual_wield(p)
-    if players(p).pclass == 1 then
+    if players(p).pclass == CLASS_MAGE then
         players(p).s_info[78 + 1].value = 0
     end
-    if players(p).pclass == 4 then
+    if players(p).pclass == CLASS_MIMIC then
         players(p).s_info[78 + 1].value = 0
     end
-    if players(p).pclass == 8 then
+    if players(p).pclass == CLASS_ADVENTURER then
         players(p).s_info[78 + 1].value = 0
     end
     if players(p).pclass == CLASS_WARRIOR then
@@ -1088,13 +1088,13 @@ function fix_stance(p)
     if l > 50000 then
 	l = 50000
     end
-    if players(p).pclass == 1 then
+    if players(p).pclass == CLASS_MAGE then
 	players(p).s_info[79 + 1].value = 0
     end
-    if players(p).pclass == 5 then
+    if players(p).pclass == CLASS_MIMIC then
 	players(p).s_info[79 + 1].value = 0
     end
-    if players(p).pclass == 8 then
+    if players(p).pclass == CLASS_ADVENTURER then
 	players(p).s_info[79 + 1].value = 0
     end
     if players(p).pclass == CLASS_WARRIOR then

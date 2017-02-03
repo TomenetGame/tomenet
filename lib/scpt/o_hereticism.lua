@@ -275,7 +275,7 @@ FIRESTORM = add_spell {
 	["fail"] = 	-75,
 --	["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			fire_wave(Ind, GF_HELL_FIRE, 0, 80 + get_level(Ind, FIRESTORM, 200), 1, 25 + get_level(Ind, FIRESTORM, 47), 5, EFF_STORM, " conjures hellfire for")
+			fire_wave(Ind, GF_HELL_FIRE, 0, 80 + get_level(Ind, FIRESTORM, 200), 1, 25 + get_level(Ind, FIRESTORM, 47), 9, EFF_STORM, " conjures hellfire for")
 		end,
 	["info"] = 	function()
 			return "dam "..(80 + get_level(Ind, FIRESTORM, 200)).." rad 1 dur "..(25 + get_level(Ind, FIRESTORM, 47))
@@ -316,9 +316,16 @@ BLOODSACRIFICE = add_spell {
 	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			player.martyr_timeout = 1000 --abuse martyr for this =p
-			msg_print(Ind, "You feel the warped powers of chaos possess your body and mind!")
-			set_mimic(randint(15) + 50 + get_level(Ind, BLOODSACRIFICE, 30), 758) --RI_BLOODTHIRSTER
+			--abuse martyr vars for this =p (no race/class can learn both spells)
+			if player.martyr_timeout > 0 then
+				msg_print(Ind, "\255yThe maelstrom of chaos doesn't favour your blood sacrifice yet.")
+			else
+				player.martyr_timeout = 1000
+				msg_print(Ind, "You feel the warped powers of chaos possess your body and mind!")
+				do_mimic_change(Ind, 758, TRUE); --RI_BLOODTHIRSTER
+				player.tim_mimic_what = 758; --RI_BLOODTHIRSTER
+				player.tim_mimic = randint(15) + 50 + get_level(Ind, BLOODSACRIFICE, 30);
+			end
 	end,
 	["info"] = 	function()
 			return "dur "..(50 + get_level(Ind, BLOODSACRIFICE, 30)).."+d15"

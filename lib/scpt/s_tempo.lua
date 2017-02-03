@@ -82,8 +82,7 @@ ESSENSESPEED = add_spell {
 			if s > 24 then
 				s = 24
 			end
---			if player.pclass ~= 1 then s = (s + 1) / 2 end -- 1: CLASS_MAGE
-			if player.pclass ~= 1 then
+			if player.pclass ~= CLASS_MAGE then
 				if s > 10 then s = 10 end
 			end
 			fire_ball(Ind, GF_SPEED_PLAYER, 0, s, 2, "")
@@ -95,8 +94,7 @@ ESSENSESPEED = add_spell {
 			if s > 24 then
 				s = 24
 			end
---			if player.pclass ~= 1 then s = (s + 1) / 2 end -- 1: CLASS_MAGE
-			if player.pclass ~= 1 then
+			if player.pclass ~= CLASS_MAGE then
 				if s > 10 then s = 10 end
 			end
 			return "dur "..(10 + get_level(Ind, ESSENSESPEED, 50)).."+d10 speed "..s

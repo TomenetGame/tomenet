@@ -213,10 +213,10 @@ function get_level_school(i, s, max, min)
 
 --	--Hack: Disruption Shield only for Istari. Not for Adventurer/Ranger.
 --	if spell(s).name == "Disruption Shield" then
---		if player.pclass == 0 then
+--		if player.pclass == CLASS_RANGER then
 --			lvl = 0
 --		end
---		if player.pclass == 8 then
+--		if player.pclass == CLASS_ADVENTURER then
 --			lvl = 0
 --		end
 --	end
@@ -237,9 +237,17 @@ end
 -- Can we cast the spell ?
 function is_ok_spell(i, s)
 	if get_level(i, s, 50, 0) == 0 then return nil end
+
 	if (s == FIREFLASH_I or s == FIREFLASH_II) and player.prace == RACE_VAMPIRE then
 		return nil
 	end
+	if player.admin_wiz == 0 and player.admin_dm == 0 then
+		--assume short circuit logic.. >_>
+		if def_hack("TEMP3", nil) and s == BLOODSACRIFICE and player.pclass ~= CLASS_HELLKNIGHT and player.pclass ~= CLASS_CPRIEST then
+			return nil
+		end
+	end
+
 	return 1
 end
 --New: Allow spells of identical name; use 'priority' to figure out which one is better
@@ -247,8 +255,15 @@ function is_ok_spell2(i, s)
 	local lev = get_level(i, s, 50, 0)
 
 	if lev == 0 then return nil end
+
 	if (s == FIREFLASH_I or s == FIREFLASH_II) and player.prace == RACE_VAMPIRE then
 		return nil
+	end
+	if player.admin_wiz == 0 and player.admin_dm == 0 then
+		--assume short circuit logic.. >_>
+		if def_hack("TEMP3", nil) and s == BLOODSACRIFICE and player.pclass ~= CLASS_HELLKNIGHT and player.pclass ~= CLASS_CPRIEST then
+			return nil
+		end
 	end
 
 	if __tmp_spells[s].priority then lev = lev + __tmp_spells[s].priority end

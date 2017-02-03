@@ -917,7 +917,7 @@ bool set_mimic(int Ind, int v, int p) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_mimic) {
-			msg_print(Ind, "Your image changes!");
+			msg_print(Ind, "Your form changes!");
 			notice = TRUE;
 		} else if (p_ptr->tim_mimic > 100 && v <= 100) {
 			msg_print(Ind, "\376\377LThe magical force stabilizing your form starts to fade...");
@@ -927,7 +927,8 @@ bool set_mimic(int Ind, int v, int p) {
 	/* Shut */
 	else {
 		if (p_ptr->tim_mimic && p_ptr->body_monster == p_ptr->tim_mimic_what) {
-			msg_print(Ind, "\376\377LYour image changes back to normality.");
+			//msg_print(Ind, "\376\377LYour form changes back to normal.");
+			msg_print(Ind, "\376\377yYour form changes back to normal!");
 			do_mimic_change(Ind, 0, TRUE);
 			notice = TRUE;
 		}

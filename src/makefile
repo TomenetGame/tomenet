@@ -355,7 +355,7 @@ LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config -
 
 # Compile a client with 'test client' version/tag
 tomenet.test: CFLAGS += -DTEST_CLIENT -Og -O0
-
+tomenet.test: PPFLAGS = -DTEST_CLIENT
 
 
 # Lua
@@ -469,22 +469,22 @@ re: clean all
 #
 
 server/util.pkg: server/util.pre preproc/preproc
-	cd server; ../preproc/preproc util.pre util.pkg $(CPP) $(CPPFLAGS); cd ..
+	cd server; ../preproc/preproc util.pre util.pkg $(CPP) $(CPPFLAGS) $(PPFLAGS); cd ..
 
 server/player.pkg: server/player.pre preproc/preproc
-	cd server; ../preproc/preproc player.pre player.pkg $(CPP) $(CPPFLAGS); cd ..
+	cd server; ../preproc/preproc player.pre player.pkg $(CPP) $(CPPFLAGS) $(PPFLAGS); cd ..
 
 server/spells.pkg: server/spells.pre preproc/preproc
-	cd server; ../preproc/preproc spells.pre spells.pkg $(CPP) $(CPPFLAGS); cd ..
+	cd server; ../preproc/preproc spells.pre spells.pkg $(CPP) $(CPPFLAGS) $(PPFLAGS); cd ..
 
 client/util.pkg: client/util.pre preproc/preproc
-	cd client; ../preproc/preproc util.pre util.pkg $(CPP) $(CPPFLAGS); cd ..
+	cd client; ../preproc/preproc util.pre util.pkg $(CPP) $(CPPFLAGS) $(PPFLAGS); cd ..
 
 client/player.pkg: client/player.pre preproc/preproc
-	cd client; ../preproc/preproc player.pre player.pkg $(CPP) $(CPPFLAGS); cd ..
+	cd client; ../preproc/preproc player.pre player.pkg $(CPP) $(CPPFLAGS) $(PPFLAGS); cd ..
 
 client/spells.pkg: client/spells.pre preproc/preproc
-	cd client; ../preproc/preproc spells.pre spells.pkg $(CPP) $(CPPFLAGS); cd ..
+	cd client; ../preproc/preproc spells.pre spells.pkg $(CPP) $(CPPFLAGS) $(PPFLAGS); cd ..
 
 server/w_util.c: server/util.pkg $(TOLUA)
 	cd server; ./tolua -n util -o w_util.c util.pkg; cd ..

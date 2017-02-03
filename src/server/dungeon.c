@@ -4234,13 +4234,23 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->tim_traps)
 		(void)set_tim_traps(Ind, p_ptr->tim_traps - minus_magic);
 
-	/* Temporary Mimicry from a Ring of Polymorphing */
+	/* Temporary Mimicry from a Ring of Polymorphing or Blood Sacrifice */
 	if (p_ptr->tim_mimic && p_ptr->body_monster == p_ptr->tim_mimic_what) {
-		/* hack - on hold while in town */
-		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) {
+#ifdef ENABLE_HELLKNIGHT
+		if (p_ptr->pclass == CLASS_HELLKNIGHT
+ #ifdef ENABLE_CPRIEST
+		    || p_ptr->pclass == CLASS_CPRIEST
+ #endif
+		    )
 			/* decrease time left of being polymorphed */
 			(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
-		}
+		else
+#endif
+			/* hack - on hold while in town */
+			if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) {
+				/* decrease time left of being polymorphed */
+				(void)set_mimic(Ind, p_ptr->tim_mimic - 1, p_ptr->tim_mimic_what);
+			}
 	}
 
 	/* Hack -- Timed manashield */
