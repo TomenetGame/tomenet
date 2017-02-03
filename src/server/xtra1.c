@@ -8286,6 +8286,7 @@ static void process_global_event(int ge_id) {
 			for (i = 1; i <= NumPlayers; i++)
 				if (inarea(&Players[i]->wpos, &wpos)) {
 					/* Give him his hit points back */
+					set_cut(i, 0, 0);
 					Players[i]->chp = Players[i]->mhp;
 					Players[i]->chp_frac = 0;
 					Players[i]->redraw |= PR_HP;
