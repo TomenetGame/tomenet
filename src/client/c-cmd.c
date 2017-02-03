@@ -1774,23 +1774,27 @@ void cmd_the_guide(void) {
 				/* Misc chapters, hardcoded: */
 				if (!strcasecmp(buf, "Bree")
 				    || my_strcasestr(buf, "Barrow")
-				    || my_strcasestr(buf, "Training Tower")) {
+				    || my_strcasestr(buf, "Training Tower")
+				    || !strcasecmp(buf, "tt")) {
 					strcpy(chapter, "Bree  ");
 					continue;
 				}
 				if (my_strcasestr(buf, "Gond")
-				    || my_strcasestr(buf, "Mordor")) {
+				    || my_strcasestr(buf, "Mordor")
+				    || !strcasecmp(buf, "mor")) {
 					strcpy(chapter, "Gondolin  ");
 					continue;
 				}
 				if (my_strcasestr(buf, "Minas") || my_strcasestr(buf, "Anor")
 				    || my_strcasestr(buf, "Paths")
-				    || my_strcasestr(buf, "Path of ")) {
+				    || my_strcasestr(buf, "Path of ")
+				    || !strcasecmp(buf, "potd")) {
 					strcpy(chapter, "Minas Anor  ");
 					continue;
 				}
 				if (my_strcasestr(buf, "Loth")
-				    || my_strcasestr(buf, "Angband")) {
+				    || my_strcasestr(buf, "Angband")
+				    || !strcasecmp(buf, "ang")) {
 					strcpy(chapter, "Lothlorien  ");
 					continue;
 				}
@@ -1799,35 +1803,35 @@ void cmd_the_guide(void) {
 					continue;
 				}
 
-				if (!strcasecmp(buf, "Death Fate")) {
+				if (!strcasecmp(buf, "Death Fate") || !strcasecmp(buf, "df")) {
 					strcpy(chapter, "Death Fate   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Mandos")) {
+				if (my_strcasestr(buf, "Mandos") || !strcasecmp(buf, "hom")) {
 					strcpy(chapter, "The Halls of Mandos   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Orc Cave")) {
+				if (my_strcasestr(buf, "Orc Cave") || !strcasecmp(buf, "oc")) {
 					strcpy(chapter, "The Orc Cave   ");
 					continue;
 				}
-				if (!strcasecmp(buf, "Mirkwood")) {
+				if (!strcasecmp(buf, "Mirkwood") || !strcasecmp(buf, "mw")) {
 					strcpy(chapter, "Mirkwood   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Forest")) {
+				if (my_strcasestr(buf, "Forest") || !strcasecmp(buf, "of")) {
 					strcpy(chapter, "The Old Forest   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Helca")) {
+				if (my_strcasestr(buf, "Helca") || !strcasecmp(buf, "hc")) {
 					strcpy(chapter, "The Helcaraxe   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Sandworm") || my_strcasestr(buf, "Lair")) {
+				if (my_strcasestr(buf, "Sandworm") || my_strcasestr(buf, "Lair") || !strcasecmp(buf, "swl") || !strcasecmp(buf, "sl")) {
 					strcpy(chapter, "The Sandworm Lair   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Heart")) {
+				if (my_strcasestr(buf, "Heart") || !strcasecmp(buf, "hote")) {
 					strcpy(chapter, "The Heart of the Earth   ");
 					continue;
 				}
@@ -1835,15 +1839,15 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "The Maze   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Cirith") || my_strcasestr(buf, "Ungol")) {
+				if (my_strcasestr(buf, "Cirith") || my_strcasestr(buf, "Ungol") || !strcasecmp(buf, "cu")) {
 					strcpy(chapter, "Cirith Ungol   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Rhun")) {
+				if (my_strcasestr(buf, "Rhun") || !strcasecmp(buf, "lor")) {
 					strcpy(chapter, "The Land of Rhun   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Moria") || my_strcasestr(buf, "Mines")) {
+				if (my_strcasestr(buf, "Moria") || my_strcasestr(buf, "Mines") || !strcasecmp(buf, "mom")) {
 					strcpy(chapter, "The Mines of Moria   ");
 					continue;
 				}
@@ -1851,15 +1855,15 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "The Small Water Cave   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Submer") || my_strcasestr(buf, "Ruin")) {
+				if (my_strcasestr(buf, "Submer") || my_strcasestr(buf, "Ruin") || !strcasecmp(buf, "sr")) {
 					strcpy(chapter, "Submerged Ruins   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Illus") || my_strcasestr(buf, "Castl")) {
+				if (my_strcasestr(buf, "Illus") || my_strcasestr(buf, "Castl") || !strcasecmp(buf, "ic")) {
 					strcpy(chapter, "The Illusory Castle   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Sacred") || my_strcasestr(buf, "Mounta")) {
+				if (my_strcasestr(buf, "Sacred") || my_strcasestr(buf, "Mounta") || !strcasecmp(buf, "slom")) {
 					strcpy(chapter, "The Sacred Land of Mountains   ");
 					continue;
 				}
@@ -1867,19 +1871,19 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "Erebor   ");
 					continue;
 				}
-				if (!strcasecmp(buf, "Dol") || my_strcasestr(buf, "Guld")) {
+				if (!strcasecmp(buf, "Dol") || my_strcasestr(buf, "Guld") || !strcasecmp(buf, "dg")) {
 					strcpy(chapter, "Dol Guldur   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Mount") || my_strcasestr(buf, "Doom")) { //note: TSLoM has been filtered out before us already
+				if (my_strcasestr(buf, "Mount") || my_strcasestr(buf, "Doom") || !strcasecmp(buf, "mtd")) { //note: TSLoM has been filtered out before us already
 					strcpy(chapter, "Mount Doom   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Cloud") || my_strcasestr(buf, "Planes")) {
+				if (my_strcasestr(buf, "Cloud") || my_strcasestr(buf, "Planes") || !strcasecmp(buf, "cp")) {
 					strcpy(chapter, "The Cloud Planes   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Nether") && my_strcasestr(buf, "Realm")) {
+				if ((my_strcasestr(buf, "Nether") && my_strcasestr(buf, "Realm")) || !strcasecmp(buf, "nr")) {
 					strcpy(chapter, "Nether Realm   ");
 					continue;
 				}
@@ -1925,6 +1929,10 @@ void cmd_the_guide(void) {
 				if (my_strcasestr(buf, "Eve")) find++;
 				if (my_strcasestr(buf, "nye") || find >= 2) {
 					strcpy(chapter, "New year's eve");
+					continue;
+				}
+				if (!strcasecmp("ma", buf)) {
+					strcpy(chapter, ".Martial Arts");
 					continue;
 				}
 
