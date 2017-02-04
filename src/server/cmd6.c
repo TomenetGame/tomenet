@@ -7727,17 +7727,26 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
 		p_ptr->cst -= 7;
 		un_afk_idle(Ind);
+		break_cloaking(Ind, 0);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
+
 		set_melee_sprint(Ind, 9 + rand_int(3)); /* number of turns it lasts */
 s_printf("TECHNIQUE_MELEE: %s - sprint\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 	case 1:	if (!(p_ptr->melee_techniques & MT_TAUNT)) return; /* Taunt */
 		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
-//		if (p_ptr->energy < level_speed(&p_ptr->wpos) / 4) return;
+		//if (p_ptr->energy < level_speed(&p_ptr->wpos) / 4) return;
 		if (p_ptr->energy <= 0) return;
 		p_ptr->cst -= 2;
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 4; /* doing it while fighting no prob */
 		un_afk_idle(Ind);
+		break_cloaking(Ind, 0);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+
 		taunt_monsters(Ind);
 s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
@@ -7747,6 +7756,10 @@ s_printf("TECHNIQUE_MELEE: %s - taunt\n", p_ptr->name);
 		p_ptr->cst -= 1;
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* just a quick grimace and mimicking ;) */
 		un_afk_idle(Ind);
+		break_cloaking(Ind, 0);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+
 		distract_monsters(Ind);
 s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
@@ -7765,7 +7778,6 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 				inven_item_increase(Ind, i, -1);
 				inven_item_describe(Ind, i);
 				inven_item_optimize(Ind, i);
-				msg_print(Ind, "You apply the poisonous essence to your weapon..");
 				set_brand(Ind, 50 + randint(20), TBRAND_POIS, 0);
 				break;
 			}
@@ -7773,6 +7785,10 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 			msg_print(Ind, "You are missing a potion of poison.");
 			return;
 		}
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
+		msg_print(Ind, "You apply the poisonous essence to your weapon..");
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
 s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
@@ -7800,6 +7816,11 @@ s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 		p_ptr->cst -= 4;
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		un_afk_idle(Ind);
+		break_cloaking(Ind, 0);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
+
 		flash_bomb(Ind);
 s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
@@ -7813,6 +7834,11 @@ s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return; // ?
 		p_ptr->cst -= 5;
 		un_afk_idle(Ind);
+		break_cloaking(Ind, 0);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
+
 		spin_attack(Ind);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
@@ -7831,6 +7857,9 @@ s_printf("TECHNIQUE_MELEE: %s - spin\n", p_ptr->name);
 			msg_print(Ind, "This attack requires two dual-wielded weapons!");
 			return;
 		}
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
+
 		msg_print(Ind, "You prepare an armour-piercing attack combination..");
 		p_ptr->piercing = 1000; /* [1000] : one round of piercing blows */
 		p_ptr->piercing_charged = TRUE; /* Prepared and ready - ST won't regenerate until we use it! */
@@ -7840,6 +7869,11 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 #endif
 	case 12 :if (!(p_ptr->melee_techniques & MT_BERSERK)) return; /* Berserk */
 		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
+		break_cloaking(Ind, 0);
+		break_shadow_running(Ind);
+		stop_precision(Ind);
+		stop_shooting_till_kill(Ind);
+
 		p_ptr->cst -= 10;
 		un_afk_idle(Ind);
 		hp_player(Ind, 20);
@@ -7943,6 +7977,8 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 			msg_print(Ind, "You are missing a flask of oil.");
 			return;
 		}
+		break_shadow_running(Ind);
+		stop_shooting_till_kill(Ind);
 		p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
 		msg_print(Ind, "You prepare an oil-drenched shot..");
@@ -7957,6 +7993,8 @@ s_printf("TECHNIQUE_RANGED: %s - flare missile\n", p_ptr->name);
 		}
 		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
 		//p_ptr->cst -= 7;
+		break_shadow_running(Ind);
+		stop_shooting_till_kill(Ind);
 		p_ptr->ranged_flare = FALSE; p_ptr->ranged_double = FALSE; p_ptr->ranged_barrage = FALSE;
 		p_ptr->ranged_precision = TRUE;
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* focus.. >:) (maybe even 2 turns oO) */
@@ -7979,6 +8017,7 @@ s_printf("TECHNIQUE_RANGED: %s - ammo\n", p_ptr->name);
 			p_ptr->ranged_double_used = 0;
 			p_ptr->ranged_flare = FALSE; p_ptr->ranged_precision = FALSE; p_ptr->ranged_barrage = FALSE;
 		}
+		break_shadow_running(Ind);
 		p_ptr->ranged_double = !p_ptr->ranged_double; /* toggle */
 		if (p_ptr->ranged_double) msg_print(Ind, "You switch to shooting double shots.");
 		else msg_print(Ind, "You stop using double shots.");
@@ -7997,6 +8036,8 @@ s_printf("TECHNIQUE_RANGED: %s - double\n", p_ptr->name);
 			return;
 		}
 		//p_ptr->cst -= 9;
+		break_shadow_running(Ind);
+		stop_shooting_till_kill(Ind);
 		p_ptr->ranged_flare = FALSE; p_ptr->ranged_precision = FALSE; p_ptr->ranged_double = FALSE;
 		p_ptr->ranged_barrage = TRUE;
 		msg_print(Ind, "You prepare a powerful multi-shot barrage...");
