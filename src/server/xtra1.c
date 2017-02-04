@@ -3680,11 +3680,12 @@ void calc_boni(int Ind) {
 
 	/* Apply the bonus from Druidism */
 #if 0 /* focus _shot_ = ranged, correct? */
+	p_ptr->to_h_ranged += p_ptr->focus_val;
+	p_ptr->dis_to_h_ranged += p_ptr->focus_val;
+#else /* apply to both, melee and ranged? */
 	p_ptr->to_h += p_ptr->focus_val;
 	p_ptr->dis_to_h += p_ptr->focus_val;
 #endif
-	p_ptr->to_h_ranged += p_ptr->focus_val;
-	p_ptr->dis_to_h_ranged += p_ptr->focus_val;
 
 	/* Scan the usable inventory */
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
