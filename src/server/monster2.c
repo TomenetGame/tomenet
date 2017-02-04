@@ -4515,10 +4515,11 @@ static bool summon_specific_okay(int r_idx) {
 			       !(r_ptr->flags1 & (RF1_UNIQUE)));
 			break;
 		case SUMMON_DRAGONRIDER:
-			okay = ((r_ptr->flags3 & RF3_DRAGONRIDER) 
+			okay = ((r_ptr->flags3 & RF3_DRAGONRIDER)
 #ifdef EXPLICITE_UNIQUE_SUMMONING
 			       && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
+			       && (r_ptr->level < 70) /* Don't summon Gold DRs, too easy to obtain mimicry form */
 				);
 			break;
 		case SUMMON_BLUE_HORROR:
