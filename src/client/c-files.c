@@ -848,34 +848,33 @@ void init_file_paths(char *path) {
  *   W:<num>:<use>
  */
 errr process_pref_file_aux(char *buf) {
-        int i, j, k;
+	int i, j, k;
 	int n1, n2;
 
-        char *zz[16];
+	char *zz[16];
 
 	/* We use our own macro__buf - mikaelh */
 	static char *macro__buf = NULL;
 
-        /* Skip "empty" lines */
-        if (!buf[0]) return (0);
+	/* Skip "empty" lines */
+	if (!buf[0]) return (0);
 
-        /* Skip "blank" lines */
-        if (isspace(buf[0])) return (0);
+	/* Skip "blank" lines */
+	if (isspace(buf[0])) return (0);
 
-        /* Skip comments */
-        if (buf[0] == '#') return (0);
-
-
-        /* Require "?:*" format */
-        if (buf[1] != ':') return (1);
+	/* Skip comments */
+	if (buf[0] == '#') return (0);
 
 
-        /* Process "%:<fname>" */
-        if (buf[0] == '%')
-        {
-                /* Attempt to Process the given file */
-                return (process_pref_file(buf + 2));
-        }
+	/* Require "?:*" format */
+	if (buf[1] != ':') return (1);
+
+
+	/* Process "%:<fname>" */
+	if (buf[0] == '%') {
+		/* Attempt to Process the given file */
+		return (process_pref_file(buf + 2));
+	}
 
 	/* Necessary hack, otherwise 'options.prf' and 'window.prf' will also be
 	   loaded by 'pref.prf' and mess up the options and window flags. */
@@ -889,147 +888,132 @@ errr process_pref_file_aux(char *buf) {
 		default: return 0;
 		}
 
-        /* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
-        if (buf[0] == 'R')
-        {
-                if (tokenize(buf+2, 3, zz) == 3)
-                {
-                        i = (huge)strtol(zz[0], NULL, 0);
-						i += 12;	/* gfx-fix by Tanix */
-                        n1 = strtol(zz[1], NULL, 0);
-                        n2 = strtol(zz[2], NULL, 0);
-                        if (i >= MAX_R_IDX) return (1);
-                        if (n1) Client_setup.r_attr[i] = n1;
-                        if (n2) Client_setup.r_char[i] = n2;
-                        return (0);
-                }
-        }
+	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races */
+	if (buf[0] == 'R') {
+		if (tokenize(buf+2, 3, zz) == 3) {
+			i = (huge)strtol(zz[0], NULL, 0);
+			i += 12;	/* gfx-fix by Tanix */
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0);
+			if (i >= MAX_R_IDX) return (1);
+			if (n1) Client_setup.r_attr[i] = n1;
+			if (n2) Client_setup.r_char[i] = n2;
+			return (0);
+		}
+	}
 
 
-        /* Process "K:<num>:<a>/<c>"  -- attr/char for object kinds */
-        else if (buf[0] == 'K')
-        {
-                if (tokenize(buf+2, 3, zz) == 3)
-                {
-                        i = (huge)strtol(zz[0], NULL, 0);
-                        n1 = strtol(zz[1], NULL, 0);
-                        n2 = strtol(zz[2], NULL, 0);
-                        if (i >= MAX_K_IDX) return (1);
-                        if (n1) Client_setup.k_attr[i] = n1;
-                        if (n2) Client_setup.k_char[i] = n2;
-                        return (0);
-                }
-        }
+	/* Process "K:<num>:<a>/<c>"  -- attr/char for object kinds */
+	else if (buf[0] == 'K') {
+		if (tokenize(buf+2, 3, zz) == 3) {
+			i = (huge)strtol(zz[0], NULL, 0);
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0);
+			if (i >= MAX_K_IDX) return (1);
+			if (n1) Client_setup.k_attr[i] = n1;
+			if (n2) Client_setup.k_char[i] = n2;
+			return (0);
+		}
+	}
 
 
-        /* Process "F:<num>:<a>/<c>" -- attr/char for terrain features */
-        else if (buf[0] == 'F')
-        {
-                if (tokenize(buf+2, 3, zz) == 3)
-                {
-                        i = (huge)strtol(zz[0], NULL, 0);
-                        n1 = strtol(zz[1], NULL, 0);
-                        n2 = strtol(zz[2], NULL, 0);
+	/* Process "F:<num>:<a>/<c>" -- attr/char for terrain features */
+	else if (buf[0] == 'F') {
+		if (tokenize(buf+2, 3, zz) == 3) {
+			i = (huge)strtol(zz[0], NULL, 0);
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0);
 #if 0
-                        if (i >= MAX_F_IDX) return (1);
+			if (i >= MAX_F_IDX) return (1);
 #endif
-                        if (n1) Client_setup.f_attr[i] = n1;
-                        if (n2) Client_setup.f_char[i] = n2;
-                        return (0);
-                }
-        }
+			if (n1) Client_setup.f_attr[i] = n1;
+			if (n2) Client_setup.f_char[i] = n2;
+			return (0);
+		}
+	}
 
 
-        /* Process "U:<tv>:<a>/<c>" -- attr/char for unaware items */
-        else if (buf[0] == 'U')
-        {
-                if (tokenize(buf+2, 3, zz) == 3)
-                {
-                        j = (huge)strtol(zz[0], NULL, 0);
-                        n1 = strtol(zz[1], NULL, 0);
-                        n2 = strtol(zz[2], NULL, 0);
+	/* Process "U:<tv>:<a>/<c>" -- attr/char for unaware items */
+	else if (buf[0] == 'U') {
+		if (tokenize(buf+2, 3, zz) == 3) {
+			j = (huge)strtol(zz[0], NULL, 0);
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0);
 			if (j > 100) return 0;
 			if (n1) Client_setup.u_attr[j] = n1;
 			if (n2) Client_setup.u_char[j] = n2;
-                        return (0);
-                }
-        }
+			return (0);
+		}
+	}
 
 
-        /* Process "E:<tv>:<a>/<c>" -- attr/char for equippy chars */
-        else if (buf[0] == 'E')
-        {
+	/* Process "E:<tv>:<a>/<c>" -- attr/char for equippy chars */
+	else if (buf[0] == 'E') {
 		/* Do nothing */
 		return (0);
 
 #if 0
-                if (tokenize(buf+2, 3, zz) == 3)
-                {
-                        j = (byte)strtol(zz[0], NULL, 0) % 128;
-                        n1 = strtol(zz[1], NULL, 0);
-                        n2 = strtol(zz[2], NULL, 0);
-                        if (n1) tval_to_attr[j] = n1;
-                        if (n2) tval_to_char[j] = n2;
-                        return (0);
-                }
+		if (tokenize(buf+2, 3, zz) == 3) {
+			j = (byte)strtol(zz[0], NULL, 0) % 128;
+			n1 = strtol(zz[1], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0);
+			if (n1) tval_to_attr[j] = n1;
+			if (n2) tval_to_char[j] = n2;
+			return (0);
+		}
 #endif
-        }
+	}
 
-        /* Process "A:<str>" -- save an "action" for later */
-        else if (buf[0] == 'A')
-        {
+	/* Process "A:<str>" -- save an "action" for later */
+	else if (buf[0] == 'A') {
 		/* Free the previous action */
 		if (macro__buf) C_FREE(macro__buf, strlen(macro__buf) + 1, char);
 
 		/* Allocate enough space for the ascii string - mikaelh */
 		macro__buf = mem_alloc(strlen(buf));
 
-                text_to_ascii(macro__buf, buf+2);
-                return (0);
-        }
+		text_to_ascii(macro__buf, buf+2);
+		return (0);
+	}
 
-        /* Process "P:<str>" -- create normal macro */
-        else if (buf[0] == 'P')
-        {
-                char tmp[1024];
-                text_to_ascii(tmp, buf+2);
-
-		//hack
-		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
-
-                macro_add(tmp, macro__buf, FALSE, FALSE);
-                return (0);
-        }
-
-        /* Process "H:<str>" -- create hybrid macro */
-        else if (buf[0] == 'H')
-        {
-                char tmp[1024];
-                text_to_ascii(tmp, buf+2);
+	/* Process "P:<str>" -- create normal macro */
+	else if (buf[0] == 'P') {
+		char tmp[1024];
+		text_to_ascii(tmp, buf+2);
 
 		//hack
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
 
-                macro_add(tmp, macro__buf, FALSE, TRUE);
-                return (0);
-        }
+		macro_add(tmp, macro__buf, FALSE, FALSE);
+		return (0);
+	}
 
-        /* Process "C:<str>" -- create command macro */
-        else if (buf[0] == 'C')
-        {
-                char tmp[1024];
-                text_to_ascii(tmp, buf+2);
+	/* Process "H:<str>" -- create hybrid macro */
+	else if (buf[0] == 'H') {
+		char tmp[1024];
+		text_to_ascii(tmp, buf+2);
 
 		//hack
 		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
 
-                macro_add(tmp, macro__buf, TRUE, FALSE);
-                return (0);
-        }
+		macro_add(tmp, macro__buf, FALSE, TRUE);
+		return (0);
+	}
+
+	/* Process "C:<str>" -- create command macro */
+	else if (buf[0] == 'C') {
+		char tmp[1024];
+		text_to_ascii(tmp, buf+2);
+
+		//hack
+		if (macro_trigger_exclusive[0] && strcmp(macro_trigger_exclusive, tmp)) return 0;
+
+		macro_add(tmp, macro__buf, TRUE, FALSE);
+		return (0);
+	}
 
 	/* Process "D:<str>" -- delete a macro */
-	else if (buf[0] == 'D')
-	{
+	else if (buf[0] == 'D') {
 		char tmp[1024];
 		text_to_ascii(tmp, buf+2);
 
@@ -1041,79 +1025,67 @@ errr process_pref_file_aux(char *buf) {
 	}
 
 
-        /* Process "S:<key>:<key>:<dir>" -- keymap */
-        else if (buf[0] == 'S')
-        {
-                if (tokenize(buf+2, 3, zz) == 3)
-                {
-                        i = strtol(zz[0], NULL, 0) & 0x7F;
-                        j = strtol(zz[0], NULL, 0) & 0x7F;
-                        k = strtol(zz[0], NULL, 0) & 0x7F;
-                        if ((k > 9) || (k == 5)) k = 0;
-                        keymap_cmds[i] = j;
-                        keymap_dirs[i] = k;
-                        return (0);
-                }
-        }
+	/* Process "S:<key>:<key>:<dir>" -- keymap */
+	else if (buf[0] == 'S') {
+		if (tokenize(buf+2, 3, zz) == 3) {
+			i = strtol(zz[0], NULL, 0) & 0x7F;
+			j = strtol(zz[0], NULL, 0) & 0x7F;
+			k = strtol(zz[0], NULL, 0) & 0x7F;
+			if ((k > 9) || (k == 5)) k = 0;
+			keymap_cmds[i] = j;
+			keymap_dirs[i] = k;
+			return (0);
+		}
+	}
 
 
-        /* Process "V:<num>:<kv>:<rv>:<gv>:<bv>" -- visual info */
-        else if (buf[0] == 'V')
-        {
+	/* Process "V:<num>:<kv>:<rv>:<gv>:<bv>" -- visual info */
+	else if (buf[0] == 'V') {
 		/* Do nothing */
 		return (0);
 
-                if (tokenize(buf+2, 5, zz) == 5)
-                {
-                        i = (byte)strtol(zz[0], NULL, 0);
-                        color_table[i][0] = (byte)strtol(zz[1], NULL, 0);
-                        color_table[i][1] = (byte)strtol(zz[2], NULL, 0);
-                        color_table[i][2] = (byte)strtol(zz[3], NULL, 0);
-                        color_table[i][3] = (byte)strtol(zz[4], NULL, 0);
-                        return (0);
-                }
-        }
+		if (tokenize(buf+2, 5, zz) == 5) {
+			i = (byte)strtol(zz[0], NULL, 0);
+			color_table[i][0] = (byte)strtol(zz[1], NULL, 0);
+			color_table[i][1] = (byte)strtol(zz[2], NULL, 0);
+			color_table[i][2] = (byte)strtol(zz[3], NULL, 0);
+			color_table[i][3] = (byte)strtol(zz[4], NULL, 0);
+			return (0);
+		}
+	}
 
 
-        /* Process "X:<str>" -- turn option off */
-        else if (buf[0] == 'X')
-        {
-                for (i = 0; option_info[i].o_desc; i++)
-                {
-                        if (option_info[i].o_var &&
-                            option_info[i].o_text &&
-                            streq(option_info[i].o_text, buf + 2))
-                        {
-                                (*option_info[i].o_var) = FALSE;
+	/* Process "X:<str>" -- turn option off */
+	else if (buf[0] == 'X') {
+		for (i = 0; option_info[i].o_desc; i++) {
+			if (option_info[i].o_var &&
+			    option_info[i].o_text &&
+			    streq(option_info[i].o_text, buf + 2)) {
+				(*option_info[i].o_var) = FALSE;
 				Client_setup.options[i] = FALSE;
 				check_immediate_options(i, FALSE, in_game);
-                                return (0);
-                        }
-                }
-        }
+				return (0);
+			}
+		}
+	}
 
-        /* Process "Y:<str>" -- turn option on */
-        else if (buf[0] == 'Y')
-        {
-                for (i = 0; option_info[i].o_desc; i++)
-                {
-                        if (option_info[i].o_var &&
-                            option_info[i].o_text &&
-                            streq(option_info[i].o_text, buf + 2))
-                        {
-                                (*option_info[i].o_var) = TRUE;
+	/* Process "Y:<str>" -- turn option on */
+	else if (buf[0] == 'Y') {
+		for (i = 0; option_info[i].o_desc; i++) {
+			if (option_info[i].o_var &&
+			    option_info[i].o_text &&
+			    streq(option_info[i].o_text, buf + 2)) {
+				(*option_info[i].o_var) = TRUE;
 				Client_setup.options[i] = TRUE;
 				check_immediate_options(i, TRUE, in_game);
-                                return (0);
-                        }
-                }
-        }
+				return (0);
+			}
+		}
+	}
 
 	/* Process "W:<num>:<use>" -- specify window action */
-	else if (buf[0] == 'W')
-	{
-		if (tokenize(buf+2, 2, zz) == 2)
-		{
+	else if (buf[0] == 'W') {
+		if (tokenize(buf+2, 2, zz) == 2) {
 			i = (byte)strtol(zz[0], NULL, 0);
 			window_flag[i] = 1L << ((byte)strtol(zz[1], NULL, 0));
 			return (0);
@@ -1121,8 +1093,8 @@ errr process_pref_file_aux(char *buf) {
 	}
 
 
-        /* Failure */
-        return (1);
+	/* Failure */
+	return (1);
 }
 
 
@@ -1131,45 +1103,42 @@ errr process_pref_file_aux(char *buf) {
  *
  * See the function above for a list of legal "commands".
  */
-errr process_pref_file(cptr name)
-{
-        FILE *fp;
+errr process_pref_file(cptr name) {
+	FILE *fp;
 
 	char buf[1024];
-        char *buf2;
+	char *buf2;
 	int n, err;
 
-        /* Build the filename */
-        path_build(buf, 1024, ANGBAND_DIR_USER, name);
+	/* Build the filename */
+	path_build(buf, 1024, ANGBAND_DIR_USER, name);
 
-        /* Open the file */
-        fp = my_fopen(buf, "r");
+	/* Open the file */
+	fp = my_fopen(buf, "r");
 
-        /* Catch errors */
-        if (!fp) return (-1);
+	/* Catch errors */
+	if (!fp) return (-1);
 
-        /* Process the file */
-        while (0 == (err = my_fgets2(fp, &buf2, &n)))
-        {
-                /* Process the line */
-                if (process_pref_file_aux(buf2))
-                {
-                        /* Useful error message */
-                        printf("Error in '%s' parsing '%s'.\n", buf2, name);
-                }
+	/* Process the file */
+	while (0 == (err = my_fgets2(fp, &buf2, &n))) {
+		/* Process the line */
+		if (process_pref_file_aux(buf2)) {
+			/* Useful error message */
+			printf("Error in '%s' parsing '%s'.\n", buf2, name);
+		}
 
 		mem_free(buf2);
-        }
+	}
 	if (err == 2) {
 		printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", name);
 		plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name));
 	}
 
-        /* Close the file */
-        my_fclose(fp);
+	/* Close the file */
+	my_fclose(fp);
 
-        /* Success */
-        return (0);
+	/* Success */
+	return (0);
 }
 
 
@@ -1181,8 +1150,7 @@ errr process_pref_file(cptr name)
 #ifdef WIN32
 extern int usleep(long microSeconds);
 #endif
-void show_motd(int delay)
-{
+void show_motd(int delay) {
 	int i;
 
 	/* Save the old screen */
@@ -1191,8 +1159,7 @@ void show_motd(int delay)
 	/* Clear the screen */
 	Term_clear();
 
-	for (i = 0; i < 23; i++)
-	{
+	for (i = 0; i < 23; i++) {
 		/* Show each line */
 		/* Term_putstr(0, i, -1, TERM_WHITE, &Setup.motd[i * 80]); */
 		Term_putstr(0, i, -1, TERM_WHITE, &Setup.motd[i * 120]);
@@ -1219,8 +1186,7 @@ void show_motd(int delay)
  *
  * It may eventually be used for help file perusal as well.
  */
-void peruse_file(void)
-{
+void peruse_file(void) {
 	char k = 0;
 
 	/* Initialize */
@@ -1247,8 +1213,8 @@ void peruse_file(void)
 
 		/* Show a general "title" */
 #if 0 /* Don't just print the version as a title, better keep the line free in \
-         that case - ideal for the new 21-lines feature (odd_line / div-3 lines). \
-         This should be kept in sync with Receive_special_line() in nclient.c! */
+	 that case - ideal for the new 21-lines feature (odd_line / div-3 lines). \
+	 This should be kept in sync with Receive_special_line() in nclient.c! */
 //		prt(format("[%s]", shortVersion), 0, 0);
 		prt(format("[TomeNET %d.%d.%d%s]",
 			VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG), 0, 0);
@@ -1309,8 +1275,8 @@ void peruse_file(void)
 		if (k == ' ' || k == KTRL('D')) {
 			cur_line += special_page_size;
 #if 1 /* take a break at end of list before wrapping around \
-         (consistent with behavior in nclient.c: Receive_special_line() \
-         and with do_cmd_help_aux() in files.c.) */
+	 (consistent with behavior in nclient.c: Receive_special_line() \
+	 and with do_cmd_help_aux() in files.c.) */
 			if (cur_line > max_line - special_page_size &&
 			    cur_line < max_line) {
 				cur_line = max_line - special_page_size;
@@ -1691,15 +1657,15 @@ void xhtml_screenshot(cptr name) {
 	file_name[x - 6] = '\0'; /* Kill the ".xhtml" from the end */
 
 	fprintf(fp, "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>\n"
-	             "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"DTD/xhtml1-strict.dtd\">\n"
-	             "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
-	             "<head>\n");
+		     "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"DTD/xhtml1-strict.dtd\">\n"
+		     "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n"
+		     "<head>\n");
 	fprintf(fp, "<meta name=\"GENERATOR\" content=\"TomeNET %d.%d.%d%s\"/>\n",
-	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 	fprintf(fp, "<title>%s</title>\n", file_name);
 	fprintf(fp, "</head>\n"
-	             "<body>\n"
-	             "<pre style=\"color: #ffffff; background-color: #000000; font-family: monospace\">\n");
+		     "<body>\n"
+		     "<pre style=\"color: #ffffff; background-color: #000000; font-family: monospace\">\n");
 
 	cur_attr = Term->scr->a[0][0];
 	prt_attr = flick_colour(cur_attr);
@@ -1738,45 +1704,44 @@ void xhtml_screenshot(cptr name) {
 			
 
 			switch (unm_cc) {
-				/* revert special characters from font_map_solid_walls */
-				case 127: case 2:
-					buf[bytes++] = '#';
-					break;
-				case 1:
-					buf[bytes++] = '$';
-					break;
-				/* Windows client uses ASCII char 31 for paths */
-				case 31:
-					buf[bytes++] = '.';
-					break;
-				case '&':
-					buf[bytes++] = '&';
-					buf[bytes++] = 'a';
-					buf[bytes++] = 'm';
-					buf[bytes++] = 'p';
-					buf[bytes++] = ';';
-					break;
-				case '<':
-					buf[bytes++] = '&';
-					buf[bytes++] = 'l';
-					buf[bytes++] = 't';
-					buf[bytes++] = ';';
-					break;
-				case '>':
-					buf[bytes++] = '&';
-					buf[bytes++] = 'g';
-					buf[bytes++] = 't';
-					buf[bytes++] = ';';
-					break;
-				default:
-					/* catch possible custom fonts */
-					if (unm_cc < 32 || unm_cc > 126)
-						buf[bytes++] = '~';
-					else
+			/* revert special characters from font_map_solid_walls */
+			case 127: case 2:
+				buf[bytes++] = '#';
+				break;
+			case 1:
+				buf[bytes++] = '$';
+				break;
+			/* Windows client uses ASCII char 31 for paths */
+			case 31:
+				buf[bytes++] = '.';
+				break;
+			case '&':
+				buf[bytes++] = '&';
+				buf[bytes++] = 'a';
+				buf[bytes++] = 'm';
+				buf[bytes++] = 'p';
+				buf[bytes++] = ';';
+				break;
+			case '<':
+				buf[bytes++] = '&';
+				buf[bytes++] = 'l';
+				buf[bytes++] = 't';
+				buf[bytes++] = ';';
+				break;
+			case '>':
+				buf[bytes++] = '&';
+				buf[bytes++] = 'g';
+				buf[bytes++] = 't';
+				buf[bytes++] = ';';
+				break;
+			default:
+				/* catch possible custom fonts */
+				if (unm_cc < 32 || unm_cc > 126)
+					buf[bytes++] = '~';
+				else
 					/* proceed normally */
 					buf[bytes++] = unm_cc;
 			}
-
 			/* Write data out before the buffer gets full */
 			if (bytes > 512) {
 				if (fwrite(buf, 1, bytes, fp) < bytes) {
@@ -1803,9 +1768,9 @@ void xhtml_screenshot(cptr name) {
 	}
 
 	fprintf(fp, "</span>\n"
-	            "</pre>\n"
-	            "</body>\n"
-	            "</html>\n");
+		    "</pre>\n"
+		    "</body>\n"
+		    "</html>\n");
 
 	fclose(fp);
 
@@ -1815,8 +1780,7 @@ void xhtml_screenshot(cptr name) {
 
 
 /* Save Auto-Inscription file (*.ins) - C. Blue */
-void save_auto_inscriptions(cptr name)
-{
+void save_auto_inscriptions(cptr name) {
 	FILE *fp;
 	char buf[1024];
 	char file_name[256];
@@ -1838,8 +1802,7 @@ void save_auto_inscriptions(cptr name)
 	path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 
 	fp = fopen(buf, "w");
-	if (!fp)
-	{
+	if (!fp) {
 		/* Couldn't write */
 		c_msg_print("Saving Auto-inscriptions failed!");
 		return;
@@ -1847,7 +1810,7 @@ void save_auto_inscriptions(cptr name)
 
 	/* write header (1 line) */
 	fprintf(fp, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n",
-	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 
 	/* write inscriptions (2 lines each) */
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
@@ -1861,8 +1824,7 @@ void save_auto_inscriptions(cptr name)
 }
 
 /* Load Auto-Inscription file (*.ins) - C. Blue */
-void load_auto_inscriptions(cptr name)
-{
+void load_auto_inscriptions(cptr name) {
 	FILE *fp;
 	char buf[1024];
 	char file_name[256];
@@ -2051,6 +2013,7 @@ void save_birth_file(cptr name) {
 	FILE *fp;
 	char buf[1024];
 	char file_name[256];
+	int i;
 
 	strncpy(file_name, name, 249);
 	file_name[249] = '\0';
@@ -2076,7 +2039,7 @@ void save_birth_file(cptr name) {
 
 	/* Header (1 line) */
 	fprintf(fp, "Character birth file for TomeNET v%d.%d.%d%s\n",
-	        VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 
 	/* Info */
 	fprintf(fp, "%d\n", sex); //Sex/Body/Mode
@@ -2085,10 +2048,8 @@ void save_birth_file(cptr name) {
 	fprintf(fp, "%d\n", trait); //Trait
 
 	/* Stats */
-	int i;
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < 6; i++)
 		fprintf(fp, "%d\n", stat_order[i]);
-	}
 
 	/* Done */
 	fclose(fp);
