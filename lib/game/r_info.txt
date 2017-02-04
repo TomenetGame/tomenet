@@ -20346,7 +20346,7 @@ B:HIT:HURT:11d11
 B:HIT:HURT:11d11
 B:HIT:HURT:11d11
 F:BLUEBAND | NO_DEATH | FORCE_MAXHP | BASH_DOOR | KILL_BODY | POWERFUL |
-F:EVIL | DEMON | NO_CONF | NO_SLEEP | CAN_FLY | HAS_LITE | NO_ESCORT
+F:EVIL | DEMON | NO_CONF | NO_SLEEP | CAN_FLY | HAS_LITE | NO_NEST | NO_ESCORT
 F:IM_FIRE | RES_COLD | IM_POIS | IM_ACID | RES_ELEC
 D:A giant humanoid demon wielding a massive, heavy and sharp scythe. Feared
 D:by foes and friends alike when it flies into one of its berserk rages, the
