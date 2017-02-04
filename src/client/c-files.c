@@ -896,11 +896,12 @@ errr process_pref_file_aux(char *buf) {
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
 			if (i >= MAX_R_IDX) return (1);
-			if (n1) {
-				Client_setup.r_attr[i] = n1;
-				monster_mapping_mod[i] = n1;
+			if (n1) Client_setup.r_attr[i] = n1;
+			if (n2) {
+				Client_setup.r_char[i] = n2;
+				if (n2 < 256) monster_mapping_mod[n2] = monster_mapping_org[i];
+				else printf("Warning - monster mapping exceeds 'char' data type range: %d->%d.", i, n2);
 			}
-			if (n2) Client_setup.r_char[i] = n2;
 			return (0);
 		}
 	}
@@ -927,11 +928,12 @@ errr process_pref_file_aux(char *buf) {
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
 			if (i >= MAX_F_IDX) return (1);
-			if (n1) {
-				Client_setup.f_attr[i] = n1;
-				floor_mapping_mod[i] = n1;
+			if (n1) Client_setup.f_attr[i] = n1;
+			if (n2) {
+				Client_setup.f_char[i] = n2;
+				if (n2 < 256) floor_mapping_mod[n2] = floor_mapping_org[i];
+				else printf("Warning - floor mapping exceeds 'char' data type range: %d->%d.", i, n2);
 			}
-			if (n2) Client_setup.f_char[i] = n2;
 			return (0);
 		}
 	}
@@ -1559,9 +1561,11 @@ void xhtml_screenshot(cptr name) {
 		"#c79d55",	/* LIGHTBROWN */
 		"#f0f0f0",	/* Invalid color */
 	};
+
 	FILE *fp;
 	byte *scr_aa;
 	char *scr_cc, unm_cc;
+	unsigned char unm_cc_idx;
 	byte cur_attr, prt_attr;
 	int i, x, y, max;
 	char buf[1024];
@@ -1704,8 +1708,10 @@ void xhtml_screenshot(cptr name) {
 			}
 
 			/* unmap custom fonts, so screenshot becomes readable */
-			unm_cc = scr_cc[x];
-			
+			unm_cc_idx = (unsigned char)(scr_cc[x]);
+			if (monster_mapping_mod[unm_cc_idx]) unm_cc = monster_mapping_mod[unm_cc_idx];
+			else if (floor_mapping_mod[unm_cc_idx]) unm_cc = floor_mapping_mod[unm_cc_idx];
+			else unm_cc = scr_cc[x]; /* no custom mapping found, take as is */
 
 			switch (unm_cc) {
 			/* revert special characters from font_map_solid_walls */

@@ -2677,6 +2677,7 @@ static void init_monster_mapping() {
 		//buf[3] = '\0';
 		//buf[5] = '\0';
 		monster_mapping_org[i] = *p1;
+		//monster_mapping_mod[(unsigned char)(*p1)] = *p1; //DEBUG
 
 		/* outdated client? */
 		if (i > MAX_R_IDX) break;
@@ -2775,6 +2776,7 @@ static void init_floor_mapping(void) {
 		//buf[3] = '\0';
 		//buf[5] = '\0';
 		floor_mapping_org[i] = *p1;
+		//floor_mapping_mod[(unsigned char)(*p1)] = *p1; //DEBUG
 
 		/* outdated client? */
 		if (i > MAX_F_IDX) break;

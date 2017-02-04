@@ -967,9 +967,9 @@ extern int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarit
 extern char kind_list_char[MAX_K_IDX], kind_list_attr[MAX_K_IDX];
 
 extern char monster_mapping_org[MAX_R_IDX + 1];
-extern u16b monster_mapping_mod[MAX_R_IDX + 1];
+extern char monster_mapping_mod[256];
 extern char floor_mapping_org[MAX_F_IDX + 1];
-extern u16b floor_mapping_mod[MAX_F_IDX + 1];
+extern char floor_mapping_mod[256];
 
 extern int screen_wid, screen_hgt;
 extern void (*resize_main_window)(int cols, int rows);
