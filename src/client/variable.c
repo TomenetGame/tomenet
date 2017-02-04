@@ -392,8 +392,10 @@ int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K
 char kind_list_char[MAX_K_IDX], kind_list_attr[MAX_K_IDX];
 
 /* For screenshots, to unmap custom fonts back to normally readable characters */
-char monster_mapping_org[MAX_R_IDX + 1], monster_mapping_mod[MAX_R_IDX + 1];
-char floor_mapping_org[MAX_F_IDX + 1], floor_mapping_mod[MAX_F_IDX + 1];
+char monster_mapping_org[MAX_R_IDX + 1];
+u16b monster_mapping_mod[MAX_R_IDX + 1]; //should be char too, but let's future-proof :p
+char floor_mapping_org[MAX_F_IDX + 1];
+u16b floor_mapping_mod[MAX_F_IDX + 1]; //should be char too, but let's future-proof :p
 
 /* for DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
 char last_prompt[MSG_LEN] = { 0 };

@@ -896,7 +896,10 @@ errr process_pref_file_aux(char *buf) {
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
 			if (i >= MAX_R_IDX) return (1);
-			if (n1) Client_setup.r_attr[i] = n1;
+			if (n1) {
+				Client_setup.r_attr[i] = n1;
+				monster_mapping_mod[i] = n1;
+			}
 			if (n2) Client_setup.r_char[i] = n2;
 			return (0);
 		}
@@ -923,10 +926,11 @@ errr process_pref_file_aux(char *buf) {
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
 			n2 = strtol(zz[2], NULL, 0);
-#if 0
 			if (i >= MAX_F_IDX) return (1);
-#endif
-			if (n1) Client_setup.f_attr[i] = n1;
+			if (n1) {
+				Client_setup.f_attr[i] = n1;
+				floor_mapping_mod[i] = n1;
+			}
 			if (n2) Client_setup.f_char[i] = n2;
 			return (0);
 		}
