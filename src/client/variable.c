@@ -391,6 +391,10 @@ char kind_list_name[MAX_K_IDX][80];
 int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx = 0;
 char kind_list_char[MAX_K_IDX], kind_list_attr[MAX_K_IDX];
 
+/* For screenshots, to unmap custom fonts back to normally readable characters */
+char monster_mapping_org[MAX_R_IDX + 1], monster_mapping_mod[MAX_R_IDX + 1];
+char floor_mapping_org[MAX_F_IDX + 1], floor_mapping_mod[MAX_F_IDX + 1];
+
 /* for DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
 char last_prompt[MSG_LEN] = { 0 };
 bool last_prompt_macro = FALSE;

@@ -1591,7 +1591,7 @@ void xhtml_screenshot(cptr name) {
 	};
 	FILE *fp;
 	byte *scr_aa;
-	char *scr_cc;
+	char *scr_cc, unm_cc;
 	byte cur_attr, prt_attr;
 	int i, x, y, max;
 	char buf[1024];
@@ -1733,7 +1733,11 @@ void xhtml_screenshot(cptr name) {
 				bytes += 2;
 			}
 
-			switch (scr_cc[x]) {
+			/* unmap custom fonts, so screenshot becomes readable */
+			unm_cc = scr_cc[x];
+			
+
+			switch (unm_cc) {
 				/* revert special characters from font_map_solid_walls */
 				case 127: case 2:
 					buf[bytes++] = '#';
@@ -1766,11 +1770,11 @@ void xhtml_screenshot(cptr name) {
 					break;
 				default:
 					/* catch possible custom fonts */
-					if (scr_cc[x] < 32 || scr_cc[x] > 126)
+					if (unm_cc < 32 || unm_cc > 126)
 						buf[bytes++] = '~';
 					else
 					/* proceed normally */
-					buf[bytes++] = scr_cc[x];
+					buf[bytes++] = unm_cc;
 			}
 
 			/* Write data out before the buffer gets full */

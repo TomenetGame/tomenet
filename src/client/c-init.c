@@ -2579,6 +2579,209 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	my_fclose(fff);
 }
 
+static void init_monster_mapping() {
+	char buf[1024], *p1, *p2;
+	int v1 = 0, v2 = 0, v3 = 0, i;
+	FILE *fff;
+
+	for (i = 0; i <= MAX_R_IDX; i++)
+		monster_mapping_org[i] = 0;
+
+	/* actually use local r_info.txt - a novum */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) {
+		//plog("Error: Your r_info.txt file is missing.");
+		return;
+	}
+
+	while (0 == my_fgets(fff, buf, 1024)) {
+		/* strip $/%..$/! conditions */
+		p1 = p2 = buf; /* dummy, != NULL */
+		while (buf[0] == '$' || buf[0] == '%') {
+			p1 = strchr(buf + 1, '$');
+			p2 = strchr(buf + 1, '!');
+			if (!p1 && !p2) break;
+			if (!p1) p1 = p2;
+			else if (p2 && p2 < p1) p1 = p2;
+
+			/* actually handle/assume certain features */
+			if (buf[0] == '$' && *p1 == '$' && (
+			    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+			    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
+			    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
+			    )) {
+				p1 = p2 = NULL;
+				break;
+			}
+
+			//strcpy(buf, p1 + 1); // overlapping strings
+			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
+		}
+
+		if (!p1 && !p2) continue;
+		if (strlen(buf) < 3) continue;
+		if (buf[0] == 'V' && buf[1] == ':') {
+			sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3);
+			if (v1 < 3 || (v1 == 3 && (v2 < 4 || (v2 == 4 && v3 < 1)))) {
+				//plog("Error: Your r_info.txt file is outdated.");
+				return;
+			}
+			continue;
+		}
+		if (buf[0] != 'N') continue;
+
+		p1 = buf + 2; /* monster index */
+		p2 = strchr(p1, ':'); /* 1 before monster name */
+		if (!p2) continue; /* paranoia (broken file) */
+
+		i = atoi(p1);
+
+		/* fetch symbol (and colour) */
+		while (0 == my_fgets(fff, buf, 1024)) {
+			/* strip $/%..$/! conditions */
+			p1 = p2 = buf; /* dummy, != NULL */
+			while (buf[0] == '$' || buf[0] == '%') {
+				p1 = strchr(buf + 1, '$');
+				p2 = strchr(buf + 1, '!');
+				if (!p1 && !p2) break;
+				if (!p1) p1 = p2;
+				else if (p2 && p2 < p1) p1 = p2;
+
+				/* actually handle/assume certain features */
+				if (buf[0] == '$' && *p1 == '!' && (
+				    (!strncmp(buf + 1, "HALLOWEEN", 9) && strstr(buf, "JOKEANGBAND")) /* allow viewing HALLOWEEN monsters (ie those that are marked as 'JOKEANGBAND when NOT Halloween') */
+				    )) {
+					p1 = p2 = NULL;
+					break;
+				}
+				if (buf[0] == '$' && *p1 == '$' && (
+				    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+				    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
+				    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
+				    )) {
+					p1 = p2 = NULL;
+					break;
+				}
+
+				//strcpy(buf, p1 + 1); // overlapping strings
+				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
+			}
+			if (!p1 && !p2) continue;
+			if (strlen(buf) < 5 || buf[0] != 'G') continue;
+
+			p1 = buf + 2; /* monster symbol */
+			p2 = strchr(p1, ':'); /* 1 before monster colour */
+			break;
+		}
+		//buf[3] = '\0';
+		//buf[5] = '\0';
+		monster_mapping_org[i] = *p1;
+
+		/* outdated client? */
+		if (i > MAX_R_IDX) break;
+	}
+	my_fclose(fff);
+}
+static void init_floor_mapping(void) {
+	char buf[1024], *p1, *p2;
+	int v1 = 0, v2 = 0, v3 = 0, i;
+	FILE *fff;
+
+	for (i = 0; i <= MAX_F_IDX; i++)
+		floor_mapping_org[i] = 0;
+
+	/* actually use local r_info.txt - a novum */
+	path_build(buf, 1024, ANGBAND_DIR_GAME, "f_info.txt");
+	fff = my_fopen(buf, "r");
+	if (fff == NULL) {
+		//plog("Error: Your r_info.txt file is missing.");
+		return;
+	}
+
+	while (0 == my_fgets(fff, buf, 1024)) {
+		/* strip $/%..$/! conditions */
+		p1 = p2 = buf; /* dummy, != NULL */
+		while (buf[0] == '$' || buf[0] == '%') {
+			p1 = strchr(buf + 1, '$');
+			p2 = strchr(buf + 1, '!');
+			if (!p1 && !p2) break;
+			if (!p1) p1 = p2;
+			else if (p2 && p2 < p1) p1 = p2;
+
+			/* actually handle/assume certain features */
+			if (buf[0] == '$' && *p1 == '$' && (
+			    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+			    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
+			    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
+			    )) {
+				p1 = p2 = NULL;
+				break;
+			}
+
+			//strcpy(buf, p1 + 1); // overlapping strings
+			memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
+		}
+
+		if (!p1 && !p2) continue;
+		if (strlen(buf) < 3) continue;
+		if (buf[0] == 'V' && buf[1] == ':') {
+			sscanf(buf + 2, "%d.%d.%d", &v1, &v2, &v3);
+			if (v1 < 3 || (v1 == 3 && (v2 < 4 || (v2 == 4 && v3 < 1)))) {
+				//plog("Error: Your r_info.txt file is outdated.");
+				return;
+			}
+			continue;
+		}
+		if (buf[0] != 'N') continue;
+
+		p1 = buf + 2; /* floor index */
+		p2 = strchr(p1, ':'); /* 1 before floor name */
+		if (!p2) continue; /* paranoia (broken file) */
+
+		i = atoi(p1);
+
+		/* fetch symbol (and colour) */
+		while (0 == my_fgets(fff, buf, 1024)) {
+			/* strip $/%..$/! conditions */
+			p1 = p2 = buf; /* dummy, != NULL */
+			while (buf[0] == '$' || buf[0] == '%') {
+				p1 = strchr(buf + 1, '$');
+				p2 = strchr(buf + 1, '!');
+				if (!p1 && !p2) break;
+				if (!p1) p1 = p2;
+				else if (p2 && p2 < p1) p1 = p2;
+
+				/* actually handle/assume certain features */
+				if (buf[0] == '$' && *p1 == '$' && (
+				    !strncmp(buf + 1, "RPG_SERVER", 10) || /* assume non-rpgserver stats */
+				    !strncmp(buf + 1, "TEST_SERVER", 11) || /* ignore test-server */
+				    !strncmp(buf + 1, "ARCADE_SERVER", 13) /* assume non-arcadeserver stats */
+				    )) {
+					p1 = p2 = NULL;
+					break;
+				}
+
+				//strcpy(buf, p1 + 1); // overlapping strings
+				memmove(buf, p1 + 1, strlen(p1 + 1) + 1);
+			}
+			if (!p1 && !p2) continue;
+			if (strlen(buf) < 5 || buf[0] != 'G') continue;
+
+			p1 = buf + 2; /* monster symbol */
+			p2 = strchr(p1, ':'); /* 1 before monster colour */
+			break;
+		}
+		//buf[3] = '\0';
+		//buf[5] = '\0';
+		floor_mapping_org[i] = *p1;
+
+		/* outdated client? */
+		if (i > MAX_F_IDX) break;
+	}
+	my_fclose(fff);
+}
+
 /* Initialize info for the in-client guide search */
 static void init_guide(void) {
 	int i;
@@ -3064,6 +3267,10 @@ void client_init(char *argv1, bool skip) {
 	init_kind_list();
 	/* Init artifact list from local (client-side) a_info.txt file */
 	init_artifact_list();
+
+	/* For unmapping custom fonts, which is required for xhtml-screenshots */
+	init_floor_mapping(); //read floor characters from local (client-side) f_info.txt
+	init_monster_mapping(); //read monster characters from local (client-side) r_info.txt
 
 	/* For in-client guide search */
 	init_guide();
