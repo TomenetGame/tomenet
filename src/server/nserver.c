@@ -11562,10 +11562,15 @@ void end_mind(int Ind, bool update) {
 	p_ptr->esp_link = 0;
 	p_ptr->esp_link_type = 0;
 	p_ptr->esp_link_flags = 0;
+
 	if (update) {
+		p_ptr->update |= (PU_MUSIC | PU_VIEW | PU_BONUS | PU_HP | PU_MANA);
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
-		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP);
-		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
+		p_ptr->redraw |= (PR_EXTRA | PR_BASIC | PR_MAP);
+	} else { /* we got apruptly severed (target logged out) */
+		p_ptr->update |= PU_MUSIC;
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		p_ptr->redraw |= (PR_BPR_WRAITH | PR_BASIC | PR_MAP);
 	}
 }
 
