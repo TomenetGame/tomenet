@@ -8660,14 +8660,14 @@ void handle_process_font_file(void) {
 	for (i = 0; i < MAX_F_IDX; i++) {
 		Client_setup.f_attr[i] = 0;
 		Client_setup.f_char[i] = 0;
-		floor_mapping_mod[i] = 0;
 	}
+	for (i = 0; i < 256; i++) floor_mapping_mod[i] = 0;
 	//race info (monsters)
 	for (i = 0; i < MAX_R_IDX; i++) {
 		Client_setup.r_attr[i] = 0;
 		Client_setup.r_char[i] = 0;
-		monster_mapping_mod[i] = 0;
 	}
+	for (i = 0; i < 256; i++) monster_mapping_mod[i] = 0;
 	//kind info (objects)
 	for (i = 0; i < MAX_K_IDX; i++) {
 		Client_setup.k_attr[i] = 0;
