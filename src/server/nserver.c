@@ -5401,11 +5401,24 @@ int Send_stamina(int Ind, int mst, int cst) {
 }
 
 int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, cptr name) {
-	connection_t *connp = Conn[Players[Ind]->conn];
+	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL;
 
 #ifndef ENABLE_DRACONIAN_TRAITS
 	if (race == RACE_DRACONIAN) trait = 0;
 #endif
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+		if (is_newer_than(&connp2->version, 4, 5, 2, 0, 0, 0)) {
+			return Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
+		} else if (is_newer_than(&connp2->version, 4, 4, 5, 10, 0, 0)) {
+			return Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, trait, sex, mode);
+		} else {
+			return Packet_printf(&connp2->c, "%c%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, sex, mode);
+		}
+	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
