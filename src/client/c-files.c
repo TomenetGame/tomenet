@@ -899,8 +899,10 @@ errr process_pref_file_aux(char *buf) {
 			if (n1) Client_setup.r_attr[i] = n1;
 			if (n2) {
 				Client_setup.r_char[i] = n2;
-				if (n2 < 256) monster_mapping_mod[n2] = monster_mapping_org[i];
-				else printf("Warning - monster mapping exceeds 'char' data type range: %d->%d.", i, n2);
+				if (!monster_mapping_mod[n2]) {
+					if (n2 < 256) monster_mapping_mod[n2] = monster_mapping_org[i];
+					else printf("Warning - monster mapping exceeds 'char' data type range: %d->%d.", i, n2);
+				}
 			}
 			return (0);
 		}
@@ -931,8 +933,10 @@ errr process_pref_file_aux(char *buf) {
 			if (n1) Client_setup.f_attr[i] = n1;
 			if (n2) {
 				Client_setup.f_char[i] = n2;
-				if (n2 < 256) floor_mapping_mod[n2] = floor_mapping_org[i];
-				else printf("Warning - floor mapping exceeds 'char' data type range: %d->%d.", i, n2);
+				if (!floor_mapping_mod[n2]) {
+					if (n2 < 256) floor_mapping_mod[n2] = floor_mapping_org[i];
+					else printf("Warning - floor mapping exceeds 'char' data type range: %d->%d.", i, n2);
+				}
 			}
 			return (0);
 		}
