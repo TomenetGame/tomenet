@@ -963,8 +963,6 @@ static void fix_inven(int Ind) {
 	display_inven(Ind);
 }
 
-
-
 /*
  * Hack -- display equipment in sub-windows
  */
@@ -979,6 +977,15 @@ static void fix_equip(int Ind) {
 static void fix_player(int Ind) {
 }
 
+static void fix_allitems(int Ind) {
+	/* Resend the inventory */
+	display_invenequip(Ind, FALSE);
+}
+
+static void fix_allitems_fwd(int Ind) {
+	/* Resend the inventory */
+	display_invenequip(Ind, TRUE);
+}
 
 
 /*
@@ -7085,6 +7092,18 @@ void window_stuff(int Ind) {
 	if (p_ptr->window & PW_MONSTER) {
 		p_ptr->window &= ~(PW_MONSTER);
 		fix_monster(Ind);
+	}
+
+	/* Display all inventory and equipment, forced */
+	if (p_ptr->window & PW_ALLITEMS) {
+		p_ptr->window &= ~(PW_ALLITEMS);
+		fix_allitems(Ind);
+	}
+
+	/* Display all inventory and equipment, forced, to mindlinker */
+	if (p_ptr->window & PW_ALLITEMS_FWD) {
+		p_ptr->window &= ~(PW_ALLITEMS_FWD);
+		fix_allitems_fwd(Ind);
 	}
 }
 

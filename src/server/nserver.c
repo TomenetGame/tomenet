@@ -5114,37 +5114,37 @@ static int Receive_undefined(int ind) {
 	/*return 0;*/
 }
 
-int Send_plusses(int ind, int tohit, int todam, int hr, int dr, int hm, int dm) {
-	connection_t *connp = Conn[Players[ind]->conn], *connp2;
+int Send_plusses(int Ind, int tohit, int todam, int hr, int dr, int hm, int dm) {
+	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for plusses (%d.%d.%d)",
-			ind, connp->state, connp->id));
+			Ind, connp->state, connp->id));
 		return 0;
 	}
 
-	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
+	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
 	}
 
-        return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
+	return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd", PKT_PLUSSES, tohit, todam, hr, dr, hm, dm);
 }
 
 
-int Send_ac(int ind, int base, int plus) {
-	connection_t *connp = Conn[Players[ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[ind];*/
+int Send_ac(int Ind, int base, int plus) {
+	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
+	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for ac (%d.%d.%d)",
-			ind, connp->state, connp->id));
+			Ind, connp->state, connp->id));
 		return 0;
 	}
-	if (get_esp_link(ind, LINKF_MISC, &p_ptr2)) {
+	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_AC, base, plus);
 	}
@@ -11530,7 +11530,7 @@ static int Receive_autophase(int ind) {
 }
 
 void end_mind(int Ind, bool update) {
-//	int Ind2;
+	//int Ind2;
 	player_type *p_ptr = Players[Ind];//, *p_ptr2;
 
 #if 0 /* end_mind() is called by get_esp_link() ! -> infinite recursion in a rare case */
@@ -11565,11 +11565,11 @@ void end_mind(int Ind, bool update) {
 
 	if (update) {
 		p_ptr->update |= (PU_MUSIC | PU_VIEW | PU_BONUS | PU_HP | PU_MANA);
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		p_ptr->window |= (PW_ALLITEMS | PW_PLAYER);
 		p_ptr->redraw |= (PR_EXTRA | PR_BASIC | PR_MAP);
 	} else { /* we got apruptly severed (target logged out) */
 		p_ptr->update |= PU_MUSIC;
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		p_ptr->window |= (PW_ALLITEMS);
 		p_ptr->redraw |= (PR_BPR_WRAITH | PR_BASIC | PR_MAP);
 	}
 }

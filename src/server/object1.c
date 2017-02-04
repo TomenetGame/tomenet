@@ -5935,8 +5935,7 @@ bool item_tester_okay(object_type *o_ptr)
  * inventory slot, along with the tval, weight, and position in the inventory
  * to the client --KLJ--
  */
-void display_inven(int Ind)
-{
+void display_inven(int Ind) {
 	player_type	*p_ptr = Players[Ind];
 	register	int i, z = 0;//n
 	object_type	*o_ptr;
@@ -6027,13 +6026,10 @@ void display_inven(int Ind)
 #endif
 }
 
-
-
 /*
  * Choice window "shadow" of the "show_equip()" function
  */
-void display_equip(int Ind)
-{
+void display_equip(int Ind) {
 	player_type	*p_ptr = Players[Ind];
 	register	int i;//, n;
 	object_type	*o_ptr;
@@ -6076,7 +6072,7 @@ void display_equip(int Ind)
 
 		/* Display the weight (if needed) */
 		wgt = o_ptr->weight;// * o_ptr->number;
-//		wgt = o_ptr->weight; <- shows wrongly for ammunition!
+		//wgt = o_ptr->weight; <- shows wrongly for ammunition!
 
 		/* Send the info off */
 		//Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
@@ -6088,6 +6084,105 @@ void display_equip(int Ind)
 			Send_apply_auto_insc(Ind, i);
 			p_ptr->inventory[i].auto_insc = FALSE;
 		}
+	}
+}
+
+/* Redisplays all inventory and equipment even if not changed (for mindlinking) */
+void display_invenequip(int Ind, bool forward) {
+	player_type	*p_ptr = Players[Ind], *p_ptr2;
+	register	int i;
+	object_type	*o_ptr;
+	byte		attr = TERM_WHITE;
+	char		tmp_val[80];
+	char		o_name[ONAME_LEN];
+	int		wgt, who = Ind;
+
+	/* Send to mindlinker instead? */
+	if (forward) {
+		if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) who = p_ptr2->Ind;
+		else return;
+	}
+
+	/* Display the pack */
+	for (i = 0; i < INVEN_WIELD; i++) {
+		/* Examine the item */
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Start with an empty "index" */
+		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
+
+		/* Prepare an "index" */
+		tmp_val[0] = index_to_label(i);
+
+		/* Obtain an item description */
+		if (is_newer_than(&p_ptr->version, 4, 4, 4, 1, 0, 0))
+			object_desc(Ind, o_name, o_ptr, TRUE, 4);
+		else
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+		/* Obtain the length of the description */
+		//n = strlen(o_name);
+
+		/* Get a color */
+		if (can_use_admin(Ind, o_ptr)) {
+			/* Get a color for a book */
+			if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
+			/* all other items */
+			else attr = get_attr_from_tval(o_ptr);
+		}
+		else attr = TERM_L_DARK;
+
+		/* Hack -- fake monochrome */
+		if (!use_color) attr = TERM_WHITE;
+
+		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
+		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
+
+		/* Display the weight if needed */
+		wgt = o_ptr->weight; //* o_ptr->number;
+
+		/* Send the info to the client */
+		if (is_newer_than(&p_ptr->version, 4, 4, 1, 7, 0, 0)) {
+			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
+				Send_inven(who, tmp_val[0], attr, wgt, o_ptr, o_name);
+			} else {
+				Send_inven_wide(who, tmp_val[0], attr, wgt, o_ptr, o_name);
+			}
+		} else {
+			Send_inven(who, tmp_val[0], attr, wgt, o_ptr, o_name);
+		}
+	}
+
+	/* Display the equipment */
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+		/* Examine the item */
+		o_ptr = &p_ptr->inventory[i];
+
+		/* Start with an empty "index" */
+		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
+
+		/* Prepare an "index" */
+		tmp_val[0] = index_to_label(i);
+
+		/* Obtain an item description */
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+		/* Obtain the length of the description */
+		//n = strlen(o_name);
+
+		/* Get the color */
+		attr = get_attr_from_tval(o_ptr);
+
+		/* Hack -- fake monochrome */
+		if (!use_color) attr = TERM_WHITE;
+
+		/* Display the weight (if needed) */
+		wgt = o_ptr->weight;// * o_ptr->number;
+		//wgt = o_ptr->weight; <- shows wrongly for ammunition!
+
+		/* Send the info off */
+		//Send_equip(who, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
+		Send_equip(who, tmp_val[0], attr, wgt, o_ptr, o_name);
 	}
 }
 

@@ -4297,36 +4297,11 @@
 /*
  * Bit flags for the "p_ptr->window" variable (etc)
  */
-#if 0
-
-#define PW_INVEN	0x00000001L	/* Display inven/equip */
-#define PW_EQUIP	0x00000002L	/* Display equip/inven */
-/* xxx */
-#define PW_PLAYER	0x00000008L	/* Display character */
-#define PW_LAGOMETER	0x00000010L	/* Display the lag-o-meter */
-/* xxx */
-#define PW_MESSAGE	0x00000040L	/* Display messages */
-#define PW_OVERHEAD	0x00000080L	/* Display overhead view */
-#define PW_MONSTER	0x00000100L	/* Display monster recall */
-#define PW_OBJECT	0x00000200L	/* Display object recall */
-/* xxx */
-/* xxx */
-/* xxx */
-/* xxx */
-/* xxx */
-/* xxx */
-/* xxx */
-/* xxx */
-#define PW_CHAT		0x00040000L	/* Display chat messages */
-#define PW_MSGNOCHAT	0x00080000L	/* Display messages except chat */
-
-#else
-
 /* flags also used by the client as term window flags */
 #define PW_INVEN	0x00000001L	/* Display inven/equip */
 #define PW_EQUIP	0x00000002L	/* Display equip/inven */
 /*#define PW_SPELL	0x00000004L*/	/* Display spell list */
-#define PW_PLAYER	0x00000004L	/* Display character */
+#define PW_PLAYER	0x00000004L	/* Display character -- unused */
 #define PW_MSGNOCHAT	0x00000008L	/* Display messages except chat */
 #define PW_MESSAGE	0x00000010L	/* Display messages */
 #define PW_CHAT		0x00000020L	/* Display chat messages */
@@ -4336,8 +4311,10 @@
 #define PW_OVERHEAD	0x00001000L	/* Display overhead view */
 #define PW_MONSTER	0x00002000L	/* Display monster recall */
 #define PW_OBJECT	0x00004000L	/* Display object recall */
+#define PW_ALLITEMS	0x00008000L	/* Display all inventory and equipment (all slots count as 'changed') */
+#define PW_ALLITEMS_FWD	0x00010000L	/* Display all inventory for mind-linking player */
 
-#endif
+
 
 /*** General index values ***/
 
