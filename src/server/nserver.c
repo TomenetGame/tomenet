@@ -7721,8 +7721,9 @@ int Send_special_other(int Ind) {
 }
 
 int Send_skills(int Ind) {
-	player_type *p_ptr = Players[Ind];
-	connection_t *connp = Conn[p_ptr->conn];
+	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
+	connection_t *connp = Conn[p_ptr->conn], *connp2;
+
 	s16b skills[12];
 	int i, tmp = 0;
 	object_type *o_ptr;
@@ -7781,8 +7782,13 @@ int Send_skills(int Ind) {
 		return 0;
 	}
 
-	Packet_printf(&connp->c, "%c", PKT_SKILLS);
+	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
+		connp2 = Conn[p_ptr2->conn];
+		Packet_printf(&connp2->c, "%c", PKT_SKILLS);
+		for (i = 0; i < 12; i++) Packet_printf(&connp2->c, "%hd", skills[i]);
+	}
 
+	Packet_printf(&connp->c, "%c", PKT_SKILLS);
 	for (i = 0; i < 12; i++) Packet_printf(&connp->c, "%hd", skills[i]);
 
 	return 1;
