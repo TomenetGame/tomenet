@@ -2475,6 +2475,7 @@ static void set_player_font_definitions(int ind, int player) {
 	player_type *p_ptr = Players[player];
 	int i, j;
 	unsigned char unm_c_idx;
+	bool custom_font = FALSE;
 
 	//paranoia
 	if (player <= 0) {
@@ -2486,6 +2487,8 @@ static void set_player_font_definitions(int ind, int player) {
 		if (!connp->Client_setup.u_attr[i] &&
 		    !connp->Client_setup.u_char[i])
 			continue;
+
+		custom_font = TRUE;
 
 		/* XXX not max_k_idx, since client doesn't know the value */
 		for (j = 0; j < MAX_K_IDX; j++) {
@@ -2501,16 +2504,15 @@ static void set_player_font_definitions(int ind, int player) {
 		p_ptr->f_attr[i] = connp->Client_setup.f_attr[i];
 		p_ptr->f_char[i] = connp->Client_setup.f_char[i];
 
+		if (p_ptr->f_attr[i] || p_ptr->f_char[i]) custom_font = TRUE;
+
 		/* Allow unmapping of custom fonts (for map-mindlinking) */
 		if (p_ptr->f_char[i]) {
 			unm_c_idx = (unsigned char)(p_ptr->f_char[i]);
 #ifdef FONTMAP_F_FIRST
-			if (unm_c_idx < 256 && !p_ptr->f_char_mod[unm_c_idx])
-				p_ptr->f_char_mod[unm_c_idx] = f_info[i].z_char;
-#else
-			if (unm_c_idx < 256)
-				p_ptr->f_char_mod[unm_c_idx] = f_info[i].z_char;
+			if (!p_ptr->f_char_mod[unm_c_idx])
 #endif
+				p_ptr->f_char_mod[unm_c_idx] = f_info[i].z_char;
 		}
 
 #ifndef FLOORTILEBUG_WORKAROUND
@@ -2611,9 +2613,11 @@ static void set_player_font_definitions(int ind, int player) {
 
 	for (i = 0; i < MAX_K_IDX; i++) {
 		p_ptr->k_char[i] = connp->Client_setup.k_char[i];
-		if (!p_ptr->k_char[i]) p_ptr->k_char[i] = k_info[i].x_char;
-
 		p_ptr->k_attr[i] = connp->Client_setup.k_attr[i];
+
+		if (p_ptr->k_attr[i] || p_ptr->k_char[i]) custom_font = TRUE;
+
+		if (!p_ptr->k_char[i]) p_ptr->k_char[i] = k_info[i].x_char;
 		if (!p_ptr->k_attr[i]) p_ptr->k_attr[i] = k_info[i].x_attr;
 
 #if 1
@@ -2638,12 +2642,9 @@ static void set_player_font_definitions(int ind, int player) {
 		if (p_ptr->r_char[i]) {
 			unm_c_idx = (unsigned char)(p_ptr->r_char[i]);
 #ifdef FONTMAP_R_FIRST
-			if (unm_c_idx < 256 && !p_ptr->r_char_mod[unm_c_idx])
-				p_ptr->r_char_mod[unm_c_idx] = r_info[i].x_char;
-#else
-			if (unm_c_idx < 256)
-				p_ptr->r_char_mod[unm_c_idx] = r_info[i].x_char;
+			if (!p_ptr->r_char_mod[unm_c_idx])
 #endif
+				p_ptr->r_char_mod[unm_c_idx] = r_info[i].x_char;
 		}
 
 		if (!p_ptr->r_char[i]) p_ptr->r_char[i] = r_info[i].x_char;
@@ -2658,6 +2659,7 @@ static void set_player_font_definitions(int ind, int player) {
 		p_ptr->r_attr[i] = r_info[i].x_attr;
 #endif
 	}
+	if (p_ptr->use_r_gfx) custom_font = TRUE;
 #ifndef FONTMAP_R_FIRST
 	p_ptr->r_char_mod[64] = '@'; /* Hack for custom font unmapping: Protect the '@' symbol specifically. */
 #endif
@@ -2772,6 +2774,8 @@ static void set_player_font_definitions(int ind, int player) {
 	p_ptr->r_attr[239] = r_info[239].d_attr;
 	p_ptr->r_char[423] = p_ptr->d_char[lookup_kind(TV_GOLD, 18)];
 	p_ptr->r_attr[423] = r_info[423].d_attr;
+
+	p_ptr->custom_font = custom_font;
 }
 
 /*

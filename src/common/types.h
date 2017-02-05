@@ -2584,6 +2584,7 @@ struct player_type {
 	char info_msg[MAX_CHARS];	/* public info message (display gets overridden by an afk reason, if specified) */
 //CHECK
 	bool use_r_gfx;			/* hack - client uses gfx? */
+	bool custom_font;		/* Did player client upload custom attr/char mappings? */
 	player_list_type *afk_noticed;	/* Only display AFK messages once in private conversations */
 
 	byte drain_exp;			/* Experience draining */

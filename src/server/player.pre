@@ -827,6 +827,8 @@ struct player_type
 	int sound_ambient;
 #endif
 
+	bool custom_font;
+
 	int admin_stasis;
 	int admin_godly_strike;
 	int admin_set_defeat;
