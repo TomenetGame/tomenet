@@ -676,6 +676,13 @@ void Receive_login(void) {
 		offset += 2;
 	}
 
+
+	enter_menu:
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
+
 	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1))) {
 		ch = inkey();
 		//added CTRL+Q for RETRY_LOGIN, so you can quit the whole game from within in-game via simply double-tapping CTRL+Q
@@ -708,16 +715,25 @@ void Receive_login(void) {
 		else strcpy(c_name, cname);
 
 		if (total_cpa <= 15)
-			c_put_str(TERM_SLATE, "(Press ESC to pick a random name)", offset + 1, COL_CHARS);
+			c_put_str(TERM_SLATE, "(Press ENTER to pick a random name, ESC to cancel)", offset + 1, COL_CHARS);
 		else
-			c_put_str(TERM_SLATE, "(Press ESC to pick a random name)", offset, 35);
+			c_put_str(TERM_SLATE, "(Press ENTER to pick a random name, ESC to cancel)", offset, 35);
 
 		while (1) {
 			c_put_str(TERM_YELLOW, "New name: ", offset, COL_CHARS);
-			askfor_aux(c_name, CHARACTERNAME_LEN - 1, 0);//was 20/19 once
-			if (strlen(c_name)) break;
-			create_random_name(0, c_name);
+			if (!askfor_aux(c_name, CHARACTERNAME_LEN - 1, 0)) {
+				if (total_cpa <= 15) {
+					Term_erase(0, offset, 80);
+					Term_erase(0, offset + 1, 80);
+				} else
+					Term_erase(0, offset, 80);
+				ch = 0;
+				break;
+			}
+			else if (strlen(c_name)) break;
+			else create_random_name(0, c_name);
 		}
+		if (!ch) goto enter_menu;
 
 		/* Trim spaces right away */
 		strcpy(tmp, c_name);
