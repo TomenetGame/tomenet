@@ -9863,11 +9863,107 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 #endif
+#if 0
 			else if (prefix(message, "/xid")) { //debugging help
 				//xid <id rod> <item to id>
 				p_ptr->delayed_index = k;
 				p_ptr->delayed_spell = -3;//<-rod : -2; <-staff
 				p_ptr->current_item = atoi(token[2]);
+				return;
+			}
+#endif
+			else if (prefix(message, "/fontmapr")) {
+				char tname[MAX_CHARS], *p, c = 0, oc;
+				unsigned char uc;
+
+				if (tk < 1) { /* Explain command usage */
+					msg_print(Ind, "Usage:    /fontmapr <character or account name>[:<symbol/ascii>]");
+					msg_print(Ind, "Example:  /fontmapr Mithrandir:@");
+					msg_print(Ind, "Prints all custom font mappings that have the same target symbol as the one");
+					msg_print(Ind, "source symbol specified has for its target symbol.");
+					return;
+				}
+
+				/* char/acc names always start on upper-case, so forgive the admin if he slacked.. */
+				message2[10] = toupper(message2[10]);
+				strcpy(tname, message2 + 10);
+				if ((p = strchr(tname, ':'))) {
+					*p = 0;
+					if (!p[2]) c = p[1];
+					else {
+						uc = atoi(p + 1);
+						c = (char)uc;
+					}
+				}
+
+				/* Check whether target is actually online by now :) */
+				if (!(i = name_lookup_loose(Ind, tname, FALSE, FALSE, TRUE))) {
+					msg_format(Ind, "Player <%s> isn't online.", tname);
+					return;
+				}
+				p_ptr = Players[i];
+
+#if 0
+				for (j = 0; j < 256; j++) {
+					if (!p_ptr->r_char_mod[j]) continue;
+					if (!c || p_ptr->r_char_mod
+					msg_format(Ind, "");
+				}
+#else
+				for (j = 0; j < MAX_R_IDX; j++) {
+					oc = r_info[j].x_char;
+					if (c && c != oc) continue;
+					if (p_ptr->r_char[j] == oc) continue;
+					msg_format(Ind, "%d (%d, '%c') -> %d '%c'", j, oc, oc, (unsigned char)p_ptr->r_char[j], p_ptr->r_char[j]);
+				}
+#endif
+				return;
+			}
+			else if (prefix(message, "/fontmapf")) {
+				char tname[MAX_CHARS], *p, c = 0, oc;
+				unsigned char uc;
+
+				if (tk < 1) { /* Explain command usage */
+					msg_print(Ind, "Usage:    /fontmapf <character or account name>[:<symbol/ascii>]");
+					msg_print(Ind, "Example:  /fontmapf Mithrandir:@");
+					msg_print(Ind, "Prints all custom font mappings that have the same target symbol as the one");
+					msg_print(Ind, "source symbol specified has for its target symbol.");
+					return;
+				}
+
+				/* char/acc names always start on upper-case, so forgive the admin if he slacked.. */
+				message2[10] = toupper(message2[10]);
+				strcpy(tname, message2 + 10);
+				if ((p = strchr(tname, ':'))) {
+					*p = 0;
+					if (!p[2]) c = p[1];
+					else {
+						uc = atoi(p + 1);
+						c = (char)uc;
+					}
+				}
+
+				/* Check whether target is actually online by now :) */
+				if (!(i = name_lookup_loose(Ind, tname, FALSE, FALSE, TRUE))) {
+					msg_format(Ind, "Player <%s> isn't online.", tname);
+					return;
+				}
+				p_ptr = Players[i];
+
+#if 0
+				for (j = 0; j < 256; j++) {
+					if (!p_ptr->f_char_mod[j]) continue;
+					if (!c || p_ptr->f_char_mod
+					msg_format(Ind, "");
+				}
+#else
+				for (j = 0; j < MAX_F_IDX; j++) {
+					oc = f_info[j].z_char;
+					if (c && c != oc) continue;
+					if (p_ptr->f_char[j] == oc) continue;
+					msg_format(Ind, "%d (%d, '%c') -> %d '%c'", j, oc, oc, (unsigned char)p_ptr->f_char[j], p_ptr->f_char[j]);
+				}
+#endif
 				return;
 			}
 		}

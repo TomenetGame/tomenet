@@ -2468,10 +2468,13 @@ static void sync_options(int Ind, bool *options) {
 
 /* Set font/graf visuals mapping according to the player's wishes,
    while applying some restrictions. */
+#define FONTMAP_R_FIRST /* Use the first custom mapping found for unmapping? Otherwise the last one found is used. */
+//#define FONTMAP_F_FIRST /* Use the first custom mapping found for unmapping? Otherwise the last one found is used. */
 static void set_player_font_definitions(int ind, int player) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = Players[player];
 	int i, j;
+	unsigned char unm_c_idx;
 
 	//paranoia
 	if (player <= 0) {
@@ -2497,6 +2500,19 @@ static void set_player_font_definitions(int ind, int player) {
 /* Hacking the no-floor bug for loth/bree tower/gondo city -C. Blue */
 		p_ptr->f_attr[i] = connp->Client_setup.f_attr[i];
 		p_ptr->f_char[i] = connp->Client_setup.f_char[i];
+
+		/* Allow unmapping of custom fonts (for map-mindlinking) */
+		if (p_ptr->f_char[i]) {
+			unm_c_idx = (unsigned char)(p_ptr->f_char[i]);
+#ifdef FONTMAP_F_FIRST
+			if (unm_c_idx < 256 && !p_ptr->f_char_mod[unm_c_idx])
+				p_ptr->f_char_mod[unm_c_idx] = f_info[i].z_char;
+#else
+			if (unm_c_idx < 256)
+				p_ptr->f_char_mod[unm_c_idx] = f_info[i].z_char;
+#endif
+		}
+
 #ifndef FLOORTILEBUG_WORKAROUND
 		if (!p_ptr->f_attr[i]) p_ptr->f_attr[i] = f_info[i].z_attr;
 		if (!p_ptr->f_char[i]
@@ -2612,8 +2628,24 @@ static void set_player_font_definitions(int ind, int player) {
 	/* Hack -- acquire a flag for ego-monsters	- Jir - */
 	p_ptr->use_r_gfx = FALSE;
 
+#ifdef FONTMAP_R_FIRST
+	p_ptr->r_char_mod[64] = '@'; /* Hack for custom font unmapping: Protect the '@' symbol specifically. */
+#endif
 	for (i = 0; i < MAX_R_IDX; i++) {
 		p_ptr->r_char[i] = connp->Client_setup.r_char[i];
+
+		/* Allow unmapping of custom fonts (for map-mindlinking) */
+		if (p_ptr->r_char[i]) {
+			unm_c_idx = (unsigned char)(p_ptr->r_char[i]);
+#ifdef FONTMAP_R_FIRST
+			if (unm_c_idx < 256 && !p_ptr->r_char_mod[unm_c_idx])
+				p_ptr->r_char_mod[unm_c_idx] = r_info[i].x_char;
+#else
+			if (unm_c_idx < 256)
+				p_ptr->r_char_mod[unm_c_idx] = r_info[i].x_char;
+#endif
+		}
+
 		if (!p_ptr->r_char[i]) p_ptr->r_char[i] = r_info[i].x_char;
 		else p_ptr->use_r_gfx = TRUE;
 
@@ -2626,6 +2658,9 @@ static void set_player_font_definitions(int ind, int player) {
 		p_ptr->r_attr[i] = r_info[i].x_attr;
 #endif
 	}
+#ifndef FONTMAP_R_FIRST
+	p_ptr->r_char_mod[64] = '@'; /* Hack for custom font unmapping: Protect the '@' symbol specifically. */
+#endif
 	/* Certain monsters (that don't already have CHAR_CLEAR) have fixed visuals
 	   that cannot be remapped by the player, because they're supposed to be
 	   chameleons of certain other things/features in the game! */
@@ -6207,8 +6242,16 @@ int Send_char(int Ind, int x, int y, byte a, char c) {
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return 0;
 
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
-		if (BIT(Conn[p_ptr2->conn]->state, CONN_PLAYING | CONN_READY))
-			Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
+		if (BIT(Conn[p_ptr2->conn]->state, CONN_PLAYING | CONN_READY)) {
+			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+			   Maybe todo: also unmap attr? */
+			unsigned char unm_c_idx = (unsigned char)c;
+			char c2 = c;
+
+			if (p_ptr->r_char_mod[unm_c_idx]) c2 = p_ptr->r_char_mod[unm_c_idx];
+			else if (p_ptr->f_char_mod[unm_c_idx]) c2 = p_ptr->f_char_mod[unm_c_idx];
+			Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c2);
+		}
 	}
 
 	return Packet_printf(&Conn[p_ptr->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
@@ -6318,11 +6361,12 @@ int Send_flush(int Ind) {
  * repeated at least twice, then bit 0x40 of the attribute is set, and
  * the next byte contains the number of repetitions of the previous grid.
  */
+//#define SEPARATE_LINK_MAP /* Send map separately to mindlinker, for unmapping of custom fonts */
 int Send_line_info(int Ind, int y, bool scr_only) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
-	char c, c2;
+	char c, c2, cu;
 	byte a, a2;
 #ifdef LOCATE_KEEPS_OVL
 	char co;
@@ -6336,6 +6380,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
 	int a_c;
 #endif
+	unsigned char unm_c_idx;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6454,13 +6499,20 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			}
 
 			if (Ind2) {
+				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+				   Maybe todo: also unmap attr? */
+				unm_c_idx = (unsigned char)c;
+				if (p_ptr->r_char_mod[unm_c_idx]) cu = p_ptr->r_char_mod[unm_c_idx];
+				else if (p_ptr->f_char_mod[unm_c_idx]) cu = p_ptr->f_char_mod[unm_c_idx];
+				else cu = c;
+
 				/* 4.4.3.1 clients support new RLE */
 				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* New RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, n);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", cu, 0xFF, a, n);
 				} else {
 					/* Old RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", c, a | 0x40, n);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", cu, a | 0x40, n);
 				}
 			}
 
@@ -6482,16 +6534,23 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			}
 
 			if (Ind2) {
+				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+				   Maybe todo: also unmap attr? */
+				unm_c_idx = (unsigned char)c;
+				if (p_ptr->r_char_mod[unm_c_idx]) cu = p_ptr->r_char_mod[unm_c_idx];
+				else if (p_ptr->f_char_mod[unm_c_idx]) cu = p_ptr->f_char_mod[unm_c_idx];
+				else cu = c;
+
 				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0xC0);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", cu, a & ~0xC0);
 				} else {
 					if (a == 0xFF) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
-						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, 1);
+						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", cu, 0xFF, a, 1);
 					} else {
 						/* Normal output */
-						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a);
+						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", cu, a);
 					}
 				}
 			}
@@ -6508,8 +6567,9 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = Players[Ind_src];
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
-	char c;
-	byte a;
+	char c, c1;
+	byte a, a1;
+	unsigned char unm_c_idx;
 #ifdef EXTENDED_TERM_COLOURS
 	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
 	int a_c;
@@ -6531,6 +6591,12 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		c = p_ptr2->scr_info[y][x].c;
 		a = p_ptr2->scr_info[y][x].a;
 
+		/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+		   Maybe todo: also unmap attr? */
+		unm_c_idx = (unsigned char)c;
+		if (p_ptr2->r_char_mod[unm_c_idx]) c = p_ptr2->r_char_mod[unm_c_idx];
+		else if (p_ptr2->f_char_mod[unm_c_idx]) c = p_ptr2->f_char_mod[unm_c_idx];
+
 #ifdef EXTENDED_TERM_COLOURS
 		if (old_colours) {
 		    a_c = a & ~(TERM_BNW | TERM_PVP);
@@ -6546,11 +6612,27 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		n = 1;
 
 		/* Count repetitions of this grid */
-		while (p_ptr2->scr_info[y][x1].c == c &&
-		    p_ptr2->scr_info[y][x1].a == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
+
+		c1 = p_ptr2->scr_info[y][x1].c;
+		a1 = p_ptr2->scr_info[y][x1].a;
+		/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+		   Maybe todo: also unmap attr? */
+		unm_c_idx = (unsigned char)c1;
+		if (p_ptr2->r_char_mod[unm_c_idx]) c1 = p_ptr2->r_char_mod[unm_c_idx];
+		else if (p_ptr2->f_char_mod[unm_c_idx]) c1 = p_ptr2->f_char_mod[unm_c_idx];
+
+		while (c1 == c && a1 == a && x1 < 80) { //TODO (EXTENDED_TERM_COLOURS): the scr_info.a should also be changed to TERM_WHITE if client is old, but it doesn't matter.
 			/* Increment count and column */
 			n++;
 			x1++;
+
+			c1 = p_ptr2->scr_info[y][x1].c;
+			a1 = p_ptr2->scr_info[y][x1].a;
+			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
+			   Maybe todo: also unmap attr? */
+			unm_c_idx = (unsigned char)c1;
+			if (p_ptr2->r_char_mod[unm_c_idx]) c1 = p_ptr2->r_char_mod[unm_c_idx];
+			else if (p_ptr2->f_char_mod[unm_c_idx]) c1 = p_ptr2->f_char_mod[unm_c_idx];
 		}
 
 		/* RLE if there at least 2 similar grids in a row */

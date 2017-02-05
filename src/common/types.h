@@ -2057,10 +2057,12 @@ struct player_type {
 	byte f_attr_solid[MAX_F_IDX];
 	char f_char[MAX_F_IDX];
 	char f_char_solid[MAX_F_IDX];
+	char f_char_mod[256];
 	byte k_attr[MAX_K_IDX];
 	char k_char[MAX_K_IDX];
 	byte r_attr[MAX_R_IDX];
 	char r_char[MAX_R_IDX];
+	char r_char_mod[256];
 
 	bool carry_query_flag;
 	bool use_old_target;
