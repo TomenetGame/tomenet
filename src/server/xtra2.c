@@ -8663,6 +8663,7 @@ void resurrect_player(int Ind, int loss_factor) {
 
 	/* Message */
 	msg_print(Ind, "\376\377GYou feel life force return to your body!");
+	msg_format_near(Ind, "%s is resurrected!", p_ptr->name);
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 	/* (was in player_death: Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue)) */
