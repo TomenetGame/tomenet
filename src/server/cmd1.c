@@ -1528,7 +1528,7 @@ void whats_under_your_feet(int Ind, bool force) {
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-	if (compat_pomode(Ind, o_ptr)) {
+	if (!exceptionally_shareable_item(o_ptr) && compat_pomode(Ind, o_ptr)) {
 		if (p_ptr->blind || no_lite(Ind))
 			msg_format(Ind, "\377DYou feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
 		else

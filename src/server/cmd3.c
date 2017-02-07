@@ -3398,7 +3398,7 @@ void do_cmd_look(int Ind, int dir) {
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 			snprintf(out_val, sizeof(out_val), "%sYou see %s%s",
-			    compat_pomode(Ind, o_ptr) ? "\377D" : "", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+			    (compat_pomode(Ind, o_ptr) && !exceptionally_shareable_item(o_ptr)) ? "\377D" : "", o_name, o_ptr->next_o_idx ? " on a pile" : "");
 		}
 
 		/* Check if the object is on a detected trap */
