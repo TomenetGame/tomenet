@@ -12000,12 +12000,12 @@ bool do_scroll_life(int Ind) {
 						   then this is a GOOD action. Reward the player */
 						if (!istown(&p_ptr->wpos) && getlevel(&p_ptr->wpos) == q_ptr->died_from_depth) {
 							u16b dal = 1 + ((2 * q_ptr->lev) / p_ptr->lev);
-							if (p_ptr->align_good > dal)
-								p_ptr->align_good -= dal;
+
+							if (p_ptr->align_good > dal) p_ptr->align_good -= dal;
 							else p_ptr->align_good = 0;
 						}
 						return TRUE;
-					} else msg_print(Ind, "The scroll fails here!");
+					} else msg_format(Ind, "The scroll fails for %s because there is no solid ground!", q_ptr->name);
 				}
 			}
 		}
