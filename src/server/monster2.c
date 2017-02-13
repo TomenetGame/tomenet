@@ -2996,7 +2996,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 	if (!level_generation_time && !(summon_override_checks & SO_BOSS_MONSTERS) &&
 	    (r_idx == RI_DARKLING || r_idx == RI_CANDLEBEARER
 	    || (r_ptr->flags0 & RF0_FINAL_GUARDIAN)
-	    || r_idx == RI_UNMAKER
+	    || (r_idx == RI_UNMAKER && !clo && !clone_summoning)
 	    )) return 50;
 
 #ifdef PMO_DEBUG

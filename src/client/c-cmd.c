@@ -1525,10 +1525,10 @@ void cmd_the_guide(void) {
 					char *p, *s;
 
 					searchline++;
-					//must be beginning of line or only spaces before
+					//must be beginning of line or <only spaces before it, AND NO SPACE in the actual chapter search string>
 					p = strstr(buf2, chapter);
 					if (p == buf2) ok = TRUE;
-					else if (p) {
+					else if (p && chapter[0] != ' ') { //also allow searching for various keywords, but make sure we don't pick eg 'Darkness Storm' before the actual spell diz -> SPACE check
 						s = buf2;
 						ok = TRUE;
 						while (s < p) {
