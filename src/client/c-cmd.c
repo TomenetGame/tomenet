@@ -1493,8 +1493,11 @@ void cmd_the_guide(void) {
 									}
 								}
 							}
-							/* main chapter aka (x) */
-							else if (*(cp + 2) == ')') {
+							/* main chapter aka (x) --
+							   but must be at the beginning of a line, so references to them (which currently don't exist in the text) don't count.
+							   This restriction was added because many things such as lvl reqs are currently written as "(n)" in the text. */
+							else if (*(cp + 2) == ')'
+							    && cp == buf) { //<-'beginning of line' restriction
 								/* begin of colourizing */
 								*cp2++ = '\377';
 								*cp2++ = 'G';
