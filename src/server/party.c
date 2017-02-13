@@ -3986,7 +3986,7 @@ void clockin(int Ind, int type) {
 				if (ptr->laston) ptr->laston = time(&ptr->laston);
 				break;
 			case 1:
-/*				if(p_ptr->lev>ptr->level)  -- changed it to != -- C. Blue */
+				/*if (p_ptr->lev>ptr->level)  -- changed it to != -- C. Blue */
 				if (p_ptr->lev != ptr->level)
 					ptr->level = p_ptr->lev;
 				break;
@@ -4018,6 +4018,11 @@ void clockin(int Ind, int type) {
 			case 9:
 				ptr->winner = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 				break;
+#if defined(ENABLE_HELLKNIGHT) || defined(ENABLE_CPRIEST) /* not needed for 'normal' classes that don't change, not even Death Knight */
+			case 10:
+				ptr->class = p_ptr->pclass;
+				break;
+#endif
 			}
 			break;
 		}

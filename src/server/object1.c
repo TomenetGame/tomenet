@@ -4536,17 +4536,17 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		msg_print(Ind, "\377s  You have no special knowledge about that item.");
 }
 #else /* new way: display an info screen as for identify_fully_aux(), for additional k_info information - C. Blue */
-bool identify_combo_aux(int Ind, object_type *o_ptr, bool full);
-void observe_aux(int Ind, object_type *o_ptr) {
-	(void)identify_combo_aux(Ind, o_ptr, FALSE);
+bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item);
+void observe_aux(int Ind, object_type *o_ptr, int item) {
+	(void)identify_combo_aux(Ind, o_ptr, FALSE, item);
 }
-bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware) {
+bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware, int item) {
 	/* special hack (added for *id*ed items in player stores):
 	   we cannot fully inspect a flavoured item if we don't know the flavour yet */
 	if (!assume_aware && !object_aware_p(Ind, o_ptr))
-		return identify_combo_aux(Ind, o_ptr, FALSE);
+		return identify_combo_aux(Ind, o_ptr, FALSE, item);
 
-	return identify_combo_aux(Ind, o_ptr, TRUE);
+	return identify_combo_aux(Ind, o_ptr, TRUE, item);
 }
 #endif
 
@@ -4560,7 +4560,7 @@ bool identify_fully_aux(int Ind, object_type *o_ptr, bool assume_aware) {
 bool identify_fully_aux(int Ind, object_type *o_ptr) {
 #else
 /* combined handling of non-id, id, *id* info screens: */
-bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
+bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	bool id = full || object_known_p(Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
@@ -4804,6 +4804,32 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full) {
 
 	/* Sigil */
 	if (o_ptr->sigil) fprintf(fff, "\377BIt is emblazoned with a sigil of %s.\n", r_projections[o_ptr->sigil-1].name);
+
+#ifdef NEW_ID_SCREEN
+	/* Temporary brands -- kinda hacky that they use p_ptr instead of o_ptr.. */
+	if (p_ptr->brand && is_melee_weapon(o_ptr->tval) && (item == INVEN_WIELD || item == INVEN_ARM))
+		switch (p_ptr->brand_t) {
+		case TBRAND_ELEC:
+			fprintf(fff, "\377BLightning charge has been applied to it temporarily.\n");
+			break;
+		case TBRAND_COLD:
+			fprintf(fff, "\377BFrost brand has been applied to it temporarily.\n");
+			break;
+		case TBRAND_ACID:
+			fprintf(fff, "\377BAcid cover has been applied to it temporarily.\n");
+			break;
+		case TBRAND_FIRE:
+			fprintf(fff, "\377BFire brand has been applied to it temporarily.\n");
+			break;
+		case TBRAND_POIS:
+			fprintf(fff, "\377BVenom has been applied to it temporarily.\n");
+			break;
+		//other brands are unused atm (possibly not fully implemented even)
+		}
+	//Note: bow_brand_t is unused atm (possibly not fully implemented even)
+	/* Note: Static brands (p_ptr->brand_..) aren't displayed here, since they come completely independant of the weapon usage,
+	         while temporary brands at least (usually) stop when you take off the weapon. */
+#endif
 
 	/* in case we just *ID* it because an admin inspected it */
 	if (!(o_ptr->ident & ID_MENTAL) && is_admin(p_ptr)

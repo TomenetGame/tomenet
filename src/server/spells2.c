@@ -3876,11 +3876,11 @@ bool identify_fully_item(int Ind, int item) {
 		           o_name);
 
 	/* Describe it fully */
-	(void)identify_fully_aux(Ind, o_ptr, FALSE);
+	(void)identify_fully_aux(Ind, o_ptr, FALSE, item);
 
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
-//		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
+		//inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;
 
@@ -3923,7 +3923,7 @@ bool identify_fully_item_quiet(int Ind, int item) {
 
 	/* Did we use up an item? */
 	if (p_ptr->using_up_item >= 0) {
-//		inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
+		//inven_item_describe(Ind, p_ptr->using_up_item); /* maybe not for *ID* */
 		inven_item_optimize(Ind, p_ptr->using_up_item);
 		p_ptr->using_up_item = -1;
 

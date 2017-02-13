@@ -1843,9 +1843,9 @@ void do_cmd_observe(int Ind, int item) {
 	}
 
 	/* Require full knowledge */
-	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr);
+	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr, item);
 	/* Describe it fully */
-	else if (!identify_fully_aux(Ind, o_ptr, FALSE)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr, FALSE, item)) msg_print(Ind, "You see nothing special.");
 }
 
 

@@ -4042,9 +4042,9 @@ void store_examine(int Ind, int item) {
 	if (!o_ptr->tval) return;
 
 	/* Require full knowledge */
-	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr);
+	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr, -1);
 	/* Describe it fully */
-	else if (!identify_fully_aux(Ind, o_ptr, assume_aware)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr, assume_aware, -1)) msg_print(Ind, "You see nothing special.");
 
 	return;
 }
@@ -5898,7 +5898,7 @@ void home_purchase(int Ind, int item, int amt) {
  */
 void home_examine(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-//	int st = p_ptr->store_num;
+	//int st = p_ptr->store_num;
 	int	h_idx;
 	object_type		*o_ptr;
 	char		o_name[ONAME_LEN];
@@ -5932,9 +5932,9 @@ void home_examine(int Ind, int item) {
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Require full knowledge */
-	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr);
+	if (!(o_ptr->ident & ID_MENTAL) && !is_admin(p_ptr)) observe_aux(Ind, o_ptr, -1);
 	/* Describe it fully */
-	else if (!identify_fully_aux(Ind, o_ptr, FALSE)) msg_print(Ind, "You see nothing special.");
+	else if (!identify_fully_aux(Ind, o_ptr, FALSE, -1)) msg_print(Ind, "You see nothing special.");
 
 	return;
 }
@@ -5946,7 +5946,7 @@ void home_examine(int Ind, int item) {
  */
 void home_extend(int Ind) {
 	player_type *p_ptr = Players[Ind];
-//	int st = p_ptr->store_num;
+	//int st = p_ptr->store_num;
 	int h_idx, cost = 0;
 	house_type *h_ptr;
 
