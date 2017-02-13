@@ -334,7 +334,7 @@ const char *my_strcasestr(const char *big, const char *little) {
 		cnt2 = 0;
 		l = 0;
 		while (little[cnt2] != 0) {
-			if (big[cnt + cnt2] == little[cnt2] || big[cnt + cnt2] == little[cnt2] - 32 || big[cnt + cnt2] == little[cnt2] + 32) l++;
+			if (big[cnt + cnt2] == little[cnt2] || big[cnt + cnt2] == tolower(little[cnt2]) || big[cnt + cnt2] == toupper(little[cnt2])) l++;
 			else break;
 
 			if (l == 1) ret = big + cnt;
