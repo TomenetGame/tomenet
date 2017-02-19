@@ -8557,25 +8557,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			}
 		}
 
-		/* don't generate items that are too worhtless at low pval */
-		switch (o_ptr->name2) {
-		case EGO_INTELLIGENCE:
-		case EGO_WISDOM:
-			if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
-			break;
-		case EGO_BRILLIANCE:
-			if (o_ptr->pval < 3) o_ptr->pval = 3 + (rand_int(3) ? 0 : 1);
-			break;
-		case EGO_OFTHEMAGI:
-			if (o_ptr->pval < 5) o_ptr->pval = 5; //higher pvals are commonly used towards end-game, no need to hack it up further now
-			break;
-		case EGO_AGILITY:
-			if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
-			break;
-		}
-		/* as _double ego_, it should be acceptable :-p */
-		if (!o_ptr->name2)
-			switch (o_ptr->name2b) {
+		/* single-ego restrictions */
+		if (!o_ptr->name2b) {
+			switch (o_ptr->name2) {
+			/* don't generate items that are too worthless at low pval */
 			case EGO_INTELLIGENCE:
 			case EGO_WISDOM:
 				if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
@@ -8589,11 +8574,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case EGO_AGILITY:
 				if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
 				break;
-		}
-
-		/* Don't generate (possibly expensive due to high bpval or high +ac, hence passed up till here) definite crap */
-		if (!o_ptr->name2b)
-			switch (o_ptr->name2) {
+			/* Don't generate (possibly expensive due to high bpval or high +ac, hence passed up till here) definite crap */
 			case EGO_CONCENTRATION:
 			case EGO_INFRAVISION:
 			case EGO_BEAUTY:
@@ -8606,6 +8587,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case EGO_FROCK_PIETY:
 			case EGO_ROBE_MAGI:
 				continue;
+			}
 		}
 
 #ifdef TRAPKIT_EGO_ALL
@@ -8647,8 +8629,20 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 #endif
 
 		/* prevent rewards that pass the min price check but are still not useful enough: */
+#if 1
+		/* no pval +1 items, as the bonus is maybe too weak - especially: Cloak of the Magi
+		   -- note: this prevents 1h +LIFE weapons as a side-effect */
+		if (resf & RESF_NOHIVALUE) { /* eg Dungeon Keeper */
+			/* prevent */
+			if (o_ptr->pval == 1) continue;
+		} else { /* eg Highlander */
+			/* boost */
+			if (o_ptr->pval == 1 && o_ptr->name2 != EGO_LIFE && o_ptr->name2b != EGO_LIFE) o_ptr->pval = 2;
+		}
+#else
 		/* - prevent +1 speed boots! */
 		if ((o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) && o_ptr->pval == 1) continue;
+#endif
 		/* - prevent shields of reflection */
 		if (o_ptr->name2 == EGO_REFLECT || o_ptr->name2b == EGO_REFLECT) continue;
 		/* - it's a bit sad to get super-low mage staves (of Mana, +1..4) */
