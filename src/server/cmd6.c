@@ -201,7 +201,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 	case SV_FOOD_CURE_PARANOIA:
 		if (set_afraid(Ind, 0)) ident = TRUE;
-//				if (set_image(Ind, p_ptr->image / 2)) ident = TRUE;
+		//if (set_image(Ind, p_ptr->image / 2)) ident = TRUE;
 		if (set_image(Ind, 0)) ident = TRUE;
 		break;
 
@@ -213,8 +213,8 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, (p_ptr->cut / 2) - 50, p_ptr->cut_attacker)) ident = TRUE;
-//			(void)set_poisoned(Ind, 0, 0);
-//			(void)set_image(Ind, 0);	// ok?
+		//(void)set_poisoned(Ind, 0, 0);
+		//(void)set_image(Ind, 0);	// ok?
 		if (hp_player(Ind, damroll(6, 8))) ident = TRUE;
 		break;
 
@@ -1833,7 +1833,7 @@ bool curse_armor(int Ind) {
 	if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
-		           "terrible black aura", "surround your armour", o_name);
+		    "terrible black aura", "surround your armour", o_name);
 	}
 
 	/* not artifact or failed save... */
@@ -1904,7 +1904,7 @@ bool curse_weapon(int Ind) {
 	if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
-		           "terrible black aura", "surround your weapon", o_name);
+		    "terrible black aura", "surround your weapon", o_name);
 	}
 
 	/* not artifact or failed save... */
@@ -1978,7 +1978,7 @@ bool curse_an_item(int Ind, int slot) {
 	if (artifact_p(o_ptr) && (rand_int(100) < 50)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
-		           "terrible black aura", "surround you", o_name);
+		    "terrible black aura", "surround you", o_name);
 	}
 
 	/* not artifact or failed save... */
@@ -2116,7 +2116,6 @@ static void do_lottery(int Ind, object_type *o_ptr) {
 	/* 30 * 4^7 = 30 * 16384 =   491,520 */
 	/* 30 * 5^7 = 30 * 78125 = 2,343,750 */
 	for (j = 0; j < LOTTERY_MAX_PRIZE; j++) {
-/* was this really intended to be magik() !? - C. Blue -		if (!magik(5)) break; */
 		if (rand_int(4)) break;
 		if (k) i *= 5;
 		k++;
@@ -2539,7 +2538,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			//if (p_ptr->suscep_lite && !p_ptr->resist_lite)
 			if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite)
 				take_hit(Ind, damroll(10, 3), o_ptr ? "a Scroll of Light" : "a flash of light", 0);
-                        	//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
+				//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
 			if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind)
 				(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			break;
@@ -2582,7 +2581,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			//if (p_ptr->prace == RACE_VAMPIRE) {
 				take_hit(Ind, damroll(5, 3), o_ptr ? "a Scroll of Blessing" : "a blessing", 0);
 			} else if (p_ptr->blessed_power <= 8) {
-			        p_ptr->blessed_power = 8;
+				p_ptr->blessed_power = 8;
 				if (set_blessed(Ind, randint(12) + 6)) ident = TRUE; /* removed stacking */
 			}
 			break;
@@ -2664,7 +2663,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 			object_level = getlevel(&p_ptr->wpos);
 			if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
-		        s_printf("%s: ACQ_SCROLL: by player %s\n", showtime(), p_ptr->name);
+			s_printf("%s: ACQ_SCROLL: by player %s\n", showtime(), p_ptr->name);
 			acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
 			object_discount = 0;
 			object_level = obj_tmp; /*just paranoia, dunno if needed.*/
@@ -2679,7 +2678,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 			object_level = getlevel(&p_ptr->wpos);
 			if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
-		        s_printf("%s: *ACQ_SCROLL*: by player %s\n", showtime(), p_ptr->name);
+			s_printf("%s: *ACQ_SCROLL*: by player %s\n", showtime(), p_ptr->name);
 			acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
 			object_discount = 0;
 			object_level = obj_tmp; /*just paranoia, dunno if needed.*/
@@ -2693,7 +2692,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			fire_ball(Ind, GF_FIRE, 0, 200, 4, p_ptr->attacker);
 			/* Note: "Double" damage since it is centered on the player ... */
 			if (!(p_ptr->oppose_fire || p_ptr->resist_fire || p_ptr->immune_fire))
-				//                                take_hit(Ind, 50+randint(50)+(p_ptr->suscep_fire)?20:0, "a Scroll of Fire", 0);
+				//take_hit(Ind, 50+randint(50)+(p_ptr->suscep_fire)?20:0, "a Scroll of Fire", 0);
 				take_hit(Ind, 100 + randint(100), o_ptr ? "a Scroll of Fire" : "fire", 0);
 			ident = TRUE;
 			break;
@@ -3031,7 +3030,7 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 		msg_print(Ind, "Your anti-magic field disrupts the scroll.");
-	        return;
+		return;
 	}
 #endif
 
@@ -4253,8 +4252,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	un_afk_idle(Ind);
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos) /
-	        ((f4 & TR4_FAST_CAST)?2:1);
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / ((f4 & TR4_FAST_CAST) ? 2 : 1);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -4475,8 +4473,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	un_afk_idle(Ind);
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos) /
-	        ((f4 & TR4_FAST_CAST)?2:1);
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / ((f4 & TR4_FAST_CAST) ? 2 : 1);
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -5055,14 +5052,14 @@ bool activation_requires_direction(object_type *o_ptr) {
 		}
 	}
 
-        /* Hack -- Amulet of the Serpents can be activated as well */
+	/* Hack -- Amulet of the Serpents can be activated as well */
 	else if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_SERPENT)) {
 		return TRUE;
 	}
 
 	else if (o_ptr->tval == TV_RING) {
 		switch (o_ptr->sval) {
-                case SV_RING_ELEC:
+		case SV_RING_ELEC:
 		case SV_RING_ACID:
 		case SV_RING_ICE:
 		case SV_RING_FLAMES:
@@ -5099,7 +5096,7 @@ bool rod_requires_direction(int Ind, object_type *o_ptr) {
  */
 void do_cmd_activate(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
-	int         i, k;
+	int i, k;
 	bool done = FALSE;
 	//int md = get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 	object_type *o_ptr;
@@ -5386,7 +5383,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		/* free space left? */
 		i = 0;
 		/* k_info-pval dependant */
-                switch (o_ptr->bpval) {
+		switch (o_ptr->bpval) {
 		case 9: if (!o_ptr->xtra9) i = 1;
 		case 8: if (!o_ptr->xtra8) i = 1;
 		case 7: if (!o_ptr->xtra7) i = 1;
@@ -5793,8 +5790,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_KNOWLEDGE:
 			identify_fully(Ind);
 			msg_print(Ind, "\377RYou hear horrible, otherworldy sounds of the dead in your head..");
-                                take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead");
-//				take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
+				take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead");
+				//take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
 			o_ptr->recharging = rand_int(100) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_UNDEATH:
@@ -5848,7 +5845,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_STONE_LORE:
 			msg_print(Ind, "The stone reveals hidden mysteries...");
 			if (!ident_spell(Ind)) return;
-			//                                if (!p_ptr->realm1)
+			//if (!p_ptr->realm1)
 			if (1) {
 				/* Sufficient mana */
 				if (20 <= p_ptr->csp) {
