@@ -12294,6 +12294,8 @@ Note that not every skill is available to every profession (class).
                                 blood. This means that the speed of your hit
                                 point regeneration will be reduced while the
                                 aura is active.
+                                If your skill is at least 30.000 you obtain
+                                fear resistance.
 
         .Shivering Aura         Monsters that hit you are stunned.
                                 Monsters that are immune to cold and those that

@@ -4979,6 +4979,7 @@ void calc_boni(int Ind) {
 	}
 
 
+
 	/* -------------------- AC mods unaffected by body_monster: -------------------- */
 
 	/* Invulnerability */
@@ -5011,7 +5012,6 @@ void calc_boni(int Ind) {
 		if (p_ptr->to_a > 0) p_ptr->to_a = (p_ptr->to_a * 2) / 3;
 	}
 
-
 	/* Redraw armor (if needed) */
 	if ((p_ptr->dis_ac != old_dis_ac) || (p_ptr->dis_to_a != old_dis_to_a)) {
 		/* Redraw */
@@ -5019,6 +5019,7 @@ void calc_boni(int Ind) {
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
 	}
+
 
 
 	/* Obtain the "hold" value */
@@ -5147,7 +5148,6 @@ void calc_boni(int Ind) {
 	/* Add in the "bonus spells" */
 	p_ptr->num_spell += extra_spells;
 
-
 	/* Examine the "tool" */
 	o_ptr = &p_ptr->inventory[INVEN_TOOL];
 
@@ -5162,7 +5162,6 @@ void calc_boni(int Ind) {
 		p_ptr->skill_dig += p_ptr->skill_dig *
 		    get_skill_scale(p_ptr, SKILL_DIG, 200) / 100;
 	}
-
 
 	/* Examine the "shield" */
 	o_ptr = &p_ptr->inventory[INVEN_ARM];
@@ -5233,7 +5232,6 @@ void calc_boni(int Ind) {
 	}
 #endif
 
-
 	/* Examine the "main weapon" */
 	/* note- for dual-wield we don't need to run the main parry checks again on the secondary weapon,
 	   because you are not allowed to hold 2h or 1.5h weapons in secondary slot. this leaves only one
@@ -5291,7 +5289,6 @@ void calc_boni(int Ind) {
 		}
 	}
 #endif
-
 
 	/* It is hard to hold a heavy weapon */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
@@ -5805,7 +5802,7 @@ void calc_boni(int Ind) {
 	p_ptr->skill_dig += adj_str_dig[p_ptr->stat_ind[A_STR]];
 
 	/* Affect Skill -- disarming (Level, by Class) */
-//	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_DISARM) / 10);
+	//p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_DISARM) / 10);
 	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_TRAPPING) / 10);
 
 	/* Affect Skill -- magic devices (Level, by Class) */
@@ -5866,24 +5863,22 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_META) >= 20) p_ptr->skill_sav += get_skill(p_ptr, SKILL_META) - 20;
 	/* - SKILL_HOFFENSE gives slay mods in brand/slay function tot_dam_aux() */
 	/* - SKILL_HDEFENSE gives auto protection-from-evil */
-//	if (get_skill(p_ptr, SKILL_HDEFENSE) >= 40) { p_ptr->resist_lite = TRUE; p_ptr->resist_dark = TRUE; }
+	//if (get_skill(p_ptr, SKILL_HDEFENSE) >= 40) { p_ptr->resist_lite = TRUE; p_ptr->resist_dark = TRUE; }
 	/* - SKILL_HCURING gives extra high regeneration in regen function, and reduces various effects */
-//	if (get_skill(p_ptr, SKILL_HCURING) >= 50 && !p_ptr->reduce_insanity) p_ptr->reduce_insanity = 1;
+	//if (get_skill(p_ptr, SKILL_HCURING) >= 50 && !p_ptr->reduce_insanity) p_ptr->reduce_insanity = 1;
 	/* - SKILL_HSUPPORT renders DG/TY_CURSE effectless and prevents hunger */
-	
+
 	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 50) csheet_boni[14].cb[6] |= CB7_IFOOD;
-	
+
 	/* slay/brand boni check here... */
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) csheet_boni[14].cb[9] |= CB10_SEVIL;
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) csheet_boni[14].cb[8] |= CB9_SDEMN;
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) csheet_boni[14].cb[9] |= CB10_SUNDD;
 	//prob: it's melee only! if (get_skill(p_ptr, SKILL_HCURING) >= 50) csheet_boni[14].cb[9] |= CB10_SUNDD;
-#ifdef ENABLE_OCCULT /* Occult */
-	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 40) csheet_boni[14].cb[9] |= CB10_SUNDD;
-#endif
 
 #ifdef ENABLE_OCCULT /* Occult */
 	/* Should Occult schools really give boni? */
+	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 40) csheet_boni[14].cb[9] |= CB10_SUNDD;
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 30) {
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		/* Stealth bonus: */
@@ -5901,7 +5896,14 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 45) { p_ptr->resist_chaos = TRUE; csheet_boni[14].cb[3] |= CB4_RCHAO; }
  #endif
 #endif
+
 	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50) { p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }
+
+	/* Fear Resistance from aura */
+	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 30)
+		{ p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR; }
+
+
 
 	/* Take note when "heavy bow" changes */
 	if (p_ptr->old_heavy_shoot != p_ptr->heavy_shoot) {
@@ -5916,7 +5918,6 @@ void calc_boni(int Ind) {
 		/* Save it */
 		p_ptr->old_heavy_shoot = p_ptr->heavy_shoot;
 	}
-
 
 	/* Take note when "heavy weapon" changes */
 	if (p_ptr->old_heavy_wield != p_ptr->heavy_wield) {
@@ -6039,6 +6040,7 @@ void calc_boni(int Ind) {
 #endif
 
 
+
 	/* resistance to fire cancel sensibility to fire */
 	if (p_ptr->resist_fire || p_ptr->oppose_fire || p_ptr->immune_fire)
 		p_ptr->suscep_fire = FALSE;
@@ -6053,6 +6055,7 @@ void calc_boni(int Ind) {
 		p_ptr->suscep_acid = FALSE;
 	/* resistance to light cancels sensibility to light */
 	if (p_ptr->resist_lite) p_ptr->suscep_lite = FALSE;
+
 
 
 #if 0 /* in the making.. */
@@ -6072,7 +6075,7 @@ void calc_boni(int Ind) {
 		if (factor1 >= factor2) { /* player 1 is faster or equal speed */
 			if (p_ptr->pspeed > 120) /* top (cur atm) speed for moving during blood bond */
 				p_ptr->pspeed = 120;
-//				reduction = p_ptr->pspeed - 120;
+				//reduction = p_ptr->pspeed - 120;
 			if (factor1 >= (p_ptr->pspeed - 110) + 10) {
 				factor1 = (factor * 10) / (p_ptr->pspeed - 110) + 10;
 				Players[Ind2]->pspeed = 110 - factor1 + 10;
@@ -6080,7 +6083,7 @@ void calc_boni(int Ind) {
 		} else { /* player 2 is faster or equal speed */
 			if (Players[Ind2]->pspeed > 120) /* top (cur atm) speed for moving during blood bond */
 				Players[Ind2]->pspeed = 120;
-//				reduction = Players[Ind2]->pspeed - 120;
+				//reduction = Players[Ind2]->pspeed - 120;
 		}
 	}
 #endif
@@ -6098,13 +6101,14 @@ void calc_boni(int Ind) {
 	/* XXX XXX XXX Apply "encumbrance" from weight */
 	if (w > i / 2) {
 		/* protect pspeed from uberflow O_o */
-//		if (w > 61500) p_ptr->pspeed = 10; /* roughly ;-p */
+		//if (w > 61500) p_ptr->pspeed = 10; /* roughly ;-p */
 		if (w > 70000) p_ptr->pspeed = 10; /* roughly ;-p */
 		else p_ptr->pspeed -= ((w - (i / 2)) / (i / 10));
 	}
 
 	/* Display the speed (if needed) */
 	if (p_ptr->pspeed != old_speed) p_ptr->redraw |= (PR_SPEED);
+
 
 
 	/* swapping in AUTO_ID items will instantly ID inventory and equipment.
@@ -6127,6 +6131,7 @@ void calc_boni(int Ind) {
 		if (!p_ptr->inventory_changes) Send_inventory_revision(Ind);
 #endif
 	}
+
 
 
 /* -------------------- Limits -------------------- */
@@ -6214,6 +6219,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->ghost && !is_admin(p_ptr)) p_ptr->num_blow = (p_ptr->lev + 15) / 16;
 
 
+
 	/* Determine colour of our light radius */
 	old_lite_type = p_ptr->lite_type;
 	if (p_ptr->cur_vlite > p_ptr->cur_lite) p_ptr->lite_type = 1; /* vampiric */
@@ -6227,6 +6233,7 @@ void calc_boni(int Ind) {
 		}
 		old_lite_type = p_ptr->lite_type; /* erm, this isnt needed? */
 	}
+
 
 
 	/* XXX - Always resend skills */
@@ -6567,6 +6574,8 @@ void calc_boni(int Ind) {
 			Send_boni_col(Ind, csheet_boni[i]);
 		}
 
+
+
 	/* Don't kill warnings by inspecting weapons/armour in stores! */
 	if (!suppress_message && !p_ptr->ghost) {
 		/* warning messages, mostly for newbies */
@@ -6626,6 +6635,8 @@ void calc_boni(int Ind) {
 			s_printf("warning_bpr23: %s\n", p_ptr->name);
 		}
 	} /* suppress_message */
+
+
 
 	/* hack: no physical attacks */
 	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
