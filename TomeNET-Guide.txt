@@ -638,6 +638,8 @@ p       p       Concentrate on opening your mind for telekinesis.
                 Certain spells of the mindcrafter class might also require
                 players in the same party to open their minds in order to work
                 or to affect them as intended.
+                Having an open mind can make it easier for psi/confuse effects
+                to affect you.
 
 h       CTRL+E  sell/buy a house or change house parameters. See (4.10).
 

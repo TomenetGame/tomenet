@@ -3619,8 +3619,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 		sound(Ind, "insanity", NULL, SFX_TYPE_MON_SPELL, TRUE);
 #endif
 
-		if (rand_int(100) < p_ptr->skill_sav ||
-		    (p_ptr->pclass == CLASS_MINDCRAFTER && magik(75)))
+		if ((rand_int(100) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) /* An open mind invites psi attacks */
+		    || (p_ptr->pclass == CLASS_MINDCRAFTER && magik(75)))
 			msg_print(Ind, "You resist the effects!");
 		else if (lose_all_info(Ind))
 			msg_print(Ind, "Your memories fade away.");
