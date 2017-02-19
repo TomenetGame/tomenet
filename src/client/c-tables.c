@@ -406,9 +406,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
     //page 6 - 87
 	{ &c_cfg.audio_paging,		TRUE,	5,	0, 88, TRUE,
 	    "audio_paging",		"Use audio system for page/alert, if available" },
-	{ &c_cfg.paging_master_volume,	TRUE,	5,	0, 89, TRUE,
+	{ &c_cfg.paging_master_volume,	FALSE,	5,	0, 89, TRUE,
 	    "paging_master_vol",	"Play page/alert sounds at master volume" },
-	{ &c_cfg.paging_max_volume,	TRUE,	5,	0, 90, TRUE,
+	{ &c_cfg.paging_max_volume,	FALSE,	5,	0, 90, TRUE,
 	    "paging_max_vol",		"Play page/alert sounds at maximum volume" },
 	{ &c_cfg.no_ovl_close_sfx,	TRUE,	5,	0, 91, TRUE,
 	    "no_ovl_close_sfx",		"Prevent re-playing sfx received after <100ms gap" },

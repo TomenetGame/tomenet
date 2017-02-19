@@ -101,8 +101,8 @@ X:disable_flush
 Y:hide_unusable_skills
 Y:allow_paging
 Y:audio_paging
-Y:paging_master_vol
-Y:paging_max_vol
+X:paging_master_vol
+X:paging_max_vol
 Y:no_ovl_close_sfx
 Y:ovl_sfx_attack
 X:half_sfx_attack
