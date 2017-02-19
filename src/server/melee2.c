@@ -2932,18 +2932,17 @@ bool make_attack_spell(int Ind, int m_idx) {
 		else
 			msg_format(Ind, "%^s gazes deep into your eyes.", m_name);
 
-		if (rand_int(100) < p_ptr->skill_sav) {
+		if (rand_int(100) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) { /* An open mind invites psi attacks */
 			msg_print(Ind, "You resist the effects!");
 		} else {
 			msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
+			//take_hit(Ind, damroll(8, 8), ddesc, 0);
+			take_sanity_hit(Ind, damroll(6, 6), ddesc);/* 8,8 was too powerful */
 			if (!p_ptr->resist_conf)
 				(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 
 			if ((!p_ptr->resist_chaos) && (randint(3) == 1))
 				(void) set_image(Ind, p_ptr->image + rand_int(250) + 150);
-
-			take_sanity_hit(Ind, damroll(6, 6), ddesc);/* 8,8 was too powerful */
-			//take_hit(Ind, damroll(8, 8), ddesc, 0);
 		}
 		break;
 
@@ -2955,7 +2954,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		else
 			msg_format(Ind, "%^s looks deep into your eyes.", m_name);
 
-		if (rand_int(100) < p_ptr->skill_sav) {
+		if (rand_int(100) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) { /* An open mind invites psi attacks */
 			msg_print(Ind, "You resist the effects!");
 		} else {
 			msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
@@ -3228,7 +3227,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		else msg_format(Ind, "%^s creates a mesmerising illusion.", m_name);
 		if (p_ptr->resist_conf)
 			msg_print(Ind, "You disbelieve the feeble spell.");
-		else if (rand_int(100) < p_ptr->skill_sav ||
+		else if ((rand_int(100) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) || /* An open mind invites psi attacks */
 		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			msg_print(Ind, "You disbelieve the feeble spell.");
 		else

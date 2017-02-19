@@ -9078,8 +9078,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	switch (typ) {
 	/* Psionics */
 	case GF_PSI:
-		if (rand_int(100) < p_ptr->skill_sav) psi_resists++;
+		if (rand_int(100) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) /* An open mind invites psi attacks */
+			psi_resists++;
 		if (p_ptr->mindboost && magik(p_ptr->mindboost_power)) psi_resists++;
+
 		if ((p_ptr->shero) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--;
 		if (p_ptr->confused) psi_resists--;
 		if (p_ptr->image) psi_resists--;
@@ -10321,7 +10323,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->resist_conf ||
 		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			msg_print(Ind, "You disbelieve the feeble spell.");
-		else if (rand_int(100 + dam*6) < p_ptr->skill_sav)
+		else if (rand_int(100 + dam*6) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) /* An open mind invites psi attacks */
 			msg_print(Ind, "You disbelieve the feeble spell.");
 		//else set_confused(Ind, p_ptr->confused + dam); too much for pvp
 		else set_confused(Ind, p_ptr->confused + 2 + rand_int(3));
