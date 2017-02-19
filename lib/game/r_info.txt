@@ -13833,7 +13833,7 @@ F:COLD_BLOOD | OPEN_DOOR | BASH_DOOR | RES_NETH |
 F:EVIL | UNDEAD | IM_COLD | IM_POIS | IM_ACID | RES_TELE |
 F:NO_CONF | NO_SLEEP | KILL_WALL | NO_FEAR |
 F:MORTAL | BASEANGBAND | NO_CUT | NO_NEST
-S:1_IN_3 |
+S:1_IN_2 |
 S:TELE_TO | HOLD | DRAIN_MANA |
 S:BRAIN_SMASH | BA_MANA | BA_NETH | S_UNDEAD
 D:A humanoid form, black as night, advancing steadily and unstoppably, even
