@@ -5900,7 +5900,7 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50) { p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }
 
 	/* Fear Resistance from aura */
-	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 30)
+	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 20)
 		{ p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR; }
 
 
