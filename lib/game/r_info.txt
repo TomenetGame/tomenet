@@ -15276,7 +15276,8 @@ F:NO_CONF | NO_SLEEP | NO_FEAR | RES_TELE | BASEANGBAND | HAS_LITE
 S:1_IN_2 |
 S:TPORT | BA_MANA | BA_FIRE | BA_WATE | BA_NETH | BA_DARK | BA_CHAO |
 S:S_HI_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | S_NAZGUL | S_HI_UNIQUE
-S:FORGET | BO_MANA | TELE_LEVEL | BRAIN_SMASH | RAISE_DEAD
+S:BRAIN_SMASH | RAISE_DEAD
+#FORGET | BO_MANA | TELE_LEVEL |
 #S:HAND_DOOM |
 D:Mighty in spells and enchantments, he created the One Ring.
 D:His eyes glow with power and with his gaze he seeks to destroy
