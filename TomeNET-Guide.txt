@@ -1063,7 +1063,6 @@ They all start with a slash '/' hence they're called slash commands:
 
 /dun        Displays the name of the dungeon you're currently in.
 
-(The /empty function is currently disabled)
 /empty <inventory slot>
             Empty a potion from your inventory, leaving an empty bottle.
             Example: /empty c   (if you have 'c) 3 potions of boldness', one
