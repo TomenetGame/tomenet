@@ -12267,11 +12267,11 @@ Note that not every skill is available to every profession (class).
                                 experience drain.
 
                                 A natural vampire race character who has both
-                                Necromancy and Traumaturgy at 25 or higher will
-                                get his intrinsic melee vampirism drain rate
-                                increased from the usual 50% by +1% for each
-                                further point in either school, up to 100%
-                                when both schools reach 50.000.
+                                Necromancy and Traumaturgy at 25.000 or higher
+                                will get his intrinsic melee vampirism drain
+                                rate increased from the usual 50% by +1% for
+                                each further point in either school, up to
+                                100% when both schools reach 50.000.
 
         .Traumaturgy            Drains mana from monsters when you inflict
                                 damage on them, replenishing your MP.
@@ -12290,11 +12290,11 @@ Note that not every skill is available to every profession (class).
                                 and nonliving (constructs) monsters.
 
                                 A natural vampire race character who has both
-                                Necromancy and Traumaturgy at 25 or higher will
-                                get his intrinsic melee vampirism drain rate
-                                increased from the usual 50% by +1% for each
-                                further point in either school, up to 100%
-                                when both schools reach 50.000.
+                                Necromancy and Traumaturgy at 25.000 or higher
+                                will get his intrinsic melee vampirism drain
+                                rate increased from the usual 50% by +1% for
+                                each further point in either school, up to
+                                100% when both schools reach 50.000.
 
         .Aura of Fear           Monsters that hit you are stroke by fear.
                                 Undead and non-living monsters and those that
