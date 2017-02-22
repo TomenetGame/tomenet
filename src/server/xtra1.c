@@ -3426,6 +3426,11 @@ void calc_boni(int Ind) {
 
 		if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
 		csheet_boni[14].cb[6] |= CB7_RVAMP;
+		/* Necro+Trauma combo intrinsic vamp boost for true vampires */
+		if (get_skill(p_ptr, SKILL_NECROMANCY) >= 25 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 25
+		    && p_ptr->vampiric_melee < get_skill(p_ptr, SKILL_NECROMANCY) + get_skill(p_ptr, SKILL_TRAUMATURGY))
+			p_ptr->vampiric_melee = get_skill(p_ptr, SKILL_NECROMANCY) + get_skill(p_ptr, SKILL_TRAUMATURGY);
+
 		/* sense surroundings without light source! (virtual lite / dark light) */
 		p_ptr->cur_vlite = 1 + p_ptr->lev / 10; csheet_boni[14].lite = 1 + p_ptr->lev / 10;
 		csheet_boni[14].cb[12] |= CB13_XLITE;
