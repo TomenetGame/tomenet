@@ -6773,58 +6773,58 @@ void do_cmd_activate_dir(int Ind, int dir) {
 				fire_ball(Ind, GF_SOUND, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
 				break;
 			case 2:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe force.");
+				sprintf(p_ptr->attacker, " breathes force for");
 				fire_ball(Ind, GF_FORCE, dir, 375 + get_skill_scale(p_ptr, SKILL_DEVICE, 375), 4, p_ptr->attacker);
 				break;
 			case 3:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe inertia.");
+				sprintf(p_ptr->attacker, " breathes inertia for");
 				fire_ball(Ind, GF_INERTIA, dir, 375 + get_skill_scale(p_ptr, SKILL_DEVICE, 375), 4, p_ptr->attacker);
 				break;
 			case 4:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe gravity.");
+				sprintf(p_ptr->attacker, " breathes gravity for");
 				fire_ball(Ind, GF_GRAVITY, dir, 350 + get_skill_scale(p_ptr, SKILL_DEVICE, 350), 4, p_ptr->attacker); //extra-boosted damage
 				break;
 			case 5:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe nexus.");
+				sprintf(p_ptr->attacker, " breathes nexus for");
 				fire_ball(Ind, GF_NEXUS, dir, 375 + get_skill_scale(p_ptr, SKILL_DEVICE, 375), 4, p_ptr->attacker);
 				break;
 			case 6:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe time.");
+				sprintf(p_ptr->attacker, " breathes time for");
 				fire_ball(Ind, GF_TIME, dir, 350 + get_skill_scale(p_ptr, SKILL_DEVICE, 350), 4, p_ptr->attacker); //extra-boosted damage
 				break;
 			case 7:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe mana.");
+				sprintf(p_ptr->attacker, " breathes mana for");
 				fire_ball(Ind, GF_MANA, dir, 450 + get_skill_scale(p_ptr, SKILL_DEVICE, 450), 4, p_ptr->attacker);
 				break;
 			case 8:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe plasma.");
+				sprintf(p_ptr->attacker, " breathes plasma for");
 				fire_ball(Ind, GF_PLASMA, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
 				break;
 			case 9:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe toxic waste.");
+				sprintf(p_ptr->attacker, " breathes toxic waste for");
 				fire_ball(Ind, GF_NUKE, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
 				break;
 			case 10:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe chaos.");
+				sprintf(p_ptr->attacker, " breathes chaos for");
 				fire_ball(Ind, GF_CHAOS, dir, 600 + get_skill_scale(p_ptr, SKILL_DEVICE, 600), 4, p_ptr->attacker);
 				break;
 			case 11:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe disenchantment.");
+				sprintf(p_ptr->attacker, " breathes disenchantment for");
 				fire_ball(Ind, GF_DISENCHANT, dir, 500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500), 4, p_ptr->attacker);
 				break;
 			case 12:
-				msg_print(Ind, "You breathe .");
-				sprintf(p_ptr->attacker, " breathes  for");
+				msg_print(Ind, "You breathe disintegration.");
+				sprintf(p_ptr->attacker, " breathes disintegration for");
 				fire_ball(Ind, GF_DISINTEGRATE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 400), 4, p_ptr->attacker);
 				break;
 			}
