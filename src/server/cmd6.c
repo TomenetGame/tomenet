@@ -2633,6 +2633,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			break;
 
 		case SV_SCROLL_STAR_DESTRUCTION:
+			s_printf("*DESTRUCTION* (scroll) by %s\n", p_ptr->name);
 			destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
 			ident = TRUE;
 			break;
@@ -3318,6 +3319,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		break;
 
 	case SV_STAFF_DESTRUCTION:
+		s_printf("*DESTRUCTION* (staff) by %s\n", p_ptr->name);
 		if (msg) msg_format_near(Ind, "%s unleashes great power!", p_ptr->name);
 		else msg_print_near(Ind, "Great power is unleashed!");
 		destroy_area(&p_ptr->wpos, p_ptr->py, p_ptr->px, 15, TRUE, FEAT_FLOOR, 120);
