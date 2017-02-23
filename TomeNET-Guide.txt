@@ -13295,8 +13295,9 @@ create a character!):
     equipped: Those will drain exp at half the normal rate.
     Vampires have a good chance to resist the adverse effects of encountering
     an eldritch horror (see (6.3) under 'Saving Throw' for details on those).
-    They also have partially life leeching (vampiric) attacks (see '(5.15)
-    Vampirism' for more information).
+    They also intrinsically have partially life leeching (vampiric) attacks
+    (see '(5.15) Vampirism' for more information) which they can further
+    improve by training in both Necromancy and Traumaturgy (see skill details).
     Being undead, vampires don't drown as easily as other races, but the water
     still has a somewhat damaging effect if they cannot swim at all.
     At level 20 they become able to turn into a vampire bat (mimicry code 391).
