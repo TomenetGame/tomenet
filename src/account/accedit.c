@@ -637,19 +637,26 @@ void editor() {
 }
 
 /* account finder */
+#define PARTIAL_ANYWHERE /* don't restrict partial search to prefix-only */
 int findacc(bool next) {
 	int x, l;
 	static int i = 0;
 	static char sname[30] = { 0 };
+#ifdef PARTIAL_ANYWHERE
+	static char sname2[30] = { 0 };
+#endif
 	struct account c_acc;
 
 	if (!next) {
 		statinput("Find which name: ", sname, 30);
+#ifdef PARTIAL_ANYWHERE
+		strcpy(sname2, sname);
+#endif
 		/* its always upper, and admins can be lazy */
 		sname[0] = toupper(sname[0]);
-		i = 0;
 
 		/* search for direct match */
+		i = 0;
 		fseek(fp, 0L, SEEK_SET);
 		while ((x = fread(&c_acc, sizeof(struct account), 1, fp))) {
 			i++;
@@ -666,6 +673,9 @@ int findacc(bool next) {
 	while ((x = fread(&c_acc, sizeof(struct account), 1, fp))) {
 		i++;
 		if (!strncmp(c_acc.name, sname, l)) return (i - 1);
+#ifdef PARTIAL_ANYWHERE
+		if (strstr(c_acc.name, sname2)) return (i - 1);
+#endif
 	} while(x);
 
 	status("Could not find that account");
