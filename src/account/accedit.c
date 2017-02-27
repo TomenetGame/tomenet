@@ -62,9 +62,9 @@ void setupscreen() {
 	mvprintw(0, COLS / 2 - 18, "TomeNET account editor - 2002 Evileye");
 	mvprintw(1, COLS / 2 - 16, "(Updated by Mikaelh and C. Blue)");
 	attroff(A_STANDOUT);
-	mvprintw(LINES - 3, COLS / 2 - 19, "N: next      P: previous     D: Delete");
-	mvprintw(LINES - 4, COLS / 2 - 19, "V: Validate A: Admin S: Score M: Multi");
-	mvprintw(LINES - 5, COLS / 2 - 19, "L: List/Long F: Find");
+	mvprintw(LINES - 3, COLS / 2 - 29, "N: next P: previous BK: 1st/end D: Delete U: Purge dupes");
+	mvprintw(LINES - 4, COLS / 2 - 29, "V+S: Validate+Score A: Admin M: Multi B: Ban C: Quiet H: PW");
+	mvprintw(LINES - 5, COLS / 2 - 29, "L: List/Long f/F: Find/Next R: Restrict I: Privilege K: PvP");
 	mainwin = newwin(LINES - 9, COLS, 3, 0);
 	listwin = newwin(LINES - 9, COLS, 3, 0);
 	refresh();
