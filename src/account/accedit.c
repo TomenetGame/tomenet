@@ -204,6 +204,7 @@ int ListAccounts(int fpos) {
 				break;
 			case 'n':
 			case 'N':
+			case ' ':
 				if (change)
 					if (ask("This record was changed. Save?")) {
 						if (recwrite(&c_acc, fpos * sizeof(struct account)))
@@ -475,6 +476,7 @@ void editor() {
 				break;
 				case 'n':
 				case 'N':
+				case ' ':
 					if (change)
 						if (ask("This record was changed. Save?")) {
 							if (recwrite(&c_acc, fpos * sizeof(struct account)))
