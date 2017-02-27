@@ -32,7 +32,7 @@ unsigned short recwrite(struct account *rec, long filepos);
 int ListAccounts(int fpos);
 void statinput(char *prompt, char *string, int max);
 void getstring(const char *prompt, char *string, int max);
-int findacc(void);
+int findacc(bool next);
 void purge_duplicates(void);
 
 FILE *fp;
@@ -183,7 +183,7 @@ int ListAccounts(int fpos) {
 			case 'F':
 				mvwaddch(listwin, (fpos - ifpos) + 1, 3, ' ');
 				if (change)
-					if (ask("This record was changed. Save?")){
+					if (ask("This record was changed. Save?")) {
 						if (recwrite(&c_acc, fpos * sizeof(struct account)))
 							change = 0;
 						else {
@@ -191,7 +191,7 @@ int ListAccounts(int fpos) {
 								break;
 						}
 					}
-				tfpos = findacc();
+				tfpos = findacc(ch == 'F');
 				if (tfpos >= 0) {
 					fpos = tfpos;
 					change = 0;
@@ -259,9 +259,36 @@ int ListAccounts(int fpos) {
 						status("This is the first record");
 				}
 				break;
+			case 8: case 127: //BACKSPACE: Do both, 'Home' and 'End'
+				if (change)
+					if (ask("This record was changed. Save?")) {
+						if (recwrite(&c_acc, fpos * sizeof(struct account)))
+							change = 0;
+						else {
+							if (!ask("Could not write record. Continue anyway?"))
+								break;
+						}
+					}
+				if (!fpos) {
+					do {
+						x = fread(&c_acc, sizeof(struct account), 1, fp);
+						fpos++;
+					} while (x);
+					fpos--;
+					ifpos = fpos;
+					status("Jumped to last record");
+				} else {
+					ifpos = fpos = 0;
+					fseek(fp, 0, SEEK_SET);
+					x = fread(&c_acc, sizeof(struct account), 1, fp);
+					status("Jumped to first record");
+				}
+				change = 0;
+				reload = 1;
+				break;
 			case 'q':
 			case 'Q':
-				if(ask("Are you sure you want to quit?")){
+				if(ask("Are you sure you want to quit?")) {
 					quit = 1;
 					fpos = -1;
 				}
@@ -404,9 +431,9 @@ void editor() {
 					break;
 				case 'Q':
 				case 'q':
-					if (ask("Are you sure you want to quit?")){
+					if (ask("Are you sure you want to quit?")) {
 						if (change)
-							if (ask("This record was changed. Save?")){
+							if (ask("This record was changed. Save?")) {
 								recwrite(&c_acc, fpos * sizeof(struct account));
 							}
 						quit = 1;
@@ -416,13 +443,13 @@ void editor() {
 				case 'L':
 					/* Short list of accounts */
 					fpos = ListAccounts(fpos);
-					if (fpos == (unsigned long) - 1){
+					if (fpos == (unsigned long) - 1) {
 						quit = 1;
 						break;
 					}
 
 					fseek(fp, fpos * sizeof(struct account), SEEK_SET);
-					x = fread(&c_acc, sizeof(struct account),1, fp);
+					x = fread(&c_acc, sizeof(struct account), 1, fp);
 					change = 0;
 					touchwin(mainwin);
 					continue;
@@ -438,18 +465,18 @@ void editor() {
 									break;
 							}
 						}
-					tfpos = findacc();
+					tfpos = findacc(ch == 'F');
 					if (tfpos >= 0) {
 						fpos = tfpos;
 						change = 0;
 						fseek(fp, fpos * sizeof(struct account), SEEK_SET);
-						x = fread(&c_acc, sizeof(struct account),1, fp);
+						x = fread(&c_acc, sizeof(struct account), 1, fp);
 					}
 				break;
 				case 'n':
 				case 'N':
 					if (change)
-						if (ask("This record was changed. Save?")){
+						if (ask("This record was changed. Save?")) {
 							if (recwrite(&c_acc, fpos * sizeof(struct account)))
 								change = 0;
 							else {
@@ -457,7 +484,7 @@ void editor() {
 									break;
 							}
 						}
-					x = fread(&c_acc, sizeof(struct account),1, fp);
+					x = fread(&c_acc, sizeof(struct account), 1, fp);
 					if (!x) {
 						status("No more records to edit.");
 						beep();
@@ -469,7 +496,7 @@ void editor() {
 				case 'p':
 				case 'P':
 					if (change)
-						if (ask("This record was changed. Save?")){
+						if (ask("This record was changed. Save?")) {
 							if (recwrite(&c_acc, fpos * sizeof(struct account)))
 								change = 0;
 							else {
@@ -483,11 +510,36 @@ void editor() {
 					}
 					fpos--;
 					fseek(fp, fpos * sizeof(struct account), SEEK_SET);
-					x = fread(&c_acc, sizeof(struct account),1, fp);
+					x = fread(&c_acc, sizeof(struct account), 1, fp);
+					change = 0;
+					break;
+				case 8: case 127: //BACKSPACE: Do both, 'Home' and 'End'
+					if (change)
+						if (ask("This record was changed. Save?")) {
+							if (recwrite(&c_acc, fpos * sizeof(struct account)))
+								change = 0;
+							else {
+								if (!ask("Could not write record. Continue anyway?"))
+									break;
+							}
+						}
+					if (!fpos) {
+						do {
+							x = fread(&c_acc, sizeof(struct account), 1, fp);
+							fpos++;
+						} while (x);
+						fpos--;
+						status("Jumped to last record");
+					} else {
+						fpos = 0;
+						fseek(fp, 0, SEEK_SET);
+						x = fread(&c_acc, sizeof(struct account), 1, fp);
+						status("Jumped to first record");
+					}
 					change = 0;
 					break;
 				case 'D':
-					if (ask("Are you sure you wish to delete this record?")){
+					if (ask("Are you sure you wish to delete this record?")) {
 						change = 1;
 						c_acc.flags |= ACC_DELD;
 					}
@@ -583,24 +635,39 @@ void editor() {
 }
 
 /* account finder */
-int findacc() {
-	int x, i = 0;
-	char sname[30];
+int findacc(bool next) {
+	int x, l;
+	static int i = 0;
+	static char sname[30] = { 0 };
 	struct account c_acc;
 
-	statinput("Find which name: ", sname, 30);
-	fseek(fp, 0L, SEEK_SET);
-	/* its always upper, and admins can be lazy */
-	sname[0] = toupper(sname[0]);
-	while ((x = fread(&c_acc, sizeof(struct account),1, fp))) {
-		if (!strncmp(c_acc.name, sname, 30)) {
-			return(i);
-		}
-		i++;
-	} while(x);
-	status("Could not find that account");
+	if (!next) {
+		statinput("Find which name: ", sname, 30);
+		/* its always upper, and admins can be lazy */
+		sname[0] = toupper(sname[0]);
+		i = 0;
 
-	return(-1);
+		/* search for direct match */
+		fseek(fp, 0L, SEEK_SET);
+		while ((x = fread(&c_acc, sizeof(struct account), 1, fp))) {
+			i++;
+			if (!strncmp(c_acc.name, sname, 30)) return (i - 1);
+		} while(x);
+
+		/* prepare for partial match search */
+		i = 0;
+		fseek(fp, 0L, SEEK_SET);
+	}
+
+	/* search for partial match (prefix) */
+	l = strlen(sname);
+	while ((x = fread(&c_acc, sizeof(struct account), 1, fp))) {
+		i++;
+		if (!strncmp(c_acc.name, sname, l)) return (i - 1);
+	} while(x);
+
+	status("Could not find that account");
+	return (-1);
 }
 
 void status(char *info) {
