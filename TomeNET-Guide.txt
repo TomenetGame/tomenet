@@ -11927,7 +11927,8 @@ Note that not every skill is available to every profession (class).
 
                                 Defensive stance - you will block more,
                                                  - reduce the effect of most
-                                                   combat-induced stun effects,
+                                                   combat-induced stun effects
+                                                   (and possibly some others),
                                                  - intercept less often,
                                                  - deal less damage.
                                                  Note: You can use it even
