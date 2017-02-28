@@ -3977,8 +3977,10 @@ void clockin(int Ind, int type) {
 	int slot;
 	hash_entry *ptr;
 	player_type *p_ptr = Players[Ind];
+
 	slot = hash_slot(p_ptr->id);
 	ptr = hash_table[slot];
+
 	while (ptr) {
 		if (ptr->id == p_ptr->id) {
 			switch (type) {
@@ -3986,9 +3988,8 @@ void clockin(int Ind, int type) {
 				if (ptr->laston) ptr->laston = time(&ptr->laston);
 				break;
 			case 1:
-				/*if (p_ptr->lev>ptr->level)  -- changed it to != -- C. Blue */
-				if (p_ptr->lev != ptr->level)
-					ptr->level = p_ptr->lev;
+				/*if (p_ptr->lev > ptr->level)  -- changed it to != -- C. Blue */
+				if (p_ptr->lev != ptr->level) ptr->level = p_ptr->lev;
 				break;
 			case 2:
 				ptr->party = p_ptr->party;
@@ -4021,6 +4022,53 @@ void clockin(int Ind, int type) {
 #if defined(ENABLE_HELLKNIGHT) || defined(ENABLE_CPRIEST) /* not needed for 'normal' classes that don't change, not even Death Knight */
 			case 10:
 				ptr->class = p_ptr->pclass;
+				break;
+#endif
+			}
+			break;
+		}
+		ptr = ptr->next;
+	}
+}
+void clockin_id(s32b id, int type, int parm, u32b parm2) {
+	int slot;
+	hash_entry *ptr;
+
+	slot = hash_slot(id);
+	ptr = hash_table[slot];
+
+	while (ptr) {
+		if (ptr->id == id) {
+			switch (type) {
+			case 0:
+				if (ptr->laston) ptr->laston = time(&ptr->laston);
+				break;
+			case 1:
+				/*if (parm > ptr->level)  -- changed it to != -- C. Blue */
+				if (parm != ptr->level) ptr->level = parm;
+				break;
+			case 2:
+				ptr->party = parm;
+				break;
+			case 3:
+				ptr->guild = parm;
+				ptr->guild_flags = parm2;
+				break;
+			case 4:
+				ptr->xorder = parm;
+				break;
+			case 6:
+				ptr->admin = parm;
+				break;
+			case 8:
+				ptr->houses = parm;
+				break;
+			case 9:
+				ptr->winner = parm;
+				break;
+#if defined(ENABLE_HELLKNIGHT) || defined(ENABLE_CPRIEST) /* not needed for 'normal' classes that don't change, not even Death Knight */
+			case 10:
+				ptr->class = parm;
 				break;
 #endif
 			}

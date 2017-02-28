@@ -596,6 +596,32 @@ void lua_count_houses(int Ind) {
 			}
 		}
 }
+int lua_count_houses_id(s32b id) {
+	int i, ho = 0, co = 0, lev = lookup_player_level(id);
+
+	for (i = 0; i < num_houses; i++)
+		if ((houses[i].dna->owner_type == OT_PLAYER) &&
+		    (houses[i].dna->owner == id)) {
+			ho++;
+
+			if (cfg.houses_per_player &&
+			    ho > (lev >= 50 ? 50 : lev) / cfg.houses_per_player)
+				/* only maybe, because lev isnt max_plv! */
+				s_printf("HOUSES_EXCEEDED_MAYBE: %s owns %d houses.\n", lookup_player_name(id), ho);
+
+			if (houses[i].flags & HF_MOAT) {
+				co++;
+
+				if (cfg.castles_per_player &&
+				    co > cfg.castles_per_player)
+					s_printf("HOUSES_EXCEEDED: %s owns %d castles.\n", lookup_player_name(id), co);
+
+				if (cfg.castles_for_kings && lookup_player_winner(id) > 0)
+					s_printf("HOUSES_EXCEEDED: non-(ex)winner %s owns castle(s).\n", lookup_player_name(id));
+			}
+		}
+	return ho;
+}
 
 /* keep whole function in sync with birth.c! */
 void lua_recalc_char(int Ind) {

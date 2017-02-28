@@ -1422,6 +1422,7 @@ extern byte lookup_player_admin(int id);
 extern byte lookup_player_winner(int id);
 extern struct worldpos lookup_player_wpos(int id);
 extern void clockin(int Ind, int type);
+extern void clockin_id(s32b id, int type, int parm, u32b parm2);
 extern int newid(void);
 
 extern void scan_players(void);
@@ -2225,6 +2226,7 @@ void lua_add_anote(char *anote);
 void lua_del_anotes(void);
 void lua_broadcast_motd(void);
 void lua_count_houses(int Ind);
+int lua_count_houses_id(s32b id);
 void lua_recalc_char(int Ind);
 void lua_examine_item(int Ind, int Ind_target, int item);
 void lua_determine_level_req(int Ind, int item);
