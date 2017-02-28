@@ -9738,25 +9738,6 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "Admin parm set.");
 				return;
 			}
-			else if (prefix(message, "/ahl")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
-				int i;
-				struct account acc;
-
-				if (!tk) {
-					msg_print(Ind, "Usage: /ahl <account name>");
-					return;
-				}
-
-				if (!GetAccount(&acc, message3, NULL, FALSE)) {
-					msg_print(Ind, "Couldn't find that account.");
-					return;
-				}
-
-				i = acc_sum_houses(&acc);
-				msg_format(Ind, "Account '%s' got sum of houses of %d.", message3, i);
-
-				return;
-			}
 			else if (prefix(message, "/ahlfix")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
 				int i;
 				struct account acc;
@@ -9776,6 +9757,25 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "Account '%s' got sum of houses of %d.", message3, i);
 				acc_set_houses(message3, i);
 				s_printf("ACC_HOUSE_LIMIT_INIT_MANUAL: initialised %s with %d.\n", message3, i);
+
+				return;
+			}
+			else if (prefix(message, "/ahl")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
+				int i;
+				struct account acc;
+
+				if (!tk) {
+					msg_print(Ind, "Usage: /ahl <account name>");
+					return;
+				}
+
+				if (!GetAccount(&acc, message3, NULL, FALSE)) {
+					msg_print(Ind, "Couldn't find that account.");
+					return;
+				}
+
+				i = acc_sum_houses(&acc);
+				msg_format(Ind, "Account '%s' got sum of houses of %d.", message3, i);
 
 				return;
 			}
