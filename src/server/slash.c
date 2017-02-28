@@ -9771,6 +9771,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 
+				msg_format(Ind, "Account '%s' had sum of houses of %d.", message3, acc_get_houses(message3));
 				i = acc_sum_houses(&acc);
 				msg_format(Ind, "Account '%s' got sum of houses of %d.", message3, i);
 				acc_set_houses(message3, i);
