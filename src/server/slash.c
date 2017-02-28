@@ -6422,8 +6422,9 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 				if (!j) return;
+				msg_format(Ind, "Current houses/castles for %s: %d/%d", Players[j]->name, Players[j]->houses_owned, Players[j]->castles_owned);
 				lua_count_houses(j);
-				msg_format(Ind, "Counted houses/castles for %s.", Players[j]->name);
+				msg_format(Ind, "Counted houses/castles for %s: %d/%d", Players[j]->name, Players[j]->houses_owned, Players[j]->castles_owned);
 				return;
 			}
 			/* fix insane hit dice of a golem manually - gotta solve the bug really */
