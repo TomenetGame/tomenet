@@ -2557,10 +2557,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 #if 0
 			if (ident) {
 				msg_print(Ind, "Doh!!");
-				set_stun(Ind, p_ptr->stun + randint(50));
-#ifdef USE_SOUND_2010
+				set_stun_raw(Ind, p_ptr->stun + randint(50));
+ #ifdef USE_SOUND_2010
 				sound_near_site(y, x, wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
-#endif
+ #endif
 			}
 #endif	// 0
 			break;

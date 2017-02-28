@@ -467,7 +467,6 @@ bool set_adrenaline(int Ind, int v) {
 
 	/* Result */
 	return (TRUE);
-
 }
 /*
  * Set "p_ptr->biofeedback", notice observable changes
@@ -491,7 +490,7 @@ bool set_biofeedback(int Ind, int v) {
 					msg_print(Ind, "You start to tremble as your blood sugar crashes.");
 					set_slow(Ind, p_ptr->slow + rand_int(rand_int(16)));
 					if (!rand_int(5)) set_paralyzed(Ind, p_ptr->paralyzed + 1);
-					if (!rand_int(3)) set_stun(Ind, p_ptr->stun + rand_int(30));
+					if (!rand_int(3)) set_stun_raw(Ind, p_ptr->stun + rand_int(30));
 				}
 			}
 			notice = TRUE;
@@ -2652,6 +2651,104 @@ bool set_oppose_pois(int Ind, int v) {
 }
 
 
+/* like set_stun() but ignoring stance defense */
+bool set_stun_raw(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+	int old_aux, new_aux;
+	bool notice = FALSE;
+
+	if (p_ptr->martyr && v) return FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Knocked out */
+	if (p_ptr->stun > 100) old_aux = 3;
+	/* Heavy stun */
+	else if (p_ptr->stun > 50) old_aux = 2;
+	/* Stun */
+	else if (p_ptr->stun > 0) old_aux = 1;
+	/* None */
+	else old_aux = 0;
+
+	/* Knocked out */
+	if (v > 100) new_aux = 3;
+	/* Heavy stun */
+	else if (v > 50) new_aux = 2;
+	/* Stun */
+	else if (v > 0) new_aux = 1;
+	/* None */
+	else new_aux = 0;
+
+	/* Increase stun */
+	if (new_aux > old_aux) {
+		/* Describe the state */
+		switch (new_aux) {
+			/* Stun */
+			case 1:
+			msg_format_near(Ind, "\377o%s appears stunned.", p_ptr->name);
+			msg_print(Ind, "\377oYou have been stunned.");
+			break;
+
+			/* Heavy stun */
+			case 2:
+			msg_format_near(Ind, "\377o%s is heavily stunned.", p_ptr->name);
+			msg_print(Ind, "\377oYou have been heavily stunned.");
+			break;
+
+			/* Knocked out */
+			case 3:
+			msg_format_near(Ind, "%s has been knocked out.", p_ptr->name);
+			msg_print(Ind, "\377rYou have been knocked out.");
+			s_printf("%s EFFECT: Knockedout %s.\n", showtime(), p_ptr->name);
+			p_ptr->energy = 0;/* paranoia, couldn't reproduce it so far - don't allow him a final action with his rest of energy */
+			break;
+		}
+
+		break_shadow_running(Ind);
+
+		/* Notice */
+		notice = TRUE;
+	}
+
+	/* Decrease cut */
+	else if (new_aux < old_aux) {
+		/* Describe the state */
+		switch (new_aux) {
+			/* None */
+			case 0:
+			msg_format_near(Ind, "\377o%s is no longer stunned.", p_ptr->name);
+			msg_print(Ind, "\377yYou are no longer stunned.");
+			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+			break;
+		}
+
+		/* Notice */
+		notice = TRUE;
+	}
+
+	/* Use the value */
+	p_ptr->stun = v;
+
+	/* No change */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Redraw the "stun" */
+	p_ptr->redraw |= (PR_STUN);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
 /*
  * Set "p_ptr->stun", notice observable changes
  *
@@ -2664,16 +2761,17 @@ bool set_stun(int Ind, int v) {
 
 	if (p_ptr->martyr && v) return FALSE;
 
-	/* hack -- the admin wizard can not be stunned */
-	//if (p_ptr->admin_wiz) return TRUE;
-
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
-#if 0 /* decided to make it just as combat skill working in dungeon.c to accelerate recovery! */
-	/* apply HCURING in a special way: halve the duration of highest stun level that actually gets reached */
-	if (get_skill(p_ptr, SKILL_HCURING) >= 40) v /= 2;
-#endif
+	/* New/Experimental: Defensive stance helps! */
+	if (p_ptr->combat_stance == 1)
+		switch (p_ptr->combat_stance_power) {
+		case 0: v = (v * 7 + 1) / 8; break;
+		case 1: v = (v * 5 + 1) / 6; break;
+		case 2: v = (v * 3 + 1) / 4; break;
+		case 3: v = (v * 2 + 1) / 3; break;
+		}
 
 	/* Knocked out */
 	if (p_ptr->stun > 100) old_aux = 3;

@@ -6357,7 +6357,7 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format_near(j, "\377y%s is being strangled by something invisible!", Players[j]->name);
 				bypass_invuln = TRUE;
 				take_hit(j, Players[j]->chp / 4, "", 0);
-				set_stun(j, Players[j]->stun + 5);
+				set_stun_raw(j, Players[j]->stun + 5);
 				bypass_invuln = FALSE;
 				return;
 			}

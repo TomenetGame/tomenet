@@ -3858,7 +3858,7 @@ static bool process_player_end_aux(int Ind) {
 			   you quaff healing potions anyway.
 			   if you change the amount, compare it with continuous
 			   stun reduction so it won't get neutralized by high combat skill. */
-			if (p_ptr->stun < 20) set_stun(Ind, p_ptr->stun + 5);
+			if (p_ptr->stun < 20) set_stun_raw(Ind, p_ptr->stun + 5);
 
 			take_hit(Ind, hit, "anoxia", 0);
 		}
@@ -4583,6 +4583,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Poison */
 	if (p_ptr->poisoned) {
 		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+
 		/* Apply some healing */
 		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust *= 2;
 
@@ -4594,17 +4595,12 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Stun */
 	if (p_ptr->stun) {
-#if 0
-		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 		/* Apply some healing */
-		//(void)set_stun(Ind, p_ptr->stun - adjust - minus_health * 2);
-		(void)set_stun(Ind, p_ptr->stun - (adjust + minus_health) * (minus_health + 1));
-#endif
 		int adjust = minus + get_skill_scale_fine(p_ptr, SKILL_COMBAT, 1);
-		//if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust = (adjust * 5) / 3;
-		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++;
 
-		(void)set_stun(Ind, p_ptr->stun - adjust);
+		if (rand_int(9) < adj_con_fix[p_ptr->stat_ind[A_CON]]) adjust++;
+		if (get_skill(p_ptr, SKILL_HCURING) >= 40) adjust++;
+		(void)set_stun_raw(Ind, p_ptr->stun - adjust);
 	}
 
 	/* Cut */

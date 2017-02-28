@@ -303,7 +303,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			if (magik(TRUE? 60 : 30))
 				set_confused(Ind, p_ptr->confused + 20 + randint(20));
 			if (magik(TRUE? 50 : 20))
-				set_stun(Ind, p_ptr->stun + 10 + randint(10));
+				set_stun_raw(Ind, p_ptr->stun + 10 + randint(10));
 
 			if (magik(TRUE? 50 : 10)){
 				set_image(Ind, p_ptr->image + 10 + randint(10));
@@ -376,7 +376,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			if (magik(o_ptr->name2? 60 : 30))
 				set_confused(Ind, p_ptr->confused + 20 + randint(20));
 			if (magik(o_ptr->name2? 50 : 20))
-				set_stun(Ind, p_ptr->stun + 10 + randint(10));
+				set_stun_raw(Ind, p_ptr->stun + 10 + randint(10));
 
 			if (magik(o_ptr->name2? 50 : 10)){
 				set_image(Ind, p_ptr->image + 10 + randint(10));
@@ -727,7 +727,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (!msg) take_hit(Ind, damroll(50, 20), "a potion of detonation", 0);
 			else if (msg == 1) take_hit(Ind, damroll(50, 20), "a fountain of detonation", 0); //disabled
 			else take_hit(Ind, damroll(50, 20), "detonations", 0);
-			(void)set_stun(Ind, p_ptr->stun + 75);
+			(void)set_stun_raw(Ind, p_ptr->stun + 75);
 			(void)set_cut(Ind, p_ptr->cut + 5000, Ind);
 			ident = TRUE;
 			break;

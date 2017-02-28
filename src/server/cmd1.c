@@ -3658,7 +3658,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 								msg_format(Ind, "%^s resists the effect.", q_name);
 							} else {
 								msg_format(Ind, "\377o%^s appears stunned.", q_name);
-								set_stun(0 - c_ptr->m_idx, q_ptr->stun + 20 + rand_int(get_skill_scale(p_ptr, SKILL_COMBAT, 10)));
+								set_stun_raw(0 - c_ptr->m_idx, q_ptr->stun + 20 + rand_int(get_skill_scale(p_ptr, SKILL_COMBAT, 10)));
 							}
 						}
 #endif
@@ -5302,7 +5302,7 @@ void py_touch_zap_player(int Ind, int Ind2) {
 
 		if (magik(chance_trigger) && (p_ptr->lev < threshold_effect)) {
 			if (aura_ok)
-				(void)set_stun(Ind, p_ptr->stun + 5);
+				(void)set_stun_raw(Ind, p_ptr->stun + 5);
 			else auras_failed++;
 		}
 	}

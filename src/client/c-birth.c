@@ -1277,11 +1277,11 @@ static bool choose_stat_order(void) {
 				case 4:	c_put_str(TERM_L_UMBER,"   - Constitution -", DIZ_ROW, 30);
 					c_put_str(TERM_YELLOW, "   Determines your amout of HP                  ", DIZ_ROW + 1, 30);
 					c_put_str(TERM_YELLOW, "    (hit points, ie how much damage you can     ", DIZ_ROW + 2, 30);
-					c_put_str(TERM_YELLOW, "    take without dying.                         ", DIZ_ROW + 3, 30);
-					c_put_str(TERM_YELLOW, "    Very high constitution might not show much  ", DIZ_ROW + 4, 30);
-					c_put_str(TERM_YELLOW, "    effect until your character also reaches    ", DIZ_ROW + 5, 30);
-					c_put_str(TERM_YELLOW, "    an appropriate level.)                      ", DIZ_ROW + 6, 30);
-					c_put_str(TERM_YELLOW, "   Reduces the duration of poisonous effects.   ", DIZ_ROW + 7, 30);
+					c_put_str(TERM_YELLOW, "    take without dying. High constitution might ", DIZ_ROW + 3, 30);
+					c_put_str(TERM_YELLOW, "    not show much effect until your character   ", DIZ_ROW + 4, 30);
+					c_put_str(TERM_YELLOW, "    also reaches an appropriate level.)         ", DIZ_ROW + 5, 30);
+					c_put_str(TERM_YELLOW, "   Reduces duration of poison and stun effects. ", DIZ_ROW + 6, 30);
+					c_put_str(TERM_YELLOW, "   Increases stamina regeneration rate.         ", DIZ_ROW + 7, 30);
 					c_put_str(TERM_YELLOW, "   Helps your character not to drown too easily.", DIZ_ROW + 8, 30);
 					break;
 				case 5:	c_put_str(TERM_L_UMBER,"   - Charisma -    ", DIZ_ROW, 30);

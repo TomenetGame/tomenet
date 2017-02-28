@@ -11699,7 +11699,8 @@ Constitution (CON)
      increase as long as your character is level 20.
      At level 30, CON cap is 18/130, at level 40 it's 18/190, and at level
      45 and higher the full CON bonus is utilized for determining Hit Points.
-    -Also reduces the duration of poisonous effects on you.
+    -Also reduces the duration of poisonous and stunning effects on you.
+    -Increases your stamina regeneration rate.
     -Reduces drowning (also for aquatic forms outside of water) effects.
 Charisma (CHR)
     -Do you get good prices in shops? :)
@@ -11925,6 +11926,8 @@ Note that not every skill is available to every profession (class).
                                 Balanced stance  - the default, no boni/mali.
 
                                 Defensive stance - you will block more,
+                                                 - reduce the effect of most
+                                                   combat-induced stun effects,
                                                  - intercept less often,
                                                  - deal less damage.
                                                  Note: You can use it even
@@ -11933,9 +11936,12 @@ Note that not every skill is available to every profession (class).
                                                  increased instead of blocking.
 
                                 Offensive stance - you can stun opponents
-                                                   (compare (4.12)),
+                                                   depending on your strength,
+                                                   your 'Weaponmastery' skill
+                                                   and your opponent
+                                                   (see (4.12) about stunning),
                                                  - intercept more often,
-                                                 - parry and dodge less often,
+                                                 - parry and dodge only rarely,
                                                  - get an AC penalty same as
                                                    for being in 'fury'.
                                                  Note: You must wield a weapon

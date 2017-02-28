@@ -5193,25 +5193,6 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			/* Access the grid */
 			c_ptr = &zcave[y][x];
 
-			/* Vault is protected */
-			if (c_ptr->info & CAVE_ICKY) continue;
-
-			/* Special key doors are protected -C. Blue */
-			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
-
-			/* Lose room and nest */
-			/* Hack -- don't do this to houses/rooms outside the dungeon,
-			 * this will protect hosues outside town.
-			 */
-			if (wpos->wz) {
-				/* Lose room and nest */
-				c_ptr->info &= ~(CAVE_ROOM | CAVE_NEST_PIT);
-			}
-
-			/* Lose light and knowledge */
-			c_ptr->info &= ~(CAVE_GLOW);
-			everyone_forget_spot(wpos, y, x);
-
 			/* Hack -- Notice player affect */
 			if (c_ptr->m_idx < 0) {
 				Ind = 0 - c_ptr->m_idx;
@@ -5228,7 +5209,15 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 					/* Become blind */
 					(void)set_blind(Ind, p_ptr->blind + 20 + randint(10));
 				}
-				if (!is_admin(p_ptr)) (void)set_stun(Ind, stun); /* ~20s in NR, depends tho */
+				if (!is_admin(p_ptr)) {
+					/* ~20s in NR, depends tho */
+#if 0 /* will prevent k.o. */
+					if (!k) (void)set_stun_raw(Ind, stun);
+					else (void)set_stun(Ind, stun);
+#else /* keep k.o.'ing */
+					(void)set_stun_raw(Ind, stun);
+#endif
+				}
 
 				/* Mega-Hack -- Forget the view and lite */
 				p_ptr->update |= (PU_UN_VIEW | PU_UN_LITE);
@@ -5249,8 +5238,17 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				continue;
 			}
 
-			/* Hack -- Skip the epicenter */
-			if ((y == y1) && (x == x1)) continue;
+			/* Vault is protected */
+			if (c_ptr->info & CAVE_ICKY) continue;
+
+			/* Lose room and nest */
+			/* Hack -- don't do this to houses/rooms outside the dungeon,
+			 * this will protect hosues outside town.
+			 */
+			if (wpos->wz) {
+				/* Lose room and nest */
+				c_ptr->info &= ~(CAVE_ROOM | CAVE_NEST_PIT);
+			}
 
 			/* Delete the monster (if any) */
 			if (c_ptr->m_idx > 0) {
@@ -5259,10 +5257,21 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				else continue;
 			}
 
+			/* Special key doors are protected -C. Blue */
+			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) continue;
+
+			/* Lose light and knowledge */
+			c_ptr->info &= ~(CAVE_GLOW);
+			everyone_forget_spot(wpos, y, x);
+
+			/* Hack -- Skip the epicenter */
+			if ((y == y1) && (x == x1)) continue;
+
 			/* Destroy "valid" grids */
 			//if ((cave_valid_bold(zcave, y, x)) && !(c_ptr->info&CAVE_ICKY))
 			if (cave_valid_bold(zcave, y, x)) {
 				struct c_special *cs_ptr;
+
 				/* Delete the object (if any) */
 				delete_object(wpos, y, x, TRUE);
 
@@ -5304,14 +5313,18 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 			}
 		}
 	}
+
 	/* Stun everyone around who hasn't been affected by the initial stun */
 	for (k = 1; k <= NumPlayers; k++) {
 		p_ptr = Players[k];
-		if (inarea(wpos, &p_ptr->wpos) &&
-		    !is_admin(p_ptr) &&
-		    p_ptr->stun < stun) {
+		t = distance(y1, x1, p_ptr->py, p_ptr->px);
+		if (!is_admin(p_ptr) && inarea(wpos, &p_ptr->wpos) && t > r) {
 			msg_print(k, "\377oYou are hit by a terrible shockwave!");
-			(void)set_stun(k, stun - (distance(p_ptr->py, p_ptr->px, y1, x1) - r) / 3);
+#if 0 /* will prevent k.o. */
+			(void)set_stun(k, stun - (t - r) / 3);
+#else /* keep k.o.'ing */
+			(void)set_stun_raw(k, stun - (t - r) / 3);
+#endif
 		}
 	}
 }
@@ -5380,7 +5393,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 			if (!in_bounds(yy, xx)) continue;
 
 			/* Skip distant grids */
-			if (distance(cy, cx, yy, xx) > r) continue;
+			t = distance(cy, cx, yy, xx);
+			if (t > r) continue;
 
 			/* Access the grid */
 			c_ptr = &zcave[yy][xx];
@@ -5485,7 +5499,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 
 					/* Stun only once - mikaelh */
 					if (p_ptr->total_damage == 0) {
-						(void)set_stun(Ind, p_ptr->stun + randint(40));
+						if (!t) (void)set_stun_raw(Ind, p_ptr->stun + randint(40));
+						else (void)set_stun(Ind, p_ptr->stun + randint(40));
 					}
 				}
 
@@ -5510,7 +5525,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 
 							/* Stun only once - mikaelh */
 							if (p_ptr->total_damage == 0) {
-								(void)set_stun(Ind, p_ptr->stun + randint(33));
+								if (!t) (void)set_stun_raw(Ind, p_ptr->stun + randint(33));
+								else (void)set_stun(Ind, p_ptr->stun + randint(33));
 							}
 							break;
 						case 3:
@@ -5523,8 +5539,10 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 								msg_format(Ind, "You are crushed between the floor and ceiling for \377o%d\377w damage!", damage);
 
 							/* Stun only once - mikaelh */
-							if (p_ptr->total_damage == 0)
-								(void)set_stun(Ind, p_ptr->stun + randint(33));
+							if (p_ptr->total_damage == 0) {
+								if (!t) (void)set_stun_raw(Ind, p_ptr->stun + randint(33));
+								else (void)set_stun(Ind, p_ptr->stun + randint(33));
+							}
 							break;
 					}
 

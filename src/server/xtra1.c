@@ -5721,17 +5721,17 @@ void calc_boni(int Ind) {
  #endif
  #ifdef USE_PARRYING /* need parrying to make use of offensive stance */
 		if (p_ptr->combat_stance == 2) switch (p_ptr->combat_stance_power) {
-			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2) / 10;
+			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 0) / 10;
+				p_ptr->dodge_level = (p_ptr->dodge_level * 0) / 10;
+				break;
+			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 1) / 10;
+				p_ptr->dodge_level = (p_ptr->dodge_level * 1) / 10;
+				break;
+			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2) / 10;
 				p_ptr->dodge_level = (p_ptr->dodge_level * 2) / 10;
 				break;
-			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3) / 10;
+			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3) / 10;
 				p_ptr->dodge_level = (p_ptr->dodge_level * 3) / 10;
-				break;
-			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 4) / 10;
-				p_ptr->dodge_level = (p_ptr->dodge_level * 4) / 10;
-				break;
-			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 5) / 10;
-				p_ptr->dodge_level = (p_ptr->dodge_level * 5) / 10;
 				break;
 		}
   #ifdef ALLOW_SHIELDLESS_DEFENSIVE_STANCE

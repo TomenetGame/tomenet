@@ -2626,7 +2626,7 @@ void do_cmd_steal(int Ind, int dir) {
 		msg_format(Ind, "\377r%s gave you an unexpected blow!",
 		           q_ptr->name);
 
-		set_stun(Ind, p_ptr->stun + randint(50));
+		set_stun_raw(Ind, p_ptr->stun + randint(50));
 		set_confused(Ind, p_ptr->confused + rand_int(20) + 10);
 		if (cfg.use_pk_rules == PK_RULES_DECLARE)
 			p_ptr->pkill |= PKILL_KILLABLE;
