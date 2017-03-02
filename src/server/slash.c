@@ -4126,6 +4126,7 @@ void do_slash_cmd(int Ind, char *message) {
 		else if (prefix(message, "/who")) { /* returns account name to which the given character name belongs -- user version of /characc[l] */
 			u32b p_id;
 			cptr acc;
+			bool online = FALSE;
 
 			if (tk < 1) {
 				msg_print(Ind, "Usage: /who <character name>");
@@ -4169,6 +4170,11 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "***ERROR: No account found.");
 				return;
 			}
+			for (i = 1; i <= NumPlayers; i++) 
+				if (!strcmp(Players[i]->accountname, acc)) {
+					online = TRUE;
+					break;
+				}
 			//msg_format(Ind, "That character belongs to account: \377s%s", acc);
 			if (lookup_player_admin(p_id))
 				msg_format(Ind, "That administrative character belongs to account: \377s%s", acc);
@@ -4201,12 +4207,13 @@ void do_slash_cmd(int Ind, char *message) {
 					col = 'w';
 				}
 
-				msg_format(Ind, "That level %d \377%c%s %s\377w belongs to account: \377s%s",
+				msg_format(Ind, "That level %d \377%c%s %s\377w belongs to account: \377s%s%s",
 				    lev, col,
 				    //race_info[ptype & 0xff].title,
 				    special_prace_lookup[ptype & 0xff],
 				    class_info[ptype >> 8].title,
-				    acc);
+				    acc,
+				    online ? " \377G(online)" : "");
 			}
 			return;
 		}
