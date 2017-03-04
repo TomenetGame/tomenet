@@ -4139,6 +4139,8 @@ static int censor(char *line) {
 	}
 	lcopy[j] = 0;
 #endif
+//s_printf("ns: '%s'  '%s'\n", lcopy, lcopy2); //DEBUG
+	/* Maybe todo: Also apply nonswear to lcopy2 (the non-reduced version of lcopy) afterwards */
 	for (i = 0; nonswear[i][0]; i++) {
 #ifndef HIGHLY_EFFECTIVE_CENSOR
 		/* hack! If HIGHLY_EFFECTIVE_CENSOR is NOT enabled, skip all nonswearing-words that contain spaces!
