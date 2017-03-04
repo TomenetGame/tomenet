@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. February 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 4. March 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5180,26 +5180,33 @@ a while, instead of being regenerated.
 This allows other players to go down there later and retrieve his items or
 money, however, whatever killed him/her will probably also still be down
 there!
-The time a level stays static is usually 3 minutes * dungeonlevel.
+
+The time a level stays static is usually 2 minutes * dungeonlevel.
 Example: A player dies on -300 ft in The Orc Cave dungeon.
          In The Orc Cave, the first floor at -50ft is alreay like -500ft ie
          level 10 (compare (4.5)). The player died 5 floors deeper at -300
          so we have to add 5 more floors to 10, so the player died at dungeon
-         level 15 in fact. 3 minutes times 15 = 45 minutes time for others to
+         level 15 in fact. 2 minutes times 15 = 30 minutes time for others to
          go there and pickup his loot until the level randomly changes again.
-Levels below 9 (ie less than +/-450ft) are usually exempt from remaining
-static and will regenerate normally, meaning the loot is lost after a couple
-of seconds.
-Note: If a player enters a static-by-death floor, the floor timer will be
-      reset and start counting down the full duration again, prolonging its
-      staticness. This timer-reset happens the moment a player enters that
-      floor. How long he stays or when he leaves again has no effect.
 
-Hint: The same timing that applies for static-by-death floors is also valid
-      for static-by-save&exit floors, ie floors where a player logged out
-      instead of doing that in town.
-      So if you logged out because your character was stuck, make sure you
-      don't log on too early or you will reset the timer as mentioned above.
+Levels below 9 (eg for Barrow-Downs less deep than -450ft) are usually exempt
+from remaining static and will regenerate normally, meaning the loot is lost
+after a couple of seconds.
+
+Sauron's floor (the bottom of Mount Doom) is special and will only stay static
+for 60 minutes to avoid possibly blocking other players for a long time who
+want to try and defeat him.
+
+Notes: If a player enters a static-by-death floor, the floor timer will be
+       reset and start counting down the full duration again, prolonging its
+       staticness. This timer-reset happens the moment a player enters that
+       floor. How long he stays or when he leaves again has no effect.
+
+       The same timing that applies for static-by-death floors is also valid
+       for static-by-save&exit floors, ie floors where a player logged out
+       instead of doing that in town.
+       So if you logged out because your character was stuck, make sure you
+       don't log on too early or you will reset the timer as mentioned above.
 
 
 What happens to your loot
