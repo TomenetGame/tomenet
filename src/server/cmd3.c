@@ -3538,8 +3538,8 @@ void do_cmd_locate(int Ind, int dir) {
 				ex = MAX_WINDOW_WID;
 				ix = 1;
 			} else {
-				sx = MAX_WINDOW_WID;
-				ex = 0;
+				sx = MAX_WINDOW_WID - 1;
+				ex = -1;
 				ix = -1;
 			}
 			if (ovl_offset_y > 0) {
@@ -3547,8 +3547,8 @@ void do_cmd_locate(int Ind, int dir) {
 				ey = MAX_WINDOW_HGT;
 				iy = 1;
 			} else {
-				sy = MAX_WINDOW_HGT;
-				ey = 0;
+				sy = MAX_WINDOW_HGT - 1;
+				ey = -1;
 				iy = -1;
 			}
 
