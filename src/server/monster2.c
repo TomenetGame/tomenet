@@ -2457,7 +2457,7 @@ void update_mon(int m_idx, bool dist) {
 				if (!is_admin(p_ptr)) r_ptr->r_sights++;
 
 				/* Disturb on appearance */
-				if (!m_list[m_idx].special && !(r_ptr->flags8 & RF8_ALLOW_RUNNING))
+				if (!m_list[m_idx].special && !(r_ptr->flags8 & RF8_ALLOW_RUNNING) && !in_bree(&p_ptr->wpos))
 					if (p_ptr->disturb_move) disturb(Ind, 1, 0);
 			}
 
@@ -2523,7 +2523,7 @@ void update_mon(int m_idx, bool dist) {
 
 				/* Disturb on appearance */
 				if (!m_list[m_idx].special && !(r_ptr->flags8 & RF8_ALLOW_RUNNING))
-					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
+					if (p_ptr->disturb_near || p_ptr->disturb_see) disturb(Ind, 1, 0);
 
 				/* well, is it the right place to be? */
 				if (r_ptr->flags2 & RF2_ELDRITCH_HORROR) {
@@ -2542,7 +2542,7 @@ void update_mon(int m_idx, bool dist) {
 
 				/* Disturb on disappearance */
 				if (!m_list[m_idx].special && !(r_ptr->flags8 & RF8_ALLOW_RUNNING))
-					if (p_ptr->disturb_near) disturb(Ind, 1, 0);
+					if (p_ptr->disturb_near || p_ptr->disturb_see) disturb(Ind, 1, 0);
 			}
 		}
 	}
@@ -2815,7 +2815,7 @@ void update_player(int Ind) {
 
 #ifdef HOSTILITY_ABORTS_RUNNING
 				/* Disturb on appearance */
-				if (p_ptr->disturb_near && hostile) {
+				if ((p_ptr->disturb_near || p_ptr->disturb_see) && hostile) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}
@@ -2832,7 +2832,7 @@ void update_player(int Ind) {
 
 #ifdef HOSTILITY_ABORTS_RUNNING
 				/* Disturb on disappearance */
-				if (p_ptr->disturb_near && hostile) {
+				if ((p_ptr->disturb_near || p_ptr->disturb_see) && hostile) {
 					/* Disturb */
 					disturb(i, 1, 0);
 				}

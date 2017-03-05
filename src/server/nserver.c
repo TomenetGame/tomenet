@@ -2303,9 +2303,6 @@ static void sync_options(int Ind, bool *options) {
 	bool vlf = p_ptr->view_lite_extra;
 	bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
 
-	/* unmutable options :D */
-	p_ptr->last_words = TRUE;
-
 	//page 1
 
 	p_ptr->rogue_like_commands = options[0];
@@ -2399,7 +2396,7 @@ static void sync_options(int Ind, bool *options) {
 	p_ptr->idle_starve_kick = options[51];
 	p_ptr->safe_float = options[52];
 
-//	p_ptr->auto_destroy = options[];
+	//p_ptr->auto_destroy = options[];
 	p_ptr->auto_untag = options[54];
 	p_ptr->clear_inscr = options[55];
 	p_ptr->auto_inscribe = options[56];
@@ -2462,6 +2459,14 @@ static void sync_options(int Ind, bool *options) {
 			else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
 			else Send_sfx_volume(Ind, 100, 100);
 		}
+	}
+
+	if (!is_older_than(&p_ptr->version, 4, 7, 1, 0, 0, 0)) {
+		p_ptr->last_words = options[115]; //it's back!
+		p_ptr->disturb_see = options[116];
+	} else {
+		p_ptr->last_words = TRUE;
+		p_ptr->disturb_see = FALSE;
 	}
     }
 }

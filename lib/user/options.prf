@@ -135,3 +135,6 @@ X:permawalls_shade
 X:targetinfo_msg
 Y:live_timeouts
 X:flash_insane
+
+X:disturb_see
+Y:last_words

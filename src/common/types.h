@@ -2077,6 +2077,7 @@ struct player_type {
 	bool find_examine;
 	bool disturb_move;
 	bool disturb_near;
+	bool disturb_see;
 	bool disturb_panel;
 	bool disturb_state;
 	bool disturb_minor;
@@ -3396,6 +3397,9 @@ struct client_opts {
 	bool targetinfo_msg;
 	bool live_timeouts;
 	bool flash_insane;
+
+	bool last_words;
+	bool disturb_see;
 };
 
 /*

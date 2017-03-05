@@ -316,7 +316,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_verify_sell",		"Skip safety question when selling items" },
 	{ &c_cfg.no_verify_destroy,	FALSE,	6,	0, 49, TRUE,
 	    "no_verify_destroy",	"Skip safety question when destroying items" },
-	//HOLE:15
+	//HOLE:14
 
     //page 4 - 49
 	{ &c_cfg.auto_afk,		TRUE,	2,	1, 50, TRUE,
@@ -401,7 +401,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "easy_disarm",		"Automatically disarm traps (except under items)" },
 	{ &c_cfg.easy_tunnel,		FALSE,	3,	9, 87, TRUE,
 	    "easy_tunnel",		"Automatically tunnel walls" },
-	//HOLE: 5
+	//HOLE: 4
 
     //page 6 - 87
 	{ &c_cfg.audio_paging,		TRUE,	5,	0, 88, TRUE,
@@ -480,8 +480,6 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "fresh_after",		"(obsolete) Flush output after every command" },
 	{ &c_cfg.auto_destroy,		FALSE,	3,	9, 63, FALSE,
 	    "auto_destroy",		"(broken) No query to destroy known junks" },
-	{ &c_cfg.last_words,		TRUE,	6,	9, 66, TRUE,
-	    "last_words",		"Get last words when the character dies" },
     //todo: check shopkeeper speakage
 	{ &c_cfg.speak_unique,		TRUE,	6,	13, xx, TRUE,
 	    "speak_unique",		"Allow shopkeepers and uniques to speak" },
@@ -500,6 +498,11 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "live_timeouts",		"Always update item timeout numbers on every tick" },
 	{ &c_cfg.flash_insane,		FALSE,	6,	0, 114, TRUE, //page 3 (UI 3)
 	    "flash_insane",		"Flash own character icon when going badly insane" },
+    /* 4.7.1: */
+	{ &c_cfg.last_words,		TRUE,	6,	9, 115, TRUE,
+	    "last_words",		"Get last words when the character dies" },
+	{ &c_cfg.disturb_see,		FALSE,	3,	0, 116, TRUE,
+	    "disturb_see",		"Disturb whenever seeing any monster" },
 };
 
 
