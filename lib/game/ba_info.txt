@@ -160,7 +160,8 @@ C:180000:170000:160000
 I:30:0:a:0
 
 N:32:Enchant bow
-C:42000:39000:36000
+#double price because these don't get damaged
+C:84000:78000:72000
 I:31:0:b:0
 
 N:33:Recall to dungeon

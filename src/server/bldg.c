@@ -1256,6 +1256,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac, int
 			if (!is_armour(o_ptr->tval)) continue;
 			if (o_ptr->to_a >= maxenchant_eff) continue;
 			o_ptr->to_a = maxenchant_eff;
+			if (o_ptr->level < maxenchant_eff) o_ptr->level = maxenchant_eff;
 			msg_format(Ind, "Your %s has been enchanted to [+%d].", tmp_str, maxenchant_eff);
 			break;
 		} else {
@@ -1263,6 +1264,7 @@ static bool fix_item(int Ind, int istart, int iend, int ispecific, bool iac, int
 			if (o_ptr->to_h >= maxenchant_eff && o_ptr->to_d >= maxenchant_eff) continue;
 			if (o_ptr->to_h < maxenchant_eff) o_ptr->to_h = maxenchant_eff;
 			if (o_ptr->to_d < maxenchant_eff) o_ptr->to_d = maxenchant_eff;
+			if (o_ptr->level < maxenchant_eff) o_ptr->level = maxenchant_eff;
 			msg_format(Ind, "Your %s %s been enchanted to (+%d,+%d).",
 			    tmp_str, o_ptr->number == 1 ? "has" : "have", o_ptr->to_h, o_ptr->to_d);
 			break;
@@ -1885,12 +1887,12 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 #endif
 			break;
 		case BACT_ENCHANT_ARROWS:
-			paid = fix_item(Ind, INVEN_AMMO, INVEN_AMMO, 0, FALSE,
-					BACT_ENCHANT_ARROWS, set_reward);
+			paid = fix_item(Ind, INVEN_AMMO, INVEN_AMMO, 0, FALSE, BACT_ENCHANT_ARROWS, set_reward);
 			break;
 		case BACT_ENCHANT_BOW:
-			paid = fix_item(Ind, INVEN_BOW, INVEN_BOW, TV_BOW, FALSE,
-					BACT_ENCHANT_BOW, set_reward);
+			//paid = fix_item(Ind, INVEN_BOW, INVEN_BOW, TV_BOW, FALSE, BACT_ENCHANT_BOW, set_reward);
+			//allow boomerangs too:
+			paid = fix_item(Ind, INVEN_BOW, INVEN_BOW, 0, FALSE, BACT_ENCHANT_BOW, set_reward);
 			break;
 #if 0
 		case BACT_RECALL:
