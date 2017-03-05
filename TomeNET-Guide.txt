@@ -10879,9 +10879,7 @@ UN_POWER        no resistance. It drains charges/energy from your items.
 
                 Mimicking a monster form that has UN_POWER attacks and at the
                 same time is a very proficient caster (at least 1_IN_2 spell
-                frequency) will help to prevent draining too. Note that these
-                conditions are at the time of writing only met by the forms
-                Lesser Black Reaver and Black Reaver.
+                frequency) will help to prevent draining too.
 
                 Also reduces the remaining duration of a polymorph ring form
                 the player is currently mimicking (this effect cannot be
