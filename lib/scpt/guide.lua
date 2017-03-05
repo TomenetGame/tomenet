@@ -167,7 +167,7 @@ guide_school = {
     "Astral Knowledge -",
 }
 
-guide_spells = 163
+guide_spells = 174
 guide_spell = {
     "Manathrust",
     "Recharge",
@@ -181,7 +181,7 @@ guide_spell = {
     "Fiery Shield",
     "Firewall",
     "Fire Ball",
-    "Fireflash",
+    "Fireflash", --12
 
     "Vapor",
     "Ent's Potion",
@@ -195,7 +195,7 @@ guide_spell = {
     "Lightning Bolt",
     "Wings of Wind",
     "Thunderstorm",
-    "Invisibility",
+    "Invisibility", --24
 
     "Dig",
     "Acid Bolt",
@@ -209,7 +209,7 @@ guide_spell = {
     "Thunderstorm",
     "Regeneration",
     "Grow Trees",
-    "Poison Blood",
+    "Poison Blood", --36
 
     "Phase Door",
     "Disarm",
@@ -224,7 +224,7 @@ guide_spell = {
     "Greater Identify",
     "Vision",
     "Sense Hidden",
-    "Reveal Ways",
+    "Reveal Ways", --49
 
     "Magelock",
     "Slow Monster",
@@ -234,8 +234,9 @@ guide_spell = {
     "Genocide",
     "Obliteration",
     "Wraithform",
+    "Stop Wraithform",
     "Disenchantment Bolt",
-    "Hellfire",
+    "Hellfire", --59
 
     "Confuse",
     "Stun",
@@ -248,7 +249,7 @@ guide_spell = {
     "Redemption",
     "Orb of Draining",
     "Doomed Grounds",
-    "Earthquake",
+    "Earthquake", --70
 
     "Blessing",
     "Holy Resistance",
@@ -265,7 +266,7 @@ guide_spell = {
     "Restoration",
     "Faithful Focus",
     "Resurrection",
-    "Soul Curing",
+    "Soul Curing", --85
 
     "Remove Fear",
     "Holy Light",
@@ -274,7 +275,7 @@ guide_spell = {
     "Sanctuary",
     "Satisfy Hunger",
     "Sense Surroundings",
-    "Zeal",
+    "Zeal", --93
 
     "Cause Fear",
     "Blindness",
@@ -289,7 +290,7 @@ guide_spell = {
     "Chaos Bolt",
     "Nether Bolt",
     "Drain Life",
-    "Darkness Storm",
+    "Darkness Storm", --107
 
     "Cause Wounds",
     "Tame Fear",
@@ -300,7 +301,7 @@ guide_spell = {
     "Lift Curses",
     "Ethereal Eye",
     "Possess",
-    "Guardian Spirit",
+    "Guardian Spirit", --117
 
     "Terror",
     "Ignore Fear",
@@ -311,7 +312,7 @@ guide_spell = {
     "Dark Meditation",
     "Levitation",
     "Robes of Havoc",
-    "Blood Sacrifice",
+    "Blood Sacrifice", --126
 
     "Nature's Call",
     "Toxic Moisture",
@@ -323,7 +324,7 @@ guide_spell = {
     "Quickfeet",
     "Herbal Tea",
     "Extra Growth",
-    "Focus",
+    "Focus", --136
 
     "Psychic Hammer",
     "Psychokinesis",
@@ -343,7 +344,7 @@ guide_spell = {
     "Accelerate Nerves",
     "Telepathy",
     "Recognition",
-    "Stabilize Thoughts",
+    "Stabilize Thoughts", --154
 
     "Psionic Blast",
     "Psi Storm",
@@ -355,6 +356,7 @@ guide_spell = {
     "Remote Vision",
     "Recognition",
     "Charm",
+    "Stop Charm",
 
     "Power Bolt",
     "Power Ray",
@@ -364,5 +366,5 @@ guide_spell = {
     "Empowerment",
     "The Silent Force",
     "Sphere of Destruction",
-    "Gateway",
+    "Gateway", --174
 }
