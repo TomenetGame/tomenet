@@ -3424,8 +3424,9 @@ void calc_boni(int Ind) {
 
 		p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
+		p_ptr->resist_cold = TRUE; csheet_boni[14].cb[0] |= CB1_RCOLD;
 		p_ptr->resist_neth = TRUE; csheet_boni[14].cb[2] |= CB3_RNETH;
-		p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS;
+		p_ptr->immune_pois = TRUE; csheet_boni[14].cb[1] |= CB2_IPOIS;
 		p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE;
 
 		p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND;
