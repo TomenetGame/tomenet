@@ -1218,6 +1218,9 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			note_toggle_cursed(o_ptr, TRUE);
 		}
 
+		/* For priests, easy recognition of easily usable BLESSED weapons */
+		if (p_ptr->pclass == CLASS_PRIEST && is_melee_weapon(o_ptr->tval) && (f3 & TR3_BLESSED) && !(o_ptr->ident & ID_KNOWN))
+			msg_print(Ind, "This weapon appears to be blessed by the gods.");
 	}
 
 	/* already done elsewhere */
