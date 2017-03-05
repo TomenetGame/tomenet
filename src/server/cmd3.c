@@ -375,7 +375,7 @@ void inven_drop(int Ind, int item, int amt) {
 #endif
 
 	/* Check if item gave WRAITH form */
-	if ((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
+	if ((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith && item >= INVEN_WIELD) {
 		s_printf("DROP_EXPLOIT (wraith): %s dropped %s\n", p_ptr->name, o_name);
 #if 1
 		p_ptr->tim_wraith = 1;
@@ -391,7 +391,7 @@ void inven_drop(int Ind, int item, int amt) {
 		else
 			a_ptr = &a_info[o_ptr->name1];
 
-		if ((a_ptr->flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
+		if ((a_ptr->flags3 & TR3_WRAITH) && p_ptr->tim_wraith && item >= INVEN_WIELD) {
 #if 1
 			p_ptr->tim_wraith = 1;
 #endif
