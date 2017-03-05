@@ -16777,8 +16777,10 @@ Guilds:
     You can create a guild with a character that is at least level 30.
     This costs 2,000,000 Au. A guild will stay, even if the owner dies.
     The guild creator will receive a 'Guild Key' which designates him as the
-    guild master. In case the guild master dies, another guild member may
-    fetch the key to become the new guild master.
+    guild master. The guild master doesn't need to carry the key around with
+    him but can just safely deposit it in a house.
+    In case the guild master dies, another guild member may fetch the key to
+    become the new guild master.
     Only one character per account can be a guild master.
 
     A guild offers a dedicated guild chat, so players in a guild can organize
