@@ -13972,8 +13972,8 @@ create a character!):
     attemps and psionic attacks in general much better than other classes.
     A lot of their spells can actually be cast while blinded (or even
     confused), and their targetted spells often do not require a clean line of
-    sight, since they manifest whereever their mind is focussed on (e.g.
-    Psionic Blast).
+    sight, since they manifest whereever their mind is focussed on
+    (e.g. Psionic Blast).
     Their spells also cannot be reflected by monsters for that same reason.
     Some of the mindcrafters' spells that interact with party members will
     require them to prepare and open their mind for telepathic contact. This
