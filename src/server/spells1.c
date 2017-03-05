@@ -10078,7 +10078,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* The druid spell; Note that it _damages_ undead-players instead of healing :-) - the_sandman */
 	case GF_HEALINGCLOUD:
-			if (p_ptr->ghost || (r_ptr->flags3 & RF3_UNDEAD) || p_ptr->suscep_life) {
+			if (p_ptr->ghost || p_ptr->suscep_good || p_ptr->suscep_life) {
 				if (rand_int(100) < p_ptr->skill_sav)
 					msg_print(Ind, "You shudder, but you resist the effect!");
 				else {
