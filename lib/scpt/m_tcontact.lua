@@ -280,7 +280,7 @@ MTELEKINESIS = add_spell {
 			end
 			end,
 	["info"] = 	function()
-			return "max wgt "..((4 + get_level(Ind, MTELEKINESIS, 400, 0)) / 10).."."..(imod(4 + get_level(Ind, MTELEKINESIS, 400, 0), 10))
+			return "max wgt "..((4 + get_level(Ind, MTELEKINESIS, 350, 0)) / 10).."."..(imod(4 + get_level(Ind, MTELEKINESIS, 350, 0), 10))
 			end,
 	["desc"] = 	{
 			"Inscribe your book with @Pplayername, cast it, select an item",
