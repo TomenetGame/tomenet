@@ -7640,13 +7640,9 @@ void global_event_signup(int Ind, int n, cptr parm) {
 
 		/* base monster type is not allowed? */
 		if (!is_admin(p_ptr) &&
-		    ((r_info[r_found].flags1 & RF1_UNIQUE) ||
-		    (r_info[r_found].flags1 & RF1_QUESTOR) ||
-		    (r_info[r_found].flags7 & RF7_NEVER_ACT) ||
-		    (r_info[r_found].flags7 & RF7_PET) ||
-		    (r_info[r_found].flags7 & RF7_NEUTRAL) ||
-		    (r_info[r_found].flags7 & RF7_FRIENDLY) ||
-		    (r_info[r_found].flags8 & RF8_JOKEANGBAND) ||
+		    ((r_info[r_found].flags1 & (RF1_UNIQUE | RF1_QUESTOR)) ||
+		    (r_info[r_found].flags7 & (RF7_NEVER_ACT | RF7_NO_DEATH | RF7_PET | RF7_NEUTRAL | RF7_FRIENDLY)) ||
+		    (r_info[r_found].flags8 & (RF8_GENO_NO_THIN | RF8_JOKEANGBAND)) ||
 		    (r_info[r_found].rarity == 255))) {
 			msg_print(Ind, "\377ySorry, that creature is beyond the wizards' abilities.");
 			return;
