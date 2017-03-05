@@ -2674,7 +2674,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 500, },
 		{ SKILL_MAGIC,
-			'+', 1000,
+			'+', 0,
 			'+', 600, },
 		/* They can be changed */
 		{ SKILL_CONVEYANCE,
