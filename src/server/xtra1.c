@@ -3405,7 +3405,7 @@ void calc_boni(int Ind) {
 	/* Dark-Elves */
 	else if (p_ptr->prace == RACE_DARK_ELF) {
 		p_ptr->suscep_lite = TRUE; csheet_boni[14].cb[2] |= CB3_SLITE;
-//		p_ptr->suscep_good = TRUE;//maybe too harsh
+		//p_ptr->suscep_good = TRUE;//maybe too harsh
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		if (p_ptr->lev >= 20) { p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV; }
 	}
