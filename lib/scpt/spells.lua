@@ -315,11 +315,11 @@ end
 --}
 -- Create the handbook of novice etiquette
 school_book[56] = { HDELFEAR, HBLESSING_I, HCURING_I, HGLOBELIGHT_I, HDETECTEVIL, HHEALING_I}
----- Create the handbook for rogues (of shadows)
+---- Create the handbook for rogues (of deception)
 if (def_hack("TEMP2", nil)) then
 	--include Occult Shadow spells
 	--school_book[57] = { BLINK, POISONFOG_III, OFEAR_II, OBLIND_II, DETECTINVIS, SENSEHIDDEN_II, REVEALWAYS, VISION_II, OINVIS, INVISIBILITY }
-	school_book[57] = { BLINK, OFEAR_II, OBLIND_II, DETECTINVIS, SENSEHIDDEN_II, REVEALWAYS, VISION_II, OINVIS, INVISIBILITY }
+	school_book[57] = { BLINK, TELEPORT, OFEAR_II, OBLIND_II, OINVIS, SHADOWGATE }
 else
 	school_book[57] = { BLINK, NOXIOUSCLOUD_III, SENSEHIDDEN_II, REVEALWAYS, VISION_II, INVISIBILITY }
 end
