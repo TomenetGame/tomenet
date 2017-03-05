@@ -7920,7 +7920,7 @@ void do_slash_cmd(int Ind, char *message) {
 								o_ptr->iy = 255 - o_ptr->iy;
 							}
 							/* in a house (or vault, theoretically) */
-							if (zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY) {
+							if (!o_ptr->wpos.wz && (zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY) && !(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_JAIL)) {
 								/* mark item as 'inside house' */
 								o_ptr->marked2 = ITEM_REMOVAL_HOUSE;
 								/* count for fun */

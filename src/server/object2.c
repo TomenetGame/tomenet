@@ -9469,7 +9469,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 			   additionally check and delete objects on
 			   unallocated levels - C. Blue */
 			if (o_ptr->marked2 != ITEM_REMOVAL_NEVER) {
-				if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY)) {
+				if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY) && !(c_ptr->info & CAVE_JAIL)) {
 					/* mark as 'inside a house' */
 					o_ptr->marked2 = ITEM_REMOVAL_HOUSE;
 				} else if (o_ptr->marked2 != ITEM_REMOVAL_DEATH_WILD &&
