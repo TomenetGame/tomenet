@@ -6617,6 +6617,10 @@ static void do_cmd_options_acc(void) {
 			/* Send the request */
 			if (Send_change_password(old_pass, new_pass) == 1) {
 				c_msg_print("\377gPassword change has been submitted.");
+#ifdef RETRY_LOGIN
+				/* update password in memory so we can relogin */
+				strcpy(pass, new_pass);
+#endif
 			} else {
 				c_msg_print("\377yFailed to send password change request.");
 			}
