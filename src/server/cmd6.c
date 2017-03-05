@@ -7770,6 +7770,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 			return;
 		}
 		for (i = 0; i < INVEN_WIELD; i++)
+			if (!(p_ptr->inventory[i].ident & ID_KNOWN)) continue; //skip unidentified items
 			if ((p_ptr->inventory[i].tval == TV_POTION && p_ptr->inventory[i].sval == SV_POTION_POISON) ||
 			    (p_ptr->inventory[i].tval == TV_FOOD &&
 			    (p_ptr->inventory[i].sval == SV_FOOD_POISON || p_ptr->inventory[i].sval == SV_FOOD_UNHEALTH))) {
@@ -7781,7 +7782,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 				break;
 			}
 		if (i == INVEN_WIELD) {
-			msg_print(Ind, "You are missing a potion of poison.");
+			msg_print(Ind, "You are missing a poisonous ingredient.");
 			return;
 		}
 		break_shadow_running(Ind);
