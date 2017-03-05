@@ -1868,55 +1868,60 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
 
 		switch (r_ptr->blow[i].effect) {
-			case RBE_EXP_10:
-			case RBE_EXP_20:
-			case RBE_EXP_40:
-			case RBE_EXP_80:
-				p_ptr->hold_life = TRUE;
-				csheet_boni->cb[5] |= CB6_RLIFE;
-				break;
-			case RBE_SHATTER:
-				p_ptr->stat_add[A_STR]++;
-				csheet_boni->pstr++;
-				break;
-			case RBE_LOSE_STR:
-				p_ptr->sustain_str = TRUE;
-				csheet_boni->cb[11] |= CB12_RSSTR;
-				break;
-			case RBE_LOSE_INT:
-				p_ptr->sustain_int = TRUE;
-				csheet_boni->cb[11] |= CB12_RSINT;
-				break;
-			case RBE_LOSE_WIS:
-				p_ptr->sustain_wis = TRUE;
-				csheet_boni->cb[11] |= CB12_RSWIS;
-				break;
-			case RBE_LOSE_DEX:
-				p_ptr->sustain_dex = TRUE;
-				csheet_boni->cb[11] |= CB12_RSDEX;
-				break;
-			case RBE_LOSE_CON:
-				p_ptr->sustain_con = TRUE;
-				csheet_boni->cb[11] |= CB12_RSCON;
-				break;
-			case RBE_LOSE_CHR:
-				p_ptr->sustain_chr = TRUE;
-				csheet_boni->cb[11] |= CB12_RSCHR;
-				break;
-			case RBE_LOSE_ALL:
-				p_ptr->sustain_str = TRUE;
-				csheet_boni->cb[11] |= CB12_RSSTR;
-				p_ptr->sustain_int = TRUE;
-				csheet_boni->cb[11] |= CB12_RSINT;
-				p_ptr->sustain_wis = TRUE;
-				csheet_boni->cb[11] |= CB12_RSWIS;
-				p_ptr->sustain_dex = TRUE;
-				csheet_boni->cb[11] |= CB12_RSDEX;
-				p_ptr->sustain_con = TRUE;
-				csheet_boni->cb[11] |= CB12_RSCON;
-				p_ptr->sustain_chr = TRUE;
-				csheet_boni->cb[11] |= CB12_RSCHR;
-				break;
+		case RBE_EXP_10:
+		case RBE_EXP_20:
+		case RBE_EXP_40:
+		case RBE_EXP_80:
+			p_ptr->hold_life = TRUE;
+			csheet_boni->cb[5] |= CB6_RLIFE;
+			break;
+		case RBE_SHATTER:
+			p_ptr->stat_add[A_STR]++;
+			csheet_boni->pstr++;
+			break;
+		case RBE_LOSE_STR:
+			p_ptr->sustain_str = TRUE;
+			csheet_boni->cb[11] |= CB12_RSSTR;
+			break;
+		case RBE_LOSE_INT:
+			p_ptr->sustain_int = TRUE;
+			csheet_boni->cb[11] |= CB12_RSINT;
+			break;
+		case RBE_LOSE_WIS:
+			p_ptr->sustain_wis = TRUE;
+			csheet_boni->cb[11] |= CB12_RSWIS;
+			break;
+		case RBE_LOSE_DEX:
+			p_ptr->sustain_dex = TRUE;
+			csheet_boni->cb[11] |= CB12_RSDEX;
+			break;
+		case RBE_LOSE_CON:
+			p_ptr->sustain_con = TRUE;
+			csheet_boni->cb[11] |= CB12_RSCON;
+			break;
+		case RBE_LOSE_CHR:
+			p_ptr->sustain_chr = TRUE;
+			csheet_boni->cb[11] |= CB12_RSCHR;
+			break;
+		case RBE_LOSE_ALL:
+			p_ptr->sustain_str = TRUE;
+			csheet_boni->cb[11] |= CB12_RSSTR;
+			p_ptr->sustain_int = TRUE;
+			csheet_boni->cb[11] |= CB12_RSINT;
+			p_ptr->sustain_wis = TRUE;
+			csheet_boni->cb[11] |= CB12_RSWIS;
+			p_ptr->sustain_dex = TRUE;
+			csheet_boni->cb[11] |= CB12_RSDEX;
+			p_ptr->sustain_con = TRUE;
+			csheet_boni->cb[11] |= CB12_RSCON;
+			p_ptr->sustain_chr = TRUE;
+			csheet_boni->cb[11] |= CB12_RSCHR;
+			break;
+		case RBE_UN_POWER:
+			/* Specialty for (Lesser) Black Reaver form, buffing it for magic device usage:
+			   Great casters who can also inflict power-drain are themselves resistant to it. */
+			if (r_ptr->freq_innate >= 50) p_ptr->resist_discharge = TRUE; //unofficial resistance =p
+			break;
 		}
 
 		d += (j * 2);
@@ -2103,7 +2108,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 
 
 	/* Racial boni depending on the form's race */
-	switch(p_ptr->body_monster) {
+	switch (p_ptr->body_monster) {
 		/* Bats get feather falling */
 		case 37:	case 114:	case 187:	case 235:	case 351:
 		case 377:	case RI_VAMPIRE_BAT:	case 406:	case 484:	case 968:
@@ -2183,7 +2188,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			p_ptr->pspeed -= 2;
 			p_ptr->suscep_fire = TRUE; csheet_boni->cb[0] |= CB1_SFIRE;
 			p_ptr->resist_water = TRUE; csheet_boni->cb[3] |= CB4_RWATR;
-/* not form-dependant:			if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE; */
+/* not form-dependant:	if (p_ptr->lev >= 4) p_ptr->see_inv = TRUE; */
 			p_ptr->can_swim = TRUE; csheet_boni->cb[12] |= CB13_XSWIM; /* wood? */
 			p_ptr->pass_trees = TRUE; csheet_boni->cb[12] |= CB13_XTREE;
 			break;
@@ -2198,7 +2203,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			/* I'd prefer ghosts having a radius of awareness, like a 'pseudo-light source',
 			since atm ghosts are completely blind in the dark :( -C. Blue */
 			p_ptr->see_inv = TRUE; csheet_boni->cb[4] |= CB5_RSINV;
-	//		p_ptr->invis += 5; */ /* No. */
+			//p_ptr->invis += 5; */ /* No. */
 			break;
 
 		/* Vampires have VAMPIRIC attacks */
@@ -2244,7 +2249,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if (r_ptr->flags7 & RF7_SPIDER) { p_ptr->climb = TRUE; csheet_boni->cb[5] |= CB6_RCLMB; }
 
 	/* Orcs get resist_dark */
-	if(r_ptr->flags3 & RF3_ORC) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
+	if (r_ptr->flags3 & RF3_ORC) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
 
 	/* Trolls/Giants get sustain_str */
 	if ((r_ptr->flags3 & RF3_TROLL) || (r_ptr->flags3 & RF3_GIANT)) { p_ptr->sustain_str = TRUE; csheet_boni->cb[11] |= CB12_RSSTR; }
@@ -3097,6 +3102,7 @@ void calc_boni(int Ind) {
 	p_ptr->resist_dark = FALSE;
 	p_ptr->resist_chaos = FALSE;
 	p_ptr->resist_disen = FALSE;
+	p_ptr->resist_discharge = FALSE;
 	p_ptr->resist_shard = FALSE;
 	p_ptr->resist_nexus = FALSE;
 	p_ptr->resist_blind = FALSE;

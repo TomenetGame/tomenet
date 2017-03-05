@@ -1284,6 +1284,9 @@ bool make_attack_melee(int Ind, int m_idx)
 					}
 #endif
 
+					/* Saving throw from discharge resistance - anti-cheeze: for now applied _after_ above's tim_mimic discharge */
+					if (p_ptr->resist_discharge && !magik(r_ptr->level > p_ptr->lev + 20 ? r_ptr->level - p_ptr->lev : 20)) break;
+
 					/* Saving throw by Magic Device skill (9%..99%) */
 					if (magik(117 - (2160 / (20 + get_skill_scale(p_ptr, SKILL_DEVICE, 100))))) break;
 
@@ -2442,7 +2445,7 @@ bool make_attack_melee(int Ind, int m_idx)
 					/* Obvious */
 					obvious = TRUE;
 
-					//                                        if (!p_ptr->parasite) set_parasite(damage, r_idx);
+					//if (!p_ptr->parasite) set_parasite(damage, r_idx);
 
 					break;
 				case RBE_HALLU:

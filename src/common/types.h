@@ -2459,6 +2459,7 @@ struct player_type {
 	bool resist_dark;		/* Resist darkness */
 	bool resist_chaos;		/* Resist chaos */
 	bool resist_disen;		/* Resist disenchant */
+	bool resist_discharge;		/* Resist UN_POWER discharging */
 	bool resist_shard;		/* Resist shards */
 	bool resist_nexus;		/* Resist nexus */
 	bool resist_blind;		/* Resist blindness */

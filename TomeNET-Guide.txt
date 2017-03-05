@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. March 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 5. March 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10873,17 +10873,26 @@ EAT_xxx         DEX, stealing skill.
 UN_BONUS        disenchantment.
                 The damage can partially be mitigated by having the resistance.
 UN_POWER        no resistance. It drains charges/energy from your items.
+
                 Magic Device skill helps to prevent draining though.
                 See (6.10) for more information about the Magic Device skill.
-                Also drains the duration of a polymorph ring form the player is
-                currently mimicking.
+
+                Mimicking a monster form that has UN_POWER attacks and at the
+                same time is a very proficient caster (at least 1_IN_2 spell
+                frequency) will help to prevent draining too. Note that these
+                conditions are at the time of writing only met by the forms
+                Lesser Black Reaver and Black Reaver.
+
+                Also reduces the remaining duration of a polymorph ring form
+                the player is currently mimicking (this effect cannot be
+                mitigated by magic device skill or unpower-form).
 TIME            time.
                 The damage can partially be mitigated by having the resistance.
 DISEASE         poison.
                 This attack can also decrease your constitution.
 INSANITY        none. (mimics using WEIRD_MIND/EMPTY_MIND form resist slightly)
 HALLU           chaos.
-PARASITE        <no effect>
+PARASITE        <currently no effect>
 DISARM          'Fighting' ability.
                 Weapons wielded 2-handely are harder to disarm (stacking).
                 Artifacts are also harder to disarm (stacking).
@@ -10901,7 +10910,8 @@ SEDUCE          none. Makes you take off equipped items.
                 - lose an item or gold (monster steals it; tools won't help!)
                 - gain some experience
                 - regain some drained sanity, if any.
-SHATTER         hits & causes an earthquake - very dangerous, see (5.13).
+SHATTER         purely physical damage. Hits & causes an earthquake - very
+                dangerous, see (5.13).
                 This damage type can be mitigated by AC.
 LITE            Light or blindness resistance.
                 The damage can partially be mitigated by having light
