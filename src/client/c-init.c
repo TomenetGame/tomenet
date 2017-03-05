@@ -2248,7 +2248,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 			    /* depth */
 				p2 = strchr(p1, ':') + 1;
-				if (!artifact_list_specialgene[alidx])
+				if (!artifact_list_specialgene[alidx] || aidx == 233) /* hardcoded ART_AMUGROM -_- */
 					sprintf(info_tmp, "Found around depth: \377%c%d\377%c. ", a_val, atoi(p1), a_key);
 				else
 					sprintf(info_tmp, "Carried by a dungeon boss. ");
