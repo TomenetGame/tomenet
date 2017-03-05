@@ -1947,6 +1947,7 @@ void cmd_the_guide(void) {
 					break;
 				}
 				if (chapter[0]) continue;
+
 				for (i = 0; i < guide_classes; i++) {
 					if (!my_strcasestr(guide_class[i], buf)) continue;
 					strcpy(chapter, "- ");
@@ -1954,12 +1955,26 @@ void cmd_the_guide(void) {
 					break;
 				}
 				if (chapter[0]) continue;
+
 				for (i = 0; i < guide_skills; i++) {
-					if (!my_strcasestr(guide_skill[i], buf)) continue;
+					if (strcasecmp(guide_skill[i], buf)) continue; //exact match?
 					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
 					break;
 				}
 				if (chapter[0]) continue;
+				for (i = 0; i < guide_skills; i++) {
+					if (my_strcasestr(guide_skill[i], buf) != guide_skill[i]) continue; //prefix match?
+					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
+					break;
+				}
+				if (chapter[0]) continue;
+				for (i = 0; i < guide_skills; i++) {
+					if (!my_strcasestr(guide_skill[i], buf)) continue; //any match (default)
+					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
+					break;
+				}
+				if (chapter[0]) continue;
+
 				for (i = 0; i < guide_schools; i++) {
 					if (!my_strcasestr(guide_school[i], buf)) continue;
 					strcpy(chapter, "- ");
@@ -1967,7 +1982,22 @@ void cmd_the_guide(void) {
 					break;
 				}
 				if (chapter[0]) continue;
-				for (i = 0; i < guide_spells; i++) {
+
+				for (i = 0; i < guide_spells; i++) { //exact match?
+					if (strcasecmp(guide_spell[i], buf)) continue;
+					strcpy(chapter, "    ");
+					strcat(chapter, guide_spell[i]);
+					break;
+				}
+				if (chapter[0]) continue;
+				for (i = 0; i < guide_spells; i++) { //prefix match?
+					if (my_strcasestr(guide_spell[i], buf) != guide_spell[i]) continue;
+					strcpy(chapter, "    ");
+					strcat(chapter, guide_spell[i]);
+					break;
+				}
+				if (chapter[0]) continue;
+				for (i = 0; i < guide_spells; i++) { //any match (default)
 					if (!my_strcasestr(guide_spell[i], buf)) continue;
 					strcpy(chapter, "    ");
 					strcat(chapter, guide_spell[i]);
