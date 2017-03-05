@@ -583,6 +583,8 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	/* Don't stack quest items if not from same quest AND stage! */
 	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return FALSE;
 
+	/* Overpoweredness, Hello! - the_sandman */
+	if (o_ptr->tval == TV_ROD && o_ptr->sval == SV_ROD_HAVOC) return FALSE;
 
 	/* Don't stack potions of blood because of their timeout */
 	if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) return FALSE;
@@ -1193,8 +1195,8 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 		if (store_object_similar(j_ptr, o_ptr)) {
 			/* Hack: Can't have more than 1 of certain items at a time!
 			   Added for Artifact Creation - C. Blue */
-			if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
-				return (-1);
+			if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION) return (-1);
+			if (o_ptr->tval == TV_ROD && o_ptr->sval == SV_ROD_HAVOC) return (-1);
 
 			/* Hack -- extra items disappear */
 			store_object_absorb(j_ptr, o_ptr);
