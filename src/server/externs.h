@@ -673,7 +673,7 @@ extern void do_cmd_fusion(int Ind);
 
 
 /* cmd3.c */
-extern void inven_drop(int Ind, int item, int amt);
+extern int inven_drop(int Ind, int item, int amt);
 extern void inven_takeoff(int Ind, int item, int amt, bool called_from_wield);
 extern void do_takeoff_impossible(int Ind);
 extern void do_cmd_wield(int Ind, int item, u16b alt_slots);

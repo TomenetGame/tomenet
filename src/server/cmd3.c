@@ -235,7 +235,7 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 /*
  * Drops (some of) an item from inventory to "near" the current location
  */
-void inven_drop(int Ind, int item, int amt) {
+int inven_drop(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 
 	object_type		*o_ptr;
@@ -254,12 +254,12 @@ void inven_drop(int Ind, int item, int amt) {
 	/* Not too many */
 	if (amt > o_ptr->number) amt = o_ptr->number;
 	/* Error check/Nothing done? */
-	if (amt <= 0) return;
+	if (amt <= 0) return -1;
 
 	/* check for !d  or !* in inscriptions */
 	if (!bypass_inscrption && check_guard_inscription(o_ptr->note, 'd')) {
 		msg_print(Ind, "The item's inscription prevents it.");
-		return;
+		return -1;
 	}
 	bypass_inscrption = FALSE;
 
@@ -425,7 +425,7 @@ void inven_drop(int Ind, int item, int amt) {
 
 #ifdef PLAYER_STORES
 	o_ptr = &o_list[o_idx];
-	if (o_idx > 0 && o_ptr->note && strstr(quark_str(o_ptr->note), "@S") && !o_ptr->questor
+	if (o_idx >= 0 && o_ptr->note && strstr(quark_str(o_ptr->note), "@S") && !o_ptr->questor
 	    && inside_house(&p_ptr->wpos, o_ptr->ix, o_ptr->iy)) {
 		object_desc(0, o_name, o_ptr, TRUE, 3);
 		s_printf("PLAYER_STORE_OFFER: %s - %s (%d,%d,%d; %d,%d).\n",
@@ -458,6 +458,8 @@ void inven_drop(int Ind, int item, int amt) {
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
+
+	return o_idx;
 }
 
 /*

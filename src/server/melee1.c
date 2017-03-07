@@ -509,8 +509,8 @@ static bool do_seduce(int Ind, int m_idx)
 /*
  * Attack a player via physical attacks.
  */
-bool make_attack_melee(int Ind, int m_idx)
-{
+#define DISARM_SCATTER /* disarmed items that dropped to the floor but failed to land properly, don't get erased but scattered around the floor instead */
+bool make_attack_melee(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 
 	monster_type    *m_ptr = &m_list[m_idx];
@@ -2660,15 +2660,44 @@ bool make_attack_melee(int Ind, int m_idx)
 								inven_takeoff(Ind, slot, 1, FALSE);
 								s_printf("%s EFFECT: Disarmed (takeoff) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							} else {
+#ifdef DISARM_SCATTER
+								int o_idx;
+								object_type forge = p_ptr->inventory[slot];
+#endif
+
 								s_printf("%s EFFECT: Disarmed (drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
 #if 0
 								/* Drop it (carefully) near the player */
-								drop_near_severe(Ind, &p_ptr->inventory[slot], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+ #ifdef DISARM_SCATTER
+								o_idx =
+ #endif
+								    drop_near_severe(Ind, &p_ptr->inventory[slot], 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 								/* Decrease the item, optimize. */
 								inven_item_increase(Ind, slot, -p_ptr->inventory[slot].number);
 								inven_item_optimize(Ind, slot);
 #else
-								inven_drop(Ind, slot, 1);
+ #ifdef DISARM_SCATTER
+								o_idx =
+ #endif
+								    inven_drop(Ind, slot, 1);
+#endif
+#ifdef DISARM_SCATTER
+								if (o_idx == -1) {
+									int x1, y1, try = 500;
+									cave_type **zcave;
+
+									o_idx = 0;
+									if ((zcave = getcave(&p_ptr->wpos))) /* this should never.. */
+										while (o_idx <= 0 && try--) {
+											x1 = rand_int(p_ptr->cur_wid);
+											y1 = rand_int(p_ptr->cur_hgt);
+
+											if (!cave_clean_bold(zcave, y1, x1)) continue;
+											forge.marked2 = ITEM_REMOVAL_DEATH_WILD;
+											o_idx = drop_near(0, &forge, 0, &p_ptr->wpos, y1, x1);
+										}
+									s_printf("SCATTERING %s.\n", o_idx ? "succeeded" : "failed");
+								}
 #endif
 								if (slot == INVEN_ARM) dis_sec = TRUE;
 							}
@@ -2691,17 +2720,70 @@ bool make_attack_melee(int Ind, int m_idx)
 								inven_takeoff(Ind, INVEN_WIELD, 1, FALSE);
 								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							} else {
-								inven_drop(Ind, INVEN_WIELD, 1);
+#ifdef DISARM_SCATTER
+								int o_idx;
+								object_type forge = p_ptr->inventory[INVEN_WIELD];
+#endif
+
+#ifdef DISARM_SCATTER
+								o_idx =
+#endif
+								    inven_drop(Ind, INVEN_WIELD, 1);
 								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
+#ifdef DISARM_SCATTER
+								if (o_idx == -1) {
+									int x1, y1, try = 500;
+									cave_type **zcave;
+
+									o_idx = 0;
+									if ((zcave = getcave(&p_ptr->wpos))) /* this should never.. */
+										while (o_idx <= 0 && try--) {
+											x1 = rand_int(p_ptr->cur_wid);
+											y1 = rand_int(p_ptr->cur_hgt);
+
+											if (!cave_clean_bold(zcave, y1, x1)) continue;
+											forge.marked2 = ITEM_REMOVAL_DEATH_WILD;
+											o_idx = drop_near(0, &forge, 0, &p_ptr->wpos, y1, x1);
+										}
+									s_printf("SCATTERING %s.\n", o_idx ? "succeeded" : "failed");
+								}
+#endif
 							}
+
 							o_ptr = &p_ptr->inventory[INVEN_ARM];
 							object_desc(0, o_name, o_ptr, FALSE, 3);
 							if (cfg.anti_arts_hoard && true_artifact_p(o_ptr) && magik(98)) {
 								inven_takeoff(Ind, INVEN_ARM, 1, FALSE);
 								s_printf("%s EFFECT: Disarmed (dual, takeoff) %s: %s.\n", showtime(), p_ptr->name, o_name);
 							} else {
-								inven_drop(Ind, INVEN_ARM, 1);
+#ifdef DISARM_SCATTER
+								int o_idx;
+								object_type forge = p_ptr->inventory[INVEN_ARM];
+#endif
+
+#ifdef DISARM_SCATTER
+								o_idx =
+#endif
+								    inven_drop(Ind, INVEN_ARM, 1);
 								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
+#ifdef DISARM_SCATTER
+								if (o_idx == -1) {
+									int x1, y1, try = 500;
+									cave_type **zcave;
+
+									o_idx = 0;
+									if ((zcave = getcave(&p_ptr->wpos))) /* this should never.. */
+										while (o_idx <= 0 && try--) {
+											x1 = rand_int(p_ptr->cur_wid);
+											y1 = rand_int(p_ptr->cur_hgt);
+
+											if (!cave_clean_bold(zcave, y1, x1)) continue;
+											forge.marked2 = ITEM_REMOVAL_DEATH_WILD;
+											o_idx = drop_near(0, &forge, 0, &p_ptr->wpos, y1, x1);
+										}
+									s_printf("SCATTERING %s.\n", o_idx ? "succeeded" : "failed");
+								}
+#endif
 							}
 							dis_sec = TRUE;
 						}
