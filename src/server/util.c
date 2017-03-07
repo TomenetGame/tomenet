@@ -5785,7 +5785,7 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	   Note: Only display ONE feeling, thereby setting priorities here.
 	   Note: Don't display feelings in Training Tower (NO_DEATH). */
 	if ((!p_ptr->distinct_floor_feeling && !is_admin(p_ptr)) || (d_ptr->flags2 & DF2_NO_DEATH) ||
-	    (wpos->wx == WPOS_PVPARENA_X && wpos->wy == WPOS_PVPARENA_Y && wpos->wz == WPOS_PVPARENA_Z)) {
+	    in_pvparena(wpos) || isdungeontown(wpos)) {
 		//msg_print(Ind, "\376\377yLooks like any other level..");
 		//msg_print(Ind, "\377ypfft");
 	}
