@@ -1125,7 +1125,7 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->target_col = tx;
 
 			/* Set 'stationary' target */
-			p_ptr->target_who = 0 - MAX_PLAYERS - 2;
+			p_ptr->target_who = 0 - MAX_PLAYERS - 2; //TARGET_STATIONARY
 
 			return;
 		}

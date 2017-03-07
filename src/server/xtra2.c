@@ -10739,6 +10739,10 @@ bool target_able(int Ind, int m_idx) {
 	/* Hack -- no targeting hallucinations */
 	if (p_ptr->image) return (FALSE);
 
+	/* Safety check to prevent overflows below if any call of target_able() was executed with bad parameter here.
+	   Note: target_who is only really used as parm in retaliate_...() (and in target_okay() itself), so this should never really happen.. */
+	if (TARGET_STATIONARY(m_idx)) return FALSE; //paranoia
+
 	/* Check for OK monster */
 	if (m_idx > 0) {
 		monster_race *r_ptr;
@@ -10765,7 +10769,7 @@ bool target_able(int Ind, int m_idx) {
 		if (!projectable(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx, MAX_RANGE)) return (FALSE);
 #endif
 
-		if(m_ptr->owner == p_ptr->id) return(FALSE);
+		if (m_ptr->owner == p_ptr->id) return(FALSE);
 
 		/* XXX XXX XXX Hack -- Never target trappers */
 		/* if (CLEAR_ATTR && CLEAR_CHAR) return (FALSE); */
@@ -10838,8 +10842,7 @@ bool target_okay(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Accept stationary targets */
-	//if (p_ptr->target_who > MAX_M_IDX) return (TRUE);
-	if (p_ptr->target_who < 0 - MAX_PLAYERS) return (TRUE);
+	if (TARGET_STATIONARY(p_ptr->target_who)) return (TRUE);
 
 	/* Check moving monsters */
 	if (p_ptr->target_who > 0) {
@@ -11047,15 +11050,17 @@ bool target_set(int Ind, int dir) {
 		}
 
 		/* Info */
-		strcpy(out_val, "[<dir>, t, q] ");
+		if (dir != 128 + 5) /* code to confirm the targetted position, finishing the manual targetting process */
+			strcpy(out_val, "[<dir>, t, q] "); /* still in the targetting process.. */
 
 		/* Tell the client */
 		Send_target_info(Ind, p_ptr->target_col - p_ptr->panel_col_prt, p_ptr->target_row - p_ptr->panel_row_prt, out_val);
 
 		/* Check for completion */
 		if (dir == 128 + 5) {
-			//p_ptr->target_who = MAX_M_IDX + 1;
-			p_ptr->target_who = 0;
+			p_ptr->target_who = MAX_M_IDX + 1; //TARGET_STATIONARY
+			//p_ptr->target_who = 0;
+//s_printf("target_info TRUE: %d,%d (%d,%d)\n", p_ptr->target_col - p_ptr->panel_col_prt, p_ptr->target_row - p_ptr->panel_row_prt, p_ptr->target_col, p_ptr->target_row);
 			return TRUE;
 		}
 
@@ -11168,7 +11173,7 @@ bool target_set(int Ind, int dir) {
 		p_ptr->target_row = p_ptr->target_y[m];
 
 		/* Track */
-		if (p_ptr->target_who) health_track(Ind, p_ptr->target_who);
+		if (TARGET_BEING(p_ptr->target_who)) health_track(Ind, p_ptr->target_who);
 	}
 
 	/* Failure */
@@ -11268,11 +11273,11 @@ bool target_set_friendly(int Ind, int dir, ...) {
 	}
 
 
-#if 0 /* currently no effect with wounded_player_target_sort() */
+ #if 0 /* currently no effect with wounded_player_target_sort() */
 	/* Set the sort hooks */
 	ang_sort_comp = ang_sort_comp_distance;
 	ang_sort_swap = ang_sort_swap_distance;
-#endif
+ #endif
 	/* Sort the positions */
 	wounded_player_target_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_idx, p_ptr->target_n);
 
@@ -11372,17 +11377,17 @@ bool target_set_friendly(int Ind, int dir) {
 		p_ptr->target_n++;
 	}
 
-#if 1
+ #if 1
 	/* Sort the positions */
 	wounded_player_target_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_idx, p_ptr->target_n);
-#else //TODO
+ #else //TODO
 	/* Set the sort hooks */
 	ang_sort_comp = ang_sort_comp_distance;
 	ang_sort_swap = ang_sort_swap_distance;
 
 	/* Sort the positions */
 	ang_sort(Ind, p_ptr->target_x, p_ptr->target_y, p_ptr->target_n);
-#endif
+ #endif
 
 	m = 0;
 

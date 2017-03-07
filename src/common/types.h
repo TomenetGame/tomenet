@@ -2002,7 +2002,7 @@ struct player_type {
 	byte guild;			/* The guild he belongs to (0 if neutral)*/
 	u32b guild_dna;			/* Remember the guild, to avoid confusion it was disbanded while we were offline */
 
-	s16b target_who;
+	s32b target_who;
 	s16b target_col;		/* What position is targetted */
 	s16b target_row;
 

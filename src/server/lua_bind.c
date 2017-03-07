@@ -383,7 +383,8 @@ cave_type *lua_get_cave(int y, int x) {
 }
 
 void set_target(int y, int x) {
-	target_who = -1;
+	//target_who = -1;
+	target_who = 0 - MAX_PLAYERS - 2; //TARGET_STATIONARY
 	target_col = x;
 	target_row = y;
 }

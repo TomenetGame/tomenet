@@ -2167,6 +2167,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Wrong Target Trap */
 		case TRAP_OF_WRONG_TARGET:
 		{
+#if 0 /* pointless, instantly overwritten by auto-targetting */
 			int tx, ty;
 
 			/* Clear the target */
@@ -2179,9 +2180,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			p_ptr->target_col = tx;
 
 			/* Set 'stationary' target */
-			p_ptr->target_who = 0 - MAX_PLAYERS - 2;
+			p_ptr->target_who = 0 - MAX_PLAYERS - 2; //TARGET_STATIONARY
 
 			msg_print(Ind, "You feel uneasy.");
+#endif
 			break;
 		}
 

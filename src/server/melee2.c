@@ -6164,17 +6164,16 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 
 	/* Lets find a target */
 
-	if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && p_ptr->target_who && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who))) {
+	if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && TARGET_BEING(p_ptr->target_who) && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who)))
 		tm_idx = p_ptr->target_who;
-	} else// if (m_ptr->mind & GOLEM_GUARD)
+	else// if (m_ptr->mind & GOLEM_GUARD)
 	{
 		int sx, sy;
 		s32b max_hp = 0;
 
 		/* Scan grids around */
 		for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
-		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++)
-		{
+		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++) {
 			cave_type *c_ptr;
 			cave_type **zcave;
 			if (!in_bounds(sy, sx)) continue;
@@ -6188,20 +6187,15 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 			if (!(zcave = getcave(&m_ptr->wpos))) return FALSE;
 			c_ptr = &zcave[sy][sx];
 
-			if(!c_ptr->m_idx) continue;
+			if (!c_ptr->m_idx) continue;
 
-			if (c_ptr->m_idx > 0)
-			{
-				if (max_hp < m_list[c_ptr->m_idx].maxhp)
-				{
+			if (c_ptr->m_idx > 0) {
+				if (max_hp < m_list[c_ptr->m_idx].maxhp) {
 					max_hp = m_list[c_ptr->m_idx].maxhp;
 					tm_idx = c_ptr->m_idx;
 				}
-			}
-			else
-			{
-				if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id))
-				{
+			} else {
+				if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id)) {
 					max_hp = Players[-c_ptr->m_idx]->mhp;
 					tm_idx = c_ptr->m_idx;
 				}
@@ -6210,9 +6204,7 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 	}
 	/* Nothing else to do ? */
 	if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
-	{
 		tm_idx = -Ind;
-	}
 
 	if (!tm_idx) return FALSE;
 
@@ -6234,153 +6226,124 @@ static bool get_moves_pet(int Ind, int m_idx, int *mm) {
 	if (x > 0) move_val += 4;
 
 	/* Prevent the diamond maneuvre */
-	if (ay > (ax << 1))
-	{
+	if (ay > (ax << 1)) {
 		move_val++;
 		move_val++;
-	}
-	else if (ax > (ay << 1))
-	{
+	} else if (ax > (ay << 1))
 		move_val++;
-	}
 
 	/* Extract some directions */
-	switch (move_val)
-	{
-		case 0:
+	switch (move_val) {
+	case 0:
 		mm[0] = 9;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 8;
 			mm[2] = 6;
 			mm[3] = 7;
 			mm[4] = 3;
-		}
-		else
-		{
+		} else {
 			mm[1] = 6;
 			mm[2] = 8;
 			mm[3] = 3;
 			mm[4] = 7;
 		}
 		break;
-		case 1:
-		case 9:
+	case 1:
+	case 9:
 		mm[0] = 6;
-		if (y < 0)
-		{
+		if (y < 0) {
 			mm[1] = 3;
 			mm[2] = 9;
 			mm[3] = 2;
 			mm[4] = 8;
-		}
-		else
-		{
+		} else {
 			mm[1] = 9;
 			mm[2] = 3;
 			mm[3] = 8;
 			mm[4] = 2;
 		}
 		break;
-		case 2:
-		case 6:
+	case 2:
+	case 6:
 		mm[0] = 8;
-		if (x < 0)
-		{
+		if (x < 0) {
 			mm[1] = 9;
 			mm[2] = 7;
 			mm[3] = 6;
 			mm[4] = 4;
-		}
-		else
-		{
+		} else {
 			mm[1] = 7;
 			mm[2] = 9;
 			mm[3] = 4;
 			mm[4] = 6;
 		}
 		break;
-		case 4:
+	case 4:
 		mm[0] = 7;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 8;
 			mm[2] = 4;
 			mm[3] = 9;
 			mm[4] = 1;
-		}
-		else
-		{
+		} else {
 			mm[1] = 4;
 			mm[2] = 8;
 			mm[3] = 1;
 			mm[4] = 9;
 		}
 		break;
-		case 5:
-		case 13:
+	case 5:
+	case 13:
 		mm[0] = 4;
-		if (y < 0)
-		{
+		if (y < 0) {
 			mm[1] = 1;
 			mm[2] = 7;
 			mm[3] = 2;
 			mm[4] = 8;
-		}
-		else
-		{
+		} else {
 			mm[1] = 7;
 			mm[2] = 1;
 			mm[3] = 8;
 			mm[4] = 2;
 		}
 		break;
-		case 8:
+	case 8:
 		mm[0] = 3;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 2;
 			mm[2] = 6;
 			mm[3] = 1;
 			mm[4] = 9;
-		}
-		else
-		{
+		} else {
 			mm[1] = 6;
 			mm[2] = 2;
 			mm[3] = 9;
 			mm[4] = 1;
 		}
 		break;
-		case 10:
-		case 14:
+	case 10:
+	case 14:
 		mm[0] = 2;
-		if (x < 0)
-		{
+		if (x < 0) {
 			mm[1] = 3;
 			mm[2] = 1;
 			mm[3] = 6;
 			mm[4] = 4;
-		}
-		else
-		{
+		} else {
 			mm[1] = 1;
 			mm[2] = 3;
 			mm[3] = 4;
 			mm[4] = 6;
 		}
 		break;
-		case 12:
+	case 12:
 		mm[0] = 1;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 2;
 			mm[2] = 4;
 			mm[3] = 3;
 			mm[4] = 7;
-		}
-		else
-		{
+		} else {
 			mm[1] = 4;
 			mm[2] = 2;
 			mm[3] = 7;
@@ -6412,19 +6375,15 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 
 	/* Lets find a target */
 
-	if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && p_ptr->target_who && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who)))
-	{
+	if ((p_ptr != NULL) && (m_ptr->mind & GOLEM_ATTACK) && TARGET_BEING(p_ptr->target_who) && (p_ptr->target_who > 0 || check_hostile(Ind, -p_ptr->target_who)))
 		tm_idx = p_ptr->target_who;
-	}
-	else if (m_ptr->mind & GOLEM_GUARD)
-	{
+	else if (m_ptr->mind & GOLEM_GUARD) {
 		int sx, sy;
 		s32b max_hp = 0;
 
 		/* Scan grids around */
 		for (sx = m_ptr->fx - 1; sx <= m_ptr->fx + 1; sx++)
-		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++)
-		{
+		for (sy = m_ptr->fy - 1; sy <= m_ptr->fy + 1; sy++) {
 			cave_type *c_ptr;
 			cave_type **zcave;
 			if (!in_bounds(sy, sx)) continue;
@@ -6440,18 +6399,13 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 
 			if(!c_ptr->m_idx) continue;
 
-			if (c_ptr->m_idx > 0)
-			{
-				if (max_hp < m_list[c_ptr->m_idx].maxhp)
-				{
+			if (c_ptr->m_idx > 0) {
+				if (max_hp < m_list[c_ptr->m_idx].maxhp) {
 					max_hp = m_list[c_ptr->m_idx].maxhp;
 					tm_idx = c_ptr->m_idx;
 				}
-			}
-			else
-			{
-				if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id))
-				{
+			} else {
+				if ((max_hp < Players[-c_ptr->m_idx]->mhp) && (m_ptr->owner != Players[-c_ptr->m_idx]->id)) {
 					max_hp = Players[-c_ptr->m_idx]->mhp;
 					tm_idx = c_ptr->m_idx;
 				}
@@ -6460,9 +6414,7 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 	}
 	/* Nothing else to do ? */
 	if ((p_ptr != NULL) && !tm_idx && (m_ptr->mind & GOLEM_FOLLOW))
-	{
 		tm_idx = -Ind;
-	}
 
 	if (!tm_idx) return FALSE;
 
@@ -6484,153 +6436,124 @@ static bool get_moves_golem(int Ind, int m_idx, int *mm) {
 	if (x > 0) move_val += 4;
 
 	/* Prevent the diamond maneuvre */
-	if (ay > (ax << 1))
-	{
+	if (ay > (ax << 1)) {
 		move_val++;
 		move_val++;
-	}
-	else if (ax > (ay << 1))
-	{
+	} else if (ax > (ay << 1))
 		move_val++;
-	}
 
 	/* Extract some directions */
-	switch (move_val)
-	{
-		case 0:
+	switch (move_val) {
+	case 0:
 		mm[0] = 9;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 8;
 			mm[2] = 6;
 			mm[3] = 7;
 			mm[4] = 3;
-		}
-		else
-		{
+		} else {
 			mm[1] = 6;
 			mm[2] = 8;
 			mm[3] = 3;
 			mm[4] = 7;
 		}
 		break;
-		case 1:
-		case 9:
+	case 1:
+	case 9:
 		mm[0] = 6;
-		if (y < 0)
-		{
+		if (y < 0) {
 			mm[1] = 3;
 			mm[2] = 9;
 			mm[3] = 2;
 			mm[4] = 8;
-		}
-		else
-		{
+		} else {
 			mm[1] = 9;
 			mm[2] = 3;
 			mm[3] = 8;
 			mm[4] = 2;
 		}
 		break;
-		case 2:
-		case 6:
+	case 2:
+	case 6:
 		mm[0] = 8;
-		if (x < 0)
-		{
+		if (x < 0) {
 			mm[1] = 9;
 			mm[2] = 7;
 			mm[3] = 6;
 			mm[4] = 4;
-		}
-		else
-		{
+		} else {
 			mm[1] = 7;
 			mm[2] = 9;
 			mm[3] = 4;
 			mm[4] = 6;
 		}
 		break;
-		case 4:
+	case 4:
 		mm[0] = 7;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 8;
 			mm[2] = 4;
 			mm[3] = 9;
 			mm[4] = 1;
-		}
-		else
-		{
+		} else {
 			mm[1] = 4;
 			mm[2] = 8;
 			mm[3] = 1;
 			mm[4] = 9;
 		}
 		break;
-		case 5:
-		case 13:
+	case 5:
+	case 13:
 		mm[0] = 4;
-		if (y < 0)
-		{
+		if (y < 0) {
 			mm[1] = 1;
 			mm[2] = 7;
 			mm[3] = 2;
 			mm[4] = 8;
-		}
-		else
-		{
+		} else {
 			mm[1] = 7;
 			mm[2] = 1;
 			mm[3] = 8;
 			mm[4] = 2;
 		}
 		break;
-		case 8:
+	case 8:
 		mm[0] = 3;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 2;
 			mm[2] = 6;
 			mm[3] = 1;
 			mm[4] = 9;
-		}
-		else
-		{
+		} else {
 			mm[1] = 6;
 			mm[2] = 2;
 			mm[3] = 9;
 			mm[4] = 1;
 		}
 		break;
-		case 10:
-		case 14:
+	case 10:
+	case 14:
 		mm[0] = 2;
-		if (x < 0)
-		{
+		if (x < 0) {
 			mm[1] = 3;
 			mm[2] = 1;
 			mm[3] = 6;
 			mm[4] = 4;
-		}
-		else
-		{
+		} else {
 			mm[1] = 1;
 			mm[2] = 3;
 			mm[3] = 4;
 			mm[4] = 6;
 		}
 		break;
-		case 12:
+	case 12:
 		mm[0] = 1;
-		if (ay > ax)
-		{
+		if (ay > ax) {
 			mm[1] = 2;
 			mm[2] = 4;
 			mm[3] = 3;
 			mm[4] = 7;
-		}
-		else
-		{
+		} else {
 			mm[1] = 4;
 			mm[2] = 2;
 			mm[3] = 7;

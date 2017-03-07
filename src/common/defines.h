@@ -7546,6 +7546,10 @@ extern int PlayerUID;
 #define PROJECTOR_PLAYER	-1006
 #define PROJECTOR_RUNE		-1007
 
+/* target_who may have various special values for targetting hacks - test for actual monster/player here: */
+#define TARGET_BEING(twho)	((twho) && (twho) >= 0 - MAX_PLAYERS && (twho) <= MAX_M_IDX)
+#define TARGET_STATIONARY(twho)	((twho) < 0 - MAX_PLAYERS || (twho) > MAX_M_IDX)
+
 //see true_artifact_p - #define TRUE_ARTS(o_ptr) ((artifact_p(o_ptr)) && (!o_ptr->name3))
 #define PRICE_BOOST(value, base, step) \
 			(value > base ? value << ((value - base)/step) : value )
