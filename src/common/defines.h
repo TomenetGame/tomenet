@@ -2634,6 +2634,7 @@
 #define ART_HAVOC		274
 #define ART_EOWYN		275
 #define ART_SMASHER		276
+#define ART_LAMFADA		277
 /* #define ART_ANGTIRCALAD	*/
 
 

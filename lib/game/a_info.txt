@@ -2694,7 +2694,7 @@ D:tools available for his line of work.
 
 N:215:of Halflings
 I:19:2:3
-W:45:45:50:70000
+W:45:45:5:70000
 P:0:0d0:20:25:0
 F:DEX | SUST_DEX | STEALTH | HIDE_TYPE
 F:REGEN | XTRA_MIGHT | XTRA_SHOTS | ESP_ANIMAL | SEE_INVIS
@@ -3382,6 +3382,7 @@ F:WINNERS_ONLY | STR | CON | IM_ELEC | RES_MANA | RES_DISEN | RES_FEAR
 D:An armor of thick gleaming layers of adamantite that appears utterly
 D:impenetrable. Powerful engraved runes ornate arm and leg protectors.
 
+
 # The Executioner Axe 'Skull Splitter'
 
 N:273:'Skull Splitter'
@@ -3391,6 +3392,7 @@ P:0:6d6:25:26:0
 F:SHOW_MODS | SLAY_GIANT | SLAY_TROLL | SLAY_ORC
 F:SLAY_DEMON | SLAY_DRAGON | SLAY_UNDEAD | STR | RES_FEAR
 D:Whatever the foe, if it has a skull it better watch out.
+
 
 # The Havoc Staff
 
@@ -3403,6 +3405,7 @@ F:RES_DARK | RES_NETHER | RES_ELEC | RES_COLD | ESP_GOOD
 D:An long sceptre crowned with a ram's skull, imbued with magic allowing you to
 D:sense those who oppose evil and to unleash devastating forces on your foe.
 D:A white glow emanates from its hollow eyes as you channel its powers.
+
 
 # The Bastard Sword of Eowyn
 
@@ -3417,6 +3420,7 @@ D:The blade of the legendary Shieldmaiden of Rohan, who struck a
 D:mighty blow against the Morgul-lord whom no mortal Man could hinder,
 D:and also slew his foul steed.
 
+
 # The Club 'Smasher'
 
 N:276:'Smasher'
@@ -3425,6 +3429,18 @@ W:0:20:40:10000
 P:0:2d4:4:17:0
 F:SHOW_MODS | STR | ACTIVATE
 D:This club has seen many pub fights and a lot of broken wood and bones.
+
+
+# The Sling of Lamfada
+
+N:277:of Lamfada
+I:19:2:3
+W:85:70:7:150000
+P:0:0d0:30:30:0
+F:STR | HIDE_TYPE | XTRA_MIGHT | XTRA_SHOTS | SEE_INVIS | RES_FEAR
+F:RES_FIRE | RES_COLD | RES_ELEC | RES_LITE | RES_SOUND
+D:Wielded by Lugh, hero of the skies, no other sling will surpass this one in
+D:the hands of even the most skilled of fighters.
 
 
 #weapon base items that don't have arts yet:
