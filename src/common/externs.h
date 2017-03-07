@@ -594,8 +594,8 @@ extern bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam);
 extern bool lite_line(int Ind, int dir, bool starlight);
 extern bool drain_life(int Ind, int dir, int dam);
 extern bool wall_to_mud(int Ind, int dir);
-extern bool destroy_door(int Ind, int dir);
-extern bool disarm_trap(int Ind, int dir);
+extern bool destroy_trap_door(int Ind, int dir);
+extern bool disarm_trap_door(int Ind, int dir);
 extern bool heal_monster(int Ind, int dir);
 extern bool speed_monster(int Ind, int dir);
 extern bool slow_monster(int Ind, int dir);
@@ -608,6 +608,8 @@ extern bool teleport_monster(int Ind, int dir);
 extern bool door_creation(int Ind);
 extern bool trap_creation(int Ind);
 extern bool destroy_doors_touch(int Ind);
+extern bool destroy_traps_touch(int Ind);
+extern bool destroy_traps_doors_touch(int Ind);
 extern bool sleep_monsters_touch(int Ind);
 
 /* store.c */

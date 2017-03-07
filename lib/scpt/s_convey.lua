@@ -25,12 +25,12 @@ DISARM = add_spell {
 	["mana_max"] = 	4,
 	["fail"] = 	10,
 	["spell"] = 	function()
-			destroy_doors_touch(Ind, 1 + get_level(Ind, DISARM, 4, 0))
+			destroy_traps_touch(Ind, 1 + get_level(Ind, DISARM, 4, 0))
 	end,
 	["info"] = 	function()
 			return "rad "..(1 + get_level(Ind, DISARM, 4, 0))
 	end,
-	["desc"] = 	{ "Destroys traps and visible doors.", }
+	["desc"] = 	{ "Destroys traps and reveals and unlocks doors.", }
 }
 
 TELEPORT = add_spell {

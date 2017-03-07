@@ -127,7 +127,7 @@ MDISARM = add_spell {
 	["fail"] = 	10,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
---			destroy_doors_touch(Ind, 1)
+--			destroy_traps_touch(Ind, 1)
 			fire_grid_beam(Ind, GF_KILL_TRAP, args.dir, 0, "")
 			end,
 	["info"] = 	function()

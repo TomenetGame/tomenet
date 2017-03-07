@@ -576,14 +576,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				p_ptr->arc_b += 3;
 				msg_print(Ind, "+3 Length!");
 			}
-			destroy_doors_touch(Ind, 0);
+			destroy_traps_doors_touch(Ind, 0);
 			break;
 		}
 
 		case TRAP_OF_LASER: {
 			p_ptr->arc_a = 30;
 			p_ptr->arc_b = 2;
-			destroy_doors_touch(Ind, 0);
+			destroy_traps_doors_touch(Ind, 0);
 			msg_print(Ind, "You got a frickin laser beam!");
 			break;
 		}
@@ -594,13 +594,13 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			p_ptr->arc_c = 0;
 			p_ptr->arc_d = 1;
 
-			destroy_doors_touch(Ind, 0);
+			destroy_traps_doors_touch(Ind, 0);
 			msg_print(Ind, "You're a rocket man.");
 			break;
 		}
 
 		case TRAP_OF_HEALING: {
-			destroy_doors_touch(Ind, 0);
+			destroy_traps_doors_touch(Ind, 0);
 			hp_player(Ind, p_ptr->mhp-p_ptr->chp);
 			break;
 		}

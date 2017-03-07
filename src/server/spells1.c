@@ -4187,14 +4187,108 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		/* Destroy Doors (and traps) */
+		/* Destroy Doors (and traps on them) */
 		case GF_KILL_DOOR:
 		{
 			byte feat = twall_erosion(wpos, y, x);
 			struct c_special *cs_ptr;
+			bool door = FALSE;
 
-			/* Destroy invisible traps */
-			//if (c_ptr->feat == FEAT_INVIS)
+			/* Destroy all visible traps and open doors */
+			if ((c_ptr->feat == FEAT_OPEN) ||
+			    (c_ptr->feat == FEAT_BROKEN)) {
+				door = TRUE;
+
+				/* Hack -- special message */
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
+					msg_print(Ind, "There is a bright flash of light!");
+					obvious = TRUE;
+				}
+
+				/* Destroy the feature */
+				cave_set_feat_live(wpos, y, x, feat);
+				/* Forget the wall */
+				everyone_forget_spot(wpos, y, x);
+
+				if (!quiet) {
+					/* Notice */
+					note_spot(Ind, y, x);
+
+					/* Redraw */
+					if (c_ptr->o_idx && !c_ptr->m_idx)
+						/* Make sure no traps are displayed on the screen anymore - mikaelh */
+						everyone_clear_ovl_spot(wpos, y, x);
+					else
+						everyone_lite_spot(wpos, y, x);
+				}
+			}
+
+			/* Destroy all closed doors */
+			if ((c_ptr->feat >= FEAT_DOOR_HEAD) &&
+			    (c_ptr->feat <= FEAT_DOOR_TAIL)) {
+				door = TRUE;
+
+				/* Hack -- special message */
+				if (!quiet && (*w_ptr & CAVE_MARK)) {
+					msg_print(Ind, "There is a bright flash of light!");
+					obvious = TRUE;
+				}
+
+				/* Destroy the feature */
+				cave_set_feat_live(wpos, y, x, feat);
+
+				/* Forget the wall */
+				everyone_forget_spot(wpos, y, x);
+
+				if (!quiet) {
+					/* Notice */
+					note_spot(Ind, y, x);
+
+					/* Redraw */
+					everyone_lite_spot(wpos, y, x);
+
+					/* Update some things */
+					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+				}
+			}
+
+			/* Destroy any traps that were on this door */
+			if (door && (cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
+				/* Hack -- special message */
+				if (!quiet && player_can_see_bold(Ind, y, x)) {
+					msg_print(Ind, "There is a bright flash of light!");
+					obvious = TRUE;
+				}
+
+				/* Destroy the feature */
+				//c_ptr->feat = FEAT_FLOOR;
+				cs_erase(c_ptr, cs_ptr);
+
+				/* Forget the wall */
+				everyone_forget_spot(wpos, y, x);
+
+				if (!quiet) {
+					/* Notice */
+					note_spot(Ind, y, x);
+
+					/* Redraw */
+					if (c_ptr->o_idx && !c_ptr->m_idx)
+						/* Make sure no traps are displayed on the screen anymore - mikaelh */
+						everyone_clear_ovl_spot(wpos, y, x);
+					else
+						everyone_lite_spot(wpos, y, x);
+				}
+			}
+			break;
+		}
+
+		/* Destroy Traps and Doors */
+		case GF_KILL_TRAP_DOOR:
+		{
+			byte feat = twall_erosion(wpos, y, x);
+			struct c_special *cs_ptr;
+
+			/* Destroy any traps */
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 				/* Hack -- special message */
 				if (!quiet && player_can_see_bold(Ind, y, x)) {
@@ -5004,7 +5098,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Unlock chests */
 		case GF_KILL_TRAP:
-		case GF_KILL_DOOR:
+		//case GF_KILL_DOOR:
 			/* Chests are noticed only if trapped or locked */
 			if (o_ptr->tval == TV_CHEST) {
 				/* Disarm/Unlock traps */

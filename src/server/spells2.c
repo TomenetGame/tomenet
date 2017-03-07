@@ -6905,12 +6905,12 @@ bool wall_to_mud(int Ind, int dir) {
 	return (project_hook(Ind, GF_KILL_WALL, dir, 20 + randint(30), flg, ""));
 }
 
-bool destroy_door(int Ind, int dir) {
+bool destroy_trap_door(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
-	return (project_hook(Ind, GF_KILL_DOOR, dir, 0, flg, ""));
+	return (project_hook(Ind, GF_KILL_TRAP_DOOR, dir, 0, flg, ""));
 }
 
-bool disarm_trap(int Ind, int dir) {
+bool disarm_trap_door(int Ind, int dir) {
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 	return (project_hook(Ind, GF_KILL_TRAP, dir, 0, flg, ""));
 }
@@ -7014,6 +7014,18 @@ bool destroy_doors_touch(int Ind, int rad) {
 
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
 	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_DOOR, flg, ""));
+}
+bool destroy_traps_touch(int Ind, int rad) {
+	player_type *p_ptr = Players[Ind];
+
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
+	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP, flg, ""));
+}
+bool destroy_traps_doors_touch(int Ind, int rad) {
+	player_type *p_ptr = Players[Ind];
+
+	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_HIDE | PROJECT_NODF | PROJECT_NODO;
+	return (project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, 0, GF_KILL_TRAP_DOOR, flg, ""));
 }
 
 bool sleep_monsters_touch(int Ind) {

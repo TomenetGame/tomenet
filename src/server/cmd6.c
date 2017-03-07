@@ -2629,7 +2629,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			break;
 
 		case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
-			if (destroy_doors_touch(Ind, 1)) ident = TRUE;
+			if (destroy_traps_doors_touch(Ind, 1)) ident = TRUE;
 			break;
 
 		case SV_SCROLL_STAR_DESTRUCTION:
@@ -3773,11 +3773,11 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 		break;
 
 	case SV_WAND_DISARMING:
-		if (disarm_trap(Ind, dir)) ident = TRUE;
+		if (disarm_trap_door(Ind, dir)) ident = TRUE;
 		break;
 
 	case SV_WAND_TRAP_DOOR_DEST:
-		if (destroy_door(Ind, dir)) ident = TRUE;
+		if (destroy_trap_door(Ind, dir)) ident = TRUE;
 		break;
 
 	case SV_WAND_STONE_TO_MUD:
@@ -4544,7 +4544,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		break;
 
 	case SV_ROD_DISARMING:
-		if (disarm_trap(Ind, dir)) ident = TRUE;
+		if (disarm_trap_door(Ind, dir)) ident = TRUE;
 		//o_ptr->pval += 30;
 		/* up to 50% faster with maxed MD - the_sandman */
 		o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
@@ -5476,7 +5476,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			return;
 		case ART_CASPANION:
 			msg_print(Ind, "Your armour glows bright red...");
-			destroy_doors_touch(Ind, 1);
+			destroy_traps_doors_touch(Ind, 1);
 			o_ptr->recharging = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
 		case ART_AVAVIR:
@@ -6102,7 +6102,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		/* ToNE-NET additions */
 		case ART_BILBO:
 			msg_print(Ind, "Your picklock flashes...");
-			destroy_doors_touch(Ind, 2);
+			destroy_traps_touch(Ind, 1);
 			o_ptr->recharging = 30 + randint(10) - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		case ART_SOULCURE:
@@ -6131,7 +6131,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_PHASING:
 			msg_print(Ind, "Your surroundings fade.. you are carried away through a tunnel of light!");
-//			msg_print(Ind, "You hear a voice, saying 'Sorry, not yet implemented!'");
+			//msg_print(Ind, "You hear a voice, saying 'Sorry, not yet implemented!'");
 			o_ptr->recharging = 1000;
 			p_ptr->auto_transport = AT_VALINOR;
 			//p_ptr->paralyzed = 1; /* Paranoia? In case there is a timing glitch, allowing to drop the Ring of Phasing before arriving in Valinor ;) */
@@ -6142,6 +6142,14 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "\377u ~j'en prend plein la caboche. Avec le casque Lebohaum, tout ces monstres a la~");
 			msg_print(Ind, "\377u ~con, je leur met bien profond: c'est moi le maitre du dongeon!~'");
 			o_ptr->recharging = 30;
+			break;
+		case ART_SMASHER:
+			if (destroy_doors_touch(Ind, 1)) {
+#ifdef USE_SOUND_2010
+				sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+			}
+			o_ptr->recharging = 15 + randint(3) - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		default: done = FALSE;
 		}

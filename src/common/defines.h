@@ -2632,6 +2632,8 @@
 #define ART_URUKHAI		269
 #define ART_DREADNOUGHT		272
 #define ART_HAVOC		274
+#define ART_EOWYN		275
+#define ART_SMASHER		276
 /* #define ART_ANGTIRCALAD	*/
 
 
@@ -4410,6 +4412,7 @@
 #define GF_KILL_WALL		40
 #define GF_KILL_DOOR		41
 #define GF_KILL_TRAP		42
+#define GF_KILL_TRAP_DOOR	43
 #define GF_MAKE_WALL		45
 #define GF_MAKE_DOOR		46
 #define GF_MAKE_TRAP		47

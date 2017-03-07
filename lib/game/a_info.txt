@@ -1620,7 +1620,7 @@ D:around - and bathe it in the blood of your foes.
 N:115:'Firestar'
 I:21:12:0
 W:19:20:140:25000
-P:0:2d6:6:17:2
+P:0:2d6:6:17:0
 F:BRAND_FIRE | IM_FIRE | ACTIVATE | SHOW_MODS | LITE1
 D:A famed battle-lord of old, with a ruddy head, colored as embers are that
 D:can yet rise up in wrath.
@@ -3417,9 +3417,18 @@ D:The blade of the legendary Shieldmaiden of Rohan, who struck a
 D:mighty blow against the Morgul-lord whom no mortal Man could hinder,
 D:and also slew his foul steed.
 
+# The Club 'Smasher'
+
+N:276:'Smasher'
+I:21:1:3
+W:0:20:40:10000
+P:0:2d4:4:17:0
+F:SHOW_MODS | STR | ACTIVATE
+D:This club has seen many pub fights and a lot of broken wood and bones.
+
 
 #weapon base items that don't have arts yet:
-#Three Piece Rod, Club; Awl-Pike, Rhomphaia
+#Awl-Pike, Rhomphaia
 
 
 # Combined item (3 pieces) Halberd 'Ang-Tir-Calad'
