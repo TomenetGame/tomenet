@@ -3439,8 +3439,8 @@ W:85:70:7:150000
 P:0:0d0:28:29:0
 F:STR | HIDE_TYPE | XTRA_MIGHT | XTRA_SHOTS | SEE_INVIS | RES_FEAR
 F:RES_FIRE | RES_COLD | RES_ELEC | RES_LITE | RES_SOUND
-D:Wielded by Lugh, hero of the skies, no other sling will surpass this one in
-D:the hands of even the most skilled of fighters.
+D:Wielded by Lugh, hero of the skies, this sling will match the skill of even
+D:the greatest of fighters.
 
 
 #weapon base items that don't have arts yet:
