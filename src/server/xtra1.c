@@ -2613,7 +2613,7 @@ int get_weaponmastery_skill(player_type *p_ptr, object_type *o_ptr) {
 	/* EXPERIMENTAL - Hack for priests:
 	   They always get full weapon skill if the weapon is BLESSED,
 	   even if it's not a 'Blunt' type weapon: */
-	if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT) {
+	if (p_ptr->pclass == CLASS_PRIEST && o_ptr->tval != TV_BLUNT && is_melee_weapon(o_ptr->tval)) {
 		u32b dummy, f3;
 
 		object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
