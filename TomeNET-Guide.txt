@@ -10898,6 +10898,12 @@ DISARM          'Fighting' ability.
                 Note that DISARM effects have a chance to be blocked or parried
                 if their attack type can be blocked or parried, which is
                 usually the case (they usually have HIT attack type).
+
+                Sometimes disarmed weapons land in your backpack, but sometimes
+                you drop them to the ground instead. If there is no empty floor
+                (for example because you're fighting on mountain terrain) they
+                will instead be scattered across the dungeon level and you will
+                have to search it to retrieve them.
 FAMINE          none. Makes you hungry.
 SEDUCE          none. Makes you take off equipped items.
                 Can have random side effects, if your HP are still above 40%
