@@ -1783,7 +1783,8 @@ static bool rd_extra(int Ind) {
 	rd_s16b(&p_ptr->invuln);
 	rd_s16b(&p_ptr->hero);
 	rd_s16b(&p_ptr->shero);
-	if (!older_than(4, 3, 7)) strip_bytes(2);//berserk, deprecated		hole
+	if (!older_than(4, 7, 3)) rd_s16b(&p_ptr->body_monster_prev);
+	else if (!older_than(4, 3, 7)) strip_bytes(2);//berserk, deprecated
 	rd_s16b(&p_ptr->shield);
 	if (!older_than(4, 0, 4)) {
 		rd_s16b(&p_ptr->shield_power);
@@ -1924,6 +1925,7 @@ static bool rd_extra(int Ind) {
 	if (!older_than(4, 5, 14)) rd_byte(&p_ptr->sanity_bar);
 	else {
 		int skill = get_skill(p_ptr, SKILL_HEALTH);
+
 		strip_bytes(1);
 		if (skill >= 40) p_ptr->sanity_bar = 3;
 		else if (skill >= 20) p_ptr->sanity_bar = 2;
@@ -1964,7 +1966,7 @@ static bool rd_extra(int Ind) {
 	}
 
 	/* Future use */
-	strip_bytes(6);
+	strip_bytes(6);			//hole
 
 #ifdef SOLO_REKING
 	rd_s32b(&p_ptr->solo_reking);
