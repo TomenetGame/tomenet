@@ -3436,7 +3436,7 @@ D:This club has seen many pub fights and a lot of broken wood and bones.
 N:277:of Lamfada
 I:19:2:3
 W:85:70:7:150000
-P:0:0d0:30:30:0
+P:0:0d0:28:29:0
 F:STR | HIDE_TYPE | XTRA_MIGHT | XTRA_SHOTS | SEE_INVIS | RES_FEAR
 F:RES_FIRE | RES_COLD | RES_ELEC | RES_LITE | RES_SOUND
 D:Wielded by Lugh, hero of the skies, no other sling will surpass this one in
