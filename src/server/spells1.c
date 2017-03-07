@@ -10211,7 +10211,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_EXTRA_SPR: //unused
 			dam = dam - 30;
 			if (dam < 0) break;
-			do_focus_shot(Ind, dam / 6, 30 + dam);
+			do_focus(Ind, dam / 6, 30 + dam);
 			break;
 
 	case GF_SHIELD_PLAYER: //unused

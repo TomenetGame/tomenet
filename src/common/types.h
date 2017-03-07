@@ -2280,7 +2280,7 @@ struct player_type {
 	byte xtrastat_pow;		/* power */
 	s16b xtrastat_which;		/* which */
 
-	s16b focus_time;		/* focus shot */
+	s16b focus_time;		/* focus */
 	s16b focus_val;
 
 	s16b protevil;			/* Timed -- Protection */

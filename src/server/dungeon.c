@@ -4395,7 +4395,7 @@ static bool process_player_end_aux(int Ind) {
 #endif
 	/* xtra shot? - the_sandman */
 	if (p_ptr->focus_time)
-		(void)do_focus_shot(Ind, p_ptr->focus_val, p_ptr->focus_time - minus_magic);
+		(void)do_focus(Ind, p_ptr->focus_val, p_ptr->focus_time - minus_magic);
 
 	/* xtra stats? - the_sandman */
 	if (p_ptr->xtrastat_tim)

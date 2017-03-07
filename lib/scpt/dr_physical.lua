@@ -197,7 +197,7 @@ EXTRASTATS_II = add_spell {
 
 -- A shot that increases a players SPR (if wearing a shooter)
 -- but also decreases his/her speed!
-FOCUSSHOT = add_spell {
+FOCUS = add_spell {
 	["name"] = 	"Focus",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
@@ -208,10 +208,10 @@ FOCUSSHOT = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			do_focus_shot(Ind, 5 + get_level(Ind, FOCUSSHOT, 20), rand_int(5) + 15 + get_level(Ind, FOCUSSHOT, 10))
+			do_focus(Ind, 5 + get_level(Ind, FOCUS, 20), rand_int(5) + 15 + get_level(Ind, FOCUS, 10))
 			end,
 	["info"] = 	function()
-			return "+" .. (5 + get_level(Ind, FOCUSSHOT, 20)) .. " dur d5+" .. (15 + get_level(Ind, FOCUSSHOT, 10))
+			return "+" .. (5 + get_level(Ind, FOCUS, 20)) .. " dur d5+" .. (15 + get_level(Ind, FOCUS, 10))
 			end,
 	["desc"] = 	{ "Increases your accuracy.", }
 }

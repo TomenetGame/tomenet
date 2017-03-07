@@ -388,7 +388,7 @@ bool create_garden(int Ind, int chance) {
  * spell_lvl/2
  * Yep. More druidry. - the_sandman
  */
-bool do_focus_shot(int Ind, int p, int v) {
+bool do_focus(int Ind, int p, int v) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -450,7 +450,7 @@ bool do_focus_shot(int Ind, int p, int v) {
 
 	/* Result */
 	return (TRUE);
-}//focus shot
+}
 
 /*
  * Extra stats! By how much depends on the player's level.
