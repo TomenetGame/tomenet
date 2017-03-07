@@ -3317,9 +3317,13 @@ cptr item_activation(object_type *o_ptr) {
 		return "haste self (20+d20 turns) every 30..100+d50 turns";
 	case ART_ERIRIL:
 		return "identifying every 2..10 turns";
-	case ART_OLORIN:
-//		return "probing, detection and full id every 1000 turns";
+	case ART_RUYIWANG:
+#if 0 /* ART_OLORIN */
+		//return "probing, detection and full id every 1000 turns";
 		return "probing and detection every 5..20 turns";
+#else /* ART_RUYIWANG */
+		return "spinning around every 10..20+d5 turns";
+#endif
 	case ART_EONWE:
 		return "obliteration every 500..1000 turns";
 	case ART_LOTHARANG:
@@ -3487,31 +3491,28 @@ cptr item_activation(object_type *o_ptr) {
 
 	// -------------------- ego items -------------------- //
 
-	// requires some substitution..
 	/* Some ego items can be activated */
+	if (is_ego_p(o_ptr, EGO_DRAGON))
+		return "teleportation every 25..50+d50 turns";
+	if (is_ego_p(o_ptr, EGO_JUMP))
+		return "phase jump every 5..15+d10 turns";
+	if (is_ego_p(o_ptr, EGO_SPINNING))
+		return "spinning around every 15..50+d25 turns";
+	if (is_ego_p(o_ptr, EGO_FURY))
+		return "growing a fury every 50..100+d50 turns";
+	if (is_ego_p(o_ptr, EGO_NOLDOR))
+		return "detecting treasure every 5..20+d10 turns";
+	if (is_ego_p(o_ptr, EGO_SPECTRAL))
+		return "wraithform every 25..50+d50 turns";
+
+	if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
+		return "temporary resistance every 50..150+d40 turns";
 	if (is_ego_p(o_ptr, EGO_AURA_FIRE2))
 		return "temporary fire resistance every 50..150+d40 turns";
 	if (is_ego_p(o_ptr, EGO_AURA_ELEC2))
 		return "temporary lighting resistance every 50..150+d40 turns";
 	if (is_ego_p(o_ptr, EGO_AURA_COLD2))
 		return "temporary frost resistance every 50..150+d40 turns";
-
-	if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
-		return "temporary resistance every 50..150+d40 turns";
-
-	/* divers */
-	if (is_ego_p(o_ptr, EGO_DRAGON))
-		return "teleportation every 25..50+d50 turns";
-	if (is_ego_p(o_ptr, EGO_JUMP))
-		return "phase jump every 10+d10 turns";
-	if (is_ego_p(o_ptr, EGO_SPINNING))
-		return "spinning around every 50+d25 turns";
-	if (is_ego_p(o_ptr, EGO_FURY))
-		return "growing a fury every 50..100+d50 turns";
-	if (is_ego_p(o_ptr, EGO_NOLDOR))
-		return "detecting treasure every 10+d20 turns";
-	if (is_ego_p(o_ptr, EGO_SPECTRAL))
-		return "wraithform every 25..50+d50 turns";
 
 	//EGO_MUSIC_ELDAR, EGO_MUSIC_POWER
 
@@ -3523,65 +3524,65 @@ cptr item_activation(object_type *o_ptr) {
 		switch (o_ptr->sval) {
 		case SV_DRAGON_BLUE:
 			return "breathe lightning (600..1200) every 200+d100 turns";
-//			return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
+			//return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
 		case SV_DRAGON_WHITE:
 			return "breathe frost (600..1200) every 200+d100 turns";
-//			return "polymorph into an Ancient White Dragon every 200+d100 turns";
+			//return "polymorph into an Ancient White Dragon every 200+d100 turns";
 		case SV_DRAGON_BLACK:
 			return "breathe acid (600..1200) every 200+d100 turns";
-//			return "polymorph into an Ancient Black Dragon every 200+d100 turns";
+			//return "polymorph into an Ancient Black Dragon every 200+d100 turns";
 		case SV_DRAGON_GREEN:
 			return "breathe poison (600..1200) every 200+d100 turns";
-//			return "polymorph into an Ancient Green Dragon every 200+d100 turns";
+			//return "polymorph into an Ancient Green Dragon every 200+d100 turns";
 		case SV_DRAGON_RED:
 			return "breathe fire (600..1200) every 200+d100 turns";
-//			return "polymorph into an Ancient Red Dragon every 200+d100 turns";
+			//return "polymorph into an Ancient Red Dragon every 200+d100 turns";
 		case SV_DRAGON_MULTIHUED:
 			return "breathe the elements (600..1200) every 200+d100 turns";
-//			return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
+			//return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
 		case SV_DRAGON_PSEUDO:
 			return "breathe light/dark (200..400) every 200+d100 turns";
-//			return "polymorph into an Ethereal Drake every 200+d100 turns";
+			//return "polymorph into an Ethereal Drake every 200+d100 turns";
 			//return "polymorph into a Pseudo Dragon every 200+d100 turns";
 		case SV_DRAGON_BRONZE:
 			return "breathe confusion (300..600) every 200+d100 turns";
-//			return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
+			//return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
 		case SV_DRAGON_GOLD:
 			return "breathe sound (400..800) every 200+d100 turns";
-//			return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
+			//return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
 		case SV_DRAGON_CHAOS:
 			return "breathe chaos (600..1200) every 200+d100 turns";
-//			return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
+			//return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
 		case SV_DRAGON_LAW:
 			return "breathe shards/sound (400..800) every 200+d100 turns";
-//			return "polymorph into a Great Wyrm of Law every 200+d100 turns";
+			//return "polymorph into a Great Wyrm of Law every 200+d100 turns";
 		case SV_DRAGON_BALANCE:
 			return "breathe disenchantment (500..1000) every 200+d100 turns";
-//			return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
+			//return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
 		case SV_DRAGON_SHINING:
 			return "breathe light/dark (400..800) every 200+d100 turns";
-//			return "polymorph into an Ethereal Dragon every 200+d100 turns";
+			//return "polymorph into an Ethereal Dragon every 200+d100 turns";
 		case SV_DRAGON_POWER:
 			return "breathe havoc (675..1675) every 200+d100 turns";
-//			return "polymorph into a Great Wyrm of Power every 200+d100 turns";
+			//return "polymorph into a Great Wyrm of Power every 200+d100 turns";
 		case SV_DRAGON_DEATH:
 			return "breathe nether (550..1050) every 200+d100 turns";
-//			return "polymorph into a death drake every 200+d100 turns";
+			//return "polymorph into a death drake every 200+d100 turns";
 		case SV_DRAGON_CRYSTAL:
 			return "breathe shards (400..800) every 200+d100 turns";
-//			return "polymorph into a great crystal drake every 200+d100 turns";
+			//return "polymorph into a great crystal drake every 200+d100 turns";
 		case SV_DRAGON_DRACOLICH:
 			return "breathe nether/cold (400..1200) every 200+d100 turns";
-//			return "polymorph into a dracolich every 200+d100 turns";
+			//return "polymorph into a dracolich every 200+d100 turns";
 		case SV_DRAGON_DRACOLISK:
 			return "breathe fire/nexus (250..1200) every 200+d100 turns";
-//			return "polymorph into a dracolisk every 200+d100 turns";
+			//return "polymorph into a dracolisk every 200+d100 turns";
 		case SV_DRAGON_SKY:
 			return "breathe electricity/light/gravity (300..1200) every 200+d100 turns";
-//			return "polymorph into a sky drake every 200+d100 turns";
+			//return "polymorph into a sky drake every 200+d100 turns";
 		case SV_DRAGON_SILVER:
 			return "breathe inertia/cold (250..1200) every 200+d100 turns";
-//			return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
+			//return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
 		}
 	}
 

@@ -1678,20 +1678,20 @@ D:The radiant golden staff of an Istari of legend, this wizard's companion
 D:grants keen sight and the knowledge of many hidden things.
 
 
-# The Quarterstaff of Olorin
+# The Three Piece Rod 'Ruyi Bang'
 #ZAng: Gandalf
 
-N:120:of Olorin
-I:21:3:4
+N:120:'Ruyi Bang'
+I:21:11:4
 W:45:105:140:100000
-P:0:4d8:20:20:15
-F:INT | WIS | CHR | MANA | HIDE_TYPE | SEARCH | SPECIAL_GENE | RES_ACID
-F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC | SLAY_DRAGON | ACTIVATE
-F:HOLD_LIFE | RES_FIRE | RES_SHARDS | RES_NETHER | SEE_INVIS | ESP_EVIL
-F:SHOW_MODS | BRAND_ACID
-D:A staff tall and sturdy, with rough-hewn runes that invoke the element of
-D:Earth, and which strikes down all creatures who live in the shadow of
-D:mountains.
+P:0:3d8:20:20:15
+F:INT | WIS | CHR | MANA | SEARCH | ACTIVATE | SEE_INVIS | ESP_EVIL
+F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SLAY_DRAGON | SLAY_UNDEAD | SLAY_DEMON
+F:HOLD_LIFE | RES_SHARDS | RES_FIRE | RES_COLD | RES_ELEC | BRAND_FIRE
+F:SHOW_MODS | HIDE_TYPE | SPECIAL_GENE
+#D:A staff tall and sturdy, with rough-hewn runes that invoke the element of
+#D:Earth, and which strikes down all creatures who live in the shadow of
+#D:mountains.
 
 
 # The Mace of Disruption 'Deathwreaker'

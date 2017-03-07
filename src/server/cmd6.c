@@ -5494,10 +5494,15 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* XXX Note that the artifact is always de-charged */
 			o_ptr->recharging = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 8);
 			break;
-		case ART_OLORIN:
+		case ART_RUYIWANG:
+#if 0 /* ART_OLORIN */
 			probing(Ind);
 			detection(Ind, DEFAULT_RADIUS * 2);
 			o_ptr->recharging = 20 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
+#else /* ART_RUYIWANG */
+			spin_attack(Ind); /* this one is nicer than do_spin */
+			o_ptr->recharging = 20 + randint(5) - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
+#endif
 			break;
 		case ART_EONWE:
 			msg_print(Ind, "Your axe lets out a long, shrill note...");

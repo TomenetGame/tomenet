@@ -6428,15 +6428,15 @@ The Halls of Mandos (****)   |  -                    | -
 The Orc Cave                 |  Azog                 | -
 Mirkwood                     |  -                    | -
 The Old Forest               |  Old Man Willow       | Boomerang of Beor
-The Helcaraxe                |  White Balrog         | Til-i-arc
+The Helcaraxe                |  White Balrog         | Pike 'Til-i-arc'
 The Sandworm lair            |  Sandworm Queen       | Armour of the Sandworm
 The Heart of the Earth       |  Golgarach            | Space-time Anchor (**)
 The Maze                     |  Minotaur             | Helm of Hammerhand
-Cirith Ungol                 |  Shelob               | Sting
-The Land Of Rhun             |  Ulfang the Black     | Careth Asdriag
-Moria                        |  Balrog of Moria      | Quarterstaff of Olorin
+Cirith Ungol                 |  Shelob               | Smallsword 'Sting'
+The Land Of Rhun             |  Ulfang the Black     | Sabre 'Careth Asdriag'
+Moria                        |  Balrog of Moria      | Quarterstaff 'Ruyi Bang'
 The Small Water Cave         |  Watcher in the Water | Trident of Wrath
-Submerged Ruins              |  Ar-Pharazon          | Toris Mejistos
+Submerged Ruins              |  Ar-Pharazon          | Amulet 'Toris Mejistos'
 The Illusory Castle          |  King in Yellow       | Helm of Knowledge
 The Sacred Land Of Mountains |  T'ron  (level 72!)   | Coat of T'ron
 Erebor                       |  Smaug                | Arkenstone of Thrain
