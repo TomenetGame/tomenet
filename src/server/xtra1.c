@@ -2669,10 +2669,9 @@ int get_archery_skill(player_type *p_ptr) {
 int calc_blows_obj(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 	int str_index, dex_index, eff_weight = o_ptr->weight;
-	u32b f1;
-	artifact_type *a_ptr;
+	u32b f1, f2, f3, f4, f5, f6, esp;
+	int num = 0, wgt = 0, mul = 0, div = 0, num_blow = 0, str_adj;
 
-	int num = 0, wgt = 0, mul = 0, div = 0, num_blow = 0, str_adj, xblow = 0;
 
 	/* cap for Grond. Heaviest normal weapon is MoD at 40.0, which Grond originally was, too. - C. Blue */
 	if (eff_weight > 400) eff_weight = 400;
@@ -2748,34 +2747,21 @@ otherwise, let's compromise for now: */
 	/* Require at least one blow */
 	if (num_blow < 1) num_blow = 1;
 
+
 	/* Boost blows with masteries */
 	if ((num = get_weaponmastery_skill(p_ptr, o_ptr)) != -1)
 		num_blow += get_skill_scale(p_ptr, num, 2);
 
-#if 0
-	f1 = k_info[o_ptr->k_idx].flags1;
-#else
-	u32b f2, f3, f4, f5, f6, esp;
+
 	/* Extract the item flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-#endif
-	if (f1 & (TR1_BLOWS)) xblow = o_ptr->bpval;
-	if (o_ptr->name2) {
-		a_ptr = ego_make(o_ptr);
-		f1 &= ~(k_info[o_ptr->k_idx].flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+	if (f1 & TR1_BLOWS) {
+		if (o_ptr->name1) num_blow += o_ptr->pval;
+		else if (o_ptr->name2) {
+			if (k_info[o_ptr->k_idx].flags1 & TR1_BLOWS) num_blow += o_ptr->bpval; /* EA rings only */
+			else num_blow += o_ptr->pval; /* normal EA ego power */
+		} else num_blow += o_ptr->bpval; /* EA rings only */
 	}
-	if (o_ptr->name1 == ART_RANDART) {
-		a_ptr = randart_make(o_ptr);
-		f1 &= ~(k_info[o_ptr->k_idx].flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
-	}
-	if ((f1 & TR1_BLOWS)
-#if 1 /* this appearently works */
-	    && o_ptr->pval > xblow) xblow = o_ptr->pval;
-#else /* this is how it's done in xtra1.c though */
-      /* this allows shadow blade of ea (+2) (+n) to give +2+n EA */
-		) xblow += o_ptr->pval;
-#endif
-	num_blow += xblow;
 
 	return (num_blow);
 }
