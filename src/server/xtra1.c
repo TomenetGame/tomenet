@@ -2756,11 +2756,11 @@ otherwise, let's compromise for now: */
 	/* Extract the item flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (f1 & TR1_BLOWS) {
-		if (o_ptr->name1) num_blow += o_ptr->pval;
+		if (o_ptr->name1) num_blow += o_ptr->pval; /* normal EA artifact weapon */
 		else if (o_ptr->name2) {
-			if (k_info[o_ptr->k_idx].flags1 & TR1_BLOWS) num_blow += o_ptr->bpval; /* EA rings only */
-			else num_blow += o_ptr->pval; /* normal EA ego power */
-		} else num_blow += o_ptr->bpval; /* EA rings only */
+			if (k_info[o_ptr->k_idx].flags1 & TR1_BLOWS) num_blow += o_ptr->bpval; /* <-not needed: there is no weapon with EA on base item (only item that has it are actually EA rings) */
+			else num_blow += o_ptr->pval; /* normal EA ego weapon */
+		} else num_blow += o_ptr->bpval; /* <-not needed: there is no weapon with EA on base item (only item that has it are actually EA rings) */
 	}
 
 	return (num_blow);
@@ -3848,7 +3848,7 @@ void calc_boni(int Ind) {
 #endif
 			/* Affect spells */
 			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
-//			if (k_ptr->flags1 & TR1_SPELL_SPEED) extra_spells += o_ptr->bpval;
+			//if (k_ptr->flags1 & TR1_SPELL_SPEED) extra_spells += o_ptr->bpval;
 
 			/* Affect mana capacity */
 			if (f1 & (TR1_MANA)) {
@@ -3876,30 +3876,12 @@ void calc_boni(int Ind) {
 #endif
 		}
 
-#if 0 /* deprecated, see text */
-		/* bad hack for certain double-egos, sorry. need redesign of boni - C. Blue
-		    *** deprecated, because VAMPIRIC no longer gives -LIFE ***
-		   fixes the vampiric shadow blade bug / affects all -life +basestealth weapons:
-		   (+2)(-2stl) -> life remains unchanged, stealth is increased by 2:
-		   both mods affect the life! Correct mod affects the stealth, but it's displayed wrong.
-		   pval should contain life bonus, bpval stealth. */
-/*		if (o_ptr->name2 == EGO_VAMPIRIC || o_ptr->name2b == EGO_VAMPIRIC)	*/
-		if ((f1 & (TR1_LIFE)) && o_ptr->pval != 0 && o_ptr->bpval != 0) {
-			/* first we remove both effects on +LIFE */
-			p_ptr->to_l -= o_ptr->pval + o_ptr->bpval;
-			/* then we add the correct one, which is the wrong one ;) */
-/*			if (o_ptr->pval < 0) p_ptr->to_l += o_ptr->pval;
-			if (o_ptr->bpval < 0) p_ptr->to_l += o_ptr->bpval;		*/
-			p_ptr->to_l += o_ptr->pval;
-		}
-#endif
-
 		/* Next, add our ego bonuses */
 		/* Hack -- clear out any pval bonuses that are in the base item
 		 * bonus but not the ego bonus so we don't add them twice.
-		*/
+		 */
 #if 1
-//		if (o_ptr->name2 && o_ptr->tval != TV_RING) // pls see apply_magic ;)
+		//if (o_ptr->name2 && o_ptr->tval != TV_RING) // pls see apply_magic ;)
 		if (o_ptr->name2) {
 			artifact_type *a_ptr;
 
