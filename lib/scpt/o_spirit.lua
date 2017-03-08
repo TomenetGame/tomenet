@@ -269,15 +269,15 @@ function get_olightningbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, OLIGHTNINGBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 3 + ((lev * 4) / 5), 6 + ((lev * 2) / 3)
+	return 4 + ((lev * 4) / 5), 6 + ((lev * 2) / 3)
 end
 OLIGHTNINGBOLT_I = add_spell {
 	["name"] = 	"Lightning I",
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	10,
-	["mana"] = 	2,
-	["mana_max"] = 	2,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
 	["fail"] = 	-10,
 	["direction"] = TRUE,
 	["ftk"] = 1,
@@ -297,8 +297,8 @@ OLIGHTNINGBOLT_II = add_spell {
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	25,
-	["mana"] = 	8,
-	["mana_max"] = 	8,
+	["mana"] = 	9,
+	["mana_max"] = 	9,
 	["fail"] = 	-40,
 	["direction"] = TRUE,
 	["ftk"] = 1,
@@ -318,8 +318,8 @@ OLIGHTNINGBOLT_III = add_spell {
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	40,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
+	["mana"] = 	17,
+	["mana_max"] = 	17,
 	["fail"] = 	-80,
 	["direction"] = TRUE,
 	["ftk"] = 1,
