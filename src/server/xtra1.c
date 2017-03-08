@@ -2682,26 +2682,23 @@ int calc_blows_obj(int Ind, object_type *o_ptr) {
 	    (!p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) &&
 	    (k_info[o_ptr->k_idx].flags4 & (TR4_SHOULD2H | TR4_MUST2H | TR4_COULD2H)))
 		eff_weight = (eff_weight * 2) / 3; /* probably more sensible, but..see the line below :/ */
-//too easy!	eff_weight = (eff_weight * 1) / 2; /* get 2bpr with 18/30 str even with broad axe starting weapon */
+		//too easy!	eff_weight = (eff_weight * 1) / 2; /* get 2bpr with 18/30 str even with broad axe starting weapon */
 
 	/* Analyze the class */
 	switch (p_ptr->pclass) {
-		case CLASS_ADVENTURER: num = 4; wgt = 35; mul = 4; break;//wgt=35, but MA is too easy in comparison.
-//was num = 5; ; mul = 6
+		case CLASS_ADVENTURER: num = 4; wgt = 35; mul = 4; break;//wgt=35, but MA is too easy in comparison. //was num = 5; ; mul = 6
 		case CLASS_WARRIOR: num = 6; wgt = 30; mul = 5; break;
-		case CLASS_MAGE: num = 1; wgt = 40; mul = 2; break;
-//was num = 3; ; 
+		case CLASS_MAGE: num = 1; wgt = 40; mul = 2; break; //was num = 3; ;
 #ifdef ENABLE_CPRIEST
 		case CLASS_CPRIEST:
 #endif
-		case CLASS_PRIEST: num = 4; wgt = 35; mul = 4; break;//mul3
-//was num = 5; ; 
+		case CLASS_PRIEST: num = 4; wgt = 35; mul = 4; break;//mul3 //was num = 5; ;
 		case CLASS_ROGUE: num = 5; wgt = 30; mul = 4; break; /* was mul = 3 - C. Blue - EXPERIMENTAL */
 		/* I'm a rogue like :-o */
 		case CLASS_RUNEMASTER: num = 4; wgt = 30; mul = 4; break;//was wgt = 40
-//trying 5bpr	case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
+		//trying 5bpr	case CLASS_MIMIC: num = 4; wgt = 30; mul = 4; break;//mul3
 		case CLASS_MIMIC: num = 5; wgt = 35; mul = 5; break;//mul3; mul4!
-//		case CLASS_ARCHER: num = 3; wgt = 30; mul = 3; break;
+		//case CLASS_ARCHER: num = 3; wgt = 30; mul = 3; break;
 		case CLASS_ARCHER: num = 3; wgt = 35; mul = 4; break;
 #ifdef ENABLE_DEATHKNIGHT
 		case CLASS_DEATHKNIGHT:
@@ -2712,13 +2709,13 @@ int calc_blows_obj(int Ind, object_type *o_ptr) {
 		case CLASS_PALADIN: num = 5; wgt = 35; mul = 5; break;//mul4
 		case CLASS_RANGER: num = 5; wgt = 35; mul = 4; break;//mul4
 		case CLASS_DRUID: num = 4; wgt = 35; mul = 4; break;
-/* if he is to become a spellcaster, necro working on spell-kills:
+		/* if he is to become a spellcaster, necro working on spell-kills:
 		case CLASS_SHAMAN: num = 2; wgt = 40; mul = 3; break;
-    however, then Martial Arts would require massive nerfing too for this class (or being removed even).
-otherwise, let's compromise for now: */
+		    however, then Martial Arts would require massive nerfing too for this class (or being removed even).
+		    otherwise, let's compromise for now: */
 		case CLASS_SHAMAN: num = 4; wgt = 35; mul = 4; break;
 		case CLASS_MINDCRAFTER: num = 5; wgt = 35; mul = 4; break;//was 4,30,4
-/*		case CLASS_BARD: num = 4; wgt = 35; mul = 4; break; */
+		/*case CLASS_BARD: num = 4; wgt = 35; mul = 4; break; */
 	}
 
 	/* Enforce a minimum "weight" (tenth pounds) */
@@ -2756,11 +2753,16 @@ otherwise, let's compromise for now: */
 	/* Extract the item flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (f1 & TR1_BLOWS) {
-		if (o_ptr->name1) num_blow += o_ptr->pval; /* normal EA artifact weapon */
-		else if (o_ptr->name2) {
-			if (k_info[o_ptr->k_idx].flags1 & TR1_BLOWS) num_blow += o_ptr->bpval; /* <-not needed: there is no weapon with EA on base item (only item that has it are actually EA rings) */
-			else num_blow += o_ptr->pval; /* normal EA ego weapon */
-		} else num_blow += o_ptr->bpval; /* <-not needed: there is no weapon with EA on base item (only item that has it are actually EA rings) */
+		if (o_ptr->name1) num_blow += o_ptr->pval;
+		else {
+			if (k_info[o_ptr->k_idx].flags1 & TR1_BLOWS) num_blow += o_ptr->bpval;
+			if (o_ptr->name2) {
+				artifact_type *a_ptr = ego_make(o_ptr);
+
+				f1 &= ~(k_info[o_ptr->k_idx].flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+				if (f1 & TR1_BLOWS) num_blow += o_ptr->pval;
+			}
+		}
 	}
 
 	return (num_blow);
@@ -2809,29 +2811,23 @@ int calc_blows_weapons(int Ind) {
 }
 
 int calc_crit_obj(int Ind, object_type *o_ptr) {
-	artifact_type *a_ptr;
 	int xcrit = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-	if (f5 & (TR5_CRIT)) xcrit = o_ptr->bpval;
-	/* check for either.. */
-	if (o_ptr->name2) {
-		/* additional crits from an ego power, or.. */
-		a_ptr = ego_make(o_ptr);
-		f5 &= ~(k_info[o_ptr->k_idx].flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	if (f5 & TR5_CRIT) {
+		if (o_ptr->name1) xcrit += o_ptr->pval;
+		else {
+			if (k_info[o_ptr->k_idx].flags5 & TR5_CRIT) xcrit += o_ptr->bpval;
+			if (o_ptr->name2) {
+				artifact_type *a_ptr = ego_make(o_ptr);
+
+				f5 &= ~(k_info[o_ptr->k_idx].flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+				if (f5 & TR5_CRIT) xcrit += o_ptr->pval;
+			}
+		}
 	}
-	if (o_ptr->name1 == ART_RANDART) {
-		/* additional crits from a randart power. */
-		a_ptr = randart_make(o_ptr);
-		f5 &= ~(k_info[o_ptr->k_idx].flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
-	}
-	if ((f5 & TR5_CRIT)
-#if 0 /* this appearently works */
-	    && o_ptr->pval > xcrit) xcrit = o_ptr->pval;
-#else /* this is how it's done in xtra1.c though */
-		) xcrit += o_ptr->pval; /* no intrinsic +CRIT items in k_info.txt at the moment anyway, so it doesn't matter which way we choose */
-#endif
+
 	return (xcrit);
 }
 
@@ -3848,8 +3844,8 @@ void calc_boni(int Ind) {
 			/* Affect spells */
 			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
 
-			/* Affect mana capacity */
-			if (f1 & (TR1_MANA)) {
+			/* Affect mana capacity -- currently doesn't exist as base bonus */
+			if (k_ptr->flags1 & TR1_MANA) {
 				if ((f4 & TR4_SHOULD2H) &&
 				    (p_ptr->inventory[INVEN_WIELD].k_idx && p_ptr->inventory[INVEN_ARM].k_idx))
 					{ p_ptr->to_m += (o_ptr->bpval * 20) / 3; csheet_boni[i-INVEN_WIELD].mxmp += o_ptr->bpval; }
@@ -3857,21 +3853,19 @@ void calc_boni(int Ind) {
 					{ p_ptr->to_m += o_ptr->bpval * 10; csheet_boni[i-INVEN_WIELD].mxmp += o_ptr->bpval; }
 			}
 
-			/* Affect life capacity */
-			if ((f1 & (TR1_LIFE)) &&
+			/* Affect life capacity -- currently doesn't exist as base bonus */
+			if ((k_ptr->flags1 & TR1_LIFE) &&
 			    ((o_ptr->name1 != ART_RANDART) ||
 			    (make_resf(p_ptr) & RESF_LIFE) ||
-			    o_ptr->bpval < 0))
+			    o_ptr->bpval < 0)) //(hack: negative LIFE boni do get applied from randarts even for non-eligible characters)
 				{ p_ptr->to_l += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].mxhp += o_ptr->bpval; }
 		}
 
 		if (k_ptr->flags5 & TR5_PVAL_MASK) {
-			if (f5 & TR5_DISARM) p_ptr->skill_dis += (o_ptr->bpval) * 5;
-			if (f5 & TR5_LUCK) { p_ptr->luck += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].luck += o_ptr->bpval; }
-#if 1 /* this is too much for dual-wield, done in calc_blows_obj() now */
-/* There are no known weapons so far that adds to crit intrinsically. */
-			if (f5 & TR5_CRIT) { p_ptr->xtra_crit += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].crit += o_ptr->bpval; }
-#endif
+			if (k_ptr->flags5 & TR5_DISARM) p_ptr->skill_dis += (o_ptr->bpval) * 5;
+			if (k_ptr->flags5 & TR5_LUCK) { p_ptr->luck += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].luck += o_ptr->bpval; }
+			/* There are no known weapons so far that add to crit intrinsically. */
+			if (k_ptr->flags5 & TR5_CRIT) { p_ptr->xtra_crit += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].crit += o_ptr->bpval; }
 		}
 
 		/* Next, add our ego bonuses */
@@ -3883,7 +3877,7 @@ void calc_boni(int Ind) {
 		if (o_ptr->name2) {
 			artifact_type *a_ptr;
 
-			a_ptr =	ego_make(o_ptr);
+			a_ptr = ego_make(o_ptr);
 			f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
 			f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
 

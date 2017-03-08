@@ -3010,8 +3010,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* Dump "pval" flags for wearable items */
 		if (known && (((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK)))
 		    || o_ptr->tval == TV_GOLEM || o_ptr->tval == TV_TRAPKIT)) {
-			/* Hack -- first display any base pval bonuses.
-			 * The "bpval" flags are never displayed.  */
+			/* Hack -- first display any base pval bonuses. */
 			if (o_ptr->bpval && !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL)) {
 				if (!(mode & 8)) t = object_desc_chr(t, ' ');
 				t = object_desc_chr(t, p1);
@@ -3021,16 +3020,17 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				/* hack (originally just for plain talismans, since it doesn't say "amulet of luck"
 				   to give a hint to newbies what they do) to display a basic bpval property: */
 				if (!o_ptr->pval && !(f3 & TR3_HIDE_TYPE)) {
-					if (f1 & TR1_SPEED) t = object_desc_str(t, !(mode & 8) ? " to speed" : "spd");
-					else if (f1 & TR1_BLOWS) {
+					if (k_ptr->flags1 & TR1_LIFE) t = object_desc_str(t, !(mode & 8) ? " to life" : "life");
+					else if (k_ptr->flags1 & TR1_SPEED) t = object_desc_str(t, !(mode & 8) ? " to speed" : "spd");
+					else if (k_ptr->flags1 & TR1_BLOWS) {
 						t = object_desc_str(t, !(mode & 8) ? " attack" : "at");
-						if (ABS(o_ptr->pval) != 1 && !(mode & 8)) t = object_desc_chr(t, 's');
-					} else if (f5 & (TR5_CRIT)) t = object_desc_str(t, !(mode & 8) ? " critical hits" : "crt");
-					else if (f1 & TR1_STEALTH) t = object_desc_str(t, !(mode & 8) ? " to stealth" : "stl");
-					else if (f1 & TR1_SEARCH) t = object_desc_str(t, !(mode & 8) ? " to searching" : "srch");
-					else if (f1 & TR1_INFRA) t = object_desc_str(t, !(mode & 8) ? " to infravision" : "infr");
-					else if (f5 & TR5_LUCK) t = object_desc_str(t, !(mode & 8) ? " to luck" : "luck");
-					else if (f1 & TR1_TUNNEL) {}
+						if (ABS(o_ptr->bpval) != 1 && !(mode & 8)) t = object_desc_chr(t, 's');
+					} else if (k_ptr->flags5 & (TR5_CRIT)) t = object_desc_str(t, !(mode & 8) ? " critical hits" : "crt");
+					else if (k_ptr->flags1 & TR1_STEALTH) t = object_desc_str(t, !(mode & 8) ? " to stealth" : "stl");
+					else if (k_ptr->flags1 & TR1_SEARCH) t = object_desc_str(t, !(mode & 8) ? " to searching" : "srch");
+					else if (k_ptr->flags1 & TR1_INFRA) t = object_desc_str(t, !(mode & 8) ? " to infravision" : "infr");
+					else if (k_ptr->flags5 & TR5_LUCK) t = object_desc_str(t, !(mode & 8) ? " to luck" : "luck");
+					else if (k_ptr->flags1 & TR1_TUNNEL) {}
 				}
 #endif
 				/* finish with closing bracket ')' */
@@ -3044,6 +3044,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 #endif
 			/* Next, display any pval bonuses. */
 			if (o_ptr->pval) {
+				artifact_type *a_ptr;
+
 				/* Start the display */
 				if (!(mode & 8)) t = object_desc_chr(t, ' ');
 				t = object_desc_chr(t, p1);
@@ -3051,9 +3053,20 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				/* Dump the "pval" itself */
 				t = object_desc_int(t, o_ptr->pval);
 
+				/* Don't confuse ego flags with kind flags.. */
+				if (o_ptr->name2) {
+					a_ptr = ego_make(o_ptr);
+					f1 &= ~(k_ptr->flags1 & TR1_PVAL_MASK & ~a_ptr->flags1);
+					f5 &= ~(k_ptr->flags5 & TR5_PVAL_MASK & ~a_ptr->flags5);
+				}
+
 				/* Do not display the "pval" flags */
-				if (f3 & TR3_HIDE_TYPE) {
+				if ((f3 & TR3_HIDE_TYPE) || o_ptr->name1) {
 					/* Nothing */
+				}
+				/* Life */
+				else if (f1 & TR1_LIFE) {
+					t = object_desc_str(t, !(mode & 8) ? " to life" : "life");
 				}
 				/* Speed */
 				else if (f1 & TR1_SPEED) {
