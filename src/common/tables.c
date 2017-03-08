@@ -151,7 +151,7 @@ byte adj_int_pow[] = {
  * (slevel, smana, sfail, sexp, ftk)
  */
 magic_type innate_powers[96] = {
-/* 0, mana, fail, 0 */
+/* 0(lev), mana, fail, 0(exp), ftk */
 // RF4_SHRIEK                   0x00000001      /* Shriek for help */
   {0, 2, 0, 0, 0},
 // RF4_UNMAGIC                  0x00000002      /* (?) */
@@ -275,15 +275,15 @@ magic_type innate_powers[96] = {
 // RF5_MISSILE                  0x04000000      /* Magic Missile */
   {0, 2, 5, 0, 1},
 // RF5_SCARE                    0x08000000      /* Frighten Player */
-  {0, 3, 8, 0, 2},
+  {0, 3, 8, 0, 0},
 // RF5_BLIND                    0x10000000      /* Blind Player */
-  {0, 5, 8, 0, 2},
+  {0, 5, 8, 0, 0},
 // RF5_CONF                     0x20000000      /* Confuse Player */
-  {0, 5, 8, 0, 2},
+  {0, 5, 8, 0, 0},
 // RF5_SLOW                     0x40000000      /* Slow Player */
-  {0, 7, 10, 0, 2},
+  {0, 7, 10, 0, 0},
 // RF5_HOLD                     0x80000000      /* Paralyze Player (translates into forced monsleep) */
-  {0, 5, 10, 0, 2},
+  {0, 5, 10, 0, 0},
 
 /*
  * New monster race bit flags
@@ -317,7 +317,7 @@ magic_type innate_powers[96] = {
 // RF6_TRAPS                    0x00002000      /* Create Traps */
   {0, 15, 25, 0, 0},
 // RF6_FORGET                   0x00004000      /* Cause amnesia */
-  {0, 25, 35, 0, 2},
+  {0, 25, 35, 0, 0},
 
 };
 
