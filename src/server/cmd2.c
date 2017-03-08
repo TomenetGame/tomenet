@@ -5230,6 +5230,7 @@ void do_cmd_fire(int Ind, int dir) {
 		/* Hack -- sorta magic */
 		returning = TRUE;
 	}
+	if (p_ptr->blind) chance >>= 2;
 //s_printf("R chance %d, skill_thb %d, bonus %d\n", chance, p_ptr->skill_thb, bonus); //DEBUG hit chance
 	/* Is this magic Arrow or magic shots or magic bolts? */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) {
@@ -6885,6 +6886,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Chance of hitting */
 	chance = (p_ptr->skill_tht + (p_ptr->to_h * BTH_PLUS_ADJ));
+	if (p_ptr->blind) chance >>= 2;
 
 
 	/* Take a turn */

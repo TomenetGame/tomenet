@@ -2964,6 +2964,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		/* Calculate the "attack quality" */
 		bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
+		if (p_ptr->blind) chance >>= 1;
 
 #ifdef TEST_SERVER
 		p_ptr->test_attacks++;
@@ -4093,6 +4094,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		/* Calculate the "attack quality" */
 		bonus = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_melee;
 		chance = (p_ptr->skill_thn + (bonus * BTH_PLUS_ADJ));
+		if (p_ptr->blind) chance >>= 1;
 //s_printf("M chance %d, skill_thn %d, bonus %d\n", chance, p_ptr->skill_thn, bonus);//DEBUG hit chance
 
 		/* Plan ahead if a missed attack would be a blocked or parried one or just an
