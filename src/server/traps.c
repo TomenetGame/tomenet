@@ -1307,6 +1307,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			{
 				s16b i;
 				object_type *j_ptr;
+
 				for (i = 0; i < INVEN_PACK; i++) {
 					if (!p_ptr->inventory[i].k_idx) continue;
 					j_ptr = &p_ptr->inventory[i];
@@ -1316,12 +1317,14 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 							j_ptr->sval = rand_int(SV_WAND_NASTY_WAND);
 							j_ptr->k_idx = lookup_kind(j_ptr->tval, j_ptr->sval);
 							p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+							p_ptr->window |= PW_INVEN;
 						}
 						if ((j_ptr->sval >= SV_STAFF_NASTY_STAFF) && (rand_int(5) == 1)) {
 							if (object_known_p(Ind, j_ptr)) ident = TRUE;
 							j_ptr->sval = rand_int(SV_STAFF_NASTY_STAFF);
 							j_ptr->k_idx = lookup_kind(j_ptr->tval, j_ptr->sval);
 							p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+							p_ptr->window |= PW_INVEN;
 						}
 					}
 				}
