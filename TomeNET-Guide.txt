@@ -15793,8 +15793,7 @@ school.
     Chaos Bolt      Channels the powers of chaos into a bolt.
                     Required skill level for first spell level: 32.
 
-    Wicked Oath
-                    Restores drained stats and lost experience.
+    Wicked Oath     Restores drained stats and lost experience.
                     Required skill level for first spell level: 35.
 
     Levitation      Grants the power of levitation.
