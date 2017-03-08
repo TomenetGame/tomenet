@@ -5329,7 +5329,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 	/* Very good */
 	if (power > 1) {
 		/* Make ego item */
-//		if (!rand_int(RANDART_JEWEL) && (o_ptr->tval == TV_LITE)) create_artifact(o_ptr, FALSE, TRUE);	else
+		//if (!rand_int(RANDART_JEWEL) && (o_ptr->tval == TV_LITE)) create_artifact(o_ptr, FALSE, TRUE);	else
 		make_ego_item(level, o_ptr, TRUE, resf);
 	} else if (power < -1) {
 		/* Make ego item */
@@ -5352,8 +5352,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 				i = rand_int(max_spells);
 
 				/* Only random ones */
-//				if (exec_lua(format("return can_spell_random(%d)", i)) == FALSE)
-//					continue;
+				//if (exec_lua(format("return can_spell_random(%d)", i)) == FALSE) continue;
 
 				/* Test if it passes the level check */
 				if (rand_int(school_spells[i].skill_level * 3) <= level) {
@@ -5653,6 +5652,9 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		//o_ptr->timeout = 0;
 		o_ptr->timeout_magic = 0;
 		o_ptr->recharging = 0;
+
+		/* Fuelable artifact lights shouldn't always start at 0 energy */
+		if (o_ptr->tval == TV_LITE) a_m_aux_4(o_ptr, lev, power, resf);
 
 		/* clear flags from pre-artified item, simulating
 		   generation of a brand new object. */
