@@ -6024,7 +6024,7 @@ void do_cmd_fire(int Ind, int dir) {
 						if (visible) {
 							char hit_desc[MAX_CHARS];
 							sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
-							hit_desc[0] = toupper(hit_desc[0]);
+							hit_desc[2] = toupper(hit_desc[2]);
 							msg_print(Ind, hit_desc);
 						}
 						hit_body = 1;
@@ -6120,7 +6120,7 @@ void do_cmd_fire(int Ind, int dir) {
 							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 							/* Message */
-							msg_format(Ind, "%s appears confused.", m_name);
+							msg_format(Ind, "%^s appears confused.", m_name);
 						}
 					}
 #endif	// 0
@@ -7176,7 +7176,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					if (visible) {
 						char hit_desc[MAX_CHARS];
 						sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
-						hit_desc[0] = toupper(hit_desc[0]);
+						hit_desc[2] = toupper(hit_desc[2]);
 						msg_print(Ind, hit_desc);
 					}
 					break;

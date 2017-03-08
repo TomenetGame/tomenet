@@ -1079,14 +1079,15 @@ bool make_attack_melee(int Ind, int m_idx) {
 					msg_format(Ind, "%^s %s.", m_name, act);
 				strcpy(dam_msg, ""); /* suppress 'bla hits you for x dam' message! */
 			} else if ((act) && (r_ptr->flags1 & (RF1_UNIQUE))) {
-//				msg_format(Ind, "%^s %s for \377f%d \377wdamage.", m_name, act, damage);
-//				sprintf(dam_msg, "%^s %s for \377f%%d \377wdamage.", m_name, act);
+				//msg_format(Ind, "%^s %s for \377f%d \377wdamage.", m_name, act, damage);
+				//sprintf(dam_msg, "%^s %s for \377f%%d \377wdamage.", m_name, act);
 				sprintf(dam_msg, "%s %s for \377f%%d \377wdamage.", m_name, act);
 			} else if (act) {
-//				msg_format(Ind, "%^s %s for \377r%d \377wdamage.", m_name, act, damage);
-//				sprintf(dam_msg, "%^s %s for \377r%%d \377wdamage.", m_name, act);
+				//msg_format(Ind, "%^s %s for \377r%d \377wdamage.", m_name, act, damage);
+				//sprintf(dam_msg, "%^s %s for \377r%%d \377wdamage.", m_name, act);
 				sprintf(dam_msg, "%s %s for \377r%%d \377wdamage.", m_name, act);
 			}
+			dam_msg[0] = toupper(dam_msg[0]);
 
 
 			/* The undead can give the player the Black Breath with

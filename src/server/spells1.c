@@ -5535,8 +5535,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	    && !rand_int(52 - r_ptr->level / 3)) { /* small chance to block spells */
 		if (seen) {
 			char hit_desc[MAX_CHARS];
+
 			sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
-			hit_desc[0] = toupper(hit_desc[0]);
+			hit_desc[2] = toupper(hit_desc[2]);
 			msg_print(Ind, hit_desc);
 		}
 		return TRUE; /* notice */
@@ -9063,7 +9064,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (blind) msg_print(Ind, "Something bounces!");
 		else {
 			if (p_ptr->play_vis[0 - who])
-				msg_format(Ind, "%s attack bounces!", m_name_gen);
+				msg_format(Ind, "%^s attack bounces!", m_name_gen);
 			else
 				msg_print(Ind, "Its attack bounces!");
 		}
@@ -11203,6 +11204,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	/* Blindness is currently ignored for this function */
 	/*bool blind;*/
 
+
+	/* Non-unique monster names might start on lower-case, due to usage of snprintf() which doesn't know '%^s' formatting.. */
+	attacker[0] = toupper(attacker[0]);
 
 	/* Hack: GF_CAUSE does travel by LoS but isn't a real bolt and actually unavoidable, except by saving throw! */
 	if (typ == GF_CAUSE) flg |= PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;

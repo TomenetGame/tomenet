@@ -2406,7 +2406,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #ifdef USE_SOUND_2010
 		sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
 #endif
-//can be spammy!	s_printf("SHRIEK: %s -> %s.\n", m_name, p_ptr->name);
+		//can be spammy!	s_printf("SHRIEK: %s -> %s.\n", m_name, p_ptr->name);
 		aggravate_monsters(Ind, m_idx);
 		break;
 

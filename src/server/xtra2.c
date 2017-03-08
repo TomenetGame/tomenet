@@ -5341,6 +5341,7 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 
 			snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s explodes for", m_name);
+			p_ptr->attacker[0] = toupper(p_ptr->attacker[0]);
 			project(m_idx, 3, wpos, y, x, damage > base_damage ? base_damage : damage, typ, flg, p_ptr->attacker);
 			break;
 		}
