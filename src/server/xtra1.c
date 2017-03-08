@@ -2927,7 +2927,7 @@ void calc_boni(int Ind) {
 	int old_dis_to_h, old_to_h_melee;
 	int old_dis_to_d, old_to_d_melee;
 
-//	int extra_blows;
+	//int extra_blows;
 	int extra_shots;
 	int extra_spells;
 	bool never_blow = FALSE, never_blow_ranged = FALSE;
@@ -2992,7 +2992,7 @@ void calc_boni(int Ind) {
 	old_to_d_melee = p_ptr->to_d_melee;
 
 	/* Clear extra blows/shots */
-//	extra_blows = extra_shots = extra_spells = 0;
+	//extra_blows = extra_shots = extra_spells = 0;
 	extra_shots = extra_spells = 0;
 
 	/* Clear the stat modifiers */
@@ -3123,7 +3123,7 @@ void calc_boni(int Ind) {
 	p_ptr->weapon_parry = 0;
 	p_ptr->no_cut = FALSE;
 	p_ptr->reduce_insanity = 0;
-//	p_ptr->to_s = 0;
+	//p_ptr->to_s = 0;
 	p_ptr->to_m = 0;
 	p_ptr->to_l = 0;
 	p_ptr->to_hp = 0;
@@ -3260,9 +3260,9 @@ void calc_boni(int Ind) {
 		if (p_ptr->fruit_bat) {
 			if (p_ptr->fruit_bat == 1) {
 				p_ptr->pspeed += 10; //disabled due to bat-party-powerlevel-cheezing
-//				p_ptr->pspeed += (3 + (p_ptr->lev > 49 ? 7 : p_ptr->lev / 7)); // +10 eventually.
-//				p_ptr->pspeed += (3 + (p_ptr->lev > 42 ? 7 : p_ptr->lev / 6)); // +10 eventually.
-//				p_ptr->pspeed += (3 + (p_ptr->lev > 35 ? 7 : p_ptr->lev / 5)); // +10 eventually.
+				//p_ptr->pspeed += (3 + (p_ptr->lev > 49 ? 7 : p_ptr->lev / 7)); // +10 eventually.
+				//p_ptr->pspeed += (3 + (p_ptr->lev > 42 ? 7 : p_ptr->lev / 6)); // +10 eventually.
+				//p_ptr->pspeed += (3 + (p_ptr->lev > 35 ? 7 : p_ptr->lev / 5)); // +10 eventually.
 				if (p_ptr->vampiric_melee < 50) { p_ptr->vampiric_melee = 50; csheet_boni->cb[6] |= CB7_RVAMP; }
 			} else {
 				p_ptr->pspeed += 3;
@@ -3634,7 +3634,7 @@ void calc_boni(int Ind) {
 		p_ptr->levitate = TRUE; csheet_boni[14].cb[5] |= CB6_RLVTN; /* redundant */
 		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL;
 		/*p_ptr->tim_wraith = 10000; redundant*/
-//		p_ptr->invis += 5; */ /* No. */
+		//p_ptr->invis += 5; */ /* No. */
 	}
 
 	/* Hack -- apply racial/class stat maxes */
@@ -3643,7 +3643,7 @@ void calc_boni(int Ind) {
 		for (i = 0; i < 6; i++) {
 			/* Modify the stats for "race" */
 			/* yeek mimic no longer rocks too much */
-//			if (!p_ptr->body_monster) p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]);
+			//if (!p_ptr->body_monster) p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]);
 //done in calc_body_bonus()!			p_ptr->stat_add[i] += (p_ptr->rp_ptr->r_adj[i]) * 3 / (p_ptr->body_monster ? 4 : 3);
 			p_ptr->stat_add[i] += p_ptr->rp_ptr->r_adj[i];
 			p_ptr->stat_add[i] += p_ptr->cp_ptr->c_adj[i];
@@ -3842,13 +3842,11 @@ void calc_boni(int Ind) {
 			if (k_ptr->flags1 & TR1_SPEED) { p_ptr->pspeed += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].spd += o_ptr->bpval; }
 
 			/* Affect blows */
-#if 1 /* for dual-wield this is too much, it's done in calc_blows_obj() now */
-/* There are no known weapons so far that adds bpr intrinsically. Need this for e.g., ring of EA */
+			/* There are no known weapons so far that adds bpr intrinsically. Need this only for ring of EA atm. */
 			if (k_ptr->flags1 & TR1_BLOWS) { p_ptr->extra_blows += o_ptr->bpval; csheet_boni[i-INVEN_WIELD].blow += o_ptr->bpval; }
-#endif
+
 			/* Affect spells */
 			if (k_ptr->flags1 & TR1_SPELL) extra_spells += o_ptr->bpval;
-			//if (k_ptr->flags1 & TR1_SPELL_SPEED) extra_spells += o_ptr->bpval;
 
 			/* Affect mana capacity */
 			if (f1 & (TR1_MANA)) {
@@ -3929,7 +3927,7 @@ void calc_boni(int Ind) {
 		if (f5 & (TR5_LUCK)) { p_ptr->luck += pval; csheet_boni[i-INVEN_WIELD].luck += pval; }
 
 		/* Affect spell power */
-//		if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
+		//if (f1 & (TR1_SPELL)) p_ptr->to_s += pval;
 
 		/* Affect mana capacity */
 		if (f1 & (TR1_MANA)) {
@@ -3967,14 +3965,14 @@ void calc_boni(int Ind) {
 		if (f1 & TR1_SPEED) { p_ptr->pspeed += pval; csheet_boni[i-INVEN_WIELD].spd += pval; }
 
 		/* Affect spellss */
-//		if (f1 & TR1_SPELL_SPEED) extra_spells += pval;
+		//if (f1 & TR1_SPELL_SPEED) extra_spells += pval;
 		if (f1 & TR1_SPELL) extra_spells += pval;
 
 		/* Affect disarming (factor of 20) */
 		if (f5 & (TR5_DISARM)) p_ptr->skill_dis += pval * 5;
 
 		/* Hack -- Sensible */
-/* not yet implemented
+		/* not yet implemented
 		if (f5 & (TR5_SENS_FIRE)) p_ptr->suscep_fire = TRUE;
 		if (f5 & (TR6_SENS_COLD)) p_ptr->suscep_cold = TRUE;
 		if (f5 & (TR6_SENS_ELEC)) p_ptr->suscep_elec = TRUE;
@@ -3982,7 +3980,7 @@ void calc_boni(int Ind) {
 		if (f5 & (TR6_SENS_POIS)) p_ptr->suscep_acid = TRUE; */
 
 		/* Boost shots */
-//		if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
+		//if (f3 & TR3_KNOWLEDGE) p_ptr->auto_id = TRUE;
 		if (f4 & TR4_AUTO_ID) { p_ptr->auto_id = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAUID; }
 
 		/* Boost shots */
@@ -4063,15 +4061,15 @@ void calc_boni(int Ind) {
 				if (esp & ESP_UNIQUE) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_EUNIQ;
 			}
 		}
-//		if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
-//		if (f3 & TR3_LITE1) p_ptr->lite += 1;
+		//if (f3 & TR3_TELEPATHY) p_ptr->telepathy = TRUE;
+		//if (f3 & TR3_LITE1) p_ptr->lite += 1;
 		if (f3 & TR3_SEE_INVIS) { p_ptr->see_inv = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RSINV; }
 		if (f3 & TR3_FEATHER) { p_ptr->feather_fall = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RFFAL; }
 		if (f2 & TR2_FREE_ACT) { p_ptr->free_act = TRUE; csheet_boni[i-INVEN_WIELD].cb[4] |= CB5_RPARA; }
 		if (f2 & TR2_HOLD_LIFE) { p_ptr->hold_life = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RLIFE; }
 
 		/* Light(consider doing it on calc_torch) */
-//		if (((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) || (!(f4 & TR4_FUEL_LITE)))
+		//if (((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) || (!(f4 & TR4_FUEL_LITE)))
 		{
 			j = 0;
 			if (f3 & TR3_LITE1) j++;
@@ -4351,9 +4349,9 @@ void calc_boni(int Ind) {
 		/* Display the luck boni on each involved item */
 		//for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) //Mh, this doesn't really always work, needs better tracking in the luck calculation code?
 			//if (equipment_set_amount[i]) csheet_boni[i].luck += equipment_set_bonus;
-//		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus) / 2;
-//		equipment_set_bonus = (equipment_set_bonus - 1) * 4;
-//		equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus);
+		//equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus) / 2;
+		//equipment_set_bonus = (equipment_set_bonus - 1) * 4;
+		//equipment_set_bonus = (equipment_set_bonus * equipment_set_bonus);
 		equipment_set_bonus = (equipment_set_bonus * (equipment_set_bonus + 1)) / 2;
 		/* just prevent numerical overflows in p_ptr->luck (paranoiaish) */
 		if (equipment_set_bonus > 40) equipment_set_bonus = 40;
@@ -4444,7 +4442,7 @@ void calc_boni(int Ind) {
 
 	/* Temp ESP */
 	if (p_ptr->tim_esp) {
-//		p_ptr->telepathy = TRUE;
+		//p_ptr->telepathy = TRUE;
 		p_ptr->telepathy |= ESP_ALL;
 	}
 
@@ -4493,7 +4491,7 @@ void calc_boni(int Ind) {
 
 	/* Temporary infravision boost */
 	if (p_ptr->tim_infra) {
-//		p_ptr->see_infra++;
+		//p_ptr->see_infra++;
 		p_ptr->see_infra += 5;
 	}
 
@@ -4539,8 +4537,8 @@ void calc_boni(int Ind) {
 		if (sneakiness >= 0) {
 			/* prevent TLs from getting glitched abysmal stealth here.. */
 			if (p_ptr->skill_srh >= 0) p_ptr->skill_srh = (p_ptr->skill_srh * (sneakiness + 50)) / 50;
-//			p_ptr->skill_srh = p_ptr->skill_srh + sneakiness / 3;
-//			p_ptr->skill_fos = p_ptr->skill_fos * sneakiness / 10;
+			//p_ptr->skill_srh = p_ptr->skill_srh + sneakiness / 3;
+			//p_ptr->skill_fos = p_ptr->skill_fos * sneakiness / 10;
 		}
 	}
 
@@ -4905,15 +4903,15 @@ void calc_boni(int Ind) {
 #else /* multiplication (percent) -- TODO FIRST!!: would need to be before all penalties but after marts/etc +hit boni! */
 	p_ptr->to_h_melee = ((int)((p_ptr->to_h_melee * adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]) / 100));
 #endif
-//	p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-//	p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-//	p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
+	//p_ptr->to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+	//p_ptr->to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+	//p_ptr->to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
 
 	/* Displayed Modifier Bonuses (Un-inflate stat bonuses) */
 	p_ptr->dis_to_a += ((int)(adj_dex_ta[p_ptr->stat_ind[A_DEX]]) - 128);
-//	p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-//	p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
-//	p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
+	//p_ptr->dis_to_d += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+	//p_ptr->dis_to_h += ((int)(adj_dex_th[p_ptr->stat_ind[A_DEX]]) - 128);
+	//p_ptr->dis_to_h += ((int)(adj_str_th[p_ptr->stat_ind[A_STR]]) - 128);
 
 	/* Modify ranged weapon boni. DEX now very important for to_hit */
 #if 1 /* addition */
@@ -5349,7 +5347,7 @@ void calc_boni(int Ind) {
 		if (marts >  9) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 		if (marts > 19) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 		if (marts > 29) { p_ptr->num_blow++; csheet_boni[14].blow++; }
-//		if (marts > 34) p_ptr->num_blow++; csheet_boni[14].blow++; } /* This _could_ be added if really required */
+		//if (marts > 34) p_ptr->num_blow++; csheet_boni[14].blow++; } /* This _could_ be added if really required */
 		if (marts > 39) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 		if (marts > 44) { p_ptr->num_blow++; csheet_boni[14].blow++; }
 		if (marts > 49) { p_ptr->num_blow++; csheet_boni[14].blow++; }
@@ -5385,7 +5383,7 @@ void calc_boni(int Ind) {
 		if (p_ptr->cumber_armor && (p_ptr->to_h_melee > 0)) p_ptr->to_h_melee = (p_ptr->to_h_melee * 2) / 3;
 	}
 
-//	p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
+	//p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_AGILITY, 10);
 	if (p_ptr->cumber_armor) {
 		p_ptr->pspeed += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
 		csheet_boni[14].spd += get_skill_scale(p_ptr, SKILL_SNEAKINESS, 4);
@@ -5967,7 +5965,7 @@ void calc_boni(int Ind) {
 				else
 					msg_print(Ind, "\377wWithout shield, your weapon feels especially easy to swing.");
 			} else if (p_ptr->inventory[INVEN_WIELD].k_idx) {
-/*					msg_print(Ind, "\377wWith shield, your weapon feels normally comfortable.");
+				/*msg_print(Ind, "\377wWith shield, your weapon feels normally comfortable.");
 				this above line does also show if you don't equip a shield but just switch from a
 				may_2h to a normal weapon, hence confusing. */
 				msg_print(Ind, "\377wYour weapon feels comfortable as usual.");
