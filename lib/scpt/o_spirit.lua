@@ -167,6 +167,45 @@ STARLIGHT_II = add_spell {
 	["desc"] = 	{ "Creates a globe of starlight, powerful enough to hurt all foes.", }
 }
 
+MEDITATION = add_spell {
+	["name"] = 	"Meditation",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["spell_power"] = 0,
+	["am"] = 	75,
+	["level"] = 	4,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	10,
+	["stat"] = 	A_WIS,
+	-- Unaffected by blindness
+	["blind"] = 	FALSE,
+	-- Unaffected by confusion
+	["confusion"] = FALSE,
+	["spell"] = 	function()
+			set_blind(Ind, 0)
+			set_confused(Ind, 0)
+			if get_level(Ind, MEDITATION, 50) >= 18 then
+				do_res_stat(Ind, A_STR)
+				do_res_stat(Ind, A_CON)
+				do_res_stat(Ind, A_DEX)
+				do_res_stat(Ind, A_WIS)
+				do_res_stat(Ind, A_INT)
+				do_res_stat(Ind, A_CHR)
+			end
+			if get_level(Ind, MEDITATION, 50) >= 28 then
+				restore_level(Ind)
+			end
+			end,
+	["info"] = 	function()
+			return ""
+			end,
+	["desc"] = 	{
+			"Cures blindness and confusion.",
+			"At level 18 also restores drained stats.",
+			"At level 28 also restores lost experience.",
+			}
+}
+
 DETECTCREATURES = add_spell {
 	["name"] = 	"Ethereal Eye", --this name for if it really detects ALL monsters
 	["school"] = 	{SCHOOL_OSPIRIT},
@@ -530,3 +569,40 @@ GUARDIANSPIRIT_II = add_spell {
 --	["info"] = 	function()
 --		return "power "..(10 + get_level(Ind, GUARDIANSPIRIT_II, 50))
 --	end,
+
+RITES_I = add_spell {
+	["name"] = 	"Purification Rites I",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["spell_power"] = 0,
+	["am"] = 	75,
+	["level"] = 	30,
+	["mana"] = 	30,
+	["mana_max"] = 	30,
+	["fail"] = 	-45,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function(args)
+			dispel_undead(Ind, 180 + get_level(Ind, RITES_I, 500))
+			end,
+	["info"] = 	function()
+		return "dam "..(180 + get_level(Ind, RITES_I, 500))
+	end,
+	["desc"] = 	{ "Banishes nearby undead.", }
+}
+RITES_II = add_spell {
+	["name"] = 	"Purification Rites II",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["spell_power"] = 0,
+	["am"] = 	75,
+	["level"] = 	45,
+	["mana"] = 	60,
+	["mana_max"] = 	60,
+	["fail"] = 	-90,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function(args)
+			dispel_undead(Ind, get_level(Ind, RITES_I, 2300) - 35)
+			end,
+	["info"] = 	function()
+		return "dam "..(get_level(Ind, RITES_I, 2300) - 35)
+	end,
+	["desc"] = 	{ "Banishes nearby undead.", }
+}

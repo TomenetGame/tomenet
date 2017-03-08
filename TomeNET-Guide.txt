@@ -15723,6 +15723,11 @@ school.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 2.
 
+    Meditation      Cures confusion and blindness.
+                    Level 18: Also restores drained stats.
+                    Level 28: Also restores lost experience.
+                    Required skill level for first spell level: 4.
+
     Trance          Causes all ghosts, spirits and elementals that see you
                     to fall into a deep, spiritual sleep instantly.
                     Required skill level for first spell level: 5.
@@ -15756,6 +15761,10 @@ school.
                           at the cost of your mana.
                     Required skill level for first spell level: 25.
 
+    Rites of Purification
+                    *Dispels undead* in your field of view.
+                    Required skill level for first spell level: 30.
+
     BONI:           At 30 grants a firm hold on your life force.
                     Adds slay undead to all your physical attacks at 40.
                     -5% experience loss on getting revived (by whatever means,
@@ -15784,7 +15793,7 @@ school.
     Chaos Bolt      Channels the powers of chaos into a bolt.
                     Required skill level for first spell level: 32.
 
-    Dark Meditation
+    Wicked Oath
                     Restores drained stats and lost experience.
                     Required skill level for first spell level: 35.
 

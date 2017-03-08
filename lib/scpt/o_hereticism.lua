@@ -200,7 +200,7 @@ CHAOSBOLT2 = add_spell {
 }
 
 ORESTORING = add_spell {
-	["name"] = 	"Dark Meditation",
+	["name"] = 	"Wicked Oath",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["am"] = 	75,
