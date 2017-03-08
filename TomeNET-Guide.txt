@@ -15727,12 +15727,11 @@ school.
                     to fall into a deep, spiritual sleep instantly.
                     Required skill level for first spell level: 5.
 
-    Lightning Bolt  Conjures up spiritual power into a lightning bolt.
+    Lightning       Conjures up spiritual power into a great lightning bolt.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 10.
 
     Spear of Light  Conjures up spiritual light into a powerful beam.
-                    (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 10.
 
     Lift Curses     Removes curses from carried/worn objects.

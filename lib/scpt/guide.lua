@@ -296,7 +296,7 @@ guide_spell = {
     "Tame Fear",
     "Starlight",
     "Trance",
-    "Lightning Bolt",
+    "Lightning",
     "Spear of Light",
     "Lift Curses",
     "Ethereal Eye",
