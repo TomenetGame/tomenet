@@ -1962,7 +1962,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	   Then replace the part starting on first letter, until an usual delimiter char is found.
 	   '\@@' or '\!!' will erase the corresponding tag from the inscription. */
 	/* catch empty item inscription */
-	if (!o_ptr->note && inscription[0] == '\\') {
+	if (!o_ptr->note && inscription[0] == '\\' && inscription[1] != '\\') {
 		/* cannot delete anything in an empty inscription */
 		if ((inscription[1] == '@' || inscription[1] == '!' || inscription [1] == '#')
 		    && inscription[2] == inscription[1])
@@ -1971,84 +1971,96 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		while (inscription[0] == '\\') inscription++;
 	}
 	if (inscription[0] == '\\') {
-		bool append = TRUE;
-		char modsrc[3];
-
-		qins = quark_str(o_ptr->note);
-		strcpy(modins, qins);
-
-		modsrc[0] = inscription[1];
-		/* search for specific @-tag to replace? */
-		if (inscription[1] == '@') {
-			/* duplicate tag, aka "delete!" ? */
-			if (inscription[2] == '@') modsrc[1] = inscription[3];
-			/* normal tag (replace or append) */
-			else modsrc[1] = inscription[2];
-			modsrc[2] = 0;
-		}
-		/* search for first !-tag to replace? */
-		else modsrc[1] = 0;
-
-		/* append or replace a @/!/# part? */
-		if (inscription[1] == '@' || inscription[1] == '!' || inscription [1] == '#') {
-			char *start = strstr(modins, modsrc);
-			bool delete = FALSE;
-
-			/* delete? */
-			if (inscription[2] == inscription[1]) {
-				delete = TRUE;
-				/* definitely don't append: in case tag does not exist yet */
-				append = FALSE;
-			}
-
-			/* replace? (or delete) */
-			if (start) {
-				const char *delimiter;
-				const char *deltmp;
-
-				append = FALSE;
-
-				/* after '#' the line is always completely replaced;
-				   same for @P because player names can contain spaces. */
-				if (inscription[1] != '#' &&
-				    !(inscription[1] == '@' && inscription[2] == 'P')) {
-					deltmp = qins + (start - modins) + strlen(modsrc);
-					while (*deltmp) {
-						delimiter = strchr(" @!#", *deltmp);
-						if (delimiter) break;
-						deltmp++;
-					}
-					//if (!delimiter) delimiter = qins + strlen(qins); //point to zero terminator char
-				} else deltmp = qins + strlen(qins);
-				//delimiter = qins + strlen(qins); //point to zero terminator char
-
-				if (delete) strcpy(start, deltmp);
-				else { /* try to replace */
-					//if ((start - modins) + strlen(inscription + 1) + strlen(delimiter) > MAX_CHARS) {
-					if ((start - modins) + strlen(inscription + 1) + strlen(deltmp) > MAX_CHARS) {
-						msg_print(Ind, "Inscription would become too long.");
-						return;
-					}
-
-					/* replace */
-					strcpy(start, inscription + 1);
-					//strcat(start, delimiter);
-					strcat(start, deltmp);
-				}
-			}
-
-			/* new: trim trailing spaces, if anything was deleted */
-			if (delete) while (modins[strlen(modins) - 1] == ' ') modins[strlen(modins) - 1] = 0;
-		}
-		/* append? */
-		if (append) {
-			if (strlen(modins) + strlen(inscription) > MAX_CHARS) {
+		/* force append? */
+		if (inscription[1] == '\\') {
+			if (o_ptr->note) strcpy(modins, quark_str(o_ptr->note));
+			else modins[0] = 0;
+			if (strlen(modins) + strlen(inscription) - 1 > MAX_CHARS) {
 				msg_print(Ind, "Inscription would become too long.");
 				return;
 			}
-			strcat(modins, inscription + 1);
+			strcat(modins, inscription + 2);
+			inscription = modins;
+		} else {
+			bool append = TRUE;
+			char modsrc[3];
+
+			qins = quark_str(o_ptr->note);
+			strcpy(modins, qins);
+
+			modsrc[0] = inscription[1];
+			/* search for specific @-tag to replace? */
+			if (inscription[1] == '@') {
+				/* duplicate tag, aka "delete!" ? */
+				if (inscription[2] == '@') modsrc[1] = inscription[3];
+				/* normal tag (replace or append) */
+				else modsrc[1] = inscription[2];
+				modsrc[2] = 0;
+			}
+			/* search for first !-tag to replace? */
+			else modsrc[1] = 0;
+
+			/* append or replace a @/!/# part? */
+			if (inscription[1] == '@' || inscription[1] == '!' || inscription [1] == '#') {
+				char *start = strstr(modins, modsrc);
+				bool delete = FALSE;
+
+				/* delete? */
+				if (inscription[2] == inscription[1]) {
+					delete = TRUE;
+					/* definitely don't append: in case tag does not exist yet */
+					append = FALSE;
+				}
+
+				/* replace? (or delete) */
+				if (start) {
+					const char *delimiter;
+					const char *deltmp;
+
+					append = FALSE;
+
+					/* after '#' the line is always completely replaced;
+					   same for @P because player names can contain spaces. */
+					if (inscription[1] != '#' &&
+					    !(inscription[1] == '@' && inscription[2] == 'P')) {
+						deltmp = qins + (start - modins) + strlen(modsrc);
+						while (*deltmp) {
+							delimiter = strchr(" @!#", *deltmp);
+							if (delimiter) break;
+							deltmp++;
+						}
+						//if (!delimiter) delimiter = qins + strlen(qins); //point to zero terminator char
+					} else deltmp = qins + strlen(qins);
+					//delimiter = qins + strlen(qins); //point to zero terminator char
+
+					if (delete) strcpy(start, deltmp);
+					else { /* try to replace */
+						//if ((start - modins) + strlen(inscription + 1) + strlen(delimiter) > MAX_CHARS) {
+						if ((start - modins) + strlen(inscription + 1) + strlen(deltmp) > MAX_CHARS) {
+							msg_print(Ind, "Inscription would become too long.");
+							return;
+						}
+
+						/* replace */
+						strcpy(start, inscription + 1);
+						//strcat(start, delimiter);
+						strcat(start, deltmp);
+					}
+				}
+
+				/* new: trim trailing spaces, if anything was deleted */
+				if (delete) while (modins[strlen(modins) - 1] == ' ') modins[strlen(modins) - 1] = 0;
+			}
+			/* append? */
+			if (append) {
+				if (strlen(modins) + strlen(inscription) > MAX_CHARS) {
+					msg_print(Ind, "Inscription would become too long.");
+					return;
+				}
+				strcat(modins, inscription + 1);
+			}
+			inscription = modins;
 		}
-		inscription = modins;
 	}
 
 	/* Save the inscription */
