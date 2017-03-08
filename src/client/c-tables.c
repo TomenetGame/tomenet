@@ -257,7 +257,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.limit_chat,		FALSE,	4,	9, 24, TRUE,
 	    "limit_chat",		"Chat only with players on the same floor" },
 	{ &c_cfg.no_afk_msg,		FALSE,	4,	9, 25, TRUE,
-	    "no_afk_msg",		"Don't show AFK status messages in chat window" },
+	    "no_afk_msg",		"Don't show AFK toggle messages of other players" },
 	{ &c_cfg.overview_startup,	FALSE,	4,	1, 26, TRUE,
 	    "overview_startup",		"Display overview resistance/boni page at startup" },
 
