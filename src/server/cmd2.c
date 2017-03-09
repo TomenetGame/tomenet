@@ -7036,6 +7036,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				q_ptr = Players[0 - c_ptr->m_idx];
 				msg_format_near(0 - c_ptr->m_idx, "%s hits %s with a snowball!", p_ptr->name, q_ptr->name);
 				msg_format(0 - c_ptr->m_idx, "%s hits you with a snowball!", p_ptr->name);
+#ifdef USE_SOUND_2010
+				sound_near_site(q_ptr->py, q_ptr->px, &q_ptr->wpos, 0, "snowball", "", SFX_TYPE_COMMAND, TRUE);
+#endif
 				q_ptr->dummy_option_8 = TRUE; //snowed
 				note_spot(0 - c_ptr->m_idx, q_ptr->py, q_ptr->px);
 				update_player(0 - c_ptr->m_idx); //becomes visible!

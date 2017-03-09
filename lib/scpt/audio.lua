@@ -85,6 +85,8 @@ audio_sfx = {
     "barrage_bolt",
 
     "slap",
+    "snowball",
+    "applaud",
 
     "knock",
     "knock_castle",
