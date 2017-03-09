@@ -5374,7 +5374,7 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 				s_printf("NAZGUL_DISI_NORM: %s : %s.\n", p_ptr->name, o_name);
 
 #ifdef USE_SOUND_2010
-        			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
+				sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
 #endif
 				msg_print(Ind, "\376\377rYour weapon *DISINTEGRATES*!");
 				//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
