@@ -6217,24 +6217,28 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			(void)set_oppose_cold(Ind, randint(20) + 50);
 			(void)set_oppose_pois(Ind, randint(20) + 50);
 			o_ptr->recharging = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			return;
 		} else if (is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
 		//else if (is_ego_p(o_ptr, EGO_AURA_FIRE) || is_ego_p(o_ptr, EGO_AURA_FIRE2)) {
 			msg_print(Ind, "Your cloak flashes in flames...");
 			(void)set_oppose_fire(Ind, randint(40) + 40);
 			o_ptr->recharging = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			return;
 		} else if (is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
 		//else if (is_ego_p(o_ptr, EGO_AURA_ELEC) || is_ego_p(o_ptr, EGO_AURA_ELEC2)) {
 			msg_print(Ind, "Your cloak sparkles with lightning...");
 			(void)set_oppose_elec(Ind, randint(40) + 40);
 			o_ptr->recharging = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			return;
 		} else if (is_ego_p(o_ptr, EGO_AURA_COLD2)) {
 		//else if (is_ego_p(o_ptr, EGO_AURA_COLD) || is_ego_p(o_ptr, EGO_AURA_COLD2)) {
 			msg_print(Ind, "Your cloak shines with frost...");
 			(void)set_oppose_cold(Ind, randint(40) + 40);
 			o_ptr->recharging = rand_int(40) + 150 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			return;
 		}
 	}
@@ -6263,6 +6267,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "Your amulet glows a deep blue...");
 			sleep_monsters(Ind, 20 + p_ptr->lev + get_skill_scale(p_ptr, SKILL_DEVICE, 80));
 			o_ptr->recharging = rand_int(100) + 100;
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			return;
 		/* Amulets of rage can be activated for berserk strength */
 		case SV_AMULET_RAGE:
@@ -6271,6 +6276,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			set_fury(Ind, randint(10) + 15); /* removed stacking */
 			hp_player(Ind, 40);
 			o_ptr->recharging = rand_int(150) + 250 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			return;
 		}
 	}
