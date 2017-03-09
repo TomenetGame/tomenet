@@ -5859,7 +5859,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
 	int csmove = TRUE;
-	int iterations = 10;
+	int iterations = 15;
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -5890,9 +5890,18 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 				/* convenience hack: don't run into walls, because that's just too silly */
 				if (!player_can_enter(Ind, zcave[y][x].feat, FALSE)) i = 5;
+				/* ..and also don't switch sectors accidentally */
+				if (zcave[y][x].feat == FEAT_PERM_CLEAR) i = 5;
+				/* ..aand conveniently also don't move onto grids that don't allow running if we're currently running */
+				if (p_ptr->running && !(f_info[zcave[y][x].feat].flags1 & FF1_CAN_RUN)) i = 5;
 				/* convenience hack: don't stop running if we just left proximity of a wall */
 				if (p_ptr->running) rnd = TRUE;
 			} while (i == 5 && --iterations > 0);
+			/* be nice and fall back safely.. */
+			if (!iterations) {
+				y = p_ptr->py + ddy[dir];
+				x = p_ptr->px + ddx[dir];
+			}
 		} else {
 			y = p_ptr->py + ddy[dir];
 			x = p_ptr->px + ddx[dir];
@@ -5919,9 +5928,16 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			if (!player_can_enter(Ind, zcave[y][x].feat, FALSE)) i = 5;
 			/* ..and also don't switch sectors accidentally */
 			if (zcave[y][x].feat == FEAT_PERM_CLEAR) i = 5;
+			/* ..aand conveniently also don't move onto grids that don't allow running if we're currently running */
+			if (p_ptr->running && !(f_info[zcave[y][x].feat].flags1 & FF1_CAN_RUN)) i = 5;
 			/* convenience hack: don't stop running if we just left proximity of a wall */
 			if (p_ptr->running) rnd = TRUE;
 		} while (i == 5 && --iterations > 0);
+		/* be nice and fall back safely.. */
+		if (!iterations) {
+			y = p_ptr->py + ddy[dir];
+			x = p_ptr->px + ddx[dir];
+		}
 	} else {
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
