@@ -2064,6 +2064,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind	*k_ptr = &k_info[o_ptr->k_idx];
 	bool skip_base_article = FALSE;
+	bool special_rop = (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL);
 
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -2107,7 +2108,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 
 	/* Hack: Fix silly names on artifact flavoured items (rings/amulets) */
-	if (artifact_p(o_ptr) && aware && !known) aware = FALSE;
+	if (artifact_p(o_ptr) && aware && !known && !special_rop) aware = FALSE;
 
 
 	/* Analyze the object */
@@ -2211,8 +2212,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			/* Rings (including a few "Specials") */
 		case TV_RING:
 			/* keep our special randart naming ;) 'the slow digestion of..' */
-			if (o_ptr->sval == SV_RING_SPECIAL) basenm = "Ring of Power"; /* except for rings of power */
-			if (o_ptr->name1 == ART_RANDART && known) break;
+			//if (o_ptr->sval == SV_RING_SPECIAL) basenm = "Ring of Power"; /* except for rings of power */
+			if (o_ptr->name1 == ART_RANDART && known && !special_rop) break;
 
 #if 0
 			/* Suppress flavour */
@@ -2224,8 +2225,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 			/* Color the object */
 			modstr = ring_adj[indexx];
-			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)))) append_name = TRUE;
-			//if (aware) append_name = TRUE;
+			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)) || special_rop)) append_name = TRUE;
 			if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
 			else basenm = "& # Ring~";
 
@@ -2595,12 +2595,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	/* Terminate */
 	*t = '\0';
 
-
 	/* Append the "kind name" to the "base name" */
 	if (append_name) {
 		t = object_desc_str(t, !(mode & 8) ? " of " : " ");
 
-		if (o_ptr->sval == SV_SCROLL_FIREWORK) {
+		if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK) {
 			if (!(mode & 256)) {
 				switch (o_ptr->xtra1) {
 				case 0: t = object_desc_str(t, "Small "); break;
@@ -2665,7 +2664,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		if (o_ptr->name1 == ART_RANDART) {
 			t = object_desc_chr(t, ' ');
 
-			if(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL){
+			if (special_rop) {
 				monster_race *r_ptr = &r_info[o_ptr->bpval];
 				t = object_desc_str(t, "of ");
 				if (!(r_ptr->flags7 & RF7_NAZGUL)) {
@@ -3011,7 +3010,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		if (known && (((f1 & (TR1_PVAL_MASK)) || (f5 & (TR5_PVAL_MASK)))
 		    || o_ptr->tval == TV_GOLEM || o_ptr->tval == TV_TRAPKIT)) {
 			/* Hack -- first display any base pval bonuses. */
-			if (o_ptr->bpval && !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL)) {
+			if (o_ptr->bpval && !special_rop) {
 				if (!(mode & 8)) t = object_desc_chr(t, ' ');
 				t = object_desc_chr(t, p1);
 				/* Dump the "pval" itself */
