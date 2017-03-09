@@ -2475,6 +2475,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if (r_ptr->flags3 & RF3_RES_TELE) { p_ptr->res_tele = TRUE; csheet_boni->cb[4] |= CB5_RTELE; }
 	if (r_ptr->flags9 & RF9_IM_TELE) { p_ptr->res_tele = TRUE; csheet_boni->cb[4] |= CB5_RTELE; }
 	if (r_ptr->flags3 & RF3_RES_WATE) { p_ptr->resist_water = TRUE; csheet_boni->cb[3] |= CB4_RWATR; }
+	if (r_ptr->flags7 & RF7_AQUATIC) { p_ptr->resist_water = TRUE; csheet_boni->cb[3] |= CB4_RWATR; }
 	if (r_ptr->flags3 & RF3_RES_NETH) { p_ptr->resist_neth = TRUE; csheet_boni->cb[2] |= CB3_RNETH; }
 	if (r_ptr->flags3 & RF3_RES_NEXU) { p_ptr->resist_nexus = TRUE; csheet_boni->cb[2] |= CB3_RNEXU; }
 	if (r_ptr->flags3 & RF3_RES_DISE) { p_ptr->resist_disen = TRUE; csheet_boni->cb[3] |= CB4_RDISE; }
@@ -2528,7 +2529,6 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	}
 	if (r_ptr->flags4 & RF4_BR_WALL) { p_ptr->resist_sound = TRUE; csheet_boni->cb[2] |= CB3_RSOUN; }
 	/* if ((r_ptr->flags4 & RF4_BR_WATE) || <- does not exist */
-	if (r_ptr->flags7 & RF7_AQUATIC) { p_ptr->resist_water = TRUE; csheet_boni->cb[3] |= CB4_RWATR; }
 	if (r_ptr->flags4 & RF4_BR_NETH) { p_ptr->resist_neth = TRUE; csheet_boni->cb[2] |= CB3_RNETH; }
 	/* res_neth_somewhat: (r_ptr->flags3 & RF3_EVIL) */
 	if (r_ptr->flags4 & RF4_BR_NEXU) { p_ptr->resist_nexus = TRUE; csheet_boni->cb[2] |= CB3_RNEXU; }
