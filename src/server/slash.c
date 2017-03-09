@@ -3390,6 +3390,32 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			return;
 		}
+		else if (prefix(message, "/applaud")) {
+			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+			if (tk) {
+				j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
+				if (!j || !p_ptr->play_vis[j] || j == Ind) return;
+				if (!target_able(Ind, -j)) {
+					msg_print(Ind, "Player is not within your line of sight.");
+					return;
+				}
+
+				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s applauds you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
+				msg_format_near(j, "\377y%s applauds %s.", p_ptr->name, Players[j]->name);
+#ifdef USE_SOUND_2010
+				sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "applaud", "", SFX_TYPE_COMMAND, TRUE);
+#endif
+				return;
+			}
+			msg_print(Ind, "\377yYou applaud.");
+			msg_format_near(Ind, "\377y%s applauds.", p_ptr->name);
+#ifdef USE_SOUND_2010
+			sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "applaud", "", SFX_TYPE_COMMAND, TRUE);
+#endif
+			return;
+		}
 		else if (prefix(message, "/tip")) { /* put some cash (level ^ 2) in player's waistcoat pocket~ */
 			cave_type **zcave = getcave(&p_ptr->wpos);
 			u32b tip;
