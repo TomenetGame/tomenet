@@ -579,7 +579,7 @@ void compact_monsters(int size, bool purge) {
 			/* Update the cave */
 			/* Hack -- make sure the level is allocated, as in the wilderness
 			   it sometimes will not be */
-			if((zcave = getcave(wpos))) zcave[ny][nx].m_idx = i;
+			if ((zcave = getcave(wpos))) zcave[ny][nx].m_idx = i;
 
 #ifdef MONSTER_INVENTORY
 			/* Repair objects being carried by monster */
@@ -759,7 +759,7 @@ void thin_surface_spawns() {
 		monster_type *m_ptr = &m_list[i];
 
 		/* Only affect surface monsters, and only 20% of them (randomly) */
-//		if ((m_ptr->wpos.wz != 0) || !magik(20)) continue; //high towns end up pretty empty, even if a player idles for hours
+		//if ((m_ptr->wpos.wz != 0) || !magik(20)) continue; //high towns end up pretty empty, even if a player idles for hours
 		if ((m_ptr->wpos.wz != 0) || !magik(10)) continue; //<testing>
 
 		/* Skip monsters that are 'trapped' in houses */
@@ -840,7 +840,7 @@ void wipe_m_list_roaming(struct worldpos *wpos) {
 	compact_monsters(0, FALSE);
 }
 
-/* 
+/*
  * Heal up every monster on the depth, so that a player
  * cannot abuse stair-GoI and anti-scum.	- Jir -
  */
@@ -852,13 +852,11 @@ void heal_m_list(struct worldpos *wpos) {
 	for (i = m_max - 1; i >= 1; i--) {
 		monster_type *m_ptr = &m_list[i];
 
-		if (inarea(&m_ptr->wpos,wpos))
-			m_ptr->hp = m_ptr->maxhp;
-//			delete_monster_idx(i);
+		if (inarea(&m_ptr->wpos,wpos)) m_ptr->hp = m_ptr->maxhp; //delete_monster_idx(i);
 	}
 
 	/* Compact the monster list */
-//	compact_monsters(0);
+	//compact_monsters(0);
 }
 #endif	// 0
 
