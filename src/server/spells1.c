@@ -11204,9 +11204,12 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	/* Blindness is currently ignored for this function */
 	/*bool blind;*/
 
-
 	/* Non-unique monster names might start on lower-case, due to usage of snprintf() which doesn't know '%^s' formatting.. */
-	attacker[0] = toupper(attacker[0]);
+	char pattacker[MAX_CHARS];
+
+
+	strcpy(pattacker, attacker);
+	pattacker[0] = toupper(pattacker[0]);
 
 	/* Hack: GF_CAUSE does travel by LoS but isn't a real bolt and actually unavoidable, except by saving throw! */
 	if (typ == GF_CAUSE) flg |= PROJECT_NORF | PROJECT_NODF | PROJECT_NODO;
@@ -12113,7 +12116,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 			/* Affect the player */
 			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
-			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ, rad, flg, attacker)) notice = TRUE;
+			if (project_p(player_idx, who, dist, wpos, y, x, dam, typ, rad, flg, pattacker)) notice = TRUE;
 			/* reset stair-goi helper flag (used by project_p()) again */
 			if (player_idx >= 1 && player_idx <= NumPlayers) Players[player_idx]->invuln_applied = FALSE;
 		}
