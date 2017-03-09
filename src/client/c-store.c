@@ -522,7 +522,7 @@ static void store_do_command(int num, bool one) {
 
 static void store_process_command(int cmd) {
 	int i;
-	bool allow_w_t = TRUE;
+	bool allow_w_t = TRUE, allow_k = TRUE;
 
 	/* BIG_MAP leads to big shops */
 	int entries = (screen_hgt > SCREEN_HGT) ? 26 : 12;
@@ -541,10 +541,12 @@ static void store_process_command(int cmd) {
 			if (c_store.letter[i] == 'w' ||
 			    //c_store.letter[i] == KTRL('W') ||
 			    c_store.letter[i] == 'T') allow_w_t = FALSE;
+			//if (c_store.letter[i] == KTRL('W')) allow_k = FALSE;
 		} else {
 			if (c_store.letter[i] == 'w' ||
 			    c_store.letter[i] == 'W' ||
 			    c_store.letter[i] == 't') allow_w_t = FALSE;
+			if (c_store.letter[i] == 'k') allow_k = FALSE;
 		}
 	}
 
@@ -749,6 +751,14 @@ static void store_process_command(int cmd) {
 		case 'T':
 			if (!c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
 			else cmd_take_off();
+			break;
+		case 'k':
+			if (c_cfg.rogue_like_commands || !allow_k) cmd_raw_key(cmd);
+			else cmd_destroy(USE_INVEN | USE_EQUIP);
+			break;
+		case KTRL('D'):
+			if (!c_cfg.rogue_like_commands || !allow_k) cmd_raw_key(cmd);
+			else cmd_destroy(USE_INVEN | USE_EQUIP);
 			break;
 
 		default:
