@@ -2060,6 +2060,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	char		c1 = '{', c2 = '}';
 
 	char		tmp_val[ONAME_LEN];
+	static char	basenm2[ONAME_LEN];
 	bool 		short_item_names = FALSE;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	object_kind	*k_ptr = &k_info[o_ptr->k_idx];
@@ -2203,16 +2204,29 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 			/* Color the object */
 			modstr = amulet_adj[indexx];
-			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)))) append_name = TRUE;
-			if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
-			else basenm = "& # Amulet~";
-			break;
 
+			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)))) append_name = TRUE;
+
+			/* Hack for insta-arts: Use alternative name from k_info?
+			   If the k-name starts on '&' it's actually an alternative base item name,
+			   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
+			if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
+				if (short_item_names || !aware) basenm = k_name + k_ptr->name;
+				else {
+					strcpy(basenm2, "& #");
+					strcat(basenm2, k_name + k_ptr->name + 1);
+					basenm = basenm2;
+				}
+			} else {
+				if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
+				else basenm = "& # Amulet~";
+			}
+
+			break;
 
 			/* Rings (including a few "Specials") */
 		case TV_RING:
 			/* keep our special randart naming ;) 'the slow digestion of..' */
-			//if (o_ptr->sval == SV_RING_SPECIAL) basenm = "Ring of Power"; /* except for rings of power */
 			if (o_ptr->name1 == ART_RANDART && known && !special_rop) break;
 
 #if 0
@@ -2225,14 +2239,24 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 			/* Color the object */
 			modstr = ring_adj[indexx];
-			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)) || special_rop)) append_name = TRUE;
-			if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
-			else basenm = "& # Ring~";
 
-#if 0 /* done via flavour_hacks() now */
-			/* Hack -- The One Ring */
-			if (!aware && (o_ptr->sval == SV_RING_POWER)) modstr = "Plain Gold";
-#endif
+			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)) || special_rop)) append_name = TRUE;
+
+			/* Hack for insta-arts: Use alternative name from k_info?
+			   If the k-name starts on '&' it's actually an alternative base item name,
+			   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
+			if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
+				if (short_item_names || !aware) basenm = k_name + k_ptr->name;
+				else {
+					strcpy(basenm2, "& #");
+					strcat(basenm2, k_name + k_ptr->name + 1);
+					basenm = basenm2;
+				}
+			} else {
+				if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
+				else basenm = "& # Ring~";
+			}
+
 			break;
 
 		case TV_STAFF:
