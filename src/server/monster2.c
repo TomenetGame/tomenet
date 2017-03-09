@@ -3819,7 +3819,7 @@ static bool place_monster_okay_escort(int r_idx) {
 	/* Skip more advanced monsters */
 	if (z_ptr->level > r_ptr->level) return (FALSE);
 
-	/* Skip Black Dogs */
+	/* Skip Black Dogs, Wild Rabbits and a few high-profile mimic forms.. */
 	if (z_ptr->flags0 & RF0_NO_GROUP_MASK) return (FALSE);
 
 	/* Skip unique monsters */
