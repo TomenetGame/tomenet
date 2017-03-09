@@ -2977,8 +2977,8 @@ struct player_type {
 	s32b item_order_turn;
 #endif
 
-#ifdef TARGET_SWITCHING_COST
-	s16b tsc_lasttarget;
+#if defined(TARGET_SWITCHING_COST) || defined(TARGET_SWITCHING_COST_RANGED)
+	s16b tsc_lasttarget, tsc_idle_energy;
 #endif
 
 #ifdef ENABLE_MERCHANT_MAIL

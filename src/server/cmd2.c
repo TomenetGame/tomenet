@@ -5195,7 +5195,7 @@ void do_cmd_fire(int Ind, int dir) {
 		msg_print(Ind, "Your quiver is empty!");
 		return;
 	}
-	
+
 	if (o_ptr->tval != p_ptr->tval_ammo && !boomerang) {
 		switch (p_ptr->tval_ammo) {
 		case TV_SHOT: msg_print(Ind, "Your ranged weapon can only fire shots or pebbles!"); return;
@@ -5281,6 +5281,25 @@ void do_cmd_fire(int Ind, int dir) {
 			if (!is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0)) return;
 		}
 	}
+
+#ifdef TARGET_SWITCHING_COST_RANGED
+	/* Time cost for switching target during ongoing combat. */
+	/* we did attack something right now without any pause afterwards,
+	   and it was something different than our current target? */
+	if (p_ptr->tsc_lasttarget != p_ptr->target_col + p_ptr->target_row * 100
+	    /* leeway - don't apply it to already pretty slow attackers */
+	    && p_ptr->num_fire > 2) {
+		/* we switched to a new target? */
+		if (p_ptr->tsc_lasttarget) { //todo: maybe allow 'double shot' technique to sometimes bypass switching cost?
+			p_ptr->tsc_lasttarget = p_ptr->target_col + p_ptr->target_row * 100;
+			/* skip a shot, for setting aim to our new target */
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / thits;
+			return;
+		}
+		/* we actually just began ranged combat, attacking our very first target - we're already prepared. */
+		p_ptr->tsc_lasttarget = p_ptr->target_col + p_ptr->target_row * 100;
+	}
+#endif
 
 	/* Check if monsters around him/her hinder this */
 	//if (interfere(Ind, cfg.spell_interfere * 3)) return;

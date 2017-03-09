@@ -250,6 +250,8 @@
 
 /* For auto-retaliator's attack splitting: Switching target in the midst of combat costs 1 bpr of energy. Only affects melee attacking. */
 #define TARGET_SWITCHING_COST
+/* For shooting: Switching target in the midst of combat costs 1 spr of energy. */
+#define TARGET_SWITCHING_COST_RANGED
 
 /* Allow sending gold or an item to someone via merchants' guild */
 #define ENABLE_MERCHANT_MAIL

@@ -3051,6 +3051,14 @@ static void process_player_begin(int Ind) {
 		break;
 	}
 
+#if defined(TARGET_SWITCHING_COST) || defined(TARGET_SWITCHING_COST_RANGED)
+	if (p_ptr->tsc_lasttarget && p_ptr->energy >= level_speed(&p_ptr->wpos) * 2 - 1) {
+		if (p_ptr->tsc_idle_energy >= level_speed(&p_ptr->wpos)) {
+			p_ptr->tsc_lasttarget = 0;
+			p_ptr->tsc_idle_energy = 0;
+		} else p_ptr->tsc_idle_energy += extract_energy[p_ptr->pspeed];
+	}
+#endif
 
 	/* Give the player some energy */
 	p_ptr->energy += extract_energy[p_ptr->pspeed];
@@ -5416,11 +5424,6 @@ static void process_player_end(int Ind) {
 			if (!p_ptr->shooting_till_kill && !p_ptr->auto_retaliating) {
 				p_ptr->count_cut_sfx_attack = 500;
 				p_ptr->half_sfx_attack_state = FALSE;
-
-#ifdef TARGET_SWITCHING_COST
-				/* Also abuse this to reset the target for target switching cost check */
-				p_ptr->tsc_lasttarget = 0;
-#endif
 			}
 		} else {
 			p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
