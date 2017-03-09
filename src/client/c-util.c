@@ -8474,12 +8474,17 @@ void Send_paste_msg(char *msg) {
 	/* replace first : by :: in case we're going for normal chat mode */
 	char buf[MSG_LEN], *c;
 
+	/* Only needed for non-global chat: If first msg char is a ':' it'd screw up the chat mode tag.
+	   Hack for this: Just insert a pointless colour code '\377-' as a separator of the two ':'.. */
 	if (chat_mode == CHAT_MODE_PARTY)
-		Send_msg(format("!:%s", msg));
+		if (msg[0] == ':') Send_msg(format("!:\377-%s", msg));
+		else Send_msg(format("!: %s", msg));
 	else if (chat_mode == CHAT_MODE_LEVEL)
-		Send_msg(format("#:%s", msg));
+		if (msg[0] == ':') Send_msg(format("#:\377-%s", msg));
+		else Send_msg(format("#: %s", msg));
 	else if (chat_mode == CHAT_MODE_GUILD)
-		Send_msg(format("$:%s", msg));
+		if (msg[0] == ':') Send_msg(format("$:\377-%s", msg));
+		else Send_msg(format("$: %s", msg));
 	else {
 		strcpy(buf, msg);
 		if ((c = strchr(msg, ':')) &&
