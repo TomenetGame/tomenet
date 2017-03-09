@@ -2047,6 +2047,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	bool		known = FALSE;
 
 	bool		append_name = FALSE;
+	bool		switched_ego_prefix_and_modstr = FALSE;
 
 	bool		show_weapon = FALSE;
 	bool		show_armour = FALSE;
@@ -2150,6 +2151,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		/* Trapping Kits */
 		case TV_TRAPKIT:
 			modstr = basenm;
+			switched_ego_prefix_and_modstr = TRUE;
 			basenm = "& # Trap Kit~";
 			break;
 
@@ -2354,6 +2356,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 		case TV_PARCHMENT:
 			modstr = basenm;
+			switched_ego_prefix_and_modstr = TRUE;
 			basenm = "& Parchment~ - #";
 			break;
 
@@ -2455,6 +2458,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				s += 4;
 				skip_base_article = TRUE;
 			}
+		}
+
+		/* Trap kits hackily exchange the order usage of 'modstr' vs prefix ego */
+		else if (switched_ego_prefix_and_modstr && ego != NULL) {
+			if (is_a_vowel(ego[0])) t = object_desc_str(t, "an ");
+			else t = object_desc_str(t, "a ");
 		}
 
 		/* A single one, with a vowel in the modifier */
