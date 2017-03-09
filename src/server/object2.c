@@ -7415,8 +7415,10 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	}
 
 #ifdef IDDC_ID_BOOST /* experimental */
-	if ((resf & RESF_COND_MASK) == 0x0 && in_irondeepdive(wpos) && !forge.name1 && !forge.name2 && forge.level && !forge.owner && !forge.questor) {// && forge.tval == TV_SCROLL) {
-		if (k_info[k_idx].cost <= 1000 && !rand_int(20)) {
+	if ((resf & RESF_COND_MASK) == 0x0 && in_irondeepdive(wpos) && !forge.name1 && !forge.name2
+	    && k_info[forge.k_idx].cost <= 1000
+	    && forge.level && !forge.owner && !forge.questor) {// && forge.tval == TV_SCROLL) {
+		if (!rand_int(20)) {
 			invwipe(&forge);
 			forge.tval = TV_SCROLL;
 			forge.sval = SV_SCROLL_IDENTIFY;
@@ -7424,8 +7426,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			forge.number = 1;
 			determine_level_req(dlev, &forge);
 			s_printf("<<ID\n");
-		}
-		else if (k_info[k_idx].cost <= 1000 && !rand_int(500)) {
+		} else if (!rand_int(500)) {
 			invwipe(&forge);
 			forge.tval = TV_SCROLL;
 			forge.sval = SV_SCROLL_ID_ALL;
@@ -7433,8 +7434,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			forge.number = 1;
 			determine_level_req(dlev, &forge);
 			s_printf("<<IDE\n");
-		}
-		else if (k_info[k_idx].cost <= 1000 && !rand_int(200)) {
+		} else if (!rand_int(200)) {
 			invwipe(&forge);
 			forge.tval = TV_SCROLL;
 			forge.sval = SV_SCROLL_STAR_IDENTIFY;
