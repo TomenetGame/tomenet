@@ -934,6 +934,9 @@
 /* Make true artifacts pass their rarity roll more easily in IDDC? */
 #define IDDC_EASY_TRUE_ARTIFACTS
 
+/* Faster pseudo-id and more id / *id* scroll drops in IDDC? */
+#define IDDC_ID_BOOST
+
 /* Show character icon with coloured '@' or 'b' in top score table
    of the Ironman Deep Dive Challenge? */
 #define IDDC_HISCORE_SHOWS_ICON

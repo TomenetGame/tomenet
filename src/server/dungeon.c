@@ -354,7 +354,7 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 static void sense_inventory(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	int i;
+	int i, dur;
 
 	bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE;
 	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE;
@@ -372,16 +372,22 @@ static void sense_inventory(int Ind) {
 	/* No sensing when confused */
 	if (p_ptr->confused) return;
 
-     /* instead, allow more use at lower SKILL_COMBAT levels already,
+#ifdef IDDC_ID_BOOST
+	if (in_irondeepdive(&p_ptr->wpos)) dur = 1500; /* faster pseudo-id in IDDC */
+	else
+#endif
+	dur = 3000; /* default */
+
+	/* instead, allow more use at lower SKILL_COMBAT levels already,
 	otherwise huge stacks of ID scrolls will remain mandatory for maybe too long a time - C. Blue */
-	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20) - 28)) ok_combat = TRUE;
-	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_ARCHERY, 80) + 20) - 28)) ok_archery = TRUE;
-	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_MAGIC, 80) + 20) - 28)) {
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20) - 28)) ok_combat = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_ARCHERY, 80) + 20) - 28)) ok_archery = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_MAGIC, 80) + 20) - 28)) {
 		ok_magic = TRUE;
 		ok_curse = TRUE;
 	}
 	/* note: SKILL_PRAY is currently unused */
-	if (!rand_int(3000 / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse = TRUE;
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
