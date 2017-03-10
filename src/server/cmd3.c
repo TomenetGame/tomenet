@@ -1979,7 +1979,6 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			if (o_ptr->xtra7) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1))));
 			if (o_ptr->xtra8) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1))));
 			if (o_ptr->xtra9) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1))));
-			if (powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
 		}
 
 		if (f3 & (TR3_XTRA_MIGHT)) strcat(powins, "Xm");
@@ -2130,7 +2129,8 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))  strcat(powins, "+Lt");
 
 		if ((tmp = (f1 & (TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ANIMAL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_DRAGON | TR1_SLAY_EVIL | TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON)))) {
-			strcat(powins, ",+");
+			if (powins[0]) strcat(powins, ",");
+			strcat(powins, "+");
 			if (f1 & (TR1_SLAY_ORC)) strcat(powins, "o");
 			if (f1 & (TR1_SLAY_TROLL)) strcat(powins, "T");
 			if (f1 & (TR1_SLAY_GIANT)) strcat(powins, "P");
@@ -2147,9 +2147,12 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			}
 		}
 		if (esp) {
-			if (esp & ESP_ALL) strcat(powins, ",ESP");
-			else {
-				strcat(powins, ",ESP-");
+			if (esp & ESP_ALL) {
+				if (powins[0]) strcat(powins, ",");
+				strcat(powins, "ESP");
+			} else {
+				if (powins[0]) strcat(powins, ",");
+				strcat(powins, "~");
 				if (esp & ESP_SPIDER) strcat(powins, "S");
 				if (esp & ESP_ORC) strcat(powins, "o");
 				if (esp & ESP_TROLL) strcat(powins, "T");
@@ -2173,6 +2176,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		if (f3 & (TR3_DRAIN_EXP)) strcat(powins, "Drx");
 		if (f3 & (TR3_AGGRAVATE)) strcat(powins, "Aggr");
 
+		/* covers both, tmp+esp and strange books.. */
 		if (powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
 
 		/* exploding ammo */
