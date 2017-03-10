@@ -1951,6 +1951,284 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	/* Describe the activity */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
+	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription */
+	if (!strcmp(inscription, "@@")) {
+		char powins[MAX_CHARS_WIDE];
+		u32b f1, f2, f3, f4, f5, f6, esp, tmpf1, tmpf2, tmpf3, tmp;
+		bool i_f = FALSE, i_c = FALSE, i_e = FALSE, i_a = FALSE, i_p = FALSE, i_w = FALSE, i_n = FALSE;
+
+		if (!(o_ptr->ident & ID_MENTAL)) {
+			msg_print(Ind, "\377yYou must have *identified* an item in order to power-inscribe it.");
+			return;
+		}
+
+		msg_format(Ind, "Power-inscribing %s.", o_name);
+		msg_print(Ind, NULL);
+
+		powins[0] = 0;
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+		/* specialty: recognize custom spell books and inscribe with their spell names! */
+		if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
+			if (o_ptr->xtra1) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1))));
+			if (o_ptr->xtra2) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1))));
+			if (o_ptr->xtra3) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1))));
+			if (o_ptr->xtra4) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1))));
+			if (o_ptr->xtra5) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1))));
+			if (o_ptr->xtra6) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1))));
+			if (o_ptr->xtra7) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1))));
+			if (o_ptr->xtra8) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1))));
+			if (o_ptr->xtra9) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1))));
+			if (powins[strlen(powins) - 1] == '-') powins[strlen(powins) - 1] = 0;
+		}
+
+		if (f3 & (TR3_XTRA_MIGHT)) strcat(powins, "Xm");
+		if (f3 & (TR3_XTRA_SHOTS)) strcat(powins, "Xs");
+		if (f1 & (TR1_LIFE)) strcat(powins, "HP");
+		tmpf1 = f1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR);
+		tmpf2 = f2 & (TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
+		tmpf3 = tmpf1 & tmpf2;
+		if (tmpf3) {
+			strcat(powins, "^");
+			if (tmpf3 & TR1_STR) strcat(powins, "S");
+			if (tmpf3 & TR1_INT) strcat(powins, "I");
+			if (tmpf3 & TR1_WIS) strcat(powins, "W");
+			if (tmpf3 & TR1_DEX) strcat(powins, "D");
+			if (tmpf3 & TR1_CON) strcat(powins, "C");
+			if (tmpf3 & TR1_CHR) strcat(powins, "H");
+			tmpf1 &= ~tmpf3;
+			tmpf2 &= ~tmpf3;
+		}
+		if (tmpf1) {
+			strcat(powins, "+");
+			if (tmpf1 & TR1_STR) strcat(powins, "S");
+			if (tmpf1 & TR1_INT) strcat(powins, "I");
+			if (tmpf1 & TR1_WIS) strcat(powins, "W");
+			if (tmpf1 & TR1_DEX) strcat(powins, "D");
+			if (tmpf1 & TR1_CON) strcat(powins, "C");
+			if (tmpf1 & TR1_CHR) strcat(powins, "H");
+		}
+		if (tmpf2) {
+			strcat(powins, "_");
+			if (tmpf2 & TR2_SUST_STR) strcat(powins, "S");
+			if (tmpf2 & TR2_SUST_INT) strcat(powins, "I");
+			if (tmpf2 & TR2_SUST_WIS) strcat(powins, "W");
+			if (tmpf2 & TR2_SUST_DEX) strcat(powins, "D");
+			if (tmpf2 & TR2_SUST_CON) strcat(powins, "C");
+			if (tmpf2 & TR2_SUST_CHR) strcat(powins, "H");
+		}
+		if (tmpf1 || tmpf2 || tmpf3) strcat(powins, ",");
+
+		if (f1 & (TR1_STEALTH)) {
+			if (o_ptr->tval != TV_TRAPKIT) strcat(powins, "Stl");
+		}
+#if 0
+#ifdef ART_WITAN_STEALTH
+		else if (o_ptr->name1 && o_ptr->tval == TV_BOOTS && o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS)
+			 strcat(powins, "Stl");
+#endif
+#endif
+		if (f1 & (TR1_SEARCH)) strcat(powins, "Src");
+		if (f5 & (TR5_DISARM)) strcat(powins, "Dsr");
+		if (f1 & (TR1_INFRA)) strcat(powins, "IV");
+		if (f1 & (TR1_TUNNEL)) strcat(powins, "Dig");
+		if (f1 & (TR1_SPEED)) strcat(powins, "Spd");
+		if (f1 & (TR1_BLOWS)) strcat(powins, "Att");
+		if (f5 & (TR5_CRIT)) strcat(powins, "Crt");
+		if (f5 & (TR5_LUCK)) strcat(powins, "Lu");
+		if (f5 & (TR5_CHAOTIC)) strcat(powins, "Cht");
+		if (f1 & (TR1_VAMPIRIC)) strcat(powins, "Va");
+		if (f5 & (TR5_IMPACT)) strcat(powins, "Qu");
+		if (f5 & (TR5_VORPAL)) strcat(powins, "Vo");
+		/*if (f5 & (TR5_WOUNDING))*/
+		if (f1 & (TR1_MANA)) strcat(powins, "MP");
+		//if (f1 & (TR1_SPELL)) strcat(powins, "Sp");
+		if (f5 & (TR5_INVIS)) strcat(powins, "Inv");
+		if (o_ptr->tval != TV_TRAPKIT) {
+			if ((f2 & (TR2_IM_FIRE)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x01)) i_f = TRUE;
+			if ((f2 & (TR2_IM_COLD)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x02)) i_c = TRUE;
+			if ((f2 & (TR2_IM_ELEC)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x04)) i_e = TRUE;
+			if ((f2 & (TR2_IM_ACID)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x08)) i_a = TRUE;
+			if ((f5 & (TR5_IM_POISON)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x10)) i_p = TRUE;
+			if (f5 & (TR5_IM_WATER)) i_w = TRUE;
+			if (f4 & (TR4_IM_NETHER)) i_n = TRUE;
+			if ((tmp = (i_f || i_c || i_e || i_a || i_p || i_w || i_n))) {
+				if (powins[0]) strcat(powins, ",");
+				strcat(powins, "*");
+				if (i_f) strcat(powins, "F");
+				if (i_c) strcat(powins, "C");
+				if (i_e) strcat(powins, "E");
+				if (i_a) strcat(powins, "A");
+				if (i_p) strcat(powins, "P");
+				if (i_w) strcat(powins, "W");
+				if (i_n) strcat(powins, "N");
+				strcat(powins, "*");
+			}
+		}
+		//if (o_ptr->tval != TV_DRAG_ARMOR || o_ptr->sval != SV_DRAGON_MULTIHUED)
+		{
+			if (!(i_f && i_c && i_e && i_a)) {
+				if ((f2 & TR2_RES_FIRE) && (f2 & TR2_RES_COLD) && (f2 & TR2_RES_ELEC) && (f2 & TR2_RES_ACID)) {
+					if (!tmp && powins[0]) strcat(powins, ",");
+					strcat(powins, "Base");
+				} else {
+					i_f = (f2 & TR2_RES_FIRE) && !(f2 & TR2_IM_FIRE);
+					i_c = (f2 & TR2_RES_COLD) && !(f2 & TR2_IM_COLD);
+					i_e = (f2 & TR2_RES_ELEC) && !(f2 & TR2_IM_ELEC);
+					i_a = (f2 & TR2_RES_ACID) && !(f2 & TR2_IM_ACID);
+					if (!tmp && powins[0] && (i_f | i_c | i_e | i_a)) {
+						strcat(powins, ",");
+						if (i_f) strcat(powins, "f");
+						if (i_c) strcat(powins, "c");
+						if (i_e) strcat(powins, "e");
+						if (i_a) strcat(powins, "a");
+					}
+				}
+			}
+		}
+		if (!i_p && (f2 & TR2_RES_POIS)) strcat(powins, "Po");
+		if (!i_w && (f5 & TR5_RES_WATER)) strcat(powins, "Wa");
+		if (!i_n && (f2 & TR2_RES_NETHER)) strcat(powins, "Nt");
+		if (f2 & (TR2_RES_NEXUS)) strcat(powins, "Nx");
+		if (f2 & (TR2_RES_CHAOS)) strcat(powins, "Ca");
+		if (f2 & (TR2_RES_DISEN)) strcat(powins, "Di");
+		if (f2 & (TR2_RES_SOUND)) strcat(powins, "So");
+		if (f2 & (TR2_RES_SHARDS)) strcat(powins, "Sh");
+		if (f2 & (TR2_RES_LITE)) strcat(powins, "Lt");
+		if (f2 & (TR2_RES_DARK)) strcat(powins, "Dk");
+		if (f5 & (TR5_RES_TIME)) strcat(powins, "Ti");
+		if (f5 & (TR5_RES_MANA)) strcat(powins, "Ma");
+		if (f2 & (TR2_RES_BLIND)) strcat(powins, "Bl");
+		if (f2 & (TR2_RES_CONF)) strcat(powins, "Cf");
+		if (f5 & TR5_RES_TELE) strcat(powins, "RT");
+		if (f2 & (TR2_FREE_ACT)) strcat(powins, "FA");
+		if (f2 & (TR2_HOLD_LIFE)) strcat(powins, "HL");
+		if (f2 & (TR2_RES_FEAR)) strcat(powins, "Fe");
+		if (f3 & (TR3_SEE_INVIS)) strcat(powins, "SI");
+		if (f3 & (TR3_FEATHER)) strcat(powins, "FF");
+		if (f4 & (TR4_LEVITATE)) strcat(powins, "Lv");
+		if (f3 & (TR3_SLOW_DIGEST)) strcat(powins, "SD");
+		if (f3 & (TR3_REGEN)) strcat(powins, "Rg");
+		if (f5 & (TR5_REGEN_MANA)) strcat(powins, "Rgm");
+		if (f5 & (TR5_REFLECT)) strcat(powins, "Rf");
+		if (f1 & (TR1_BRAND_ACID)) strcat(powins, "BA");
+		if (f1 & (TR1_BRAND_ELEC)) strcat(powins, "BE");
+		if (f1 & (TR1_BRAND_FIRE)) strcat(powins, "BF");
+		if (f1 & (TR1_BRAND_COLD)) strcat(powins, "BC");
+		if (f1 & (TR1_BRAND_POIS)) strcat(powins, "BP");
+		if (f3 & (TR3_SH_FIRE)) strcat(powins, "SF");
+		if (f5 & (TR5_SH_COLD)) strcat(powins, "SC");
+		if (f3 & (TR3_SH_ELEC)) strcat(powins, "SE");
+		if (f3 & (TR3_NO_MAGIC)) strcat(powins, "AM");
+		if (f4 & (TR4_AUTO_ID)) strcat(powins, "ID");
+		if (f3 & (TR3_BLESSED)) strcat(powins, "Bless");
+		if (f3 & (TR3_TELEPORT)) strcat(powins, "Tele");
+
+		if (f5 & (TR5_PASS_WATER)) strcat(powins, "Swim");
+		if (f4 & (TR4_CLIMB)) strcat(powins, "Climb");
+		if (f3 & (TR3_WRAITH)) strcat(powins, "Wraith");
+		if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))  strcat(powins, "+Lt");
+
+		if ((tmp = (f1 & (TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ANIMAL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_DRAGON | TR1_SLAY_EVIL | TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON)))) {
+			strcat(powins, ",+");
+			if (f1 & (TR1_SLAY_ORC)) strcat(powins, "o");
+			if (f1 & (TR1_SLAY_TROLL)) strcat(powins, "T");
+			if (f1 & (TR1_SLAY_GIANT)) strcat(powins, "P");
+			if (f1 & (TR1_SLAY_ANIMAL)) strcat(powins, "a");
+			if (!(f1 & (TR1_KILL_UNDEAD)) && (f1 & TR1_SLAY_UNDEAD)) strcat(powins, "W");
+			if (!(f1 & (TR1_KILL_UNDEAD)) && (f1 & TR1_SLAY_UNDEAD)) strcat(powins, "U");
+			if (!(f1 & (TR1_KILL_UNDEAD)) && (f1 & TR1_SLAY_UNDEAD)) strcat(powins, "D");
+			if (f1 & (TR1_SLAY_EVIL)) strcat(powins, "Evil");
+			if (f1 & (TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON)) {
+				strcat(powins, "*");
+				if (f1 & TR1_KILL_UNDEAD) strcat(powins, "W");
+				if (f1 & TR1_KILL_DEMON) strcat(powins, "U");
+				if (f1 & TR1_KILL_DRAGON) strcat(powins, "D");
+			}
+		}
+		if (esp) {
+			if (esp & ESP_ALL) strcat(powins, ",ESP");
+			else {
+				strcat(powins, ",ESP-");
+				if (esp & ESP_SPIDER) strcat(powins, "S");
+				if (esp & ESP_ORC) strcat(powins, "o");
+				if (esp & ESP_TROLL) strcat(powins, "T");
+				if (esp & ESP_GIANT) strcat(powins, "P");
+				if (esp & ESP_ANIMAL) strcat(powins, "a");
+				if (esp & ESP_UNDEAD) strcat(powins, "W");
+				if (esp & ESP_DEMON) strcat(powins, "U");
+				if (esp & ESP_DRAGON) strcat(powins, "D");
+				if (esp & ESP_DRAGONRIDER) strcat(powins, "DR");
+				if (esp & ESP_GOOD) strcat(powins, "A");
+				if (esp & ESP_NONLIVING) strcat(powins, "g");
+				if (esp & ESP_UNIQUE) strcat(powins, "*");
+				if (esp & ESP_EVIL) strcat(powins, "Evil");
+			}
+		}
+		if (tmp || esp) strcat(powins, ",");
+
+		if (f3 & (TR3_NO_TELE)) strcat(powins, "NT");
+		if (f5 & (TR5_DRAIN_HP)) strcat(powins, "Dr");
+		if (f5 & (TR5_DRAIN_MANA)) strcat(powins, "Drm");
+		if (f3 & (TR3_DRAIN_EXP)) strcat(powins, "Drx");
+		if (f3 & (TR3_AGGRAVATE)) strcat(powins, "Aggr");
+
+		if (powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
+
+		/* exploding ammo */
+		if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0)) {
+			if (powins[0]) strcat(powins, " ");
+			strcat(powins, "(");
+			switch (o_ptr->pval) {
+			case GF_ELEC: strcat(powins, "Lightning"); break;
+			case GF_POIS: strcat(powins, "Poison"); break;
+			case GF_ACID: strcat(powins, "Acid"); break;
+			case GF_COLD: strcat(powins, "Frost"); break;
+			case GF_FIRE: strcat(powins, "Fire"); break;
+			case GF_PLASMA: strcat(powins, "Plasma"); break;
+			case GF_LITE: strcat(powins, "Light"); break;
+			case GF_DARK: strcat(powins, "Darkness"); break;
+			case GF_SHARDS: strcat(powins, "Shards"); break;
+			case GF_SOUND: strcat(powins, "Sound"); break;
+			case GF_CONFUSION: strcat(powins, "Confusion"); break;
+			case GF_FORCE: strcat(powins, "Force"); break;
+			case GF_INERTIA: strcat(powins, "Inertia"); break;
+			case GF_MANA: strcat(powins, "Mana"); break;
+			case GF_METEOR: strcat(powins, "Mini-Meteors"); break;
+			case GF_ICE: strcat(powins, "Ice"); break;
+			case GF_CHAOS: strcat(powins, "Chaos"); break;
+			case GF_NETHER: strcat(powins, "Nether"); break;
+			case GF_NEXUS: strcat(powins, "Nexus"); break;
+			case GF_TIME: strcat(powins, "Time"); break;
+			case GF_GRAVITY: strcat(powins, "Gravity"); break;
+			case GF_KILL_WALL: strcat(powins, "Stone-to-mud"); break;
+			case GF_AWAY_ALL: strcat(powins, "Teleportation"); break;
+			case GF_TURN_ALL: strcat(powins, "Fear"); break;
+			case GF_NUKE: strcat(powins, "Toxic waste"); break;
+			case GF_STUN: strcat(powins, "Stun"); break; //disabled
+			case GF_DISINTEGRATE: strcat(powins, "Disintegration"); break;
+			case GF_HELL_FIRE: strcat(powins, "Hellfire"); break;
+			}
+			strcat(powins, ")");
+		}
+
+		/* Watch total object name length */
+		o_ptr->note = o_ptr->note_utag = 0;
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
+
+		/* Save the inscription */
+		o_ptr->note = quark_add(powins);
+		o_ptr->note_utag = 0;
+
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+		return;
+	}
+
 	/* Message */
 	msg_format(Ind, "Inscribing %s.", o_name);
 	msg_print(Ind, NULL);
