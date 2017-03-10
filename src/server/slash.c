@@ -9994,6 +9994,10 @@ void do_slash_cmd(int Ind, char *message) {
 #endif
 				return;
 			}
+			else if (prefix(message, "/tp")) { //quick admin teleport-self
+				teleport_player_force(Ind, 250);
+				return;
+			}
 		}
 	}
 
