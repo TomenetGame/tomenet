@@ -4638,18 +4638,18 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf) {
 //				if (randint(100) < 7)
 				if (randint(500) < level + 5) {
 					/* Exploding missile */
-					int power[28] = { GF_ELEC, GF_POIS, GF_ACID,
+					int power[27] = { GF_ELEC, GF_POIS, GF_ACID,
 						GF_COLD, GF_FIRE, GF_PLASMA, GF_LITE,
 						GF_DARK, GF_SHARDS, GF_SOUND,
 						GF_CONFUSION, GF_FORCE, GF_INERTIA,
 						GF_MANA, GF_METEOR, GF_ICE, GF_CHAOS,
 						GF_NETHER, GF_NEXUS, GF_TIME,
 						GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
-						GF_TURN_ALL, GF_NUKE, GF_STUN,
+						GF_TURN_ALL, GF_NUKE, //GF_STUN,
 						GF_DISINTEGRATE, GF_HELL_FIRE };
 
 						//                                o_ptr->pval2 = power[rand_int(25)];
-					o_ptr->pval = power[rand_int(28)];
+					o_ptr->pval = power[rand_int(27)];
 				}
 			}
 			break;
