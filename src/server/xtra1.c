@@ -1501,13 +1501,15 @@ void calc_hitpoints(int Ind) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL; /* silence the warning */
 	int player_hp_eff; /* replacement for accessing player_hp[] directly */
 
-//	object_type *o_ptr;
-//	u32b f1, f2, f3, f4, f5, f6, esp;
+	//object_type *o_ptr;
+	//u32b f1, f2, f3, f4, f5, f6, esp;
 
 	int bonus, Ind2 = 0, cr_mhp = p_ptr->cp_ptr->c_mhp + p_ptr->rp_ptr->r_mhp;
 	long mhp, mhp_playerform, weakling_boost;
 	u32b mHPLim, finalHP;
 	int bonus_cap, to_life;
+	int rlev = r_info[p_ptr->body_monster].level;
+
 
 	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 	}
@@ -1621,11 +1623,21 @@ void calc_hitpoints(int Ind) {
 #ifndef MIMICRY_BOOST_WEAK_FORM
 		long levD, hpD;
 #endif
+
+#if defined(ENABLE_OHERETICISM) && defined(ENABLE_HELLKNIGHT)
+		/* Blood Sacrifice has special traits: Always useful form */
+		if (p_ptr->body_monster == RI_BLOODTHIRSTER && (p_ptr->pclass == CLASS_HELLKNIGHT
+ #ifdef CLASS_CPRIEST
+		    || p_ptr->pclass == CLASS_CPRIEST
+ #endif
+		    )) rlev = 80;
+#endif
+
 		mHPLim = (50000 / ((50000 / rhp) + 20));
 
 #if 0 /* done below */
 		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
-		mHPLim += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * (r_info[p_ptr->body_monster].level + 30)) / 100) * 20 : 0;
+		mHPLim += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * (rlev + 30)) / 100) * 20 : 0;
 #endif
 
 		raceHPbonus = mhp - ((mhp * 16) / p_ptr->hitdie); /* 10 human + 6 mimic */
@@ -1638,7 +1650,7 @@ void calc_hitpoints(int Ind) {
 #ifdef MIMICRY_BOOST_WEAK_FORM
 			mHPLim = mhp;
 #else
-			levD = p_ptr->lev - r_info[p_ptr->body_monster].level;
+			levD = p_ptr->lev - rlev;
 			if (levD < 0) levD = 0;
 			if (levD > 20) levD = 20;
 			hpD = mhp - mHPLim;
@@ -1693,11 +1705,11 @@ void calc_hitpoints(int Ind) {
 	if (p_ptr->body_monster) {
 		/* add flat bonus to maximum HP limit for char levels > 50, if form is powerful, to keep it useful */
 		mhp += (p_ptr->lev > 50) ?
-		    (((p_ptr->lev - 50) * ((r_info[p_ptr->body_monster].level > 80 ? 80 :
+		    (((p_ptr->lev - 50) * ((rlev > 80 ? 80 :
  #if 0 /* for 15..17/32 hp birth calc */
-		    r_info[p_ptr->body_monster].level) + 30)) / 100) * 5 : 0;
+		    rlev) + 30)) / 100) * 5 : 0;
  #else /* for 31..33/64 hp birth calc */
-		    r_info[p_ptr->body_monster].level) + 30)) / 25) : 0;
+		    rlev) + 30)) / 25) : 0;
  #endif 
 	}
 #endif
@@ -1839,12 +1851,13 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	cave_type **zcave;
-	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	int d, immunities = 0, immunity[7], immrand, spellbonus = 0;
 	int i, j;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	char mname[MNAME_LEN];
+
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	/* If in the player body nothing have to be done */
 	if (!p_ptr->body_monster) return;
@@ -2184,7 +2197,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		/* Ents */
 		case 708:
 			p_ptr->slow_digest = TRUE; csheet_boni->cb[6] |= CB7_RFOOD;
-			//if (p_ptr->prace != RACE_ENT) 
+			//if (p_ptr->prace != RACE_ENT)
 			p_ptr->pspeed -= 2;
 			p_ptr->suscep_fire = TRUE; csheet_boni->cb[0] |= CB1_SFIRE;
 			p_ptr->resist_water = TRUE; csheet_boni->cb[3] |= CB4_RWATR;
@@ -2452,8 +2465,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	   But the spell is already learnt at 45, when the player doesn't IM_FIRE yet. Now, it'd be weird if the form gave IM_POIS or even a choice instead,
 	   especially since the player cannot use 'Select preferred immunity' function due to missing Mimicry skill.
 	   So we'll just be generous at levels 45 to 49 and give IM_FIRE for free :-p as at 50 it'll not matter anymore. */
-	if (p_ptr->body_monster == RI_BLOODTHIRSTER
-	    && (p_ptr->pclass == CLASS_HELLKNIGHT
+	if (p_ptr->body_monster == RI_BLOODTHIRSTER && (p_ptr->pclass == CLASS_HELLKNIGHT
  #ifdef CLASS_CPRIEST
 	    || p_ptr->pclass == CLASS_CPRIEST
  #endif
@@ -4937,6 +4949,22 @@ void calc_boni(int Ind) {
 
 	/* Evaluate monster AC (if skin or armor etc) */
 	if (p_ptr->body_monster) {
+#if defined(ENABLE_OHERETICISM) && defined(ENABLE_HELLKNIGHT)
+		/* Hack: Blood Sacrifice has special traits */
+		if (p_ptr->body_monster == RI_BLOODTHIRSTER && (p_ptr->pclass == CLASS_HELLKNIGHT
+ #ifdef CLASS_CPRIEST
+		    || p_ptr->pclass == CLASS_CPRIEST
+ #endif
+		    )) {
+			/* never reduce AC, only increase or leave as is! */
+			if (toac > (p_ptr->ac + p_ptr->to_a)) {
+				p_ptr->ac = (p_ptr->ac * 1) / 2;
+				p_ptr->to_a = ((p_ptr->to_a * 1) + (toac * 1)) / 2;
+				p_ptr->dis_ac = (p_ptr->dis_ac * 1) / 2;
+				p_ptr->dis_to_a = ((p_ptr->dis_to_a * 1) + (toac * 1)) / 2;
+			}
+		} else {
+#endif
 		if (p_ptr->pclass == CLASS_DRUID)
 			body = 1 + 3 + 0 + 0; /* 0 1 0 2 1 0 = typical ANIMAL pattern,
 						need to hardcode it here to balance
@@ -4951,6 +4979,7 @@ void calc_boni(int Ind) {
 				+ (r_ptr->body_parts[BODY_LEGS] ? 1 : 0);
 
 		toac = r_ptr->ac * 14 / (7 + body);
+
 		/* p_ptr->ac += toac;
 		p_ptr->dis_ac += toac; - similar to HP calculation: */
 		if (toac < (p_ptr->ac + p_ptr->to_a)) {
@@ -4964,9 +4993,12 @@ void calc_boni(int Ind) {
 			p_ptr->dis_ac = (p_ptr->dis_ac * 1) / 2;
 			p_ptr->dis_to_a = ((p_ptr->dis_to_a * 1) + (toac * 1)) / 2;
 		}
-		/*	p_ptr->dis_ac = (toac < p_ptr->dis_ac) ?
+		/* p_ptr->dis_ac = (toac < p_ptr->dis_ac) ?
 		(((p_ptr->dis_ac * 2) + (toac * 1)) / 3) :
 		(((p_ptr->dis_ac * 1) + (toac * 1)) / 2);*/
+#if defined(ENABLE_OHERETICISM) && defined(ENABLE_HELLKNIGHT)
+		}
+#endif
 	}
 
 
