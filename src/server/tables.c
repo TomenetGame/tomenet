@@ -4149,7 +4149,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 750, },
 		{ SKILL_AXE,
 			'+', 0,
-			'+', 700, },
+			'+', 750, },
 		{ SKILL_POLEARM,
 			'+', 0,
 			'+', 700, },
