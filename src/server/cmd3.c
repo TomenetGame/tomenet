@@ -2064,7 +2064,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 				if (i_n) strcat(powins, "N");
 				strcat(powins, "*");
 			}
-		}
+		} else tmp = FALSE;
 		//if (o_ptr->tval != TV_DRAG_ARMOR || o_ptr->sval != SV_DRAGON_MULTIHUED)
 		{
 			if (!(i_f && i_c && i_e && i_a)) {
