@@ -15822,8 +15822,9 @@ school.
                         Maia Priests and Hell Knights! ---
                     Required skill level for first spell level: 45.
 
-                    (Form information according to (6.7) with the exception
-                     that this form will grant BOTH, poison and fire immunity:
+                    (Form information according to (6.7) with the exceptions
+                     that this form will grant BOTH, poison and fire immunity
+                     and never has less armour class than in normal form:
                      Greater demon, speedy and tough; HP-regeneration; immune
                      to fire and poison; resists acid, cold, fear, paralysis,
                      confusion, nether, nexus and teleportation effects.)
