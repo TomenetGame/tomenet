@@ -1970,16 +1970,16 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 		/* specialty: recognize custom spell books and inscribe with their spell names! */
 		if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
-			if (o_ptr->xtra1) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1))));
-			if (o_ptr->xtra2) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1))));
-			if (o_ptr->xtra3) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1))));
-			if (o_ptr->xtra4) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1))));
-			if (o_ptr->xtra5) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1))));
-			if (o_ptr->xtra6) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1))));
-			if (o_ptr->xtra7) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1))));
-			if (o_ptr->xtra8) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1))));
-			if (o_ptr->xtra9) strcat(powins, format("%s-", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1))));
-			if (powins[strlen(powins) - 1] == '-') powins[strlen(powins) - 1] = 0;
+			if (o_ptr->xtra1) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1))));
+			if (o_ptr->xtra2) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1))));
+			if (o_ptr->xtra3) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1))));
+			if (o_ptr->xtra4) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1))));
+			if (o_ptr->xtra5) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1))));
+			if (o_ptr->xtra6) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1))));
+			if (o_ptr->xtra7) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1))));
+			if (o_ptr->xtra8) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1))));
+			if (o_ptr->xtra9) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1))));
+			if (powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
 		}
 
 		if (f3 & (TR3_XTRA_MIGHT)) strcat(powins, "Xm");
