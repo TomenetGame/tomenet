@@ -1953,7 +1953,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription */
 	if (!strcmp(inscription, "@@")) {
-		char powins[MAX_CHARS_WIDE];
+		char powins[1024]; //powins[MAX_CHARS_WIDE];  --let's play it safe..
 		u32b f1, f2, f3, f4, f5, f6, esp, tmpf1, tmpf2, tmpf3, tmp;
 		bool i_f = FALSE, i_c = FALSE, i_e = FALSE, i_a = FALSE, i_p = FALSE, i_w = FALSE, i_n = FALSE;
 
@@ -2215,11 +2215,13 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		/* Watch total object name length */
 		o_ptr->note = o_ptr->note_utag = 0;
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
-		if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
+		if (ONAME_LEN - strlen(o_name) - 1 >= 0) { /* paranoia */
+			if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
 
-		/* Save the inscription */
-		o_ptr->note = quark_add(powins);
-		o_ptr->note_utag = 0;
+			/* Save the inscription */
+			o_ptr->note = quark_add(powins);
+			o_ptr->note_utag = 0;
+		}
 
 		/* Combine the pack */
 		p_ptr->notice |= (PN_COMBINE);
