@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. March 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 10. March 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1512,30 +1512,30 @@ The !+ inscription:
     so it does not imply !d but just !ksv=h (with 'h' being obsolete).
 
 A very useful inscription for (heavily) cursed items:
-    !w          prevent wielding/wearing an item. This is very useful if you
+    !w          Prevent wielding/wearing an item. This is very useful if you
                 carry a cursed item in your inventory that you really don't
                 want to equip by accident.
 
 Useful for characters who wield a boomerang not for throwing it, but rather
 because it provides magical boni:
-    !f          prevent firing an item (ie your equipped ranged weapon).
+    !f          Prevent firing an item (ie your equipped ranged weapon).
 
 If you use a sling, bow or crossbow and rather worthless ammo that you don't
 intend to pick up again, you may inscribe the ammo to make it disappear:
-    !g          makes ammo always break and never drop to the floor.
+    !g          Makes ammo always break and never drop to the floor.
 
 Other !-inscriptions:
-    !T          prevent taking off a secondary item.
-    !F          prevent using up this item to fuel your currently equipped
+    !T          Prevent taking off a secondary item.
+    !F          Prevent using up this item to fuel your currently equipped
                 light source. (Note that !k inscription implies this too.)
-    !E          prevent eating this item.
-    !q          prevent quaffing this potion.
-    !r          prevent reading this scroll.
-    !u          prevent using a staff.
-    !a          prevent aiming a wand.
-    !z          prevent zapping a rod.
-    !A          prevent activating this item.
-    !R          will prevent consuming the last rune in a stack for runespells.
+    !E          Prevent eating this item.
+    !q          Prevent quaffing this potion.
+    !r          Prevent reading this scroll.
+    !u          Prevent using a staff.
+    !a          Prevent aiming a wand.
+    !z          Prevent zapping a rod.
+    !A          Prevent activating this item.
+    !R          Will prevent consuming the last rune in a stack for runespells.
     !L          Can be used on an item that is the target of a scroll of
                 Artifact Creation. The resulting randart will not gain +LIFE
                 ('it affects your hit points') mod. So this is an inscription
@@ -1561,29 +1561,29 @@ Items that 'can cause Earthquakes':
                 See (5.13) for more information about earthquakes.
 
 Weapons, devices and spells:
-    @O          and its variants control the 'auto-retaliator' which is a
+    @O          This and its variants control the 'auto-retaliator' which is a
                 mechanism designed to make your character automatically attack
                 targets that are standing directly adjacent to you.
                 For details about auto-retaliation and the different types of
                 @O... inscriptions, see (4.1a)!
 
 Rods only:
-    !C          will notify you when the rod finished recharging.
+    !C          Will notify you when the rod finished recharging.
 
 Wands and directional rods:
-    !K          will enable fire-till-kill mode for this item, provided that
+    !K          Will enable fire-till-kill mode for this item, provided that
                 you have turned on fire-till-kill mode the usual way ('m' key).
 
 Ammunition:
-    !=          will make your character auto-pickup the ammo from the floor.
-    !g          will make your ammunition break. Rather disadvantageous but
+    !=          Will make your character auto-pickup the ammo from the floor.
+    !g          Will make your ammunition break. Rather disadvantageous but
                 maybe useful if you don't like littering the floor with it.
-    !M          makes ammunition stacks of same base type and same ego power
+    !M          Makes ammunition stacks of same base type and same ego power
                 stack even if +hit or +dam enchantments are not equal. Those
                 will be averaged and rounded downwards. (Doesn't work for
                 cursed or artifact ammo.) Wield the !M stack first, then also
                 wield the stack you want to merge with the equipped ammo.
-    !L          inscribe stacks of ammo in your inventory !L to make them be
+    !L          Inscribe stacks of ammo in your inventory !L to make them be
                 automatically reloaded into your quiver as soon as the ammo
                 you're currently using runs out.
                 Note that you can place ammo in your inventory in the desired
@@ -1604,13 +1604,13 @@ Scrolls/spell books of Identify (except for bag-ID), Rods/Staves of Perception:
                 See (5.7) for more information about identification.
 
 An item that can be activated:
-    @A1         pressing the keys 'A' and then '1' will activate that item.
+    @A1         Pressing the keys 'A' and then '1' will activate that item.
 
 A potion:
-    @q3         pressing 'q' then '3' will quaff that potion.
+    @q3         Pressing 'q' then '3' will quaff that potion.
 
 A magic scroll:
-    @r0         pressing the keys 'r' and '0' will read that scroll.
+    @r0         Pressing the keys 'r' and '0' will read that scroll.
 
 etc.. you get the idea. :)
 
@@ -1619,7 +1619,12 @@ if you find an armour that is an artifact, and you found out it resists
 fire and acid, you might inscribe it {ResFire,ResAcid} so that you will
 remember what it does just by looking at it and reading the inscription.
 It can make your life easier if you wear lots of items that have different
-resistances or abilities.
+resistances or abilities. A shortcut is the...
+
+Item power inscription (added in 4.7.1):
+    @@         Will automatically inscribe an item with codes representing its
+               special powers. Only works with *identified* items.
+
 
 "Word of Recall", provided by items (scrolls and rods) or spells:
 -----------------------------------------------------------------
