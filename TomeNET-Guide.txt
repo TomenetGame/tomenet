@@ -15743,15 +15743,15 @@ school.
                     Lv21: Removes all curses including heavy curses.
                     Required skill level for first spell level: 15.
 
-    Ethereal Eye    Detects all nearby creatures.
-                    Required skill level for first spell level: 20.
-
     Possess         Tries to manipulate the mind of a monster to make it ignore
                     you.
                     Lv9: Turns into a ball.
                     Lv17: Affects all monsters in sight.
                     Required skill level for first spell level: 23.
     Stop Possess    Stops active possession of monster minds.
+
+    Ethereal Eye    Detects all nearby creatures.
+                    Required skill level for first spell level: 28.
 
     Guardian Spirit
                     Invokes your guardian spirit, guiding and protecting you.
