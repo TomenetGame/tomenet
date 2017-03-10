@@ -5245,21 +5245,21 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	if (f5 & (TR5_IM_POISON))
 		fprintf(fff, "It provides immunity to poison.\n");
 
-        if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
+	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
 		if (!(f2 & (TR2_IM_FIRE))) {
-		        if (eff_full && (o_ptr->xtra2 & 0x01)) fprintf(fff, "It provides immunity to fire.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x01)) fprintf(fff, "It provides immunity to fire.\n");
 			else fprintf(fff, "It provides resistance to fire.\n");
 		}
 		if (!(f2 & (TR2_IM_COLD))) {
-		        if (eff_full && (o_ptr->xtra2 & 0x02)) fprintf(fff, "It provides immunity to cold.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x02)) fprintf(fff, "It provides immunity to cold.\n");
 			else fprintf(fff, "It provides resistance to cold.\n");
 		}
 		if (!(f2 & (TR2_IM_ELEC))) {
-		        if (eff_full && (o_ptr->xtra2 & 0x04)) fprintf(fff, "It provides immunity to electricity.\n");
-		        else fprintf(fff, "It provides resistance to electricity.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x04)) fprintf(fff, "It provides immunity to electricity.\n");
+			else fprintf(fff, "It provides resistance to electricity.\n");
 		}
 		if (!(f2 & (TR2_IM_ACID))) {
-		        if (eff_full && (o_ptr->xtra2 & 0x08)) fprintf(fff, "It provides immunity to acid.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x08)) fprintf(fff, "It provides immunity to acid.\n");
 			else fprintf(fff, "It provides resistance to acid.\n");
 		}
 		if (!(f5 & (TR5_IM_POISON))) {
@@ -5283,46 +5283,47 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 			fprintf(fff, "It provides resistance to poison.\n");
 	}
 
-	if (f2 & (TR2_RES_LITE))
-		fprintf(fff, "It provides resistance to light.\n");
-	if (f2 & (TR2_RES_DARK))
-		fprintf(fff, "It provides resistance to dark.\n");
-
-	if (f2 & (TR2_RES_BLIND))
-		fprintf(fff, "It provides resistance to blindness.\n");
-	if (f2 & (TR2_RES_CONF))
-		fprintf(fff, "It provides resistance to confusion.\n");
-	if (f2 & (TR2_RES_SOUND))
-		fprintf(fff, "It provides resistance to sound.\n");
-	if (f2 & (TR2_RES_SHARDS))
-		fprintf(fff, "It provides resistance to shards.\n");
-
+	if (f5 & (TR5_IM_WATER))
+		fprintf(fff, "It provides complete protection from unleashed water.\n");
+	else if (f5 & (TR5_RES_WATER))
+		fprintf(fff, "It provides resistance to unleashed water.\n");
 	if (f4 & (TR4_IM_NETHER))
 		fprintf(fff, "It provides immunity to nether.\n");
 	else if (f2 & (TR2_RES_NETHER))
 		fprintf(fff, "It provides resistance to nether.\n");
+
 	if (f2 & (TR2_RES_NEXUS))
 		fprintf(fff, "It provides resistance to nexus.\n");
 	if (f2 & (TR2_RES_CHAOS))
 		fprintf(fff, "It provides resistance to chaos.\n");
 	if (f2 & (TR2_RES_DISEN))
 		fprintf(fff, "It provides resistance to disenchantment.\n");
-	if (f5 & (TR5_IM_WATER))
-		fprintf(fff, "It provides complete protection from unleashed water.\n");
-	else if (f5 & (TR5_RES_WATER))
-		fprintf(fff, "It provides resistance to unleashed water.\n");
+	if (f2 & (TR2_RES_SOUND))
+		fprintf(fff, "It provides resistance to sound.\n");
+	if (f2 & (TR2_RES_SHARDS))
+		fprintf(fff, "It provides resistance to shards.\n");
+
 	if (f5 & (TR5_RES_TIME))
 		fprintf(fff, "It provides resistance to time.\n");
 	if (f5 & (TR5_RES_MANA))
 		fprintf(fff, "It provides resistance to magical energy.\n");
 	if (f5 & TR5_RES_TELE) fprintf(fff, "It provides resistance to teleportation attacks.\n");
 
-	if (f2 & (TR2_FREE_ACT))
-		fprintf(fff, "It provides immunity to paralysis.\n");
-	if (f2 & (TR2_HOLD_LIFE))
-		fprintf(fff, "It provides resistance to life draining attacks.\n");
+	if (f2 & (TR2_RES_LITE))
+		fprintf(fff, "It provides resistance to light.\n");
+	if (f2 & (TR2_RES_DARK))
+		fprintf(fff, "It provides resistance to dark.\n");
+	if (f2 & (TR2_RES_BLIND))
+		fprintf(fff, "It provides resistance to blindness.\n");
+
 	if (f2 & (TR2_RES_FEAR))
 		fprintf(fff, "It makes you completely fearless.\n");
+	if (f2 & (TR2_FREE_ACT))
+		fprintf(fff, "It provides immunity to paralysis.\n");
+	if (f2 & (TR2_RES_CONF))
+		fprintf(fff, "It provides resistance to confusion.\n");
+	if (f2 & (TR2_HOLD_LIFE))
+		fprintf(fff, "It provides resistance to life draining attacks.\n");
 	if (f3 & (TR3_SEE_INVIS))
 		fprintf(fff, "It allows you to see invisible monsters.\n");
 
