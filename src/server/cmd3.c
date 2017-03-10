@@ -2068,7 +2068,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		{
 			if (!(i_f && i_c && i_e && i_a)) {
 				if ((f2 & TR2_RES_FIRE) && (f2 & TR2_RES_COLD) && (f2 & TR2_RES_ELEC) && (f2 & TR2_RES_ACID)) {
-					if (!tmp && powins[0]) strcat(powins, ",");
+					if (!tmp && powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 					strcat(powins, "Base");
 				} else {
 					i_f = (f2 & TR2_RES_FIRE) && !(f2 & TR2_IM_FIRE);
@@ -2076,7 +2076,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 					i_e = (f2 & TR2_RES_ELEC) && !(f2 & TR2_IM_ELEC);
 					i_a = (f2 & TR2_RES_ACID) && !(f2 & TR2_IM_ACID);
 					if (!tmp && powins[0] && (i_f | i_c | i_e | i_a)) {
-						strcat(powins, ",");
+						if (powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 						if (i_f) strcat(powins, "f");
 						if (i_c) strcat(powins, "c");
 						if (i_e) strcat(powins, "e");
@@ -2129,7 +2129,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))  strcat(powins, "+Lt");
 
 		if ((tmp = (f1 & (TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ANIMAL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_DRAGON | TR1_SLAY_EVIL | TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON)))) {
-			if (powins[0]) strcat(powins, ",");
+			if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 			strcat(powins, "+");
 			if (f1 & (TR1_SLAY_ORC)) strcat(powins, "o");
 			if (f1 & (TR1_SLAY_TROLL)) strcat(powins, "T");
@@ -2148,10 +2148,10 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		}
 		if (esp) {
 			if (esp & ESP_ALL) {
-				if (powins[0]) strcat(powins, ",");
+				if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 				strcat(powins, "ESP");
 			} else {
-				if (powins[0]) strcat(powins, ",");
+				if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 				strcat(powins, "~");
 				if (esp & ESP_SPIDER) strcat(powins, "S");
 				if (esp & ESP_ORC) strcat(powins, "o");
