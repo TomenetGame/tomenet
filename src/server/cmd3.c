@@ -1218,6 +1218,13 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 #endif
 
 			note_toggle_cursed(o_ptr, TRUE);
+
+			/* Force dual-hand mode if wielding cursed weapon(s) */
+			if ((slot == INVEN_WIELD || (slot == INVEN_ARM && is_melee_weapon(o_ptr->tval)))
+			    && get_skill(p_ptr, SKILL_DUAL)) {
+				p_ptr->dual_mode = TRUE;
+				p_ptr->redraw |= PR_STATE;
+			}
 		}
 
 		/* For priests, easy recognition of easily usable BLESSED weapons */

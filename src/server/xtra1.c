@@ -2673,6 +2673,11 @@ int calc_blows_obj(int Ind, object_type *o_ptr) {
 	int num = 0, wgt = 0, mul = 0, div = 0, num_blow = 0, str_adj;
 
 
+	/* Extract the item flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+	if (f4 & TR4_NEVER_BLOW) return 0;
+
 	/* cap for Grond. Heaviest normal weapon is MoD at 40.0, which Grond originally was, too. - C. Blue */
 	if (eff_weight > 400) eff_weight = 400;
 
@@ -2750,8 +2755,7 @@ int calc_blows_obj(int Ind, object_type *o_ptr) {
 		num_blow += get_skill_scale(p_ptr, num, 2);
 
 
-	/* Extract the item flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	/* Extra Attacks from item */
 	if (f1 & TR1_BLOWS) {
 		if (o_ptr->name1) num_blow += o_ptr->pval;
 		else {
@@ -2797,7 +2801,9 @@ int calc_blows_weapons(int Ind) {
 	else num_blow = blows1;
 
 	/* add dual-wield bonus if we wear light armour! */
-	if (!p_ptr->rogue_heavyarmor && p_ptr->dual_wield && p_ptr->dual_mode)
+	if (!p_ptr->rogue_heavyarmor && p_ptr->dual_wield && p_ptr->dual_mode
+	    /* don't give dual-wield EA bonus if one of the weapons is NEVER_BLOW! */
+	    && blows1 != 0 && blows2 != 0)
 #if 0 /* if rounding down, add percentage bpr bonus maybe */
 //		num_blow += (1 + (num_blow - 1) / 5);
 		num_blow++;
@@ -2926,7 +2932,8 @@ void calc_boni(int Ind) {
 	//int extra_blows;
 	int extra_shots;
 	int extra_spells;
-	bool never_blow = FALSE, never_blow_ranged = FALSE;
+	byte never_blow = 0x0;
+	bool never_blow_ranged = FALSE;
 
 	object_type *o_ptr, *o2_ptr;
 	object_kind *k_ptr;
@@ -3783,8 +3790,20 @@ void calc_boni(int Ind) {
 		if (i == INVEN_ARM && o_ptr->tval != TV_SHIELD && rogue_heavy_armor(p_ptr)) continue;
 
 		if (f4 & TR4_NEVER_BLOW) {
-			if (o_ptr->tval == TV_BOOMERANG) never_blow_ranged = TRUE;
-			else never_blow = TRUE;
+			if (is_ranged_weapon(o_ptr->tval)) never_blow_ranged = TRUE; //disable shooting attacks
+			else if (is_melee_weapon(o_ptr->tval)) {
+				switch (i) {
+				case INVEN_WIELD:
+					never_blow |= 0x2; //disable melee for this weapon
+					break;
+				case INVEN_ARM:
+					never_blow |= 0x4; //disable melee for this weapon
+					break;
+				}
+			} else {
+				never_blow = 0x1; //completely disable melee
+				p_ptr->num_blow = 0;
+			}
 		}
 
 		/* MEGA ugly hack -- set spacetime distortion resistance */
@@ -5230,7 +5249,12 @@ void calc_boni(int Ind) {
 			p_ptr->weapon_parry = 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 10);
 		}
 		/* for dual-wielders, get a parry bonus for second weapon: */
-		if (p_ptr->dual_wield && p_ptr->dual_mode && !p_ptr->rogue_heavyarmor)
+		if (p_ptr->dual_wield && p_ptr->dual_mode && !p_ptr->rogue_heavyarmor
+#if 0
+		    /* don't give parry bonus if one of our weapons is NEVER_BLOW? */
+		    && never_blow == 0x0
+#endif
+		    )
 			//p_ptr->weapon_parry += 5 + get_skill_scale(p_ptr, SKILL_MASTERY, 5);//was +0(+10)
 			p_ptr->weapon_parry += 10;//pretty high, because independent of mastery skill^^
 
@@ -5294,40 +5318,91 @@ void calc_boni(int Ind) {
 	o2_ptr = &p_ptr->inventory[INVEN_ARM];
 	melee_weapon = (o_ptr->k_idx || (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD));
 	if (melee_weapon && !p_ptr->heavy_wield) {
-		int lev1 = -1, lev2 = -1;
+		int lev1 = -1, lev2 = -1, chh_bpr = 0;
 
 		p_ptr->num_blow = calc_blows_weapons(Ind);
 
-		/* Get intrinsic blow boni for column display (so everything adds up) */
-		if ((i = get_weaponmastery_skill(p_ptr, o_ptr)) != -1)
-			csheet_boni[14].blow += get_skill_scale(p_ptr, i, 2);
-		
-		p_ptr->num_blow += p_ptr->extra_blows;
-		/* Boost blows with masteries */
-		/* note for dual-wield: instead of using two different p_ptr->to_h/d_melee for each
-		   weapon, we just average the mastery boni we'd receive on each - C. Blue */
-		if ((i = get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_WIELD])) != -1)
-			lev1 = get_skill(p_ptr, i);
-		if ((i = get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_ARM])) != -1)
-			lev2 = get_skill(p_ptr, i);
-		/* if we don't wear any weapon at all, we get 0 bonus */
-		if (lev1 == -1 && lev2 == -1) lev2 = 0;
-		/* if we don't dual-wield, we mustn't average things */
-		if (lev1 == -1) lev1 = lev2;
-		if (lev2 == -1) lev2 = lev1;
-		/* average for dual-wield */
-		if (p_ptr->dual_mode) {
-			p_ptr->to_h_melee += ((lev1 + lev2) / 2);
-			p_ptr->to_d_melee += ((lev1 + lev2) / 6);
-		} else { /* treat main-hand mode basically like weapon+shield, in terms of accuracy/damage (ie no loss) */
-			p_ptr->to_h_melee += lev1;
-			p_ptr->to_d_melee += lev1 / 3;
+
+		/* one of our two weapons is NEVER_BLOW? half total # of attacks (and half extra blows accordingly) */
+		if ((never_blow == 0x2 || never_blow == 0x4) && p_ptr->dual_wield && p_ptr->dual_mode) {
+			p_ptr->num_blow += (p_ptr->extra_blows + 1) / 2; //we're nice: rounding up! ('Character has control over weapon usaage'..)
+			if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
+
+			/* Boost blows with masteries */
+			/* note for dual-wield: instead of using two different p_ptr->to_h/d_melee for each
+			   weapon, we just average the mastery boni we'd receive on each - C. Blue */
+			if (never_blow == 0x4 && (i = get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_WIELD])) != -1) {
+				lev1 = get_skill(p_ptr, i);
+				/* Get intrinsic blow boni for column display (so everything adds up) */
+				chh_bpr += get_skill_scale(p_ptr, i, 2);
+			}
+			if (never_blow == 0x2 && (i = get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_ARM])) != -1) {
+				lev2 = get_skill(p_ptr, i);
+				/* Get intrinsic blow boni for column display (so everything adds up) */
+				chh_bpr += get_skill_scale(p_ptr, i, 2);
+			}
+			csheet_boni[14].blow += (chh_bpr + 1) / 2; //rounding up..
+
+			/* if we don't wear any weapon at all, we get 0 bonus */
+			if (lev1 == -1 && lev2 == -1) lev2 = 0;
+			/* if we don't dual-wield, we mustn't average things */
+			if (lev1 == -1) lev1 = lev2;
+			if (lev2 == -1) lev2 = lev1;
+			/* average for dual-wield */
+			if (p_ptr->dual_mode) {
+				p_ptr->to_h_melee += ((lev1 + lev2) / 2);
+				p_ptr->to_d_melee += ((lev1 + lev2) / 6);
+			} else { /* treat main-hand mode basically like weapon+shield, in terms of accuracy/damage (ie no loss) */
+				p_ptr->to_h_melee += lev1;
+				p_ptr->to_d_melee += lev1 / 3;
+			}
+		}
+		/* all our weapons are NEVER_BLOW? no melee then */
+		else if (never_blow) {
+			p_ptr->to_h_melee = p_ptr->to_d_melee = 0;
+			p_ptr->num_blow = 0;
+		}
+		/* all weapons (1 or 2) are fine */
+		else {
+			p_ptr->num_blow += p_ptr->extra_blows;
+			if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
+
+			/* Boost blows with masteries */
+			/* note for dual-wield: instead of using two different p_ptr->to_h/d_melee for each
+			   weapon, we just average the mastery boni we'd receive on each - C. Blue */
+			if ((i = get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_WIELD])) != -1) {
+				lev1 = get_skill(p_ptr, i);
+				/* Get intrinsic blow boni for column display (so everything adds up) */
+				chh_bpr += get_skill_scale(p_ptr, i, 2);
+			}
+			if ((i = get_weaponmastery_skill(p_ptr, &p_ptr->inventory[INVEN_ARM])) != -1) {
+				lev2 = get_skill(p_ptr, i);
+				/* Get intrinsic blow boni for column display (so everything adds up) */
+				chh_bpr += get_skill_scale(p_ptr, i, 2);
+			}
+			if (lev1 != -1 && lev2 != -1) csheet_boni[14].blow += (chh_bpr + 1) / 2; //rounding up..
+			else csheet_boni[14].blow += chh_bpr;
+
+			/* if we don't wear any weapon at all, we get 0 bonus */
+			if (lev1 == -1 && lev2 == -1) lev2 = 0;
+			/* if we don't dual-wield, we mustn't average things */
+			if (lev1 == -1) lev1 = lev2;
+			if (lev2 == -1) lev2 = lev1;
+			/* average for dual-wield */
+			if (p_ptr->dual_mode) {
+				p_ptr->to_h_melee += ((lev1 + lev2) / 2);
+				p_ptr->to_d_melee += ((lev1 + lev2) / 6);
+			} else { /* treat main-hand mode basically like weapon+shield, in terms of accuracy/damage (ie no loss) */
+				p_ptr->to_h_melee += lev1;
+				p_ptr->to_d_melee += lev1 / 3;
+			}
 		}
 	}
 
 
 	/* Different calculation for monks with empty hands */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) && !melee_weapon &&
+	    never_blow != 0x1 &&
 #ifndef ENABLE_MA_BOOMERANG
 	    !(p_ptr->inventory[INVEN_BOW].k_idx)) {
 #else
@@ -5349,6 +5424,7 @@ void calc_boni(int Ind) {
 		if (monk_heavy_armor(p_ptr)) p_ptr->num_blow /= 2;
 
 		p_ptr->num_blow += 1 + p_ptr->extra_blows;
+		if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
 
 		if (!monk_heavy_armor(p_ptr)) {
 			p_ptr->to_h_melee += (marts * 4) / 2;//was *3/2
@@ -5430,7 +5506,7 @@ void calc_boni(int Ind) {
 	    (p_ptr->num_blow > 1)) p_ptr->num_blow = 1;
 
 	/* Weaponmastery bonus to hit and damage - not for MA!- C. Blue */
-	if (get_skill(p_ptr, SKILL_MASTERY) && melee_weapon) {
+	if (get_skill(p_ptr, SKILL_MASTERY) && melee_weapon && p_ptr->num_blow) {
 		int lev = get_skill(p_ptr, SKILL_MASTERY);
 		p_ptr->to_h_melee += lev / 3;
 		p_ptr->to_d_melee += lev / 10;
@@ -6564,7 +6640,7 @@ void calc_boni(int Ind) {
 			s_printf("warning_bpr: %s\n", p_ptr->name);
 		}
 		if (p_ptr->warning_bpr3 == 2 &&
-		    p_ptr->num_blow == 1 && old_num_blow == 1 && 
+		    p_ptr->num_blow == 1 && old_num_blow == 1 &&
 		    /* and don't spam Martial Arts users or mage-staff wielders ;) */
 		    p_ptr->inventory[INVEN_WIELD].k_idx && is_melee_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
@@ -6613,7 +6689,7 @@ void calc_boni(int Ind) {
 	/* hack: no physical attacks */
 	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
 	    (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags1 & RF1_NEVER_BLOW)) ||
-	    never_blow)
+	    never_blow == 0x1 || ((never_blow == 0x2 || never_blow == 0x4) && !(p_ptr->dual_wield && p_ptr->dual_mode)) || never_blow == 0x6)
 		p_ptr->num_blow = 0;
 	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
 	    never_blow_ranged)

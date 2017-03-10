@@ -3395,10 +3395,14 @@ void toggle_dual_mode(int Ind) {
 		return;
 	}
 
-	if (p_ptr->dual_mode)
+	if (p_ptr->dual_mode) {
+		if (cursed_p(&p_ptr->inventory[INVEN_WIELD]) || (p_ptr->dual_wield && cursed_p(&p_ptr->inventory[INVEN_ARM]))) {
+			msg_print(Ind, "\377yYou cannot switch to main-hand mode while wielding a cursed weapon!");
+			return;
+		}
 		msg_print(Ind, "\377wDual-wield mode: Main-hand. (This disables all dual-wield boni.)");
-	else
-		msg_print(Ind, "\377wDual-wield mode: Dual-hand.");
+	} else msg_print(Ind, "\377wDual-wield mode: Dual-hand.");
+
 	p_ptr->dual_mode = !p_ptr->dual_mode;
 s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "true" : "false");
 	p_ptr->redraw |= PR_STATE | PR_PLUSSES;
