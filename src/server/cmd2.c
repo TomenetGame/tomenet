@@ -5285,19 +5285,20 @@ void do_cmd_fire(int Ind, int dir) {
 #ifdef TARGET_SWITCHING_COST_RANGED
 	/* Time cost for switching target during ongoing combat. */
 	/* we did attack something right now without any pause afterwards,
-	   and it was something different than our current target? */
-	if (p_ptr->tsc_lasttarget != p_ptr->target_col + p_ptr->target_row * 100
+	   and it was something different than our current target?
+	   (Paranoid todo: account for stationary targetting, could potentially be exploited if insane) */
+	if (p_ptr->tsc_lasttarget != p_ptr->target_who
 	    /* leeway - don't apply it to already pretty slow attackers */
 	    && p_ptr->num_fire > 2) {
 		/* we switched to a new target? */
 		if (p_ptr->tsc_lasttarget) { //todo: maybe allow 'double shot' technique to sometimes bypass switching cost?
-			p_ptr->tsc_lasttarget = p_ptr->target_col + p_ptr->target_row * 100;
+			p_ptr->tsc_lasttarget = p_ptr->target_who;
 			/* skip a shot, for setting aim to our new target */
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / thits;
 			return;
 		}
 		/* we actually just began ranged combat, attacking our very first target - we're already prepared. */
-		p_ptr->tsc_lasttarget = p_ptr->target_col + p_ptr->target_row * 100;
+		p_ptr->tsc_lasttarget = p_ptr->target_who;
 	}
 #endif
 
