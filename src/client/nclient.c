@@ -1534,6 +1534,7 @@ int Receive_hp(void) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c", &ch, &max, &cur, &drain)) <= 0)
 			return n;
 	} else {
+		drain = FALSE;
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
 			return n;
 	}
