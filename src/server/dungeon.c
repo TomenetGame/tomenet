@@ -3409,7 +3409,8 @@ void recall_player(int Ind, char *message) {
 	/* Specialty: Did we make it through the Halls of Mandos?
 	   Those are now ironman, so they're a 'pure', traditional ironman challenge.
 	   However, this dungeon can be entered at any level, so it might be less of a challenge. */
-	if (in_hallsofmandos(&old_wpos)) {
+	if (in_hallsofmandos(&old_wpos)
+	    && !is_admin(p_ptr)) {
 		msg_print(Ind, "\374\377a***\377sYou made it through the Halls of Mandos!\377a***");
 		sprintf(buf, "\374\377a***\377s%s made it through the Halls of Mandos!\377a***", p_ptr->name);
 		msg_broadcast(Ind, buf);
@@ -3421,8 +3422,7 @@ void recall_player(int Ind, char *message) {
 /* Handles WoR
  * XXX dirty -- REWRITEME
  */
-static void do_recall(int Ind, bool bypass)
-{
+static void do_recall(int Ind, bool bypass) {
 	player_type *p_ptr = Players[Ind];
 	char *message = NULL;
 
@@ -3568,7 +3568,7 @@ static void do_recall(int Ind, bool bypass)
 	/* even at runlevel 2048 players may still recall..for now */
 	else if (cfg.runlevel > 4 && cfg.runlevel != 2049) {
 		wilderness_type *w_ptr = &wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx];
-//		wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+		//wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		/* Messages */
 		if (p_ptr->recall_pos.wz < 0 && w_ptr->flags & WILD_F_DOWN) {
 			dungeon_type *d_ptr = wild_info[p_ptr->recall_pos.wy][p_ptr->recall_pos.wx].dungeon;
