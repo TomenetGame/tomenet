@@ -3436,8 +3436,15 @@ void calc_boni(int Ind) {
 		csheet_boni[14].cb[6] |= CB7_RVAMP;
 		/* Necro+Trauma combo intrinsic vamp boost for true vampires */
 		if (get_skill(p_ptr, SKILL_NECROMANCY) >= 25 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 25
+#if 0 /* Chh screen currently doesn't support a 'full vampirism' flag for '@' column, it's instead using some nasty hard-coded hacks.. */
+		    && p_ptr->vampiric_melee <= get_skill(p_ptr, SKILL_NECROMANCY) + get_skill(p_ptr, SKILL_TRAUMATURGY)) { /* '<=' instead of '<' to trigger the csheet-boni */
+			p_ptr->vampiric_melee = get_skill(p_ptr, SKILL_NECROMANCY) + get_skill(p_ptr, SKILL_TRAUMATURGY);
+			if (p_ptr->vampiric_melee == 100) csheet_boni[14].cb[6] |= CB7_RVAMP;
+		}
+#else
 		    && p_ptr->vampiric_melee < get_skill(p_ptr, SKILL_NECROMANCY) + get_skill(p_ptr, SKILL_TRAUMATURGY))
 			p_ptr->vampiric_melee = get_skill(p_ptr, SKILL_NECROMANCY) + get_skill(p_ptr, SKILL_TRAUMATURGY);
+#endif
 
 		/* sense surroundings without light source! (virtual lite / dark light) */
 		p_ptr->cur_vlite = 1 + p_ptr->lev / 10; csheet_boni[14].lite = 1 + p_ptr->lev / 10;

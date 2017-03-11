@@ -2467,11 +2467,11 @@ void display_player(int hist) {
 			if (p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) { c_put_str(TERM_WHITE, "*", 13, 25 + 14); if (header_color[1][12] == TERM_L_DARK) header_color[1][12] = TERM_WHITE; } //Hack: Ents/Vamps require food but do not gorge! - Kurzel
 			if (csheet_boni[i].cb[6] & CB7_IFOOD) { c_put_str(TERM_L_UMBER, "*", 13, 25 + i); if (header_color[1][12] != TERM_L_UMBER) header_color[1][12] = TERM_L_UMBER; }
 			if (csheet_boni[i].cb[6] & CB7_RVAMP) {
-				if ((i == 0) || (i == 1) || (i == 2) || (i == 12) || ((i == 14) && ((p_ptr->body_monster == 365) || (p_ptr->body_monster == 391)))) { //Hack: use * for 100% weapon/ammo or v-bat/mist forms
+				if ((i == 0) || (i == 1) || (i == 2) || (i == 12)
+				    || ((i == 14) && ((p_ptr->body_monster == 365) || (p_ptr->body_monster == 391))) //Hack: use * for 100% weapon/ammo or v-bat/mist forms
+				    || (i == 14 && get_skill(SKILL_NECROMANCY) == 50 && get_skill(SKILL_TRAUMATURGY) == 50)) { //Nasty hack: Assume that having full trauma+necro gives 100% vamp actually
 					c_put_str(TERM_WHITE, "*", 14, 25 + i); header_color[1][13] = TERM_WHITE;
-				} else {
-					c_put_str(TERM_WHITE, "+", 14, 25 + i); header_color[1][13] = TERM_WHITE;
-				}
+				} else { c_put_str(TERM_WHITE, "+", 14, 25 + i); header_color[1][13] = TERM_WHITE; }
 			}
 			if (p_ptr->mode & MODE_FRUIT_BAT && p_ptr->body_monster == 0) { c_put_str(TERM_WHITE, "+", 14, 25 + 14); header_color[1][13] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
 			if (csheet_boni[i].cb[6] & CB7_RAUID) { c_put_str(TERM_WHITE, "+", 15, 25 + i); header_color[1][14] = TERM_WHITE; }
