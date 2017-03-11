@@ -1365,6 +1365,25 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 		return;
 	}
 
+#if 1
+	/* Corrupted Priest: Reverse all heavy-cursed boni for true demon form - the only time during which they too get flipped item boni. */
+#ifdef VAMPIRES_INV_CURSED
+ #ifdef ENABLE_CPRIEST
+	if (p_ptr->pclass == CLASS_CPRIEST) {
+		if (p_ptr->body_monster != RI_BLOODTHIRSTER && r_idx == RI_BLOODTHIRSTER) {
+			int i;
+
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) inverse_cursed(&p_ptr->inventory[i]);
+		} else if (p_ptr->body_monster == RI_BLOODTHIRSTER && r_idx != RI_BLOODTHIRSTER) {
+			int i;
+
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) reverse_cursed(&p_ptr->inventory[i]);
+		}
+	}
+ #endif
+#endif
+#endif
+
 	/* mimics can easily restore from chauve-souris fruit bat form */
 	if (p_ptr->fruit_bat == 2) p_ptr->fruit_bat = 0;
 
