@@ -1912,6 +1912,22 @@ player_race race_info[MAX_RACE] = {
 			'+', 0,
 			'%', 105, },
 #endif
+		{ SKILL_NECROMANCY,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_TRAUMATURGY,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_AURA_FEAR,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_AURA_SHIVER,
+			'+', 0,
+			'%', 0, },
+		{ SKILL_AURA_DEATH,
+			'+', 0,
+			'%', 0, },
+
 		{ SKILL_FIRE, /* But hates fire */
 			'+', 0,
 			'%', 60, },
