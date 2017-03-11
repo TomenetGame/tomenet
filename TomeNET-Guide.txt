@@ -13590,7 +13590,7 @@ create a character!):
     strength to get at least 2 blows per round with it).
     (For details on the benefits of dual-wielding, see (6.2).)
 
-- Istar (elvish word for Mage)
+- Istar (the Quenya word for "mage")
     Istari use intelligence primarily, determining how much mana they have
     to cast spells and how low their failure rate is.
     They are the all-around best magicians, having both devastating and highly
