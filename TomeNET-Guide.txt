@@ -15260,7 +15260,7 @@ school.
     Phase Door      Teleports you on a small scale range.
                     Required skill level for first spell level: 2.
 
-    Disarm          Destroys traps and visible doors around you.
+    Disarm          Destroys traps and reveals and unlocks doors around you.
                     Required skill level for first spell level: 5.
 
     Teleport        Teleports you within the level.
