@@ -2585,6 +2585,9 @@ static void player_setup(int Ind, bool new) {
 	/* No item being used up */
 	p_ptr->using_up_item = -1;
 
+	/* Drain-HP hack for client recognition when to warn */
+	p_ptr->hp_drained = TRUE;
+
 	/* Set the player's "panel" information */
 	l_ptr = getfloor(wpos);
 	if (l_ptr) {

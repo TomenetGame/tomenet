@@ -1800,12 +1800,14 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	if (!p_ptr->no_alert) {
 		if (((p_ptr->alert_afk_dam && p_ptr->afk)
 #ifdef ALERT_OFFPANEL_DAM
-		    /* new: alert when we're off-panel (cmd_locate) */
+		    /* new: alert when we're off-panel (cmd_locate) or in a sticky screen (menus) */
 		    || (p_ptr->alert_offpanel_dam && (p_ptr->panel_row_old != p_ptr->panel_row || p_ptr->panel_col_old != p_ptr->panel_col))
 #endif
 		    )
 		    /* don't alert about 0-damage terrain effect */
 		    && (damage || -Ind_attacker != PROJECTOR_TERRAIN)
+		    /* don't alert about life drain effects (equipment/sunburn) */
+		    && !drain
 #ifdef USE_SOUND_2010
 		    ) {
 			Send_warning_beep(Ind);
@@ -1836,7 +1838,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	is acitavted (C. Blue) */
 /*	if (!p_ptr->tim_manashield)
 	{
-*/		old_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+*/		old_num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
 		if (old_num >= 7) old_num = 10;
 /*	}
 	else if (p_ptr->msp > 0)
@@ -1906,10 +1908,10 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 
 			switch(p_ptr->pclass) {
 			case CLASS_MAGE:
-			taken = (damage * 2 ) / 2;//mana shield works with a ratio of SP<->damage points
+			taken = (damage * 2) / 2;//mana shield works with a ratio of SP<->damage points
 			break;
 			default:
-			taken = (damage * 2 ) / 1;
+			taken = (damage * 2) / 1;
 			break;
 			}
 
@@ -1946,6 +1948,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	/* Hurt the player */
 	p_ptr->chp -= damage;
 	p_ptr->deathblow = damage;
+	if (!drain) p_ptr->hp_drained = FALSE;
 
 	/* for cloaking as well as shadow running:
 	   floor damage (like in nether realm) ain't supposed to break it! - C. Blue */
@@ -1966,7 +1969,7 @@ destined_defeat:
 	is acitavted (C. Blue) */
 /*	if (!p_ptr->tim_manashield)
 	{
-*/		new_num = (p_ptr->chp * 95) / (p_ptr->mhp*10); 
+*/		new_num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
 		if (new_num > TURN_CHAR_INTO_NUMBER) new_num = 10;
 /*	}
 	else

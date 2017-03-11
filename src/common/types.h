@@ -1949,6 +1949,7 @@ struct player_type {
 	u16b chp_frac;			/* Cur hit frac (times 2^16) */
 	s16b player_hp[PY_MAX_LEVEL];
 	s16b form_hp_ratio;		/* mimic form HP+ percentage */
+	bool hp_drained;		/* hack for client-size recognition of "harmless" lifedrain damage */
 
 	s16b msp;			/* Max mana pts */
 	s16b csp;			/* Cur mana pts */

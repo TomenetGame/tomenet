@@ -1524,20 +1524,26 @@ int Receive_stat(void) {
 int Receive_hp(void) {
 	int	n;
 	char 	ch;
+	char	drain;
 	s16b	max, cur;
 #ifdef USE_SOUND_2010
 	static int prev_chp = 0;
 #endif
 
-	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
-		return n;
+	if (is_newer_than(&server_version, 4, 7, 0, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c", &ch, &max, &cur, &drain)) <= 0)
+			return n;
+	} else {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
+			return n;
+	}
 
 	p_ptr->mhp = max;
 	p_ptr->chp = cur;
 
 #ifdef USE_SOUND_2010
 	/* Send beep when we're losing HP while we're busy in some other window */
-	if (c_cfg.alert_offpanel_dam && screen_icky && cur < prev_chp) warning_page();
+	if (c_cfg.alert_offpanel_dam && screen_icky && cur < prev_chp && !drain) warning_page();
 	if (cur != prev_chp) prev_chp = cur;
 #endif
 

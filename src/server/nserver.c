@@ -5361,7 +5361,11 @@ int Send_sanity(int Ind, byte attr, cptr msg) {
 
 int Send_hp(int Ind, int mhp, int chp) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+	char drain = p_ptr->hp_drained ? 1 : 0;
+
+	/* Always start assuming that all further hp loss from now on was just to equipment-induced life draining */
+	p_ptr->hp_drained = TRUE;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -5371,9 +5375,15 @@ int Send_hp(int Ind, int mhp, int chp) {
 	}
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%hd%hd", PKT_HP, mhp, chp);
+		if (is_newer_than(&p_ptr2->version, 4, 7, 0, 2, 0, 0))
+			Packet_printf(&connp2->c, "%c%hd%hd%c", PKT_HP, mhp, chp, drain);
+		else
+			Packet_printf(&connp2->c, "%c%hd%hd", PKT_HP, mhp, chp);
 	}
-	return Packet_printf(&connp->c, "%c%hd%hd", PKT_HP, mhp, chp);
+	if (is_newer_than(&p_ptr->version, 4, 7, 0, 2, 0, 0))
+		return Packet_printf(&connp->c, "%c%hd%hd%c", PKT_HP, mhp, chp, drain);
+	else
+		return Packet_printf(&connp->c, "%c%hd%hd", PKT_HP, mhp, chp);
 }
 
 int Send_sp(int Ind, int msp, int csp) {
@@ -7361,7 +7371,7 @@ int Send_warning_beep(int Ind) {
 
 int Send_AFK(int Ind, byte afk) {
 	connection_t *connp = Conn[Players[Ind]->conn];
-//	player_type *p_ptr = Players[Ind];
+	//player_type *p_ptr = Players[Ind];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
