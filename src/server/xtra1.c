@@ -3020,8 +3020,8 @@ void calc_boni(int Ind) {
 		case 4: /* Hell Knight's Demonic Strength */
 			p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow; csheet_boni[14].pstr += p_ptr->xtrastat_pow;
 			p_ptr->stat_add[A_CON] = p_ptr->xtrastat_pow; csheet_boni[14].pcon += p_ptr->xtrastat_pow;
-			p_ptr->sustain_str = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSSTR;
-			p_ptr->sustain_con = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSCON;
+			p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
+			p_ptr->sustain_con = TRUE; csheet_boni[14].cb[11] |= CB12_RSCON;
 			break;
 #endif
 		/* Druid's Extra Growth */
@@ -3045,8 +3045,8 @@ void calc_boni(int Ind) {
 		/* Bloodthirster form includes the benefits of 'Demonic Strength' (+max power of the spell) */
 		p_ptr->stat_add[A_STR] = 4; csheet_boni[14].pstr += 4;
 		p_ptr->stat_add[A_CON] = 4; csheet_boni[14].pcon += 4;
-		p_ptr->sustain_str = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSSTR;
-		p_ptr->sustain_con = TRUE; csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_RSCON;
+		p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
+		p_ptr->sustain_con = TRUE; csheet_boni[14].cb[11] |= CB12_RSCON;
 	}
 #endif
 
