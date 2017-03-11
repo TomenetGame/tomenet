@@ -2222,7 +2222,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		/* Watch total object name length */
 		o_ptr->note = o_ptr->note_utag = 0;
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
-		if (ONAME_LEN - strlen(o_name) - 1 >= 0) { /* paranoia */
+		if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia */
 			if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
 
 			/* Save the inscription */
