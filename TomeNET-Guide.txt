@@ -714,6 +714,9 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         "\!!" will remove an "!" tag.
         "\##" will remove the whole part that follows after the '#' character.
 
+        To simply append a new inscription to an existing inscription, enter
+        '\\' at the beginning of the new inscription.
+
 }       remove inscription from an item.
 
 /       in general, use an item (combines q,r, etc..).
