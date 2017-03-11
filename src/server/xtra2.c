@@ -9051,7 +9051,7 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *num){
 	int r = *type, i = *num, lev = *level, k = 0;
 	player_type *p_ptr = Players[j];
-	bool iddc;
+	bool iddc = in_irondeepdive(&p_ptr->wpos), mandos = in_hallsofmandos(&p_ptr->wpos);
 
 	if (p_ptr->xorder_id) {
 		for (i = 0; i < MAX_XORDERS; i++) {
@@ -9067,9 +9067,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 		}
 	}
 
-	if (!in_irondeepdive(&p_ptr->wpos)) {
-		iddc = FALSE;
-
+	if (!iddc && !mandos) {
 		if (p_ptr->mode & MODE_DED_IDDC) {
 			msg_print(Ind, "\377yYou can only acquire an extermination order when you are inside the IDDC!");
 			msg_print(Ind, "\377yUse the /xo (short for /xorder) command after you entered it.");
@@ -9087,7 +9085,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 			msg_print(Ind, "\377yPlease visit your local town hall or seat of ruling to receive an order!");
 			return FALSE;
 		}
-	} else iddc = TRUE;
+	}
 
 	if (p_ptr->IDDC_logscum) {
 		msg_print(Ind, "\377yYou cannot acquire an extermination order on a stale floor.");
@@ -9111,7 +9109,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 		return FALSE;
 	}
 
-	if (iddc || in_hallsofmandos(&p_ptr->wpos)) {
+	if (iddc || mandos) {
 		/* Specialty: In IDDC and Halls of Mandos, base the monster level on the floor level! */
 		lev = getlevel(&p_ptr->wpos);
 		lev += rand_int(lev / 20 + 3);

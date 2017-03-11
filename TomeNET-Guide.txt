@@ -1298,8 +1298,8 @@ They all start with a slash '/' hence they're called slash commands:
             appear in your inventory and carry an inscription indicating
             it's the reward. (See (4.13) for more info.)
             This command is only available in the Ironman Deep Dive Challenge
-            dungeon. Otherwise you have to visit the mayor's office in Bree to
-            receive an extermination order.
+            dungeon and in the Halls of Mandos. Otherwise you have to visit the
+            mayor's office in Bree to receive an extermination order.
 
 /que        Lists your currently pursued quests.
  (/quest)   Specify a quest number to drop a quest -- warning! You might not
