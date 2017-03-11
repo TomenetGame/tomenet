@@ -1539,6 +1539,8 @@ void cmd_the_guide(void) {
 							}
 						}
 					}
+					/* a little extra hack for '- Mind' and '- Mindcraft -' vs '- Mindcrafter': make sure a word isn't partially matched but really ends */
+					if (ok && isalpha(chapter[strlen(chapter) - 1]) && isalpha(p[strlen(chapter)])) ok = FALSE;
 					/* Found it? */
 					if (ok) {
 						/* Hack: Abuse normal 's' search to colourize */
@@ -1771,6 +1773,7 @@ void cmd_the_guide(void) {
 			/* abuse chapter searching for extra functionality: search for chapter about a specific main term? */
 			if (isalpha(buf[0])) {
 				int find;
+				char tmpbuf[MAX_CHARS];
 
 				chapter[0] = 0;
 
@@ -1940,6 +1943,21 @@ void cmd_the_guide(void) {
 				}
 
 				/* Lua-defined chapters */
+
+				/* actually first do an 'exact match' search on all schools/school groups, while we check for partial match further down again -
+				   reason: '- Mind' school and '- Mindcraft -' school group vs 'Mindcrafter' class name similarity.. */
+				for (i = 0; i < guide_schools; i++) {
+					/* account for the hacky trailing ' -' in some guide skills */
+					strcpy(tmpbuf, guide_school[i]);
+					if (tmpbuf[strlen(tmpbuf) - 1] == '-') tmpbuf[strlen(tmpbuf) - 2] = 0; //school group 'Mindcraft': cut off the trailing ' -'
+
+					if (strcasecmp(tmpbuf, buf)) continue; //any match (default)
+					strcpy(chapter, "- ");
+					strcat(chapter, guide_school[i]); //can be prefixed by either + or . (see guide.lua)
+					break;
+				}
+				if (chapter[0]) continue;
+
 				for (i = 0; i < guide_races; i++) {
 					if (!my_strcasestr(guide_race[i], buf)) continue;
 					strcpy(chapter, "- ");
