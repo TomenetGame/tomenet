@@ -1530,7 +1530,7 @@ int Receive_hp(void) {
 	static int prev_chp = 0;
 #endif
 
-	if (is_newer_than(&server_version, 4, 7, 0, 2, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 7, 0, 2, 0, 1)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c", &ch, &max, &cur, &drain)) <= 0)
 			return n;
 	} else {
