@@ -1981,9 +1981,6 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			if (o_ptr->xtra9) strcat(powins, format("%s,", string_exec_lua(Ind, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1))));
 		}
 
-		if (f3 & (TR3_XTRA_MIGHT)) strcat(powins, "Xm");
-		if (f3 & (TR3_XTRA_SHOTS)) strcat(powins, "Xs");
-		if (f1 & (TR1_LIFE)) strcat(powins, "HP");
 		tmpf1 = f1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR);
 		tmpf2 = f2 & (TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
 		tmpf3 = tmpf1 & tmpf2;
@@ -2018,6 +2015,14 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		}
 		if (tmpf1 || tmpf2 || tmpf3) strcat(powins, ",");
 
+		if (f3 & (TR3_XTRA_MIGHT)) strcat(powins, "Xm");
+		if (f3 & (TR3_XTRA_SHOTS)) strcat(powins, "Xs");
+		if (f1 & (TR1_LIFE)) strcat(powins, "HP");
+		if (f1 & (TR1_MANA)) strcat(powins, "MP");
+		//if (f1 & (TR1_SPELL)) strcat(powins, "Sp");
+		if (f1 & (TR1_SPEED)) strcat(powins, "Spd");
+		if (f1 & (TR1_BLOWS)) strcat(powins, "Att");
+		if (f5 & (TR5_CRIT)) strcat(powins, "Crt");
 		if (f1 & (TR1_STEALTH)) {
 			if (o_ptr->tval != TV_TRAPKIT) strcat(powins, "Stl");
 		}
@@ -2028,21 +2033,15 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 #endif
 #endif
 		if (f1 & (TR1_SEARCH)) strcat(powins, "Src");
-		if (f5 & (TR5_DISARM)) strcat(powins, "Dsr");
 		if (f1 & (TR1_INFRA)) strcat(powins, "IV");
 		if (f1 & (TR1_TUNNEL)) strcat(powins, "Dig");
-		if (f1 & (TR1_SPEED)) strcat(powins, "Spd");
-		if (f1 & (TR1_BLOWS)) strcat(powins, "Att");
-		if (f5 & (TR5_CRIT)) strcat(powins, "Crt");
+		if (f5 & (TR5_DISARM)) strcat(powins, "Dsr");
 		if (f5 & (TR5_LUCK)) strcat(powins, "Lu");
 		if (f5 & (TR5_CHAOTIC)) strcat(powins, "Cht");
 		if (f1 & (TR1_VAMPIRIC)) strcat(powins, "Va");
-		if (f5 & (TR5_IMPACT)) strcat(powins, "Qu");
 		if (f5 & (TR5_VORPAL)) strcat(powins, "Vo");
 		/*if (f5 & (TR5_WOUNDING))*/
-		if (f1 & (TR1_MANA)) strcat(powins, "MP");
-		//if (f1 & (TR1_SPELL)) strcat(powins, "Sp");
-		if (f5 & (TR5_INVIS)) strcat(powins, "Inv");
+		if (f5 & (TR5_IMPACT)) strcat(powins, "Eq");
 		if (o_ptr->tval != TV_TRAPKIT) {
 			if ((f2 & (TR2_IM_FIRE)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x01)) i_f = TRUE;
 			if ((f2 & (TR2_IM_COLD)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x02)) i_c = TRUE;
@@ -2099,17 +2098,18 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		if (f5 & (TR5_RES_MANA)) strcat(powins, "Ma");
 		if (f2 & (TR2_RES_BLIND)) strcat(powins, "Bl");
 		if (f2 & (TR2_RES_CONF)) strcat(powins, "Cf");
+
 		if (f5 & TR5_RES_TELE) strcat(powins, "RT");
 		if (f2 & (TR2_FREE_ACT)) strcat(powins, "FA");
 		if (f2 & (TR2_HOLD_LIFE)) strcat(powins, "HL");
 		if (f2 & (TR2_RES_FEAR)) strcat(powins, "Fe");
 		if (f3 & (TR3_SEE_INVIS)) strcat(powins, "SI");
-		if (f3 & (TR3_FEATHER)) strcat(powins, "FF");
 		if (f4 & (TR4_LEVITATE)) strcat(powins, "Lv");
+		else if (f3 & (TR3_FEATHER)) strcat(powins, "FF");
 		if (f3 & (TR3_SLOW_DIGEST)) strcat(powins, "SD");
 		if (f3 & (TR3_REGEN)) strcat(powins, "Rg");
 		if (f5 & (TR5_REGEN_MANA)) strcat(powins, "Rgm");
-		if (f5 & (TR5_REFLECT)) strcat(powins, "Rf");
+
 		if (f1 & (TR1_BRAND_ACID)) strcat(powins, "BA");
 		if (f1 & (TR1_BRAND_ELEC)) strcat(powins, "BE");
 		if (f1 & (TR1_BRAND_FIRE)) strcat(powins, "BF");
@@ -2118,15 +2118,17 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		if (f3 & (TR3_SH_FIRE)) strcat(powins, "SF");
 		if (f5 & (TR5_SH_COLD)) strcat(powins, "SC");
 		if (f3 & (TR3_SH_ELEC)) strcat(powins, "SE");
+
+		if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))  strcat(powins, "+Lt");
+		if (f5 & (TR5_INVIS)) strcat(powins, "Inv");
+		if (f5 & (TR5_REFLECT)) strcat(powins, "Refl");
+		if (f3 & (TR3_BLESSED)) strcat(powins, "Bless");
 		if (f3 & (TR3_NO_MAGIC)) strcat(powins, "AM");
 		if (f4 & (TR4_AUTO_ID)) strcat(powins, "ID");
-		if (f3 & (TR3_BLESSED)) strcat(powins, "Bless");
-		if (f3 & (TR3_TELEPORT)) strcat(powins, "Tele");
 
 		if (f5 & (TR5_PASS_WATER)) strcat(powins, "Swim");
 		if (f4 & (TR4_CLIMB)) strcat(powins, "Climb");
 		if (f3 & (TR3_WRAITH)) strcat(powins, "Wraith");
-		if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))  strcat(powins, "+Lt");
 
 		if ((tmp = (f1 & (TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ANIMAL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_DRAGON | TR1_SLAY_EVIL | TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON)))) {
 			if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
@@ -2170,6 +2172,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		}
 		if (tmp || esp) strcat(powins, ",");
 
+		if (f3 & (TR3_TELEPORT)) strcat(powins, "Tele");
 		if (f3 & (TR3_NO_TELE)) strcat(powins, "NT");
 		if (f5 & (TR5_DRAIN_HP)) strcat(powins, "Dr");
 		if (f5 & (TR5_DRAIN_MANA)) strcat(powins, "Drm");
