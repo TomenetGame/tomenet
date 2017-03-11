@@ -24,7 +24,7 @@ guide_race = {
     "Maia",
 }
 
-guide_classes = 14
+guide_classes = 15
 guide_class = {
     "Warrior",
     "Istar",
