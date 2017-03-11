@@ -16086,7 +16086,7 @@ school.
 
 
 - Astral Knowledge -
----------------------
+--------------------
 The exclusive astral school for Maiar.
 Instead of normal spell level, the spells of this school use an 'astral level'
 to determine damage or effect. This astral level consists to equal parts of

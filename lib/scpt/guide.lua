@@ -134,7 +134,7 @@ guide_skill = {
 }
 
 --(note: Sorcery isn't a school)
-guide_schools = 28
+guide_schools = 29
 guide_school = {
     "Wizardry -",
     "Mana",
@@ -161,7 +161,7 @@ guide_school = {
     "Arcane Lore",
     "Physical Lore",
     "Mindcraft -",
-    "Psycho-Power",
+    "Psycho-power",
     "Attunement",
     "Mental Intrusion",
     "Astral Knowledge -",
