@@ -2440,7 +2440,7 @@ D:silent, hasted movement.
 # The Pair of Metal Shod Boots of Gimli
 
 N:180:of Gimli
-I:25:6:3
+I:30:6:3
 W:25:8:60:67000
 P:4:1d1:5:5:30
 F:STR | INFRA | SEARCH | TUNNEL | CLIMB | HIDE_TYPE
