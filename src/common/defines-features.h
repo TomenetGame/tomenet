@@ -297,13 +297,13 @@
 #ifdef ENABLE_OCCULT
  #define ENABLE_DEATHKNIGHT
 
- #if defined(TEST_SERVER) || defined(TEST_CLIENT)
+ //#if defined(TEST_SERVER) || defined(TEST_CLIENT)
   #define ENABLE_HELLKNIGHT	/* Allow 'Corrupted Paladins' aka Hell Knights. Requires ENABLE_OCCULT. */
   #ifdef ENABLE_HELLKNIGHT
    #define ENABLE_OHERETICISM	/* Enable 'Hereticism' occult school for Hell Knights */
    #define ENABLE_CPRIEST	/* Allow 'Corrupted Priest', keeping its normal class name. Should assume ENABLE_HELLKNIGHT. */
   #endif
- #endif
+ //#endif
 #endif
 
 
