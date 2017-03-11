@@ -348,7 +348,7 @@ POISONRES = add_spell {
 		return "dur "..(20 + get_level(Ind, POISONRES, 25)).."+d15"
 	end,
 	["desc"] = 	{
-		"It temporarily bestows the touch of poison on your weapons.",
+		"It temporarily bestows the touch of poison on melee your weapons.",
 		"At level 10 it grants temporary poison resistance.",
 	}
 }

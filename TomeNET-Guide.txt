@@ -15663,7 +15663,7 @@ school.
                     Required skill level for first spell level: 10.
 
     Aspect of Peril
-                    Temporarily brands your weapon with poison.
+                    Temporarily brands your melee weapons with poison.
                     Lv10: Grants temporary poison resistance.
                     Required skill level for first spell level: 14.
 
@@ -15789,7 +15789,7 @@ school.
     Fire Bolt       Conjures up fire into a powerful bolt.
                     Required skill level for first spell level: 10.
 
-    Wrathflame      It temporarily brands your weapons with unholy fire.
+    Wrathflame      It temporarily brands your melee weapons with unholy fire.
                     Lv7: Grants temporary fire resistance.
                     Required skill level for first spell level: 12.
 

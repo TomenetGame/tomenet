@@ -145,7 +145,7 @@ FIRERES = add_spell {
 		return "dur "..(20 + get_level(Ind, FIRERES, 25)).."+d15"
 	end,
 	["desc"] = 	{
-		"It temporarily brands your weapons with unholy fire.",
+		"It temporarily brands your melee weapons with unholy fire.",
 		"At level 7 it grants temporary fire resistance.",
 	}
 }
