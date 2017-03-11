@@ -1881,7 +1881,9 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "Dol Guldur   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Mount") || my_strcasestr(buf, "Doom") || !strcasecmp(buf, "mtd")) { //note: TSLoM has been filtered out before us already
+				if (my_strcasestr(buf, "Mount") || (my_strcasestr(buf, "Doom")
+				    && !my_strcasestr(buf, "Doome") //don't confuse with Doomed Grounds spell
+				    ) || !strcasecmp(buf, "mtd")) { //note: TSLoM has been filtered out before us already
 					strcpy(chapter, "Mount Doom   ");
 					continue;
 				}
