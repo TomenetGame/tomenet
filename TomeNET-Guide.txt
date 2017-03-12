@@ -1627,6 +1627,8 @@ resistances or abilities. A shortcut is the...
 Item power inscription (added in 4.7.1):
     @@         Will automatically inscribe an item with codes representing its
                special powers. Only works with *identified* items.
+               The @@ part must always be in the beginning of the inscription,
+               after it you can append more things if you like to.
 
 
 "Word of Recall", provided by items (scrolls and rods) or spells:
