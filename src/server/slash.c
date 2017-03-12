@@ -4978,9 +4978,6 @@ void do_slash_cmd(int Ind, char *message) {
 				bool fear, full = (tk);
 
 				/* Kill all the monsters */
-				dbgvar1 = dbgvar2 = dbgvar3 = dbgvar4 = 0;
-				dbgvar1a = dbgvar2a = dbgvar3a = dbgvar4a = 0;
-				dbgvar1b = dbgvar2b = dbgvar3b = dbgvar4b = 0;
 				for (i = m_max - 1; i >= 1; i--) {
 					monster_type *m_ptr = &m_list[i];
 					if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
@@ -10015,6 +10012,7 @@ void do_slash_cmd(int Ind, char *message) {
 				dbgvar1 = dbgvar2 = dbgvar3 = dbgvar4 = dbgvar5 = dbgvar6 = 0;
 				dbgvar1a = dbgvar2a = dbgvar3a = dbgvar4a = dbgvar5a = dbgvar6a = 0;
 				dbgvar1b = dbgvar2b = dbgvar3b = dbgvar4b = dbgvar5b = dbgvar6b = 0;
+				dbgvars[0] = 0;
 				return;
 			}
 		}
