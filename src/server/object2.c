@@ -7447,14 +7447,14 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 #endif
 
 #if 1 /* DEBUG */
-	if (k_info[forge.k_idx].flags4 & TR4_SHOULD2H) {
+	if (k_info[forge.k_idx].flags4 & TR4_MUST2H) {
 		switch (forge.tval) {
-		case TV_SWORD: dbgvar1++; break;
-		case TV_AXE: dbgvar2++; break;
-		case TV_BLUNT: dbgvar3++; break;
-		case TV_POLEARM: dbgvar4++; break;
+		case TV_SWORD: dbgvar1b++; break;
+		case TV_AXE: dbgvar2b++; break;
+		case TV_BLUNT: dbgvar3b++; break;
+		case TV_POLEARM: dbgvar4b++; break;
 		}
-	} else if (k_info[forge.k_idx].flags4 & TR4_MUST2H) {
+	} else if (k_info[forge.k_idx].flags4 & TR4_SHOULD2H) {
 		switch (forge.tval) {
 		case TV_SWORD: dbgvar1a++; break;
 		case TV_AXE: dbgvar2a++; break;
@@ -7463,10 +7463,10 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 		}
 	} else {
 		switch (forge.tval) {
-		case TV_SWORD: dbgvar1b++; break;
-		case TV_AXE: dbgvar2b++; break;
-		case TV_BLUNT: dbgvar3b++; break;
-		case TV_POLEARM: dbgvar4b++; break;
+		case TV_SWORD: dbgvar1++; break;
+		case TV_AXE: dbgvar2++; break;
+		case TV_BLUNT: dbgvar3++; break;
+		case TV_POLEARM: dbgvar4++; break;
 		}
 	}
 #endif

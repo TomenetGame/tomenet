@@ -10002,10 +10002,16 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 			else if (prefix(message, "/debugvars")) { //debugging
+#if 0
 				msg_format(Ind, "%d, %d, %d, %d, %d, %d", dbgvar1, dbgvar2, dbgvar3, dbgvar4, dbgvar5, dbgvar6);
 				msg_format(Ind, "%d, %d, %d, %d, %d, %d", dbgvar1a, dbgvar2a, dbgvar3a, dbgvar4a, dbgvar5a, dbgvar6b);
 				msg_format(Ind, "%d, %d, %d, %d, %d, %d", dbgvar1b, dbgvar2b, dbgvar3b, dbgvar4b, dbgvar5b, dbgvar6b);
 				msg_format(Ind, "%s", dbgvars);
+#else
+				msg_print(Ind, " S / A / B / P");
+				msg_format(Ind, "%d, %d, %d, %d", dbgvar1, dbgvar2, dbgvar3, dbgvar4);
+				msg_format(Ind, "%d, %d, %d, %d", dbgvar1a + dbgvar1b, dbgvar2a + dbgvar2b, dbgvar3a + dbgvar3b, dbgvar4a + dbgvar4b);
+#endif
 				return;
 			}
 		}
