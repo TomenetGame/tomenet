@@ -3839,9 +3839,7 @@ F:EASY_KNOW
 D:Releases a magical firework rocket.
 #D:Can only be used during new years eve season.
 
-
-### Numbers 447-458 unused ###
-
+# HOLE 447-458
 
 ##### Additional skeletons #####
 
@@ -4267,7 +4265,7 @@ I:45:37:0
 W:100:0:2:5000000
 F:INSTA_ART
 
-
+# HOLE 512-520
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
 
 #521 and 522 cannot have EASY_KNOW because they may be cursed
@@ -4384,6 +4382,7 @@ A:2/1:8/1
 P:0:1d5:0:0:0
 F:SHOW_MODS
 
+# HOLE 534
 
 ##### New armour #####
 
@@ -4413,6 +4412,8 @@ W:7:0:50:110
 A:7/2
 P:0:2d3:0:0:0
 F:SHOW_MODS
+
+# HOLE 538-541
 
 N:542:& Club~
 G:\:u
@@ -5284,6 +5285,7 @@ P:0:0d0:0:0:0
 #W:5:0:5:125
 #A:5/1:15/1:25/1:35/1:65/1:85/1:95/1
 
+# HOLE 655-660
 
 # The Phial of Undeath -- see artifact list. He he he he...
 
@@ -5578,6 +5580,8 @@ W:25:5:2:450
 A:25/2:55/1:85/1
 D:Food that also cures poison, stun, cuts and even Black Breath.
 
+# HOLE 702-719
+
 # The Scroll of Deincarnation (now an artifact)
 
 #N:720:& Old Scroll~ of Deincarnation
@@ -5650,15 +5654,7 @@ W:50:0:10:1000
 A:50/1
 P:0:1d1:0:0:0
 
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
+# HOLE 729-737
 
 N:738:& Handbook~ of Beginner Cantrips
 G:?:B
@@ -5696,6 +5692,7 @@ F:IGNORE_WATER | EASY_KNOW
 #A:12/1
 #P:0:1d1:0:0:0
 
+# HOLE 743-748
 
 ## Scroll
 #N:749:Spell
@@ -5819,11 +5816,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE
 #P:0:1d1:0:0:0
 #F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
+# HOLE 765-769
 
 # The Ring of Phasing -- see artifact list
 
@@ -5834,6 +5827,7 @@ W:127:0:2:3000000
 #A:110/5
 F:INSTA_ART
 
+# HOLE 771-775
 
 # Rod tip of Home Summoning: now an artifact
 #N:776:& Great Rod Tip~ of Home Summoning
@@ -5938,6 +5932,7 @@ I:8:50:0
 W:0:0:5:1
 A:0/10
 
+# HOLE 788-792
 
 # Rods
 
@@ -6172,6 +6167,7 @@ W:15:0:2:75
 A:15/1
 D:Removes all kinds of temporary magical effects.
 
+# HOLE 816-838
 
 ##### Keys #####
 
@@ -6216,6 +6212,8 @@ N:846:& Ear~ of Corn
 G:`:y
 I:80:25:2000
 W:0:0:2:2
+
+# HOLE 847-849
 
 # secondary probabilities for pieces
 N:850:& Massive Piece~ of Wood
@@ -6344,6 +6342,8 @@ I:70:55:0
 W:10:0:5:1250
 A:10/20:20/10
 D:Creates a golem provided you carry all required parts in your backpack.
+
+# HOLE 864-880
 
 N:881:House creation
 G:?:d
@@ -7261,6 +7261,8 @@ F:AUTO_ID | LITE1 | WHITE_LIGHT | EASY_KNOW
 F:ESP_ALL | SEE_INVIS
 D:This amulet can be combined with other amulets of the highlands!
 
+#980: Handbook of Deception
+
 # Goggles that allow a player to spot hidden DMs (for testing purpose)
 N:981:Goggles
 G:]:v
@@ -7419,7 +7421,14 @@ $ENABLE_MCRAFT$A:50/50:100/50
 $ENABLE_MCRAFT$P:0:1d1:0:0:0
 $ENABLE_MCRAFT$F:FULL_NAME | EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID
 
-#999 unused
+N:999:& Infernal Axe~
+G:/:R
+I:24:32:0
+W:65:0:360:2000
+A:65/5
+P:0:7d6:0:0:0
+#P:0:5d9:0:0:0
+F:SHOW_MODS | MUST2H | IGNORE_FIRE | BRAND_FIRE
 
 #Placeholder that prevents item corruption in case k_info.txt doesn't meet
 #saved items in the server's savefile anymore after having been edited. - C. Blue
