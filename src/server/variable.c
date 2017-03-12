@@ -1059,3 +1059,9 @@ bool rl_connection_destructible = FALSE, rl_connection_destroyed = FALSE;
 byte rl_connection_state = 0;
 
 bool allow_similar_names = FALSE;
+
+/* Generic global debugging/testing */
+int dbgvar1 = 0, dbgvar2 = 0, dbgvar3 = 0, dbgvar4 = 0, dbgvar5 = 0, dbgvar6 = 0;
+int dbgvar1a = 0, dbgvar2a = 0, dbgvar3a = 0, dbgvar4a = 0, dbgvar5a = 0, dbgvar6a = 0;
+int dbgvar1b = 0, dbgvar2b = 0, dbgvar3b = 0, dbgvar4b = 0, dbgvar5b = 0, dbgvar6b = 0;
+char dbgvars[MAX_CHARS] = { 0 };

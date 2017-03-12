@@ -4978,6 +4978,9 @@ void do_slash_cmd(int Ind, char *message) {
 				bool fear, full = (tk);
 
 				/* Kill all the monsters */
+				dbgvar1 = dbgvar2 = dbgvar3 = dbgvar4 = 0;
+				dbgvar1a = dbgvar2a = dbgvar3a = dbgvar4a = 0;
+				dbgvar1b = dbgvar2b = dbgvar3b = dbgvar4b = 0;
 				for (i = m_max - 1; i >= 1; i--) {
 					monster_type *m_ptr = &m_list[i];
 					if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
@@ -8499,7 +8502,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			/* Display various gameplay-related or rather global server status
 			   like seasons and (seasonal) events (for debugging) - C. Blue */
-			else if (prefix(message, "/vars")) {
+			else if (prefix(message, "/seasonvars")) {
 				msg_format(Ind, "season (0..3): %d.", season);
 				msg_format(Ind, "season_halloween: %d, season_xmas: %d, season_newyearseve: %d.", season_halloween, season_xmas, season_newyearseve);
 				msg_format(Ind, "sector weather: %d, sector wind: %d, sector w-speed: %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type, wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind, wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_speed);
@@ -9996,6 +9999,13 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/tp")) { //quick admin teleport-self
 				teleport_player_force(Ind, 250);
+				return;
+			}
+			else if (prefix(message, "/debugvars")) { //debugging
+				msg_format(Ind, "%d, %d, %d, %d, %d, %d", dbgvar1, dbgvar2, dbgvar3, dbgvar4, dbgvar5, dbgvar6);
+				msg_format(Ind, "%d, %d, %d, %d, %d, %d", dbgvar1a, dbgvar2a, dbgvar3a, dbgvar4a, dbgvar5a, dbgvar6b);
+				msg_format(Ind, "%d, %d, %d, %d, %d, %d", dbgvar1b, dbgvar2b, dbgvar3b, dbgvar4b, dbgvar5b, dbgvar6b);
+				msg_format(Ind, "%s", dbgvars);
 				return;
 			}
 		}

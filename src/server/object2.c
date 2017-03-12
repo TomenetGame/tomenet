@@ -7235,7 +7235,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 #endif
 
 	/* Require clean floor space */
-//	if (!cave_clean_bold(zcave, y, x)) return;
+	//if (!cave_clean_bold(zcave, y, x)) return;
 
 	if (resf & RESF_DEBUG_ITEM) {
 		debug_k_idx = luck;
@@ -7442,6 +7442,31 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			forge.number = 1;
 			determine_level_req(dlev, &forge);
 			s_printf("<<*ID*\n");
+		}
+	}
+#endif
+
+#if 1 /* DEBUG */
+	if (k_info[forge.k_idx].flags4 & TR4_SHOULD2H) {
+		switch (forge.tval) {
+		case TV_SWORD: dbgvar1++; break;
+		case TV_AXE: dbgvar2++; break;
+		case TV_BLUNT: dbgvar3++; break;
+		case TV_POLEARM: dbgvar4++; break;
+		}
+	} else if (k_info[forge.k_idx].flags4 & TR4_MUST2H) {
+		switch (forge.tval) {
+		case TV_SWORD: dbgvar1a++; break;
+		case TV_AXE: dbgvar2a++; break;
+		case TV_BLUNT: dbgvar3a++; break;
+		case TV_POLEARM: dbgvar4a++; break;
+		}
+	} else {
+		switch (forge.tval) {
+		case TV_SWORD: dbgvar1b++; break;
+		case TV_AXE: dbgvar2b++; break;
+		case TV_BLUNT: dbgvar3b++; break;
+		case TV_POLEARM: dbgvar4b++; break;
 		}
 	}
 #endif
