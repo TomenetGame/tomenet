@@ -2060,7 +2060,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			if (f5 & (TR5_IM_WATER)) i_w = TRUE;
 			if (f4 & (TR4_IM_NETHER)) i_n = TRUE;
 			if ((tmp = (i_f || i_c || i_e || i_a || i_p || i_w || i_n))) {
-				if (powins[0]) strcat(powins, ",");
+				if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 				strcat(powins, "*");
 				if (i_f) strcat(powins, "F");
 				if (i_c) strcat(powins, "C");
