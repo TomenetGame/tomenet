@@ -2141,15 +2141,17 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 		if ((tmp = (f1 & (TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ANIMAL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_DRAGON | TR1_SLAY_EVIL | TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON)))) {
 			if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
-			strcat(powins, "+");
-			if (f1 & (TR1_SLAY_ORC)) strcat(powins, "o");
-			if (f1 & (TR1_SLAY_TROLL)) strcat(powins, "T");
-			if (f1 & (TR1_SLAY_GIANT)) strcat(powins, "P");
-			if (f1 & (TR1_SLAY_ANIMAL)) strcat(powins, "a");
-			if (!(f1 & (TR1_KILL_UNDEAD)) && (f1 & TR1_SLAY_UNDEAD)) strcat(powins, "W");
-			if (!(f1 & (TR1_KILL_UNDEAD)) && (f1 & TR1_SLAY_UNDEAD)) strcat(powins, "U");
-			if (!(f1 & (TR1_KILL_UNDEAD)) && (f1 & TR1_SLAY_UNDEAD)) strcat(powins, "D");
-			if (f1 & (TR1_SLAY_EVIL)) strcat(powins, "Evil");
+			if (f1 & (TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ANIMAL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_DRAGON | TR1_SLAY_EVIL)) {
+				strcat(powins, "+");
+				if (f1 & (TR1_SLAY_ORC)) strcat(powins, "o");
+				if (f1 & (TR1_SLAY_TROLL)) strcat(powins, "T");
+				if (f1 & (TR1_SLAY_GIANT)) strcat(powins, "P");
+				if (f1 & (TR1_SLAY_ANIMAL)) strcat(powins, "a");
+				if (!(f1 & (TR1_KILL_UNDEAD)) && (f1 & TR1_SLAY_UNDEAD)) strcat(powins, "W");
+				if (!(f1 & (TR1_KILL_DEMON)) && (f1 & TR1_SLAY_DEMON)) strcat(powins, "U");
+				if (!(f1 & (TR1_KILL_DRAGON)) && (f1 & TR1_SLAY_DRAGON)) strcat(powins, "D");
+				if (f1 & (TR1_SLAY_EVIL)) strcat(powins, "Evil");
+			}
 			if (f1 & (TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON)) {
 				strcat(powins, "*");
 				if (f1 & TR1_KILL_UNDEAD) strcat(powins, "W");
