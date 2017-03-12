@@ -1961,7 +1961,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription */
-	if (!strcmp(inscription, "@@")) {
+	if (!strncmp(inscription, "@@", 2)) {
 		char powins[1024]; //powins[MAX_CHARS_WIDE];  --let's play it safe..
 		u32b f1, f2, f3, f4, f5, f6, esp, tmpf1, tmpf2, tmpf3, tmp;
 		bool i_f = FALSE, i_c = FALSE, i_e = FALSE, i_a = FALSE, i_p = FALSE, i_w = FALSE, i_n = FALSE;
@@ -2228,10 +2228,14 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			strcat(powins, ")");
 		}
 
+		/* Append the rest of the inscription, if any */
+		strcat(powins, inscription + 2);
+
 		/* Watch total object name length */
 		o_ptr->note = o_ptr->note_utag = 0;
 		object_desc(Ind, o_name, o_ptr, TRUE, 3);
-		if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia */
+		if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia -- item name not too long already, leaving no room for an inscription at all? */
+			/* inscription too long? cut it down */
 			if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
 
 			/* Save the inscription */
