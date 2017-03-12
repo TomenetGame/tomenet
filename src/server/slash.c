@@ -10012,6 +10012,9 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "%d, %d, %d, %d", dbgvar1, dbgvar2, dbgvar3, dbgvar4);
 				msg_format(Ind, "%d, %d, %d, %d", dbgvar1a + dbgvar1b, dbgvar2a + dbgvar2b, dbgvar3a + dbgvar3b, dbgvar4a + dbgvar4b);
 #endif
+				dbgvar1 = dbgvar2 = dbgvar3 = dbgvar4 = dbgvar5 = dbgvar6 = 0;
+				dbgvar1a = dbgvar2a = dbgvar3a = dbgvar4a = dbgvar5a = dbgvar6a = 0;
+				dbgvar1b = dbgvar2b = dbgvar3b = dbgvar4b = dbgvar5b = dbgvar6b = 0;
 				return;
 			}
 		}
