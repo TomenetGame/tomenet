@@ -194,8 +194,9 @@ static void print_skills(int table[MAX_SKILLS][2], int max, int sel, int start) 
 	else
 		c_prt(TERM_WHITE, " === TomeNET Skills Screen ===  [move:2,8,g,G,#  fold:<CR>,c,o  advance:6]", 0, 0);
 
-	c_prt((p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
-	      format("Skill points left: %d", p_ptr->skill_points), 1, 0);
+	//c_prt((p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
+	Term_putstr(0, 1, -1, (p_ptr->skill_points) ? TERM_L_BLUE : TERM_L_RED,
+	      format("Skill points left: %-4d  \377wType \377s/undoskills\377- into chat if you made a mistake.", p_ptr->skill_points));
 	print_desc_aux((char*)s_info[table[sel][0]].desc, 2, 0);
 
 	for (j = start; j < start + (hgt - 4); j++) {
