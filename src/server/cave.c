@@ -4218,6 +4218,7 @@ void display_map(int Ind, int *cy, int *cx) {
 						tc = '0' + num;
 					}
 				}
+				Send_mini_map_pos(Ind, x + (80 - MAP_WID - 2) / 2, y, ta, tc);
 			}
 /* duplicate code end */
 			/* Save "best" */
@@ -4250,7 +4251,7 @@ void display_map(int Ind, int *cy, int *cx) {
 
 
 	/* Display each map line in order */
-	for (y = 0; y < MAP_HGT+2; ++y) {
+	for (y = 0; y < MAP_HGT + 2; ++y) {
 		/* Clear the screen buffer */
 #if 0
 		memset(sa, 0, sizeof(sa));
@@ -4264,7 +4265,7 @@ void display_map(int Ind, int *cy, int *cx) {
 #endif
 
      		/* Display the line */
-		for (x = 0; x < MAP_WID+2; ++x) {
+		for (x = 0; x < MAP_WID + 2; ++x) {
 			ta = ma[y][x];
 			tc = mc[y][x];
 
