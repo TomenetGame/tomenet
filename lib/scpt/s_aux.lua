@@ -769,9 +769,21 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 
 		-- Invoke the spell effect
 		if (magik(spell_chance(i, s)) == FALSE) then
+			local mp_cost = get_mana(i, s)
+
 			msg_print(i, "You successfully cast the spell "..spell(s).name..".")
-			if (__spell_spell[s](other) == nil) then
-				use  = TRUE
+
+			-- Reduce mana BEFORE casting the spell, for Necromancy to work effectively:
+			-- If the monster dies, MP should not get refunded before the spell cost was actually deducted.
+			adjust_power(i, s, -mp_cost)
+			use  = TRUE
+
+			if (__spell_spell[s](other) ~= nil) then
+				--correct the situation - we have to do it this way round,
+				--so we were able to deduct MP before actually casting the spell above
+				use = FALSE
+				--and refund the mana
+				adjust_power(i, s, mp_cost)
 			end
 		else
 			local index, sch
@@ -782,6 +794,10 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 ]]
 
 			msg_print(i, "\255yYou failed to get the spell "..spell(s).name.." off!")
+
+			-- Reduce mana
+			adjust_power(i, s, -get_mana(i, s))
+
 			for index, sch in __spell_school[s] do
 				if __schools[sch].fail then
 					__schools[sch].fail(spell_chance(i, s))
@@ -794,9 +810,6 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 	end
 
 	if use == TRUE then
-		-- Reduce mana
-		adjust_power(i, s, -get_mana(i, s))
-
 		-- Take a turn
 		local energy = level_speed(player.wpos);
 		player.energy = player.energy - energy
