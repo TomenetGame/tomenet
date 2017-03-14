@@ -336,8 +336,8 @@ BLOODSACRIFICE = add_spell {
 			  "--- This spell is only usable by Maia Priests and Hell Knights. ---", }
 }
 
-ERADICATION_I = add_spell {
-	["name"] = 	"Eradication I",
+FLAMEWAVE_I = add_spell {
+	["name"] = 	"Flame Wave I",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -345,16 +345,15 @@ ERADICATION_I = add_spell {
 	["mana_max"] = 	7,
 	["fail"] = 	-20,
 	["spell"] = 	function()
-			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, ERADICATION_I, 120), 1, 5 + get_level(Ind, ERADICATION_I, 6), 3, EFF_THINWAVE, " emits a flamewave for")
+			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, FLAMEWAVE_I, 120), 1, 5 + get_level(Ind, FLAMEWAVE_I, 6), 3, EFF_THINWAVE, " emits a flamewave for")
 	end,
 	["info"] = 	function()
-			return "dam "..(30 + get_level(Ind, ERADICATION_I,  120)).." rad "..(5 + get_level(Ind, ERADICATION_I, 6))
+			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I,  120)).." rad "..(5 + get_level(Ind, FLAMEWAVE_I, 6))
 	end,
-	["desc"] = 	{ "Vanquishes critters that dare trifle with you in passing,",
-			  "by emitting a flamewave that expands into all directions." }
+	["desc"] = 	{ "Eradicates critters that dare trifle with you in passing." }
 }
-ERADICATION_II = add_spell {
-	["name"] = 	"Eradication II",
+FLAMEWAVE_II = add_spell {
+	["name"] = 	"Flame Wave II",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	35,
@@ -362,11 +361,10 @@ ERADICATION_II = add_spell {
 	["mana_max"] = 	20,
 	["fail"] = 	-65,
 	["spell"] = 	function()
-			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, ERADICATION_I, 300), 1, 5 + get_level(Ind, ERADICATION_I, 6), 3, EFF_THINWAVE, " casts a flamewave for")
+			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, FLAMEWAVE_I, 300), 1, 5 + get_level(Ind, FLAMEWAVE_I, 6), 3, EFF_THINWAVE, " casts a flamewave for")
 	end,
 	["info"] = 	function()
-			return "dam "..(30 + get_level(Ind, ERADICATION_I, 300)).." rad "..(5 + get_level(Ind, ERADICATION_I, 6))
+			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I, 300)).." rad "..(5 + get_level(Ind, FLAMEWAVE_I, 6))
 	end,
-	["desc"] = 	{ "Vanquishes critters that dare trifle with you in passing,",
-			  "by emitting a flamewave that expands into all directions." }
+	["desc"] = 	{ "Eradicates critters that dare trifle with you in passing." }
 }

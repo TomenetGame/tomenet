@@ -15795,7 +15795,7 @@ school.
                     Lv7: Grants temporary fire resistance.
                     Required skill level for first spell level: 12.
 
-    Eradication     Vanquishes critters that dare trifle with you in passing,
+    Flame Wave      Eradicates critters that dare trifle with you in passing,
                     by emitting a flamewave that expands into all directions.
                     Required skill level for first spell level: 20.
 
