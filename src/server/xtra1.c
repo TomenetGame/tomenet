@@ -5981,6 +5981,9 @@ void calc_boni(int Ind) {
  #ifdef ENABLE_OHERETICISM
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 30) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 45) { p_ptr->resist_chaos = TRUE; csheet_boni[14].cb[3] |= CB4_RCHAO; }
+
+	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 30 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 30 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
+	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 45 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 45) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND; }
  #endif
 #endif
 
