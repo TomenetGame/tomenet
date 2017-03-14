@@ -1320,13 +1320,16 @@ s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 static bool repair_item(int Ind, int i, bool iac) {
 	player_type *p_ptr = Players[Ind];
 
-	int minenchant;
+	int minenchant, cost;
 
 	object_type *o_ptr;
 	char tmp_str[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	o_ptr = &p_ptr->inventory[i];
+	if (!o_ptr->tval) return FALSE;
+
+	cost = (k_info[o_ptr->k_idx].cost >> 2) + 20;
 
 	/* eligible item in this equipment slot? */
 	if (iac) {
@@ -1334,19 +1337,48 @@ static bool repair_item(int Ind, int i, bool iac) {
 			msg_print(Ind, "That is not a piece of armour.");
 			return FALSE;
 		}
+
+		if (o_ptr->tval == TV_SHIELD)
+#ifdef NEW_SHIELDS_NO_AC
+		{
+			msg_print(Ind, "That item isn't damaged.");
+			return FALSE;
+		}
+#else
+ #ifdef USE_NEW_SHIELDS
+			minenchant = -o_ptr->ac / 2;
+ #else
+			minenchant = -o_ptr->ac;
+ #endif
+#endif
+		else minenchant = -o_ptr->ac;
+
 		if (o_ptr->to_a >= 0) {
 			msg_print(Ind, "That looks pretty fine already.");
 			return FALSE;
 		}
+		if (o_ptr->to_a < minenchant) {
+			msg_print(Ind, "Sorry, but that piece of armour is beyond repair.");
+			return FALSE;
+		}
+		cost -= o_ptr->to_a * 35;
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
 			msg_print(Ind, "That is not a weapon.");
 			return FALSE;
 		}
-		if (o_ptr->to_h >= 0 && o_ptr->to_d >= 0) {
+
+		minenchant = -10; //weapon max damage
+
+		if (o_ptr->to_d >= 0) {
 			msg_print(Ind, "That looks pretty fine already.");
 			return FALSE;
 		}
+		if (o_ptr->to_d < minenchant) {
+			msg_print(Ind, "Sorry, but that weapon is beyond repair.");
+			return FALSE;
+		}
+		cost -= o_ptr->to_d * 35;
 	}
 
 	if (!is_enchantable(o_ptr)) {
@@ -1377,42 +1409,15 @@ static bool repair_item(int Ind, int i, bool iac) {
 
 	object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
 
-	if (o_ptr->tval == TV_SHIELD)
-#ifdef NEW_SHIELDS_NO_AC
-	{
-		msg_print(Ind, "That item isn't damaged.");
-		return FALSE;
-	}
-#else
- #ifdef USE_NEW_SHIELDS
-		minenchant = -o_ptr->ac / 2;
- #else
-		minenchant = -o_ptr->ac;
- #endif
-#endif
-	else minenchant = -10; //weapon max damage
-
-	if (iac) {
-		if (o_ptr->to_a < minenchant) {
-			msg_print(Ind, "Sorry, but that item is beyond repair.");
-			return FALSE;
-		}
-		Send_request_cfr(Ind, RID_REPAIR_ARMOUR, format("That'll cost %d Au to repair, accept?", k_info[o_ptr->k_idx].cost + 150), 0);
-		p_ptr->request_extra = i + 1;
-	} else {
-		if (o_ptr->to_h < minenchant && o_ptr->to_d < minenchant) {
-			msg_print(Ind, "Sorry, but that item is beyond repair.");
-			return FALSE;
-		}
-		Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("That'll cost %d Au to repair, accept?", k_info[o_ptr->k_idx].cost + 150), 0);
-		p_ptr->request_extra = i + 1;
-	}
+	if (iac) Send_request_cfr(Ind, RID_REPAIR_ARMOUR, format("That'll cost %d Au to repair, accept?", cost), 0);
+	else Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("That'll cost %d Au to repair, accept?", cost), 0);
+	p_ptr->request_extra = i + 1;
 	return (TRUE);
 }
 bool repair_item_aux(int Ind, int i, bool iac) {
 	player_type *p_ptr = Players[Ind];
 
-	int minenchant;
+	int minenchant, cost;
 
 	object_type *o_ptr;
 	char tmp_str[ONAME_LEN];
@@ -1421,6 +1426,9 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 	if (!i) return FALSE; //paranoia
 	i--;
 	o_ptr = &p_ptr->inventory[i];
+	if (!o_ptr->tval) return FALSE;
+
+	cost = (k_info[o_ptr->k_idx].cost >> 2) + 20;
 
 	/* eligible item in this equipment slot? */
 	if (iac) {
@@ -1428,19 +1436,48 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 			msg_print(Ind, "That is not a piece of armour.");
 			return FALSE;
 		}
+
+		if (o_ptr->tval == TV_SHIELD)
+#ifdef NEW_SHIELDS_NO_AC
+		{
+			msg_print(Ind, "That item isn't damaged.");
+			return FALSE;
+		}
+#else
+ #ifdef USE_NEW_SHIELDS
+			minenchant = -o_ptr->ac / 2;
+ #else
+			minenchant = -o_ptr->ac;
+ #endif
+#endif
+		else minenchant = -o_ptr->ac;
+
 		if (o_ptr->to_a >= 0) {
 			msg_print(Ind, "That looks pretty fine already.");
 			return FALSE;
 		}
+		if (o_ptr->to_a < minenchant) {
+			msg_print(Ind, "Sorry, but that piece of armour is beyond repair.");
+			return FALSE;
+		}
+		cost -= o_ptr->to_a * 35;
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
 			msg_print(Ind, "That is not a weapon.");
 			return FALSE;
 		}
-		if (o_ptr->to_h >= 0 && o_ptr->to_d >= 0) {
+
+		minenchant = -10; //weapon max damage
+
+		if (o_ptr->to_d >= 0) {
 			msg_print(Ind, "That looks pretty fine already.");
 			return FALSE;
 		}
+		if (o_ptr->to_d < minenchant) {
+			msg_print(Ind, "Sorry, but that weapon is beyond repair.");
+			return FALSE;
+		}
+		cost -= o_ptr->to_d * 35;
 	}
 
 	if (!is_enchantable(o_ptr)) {
@@ -1471,36 +1508,16 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 
 	object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
 
-	if (o_ptr->tval == TV_SHIELD)
-#ifdef NEW_SHIELDS_NO_AC
-	{
-		msg_print(Ind, "That item isn't damaged.");
-		return FALSE;
-	}
-#else
- #ifdef USE_NEW_SHIELDS
-		minenchant = -o_ptr->ac / 2;
- #else
-		minenchant = -o_ptr->ac;
- #endif
-#endif
-	else minenchant = -10; //weapon max damage
-
-	if (p_ptr->au < k_info[o_ptr->k_idx].cost + 150) {
+	if (p_ptr->au < cost) {
 		msg_print(Ind, "You do not have enough money!");
 		return FALSE;
 	}
-	p_ptr->au -= k_info[o_ptr->k_idx].cost + 150;
+	p_ptr->au -= cost;
 	p_ptr->redraw |= PR_GOLD;
 
-	if (iac) {
-		o_ptr->to_a = 0;
-		msg_format(Ind, "Your %s looks as good as new again!", tmp_str);
-	} else {
-		if (o_ptr->to_h >= minenchant) o_ptr->to_h = 0;
-		if (o_ptr->to_d >= minenchant) o_ptr->to_d = 0;
-		msg_format(Ind, "Your %s looks as good as new again!", tmp_str);
-	}
+	if (iac) o_ptr->to_a = 0;
+	else o_ptr->to_d = 0;
+	msg_format(Ind, "Your %s looks as good as new again!", tmp_str);
 
 s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
 
