@@ -3273,8 +3273,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 		if (rand_int(prob) >= 100) continue;
 
 		/* Enchant to hit, but not that easily multiple times over 9 */
-		if ((eflag & ENCH_TOHIT) && (magik(30) || !(did_tohit && o_ptr->to_h > 9)))
-		{
+		if ((eflag & ENCH_TOHIT) && (magik(30) || !(did_tohit && o_ptr->to_h > 9))) {
 			if (o_ptr->to_h < 0) chance = 0;
 			else if (o_ptr->to_h > 14) chance = 1000;
 			else {
@@ -3283,18 +3282,19 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				if (n > 1) chance = ((chance * 1) / 3);
 			}
 
-			if ((randint(1000) > chance) && (!a || (rand_int(100) < 50)))
-			{
+			if ((randint(1000) > chance) && (!a || (rand_int(100) < 50))) {
 				o_ptr->to_h++;
 				res = TRUE;
 				did_tohit = TRUE;
 
+				/* Anti-cheeze */
+				if (o_ptr->level < o_ptr->to_h) o_ptr->level = o_ptr->to_h;
+
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
 				    (!(f3 & TR3_PERMA_CURSE)) &&
-//				    (o_ptr->to_h >= 0) && (rand_int(100) < 25))
-				    (rand_int(100) < 10 + 10 * o_ptr->to_h))
-				{
+				    //(o_ptr->to_h >= 0) && (rand_int(100) < 25))
+				    (rand_int(100) < 10 + 10 * o_ptr->to_h)) {
 					msg_print(Ind, "The curse is broken!");
 					o_ptr->ident &= ~ID_CURSED;
 					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
@@ -3318,10 +3318,13 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				res = TRUE;
 				did_todam = TRUE;
 
+				/* Anti-cheeze */
+				if (o_ptr->level < o_ptr->to_d) o_ptr->level = o_ptr->to_d;
+
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
 				    (!(f3 & TR3_PERMA_CURSE)) &&
-//				    (o_ptr->to_d >= 0) && (rand_int(100) < 25))
+				    //(o_ptr->to_d >= 0) && (rand_int(100) < 25))
 				    (rand_int(100) < 10 + 10 * o_ptr->to_d))
 				{
 					msg_print(Ind, "The curse is broken!");
@@ -3346,6 +3349,9 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				o_ptr->to_a++;
 				res = TRUE;
 				did_toac = TRUE;
+
+				/* Anti-cheeze */
+				if (o_ptr->level < o_ptr->to_a) o_ptr->level = o_ptr->to_a;
 
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
@@ -3432,7 +3438,7 @@ bool create_artifact_aux(int Ind, int item) {
 		msg_print(Ind, "The strong magic of that object dissolves!");
 	}
 	if (o_ptr->number > 1) {
-/*		msg_print(Ind, "The creation fails because the magic is split to multiple targets!");
+		/*msg_print(Ind, "The creation fails because the magic is split to multiple targets!");
 		return FALSE;*/
 		o_ptr->number = 1;
 		msg_print(Ind, "The stack of objects magically dissolves, leaving only a single item!");
@@ -3515,8 +3521,7 @@ bool curse_spell(int Ind) {	// could be void
 	return TRUE;
 }
 
-bool curse_spell_aux(int Ind, int item)
-{
+bool curse_spell_aux(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[item];
 	char o_name[ONAME_LEN];
