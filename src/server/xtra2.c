@@ -672,7 +672,7 @@ bool set_prob_travel(int Ind, int v) {
 /*
  * Set "p_ptr->brand", notice observable changes
  */
-bool set_brand(int Ind, int v, int t, int p) {
+bool set_melee_brand(int Ind, int v, int t, int p) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE, plural;
 	char weapons[20];
@@ -688,9 +688,9 @@ bool set_brand(int Ind, int v, int t, int p) {
 	} else {
 		if (v) msg_print(Ind, "You are not wielding any melee weapons to brand."); /* failure */
 		else { /* Shut */
-			p_ptr->brand = 0;
-			p_ptr->brand_t = 0;
-			p_ptr->brand_d = 0;
+			p_ptr->melee_brand = 0;
+			p_ptr->melee_brand_t = 0;
+			p_ptr->melee_brand_d = 0;
 		}
 		return FALSE; /* don't notice anything */
 	}
@@ -700,7 +700,7 @@ bool set_brand(int Ind, int v, int t, int p) {
 
 	/* Open */
 	if (v) {
-		if (!p_ptr->brand &&
+		if (!p_ptr->melee_brand &&
 		    (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield..*/
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
 			switch (t) {
@@ -751,7 +751,7 @@ bool set_brand(int Ind, int v, int t, int p) {
 
 	/* Shut */
 	else {
-		if (p_ptr->brand) {
+		if (p_ptr->melee_brand) {
 			switch (t) {
 				case TBRAND_BALL_ACID: //not used
 				case TBRAND_ACID:
@@ -789,9 +789,9 @@ bool set_brand(int Ind, int v, int t, int p) {
 	}
 
 	/* Use the value */
-	p_ptr->brand = v;
-	p_ptr->brand_t = t;
-	p_ptr->brand_d = p;
+	p_ptr->melee_brand = v;
+	p_ptr->melee_brand_t = t;
+	p_ptr->melee_brand_d = p;
 
 
 	/* Nothing to notice */

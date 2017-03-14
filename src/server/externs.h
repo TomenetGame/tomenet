@@ -1977,7 +1977,7 @@ extern bool set_tim_deflect(int Ind, int v);
 #ifdef ARCADE_SERVER
 extern void set_pushed(int Ind, int dir);
 #endif
-extern bool set_brand(int Ind, int v, int t, int p);
+extern bool set_melee_brand(int Ind, int v, int t, int p);
 extern s16b questid;
 extern bool imprison(int Ind, u16b time, char *reason);
 extern bool guild_build(int Ind);

@@ -482,8 +482,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
 		/* Temporary weapon branding */
-		if (p_ptr->brand && o_ptr->k_idx) {
-			switch (p_ptr->brand_t) {
+		if (p_ptr->melee_brand && o_ptr->k_idx) {
+			switch (p_ptr->melee_brand_t) {
 			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
 				break;
@@ -1032,8 +1032,8 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
 		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
 		/* Temporary weapon branding */
-		if (p_ptr->brand && o_ptr->k_idx) {
-			switch (p_ptr->brand_t) {
+		if (p_ptr->melee_brand && o_ptr->k_idx) {
+			switch (p_ptr->melee_brand_t) {
 			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
 				break;

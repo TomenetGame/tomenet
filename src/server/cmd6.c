@@ -7797,7 +7797,7 @@ s_printf("TECHNIQUE_MELEE: %s - distract\n", p_ptr->name);
 				inven_item_increase(Ind, i, -1);
 				inven_item_describe(Ind, i);
 				inven_item_optimize(Ind, i);
-				set_brand(Ind, 50 + randint(20), TBRAND_POIS, 0);
+				set_melee_brand(Ind, 50 + randint(20), TBRAND_POIS, 0);
 				break;
 			}
 		if (i == INVEN_WIELD) {

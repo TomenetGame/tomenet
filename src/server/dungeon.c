@@ -4237,8 +4237,8 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_ammo_brand(Ind, p_ptr->ammo_brand - minus_magic, p_ptr->ammo_brand_t, p_ptr->ammo_brand_d);
 
 	/* weapon brand time */
-	if (p_ptr->brand) {
-		(void)set_brand(Ind, p_ptr->brand - minus_magic, p_ptr->brand_t, p_ptr->brand_d);
+	if (p_ptr->melee_brand) {
+		(void)set_melee_brand(Ind, p_ptr->melee_brand - minus_magic, p_ptr->melee_brand_t, p_ptr->melee_brand_d);
 	}
 
 	/* Hack -- Timed ESP */

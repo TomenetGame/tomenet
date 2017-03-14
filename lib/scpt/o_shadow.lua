@@ -339,7 +339,7 @@ POISONRES = add_spell {
 	["spell"] = 	function()
 		local dur
 		dur = randint(15) + 20 + get_level(Ind, POISONRES, 25)
-		set_brand(Ind, dur, TBRAND_POIS, 10)
+		set_melee_brand(Ind, dur, TBRAND_POIS, 10)
 		if get_level(Ind, POISONRES, 50) >= 10 then
 			set_oppose_pois(Ind, dur)
 		end
