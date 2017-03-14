@@ -88,7 +88,7 @@ bool is_state(int Ind, store_type *s_ptr, int state)
 /*
  * Display a building.
  */
-#define NEUTRAL_COLOURS /* don't use green/yellow/red colours for different pricing depending on shop owner's hate/like */
+//#define NEUTRAL_COLOURS /* don't use green/yellow/red colours for different pricing depending on shop owner's hate/like */
 void show_building(int Ind, store_type *s_ptr) {
 	char buff[20];
 	int i, cost = 0;
@@ -200,7 +200,7 @@ void show_building(int Ind, store_type *s_ptr) {
 			}
 
 			strnfmt(tmp_str, 80, " %c) %s %s", ba_ptr->letter, ba_ptr->name + ba_name, buff);
-//			c_put_str(action_color, tmp_str, 21 + (i / 2), 17 + (30 * (i % 2)));
+			//c_put_str(action_color, tmp_str, 21 + (i / 2), 17 + (30 * (i % 2)));
 #if 0
 			Send_store_action(Ind, j, ba_ptr->action, ba_name + ba_ptr->name,
 					ba_ptr->letter, ba_ptr->costs[STORE_LIKED], ba_ptr->flags);
@@ -1317,9 +1317,8 @@ s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 }
 
 /* Repair an item (no enchantment!) */
-static bool repair_item(int Ind, int istart, int iend, int ispecific, bool iac) {
+static bool repair_item(int Ind, int i, bool iac) {
 	player_type *p_ptr = Players[Ind];
-	int i;
 
 	int minenchant;
 
@@ -1327,71 +1326,182 @@ static bool repair_item(int Ind, int istart, int iend, int ispecific, bool iac) 
 	char tmp_str[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	for (i = istart; i <= iend; i++) {
-		o_ptr = &p_ptr->inventory[i];
+	o_ptr = &p_ptr->inventory[i];
 
-		/* eligible item in this equipment slot? */
-		if (iac) {
-			if (!is_armour(o_ptr->tval)) continue;
-			if (o_ptr->to_a >= 0) continue;
-		} else {
-			if (!is_weapon(o_ptr->tval)) continue;
-			if (o_ptr->to_h >= 0 && o_ptr->to_d >= 0) continue;
+	/* eligible item in this equipment slot? */
+	if (iac) {
+		if (!is_armour(o_ptr->tval)) {
+			msg_print(Ind, "That is not a piece of armour.");
+			return FALSE;
 		}
-		if (ispecific > 0 && o_ptr->tval != ispecific) continue;
+		if (o_ptr->to_a >= 0) {
+			msg_print(Ind, "That looks pretty fine already.");
+			return FALSE;
+		}
+	} else {
+		if (!is_weapon(o_ptr->tval)) {
+			msg_print(Ind, "That is not a weapon.");
+			return FALSE;
+		}
+		if (o_ptr->to_h >= 0 && o_ptr->to_d >= 0) {
+			msg_print(Ind, "That looks pretty fine already.");
+			return FALSE;
+		}
+	}
 
-		if (!is_enchantable(o_ptr)) continue;
+	if (!is_enchantable(o_ptr)) {
+		msg_print(Ind, "That item cannot be repaired.");
+		return FALSE;
+	}
 
-		/* Artifacts cannot be repaired. */
-		if (artifact_p(o_ptr)) continue;
+	/* Artifacts cannot be repaired. */
+	if (artifact_p(o_ptr)) {
+		msg_print(Ind, "Artifacts cannot be repaired.");
+		return FALSE;
+	}
 
-		/* Extract the flags */
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-		/* Unenchantable items always fail */
-		if (f5 & TR5_NO_ENCHANT) continue;
+	/* Unenchantable items always fail */
+	if (f5 & TR5_NO_ENCHANT) {
+		msg_print(Ind, "That item cannot be repaired.");
+		return FALSE;
+	}
 
-		/* No easy fix for nothingness/morgul items */
-		if (cursed_p(o_ptr)) continue;
+	/* No easy fix for nothingness/morgul items */
+	if (cursed_p(o_ptr)) {
+		msg_print(Ind, "Cursed items cannot be repaired.");
+		return FALSE;
+	}
 
-		object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
+	object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
 
-		if (o_ptr->tval == TV_SHIELD)
+	if (o_ptr->tval == TV_SHIELD)
 #ifdef NEW_SHIELDS_NO_AC
-			minenchant = 0;
+	{
+		msg_print(Ind, "That item isn't damaged.");
+		return FALSE;
+	}
 #else
  #ifdef USE_NEW_SHIELDS
-			minenchant = -o_ptr->ac / 2;
+		minenchant = -o_ptr->ac / 2;
  #else
-			minenchant = -o_ptr->ac;
+		minenchant = -o_ptr->ac;
  #endif
 #endif
-		else minenchant = -10; //weapon max damage
+	else minenchant = -10; //weapon max damage
 
-		if (iac) {
-			if (o_ptr->to_a < minenchant) {
-				msg_format(Ind, "Sorry, but your %s is beyond repair.", tmp_str);
-				continue;
-			}
-			o_ptr->to_a = 0;
-			msg_format(Ind, "Your %s looks as good as new again.", tmp_str);
-			break;
-		} else {
-			if (o_ptr->to_h < minenchant && o_ptr->to_d < minenchant) {
-				msg_format(Ind, "Sorry, but your %s is beyond repair.", tmp_str);
-				continue;
-			}
-			if (o_ptr->to_h >= minenchant) o_ptr->to_h = 0;
-			if (o_ptr->to_d >= minenchant) o_ptr->to_d = 0;
-			msg_format(Ind, "Your %s looks as good as new again.", tmp_str);
-			break;
+	if (iac) {
+		if (o_ptr->to_a < minenchant) {
+			msg_print(Ind, "Sorry, but that item is beyond repair.");
+			return FALSE;
+		}
+		Send_request_cfr(Ind, RID_REPAIR_ARMOUR, format("That'll cost %d Au to repair, accept?", k_info[o_ptr->k_idx].cost + 150), 0);
+		p_ptr->request_extra = i + 1;
+	} else {
+		if (o_ptr->to_h < minenchant && o_ptr->to_d < minenchant) {
+			msg_print(Ind, "Sorry, but that item is beyond repair.");
+			return FALSE;
+		}
+		Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("That'll cost %d Au to repair, accept?", k_info[o_ptr->k_idx].cost + 150), 0);
+		p_ptr->request_extra = i + 1;
+	}
+	return (TRUE);
+}
+bool repair_item_aux(int Ind, int i, bool iac) {
+	player_type *p_ptr = Players[Ind];
+
+	int minenchant;
+
+	object_type *o_ptr;
+	char tmp_str[ONAME_LEN];
+	u32b f1, f2, f3, f4, f5, f6, esp;
+
+	if (!i) return FALSE; //paranoia
+	i--;
+	o_ptr = &p_ptr->inventory[i];
+
+	/* eligible item in this equipment slot? */
+	if (iac) {
+		if (!is_armour(o_ptr->tval)) {
+			msg_print(Ind, "That is not a piece of armour.");
+			return FALSE;
+		}
+		if (o_ptr->to_a >= 0) {
+			msg_print(Ind, "That looks pretty fine already.");
+			return FALSE;
+		}
+	} else {
+		if (!is_weapon(o_ptr->tval)) {
+			msg_print(Ind, "That is not a weapon.");
+			return FALSE;
+		}
+		if (o_ptr->to_h >= 0 && o_ptr->to_d >= 0) {
+			msg_print(Ind, "That looks pretty fine already.");
+			return FALSE;
 		}
 	}
 
-	if (i > iend) {
-		msg_print(Ind, "You don't have anything that I could repair..");
-		return (FALSE);
+	if (!is_enchantable(o_ptr)) {
+		msg_print(Ind, "That item cannot be repaired.");
+		return FALSE;
 	}
+
+	/* Artifacts cannot be repaired. */
+	if (artifact_p(o_ptr)) {
+		msg_print(Ind, "Artifacts cannot be repaired.");
+		return FALSE;
+	}
+
+	/* Extract the flags */
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+	/* Unenchantable items always fail */
+	if (f5 & TR5_NO_ENCHANT) {
+		msg_print(Ind, "That item cannot be repaired.");
+		return FALSE;
+	}
+
+	/* No easy fix for nothingness/morgul items */
+	if (cursed_p(o_ptr)) {
+		msg_print(Ind, "Cursed items cannot be repaired.");
+		return FALSE;
+	}
+
+	object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
+
+	if (o_ptr->tval == TV_SHIELD)
+#ifdef NEW_SHIELDS_NO_AC
+	{
+		msg_print(Ind, "That item isn't damaged.");
+		return FALSE;
+	}
+#else
+ #ifdef USE_NEW_SHIELDS
+		minenchant = -o_ptr->ac / 2;
+ #else
+		minenchant = -o_ptr->ac;
+ #endif
+#endif
+	else minenchant = -10; //weapon max damage
+
+	if (p_ptr->au < k_info[o_ptr->k_idx].cost + 150) {
+		msg_print(Ind, "You do not have enough money!");
+		return FALSE;
+	}
+	p_ptr->au -= k_info[o_ptr->k_idx].cost + 150;
+	p_ptr->redraw |= PR_GOLD;
+
+	if (iac) {
+		o_ptr->to_a = 0;
+		msg_format(Ind, "Your %s looks as good as new again!", tmp_str);
+	} else {
+		if (o_ptr->to_h >= minenchant) o_ptr->to_h = 0;
+		if (o_ptr->to_d >= minenchant) o_ptr->to_d = 0;
+		msg_format(Ind, "Your %s looks as good as new again!", tmp_str);
+	}
+
 s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
 
 	/* We might be wearing/wielding the item */
@@ -2529,10 +2639,10 @@ if (is_admin(p_ptr))
 			break; }
 #endif
 		case BACT_REPAIR_WEAPON:
-			paid = repair_item(Ind, INVEN_WIELD, INVEN_ARM, 0, FALSE);
+			paid = repair_item(Ind, item, FALSE);
 			break;
 		case BACT_REPAIR_ARMOR:
-			paid = repair_item(Ind, INVEN_ARM, INVEN_FEET, 0, TRUE);
+			paid = repair_item(Ind, item, TRUE);
 			break;
 		default:
 #if 0

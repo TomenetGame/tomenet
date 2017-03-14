@@ -9859,6 +9859,12 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		Send_request_num(Ind, RID_SEND_ITEM_PAY, "How much gold does the receipient have to pay you? ", -1);
 		return;
 #endif
+	case RID_REPAIR_ARMOUR:
+		if (cfr) repair_item_aux(Ind, p_ptr->request_extra, TRUE);
+		return;
+	case RID_REPAIR_WEAPON:
+		if (cfr) repair_item_aux(Ind, p_ptr->request_extra, FALSE);
+		return;
 	default: ;
 	}
 }

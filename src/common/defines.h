@@ -8513,6 +8513,8 @@ extern int PlayerUID;
 #define RID_SEND_ITEM_PAY	13
 #define RID_SEND_ITEM_PAY2	14
 #define RID_SEND_FEE_PAY	15
+#define RID_REPAIR_ARMOUR	16
+#define RID_REPAIR_WEAPON	17
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 

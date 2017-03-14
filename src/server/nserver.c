@@ -8071,6 +8071,7 @@ int Send_request_key(int Ind, int id, char *prompt) {
 
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_KEY;
+	Players[Ind]->request_extra = 0; //anti-exploit: clear!
 	return Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_KEY, id, prompt);
 }
 int Send_request_num(int Ind, int id, char *prompt, int max) {
@@ -8086,6 +8087,7 @@ int Send_request_num(int Ind, int id, char *prompt, int max) {
 
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_NUM;
+	Players[Ind]->request_extra = 0; //anti-exploit: clear!
 	return Packet_printf(&connp->c, "%c%d%s%d", PKT_REQUEST_NUM, id, prompt, max);
 }
 void Send_delayed_request_str(int Ind, int id, char *prompt, char *std) {
@@ -8093,6 +8095,7 @@ void Send_delayed_request_str(int Ind, int id, char *prompt, char *std) {
 
 	p_ptr->delay_str = cfg.fps / 2;//delay (turns)
 	p_ptr->delay_str_id = id;
+	p_ptr->request_extra = 0; //anti-exploit: clear!
 	strcpy(p_ptr->delay_str_prompt, prompt);
 	strcpy(p_ptr->delay_str_std, std);
 }
@@ -8109,6 +8112,7 @@ int Send_request_str(int Ind, int id, char *prompt, char *std) {
 
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_STR;
+	Players[Ind]->request_extra = 0; //anti-exploit: clear!
 	return Packet_printf(&connp->c, "%c%d%s%s", PKT_REQUEST_STR, id, prompt, std);
 }
 void Send_delayed_request_cfr(int Ind, int id, char *prompt, char default_choice) {
@@ -8116,6 +8120,7 @@ void Send_delayed_request_cfr(int Ind, int id, char *prompt, char default_choice
 
 	p_ptr->delay_cfr = cfg.fps / 2;//delay (turns)
 	p_ptr->delay_cfr_id = id;
+	p_ptr->request_extra = 0; //anti-exploit: clear!
 	strcpy(p_ptr->delay_cfr_prompt, prompt);
 	p_ptr->delay_cfr_default_choice = default_choice;
 }
@@ -8132,6 +8137,7 @@ int Send_request_cfr(int Ind, int id, char *prompt, char default_choice) {
 
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_CFR;
+	Players[Ind]->request_extra = 0; //anti-exploit: clear!
 	if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1))
 		return Packet_printf(&connp->c, "%c%d%s%c", PKT_REQUEST_CFR, id, prompt, default_choice);
 	else
