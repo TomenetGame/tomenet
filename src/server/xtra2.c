@@ -755,27 +755,27 @@ bool set_brand(int Ind, int v, int t, int p) {
 			switch (t) {
 				case TBRAND_BALL_ACID: //not used
 				case TBRAND_ACID:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377sacid.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377sacid.");
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377sacid\377W.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377sacid\377W.");
 				break;
 				case TBRAND_BALL_ELEC: //not used
 				case TBRAND_ELEC:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377blightning.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377blightning.");
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377blightning\377W.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377blightning\377W.");
 				break;
 				case TBRAND_BALL_FIRE: //not used
 				case TBRAND_FIRE:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rfire.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377rfire.");
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rfire\377W.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377rfire\377W.");
 				break;
 				case TBRAND_BALL_COLD: //not used
 				case TBRAND_COLD:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377wfrost.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377wfrost.");
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377wfrost\377W.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377wfrost\377W.");
 				break;
 				case TBRAND_POIS:
-					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377gpoison.");
-					else msg_format(Ind, "\377WYour weapon is no longer branded with \377gpoison.");
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377gpoison\377W.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377gpoison\377W.");
 				break;
 				default:
 					if (plural) msg_print(Ind, "\377WYour weapons are no longer branded.");
@@ -811,18 +811,18 @@ bool set_brand(int Ind, int v, int t, int p) {
 }
 
 /*
- * Set "p_ptr->bow_brand_xxx", notice observable changes
+ * Set "p_ptr->ammo_brand_xxx", notice observable changes
  */
-bool set_bow_brand(int Ind, int v, int t, int p) {
+bool set_ammo_brand(int Ind, int v, int t, int p) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
 	if (!p_ptr->inventory[INVEN_AMMO].k_idx) {
 		if (v) msg_print(Ind, "Your quiver does not hold any ammunition to brand."); /* failure */
 		else { /* Shut */
-			p_ptr->bow_brand = 0;
-			p_ptr->bow_brand_t = 0;
-			p_ptr->bow_brand_d = 0;
+			p_ptr->ammo_brand = 0;
+			p_ptr->ammo_brand_t = 0;
+			p_ptr->ammo_brand_d = 0;
 		}
 		return FALSE; /* don't notice anything */
 	}
@@ -832,38 +832,38 @@ bool set_bow_brand(int Ind, int v, int t, int p) {
 
 	/* Open */
 	if (v) {
-		if (!p_ptr->bow_brand) {
+		if (!p_ptr->ammo_brand) {
 			switch (t) {
 			case TBRAND_ELEC:
 			case TBRAND_BALL_ELEC:
-				msg_print(Ind, "\377oYour ammunition sparkles with lightnings!");
+				msg_print(Ind, "Your ammunition sparkles with lightnings!");
 				break;
 			case TBRAND_BALL_COLD:
 			case TBRAND_COLD:
-				msg_print(Ind, "\377oYour ammunition freezes!");
+				msg_print(Ind, "Your ammunition freezes!");
 				break;
 			case TBRAND_BALL_FIRE:
 			case TBRAND_FIRE:
-				msg_print(Ind, "\377oYour ammunition burns!");
+				msg_print(Ind, "Your ammunition burns!");
 				break;
 			case TBRAND_BALL_ACID:
 			case TBRAND_ACID:
-				msg_print(Ind, "\377oYour ammunition drips acid!");
+				msg_print(Ind, "Your ammunition drips acid!");
 				break;
 			case TBRAND_POIS:
-				msg_print(Ind, "\377oYour ammunition is covered with venom!");
+				msg_print(Ind, "Your ammunition is covered with venom!");
 				break;
 			case TBRAND_BASE:
-				msg_print(Ind, "\377oYour ammunition glows in many colours!");
+				msg_print(Ind, "Your ammunition glows in many colours!");
 				break;
 			case TBRAND_CHAO:
-				msg_print(Ind, "\377oYour ammunition seems to twist and warp!");
+				msg_print(Ind, "Your ammunition seems to twist and warp!");
 				break;
 			case TBRAND_VORP:
-				msg_print(Ind, "\377oYour ammunition sharpens!");
+				msg_print(Ind, "Your ammunition sharpens!");
 				break;
 			case TBRAND_BALL_SOUN:
-				msg_print(Ind, "\377oYour ammunition vibrates!");
+				msg_print(Ind, "Your ammunition vibrates!");
 				break;
 			}
 			notice = TRUE;
@@ -872,8 +872,8 @@ bool set_bow_brand(int Ind, int v, int t, int p) {
 
 	/* Shut */
 	else {
-		if (p_ptr->bow_brand) {
-			msg_print(Ind, "\377oThe branding magic on your ammunition ceases again.");
+		if (p_ptr->ammo_brand) {
+			msg_print(Ind, "\377WThe branding magic on your ammunition ceases again.");
 			notice = TRUE;
 			t = 0;
 			p = 0;
@@ -881,9 +881,9 @@ bool set_bow_brand(int Ind, int v, int t, int p) {
 	}
 
 	/* Use the value */
-	p_ptr->bow_brand = v;
-	p_ptr->bow_brand_t = t;
-	p_ptr->bow_brand_d = p;
+	p_ptr->ammo_brand = v;
+	p_ptr->ammo_brand_t = t;
+	p_ptr->ammo_brand_d = p;
 
 
 	/* Nothing to notice */
@@ -2457,7 +2457,7 @@ bool set_oppose_acid(int Ind, int v) {
 	/* Shut */
 	else {
 		if (p_ptr->oppose_acid) {
-			msg_print(Ind, "\377WYou feel less resistant to \377sacid.");
+			msg_print(Ind, "\377WYou feel less resistant to \377sacid\377W.");
 			notice = TRUE;
 		}
 	}
@@ -2500,7 +2500,7 @@ bool set_oppose_elec(int Ind, int v) {
 	/* Shut */
 	else {
 		if (p_ptr->oppose_elec) {
-			msg_print(Ind, "\377WYou feel less resistant to \377belectricity.");
+			msg_print(Ind, "\377WYou feel less resistant to \377belectricity\377W.");
 			notice = TRUE;
 		}
 	}
@@ -2543,7 +2543,7 @@ bool set_oppose_fire(int Ind, int v) {
 	/* Shut */
 	else {
 		if (p_ptr->oppose_fire) {
-			msg_print(Ind, "\377WYou feel less resistant to \377rfire.");
+			msg_print(Ind, "\377WYou feel less resistant to \377rfire\377W.");
 			notice = TRUE;
 		}
 	}
@@ -2586,7 +2586,7 @@ bool set_oppose_cold(int Ind, int v) {
 	/* Shut */
 	else {
 		if (p_ptr->oppose_cold) {
-			msg_print(Ind, "\377WYou feel less resistant to \377wcold.");
+			msg_print(Ind, "\377WYou feel less resistant to \377wcold\377W.");
 			notice = TRUE;
 		}
 	}
@@ -2629,7 +2629,7 @@ bool set_oppose_pois(int Ind, int v) {
 	/* Shut */
 	else {
 		if (p_ptr->oppose_pois) {
-			msg_print(Ind, "\377WYou feel less resistant to \377gpoison.");
+			msg_print(Ind, "\377WYou feel less resistant to \377gpoison\377W.");
 			notice = TRUE;
 		}
 	}

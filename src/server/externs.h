@@ -2093,7 +2093,7 @@ extern bool do_restoreXP_other(int Ind);
 extern bool telekinesis(int Ind, object_type *o_ptr, int max_weight);
 #endif
 extern void telekinesis_aux(int Ind, int item);
-extern bool set_bow_brand(int Ind, int v, int t, int p);
+extern bool set_ammo_brand(int Ind, int v, int t, int p);
 
 extern bool bless_temp_luck(int Ind, int pow, int dur);
 extern bool set_sh_fire_tim(int Ind, int v);

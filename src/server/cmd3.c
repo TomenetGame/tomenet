@@ -65,11 +65,11 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 		o_ptr->sseed = 0;
 	}
 
-	if (p_ptr->bow_brand && item == INVEN_AMMO) set_bow_brand(Ind, 0, 0, 0);
+	if (p_ptr->ammo_brand && item == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
 	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
 	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
 	else if (p_ptr->brand && (item == INVEN_WIELD || /* dual-wield */
-	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_brand(Ind, 0, 0, 0);
+	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_brand(Ind, 0, p_ptr->brand_t, 0);
 
 	/* Verify */
 	if (amt > o_ptr->number) amt = o_ptr->number;
@@ -425,6 +425,19 @@ int inven_drop(int Ind, int item, int amt) {
 
 	/* Message */
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(item));
+
+	/* Sigil (reset it) */
+	if (o_ptr->sigil) {
+		msg_print(Ind, "The sigil fades away.");
+		o_ptr->sigil = 0;
+		o_ptr->sseed = 0;
+	}
+	/* Reset temporary brand enchantments */
+	if (p_ptr->ammo_brand && item == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
+	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
+	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
+	else if (p_ptr->brand && (item == INVEN_WIELD || /* dual-wield */
+	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_brand(Ind, 0, p_ptr->brand_t, 0);
 
 	/* Drop it (carefully) near the player */
 	o_idx = drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -1181,11 +1194,11 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		switch (slot) {
 		case INVEN_WIELD:
 			act = "You are wielding";
-			if (p_ptr->brand) set_brand(Ind, 0, 0, 0); /* actually only applies for dual-wield */
+			if (p_ptr->brand) set_brand(Ind, 0, p_ptr->brand_t, 0); /* actually only applies for dual-wield */
 			break;
 		case INVEN_ARM:
 			act = "You are wielding";
-			if (p_ptr->brand && o_ptr->tval != TV_SHIELD) set_brand(Ind, 0, 0, 0); /* dual-wield */
+			if (p_ptr->brand && o_ptr->tval != TV_SHIELD) set_brand(Ind, 0, p_ptr->brand_t, 0); /* dual-wield */
 			break;
 		case INVEN_BOW: act = "You are shooting with"; break;
 		case INVEN_LITE: act = "Your light source is"; break;

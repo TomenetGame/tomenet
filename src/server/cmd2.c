@@ -4902,7 +4902,7 @@ int breakage_chance(object_type *o_ptr) {
 static void do_arrow_brand_effect(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 
-	switch (p_ptr->bow_brand_t) {
+	switch (p_ptr->ammo_brand_t) {
 	case TBRAND_BALL_FIRE:
 		project(0 - Ind, 2, &p_ptr->wpos, y, x, 30, GF_FIRE, PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
 		break;
@@ -5737,7 +5737,7 @@ void do_cmd_fire(int Ind, int dir) {
 			if (zcave[y][x].m_idx < 0) {
 				if (cfg.use_pk_rules == PK_RULES_NEVER) {
 					/* Stop looking */
-					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != TBRAND_VORP)) break;
+					if (!p_ptr->ammo_brand || (p_ptr->ammo_brand_t != TBRAND_VORP)) break;
 				} else {
 					cave_type *c_ptr = &zcave[y][x];
 					q_ptr = Players[0 - c_ptr->m_idx];
@@ -5869,7 +5869,7 @@ void do_cmd_fire(int Ind, int dir) {
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, FALSE);
 									if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
-									if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
+									if (p_ptr->ammo_brand) tdam += p_ptr->ammo_brand_d;
 									tdam += o_ptr->to_d;
 									tdam += j_ptr->to_d + p_ptr->to_d_ranged;
 								} else {
@@ -5945,7 +5945,7 @@ void do_cmd_fire(int Ind, int dir) {
 								}
 //less spam for now - C. Blue					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
-								if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == TBRAND_CHAO)) && !q_ptr->resist_conf && !boomerang)
+								if ((p_ptr->ammo_brand && (p_ptr->ammo_brand_t == TBRAND_CHAO)) && !q_ptr->resist_conf && !boomerang)
 									(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + 5);
 
 								if (p_ptr->ranged_barrage)
@@ -5957,15 +5957,15 @@ void do_cmd_fire(int Ind, int dir) {
 
 								/* XXX confusion arrow is not handled right
 								 * in do_arrow_brand_effect */
-								if (!boomerang && p_ptr->bow_brand_t
-								    && p_ptr->bow_brand_t != TBRAND_CHAO)
+								if (!boomerang && p_ptr->ammo_brand_t
+								    && p_ptr->ammo_brand_t != TBRAND_CHAO)
 									do_arrow_brand_effect(Ind, y, x);
 
 								if (!boomerang && !magic && o_ptr->pval)
 									do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 								/* Stop looking */
-								if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != TBRAND_VORP) || boomerang) break;
+								if (!p_ptr->ammo_brand || (p_ptr->ammo_brand_t != TBRAND_VORP) || boomerang) break;
 							}
 						}
 
@@ -6076,7 +6076,7 @@ void do_cmd_fire(int Ind, int dir) {
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
-						if (p_ptr->bow_brand) tdam += p_ptr->bow_brand_d;
+						if (p_ptr->ammo_brand) tdam += p_ptr->ammo_brand_d;
 						tdam += o_ptr->to_d;
 						//tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						tdam += j_ptr->to_d + p_ptr->to_d_ranged;
@@ -6120,7 +6120,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 #if 0
 					/* XXX consider using project() with GF_CONF */
-					if ((p_ptr->bow_brand && (p_ptr->bow_brand_t == TBRAND_CHAO)) &&
+					if ((p_ptr->ammo_brand && (p_ptr->ammo_brand_t == TBRAND_CHAO)) &&
 					    !(r_ptr->flags3 & RF3_NO_CONF) &&
 					    !(r_ptr->flags4 & RF4_BR_CONF) &&
 					    !(r_ptr->flags4 & RF4_BR_CHAO) && !boomerang) {
@@ -6240,14 +6240,14 @@ void do_cmd_fire(int Ind, int dir) {
 						}
 					}
 
-					if (!boomerang && p_ptr->bow_brand_t)
+					if (!boomerang && p_ptr->ammo_brand_t)
 						do_arrow_brand_effect(Ind, y, x);
 
 					if (!boomerang && !magic && o_ptr->pval)
 						do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 
 					/* Stop looking */
-					if (!p_ptr->bow_brand || (p_ptr->bow_brand_t != TBRAND_VORP) || boomerang) break;
+					if (!p_ptr->ammo_brand || (p_ptr->ammo_brand_t != TBRAND_VORP) || boomerang) break;
 				}
 			}
 

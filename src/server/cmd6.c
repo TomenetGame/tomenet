@@ -6980,7 +6980,7 @@ bool unmagic(int Ind) {
 		set_tim_esp(Ind, 0) |
 		set_st_anchor(Ind, 0) |
 		set_prob_travel(Ind, 0) |
-		set_bow_brand(Ind, 0, 0, 0) |
+		set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0) |
 #if 0
 		set_mimic(Ind, 0, 0) |
 #endif

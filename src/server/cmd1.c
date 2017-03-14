@@ -343,8 +343,8 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Hack -- extract temp branding */
-		if (p_ptr && p_ptr->bow_brand) {
-			switch (p_ptr->bow_brand_t) {
+		if (p_ptr && p_ptr->ammo_brand) {
+			switch (p_ptr->ammo_brand_t) {
 			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
 				break;

@@ -4874,7 +4874,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 			break;
 		//other brands are unused atm (possibly not fully implemented even)
 		}
-	//Note: bow_brand_t is unused atm (possibly not fully implemented even)
+	//Note: ammo_brand_t is unused atm (possibly not fully implemented even)
 	/* Note: Static brands (p_ptr->brand_..) aren't displayed here, since they come completely independant of the weapon usage,
 	         while temporary brands at least (usually) stop when you take off the weapon. */
 #endif

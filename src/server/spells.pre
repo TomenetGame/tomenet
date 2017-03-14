@@ -292,7 +292,7 @@ extern bool do_shadow_gate(int Ind, int range);
 
 /* xtra2.c */
 extern bool set_brand(int Ind, int v, int t, int p);
-extern bool set_bow_brand(int Ind, int v, int t, int p);
+extern bool set_ammo_brand(int Ind, int v, int t, int p);
 
 /*
  * The spell function must provide the desc

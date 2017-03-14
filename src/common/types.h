@@ -2330,9 +2330,9 @@ struct player_type {
 	s16b tim_mimic;			/* Timed -- Mimicry */
 	s16b tim_mimic_what;		/* Timed -- Mimicry */
 //UNUSED just queried
-	s16b bow_brand;			/* Timed -- Bow Branding */
-	byte bow_brand_t;		/* Timed -- Bow Branding */
-	s16b bow_brand_d;		/* Timed -- Bow Branding */
+	s16b ammo_brand;			/* Timed -- Bow Branding */
+	byte ammo_brand_t;		/* Timed -- Bow Branding */
+	s16b ammo_brand_d;		/* Timed -- Bow Branding */
 	s16b brand;			/* Timed -- Weapon Branding (used by runecraft) */
 	byte brand_t;			/* Timed -- Weapon Branding */
 	s16b brand_d;			/* Timed -- Weapon Branding */

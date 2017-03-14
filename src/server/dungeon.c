@@ -4233,8 +4233,8 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_biofeedback(Ind, p_ptr->biofeedback - 1);
 
 	/* Hack -- Bow Branding */
-	if (p_ptr->bow_brand)
-		(void)set_bow_brand(Ind, p_ptr->bow_brand - minus_magic, p_ptr->bow_brand_t, p_ptr->bow_brand_d);
+	if (p_ptr->ammo_brand)
+		(void)set_ammo_brand(Ind, p_ptr->ammo_brand - minus_magic, p_ptr->ammo_brand_t, p_ptr->ammo_brand_d);
 
 	/* weapon brand time */
 	if (p_ptr->brand) {
