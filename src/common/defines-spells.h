@@ -9,8 +9,9 @@
 /*
  * Number of effects
  */
-#define EFF_WAVE	0x00000001      /* A circle whose radius increase */
-#define EFF_STORM	0x00000004      /* The area follows the player */
+#define EFF_WAVE	0x00000001	/* A circle whose radius increase */
+#define EFF_STORM	0x00000004	/* The area follows the player */
+#define EFF_THINWAVE	0x00000080	/* Same as wave, but thickness 1 instead of 3 (hits each target only once instead of three times) */
 
 
 /* Generic temporary weapon branding, currently only used for melee weapons */

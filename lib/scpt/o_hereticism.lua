@@ -154,13 +154,14 @@ OEXTRASTATS = add_spell {
 	["name"] = 	"Demonic Strength",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
-	["level"] = 	30,
+	["level"] = 	26,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
 	["fail"] = 	-30,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
+			--(lv=30 -> +4 at 50)
 			do_xtra_stats(Ind, 4, 1 + get_level(Ind, OEXTRASTATS, 50) / 7, rand_int(7) + 22 + get_level(Ind, OEXTRASTATS, 30))
 			end,
 	["info"] = 	function()
@@ -273,7 +274,7 @@ FIRESTORM = add_spell {
 	["mana"] = 	25,
 	["mana_max"] = 	25,
 	["fail"] = 	-75,
---	["stat"] = 	A_WIS,
+	--["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
 			fire_wave(Ind, GF_HELL_FIRE, 0, 80 + get_level(Ind, FIRESTORM, 200), 1, 25 + get_level(Ind, FIRESTORM, 47), 9, EFF_STORM, " conjures hellfire for")
 		end,
@@ -333,4 +334,39 @@ BLOODSACRIFICE = add_spell {
 	["desc"] = 	{ "Inflict a mortal wound on yourself, causing the warped powers of chaos",
 			  "to temporarily change your form into a terrifying Bloodthirster.",
 			  "--- This spell is only usable by Maia Priests and Hell Knights. ---", }
+}
+
+ERADICATION_I = add_spell {
+	["name"] = 	"Eradication I",
+	["school"] = 	{SCHOOL_OHERETICISM},
+	["spell_power"] = 0,
+	["level"] = 	20,
+	["mana"] = 	7,
+	["mana_max"] = 	7,
+	["fail"] = 	-20,
+	["spell"] = 	function()
+			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, ERADICATION_I, 120), 1, 5 + get_level(Ind, ERADICATION_I, 6), 3, EFF_THINWAVE, " emits a flamewave for")
+	end,
+	["info"] = 	function()
+			return "dam "..(30 + get_level(Ind, ERADICATION_I,  120)).." rad "..(5 + get_level(Ind, ERADICATION_I, 6))
+	end,
+	["desc"] = 	{ "Vanquishes critters that dare trifle with you in passing,",
+			  "by emitting a flamewave that expands into all directions." }
+}
+ERADICATION_II = add_spell {
+	["name"] = 	"Eradication II",
+	["school"] = 	{SCHOOL_OHERETICISM},
+	["spell_power"] = 0,
+	["level"] = 	35,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
+	["fail"] = 	-65,
+	["spell"] = 	function()
+			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, ERADICATION_I, 300), 1, 5 + get_level(Ind, ERADICATION_I, 6), 3, EFF_THINWAVE, " casts a flamewave for")
+	end,
+	["info"] = 	function()
+			return "dam "..(30 + get_level(Ind, ERADICATION_I, 300)).." rad "..(5 + get_level(Ind, ERADICATION_I, 6))
+	end,
+	["desc"] = 	{ "Vanquishes critters that dare trifle with you in passing,",
+			  "by emitting a flamewave that expands into all directions." }
 }

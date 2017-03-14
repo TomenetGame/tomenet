@@ -1082,11 +1082,20 @@ static void process_effects(void) {
 				if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
 					c_ptr->effect = 0;
 			}
+			if (((e_ptr->flags & EFF_THINWAVE) && !(e_ptr->flags & EFF_LAST)) || ((e_ptr->flags & EFF_STORM) && !(e_ptr->flags & EFF_LAST))) {
+				if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
+					c_ptr->effect = 0;
+			}
 #else	// 0
 
 			if (!(e_ptr->flags & EFF_LAST)) {
 				if ((e_ptr->flags & EFF_WAVE)) {
-					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2) {
+					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2) { //wave has thickness 3: each taget gets hit 3 times
+						c_ptr->effect = 0;
+						everyone_lite_spot(wpos, j, i);
+					}
+				} else if ((e_ptr->flags & EFF_THINWAVE)) {
+					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad) { // thin wave has thickness 1: each target gets hit 1 time
 						c_ptr->effect = 0;
 						everyone_lite_spot(wpos, j, i);
 					}
@@ -1112,7 +1121,7 @@ static void process_effects(void) {
 #endif	// 0
 
 			/* Creates a "wave" effect*/
-			if (e_ptr->flags & EFF_WAVE) {
+			if (e_ptr->flags & (EFF_WAVE | EFF_THINWAVE)) {
 				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
 				    (distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad)) {
 					c_ptr->effect = k;
@@ -1502,7 +1511,7 @@ static void process_effects(void) {
 			}
 		}
 
-		if (e_ptr->flags & EFF_WAVE) e_ptr->rad++;
+		if (e_ptr->flags & (EFF_WAVE | EFF_THINWAVE)) e_ptr->rad++;
 		/* Creates a "storm" effect*/
 		else if (e_ptr->flags & EFF_STORM && who > PROJECTOR_EFFECT) {
 			p_ptr = Players[0 - who];

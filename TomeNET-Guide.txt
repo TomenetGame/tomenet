@@ -15795,10 +15795,14 @@ school.
                     Lv7: Grants temporary fire resistance.
                     Required skill level for first spell level: 12.
 
+    Eradication     Vanquishes critters that dare trifle with you in passing,
+                    by emitting a flamewave that expands into all directions.
+                    Required skill level for first spell level: 20.
+
     Demonic Strength
                     Temporarily increases and sustains strength and
                     constitution.
-                    Required skill level for first spell level: 30.
+                    Required skill level for first spell level: 26.
 
     Chaos Bolt      Channels the powers of chaos into a bolt.
                     Required skill level for first spell level: 32.

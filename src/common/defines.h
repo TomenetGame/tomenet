@@ -2345,6 +2345,7 @@
 #define EFF_CROSSHAIR_A		0x00000010
 #define EFF_CROSSHAIR_B		0x00000020
 #define EFF_CROSSHAIR_C		0x00000040
+#define EFF_THINWAVE		0x00000080	/* Same as wave, but thickness 1 instead of 3 (hits each target only once instead of three times) */
 
 #define EFF_THUNDER_VISUAL	0x00800000	/* For 'Thunderstorm' spell electrocution */
 #define EFF_LIGHTNING1		0x01000000	/* For Nether Realm finishing */
