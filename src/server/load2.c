@@ -791,6 +791,9 @@ static void rd_item(object_type *o_ptr) {
 			if ((a_ptr->flags1 & TR1_LIFE) && (o_ptr->pval > 2)) a_ptr->pval = o_ptr->pval = 2;
 		}
 	}
+
+	/* Shop-enchanted cheeze - fix level */
+	if (o_ptr->level <= 3 && o_ptr->to_h >= 10 && o_ptr->to_d >= 10 && !o_ptr->name1 && !o_ptr->name2) o_ptr->level = o_ptr->to_h > o_ptr->to_d ? o_ptr->to_d : o_ptr->to_d;
 }
 
 
