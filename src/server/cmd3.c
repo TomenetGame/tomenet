@@ -1816,7 +1816,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 #endif
 
 	/* Check if item gave WRAITH form */
-	if((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
+	if ((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith) {
 		s_printf("DESTROY_EXPLOIT (wraith): %s destroyed %s\n", p_ptr->name, o_name);
 #if 1
 		p_ptr->tim_wraith = 1;
@@ -1826,8 +1826,23 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	/* Message */
 	msg_format(Ind, "You destroy %s.", o_name);
 
+	/* Reset temporary brands -- silently! By directly resetting the vars instead of calling the set_..() functions. */
+	if (p_ptr->ammo_brand && item == INVEN_AMMO) {
+		p_ptr->ammo_brand = 0;
+		p_ptr->ammo_brand_t = 0;
+		p_ptr->ammo_brand_d = 0;
+	}
+	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
+	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
+	else if (p_ptr->brand && (item == INVEN_WIELD || /* dual-wield */
+	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) {
+		p_ptr->brand = 0;
+		p_ptr->brand_t = 0;
+		p_ptr->brand_d = 0;
+	}
+
 #ifdef USE_SOUND_2010
-//	sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
+	//sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_"); /* too spammy when mass-looting maybe */
 #endif
 
 	/* log big oopsies */
