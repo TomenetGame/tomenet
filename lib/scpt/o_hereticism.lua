@@ -350,7 +350,7 @@ FLAMEWAVE_I = add_spell {
 	["info"] = 	function()
 			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I,  120)).." rad "..(5 + get_level(Ind, FLAMEWAVE_I, 6))
 	end,
-	["desc"] = 	{ "Eradicates critters that dare trifle with you in passing." }
+	["desc"] = 	{ "Eradicates critters beneath your notice that dare trifle with you." }
 }
 FLAMEWAVE_II = add_spell {
 	["name"] = 	"Flame Wave II",
@@ -366,5 +366,5 @@ FLAMEWAVE_II = add_spell {
 	["info"] = 	function()
 			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I, 300)).." rad "..(5 + get_level(Ind, FLAMEWAVE_I, 6))
 	end,
-	["desc"] = 	{ "Eradicates critters that dare trifle with you in passing." }
+	["desc"] = 	{ "Eradicates critters beneath your notice that dare trifle with you." }
 }

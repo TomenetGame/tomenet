@@ -15795,8 +15795,9 @@ school.
                     Lv7: Grants temporary fire resistance.
                     Required skill level for first spell level: 12.
 
-    Flame Wave      Eradicates critters that dare trifle with you in passing,
-                    by emitting a flamewave that expands into all directions.
+    Flame Wave      Eradicates critters beneath your notice that dare trifle
+                    with you, by emitting a flamewave that expands into all
+                    directions.
                     Required skill level for first spell level: 20.
 
     Demonic Strength
