@@ -69,8 +69,8 @@ T:9:46:6
 T:5:12:7
 #piece of wood? (player store sign) - maybe don't make it available from npc shops at all!
 #T:1:11:7
-$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
-$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:2:1:3:4:72:0
+$ENABLE_ITEM_ORDER!A:2:1:3:4:0:0
 O:0:5:6:7:1:35
 G:1:U
 W:24
@@ -100,8 +100,8 @@ I:80:& Set~ of Gauntlets
 I:100:& Small Leather Shield~
 I:90:& Large Leather Shield~
 I:80:& Small Metal Shield~
-$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
-$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:2:1:3:4:72:78
+$ENABLE_ITEM_ORDER!A:2:1:3:4:0:78
 O:8:9:10:11:38:20
 G:2:s
 W:36
@@ -140,8 +140,8 @@ I:100:& Iron Shot~
 I:100:& Arrow~
 I:100:& Bolt~
 I:100:& Whip~
-$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
-$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:2:1:3:4:72:77
+$ENABLE_ITEM_ORDER!A:2:1:3:4:0:77
 O:12:13:14:15:44:68
 G:3:w
 W:36
@@ -198,8 +198,8 @@ I:100:Neutralize Poison
 T:100:70:56
 T:100:70:56
 I:100:Light
-$ENABLE_ITEM_ORDER$A:67:72:1:2:3:4
-$ENABLE_ITEM_ORDER!A:67:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:2:1:3:4:72:67
+$ENABLE_ITEM_ORDER!A:2:1:3:4:0:67
 O:26:27:28:29:26:43
 G:4:g
 W:36
@@ -270,8 +270,8 @@ T:100:70:29
 T:100:70:29
 I:100:Resist Heat
 I:100:Resist Cold
-$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
-$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:2:1:3:4:72:0
+$ENABLE_ITEM_ORDER!A:2:1:3:4:0:0
 O:30:31:32:33:30:33
 G:5:b
 W:36
@@ -328,8 +328,8 @@ I:100:Probing
 T:100:111:50
 T:100:111:50
 T:100:111:50
-$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
-$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:2:1:3:4:72:0
+$ENABLE_ITEM_ORDER!A:2:1:3:4:0:0
 #O:34:35:36:37:31:44 need more keepers first in ow_info
 #O:34:35:36:37:36:37
 O:34:35:36:37:46:49
@@ -397,8 +397,8 @@ T:7:111:50
 T:7:111:56
 T:7:111:61
 T:100:111:255
-$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
-$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:2:1:3:4:72:0
+$ENABLE_ITEM_ORDER!A:2:1:3:4:0:0
 O:42:43:44:45:42:43
 G:9:o
 #W:84 --priest spells tiered=+24:
@@ -434,8 +434,8 @@ T:20:107:17
 T:20:107:18
 T:20:107:19
 T:20:107:20
-$ENABLE_ITEM_ORDER$A:0:72:1:2:3:4
-$ENABLE_ITEM_ORDER!A:0:0:1:2:3:4
+$ENABLE_ITEM_ORDER$A:2:1:3:4:72:0
+$ENABLE_ITEM_ORDER!A:2:1:3:4:0:0
 O:46:47:48:46:47:48
 G:+:B
 F:MEDIUM_LEVEL
@@ -654,7 +654,7 @@ W:0
 # Here begins the random shops, for the random towns
 N:38:Axe Smith
 T:100:24:256
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:12:13:14:15:44:68
 G:3:W
 F:RANDOM | MEDIUM_LEVEL | BUY67
@@ -663,7 +663,7 @@ W:0
 
 N:39:Blunt Smith
 T:100:21:256
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:12:13:14:15:44:68
 G:3:W
 F:RANDOM | MEDIUM_LEVEL | BUY67
@@ -672,7 +672,7 @@ W:0
 
 N:40:Polearm Smith
 T:100:22:256
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:12:13:14:15:44:68
 G:3:W
 F:RANDOM | MEDIUM_LEVEL | BUY67
@@ -681,7 +681,7 @@ W:0
 
 N:41:Sword Smith
 T:100:23:256
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:12:13:14:15:44:68
 G:3:W
 F:RANDOM | MEDIUM_LEVEL | BUY67
@@ -691,7 +691,7 @@ W:0
 N:42:Rare Jewelry Shop
 T:60:40:256
 T:100:45:256
-A:0:0:1:2:3:0
+A:2:1:3:4:0:0
 O:34:35:36:37:46:49
 G:6:v
 F:RANDOM | SHALLOW_LEVEL | DEEP_LEVEL | FORCE_LEVEL |
@@ -701,7 +701,7 @@ W:12
 N:43:Jewelry Shop
 T:100:40:256
 T:100:45:256
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:34:35:36:37:46:49
 G:6:y
 F:RANDOM | DEPEND_LEVEL | SHALLOW_LEVEL | FORCE_LEVEL
@@ -711,7 +711,7 @@ W:0
 
 N:44:Footwear Shop
 T:100:30:256
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:8:9:10:11:38:20
 G:2:r
 F:RANDOM | MEDIUM_LEVEL
@@ -726,7 +726,7 @@ T:100:30:2
 T:100:30:3
 T:75:30:6
 T:75:30:8
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 O:8:9:10:11:38:20
 G:2:r
 F:RANDOM | DEEP_LEVEL | MEDIUM_LEVEL
@@ -739,7 +739,7 @@ T:100:111:50
 T:100:111:56
 T:100:111:61
 T:100:111:255
-A:27:0:1:2:3:4
+A:2:1:3:4:0:27
 #O:8:9:10:11
 O:42:43:44:45:4:58
 G:9:y
@@ -752,7 +752,7 @@ T:100:111:50
 T:100:111:56
 T:100:111:61
 T:100:111:255
-A:27:0:1:2:3:0
+A:2:1:3:0:0:27
 #O:8:9:10:11
 O:42:43:44:45:4:58
 G:9:v
@@ -766,7 +766,7 @@ W:0
 N:48:Expensive B. Market
 ###T:100:111:102
 T:6:70:52
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 #O:39:40:41:39:40:41
 O:39:40:70:40:41:70
 G:7:v
@@ -788,7 +788,7 @@ I:98:& Cloak~
 I:46:& Fur Cloak~
 I:100:Word of Recall
 I:100:Cure Critical Wounds
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:0:5:6:7:1:35
 G:1:U
 W:0
@@ -796,7 +796,7 @@ W:0
 
 N:50:Dragon Hunter
 T:100:38:256
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 O:8:9:10:11:38:20
 G:2:v
 F:RANDOM | DEEP_LEVEL | DEPEND_LEVEL
@@ -836,7 +836,7 @@ T:100:71:60
 T:100:71:60
 # *Healing*:
 T:100:71:37
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 O:30:31:32:33:30:33
 G:5:s
 W:36
@@ -844,7 +844,7 @@ F:BUY67 | PRICE2 | NO_DISCOUNT1 | NO_DISCOUNT2
 
 N:52:Scribe
 T:100:70:256
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:42:43:44:45:4:58
 G:5:w
 F:RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | BUY67 | HARD_STEAL
@@ -852,7 +852,7 @@ W:12
 
 N:53:Potion Store
 T:100:71:256
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:30:31:32:33:30:33
 G:5:B
 W:12
@@ -861,7 +861,7 @@ F:PRICE1 | VHARD_STEAL
 
 N:54:Recaller
 I:100:Word of Recall
-A:33:0:1:2:3:0
+A:2:1:3:0:0:0
 O:67:64:61:58:57:56
 G:+:b
 F:RANDOM | HARD_STEAL
@@ -877,7 +877,7 @@ T:50:19:24
 T:50:16:256
 T:50:17:256
 T:50:18:256
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 O:12:13:14:15:44:68
 G:3:o
 F:RANDOM | MEDIUM_LEVEL | RARE | BUY67 | HARD_STEAL
@@ -921,14 +921,14 @@ I:25:& Feanorian Lamp~
 #I:5:& Everburning Torch~
 T:60:65:6
 I:70:Detonations
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:11:15:26:40:11:15
 F:MEDIUM_LEVEL | VHARD_STEAL | PRICE1
 G:+:s
 W:24
 
 N:60:Secret Black Market
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 #O:39:40:41:39:40:41
 O:39:40:70:40:41:70
 G:7:U
@@ -967,7 +967,7 @@ I:100:Satisfy Hunger
 T:30:39:2
 T:30:39:2
 T:30:39:3
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 #O:34:35:36:37:46:49
 O:19:24:25:45:54:67
 G:1:y
@@ -994,7 +994,7 @@ T:95:71:2
 T:5:80:37
 I:15:& Pint~ of Fine Wine
 I:20:& Pint~ of Fine Ale
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 #O:34:35:36:37
 O:0:5:6:7:1:35
 G:5:u
@@ -1052,7 +1052,7 @@ T:100:111:255
 T:100:111:255
 T:100:111:255
 T:100:111:255
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:30:31:32:33:30:33
 G:1:s
 W:36
@@ -1070,7 +1070,7 @@ T:100:24:256
 T:100:21:256
 T:100:22:256
 T:100:23:256
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:12:13:14:15:44:68
 G:3:W
 #needs PRICE4 because it very often sells ego items
@@ -1084,7 +1084,7 @@ T:6:111:61
 T:100:111:255
 T:1:111:100
 #A:27:0:1:2:3:0	(removed for IDDC_IRON_COOP)
-A:27:0:1:2:3:4
+A:2:1:3:4:0:0
 O:42:43:44:45:4:58
 G:9:r
 #deeper store -> higher level books
@@ -1096,14 +1096,14 @@ F:GREAT
 W:72
 
 N:66:Player Store Template
-A:0:0:0:2:3:0
+A:2:0:3:0:0:0
 #note: stealing is usually turned off for pstores anyway
 F:VHARD_STEAL
 
 # Variant of dungeon potion store, for Ironman Deep Dive Challenge towns
 N:67:Potion Store
 T:100:71:256
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 O:30:31:32:33:30:33
 G:5:B
 W:36
@@ -1176,7 +1176,7 @@ T:100:46:256
 T:5:12:7
 T:5:12:0
 #A:0:0:1:2:3:4	(removed for IDDC_IRON_COOP)
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 O:0:5:6:7:1:35
 G:1:U
 W:60
@@ -1205,7 +1205,7 @@ T:100:37:256
 T:100:37:256
 T:100:37:256
 #A:0:0:1:2:3:4	(removed for IDDC_IRON_COOP)
-A:0:0:1:2:3:0
+A:2:1:3:0:0:78
 O:8:9:10:11:38:20
 G:2:s
 #W:24
@@ -1231,7 +1231,7 @@ T:100:22:256
 T:100:23:256
 T:100:24:256
 #A:0:0:1:2:3:4	(removed for IDDC_IRON_COOP)
-A:0:0:1:2:3:0
+A:2:1:3:0:0:77
 O:12:13:14:15:44:68
 G:3:w
 #W:24
@@ -1291,7 +1291,7 @@ I:100:Neutralize Poison
 T:100:70:56
 T:100:70:56
 I:100:Light
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 O:26:27:28:29:26:43
 G:4:g
 #W:24
@@ -1364,7 +1364,7 @@ T:100:70:29
 T:100:70:29
 I:100:Resist Heat
 I:100:Resist Cold
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:30:31:32:33:30:33
 G:5:b
 #W:24
@@ -1427,7 +1427,7 @@ I:100:Cunningness
 I:100:Toughness
 I:100:Mana-charging
 #A:0:0:1:2:3:4	(removed for IDDC_IRON_COOP)
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 #O:34:35:36:37:31:44 need more keepers first in ow_info
 #O:34:35:36:37:36:37
 O:34:35:36:37:46:49
@@ -1479,7 +1479,7 @@ T:5:71:37
 T:5:12:7
 I:50:Blood Bond
 #A:30:0:1:2:3:0
-A:0:0:1:2:3:0
+A:2:1:3:0:0:0
 #O:38:39:40:41:42:
 O:39:40:41:39:40:41
 G:7:D
@@ -1503,7 +1503,7 @@ T:7:111:50
 T:7:111:56
 T:7:111:61
 T:100:111:255
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:42:43:44:45:42:43
 G:9:o
 W:96
@@ -1539,7 +1539,7 @@ T:20:107:17
 T:20:107:18
 T:20:107:19
 T:20:107:20
-A:0:0:1:2:3:4
+A:2:1:3:4:0:0
 O:46:47:48:46:47:48
 G:+:B
 F:MEDIUM_LEVEL

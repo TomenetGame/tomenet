@@ -88,6 +88,7 @@ bool is_state(int Ind, store_type *s_ptr, int state)
 /*
  * Display a building.
  */
+#define NEUTRAL_COLOURS /* don't use green/yellow/red colours for different pricing depending on shop owner's hate/like */
 void show_building(int Ind, store_type *s_ptr) {
 	char buff[20];
 	int i, cost = 0;
@@ -119,6 +120,7 @@ void show_building(int Ind, store_type *s_ptr) {
 
 		if (ba_ptr->letter != '.') {
 			if (ba_ptr->action_restr == 0) {
+#ifndef NEUTRAL_COLOURS /* different colour for actions that cost money, depending on shop owner like/hate'ness? */
 				if ((is_state(Ind, s_ptr, STORE_LIKED) && (ba_ptr->costs[STORE_LIKED] == 0)) ||
 				    (is_state(Ind, s_ptr, STORE_HATED) && (ba_ptr->costs[STORE_HATED] == 0)) ||
 				    (is_state(Ind, s_ptr, STORE_NORMAL) && (ba_ptr->costs[STORE_NORMAL] == 0)))
@@ -138,6 +140,21 @@ void show_building(int Ind, store_type *s_ptr) {
 					cost = ba_ptr->costs[STORE_NORMAL];
 					strnfmt(buff, 20, "(%dgp)", cost);
 				}
+#else /* just use neutral white for everything? */
+				action_color = TERM_WHITE;
+				if (ba_ptr->costs[STORE_LIKED] == 0 && ba_ptr->costs[STORE_HATED] == 0 && ba_ptr->costs[STORE_NORMAL] == 0) {
+					buff[0] = '\0';
+				} else if (is_state(Ind, s_ptr, STORE_LIKED)) {
+					cost = ba_ptr->costs[STORE_LIKED];
+					strnfmt(buff, 20, "(%dgp)", cost);
+				} else if (is_state(Ind, s_ptr, STORE_HATED)) {
+					cost = ba_ptr->costs[STORE_HATED];
+					strnfmt(buff, 20, "(%dgp)", cost);
+				} else {
+					cost = ba_ptr->costs[STORE_NORMAL];
+					strnfmt(buff, 20, "(%dgp)", cost);
+				}
+#endif
 			} else if (ba_ptr->action_restr == 1) {
 				if ((is_state(Ind, s_ptr, STORE_LIKED) && (ba_ptr->costs[STORE_LIKED] == 0)) ||
 				    (is_state(Ind, s_ptr, STORE_NORMAL) && (ba_ptr->costs[STORE_NORMAL] == 0)))
@@ -145,14 +162,22 @@ void show_building(int Ind, store_type *s_ptr) {
 					action_color = TERM_WHITE;
 					buff[0] = '\0';
 				} else if (is_state(Ind, s_ptr, STORE_LIKED)) {
+#ifndef NEUTRAL_COLOURS
 					action_color = TERM_L_GREEN;
+#else
+					action_color = TERM_WHITE;
+#endif
 					cost = ba_ptr->costs[STORE_LIKED];
 					strnfmt(buff, 20, "(%dgp)", cost);
 				} else if (is_state(Ind, s_ptr, STORE_HATED)) {
 					action_color = TERM_L_DARK;
 					strnfmt(buff, 20, "(closed)");
 				} else {
+#ifndef NEUTRAL_COLOURS
 					action_color = TERM_YELLOW;
+#else
+					action_color = TERM_WHITE;
+#endif
 					cost = ba_ptr->costs[STORE_NORMAL];
 					strnfmt(buff, 20, "(%dgp)", cost);
 				}
@@ -161,7 +186,11 @@ void show_building(int Ind, store_type *s_ptr) {
 					action_color = TERM_WHITE;
 					buff[0] = '\0';
 				} else if (is_state(Ind, s_ptr, STORE_LIKED)) {
+#ifndef NEUTRAL_COLOURS
 					action_color = TERM_L_GREEN;
+#else
+					action_color = TERM_WHITE;
+#endif
 					cost = ba_ptr->costs[STORE_LIKED];
 					strnfmt(buff, 20, "(%dgp)", cost);
 				} else {
@@ -187,8 +216,7 @@ void show_building(int Ind, store_type *s_ptr) {
 
 #if 0
 
-static void reset_tim_flags()
-{
+static void reset_tim_flags() {
 	p_ptr->fast = 0;            /* Timed -- Fast */
 	p_ptr->slow = 0;            /* Timed -- Slow */
 	p_ptr->blind = 0;           /* Timed -- Blindness */
@@ -1279,6 +1307,92 @@ s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 #if 0
 	if (set_reward) p_ptr->rewards[ireward] = TRUE;
 #endif
+
+	/* We might be wearing/wielding the item */
+	p_ptr->update |= PU_BONUS;
+
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+	return (TRUE);
+}
+
+/* Repair an item (no enchantment!) */
+static bool repair_item(int Ind, int istart, int iend, int ispecific, bool iac) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	int minenchant;
+
+	object_type *o_ptr;
+	char tmp_str[ONAME_LEN];
+	u32b f1, f2, f3, f4, f5, f6, esp;
+
+	for (i = istart; i <= iend; i++) {
+		o_ptr = &p_ptr->inventory[i];
+
+		/* eligible item in this equipment slot? */
+		if (iac) {
+			if (!is_armour(o_ptr->tval)) continue;
+			if (o_ptr->to_a >= 0) continue;
+		} else {
+			if (!is_weapon(o_ptr->tval)) continue;
+			if (o_ptr->to_h >= 0 && o_ptr->to_d >= 0) continue;
+		}
+		if (ispecific > 0 && o_ptr->tval != ispecific) continue;
+
+		if (!is_enchantable(o_ptr)) continue;
+
+		/* Artifacts cannot be repaired. */
+		if (artifact_p(o_ptr)) continue;
+
+		/* Extract the flags */
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+		/* Unenchantable items always fail */
+		if (f5 & TR5_NO_ENCHANT) continue;
+
+		/* No easy fix for nothingness/morgul items */
+		if (cursed_p(o_ptr)) continue;
+
+		object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
+
+		if (o_ptr->tval == TV_SHIELD)
+#ifdef NEW_SHIELDS_NO_AC
+			minenchant = 0;
+#else
+ #ifdef USE_NEW_SHIELDS
+			minenchant = -o_ptr->ac / 2;
+ #else
+			minenchant = -o_ptr->ac;
+ #endif
+#endif
+		else minenchant = -10; //weapon max damage
+
+		if (iac) {
+			if (o_ptr->to_a < minenchant) {
+				msg_format(Ind, "Sorry, but your %s is beyond repair.", tmp_str);
+				continue;
+			}
+			o_ptr->to_a = 0;
+			msg_format(Ind, "Your %s looks as good as new again.", tmp_str);
+			break;
+		} else {
+			if (o_ptr->to_h < minenchant && o_ptr->to_d < minenchant) {
+				msg_format(Ind, "Sorry, but your %s is beyond repair.", tmp_str);
+				continue;
+			}
+			if (o_ptr->to_h >= minenchant) o_ptr->to_h = 0;
+			if (o_ptr->to_d >= minenchant) o_ptr->to_d = 0;
+			msg_format(Ind, "Your %s looks as good as new again.", tmp_str);
+			break;
+		}
+	}
+
+	if (i > iend) {
+		msg_print(Ind, "You don't have anything that I could repair..");
+		return (FALSE);
+	}
+s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
 
 	/* We might be wearing/wielding the item */
 	p_ptr->update |= PU_BONUS;
@@ -2414,6 +2528,12 @@ if (is_admin(p_ptr))
 			Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d Au, accept?", gold, fee), 2);
 			break; }
 #endif
+		case BACT_REPAIR_WEAPON:
+			paid = repair_item(Ind, INVEN_WIELD, INVEN_ARM, 0, FALSE);
+			break;
+		case BACT_REPAIR_ARMOR:
+			paid = repair_item(Ind, INVEN_ARM, INVEN_FEET, 0, TRUE);
+			break;
 		default:
 #if 0
 			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {

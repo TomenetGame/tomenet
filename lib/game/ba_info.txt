@@ -361,3 +361,11 @@ I:69:0:g:4
 N:76:Send item for payment
 C:0:0:0
 I:70:0:a:2
+
+N:77:Repair weapon
+C:120:100:80
+I:71:0:r:0
+
+N:78:Repair armour
+C:120:100:80
+I:72:0:r:0
