@@ -688,9 +688,7 @@ X:B:24:20
 W:0:1:107:5000
 C:0:0:0:3
 R:100
-F:WIS | ESP_GOOD | SLAY_EVIL | BLESSED
-F:ABILITY | REGEN_MANA
-F:IGNORE_FIRE
+F:WIS | ESP_GOOD | SLAY_EVIL | BLESSED | ABILITY | REGEN_MANA
 
 N:68:of Life
 T:21:0:255
@@ -854,7 +852,7 @@ T:24:0:255
 X:B:24:20
 W:0:2:107:5000
 R:100
-F:VORPAL | IGNORE_WATER
+F:VORPAL
 
 #heavy diggers (picks, mattocks), no shovels
 #two-handed heavy blunts
@@ -990,7 +988,7 @@ X:A:24:40
 W:0:2:107:20000
 C:0:0:0:2
 R:100
-F:WIS | SLAY_EVIL | BLESSED | ESP_EVIL | RES_FEAR | ABILITY | IGNORE_FIRE | IGNORE_ACID
+F:WIS | SLAY_EVIL | BLESSED | ESP_EVIL | RES_FEAR | ABILITY
 
 N:91:of *Slay Undead*
 T:15:0:255
@@ -1075,7 +1073,7 @@ X:B:24:25
 W:0:2:107:10000
 C:0:0:0:0
 R:100
-F:VAMPIRIC | HOLD_LIFE | IGNORE_WATER
+F:VAMPIRIC | HOLD_LIFE
 
 N:98:(*Defender*)
 T:21:0:255
@@ -2234,10 +2232,7 @@ T:23:20:20
 T:23:31:32
 C:20:15:0:10
 R:100
-#current idea regarding ignoring damage: hardened steel + moonwood
-F:CRIT | HIDE_TYPE | IGNORE_FIRE
-#also inherit similar bonus as 'Sharp' ego has:
-F:IGNORE_WATER
+F:CRIT | HIDE_TYPE
 
 #Some prefix-egos for missile launchers :) -C. Blue
 N:200:Moonwood
