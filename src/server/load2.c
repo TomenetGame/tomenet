@@ -796,6 +796,7 @@ static void rd_item(object_type *o_ptr) {
 	/* Shop-enchanted cheeze - fix level */
 	if (o_ptr->level <= 3 && o_ptr->to_h >= 10 && o_ptr->to_d >= 10 && !o_ptr->name1 && !o_ptr->name2) o_ptr->level = o_ptr->to_h > o_ptr->to_d ? o_ptr->to_h : o_ptr->to_d;
 #endif
+	if (o_ptr->level <= 3 && o_ptr->to_a >= 10 && !o_ptr->name1 && !o_ptr->name2) o_ptr->level = o_ptr->to_a;
 }
 
 
