@@ -9633,7 +9633,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			else gain_sp /= 10;
 			if (!gain_sp && magik(25)) gain_sp = 1; /* level 0 monsters have chance to give energy too */
 #else
-			gain_sp = ((gain_sp + 1) * (gain_sp + 1)) / 100;
+			gain_sp = ((gain_sp + 1) * (gain_sp + 1)) / 75;
 			if (!gain_sp) gain_sp = 1; /* level 0 monsters give energy */
 #endif
 
