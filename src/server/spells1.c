@@ -2917,6 +2917,9 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 	/* Nothing to damage */
 	if (!o_ptr->k_idx) return (FALSE);
 
+	/* Ok, ego items finally don't take equipment damage anymore */
+	if (o_ptr->name1 || o_ptr->name2) return FALSE;
+
 	switch (typ) {
 	case GF_WATER:
 		/* hack -- decrease the variety of damaging attacks a bit, mercifully */
