@@ -3444,7 +3444,7 @@ D:the greatest of fighters.
 
 
 #weapon base items that don't have arts yet:
-#Awl-Pike, Rhomphaia
+#Awl-Pike, Rhomphaia, Infernal Axe
 
 
 # Combined item (3 pieces) Halberd 'Ang-Tir-Calad'
