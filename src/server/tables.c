@@ -4295,7 +4295,7 @@ player_class class_info[MAX_CLASS] = {
  #ifdef ENABLE_OHERETICISM
 		{ SKILL_OHERETICISM,
 			'+', 0,
-			'+', 800, },
+			'+', 1050, },
  #endif
 #endif
 		{ SKILL_DEVICE,

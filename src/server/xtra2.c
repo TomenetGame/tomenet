@@ -3856,7 +3856,7 @@ void shape_Maia_skills(int Ind) {
 			   hereticism; axe, polearm, blunt; all bloodmagic */
  #ifdef ENABLE_OHERETICISM /* (should actually always be defined if Corrupted Priests are enabled) */
 			p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE; //expand Occultism, to ensure the player notices it on the skill chart
-			do_Maia_skill2(Ind, SKILL_OHERETICISM, 0, ((1150 * 7) / 10 * 21) / 10);
+			do_Maia_skill2(Ind, SKILL_OHERETICISM, 0, ((1050 * 7) / 10 * 21) / 10);
  #endif
 			respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
 			p_ptr->s_info[SKILL_BLUNT].mod = 0;
