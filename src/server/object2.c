@@ -5923,19 +5923,19 @@ void determine_level_req(int level, object_type *o_ptr) {
 	case TV_RING:
 		switch (o_ptr->sval) {
 		case SV_RING_SPEED:
-	                if (level < 75) level = 75;
-		        break;
+			if (level < 75) level = 75;
+			break;
 		case SV_RING_MIGHT:
 		case SV_RING_TOUGHNESS:
 		case SV_RING_READYWIT:
 		case SV_RING_CUNNINGNESS:
 			if (level < 25) level = 25;
-		        break;
+			break;
 		}
 		break;
 	case TV_DRAG_ARMOR:
-	        if (o_ptr->sval == SV_DRAGON_POWER && level < 100) level = 100;
-	        break;
+		if (o_ptr->sval == SV_DRAGON_POWER && level < 100) level = 100;
+		break;
 	case TV_POTION:
 		switch (o_ptr->sval) {
 		case SV_POTION_INC_STR:
@@ -5946,8 +5946,8 @@ void determine_level_req(int level, object_type *o_ptr) {
 		case SV_POTION_INC_CHR:
 			if (level < 20) level = 20;
 			break;
-	        }
-	        break;
+		}
+		break;
 	}
 
 
