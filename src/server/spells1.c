@@ -5888,7 +5888,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
 #endif
 			}
-#if 0
+#if 1
 			else if (r_ptr->flags9 & RF9_SUSCEP_POIS) {
 				note = " is hit hard";
 				dam *= 2;
@@ -5949,6 +5949,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
  #endif
 				}
 #endif
+				else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags3 & RF3_DEMON)) {
+					note = " resists";
+					dam = (dam * 2) / 3;
+#ifdef OLD_MONSTER_LORE
+					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
+#endif
+				}
 				else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON)) {
 					note = " resists somewhat";
 					dam = (dam * 3) / 4;
@@ -12375,31 +12382,30 @@ int approx_damage(int m_idx, int dam, int typ) {
 			else if (r_ptr->flags9 & RF9_RES_POIS)
 				dam = (dam * 3) / 4;
 			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
-				dam = (dam * 3) / 2;
+				dam *= 2;
 			break;
 
 		case GF_HELL_FIRE:
 			if (r_ptr->flags3 & (RF3_GOOD)) {
 				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					dam *= 2; dam /= 2;//(randint(4)+3);
+					dam *= 2; dam /= 2;
 				} else if (r_ptr->flags9 & RF9_RES_FIRE)
 					dam = (dam * 3) / 2;
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-					dam *= 2;
 				else
 					dam *= 2;
 			} else {
 				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					dam *= 2; dam /= 4;//(randint(6)+10);
-				} else if (r_ptr->flags9 & RF9_RES_FIRE)
+					dam *= 2; dam /= 4;
+				} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
+					dam *= 2;
+				else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags3 & RF3_DEMON))
+					dam = (dam * 2) / 3;
+				else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON))
 					dam = (dam * 3) / 4;
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-					dam /= 2;
 				else {
-					//dam *= 5; dam /= (randint(3)+4);
+					//dam *= 5; dam /= 6;
 				}
 			}
-			if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
 			break;
 
 		case GF_HOLY_ORB:
