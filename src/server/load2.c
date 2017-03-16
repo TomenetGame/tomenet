@@ -808,7 +808,7 @@ static void rd_item(object_type *o_ptr) {
 	}
 	/* fix shields previously ruined by formerly buggy code above */
 	if (o_ptr->tval == TV_SHIELD && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->level ) {
-		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51;
+		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51 + rand_int(3);
 		else o_ptr->level = 3;//whatever..
 	}
 #endif
