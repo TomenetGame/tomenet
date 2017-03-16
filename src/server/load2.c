@@ -792,11 +792,21 @@ static void rd_item(object_type *o_ptr) {
 		}
 	}
 
-#if 0
+#if 1
 	/* Shop-enchanted cheeze - fix level */
-	if (o_ptr->level <= 3 && o_ptr->to_h >= 10 && o_ptr->to_d >= 10 && !o_ptr->name1 && !o_ptr->name2) o_ptr->level = o_ptr->to_h > o_ptr->to_d ? o_ptr->to_h : o_ptr->to_d;
+	if (is_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2) {
+		if (o_ptr->to_h > o_ptr->to_d) {
+			if (o_ptr->level < o_ptr->to_h) o_ptr->level = o_ptr->to_h;
+		} else {
+			if (o_ptr->level < o_ptr->to_d) o_ptr->level = o_ptr->to_d;
+		}
+		if (o_ptr->level > 20) o_ptr->level = 20;
+	}
+	if (is_armour(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2) {
+		o_ptr->level = o_ptr->to_a;
+		if (o_ptr->level > 20) o_ptr->level = 20; //don't exaggerate - for early mithril helmet finds etc
+	}
 #endif
-	if (o_ptr->level <= 3 && o_ptr->to_a >= 10 && !o_ptr->name1 && !o_ptr->name2) o_ptr->level = o_ptr->to_a;
 }
 
 
