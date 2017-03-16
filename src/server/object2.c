@@ -7441,7 +7441,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			forge.k_idx = lookup_kind(TV_SCROLL, SV_SCROLL_IDENTIFY);
 			forge.number = 1;
 			determine_level_req(dlev, &forge);
-			s_printf("<<ID\n");
+			//s_printf("<<ID\n");
 		} else if (!rand_int(500)) {
 			invwipe(&forge);
 			forge.tval = TV_SCROLL;
@@ -7449,7 +7449,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			forge.k_idx = lookup_kind(TV_SCROLL, SV_SCROLL_ID_ALL);
 			forge.number = 1;
 			determine_level_req(dlev, &forge);
-			s_printf("<<IDE\n");
+			//s_printf("<<IDE\n");
 		} else if (!rand_int(200)) {
 			invwipe(&forge);
 			forge.tval = TV_SCROLL;
@@ -7457,7 +7457,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 			forge.k_idx = lookup_kind(TV_SCROLL, SV_SCROLL_STAR_IDENTIFY);
 			forge.number = 1;
 			determine_level_req(dlev, &forge);
-			s_printf("<<*ID*\n");
+			//s_printf("<<*ID*\n");
 		}
 	}
 #endif
