@@ -11940,8 +11940,8 @@ Note that not every skill is available to every profession (class).
                                 of each stance, which is the most powerful
                                 version. If you die and lose your title, you
                                 won't be able to use the stance either.
-                                Only warriors, mimics, paladins and rangers
-                                can learn certain stances.
+                                Only warriors, mimics, paladins, rangers and
+                                mindcrafters can learn certain stances.
                                 On certain skill levels, you will learn a new
                                 rank of a stance. A higher ranked stance
                                 features more of its benefits and/or less of

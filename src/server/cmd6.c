@@ -7482,6 +7482,7 @@ s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 			}
 		break;
 		case CLASS_RANGER:
+		case CLASS_MINDCRAFTER:
 			if (p_ptr->max_lev < 10) {
 				msg_print(Ind, "\377sYou haven't learned a defensive stance yet.");
 				return;
@@ -7559,6 +7560,7 @@ s_printf("SWITCH_STANCE: %s - balance\n", p_ptr->name);
 			}
 			break;
 		case CLASS_RANGER:
+		case CLASS_MINDCRAFTER:
 			if (p_ptr->max_lev < 20) {
 				power = 0;
 				msg_print(Ind, "\377sYou enter defensive stance rank I");
@@ -7604,6 +7606,7 @@ s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
 			}
 			break;
 		case CLASS_RANGER:
+		case CLASS_MINDCRAFTER:
 			if (p_ptr->max_lev < 15) {
 				msg_print(Ind, "\377sYou haven't learned an offensive stance yet.");
 				return;
@@ -7677,6 +7680,7 @@ s_printf("SWITCH_STANCE: %s - defensive\n", p_ptr->name);
 			}
 			break;
 		case CLASS_RANGER:
+		case CLASS_MINDCRAFTER:
 			if (p_ptr->max_lev < 25) {
 				power = 0;
 				msg_print(Ind, "\377sYou enter offensive stance rank I");

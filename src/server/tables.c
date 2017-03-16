@@ -3933,6 +3933,11 @@ player_class class_info[MAX_CLASS] = {
 			//'+', 400,
 			//'+', 600,
 			'+', 800, },
+#ifdef ENABLE_STANCES
+		{ SKILL_STANCE,
+			'+', 1000,
+			'+', 0, },
+#endif
 		{ SKILL_TECHNIQUE,
 			'+', 1000,
 			'+', 0, },

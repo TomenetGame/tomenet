@@ -342,8 +342,8 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank III.");
 				if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 2;
 			}
-			if (old_value < 100 && new_value >= 150) msg_print(Ind, "\374\377GYou learn how to enter an offensive stance (rank I).");
-			if (old_value < 200 && new_value >= 250) {
+			if (old_value < 150 && new_value >= 150) msg_print(Ind, "\374\377GYou learn how to enter an offensive stance (rank I).");
+			if (old_value < 250 && new_value >= 250) {
 				msg_print(Ind, "\374\377GYou learn how to enter offensive stance rank II.");
 				if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 1;
 			}
@@ -368,8 +368,8 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank III.");
 				if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 2;
 			}
-			if (old_value < 100 && new_value >= 150) msg_print(Ind, "\374\377GYou learn how to enter an offensive stance (rank I).");
-			if (old_value < 200 && new_value >= 250) {
+			if (old_value < 150 && new_value >= 150) msg_print(Ind, "\374\377GYou learn how to enter an offensive stance (rank I).");
+			if (old_value < 250 && new_value >= 250) {
 				msg_print(Ind, "\374\377GYou learn how to enter offensive stance rank II.");
 				if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 1;
 			}
@@ -379,17 +379,18 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			}
 			break;
 		case CLASS_RANGER:
-			if (old_value < 50 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('\377gm\377G' key)");
-			if (old_value < 150 && new_value >= 200) {
+		case CLASS_MINDCRAFTER:
+			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('\377gm\377G' key)");
+			if (old_value < 200 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
 				if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 1;
 			}
-			if (old_value < 350 && new_value >= 400) {
+			if (old_value < 400 && new_value >= 400) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank III.");
 				if (p_ptr->combat_stance == 1) p_ptr->combat_stance_power = 2;
 			}
-			if (old_value < 100 && new_value >= 150) msg_print(Ind, "\374\377GYou learn how to enter an offensive stance (rank I).");
-			if (old_value < 200 && new_value >= 250) {
+			if (old_value < 150 && new_value >= 150) msg_print(Ind, "\374\377GYou learn how to enter an offensive stance (rank I).");
+			if (old_value < 250 && new_value >= 250) {
 				msg_print(Ind, "\374\377GYou learn how to enter offensive stance rank II.");
 				if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 1;
 			}
