@@ -1645,6 +1645,8 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 	   and vice versa, depending on server cfg. */
 	tmp_obj.mode = p_ptr->mode;
 
+	tmp_obj.iron_trade = p_ptr->iron_trade;
+
 	/* Drop it */
 	drop_near(0, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
