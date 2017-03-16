@@ -2462,8 +2462,8 @@ static void sync_options(int Ind, bool *options) {
 	}
 
 	if (!is_older_than(&p_ptr->version, 4, 7, 1, 0, 0, 0)) {
-		p_ptr->last_words = options[115]; //it's back!
-		p_ptr->disturb_see = options[116];
+		p_ptr->last_words = options[117]; //it's back!
+		p_ptr->disturb_see = options[118];
 	} else {
 		p_ptr->last_words = TRUE;
 		p_ptr->disturb_see = FALSE;

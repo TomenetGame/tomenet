@@ -3236,7 +3236,7 @@ struct server_opts {
 typedef struct client_opts client_opts;
 struct client_opts {
     //page 1
-	bool rogue_like_commands;
+	bool rogue_like_commands; //0
 	bool newbie_hints;
 	bool censor_swearing;
 	bool hilite_chat;
@@ -3246,7 +3246,7 @@ struct client_opts {
 	bool big_map;
 	bool font_map_solid_walls;
 	bool view_animated_lite;
-	bool wall_lighting;
+	bool wall_lighting; //10
 	bool view_lamp_walls;
 	bool view_shade_walls;
 	bool floor_lighting;
@@ -3256,7 +3256,7 @@ struct client_opts {
 	bool alert_hitpoint;
 	bool alert_mana;
 	bool alert_afk_dam;
-	bool alert_offpanel_dam;
+	bool alert_offpanel_dam; //20
 	bool exp_bar;
     //page 2
 	bool uniques_alive;
@@ -3267,7 +3267,7 @@ struct client_opts {
 	bool allow_paging;
 	bool ring_bell;
 	bool linear_stats;
-	bool exp_need;
+	bool exp_need; //30
 	bool depth_in_feet;
 	bool newb_suicide;
 	bool show_weights;
@@ -3277,7 +3277,7 @@ struct client_opts {
 	bool keep_topline;
 	bool target_history;
 	bool taciturn_messages;
-	bool always_show_lists;
+	bool always_show_lists; //40
 	bool no_weather;
 	bool player_list;
 	bool player_list2;
@@ -3291,7 +3291,7 @@ struct client_opts {
 	bool no_verify_sell;
 
     //page 5
-	bool auto_afk;
+	bool auto_afk; //50
 	bool idle_starve_kick;
 	bool safe_float;
 	bool safe_macros;
@@ -3301,7 +3301,7 @@ struct client_opts {
 	bool stack_force_notes;
 	bool stack_force_costs;
 	bool stack_allow_items;
-	bool stack_allow_wands;
+	bool stack_allow_wands; //60
 	bool whole_ammo_stack;
 	bool always_repeat;
 	bool always_pickup;
@@ -3311,7 +3311,7 @@ struct client_opts {
 	bool wide_scroll_margin;
 	bool auto_target;
 	bool thin_down_flush;
-	bool disable_flush;
+	bool disable_flush; //70
 
     //page 6
 	bool find_ignore_stairs;
@@ -3323,7 +3323,7 @@ struct client_opts {
 	bool disturb_panel;
 	bool disturb_state;
 	bool disturb_minor;
-	bool disturb_other;
+	bool disturb_other; //80
 	bool view_perma_grids;
 	bool view_torch_grids;
 	bool view_reduce_lite;
@@ -3335,7 +3335,7 @@ struct client_opts {
     //page 4
 	bool audio_paging;
 	bool paging_master_volume;
-	bool paging_max_volume;
+	bool paging_max_volume; //90
 	bool no_ovl_close_sfx;
 	bool ovl_sfx_attack;
 	bool no_combat_sfx;
@@ -3345,7 +3345,7 @@ struct client_opts {
 	bool cut_sfx_attack;
 	bool ovl_sfx_command;
 	bool ovl_sfx_misc;
-	bool ovl_sfx_mon_attack;
+	bool ovl_sfx_mon_attack; //100
 	bool ovl_sfx_mon_spell;
 	bool ovl_sfx_mon_misc;
 	bool no_monsterattack_sfx;
@@ -3357,7 +3357,7 @@ struct client_opts {
 
     //unmutable, pfft
 	bool use_color;
-	bool other_query_flag;
+	bool other_query_flag; //110
 
     //deprecated/broken/todo
 #if 0
@@ -3401,7 +3401,7 @@ struct client_opts {
 	bool flash_insane;
 
 	bool last_words;
-	bool disturb_see;
+	bool disturb_see; //118
 };
 
 /*

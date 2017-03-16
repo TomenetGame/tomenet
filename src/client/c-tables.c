@@ -449,9 +449,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	//HOLE: 1
 
     /* unmutable options, pfft -- these are never shown in any options menu (-> FALSE) */
-	{ &c_cfg.use_color,		TRUE,	1,	0, 152, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
+	{ &c_cfg.use_color,		TRUE,	1,	0, 109, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
 	    "use_color",		"(deprecated) Use color if possible" },
-	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 153, FALSE,
+	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 110, FALSE,
 	    "other_query_flag",		"Prompt for various information (mimic polymorph)" },
 
     /* deprecated/broken/todo options */
@@ -486,22 +486,22 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 #endif
 
     /* new additions for 4.6.2 */
-	{ &c_cfg.shuffle_music,		FALSE,	5,	0, 109, TRUE,
+	{ &c_cfg.shuffle_music,		FALSE,	5,	0, 111, TRUE,
 	    "shuffle_music",		"Don't loop song files but shuffle through them" },
-	{ &c_cfg.permawalls_shade,	FALSE,	6,	0, 110, TRUE, //page 3 (UI 3)
+	{ &c_cfg.permawalls_shade,	FALSE,	6,	0, 112, TRUE, //page 3 (UI 3)
 	    "permawalls_shade",		"Display permanent vault walls in a special colour" },
-	{ &c_cfg.topline_no_msg,	FALSE,	6,	0, 111, TRUE, //page 3 (UI 3)
+	{ &c_cfg.topline_no_msg,	FALSE,	6,	0, 113, TRUE, //page 3 (UI 3)
 	    "topline_no_msg",		"Don't display messages in main window top line" },
-	{ &c_cfg.targetinfo_msg,	FALSE,	6,	0, 112, TRUE, //page 3 (UI 3)
+	{ &c_cfg.targetinfo_msg,	FALSE,	6,	0, 114, TRUE, //page 3 (UI 3)
 	    "targetinfo_msg",		"Display look/target info in message window too" },
-	{ &c_cfg.live_timeouts,		TRUE,	6,	0, 113, TRUE, //page 3 (UI 3)
+	{ &c_cfg.live_timeouts,		TRUE,	6,	0, 115, TRUE, //page 3 (UI 3)
 	    "live_timeouts",		"Always update item timeout numbers on every tick" },
-	{ &c_cfg.flash_insane,		FALSE,	6,	0, 114, TRUE, //page 3 (UI 3)
+	{ &c_cfg.flash_insane,		FALSE,	6,	0, 116, TRUE, //page 3 (UI 3)
 	    "flash_insane",		"Flash own character icon when going badly insane" },
     /* 4.7.1: */
-	{ &c_cfg.last_words,		TRUE,	6,	9, 115, TRUE,
+	{ &c_cfg.last_words,		TRUE,	6,	9, 117, TRUE,
 	    "last_words",		"Get last words when the character dies" },
-	{ &c_cfg.disturb_see,		FALSE,	3,	0, 116, TRUE,
+	{ &c_cfg.disturb_see,		FALSE,	3,	0, 118, TRUE,
 	    "disturb_see",		"Disturb whenever seeing any monster" },
 };
 
