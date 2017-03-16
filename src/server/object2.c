@@ -4681,7 +4681,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf) {
 	}
 
 	/* Anti-cheeze */
-	if (!o_ptr->name1 && !o_ptr->name2) {
+	if (!o_ptr->name1 && !o_ptr->name2 && o_ptr->level) {
 		if (o_ptr->to_h > o_ptr->to_d) {
 			if (o_ptr->level < o_ptr->to_h) o_ptr->level = o_ptr->to_h;
 		} else {
@@ -4858,7 +4858,7 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 	}
 
 	/* Anti-cheeze */
-	if (!o_ptr->name1 && !o_ptr->name2 && o_ptr->level < o_ptr->to_a) {
+	if (!o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level < o_ptr->to_a) {
 		o_ptr->level = o_ptr->to_a;
 		if (o_ptr->level > 20) o_ptr->level = 20; //don't exaggerate - for early mithril helmet finds etc
 	}

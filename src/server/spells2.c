@@ -3288,7 +3288,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				did_tohit = TRUE;
 
 				/* Anti-cheeze */
-				if (o_ptr->level < o_ptr->to_h) o_ptr->level = o_ptr->to_h;
+				if (o_ptr->level && o_ptr->level < o_ptr->to_h) o_ptr->level = o_ptr->to_h;
 
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
@@ -3319,7 +3319,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				did_todam = TRUE;
 
 				/* Anti-cheeze */
-				if (o_ptr->level < o_ptr->to_d) o_ptr->level = o_ptr->to_d;
+				if (o_ptr->level && o_ptr->level < o_ptr->to_d) o_ptr->level = o_ptr->to_d;
 
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
@@ -3351,7 +3351,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				did_toac = TRUE;
 
 				/* Anti-cheeze */
-				if (o_ptr->level < o_ptr->to_a) o_ptr->level = o_ptr->to_a;
+				if (o_ptr->level && o_ptr->level < o_ptr->to_a) o_ptr->level = o_ptr->to_a;
 
 				/* only when you get it above -1 -CFT */
 				if (cursed_p(o_ptr) &&
