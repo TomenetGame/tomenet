@@ -807,13 +807,13 @@ static void rd_item(object_type *o_ptr) {
 		if (o_ptr->level > 20) o_ptr->level = 20; //don't exaggerate - for early mithril helmet finds etc
 	}
 	/* fix shields previously ruined by formerly buggy code above */
-	if (o_ptr->tval == TV_SHIELD && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->level) {
-		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51 + rand_int(3);
+	if (o_ptr->tval == TV_SHIELD && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->level && o_ptr->level <= 50) {
+		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51;
 		else o_ptr->level = 3;//whatever..
 	}
 	/* fix royal armour and dsms etc.. Basically all armour that had a level > 20 but < to_a. */
 	if (is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level == 20 && k_info[o_ptr->k_idx].cost > 3000) {
-		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51 + rand_int(3);
+		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51;
 		else determine_level_req(-9999, o_ptr);
 	}
 	/* fix weapons too while at it.. */
