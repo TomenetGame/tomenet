@@ -1371,7 +1371,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
   #if 1
 			if (admin)
 #ifdef ADMIN_EXTRA_STATISTICS
-				fprintf(fff, "%s [%d,%d] (%s)%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname,
+				fprintf(fff, "%s [%d,%d] (%s)%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname,
 				    !q_ptr->exp_bar ?
  #if 0
 				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1380,7 +1380,12 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 				    (q_ptr->audio_mus ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 				    (q_ptr->audio_mus ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
  #endif
-				    , q_ptr->custom_font ? "\377wf\377-" : ""
+ #if 0
+				    , q_ptr->custom_font ? "\377wf\377-" : "", ""
+ #else /* combine custom font and OS type O_o */
+				    , q_ptr->custom_font ? "\377w" : "\377D"
+				    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
+ #endif
 				    );
 #else
 				fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname);
@@ -1460,7 +1465,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		    ) {
 			if (admin)
 #ifdef ADMIN_EXTRA_STATISTICS
-				fprintf(fff, "%s [%d,%d]%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col,
+				fprintf(fff, "%s [%d,%d]%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col,
 				    !q_ptr->exp_bar ?
  #if 0
 				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1469,7 +1474,12 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 				    (q_ptr->audio_mus > 0 ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 				    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
  #endif
-				    , q_ptr->custom_font ? "\377wf\377-" : ""
+ #if 0
+				    , q_ptr->custom_font ? "\377wf\377-" : "", ""
+ #else /* combine custom font and OS type O_o */
+				    , q_ptr->custom_font ? "\377w" : "\377D"
+				    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
+ #endif
 				    );
 #else
 				fprintf(fff, "%s [%d,%d]", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
@@ -1511,7 +1521,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 #ifdef ADMIN_EXTRA_STATISTICS
-		if (admin) fprintf(fff, "%s%s",
+		if (admin) fprintf(fff, "%s%s%s",
 		    !q_ptr->exp_bar ?
  #if 0
 		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1520,7 +1530,12 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		    (q_ptr->audio_mus > 0 ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 		    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
  #endif
-		    , q_ptr->custom_font ? "\377wf\377-" : ""
+ #if 0
+		    , q_ptr->custom_font ? "\377wf\377-" : "", ""
+ #else /* combine custom font and OS type O_o */
+				    , q_ptr->custom_font ? "\377w" : "\377D"
+				    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
+ #endif
 		    );
 #endif
 		fprintf(fff, "\n");
@@ -1598,7 +1613,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 
 			fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
 #ifdef ADMIN_EXTRA_STATISTICS
-			if (admin) fprintf(fff, "%s%s",
+			if (admin) fprintf(fff, "%s%s%s",
 			    !q_ptr->exp_bar ?
  #if 0
 			    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1607,7 +1622,12 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			    (q_ptr->audio_mus > 0 ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 			    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
  #endif
-			    , q_ptr->custom_font ? "\377wf\377-" : ""
+ #if 0
+			    , q_ptr->custom_font ? "\377wf\377-" : "", ""
+ #else /* combine custom font and OS type O_o */
+			    , q_ptr->custom_font ? "\377w" : "\377D"
+			    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OSX ? "O\377-" : "\377-"))))
+ #endif
 			    );
 #endif
 		}
