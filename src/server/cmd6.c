@@ -5639,8 +5639,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			(void)set_afraid(Ind, 0);
 			(void)set_res_fear(Ind, 20);
 			(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
-			p_ptr->blessed_power = 20;
-			(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
+			//p_ptr->blessed_power = 20;
+			//(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
 			(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
 			(void)set_oppose_elec(Ind, randint(50) + 50);
 			(void)set_oppose_fire(Ind, randint(50) + 50);
@@ -5651,12 +5651,15 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_GALADRIEL:
 			msg_print(Ind, "The phial wells with clear light...");
 			lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
-			if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "the phial of galadriel", 0);
-				if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+			if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "The Phial of Galadriel", 0);
+			if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			o_ptr->recharging = rand_int(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_ELENDIL:
 			msg_print(Ind, "The star shines brightly...");
+			lite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
+			if (p_ptr->suscep_lite) take_hit(Ind, damroll(50, 4), "The Star of Elendil", 0);
+			if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
 			map_area(Ind);
 			o_ptr->recharging = rand_int(25) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 40);
 			break;
@@ -5670,11 +5673,18 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_INGWE:
 			msg_print(Ind, "An aura of good floods the area...");
 			dispel_evil(Ind, p_ptr->lev * 10 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
+			if (p_ptr->suscep_good) {
+				take_hit(Ind, damroll(35, 3), "The Amulet of Ingwe", 0);
+			}
 			o_ptr->recharging = rand_int(150) + 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 250);
 			break;
 		case ART_CARLAMMAS:
 			msg_print(Ind, "The amulet lets out a shrill wail...");
-			(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+			if (p_ptr->suscep_good) {
+				take_hit(Ind, damroll(10, 3), "The Amulet of Carlammas", 0);
+			} else {
+				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+			}
 			o_ptr->recharging = rand_int(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 200);
 			break;
 		case ART_TULKAS:
@@ -5724,6 +5734,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_FUNDIN:
 			dispel_evil(Ind, p_ptr->lev * 8 + get_skill_scale(p_ptr, SKILL_DEVICE, 400));
+			if (p_ptr->suscep_good) {
+				take_hit(Ind, damroll(35, 3), "the Ball-and-Chain of Fundin Bluecloak", 0);
+			}
 			o_ptr->recharging = rand_int(50) + 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 80);
 			break;
 		case ART_NAIN:
@@ -5797,8 +5810,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_KNOWLEDGE:
 			identify_fully(Ind);
 			msg_print(Ind, "\377RYou hear horrible, otherworldy sounds of the dead in your head..");
-				take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead");
-				//take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
+			take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead");
+			//take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
 			o_ptr->recharging = rand_int(100) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_UNDEATH:
@@ -5816,7 +5829,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			o_ptr->recharging = rand_int(10) + 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
 		case ART_HIMRING:
-			(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+			if (p_ptr->suscep_good) {
+				take_hit(Ind, damroll(10, 3), "The Hard Leather Armour of Himring", 0);
+			} else {
+				(void)set_protevil(Ind, randint(15) + 30); /* removed stacking */
+			}
 			o_ptr->recharging = rand_int(125) + 225 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
 		case ART_FLAR:
@@ -5931,6 +5948,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
  #endif
 #else
 			do_banish_undead(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
+ #if 0 /* just 0'ed because banish-dragons and banish-animals don't do anything either.. */
+			if (p_ptr->suscep_life) {
+				take_hit(Ind, damroll(100, 3), "The Long Sword of the Dawn", 0);
+			}
+ #endif
 #endif
 			o_ptr->recharging = 500 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 400);
 			break;
@@ -5946,8 +5968,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 #if 1
 		case ART_ELESSAR:
-			if (p_ptr->black_breath)
-				msg_print(Ind, "The hold of the Black Breath on you is broken!");
+			if (p_ptr->black_breath) msg_print(Ind, "The hold of the Black Breath on you is broken!");
 			p_ptr->black_breath = FALSE;
 			hp_player(Ind, 100);
 			o_ptr->recharging = 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
@@ -5990,6 +6011,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			}
 #else
 			do_banish_dragons(Ind, 100 + get_skill_scale(p_ptr, SKILL_DEVICE, 30));
+ #if 0 /* maybe doesn't make sense that her own coat does this (to her)?.. */
+			if (p_ptr->prace == RACE_DRACONIAN || (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags3 & (RF3_DRAGON | RF3_DRAGONRIDER)))) {
+				take_hit(Ind, damroll(100, 3), "The Dragonrider Coat of Mardra", 0);
+			}
+ #endif
 #endif
 			o_ptr->recharging = 1000 - get_skill_scale(p_ptr, SKILL_DEVICE, 500);
 			break;
@@ -6085,6 +6111,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "Your axe glows blood red...");
 			//dispel_monsters(500 + get_skill_scale(p_ptr, SKILL_DEVICE, 500));
 			do_banish_animals(Ind, 80);
+ #if 0 /* 0'ed because the druid spell doing this too would be silyl, since druids are always in animal form */
+			if (p_ptr->prace == RACE_YEEK || (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags3 & RF3_ANIMAL))) {
+				take_hit(Ind, damroll(100, 2), "The Slaughter Axe 'Naturebane'", 0);
+			}
+ #endif
 			o_ptr->recharging = 200 + randint(200) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_NIGHT:
@@ -6106,7 +6137,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			o_ptr->recharging = 30 + randint(10) - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		case ART_SOULCURE:
-			if (p_ptr->blessed_power <= 20) {
+			if (p_ptr->suscep_life) {
+				take_hit(Ind, damroll(30, 3), "The Set of Leather Gloves 'Soul Grip'", 0);
+				o_ptr->recharging = 150 + randint(100) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
+			} else if (p_ptr->blessed_power <= 20) {
 				msg_print(Ind, "Your gloves glow golden...");
 				p_ptr->blessed_power = 20;
 				set_blessed(Ind, randint(48) + 24); /* removed stacking */
@@ -6601,8 +6635,8 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			(void)set_afraid(Ind, 0);
 			(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
 			(void)hp_player(Ind, 30);
-			p_ptr->blessed_power = 20;
-			(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
+			//p_ptr->blessed_power = 20;
+			//(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
 			(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
 			(void)set_oppose_elec(Ind, randint(50) + 50);
 			(void)set_oppose_fire(Ind, randint(50) + 50);

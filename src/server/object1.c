@@ -3422,9 +3422,11 @@ cptr item_activation(object_type *o_ptr) {
 		return "lightning balls (8x150..600) every 300..1000 turns";
 	case ART_BLADETURNER:
 		//return "invulnerability (4+d8) every 800 turns";
-		return "Berserk rage, chant and resistance every 200..400 turns";
+		//return "Berserk rage, prayer and resistance every 200..400 turns";
+		return "Berserk rage and resistance every 200..400 turns";
 	case ART_MEDIATOR:
-		return "breathing elements (300..600), berserk, bless, resistance every 100..400 turns";
+		//return "breathing elements (300..600), berserk, prayer, resistance every 100..400 turns";
+		return "breathing elements (300..600), berserk, resistance every 100..400 turns";
 	case ART_KNOWLEDGE:
 		return "whispers from beyond 100..200+d100 turns";
 	case ART_GALADRIEL:
