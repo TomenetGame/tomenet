@@ -509,10 +509,10 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
 	int l = 0, pl = -1, cl = strlen(cname);
-	int pl_len = 80 - 3 - cl - 2; /* 80 - 3 - namelen = chars available per chat line; 3 for brackets+space, 2 for colour code */
-	int msg_len_eff = MSG_LEN - cl - 5 - 3 - 8;
-	int chars_per_pline = (msg_len_eff / pl_len) * pl_len; /* chars usable in a paste_lines[] */
-	char tmp[MSG_LEN];
+	//int pl_len = 80 - 3 - cl - 2; /* 80 - 3 - namelen = chars available per chat line; 3 for brackets+space, 2 for colour code */
+	int pl_textlen = 80 - 3 - cl, lines_per_pline = MSG_LEN / 80, lpp, lppc;
+	int chars_per_pline = lines_per_pline * pl_textlen + 1; /* chars usable in a paste_lines[] */
+	char *p0, buf0[MAX_CHARS_WIDE]; /* MAX_CHARS is ok, but let's be paranoid if ?_info.txt files exceed a Diz line somewhere.. */
 
 	/* actually use local r_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "r_info.txt");
@@ -557,6 +557,8 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 
 		/* fetch diz */
+		lpp = 1;
+		lppc = 80 - pl_textlen;
 		strcpy(paste_lines[++pl], "\377u");
 		while (0 == my_fgets(fff, buf, 1024)) {
 			/* strip $/%..$/! conditions */
@@ -579,49 +581,45 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			p1 = buf + 2; /* monster diz line */
 			/* strip trailing spaces */
 			while (p1[strlen(p1) - 1] == ' ') p1[strlen(p1) - 1] = '\0';
+			strcat(p1, " "); /* add a final trailing space though, for when the subsequent line's text gets appended to this one's in chat-paste output */
 			Term_putstr(1, 7 + (l++), -1, TERM_UMBER, p1);
 
-			/* add to chat-paste buffer. */
-			while (p1) {
-				/* diz line fits in pasteline? */
-				if (strlen(paste_lines[pl]) + strlen(p1) <= chars_per_pline) {
-					strcat(paste_lines[pl], p1);
-					strcat(paste_lines[pl], " ");
-					break;
-				} else {
-					/* diz line cannot be split? */
-					if (!(p2 = strchr(p1, ' '))) {
+			p0 = p1;
+			while (*p0) {
+				/* Avoid pasting a hardly used last line, making the overall formatting look bad. */
+				/* For this, split line into single words, to add them one by one instead of the whole line at once: */
+				strcpy(buf0, p0);
+				if ((p1 = strchr(buf0, ' '))) {
+					*(p1 + 1) = 0;
+					p0 += strlen(buf0);
+				} else p0 = &p0[strlen(p0)]; /* point to null-terminator */
+				p1 = buf0;
+
+				/* add to chat-paste buffer. */
+				while (*p1) {
+					/* for sake of formatting, avoid more than lines_per_pline [3] screen lines per paste line */
+					if (lppc + strlen(p1) > 80) {
+						if (lpp == lines_per_pline) {
+							/* next pasteline */
+							strcpy(paste_lines[++pl], "\377u");
+							lpp = 1;
+						} else lpp++;
+						lppc = 80 - pl_textlen + strlen(p1);
+					} else lppc += strlen(p1);
+
+					/* diz line fits in pasteline? */
+					if (strlen(paste_lines[pl]) + strlen(p1) <= chars_per_pline) {
+						strcat(paste_lines[pl], p1);
+						break;
+					} else {
 						/* next pasteline */
 						strcpy(paste_lines[++pl], "\377u");
 						strcat(paste_lines[pl], p1);
-						strcat(paste_lines[pl], " ");
 						break;
-					}
-					/* diz line can be split? */
-					else {
-						strcpy(tmp, p1);
-						tmp[p2 - p1] = '\0';
-						/* split part is too big? */
-						if (strlen(paste_lines[pl]) + strlen(tmp) > chars_per_pline) {
-							/* next pasteline */
-							strcpy(paste_lines[++pl], "\377u");
-							strcat(paste_lines[pl], p1);
-							strcat(paste_lines[pl], " ");
-							break;
-						}
-						/* append split part */
-						else {
-							strcat(paste_lines[pl], tmp);
-							strcat(paste_lines[pl], " ");
-							p1 = p2 + 1;
-
-							/* go on */
-						}
 					}
 				}
 			}
 		}
-
 		break;
 	}
 
@@ -1806,10 +1804,10 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
 	int l = 0, pl = -1, cl = strlen(cname);
-	int pl_len = 80 - 3 - cl - 2; /* 80 - 3 - namelen = chars available per chat line; 3 for brackets+space, 2 for colour code */
-	int msg_len_eff = MSG_LEN - cl - 5 - 3 - 8;
-	int chars_per_pline = (msg_len_eff / pl_len) * pl_len; /* chars usable in a paste_lines[] */
-	char tmp[MSG_LEN];
+	//int pl_len = 80 - 3 - cl - 2; /* 80 - 3 - namelen = chars available per chat line; 3 for brackets+space, 2 for colour code */
+	int pl_textlen = 80 - 3 - cl, lines_per_pline = MSG_LEN / 80, lpp, lppc;
+	int chars_per_pline = lines_per_pline * pl_textlen + 1; /* chars usable in a paste_lines[] */
+	char *p0, buf0[MAX_CHARS_WIDE]; /* MAX_CHARS is ok, but let's be paranoid if ?_info.txt files exceed a Diz line somewhere.. */
 
 	/* actually use local a_info.txt - a novum */
 	path_build(buf, 1024, ANGBAND_DIR_GAME, "a_info.txt");
@@ -1850,6 +1848,8 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 
 		/* fetch diz */
+		lpp = 1;
+		lppc = 80 - pl_textlen;
 		strcpy(paste_lines[++pl], "\377u");
 		while (0 == my_fgets(fff, buf, 1024)) {
 			/* strip $/%..$/! conditions */
@@ -1872,52 +1872,49 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 			p1 = buf + 2; /* artifact diz line */
 			/* strip trailing spaces */
 			while (p1[strlen(p1) - 1] == ' ') p1[strlen(p1) - 1] = '\0';
+			strcat(p1, " "); /* add a final trailing space though, for when the subsequent line's text gets appended to this one's in chat-paste output */
 			Term_putstr(1, 7 + (l++), -1, TERM_UMBER, p1);
 
 			/* add to chat-paste buffer. */
-			while (*p1) {
-				while (*p1 == ' ') p1++;
-				if (*p1 == 0) break;
+			p0 = p1;
+			while (*p0) {
+				/* Avoid pasting a hardly used last line, making the overall formatting look bad. */
+				/* For this, split line into single words, to add them one by one instead of the whole line at once: */
+				strcpy(buf0, p0);
+				if ((p1 = strchr(buf0, ' '))) {
+					*(p1 + 1) = 0;
+					p0 += strlen(buf0);
+				} else p0 = &p0[strlen(p0)]; /* point to null-terminator */
+				p1 = buf0;
 
-				/* diz line fits in pasteline? */
-				if (strlen(paste_lines[pl]) + strlen(p1) <= chars_per_pline) {
-					strcat(paste_lines[pl], p1);
-					strcat(paste_lines[pl], " ");
-					break;
-				} else {
-					/* diz line cannot be split? */
-					if (!(p2 = strchr(p1, ' '))) {
+				/* add to chat-paste buffer. */
+				while (*p1) {
+					while (*p1 == ' ') p1++;
+					if (*p1 == 0) break;
+
+					/* for sake of formatting, avoid more than lines_per_pline [3] screen lines per paste line */
+					if (lppc + strlen(p1) > 80) {
+						if (lpp == lines_per_pline) {
+							/* next pasteline */
+							strcpy(paste_lines[++pl], "\377u");
+							lpp = 1;
+						} else lpp++;
+						lppc = 80 - pl_textlen + strlen(p1);
+					} else lppc += strlen(p1);
+
+					/* diz line fits in pasteline? */
+					if (strlen(paste_lines[pl]) + strlen(p1) <= chars_per_pline) {
+						strcat(paste_lines[pl], p1);
+						break;
+					} else {
 						/* next pasteline */
 						strcpy(paste_lines[++pl], "\377u");
 						strcat(paste_lines[pl], p1);
-						strcat(paste_lines[pl], " ");
 						break;
-					}
-					/* diz line can be split? */
-					else {
-						strcpy(tmp, p1);
-						tmp[p2 - p1] = '\0';
-						/* split part is too big? */
-						if (strlen(paste_lines[pl]) + strlen(tmp) > chars_per_pline) {
-							/* next pasteline */
-							strcpy(paste_lines[++pl], "\377u");
-							strcat(paste_lines[pl], p1);
-							strcat(paste_lines[pl], " ");
-							break;
-						}
-						/* append split part */
-						else {
-							strcat(paste_lines[pl], tmp);
-							strcat(paste_lines[pl], " ");
-							p1 = p2 + 1;
-
-							/* go on */
-						}
 					}
 				}
 			}
 		}
-
 		break;
 	}
 
