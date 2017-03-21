@@ -794,6 +794,11 @@ static void rd_item(object_type *o_ptr) {
 
 #if 1
 	/* Shop-enchanted cheeze - fix level */
+
+	/* fix armour ruined by formerly buggy code */
+	if (is_armour(o_ptr->tval) && o_ptr->level > 200) o_ptr->level = (k_info[o_ptr->k_idx].level + 1) / 2;
+
+	/* anti-cheeze */
 	if (is_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level < 20) {
 		if (o_ptr->to_h > o_ptr->to_d) {
 			if (o_ptr->level < o_ptr->to_h) o_ptr->level = o_ptr->to_h;
@@ -806,6 +811,7 @@ static void rd_item(object_type *o_ptr) {
 		o_ptr->level = o_ptr->to_a;
 		if (o_ptr->level > 20) o_ptr->level = 20; //don't exaggerate - for early mithril helmet finds etc
 	}
+
 	/* fix shields previously ruined by formerly buggy code above */
 	if (o_ptr->tval == TV_SHIELD && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->level && o_ptr->level <= 50) {
 		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51;
