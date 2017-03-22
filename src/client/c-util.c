@@ -8425,17 +8425,17 @@ void interact_audio(void) {
 			set_mixing();
 			break;
 		case 'A':
-			cur_item = 4;
+			cur_item = 0;
 			break;
 		case 'C':
 		case 'M':
-			cur_item = 5;
+			cur_item = 1;
 			break;
 		case 'S':
-			cur_item = 6;
+			cur_item = 2;
 			break;
 		case 'W':
-			cur_item = 7;
+			cur_item = 3;
 			break;
 		case '\n':
 		case '\r':
