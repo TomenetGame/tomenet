@@ -1464,11 +1464,11 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (f1 & TR1_KILL_DRAGON) total += 5500;
 	if (f5 & TR5_VORPAL) total += 5000;
 	if (f5 & TR5_IMPACT) total += 5000;
-	if (f1 & TR1_BRAND_POIS) total += 7500;
+	if (f1 & TR1_BRAND_POIS) total += 4500;
 	if (f1 & TR1_BRAND_ACID) total += 7500;
 	if (f1 & TR1_BRAND_ELEC) total += 7500;
-	if (f1 & TR1_BRAND_FIRE) total += 5000;
-	if (f1 & TR1_BRAND_COLD) total += 5000;
+	if (f1 & TR1_BRAND_FIRE) total += 5500;
+	if (f1 & TR1_BRAND_COLD) total += 4500;
 	if (f2 & TR2_SUST_STR) total += 850;
 	if (f2 & TR2_SUST_INT) total += 850;
 	if (f2 & TR2_SUST_WIS) total += 850;
