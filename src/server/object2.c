@@ -10922,6 +10922,9 @@ bool anti_undead(object_type *o_ptr) {
 	if (o_ptr->name1 == ART_STONE_LORE) return FALSE;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+	if (f5 & TR5_CHAOTIC) return FALSE; //assume that CHAOTIC and BLESSED cannot coincide!
+
 	if (f3 & TR3_LITE1) l++;
 	if (f4 & TR4_LITE2) l += 2;
 	if (f4 & TR4_LITE3) l += 3;
@@ -10954,6 +10957,9 @@ bool anti_demon(object_type *o_ptr) {
 	if (o_ptr->name1 == ART_STONE_LORE) return FALSE;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+
+	if (f5 & TR5_CHAOTIC) return FALSE; //assume that CHAOTIC and BLESSED cannot coincide!
+
 	if (f3 & TR3_LITE1) l++;
 	if (f4 & TR4_LITE2) l += 2;
 	if (f4 & TR4_LITE3) l += 3;
