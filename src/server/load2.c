@@ -796,7 +796,7 @@ static void rd_item(object_type *o_ptr) {
 	/* Shop-enchanted cheeze - fix level */
 
 	/* fix armour ruined by formerly buggy code */
-	if (is_armour(o_ptr->tval) && o_ptr->level > 200) o_ptr->level = (k_info[o_ptr->k_idx].level + 1) / 2;
+	if (is_armour(o_ptr->tval) && (o_ptr->level < 0 || o_ptr->level > 200)) o_ptr->level = (k_info[o_ptr->k_idx].level + 1) / 2;
 
 	/* anti-cheeze */
 	if (is_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level < 20) {
