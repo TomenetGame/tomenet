@@ -2939,6 +2939,8 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		o_ptr = &p_ptr->inventory[slot];
 
 		/* Manage backstabbing and 'flee-stabbing' */
+		//todo: vortices, oozes, elementals, constructs, undead, plants, swarms, some undead maybe, incorporeal undead if you aren't incorporeal
+		//..also no-cut
 		if (stab_skill && /* Need TV_SWORD type weapon or martial arts to backstab */
 		    p_ptr->mon_vis[c_ptr->m_idx] &&
 		    (o_ptr->tval == TV_SWORD ||
