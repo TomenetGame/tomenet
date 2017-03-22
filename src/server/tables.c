@@ -4939,8 +4939,8 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 		{"Plague Champion", "Plague Champion", "Pl. Champion", "Pl. Champion", },
 		{"Grand Tormentor", "Grand Tormentor", "Gr.Tormentor", "Gr.Tormentor", },
 		{"Vizier of Chaos", "Vizier of Chaos", "Vizier o.C.", "Vizier o.C.", },
+		{"Demon Prince", "Demon Princess", "Demon Prince", "Dmn.Princess", },
 		{"Demon King", "Demon Queen", "Demon King", "Demon Queen", },
-		{"Devil's Hand", "Devil's Hand", "Devil's Hand", "Devil's Hand", },
 	},
 #endif
 #ifdef ENABLE_CPRIEST
