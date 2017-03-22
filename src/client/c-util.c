@@ -8266,8 +8266,8 @@ void interact_audio(void) {
 			/* Describe */
 			Term_putstr(30,  0, -1, TERM_L_UMBER, "*** Audio Mixer ***");
 			Term_putstr(3, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN/SPACE to toggle, ESC to leave.");
-//			Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
-//			Term_putstr(7, 3, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
+			//Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
+			//Term_putstr(7, 3, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
 			Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
 
 			if (quiet_mode) Term_putstr(12, 4, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
@@ -8319,8 +8319,8 @@ void interact_audio(void) {
 		redraw = TRUE;
 
 		/* display editing 'cursor' */
-//		Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "  ^");
-//		Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "  |");
+		//Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "  ^");
+		//Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "  |");
 		Term_putstr(item_x[0], y_label, -1, cur_item == 0 ? TERM_ORANGE : TERM_WHITE, "Master");
 		Term_putstr(item_x[1], y_label, -1, cur_item == 1 ? TERM_ORANGE : TERM_WHITE, "Music");
 		Term_putstr(item_x[2], y_label, -1, cur_item == 2 ? TERM_ORANGE : TERM_WHITE, "Sound");
@@ -8349,16 +8349,16 @@ void interact_audio(void) {
 			break;
 		case 'n':
 		case '6':
-//			Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
-//			Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
+			//Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
+			//Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
 			cur_item++;
 			if (cur_item > 7) cur_item = 0;
 			redraw = FALSE;
 			break;
 		case 'p':
 		case '4':
-//			Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
-//			Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
+			//Term_putstr(item_x[cur_item], y_label + 2, -1, TERM_ORANGE, "   ");
+			//Term_putstr(item_x[cur_item], y_label + 3, -1, TERM_ORANGE, "   ");
 			cur_item--;
 			if (cur_item < 0) cur_item = 7;
 			redraw = FALSE;
@@ -8366,13 +8366,19 @@ void interact_audio(void) {
 		case '8':
 		case '+':
 			switch (cur_item) {
+#if 0
 			case 0: cfg_audio_master = !cfg_audio_master; break;
 			case 1: cfg_audio_music = !cfg_audio_music; break;
 			case 2: cfg_audio_sound = !cfg_audio_sound; break;
 			case 3: cfg_audio_weather = !cfg_audio_weather; break;
+#endif
+			case 0:
 			case 4: if (cfg_audio_master_volume <= 90) cfg_audio_master_volume += 10; else cfg_audio_master_volume = 100; break;
+			case 1:
 			case 5: if (cfg_audio_music_volume <= 90) cfg_audio_music_volume += 10; else cfg_audio_music_volume = 100; break;
+			case 2:
 			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 100; break;
+			case 3:
 			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 100; break;
 			}
 			set_mixing();
@@ -8380,13 +8386,19 @@ void interact_audio(void) {
 		case '2':
 		case '-':
 			switch (cur_item) {
+#if 0
 			case 0: cfg_audio_master = !cfg_audio_master; break;
 			case 1: cfg_audio_music = !cfg_audio_music; break;
 			case 2: cfg_audio_sound = !cfg_audio_sound; break;
 			case 3: cfg_audio_weather = !cfg_audio_weather; break;
+#endif
+			case 0:
 			case 4: if (cfg_audio_master_volume >= 10) cfg_audio_master_volume -= 10; else cfg_audio_master_volume = 0; break;
+			case 1:
 			case 5: if (cfg_audio_music_volume >= 10) cfg_audio_music_volume -= 10; else cfg_audio_music_volume = 0; break;
+			case 2:
 			case 6: if (cfg_audio_sound_volume >= 10) cfg_audio_sound_volume -= 10; else cfg_audio_sound_volume = 0; break;
+			case 3:
 			case 7: if (cfg_audio_weather_volume >= 10) cfg_audio_weather_volume -= 10; else cfg_audio_weather_volume = 0; break;
 			}
 			set_mixing();
