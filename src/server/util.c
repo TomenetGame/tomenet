@@ -3944,8 +3944,48 @@ static int censor(char *line) {
 	char ccns[MSG_LEN];
 #endif
 
-
 	strcpy(lcopy, line);
+
+#if 1	/* extra: also apply non-swearing in advance here, for exact matching (ie case-sensitive, non-alphanum, etc) */
+	/* Maybe todo: Also apply nonswear to lcopy2 (the non-reduced version of lcopy) afterwards */
+	for (i = 0; nonswear[i][0]; i++) {
+ #ifndef HIGHLY_EFFECTIVE_CENSOR
+		/* hack! If HIGHLY_EFFECTIVE_CENSOR is NOT enabled, skip all nonswearing-words that contain spaces!
+		   This is done because those nonswearing-words are usually supposed to counter wrong positives
+		   from HIGHLY_EFFECTIVE_CENSOR, and will lead to false negatives when it is disabled xD
+		   (eg: 'was shit' chat with "as sh" non-swear)  - C. Blue */
+		//if (strchr(nonswear[i], ' ')) continue; -- not here, in later application of non-swear yes
+ #endif
+
+		offset = 0;
+		/* check for multiple occurrances of this nonswear word */
+		while ((word = strstr(lcopy + offset, nonswear[i]))) {
+			/* prevent checking the same occurance repeatedly */
+			offset = word - lcopy + strlen(nonswear[i]);
+
+			if ((nonswear_affix[i] & 0x1)) {
+				if (word == lcopy) continue; //beginning of lcopy string?
+				if (!((*(word - 1) >= 'a' && *(word - 1) <= 'z') ||
+				    (*(word - 1) >= 'A' && *(word - 1) <= 'Z') ||
+				    (*(word - 1) >= '0' && *(word - 1) <= '1') ||
+				    *(word - 1) == '\''))
+					continue;
+			}
+			if ((nonswear_affix[i] & 0x2)) {
+				if (!word[strlen(nonswear[i])]) continue; //end of lcopy string?
+				if (!((lcopy[offset] >= 'a' && lcopy[offset] <= 'z') ||
+				    (lcopy[offset] >= 'A' && lcopy[offset] <= 'Z') ||
+				    (lcopy[offset] >= '0' && lcopy[offset] <= '1') ||
+				    lcopy[offset] == '\''))
+					continue;
+			}
+
+			/* prevent it from getting tested for swear words */
+			for (j = 0; j < strlen(nonswear[i]); j++)
+				lcopy[(word - lcopy) + j] = 'Z';
+		}
+	}
+#endif
 
 	/* special expressions to exempt: '@S...<.>blabla': '@S-.shards' -> '*****hards' :-p */
 	if ((word = strstr(lcopy, "@S"))) {
