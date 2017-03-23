@@ -1070,9 +1070,12 @@
  #define FACTOR_KILL		30
  #define FACTOR_BRAND_RES	15
  #define FACTOR_BRAND		20
+ #define FACTOR_BRAND_STRONG	30	/* added for Hellfire vs <Good && Resist> */
  #define FACTOR_BRAND_SUSC	40
 #endif
 /* Apply flat brand/slay +todam bonus too (for low-dice weapons)? - C. Blue */
+#define FLAT_MIN_BONUS		1	/* added for Hellfire vs <Good && Immune> */
+#define FLAT_HALF_BONUS		2	/* added for Hellfire vs <Good && Resist> */
 #define FLAT_HURT_BONUS		3
 #define FLAT_BRAND_BONUS	4	/* same for susceptible monsters, none for resisting monsters */
 #define FLAT_SLAY_BONUS		4
@@ -4725,6 +4728,7 @@
 #define TR1_MANA			0x00000040L	/* SP += "pval" * SP / 10 */
 /* #define TR1_SPELL_SPEED		0x00000080L */	/* Spell Speed += pval */
  #define TR1_SPELL			0x00000080L	/* Spell Speed += pval -- unused, remove me -- */
+//HOLE
 #define TR1_STEALTH		0x00000100L	/* Stealth += "pval" */
 #define TR1_SEARCH		0x00000200L	/* Search += "pval" */
 #define TR1_INFRA		0x00000400L	/* Infra += "pval" */
@@ -4742,9 +4746,9 @@
 #define TR1_SLAY_GIANT			0x00400000L
 #define TR1_SLAY_DRAGON			0x00800000L
 #define TR1_KILL_DRAGON		0x01000000L	/* Execute Dragon */
-#define TR1_KILL_DEMON		0x02000000L     /* Execute Demon */
-#define TR1_KILL_UNDEAD		0x04000000L     /* Execute Undead */
-#define TR1_BRAND_POIS		0x08000000L	/* XXX6 */
+#define TR1_KILL_DEMON		0x02000000L	/* Execute Demon */
+#define TR1_KILL_UNDEAD		0x04000000L	/* Execute Undead */
+#define TR1_BRAND_POIS		0x08000000L
 #define TR1_BRAND_ACID			0x10000000L
 #define TR1_BRAND_ELEC			0x20000000L
 #define TR1_BRAND_FIRE			0x40000000L
@@ -7165,25 +7169,26 @@ extern int PlayerUID;
  */
 #define GHOST_SPELLS	7
 
-
 /* Kings/Queens abilities */
 #define KING_OWN	0
 
 /* Generic temporary weapon branding, currently only used for melee weapons */
-#define TBRAND_ELEC		0
-#define TBRAND_COLD		1
-#define TBRAND_FIRE		2
-#define TBRAND_ACID		3
-#define TBRAND_POIS		4
+#define TBRAND_ELEC		0x0001
+#define TBRAND_COLD		0x0002
+#define TBRAND_FIRE		0x0004
+#define TBRAND_ACID		0x0008
+#define TBRAND_POIS		0x0010
 //unused/not fully implemented:
-#define TBRAND_BASE		5
-#define TBRAND_CHAO		6
-#define TBRAND_VORP		7
-#define TBRAND_BALL_FIRE	8
-#define TBRAND_BALL_COLD	9
-#define TBRAND_BALL_ELEC	10
-#define TBRAND_BALL_ACID	11
-#define TBRAND_BALL_SOUN	12
+#define TBRAND_BASE		0x0020
+#define TBRAND_CHAO		0x0040
+#define TBRAND_VORP		0x0080
+#define TBRAND_BALL_FIRE	0x0100
+#define TBRAND_BALL_COLD	0x0200
+#define TBRAND_BALL_ELEC	0x0400
+#define TBRAND_BALL_ACID	0x0800
+#define TBRAND_BALL_SOUN	0x1000
+//hereticism:
+#define TBRAND_HELLFIRE		0x2000
 
 /* Client modes (e) */
 #define CLIENT_NORMAL		0x0000

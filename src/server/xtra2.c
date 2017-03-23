@@ -672,7 +672,7 @@ bool set_prob_travel(int Ind, int v) {
 /*
  * Set "p_ptr->brand", notice observable changes
  */
-bool set_melee_brand(int Ind, int v, int t, int p) {
+bool set_melee_brand(int Ind, int v, u16b t, int p) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE, plural;
 	char weapons[20];
@@ -704,45 +704,49 @@ bool set_melee_brand(int Ind, int v, int t, int p) {
 		    (p_ptr->inventory[INVEN_WIELD].k_idx || /* dual-wield..*/
 		    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
 			switch (t) {
-				case TBRAND_BALL_ACID: //not used
-				case TBRAND_ACID:
-					if (plural) msg_format(Ind, "%s are branded with acid!", weapons);
-					else msg_format(Ind, "%s is branded with acid!", weapons);
+			case TBRAND_BALL_ACID: //not used
+			case TBRAND_ACID:
+				if (plural) msg_format(Ind, "%s are branded with acid!", weapons);
+				else msg_format(Ind, "%s is branded with acid!", weapons);
 				break;
-				case TBRAND_BALL_ELEC: //not used
-				case TBRAND_ELEC:
-					if (plural) msg_format(Ind, "%s are branded with lightning!", weapons);
-					else msg_format(Ind, "%s is branded with lightning!", weapons);
+			case TBRAND_BALL_ELEC: //not used
+			case TBRAND_ELEC:
+				if (plural) msg_format(Ind, "%s are branded with lightning!", weapons);
+				else msg_format(Ind, "%s is branded with lightning!", weapons);
 				break;
-				case TBRAND_BALL_FIRE: //not used
-				case TBRAND_FIRE:
-					if (plural) msg_format(Ind, "%s are branded with fire!", weapons);
-					else msg_format(Ind, "%s is branded with fire!", weapons);
+			case TBRAND_BALL_FIRE: //not used
+			case TBRAND_FIRE:
+				if (plural) msg_format(Ind, "%s are branded with fire!", weapons);
+				else msg_format(Ind, "%s is branded with fire!", weapons);
 				break;
-				case TBRAND_BALL_COLD: //not used
-				case TBRAND_COLD:
-					if (plural) msg_format(Ind, "%s are branded with frost!", weapons);
-					else msg_format(Ind, "%s is branded with frost!", weapons);
+			case TBRAND_BALL_COLD: //not used
+			case TBRAND_COLD:
+				if (plural) msg_format(Ind, "%s are branded with frost!", weapons);
+				else msg_format(Ind, "%s is branded with frost!", weapons);
 				break;
-				case TBRAND_POIS:
-					if (plural) msg_format(Ind, "%s are branded with poison!", weapons);
-					else msg_format(Ind, "%s is branded with poison!", weapons);
+			case TBRAND_POIS:
+				if (plural) msg_format(Ind, "%s are branded with poison!", weapons);
+				else msg_format(Ind, "%s is branded with poison!", weapons);
 				break;
-				case TBRAND_BASE:
-					if (plural) msg_format(Ind, "%s glow in many colours!", weapons); //not used
-					else msg_format(Ind, "%s glows in many colours!", weapons); //not used
+			case TBRAND_BASE:
+				if (plural) msg_format(Ind, "%s glow in many colours!", weapons); //not used
+				else msg_format(Ind, "%s glows in many colours!", weapons); //not used
 				break;
-				case TBRAND_CHAO:
-					if (plural) msg_format(Ind, "%s seem to twist and warp!", weapons); //not used
-					else msg_format(Ind, "%s seems to twist and warp!", weapons); //not used
+			case TBRAND_CHAO:
+				if (plural) msg_format(Ind, "%s seem to twist and warp!", weapons); //not used
+				else msg_format(Ind, "%s seems to twist and warp!", weapons); //not used
 				break;
-				case TBRAND_VORP:
-					if (plural) msg_format(Ind, "%s sharpen!", weapons); //not used
-					else msg_format(Ind, "%s sharpens!", weapons); //not used
+			case TBRAND_VORP:
+				if (plural) msg_format(Ind, "%s sharpen!", weapons); //not used
+				else msg_format(Ind, "%s sharpens!", weapons); //not used
 				break;
-				case TBRAND_BALL_SOUN:
-					if (plural) msg_format(Ind, "%s vibrate!", weapons); //not used
-					else msg_format(Ind, "%s vibrates!", weapons); //not used
+			case TBRAND_BALL_SOUN:
+				if (plural) msg_format(Ind, "%s vibrate!", weapons); //not used
+				else msg_format(Ind, "%s vibrates!", weapons); //not used
+				break;
+			case TBRAND_HELLFIRE:
+				if (plural) msg_format(Ind, "%s are branded with hellfire!", weapons);
+				else msg_format(Ind, "%s is branded with hellfire!", weapons);
 				break;
 			}
 			notice = TRUE;
@@ -776,6 +780,10 @@ bool set_melee_brand(int Ind, int v, int t, int p) {
 				case TBRAND_POIS:
 					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377gpoison\377W.");
 					else msg_format(Ind, "\377WYour weapon is no longer branded with \377gpoison\377W.");
+				break;
+				case TBRAND_HELLFIRE:
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rhellfire\377W.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377rhellfire\377W.");
 				break;
 				default:
 					if (plural) msg_print(Ind, "\377WYour weapons are no longer branded.");
@@ -813,7 +821,7 @@ bool set_melee_brand(int Ind, int v, int t, int p) {
 /*
  * Set "p_ptr->ammo_brand_xxx", notice observable changes
  */
-bool set_ammo_brand(int Ind, int v, int t, int p) {
+bool set_ammo_brand(int Ind, int v, u16b t, int p) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
@@ -864,6 +872,9 @@ bool set_ammo_brand(int Ind, int v, int t, int p) {
 				break;
 			case TBRAND_BALL_SOUN:
 				msg_print(Ind, "Your ammunition vibrates!");
+				break;
+			case TBRAND_HELLFIRE:
+				msg_print(Ind, "Your ammunition burns hellishly!");
 				break;
 			}
 			notice = TRUE;

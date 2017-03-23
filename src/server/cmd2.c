@@ -5057,8 +5057,6 @@ void do_cmd_fire(int Ind, int dir) {
 	int path_num = 0;
 #endif
 
-	char brand_msg[MAX_CHARS_WIDE] = { '\0' };
-
 	bool drain_msg = TRUE;
 	int drain_result = 0, drain_heal = 0;
 	int drain_left = MAX_VAMPIRIC_DRAIN_RANGED;
@@ -5867,7 +5865,7 @@ void do_cmd_fire(int Ind, int dir) {
 								if (!boomerang) {
 									/* Base damage from thrown object plus launcher bonus */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
-									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, FALSE);
+									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
 									if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
 									if (p_ptr->ammo_brand) tdam += p_ptr->ammo_brand_d;
 									tdam += o_ptr->to_d;
@@ -5875,7 +5873,7 @@ void do_cmd_fire(int Ind, int dir) {
 								} else {
 									 /* Base damage from thrown object */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
-									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, FALSE);
+									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
 									tdam += o_ptr->to_d;
 									tdam += p_ptr->to_d_ranged;
 								}
@@ -5943,7 +5941,6 @@ void do_cmd_fire(int Ind, int dir) {
 										}
 									}
 								}
-//less spam for now - C. Blue					if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 								if ((p_ptr->ammo_brand && (p_ptr->ammo_brand_t == TBRAND_CHAO)) && !q_ptr->resist_conf && !boomerang)
 									(void)set_confused(0 - c_ptr->m_idx, q_ptr->confused + 5);
@@ -6074,23 +6071,19 @@ void do_cmd_fire(int Ind, int dir) {
 					if (!boomerang) {
 						/* Base damage from thrown object plus launcher bonus */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
-						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
+						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
 						if (p_ptr->ranged_flare) tdam += damroll(2, 6); /* compare to dice in k_info for oil flask */
 						if (p_ptr->ammo_brand) tdam += p_ptr->ammo_brand_d;
 						tdam += o_ptr->to_d;
-						//tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 						tdam += j_ptr->to_d + p_ptr->to_d_ranged;
-						//tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
 					} else {
 						 /* Base damage from thrown object */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
-						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, FALSE);
+						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
 						tdam += o_ptr->to_d;
 						tdam += p_ptr->to_d_ranged;
 					}
 					ranged_flare_body = TRUE;
-
-//less spam for now - C. Blue		if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 					/* Boost the damage */
 					tdam *= tmul;
@@ -6712,8 +6705,6 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	char            o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
-	char brand_msg[MAX_CHARS_WIDE] = { '\0' };
-
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
@@ -7100,11 +7091,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 					/* Hack -- Base damage from thrown object */
 					tdam = damroll(o_ptr->dd, o_ptr->ds);
-					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, brand_msg, TRUE);
+					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, TRUE);
 					tdam += o_ptr->to_d;
 					/* Apply special damage XXX XXX XXX */
 					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE);
-//less spam for now - C. Blue		if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;
@@ -7131,7 +7121,6 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						/* Track player's health */
 						health_track(Ind, c_ptr->m_idx);
 					}
-//less spam for now - C. Blue		if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 					/* Take damage */
 					take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name, Ind);
@@ -7227,11 +7216,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 				/* Hack -- Base damage from thrown object */
 				tdam = damroll(o_ptr->dd, o_ptr->ds);
-				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, brand_msg, TRUE);
+				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, TRUE);
 				tdam += o_ptr->to_d;
 				/* Apply special damage XXX XXX XXX */
 				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE);
-//less spam for now - C. Blue	if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;

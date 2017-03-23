@@ -603,8 +603,8 @@ extern bool test_hit_fire(int chance, int ac, int vis);
 extern bool test_hit_melee(int chance, int ac, int vis);
 extern s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision);
 extern s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_crits, int o_crit);
-extern s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg, bool thrown);
-extern s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *p_ptr, char *brand_msg, bool thrown);
+extern s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, bool thrown);
+extern s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *p_ptr, bool thrown);
 extern void search(int Ind);
 extern void carry(int Ind, int pickup, int confirm, bool pick_one);
 extern void py_attack(int Ind, int y, int x, byte old);
@@ -1977,7 +1977,7 @@ extern bool set_tim_deflect(int Ind, int v);
 #ifdef ARCADE_SERVER
 extern void set_pushed(int Ind, int dir);
 #endif
-extern bool set_melee_brand(int Ind, int v, int t, int p);
+extern bool set_melee_brand(int Ind, int v, u16b t, int p);
 extern s16b questid;
 extern bool imprison(int Ind, u16b time, char *reason);
 extern bool guild_build(int Ind);
@@ -2093,7 +2093,7 @@ extern bool do_restoreXP_other(int Ind);
 extern bool telekinesis(int Ind, object_type *o_ptr, int max_weight);
 #endif
 extern void telekinesis_aux(int Ind, int item);
-extern bool set_ammo_brand(int Ind, int v, int t, int p);
+extern bool set_ammo_brand(int Ind, int v, u16b t, int p);
 
 extern bool bless_temp_luck(int Ind, int pow, int dur);
 extern bool set_sh_fire_tim(int Ind, int v);

@@ -4874,6 +4874,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		case TBRAND_POIS:
 			fprintf(fff, "\377BVenom has been applied to it temporarily.\n");
 			break;
+		case TBRAND_HELLFIRE:
+			fprintf(fff, "\377BHellfire brand has been applied to it temporarily.\n");
+			break;
 		//other brands are unused atm (possibly not fully implemented even)
 		}
 	//Note: ammo_brand_t is unused atm (possibly not fully implemented even)

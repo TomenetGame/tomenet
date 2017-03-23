@@ -2331,10 +2331,10 @@ struct player_type {
 	s16b tim_mimic_what;		/* Timed -- Mimicry */
 //UNUSED just queried
 	s16b ammo_brand;			/* Timed -- Bow Branding */
-	byte ammo_brand_t;		/* Timed -- Bow Branding */
+	u16b ammo_brand_t;		/* Timed -- Bow Branding */
 	s16b ammo_brand_d;		/* Timed -- Bow Branding */
 	s16b melee_brand;			/* Timed -- Weapon Branding (used by runecraft) */
-	byte melee_brand_t;			/* Timed -- Weapon Branding */
+	u16b melee_brand_t;			/* Timed -- Weapon Branding */
 	s16b melee_brand_d;			/* Timed -- Weapon Branding */
 	bool brand_fire;		/* Added for Draconians, but could clean up a lot of tot_dam_aux.. code too */
 	bool brand_cold;

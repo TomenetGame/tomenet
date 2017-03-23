@@ -15,20 +15,22 @@
 
 
 /* Generic temporary weapon branding, currently only used for melee weapons */
-#define TBRAND_ELEC		0
-#define TBRAND_COLD		1
-#define TBRAND_FIRE		2
-#define TBRAND_ACID		3
-#define TBRAND_POIS		4
+#define TBRAND_ELEC		0x0001
+#define TBRAND_COLD		0x0002
+#define TBRAND_FIRE		0x0004
+#define TBRAND_ACID		0x0008
+#define TBRAND_POIS		0x0010
 //unused/not fully implemented:
-#define TBRAND_BASE		5
-#define TBRAND_CHAO		6
-#define TBRAND_VORP		7
-#define TBRAND_BALL_FIRE	8
-#define TBRAND_BALL_COLD	9
-#define TBRAND_BALL_ELEC	10
-#define TBRAND_BALL_ACID	11
-#define TBRAND_BALL_SOUN	12
+#define TBRAND_BASE		0x0020
+#define TBRAND_CHAO		0x0040
+#define TBRAND_VORP		0x0080
+#define TBRAND_BALL_FIRE	0x0100
+#define TBRAND_BALL_COLD	0x0200
+#define TBRAND_BALL_ELEC	0x0400
+#define TBRAND_BALL_ACID	0x0800
+#define TBRAND_BALL_SOUN	0x1000
+//hereticism:
+#define TBRAND_HELLFIRE		0x2000
 
 
 /*

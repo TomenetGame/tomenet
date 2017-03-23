@@ -298,10 +298,11 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, bool allow_skill_cri
  * Slay Evil (x2), and Kill dragon (x5).
  */
 /* accepts Ind <=0 */
-s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, char *brand_msg, bool thrown) {
+s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, bool thrown) {
 	int mult = FACTOR_MULT, bonus = 0;
 	monster_race *r_ptr = race_inf(m_ptr);
 	u32b f1, f2, f3, f4, f5, f6, esp;
+	u16b fx = 0x0;
 	player_type *p_ptr = NULL;
 
 	struct worldpos *wpos = &m_ptr->wpos;
@@ -311,8 +312,6 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 
 	object_type *e_ptr;
 	u32b ef1, ef2, ef3, ef4, ef5, ef6, eesp;
-	int brands_total = 0, brand_msgs_added = 0;
-	/* char brand_msg[80];*/
 
 	monster_race *pr_ptr = NULL;
 	bool apply_monster_brands = TRUE;
@@ -359,6 +358,10 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 				break;
 			case TBRAND_POIS:
 				f1 |= TR1_BRAND_POIS;
+				break;
+			/* flags that exist in temporary form only */
+			case TBRAND_HELLFIRE:
+				fx = TBRAND_HELLFIRE;
 				break;
 			}
 		}
@@ -505,132 +508,26 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 			case TBRAND_CHAO:
 				f5 |= TR5_CHAOTIC;
 				break;
+			/* flags that exist in temporary form only */
+			case TBRAND_HELLFIRE:
+				fx = TBRAND_HELLFIRE;
+				break;
 			}
 		}
 	}
-
-#if 1 /* for debugging only, so far: */
-	/* Display message for all applied brands each */
-	if (f1 & TR1_BRAND_ACID) brands_total++;
-	if (f1 & TR1_BRAND_ELEC) brands_total++;
-	if (f1 & TR1_BRAND_FIRE) brands_total++;
-	if (f1 & TR1_BRAND_COLD) brands_total++;
-	if (f1 & TR1_BRAND_POIS) brands_total++;
 
 	/* Avoid contradictionary brands,
 	   let one of them randomly 'flicker up' on striking, suppressing the other */
 	if ((f1 & TR1_BRAND_FIRE) && (f1 & TR1_BRAND_COLD)) {
 		if (magik(50)) f1 &= ~TR1_BRAND_FIRE;
 		else f1 &= ~TR1_BRAND_COLD;
-		/* Hack - Make it still say 'blabla is hit by THE ELEMENTS' */
-		if (brands_total != 5) brands_total--;
 	}
+	if ((f1 & TR1_BRAND_COLD) && (fx & TBRAND_HELLFIRE))
+		f1 &= ~TR1_BRAND_COLD; //hellfire gets priority
 
-	strcpy(brand_msg,m_name);
-	strcat(brand_msg," is ");//"%^s is ");
-	switch (brands_total) {
-		/* full messages for only 1 brand */
-		case 1:
-		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"covered in acid");
-		if (f1 & TR1_BRAND_ELEC) strcat(brand_msg,"struck by electricity");
-		if (f1 & TR1_BRAND_FIRE) strcat(brand_msg,"enveloped in flames");
-		if (f1 & TR1_BRAND_COLD) strcat(brand_msg,"covered with frost");
-		if (f1 & TR1_BRAND_POIS) strcat(brand_msg,"contacted with poison");
-		break;
-		/* fully combined messages for 2 brands */
-		case 2:
-		if (f1 & TR1_BRAND_ACID) {
-			strcat(brand_msg,"covered in acid");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_COLD) {
-			/* cold is grammatically combined with acid since the verbum 'covered' is identical */
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and frost");
-			    else strcat(brand_msg,", frost");
-			}
-			else strcat(brand_msg,"covered with frost");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_ELEC) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"struck by electricity");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_FIRE) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"enveloped in flames");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_POIS) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"contacted with poison");
-			brand_msgs_added++;
-		}
-		break;
-		/* shorter messages if more brands have to fit in the message-line */
-		case 3:		case 4:
-		strcat(brand_msg,"hit by ");
-		if (f1 & TR1_BRAND_ACID) {
-			strcat(brand_msg,"acid");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_COLD) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"frost");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_ELEC) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"electricity");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_FIRE) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"flames");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_POIS) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"poison");
-			brand_msgs_added++;
-		}
-		break;
-		/* short and simple for all brands */
-		case 5:
-		strcat(brand_msg,"hit by the elements");
-		break;
-	}
-	strcat(brand_msg,"!");
-	if (brands_total > 0) {
-		//msg_format(Ind, brand_msg, m_name);
-	}
-	else strcpy(brand_msg,"");
-#endif
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval) {
-/*		case TV_SHOT:
+		/*case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_BLUNT:
@@ -844,7 +741,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 					if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_POIS);
 #endif
 					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-//					if (magik(95)) *special |= SPEC_POIS;
+					//if (magik(95)) *special |= SPEC_POIS;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				} else if (r_ptr->flags9 & RF9_RES_POIS) {
 				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
@@ -853,6 +750,39 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
 				else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				}
+			}
+
+			/* Brand (Hellfire) */
+			if (fx & TBRAND_HELLFIRE) {
+				if (r_ptr->flags3 & RF3_GOOD) {
+					if (r_ptr->flags3 & RF3_IM_FIRE) {
+						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					} else if (r_ptr->flags9 & RF9_RES_FIRE) {
+						if (mult < FACTOR_BRAND_STRONG) mult = FACTOR_BRAND_STRONG;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					} else {
+						if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					}
+				} else {
+					if (r_ptr->flags3 & RF3_IM_FIRE) {
+						if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+						if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
+					} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+						if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					} else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags3 & RF3_DEMON)) {
+						if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+						if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
+					} else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON)) {
+						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+						if (bonus < FLAT_HALF_BONUS) bonus = FLAT_HALF_BONUS;
+					} else {
+						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					}
 				}
 			}
 
@@ -891,14 +821,13 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, cha
  * Note that "flasks of oil" do NOT do fire damage, although they
  * certainly could be made to do so.  XXX XXX
  */
-s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, char *brand_msg, bool thrown) {
+s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, bool thrown) {
 	int mult = FACTOR_MULT, bonus = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
+	u16b fx = 0x0;
 	player_type *p_ptr = NULL;
 	object_type *e_ptr;
 	u32b ef1, ef2, ef3, ef4, ef5, ef6, eesp;
-	int brands_total, brand_msgs_added;
-	/* char brand_msg[80]; */
 
 	monster_race *pr_ptr = NULL;
 	bool apply_monster_brands = TRUE;
@@ -1055,134 +984,24 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 			case TBRAND_CHAO:
 				f5 |= TR5_CHAOTIC;
 				break;
+			/* flags that exist in temporary form only */
+			case TBRAND_HELLFIRE:
+				fx = TBRAND_HELLFIRE;
+				break;
 			}
 		}
 	}
-
-#if 1 /* for debugging only, so far: */
-	/* Display message for all applied brands each */
-	brands_total = 0;
-	brand_msgs_added = 0;
-	if (f1 & TR1_BRAND_ACID) brands_total++;
-	if (f1 & TR1_BRAND_ELEC) brands_total++;
-	if (f1 & TR1_BRAND_FIRE) brands_total++;
-	if (f1 & TR1_BRAND_COLD) brands_total++;
-	if (f1 & TR1_BRAND_POIS) brands_total++;
 
 	/* Avoid contradictionary brands,
 	   let one of them randomly 'flicker up' on striking, suppressing the other */
 	if ((f1 & TR1_BRAND_FIRE) && (f1 & TR1_BRAND_COLD)) {
 		if (magik(50)) f1 &= ~TR1_BRAND_FIRE;
 		else f1 &= ~TR1_BRAND_COLD;
-		/* Hack - Make it still say 'blabla is hit by THE ELEMENTS' */
-		if (brands_total != 5) brands_total--;
 	}
 
-	strcpy(brand_msg,q_ptr->name);
-	strcat(brand_msg," is ");//"%^s is ");
-	switch (brands_total) {
-		/* full messages for only 1 brand */
-		case 1:
-		if (f1 & TR1_BRAND_ACID) strcat(brand_msg,"covered in acid");
-		if (f1 & TR1_BRAND_ELEC) strcat(brand_msg,"struck by electricity");
-		if (f1 & TR1_BRAND_FIRE) strcat(brand_msg,"enveloped in flames");
-		if (f1 & TR1_BRAND_COLD) strcat(brand_msg,"covered with frost");
-		if (f1 & TR1_BRAND_POIS) strcat(brand_msg,"contacted with poison");
-		break;
-		/* fully combined messages for 2 brands */
-		case 2:
-		if (f1 & TR1_BRAND_ACID) {
-			strcat(brand_msg,"covered in acid");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_COLD) {
-			/* cold is grammatically combined with acid since the verbum 'covered' is identical */
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and frost");
-			    else strcat(brand_msg,", frost");
-			}
-			else strcat(brand_msg,"covered with frost");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_ELEC) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"struck by electricity");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_FIRE) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"enveloped in flames");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_POIS) {
-			if (brand_msgs_added > 0) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"contacted with poison");
-			brand_msgs_added++;
-		}
-		break;
-		/* shorter messages if more brands have to fit in the message-line */
-		case 3:		case 4:
-		strcat(brand_msg,"hit by ");
-		if (f1 & TR1_BRAND_ACID) {
-			strcat(brand_msg,"acid");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_COLD) {
-			if (brand_msg[0]) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"frost");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_ELEC) {
-			if (brand_msg[0]) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"electricity");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_FIRE) {
-			if (brand_msg[0]) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"flames");
-			brand_msgs_added++;
-		}
-		if (f1 & TR1_BRAND_POIS) {
-			if (brand_msg[0]) {
-			    if (brand_msgs_added == (brands_total - 1)) strcat(brand_msg," and ");
-			    else strcat(brand_msg,", ");
-			}
-			strcat(brand_msg,"poison");
-			brand_msgs_added++;
-		}
-		break;
-		/* short and simple for all brands */
-		case 5:
-		strcat(brand_msg,"hit by the elements");
-		break;
-	}
-	strcat(brand_msg,"!");
-	if (brands_total > 0) {
-		//msg_format(Ind, brand_msg, q_ptr->name);
-	}
-	else strcpy(brand_msg,"");
-#endif
 	/* Some "weapons" and "ammo" do extra damage */
 	switch (o_ptr->tval) {
-/*		case TV_SHOT:
+		/*case TV_SHOT:
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_BLUNT:
@@ -1197,7 +1016,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 			/* emulate slay-susceptibilities */
 			if (q_ptr->body_monster) q_flags3 |= r_info[q_ptr->body_monster].flags3;
 			if (q_ptr->suscep_good) q_flags3 |= RF3_EVIL;
-			//if (q_ptr->suscep_evil) q_flags3 |= RF3_GOOD; //unused (enlightened maia)
+			if (q_ptr->suscep_evil) q_flags3 |= RF3_GOOD; //unused (enlightened maia)
 			if (q_ptr->suscep_life) q_flags3 |= RF3_UNDEAD; //covers RACE_VAMPIRE
 			if (q_ptr->prace == RACE_DRACONIAN) q_flags3 |= RF3_DRAGON;
 			if (q_ptr->ptrait == TRAIT_CORRUPTED) q_flags3 |= RF3_DEMON;
@@ -1310,7 +1129,10 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else {
+				else if (q_ptr->suscep_acid) {
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				} else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
@@ -1324,7 +1146,10 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else {
+				else if (q_ptr->suscep_elec) {
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				} else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
@@ -1338,7 +1163,10 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else {
+				else if (q_ptr->suscep_fire) {
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				} else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
@@ -1352,7 +1180,10 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else {
+				else if (q_ptr->suscep_cold) {
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				} else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
@@ -1366,11 +1197,48 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 				}
 				/* Otherwise, take the damage */
-				else {
+				else if (q_ptr->suscep_pois) {
+					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+				} else {
 					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
 					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 				}
 			}
+
+			/* Brand (Hellfire) */
+			if (fx & TBRAND_HELLFIRE) {
+				if (q_flags3 & RF3_GOOD) {
+					if (q_ptr->immune_fire) {
+						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					} else if (q_ptr->resist_fire) {
+						if (mult < FACTOR_BRAND_STRONG) mult = FACTOR_BRAND_STRONG;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					} else {
+						if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					}
+				} else {
+					if (q_ptr->immune_fire) {
+						if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+						if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
+					} else if (q_ptr->suscep_fire) {
+						if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					} else if (q_ptr->resist_fire && (q_flags3 & RF3_DEMON)) {
+						if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+						if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
+					} else if (q_ptr->resist_fire || (q_flags3 & RF3_DEMON)) {
+						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+						if (bonus < FLAT_HALF_BONUS) bonus = FLAT_HALF_BONUS;
+					} else {
+						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+					}
+				}
+			}
+
 			break;
 		}
 	}
@@ -2707,7 +2575,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	long int kl;
 	player_type *q_ptr;
 	object_type *o_ptr = NULL;
-	char q_name[NAME_LEN], brand_msg[MAX_CHARS_WIDE] = { '\0' }, hit_desc[MAX_CHARS_WIDE];
+	char q_name[NAME_LEN], hit_desc[MAX_CHARS_WIDE];
 	bool do_quake = FALSE;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
@@ -3178,7 +3046,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
 				/* Apply the player damage boni */
@@ -3187,7 +3055,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0);
 				k3 += k2;
 #else
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -3240,10 +3108,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #endif
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 #else
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
 #endif
 #ifdef VORPAL_LOWBRANDED
 				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
@@ -3336,7 +3204,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, brand_msg, FALSE);
+				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -3437,7 +3305,6 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				msg_format(Ind, "%s for \377y%d \377wdamage.", hit_desc, k);
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 			}
-//less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 			if (cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp < 5){
 				msg_format(Ind, "\374You have beaten %s", q_ptr->name);
@@ -3812,7 +3679,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	object_type	*o_ptr = NULL;
 	bool		do_quake = FALSE;
 
-	char		m_name[MNAME_LEN], brand_msg[MAX_CHARS_WIDE] = { '\0' }, hit_desc[MAX_CHARS_WIDE], mbname[MNAME_LEN];
+	char		m_name[MNAME_LEN], hit_desc[MAX_CHARS_WIDE], mbname[MNAME_LEN];
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
 
@@ -4262,7 +4129,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
 				/* Apply the player damage boni */
@@ -4271,7 +4138,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0);
 				k3 += k2;
 #else
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -4341,10 +4208,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 #else
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
 #endif
 #ifdef VORPAL_LOWBRANDED
 				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
@@ -4488,7 +4355,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, brand_msg, FALSE);
+				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -4592,7 +4459,6 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				}
 				else msg_format(Ind, "%s for \377g%d \377wdamage.", hit_desc, k);
 			}
-//less spam for now - C. Blue   if (strlen(brand_msg) > 0) msg_print(Ind, brand_msg);
 
 			if (did_stun) {
 				if (m_ptr->stunned > 100)
