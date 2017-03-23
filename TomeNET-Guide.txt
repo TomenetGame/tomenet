@@ -15791,8 +15791,9 @@ school.
     Fire Bolt       Conjures up fire into a powerful bolt.
                     Required skill level for first spell level: 10.
 
-    Wrathflame      It temporarily brands your melee weapons with unholy fire.
+    Wrathflame      It temporarily brands your melee weapons with fire.
                     Lv7: Grants temporary fire resistance.
+                    Lv17: The brand is now hellfire instead of normal fire.
                     Required skill level for first spell level: 12.
 
     Flame Wave      Eradicates critters beneath your notice that dare trifle
