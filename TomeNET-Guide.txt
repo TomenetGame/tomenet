@@ -1629,6 +1629,44 @@ Item power inscription (added in 4.7.1):
                special powers. Only works with *identified* items.
                The @@ part must always be in the beginning of the inscription,
                after it you can append more things if you like to.
+    @@@        Redux version. Avoids stats, extra might since it's obvious,
+               light radius, slays and brands except for kill-flags, and
+               partial ESPs.
+
+    Resulting inscription details:
+    _S                sustain stat (S/I/W/D/C/H, where H is cHarisma)
+    +S                increase stat
+    ^S                increase and sustain stat
+    Xm/Xs             extra might/extra shots (ranged weapons)
+    HP/MP             +hit points/+mana
+    Spd/Att/Crt/Stl   +speed/+extra attacks/+critical hits/+stealth
+    Src/IV/Dsr/Dig/Lu +searching/+infra-vision/+disarm/+digging/+luck
+    Eq/Cht/Va/Vo      earthquakes/chaotic/vampiric/vorpal
+    *F/C/E/A/P/W/N*   immunity to an element (fire,cold,electricity,acid,
+                      poison,water,nether)
+    Base              resistance to the four base elements (same as 'fcea')
+    f/c/e/a           resistance to a base element (fire,cold,electricity,acid)
+     Resistances to high elements:
+    Po/Wa/Nt/Nx/Ca/Di poison/water/nether/nexus/chaos/disenchantment
+    So/Sh/Lt/Dk/Ti/Ma sound/shards/light/darkness/time/mana
+     Further resistances:
+    Bl/Cf/RT/FA/HL/Fe blindness/confusion/teleport/free action/hold life/fear
+     Other flags:
+    SI/Lv/FF/SD       see invisible/levitation/feather falling/slow digestion
+    Rg/Rgm            regenerate hit points/regenerate mana
+    Refl/Inv/AM/Bless reflection/invisibility/anti-magic shell/Blessed
+    ID                auto-ID
+    Climb/Swim/Wraith climbing/swimming/wraithform
+    AF/AC/AE          aura of fire/cold/electricity
+    BF/BC/BE/BA/BP    brand of fire/cold/electricity/acid/poison
+    +oTPaWUDEvil      slay orc/troll/giant/animal/undead/demon/dragon/evil
+    *WUD              kill undead/demon/dragon
+    ~oTPaWUEvil       ESP orc/troll/giant/animal/undead/demon/dragon/evil
+     SDRAgUni             spider/dragonrider/angel/nonliving/unique
+    ESP               telepathy (full ESP)
+    Tele/NT           induces random teleportation/allows no teleportation
+    Dr/Drm/Drx/Aggr   drains hp/mana/experience / aggravates
+    Exploding ammunition will have its explosion type added in parentheses.
 
 
 "Word of Recall", provided by items (scrolls and rods) or spells:
