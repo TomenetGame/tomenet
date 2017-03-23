@@ -466,6 +466,8 @@ static int do_cmd_activate_skill_aux() {
 
 	if (!max) {
 		c_msg_print("You don't have any activable skills.");
+		/* Stop macro execution if we're on safe_macros! */
+		if (parse_macro && c_cfg.safe_macros) flush_now();
 		return -1;
 	}
 /*	if (max == 1 && c_cfg.quick_messages)

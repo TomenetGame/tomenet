@@ -597,6 +597,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		/* Forget the item_tester_hook restriction */
 		item_tester_hook = 0;
 
+		/* Stop macro execution if we're on safe_macros! */
+		if (parse_macro && c_cfg.safe_macros) flush_now();
+
 		return (FALSE);
 	}
 
@@ -645,8 +648,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		topline_icky = FALSE;
 		if (!(mode & NO_FAIL_MSG)) c_msg_print("You do not have an eligible item.");
 
+		/* Stop macro execution if we're on safe_macros! */
+		if (parse_macro && c_cfg.safe_macros) flush_now();
 		/* Flush any events */
-		Flush_queue();//this will cancel macro execution already, so an additional 'c_cfg.safe_macros' check isn't needed here
+		Flush_queue(); //I thought this also cleared macro execution, making flush_now() superfluous, but sometimes (delay-dependant?) it didn't
 
 		/* Hack -- Cancel "display" */
 		command_see = FALSE;
