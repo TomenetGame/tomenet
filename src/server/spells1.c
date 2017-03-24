@@ -4822,8 +4822,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	switch (typ) {
 		/* Identify */
 		case GF_IDENTIFY:
-			do_kill = FALSE;
-
 			/* Identify it fully */
 			if (!quiet) object_aware(Ind, o_ptr);
 			object_known(o_ptr);
@@ -5072,11 +5070,21 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Holy Orb -- destroys cursed non-artifacts */
 		case GF_HOLY_FIRE:
+			/* same effect as normal fire on items */
+			if (hates_fire(o_ptr)) {
+				do_kill = TRUE;
+				if (is_meltable)
+					note_kill = (plural ? " melt!" : " melts!");
+				else if (is_potion)
+					note_kill = (plural ? " evaporate!" : " evaporates!");
+				else
+					note_kill = (plural ? " burn up!" : " burns up!");
+				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
+			}
 		case GF_HOLY_ORB:
 			do_smash_effect = TRUE;
-			if (cursed_p(o_ptr)
-//should be enabled maybe?    || hates_fire(o_ptr)
-			    ) {
+			if (!do_kill &&
+			    (cursed_p(o_ptr) || (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_TOME_CHAOS))) {
 				do_kill = TRUE;
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 			}

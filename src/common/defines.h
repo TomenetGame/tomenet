@@ -4012,6 +4012,7 @@
 
 /* for TV_BOOK */
 /* 0..49 are school tomes */
+#define SV_TOME_CHAOS			24
 #define SV_BOOK_COMBO			50 /* 50..99 are handbooks, 50 is beginner cantrips */
 #define SV_SPELLBOOK			255
 #define SV_CUSTOM_TOME_1		100 /* player-made personalized tomes */
