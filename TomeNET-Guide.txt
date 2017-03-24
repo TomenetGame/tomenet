@@ -1668,6 +1668,9 @@ Item power inscription (added in 4.7.1):
     Dr/Drm/Drx/Aggr   drains hp/mana/experience / aggravates
     Exploding ammunition will have its explosion type added in parentheses.
 
+If you want an inscription starting on @ to follow a @@ inscription, add a
+space in between: @@ @S  - otherwise it'll be treated as @@@ instead.
+
 
 "Word of Recall", provided by items (scrolls and rods) or spells:
 -----------------------------------------------------------------
