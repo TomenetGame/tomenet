@@ -1209,9 +1209,9 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		/* Priest */
 		{ TV_BLUNT, SV_MACE, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
-//		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
+		//{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
 		{ TV_BOOK, 56, 0 },
-//		{ TV_SOFT_ARMOR, SV_ROBE, 0},
+		//{ TV_SOFT_ARMOR, SV_ROBE, 0},
 		{ TV_SOFT_ARMOR, SV_FROCK, 0},
 		{ 255, 255, 0 },
 	},
@@ -1222,8 +1222,9 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
+		//{ TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
-//		{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
+		//{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
 	},
 
 	{
@@ -1233,7 +1234,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_POTION, SV_POTION_CURE_SERIOUS, 0 },
 		{ TV_POTION, SV_POTION_SELF_KNOWLEDGE, 0},
 		{ 255, 255, 0 },
-//		{ TV_RING, SV_RING_POLYMORPH, 0 },
+		//{ TV_RING, SV_RING_POLYMORPH, 0 },
 	},
 
 	{
@@ -1299,9 +1300,9 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	},
 	{
 		/* Mindcrafter */
-//		{ TV_BOOK, 50, 0 },
+		//{ TV_BOOK, 50, 0 },
 		{ TV_BOOK, SV_SPELLBOOK, -1 },/* __lua_MSCARE */
-//		{ TV_SWORD, SV_SHORT_SWORD, 0 },
+		//{ TV_SWORD, SV_SHORT_SWORD, 0 },
 		{ TV_SWORD, SV_RAPIER, 0 },//TV_SABRE didn't give 2 bpr w/ min recomm stats, and they are so similar, so what gives
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
 		{ TV_SCROLL, SV_SCROLL_TELEPORT, 0 },
@@ -1364,7 +1365,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		/* Priest */
 		{ TV_HELM, SV_CLOTH_CAP, 0 },
 		{ TV_POTION, SV_POTION_HEALING, 0 },
-//		{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
+		//{ TV_BOOK, SV_SPELLBOOK, -1 }, /* __lua_HHEALING */
 		{ TV_BOOK, 56, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ 255, 255, 0 },
@@ -1376,8 +1377,9 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ 255, 255, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_SLING, 0 },
+		//{ TV_SCROLL, SV_SCROLL_PHASE_DOOR, 0 },
 		{ TV_TRAPKIT, SV_TRAPKIT_POTION, 0 },
-//		{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
+		//{ TV_BOOK, SV_SPELLBOOK, 21 }, /* Spellbook of Phase Door */
 	},
 
 	{
@@ -1387,7 +1389,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_POTION, SV_POTION_CURE_SERIOUS, 0 },
 		{ TV_POTION, SV_POTION_SELF_KNOWLEDGE, 0},
 		{ 255, 255, 0 },
-//		{ TV_RING, SV_RING_POLYMORPH, 0 },
+		//{ TV_RING, SV_RING_POLYMORPH, 0 },
 	},
 
 	{
@@ -1453,7 +1455,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 	},
 	{
 		/* Mindcrafter */
-//		{ TV_BOOK, 50, 0 },
+		//{ TV_BOOK, 50, 0 },
 		{ TV_BOOK, SV_SPELLBOOK, -1 },/* __lua_MSCARE */
 		{ TV_HELM, SV_METAL_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
