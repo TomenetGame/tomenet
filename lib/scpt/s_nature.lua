@@ -13,13 +13,6 @@ end
 function get_healing_cap(limit_lev)
 	local pow
 
-	--pow = get_level(Ind, HEALING, 417)
-	--if limit_lev ~= 0 then
-	--	if pow > limit_lev * 8 then
-	--		pow = limit_lev * 8 + (pow - limit_lev * 8) / 3
-	--	end
-	--end
-
 	pow = ((10 + get_level(Ind, HEALING_I, 417)) * (get_level(Ind, HEALING_I, 417) + 209)) / 1562 + 1
 	if limit_lev ~= 0 then
 		if pow > limit_lev * 3 then
@@ -45,7 +38,7 @@ end
 
 GROWTREE = add_spell {
 	["name"] = 	"Grow Trees",
---	["school"] = 	{SCHOOL_NATURE, SCHOOL_TEMPORAL},
+	--["school"] = 	{SCHOOL_NATURE, SCHOOL_TEMPORAL},
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	30,
 	["mana"] = 	25,
@@ -64,22 +57,11 @@ HEALING_I = add_spell {
 	["name"] = 	"Healing I",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	1,
-	["mana"] = 	15,
-	["mana_max"] = 	15,
+	["mana"] = 	13,
+	["mana_max"] = 	13,
 	["fail"] = 	10,
 	["spell"] = 	function()
-			local status_ailments = 1024
-			--hacks to cure effects same as potions would
-			--if get_level(Ind, HEALING, 50) >= 24 then
-			--	status_ailments = status_ailments + 8192 + 4096 + 2048
-			--elseif get_level(Ind, HEALING, 50) >= 10 then
-			--	status_ailments = status_ailments + 4096 + 2048
-			--elseif get_level(Ind, HEALING, 50) >= 4 then
-			--	status_ailments = status_ailments + 2048
-			--end
-
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(1), 1, "")
---			hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(1), 1, "")
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents(1).."% (max "..get_healing_cap(1)..") = "..get_healing_power(1)
@@ -93,22 +75,11 @@ HEALING_II = add_spell {
 	["name"] = 	"Healing II",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	20,
-	["mana"] = 	40,
-	["mana_max"] = 	40,
+	["mana"] = 	28,
+	["mana_max"] = 	28,
 	["fail"] = 	-30,
 	["spell"] = 	function()
-			local status_ailments = 1024
-			--hacks to cure effects same as potions would
-			--if get_level(Ind, HEALING, 50) >= 24 then
-			--	status_ailments = status_ailments + 8192 + 4096 + 2048
-			--elseif get_level(Ind, HEALING, 50) >= 10 then
-			--	status_ailments = status_ailments + 4096 + 2048
-			--elseif get_level(Ind, HEALING, 50) >= 4 then
-			--	status_ailments = status_ailments + 2048
-			--end
-
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(15), 1, "")
---			hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(15), 1, "")
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents(15).."% (max "..get_healing_cap(15)..") = "..get_healing_power(15)
@@ -122,22 +93,11 @@ HEALING_III = add_spell {
 	["name"] = 	"Healing III",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	40,
-	["mana"] = 	120,
-	["mana_max"] = 	120,
+	["mana"] = 	80,
+	["mana_max"] = 	80,
 	["fail"] = 	-70,
 	["spell"] = 	function()
-			local status_ailments = 1024
-			--hacks to cure effects same as potions would
-			--if get_level(Ind, HEALING, 50) >= 24 then
-			--	status_ailments = status_ailments + 8192 + 4096 + 2048
-			--elseif get_level(Ind, HEALING, 50) >= 10 then
-			--	status_ailments = status_ailments + 4096 + 2048
-			--elseif get_level(Ind, HEALING, 50) >= 4 then
-			--	status_ailments = status_ailments + 2048
-			--end
-
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power(0), 1, "")
---			hp_player(Ind, get_healing_power(0)) <- doesn't give a neat msg with numbers
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(0), 1, "")
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents(0).."% (max "..get_healing_cap(0)..") = "..get_healing_power(0)
@@ -239,7 +199,7 @@ VERMINCONTROL = add_spell {
 
 RESISTS_I = add_spell {
 	["name"] = 	"Elemental Shield I",
---	["school"] = 	SCHOOL_NATURE,
+	--["school"] = 	SCHOOL_NATURE,
 	["school"] = 	{SCHOOL_FIRE,SCHOOL_WATER},
 	["level"] = 	15,
 	["mana"] = 	10,
@@ -261,7 +221,7 @@ RESISTS_I = add_spell {
 }
 RESISTS_II = add_spell {
 	["name"] = 	"Elemental Shield II",
---	["school"] = 	SCHOOL_NATURE,
+	--["school"] = 	SCHOOL_NATURE,
 	["school"] = 	{SCHOOL_FIRE,SCHOOL_WATER,SCHOOL_AIR,SCHOOL_EARTH},
 	["level"] = 	20,
 	["mana"] = 	20,

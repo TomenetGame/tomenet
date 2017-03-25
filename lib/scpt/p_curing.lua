@@ -12,13 +12,7 @@ function get_healing_percents2(limit_lev)
 end
 function get_healing_cap2(limit_lev)
 	local pow
-	--pow = get_level(Ind, HHEALING_I, 417)
 
-	--new method, part 1/2:
-	--pow = (get_level(Ind, HHEALING_I, 417) * (get_level(Ind, HHEALING_I, 417) + 209)) / 609
-	--pow = pow + 121 - ((get_level(Ind, HHEALING_I, 10) + 10) * (get_level(Ind, HHEALING_I, 10) + 10))
-
-	--pow = ((10 + get_level(Ind, HHEALING_I, 417)) * (get_level(Ind, HHEALING_I, 417) + 209)) / 1560
 	pow = ((10 + get_level(Ind, HHEALING_I, 417)) * (get_level(Ind, HHEALING_I, 417) + 209)) / 1562 + 1
 	--avoid cubics, the limit_lev stuff is already bad enough :-p kicks in around 60-70 in tier I
 	--pow = pow / (1 + (5 / (2 + get_level(Ind, HHEALING_I, 50))))
@@ -30,7 +24,6 @@ function get_healing_cap2(limit_lev)
 		end
 	end
 
-	--new method, part 2/2:
 	pow = (pow * 5) / 2
 
 	if pow > 400 then
@@ -79,18 +72,11 @@ HCUREWOUNDS_I = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			local status_ailments, hd, pow
-
-			status_ailments = 0
-			--hacks to cure effects same as potions would
-			--if get_level(Ind, HCUREWOUNDS_I, 50) >= 9 then
-			--	status_ailments = status_ailments + 2048
-			--end
-
+			local hd, pow
 			hd = get_level(Ind, HCUREWOUNDS_I, 18)
 			if (hd > 9) then hd = 9 end
 			pow = damroll(hd, 8)
-			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + pow, " points at your wounds.")
+			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, pow, " points at your wounds.")
 	end,
 	["info"] = 	function()
 			local hd
@@ -102,7 +88,6 @@ HCUREWOUNDS_I = add_spell {
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target.",
 		"Caps at 9d8 (same as potion of cure critical wounds).",
-		--"Also cures blindness and cuts at level 9.",
 	}
 }
 --cure critical wounds
@@ -118,20 +103,11 @@ HCUREWOUNDS_II = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			local status_ailments, hd, pow
-			status_ailments = 0
-
-			--hacks to cure effects same as potions would
-			--if get_level(Ind, HCUREWOUNDS_II, 50) >= 9 then
-			--	status_ailments = status_ailments + 8192 + 4096 + 2048
-			--else
-			--	status_ailments = status_ailments + 4096 + 2048
-			--end
-
+			local hd, pow
 			hd = get_level(Ind, HCUREWOUNDS_I, 27) + 1
 			if (hd > 14) then hd = 14 end
 			pow = damroll(hd, 8)
-			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, status_ailments + pow, " points at your wounds.")
+			fire_grid_bolt(Ind, GF_HEAL_PLAYER, args.dir, pow, " points at your wounds.")
 	end,
 	["info"] = 	function()
 			local hd
@@ -143,8 +119,6 @@ HCUREWOUNDS_II = add_spell {
 	["desc"] = 	{
 		"Heals a certain amount of hitpoints of a friendly target.",
 		"Caps at 14d8 (same as potion of cure critical wounds).",
-		--"Also cures blindness, cuts and confusion.",
-		--"Also cures stun at level 9.",
 	}
 }
 
@@ -159,22 +133,13 @@ HHEALING_I = add_spell {
 	["fail"] = 	25,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			local status_ailments = 1024
-			--status_ailments = 1024
-			--hacks to cure effects same as potions would
-			--if get_level(Ind, HHEALING_I, 50) >= 10 then
-			--	status_ailments = status_ailments + 4096 + 2048
-			--elseif get_level(Ind, HHEALING_I, 50) >= 4 then
-			--	status_ailments = status_ailments + 2048
-			--end
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(8), 1, " points at your wounds.")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, 1024 + get_healing_power2(8), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents2(8).."% (max "..get_healing_cap2(8)..") = "..get_healing_power2(8)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
-		--"Also cures blindness and cuts at level 4 and confusion at level 10.",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
 		"***Automatically projecting***",
 	}
@@ -191,20 +156,13 @@ HHEALING_II = add_spell {
 	["fail"] = 	-38,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			local status_ailments = 1024
-			--status_ailments = 1024 + 2048 + 4096
-			--hacks to cure effects same as potions would
-			--if get_level(Ind, HHEALING_II, 50) >= 8 then
-			--	status_ailments = status_ailments + 8192
-			--end
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(20), 1, " points at your wounds.")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, 1024 + get_healing_power2(20), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents2(20).."% (max "..get_healing_cap2(20)..") = "..get_healing_power2(20)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
-		--"Also cures blindness, cuts and confusion and at level 8 stun too.",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
 		"***Automatically projecting***",
 	}
@@ -220,17 +178,13 @@ HHEALING_III = add_spell {
 	["fail"] = 	-87,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			local status_ailments = 1024
-			--hacks to cure effects same as potions would
-			--status_ailments = 1024 + 2048 + 4096 + 8192
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, status_ailments + get_healing_power2(0), 1, " points at your wounds.")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, 1024 + get_healing_power2(0), 1, " points at your wounds.")
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents2(0).."% (max "..get_healing_cap2(0)..") = "..get_healing_power2(0)
 	end,
 	["desc"] = 	{
 		"Heals a percentage of your hitpoints up to a spell level-dependent cap.",
-		--"Also cures blindness, cuts, confusion and stun.",
 		"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.", --requires +1024
 		"***Automatically projecting***",
 	}
@@ -376,9 +330,7 @@ HCURING_II = add_spell {
 	["mana_max"] = 	10,
 	["fail"] = 	0,
 	["stat"] = 	A_WIS,
-	-- Unaffected by blindness
 	["blind"] = 	FALSE,
-	-- Unaffected by confusion
 	--["confusion"] =	FALSE,
 	["spell"] = 	function()
 			if (player.food >= PY_FOOD_MAX) then
@@ -409,9 +361,7 @@ HCURING_III = add_spell {
 	["mana_max"] = 	25,
 	["fail"] = 	-31,
 	["stat"] = 	A_WIS,
-	-- Unaffected by blindness
 	["blind"] = 	FALSE,
-	-- Unaffected by confusion
 	["confusion"] =	FALSE,
 	["spell"] = 	function()
 			if (player.food >= PY_FOOD_MAX) then
@@ -463,45 +413,6 @@ HRESTORING = add_spell {
 			"***Automatically projecting***",
 	}
 }
-
---[[ old mind focus spell
-HSANITY = add_spell {
-	["name"] = 	"Mind Focus",
-	["school"] = 	{SCHOOL_HCURING},
-	["spell_power"] = 0,
-	["am"] = 	75,
-	["level"] = 	21,
-	["mana"] = 	50,
-	["mana_max"] = 	100,
-	["fail"] = 	50,
-	["stat"] = 	A_WIS,
-	["spell"] = 	function()
-			set_image(Ind, 0)
-			if get_level(Ind, HSANITY, 50) >= 20 then
-				if player.csane < (player.msane * 6 / 12) then
-					player.csane = (player.msane * 6 / 12)
-				end
-				fire_ball(Ind, GF_SANITY_PLAYER, 0, 6 * 2, 1, " waves over your eyes, murmuring some words.")
-			elseif get_level(Ind, HSANITY, 50) >= 10 then
-				if player.csane < (player.msane * 3 / 12) then
-					player.csane = (player.msane * 3 / 12)
-				end
-				fire_ball(Ind, GF_SANITY_PLAYER, 0, 3 * 2, 1, " waves over your eyes, murmuring some words.")
-			else
-				fire_ball(Ind, GF_SANITY_PLAYER, 0, 0, 1, " waves over your eyes.")
-			end
-			end,
-	["info"] = 	function()
-			return ""
-			end,
-	["desc"] = 	{
-			"Frees your mind from hallucinations",
-			"At level 10 it slightly cures very bad insanity",
-			"At level 20 it fairly cures very bad insanity",
-			"***Automatically projecting***",
-	}
-}
-]]
 
 -- the new mind focus spell - mikaelh
 -- effect ranges from a light SN potion at level 21 to a serious SN potion at level 50
