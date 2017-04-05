@@ -4414,7 +4414,7 @@ bool merchant_mail_carry(int Ind, int i) {
 			msg_print(Ind, "\374\377yYou currently have no room in your inventory to receive a shipment!");
 			return FALSE;
 		}
-		msg_format(NumPlayers, "\374\377yThe accountant hands you a package from %s!", mail_sender[i]);
+		msg_format(Ind, "\374\377yThe accountant hands you a package from %s!", mail_sender[i]);
 		slot = inven_carry(Ind, &mail_forge[i]);
 		object_desc(Ind, o_name, &mail_forge[i], TRUE, 3);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
