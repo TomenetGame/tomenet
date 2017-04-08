@@ -797,6 +797,9 @@ static void rd_item(object_type *o_ptr) {
 
 	/* fix armour ruined by formerly buggy code */
 	if (is_armour(o_ptr->tval) && (o_ptr->level < 0 || o_ptr->level > 200)) o_ptr->level = (k_info[o_ptr->k_idx].level + 1) / 2;
+	/* fix low level dsms etc */
+	if (is_armour(o_ptr->tval) && o_ptr->level && o_ptr->level <= 20 && k_info[o_ptr->k_idx].cost > 2000) determine_level_req(-9999, o_ptr);
+
 
 	/* anti-cheeze */
 	if (is_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level < 20) {
