@@ -5113,6 +5113,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Unlock chests */
 		case GF_KILL_TRAP:
 		//case GF_KILL_DOOR:
+		case GF_KILL_TRAP_DOOR:
 			/* Chests are noticed only if trapped or locked */
 			if (o_ptr->tval == TV_CHEST) {
 				/* Disarm/Unlock traps */
