@@ -3081,14 +3081,18 @@ void do_slash_cmd(int Ind, char *message) {
 		else if (prefix(message, "/info")) { /* set a personal info message - C. Blue */
 			char to_strip[80];
 			if (strlen(message2) > 6) {
+				if (p_ptr->info_msg[0]) msg_print(Ind, "Personal info message has been changed.");
+				else msg_print(Ind, "Personal info message has been set.");
 				strncpy(to_strip, message2 + 6, MAX_CHARS);
 				if (strlen(message2 + 6) >= MAX_CHARS) to_strip[MAX_CHARS - 1] = '\0';
 				else to_strip[strlen(message2 + 6)] = '\0';
 				strip_control_codes(p_ptr->info_msg, to_strip);
-				msg_print(Ind, "Personal info message has been changed.");
-			} else {
+			} else if (p_ptr->info_msg[0]) {
 				strcpy(p_ptr->info_msg, "");
 				msg_print(Ind, "Personal info message has been cleared.");
+			} else {
+				msg_print(Ind, "You haven't set any personal info text. Usage:  /info <text>");
+				msg_print(Ind, "If no text is given, any existing info text will be cleared.");
 			}
 			return;
 		}
