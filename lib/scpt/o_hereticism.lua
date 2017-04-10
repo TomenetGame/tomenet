@@ -60,6 +60,15 @@ ODELFEAR2 = add_spell {
 	["desc"] = 	{ "Removes the ignorant weakness that is fear, for a while.", }
 }
 
+function get_firebolt2_dam(Ind, limit_lev)
+	--return 5 + get_level(Ind, FIREBOLT, 25), 7 + get_level(Ind, FIREBOLT, 25) + 1
+	local lev
+
+	lev = get_level(Ind, OFIREBOLT_I, 50)
+	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
+
+	return 5 + ((lev * 3) / 5), 7 + (lev / 2) + 1
+end
 OFIREBOLT_I = add_spell {
 	["name"] = 	"Fire Bolt I",
 	["school"] = 	SCHOOL_OHERETICISM,
@@ -71,12 +80,12 @@ OFIREBOLT_I = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-			fire_bolt(Ind, GF_FIRE, args.dir, damroll(get_firebolt_dam(Ind, 1)), " casts a fire bolt for")
+			fire_bolt(Ind, GF_FIRE, args.dir, damroll(get_firebolt2_dam(Ind, 1)), " casts a fire bolt for")
 	end,
 	["info"] = 	function()
 			local x, y
 
-			x, y = get_firebolt_dam(Ind, 1)
+			x, y = get_firebolt2_dam(Ind, 1)
 			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Conjures up fire into a powerful bolt.", }
@@ -92,12 +101,12 @@ OFIREBOLT_II = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-			fire_bolt(Ind, GF_FIRE, args.dir, damroll(get_firebolt_dam(Ind, 15)), " casts a fire bolt for")
+			fire_bolt(Ind, GF_FIRE, args.dir, damroll(get_firebolt2_dam(Ind, 15)), " casts a fire bolt for")
 	end,
 	["info"] = 	function()
 			local x, y
 
-			x, y = get_firebolt_dam(Ind, 15)
+			x, y = get_firebolt2_dam(Ind, 15)
 			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Conjures up fire into a powerful bolt.", }
@@ -113,12 +122,12 @@ OFIREBOLT_III = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-			fire_bolt(Ind, GF_FIRE, args.dir, damroll(get_firebolt_dam(Ind, 0)), " casts a fire bolt for")
+			fire_bolt(Ind, GF_FIRE, args.dir, damroll(get_firebolt2_dam(Ind, 0)), " casts a fire bolt for")
 	end,
 	["info"] = 	function()
 			local x, y
 
-			x, y = get_firebolt_dam(Ind, 0)
+			x, y = get_firebolt2_dam(Ind, 0)
 			return "dam "..x.."d"..y
 	end,
 	["desc"] = 	{ "Conjures up fire into a powerful bolt.", }
