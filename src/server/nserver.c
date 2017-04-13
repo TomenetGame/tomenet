@@ -8988,7 +8988,7 @@ static int Receive_activate_skill(int ind) {
 				if (p_ptr->shoot_till_kill && dir == 5) p_ptr->shooty_till_kill = TRUE;
 				do_cmd_mimic(player, spell, dir);
 				p_ptr->shooty_till_kill = FALSE;
-			}
+			} else msg_print(player, "\377yYou cannot control your form.");
 			break;
 
 		case MKEY_DODGE:

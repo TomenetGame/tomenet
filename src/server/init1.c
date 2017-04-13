@@ -3245,8 +3245,11 @@ errr init_s_info_txt(FILE *fp, char *buf) {
 			s2 = find_skill(sec);
 			if ((s1 == -1) || (s2 == -1)) return (1);
 
-			s_info[s1].action[s2] = SKILL_EXCLUSIVE;
-			s_info[s2].action[s1] = SKILL_EXCLUSIVE;
+			/* Actually have it only one-way. If two-way is needed, just define the opposite way too in s_info.
+			   Reason: Anti-magic should disable Mimicry (and all other magic), but Mimicry shouldn't outright disable Anti-magic.
+			           At least for now, specifically to keep open the option of having an anti-magic one-time transformer mimic.. */
+			//s_info[s1].action[s2] = SKILL_EXCLUSIVE; // s_info syntax: 'E:x disables y'
+			s_info[s2].action[s1] = SKILL_EXCLUSIVE; // s_info syntax: 'E:x is disabled by y'
 
 			/* Next... */
 			continue;

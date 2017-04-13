@@ -700,8 +700,14 @@ static void increase_related_skills(int Ind, int i, bool quiet) {
 
 		/* Exclusive skills */
 		if (s_info[i].action[j] == SKILL_EXCLUSIVE) {
-			/* Turn it off */
-			p_ptr->s_info[j].value = 0;
+			if (p_ptr->s_info[j].value || p_ptr->s_info[j].mod) {
+				/* Turn it off */
+				p_ptr->s_info[j].value = 0;
+				p_ptr->s_info[j].mod = 0;
+
+				/* always send, even if 'quiet' */
+				Send_skill_info(Ind, j, TRUE);
+			}
 		}
 
 		/* Non-exclusive skills */

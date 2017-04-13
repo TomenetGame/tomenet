@@ -606,6 +606,7 @@ f:Axe-mastery:Weaponmastery%15
 f:Polearm-mastery:Weaponmastery%15
 f:Blunt-mastery:Weaponmastery%15
 
+
 # Ranged: Specific masteries improve generic mastery
 #new feature: archery gives special abilities. -> reducing synergies
 #f:Sling-mastery:Archery%25
@@ -619,6 +620,7 @@ f:Crossbow-mastery:Archery%15
 #f:Hunting Lore:Archery%5
 #f:Ricochet:Archery%15
 #f:Sling-mastery:Ricochet%25
+
 
 # All combat skills improve Combat
 #f:Weaponmastery:Combat%50
@@ -646,6 +648,7 @@ f:Martial Arts:Combat%20
 #f:Ricochet:Combat%7
 #f:Fighting Technique:Combat%25
 
+
 # Sorcery and Weaponmastery arent exactly friendly to each other
 O:Sorcery:Weaponmastery%100
 O:Sorcery:Archery%100
@@ -653,6 +656,7 @@ O:Sorcery:Martial Arts%100
 O:Weaponmastery:Sorcery%100
 O:Archery:Sorcery%100
 O:Martial Arts:Sorcery%100
+
 
 # All magic skills affect magic skill
 f:Magic device:Magic%7
@@ -670,7 +674,9 @@ f:Temporal:Magic%10
 f:Meta:Magic%10
 f:Mind:Magic%10
 f:Udun:Magic%10
+
 f:Mimicry:Magic%7
+
 #f:Demonology:Magic%10
 #f:Necromancy:Magic%4
 #f:Thaumaturgy:Magic%6
@@ -683,9 +689,84 @@ f:Mimicry:Magic%7
 #f:Revelation:Prayer%10
 #f:Revelation:Magic%5
 
+
 # Anti-magic exclude all magic
-E:Magic device:Anti-magic
+
+E:Magic:Anti-magic
+
+E:Wizardry:Anti-magic
+#E:Spell-learning:Anti-magic
+#E:Spell-power:Anti-magic
+E:Prayers:Anti-magic
+E:Druidism:Anti-magic
+$ENABLE_MCRAFT$E:Mindcraft:Anti-magic
+$ENABLE_OCCULT$E:Occultism:Anti-magic
+E:Runecraft:Anti-magic
+$ENABLE_MAIA$E:Astral Knowledge:Anti-magic
+E:Blood Magic:Anti-magic
+
 E:Sorcery:Anti-magic
+E:Mana:Anti-magic
+E:Fire:Anti-magic
+E:Water:Anti-magic
+E:Air:Anti-magic
+E:Earth:Anti-magic
+E:Nature:Anti-magic
+E:Conveyance:Anti-magic
+E:Divination:Anti-magic
+E:Temporal:Anti-magic
+E:Udun:Anti-magic
+E:Mind:Anti-magic
+E:Meta:Anti-magic
+E:Spell-power:Anti-magic
+
+#E:Demonology:Anti-magic
+#E:Necromancy:Anti-magic
+#E:Thaumaturgy:Anti-magic
+#E:Alchemy:Anti-magic
+
+E:Holy Offense:Anti-magic
+E:Holy Defense:Anti-magic
+E:Holy Curing:Anti-magic
+E:Holy Support:Anti-magic
+
+E:Arcane Lore:Anti-magic
+E:Physical Lore:Anti-magic
+
+$ENABLE_MCRAFT$E:Psycho-power:Anti-magic
+$ENABLE_MCRAFT$E:Attunement:Anti-magic
+$ENABLE_MCRAFT$E:Mental Intrusion:Anti-magic
+
+$ENABLE_OCCULT$E:Shadow:Anti-magic
+$ENABLE_OCCULT$E:Spirit:Anti-magic
+$ENABLE_OHERETICISM$E:Hereticism:Anti-magic
+
+E:Light:Anti-magic
+E:Darkness:Anti-magic
+E:Nexus:Anti-magic
+E:Nether:Anti-magic
+E:Chaos:Anti-magic
+E:Mana :Anti-magic
+
+#E:Spirituality:Anti-magic
+#E:Prayer:Anti-magic
+#E:Druidistic:Anti-magic
+#E:Mindcraft:Anti-magic
+#E:Music:Anti-magic
+
+#E:Aura power:Anti-magic
+E:Necromancy:Anti-magic
+E:Traumaturgy:Anti-magic
+E:Aura of Fear:Anti-magic
+E:Shivering Aura:Anti-magic
+E:Aura of Death:Anti-magic
+
+E:Magic device:Anti-magic
+
+#Implications if Mimicry is disabled by anti-magic:
+#-cannot learn new forms
+#-doesn't gain extra mana from mimicry skill (which doesn't matter as he cannot use mana)
+#-cannot change preferred immunity anymore
 E:Mimicry:Anti-magic
 
 ##E:Casting-speed:Anti-magic
@@ -695,6 +776,7 @@ E:Mimicry:Anti-magic
 #E:Prayer:Anti-magic
 ##E:Revelation:Anti-magic
 #E:Hunting Lore:Anti-magic
+
 
 f:Holy Offense:Magic%10
 f:Holy Defense:Magic%10
@@ -713,6 +795,7 @@ $ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 
 $ENABLE_OCCULT$f:Shadow:Magic%10
 $ENABLE_OCCULT$f:Spirit:Magic%10
+$ENABLE_HERETICISM$f:Hereticism:Magic%10
 
 f:Light:Magic%15
 f:Darkness:Magic%15
