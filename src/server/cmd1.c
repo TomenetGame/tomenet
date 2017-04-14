@@ -5405,6 +5405,7 @@ bool do_prob_travel(int Ind, int dir) {
 		zcave[oy][ox].m_idx = 0;
 		zcave[y][x].m_idx = 0 - Ind;
 		cave_midx_debug(wpos, y, x, -Ind);
+		grid_affects_player(Ind, ox, oy);
 
 		/* Redraw new spot */
 		everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);

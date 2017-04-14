@@ -5570,6 +5570,8 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 					/* Redraw the new spot */
 					everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
 
+					grid_affects_player(Ind, ox, oy);
+
 					/* Check for new panel */
 					verify_panel(Ind);
 				}
@@ -6647,6 +6649,8 @@ bool swap_position(int Ind, int lty, int ltx){
 
 		/* Redraw new grid */
 		everyone_lite_spot(wpos, lty, ltx);
+
+		grid_affects_player(Ind, tx, ty);
 
 		if (Ind2) verify_panel(Ind2);
 		if (q_ptr) {
