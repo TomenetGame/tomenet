@@ -8284,7 +8284,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 				/* Update the old monster */
 				update_mon(c_ptr->m_idx, TRUE);
-			} else if (c_ptr->m_idx < 0) { /* SHOULD HAPPEN ONLY FOR PETS --happened by MOVE_BODY to a player */
+			} else if (c_ptr->m_idx < 0) { /* caused by MOVE_BODY to a player */
 				player_type *q_ptr = Players[0 - c_ptr->m_idx];
 				char m_name[MNAME_LEN];
 
@@ -8300,8 +8300,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				update_player(0 - c_ptr->m_idx);
 				msg_format(0 - c_ptr->m_idx, "\377y%^s switches place with you!", m_name);
 
+				/* Log this to be safe about MOVE_BODY code maybe not having been called as it should have been, which would be a bug.. */
+				s_printf("MOVE_BODY2: '%s' got switched by '%s'.\n", q_ptr->name, m_name);
+
 				stop_precision(0 - c_ptr->m_idx);
 				stop_shooting_till_kill(0 - c_ptr->m_idx);
+
+				grid_affects_player(0 - c_ptr->m_idx, ox, oy);
 			}
 			cave_midx_debug(wpos, oy, ox, c_ptr->m_idx);
 
