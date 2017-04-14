@@ -1181,6 +1181,7 @@ void teleport_player_to(int Ind, int ny, int nx) {
 			dis++;
 		}
 	}
+	if (!tries) return;
 
 	break_cloaking(Ind, 7);
 	stop_precision(Ind);
