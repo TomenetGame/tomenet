@@ -8116,7 +8116,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			if (q_ptr && !q_ptr->admin_invinc) {
 				/* Push past weaker players (unless leaving a wall) */
 				if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
-//				    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
+				    //(cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
 				    (cave_floor_bold(zcave, oy, ox)) &&
 				    magik(10) && !q_ptr->martyr &&
 				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5)))
