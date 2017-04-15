@@ -268,7 +268,7 @@ LEVITATION = add_spell {
 	["level"] = 	39,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	70,
+	["fail"] = 	-70,
 	["spell"] = 	function()
 			set_tim_lev(Ind, randint(10) + 5 + get_level(Ind, LEVITATION, 25))
 	end,
@@ -326,8 +326,8 @@ BLOODSACRIFICE = add_spell {
 	["am"] = 	75,
 	["spell_power"] = 0,
 	["level"] = 	45,
-	["mana"] = 	70,
-	["mana_max"] = 	70,
+	["mana"] = 	50,
+	["mana_max"] = 	50,
 	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
