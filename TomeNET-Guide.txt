@@ -13480,7 +13480,8 @@ create a character!):
         be enveloped in a fiery aura.
         Able to take off lightly cursed items.
 
-        The four holy schools and Spirit become disabled.
+        The four holy schools and Spirit become disabled,
+        priests and paladins also get the four holy schools reset.
         Axe-mastery and Martial Arts skill x 1.3.
         Priests only: Sword-mastery x 1.3.
         Priests and Paladins get Blunt-mastery reset and disabled.
