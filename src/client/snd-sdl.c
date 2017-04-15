@@ -2152,7 +2152,7 @@ void do_cmd_options_sfx_sdl(void) {
 		/* Display the events */
 		for (i = y - 10 ; i <= y + 10 ; i++) {
 			if (i < 0 || i >= audio_sfx) {
-				Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                          ");
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                          ");
 				continue;
 			}
 
@@ -2180,12 +2180,13 @@ void do_cmd_options_sfx_sdl(void) {
 				a2 = TERM_YELLOW;
 			}
 
-			Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, a2, format("%3d", i + 1));
-			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                ");
+			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d", i + 1));
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                                   ");
 			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 			if (j == weather_current || j == ambient_current) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
-				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%s    (playing)", (char*)lua_name));
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
+				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-40s  (playing)", (char*)lua_name));
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 		}
@@ -2432,7 +2433,7 @@ void do_cmd_options_mus_sdl(void) {
 		/* Display the events */
 		for (i = y - 10 ; i <= y + 10 ; i++) {
 			if (i < 0 || i >= audio_music) {
-				Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                          ");
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, TERM_WHITE, "                                                          ");
 				continue;
 			}
 
@@ -2460,11 +2461,12 @@ void do_cmd_options_mus_sdl(void) {
 				a2 = TERM_YELLOW;
 			}
 
-			Term_putstr(horiz_offset + 7, vertikal_offset + i + 10 - y, -1, a2, format("%3d", i + 1));
-			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                ");
+			Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a2, format("  %3d", i + 1));
+			Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, "                                                   ");
 			if (j == music_cur) {
 				if (a != TERM_L_DARK) a = TERM_L_GREEN;
-				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%s    (playing)", (char*)lua_name));
+				Term_putstr(horiz_offset + 5, vertikal_offset + i + 10 - y, -1, a, "*");
+				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-40s  (playing)", (char*)lua_name));
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 		}
