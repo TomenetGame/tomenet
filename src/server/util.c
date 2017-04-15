@@ -2078,7 +2078,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 
 /* play single ambient sfx, synched for all players, depending on worldmap terrain - C. Blue */
 void process_ambient_sfx(void) {
-	int i, vol;
+	int i, vol, typ = -1;
 	player_type *p_ptr;
 	wilderness_type *w_ptr;
 
@@ -2104,7 +2104,25 @@ void process_ambient_sfx(void) {
 		vol = 25 + rand_int(75);
 		//if (!rand_int(6)) vol = 100;
 
-		switch (w_ptr->type) { /* ---- ensure consistency with alloc_dungeon_level() ---- */
+#ifdef TEST_SERVER
+		/* hack for towns: allow some ambient sfx here too! */
+		if (w_ptr->type == WILD_TOWN)
+			switch (town[w_ptr->town_idx].type) {
+			case TOWN_BREE: typ = WILD_FOREST; break; //WILD_GRASSLAND
+			case TOWN_GONDOLIN: typ = WILD_GRASSLAND; break;
+			case TOWN_MINAS_ANOR: typ = WILD_MOUNTAIN; break;
+			case TOWN_LOTHLORIEN: typ = WILD_FOREST; break; //WILD_OCEAN
+			case TOWN_KHAZADDUM: typ = WILD_MOUNTAIN; break; //WILD_VOLCANO
+			default:
+			case TOWN_VANILLA: typ = -1; break;
+			//TODO: actually keep terrain type of a wilderness town, instead of just overwriting w_ptr->type with WILD_TOWN;
+			//having w_ptr->town_idx should be enough to determine that a sector is a town.
+			}
+		else
+#endif
+			typ = w_ptr->type;
+
+		switch (typ) { /* ---- ensure consistency with alloc_dungeon_level() ---- */
 		case WILD_RIVER:
 		case WILD_LAKE:
 		case WILD_SWAMP:
