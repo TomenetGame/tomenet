@@ -15832,6 +15832,7 @@ school.
                     Required skill level for first spell level: 7.
 
     Fire Bolt       Conjures up fire into a powerful bolt.
+                    (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 10.
 
     Wrathflame      It temporarily brands your melee weapons with fire.
@@ -15842,6 +15843,7 @@ school.
     Flame Wave      Eradicates critters beneath your notice that dare trifle
                     with you, by emitting a flamewave that expands into all
                     directions.
+                    (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 20.
 
     Demonic Strength
@@ -15856,9 +15858,11 @@ school.
                     Required skill level for first spell level: 35.
 
     Levitation      Grants the power of levitation.
+                    (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 39.
 
     Robes of Havoc  Envelops you in hellfire, burning your opponents to ashes.
+                    (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 42.
 
     Blood Sacrifice
@@ -16695,7 +16699,8 @@ Magic schools:
 Prayer schools:
     All holy spells depend on the spell level and your wisdom.
 Occult schools:
-    Some shadow and most spirit spells use wisdom, the others intelligence.
+    Some shadow and most spirit and hereticism spells use wisdom, the others
+    intelligence.
 Mindcraft schools:
     All mind spells depend on the spell level and your intelligence,
     except for 'Charm' which uses charisma.
