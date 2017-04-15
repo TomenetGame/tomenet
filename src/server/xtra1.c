@@ -9074,7 +9074,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		owner_type *ot_ptr;
 		s64b price;
 		object_type forge;
-		char o_name[ONAME_LEN];
+		char o_name[ONAME_LEN], o_name2[ONAME_LEN];
 		bool old_rand;
 		u32b tmp_seed;
 
@@ -9084,6 +9084,17 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			else
 				msg_format(Ind, "\377yYou still have an order open at the %s in %s!",
 				    st_name + st_info[p_ptr->item_order_store - 1].name, town_profile[town[p_ptr->item_order_town].type].name);
+			return;
+		}
+
+		/* failure, not in an npc-store */
+		if (p_ptr->store_num < 0) {
+			msg_print(Ind, "Sorry, I don't take orders.");
+			return;
+		}
+		/* failure, not a simple town store */
+		if (p_ptr->store_num > STORE_MAGIC && p_ptr->store_num != STORE_BOOK && p_ptr->store_num != STORE_RUNE) {
+			msg_print(Ind, "Sorry, I don't take orders.");
 			return;
 		}
 
@@ -9127,17 +9138,6 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		}
 
 		strcpy(str, str2ptr);
-
-		/* failure, not in an npc-store */
-		if (p_ptr->store_num < 0) {
-			msg_print(Ind, "Sorry, I don't take orders.");
-			return;
-		}
-		/* failure, not a simple town store */
-		if (p_ptr->store_num > STORE_MAGIC && p_ptr->store_num != STORE_BOOK && p_ptr->store_num != STORE_RUNE) {
-			msg_print(Ind, "Sorry, I don't take orders.");
-			return;
-		}
 
 		/* hack: allow ordering very specific spell scrolls */
 		strncpy(str2, str, 40);
@@ -9201,18 +9201,44 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			extra = i;
 		}
 
-		/* failure, item does not exist in the game */
+		/* check for failure, if item does not exist in the game */
 		for (i = 1; i < max_k_idx; i++) {
 			invcopy(&forge, i);
 			forge.number = num; //hack: make item name match player input for plural (num > 1)
 			object_desc(0, o_name, &forge, FALSE, 256);
 			if (!o_name[0] || o_name[0] == ' ') continue;
 			if (!strcmp(o_name, "(nothing)")) continue;
+			/* generated scrolls always have pval 0 (MANATHRUST), so special check is needed:
+			   Don't compare the actual spell for now, just the base item type (spell scroll/crystal). */
+			if (*str2 && strstr(o_name, " of Manathrust") && extra != -1) o_name[strlen(str)] = 0;
+			/* Our item? */
 			if (!strcasecmp(o_name, str)) break;
-			/* generated scrolls always have pval 0 (MANATHRUST), so special check is needed.
-			   Also note that we omit the 'Spell scroll' part because we're not sure if it's singular or plural. */
-			if (strstr(o_name, " of Manathrust") && extra != -1) break;
+
+			/* extra: if someone just entered the plural form of the name but didn't specify an actual number,
+			   'num' is wrongly still '1' here and we don't know how many he actually wants..
+			   Catch that here and ask him how many: */
+			if (num == 1) {
+				forge.number = 2;
+				object_desc(0, o_name, &forge, FALSE, 256);
+				if (*str2 && strstr(o_name, " of Manathrust") && extra != -1) o_name[strlen(str)] = 0;
+				if (!strcasecmp(o_name, str)) {
+					msg_print(Ind, "Well, so how many exactly do you want?");
+					return;
+				}
+			}
+
+			/* silly: if someone specifically wanted more than one, but gave the singular form.. :-p */
+			if (num > 1) {
+				forge.number = 1;
+				object_desc(0, o_name2, &forge, FALSE, 256);
+				if (*str2 && strstr(o_name2, " of Manathrust") && extra != -1) o_name2[strlen(str)] = 0;
+				if (!strcasecmp(o_name2, str)) {
+					msg_format(Ind, "Did you mean to say \"%s\" if you wanted more than one?", o_name);
+					return;
+				}
+			}
 		}
+		/* ..it didn't exist - failure (except for QoL hack below, for a second chance in specific shops) */
 		if (i == max_k_idx) {
 #if 1 /* quality of life: for specific stores, no need to type the whole (always same) item name. */
 			/* assume player maybe just entered a spell name, if this is the bookstore. */
