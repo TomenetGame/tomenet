@@ -2316,7 +2316,7 @@ void do_cmd_options_sfx_sdl(void) {
 			cmd_message();
 			break;
 
-		case 't':
+		case 't': case ' ':
 			samples[j_sel].disabled = !samples[j_sel].disabled;
 			if (samples[j_sel].disabled) {
 				if (j_sel == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
@@ -2594,7 +2594,7 @@ void do_cmd_options_mus_sdl(void) {
 			cmd_message();
 			break;
 
-		case 't':
+		case 't': case ' ':
 			songs[j_sel].disabled = !songs[j_sel].disabled;
 			if (songs[j_sel].disabled) {
 				if (music_cur == j_sel && Mix_PlayingMusic()) Mix_HaltMusic();
