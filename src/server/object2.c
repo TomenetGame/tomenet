@@ -10933,6 +10933,7 @@ bool anti_undead(object_type *o_ptr) {
 	/* powerful lights and anti-undead/evil items damage vampires */
 	if (l) { /* light sources, or other items that provide light */
 		if ((l > 2) || o_ptr->name1 || (f3 & TR3_BLESSED) ||
+		    (f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
 		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD))
 			return(TRUE);
 	} else {
@@ -10943,7 +10944,9 @@ bool anti_undead(object_type *o_ptr) {
 	return(FALSE);
 }
 #ifdef ENABLE_HELLKNIGHT
-/* Check whether an item causes HP drain on a demonic player (hell knight) who wears/wields it */
+/* Check whether an item causes HP drain on a demonic player (hell knight) who wears/wields it.
+   Less strict than anti_undead(), since Vampires aren't really supposed to wear any light,
+   while for hell knights they don't have any intrinsic light source! */
 bool anti_demon(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
@@ -10965,9 +10968,10 @@ bool anti_demon(object_type *o_ptr) {
 	if (f4 & TR4_LITE3) l += 3;
 	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
 
-	/* powerful lights and anti-undead/evil items damage vampires */
+	/* powerful lights and anti-demon/evil items damage hell knights */
 	if (l) { /* light sources, or other items that provide light */
-		if ((l > 2) || o_ptr->name1 || (f3 & TR3_BLESSED) ||
+		if ((f3 & TR3_BLESSED) ||
+		    (f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
 		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON))
 			return(TRUE);
 	} else {
