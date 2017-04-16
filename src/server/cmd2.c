@@ -4266,12 +4266,18 @@ void do_cmd_bash(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* Message */
-//			msg_print(Ind, "There is a monster in the way!");
+			//msg_print(Ind, "There is a monster in the way!");
 
-			/* Attack */
+			/* Attack with all BpR */
 			py_attack(Ind, y, x, TRUE);
 		}
-
+		/* Player in the way */
+		else if (c_ptr->m_idx < 0 && cfg.use_pk_rules != PK_RULES_NEVER && check_hostile(Ind, -c_ptr->m_idx)) {
+			/* Take a turn */
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			/* Attack with all BpR */
+			py_attack(Ind, y, x, TRUE);
+		}
 		/* Nothing useful */
 		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 		    (c_ptr->feat <= FEAT_DOOR_TAIL)) &&
