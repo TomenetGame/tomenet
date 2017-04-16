@@ -6164,11 +6164,32 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			(void)set_tim_wraith(Ind, 50 + rand_int(11));
 			break;
 		case ART_PHASING:
+			/* Don't escape ironman/no-tele situations this way */
 			if (p_ptr->wpos.wz) {
-				msg_print(Ind, "There are some flashes of light around you for a moment!");
-				o_ptr->recharging = 25;
-				break;
+				cave_type **zcave = getcave(&p_ptr->wpos);
+				dun_level *l_ptr = getfloor(&p_ptr->wpos);
+				struct dungeon_type *d_ptr;
+				d_ptr = getdungeon(&p_ptr->wpos);
+
+				if (((d_ptr->flags2 & DF2_IRON || d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
+				    (d_ptr->flags1 & DF1_NO_RECALL)) {
+					if (!(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL)) {
+						msg_print(Ind, "There are some flashes of light around you for a moment!");
+						o_ptr->recharging = 25;
+						break;
+					}
+				}
+				if (((p_ptr->anti_tele ||
+				    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px))
+				     && !(l_ptr && (l_ptr->flags2 & LF2_NO_TELE))) ||
+				    p_ptr->store_num != -1 ||
+				    (zcave && zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) {
+					msg_print(Ind, "There are some flashes of light around you for a moment!");
+					o_ptr->recharging = 25;
+					break;
+				}
 			}
+
 			msg_print(Ind, "Your surroundings fade.. you are carried away through a tunnel of light!");
 			//msg_print(Ind, "You hear a voice, saying 'Sorry, not yet implemented!'");
 			o_ptr->recharging = 1000;
