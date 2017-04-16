@@ -6164,6 +6164,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			(void)set_tim_wraith(Ind, 50 + rand_int(11));
 			break;
 		case ART_PHASING:
+			if (p_ptr->wpos.wz) {
+				msg_print(Ind, "There are some flashes of light around you for a moment!");
+				o_ptr->recharging = 25;
+				break;
+			}
 			msg_print(Ind, "Your surroundings fade.. you are carried away through a tunnel of light!");
 			//msg_print(Ind, "You hear a voice, saying 'Sorry, not yet implemented!'");
 			o_ptr->recharging = 1000;
