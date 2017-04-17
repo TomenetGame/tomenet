@@ -6904,6 +6904,7 @@ feeling as soon as you are about to enter the vault:
                                         change from the normal theme of that
                                         dungeon to the same music played on
                                         'terrifying' levels, for easier notice.
+                                        (Morgoth's music will not change.)
 
 As soon as you leave such a no-teleport-vault you'll receive this feeling:
   "Fresh air greets you as you leave the vault."
@@ -7987,9 +7988,9 @@ In general for all teleportation attempts, these are:
  dungeon).
 -Trying to teleport in a local no-teleport area.
  When you enter such an area (no-tele vaults) you will see a message in dark
- grey, saying "The air in here feels very still". Music will change too, and
- your speed and worldmap indicator will change colour to grey, to catch your
- attention.
+ grey, saying "The air in here feels very still". Music will change too in most
+ cases (Morgoth's music will not change), and your speed and worldmap indicator
+ will change colour to grey, to catch your attention.
  When you try to teleport you will get a message in bright red, saying:
  "This location suppresses teleportation!"
 -Trying to teleport while having equipped an amulet of anti-teleportation or
