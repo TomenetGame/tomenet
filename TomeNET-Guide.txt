@@ -7808,6 +7808,7 @@ Three time systems are relevant for the players' game experience:
  When NPCs inform you about anything time related, they will do so in in-game
  time, effectively speaking to your character, not to you as a player.
  In-game time passes much faster than real-time (see below).
+ This time also controls day/night changes.
 
 -in-game 'turns' (the /ex command tells you how fast you can move, ie how much
                  you can move each turn)
