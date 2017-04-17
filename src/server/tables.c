@@ -5206,5 +5206,14 @@ byte mtech_lev[MAX_CLASS][16] = {
 	{5,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//druid
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//shaman
 	{4,	6,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//runemaster
-	{0,	8,	0,	12,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0}	//mindcrafter
+	{0,	8,	0,	12,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//mindcrafter
+#ifdef ENABLE_DEATHKNIGHT
+	{5,	9,	0,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//death knight
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	{5,	9,	0,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0},	//hell knight
+#endif
+#ifdef ENABLE_CPRIEST
+	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//corrupted priest
+#endif
 };
