@@ -12404,6 +12404,16 @@ Note that not every skill is available to every profession (class).
                                 high as the monster level.
                                 Necromancy has no effect on undead and
                                 nonliving monsters.
+
+                                (Don't confuse Necromancy with vampirism:
+                                Necromancy drains from the monster's soul on
+                                its actual death, while any vampiric effects
+                                your character might have drain by simply
+                                hitting the monster. So vampirism will work
+                                fine in conjunction with Necromancy as they
+                                are different effects that don't overlap in
+                                any way.)
+
                                 At 50.000 the character gains ultimate hold
                                 on his life force, rendering him immune to
                                 experience drain.
