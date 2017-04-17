@@ -244,7 +244,7 @@ void world_comm(int fd, int arg) {
 				/* Allow certain status commands from IRC to TomeNET server */
 				if ((p = strchr(wpk->d.chat.ctxt, ']')) && *(p += 2) == '?') {
 					if (!strncmp(p, "?help", 5)) {
-						msg_to_irc("Bot commands are: ?players, ?who, ?seen.");
+						msg_to_irc("Bot commands are: ?help, ?players, ?who, ?seen.");
 						break;
 					}
 					/* list number + character names of players online */
