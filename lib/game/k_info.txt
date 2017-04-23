@@ -6124,7 +6124,7 @@ I:45:60:0
 W:30:0:2:1000
 A:30/1
 F:ACTIVATE | HIDE_TYPE | EASY_USE
-#D:Mimicry users can use this to transform.
+D:Those adept in mimicry can make use of this.
 
 N:811:& Magic Arrow~
 G:{:v
