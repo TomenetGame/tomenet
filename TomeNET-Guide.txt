@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. April 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 23. April 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4022,12 +4022,12 @@ a Chain Mail {0,+} (-2) [14,+0]
 
     Likewise, if you fight an acidic monster for example, the acid might damage
     your Chain Mail, and turn it into for example a Chain Mail [14,-2].
-    This Chain Mail only provides you with 12 AC. You can 'repair' it if you
-    want to, by buying 'Scrolls of enchant armour' from store 5 in town.
-    These will try to enchant a piece of armour, so if you are lucky you can
-    just use two of them on your armour and end up with a Chain Mail [14,+0]
-    again. Note that enchanting has a chance to fail, depending on how high
-    an item has been enchanted already.
+    This Chain Mail only provides you with 12 AC. You could 'repair' it 
+    by buying two 'Scrolls of enchant armour' from store 5 in town to enchant
+    it back to +0, but the cheaper way would be to use the 'repair' service
+    instead which is offered in the armoury (and also at the weaponsmith's).
+    Note that enchanting items by using scrolls to anything above +0 has a
+    chance to fail, depending on how high it has already been enchanted.
 
 a Long Sword {0,+} (2d6) (+0,+0)
     Again the {..} part is already know. What's new for all types of weapons is
@@ -5901,7 +5901,11 @@ Each town has several shops, displayed as numbers 1..9 and some '+'.
 The 1..9 are standard shops, namely..
 1       General Store   Sells food, lanterns, ammunition, cloaks and shrooms.
 2       Armoury         Offers various basic armour. Rarely excellent pieces.
+                        Also offers to repair damaged armour (which is cheaper
+                        than enchanting it).
 3       Weapon Shop     Offers various basic weapons. Rarely excellent pieces.
+                        Also offers to repair damaged weapons (which is cheaper
+                        than enchanting it).
 4       Temple          Player ghosts will be revived here, and receive some
                         money. The temple also sells a selection of blunt
                         weaponry, scrolls and potions.
@@ -8792,7 +8796,8 @@ Also, armour can be damaged by fire, acid or water, depending on its material.
 Items which ignore an element, resist it, or even provide immunity against it
 are unaffected by any attack of that type and won't take damage.
 Taking damage means that weapons will lose +dam enchantment, and armour will
-will lose +AC enchantment, so you can repair them again by reenchanting them.
+will lose +AC enchantment, so you can repair them again by either using the
+armoury's repair service or -in tougher cases- reenchanting them.
 If your character resists a specific element, the chance of any item getting
 damaged by it is reduced. Having double resistance will reduce it much further
 even.
