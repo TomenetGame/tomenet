@@ -829,6 +829,9 @@ static void rd_item(object_type *o_ptr) {
 	if (is_melee_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level == 20 && k_info[o_ptr->k_idx].cost > 1000)
 		determine_level_req(-9999, o_ptr);
 #endif
+
+	/* fix rods stuck in charging state (from recharge spell) */
+	if (o_ptr->tval == TV_ROD && !o_ptr->pval && o_ptr->bpval) o_ptr->bpval = 0;
 }
 
 
