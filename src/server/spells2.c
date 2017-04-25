@@ -4094,7 +4094,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 			/* Recharge by that amount */
 			if (o_ptr->pval > t) o_ptr->pval -= t;
 			/* Fully recharged */
-			else o_ptr->pval = 0;
+			else o_ptr->pval = o_ptr->bpval = 0;
 		}
 	}
 

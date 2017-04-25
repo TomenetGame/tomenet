@@ -2058,12 +2058,15 @@ bool do_cancellation(int Ind, int flags) {
 			else
 				o_ptr->timeout_magic = 0;
 		}
-		/* pval for potions is their nourishment value, so exempt them */
-		if (o_ptr->tval != TV_POTION && o_ptr->pval > 0) {
+
+		/* pval for potions is their nourishment value, for rods bpval and it are (dis)charge, so exempt them */
+		if (o_ptr->tval == TV_ROD || o_ptr->tval == TV_POTION) continue;
+
+		if (o_ptr->pval > 0) {
 			ident = TRUE;
 			o_ptr->pval = 0;
 		}
-		if (o_ptr->bpval) {
+		if (o_ptr->bpval > 0) {
 			ident = TRUE;
 			o_ptr->bpval = 0;
 		}

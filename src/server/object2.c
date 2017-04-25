@@ -5438,8 +5438,8 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 
 	/* Hack -- consider using 'timeout' inplace */
 	case TV_ROD:
-		/* Hack -- charge rods */
-		o_ptr->pval = 0;
+		/* Hack -- charge rods (should be redundant since init vals are 0ed anyway) */
+		o_ptr->pval = o_ptr->bpval = 0;
 		break;
 
 	case TV_SCROLL:
