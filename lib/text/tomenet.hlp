@@ -28,7 +28,7 @@ i  Inventory   I  Examine       .  Run                     switch chat mode
 j  Steal                        /  Use item        CTRL+I  Lagometer or
 k  Destroy     K  Force-stack   \{y:  Chat\{w                    switch chat mode
 l  Look        L  Locate (map)  ;  Walk            CTRL+O  Chat history
-m  Use skill   M  Show minimap  ?  Help            CTRL+P  All message history
+m  Use ability M  Show minimap  ?  Help            CTRL+P  All message history
 o  Open door                    \{y@  Player list\{w     CTRL+R  Redraw
 p  Open mind   \{yP  Party menu\{w    ~  Knowledge menu  CTRL+S  Spike
 q  Quaff       \{yQ  Suicide\{w       +  Dig             CTRL+T  Screenshot
