@@ -482,10 +482,9 @@ v       v       throw an item from your inventory.
 
 b       P       browse (peruse) a book.
 
-m       m       activate a skill (ie cast a magic spell, lay a trap, use an
-                ability, use a technique, polymorph into a monster form or
-                back to normal, cast a monster-spell while polymorphed,
-                enter a combat stance).
+m       m       use an ability/skill (ie cast a magic spell, lay a trap, use a
+                technique, polymorph into a monster form or back to normal,
+                cast a monster-spell while polymorphed, enter a combat stance).
 
 a       z       use (aim) a magic wand.
 
