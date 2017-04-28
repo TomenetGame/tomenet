@@ -1960,6 +1960,23 @@ void cmd_the_guide(void) {
 				}
 				if (chapter[0]) continue;
 
+				//race/class prefix match
+				for (i = 0; i < guide_races; i++) {
+					if (my_strcasestr(guide_race[i], buf) != guide_race[i]) continue;
+					strcpy(chapter, "- ");
+					strcat(chapter, guide_race[i]);
+					break;
+				}
+				if (chapter[0]) continue;
+				for (i = 0; i < guide_classes; i++) {
+					if (my_strcasestr(guide_class[i], buf) != guide_class[i]) continue;
+					strcpy(chapter, "- ");
+					strcat(chapter, guide_class[i]);
+					break;
+				}
+				if (chapter[0]) continue;
+
+				//race/class any match
 				for (i = 0; i < guide_races; i++) {
 					if (!my_strcasestr(guide_race[i], buf)) continue;
 					strcpy(chapter, "- ");
@@ -1967,7 +1984,6 @@ void cmd_the_guide(void) {
 					break;
 				}
 				if (chapter[0]) continue;
-
 				for (i = 0; i < guide_classes; i++) {
 					if (!my_strcasestr(guide_class[i], buf)) continue;
 					strcpy(chapter, "- ");
