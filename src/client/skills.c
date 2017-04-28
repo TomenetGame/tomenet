@@ -433,7 +433,9 @@ static void print_skill_batch(int *p, int start, int max, bool mode) {
 		j++;
 	}
 	if (mode) prt("", 2 + j, 20);
-	prompt_topline(format("Select a skill (a-%c), * to list, @ to select by name/No., +/- to scroll:", I2A(j - 1)));
+	//note: since the "skill screen" contains "skills", these 'meta' skills have been dubbed "abilities" for now,
+	//just to avoid (er hopefully) confusion.. (keep consistent with tomenet*.hlp files):
+	prompt_topline(format("Select an ability (a-%c), * to list, @ to select by name/No., +/- to scroll:", I2A(j - 1)));
 }
 
 static int do_cmd_activate_skill_aux() {
