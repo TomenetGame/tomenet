@@ -659,7 +659,7 @@ static void console_change_unique(int unique, cptr killer)
 	r_ptr = &r_info[unique];
 
 	/* Check for uniqueness */
-	if (!r_ptr->flags1 & RF1_UNIQUE) {
+	if (!(r_ptr->flags1 & RF1_UNIQUE)) {
 		/* Failed */
 		Packet_printf(&console_buf, "%c%c", CONSOLE_CHANGE_UNIQUE, 0);
 
