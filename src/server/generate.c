@@ -8614,7 +8614,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* in case of paranoia, note that ALL normal dungeons (in d_info, and
 	   currently all admin-created type-0 'wilderness' dungeons too) are
 	   DF2_RANDOM ;) -- there is no exception */
-	if (!d_ptr->flags2 & DF2_RANDOM) return;
+	if (!(d_ptr->flags2 & DF2_RANDOM)) return;
 
 
 	/* Hack -- Don't tell players about it (for efficiency) */
