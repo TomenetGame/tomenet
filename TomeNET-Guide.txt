@@ -15902,6 +15902,7 @@ school.
 
 - Hereticism
     Terror          Casts fear and confusion into the hearts of others.
+                    Level 16: Affects all opponents surrounding you.
                     Required skill level for first spell level: 3.
 
     Ignore Fear     Temporarily removes the ignorant weakness known as fear.
