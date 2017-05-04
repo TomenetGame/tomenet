@@ -7103,7 +7103,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 		break;
 	}
 	if (i == MAX_RESERVED_NAMES)
-		s_printf("Warning: Coudln't reserve character name '%s' for account '%s'!\n", p_ptr->name, p_ptr->accountname);
+		s_printf("Warning: Couldn't reserve character name '%s' for account '%s'!\n", p_ptr->name, p_ptr->accountname);
 
 	/* Remove him from the player name database */
 	delete_player_name(p_ptr->name);
