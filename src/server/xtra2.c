@@ -7100,6 +7100,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 		strcpy(reserved_name_character[i], p_ptr->name);
 		strcpy(reserved_name_account[i], p_ptr->accountname);
 		reserved_name_timeout[i] = 60 * 24; //minutes
+		s_printf("RESERVED_NAMES: reserved \"%s\"\n", reserved_name_character[i]); //debug
 		break;
 	}
 	if (i == MAX_RESERVED_NAMES)
