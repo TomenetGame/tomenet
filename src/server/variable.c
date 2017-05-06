@@ -644,6 +644,7 @@ void (*ang_sort_extra_swap)(int Ind, vptr u, vptr v, vptr w, int a, int b);
  */
 bool (*get_mon_num_hook)(int r_idx);
 bool (*get_mon_num2_hook)(int r_idx);
+bool xorder_aux_extra;
 
 
 

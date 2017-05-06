@@ -9132,6 +9132,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	}
 
 	get_mon_num_hook = xorder_aux;
+	xorder_aux_extra = p_ptr->total_winner;
 	get_mon_num_prep(0, NULL);
 	i = 2 + randint(5);
 
