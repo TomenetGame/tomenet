@@ -14481,7 +14481,10 @@ F: flag list
                 If you are already using a form that can provide the immunity
                 that you switch to, that immunity will become the active one
                 immediately without the need for re-polymorphing.
-                (Note: IM_TELE actually always gives RES_TELE.)
+                Note that two immunities are actually exempt and don't
+                translate directly:
+                    IM_TELE actually always gives RES_TELE.
+                    IM_PSI instead gives strong insanity reduction.
     PASS_WALL   Will allow the mimic to pass walls like a ghost.
                 These immaterial forms also drain the hit points of their
                 user.
