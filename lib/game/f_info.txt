@@ -1014,7 +1014,7 @@ N:188:glass wall
 G:#:B
 F:NO_WALK | WALL | PERMANENT | NOTICE
 F:DONT_NOTICE_RUNNING
-D:1:This glass seems to be totaly impenetrable.
+D:1:This glass seems to be totally impenetrable.
 D:2:a glass wall blocking your way
 
 # Illusion wall -- can't see but can pass

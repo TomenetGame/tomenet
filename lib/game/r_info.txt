@@ -17355,7 +17355,7 @@ S:BR_NETH | HASTE | TRAPS | FORGET | BR_DISE | BR_TIME | MIND_BLAST |
 S:HEAL | TPORT | TELE_TO | CURSE | BLIND |
 S:CONF | SLOW | HOLD | S_ANGEL | S_UNIQUE
 D:A woman of mind-shattering beauty, none can match her beauty. She is perfect,
-D:and totaly evil. She loves nothing but herself and her evilness is as
+D:and totally evil. She loves nothing but herself and her evilness is as
 D:great as her beauty. No one can stand against her, even DarkGod.
 D:As you see her approaching, you feel your heart breaking.
 D:She is the perfection, don't even try against her; you will surely lose
