@@ -1779,14 +1779,16 @@ void cmd_the_guide(void) {
 
 				/* Misc chapters, hardcoded: */
 				if (!strcasecmp(buf, "Bree")
-				    || my_strcasestr(buf, "Barrow")
-				    || my_strcasestr(buf, "Training Tower")
+				    || my_strcasestr(buf, "Barr")
+				    || my_strcasestr(buf, "Downs")
+				    || my_strcasestr(buf, "Train")
+				    || my_strcasestr(buf, "Tow")
 				    || !strcasecmp(buf, "tt")) {
 					strcpy(chapter, "Bree  ");
 					continue;
 				}
 				if (my_strcasestr(buf, "Gond")
-				    || my_strcasestr(buf, "Mordor")
+				    || my_strcasestr(buf, "Mord")
 				    || !strcasecmp(buf, "mor")) {
 					strcpy(chapter, "Gondolin  ");
 					continue;
@@ -1809,31 +1811,31 @@ void cmd_the_guide(void) {
 					continue;
 				}
 
-				if (!strcasecmp(buf, "Death Fate") || !strcasecmp(buf, "df")) {
+				if (my_strcasestr(buf, "Fate") || !strcasecmp(buf, "df")) {
 					strcpy(chapter, "Death Fate   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Mandos") || !strcasecmp(buf, "hom")) {
+				if (my_strcasestr(buf, "Mand") || my_strcasestr(buf, "Halls") || !strcasecmp(buf, "hom")) {
 					strcpy(chapter, "The Halls of Mandos   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Orc Cave") || !strcasecmp(buf, "oc")) {
+				if ((my_strcasestr(buf, "Orc") && my_strcasestr(buf, "Cav")) || !strcasecmp(buf, "oc")) {
 					strcpy(chapter, "The Orc Cave   ");
 					continue;
 				}
-				if (!strcasecmp(buf, "Mirkwood") || !strcasecmp(buf, "mw")) {
+				if (my_strcasestr(buf, "Mirk") || !strcasecmp(buf, "mw")) {
 					strcpy(chapter, "Mirkwood   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Forest") || !strcasecmp(buf, "of")) {
+				if ((my_strcasestr(buf, "Old") && my_strcasestr(buf, "For")) || !strcasecmp(buf, "of")) {
 					strcpy(chapter, "The Old Forest   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Helca") || !strcasecmp(buf, "hc")) {
+				if (my_strcasestr(buf, "Helc") || !strcasecmp(buf, "hc")) {
 					strcpy(chapter, "The Helcaraxe   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Sandworm") || my_strcasestr(buf, "Lair") || !strcasecmp(buf, "swl") || !strcasecmp(buf, "sl")) {
+				if (my_strcasestr(buf, "Sandw") || my_strcasestr(buf, "Lair") || !strcasecmp(buf, "swl") || !strcasecmp(buf, "sl")) {
 					strcpy(chapter, "The Sandworm Lair   ");
 					continue;
 				}
@@ -1845,7 +1847,7 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "The Maze   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Cirith") || my_strcasestr(buf, "Ungol") || !strcasecmp(buf, "cu")) {
+				if (my_strcasestr(buf, "Ciri") || my_strcasestr(buf, "Ung") || !strcasecmp(buf, "cu")) {
 					strcpy(chapter, "Cirith Ungol   ");
 					continue;
 				}
@@ -1853,23 +1855,31 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "The Land of Rhun   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Moria") || my_strcasestr(buf, "Mines") || !strcasecmp(buf, "mom")) {
+				if (my_strcasestr(buf, "Mori") || my_strcasestr(buf, "Mines") || !strcasecmp(buf, "mom")) {
 					strcpy(chapter, "The Mines of Moria   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Small Water") || my_strcasestr(buf, "Small Cave") || my_strcasestr(buf, "Water Cave") || my_strcasestr(buf, "SWC")) {
+				find = 0;
+				if (my_strcasestr(buf, "Smal")) find++;
+				if (my_strcasestr(buf, "Wate")) find++;
+				if (my_strcasestr(buf, "Cav")) find++;
+				if (find >= 2 || my_strcasestr(buf, "SWC")) {
 					strcpy(chapter, "The Small Water Cave   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Submer") || my_strcasestr(buf, "Ruin") || !strcasecmp(buf, "sr")) {
+				if (my_strcasestr(buf, "Subm") || my_strcasestr(buf, "Ruin") || !strcasecmp(buf, "sr")) {
 					strcpy(chapter, "Submerged Ruins   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Illus") || my_strcasestr(buf, "Castl") || !strcasecmp(buf, "ic")) {
+				if (my_strcasestr(buf, "Illu") || my_strcasestr(buf, "Cast") || !strcasecmp(buf, "ic")) {
 					strcpy(chapter, "The Illusory Castle   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Sacred") || my_strcasestr(buf, "Mounta") || !strcasecmp(buf, "slom")) {
+				find = 0;
+				if (my_strcasestr(buf, "Sacr")) find++;
+				if (my_strcasestr(buf, "Land")) find++;
+				if (my_strcasestr(buf, "Mou")) find++;
+				if (find >= 2 || !strcasecmp(buf, "slom")) {
 					strcpy(chapter, "The Sacred Land of Mountains   ");
 					continue;
 				}
@@ -1881,17 +1891,19 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "Dol Guldur   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Mount") || (my_strcasestr(buf, "Doom")
-				    && !my_strcasestr(buf, "Doome") //don't confuse with Doomed Grounds spell
-				    ) || !strcasecmp(buf, "mtd")) { //note: TSLoM has been filtered out before us already
+				if ((my_strcasestr(buf, "Moun")
+				    && !my_strcasestr(buf, "Mounta")) //don't confuse with Sacred Lands of Mountains
+				    || (my_strcasestr(buf, "Doom")
+				    && !my_strcasestr(buf, "Doome")) //don't confuse with Doomed Grounds spell
+				    || !strcasecmp(buf, "mtd")) { //note: TSLoM has been filtered out before us already
 					strcpy(chapter, "Mount Doom   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Cloud") || my_strcasestr(buf, "Planes") || !strcasecmp(buf, "cp")) {
+				if ((my_strcasestr(buf, "Clou") && my_strcasestr(buf, "Pla")) || !strcasecmp(buf, "cp")) {
 					strcpy(chapter, "The Cloud Planes   ");
 					continue;
 				}
-				if ((my_strcasestr(buf, "Nether") && my_strcasestr(buf, "Realm")) || !strcasecmp(buf, "nr")) {
+				if ((my_strcasestr(buf, "Neth") && my_strcasestr(buf, "Rea")) || !strcasecmp(buf, "nr")) {
 					strcpy(chapter, "Nether Realm   ");
 					continue;
 				}
@@ -1900,7 +1912,7 @@ void cmd_the_guide(void) {
 				if (my_strcasestr(buf, "Iron")) find++;
 				if (my_strcasestr(buf, "Deep")) find++;
 				if (my_strcasestr(buf, "Dive")) find++;
-				if (my_strcasestr(buf, "Challenge")) find++;
+				if (my_strcasestr(buf, "Chal")) find++;
 				if (!strcasecmp(buf, "IDDC") || !strcasecmp("Ironman Deep Dive Challenge", buf) || find >= 2) {
 					strcpy(chapter, "Ironman Deep Dive Challenge (IDDC)");
 					continue;
