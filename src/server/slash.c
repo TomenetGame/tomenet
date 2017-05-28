@@ -2752,6 +2752,11 @@ void do_slash_cmd(int Ind, char *message) {
 			int ystart = 0, xstart = 0;
 			bool fresh_arena = FALSE;
 
+			if (pvp_disabled) {
+				msg_print(Ind, "\377ySorry, the Player vs Player arena is currently closed for maintenance.");
+				return;
+			}
+
 			/* can't get in if not PvP mode */
 			if (!(p_ptr->mode & MODE_PVP)) {
 				msg_print(Ind, "\377yYour character is not PvP mode.");

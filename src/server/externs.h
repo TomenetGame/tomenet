@@ -2513,3 +2513,5 @@ extern int dbgvar1, dbgvar2, dbgvar3, dbgvar4, dbgvar5, dbgvar6;
 extern int dbgvar1a, dbgvar2a, dbgvar3a, dbgvar4a, dbgvar5a, dbgvar6a;
 extern int dbgvar1b, dbgvar2b, dbgvar3b, dbgvar4b, dbgvar5b, dbgvar6b;
 extern char dbgvars[MAX_CHARS];
+
+extern bool pvp_disabled;

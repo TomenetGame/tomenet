@@ -429,3 +429,5 @@ extern int __audio_sfx_max;
 extern int __audio_mus_max;
 
 extern bool allow_similar_names;
+
+extern bool pvp_disabled;
