@@ -3718,6 +3718,9 @@ void calc_boni(int Ind) {
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
 		k_ptr = &k_info[o_ptr->k_idx];
+		char *cp;
+		byte *ap;
+
 		pval = o_ptr->pval;
 
 		/* Skip missing items */
@@ -3727,8 +3730,9 @@ void calc_boni(int Ind) {
 		}
 
 		/* Set item display info */
-		csheet_boni[i-INVEN_WIELD].color = k_info[o_ptr->k_idx].d_attr;
-		csheet_boni[i-INVEN_WIELD].symbol = k_info[o_ptr->k_idx].d_char;
+		get_object_visuals(cp, ap, o_ptr, p_ptr);
+		csheet_boni[i - INVEN_WIELD].symbol = *cp;
+		csheet_boni[i - INVEN_WIELD].color = *ap;
 
 		/* Special admin items */
 		if (o_ptr->tval == TV_AMULET) {

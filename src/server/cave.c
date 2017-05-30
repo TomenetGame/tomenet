@@ -2440,6 +2440,49 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
 }
 #endif
 
+/* Extracted this from map_info() so it can also be used by the character flags sheet.
+   NOTE: p_ptr is actually used by object_char() and object_attr() macros! */
+void get_object_visuals(char *cp, byte *ap, object_type *o_ptr, player_type *p_ptr) {
+	/* Normal char */
+	(*cp) = object_char(o_ptr);
+
+	/* Normal attr */
+	(*ap) = object_attr(o_ptr);
+
+	/* hacks: mindcrafter 'crystals' are yellow, custom books' colour depends on their content! - C. Blue */
+	if (o_ptr->tval == TV_BOOK) {
+		if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
+			(*ap) = TERM_YELLOW;
+		else if (is_custom_tome(o_ptr->sval))
+			(*ap) = get_book_name_color(o_ptr);
+	}
+
+	/* hack: colour of fancy shirts or custom objects can vary  */
+	if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
+	    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
+		if (o_ptr->xtra1) (*ap) = (byte)o_ptr->xtra1;
+		if (o_ptr->tval != TV_SOFT_ARMOR && o_ptr->xtra2) (*cp) = (char)o_ptr->xtra2;
+	}
+
+	/* quest items can have custom appearance too */
+	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) {
+		(*cp) = (char)o_ptr->xtra1;
+		(*ap) = (byte)o_ptr->xtra2;
+	}
+
+	/* Abnormal attr */
+	//if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color();
+	if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)
+#ifdef CLIENT_SHIMMER
+		(*ap) = TERM_HALF;
+#else
+		(*ap) = get_shimmer_color();
+#endif
+		//(*ap) = randint(15);
+
+	/* hack: questors may have specific attr */
+	if (o_ptr->questor) (*ap) = q_info[o_ptr->quest - 1].questor[o_ptr->questor_idx].oattr;
+}
 
 /*
  * Extract the attr/char to display at the given (legal) map location
@@ -3117,57 +3160,13 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 
 		/* Hack - Traps override objects while searching - mikaelh */
 		if (!p_ptr->searching || !((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found)) {
-			/* Get the actual item */
-			object_type *o_ptr = &o_list[c_ptr->o_idx];
-
 			/* Memorized objects */
 			/* Hack -- the dungeon master knows where everything is */
 			if ((p_ptr->obj_vis[c_ptr->o_idx]) || (p_ptr->admin_dm)) {
-				/* Normal char */
-				(*cp) = object_char(o_ptr);
-
-				/* Normal attr */
-				(*ap) = object_attr(o_ptr);
+				get_object_visuals(cp, ap, &o_list[c_ptr->o_idx], p_ptr);
 
 				/* Hack -- always l.blue if underwater */
-				if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
-					(*ap) = TERM_L_BLUE;
-
-				/* hacks: mindcrafter 'crystals' are yellow, custom books' colour depends on their content! - C. Blue */
-				if (o_ptr->tval == TV_BOOK) {
-					if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
-						(*ap) = TERM_YELLOW;
-					else if (is_custom_tome(o_ptr->sval))
-						(*ap) = get_book_name_color(o_ptr);
-				}
-
-				/* hack: colour of fancy shirts or custom objects can vary  */
-				if ((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
-				    (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT)) {
-					if (!o_ptr->xtra1) o_ptr->xtra1 = (s16b)(*ap); //wut.. remove this hack? should be superfluous anyway
-					(*ap) = (byte)o_ptr->xtra1;
-					/* new: also allow custom char */
-					if (o_ptr->xtra2) (*cp) = (char)o_ptr->xtra2;
-				}
-
-				/* quest items can have custom appearance too */
-				if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) {
-					(*cp) = (char)o_ptr->xtra1;
-					(*ap) = (byte)o_ptr->xtra2;
-				}
-
-				/* Abnormal attr */
-/*      	                  if ((!avoid_other) && (!(((*ap) & 0x80) && ((*cp) & 0x80))) && (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)) (*ap) = get_shimmer_color(); */
-				if (k_info[o_ptr->k_idx].flags5 & TR5_ATTR_MULTI)
-#ifdef CLIENT_SHIMMER
-					(*ap) = TERM_HALF;
-#else
-					(*ap) = get_shimmer_color();
-#endif
-/*					(*ap) = randint(15); */
-
-				/* hack: questors may have specific attr */
-				if (o_ptr->questor) (*ap) = q_info[o_ptr->quest - 1].questor[o_ptr->questor_idx].oattr;
+				if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER) (*ap) = TERM_L_BLUE;
 
 				/* Hack -- hallucination */
 				if (p_ptr->image) image_object(ap, cp);
