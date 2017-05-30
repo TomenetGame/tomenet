@@ -1084,6 +1084,12 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 	player_type *p_ptr = Players[Ind];
 	int val = -1, val2 = -1, i, d;
 
+	/* Don't reveal the hidden DM by transportation sounds, especially when recalling */
+	if (p_ptr->admin_dm && cfg.secret_dungeon_master && (
+	    //!strcmp(name, "blink") ||
+	    !strcmp(name, "phase_door") || !strcmp(name, "teleport")))
+		return;
+
 	/* backward compatibility */
 	if (type == SFX_TYPE_STOP && !is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 0)) return;
 
