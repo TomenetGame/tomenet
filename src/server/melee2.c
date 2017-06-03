@@ -2730,7 +2730,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF4_OFFSET+27:
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
-		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes magical energy", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes magical energy for", m_name);
 		breath(Ind, m_idx, GF_MANA, ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
 		break;
 
