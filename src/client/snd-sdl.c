@@ -25,6 +25,14 @@
 
 #ifdef SOUND_SDL
 
+/* allow pressing RETURN key to play any piece of music (like for sfx) -- only reason to disable: It's spoilery ;) */
+#define ENABLE_JUKEBOX
+/* if a song is selected, don't fadeout current song first, but halt it instantly. this is needed for playing disabled songs.
+   Note that enabling this will also allow to iteratively play through all sub-songs of a specific music event, by activating
+   the same song over and over, while otherwise if this option is disabled you'd have to wait for it to end and randomly switch
+   to other sub-songs.*/
+#define JUKEBOX_INSTANT_PLAY
+
 /* Smooth dynamic weather volume change depending on amount of particles,
    instead of just on/off depending on particle count window? */
 //#define WEATHER_VOL_PARTICLES  -- not yet that cool
@@ -1792,6 +1800,43 @@ static void fadein_next_music(void) {
 	Mix_FadeInMusic(wave, c_cfg.shuffle_music ? 0 : -1, 1000);
 }
 
+#ifdef JUKEBOX_INSTANT_PLAY
+static bool play_music_instantly(int event) {
+	Mix_Music *wave = NULL;
+
+	Mix_HaltMusic();
+
+	/* Catch disabled songs */
+	if (songs[event].disabled) {
+		music_cur = -1;
+		return TRUE;
+	}
+	if (songs[event].num < 1) return FALSE; //paranoia
+
+	/* but play different song, iteratingly instead of randomly! */
+	if (music_cur != event) {
+		music_cur = event;
+		music_cur_song = 0;
+	} else music_cur_song = (music_cur_song + 1) % songs[music_cur].num;
+
+	/* Choose the predetermined random event */
+	wave = songs[music_cur].wavs[music_cur_song];
+
+	/* Try loading it, if it's not cached */
+	if (!wave && !(wave = load_song(music_cur, music_cur_song))) {
+		/* we really failed to load it */
+		plog(format("SDL music load failed (%d, %d).", music_cur, music_cur_song));
+		puts(format("SDL music load failed (%d, %d).", music_cur, music_cur_song));
+		return FALSE;
+	}
+
+	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music here. */
+	Mix_PlayMusic(wave, -1);
+	return TRUE;
+}
+#endif
+
+
 #ifdef DISABLE_MUTED_AUDIO
 /* start playing current music again if we reenabled it in the mixer UI after having had it disabled */
 static void reenable_music(void) {
@@ -2404,6 +2449,12 @@ void do_cmd_options_mus_sdl(void) {
 	bool go = TRUE;
 	char buf[1024], buf2[1024], out_val[2048], out_val2[2048], *p, evname[2048];
 	FILE *fff, *fff2;
+#ifdef ENABLE_JUKEBOX
+ #ifdef JUKEBOX_INSTANT_PLAY
+	bool dis;
+ #endif
+	int jukebox_org = music_cur;
+#endif
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
@@ -2427,7 +2478,11 @@ void do_cmd_options_mus_sdl(void) {
 
 	/* Interact */
 	while (go) {
+#ifdef ENABLE_JUKEBOX
+		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
+#else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
+#endif
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 
 		/* Display the events */
@@ -2487,6 +2542,18 @@ void do_cmd_options_mus_sdl(void) {
 		/* Analyze */
 		switch (ch) {
 		case ESCAPE:
+#ifdef ENABLE_JUKEBOX
+ #ifdef JUKEBOX_INSTANT_PLAY
+			/* Note that this will also insta-halt current music if it happens to be <disabled>,
+			   so no need for us to check here for songs[].disabled explicitely actually. */
+			if (jukebox_org != music_cur) play_music(jukebox_org);
+ #else
+			if (jukebox_org != music_cur) {
+				if (songs[jukebox_org].disabled) play_music(-2);
+				else play_music(jukebox_org);
+			}
+ #endif
+#endif
 			/* auto-save */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 #ifndef WINDOWS
@@ -2617,6 +2684,20 @@ void do_cmd_options_mus_sdl(void) {
 			if (music_cur == j_sel && Mix_PlayingMusic()) Mix_HaltMusic();
 			break;
 
+#ifdef ENABLE_JUKEBOX
+		case '\r':
+ #ifdef JUKEBOX_INSTANT_PLAY
+			dis = songs[j_sel].disabled;
+			songs[j_sel].disabled = FALSE;
+			play_music_instantly(j_sel);
+			songs[j_sel].disabled = dis;
+ #else
+			if (j_sel == music_cur) break;
+			if (songs[j_sel].disabled) break;
+			play_music(j_sel);
+ #endif
+			break;
+#endif
 		case '#':
 			y = c_get_quantity("Enter index number: ", audio_music) - 1;
 			if (y < 0) y = 0;
