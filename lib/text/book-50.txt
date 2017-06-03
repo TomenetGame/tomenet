@@ -10,6 +10,8 @@
  directory. Latest version available online at www.tomenet.eu -> 'The Guide'.
  It contains all information about TomeNET, as well as a 'how-to-start' part.
 
+ You can press '?' key to see a short list of all command keys.
+
  Listen to this bit of advice. Don't get discouraged!
  If you are new to TomeNET, you will die..... a lot. But, as you get more
  experienced, you will become better at surviving, and may even live to see
