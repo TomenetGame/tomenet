@@ -1,6 +1,6 @@
             /---------------------------------------------+
            /     TomeNET Gazette                          |
-           |                          issued 16/Aug/2011  /
+           |                          issued 01/Feb/2015  /
            +---------------------------------------------/
 
 A manual to the game can be found in your TomeNET folder, it's the file
