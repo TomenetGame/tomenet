@@ -251,7 +251,7 @@ VAPOR_I = add_spell {
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	2,
 	["mana"] = 	2,
-	["mana_max"] = 	12,
+	["mana_max"] = 	2,
 	["fail"] = 	20,
 	["spell"] = 	function()
 			fire_cloud(Ind, GF_VAPOUR, 0, 3 + get_level(Ind, VAPOR_I, 20), 3 + get_level(Ind, VAPOR_I, 4, 0), 5, 8, " fires a cloud of vapor for")
