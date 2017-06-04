@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. June 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 4. June 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -242,9 +242,9 @@ compile the game under '(2.1) Installing/updating TomeNET'.
    STR (and DEX) determine your number of attacks per round. 18/30 in STR is
    enough for warriors to get 3 attacks per round with very light weapons
    (daggers or whips) regardless of how you modify your DEX.
-   To get the 3 blows per round (bpr) you'll need to sell your heavy sword and
+   To get the 3 blows per round (BpR) you'll need to sell your heavy sword and
    buy a light weapon (3.0 lb or less) like a dagger or whip. That is more
-   efficient than 1 or 2 bpr with your original sword! Later on when your
+   efficient than 1 or 2 BpR with your original sword! Later on when your
    character becomes more powerful you can switch back to heavier weaponry.
    Warriors don't really need INT so you should reduce it to spend the points
    on other attributes. WIS isn't really needed either, but it can be useful
@@ -1795,6 +1795,19 @@ Auto-ID     A special ability of some items. If you equip an item that grants
 
 BM          Black Market (Store '7').
 
+BpR/SpR     Blows per round, shots per round. The number of attacks you get
+            in melee (BpR) or with your ranged weapon (SpR).
+
+            For melee characters BpR depends on weapon skills, magic buffs and
+            items that give you 'Extra Attacks' and (unless you use Martial
+            Arts) on your weapon weight vs your STR and DEX stats.
+            You should pick the recommend STR/DEX values on character creation
+            to ensure that you start with at least 2 BpR and if possible buy a
+            lighter weapon right away to upgrade your BpR from 2 to 3.
+
+            For martial arts or ranged weapons, STR and DEX stats (or any other
+            stats) have no effect on BpR or SpR respectively.
+
 Cheeze      Questionable action, not quite cheating but close to it.
             This can be transferring items to a store character (mule)
             or exploiting weaknesses in the game design instead of
@@ -1811,7 +1824,7 @@ DSM         Dragon Scale Mail. Legendary pieces of armour.
 Excellents  Items that pseudo-identified as 'excellent'.
 
 EA          Extra Attacks. Rings, gloves or weapons which increase your number
-            of blows per round with melee weapons. Quite expensive.
+            of blows per round (BpR) with melee weapons. Quite expensive.
 
 FA          Free Action (immunity to paralysis).
 
@@ -3474,7 +3487,7 @@ DEXterity, CONstitution, CHaRisma.
 IMPORTANT NOTE: For fighters (rogues also belong to these, ie all characters
 that rely on close combat) that use weapons, it is important that you have
 enough STRength and DEXterity to execute at least two attacks per round, called
-bpr (blows per round, see (6.5a)).
+BpR (blows per round, see (6.5a)).
 Sometimes this requires you to get rid of your initial weapon and buy a very
 light weapon, for example one of these:
  -dagger or main gauche (sword class),
@@ -3482,7 +3495,7 @@ light weapon, for example one of these:
  -cleaver (axe class) or
  -spear (polearm class).
 (For more information about the different weapon classes see (5.1a).)
-Sometimes it is even possible to start out with 3 bpr (warriors mostly).
+Sometimes it is even possible to start out with 3 BpR (warriors mostly).
 
 Depending on the server configuration, starting at TomeNET version 4.2.0,
 there are 2 alternative stages of character creation that may follow now.
@@ -3508,10 +3521,10 @@ your choice.
 In general, if you play a character that relies on close combat, try to at
 least match the STR and DEX values shown in the table in the column titled
 'Min. recommended, if possible'.
-If you can do that then you should start with at least 2 bpr with a light
+If you can do that then you should start with at least 2 BpR with a light
 weapon, or even with your starting weapon. If your starting weapon already
-gives 2 bpr you could still examine even lighter weapons in stores to find one
-that gives you one more bpr i.e. 3 bpr and just discard your starting weapon.
+gives 2 BpR you could still examine even lighter weapons in stores to find one
+that gives you one more BpR i.e. 3 BpR and just discard your starting weapon.
 
 Note: The stat points you distribute have no effect on the maximum value your
 character can get by quaffing stat potions. These points to distribute are
@@ -11445,7 +11458,7 @@ Storm giant has monster level 35 (assumed the warrior encounters him on
 dungeon level 35), so his lightning aura will inflict 2d3 damage each hit.
 The warrior has lightning resistance, so the damage will be cut down to 1/3,
 which is 1 or 2.
-Since the warrior has 6 bpr, he will suffer between 6 and 12 (6*1 and 6*2)
+Since the warrior has 6 BpR, he will suffer between 6 and 12 (6*1 and 6*2)
 damage per turn while hitting the storm giant.
 
 
@@ -12126,11 +12139,11 @@ Note that not every skill is available to every profession (class).
                                 be used for that particular hit.
 
                                 To avoid confusion: If you use weapons with
-                                different blows/round, their bpr will get
-                                averaged, and rounded up, then bpr bonus for
+                                different blows/round, their BpR will get
+                                averaged, and rounded up, then BpR bonus for
                                 dual-wielding is added.
-                                Example: 4bpr & 5bpr = 4.5bpr rounded to 5bpr.
-                                +1 bonus bpr for dual-wielding -> 6bpr total.
+                                Example: 4BpR & 5BpR = 4.5BpR rounded to 5BpR.
+                                +1 bonus BpR for dual-wielding -> 6BpR total.
 
                                 By pressing 'm' you can disable/reenable
                                 dual-wield mode.
@@ -14215,20 +14228,20 @@ they will get right after character creation, to avoid them being unnecessarily
 weak during low-mid levels.
 So a melee-oriented character should make sure to start with sufficient
 STRength and DEXterity to be able to get at least 2 blows/round with the
-lightest possible weapons. (Getting more bpr with heavy weapons is a luxury
+lightest possible weapons. (Getting more BpR with heavy weapons is a luxury
 that will have to be put aside until later in the game.)
 
-Note that a (heavier) startup weapon at 2 bpr might beat a very light weapon at
-3 bpr for a few levels at the beginning, maybe up to 4 or so. So you can wait
+Note that a (heavier) startup weapon at 2 BpR might beat a very light weapon at
+3 BpR for a few levels at the beginning, maybe up to 4 or so. So you can wait
 for a little a bit until spending $ on it.
 
 
 (6.5a) Start-up Blows/Round Table
 ---------------------------------
-Here is a table, showing you some bpr numbers you can expect your newly
+Here is a table, showing you some BpR numbers you can expect your newly
 created character to have, depending on certain combinations of class, STR,
 DEX, given for both, lightest possible weapon and startup weapon:
-(Don't forget that some classes can dual-wield, adding an extra +1 bpr on top!)
+(Don't forget that some classes can dual-wield, adding an extra +1 BpR on top!)
 
 Note: 'Light' weapon may refer to as low as 3.0 lb (varies depending on STR
       and DEX - any weapon that weighs at most 3.0 lb will definitely work).
@@ -14282,7 +14295,7 @@ Runemaster      similar to rogue
 Mindcrafter     similar to ranger
 
 So if you're playing a melee-oriented characer, make sure you start with at
-least 2 bpr (in some cases you might have to buy very light weapon and discard
+least 2 BpR (in some cases you might have to buy very light weapon and discard
 your starter weapon to achieve this)!
 
 If you think it's strange that 'Mimic fights similar to Priest' keep in mind
@@ -17714,14 +17727,14 @@ Beginners (level 1)
 + An appropriate melee weapon (except if using martial arts, eg Druids!)
   Check out how many blows per round you get with a light dagger, whip,
   cleaver or spear, depending on your favourite weapon class. If you get more
-  bpr than with your starter weapon, switch!
+  BpR than with your starter weapon, switch!
   If your character has only one blow per round even with light weapons, choose
   a heavy weapon that can deal more damage in one blow. If your character is
   low on strength, pay attention that you don't buy a weapon that is too heavy
   to use at all. You can press 'x' in shops to examine weapons (and all other
   items), to check if you can benefit from buying it or not.
-  If you have only 1 bpr, make sure to dual-wield if your character can do that
-  because that will give you a bonus bpr. Don't forget that you cannot dual-
+  If you have only 1 BpR, make sure to dual-wield if your character can do that
+  because that will give you a bonus BpR. Don't forget that you cannot dual-
   wield with heavy armour. Rogues should always be dual-wielding.
 
 
@@ -19218,11 +19231,11 @@ will benefit from 14 blows or shots per round, which is the maximum you can
 benefit from at max speed.
 
 This limit can only be reached by a dual-wielding warrior, other warriors will
-only reach 13 bpr, which is reached at dungeon level 77 aka -3850ft.
+only reach 13 BpR, which is reached at dungeon level 77 aka -3850ft.
 
 If boosted by friendly spells mindboost, zeal and by berserk magic (or ability)
-a dual-wielding warrior could reach 14 + 1 + 2 + 1 = 18 bpr. The maximum speed
-for which this high bpr still makes sense (on dungeon level 4200ft and deeper)
+a dual-wielding warrior could reach 14 + 1 + 2 + 1 = 18 BpR. The maximum speed
+for which this high BpR still makes sense (on dungeon level 4200ft and deeper)
 is +55 speed. If you regularly get boosted by party members in this crazy way,
 consider using accuracy/damage or critical-hits equipment instead of
 extra-attacks items so you can increase your speed above 55 and still get full
