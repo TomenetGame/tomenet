@@ -795,7 +795,7 @@ $ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 
 $ENABLE_OCCULT$f:Shadow:Magic%10
 $ENABLE_OCCULT$f:Spirit:Magic%10
-$ENABLE_HERETICISM$f:Hereticism:Magic%10
+$ENABLE_OHERETICISM$f:Hereticism:Magic%10
 
 f:Light:Magic%15
 f:Darkness:Magic%15
