@@ -5212,10 +5212,10 @@ void toggle_afk(int Ind, char *msg)
 #endif
 {
 	player_type *p_ptr = Players[Ind];
-	char afk[MAX_CHARS];
+	char afk[MAX_CHARS_WIDE];
 	int i = 0;
 #ifdef ALLOW_AFK_COLOURCODES
-	char msg[MAX_CHARS], *m = msg0;
+	char msg[MAX_CHARS_WIDE], *m = msg0;
 
 	/* strip colour codes and cap message at len 60 */
 	while ((*m) && i < 60) {
@@ -5245,9 +5245,9 @@ void toggle_afk(int Ind, char *msg)
 			msg_format(Ind, "AFK mode is turned \377GOFF\377w. (%s\377w)", p_ptr->afk_msg);
 		if (!p_ptr->admin_dm) {
 			if (strlen(p_ptr->afk_msg) == 0)
-				snprintf(afk, sizeof(afk), "\377%c%s has returned from AFK.", COLOUR_AFK, p_ptr->name);
+				snprintf(afk, sizeof(afk) - 1, "\377%c%s has returned from AFK.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\377%c%s has returned from AFK. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
+				snprintf(afk, sizeof(afk) - 1, "\377%c%s has returned from AFK. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = FALSE;
 
@@ -5271,9 +5271,9 @@ void toggle_afk(int Ind, char *msg)
 			msg_format(Ind, "AFK mode is turned \377rON\377w. (%s\377w)", p_ptr->afk_msg);
 		if (!p_ptr->admin_dm) {
 			if (strlen(p_ptr->afk_msg) == 0)
-				snprintf(afk, sizeof(afk), "\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
+				snprintf(afk, sizeof(afk) - 1, "\377%c%s seems to be AFK now.", COLOUR_AFK, p_ptr->name);
 			else
-				snprintf(afk, sizeof(afk), "\377%c%s seems to be AFK now. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
+				snprintf(afk, sizeof(afk) - 1, "\377%c%s seems to be AFK now. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = TRUE;
 

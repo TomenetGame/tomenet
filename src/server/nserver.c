@@ -5850,7 +5850,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		/* use indicator asterisk instead in newer versions */
 		else if ((!is_newer_than(&p_ptr->version, 4, 5, 6, 0, 0, 1) || ville) &&
 		    /* able to get extra level feeling on next floor? */
-		    TURNS_FOR_EXTRA_FEELING && p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
+		    TURNS_FOR_EXTRA_FEELING != 0 && p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
 			colour = TERM_L_BLUE;
 		/* in a town? ignore town level */
 		else if (ville || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour = TERM_WHITE;
@@ -5865,7 +5865,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	}
 	/* able to get extra level feeling on next floor? */
 	if (is_newer_than(&p_ptr->version, 4, 5, 6, 0, 0, 1) && !ville &&
-	    TURNS_FOR_EXTRA_FEELING && p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
+	    TURNS_FOR_EXTRA_FEELING != 0 && p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)
 		desc = "*";
 
 
@@ -5926,7 +5926,7 @@ int Send_depth_hack(int Ind, struct worldpos *wpos, bool town, cptr desc) {
 			/* pending recall? */
 			if (p_ptr2->word_recall) colour2 = TERM_ORANGE;
 			/* able to get extra level feeling on next floor? */
-			else if (TURNS_FOR_EXTRA_FEELING && (p_ptr2->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour2 = TERM_L_BLUE;
+			else if (TURNS_FOR_EXTRA_FEELING != 0 && (p_ptr2->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour2 = TERM_L_BLUE;
 			/* in a town? ignore town level */
 			else if (town || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour2 = TERM_WHITE;
 			/* way too low to get good exp? */
@@ -5954,7 +5954,7 @@ int Send_depth_hack(int Ind, struct worldpos *wpos, bool town, cptr desc) {
 		/* pending recall? */
 		if (p_ptr->word_recall) colour = TERM_ORANGE;
 		/* able to get extra level feeling on next floor? */
-		else if (TURNS_FOR_EXTRA_FEELING && (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour = TERM_L_BLUE;
+		else if (TURNS_FOR_EXTRA_FEELING != 0 && (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour = TERM_L_BLUE;
 		/* in a town? ignore town level */
 		else if (town || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour = TERM_WHITE;
 		/* way too low to get good exp? */

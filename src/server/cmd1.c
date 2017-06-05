@@ -409,7 +409,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 
 		/* Get monster brands. If monster has several, choose one randomly */
 		for (i = 0; i < 4; i++) {
-			if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
+			if (pr_ptr->blow[i].d_dice && pr_ptr->blow[i].d_side) {
 				switch (pr_ptr->blow[i].effect) {
 				case RBE_ACID:
 					monster_brands++;
@@ -893,7 +893,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 
 		/* Get monster brands. If monster has several, choose one randomly */
 		for (i = 0; i < 4; i++) {
-			if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
+			if (pr_ptr->blow[i].d_dice && pr_ptr->blow[i].d_side) {
 				switch (pr_ptr->blow[i].effect) {
 				case RBE_ACID:
 					monster_brands++;
@@ -3449,7 +3449,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				/* Get monster effects. If monster has several, choose one randomly */
 				monster_effects = 0;
 				for (i = 0; i < 4; i++) {
-					if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
+					if (pr_ptr->blow[i].d_dice && pr_ptr->blow[i].d_side) {
 						monster_effects++;
 						monster_effect[monster_effects] = pr_ptr->blow[i].effect;
 					}
@@ -4547,7 +4547,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				/* Get monster effects. If monster has several, choose one randomly */
 				monster_effects = 0;
 				for (i = 0; i < 4; i++) {
-					if (pr_ptr->blow[i].d_dice * pr_ptr->blow[i].d_side) {
+					if (pr_ptr->blow[i].d_dice && pr_ptr->blow[i].d_side) {
 						monster_effects++;
 						monster_effect[monster_effects] = pr_ptr->blow[i].effect;
 					}

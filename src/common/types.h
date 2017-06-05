@@ -1544,7 +1544,7 @@ struct cave_view_type {
  * Information about a "party"
  */
 typedef struct party_type {
-	char name[MAX_CHARS];	/* Name of the party */
+	char name[NAME_LEN];	/* Name of the party */
 	char owner[NAME_LEN];	/* Owner's name */
 	s32b members;		/* Number of people in the party */
 	s32b created;		/* Creation (or disband-tion) time */
@@ -1576,7 +1576,7 @@ typedef struct party_type {
  * to the bank in the same way houses are. (evileye)
  */
 typedef struct guild_type {
-	char name[MAX_CHARS];
+	char name[NAME_LEN];
 	s32b master;		/* Guildmaster unique player ID */
 	s32b members;		/* Number of guild members */
 	byte cmode;		/* Guild creator's character mode */
@@ -1850,11 +1850,11 @@ typedef struct player_type player_type;
 struct player_type {
 	int conn;			/* Connection number */
 	int Ind;			/* Self-reference */
-	char name[MAX_CHARS];		/* Nickname */
-	char basename[MAX_CHARS];	/* == Charactername (Nickname)? */
-	char realname[MAX_CHARS];	/* Userid (local machine's user name, default is 'PLAYER') */
-	char accountname[MAX_CHARS];
-	char hostname[MAX_CHARS];	/* His hostname */
+	char name[CHARACTERNAME_LEN];	/* Character name */
+	char basename[CHARACTERNAME_LEN];	/* Character name without special characters (used for save files on Mac/Win/Amiga) */
+	char realname[REALNAME_LEN];	/* Userid (local machine's user name, default is 'PLAYER') */
+	char accountname[ACCOUNTNAME_LEN];
+	char hostname[HOSTNAME_LEN];	/* His hostname */
 	char addr[MAX_CHARS];		/* His IP address */
 	//unsigned int version;		/* His version */
 	version_type version;
