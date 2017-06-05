@@ -2101,9 +2101,9 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			if ((f2 & (TR2_IM_COLD)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x02)) i_c = TRUE;
 			if ((f2 & (TR2_IM_ELEC)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x04)) i_e = TRUE;
 			if ((f2 & (TR2_IM_ACID)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x08)) i_a = TRUE;
-			if ((f5 & (TR5_IM_POISON)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x10)) i_p = TRUE;
-			if (f5 & (TR5_IM_WATER)) i_w = TRUE;
-			if (f4 & (TR4_IM_NETHER)) i_n = TRUE;
+			if ((f2 & (TR2_IM_POISON)) || (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED && o_ptr->xtra2 & 0x10)) i_p = TRUE;
+			if (f2 & (TR2_IM_WATER)) i_w = TRUE;
+			if (f2 & (TR2_IM_NETHER)) i_n = TRUE;
 			if ((tmp = (i_f || i_c || i_e || i_a || i_p || i_w || i_n))) {
 				if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 				strcat(powins, "*");
@@ -2139,7 +2139,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			}
 		}
 		if (!i_p && (f2 & TR2_RES_POIS)) strcat(powins, "Po");
-		if (!i_w && (f5 & TR5_RES_WATER)) strcat(powins, "Wa");
+		if (!i_w && (f2 & TR2_RES_WATER)) strcat(powins, "Wa");
 		if (!i_n && (f2 & TR2_RES_NETHER)) strcat(powins, "Nt");
 		if (f2 & (TR2_RES_NEXUS)) strcat(powins, "Nx");
 		if (f2 & (TR2_RES_CHAOS)) strcat(powins, "Ca");
@@ -2164,7 +2164,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 		/* -- other flags -- */
 		if (f3 & (TR3_REGEN)) strcat(powins, "Rg");
-		if (f5 & (TR5_REGEN_MANA)) strcat(powins, "Rgm");
+		if (f3 & (TR3_REGEN_MANA)) strcat(powins, "Rgm");
 		if (!redux) {
 			if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))  strcat(powins, "+Lt");
 		}
@@ -2182,14 +2182,13 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		/* -- auras, brands, slays, esp -- */
 		if (redux) {
 			f1 &= ~(TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ANIMAL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_DRAGON | TR1_SLAY_EVIL);
-			f3 &= ~(TR3_SH_FIRE | TR3_SH_ELEC);
-			f5 &= ~(TR5_SH_COLD);
+			f3 &= ~(TR3_SH_FIRE | TR3_SH_ELEC | TR3_SH_COLD);
 			f1 &= ~(TR1_BRAND_ACID | TR1_BRAND_ELEC | TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_POIS);
 			tmpf1 = (f1 & (TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON));
 			tmp = tmpf1;
 		} else {
 			tmpf1 = (f1 & (TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ANIMAL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_DRAGON | TR1_SLAY_EVIL | TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON));
-			tmpf2 = ((f3 & (TR3_SH_FIRE | TR3_SH_ELEC)) || (f5 & TR5_SH_COLD));
+			tmpf2 = (f3 & (TR3_SH_FIRE | TR3_SH_ELEC | TR3_SH_COLD));
 			tmpf3 = (f1 & (TR1_BRAND_ACID | TR1_BRAND_ELEC | TR1_BRAND_FIRE | TR1_BRAND_COLD | TR1_BRAND_POIS));
 			tmp = tmpf1 || tmpf2 || tmpf3;
 		}
@@ -2197,7 +2196,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 
 			if (f3 & (TR3_SH_ELEC)) strcat(powins, "AE");
-			if (f5 & (TR5_SH_COLD)) strcat(powins, "AC");
+			if (f3 & (TR3_SH_COLD)) strcat(powins, "AC");
 			if (f3 & (TR3_SH_FIRE)) strcat(powins, "AF");
 			if (f1 & (TR1_BRAND_ELEC)) strcat(powins, "BE");
 			if (f1 & (TR1_BRAND_COLD)) strcat(powins, "BC");
