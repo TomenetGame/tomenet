@@ -4531,9 +4531,6 @@ void calc_boni(int Ind) {
 		p_ptr->see_infra += 5;
 	}
 
-	/* Hack -- Res Chaos -> Res Conf */
-	if (p_ptr->resist_chaos) p_ptr->resist_conf = TRUE;
-
 	/* Heart is boldened */
 	if (p_ptr->res_fear_temp || p_ptr->hero || p_ptr->shero ||
 	    p_ptr->fury || p_ptr->berserk || p_ptr->mindboost)
@@ -5996,6 +5993,9 @@ void calc_boni(int Ind) {
 	/* Fear Resistance from aura */
 	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 20)
 		{ p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR; }
+
+	/* Hack -- Res Chaos -> Res Conf */
+	if (p_ptr->resist_chaos) p_ptr->resist_conf = TRUE;
 
 
 
