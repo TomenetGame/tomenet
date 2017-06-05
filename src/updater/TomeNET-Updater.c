@@ -5,6 +5,9 @@
 
 #include <stdlib.h> /* system() call */
 
+/* Add a button to 'Install/Update guide' too? */
+#define GUIDE
+
 #ifdef WINDOWS
  #include <windows.h>
  #include <winreg.h>	/* remote control of installed 7-zip via registry approach */
@@ -73,12 +76,26 @@ void show_error(gpointer window) {
 #ifdef WINDOWS
 	    "You must first install 7-zip from www.7-zip.org !");
 #else
-	    "You must install 7-zip-GUI (7zG) first! Package name is 'p7zip'.");
+	    "You must install 7-zip (7z) first! Package name is 'p7zip'.");
 #endif
 	gtk_window_set_title(GTK_WINDOW(dialog), "Error");
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 }
+
+#ifndef WINDOWS
+void show_error_wget(gpointer window) {
+	GtkWidget *dialog;
+	dialog = gtk_message_dialog_new(GTK_WINDOW(window),
+	    GTK_DIALOG_DESTROY_WITH_PARENT,
+	    GTK_MESSAGE_ERROR,
+	    GTK_BUTTONS_OK,
+	    "You must first install the 'wget' package!");
+	gtk_window_set_title(GTK_WINDOW(dialog), "Error");
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+}
+#endif
 
 void show_error_broken(gpointer window) {
 	GtkWidget *dialog;
@@ -94,36 +111,55 @@ void show_error_broken(gpointer window) {
 	gtk_widget_destroy(dialog);
 }
 
+void show_done(gpointer window) {
+	GtkWidget *dialog;
+	dialog = gtk_message_dialog_new(GTK_WINDOW(window),
+	    GTK_DIALOG_DESTROY_WITH_PARENT,
+	    GTK_MESSAGE_OTHER, /* GTK_MESSAGE_INFO */
+	    GTK_BUTTONS_OK,
+	    "Operation finished.");
+	gtk_window_set_title(GTK_WINDOW(dialog), "Done");
+	gtk_dialog_run(GTK_DIALOG(dialog));
+	gtk_widget_destroy(dialog);
+}
+
 //void install_client(GtkWidget *widget, gpointer label) {
 void install_client(GtkButton *button, gpointer label) {
+	long res = 0;
+
 	gtk_button_set_label(button, "..please wait..");
 	while(gtk_events_pending())
 	    gtk_main_iteration();
 
 #ifdef WINDOWS
-	int res;
+	//TomeNET-latest-client.zip
+	char _download[1024], _latest_install[1024];//, _latest_client[1024];
+
+	strcpy(_download, "http://www.tomenet.eu/downloads/");
+	sprintf(_latest_install, "%sTomeNET-latest-install.exe", _download);
+	//sprintf(_latest_client, "%sTomeNET-latest-client.zip", _download);
 
 	remove("TomeNET-latest-install.exe");
  #if 0 /* winbash is dysfunctional, no alternatives available ----------------------------------------- */
   #if 0 /* problem: 7z doesn't support stripping a path level */ 
 	/* Download */
-	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", "http://www.tomenet.eu/downloads/TomeNET-latest-client.zip", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
+	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", _latest_client, NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
 	/* Extract */
 	_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-latest-client.zip", NULL);
   #else /* workaround: we just use the installer instead */
 	/* Download */
-	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", "http://www.tomenet.eu/downloads/TomeNET-latest-install.exe", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
+	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", _latest_install, NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
 	/* Extract */
 	_spawnl(_P_WAIT, "TomeNET-latest-install.exe", "TomeNET-latest-install.exe", NULL);
   #endif
  #else /* just use wget and silly html processing for now, ew ----------------------------------------- */
 	/* Download */
   #ifndef USE_URL2FILE
-	res = _spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", "http://www.tomenet.eu/downloads/TomeNET-latest-install.exe", NULL);
+	res = _spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", _latest_install, NULL);
 	if (res != 0) show_error_broken(top_window);
 	else
   #else
-	res = _spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", "http://www.tomenet.eu/downloads/TomeNET-latest-install.exe", "TomeNET-latest-install.exe", NULL);
+	res = _spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", _latest_install, "TomeNET-latest-install.exe", NULL);
 	if (res != 0) show_error_broken(top_window);
 	else
   #endif
@@ -135,6 +171,9 @@ void install_client(GtkButton *button, gpointer label) {
 	void *cwd;
 	const char *clname;
 	FILE *fp;
+
+	char _download[1024];
+	strcpy(_download, "http://www.tomenet.eu/downloads/");
 
 
 	if (is_linux) {
@@ -162,7 +201,7 @@ void install_client(GtkButton *button, gpointer label) {
 	fprintf(fp, "cd %s\n", out_val);
 	fprintf(fp, "rm %s\n", clname);
 	fprintf(fp, "rm updater/result.tmp\n");
-	fprintf(fp, "wget http://www.tomenet.eu/downloads/%s\n", clname);
+	fprintf(fp, "wget %s%s\n", _download, clname);
 	fprintf(fp, "RETVAL=$?\n");
 	fprintf(fp, "echo $RETVAL > updater/result.tmp\n");
 	fprintf(fp, "tar xvjf %s --strip-components 1\n", clname);
@@ -185,14 +224,17 @@ void install_client(GtkButton *button, gpointer label) {
 
 	fp = fopen("updater/result.tmp", "r");
 	if (fp) {//~paranoia?
-		long res;
-
 		fgets(out_val, 20, fp);
 		res = atoi(out_val);
 		if (res != 0) show_error_broken(top_window);
 		fclose(fp);
+	} else {
+		res = -1;
+		show_error_broken(top_window);
 	}
 #endif
+
+	if (!res) show_done(top_window);
 
 	gtk_button_set_label(button, "Install/update game client");
 	while(gtk_events_pending())
@@ -200,6 +242,8 @@ void install_client(GtkButton *button, gpointer label) {
 }
 
 void install_sound(GtkButton *button, gpointer label) {
+	long res = 0;
+
 	gtk_button_set_label(button, "..please wait..");
 	while(gtk_events_pending())
 	    gtk_main_iteration();
@@ -208,6 +252,14 @@ void install_sound(GtkButton *button, gpointer label) {
 #ifdef WINDOWS
 	char path[1024], out_val[1024];
 	FILE *fp;
+	char _soundpack[1024];
+	strcpy(_soundpack, "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z");
+	fp = fopen("TomeNET-Updater.cfg", "r");
+	if (fp) {
+		//fgets(out_val, 1024, fp);
+		if (fgets(out_val, 1024, fp)) strcpy(_soundpack, out_val);
+		fclose(fp);
+	}
 
 	remove("TomeNET-soundpack.7z");
 
@@ -235,9 +287,9 @@ exit(0);
  #else /* just use wget and silly html processing for now, ew ----------------------------------------- */
   #ifndef USE_URL2FILE
 	//_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "-O", "temp.html", "--dot-style=mega", "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z", NULL);
-	_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "-O", "temp.html", "--dot-style=mega", "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z", NULL);
+	_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "-O", "temp.html", "--dot-style=mega", _soundpack, NULL);
   #else
-	_spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z", "temp.html", NULL);
+	_spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", _soundpack, "temp.html", NULL);
   #endif
 	fp = fopen("temp.html", "r");
 	out_val[0] = out_val[1] = 0;
@@ -311,7 +363,7 @@ exit(0);
 	fprintf(fp, "mv TomeNET-soundpack.7z ..\n");
 	fprintf(fp, "mkdir -p %s/lib/xtra\n", out_val); /* in case someone deleted his whole lib folder */
 	fprintf(fp, "cd %s/lib/xtra\n", out_val);
-	fprintf(fp, "7zG x -y ../../TomeNET-soundpack.7z\n");
+	fprintf(fp, "7z x -y ../../TomeNET-soundpack.7z\n");
 	/* done, wait for confirmation */
 	fprintf(fp, "echo\n");
 	fprintf(fp, "read -p \"Press ENTER to finish.\"\n");
@@ -333,14 +385,17 @@ exit(0);
 
 	fp = fopen("updater/result.tmp", "r");
 	if (fp) {//~paranoia?
-		long res;
-
 		fgets(out_val, 20, fp);
 		res = atoi(out_val);
 		if (res != 0) show_error_broken(top_window);
 		fclose(fp);
+	} else {
+		res = -1;
+		show_error_broken(top_window);
 	}
 #endif
+
+	if (!res) show_done(top_window);
 
 	gtk_button_set_label(button, "Install/update sound pack");
 	while(gtk_events_pending())
@@ -348,6 +403,8 @@ exit(0);
 }
 
 void install_music(GtkButton *button, gpointer label) {
+	long res = 0;
+
 	gtk_button_set_label(button, "..please wait..");
 	while(gtk_events_pending())
 	    gtk_main_iteration();
@@ -356,6 +413,15 @@ void install_music(GtkButton *button, gpointer label) {
 #ifdef WINDOWS
 	char path[1024], out_val[1024];
 	FILE *fp;
+	char _musicpack[1024];
+	strcpy(_musicpack, "http://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z");
+	fp = fopen("TomeNET-Updater.cfg", "r");
+	if (fp) {
+		//fgets(out_val, 1024, fp);
+		fgets(out_val, 1024, fp);
+		if (fgets(out_val, 1024, fp)) strcpy(_musicpack, out_val);
+		fclose(fp);
+	}
 
 	remove("TomeNET-musicpack.7z");
 	/* download */
@@ -373,9 +439,9 @@ void install_music(GtkButton *button, gpointer label) {
   #endif
  #else /* just use wget and silly html processing for now, ew ----------------------------------------- */
   #ifndef USE_URL2FILE
-	_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "-O", "temp.html", "--dot-style=mega", "http://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z", NULL);
+	_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "-O", "temp.html", "--dot-style=mega", _musicpack, NULL);
   #else
-	_spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", "http://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z", "temp.html", NULL);
+	_spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", _musicpack, "temp.html", NULL);
   #endif
  	fp = fopen("temp.html", "r");
 	out_val[0] = out_val[1] = 0;
@@ -449,7 +515,7 @@ void install_music(GtkButton *button, gpointer label) {
 	fprintf(fp, "mv TomeNET-musicpack.7z ..\n");
 	fprintf(fp, "mkdir -p %s/lib/xtra\n", out_val); /* in case someone deleted his whole lib folder */
 	fprintf(fp, "cd %s/lib/xtra\n", out_val);
-	fprintf(fp, "7zG x -y ../../TomeNET-musicpack.7z\n");
+	fprintf(fp, "7z x -y ../../TomeNET-musicpack.7z\n");
 	/* done, wait for confirmation */
 	fprintf(fp, "echo\n");
 	fprintf(fp, "read -p \"Press ENTER to finish.\"\n");
@@ -471,19 +537,79 @@ void install_music(GtkButton *button, gpointer label) {
 
 	fp = fopen("updater/result.tmp", "r");
 	if (fp) {//~paranoia?
-		long res;
-
 		fgets(out_val, 20, fp);
 		res = atoi(out_val);
 		if (res != 0) show_error_broken(top_window);
 		fclose(fp);
+	} else {
+		res = -1;
+		show_error_broken(top_window);
 	}
 #endif
+
+	if (!res) show_done(top_window);
 
 	gtk_button_set_label(button, "Install/update music pack");
 	while(gtk_events_pending())
 	    gtk_main_iteration();
 }
+
+#ifdef GUIDE
+void install_guide(GtkButton *button, gpointer label) {
+	long res = 0;
+
+	gtk_button_set_label(button, "..please wait..");
+	while(gtk_events_pending())
+	    gtk_main_iteration();
+
+#ifdef WINDOWS
+	char _latest_install[1024];
+
+	strcpy(_latest_install, "http://www.tomenet.eu/TomeNET-Guide.txt");
+
+	remove("TomeNET-Guide.txt");
+ #if 0 /* winbash is dysfunctional, no alternatives available ----------------------------------------- */
+	/* Download */
+	_spawnl(_P_WAIT, "updater/dl_win32/winbash/wget.exe", "wget.exe", _latest_install, NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
+ #else /* just use wget and silly html processing for now, ew ----------------------------------------- */
+	/* Download */
+  #ifndef USE_URL2FILE
+	res = _spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", _latest_install, NULL);
+	if (res != 0) show_error_broken(top_window);
+	else
+  #else
+	res = _spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", _latest_install, "TomeNET-Guide.txt", NULL);
+	if (res != 0) show_error_broken(top_window);
+	else
+  #endif
+ #endif
+#else
+	FILE *fp;
+	char out_val[3];
+
+	remove("TomeNET-Guide.txt");
+	system("wget http://www.tomenet.eu/TomeNET-Guide.txt");
+
+	fp = fopen("TomeNET-Guide.txt", "r");
+	if (fp) {//~paranoia?
+		out_val[0] = 0;
+		fgets(out_val, 2, fp);
+		res = (out_val[0] < 32);
+		if (res != 0) show_error_broken(top_window);
+		fclose(fp);
+	} else {
+		res = -1;
+		show_error_broken(top_window);
+	}
+#endif
+
+	if (!res) show_done(top_window);
+
+	gtk_button_set_label(button, "Install/update guide");
+	while(gtk_events_pending())
+	    gtk_main_iteration();
+}
+#endif
 
 int main(int argc, char *argv[]) {
 	FILE *fp;
@@ -504,15 +630,23 @@ int main(int argc, char *argv[]) {
 
 	GtkWidget *label;
 	GtkWidget *frame;
+
 	GtkWidget *insclient;
 	GtkWidget *inssfx;
 	GtkWidget *insmus;
+#ifdef GUIDE
+	GtkWidget *insguide;
+#endif
 
 	gtk_init(&argc, &argv);
 	top_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 	gtk_window_set_title(GTK_WINDOW(top_window), "TomeNET Updater v1.0");
+#ifndef GUIDE
 	gtk_window_set_default_size(GTK_WINDOW(top_window), 320, 220);
+#else
+	gtk_window_set_default_size(GTK_WINDOW(top_window), 320, 270);
+#endif
 	gtk_window_set_position(GTK_WINDOW(top_window), GTK_WIN_POS_CENTER);
 	//gtk_window_set_icon(GTK_WINDOW(window), create_pixbuf("updater/tomenet4.png"));
 	//gtk_window_set_icon(GTK_WINDOW(top_window), create_pixbuf("updater/TomeNET-Updater.png"));
@@ -522,7 +656,7 @@ int main(int argc, char *argv[]) {
 	gtk_container_add(GTK_CONTAINER(top_window), frame);
 
 	label = gtk_label_new("  Make sure to quit and close the\ngame before running this updater!");
-	gtk_fixed_put(GTK_FIXED(frame), label, 20, 15); 
+	gtk_fixed_put(GTK_FIXED(frame), label, 20, 15);
 
 	insclient = gtk_button_new_with_label("Install/update game client");
 	gtk_widget_set_size_request(insclient, 255, 35);
@@ -536,11 +670,20 @@ int main(int argc, char *argv[]) {
 	gtk_widget_set_size_request(insmus, 255, 35);
 	gtk_fixed_put(GTK_FIXED(frame), insmus, 30, 170);
 
+#ifdef GUIDE
+	insguide = gtk_button_new_with_label("Install/update guide");
+	gtk_widget_set_size_request(insguide, 255, 35);
+	gtk_fixed_put(GTK_FIXED(frame), insguide, 30, 220);
+#endif
+
 	gtk_widget_show_all(top_window);
 
 	g_signal_connect(insclient, "clicked", G_CALLBACK(install_client), NULL);
 	g_signal_connect(inssfx, "clicked", G_CALLBACK(install_sound), NULL);
 	g_signal_connect(insmus, "clicked", G_CALLBACK(install_music), NULL);
+#ifdef GUIDE
+	g_signal_connect(insguide, "clicked", G_CALLBACK(install_guide), NULL);
+#endif
 
 	g_signal_connect_swapped(G_OBJECT(top_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
@@ -621,17 +764,17 @@ int main(int argc, char *argv[]) {
  #else	/* GUI 7z (for password prompts) */
 	fp = fopen("tmp.file", "w");
 	fclose(fp);
-	system("7zG a tmp.7z tmp.file");
+	system("7z a tmp.7z tmp.file");
 	remove("tmp.file");
  #endif
         if (!(fp = fopen("tmp.7z", "r"))) { /* paranoia? */
 		//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
-		show_error(top_window);//, "7-zip GUI not found ('7zG'). Install it first. (Package name is 'p7zip'.)");
+		show_error(top_window);//, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
 		return -1;
 	} else if (fgetc(fp) == EOF) { /* normal */
 		fclose(fp);
 		//MessageBox(NULL, "You must first install 7-zip from www.7-zip.org !", "Error", MB_OK);
-		show_error(top_window);//, "7-zip GUI not found ('7zG'). Install it first. (Package name is 'p7zip'.)");
+		show_error(top_window);//, "7-zip not found ('7z'). Install it first. (Package name is 'p7zip'.)");
 		return -1;
 	}
 #endif
@@ -664,6 +807,26 @@ int main(int argc, char *argv[]) {
 		else if (system("bash -c echo") == 0) posix_terminal = 4;
 		else if (system("sh -c echo") == 0) posix_terminal = 5;
 	}
+
+ #ifndef USE_URL2FILE
+	/* Verify that wget is installed */
+	system("wget --version > __wget.tmp");
+	fp = fopen("__wget.tmp", "r");
+	if (fp) {
+		buf[0] = 0;
+		fgets(buf, 2, fp);
+		fclose(fp);
+		remove("__wget.tmp");
+		if (buf[0] < 32) {
+			show_error_wget(top_window);
+			return 0;
+		}
+	} else {
+		remove("__wget.tmp");
+		show_error_wget(top_window);
+		return 0;
+	}
+ #endif
 #endif
 
 	gtk_main();
