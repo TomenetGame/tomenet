@@ -4797,14 +4797,14 @@
 #define TR2_SUST_DEX		0x00000008L
 #define TR2_SUST_CON			0x00000010L
 #define TR2_SUST_CHR			0x00000020L
- #define TR2_REDUC_FIRE			0x00000040L     /* Later */
- #define TR2_REDUC_COLD			0x00000080L     /* Later */
+#define TR2_RES_WATER			0x00000040L	/* Resist Water */
+#define TR2_IM_NETHER			0x00000080L     /* Immunity to nether */
 #define TR2_IM_ACID		0x00000100L
 #define TR2_IM_ELEC		0x00000200L
 #define TR2_IM_FIRE		0x00000400L
 #define TR2_IM_COLD		0x00000800L
- #define TR2_REDUC_ELEC			0x00001000L     /* Later */
- #define TR2_REDUC_ACID			0x00002000L     /* Later */
+#define TR2_IM_POISON			0x00001000L
+#define TR2_IM_WATER			0x00002000L	/* Water immunity, should also let you breathe under water */
 #define TR2_FREE_ACT			0x00004000L	/* Free Action */
 #define TR2_HOLD_LIFE	 		0x00008000L	/* Hold Life */
 #define TR2_RES_ACID		0x00010000L
@@ -4838,8 +4838,8 @@
 
 #define TR3_SH_FIRE		0x00000001L     /* Immolation (Fire) */
 #define TR3_SH_ELEC		0x00000002L     /* Electric Sheath */
-#define TR3_AUTO_CURSE		0x00000004L     /* The obj will recurse itself */
- #define TR3_DECAY		0x00000008L     /* Decay -- unused -- */
+#define TR3_SH_COLD		0x00000004L		/* Winter's might/Snow grasp/Frostweaving (Cold aura) */
+#define TR3_AUTO_CURSE		0x00000008L     /* The obj will recurse itself */
 #define TR3_NO_TELE			0x00000010L     /* Anti-teleportation */
 #define TR3_NO_MAGIC			0x00000020L     /* Anti-magic */
 #define TR3_WRAITH			0x00000040L     /* Wraithform */
@@ -4851,7 +4851,7 @@
 #define TR3_FEATHER			0x00001000L	/* Feather Falling */
 #define TR3_LITE1			0x00002000L	/* Permanent Light */
 #define TR3_SEE_INVIS			0x00004000L	/* See Invisible */
- #define TR3_NO_NORM_ART		0x00008000L	/* ??? -- unused -- */
+#define TR3_REGEN_MANA			0x00008000L	/* Item induces regeneration */
 #define TR3_SLOW_DIGEST		0x00010000L	/* Item slows down digestion */
 #define TR3_REGEN		0x00020000L	/* Item induces regeneration */
 #define TR3_XTRA_MIGHT		0x00040000L	/* Bows get extra multiplier */
@@ -4893,8 +4893,8 @@
 #define TR4_ANTIMAGIC_20	0x00080000L     /* Forbid magic */
 #define TR4_ANTIMAGIC_10		0x00100000L     /* Forbid magic */
 #define TR4_EASY_USE			0x00200000L     /* Easily activable */
-#define TR4_IM_NETHER			0x00400000L     /* Immunity to nether */
- #define TR4_RECHARGED			0x00800000L     /* Object has been recharged once -- unused -- */
+ #define TR4_RECHARGED			0x00400000L     /* Object has been recharged once -- unused -- */
+ #define TR3_NO_NORM_ART		0x00800000L	/* ??? -- unused -- */
  #define TR4_ULTIMATE		0x01000000L     /* ULTIMATE artifact -- unused -- */
 #define TR4_AUTO_ID		0x02000000L     /* Id stuff on floor */
 #define TR4_LITE2		0x04000000L     /* lite radius 2 */
@@ -4923,15 +4923,15 @@
 #define TR5_WHITE_LIGHT			0x00002000L	/* Light source colour is white instead of flame-yellow (for CAVE_LITE_COLOURS) */
 #define TR5_IGNORE_DISEN		0x00004000L	/* For 'Arcane' ego power for Heavy winners-only armour */
 #define TR5_RES_TELE			0x00008000L     /* For Sky Dragon Scale Mail */
-#define TR5_SH_COLD		0x00010000L		/* Winter's might/Snow grasp/Frostweaving (Cold aura) */
+ #define TR5_DECAY		0x00010000L		/* Decay -- unused -- */
 #define TR5_IGNORE_MANA		0x00020000L		/* Item ignores Mana Damage */
 #define TR5_IGNORE_WATER	0x00040000L		/* Item ignores Water damage */
 #define TR5_RES_TIME		0x00080000L
 #define TR5_RES_MANA			0x00100000L
-#define TR5_IM_POISON			0x00200000L
-#define TR5_IM_WATER			0x00400000L	/* Water immunity, should also let you breathe under water */
-#define TR5_RES_WATER			0x00800000L	/* Resist Water */
-#define TR5_REGEN_MANA		0x01000000L		/* Item induces regeneration */
+ #define TR5_REDUC_FIRE			0x00002000L	/* Later */
+ #define TR5_REDUC_COLD			0x00004000L	/* Later */
+ #define TR5_REDUC_ELEC			0x00008000L	/* Later */
+ #define TR5_REDUC_ACID		0x01000000L		/* Later */
 #define TR5_DISARM		0x02000000L
 #define TR5_NO_ENCHANT		0x04000000L
 #define TR5_CHAOTIC		0x08000000L

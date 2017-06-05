@@ -1501,9 +1501,9 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (f2 & TR2_RES_CHAOS) total += 15000;
 	if (f2 & TR2_RES_DISEN) total += 20000;
 	if (f3 & TR3_SH_FIRE) total += 3000;
-	if (f5 & TR5_SH_COLD) total += 3000;
+	if (f3 & TR3_SH_COLD) total += 3000;
 	if (f3 & TR3_SH_ELEC) total += 3000;
-	if (f3 & TR3_DECAY) total += 0;
+	if (f5 & TR5_DECAY) total += 0;
 	if (f3 & TR3_NO_TELE) total += 2500;
 	if (f3 & TR3_NO_MAGIC) total += 2500;
 	if (f3 & TR3_TY_CURSE) total -= 15000;
@@ -1529,7 +1529,7 @@ s32b flag_cost(object_type *o_ptr, int plusses) {
 	if (esp & ESP_ALL) total += 150000;/* was 125k, but ESP crowns cost 150k */
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 2500;
-	if (f5 & TR5_REGEN_MANA) total += 2500;
+	if (f3 & TR3_REGEN_MANA) total += 2500;
 	if (f3 & TR3_XTRA_MIGHT) total += 2250;
 	if (f3 & TR3_XTRA_SHOTS) total += 10000;
 	if (f5 & TR5_IGNORE_WATER) total += 0;
@@ -2351,9 +2351,9 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	}
 
 	if (f3 & TR3_SH_FIRE) total += 2000;
-	if (f5 & TR5_SH_COLD) total += 2000;
+	if (f3 & TR3_SH_COLD) total += 2000;
 	if (f3 & TR3_SH_ELEC) total += 2000;
-        if (f3 & TR3_DECAY) total += 0;
+	if (f5 & TR5_DECAY) total += 0;
 //done elsewhere	if (f3 & TR3_NO_TELE) total -= 50000;
 	if (f3 & TR3_NO_MAGIC) total += 0;
 	if (f3 & TR3_TY_CURSE) total -= 15000;
@@ -2378,7 +2378,7 @@ s32b artifact_flag_cost(object_type *o_ptr, int plusses) {
 	if (esp & ESP_ALL) total += 150000;// + 40000; /* hm, extra bonus */
 	if (f3 & TR3_SLOW_DIGEST) total += 750;
 	if (f3 & TR3_REGEN) total += 3500;
-	if (f5 & TR5_REGEN_MANA) total += 3500;
+	if (f3 & TR3_REGEN_MANA) total += 3500;
 	if (f3 & TR3_XTRA_MIGHT) total += 10000;
 	if (f3 & TR3_XTRA_SHOTS) total += 10000;
 	if (f5 & TR5_IGNORE_WATER) total += 0;
@@ -2500,7 +2500,7 @@ static int artifact_flag_rating_armour(object_type *o_ptr) {
 	if (f2 & TR2_RES_CHAOS) total += 4;
 	if (f2 & TR2_RES_DISEN) total += 4;
 	if (f5 & TR5_RES_MANA) total += 2;
-	if (f5 & TR5_REGEN_MANA) total += 2;
+	if (f3 & TR3_REGEN_MANA) total += 2;
 	if (f4 & TR4_LEVITATE) total += 2;
 	if (f2 & TR2_FREE_ACT) total += 2;
 	if (f2 & TR2_HOLD_LIFE) total += 4;
@@ -8746,7 +8746,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			bool rsoun = (rnexu && rchao);
 			bool rshar = (rnexu && rmana);
 			bool rdise = (rneth && rchao);
-			u32b relem2, relem5;
+			u32b relem2;
 
 			if (p_ptr->resist_fire || p_ptr->immune_fire) rfire = FALSE;
 			if (p_ptr->resist_cold || p_ptr->immune_cold) rcold = FALSE;
@@ -8769,16 +8769,15 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			    (rchao ? TR2_RES_CHAOS : 0x0) |
 			    (rfire ? TR2_RES_FIRE | TR2_IM_FIRE : 0x0) | (rcold ? TR2_RES_COLD | TR2_IM_COLD : 0x0) |
 			    (relec ? TR2_RES_ELEC | TR2_IM_ELEC : 0x0) | (racid ? TR2_RES_ACID | TR2_IM_ACID : 0x0) |
-			    (rpois ? TR2_RES_POIS : 0x0) |
+			    (rpois ? TR2_RES_POIS | TR2_IM_POISON : 0x0) |
 			    (rconf ? TR2_RES_CONF | TR2_RES_CHAOS : 0x0) | (rsoun ? TR2_RES_SOUND : 0x0) |
 			    (rshar ? TR2_RES_SHARDS : 0x0) | (rdise ? TR2_RES_DISEN : 0x0));
-			relem5 = (rpois ? TR5_IM_POISON : 0x0);
 
-			if ((relem2 || relem5) && !(f2 & relem2) && !(f5 & relem5)) continue;
+			if (relem2 && !(f2 & relem2)) continue;
 		}
 
 		/* If the item only has high resistance, and no immunity, make sure that we don't already resist it. */
-		if (!(f2 & (TR2_IM_FIRE | TR2_IM_COLD | TR2_IM_ACID | TR2_IM_ELEC)) && !(f5 & TR5_IM_POISON)) {
+		if (!(f2 & (TR2_IM_FIRE | TR2_IM_COLD | TR2_IM_ACID | TR2_IM_ELEC | TR2_IM_POISON))) {
 			int hres = 0;
 			int pres = 0;
 
@@ -8832,7 +8831,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			}
 
 			/* misc */
-			//if (f5 & TR5_RES_WATER) hres++;
+			//if (f2 & TR2_RES_WATER) hres++;
 			//PLASMA, MANA, TIME, FEAR
 			//don't check for FA, to make sure Vampires/GreenD don't get mirkwood boots
 

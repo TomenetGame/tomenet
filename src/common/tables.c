@@ -495,7 +495,7 @@ r_projection r_projections[RCRAFT_MAX_PROJECTIONS] = {
 { R_LITE | R_NEXU, GF_INERTIA,    200, "inertia",         TR2_FREE_ACT },
 { R_LITE | R_NETH, GF_ELEC,      1200, "lightning",       TR2_RES_ELEC },
 { R_LITE | R_CHAO, GF_FIRE,      1200, "fire",            TR2_RES_FIRE },
-{ R_LITE | R_MANA, GF_WAVE,       300, "water",           TR5_RES_WATER },
+{ R_LITE | R_MANA, GF_WAVE,       300, "water",           TR2_RES_WATER },
 
 { R_DARK | R_NEXU, GF_GRAVITY,    150, "gravity",         TR3_FEATHER },
 { R_DARK | R_NETH, GF_COLD,      1200, "frost",           TR2_RES_COLD },

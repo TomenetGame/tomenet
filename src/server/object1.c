@@ -1336,7 +1336,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				if (!((*f2) & TR2_RES_ELEC) && !((*f2) & TR2_IM_ELEC)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_ELEC; flag_count++; }
 				if (!((*f2) & TR2_RES_FIRE) && !((*f2) & TR2_IM_FIRE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_FIRE; flag_count++; }
 				if (!((*f2) & TR2_RES_COLD) && !((*f2) & TR2_IM_COLD)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_COLD; flag_count++; }
-				if (!((*f2) & TR2_RES_POIS) && !((*f5) & TR5_IM_POISON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_POIS; flag_count++; }
+				if (!((*f2) & TR2_RES_POIS) && !((*f2) & TR2_IM_POISON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_POIS; flag_count++; }
 				if (!((*f2) & TR2_RES_LITE)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_LITE; flag_count++; }
 				if (!((*f2) & TR2_RES_DARK)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_DARK; flag_count++; }
 				if (!((*f2) & TR2_RES_BLIND)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_BLIND; flag_count++; }
@@ -1360,11 +1360,11 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_MANA) { //Mana           | Rm     |      |        |       |       | MPRm  | MP    |
-				if (!((*f5) & TR5_REGEN_MANA)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REGEN_MANA; flag_count++; }
+				if (!((*f3) & TR3_REGEN_MANA)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_REGEN_MANA; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_CROWN:
 						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
-						if (!((*f5) & TR5_REGEN_MANA)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_REGEN_MANA; flag_count++; }
+						if (!((*f3) & TR3_REGEN_MANA)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_REGEN_MANA; flag_count++; }
 					break;
 					case TV_GLOVES:
 						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
@@ -1441,7 +1441,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_WATE) { //Water          | Im     |      |        |       |       |       |       |
-				if (!((*f5) & TR5_IM_WATER) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_WATER; flag_count++; }
+				if (!((*f2) & TR2_IM_WATER) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_WATER; flag_count++; }
 			}
 
 			else if (sigil == SV_R_GRAV) { //Gravity        | NT     |      |        |       | Lv    |       |       | Lv
@@ -1469,7 +1469,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 						if (!((*f1) & TR1_BRAND_COLD)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_COLD; flag_count++; }
 					break;
 					case TV_CLOAK:
-						if (!((*f5) & TR5_SH_COLD)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_SH_COLD; flag_count++; }
+						if (!((*f3) & TR3_SH_COLD)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_SH_COLD; flag_count++; }
 					break;
 					default:
 					break;
@@ -1494,7 +1494,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_POIS) { //Poison         | Im     | Br   |        | C+    |       |       | BrC+  |
-				if (!((*f5) & TR5_IM_POISON) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IM_POISON; flag_count++; }
+				if (!((*f2) & TR2_IM_POISON) && !(o_ptr->sval == SV_DRAGON_MULTIHUED)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_IM_POISON; flag_count++; }
 				if (!((*f1) & TR1_CON) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_CON; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
@@ -1680,21 +1680,16 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 						case TR2_IM_ELEC: { if ((*f2) & TR2_RES_ELEC) (*f2) &= ~(TR2_RES_ELEC); (*f2) |= flag_pool[flag_pick]; break; }
 						case TR2_IM_FIRE: { if ((*f2) & TR2_RES_FIRE) (*f2) &= ~(TR2_RES_FIRE); (*f2) |= flag_pool[flag_pick]; break; }
 						case TR2_IM_COLD: { if ((*f2) & TR2_RES_COLD) (*f2) &= ~(TR2_RES_COLD); (*f2) |= flag_pool[flag_pick]; break; }
+						case TR2_IM_POISON: { if ((*f2) & TR2_RES_POIS) (*f2) &= ~(TR2_RES_POIS); (*f2) |= flag_pool[flag_pick]; break; }
+						case TR2_IM_WATER: { if ((*f2) & TR2_RES_WATER) (*f2) &= ~(TR2_RES_WATER); (*f2) |= flag_pool[flag_pick]; break; }
 						default:
 							(*f2) |= flag_pool[flag_pick];
 						break;
 					}
 				} else if (category == 3) (*f3) |= flag_pool[flag_pick];
 				else if (category == 4) (*f4) |= flag_pool[flag_pick];
-				else if (category == 5) {
-					switch (flag_pool[flag_pick]) {
-						case TR5_IM_POISON: { if ((*f2) & TR2_RES_POIS) (*f2) &= ~(TR2_RES_POIS); (*f5) |= flag_pool[flag_pick]; break; }
-						case TR5_IM_WATER: { if ((*f5) & TR5_RES_WATER) (*f5) &= ~(TR5_RES_WATER); (*f5) |= flag_pool[flag_pick]; break; }
-						default:
-							(*f5) |= flag_pool[flag_pick];
-						break;
-					}
-				} else if (category == 6) (*esp) |= flag_pool[flag_pick];
+				else if (category == 5) (*f5) |= flag_pool[flag_pick];
+				else if (category == 6) (*esp) |= flag_pool[flag_pick];
 				else failed = 1;
 			} else failed = 1;
 
@@ -1736,12 +1731,12 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					(*f2) |= r_projections[o_ptr->sigil-1].resist;
 				break;
 				case SV_R_POIS:
-					if ((*f5) & TR5_IM_POISON) { failed = 1; break; }
+					if ((*f2) & TR2_IM_POISON) { failed = 1; break; }
 					(*f2) |= r_projections[o_ptr->sigil-1].resist;
 				break;
 				case SV_R_WATE:
-					if ((*f5) & TR5_IM_WATER) { failed = 1; break; }
-					(*f5) |= r_projections[o_ptr->sigil-1].resist;
+					if ((*f2) & TR2_IM_WATER) { failed = 1; break; }
+					(*f2) |= r_projections[o_ptr->sigil-1].resist;
 				break;
 				case SV_R_ICEE: //Hack, manually add.. - Kurzel
 					if (!((*f2) & TR2_IM_COLD)) (*f2) |= TR2_RES_COLD;
@@ -5247,7 +5242,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 			fprintf(fff, "It can only be set off by evil creatures.\n");
 	}
 #endif
-	if (f5 & (TR5_IM_POISON))
+	if (f2 & (TR2_IM_POISON))
 		fprintf(fff, "It provides immunity to poison.\n");
 
 	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
@@ -5267,7 +5262,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 			if (eff_full && (o_ptr->xtra2 & 0x08)) fprintf(fff, "It provides immunity to acid.\n");
 			else fprintf(fff, "It provides resistance to acid.\n");
 		}
-		if (!(f5 & (TR5_IM_POISON))) {
+		if (!(f2 & (TR2_IM_POISON))) {
 			if (eff_full && (o_ptr->xtra2 & 0x10)) fprintf(fff, "It provides immunity to poison.\n");
 			else fprintf(fff, "It provides resistance to poison.\n");
 		}
@@ -5284,15 +5279,15 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 			fprintf(fff, "It provides resistance to electricity.\n");
 		if ((f2 & (TR2_RES_ACID)) && !(f2 & (TR2_IM_ACID)))
 			fprintf(fff, "It provides resistance to acid.\n");
-		if ((f2 & (TR2_RES_POIS)) && !(f5 & (TR5_IM_POISON)))
+		if ((f2 & (TR2_RES_POIS)) && !(f2 & (TR2_IM_POISON)))
 			fprintf(fff, "It provides resistance to poison.\n");
 	}
 
-	if (f5 & (TR5_IM_WATER))
+	if (f2 & (TR2_IM_WATER))
 		fprintf(fff, "It provides complete protection from unleashed water.\n");
-	else if (f5 & (TR5_RES_WATER))
+	else if (f2 & (TR2_RES_WATER))
 		fprintf(fff, "It provides resistance to unleashed water.\n");
-	if (f4 & (TR4_IM_NETHER))
+	if (f2 & (TR2_IM_NETHER))
 		fprintf(fff, "It provides immunity to nether.\n");
 	else if (f2 & (TR2_RES_NETHER))
 		fprintf(fff, "It provides resistance to nether.\n");
@@ -5366,13 +5361,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		fprintf(fff, "It slows your metabolism.\n");
 	if (f3 & (TR3_REGEN))
 		fprintf(fff, "It speeds your hit point regeneration.\n");
-	if (f5 & (TR5_REGEN_MANA))
+	if (f3 & (TR3_REGEN_MANA))
 		fprintf(fff, "It speeds your mana recharging.\n");
 	if (f5 & (TR5_REFLECT))
 		fprintf(fff, "It reflects bolts and arrows.\n");
 	if (f3 & (TR3_SH_FIRE))
 		fprintf(fff, "It produces a fiery aura.\n");
-	if (f5 & (TR5_SH_COLD))
+	if (f3 & (TR3_SH_COLD))
 		fprintf(fff, "It produces an icy aura.\n");
 	if (f3 & (TR3_SH_ELEC))
 		fprintf(fff, "It produces an electric aura.\n");

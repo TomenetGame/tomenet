@@ -377,7 +377,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 		p += 23;
 		immunities++;
 	}
-	if (a_ptr->flags5 & TR5_IM_POISON) { //currently not possible on randarts
+	if (a_ptr->flags2 & TR2_IM_POISON) { //currently not possible on randarts
 		p += 20;
 		immunities++;
 	}
@@ -427,7 +427,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->flags4 & TR4_AUTO_ID) p += 20;//maybe even higher, like 30
 	if (a_ptr->flags3 & TR3_SLOW_DIGEST) p += 4;
 	if (a_ptr->flags3 & TR3_REGEN) p += 8;
-	if (a_ptr->flags5 & TR5_REGEN_MANA) p += 8;
+	if (a_ptr->flags3 & TR3_REGEN_MANA) p += 8;
 	if ((a_ptr->flags3 & TR3_TELEPORT) && (a_ptr->flags3 & TR3_CURSED)) p -= 20;
 	if (a_ptr->flags3 & TR3_DRAIN_EXP) p -= 16;
 	if (a_ptr->flags3 & TR3_AGGRAVATE) p -= 8;
@@ -443,7 +443,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	if (a_ptr->flags4 & TR4_LEVITATE) p += 15;
 	if (a_ptr->flags4 & TR4_CLIMB) p += 15;
 	if (a_ptr->flags3 & TR3_SH_FIRE) p += 5;
-	if (a_ptr->flags5 & TR5_SH_COLD) p += 5;
+	if (a_ptr->flags3 & TR3_SH_COLD) p += 5;
 	if (a_ptr->flags3 & TR3_SH_ELEC) p += 5;
 
 	/* only for Ethereal DSM basically.. */
@@ -910,7 +910,7 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 17) {
 				a_ptr->flags1 |= TR1_INFRA;
 				if (a_ptr->pval == 0) a_ptr->pval = randint(2);
-			} else if (r < 20) a_ptr->flags5 |= TR5_REGEN_MANA;
+			} else if (r < 20) a_ptr->flags3 |= TR3_REGEN_MANA;
 			else if (r < 22) {
 				a_ptr->flags1 |= TR1_MANA;
 				if (a_ptr->pval == 0) a_ptr->pval = randint(5);
@@ -974,7 +974,7 @@ static void add_ability (artifact_type *a_ptr) {
 				do_pval (a_ptr);
 			} else if (r < 10) { //30
 				if (!(a_ptr->flags3 & TR3_SH_FIRE ||
-				     a_ptr->flags5 & TR5_SH_COLD ||
+				     a_ptr->flags3 & TR3_SH_COLD ||
 				     a_ptr->flags3 & TR3_SH_ELEC)) {
 					switch(rand_int(3)) {
 					case 0:	a_ptr->flags3 |= TR3_SH_FIRE;
@@ -983,7 +983,7 @@ static void add_ability (artifact_type *a_ptr) {
 					case 1:	a_ptr->flags3 |= TR3_SH_ELEC;
 						a_ptr->flags2 |= TR2_RES_ELEC;
 						break;
-					case 2: a_ptr->flags5 |= TR5_SH_COLD;
+					case 2: a_ptr->flags3 |= TR3_SH_COLD;
 						a_ptr->flags2 |= TR2_RES_COLD;
 						break;
 					}
@@ -1073,12 +1073,15 @@ static void add_ability (artifact_type *a_ptr) {
 			else a_ptr->to_a += 3 + rand_int(7);
 #endif
 			break;
+		case TV_AMULET:
 		case TV_RING:
+			if (k_ptr->cost > 12000) break; //Serpents amulet is 10k, ring of poison res is 12k
 			if (r < 5) {
 				if (k_ptr->flags2 & TR2_RES_ELEC) a_ptr->flags2 |= TR2_IM_ELEC;
 				else if (k_ptr->flags2 & TR2_RES_COLD) a_ptr->flags2 |= TR2_IM_COLD;
 				else if (k_ptr->flags2 & TR2_RES_FIRE) a_ptr->flags2 |= TR2_IM_FIRE;
 				else if (k_ptr->flags2 & TR2_RES_ACID) a_ptr->flags2 |= TR2_IM_ACID;
+				else if (k_ptr->flags2 & TR2_RES_POIS) a_ptr->flags2 |= TR2_IM_POISON;
 			}
 			break;
 		case TV_LITE:
@@ -1273,7 +1276,7 @@ static void add_ability (artifact_type *a_ptr) {
 				}
 			case 41: a_ptr->flags3 |= TR3_SLOW_DIGEST; break;
 			case 42:
-				a_ptr->flags5 |= TR5_REGEN_MANA; break;
+				a_ptr->flags3 |= TR3_REGEN_MANA; break;
 			case 43:
 				a_ptr->flags3 |= TR3_REGEN; break;
 #if 0 /* only for helms/crowns */
@@ -1383,7 +1386,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	/* If an item gives +MANA, remove NO_MAGIC property */
 	if ((a_ptr->flags1 & TR1_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 	/* If an item gives REGEN_MANA, remove NO_MAGIC property */
-	if ((a_ptr->flags5 & TR5_REGEN_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	if ((a_ptr->flags3 & TR3_REGEN_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 #if 0 /* would also need to disallow egos w/ BLESSED then, which is problematic in some ways */
 	/* Don't allow BLESSED on Dark Swords */
 	if (k_ptr->tval == TV_SWORD && k_ptr->sval == SV_DARK_SWORD) a_ptr->flags3 &= ~TR3_BLESSED;
@@ -1626,7 +1629,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	/* If an item gives +MANA, remove NO_MAGIC property */
 	if ((a_ptr->flags1 & TR1_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 	/* If an item gives REGEN_MANA, remove NO_MAGIC property */
-	if ((a_ptr->flags5 & TR5_REGEN_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+	if ((a_ptr->flags3 & TR3_REGEN_MANA) && !(k_ptr->flags3 & TR3_NO_MAGIC)) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 #if 0 /* would also need to disallow egos w/ BLESSED then, which is problematic in some ways */
 	/* Don't allow BLESSED on Dark Swords */
 	if (k_ptr->tval == TV_SWORD && k_ptr->sval == SV_DARK_SWORD) a_ptr->flags3 &= ~TR3_BLESSED;
@@ -1867,11 +1870,13 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 		}
 	}
 
-	/* rings that give a base resistance in their base version should prioritize the
-	   according type of immunity over going with a different immunity _instead_.
+	/* low-profile rings/amulets that give a base resistance in their base version should prioritize
+	   the according type of immunity over going with a different immunity _instead_.
 	   Note: we are a bit rough and kill the case of a ring having double-immunity that _both_
 	         didn't fit - instead of rearraging only one of them we just discard both.. */
-	if (a_ptr->tval == TV_RING && (a_ptr->flags2 & (TR2_IM_ELEC | TR2_IM_COLD | TR2_IM_FIRE | TR2_IM_ACID))) {
+	if ((a_ptr->tval == TV_RING || a_ptr->tval == TV_AMULET)
+	    && (a_ptr->flags2 & (TR2_IM_ELEC | TR2_IM_COLD | TR2_IM_FIRE | TR2_IM_ACID | TR2_IM_POISON))
+	    && k_ptr->cost <= 12000) { //Serpents amulet is 10k, ring of poison res is 12k
 		if ((k_ptr->flags2 & TR2_RES_ELEC) && !(a_ptr->flags2 & TR2_IM_ELEC))
 			a_ptr->flags2 = TR2_IM_ELEC;
 		else if ((k_ptr->flags2 & TR2_RES_COLD) && !(a_ptr->flags2 & TR2_IM_COLD))
@@ -1880,6 +1885,8 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 			a_ptr->flags2 = TR2_IM_FIRE;
 		else if ((k_ptr->flags2 & TR2_RES_ACID) && !(a_ptr->flags2 & TR2_IM_ACID))
 			a_ptr->flags2 = TR2_IM_ACID;
+		else if ((k_ptr->flags2 & TR2_RES_POIS) && !(a_ptr->flags2 & TR2_IM_POISON))
+			a_ptr->flags2 = TR2_IM_POISON;
 	}
 }
 
@@ -2095,7 +2102,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 			if ((o_ptr->xtra2 & 0x2)) a_ptr->flags2 |= TR2_IM_COLD;
 			if ((o_ptr->xtra2 & 0x4)) a_ptr->flags2 |= TR2_IM_ELEC;
 			if ((o_ptr->xtra2 & 0x8)) a_ptr->flags2 |= TR2_IM_ACID;
-			if ((o_ptr->xtra2 & 0x10)) a_ptr->flags5 |= TR5_IM_POISON;
+			if ((o_ptr->xtra2 & 0x10)) a_ptr->flags2 |= TR2_IM_POISON;
 		}
 	}
 
@@ -2545,7 +2552,7 @@ try_an_other_ego:
 		/* If an item gives BLESSED, remove NO_MAGIC property */
 		if (a_ptr->flags3 & TR3_BLESSED) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 		/* If an item gives REGEN_MANA, remove NO_MAGIC property */
-		else if (a_ptr->flags5 & TR5_REGEN_MANA) a_ptr->flags3 &= ~TR3_NO_MAGIC;
+		else if (a_ptr->flags3 & TR3_REGEN_MANA) a_ptr->flags3 &= ~TR3_NO_MAGIC;
 		/* Ego powers which are named in a way so that you shoudldn't expect no-magic on them */
 		else if ((o_ptr->name2 == EGO_MAGI || o_ptr->name2b == EGO_MAGI) || /* crowns */
 		    (o_ptr->name2 == EGO_LITE_MAGI || o_ptr->name2b == EGO_LITE_MAGI) ||
@@ -2724,7 +2731,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		case 7: a_ptr->flags2 |= (TR2_FREE_ACT);    break;
 		case 8: a_ptr->flags2 |= (TR2_HOLD_LIFE);   break;
 		case 9: a_ptr->flags3 |= (TR3_NO_MAGIC);   break;
-		case 10: a_ptr->flags5 |= (TR5_REGEN_MANA);   break;
+		case 10: a_ptr->flags3 |= (TR3_REGEN_MANA);   break;
 		}
 	}
 
@@ -2741,7 +2748,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		case 7: a_ptr->flags2 |= (TR2_FREE_ACT);    break;
 		case 8: a_ptr->flags2 |= (TR2_HOLD_LIFE);   break;
 		case 9: a_ptr->flags3 |= (TR3_NO_MAGIC);   break;
-		case 10: a_ptr->flags5 |= (TR5_REGEN_MANA);   break;
+		case 10: a_ptr->flags3 |= (TR3_REGEN_MANA);   break;
 		}
 	}
 
@@ -3063,8 +3070,8 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific) {
 				if (randint(2) == 1) return;
 			}
 			if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR &&
-			    !(a_ptr->flags5 & TR5_SH_COLD)) {
-				a_ptr->flags5 |= TR5_SH_COLD;
+			    !(a_ptr->flags3 & TR3_SH_COLD)) {
+				a_ptr->flags3 |= TR3_SH_COLD;
 				if (randint(2) == 1) return;
 			}
 			if (randint(BIAS_LUCK) == 1 && !(a_ptr->flags2 & TR2_IM_COLD)) {
@@ -3242,7 +3249,7 @@ void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific) {
 		break;
 	case 41:
 		if (a_ptr->tval >= TV_CLOAK && a_ptr->tval <= TV_HARD_ARMOR)
-			a_ptr->flags5 |= TR5_SH_COLD;
+			a_ptr->flags3 |= TR3_SH_COLD;
 		else
 			random_resistance(a_ptr, is_scroll, specific);
 		if (!(artifact_bias)) artifact_bias = BIAS_COLD;

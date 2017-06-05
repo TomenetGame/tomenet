@@ -8372,7 +8372,7 @@ void do_slash_cmd(int Ind, char *message) {
 					if ((a_ptr->flags2 & TR2_IM_COLD)) i++;
 					if ((a_ptr->flags2 & TR2_IM_ELEC)) i++;
 					if ((a_ptr->flags2 & TR2_IM_ACID)) i++;
-					if ((a_ptr->flags5 & TR5_IM_POISON)) i++;
+					if ((a_ptr->flags2 & TR2_IM_POISON)) i++;
 				} while (
 				    //i < 2 ||
 				    //o_ptr->to_h < 30 ||

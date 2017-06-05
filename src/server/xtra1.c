@@ -4069,11 +4069,11 @@ void calc_boni(int Ind) {
 		if (f3 & TR3_REGEN) { p_ptr->regenerate = TRUE; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RRGHP; }
 		if (f5 & TR5_RES_TIME) { p_ptr->resist_time = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RTIME; }
 		if (f5 & TR5_RES_MANA) { p_ptr->resist_mana = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RMANA; }
-		if (f5 & TR5_IM_POISON) { p_ptr->immune_poison = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IPOIS; }
-		if (f5 & TR5_IM_WATER) { p_ptr->immune_water = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_IWATR; }
-		if (f5 & TR5_RES_WATER) { p_ptr->resist_water = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RWATR; }
+		if (f2 & TR2_IM_POISON) { p_ptr->immune_poison = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IPOIS; }
+		if (f2 & TR2_IM_WATER) { p_ptr->immune_water = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_IWATR; }
+		if (f2 & TR2_RES_WATER) { p_ptr->resist_water = TRUE; csheet_boni[i-INVEN_WIELD].cb[3] |= CB4_RWATR; }
 		if (f5 & TR5_PASS_WATER) { p_ptr->can_swim = TRUE; csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XSWIM; }
-		if (f5 & TR5_REGEN_MANA) { p_ptr->regen_mana = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RRGMP; }
+		if (f3 & TR3_REGEN_MANA) { p_ptr->regen_mana = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RRGMP; }
 		if (esp) {
 			p_ptr->telepathy |= esp;
 			/* Flag all the ESPs for ESP_ALL */
@@ -4141,10 +4141,10 @@ void calc_boni(int Ind) {
 		if (f2 & TR2_IM_COLD) { p_ptr->immune_cold = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_ICOLD; }
 		if (f2 & TR2_IM_ELEC) { p_ptr->immune_elec = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_IELEC; }
 
-		if (f2 & TR2_REDUC_FIRE) p_ptr->reduc_fire += 5 * o_ptr->to_a;
-		if (f2 & TR2_REDUC_COLD) p_ptr->reduc_cold += 5 * o_ptr->to_a;
-		if (f2 & TR2_REDUC_ELEC) p_ptr->reduc_elec += 5 * o_ptr->to_a;
-		if (f2 & TR2_REDUC_ACID) p_ptr->reduc_acid += 5 * o_ptr->to_a;
+		if (f5 & TR5_REDUC_FIRE) p_ptr->reduc_fire += 5 * o_ptr->to_a;
+		if (f5 & TR5_REDUC_COLD) p_ptr->reduc_cold += 5 * o_ptr->to_a;
+		if (f5 & TR5_REDUC_ELEC) p_ptr->reduc_elec += 5 * o_ptr->to_a;
+		if (f5 & TR5_REDUC_ACID) p_ptr->reduc_acid += 5 * o_ptr->to_a;
 
 		/* Resistance flags */
 		if (f2 & TR2_RES_ACID) { p_ptr->resist_acid = TRUE; csheet_boni[i-INVEN_WIELD].cb[1] |= CB2_RACID; }
@@ -4199,13 +4199,13 @@ void calc_boni(int Ind) {
 #endif
 		}
 		/* The Ring of Phasing, exclusively */
-		if (f4 & (TR4_IM_NETHER)) { p_ptr->immune_neth = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_INETH; }
+		if (f2 & (TR2_IM_NETHER)) { p_ptr->immune_neth = TRUE; csheet_boni[i-INVEN_WIELD].cb[2] |= CB3_INETH; }
 		if (f5 & (TR5_REFLECT)) {
 			if (o_ptr->tval != TV_SHIELD) { p_ptr->reflect = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RREFL; }
 			else may_reflect = TRUE;
 		}
 		if (f3 & (TR3_SH_FIRE)) { p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_AFIRE; }
-		if (f5 & (TR5_SH_COLD)) { p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_ACOLD; }
+		if (f3 & (TR3_SH_COLD)) { p_ptr->sh_cold = p_ptr->sh_cold_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_ACOLD; }
 		if (f3 & (TR3_SH_ELEC)) { p_ptr->sh_elec = p_ptr->sh_elec_fix = TRUE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_AELEC; }
 		if (f3 & (TR3_NO_MAGIC)) {
 			p_ptr->anti_magic = TRUE; csheet_boni[i-INVEN_WIELD].cb[6] |= CB7_RAMSH;
@@ -4218,7 +4218,7 @@ void calc_boni(int Ind) {
 
 		/* Additional flags from PernAngband */
 
-		if (f4 & (TR4_IM_NETHER)) p_ptr->immune_neth = TRUE;
+		if (f2 & (TR2_IM_NETHER)) p_ptr->immune_neth = TRUE;
 
 		/* Limit use of disenchanted DarkSword for non-unbe */
 		minus = o_ptr->to_h + o_ptr->to_d; // + pval;// + (o_ptr->to_a / 4);
@@ -6481,7 +6481,7 @@ void calc_boni(int Ind) {
 						if (f2 & TR2_RES_ACID) csheet_boni[i].cb[1] |= CB2_RACID;
 						if (f2 & TR2_IM_ACID) csheet_boni[i].cb[1] |= CB2_IACID;
 						if (f2 & TR2_RES_POIS) csheet_boni[i].cb[1] |= CB2_RPOIS;
-						if (f5 & TR5_IM_POISON) csheet_boni[i].cb[1] |= CB2_IPOIS;
+						if (f2 & TR2_IM_POISON) csheet_boni[i].cb[1] |= CB2_IPOIS;
 						if (f2 & TR2_RES_BLIND) csheet_boni[i].cb[1] |= CB2_RBLND;
 						if (f2 & TR2_RES_LITE) csheet_boni[i].cb[2] |= CB3_RLITE;
 						if (f2 & TR2_RES_DARK) csheet_boni[i].cb[2] |= CB3_RDARK;
@@ -6489,12 +6489,12 @@ void calc_boni(int Ind) {
 						if (f2 & TR2_RES_SHARDS) csheet_boni[i].cb[2] |= CB3_RSHRD;
 						if (f2 & TR2_RES_NEXUS) csheet_boni[i].cb[2] |= CB3_RNEXU;
 						if (f2 & TR2_RES_NETHER) csheet_boni[i].cb[2] |= CB3_RNETH;
-						if (f4 & TR4_IM_NETHER) csheet_boni[i].cb[2] |= CB3_INETH; //ring of phasing
+						if (f2 & TR2_IM_NETHER) csheet_boni[i].cb[2] |= CB3_INETH; //ring of phasing
 						if (f2 & TR2_RES_CONF) csheet_boni[i].cb[3] |= CB4_RCONF;
 						if (f2 & TR2_RES_CHAOS) csheet_boni[i].cb[3] |= CB4_RCHAO;
 						if (f2 & TR2_RES_DISEN) csheet_boni[i].cb[3] |= CB4_RDISE;
-						if (f5 & TR5_RES_WATER) csheet_boni[i].cb[3] |= CB4_RWATR;
-						if (f5 & TR5_IM_WATER) csheet_boni[i].cb[3] |= CB4_IWATR; //ocean soul
+						if (f2 & TR2_RES_WATER) csheet_boni[i].cb[3] |= CB4_RWATR;
+						if (f2 & TR2_IM_WATER) csheet_boni[i].cb[3] |= CB4_IWATR; //ocean soul
 						if (f5 & TR5_RES_TIME) csheet_boni[i].cb[3] |= CB4_RTIME;
 						if (f5 & TR5_RES_MANA) csheet_boni[i].cb[3] |= CB4_RMANA;
 						
@@ -6536,7 +6536,7 @@ void calc_boni(int Ind) {
 						if (f5 & TR5_DRAIN_HP) csheet_boni[i].cb[5] |= CB6_SRGHP;
 						if (f3 & TR3_REGEN) csheet_boni[i].cb[5] |= CB6_RRGHP;
 						if (f5 & TR5_DRAIN_MANA) csheet_boni[i].cb[5] |= CB6_SRGMP;
-						if (f5 & TR5_REGEN_MANA) csheet_boni[i].cb[6] |= CB7_RRGMP;
+						if (f3 & TR3_REGEN_MANA) csheet_boni[i].cb[6] |= CB7_RRGMP;
 						if (f3 & TR3_SLOW_DIGEST) csheet_boni[i].cb[6] |= CB7_RFOOD;
 						if (f1 & TR1_VAMPIRIC) csheet_boni[i].cb[6] |= CB7_RVAMP;
 						if (f4 & TR4_AUTO_ID) csheet_boni[i].cb[6] |= CB7_RAUID;
@@ -6653,7 +6653,7 @@ void calc_boni(int Ind) {
 						if (f1 & TR1_BRAND_FIRE) csheet_boni[i].cb[10] |= CB11_BFIRE;
 						if (f3 & TR3_SH_FIRE) csheet_boni[i].cb[10] |= CB11_AFIRE;
 						if (f1 & TR1_BRAND_COLD) csheet_boni[i].cb[10] |= CB11_BCOLD;
-						if (f5 & TR5_SH_COLD) csheet_boni[i].cb[10] |= CB11_ACOLD;
+						if (f3 & TR3_SH_COLD) csheet_boni[i].cb[10] |= CB11_ACOLD;
 						if (f1 & TR1_BRAND_ELEC) csheet_boni[i].cb[10] |= CB11_BELEC;
 						if (f3 & TR3_SH_ELEC) csheet_boni[i].cb[10] |= CB11_AELEC;
 						if (f1 & TR1_BRAND_ACID) csheet_boni[i].cb[10] |= CB11_BACID;
