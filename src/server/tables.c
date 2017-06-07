@@ -4717,7 +4717,7 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Tainted", "Tainted", "Tainted", "Tainted", }, //maybe hellish
 		{"Unhallowed", "Unhallowed", "Unhallowed", "Unhallowed", },
 		{"Dark Adept", "Dark Adept", "Dark Adept", "Dark Adept", },
-		{"Crypt Keeper", "Crypt Keeper", "Crypt Keeper", "Crpyt Keeper", },
+		{"Crypt Keeper", "Crypt Keeper", "Crypt Keeper", "Crypt Keeper", },
 		{"Fallen Champion", "Fallen Champion", "F.Champion", "F.Champion", },
 		{"Antipaladin", "Antipaladin", "A.Paladin", "A.Paladin", },
 		{"Death Knight", "Death Knight", "Death Knight", "Death Knight", },
