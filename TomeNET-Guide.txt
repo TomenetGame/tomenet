@@ -12236,17 +12236,25 @@ Note that not every skill is available to every profession (class).
                                 The monster must be standing right beside you
                                 (horizontally, vertically or diagonally).
 
-                                All characters that are able to train this
-                                skill or that have trained Martial Arts skill
-                                actually gain a base interception chance:
-                                If they are able to train Interception then
-                                that base chance will depend on their character
-                                level. If they don't have Interception skill
-                                available then it will depend on their Martial
-                                Arts skill level instead (capped to their
-                                character level).
-                                Actually training the Interception skill will
-                                then further add to that base chance.
+                                Classes that have the Interception skill
+                                available for training will automatically gain
+                                a certain base chance to intercept, even if
+                                they haven't trained the skill. Training the
+                                skill will then add to that base chance.
+                                The base chance depends on the character's
+                                level, capped at 50.
+                                This base chance is also gained by classes that
+                                cannot actually train Interception but that are
+                                able to train in 'Martial Arts'. In this case
+                                however the base chance won't depend on their
+                                character level but instead on their current
+                                skill in Martial Arts.
+                                (So training Martial Arts on such a character
+                                would actually increase the total interception
+                                chance in two ways at once: Increase the base
+                                chance and then add the Martial Arts
+                                Interception bonus, see 'Martial Arts' skill
+                                for details.)
 
                                 The higher base level the monster has (rlevel)
                                 the harder it is to intercept it.
