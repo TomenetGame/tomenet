@@ -1582,7 +1582,7 @@ N:191:*Remove Curse*
 G:?:d
 I:70:15:0
 W:50:0:5:8000
-A:50/2:75/2:85/2:95/1
+A:50/8:75/8:85/8:95/4
 D:Breaks all light and heavy curses on all your items.
 
 N:192:Treasure Detection
