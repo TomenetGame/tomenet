@@ -1085,7 +1085,7 @@ void sound(int Ind, cptr name, cptr alternative, int type, bool nearby) {
 	int val = -1, val2 = -1, i, d;
 
 	/* Don't reveal the hidden DM by transportation sounds, especially when recalling */
-	if (p_ptr->admin_dm && cfg.secret_dungeon_master && (
+	if (name && p_ptr->admin_dm && cfg.secret_dungeon_master && (
 	    //!strcmp(name, "blink") ||
 	    !strcmp(name, "phase_door") || !strcmp(name, "teleport")))
 		return;
