@@ -660,7 +660,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 		}
 
 		switch (method) {
-			case RBM_GAZE: if (p_ptr->blind) continue; /* :-D */
+			case RBM_GAZE://too crazy vs the big bosses..  if (p_ptr->blind) continue; /* :-D */
 			case RBM_WAIL:
 			case RBM_BEG:
 			case RBM_INSULT:
