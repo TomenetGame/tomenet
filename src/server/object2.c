@@ -10931,8 +10931,10 @@ bool anti_undead(object_type *o_ptr) {
 
 	/* powerful lights and anti-undead/evil items damage vampires */
 	if (l) { /* light sources, or other items that provide light */
-		if ((l > 2) || o_ptr->name1 || (f3 & TR3_BLESSED) ||
+		if ((l > 2) ||
+		    //(o_ptr->name1 && (f5 & TR5_WHITE_LIGHT)) || /* exempt: +lite caused by BRAND_FIRE mod; covered by just checking for white light below: */
 		    (f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
+		    (f3 & TR3_BLESSED) ||
 		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD))
 			return(TRUE);
 	} else {
