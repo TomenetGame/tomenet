@@ -797,6 +797,8 @@ static void rd_item(object_type *o_ptr) {
 
 	/* fix armour ruined by formerly buggy code */
 	if (is_armour(o_ptr->tval) && (o_ptr->level < 0 || o_ptr->level > 200)) o_ptr->level = (k_info[o_ptr->k_idx].level + 1) / 2;
+	/* fix ruined royal armour */
+	if (is_armour(o_ptr->tval) /* && o_ptr->tval != TV_SHIELD */ && !o_ptr->level && (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY)) o_ptr->level = 51;
 	/* fix low level dsms etc */
 	if (is_armour(o_ptr->tval) && o_ptr->level && o_ptr->level <= 20 && k_info[o_ptr->k_idx].cost > 2000) determine_level_req(-9999, o_ptr);
 
