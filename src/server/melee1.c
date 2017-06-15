@@ -43,6 +43,9 @@
    providing that the attack type indicates a phsyical attack? - C. Blue */
 //#define ELEMENTAL_AC_MITIGATION
 
+/* Let RBE_UN_POWER additionally drain MP from the player? */
+#define UNPOWER_DRAINS_MP
+
 
 /*
  * Critical blow.  All hits that do 95% of total possible damage,
@@ -1375,6 +1378,16 @@ bool make_attack_melee(int Ind, int m_idx) {
 							break;
 						}
 					}
+
+#ifdef UNPOWER_DRAINS_MP
+					if (p_ptr->csp) {
+						p_ptr->csp -= (p_ptr->mhp * (r_ptr->level + 30)) / 600;
+						if (p_ptr->csp < 0) p_ptr->csp = 0;
+						p_ptr->redraw |= PR_MANA;
+						if (!obvious) msg_print(Ind, "Your psychic energy gets drained!");
+					}
+#endif
+
 					break;
 
 				case RBE_EAT_GOLD:
