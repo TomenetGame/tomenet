@@ -11012,6 +11012,7 @@ EAT_xxx         DEX, stealing skill.
 UN_BONUS        disenchantment.
                 The damage can partially be mitigated by having the resistance.
 UN_POWER        no resistance. It drains charges/energy from your items.
+                Additionally it drains some of your mana.
 
                 Magic Device skill helps to prevent draining though.
                 See (6.10) for more information about the Magic Device skill.
@@ -11022,7 +11023,7 @@ UN_POWER        no resistance. It drains charges/energy from your items.
 
                 Also reduces the remaining duration of a polymorph ring form
                 the player is currently mimicking (this effect cannot be
-                mitigated by magic device skill or unpower-form).
+                mitigated by magic device skill or un_power-form).
 TIME            time.
                 The damage can partially be mitigated by having the resistance.
 DISEASE         poison.
