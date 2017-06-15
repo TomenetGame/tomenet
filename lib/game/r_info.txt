@@ -19104,7 +19104,7 @@ D:their balance. Its aura is pure beyond expression, its eyes reflect supreme
 D:laws beyond comprehension, daring to look at it will drive you insane,
 D:let alone fighting it!
 
-N:1074:Michael, The Guardian Overlord
+N:1074:Michael, the Guardian Overlord
 G:A:U
 I:140:400d70:250:200:255
 W:98:8:3200:58000
@@ -19133,7 +19133,7 @@ D:not fold his cosmic wings about him to return home until the final angelic
 D:being is freed, the last man is redeemed and the last elemental returned to
 D:its perfect state.
 
-N:1075:Lord Jubei, The Legendary Swordsmaster
+N:1075:Lord Jubei, the Legendary Swordsmaster
 G:p:u
 I:130:50d100:40:500:8
 W:72:3:2000:20000
@@ -19561,7 +19561,7 @@ D:But it is just someone costumed for Halloween festival!
 #More monsters:
 
 #Nether Realm only
-N:1097:Zu-Aon, The Cosmic Border Guard
+N:1097:Zu-Aon, the Cosmic Border Guard
 #FINAL_GUARDIAN
 G:N:b
 I:145:300d200:200:200:0
@@ -19590,7 +19590,7 @@ D:probably lasts a cosmos' lifetime, its paycheck remains unknown.
 
 #Shores of Valinor - C. Blue
 
-N:1098:Orome, The Hunter
+N:1098:Orome, the Hunter
 G:P:v
 I:180:500d200:200:200:0
 W:200:0:0:2000000
@@ -20408,6 +20408,27 @@ F:DROP_4D2 | DROP_3D2 | DROP_2D2 | DROP_1D2 | DROP_1 | DROP_90 | DROP_60
 F:DROP_GOOD
 #F:DROP_GREAT
 D:For testing
+
+N:1151:Tzeentch, the Changer of Ways
+G:U:v
+I:130:100d100:250:50:0
+W:96:3:3000:50000
+E:0:0:0:0:0:0
+O:0:0:100:0
+B:GAZE:INSANITY:8d4
+B:TOUCH:UN_POWER:10d10
+F:UNIQUE | BLUEBAND | ATTR_MULTI | CAN_SPEAK | DEMON | EVIL | AI_ANNOY | ASTAR
+F:SMART | POWERFUL | CAN_FLY | OPEN_DOOR | BASH_DOOR | MOVE_BODY | FORCE_MAXHP
+F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_1D2 | DROP_GOOD | DROP_GREAT | HAS_LITE
+F:IM_FIRE | IM_POIS | IM_ELEC | IM_ACID | IM_COLD | NO_CONF | NO_SLEEP
+F:RES_DARK | RES_LITE | RES_SOUND | RES_NEXU | RES_CHAO | RES_DISE | RES_MANA
+S:1_IN_2
+S:TPORT | BRAIN_SMASH | DRAIN_MANA | FORGET
+S:BA_CHAO | BR_DISE | BA_DARK | S_HI_MONSTERS
+D:"Do not ask which creature screams in the night. Do not question who waits for
+D:you in the shadow. It is my cry that wakes you in the night, and my body that
+D:crouches in the shadow. I am Tzeentch and you are the puppet that dances to my
+D:tune.."
 
 
 # N: serial number : monster name
