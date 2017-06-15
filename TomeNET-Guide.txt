@@ -14262,7 +14262,7 @@ Warrior         18      10      2               1
                 18/40   18/10   4               2
                 18/50   all     3               2
                 18/70..110  *   3-4             3 (depends on weapon)
-                and for polearms (spears):
+                and for spears (no special treatment, just weight related):
                 18/40   18/10   3
                 18/70   10      3
 
