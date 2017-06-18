@@ -5317,6 +5317,7 @@
 #define RBE_SEDUCE	36
 
 #define RBE_LITE	37	/* explosion-only effect. No actual hit! */
+#define RBE_EAT_MANA	38
 
 /*** Monster flag values (hard-coded) ***/
 

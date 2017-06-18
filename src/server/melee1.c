@@ -624,42 +624,43 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 		/* Extract the attack "power" */
 		switch (effect) {
-			case RBE_HURT:  	power = 60; break;
-			case RBE_POISON:        power =  5; break;
-			case RBE_UN_BONUS:      power = 20; break;
-			case RBE_UN_POWER:      power = 15; break;
-			case RBE_EAT_GOLD:      power =  5; break;
-			case RBE_EAT_ITEM:      power =  5; break;
-			case RBE_EAT_FOOD:      power =  5; break;
-			case RBE_EAT_LITE:      power =  5; break;
-			case RBE_ACID:  	power =  0; break;
-			case RBE_ELEC:  	power = 10; break;
-			case RBE_FIRE:  	power = 10; break;
-			case RBE_COLD:  	power = 10; break;
-			case RBE_BLIND: 	power =  2; break;
-			case RBE_CONFUSE:       power = 10; break;
-			case RBE_TERRIFY:       power = 10; break;
-			case RBE_PARALYZE:      power =  2; break;
-			case RBE_LOSE_STR:      power =  0; break;
-			case RBE_LOSE_DEX:      power =  0; break;
-			case RBE_LOSE_CON:      power =  0; break;
-			case RBE_LOSE_INT:      power =  0; break;
-			case RBE_LOSE_WIS:      power =  0; break;
-			case RBE_LOSE_CHR:      power =  0; break;
-			case RBE_LOSE_ALL:      power =  2; break;
-			case RBE_SHATTER:       power = 60; break;
-			case RBE_EXP_10:        power =  5; break;
-			case RBE_EXP_20:        power =  5; break;
-			case RBE_EXP_40:        power =  5; break;
-			case RBE_EXP_80:        power =  5; break;
-			case RBE_DISEASE:   	power =  5; break;
-			case RBE_TIME:      	power =  5; break;
-                        case RBE_SANITY:    	power = 60; break;
-                        case RBE_HALLU:     	power = 10; break;
-                        case RBE_PARASITE:  	power =  5; break;
+			case RBE_HURT:		power = 60; break;
+			case RBE_POISON:	power =  5; break;
+			case RBE_UN_BONUS:	power = 20; break;
+			case RBE_UN_POWER:	power = 15; break;
+			case RBE_EAT_GOLD:	power =  5; break;
+			case RBE_EAT_ITEM:	power =  5; break;
+			case RBE_EAT_FOOD:	power =  5; break;
+			case RBE_EAT_LITE:	power =  5; break;
+			case RBE_ACID:		power =  0; break;
+			case RBE_ELEC:		power = 10; break;
+			case RBE_FIRE:		power = 10; break;
+			case RBE_COLD:		power = 10; break;
+			case RBE_BLIND:		power =  2; break;
+			case RBE_CONFUSE:	power = 10; break;
+			case RBE_TERRIFY:	power = 10; break;
+			case RBE_PARALYZE:	power =  2; break;
+			case RBE_LOSE_STR:	power =  0; break;
+			case RBE_LOSE_DEX:	power =  0; break;
+			case RBE_LOSE_CON:	power =  0; break;
+			case RBE_LOSE_INT:	power =  0; break;
+			case RBE_LOSE_WIS:	power =  0; break;
+			case RBE_LOSE_CHR:	power =  0; break;
+			case RBE_LOSE_ALL:	power =  2; break;
+			case RBE_SHATTER:	power = 60; break;
+			case RBE_EXP_10:	power =  5; break;
+			case RBE_EXP_20:	power =  5; break;
+			case RBE_EXP_40:	power =  5; break;
+			case RBE_EXP_80:	power =  5; break;
+			case RBE_DISEASE:	power =  5; break;
+			case RBE_TIME:		power =  5; break;
+			case RBE_SANITY:	power = 60; break;
+			case RBE_HALLU:		power = 10; break;
+			case RBE_PARASITE:	power =  5; break;
 			case RBE_DISARM:	power = 60; break;
 			case RBE_FAMINE:	power = 20; break;
 			case RBE_SEDUCE:	power = 80; break;
+			case RBE_EAT_MANA:	power = 10; break;
 		}
 
 		switch (method) {
@@ -2892,6 +2893,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					obvious = TRUE;
 
 					break;
+
 				case RBE_LITE:
 					/* Special damage */
 					dam_ele = damage;
@@ -2927,6 +2929,59 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_BLIND);
+					break;
+
+				case RBE_EAT_MANA:
+#ifdef EXPERIMENTAL_MITIGATION
+					/* Special damage -- we assume the 'elemental' part stands for the attack
+					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
+					dam_ele = damage; //no resistance
+
+					switch (method) {
+					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
+					case RBM_CLAW: case RBM_BITE: case RBM_STING:
+					case RBM_BUTT: case RBM_CRUSH:
+						/* 50% physical, 50% elemental */
+						dam_ele /= 2;
+						damage /= 2;
+						break;
+					default:
+						/* 100% elemental */
+						damage = 0;
+					}
+ #ifdef ELEMENTAL_AC_MITIGATION
+					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
+ #endif
+					/* unify elemental and physical damage again: */
+					damage = damage + dam_ele;
+#endif
+
+					/* Take some damage */
+					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
+					take_hit(Ind, damage, ddesc, 0);
+
+					if (safe_area(Ind)) break;
+
+					/* Access the lite */
+					o_ptr = &p_ptr->inventory[INVEN_LITE];
+
+					/* Drain mana */
+					if (p_ptr->csp > 0) {
+#if 0
+						p_ptr->csp -= dam_ele; //drain fixed amount depending on damage
+						p_ptr->csp -= (p_ptr->mhp * (r_ptr->level + 50)) / 1000; //additionally drain a percentage
+#else
+						p_ptr->csp -= (p_ptr->mhp * (r_ptr->level + 30)) / 600; //drain a percentage
+#endif
+						if (p_ptr->csp < 0) p_ptr->csp = 0;
+						p_ptr->redraw |= PR_MANA;
+						if (!obvious) msg_print(Ind, "Your psychic energy gets drained.");
+
+						obvious = TRUE;
+
+						p_ptr->redraw |= PR_MANA;
+					}
+
 					break;
 			}
 

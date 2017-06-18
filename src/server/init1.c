@@ -134,6 +134,7 @@ static cptr r_info_blow_effect[] = {
 	"FAMINE",
 	"SEDUCE",
 	"LITE",		/* to replace RBE_BLIND for explosion of "yellow light" */
+	"EAT_MANA",
 	NULL
 };
 
