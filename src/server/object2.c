@@ -11636,6 +11636,16 @@ void inverse_cursed(object_type *o_ptr) {
 		if (o_ptr->to_h > 10) o_ptr->to_h = 10;
 		if (o_ptr->to_d > 10) o_ptr->to_d = 10;
 	}
+	/* ammo doesn't get exaggerating hit/dam boni */
+	if (is_ammo(o_ptr->tval)) {
+#if 0
+		if (o_ptr->to_h > 12) o_ptr->to_h = 12;
+		if (o_ptr->to_d > 6) o_ptr->to_d = 6;
+#else /* extra-reduced power */
+		o_ptr->to_h /= 4; //+7
+		o_ptr->to_d /= 7; //+4
+#endif
+	}
 
 	/* reverse AC */
 	if (o_ptr->to_a < 0) {
