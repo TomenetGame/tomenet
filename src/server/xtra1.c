@@ -9410,6 +9410,8 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		char o_name[ONAME_LEN];
 		dungeon_type *d_ptr;
 		struct worldpos wpos;
+		u32b f1, f2, f3, f4, f5, f6, esp;
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		if (!o_ptr->k_idx) {
 			msg_print(Ind, "Invalid item.");
@@ -9464,6 +9466,33 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 #endif
+
+		/* Cannot remove cursed items */
+		if (cursed_p(o_ptr)
+		    && !(is_admin(p_ptr) /* Hack -- DM can */
+#if 1 /* allow Bloodthirster to take off/drop heavily cursed items? */
+ #ifdef ENABLE_HELLKNIGHT
+		    /* note: only for corrupted priests/paladins: */
+		    || ((p_ptr->pclass == CLASS_HELLKNIGHT
+  #ifdef ENABLE_CPRIEST
+		    || p_ptr->pclass == CLASS_CPRIEST
+  #endif
+		    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE))
+ #endif
+#endif
+		    )) {
+			if ((p_ptr->mail_item >= INVEN_WIELD) ) {
+				/* Oops */
+				msg_print(Ind, "\377yHmmm, the item seems to be cursed.");
+				/* Nope */
+				return;
+			} else if (f4 & TR4_CURSE_NO_DROP) {
+				/* Oops */
+				msg_print(Ind, "\377yHmmm, you seem to be unable to let go of that item.");
+				/* Nope */
+				return;
+			}
+		}
 
 		/* true artifact restrictions */
 		if (true_artifact_p(o_ptr)) {
