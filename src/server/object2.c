@@ -7871,6 +7871,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	bool mha, rha; /* monk heavy armor, rogue heavy armor */
 	bool go_heavy = TRUE; /* new special thingy: don't pick super light cloth armour if we're not specifically light-armour oriented */
 	bool caster = FALSE;
+	bool antimagic = p_ptr->s_info[SKILL_ANTIMAGIC].value;
 
 	/* for analysis functions and afterwards for determining concrete reward */
 	int maxweight_melee = adj_str_hold[p_ptr->stat_ind[A_STR]] * 10;
@@ -7888,6 +7889,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	/* concrete reward */
 	int reward_tval = 0, reward_sval = 0, k_idx = 0, reward_maxweight = 500;
 	int force_tval = o_ptr->tval;
+
+
+	/* Anti-cheeze, added specifically for 'antimagic' actually:
+	   Don't allow undoing skill points after receiving a reward. */
+	p_ptr->reskill_possible = FALSE;
 
 	invwipe(o_ptr);
 
@@ -8602,6 +8608,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (f5 & TR5_DRAIN_MANA) continue;
 			if (f3 & TR3_NO_MAGIC) continue;
 		}
+		/* Don't generate +MANA items for AM */
+		else if (antimagic && (f1 & TR1_MANA)) continue;
+
 		/* Don't generate DRAIN_HP items (Spectral) - except for Vampires who are unaffected */
 		if (f5 & TR5_DRAIN_HP) {
 			if ((o_ptr->name2 != EGO_SPECTRAL && o_ptr->name2b != EGO_SPECTRAL) || p_ptr->prace != RACE_VAMPIRE) continue;
