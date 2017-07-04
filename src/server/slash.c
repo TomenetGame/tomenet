@@ -3075,11 +3075,7 @@ void do_slash_cmd(int Ind, char *message) {
 
 				/* No more reskills */
 				p_ptr->reskill_possible = FALSE;
-			}
-			else
-			{
-				msg_print(Ind, "\377yNo skills could be undone.");
-			}
+			} else msg_print(Ind, "\377yNo skills could be undone.");
 			return;
 		}
 #if 1
