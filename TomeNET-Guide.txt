@@ -7595,10 +7595,10 @@ Ironman Deep Dive Challenge (IDDC)
     Use the /ex command to see how much more gold you may pick up.
 
     If you make a 'slot-exclusive' IDDC character, it will start out with 300
-    extra gold, get at least a 50% discount in all shops, and in turn will
-    automatically be unable to pick up any more gold or items of other players,
-    and it won't get experience from eating bad food either. (It cannot buy
-    houses either, but you won't need those anyway.)
+    extra gold, get at least a 50% discount in all shops in Bree, and in turn
+    will automatically be unable to pick up any more gold or items of other
+    players, and it won't get experience from eating bad food either. (It
+    cannot buy houses either, but you won't need those anyway.)
 
     As IDDC-exclusive character you will get no experience when you kill a
     monsters outside of the IDDC. As a little extra bonus, slot-exclusive IDDC
