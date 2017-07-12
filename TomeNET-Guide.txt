@@ -15745,7 +15745,7 @@ school.
                     30 (blindness, poison) / 40 (stun, cuts) / 50
                     (hallucination).
                     Less frequent suffering from black breath,
-                    adds slay undead to all (phsyical) melee attacks and
+                    adds slay undead to all (physical) melee attacks and
                     -5% experience loss on getting revived (by whatever means,
                     but never goes below 30% total exp loss) at 50.
 
