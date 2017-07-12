@@ -449,7 +449,7 @@ static bool do_seduce(int Ind, int m_idx)
 				break;
 
 			case 2:
-				msg_print(Ind, "Darn, you've got a disease!");
+				msg_print(Ind, "Darn, you've caught a disease!");
 				/* bypass resistance */
 				set_poisoned(Ind, p_ptr->poisoned + rand_int(40) + 40, 0);
 				done = TRUE;
@@ -2442,11 +2442,18 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, 0);
 
+#if 0 /* keep consistent with do_seduce(), which has disease effect too, which currently bypasses any poison resistance! */
 					/* Take "poison" effect */
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison)) {
 						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, 0))
 							obvious = TRUE;
 					}
+#else
+					if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, 0)) {
+						msg_print(Ind, "You caught a disease!");
+						obvious = TRUE;
+					}
+#endif
 
 					/* Damage CON (10% chance)*/
 					if (randint(100) < 11) {
