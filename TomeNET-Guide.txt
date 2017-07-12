@@ -13048,6 +13048,10 @@ Modifications for becoming 'corrupted':
   Shadow school x 2.1.
   All Blood Magic schools x 3.0.
 
+  Paladins/priests:
+   The four holy schools and Blunt-mastery get completely reset, disabled
+   and their points fully refunded.
+
 Note: After a skill's gain ratio has been boosted as stated above, it will be
       capped against a maximum value of 2.000, which cannot be exceeded.
 
