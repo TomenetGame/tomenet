@@ -5366,7 +5366,7 @@ To move around, use the number pad keys 1,2,3; 4,6; 7,8,9.
 You can also use the arrow keys to move, but the numpad is better since it
 allows you to move diagonally too, which is very important.
 
-If no monsters are within your line of sight, are those which are are soundly
+If no monsters are within your line of sight, or those which are are soundly
 asleep, you are able to "run".
 This feature was introduced to let you quickly cross empty areas, while it will
 cease to work as long as you fight monsters. To run, press SHIFT+<direction>
