@@ -112,7 +112,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 	/* Analyze the food */
 	switch (sval) {
 	case SV_FOOD_POISON:
-		if (!(p_ptr->resist_pois || p_ptr->oppose_pois)) {
+		if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison)) {
 			if (set_poisoned(Ind, p_ptr->poisoned + rand_int(10) + 10, Ind))
 				ident = TRUE;
 		}
@@ -657,7 +657,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			ident = TRUE;
 			break;
 		case SV_POTION_POISON:
-			if (!(p_ptr->resist_pois || p_ptr->oppose_pois))
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
 				if (set_poisoned(Ind, p_ptr->poisoned + rand_int(15) + 10, 0)) ident = TRUE;
 			break;
 		case SV_POTION_BLINDNESS:
