@@ -4995,9 +4995,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
  #if 1 /* display trigger chance for magic devices? */
 			if ((is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE))
 			    && o_ptr->tval != TV_BOOK) {
-				if (!get_skill(p_ptr, SKILL_ANTIMAGIC))
-					fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", activate_magic_device_chance(Ind, o_ptr));
-				else
+				if (!get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+					byte chance, permille;
+
+					chance = activate_magic_device_chance(Ind, o_ptr, &permille);
+					if (chance == 100) fprintf(fff, "\377WYou have a 99.%d%% chance to successfully activate this magic device.\n", permille);
+					else fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", chance);
+				} else
 					fprintf(fff, "\377DAs an unbeliever you cannot activate this magic device.\n");
 			}
  #endif
@@ -5635,9 +5639,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 #if 1 /* display trigger chance for magic devices? */
 	if ((eff_full && (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE)))
 	    && o_ptr->tval != TV_BOOK) {
-		if (!get_skill(p_ptr, SKILL_ANTIMAGIC))
-			fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", activate_magic_device_chance(Ind, o_ptr));
-		else
+		if (!get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+			byte chance, permille;
+
+			chance = activate_magic_device_chance(Ind, o_ptr, &permille);
+			if (chance == 100) fprintf(fff, "\377WYou have a 99.%d%% chance to successfully activate this magic device.\n", permille);
+			else fprintf(fff, "\377WYou have a %d%% chance to successfully activate this magic device.\n", chance);
+		} else
 			fprintf(fff, "\377DAs an unbeliever you cannot activate this magic device.\n");
 	}
 #endif

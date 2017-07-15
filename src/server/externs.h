@@ -1919,7 +1919,7 @@ extern void log_floor_coverage(dun_level *l_ptr, struct worldpos *wpos);
 extern void grid_affects_player(int Ind, int ox, int oy);
 extern bool exceptionally_shareable_item(object_type *o_ptr);
 extern bool shareable_starter_item(object_type *o_ptr);
-extern int activate_magic_device_chance(int Ind, object_type *o_ptr);
+extern int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille);
 extern bool activate_magic_device(int Ind, object_type *o_ptr);
 extern void condense_name(char *condensed, cptr name);
 extern int similar_names(const char *name1, const char *name2);

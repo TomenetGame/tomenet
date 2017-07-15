@@ -7961,7 +7961,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 }
 
 /* just for display purpose, return an actual average percentage value */
-int activate_magic_device_chance(int Ind, object_type *o_ptr) {
+int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 	int chance = magic_device_base_chance(Ind, o_ptr);
 
 	/* Give everyone a (slight) chance */
@@ -7969,7 +7969,12 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr) {
 		return ((100 / (USE_DEVICE - chance + 1)) * ((100 * (USE_DEVICE - 1)) / USE_DEVICE)) / 100;
 
 	/* Normal chance */
-	return 100 - ((USE_DEVICE - 1) * 100) / chance;
+	/* Hack:
+	   For chance >= 201 this produces a rounding error that would result in displayed 100%,
+	   when in reality activate_magic_device() can never reach 100% (even though it can go over 99%!).
+	   So we should not return 100 here, really, as it gives a false sense of perfect security. */
+	*permille = (1000 - ((USE_DEVICE - 1) * 1000) / chance) % 10; /* <- for calling function, to disregard '100%' fake result and display permille instead */
+	return 100 - ((USE_DEVICE - 1) * 100) / chance; /* <- rounding error causes '100%' for chance >= 201 */
 }
 
 bool activate_magic_device(int Ind, object_type *o_ptr) {
