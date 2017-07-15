@@ -19363,7 +19363,7 @@ SOLUTION:   A rare problem that is not caused by TomeNET really, but usually
             your Windows user account out and then back in right away.
             (This usually only happens once, after updating the client.)
 
-PROBLEM 04: All windows _except for the main window_ stay empty.
+PROBLEM 04: All windows _except for the main window_ stay empty / stay blank.
 SOLUTION:   First make sure it's really a bug and not just missing window
             settings: Press '=' key and 'w' key and configure your windows
             appropriately. It is vital to set one of the windows to display
