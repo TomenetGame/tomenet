@@ -7999,11 +7999,14 @@ static void print_tomb(cptr reason) {
 void c_close_game(cptr reason) {
 	int k;
 	char tmp[MAX_CHARS];
+	bool c_cfg_tmp = c_cfg.topline_no_msg;
 
 	/* Let the player view the last scene */
+	c_cfg.topline_no_msg = FALSE;
 	c_msg_format("%s ...Press '0' key to proceed", reason);
 
 	while (inkey() != '0');
+	c_cfg.topline_no_msg = c_cfg_tmp;
 
 	/* You are dead */
 	print_tomb(reason);
