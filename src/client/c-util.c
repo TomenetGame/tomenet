@@ -1424,8 +1424,12 @@ void bell(void) {
 	/* Flush the input (later!) */
 	flush();
 
-	/* hack for safe_macros item prompts */
-	abort_prompt = TRUE;
+	/* hack for safe_macros item prompts
+	   (Bugfix: Only set abort_prompt to TRUE if we're actually parsing a macro,
+	   otherwise we end up with a lingering rogue 'abort_prompt' that will cause
+	   any next macro to abort in undefined ways even if the macro was fine,
+	   possibly causing the @ menu to pop up if the macro contained an '@' (eg for call-by-name).) */
+	if (parse_macro) abort_prompt = TRUE;
 }
 
 /* Generate a page sfx (beep) */
