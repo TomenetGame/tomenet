@@ -328,6 +328,11 @@ const char *my_strcasestr(const char *big, const char *little) {
 	int cnt = 0, cnt2 = 0;
 	int L = strlen(little), l;
 
+	/* para stuff */
+	if (big == NULL) return NULL;
+	if (*little == 0) return big;
+	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
+
 	if (little == NULL) return big;
 
 	do {
