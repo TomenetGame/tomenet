@@ -2783,7 +2783,7 @@ static void init_floor_mapping(void) {
 
 /* Initialize info for the in-client guide search */
 #ifdef BUFFER_GUIDE
-char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1]; //one extra char per line for paranoia about badly formatted guide, pft..
+char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1]; //one extra char per line for newline char '\n'
 #endif
 static void init_guide(void) {
 	int i;
