@@ -373,6 +373,12 @@
 
  /* Atmospheric login screens, with animation, sound and music? */
  #define ATMOSPHERIC_INTRO
+
+ /* Buffer guide in RAM, to reduce searching times (especially on Windows OS, not really bad on Linux) */
+ #define BUFFER_GUIDE
+ #ifdef BUFFER_GUIDE
+  #define GUIDE_LINES_MAX 25000 //note: the guide is currently 20038 lines long
+ #endif
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/

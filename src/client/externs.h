@@ -1000,6 +1000,9 @@ extern bool player_pref_files_loaded;
 #endif
 
 extern int guide_lastline;
+#ifdef BUFFER_GUIDE
+extern char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1];
+#endif
 extern char guide_race[64][MAX_CHARS];
 extern char guide_class[64][MAX_CHARS];
 extern char guide_skill[128][MAX_CHARS];

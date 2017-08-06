@@ -2782,6 +2782,9 @@ static void init_floor_mapping(void) {
 }
 
 /* Initialize info for the in-client guide search */
+#ifdef BUFFER_GUIDE
+char guide_line[GUIDE_LINES_MAX][MAX_CHARS + 1]; //one extra char per line for paranoia about badly formatted guide, pft..
+#endif
 static void init_guide(void) {
 	int i;
 
@@ -2797,6 +2800,10 @@ static void init_guide(void) {
 	/* count lines */
 	while (fgets(buf, 81 , fff)) {
 		guide_lastline++;
+
+#ifdef BUFFER_GUIDE
+		strcpy(guide_line[guide_lastline], buf); //note: guide_lastline was initialized to -1, so it'll start at 0 here as it should
+#endif
 
 		/* and also remember chapter titles */
 		buf[strlen(buf) - 1] = 0; /* remove trailing newline */

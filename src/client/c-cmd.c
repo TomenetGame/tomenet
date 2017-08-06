@@ -1392,6 +1392,7 @@ void cmd_high_scores(void) {
 	peruse_file();
 }
 
+#ifndef BUFFER_GUIDE
 static char *fgets_inverse(char *buf, int max, FILE *f) {
 	int c, res, pos;
 	char *ress;
@@ -1412,6 +1413,7 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 
 	return ress;
 }
+#endif
 void cmd_the_guide(void) {
 	static int line = 0, line_before_search = 0;
 	static char lastsearch[MAX_CHARS] = "";
@@ -1420,19 +1422,26 @@ void cmd_the_guide(void) {
 	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c, n, line_presearch = line;
-	char path[1024], buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, bufdummy[MAX_CHARS + 1];
 	char search[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
+	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
+#ifndef BUFFER_GUIDE
+	char path[1024], bufdummy[MAX_CHARS + 1];
 	FILE *fff;
+#else
+	static int fseek_pseudo = 0; //fake a file position, within our buffered guide string array
+#endif
 	int i;
 	char *res;
 
 	/* empty file? */
 	if (guide_lastline == -1) return;
 
+#ifndef BUFFER_GUIDE
 	path_build(path, 1024, "", "TomeNET-Guide.txt");
 	fff = my_fopen(path, "r");
 	/* mysteriously can't open file anymore? */
 	if (!fff) return;
+#endif
 
 	/* init searches */
 	chapter[0] = 0;
@@ -1453,6 +1462,7 @@ void cmd_the_guide(void) {
 		if (skip_redraw) goto skipped_redraw;
 		restore_pos = FALSE;
 
+#ifndef BUFFER_GUIDE
 		/* Always begin at zero */
 		if (backwards) fseek(fff, -1, SEEK_END);
 		else fseek(fff, 0, SEEK_SET);
@@ -1465,201 +1475,237 @@ void cmd_the_guide(void) {
 				if (!searchwrap) for (n = 0; n < line; n++) res = fgets(buf, 81, fff); //res just slays compiler warning
 			}
 		} else searchline = -1; //init searchline for chapter-search
+#else
+		/* Always begin at zero */
+		if (backwards) fseek_pseudo = guide_lastline;
+		else fseek_pseudo = 0;
+
+		/* If we're not searching for something specific, just seek forwards until reaching our current starting line */
+		if (!chapter[0]) {
+			if (backwards) {
+				if (!searchwrap) fseek_pseudo -= line;
+			} else {
+				if (!searchwrap) fseek_pseudo += line;
+			}
+		} else searchline = -1; //init searchline for chapter-search
+#endif
 
 		/* Display as many lines as fit on the screen, starting at the desired position */
 		withinsearch[0] = 0;
 		for (n = 0; n < maxlines; n++) {
+#ifndef BUFFER_GUIDE
 			if (backwards) res = fgets_inverse(buf, 81, fff);
 			else res = fgets(buf, 81, fff);
-			if (res) {
-				buf[strlen(buf) - 1] = 0; //strip trailing newlines
+#else
+			if (backwards) {
+				if (fseek_pseudo < 0) {
+					fseek_pseudo = 0;
+					res = NULL; //emulate EOF
+				} else res = buf;
+				strcpy(buf, guide_line[fseek_pseudo]);
+				fseek_pseudo--;
+			} else {
+				if (fseek_pseudo > guide_lastline) {
+					fseek_pseudo = guide_lastline;
+					res = NULL; //emulate EOF
+				} else res = buf;
+				strcpy(buf, guide_line[fseek_pseudo]);
+				fseek_pseudo++;
+			}
+#endif
+			/* Reached end of file? -> No need to try and display further lines */
+			if (!res) break;
 
-				/* Automatically add colours to "(x.yza)" formatted chapter markers */
+			buf[strlen(buf) - 1] = 0; //strip trailing newlines
+
+			/* Automatically add colours to "(x.yza)" formatted chapter markers */
+			cp = buf;
+			cp2 = buf2;
+			within = FALSE;
+			while (*cp) {
+				/* look ahead for "(x.yza)" */
+				if (*cp == '(') {
+					switch (*(cp + 1)) {
+					case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+						/* sub chapter aka (x,yza) */
+						if (*(cp + 2) == '.') {
+							switch (*(cp + 3)) {
+							case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+								if (*(cp + 4) == ')' || *(cp + 5) == ')' || *(cp + 6) == ')') {
+									/* begin of colourizing */
+									*cp2++ = '\377';
+									*cp2++ = 'G';
+									within = TRUE;
+								}
+							}
+						}
+						/* main chapter aka (x) --
+						   but must be at the beginning of a line, so references to them (which currently don't exist in the text) don't count.
+						   This restriction was added because many things such as lvl reqs are currently written as "(n)" in the text. */
+						else if (*(cp + 2) == ')'
+						    && cp == buf) { //<-'beginning of line' restriction
+							/* begin of colourizing */
+							*cp2++ = '\377';
+							*cp2++ = 'G';
+							within = TRUE;
+						}
+					}
+				}
+
+				/* just copy each single character over */
+				*cp2++ = *cp++;
+
+				/* end of colourizing */
+				if (*(cp - 1) == ')' && within) {
+					*cp2++ = '\377';
+					*cp2++ = 'w';
+					within = FALSE;
+				}
+
+			}
+			*cp2 = 0;
+
+			/* New chapter functionality: Search for a specific chapter keyword? */
+			if (chapter[0] && chapter[0] != '(') {
+				bool ok = FALSE;
+				char *p, *s;
+
+				searchline++;
+				//must be beginning of line or <only spaces before it, AND NO SPACE in the actual chapter search string>
+				p = strstr(buf2, chapter);
+				if (p == buf2) ok = TRUE;
+				else if (p && chapter[0] != ' ') { //also allow searching for various keywords, but make sure we don't pick eg 'Darkness Storm' before the actual spell diz -> SPACE check
+					s = buf2;
+					ok = TRUE;
+					while (s < p) {
+						if (*s == ' ') s++;
+						else {
+							ok = FALSE;
+							break;
+						}
+					}
+				}
+				/* a little extra hack for '- Mind' and '- Mindcraft -' vs '- Mindcrafter': make sure a word isn't partially matched but really ends */
+				if (ok && isalpha(chapter[strlen(chapter) - 1]) && isalpha(p[strlen(chapter)])) ok = FALSE;
+				/* Found it? */
+				if (ok) {
+					/* Hack: Abuse normal 's' search to colourize */
+					strcpy(withinsearch, chapter);
+
+					chapter[0] = 0;
+					line = searchline;
+					/* Redraw line number display */
+					if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
+					else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
+				} else {
+					/* Skip all lines until we find the desired chapter */
+					n--;
+					continue;
+				}
+			}
+			/* Search for specific chapter? */
+			else if (chapter[0]) {
+				searchline++;
+				/* Found it? Accomodate for colour code and '.' must not follow after the chapter marker */
+				if (searchline >= guide_endofcontents &&
+				    strstr(buf2, chapter) == buf2 + 2 && !strchr(strchr(buf2, ')'), '.')) {
+					chapter[0] = 0;
+					line = searchline;
+					/* Redraw line number display */
+					if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
+					else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
+				} else {
+					/* Skip all lines until we find the desired chapter */
+					n--;
+					continue;
+				}
+			}
+
+			/* Search for specific string? */
+			else if (search[0]) {
+				searchline++;
+				/* Search wrapped around once and still no result? Finish. */
+				if (searchwrap && searchline == line) {
+					search[0] = 0;
+					searchwrap = FALSE;
+					withinsearch[0] = 0;
+
+					/* we cannot search for further results if there was none (would result in glitchy visuals) */
+					lastsearch[0] = 0;
+
+					/* correct our line number again */
+					line = line_presearch;
+					backwards = FALSE;
+					/* return to that position again */
+					restore_pos = TRUE;
+					break;
+				/* We found a result */
+				} else if (my_strcasestr(buf2, search)) {
+					/* Reverse again to normal direction/location */
+					if (backwards) {
+						backwards = FALSE;
+						searchline = guide_lastline - searchline;
+#ifndef BUFFER_GUIDE
+						/* Skip end of line, advancing to next line */
+						fseek(fff, 1, SEEK_CUR);
+						/* This line has already been read too, by fgets_inverse(), so skip too */
+						res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+#else
+						fseek_pseudo += 2;
+#endif
+					}
+
+					strcpy(withinsearch, search);
+					search[0] = 0;
+					searchwrap = FALSE;
+					line = searchline;
+					/* Redraw line number display */
+					Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
+				/* Still searching */
+				} else {
+					/* Skip all lines until we find the desired string */
+					n--;
+					continue;
+				}
+			}
+
+			/* Colour all search finds */
+			if (withinsearch[0] && my_strcasestr(buf2, withinsearch)) {
+				strcpy(buf, buf2);
+
 				cp = buf;
 				cp2 = buf2;
 				within = FALSE;
 				while (*cp) {
-					/* look ahead for "(x.yza)" */
-					if (*cp == '(') {
-						switch (*(cp + 1)) {
-						case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-							/* sub chapter aka (x,yza) */
-							if (*(cp + 2) == '.') {
-								switch (*(cp + 3)) {
-								case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-									if (*(cp + 4) == ')' || *(cp + 5) == ')' || *(cp + 6) == ')') {
-										/* begin of colourizing */
-										*cp2++ = '\377';
-										*cp2++ = 'G';
-										within = TRUE;
-									}
-								}
-							}
-							/* main chapter aka (x) --
-							   but must be at the beginning of a line, so references to them (which currently don't exist in the text) don't count.
-							   This restriction was added because many things such as lvl reqs are currently written as "(n)" in the text. */
-							else if (*(cp + 2) == ')'
-							    && cp == buf) { //<-'beginning of line' restriction
-								/* begin of colourizing */
-								*cp2++ = '\377';
-								*cp2++ = 'G';
-								within = TRUE;
-							}
-						}
+					if (!strncasecmp(cp, withinsearch, strlen(withinsearch))) {
+						/* begin of colourizing */
+						*cp2++ = '\377';
+						*cp2++ = 'R';
+						within = TRUE;
+						within_cnt = 0;
 					}
 
 					/* just copy each single character over */
 					*cp2++ = *cp++;
 
-					/* end of colourizing */
-					if (*(cp - 1) == ')' && within) {
-						*cp2++ = '\377';
-						*cp2++ = 'w';
-						within = FALSE;
+					/* end of colourizing? */
+					if (within) {
+						within_cnt++;
+						if (within_cnt == strlen(withinsearch)) {
+							*cp2++ = '\377';
+							*cp2++ = 'w';
+							within = FALSE;
+						}
 					}
 
 				}
 				*cp2 = 0;
-
-				/* New chapter functionality: Search for a specific chapter keyword? */
-				if (chapter[0] && chapter[0] != '(') {
-					bool ok = FALSE;
-					char *p, *s;
-
-					searchline++;
-					//must be beginning of line or <only spaces before it, AND NO SPACE in the actual chapter search string>
-					p = strstr(buf2, chapter);
-					if (p == buf2) ok = TRUE;
-					else if (p && chapter[0] != ' ') { //also allow searching for various keywords, but make sure we don't pick eg 'Darkness Storm' before the actual spell diz -> SPACE check
-						s = buf2;
-						ok = TRUE;
-						while (s < p) {
-							if (*s == ' ') s++;
-							else {
-								ok = FALSE;
-								break;
-							}
-						}
-					}
-					/* a little extra hack for '- Mind' and '- Mindcraft -' vs '- Mindcrafter': make sure a word isn't partially matched but really ends */
-					if (ok && isalpha(chapter[strlen(chapter) - 1]) && isalpha(p[strlen(chapter)])) ok = FALSE;
-					/* Found it? */
-					if (ok) {
-						/* Hack: Abuse normal 's' search to colourize */
-						strcpy(withinsearch, chapter);
-
-						chapter[0] = 0;
-						line = searchline;
-						/* Redraw line number display */
-						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
-						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
-					} else {
-						/* Skip all lines until we find the desired chapter */
-						n--;
-						continue;
-					}
-				}
-				/* Search for specific chapter? */
-				else if (chapter[0]) {
-					searchline++;
-					/* Found it? Accomodate for colour code and '.' must not follow after the chapter marker */
-					if (searchline >= guide_endofcontents &&
-					    strstr(buf2, chapter) == buf2 + 2 && !strchr(strchr(buf2, ')'), '.')) {
-						chapter[0] = 0;
-						line = searchline;
-						/* Redraw line number display */
-						if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
-						else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
-					} else {
-						/* Skip all lines until we find the desired chapter */
-						n--;
-						continue;
-					}
-				}
-
-				/* Search for specific string? */
-				else if (search[0]) {
-					searchline++;
-					/* Search wrapped around once and still no result? Finish. */
-					if (searchwrap && searchline == line) {
-						search[0] = 0;
-						searchwrap = FALSE;
-						withinsearch[0] = 0;
-
-						/* we cannot search for further results if there was none (would result in glitchy visuals) */
-						lastsearch[0] = 0;
-
-						/* correct our line number again */
-						line = line_presearch;
-						backwards = FALSE;
-						/* return to that position again */
-						restore_pos = TRUE;
-						break;
-					/* We found a result */
-					} else if (my_strcasestr(buf2, search)) {
-						/* Reverse again to normal direction/location */
-						if (backwards) {
-							backwards = FALSE;
-							searchline = guide_lastline - searchline;
-							/* Skip end of line, advancing to next line */
-							fseek(fff, 1, SEEK_CUR);
-							/* This line has already been read too, by fgets_inverse(), so skip too */
-							res = fgets(bufdummy, 81, fff); //res just slays compiler warning
-						}
-
-						strcpy(withinsearch, search);
-						search[0] = 0;
-						searchwrap = FALSE;
-						line = searchline;
-						/* Redraw line number display */
-						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
-					/* Still searching */
-					} else {
-						/* Skip all lines until we find the desired string */
-						n--;
-						continue;
-					}
-				}
-
-				/* Colour all search finds */
-				if (withinsearch[0] && my_strcasestr(buf2, withinsearch)) {
-					strcpy(buf, buf2);
-
-					cp = buf;
-					cp2 = buf2;
-					within = FALSE;
-					while (*cp) {
-						if (!strncasecmp(cp, withinsearch, strlen(withinsearch))) {
-							/* begin of colourizing */
-							*cp2++ = '\377';
-							*cp2++ = 'R';
-							within = TRUE;
-							within_cnt = 0;
-						}
-
-						/* just copy each single character over */
-						*cp2++ = *cp++;
-
-						/* end of colourizing? */
-						if (within) {
-							within_cnt++;
-							if (within_cnt == strlen(withinsearch)) {
-								*cp2++ = '\377';
-								*cp2++ = 'w';
-								within = FALSE;
-							}
-						}
-
-					}
-					*cp2 = 0;
-				}
-
-				/* Display processed line, colourized by chapters and search results */
-				Term_putstr(0, 2 + n, -1, TERM_WHITE, buf2);
 			}
-			/* Reached end of file, no need to try and display further lines */
-			else break;
+
+			/* Display processed line, colourized by chapters and search results */
+			Term_putstr(0, 2 + n, -1, TERM_WHITE, buf2);
 		}
+
 		/* failed to locate chapter? Forget about it and return to where we were */
 		if (chapter[0]) {
 			chapter[0] = 0;
@@ -1723,7 +1769,7 @@ void cmd_the_guide(void) {
 		/* navigate (up/down) */
 		case '8': case '\010': case 0x7F: //rl:'k'
 			line--;
-			if (line < 0) line = guide_lastline - maxlines;
+			if (line < 0) line = guide_lastline - maxlines + 1;
 			if (line < 0) line = 0;
 			continue;
 		case '2': case '\r': case '\n': //rl:'j'
@@ -1732,7 +1778,7 @@ void cmd_the_guide(void) {
 			continue;
 		/* page up/down */
 		case '9': case 'p': //rl:?
-			if (line == 0) line = guide_lastline - maxlines;
+			if (line == 0) line = guide_lastline - maxlines + 1;
 			else line -= maxlines;
 			if (line < 0) line = 0;
 			continue;
@@ -1749,7 +1795,7 @@ void cmd_the_guide(void) {
 			continue;
 		/* support end key too.. */
 		case '1': //rl:?
-			line = guide_lastline - maxlines;
+			line = guide_lastline - maxlines + 1;
 			if (line < 0) line = 0;
 			continue;
 
@@ -2276,13 +2322,17 @@ void cmd_the_guide(void) {
 
 		/* exit */
 		case ESCAPE: //case 'q': case KTRL('Q'):
+#ifndef BUFFER_GUIDE
 			my_fclose(fff);
+#endif
 			Term_load();
 			return;
 		}
 	}
 
+#ifndef BUFFER_GUIDE
 	my_fclose(fff);
+#endif
 	Term_load();
 }
 
