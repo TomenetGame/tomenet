@@ -807,6 +807,8 @@ if (c_cfg.keep_topline)
 	inkey_sleep_semaphore = FALSE; //init semaphore for macros containing \wXX
 	/* Assume that the macro has no problems with possibly missing items so far */
 	macro_missing_item = 0;
+	/* Paranoia: Make sure that the macro won't instantly fail because something failed before */
+	abort_prompt = FALSE;
 
 	/* Push the "macro complete" key */
 	if (Term_key_push(29)) return (0);
