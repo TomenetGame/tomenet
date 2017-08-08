@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 7. August 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 8. August 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15211,6 +15211,18 @@ it means that training in one of those schools will increase the spell level
 by only half that amount. So if you want to increase a shared spell by say 5
 points, you either have to increase both of its schools by 5, or one of them
 by 10.
+However, you don't need to train all involved schools necessarily. As long as
+you manage to increase the spell level to at least 1, you become able to use it
+even if you only trained one of all involved schools.
+
+Spell tiers:
+Some spells have multiple tiers, usually two or three, denoted by roman numbers
+after the spell name.
+Higher tiers usually have greater effect but also cost more mana than lower
+tiers. Sometimes a higher tier will have not just added effects but actually
+different effects, in most cases a different type of damage dealt to enemies.
+Especially non-elemental attack spells will often have a different area of
+effect in higher tiers, such as bolt -> ball -> line of sight.
 
 Magic, holy and occult schools give certain permanent boni and abilities to
 the player, when trained to a certain extent. The boni are listed below each
@@ -15225,20 +15237,32 @@ school.
     Manathrust      Casts a powerful mana bolt.
                     Required skill level for first spell level: 1.
 
+                    Tier II: Level 20.
+
+                    Tier III: Level 40.
+
     Recharge        Recharges a magic staff or wand.
-                    Level 21: Also recharges rods.
                     Required skill level for first spell level: 5.
+                    Level 21: Also recharges rods.
+
+                    Tier II: Level 25.
+                    Can also recharge rods. At the skill level you learn this
+                    tier, the 1st tier spell can actually recharge rods too.
+
+                    Tier II: Level 40.
 
     Disperse Magic  Removes magical influences.
+                    Required skill level for first spell level: 15.
                     Lv1: Blindness/Confusion.
                     Lv10: Confusion/Hallucination.
                     Lv15: Speed/Slowness/Stun.
-                    Required skill level for first spell level: 15.
                     This spell can be used even while confused or blind.
 
-    Remove Curses   Removes curses from carried/worn objects.
-                    Lv21: Removes all curses including heavy curses.
+    Remove Curses   Removes non-heavy curses from carried/worn objects.
                     Required skill level for first spell level: 20.
+
+                    Tier II: Level 40.
+                    Removes all normal and heavy curses. Also see (5.14).
 
     Disruption Shield
                     Conjures a shield that protects you from taking damage.
@@ -15255,33 +15279,49 @@ school.
 - Fire
 
     Globe of Light  Creates a globe of magical light.
-                    Lv10: Hurts monsters that are susceptible to light.
-                    Lv21: Calls a more powerful kind of light. This light
-                          hurts all types of monsters.
-                          Radius and damage will further increase.
                     Required skill level for first spell level: 2.
+                    Lv10: Hurts monsters that are susceptible to light.
+                    Radius and damage will further increase.
+
+                    Tier II: Level 22.
+                    Calls a more powerful kind of light. This light hurts all
+                    types of monsters.
 
     Fire Bolt       Fires a fire bolt at a target.
                     Required skill level for first spell level: 10.
 
+                    Tier II: Level 25.
+
+                    Tier III: Level 40.
+
     Elemental Shield
-                    Gives temporary resistance to heat and cold, and at
-                    higher tier also to lightning and acid.    (auto-project)
+                    Temporary resistance to heat and cold.     (auto-project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Water.
-                    For the complete version: Fire, Water, Earth, Air.
+
+                    Tier II: Level 20.                         (auto-project)
+                    Temporary resistance to heat, cold, lightning and acid.
+                    Shared spell (see above): Fire, Water, Earth, Air.
 
     Fiery Shield    Creates a shield of flames around you.
                     Required skill level for first spell level: 16.
 
+                    Tier II: Level 36.
+
     Firewall        Creates a fire wall to incinerate monsters that cross it.
                     Required skill level for first spell level: 20.
+
+                    Tier II: Level 40.
 
     Fire Ball       Conjures a fire ball.
                     Required skill level for first spell level: 23.
 
+                    Tier II: Level 40.
+
     Fireflash       Conjures a ball of holy fire.
                     Required skill level for first spell level: 30.
+
+                    Tier II: Level 42.
 
     BONI:           Fire resistance at 30,
                     Fire immunity at 50.
@@ -15293,6 +15333,10 @@ school.
                     (which does pure water damage, not poison).
                     Required skill level for first spell level: 2.
 
+                    Tier II: Level 20.
+
+                    Tier III: Level 40.
+
     Ent's Potion    Fills your stomach.
                     Lv5: Removes fear.
                     Lv12: Makes you heroic.
@@ -15301,25 +15345,41 @@ school.
     Frost Bolt      Fires a frost bolt at a target.
                     Required skill level for first spell level: 8.
 
+                    Tier II: Level 22.
+
+                    Tier II: Level 40.
+
     Water Bolt      Fires a water bolt at a target.
                     Required skill level for first spell level: 14.
 
+                    Tier II: Level 24.
+
+                    Tier II: Level 40.
+
     Elemental Shield
-                    Gives temporary resistance to heat and cold, and at
-                    higher tier also to lightning and acid.    (auto-project)
+                    Temporary resistance to heat and cold.     (auto-project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Water.
-                    For the complete version: Fire, Water, Earth, Air.
+
+                    Tier II: Level 20.                         (auto-project)
+                    Temporary resistance to heat, cold, lightning and acid.
+                    Shared spell (see above): Fire, Water, Earth, Air.
 
     Tidal Wave      Summons a monstrous tidal wave.
                     Required skill level for first spell level: 16.
+
+                    Tier II: Level 36.
 
     Frost Barrier   Engulfs you in a storm of roaring cold.
                     Lv16: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
 
+                    Tier II: Level 37.
+
     Frost Ball      Conjures a frost ball.
                     Required skill level for first spell level: 22.
+
+                    Tier II: Level 40.
 
     BONI:           Passing water at 30,
                     water resistance at 40,
@@ -15329,19 +15389,29 @@ school.
 - Air
 
     Noxious Cloud   Fires a poison cloud at a designated target.
-                    Lv31: Unbreath cloud, harder to resist since it prevents
-                    living creatures from actually breathing.
                     Required skill level for first spell level: 3.
+
+                    Tier II: Level 18.
+
+                    Tier III: Level 33.
+                    Unbreath cloud instead of normal poison, harder to resist
+                    since it prevents living creatures from actually breathing.
 
     Lightning Bolt  Fires a lightning bolt at a target.
                     Required skill level for first spell level: 6.
 
+                    Tier II: Level 21.
+
+                    Tier III: Level 40.
+
     Elemental Shield
-                    Gives temporary resistance to heat and cold, and at
-                    higher tier also to lightning and acid.    (auto-project)
+                    Temporary resistance to heat and cold.     (auto-project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Water.
-                    For the complete version: Fire, Water, Earth, Air.
+
+                    Tier II: Level 20.                         (auto-project)
+                    Temporary resistance to heat, cold, lightning and acid.
+                    Shared spell (see above): Fire, Water, Earth, Air.
 
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
@@ -15369,19 +15439,27 @@ school.
     Acid Bolt       Fires an acid bolt at a target.
                     Required skill level for first spell level: 12.
 
+                    Tier II: Level 24.
+
+                    Tier III: Level 40.
+
     Elemental Shield
-                    Gives temporary resistance to heat and cold, and at
-                    higher tier also to lightning and acid.    (auto-project)
+                    Temporary resistance to heat and cold.     (auto-project)
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Fire, Water.
-                    For the complete version: Fire, Water, Earth, Air.
+
+                    Tier II: Level 20.                         (auto-project)
+                    Temporary resistance to heat, cold, lightning and acid.
+                    Shared spell (see above): Fire, Water, Earth, Air.
 
     Stone Prison    Creates a prison of granite walls around you.
                     Required skill level for first spell level: 25.
 
     Strike          Creates a force bolt that may stun enemies.
-                    Lv13: it turns into a small ball.
                     Required skill level for first spell level: 25.
+
+                    Tier III: Level 37.
+                    It's a small ball instead of a bolt.
 
     Shake           Creates a local earthquake.
                     Required skill level for first spell level: 35.
@@ -15395,14 +15473,20 @@ school.
     Healing         Heals a percentage of your hit points.     (auto-project)
                     Required skill level for first spell level: 1.
 
+                    Tier II: Level 20.
+
+                    Tier II: Level 40.
+
     Vermin Control  Prevents vermin from breeding any further on
                     your current level.
                     Required skill level for first spell level: 10.
 
     Recovery        Neutralizes poison, heals cuts, cures confusion,
                     stun and blindness.                        (auto-project)
-                    Level 21: Also restores drained stats and lost experience.
                     Required skill level for first spell level: 15.
+
+                    Tier II: Level 35.
+                    Also restores drained stats and lost experience.
 
     Thunderstorm    Throws thunder bolts at random monsters nearby.
                     (33% lightning, 33% sound, 33% light)
@@ -15444,8 +15528,10 @@ school.
                     Shared spell (see above): Air, Conveyance.
 
     Teleport Away   Teleports a line of monsters away.
-                    Lv21: Teleports away all monsters in sight.
                     Required skill level for first spell level: 23.
+
+                    Tier II: Level 43.
+                    Teleports away all monsters in sight.
 
     Recall          Works like Word of Recall.
                     Inscribe your spell scroll or book like you would inscribe
@@ -15487,20 +15573,29 @@ school.
                     Required skill level for first spell level: 3.
 
     Sense Hidden    Detects traps.                             (auto-project)
-                    Lv16: Lets you see invisible for a while.  (auto-project)
                     Required skill level for first spell level: 5.
 
-    Identify        Identifies items.
-                    Lv18: Identifies all items that you carry/wear.
-                    Lv28: Also identifies all items on the floor around you.
+                    Tier II: Level 20.
+                    Lets you see invisible for a while.        (auto-project)
+
+    Identify        Identifies an item that you carry or have equipped.
                     Required skill level for first spell level: 8.
+
+                    Tier II: Level 25.
+                    Identifies all items that you carry or have equipped.
+
+                    Tier II: Level 35.
+                    Identifies all items that you carry or have equipped and
+                    identifies all items on the floor around you.
 
     Reveal Ways     Detects doors/stairs/ways within a radius. (auto-project)
                     Required skill level for first spell level: 9.
 
     Vision          Detects the dungeon layout around you.
-                    Lv23: Maps and lights the whole level.
                     Required skill level for first spell level: 18.
+
+                    Tier II: Level 40. (Also dubbed "Clairvoyance".)
+                    Maps and lights the whole level.
 
     Greater Identify
                     *Identifies* an item.
@@ -15512,13 +15607,18 @@ school.
 - Temporal
 
     Magelock        Magically locks a door.
-                    Lv41: Creates a Glyph of Warding on the ground that stops
-                          monsters from crossing the field or summoning on it.
                     Required skill level for first spell level: 1.
 
+                    Tier II: Level 40.
+                    Creates a Glyph of Warding on the ground that stops
+                    monsters from crossing the field or summoning on it.
+                    Powerful monsters may be able to break glyphs.
+
     Slow Monster    Slows down a monster.
-                    Lv21: Affects a zone.
                     Required skill level for first spell level: 10.
+
+                    Tier II: Level 30.
+                    Affects a zone.
 
     Essence of Speed
                     Hastes you for a while.                    (auto-project)
@@ -15539,6 +15639,8 @@ school.
     Hellfire        Conjures a ball of hellfire which is especially deadly to
                     GOOD opponents.
                     Required skill level for first spell level: 20.
+
+                    Tier II: Level 40.
 
     Genocide        Genocides all monsters of a race on the level.
                     For details on the effect "genocide" of this spell,
@@ -15568,12 +15670,16 @@ school.
 - Mind
 
     Confuse         Confuses a monsters.
-                    Lv16: Turns into a ball.
                     Required skill level for first spell level: 5.
 
+                    Tier II: Level 20.
+                    Turns into a ball.
+
     Stun            Stuns a monster.
-                    Lv26: Turns into a ball.
                     Required skill level for first spell level: 15.
+
+                    Tier II: Level 40.
+                    Turns into a ball.
 
     Sense Minds     Gives you temporary ESP.
                     Required skill level for first spell level: 30.
@@ -15599,28 +15705,43 @@ school.
 - Holy Offense
 
     Curse           Randomly causes confusion damage or slowness or blindness.
-                    Lv16: Turns from bolt into beam, passing through the
-                          target and also hitting those behind.
-                    Lv26: Affects all monsters in line of sight.
                     Required skill level for first spell level: 1.
 
+                    Tier II: Level 16.
+                    Turns from bolt into beam, passing through the target and
+                    also hitting those behind.
+
+                    Tier III: Level 26.
+                    Affects all monsters in line of sight.
+
     Holy Light      Creates a globe of pure light.
-                    Lv3:  Hurts monsters that are susceptible to light.
-                    Lv19: Calls a more powerful kind of light. This light
-                         hurts all types of monsters.
-                         Radius and damage will further increase.
                     Required skill level for first spell level: 2.
+                    Lv3:  Hurts monsters that are susceptible to light.
+                    Shared spell (see above): H.Offense, H.Support.
+
+                    Tier II: Level 20.
+                    Calls a more powerful kind of light. This light hurts all
+                    types of monsters.
+                    Radius and damage will further increase.
                     Shared spell (see above): H.Offense, H.Support.
 
     Redemption      *Dispels undead* in your field of view.
                     Required skill level for first spell level: 10.
 
+                    Tier II: Level 25.
+
+                    Tier III: Level 40.
+
     Exorcism        *Dispels demons* in your field of view.
                     Required skill level for first spell level: 20.
+
+                    Tier II: Level 40.
 
     Orb of Draining Summons a holy orb, devouring monsters.
                     This spell deals double damage against evil monsters.
                     Required skill level for first spell level: 20.
+
+                    Tier II: Level 40.
 
     Chaos Bolt      Channels the powers of chaos into a bolt attack.
                     Required skill level for first spell level: 30.
@@ -15643,9 +15764,13 @@ school.
 - Holy Defense
 
     Blessing        Same effect as scroll of Blessing.         (auto-project)
-                    Lv15: Same effect as scroll of Holy Chant. (auto-project)
-                    Lv30: Same effect as scroll of Holy Prayer.(auto-project)
                     Required skill level for first spell level: 1.
+
+                    Tier II: Level 15.
+                    Same effect as scroll of Holy Chant.       (auto-project)
+
+                    Tier II: Level 30.
+                    Same effect as scroll of Holy Prayer.      (auto-project)
 
     Protection from evil
                     Evil creatures that try to attack you in melee might get
@@ -15663,9 +15788,13 @@ school.
                     This spell can be used even while confused or blind.
 
     Holy Resistance Lets you resist heat and cold.             (auto-project)
-                    Lv11: Also resist lightning and acid.      (auto-project)
-                    Lv21: Also resist poison.                  (auto-project)
                     Required skill level for first spell level: 20.
+
+                    Tier II: Level 30.
+                    Also resist lightning and acid.            (auto-project)
+
+                    Tier II: Level 40.
+                    Also resist poison.                        (auto-project)
 
     Glyph of Warding
                     Creates a rune on the ground that monsters cannot cross
@@ -15708,9 +15837,13 @@ school.
 
     Curing          Slows down the effect of poison            (auto-project)
                     and cures being gorged.
-                    Lv11: Neutralizes poison, cures blindness, cuts, confusion.
-                    Lv21: Also cures stun and hallucinations.
                     Required skill level for first spell level: 1.
+
+                    Tier II: Level 11.                         (auto-project)
+                    Also neutralizes poison, cures blindness, cuts, confusion.
+
+                    Tier III: Level 21.                        (auto-project)
+                    Also cures stun and hallucinations.
 
     Cure Wounds     Heals a fixed amount of hit points of a friendly target,
                     which is capped at 14d8, the same amount a potion of cure
@@ -15723,16 +15856,28 @@ school.
                     target via '*q' and picks direction '5' which will then be
                     your current grid.)
 
+                    Tier II: Level 23.
+
     Healing         Heals a percentage of hit points.          (auto-project)
                     Required skill level for first spell level: 3.
 
-    Break Curses    Removes curses from carried/worn objects.
-                    Lv26: Removes all curses including heavy curses.
+                    Tier II: Level 23.
+
+                    Tier III: Level 40.
+
+    Break Curses    Removes non-heavy curses from carried/worn objects.
                     Required skill level for first spell level: 10.
+
+                    Tier II: Level 35.
+                    Removes all normal and heavy curses. Also see (5.14).
 
     Cleansing Light Continuously heals every player who steps inside.
                     It also damages undead creatures.
                     Required skill level for first spell level: 18.
+
+                    Tier II: Level 29.
+
+                    Tier III: Level 40.
 
     Faithful Focus  Cure hallucinations and insanity.          (auto-project)
                     Required skill level for first spell level: 21.
@@ -15781,25 +15926,33 @@ school.
                     Required skill level for first spell level: 3.
 
     Sanctuary       Puts nearby monsters asleep.
-                    Lv21: Lets all monsters in line of sight fall asleep.
                     Required skill level for first spell level: 3.
+
+                    Tier II: Level 23.
+                    Lets all monsters in line of sight fall asleep.
 
     Satisfy Hunger  Satisfies your hunger.                     (auto-project)
                     Required skill level for first spell level: 10.
 
     Sense Surroundings
                     Maps the dungeon around you.
-                    Lv21: Gives clairvoyance (full enlightened map).
                     Required skill level for first spell level: 20.
 
+                    Tier II: Level 40.
+                    Gives clairvoyance (full, enlightened map).
+
     Zeal            Gives +1 extra attack per round for a while.
-                    Lv11: Gives +2 EA.                         (auto-project)
-                    Lv22: Gives +3 EA.                         (auto-project)
                     Friendly players around the caster that are affected by the
-                    spell will receive up to +2 EA depending on spell level.
+                    spell may receive up to +2 EA depending on spell tier.
                     Note: The EA effect won't be applied to barehanded players
                     if they don't have Martial Arts skill of at least 01.000.
                     Required skill level for first spell level: 27.
+
+                    Tier II: Level 37.                         (auto-project)
+                    Gives +2 EA to the caster.
+
+                    Tier III: Level 47.                        (auto-project)
+                    Gives +3 EA to the caster.
 
     Sense Monsters  Gives full temporary ESP.
                     Required skill level for first spell level: 33.
@@ -15815,9 +15968,11 @@ school.
 - Shadow
 
     Cause Fear      Scares your target.
-                    Lv18: Scares all nearby creatures.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 1.
+
+                    Tier II: Level 18.
+                    Scares all nearby creatures.
 
     Blindness       Blinds your target.
                     Required skill level for first spell level: 3.
@@ -15827,12 +15982,18 @@ school.
                     Required skill level for first spell level: 3.
 
     Veil of Night   Causes your target to fall asleep instantly.
-                    Lv16: It expands around you.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 5.
 
+                    Tier II: Level 20.
+                    It expands around you.
+
     Shadow Bolt     Channels shadow into a bolt attack.
                     Required skill level for first spell level: 10.
+
+                    Tier II: Level 25.
+
+                    Tier III: Level 40.
 
     Aspect of Peril
                     Temporarily brands your melee weapons with poison.
@@ -15892,16 +16053,22 @@ school.
                     damage.
                     Required skill level for first spell level: 1.
 
+                    Tier II: Level 20.
+
+                    Tier III: Level 40.
+
     Tame Fear       Keeps your heart boldened for a while.     (auto-project)
                     Required skill level for first spell level: 1.
 
     Starlight       Creates a globe of starlight around you.
                     Lv10: Damages monsters that are susceptible to light.
-                    Lv21: Calls a more powerful kind of light. This light
-                         damages all types of monsters.
-                         Radius and damage will further increase.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 2.
+
+                    Tier II: Level 22.
+                    Calls a more powerful kind of light. This light damages all
+                    types of monsters.
+                    Radius and damage will further increase.
 
     Meditation      Cures confusion and blindness.
                     Level 18: Also restores drained stats.
@@ -15916,18 +16083,29 @@ school.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 10.
 
+                    Tier II: Level 25.
+
+                    Tier III: Level 40.
+
     Spear of Light  Conjures up spiritual light into a powerful beam.
                     Required skill level for first spell level: 10.
 
+                    Tier II: Level 25.
+
+                    Tier III: Level 40.
+
     Lift Curses     Removes curses from carried/worn objects.
-                    Lv21: Removes all curses including heavy curses.
                     Required skill level for first spell level: 15.
+
+                    Tier II: Level 35.
+                    Removes all normal and heavy curses. Also see (5.14).
 
     Possess         Tries to manipulate the mind of a monster to make it ignore
                     you.
                     Lv9: Turns into a ball.
                     Lv17: Affects all monsters in sight.
                     Required skill level for first spell level: 23.
+
     Stop Possess    Stops active possession of monster minds.
 
     Ethereal Eye    Detects all nearby creatures.
@@ -15937,13 +16115,17 @@ school.
                     Invokes your guardian spirit, guiding and protecting you.
                     Your saving throw is maximised and you are protected from
                     evil.
-                    Lv21: All physical attacks have a chance to miss you,
-                          at the cost of your mana.
                     Required skill level for first spell level: 25.
+
+                    Tier II: Level 45.
+                    All physical attacks have a chance to miss you, at the cost
+                    of your mana.
 
     Rites of Purification
                     *Dispels undead* in your field of view.
                     Required skill level for first spell level: 30.
+
+                    Tier II: Level 45.
 
     BONI:           At 30 grants a firm hold on your life force.
                     Adds slay undead to all your physical attacks at 40.
@@ -15953,8 +16135,10 @@ school.
 
 - Hereticism
     Terror          Casts fear and confusion into the hearts of others.
-                    Level 16: Affects all opponents surrounding you.
                     Required skill level for first spell level: 3.
+
+                    Tier II: Level 18.
+                    Affects all opponents surrounding you.
 
     Ignore Fear     Temporarily removes the ignorant weakness known as fear.
                     Required skill level for first spell level: 7.
@@ -15962,6 +16146,10 @@ school.
     Fire Bolt       Conjures up fire into a powerful bolt.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 10.
+
+                    Tier II: Level 25.
+
+                    Tier III: Level 40.
 
     Wrathflame      It temporarily brands your melee weapons with fire.
                     Lv7: Grants temporary fire resistance.
@@ -15973,6 +16161,8 @@ school.
                     directions.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 20.
+
+                    Tier II: Level 35.
 
     Demonic Strength
                     Temporarily increases and sustains strength and
@@ -16030,11 +16220,14 @@ school.
 
     Toxic Moisture  Creates a cloud of toxic moisture at a designated target,
                     consisting of poisonous gas.
-                    At level 18 it combines the surrounding air into the
-                    attack, turning it into a water/poison mixture.
-                    At level 31 it condenses the water and turns into
-                    poisonous ice shards.
                     Required skill level for first spell level: 3.
+
+                    Tier II: Level 20.
+                    It combines the surrounding air into the attack, turning it
+                    into a water/poison mixture.
+
+                    Tier III: Level 33.
+                    It condenses the water and turns into poisonous ice shards.
 
     Nature's Call   Quickly grows trees around you.
                     Required skill level for first spell level: 10.
@@ -16075,12 +16268,18 @@ school.
                     yourself over time.                        (auto-project)
                     Required skill level for first spell level: 18.
 
+                    Tier II: Level 29.
+
+                    Tier III: Level 40.
+
     Extra Growth    Increases your attributes temporarily.
                     Lv1: Increases strength.
                     Lv5: Also increases dexterity.
-                    Lv10: Also increases constitution.
-                    Lv20: Also increases intelligence.
                     Required skill level for first spell level: 15.
+
+                    Tier II: Level 25.
+                    Also increases constitution.
+                    Lv11: Also increases intelligence.
 
 
 - Mindcraft -
@@ -16114,8 +16313,12 @@ school.
     Pyrokinesis     Causes a severe inflammation to burn your opponent.
                     Required skill level for first spell level: 20.
 
+                    Tier II: Level 37.
+
     Cryokinesis     Causes a dramatic temperature drop on your opponent.
                     Required skill level for first spell level: 24.
+
+                    Tier II: Level 39.
 
     Psychic Warp    Attempts to teleport away your opponent.
                     Required skill level for first spell level: 30.
@@ -16206,21 +16409,33 @@ school.
                     Possibly causing various additional effects.
                     Required skill level for first spell level: 1.
 
+                    Tier II: Level 20.
+
+                    Tier III: Level 40.
+
     Scare           Infuses your target's mind with fear.
-                    Lv15: Affects all monsters in LoS.
                     Required skill level for first spell level: 1.
 
+                    Tier II: Level 15.
+                    Affects all monsters in LoS (line of sight).
+
     Confuse         Infuses your target's mind with confusion.
-                    Lv16: Affects all monsters in LoS.
                     Required skill level for first spell level: 3.
 
+                    Tier II: Level 18.
+                    Affects all monsters in LoS.
+
     Hypnosis        Puts your target's mind to sleep.
-                    Lv16: Affects all monsters in LoS.
                     Required skill level for first spell level: 5.
 
+                    Tier II: Level 20.
+                    Affects all monsters in LoS.
+
     Drain Strength  Slows your target down, draining power from its muscles.
-                    Lv16: Affects all monsters in LoS.
                     Required skill level for first spell level: 7.
+
+                    Tier II: Level 22.
+                    Affects all monsters in LoS.
 
     Psychic Suppression
                     Drains the target's psychic energy, impacting its ability
@@ -16241,6 +16456,8 @@ school.
                     area for a while, causing the usual random Psi side effects
                     on all targets similar to Psionic Blast.
                     Required skill level for first spell level: 18.
+
+                    Tier II: Level 38.
 
     Remote Vision   Tries to forcibly enter all sentient creatures' minds
                     (including invisible monsters, but never empty-minded ones)
@@ -16293,13 +16510,25 @@ though, as all other magic schools do, not the astral level.)
                     corrupted -> dispel.
                     Required skill level for first spell level: 1.
 
+                    Tier II: Level 20.
+
+                    Tier III: Level 40.
+
     Power Ray       Casts a beam of electricity/light/darkness depending on
                     your alignment (see Power Bolt spell above).
                     Required skill level for first spell level: 5.
 
+                    Tier II: Level 20.
+
+                    Tier III: Level 40.
+
     Power Blast     Casts a ball of electricity/mana/dispelling depending on
                     your alignment (see Power Bolt spell above).
                     Required skill level for first spell level: 10.
+
+                    Tier II: Level 25.
+
+                    Tier III: Level 45.
 
     Relocation      Same as Word of Recall.
                     You may inscribe book '@R' etc. for the usual results.
