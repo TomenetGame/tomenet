@@ -4412,7 +4412,13 @@ void interact_macros(void) {
 				//hybrid macros: all others, maybe even also normal-macro-keys
 				if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
 				    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
+#if 0
 				    (*buf >= 'a' && *buf <= 'w') || /* inventory */
+#else
+				    (*buf >= 'a' && *buf <= 'z') || /* command keys - you shouldn't really put macros on these, but w/e.. */
+				    (*buf >= 'A' && *buf <= 'Z') ||
+				    (*buf >= '0' && *buf <= '9') || /* menu choices. Especially for ~ menu it is required that these are command macros so they don't trigger there.. */
+#endif
 				    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 				    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
 				    ) {
@@ -6157,7 +6163,13 @@ Chain_Macro:
 					//hybrid macros: all others, maybe even also normal-macro-keys
 					if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
 					    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
+#if 0
 					    (*buf >= 'a' && *buf <= 'w') || /* inventory */
+#else
+					    (*buf >= 'a' && *buf <= 'z') || /* command keys - you shouldn't really put macros on these, but w/e.. */
+					    (*buf >= 'A' && *buf <= 'Z') ||
+					    (*buf >= '0' && *buf <= '9') || /* menu choices. Especially for ~ menu it is required that these are command macros so they don't trigger there.. */
+#endif
 					    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 					    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
 					    ) {
