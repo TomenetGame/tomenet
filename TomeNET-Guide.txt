@@ -16915,8 +16915,15 @@ Cloud      |  10 | Damages an area about your target over time.      | Storm
 Sign   (*) |  15 | Specific buff or effect, see Sign Effects.        | Glyph
 Ball       |  20 | Targeted area damage that diminishes with radius. | Swarm
 Wave       |  25 | High damage in an expanding area about yourself.  | Surge
-Sigil  (&) |  30 | Grants worn equipment the according resistance.   | Boon
+Sigil  (&) |  30 | Grants worn equipment the according resistance*.  | Boon
 Burst      |  35 | Focussed area damage, full damage across radius.  | Flare
+-------------------------------------------------------------------------------
+* Elements that don't have a resistance grant these associated boni, instead:
+    Inertia  |  free action
+    Gravity  |  feather falling
+    Ice      |  cold and shards resistance
+    Plasma   |  fire, electricity and sound resistance
+-------------------------------------------------------------------------------
 
 Enhanced Spell Types
 --------------------

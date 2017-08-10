@@ -2044,8 +2044,26 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 			case T_SIGL: { //Boon
 				if (!has_rune && color != 'D') color = 'R';
 				if (r_imperatives[imperative].flag != I_ENHA) {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% %s resistance",
-					color, 'a' + i, r_types[i].name, sdiff, cost, fail, r_projections[projection].name);
+          // Hack - Describe elements without an according resist! - Kurzel
+          switch (projection) {
+            case SV_R_INER: { // TR2_FREE_ACT
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% free action",
+              color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+						break; }
+            case SV_R_GRAV: { // TR3_FEATHER
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% feather falling",
+              color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+						break; }
+            case SV_R_ICEE:   // TR2_RES_COLD | TR2_RES_SHARDS
+						case SV_R_PLAS: { // TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND
+              sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% multiple resists",
+              color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+						break; }
+            default: {
+              sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% %s resistance",
+              color, 'a' + i, r_types[i].name, sdiff, cost, fail, r_projections[projection].name);
+            break; }
+          }
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% miscellaneous boni",
 					color, 'a' + i, "boon", sdiff, cost, fail);
