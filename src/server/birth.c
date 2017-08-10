@@ -872,6 +872,46 @@ void get_history(int Ind) {
 		break;
 	}
 
+	/*
+	 * IDDC Easter Egg! - Kurzel
+	 * Detail the specific history of some notable characters from Beleriand
+	 * Maybe no class restrictions though, that's not really lore-specific
+	 */
+	if (p_ptr->mode & MODE_DED_IDDC) { // Beleriand->Doriath->Menegroth
+		if (!strcmp(p_ptr->name, "Beren") && (p_ptr->male) &&
+		    // p_ptr->pclass == CLASS_ROGUE && // stealthy, most notably wielding Angrist
+		    p_ptr->prace == RACE_HUMAN // of the house of Beor, before the Dunedain
+		    ) { // Human/Dunadan -->  1 -->  2 -->  3 --> 50 --> 51 --> 52 --> 53
+			/* Process predefined history using the existing charts */
+			int charts[7] = {1,2,3,50,51,52,53};
+			int rolls[7] = {100,100,80,100,90,30,90}; // nobility, Beor look like Noldor
+
+			for (int x = 0; x < 7; x++) {
+				i = 0;
+				while ((charts[x] != bg[i].chart) || (rolls[x] > bg[i].roll)) i++;
+				(void)strcat(buf, bg[i].info);
+				social_class += (int)(bg[i].bonus) - 50;
+			}
+			chart = 0;
+		}
+		if (!strcmp(p_ptr->name, "Luthien") && !(p_ptr->male) &&
+		    // p_ptr->pclass == CLASS_RUNEMASTER && // stealthy, similar magical ability!
+		    p_ptr->prace == RACE_HIGH_ELF && // approximately half-maia/elf, maybe <_<
+		    p_ptr->stat_max[5] == 17 // gotta remain true to the lore :)
+		    ) { // Elf/High-Elf  -->  7 -->  8 -->  9 --> 54 --> 55 --> 56
+			/* Process predefined history using the existing charts */
+			int charts[6] = {7,8,9,54,55,56};
+			int rolls[6] = {100,75,100,85,75,75}; // nobility, specific Teleri features
+
+			for (int x = 0; x < 6; x++) {
+				i = 0;
+				while ((charts[x] != bg[i].chart) || (rolls[x] > bg[i].roll)) i++;
+				(void)strcat(buf, bg[i].info);
+				social_class += (int)(bg[i].bonus) - 50;
+			}
+			chart = 0;
+		}
+	}
 
 	/* Process the history */
 	while (chart) {
