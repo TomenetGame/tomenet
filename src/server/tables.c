@@ -3834,6 +3834,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_MAGIC,
 			'+', 1000,
 			'+', 800, },
+		/* Re-added devices with all the changes (especially stacking), even archers/warriors can skill it!
+		   Ratio as with ranger (between rogue/istar); expecting to see this on mana runies. - Kurzel */
+		{ SKILL_DEVICE,
+			'+', 1000,
+			'+', 1000, },
 			/* Sneakiness tree */
 		{ SKILL_SNEAKINESS,
 			'+', 1000,
