@@ -3004,7 +3004,7 @@ struct boni_col {
 	/* Flags in char/byte chunks for PKT transfer */
 	byte cb[16]; //16 so far, hardcode and check compatibility, ew - Kurzel
 	/* Attr + Char */
-	char color; char symbol;
+	byte color; char symbol;
 };
 
 /* For Monk martial arts */
