@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. August 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 13. August 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10573,15 +10573,39 @@ someone else kills Zu-Aon. Until then its owner can keep it indefinitely.
 (5.10) Destruction of items by elemental attacks
 ------------------------------------------------
 Items in your inventory can be destroyed if you are hit by an elemental
-attack. Those attacks even have a very slim chance of destroying an item
+attack. Those attacks can even have a very slim chance of damaging an item
 that you have equipped!
 
-In order for an item to guaranteedly survive such an attack, you must either
-be immune or double-resisting (have permanent AND temporary resistance, also
-see (5.17)) to that specific element. Double resistance is nearly as good as
-immunity in regard to item protection.
+There are two different cases, inventory items and equipped items:
+
+-Inventory items can get destroyed or in some cases damaged (disenchanted) or
+ discharged (magic devices) by various elemental attacks, depending on the item
+ type and element type.
+
+ Having resistance will reduce the chance of inventory items getting destroyed
+ somewhat. To protect your inventory effectively though you will need to have
+ double resistance*.
+ Being immune to an element will also protect all your inventory from any
+ damage from that element.
+
+-Equipped items can get damaged by certain elemental attacks (armour) or they
+ can get damaged when used to attack an elementally affine monster (weapons) or
+ when blocking attacks of such a monster (shields).
+
+ Having resistance will reduce the chance of equipment items getting damaged
+ somewhat. Having double resistance* will greatly reduce the chance of damage.
+ Being immune to an element will also protect all your equipment from any
+ damage from that element.
+
+(*"Double resistance": Static resistance gained from an equipped item or an
+ intrinsic character class/race resistance or a resistance acquired by training
+ a skill, plus temporary resistance gained from either consumables (usually
+ potions) or castable spells or activatable items that grant you temporary
+ resistance on activation - also see (5.17).)
+
 Some items have IGNORE_xxx flags which let them ignore certain elements,
-preventing them from being destroyed.
+completely preventing them from being destroyed or damaged by that element.
+
 All artifacts, random and static ones, cannot be harmed by elemental attacks
 of any type.
 
@@ -11399,24 +11423,33 @@ See (0.2) for more information about cloaking.
 The same resistance from two or more items in your equipment don't add to each
 other. For example you only need one item that provides fire resistance. If
 you equip two such items you won't get better resistance than with just one
-item. You cannot get "double resistance" from two items' permanent resistances.
+item. You cannot get "double resistance" from two items' static resistances.
 This rule applies to all resistances and abilities that don't use a bonus
 number to indicate their effectiveness, like faster mana replenishing or hit
 point regeneration, telepathic powers, slow digestion, etc.
+Intrinsic resistances and abilities gained from your class or race, or those
+acquired from training a skill are also static resistances and will not stack
+with other static resistances from items.
 
-However, there is a way to further increase your resistances temporarily:
-(NOTE: THIS ONLY APPLIES FOR BASE (fire/cold/acid/elec) AND POISON RESISTANCE!)
+However, there is a way to further increase your base resistances (fire, cold,
+acid, lightning) or poison resistance temporarily:
 
-Use an item that provides some temporary resistance. Temporary resistance and
-permanent (such from your equipment) resistance stack and their effects are
-multiplied! For example if you wear a shield of resist fire and you quaff a
-potion of resist heat you'll have double fire resistance as long as the potion
-lasts, resulting in fire damage being cut down to 1/9 instead of 1/3! This is
-nearly as good as having fire immunity. (1/3 perm res * 1/3 temp res =
-1/9 total res).
+Use an item or spell that provides some temporary resistance. Static resistance
+and temporary resistance actually stack and their effects are multiplied!
+For example if you wield a shield of resist fire and you quaff a potion of
+resist heat you'll have double fire resistance as long as the potion lasts,
+resulting in fire damage being cut down to 1/9 instead of 1/3:
+1/3 static res * 1/3 temp res = 1/9 total res.
+This is quite close to having fire immunity, as far as single monster fights
+are concerned.
 Not only potions can boost your resistances temporarily, some items can also
 be activated for temporary resistance, for example cloaks of lordly resistance
-or elemental protection rings or certain artifacts.
+or elemental protection rings or certain artifacts. And of course there are
+some spells that can be cast for temporary resistances.
+
+Note that two temporary resistances to the same element do not stack either,
+same as how two static resistances to the same element don't stack.
+Only one static and one temporary resistance will stack in total, ever.
 
 Stat increases or ability increases that are not 'flags' (flag means you either
 have it or you don't) but that use bonus numbers will add to each other.
