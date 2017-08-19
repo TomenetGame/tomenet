@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Download files from file sharing websites
-# Copyright (c) 2010-2014 Plowshare team
+# Copyright (c) 2010-2016 Plowshare team
 #
 # This file is part of Plowshare.
 #
@@ -18,18 +18,19 @@
 # You should have received a copy of the GNU General Public License
 # along with Plowshare.  If not, see <http://www.gnu.org/licenses/>.
 
-declare -r VERSION='v1.0.1-32-g63a9a11 (2014-04-24)'
+declare -r VERSION='GIT-snapshot'
 
 declare -r EARLY_OPTIONS="
 HELP,h,help,,Show help info and exit
-HELPFULL,H,longhelp,,Exhaustive help info (with modules command-line options)
+HELPFUL,H,longhelp,,Exhaustive help info (with modules command-line options)
 GETVERSION,,version,,Output plowdown version information and exit
 ALLMODULES,,modules,,Output available modules (one per line) and exit. Useful for wrappers.
 EXT_PLOWSHARERC,,plowsharerc,f=FILE,Force using an alternate configuration file (overrides default search path)
-NO_PLOWSHARERC,,no-plowsharerc,,Do not use any plowshare.conf configuration file"
+NO_PLOWSHARERC,,no-plowsharerc,,Do not use any plowshare.conf configuration file
+NO_COLOR,,no-color,,Disables log notice & log error output coloring"
 
 declare -r MAIN_OPTIONS="
-VERBOSE,v,verbose,V=LEVEL,Set output verbose level: 0=none, 1=err, 2=notice (default), 3=dbg, 4=report
+VERBOSE,v,verbose,c|0|1|2|3|4=LEVEL,Verbosity level: 0=none, 1=err, 2=notice (default), 3=dbg, 4=report
 QUIET,q,quiet,,Alias for -v0
 MARK_DOWN,m,mark-downloaded,,Mark downloaded links (useful for file list arguments)
 NOOVERWRITE,x,no-overwrite,,Do not overwrite existing files
@@ -37,22 +38,25 @@ OUTPUT_DIR,o,output-directory,D=DIR,Directory where files will be saved
 TEMP_DIR,,temp-directory,D=DIR,Directory for temporary files (final link download, cookies, images)
 TEMP_RENAME,,temp-rename,,Append .part suffix to filename while file is being downloaded
 MAX_LIMIT_RATE,,max-rate,r=SPEED,Limit maximum speed to bytes/sec (accept usual suffixes)
+MIN_LIMIT_RATE,,min-rate,r=SPEED,Limit minimum speed to bytes/sec (during 30 seconds)
 MIN_LIMIT_SPACE,,min-space,R=LIMIT,Set the minimum amount of disk space to exit.
 INTERFACE,i,interface,s=IFACE,Force IFACE network interface
 TIMEOUT,t,timeout,n=SECS,Timeout after SECS seconds of waits
 MAXRETRIES,r,max-retries,N=NUM,Set maximum retries for download failures (captcha, network errors). Default is 2 (3 tries).
+CACHE,,cache,C|none|session|shared=METHOD,Policy for storage data. Available: none, session (default), shared.
 CAPTCHA_METHOD,,captchamethod,s=METHOD,Force specific captcha solving method. Available: online, imgur, x11, fb, nox, none.
 CAPTCHA_PROGRAM,,captchaprogram,F=PROGRAM,Call external program/script for captcha solving.
 CAPTCHA_9KWEU,,9kweu,s=KEY,9kw.eu captcha (API) key
 CAPTCHA_ANTIGATE,,antigate,s=KEY,Antigate.com captcha key
 CAPTCHA_BHOOD,,captchabhood,a=USER:PASSWD,CaptchaBrotherhood account
+CAPTCHA_COIN,,captchacoin,s=KEY,captchacoin.com API key
 CAPTCHA_DEATHBY,,deathbycaptcha,a=USER:PASSWD,DeathByCaptcha account
-GLOBAL_COOKIES,,cookies,f=FILE,Force using specified cookies file
 PRE_COMMAND,,run-before,F=PROGRAM,Call external program/script before new link processing
 POST_COMMAND,,run-after,F=PROGRAM,Call external program/script after link being successfully processed
 SKIP_FINAL,,skip-final,,Don't process final link (returned by module), just skip it (for each link)
-PRINTF_FORMAT,,printf,s=FORMAT,Print results in a given format (for each successful download). Default string is: \"%F%n\".
+PRINTF_FORMAT,,printf,s=FORMAT,Print results in a given format (for each successful download). Default is \"%F%n\".
 NO_MODULE_FALLBACK,,fallback,,If no module is found for link, simply download it (HTTP GET)
+EXT_CURLRC,,curlrc,f=FILE,Force using an alternate curl configuration file (overrides ~/.curlrc)
 NO_CURLRC,,no-curlrc,,Do not use curlrc config file"
 
 
@@ -91,12 +95,20 @@ process_item() {
         echo 'url'
         strip <<< "$ITEM"
     elif [ -f "$ITEM" ]; then
-        if [[ $ITEM =~ (zip|rar|tar|[7gx]z|bz2|mp[234g]|avi|mkv|jpg)$ ]]; then
-            log_error "Skip: '$ITEM' seems to be a binary file, not a list of links"
+        local MATCH
+
+        if check_exec 'file'; then
+            [[ $(file -i "$ITEM") =~ \ charset=binary$ ]] && MATCH=1
         else
+            [[ $ITEM =~ \.(zip|rar|tar|[7gx]z|bz2|mp[234g]|avi|mkv|jpg)$ ]] && MATCH=1
+        fi
+
+        if [ -z "$MATCH" ]; then
             # Discard empty lines and comments
             echo 'file'
             sed -ne '/^[[:space:]]*[^#[:space:]]/{s/^[[:space:]]*//; s/[[:space:]]*$//; p}' "$ITEM"
+        else
+            log_error "Skip: '$ITEM' seems to be a binary file, not a list of links"
         fi
     else
         log_error "Skip: cannot stat '$ITEM': No such file or directory"
@@ -104,14 +116,14 @@ process_item() {
 }
 
 # Print usage (on stdout)
-# Note: $MODULES is a multi-line list
+# Note: Global array variable MODULES is accessed directly.
 usage() {
     echo 'Usage: plowdown [OPTIONS] [MODULE_OPTIONS] URL|FILE...'
     echo 'Download files from file sharing websites.'
     echo
     echo 'Global options:'
     print_options "$EARLY_OPTIONS$MAIN_OPTIONS"
-    test -z "$1" || print_module_options "$MODULES" DOWNLOAD
+    test -z "$1" || print_module_options MODULES[@] DOWNLOAD
 }
 
 # Mark status of link (inside file or to stdout). See --mark-downloaded switch.
@@ -131,10 +143,19 @@ mark_queue() {
         if [ 'file' = "$1" ]; then
             if test -w "$FILE"; then
                 local -r D=$'\001' # sed separator
-                test "$FILENAME" && FILENAME="${FILENAME//&/\\&}\n"
-                sed -i -e "s$D^[[:space:]]*\(${URL//\\/\\\\/}[[:space:]]*\)\$$D$FILENAME$STATUS \1$D" "$FILE" &&
-                    log_notice "link marked in file \`$FILE' ($STATUS)" ||
+                local SRET=0
+                if [ -z "$FILENAME" ]; then
+                    sed -i -e "s$D^[[:space:]]*\(${URL//\\/\\\\/}[[:space:]]*\)\$$D$STATUS \1$D" "$FILE" || SRET=$?
+                else
+                    # Don't write filename if it is already present
+                    sed -i -e "\\$D^[[:space:]]*#[[:space:]]*${FILENAME:2}\r\?\$$D{N}" \
+                        -e "s$D^\([[:space:]]*#[[:space:]]*${FILENAME:2}\r\?\n\)\?[[:space:]]*\(${URL//\\/\\\\/}[[:space:]]*\r\?\)\$$D${FILENAME//&/\\&}\n$STATUS \2$D" "$FILE" || SRET=$?
+                fi
+                if [ $SRET -eq 0 ]; then
+                    log_notice "link marked in file \`$FILE' ($STATUS)"
+                else
                     log_error "failed marking link in file \`$FILE' ($STATUS)"
+                fi
             else
                 log_error "Can't mark link, no write permission ($FILE)"
             fi
@@ -212,9 +233,10 @@ module_config_need_cookie() {
 # Example: "MODULE_RYUSHARE_DOWNLOAD_FINAL_LINK_NEEDS_EXTRA=(-F "key=value")
 # $1: module name
 # stdout: variable array name (not content)
+# $?: 0 for success (non empty array)
 module_config_need_extra() {
     local -u VAR="MODULE_${1}_DOWNLOAD_FINAL_LINK_NEEDS_EXTRA"
-    test -z "${!VAR}" || echo "${VAR}"
+    test -n "${!VAR}" && echo "${VAR}[@]"
 }
 
 # Example: "MODULE_RYUSHARE_DOWNLOAD_SUCCESSIVE_INTERVAL=10"
@@ -233,17 +255,16 @@ module_null_download() {
 }
 
 # Note: Global options $INDEX, $MARK_DOWN, $NOOVERWRITE,
-# $TIMEOUT, $CAPTCHA_METHOD, $GLOBAL_COOKIES, $PRINTF_FORMAT,
-# $SKIP_FINAL, $PRE_COMMAND, $POST_COMMAND, $TEMP_RENAME are accessed directly.
+# $TIMEOUT, $CAPTCHA_METHOD, $PRINTF_FORMAT, $SKIP_FINAL,
+# $PRE_COMMAND, $POST_COMMAND, $TEMP_DIR, $TEMP_RENAME are accessed directly.
 download() {
     local -r MODULE=$1
     local -r URL_RAW=$2
     local -r TYPE=$3
     local -r ITEM=$4
     local -r OUT_DIR=$5
-    local -r TMP_DIR=$6
-    local -r MAX_RETRIES=$7
-    local -r LAST_HOST=$8
+    local -r MAX_RETRIES=$6
+    local -r LAST_HOST=$7
 
     local DRETVAL DRESULT AWAIT FILE_NAME FILE_URL COOKIE_FILE COOKIE_JAR ANAME BASE_URL
     local -i STATUS FILE_SIZE
@@ -264,11 +285,6 @@ download() {
 
     while :; do
         COOKIE_FILE=$(create_tempfile)
-
-        # Use provided cookie
-        if [ -s "$GLOBAL_COOKIES" ]; then
-            cat "$GLOBAL_COOKIES" > "$COOKIE_FILE"
-        fi
 
         # Pre-processing script (executed in a subshell)
         if [ -n "$PRE_COMMAND" ]; then
@@ -291,6 +307,8 @@ download() {
             DRETVAL=0
             $FUNCTION "$COOKIE_FILE" "$URL_ENCODED" >"$DRESULT" || DRETVAL=$?
 
+            # $ERR_LINK_TEMP_UNAVAILABLE and $ERR_EXPIRED_SESSION
+            # do not count as a retry
             if [ $DRETVAL -eq $ERR_LINK_TEMP_UNAVAILABLE ]; then
                 read AWAIT <"$DRESULT"
                 if [ -z "$AWAIT" ]; then
@@ -299,6 +317,9 @@ download() {
                     log_debug 'arbitrary wait (from module)'
                 fi
                 wait ${AWAIT:-60} || { DRETVAL=$?; break; }
+                continue
+            elif [ $DRETVAL -eq $ERR_EXPIRED_SESSION ]; then
+                log_notice 'expired session: delete cache entry'
                 continue
             elif [[ $MAX_RETRIES -eq 0 ]]; then
                 break
@@ -410,7 +431,7 @@ download() {
         if [[ $BASE_URL =~ :([[:digit:]]{2,5})$ ]]; then
             local -i PORT=${BASH_REMATCH[1]}
             if (( PORT != 80 && PORT != 443 )); then
-                log_notice "Warning: Final URL requires an outgoing TCP connection to port $PORT, hope you're not behind a proxy/firewall"
+                log_notice "WARNING: Final URL requires an outgoing TCP connection to port $PORT, hope you're not behind a proxy/firewall."
             fi
         fi
 
@@ -454,8 +475,8 @@ download() {
             local -a CURL_ARGS=()
 
             # Temporary download filename (with full path)
-            if test "$TMP_DIR"; then
-                FILENAME_TMP="$TMP_DIR/$FILE_NAME"
+            if test "$TEMP_DIR"; then
+                FILENAME_TMP="$TMPDIR/$FILE_NAME"
             elif test "$OUT_DIR"; then
                 FILENAME_TMP="$OUT_DIR/$FILE_NAME"
             else
@@ -480,16 +501,18 @@ download() {
             fi
 
             if test "$TEMP_RENAME"; then
-                FILENAME_TMP="$FILENAME_TMP.part"
+                FILENAME_TMP+='.part'
             fi
 
             if [ "$FILENAME_OUT" = "$FILENAME_TMP" ]; then
                 if [ -f "$FILENAME_OUT" ]; then
                     # Can we overwrite destination file?
                     if [ ! -w "$FILENAME_OUT" ]; then
-                        module_config_resume "$MODULE" && \
-                            log_error "error: no write permission, cannot resume final file ($FILENAME_OUT)" || \
-                            log_error "error: no write permission, cannot overwrite final file ($FILENAME_OUT)"
+                        if module_config_resume "$MODULE"; then
+                            log_error "ERROR: No write permission, cannot resume final file ($FILENAME_OUT)"
+                        else
+                            log_error "ERROR: No write permission, cannot overwrite final file ($FILENAME_OUT)"
+                        fi
                         return $ERR_SYSTEM
                     fi
 
@@ -502,18 +525,20 @@ download() {
                 if [ -f "$FILENAME_OUT" ]; then
                     # Can we overwrite destination file?
                     if [ ! -w "$FILENAME_OUT" ]; then
-                        log_error "error: no write permission, cannot overwrite final file ($FILENAME_OUT)"
+                        log_error "ERROR: No write permission, cannot overwrite final file ($FILENAME_OUT)"
                         return $ERR_SYSTEM
                     fi
-                    log_notice "warning: final file will be overwritten ($FILENAME_OUT)"
+                    log_notice 'WARNING: The filename file already exists, overwrite it. Use `plowdown --no-overwrite'\'' to disable.'
                 fi
 
                 if [ -f "$FILENAME_TMP" ]; then
                     # Can we overwrite temporary file?
                     if [ ! -w "$FILENAME_TMP" ]; then
-                        module_config_resume "$MODULE" && \
-                            log_error "error: no write permission, cannot resume tmp/part file ($FILENAME_TMP)" || \
-                            log_error "error: no write permission, cannot overwrite tmp/part file ($FILENAME_TMP)"
+                        if module_config_resume "$MODULE"; then
+                            log_error "ERROR: No write permission, cannot resume tmp/part file ($FILENAME_TMP)"
+                        else
+                            log_error "ERROR: No write permission, cannot overwrite tmp/part file ($FILENAME_TMP)"
+                        fi
                         return $ERR_SYSTEM
                     fi
 
@@ -528,13 +553,17 @@ download() {
             :> "$DRESULT"
 
             #  Give extra parameters to curl (custom HTTP headers, ...)
-            ANAME=$(module_config_need_extra "$MODULE")
-            if test -n "$ANAME"; then
-                local -a CURL_EXTRA="$ANAME[@]"
+            if ANAME=$(module_config_need_extra "$MODULE"); then
                 local OPTION
-                for OPTION in "${!CURL_EXTRA}"; do
-                    log_debug "adding extra curl options: '$OPTION'"
-                    CURL_ARGS+=("$OPTION")
+                for OPTION in "${!ANAME}"; do
+                    if [[ $OPTION = '-J' || $OPTION = '--remote-header-name' ]]; then
+                        log_debug "ignoring extra curl option: '$OPTION'"
+                    elif [[ $OPTION = '-O' || $OPTION = '--remote-name' ]]; then
+                        log_debug "ignoring extra curl option: '$OPTION'"
+                    else
+                        log_debug "adding extra curl option: '$OPTION'"
+                        CURL_ARGS+=("$OPTION")
+                    fi
                 done
             fi
 
@@ -546,10 +575,9 @@ download() {
             fi
 
             DRETVAL=0
-            curl_with_log "${CURL_ARGS[@]}" --fail --globoff \
+            umask 0066 && curl_with_log "${CURL_ARGS[@]}" --fail --globoff \
                 -w '%{http_code}\t%{size_download}' \
                 -o "$FILENAME_TMP" "$FILE_URL" >"$DRESULT" || DRETVAL=$?
-
             IFS=$'\t' read -r STATUS FILE_SIZE < "$DRESULT"
             rm -f "$DRESULT"
 
@@ -599,12 +627,12 @@ download() {
                 return $ERR_NETWORK
             fi
 
-            chmod 644 "$FILENAME_TMP" || log_error "chmod failed: $FILENAME_TMP"
+            chmod 644 "$FILENAME_TMP" 2>/dev/null || log_error "chmod failed: $FILENAME_TMP"
 
             if [ "$FILENAME_TMP" != "$FILENAME_OUT" ]; then
                 test "$TEMP_RENAME" || \
                     log_notice "Moving file to output directory: ${OUT_DIR:-.}"
-                mv -f "$FILENAME_TMP" "$FILENAME_OUT"
+                mv -f "$FILENAME_TMP" "$FILENAME_OUT" 2>/dev/null || log_error "mv failed: $FILENAME_TMP"
             fi
 
             mark_queue "$TYPE" "$MARK_DOWN" "$ITEM" "$URL_RAW" OK "$FILENAME_OUT"
@@ -641,11 +669,13 @@ download() {
 # %c: final cookie filename (with output directory)
 # %C: %c or empty string if module does not require it
 # %d: download (final) url
+# %D: download (final) url (JSON string)
 # %f: destination (local) filename
 # %F: destination (local) filename (with output directory)
 # %m: module name
 # %s: destination (local) file size (in bytes)
 # %u: download (source) url
+# %U: download url (JSON string)
 # and also:
 # %n: newline
 # %t: tabulation
@@ -657,7 +687,7 @@ download() {
 pretty_check() {
     # This must be non greedy!
     local S TOKEN
-    S=${1//%[cdfmsuCFnt%]}
+    S=${1//%[cdDfmsuUCFnt%]}
     TOKEN=$(parse_quiet . '\(%.\)' <<< "$S")
     if [ -n "$TOKEN" ]; then
         log_error "Bad format string: unknown sequence << $TOKEN >>"
@@ -670,12 +700,12 @@ pretty_check() {
 # $3: format string
 # Note: Don't chmod cookie file (keep strict permissions)
 pretty_print() {
-    local -r N=$(printf %04d $1)
     local -ar A=("${!2}")
     local -r CR=$'\n'
     local FMT=$3
-    local COOKIE_FILE
+    local N COOKIE_FILE
 
+    printf -v N %04d $(($1))
     test "${FMT#*%%}" != "$FMT" && FMT=$(replace_all '%%' "%raw" <<< "$FMT")
 
     # FIXME: ${A[2]} could contain %? patterns
@@ -713,7 +743,7 @@ pretty_print() {
 
     handle_tokens "$FMT" '%raw,%' '%t,	' "%n,$CR" \
         "%m,${A[0]}" "%f,${A[1]}" "%u,${A[4]}" "%d,${A[5]}" \
-        "%s,${A[6]}"
+        "%s,${A[6]}" "%U,$(json_escape "${A[4]}")" "%D,$(json_escape "${A[5]}")"
 }
 
 #
@@ -727,32 +757,49 @@ if (( ${BASH_VERSINFO[0]} * 100 + ${BASH_VERSINFO[1]} <= 400 )); then
     exit 1
 fi
 
+if [[ $SHELLOPTS = *posix* ]]; then
+    echo "plowdown: Your shell is in POSIX mode, this will not work." >&2
+    exit 1
+fi
+
 # Get library directory
 LIBDIR=$(absolute_path "$0")
+readonly LIBDIR
+TMPDIR=${TMPDIR:-/tmp}
 
 set -e # enable exit checking
 
 source "$LIBDIR/core.sh"
-MODULES=$(grep_list_modules 'download') || exit
-for MODULE in $MODULES; do
-    source "$LIBDIR/modules/$MODULE.sh"
+
+declare -a MODULES=()
+eval "$(get_all_modules_list download)" || exit
+for MODULE in "${!MODULES_PATH[@]}"; do
+    source "${MODULES_PATH[$MODULE]}"
+    MODULES+=("$MODULE")
 done
 
 # Process command-line (plowdown early options)
 eval "$(process_core_options 'plowdown' "$EARLY_OPTIONS" "$@")" || exit
 
-test "$HELPFULL" && { usage 1; exit 0; }
+test "$HELPFUL" && { usage 1; exit 0; }
 test "$HELP" && { usage; exit 0; }
 test "$GETVERSION" && { echo "$VERSION"; exit 0; }
 
 if test "$ALLMODULES"; then
-    for MODULE in $MODULES; do echo "$MODULE"; done
+    for MODULE in "${MODULES[@]}"; do echo "$MODULE"; done
     exit 0
 fi
 
 # Get configuration file options. Command-line is partially parsed.
 test -z "$NO_PLOWSHARERC" && \
-    process_configfile_options '[Pp]lowdown' "$MAIN_OPTIONS" "$EXT_PLOWSHARERC"
+    process_configfile_options '[Pp]lowdown' "${MAIN_OPTIONS}
+NO_COLOR,,no-color,,x" "$EXT_PLOWSHARERC"
+
+if [ -n "$NO_COLOR" ]; then
+    unset COLOR
+else
+    declare -r COLOR=yes
+fi
 
 declare -a COMMAND_LINE_MODULE_OPTS COMMAND_LINE_ARGS RETVALS
 COMMAND_LINE_ARGS=("${UNUSED_ARGS[@]}")
@@ -768,13 +815,25 @@ elif [ -z "$VERBOSE" ]; then
     declare -r VERBOSE=2
 fi
 
+if [ "${#MODULES}" -le 0 ]; then
+    log_error \
+"-------------------------------------------------------------------------------
+Your plowshare installation has currently no module.
+($PLOWSHARE_CONFDIR/modules.d/ is empty)
+
+In order to use plowdown you must install some modules. Here is a quick start:
+$ plowmod --install
+-------------------------------------------------------------------------------"
+    exit $ERR_NOMODULE
+fi
+
 if [ $# -lt 1 ]; then
     log_error 'plowdown: no URL specified!'
     log_error "plowdown: try \`plowdown --help' for more information."
     exit $ERR_BAD_COMMAND_LINE
 fi
 
-log_report_info
+log_report_info "$LIBDIR"
 log_report "plowdown version $VERSION"
 
 if [ -n "$EXT_PLOWSHARERC" ]; then
@@ -785,6 +844,13 @@ if [ -n "$EXT_PLOWSHARERC" ]; then
     fi
 fi
 
+if [ -n "$MAX_LIMIT_RATE" -a -n "$MIN_LIMIT_RATE" ]; then
+  if (( MAX_LIMIT_RATE < MIN_LIMIT_RATE )); then
+      log_error "--min-rate ($MIN_LIMIT_RATE) is greater than --max-rate ($MAX_LIMIT_RATE)"
+      exit $ERR_BAD_COMMAND_LINE
+  fi
+fi
+
 if [ -n "$TEMP_DIR" ]; then
     TMPDIR=${TEMP_DIR%/}
     log_notice "Temporary directory: $TMPDIR"
@@ -793,19 +859,17 @@ fi
 if [ -n "$OUTPUT_DIR" ]; then
     log_notice "Output directory: ${OUTPUT_DIR%/}"
 elif [ ! -w "$PWD" ]; then
-    log_notice 'Warning: Current directory is not writable!'
+    log_notice 'WARNING: Current directory is not writable, you may experience troubles.'
 fi
 
 if [ -n "$MIN_LIMIT_SPACE" ]; then
     DISKMON=$(disk_mount_point "${OUTPUT_DIR:-$PWD}") || exit
 fi
 
-if [ -n "$GLOBAL_COOKIES" ]; then
-    log_notice 'plowdown: using provided cookies file'
-fi
-
 if [ -n "$PRINTF_FORMAT" ]; then
     pretty_check "$PRINTF_FORMAT" || exit
+elif [ -n "$SKIP_FINAL" -a -z "$POST_COMMAND" ]; then
+    log_notice 'plowdown: using --skip-final without --printf is probably not what you want'
 fi
 
 # Print chosen options
@@ -825,11 +889,17 @@ else
     [ -n "$CAPTCHA_DEATHBY" ] && log_debug 'plowdown: --deathbycaptcha selected'
 fi
 
-if [ -z "$NO_CURLRC" -a -f "$HOME/.curlrc" ]; then
+if [ -n "$EXT_CURLRC" ]; then
+    if [ -n "$NO_CURLRC" ]; then
+        log_notice 'plowdown: --no-curlrc selected and prevails over --curlrc'
+    else
+        log_notice 'plowdown: using alternate curl configuration file'
+    fi
+elif [ -z "$NO_CURLRC" -a -f "$HOME/.curlrc" ]; then
     log_debug 'using local ~/.curlrc'
 fi
 
-MODULE_OPTIONS=$(get_all_modules_options "$MODULES" DOWNLOAD)
+MODULE_OPTIONS=$(get_all_modules_options MODULES[@] DOWNLOAD)
 
 # Process command-line (all module options)
 eval "$(process_all_modules_options 'plowdown' "$MODULE_OPTIONS" \
@@ -845,32 +915,21 @@ if [ ${#COMMAND_LINE_ARGS[@]} -eq 0 ]; then
     exit $ERR_BAD_COMMAND_LINE
 fi
 
-# Sanity check
-for MOD in $MODULES; do
-    if ! declare -f "${MOD}_download" > /dev/null; then
-        log_error "plowdown: module \`${MOD}_download' function was not found"
-        exit $ERR_BAD_COMMAND_LINE
-    fi
-done
-
-set_exit_trap
-
-# Save umask
-declare -r UMASK=$(umask)
-test "$UMASK" && umask 0066
+core_init 'plowdown'
 
 # Remember last host because hosters may require waiting between
-# sucessive downloads.
+# successive downloads.
 PREVIOUS_HOST=none
+
+# Only used when CACHE policy is session (default).
+# Use an associative array to not have duplicated modules.
+declare -A CACHED_MODULES
 
 # Count downloads (1-based index)
 declare -i INDEX=1
 
 for ITEM in "${COMMAND_LINE_ARGS[@]}"; do
-    OLD_IFS=$IFS
-    IFS=$'\n'
-    ELEMENTS=($(process_item "$ITEM"))
-    IFS=$OLD_IFS
+    mapfile -t ELEMENTS < <(process_item "$ITEM")
 
     TYPE=${ELEMENTS[0]}
     unset ELEMENTS[0]
@@ -890,9 +949,18 @@ for ITEM in "${COMMAND_LINE_ARGS[@]}"; do
             log_notice "This seems to be a redirection url. Trying with: '$URL'"
         fi
 
-        MODULE=$(get_module "$URL" "$MODULES") || true
+        # Sanity check
+        if [[ ${URL%/} =~ ^[Hh][Tt][Tt][Pp][Ss]?://(www\.)?[[:alnum:]]+\.[[:alpha:]]{2,3}$ ]]; then
+            log_notice 'You seem to have entered a basename link without any path/query. Please check if your link is valid.'
+            URL="${URL%/}/"
+            # Force error even if $MODULE detected
+            MRETVAL=$ERR_NOMODULE
+        fi
+
+        MODULE=$(get_module "$URL" MODULES[@]) || true
 
         if [ -z "$MODULE" ]; then
+            MRETVAL=0
             if match_remote_url "$URL"; then
                 # Test for simple HTTP 30X redirection
                 # (disable User-Agent because some proxy can fake it)
@@ -905,8 +973,8 @@ for ITEM in "${COMMAND_LINE_ARGS[@]}"; do
                     URL_TEMP=$(grep_http_header_location_quiet <<< "$HEADERS")
 
                     if [ -n "$URL_TEMP" ]; then
-                        MODULE=$(get_module "$URL_TEMP" "$MODULES") || MRETVAL=$?
-                        test "$MODULE" && URL="$URL_TEMP"
+                        MODULE=$(get_module "$URL_TEMP" MODULES[@]) || MRETVAL=$?
+                        test "$MODULE" && URL=$URL_TEMP
                     elif test "$NO_MODULE_FALLBACK"; then
                         log_notice 'No module found, do a simple HTTP GET as requested'
                         MODULE='module_null'
@@ -938,17 +1006,24 @@ for ITEM in "${COMMAND_LINE_ARGS[@]}"; do
         fi
 
         if [ $MRETVAL -ne 0 ]; then
-            match_remote_url "$URL" && \
-                log_error "Skip: no module for URL ($(basename_url "$URL")/)"
+            if match_remote_url "$URL"; then
+                if [ -z "$MODULE" ]; then
+                    log_error "Skip: no module for URL ($(basename_url "$URL"))"
+                else
+                    log_error "Skip: invalid URL (${URL%/}) but module is supported ($MODULE)"
+                fi
+            fi
 
             # Check if plowlist can handle $URL
-            if [ -z "$MODULES_LIST" ]; then
-                MODULES_LIST=$(grep_list_modules 'list' 'download') || true
-                for MODULE in $MODULES_LIST; do
-                    source "$LIBDIR/modules/$MODULE.sh"
+            if [[ ! $MODULES2 ]]; then
+                declare -a MODULES2=()
+                eval "$(get_all_modules_list list download)" || exit
+                for MODULE in "${!MODULES_PATH[@]}"; do
+                    source "${MODULES_PATH[$MODULE]}"
+                    MODULES2+=("$MODULE")
                 done
             fi
-            MODULE=$(get_module "$URL" "$MODULES_LIST") || true
+            MODULE=$(get_module "$URL" MODULES2[@]) || true
             if [ -n "$MODULE" ]; then
                 log_notice "Note: This URL ($MODULE) is supported by plowlist"
             fi
@@ -963,9 +1038,19 @@ for ITEM in "${COMMAND_LINE_ARGS[@]}"; do
             eval "$(process_module_options "$MODULE" DOWNLOAD \
                 "${COMMAND_LINE_MODULE_OPTS[@]}")" || true
 
+            [ "${#UNUSED_OPTS[@]}" -eq 0 ] || \
+                log_notice "$MODULE: unused command line switches: ${UNUSED_OPTS[*]}"
+
+            # Module storage policy (part 1/2)
+            if [ "$CACHE" = 'none' ]; then
+                storage_reset
+            elif [ "$CACHE" != 'shared' ]; then
+                [[ ${CACHED_MODULES["$MODULE"]} ]] || CACHED_MODULES["$MODULE"]=1
+            fi
+
             ${MODULE}_vars_set
             download "$MODULE" "$URL" "$TYPE" "$ITEM" "${OUTPUT_DIR%/}" \
-                "$TMPDIR" "${MAXRETRIES:-2}" "$PREVIOUS_HOST" || MRETVAL=$?
+                "${MAXRETRIES:-2}" "$PREVIOUS_HOST" || MRETVAL=$?
             ${MODULE}_vars_unset
 
             # Link explicitly skipped
@@ -982,15 +1067,17 @@ for ITEM in "${COMMAND_LINE_ARGS[@]}"; do
     done
 done
 
-# Restore umask
-test "$UMASK" && umask $UMASK
+# Module storage policy (part 2/2)
+if [ "$CACHE" != 'shared' ]; then
+    for MODULE in "${!CACHED_MODULES[@]}"; do storage_reset; done
+fi
 
 if [ ${#RETVALS[@]} -eq 0 ]; then
     exit 0
 elif [ ${#RETVALS[@]} -eq 1 ]; then
     exit ${RETVALS[0]}
 else
-    log_debug "retvals:${RETVALS[@]}"
+    log_debug "retvals:${RETVALS[*]}"
     # Drop success values
     RETVALS=(${RETVALS[@]/#0*} -$ERR_FATAL_MULTIPLE)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Common set of functions used by modules
-# Copyright (c) 2010-2014 Plowshare team
+# Copyright (c) 2010-2016 Plowshare team
 #
 # This file is part of Plowshare.
 #
@@ -22,7 +22,14 @@
 set -o pipefail
 
 # Each time an API is updated, this value will be increased
-declare -r PLOWSHARE_API_VERSION=0
+declare -r PLOWSHARE_API_VERSION=6
+
+# User configuration directory (contains plowshare.conf, exec/, storage/, modules.d/)
+declare -r PLOWSHARE_CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}/plowshare"
+
+# Dependencies
+declare -r PLOWCORE_JS=${PLOWSHARE_JS:-js}
+declare -r PLOWCORE_CURL=${PLOWSHARE_CURL:-curl}
 
 # Global error codes
 # 0 means success or link alive
@@ -48,26 +55,28 @@ declare -r ERR_SIZE_LIMIT_EXCEEDED=14     # plowdown: Can't download link becaus
                                           # plowup: Can't upload too big file (need permissions)
 declare -r ERR_BAD_COMMAND_LINE=15        # Unknown command line parameter or incompatible options
 declare -r ERR_ASYNC_REQUEST=16           # plowup: Asynchronous remote upload started (can't predict final status)
+declare -r ERR_EXPIRED_SESSION=17         # Related to local storage module file, expired session
 declare -r ERR_FATAL_MULTIPLE=100         # 100 + (n) with n = first error code (when multiple arguments)
 
 # Global variables used (defined in plow* scripts):
-#   - VERBOSE          Verbose log level (0=none, 1, 2, 3, 4)
-#   - LIBDIR           Absolute path to plowshare's libdir
-#   - INTERFACE        Network interface (used by curl)
-#   - MAX_LIMIT_RATE   Network maximum speed (used by curl)
-#   - MIN_LIMIT_RATE   Network minimum speed (used by curl)
-#   - NO_CURLRC        Do not read of use curlrc config
+#   - VERBOSE          Verbosity level (0=none, 1=error, 2=notice, 3=debug, 4=report)
+#   - INTERFACE        (curl) Network interface
+#   - MAX_LIMIT_RATE   (curl) Network maximum speed
+#   - MIN_LIMIT_RATE   (curl) Network minimum speed
+#   - NO_CURLRC        (curl) Do not read of use curlrc config
+#   - EXT_CURLRC       (curl) Alternate curlrc config file
 #   - CAPTCHA_METHOD   User-specified captcha method
 #   - CAPTCHA_ANTIGATE Antigate.com captcha key
 #   - CAPTCHA_9KWEU    9kw.eu captcha key
 #   - CAPTCHA_BHOOD    Captcha Brotherhood account
+#   - CAPTCHA_COIN     captchacoin.com captcha key
 #   - CAPTCHA_DEATHBY  DeathByCaptcha account
 #   - CAPTCHA_PROGRAM  External solver program/script
-#   - MODULE           Module name (don't include .sh)
-# Note: captchas are handled in plowdown, plowup, plowdel.
-#
-# Global variables defined here:
-#   - PS_TIMEOUT       (plowdown, plowup) Timeout (in seconds) for one item
+#   - MODULE           Module name (don't include .sh), used by storage API
+#   - TMPDIR           Temporary directory
+#   - CACHE            Storage API policy: none, session (default or empty), shared.
+#   - COLOR            Display log_notice & log_error messages with colors
+# Note: captchas are handled in plowdown, plowup and plowdel.
 #
 # Logs are sent to stderr stream.
 # Policies:
@@ -75,12 +84,16 @@ declare -r ERR_FATAL_MULTIPLE=100         # 100 + (n) with n = first error code 
 # - notice: core messages (wait, timeout, retries), lastest curl call (plowdown, plowup)
 # - debug: all core/modules messages, curl calls
 # - report: debug plus curl content (html pages, cookies)
+#
+# Global variables defined here (FIXME later):
+#   - PS_TIMEOUT       (plowdown, plowup) Timeout (in seconds) for one item
+#   - CONT_SIGNAL      SIGCONT signal received
 
 # log_report for a file
 # $1: filename
 logcat_report() {
     if test -s "$1"; then
-        test $VERBOSE -ge 4 && \
+        test $VERBOSE -lt 4 || \
             stderr "$(sed -e 's/^/rep:/' "$1")"
     fi
     return 0
@@ -88,24 +101,30 @@ logcat_report() {
 
 # This should not be called within modules
 log_report() {
-    test $VERBOSE -ge 4 && stderr "rep: $@"
-    return 0
+    test $VERBOSE -lt 4 || stderr 'rep:' "$@"
 }
 
 log_debug() {
-    test $VERBOSE -ge 3 && stderr "dbg: $@"
-    return 0
+    test $VERBOSE -lt 3 || stderr 'dbg:' "$@"
 }
 
 # This should not be called within modules
 log_notice() {
-    test $VERBOSE -ge 2 && stderr "$@"
-    return 0
+    if [[ $COLOR ]]; then
+        # 33 is yellow
+        test $VERBOSE -lt 2 || echo -e "\033[0;33m$@\033[0m" >&2
+    else
+        test $VERBOSE -lt 2 || stderr "$@"
+    fi
 }
 
 log_error() {
-    test $VERBOSE -ge 1 && stderr "$@"
-    return 0
+    if [[ $COLOR ]]; then
+        # 31 is red
+        test $VERBOSE -lt 1 || echo -e "\033[0;31m$@\033[0m" >&2
+    else
+        test $VERBOSE -lt 1 || stderr "$@"
+    fi
 }
 
 ## ----------------------------------------------------------------------------
@@ -134,7 +153,11 @@ curl() {
         find_in_array CURL_ARGS[@] '--max-redirs' || OPTIONS+=(--max-redirs 5)
     fi
 
-    test -n "$NO_CURLRC" && OPTIONS[${#OPTIONS[@]}]='-q'
+    if [ -n "$NO_CURLRC" ]; then
+        OPTIONS=(-q "${OPTIONS[@]}")
+    elif [ -n "$EXT_CURLRC" ]; then
+        OPTIONS=(-q --config "$EXT_CURLRC" "${OPTIONS[@]}")
+    fi
 
     # No verbose unless debug level; don't show progress meter for report level too
     if [ "${FUNCNAME[1]}" = 'curl_with_log' ]; then
@@ -154,11 +177,11 @@ curl() {
     fi
 
     if test $VERBOSE -lt 4; then
-        command curl "${OPTIONS[@]}" "${CURL_ARGS[@]}" || DRETVAL=$?
+        command "$PLOWCORE_CURL" "${OPTIONS[@]}" "${CURL_ARGS[@]}" || DRETVAL=$?
     else
-        local TEMPCURL=$(create_tempfile)
+        local FILESIZE TEMPCURL=$(create_tempfile)
         log_report "${OPTIONS[@]}" "${CURL_ARGS[@]}"
-        command curl --show-error --silent "${OPTIONS[@]}" "${CURL_ARGS[@]}" 2>&1 >"$TEMPCURL" || DRETVAL=$?
+        command "$PLOWCORE_CURL" "${OPTIONS[@]}" "${CURL_ARGS[@]}" --show-error --silent >"$TEMPCURL" 2>&1 || DRETVAL=$?
         FILESIZE=$(get_filesize "$TEMPCURL")
         log_report "Received $FILESIZE bytes. DRETVAL=$DRETVAL"
         log_report '=== CURL BEGIN ==='
@@ -286,10 +309,11 @@ first_line() {
     local -r N=${1:-1}
 
     if (( N < 1 )); then
+        log_error "$FUNCNAME: negative index not expected"
         return $ERR_FATAL
     fi
 
-    # equivalent to `sed -ne 1p` or `sed -e q` or `sed -e 1q` (N=1 here)
+    # Equivalent to `sed -ne 1p` or `sed -e q` or `sed -e 1q` (N=1 here)
     head -n$((N))
 }
 
@@ -300,10 +324,11 @@ last_line() {
     local -r N=${1:-1}
 
     if (( N < 1 )); then
+        log_error "$FUNCNAME: negative index not expected"
         return $ERR_FATAL
     fi
 
-    # equivalent to `sed -ne '$p'` or `sed -e '$!d'` (N=1 here)
+    # Equivalent to `sed -ne '$p'` or `sed -e '$!d'` (N=1 here)
     tail -n$((N))
 }
 
@@ -311,8 +336,15 @@ last_line() {
 # stdin: input string (multiline)
 # $1: line number (start at index 1)
 nth_line() {
-   # equivalent to `sed -e "${1}q;d"` or `sed -e "${1}!d"`
-   sed -ne "${1}p"
+    local -r N=${1:-1}
+
+    if (( N < 1 )); then
+        log_error "$FUNCNAME: negative index not expected"
+        return $ERR_FATAL
+    fi
+
+    # Equivalent to `sed -e "${1}q;d"` or `sed -e "${1}!d"`
+    sed -ne "$((N))p"
 }
 
 # Delete fist line(s) of a buffer
@@ -322,17 +354,140 @@ delete_first_line() {
     local -r N=${1:-1}
 
     if (( N < 1 )); then
+        log_error "$FUNCNAME: negative index not expected"
         return $ERR_FATAL
     fi
 
-    # equivalent to `tail -n +2` (if $1=1)
+    # Equivalent to `tail -n +2` (if $1=1)
     sed -ne "$((N+1)),\$p"
 }
 
-# Delete last line of a text
+# Delete last line(s) of a text
+# $1: (optional) How many tail lines to delete (default is 1)
 # stdin: input string (multiline)
 delete_last_line() {
-    sed -e '$d'
+    local -r N=${1:-1}
+
+    if (( N < 1 )); then
+        log_error "$FUNCNAME: negative index not expected"
+        return $ERR_FATAL
+    fi
+
+    # Equivalent to `head -n -1` (if $1=1)
+    sed -ne :a -e "1,$N!{P;N;D;};N;ba"
+}
+
+# Delete lines up to regexp (included).
+# In a nutshell: eat lines until regexp is met, if nothing match,
+# delete lines until the end of input data (not really useful).
+# In vim, it would look like this: ":.,/regex/d" or ":.+5,/regex/+1d" ($3=5,$2=1).
+#
+# Examples:
+# $ echo -e "aa\nbb\ncc\ndd\ee" >/tmp/f
+# $ delete_filter_line 'cc'     </tmp/f         # Returns: dd\nee
+# $ delete_filter_line 'cc' -1  </tmp/f         # Returns: cc\ndd\nee
+# $ delete_filter_line 'cc' -2  </tmp/f         # Returns: bb\ncc\ndd\nee
+# $ delete_filter_line 'cc' 1   </tmp/f         # Returns: ee
+#
+# $1: stop condition regex
+#     This is non greedy, first occurrence is taken
+# $2: (optional): offset, how many line to skip (default is 0) after matching regexp.
+#     Example ($2=-1): delete lines from line $3 to regexp (excluded)
+# $3: (optional): start line number (start at index 1, default is 1)
+# stdin: text data (multiline)
+# stdout: result
+delete_filter_line() {
+    local -i FUZZ=${2:-0}
+    local -i N=${3:-1}
+    local -r D=$'\001' # Change sed separator to allow '/' characters in regexp
+    local STR FILTER
+
+    if [[ ! $1 ]]; then
+        log_error "$FUNCNAME: invalid regexp, must not be empty"
+        return $ERR_FATAL
+    elif [ $N -le 0 ]; then
+        log_error "$FUNCNAME: wrong argument, start line must be strictly positive ($N given)"
+        return $ERR_FATAL
+    elif [ $N -gt 1 -a $FUZZ -lt -1 ]; then
+        log_debug "$FUNCNAME: before context ($FUZZ) could duplicates lines (already printed before line $N), continue anyway"
+    fi
+
+    # Notes:
+    # - We need to be careful when regex matches the first line ($3)
+    # - This head lines skip ($3) makes things really more complicated
+
+    (( --N ))
+    FILTER="\\${D}$1${D}" # /$1/
+
+    if [ $FUZZ -eq 0 ]; then
+        if (( $N > 0 )); then
+            # Line $N must be displayed
+            STR=$(sed -e "${N}p" -e "$N,${FILTER}d")
+        else
+            # 0,/regexp/ is valid, match can occur on first line
+            STR=$(sed -e "$N,${FILTER}d")
+        fi
+
+    elif [ $FUZZ -eq 1 ]; then
+        if (( $N > 0 )); then
+            STR=$(sed -e "${N}p" -e "$N,${FILTER}{${FILTER}N;d}")
+        else
+            STR=$(sed -e "$N,${FILTER}{${FILTER}N;d}")
+        fi
+
+    elif [ $FUZZ -eq -1 ]; then
+        if (( $N > 0 )); then
+            # If regexp matches at line $N do not print it twice
+            STR=$(sed -e "${N}p" -e "$N,${FILTER}{${N}d;${FILTER}p;d}")
+        else
+            STR=$(sed -e "$N,${FILTER}{${FILTER}p;d}")
+        fi
+
+    else
+        local -i FUZZ_ABS=$(( FUZZ < 0 ? -FUZZ : FUZZ ))
+
+        [ $FUZZ_ABS -gt 10 ] &&
+            log_notice "$FUNCNAME: are you sure you want to skip $((N+1)) lines?"
+
+        if [ $FUZZ -gt 0 ]; then
+            local SKIPS='N'
+
+            # printf '=%.0s' {1..n}
+            while (( --FUZZ_ABS )); do
+                SKIPS+=';N'
+            done
+
+            if (( $N > 0 )); then
+                STR=$(sed -e "${N}p" -e "$N,${FILTER}{${FILTER}{${SKIPS}};d}")
+            else
+                STR=$(sed -e "$N,${FILTER}{${FILTER}{${SKIPS}};d}")
+            fi
+        else
+            local LINES='.*'
+
+            while (( --FUZZ_ABS )); do
+                LINES+='\n.*'
+            done
+
+            if (( $N > 0 )); then
+                # Notes: could display duplicated lines when fuzz is below $N
+                # This is not a bug, just a side effect...
+                STR=$(sed -e "${N}p" -e "1h;1!H;x;s/^.*\\n\\($LINES\)$/\\1/;x" \
+                          -e "$N,${FILTER}{${N}d;${FILTER}{g;p};d}")
+            else
+                STR=$(sed -e "1h;1!H;x;s/^.*\\n\\($LINES\)$/\\1/;x" \
+                          -e "$N,${FILTER}{${FILTER}{g;p};d}")
+            fi
+        fi
+    fi
+
+    if [ -z "$STR" ]; then
+        log_error "$FUNCNAME failed (sed): \"$N,/$1/d\" (skip $FUZZ)"
+        log_notice_stack
+        return $ERR_FATAL
+    fi
+
+    echo "$STR"
 }
 
 # Check if a string ($2) matches a regexp ($1)
@@ -374,7 +529,7 @@ match_remote_url() {
 
     shopt -s nocasematch
     while [[ $# -gt 1 ]]; do
-            shift
+        shift
         if [[ $1 =~ ^[[:alpha:]][-.+[:alnum:]]*$ ]]; then
             if [[ $URL =~ ^[[:space:]]*$1:// ]]; then
                 RET=0
@@ -403,30 +558,31 @@ parse_all() {
     local PARSE=$2
     local -i N=${3:-0}
     local -r D=$'\001' # Change sed separator to allow '/' characters in regexp
-    local STRING FILTER
+    local STR FILTER
 
     if [ -n "$1" -a "$1" != '.' ]; then
         FILTER="\\${D}$1${D}" # /$1/
-    else
-        [ $N -eq 0 ] || return $ERR_FATAL
+    elif [ $N -ne 0 ]; then
+        log_error "$FUNCNAME: wrong argument, offset argument is $N and filter regexp is \"$1\""
+        return $ERR_FATAL
     fi
 
     [ '^' = "${PARSE:0:1}" ] || PARSE="^.*$PARSE"
-    [ '$' = "${PARSE:(-1):1}" ] || PARSE="$PARSE.*$"
+    [ '$' = "${PARSE:(-1):1}" ] || PARSE+='.*$'
     PARSE="s${D}$PARSE${D}\1${D}p" # s/$PARSE/\1/p
 
     if [ $N -eq 0 ]; then
-        # STRING=$(sed -ne "/$1/ s/$2/\1/p")
-        STRING=$(sed -ne "$FILTER $PARSE")
+        # STR=$(sed -ne "/$1/ s/$2/\1/p")
+        STR=$(sed -ne "$FILTER $PARSE")
 
     elif [ $N -eq 1 ]; then
         # Note: Loop (with label) is required for consecutive matches
-        # STRING=$(sed -ne ":a /$1/ {n;h; s/$2/\1/p; g;ba;}")
-        STRING=$(sed -ne ":a $FILTER {n;h; $PARSE; g;ba;}")
+        # STR=$(sed -ne ":a /$1/ {n;h; s/$2/\1/p; g;ba;}")
+        STR=$(sed -ne ":a $FILTER {n;h; $PARSE; g;ba;}")
 
     elif [ $N -eq -1 ]; then
-        # STRING=$(sed -ne "/$1/ {x; s/$2/\1/p; b;}" -e 'h')
-        STRING=$(sed -ne "$FILTER {x; $PARSE; b;}" -e 'h')
+        # STR=$(sed -ne "/$1/ {x; s/$2/\1/p; b;}" -e 'h')
+        STR=$(sed -ne "$FILTER {x; $PARSE; b;}" -e 'h')
 
     else
         local -r FIRST_LINE='^\([^\n]*\).*$'
@@ -441,11 +597,11 @@ parse_all() {
             log_notice "$FUNCNAME: are you sure you want to skip $N lines?"
 
         while (( I-- )); do
-            INIT="$INIT;N"
+            INIT+=';N'
         done
 
         while (( N_ABS-- )); do
-            LINES="$LINES\\n.*"
+            LINES+='\n.*'
         done
 
         if [ $N -gt 0 ]; then
@@ -456,7 +612,7 @@ parse_all() {
             PARSE_LINE=$FIRST_LINE
         fi
 
-        STRING=$(sed -ne "1 {$INIT;h;n}" \
+        STR=$(sed -ne "1 {$INIT;h;n}" \
             -e "H;g;s/^.*\\n\\($LINES\)$/\\1/;h" \
             -e "s/$FILTER_LINE/\1/" \
             -e "$FILTER {g;s/$PARSE_LINE/\1/;$PARSE }")
@@ -469,13 +625,13 @@ parse_all() {
         #     be parsed and apply parse command
     fi
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "$FUNCNAME failed (sed): \"/$1/ ${PARSE//$D//}\" (skip $N)"
         log_notice_stack
         return $ERR_FATAL
     fi
 
-    echo "$STRING"
+    echo "$STR"
 }
 
 # Like parse_all, but hide possible error
@@ -489,30 +645,31 @@ parse() {
     local PARSE=$2
     local -i N=${3:-0}
     local -r D=$'\001' # Change sed separator to allow '/' characters in regexp
-    local STRING FILTER
+    local STR FILTER
 
     if [ -n "$1" -a "$1" != '.' ]; then
         FILTER="\\${D}$1${D}" # /$1/
-    else
-        [ $N -eq 0 ] || return $ERR_FATAL
+    elif [ $N -ne 0 ]; then
+        log_error "$FUNCNAME: wrong argument, offset argument is $N and filter regexp is \"$1\""
+        return $ERR_FATAL
     fi
 
     [ '^' = "${PARSE:0:1}" ] || PARSE="^.*$PARSE"
-    [ '$' = "${PARSE:(-1):1}" ] || PARSE="$PARSE.*$"
+    [ '$' = "${PARSE:(-1):1}" ] || PARSE+='.*$'
     PARSE="s${D}$PARSE${D}\1${D}p" # s/$PARSE/\1/p
 
     if [ $N -eq 0 ]; then
-        # Note: This requires GNU sed (which is assumed by Plowshare4)
-        #STRING=$(sed -ne "$FILTER {$PARSE;ta;b;:a;q;}")
-        STRING=$(sed -ne "$FILTER {$PARSE;T;q;}")
+        # Note: This requires GNU sed (which is assumed by Plowshare)
+        #STR=$(sed -ne "$FILTER {$PARSE;ta;b;:a;q;}")
+        STR=$(sed -ne "$FILTER {$PARSE;T;q;}")
 
     elif [ $N -eq 1 ]; then
-        #STRING=$(sed -ne ":a $FILTER {n;h;$PARSE;tb;ba;:b;q;}")
-        STRING=$(sed -ne ":a $FILTER {n;$PARSE;Ta;q;}")
+        #STR=$(sed -ne ":a $FILTER {n;h;$PARSE;tb;ba;:b;q;}")
+        STR=$(sed -ne ":a $FILTER {n;$PARSE;Ta;q;}")
 
     elif [ $N -eq -1 ]; then
-        #STRING=$(sed -ne "$FILTER {g;$PARSE;ta;b;:a;q;}" -e 'h')
-        STRING=$(sed -ne "$FILTER {g;$PARSE;T;q;}" -e 'h')
+        #STR=$(sed -ne "$FILTER {g;$PARSE;ta;b;:a;q;}" -e 'h')
+        STR=$(sed -ne "$FILTER {g;$PARSE;T;q;}" -e 'h')
 
     else
         local -r FIRST_LINE='^\([^\n]*\).*$'
@@ -527,11 +684,11 @@ parse() {
             log_notice "$FUNCNAME: are you sure you want to skip $N lines?"
 
         while (( I-- )); do
-            INIT="$INIT;N"
+            INIT+=';N'
         done
 
         while (( N_ABS-- )); do
-            LINES="$LINES\\n.*"
+            LINES+='\n.*'
         done
 
         if [ $N -gt 0 ]; then
@@ -543,19 +700,19 @@ parse() {
         fi
 
         # Note: Need to "clean" conditionnal flag after s/$PARSE_LINE/\1/
-        STRING=$(sed -ne "1 {$INIT;h;n}" \
+        STR=$(sed -ne "1 {$INIT;h;n}" \
             -e "H;g;s/^.*\\n\\($LINES\)$/\\1/;h" \
             -e "s/$FILTER_LINE/\1/" \
             -e "$FILTER {g;s/$PARSE_LINE/\1/;ta;:a;$PARSE;T;q;}")
     fi
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "$FUNCNAME failed (sed): \"/$1/ ${PARSE//$D//}\" (skip $N)"
         log_notice_stack
         return $ERR_FATAL
     fi
 
-    echo "$STRING"
+    echo "$STR"
 }
 
 # Like parse, but hide possible error
@@ -569,7 +726,7 @@ parse_quiet() {
 # Notes:
 # - Single line parsing oriented (user should strip newlines first): no tree model
 # - Array and Object types: basic poor support (depth 1 without complex types)
-# - String type: no support for escaped unicode characters (\uXXXX)
+# - String type: support for escaped unicode characters (\uXXXX) with bash >= 4.2 (and proper locale)
 # - No non standard C/C++ comments handling (like in JSONP)
 # - If several entries exist on same line: last occurrence is taken, but:
 #   consider precedence (order of priority): number, boolean/empty, string.
@@ -583,8 +740,10 @@ parse_quiet() {
 # stdout: result
 parse_json() {
     local -r NAME="\"$1\"[[:space:]]*:[[:space:]]*"
-    local STRING PRE
-    local -r END='\([,}[:space:]].*\)\?$'
+    local STR PRE
+    # Note: Be nice with unicode chars and don't use $ (end-of-line).
+    # Because dot will not match everything.
+    local -r END='\([,}[:space:]].*\)\?'
 
     if [ "$2" = 'join' ]; then
         PRE="tr -d '\n\r'"
@@ -595,30 +754,30 @@ parse_json() {
     fi
 
     # Note: "ta;:a" is a trick for cleaning conditionnal flag
-    STRING=$($PRE | sed \
+    STR=$($PRE | sed \
         -ne "/$NAME\[/{s/^.*$NAME\(\[[^]]*\]\).*$/\1/;ta;:a;s/^\[.*\[//;t;p;q;}" \
         -ne "/$NAME{/{s/^.*$NAME\({[^}]*}\).*$/\1/;ta;:a;s/^{.*{//;t;p;q;}" \
         -ne "s/^.*$NAME\(-\?\(0\|[1-9][[:digit:]]*\)\(\.[[:digit:]]\+\)\?\([eE][-+]\?[[:digit:]]\+\)\?\)$END/\1/p" \
         -ne "s/^.*$NAME\(true\|false\|null\)$END/\1/p" \
         -ne "s/\\\\\"/\\\\q/g;s/^.*$NAME\"\([^\"]*\)\"$END/\1/p")
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "$FUNCNAME failed (json): \"$1\""
         log_notice_stack
         return $ERR_FATAL
     fi
 
     # Translate two-character sequence escape representations
-    STRING=${STRING//\\\//\/}
-    STRING=${STRING//\\\\/\\}
-    STRING=${STRING//\\q/\"}
-    STRING=${STRING//\\b/$'\b'}
-    STRING=${STRING//\\f/$'\f'}
-    STRING=${STRING//\\n/$'\n'}
-    STRING=${STRING//\\r/$'\r'}
-    STRING=${STRING//\\t/	}
+    STR=${STR//\\\//\/}
+    STR=${STR//\\\\/\\}
+    STR=${STR//\\q/\"}
+    STR=${STR//\\b/$'\b'}
+    STR=${STR//\\f/$'\f'}
+    STR=${STR//\\n/$'\n'}
+    STR=${STR//\\r/$'\r'}
+    STR=${STR//\\t/	}
 
-    echo "$STRING"
+    echo -e "$STR"
 }
 
 # Like parse_json, but hide possible error
@@ -645,7 +804,7 @@ match_json_true() {
 # Notes:
 # - This is using parse_all, so result can be multiline
 #   (rare usage is: curl -I -L ...).
-# - Use [:cntrl:] intead of \r because Busybox sed <1.19
+# - Use [:cntrl:] instead of \r because Busybox sed <1.19
 #   does not support it.
 #
 # stdin: result of curl request (with -i/--include, -D/--dump-header
@@ -672,7 +831,7 @@ grep_http_header_content_length() {
 # See RFC5987 and RFC2183.
 #
 # stdin: HTTP response headers (see below)
-# stdout: attachement filename
+# stdout: attachment filename
 grep_http_header_content_disposition() {
     parse_all '^[Cc]ontent-[Dd]isposition:' "filename\*\?=[\"']\?\([^\"'[:cntrl:]]*\)"
 }
@@ -689,15 +848,15 @@ grep_http_header_content_disposition() {
 # stdout: result
 grep_form_by_name() {
     local -r A=${2:-'.*'}
-    local STRING=$(sed -ne \
+    local STR=$(sed -ne \
         "/<[Ff][Oo][Rr][Mm][[:space:]].*name[[:space:]]*=[[:space:]]*[\"']\?$A[\"']\?[[:space:]/>]/,/<\/[Ff][Oo][Rr][Mm]>/p" <<< "$1")
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "$FUNCNAME failed (sed): \"name=$A\""
         return $ERR_FATAL
     fi
 
-    echo "$STRING"
+    echo "$STR"
 }
 
 # Extract a id-specified form from a HTML content.
@@ -712,15 +871,15 @@ grep_form_by_name() {
 # stdout: result
 grep_form_by_id() {
     local -r A=${2:-'.*'}
-    local STRING=$(sed -ne \
+    local STR=$(sed -ne \
         "/<[Ff][Oo][Rr][Mm][[:space:]].*id[[:space:]]*=[[:space:]]*[\"']\?$A[\"']\?[[:space:]/>]/,/<\/[Ff][Oo][Rr][Mm]>/p" <<< "$1")
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "$FUNCNAME failed (sed): \"id=$A\""
         return $ERR_FATAL
     fi
 
-    echo "$STRING"
+    echo "$STR"
 }
 
 # Extract a specific FORM block from a HTML content.
@@ -779,16 +938,16 @@ strip_html_comments() {
 parse_all_tag() {
     local -r T=${2:-"$1"}
     local -r D=$'\001'
-    local STRING=$(sed -ne \
+    local STR=$(sed -ne \
         "\\${D}$1${D}"'!b; s/<\/'"$T>.*//; s/^.*<$T\(>\|[[:space:]][^>]*>\)//p")
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "$FUNCNAME failed (sed): \"/$1/ <$T>\""
         log_notice_stack
         return $ERR_FATAL
     fi
 
-    echo "$STRING"
+    echo "$STR"
 }
 
 # Like parse_all_tag, but hide possible error
@@ -802,16 +961,16 @@ parse_all_tag_quiet() {
 parse_tag() {
     local -r T=${2:-"$1"}
     local -r D=$'\001'
-    local STRING=$(sed -ne \
+    local STR=$(sed -ne \
         "\\${D}$1${D}"'!b; s/<\/'"$T>.*//; s/^.*<$T\(>\|[[:space:]][^>]*>\)//;ta;b;:a;p;q;")
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "$FUNCNAME failed (sed): \"/$1/ <$T>\""
         log_notice_stack
         return $ERR_FATAL
     fi
 
-    echo "$STRING"
+    echo "$STR"
 }
 
 # Like parse_tag, but hide possible error
@@ -835,18 +994,18 @@ parse_tag_quiet() {
 parse_all_attr() {
     local -r A=${2:-"$1"}
     local -r D=$'\001'
-    local STRING=$(sed \
+    local STR=$(sed \
         -ne "\\${D}$1${D}s${D}.*[[:space:]]\($A\)[[:space:]]*=[[:space:]]*\"\([^\">]*\).*${D}\2${D}p" \
         -ne "\\${D}$1${D}s${D}.*[[:space:]]\($A\)[[:space:]]*=[[:space:]]*'\([^'>]*\).*${D}\2${D}p" \
         -ne "\\${D}$1${D}s${D}.*[[:space:]]\($A\)[[:space:]]*=[[:space:]]*\([^[:space:]\"\`'<=>]\+\).*${D}\2${D}p")
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "$FUNCNAME failed (sed): \"/$1/ $A=\""
         log_notice_stack
         return $ERR_FATAL
     fi
 
-    echo "$STRING"
+    echo "$STR"
 }
 
 # Like parse_all_attr, but hide possible error
@@ -860,19 +1019,19 @@ parse_all_attr_quiet() {
 parse_attr() {
     local -r A=${2:-"$1"}
     local -r D=$'\001'
-    local STRING=$(sed \
+    local STR=$(sed \
         -ne "\\${D}$1${D}s${D}.*[[:space:]]\($A\)[[:space:]]*=[[:space:]]*\"\([^\">]*\).*${D}\2${D}p;ta" \
         -ne "\\${D}$1${D}s${D}.*[[:space:]]\($A\)[[:space:]]*=[[:space:]]*'\([^'>]*\).*${D}\2${D}p;ta" \
         -ne "\\${D}$1${D}s${D}.*[[:space:]]\($A\)[[:space:]]*=[[:space:]]*\([^[:space:]\"\`'<=>]\+\).*${D}\2${D}p;ta" \
         -ne 'b;:a;q;')
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "$FUNCNAME failed (sed): \"/$1/ $A=\""
         log_notice_stack
         return $ERR_FATAL
     fi
 
-    echo "$STRING"
+    echo "$STR"
 }
 
 # Like parse_attr, but hide possible error
@@ -883,7 +1042,7 @@ parse_attr_quiet() {
 
 # Retrieve "action" attribute (URL) from a <form> marker
 #
-# stdin: (X)HTML data (idealy, call grep_form_by_xxx before)
+# stdin: (X)HTML data (ideally, call grep_form_by_xxx before)
 # stdout: result
 parse_form_action() {
     parse_attr '<[Ff][Oo][Rr][Mm]' 'action'
@@ -972,8 +1131,7 @@ basename_url() {
 #
 # $1: filename
 basename_file() {
-    # `basename -- "$1"` may be screwed on some BusyBox versions
-    echo "${1##*/}"
+    basename -- "$1" || return $ERR_SYSTEM
 }
 
 # HTML entities will be translated
@@ -1089,9 +1247,14 @@ get_filesize() {
 # $1: (optional) filename suffix
 create_tempfile() {
     local -r SUFFIX=$1
-    local FILE="${TMPDIR:-/tmp}/$(basename_file "$0").$$.$RANDOM$SUFFIX"
-    :> "$FILE" || return $ERR_SYSTEM
-    echo "$FILE"
+    local FILE="$TMPDIR/$(basename_file "$0").$$.$RANDOM$SUFFIX"
+
+    if touch "$FILE" && chmod 600 "$FILE"; then
+        echo "$FILE"
+        return 0
+    fi
+
+    return $ERR_SYSTEM
 }
 
 # User password entry
@@ -1143,7 +1306,7 @@ post_login() {
     fi
 
     # Seem faster than
-    # IFS=":" read -r USER PASSWORD <<< "$AUTH"
+    # IFS=':' read -r USER PASSWORD <<< "$AUTH"
     USER=$(echo "${AUTH%%:*}" | uri_encode_strict)
     PASSWORD=$(echo "${AUTH#*:}" | uri_encode_strict)
 
@@ -1157,7 +1320,7 @@ post_login() {
     RESULT=$(curl --cookie-jar "$COOKIE" --data "$DATA" "${CURL_ARGS[@]}" \
         "$LOGIN_URL") || return
 
-    # "$RESULT" can be empty, this is not necessarily an error
+    # $RESULT can be empty, this is not necessarily an error
     if [ ! -s "$COOKIE" ]; then
         log_debug "$FUNCNAME: no entry was set (empty cookie file)"
         return $ERR_LOGIN_FAILED
@@ -1175,7 +1338,7 @@ post_login() {
 # Detect if a JavaScript interpreter is installed
 # $? is zero on success
 detect_javascript() {
-    if ! type -P js >/dev/null 2>&1; then
+    if ! type -P "$PLOWCORE_JS" >/dev/null 2>&1; then
         log_notice 'Javascript interpreter not found. Please install one!'
         return $ERR_SYSTEM
     fi
@@ -1197,7 +1360,7 @@ javascript() {
     logcat_report "$TEMPSCRIPT"
     log_report '=== JAVASCRIPT END ==='
 
-    command js "$TEMPSCRIPT"
+    command "$PLOWCORE_JS" "$TEMPSCRIPT"
     rm -f "$TEMPSCRIPT"
     return 0
 }
@@ -1231,20 +1394,31 @@ wait() {
     local MSG="Waiting $VALUE $UNIT_STR..."
     local CLEAR="     \b\b\b\b\b"
     if test -t 2; then
-      while [ "$REMAINING" -gt 0 ]; do
-          log_notice -ne "\r$MSG $(splitseconds $REMAINING) left$CLEAR"
-          sleep 1
-          (( --REMAINING ))
-      done
-      log_notice -e "\r$MSG done$CLEAR"
+        local START_DATE=$(date +%s)
+        CONT_SIGNAL=
+        while [ "$REMAINING" -gt 0 ]; do
+            log_notice_norc "\r$MSG $(splitseconds $REMAINING) left$CLEAR"
+            sleep 1
+            if [[ $CONT_SIGNAL ]]; then
+                local -i TMP_SECS
+                (( TMP_SECS = TOTAL_SECS - (CONT_SIGNAL - START_DATE) ))
+                (( TMP_SECS >= 0 )) || TMP_SECS=0
+                CONT_SIGNAL=
+                log_debug "SIGCONT detected, adjust wait time ($REMAINING => $TMP_SECS)"
+                REMAINING=$TMP_SECS
+            else
+                (( --REMAINING ))
+            fi
+        done
+        log_notice_norc "\r$MSG done$CLEAR\n"
     else
-      log_notice "$MSG"
-      sleep $TOTAL_SECS
+        log_notice "$MSG"
+        sleep $TOTAL_SECS
     fi
 }
 
-# $1: local image filename (with full path). No specific image format expected.
-# $2: captcha type or hint
+# $1: Image filename (local with full path or remote). No specific image format expected.
+# $2: captcha type or hint. For example: digit, letter, alnum
 # $3: (optional) minimal captcha length
 # $4: (optional) maximal captcha length (unused)
 # stdout: On 2 lines: <word> \n <transaction_id>
@@ -1271,7 +1445,7 @@ captcha_process() {
         return $ERR_FATAL
     fi
 
-    # plowdown/plowup --captchaprogram
+    # plowdown/plowup/plowdel --captchaprogram
     if [ -n "$CAPTCHA_PROGRAM" ]; then
         local RET=0
 
@@ -1286,7 +1460,7 @@ captcha_process() {
         fi
     fi
 
-    # plowdown/plowup --captchamethod
+    # plowdown/plowup/plowdel --captchamethod
     if [ -n "$CAPTCHA_METHOD" ]; then
         captcha_method_translate "$CAPTCHA_METHOD" METHOD_SOLVE METHOD_VIEW
     # Auto-guess mode (solve)
@@ -1294,7 +1468,7 @@ captcha_process() {
         METHOD_SOLVE='online,prompt'
     fi
 
-    if [[ "$METHOD_SOLVE" = *online* ]]; then
+    if [[ $METHOD_SOLVE = *online* ]]; then
         if service_antigate_ready "$CAPTCHA_ANTIGATE"; then
             METHOD_SOLVE=antigate
             : ${METHOD_VIEW:=log}
@@ -1303,6 +1477,9 @@ captcha_process() {
             : ${METHOD_VIEW:=log}
         elif service_captchabrotherhood_ready "${CAPTCHA_BHOOD%%:*}" "${CAPTCHA_BHOOD#*:}"; then
             METHOD_SOLVE=captchabrotherhood
+            : ${METHOD_VIEW:=log}
+        elif service_captchacoin_ready "$CAPTCHA_COIN"; then
+            METHOD_SOLVE=captchacoin
             : ${METHOD_VIEW:=log}
         elif service_captchadeathby_ready "${CAPTCHA_DEATHBY%%:*}" "${CAPTCHA_DEATHBY#*:}"; then
             METHOD_SOLVE=deathbycaptcha
@@ -1328,7 +1505,7 @@ captcha_process() {
     fi
 
     # 1) Probe for X11/Xorg viewers
-    if [[ "$METHOD_VIEW" = *view-x* ]]; then
+    if [[ $METHOD_VIEW = *view-x* ]]; then
         if test -z "$DISPLAY"; then
             log_notice 'DISPLAY variable not exported! Skip X11 viewers probing.'
         elif check_exec 'display'; then
@@ -1345,7 +1522,7 @@ captcha_process() {
     fi
 
     # 2) Probe for framebuffer viewers
-    if [[ "$METHOD_VIEW" = *view-fb* ]]; then
+    if [[ $METHOD_VIEW = *view-fb* ]]; then
         if test -n "$FRAMEBUFFER"; then
             log_notice 'FRAMEBUFFER variable is not empty, use it.'
             FBDEV=$FRAMEBUFFER
@@ -1367,7 +1544,7 @@ captcha_process() {
     # 3) Probe for ascii viewers
     # Try to maximize the image size on terminal
     local MAX_OUTPUT_WIDTH MAX_OUTPUT_HEIGHT
-    if [[ "$METHOD_VIEW" = *view-aa* ]]; then
+    if [[ $METHOD_VIEW = *view-aa* ]]; then
         # libcaca
         if check_exec img2txt; then
             METHOD_VIEW=img2txt
@@ -1381,10 +1558,15 @@ captcha_process() {
             log_notice 'No ascii viewer found to display captcha image'
         fi
 
-        if [[ "$METHOD_VIEW" != *view-aa* ]]; then
+        if [[ $METHOD_VIEW != *view-aa* ]]; then
             if check_exec tput; then
-                MAX_OUTPUT_WIDTH=$(tput cols)
-                MAX_OUTPUT_HEIGHT=$(tput lines)
+                local TYPE
+                if [ -z "$TERM" -o "$TERM" = 'dumb' ]; then
+                    log_notice 'Invalid $TERM value. Terminal type forced to vt100.'
+                    TYPE='-Tvt100'
+                fi
+                MAX_OUTPUT_WIDTH=$(tput $TYPE cols)
+                MAX_OUTPUT_HEIGHT=$(tput $TYPE lines)
             else
                 # Try environment variables
                 MAX_OUTPUT_WIDTH=${COLUMNS:-150}
@@ -1392,9 +1574,8 @@ captcha_process() {
             fi
 
             if check_exec identify; then
-                local DIMENSION=$(identify -quiet "$FILENAME" | cut -d' ' -f3)
-                local W=${DIMENSION%x*}
-                local H=${DIMENSION#*x}
+                local -i W H
+                read -r W H < <(identify -quiet -format '%w %h' "$FILENAME")
                 [ "$W" -lt "$MAX_OUTPUT_WIDTH" ] && MAX_OUTPUT_WIDTH=$W
                 [ "$H" -lt "$MAX_OUTPUT_HEIGHT" ] && MAX_OUTPUT_HEIGHT=$H
             fi
@@ -1443,8 +1624,8 @@ captcha_process() {
             PRG_PID=$!
             ;;
         X-sxiv)
-            # open a 640x480 window
-            sxiv -q -s "$FILENAME" &
+            # open a 640x480 window (rescale to fit)
+            sxiv -q -s f "$FILENAME" &
             [ $? -eq 0 ] && PRG_PID=$!
             ;;
         fb-fbi)
@@ -1640,6 +1821,78 @@ captcha_process() {
             rm -f "$FILENAME"
             return $ERR_FATAL
             ;;
+        captchacoin)
+            log_notice 'Using CaptchaCoin captcha recognition system'
+
+            RESPONSE=$(curl -F "file=@$FILENAME;filename=file.jpg" \
+                -F "api_key=$CAPTCHA_COIN" \
+                'http://www.captchacoin.com/api/submit') || return
+
+            if [ -z "$RESPONSE" ]; then
+                log_error 'CaptchaCoin empty answer'
+                rm -f "$FILENAME"
+                return $ERR_NETWORK
+            fi
+
+            if match_json_true 'success' "$RESPONSE"; then
+                TID=$(echo "$RESPONSE" | parse_json_quiet 'img_key')
+
+                if [ -z "$TID" ]; then
+                    log_error 'CaptchaCoin error: no image key'
+                    rm -f "$FILENAME"
+                    return $ERR_FATAL
+                fi
+            else
+                log_error "CaptchaCoin error: $RESPONSE"
+                rm -f "$FILENAME"
+                return $ERR_FATAL
+            fi
+
+            for I in 10 5 5 6 6 7 7 8; do
+                wait $I seconds
+
+                RESPONSE=$(curl --get \
+                    -d "api_key=$CAPTCHA_COIN" \
+                    -d "img_key=$TID" \
+                    'http://api.captchacoin.com/api/imginfo') || return
+
+                if match_json_true 'success' "$RESPONSE"; then
+                    if match_json_true 'assigned' "$RESPONSE"; then
+                        log_debug 'CaptchaCoin: someone is solving the captcha'
+                    fi
+
+                    CAPCTHA_AGE=$(echo "$RESPONSE" | parse_json_quiet 'age_seconds')
+                    [ -n "$CAPCTHA_AGE" ] && log_debug "CaptchaCoin: captcha age $CAPCTHA_AGE"
+
+                    WORD=$(echo "$RESPONSE" | parse_json_quiet 'solution')
+                    [ -n "$WORD" ] && break
+                else
+                    log_error "CaptchaCoin error: $RESPONSE"
+                    rm -f "$FILENAME"
+                    return $ERR_FATAL
+                fi
+            done
+
+            if [ -z "$WORD" ]; then
+                RESPONSE=$(curl --get \
+                    -d "api_key=$CAPTCHA_COIN" \
+                    -d "img_key=$TID" \
+                    'http://www.captchacoin.com/api/withdraw') || return
+
+                if match_json_true 'success' "$RESPONSE"; then
+                    log_error 'CaptchaCoin: recognition failed, withdraw successful'
+                else
+                    log_error "CaptchaCoin: recognition failed, withdraw error ($RESPONSE)"
+                fi
+
+                rm -f "$FILENAME"
+                return $ERR_FATAL
+            fi
+
+            # result on two lines
+            echo "$WORD"
+            echo "c$TID"
+            ;;
         deathbycaptcha)
             local HTTP_CODE POLL_URL
             local USERNAME=${CAPTCHA_DEATHBY%%:*}
@@ -1696,7 +1949,7 @@ captcha_process() {
             return $ERR_CAPTCHA
             ;;
         prompt)
-            # Reload mecanism is not available for all types
+            # Reload mechanism is not available for all types
             if [ "$CAPTCHA_TYPE" = 'recaptcha' -o \
                  "$CAPTCHA_TYPE" = 'solvemedia' ]; then
                 log_notice 'Leave this field blank and hit enter to get another captcha image'
@@ -1716,7 +1969,7 @@ captcha_process() {
     # Second pass for cleaning up
     case $METHOD_VIEW in
         X-*)
-            [[ $PRG_PID ]] && kill -HUP $PRG_PID 2>&1 >/dev/null
+            [[ $PRG_PID ]] && kill -HUP $PRG_PID >/dev/null 2>&1
             ;;
         imgur)
             image_delete_imgur "$IMG_HASH" || true
@@ -1736,7 +1989,7 @@ captcha_process() {
 # stdout: On 3 lines: <word> \n <challenge> \n <transaction_id>
 recaptcha_process() {
     local -r RECAPTCHA_SERVER='http://www.google.com/recaptcha/api/'
-    local URL="${RECAPTCHA_SERVER}challenge?k=${1}&ajax=1"
+    local URL="${RECAPTCHA_SERVER}challenge?k=${1}"
     local VARS SERVER TRY CHALLENGE FILENAME WORDS TID
 
     VARS=$(curl -L "$URL") || return
@@ -1748,6 +2001,10 @@ recaptcha_process() {
     # Load image
     SERVER=$(echo "$VARS" | parse_quiet 'server' "server[[:space:]]\?:[[:space:]]\?'\([^']*\)'") || return
     CHALLENGE=$(echo "$VARS" | parse_quiet 'challenge' "challenge[[:space:]]\?:[[:space:]]\?'\([^']*\)'") || return
+
+    # Result: Recaptcha.finish_reload('...', 'image');
+    VARS=$(curl "${SERVER}reload?k=${1}&c=${CHALLENGE}&reason=i&type=image&lang=en") || return
+    CHALLENGE=$(echo "$VARS" | parse 'finish_reload' "('\([^']*\)") || return
 
     log_debug "reCaptcha server: $SERVER"
 
@@ -1883,6 +2140,21 @@ captcha_ack() {
             log_error "$FUNCNAME failed: 9kweu missing captcha key"
         fi
 
+    elif [ c = "$M" ]; then
+        if [ -n "$CAPTCHA_COIN" ]; then
+            log_debug 'CaptchaCoin report ack'
+
+            RESPONSE=$(curl --get \
+                -d "api_key=$CAPTCHA_COIN" -d 'status=1' \
+                -d "img_key=$TID" \
+                'http://www.captchacoin.com/api/poststatus') || return
+
+            if ! match_json_true 'success' "$RESPONSE"; then
+                log_error "CaptchaCoin: report ack error ($RESPONSE)"
+            fi
+        else
+            log_error "$FUNCNAME failed: CaptchaCoin missing API key"
+        fi
     elif [[ $M != [abd] ]]; then
         log_error "$FUNCNAME failed: unknown transaction ID: $1"
     fi
@@ -1937,6 +2209,22 @@ captcha_nack() {
                 log_error "$FUNCNAME FIXME cbh[$RESPONSE]"
         else
             log_error "$FUNCNAME failed: captcha brotherhood missing account data"
+        fi
+
+    elif [ c = "$M" ]; then
+        if [ -n "$CAPTCHA_COIN" ]; then
+            log_debug 'CaptchaCoin report nack'
+
+            RESPONSE=$(curl --get \
+                -d "api_key=$CAPTCHA_COIN" -d 'status=0' \
+                -d "img_key=$TID" \
+                'http://www.captchacoin.com/api/poststatus') || return
+
+            if ! match_json_true 'success' "$RESPONSE"; then
+                log_error "CaptchaCoin: report nack error ($RESPONSE)"
+            fi
+        else
+            log_error "$FUNCNAME failed: CaptchaCoin missing API key"
         fi
 
     elif [ d = "$M" ]; then
@@ -2094,6 +2382,9 @@ sha1() {
     # GNU coreutils
     if check_exec sha1sum; then
         echo -n "$1" | sha1sum -b 2>/dev/null | cut -d' ' -f1
+    # BSD
+    elif check_exec sha1; then
+        command sha1 -qs "$1"
     # OpenSSL
     elif check_exec openssl; then
         echo -n "$1" | openssl dgst -sha1 | cut -d' ' -f2
@@ -2129,6 +2420,31 @@ md5_file() {
     fi
 }
 
+# Calculate SHA-1 hash (160-bit) of a file.
+# $1: input file
+# stdout: message-digest fingerprint (40-digit hexadecimal number, lowercase letters)
+# $?: 0 for success or $ERR_SYSTEM
+sha1_file() {
+    if [ -f "$1" ]; then
+        # GNU coreutils
+        if check_exec sha1sum; then
+            sha1sum -b "$1" 2>/dev/null | cut -d' ' -f1
+        # BSD
+        elif check_exec sha1; then
+            command sha1 -q "$1"
+        # OpenSSL
+        elif check_exec openssl; then
+            openssl dgst -sha1 "$1" | cut -d' ' -f2
+        else
+            log_error "$FUNCNAME: cannot find sha1 calculator"
+            return $ERR_SYSTEM
+        fi
+    else
+        log_error "$FUNCNAME: cannot stat file"
+        return $ERR_SYSTEM
+    fi
+}
+
 # Split credentials
 # $1: auth string (user:password)
 # $2: variable name (user)
@@ -2149,9 +2465,9 @@ split_auth() {
         return $ERR_LOGIN_FAILED
     fi
 
-    [[ "$2" ]] && unset "$2" && eval $2=\$__STR__
+    [[ $2 ]] && unset "$2" && eval $2=\$__STR__
 
-    if [[ "$3" ]]; then
+    if [[ $3 ]]; then
         # Sanity check
         if [ "$2" = "$3" ]; then
             log_error "$FUNCNAME: user and password varname must not be the same"
@@ -2168,7 +2484,7 @@ split_auth() {
 # Report list results. Only used by list module functions.
 #
 # $1: links list (one url per line)
-# $2: (optional) name list (one filename per line)
+# $2: (optional) filename or name list (one hoster name per line)
 # $3: (optional) link prefix (gets prepended to every link)
 # $4: (optional) link suffix (gets appended to every link)
 # $?: 0 for success or $ERR_LINK_DEAD
@@ -2183,11 +2499,20 @@ list_submit() {
         mapfile -t LINKS <<< "$1"
         mapfile -t NAMES <<< "$2"
 
-        for I in "${!LINKS[@]}"; do
-            test "${LINKS[$I]}" || continue
-            echo "$3${LINKS[$I]}$4"
-            echo "${NAMES[$I]}"
-        done
+        # One single name for all links
+        if [[ "${#NAMES[@]}" -eq 1 ]]; then
+            for I in "${!LINKS[@]}"; do
+                test "${LINKS[$I]}" || continue
+                echo "$3${LINKS[$I]}$4"
+                echo "${NAMES[0]}"
+            done
+        else
+            for I in "${!LINKS[@]}"; do
+                test "${LINKS[$I]}" || continue
+                echo "$3${LINKS[$I]}$4"
+                echo "${NAMES[$I]}"
+            done
+        fi
     else
         while IFS= read -r LINE; do
             test "$LINE" || continue
@@ -2206,8 +2531,8 @@ translate_size() {
     local S T
 
     N=${N//	}
-    if [ "$N" = '' ]; then
-        log_error "$FUNCNAME: argument expected"
+    if [ -z "$N" ]; then
+        log_error "$FUNCNAME: non empty argument expected"
         return $ERR_FATAL
     fi
 
@@ -2219,8 +2544,8 @@ translate_size() {
         return $ERR_FATAL
     fi
 
-    declare -i R=10#${S%_*}
-    declare -i F=0
+    local -i R=10#${S%_*}
+    local -i F=0
 
     # Fractionnal part (consider 3 digits)
     T=${S#*_}
@@ -2241,7 +2566,7 @@ translate_size() {
             ;;
         # kibibyte (KiB)
         KiB|Ki|K|KB)
-            echo $(( 1024 * R + F))
+            echo $(( 1024 * R + 1024 * F / 1000))
             ;;
         # megabyte (10^6)
         M|MB)
@@ -2249,7 +2574,7 @@ translate_size() {
             ;;
         # mebibyte (MiB)
         MiB|Mi|m|mB)
-            echo $(( 1048576 * R + 1000 * F))
+            echo $(( 1048576 * R + 1048576 * F / 1000))
             ;;
         # gigabyte (10^9)
         G|GB)
@@ -2257,7 +2582,7 @@ translate_size() {
             ;;
         # gibibyte (GiB)
         GiB|Gi)
-            echo $(( 1073741824 * R + 1000000 * F))
+            echo $(( 1073741824 * R + 1073741824 * F / 1000))
             ;;
         # bytes
         B|'')
@@ -2274,6 +2599,142 @@ translate_size() {
     esac
 }
 
+# Add/Update item (key-value pair) to local storage module file.
+#
+# $1: Key name. Will be 'default' for empty string.
+# $2: (optional) String value to save. Don't mention this to delete key.
+# $?: 0 for success (item saved correctly), error otherwise
+storage_set() {
+    local -r KEY=${1:-default}
+    local CONFIG
+    local -A OBJ
+
+    if [ -z "$MODULE" ]; then
+        log_error "$FUNCNAME: \$MODULE is undefined, abort"
+        return $ERR_NOMODULE
+    fi
+
+    if [ "$CACHE" != 'shared' ]; then
+        CONFIG="$TMPDIR/$(basename_file "$0").$$.${MODULE}.txt"
+    else
+        CONFIG="$PLOWSHARE_CONFDIR/storage"
+
+        if [ ! -d "$CONFIG" ]; then
+            mkdir -p "$CONFIG"
+            chmod 700 "$CONFIG"
+        fi
+
+        if [ ! -w "$CONFIG" ]; then
+          log_error "$FUNCNAME: write permissions expected \`$CONFIG'"
+          return $ERR_SYSTEM
+        fi
+
+        CONFIG="$CONFIG/${MODULE}.txt"
+    fi
+
+    if [ -f "$CONFIG" ]; then
+        if [ ! -w "$CONFIG" ]; then
+            log_error "$FUNCNAME: write permissions expected \`$CONFIG'"
+            return $ERR_SYSTEM
+        fi
+        source "$CONFIG"
+    else
+        touch "$CONFIG"
+        chmod 600 "$CONFIG"
+    fi
+
+    # Unset parameter and empty string are different
+    if test "${2+isset}"; then
+        OBJ[$KEY]=$2
+    else
+        unset -v OBJ[$KEY]
+    fi
+
+    declare -p OBJ >"$CONFIG"
+    log_debug "$FUNCNAME: \`$KEY' set for module \`$MODULE'"
+}
+
+# Get item value from local storage module file.
+#
+# $1: (optional) Key name. Will be 'default' if unset
+# $?: 0 for success, error otherwise
+# stdout: value read from file
+storage_get() {
+    local -r KEY=${1:-default}
+    local CONFIG
+    local -A OBJ
+
+    if [ -z "$MODULE" ]; then
+        log_error "$FUNCNAME: \$MODULE is undefined, abort"
+        return $ERR_NOMODULE
+    fi
+
+    if [ "$CACHE" != 'shared' ]; then
+        CONFIG="$TMPDIR/$(basename_file "$0").$$.${MODULE}.txt"
+    else
+        CONFIG="$PLOWSHARE_CONFDIR/storage"
+        [ -d "$CONFIG" ] || return $ERR_FATAL
+        CONFIG="$CONFIG/${MODULE}.txt"
+    fi
+
+    if [ -f "$CONFIG" ]; then
+        if [ ! -r "$CONFIG" ]; then
+            log_error "$FUNCNAME: read permissions expected \`$CONFIG'"
+            return $ERR_SYSTEM
+        fi
+
+        source "$CONFIG"
+
+        if test "${OBJ[$KEY]+isset}"; then
+            echo "${OBJ[$KEY]}"
+            return 0
+        fi
+    fi
+
+    return $ERR_FATAL
+}
+
+# Clear local storage module file, all entries will be lost.
+storage_reset() {
+    local CONFIG
+
+    if [ -z "$MODULE" ]; then
+        log_error "$FUNCNAME: \$MODULE is undefined, abort"
+        return $ERR_NOMODULE
+    fi
+
+    if [ "$CACHE" != 'shared' ]; then
+        CONFIG="$TMPDIR/$(basename_file "$0").$$.${MODULE}.txt"
+    else
+        CONFIG="$PLOWSHARE_CONFDIR/storage"
+        [ -d "$CONFIG" ] || return $ERR_FATAL
+        CONFIG="$CONFIG/${MODULE}.txt"
+    fi
+
+    if [ -f "$CONFIG" ]; then
+        rm -f "$CONFIG"
+        log_debug "$FUNCNAME: delete file for module \`$MODULE'"
+    fi
+}
+
+# Save current date (Epoch) in local storage module file.
+# $?: 0 for success, error otherwise
+storage_timestamp_set() {
+  storage_set '__date__' "$(date -u +%s)"
+}
+
+# Get time difference from date save in local storage module file.
+# $1: (optional) Touch flag. If defined, update saved timestamp.
+# $?: 0 for success, error otherwise
+# stdout: age value (in seconds)
+storage_timestamp_diff() {
+  local CUR DATE
+  DATE=$(storage_get '__date__') || return
+  CUR=$(date -u +%s)
+  [ -z "$1" ] || storage_set '__date__' "$CUR"
+  echo "$((CUR - DATE))"
+}
+
 ## ----------------------------------------------------------------------------
 
 ##
@@ -2281,29 +2742,57 @@ translate_size() {
 ## download.sh, upload.sh, delete.sh, list.sh, probe.sh
 ##
 
-# Delete leading and trailing whitespaces.
+# Delete leading and trailing whitespace.
 # stdin: input string (can be multiline)
 # stdout: result string
 strip() {
-    sed -e 's/^[[:space:]]*//; s/[[:space:]]*$//'
+    # first translate non-breaking space to space
+    sed -e 's/\xC2\?\xA0/ /g' -e 's/^[[:space:]]*//; s/[[:space:]]*$//'
 }
 
-# Remove all temporal files created by the script
-# (with create_tempfile)
-remove_tempfiles() {
-    rm -f "${TMPDIR:-/tmp}/$(basename_file $0).$$".*
+# Initialize plowcore: check environment variables and install signal handlers
+# $1: program name (used for error reporting only)
+core_init() {
+    local -r NAME=${1:-ERROR}
+
+    if [ -z "$TMPDIR" ]; then
+        log_error "$NAME: \$TMPDIR is undefined, abort"
+        return $ERR_SYSTEM
+    elif [ ! -d "$TMPDIR" ]; then
+        log_error "$NAME: \$TMPDIR is not a directory, abort"
+        return $ERR_SYSTEM
+    fi
+
+    if [ -n "$PLOWSHARE_CURL" ]; then
+        if ! type -P "$PLOWSHARE_CURL" >/dev/null 2>&1; then
+            log_error "$NAME: \$PLOWSHARE_CURL is invalid, abort"
+            return $ERR_SYSTEM
+        fi
+        log_debug "using custom curl: $PLOWSHARE_CURL"
+    fi
+
+    if [ -n "$PLOWSHARE_JS" ]; then
+        if ! type -P "$PLOWSHARE_JS" >/dev/null 2>&1; then
+            log_error "$NAME: \$PLOWSHARE_JS is invalid, abort"
+            return $ERR_SYSTEM
+        fi
+        log_debug "using custom js: $PLOWSHARE_JS"
+    fi
+
+    # Shutdown cleanups:
+    # - Restore proper colors (just in case)
+    # - Remove temporal files created by create_tempfile
+    trap 'log_notice_norc ""; rm -f "$TMPDIR/$(basename_file $0).$$".*' EXIT TERM
+
+    # SIGCONT notification
+    trap 'CONT_SIGNAL=$(date +%s)' CONT
 }
 
-# Exit callback (task: clean temporal files)
-set_exit_trap() {
-    trap remove_tempfiles EXIT
-}
-
-# Check existance of executable in $PATH
+# Check existence of executable in $PATH
 # Better than "which" (external) executable
 #
 # $1: Executable to check
-# $?: zero means not found
+# $?: one means not found
 check_exec() {
     command -v "$1" >/dev/null 2>&1
 }
@@ -2315,7 +2804,7 @@ timeout_init() {
 
 # Show help info for options
 #
-# $1: options
+# $1: options (one per line)
 # $2: indent string
 print_options() {
     local -r INDENT=${2:-'  '}
@@ -2323,7 +2812,7 @@ print_options() {
 
     while read -r; do
         test "$REPLY" || continue
-        IFS="," read -r VAR SHORT LONG TYPE MSG <<< "$REPLY"
+        IFS=',' read -r VAR SHORT LONG TYPE MSG <<< "$REPLY"
         if [ -n "$SHORT" ]; then
             if test "$TYPE"; then
                 STR="-${SHORT} ${TYPE#*=}"
@@ -2346,52 +2835,62 @@ print_options() {
 
 # Show usage info for modules
 #
-# $1: module name list (one per line)
+# $1: module list (array name)
 # $2: option family name (string, example:UPLOAD)
 print_module_options() {
-    while read -r; do
-        local OPTIONS=$(get_module_options "$REPLY" "$2")
+    local ELT OPTIONS
+    for ELT in "${!1}"; do
+        OPTIONS=$(get_module_options "$ELT" "$2")
         if test "$OPTIONS"; then
             echo
-            echo "Options for module <$REPLY>:"
+            echo "Options for module <$ELT>:"
             print_options "$OPTIONS"
         fi
-    done <<< "$1"
+    done
 }
 
 # Get all modules options with specified family name
 #
-# $1: module name list (one per line)
+# $1: module list (array name)
 # $2: option family name (string, example:UPLOAD)
 get_all_modules_options() {
-    while read -r; do
-        get_module_options "$REPLY" "$2"
-    done <<< "$1"
+    local ELT
+    for ELT in "${!1}"; do
+        get_module_options "$ELT" "$2"
+    done
 }
 
 # Get module name from URL link
 #
 # $1: url
-# $2: module name list (one per line)
+# $2: module list (array name)
 get_module() {
-    while read -r; do
-        local -u VAR="MODULE_${REPLY}_REGEXP_URL"
+    local ELT
+    for ELT in "${!2}"; do
+        local -u VAR="MODULE_${ELT}_REGEXP_URL"
         if match "${!VAR}" "$1"; then
-            echo "$REPLY"
+            echo "$ELT"
             return 0
         fi
-    done <<< "$2"
+    done
     return $ERR_NOMODULE
 }
 
 # $1: program name (used for error reporting only)
 # $2: core option list (one per line)
 # $3..$n: arguments
+# Note: This is called two times: early plowX options and plowX options
 process_core_options() {
     local -r NAME=$1
     local -r OPTIONS=$(strip_and_drop_empty_lines "$2")
     shift 2
-    VERBOSE=2 process_options "$NAME" "$OPTIONS" -1 "$@"
+
+    if [ -d "$PLOWSHARE_CONFDIR/exec" ]; then
+        VERBOSE=2 PATH="$PLOWSHARE_CONFDIR/exec:$PATH" process_options \
+            "$NAME" "$OPTIONS" -1 "$@"
+    else
+        VERBOSE=2 process_options "$NAME" "$OPTIONS" -1 "$@"
+    fi
 }
 
 # $1: program name (used for error reporting only)
@@ -2408,47 +2907,66 @@ process_all_modules_options() {
 # $2: option family name (string, example:UPLOAD)
 # $3..$n: arguments
 process_module_options() {
-    local -r MODULE=$1
+    local -r M=$1
     local -r OPTIONS=$(get_module_options "$1" "$2")
     shift 2
-    process_options "$MODULE" "$OPTIONS" 1 "$@"
+    process_options "$M" "$OPTIONS" 1 "$@"
 }
 
-# Get module list according to capability
-# Note1: use global variable LIBDIR
-# Note2: VERBOSE (log_debug) not initialised yet
+# Get list of all available modules (according to capability)
+# Notes:
+# - VERBOSE (log_debug) not initialised yet
+# - Function is designed to be called in an eval statement (print array on stdout)
 #
 # $1: feature to grep (must not contain '|' char)
 # $2 (optional): feature to subtract (must not contain '|' char)
-# stdout: return module list (one name per line)
-grep_list_modules() {
-    local -r CONFIG="$LIBDIR/modules/config"
+# stdout: declare an associative array (MODULES_PATH)
+get_all_modules_list() {
+    # Legacy locations are kept for compatibility
+    local -a SRCS=( "$LIBDIR/modules" "$PLOWSHARE_CONFDIR/modules" )
+    local -A MODULES_PATH=()
+    local D CONFIG
 
-    if [ ! -f "$CONFIG" ]; then
-        stderr "can't find config file"
-        return $ERR_SYSTEM
+    if [ -d "$PLOWSHARE_CONFDIR/modules.d/" ]; then
+        while read -r; do
+            D=$(dirname "$REPLY")
+            SRCS+=( "$D" )
+        done < <(find -L "$PLOWSHARE_CONFDIR/modules.d/" -mindepth 2 -maxdepth 2 -name config)
     fi
 
-    if test "$2"; then
-        sed -ne "/^[^#]/{/|[[:space:]]*$1/{/|[[:space:]]*$2/!s/^\([^[:space:]|]*\).*/\1/p}}" \
-            "$CONFIG"
-    else
-        sed -ne "/^[^#]/{/|[[:space:]]*$1/s/^\([^[:space:]|]*\).*/\1/p}" \
-            "$CONFIG"
-    fi
+    for D in "${SRCS[@]}"; do
+        CONFIG="$D/config"
+        if [[ -d "$D" && -f "$CONFIG" ]]; then
+            while read -r; do
+                if [ -f "$D/$REPLY.sh" ]; then
+                    # Silent override: modules installed in $HOME prevails over $LIBDIR
+                    #if [[ ${MODULES_PATH["$REPLY"]} ]]; then
+                    #    stderr "INFO: $CONFIG: \`$REPLY\` module overwrite, this one is taken"
+                    #fi
+                    MODULES_PATH[$REPLY]="$D/$REPLY.sh"
+                else
+                    stderr "ERROR: $CONFIG: \`$REPLY\` module not found, ignoring"
+                fi
+            done < <(if test "$2"; then sed -ne \
+                "/^[^#]/{/|[[:space:]]*$1/{/|[[:space:]]*$2/!s/^\([^[:space:]|]*\).*/\1/p}}" \
+                "$CONFIG"; else sed -ne \
+                "/^[^#]/{/|[[:space:]]*$1/s/^\([^[:space:]|]*\).*/\1/p}" "$CONFIG"; fi)
+        fi
+    done
+    declare -p MODULES_PATH
 }
 
 # $1: section name in ini-style file ("General" will be considered too)
-# $2: command-line arguments list
+# $2: command-line argument list
 # $3 (optional): user specified configuration file
 # Note: VERBOSE (log_debug) not initialised yet
 process_configfile_options() {
     local CONFIG OPTIONS SECTION NAME VALUE OPTION
 
     if [ -z "$3" ]; then
-        CONFIG="$HOME/.config/plowshare/plowshare.conf"
-        test -f "$CONFIG" || CONFIG='/etc/plowshare.conf'
-        test -f "$CONFIG" || return 0
+        CONFIG="$PLOWSHARE_CONFDIR/plowshare.conf"
+        test -r "$CONFIG" || CONFIG='/etc/plowshare.conf'
+        test -r "$CONFIG" || return 0
     else
         CONFIG=$3
     fi
@@ -2465,11 +2983,11 @@ process_configfile_options() {
             NAME=$(strip <<< "${REPLY%%=*}")
             VALUE=$(strip <<< "${REPLY#*=}")
 
-            # If NAME contain a '/' character, this is a module option, skip it
+            # If $NAME contains a '/' character, this is a module option, skip it
             [[ $NAME = */* ]] && continue
 
             # Look for optional double quote (protect leading/trailing spaces)
-            if [ '"' = "${VALUE:0:1}" -a '"' = "${VALUE:(-1):1}" ]; then
+            if [ ${#VALUE} -gt 1 ] && [ '"' = "${VALUE:0:1}" -a '"' = "${VALUE:(-1):1}" ]; then
                 VALUE=${VALUE%?}
                 VALUE=${VALUE:1}
             fi
@@ -2492,24 +3010,30 @@ process_configfile_module_options() {
     local CONFIG OPTIONS SECTION OPTION LINE VALUE
 
     if [ -z "$4" ]; then
-        CONFIG="$HOME/.config/plowshare/plowshare.conf"
-        if [ -f "$CONFIG" ]; then
-            if [ -O "$CONFIG" ]; then
-                # First 10 characters: access rights (human readable form)
-                local FILE_PERM=$(ls -l "$CONFIG" 2>/dev/null)
-
-                if [[ ${FILE_PERM:4:6} != '------' ]]; then
-                    log_notice "Warning (configuration file permissions): chmod 600 $CONFIG"
-                fi
-            else
-                log_notice "Warning (configuration file ownership): chown $USERNAME $CONFIG"
-            fi
-        else
-            CONFIG='/etc/plowshare.conf'
-            test -f "$CONFIG" || return 0
-        fi
+        CONFIG="$PLOWSHARE_CONFDIR/plowshare.conf"
+        test -r "$CONFIG" || CONFIG='/etc/plowshare.conf'
+        test -r "$CONFIG" || return 0
     else
         CONFIG=$4
+    fi
+
+    # Security check (but don't check permission/ownership on global config)
+    if [ -r "$CONFIG" ]; then
+        if [ "$CONFIG" != '/etc/plowshare.conf' ]; then
+            if [ -O "$CONFIG" ]; then
+                # First 10 characters: access rights (human readable form)
+                local FILE_PERM=$(ls -l -L "$CONFIG" 2>/dev/null)
+
+                if [[ ${FILE_PERM:4:6} != '------' ]]; then
+                    log_notice "WARNING: Wrong configuration file permissions. Fix it with: chmod 600 $CONFIG"
+                fi
+            else
+                log_notice "WARNING: Bad configuration file ownership. Fix it with: chown $USER $CONFIG"
+            fi
+        fi
+    else
+        log_error "ERROR: cannot access file \`$CONFIG'"
+        return 0
     fi
 
     log_report "use $CONFIG"
@@ -2521,12 +3045,13 @@ process_configfile_module_options() {
         "$CONFIG" | sed -e '/^\(#\|\[\|[[:space:]]*$\)/d') || true
 
     if [ -n "$SECTION" -a -n "$OPTIONS" ]; then
+        local VAR SHORT LONG
         local -lr M=$2
 
         # For example:
         # AUTH,a,auth,a=USER:PASSWORD,User account
         while read -r; do
-            IFS="," read -r VAR SHORT LONG TYPE_HELP <<< "$REPLY"
+            IFS=',' read -r VAR SHORT LONG _ <<< "$REPLY"
 
             # Look for 'module/option_name' (short or long) in section list
             LINE=$(sed -ne "/^[[:space:]]*$M\/\($SHORT\|$LONG\)[[:space:]]*=/{p;q}" <<< "$SECTION") || true
@@ -2534,7 +3059,7 @@ process_configfile_module_options() {
                 VALUE=$(strip <<< "${LINE#*=}")
 
                 # Look for optional double quote (protect leading/trailing spaces)
-                if [ '"' = "${VALUE:0:1}" -a '"' = "${VALUE:(-1):1}" ]; then
+                if [ ${#VALUE} -gt 1 ] && [ '"' = "${VALUE:0:1}" -a '"' = "${VALUE:(-1):1}" ]; then
                     VALUE=${VALUE%?}
                     VALUE=${VALUE:1}
                 fi
@@ -2548,30 +3073,39 @@ process_configfile_module_options() {
     fi
 }
 
-# Get system information
-# Note: prefer "type -P" rather than "type -p" to override local definitions (function, alias, ...).
+# Get system information.
+# $1: absolute path to plowshare's libdir
 log_report_info() {
-    local G GIT_DIR
+    local -r LIBDIR1=$1
+    local G LIBDIR2
 
     if test $VERBOSE -ge 4; then
         log_report '=== SYSTEM INFO BEGIN ==='
-        log_report "[mach] $(uname -a)"
+        log_report "[mach] $HOSTNAME $HOSTTYPE $OSTYPE $MACHTYPE"
         log_report "[bash] $BASH_VERSION"
         test "$http_proxy" && log_report "[env ] http_proxy=$http_proxy"
-        if type -P curl >/dev/null 2>&1; then
+        if check_exec 'curl'; then
             log_report "[curl] $(command curl --version | first_line)"
-            test -f "$HOME/.curlrc" && log_report '[curl] ~/.curlrc exists'
+            [ -f "$HOME/.curlrc" ] && \
+                log_report '[curl] ~/.curlrc exists'
         else
             log_report '[curl] not found!'
         fi
         check_exec 'gsed' && G=g
         log_report "[sed ] $(${G}sed --version | sed -ne '/version/p')"
-        log_report "[lib ] '$LIBDIR'"
+        log_report "[lib ] '$LIBDIR1'"
 
-        GIT_DIR=$(cd "$LIBDIR" && git rev-parse --git-dir 2>/dev/null) || true
-        if [ -d "$GIT_DIR" ]; then
-            local -r GIT_BRANCH=$(git --git-dir=$GIT_DIR rev-parse --abbrev-ref HEAD 2>/dev/null)
-            local -r GIT_REV=$(git --git-dir=$GIT_DIR describe --tags --always 2>/dev/null)
+        # Having several installations is usually a source of issues
+        for LIBDIR2 in '/usr/share/plowshare' '/usr/local/share/plowshare'; do
+            if [ "$LIBDIR2" != "$LIBDIR1" -a -f "$LIBDIR2/core.sh" ]; then
+                log_report "[lib2] '$LIBDIR2'"
+            fi
+        done
+
+        # Note: git -C <path> is available since v1.8.5
+        if git -C "$LIBDIR" rev-parse --is-inside-work-tree &>/dev/null; then
+            local -r GIT_BRANCH=$(git -C "$LIBDIR" rev-parse --quiet --abbrev-ref HEAD)
+            local -r GIT_REV=$(git -C "$LIBDIR" describe --tags --always 2>/dev/null)
             log_report "[git ] $GIT_REV ($GIT_BRANCH branch)"
         fi
 
@@ -2608,8 +3142,8 @@ captcha_method_translate() {
             ;;
         online)
             if [ -z "$CAPTCHA_ANTIGATE" -a -z "$CAPTCHA_9KWEU" -a \
-                    -z "$CAPTCHA_BHOOD" -a -z "$CAPTCHA_DEATHBY" ]; then
-                log_error 'No captcha solver account provided. Consider using --9kweu, --antigate, --captchabhood or --deathbycaptcha options.'
+                    -z "$CAPTCHA_BHOOD" -a -z "$CAPTCHA_COIN" -a -z "$CAPTCHA_DEATHBY" ]; then
+                log_error 'No captcha solver account provided. Consider using --9kweu, --antigate, --captchabhood, --captchacoin or --deathbycaptcha options.'
                 return $ERR_FATAL
             fi
             [[ $2 ]] && unset "$2" && eval $2=online
@@ -2624,7 +3158,7 @@ captcha_method_translate() {
             [[ $3 ]] && unset "$3" && eval $3=view-fb,log
             ;;
         *)
-            log_error "Error: unknown captcha method: $1"
+            log_error "ERROR: Unknown captcha method '$1'.${DISPLAY:+ Try with 'x11' for example.}"
             return $ERR_FATAL
             ;;
     esac
@@ -2663,6 +3197,17 @@ handle_tokens() {
     echo -n "${OUT%x}"
 }
 
+# Format a string suitable for JSON (see www.json.org)
+# Escaped characters: / " \
+#
+# $1: string
+# stdout: JSON string
+json_escape() {
+    local S=${1//\\/\\\\}
+    S=${S//\//\\/}
+    echo -n "${S//\"/\\\"}"
+}
+
 ## ----------------------------------------------------------------------------
 
 ##
@@ -2672,6 +3217,7 @@ handle_tokens() {
 
 stderr() {
     echo "$@" >&2
+    return 0
 }
 
 # This function shell-quotes the argument ($1)
@@ -2699,7 +3245,7 @@ quote_multiple() {
 quote_array() {
     local -a ARR
     local E
-    IFS="," read -r -a ARR <<< "$1"
+    IFS=',' read -r -a ARR <<< "$1"
     echo '('
     for E in "${ARR[@]}"; do
         quote "$(strip <<< "$E")"
@@ -2720,6 +3266,8 @@ translate_exec() {
     if test -x "$F"; then
         [[ $F = /* ]] || F="$PWD/$F"
     else
+        # Note: prefer "type -P" rather than "type -p" to override
+        #       local definitions (function, alias, ...).
         F=$(type -P "$F" 2>/dev/null)
     fi
 
@@ -2728,12 +3276,12 @@ translate_exec() {
         return $ERR_FATAL
     fi
 
-    echo "$F"
+    quote "$F"
 }
 
 # Check for positive speed rate
 # Ki is kibi (2^10 = 1024). Alias: K
-# Mi is mebi (2^20 = 1024^2 = 1048576). Alias:m
+# Mi is mebi (2^20 = 1024^2 = 1048576). Alias: m
 # k  is kilo (10^3 = 1000)
 # M  is mega (10^6 = 1000000)
 #
@@ -2825,20 +3373,20 @@ grep_block_by_order() {
     done
 
     # Get first form only
-    local STRING=$(sed -ne \
+    local STR=$(sed -ne \
         "/<$TAG[[:space:]>]/,/<\/$TAG>/{p;/<\/$TAG/q}" <<< "$DATA")
 
-    if [ -z "$STRING" ]; then
+    if [ -z "$STR" ]; then
         log_error "${FUNCNAME[1]} failed (sed): \"n=$N\""
         return $ERR_FATAL
     fi
 
-    echo "$STRING"
+    echo "$STR"
 }
 
 # Check argument type
 # $1: program name (used for error reporting only)
-# $2: format (a, D, e, f, F, l, n, N, r, R, s, S, t, V)
+# $2: format (a, c, C, D, e, f, F, l, n, N, r, R, s, S, t)
 # $3: option value (string)
 # $4: option name (used for error reporting only)
 # $?: return 0 for success
@@ -2922,13 +3470,24 @@ check_argument_type() {
     # l: List (comma-separated values), non empty
     elif [[ $TYPE = 'l' && $VAL = '' ]]; then
         log_error "$NAME ($OPT): comma-separated list expected"
-    # V: special type for verbosity (values={0,1,2,3,4})
-    elif [[ $TYPE = 'V' && $VAL != [0-4] ]]; then
-       log_error "$NAME: wrong verbose level \`$VAL'. Must be 0, 1, 2, 3 or 4."
+    # c: choice list
+    # C: choice list with empty string allowed. Long options only advised.
+    elif [[ $TYPE = [cC]* ]]; then
+        if [[ $TYPE = C* && $VAL = '' ]]; then
+            RET=0
+        else
+            local -a ITEMS
+            IFS='|' read -r -a ITEMS <<< "${TYPE:2}"
+            if find_in_array ITEMS[@] "$VAL"; then
+                RET=0
+            else
+                log_error "$NAME ($OPT): wrong value '$VAL'. Possible values are: ${ITEMS[*]}."
+            fi
+        fi
 
     elif [[ $TYPE = [lsSt] ]]; then
         RET=0
-    elif [[ $TYPE = [aenNrRV] ]]; then
+    elif [[ $TYPE = [aenNrR] ]]; then
         if [ "${VAL:0:1}" = '-' ]; then
             log_error "$NAME ($OPT): missing parameter"
         else
@@ -2943,15 +3502,20 @@ check_argument_type() {
 }
 
 # Standalone argument parsing (don't use GNU getopt or builtin getopts Bash)
+# Notes:
+# - Function is designed to be called in an eval statement (prints arrays on stdout)
+# - Stdin dash parameter "-" is handled
+# - Double dash parameter "--" is handled
+#
 # $1: program name (used for error reporting only)
 # $2: option list (one per line)
 # $3: step number (-1, 0 or 1). Always declare UNUSED_ARGS & UNUSED_OPTS arrays.
-#     -1: check plow* args and declare readonly variables
+#     -1: check plow* args and declare readonly variables.
+#         CLOSE_OPT variable can contain a close match heuristic (possible command-line user typo)
 #      0: check all module args
 #      1: declare module_vars_set & module_vars_unset functions
 # $4..$n: arguments
-# stdout: variable=value (one per line). Content can be eval'ed.
-# Note: "--" (double dash) is handled.
+# stdout: (depending step number) declare two arrays (UNUSED_ARGS & UNUSED_OPTS), variables, functions
 process_options() {
     local -r NAME=$1
     local -r OPTIONS=$2
@@ -2961,7 +3525,7 @@ process_options() {
     local -a UNUSED_OPTS UNUSED_ARGS
     local -a OPTS_VAR_LONG OPTS_NAME_LONG OPTS_TYPE_LONG
     local -a OPTS_VAR_SHORT OPTS_NAME_SHORT OPTS_TYPE_SHORT
-    local ARG VAR SHORT LONG TYPE HELP SKIP_ARG FOUND FUNC
+    local ARG VAR SHORT LONG TYPE SKIP_ARG FOUND FUNC
 
     shift 3
 
@@ -2977,7 +3541,7 @@ process_options() {
     else
         # Populate OPTS_* vars
         while read -r ARG; do
-            IFS="," read -r VAR SHORT LONG TYPE HELP <<< "$ARG"
+            IFS=',' read -r VAR SHORT LONG TYPE _ <<< "$ARG"
             if [ -n "$LONG" ]; then
                 OPTS_VAR_LONG[${#OPTS_VAR_LONG[@]}]=$VAR
                 OPTS_NAME_LONG[${#OPTS_NAME_LONG[@]}]="--$LONG"
@@ -3046,8 +3610,8 @@ process_options() {
                         fi
                     else
                         if [ $# -eq 0 ]; then
-                            log_error "$NAME: missing parameter for $ARG"
-                            echo false
+                            log_error "$NAME ($ARG): argument required"
+                            echo "exit $ERR_BAD_COMMAND_LINE"
                             return $ERR_BAD_COMMAND_LINE
                         fi
 
@@ -3108,8 +3672,8 @@ process_options() {
                         fi
                     else
                         if [ $# -eq 0 ]; then
-                            log_error "$NAME: missing parameter for $ARG"
-                            echo false
+                            log_error "$NAME ($ARG): argument required"
+                            echo "exit $ERR_BAD_COMMAND_LINE"
                             return $ERR_BAD_COMMAND_LINE
                         fi
 
@@ -3132,19 +3696,41 @@ process_options() {
             done
         fi
 
-        if [ $STEP -eq 0 ]; then
-            if [ -z "$FOUND" ]; then
-                # Note: accepts '-' argument
+        if [ -z "$FOUND" ]; then
+            # Check for user typo: -option instead of --option
+            # Note: COLOR may not be defined here (STEP < 0)
+            if [[ $ARG =~ ^-[[:alnum:]][[:alnum:]-]+ ]]; then
+                if find_in_array OPTS_NAME_LONG[@] "-${BASH_REMATCH[0]}"; then
+                    log_error "$NAME: unknown command-line option \`$ARG\`, do you mean \`-${BASH_REMATCH[0]}\` (with two dashes)?"
+                    echo "exit $ERR_BAD_COMMAND_LINE"
+                    return $ERR_BAD_COMMAND_LINE
+                fi
+            fi
+
+            # Restrict to MAIN_OPTIONS & EARLY_OPTIONS because an unused module switch could be found
+            # Will detect: "--print" instead of "--printf" and "--noplowsharerc" instead of "--no-plowsharerc"
+            if [ $STEP -lt 0 ]; then
+                [[ $ARG = --??* ]] && \
+                    CLOSE_OPT=$(close_match_in_array OPTS_NAME_LONG[@] "$ARG") && \
+                        declare -p CLOSE_OPT
+            fi
+
+            if [ $STEP -eq 0 ]; then
+                # Accept '-' (stdin semantic) argument
                 if [[ $ARG = -?* ]]; then
-                    log_error "$NAME: unknown command-line option $ARG"
-                    echo false
+                    if [[ $CLOSE_OPT ]]; then
+                        log_error "$NAME: unknown command-line option \`$ARG\`, do you mean \`$CLOSE_OPT\` (close match)?"
+                    else
+                        log_error "$NAME: unknown command-line option \`$ARG\`"
+                    fi
+                    echo "exit $ERR_BAD_COMMAND_LINE"
                     return $ERR_BAD_COMMAND_LINE
                 fi
                 UNUSED_ARGS[${#UNUSED_ARGS[@]}]="$ARG"
             else
                 UNUSED_OPTS[${#UNUSED_OPTS[@]}]="$ARG"
             fi
-        elif [ -z "$FOUND" ]; then
+        elif [ $STEP -eq 0 ]; then
             UNUSED_OPTS[${#UNUSED_OPTS[@]}]="$ARG"
         fi
     done
@@ -3209,7 +3795,7 @@ timeout_update() {
     (( PS_TIMEOUT -= WAIT ))
 }
 
-# Look for one element in a array
+# Look for one element in an array
 # $1: array[@]
 # $2: element to find
 # $3: alternate element to find (can be null)
@@ -3218,6 +3804,23 @@ find_in_array() {
     local ELT
     for ELT in "${!1}"; do
         [ "$ELT" = "$2" -o "$ELT" = "$3" ] && return 0
+    done
+    return 1
+}
+
+# Look for a close match in an array (of command line options)
+# $1: array[@]
+# $2: element to find (string)
+# $?: 0 for success (close element found), not found otherwise
+# stdout: array element, undefined if not found.
+close_match_in_array() {
+    local ELT
+    local S=${2/#--no/--no-?}
+    for ELT in "${!1}"; do
+        if [[ $ELT =~ ^$S.?$ ]]; then
+            echo "$ELT"
+            return 0
+        fi
     done
     return 1
 }
@@ -3360,6 +3963,45 @@ service_captchabrotherhood_ready() {
     log_debug "CaptchaBrotherhood credits: $AMOUNT"
 }
 
+# Verify balance (captchacoin)
+# $1: captchacoin.com captcha key
+# $?: 0 for success (enough credits)
+service_captchacoin_ready() {
+    local -r KEY=$1
+    local JSON ERROR AMOUNT
+
+    if [ -z "$KEY" ]; then
+        return $ERR_FATAL
+    fi
+
+    JSON=$(curl --get -d "api_key=${KEY}" \
+            'http://api.captchacoin.com/api/details') || { \
+        log_notice 'CaptchaCoin: site seems to be down'
+        return $ERR_NETWORK
+    }
+
+    if match_json_true 'success' "$JSON"; then
+        AMOUNT=$(echo "$JSON" | parse_json 'balance')
+
+        if (( AMOUNT < 100 )); then
+            log_error 'CaptchaCoin: not enough credits'
+            return $ERR_FATAL
+        fi
+    else
+        ERROR=$(echo "$JSON" | parse_json_quiet 'error')
+
+        if [ -n "$ERROR" ]; then
+            log_error "CaptchaCoin error: $ERROR"
+        else
+            log_error "CaptchaCoin unknown error: $JSON"
+        fi
+
+        return $ERR_FATAL
+    fi
+
+    log_debug "CaptchaCoin credits: $AMOUNT"
+}
+
 # Verify balance (DeathByCaptcha)
 # $1: death by captcha username
 # $2: death by captcha password
@@ -3412,23 +4054,24 @@ service_captchadeathby_ready() {
 # $?: 0 for success
 image_upload_imgur() {
     local -r IMG=$1
-    local -r BASE_API='http://api.imgur.com/2'
-    local RESPONSE DIRECT_URL SITE_URL DEL_HASH
+    local -r BASE_API='https://api.imgur.com/3'
+    local RESPONSE DIRECT_URL FID DEL_HASH
 
     log_debug 'uploading image to Imgur.com'
 
-    # Plowshare API key for Imgur
-    RESPONSE=$(curl -F "image=@$IMG" -H 'Expect: ' \
-        --form-string 'key=23d202e580c2f8f378bd2852916d8f30' \
+    # Plowshare App for Imgur
+    RESPONSE=$(curl -F "image=@$IMG" \
+        -H 'Authorization: Client-ID 5926b561daf4510' \
         --form-string 'type=file' \
         --form-string 'title=Plowshare uploaded image' \
         "$BASE_API/upload.json") || return
 
-    DIRECT_URL=$(echo "$RESPONSE" | parse_json_quiet original)
-    SITE_URL=$(echo "$RESPONSE" | parse_json_quiet imgur_page)
-    DEL_HASH=$(echo "$RESPONSE" | parse_json_quiet deletehash)
+    DIRECT_URL=$(parse_json_quiet link <<< "$RESPONSE")
+    FID=$(parse_json_quiet id <<< "$RESPONSE")
+    DEL_HASH=$(parse_json_quiet deletehash <<< "$RESPONSE")
 
-    if [ -z "$DIRECT_URL" -o -z "$SITE_URL" ]; then
+    if [ -z "$DIRECT_URL" -o -z "$FID" ]; then
+        log_debug "$FUNCNAME: $RESPONSE"
         if match '504 Gateway Time-out' "$RESPONSE"; then
             log_error "$FUNCNAME: upload error (Gateway Time-out)"
         # <h1>Imgur is over capacity!</h1>
@@ -3441,7 +4084,7 @@ image_upload_imgur() {
     fi
 
     log_error "Image: $DIRECT_URL"
-    log_error "Image: $SITE_URL"
+    log_error "Image: http://imgur.com/$FID"
     echo "$DEL_HASH"
 }
 
@@ -3449,14 +4092,19 @@ image_upload_imgur() {
 # $1: delete hash
 image_delete_imgur() {
     local -r HID=$1
-    local -r BASE_API='http://api.imgur.com/2'
-    local RESPONSE MSG
+    local -r BASE_API='https://api.imgur.com/3'
+    local RESPONSE
 
     log_debug 'deleting image from Imgur.com'
-    RESPONSE=$(curl "$BASE_API/delete/$HID.json") || return
-    MSG=$(echo "$RESPONSE" | parse_json_quiet message)
-    if [ "$MSG" != 'Success' ]; then
-        log_notice "$FUNCNAME: remote error, $MSG"
+    RESPONSE=$(curl -X DELETE \
+        -H 'Authorization: Client-ID 5926b561daf4510' \
+        "$BASE_API/image/$HID.json") || return
+
+    if ! match_json_true 'success' "$RESPONSE"; then
+        local MSG ERRNO
+        MSG=$(parse_json error <<< "$RESPONSE")
+        ERRNO=$(parse_json status <<< "$RESPONSE")
+        log_notice "$FUNCNAME: remote error, $MSG ($ERRNO)"
     fi
 }
 
@@ -3471,14 +4119,31 @@ log_notice_stack() {
     done
 }
 
-# Bash4 builtin error-handling function
-command_not_found_handle() {
-    local ERR=$ERR_SYSTEM
-    [ "$1" = 'curl' ] && ERR=62
+# log_notice without end of line
+log_notice_norc() {
+    if [[ $COLOR ]]; then
+        test $VERBOSE -lt 2 || echo -ne "\033[0;33m$@\033[0m" >&2
+    else
+        test $VERBOSE -lt 2 || stderr -ne "$@"
+    fi
+}
 
-    log_error "$1: command not found"
+# Bash4 builtin error-handling function
+# VERBOSE is not defined here.
+command_not_found_handle() {
+    local -r CMD=$1
+    local ERR=$ERR_SYSTEM
+
+    # Missing module function
+    if [[ $CMD =~ _(delete|download|list|probe|upload)$ ]]; then
+        stderr "$MODULE module: \`$CMD' function was not found"
+    else
+        [ "$CMD" = 'curl' ] && ERR=62
+        stderr "$CMD: command not found"
+    fi
+
     shift
-    log_debug "with arguments: $*"
+    stderr "called with arguments: $*"
 
     return $ERR
 }
