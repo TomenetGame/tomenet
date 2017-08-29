@@ -8597,7 +8597,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 #endif
 
 		/* no anti-undead items for vampires */
-		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr)) continue;
+		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr, p_ptr)) continue;
 #ifdef ENABLE_HELLKNIGHT
 		/* no anti-demon items for hell knights */
 		if (p_ptr->pclass == CLASS_HELLKNIGHT && anti_demon(o_ptr)) continue;
@@ -10917,7 +10917,7 @@ s_printf("A_TIMEOUT: handle_art_d 2 (%d)\n", aidx);
 }
 
 /* Check whether an item causes HP drain on an undead player (vampire) who wears/wields it */
-bool anti_undead(object_type *o_ptr) {
+bool anti_undead(object_type *o_ptr, player_type *p_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
 
@@ -10940,11 +10940,13 @@ bool anti_undead(object_type *o_ptr) {
 
 	/* powerful lights and anti-undead/evil items damage vampires */
 	if (l) { /* light sources, or other items that provide light */
-		if ((l > 2) ||
-		    //(o_ptr->name1 && (f5 & TR5_WHITE_LIGHT)) || /* exempt: +lite caused by BRAND_FIRE mod; covered by just checking for white light below: */
-		    (f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
-		    (f3 & TR3_BLESSED) ||
-		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD))
+		if ((f3 & TR3_BLESSED) ||
+		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD) ||
+		    ////(o_ptr->name1 && (f5 & TR5_WHITE_LIGHT)) || /* exempt: +lite caused by BRAND_FIRE mod; covered by just checking for white light below: */
+		    //(f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
+		    /* .. instead this, to make normal Brilliance/Night&Day/Light hats wearable: (Added BLESSED to Devotion amulet though, to actually exempt it) */
+		    (l > 2) ||
+		    ((l == 2 || o_ptr->name1 || !p_ptr->resist_lite) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
 			return(TRUE);
 	} else {
 		if ((f3 & TR3_BLESSED) || (f1 & TR1_KILL_UNDEAD))
@@ -10981,8 +10983,10 @@ bool anti_demon(object_type *o_ptr) {
 	/* powerful lights and anti-demon/evil items damage hell knights */
 	if (l) { /* light sources, or other items that provide light */
 		if ((f3 & TR3_BLESSED) ||
-		    (f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
-		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON))
+		    (f1 & TR1_SLAY_EVIL) || (f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON) ||
+		    //(f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
+		    /* .. instead this, to make normal Brilliance/Night&Day/Light hats wearable: (Added BLESSED to Devotion amulet though, to actually exempt it) */
+		    ((l >= 2 || o_ptr->name1) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
 			return(TRUE);
 	} else {
 		if ((f3 & TR3_BLESSED) || (f1 & TR1_KILL_DEMON))

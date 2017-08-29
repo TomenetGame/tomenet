@@ -4124,7 +4124,7 @@ void calc_boni(int Ind) {
 
 		if (p_ptr->prace == RACE_VAMPIRE) {
 			/* powerful lights and anti-undead/evil items damage vampires */
-			if (anti_undead(o_ptr)) p_ptr->drain_life++;
+			if (anti_undead(o_ptr, p_ptr)) p_ptr->drain_life++;
 			/* then again, spectral weapons don't hurt them */
 			if (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL) p_ptr->drain_life--; /* hack: cancel out the life-drain applied by spectral'ity */
 		}
