@@ -76,7 +76,7 @@ OFIREBOLT_I = add_spell {
 	["level"] = 	10,
 	["mana"] = 	3,
 	["mana_max"] = 	3,
-	["fail"] = 	-10,
+	["fail"] = 	-15,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -357,9 +357,9 @@ FLAMEWAVE_I = add_spell {
 	["level"] = 	20,
 	["mana"] = 	7,
 	["mana_max"] = 	7,
-	["fail"] = 	-20,
+	["fail"] = 	-35,
 	["spell"] = 	function()
-			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, FLAMEWAVE_I, 120), 1, 5 + get_level(Ind, FLAMEWAVE_I, 6), 3, EFF_THINWAVE, " emits a flamewave for")
+			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, FLAMEWAVE_I, 120), 1, 6 + get_level(Ind, FLAMEWAVE_I, 5), 3, EFF_THINWAVE, " emits a flamewave for")
 	end,
 	["info"] = 	function()
 			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I,  120)).." rad "..(5 + get_level(Ind, FLAMEWAVE_I, 6))
@@ -373,9 +373,9 @@ FLAMEWAVE_II = add_spell {
 	["level"] = 	35,
 	["mana"] = 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	-65,
+	["fail"] = 	-75,
 	["spell"] = 	function()
-			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, FLAMEWAVE_I, 300), 1, 5 + get_level(Ind, FLAMEWAVE_I, 6), 3, EFF_THINWAVE, " casts a flamewave for")
+			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, FLAMEWAVE_I, 300), 1, 6 + get_level(Ind, FLAMEWAVE_I, 5), 3, EFF_THINWAVE, " casts a flamewave for")
 	end,
 	["info"] = 	function()
 			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I, 300)).." rad "..(5 + get_level(Ind, FLAMEWAVE_I, 6))
