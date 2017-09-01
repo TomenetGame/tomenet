@@ -362,7 +362,7 @@ FLAMEWAVE_I = add_spell {
 			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, FLAMEWAVE_I, 120), 1, 6 + get_level(Ind, FLAMEWAVE_I, 5), 3, EFF_THINWAVE, " emits a flamewave for")
 	end,
 	["info"] = 	function()
-			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I,  120)).." rad "..(5 + get_level(Ind, FLAMEWAVE_I, 6))
+			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I,  120)).." rad "..(6 + get_level(Ind, FLAMEWAVE_I, 5))
 	end,
 	["desc"] = 	{ "Eradicates critters beneath your notice that dare trifle with you." }
 }
@@ -378,7 +378,7 @@ FLAMEWAVE_II = add_spell {
 			fire_wave(Ind, GF_FIRE, 0, 30 + get_level(Ind, FLAMEWAVE_I, 300), 1, 6 + get_level(Ind, FLAMEWAVE_I, 5), 3, EFF_THINWAVE, " casts a flamewave for")
 	end,
 	["info"] = 	function()
-			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I, 300)).." rad "..(5 + get_level(Ind, FLAMEWAVE_I, 6))
+			return "dam "..(30 + get_level(Ind, FLAMEWAVE_I, 300)).." rad "..(6 + get_level(Ind, FLAMEWAVE_I, 5))
 	end,
 	["desc"] = 	{ "Eradicates critters beneath your notice that dare trifle with you." }
 }
