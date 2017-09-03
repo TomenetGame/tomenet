@@ -2128,8 +2128,8 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 					i_c = (f2 & TR2_RES_COLD) && !(f2 & TR2_IM_COLD);
 					i_e = (f2 & TR2_RES_ELEC) && !(f2 & TR2_IM_ELEC);
 					i_a = (f2 & TR2_RES_ACID) && !(f2 & TR2_IM_ACID);
-					if (!tmp && powins[0] && (i_f | i_c | i_e | i_a)) {
-						if (powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+					if (i_f | i_c | i_e | i_a) {
+						if (!tmp && powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 						if (i_f) strcat(powins, "f");
 						if (i_c) strcat(powins, "c");
 						if (i_e) strcat(powins, "e");
