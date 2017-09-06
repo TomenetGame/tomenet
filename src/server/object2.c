@@ -2023,9 +2023,9 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	case TV_STAFF:
 		/* Pay extra for charges */
 #ifdef NEW_MDEV_STACKING
-		value += ((value / 20) * o_ptr->pval);
-#else
 		value += ((value / 20) * o_ptr->pval) / o_ptr->number;
+#else
+		value += ((value / 20) * o_ptr->pval);
 #endif
 
 		/* Done */
