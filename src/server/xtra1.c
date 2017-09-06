@@ -5687,6 +5687,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->inventory[INVEN_WIELD].k_idx && (
 	    (p_ptr->pclass == CLASS_PRIEST && !p_ptr->bless_blade &&
 	    (o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM || o_ptr->tval == TV_AXE))
+	    || (p_ptr->prace == RACE_VAMPIRE && p_ptr->bless_blade)
 #ifdef ENABLE_CPRIEST
 	    || (p_ptr->pclass == CLASS_CPRIEST && p_ptr->bless_blade)
 #endif
