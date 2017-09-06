@@ -168,7 +168,7 @@ OEXTRASTATS = add_spell {
 	["name"] = 	"Demonic Strength",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
-	["level"] = 	26,
+	["level"] = 	23,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
 	["fail"] = 	-30,
@@ -176,10 +176,10 @@ OEXTRASTATS = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			--(lv=30 -> +4 at 50)
-			do_xtra_stats(Ind, 4, 1 + get_level(Ind, OEXTRASTATS, 50) / 7, rand_int(7) + 22 + get_level(Ind, OEXTRASTATS, 30))
+			do_xtra_stats(Ind, 4, 2 + get_level(Ind, OEXTRASTATS, 50) / 7, rand_int(7) + 22 + get_level(Ind, OEXTRASTATS, 30))
 			end,
 	["info"] = 	function()
-			return "+" .. (1 + get_level(Ind, OEXTRASTATS, 50) / 7) .. " dur d7+" .. (22 + get_level(Ind, OEXTRASTATS, 30))
+			return "+" .. (2 + get_level(Ind, OEXTRASTATS, 50) / 7) .. " dur d7+" .. (22 + get_level(Ind, OEXTRASTATS, 30))
 			end,
 	["desc"] = 	{ "Temporarily increases and sustains strength and constitution.", }
 }

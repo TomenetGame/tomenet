@@ -3043,8 +3043,8 @@ void calc_boni(int Ind) {
  #endif
 	    )) {
 		/* Bloodthirster form includes the benefits of 'Demonic Strength' (+max power of the spell) */
-		p_ptr->stat_add[A_STR] = 4; csheet_boni[14].pstr += 4;
-		p_ptr->stat_add[A_CON] = 4; csheet_boni[14].pcon += 4;
+		p_ptr->stat_add[A_STR] = 4; csheet_boni[14].pstr += 6;
+		p_ptr->stat_add[A_CON] = 4; csheet_boni[14].pcon += 6;
 		p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
 		p_ptr->sustain_con = TRUE; csheet_boni[14].cb[11] |= CB12_RSCON;
 	}
