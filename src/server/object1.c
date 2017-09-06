@@ -4371,7 +4371,20 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 			if (p_ptr->awkward_wield && !old_awkward_wield) fprintf(fff, "\377r    One-handed use reduces its efficiency.\n");
 			if (k_info[o_ptr->k_idx].flags4 & TR4_COULD2H) fprintf(fff, "\377r    Wielding it two-handedly might make it even more effective.\n");
 			if (p_ptr->heavy_wield && !old_heavy_wield) fprintf(fff, "\377r    Your strength is insufficient to hold it properly.\n");
-			if (p_ptr->icky_wield && !old_icky_wield) fprintf(fff, "\377r    It is edged and not blessed.\n");
+			if (p_ptr->icky_wield && !old_icky_wield) {
+				if (p_ptr->bless_blade && (
+				    p_ptr->prace == RACE_VAMPIRE
+#ifdef ENABLE_CPRIEST
+				    || p_ptr->pclass == CLASS_CPRIEST
+#endif
+#ifdef ENABLE_HELLKNIGHT
+				    || p_ptr->pclass == CLASS_HELLKNIGHT
+#endif
+				    ))
+					fprintf(fff, "\377r    It is blessed.\n");
+				else
+					fprintf(fff, "\377r    It is edged and not blessed.\n");
+			}
 //			fprintf(fff, "\n");
 		}
 //we get this info although we didn't *id*!
@@ -4398,7 +4411,21 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 			if (fff) {
 				if (!p_ptr->awkward_wield && old_awkward_wield) fprintf(fff, "\377g    One-handed use will not reduce its efficiency.\n");
 				if (!p_ptr->heavy_wield && old_heavy_wield) fprintf(fff, "\377g    Your strength is sufficient to hold it properly.\n");
-				if (!p_ptr->icky_wield && old_icky_wield) fprintf(fff, "\377g    It is not edged, or at least blessed.\n");
+				if (!p_ptr->icky_wield && old_icky_wield) {
+					if (p_ptr->prace == RACE_VAMPIRE
+#ifdef ENABLE_CPRIEST
+					    || p_ptr->pclass == CLASS_CPRIEST
+#endif
+#ifdef ENABLE_HELLKNIGHT
+					    || p_ptr->pclass == CLASS_HELLKNIGHT
+#endif
+					    )
+						fprintf(fff, "\377g    It is not blessed.\n");
+					else {
+						if (o_ptr->tval == TV_BLUNT) fprintf(fff, "\377g    It is not an edged weapon.\n");
+						else fprintf(fff, "\377g    It is an edged weapon, but it is blessed.\n");
+					}
+				}
 			}
 		}
 //		if (fff) fprintf(fff, "\n");
