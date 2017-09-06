@@ -15508,7 +15508,7 @@ school.
 
                     Tier II: Level 20.
 
-                    Tier II: Level 40.
+                    Tier III: Level 40.
 
     Vermin Control  Prevents vermin from breeding any further on
                     your current level.
