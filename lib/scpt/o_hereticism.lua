@@ -401,5 +401,6 @@ HATE = add_spell {
 	end,
 	["desc"] = 	{
 		"Granting you an extra melee attack per round for 9+d5 turns.",
+		"The duration of this spell can be prolonged by Traumaturgy.",
 	}
 }

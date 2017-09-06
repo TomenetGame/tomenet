@@ -2162,8 +2162,12 @@ bool set_zeal(int Ind, int p, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->zeal) {
+#ifndef ENABLE_OHERETICISM
+			msg_print(Ind, "You heed a holy call!");
+#else
 			if (p_ptr->ptrait != TRAIT_CORRUPTED) msg_print(Ind, "You heed a holy call!");
 			else msg_print(Ind, "You let your hate run freely!");
+#endif
 			notice = TRUE;
 		}
 	}
@@ -2171,8 +2175,12 @@ bool set_zeal(int Ind, int p, int v) {
 	/* Shut */
 	else {
 		if (p_ptr->zeal) {
+#ifndef ENABLE_OHERETICISM
+			msg_print(Ind, "The holy call fades.");
+#else
 			if (p_ptr->ptrait != TRAIT_CORRUPTED) msg_print(Ind, "The holy call fades.");
 			else msg_print(Ind, "Your hate is contained again, for now.");
+#endif
 			notice = TRUE;
 		}
 	}
@@ -9255,7 +9263,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	    target_able(Ind, m_idx) &&
 	    (!(r_ptr->flags3 & RF3_UNDEAD)) &&
 	    (!(r_ptr->flags3 & RF3_NONLIVING)) &&
-	    (!(strchr("AEgv", r_ptr->d_char)))) {
+	    (!(strchr("Egv", r_ptr->d_char)))) {
 		if (magik(p_ptr->antimagic)) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
@@ -9313,6 +9321,14 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
 			p_ptr->redraw |= (PR_MANA);
 		}
+
+#ifdef ENABLE_OHERETICISM
+ #ifdef TEST_SERVER
+//		msg_format(Ind, "Gain=%d, skill=%d", gain, skill_trauma);
+ #endif
+		/* Special synergy beween 'Boundless Hate' spell and Traumaturgy: Extend the spell's duration! */
+		if (p_ptr->zeal && p_ptr->ptrait == TRAIT_CORRUPTED && !p_ptr->hate_prolong && gain && rand_int(1000) < ((skill_trauma + 100) * skill_trauma) / 400) p_ptr->hate_prolong = 1;
+#endif
 	}
 
 	/* Wake it up */

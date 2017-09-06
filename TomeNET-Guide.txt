@@ -12476,7 +12476,7 @@ Note that not every skill is available to every profession (class).
                                 drain, the skill should be at least half as
                                 high as the monster level.
                                 Necromancy has no effect on undead and
-                                nonliving monsters.
+                                nonliving (constructs) monsters.
 
                                 (Don't confuse Necromancy with vampirism:
                                 Necromancy drains from the monster's soul on
@@ -12511,8 +12511,8 @@ Note that not every skill is available to every profession (class).
                                 have an area of effect and can therefore hit
                                 multiple monsters, such as balls and especially
                                 clouds.
-                                Traumaturgy has no effect on angels, undead,
-                                and nonliving (constructs) monsters.
+                                Traumaturgy has no effect on undead and
+                                nonliving (constructs) monsters.
 
                                 A natural vampire race character who has both
                                 Necromancy and Traumaturgy at 25.000 or higher
@@ -16214,6 +16214,11 @@ school.
 
     Boundless Hate  Your melee strikes are furious, granting you one
                     extra attack per round.
+                    This spell has a special synergy with 'Traumaturgy' skill:
+                    If you keep hitting opponents in melee that are affected by
+                    Traumaturgy while under the effect of Boundless Hate, their
+                    pain will continue to fuel your rage and keep extending the
+                    spell's duration.
                     Required skill level for first spell level: 41.
 
     Robes of Havoc  Envelops you in hellfire, burning your opponents to ashes.

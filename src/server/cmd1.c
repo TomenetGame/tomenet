@@ -3603,6 +3603,11 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
 #endif
+
+#ifdef ENABLE_OHERETICISM
+			/* Extend ongoing 'Boundless Hate' spell thanks to Traumaturgy feedback? */
+			if (p_ptr->hate_prolong == 1) p_ptr->hate_prolong = 2;
+#endif
 		}
 
 		/* Player misses */
@@ -4533,6 +4538,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 				break; /* monster is dead */
 			}
+#ifdef ENABLE_OHERETICISM
+			/* Extend ongoing 'Boundless Hate' spell thanks to Traumaturgy feedback? */
+			if (p_ptr->hate_prolong == 1) p_ptr->hate_prolong = 2;
+#endif
 
 			touch_zap_player(Ind, c_ptr->m_idx);
 

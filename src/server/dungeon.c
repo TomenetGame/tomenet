@@ -4429,8 +4429,16 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_protevil(Ind, p_ptr->protevil - minus_magic);
 
 	/* Holy Zeal - EA bonus */
-	if (p_ptr->zeal)
+	if (p_ptr->zeal) {
+#ifdef ENABLE_OHERETICISM
+		/* Extend ongoing 'Boundless Hate' spell thanks to Traumaturgy feedback? */
+		if (p_ptr->hate_prolong == 2) p_ptr->hate_prolong = 0;
+//msg_print(Ind, " \377v+prolonged");
+		else
+//msg_print(Ind, " \377R+0");
+#endif
 		(void)set_zeal(Ind, p_ptr->zeal_power, p_ptr->zeal - 1);
+	}
 
 	/* Heart is still boldened */
 	if (p_ptr->res_fear_temp)

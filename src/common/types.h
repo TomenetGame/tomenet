@@ -2287,6 +2287,7 @@ struct player_type {
 	s16b protevil;			/* Timed -- Protection */
 	s16b zeal;			/* timed EA bonus */
 	s16b zeal_power;
+	byte hate_prolong;		/* For dark Zeal version 'Boundless Hate', feedback with Traumaturgy */
 	s16b martyr;
 	s16b martyr_timeout;
 	s16b martyr_dur;
