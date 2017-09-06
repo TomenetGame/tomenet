@@ -15856,7 +15856,7 @@ school.
                     During martyrdom any kind of line-of-sight (ie affecting
                     all monsters at once that are in your character's field of
                     view) spell damage you inflict will only deal half damage.
-                    Required skill level for first spell level: 45.
+                    Required skill level for first spell level: 47.
 
     BONI:           Protects the player from undead at 30, from demons at 40
                     and from evil in general at 50. Works similar to the
@@ -16214,11 +16214,11 @@ school.
 
     Boundless Hate  Your melee strikes are furious, granting you one
                     extra attack per round.
-                    Required skill level for first spell level: 40.
+                    Required skill level for first spell level: 41.
 
     Robes of Havoc  Envelops you in hellfire, burning your opponents to ashes.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
-                    Required skill level for first spell level: 42.
+                    Required skill level for first spell level: 44.
 
     Blood Sacrifice
                     Inflict a mortal wound on yourself, causing the warped
@@ -16233,7 +16233,7 @@ school.
                     use the /sacrifice (or /sac) command.
                     --- This spell is only usable by Corrupted
                         Maia Priests and Hell Knights! ---
-                    Required skill level for first spell level: 45.
+                    Required skill level for first spell level: 47.
 
                     (Its powers according to (6.7), with the exceptions that
                      this greater demon form will actually grant TWO immunities
