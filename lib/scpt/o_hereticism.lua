@@ -382,3 +382,24 @@ FLAMEWAVE_II = add_spell {
 	end,
 	["desc"] = 	{ "Eradicates critters beneath your notice that dare trifle with you." }
 }
+
+HATE = add_spell {
+	["name"] = 	"Boundless Hate",
+	["school"] = 	SCHOOL_OHERETICISM,
+	["spell_power"] = 0,
+	["am"] = 	50,
+	["level"] = 	40,
+	["mana"] = 	45,
+	["mana_max"] = 	45,
+	["fail"] = 	-85,
+	["stat"] = 	A_WIS,
+	["spell"] = 	function()
+		set_zeal(Ind, 10, 9 + randint(5))
+	end,
+	["info"] = 	function()
+			return "dur 9+d5, +1 BpR"
+	end,
+	["desc"] = 	{
+		"Granting you an extra melee attack per round for 9+d5 turns.",
+	}
+}

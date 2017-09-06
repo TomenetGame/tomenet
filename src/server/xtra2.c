@@ -2162,7 +2162,8 @@ bool set_zeal(int Ind, int p, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->zeal) {
-			msg_print(Ind, "You heed a holy call!");
+			if (p_ptr->ptrait != TRAIT_CORRUPTED) msg_print(Ind, "You heed a holy call!");
+			else msg_print(Ind, "You let your hate run freely!");
 			notice = TRUE;
 		}
 	}
@@ -2170,7 +2171,8 @@ bool set_zeal(int Ind, int p, int v) {
 	/* Shut */
 	else {
 		if (p_ptr->zeal) {
-			msg_print(Ind, "The holy call fades.");
+			if (p_ptr->ptrait != TRAIT_CORRUPTED) msg_print(Ind, "The holy call fades.");
+			else msg_print(Ind, "Your hate is contained again, for now.");
 			notice = TRUE;
 		}
 	}

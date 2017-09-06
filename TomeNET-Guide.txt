@@ -16212,6 +16212,10 @@ school.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 39.
 
+    Boundless Hate  Your melee strikes are furious, granting you one
+                    extra attack per round.
+                    Required skill level for first spell level: 40.
+
     Robes of Havoc  Envelops you in hellfire, burning your opponents to ashes.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 42.
