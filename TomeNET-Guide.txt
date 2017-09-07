@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 06. September 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 7. September 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3711,6 +3711,8 @@ important stats:
  healed.
 -Next entry is your stamina (ST), if you chose a class that makes use of it.
  Stamina may allow you to employ special techniques accessed with 'm'.
+ Maximum stamina is always 10. Its regeneration rate can be increased by
+ having a higher Constitution attribute (CON) or by training 'Health' skill.
 -Below stamina is a 'flag bar' which displays certain combat-related modi of
  your character, if available to your class:
  -Combat stance (Bl = balanced, Df = defensive, Of = offensive, see (6.2))
