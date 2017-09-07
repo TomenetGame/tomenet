@@ -4707,6 +4707,8 @@ void check_experience(int Ind) {
 	if (p_ptr->lev == 50 && !p_ptr->total_winner) msg_print(Ind, "\374\377G* To level up further, you must defeat Morgoth, Lord of Darkness! *");
 #endif
 
+	if (p_ptr->lev == 99) msg_print(Ind, "\374\377GYou gain ultimate hold of your life force.");
+
 	/* pvp mode cant go higher, but receives a reward maybe */
 	if (p_ptr->mode & MODE_PVP) {
 		if (get_skill(p_ptr, SKILL_MIMIC) &&
