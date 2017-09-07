@@ -184,7 +184,7 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
    from increasing a skill */
 void msg_gained_abilities(int Ind, int old_value, int i) {
 	player_type *p_ptr = Players[Ind];
-	int new_value = get_skill_scale(p_ptr, i, 500);
+	int new_value = get_skill_scale(p_ptr, i, 500), n;
 
 //	int as = get_archery_skill(p_ptr);
 //	int ws = get_weaponmastery_skill(p_ptr);
@@ -684,6 +684,41 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (p_ptr->aura[1]) toggle_aura(Ind, 1);
 		if (p_ptr->aura[2]) toggle_aura(Ind, 2);
 		break;
+	}
+
+	/* New odd combo traits, mostly for Necro/Trauma related things, for DK/HK */
+	switch (i) {
+	case SKILL_NECROMANCY:
+		if (old_value < 500 && new_value >= 500) msg_print(Ind, "\374\377GYou gain ultimate hold of your life force.");
+		n = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 500);
+		if (p_ptr->prace == RACE_VAMPIRE
+		    && new_value >= 250 && n >= 250 && new_value + n > 500
+		    && (old_value < 250 || old_value + n <= 500))
+			msg_print(Ind, "\374\377GYour intrinsic vampirism begins to become more powerful.");
+		break;
+	case SKILL_TRAUMATURGY:
+		n = get_skill_scale(p_ptr, SKILL_NECROMANCY, 500);
+		if (p_ptr->prace == RACE_VAMPIRE
+		    && new_value >= 250 && n >= 250 && new_value + n > 500
+		    && (old_value < 250 || old_value + n <= 500))
+			msg_print(Ind, "\374\377GYour intrinsic vampirism begins to become more powerful.");
+#ifdef ENABLE_OHERETICISM
+		n = get_skill_scale(p_ptr, SKILL_OHERETICISM, 500);
+		if (n == 300 && old_value < 300 && new_value >= 300)
+			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity.");
+		if (n == 450 && old_value < 450 && new_value >= 450)
+			msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity.");
+#endif
+		break;
+#ifdef ENABLE_OHERETICISM
+	case SKILL_OHERETICISM:
+		n = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 500);
+		if (n == 300 && old_value < 300 && new_value >= 300)
+			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity.");
+		if (n == 450 && old_value < 450 && new_value >= 450)
+			msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity.");
+		break;
+#endif
 	}
 }
 
