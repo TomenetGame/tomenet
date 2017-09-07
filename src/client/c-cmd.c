@@ -1895,7 +1895,7 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "The Maze   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Ciri") || my_strcasestr(buf, "Ung") || !strcasecmp(buf, "cu")) {
+				if (my_strcasestr(buf, "Ciri") || (my_strcasestr(buf, "Ung") && !my_strcasestr(buf, "Dung") && !my_strcasestr(buf, "Ungoli")) || !strcasecmp(buf, "cu")) { //Ungoliant check is just paranoia, not a dungeon boss
 					strcpy(chapter, "Cirith Ungol   ");
 					continue;
 				}
