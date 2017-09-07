@@ -270,10 +270,10 @@ LEVITATION = add_spell {
 	["mana_max"] = 	30,
 	["fail"] = 	-70,
 	["spell"] = 	function()
-			set_tim_lev(Ind, randint(10) + 5 + get_level(Ind, LEVITATION, 25))
+			set_tim_lev(Ind, randint(10) + 10 + get_level(Ind, LEVITATION, 30))
 	end,
 	["info"] = 	function()
-			return "dur "..(5 + get_level(Ind, LEVITATION, 25)).."+d10"
+			return "dur "..(10 + get_level(Ind, LEVITATION, 30)).."+d10"
 	end,
 	["desc"] = 	{
 			"Grants the power of levitation."
