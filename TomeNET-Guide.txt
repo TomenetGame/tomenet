@@ -16204,6 +16204,18 @@ school.
                     constitution.
                     Required skill level for first spell level: 23.
 
+    Boundless Hate  Your melee strikes are furious, granting you one
+                    extra attack per round.
+                    This spell has a special synergy with 'Traumaturgy' skill:
+                    If you keep hitting opponents in melee that are affected by
+                    Traumaturgy while under the effect of Boundless Hate, their
+                    pain will continue to fuel your rage and keep extending the
+                    spell's duration.
+                    Required skill level for first spell level: 29.
+
+                    Tier II: Level 41.
+                    Gives +2 EA to the caster.
+
     Chaos Bolt      Channels the powers of chaos into a bolt.
                     Required skill level for first spell level: 32.
 
@@ -16213,15 +16225,6 @@ school.
     Levitation      Grants the power of levitation.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 39.
-
-    Boundless Hate  Your melee strikes are furious, granting you one
-                    extra attack per round.
-                    This spell has a special synergy with 'Traumaturgy' skill:
-                    If you keep hitting opponents in melee that are affected by
-                    Traumaturgy while under the effect of Boundless Hate, their
-                    pain will continue to fuel your rage and keep extending the
-                    spell's duration.
-                    Required skill level for first spell level: 41.
 
     Robes of Havoc  Envelops you in hellfire, burning your opponents to ashes.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
