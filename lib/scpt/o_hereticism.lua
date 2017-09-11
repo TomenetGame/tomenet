@@ -266,8 +266,8 @@ LEVITATION = add_spell {
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	39,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
 	["fail"] = 	-70,
 	["spell"] = 	function()
 			set_tim_lev(Ind, randint(10) + 10 + get_level(Ind, LEVITATION, 30))
