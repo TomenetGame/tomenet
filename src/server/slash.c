@@ -2060,7 +2060,7 @@ void do_slash_cmd(int Ind, char *message) {
 			if (Players[Ind]->martyr_timeout)
 				msg_print(Ind, "\377yThe maelstrom of chaos doesn't favour your blood sacrifice yet.");
 			else
-				msg_print(Ind, "The maelstrom of chaos is tempting you to sacrifice your blood.");
+				msg_print(Ind, "The maelstrom of chaos is tempting you to sacrifice your blood!");
 			return;
 		}
 #endif
