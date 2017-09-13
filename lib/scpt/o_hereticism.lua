@@ -383,8 +383,8 @@ FLAMEWAVE_II = add_spell {
 	["desc"] = 	{ "Eradicates critters beneath your notice that dare trifle with you." }
 }
 
-HATE_I = add_spell {
-	["name"] = 	"Boundless Hate I",
+RAGE_I = add_spell {
+	["name"] = 	"Boundless Rage I",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["am"] = 	50,
@@ -405,8 +405,8 @@ HATE_I = add_spell {
 	}
 }
 
-HATE_II = add_spell {
-	["name"] = 	"Boundless Hate II",
+RAGE_II = add_spell {
+	["name"] = 	"Boundless Rage II",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["am"] = 	50,
