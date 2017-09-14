@@ -4645,8 +4645,11 @@ void check_experience(int Ind) {
 	case CLASS_MINDCRAFTER:
 		if (old_lev < 10 && p_ptr->lev >= 10
 		    && p_ptr->prace != RACE_VAMPIRE)
-			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity!");
-		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity!");
+			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity somewhat!");
+		if (old_lev < 20 && p_ptr->lev >= 20
+		    && p_ptr->prace != RACE_VAMPIRE)
+			msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity better!");
+		if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn to keep hold of your sanity even better!");
 		break;
 	}
 

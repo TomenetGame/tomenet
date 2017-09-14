@@ -2012,14 +2012,14 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 	if (p_ptr->admin_dm) return;
 
 	if (!necro) {
-		char		m_name[MNAME_LEN];
-		monster_race	*r_ptr;
+		char m_name[MNAME_LEN];
+		monster_race *r_ptr;
 		int res = p_ptr->reduce_insanity;
 
 		if (m_ptr != NULL) r_ptr = race_inf(m_ptr);
 		else return;
 
-		power = (m_ptr->level)+10;
+		power = (m_ptr->level) + 10;
 
 		monster_desc(Ind, m_name, m_idx, 0);
 
@@ -2042,7 +2042,7 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 
 		if (randint(power) < p_ptr->skill_sav) return; /* Save, no adverse effects */
 		/* extra ways to resist */
-		if (p_ptr->suscep_life) res = 2;
+		if (p_ptr->suscep_life && res < 2) res = 2;
 		if (p_ptr->pclass == CLASS_MINDCRAFTER || p_ptr->prace == RACE_VAMPIRE) res = 4;
 		if (rand_int(6) < res) return;
 

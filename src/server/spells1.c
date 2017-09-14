@@ -2154,8 +2154,11 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from) {
 	disturb(Ind, 1, 0);
 
 	/* Having WEIRD_MIND or EMPTY_MIND form helps, as well as being mindcrafter */
-	if(p_ptr->reduce_insanity == 1) damage = (damage * (9 + rand_int(4))) / 12;
-	if(p_ptr->reduce_insanity == 2) damage = (damage * (6 + rand_int(7))) / 12;
+	switch (p_ptr->reduce_insanity) {
+	case 1: damage = (damage * (9 + rand_int(4))) / 12; break; //~7/8
+	case 2: damage = (damage * (6 + rand_int(7))) / 12; break; //~6/8
+	case 3: damage = (damage * (6 + rand_int(4))) / 12; break; //~5/8
+	}
 
 	/* Hurt the player */
 	p_ptr->csane -= damage;

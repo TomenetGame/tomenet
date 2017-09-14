@@ -2436,8 +2436,9 @@ void display_player(int hist) {
 			if (csheet_boni[i].cb[3] & CB4_IWATR) { c_put_str(TERM_L_UMBER, "*", 16, 5 + i); if (header_color[0][15] != TERM_L_UMBER) header_color[0][15] = TERM_L_UMBER; }
 			if (csheet_boni[i].cb[3] & CB4_RTIME) { c_put_str(TERM_WHITE, "+", 17, 5 + i); header_color[0][16] = TERM_WHITE; }
 			if (csheet_boni[i].cb[3] & CB4_RMANA) { c_put_str(TERM_WHITE, "+", 18, 5 + i); header_color[0][17] = TERM_WHITE; }
-			if (csheet_boni[i].cb[3] & CB4_RMIND) { c_put_str(TERM_WHITE, "+", 19, 5 + i); header_color[0][18] = TERM_WHITE; }
-			if (csheet_boni[i].cb[4] & CB5_XMIND) { c_put_str(TERM_WHITE, "*", 19, 5 + i); header_color[0][18] = TERM_WHITE; } //Similar to no_cut, for now? Level 2~ - Kurzel
+			if (csheet_boni[i].cb[13] & CB14_UMIND) { c_put_str(TERM_WHITE, "*", 19, 5 + i); header_color[0][18] = TERM_WHITE; } //I added a 'level 3' - C. Blue
+			else if (csheet_boni[i].cb[4] & CB5_XMIND) { c_put_str(TERM_WHITE, "+", 19, 5 + i); header_color[0][18] = TERM_WHITE; } //Similar to no_cut, for now? Level 2~ - Kurzel
+			else if (csheet_boni[i].cb[3] & CB4_RMIND) { c_put_str(TERM_WHITE, "~", 19, 5 + i); header_color[0][18] = TERM_WHITE; }
 
 			if (csheet_boni[i].cb[4] & CB5_RFEAR) { c_put_str(TERM_WHITE, "+", 1, 25 + i); header_color[1][0] = TERM_WHITE; }
 			if (csheet_boni[i].cb[4] & CB5_RPARA) { c_put_str(TERM_WHITE, "+", 2, 25 + i); header_color[1][1] = TERM_WHITE; }

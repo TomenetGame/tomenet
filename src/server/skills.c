@@ -526,9 +526,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYou feel strong against confusion and hallucinations.");
 		} if (old_value < 400 && new_value >= 400
 		    && p_ptr->prace != RACE_VAMPIRE) {
-			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity.");
+			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity somewhat.");
 		} if (old_value < 500 && new_value >= 500) {
-			msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity.");
+			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity somewhat better.");
 		}
 		break;
 	case SKILL_TEMPORAL:
@@ -704,19 +704,23 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYour intrinsic vampirism begins to become more powerful.");
 #ifdef ENABLE_OHERETICISM
 		n = get_skill_scale(p_ptr, SKILL_OHERETICISM, 500);
-		if (n == 300 && old_value < 300 && new_value >= 300)
-			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity.");
-		if (n == 450 && old_value < 450 && new_value >= 450)
-			msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity.");
+		if (n >= 150 && old_value < 150 && new_value >= 150)
+			msg_print(Ind, "\374\377GYou become less sensitive to sanity-draining effects.");
+		if (n >= 300 && old_value < 300 && new_value >= 300)
+			msg_print(Ind, "\374\377GYou become even less sensitive to sanity-draining effects.");
+		if (n >= 450 && old_value < 450 && new_value >= 450)
+			msg_print(Ind, "\374\377GYou become even less sensitive to sanity-draining effects");
 #endif
 		break;
 #ifdef ENABLE_OHERETICISM
 	case SKILL_OHERETICISM:
 		n = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 500);
-		if (n == 300 && old_value < 300 && new_value >= 300)
-			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity.");
-		if (n == 450 && old_value < 450 && new_value >= 450)
-			msg_print(Ind, "\374\377GYou learn to keep strong hold of your sanity.");
+		if (n >= 150 && old_value < 150 && new_value >= 150)
+			msg_print(Ind, "\374\377GYou become less sensitive to sanity-draining effects.");
+		if (n >= 300 && old_value < 300 && new_value >= 300)
+			msg_print(Ind, "\374\377GYou become even less sensitive to sanity-draining effects.");
+		if (n >= 450 && old_value < 450 && new_value >= 450)
+			msg_print(Ind, "\374\377GYou become even less sensitive to sanity-draining effects");
 		break;
 #endif
 	}

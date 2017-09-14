@@ -3430,7 +3430,7 @@ void calc_boni(int Ind) {
 		p_ptr->immune_poison = TRUE; csheet_boni[14].cb[1] |= CB2_IPOIS;
 		p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE;
 
-		p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND;
+		p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND;
 
 		if (p_ptr->vampiric_melee < 50) p_ptr->vampiric_melee = 50; /* mimic forms give 50 (50% bite attacks) - 33 was actually pretty ok, for lower levels at least */
 		csheet_boni[14].cb[6] |= CB7_RVAMP;
@@ -3612,7 +3612,8 @@ void calc_boni(int Ind) {
 		if (p_ptr->lev >= 10) { p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE; }
 
 	if (p_ptr->pclass == CLASS_MINDCRAFTER) {
-		if (p_ptr->lev >= 20) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND; }
+		if (p_ptr->lev >= 40) { p_ptr->reduce_insanity = 3; csheet_boni[14].cb[4] |= CB5_XMIND; csheet_boni[14].cb[13] |= CB14_UMIND; }
+		else if (p_ptr->lev >= 20) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND; }
 		else if (p_ptr->lev >= 10 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
 	}
 
@@ -3652,7 +3653,7 @@ void calc_boni(int Ind) {
 		p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR;
 		p_ptr->resist_conf = TRUE; csheet_boni[14].cb[3] |= CB4_RCONF;
 		p_ptr->no_cut = TRUE; csheet_boni[14].cb[12] |= CB13_XNCUT;
-		if (!p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
+		if (p_ptr->reduce_insanity < 3) { p_ptr->reduce_insanity = 3; csheet_boni[14].cb[4] |= CB5_XMIND; csheet_boni[14].cb[13] |= CB14_UMIND; }
 		p_ptr->levitate = TRUE; csheet_boni[14].cb[5] |= CB6_RLVTN; /* redundant */
 		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL;
 		/*p_ptr->tim_wraith = 10000; redundant*/
@@ -5984,8 +5985,9 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 30) { p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE; }
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 45) { p_ptr->resist_chaos = TRUE; csheet_boni[14].cb[3] |= CB4_RCHAO; }
 
-	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 30 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 30 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
-	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 45 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 45) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND; }
+	if (get_skill(p_ptr, SKILL_OHERETICISM) >= 45 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 45) { p_ptr->reduce_insanity = 3; csheet_boni[14].cb[4] |= CB5_XMIND; csheet_boni[14].cb[13] |= CB14_UMIND; }
+	else if (get_skill(p_ptr, SKILL_OHERETICISM) >= 30 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 30 && p_ptr->reduce_insanity < 2) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND; }
+	else if (get_skill(p_ptr, SKILL_OHERETICISM) >= 15 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 15 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
  #endif
 #endif
 

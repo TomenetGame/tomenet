@@ -1620,8 +1620,10 @@ void self_knowledge(int Ind) {
 	if (p_ptr->reflect) fprintf(fff, "You reflect arrows and bolts.\n");
 	if (p_ptr->no_cut) fprintf(fff, "You cannot be cut.\n");
 
-	if (p_ptr->reduce_insanity > 0) {
-		fprintf(fff, "Your mind is somewhat resistant against insanity.\n");
+	switch (p_ptr->reduce_insanity) {
+	case 1: fprintf(fff, "Your mind is slightly resistant against insanity.\n"); break;
+	case 2: fprintf(fff, "Your mind is somewhat resistant against insanity.\n"); break;
+	case 3: fprintf(fff, "Your mind is relatively resistant against insanity.\n"); break;
 	}
 	if (p_ptr->suscep_fire) fprintf(fff, "You are susceptible to fire.\n");
 	if (p_ptr->suscep_cold) fprintf(fff, "You are susceptible to cold.\n");

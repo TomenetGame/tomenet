@@ -5078,6 +5078,7 @@
 #define CB13_XLITE	0x80
 
 #define CB14_ILIFE	0x01
+#define CB14_UMIND	0x02
 
 /* Added CB14 CB15 and CB16 for now - Kurzel */
 
