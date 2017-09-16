@@ -5486,8 +5486,12 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	if (f5 & (TR5_DRAIN_MANA))
 		fprintf(fff, "\377DIt drains your magic.\n");
 
-	if (f5 & (TR5_DRAIN_HP))
-		fprintf(fff, "\377DIt drains your health.\n");
+	if (f5 & (TR5_DRAIN_HP)) {
+		/* Note: This assumes that there is no possible double-ego power that also has DRAIN_HP besides 'Spectral', otherwise this message might turn out incorrect.. */
+		if (p_ptr->prace == RACE_VAMPIRE && (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL))
+			fprintf(fff, "\377DIt drains health, but as a true vampire you are unaffected.\n");
+		else fprintf(fff, "\377DIt drains your health.\n");
+	}
 
 	if (f3 & (TR3_DRAIN_EXP))
 		fprintf(fff, "\377DIt drains your life force.\n");
