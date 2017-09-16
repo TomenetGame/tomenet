@@ -10940,6 +10940,20 @@ bool anti_undead(object_type *o_ptr, player_type *p_ptr) {
 	if (f4 & TR4_LITE3) l += 3;
 	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
 
+	/* be less strict to mimicked undead forms */
+	if (p_ptr->prace != RACE_VAMPIRE) {
+		/* powerful lights and anti-undead/evil items damage undead */
+		if (l) { /* light sources, or other items that provide light */
+			if ((f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD) ||
+			    ((f5 & TR5_WHITE_LIGHT) && (l >= 4 || o_ptr->name1 || !p_ptr->resist_lite))) //allowing feanorians of the magi
+				return(TRUE);
+		} else {
+			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD)) /* allow undead to kill each other with *slay undead* weapons =p */
+				return(TRUE);
+		}
+		return FALSE;
+	}
+
 	/* powerful lights and anti-undead/evil items damage vampires */
 	if (l) { /* light sources, or other items that provide light */
 		if ((f3 & TR3_BLESSED) ||
@@ -10986,6 +11000,29 @@ bool anti_demon(object_type *o_ptr, player_type *p_ptr) {
 	if (f4 & TR4_LITE2) l += 2;
 	if (f4 & TR4_LITE3) l += 3;
 	if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout < 1)) l = 0;
+
+	/* be less strict to mimicked demon forms */
+	if (TRUE
+#ifdef ENABLE_HELLKNIGHT
+	    && p_ptr->pclass != CLASS_HELLKNIGHT
+#endif
+#ifdef ENABLE_CPRIEST
+	    && (p_ptr->pclass != CLASS_CPRIEST || !p_ptr->body_monster)
+#endif
+	    ) {
+		/* powerful lights and anti-demon items damage demons --
+		   note that (light radius 3 instead of 2) this is actually rather the anti-undead version above than a softened version of true anti-demon;
+		   reasoning is that undead and demon mimic forms should be treated equally in this regard. */
+		if (l) { /* light sources, or other items that provide light */
+			if ((f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON) ||
+			    ((f5 & TR5_WHITE_LIGHT) && (l >= 4 || o_ptr->name1 || !p_ptr->resist_lite))) //allowing feanorians of the magi
+				return(TRUE);
+		} else {
+			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_DEMON)) /* allow demons to kill each other with *slay demon* weapons =p */
+				return(TRUE);
+		}
+		return FALSE;
+	}
 
 	/* powerful lights and anti-demon/evil items damage hell knights */
 	if (l) { /* light sources, or other items that provide light */
