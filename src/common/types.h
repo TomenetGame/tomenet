@@ -2608,6 +2608,7 @@ struct player_type {
 	bool suscep_good;		/* Anti-evil effects do more damage on the player */
 	bool suscep_evil;		/* Anti-good effects do more damage on the player */
 	bool suscep_life;		/* Anti-undead effects do more damage on the player */
+	bool demon;			/* Specifically for hell knights and mimicked demon forms. */
 
 	bool reflect;			/* Reflect 'bolt' attacks */
 	int shield_deflect;		/* Deflect various attacks (ranged), needs USE_BLOCKING */

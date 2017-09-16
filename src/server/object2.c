@@ -8597,11 +8597,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 #endif
 
 		/* no anti-undead items for vampires */
-		if (p_ptr->prace == RACE_VAMPIRE && anti_undead(o_ptr, p_ptr)) continue;
-#ifdef ENABLE_HELLKNIGHT
+		if (anti_undead(o_ptr, p_ptr)) continue;
 		/* no anti-demon items for hell knights */
-		if (p_ptr->pclass == CLASS_HELLKNIGHT && anti_demon(o_ptr)) continue;
-#endif
+		if (anti_demon(o_ptr, p_ptr)) continue;
 
 		/* Don't generate NO_MAGIC or DRAIN_MANA items if we do use magic */
 		if (caster) {
@@ -10921,6 +10919,10 @@ bool anti_undead(object_type *o_ptr, player_type *p_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
 
+	/* Assumption: Only undead get this.
+	   (Affects true vampires and mimicked undead forms.) */
+	if (!p_ptr->suscep_life) return FALSE;
+
 	/* only concerns wearable items */
 	if (wield_slot(0, o_ptr) == -1) return FALSE;
 
@@ -10949,7 +10951,8 @@ bool anti_undead(object_type *o_ptr, player_type *p_ptr) {
 		    ((l == 2 || o_ptr->name1 || !p_ptr->resist_lite) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
 			return(TRUE);
 	} else {
-		if ((f3 & TR3_BLESSED) || (f1 & TR1_KILL_UNDEAD))
+		if ((f3 & TR3_BLESSED) ||
+		    ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD))) /* allow undead to kill each other with *slay undead* weapons =p */
 			return(TRUE);
 	}
 
@@ -10959,9 +10962,13 @@ bool anti_undead(object_type *o_ptr, player_type *p_ptr) {
 /* Check whether an item causes HP drain on a demonic player (hell knight) who wears/wields it.
    Less strict than anti_undead(), since Vampires aren't really supposed to wear any light,
    while for hell knights they don't have any intrinsic light source! */
-bool anti_demon(object_type *o_ptr) {
+bool anti_demon(object_type *o_ptr, player_type *p_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
+
+	/* Assumptions: Vampires are both, demons are just suscep_good, only demons get suscep_good.
+	   (Affects hell knights and mimicked demon forms.) */
+	if (!p_ptr->demon) return FALSE;
 
 	/* only concerns wearable items */
 	if (wield_slot(0, o_ptr) == -1) return FALSE;
@@ -10989,7 +10996,8 @@ bool anti_demon(object_type *o_ptr) {
 		    ((l >= 2 || o_ptr->name1) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
 			return(TRUE);
 	} else {
-		if ((f3 & TR3_BLESSED) || (f1 & TR1_KILL_DEMON))
+		if ((f3 & TR3_BLESSED) ||
+		    ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_DEMON))) /* allow demons to kill each other with *slay demon* weapons =p */
 			return(TRUE);
 	}
 

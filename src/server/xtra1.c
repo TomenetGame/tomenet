@@ -2378,10 +2378,10 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	if (r_ptr->flags3 & RF3_HURT_LITE) { p_ptr->suscep_lite = TRUE; csheet_boni->cb[2] |= CB3_SLITE; }
 #if 0 /* for now let's say EVIL is a state of mind, so the mimic isn't necessarily evil */
 	if (r_ptr->flags3 & RF3_EVIL) p_ptr->suscep_good = TRUE;
-#else /* the appearance is important for damage though - let's keep it restricted to demon/undead for now */
-	if (r_ptr->flags3 & RF3_DEMON || r_ptr->flags3 & RF3_UNDEAD) p_ptr->suscep_good = TRUE;
 #endif
-	if (r_ptr->flags3 & RF3_UNDEAD) p_ptr->suscep_life = TRUE;
+	/* the appearance is important for damage though - let's keep it restricted to demon/undead for now */
+	if (r_ptr->flags3 & RF3_DEMON) p_ptr->suscep_good = p_ptr->demon = TRUE;
+	if (r_ptr->flags3 & RF3_UNDEAD) p_ptr->suscep_good = p_ptr->suscep_life = TRUE;
 	if (r_ptr->flags3 & RF3_GOOD) p_ptr->suscep_evil = TRUE;
 
 	/* Grant a mimic a maximum of 2 immunities for now. All further immunities
@@ -3180,6 +3180,7 @@ void calc_boni(int Ind) {
 	p_ptr->suscep_good = FALSE;
 	p_ptr->suscep_evil = FALSE;
 	p_ptr->suscep_life = FALSE;
+	p_ptr->demon = FALSE;
 	p_ptr->resist_continuum = FALSE;
 	p_ptr->vampiric_melee = 0;
 	p_ptr->vampiric_ranged = 0;
@@ -3494,6 +3495,9 @@ void calc_boni(int Ind) {
 		} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 			if (p_ptr->lev >= 20) csheet_boni[14].cb[6] |= CB7_IFOOD;
 			p_ptr->suscep_good = TRUE;
+#ifdef ENABLE_HELLKNIGHT
+			if (p_ptr->pclass == CLASS_HELLKNIGHT) p_ptr->demon = TRUE;
+#endif
 
 			p_ptr->resist_fire = TRUE; csheet_boni[14].cb[0] |= CB1_RFIRE;
 			p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
@@ -4123,18 +4127,16 @@ void calc_boni(int Ind) {
 			if (!(f4 & TR4_FUEL_LITE)) csheet_boni[i-INVEN_WIELD].cb[12] |= CB13_XLITE;
 		}
 
-		if (p_ptr->prace == RACE_VAMPIRE) {
-			/* powerful lights and anti-undead/evil items damage vampires */
-			if (anti_undead(o_ptr, p_ptr)) p_ptr->drain_life++;
-			/* then again, spectral weapons don't hurt them */
-			if (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL) p_ptr->drain_life--; /* hack: cancel out the life-drain applied by spectral'ity */
-		}
-#ifdef ENABLE_HELLKNIGHT
-		if (p_ptr->pclass == CLASS_HELLKNIGHT) {
-			/* powerful lights and anti-demon/evil items damage hell knights */
-			if (anti_demon(o_ptr)) p_ptr->drain_life++;
-		}
-#endif
+		/* powerful lights and anti-undead/evil items damage undead */
+		if (anti_undead(o_ptr, p_ptr)) p_ptr->drain_life++;
+
+		/* then again, spectral weapons don't hurt true vampires */
+		if (p_ptr->prace == RACE_VAMPIRE &&
+		    (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL))
+			p_ptr->drain_life--; /* hack: cancel out the life-drain applied by spectral'ity */
+
+		/* powerful lights and anti-demon/evil items damage hell knights and (mimicked) demons */
+		if (anti_demon(o_ptr, p_ptr)) p_ptr->drain_life++;
 
 		/* Immunity flags */
 		if (f2 & TR2_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_IFIRE; }
