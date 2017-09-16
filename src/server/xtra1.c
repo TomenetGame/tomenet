@@ -6242,6 +6242,16 @@ void calc_boni(int Ind) {
 
 /* -------------------- Limits -------------------- */
 
+	/* no_hp_regen special workings: Actually simulates having hp-drain and hp-regen at the same time, keeping each other in check */
+	if (p_ptr->no_hp_regen) {
+		if (!p_ptr->drain_life) {
+			p_ptr->drain_life = 1;
+
+			p_ptr->regenerate = TRUE;
+			//csheet_boni[14].cb[5] |= CB6_RRGHP; /* don't display this maybe */
+		}
+	}
+
 	/* Make sure we don't get negative stealth from monster body malus */
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
 
