@@ -5533,11 +5533,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	/* also show anti-undead/demon life drain */
 	switch ((j = anti_undead(o_ptr, p_ptr))) {
 	case 1: fprintf(fff, "\377oIts power is adverse to undead, draining your health.\n"); break;
-	case 2: fprintf(fff, "\377oIts power is adverse to undead, preventing your health from regenerating.\n"); break;
+	case 2: //fprintf(fff, "\377oIts power is adverse to undead, preventing your health from regenerating.\n"); break;
+		fprintf(fff, "\377oIts power is adverse to undead, hampering your health regeneration.\n"); break;
 	}
 	if (!j) switch ((j = anti_demon(o_ptr, p_ptr))) {
 	case 1: fprintf(fff, "\377oIts power is adverse to demons, draining your health.\n"); break;
-	case 2: fprintf(fff, "\377oIts power is adverse to demons, preventing your health from regenerating.\n"); break;
+	case 2: //fprintf(fff, "\377oIts power is adverse to demons, preventing your health from regenerating.\n"); break;
+		fprintf(fff, "\377oIts power is adverse to demons, hampering your health regeneration.\n"); break;
 	}
 
 	/* magically returning ranged weapon? */
