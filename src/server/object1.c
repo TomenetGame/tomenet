@@ -5527,8 +5527,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		fprintf(fff, "\377DIt's possessed by mad wrath!\n");
 
 	/* also show anti-undead/demon life drain */
-	if (anti_undead(o_ptr, p_ptr)) fprintf(fff, "\377oIt is strongly opposed to undead and would drain your health.\n");
-	else if (anti_demon(o_ptr, p_ptr)) fprintf(fff, "\377oIt is strongly opposed to demons and would drain your health.\n");
+	if (anti_undead(o_ptr, p_ptr)) fprintf(fff, "\377oIts power is adverse to undead, draining your health.\n");
+	else if (anti_demon(o_ptr, p_ptr)) fprintf(fff, "\377oIts power is adverse to demons, draining your health.\n");
 
 	/* magically returning ranged weapon? */
 	if (o_ptr->tval == TV_BOOMERANG && o_ptr->name1)
