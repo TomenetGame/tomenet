@@ -783,7 +783,7 @@ void do_takeoff_impossible(int Ind) {
 void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	player_type *p_ptr = Players[Ind];
 
-	int slot, num = 1;
+	int slot, num = 1, takeoff_slot = 0;
 	bool item_fits_dual = FALSE, equip_fits_dual = TRUE, all_cursed = FALSE;
 	bool slot1 = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
 	bool slot2 = (p_ptr->inventory[INVEN_ARM].k_idx != 0);
@@ -958,13 +958,17 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
 		}
-		inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
-		if (item >= 0) {
-			item = replay_inven_changes(Ind, item);
-			o_ptr = &(p_ptr->inventory[item]);
-			if (item == 0xFF) {
-				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
-				return; //item is gone, shouldn't happen
+		/* if we don't wield a main weapon, we can use the temporary object for the arm-object, taking it off later.. */
+		if (!p_ptr->inventory[INVEN_WIELD].k_idx) takeoff_slot = INVEN_ARM;
+		else {
+			inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
+			if (item >= 0) {
+				item = replay_inven_changes(Ind, item);
+				o_ptr = &(p_ptr->inventory[item]);
+				if (item == 0xFF) {
+					Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+					return; //item is gone, shouldn't happen
+				}
 			}
 		}
 #endif
@@ -989,13 +993,17 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return;
 		}
-		inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
-		if (item >= 0) {
-			item = replay_inven_changes(Ind, item);
-			o_ptr = &(p_ptr->inventory[item]);
-			if (item == 0xFF) {
-				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
-				return; //item is gone, shouldn't happen
+		/* if we don't wield a main weapon, we can use the temporary object for the arm-object, taking it off later.. */
+		if (!p_ptr->inventory[INVEN_WIELD].k_idx) takeoff_slot = INVEN_ARM;
+		else {
+			inven_takeoff(Ind, INVEN_ARM, 255, TRUE);
+			if (item >= 0) {
+				item = replay_inven_changes(Ind, item);
+				o_ptr = &(p_ptr->inventory[item]);
+				if (item == 0xFF) {
+					Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+					return; //item is gone, shouldn't happen
+				}
 			}
 		}
 #endif
@@ -1023,13 +1031,17 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 				return;
 			}
-			inven_takeoff(Ind, INVEN_WIELD, 255, TRUE);
-			if (item >= 0) {
-				item = replay_inven_changes(Ind, item);
-				o_ptr = &(p_ptr->inventory[item]);
-				if (item == 0xFF) {
-					Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
-					return; //item is gone, shouldn't happen
+			/* if we don't wield a secondary weapon or a shield, we can use the temporary object for the arm-object, taking it off later.. */
+			if (!p_ptr->inventory[INVEN_ARM].k_idx) takeoff_slot = INVEN_WIELD;
+			else {
+				inven_takeoff(Ind, INVEN_WIELD, 255, TRUE);
+				if (item >= 0) {
+					item = replay_inven_changes(Ind, item);
+					o_ptr = &(p_ptr->inventory[item]);
+					if (item == 0xFF) {
+						Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
+						return; //item is gone, shouldn't happen
+					}
 				}
 			}
 #endif
@@ -1127,17 +1139,14 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	/* Get a copy of the object to wield */
 	tmp_obj = *o_ptr;
 
-	if (slot == INVEN_AMMO) num = o_ptr->number;
-	tmp_obj.number = num;
-
 	/* Decrease the item (from the pack) */
 	if (item >= 0) {
-		inven_item_increase(Ind, item, -num);
+		inven_item_increase(Ind, item, -99);
 		inven_item_optimize(Ind, item);
 	}
 	/* Decrease the item (from the floor) */
 	else {
-		floor_item_increase(0 - item, -num);
+		floor_item_increase(0 - item, -99);
 		floor_item_optimize(0 - item);
 	}
 
@@ -1154,28 +1163,31 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		o_ptr->pval += tmp_obj.pval; /* unused, except if it was wished for */
 		msg_print(Ind, "\377GThe amulets merge into one!");
 	} else {
-
+		/* Hack for exchanging a 2h-weapon with a shield (or secondary weapon), while the primary wield slot is empty */
+		object_type *ot_ptr;
+		if (!takeoff_slot) takeoff_slot = slot;
+		ot_ptr = &(p_ptr->inventory[takeoff_slot]);
 #if 0
 		/* Take off the "entire" item if one is there */
-		if (p_ptr->inventory[slot].k_idx) inven_takeoff(Ind, slot, 255, TRUE);
+		if (p_ptr->inventory[takeoff_slot].k_idx) inven_takeoff(Ind, takeoff_slot, 255, TRUE);
 #else	// 0
 		/* Take off existing item */
-		if (slot != INVEN_AMMO) {
-			if (o_ptr->k_idx) {
+		if (takeoff_slot != INVEN_AMMO) {
+			if (ot_ptr->k_idx) {
 				/* Take off existing item */
-				(void)inven_takeoff(Ind, slot, 255, TRUE);
+				(void)inven_takeoff(Ind, takeoff_slot, 255, TRUE);
 			}
 		} else {
-			if (o_ptr->k_idx) {
+			if (ot_ptr->k_idx) {
 				/* !M inscription tolerates different +hit / +dam enchantments,
 				   which will be merged and averaged in object_absorb.
 				   However, this doesn't work for cursed items or artefacts. - C. Blue */
-				if (!object_similar(Ind, o_ptr, &tmp_obj, 0x1)) {
+				if (takeoff_slot != slot || !object_similar(Ind, ot_ptr, &tmp_obj, 0x1)) {
 					/* Take off existing item */
-					(void)inven_takeoff(Ind, slot, 255, TRUE);
+					(void)inven_takeoff(Ind, takeoff_slot, 255, TRUE);
 				} else {
 					// tmp_obj.number += o_ptr->number;
-					object_absorb(Ind, &tmp_obj, o_ptr);
+					object_absorb(Ind, &tmp_obj, ot_ptr);
 				}
 			}
 		}
