@@ -1138,15 +1138,17 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	/* Get a copy of the object to wield */
 	tmp_obj = *o_ptr;
+	if (slot == INVEN_AMMO) num = o_ptr->number;
+	tmp_obj.number = num;
 
 	/* Decrease the item (from the pack) */
 	if (item >= 0) {
-		inven_item_increase(Ind, item, -99);
+		inven_item_increase(Ind, item, -num);
 		inven_item_optimize(Ind, item);
 	}
 	/* Decrease the item (from the floor) */
 	else {
-		floor_item_increase(0 - item, -99);
+		floor_item_increase(0 - item, -num);
 		floor_item_optimize(0 - item);
 	}
 
