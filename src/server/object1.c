@@ -4251,7 +4251,7 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff) {
 			if (p_ptr->monk_heavyarmor && !old_monk_heavyarmor) fprintf(fff, "\377r    Your martial arts performance.\n");
 			if (p_ptr->rogue_heavyarmor && !old_rogue_heavyarmor) fprintf(fff, "\377r    Your flexibility and awareness.\n");
 			if (p_ptr->awkward_shoot && !old_awkward_shoot) fprintf(fff, "\377r    Your shooting ability (all shields do that).\n");
-//			fprintf(fff, "\n");
+			//fprintf(fff, "\n");
 		}
 	}
 
@@ -4288,14 +4288,14 @@ static void display_armour_handling(int Ind, object_type *o_ptr, FILE *fff) {
 				if (!p_ptr->awkward_shoot && old_awkward_shoot) fprintf(fff, "\377g    Your shooting ability (all shields encumber this).\n");
 			}
 		}
-//		if (fff) fprintf(fff, "\n");
+		//if (fff) fprintf(fff, "\n");
 	}
 
 #ifdef NEW_SHIELDS_NO_AC
 	if (o_ptr->tval != TV_SHIELD)
 #endif
 	if (fff) fprintf(fff, "\377sUsing it you would have \377W%d\377s total AC.\n", p_ptr->dis_ac + p_ptr->dis_to_a);
-//	else msg_format(Ind, "\377s  Using it you would have %d total AC.", p_ptr->dis_ac + p_ptr->dis_to_a);
+	//else msg_format(Ind, "\377s  Using it you would have %d total AC.", p_ptr->dis_ac + p_ptr->dis_to_a);
 
 	/* get our armour back */
 	object_copy(&p_ptr->inventory[slot], old_ptr);
@@ -4320,7 +4320,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	bool old_heavy_wield = p_ptr->heavy_wield;
 	bool old_icky_wield = p_ptr->icky_wield;
 	bool old_awkward_wield = p_ptr->awkward_wield;
-//	bool old_easy_wield = p_ptr->easy_wield;
+	//bool old_easy_wield = p_ptr->easy_wield;
 
 	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
@@ -4359,12 +4359,12 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 
 		if (!old_awkward_wield && !old_heavy_wield && !old_icky_wield) {
 			if (fff) fprintf(fff, "\377rWielding this weapon would give you one or more mali:\n");
-//			else msg_print(Ind, "\377s  This weapon seems too heavy or in another way unfit for you!");
-//see below instead
+			//else msg_print(Ind, "\377s  This weapon seems too heavy or in another way unfit for you!");
+			//see below instead
 		} else {
 			if (fff) fprintf(fff, "\377rWielding this weapon would give you one or more additional mali:\n");
-//			else msg_print(Ind, "\377s  This weapon would seem to give you additional trouble!");
-//see below instead
+			//else msg_print(Ind, "\377s  This weapon would seem to give you additional trouble!");
+			//see below instead
 		}
 
 		if (fff) {
@@ -4385,9 +4385,9 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 				else
 					fprintf(fff, "\377r    It is edged and not blessed.\n");
 			}
-//			fprintf(fff, "\n");
+			//fprintf(fff, "\n");
 		}
-//we get this info although we didn't *id*!
+		//we get this info although we didn't *id*!
 		else {
 			if (p_ptr->awkward_wield && !old_awkward_wield) msg_print(Ind, "\377s  One-handed use reduces its efficiency.");
 			if (k_info[o_ptr->k_idx].flags4 & TR4_COULD2H) msg_print(Ind, "\377s  Wielding it two-handedly might make it even more effective.");
@@ -4428,7 +4428,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 				}
 			}
 		}
-//		if (fff) fprintf(fff, "\n");
+		//if (fff) fprintf(fff, "\n");
 	}
 
 	/* get our weapon back */
@@ -4453,7 +4453,7 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	object_type forge, *old_ptr = &forge;
 
 	bool old_heavy_shoot = p_ptr->heavy_shoot;
-//	bool old_awkward_shoot = p_ptr->awkward_shoot;
+	//bool old_awkward_shoot = p_ptr->awkward_shoot;
 
 	/* save timed effects that might be changed on weapon switching */
 	long tim_wraith = p_ptr->tim_wraith;
@@ -4487,7 +4487,7 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 			if (fff) fprintf(fff, "\377rThis weapon currently seems too heavy for you to use!\n");
 			else msg_print(Ind, "\377s  This weapon currently seems too heavy for you!");
 		}
-//			fprintf(fff, "\n");
+		//fprintf(fff, "\n");
 	}
 
 	/* Lost encumberment? */
@@ -4497,7 +4497,7 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 			if (fff) fprintf(fff, "\377gThis weapon seems light enough for you to use properly.\n");
 			else msg_print(Ind, "\377s  This weapon seems light enough for you to use properly.");
 		}
-//		if (fff) fprintf(fff, "\n");
+		//if (fff) fprintf(fff, "\n");
 	}
 
 	/* get our weapon back */
@@ -5525,6 +5525,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	/* Stormbringer hardcoded note to give a warning!- C. Blue */
 	if (o_ptr->name2 == EGO_STORMBRINGER)
 		fprintf(fff, "\377DIt's possessed by mad wrath!\n");
+
+	/* also show anti-undead/demon life drain */
+	if (anti_undead(o_ptr, p_ptr)) fprintf(fff, "\377oIt is strongly opposed to undead and would drain your health.\n");
+	else if (anti_demon(o_ptr, p_ptr)) fprintf(fff, "\377oIt is strongly opposed to demons and would drain your health.\n");
 
 	/* magically returning ranged weapon? */
 	if (o_ptr->tval == TV_BOOMERANG && o_ptr->name1)
