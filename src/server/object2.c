@@ -10915,7 +10915,7 @@ s_printf("A_TIMEOUT: handle_art_d 2 (%d)\n", aidx);
 }
 
 /* Check whether an item causes HP drain on an undead player (vampire) who wears/wields it */
-bool anti_undead(object_type *o_ptr, player_type *p_ptr) {
+byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
 
@@ -10944,12 +10944,10 @@ bool anti_undead(object_type *o_ptr, player_type *p_ptr) {
 	if (p_ptr->prace != RACE_VAMPIRE) {
 		/* powerful lights and anti-undead/evil items damage undead */
 		if (l) { /* light sources, or other items that provide light */
-			if ((f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD) ||
-			    ((f5 & TR5_WHITE_LIGHT) && (l >= 4 || o_ptr->name1 || !p_ptr->resist_lite))) //allowing feanorians of the magi
-				return(TRUE);
+			if ((f1 & TR1_SLAY_UNDEAD) || (f1 & TR1_KILL_UNDEAD)) return 1;
+			if ((f5 & TR5_WHITE_LIGHT) && (l >= 3 || o_ptr->name1 || !p_ptr->resist_lite)) return 2;
 		} else {
-			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD)) /* allow undead to kill each other with *slay undead* weapons =p */
-				return(TRUE);
+			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD)) return 1; /* allow undead to kill each other with *slay undead* weapons =p */
 		}
 		return FALSE;
 	}
@@ -10963,11 +10961,11 @@ bool anti_undead(object_type *o_ptr, player_type *p_ptr) {
 		    /* .. instead this, to make normal Brilliance/Night&Day/Light hats wearable: (Added BLESSED to Devotion amulet though, to actually exempt it) */
 		    (l > 2) ||
 		    ((l == 2 || o_ptr->name1 || !p_ptr->resist_lite) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
-			return(TRUE);
+			return 1;
 	} else {
 		if ((f3 & TR3_BLESSED) ||
 		    ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_UNDEAD))) /* allow undead to kill each other with *slay undead* weapons =p */
-			return(TRUE);
+			return 1;
 	}
 
 	return(FALSE);
@@ -10976,7 +10974,7 @@ bool anti_undead(object_type *o_ptr, player_type *p_ptr) {
 /* Check whether an item causes HP drain on a demonic player (hell knight) who wears/wields it.
    Less strict than anti_undead(), since Vampires aren't really supposed to wear any light,
    while for hell knights they don't have any intrinsic light source! */
-bool anti_demon(object_type *o_ptr, player_type *p_ptr) {
+byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	int l = 0;
 
@@ -11011,15 +11009,13 @@ bool anti_demon(object_type *o_ptr, player_type *p_ptr) {
 #endif
 	    ) {
 		/* powerful lights and anti-demon items damage demons --
-		   note that (light radius 3 instead of 2) this is actually rather the anti-undead version above than a softened version of true anti-demon;
+		   note that (light radius!) this is actually rather the anti-undead version above than a softened version of true anti-demon;
 		   reasoning is that undead and demon mimic forms should be treated equally in this regard. */
 		if (l) { /* light sources, or other items that provide light */
-			if ((f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON) ||
-			    ((f5 & TR5_WHITE_LIGHT) && (l >= 4 || o_ptr->name1 || !p_ptr->resist_lite))) //allowing feanorians of the magi
-				return(TRUE);
+			if ((f1 & TR1_SLAY_DEMON) || (f1 & TR1_KILL_DEMON)) return 1;
+			if ((f5 & TR5_WHITE_LIGHT) && (l >= 3 || o_ptr->name1 || !p_ptr->resist_lite)) return 2;
 		} else {
-			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_DEMON)) /* allow demons to kill each other with *slay demon* weapons =p */
-				return(TRUE);
+			if ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_DEMON)) return 2; /* allow demons to kill each other with *slay demon* weapons =p */
 		}
 		return FALSE;
 	}
@@ -11031,11 +11027,11 @@ bool anti_demon(object_type *o_ptr, player_type *p_ptr) {
 		    //(f5 & TR5_WHITE_LIGHT) || /* ! (controversial: Anchor, Stone, Razorback, Knowledge, Orthanc) */
 		    /* .. instead this, to make normal Brilliance/Night&Day/Light hats wearable: (Added BLESSED to Devotion amulet though, to actually exempt it) */
 		    ((l >= 2 || o_ptr->name1) && (f5 & TR5_WHITE_LIGHT))) /* ! (controversial: Razorback, Knowledge, Orthanc) */
-			return(TRUE);
+			return 1;
 	} else {
 		if ((f3 & TR3_BLESSED) ||
 		    ((!is_weapon(o_ptr->tval) || o_ptr->name1) && (f1 & TR1_KILL_DEMON))) /* allow demons to kill each other with *slay demon* weapons =p */
-			return(TRUE);
+			return 1;
 	}
 
 	return(FALSE);

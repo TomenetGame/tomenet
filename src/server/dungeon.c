@@ -756,6 +756,8 @@ static void regenhp(int Ind, int percent) {
 	int                   old_chp;
 	int freeze_test_heal = p_ptr->test_heal;
 
+	if (p_ptr->no_hp_regen) return;
+
 	/* Save the old hitpoints */
 	old_chp = p_ptr->chp;
 

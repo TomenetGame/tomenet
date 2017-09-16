@@ -2828,6 +2828,7 @@ struct player_type {
 	int free_mimic, pvp_prevent_tele, pvp_prevent_phase;
 	long heal_effect;
 	bool no_heal;			/* for special events */
+	bool no_hp_regen;		/* for anti_undead/anti_demon soft version, for mimicked forms */
 
 	/* for client-side weather */
 	bool panel_changed;

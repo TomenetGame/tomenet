@@ -3234,6 +3234,7 @@ void calc_boni(int Ind) {
 	p_ptr->admin_invuln = p_ptr->admin_invinc = FALSE;
 
 	p_ptr->no_heal = FALSE;
+	p_ptr->no_hp_regen = FALSE;
 
 
 	/* Not a limit, but good place maybe */
@@ -4128,15 +4129,21 @@ void calc_boni(int Ind) {
 		}
 
 		/* powerful lights and anti-undead/evil items damage undead */
-		if (anti_undead(o_ptr, p_ptr)) p_ptr->drain_life++;
+		switch (anti_undead(o_ptr, p_ptr)) {
+		case 1: p_ptr->drain_life++; break;
+		case 2: p_ptr->no_hp_regen = TRUE; break;
+		}
+
+		/* powerful lights and anti-demon/evil items damage hell knights and (mimicked) demons */
+		switch (anti_demon(o_ptr, p_ptr)) {
+		case 1: p_ptr->drain_life++; break;
+		case 2: p_ptr->no_hp_regen = TRUE; break;
+		}
 
 		/* then again, spectral weapons don't hurt true vampires */
 		if (p_ptr->prace == RACE_VAMPIRE &&
 		    (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL))
 			p_ptr->drain_life--; /* hack: cancel out the life-drain applied by spectral'ity */
-
-		/* powerful lights and anti-demon/evil items damage hell knights and (mimicked) demons */
-		if (anti_demon(o_ptr, p_ptr)) p_ptr->drain_life++;
 
 		/* Immunity flags */
 		if (f2 & TR2_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_IFIRE; }

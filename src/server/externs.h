@@ -1313,8 +1313,8 @@ extern void handle_art_inum(int aidx);
 extern void handle_art_inumpara(int aidx);
 
 extern byte get_attr_from_tval(object_type *o_ptr);
-extern bool anti_undead(object_type *o_ptr, player_type *p_ptr);
-extern bool anti_demon(object_type *o_ptr, player_type *p_ptr);
+extern byte anti_undead(object_type *o_ptr, player_type *p_ptr);
+extern byte anti_demon(object_type *o_ptr, player_type *p_ptr);
 extern u32b make_resf(player_type *p_ptr);
 
 extern void inven_index_slide(int Ind, s16b begin, s16b mod, s16b end);
