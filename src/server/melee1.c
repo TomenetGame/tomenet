@@ -44,7 +44,7 @@
 //#define ELEMENTAL_AC_MITIGATION
 
 /* Let RBE_UN_POWER additionally drain MP from the player? */
-#define UNPOWER_DRAINS_MP
+//#define UNPOWER_DRAINS_MP
 
 
 /*
