@@ -48,31 +48,44 @@
 #ifdef USE_SOUND_2010
 static void staircase_sfx(int Ind) {
 	int b = Players[Ind]->body_monster;
+
 	if (b) {
-		/* hack: Riders */
+		/* Hardcoded forms */
 		switch (b) {
+		/* Riders */
 		case 955: case 956: case 957: case 958: case 959:
 			sound(Ind, "staircase_rider", "staircase", SFX_TYPE_COMMAND, FALSE);
+			return;
+		/* 'H' forms, oh dear.. at least cover the druid forms: */
+		case 279:
+			sound(Ind, "staircase_pad", "staircase", SFX_TYPE_COMMAND, FALSE);
+			return;
+		case 641: case 723:
+			sound(Ind, "staircase_rider", "staircase", SFX_TYPE_COMMAND, FALSE);
+			return;
+		case 778:
+			sound(Ind, "staircase_pad", "staircase", SFX_TYPE_COMMAND, FALSE);
 			return;
 		}
 
 		switch (r_info[b].d_char) {
 		case 'b': case 'B': case 'F':
 			sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
-			break;
+			return;
 		case 'C': case 'f': case 'Z':
 		case 'R': case 'd': case 'D': case 'q': case 'r': case 'M':
 			sound(Ind, "staircase_pad", "staircase", SFX_TYPE_COMMAND, FALSE);
-			break;
+			return;
 		//case 'X': ~?~
 		case '~': case 'J': case 'i': case 'n': case 'v': case 'w': case 'E': case 'G':
 			sound(Ind, "staircase_slither", "staircase", SFX_TYPE_COMMAND, FALSE);
-			break;
+			return;
 		case 'I': case 'S': case 'c': case 'a': case 'l': case 'K':
 			sound(Ind, "staircase_scuttle", "staircase", SFX_TYPE_COMMAND, FALSE);
-			break;
+			return;
 		default:
 			sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
+			return;
 		}
 	} else if (Players[Ind]->fruit_bat) sound(Ind, "staircase_fly", "staircase", SFX_TYPE_COMMAND, FALSE);
 	else sound(Ind, "staircase", NULL, SFX_TYPE_COMMAND, FALSE);
