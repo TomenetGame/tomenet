@@ -12404,7 +12404,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		case GF_HELL_FIRE:
 			if (r_ptr->flags3 & (RF3_GOOD)) {
 				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					dam *= 2; dam /= 2;
+					dam *= 2; dam = (dam * 2) / 3;
 				} else if (r_ptr->flags9 & RF9_RES_FIRE)
 					dam = (dam * 3) / 2;
 				else
@@ -12438,9 +12438,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 				if (r_ptr->flags3 & RF3_IM_FIRE) {
 					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
 				} else if (r_ptr->flags9 & RF9_RES_FIRE)
-					dam = (dam * 6) / 4;
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-					dam *= 2;
+					dam = (dam * 3) / 2;
 				else
 					dam *= 2;
 			} else {
