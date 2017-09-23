@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. September 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 23. September 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11229,9 +11229,9 @@ DG_CURSE        Rarely summons a random monster on you, even if uncursed.
                 negate TY_CURSE effects.
                 ("It carries an ancient morgothian curse.")
 
-If 'CURSED' or 'HEAVY_CURSE' occurs on a weapon or armour piece, the curses
-can alternatively be broken by enchanting the item's stats above +0 manually.
-(The enchant service of shops won't help!)
+If 'CURSED' or 'HEAVY_CURSE' occurs on an enchantable item such as a weapon or
+armour piece, the curses can alternatively be broken by enchanting the item's
+stats above +0 manually. (Note: The enchant service of shops CANNOT do this!)
 Each enchantment of any of their stats (to-hit, to-dam, to-ac) above +0 has
 a certain chance to break the curse. This can often be cheaper than buying a
 *Remove Curse* scroll for HEAVY_CURSE items.
