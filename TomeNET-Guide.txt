@@ -6522,7 +6522,7 @@ Erebor                       |  Smaug                | Arkenstone of Thrain
 Dol Guldur            (***)  |  Shadow of Dol Guldur | Ring of Durin
 Mount Doom            (***)  |  Sauron, the Sorceror | -
 The Cloud Planes             |  The Living Lightning | -
-Nether Realm                 |  Zu-Aon               | Ring of Phasing
+Nether Realm                 |  Zu-Aon (*****)       | Ring of Phasing
 
 (*) Angband does not have a designated final boss, but the unique monster
 Tik'srvzllat does not appear before depth 127. Since Angband ends at depth 127,
@@ -6534,6 +6534,10 @@ deeper. See (1.3), (1.3a) and (1.3b) for more information.
 
 (**) A space-time anchor is an anti-teleportation field of radius 12 that will
 prevent all teleportation and stall all Word of Recall attempts within.
+(Note: It actually prevents all teleportation attempts that originate from
+       within it and also prevents all teleportation targets to be moved away
+       from within it, but does not prevent a teleportation from dropping its
+       target into them.)
 
 (***) While Sauron, the Sorceror, boss of Mount Doom, does not drop any
 specific artifact, he is still a required kill before you are able to encounter
@@ -6546,6 +6550,13 @@ you didn't kill it before killing Sauron.
 Also, you cannot find The One Ring anymore if you already killed Sauron.
 
 (****) The Halls of Mandos are barred to ANY unique monsters!
+
+(*****) Zu-Aon's teleport-to attack has special transdimensional power and
+actually defeats anti-teleportation, space-time anchors and cannot be mitigated
+by saving throw or teleportation resistance either.
+It can however be defeated regularly by holy martyr or by antimagic fields
+which -as usual- can prevent the spell from coming into existance in the first
+place.
 
 
 
@@ -14567,8 +14578,8 @@ F: flag list
                 immediately without the need for re-polymorphing.
                 Note that two immunities are actually exempt and don't
                 translate directly:
-                    IM_TELE actually always gives RES_TELE.
-                    IM_PSI instead gives strong insanity reduction.
+                    IM_TELE gives teleport resistance (like RES_TELE) instead.
+                    IM_PSI gives insanity reduction (like EMPTY_MIND) instead.
     PASS_WALL   Will allow the mimic to pass walls like a ghost.
                 These immaterial forms also drain the hit points of their
                 user.
