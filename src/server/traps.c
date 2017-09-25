@@ -244,6 +244,7 @@ static bool do_player_trap_call_out(int Ind) {
 		if (!m_ptr->r_idx) continue;
 		if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
 		if ((r_ptr->flags1 & RF1_UNIQUE)) continue;
+		if (check_st_anchor(&m_ptr->wpos, m_ptr->fy, m_ptr->fx)) continue;
 
 		if (m_ptr->level >= h_level) {
 			h_level = m_ptr->level;
@@ -260,12 +261,14 @@ static bool do_player_trap_call_out(int Ind) {
 		cx = p_ptr->px + ddx[i];
 		cy = p_ptr->py + ddy[i];
 		if (!in_bounds(cy, cx)) continue;
+
 		/* Skip non-empty grids */
 		if (!cave_valid_bold(zcave, cy, cx)) continue; /* This wasn't really enough.. */
 		if (!cave_empty_bold(zcave, cy, cx)) continue; /* better added this one;) -C. Blue */
 		if (zcave[cy][cx].feat == FEAT_GLYPH) continue;
 		if (zcave[cy][cx].feat == FEAT_RUNE) continue;
 		if ((cx == p_ptr->px) && (cy == p_ptr->py)) continue;
+
 		sn++;
 		/* Randomize choice */
 		if (rand_int(sn) > 0) continue;
@@ -314,7 +317,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 	if (!in_bounds(y, x)) return(FALSE);
 	if ((zcave = getcave(&p_ptr->wpos))) {
 		/* naught */
-//		c_ptr = &zcave[y][x];
+		//c_ptr = &zcave[y][x];
 	}
 	else return(FALSE);
 	if (check_st_anchor(&p_ptr->wpos, y, x)) return(FALSE);
@@ -707,8 +710,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		case TRAP_OF_TELEPORT:
 		{
 			int chance = (195 - p_ptr->skill_sav) / 2;
-			if (p_ptr->res_tele) chance = 50;
 
+			if (p_ptr->martyr) break;
+			if (p_ptr->res_tele) chance >>= 1;
 			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x) || magik(chance)) break;
 			msg_print(Ind, "The world whirls around you.");
 			teleport_player(Ind, RATIO*67, TRUE);

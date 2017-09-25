@@ -1495,6 +1495,7 @@ extern void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fata
 extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
 extern s16b poly_r_idx(int r_idx);
 extern bool check_st_anchor(struct worldpos *wpos, int y, int x);
+extern bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2);
 extern bool teleport_away(int m_idx, int dis);
 extern bool teleport_player(int Ind, int dis, bool ignore_pvp);
 extern void teleport_player_force(int Ind, int dis);

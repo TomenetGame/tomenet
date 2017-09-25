@@ -484,7 +484,40 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x) {
 	/* Assume no st_anchor */
 	return FALSE;
 }
+/* Like check_st_anchor() but also checks for destination grid to be anchored. */
+bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2) {
+	int i;
+	//dun_level *l_ptr = getfloor(wpos);
 
+	for (i = 1; i <= NumPlayers; i++) {
+		player_type *q_ptr = Players[i];
+
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Skip players not on this depth */
+		if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+		/* Maybe CAVE_ICKY/CAVE_STCK can be checked here */
+
+		//if (!q_ptr->st_anchor) continue;
+		//if (!q_ptr->anti_tele) continue;
+		//if ((!q_ptr->res_tele) && (rand_int(100) < 67)) continue;
+		if (!q_ptr->resist_continuum) continue;
+
+		/* Compute distance */
+		if (distance(y, x, q_ptr->py, q_ptr->px) > ST_ANCHOR_DIS &&
+		    distance(y2, x2, q_ptr->py, q_ptr->px) > ST_ANCHOR_DIS)
+			continue;
+
+		//if(istown(wpos) && randint(100)>q_ptr->lev) continue;
+
+		return TRUE;
+	  }
+
+	/* Assume no st_anchor */
+	return FALSE;
+}
 
 /*
  * Teleport a monster, normally up to "dis" grids away.
@@ -3742,18 +3775,21 @@ bool apply_discharge_item(int o_idx, int dam) {
 static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int max1, cur1, max2, cur2, ii, jj;
-
 	int chance = (195 - p_ptr->skill_sav) / 2;
-	if (p_ptr->res_tele) chance = 50; //equal to 95% saving throw (max)
 
 	if (p_ptr->martyr) return;
+	if (p_ptr->res_tele) chance >>= 1;
 
 	if (IS_PLAYER(Ind_attacker))
 		s_printf("APPLY_NEXUS_PY: %s by %s\n", p_ptr->name, Players[Ind_attacker]->name);
 
 	switch (randint((safe_area(Ind) || (p_ptr->mode & MODE_PVP)) ? 5 : 8)) { /* don't do baaad things in Monster Arena Challenge */
 	case 4: case 5:
-		if (p_ptr->anti_tele || magik(chance)) {
+		if (check_st_anchor2(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) break;
+		if (p_ptr->anti_tele) {
+			msg_print(Ind, "You are unaffected!");
+			break;
+		} else if (magik(chance)) {
 			msg_print(Ind, "You resist the effects!");
 			break;
 		}
@@ -3761,14 +3797,22 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 		else teleport_player(Ind, 200, TRUE);
 		break;
 	case 1: case 2: case 3:
-		if (p_ptr->anti_tele || magik(chance)) {
+		if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
+		if (p_ptr->anti_tele) {
+			msg_print(Ind, "You are unaffected!");
+			break;
+		} else if (magik(chance)) {
 			msg_print(Ind, "You resist the effects!");
 			break;
 		}
 		teleport_player(Ind, 200, TRUE);
 		break;
 	case 6:
-		if (magik(chance)) {
+		//if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break; checked in teleport_player_level()
+		if (p_ptr->anti_tele) {
+			msg_print(Ind, "You are unaffected!");
+			break;
+		} else if (magik(chance)) {
 			msg_print(Ind, "You resist the effects!");
 			break;
 		}
@@ -3799,7 +3843,10 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 		break;
 	case 8:
 		if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
-		if (p_ptr->anti_tele || magik(chance)) {
+		if (p_ptr->anti_tele) {
+			msg_print(Ind, "You are unaffected!");
+			break;
+		} else if (magik(chance)) {
 			msg_print(Ind, "You resist the effects!");
 			break;
 		}
@@ -10000,35 +10047,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 			}
 
-		/* Teleport other -- Teleports */
-	case GF_AWAY_ALL:
-			if (p_ptr->martyr) break;
-
-			if (IS_PVP) {
-				/* protect players in inns */
-				cave_type **zcave;
-				cave_type *c_ptr;
-				if ((zcave = getcave(wpos))) {
-					c_ptr = &zcave[p_ptr->py][p_ptr->px];
-					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) break;
-				}
-
-				/* protect AFK players */
-				if (p_ptr->afk) break;
-
-				/* Log PvP teleports - mikaelh */
-				s_printf("%s teleported (GF_AWAY_ALL) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
-					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-
-				/* Tell the one who caused it */
-				msg_format(0 - who, "You teleport %s away.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
-			}
-
-			if (fuzzy) msg_print(Ind, "Someone teleports you away!");
-			else msg_format(Ind, "%^s teleports you away!", killer);
-			teleport_player(Ind, 200, TRUE);
-			break;
-
 	case GF_WRAITH_PLAYER:
 			if (fuzzy) msg_print(Ind, "You feel less constant!");
 			else msg_format(Ind, "%^s turns you into a wraith!", killer);
@@ -10249,9 +10267,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)set_shield(Ind, 10 + (dam * 5), dam, SHIELD_NONE, 0, 0); /* removed stacking */
 			break;
 
-	case GF_TELEPORT_PLAYER:
-			if (p_ptr->martyr) break;
+	case GF_TELEPORT_PLAYER: {
+			int chance = (195 - p_ptr->skill_sav) / 2;
 
+			if (p_ptr->martyr) break;
 			if (IS_PVP) {
 				/* protect players in inns */
 				cave_type **zcave;
@@ -10272,11 +10291,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_format(0 - who, "You teleport %s away.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
 			}
 
-			if (fuzzy) msg_print(Ind, "Someone teleports you away!");
-			else msg_format(Ind, "%^s teleports you away!", killer);
+			if (p_ptr->res_tele) chance >>= 1;
+			if (rand_int(100) < chance) {
+				if (fuzzy) msg_print(Ind, "Someone teleports you away!");
+				else msg_format(Ind, "%^s teleports you away!", killer);
 
-			teleport_player(Ind, dam, TRUE);
+				teleport_player(Ind, dam, TRUE);
+			} else msg_print(Ind, "You resist the effect!");
 			break;
+			}
 
 	case GF_RECALL_PLAYER:
 			dam = 0;
@@ -10632,9 +10655,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		{
 			//bool resists_tele = FALSE;
 			//dun_level		*l_ptr = getfloor(wpos);
-			int chance = (195 - p_ptr->skill_sav) / 2; 
+			int chance = (195 - p_ptr->skill_sav) / 2;
 
-			if (p_ptr->res_tele) chance = 50; 
 			if (p_ptr->martyr) break;
 			if (IS_PVP) {
 				/* protect players in inns */
@@ -10650,7 +10672,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Log PvP teleports - mikaelh */
 				s_printf("%s teleported (GF_TELE_TO) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
-					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+				    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 				/* Tell the one who caused it */
 				msg_format(0 - who, "You command %s to return.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
@@ -10659,6 +10681,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Teleport to nowhere..? */
 			if (who >= 0 || who <= PROJECTOR_UNUSUAL) break;
 
+			if (p_ptr->res_tele) chance >>= 1;
 			if (p_ptr->anti_tele) msg_print(Ind, "You are unaffected!");
 			else if (magik(chance)) msg_print(Ind, "You resist the effect!");
 			else {
@@ -10714,19 +10737,25 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			}
 
-		if (p_ptr->ghost || p_ptr->suscep_life) {
 			/* Only affect undead */
-			if (p_ptr->res_tele) msg_print(Ind, "You are unaffected!");
-			//else if (p_ptr->lev+50 < randint(150))
-			else if (rand_int(100) < p_ptr->skill_sav) teleport_player(Ind, dam, TRUE);
-			else msg_print(Ind, "You resist the effect!");
-		}
+			if (p_ptr->ghost || p_ptr->suscep_life) {
+				int chance = 100 - p_ptr->skill_sav;
+
+				if (p_ptr->res_tele) chance >>= 1;
+				if (rand_int(100) < chance) {
+					if (fuzzy) msg_print(Ind, "Someone teleports you away!");
+					else msg_format(Ind, "%^s teleports you away!", killer);
+					//teleport_player(Ind, 200, TRUE);
+					teleport_player(Ind, dam, TRUE);
+				}
+				else msg_print(Ind, "You resist the effect!");
+			}
 
 			/* No "real" damage */
 			dam = 0;
 			break;
 
-		/* Teleport evil (Use "dam" as "power") */
+	/* Teleport evil (Use "dam" as "power") */
 	case GF_AWAY_EVIL:
 			if (p_ptr->martyr) break;
 			if (IS_PVP) {
@@ -10746,42 +10775,58 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			}
 
+			/* Only affect evil */
 			if (p_ptr->suscep_good) {
-				/* Only affect evil */
-				if (p_ptr->res_tele)
-					msg_print(Ind, "You are unaffected!");
-				//else if (p_ptr->lev+50 < randint(150))
-				else if (rand_int(100) < p_ptr->skill_sav)
+				int chance = 100 - p_ptr->skill_sav;
+
+				if (p_ptr->res_tele) chance >>= 1;
+				if (rand_int(100) < chance) {
+					if (fuzzy) msg_print(Ind, "Someone teleports you away!");
+					else msg_format(Ind, "%^s teleports you away!", killer);
+					//teleport_player(Ind, 200, TRUE);
 					teleport_player(Ind, dam, TRUE);
-				else
-					msg_print(Ind, "You resist the effect!");
+				}
+				else msg_print(Ind, "You resist the effect!");
 			}
 			/* No "real" damage */
 			dam = 0;
 			break;
 
-#if 0	//already defined above for affecting ALL players!
-		/* Teleport monster (Use "dam" as "power") */
-	case GF_AWAY_ALL:
-			if (p_ptr->martyr) break;
-			//if (p_ptr->body_monster) { --commented out to be consistent with GF_DISP_ALL
-			//if (p_ptr->body_monster) {
-				bool resists_tele = FALSE;
-				dun_level *l_ptr = getfloor(wpos);
+	/* Teleport other -- Teleports */
+	case GF_AWAY_ALL: {
+			int chance = 100 - p_ptr->skill_sav;
 
-				if (p_ptr->res_tele)
-					msg_print(Ind, "You are unaffected!");
-				//else if (p_ptr->lev+50 < randint(150))
-				else if (rand_int(100) < p_ptr->skill_sav)
-					teleport_player(Ind, dam, TRUE);
-				else
-					msg_print(Ind, "You resist the effect!");
-			//}
+			if (p_ptr->martyr) break;
+			if (IS_PVP) {
+				/* protect players in inns */
+				cave_type **zcave;
+				cave_type *c_ptr;
+				if ((zcave = getcave(wpos))) {
+					c_ptr = &zcave[p_ptr->py][p_ptr->px];
+					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) break;
+				}
+
+				/* protect AFK players */
+				if (p_ptr->afk) break;
+
+				/* Log PvP teleports - mikaelh */
+				s_printf("%s teleported (GF_AWAY_ALL) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+					p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			}
+
+			if (p_ptr->res_tele) chance >>= 1;
+			if (rand_int(100) < chance) {
+				if (fuzzy) msg_print(Ind, "Someone teleports you away!");
+				else msg_format(Ind, "%^s teleports you away!", killer);
+				//teleport_player(Ind, 200, TRUE);
+				teleport_player(Ind, dam, TRUE);
+			}
+			else msg_print(Ind, "You resist the effect!");
 
 			/* No "real" damage */
 			dam = 0;
 			break;
-#endif
+			}
 
 		/* Turn undead (Use "dam" as "power") */
 	case GF_TURN_UNDEAD:

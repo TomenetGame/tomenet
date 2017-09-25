@@ -3484,9 +3484,11 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF6_TELE_TO */
-	case RF6_OFFSET+8:
-		if (monst_check_antimagic(Ind, m_idx)) break;
+	case RF6_OFFSET+8: {
+		int chance = (195 - p_ptr->skill_sav) / 2;
+
 		if (p_ptr->martyr) break;
+		if (monst_check_antimagic(Ind, m_idx)) break;
 
 		/* No teleporting within no-tele vaults and such */
 		if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK)) {
@@ -3494,18 +3496,15 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 
-/*		if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/*if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to command you to return.", m_name);
 			break;
-		}
-*/
+		} */
 		disturb(Ind, 1, 0);
 		if (m_ptr->r_idx != RI_ZU_AON) { /* can always TELE_TO */
-			int chance = (195 - p_ptr->skill_sav) / 2;
-			if (p_ptr->res_tele) chance = 50;
+			if (p_ptr->res_tele) chance >>= 1;
 			/* Hack -- duplicated check to avoid silly message */
-			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) ||
-			    magik(chance)) {
+			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) || magik(chance)) {
 				msg_format(Ind, "%^s commands you to return, but you don't care.", m_name);
 				break;
 			}
@@ -3514,14 +3513,15 @@ bool make_attack_spell(int Ind, int m_idx) {
 		msg_format(Ind, "%^s commands you to return.", m_name);
 		teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
 		break;
+		}
 
 	/* RF6_TELE_AWAY */
 	case RF6_OFFSET+9: {
 		int chance = (195 - p_ptr->skill_sav) / 2;
-		if (p_ptr->res_tele) chance = 50;
 
-		if (monst_check_antimagic(Ind, m_idx)) break;
 		if (p_ptr->martyr) break;
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		if (p_ptr->res_tele) chance >>= 1;
 
 		/* No teleporting within no-tele vaults and such */
 		if ((zcave[oy][ox].info & CAVE_STCK) || (zcave[y][x].info & CAVE_STCK)) {
@@ -3529,14 +3529,14 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		}
 
-/*		if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
+		/*if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			msg_format(Ind, "%^s fails to teleport you away.", m_name);
 			break;
-		}
-*/
+		}*/
+
 		disturb(Ind, 1, 0);
 		/* Hack -- duplicated check to avoid silly message */
-		if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) || magik(chance)) {
+		if (p_ptr->anti_tele || check_st_anchor2(wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) || magik(chance)) {
 			msg_format(Ind, "%^s tries to teleport you away in vain.", m_name);
 			break;
 		}
