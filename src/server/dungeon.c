@@ -5180,7 +5180,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Delayed Word-of-Recall */
 	if (p_ptr->word_recall) {
 #ifdef ANTI_TELE_CHEEZE
-		if (p_ptr->anti_tele) {
+		if (p_ptr->anti_tele || check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) {
 			msg_print(Ind, "\377oA tension leaves the air around you...");
 			p_ptr->word_recall = 0;
 			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
