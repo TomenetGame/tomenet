@@ -5152,9 +5152,10 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				else
 					note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
-			} else if (!cursed_p(o_ptr) && magik(10)) {
+			} else if (!cursed_p(o_ptr) && magik(3)) {
 				note_kill = (plural ? " are destroyed!" : " is destroyed!");
 				do_kill = TRUE;
+				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
 #ifdef SMELTING
 			melt = TRUE;
@@ -5270,7 +5271,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 	}
 #ifdef SMELTING
-	else if (melt && this_o_idx == c_ptr->o_idx) { /* only apply to raw material on top of a pile, not inside */
+	else if (melt && this_o_idx == c_ptr->o_idx && !(f3 & TR3_IGNORE_FIRE)) { /* only apply to raw material on top of a pile, not inside */
 		if (o_ptr->tval == TV_GOLD) {
 			object_type forge;
 
