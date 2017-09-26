@@ -8858,7 +8858,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 		/* If the item is a dragon scale mail and we're draconian, prevent redundant immunity.
 		   (Very ugly hacking, since we change sval and k_idx on the fly and
-		    just assume that no other base item features need to be modified.) */
+		    just assume that no other base item features need to be modified.
+		    bpval is corrected afterwads.) */
 		if (o_ptr->tval == TV_DRAG_ARMOR) {
 			switch (p_ptr->prace) {
 			case RACE_DRACONIAN:
@@ -8956,6 +8957,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 			/* finally hack k_idx accordingly */
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
+			/* correct +CON */
+			o_ptr->bpval = k_info[o_ptr->k_idx].pval;
 		}
 
 		break;
