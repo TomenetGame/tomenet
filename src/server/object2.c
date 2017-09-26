@@ -8662,8 +8662,19 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			case EGO_BEAUTY:
 			case EGO_CHARMING:
 			case EGO_NOLDOR: //well, could give +1 BPR and useful in Orc Cave actually =P -- still leaving it here though because pval is limited to just +2 in e_info
+				continue;
+
 			case EGO_SLOW_DESCENT: //has a high res, but still maybe not helpful enough
+#if 1
+				/* about 2.5x as common as STABILITY/MIRKWOOD.. so maybe adjust here: */
+				if (rand_int(2)) continue;
+#endif
 			case EGO_STABILITY: //since EGO_SLOW_DESCENT was added too..
+#if 0 /* With a high res, these are definitely useful! (Without high res they won't pass the min-value check.) */
+				continue;
+#else
+				break;
+#endif
 
 			case EGO_MARTIAL:
 			case EGO_FROCK_PIETY:
@@ -8734,7 +8745,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		//note: thievery gloves +1 speed are ok!
 
 		/* Limit for mage staves so they don't end up as top end gear (Wiz: 8..10) */
-		if ((o_ptr->name2 == EGO_MWIZARDRY || o_ptr->name2b == EGO_MWIZARDRY) && o_ptr->pval > 8) o_ptr->pval = 8;
+		if ((o_ptr->name2 == EGO_MWIZARDRY || o_ptr->name2b == EGO_MWIZARDRY) && o_ptr->pval > 7) o_ptr->pval = 7;
 
 		/* specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
 		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
