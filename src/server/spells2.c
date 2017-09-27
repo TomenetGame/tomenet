@@ -98,7 +98,7 @@ void divine_vengeance(int Ind, int power) {
 		int i;
 		/* players TELE_TO */
 		if (p_ptr->party == 0) {
-			msg_print(Ind, "You can only teleport to party members.");
+			msg_print(Ind, "You can only teleport-to party members.");
 		} else {
 			fire_ball(Ind, GF_KILL_GLYPH, 0, 0, 2, "");
 			for (i = 1; i <= NumPlayers; i++) {
