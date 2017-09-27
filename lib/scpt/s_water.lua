@@ -185,10 +185,10 @@ ICESTORM_I = add_spell {
 	["mana_max"] = 	30,
 	["fail"] = 	20,
 	["spell"] = 	function()
-			fire_wave(Ind, GF_COLD, 0, 80 + get_level(Ind, ICESTORM_I, 200), 1, 20 + get_level(Ind, ICESTORM_I, 27), 8, EFF_STORM, " summons an ice storm for")
+			fire_wave(Ind, GF_COLD, 0, 34 + get_level(Ind, ICESTORM_I, 200), 1, 20 + get_level(Ind, ICESTORM_I, 27), 8, EFF_STORM, " summons an ice storm for")
 	end,
 	["info"] = 	function()
-			return "dam "..(80 + get_level(Ind, ICESTORM_I, 200)).." rad 1 dur "..(20 + get_level(Ind, ICESTORM_I, 27))
+			return "dam "..(34 + get_level(Ind, ICESTORM_I, 200)).." rad 1 dur "..(20 + get_level(Ind, ICESTORM_I, 27))
 	end,
 	["desc"] = 	{ "Engulfs you in a whirl of roaring cold that strikes all foes at close range.", }
 }
@@ -200,10 +200,10 @@ ICESTORM_II = add_spell {
 	["mana_max"] = 	60,
 	["fail"] = 	-50,
 	["spell"] = 	function()
-			fire_wave(Ind, GF_ICE, 0, 80 + get_level(Ind, ICESTORM_I, 200), 1, 20 + get_level(Ind, ICESTORM_I, 27), 8, EFF_STORM, " summons an ice storm for")
+			fire_wave(Ind, GF_ICE, 0, 34 + get_level(Ind, ICESTORM_I, 200), 1, 20 + get_level(Ind, ICESTORM_I, 27), 8, EFF_STORM, " summons an ice storm for")
 	end,
 	["info"] = 	function()
-			return "dam "..(80 + get_level(Ind, ICESTORM_I, 200)).." rad 1 dur "..(20 + get_level(Ind, ICESTORM_I, 27))
+			return "dam "..(34 + get_level(Ind, ICESTORM_I, 200)).." rad 1 dur "..(20 + get_level(Ind, ICESTORM_I, 27))
 	end,
 	["desc"] = 	{ "Engulfs you in a whirl of sparkling ice that strikes all foes at close range.", }
 }
