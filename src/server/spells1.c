@@ -3785,7 +3785,11 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 
 	switch (randint((safe_area(Ind) || (p_ptr->mode & MODE_PVP)) ? 5 : 8)) { /* don't do baaad things in Monster Arena Challenge */
 	case 4: case 5:
-		if (check_st_anchor2(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) break;
+		if (m_ptr) {
+			if (check_st_anchor2(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) break;
+		} else {
+			if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
+		}
 		if (p_ptr->anti_tele) {
 			msg_print(Ind, "You are unaffected!");
 			break;
