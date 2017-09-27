@@ -96,10 +96,10 @@ void divine_vengeance(int Ind, int power) {
 
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
 		int i;
+
 		/* players TELE_TO */
-		if (p_ptr->party == 0) {
-			msg_print(Ind, "You can only teleport-to party members.");
-		} else {
+		if (p_ptr->party) {
+			//..else msg_print(Ind, "You can only teleport-to party members.");
 			fire_ball(Ind, GF_KILL_GLYPH, 0, 0, 2, "");
 			for (i = 1; i <= NumPlayers; i++) {
 				/* Skip self */
@@ -135,6 +135,7 @@ void divine_vengeance(int Ind, int power) {
 				teleport_player_to(i, p_ptr->py, p_ptr->px);
 			}
 		}
+
 		/* monsters TELE_TO */
 		project_los(Ind, GF_TELE_TO, 0, " commands return");
 	} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
