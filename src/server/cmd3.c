@@ -1440,10 +1440,24 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 #endif
 		    )) {
 			/* Oops */
-			msg_print(Ind, "Hmmm, it seems to be cursed.");
+			if (o_ptr->number == 1) msg_print(Ind, "Hmmm, it seems to be cursed.");
+			else msg_print(Ind, "Hmmm, they seem to be cursed.");
 			/* Nope */
 			Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
 			return;
+		} else {
+			char o_name[ONAME_LEN];
+
+			if (amt < o_ptr->number) {
+				object_type tmp_obj = *o_ptr;
+
+				tmp_obj.number = amt;
+				object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
+			} else object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+			if (is_armour(o_ptr->tval)) msg_format(Ind, "You tear off %s.", o_name);
+			else if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) msg_format(Ind, "You rip off %s.", o_name);
+			else msg_format(Ind, "You force off %s.", o_name);
 		}
 	}
 
@@ -1463,7 +1477,7 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
  */
 void do_cmd_drop(int Ind, int item, int quantity) {
 	player_type *p_ptr = Players[Ind];
-
+	byte override = 0;
 	object_type *o_ptr;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
@@ -1484,6 +1498,22 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	}
 #endif
 
+	if (o_ptr->questor) {
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377yYou can't drop this item. Use '\377oCTRL+d\377y' to destroy it. (Might abandon the quest!)");
+		else
+			msg_print(Ind, "\377yYou cannot drop this item. Use '\377ok\377y' to destroy it. (Might abandon the quest!)");
+		return;
+	}
+
+	if (p_ptr->inval) {
+		if (p_ptr->rogue_like_commands)
+			msg_print(Ind, "\377yYou may not drop items, wait for an admin to validate your account. (Destroy it with '\377oCTRL+d\377y' or sell it instead.)");
+		else
+			msg_print(Ind, "\377yYou may not drop items, wait for an admin to validate your account. (Destroy it with '\377ok\377y' or sell it instead.)");
+		return;
+	}
+
 	/* Handle the newbies_cannot_drop option */	
 #if (STARTEQ_TREATMENT == 1)
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop && !is_admin(p_ptr) &&
@@ -1501,9 +1531,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 		return;
 	};
 
-	/* Cannot remove cursed items */
-	if (cursed_p(o_ptr)
-	    && !(is_admin(p_ptr) /* Hack -- DM can */
+	if ((is_admin(p_ptr) /* Hack -- DM can */
 #if 1 /* allow Bloodthirster to take off/drop heavily cursed items? */
  #ifdef ENABLE_HELLKNIGHT
 	    /* note: only for corrupted priests/paladins: */
@@ -1514,35 +1542,28 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE))
  #endif
 #endif
-	    )) {
+	    )) override = 1;
+
+	/* Cannot remove cursed items */
+	if (cursed_p(o_ptr)) {
 		if ((item >= INVEN_WIELD) ) {
-			/* Oops */
-			msg_print(Ind, "Hmmm, it seems to be cursed.");
-			/* Nope */
-			return;
+			if (override) override = 2;
+			else {
+				/* Oops */
+				msg_print(Ind, "Hmmm, it seems to be cursed.");
+				/* Nope */
+				return;
+			}
 		} else if (f4 & TR4_CURSE_NO_DROP) {
-			/* Oops */
-			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
-			/* Nope */
-			return;
+			if (override) override = 2;
+			else {
+				/* Oops */
+				msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
+				/* Nope */
+				return;
+			}
 		}
 	}
-	if (o_ptr->questor) {
-		if (p_ptr->rogue_like_commands)
-			msg_print(Ind, "\377yYou can't drop this item. Use '\377oCTRL+d\377y' to destroy it. (Might abandon the quest!)");
-		else
-			msg_print(Ind, "\377yYou cannot drop this item. Use '\377ok\377y' to destroy it. (Might abandon the quest!)");
-		return;
-	}
-
-	if (p_ptr->inval) {
-		if (p_ptr->rogue_like_commands)
-			msg_print(Ind, "\377yYou may not drop items, wait for an admin to validate your account. (Destroy it with '\377oCTRL+d\377y' or sell it instead.)");
-		else
-			msg_print(Ind, "\377yYou may not drop items, wait for an admin to validate your account. (Destroy it with '\377ok\377y' or sell it instead.)");
-		return;
-	}
-
 #if 0
 	/* Mega-Hack -- verify "dangerous" drops */
 	if (cave[p_ptr->dun_depth][p_ptr->py][p_ptr->px].o_idx) {
@@ -1586,6 +1607,20 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 
 	/* Let's not end afk for this - C. Blue */
 /* 	un_afk_idle(Ind); */
+
+	/* Extra message, for override-drop */
+	if (override == 2) {
+		char o_name[ONAME_LEN];
+
+		if (quantity < o_ptr->number) {
+			object_type tmp_obj = *o_ptr;
+
+			tmp_obj.number = quantity;
+			object_desc(Ind, o_name, &tmp_obj, TRUE, 3);
+		} else object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+		msg_format(Ind, "You force away %s.", o_name);
+	}
 
 #if (STARTEQ_TREATMENT > 1)
  #ifndef RPG_SERVER
@@ -1709,10 +1744,10 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
  */
 bool do_cmd_destroy(int Ind, int item, int quantity) {
 	player_type *p_ptr = Players[Ind];
-	int			old_number;
-	//bool		force = FALSE;
-	object_type		*o_ptr;
-	char		o_name[ONAME_LEN];
+	int old_number;
+	byte override = 0;
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Get the item (in the pack) */
@@ -1750,12 +1785,21 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
+	/* Certain questor objects cannot be destroyed */
 	if (o_ptr->questor && o_ptr->questor_invincible) {
 		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
 		return FALSE;
 	}
-	if (((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr))
-	    && !(is_admin(p_ptr)
+	/* Keys cannot be destroyed */
+	if (o_ptr->tval == TV_KEY && !is_admin(p_ptr)) {
+		/* Message */
+		msg_format(Ind, "You cannot destroy %s.", o_name);
+		/* Done */
+		return FALSE;
+	}
+
+	/* Special curse-override? */
+	if (is_admin(p_ptr)
 #if 1 /* allow Bloodthirster to take off/drop heavily cursed items? */
  #ifdef ENABLE_HELLKNIGHT
 	    /* note: only for corrupted priests/paladins: */
@@ -1766,13 +1810,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE))
  #endif
 #endif
-	    )) {
-		/* Oops */
-		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
-
-		/* Nope */
-		return FALSE;
-	}
+	    ) override = 1;
 
 #ifndef FUN_SERVER /* while server is being hacked, allow this (while /wish is also allowed) - C. Blue */
 	/* Artifacts cannot be destroyed */
@@ -1797,20 +1835,26 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 		return FALSE;
 	}
 #endif
-	/* Keys cannot be destroyed */
-	if (o_ptr->tval == TV_KEY && !is_admin(p_ptr)) {
-		/* Message */
-		msg_format(Ind, "You cannot destroy %s.", o_name);
-		/* Done */
-		return FALSE;
+
+	if ((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) {
+		if (override) override = 2;
+		else {
+			/* Oops */
+			msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
+			/* Nope */
+			return FALSE;
+		}
 	}
 
 	/* Cursed, equipped items cannot be destroyed */
-	if (item >= INVEN_WIELD && cursed_p(o_ptr) && !is_admin(p_ptr)) {
-		/* Message */
-		msg_print(Ind, "Hmm, that seems to be cursed.");
-		/* Done */
-		return FALSE;
+	if (item >= INVEN_WIELD && cursed_p(o_ptr)) {
+		if (override) override = 2;
+		else {
+			/* Message */
+			msg_print(Ind, "Hmm, that seems to be cursed.");
+			/* Done */
+			return FALSE;
+		}
 	}
 
 #if POLY_RING_METHOD == 0
@@ -1840,7 +1884,8 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	}
 
 	/* Message */
-	msg_format(Ind, "You destroy %s.", o_name);
+	if (override == 2) msg_format(Ind, "You crush %s.", o_name);
+	else msg_format(Ind, "You destroy %s.", o_name);
 
 	/* Reset temporary brands -- silently! By directly resetting the vars instead of calling the set_..() functions. */
 	if (p_ptr->ammo_brand && item == INVEN_AMMO) {
