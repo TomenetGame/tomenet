@@ -5718,10 +5718,10 @@
 #define RF0_CAN_CLIMB		0x00000800		/* Monster can climb */
 #define RF0_RAND_5			0x00001000	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
 #define RF0_DROP_2			0x00002000	/* Drop exactly 2 items/gold piles */
-#define RF0_S_DEMONS			0x00004000	/* Summon Demons */
-#define RF0_S_DRAGONS			0x00008000	/* Summon Dragons */
-#define RF0_S_HI_DEMON		0x00010000	/* Summon Greater Demon */
-#define RF0_S_HI_DRAGON		0x00020000	/* Summon Ancient Dragon */
+#define RF0_S_DEMONS			0x00004000	/* Summon Demons -- unused */
+#define RF0_S_DRAGONS			0x00008000	/* Summon Dragons -- unused */
+#define RF0_S_HI_DEMON		0x00010000	/* Summon Greater Demon (Tzeentch) */
+#define RF0_S_HI_DRAGON		0x00020000	/* Summon Ancient Dragon -- unused */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
 
