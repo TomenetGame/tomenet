@@ -5550,19 +5550,19 @@
 #define RF6_FORGET			0x00004000	/* Cause amnesia */
 #define RF6_S_DRAGONRIDER		0x00008000      /* Summon DragonRiders */
 #define RF6_S_KIN		0x00010000      /* Summon "kin" */
-#define RF6_S_HI_DEMON		0x00020000      /* Summon greater demons! */
+#define RF6_S_HI_DEMONS		0x00020000      /* Summon greater demons! */
 #define RF6_S_MONSTER		0x00040000	/* Summon Monster */
 #define RF6_S_MONSTERS		0x00080000	/* Summon Monsters */
-#define RF6_S_ANT			0x00100000	/* Summon Ants */
-#define RF6_S_SPIDER			0x00200000	/* Summon Spiders */
-#define RF6_S_HOUND			0x00400000	/* Summon Hounds */
-#define RF6_S_HYDRA			0x00800000	/* Summon Hydras */
+#define RF6_S_ANTS			0x00100000	/* Summon Ants */
+#define RF6_S_SPIDERS			0x00200000	/* Summon Spiders */
+#define RF6_S_HOUNDS			0x00400000	/* Summon Hounds */
+#define RF6_S_HYDRAS			0x00800000	/* Summon Hydras */
 #define RF6_S_ANGEL		0x01000000	/* Summon Angel */
 #define RF6_S_DEMON		0x02000000	/* Summon Demon */
 #define RF6_S_UNDEAD		0x04000000	/* Summon Undead */
 #define RF6_S_DRAGON		0x08000000	/* Summon Dragon */
 #define RF6_S_HI_UNDEAD			0x10000000	/* Summon Greater Undead */
-#define RF6_S_HI_DRAGON			0x20000000	/* Summon Ancient Dragon */
+#define RF6_S_HI_DRAGONS		0x20000000	/* Summon Ancient Dragon */
 #define RF6_S_NAZGUL			0x40000000	/* Summon Unique Wraith */
 #define RF6_S_UNIQUE			0x80000000	/* Summon Unique Monster */
 
@@ -5718,6 +5718,10 @@
 #define RF0_CAN_CLIMB		0x00000800		/* Monster can climb */
 #define RF0_RAND_5			0x00001000	/* Moves very slightly randomly (5%) (for Panda, so it's not appearing totally 'passive' - C. Blue) */
 #define RF0_DROP_2			0x00002000	/* Drop exactly 2 items/gold piles */
+#define RF0_S_DEMONS			0x00004000	/* Summon Demons */
+#define RF0_S_DRAGONS			0x00008000	/* Summon Dragons */
+#define RF0_S_HI_DEMON		0x00010000	/* Summon Greater Demon */
+#define RF0_S_HI_DRAGON		0x00020000	/* Summon Ancient Dragon */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
 
@@ -5729,7 +5733,7 @@
 
 /* Special addition, since RF0_ mixes quite different types of flags.
    This is to sort them out a bit. */
-#define RF0_ACTIVE_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE)
+#define RF0_ACTIVE_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON)
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
 #define RF1_DISABLE_MASK	(0x0)
@@ -5761,14 +5765,14 @@
  #define RF6_INT_MASK \
 	(RF6_BLINK |  RF6_TPORT | RF6_TELE_LEVEL | RF6_TELE_AWAY | \
 	RF6_HEAL | RF6_HASTE | RF6_TRAPS | \
-	RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | \
-	RF6_S_ANT | RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | \
+	RF6_S_KIN | RF6_S_HI_DEMONS | RF6_S_MONSTER | RF6_S_MONSTERS | \
+	RF6_S_ANTS | RF6_S_SPIDERS | RF6_S_HOUNDS | RF6_S_HYDRAS | \
 	RF6_S_ANGEL | RF6_S_DRAGON | RF6_S_UNDEAD | RF6_S_DEMON | \
-	RF6_S_HI_DRAGON | RF6_S_HI_UNDEAD | RF6_S_NAZGUL | RF6_S_UNIQUE | \
+	RF6_S_HI_DRAGONS | RF6_S_HI_UNDEAD | RF6_S_NAZGUL | RF6_S_UNIQUE | \
 	RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG | RF6_S_ANIMALS)
 
  #define RF0_INT_MASK \
-	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
+	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON)
 #else
  #define RF4_INT_MASK (0L)
  #define RF5_INT_MASK (0L)
@@ -5839,13 +5843,13 @@
 	(0L)
 
 #define RF6_SUMMON_MASK \
-	(RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
-	RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | \
-	RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | \
+	(RF6_S_KIN | RF6_S_HI_DEMONS | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANTS | \
+	RF6_S_SPIDERS | RF6_S_HOUNDS | RF6_S_HYDRAS | RF6_S_ANGEL | RF6_S_DEMON | \
+	RF6_S_UNDEAD | RF6_S_DRAGON | RF6_S_HI_UNDEAD | RF6_S_HI_DRAGONS | \
 	RF6_S_NAZGUL | RF6_S_UNIQUE | RF6_S_DRAGONRIDER | RF6_S_BUG | RF6_S_RNG)
 
 #define RF0_SUMMON_MASK \
-	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE)
+	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON)
 
 
 /*
@@ -5968,11 +5972,11 @@
 #define RF6_SPELLCASTER_MASK \
 	(RF6_HASTE | RF6_HAND_DOOM | RF6_HEAL | RF6_S_ANIMALS | RF6_BLINK | RF6_TPORT | \
 	RF6_RAISE_DEAD | RF6_S_BUG | RF6_TELE_TO | RF6_TELE_AWAY | RF6_TELE_LEVEL | RF6_S_RNG | RF6_DARKNESS | \
-	RF6_S_DRAGONRIDER | RF6_S_KIN | RF6_S_HI_DEMON | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANT | \
-	RF6_S_SPIDER | RF6_S_HOUND | RF6_S_HYDRA | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
-	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGON | RF6_S_NAZGUL | RF6_S_UNIQUE)
+	RF6_S_DRAGONRIDER | RF6_S_KIN | RF6_S_HI_DEMONS | RF6_S_MONSTER | RF6_S_MONSTERS | RF6_S_ANTS | \
+	RF6_S_SPIDERS | RF6_S_HOUNDS | RF6_S_HYDRAS | RF6_S_ANGEL | RF6_S_DEMON | RF6_S_UNDEAD | RF6_S_DRAGON | \
+	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGONS | RF6_S_NAZGUL | RF6_S_UNIQUE)
 #define RF0_SPELLCASTER_MASK \
-	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE)
+	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON)
 
 
 /*

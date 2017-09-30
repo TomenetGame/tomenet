@@ -352,7 +352,7 @@ static cptr r_info_flags6[] = {
 	"S_ANIMALS",	// "XXX2X6",
 	"BLINK",
 	"TPORT",
-	"RAISE_DEAD",	// "XXX3X6",
+	"RAISE_DEAD",	// "XXX3X6", -- not implemented
 	"S_BUG",	// "XXX4X6",
 	"TELE_TO",
 	"TELE_AWAY",
@@ -363,31 +363,22 @@ static cptr r_info_flags6[] = {
 	"FORGET",
 	"S_DRAGONRIDER",	// "XXX6X6",
 	"S_KIN",	// "XXX7X6",
-	"S_HI_DEMON",	// "XXX8X6",
+	"S_HI_DEMONS",	// "XXX8X6",
 	"S_MONSTER",
 	"S_MONSTERS",
-	"S_ANT",
-	"S_SPIDER",
-	"S_HOUND",
-	"S_HYDRA",
+	"S_ANTS",
+	"S_SPIDERS",
+	"S_HOUNDS",
+	"S_HYDRAS",
 	"S_ANGEL",
 	"S_DEMON",
 	"S_UNDEAD",
 	"S_DRAGON",
 	"S_HI_UNDEAD",
-	"S_HI_DRAGON",
+	"S_HI_DRAGONS",
 	"S_NAZGUL",
 	"S_UNIQUE"
 };
-
-#if 0	/* flags6 */
-	"RAISE_DEAD", /* ToDo: Implement RAISE_DEAD */
-	"S_BUG",
-	"S_RNG",
-	"S_DRAGONRIDER",  /* DG : Summon DragonRider */
-	"S_KIN",
-	"S_HI_DEMON",
-#endif
 
 /*
  * most of r_info_flags7-9 are not implemented;
@@ -534,10 +525,10 @@ static cptr r_info_flags0[] = {
 	"CAN_CLIMB",//12
 	"RAND_5",
 	"DROP_2",
-	"X00004000",
-	"X00008000",//16
-	"X00010000",
-	"X00020000",
+	"S_DEMONS",
+	"S_DRAGONS",//16
+	"S_HI_DEMON",
+	"S_HI_DRAGON",
 	"X00040000",
 	"X00080000",//20
 	"X00100000",

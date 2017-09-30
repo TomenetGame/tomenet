@@ -4670,23 +4670,8 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	 * This fix presumes Morgie and Morgie only has level 100 */
 
 	for (i = 0; i < 10; i++) { /* try a couple of times */
-#if 0 /* incorporated it directly into summon_specific_type, as it should be */
-		/* Hack for RF0_S_HI_ flags */
-		if (type == SUMMON_HI_MONSTER || type == SUMMON_HI_UNIQUE) {
-			/* Ok, now let them summon what they can */
-			r_idx = get_mon_num(100 + 5, 100);
-			if (r_info[r_idx].level < 60) {
-				r_idx = 0; /* failure - see below */
-				continue;
-			}
-		} else {
-			/* Ok, now let them summon what they can */
-			r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5, (getlevel(wpos) + lev) / 2);
-		}
-#else
 		/* Ok, now let them summon what they can */
 		r_idx = get_mon_num((getlevel(wpos) + lev) / 2 + 5, (getlevel(wpos) + lev) / 2);
-#endif
 		break;
 	}
 

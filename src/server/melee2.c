@@ -3656,7 +3656,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		}
 
 	/* RF6_XXX8X6 */
-	/* RF6_S_HI_DEMON */
+	/* RF6_S_HI_DEMONS */
 	case RF6_OFFSET+17:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
@@ -3694,7 +3694,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		HANDLE_SUMMON("many things", "monsters")
 		break;
 
-	/* RF6_S_ANT */
+	/* RF6_S_ANTS */
 	case RF6_OFFSET+20:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
@@ -3703,7 +3703,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		HANDLE_SUMMON("many things", "ants")
 		break;
 
-	/* RF6_S_SPIDER */
+	/* RF6_S_SPIDERS */
 	case RF6_OFFSET+21:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
@@ -3712,7 +3712,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		HANDLE_SUMMON("many things", "spiders")
 		break;
 
-	/* RF6_S_HOUND */
+	/* RF6_S_HOUNDS */
 	case RF6_OFFSET+22:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
@@ -3721,7 +3721,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		HANDLE_SUMMON("many things", "hounds")
 		break;
 
-	/* RF6_S_HYDRA */
+	/* RF6_S_HYDRAS */
 	case RF6_OFFSET+23:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
@@ -3771,7 +3771,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		HANDLE_SUMMON("many creepy things", "greater undead")
 		break;
 
-	/* RF6_S_HI_DRAGON */
+	/* RF6_S_HI_DRAGONS */
 	case RF6_OFFSET+29:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
@@ -3831,7 +3831,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BO_DISE */
-	case RF0_OFFSET+3:
+	case RF0_OFFSET+7:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
@@ -3841,13 +3841,47 @@ bool make_attack_spell(int Ind, int m_idx) {
 		break;
 
 	/* RF0_BA_DISE */
-	case RF0_OFFSET+4:
+	case RF0_OFFSET+8:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a disenchantment ball of", m_name);
 		ball(Ind, m_idx, GF_DISENCHANT, (40 + damroll(6, 10) + rlev * 4), y, x, srad);
 		update_smart_learn(m_idx, DRS_DISEN);
+		break;
+
+	/* RF0_S_DEMONS */
+	case RF0_OFFSET+14:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		for (k = 0; k < 6; k++)
+			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
+		HANDLE_SUMMON("something", "a hellish adversary")
+		break;
+
+	/* RF0_S_DRAGONS */
+	case RF0_OFFSET+15:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		for (k = 0; k < 6; k++)
+			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
+		HANDLE_SUMMON("something", "a dragon")
+		break;
+
+	/* RF0_S_HI_DEMON */
+	case RF0_OFFSET+16:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DEMON, 1, clone_summoning);
+		HANDLE_SUMMON2("You feel a hellish aura appear nearby.", "greater demon")
+		break;
+
+	/* RF0_S_HI_DRAGON */
+	case RF0_OFFSET+17:
+		if (monst_check_antimagic(Ind, m_idx)) break;
+		disturb(Ind, 1, 0);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DRAGON, 1, clone_summoning);
+		HANDLE_SUMMON2("You feel a powerful entity appear nearby.", "ancient dragon")
 		break;
 	}
 

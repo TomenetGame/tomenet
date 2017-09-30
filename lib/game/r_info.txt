@@ -4066,7 +4066,7 @@ F:FORCE_MAXHP | DROP_60 |
 F:OPEN_DOOR | BASH_DOOR | IM_COLD |
 F:EVIL | DEMON | UNDEAD | IM_POIS | NONLIVING | ZANGBAND | NO_CUT
 S:1_IN_8 |
-S:SCARE | S_ANT | CURSE | SLOW
+S:SCARE | S_ANTS | CURSE | SLOW
 D:An unfortunate individual, who was killed by the incurable
 D:disease known as Nurgle's Rot, and was transformed into a
 D:rotting demon zombie. It has but one eye, and a single
@@ -6065,7 +6065,7 @@ F:IM_FIRE | IM_ELEC | EMPTY_MIND | EVIL | SMART | RES_TELE | CAN_FLY |
 F:ZANGBAND
 S:1_IN_4
 S:DRAIN_MANA | BLINK | BLIND | SCARE | CONF | S_UNDEAD | S_MONSTER |
-S:HEAL | TELE_AWAY | DARKNESS | S_HYDRA | TRAPS | FORGET | TELE_TO | SHRIEK
+S:HEAL | TELE_AWAY | DARKNESS | S_HYDRAS | TRAPS | FORGET | TELE_TO | SHRIEK
 D:Nobody has ever seen It.
 
 N:394:Banshee
@@ -6186,7 +6186,7 @@ F:OPEN_DOOR | BASH_DOOR | RES_DARK | WILD_TOO | WILD_WOOD
 F:EVIL | IM_POIS | HURT_LITE | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
 S:1_IN_4 |
 S:HEAL | CONF | DARKNESS |
-S:S_MONSTER | S_SPIDER | S_ANIMAL
+S:S_MONSTER | S_SPIDERS | S_ANIMAL
 D:A powerful dark elf, with mighty nature-controlling enchantments.
 
 N:401:Stone troll
@@ -7564,7 +7564,7 @@ F:ANIMAL | SPIDER | EVIL | HURT_LITE | NO_CONF | NO_SLEEP | BASEANGBAND
 S:1_IN_4 |
 S:HEAL | BLIND | SLOW | CONF | SCARE | CURSE |
 S:TRAPS | BR_DARK | BR_POIS |
-S:S_SPIDER
+S:S_SPIDERS
 D:Shelob is an enormous bloated spider, the last daughter of Ungoliant the
 D:Unlight. Her poison is legendary, as is her ego. She normally guards the
 D:pass through Cirith Ungol, but occasionally goes out foraging for food to
@@ -7867,7 +7867,7 @@ F:IM_ACID | RES_POIS | NO_CONF | NO_SLEEP
 F:MORTAL | ZANGBAND | HAS_LITE | RES_CHAOS
 S:1_IN_6 |
 S:HEAL |
-S:S_SPIDER | BA_CHAO | S_DEMON
+S:S_SPIDERS | BA_CHAO | S_DEMON
 D:An adept of chaos, feared for his skill of invoking raw Chaos.
 
 N:499:Barrow wight
@@ -9639,7 +9639,7 @@ F:UNIQUE | FEMALE | FORCE_SLEEP | FORCE_MAXHP | POWERFUL |
 F:NO_CONF | NO_SLEEP |
 F:MORTAL | CTHANGBAND
 S:1_IN_7 |
-S:S_HYDRA | S_DEMON | DARKNESS | BA_WATE | BO_ACID | BA_ACID
+S:S_HYDRAS | S_DEMON | DARKNESS | BA_WATE | BO_ACID | BA_ACID
 D:The queen of the deep ones. "Vast, Polyphemus-like, and loathsome, it
 D:darted like a stupendous monster of nightmares..."
 
@@ -9903,7 +9903,7 @@ F:ONLY_GOLD | DROP_2D2 | DROP_4D2 | DROP_CORPSE |
 F:BASH_DOOR | MOVE_BODY | EVIL | ZANGBAND | RES_WATE |
 F:ANIMAL | IM_POIS | IM_FIRE
 S:1_IN_5 |
-S:BR_POIS | BR_FIRE | SCARE | CONF | S_HYDRA
+S:BR_POIS | BR_FIRE | SCARE | CONF | S_HYDRAS
 D:A many-headed sea-monster, this foul creature preys on all those who
 D:escape the clutches of Charybdis.
 
@@ -10493,7 +10493,7 @@ F:EVIL | RES_WATE | RES_ACID | RES_FIRE | IM_POIS | NO_CONF | NO_SLEEP |
 F:MORTAL | BASEANGBAND
 S:1_IN_2 |
 S:HOLD | SCARE | CURSE | BO_FIRE | BO_PLAS | BA_ACID |
-S:S_HYDRA | S_KIN
+S:S_HYDRAS | S_KIN
 D:One of the original three ugly sisters. Her face could sink a thousand
 D:ships. Her scales rattle as she slithers towards you, venom dripping from
 D:her ghastly mouth.
@@ -11101,7 +11101,7 @@ F:ONLY_ITEM | DROP_90 | DROP_4D2 |
 F:SMART | OPEN_DOOR | BASH_DOOR |
 F:NO_STUN | NO_CONF | NO_SLEEP | ZANGBAND | NO_CUT
 S:1_IN_5 |
-S:SHRIEK | S_HOUND
+S:SHRIEK | S_HOUNDS
 D:An undead master of the vicious Zephyr hounds.
 
 N:672:Juggernaut of Khorne
@@ -11599,7 +11599,7 @@ F:KILL_ITEM | BASH_DOOR | POWERFUL |
 F:EVIL | RES_ACID | RES_COLD | RES_ELEC | RES_POIS |
 F:NO_CONF | NO_SLEEP | NO_FEAR | CTHANGBAND
 S:1_IN_5 |
-S:S_MONSTER | SCARE | CURSE | S_HYDRA | S_SPIDER |
+S:S_MONSTER | SCARE | CURSE | S_HYDRAS | S_SPIDERS |
 S:BA_NETH | BA_POIS | BA_ACID | CURSE | HOLD | MIND_BLAST
 D:"A body shaped like a road-based, truncated cone. A flat, blunt,
 D:wedge-shaped, vaguely reptilian head surmounts this conical torso,
@@ -12019,7 +12019,7 @@ F:SMART | EVIL | DRAGON | IM_POIS | IM_FIRE | RES_LITE
 F:NO_CONF | NO_SLEEP | NO_STUN | BASEANGBAND | HAS_LITE
 S:1_IN_3 |
 S:BLIND | CONF | SCARE |
-S:BR_FIRE | BR_POIS | BR_SOUN | S_HI_DRAGON
+S:BR_FIRE | BR_POIS | BR_SOUN | S_HI_DRAGONS
 D:Glaurung is the father of all dragons, and was for a long time the most
 D:powerful. Though this is no longer so, he still has full command over
 D:his brood and can command them to appear whenever he so wishes. He is
@@ -12060,7 +12060,7 @@ F:OPEN_DOOR | BASH_DOOR | MOVE_BODY | RES_NETH |
 F:ANIMAL | EVIL | IM_FIRE | NO_CONF | NO_SLEEP | ZANGBAND
 S:1_IN_3 |
 S:BR_NETH | BR_COLD | BR_DARK |
-S:S_HOUND | S_UNDEAD
+S:S_HOUNDS | S_UNDEAD
 D:Garm is a gigantic hound, whose job is to guard that none escapes
 D:the tortures of Hel, the place of punishment for the wicked
 D:and cowardly dead.
@@ -12383,7 +12383,7 @@ F:COLD_BLOOD | RES_TELE | JOKEANGBAND | HAS_LITE
 F:AI_ANNOY | PSEUDO_UNIQUE
 S:1_IN_3 |
 S:CURSE | HOLD | DRAIN_MANA | SCARE | BLIND |
-S:S_UNDEAD | S_HI_UNDEAD | S_HI_DRAGON | S_UNIQUE |
+S:S_UNDEAD | S_HI_UNDEAD | S_HI_DRAGONS | S_UNIQUE |
 S:BA_NETH | FORGET | TRAPS | BRAIN_SMASH | TELE_AWAY
 D:Why would anybody want to kill Santa Claus? To get all the presents,
 D:of course!
@@ -12478,7 +12478,7 @@ F:IM_ACID | IM_FIRE | IM_COLD | RES_ELEC | IM_POIS | NO_CONF | NO_SLEEP |
 F:ZANGBAND | HAS_LITE
 S:1_IN_2 |
 S:HEAL | MIND_BLAST | BA_CHAO |
-S:S_SPIDER | S_HOUND | S_DEMON
+S:S_SPIDERS | S_HOUNDS | S_DEMON
 D:He is one of the few true masters of the art, being extremely skillful in
 D:all forms of unarmed combat and controlling the Chaos
 D:with disdainful ease.
@@ -12500,7 +12500,7 @@ F:IM_FIRE | IM_COLD | IM_ELEC | IM_ACID | RES_POIS
 S:1_IN_2 |
 S:BLINK | TELE_TO | BLIND | CONF | CURSE | TRAPS |
 S:BO_ACID | BA_FIRE | BA_COLD | BA_POIS |
-S:S_MONSTER | S_DEMON | S_HI_DRAGON | S_UNDEAD
+S:S_MONSTER | S_DEMON | S_HI_DRAGONS | S_UNDEAD
 D:A human figure in robes, he moves with magically improved speed, and his
 D:hands are ablur with spell casting. You stagger at the mighty sound of his
 D:spells as they echo hollowly through the dungeon.
@@ -12648,7 +12648,7 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP |
 F:ZANGBAND
 S:1_IN_3
 S:MIND_BLAST | BA_CHAO | SCARE | BRAIN_SMASH | DRAIN_MANA |
-S:S_HOUND | S_DEMON | S_DRAGON | TPORT | HASTE | CONF | SCARE |
+S:S_HOUNDS | S_DEMON | S_DRAGON | TPORT | HASTE | CONF | SCARE |
 S:TELE_AWAY | FORGET
 D:The most powerful of Tzeentch's servitors. This demon looks like
 D:a huge bird-creature, with the head of a predatory bird and
@@ -12832,7 +12832,7 @@ F:MORTAL | BASEANGBAND
 S:1_IN_3 |
 S:SCARE |
 S:BO_FIRE | BO_PLAS | BA_FIRE | BA_POIS |
-S:BR_FIRE | BR_POIS | S_HYDRA | S_KIN
+S:BR_FIRE | BR_POIS | S_HYDRAS | S_KIN
 D:A massive legendary hydra. It has twelve powerful heads. Its many eyes
 D:stare at you as clouds of smoke and poisonous vapour rise from its
 D:seething form. It grows new heads as fast as you chop them off.
@@ -13109,7 +13109,7 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
 F:BASEANGBAND | HAS_LITE
 S:1_IN_3 |
 S:BR_ACID | BR_FIRE | BR_DISI | BR_WALL | BR_TIME |
-S:S_HI_DRAGON | S_KIN
+S:S_HI_DRAGONS | S_KIN
 D:"Rushing Jaws" is his name, and death is his game; the greatest and most
 D:terrible of all dragonkind, his power dismayed even the Valar for a time.
 
@@ -13233,7 +13233,7 @@ S:1_IN_2 |
 S:HEAL | HASTE | TPORT | TELE_AWAY | BLIND | CONF | SCARE |
 S:CURSE | MIND_BLAST | FORGET | TRAPS | RAISE_DEAD | BO_MANA |
 S:BO_ICEE | BA_ACID | BA_FIRE | BA_COLD | BA_WATE | BA_CHAO |
-S:S_UNDEAD | S_DEMON | S_HI_DRAGON | S_ANIMALS
+S:S_UNDEAD | S_DEMON | S_HI_DRAGONS | S_ANIMALS
 D:Originally known as the White, Saruman fell prey to Sauron's wiles. He
 D:searches forever for the One Ring, to become a mighty Sorcerer-King of the
 D:world.
@@ -13463,7 +13463,7 @@ F:IM_FIRE | IM_ACID | IM_COLD | IM_POIS |
 F:ANIMAL | NO_CONF | NO_SLEEP | NO_FEAR | DROP_CORPSE | BASEANGBAND | IM_WATER
 S:1_IN_9
 S:BR_FIRE | BR_ACID | BR_DARK | BR_POIS | BA_WATE |
-S:S_DRAGON | S_HYDRA | HEAL | CONF | DARKNESS
+S:S_DRAGON | S_HYDRAS | HEAL | CONF | DARKNESS
 D:An enormous, terrible sea-monster, the true master of the ocean.
 
 N:783:Great Wyrm of Chaos
@@ -13484,7 +13484,7 @@ F:EVIL | DRAGON | NO_CONF | NO_SLEEP | NO_STUN | BASEANGBAND | HAS_LITE
 S:1_IN_4 |
 S:BLIND | CONF | SCARE |
 S:BR_CHAO | BR_DISE |
-S:S_DRAGON | S_HI_DRAGON
+S:S_DRAGON | S_HI_DRAGONS
 D:A massive dragon of changing form. As you watch, it appears first fair
 D:and then foul. Its body is twisted by chaotic forces as it strives to
 D:stay real. Its very existence distorts the universe around it.
@@ -13507,7 +13507,7 @@ F:ATTR_MULTI | NO_NEST
 S:1_IN_4 |
 S:BLIND | CONF | SCARE |
 S:BR_SOUN | BR_SHAR |
-S:S_DRAGON | S_HI_DRAGON
+S:S_DRAGON | S_HI_DRAGONS
 D:A massive dragon of powerful intellect. It seeks to dominate the universe
 D:and despises all other life. It sees all who do not obey it as mere
 D:insects to be crushed underfoot.
@@ -13530,7 +13530,7 @@ F:NO_STUN | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE | NO_CUT | ATTR_MULTI
 S:1_IN_4 |
 S:BLIND | CONF | SCARE |
 S:BR_SOUN | BR_CHAO | BR_SHAR | BR_DISE |
-S:S_DRAGON | S_HI_DRAGON
+S:S_DRAGON | S_HI_DRAGONS
 D:A massive dragon, it is thousands of
 D:years old and seeks to maintain the Cosmic Balance. It sees you as an
 D:upstart troublemaker without the wisdom to control your actions.
@@ -13572,7 +13572,7 @@ F:ONLY_ITEM | DROP_GOOD | DROP_2D2 | CAN_FLY | IM_POIS |
 F:OPEN_DOOR | BASH_DOOR | POWERFUL | REGENERATE |
 F:EVIL | DEMON | IM_COLD | NO_CONF | NO_SLEEP
 S:1_IN_6
-S:BR_COLD | BR_SHAR | BA_COLD | BO_ICEE | S_HI_DEMON |
+S:BR_COLD | BR_SHAR | BA_COLD | BO_ICEE | S_HI_DEMONS |
 S:SLOW | SCARE | HOLD
 D:This demon from the ice planes is a truly terrifying sight. It has an
 D:extremely large, insect-like body towering a full twelve feet tall, with
@@ -13595,7 +13595,7 @@ F:FORCE_SLEEP | FORCE_MAXHP | EVIL | SMART | DEMON |
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD |
 F:NO_SLEEP | NO_CONF | NO_STUN | IM_POIS | IM_COLD | IM_ACID | CTHANGBAND
 S:1_IN_5
-S:BA_WATE | S_HYDRA | S_DRAGON | S_DEMON | SCARE |
+S:BA_WATE | S_HYDRAS | S_DRAGON | S_DEMON | SCARE |
 S:BLIND | CONF | CURSE | BR_POIS
 D:"From an oval body protruded countless thin, pointed spines of
 D:multi-colored metal; at the more rounded end of the oval a
@@ -13716,7 +13716,7 @@ F:ATTR_MULTI | NO_STUN | NO_NEST
 #added NO_STUN to justify sound res on dsm
 S:1_IN_4 |
 S:BR_ELEC | BR_GRAV | BR_LITE |
-S:S_DRAGON | S_HI_DRAGON |
+S:S_DRAGON | S_HI_DRAGONS |
 S:SCARE | BLIND
 D:The mightiest elemental dragon of air, it can destroy you with ease.
 
@@ -13758,7 +13758,7 @@ F:OPEN_DOOR | BASH_DOOR | KILL_BODY | POWERFUL |
 F:EVIL | DEMON | NO_CONF | NO_SLEEP | CAN_FLY |
 F:IM_FIRE | RES_COLD | IM_POIS | IM_ACID | RES_ELEC
 S:1_IN_5 |
-S:HASTE | SLOW | SCARE | S_HI_DEMON
+S:HASTE | SLOW | SCARE | S_HI_DEMONS
 D:A giant humanoid demon wielding a massive, heavy and sharp scythe. Feared
 D:by foes and friends alike when it flies into one of its berserk rages, the
 D:Horned Reaper will cut down anything in its path between it and you - even
@@ -13784,7 +13784,7 @@ F:NO_CONF | NO_SLEEP | ZANGBAND
 S:1_IN_2 |
 S:BLIND | CONF | SCARE |
 S:BR_NETH | BR_CHAO | BR_TIME | BR_GRAV | BR_DISI |
-S:S_HI_DRAGON | S_MONSTERS
+S:S_HI_DRAGONS | S_MONSTERS
 D:An elephantine horror with five trunks, each capable of breathing
 D:destructive blasts. It is said that it is better to face the fury
 D:of a thousand raging lions than the Norsa!
@@ -13869,7 +13869,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND
 # | S_LOWEXP
 S:1_IN_2 |
 S:BLINK | TELE_TO |
-S:S_HI_DEMON
+S:S_HI_DEMONS
 D:A massive pulsating mound of flesh, glowing with an inner hellish light.
 
 N:801:Greater draconic quylthulg
@@ -13884,7 +13884,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND
 # | S_LOWEXP
 S:1_IN_2 |
 S:BLINK | TELE_TO |
-S:S_HI_DRAGON
+S:S_HI_DRAGONS
 D:A massive mound of scaled flesh, throbbing and pulsating with multi-hued
 D:light.
 
@@ -14012,7 +14012,7 @@ F:RES_NETH | REGENERATE | BASEANGBAND | HAS_LITE | RES_SOUND
 S:1_IN_3 |
 S:BLIND | CONF | BRAIN_SMASH |
 S:BR_FIRE | BA_NETH | BA_FIRE | BR_PLAS | BO_PLAS |
-S:S_HI_DEMON | S_UNDEAD | S_DEMON |
+S:S_HI_DEMONS | S_UNDEAD | S_DEMON |
 D:Originally of the semi-divine Maiar, this evil spirit swore allegiance
 D:to Morgoth at the beginning of time and is now one of his most terrible
 D:demonic servants. With its flaming whip and sword it seeks to destroy you.
@@ -14035,7 +14035,7 @@ F:ANIMAL | SPIDER | EVIL | IM_POIS | HURT_LITE | NO_CONF | NO_SLEEP
 F:BASEANGBAND
 S:1_IN_3 |
 S:HEAL | BLIND | DARKNESS | BA_DARK |
-S:BR_POIS | BR_DARK | S_SPIDER
+S:BR_POIS | BR_DARK | S_SPIDERS
 D:This enormous, hideous spirit of void is in the form of a spider of
 D:immense proportions. She is surrounded by a cloud of Unlight as she sucks
 D:in all living light into her bloated body, and breathes out the blackest of
@@ -14061,7 +14061,7 @@ F:CTHANGBAND
 F:NONLIVING
 S:1_IN_3 |
 S:SCARE | BLIND | CONF | HOLD | BR_POIS |
-S:DARKNESS | BR_DARK | S_KIN | S_HI_DEMON
+S:DARKNESS | BR_DARK | S_KIN | S_HI_DEMONS
 D:"...there was a kind of face on the squat ebon body, low down amid
 D:the several-jointed legs. The face peered up with a weird expression
 D:of doubt and inquiry..."
@@ -14083,7 +14083,7 @@ F:SMART | BASH_DOOR | MOVE_BODY |
 F:EVIL | IM_POIS | NO_CONF | NO_SLEEP | CTHANGBAND
 S:1_IN_3 |
 S:SCARE | BLIND | CONF | HOLD | HASTE | DRAIN_MANA | HASTE |
-S:CURSE | DARKNESS | FORGET | S_DEMON | S_HOUND |
+S:CURSE | DARKNESS | FORGET | S_DEMON | S_HOUNDS |
 S:TPORT | TELE_TO
 D:"He saw why the shadow on the frosted pane yesterday had been
 D:headless and he screamed... but before he could scream out his
@@ -14131,7 +14131,7 @@ F:ONLY_ITEM | DROP_GOOD | DROP_3D2 | BASEANGBAND |
 F:OPEN_DOOR | BASH_DOOR | MOVE_BODY | POWERFUL | CAN_FLY |
 F:EVIL | DEMON | IM_FIRE | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN
 S:1_IN_5 |
-S:S_HI_DEMON | S_HI_DRAGON | BR_FIRE | BR_POIS | BR_CHAO | BA_CHAO |
+S:S_HI_DEMONS | S_HI_DRAGONS | BR_FIRE | BR_POIS | BR_CHAO | BA_CHAO |
 S:SCARE | BA_FIRE | CURSE
 D:Appearing as a giant, clawed and winged humanoid with a scaly red body
 D:and massive fangs dripping a foul green liquid, the Pit Fiend is a
@@ -14158,7 +14158,7 @@ F:IM_COLD | IM_FIRE | IM_POIS | RES_CHAOS | RES_DISE |
 F:RES_NETH | RES_NEXU | RES_MANA | RES_TIME | RES_TELE
 S:1_IN_3 |
 S:BR_CHAO | BR_DISI | BA_CHAO | BR_NETH | BR_MANA |
-S:S_MONSTERS | S_HI_DEMON | S_HI_DRAGON
+S:S_MONSTERS | S_HI_DEMONS | S_HI_DRAGONS
 D:Writhing coil upon coil, this mighty spawn of Chaos constantly disintegrates
 D:and reforms before your dazzled eyes. It gazes balefully upon you with its
 D:one remaining eye, and seeks to destroy you utterly.
@@ -14179,7 +14179,7 @@ F:OPEN_DOOR | BASH_DOOR | FORCE_SLEEP | FORCE_MAXHP | NO_CONF | NO_SLEEP
 F:DROP_4D2 | DROP_1D2 | DROP_GOOD | DROP_60 | DROP_90 | ONLY_ITEM |
 F:EVIL | IM_POIS | IM_ACID | IM_ELEC | REGENERATE | ZANGBAND | RES_WATE
 S:1_IN_4 |
-S:BR_POIS | BR_NUKE | BR_ACID | S_HYDRA | S_KIN | S_DEMON |
+S:BR_POIS | BR_NUKE | BR_ACID | S_HYDRAS | S_KIN | S_DEMON |
 D:"The half-human father of serpents... the snake-god of the central
 D:plains tribes -- presumably the primal source of the more
 D:southerly Quetzalcoatl or Kukulcan -- was odd, half-anthropomorphic
@@ -14244,7 +14244,7 @@ F:RES_FIRE | NO_CONF | NO_SLEEP | ZANGBAND | HAS_LITE
 S:1_IN_3 |
 S:CURSE | TELE_TO | HOLD |
 #S:HAND_DOOM |
-S:S_UNDEAD | S_HI_UNDEAD | S_HI_DRAGON | FORGET | SCARE | BLIND |
+S:S_UNDEAD | S_HI_UNDEAD | S_HI_DRAGONS | FORGET | SCARE | BLIND |
 S:BA_DARK | BA_NETH | HEAL | RAISE_DEAD
 D:The Norse ruler of Hel is a merciless queen, who ever hunts for more
 D:souls to add to her collection of tortured spirits. She arrives in
@@ -14271,7 +14271,7 @@ F:IM_ELEC | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
 S:1_IN_2 |
 S:TELE_TO | HOLD | CURSE | TRAPS | RAISE_DEAD |
 S:BO_PLAS | BA_DARK | BA_MANA | BA_FIRE | BA_WATE | BA_NETH
-S:S_HI_DEMON | S_HI_UNDEAD
+S:S_HI_DEMONS | S_HI_UNDEAD
 D:The Mouth of Sauron is a mighty spell caster. So old that even he cannot
 D:remember his own name, his power and evil are undeniable. He believes
 D:unshakeably that he is unbeatable and laughs as he weaves his awesome
@@ -14340,7 +14340,7 @@ F:INVISIBLE | EMPTY_MIND | ANIMAL | RES_TELE |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND
 # | S_LOWEXP
 S:1_IN_2 |
-S:S_MONSTERS | S_HI_UNDEAD | S_HI_DRAGON | S_HI_DEMON | S_ANIMALS
+S:S_MONSTERS | S_HI_UNDEAD | S_HI_DRAGONS | S_HI_DEMONS | S_ANIMALS
 S:BLINK | TELE_TO
 D:A giant seething mass of flesh, overwhelming you with monster after monster.
 
@@ -14357,8 +14357,8 @@ F:INVISIBLE | ATTR_MULTI | EMPTY_MIND | ANIMAL |
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND
 # | S_LOWEXP
 S:1_IN_1 |
-S:S_MONSTERS | S_ANGEL | S_HOUND | S_HYDRA | S_SPIDER | S_ANT | S_ANIMALS |
-S:S_HI_UNDEAD | S_HI_DRAGON | S_HI_DEMON | S_NAZGUL | S_UNIQUE | S_KIN | BLINK
+S:S_MONSTERS | S_ANGEL | S_HOUNDS | S_HYDRAS | S_SPIDERS | S_ANTS | S_ANIMALS |
+S:S_HI_UNDEAD | S_HI_DRAGONS | S_HI_DEMONS | S_NAZGUL | S_UNIQUE | S_KIN | BLINK
 D:A gigantic seething mass of flesh, Qlzqqlzuup changes colours in front
 D:of your eyes. Pulsating first one colour then the next, it knows only it
 D:must bring help to protect itself.
@@ -14426,7 +14426,7 @@ F:REGENERATE | REFLECTING | RES_MANA | DROP_SKELETON | DROP_CORPSE | BASEANGBAND
 F:HAS_LITE
 S:1_IN_6 |
 S:S_MONSTERS | S_NAZGUL | S_HI_UNDEAD |
-S:S_HI_DRAGON | S_HI_DEMON | S_UNIQUE | S_ANIMALS
+S:S_HI_DRAGONS | S_HI_DEMONS | S_UNIQUE | S_ANIMALS
 D:The son of Eol the Dark-Elf, Maeglin is every bit as evil as his father
 D:and more. His greed for gold led him to betray the Hidden Kingdom of
 D:Gondolin to Morgoth's forces. He is a mighty warrior himself, and some
@@ -14452,7 +14452,7 @@ S:1_IN_3 |
 S:TELE_AWAY | BLIND | HOLD | SCARE | BRAIN_SMASH |
 S:BR_DARK | BA_DARK | BR_NETH |
 #S:HAND_DOOM |
-S:S_HI_UNDEAD | S_DEMON | S_MONSTERS | S_HYDRA
+S:S_HI_UNDEAD | S_DEMON | S_MONSTERS | S_HYDRAS
 D:"...it was a gigantic eye staring down at them. Around the eye,
 D:the sky split; deep clefts opened through which the darkness
 D:began to ooze, a darkness blacker than the night, which crawled
@@ -14478,7 +14478,7 @@ F:INVISIBLE | OPEN_DOOR | BASH_DOOR | SMART
 F:EVIL | DEMON | IM_ACID | RES_FIRE | IM_COLD | IM_ELEC |
 F:IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND
 S:1_IN_3 |
-S:MIND_BLAST | BO_ELEC | BO_MANA | BA_ELEC | S_HI_DEMON
+S:MIND_BLAST | BO_ELEC | BO_MANA | BA_ELEC | S_HI_DEMONS
 D:A winged humanoid demon from the Planes of Hell, Pazuzu grins inhumanely at
 D:you as he decides your fate.
 
@@ -14565,7 +14565,7 @@ F:ESCORTS | RES_COLD | IM_POIS | ZANGBAND | HAS_LITE
 S:1_IN_3 |
 S:TELE_TO | SCARE | HOLD | BRAIN_SMASH |
 S:S_DEMON | S_HI_UNDEAD | S_UNDEAD |
-S:BR_FIRE | BR_NETH | S_HI_DEMON | RAISE_DEAD
+S:BR_FIRE | BR_NETH | S_HI_DEMONS | RAISE_DEAD
 #S:HAND_DOOM |
 D:A duke of hell, in the flesh.
 
@@ -14608,7 +14608,7 @@ F:NO_FEAR | NO_CONF | NO_SLEEP | DEMON | SMART | ELDRITCH_HORROR |
 F:COLD_BLOOD | RES_DISE | NO_STUN | CTHANGBAND | NO_CUT | RES_SOUND
 # | S_LOWEXP
 S:1_IN_6 |
-S:S_MONSTERS | S_DEMON | S_HI_DRAGON | S_HI_UNDEAD | HEAL |
+S:S_MONSTERS | S_DEMON | S_HI_DRAGONS | S_HI_UNDEAD | HEAL |
 S:TELE_AWAY | TPORT | CURSE | BRAIN_SMASH | DRAIN_MANA |
 S:BR_NUKE | BR_POIS | BR_CHAO | BR_NEXU | RAISE_DEAD
 D:"...in the pool [there was] a grayish, horrid mass that nearly choked
@@ -14658,9 +14658,9 @@ F:IM_FIRE | NO_CONF | NO_SLEEP | IM_POIS | SUSCEP_COLD | GIANT |
 F:REGENERATE | ZANGBAND | HAS_LITE | NO_STUN
 S:1_IN_5 |
 S:SHRIEK | HASTE | HEAL | DRAIN_MANA | TPORT | TELE_TO | TELE_AWAY |
-S:TELE_LEVEL | FORGET | S_HI_DEMON | S_HI_UNDEAD |
+S:TELE_LEVEL | FORGET | S_HI_DEMONS | S_HI_UNDEAD |
 #S:HAND_DOOM |
-S:S_UNIQUE | S_HI_DRAGON | BA_DARK | BA_MANA | RAISE_DEAD
+S:S_UNIQUE | S_HI_DRAGONS | BA_DARK | BA_MANA | RAISE_DEAD
 D:Loki, the god of mischief, is a nasty person. He will use every
 D:dirty trick in the book, and then some. In the end, his half-giant
 D:heritage is bound to show, as he will defect to the side of the
@@ -14711,7 +14711,7 @@ F:EVIL | IM_FIRE | NO_CONF | NO_SLEEP | IM_POIS | SUSCEP_COLD | GIANT |
 F:ZANGBAND | HAS_LITE | WILD_VOLCANO | NO_STUN | NO_FEAR | RES_LITE
 S:1_IN_5 |
 S:BR_FIRE | BR_PLAS | BLIND | TELE_TO | S_KIN |
-S:TELE_AWAY | S_HI_DEMON
+S:TELE_AWAY | S_HI_DEMONS
 #S:HAND_DOOM |
 D:Surtur is another of the most ancient of all creatures. He is a demonic
 D:giant of fire, who is destined to set the nine worlds afire with his
@@ -14757,7 +14757,7 @@ F:NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
 S:1_IN_4 |
 S:BLIND | CONF | SCARE |
 S:BR_FIRE | BR_PLAS |
-S:S_HI_DEMON | S_UNDEAD
+S:S_HI_DEMONS | S_UNDEAD
 D:A massive form cloaked in flame. Lungorthin stares balefully at you with
 D:eyes that smoulder red. The dungeon floor where he stands is scorched by
 D:the heat of his body.
@@ -14780,7 +14780,7 @@ F:ONLY_ITEM | DROP_1D2 | DROP_GOOD |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR | MOVE_BODY |
 F:ANIMAL | EVIL | IM_POIS | BASEANGBAND | NO_CONF
 S:1_IN_3 |
-S:SCARE | S_MONSTERS | S_HOUND
+S:SCARE | S_MONSTERS | S_HOUNDS
 D:Draugluin provides Sauron with a fearsome personal guard. He is an
 D:enormous wolf inhabited by a human spirit. He is chief of all his kind.
 
@@ -14806,8 +14806,8 @@ S:1_IN_2 |
 S:FORGET | HEAL | BA_MANA | TPORT | TELE_AWAY |
 #S:HAND_DOOM |
 S:TELE_LEVEL | CONF | BLIND | BRAIN_SMASH | DRAIN_MANA |
-S:S_MONSTERS | S_KIN | S_HI_DEMON | S_HOUND | S_HYDRA |
-S:S_UNIQUE | S_HI_UNDEAD | S_HI_DRAGON | RAISE_DEAD
+S:S_MONSTERS | S_KIN | S_HI_DEMONS | S_HOUNDS | S_HYDRAS |
+S:S_UNIQUE | S_HI_UNDEAD | S_HI_DRAGONS | RAISE_DEAD
 D:Shuma-Gorath is one of the immortal lords of chaos. The true form of
 D:this blasphemous horror is a huge, all-seeing eye surrounded by tentacles.
 
@@ -14851,7 +14851,7 @@ F:IM_POIS | IM_FIRE | FORCE_SLEEP | FORCE_MAXHP | JOKEANGBAND |
 F:HAS_LITE
 #F:NONLIVING
 S:1_IN_3 |
-S:ROCKET | S_HI_DEMON
+S:ROCKET | S_HI_DEMONS
 D:The mightiest of Cyberdemons, their lord and ruler.
 
 N:844:Vecna, the Emperor Lich
@@ -14876,7 +14876,7 @@ F:NO_CUT
 S:1_IN_3 |
 S:TPORT | BLIND | SCARE | CURSE | BRAIN_SMASH |
 S:BA_MANA | BO_MANA | BA_FIRE | BA_NETH |
-S:S_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_KIN | RAISE_DEAD
+S:S_MONSTERS | S_HI_DEMONS | S_HI_UNDEAD | S_KIN | RAISE_DEAD
 #S:HAND_DOOM |
 D:The greatest of all undead sorcerers, even the gods once feared him. This
 D:ancient shadow of death wilts every living thing it passes.
@@ -14897,8 +14897,8 @@ F:COLD_BLOOD | OPEN_DOOR | BASH_DOOR | NONLIVING | CAN_FLY | RES_CHAOS |
 F:EVIL | RES_ACID | IM_COLD | IM_ELEC | IM_POIS | RES_FIRE | NO_CONF | NO_SLEEP
 F:CTHANGBAND | HAS_LITE | NO_CUT
 S:1_IN_3 |
-S:BO_MANA | BRAIN_SMASH | BA_MANA | S_MONSTERS | S_HI_DEMON |
-S:BA_CHAO | S_DEMON | S_HI_UNDEAD | S_HOUND | BR_MANA | BR_DISI
+S:BO_MANA | BRAIN_SMASH | BA_MANA | S_MONSTERS | S_HI_DEMONS |
+S:BA_CHAO | S_DEMON | S_HI_UNDEAD | S_HOUNDS | BR_MANA | BR_DISI
 D:"Great globes of light massing towards the opening... the breaking
 D:apart of the nearest globes, and the protoplasmic flesh that
 D:flowed blackly outward to join together and form that eldritch,
@@ -14945,7 +14945,7 @@ F:NO_CUT | NO_CONF | NO_SLEEP | NO_STUN | AURA_FIRE | AURA_ELEC | AURA_COLD
 F:RES_TELE | REFLECTING | RES_MANA | RES_NETH | RES_DISE | RES_NEXU | RES_SOUND
 F:ATTR_MULTI | OOD_10 | NO_NEST | CAN_CLIMB
 S:1_IN_4 |
-S:S_HI_DRAGON | S_DRAGON | S_KIN |
+S:S_HI_DRAGONS | S_DRAGON | S_KIN |
 S:BR_NUKE | BR_ACID | BR_ELEC | BR_FIRE |
 S:BR_COLD | BR_POIS | BR_NETH | BR_LITE | BR_DARK |
 S:BR_CONF | BR_SOUN | BR_CHAO | BR_DISE | BR_NEXU |
@@ -14972,7 +14972,7 @@ F:EVIL | RES_ACID | IM_COLD | IM_POIS | NO_CONF | NO_SLEEP | CTHANGBAND
 S:1_IN_3 |
 S:BO_MANA | BRAIN_SMASH | BA_DARK | S_MONSTERS |
 S:CURSE | HEAL | BR_CHAO | BR_CONF | BR_POIS | BR_NUKE |
-S:BA_CHAO | S_HI_DEMON | S_HI_UNDEAD | S_UNIQUE | RAISE_DEAD
+S:BA_CHAO | S_HI_DEMONS | S_HI_UNDEAD | S_UNIQUE | RAISE_DEAD
 D:This horrendous outer god looks like a writhing cloudy mass filled
 D:with mouths and tentacles.
 
@@ -15017,7 +15017,7 @@ F:ONLY_ITEM | DROP_4D2 | DROP_GOOD | AURA_FIRE |
 F:SMART | OPEN_DOOR | BASH_DOOR | MOVE_BODY |
 F:ANIMAL | EVIL | RES_FIRE | RES_POIS | NO_CONF | NO_SLEEP | BASEANGBAND
 S:1_IN_3 |
-S:BR_DARK | BR_POIS | BR_FIRE | BR_NETH | S_HOUND
+S:BR_DARK | BR_POIS | BR_FIRE | BR_NETH | S_HOUNDS
 D:The first guard of Angband, Carcharoth, also known as 'The Red Maw', is
 D:the largest wolf to ever walk the earth. He is highly intelligent and a
 D:deadly opponent in combat.
@@ -15041,8 +15041,8 @@ F:EVIL | IM_ACID | IM_POIS | IM_FIRE | NO_CONF | NO_SLEEP | NO_STUN | RES_CHAOS
 S:1_IN_3 |
 S:TELE_AWAY | TELE_TO | TELE_LEVEL | TPORT | BR_NEXU | BA_CHAO |
 S:BA_MANA | BA_FIRE | S_MONSTERS | BRAIN_SMASH | MIND_BLAST |
-S:CURSE | HASTE | S_HI_UNDEAD | S_HI_DRAGON | RAISE_DEAD |
-S:S_ANGEL | HEAL | S_SPIDER | S_HOUND | S_HI_DEMON
+S:CURSE | HASTE | S_HI_UNDEAD | S_HI_DRAGONS | RAISE_DEAD |
+S:S_ANGEL | HEAL | S_SPIDERS | S_HOUNDS | S_HI_DEMONS
 # | HAND_DOOM
 D:Nyarlathothep is the messenger, the heart and the soul of the outer gods.
 D:He is a shapechanger capable of assuming thousands of nightmarish forms.
@@ -15165,7 +15165,7 @@ F:IM_FIRE | IM_ELEC | NO_CONF | NO_SLEEP | BASEANGBAND | HAS_LITE
 S:1_IN_3 |
 S:BLIND | CONF | SCARE |
 S:BR_FIRE | BA_NETH | S_KIN |
-S:S_HI_DEMON | S_HI_UNDEAD
+S:S_HI_DEMONS | S_HI_UNDEAD
 D:Gothmog is the Chief Balrog in Morgoth's personal guard. He is renowned
 D:for slaying three High Kings of the Noldor Elves, and he has never been
 D:defeated in combat. With his whip of flame and awesome fiery breath he
@@ -15193,7 +15193,7 @@ S:1_IN_3
 S:TPORT | SCARE | BLIND | MIND_BLAST | BRAIN_SMASH | DRAIN_MANA |
 S:BR_POIS | BR_ACID | BR_FIRE | CONF | DARKNESS | FORGET | S_HI_UNDEAD |
 S:BR_NUKE | BR_NETH | BR_CHAO | BR_DISE | BR_DARK | BR_PLAS | BR_CONF
-S:BR_NEXU | S_HI_DEMON | BR_DISI |
+S:BR_NEXU | S_HI_DEMONS | BR_DISI |
 #S:HAND_DOOM |
 S:RAISE_DEAD
 D:This creature is death incarnate. "A monster of vaguely anthropoid
@@ -15271,7 +15271,7 @@ F:EVIL | RES_FIRE | RES_COLD | RES_ELEC | IM_POIS | ASTAR
 F:NO_CONF | NO_SLEEP | NO_FEAR | RES_TELE | BASEANGBAND | HAS_LITE
 S:1_IN_2 |
 S:TPORT | BA_MANA | BA_FIRE | BA_WATE | BA_NETH | BA_DARK | BA_CHAO |
-S:S_HI_MONSTERS | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON | S_NAZGUL | S_HI_UNIQUE
+S:S_HI_MONSTERS | S_HI_DEMONS | S_HI_UNDEAD | S_HI_DRAGONS | S_NAZGUL | S_HI_UNIQUE
 S:BRAIN_SMASH | RAISE_DEAD
 #FORGET | BO_MANA | TELE_LEVEL |
 #S:HAND_DOOM |
@@ -15300,8 +15300,8 @@ F:EVIL | IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS |
 F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN | RES_TELE
 F:MORTAL | JOKEANGBAND | HAS_LITE
 S:1_IN_2 |
-S:S_DRAGONRIDER | BR_CHAO | BA_CHAO | ROCKET | BRAIN_SMASH | S_HI_DEMON |
-S:BR_NETH | HASTE | BR_MANA | S_HI_UNDEAD | S_HI_DRAGON | TRAPS | FORGET |
+S:S_DRAGONRIDER | BR_CHAO | BA_CHAO | ROCKET | BRAIN_SMASH | S_HI_DEMONS |
+S:BR_NETH | HASTE | BR_MANA | S_HI_UNDEAD | S_HI_DRAGONS | TRAPS | FORGET |
 S:BR_NUKE | BR_POIS | BR_DISI | HEAL | TPORT | TELE_TO |
 #S:HAND_DOOM |
 S:S_BUG | S_RNG |
@@ -15332,7 +15332,7 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | REFLECTING | REGENERATE
 F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN | RES_TELE | BASEANGBAND | HAS_LITE
 S:1_IN_3
 S:BRAIN_SMASH | RAISE_DEAD | S_NAZGUL
-S:S_HI_MONSTERS | S_HI_UNIQUE | S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON
+S:S_HI_MONSTERS | S_HI_UNIQUE | S_HI_DEMONS | S_HI_UNDEAD | S_HI_DRAGONS
 S:ROCKET | BR_NETH | BR_DISI | BA_MANA | BA_NETH | BA_CHAO | BA_DARK
 #S:HAND_DOOM
 #S:UNMAGIC
@@ -15615,7 +15615,7 @@ F:DROP_GOOD | DROP_GREAT | DROP_60 | DROP_1D2 |
 F:OPEN_DOOR | BASH_DOOR | PASS_WALL |
 F:EVIL | UNDEAD | JOKEANGBAND | NO_CUT | RES_DARK | RES_NETH |
 S:1_IN_2 |
-S:S_ANT | S_SPIDER
+S:S_ANTS | S_SPIDERS
 D:One of the horsemen of the apocalypse, before you lies Pestilence.
 D:At first, it looks like a human, but then you notice ants, worms, and
 D:worse peeking out of the flesh. Pestilence rides a purple horse with
@@ -16796,7 +16796,7 @@ F:EVIL | UNDEAD | RES_FIRE | RES_COLD | IM_POIS | ASTAR
 F:HURT_LITE | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 S:1_IN_3 |
 S:BLIND | HOLD | SCARE | CURSE | BA_FIRE | BA_NETH |
-S:S_MONSTERS | S_UNDEAD | S_HOUND
+S:S_MONSTERS | S_UNDEAD | S_HOUNDS
 D:Dwar had a special affinity for dogs in life, and can still command them
 D:at will. He howls manically as he reaches out to destroy you.
 
@@ -16864,7 +16864,7 @@ F:IM_COLD | IM_POIS | HURT_LITE | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 S:1_IN_2 |
 S:TELE_AWAY | BLIND | HOLD | SCARE | CURSE | BRAIN_SMASH |
 S:BO_MANA | BA_NETH | S_NAZGUL |
-S:S_KIN | S_HI_UNDEAD | S_HI_DRAGON | S_MONSTERS | RAISE_DEAD
+S:S_KIN | S_HI_UNDEAD | S_HI_DRAGONS | S_MONSTERS | RAISE_DEAD
 D:The Chief of the Ringwraiths. A fell being of devastating power. His
 D:spells are lethal and his combat blows crushingly hard. He moves at
 D:speed, and commands legions of evil to do his bidding. It is said that he
@@ -17057,7 +17057,7 @@ F:BASH_DOOR | HURT_LITE | SMART | REGENERATE |
 F:ANIMAL | SPIDER | EVIL | IM_FIRE | IM_POIS | BASEANGBAND
 S:1_IN_6
 S:SLOW | HOLD | DRAIN_MANA | MIND_BLAST | HEAL |
-S:BA_FIRE | BO_FIRE | CURSE | S_SPIDER
+S:BA_FIRE | BO_FIRE | CURSE | S_SPIDERS
 D:A vast, bloated arachnid, master of its brood: among the more terrible of
 D:Ungoliant's descendants, this is a monster such as those who haunted the dread
 D:valley of Nan Dungortheb long ago.
@@ -17379,8 +17379,8 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | JOKEANGBAND | NO_CUT
 S:1_IN_2
 S:CONF | SHRIEK | BR_CONF | BR_TIME | BR_INER | BR_GRAV | BRAIN_SMASH |
 S:SCARE | BLIND | SLOW | HOLD | HASTE | HEAL | TELE_TO | FORGET |
-S:S_HI_DEMON | S_MONSTERS | S_HYDRA | S_HI_DRAGON | S_HI_UNDEAD | S_ANGEL |
-S:S_HOUND | S_UNIQUE |
+S:S_HI_DEMONS | S_MONSTERS | S_HYDRAS | S_HI_DRAGONS | S_HI_UNDEAD | S_ANGEL |
+S:S_HOUNDS | S_UNIQUE |
 D:It is even worse than the RNG, coming from Mangband,
 D:it seeks to crush you to pulp... and surely can.
 
@@ -17478,7 +17478,7 @@ F:IM_ACID | IM_POIS | NO_CONF | NO_SLEEP |
 F:MORTAL | BASEANGBAND | HAS_LITE
 S:1_IN_6 |
 S:HEAL |
-S:S_SPIDER | S_ANIMAL
+S:S_SPIDERS | S_ANIMAL
 D:An adept at unarmed combat, the mystic strikes with stunning power. He
 D:can summon help from nature and is able to focus his power to ease any
 D:pain.
@@ -17668,7 +17668,7 @@ F:NO_CONF | NO_SLEEP | WILD_MOUNTAIN | NO_STUN |
 F:MORTAL | BASEANGBAND | HAS_LITE | CAN_SWIM
 S:1_IN_3 |
 S:HEAL |
-S:S_SPIDER | S_ANIMALS
+S:S_SPIDERS | S_ANIMALS
 D:A lord of all that is natural, skilled in the mystic ways. He is a master
 D:of martial arts and is at one with nature, able to summon help from the
 D:wild if need be.
@@ -17691,7 +17691,7 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP |
 F:MORTAL | BASEANGBAND | HAS_LITE | WILD_MOUNTAIN | CAN_SWIM
 S:1_IN_2 |
 S:HEAL | MIND_BLAST |
-S:S_SPIDER | S_HOUND | S_ANIMALS
+S:S_SPIDERS | S_HOUNDS | S_ANIMALS
 D:He is one of the few true masters of the art, being extremely skillful in
 D:all forms of unarmed combat and controlling the world's natural creatures
 D:with disdainful ease.
@@ -18001,7 +18001,7 @@ F:OPEN_DOOR | BASH_DOOR | RES_FIRE | IM_ELEC | IM_POIS | RES_TELE | NO_NEST
 F:NO_CONF | NO_SLEEP | NO_STUN | NO_FEAR | NONLIVING | BASEANGBAND | NO_CUT
 F:RES_LITE | REFLECTING | RES_DARK | RES_LITE | RES_SOUND
 S:1_IN_3 |
-S:BO_PLAS | BA_FIRE | BR_FIRE | BA_ELEC | S_HI_DEMON | TELE_TO
+S:BO_PLAS | BA_FIRE | BR_FIRE | BA_ELEC | S_HI_DEMONS | TELE_TO
 D:A gigantic four-armed animated bronze statue, glowing with great heat.
 
 N:1016:Dimensional shambler
@@ -18124,7 +18124,7 @@ F:EVIL | IM_FIRE | NO_CONF | NO_SLEEP | IM_POIS | GIANT | DEMON | NO_STUN |
 F:ZANGBAND | HAS_LITE | IM_ELEC | RES_COLD
 # | SUSCEP_COLD
 S:1_IN_5 |
-S:BR_ELEC | BR_PLAS | BR_MANA | BLIND | TELE_TO | S_KIN | S_HI_DRAGON |
+S:BR_ELEC | BR_PLAS | BR_MANA | BLIND | TELE_TO | S_KIN | S_HI_DRAGONS |
 S:TELE_AWAY
 #S:HAND_DOOM |
 D:Thiazi is the greatest of all the Storm Giants: when travelling, he takes
@@ -18345,8 +18345,8 @@ F:EVIL | UNDEAD | IM_COLD | IM_FIRE | IM_ACID | IM_ELEC | AURA_COLD |
 F:IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT | RES_SOUND
 S:1_IN_2 |
 S:S_UNDEAD | S_DEMON | S_DRAGON |
-S:S_UNIQUE | S_NAZGUL | S_HI_DEMON |
-S:S_HI_UNDEAD | S_HI_DRAGON | S_KIN |
+S:S_UNIQUE | S_NAZGUL | S_HI_DEMONS |
+S:S_HI_UNDEAD | S_HI_DRAGONS | S_KIN |
 S:BR_DISE | BA_NETH
 D:A disembodied and barely sentient mind, Tik'srvzllat floated
 D:through the void for eons before being awakened by sorcery, pulled
@@ -18500,7 +18500,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR | NO_STUN |
 F:JOKEANGBAND | HAS_LITE | RES_WATE | NO_CUT
 # | S_LOWEXP
 S:1_IN_2 |
-S:S_HI_DRAGON | S_KIN | BR_DISI | HEAL | TPORT |
+S:S_HI_DRAGONS | S_KIN | BR_DISI | HEAL | TPORT |
 S:TELE_LEVEL | TELE_TO
 D:An assistant to Dark God, Improv has chosen the form of a dense
 D:purple smog for his incarnation into Middle Earth. It travels the
@@ -18940,7 +18940,7 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_CONF | NO_SLEEP
 S:1_IN_2 |
 S:BLIND | CONF | SCARE |
 S:BR_ACID | BR_FIRE | BR_COLD | BR_ELEC | BR_POIS |
-S:S_HI_DRAGON
+S:S_HI_DRAGONS
 D:Usually found guarding the first plane of Hell, Tiamat is a formidable
 D:opponent, her five heads breathing death to all who stand against her.
 
@@ -18963,7 +18963,7 @@ F:DROP_GREAT | DROP_CHOSEN | NO_CONF | NO_SLEEP | NO_CUT | CAN_FLY | POWERFUL
 F:KILL_ITEM | HAS_LITE | BASH_DOOR | BLUEBAND | RES_MANA | IM_COLD | ATTR_ANY
 S:1_IN_3
 S:BR_DISI | BR_MANA | BR_CHAO | SHRIEK | BA_MANA |
-S:S_HI_DEMON | S_HI_UNDEAD | S_HI_DRAGON
+S:S_HI_DEMONS | S_HI_UNDEAD | S_HI_DRAGONS
 D:A remotely humanoid creature with four arms ending in claws and a demonic
 D:head with its facial features unchanging, making it seem much like a golem.
 D:Awakened on the hell forge, the body is gleaming in tones of dark red as
@@ -19170,7 +19170,7 @@ F:ONLY_ITEM | DROP_4D2 | DROP_GREAT | IM_FIRE | IM_ELEC | IM_ACID |
 F:COLD_BLOOD | PASS_WALL | MOVE_BODY | RES_DARK | RES_NETH |
 F:OPEN_DOOR | BASH_DOOR | IM_POIS | IM_COLD | DEMON | EVIL | ATTR_ANY | NO_CONF
 S:1_IN_3 |
-S:CURSE | BA_NETH | S_HI_DEMON |
+S:CURSE | BA_NETH | S_HI_DEMONS |
 S:FORGET | MIND_BLAST | DARKNESS | TELE_TO
 D:Direct descendant of Lucifer, mother of Glaryssa, all angels seeking
 D:to destroy her fell to her serpent kiss.
@@ -20424,7 +20424,7 @@ F:IM_FIRE | IM_POIS | IM_ELEC | IM_ACID | IM_COLD | NO_CONF | NO_SLEEP
 F:RES_DARK | RES_LITE | RES_SOUND | RES_NEXU | RES_CHAOS | RES_DISE | RES_MANA
 S:1_IN_1
 S:TPORT | BRAIN_SMASH | FORGET | BLINK | DRAIN_MANA
-S:BA_CHAO | BR_DISE | BA_DARK | S_HI_MONSTERS | S_HI_MONSTER
+S:BA_CHAO | BR_DISE | BA_DARK | S_HI_MONSTER | S_HI_DEMON
 D:"Do not ask which creature screams in the night. Do not question who waits for
 D:you in the shadow. It is my cry that wakes you in the night, and my body that
 D:crouches in the shadow. I am Tzeentch and you are the puppet that dances to my
