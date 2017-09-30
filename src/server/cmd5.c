@@ -1233,6 +1233,22 @@ void do_mimic_power_aux(int Ind, int dir) {
 	fire_grid_bolt(Ind, GF_CONFUSION, dir, damroll(4, 6) + (rlev / 2), p_ptr->attacker);
 	break;
 
+//TODO: implement 96+ mimic spells, aka RF0_, aka innate_spells[3]
+/* RF0_BO_DISE */
+    case 96+7:
+	sprintf(p_ptr->attacker, " casts a disenchantment bolt for");
+	msg_print(Ind, "You cast a disenchantment bolt.");
+	//fire_bolt(Ind, GF_DISENCHANT, dir, damroll(7, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
+	fire_bolt(Ind, GF_DISENCHANT, dir, 25 + damroll(4, 5) + (rlev * 3) / 2 + rlev_bonus / 3, p_ptr->attacker);
+	break;
+// RF0_BA_DISE			0x00010000	/* Acid Bolt */
+    case 96+8:
+	sprintf(p_ptr->attacker, " casts a disenchantment ball");
+	msg_print(Ind, "You cast a  disenchantment ball.");
+	//fire_ball(Ind, GF_DISENCHANT, dir, (rlev * 2) + damroll(10, 10) + rlev_bonus, 4, p_ptr->attacker);
+	fire_ball(Ind, GF_DISENCHANT, dir, 60 + damroll(10, 10) + rlev + rlev_bonus, rad, p_ptr->attacker);
+	break;
+
 	default: /* For some reason we got called for a spell that
 		    doesn't require a direction */
 		msg_format(Ind, "SERVER ERROR: do_mimic_power_aux() called for non-directional power %d!", p_ptr->current_spell);
