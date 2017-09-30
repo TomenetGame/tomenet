@@ -2434,8 +2434,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF4_OFFSET+2:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		for (k = 0; k < 1; k++)
-			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANIMAL, 1, clone_summoning);
 		HANDLE_SUMMON("something", "an animal")
 		break;
 
@@ -2888,10 +2887,15 @@ bool make_attack_spell(int Ind, int m_idx) {
 			msg_format(Ind, "%^s draws psychic energy from you!", m_name);
 
 			/* Attack power */
-			r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4;
+			//r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4; //lv3 j: 4, lv10 m: 8, lv24 W: 15, lv40 e: 23, lv62 G: 34, lv86 U: 46
+			/* New attack power: Add a percentage depending on rlev! */
+			r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4 + (p_ptr->msp * rlev) / 5; //lv3 j: +0%, lv10 m: +2%, lv24 W: +4%, lv40 e: +8%, lv62 G: +12%, lv86 U: +17%, Tzeentch +38% (if 2x UNIQUE)
 
 			/* An open mind invites mana drain attacks */
 			if ((p_ptr->esp_link_flags & LINKF_OPEN)) r1 *= 2;
+
+			/* Special boost - added for Tzeentch, but seems interesting in general ;) - C. Blue */
+			if (r_ptr->flags1 & RF1_UNIQUE) r1 *= 2;
 
 			/* Full drain */
 			if (r1 >= p_ptr->csp) {
@@ -3631,8 +3635,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF6_OFFSET+15:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		for (k = 0; k < 1; k++)
-			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGONRIDER, 1, clone_summoning);
 		HANDLE_SUMMON("something", "a dragonrider")
 		break;
 
@@ -3678,8 +3681,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF6_OFFSET+18:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		for (k = 0; k < 1; k++)
-			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_MONSTER, 1, clone_summoning);
 		HANDLE_SUMMON("something", "help")
 		break;
 
@@ -3732,8 +3734,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF6_OFFSET+24:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		for (k = 0; k < 1; k++)
-			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANGEL, 1, clone_summoning);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_ANGEL, 1, clone_summoning);
 		HANDLE_SUMMON("something", "an angel")
 		break;
 
@@ -3741,8 +3742,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF6_OFFSET+25:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		for (k = 0; k < 1; k++)
-			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DEMON, 1, clone_summoning);
 		HANDLE_SUMMON("something", "a hellish adversary")
 		break;
 
@@ -3750,8 +3750,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF6_OFFSET+26:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		for (k = 0; k < 1; k++)
-			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_UNDEAD, 1, clone_summoning);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_UNDEAD, 1, clone_summoning);
 		HANDLE_SUMMON("something", "an undead adversary")
 		break;
 
@@ -3759,8 +3758,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF6_OFFSET+27:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		for (k = 0; k < 1; k++)
-			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_DRAGON, 1, clone_summoning);
 		HANDLE_SUMMON("something", "a dragon")
 		break;
 
@@ -3808,8 +3806,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF0_OFFSET+0:
 		if (monst_check_antimagic(Ind, m_idx)) break;
 		disturb(Ind, 1, 0);
-		for (k = 0; k < 1; k++)
-			count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
+		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_MONSTER, 1, clone_summoning);
 		HANDLE_SUMMON("something", "help")
 		break;
 

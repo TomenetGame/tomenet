@@ -20411,7 +20411,7 @@ D:For testing
 
 N:1151:Tzeentch, the Changer of Ways
 G:U:v
-I:140:100d100:250:50:0
+I:140:110d110:250:100:0
 W:96:3:3000:50000
 E:0:0:0:0:0:0
 O:0:0:100:0
@@ -20422,10 +20422,9 @@ F:SMART | POWERFUL | CAN_FLY | OPEN_DOOR | BASH_DOOR | MOVE_BODY | FORCE_MAXHP
 F:ONLY_ITEM | DROP_2D2 | DROP_4D2 | DROP_1D2 | DROP_GOOD | DROP_GREAT | HAS_LITE
 F:IM_FIRE | IM_POIS | IM_ELEC | IM_ACID | IM_COLD | NO_CONF | NO_SLEEP
 F:RES_DARK | RES_LITE | RES_SOUND | RES_NEXU | RES_CHAOS | RES_DISE | RES_MANA
-S:1_IN_2
-S:TPORT | BRAIN_SMASH | FORGET | BLINK
-S:BA_CHAO | BR_DISE | BA_DARK | S_HI_MONSTERS
-#DRAIN_MANA | 
+S:1_IN_1
+S:TPORT | BRAIN_SMASH | FORGET | BLINK | DRAIN_MANA
+S:BA_CHAO | BR_DISE | BA_DARK | S_HI_MONSTERS | S_HI_MONSTER
 D:"Do not ask which creature screams in the night. Do not question who waits for
 D:you in the shadow. It is my cry that wakes you in the night, and my body that
 D:crouches in the shadow. I am Tzeentch and you are the puppet that dances to my
