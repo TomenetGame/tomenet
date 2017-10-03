@@ -2983,10 +2983,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 						if (p_ptr->csp < 0) p_ptr->csp = 0;
 						p_ptr->redraw |= PR_MANA;
 						if (!obvious) msg_print(Ind, "Your psychic energy gets drained.");
-
 						obvious = TRUE;
-
-						p_ptr->redraw |= PR_MANA;
 					}
 
 					break;

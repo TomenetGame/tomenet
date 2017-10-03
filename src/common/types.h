@@ -897,7 +897,7 @@ struct monster_type {
 	u16b clone;			/* clone value */
 	u16b clone_summoning;		/* counter to keep track of summoning */
 
-	s16b mind;			/* Current action -- golems */
+	s16b mind;			/* Current action (golems, pets) -- Now also use for new AI_HYBRID (added for Tzeentch) */
 
 #ifdef RANDUNIS
 	u16b ego;			/* Ego monster type */

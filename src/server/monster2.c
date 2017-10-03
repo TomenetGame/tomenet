@@ -2379,7 +2379,7 @@ void update_mon(int m_idx, bool dist) {
 				if ((p_ptr->telepathy & ESP_DRAGONRIDER) && (r_ptr->flags3 & RF3_DRAGONRIDER)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_GOOD) && (r_ptr->flags3 & RF3_GOOD)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_NONLIVING) && (r_ptr->flags3 & RF3_NONLIVING)) see = TRUE;
-				if ((p_ptr->telepathy & ESP_UNIQUE) && ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_UNIQUE_4))) see = TRUE;
+				if ((p_ptr->telepathy & ESP_UNIQUE) && (r_ptr->flags1 & RF1_UNIQUE)) see = TRUE;
 				if (p_ptr->telepathy & ESP_ALL) see = TRUE;
 
 				if (see && (p_ptr->mode & MODE_HARD) && (m_ptr->cdis > MAX_SIGHT)) see = FALSE;

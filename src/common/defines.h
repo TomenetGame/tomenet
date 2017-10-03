@@ -5427,8 +5427,7 @@
 #define RF3_XXX			0x01000000 //unused- was plasma res
 #define RF3_RES_NEXU		0x02000000	/* Resist nexus */
 #define RF3_RES_DISE		0x04000000	/* Resist disenchantment */
-#define RF3_UNIQUE_4		0x08000000      /* Is a "Nazgul" unique -- UNUSED*/
-//HOLE ^ uniq4
+#define RF3_AI_HYBRID		0x08000000	/* Monster is AI_ANNOY while target player isn't in melee (aka on adjacent grid) */
 #define RF3_NO_FEAR			0x10000000	/* Cannot be scared */
 #define RF3_NO_STUN			0x20000000	/* Cannot be stunned */
 #define RF3_NO_CONF			0x40000000	/* Cannot be confused */
@@ -5511,7 +5510,7 @@
 #define RF5_BO_FIRE		0x00040000	/* Fire Bolt */
 #define RF5_BO_COLD		0x00080000	/* Cold Bolt */
 #define RF5_BO_POIS			0x00100000	/* Poison Bolt (unused/not implemented for monsters) */
-//HOLE (^unused pois bolt)
+//HOLE^, used by Judge Mortis only, and has no code
 #define RF5_BO_NETH			0x00200000	/* Nether Bolt */
 #define RF5_BO_WATE			0x00400000	/* Water Bolt */
 #define RF5_BO_MANA			0x00800000	/* Mana Bolt */
@@ -5539,7 +5538,7 @@
 #define RF6_BLINK			0x00000010	/* Teleport Short */
 #define RF6_TPORT			0x00000020	/* Teleport Long */
 #define RF6_RAISE_DEAD			0x00000040      /* Raise Dead -- not implemented */
-//HOLE^not implemented
+//HOLE^not implemented, but used in r_info
 #define RF6_S_BUG			0x00000080      /* Summon Software bug */
 #define RF6_TELE_TO		0x00000100	/* Move player to monster */
 #define RF6_TELE_AWAY		0x00000200	/* Move player far away */
@@ -5579,12 +5578,12 @@
 #define RF7_FRIENDLY		0x00000008  /* Monster is friendly */
 #define RF7_PET				0x00000010  /* Monster is a pet */
 #define RF7_MORTAL			0x00000020  /* Monster is a mortal being -- UNUSED */
-//HOLE^mortal
+//^effectless, but actually used in r_info
 #define RF7_SPIDER			0x00000040  /* Monster is a spider (can pass webs) */
 #define RF7_NAZGUL			0x00000080  /* Monster is a Nazgul */
 #define RF7_DG_CURSE		0x00000100  /* If killed the monster grant a DG Curse to the player */
 #define RF7_POSSESSOR		0x00000200  /* Is it a dreaded possessor monster ? -- UNUSED */
-//HOLE^poss
+//^effectless, but actually used in r_info
 #define RF7_NO_DEATH		0x00000400  /* Cannot be killed */
 #define RF7_NO_TARGET		0x00000800  /* Cannot be targeted */
 #define RF7_AI_ANNOY			0x00001000  /* Try to tease the player */
@@ -7266,6 +7265,10 @@ extern int PlayerUID;
 #define GOLEM_ATTACK		0x01
 #define GOLEM_FOLLOW		0x02
 #define GOLEM_GUARD		0x04
+
+/* Mind defines (non-golem/pet monsters that have AI_HYBRID) - C. Blue */
+#define HYBRID_NORMAL		0x0
+#define HYBRID_ANNOY		0x1
 
 /*
  * Monster AI-state defines	- Jir -

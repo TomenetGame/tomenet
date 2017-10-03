@@ -256,7 +256,7 @@ static cptr r_info_flags3[] = {
 	"XXX",
 	"RES_NEXU",
 	"RES_DISE",
-	"UNIQUE_4",	// "RES_PSI",
+	"AI_HYBRID",
 	"NO_FEAR",
 	"NO_STUN",
 	"NO_CONF",

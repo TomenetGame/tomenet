@@ -5284,7 +5284,7 @@ static bool get_moves(int Ind, int m_idx, int *mm) {
 
 	/* If player is next to us, we might eventually decide to attack instead of avoiding terrain problems etc */
 	if (ABS(m_ptr->fx - x2) <= 1 && ABS(m_ptr->fy - y2) <= 1 &&
-	    (!(r_ptr->flags7 & RF7_AI_ANNOY) || m_ptr->taunted))
+	    (!((r_ptr->flags7 & RF7_AI_ANNOY) || (m_ptr->mind & HYBRID_ANNOY)) || m_ptr->taunted))
 		close_combat = TRUE;
 
 #ifdef MONSTER_ASTAR
@@ -5564,7 +5564,7 @@ s_printf("ASTAR_INCOMPLETE\n");
 #endif	/* SAFETY_RADIUS */
 	}
 	/* Tease the player */
-	else if (((r_ptr->flags7 & RF7_AI_ANNOY) || robin) && !m_ptr->taunted) {
+	else if (((r_ptr->flags7 & RF7_AI_ANNOY) || (m_ptr->mind & HYBRID_ANNOY) || robin) && !m_ptr->taunted) {
 		/* Cheeze note: Use of distance() makes diagonal approaching preferable, with the monster
 		   keeping only 2-3 grids distance instead of 3-4 for straight vertical/horizontal distances */
 		if (distance(m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px) < ANNOY_DISTANCE) {
@@ -7432,7 +7432,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	/* Handle "fear" */
 	if (m_ptr->monfear
 #if 1 /* experimental: don't recover from fear until healed up somewhat? except if we're usually attacking from afar anyway */
-	    && ((m_ptr->hp * 100) / m_ptr->maxhp >= 20 + rand_int(11) || (r_ptr->flags7 & RF7_AI_ANNOY))
+	    && ((m_ptr->hp * 100) / m_ptr->maxhp >= 20 + rand_int(11) || (r_ptr->flags7 & RF7_AI_ANNOY) || (m_ptr->mind & HYBRID_ANNOY))
 #endif
 	    ) {
 		/* Amount of "boldness" */
@@ -10076,6 +10076,15 @@ void process_monsters(void) {
 			}
 		}
 #endif
+
+		if (r_ptr->flags3 & RF3_AI_HYBRID) {
+			/* switch to AI_ANNOY if the target player is at distance,
+			   switch to normal if the target player is in melee range. */
+			bool adj = ((p_ptr->py - m_ptr->fy <= 1) && (p_ptr->px - m_ptr->fx <= 1));
+
+			if (adj && (m_ptr->mind & HYBRID_ANNOY)) m_ptr->mind &= ~HYBRID_ANNOY;
+			else if (!adj && !(m_ptr->mind & HYBRID_ANNOY)) m_ptr->mind |= HYBRID_ANNOY;
+		}
 	}
 
 	/* Only when needed, every five game turns */
