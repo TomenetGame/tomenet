@@ -2109,6 +2109,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 	f7 = r_ptr->flags7;
 	f0 = r_ptr->flags0;
 
+	/* Hack for Tzeentch:
+	   Monsters that have both ASTAR and BLINK will not need to use it for movement purpose other than when ASTAR gets stuck.
+	   The other reason when BLINK is used is for escaping, which means player must be close or in line of sight. */
+	if ((f0 & RF0_ASTAR) && (f6 & RF6_BLINK)
+	    && distance(y, x, oy, ox) >= ANNOY_DISTANCE - 1 && !los(wpos, y, x, oy, ox))
+		f6 &= ~RF6_BLINK;
+
 	/* unable to summon on this floor? */
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON))
 	    || (in_sector00(wpos) && (sector00flags2 & LF2_NO_SUMMON))) {
