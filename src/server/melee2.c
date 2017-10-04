@@ -2096,7 +2096,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 	//if (!chance) return (FALSE);
 
 	/* Specialty for AI_HYBRID (Tzeentch) so he actually does melee for a change despite casting 1_IN_1 */
-	if ((r_ptr->flags3 & RF3_AI_HYBRID) && !(m_ptr->mind & HYBRID_ANNOY))
+	if ((r_ptr->flags3 & RF3_AI_HYBRID) && !(m_ptr->mind & HYBRID_ANNOY)
+	    && r_ptr->freq_innate && r_ptr->freq_spell) //avoid div0
 		/* Shift chance from 1_IN_n to 1_IN_(n+i/10), where i should probably be between 10 and 20. */
 		chance = 1000 / ((1000 / ((r_ptr->freq_innate + r_ptr->freq_spell) / 2)) + 10);
 
