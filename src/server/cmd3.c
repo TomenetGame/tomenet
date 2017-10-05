@@ -2056,8 +2056,8 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		u32b f1, f2, f3, f4, f5, f6, esp, tmpf1, tmpf2, tmpf3, tmp;
 		bool i_f = FALSE, i_c = FALSE, i_e = FALSE, i_a = FALSE, i_p = FALSE, i_w = FALSE, i_n = FALSE;
 
-		if (!(o_ptr->ident & ID_MENTAL)) {
-			msg_print(Ind, "\377yYou must have *identified* an item in order to power-inscribe it.");
+		if (maybe_hidden_powers(Ind, o_ptr)) {
+			msg_print(Ind, "\377yThis item may have hidden powers. You must *identify* it first.");
 			return;
 		}
 
@@ -2082,11 +2082,15 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 		/* -- stats -- */
 		if (!redux) {
+			int amt = o_ptr->bpval + o_ptr->pval;
+
 			tmpf1 = f1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR);
 			tmpf2 = f2 & (TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
 			tmpf3 = tmpf1 & tmpf2;
+			if (!amt) tmpf1 = tmpf3 = 0x0; //item was disenchanted to zero? don't display stat effects then.
 			if (tmpf3) {
-				strcat(powins, "^");
+				if (amt > 0) strcat(powins, "^");
+				else strcat(powins, "v");
 				if (tmpf3 & TR1_STR) strcat(powins, "S");
 				if (tmpf3 & TR1_INT) strcat(powins, "I");
 				if (tmpf3 & TR1_WIS) strcat(powins, "W");
@@ -2097,7 +2101,8 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 				tmpf2 &= ~tmpf3;
 			}
 			if (tmpf1) {
-				strcat(powins, "+");
+				if (amt > 0) strcat(powins, "+");
+				else strcat(powins, "-");
 				if (tmpf1 & TR1_STR) strcat(powins, "S");
 				if (tmpf1 & TR1_INT) strcat(powins, "I");
 				if (tmpf1 & TR1_WIS) strcat(powins, "W");
@@ -2269,14 +2274,14 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 				if (f1 & (TR1_SLAY_TROLL)) strcat(powins, "T");
 				if (f1 & (TR1_SLAY_GIANT)) strcat(powins, "P");
 				if (f1 & (TR1_SLAY_ANIMAL)) strcat(powins, "a");
-				if (!(f1 & (TR1_KILL_UNDEAD)) && (f1 & TR1_SLAY_UNDEAD)) strcat(powins, "W");
+				if (!(f1 & (TR1_KILL_UNDEAD)) && (f1 & TR1_SLAY_UNDEAD)) strcat(powins, "G");
 				if (!(f1 & (TR1_KILL_DEMON)) && (f1 & TR1_SLAY_DEMON)) strcat(powins, "U");
 				if (!(f1 & (TR1_KILL_DRAGON)) && (f1 & TR1_SLAY_DRAGON)) strcat(powins, "D");
 				if (f1 & (TR1_SLAY_EVIL)) strcat(powins, "Evil");
 			}
 			if (f1 & (TR1_KILL_UNDEAD | TR1_KILL_DEMON | TR1_KILL_DRAGON)) {
 				strcat(powins, "*");
-				if (f1 & TR1_KILL_UNDEAD) strcat(powins, "W");
+				if (f1 & TR1_KILL_UNDEAD) strcat(powins, "G");
 				if (f1 & TR1_KILL_DEMON) strcat(powins, "U");
 				if (f1 & TR1_KILL_DRAGON) strcat(powins, "D");
 			}
@@ -2351,6 +2356,26 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			case GF_HELL_FIRE: strcat(powins, "Hellfire"); break;
 			}
 			strcat(powins, ")");
+		}
+
+		/* Dark Swords: Antimagic Field % */
+		if (f4 & (TR4_ANTIMAGIC_10 | TR4_ANTIMAGIC_20 | TR4_ANTIMAGIC_30 | TR4_ANTIMAGIC_50)) {
+			int am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
+			    + ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)
+			    + ((f4 & (TR4_ANTIMAGIC_20)) ? 20 : 0)
+			    + ((f4 & (TR4_ANTIMAGIC_10)) ? 10 : 0);
+			if (am) {
+				int j = o_ptr->to_h + o_ptr->to_d;// + o_ptr->pval + o_ptr->to_a;
+				if (j > 0) am -= j;
+				if (am > 50) am = 50;
+			}
+#ifdef NEW_ANTIMAGIC_RATIO
+			am = (am * 3) / 5;
+#endif
+			if (am < 0) am = 0;
+
+			if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
+			strcat(powins, format("%d%%", am));
 		}
 
 		/* Append the rest of the inscription, if any */

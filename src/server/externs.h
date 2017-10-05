@@ -1204,6 +1204,7 @@ extern int Send_reliable(int ind);
 
 
 /* object1.c */
+extern bool maybe_hidden_powers(int Ind, object_type *o_ptr);
 /* object2.c */
 extern void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt);
 extern void discharge_rod(object_type *o_ptr, int c);

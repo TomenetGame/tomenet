@@ -4515,6 +4515,75 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	p_ptr->tim_wraith = tim_wraith;
 }
 
+/* New helper function for @@/@@@ inscriptions: Check if item might have hidden powers (in which case the inscription is declined). */
+bool maybe_hidden_powers(int Ind, object_type *o_ptr) {
+	bool aware = object_aware_p(Ind, o_ptr);
+	ego_item_type *e_ptr;
+	int j;
+
+	/* item not already *id*ed or well known (flavoured item)? */
+	if ((o_ptr->ident & ID_MENTAL) ||
+	    (k_info[o_ptr->k_idx].easy_know && aware && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->name2b)) return FALSE;
+
+	/* Un-*id*-ed artifacts can (and will) always have hidden powers.. */
+	if (o_ptr->name1) return TRUE;
+
+	/* Unidentified items always qualify (if they're not easily known anyway and don't need ID, eg flavoured items) */
+	if (!object_known_p(Ind, o_ptr)) return TRUE;
+
+	/* be strict: unknown AM field counts too.
+	   Arts can have deviant AM fields. For non-arts however they're obvious by just normal ID, to reveal +hit,+dam values. */
+	if (o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD && o_ptr->name1) return TRUE;
+
+	/* Assume we must *id* (just once) to learn sigil powers - Kurzel */
+	if (o_ptr->sigil) return TRUE;
+
+	/* Multi-Hued DSMs need *id* to reveal their immunities */
+	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) return TRUE;
+
+	/* Just add the fixed ego flags that we know to be on the item */
+	if (o_ptr->name2) {
+		e_ptr = &e_info[o_ptr->name2];
+		for (j = 0; j < 5; j++) {
+			if (e_ptr->rar[j] == 0) continue;
+			/* hack: can *identifying* actually make a difference at all? */
+
+			/* any non-trivial (on the object name itself visible) abilities? */
+			if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+			    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
+			    /* random ego mods (R_xxx)? */
+			    (e_ptr->esp[j] & ESP_R_MASK)) return TRUE;
+
+			/* random base mods? */
+			if (e_ptr->rar[j] != 100) {
+				if (e_ptr->flags1[j] | e_ptr->flags2[j] | e_ptr->flags3[j] |
+				    e_ptr->flags4[j] | e_ptr->flags5[j] | e_ptr->flags6[j] |
+				    e_ptr->esp[j]) return TRUE;
+			}
+		}
+	}
+	if (o_ptr->name2b) {
+		e_ptr = &e_info[o_ptr->name2b];
+		for (j = 0; j < 5; j++) {
+			if (e_ptr->rar[j] == 0) continue;
+			/* hack: can *identifying* actually make a difference at all? */
+
+			/* any non-trivial (on the object name itself visible) abilities? */
+			if ((e_ptr->fego1[j] & ETR1_EASYKNOW_MASK) ||
+			    (e_ptr->fego2[j] & ETR2_EASYKNOW_MASK) ||
+			    /* random ego mods (R_xxx)? */
+			    (e_ptr->esp[j] & ESP_R_MASK)) return TRUE;
+
+			/* random base mods? */
+			if (e_ptr->rar[j] != 100) {
+				if (e_ptr->flags1[j] | e_ptr->flags2[j] | e_ptr->flags3[j] |
+				    e_ptr->flags4[j] | e_ptr->flags5[j] | e_ptr->flags6[j] |
+				    e_ptr->esp[j]) return TRUE;
+			}
+		}
+	}
+	return FALSE;
+}
 
 /* Display examine (x/I) text of an item we haven't *identified* yet */
 #ifndef NEW_ID_SCREEN /* old way: paste some info directly into chat */
