@@ -37,6 +37,11 @@
 /* Allow ego-trapkits that aren't bolt/arrow/shot type? */
 #define TRAPKIT_EGO_ALL
 
+/* Bonus added to object_level for item generation via DROP_GOOD or DROP_GREAT flag.
+   (Was 10, but that implies a +10 bonus to _both_ monster level and floor depth, with the new
+   averaging calculations. It already improves enchantment/ego/art chances, so maybe zero is best.) */
+#define GOOD_OLEV_BONUS 0
+
 
 //#if FORCED_DROPS == 1  --now also required for tc_bias
 static int which_theme(int tval);
@@ -7299,7 +7304,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	prob = (good || great ? 300 : 10000); // 10 : 1000; 30 : 1000
 
 	/* Base level for the object */
-	base = (good || great ? (object_level + 10) : object_level);
+	base = (good || great ? (object_level + GOOD_OLEV_BONUS) : object_level);
 
 
 	/* Hack -- clear out the forgery */
@@ -7562,7 +7567,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 	prob = (good || great ? 300 : 10000); // 10 : 1000; 30 : 1000
 
 	/* Base level for the object */
-	base = (good || great ? (object_level + 10) : object_level);
+	base = (good || great ? (object_level + GOOD_OLEV_BONUS) : object_level);
 
 
 	/* Hack -- clear out the forgery */
