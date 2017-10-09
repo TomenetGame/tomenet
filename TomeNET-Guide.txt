@@ -9513,8 +9513,8 @@ Note that the highest level items in the game at this time are these two level
 Example:
 
 You kill a great wyrm of power on the deepest floor of Angband (-3050 ft), so
-floor level is 127, race level is 85.
-(floor + race) / 2 = (127 + 85) / 2 = 106.
+floor level is 127 and race level is 85.
+(floor + race) / 2 = (127 + 85) / 2 = 106 (the result is always rounded down).
 Now the higher of the two (floor and race) is 127. The difference of the result
 (106) to 127 is 21. This gets capped at 20 and is the random 'tolerance' for
 each item dropped by the wyrm.
