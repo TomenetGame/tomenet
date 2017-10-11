@@ -351,3 +351,45 @@ const char *my_strcasestr(const char *big, const char *little) {
 	} while (big[cnt] != '\0');
 	return NULL;
 }
+/* Same as my_strcasestr() but skips colour codes (added for guide search) */
+const char *my_strcasestr_skipcol(const char *big, const char *little) {
+	const char *ret = NULL;
+	int cnt = 0, cnt2 = 0, cnt_offset;
+	int L = strlen(little), l;
+
+	/* para stuff that is necessary */
+	if (big == NULL) return NULL; //cannot find anything in a place that doesn't exist
+	if (little == NULL) return NULL; //something that doesn't exist, cannot be found.. (was 'return big')
+	if (*little == 0) return big;
+	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
+
+	do {
+		/* Skip colour codes */
+		if (big[cnt] == '\377') {
+			cnt++;
+			if (big[cnt] != 0) cnt++; //paranoia: broken colour code
+		}
+
+		cnt2 = cnt_offset = 0;
+		l = 0;
+		while (little[cnt2] != 0) {
+			/* Skip colour codes */
+			if (big[cnt + cnt2 + cnt_offset] == '\377') {
+				cnt_offset++;
+				if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
+				continue;
+			}
+
+			if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == tolower(little[cnt2]) || big[cnt + cnt2 + cnt_offset] == toupper(little[cnt2])) l++;
+			else break;
+
+			if (l == 1) ret = big + cnt;
+
+			cnt2++;
+		}
+
+		if (L == l) return ret;
+		cnt++;
+	} while (big[cnt] != '\0');
+	return NULL;
+}

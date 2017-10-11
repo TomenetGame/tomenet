@@ -1419,7 +1419,7 @@ void cmd_the_guide(void) {
 	static char lastsearch[MAX_CHARS] = "";
 	static char lastchapter[MAX_CHARS] = "";
 
-	bool inkey_msg_old, within, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
+	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c, n, line_presearch = line;
 	char search[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
@@ -1640,7 +1640,7 @@ void cmd_the_guide(void) {
 					restore_pos = TRUE;
 					break;
 				/* We found a result */
-				} else if (my_strcasestr(buf2, search)) {
+				} else if (my_strcasestr_skipcol(buf2, search)) {
 					/* Reverse again to normal direction/location */
 					if (backwards) {
 						backwards = FALSE;
@@ -1670,14 +1670,37 @@ void cmd_the_guide(void) {
 			}
 
 			/* Colour all search finds */
-			if (withinsearch[0] && my_strcasestr(buf2, withinsearch)) {
+			if (withinsearch[0] && my_strcasestr_skipcol(buf2, withinsearch)) {
 				strcpy(buf, buf2);
 
 				cp = buf;
 				cp2 = buf2;
-				within = FALSE;
+				within = within_col = FALSE;
 				while (*cp) {
-					if (!strncasecmp(cp, withinsearch, strlen(withinsearch))) {
+					/* We're entering/exiting a (light green) coloured chapter marker? */
+					if (*cp == '\377') {
+						if (*(cp + 1) == 'G') within_col = TRUE;
+						else within_col = FALSE;
+
+						/* The colour-letter inside a colour code does of course not count towards the search result.
+						   However, if already inside a result, don't recolour it from red to green.. */
+						if (!within) {
+							*cp2++ = *cp++;
+							/* paranoia: broken colour code? */
+							if (!(*cp)) break;
+							*cp2++ = *cp++;
+						} else {
+							cp++;
+							/* paranoia: broken colour code? */
+							if (!(*cp)) break;
+							cp++;
+						}
+
+						continue;
+					}
+
+					//if (!strncasecmp_skipcol(cp, withinsearch, strlen(withinsearch))) { --no need to define an extra function, just reuse my_strcasestr_skipcol() simply:
+					if (my_strcasestr_skipcol(cp, withinsearch) == cp) {
 						/* begin of colourizing */
 						*cp2++ = '\377';
 						*cp2++ = 'R';
@@ -1692,9 +1715,15 @@ void cmd_the_guide(void) {
 					if (within) {
 						within_cnt++;
 						if (within_cnt == strlen(withinsearch)) {
-							*cp2++ = '\377';
-							*cp2++ = 'w';
 							within = FALSE;
+							*cp2++ = '\377';
+							/* restore a disrupted chapter marker? */
+							if (within_col) {
+								within_col = FALSE;
+								*cp2++ = 'G';
+							}
+							/* normal text */
+							else *cp2++ = 'w';
 						}
 					}
 
