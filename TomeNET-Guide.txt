@@ -8248,7 +8248,7 @@ Polearms*  low / high           high / medium         low / mid
 -------------------------------------------------------------------------------
  * Note that these weapon types can (partially) obtain VORPAL mod from 'Sharp'
  or 'Spinning' ego power (see (5.8)):
- ** For randarts, only swords can spawn the VORPAL mod:
+ ** For randarts, only swords can spawn the VORPAL (see (5.8)) mod:
  Damage-wise 2h-swords with VORPAL flag can make up somewhat for the damage gap
  towards the top tier weapons of the other weapon classes.
  VORPAL mod makes an especially big difference in scenarios that are low on
@@ -15481,7 +15481,7 @@ school.
                     Required skill level for first spell level: 16.
                     Shared spell (see above): Air, Conveyance.
 
-    Invisibility    Turns you invisible.
+    Invisibility    Turns you invisible. (See (5.16) for details.)
                     Required skill level for first spell level: 30.
 
     BONI:           Feather falling at 30,
@@ -16067,7 +16067,7 @@ school.
                     Shared spell (see above): O.Shadow, Conveyance.
                     This spell cannot be found in the Conveyance tome.
 
-    Shadow Shroud   Grants temporary invisibility.
+    Shadow Shroud   Grants temporary invisibility. (See (5.16) for details.)
                     Required skill level for first spell level: 30.
 
     Chaos Bolt      Channels the powers of chaos into a bolt attack.
@@ -17056,14 +17056,14 @@ staves, boomerangs, and crowns (see (8.4) Artifact Creation).
 Note: Non-enhanced sigils will always produce the element's according resist.
 
 Abbreviations (in alphabetical order):
-AM - Anti-magic shell
+AM - Anti-magic shell (see (5.8) under NO_MAGIC)
 Au - Aura
 Ba - Base resist (acid/elec/fire/cold)
 Bl - Blind resist
 Br - Brand
 c+ - Charisma bonus (PVAL Required)
 C+ - Constitution bonus (PVAL Required)
-Ch - Chaotic
+Ch - Chaotic (see (5.8) for details)
 Cr - Critical bonus (PVAL Required)
 D+ - Dexterity bonus (PVAL Required)
 EA - Extra attacks (PVAL Required)
@@ -17075,7 +17075,7 @@ HL - Hold life
 I+ - Intelligence bonus (PVAL Required) [Helm -- Crowns ONLY]
 If - Infra-vision (PVAL Required)
 Im - Immunity (One element only!)
-In - Invisibility
+In - Invisibility (see (5.16) for details)
 MP - Max mana increase (PVAL Required) [Helm -- Crowns ONLY]
 NT - Anti-Teleportation
 Re - Reflection
@@ -17089,8 +17089,8 @@ SK - Random slay/kill flag
 Sl - Stealth (PVAL required)
 Sp - Speed (PVAL Required)
 Su - Random sustain
-Va - Vampirism
-Vo - Vorpal (Quaking if blunt)
+Va - Vampirism (see (5.15) for details)
+Vo - Vorpal (Quaking if blunt) (see (5.8) for details on 'IMPACT' and 'VORPAL')
 W+ - Wisdom bonus (PVAL Required) [Helm -- Crowns ONLY]
 
 -------------------------------------------------------------------------------
@@ -19050,7 +19050,7 @@ Weapons, boomerangs
         All SLAY mods (also have a chance to add the corresponding ESP)
         All KILL (*SLAY*) mods (will also add the corresponding ESP)
         Critical hit bonus
-        Vorpal mod (swords only)
+        Vorpal mod (swords only, see (5.8) for details)
         Extra attacks
         Extra +hit and +dam bonus
         Extra +AC bonus
@@ -19140,7 +19140,7 @@ Cloaks
         Chance for either lightning or fire aura and corresponding resistance
         Chance for shard resistance
         Hold life
-        Invisibility
+        Invisibility (see (5.16) for details.)
         Extra +AC bonus (somewhat more common than on other items)
 Body Armour (except for Dragon Scale Mails)
         Stealth
@@ -19217,7 +19217,8 @@ General mods:
         Faster mana regeneration
         Faster HP regeneration
         Anti-magic shell
-            (Legendary saving throw is raised to 95% cap)
+            (Legendary saving throw is raised to 95% cap,
+             also see 'NO_MAGIC' in (5.8) for more details.)
 
 
 Item Mod Limits:
