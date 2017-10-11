@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. September 2017 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 11. October 2017 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11071,7 +11071,8 @@ TIME            time.
                 The damage can partially be mitigated by having the resistance.
 DISEASE         poison.
                 This attack can also decrease your constitution.
-INSANITY        none. (mimics using WEIRD_MIND/EMPTY_MIND form resist slightly)
+INSANITY        none. But certain mimicry forms, skills and classes/races gain
+                some damage reduction in three tiers, see (6.6) for details.
 HALLU           chaos.
 PARASITE        <currently no effect>
 DISARM          'Fighting' ability.
@@ -13539,7 +13540,7 @@ create a character!):
     cold, time, nether, they're immune to poison and it's hard to drain their
     life force - this is also true for life force drained by items a vampire
     has equipped: Those will drain exp at only half the normal rate.
-    Vampires have a good chance to resist the adverse effects of encountering
+    Vampires have a high chance to resist the adverse effects of encountering
     an eldritch horror (see (6.3) under 'Saving Throw' for details on those).
     They also intrinsically have partially life leeching (vampiric) attacks
     (see '(5.15) Vampirism' for more information) which they can further
@@ -14024,6 +14025,9 @@ create a character!):
     great effect, flipping their negative boni to positive ones. (With the same
     exception as for vampires: Weapons "of nothingness" will do them no good
     either.)
+    Hell Hnights have a very high chance to resist the adverse effects of
+    encountering an eldritch horror (see (6.3) under 'Saving Throw' for details
+    on those).
 
 - Ranger
     Second only to adventurers regarding versatility rangers excel at a lot of
@@ -14196,10 +14200,10 @@ create a character!):
     amount of psychic energy.
     Mindcrafters will learn to resist sanity-draining effects a bit at level
     10, somewhat better at level 20 and even better at 40.
-    They also have a good chance to resist the adverse effects of encountering
-    an eldritch horror (see (6.3)
-    under 'Saving Throw' for details on those), they also resist mind-blanking
-    attemps and psionic attacks in general much better than other classes.
+    They also have a high chance to resist the adverse effects of encountering
+    an eldritch horror (see (6.3) under 'Saving Throw' for details on those),
+    they also resist mind-blanking attemps and psionic attacks in general much
+    better than other classes.
     A lot of their spells can actually be cast while blinded (or even
     confused), and their targetted spells often do not require a clean line of
     sight, since they manifest whereever their mind is focussed on
@@ -14406,6 +14410,19 @@ messages, to make it easily visible.
 
 Certain classes such as priests or mindcrafters may depending on their skills
 be able to cure insanity.
+
+There are no items granting any insanity resistance, but there are certain ways
+to reduce incoming insanity damage, depending on the flags of a mimicked form
+or your race, class or skills, in three tiers:
+    Mimicry: UNDEAD/WEIRD_MIND/MIND_BLAST/RES_PSI = tier 1.
+    Mimicry: NONLIVING/EMPTY_MIND/BRAIN_SMASH/IM_PSI = tier 2.
+    Mind school skill: Level 40/50 = tier 1/2.
+    Hereticism + Traumaturgy skills: Both level 15/30/45 = tier 1/2/3.
+    Mindcrafter class: Level 10/20/40 = tier 1/2/3.
+    Vampire race: Tier 2.
+    Player ghosts: Tier 3.
+Insanity reduction also helps resisting the adverse effects of encountering an
+eldritch horror (see (6.3) under Saving Throw).
 
 
 
@@ -14624,15 +14641,9 @@ F: flag list
     SUSCEP_FIRE/SUSCEP_COLD/SUSCEP_ELEC/SUSCEP_ACID/SUSCEP_POIS
                 The player is susceptible against these attacks. Dangerous!
     WIERD_MIND/RES_PSI
-                Insanity attacks are reduced a little bit. (Overrides S-flags)
-                Also helps somewhat against the effects of encountering an
-                eldritch horror (see (6.3) under 'Saving Throw' for details on
-                those).
+                Insanity attacks are reduced a little bit. See (6.6).
     EMPTY_MIND/IM_PSI
-                Insanity attacks are reduced somewhat. (Overrides S-flags)
-                Also helps somewhat against the effects of encountering an
-                eldritch horror (see (6.3) under 'Saving Throw' for details on
-                those).
+                Insanity attacks are reduced somewhat. See (6.6).
     AQUATIC     Gives superb water resistance.
     NEVER_MOVE  Using this form, the player won't be able to move (except for
                 teleportation/phasing/recalling).
@@ -14676,8 +14687,8 @@ S: spell list
     BR_PLASMA   gives fire immunity and resistance to electricity and sound.
     BR_GRAVITY  gives feather falling.
     BR_INERTIA  gives free action.
-    MIND_BLAST  Insanity attacks are reduced a little bit.
-    BRAIN_SMASH Insanity attacks are reduced somewhat.
+    MIND_BLAST  Insanity attacks are reduced a little bit. See (6.6).
+    BRAIN_SMASH Insanity attacks are reduced somewhat. See (6.6).
     The mana costs of mimic powers are fixed, the success chance is relatively
     fixed too although it benefits somewhat from 'Magic' skill.
 
@@ -14718,10 +14729,7 @@ All undead creatures
                 Resist darkness, blindness, poison (usually immunity, depends
                 on ~7 flags), time and nether;
                 can't bleed (no_cut), infra-vision +1, insanity attacks are
-                reduced by a little bit.
-                Also helps somewhat against the effects of encountering an
-                eldritch horrors (see (6.3) under 'Saving Throw' for details
-                on those).
+                reduced by a little bit (see (6.6)).
                 Drowning damage taken is halved.
                 Becomes susceptible to 'life', which concerns some healing or
                 cleansing effects mostly.
@@ -14739,7 +14747,7 @@ All greater demons (capital 'U')
                 from a couple of 'good' effects/spells (similar to undead).
 All non-living creatures
                 Resist poison (usually even immune, depends on ~7 flags)
-                and fear; insanity attacks are reduced somewhat.
+                and fear; insanity attacks are reduced somewhat (see (6.6)).
 All vampires and vampiric monsters (vampire bats and others)
                 Vampires are susceptible to light.
                 Chance to drain life on attacking in melee.
@@ -14748,8 +14756,9 @@ All vampires and vampiric monsters (vampire bats and others)
                 (half their attacks are hits, the other half is biting).
                 For details see '(5.15) Vampirism'.
 All angels      Resist light, blindness and poison (usually immunity, see ~7
-                flags), resist fear, resist confusion, free action, strong
-                resistance to insanity-inducing attacks, see invisible.
+                flags), resist fear, resist confusion, free action, some
+                resistance to insanity-inducing attacks (see (6.6)), see
+                invisible.
                 Note: 'Fallen Angel' doesn't get light resistances.
 Mist and fume   Feather falling.
 
