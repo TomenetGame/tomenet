@@ -11379,8 +11379,10 @@ Invisibility won't work at all on monsters that are..
         -game bosses (Sauron, Morgoth, Zu-Aon).
         -Dragonriders, they have ESP.
         -nonliving monsters with empty mind (not using optical senses).
-        -able to see through the rogue-specific 'cloaking' ability,
-         see the cloaking command description in (0.2) for a list.
+        -able to see through the rogue-specific 'cloaking' ability, these can
+         see through invisibility too (compare (0.2) 'cloaking mode'):
+         Eyes, angels, Nazgul, nether guards, and unique monsters which are
+         both smart and powerful at once.
 
 All other monsters are randomly affected by the player's invisibility,
 meaning that they will only sometimes be able to spot him (they will see the
