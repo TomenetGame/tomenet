@@ -2042,10 +2042,11 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 
 		if (randint(power) < p_ptr->skill_sav) return; /* Save, no adverse effects */
 		/* extra ways to resist */
-		if (p_ptr->suscep_life && res < 2) res = 2;
 		if (p_ptr->pclass == CLASS_MINDCRAFTER || p_ptr->prace == RACE_VAMPIRE) res = 4;
+#ifdef ENABLE_HELLKNIGHT
+		if (p_ptr->pclass == CLASS_HELLKNIGHT) res = 5;
+#endif
 		if (rand_int(6) < res) return;
-
 
 		if (p_ptr->image) {
 			/* Something silly happens... */
