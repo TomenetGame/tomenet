@@ -1834,15 +1834,15 @@ void save_auto_inscriptions(cptr name) {
 
 	fclose(fp);
 
-	c_msg_print("Auto-inscriptions saved.");
+	c_msg_format("Auto-inscriptions saved to file '%s'.", name);
 }
 
 /* Load Auto-Inscription file (*.ins) - C. Blue */
 void load_auto_inscriptions(cptr name) {
 	FILE *fp;
 	char buf[1024];
-	char file_name[256];
-	int i, c, j, c_eff;
+	char file_name[256], vtag[5];
+	int i, c, j, c_eff, version, vmaj, vmin, vex;
 	bool replaced;
 
 	strncpy(file_name, name, 249);
@@ -1871,6 +1871,14 @@ void load_auto_inscriptions(cptr name) {
 		fclose(fp);
 		return;
 	}
+	/* extract version */
+	sscanf(buf, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n", &vmaj, &vmin, &vex, vtag);
+//c_message_add(format("n='%s',v=%d,%d,%d,%s.", name,vmaj,vmin,vex,vtag));
+	if (vmaj < 4 ||
+	    (vmaj == 4 && (vmin < 7 ||
+	    (vmin == 7 && (vex < 1 ||
+	    (vex == 1 && (streq(vtag, "") || streq(vtag, "a") || streq(vtag, "test")))))))) version = 1;
+	else version = 2;
 
 #if 0 /* completely overwrite/erase current auto-inscriptions */
 	/* load inscriptions (2 lines each) */
@@ -1948,7 +1956,7 @@ void load_auto_inscriptions(cptr name) {
 		if (strlen(buf)) buf[strlen(buf) - 1] = '\0';
 		strcpy(auto_inscription_tag[c], buf);
 	}
-//	c_msg_print("Auto-inscriptions loaded/merged.");
+	//c_msg_print("Auto-inscriptions loaded/merged.");
 	fclose(fp);
 #endif
 #if 1 /* attempt to merge current auto-inscriptions, and give priority to those we want to load here */
@@ -1972,6 +1980,12 @@ void load_auto_inscriptions(cptr name) {
 				return;
 			}
 			continue;
+		}
+
+		/* Old version (v1, before version tag was introduced): Convert '?' wildcard to new '*' wildcard automatically: */
+		if (version == 1) {
+			char *wc;
+			while ((wc = strchr(buf, '?'))) *wc = '#';
 		}
 
 		/* check for duplicate entry (if it already exists)
@@ -2017,8 +2031,14 @@ void load_auto_inscriptions(cptr name) {
 
 		if (c >= 0) c++;
 	}
-//	c_msg_print("Auto-inscriptions loaded/merged.");
+	//c_msg_print("Auto-inscriptions loaded/merged.");
 	fclose(fp);
+
+	/* Auto-convert old version files: Write new version back to disk. */
+	if (version == 1) {
+		c_message_add("Old auto-inscription wildcards ('?') have been converted to new version ('#').");
+		save_auto_inscriptions(name);
+	}
 #endif
 }
 

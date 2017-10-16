@@ -6257,7 +6257,7 @@ void auto_inscriptions(void) {
 			Term_putstr(20,  0, -1, TERM_L_UMBER, "*** Current Auto-Inscriptions List ***");
 			Term_putstr(14, 21, -1, TERM_L_UMBER, "[Press 'n' for next, 'p' for previous, ESC to exit]");
 			Term_putstr(12, 22, -1, TERM_L_UMBER, "(l/s) Load/save auto-inscriptions from/to an '.ins' file");
-			Term_putstr(4, 23, -1, TERM_L_UMBER, "(e/d/c) Edit current ('?' wildcard, '!' forces)/delete current/CLEAR ALL");
+			Term_putstr(4, 23, -1, TERM_L_UMBER, "(e/d/c) Edit current ('#' wildcard, '!' forces)/delete current/CLEAR ALL");
 
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 				/* build a whole line */
@@ -6351,8 +6351,8 @@ void auto_inscriptions(void) {
 			/* hack: remove leading/trailing wild cards since they are obsolete.
 			   Especially trailing ones currently make it not work. */
 			buf_ptr = buf;
-			while (*buf_ptr == '?') buf_ptr++;
-			while (*(buf_ptr + strlen(buf_ptr) - 1) == '?') *(buf_ptr + strlen(buf_ptr) - 1) = '\0';
+			while (*buf_ptr == '#') buf_ptr++;
+			while (*(buf_ptr + strlen(buf_ptr) - 1) == '#') *(buf_ptr + strlen(buf_ptr) - 1) = '\0';
 			Term_putstr(9, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
 			Term_putstr(9, cur_line + 1, -1, TERM_WHITE, buf_ptr);
 			/* ok */

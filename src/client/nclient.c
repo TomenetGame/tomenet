@@ -4138,21 +4138,21 @@ void apply_auto_inscriptions(int slot, bool force) {
  #endif
 
 		/* found a matching inscription? */
- #if 0 /* no '?' wildcard allowed */
+ #if 0 /* no '#' wildcard allowed */
 		if (strstr(inventory_name[slot], match)) break;
- #else /* '?' wildcard allowed: a random number (including 0) of random chars */
+ #else /* '#' wildcard allowed: a random number (including 0) of random chars */
 		/* prepare */
 		strcpy(ex_buf, match);
 		ex2 = inventory_name[slot];
 		found = FALSE;
 
 		do {
-			ex = strstr(ex_buf, "?");
+			ex = strstr(ex_buf, "#");
 			if (ex == NULL) {
 				if (strstr(ex2, ex_buf)) found = TRUE;
 				break;
 			} else {
-				/* get partial string up to before the '?' */
+				/* get partial string up to before the '#' */
 				strncpy(ex_buf2, ex_buf, ex - ex_buf);
 				ex_buf2[ex - ex_buf] = '\0';
 				/* test partial string for match */
