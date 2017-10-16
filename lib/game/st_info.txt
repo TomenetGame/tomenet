@@ -807,6 +807,8 @@ W:0
 
 # For Ironman challenges, created by DEEPSUPPLY dungeon flag
 N:51:Seasoned Alchemist
+#Word of Recall?:
+T:100:70:11
 #Trap-scrolls
 T:100:70:48
 T:100:70:49
