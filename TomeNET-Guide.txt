@@ -9639,7 +9639,7 @@ BLESSED ('It has been blessed by the gods')
         'Blunt-mastery' skill applied to any blessed weapon, even if it isn't
         actually blunt-type but a sword, axe or polearm instead.
         Blessed weapons will have adverse effects on corrupted characters and
-        especially on characters of vampire race or hell knight class.
+        on characters of vampire race or hell knight class.
 VAMPIRIC ('It drains life from your foes')
         Drains life from your victim, which heals you slightly.
         For details see '(5.15) Vampirism'.

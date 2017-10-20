@@ -4140,8 +4140,10 @@ void calc_boni(int Ind) {
 		case 2: p_ptr->no_hp_regen = TRUE; break;
 		}
 
+#if 0 /* 0ed: get icky_wield instead */
 		/* BLESSED items are adverse to Corrupted beings in general? */
 		if (p_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED)) p_ptr->no_hp_regen++;
+#endif
 
 		/* then again, spectral weapons don't hurt true vampires */
 		if (p_ptr->prace == RACE_VAMPIRE &&
@@ -5701,7 +5703,7 @@ void calc_boni(int Ind) {
 	    (p_ptr->pclass == CLASS_PRIEST && !p_ptr->bless_blade &&
 	    (o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM || o_ptr->tval == TV_AXE))
 	    || (p_ptr->prace == RACE_VAMPIRE && p_ptr->bless_blade)
-	    //|| (p_ptr->ptrait == TRAIT_CORRUPTED && p_ptr->bless_blade)
+	    || (p_ptr->ptrait == TRAIT_CORRUPTED && p_ptr->bless_blade)
 #ifdef ENABLE_CPRIEST
 	    || (p_ptr->pclass == CLASS_CPRIEST && p_ptr->bless_blade)
 #endif
