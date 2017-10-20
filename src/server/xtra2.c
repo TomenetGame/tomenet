@@ -3851,7 +3851,7 @@ void shape_Maia_skills(int Ind) {
  #else
 			do_Maia_skill2(Ind, SKILL_BLUNT, 0, 600); //swap with Axe
  #endif
-			do_Maia_skill2(Ind, SKILL_AXE, 0, (750 * 13) / 10); //swap with Blunt, buff then canonically
+			do_Maia_skill2(Ind, SKILL_AXE, 0, 750); //swap with Blunt (and get buffed then canonically further down)
 			do_Maia_skill2(Ind, SKILL_SWORD, 0, 825); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
 			//Note: SKILL_POLEARM just falls through, kept at usual 0.750
 
