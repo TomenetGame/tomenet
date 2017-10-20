@@ -3844,11 +3844,16 @@ void shape_Maia_skills(int Ind) {
 			p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE; //expand Occultism, to ensure the player notices it on the skill chart
 			do_Maia_skill2(Ind, SKILL_OHERETICISM, 0, ((700 * 7) / 10 * 21) / 10);
  #endif
+ #if 0 /* 0ed to re-allow */
 			respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
 			p_ptr->s_info[SKILL_BLUNT].mod = 0;
 			Send_skill_info(Ind, SKILL_BLUNT, FALSE);
-			do_Maia_skill2(Ind, SKILL_AXE, 0, (700 * 13) / 10);
-			do_Maia_skill2(Ind, SKILL_POLEARM, 0, 700);
+ #else
+			do_Maia_skill2(Ind, SKILL_BLUNT, 0, 600); //swap with Axe
+ #endif
+			do_Maia_skill2(Ind, SKILL_AXE, 0, (750 * 13) / 10); //swap with Blunt, buff then canonically
+			do_Maia_skill2(Ind, SKILL_SWORD, 0, 825); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
+			//Note: SKILL_POLEARM just falls through, kept at usual 0.750
 
 			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
 			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1500 * 7) / 10 * 3);
@@ -3879,14 +3884,17 @@ void shape_Maia_skills(int Ind) {
 			p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE; //expand Occultism, to ensure the player notices it on the skill chart
 			do_Maia_skill2(Ind, SKILL_OHERETICISM, 0, ((1050 * 7) / 10 * 21) / 10);
  #endif
+ #if 0 /* 0ed to re-allow */
 			respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
 			p_ptr->s_info[SKILL_BLUNT].mod = 0;
 			Send_skill_info(Ind, SKILL_BLUNT, FALSE);
+ #endif
 			/* Note: Corrupted trait doesn't give sword bonus but axe,
 			   but since Enlightened trait gives priests melee bonus (blunt), we need Corrupted Priests to be on par,
 			   as if their Blunt skill was just transferred to become Sword.. a bit inconsistent :/ */
-			//do_Maia_skill2(Ind, SKILL_SWORD, 0, 600);
-			do_Maia_skill2(Ind, SKILL_SWORD, 0, (600 * 13) / 10);
+			//do_Maia_skill2(Ind, SKILL_SWORD, 0, (600 * 13) / 10);
+			do_Maia_skill2(Ind, SKILL_SWORD, 0, (500 * 13) / 10); //Base x 1.3, as replacement for missing Axe-Mastery.
+			//Note: Martial Arts falls through at 0.500 and becomes 0.650, Blunt-Mastery falls through at 0.600.
 
 			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
 			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1400 * 7) / 10 * 3);

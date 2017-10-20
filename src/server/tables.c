@@ -4171,10 +4171,15 @@ player_class class_info[MAX_CLASS] = {
  #endif
 		{ SKILL_SWORD,
 			'+', 0,
-			'+', 800, },
+			'+', 825, },
+ #if 1 /* re-allow */
+		{ SKILL_BLUNT,
+			'+', 0,
+			'+', 600, },
+ #endif
 		{ SKILL_AXE,
 			'+', 0,
-			'+', 750, },
+			'+', 975, },
 		{ SKILL_POLEARM,
 			'+', 0,
 			'+', 750, },
@@ -4276,12 +4281,17 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_MASTERY,
 			'+', 0,
 			'+', 400, },//800
-		{ SKILL_SWORD, //instead of blunt
+		{ SKILL_SWORD, //additionally to blunt! (or instead of it, under 1st CPRIEST version, before blunt was re-allowed)
+			'+', 0,
+			'+', 650, },
+ #if 1 /* re-allow */
+		{ SKILL_BLUNT,
 			'+', 0,
 			'+', 600, },
+ #endif
 		{ SKILL_MARTIAL_ARTS,
 			'+', 0,
-			'+', 500, }, //450
+			'+', 650, }, //450
 		{ SKILL_MAGIC,
 			'+', 2000,
 			'+', 900, },

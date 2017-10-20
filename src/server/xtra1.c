@@ -4140,6 +4140,9 @@ void calc_boni(int Ind) {
 		case 2: p_ptr->no_hp_regen = TRUE; break;
 		}
 
+		/* BLESSED items are adverse to Corrupted beings in general? */
+		if (p_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED)) p_ptr->no_hp_regen++;
+
 		/* then again, spectral weapons don't hurt true vampires */
 		if (p_ptr->prace == RACE_VAMPIRE &&
 		    (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL))
@@ -5698,6 +5701,7 @@ void calc_boni(int Ind) {
 	    (p_ptr->pclass == CLASS_PRIEST && !p_ptr->bless_blade &&
 	    (o_ptr->tval == TV_SWORD || o_ptr->tval == TV_POLEARM || o_ptr->tval == TV_AXE))
 	    || (p_ptr->prace == RACE_VAMPIRE && p_ptr->bless_blade)
+	    //|| (p_ptr->ptrait == TRAIT_CORRUPTED && p_ptr->bless_blade)
 #ifdef ENABLE_CPRIEST
 	    || (p_ptr->pclass == CLASS_CPRIEST && p_ptr->bless_blade)
 #endif
@@ -6735,7 +6739,8 @@ void calc_boni(int Ind) {
 #endif
 #ifdef ENABLE_HELLKNIGHT
 			case CLASS_HELLKNIGHT:
-				msg_print(Ind, "\374\377y    Hell Knights should try either a dagger, spear or cleaver.");
+				//msg_print(Ind, "\374\377y    Hell Knights should try either a dagger, spear or cleaver.");
+				msg_print(Ind, "\374\377y    Hell Knights should try either a dagger, whip, spear or cleaver.");
 				break;
 #endif
 			case CLASS_MIMIC:

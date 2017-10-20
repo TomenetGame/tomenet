@@ -8607,6 +8607,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		if (anti_undead(o_ptr, p_ptr)) continue;
 		/* no anti-demon items for hell knights */
 		if (anti_demon(o_ptr, p_ptr)) continue;
+		/* no BLESSED items for evil */
+		if (p_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED)) continue;
 
 		/* Don't generate NO_MAGIC or DRAIN_MANA items if we do use magic */
 		if (caster) {

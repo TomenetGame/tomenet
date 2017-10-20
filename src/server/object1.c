@@ -4374,6 +4374,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 			if (p_ptr->icky_wield && !old_icky_wield) {
 				if (p_ptr->bless_blade && (
 				    p_ptr->prace == RACE_VAMPIRE
+				    || p_ptr->ptrait == TRAIT_CORRUPTED
 #ifdef ENABLE_CPRIEST
 				    || p_ptr->pclass == CLASS_CPRIEST
 #endif
@@ -4413,6 +4414,7 @@ static void display_weapon_handling(int Ind, object_type *o_ptr, FILE *fff) {
 				if (!p_ptr->heavy_wield && old_heavy_wield) fprintf(fff, "\377g    Your strength is sufficient to hold it properly.\n");
 				if (!p_ptr->icky_wield && old_icky_wield) {
 					if (p_ptr->prace == RACE_VAMPIRE
+					|| p_ptr->ptrait == TRAIT_CORRUPTED
 #ifdef ENABLE_CPRIEST
 					    || p_ptr->pclass == CLASS_CPRIEST
 #endif
@@ -5610,6 +5612,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	case 2: //fprintf(fff, "\377oIts power is adverse to demons, preventing your health from regenerating.\n"); break;
 		fprintf(fff, "\377oIts power is adverse to demons, hampering your health regeneration.\n"); break;
 	}
+	/* BLESSED items harm all Corrupted beings in general? */
+	if (!j && p_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED))
+		//fprintf(fff, "\377oIts power is adverse to corruption, draining your health.\n");
+		fprintf(fff, "\377oIts power is adverse to corruption, hampering your health regeneration.\n");
 
 	/* magically returning ranged weapon? */
 	if (o_ptr->tval == TV_BOOMERANG && o_ptr->name1)

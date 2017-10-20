@@ -7815,7 +7815,8 @@ void process_player_change_wpos(int Ind) {
 #endif
 #ifdef ENABLE_HELLKNIGHT
 			case CLASS_HELLKNIGHT:
-				msg_print(Ind, "\374\377y    Hell Knights should try either a dagger, spear or cleaver.");
+				//msg_print(Ind, "\374\377y    Hell Knights should try either a dagger, spear or cleaver.");
+				msg_print(Ind, "\374\377y    Hell Knights should try either a dagger, whip, spear or cleaver.");
 				break;
 #endif
 			case CLASS_MIMIC:

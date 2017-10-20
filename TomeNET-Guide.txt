@@ -9638,6 +9638,8 @@ BLESSED ('It has been blessed by the gods')
         without penalties, even if they are not blunt. They will get their
         'Blunt-mastery' skill applied to any blessed weapon, even if it isn't
         actually blunt-type but a sword, axe or polearm instead.
+        Blessed weapons will have adverse effects on corrupted characters and
+        especially on characters of vampire race or hell knight class.
 VAMPIRIC ('It drains life from your foes')
         Drains life from your victim, which heals you slightly.
         For details see '(5.15) Vampirism'.
@@ -13108,8 +13110,8 @@ Modifications for becoming 'corrupted':
   All Blood Magic schools x 3.0.
 
   Paladins/priests:
-   The four holy schools and Blunt-mastery get completely reset, disabled
-   and their points fully refunded.
+   The four holy schools get completely reset, disabled and their points are
+   fully refunded.
 
 Note: After a skill's gain ratio has been boosted as stated above, it will be
       capped against a maximum value of 2.000, which cannot be exceeded.
@@ -13650,9 +13652,11 @@ create a character!):
 
         The four holy schools and Spirit become disabled,
         priests and paladins also get the four holy schools reset.
+        Priests:  Sword-mastery is enabled at their Blunt-Mastery x 1.3.
+        Paladins: Sword-mastery x1.1,
+                  Axe-mastery is set to their Blunt-Mastery (and then x1.3),
+                  Blunt-mastery is set to their former Axe-Mastery.
         Axe-mastery and Martial Arts skill x 1.3.
-        Priests only: Sword-mastery x 1.3.
-        Priests and Paladins get Blunt-mastery reset and disabled.
         Fire, Air, Conveyance schools x 1.7, Udun x 2.0, Shadow x 2.1.
         Darkness and Nether runes x 1.7, all Blood Magic schools x 3.0.
 
