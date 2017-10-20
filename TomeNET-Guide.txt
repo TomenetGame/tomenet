@@ -13652,10 +13652,12 @@ create a character!):
 
         The four holy schools and Spirit become disabled,
         priests and paladins also get the four holy schools reset.
-        Priests:  Sword-mastery is enabled at their Blunt-Mastery x 1.3.
-        Paladins: Sword-mastery x1.1,
-                  Axe-mastery is set to their Blunt-Mastery (and then x1.3),
-                  Blunt-mastery is set to their former Axe-Mastery.
+        Priests:  Sword-mastery is enabled and receives the same skill ratio as
+                  Blunt-Mastery x 1.3.
+        Paladins: Sword-mastery x 1.1.
+                  Axe-mastery ratio is set to Blunt-Mastery ratio (and then
+                  multiplied by x 1.3 as usual for Corrupted).
+                  Blunt-mastery ratio is set to their former Axe-Mastery.
         Axe-mastery and Martial Arts skill x 1.3.
         Fire, Air, Conveyance schools x 1.7, Udun x 2.0, Shadow x 2.1.
         Darkness and Nether runes x 1.7, all Blood Magic schools x 3.0.
