@@ -5477,9 +5477,12 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		fprintf(fff, "It produces an anti-magic shell.\n");
 
 	if (f3 & (TR3_BLESSED)) {
+#if 0 /* already given under red 'encumberments' above these lines.. */
 		/* BLESSED items give icky_wield to Corrupted? */
 		if (p_ptr->ptrait == TRAIT_CORRUPTED) fprintf(fff, "\377oIt has been blessed by the gods.\n");
-		else fprintf(fff, "It has been blessed by the gods.\n");
+		else
+#endif
+		fprintf(fff, "It has been blessed by the gods.\n");
 	}
 
 	if (f4 & (TR4_AUTO_ID))
