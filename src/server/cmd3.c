@@ -2051,7 +2051,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 
 	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription */
 	if (!strncmp(inscription, "@@", 2)) {
-		bool redux = !strncmp(inscription, "@@@", 3);
+		bool redux = !strncmp(inscription, "@@@", 3);//, reduxx = !strncmp(inscription, "@@@@", 4);
 		char powins[1024]; //powins[MAX_CHARS_WIDE];  --let's play it safe..
 		u32b f1, f2, f3, f4, f5, f6, esp, tmpf1, tmpf2, tmpf3, tmp;
 		bool i_f = FALSE, i_c = FALSE, i_e = FALSE, i_a = FALSE, i_p = FALSE, i_w = FALSE, i_n = FALSE;
@@ -2145,13 +2145,15 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			 strcat(powins, "Stl");
 #endif
 #endif
-		if (f1 & (TR1_SEARCH)) strcat(powins, "Src");
-		if (f1 & (TR1_INFRA)) strcat(powins, "IV");
-		/* The next _4_ mods cannot spawn on randarts, except if the base item already had them! */
-		if (f5 & (TR5_DISARM)) strcat(powins, "Dsr");
-		if (f1 & (TR1_TUNNEL)) strcat(powins, "Dig"); /* Egos: Can (will) only newly spawn on 'Earthquake' heavy 2-handed blunts */
-		if (f5 & (TR5_LUCK)) strcat(powins, "Lu"); /* Egos: Can (will) only newly spawn on 'Morgul'. */
-
+		//if (!reduxx) {
+		if (!redux) {
+			if (f1 & (TR1_SEARCH)) strcat(powins, "Src");
+			if (f1 & (TR1_INFRA)) strcat(powins, "IV");
+			/* The next _4_ mods cannot spawn on randarts, except if the base item already had them! */
+			if (f5 & (TR5_DISARM)) strcat(powins, "Dsr");
+			if (f1 & (TR1_TUNNEL)) strcat(powins, "Dig"); /* Egos: Can (will) only newly spawn on 'Earthquake' heavy 2-handed blunts */
+			if (f5 & (TR5_LUCK)) strcat(powins, "Lu"); /* Egos: Can (will) only newly spawn on 'Morgul'. */
+		}
 		/* -- non-bpval/pval mods -- */
 		if (f5 & (TR5_IMPACT)) strcat(powins, "Eq"); /* Egos: Can (and will) only newly spawn on 'Earthquake' heavy 2-handed blunts */
 		if (f5 & (TR5_CHAOTIC)) strcat(powins, "Cht");
