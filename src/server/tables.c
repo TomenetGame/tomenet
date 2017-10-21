@@ -4172,18 +4172,18 @@ player_class class_info[MAX_CLASS] = {
  #endif
 		{ SKILL_SWORD,
 			'+', 0,
-			'+', 825, },
+			'+', 825, }, //x1.1 (replacement for MA x1.3 bonus we're missing out on)
  #if 1 /* re-allow */
 		{ SKILL_BLUNT,
 			'+', 0,
-			'+', 600, },
+			'+', 660, }, //swapped with former axe ratio, x1.1 (replacement for MA x1.3 bonus we're missing out on)
  #endif
 		{ SKILL_AXE,
 			'+', 0,
-			'+', 975, },
+			'+', 975, }, //swapped with former blunt ratio, x1.3
 		{ SKILL_POLEARM,
 			'+', 0,
-			'+', 750, },
+			'+', 750, }, //falls through
 		{ SKILL_BOW,
 			'+', 0,
 			'+', 300, },

@@ -3849,10 +3849,15 @@ void shape_Maia_skills(int Ind) {
 			p_ptr->s_info[SKILL_BLUNT].mod = 0;
 			Send_skill_info(Ind, SKILL_BLUNT, FALSE);
  #else
+  #if 0 /* actually, if a skill ends up LOWER than before, we really have to reset it completely instead! */
 			do_Maia_skill2(Ind, SKILL_BLUNT, 0, 600); //swap with Axe
+  #else
+			respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
+			do_Maia_skill2(Ind, SKILL_BLUNT, 0, (600 * 11) / 10); //swap with Axe and gain x1.1, to not lag behind original Paladin skill too much
+  #endif
  #endif
 			do_Maia_skill2(Ind, SKILL_AXE, 0, 750); //swap with Blunt (and get buffed then canonically further down)
-			do_Maia_skill2(Ind, SKILL_SWORD, 0, 825); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
+			do_Maia_skill2(Ind, SKILL_SWORD, 0, (750 * 11) / 10); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
 			//Note: SKILL_POLEARM just falls through, kept at usual 0.750
 
 			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
@@ -3893,8 +3898,8 @@ void shape_Maia_skills(int Ind) {
 			   but since Enlightened trait gives priests melee bonus (blunt), we need Corrupted Priests to be on par,
 			   as if their Blunt skill was just transferred to become Sword.. a bit inconsistent :/ */
 			//do_Maia_skill2(Ind, SKILL_SWORD, 0, (600 * 13) / 10);
-			do_Maia_skill2(Ind, SKILL_SWORD, 0, (500 * 13) / 10); //Base x 1.3, as replacement for missing Axe-Mastery.
-			//Note: Martial Arts falls through at 0.500 and becomes 0.650, Blunt-Mastery falls through at 0.600.
+			do_Maia_skill2(Ind, SKILL_SWORD, 0, (500 * 13) / 10); //Base x1.3, as replacement for missing Axe-Mastery.
+			//Note: Martial Arts falls through at 0.500 and becomes 0.650 (x1.3), Blunt-Mastery falls through at 0.600, as canonical.
 
 			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
 			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1400 * 7) / 10 * 3);
