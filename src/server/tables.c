@@ -4155,6 +4155,7 @@ player_class class_info[MAX_CLASS] = {
 		8, 30,
 
 		// --- Lots of skills that differ from Paladin template are HARDCODED in shape_Maia_skills()! :( ---
+		// This skill chart is basically just for reference, it has no actual effect in-game. All skills are derived from "Paladin" and then possibly modified in a hard-coded way on initiation.
 		{{  SKILL_COMBAT,
 			'+', 2700,
 			'+', 1400, },
@@ -4275,6 +4276,7 @@ player_class class_info[MAX_CLASS] = {
 		5, 20, //2, 20,//4,20
 		//7, 20,
 
+		// This skill chart is basically just for reference, it has no actual effect in-game. All skills are derived from normal "Priest" and then possibly modified in a hard-coded way on initiation.
 		{{ SKILL_COMBAT,
 			'+', 0,
 			'+', 750,}, //x1.5
