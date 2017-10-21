@@ -4648,15 +4648,12 @@
 
 
 /*
- * Hack -- special "xtra" object powers
+ * Hack -- special "xtra" object powers -- UNUSED, see ETRx_ flags instead --
  */
-
 /* Sustain one stat */
 #define EGO_XTRA_SUSTAIN	1
-
 /* High resist */
 #define EGO_XTRA_POWER		2
-
 /* Special ability */
 #define EGO_XTRA_ABILITY	3
 
@@ -5185,7 +5182,7 @@
 #define ETR1_R_LOW		0x00000010L	/* Item has a random low resist */
 #define ETR1_R_HIGH		0x00000020L	/* Item has a random high resist */
 #define ETR1_R_ANY		0x00000040L	/* Item has one additional resist */
-#define ETR1_R_DRAGON		0x00000080L	/* Item gets "Dragon" Resist */
+#define ETR1_R_DRAGON		0x00000080L	/* Item gets "Dragon" Resist -- UNUSED//HOLE, verify implementation on use, because of hard-coded values */
 #define ETR1_SLAY_WEAP		0x00000100L	/* Special 'Slaying' bonus */
 #define ETR1_DAM_DIE		0x00000200L	/* Item has an additional dam die */
 #define ETR1_DAM_SIZE		0x00000400L	/* Item has greater damage dice */
@@ -5195,13 +5192,15 @@
 #define ETR1_PVAL_M5		0x00004000L	/* Item has +(up to 5) to pval */
 #define ETR1_AC_M5		0x00008000L	/* Item has +(up to 5) to AC */
 #define ETR1_NO_DOUBLE_EGO	0x00010000L	/* Item may not have two ego powers */
+#define ETR1_R_HIGH_IMMUNITY	0x00020000L	/* Item has a random high resistance or base immunity */
+//HOLE
 #define ETR1_R_ESP		0x01000000L	/* Item has a random ESP */
 #define ETR1_NO_SEED		0x02000000L	/* Item doesn't have random seed */
 #define ETR1_LOW_ABILITY	0x04000000L	/* like ABILITY without top esp */
 #define ETR1_R_P_ABILITY	0x08000000L	/* Item has a random pval-affected ability */
 #define ETR1_R_STAT		0x10000000L	/* Item affects a random stat */
 #define ETR1_R_STAT_SUST	0x20000000L	/* Item affects a random stat & sustains it */
-#define ETR1_R_IMMUNITY		0x40000000L	/* Item gives a random immunity */
+#define ETR1_R_IMMUNITY		0x40000000L	/* Item gives a random base immunity */
 #define ETR1_LIMIT_BLOWS	0x80000000L	/* Only on 'Aman' weapons atm - reduces bpr */
 
 #define ETR1_EASYKNOW_MASK	\

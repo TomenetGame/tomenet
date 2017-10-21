@@ -919,7 +919,7 @@ static cptr ego_flags1[] = {
 	"AC_M5",
 
 	"NO_DOUBLE_EGO",
-	"XXX2",
+	"R_HIGH_IMMUNITY",
 	"XXX3",
 	"XXXH1",
 

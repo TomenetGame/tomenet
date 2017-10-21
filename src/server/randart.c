@@ -2772,6 +2772,33 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 		/* Make "dragon resist" */
 		dragon_resist(a_ptr);
 	}
+	if (fego1 & ETR1_R_HIGH_IMMUNITY) {
+		if (rand_int(2)) {
+			/* Make a high resist */
+			random_resistance(a_ptr, FALSE, randint(22) + 16);
+		} else {
+			/* Give a random immunity */
+			switch (randint(4)) {
+			case 1:
+				a_ptr->flags2 |= TR2_IM_FIRE;
+				a_ptr->flags3 |= TR3_IGNORE_FIRE;
+				break;
+			case 2:
+				a_ptr->flags2 |= TR2_IM_ACID;
+				a_ptr->flags3 |= TR3_IGNORE_ACID;
+				a_ptr->flags5 |= TR5_IGNORE_WATER;
+				break;
+			case 3:
+				a_ptr->flags2 |= TR2_IM_ELEC;
+				a_ptr->flags3 |= TR3_IGNORE_ELEC;
+				break;
+			case 4:
+				a_ptr->flags2 |= TR2_IM_COLD;
+				a_ptr->flags3 |= TR3_IGNORE_COLD;
+				break;
+			}
+		}
+	}
 	if (fego1 & ETR1_DAM_DIE) {
 		/* Increase damage dice */
 		a_ptr->dd++;
