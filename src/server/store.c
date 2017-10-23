@@ -1796,9 +1796,11 @@ static void store_create(store_type *st_ptr) {
 			/* Hack -- Less POTION items */
 			if ((o_ptr->tval == TV_POTION) && magik(80)) continue;
 
+#if 0 /* 0'ed: increased rarity from /1 to /10 after treasure class system rework, test if maybe fine now */
 			/* Hack -- less athelas */
 			if (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_ATHELAS &&
 				magik(80)) continue;
+#endif
 		}
 
 		/* Prune normal stores */

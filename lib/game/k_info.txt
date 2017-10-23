@@ -5579,7 +5579,7 @@ N:701:& Sprig~ of Athelas
 G:,:g
 I:80:40:0
 W:25:5:2:450
-A:25/2:55/1:85/1
+A:25/20:55/10:85/10
 D:Food that also cures poison, stun, cuts and even Black Breath.
 
 # HOLE 702-719
