@@ -409,7 +409,7 @@ INTENSIFY = add_spell {
 
 			if (players(Ind).ptrait == TRAIT_ENLIGHTENED) then
 				project_los(Ind, GF_OLD_SLOW, alev * 3, "")
-				do_divine_xtra_res_time(Ind, randint(10) + alev)
+				do_divine_xtra_res(Ind, randint(10) + alev)
 			elseif (players(Ind).ptrait == TRAIT_CORRUPTED) then
 				do_divine_crit(Ind, 2 + ((alev - 45) / 5), randint(5) + (alev * 2) / 3)
 			end
@@ -427,7 +427,7 @@ INTENSIFY = add_spell {
 	end,
 	["desc"] = 	{
 			"Enlightened: slows down monsters in sight and",
-			"             grants temporary time resistance.",
+			"             grants temporary mana resistance.",
 			"Corrupted: increases your critical chance.",
 		}
 }

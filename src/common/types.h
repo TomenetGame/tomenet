@@ -2765,11 +2765,10 @@ struct player_type {
 
 	int divine_crit;
 	int divine_hp;
-	int divine_xtra_res_time;
+	int divine_xtra_res;
 
 	int divine_crit_mod;
 	int divine_hp_mod;
-	int divine_xtra_res_time_mod;
 #endif
 	bool got_hit;			/* Prevent players from taking it multiple times from a single effect - mikaelh */
 	s32b total_damage;		/* No insane amounts of damage either */

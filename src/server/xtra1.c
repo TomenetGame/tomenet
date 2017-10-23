@@ -3490,9 +3490,13 @@ void calc_boni(int Ind) {
 				p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL;
 			}
 
-			/* Bonus resistance for the good side */
-			if (p_ptr->divine_xtra_res_time > 0)
-				p_ptr->resist_time = TRUE;
+			/* Bonus resistance for the good side. (Note: Temporary resistance isn't shown in C-h-h.) */
+			if (p_ptr->divine_xtra_res > 0)
+				//p_ptr->resist_time = TRUE;
+				p_ptr->resist_mana = TRUE;
+
+			/* Both initiated sides get time resistance now */
+			p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
 		} else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
 			if (p_ptr->lev >= 20) csheet_boni[14].cb[6] |= CB7_IFOOD;
 			p_ptr->suscep_good = TRUE;
@@ -3512,6 +3516,9 @@ void calc_boni(int Ind) {
 			/* Bonus crit for the bad side */
 			if (p_ptr->divine_crit > 0)
 				p_ptr->xtra_crit = p_ptr->divine_crit_mod;
+
+			/* Both initiated sides get time resistance now */
+			p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME;
 		} else { p_ptr->slow_digest = TRUE; csheet_boni[14].cb[6] |= CB7_RFOOD; }
 	}
 #endif
