@@ -1507,8 +1507,8 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
-//	int             i, d, ny, nx;
-	int             number, little;
+	//int		i, d, ny, nx;
+	int		number, little;
 	long		cash;
 
 	if (!(zcave = getcave(wpos))) return;
@@ -1535,7 +1535,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 				opening_chest_mode = o_ptr->mode;
 
 				/* Determine the "value" of the items */
-//				object_level = ABS(o_ptr->pval) + 10;
+				//object_level = ABS(o_ptr->pval) + 10;
 				object_level = ABS(o_ptr->level) + 10;
 
 				/* Small chests often drop gold */
@@ -1575,8 +1575,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
  * Exploding chest destroys contents (and traps).
  * Note that the chest itself is never destroyed.
  */
-static void chest_trap(int Ind, int y, int x, s16b o_idx)
-{
+static void chest_trap(int Ind, int y, int x, s16b o_idx) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &o_list[o_idx];
 
@@ -1593,7 +1592,7 @@ static void chest_trap(int Ind, int y, int x, s16b o_idx)
 	trap = o_ptr->pval;
 
 	/* Message */
-//	msg_print(Ind, "You found a trap!");
+	//msg_print(Ind, "You found a trap!");
 	msg_print(Ind, "You triggered a trap!");
 
 #ifdef USE_SOUND_2010
@@ -1657,6 +1656,9 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 	   --- correction, kill_house_contents() WILL allocate the map and call delete_object->delete_object_idx which will trigger PLAYER_STORE_REMOVED. */
 	if (!zcave) return FALSE;
 
+	/* hack for monster trap items */
+	if (!in_bounds_array(y, x) && in_bounds_array(255 - y, x)) y = 255 - y;
+
 	c_ptr = &zcave[y][x];
 	/* assume all houses are on the world surface (and vaults aren't) */
 	if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY) &&
@@ -1672,6 +1674,9 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 int inside_which_house(struct worldpos *wpos, int x, int y) {
 	int i;
 	house_type *h_ptr;
+
+	/* hack for monster trap items */
+	if (!in_bounds_array(y, x) && in_bounds_array(255 - y, x)) y = 255 - y;
 
 	for (i = 0; i < num_houses; i++) {
 		h_ptr = &houses[i];
