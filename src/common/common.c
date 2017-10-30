@@ -112,11 +112,11 @@ int color_char_to_attr(char c) {
 		case 'J': return TERM_HOLYFIRE;
 		case 'X': return TERM_HELLFIRE;
 		case 'z': return TERM_THUNDER;
-		//case '': return TERM_LAMP; //this is just static yellow
-		//case '': return TERM_LAMP_DARK; //this is just static l_umber
 		case 'Z': return TERM_EMBER;
 		case '0': return TERM_STARLITE;
 		case '1': return TERM_HAVOC;
+		case '2': return TERM_LAMP;
+		case '3': return TERM_LAMP_DARK;
 	}
 
 	return (-1);
@@ -186,35 +186,35 @@ char color_attr_to_char(int a) {
 		case TERM_HOLYFIRE: return 'J';
 		case TERM_HELLFIRE: return 'X';
 		case TERM_THUNDER: return 'z';
-		//case TERM_LAMP: return ''; //this is just static yellow
-		//case TERM_LAMP_DARK: return ''; //this is just static l_umber
 		case TERM_EMBER: return 'Z'; //this was the final free letter ;) no more colour letters available now!
 		case TERM_STARLITE: return '0'; //:-p
 		case TERM_HAVOC: return '1';
+		case TERM_LAMP: return '2';
+		case TERM_LAMP_DARK: return '3';
 	}
 
 	return 'w';
 }
 
 byte mh_attr(int max) {
-        switch (randint(max)) {
-                case  1: return (TERM_RED);
-                case  2: return (TERM_GREEN);
-                case  3: return (TERM_BLUE);
-                case  4: return (TERM_YELLOW);
-                case  5: return (TERM_ORANGE);
-                case  6: return (TERM_VIOLET);
-                case  7: return (TERM_L_RED);
-                case  8: return (TERM_L_GREEN);
-                case  9: return (TERM_L_BLUE);
-                case 10: return (TERM_UMBER);
-                case 11: return (TERM_L_UMBER);
-                case 12: return (TERM_SLATE);
-                case 13: return (TERM_WHITE);
-                case 14: return (TERM_L_WHITE);
-                case 15: return (TERM_L_DARK);
-        }
-        return (TERM_WHITE);
+	switch (randint(max)) {
+	case  1: return (TERM_RED);
+	case  2: return (TERM_GREEN);
+	case  3: return (TERM_BLUE);
+	case  4: return (TERM_YELLOW);
+	case  5: return (TERM_ORANGE);
+	case  6: return (TERM_VIOLET);
+	case  7: return (TERM_L_RED);
+	case  8: return (TERM_L_GREEN);
+	case  9: return (TERM_L_BLUE);
+	case 10: return (TERM_UMBER);
+	case 11: return (TERM_L_UMBER);
+	case 12: return (TERM_SLATE);
+	case 13: return (TERM_WHITE);
+	case 14: return (TERM_L_WHITE);
+	case 15: return (TERM_L_DARK);
+	}
+	return (TERM_WHITE);
 }
 
 /*
@@ -230,38 +230,33 @@ byte mh_attr(int max) {
  * Note that this function yields a path which must be "parsed"
  * using the "parse" function above.
  */
-errr path_build(char *buf, int max, cptr path, cptr file)
-{
-        /* Special file */
-        if (file[0] == '~')
-        {
-                /* Use the file itself */
-                strnfmt(buf, max, "%s", file);
-        }
+errr path_build(char *buf, int max, cptr path, cptr file) {
+	/* Special file */
+	if (file[0] == '~') {
+		/* Use the file itself */
+		strnfmt(buf, max, "%s", file);
+	}
 
-        /* Absolute file, on "normal" systems */
-        else if (prefix(file, PATH_SEP) && !streq(PATH_SEP, ""))
-        {
-                /* Use the file itself */
-                strnfmt(buf, max, "%s", file);
-        }
+	/* Absolute file, on "normal" systems */
+	else if (prefix(file, PATH_SEP) && !streq(PATH_SEP, "")) {
+		/* Use the file itself */
+		strnfmt(buf, max, "%s", file);
+	}
 
-        /* No path given */
-        else if (!path[0])
-        {
-                /* Use the file itself */
-                strnfmt(buf, max, "%s", file);
-        }
+	/* No path given */
+	else if (!path[0]) {
+		/* Use the file itself */
+		strnfmt(buf, max, "%s", file);
+	}
 
-        /* Path and File */
-        else
-        {
-                /* Build the new path */
-                strnfmt(buf, max, "%s%s%s", path, PATH_SEP, file);
-        }
+	/* Path and File */
+	else {
+		/* Build the new path */
+		strnfmt(buf, max, "%s%s%s", path, PATH_SEP, file);
+	}
 
-        /* Success */
-        return (0);
+	/* Success */
+	return (0);
 }
 
 /*
@@ -270,8 +265,7 @@ errr path_build(char *buf, int max, cptr path, cptr file)
 cptr longVersion;
 cptr shortVersion;
 
-void version_build()
-{
+void version_build() {
 	char temp[256];
 
 	/* Append the version number */
@@ -300,26 +294,24 @@ void version_build()
 
 /* Hrm, maybe we'd better prepare common/skills.c or sth? */
 /* Find the realm, given a book(tval) */
-int find_realm(int book)
-{
-        switch (book)
-        {
-        case TV_MAGIC_BOOK:
-                return REALM_MAGERY;
-        case TV_PRAYER_BOOK:
-                return REALM_PRAYER;
-        case TV_SORCERY_BOOK:
-                return REALM_SORCERY;
-        case TV_FIGHT_BOOK:
-                return REALM_FIGHTING;
-        case TV_SHADOW_BOOK:
-                return REALM_SHADOW;
-        case TV_PSI_BOOK:
-                return REALM_PSI;
-        case TV_HUNT_BOOK:
-                return REALM_HUNT;
-        };
-        return -1;
+int find_realm(int book) {
+	switch (book) {
+	case TV_MAGIC_BOOK:
+		return REALM_MAGERY;
+	case TV_PRAYER_BOOK:
+		return REALM_PRAYER;
+	case TV_SORCERY_BOOK:
+		return REALM_SORCERY;
+	case TV_FIGHT_BOOK:
+		return REALM_FIGHTING;
+	case TV_SHADOW_BOOK:
+		return REALM_SHADOW;
+	case TV_PSI_BOOK:
+		return REALM_PSI;
+	case TV_HUNT_BOOK:
+		return REALM_HUNT;
+	};
+	return -1;
 }
 
 /* strcasestr() is only defined in _GNU_SOURCE, so we need our own implementation to be safe */
