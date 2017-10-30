@@ -3703,7 +3703,7 @@ void wilderness_gen(struct worldpos *wpos) {
 			       (also see second check for this, in decorate_dungeon_entrance()) */
 			    !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY)))
 				decorate_dungeon_entrance(wpos, d_ptr, zcave, x, y);
-			else s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration.\n");
+			else s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration (tower).\n");
 		}
 		/* Dungeon */
 		if ((w_ptr->flags & WILD_F_DOWN) && can_go_down(wpos, 0x1)) {
@@ -3716,7 +3716,7 @@ void wilderness_gen(struct worldpos *wpos) {
 			       (also see second check for this, in decorate_dungeon_entrance()) */
 			    !(zcave[y][x].info & (CAVE_ROOM | CAVE_ICKY)))
 				decorate_dungeon_entrance(wpos, d_ptr, zcave, x, y);
-			else s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration.\n");
+			else s_printf("WARNING: wilderness_gen() out of bounds dungeon decoration (dungeon).\n");
 		}
 	}
 

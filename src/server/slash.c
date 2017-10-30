@@ -2799,7 +2799,7 @@ void do_slash_cmd(int Ind, char *message) {
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
 			if (!wild_info[apos.wy][apos.wx].tower) {
 				add_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
-				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK, 0x0, TRUE, 0, 0, 0, 0);
+				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, 0x0, TRUE, 0, 0, 0, 0);
 				fresh_arena = TRUE;
 			}
 			apos.wz = 1;
@@ -2810,7 +2810,8 @@ void do_slash_cmd(int Ind, char *message) {
 			if (fresh_arena) generate_cave(&apos, p_ptr); /* <- required or panic save: py,px will be far negative (haven't checked why) */
 
 			p_ptr->recall_pos = apos;
-			p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+			//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+			p_ptr->new_level_method = LEVEL_RAND;
 			recall_player(Ind, "");
 
 			if (fresh_arena) {
@@ -2822,6 +2823,14 @@ void do_slash_cmd(int Ind, char *message) {
 				timer_pvparena2 = 1; /* start with releasing 1st monster */
 				timer_pvparena3 = 0; /* 'basic monsters' cycle active */
 			}
+			return;
+		}
+		else if (prefix(message, "/remdun")) { /* forcefully removes a dungeon or tower, even if someone is inside (gets recalled), even if there is no staircase. */
+			if (!tk) {
+				msg_print(Ind, "Usage: /remdun (d/t)");
+				return;
+			}
+			rem_dungeon(&p_ptr->wpos, token[0][0] != 'd');
 			return;
 		}
 #ifdef AUCTION_SYSTEM
@@ -6792,7 +6801,8 @@ void do_slash_cmd(int Ind, char *message) {
 						q_ptr->recall_pos.wx = p_ptr->wpos.wx;
 						q_ptr->recall_pos.wy = p_ptr->wpos.wy;
 						q_ptr->recall_pos.wz = p_ptr->wpos.wz;
-						q_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						if (!q_ptr->recall_pos.wz) q_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						else q_ptr->new_level_method = LEVEL_RAND;
 						recall_player(p, "\377yA magical gust of wind lifts you up and carries you away!");
 						process_player_change_wpos(p);
 					}
@@ -6805,7 +6815,8 @@ void do_slash_cmd(int Ind, char *message) {
 						p_ptr->recall_pos.wx = q_ptr->wpos.wx;
 						p_ptr->recall_pos.wy = q_ptr->wpos.wy;
 						p_ptr->recall_pos.wz = q_ptr->wpos.wz;
-						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						if (!p_ptr->recall_pos.wz) p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						else p_ptr->new_level_method = LEVEL_RAND;
 						recall_player(Ind, "\377yA magical gust of wind lifts you up and carries you away!");
 						process_player_change_wpos(Ind);
 					}

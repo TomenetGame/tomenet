@@ -2969,7 +2969,8 @@ static void process_player_begin(int Ind) {
 					p_ptr->recall_pos.wx = x;
 					p_ptr->recall_pos.wy = y;
 					p_ptr->recall_pos.wz = 1;
-					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					p_ptr->new_level_method = LEVEL_RAND;
 					recall_player(Ind, "");
 					break;
 				}
@@ -2978,7 +2979,8 @@ static void process_player_begin(int Ind) {
 					p_ptr->recall_pos.wy = y;
 					p_ptr->recall_pos.wz = -1;
 					// let's try LEVEL_OUTSIDE_RAND (5) instead of LEVEL_OUTSIDE (4) - C. Blue :)
-					p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+					p_ptr->new_level_method = LEVEL_RAND;
 					recall_player(Ind, "");
 					break;
 				}
@@ -7316,6 +7318,14 @@ void process_player_change_wpos(int Ind) {
 
 	zcave = getcave(wpos);
 	l_ptr = getfloor(wpos);
+
+	/* Detect wrong dungeon generation:
+	   All admin-created dungeons via master_level() get DF2_RANDOM flag,
+	   so do all predefined (ie non type-0) dungeons.
+	   However, if the code somewhere calls add_dungeon() of type 0 but forgets to add DF2_RANDOM,
+	   the result might be a dungeon that has no defined width and height.
+	   We catch that here to make an admin's debugging life easier. - C. Blue */
+	if (l_ptr && !l_ptr->wid) s_printf("L_PTR WARNING: Level has dimension zero. Check for missing DF2_RANDOM flag!\n");
 
 	/* Clear the "marked" and "lit" flags for each cave grid */
 	for (y = 0; y < MAX_HGT; y++) {

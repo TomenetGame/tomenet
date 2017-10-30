@@ -8076,12 +8076,12 @@ static void process_global_event(int ge_id) {
 				if (!ge->extra[5]) {
 					s_printf("EVENT_LAYOUT: Adding dungeon (no entry).\n");
 					add_dungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
-					    DF2_NO_ENTRY_MASK,
+					    DF2_NO_ENTRY_MASK | DF2_RANDOM,
 					    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, FALSE, 0, 0, 0, 0);
 				} else {
 					s_printf("EVENT_LAYOUT: Adding dungeon (entry ok).\n");
 					add_dungeon(&wpos, 1, 50, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
-					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT,
+					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT | DF2_RANDOM,
 					    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, FALSE, 0, 0, 0, 0);
 
 					/* place staircase on an empty accessible grid */
@@ -8119,7 +8119,8 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wz = WPOS_HIGHLANDER_DUN_Z;
 						p_ptr->global_event_temp = PEVF_PASS_00 | PEVF_NOGHOST_00 |
 						    PEVF_SAFEDUN_00 | PEVF_SEPDUN_00;
-						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						p_ptr->new_level_method = LEVEL_RAND;
 						recall_player(i, "");
 					}
 					/* Give him the amulet of the highlands */
@@ -8778,7 +8779,9 @@ static void process_global_event(int ge_id) {
 						p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
 						p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
 						p_ptr->global_event_temp = PEVF_PASS_00;
-						p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						if (!WPOS_SECTOR00_Z) p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+						else p_ptr->new_level_method = LEVEL_RAND;
 						/* don't spawn them too close to a beacon */
 						p_ptr->avoid_loc = k;
 						p_ptr->avoid_loc_x = bx;
@@ -8883,10 +8886,10 @@ static void process_global_event(int ge_id) {
 			/* cleanly teleport all lingering admins out instead of displacing them into (non-generated) pvp-dungeon ^^ */
 			for (i = 1; i <= NumPlayers; i++)
 				if (inarea(&Players[i]->wpos, &wpos)) {
-					Players[i]->new_level_method = LEVEL_OUTSIDE_RAND;
 					Players[i]->recall_pos.wx = cfg.town_x;
 					Players[i]->recall_pos.wy = cfg.town_y;
 					Players[i]->recall_pos.wz = 0;
+					Players[i]->new_level_method = LEVEL_OUTSIDE_RAND;
 					recall_player(i, "");
 				}
 
