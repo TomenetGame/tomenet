@@ -2926,8 +2926,9 @@ F:OPEN_DOOR | BASH_DOOR |
 F:EVIL | DEMON | RES_FIRE | NO_FEAR | RES_TELE | CAN_FLY | BASEANGBAND
 S:1_IN_3 |
 S:BLINK | TELE_TO | TELE_AWAY | TPORT
-D:It is a fast-moving demon that blinks quickly in and out of existence; no
-D:other demon matches its teleporting mastery.
+D:It is a fast-moving demon with some remotely bird-like features that blinks
+D:quickly in and out of existence; no other demon matches its teleporting
+D:mastery.
 
 N:195:Creeping gold coins
 G:$:y
