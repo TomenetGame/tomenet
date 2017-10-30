@@ -1877,7 +1877,7 @@ void load_auto_inscriptions(cptr name) {
 	if (vmaj < 4 ||
 	    (vmaj == 4 && (vmin < 7 ||
 	    (vmin == 7 && (vex < 1 ||
-	    (vex == 1 && (streq(vtag, "") || streq(vtag, "a") || streq(vtag, "test")))))))) version = 1;
+	    (vex == 1 && (streq(vtag, "") || streq(vtag, "a")))))))) version = 1;
 	else version = 2;
 
 #if 0 /* completely overwrite/erase current auto-inscriptions */
