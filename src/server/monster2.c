@@ -3309,15 +3309,18 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6b\n");
 		}
 
 		if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3) {
-			/* Don't spawn the pumpkin _solely_ for the person who killed him last time. */
+			/* Don't spawn the pumpkin _solely_ for the last 2 persons who killed him last time.
+			   Note: This means that a party of at least 3 can still permanently spawn him though
+			   if they take turns creating the next floor. Same applies for non-partied characters however, so seems fine. */
 			bool admins_only = TRUE;
 			int Ind = 0;
+
 			for (i = 1; i <= NumPlayers; i++) {
 				if (!inarea(&Players[i]->wpos, wpos)) continue;
 				if (Players[i]->admin_dm) continue;
 				admins_only = FALSE;
-				//if (Players[i]->id == great_pumpkin_killer) {
-				if (streq(Players[i]->accountname, great_pumpkin_killer)) {
+				if (streq(Players[i]->accountname, great_pumpkin_killer1) ||
+				    streq(Players[i]->accountname, great_pumpkin_killer2)) {
 					Ind = i;
 					continue;
 				}

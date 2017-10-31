@@ -5239,8 +5239,8 @@ bool monster_death(int Ind, int m_idx) {
 			s_printf("HALLOWEEN: %s (%d/%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev, m_name);
 			great_pumpkin_duration = 0;
 			great_pumpkin_timer = 15 + rand_int(45);
-			//great_pumpkin_killer = p_ptr->id;
-			strcpy(great_pumpkin_killer, p_ptr->accountname);
+			strcpy(great_pumpkin_killer1, great_pumpkin_killer2);
+			strcpy(great_pumpkin_killer2, p_ptr->accountname);
 		}
 	} else if (season_xmas) {
 		if ((m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2)
