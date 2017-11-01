@@ -2902,7 +2902,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			/* Attack power */
 			//r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4; //lv3 j: 4, lv10 m: 8, lv24 W: 15, lv40 e: 23, lv62 G: 34, lv86 U: 46
 			/* New attack power: Add a percentage depending on rlev! */
-			r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4 + (p_ptr->msp * rlev) / 5; //lv3 j: +0%, lv10 m: +2%, lv24 W: +4%, lv40 e: +8%, lv62 G: +12%, lv86 U: +17%, Tzeentch +38% (if 2x UNIQUE)
+			r1 = (randint(rlev * 2) + randint(3) + rlev + 10) / 4 + (p_ptr->msp * rlev) / 500; //lv3 j: +0%, lv10 m: +2%, lv24 W: +4%, lv40 e: +8%, lv62 G: +12%, lv86 U: +17%, Tzeentch +38% (if 2x UNIQUE)
 
 			/* An open mind invites mana drain attacks */
 			if ((p_ptr->esp_link_flags & LINKF_OPEN)) r1 *= 2;
