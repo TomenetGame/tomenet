@@ -2830,7 +2830,7 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "Usage: /remdun (d/t)");
 				return;
 			}
-			rem_dungeon(&p_ptr->wpos, token[0][0] != 'd');
+			rem_dungeon(&p_ptr->wpos, token[1][0] != 'd');
 			return;
 		}
 #ifdef AUCTION_SYSTEM
