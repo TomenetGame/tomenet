@@ -9111,7 +9111,8 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		return;
 #ifdef ENABLE_ITEM_ORDER
 	case RID_ITEM_ORDER: {
-		int i, j, num, extra = -1;
+		int i, j, num;
+		int extra = -1, extra2 = -1; /* Spell scrolls/crystals */
 		char str2[40], *str2ptr = str2;
 		store_type *st_ptr;
 		owner_type *ot_ptr;
@@ -9228,20 +9229,33 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		if (*str2) {
 			for (i = 0; i < max_spells; i++) {
 				/* Check for full name */
-				if (!strcasecmp(school_spells[i].name, str2)) break;
+				if (!strcasecmp(school_spells[i].name, str2)) {
+					if (extra == -1) {
+						extra = i; //allow two spells of same name
+						continue;
+					}
+					extra2 = i; //2nd spell of same name
+					break;
+				}
 
 				/* Additionally check for '... I' tier 1 spell version, assuming the player omitted the 'I' */
 				j = strlen(school_spells[i].name) - 2;
 				//assume spell names are at least 3 characters long(!)
 				if (school_spells[i].name[j] == ' ' //assume the final character must be 'I'
 				    && j == strlen(str2)
-				    && !strncasecmp(school_spells[i].name, str2, j)) break;
+				    && !strncasecmp(school_spells[i].name, str2, j)) {
+					if (extra == -1) {
+						extra = i; //allow two spells of same name
+						continue;
+					}
+					extra2 = i; //2nd spell of same name
+					break;
+				}
 			}
-			if (i == max_spells) {
+			if (i == max_spells && extra == -1) {
 				msg_print(Ind, "Sorry, I have never heard of such a spell.");
 				return;
 			}
-			extra = i;
 		}
 
 		/* check for failure, if item does not exist in the game */
@@ -9285,48 +9299,62 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		if (i == max_k_idx) {
 #if 1 /* quality of life: for specific stores, no need to type the whole (always same) item name. */
 			/* assume player maybe just entered a spell name, if this is the bookstore. */
-			if (p_ptr->store_num == STORE_BOOK ||
-			    p_ptr->store_num == STORE_BOOK_DUN ||
-			    p_ptr->store_num == STORE_LIBRARY ||
-			    p_ptr->store_num == STORE_HIDDENLIBRARY ||
-			    p_ptr->store_num == STORE_FORBIDDENLIBRARY) {
+			switch (p_ptr->store_num) {
+			case STORE_BOOK:
+			case STORE_BOOK_DUN:
+			case STORE_LIBRARY:
+			case STORE_HIDDENLIBRARY:
+			case STORE_FORBIDDENLIBRARY:
 				for (i = 0; i < max_spells; i++) {
-					if (!strcasecmp(school_spells[i].name, str)) break;
+					if (!strcasecmp(school_spells[i].name, str)) {
+						if (extra == -1) {
+							extra = i; //allow two spells of same name
+							continue;
+						}
+						extra2 = i; //2nd spell of same name
+						break;
+					}
 
 					/* Additionally check for '... I' tier 1 spell version, assuming the player omitted the 'I' */
 					j = strlen(school_spells[i].name) - 2;
 					//assume spell names are at least 3 characters long(!)
 					if (school_spells[i].name[j] == ' ' //assume the final character must be 'I'
 					    && j == strlen(str)
-					    && !strncasecmp(school_spells[i].name, str, j)) break;
+					    && !strncasecmp(school_spells[i].name, str, j)) {
+						if (extra == -1) {
+							extra = i; //allow two spells of same name
+							continue;
+						}
+						extra2 = i; //2nd spell of same name
+						break;
+					}
 				}
-				if (i < max_spells) {
-					extra = i;
-					i = lookup_kind(TV_BOOK, SV_SPELLBOOK);
-					invcopy(&forge, i);
-				}
-				/* still failure */
-				if (i == max_k_idx) {
+				/* still failure? */
+				if (i == max_spells && extra == -1) {
 					msg_print(Ind, "Sorry, I don't know of such an item or spell.");
 					return;
 				}
-			}
+				/* success */
+				i = lookup_kind(TV_BOOK, SV_SPELLBOOK);
+				invcopy(&forge, i);
+				break;
 			/* assume player maybe just entered a rune element, if this is the rune repository. */
-			if (p_ptr->store_num == STORE_RUNE ||
-			    p_ptr->store_num == STORE_RUNE_DUN) {
+			case STORE_RUNE:
+			case STORE_RUNE_DUN:
 				for (i = 0; i < max_k_idx; i++) {
 					if (k_info[i].tval != TV_RUNE) continue;
 					if (!strcasecmp(k_name + k_info[i].name, str)) break;
 				}
-				if (i < max_k_idx) invcopy(&forge, i);
-				/* still failure */
+				/* still failure? */
 				if (i == max_k_idx) {
 					msg_print(Ind, "Sorry, I don't know of such an item or rune.");
 					return;
 				}
-			}
-			/* still failure */
-			if (i == max_k_idx) {
+				/* success */
+				invcopy(&forge, i);
+				break;
+			default:
+				/* still failure */
 				msg_print(Ind, "Sorry, I don't know of such an item.");
 				return;
 			}
@@ -9373,7 +9401,48 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		Rand_quick = old_rand;
 		Rand_value = tmp_seed;
 
-		if (extra != -1) forge.pval = extra; //spellbooks
+		if (extra != -1) {
+#if 0 /* just one spell of the same name? (Use when there are no duplicate spell names in the system */
+			forge.pval = extra; //spellbooks
+#else /* allow duplicate spell names? We choose between up to two. */
+			if (extra2 == -1) forge.pval = extra; //only one spell of this name exists
+			else { //two (or more, which will atm be discarded though) spells of this name exist
+				int s, s2; // spell skill
+
+				/* Priority: 1) The spell which we have trained to highest level.. */
+				s = exec_lua(Ind, format("return get_level(%d, %d, 50, -50)", Ind, extra));
+				s2 = exec_lua(Ind, format("return get_level(%d, %d, 50, -50)", Ind, extra2));
+				if (s == s2) {
+					int r, r2;
+
+					/* Priority: 2) Discard schools that we cannot train up (mod=0). */
+					s = schools[spell_school[extra]].skill;
+					s2 = schools[spell_school[extra2]].skill;
+					r = p_ptr->s_info[s].mod;
+					r2 = p_ptr->s_info[s2].mod;
+					if (r && r2) {
+						int v, v2;
+
+						/* Priority: 3) The spell which school we have trained to highest level.. */
+						v = p_ptr->s_info[s].value;
+						v2 = p_ptr->s_info[s2].value;
+						if (v == v2) {
+							/* Priority: 3) Pick the school with the higher training ratio.. */
+							if (r == r2) {
+								/* Pick one randomly */
+								if (rand_int(2)) forge.pval = extra;
+								else forge.pval = extra2;
+							} else if (r > r2) forge.pval = extra;
+							else forge.pval = extra2;
+						} else if (v > v2) forge.pval = extra;
+						else forge.pval = extra2;
+					} else if (r) forge.pval = extra;
+					else forge.pval = extra2;
+				} else if (s > s2) forge.pval = extra;
+				else forge.pval = extra2;
+			}
+#endif
+		}
 		object_desc(0, o_name, &forge, FALSE, 256); //for checking if it's a scroll of crystal, namewise
 
 		forge.number = num;
