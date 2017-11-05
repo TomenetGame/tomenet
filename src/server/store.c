@@ -2112,6 +2112,9 @@ static void store_create(store_type *st_ptr) {
 			case TV_RING:
 				if (o_ptr->sval == SV_RING_POLYMORPH) force_num = 1;
 				break;
+			case TV_ROD:
+				if (o_ptr->sval == SV_ROD_HAVOC) force_num = 1;
+				break;
 			case TV_TOOL:
 				if (o_ptr->sval == SV_TOOL_WRAPPING) force_num = 1;
 				break;
