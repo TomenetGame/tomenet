@@ -12024,7 +12024,7 @@ D:his brood and can command them to appear whenever he so wishes. He is
 D:the definition of dragonfire.
 
 N:716:Behemoth
-G:H:B
+G:H:Y
 I:120:50d100:25:200:30
 W:49:3:6000:16000
 E:0:1:0:2:1:2
