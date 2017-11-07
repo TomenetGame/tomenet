@@ -7859,9 +7859,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			    c_ptr->feat == FEAT_TREE ||
 			    c_ptr->feat == FEAT_BUSH)))
 			    /* only if the feat is legal to remove (ie wallish) */
-			    && cave_dig_wall_grid(c_ptr)) {
-#if 0 /* if ever used, gotta fix: only if RF2_KILL_WALL !*/
-				did_kill_wall = TRUE;
+			    && cave_dig_wall_grid(c_ptr)
+			    /* stop monsters from terraforming towns too.. */
+			    && !istownarea(wpos, MAX_TOWNAREA)) {
+#ifdef OLD_MONSTER_LORE
+				if (r_ptr->flags2 & RF2_KILL_WALL) did_kill_wall = TRUE;
 #endif
 
 				/* Forget the "field mark", if any */
@@ -7903,8 +7905,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		    || (f_info[c_ptr->feat].flags2 & FF2_BOUNDARY)
 		    || (c_ptr->feat == FEAT_PERM_CLEAR)
 		    || (c_ptr->feat == FEAT_HOME)
-		    || (c_ptr->feat == FEAT_WALL_HOUSE))
-		{
+		    || (c_ptr->feat == FEAT_WALL_HOUSE)) {
 			/* Nothing */
 			/* Paranoia: Keep do_melee enabled, so Morgoth would in theory (ie if he had
 			   AI_ANNOY, which he of course doesn't have) be allowed to make TWO actions
@@ -7917,19 +7918,27 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 #ifdef MONSTER_DIG_FACTOR
 		/* EVILEYE - correct me if i interpreted this wrongly. */
 		/* You're right, mine was wrong - Jir - */
-		else if (r_ptr->flags2 & RF2_KILL_WALL ||
+		else if (((r_ptr->flags2 & RF2_KILL_WALL) ||
 		    (!(r_ptr->flags1 & RF1_NEVER_MOVE ||
 		    r_ptr->flags2 & RF2_EMPTY_MIND ||
 		   r_ptr->flags2 & RF2_STUPID) &&
 		    (!rand_int(digging_difficulty(c_ptr->feat) * MONSTER_DIG_FACTOR)
 		     && magik(5 + r_ptr->level))))
+		    /* only if the feat is legal to remove (ie wallish) */
+		    //&& cave_dig_wall_grid(c_ptr)
+		    /* stop monsters from terraforming towns too.. */
+		    && !istownarea(wpos, MAX_TOWNAREA))
 #else
-		else if ((r_ptr->flags2 & RF2_KILL_WALL) ||
+		else if (((r_ptr->flags2 & RF2_KILL_WALL) ||
 		    /* POWERFUL monsters can hack down trees */
 		    ((base_r_ptr->flags2 & RF2_POWERFUL) &&
 		    //c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_EVIL_TREE ||
 		    (c_ptr->feat == FEAT_DEAD_TREE || c_ptr->feat == FEAT_TREE ||
 		    c_ptr->feat == FEAT_BUSH || c_ptr->feat == FEAT_IVY)))
+		    /* only if the feat is legal to remove (ie wallish) */
+		    //&& cave_dig_wall_grid(c_ptr)
+		    /* stop monsters from terraforming towns too.. */
+		    && !istownarea(wpos, MAX_TOWNAREA))
 #endif
 		{
 			/* Eat through walls/doors/rubble */
@@ -7937,9 +7946,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 #ifdef OLD_MONSTER_LORE
 			/* Monster destroyed a wall */
-#if 0 /* if ever used, gotta fix: only if RF2_KILL_WALL !*/
-			did_kill_wall = TRUE;
-#endif
+			if (r_ptr->flags2 & RF2_KILL_WALL) did_kill_wall = TRUE;
 #endif
 
 			/* Forget the "field mark", if any */
@@ -7968,9 +7975,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 		/* Handle doors and secret doors */
 		else if (((c_ptr->feat >= FEAT_DOOR_HEAD) &&
-			  (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
-			 (c_ptr->feat == FEAT_SECRET))
-		{
+		    (c_ptr->feat <= FEAT_DOOR_TAIL)) ||
+		    (c_ptr->feat == FEAT_SECRET)) {
 			bool may_bash = TRUE;
 
 			/* Creature can open doors. */
@@ -7980,8 +7986,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 				/* Closed doors and secret doors */
 				if ((c_ptr->feat == FEAT_DOOR_HEAD) ||
-				    (c_ptr->feat == FEAT_SECRET))
-				{
+				    (c_ptr->feat == FEAT_SECRET)) {
 					/* The door is open */
 					did_open_door = TRUE;
 #ifdef USE_SOUND_2010
@@ -8141,8 +8146,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 		/* Some monsters never attack */
 		if (do_move && (ny == p_ptr->py) && (nx == p_ptr->px) &&
-		    (r_ptr->flags1 & RF1_NEVER_BLOW))
-		{
+		    (r_ptr->flags1 & RF1_NEVER_BLOW)) {
 #ifdef OLD_MONSTER_LORE
 			/* Hack -- memorize lack of attacks */
 			/* if (m_ptr->ml) r_ptr->r_flags1 |= RF1_NEVER_BLOW; */
@@ -8163,8 +8167,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				    //(cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)) &&
 				    (cave_floor_bold(zcave, oy, ox)) &&
 				    magik(10) && !q_ptr->martyr &&
-				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5)))
-				{
+				    (r_ptr->level > randint(q_ptr->lev * 20 + q_ptr->wt * 5))) {
 					char m_name[MNAME_LEN];
 					monster_desc(0, m_name, m_idx, 0);
 
@@ -8282,8 +8285,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			/* Push past weaker monsters (unless leaving a wall) */
 			else if ((r_ptr->flags2 & RF2_MOVE_BODY) &&
 			    (r_ptr->mexp > z_ptr->mexp) &&
-			    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx)))
-			{
+			    (cave_floor_bold(zcave, m_ptr->fy, m_ptr->fx))) {
 				/* Allow movement */
 				do_move = TRUE;
 #ifdef OLD_MONSTER_LORE
