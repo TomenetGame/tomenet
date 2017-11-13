@@ -7320,7 +7320,6 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	cave_type **zcave, *c_ptr;
 	bool newly_created, allocated;
 	house_type *h_ptr;
-	struct dna_type *dna;
 	struct worldpos *wpos;
 	object_type *o_ptr;
 
@@ -7341,10 +7340,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 		return FALSE;
 	}
 	h_ptr = &houses[i];
-
 	wpos = &h_ptr->wpos;
-	dna = h_ptr->dna;
-
 	name = lookup_player_name(id);
 	if (!name) {
 		s_printf("  warning: couldn't fetch player name of id %d.\n", id);
