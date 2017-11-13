@@ -12024,7 +12024,7 @@ D:his brood and can command them to appear whenever he so wishes. He is
 D:the definition of dragonfire.
 
 N:716:Behemoth
-G:H:Y
+G:H:B
 I:120:50d100:25:200:30
 W:49:3:6000:16000
 E:0:1:0:2:1:2
@@ -12035,7 +12035,7 @@ B:CRUSH:HURT:3d15
 B:CRUSH:HURT:3d15
 F:FORCE_SLEEP | FORCE_MAXHP | CAN_SWIM | ANIMAL | AQUATIC |
 F:IM_FIRE | IM_ACID | IM_COLD | IM_POIS | DROP_CORPSE |
-F:NO_CONF | NO_SLEEP | NO_FEAR |
+F:NO_CONF | NO_SLEEP | NO_FEAR | ATTR_MULTI | ATTR_BASE
 F:MORTAL | BASEANGBAND
 S:1_IN_9
 S:BR_FIRE
