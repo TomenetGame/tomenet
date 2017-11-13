@@ -9823,13 +9823,13 @@ void do_slash_cmd(int Ind, char *message) {
 				char *tpname;
 
 				if (!tk) {
-					msg_print(Ind, "Usage: /app <character name>");
+					msg_print(Ind, "Usage: /app <character name>[:<admin parm]");
 					return;
 				}
 				if (!(tpname = strchr(message2 + 5, ':'))) {
 					for (i = 1; i <= NumPlayers; i++)
 						if (!strcmp(message3, Players[i]->name)) break;
-					if (i == NumPlayers) {
+					if (i > NumPlayers) {
 						msg_print(Ind, "Character name not found.");
 						return;
 					}
@@ -9840,7 +9840,7 @@ void do_slash_cmd(int Ind, char *message) {
 				*tpname = 0;
 				for (i = 1; i <= NumPlayers; i++)
 					if (!strcmp(message3, Players[i]->name)) break;
-				if (i == NumPlayers) {
+				if (i > NumPlayers) {
 					msg_print(Ind, "Character name not found.");
 					return;
 				}
