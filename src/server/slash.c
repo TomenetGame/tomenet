@@ -9807,7 +9807,7 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "done.");
 				return;
 			}
-			else if (prefix(message, "/ap") && !prefix(message, "/apat")) { /* set optional parameter (too hacky..) */
+			else if (prefix(message, "/ap") && !prefix(message, "/apat") && !prefix(message, "/app")) { /* set optional parameter (too hacky..) */
 				if (!tk) {
 					msg_print(Ind, "Admin parm cleared.");
 					p_ptr->admin_parm[0] = 0;
