@@ -3765,6 +3765,12 @@ void do_slash_cmd(int Ind, char *message) {
 		}
 		/* request back real estate that was previously backed up via /backup_estate */
 		else if (prefix(message, "/request_estate") || prefix(message, "/request")) {
+			/* Specialty: Allow a single player to restore her estate */
+			if (p_ptr->admin_parm[0] == 'E' && !p_ptr->admin_parm[1]) {
+				restore_estate(Ind);
+				return;
+			}
+			/* Globally allow everyone to use this command to restore their estates */
 			if (!allow_requesting_estate) {
 				msg_print(Ind, "This command is currently not available.");
 				return;
@@ -9810,6 +9816,37 @@ void do_slash_cmd(int Ind, char *message) {
 				strncpy(p_ptr->admin_parm, message3, MAX_CHARS);
 				p_ptr->admin_parm[MAX_CHARS - 1] = 0;
 				msg_print(Ind, "Admin parm set.");
+				return;
+			}
+			else if (prefix(message, "/app") && !prefix(message, "/appla")) { /* set optional parameter (too hacky..) */
+				int i;
+				char *tpname;
+
+				if (!tk) {
+					msg_print(Ind, "Usage: /app <character name>");
+					return;
+				}
+				if (!(tpname = strchr(message2 + 5, ':'))) {
+					for (i = 1; i <= NumPlayers; i++)
+						if (!strcmp(message3, Players[i]->name)) break;
+					if (i == NumPlayers) {
+						msg_print(Ind, "Character name not found.");
+						return;
+					}
+					msg_format(Ind, "Admin parm cleared for Ind %d.", i);
+					Players[i]->admin_parm[0] = 0;
+					return;
+				}
+				*tpname = 0;
+				for (i = 1; i <= NumPlayers; i++)
+					if (!strcmp(message3, Players[i]->name)) break;
+				if (i == NumPlayers) {
+					msg_print(Ind, "Character name not found.");
+					return;
+				}
+				strncpy(Players[i]->admin_parm, tpname + 1, MAX_CHARS);
+				Players[i]->admin_parm[MAX_CHARS - 1] = 0;
+				msg_format(Ind, "Admin parm set to '%s' for Ind %d.", Players[i]->admin_parm, i);
 				return;
 			}
 			else if (prefix(message, "/ahl")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
