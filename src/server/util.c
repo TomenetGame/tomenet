@@ -7376,7 +7376,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	}
 
 	/* add house price to his backup file -- nope */
-	fprintf(fp, "AU:%d\n", 0);
+	fprintf(fp, "AU:%d\n", 1); //0 Au = 'corrupted' error ;-p
 
 	/* scan house contents and add them to his backup file */
 	/* traditional house? */
