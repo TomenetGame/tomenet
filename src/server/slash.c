@@ -9826,7 +9826,7 @@ void do_slash_cmd(int Ind, char *message) {
 					msg_print(Ind, "Usage: /app <character name>[:<admin parm]");
 					return;
 				}
-				if (!(tpname = strchr(message2 + 5, ':'))) {
+				if (!(tpname = strchr(message3, ':'))) {
 					for (i = 1; i <= NumPlayers; i++)
 						if (!strcmp(message3, Players[i]->name)) break;
 					if (i > NumPlayers) {
