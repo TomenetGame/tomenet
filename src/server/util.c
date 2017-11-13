@@ -7311,6 +7311,143 @@ bool backup_estate(bool partial) {
 	s_printf("done.\n");
 	return TRUE;
 }
+bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
+	FILE *fp;
+	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CHARACTERNAME_LEN], c;
+	cptr name;
+	int i, j, k;
+	int sy, sx, ey,ex , x, y;
+	cave_type **zcave, *c_ptr;
+	bool newly_created, allocated;
+	house_type *h_ptr;
+	struct dna_type *dna;
+	struct worldpos *wpos;
+	object_type *o_ptr;
+
+	s_printf("Backing up one real estate...\n");
+	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+
+	/* create folder lib/save/estate if not existing */
+#if defined(WINDOWS) && !defined(CYGWIN)
+	mkdir(buf2);
+#else
+	mkdir(buf2, 0770);
+#endif
+
+	/* scan house on which door we're sitting */
+	i = pick_house(hwpos, hy, hx);
+	if (i == -1) {
+		s_printf("Error: No estate here.\n");
+		return FALSE;
+	}
+	h_ptr = &houses[i];
+
+	wpos = &h_ptr->wpos;
+	dna = h_ptr->dna;
+
+	name = lookup_player_name(id);
+	if (!name) {
+		s_printf("  warning: couldn't fetch player name of id %d.\n", id);
+		return FALSE;
+	}
+
+	/* create backup file if required, or append to it */
+	/* create actual filename from character name (same as used for sf_delete or process_player_name) */
+	k = 0;
+	for (j = 0; name[j]; j++) {
+		c = name[j];
+		/* Accept some letters */
+		if (isalpha(c) || isdigit(c)) savefile[k++] = c;
+		/* Convert space, dot, and underscore to underscore */
+		else if (strchr(SF_BAD_CHARS, c)) savefile[k++] = '_';
+	}
+	savefile[k] = '\0';
+	/* build path name and try to create/append to player's backup file */
+	path_build(buf, MAX_PATH_LENGTH, buf2, savefile);
+	if ((fp = fopen(buf, "rb")) == NULL)
+		newly_created = TRUE;
+	else {
+		newly_created = FALSE;
+		fclose(fp);
+	}
+	if ((fp = fopen(buf, "ab")) == NULL) {
+		s_printf("  error: cannot open file '%s'.\n", buf);
+		return FALSE;
+	} else if (newly_created) {
+		newly_created = FALSE;
+		/* begin with a version tag */
+		fprintf(fp, "%s\n", ESTATE_BACKUP_VERSION);
+	}
+
+	/* add house price to his backup file -- nope */
+	fprintf(fp, "AU:%d\n", 0);
+
+	/* scan house contents and add them to his backup file */
+	/* traditional house? */
+	if (h_ptr->flags & HF_TRAD) {
+		for (j = 0; j < h_ptr->stock_num; j++) {
+			o_ptr = &h_ptr->stock[j];
+			/* add object to backup file */
+			fprintf(fp, "OB:");
+			(void)fwrite(o_ptr, sizeof(object_type), 1, fp);
+			/* store inscription too! */
+			if (o_ptr->note) {
+				fprintf(fp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
+				(void)fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp);
+			} else
+				fprintf(fp, "%d\n", -1);
+		}
+	}
+	/* mang-style house? */
+	else {
+		/* allocate sector of the house to access objects */
+		if (!(zcave = getcave(wpos))) {
+			alloc_dungeon_level(wpos);
+			wilderness_gen(wpos);
+			if (!(zcave = getcave(wpos))) {
+				s_printf("  error: cannot getcave(%d,%d,%d).\nfailed.\n", wpos->wx, wpos->wy, wpos->wz);
+				fclose(fp);
+				return FALSE;
+			}
+			allocated = TRUE;
+		} else allocated = FALSE;
+
+		if (h_ptr->flags & HF_RECT) {
+			sy = h_ptr->y + 1;
+			sx = h_ptr->x + 1;
+			ey = h_ptr->y + h_ptr->coords.rect.height - 1;
+			ex = h_ptr->x + h_ptr->coords.rect.width - 1;
+			for (y = sy; y < ey; y++) {
+				for (x = sx; x < ex; x++) {
+					c_ptr = &zcave[y][x];
+					if (c_ptr->o_idx) {
+						o_ptr = &o_list[c_ptr->o_idx];
+						/* add object to backup file */
+						fprintf(fp, "OB:");
+						(void)fwrite(o_ptr, sizeof(object_type), 1, fp);
+						/* store inscription too! */
+						if (o_ptr->note) {
+							fprintf(fp, "%d\n", (int)strlen(quark_str(o_ptr->note)));
+							(void)fwrite(quark_str(o_ptr->note), sizeof(char), strlen(quark_str(o_ptr->note)), fp);
+						} else
+							fprintf(fp, "%d\n", -1);
+					}
+				}
+			}
+		} else {
+			/* Polygonal house */
+			//fill_house(h_ptr, FILL_CLEAR, NULL);
+		}
+
+		if (allocated) dealloc_dungeon_level(wpos);
+	}
+
+	/* done with this particular house */
+	fclose(fp);
+
+	s_printf("done.\n");
+	return TRUE;
+}
 
 /* helper function for restore_estate():
    copy all remaining data from our save file to the temporary file

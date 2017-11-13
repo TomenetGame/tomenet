@@ -9049,7 +9049,7 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				return;
 			}
-			if (prefix(message, "/terminate")) {
+			else if (prefix(message, "/terminate")) {
 				/* same as /shutdown 0, except server will return -2 instead of -1.
 				   can be used by scripts to initiate maintenance downtime etc. */
 				set_runlevel(-1);
@@ -9061,7 +9061,7 @@ void do_slash_cmd(int Ind, char *message) {
 			/* back up all house prices and items/gold inside houses for all
 			   characters to lib/save/estate/ and invoke /terminate right
 			   afterwards if the parameter "term" is given. - C. Blue */
-			if (prefix(message, "/backup_estate")) {
+			else if (prefix(message, "/backup_estate")) {
 				msg_print(Ind, "Backing up all real estate...");
 				//specify any parameter for allowing partial backup
 				if (!backup_estate(tk)) {
@@ -9073,6 +9073,27 @@ void do_slash_cmd(int Ind, char *message) {
 				/* terminate the server? */
 				if (tk && !strcmp(token[1], "term"))
 					set_runlevel(-1);
+				return;
+			}
+			/* Same as above but only for one specific house! */
+			else if (prefix(message, "/backup_one_estate")) {
+				s32b pid;
+
+				if (!tk) {
+					msg_print(Ind, "Usage: /backup_one_estate <character name>");
+					return;
+				}
+				msg_print(Ind, "Backing up one real estate...");
+				message3[0] = toupper(message3[0]); /* char names always start on upper-case */
+				if (!(pid = lookup_player_id(message3))) {
+					msg_print(Ind, "That character name doesn't exist.");
+					return;
+				}
+				if (!backup_one_estate(&p_ptr->wpos, p_ptr->px, p_ptr->py, pid)) {
+					msg_print(Ind, "...failed.");
+					return;
+				}
+				msg_print(Ind, "...done.");
 				return;
 			}
 			/* backup all account<-character relations from 'server' savefile,
