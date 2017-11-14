@@ -140,7 +140,7 @@ A:3:Use innate power
 F:MKEY_HARDCODE
 I:1000:0
 
-N:17:Magic device
+N:17:Magic Device
 D:Increases chance to successfully use magic devices such as
 D:wands, rods, staves, artifacts. Also increases their power.
 I:1000:0
@@ -659,7 +659,7 @@ O:Martial Arts:Sorcery%100
 
 
 # All magic skills affect magic skill
-f:Magic device:Magic%7
+f:Magic Device:Magic%7
 f:Spell-power:Magic%20
 f:Sorcery:Magic%20
 f:Mana:Magic%10
@@ -761,7 +761,7 @@ E:Aura of Fear:Anti-magic
 E:Shivering Aura:Anti-magic
 E:Aura of Death:Anti-magic
 
-E:Magic device:Anti-magic
+E:Magic Device:Anti-magic
 
 #Implications if Mimicry is disabled by anti-magic:
 #-cannot learn new forms
@@ -875,7 +875,7 @@ T:Magic:Runecraft
 $ENABLE_MAIA$T:Magic:Astral Knowledge
 T:Magic:Blood Magic
 T:Magic:Mimicry
-T:Magic:Magic device
+T:Magic:Magic Device
 
 T:Wizardry:Sorcery
 T:Wizardry:Mana
