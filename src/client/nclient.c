@@ -182,7 +182,7 @@ int Receive_file(void){
 	u32b csum; /* old 32-bit checksum */
 	unsigned char digest[16]; /* new 128-bit MD5 checksum */
 	int n, bytes_read;
-	static bool updated_audio = FALSE;
+	static bool updated_audio = FALSE, updated_guide = FALSE;
 
 	/* NOTE: The amount of data read is stored in n so that the socket
 	 * buffer can be rolled back if the packet isn't complete. - mikaelh */
@@ -212,6 +212,7 @@ int Receive_file(void){
 					c_msg_print(outbuf);
 
 					if (strstr(fname, "audio.lua")) updated_audio = TRUE;
+					if (strstr(fname, "guide.lua")) updated_guide = TRUE;
 				} else {
 					if (errno == EACCES) c_msg_print("\377rNo access to update files");
 				}
@@ -262,6 +263,30 @@ int Receive_file(void){
 					if (updated_audio) {
 						c_msg_print("\377R* Audio information was updated - restarting the game is recommended! *");
 						c_msg_print("\377R   Without a restart, you might be hearing the wrong sound effects or music.");
+					}
+					if (updated_guide) {
+						int i;
+
+						/* Silently re-init guide info (keep consistent to init_guide() in c-init.c) */
+						guide_races = exec_lua(0, "return guide_races");
+						for (i = 0; i < guide_races; i++)
+							strcpy(guide_race[i], string_exec_lua(0, format("return guide_race[%d]", i + 1)));
+
+						guide_classes = exec_lua(0, "return guide_classes");
+						for (i = 0; i < guide_classes; i++)
+							strcpy(guide_class[i], string_exec_lua(0, format("return guide_class[%d]", i + 1)));
+
+						guide_skills = exec_lua(0, "return guide_skills");
+						for (i = 0; i < guide_skills; i++)
+							strcpy(guide_skill[i], string_exec_lua(0, format("return guide_skill[%d]", i + 1)));
+
+						guide_schools = exec_lua(0, "return guide_schools");
+						for (i = 0; i < guide_schools; i++)
+							strcpy(guide_school[i], string_exec_lua(0, format("return guide_school[%d]", i + 1)));
+
+						guide_spells = exec_lua(0, "return guide_spells");
+						for (i = 0; i < guide_spells; i++)
+							strcpy(guide_spell[i], string_exec_lua(0, format("return guide_spell[%d]", i + 1)));
 					}
 				}
 
