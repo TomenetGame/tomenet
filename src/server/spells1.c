@@ -12424,172 +12424,173 @@ int approx_damage(int m_idx, int dam, int typ) {
 	}
 
 	switch (typ) {
-		case GF_SILENCE:
-			if (!((r_ptr->flags4 & RF4_SPELLCASTER_MASK) |
-			    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) |
-			    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) |
-			    (r_ptr->flags0 & RF0_SPELLCASTER_MASK)) ||
-			    (r_ptr->level >= 98 && (r_ptr->flags1 & RF1_UNIQUE)))
-				dam = 0;
-			else if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags2 & RF2_POWERFUL))
-				dam /= 2;
+	case GF_SILENCE:
+		if (!((r_ptr->flags4 & RF4_SPELLCASTER_MASK) |
+		    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) |
+		    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) |
+		    (r_ptr->flags0 & RF0_SPELLCASTER_MASK)) ||
+		    (r_ptr->level >= 98 && (r_ptr->flags1 & RF1_UNIQUE)))
+			dam = 0;
+		else if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags2 & RF2_POWERFUL))
+			dam /= 2;
 #if 0 /* 0 => use 'dam' as 'avoidance' factor although there is no real damage here */
 			dam = 0;
 #endif
-			break;
+		break;
 
-		case GF_PSI:
-			if ((r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND) ||
-			    (r_ptr->flags3 & RF3_NONLIVING))
-			{
-				dam = 0;
-				break;
-			} else if (r_ptr->flags9 & RF9_RES_PSI) {
-				resist = TRUE;
-			} else if (r_ptr->flags3 & RF3_UNDEAD) {
-				resist = TRUE;
-			} else if ((r_ptr->flags2 & RF2_STUPID) ||
-			    ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags2 & RF2_CAN_SPEAK))) {
-				resist = TRUE;
-			} else if (r_ptr->flags2 & RF2_WEIRD_MIND)
-				dam = (dam * 3 + 1) / 4;
-
-			if ((r_ptr->flags2 & RF2_SMART) && !resist) dam += dam / 2;
-
-			if (resist) dam /= 2;
-			break;
-
-		case GF_CHARMIGNORE:
+	case GF_PSI:
+		if ((r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND) ||
+		    (r_ptr->flags3 & RF3_NONLIVING))
+		{
 			dam = 0;
 			break;
+		} else if (r_ptr->flags9 & RF9_RES_PSI) {
+			resist = TRUE;
+		} else if (r_ptr->flags3 & RF3_UNDEAD) {
+			resist = TRUE;
+		} else if ((r_ptr->flags2 & RF2_STUPID) ||
+		    ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags2 & RF2_CAN_SPEAK))) {
+			resist = TRUE;
+		} else if (r_ptr->flags2 & RF2_WEIRD_MIND)
+			dam = (dam * 3 + 1) / 4;
 
-		case GF_EARTHQUAKE:
+		if ((r_ptr->flags2 & RF2_SMART) && !resist) dam += dam / 2;
+
+		if (resist) dam /= 2;
+		break;
+
+	case GF_CHARMIGNORE:
+		dam = 0;
+		break;
+
+	case GF_EARTHQUAKE:
+		dam = 0;
+		break;
+
+	case GF_MISSILE:
+		break;
+
+	case GF_ACID:
+		if (r_ptr->flags3 & RF3_IM_ACID)
 			dam = 0;
-			break;
+		else if (r_ptr->flags9 & RF9_RES_ACID)
+			dam /= 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_ACID)
+			dam *= 2;
+		break;
 
-		case GF_MISSILE:
-			break;
+	case GF_ELEC:
+		if (r_ptr->flags3 & RF3_IM_ELEC)
+			dam = 0;
+		else if (r_ptr->flags9 & RF9_RES_ELEC)
+			dam /= 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
+			dam *= 2;
+		break;
 
-		case GF_ACID:
-			if (r_ptr->flags3 & RF3_IM_ACID)
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_ACID)
-				dam /= 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_ACID)
+	case GF_FIRE:
+		if (r_ptr->flags3 & RF3_IM_FIRE)
+			dam = 0;
+		else if (r_ptr->flags9 & RF9_RES_FIRE)
+			dam /= 4;
+		else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
+			dam *= 2;
+		break;
+
+	case GF_COLD:
+		if (r_ptr->flags3 & RF3_IM_COLD)
+			dam = 0;
+		else if (r_ptr->flags9 & RF9_RES_COLD)
+			dam /= 4;
+		else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
+			dam *= 2;
+		break;
+
+	case GF_POIS:
+		if ((r_ptr->flags3 & RF3_IM_POIS) ||
+		    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+		    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
+			dam = 0;
+		else if (r_ptr->flags9 & RF9_RES_POIS)
+			dam /= 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
+			dam *= 2;
+		break;
+
+	case GF_UNBREATH:
+		//if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
+		if ((r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			(r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
+			(m_ptr->r_idx == RI_MORGOTH)) /* <- Morgoth */
+			dam = 0;
+			//do_pois = 0;
+		else if (r_ptr->flags3 & RF3_IM_POIS)
+			dam = (dam * 2) / 4;
+		else if (r_ptr->flags9 & RF9_RES_POIS)
+			dam = (dam * 3) / 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
+			dam *= 2;
+		break;
+
+	case GF_HELL_FIRE:
+		if (r_ptr->flags3 & (RF3_GOOD)) {
+			if (r_ptr->flags3 & RF3_IM_FIRE) {
+				dam *= 2; dam = (dam * 2) / 3;
+			} else if (r_ptr->flags9 & RF9_RES_FIRE)
+				dam = (dam * 3) / 2;
+			else
 				dam *= 2;
-			break;
-
-		case GF_ELEC:
-			if (r_ptr->flags3 & RF3_IM_ELEC)
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_ELEC)
-				dam /= 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
+		} else {
+			if (r_ptr->flags3 & RF3_IM_FIRE) {
+				dam *= 2; dam /= 4;
+			} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
 				dam *= 2;
-			break;
-
-		case GF_FIRE:
-			if (r_ptr->flags3 & RF3_IM_FIRE)
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_FIRE)
-				dam /= 4;
-			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-				dam *= 2;
-			break;
-
-		case GF_COLD:
-			if (r_ptr->flags3 & RF3_IM_COLD)
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_COLD)
-				dam /= 4;
-			else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
-				dam *= 2;
-			break;
-
-		case GF_POIS:
-			if ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_POIS)
-				dam /= 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
-				dam *= 2;
-			break;
-
-		case GF_UNBREATH:
-			//if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
-			if ((r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-				(r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
-				(m_ptr->r_idx == RI_MORGOTH)) /* <- Morgoth */
-				dam = 0;
-				//do_pois = 0;
-			else if (r_ptr->flags3 & RF3_IM_POIS)
-				dam = (dam * 2) / 4;
-			else if (r_ptr->flags9 & RF9_RES_POIS)
+			else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags3 & RF3_DEMON))
+				dam = (dam * 2) / 3;
+			else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON))
 				dam = (dam * 3) / 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
-				dam *= 2;
-			break;
-
-		case GF_HELL_FIRE:
-			if (r_ptr->flags3 & (RF3_GOOD)) {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					dam *= 2; dam = (dam * 2) / 3;
-				} else if (r_ptr->flags9 & RF9_RES_FIRE)
-					dam = (dam * 3) / 2;
-				else
-					dam *= 2;
-			} else {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					dam *= 2; dam /= 4;
-				} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-					dam *= 2;
-				else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags3 & RF3_DEMON))
-					dam = (dam * 2) / 3;
-				else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON))
-					dam = (dam * 3) / 4;
-				else {
-					//dam *= 5; dam /= 6;
-				}
+			else {
+				//dam *= 5; dam /= 6;
 			}
-			break;
+		}
+		break;
 
-		case GF_HOLY_ORB:
-			if (r_ptr->flags3 & (RF3_GOOD))
-				dam = 0;
-			if (r_ptr->flags3 & RF3_EVIL)
+	case GF_HOLY_ORB:
+		if (r_ptr->flags3 & (RF3_GOOD))
+			dam = 0;
+		if (r_ptr->flags3 & RF3_EVIL)
+			dam *= 2;
+		break;
+
+	case GF_HOLY_FIRE:
+		if (r_ptr->flags3 & (RF3_GOOD))
+			dam = 0;
+		else if (r_ptr->flags3 & (RF3_EVIL)) {
+			if (r_ptr->flags3 & RF3_IM_FIRE) {
+				dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
+			} else if (r_ptr->flags9 & RF9_RES_FIRE)
+				dam = (dam * 3) / 2;
+			else
 				dam *= 2;
-			break;
-
-		case GF_HOLY_FIRE:
-			if (r_ptr->flags3 & (RF3_GOOD))
-				dam = 0;
-			else if (r_ptr->flags3 & (RF3_EVIL)) {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					dam *= 2; dam = (dam * 2) / 3;//(randint(4)+3);
-				} else if (r_ptr->flags9 & RF9_RES_FIRE)
-					dam = (dam * 3) / 2;
-				else
-					dam *= 2;
-			} else {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					dam *= 2; dam /= 3;//(randint(6)+10);
-				} else if (r_ptr->flags9 & RF9_RES_FIRE)
-					dam = (dam * 3) / 4;
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
-					dam /= 2;
-				else {
-					//dam *= 5; dam /= (randint(3)+4);
-				}
+		} else {
+			if (r_ptr->flags3 & RF3_IM_FIRE) {
+				dam *= 2; dam /= 3;//(randint(6)+10);
+			} else if (r_ptr->flags9 & RF9_RES_FIRE)
+				dam = (dam * 3) / 4;
+			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE)
+				dam /= 2;
+			else {
+				//dam *= 5; dam /= (randint(3)+4);
 			}
-			break;
+		}
+		break;
 
-		case GF_ARROW:
-			break;
+	case GF_ARROW:
+		break;
 
-		case GF_PLASMA: {
+	case GF_PLASMA:
+		{
 			/* 50% fire */
 			k = dam / 2;
 			if (r_ptr->flags3 & RF3_IM_FIRE) k = 0;
@@ -12609,59 +12610,59 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 		}
 
-		case GF_NETHER_WEAK:
-		case GF_NETHER:
-			if (r_ptr->flags3 & RF3_UNDEAD)
-				dam = 0;
-			else if ((r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH))
-				dam /= 3;
-			else if (r_ptr->flags3 & RF3_DEMON)
-				dam /= 2;
+	case GF_NETHER_WEAK:
+	case GF_NETHER:
+		if (r_ptr->flags3 & RF3_UNDEAD)
+			dam = 0;
+		else if ((r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH))
+			dam /= 3;
+		else if (r_ptr->flags3 & RF3_DEMON)
+			dam /= 2;
 #if 0
-			else if (r_ptr->flags3 & RF3_EVIL)
-				dam /= 2;
+		else if (r_ptr->flags3 & RF3_EVIL)
+			dam /= 2;
 #endif
-			break;
+		break;
 
-		case GF_WATER:
-		case GF_VAPOUR:
-			if (r_ptr->flags9 & RF9_IM_WATER)
-				dam = 0;
-			else if (r_ptr->flags7 & RF7_AQUATIC)
-				dam /= 9;
-			else if (r_ptr->flags3 & RF3_RES_WATE)
-				dam /= 4;
-			break;
+	case GF_WATER:
+	case GF_VAPOUR:
+		if (r_ptr->flags9 & RF9_IM_WATER)
+			dam = 0;
+		else if (r_ptr->flags7 & RF7_AQUATIC)
+			dam /= 9;
+		else if (r_ptr->flags3 & RF3_RES_WATE)
+			dam /= 4;
+		break;
 
-		case GF_WAVE:
-			if (r_ptr->flags9 & RF9_IM_WATER)
-				dam = 0;
-			else if (r_ptr->flags7 & RF7_AQUATIC)
-				dam /= 9;
-			else if (r_ptr->flags3 & RF3_RES_WATE)
-				dam /= 4;
-			else
-				//do_stun = 7;
-			break;
+	case GF_WAVE:
+		if (r_ptr->flags9 & RF9_IM_WATER)
+			dam = 0;
+		else if (r_ptr->flags7 & RF7_AQUATIC)
+			dam /= 9;
+		else if (r_ptr->flags3 & RF3_RES_WATE)
+			dam /= 4;
+		else
+			//do_stun = 7;
+		break;
 
-		case GF_CHAOS:
-			//if (r_ptr->level / 2 < 15) ;//do_poly = TRUE;
-			//do_conf = 10;
-			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
-				dam /= 3;
-				//do_conf = 0;
-				//do_poly = FALSE;
-			}
-			break;
+	case GF_CHAOS:
+		//if (r_ptr->level / 2 < 15) ;//do_poly = TRUE;
+		//do_conf = 10;
+		if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
+			dam /= 3;
+			//do_conf = 0;
+			//do_poly = FALSE;
+		}
+		break;
 
-		case GF_SHARDS:
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
-				dam /= 3;
-			else if (r_ptr->flags8 & RF8_NO_CUT)
-				dam /= 2;
-			break;
+	case GF_SHARDS:
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
+			dam /= 3;
+		else if (r_ptr->flags8 & RF8_NO_CUT)
+			dam /= 2;
+		break;
 
-		case GF_HAVOC:
+	case GF_HAVOC:
 		{
 			int res1 = 0, res2 = 0, res3 = 0, res4 = 0, res5 = 0; //shard,sound,fire,mana,chaos
 
@@ -12694,11 +12695,11 @@ int approx_damage(int m_idx, int dam, int typ) {
 				break;
 			}
 		}
-			break;
+		break;
 
-		case GF_INFERNO:
-		case GF_DETONATION:
-		case GF_ROCKET:
+	case GF_INFERNO:
+	case GF_DETONATION:
+	case GF_ROCKET:
 		{
 			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
 
@@ -12724,63 +12725,64 @@ int approx_damage(int m_idx, int dam, int typ) {
 				break;
 			}
 		}
-			break;
+		break;
 
-		case GF_STUN:
-			//do_stun = 18;
-			if (r_ptr->flags9 & RF9_RES_SOUND) {}//do_stun /= 4;
-			break;
+	case GF_STUN:
+		//do_stun = 18;
+		if (r_ptr->flags9 & RF9_RES_SOUND) {}//do_stun /= 4;
+		break;
 
-		case GF_SOUND:
-			//do_stun = 18;
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
-				dam /= 3;
-				//do_stun = 0;
-			}
-			break;
+	case GF_SOUND:
+		//do_stun = 18;
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
+			dam /= 3;
+			//do_stun = 0;
+		}
+		break;
 
-		case GF_CONFUSION:
-			//do_conf = 18;
-			if ((r_ptr->flags4 & RF4_BR_CONF) ||
-				(r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
-				dam /= 3;
-			else if (r_ptr->flags3 & RF3_NO_CONF)
-				dam /= 2;
-			break;
+	case GF_CONFUSION:
+		//do_conf = 18;
+		if ((r_ptr->flags4 & RF4_BR_CONF) ||
+			(r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
+			dam /= 3;
+		else if (r_ptr->flags3 & RF3_NO_CONF)
+			dam /= 2;
+		break;
 
-		case GF_DISENCHANT:
-			if ((r_ptr->flags4 & RF4_BR_DISE) ||
-			    prefix(name, "Disen") ||
-			    (r_ptr->flags3 & RF3_RES_DISE))
-				dam /= 3;
-			break;
+	case GF_DISENCHANT:
+		if ((r_ptr->flags4 & RF4_BR_DISE) ||
+		    prefix(name, "Disen") ||
+		    (r_ptr->flags3 & RF3_RES_DISE))
+			dam /= 3;
+		break;
 
-		case GF_NEXUS:
-			if ((r_ptr->flags4 & RF4_BR_NEXU) ||
-			    prefix(name, "Nexus") ||
-			    (r_ptr->flags3 & RF3_RES_NEXU))
-				dam /= 3;
-			break;
+	case GF_NEXUS:
+		if ((r_ptr->flags4 & RF4_BR_NEXU) ||
+		    prefix(name, "Nexus") ||
+		    (r_ptr->flags3 & RF3_RES_NEXU))
+			dam /= 3;
+		break;
 
-		case GF_FORCE:
-			//do_stun = 8;
-			if (r_ptr->flags4 & RF4_BR_WALL) dam /= 3;
-			break;
+	case GF_FORCE:
+		//do_stun = 8;
+		if (r_ptr->flags4 & RF4_BR_WALL) dam /= 3;
+		break;
 
-		case GF_INERTIA:
-			if (r_ptr->flags4 & RF4_BR_INER) dam /= 3;
-			break;
+	case GF_INERTIA:
+		if (r_ptr->flags4 & RF4_BR_INER) dam /= 3;
+		break;
 
-		case GF_TIME: //Note: Also steals energy!
-			if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)
-			    || (r_ptr->flags3 & RF3_DEMON) || (r_ptr->flags3 & RF3_NONLIVING)
-			    || (r_ptr->flags3 & RF3_UNDEAD))
-				dam /= 3;
-			break;
+	case GF_TIME: //Note: Also steals energy!
+		if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)
+		    || (r_ptr->flags3 & RF3_DEMON) || (r_ptr->flags3 & RF3_NONLIVING)
+		    || (r_ptr->flags3 & RF3_UNDEAD))
+			dam /= 3;
+		break;
 
-		case GF_GRAVITY:
+	case GF_GRAVITY:
 		{
 			bool resist_tele = FALSE;
+
 			if ((r_ptr->flags3 & RF3_RES_TELE) || (r_ptr->flags9 & RF9_IM_TELE)) {
 				if ((r_ptr->flags1 & (RF1_UNIQUE)) || (r_ptr->flags9 & RF9_IM_TELE))
 					resist_tele = TRUE;
@@ -12796,343 +12798,343 @@ int approx_damage(int m_idx, int dam, int typ) {
 			break;
 		}
 
-		case GF_MANA:
-			if (r_ptr->flags9 & RF9_RES_MANA)
-				dam /= 3;
-			else if (r_ptr->flags4 & RF4_BR_MANA)
-				dam /= 2;
-			break;
+	case GF_MANA:
+		if (r_ptr->flags9 & RF9_RES_MANA)
+			dam /= 3;
+		else if (r_ptr->flags4 & RF4_BR_MANA)
+			dam /= 2;
+		break;
 
-		case GF_METEOR:
-			break;
+	case GF_METEOR:
+		break;
 
-		case GF_ICE:
-			//do_stun = 8;
-			k = dam;
+	case GF_ICE:
+		//do_stun = 8;
+		k = dam;
 
-			dam = (k * 3) / 5;/* 60% COLD damage */
-			if (r_ptr->flags3 & RF3_IM_COLD)
-				dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_COLD)
-				dam /= 4;
-			else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
-				dam *= 2;
-
-			k = (k * 2) / 5;/* 40% SHARDS damage */
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
-				k /= 3;
-			else if (r_ptr->flags8 & RF8_NO_CUT)
-				k /= 2;
-			dam = dam + k;
-			break;
-
-		case GF_THUNDER:
-			k_elec = dam / 3; /* 33% ELEC damage */
-			if (r_ptr->flags3 & RF3_IM_ELEC)
-				k_elec = 0;
-			else if (r_ptr->flags9 & RF9_RES_ELEC)
-				k_elec /= 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
-				k_elec *= 2;
-
-			k_sound = dam / 3; /* 33% SOUND damage */
-			//do_stun = 8;
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
-				k_sound /= 3;
-				//do_stun = 0;
-			}
-
-			k_lite = dam / 3; /* 33% LIGHT damage */
-			//do_blind = damroll(3, (k_lite / 20)) + 1;
-			if (r_ptr->d_char == 'A') {
-				k_lite = 0;
-				//do_blind = 0;
-			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
-				k_lite *= 2;
-				if (r_ptr->flags2 & RF2_REFLECTING) k_lite /= 2;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
-				k_lite /= 4;
-				//do_blind = 0;
-			}
-
-			dam = k_elec + k_sound + k_lite;
-			break;
-
-		case GF_OLD_DRAIN:
-			if (m_ptr->hp > 9362)
-				dam = (m_ptr->hp / 100) * dam;
-			else if (m_ptr->hp > 936)
-				dam = ((m_ptr->hp / 10) * dam) / 10;
-			else
-				dam = (m_ptr->hp * dam) / 100;
-
-			if (dam > 900) dam = 900;
-
-			if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
-			if (!dam) dam = 1;
-
-			if ((r_ptr->flags3 & RF3_UNDEAD) ||
-			    //(r_ptr->flags3 & RF3_DEMON) ||
-			    (r_ptr->flags3 & RF3_NONLIVING) ||
-			    (strchr("Egv", r_ptr->d_char)))
-				dam = 0;
-			break;
-
-		case GF_ANNIHILATION:
-			j = dam - 1;
-			if (m_ptr->hp > 9362)
-				dam = (m_ptr->hp / 100) * dam;
-			else if (m_ptr->hp > 936)
-				dam = ((m_ptr->hp / 10) * dam) / 10;
-			else
-				dam = (m_ptr->hp * dam) / 100;
-
-			if (dam > 1200) dam = 1200;
-			//ignoring the 600 cap for 'Brief' runespells
-
-			if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
-			if (!dam) dam = 1;
-			break;
-
-		case GF_OLD_POLY:
-			//do_poly = TRUE;
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))
-				{}//do_poly = FALSE;
-
+		dam = (k * 3) / 5;/* 60% COLD damage */
+		if (r_ptr->flags3 & RF3_IM_COLD)
 			dam = 0;
-			break;
+		else if (r_ptr->flags9 & RF9_RES_COLD)
+			dam /= 4;
+		else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
+			dam *= 2;
 
-		case GF_OLD_CLONE:
-		case GF_OLD_HEAL:
-		case GF_HERO_MONSTER:
-		case GF_REMFEAR:
-		case GF_OLD_SPEED:
+		k = (k * 2) / 5;/* 40% SHARDS damage */
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
+			k /= 3;
+		else if (r_ptr->flags8 & RF8_NO_CUT)
+			k /= 2;
+		dam = dam + k;
+		break;
+
+	case GF_THUNDER:
+		k_elec = dam / 3; /* 33% ELEC damage */
+		if (r_ptr->flags3 & RF3_IM_ELEC)
+			k_elec = 0;
+		else if (r_ptr->flags9 & RF9_RES_ELEC)
+			k_elec /= 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_ELEC)
+			k_elec *= 2;
+
+		k_sound = dam / 3; /* 33% SOUND damage */
+		//do_stun = 8;
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
+			k_sound /= 3;
+			//do_stun = 0;
+		}
+
+		k_lite = dam / 3; /* 33% LIGHT damage */
+		//do_blind = damroll(3, (k_lite / 20)) + 1;
+		if (r_ptr->d_char == 'A') {
+			k_lite = 0;
+			//do_blind = 0;
+		} else if (r_ptr->flags3 & RF3_HURT_LITE) {
+			k_lite *= 2;
+			if (r_ptr->flags2 & RF2_REFLECTING) k_lite /= 2;
+		} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
+			k_lite /= 4;
+			//do_blind = 0;
+		}
+
+		dam = k_elec + k_sound + k_lite;
+		break;
+
+	case GF_OLD_DRAIN:
+		if (m_ptr->hp > 9362)
+			dam = (m_ptr->hp / 100) * dam;
+		else if (m_ptr->hp > 936)
+			dam = ((m_ptr->hp / 10) * dam) / 10;
+		else
+			dam = (m_ptr->hp * dam) / 100;
+
+		if (dam > 900) dam = 900;
+
+		if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
+		if (!dam) dam = 1;
+
+		if ((r_ptr->flags3 & RF3_UNDEAD) ||
+		    //(r_ptr->flags3 & RF3_DEMON) ||
+		    (r_ptr->flags3 & RF3_NONLIVING) ||
+		    (strchr("Egv", r_ptr->d_char)))
 			dam = 0;
-			break;
+		break;
 
-		case GF_OLD_SLOW:
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10) || /* RES_OLD() */
-			    !(m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10))
-				dam = 0;
-			break;
+	case GF_ANNIHILATION:
+		j = dam - 1;
+		if (m_ptr->hp > 9362)
+			dam = (m_ptr->hp / 100) * dam;
+		else if (m_ptr->hp > 936)
+			dam = ((m_ptr->hp / 10) * dam) / 10;
+		else
+			dam = (m_ptr->hp * dam) / 100;
 
-		case GF_OLD_SLEEP:
-			if (!((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags3 & RF3_NO_SLEEP) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))) /* RES_OLD() */
-				{}//do_sleep = GF_OLD_SLEEP_DUR;
+		if (dam > 1200) dam = 1200;
+		//ignoring the 600 cap for 'Brief' runespells
+
+		if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
+		if (!dam) dam = 1;
+		break;
+
+	case GF_OLD_POLY:
+		//do_poly = TRUE;
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))
+			{}//do_poly = FALSE;
+
+		dam = 0;
+		break;
+
+	case GF_OLD_CLONE:
+	case GF_OLD_HEAL:
+	case GF_HERO_MONSTER:
+	case GF_REMFEAR:
+	case GF_OLD_SPEED:
+		dam = 0;
+		break;
+
+	case GF_OLD_SLOW:
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) ||
+		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10) || /* RES_OLD() */
+		    !(m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10))
 			dam = 0;
-			break;
+		break;
 
-		case GF_OLD_CONF:
-			//do_conf = damroll(3, (dam / 2)) + 1;
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags3 & RF3_NO_CONF) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) /* RES_OLD() */
-				{}//do_conf = 0;
+	case GF_OLD_SLEEP:
+		if (!((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags3 & RF3_NO_SLEEP) ||
+		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10))) /* RES_OLD() */
+			{}//do_sleep = GF_OLD_SLEEP_DUR;
+		dam = 0;
+		break;
+
+	case GF_OLD_CONF:
+		//do_conf = damroll(3, (dam / 2)) + 1;
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags3 & RF3_NO_CONF) ||
+		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) /* RES_OLD() */
+			{}//do_conf = 0;
+		dam = 0;
+		break;
+
+	case GF_TERROR:
+		//do_conf = damroll(3, (dam / 2)) + 1;
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    ((r_ptr->flags3 & RF3_NO_CONF) && (r_ptr->flags3 & RF3_NO_FEAR)) ||
+		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) /* RES_OLD() */
+			{}//do_conf = do_fear = 0;
+		dam = 0;
+		break;
+
+	case GF_BLIND:
+		//do_blind = dam;
+		dam = 0;
+		break;
+
+	case GF_CURSE:
+		//do_conf = (damroll(3, (dam / 2)) + 1) / 3;
+		//do_blind = dam / 3;
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->level > ((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) / 2 + 10)) /* RES_OLD */
+			{}//do_blind = do_conf = 0;
+		if (r_ptr->flags3 & RF3_NO_CONF) {}//do_conf = 0;
+
+		dam /= 3; /* only applies damage in 1 of the 3 spell effects */
+
+		if ((r_ptr->flags4 & RF4_BR_CONF) ||
+			(r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
+			dam /= 3;
+		else if (r_ptr->flags3 & RF3_NO_CONF)
+			dam /= 2;
+		break;
+
+	case GF_HEALINGCLOUD:
+		if (!(r_ptr->flags3 & RF3_UNDEAD))
 			dam = 0;
-			break;
+		break;
 
-		case GF_TERROR:
-			//do_conf = damroll(3, (dam / 2)) + 1;
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    ((r_ptr->flags3 & RF3_NO_CONF) && (r_ptr->flags3 & RF3_NO_FEAR)) ||
-			    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10)) /* RES_OLD() */
-				{}//do_conf = do_fear = 0;
+	case GF_WATERPOISON:
+		k = dam / 2;
+		if ((r_ptr->flags3 & RF3_IM_POIS) ||
+		  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+		  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
+			k = 0;
+		else if (r_ptr->flags9 & RF9_RES_POIS)
+			k /= 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
+			k *= 2;
+		j = k;
+
+		k = dam / 2;
+		if (r_ptr->flags9 & RF9_IM_WATER)
+			k = 0;
+		else if (r_ptr->flags7 & RF7_AQUATIC)
+			k /= 9;
+		else if (r_ptr->flags3 & RF3_RES_WATE)
+			k /= 4;
+		dam = j + k;
+		break;
+
+	case GF_ICEPOISON:
+		k = (dam * 3) / 5;
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
+			k /= 3;
+		else if (r_ptr->flags8 & RF8_NO_CUT)
+			k /= 2;
+		j = k;
+
+		k = dam / 5;
+		if (r_ptr->flags9 & RF9_IM_WATER)
+			k = 0;
+		else if (r_ptr->flags7 & RF7_AQUATIC)
+			k /= 9;
+		else if (r_ptr->flags3 & RF3_RES_WATE)
+			k /= 4;
+		j += k;
+
+		k = dam / 5;
+		if ((r_ptr->flags3 & RF3_IM_POIS) ||
+		    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+		    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
+			k = 0;
+		else if (r_ptr->flags9 & RF9_RES_POIS)
+			k /= 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
+			k *= 2;
+		dam = j + k;
+		break;
+
+	case GF_LITE_WEAK:
+		if (!(r_ptr->flags3 & RF3_HURT_LITE))
 			dam = 0;
-			break;
+		else if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
+		break;
 
-		case GF_BLIND:
-			//do_blind = dam;
+	case GF_STARLITE:
+	case GF_LITE:
+		//do_blind = damroll(3, (dam / 20)) + 1;
+
+		if (r_ptr->d_char == 'A') {
+			//do_blind = 0;
+			if (r_ptr->flags3 & RF3_EVIL) break;
 			dam = 0;
-			break;
+		} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
+			dam /= 3;
+			//do_blind = 0;
+		} else if (r_ptr->flags3 & RF3_HURT_LITE) {
+			dam *= 2;
+			if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
+		}
+		break;
 
-		case GF_CURSE:
-			//do_conf = (damroll(3, (dam / 2)) + 1) / 3;
-			//do_blind = dam / 3;
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->level > ((dam / 3 - 10) < 1 ? 1 : (dam / 3 - 10)) / 2 + 10)) /* RES_OLD */
-				{}//do_blind = do_conf = 0;
-			if (r_ptr->flags3 & RF3_NO_CONF) {}//do_conf = 0;
-
-			dam /= 3; /* only applies damage in 1 of the 3 spell effects */
-
-			if ((r_ptr->flags4 & RF4_BR_CONF) ||
-				(r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS))
-				dam /= 3;
-			else if (r_ptr->flags3 & RF3_NO_CONF)
-				dam /= 2;
-			break;
-
-		case GF_HEALINGCLOUD:
-			if (!(r_ptr->flags3 & RF3_UNDEAD))
-				dam = 0;
-			break;
-
-		case GF_WATERPOISON:
-			k = dam / 2;
-			if ((r_ptr->flags3 & RF3_IM_POIS) ||
-			  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
-				k = 0;
-			else if (r_ptr->flags9 & RF9_RES_POIS)
-				k /= 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
-				k *= 2;
-			j = k;
-
-			k = dam / 2;
-			if (r_ptr->flags9 & RF9_IM_WATER)
-				k = 0;
-			else if (r_ptr->flags7 & RF7_AQUATIC)
-				k /= 9;
-			else if (r_ptr->flags3 & RF3_RES_WATE)
-				k /= 4;
-			dam = j + k;
-			break;
-
-		case GF_ICEPOISON:
-			k = (dam * 3) / 5;
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
-				k /= 3;
-			else if (r_ptr->flags8 & RF8_NO_CUT)
-				k /= 2;
-			j = k;
-
-			k = dam / 5;
-			if (r_ptr->flags9 & RF9_IM_WATER)
-				k = 0;
-			else if (r_ptr->flags7 & RF7_AQUATIC)
-				k /= 9;
-			else if (r_ptr->flags3 & RF3_RES_WATE)
-				k /= 4;
-			j += k;
-
-			k = dam / 5;
-			if ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
-				k = 0;
-			else if (r_ptr->flags9 & RF9_RES_POIS)
-				k /= 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_POIS)
-				k *= 2;
-			dam = j + k;
-			break;
-
-		case GF_LITE_WEAK:
-			if (!(r_ptr->flags3 & RF3_HURT_LITE))
-				dam = 0;
-			else if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
-			break;
-
-		case GF_STARLITE:
-		case GF_LITE:
+	case GF_DARK:
+		/* Exception: Bolt-type spells have no special effect */
+		//if (flg & (PROJECT_NORF | PROJECT_JUMP))
 			//do_blind = damroll(3, (dam / 20)) + 1;
+		if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
+		    || (r_ptr->flags3 & RF3_UNDEAD)) {
+			dam /= 3;
+			//do_blind = 0;
+		}
+		break;
 
-			if (r_ptr->d_char == 'A') {
-				//do_blind = 0;
-				if (r_ptr->flags3 & RF3_EVIL) break;
-				dam = 0;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
-				dam /= 3;
-				//do_blind = 0;
-			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
-				dam *= 2;
-				if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
-			}
-			break;
-
-		case GF_DARK:
-			/* Exception: Bolt-type spells have no special effect */
-			//if (flg & (PROJECT_NORF | PROJECT_JUMP))
-				//do_blind = damroll(3, (dam / 20)) + 1;
-			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
-			    || (r_ptr->flags3 & RF3_UNDEAD)) {
-				dam /= 3;
-				//do_blind = 0;
-			}
-			break;
-
-		case GF_KILL_WALL:
-			if (!(r_ptr->flags3 & RF3_HURT_ROCK))
-				dam = 0;
-			break;
-
-		case GF_AWAY_UNDEAD:
-		case GF_AWAY_EVIL:
-		case GF_AWAY_ALL:
-		case GF_TURN_UNDEAD:
-		case GF_TURN_EVIL:
-		case GF_TURN_ALL:
+	case GF_KILL_WALL:
+		if (!(r_ptr->flags3 & RF3_HURT_ROCK))
 			dam = 0;
-			break;
+		break;
 
-		case GF_DISP_UNDEAD:
-			if (!(r_ptr->flags3 & RF3_UNDEAD))
-				dam = 0;
-			break;
-		case GF_DISP_EVIL:
-			if (!(r_ptr->flags3 & RF3_EVIL))
-				dam = 0;
-			break;
-		case GF_DISP_DEMON:
-			if (!(r_ptr->flags3 & RF3_DEMON))
-				dam = 0;
-			break;
-		case GF_DISP_ALL:
-			break;
-		case GF_CAUSE:
-			if (r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT))
-				dam = 0;
-			else {
-				k = 200; //assume level 50 player
-				if (r_ptr->flags3 & RF3_EVIL) k *= 2;
-				if (r_ptr->flags3 & RF3_GOOD) k /= 2;
-				dam = (dam * (100 - (r_ptr->level * 100) / k)) / 100;
-			}
-			break;
+	case GF_AWAY_UNDEAD:
+	case GF_AWAY_EVIL:
+	case GF_AWAY_ALL:
+	case GF_TURN_UNDEAD:
+	case GF_TURN_EVIL:
+	case GF_TURN_ALL:
+		dam = 0;
+		break;
 
-		case GF_NUKE:
-			if ((r_ptr->flags3 & RF3_IM_POIS) ||
-			  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			  (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
-				dam = 0;
-			else if (r_ptr->flags9 & (RF9_RES_POIS))
-				dam /= 3;
-			break;
-
-		case GF_DISINTEGRATE:
-			if (r_ptr->flags3 & (RF3_HURT_ROCK))
-				dam *= 2;
-			if (r_ptr->flags1 & RF1_UNIQUE)
-				dam >>= 1;
-			break;
-
-		case GF_HOLD:
-		case GF_DOMINATE:
-		case GF_TELE_TO:
-		case GF_HAND_DOOM:
-		case GF_STOP:
-		case GF_STASIS:
-		case GF_DEC_STR:
-		case GF_DEC_DEX:
-		case GF_DEC_CON:
-		case GF_RES_STR:
-		case GF_RES_DEX:
-		case GF_RES_CON:
-		case GF_INC_STR:
-		case GF_INC_DEX:
-		case GF_INC_CON:
-		case GF_AUGMENTATION:
-		case GF_RUINATION:
-		default:
-			/* No damage */
+	case GF_DISP_UNDEAD:
+		if (!(r_ptr->flags3 & RF3_UNDEAD))
 			dam = 0;
-			break;
+		break;
+	case GF_DISP_EVIL:
+		if (!(r_ptr->flags3 & RF3_EVIL))
+			dam = 0;
+		break;
+	case GF_DISP_DEMON:
+		if (!(r_ptr->flags3 & RF3_DEMON))
+			dam = 0;
+		break;
+	case GF_DISP_ALL:
+		break;
+	case GF_CAUSE:
+		if (r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT))
+			dam = 0;
+		else {
+			k = 200; //assume level 50 player
+			if (r_ptr->flags3 & RF3_EVIL) k *= 2;
+			if (r_ptr->flags3 & RF3_GOOD) k /= 2;
+			dam = (dam * (100 - (r_ptr->level * 100) / k)) / 100;
+		}
+		break;
+
+	case GF_NUKE:
+		if ((r_ptr->flags3 & RF3_IM_POIS) ||
+		  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+		  (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
+			dam = 0;
+		else if (r_ptr->flags9 & (RF9_RES_POIS))
+			dam /= 3;
+		break;
+
+	case GF_DISINTEGRATE:
+		if (r_ptr->flags3 & (RF3_HURT_ROCK))
+			dam *= 2;
+		if (r_ptr->flags1 & RF1_UNIQUE)
+			dam >>= 1;
+		break;
+
+	case GF_HOLD:
+	case GF_DOMINATE:
+	case GF_TELE_TO:
+	case GF_HAND_DOOM:
+	case GF_STOP:
+	case GF_STASIS:
+	case GF_DEC_STR:
+	case GF_DEC_DEX:
+	case GF_DEC_CON:
+	case GF_RES_STR:
+	case GF_RES_DEX:
+	case GF_RES_CON:
+	case GF_INC_STR:
+	case GF_INC_DEX:
+	case GF_INC_CON:
+	case GF_AUGMENTATION:
+	case GF_RUINATION:
+	default:
+		/* No damage */
+		dam = 0;
+		break;
 	}
 
 #if 0
