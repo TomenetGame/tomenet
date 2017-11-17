@@ -4038,155 +4038,155 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Analyze the type */
 	switch (typ) {
-		/* Ignore most effects */
-		case GF_ACID:
-			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-			/* Destroy trees */
-			if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_BUSH) {
+	/* Ignore most effects */
+	case GF_ACID:
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		/* Destroy trees */
+		if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_BUSH) {
 #if 0 /* no msg spam maybe */
-				/* Hack -- special message */
-				if (!quiet && player_can_see_bold(Ind, y, x)) {
-					msg_print(Ind, "The tree decays!");
-					/* Notice */
-					note_spot(Ind, y, x);
-					obvious = TRUE;
-				}
+			/* Hack -- special message */
+			if (!quiet && player_can_see_bold(Ind, y, x)) {
+				msg_print(Ind, "The tree decays!");
+				/* Notice */
+				note_spot(Ind, y, x);
+				obvious = TRUE;
+			}
 #endif
-				/* Destroy the tree */
-				cave_set_feat_live(wpos, y, x, FEAT_DEAD_TREE);
-			}
+			/* Destroy the tree */
+			cave_set_feat_live(wpos, y, x, FEAT_DEAD_TREE);
+		}
 
-			/* Burn grass et al */
-			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
-			    c_ptr->feat == FEAT_WEB ||
-			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
-				cave_set_feat_live(wpos, y, x, FEAT_DIRT);//(was FEAT_MUD) or maybe FEAT_ASH?
+		/* Burn grass et al */
+		if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
+		    c_ptr->feat == FEAT_WEB ||
+		    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
+			cave_set_feat_live(wpos, y, x, FEAT_DIRT);//(was FEAT_MUD) or maybe FEAT_ASH?
 
-			break;
+		break;
 
-		case GF_NUKE:
-			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-			/* damage organic material */
-			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
-			    /*c_ptr->feat == FEAT_WEB ||*/
-			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
-				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
-			break;
+	case GF_NUKE:
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		/* damage organic material */
+		if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
+		    /*c_ptr->feat == FEAT_WEB ||*/
+		    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
+			cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+		break;
 
-		case GF_ICE:
-		case GF_ICEPOISON:
-		case GF_SHARDS:
-		case GF_FORCE:
-			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-			/* Shred certain feats */
-			if (c_ptr->feat == FEAT_WEB || c_ptr->feat == FEAT_FLOWER /* :( */)
-				cave_set_feat_live(wpos, y, x, FEAT_DIRT);
-			break;
-		case GF_ELEC:
-		case GF_COLD:
-		case GF_THUNDER:	/* a gestalt now, to remove hacky tri-bolt on thunderstorm */
-		case GF_SOUND:
-		case GF_MANA: /* <- no web/flower destructing abilities at this time? :-p */
-		case GF_HOLY_ORB:
-		case GF_CURSE:		/* new spell - the_sandman */
-		/* Druidry: */
-		case GF_HEALINGCLOUD:
-			break;
+	case GF_ICE:
+	case GF_ICEPOISON:
+	case GF_SHARDS:
+	case GF_FORCE:
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		/* Shred certain feats */
+		if (c_ptr->feat == FEAT_WEB || c_ptr->feat == FEAT_FLOWER /* :( */)
+			cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+		break;
+	case GF_ELEC:
+	case GF_COLD:
+	case GF_THUNDER:	/* a gestalt now, to remove hacky tri-bolt on thunderstorm */
+	case GF_SOUND:
+	case GF_MANA: /* <- no web/flower destructing abilities at this time? :-p */
+	case GF_HOLY_ORB:
+	case GF_CURSE:		/* new spell - the_sandman */
+	/* Druidry: */
+	case GF_HEALINGCLOUD:
+		break;
 
-		case GF_EARTHQUAKE:
-			earthquake(wpos, y, x, 0);
-			break;
+	case GF_EARTHQUAKE:
+		earthquake(wpos, y, x, 0);
+		break;
 
-		case GF_STONE_WALL:
-			/* Require a "naked" floor grid */
-			if (!cave_naked_bold(zcave, y, x)) break;
-			if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) break;
-			/* Beware of the houses in town */
-			if ((wpos->wz == 0) && (zcave[y][x].info & CAVE_ICKY)) break;
-			/* Not if it's an open house door - mikaelh */
-			if (c_ptr->feat == FEAT_HOME_OPEN) break;
+	case GF_STONE_WALL:
+		/* Require a "naked" floor grid */
+		if (!cave_naked_bold(zcave, y, x)) break;
+		if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) break;
+		/* Beware of the houses in town */
+		if ((wpos->wz == 0) && (zcave[y][x].info & CAVE_ICKY)) break;
+		/* Not if it's an open house door - mikaelh */
+		if (c_ptr->feat == FEAT_HOME_OPEN) break;
 
-			/* Place a wall */
-			if (c_ptr->feat != FEAT_WALL_EXTRA) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
-			cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
+		/* Place a wall */
+		if (c_ptr->feat != FEAT_WALL_EXTRA) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
+		cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
 
-			/* Notice */
-			if (!quiet) note_spot(Ind, y, x);
+		/* Notice */
+		if (!quiet) note_spot(Ind, y, x);
 
-			/* Redraw - the walls might block view and cause wall shading etc! */
-			for (i = 1; i <= NumPlayers; i++) {
-				/* If he's not playing, skip him */
-				if (Players[i]->conn == NOT_CONNECTED) continue;
-				/* If he's not here, skip him */
-				if (!inarea(wpos, &Players[i]->wpos)) continue;
+		/* Redraw - the walls might block view and cause wall shading etc! */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* If he's not playing, skip him */
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			/* If he's not here, skip him */
+			if (!inarea(wpos, &Players[i]->wpos)) continue;
 
-				Players[i]->update |= (PU_VIEW | PU_LITE | PU_FLOW); //PU_DISTANCE, PU_TORCH, PU_MONSTERS??; PU_FLOW needed? both VIEW and LITE needed?
-			}
-			break;
+			Players[i]->update |= (PU_VIEW | PU_LITE | PU_FLOW); //PU_DISTANCE, PU_TORCH, PU_MONSTERS??; PU_FLOW needed? both VIEW and LITE needed?
+		}
+		break;
 
-		/* Burn trees, grass, etc. depending on specific fire type */
-		case GF_HOLY_FIRE:
-			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-			/* Holy Fire doesn't destroy trees! */
-			/* spider webs (Cirith Ungol!) */
-			if (c_ptr->feat == FEAT_WEB)
-				cave_set_feat_live(wpos, y, x, FEAT_ASH);
+	/* Burn trees, grass, etc. depending on specific fire type */
+	case GF_HOLY_FIRE:
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		/* Holy Fire doesn't destroy trees! */
+		/* spider webs (Cirith Ungol!) */
+		if (c_ptr->feat == FEAT_WEB)
+			cave_set_feat_live(wpos, y, x, FEAT_ASH);
 
-			if (c_ptr->feat == FEAT_DEAD_TREE) { //dead trees only^^
-				/* Destroy the tree */
-				cave_set_feat_live(wpos, y, x, FEAT_ASH);
-			}
+		if (c_ptr->feat == FEAT_DEAD_TREE) { //dead trees only^^
+			/* Destroy the tree */
+			cave_set_feat_live(wpos, y, x, FEAT_ASH);
+		}
 
-#if 1			/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
-			if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
-				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+#if 1		/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
+		if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
+			cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
 #endif
-			break;
+		break;
 
-		case GF_HAVOC:
-		case GF_FIRE:
-		case GF_METEOR:
-		case GF_PLASMA:
-		case GF_HELL_FIRE:
-		case GF_INFERNO:
-		//GF_DETONATION and GF_ROCKET disintegrate anyway
-			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-			/* Destroy trees */
-			if (c_ptr->feat == FEAT_TREE ||
-			    c_ptr->feat == FEAT_BUSH ||
-			    c_ptr->feat == FEAT_DEAD_TREE) {
+	case GF_HAVOC:
+	case GF_FIRE:
+	case GF_METEOR:
+	case GF_PLASMA:
+	case GF_HELL_FIRE:
+	case GF_INFERNO:
+	//GF_DETONATION and GF_ROCKET disintegrate anyway
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		/* Destroy trees */
+		if (c_ptr->feat == FEAT_TREE ||
+		    c_ptr->feat == FEAT_BUSH ||
+		    c_ptr->feat == FEAT_DEAD_TREE) {
 #if 0 /* no need for message spam maybe - and spot is note'd in cave_set_feat_live already */
-				/* Hack -- special message */
-				if (!quiet && player_can_see_bold(Ind, y, x)) {
-					msg_print(Ind, "The tree burns to the ground!");
-					/* Notice */
-					note_spot(Ind, y, x);
-					obvious = TRUE;
-				}
-#endif
-				/* Destroy the tree */
-				cave_set_feat_live(wpos, y, x, FEAT_ASH);
+			/* Hack -- special message */
+			if (!quiet && player_can_see_bold(Ind, y, x)) {
+				msg_print(Ind, "The tree burns to the ground!");
+				/* Notice */
+				note_spot(Ind, y, x);
+				obvious = TRUE;
 			}
+#endif
+			/* Destroy the tree */
+			cave_set_feat_live(wpos, y, x, FEAT_ASH);
+		}
 
-			/* Burn grass, spider webs (Cirith Ungol!) and more.. */
-			if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
-			    c_ptr->feat == FEAT_WEB ||
-			    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
-				cave_set_feat_live(wpos, y, x, FEAT_ASH);
+		/* Burn grass, spider webs (Cirith Ungol!) and more.. */
+		if (c_ptr->feat == FEAT_GRASS || c_ptr->feat == FEAT_IVY ||
+		    c_ptr->feat == FEAT_WEB ||
+		    c_ptr->feat == FEAT_CROP || c_ptr->feat == FEAT_FLOWER /* :( */)
+			cave_set_feat_live(wpos, y, x, FEAT_ASH);
 
-			/* misc flavour: turn mud to dirt and/or shallow water into nothing (steam)? */
-			if (c_ptr->feat == FEAT_MUD && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
-			if (c_ptr->feat == FEAT_SHAL_WATER && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_MUD);
+		/* misc flavour: turn mud to dirt and/or shallow water into nothing (steam)? */
+		if (c_ptr->feat == FEAT_MUD && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_DIRT);
+		if (c_ptr->feat == FEAT_SHAL_WATER && rand_int(10 + dam / 100) > 7) cave_set_feat_live(wpos, y, x, FEAT_MUD);
 
 #if 1
-			/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
-			if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
-				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
+		/* FEAT_ICE_WALL are tunneable, so probably no harm in making them meltable too */
+		if (c_ptr->feat == FEAT_ICE_WALL && !rand_int((410 - (dam < 370 ? dam : 370)) / 4))
+			cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
 #endif
-			break;
+		break;
 
-		/* Destroy Traps (and Locks) */
-		case GF_KILL_TRAP:
+	/* Destroy Traps (and Locks) */
+	case GF_KILL_TRAP:
 		{
 			struct c_special *cs_ptr;
 			/* Destroy invisible traps */
@@ -4248,8 +4248,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		/* Destroy Doors (and traps on them) */
-		case GF_KILL_DOOR:
+	/* Destroy Doors (and traps on them) */
+	case GF_KILL_DOOR:
 		{
 			byte feat = twall_erosion(wpos, y, x);
 			struct c_special *cs_ptr;
@@ -4343,8 +4343,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		/* Destroy Traps and Doors */
-		case GF_KILL_TRAP_DOOR:
+	/* Destroy Traps and Doors */
+	case GF_KILL_TRAP_DOOR:
 		{
 			byte feat = twall_erosion(wpos, y, x);
 			struct c_special *cs_ptr;
@@ -4433,8 +4433,8 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		/* Destroy walls (and doors) */
-		case GF_KILL_WALL:
+	/* Destroy walls (and doors) */
+	case GF_KILL_WALL:
 		{
 			byte feat = twall_erosion(wpos, y, x);
 
@@ -4577,131 +4577,132 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-		/* Make doors */
-		case GF_MAKE_DOOR:
-			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-			/* Require a "naked" floor grid */
-			if (!cave_naked_bold(zcave, y, x)) break;
+	/* Make doors */
+	case GF_MAKE_DOOR:
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		/* Require a "naked" floor grid */
+		if (!cave_naked_bold(zcave, y, x)) break;
 
-			/* Create a closed door */
-			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+		/* Create a closed door */
+		c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 
-			if (!quiet) {
-				/* Notice */
-				note_spot(Ind, y, x);
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-				/* Observe */
-				if (*w_ptr & CAVE_MARK) obvious = TRUE;
-				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-			}
-			break;
-
-		/* Make traps */
-		case GF_MAKE_TRAP:
-			if (!allow_terraforming(wpos, FEAT_TREE)) break;
-			/* Require a "naked" floor grid */
-			if ((zcave[y][x].feat != FEAT_MORE && zcave[y][x].feat != FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
-
-			/* Place a trap */
-			place_trap(wpos, y, x, dam);
-
-			if (!quiet) {
-				/* Notice */
-				note_spot(Ind, y, x);
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-			}
-			break;
-
-		/* Lite up the grid */
-		case GF_STARLITE:
-		case GF_LITE_WEAK:
-		case GF_LITE:
-			/* Exception: Bolt-type spells have no special effect */
-			if (!(flg & (PROJECT_NORF | PROJECT_JUMP))) break;
-
-			/* don't ruin the mood :> (allow turning on light inside houses though) */
-			if ((!wpos->wz && (season_halloween || season_newyearseve)) && !(c_ptr->info & CAVE_ICKY)) break;
-
-			/* Turn on the light */
-			c_ptr->info |= CAVE_GLOW;
-
-			if (!quiet) {
-				/* Notice */
-				note_spot_depth(wpos, y, x);
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-				/* Observe */
-				if (player_can_see_bold(Ind, y, x)) obvious = TRUE;
-			}
-
-			/* Mega-Hack -- Update the monster in the affected grid */
-			/* This allows "spear of light" (etc) to work "correctly" */
-			if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
-
-			break;
-
-		/* Darken the grid */
-		case GF_DARK_WEAK:
-		case GF_DARK:
-			/* Exception: Bolt-type spells have no special effect */
-			if (!(flg & (PROJECT_NORF | PROJECT_JUMP))) break;
-
-			/* don't ruin the mood :> (allow turning on light inside houses though) */
-			if ((!wpos->wz && (season_halloween || season_newyearseve)) && !(c_ptr->info & CAVE_ICKY)) break;
-
+		if (!quiet) {
 			/* Notice */
-			if (!quiet && player_can_see_bold(Ind, y, x)) obvious = TRUE;
+			note_spot(Ind, y, x);
+			/* Redraw */
+			everyone_lite_spot(wpos, y, x);
+			/* Observe */
+			if (*w_ptr & CAVE_MARK) obvious = TRUE;
+			/* Update some things */
+			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+		}
+		break;
 
-			/* Turn off the light. */
-			c_ptr->info &= ~CAVE_GLOW;
+	/* Make traps */
+	case GF_MAKE_TRAP:
+		if (!allow_terraforming(wpos, FEAT_TREE)) break;
+		/* Require a "naked" floor grid */
+		if ((zcave[y][x].feat != FEAT_MORE && zcave[y][x].feat != FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
 
-			/* Hack -- Forget "boring" grids */
-			    //if (c_ptr->feat <= FEAT_INVIS)
-			if (cave_plain_floor_grid(c_ptr)) {
-				/* Forget the wall */
-				everyone_forget_spot(wpos, y, x);
-				if (!quiet)
-					/* Notice */
-					note_spot(Ind, y, x);
-			}
+		/* Place a trap */
+		place_trap(wpos, y, x, dam);
+
+		if (!quiet) {
+			/* Notice */
+			note_spot(Ind, y, x);
+			/* Redraw */
+			everyone_lite_spot(wpos, y, x);
+		}
+		break;
+
+	/* Lite up the grid */
+	case GF_STARLITE:
+	case GF_LITE_WEAK:
+	case GF_LITE:
+		/* Exception: Bolt-type spells have no special effect */
+		if (!(flg & (PROJECT_NORF | PROJECT_JUMP))) break;
+
+		/* don't ruin the mood :> (allow turning on light inside houses though) */
+		if ((!wpos->wz && (season_halloween || season_newyearseve)) && !(c_ptr->info & CAVE_ICKY)) break;
+
+		/* Turn on the light */
+		c_ptr->info |= CAVE_GLOW;
+
+		if (!quiet) {
+			/* Notice */
+			note_spot_depth(wpos, y, x);
+			/* Redraw */
+			everyone_lite_spot(wpos, y, x);
+			/* Observe */
+			if (player_can_see_bold(Ind, y, x)) obvious = TRUE;
+		}
+
+		/* Mega-Hack -- Update the monster in the affected grid */
+		/* This allows "spear of light" (etc) to work "correctly" */
+		if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
+
+		break;
+
+	/* Darken the grid */
+	case GF_DARK_WEAK:
+	case GF_DARK:
+		/* Exception: Bolt-type spells have no special effect */
+		if (!(flg & (PROJECT_NORF | PROJECT_JUMP))) break;
+
+		/* don't ruin the mood :> (allow turning on light inside houses though) */
+		if ((!wpos->wz && (season_halloween || season_newyearseve)) && !(c_ptr->info & CAVE_ICKY)) break;
+
+		/* Notice */
+		if (!quiet && player_can_see_bold(Ind, y, x)) obvious = TRUE;
+
+		/* Turn off the light. */
+		c_ptr->info &= ~CAVE_GLOW;
+
+		/* Hack -- Forget "boring" grids */
+		    //if (c_ptr->feat <= FEAT_INVIS)
+		if (cave_plain_floor_grid(c_ptr)) {
+			/* Forget the wall */
+			everyone_forget_spot(wpos, y, x);
 			if (!quiet)
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
+				/* Notice */
+				note_spot(Ind, y, x);
+		}
+		if (!quiet)
+			/* Redraw */
+			everyone_lite_spot(wpos, y, x);
 
-			/* Mega-Hack -- Update the monster in the affected grid */
-			/* This allows "spear of light" (etc) to work "correctly" */
-			if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
+		/* Mega-Hack -- Update the monster in the affected grid */
+		/* This allows "spear of light" (etc) to work "correctly" */
+		if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
 
-			break;
+		break;
 
-		case GF_KILL_GLYPH:
+	case GF_KILL_GLYPH:
 		{
 			byte feat = twall_erosion(wpos, y, x);
+
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			if (c_ptr->feat == FEAT_GLYPH || c_ptr->feat == FEAT_RUNE)
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
 		}
 
-		/* from PernA	- Jir - */
+	/* from PernA	- Jir - */
 #if 0
-		case GF_MAKE_GLYPH:
-			/* Require a "naked" floor grid */
-			if (!cave_clean_bold(zcave, y, x)) break;
-			if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
-			if (allow_terraforming(&p_ptr->wpos, FEAT_GLYPH))
-				cave_set_feat_live(wpos, y, x, FEAT_GLYPH);
-			break;
+	case GF_MAKE_GLYPH:
+		/* Require a "naked" floor grid */
+		if (!cave_clean_bold(zcave, y, x)) break;
+		if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
+		if (allow_terraforming(&p_ptr->wpos, FEAT_GLYPH))
+			cave_set_feat_live(wpos, y, x, FEAT_GLYPH);
+		break;
 #endif
 
-		// GF_ROCKET and GF_DISINTEGRATE are handled in project()
+	// GF_ROCKET and GF_DISINTEGRATE are handled in project()
 
-		case GF_WATER:
-		case GF_WAVE:
-		case GF_VAPOUR:
-		case GF_WATERPOISON:	//New druid stuff
+	case GF_WATER:
+	case GF_WAVE:
+	case GF_VAPOUR:
+	case GF_WATERPOISON:	//New druid stuff
 		{
 			int p1 = 0;
 			int p2 = 0;
@@ -4824,57 +4825,57 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	who = who ? who : 0;
 
 	/* Scan all objects in the grid */
-    for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
-	bool	is_art = FALSE;
-	bool	ignore = FALSE;
-	bool	plural = FALSE;
-	bool	do_kill = FALSE;
-	bool	do_smash_effect = FALSE;
+	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
+		bool	is_art = FALSE;
+		bool	ignore = FALSE;
+		bool	plural = FALSE;
+		bool	do_kill = FALSE;
+		bool	do_smash_effect = FALSE;
 
-	cptr	note_kill = NULL;
+		cptr	note_kill = NULL;
 
 #ifdef SMELTING
-	bool	melt = FALSE;
+		bool	melt = FALSE;
 #endif
 
 
-	/* Acquire object */
-	o_ptr = &o_list[this_o_idx];
-	k_ptr = &k_info[o_ptr->k_idx];
-	/* Check for (nothing), execute hack to protect such items */
-	if (nothing_test(o_ptr, NULL, wpos, x, y, 3)) {
-		//s_printf("NOTHINGHACK: spell doesn't meet item at wpos %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
-		return(FALSE);
-	}
+		/* Acquire object */
+		o_ptr = &o_list[this_o_idx];
+		k_ptr = &k_info[o_ptr->k_idx];
+		/* Check for (nothing), execute hack to protect such items */
+		if (nothing_test(o_ptr, NULL, wpos, x, y, 3)) {
+			//s_printf("NOTHINGHACK: spell doesn't meet item at wpos %d,%d,%d.\n", wpos->wx, wpos->wy, wpos->wz);
+			return(FALSE);
+		}
 
-	/* Acquire next object */
-	next_o_idx = o_ptr->next_o_idx;
+		/* Acquire next object */
+		next_o_idx = o_ptr->next_o_idx;
 
-	/* Extract the flags */
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		/* Extract the flags */
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-	/* get object name */
-	if ((Ind >= 0) && ((0 - Ind) > PROJECTOR_UNUSUAL))
-		object_desc(Ind, o_name, o_ptr, FALSE, 0);
+		/* get object name */
+		if ((Ind >= 0) && ((0 - Ind) > PROJECTOR_UNUSUAL))
+			object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
-	/* Get the "plural"-ness */
-	if (o_ptr->number > 1) plural = TRUE;
+		/* Get the "plural"-ness */
+		if (o_ptr->number > 1) plural = TRUE;
 
-	/* Check for artifact */
-	if (artifact_p(o_ptr)) is_art = TRUE;
+		/* Check for artifact */
+		if (artifact_p(o_ptr)) is_art = TRUE;
 
-	/* Stormbringer is artifact-like - C. Blue */
-	if (o_ptr->name2 == EGO_STORMBRINGER) is_art = TRUE;
+		/* Stormbringer is artifact-like - C. Blue */
+		if (o_ptr->name2 == EGO_STORMBRINGER) is_art = TRUE;
 
-	o_sval = o_ptr->sval;
-	/* potion_smash_effect only takes sval as parameter, so it can't handle TV_POTION2 at this time.
-	   For this reason, add is_basic_potion: It determines whether smash effect is applied. */
-	is_potion = ((k_info[o_ptr->k_idx].tval == TV_POTION) || (k_info[o_ptr->k_idx].tval == TV_POTION2));
-	is_basic_potion = (k_info[o_ptr->k_idx].tval == TV_POTION);
-	is_meltable = (k_info[o_ptr->k_idx].tval == TV_BOTTLE || (k_info[o_ptr->k_idx].tval == TV_GAME && k_info[o_ptr->k_idx].sval == SV_SNOWBALL));
+		o_sval = o_ptr->sval;
+		/* potion_smash_effect only takes sval as parameter, so it can't handle TV_POTION2 at this time.
+		   For this reason, add is_basic_potion: It determines whether smash effect is applied. */
+		is_potion = ((k_info[o_ptr->k_idx].tval == TV_POTION) || (k_info[o_ptr->k_idx].tval == TV_POTION2));
+		is_basic_potion = (k_info[o_ptr->k_idx].tval == TV_POTION);
+		is_meltable = (k_info[o_ptr->k_idx].tval == TV_BOTTLE || (k_info[o_ptr->k_idx].tval == TV_GAME && k_info[o_ptr->k_idx].sval == SV_SNOWBALL));
 
-	/* Analyze the type */
-	switch (typ) {
+		/* Analyze the type */
+		switch (typ) {
 		/* Identify */
 		case GF_IDENTIFY:
 			/* Identify it fully */
@@ -5193,180 +5194,180 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Nexus, Gravity -- teleports the object away */
 		case GF_NEXUS:
 		case GF_GRAVITY:
-		{
-			int j, dist = (typ == GF_NEXUS ? 80 : 15);
-			s16b cx, cy;
-			object_type tmp_obj = *o_ptr;
+			{
+				int j, dist = (typ == GF_NEXUS ? 80 : 15);
+				s16b cx, cy;
+				object_type tmp_obj = *o_ptr;
 
-			if (check_st_anchor(wpos, y, x)) break;
-			//if (seen) obvious = TRUE;
+				if (check_st_anchor(wpos, y, x)) break;
+				//if (seen) obvious = TRUE;
 
-			do_smash_effect = TRUE;
+				do_smash_effect = TRUE;
 
-			/* no tricks to get stuff out of suspended guild halls ;> */
-			if ((c_ptr->info & CAVE_GUILD_SUS)) break;
+				/* no tricks to get stuff out of suspended guild halls ;> */
+				if ((c_ptr->info & CAVE_GUILD_SUS)) break;
 
-			note_kill = (plural ? " disappear!" : " disappears!");
+				note_kill = (plural ? " disappear!" : " disappears!");
 
-			for (j = 0; j < 10; j++) {
-				cx = x + dist - rand_int(dist * 2);
-				cy = y + dist - rand_int(dist * 2);
+				for (j = 0; j < 10; j++) {
+					cx = x + dist - rand_int(dist * 2);
+					cy = y + dist - rand_int(dist * 2);
 
-				if (!in_bounds(cy, cx)) continue;
-				if (!cave_floor_bold(zcave, cy, cx) ||
-				    cave_perma_bold(zcave, cy, cx)) continue;
+					if (!in_bounds(cy, cx)) continue;
+					if (!cave_floor_bold(zcave, cy, cx) ||
+					    cave_perma_bold(zcave, cy, cx)) continue;
 
-				//(void)floor_carry(cy, cx, &tmp_obj);
-				drop_near(0, &tmp_obj, 0, wpos, cy, cx);
+					//(void)floor_carry(cy, cx, &tmp_obj);
+					drop_near(0, &tmp_obj, 0, wpos, cy, cx);
 
-				/* XXX not working? */
-				if (!quiet && note_kill)
-					msg_format_near_site(y, x, wpos, 0, TRUE, "\377oThe %s%s", o_name, note_kill);
+					/* XXX not working? */
+					if (!quiet && note_kill)
+						msg_format_near_site(y, x, wpos, 0, TRUE, "\377oThe %s%s", o_name, note_kill);
 
-				delete_object_idx(this_o_idx, FALSE);
+					delete_object_idx(this_o_idx, FALSE);
+					break;
+				}
 				break;
 			}
-			break;
+
 		}
 
-	}
 
+		/* Attempt to destroy the object */
+		//if (is_basic_potion && do_smash_effect) potion_smash_effect(who, wpos, y, x, o_sval);
 
-	/* Attempt to destroy the object */
-	//if (is_basic_potion && do_smash_effect) potion_smash_effect(who, wpos, y, x, o_sval);
-
-	//if(do_kill && (wpos->wz))
-	if (do_kill) {
-		/* Effect "observed" */
-		//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
-		if (!quiet && p_ptr->obj_vis[this_o_idx]) obvious = TRUE;
-
-		/* Artifacts, and other objects, get to resist */
-		if (is_art || ignore) {
-			/* Observe the resist */
+		//if(do_kill && (wpos->wz))
+		if (do_kill) {
+			/* Effect "observed" */
 			//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
-			if (!quiet && p_ptr->obj_vis[this_o_idx])
-				msg_format(Ind, "The %s %s unaffected!", o_name, (plural ? "are" : "is"));
-		}
+			if (!quiet && p_ptr->obj_vis[this_o_idx]) obvious = TRUE;
 
-		/* Kill it */
-		else {
-			/* Describe if needed */
-			//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx] && note_kill)
-			if (!quiet && p_ptr->obj_vis[this_o_idx] && note_kill)
-				msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
-
-			/* Delete the object */
-			//delete_object(wpos, y, x);
-			delete_object_idx(this_o_idx, TRUE);
-
-			/* Potions produce effects when 'shattered' */
-			if (is_basic_potion && do_smash_effect) {
-				/* prevent mass deto exploit */
-				if (mon_hit_proj_id == mon_hit_proj_id2) {
-					mon_hit_proj_id++;
-					(void)potion_smash_effect(who, wpos, y, x, o_sval);
-					mon_hit_proj_id2++;
-				} else (void)potion_smash_effect(who, wpos, y, x, o_sval);
+			/* Artifacts, and other objects, get to resist */
+			if (is_art || ignore) {
+				/* Observe the resist */
+				//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx])
+				if (!quiet && p_ptr->obj_vis[this_o_idx])
+					msg_format(Ind, "The %s %s unaffected!", o_name, (plural ? "are" : "is"));
 			}
 
-			/* Redraw */
-			if (!quiet) everyone_lite_spot(wpos, y, x);
-		}
-	}
-#ifdef SMELTING
-	else if (melt && this_o_idx == c_ptr->o_idx && !(f3 & TR3_IGNORE_FIRE)) { /* only apply to raw material on top of a pile, not inside */
-		if (o_ptr->tval == TV_GOLD) {
-			object_type forge;
+			/* Kill it */
+			else {
+				/* Describe if needed */
+				//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx] && note_kill)
+				if (!quiet && p_ptr->obj_vis[this_o_idx] && note_kill)
+					msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
 
-			//hardcoded massive piece value and money svals..
-			switch (o_ptr->sval) {
-			case 1: //copper
-				if (dam < 1085 / 2 || o_ptr->pval < 1400 * SMELTING) break;
-				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_COPPER));
-				forge.owner = o_ptr->owner;
-				forge.mode = o_ptr->mode;
-				forge.number = 1;
-				s_printf("MELTING: Copper for %d by %s.\n", o_ptr->pval, p_ptr->name);
-				*o_ptr = forge;
-				break;
-			case 2: //silver
-				if (dam < 962 / 2 || o_ptr->pval < 4500 * SMELTING) break;
-				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
-				forge.owner = o_ptr->owner;
-				forge.mode = o_ptr->mode;
-				forge.number = 1;
-				s_printf("MELTING: Silver for %d by %s.\n", o_ptr->pval, p_ptr->name);
-				*o_ptr = forge;
-				break;
-			case 10: //gold
-				if (dam < 1064 / 2 || o_ptr->pval < 20000 * SMELTING) break;
-				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
-				forge.owner = o_ptr->owner;
-				forge.mode = o_ptr->mode;
-				forge.number = 1;
-				s_printf("MELTING: Gold for %d by %s.\n", o_ptr->pval, p_ptr->name);
-				*o_ptr = forge;
-				break;
+				/* Delete the object */
+				//delete_object(wpos, y, x);
+				delete_object_idx(this_o_idx, TRUE);
+
+				/* Potions produce effects when 'shattered' */
+				if (is_basic_potion && do_smash_effect) {
+					/* prevent mass deto exploit */
+					if (mon_hit_proj_id == mon_hit_proj_id2) {
+						mon_hit_proj_id++;
+						(void)potion_smash_effect(who, wpos, y, x, o_sval);
+						mon_hit_proj_id2++;
+					} else (void)potion_smash_effect(who, wpos, y, x, o_sval);
+				}
+
+				/* Redraw */
+				if (!quiet) everyone_lite_spot(wpos, y, x);
+			}
+		}
+#ifdef SMELTING
+		else if (melt && this_o_idx == c_ptr->o_idx && !(f3 & TR3_IGNORE_FIRE)) { /* only apply to raw material on top of a pile, not inside */
+			if (o_ptr->tval == TV_GOLD) {
+				object_type forge;
+
+				//hardcoded massive piece value and money svals..
+				switch (o_ptr->sval) {
+				case 1: //copper
+					if (dam < 1085 / 2 || o_ptr->pval < 1400 * SMELTING) break;
+					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_COPPER));
+					forge.owner = o_ptr->owner;
+					forge.mode = o_ptr->mode;
+					forge.number = 1;
+					s_printf("MELTING: Copper for %d by %s.\n", o_ptr->pval, p_ptr->name);
+					*o_ptr = forge;
+					break;
+				case 2: //silver
+					if (dam < 962 / 2 || o_ptr->pval < 4500 * SMELTING) break;
+					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
+					forge.owner = o_ptr->owner;
+					forge.mode = o_ptr->mode;
+					forge.number = 1;
+					s_printf("MELTING: Silver for %d by %s.\n", o_ptr->pval, p_ptr->name);
+					*o_ptr = forge;
+					break;
+				case 10: //gold
+					if (dam < 1064 / 2 || o_ptr->pval < 20000 * SMELTING) break;
+					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_GOLD));
+					forge.owner = o_ptr->owner;
+					forge.mode = o_ptr->mode;
+					forge.number = 1;
+					s_printf("MELTING: Gold for %d by %s.\n", o_ptr->pval, p_ptr->name);
+					*o_ptr = forge;
+					break;
+				}
+				//consider mithril/adamantite too hard to melt
+			}
+			//iron (heavy armour, swords, crowns)
+			else if (o_ptr->tval == TV_SWORD || (o_ptr->tval == TV_HARD_ARMOR && o_ptr->sval <= SV_RIBBED_PLATE_ARMOUR) || (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_IRON_CROWN)) {
+				int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
+
+				//hardcoded massive piece value...
+				if (dam >= 1538 / 2 && val >= 800 && wgt >= 7900) {
+					object_type forge;
+
+					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_IRON));
+					forge.owner = o_ptr->owner;
+					forge.mode = o_ptr->mode;
+					forge.number = 1;
+					s_printf("MELTING: Iron '%s' for %d by %s.\n", o_name, val, p_ptr->name);
+					*o_ptr = forge;
+					break;
+				}
+			}
+			//silver (crowns)
+			else if (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_SILVER_CROWN) {
+				int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
+
+				//hardcoded massive piece value...
+				if (dam >= 962 / 2 && val >= 4500 && wgt >= 10000) {
+					object_type forge;
+
+					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
+					forge.owner = o_ptr->owner;
+					forge.mode = o_ptr->mode;
+					forge.number = 1;
+					s_printf("MELTING: Silver '%s' for %d by %s.\n", o_name, val, p_ptr->name);
+					*o_ptr = forge;
+					break;
+				}
+			}
+			//gold (crowns)
+			else if (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_GOLDEN_CROWN) {
+				int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
+
+				//hardcoded massive piece value...
+				if (dam >= 1064 / 2 && val >= 20000 && wgt >= 19000) {
+					object_type forge;
+
+					invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_IRON));
+					forge.owner = o_ptr->owner;
+					forge.mode = o_ptr->mode;
+					forge.number = 1;
+					s_printf("MELTING: Gold '%s' for %d by %s.\n", o_name, val, p_ptr->name);
+					*o_ptr = forge;
+					break;
+				}
 			}
 			//consider mithril/adamantite too hard to melt
 		}
-		//iron (heavy armour, swords, crowns)
-		else if (o_ptr->tval == TV_SWORD || (o_ptr->tval == TV_HARD_ARMOR && o_ptr->sval <= SV_RIBBED_PLATE_ARMOUR) || (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_IRON_CROWN)) {
-			int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
-
-			//hardcoded massive piece value...
-			if (dam >= 1538 / 2 && val >= 800 && wgt >= 7900) {
-				object_type forge;
-
-				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_IRON));
-				forge.owner = o_ptr->owner;
-				forge.mode = o_ptr->mode;
-				forge.number = 1;
-				s_printf("MELTING: Iron '%s' for %d by %s.\n", o_name, val, p_ptr->name);
-				*o_ptr = forge;
-				break;
-			}
-		}
-		//silver (crowns)
-		else if (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_SILVER_CROWN) {
-			int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
-
-			//hardcoded massive piece value...
-			if (dam >= 962 / 2 && val >= 4500 && wgt >= 10000) {
-				object_type forge;
-
-				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_SILVER));
-				forge.owner = o_ptr->owner;
-				forge.mode = o_ptr->mode;
-				forge.number = 1;
-				s_printf("MELTING: Silver '%s' for %d by %s.\n", o_name, val, p_ptr->name);
-				*o_ptr = forge;
-				break;
-			}
-		}
-		//gold (crowns)
-		else if (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_GOLDEN_CROWN) {
-			int val = object_value_real(0, o_ptr) * o_ptr->number, wgt = o_ptr->weight * o_ptr->number;
-
-			//hardcoded massive piece value...
-			if (dam >= 1064 / 2 && val >= 20000 && wgt >= 19000) {
-				object_type forge;
-
-				invcopy(&forge, lookup_kind(TV_GOLEM, SV_GOLEM_IRON));
-				forge.owner = o_ptr->owner;
-				forge.mode = o_ptr->mode;
-				forge.number = 1;
-				s_printf("MELTING: Gold '%s' for %d by %s.\n", o_name, val, p_ptr->name);
-				*o_ptr = forge;
-				break;
-			}
-		}
-		//consider mithril/adamantite too hard to melt
-	}
-	//gold (crown!)
+		//gold (crown!)
 #endif
-    }
+	}
 
 	/* Return "Anything seen?" */
 	return (obvious);
