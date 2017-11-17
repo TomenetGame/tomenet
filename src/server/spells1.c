@@ -5646,117 +5646,117 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Analyze the damage type */
 	switch (typ) {
-		/* psionic mana drain */
-		case GF_SILENCE:
-			/* hacks: extract power (probability for succeeding) */
-			i = dam % 100; /* 1..51 (school 10..50) */
-			k = dam - (i * 100);
-			/* calculate resistance % chance based on skill level and monster level */
-			i += 18;
-			i *= i;
-			i = i / (r_ptr->level ? r_ptr->level : 1);
-			if (i > 69) i = 69; /* cap at 95% */
-			i = (i * 138) / 100; /* finalize calculation */
-			i = 100 - i;
+	/* psionic mana drain */
+	case GF_SILENCE:
+		/* hacks: extract power (probability for succeeding) */
+		i = dam % 100; /* 1..51 (school 10..50) */
+		k = dam - (i * 100);
+		/* calculate resistance % chance based on skill level and monster level */
+		i += 18;
+		i *= i;
+		i = i / (r_ptr->level ? r_ptr->level : 1);
+		if (i > 69) i = 69; /* cap at 95% */
+		i = (i * 138) / 100; /* finalize calculation */
+		i = 100 - i;
 #ifdef TEST_SERVER
-			s_printf("GF_SILENCE: chance i=%d, duration k=%d\n", i, k);
+		s_printf("GF_SILENCE: chance i=%d, duration k=%d\n", i, k);
 #endif
-			/* test resistance */
-			if (!((r_ptr->flags4 & RF4_SPELLCASTER_MASK) |
-			    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) |
-			    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) |
-			    (r_ptr->flags0 & RF0_SPELLCASTER_MASK)) ||
-			    (r_ptr->level >= 98 && (r_ptr->flags1 & RF1_UNIQUE)) ||
-			     m_ptr->silenced != 0) { /* successful attempt also leads to cooldown! */
-				note = " is unaffected";
-			} else if (((r_ptr->flags1 & RF1_UNIQUE) && magik(50)) ||
-			    ((r_ptr->flags2 & RF2_POWERFUL) && magik(50)) ||
-			    magik(i)) {
-				/* hack: A few turns of immunity from another attempt! */
-				m_ptr->silenced = -k;
-				note = " resists the effect";
-			} else {
-				/* extract and apply duration */
-				m_ptr->silenced = k;
-				note = " loses psychic energy";
-			}
-			/* no real HP damage */
-			dam = 0; quiet_dam = TRUE;
+		/* test resistance */
+		if (!((r_ptr->flags4 & RF4_SPELLCASTER_MASK) |
+		    (r_ptr->flags5 & RF5_SPELLCASTER_MASK) |
+		    (r_ptr->flags6 & RF6_SPELLCASTER_MASK) |
+		    (r_ptr->flags0 & RF0_SPELLCASTER_MASK)) ||
+		    (r_ptr->level >= 98 && (r_ptr->flags1 & RF1_UNIQUE)) ||
+		     m_ptr->silenced != 0) { /* successful attempt also leads to cooldown! */
+			note = " is unaffected";
+		} else if (((r_ptr->flags1 & RF1_UNIQUE) && magik(50)) ||
+		    ((r_ptr->flags2 & RF2_POWERFUL) && magik(50)) ||
+		    magik(i)) {
+			/* hack: A few turns of immunity from another attempt! */
+			m_ptr->silenced = -k;
+			note = " resists the effect";
+		} else {
+			/* extract and apply duration */
+			m_ptr->silenced = k;
+			note = " loses psychic energy";
+		}
+		/* no real HP damage */
+		dam = 0; quiet_dam = TRUE;
+		break;
+	/* PSIONICS */
+	case GF_PSI:
+		if (seen) obvious = TRUE;
+		note_dies = " collapses, a mindless husk,";
+
+		/* Check resist/immunity */
+		if ((r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND) ||
+		    (r_ptr->flags3 & RF3_NONLIVING))
+		{
+			note = " is unaffected";
+			dam = 0;
+			quiet_dam = TRUE;
 			break;
-		/* PSIONICS */
-		case GF_PSI:
-			if (seen) obvious = TRUE;
-			note_dies = " collapses, a mindless husk,";
-
-			/* Check resist/immunity */
-			if ((r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND) ||
-			    (r_ptr->flags3 & RF3_NONLIVING))
-			{
-				note = " is unaffected";
-				dam = 0;
-				quiet_dam = TRUE;
-				break;
-			} else if ((r_ptr->flags9 & RF9_RES_PSI) && rand_int(3)) {
-				resist = TRUE;
-			} else if ((r_ptr->flags3 & RF3_UNDEAD) && rand_int(2)) {
-				resist = TRUE;
-			} else if ((r_ptr->flags2 & RF2_STUPID) ||
-			    ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags2 & RF2_CAN_SPEAK))) {
-				resist = TRUE;
-			} else if (r_ptr->flags2 & RF2_WEIRD_MIND) {
-				if (rand_int(5)) resist = TRUE;
-				else {
-					note = " resists somewhat";
-					dam = (dam * 3 + 1) / 4;
-				}
-			} else if (!rand_int(20)) {
-				resist = TRUE;
+		} else if ((r_ptr->flags9 & RF9_RES_PSI) && rand_int(3)) {
+			resist = TRUE;
+		} else if ((r_ptr->flags3 & RF3_UNDEAD) && rand_int(2)) {
+			resist = TRUE;
+		} else if ((r_ptr->flags2 & RF2_STUPID) ||
+		    ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags2 & RF2_CAN_SPEAK))) {
+			resist = TRUE;
+		} else if (r_ptr->flags2 & RF2_WEIRD_MIND) {
+			if (rand_int(5)) resist = TRUE;
+			else {
+				note = " resists somewhat";
+				dam = (dam * 3 + 1) / 4;
 			}
+		} else if (!rand_int(20)) {
+			resist = TRUE;
+		}
 
-			/* Check backlash vs caster */
-			//if (psi_backlash(Ind, c_ptr->m_idx, dam)) resist = TRUE;
+		/* Check backlash vs caster */
+		//if (psi_backlash(Ind, c_ptr->m_idx, dam)) resist = TRUE;
 
-			/* Check susceptibility */
+		/* Check susceptibility */
 #if 0
 /* vs f-im evil: similar dam to ood, somewhat more than (holy) ff (at 0 s.pow).
    however: max mana cost is only 15 instead of 25(ff:30). */
-	/* note: could be && !(uni && powerful), but some hi-lv
-	   uniques might need powerful flag, strangely lacking it:
-	   nodens, mephistopheles, kronos, mouth of sauron */
-			if ((r_ptr->flags2 & RF2_SMART) &&
-			    !(r_ptr->flags1 & RF1_UNIQUE)) {
-			if ((r_ptr->flags2 & RF2_SMART) &&
-			    !((r_ptr->flags1 & RF1_UNIQUE) &&
-			    (r_ptr->flags2 & RF2_POWERFUL))) {
+/* note: could be && !(uni && powerful), but some hi-lv
+   uniques might need powerful flag, strangely lacking it:
+   nodens, mephistopheles, kronos, mouth of sauron */
+		if ((r_ptr->flags2 & RF2_SMART) &&
+		    !(r_ptr->flags1 & RF1_UNIQUE)) {
+		if ((r_ptr->flags2 & RF2_SMART) &&
+		    !((r_ptr->flags1 & RF1_UNIQUE) &&
+		    (r_ptr->flags2 & RF2_POWERFUL))) {
 #endif /* fine for now maybe: */
-			if (r_ptr->flags2 & RF2_SMART) {
-				if (!resist) {
-					note = " is hit hard";
-					dam += dam / 2;
-				}
+		if (r_ptr->flags2 & RF2_SMART) {
+			if (!resist) {
+				note = " is hit hard";
+				dam += dam / 2;
 			}
-			if (((m_ptr->confused > 0) && !rand_int(3)) ||
-			    ((m_ptr->confused > 20) && !rand_int(3)) ||
-			    ((m_ptr->confused > 50) && !rand_int(3))) {
-				resist = FALSE;
-				dam = dam * (3 + randint(7)) / 4;
-			}
+		}
+		if (((m_ptr->confused > 0) && !rand_int(3)) ||
+		    ((m_ptr->confused > 20) && !rand_int(3)) ||
+		    ((m_ptr->confused > 50) && !rand_int(3))) {
+			resist = FALSE;
+			dam = dam * (3 + randint(7)) / 4;
+		}
 
-			/* Apply resistance, damage, and effects */
-			if (resist) {
-				note = " resists";
-				dam /= 2;
-				if (!(r_ptr->flags3 & RF3_NO_CONF) && !rand_int(10)) do_conf = randint(8);
-			} else if (randint(dam > 20 ? 20 : dam) > randint(r_ptr->level)) {
-				do_stun = randint(6);
-				do_conf = randint(20);
-				if (!(r_ptr->flags3 & RF3_NO_SLEEP)) do_sleep = rand_int(2) ? 5 + randint(randint(60)) : 0;
-				if (!(r_ptr->flags3 & RF3_NO_FEAR)) do_fear = randint(15);
-			}
-			break;
+		/* Apply resistance, damage, and effects */
+		if (resist) {
+			note = " resists";
+			dam /= 2;
+			if (!(r_ptr->flags3 & RF3_NO_CONF) && !rand_int(10)) do_conf = randint(8);
+		} else if (randint(dam > 20 ? 20 : dam) > randint(r_ptr->level)) {
+			do_stun = randint(6);
+			do_conf = randint(20);
+			if (!(r_ptr->flags3 & RF3_NO_SLEEP)) do_sleep = rand_int(2) ? 5 + randint(randint(60)) : 0;
+			if (!(r_ptr->flags3 & RF3_NO_FEAR)) do_fear = randint(15);
+		}
+		break;
 
-		/* Mindcrafter's charm spell, makes monsters ignore you and your teammates (mostly..) */
-		case GF_CHARMIGNORE:
+	/* Mindcrafter's charm spell, makes monsters ignore you and your teammates (mostly..) */
+	case GF_CHARMIGNORE:
 		{
 			int res = 1;
 
@@ -5803,448 +5803,448 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		}
 
-		/* Earthquake the area */
-		case GF_EARTHQUAKE:
+	/* Earthquake the area */
+	case GF_EARTHQUAKE:
+		dam = 0;
+		break;
+
+		/* Magic Missile -- pure damage */
+	case GF_MISSILE:
+		if (seen) obvious = TRUE;
+		break;
+
+	/* Acid */
+	case GF_ACID:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags3 & RF3_IM_ACID) {
+			note = " is immune";
 			dam = 0;
-			break;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= RF3_IM_ACID;
+#endif
+		} else if (r_ptr->flags9 & RF9_RES_ACID) {
+			note = " resists";
+			dam /= 4;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags9 |= RF9_RES_ACID;
+#endif
+		} else if (r_ptr->flags9 & RF9_SUSCEP_ACID) {
+			note = " is hit hard";
+			dam *= 2;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ACID;
+#endif
+		}
+		break;
 
-			/* Magic Missile -- pure damage */
-		case GF_MISSILE:
-			if (seen) obvious = TRUE;
-			break;
+	/* Electricity */
+	case GF_ELEC:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags3 & RF3_IM_ELEC) {
+			note = " is immune";
+			dam = 0;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= RF3_IM_ELEC;
+#endif
+		} else if (r_ptr->flags9 & RF9_RES_ELEC) {
+			note = " resists";
+			dam /= 4;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags9 |= RF9_RES_ELEC;
+#endif
+		} else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) {
+			note = " is hit hard";
+			dam *= 2;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ELEC;
+#endif
+		}
+		break;
 
-		/* Acid */
-		case GF_ACID:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & RF3_IM_ACID) {
-				note = " is immune";
-				dam = 0;
+	/* Fire damage */
+	case GF_FIRE:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags3 & RF3_IM_FIRE) {
+			note = " is immune";
+			dam = 0;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_IM_ACID;
+			if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
-			} else if (r_ptr->flags9 & RF9_RES_ACID) {
-				note = " resists";
-				dam /= 4;
+		} else if (r_ptr->flags9 & RF9_RES_FIRE) {
+			note = " resists";
+			dam /= 4;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_RES_ACID;
+			if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
 #endif
-			} else if (r_ptr->flags9 & RF9_SUSCEP_ACID) {
-				note = " is hit hard";
-				dam *= 2;
+		} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+			note = " is hit hard";
+			dam *= 2;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ACID;
+			if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
 #endif
-			}
-			break;
+		}
+		break;
 
-		/* Electricity */
-		case GF_ELEC:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & RF3_IM_ELEC) {
-				note = " is immune";
-				dam = 0;
+	/* Cold */
+	case GF_COLD:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags3 & RF3_IM_COLD) {
+			note = " is immune";
+			dam = 0;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_IM_ELEC;
+			if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
 #endif
-			} else if (r_ptr->flags9 & RF9_RES_ELEC) {
-				note = " resists";
-				dam /= 4;
+		} else if (r_ptr->flags9 & RF9_RES_COLD) {
+			note = " resists";
+			dam /= 4;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_RES_ELEC;
+			if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
 #endif
-			} else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) {
-				note = " is hit hard";
-				dam *= 2;
+		} else if (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+			note = " is hit hard";
+			dam *= 2;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ELEC;
+			if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
 #endif
-			}
-			break;
+		}
+		break;
 
-		/* Fire damage */
-		case GF_FIRE:
-			if (seen) obvious = TRUE;
+	/* Poison */
+	case GF_POIS:
+		if (seen) obvious = TRUE;
+		if ((r_ptr->flags3 & RF3_IM_POIS) ||
+		    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+		    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
+			note = " is immune";
+			dam = 0;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+#endif
+		} else if (r_ptr->flags9 & RF9_RES_POIS) {
+			note = " resists";
+			dam /= 4;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
+#endif
+		} else if (r_ptr->flags9 & RF9_SUSCEP_POIS) {
+			note = " is hit hard";
+			dam *= 2;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_POIS;
+#endif
+		}
+		break;
+
+	/* Thick Poison */
+	case GF_UNBREATH:
+		if (seen) obvious = TRUE;
+		//if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
+		if ((r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+		    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
+		    (m_ptr->r_idx == RI_MORGOTH)) {
+			note = " is immune";
+			dam = 0;
+			//do_pois = 0;
+		} else if (r_ptr->flags3 & RF3_IM_POIS) {
+			note = " resists";
+			dam = (dam * 2) / 4;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+#endif
+		} else if (r_ptr->flags9 & RF9_RES_POIS) {
+			note = " resists somewhat";
+			dam = (dam * 3) / 4;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
+#endif
+		}
+#if 1
+		else if (r_ptr->flags9 & RF9_SUSCEP_POIS) {
+			note = " is hit hard";
+			dam *= 2;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_POIS;
+#endif
+		}
+#endif
+		break;
+
+	case GF_HELL_FIRE:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags3 & (RF3_GOOD)) {
 			if (r_ptr->flags3 & RF3_IM_FIRE) {
-				note = " is immune";
-				dam = 0;
+				note = " resists";
+				dam *= 2; dam /= 2;//(randint(4)+3);
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
 			} else if (r_ptr->flags9 & RF9_RES_FIRE) {
-				note = " resists";
-				dam /= 4;
+				note = " is hit";
+				dam = (dam * 3) / 2;
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
 #endif
-			} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+			}
+#if 0
+			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
 				note = " is hit hard";
 				dam *= 2;
 #ifdef OLD_MONSTER_LORE
 				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
 #endif
 			}
-			break;
-
-		/* Cold */
-		case GF_COLD:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & RF3_IM_COLD) {
-				note = " is immune";
-				dam = 0;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
 #endif
-			} else if (r_ptr->flags9 & RF9_RES_COLD) {
-				note = " resists";
-				dam /= 4;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
-#endif
-			} else if (r_ptr->flags3 & RF3_SUSCEP_COLD) {
-				note = " is hit hard";
+			else {
 				dam *= 2;
+				note = " is hit hard";
+				//note = " is hit";
+			}
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
+			if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
+#endif
+		} else {
+			if (r_ptr->flags3 & RF3_IM_FIRE) {
+				note = " resists a lot";
+				dam *= 2; dam /= 4;//(randint(6)+10);
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
 #endif
 			}
-			break;
-
-		/* Poison */
-		case GF_POIS:
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
-				note = " is immune";
-				dam = 0;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
-#endif
-			} else if (r_ptr->flags9 & RF9_RES_POIS) {
-				note = " resists";
-				dam /= 4;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
-#endif
-			} else if (r_ptr->flags9 & RF9_SUSCEP_POIS) {
+#if 1
+			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
 				note = " is hit hard";
 				dam *= 2;
+ #ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+ #endif
+			}
+#endif
+			else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags3 & RF3_DEMON)) {
+				note = " resists";
+				dam = (dam * 2) / 3;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_POIS;
+				if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
 #endif
 			}
-			break;
-
-		/* Thick Poison */
-		case GF_UNBREATH:
-			if (seen) obvious = TRUE;
-			//if (magik(15)) do_pois = (10 + randint(11) + r) / (r + 1);
-			if ((r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)) ||
-			    (m_ptr->r_idx == RI_MORGOTH)) {
-				note = " is immune";
-				dam = 0;
-				//do_pois = 0;
-			} else if (r_ptr->flags3 & RF3_IM_POIS) {
-				note = " resists";
-				dam = (dam * 2) / 4;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
-#endif
-			} else if (r_ptr->flags9 & RF9_RES_POIS) {
+			else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON)) {
 				note = " resists somewhat";
 				dam = (dam * 3) / 4;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
+				if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
 #endif
 			}
-#if 1
-			else if (r_ptr->flags9 & RF9_SUSCEP_POIS) {
-				note = " is hit hard";
-				dam *= 2;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_POIS;
-#endif
+			else {
+				//note = " is hit";
+				//dam *= 5; dam /= (randint(3)+4);
 			}
-#endif
-			break;
-
-		case GF_HELL_FIRE:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & (RF3_GOOD)) {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					note = " resists";
-					dam *= 2; dam /= 2;//(randint(4)+3);
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
-#endif
-				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
-					note = " is hit";
-					dam = (dam * 3) / 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
-#endif
-				}
-#if 0
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
-					note = " is hit hard";
-					dam *= 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
-#endif
-				}
-#endif
-				else {
-					dam *= 2;
-					note = " is hit hard";
-					//note = " is hit";
-				}
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
-#endif
-			} else {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					note = " resists a lot";
-					dam *= 2; dam /= 4;//(randint(6)+10);
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
-#endif
-				}
-#if 1
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
-					note = " is hit hard";
-					dam *= 2;
- #ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
- #endif
-				}
-#endif
-				else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags3 & RF3_DEMON)) {
-					note = " resists";
-					dam = (dam * 2) / 3;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
-#endif
-				}
-				else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON)) {
-					note = " resists somewhat";
-					dam = (dam * 3) / 4;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
-#endif
-				}
-				else {
-					//note = " is hit";
-					//dam *= 5; dam /= (randint(3)+4);
-				}
-			}
-			//if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
-			break;
-
-		/* Holy Orb -- hurts Evil */
-		case GF_HOLY_ORB:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & (RF3_GOOD)) {
-				dam = 0;
-				note = " is immune";
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
-#endif
-			}
-			if (r_ptr->flags3 & RF3_EVIL) {
-				note = " is hit hard";
-				dam *= 2;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
-#endif
-			}
-			break;
-
-		/* Holy Fire -- hurts Evil, Good are immune, others _resist_ --
-		   note: the holy component strongly outweighs the fire component */
-		case GF_HOLY_FIRE:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & (RF3_GOOD)) {
-				dam = 0;
-				note = " is immune";
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
-#endif
-			} else if (r_ptr->flags3 & (RF3_EVIL)) {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					note = " resists";
-					dam = (dam * 4) / 3;//(randint(4)+3);
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
-#endif
-				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
-					note = " is hit";
-					dam = (dam * 3) / 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
-#endif
-				}
-#if 0
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
-					note = " is hit hard";
-					dam *= 2;
- #ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
- #endif
-				}
-#endif
-				else {
-					dam *= 2;
-					note = " is hit hard";
-					//note = " is hit";
-				}
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
-#endif
-			} else {
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					note = " resists a lot";
-					dam *= 2; dam /= 4;//(randint(6)+10);
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
-#endif
-				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
-					note = " resists";
-					dam = (dam * 3) / 4;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
-#endif
-				}
-#if 1
-				else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
-					note = " is hit hard";
-					dam = (dam * 3) / 2;
- #ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
- #endif
-				}
-#endif
-				else {
-					//note = " resists somewhat";
-					//dam *= 5; dam /= (randint(3)+4);
-				}
-			}
-			break;
-
-		/* Arrow -- XXX no defense */
-		case GF_ARROW:
-			if (seen) obvious = TRUE;
-			break;
-
-		/* Plasma -- Fire/Elec/Force */
-		case GF_PLASMA: {
-			if (seen) obvious = TRUE;
-
-			/* 50% fire */
-			k = (dam + 1) / 2;
-			if (r_ptr->flags3 & RF3_IM_FIRE) k = 0;
-			else if (r_ptr->flags9 & RF9_RES_FIRE) k = (k + 3) / 4;
-			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) k *= 2;
-			/* 25% elec */
-			k_elec = (dam + 3) / 4;
-			if (r_ptr->flags3 & RF3_IM_ELEC) k = 0;
-			else if (r_ptr->flags9 & RF9_RES_ELEC) k = (k + 3) / 4;
-			else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k *= 2;
-			/* 25% force */
-			k_sound = (dam + 3) / 4;
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound = (k + 1) / 2;
-			else if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(15) / div;
-
-			k += k_elec + k_sound;
-			if (k < dam / 4) note = " resists a lot";
-			else if (k < dam / 2) note = " resists";
-			else if (k < dam) note = " resists somewhat";
-			else if (k > dam) note = " is hit hard";
-			dam = k;
-			break;
 		}
+		//if (r_ptr->flags3 & (RF3_EVIL)) dam = (dam * 2) / 3;
+		break;
 
-		/* Nether -- see above */
-		case GF_NETHER_WEAK:
-		case GF_NETHER:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & RF3_UNDEAD) {
-				note = " is immune";
-				dam = 0;
+	/* Holy Orb -- hurts Evil */
+	case GF_HOLY_ORB:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags3 & (RF3_GOOD)) {
+			dam = 0;
+			note = " is immune";
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+			if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
 #endif
-			} else if ((r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			}
-			//else if (r_ptr->flags3 & RF3_EVIL)
-			else if (r_ptr->flags3 & RF3_DEMON) {
-				dam /= 2;
-				note = " resists somewhat";
+		}
+		if (r_ptr->flags3 & RF3_EVIL) {
+			note = " is hit hard";
+			dam *= 2;
 #ifdef OLD_MONSTER_LORE
-				//if (seen) r_ptr->r_flags3 |= RF3_EVIL;
-				if (seen) r_ptr->r_flags3 |= RF3_DEMON;
+			if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+#endif
+		}
+		break;
+
+	/* Holy Fire -- hurts Evil, Good are immune, others _resist_ --
+	   note: the holy component strongly outweighs the fire component */
+	case GF_HOLY_FIRE:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags3 & (RF3_GOOD)) {
+			dam = 0;
+			note = " is immune";
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= (RF3_GOOD);
+#endif
+		} else if (r_ptr->flags3 & (RF3_EVIL)) {
+			if (r_ptr->flags3 & RF3_IM_FIRE) {
+				note = " resists";
+				dam = (dam * 4) / 3;//(randint(4)+3);
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+#endif
+			} else if (r_ptr->flags9 & RF9_RES_FIRE) {
+				note = " is hit";
+				dam = (dam * 3) / 2;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
 #endif
 			}
-			break;
-
-		/* Water (acid) damage -- Water spirits/elementals are immune */
-		case GF_WATER:
-		case GF_VAPOUR:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags9 & RF9_IM_WATER) {
-				note = " is immune";
-				dam = 0;
-			} else if (r_ptr->flags7 & RF7_AQUATIC) {
+#if 0
+			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+				note = " is hit hard";
+				dam *= 2;
+ #ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+ #endif
+			}
+#endif
+			else {
+				dam *= 2;
+				note = " is hit hard";
+				//note = " is hit";
+			}
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
+#endif
+		} else {
+			if (r_ptr->flags3 & RF3_IM_FIRE) {
 				note = " resists a lot";
-				dam /= 9;
-			} else if (r_ptr->flags3 & RF3_RES_WATE) {
+				dam *= 2; dam /= 4;//(randint(6)+10);
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_IM_FIRE;
+#endif
+			} else if (r_ptr->flags9 & RF9_RES_FIRE) {
 				note = " resists";
-				dam /= 4;
+				dam = (dam * 3) / 4;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_FIRE;
+#endif
 			}
-			break;
-
-		/* Wave = Water + Force */
-		case GF_WAVE:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags9 & RF9_IM_WATER) {
-				note = " is immune";
-				dam = 0;
-			} else if (r_ptr->flags7 & RF7_AQUATIC) {
-				note = " resists a lot";
-				dam /= 9;
-			} else if (r_ptr->flags3 & RF3_RES_WATE) {
-				note = " resists";
-				dam /= 4;
-			} else do_stun = randint(15) / div;
-			break;
-
-		/* Chaos -- Chaos breathers resist */
-		case GF_CHAOS:
-			if (seen) obvious = TRUE;
-			if (rand_int(r_ptr->level) < 15) do_poly = TRUE;
-			do_conf = (5 + randint(11)) / div;
-			if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
-				note = " resists";
-				dam *= 3; dam /= randint(6) + 6;
-				do_poly = FALSE;
+#if 1
+			else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+				note = " is hit hard";
+				dam = (dam * 3) / 2;
+ #ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_FIRE;
+ #endif
 			}
-			break;
-
-		/* Shards -- Shard breathers resist */
-		case GF_SHARDS:
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			} else if (r_ptr->flags8 & RF8_NO_CUT) {
-				note = " resists somewhat";
-				dam /= 2;
+#endif
+			else {
+				//note = " resists somewhat";
+				//dam *= 5; dam /= (randint(3)+4);
 			}
-			break;
+		}
+		break;
 
-		case GF_HAVOC: {
+	/* Arrow -- XXX no defense */
+	case GF_ARROW:
+		if (seen) obvious = TRUE;
+		break;
+
+	/* Plasma -- Fire/Elec/Force */
+	case GF_PLASMA:
+		if (seen) obvious = TRUE;
+
+		/* 50% fire */
+		k = (dam + 1) / 2;
+		if (r_ptr->flags3 & RF3_IM_FIRE) k = 0;
+		else if (r_ptr->flags9 & RF9_RES_FIRE) k = (k + 3) / 4;
+		else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) k *= 2;
+		/* 25% elec */
+		k_elec = (dam + 3) / 4;
+		if (r_ptr->flags3 & RF3_IM_ELEC) k = 0;
+		else if (r_ptr->flags9 & RF9_RES_ELEC) k = (k + 3) / 4;
+		else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) k *= 2;
+		/* 25% force */
+		k_sound = (dam + 3) / 4;
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) k_sound = (k + 1) / 2;
+		else if (!(r_ptr->flags3 & RF3_NO_STUN)) do_stun = randint(15) / div;
+
+		k += k_elec + k_sound;
+		if (k < dam / 4) note = " resists a lot";
+		else if (k < dam / 2) note = " resists";
+		else if (k < dam) note = " resists somewhat";
+		else if (k > dam) note = " is hit hard";
+		dam = k;
+		break;
+
+	/* Nether -- see above */
+	case GF_NETHER_WEAK:
+	case GF_NETHER:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags3 & RF3_UNDEAD) {
+			note = " is immune";
+			dam = 0;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+#endif
+		} else if ((r_ptr->flags4 & RF4_BR_NETH) || (r_ptr->flags3 & RF3_RES_NETH)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		}
+		//else if (r_ptr->flags3 & RF3_EVIL)
+		else if (r_ptr->flags3 & RF3_DEMON) {
+			dam /= 2;
+			note = " resists somewhat";
+#ifdef OLD_MONSTER_LORE
+			//if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+			if (seen) r_ptr->r_flags3 |= RF3_DEMON;
+#endif
+		}
+		break;
+
+	/* Water (acid) damage -- Water spirits/elementals are immune */
+	case GF_WATER:
+	case GF_VAPOUR:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags9 & RF9_IM_WATER) {
+			note = " is immune";
+			dam = 0;
+		} else if (r_ptr->flags7 & RF7_AQUATIC) {
+			note = " resists a lot";
+			dam /= 9;
+		} else if (r_ptr->flags3 & RF3_RES_WATE) {
+			note = " resists";
+			dam /= 4;
+		}
+		break;
+
+	/* Wave = Water + Force */
+	case GF_WAVE:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags9 & RF9_IM_WATER) {
+			note = " is immune";
+			dam = 0;
+		} else if (r_ptr->flags7 & RF7_AQUATIC) {
+			note = " resists a lot";
+			dam /= 9;
+		} else if (r_ptr->flags3 & RF3_RES_WATE) {
+			note = " resists";
+			dam /= 4;
+		} else do_stun = randint(15) / div;
+		break;
+
+	/* Chaos -- Chaos breathers resist */
+	case GF_CHAOS:
+		if (seen) obvious = TRUE;
+		if (rand_int(r_ptr->level) < 15) do_poly = TRUE;
+		do_conf = (5 + randint(11)) / div;
+		if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
+			note = " resists";
+			dam *= 3; dam /= randint(6) + 6;
+			do_poly = FALSE;
+		}
+		break;
+
+	/* Shards -- Shard breathers resist */
+	case GF_SHARDS:
+		if (seen) obvious = TRUE;
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		} else if (r_ptr->flags8 & RF8_NO_CUT) {
+			note = " resists somewhat";
+			dam /= 2;
+		}
+		break;
+
+	case GF_HAVOC:
+		{
 			/* Inferno/Mana/Chaos */
 			int res1 = 0, res2 = 0, res3 = 0, res4 = 0, res5 = 0; //shard,sound,fire,mana,chaos
 
@@ -6280,13 +6280,15 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				break;
 			}
 			if (seen) obvious = TRUE;
-			break; }
+			break;
+		}
 
-		/* Rocket: Shard resistance helps (PernA) */
-		//(Note that the sound part doesn't cause any stun effect. - intended) */
-		case GF_INFERNO:
-		case GF_DETONATION:
-		case GF_ROCKET: {
+	/* Rocket: Shard resistance helps (PernA) */
+	//(Note that the sound part doesn't cause any stun effect. - intended) */
+	case GF_INFERNO:
+	case GF_DETONATION:
+	case GF_ROCKET:
+		{
 			int res1 = 0, res2 = 0, res3 = 0; //shard,sound,fire
 
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
@@ -6313,115 +6315,116 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				break;
 			}
 			if (seen) obvious = TRUE;
-			break; }
-
-		/* Sound -- Sound breathers resist */
-		case GF_STUN:
-			do_stun = (10 + randint(15)) / div;
 			break;
+		}
 
-		/* Sound -- Sound breathers resist */
-		case GF_SOUND:
-			if (seen) obvious = TRUE;
-			do_stun = randint(15) / div; //RF3_NO_STUN is checked later
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			}
-			break;
+	/* Sound -- Sound breathers resist */
+	case GF_STUN:
+		do_stun = (10 + randint(15)) / div;
+		break;
 
-		/* Confusion */
-		case GF_CONFUSION:
-			if (seen) obvious = TRUE;
-			do_conf = (10 + randint(15)) / div;
-			if ((r_ptr->flags4 & RF4_BR_CONF) ||
-			    (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			} else if (r_ptr->flags3 & RF3_NO_CONF) {
-				note = " resists somewhat";
-				dam /= 2;
-			}
-			break;
+	/* Sound -- Sound breathers resist */
+	case GF_SOUND:
+		if (seen) obvious = TRUE;
+		do_stun = randint(15) / div; //RF3_NO_STUN is checked later
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		}
+		break;
 
-		/* Disenchantment -- Breathers and Disenchanters resist */
-		case GF_DISENCHANT:
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags4 & RF4_BR_DISE) || prefix(name, "Disen") || (r_ptr->flags3 & RF3_RES_DISE)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			}
-			break;
+	/* Confusion */
+	case GF_CONFUSION:
+		if (seen) obvious = TRUE;
+		do_conf = (10 + randint(15)) / div;
+		if ((r_ptr->flags4 & RF4_BR_CONF) ||
+		    (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		} else if (r_ptr->flags3 & RF3_NO_CONF) {
+			note = " resists somewhat";
+			dam /= 2;
+		}
+		break;
 
-		/* Nexus -- Breathers and Existers resist */
-		case GF_NEXUS:
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags4 & RF4_BR_NEXU) || prefix(name, "Nexus") || (r_ptr->flags3 & RF3_RES_NEXU)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			}
-			break;
+	/* Disenchantment -- Breathers and Disenchanters resist */
+	case GF_DISENCHANT:
+		if (seen) obvious = TRUE;
+		if ((r_ptr->flags4 & RF4_BR_DISE) || prefix(name, "Disen") || (r_ptr->flags3 & RF3_RES_DISE)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		}
+		break;
 
-		/* Force */
-		case GF_FORCE:
-			if (seen) obvious = TRUE;
-			do_stun = randint(15) / div;
-			if (r_ptr->flags4 & RF4_BR_WALL) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			}
-			break;
+	/* Nexus -- Breathers and Existers resist */
+	case GF_NEXUS:
+		if (seen) obvious = TRUE;
+		if ((r_ptr->flags4 & RF4_BR_NEXU) || prefix(name, "Nexus") || (r_ptr->flags3 & RF3_RES_NEXU)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		}
+		break;
 
-		/* Inertia -- breathers resist */
-		case GF_INERTIA: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_CURSE AND GF_OLD_SLOW
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags4 & RF4_BR_INER) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			}
-			/* Powerful monsters can resist */
-			else if (r_ptr->flags1 & RF1_UNIQUE) {
-			} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
-			} else if (RES_OLD(r_ptr->level, dam)) {
-			} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
-			//else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
-			{
-				//if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
-				m_ptr->mspeed -= 10;
-				note = " starts moving slower";
-			}
+	/* Force */
+	case GF_FORCE:
+		if (seen) obvious = TRUE;
+		do_stun = randint(15) / div;
+		if (r_ptr->flags4 & RF4_BR_WALL) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		}
+		break;
 
-			break;
+	/* Inertia -- breathers resist */
+	case GF_INERTIA: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_CURSE AND GF_OLD_SLOW
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags4 & RF4_BR_INER) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		}
+		/* Powerful monsters can resist */
+		else if (r_ptr->flags1 & RF1_UNIQUE) {
+		} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
+		} else if (RES_OLD(r_ptr->level, dam)) {
+		} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
+		//else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
+		{
+			//if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
+			m_ptr->mspeed -= 10;
+			note = " starts moving slower";
+		}
 
-		/* Time -- breathers resist */
-		case GF_TIME:
-			if (seen) obvious = TRUE;
-			if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)
-			    || (r_ptr->flags3 & RF3_DEMON) || (r_ptr->flags3 & RF3_NONLIVING)
-			    || (r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->d_char == 'A')) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			}
+		break;
+
+	/* Time -- breathers resist */
+	case GF_TIME:
+		if (seen) obvious = TRUE;
+		if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)
+		    || (r_ptr->flags3 & RF3_DEMON) || (r_ptr->flags3 & RF3_NONLIVING)
+		    || (r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->d_char == 'A')) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		}
 #if 1 /* fixed & sanified */
-			else if (!quiet && rand_int(3) == 0) { /* only occur if a player cast this */
-				long t = m_ptr->hp / 10, tp = damroll(2, plev);
+		else if (!quiet && rand_int(3) == 0) { /* only occur if a player cast this */
+			long t = m_ptr->hp / 10, tp = damroll(2, plev);
 
-				note = " loses precious seconds to you";
-				m_ptr->energy -= m_ptr->energy / 4;
+			note = " loses precious seconds to you";
+			m_ptr->energy -= m_ptr->energy / 4;
 
-				if (!quiet) {
-					if (t > dam) t = dam;
-					if (t > tp) t = tp;
-					p_ptr->energy += (t * level_speed(&p_ptr->wpos)) / 500;
-					/* Prevent too much energy, preventing overflow too. */
-					limit_energy(p_ptr);
-				}
+			if (!quiet) {
+				if (t > dam) t = dam;
+				if (t > tp) t = tp;
+				p_ptr->energy += (t * level_speed(&p_ptr->wpos)) / 500;
+				/* Prevent too much energy, preventing overflow too. */
+				limit_energy(p_ptr);
 			}
+		}
 #endif
-			break;
+		break;
 
-		/* Gravity -- breathers resist */
-		case GF_GRAVITY:
+	/* Gravity -- breathers resist */
+	case GF_GRAVITY:
 		{
 			bool resist_tele = FALSE;
 			//dun_level *l_ptr = getfloor(wpos);
@@ -6459,417 +6462,386 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		}
 
-		/* Pure damage */
-		case GF_MANA:
-			if (r_ptr->flags9 & RF9_RES_MANA) {
-				dam /= 3;
-				note = " resists";
-			} else if (r_ptr->flags4 & RF4_BR_MANA) {
-				dam /= 2;
-				note = " resists somewhat";
-			}
-			if (seen) obvious = TRUE;
-			break;
+	/* Pure damage */
+	case GF_MANA:
+		if (r_ptr->flags9 & RF9_RES_MANA) {
+			dam /= 3;
+			note = " resists";
+		} else if (r_ptr->flags4 & RF4_BR_MANA) {
+			dam /= 2;
+			note = " resists somewhat";
+		}
+		if (seen) obvious = TRUE;
+		break;
 
-			/* Meteor -- powerful magic missile */
-		case GF_METEOR:
-			if (seen) obvious = TRUE;
-			do_stun = randint(15) / div;
-			break;
+		/* Meteor -- powerful magic missile */
+	case GF_METEOR:
+		if (seen) obvious = TRUE;
+		do_stun = randint(15) / div;
+		break;
 
-		/* Ice -- Cold + Cuts + Stun */
-		case GF_ICE:
-			if (seen) obvious = TRUE;
-			//do_stun = randint(15) / div;
-			k = dam;
+	/* Ice -- Cold + Cuts + Stun */
+	case GF_ICE:
+		if (seen) obvious = TRUE;
+		//do_stun = randint(15) / div;
+		k = dam;
 
-			dam = (k * 3) / 5;/* 60% COLD damage */
-			if (r_ptr->flags3 & RF3_IM_COLD) {
-				note = " is immune to cold";
-				dam = 0;
+		dam = (k * 3) / 5;/* 60% COLD damage */
+		if (r_ptr->flags3 & RF3_IM_COLD) {
+			note = " is immune to cold";
+			dam = 0;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
+			if (seen) r_ptr->r_flags3 |= RF3_IM_COLD;
 #endif
-			} else if (r_ptr->flags9 & RF9_RES_COLD) {
-				note = " resists cold";
-				dam /= 4;
+		} else if (r_ptr->flags9 & RF9_RES_COLD) {
+			note = " resists cold";
+			dam /= 4;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
+			if (seen) r_ptr->r_flags9 |= RF9_RES_COLD;
 #endif
-			} else if (r_ptr->flags3 & RF3_SUSCEP_COLD) {
-				note = " is hit hard by cold";
-				dam *= 2;
+		} else if (r_ptr->flags3 & RF3_SUSCEP_COLD) {
+			note = " is hit hard by cold";
+			dam *= 2;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
+			if (seen) r_ptr->r_flags3 |= RF3_SUSCEP_COLD;
 #endif
-			}
+		}
 
-			k = (k * 2) / 5;/* 40% SHARDS damage */
-			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
-				//note = " resists";
-				k = (k * 3) / (randint(6) + 6);
-			} else if (r_ptr->flags8 & RF8_NO_CUT) {
-				//note = " resists somewhat";
-				k /= 2;
-			}
+		k = (k * 2) / 5;/* 40% SHARDS damage */
+		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
+			//note = " resists";
+			k = (k * 3) / (randint(6) + 6);
+		} else if (r_ptr->flags8 & RF8_NO_CUT) {
+			//note = " resists somewhat";
+			k /= 2;
+		}
 
-			dam = dam + k;
-			break;
+		dam = dam + k;
+		break;
 
-		/* Thunder -- Elec + Sound + Light */
-		case GF_THUNDER:
-			if (seen) obvious = TRUE;
+	/* Thunder -- Elec + Sound + Light */
+	case GF_THUNDER:
+		if (seen) obvious = TRUE;
 
-			k_elec = dam / 3; /* 33% ELEC damage */
-			if (r_ptr->flags3 & RF3_IM_ELEC) {
-				note = " is immune to lightning";
-				k_elec = 0;
+		k_elec = dam / 3; /* 33% ELEC damage */
+		if (r_ptr->flags3 & RF3_IM_ELEC) {
+			note = " is immune to lightning";
+			k_elec = 0;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_IM_ELEC;
+			if (seen) r_ptr->r_flags3 |= RF3_IM_ELEC;
 #endif
-			} else if (r_ptr->flags9 & RF9_RES_ELEC) {
-				note = " resists lightning";
-				k_elec /= 4;
+		} else if (r_ptr->flags9 & RF9_RES_ELEC) {
+			note = " resists lightning";
+			k_elec /= 4;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_RES_ELEC;
+			if (seen) r_ptr->r_flags9 |= RF9_RES_ELEC;
 #endif
-			} else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) {
-				note = " is hit hard by lightning";
-				k_elec *= 2;
+		} else if (r_ptr->flags9 & RF9_SUSCEP_ELEC) {
+			note = " is hit hard by lightning";
+			k_elec *= 2;
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ELEC;
+			if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_ELEC;
 #endif
-			}
+		}
 
-			k_sound = dam / 3; /* 33% SOUND damage */
-			do_stun = randint(15) / div;
-			if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
-				//note = " resists";
-				k_sound *= 3;
-				k_sound /= (randint(6) + 6);
-			}
+		k_sound = dam / 3; /* 33% SOUND damage */
+		do_stun = randint(15) / div;
+		if ((r_ptr->flags4 & RF4_BR_SOUN) || (r_ptr->flags9 & RF9_RES_SOUND)) {
+			//note = " resists";
+			k_sound *= 3;
+			k_sound /= (randint(6) + 6);
+		}
 
-			k_lite = dam / 3; /* 33% LIGHT damage */
-			do_blind = damroll(3, (k_lite / 20)) + 1;
-			if (r_ptr->d_char == 'A') {
-				//note = " is immune";
-				k_lite = do_blind = 0;
-			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
+		k_lite = dam / 3; /* 33% LIGHT damage */
+		do_blind = damroll(3, (k_lite / 20)) + 1;
+		if (r_ptr->d_char == 'A') {
+			//note = " is immune";
+			k_lite = do_blind = 0;
+		} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
+			if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
 #endif
-				//note = " cringes from the light";
-				//note_dies = " shrivels away in the light";
-				dam *= 2;
-				if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
-				//note = " resists";
-				k_lite *= 2;
-				k_lite /= (randint(6) + 6);
-				do_blind = 0;
-			}
+			//note = " cringes from the light";
+			//note_dies = " shrivels away in the light";
+			dam *= 2;
+			if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
+		} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
+			//note = " resists";
+			k_lite *= 2;
+			k_lite /= (randint(6) + 6);
+			do_blind = 0;
+		}
 
-			dam = k_elec + k_sound + k_lite;
-			break;
+		dam = k_elec + k_sound + k_lite;
+		break;
 
-		/* Drain Life */
-		case GF_OLD_DRAIN:
-			if (seen) obvious = TRUE;
+	/* Drain Life */
+	case GF_OLD_DRAIN:
+		if (seen) obvious = TRUE;
 
-			/* Prevent internal overflow (int) - allow up to 35% leech */
-			if (m_ptr->hp > 9362) dam = (m_ptr->hp / 100) * dam;
-			else if (m_ptr->hp > 936) dam = ((m_ptr->hp / 10) * dam) / 10;
-			else dam = (m_ptr->hp * dam) / 100;
+		/* Prevent internal overflow (int) - allow up to 35% leech */
+		if (m_ptr->hp > 9362) dam = (m_ptr->hp / 100) * dam;
+		else if (m_ptr->hp > 936) dam = ((m_ptr->hp / 10) * dam) / 10;
+		else dam = (m_ptr->hp * dam) / 100;
+
+		/* Make it have an effect on low-HP monsters such as townies */
+		if (!dam) dam = 1;
+		/* Cap */
+		if (dam > 900) dam = 900;
+
+		if (!quiet) {
+			if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
+			else p_ptr->ret_dam = 0; /* paranoia */
+		}
+
+		if ((r_ptr->flags3 & RF3_UNDEAD) ||
+		    //(r_ptr->flags3 & RF3_DEMON) ||
+		    (r_ptr->flags3 & RF3_NONLIVING) ||
+		    strchr("Egv", r_ptr->d_char)) {
+#ifdef OLD_MONSTER_LORE
+			if ((r_ptr->flags3 & RF3_UNDEAD) && seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+			//if ((r_ptr->flags3 & RF3_DEMON) && seen) r_ptr->r_flags3 |= RF3_DEMON;
+			if ((r_ptr->flags3 & RF3_NONLIVING) && seen) r_ptr->r_flags3 |= RF3_NONLIVING;
+#endif
+			note = " is unaffected";
+			obvious = FALSE;
+			dam = 0;
+			quiet_dam = TRUE;
+			if (!quiet) p_ptr->ret_dam = 0;
+		} else if (r_ptr->flags1 & RF1_UNIQUE) {
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
+#endif
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
 
 			/* Make it have an effect on low-HP monsters such as townies */
 			if (!dam) dam = 1;
-			/* Cap */
-			if (dam > 900) dam = 900;
+		}
 
-			if (!quiet) {
-				if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
-				else p_ptr->ret_dam = 0; /* paranoia */
-			}
+		/* the_sandman: return 15% of the damage to player. This is special
+		   since (we're not using the upto 35% rule because for the spell
+		   (drain cloud) it will be too much) we aim for balance
+		   HACK: the priest_spell variable is defined above.
+		*/
+		if (priest_spell) {
+			//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
+			if (dam && !quiet) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
+			p_ptr->ret_dam = 0;
+		}
 
-			if ((r_ptr->flags3 & RF3_UNDEAD) ||
-			    //(r_ptr->flags3 & RF3_DEMON) ||
-			    (r_ptr->flags3 & RF3_NONLIVING) ||
-			    strchr("Egv", r_ptr->d_char)) {
-#ifdef OLD_MONSTER_LORE
-				if ((r_ptr->flags3 & RF3_UNDEAD) && seen) r_ptr->r_flags3 |= RF3_UNDEAD;
-				//if ((r_ptr->flags3 & RF3_DEMON) && seen) r_ptr->r_flags3 |= RF3_DEMON;
-				if ((r_ptr->flags3 & RF3_NONLIVING) && seen) r_ptr->r_flags3 |= RF3_NONLIVING;
-#endif
-				note = " is unaffected";
-				obvious = FALSE;
-				dam = 0;
-				quiet_dam = TRUE;
-				if (!quiet) p_ptr->ret_dam = 0;
-			} else if (r_ptr->flags1 & RF1_UNIQUE) {
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
-#endif
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
+		break;
 
-				/* Make it have an effect on low-HP monsters such as townies */
-				if (!dam) dam = 1;
-			}
+	case GF_ANNIHILATION:
+		if (seen) obvious = TRUE;
+		if (m_ptr->hp > 9362) dam = (m_ptr->hp / 100) * dam;
+		else if (m_ptr->hp > 936) dam = ((m_ptr->hp / 10) * dam) / 10;
+		else dam = (m_ptr->hp * dam) / 100;
 
-			/* the_sandman: return 15% of the damage to player. This is special
-			   since (we're not using the upto 35% rule because for the spell
-			   (drain cloud) it will be too much) we aim for balance
-			   HACK: the priest_spell variable is defined above.
-			*/
-			if (priest_spell) {
-				//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
-				if (dam && !quiet) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
-				p_ptr->ret_dam = 0;
-			}
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+		}
 
-			break;
+		/* Make it have an effect on low-HP monsters such as townies */
+		if (!dam) dam = 1;
+		/* Cap */
+		if (brief_rune_spell) {
+			if (dam > 600) dam = 600;
+		} else {
+			if (dam > 1200) dam = 1200;
+		}
+		break;
 
-		case GF_ANNIHILATION:
-			if (seen) obvious = TRUE;
-			if (m_ptr->hp > 9362) dam = (m_ptr->hp / 100) * dam;
-			else if (m_ptr->hp > 936) dam = ((m_ptr->hp / 10) * dam) / 10;
-			else dam = (m_ptr->hp * dam) / 100;
+	/* Polymorph monster (Use "dam" as "power") */
+	case GF_OLD_POLY:
+		if (seen) obvious = TRUE;
 
-			if (r_ptr->flags1 & RF1_UNIQUE) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-			}
+		/* Attempt to polymorph (see below) */
+		do_poly = TRUE;
 
-			/* Make it have an effect on low-HP monsters such as townies */
-			if (!dam) dam = 1;
-			/* Cap */
-			if (brief_rune_spell) {
-				if (dam > 600) dam = 600;
-			} else {
-				if (dam > 1200) dam = 1200;
-			}
-			break;
+		/* Powerful monsters can resist */
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)) {
+			note = " is unaffected";
+			do_poly = FALSE;
+			obvious = FALSE;
+		}
 
-		/* Polymorph monster (Use "dam" as "power") */
-		case GF_OLD_POLY:
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+
+		break;
+
+	/* Clone monsters (Ignore "dam") */
+	case GF_OLD_CLONE:
+		if (r_ptr->flags7 & RF7_NO_DEATH) { /* don't haste these.. */
+			note = " is unaffected";
+		} else {
 			if (seen) obvious = TRUE;
 
-			/* Attempt to polymorph (see below) */
-			do_poly = TRUE;
+			/* Heal fully */
+			m_ptr->hp = m_ptr->maxhp;
 
-			/* Powerful monsters can resist */
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->level > randint((dam - 10) < 1 ? 1 : (dam - 10)) + 10)) {
-				note = " is unaffected";
-				do_poly = FALSE;
-				obvious = FALSE;
+			/* Speed up */
+			if (m_ptr->mspeed < 150) m_ptr->mspeed += 10;
+
+			/* Attempt to clone. */
+			if (multiply_monster(c_ptr->m_idx)) note = " spawns";
+		}
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+
+		break;
+
+	/* Heal Monster (use "dam" as amount of healing) */
+	case GF_OLD_HEAL:
+		if (seen) obvious = TRUE;
+
+		/* Wake up */
+		m_ptr->csleep = 0;
+		/* Heal */
+		m_ptr->hp += dam;
+		/* No overflow */
+		if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
+
+		/* Redraw (later) if needed */
+		update_health(c_ptr->m_idx);
+
+		/* Message */
+		note = " looks healthier";
+
+		/* :) */
+		if (m_ptr->r_idx == RI_LEPER) {
+			int clone = m_list[c_ptr->m_idx].clone, clone_summoning = m_list[c_ptr->m_idx].clone_summoning;
+			delete_monster_idx(c_ptr->m_idx, TRUE);
+			switch (rand_int(10)) {
+			case 0: i = 1; break;
+			case 1: i = 6; break;
+			case 2: i = 9; break;
+			case 3: i = 10; break;
+			case 4: i = 11; break;
+			case 5: i = 12; break;
+			case 6: i = 14; break;
+			case 7: i = 16; break;
+			case 8: i = 17; break;
+			case 9: i = 18; break;
 			}
+			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
+		}
 
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
 
-			break;
+	/* Heroism/Berserk Strength for monsters */
+	case GF_HERO_MONSTER:
+		if (seen) obvious = TRUE;
 
-		/* Clone monsters (Ignore "dam") */
-		case GF_OLD_CLONE:
-			if (r_ptr->flags7 & RF7_NO_DEATH) { /* don't haste these.. */
-				note = " is unaffected";
-			} else {
-				if (seen) obvious = TRUE;
+		/* Wake up */
+		m_ptr->csleep = 0;
+		/* Heal */
+		m_ptr->hp += dam;
+		/* No overflow */
+		if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
 
-				/* Heal fully */
-				m_ptr->hp = m_ptr->maxhp;
+		/* Redraw (later) if needed */
+		update_health(c_ptr->m_idx);
 
-				/* Speed up */
-				if (m_ptr->mspeed < 150) m_ptr->mspeed += 10;
+		/* Message */
+		note = " looks healthier";
 
-				/* Attempt to clone. */
-				if (multiply_monster(c_ptr->m_idx)) note = " spawns";
-			}
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
 
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
+		/* No 'break;' here =) */
 
-			break;
-
-		/* Heal Monster (use "dam" as amount of healing) */
-		case GF_OLD_HEAL:
-			if (seen) obvious = TRUE;
-
-			/* Wake up */
-			m_ptr->csleep = 0;
-			/* Heal */
-			m_ptr->hp += dam;
-			/* No overflow */
-			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
-
-			/* Redraw (later) if needed */
-			update_health(c_ptr->m_idx);
-
+	/* Remove monster's fear */
+	case GF_REMFEAR:
+		if (m_ptr->monfear) {
+			m_ptr->monfear = 0;
 			/* Message */
-			note = " looks healthier";
+			note = " becomes courageous again";
+			if (seen) obvious = TRUE;
+		}
 
-			/* :) */
-			if (m_ptr->r_idx == RI_LEPER) {
-				int clone = m_list[c_ptr->m_idx].clone, clone_summoning = m_list[c_ptr->m_idx].clone_summoning;
-				delete_monster_idx(c_ptr->m_idx, TRUE);
-				switch (rand_int(10)) {
-				case 0: i = 1; break;
-				case 1: i = 6; break;
-				case 2: i = 9; break;
-				case 3: i = 10; break;
-				case 4: i = 11; break;
-				case 5: i = 12; break;
-				case 6: i = 14; break;
-				case 7: i = 16; break;
-				case 8: i = 17; break;
-				case 9: i = 18; break;
-				}
-				(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
-			}
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
 
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
-
-		/* Heroism/Berserk Strength for monsters */
-		case GF_HERO_MONSTER:
+	/* Speed Monster (Ignore "dam") */
+	case GF_OLD_SPEED:
+		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->mspeed >= 150) {
+			note = " is unaffected";
+		} else {
 			if (seen) obvious = TRUE;
 
-			/* Wake up */
-			m_ptr->csleep = 0;
-			/* Heal */
-			m_ptr->hp += dam;
-			/* No overflow */
-			if (m_ptr->hp > m_ptr->maxhp) m_ptr->hp = m_ptr->maxhp;
+			/* Speed up */
+			m_ptr->mspeed += 10;
+			note = " starts moving faster";
+		}
 
-			/* Redraw (later) if needed */
-			update_health(c_ptr->m_idx);
-
-			/* Message */
-			note = " looks healthier";
-
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-
-			/* No 'break;' here =) */
-
-		/* Remove monster's fear */
-		case GF_REMFEAR:
-			if (m_ptr->monfear) {
-				m_ptr->monfear = 0;
-				/* Message */
-				note = " becomes courageous again";
-				if (seen) obvious = TRUE;
-			}
-
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
-
-		/* Speed Monster (Ignore "dam") */
-		case GF_OLD_SPEED:
-			if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->mspeed >= 150) {
-				note = " is unaffected";
-			} else {
-				if (seen) obvious = TRUE;
-
-				/* Speed up */
-				m_ptr->mspeed += 10;
-				note = " starts moving faster";
-			}
-
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
 
 
-		/* Slow Monster (Use "dam" as "power") */
-		case GF_OLD_SLOW: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_CURSE
-			if (seen) obvious = TRUE;
+	/* Slow Monster (Use "dam" as "power") */
+	case GF_OLD_SLOW: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_CURSE
+		if (seen) obvious = TRUE;
 
-			/* Powerful monsters can resist */
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags4 & RF4_BR_INER)) {
-				note = " is unaffected";
-				obvious = FALSE;
-			} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
-				note = " resists easily"; /* vs damaging it's "resists a lot" and vs effects it's "resists easily" :-o */
-				obvious = FALSE;
-			} else if (RES_OLD(r_ptr->level, dam)) {
-				note = " resists";
-				obvious = FALSE;
-			}
-			else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
-			//else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
-			{
-				//if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
-				m_ptr->mspeed -= 10;
-				note = " starts moving slower";
-			} else {
-				note = " is unaffected";
-				obvious = FALSE;
-			}
+		/* Powerful monsters can resist */
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags4 & RF4_BR_INER)) {
+			note = " is unaffected";
+			obvious = FALSE;
+		} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
+			note = " resists easily"; /* vs damaging it's "resists a lot" and vs effects it's "resists easily" :-o */
+			obvious = FALSE;
+		} else if (RES_OLD(r_ptr->level, dam)) {
+			note = " resists";
+			obvious = FALSE;
+		}
+		else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
+		//else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
+		{
+			//if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
+			m_ptr->mspeed -= 10;
+			note = " starts moving slower";
+		} else {
+			note = " is unaffected";
+			obvious = FALSE;
+		}
 
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
 
-		/* Sleep (Use "dam" as "power") */
-		case GF_OLD_SLEEP:
+	/* Sleep (Use "dam" as "power") */
+	case GF_OLD_SLEEP:
 #ifdef ENABLE_OCCULT
-			/* hack for Occult school's "Trance" spell */
-			if (dam & 0x400) {
-				/* fails? (not a ghost, spirit or elemental) */
-				if (r_ptr->d_char != 'G' && r_ptr->d_char != 'E' && r_ptr->d_char != 'X') {
-					dam = 0;
-					quiet_dam = TRUE;
-					quiet = TRUE;
-					break;
-				}
-				dam -= 0x400;
-
-				if (RES_OLD(r_ptr->level, dam)) {
-					note = " resists";
-					if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
-					/* No obvious effect */
-					obvious = FALSE;
-				} else {
-					/* Go to sleep (much) later */
-					note = " falls asleep";
-					do_sleep = GF_OLD_SLEEP_DUR;
-				}
-				/* No "real" damage */
+		/* hack for Occult school's "Trance" spell */
+		if (dam & 0x400) {
+			/* fails? (not a ghost, spirit or elemental) */
+			if (r_ptr->d_char != 'G' && r_ptr->d_char != 'E' && r_ptr->d_char != 'X') {
 				dam = 0;
 				quiet_dam = TRUE;
+				quiet = TRUE;
 				break;
 			}
-#endif
+			dam -= 0x400;
 
-			if (seen) obvious = TRUE;
-
-			/* Attempt a saving throw */
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags3 & RF3_NO_SLEEP) ||
-			    RES_OLD(r_ptr->level, dam))
-			{
+			if (RES_OLD(r_ptr->level, dam)) {
 				note = " resists";
 				if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
-				/* Memorize a flag */
-				if (r_ptr->flags3 & RF3_NO_SLEEP) {
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_NO_SLEEP;
-#endif
-					note = " is unaffected";
-				}
-
 				/* No obvious effect */
 				obvious = FALSE;
 			} else {
@@ -6877,29 +6849,154 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " falls asleep";
 				do_sleep = GF_OLD_SLEEP_DUR;
 			}
-
 			/* No "real" damage */
 			dam = 0;
 			quiet_dam = TRUE;
 			break;
+		}
+#endif
 
-		/* Confusion (Use "dam" as "power") */
-		case GF_OLD_CONF:
-			if (seen) obvious = TRUE;
+		if (seen) obvious = TRUE;
 
+		/* Attempt a saving throw */
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags3 & RF3_NO_SLEEP) ||
+		    RES_OLD(r_ptr->level, dam))
+		{
+			note = " resists";
+			if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
+			/* Memorize a flag */
+			if (r_ptr->flags3 & RF3_NO_SLEEP) {
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_NO_SLEEP;
+#endif
+				note = " is unaffected";
+			}
+
+			/* No obvious effect */
+			obvious = FALSE;
+		} else {
+			/* Go to sleep (much) later */
+			note = " falls asleep";
+			do_sleep = GF_OLD_SLEEP_DUR;
+		}
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	/* Confusion (Use "dam" as "power") */
+	case GF_OLD_CONF:
+		if (seen) obvious = TRUE;
+
+		/* Get confused later */
+		do_conf = damroll(3, (dam / 2)) + 1;
+
+		/* Attempt a saving throw */
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags3 & RF3_NO_CONF) ||
+		    RES_OLD(r_ptr->level, dam))
+		{
+			/* No obvious effect */
+			note = " resists";
+			obvious = FALSE;
+
+			if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
+
+			/* Memorize a flag */
+			if (r_ptr->flags3 & RF3_NO_CONF) {
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_NO_CONF;
+#endif
+				note = " is unaffected";
+			}
+
+			/* Resist */
+			do_conf = 0;
+		}
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	case GF_TERROR:
+		if (seen) obvious = TRUE;
+
+		/* Apply some fear */
+		do_fear = damroll(3, (dam / 2)) + 1;
+		/* Get confused later */
+		do_conf = damroll(3, (dam / 2)) + 1;
+
+		/* Attempt a saving throw */
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    ((r_ptr->flags3 & RF3_NO_CONF) && (r_ptr->flags3 & RF3_NO_FEAR))) {
+			/* No obvious effect */
+			note = " is unaffected";
+			obvious = FALSE;
+			do_fear = do_conf = 0;
+		} else if (RES_OLD(r_ptr->level, dam)) {
+			note = " resists the effect";
+			obvious = FALSE;
+			do_fear = do_conf = 0;
+		} else {
+			if (r_ptr->flags3 & RF3_NO_CONF) do_conf = 0;
+			if (r_ptr->flags3 & RF3_NO_FEAR) do_fear = 0;
+		}
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	/* Confusion (Use "dam" as "power") */
+	case GF_BLIND:
+		if (seen) obvious = TRUE;
+
+		/* Get blinded later */
+		do_blind = dam;
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	/* The new cursing spell - basically slow/blind/conf all in one. the_sandman */
+	/* Following the pattern, use "dam" as "power". */
+	case GF_CURSE:
+		/* Assume no obvious effect */
+		obvious = FALSE;
+		int curse = randint(3);
+		if (curse == 1) { //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_OLD_SLOW
+			/*if (((r_ptr->flags1 & RF1_UNIQUE) && magik(r_ptr->level * 4)) ||
+				magik(r_ptr->level * 2)) {*/
+			if ((r_ptr->flags1 & RF1_UNIQUE) ||
+			    (r_ptr->flags4 & RF4_BR_INER)) {
+				note = " is unaffected";
+			} else if (RES_OLD(r_ptr->level, dam / 3)) {
+				note = " resists";
+			} else if (m_ptr->mspeed > 100 && m_ptr->mspeed > m_ptr->speed - 10) {
+				m_ptr->mspeed -= 10;
+				note = " starts moving slower";
+				if (seen) obvious = TRUE;
+			} else {
+				note = " is unaffected";
+			}
+			dam = 0;
+			quiet_dam = TRUE;
+			break;
+		} else if (curse == 2) { //Conf
 			/* Get confused later */
 			do_conf = damroll(3, (dam / 2)) + 1;
 
 			/* Attempt a saving throw */
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags3 & RF3_NO_CONF) ||
-			    RES_OLD(r_ptr->level, dam))
+			if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_NO_CONF) ||
+			  RES_OLD(r_ptr->level, dam / 3))
 			{
-				/* No obvious effect */
 				note = " resists";
-				obvious = FALSE;
-
 				if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
+
 
 				/* Memorize a flag */
 				if (r_ptr->flags3 & RF3_NO_CONF) {
@@ -6908,421 +7005,327 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 					note = " is unaffected";
 				}
-
 				/* Resist */
 				do_conf = 0;
 			}
 
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
+			//let's do some actual damage, too?
+			//dam = 0;
+			//quiet_dam = TRUE;
+			/* then apply proper confusion resistance damage reduction (same as for GF_CONF) */
+			if ((r_ptr->flags4 & RF4_BR_CONF) ||
+			    (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
+				dam *= 3; dam /= (randint(6) + 6);
+			} else if (r_ptr->flags3 & RF3_NO_CONF)
+				dam /= 2;
 			break;
-
-		case GF_TERROR:
-			if (seen) obvious = TRUE;
-
-			/* Apply some fear */
-			do_fear = damroll(3, (dam / 2)) + 1;
-			/* Get confused later */
-			do_conf = damroll(3, (dam / 2)) + 1;
-
-			/* Attempt a saving throw */
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    ((r_ptr->flags3 & RF3_NO_CONF) && (r_ptr->flags3 & RF3_NO_FEAR))) {
-				/* No obvious effect */
-				note = " is unaffected";
-				obvious = FALSE;
-				do_fear = do_conf = 0;
-			} else if (RES_OLD(r_ptr->level, dam)) {
-				note = " resists the effect";
-				obvious = FALSE;
-				do_fear = do_conf = 0;
-			} else {
-				if (r_ptr->flags3 & RF3_NO_CONF) do_conf = 0;
-				if (r_ptr->flags3 & RF3_NO_FEAR) do_fear = 0;
-			}
-
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
-
-		/* Confusion (Use "dam" as "power") */
-		case GF_BLIND:
-			if (seen) obvious = TRUE;
-
-			/* Get blinded later */
+		} else { //Blind
 			do_blind = dam;
-
-			/* No "real" damage */
 			dam = 0;
 			quiet_dam = TRUE;
-			break;
-
-		/* The new cursing spell - basically slow/blind/conf all in one. the_sandman */
-		/* Following the pattern, use "dam" as "power". */
-		case GF_CURSE:
-			/* Assume no obvious effect */
+			/* No obvious effect */
 			obvious = FALSE;
-			int curse = randint(3);
-			if (curse == 1) { //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_OLD_SLOW
-				/*if (((r_ptr->flags1 & RF1_UNIQUE) && magik(r_ptr->level * 4)) ||
-					magik(r_ptr->level * 2)) {*/
-				if ((r_ptr->flags1 & RF1_UNIQUE) ||
-				    (r_ptr->flags4 & RF4_BR_INER)) {
-					note = " is unaffected";
-				} else if (RES_OLD(r_ptr->level, dam / 3)) {
-					note = " resists";
-				} else if (m_ptr->mspeed > 100 && m_ptr->mspeed > m_ptr->speed - 10) {
-					m_ptr->mspeed -= 10;
-					note = " starts moving slower";
-					if (seen) obvious = TRUE;
-				} else {
-					note = " is unaffected";
-				}
-				dam = 0;
-				quiet_dam = TRUE;
-				break;
-			} else if (curse == 2) { //Conf
-				/* Get confused later */
-				do_conf = damroll(3, (dam / 2)) + 1;
+		}
+		break;
 
-				/* Attempt a saving throw */
-				if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags3 & RF3_NO_CONF) ||
-				  RES_OLD(r_ptr->level, dam / 3))
-				{
-					note = " resists";
-					if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
-
-
-					/* Memorize a flag */
-					if (r_ptr->flags3 & RF3_NO_CONF) {
+	/* Healing Cloud damages undead beings - the_sandman */
+	case GF_HEALINGCLOUD:
+		if (r_ptr->flags3 & RF3_UNDEAD) {
 #ifdef OLD_MONSTER_LORE
-						if (seen) r_ptr->r_flags3 |= RF3_NO_CONF;
+			if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
 #endif
-						note = " is unaffected";
-					}
-					/* Resist */
-					do_conf = 0;
-				}
-
-				//let's do some actual damage, too?
-				//dam = 0;
-				//quiet_dam = TRUE;
-				/* then apply proper confusion resistance damage reduction (same as for GF_CONF) */
-				if ((r_ptr->flags4 & RF4_BR_CONF) ||
-				    (r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
-					dam *= 3; dam /= (randint(6) + 6);
-				} else if (r_ptr->flags3 & RF3_NO_CONF)
-					dam /= 2;
-				break;
-			} else { //Blind
-				do_blind = dam;
-				dam = 0;
-				quiet_dam = TRUE;
-				/* No obvious effect */
-				obvious = FALSE;
-			}
-			break;
-
-		/* Healing Cloud damages undead beings - the_sandman */
-		case GF_HEALINGCLOUD:
-			if (r_ptr->flags3 & RF3_UNDEAD) {
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
-#endif
-				if (seen) obvious = TRUE;
-				note = " crackles in the light";
-				note_dies = " evaporates into thin air";
-			} else {
-				dam = 0;
-				quiet = TRUE;
-			}
-			break;
-
-		/* Vapour + poison ownage - the_sandman */
-		case GF_WATERPOISON:
-			switch (randint(2)) {
-			case 1: // Poison!
-				if (seen) obvious = TRUE;
-				if ((r_ptr->flags3 & RF3_IM_POIS) ||
-				  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-				  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
-					note = " is immune";
-					dam = 0;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
-#endif
-				} else if (r_ptr->flags9 & RF9_RES_POIS) {
-					note = " resists";
-					dam /= 4;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->flags9 |= RF9_RES_POIS;
-#endif
-				} else if (r_ptr->flags9 & RF9_SUSCEP_POIS) {
-					note = " is hit hard";
-					dam *= 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->flags9 |= RF9_SUSCEP_POIS;
-#endif
-				}
-				break;
-			default: // Water
-				if (seen) obvious = TRUE;
-				if (r_ptr->flags9 & RF9_IM_WATER) {
-					note = " is immune";
-					dam = 0;
-				} else if (r_ptr->flags7 & RF7_AQUATIC) {
-					note = " resists a lot";
-					dam /= 9;
-				} else if (r_ptr->flags3 & RF3_RES_WATE) {
-					note = " resists";
-					dam /= 4;
-				}
-			}
-			break;
-
-		/* Random between ice (shards+water) and poison. At the moment its 3:1:1 shards:water:poison chance 
-				- the_sandman */
-		case GF_ICEPOISON:
-			switch (randint(5)) {
-			case 1:  // Shards
-			case 3:
-			case 5:
-				if (seen) obvious = TRUE;
-				if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
-					note = " resists";
-					dam *= 3; dam /= (randint(6) + 6);
-				} else if (r_ptr->flags8 & RF8_NO_CUT) {
-					note = " resists somewhat";
-					dam /= 2;
-				}
-				break;
-			case 2: // Water
-				if (seen) obvious = TRUE;
-				if (r_ptr->flags9 & RF9_IM_WATER) {
-					note = " is immune";
-					dam = 0;
-				} else if (r_ptr->flags7 & RF7_AQUATIC) {
-					note = " resists a lot";
-					dam /= 9;
-				} else if (r_ptr->flags3 & RF3_RES_WATE) {
-					note = " resists";
-					dam /= 4;
-				}
-				break;
-			default: // Poison
-				if (seen) obvious = TRUE;
-				if ((r_ptr->flags3 & RF3_IM_POIS) ||
-				  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-				  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
-				{
-					note = " is immune";
-					dam = 0;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
-#endif
-				} else if (r_ptr->flags9 & RF9_RES_POIS) {
-					note = " resists";
-					dam /= 4;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
-#endif
-				} else if (r_ptr->flags9 & RF9_SUSCEP_POIS) {
-					note = " is hit hard";
-					dam *= 2;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_POIS;
-#endif
-				}
-			}
-			break;
-
-		/* Lite, but only hurts susceptible creatures */
-		case GF_LITE_WEAK:
-			/* Hurt by light */
-			if (r_ptr->flags3 & RF3_HURT_LITE) {
-				/* Obvious effect */
-				if (seen) obvious = TRUE;
-
-#ifdef OLD_MONSTER_LORE
-				/* Memorize the effects */
-				if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
-#endif
-
-				/* Special effect */
-				note = " cringes from the light";
-				note_dies = " shrivels away in the light";
-
-				/* Specialty: Reflecting monsters take reduced damage from light, even if it was a ball or beam style attack! */
-				if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
-			}
-			/* Normally no damage */
-			else {
-				/* No damage */
-				dam = 0;
-				quiet = TRUE;
-			}
-			break;
-
-		/* Lite -- opposite of Dark */
-		case GF_LITE:
-		case GF_STARLITE:
 			if (seen) obvious = TRUE;
+			note = " crackles in the light";
+			note_dies = " evaporates into thin air";
+		} else {
+			dam = 0;
+			quiet = TRUE;
+		}
+		break;
 
-			/* Get blinded later */
-			do_blind = damroll(3, (dam / 20)) + 1;
-
-			if (r_ptr->d_char == 'A') {
-				do_blind = 0;
-				if (r_ptr->flags3 & RF3_EVIL) break; /* normal damage: fallen/corrupted angel */
+	/* Vapour + poison ownage - the_sandman */
+	case GF_WATERPOISON:
+		switch (randint(2)) {
+		case 1: // Poison!
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_POIS) ||
+			  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
 				note = " is immune";
 				dam = 0;
-			} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 #ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
+				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
 #endif
-				note = " cringes from the light";
-				note_dies = " shrivels away in the light";
+			} else if (r_ptr->flags9 & RF9_RES_POIS) {
+				note = " resists";
+				dam /= 4;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->flags9 |= RF9_RES_POIS;
+#endif
+			} else if (r_ptr->flags9 & RF9_SUSCEP_POIS) {
+				note = " is hit hard";
 				dam *= 2;
-				if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
-			} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-				do_blind = 0;
-			}
-			break;
-
-		case GF_DARK_WEAK:
-			if (seen) obvious = TRUE;
-
-			/* Exception: Bolt-type spells have no special effect */
-			if (flg & (PROJECT_NORF | PROJECT_JUMP)) {
-				/* Get blinded later */
-				if (dark_spell) do_blind = dam; //occult shadow spell
-				else do_blind = damroll(3, (dam / 20)) + 1; //normal
-			}
-
-			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
-			    || (r_ptr->flags3 & RF3_UNDEAD)) {
-				note = " resists";
-				do_blind = 0;
-			}
-
-			//TODO: Light Hounds could get damaged. Currently, all GF_DARK_WEAK causes have been changed to do GF_DARK though, anyway.
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
-
-		case GF_DARK:
-			//TODO: Light Hounds could be susceptible.
-			if (seen) obvious = TRUE;
-
-			/* Exception: Bolt-type spells have no special effect */
-			if (flg & (PROJECT_NORF | PROJECT_JUMP)) {
-				/* Get blinded later */
-				do_blind = damroll(3, (dam / 20)) + 1;
-			}
-
-			if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
-			    || (r_ptr->flags3 & RF3_UNDEAD)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6);
-				do_blind = 0;
-			}
-			break;
-
-		/* Stone to Mud */
-		case GF_KILL_WALL:
-			/* Hurt by rock remover */
-			if (r_ptr->flags3 & RF3_HURT_ROCK) {
-				/* Notice effect */
-				if (seen) obvious = TRUE;
-
 #ifdef OLD_MONSTER_LORE
-				/* Memorize the effects */
-				if (seen) r_ptr->r_flags3 |= RF3_HURT_ROCK;
+				if (seen) r_ptr->flags9 |= RF9_SUSCEP_POIS;
 #endif
-
-				/* Cute little message */
-				note = " loses some skin";
-				note_dies = " dissolves";
 			}
-
-			/* Usually, ignore the effects */
-			else {
-				/* No damage */
+			break;
+		default: // Water
+			if (seen) obvious = TRUE;
+			if (r_ptr->flags9 & RF9_IM_WATER) {
+				note = " is immune";
 				dam = 0;
-				quiet = TRUE;
+			} else if (r_ptr->flags7 & RF7_AQUATIC) {
+				note = " resists a lot";
+				dam /= 9;
+			} else if (r_ptr->flags3 & RF3_RES_WATE) {
+				note = " resists";
+				dam /= 4;
+			}
+		}
+		break;
+
+	/* Random between ice (shards+water) and poison. At the moment its 3:1:1 shards:water:poison chance 
+			- the_sandman */
+	case GF_ICEPOISON:
+		switch (randint(5)) {
+		case 1:  // Shards
+		case 3:
+		case 5:
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
+				note = " resists";
+				dam *= 3; dam /= (randint(6) + 6);
+			} else if (r_ptr->flags8 & RF8_NO_CUT) {
+				note = " resists somewhat";
+				dam /= 2;
 			}
 			break;
-
-		/* Teleport undead (Use "dam" as "power") -- unused */
-		case GF_AWAY_UNDEAD:
-			/* Only affect undead */
-			if (r_ptr->flags3 & (RF3_UNDEAD)) {
-				bool resists_tele = FALSE;
-
-				if ((r_ptr->flags3 & (RF3_RES_TELE)) || (r_ptr->flags9 & RF9_IM_TELE)
-				    || (r_ptr->flags1 & (RF1_UNIQUE))) {
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
-#endif
-					note = " is unaffected";
-					resists_tele = TRUE;
-				} else if (m_ptr->level > randint(100)) {
-					note = " resists";
-					resists_tele = TRUE;
-				}
-
-				if (!resists_tele) {
-					if (seen) obvious = TRUE;
-#ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= (RF3_UNDEAD);
-#endif
-					do_dist = dam;
-				}
+		case 2: // Water
+			if (seen) obvious = TRUE;
+			if (r_ptr->flags9 & RF9_IM_WATER) {
+				note = " is immune";
+				dam = 0;
+			} else if (r_ptr->flags7 & RF7_AQUATIC) {
+				note = " resists a lot";
+				dam /= 9;
+			} else if (r_ptr->flags3 & RF3_RES_WATE) {
+				note = " resists";
+				dam /= 4;
 			}
+			break;
+		default: // Poison
+			if (seen) obvious = TRUE;
+			if ((r_ptr->flags3 & RF3_IM_POIS) ||
+			  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+			  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
+			{
+				note = " is immune";
+				dam = 0;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_IM_POIS;
+#endif
+			} else if (r_ptr->flags9 & RF9_RES_POIS) {
+				note = " resists";
+				dam /= 4;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_RES_POIS;
+#endif
+			} else if (r_ptr->flags9 & RF9_SUSCEP_POIS) {
+				note = " is hit hard";
+				dam *= 2;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags9 |= RF9_SUSCEP_POIS;
+#endif
+			}
+		}
+		break;
 
-			/* No "real" damage */
+	/* Lite, but only hurts susceptible creatures */
+	case GF_LITE_WEAK:
+		/* Hurt by light */
+		if (r_ptr->flags3 & RF3_HURT_LITE) {
+			/* Obvious effect */
+			if (seen) obvious = TRUE;
+
+#ifdef OLD_MONSTER_LORE
+			/* Memorize the effects */
+			if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
+#endif
+
+			/* Special effect */
+			note = " cringes from the light";
+			note_dies = " shrivels away in the light";
+
+			/* Specialty: Reflecting monsters take reduced damage from light, even if it was a ball or beam style attack! */
+			if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
+		}
+		/* Normally no damage */
+		else {
+			/* No damage */
 			dam = 0;
-			quiet_dam = TRUE;
-			break;
+			quiet = TRUE;
+		}
+		break;
 
-		/* Teleport evil (Use "dam" as "power") -- unused */
-		case GF_AWAY_EVIL:
-			/* Only affect evil */
-			if (r_ptr->flags3 & (RF3_EVIL)) {
-				bool resists_tele = FALSE;
+	/* Lite -- opposite of Dark */
+	case GF_LITE:
+	case GF_STARLITE:
+		if (seen) obvious = TRUE;
 
-				if ((r_ptr->flags3 & (RF3_RES_TELE)) || (r_ptr->flags9 & RF9_IM_TELE)
-				    || (r_ptr->flags1 & (RF1_UNIQUE))) {
+		/* Get blinded later */
+		do_blind = damroll(3, (dam / 20)) + 1;
+
+		if (r_ptr->d_char == 'A') {
+			do_blind = 0;
+			if (r_ptr->flags3 & RF3_EVIL) break; /* normal damage: fallen/corrupted angel */
+			note = " is immune";
+			dam = 0;
+		} else if (r_ptr->flags3 & RF3_HURT_LITE) {
 #ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+			if (seen) r_ptr->r_flags3 |= RF3_HURT_LITE;
 #endif
-					note = " is unaffected";
-					resists_tele = TRUE;
-				} else if (m_ptr->level > randint(100)) {
-					note = " resists";
-					resists_tele = TRUE;
-				}
+			note = " cringes from the light";
+			note_dies = " shrivels away in the light";
+			dam *= 2;
+			if (r_ptr->flags2 & RF2_REFLECTING) dam /= 2;
+		} else if ((r_ptr->flags4 & RF4_BR_LITE) || (r_ptr->flags9 & RF9_RES_LITE) || (r_ptr->flags2 & RF2_REFLECTING)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+			do_blind = 0;
+		}
+		break;
 
-				if (!resists_tele) {
-					if (seen) obvious = TRUE;
+	case GF_DARK_WEAK:
+		if (seen) obvious = TRUE;
+
+		/* Exception: Bolt-type spells have no special effect */
+		if (flg & (PROJECT_NORF | PROJECT_JUMP)) {
+			/* Get blinded later */
+			if (dark_spell) do_blind = dam; //occult shadow spell
+			else do_blind = damroll(3, (dam / 20)) + 1; //normal
+		}
+
+		if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
+		    || (r_ptr->flags3 & RF3_UNDEAD)) {
+			note = " resists";
+			do_blind = 0;
+		}
+
+		//TODO: Light Hounds could get damaged. Currently, all GF_DARK_WEAK causes have been changed to do GF_DARK though, anyway.
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	case GF_DARK:
+		//TODO: Light Hounds could be susceptible.
+		if (seen) obvious = TRUE;
+
+		/* Exception: Bolt-type spells have no special effect */
+		if (flg & (PROJECT_NORF | PROJECT_JUMP)) {
+			/* Get blinded later */
+			do_blind = damroll(3, (dam / 20)) + 1;
+		}
+
+		if ((r_ptr->flags4 & RF4_BR_DARK) || (r_ptr->flags9 & RF9_RES_DARK)
+		    || (r_ptr->flags3 & RF3_UNDEAD)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6);
+			do_blind = 0;
+		}
+		break;
+
+	/* Stone to Mud */
+	case GF_KILL_WALL:
+		/* Hurt by rock remover */
+		if (r_ptr->flags3 & RF3_HURT_ROCK) {
+			/* Notice effect */
+			if (seen) obvious = TRUE;
+
 #ifdef OLD_MONSTER_LORE
-					if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
+			/* Memorize the effects */
+			if (seen) r_ptr->r_flags3 |= RF3_HURT_ROCK;
 #endif
-					do_dist = dam;
-				}
+
+			/* Cute little message */
+			note = " loses some skin";
+			note_dies = " dissolves";
+		}
+
+		/* Usually, ignore the effects */
+		else {
+			/* No damage */
+			dam = 0;
+			quiet = TRUE;
+		}
+		break;
+
+	/* Teleport undead (Use "dam" as "power") -- unused */
+	case GF_AWAY_UNDEAD:
+		/* Only affect undead */
+		if (r_ptr->flags3 & (RF3_UNDEAD)) {
+			bool resists_tele = FALSE;
+
+			if ((r_ptr->flags3 & (RF3_RES_TELE)) || (r_ptr->flags9 & RF9_IM_TELE)
+			    || (r_ptr->flags1 & (RF1_UNIQUE))) {
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
+				note = " is unaffected";
+				resists_tele = TRUE;
+			} else if (m_ptr->level > randint(100)) {
+				note = " resists";
+				resists_tele = TRUE;
 			}
 
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
+			if (!resists_tele) {
+				if (seen) obvious = TRUE;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= (RF3_UNDEAD);
+#endif
+				do_dist = dam;
+			}
+		}
 
-		/* Teleport monster (Use "dam" as "power") */
-		case GF_AWAY_ALL:
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	/* Teleport evil (Use "dam" as "power") -- unused */
+	case GF_AWAY_EVIL:
+		/* Only affect evil */
+		if (r_ptr->flags3 & (RF3_EVIL)) {
+			bool resists_tele = FALSE;
+
+			if ((r_ptr->flags3 & (RF3_RES_TELE)) || (r_ptr->flags9 & RF9_IM_TELE)
+			    || (r_ptr->flags1 & (RF1_UNIQUE))) {
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= RF3_RES_TELE;
+#endif
+				note = " is unaffected";
+				resists_tele = TRUE;
+			} else if (m_ptr->level > randint(100)) {
+				note = " resists";
+				resists_tele = TRUE;
+			}
+
+			if (!resists_tele) {
+				if (seen) obvious = TRUE;
+#ifdef OLD_MONSTER_LORE
+				if (seen) r_ptr->r_flags3 |= (RF3_EVIL);
+#endif
+				do_dist = dam;
+			}
+		}
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	/* Teleport monster (Use "dam" as "power") */
+	case GF_AWAY_ALL:
 		{
 			bool resists_tele = FALSE;
 			//dun_level *l_ptr = getfloor(wpos);
@@ -7353,251 +7356,250 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		}
 
-
-		/* Turn undead (Use "dam" as "power") -- overrides NO_FEAR, UNIQUE -- unused */
-		case GF_TURN_UNDEAD:
-			/* Only affect undead */
-			if (r_ptr->flags3 & RF3_UNDEAD) {
+	/* Turn undead (Use "dam" as "power") -- overrides NO_FEAR, UNIQUE -- unused */
+	case GF_TURN_UNDEAD:
+		/* Only affect undead */
+		if (r_ptr->flags3 & RF3_UNDEAD) {
 #ifdef OLD_MONSTER_LORE
-				/* Learn about type */
-				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+			/* Learn about type */
+			if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
 #endif
-				/* Obvious */
-				if (seen) obvious = TRUE;
-				/* Apply some fear */
-				do_fear = damroll(3, (dam / 2)) + 1;
-
-				/* Attempt a saving throw */
-				if (RES_OLD(r_ptr->level, dam)) {
-					/* No obvious effect */
-					note = " is unaffected";
-					obvious = FALSE;
-					do_fear = 0;
-				}
-			}
-
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
-
-		/* Turn evil (Use "dam" as "power") -- overrides NO_FEAR -- unused */
-		case GF_TURN_EVIL:
-			/* Only affect evil */
-			if (r_ptr->flags3 & RF3_EVIL) {
-#ifdef OLD_MONSTER_LORE
-				/* Learn about type */
-				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
-#endif
-				/* Obvious */
-				if (seen) obvious = TRUE;
-				/* Apply some fear */
-				do_fear = damroll(3, (dam / 2)) + 1;
-
-				if (r_ptr->flags1 & RF1_UNIQUE) {
-					/* No obvious effect */
-					note = " is unaffected";
-					obvious = FALSE;
-					do_fear = 0;
-				}
-				/* Attempt a saving throw */
-				else if (RES_OLD(r_ptr->level, dam)) {
-					/* No obvious effect */
-					note = " is unaffected";
-					obvious = FALSE;
-					do_fear = 0;
-				}
-			}
-
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
-
-		/* Turn monster (Use "dam" as "power") */
-		case GF_TURN_ALL:
 			/* Obvious */
 			if (seen) obvious = TRUE;
-
 			/* Apply some fear */
 			do_fear = damroll(3, (dam / 2)) + 1;
 
 			/* Attempt a saving throw */
-			if ((r_ptr->flags1 & RF1_UNIQUE) ||
-			    (r_ptr->flags3 & RF3_NO_FEAR)) {
+			if (RES_OLD(r_ptr->level, dam)) {
 				/* No obvious effect */
 				note = " is unaffected";
 				obvious = FALSE;
 				do_fear = 0;
-			} else if (RES_OLD(r_ptr->level, dam)) {
-				note = " resists the effect";
+			}
+		}
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	/* Turn evil (Use "dam" as "power") -- overrides NO_FEAR -- unused */
+	case GF_TURN_EVIL:
+		/* Only affect evil */
+		if (r_ptr->flags3 & RF3_EVIL) {
+#ifdef OLD_MONSTER_LORE
+			/* Learn about type */
+			if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+#endif
+			/* Obvious */
+			if (seen) obvious = TRUE;
+			/* Apply some fear */
+			do_fear = damroll(3, (dam / 2)) + 1;
+
+			if (r_ptr->flags1 & RF1_UNIQUE) {
+				/* No obvious effect */
+				note = " is unaffected";
 				obvious = FALSE;
 				do_fear = 0;
 			}
+			/* Attempt a saving throw */
+			else if (RES_OLD(r_ptr->level, dam)) {
+				/* No obvious effect */
+				note = " is unaffected";
+				obvious = FALSE;
+				do_fear = 0;
+			}
+		}
 
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
 
-		/* Dispel undead */
-		case GF_DISP_UNDEAD:
-			/* Only affect undead */
-			if (r_ptr->flags3 & RF3_UNDEAD) {
+	/* Turn monster (Use "dam" as "power") */
+	case GF_TURN_ALL:
+		/* Obvious */
+		if (seen) obvious = TRUE;
+
+		/* Apply some fear */
+		do_fear = damroll(3, (dam / 2)) + 1;
+
+		/* Attempt a saving throw */
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags3 & RF3_NO_FEAR)) {
+			/* No obvious effect */
+			note = " is unaffected";
+			obvious = FALSE;
+			do_fear = 0;
+		} else if (RES_OLD(r_ptr->level, dam)) {
+			note = " resists the effect";
+			obvious = FALSE;
+			do_fear = 0;
+		}
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	/* Dispel undead */
+	case GF_DISP_UNDEAD:
+		/* Only affect undead */
+		if (r_ptr->flags3 & RF3_UNDEAD) {
 #ifdef OLD_MONSTER_LORE
-				/* Learn about type */
-				if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
+			/* Learn about type */
+			if (seen) r_ptr->r_flags3 |= RF3_UNDEAD;
 #endif
 
-				/* Obvious */
-				if (seen) obvious = TRUE;
-
-				/* Message */
-				note = " shudders"; 
-				note_dies = " dissolves";
-			}
-			/* Ignore other monsters */
-			else {
-				/* No damage */
-				dam = 0;
-				quiet = TRUE;
-			}
-			break;
-
-		/* Dispel evil */
-		case GF_DISP_EVIL:
-			/* Only affect evil */
-			if (r_ptr->flags3 & RF3_EVIL) {
-#ifdef OLD_MONSTER_LORE
-				/* Learn about type */
-				if (seen) r_ptr->r_flags3 |= RF3_EVIL;
-#endif
-
-				/* Obvious */
-				if (seen) obvious = TRUE;
-
-				/* Message */
-				note = " shudders";
-				note_dies = " dissolves";
-			}
-			/* Ignore other monsters */
-			else {
-				/* No damage */
-				dam = 0;
-				quiet = TRUE;
-			}
-			break;
-
-		case GF_DISP_DEMON:
-			/* Only affect demons */
-			if (r_ptr->flags3 & RF3_DEMON) {
-#ifdef OLD_MONSTER_LORE
-				/* Learn about type */
-				if (seen) r_ptr->r_flags3 |= RF3_DEMON;
-#endif
-
-				/* Obvious */
-				if (seen) obvious = TRUE;
-
-				/* Message */
-				note = " shudders";
-				note_dies = " dissolves";
-			}
-			/* Ignore other monsters */
-			else {
-				/* No damage */
-				dam = 0;
-				quiet = TRUE;
-			}
-			break;
-
-		/* Dispel monster */
-		case GF_DISP_ALL:
 			/* Obvious */
 			if (seen) obvious = TRUE;
+
+			/* Message */
+			note = " shudders"; 
+			note_dies = " dissolves";
+		}
+		/* Ignore other monsters */
+		else {
+			/* No damage */
+			dam = 0;
+			quiet = TRUE;
+		}
+		break;
+
+	/* Dispel evil */
+	case GF_DISP_EVIL:
+		/* Only affect evil */
+		if (r_ptr->flags3 & RF3_EVIL) {
+#ifdef OLD_MONSTER_LORE
+			/* Learn about type */
+			if (seen) r_ptr->r_flags3 |= RF3_EVIL;
+#endif
+
+			/* Obvious */
+			if (seen) obvious = TRUE;
+
 			/* Message */
 			note = " shudders";
 			note_dies = " dissolves";
-			break;
+		}
+		/* Ignore other monsters */
+		else {
+			/* No damage */
+			dam = 0;
+			quiet = TRUE;
+		}
+		break;
 
-		/* mimic spell 'Cause Wounds' aka monsters' 'Curse' */
-		case GF_CAUSE:
+	case GF_DISP_DEMON:
+		/* Only affect demons */
+		if (r_ptr->flags3 & RF3_DEMON) {
+#ifdef OLD_MONSTER_LORE
+			/* Learn about type */
+			if (seen) r_ptr->r_flags3 |= RF3_DEMON;
+#endif
+
 			/* Obvious */
 			if (seen) obvious = TRUE;
 
-			if (r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT)) {
-				note = " is unaffected";
-				dam = 0;
-			} else {
-				int chance = 100;
-
-				if (!quiet) chance += p_ptr->lev * 2;
-				if (r_ptr->flags3 & RF3_EVIL) chance <<= 1; //reverse pseudo-savingthrow vs 'neutral' monsters (aka 'non-evil')
-				if (r_ptr->flags3 & RF3_GOOD) chance >>= 1; //pseudo-savingthrow especially for 'good' monsters
-				if (rand_int(chance) < r_ptr->level) {
-					note = " resists the effect";
-					dam = 0;
-				}
-			}
-			break;
-
-		/* Nuclear waste */
-		case GF_NUKE:
-			if (seen) obvious = TRUE;
-
-			if ((r_ptr->flags3 & RF3_IM_POIS) ||
-			    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
-				note = " is immune";
-				dam = 0;
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= (RF3_IM_POIS);
-#endif
-			} else if (r_ptr->flags9 & (RF9_RES_POIS)) {
-				note = " resists";
-				dam *= 3; dam /= (randint(6) + 6 );
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags9 |= (RF9_RES_POIS);
-#endif
-			}
-			else if (randint(3) == 1) do_poly = TRUE;
-			break;
-
-		/* Pure damage */
-		case GF_DISINTEGRATE:
-			if (seen) obvious = TRUE;
-			if (r_ptr->flags3 & (RF3_HURT_ROCK)) {
-#ifdef OLD_MONSTER_LORE
-				if (seen) r_ptr->r_flags3 |= (RF3_HURT_ROCK);
-#endif
-				note = " loses some skin";
-				note_dies = " evaporates";
-				dam *= 2;
-			}
-
-			if (r_ptr->flags1 & RF1_UNIQUE) {
-				if (rand_int(m_ptr->level + 10) > rand_int(plev)) {
-					note = " resists";
-					dam >>= 3;
-				}
-			}
-			break;
-
-		case GF_HOLD:
-		case GF_DOMINATE:
-			if (!quiet) {
-				if ((!(r_ptr->flags1 & (RF1_UNIQUE|RF1_NEVER_MOVE)) &&
-				    !(r_ptr->flags9 & RF9_IM_PSI) && !(r_ptr->flags7 & RF7_MULTIPLY)) ||
-				    is_admin(p_ptr))
-					m_ptr->owner = p_ptr->id;
-				note = " starts following you";
-			}
+			/* Message */
+			note = " shudders";
+			note_dies = " dissolves";
+		}
+		/* Ignore other monsters */
+		else {
+			/* No damage */
 			dam = 0;
-			quiet_dam = TRUE;
-			break;
+			quiet = TRUE;
+		}
+		break;
 
-		/* Teleport monster TO */
-		case GF_TELE_TO:
+	/* Dispel monster */
+	case GF_DISP_ALL:
+		/* Obvious */
+		if (seen) obvious = TRUE;
+		/* Message */
+		note = " shudders";
+		note_dies = " dissolves";
+		break;
+
+	/* mimic spell 'Cause Wounds' aka monsters' 'Curse' */
+	case GF_CAUSE:
+		/* Obvious */
+		if (seen) obvious = TRUE;
+
+		if (r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT)) {
+			note = " is unaffected";
+			dam = 0;
+		} else {
+			int chance = 100;
+
+			if (!quiet) chance += p_ptr->lev * 2;
+			if (r_ptr->flags3 & RF3_EVIL) chance <<= 1; //reverse pseudo-savingthrow vs 'neutral' monsters (aka 'non-evil')
+			if (r_ptr->flags3 & RF3_GOOD) chance >>= 1; //pseudo-savingthrow especially for 'good' monsters
+			if (rand_int(chance) < r_ptr->level) {
+				note = " resists the effect";
+				dam = 0;
+			}
+		}
+		break;
+
+	/* Nuclear waste */
+	case GF_NUKE:
+		if (seen) obvious = TRUE;
+
+		if ((r_ptr->flags3 & RF3_IM_POIS) ||
+		    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
+		    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
+			note = " is immune";
+			dam = 0;
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= (RF3_IM_POIS);
+#endif
+		} else if (r_ptr->flags9 & (RF9_RES_POIS)) {
+			note = " resists";
+			dam *= 3; dam /= (randint(6) + 6 );
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags9 |= (RF9_RES_POIS);
+#endif
+		}
+		else if (randint(3) == 1) do_poly = TRUE;
+		break;
+
+	/* Pure damage */
+	case GF_DISINTEGRATE:
+		if (seen) obvious = TRUE;
+		if (r_ptr->flags3 & (RF3_HURT_ROCK)) {
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags3 |= (RF3_HURT_ROCK);
+#endif
+			note = " loses some skin";
+			note_dies = " evaporates";
+			dam *= 2;
+		}
+
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+			if (rand_int(m_ptr->level + 10) > rand_int(plev)) {
+				note = " resists";
+				dam >>= 3;
+			}
+		}
+		break;
+
+	case GF_HOLD:
+	case GF_DOMINATE:
+		if (!quiet) {
+			if ((!(r_ptr->flags1 & (RF1_UNIQUE|RF1_NEVER_MOVE)) &&
+			    !(r_ptr->flags9 & RF9_IM_PSI) && !(r_ptr->flags7 & RF7_MULTIPLY)) ||
+			    is_admin(p_ptr))
+				m_ptr->owner = p_ptr->id;
+			note = " starts following you";
+		}
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	/* Teleport monster TO */
+	case GF_TELE_TO:
 		{
 			bool resists_tele = FALSE;
 			//dun_level *l_ptr = getfloor(wpos);
@@ -7650,464 +7652,464 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		}
 
-		/* Hand of Doom */
-		case GF_HAND_DOOM:
+	/* Hand of Doom */
+	case GF_HAND_DOOM:
 #if 0	/* okay, do that! ;) */
-			if (r_ptr->r_flags1 & RF1_UNIQUE) {
-				note = " resists";
-				dam = 0;
-			} else
-#endif	// 0
-			{
-				int dummy = (((s32b) ((65 + randint(25)) * (m_ptr->hp))) / 100);
-				//msg_print(Ind, "You feel your life fade away!");
-
-				if (m_ptr->hp - dummy < 1) dummy = m_ptr->hp - 1;
-
-				dam = dummy;
-			}
-			break;
-
-		case GF_STOP: /* prevent monster from moving */
-			dam = (dam - r_ptr->level - rand_int(10)) / 6;
-			if (dam <= 0) {
-				dam = 0;
-				//note: we don't differentiate between 'unaffected' and 'resists' here, a dilemma added by the random factor above.
-				note = " is unaffected";
-			} else {
-				note = " is frozen to the ground";
-				m_ptr->no_move = dam;
-				dam = 0;
-			}
-			quiet_dam = TRUE;
-			break;
-
-		/* Sleep (Use "dam" as "power") */
-		case GF_STASIS:
-			if (seen) obvious = TRUE;
-
-			/* Attempt a saving throw */
-			if ((r_ptr->flags1 & (RF1_UNIQUE)) ||
-			    (r_ptr->flags9 & RF9_RES_TIME) ||
-			    RES_OLD(r_ptr->level, dam)) {
-				note = " is unaffected";
-				obvious = FALSE;
-			} else {
-				/* Go to sleep (much) later */
-				note = " is suspended";
-				do_sleep = GF_OLD_SLEEP_DUR;
-			}
-
-			/* No "real" damage */
+		if (r_ptr->r_flags1 & RF1_UNIQUE) {
+			note = " resists";
 			dam = 0;
-			quiet_dam = TRUE;
-			break;
+		} else
+#endif	// 0
+		{
+			int dummy = (((s32b) ((65 + randint(25)) * (m_ptr->hp))) / 100);
+			//msg_print(Ind, "You feel your life fade away!");
 
-		/* Decrease strength */
-		case GF_DEC_STR:
+			if (m_ptr->hp - dummy < 1) dummy = m_ptr->hp - 1;
+
+			dam = dummy;
+		}
+		break;
+
+	case GF_STOP: /* prevent monster from moving */
+		dam = (dam - r_ptr->level - rand_int(10)) / 6;
+		if (dam <= 0) {
+			dam = 0;
+			//note: we don't differentiate between 'unaffected' and 'resists' here, a dilemma added by the random factor above.
+			note = " is unaffected";
+		} else {
+			note = " is frozen to the ground";
+			m_ptr->no_move = dam;
+			dam = 0;
+		}
+		quiet_dam = TRUE;
+		break;
+
+	/* Sleep (Use "dam" as "power") */
+	case GF_STASIS:
+		if (seen) obvious = TRUE;
+
+		/* Attempt a saving throw */
+		if ((r_ptr->flags1 & (RF1_UNIQUE)) ||
+		    (r_ptr->flags9 & RF9_RES_TIME) ||
+		    RES_OLD(r_ptr->level, dam)) {
+			note = " is unaffected";
+			obvious = FALSE;
+		} else {
+			/* Go to sleep (much) later */
+			note = " is suspended";
+			do_sleep = GF_OLD_SLEEP_DUR;
+		}
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
+
+	/* Decrease strength */
+	case GF_DEC_STR:
+		/* hack */
+		dam = 0;
+
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+		    (m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
+		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		} else {
+			for (i = 0; i < 4; i++) {
+				/* prevent div0 if monster has no damaging attack */
+				if (!m_ptr->blow[i].org_d_dice) continue;
+
+				/* if dice are bigger than sides or if sides are just not further reducible, reduce the dice if they're still reducible */
+				if ((m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side || (100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side <= 72) &&
+				    (100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice > 72) {
+					/* reduce by 14% */
+					m_ptr->blow[i].d_dice -= (14 * m_ptr->blow[i].org_d_dice) / 100;
+					/* cap at 72% total reduction */
+					if ((100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice < 72)
+						m_ptr->blow[i].d_dice = (72 * m_ptr->blow[i].org_d_dice) / 100;
+					dam = 1;
+				}
+				/* otherwise reduce the sides, if still reducible */
+				else if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side > 72) {
+					/* reduce by 14% */
+					m_ptr->blow[i].d_side -= (14 * m_ptr->blow[i].org_d_side) / 100;
+					/* cap at 72% total reduction */
+					if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side < 72)
+						m_ptr->blow[i].d_side = (72 * m_ptr->blow[i].org_d_side) / 100;
+					dam = 1;
+				}
+			}
+			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears weaker!");
+			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		}
+
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Decrease dexterity */
+	case GF_DEC_DEX:
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+		    (m_ptr->r_idx == 74 || m_ptr->r_idx == 539) ||
+		    (m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
+		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+		} else {
+			if (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) {
+				if (m_ptr->ac) {
+					msg_print_near_monster(c_ptr->m_idx, "appears clumsy!");
+					m_ptr->ac = (m_ptr->ac * 7) / 8;
+					if (m_ptr->ac > 10) m_ptr->ac -= 2;
+					else if (m_ptr->ac > 5) m_ptr->ac -= 1;
+				}
+			}
+			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		}
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Decrease dexterity */
+	case GF_DEC_CON:
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+		    (m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
+		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+		} else {
+			if (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) {
+				if (m_ptr->maxhp > 3) {
+					msg_print_near_monster(c_ptr->m_idx, "appears less healthy!");
+					m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
+					if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
+					else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
+					if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
+				}
+				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+			}
+		}
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Restore strength */
+	case GF_RES_STR:
+		dam = 0; /* hack :) */
+		for (i = 0; i < 4; i++) {
+		/*	  if (m_ptr->blow[i].d_dice < r_ptr->blow[i].d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice;
+				if (m_ptr->blow[i].d_side < r_ptr->blow[i].d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].d_side;
+		*/	if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) {
+				m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+				dam = 1;
+			}
+			if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) {
+				m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+				dam = 1;
+			}
+		}
+		if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak.");
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Restore dexterity */
+	case GF_RES_DEX:
+		/*if (m_ptr->ac < r_ptr->ac) {
+			m_ptr->ac = r_ptr->ac;*/
+		if (m_ptr->ac < m_ptr->org_ac) {
+			m_ptr->ac = m_ptr->org_ac;
+			msg_print_near_monster(c_ptr->m_idx, "appears less clumsy.");
+		}
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Restore constitution */
+	case GF_RES_CON:
+		/*if (m_ptr->hp < r_ptr->hside * r_ptr->hdice) {
+			m_ptr->hp = r_ptr->hside * r_ptr->hdice;*/
+		if (m_ptr->maxhp < m_ptr->org_maxhp) {
+			m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
+			m_ptr->maxhp = m_ptr->org_maxhp;
+			msg_print_near_monster(c_ptr->m_idx, "appears less sick.");
+		}
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Increase strength! */
+	case GF_INC_STR:
+		if ((r_ptr->flags7 & RF7_NO_DEATH)) {
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		} else {
 			/* hack */
 			dam = 0;
 
-			if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
-			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
-			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
-			    (m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
-			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
-				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			} else {
-				for (i = 0; i < 4; i++) {
-					/* prevent div0 if monster has no damaging attack */
-					if (!m_ptr->blow[i].org_d_dice) continue;
+			for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
+				if (!m_ptr->blow[i].org_d_dice) continue; /* monster has no damaging attack? */
 
-					/* if dice are bigger than sides or if sides are just not further reducible, reduce the dice if they're still reducible */
-					if ((m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side || (100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side <= 72) &&
-					    (100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice > 72) {
-						/* reduce by 14% */
-						m_ptr->blow[i].d_dice -= (14 * m_ptr->blow[i].org_d_dice) / 100;
-						/* cap at 72% total reduction */
-						if ((100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice < 72)
-							m_ptr->blow[i].d_dice = (72 * m_ptr->blow[i].org_d_dice) / 100;
-						dam = 1;
-					}
-					/* otherwise reduce the sides, if still reducible */
-					else if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side > 72) {
-						/* reduce by 14% */
-						m_ptr->blow[i].d_side -= (14 * m_ptr->blow[i].org_d_side) / 100;
-						/* cap at 72% total reduction */
-						if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side < 72)
-							m_ptr->blow[i].d_side = (72 * m_ptr->blow[i].org_d_side) / 100;
-						dam = 1;
-					}
-				}
-				if (dam) msg_print_near_monster(c_ptr->m_idx, "appears weaker!");
-				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			}
+				/* do a 'restore strenght' before increasing it */
+				if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+				if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
 
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		/* Decrease dexterity */
-		case GF_DEC_DEX:
-			if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
-			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
-			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
-			    (m_ptr->r_idx == 74 || m_ptr->r_idx == 539) ||
-			    (m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
-			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
-				//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-			} else {
-				if (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) {
-					if (m_ptr->ac) {
-						msg_print_near_monster(c_ptr->m_idx, "appears clumsy!");
-						m_ptr->ac = (m_ptr->ac * 7) / 8;
-						if (m_ptr->ac > 10) m_ptr->ac -= 2;
-						else if (m_ptr->ac > 5) m_ptr->ac -= 1;
-					}
-				}
-				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			}
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		/* Decrease dexterity */
-		case GF_DEC_CON:
-			if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
-			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
-			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
-			    (m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
-			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
-				//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-			} else {
-				if (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) {
-					if (m_ptr->maxhp > 3) {
-						msg_print_near_monster(c_ptr->m_idx, "appears less healthy!");
-						m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
-						if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
-						else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
-						if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
-					}
-					//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-				}
-			}
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		/* Restore strength */
-		case GF_RES_STR:
-			dam = 0; /* hack :) */
-			for (i = 0; i < 4; i++) {
-			/*	  if (m_ptr->blow[i].d_dice < r_ptr->blow[i].d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice;
-					if (m_ptr->blow[i].d_side < r_ptr->blow[i].d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].d_side;
-			*/	if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) {
-					m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+				if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side
+				    && m_ptr->blow[i].d_dice < m_ptr->blow[i].org_d_dice + 3) {
+					m_ptr->blow[i].d_dice++;
 					dam = 1;
 				}
-				if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) {
-					m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+				else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0
+				    && m_ptr->blow[i].d_side < m_ptr->blow[i].org_d_side + 3) {
+					m_ptr->blow[i].d_side++;
+					dam = 1;
+				}
+
+				if (dam) msg_print_near_monster(c_ptr->m_idx, "appears stronger!");
+				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+			}
+		}
+
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Increase dexterity! */
+	case GF_INC_DEX:
+		if ((r_ptr->flags7 & RF7_NO_DEATH)) {
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		} else {
+			if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac; /* include restore dex */
+			if (m_ptr->ac < m_ptr->org_ac + 50) {
+				m_ptr->ac += 5;
+				msg_print_near_monster(c_ptr->m_idx, "appears more dextrous!");
+			}
+			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		}
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Increase constitution! */
+	case GF_INC_CON:
+		if ((r_ptr->flags7 & RF7_NO_DEATH)) {
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		} else {
+			if (m_ptr->maxhp < m_ptr->org_maxhp) { /* include a restore con here */
+				m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
+				m_ptr->maxhp = m_ptr->org_maxhp;
+			}
+
+			if (m_ptr->maxhp < (m_ptr->org_maxhp * 3) / 2) {
+				m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
+				m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
+				msg_print_near_monster(c_ptr->m_idx, "appears healthier!");
+			}
+			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		}
+
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Augmentation! (who'd do such a thing, silyl..) */
+	case GF_AUGMENTATION:
+		if ((r_ptr->flags7 & RF7_NO_DEATH)) {
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		} else {
+			/* hack */
+			dam = 0;
+
+			for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
+				if (!m_ptr->blow[i].org_d_dice) continue; /* monster has no damaging attack? */
+
+				/* res */
+				if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+				if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+				/* inc */
+				if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side
+				    && m_ptr->blow[i].d_dice < m_ptr->blow[i].org_d_dice + 3) {
+					m_ptr->blow[i].d_dice++;
+					dam = 1;
+				}
+				else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0
+				    && m_ptr->blow[i].d_side < m_ptr->blow[i].org_d_side + 3) {
+					m_ptr->blow[i].d_side++;
 					dam = 1;
 				}
 			}
-			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak.");
-			dam = 0;
-			quiet = TRUE;
-			break;
 
-		/* Restore dexterity */
-		case GF_RES_DEX:
-			/*if (m_ptr->ac < r_ptr->ac) {
-				m_ptr->ac = r_ptr->ac;*/
-			if (m_ptr->ac < m_ptr->org_ac) {
-				m_ptr->ac = m_ptr->org_ac;
-				msg_print_near_monster(c_ptr->m_idx, "appears less clumsy.");
+			/* res */
+			if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac;
+			/* inc */
+			if (m_ptr->ac < m_ptr->org_ac + 50) {
+				m_ptr->ac += 5;
+				dam = 1;
 			}
-			dam = 0;
-			quiet = TRUE;
-			break;
 
-		/* Restore constitution */
-		case GF_RES_CON:
-			/*if (m_ptr->hp < r_ptr->hside * r_ptr->hdice) {
-				m_ptr->hp = r_ptr->hside * r_ptr->hdice;*/
+			/* res */
 			if (m_ptr->maxhp < m_ptr->org_maxhp) {
 				m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
 				m_ptr->maxhp = m_ptr->org_maxhp;
-				msg_print_near_monster(c_ptr->m_idx, "appears less sick.");
 			}
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		/* Increase strength! */
-		case GF_INC_STR:
-			if ((r_ptr->flags7 & RF7_NO_DEATH)) {
-				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			} else {
-				/* hack */
-				dam = 0;
-
-				for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
-					if (!m_ptr->blow[i].org_d_dice) continue; /* monster has no damaging attack? */
-
-					/* do a 'restore strenght' before increasing it */
-					if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
-					if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
-
-					if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side
-					    && m_ptr->blow[i].d_dice < m_ptr->blow[i].org_d_dice + 3) {
-						m_ptr->blow[i].d_dice++;
-						dam = 1;
-					}
-					else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0
-					    && m_ptr->blow[i].d_side < m_ptr->blow[i].org_d_side + 3) {
-						m_ptr->blow[i].d_side++;
-						dam = 1;
-					}
-
-					if (dam) msg_print_near_monster(c_ptr->m_idx, "appears stronger!");
-					//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-				}
-			}
-
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		/* Increase dexterity! */
-		case GF_INC_DEX:
-			if ((r_ptr->flags7 & RF7_NO_DEATH)) {
-				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			} else {
-				if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac; /* include restore dex */
-				if (m_ptr->ac < m_ptr->org_ac + 50) {
-					m_ptr->ac += 5;
-					msg_print_near_monster(c_ptr->m_idx, "appears more dextrous!");
-				}
-				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			}
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		/* Increase constitution! */
-		case GF_INC_CON:
-			if ((r_ptr->flags7 & RF7_NO_DEATH)) {
-				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			} else {
-				if (m_ptr->maxhp < m_ptr->org_maxhp) { /* include a restore con here */
-					m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
-					m_ptr->maxhp = m_ptr->org_maxhp;
-				}
-
-				if (m_ptr->maxhp < (m_ptr->org_maxhp * 3) / 2) {
-					m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
-					m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
-					msg_print_near_monster(c_ptr->m_idx, "appears healthier!");
-				}
-				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			}
-
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		/* Augmentation! (who'd do such a thing, silyl..) */
-		case GF_AUGMENTATION:
-			if ((r_ptr->flags7 & RF7_NO_DEATH)) {
-				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			} else {
-				/* hack */
-				dam = 0;
-
-				for (i = 0; i < 4; i++) { /* increase the value which has less effect on total damage output - C. Blue :) */
-					if (!m_ptr->blow[i].org_d_dice) continue; /* monster has no damaging attack? */
-
-					/* res */
-					if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
-					if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
-					/* inc */
-					if (m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side
-					    && m_ptr->blow[i].d_dice < m_ptr->blow[i].org_d_dice + 3) {
-						m_ptr->blow[i].d_dice++;
-						dam = 1;
-					}
-					else if (m_ptr->blow[i].d_side > 0 && m_ptr->blow[i].d_dice > 0
-					    && m_ptr->blow[i].d_side < m_ptr->blow[i].org_d_side + 3) {
-						m_ptr->blow[i].d_side++;
-						dam = 1;
-					}
-				}
-
-				/* res */
-				if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac;
-				/* inc */
-				if (m_ptr->ac < m_ptr->org_ac + 50) {
-					m_ptr->ac += 5;
-					dam = 1;
-				}
-
-				/* res */
-				if (m_ptr->maxhp < m_ptr->org_maxhp) {
-					m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
-					m_ptr->maxhp = m_ptr->org_maxhp;
-				}
-				/* inc */
-				if (m_ptr->maxhp < (m_ptr->org_maxhp * 3) / 2) {
-					m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
-					m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
-					dam = 1;
-				}
-
-				if (dam) msg_print_near_monster(c_ptr->m_idx, "appears more powerful!");
-				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			}
-
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		/* Ruination! (now we're talking) */
-		case GF_RUINATION:
-			if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
-			    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
-			    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
-				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			} else {
-				/* hack */
-				dam = 0;
-
-				/* -STR */
-				if (!(r_ptr->flags3 & (RF3_TROLL | RF3_GIANT)) &&
-				    !(m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
-				    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
-				for (i = 0; i < 4; i++) {
-					/* prevent div0 if monster has no damaging attack */
-					if (!m_ptr->blow[i].org_d_dice) continue;
-
-					/* if dice are bigger than sides or if sides are just not further reducible, reduce the dice if they're still reducible */
-					if ((m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side || (100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side <= 72) &&
-					    (100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice > 72) {
-						/* reduce by 14% */
-						m_ptr->blow[i].d_dice -= (14 * m_ptr->blow[i].org_d_dice) / 100;
-						/* cap at 72% total reduction */
-						if ((100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice < 72)
-							m_ptr->blow[i].d_dice = (72 * m_ptr->blow[i].org_d_dice) / 100;
-						dam = 1;
-					}
-					/* otherwise reduce the sides, if still reducible */
-					else if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side > 72) {
-						/* reduce by 14% */
-						m_ptr->blow[i].d_side -= (14 * m_ptr->blow[i].org_d_side) / 100;
-						/* cap at 72% total reduction */
-						if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side < 72)
-							m_ptr->blow[i].d_side = (72 * m_ptr->blow[i].org_d_side) / 100;
-						dam = 1;
-					}
-				}
-
-				/* -DEX */
-				if (!(m_ptr->r_idx == 74 || m_ptr->r_idx == 539) &&
-				    !(m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
-				    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL) &&
-				    (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2)) {
-					if (m_ptr->ac) {
-						m_ptr->ac = (m_ptr->ac * 7) / 8;
-						if (m_ptr->ac > 10) m_ptr->ac -= 2;
-						else if (m_ptr->ac > 5) m_ptr->ac -= 1;
-						dam = 1;
-					}
-				}
-
-				/* -CON */
-				if (!(m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
-				    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL) &&
-				    (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2)) {
-					if (m_ptr->maxhp > 3) {
-						m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
-						if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
-						else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
-						if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
-						dam = 1;
-					}
-				}
-
-				if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less powerful!");
-				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			}
-
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		/* Give experience! (dam -> +levels) */
-		case GF_EXP:
-			if ((r_ptr->flags7 & RF7_NO_DEATH) && m_ptr->level < MONSTER_LEVEL_MAX) {
-				//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-			} else {
-				msg_print_near_monster(c_ptr->m_idx, "appears more experienced!");
-				if (dam < 1) dam = 1;
-				m_ptr->exp = MONSTER_EXP(m_ptr->level + dam);
-				monster_check_experience(c_ptr->m_idx, FALSE);
-			}
-			dam = 0;
-			quiet = TRUE;
-			break;
-
-		case GF_CURING:
-			/* hack - avoid crazy message spam under special circumstances */
-			dam = 0;
-
-			if (m_ptr->confused) {
-				m_ptr->confused = 0;
-				//msg_print_near_monster(c_ptr->m_idx, "is no longer confused.");
-				dam = 1;
-			}
-			if (m_ptr->stunned) {
-				m_ptr->stunned = 0;
-				//msg_print_near_monster(c_ptr->m_idx, "is no longer stunned.");
+			/* inc */
+			if (m_ptr->maxhp < (m_ptr->org_maxhp * 3) / 2) {
+				m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
+				m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
 				dam = 1;
 			}
 
-			dam = 0; /* hack :) */
+			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears more powerful!");
+			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		}
+
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Ruination! (now we're talking) */
+	case GF_RUINATION:
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		} else {
+			/* hack */
+			dam = 0;
+
+			/* -STR */
+			if (!(r_ptr->flags3 & (RF3_TROLL | RF3_GIANT)) &&
+			    !(m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
+			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
 			for (i = 0; i < 4; i++) {
-				if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) {
-					m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+				/* prevent div0 if monster has no damaging attack */
+				if (!m_ptr->blow[i].org_d_dice) continue;
+
+				/* if dice are bigger than sides or if sides are just not further reducible, reduce the dice if they're still reducible */
+				if ((m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side || (100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side <= 72) &&
+				    (100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice > 72) {
+					/* reduce by 14% */
+					m_ptr->blow[i].d_dice -= (14 * m_ptr->blow[i].org_d_dice) / 100;
+					/* cap at 72% total reduction */
+					if ((100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice < 72)
+						m_ptr->blow[i].d_dice = (72 * m_ptr->blow[i].org_d_dice) / 100;
 					dam = 1;
 				}
-				if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) {
-					m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+				/* otherwise reduce the sides, if still reducible */
+				else if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side > 72) {
+					/* reduce by 14% */
+					m_ptr->blow[i].d_side -= (14 * m_ptr->blow[i].org_d_side) / 100;
+					/* cap at 72% total reduction */
+					if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side < 72)
+						m_ptr->blow[i].d_side = (72 * m_ptr->blow[i].org_d_side) / 100;
 					dam = 1;
 				}
 			}
-			//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak");
 
-			if (m_ptr->ac < m_ptr->org_ac) {
-				m_ptr->ac = m_ptr->org_ac;
-				//msg_print_near_monster(c_ptr->m_idx, "appears less clumsy");
-				dam = 1;
+			/* -DEX */
+			if (!(m_ptr->r_idx == 74 || m_ptr->r_idx == 539) &&
+			    !(m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
+			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL) &&
+			    (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2)) {
+				if (m_ptr->ac) {
+					m_ptr->ac = (m_ptr->ac * 7) / 8;
+					if (m_ptr->ac > 10) m_ptr->ac -= 2;
+					else if (m_ptr->ac > 5) m_ptr->ac -= 1;
+					dam = 1;
+				}
 			}
 
-			if (m_ptr->maxhp < m_ptr->org_maxhp) {
-				m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
-				m_ptr->maxhp = m_ptr->org_maxhp;
-				//msg_print_near_monster(c_ptr->m_idx, "appears less sick");
-				dam = 1;
+			/* -CON */
+			if (!(m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
+			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL) &&
+			    (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2)) {
+				if (m_ptr->maxhp > 3) {
+					m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
+					if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
+					else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
+					if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
+					dam = 1;
+				}
 			}
 
-			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears cured.");
+			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less powerful!");
+			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		}
 
-			dam = 0;
-			quiet = TRUE;
-			break;
+		dam = 0;
+		quiet = TRUE;
+		break;
 
-		/* Default */
-		default:
-			/* No damage */
-			dam = 0;
-			quiet_dam = TRUE;
-			break;
+	/* Give experience! (dam -> +levels) */
+	case GF_EXP:
+		if ((r_ptr->flags7 & RF7_NO_DEATH) && m_ptr->level < MONSTER_LEVEL_MAX) {
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+		} else {
+			msg_print_near_monster(c_ptr->m_idx, "appears more experienced!");
+			if (dam < 1) dam = 1;
+			m_ptr->exp = MONSTER_EXP(m_ptr->level + dam);
+			monster_check_experience(c_ptr->m_idx, FALSE);
+		}
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	case GF_CURING:
+		/* hack - avoid crazy message spam under special circumstances */
+		dam = 0;
+
+		if (m_ptr->confused) {
+			m_ptr->confused = 0;
+			//msg_print_near_monster(c_ptr->m_idx, "is no longer confused.");
+			dam = 1;
+		}
+		if (m_ptr->stunned) {
+			m_ptr->stunned = 0;
+			//msg_print_near_monster(c_ptr->m_idx, "is no longer stunned.");
+			dam = 1;
+		}
+
+		dam = 0; /* hack :) */
+		for (i = 0; i < 4; i++) {
+			if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) {
+				m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+				dam = 1;
+			}
+			if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) {
+				m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+				dam = 1;
+			}
+		}
+		//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak");
+
+		if (m_ptr->ac < m_ptr->org_ac) {
+			m_ptr->ac = m_ptr->org_ac;
+			//msg_print_near_monster(c_ptr->m_idx, "appears less clumsy");
+			dam = 1;
+		}
+
+		if (m_ptr->maxhp < m_ptr->org_maxhp) {
+			m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
+			m_ptr->maxhp = m_ptr->org_maxhp;
+			//msg_print_near_monster(c_ptr->m_idx, "appears less sick");
+			dam = 1;
+		}
+
+		if (dam) msg_print_near_monster(c_ptr->m_idx, "appears cured.");
+
+		dam = 0;
+		quiet = TRUE;
+		break;
+
+	/* Default */
+	default:
+		/* No damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
 	}
 
 	/* "Unique" monsters cannot be polymorphed */
