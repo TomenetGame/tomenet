@@ -98,269 +98,270 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	int	flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO);
 
 	switch (o_sval) {
-		case SV_POTION_SLIME_MOLD:
-		case SV_POTION_WATER:   /* perhaps a 'water' attack? */
-		case SV_POTION_APPLE_JUICE:
-			return TRUE;
+	case SV_POTION_SLIME_MOLD:
+	case SV_POTION_WATER:   /* perhaps a 'water' attack? */
+	case SV_POTION_APPLE_JUICE:
+		return TRUE;
 
-		case SV_POTION_INFRAVISION:
-		case SV_POTION_DETECT_INVIS:
-		case SV_POTION_SLOW_POISON:
-		case SV_POTION_CURE_POISON:
-		case SV_POTION_RESIST_HEAT:
-		case SV_POTION_RESIST_COLD:
-		case SV_POTION_RESTORE_EXP:
-		case SV_POTION_ENLIGHTENMENT:
-		case SV_POTION_STAR_ENLIGHTENMENT:
-		case SV_POTION_SELF_KNOWLEDGE:
-		case SV_POTION_RESISTANCE:
-		case SV_POTION_INVULNERABILITY:
-		//case SV_POTION_NEW_LIFE:
-			/* All of the above potions have no effect when shattered */
-			return FALSE;
+	case SV_POTION_INFRAVISION:
+	case SV_POTION_DETECT_INVIS:
+	case SV_POTION_SLOW_POISON:
+	case SV_POTION_CURE_POISON:
+	case SV_POTION_RESIST_HEAT:
+	case SV_POTION_RESIST_COLD:
+	case SV_POTION_RESTORE_EXP:
+	case SV_POTION_ENLIGHTENMENT:
+	case SV_POTION_STAR_ENLIGHTENMENT:
+	case SV_POTION_SELF_KNOWLEDGE:
+	case SV_POTION_RESISTANCE:
+	case SV_POTION_INVULNERABILITY:
+	//case SV_POTION_NEW_LIFE:
+		/* All of the above potions have no effect when shattered */
+		return FALSE;
 
-		case SV_POTION_EXPERIENCE:
-			dt = GF_EXP;
-			dam = 1; /* level */
-			ident = TRUE;
-			break;
-		case SV_POTION_BOLDNESS:
-			radius = 3;
-			dt = GF_REMFEAR;
-			//ident = TRUE;
-			dam = 1; /* dummy */
-			break;
-		case SV_POTION_SALT_WATER:
-			dt = GF_OLD_CONF;
-			dam = damroll(10, 5);
-			ident = TRUE;
-			angry = TRUE;
+	case SV_POTION_EXPERIENCE:
+		dt = GF_EXP;
+		dam = 1; /* level */
+		ident = TRUE;
+		break;
+	case SV_POTION_BOLDNESS:
+		radius = 3;
+		dt = GF_REMFEAR;
+		//ident = TRUE;
+		dam = 1; /* dummy */
+		break;
+	case SV_POTION_SALT_WATER:
+		dt = GF_OLD_CONF;
+		dam = damroll(10, 5);
+		ident = TRUE;
+		angry = TRUE;
 
-			/* terraform hack: melt ice^^ (Ding's suggestion) */
-			{
-				cave_type **zcave;
-				if (!(zcave = getcave(wpos))) return TRUE; //paranoia
-				if (zcave[y][x].feat == FEAT_ICE_WALL) { //100% chance for now, beats fire magic o_O
-					if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice wall melts.");
-					cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
-				}
+		/* terraform hack: melt ice^^ (Ding's suggestion) */
+		{
+			cave_type **zcave;
+
+			if (!(zcave = getcave(wpos))) return TRUE; //paranoia
+			if (zcave[y][x].feat == FEAT_ICE_WALL) { //100% chance for now, beats fire magic o_O
+				if (who < 0 && who > PROJECTOR_UNUSUAL) msg_print(-who, "The ice wall melts.");
+				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
 			}
+		}
 
-			break;
-		case SV_POTION_LOSE_MEMORIES:
-			dt = GF_OLD_CONF;
-			dam = damroll(10, 11);
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case SV_POTION_DEC_STR:
-			radius = 1;
-			dt = GF_DEC_STR;
-			dam = 1; /* dummy */
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case SV_POTION_DEC_INT:
-			angry = TRUE;
-			break;
-		case SV_POTION_DEC_WIS:
-			angry = TRUE;
-			break;
-		case SV_POTION_DEC_DEX:
-			radius = 1;
-			dt = GF_DEC_DEX;
-			dam = 1; /* dummy */
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case SV_POTION_DEC_CON:
-			radius = 1;
-			dt = GF_DEC_CON;
-			dam = 1; /* dummy */
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case SV_POTION_DEC_CHR:
-			angry = TRUE;
-			break;
-		case SV_POTION_RES_STR:
-			radius = 1;
-			dt = GF_RES_STR;
-			dam = 1; /* dummy */
-			break;
-		case SV_POTION_RES_INT:
-			break;
-		case SV_POTION_RES_WIS:
-			break;
-		case SV_POTION_RES_DEX:
-			radius = 1;
-			dt = GF_RES_DEX;
-			dam = 1; /* dummy */
-			break;
-		case SV_POTION_RES_CON:
-			radius = 1;
-			dt = GF_RES_CON;
-			dam = 1; /* dummy */
-			break;
-		case SV_POTION_RES_CHR:
-			break;
-		case SV_POTION_INC_STR:
-			radius = 1;
-			dt = GF_INC_STR;
-			dam = 1; /* dummy */
-			ident = TRUE;
-			break;
-		case SV_POTION_INC_INT:
-			break;
-		case SV_POTION_INC_WIS:
-			break;
-		case SV_POTION_INC_DEX:
-			radius = 1;
-			dt = GF_INC_DEX;
-			dam = 1; /* dummy */
-			ident = TRUE;
-			break;
-		case SV_POTION_INC_CON:
-			radius = 1;
-			dt = GF_INC_CON;
-			dam = 1; /* dummy */
-			ident = TRUE;
-			break;
-		case SV_POTION_INC_CHR:
-			break;
-		case SV_POTION_AUGMENTATION:
-			radius = 1;
-			dt = GF_AUGMENTATION;
-			dam = 1; /* dummy */
-			ident = TRUE;
-			break;
-		case SV_POTION_HEROISM:
-		case SV_POTION_BERSERK_STRENGTH:
-			radius = 1;
-			dt = GF_HERO_MONSTER;
-			dam = damroll(2, 10);
-			ident = TRUE;
-			break;
-		case SV_POTION_SLOWNESS:
-			radius = 1;
-			dt = GF_OLD_SLOW;
-			dam = damroll(10, 5);
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case SV_POTION_POISON:
-			dt = GF_POIS;
-			dam = 7;
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case SV_POTION_BLINDNESS:
-			radius = 1;
-			dam = damroll(3, 5);
-			dt = GF_BLIND;
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case SV_POTION_CONFUSION: /* Booze */
-			radius = 1;
-			dam = damroll(10, 8);
-			dt = GF_OLD_CONF;
-			ident = TRUE;
-			angry = TRUE;
-			break;
-		case SV_POTION_SLEEP:
-			dt = GF_OLD_SLEEP;
-			dam = damroll(10, 8);
-			angry = TRUE;
-			ident = TRUE;
-			break;
-		case SV_POTION_RUINATION:
-			radius = 1;
-			dt = GF_RUINATION;
-			ident = TRUE;
-			angry = TRUE;
-			dam = 1; /* dummy */
-			break;
-		case SV_POTION_DETONATIONS:
-			radius = 3;
-			//dt = GF_DISINTEGRATE; /* GF_ROCKET;/* was GF_SHARDS */
-			dt = GF_DETONATION; /* GF_DETONATION like GF_ROCKET does partially DISI ;) - C. Blue */
-			dam = damroll(45, 25);
-			aggravate_monsters_floorpos(wpos, y, x);
-			angry = TRUE;
-			ident = TRUE;
-			flg |= PROJECT_LODF; /* obsolete because of PROJECT_JUMP, but just in case */
+		break;
+	case SV_POTION_LOSE_MEMORIES:
+		dt = GF_OLD_CONF;
+		dam = damroll(10, 11);
+		ident = TRUE;
+		angry = TRUE;
+		break;
+	case SV_POTION_DEC_STR:
+		radius = 1;
+		dt = GF_DEC_STR;
+		dam = 1; /* dummy */
+		ident = TRUE;
+		angry = TRUE;
+		break;
+	case SV_POTION_DEC_INT:
+		angry = TRUE;
+		break;
+	case SV_POTION_DEC_WIS:
+		angry = TRUE;
+		break;
+	case SV_POTION_DEC_DEX:
+		radius = 1;
+		dt = GF_DEC_DEX;
+		dam = 1; /* dummy */
+		ident = TRUE;
+		angry = TRUE;
+		break;
+	case SV_POTION_DEC_CON:
+		radius = 1;
+		dt = GF_DEC_CON;
+		dam = 1; /* dummy */
+		ident = TRUE;
+		angry = TRUE;
+		break;
+	case SV_POTION_DEC_CHR:
+		angry = TRUE;
+		break;
+	case SV_POTION_RES_STR:
+		radius = 1;
+		dt = GF_RES_STR;
+		dam = 1; /* dummy */
+		break;
+	case SV_POTION_RES_INT:
+		break;
+	case SV_POTION_RES_WIS:
+		break;
+	case SV_POTION_RES_DEX:
+		radius = 1;
+		dt = GF_RES_DEX;
+		dam = 1; /* dummy */
+		break;
+	case SV_POTION_RES_CON:
+		radius = 1;
+		dt = GF_RES_CON;
+		dam = 1; /* dummy */
+		break;
+	case SV_POTION_RES_CHR:
+		break;
+	case SV_POTION_INC_STR:
+		radius = 1;
+		dt = GF_INC_STR;
+		dam = 1; /* dummy */
+		ident = TRUE;
+		break;
+	case SV_POTION_INC_INT:
+		break;
+	case SV_POTION_INC_WIS:
+		break;
+	case SV_POTION_INC_DEX:
+		radius = 1;
+		dt = GF_INC_DEX;
+		dam = 1; /* dummy */
+		ident = TRUE;
+		break;
+	case SV_POTION_INC_CON:
+		radius = 1;
+		dt = GF_INC_CON;
+		dam = 1; /* dummy */
+		ident = TRUE;
+		break;
+	case SV_POTION_INC_CHR:
+		break;
+	case SV_POTION_AUGMENTATION:
+		radius = 1;
+		dt = GF_AUGMENTATION;
+		dam = 1; /* dummy */
+		ident = TRUE;
+		break;
+	case SV_POTION_HEROISM:
+	case SV_POTION_BERSERK_STRENGTH:
+		radius = 1;
+		dt = GF_HERO_MONSTER;
+		dam = damroll(2, 10);
+		ident = TRUE;
+		break;
+	case SV_POTION_SLOWNESS:
+		radius = 1;
+		dt = GF_OLD_SLOW;
+		dam = damroll(10, 5);
+		ident = TRUE;
+		angry = TRUE;
+		break;
+	case SV_POTION_POISON:
+		dt = GF_POIS;
+		dam = 7;
+		ident = TRUE;
+		angry = TRUE;
+		break;
+	case SV_POTION_BLINDNESS:
+		radius = 1;
+		dam = damroll(3, 5);
+		dt = GF_BLIND;
+		ident = TRUE;
+		angry = TRUE;
+		break;
+	case SV_POTION_CONFUSION: /* Booze */
+		radius = 1;
+		dam = damroll(10, 8);
+		dt = GF_OLD_CONF;
+		ident = TRUE;
+		angry = TRUE;
+		break;
+	case SV_POTION_SLEEP:
+		dt = GF_OLD_SLEEP;
+		dam = damroll(10, 8);
+		angry = TRUE;
+		ident = TRUE;
+		break;
+	case SV_POTION_RUINATION:
+		radius = 1;
+		dt = GF_RUINATION;
+		ident = TRUE;
+		angry = TRUE;
+		dam = 1; /* dummy */
+		break;
+	case SV_POTION_DETONATIONS:
+		radius = 3;
+		//dt = GF_DISINTEGRATE; /* GF_ROCKET;/* was GF_SHARDS */
+		dt = GF_DETONATION; /* GF_DETONATION like GF_ROCKET does partially DISI ;) - C. Blue */
+		dam = damroll(45, 25);
+		aggravate_monsters_floorpos(wpos, y, x);
+		angry = TRUE;
+		ident = TRUE;
+		flg |= PROJECT_LODF; /* obsolete because of PROJECT_JUMP, but just in case */
 #ifdef USE_SOUND_2010
-			if (who < 0 && who > PROJECTOR_UNUSUAL) sound(-who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
+		if (who < 0 && who > PROJECTOR_UNUSUAL) sound(-who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			break;
-		case SV_POTION_DEATH:
-			//dt = GF_DEATH_RAY;	/* !! */	/* not implemented yet. */
-			dt = GF_NETHER_WEAK; /* special damage type solemnly for potion smash effect */
-			dam = damroll(30,30);
-			angry = TRUE;
-			radius = 2;
-			ident = TRUE;
-			break;
-		case SV_POTION_SPEED:
-			dt = GF_OLD_SPEED;
-			dam = damroll(5, 3);
-			ident = TRUE;
-			break;
-		case SV_POTION_CURE_LIGHT:
-			dt = GF_OLD_HEAL;
-			dam = damroll(2,3);
-			ident = TRUE;
-			break;
-		case SV_POTION_CURE_SERIOUS:
-			dt = GF_OLD_HEAL;
-			dam = damroll(4,3);
-			ident = TRUE;
-			break;
-		case SV_POTION_CURE_CRITICAL:
-			dt = GF_OLD_HEAL;
-			dam = damroll(6,3);
-			ident = TRUE;
-			break;
-		case SV_POTION_CURING:
-			dt = GF_CURING; //GF_OLD_HEAL;
-			dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //damroll(5,10);
-			ident = TRUE;
-			break;
-		case SV_POTION_HEALING:
-			dt = GF_OLD_HEAL;
-			dam = damroll(10,10);
-			ident = TRUE;
-			break;
-		case SV_POTION_STAR_HEALING:
-			dt = GF_OLD_HEAL;
-			dam = damroll(30,20);
-			radius = 1;
-			ident = TRUE;
-			break;
-		case SV_POTION_LIFE:
-			dt = GF_LIFEHEAL;
-			dam = damroll(30,20);
-			radius = 1;
-			ident = TRUE;
-			break;
+		break;
+	case SV_POTION_DEATH:
+		//dt = GF_DEATH_RAY;	/* !! */	/* not implemented yet. */
+		dt = GF_NETHER_WEAK; /* special damage type solemnly for potion smash effect */
+		dam = damroll(30,30);
+		angry = TRUE;
+		radius = 2;
+		ident = TRUE;
+		break;
+	case SV_POTION_SPEED:
+		dt = GF_OLD_SPEED;
+		dam = damroll(5, 3);
+		ident = TRUE;
+		break;
+	case SV_POTION_CURE_LIGHT:
+		dt = GF_OLD_HEAL;
+		dam = damroll(2,3);
+		ident = TRUE;
+		break;
+	case SV_POTION_CURE_SERIOUS:
+		dt = GF_OLD_HEAL;
+		dam = damroll(4,3);
+		ident = TRUE;
+		break;
+	case SV_POTION_CURE_CRITICAL:
+		dt = GF_OLD_HEAL;
+		dam = damroll(6,3);
+		ident = TRUE;
+		break;
+	case SV_POTION_CURING:
+		dt = GF_CURING; //GF_OLD_HEAL;
+		dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //damroll(5,10);
+		ident = TRUE;
+		break;
+	case SV_POTION_HEALING:
+		dt = GF_OLD_HEAL;
+		dam = damroll(10,10);
+		ident = TRUE;
+		break;
+	case SV_POTION_STAR_HEALING:
+		dt = GF_OLD_HEAL;
+		dam = damroll(30,20);
+		radius = 1;
+		ident = TRUE;
+		break;
+	case SV_POTION_LIFE:
+		dt = GF_LIFEHEAL;
+		dam = damroll(30,20);
+		radius = 1;
+		ident = TRUE;
+		break;
 #if 0 /* silly. people DRINK these */
-		case SV_POTION_RESTORE_MANA:   /* MANA */
-			dt = GF_MANA;
-			dam = damroll(8,10);
-			radius = 1;
-			ident = TRUE;
-			break;
-		case SV_POTION_STAR_RESTORE_MANA:   /* MANA */
-			dt = GF_MANA;
-			dam = damroll(12,10);
-			radius = 1;
-			ident = TRUE;
-			break;
+	case SV_POTION_RESTORE_MANA:   /* MANA */
+		dt = GF_MANA;
+		dam = damroll(8,10);
+		radius = 1;
+		ident = TRUE;
+		break;
+	case SV_POTION_STAR_RESTORE_MANA:   /* MANA */
+		dt = GF_MANA;
+		dam = damroll(12,10);
+		radius = 1;
+		ident = TRUE;
+		break;
 #endif
-		default:
-			/* Do nothing */  ;
-			return FALSE;
+	default:
+		/* Do nothing */  ;
+		return FALSE;
 	}
 
 	/* doh! project halves the dam ?! */
