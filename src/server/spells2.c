@@ -7866,55 +7866,55 @@ void golem_creation(int Ind, int max) {
 	r_ptr->flags9 |= RF9_IM_TELE;
 
 	switch (golem_type) {
-		case SV_GOLEM_WOOD:
-			r_ptr->hdice = 10;
-			r_ptr->hside = 10;
-			r_ptr->ac = 20;
-			r_ptr->d_attr = r_ptr->x_attr = TERM_UMBER;
-			break;
-		case SV_GOLEM_COPPER:
-			r_ptr->hdice = 10;
-			r_ptr->hside = 20;
-			r_ptr->ac = 40;
-			r_ptr->d_attr = r_ptr->x_attr = TERM_ORANGE;
-			break;
-		case SV_GOLEM_IRON:
-			r_ptr->hdice = 10;
-			r_ptr->hside = 40;
-			r_ptr->ac = 70;
-			r_ptr->d_attr = r_ptr->x_attr = TERM_L_DARK;
-			break;
-		case SV_GOLEM_ALUM:
-			r_ptr->hdice = 10;
-			r_ptr->hside = 60;
-			r_ptr->ac = 90;
-			r_ptr->d_attr = r_ptr->x_attr = TERM_SLATE;
-			break;
-		case SV_GOLEM_SILVER:
-			r_ptr->hdice = 10;
-			r_ptr->hside = 70;
-			r_ptr->ac = 100;
-			r_ptr->d_attr = r_ptr->x_attr = TERM_L_WHITE;
-			break;
-		case SV_GOLEM_GOLD:
-			r_ptr->hdice = 10;
-			r_ptr->hside = 80;
-			r_ptr->ac = 130;
-			r_ptr->d_attr = r_ptr->x_attr = TERM_YELLOW;
-			break;
-		case SV_GOLEM_MITHRIL:
-			r_ptr->hdice = 10;
-			r_ptr->hside = 100;
-			r_ptr->ac = 160;
-			r_ptr->d_attr = r_ptr->x_attr = TERM_L_BLUE;
-			break;
-		case SV_GOLEM_ADAM:
-			r_ptr->hdice = 10;
-			r_ptr->hside = 150;
-			r_ptr->ac = 210;
-			r_ptr->d_attr = r_ptr->x_attr = TERM_VIOLET;
-			break;
-		//default:
+	case SV_GOLEM_WOOD:
+		r_ptr->hdice = 10;
+		r_ptr->hside = 10;
+		r_ptr->ac = 20;
+		r_ptr->d_attr = r_ptr->x_attr = TERM_UMBER;
+		break;
+	case SV_GOLEM_COPPER:
+		r_ptr->hdice = 10;
+		r_ptr->hside = 20;
+		r_ptr->ac = 40;
+		r_ptr->d_attr = r_ptr->x_attr = TERM_ORANGE;
+		break;
+	case SV_GOLEM_IRON:
+		r_ptr->hdice = 10;
+		r_ptr->hside = 40;
+		r_ptr->ac = 70;
+		r_ptr->d_attr = r_ptr->x_attr = TERM_L_DARK;
+		break;
+	case SV_GOLEM_ALUM:
+		r_ptr->hdice = 10;
+		r_ptr->hside = 60;
+		r_ptr->ac = 90;
+		r_ptr->d_attr = r_ptr->x_attr = TERM_SLATE;
+		break;
+	case SV_GOLEM_SILVER:
+		r_ptr->hdice = 10;
+		r_ptr->hside = 70;
+		r_ptr->ac = 100;
+		r_ptr->d_attr = r_ptr->x_attr = TERM_L_WHITE;
+		break;
+	case SV_GOLEM_GOLD:
+		r_ptr->hdice = 10;
+		r_ptr->hside = 80;
+		r_ptr->ac = 130;
+		r_ptr->d_attr = r_ptr->x_attr = TERM_YELLOW;
+		break;
+	case SV_GOLEM_MITHRIL:
+		r_ptr->hdice = 10;
+		r_ptr->hside = 100;
+		r_ptr->ac = 160;
+		r_ptr->d_attr = r_ptr->x_attr = TERM_L_BLUE;
+		break;
+	case SV_GOLEM_ADAM:
+		r_ptr->hdice = 10;
+		r_ptr->hside = 150;
+		r_ptr->ac = 210;
+		r_ptr->d_attr = r_ptr->x_attr = TERM_VIOLET;
+		break;
+	//default:
 	}
 
 	r_ptr->extra = golem_flags;
