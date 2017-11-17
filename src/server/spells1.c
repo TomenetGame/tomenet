@@ -10017,6 +10017,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_CURSE: {
 			int curse = randint(3);
+
 			if (curse == 1) { //Slow
 				if (fuzzy) msg_print(Ind, "Your body seems difficult to move!");
 				else msg_format(Ind, "%s curses at you, slowing your movements!", killer);
@@ -10036,7 +10037,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					if (fuzzy) msg_format(Ind, "Your mind is hit by confusion for \377%c%d \377wdamage!", damcol, dam);
 					else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 					dam *= 5; dam /= (randint(6) + 6);
-				}else{
+				} else {
 					if (fuzzy) msg_format(Ind, "Your mind is hit by confusion for \377%c%d \377wdamage!", damcol, dam);
 					else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 					if (!(p_ptr->mindboost && magik(p_ptr->mindboost_power)))
@@ -10056,6 +10057,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (fuzzy) msg_print(Ind, "You feel less constant!");
 			else msg_format(Ind, "%^s turns you into a wraith!", killer);
 			set_tim_wraith(Ind, dam);
+			dam = 0;
 			break;
 
 	case GF_BLESS_PLAYER:
@@ -10063,6 +10065,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else if (dam < 33) p_ptr->blessed_power = 14;
 			else p_ptr->blessed_power = 20;
 			(void)set_blessed(Ind, dam);
+			dam = 0;
 			break;
 
 		/* a special family, actually cumulative.. hacky, yeah */
@@ -10070,22 +10073,23 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			set_afraid(Ind, 0);
 			/* Stay bold for some turns */
 			(void)set_res_fear(Ind, dam);
+			dam = 0;
 			break;
 	case GF_REMCONF_PLAYER:		/* confusion, and ALSO fear */
 			set_afraid(Ind, 0);
 			/* Stay bold for some turns */
 			(void)set_res_fear(Ind, dam);
-
 			set_confused(Ind, 0);
+			dam = 0;
 			break;
 	case GF_REMIMAGE_PLAYER:	/* hallu, and ALSO conf/fear */
 			set_afraid(Ind, 0);
 			/* Stay bold for some turns */
 			(void)set_res_fear(Ind, dam);
-
 			set_confused(Ind, 0);
-
 			set_image(Ind, 0);
+
+			dam = 0;
 			break;
 
 	case GF_REMCURSE_PLAYER: /* only remove one curse */
@@ -10093,18 +10097,22 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (dam) remove_curse_aux(Ind, 0x1 + 0x2, -who);
 		else remove_curse_aux(Ind, 0x2, -who);
 #endif
+		dam = 0;
 		break;
 
 	case GF_HPINCREASE_PLAYER:
 			(void)hp_player(Ind, dam);
+			dam = 0;
 			break;
 
 	case GF_HERO_PLAYER:
 			(void)set_hero(Ind, dam); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_SHERO_PLAYER:
 			(void)set_shero(Ind, dam); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_SATHUNGER_PLAYER:
@@ -10113,69 +10121,86 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			//if (p_ptr->male) msg_format_near(Ind, "\377y%s looks like he is going to explode.", p_ptr->name);
 			//else msg_format_near(Ind, "\377y%s looks like she is going to explode.", p_ptr->name);
 		}
-			break;
+		dam = 0;
+		break;
 
 	case GF_RESFIRE_PLAYER:
 			(void)set_oppose_fire(Ind, dam); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_RESELEC_PLAYER:
 			(void)set_oppose_elec(Ind, dam); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_RESPOIS_PLAYER:
 			(void)set_oppose_pois(Ind, dam); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_RESACID_PLAYER:
 			(void)set_oppose_acid(Ind, dam); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_RESCOLD_PLAYER:
 			(void)set_oppose_cold(Ind, dam); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_CUREPOISON_PLAYER:
 			(void)set_poisoned(Ind, 0, 0);
+			dam = 0;
 			break;
 
 	case GF_SLOWPOISON_PLAYER:
 			if (p_ptr->poisoned && !p_ptr->slow_poison) p_ptr->slow_poison = 1;
+			dam = 0;
 			break;
 
 	case GF_SEEINVIS_PLAYER:
 			(void)set_tim_invis(Ind, dam); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_ZEAL_PLAYER:
 			(void)set_zeal(Ind, dam, 9 + randint(5));
+			dam = 0;
 			break;
 	case GF_SEEMAP_PLAYER:
 			map_area(Ind);
+			dam = 0;
 			break;
 	case GF_DETECTCREATURE_PLAYER:
  			(void)detect_creatures(Ind);
+			dam = 0;
 			break;
 
 	case GF_CURESTUN_PLAYER:
 			(void)set_stun(Ind, p_ptr->stun - dam);
+			dam = 0;
 			break;
 
 	case GF_DETECTDOOR_PLAYER:
 			(void)detect_sdoor(Ind, DEFAULT_RADIUS);
+			dam = 0;
 			break;
 
 	case GF_DETECTTRAP_PLAYER:
 			(void)detect_trap(Ind, DEFAULT_RADIUS);
+			dam = 0;
 			break;
 
 	case GF_CURECUT_PLAYER:
 			(void)set_cut(Ind, p_ptr->cut - dam, -who);
+			dam = 0;
 			break;
 
 	case GF_TELEPORTLVL_PLAYER:
 			if (p_ptr->martyr) break;
 			teleport_player_level(Ind, FALSE);
+			dam = 0;
 			break;
 
 	case GF_HEAL_PLAYER:
@@ -10252,16 +10277,22 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (fuzzy) msg_print(Ind, "You feel faster!");
 			else msg_format(Ind, "%^s speeds you up!", killer);
 			(void)set_fast(Ind, 10 + (dam * 5), dam); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_EXTRA_STATS: //unused
 			do_xtra_stats(Ind, dam / 100, dam % 100, 10 + rand_int(5) + (dam % 100) * 2);
+			dam = 0;
 			break;
 
 	case GF_EXTRA_SPR: //unused
 			dam = dam - 30;
-			if (dam < 0) break;
+			if (dam < 0) {
+				dam = 0;
+				break;
+			}
 			do_focus(Ind, dam / 6, 30 + dam);
+			dam = 0;
 			break;
 
 	case GF_SHIELD_PLAYER: //unused
@@ -10270,23 +10301,33 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%^s shields you!", killer);
 
 			(void)set_shield(Ind, 10 + (dam * 5), dam, SHIELD_NONE, 0, 0); /* removed stacking */
+			dam = 0;
 			break;
 
 	case GF_TELEPORT_PLAYER: {
 			int chance = (195 - p_ptr->skill_sav) / 2;
 
-			if (p_ptr->martyr) break;
+			if (p_ptr->martyr) {
+				dam = 0;
+				break;
+			}
 			if (IS_PVP) {
 				/* protect players in inns */
 				cave_type **zcave;
 				cave_type *c_ptr;
 				if ((zcave = getcave(wpos))) {
 					c_ptr = &zcave[p_ptr->py][p_ptr->px];
-					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) break;
+					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
+						dam = 0;
+						break;
+					}
 				}
 
 				/* protect AFK players */
-				if (p_ptr->afk) break;
+				if (p_ptr->afk) {
+					dam = 0;
+					break;
+				}
 
 				/* Log PvP teleports - mikaelh */
 				s_printf("%s teleported (GF_TELEPORT_PLAYER) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
@@ -10303,6 +10344,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				teleport_player(Ind, dam, TRUE);
 			} else msg_print(Ind, "You resist the effect!");
+			dam = 0;
 			break;
 			}
 
@@ -10362,6 +10404,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					p_ptr->black_breath = FALSE;
 				}
 			}
+			dam = 0;
 			break;
 	case GF_CURING:
 	case GF_CURE_PLAYER:
@@ -10392,10 +10435,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (dam & 0x80) /* Restore exp */
 				(void)restore_level(Ind);
 			if (dam & 0x100) (void)set_stun(Ind, 0);
+			dam = 0;
 			break;
 	case GF_RESURRECT_PLAYER:
 			//if (p_ptr->ghost)
 			resurrect_player(Ind, dam);
+			dam = 0;
 			break;
 	case GF_SANITY_PLAYER:
 			msg_format(Ind, "%s waves over your eyes, murmuring some words..", killer);
@@ -10426,6 +10471,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Give feedback to the healer so he knows when he may stop - C. Blue */
 				if (p_ptr->csane == p_ptr->msane) msg_format_near(Ind, "%s appears to be in full command of %s mental faculties.", p_ptr->name, p_ptr->male ? "his" : "her");
 			}
+			dam = 0;
 			break;
 	case GF_SOULCURE_PLAYER:
 			/* priest variant hurts undead, druid tea is fine */
@@ -10437,11 +10483,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				p_ptr->black_breath = FALSE;
 			}
+			dam = 0;
 			break;
 	case GF_MINDBOOST_PLAYER:
-			if (dam > 95) dam = 95;
-			set_mindboost(Ind, dam, 15 + randint(6));
-			break;
+		if (dam > 95) dam = 95;
+		set_mindboost(Ind, dam, 15 + randint(6));
+		dam = 0;
+		break;
 
 	case GF_TERROR:
 		if (fuzzy || self) msg_print(Ind, "You hear terrifying noises!");
@@ -10450,13 +10498,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->resist_conf ||
 		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			msg_print(Ind, "You disbelieve the feeble spell.");
-		else if (rand_int(100 + dam*6) < p_ptr->skill_sav)
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav)
 			msg_print(Ind, "You disbelieve the feeble spell.");
 		//else set_confused(Ind, p_ptr->confused + dam); too much for pvp
 		else set_confused(Ind, p_ptr->confused + 2 + rand_int(3));
 
 		if (p_ptr->resist_fear) msg_print(Ind, "You refuse to be frightened.");
-		else if (rand_int(100 + dam*6) < p_ptr->skill_sav) msg_print(Ind, "You refuse to be frightened.");
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav) msg_print(Ind, "You refuse to be frightened.");
 		else {
 			//(void)set_afraid(Ind, p_ptr->afraid + dam);  too much for pvp
 			(void)set_afraid(Ind, p_ptr->afraid + 2 + rand_int(3));
@@ -10485,7 +10533,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else msg_format(Ind, "%^s drains power from your muscles!", killer);
 
 		if (p_ptr->free_act) msg_print(Ind, "You are unaffected!");
-		else if (rand_int(100 + dam*6) < p_ptr->skill_sav ||
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
 		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			msg_print(Ind, "You resist the effects!");
 		//else set_slow(Ind, p_ptr->slow + dam); too much for pvp..
@@ -10500,7 +10548,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else msg_format(Ind, "%^s casts a fearful illusion!", killer);
 
 		if (p_ptr->resist_fear) msg_print(Ind, "You refuse to be frightened.");
-		else if (rand_int(100 + dam*6) < p_ptr->skill_sav) msg_print(Ind, "You refuse to be frightened.");
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav) msg_print(Ind, "You refuse to be frightened.");
 		else {
 			//(void)set_afraid(Ind, p_ptr->afraid + dam);  too much for pvp
 			(void)set_afraid(Ind, p_ptr->afraid + 2 + rand_int(3));
@@ -10511,7 +10559,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_OLD_POLY:
 			s_printf("PLAYER_POLY: %s -> %s ", Players[0 - who]->name, p_ptr->name);
-			if (p_ptr->afk) break;
+			if (p_ptr->afk) {
+				dam = 0;
+				break;
+			}
 			if (fuzzy || self) msg_print(Ind, "You feel bizzare!");
 			else msg_format(Ind, "%^s polymorphs you!", killer);
 			if (p_ptr->resist_nexus) {
@@ -10522,6 +10573,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_print(Ind, "The magic continuum twists around you!");
 				apply_morph(Ind, dam, killer, -who);
 			}
+			/* No "real" damage */
+			dam = 0;
 			break;
 
 	case GF_HAVOC:
@@ -10641,6 +10694,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->resist_blind) msg_print(Ind, "You are unaffected!");
 			else if (rand_int(100 + dam*6) < p_ptr->skill_sav) msg_print(Ind, "You resist the effects!");
 			else if (!p_ptr->blind) (void)set_blind(Ind, dam);
+			/* No "real" damage */
+			dam = 0;
 			break;
 
 		/* For shattering potions, but maybe work for wands too? */
@@ -10659,8 +10714,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_TELE_TO:
 		{
 			//bool resists_tele = FALSE;
-			//dun_level		*l_ptr = getfloor(wpos);
+			//dun_level *l_ptr = getfloor(wpos);
 			int chance = (195 - p_ptr->skill_sav) / 2;
+
+			/* No "real" damage */
+			dam = 0;
+			break;
 
 			if (p_ptr->martyr) break;
 			if (IS_PVP) {
@@ -10697,10 +10756,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Prepare to teleport */
 				teleport_player_to(Ind, q_ptr->py, q_ptr->px);
 			}
-
-			/* No "real" damage */
-			dam = 0;
-			break;
 		}
 
 		/* Hand of Doom */
@@ -10724,18 +10779,27 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 	case GF_AWAY_UNDEAD:
-			if (p_ptr->martyr) break;
+			if (p_ptr->martyr) {
+				dam = 0;
+				break;
+			}
 			if (IS_PVP) {
 				/* protect players in inns */
 				cave_type **zcave;
 				cave_type *c_ptr;
 				if ((zcave = getcave(wpos))) {
 					c_ptr = &zcave[p_ptr->py][p_ptr->px];
-					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) break;
+					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
+						dam = 0;
+						break;
+					}
 				}
 
 				/* protect AFK players */
-				if (p_ptr->afk) break;
+				if (p_ptr->afk) {
+					dam = 0;
+					break;
+				}
 
 				/* Log PvP teleports - mikaelh */
 				s_printf("%s teleported (GF_AWAY_UNDEAD) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
@@ -10762,18 +10826,27 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Teleport evil (Use "dam" as "power") */
 	case GF_AWAY_EVIL:
-			if (p_ptr->martyr) break;
+			if (p_ptr->martyr) {
+				dam = 0;
+				break;
+			}
 			if (IS_PVP) {
 				/* protect players in inns */
 				cave_type **zcave;
 				cave_type *c_ptr;
 				if ((zcave = getcave(wpos))) {
 					c_ptr = &zcave[p_ptr->py][p_ptr->px];
-					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) break;
+					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
+						dam = 0;
+						break;
+					}
 				}
 
 				/* protect AFK players */
-				if (p_ptr->afk) break;
+				if (p_ptr->afk) {
+					dam = 0;
+					break;
+				}
 
 				/* Log PvP teleports - mikaelh */
 				s_printf("%s teleported (GF_AWAY_EVIL) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
@@ -10801,18 +10874,27 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_AWAY_ALL: {
 			int chance = 100 - p_ptr->skill_sav;
 
-			if (p_ptr->martyr) break;
+			if (p_ptr->martyr) {
+				dam = 0;
+				break;
+			}
 			if (IS_PVP) {
 				/* protect players in inns */
 				cave_type **zcave;
 				cave_type *c_ptr;
 				if ((zcave = getcave(wpos))) {
 					c_ptr = &zcave[p_ptr->py][p_ptr->px];
-					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) break;
+					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
+						dam = 0;
+						break;
+					}
 				}
 
 				/* protect AFK players */
-				if (p_ptr->afk) break;
+				if (p_ptr->afk) {
+					dam = 0;
+					break;
+				}
 
 				/* Log PvP teleports - mikaelh */
 				s_printf("%s teleported (GF_AWAY_ALL) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
@@ -10844,9 +10926,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else (void)set_afraid(Ind, p_ptr->afraid + damroll(3, (dam / 2)) + 1);
 		}
 
-			/* No "real" damage */
-			dam = 0;
-			break;
+		/* No "real" damage */
+		dam = 0;
+		break;
 
 		/* Turn evil (Use "dam" as "power") */
 	case GF_TURN_EVIL:
