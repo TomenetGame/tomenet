@@ -61,10 +61,10 @@ __traits_diz = {
     "", "", "", "", "", "", "", "", "",},
 
 "Multi-hued lineage",
-    {"The \255umulti-hued\255U lineage provides more and more",
-    "intrinsic resistance to the four basic elements",
-    "and poison (25). Those four are lightning (5),",
-    "frost (10), fire (15) and acid (20).",
+    {"The \255umulti-hued\255U lineage provides intrinsic",
+    "resistances to the four basic elements and poison (25).",
+    "The basic resistances are obtained in the order of",
+    "lightning (5), frost (10), fire (15) and acid (20).",
     "This lineage provides a random elemental breath.",
     "", "", "", "", "", "", "",},
 
