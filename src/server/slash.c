@@ -9969,7 +9969,7 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 #endif
-#if 0
+#if 1
 			else if (prefix(message, "/xid")) { //debugging help
 				//xid <id rod> <item to id>
 				p_ptr->delayed_index = k;

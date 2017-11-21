@@ -9029,7 +9029,7 @@ static int Receive_activate_skill(int ind) {
 			if (dir == -1) dir = 5;
 
 #ifdef XID_REPEAT
-			if (p_ptr->delayed_spell != 0) {
+			if (p_ptr->delayed_spell > 0) {
 //msg_print(player, "override");
 				p_ptr->command_rep = PKT_ACTIVATE_SKILL; //hax
 				//paranoia?:
@@ -9417,7 +9417,7 @@ static int Receive_use(int ind) {
 	if (item >= INVEN_TOTAL) return 1;
 
 #ifdef XID_REPEAT
-	if (p_ptr->delayed_spell != 0) {
+	if (p_ptr->delayed_spell == -2) {
 //msg_print(player, "override");
 		p_ptr->command_rep = PKT_USE; //hax
 		//paranoia?:
@@ -9554,7 +9554,7 @@ static int Receive_zap(int ind) {
 		return 1;
 
 #ifdef XID_REPEAT
-	if (p_ptr->delayed_spell != 0) {
+	if (p_ptr->delayed_spell == -3) {
 //msg_print(player, "override");
 		p_ptr->command_rep = PKT_ZAP; //hax
 		//paranoia?:

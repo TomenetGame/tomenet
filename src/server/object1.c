@@ -6841,7 +6841,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 
 		/* cast it later, at a point where we can use p_ptr->command_rep */
 		p_ptr->delayed_index = index;
-		p_ptr->delayed_spell = spell;
+		p_ptr->delayed_spell = spell + 1;
 		p_ptr->current_item = slot;
 
  #ifdef XID_REPEAT

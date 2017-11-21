@@ -10115,7 +10115,7 @@ void handle_XID(int Ind) {
 		break;
 	default: /* spell */
 		p_ptr->command_rep = PKT_ACTIVATE_SKILL;
-		Packet_printf(connpq, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, p_ptr->delayed_index, p_ptr->delayed_spell, -1, -1, 0);
+		Packet_printf(connpq, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, p_ptr->delayed_index, p_ptr->delayed_spell - 1, -1, -1, 0);
 		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
 		p_ptr->delayed_spell = 0;
 	}
