@@ -200,7 +200,7 @@
 
 #if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
  /* Repeat spell cast/device activation attempt until it succeeds. (Scrolls always succeed, so not needed for those.) */
- #define XID_REPEAT
+ //#define XID_REPEAT
 #endif
 
 

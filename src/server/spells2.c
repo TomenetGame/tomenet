@@ -1153,8 +1153,10 @@ bool do_inc_stat(int Ind, int stat) {
 void XID_paranoia(player_type *p_ptr) {
 	//p_ptr->current_item = -1;
 	p_ptr->command_rep = 0;
+#ifdef XID_REPEAT
 	p_ptr->command_rep_temp = 0;
 	p_ptr->delayed_spell_temp = 0;
+#endif
 	p_ptr->delayed_spell = 0; //paranoia inside paranoia
 }
 /*
