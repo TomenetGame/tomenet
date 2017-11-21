@@ -10076,52 +10076,58 @@ int get_recall_depth(struct worldpos *wpos, player_type *p_ptr) {
 /* Inject a delayed command into the command queue, used for handling !X inscription:
    It simulates the player executing an ID command after the item has been picked up. */
 void handle_XID(int Ind) {
-#if defined(ENABLE_XID_SPELL) || defined(ENABLE_XID_MDEV)
- #ifdef XID_REPEAT
-	{
 	sockbuf_t *connpq = get_conn_q(Ind);
 	player_type *p_ptr = Players[Ind];
 
 	if (!p_ptr->delayed_spell) return;
+#ifdef XID_REPEAT
 	if (p_ptr->command_rep_active) return;
 	p_ptr->command_rep_active = TRUE;
+#endif
 
 	/* hack: inject the delayed ID-spell cast command */
 	switch (p_ptr->delayed_spell) {
 	case 0: break; /* nothing */
+#ifdef ENABLE_XID_MDEV
 	case -1: /* item activation */
-		p_ptr->command_rep = PKT_ACTIVATE;
 		Packet_printf(connpq, "%c%hd", PKT_ACTIVATE, p_ptr->delayed_index);
+ #ifdef XID_REPEAT
+		p_ptr->command_rep = PKT_ACTIVATE;
 		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
+ #endif
 		p_ptr->delayed_spell = 0;
 		break;
 	case -2: /* perception staff use */
-		p_ptr->command_rep = PKT_USE;
 		Packet_printf(connpq, "%c%hd", PKT_USE, p_ptr->delayed_index);
+ #ifdef XID_REPEAT
+		p_ptr->command_rep = PKT_USE;
 		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
+ #endif
 		p_ptr->delayed_spell = 0;
 		break;
 	case -3: /* perception rod zap */
-		p_ptr->command_rep = PKT_ZAP;
 		Packet_printf(connpq, "%c%hd", PKT_ZAP, p_ptr->delayed_index);
+ #ifdef XID_REPEAT
+		p_ptr->command_rep = PKT_ZAP;
 		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
+ #endif
 		p_ptr->delayed_spell = 0;
 		break;
+#endif
 	case -4: /* ID / *ID* scroll read (Note: This is of course a one-time thing, won't get repeated - scrolls always succeed) */
-		//p_ptr->command_rep = PKT_READ;
 		Packet_printf(connpq, "%c%hd", PKT_READ, p_ptr->delayed_index);
-		//p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
 		p_ptr->delayed_spell = 0;
 		break;
 	default: /* spell */
-		p_ptr->command_rep = PKT_ACTIVATE_SKILL;
+#ifdef ENABLE_XID_SPELL
 		Packet_printf(connpq, "%c%c%hd%hd%c%hd%hd", PKT_ACTIVATE_SKILL, MKEY_SCHOOL, p_ptr->delayed_index, p_ptr->delayed_spell - 1, -1, -1, 0);
+ #ifdef XID_REPEAT
+		p_ptr->command_rep = PKT_ACTIVATE_SKILL;
 		p_ptr->delayed_spell_temp = p_ptr->delayed_spell;
-		p_ptr->delayed_spell = 0;
-	}
-	}
  #endif
+		p_ptr->delayed_spell = 0;
 #endif
+	}
 }
 
 /* Helper function to determine snowballs melting */

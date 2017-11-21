@@ -1748,6 +1748,12 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 	if (p_ptr->anti_magic) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos); //full turn lost
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts any magic attempts.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_SPELL
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 	if (p_ptr->antimagic) {
@@ -1756,12 +1762,24 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 #endif
 		p_ptr->energy -= level_speed(&p_ptr->wpos); //full turn lost
 		msg_format(Ind, "\377%cYour anti-magic field disrupts any magic attempts.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_SPELL
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
 	/* Disruption shield prevents interfering! */
 	if (!p_ptr->tim_manashield && interfere(Ind, cfg.spell_interfere)) {
 		p_ptr->energy -= level_speed(&p_ptr->wpos); //full turn lost
+#ifdef ENABLE_XID_SPELL
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return; /* school spell casting interference chance */
 	}
 
@@ -1800,6 +1818,9 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 			p_ptr->current_item = -1;
 			XID_paranoia(p_ptr);
 		}
+ #else
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
  #endif
 #endif
 

@@ -3376,11 +3376,23 @@ void do_cmd_use_staff(int Ind, int item) {
 #if 1
 	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 #endif
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 	if (magik((p_ptr->antimagic * 8) / 5)) {
@@ -3388,6 +3400,12 @@ void do_cmd_use_staff(int Ind, int item) {
 		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
@@ -3398,25 +3416,59 @@ void do_cmd_use_staff(int Ind, int item) {
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max) return; /* item doesn't exist */
+		if (-item >= o_max) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+			p_ptr->current_item = -1;
+			XID_paranoia(p_ptr);
+ #endif
+#endif
+			return; /* item doesn't exist */
+		}
 		o_ptr = &o_list[0 - item];
 	}
 
 	if( check_guard_inscription( o_ptr->note, 'u' )) {
 		msg_print(Ind, "The item's inscription prevents it.");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	};
 
 	if (o_ptr->tval != TV_STAFF) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to use non-staff!");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
-	if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+		return;
+	}
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
 		msg_print(Ind, "You must first pick up the staffs.");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
@@ -3450,6 +3502,9 @@ void do_cmd_use_staff(int Ind, int item) {
 			p_ptr->command_rep_active = TRUE;
 			Packet_printf(conn_q, "%c%hd", PKT_USE, item);
 		} else p_ptr->current_item = -1;
+ #else
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
  #endif
 #endif
 		return;
@@ -3479,6 +3534,12 @@ void do_cmd_use_staff(int Ind, int item) {
 		o_ptr->changed = !o_ptr->changed;
 		p_ptr->window |= (PW_INVEN);
 
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
@@ -4194,6 +4255,12 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
@@ -4205,31 +4272,71 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
 	else {
-		if (-item >= o_max) return; /* item doesn't exist */
+		if (-item >= o_max) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+			p_ptr->current_item = -1;
+			XID_paranoia(p_ptr);
+ #endif
+#endif
+			return; /* item doesn't exist */
+		}
 		o_ptr = &o_list[0 - item];
 	}
 	if (check_guard_inscription(o_ptr->note, 'z')) {
 		msg_print(Ind, "The item's inscription prevents it.");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	};
 
 
 	if (o_ptr->tval != TV_ROD) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to zap non-rod!");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
 	/* Mega-Hack -- refuse to zap a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
 		msg_print(Ind, "You must first pick up the rods.");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
-	if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+		return;
+	}
 
 #if 1
 	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 #endif
@@ -4267,6 +4374,12 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
@@ -4282,6 +4395,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 			p_ptr->command_rep_active = TRUE;
 			Packet_printf(conn_q, "%c%hd", PKT_ZAP, item);
 		} else p_ptr->current_item = -1;
+ #else
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
  #endif
 #endif
 		return;
@@ -4295,6 +4411,12 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #endif
 		if (o_ptr->number == 1) msg_print(Ind, "The rod is still charging.");
 		else msg_print(Ind, "The rods are still charging.");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
@@ -5140,16 +5262,34 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	   Spectral weapons will not drain life either ;). */
 	if (item == INVEN_ARM && o_ptr->tval != TV_SHIELD && p_ptr->rogue_heavyarmor) {
 		msg_format(Ind, "\377oYour armour is too heavy for dual-wielding, preventing activation of your secondary weapon.");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
 	if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
 		if (p_ptr->anti_magic) {
 			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+			p_ptr->current_item = -1;
+			XID_paranoia(p_ptr);
+ #endif
+#endif
 			return;
 		}
 		if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
 			msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+			p_ptr->current_item = -1;
+			XID_paranoia(p_ptr);
+ #endif
+#endif
 			return;
 		}
 		if (magik((p_ptr->antimagic * 8) / 5)) {
@@ -5157,6 +5297,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 			msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+			p_ptr->current_item = -1;
+			XID_paranoia(p_ptr);
+ #endif
+#endif
 			return;
 		}
 	}
@@ -5164,15 +5310,35 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
 		msg_print(Ind, "You must be using this item to activate it.");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
 	if (check_guard_inscription( o_ptr->note, 'A')) {
 		msg_print(Ind, "The item's inscription prevents it..");
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
-	if (!can_use_verbose(Ind, o_ptr)) return;
+	if (!can_use_verbose(Ind, o_ptr)) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+		return;
+	}
 
 	/* Test the item */
 	if (!item_tester_hook_activate(Ind, o_ptr)) {
@@ -5207,6 +5373,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			p_ptr->command_rep_active = TRUE;
 			Packet_printf(conn_q, "%c%hd", PKT_ACTIVATE, item);
 		} else p_ptr->current_item = -1;
+ #else
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
  #endif
 #endif
 		return;
@@ -5215,6 +5384,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* Check the recharge */
 	if (o_ptr->recharging) {
 		msg_print(Ind, "It whines, glows and fades...");
+#ifdef ENABLE_XID_SPELL
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 		return;
 	}
 
