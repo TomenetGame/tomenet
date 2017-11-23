@@ -5315,12 +5315,11 @@ void do_cmd_fire(int Ind, int dir) {
 		/* we switched to a new target? */
 		if (p_ptr->tsc_lasttarget) { //todo: maybe allow 'double shot' technique to sometimes bypass switching cost?
 			p_ptr->tsc_lasttarget = p_ptr->target_who;
-			/* skip a shot, for setting aim to our new target */
+			/* skip a shot worth of energy, for setting aim to our new target */
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / thits;
-			return;
-		}
-		/* we actually just began ranged combat, attacking our very first target - we're already prepared. */
-		p_ptr->tsc_lasttarget = p_ptr->target_who;
+		} else
+			/* we actually just began ranged combat, attacking our very first target - we're already prepared. */
+			p_ptr->tsc_lasttarget = p_ptr->target_who;
 	}
 #endif
 

@@ -8655,7 +8655,7 @@ static int Receive_fire(int ind) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;
 	char ch, dir = 5;
-	int n, player = -1;
+	int n, player = -1, energy;
 	//s16b item;
 
 	if (connp->id != -1) {
@@ -8679,7 +8679,29 @@ static int Receive_fire(int ind) {
 		if (dir >= 5) dir++;
 	}
 
-	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos) / p_ptr->num_fire) {
+#ifdef TARGET_SWITCHING_COST_RANGED
+	/* Time cost for switching target during ongoing combat. */
+	/* we did attack something right now without any pause afterwards,
+	   and it was something different than our current target?
+	   (Paranoid todo: account for stationary targetting, could potentially be exploited if insane) */
+	if (p_ptr->tsc_lasttarget != p_ptr->target_who
+	    /* leeway - don't apply it to already pretty slow attackers */
+	    && p_ptr->num_fire > 2) {
+		/* we switched to a new target? */
+		if (p_ptr->tsc_lasttarget) //todo: maybe allow 'double shot' technique to sometimes bypass switching cost?
+			/* require twice as much energy as for a shot, for setting aim to our new target first */
+			energy = level_speed(&p_ptr->wpos) / p_ptr->num_fire * 2;
+		else
+			/* normal energy requirements */
+			energy = level_speed(&p_ptr->wpos) / p_ptr->num_fire;
+	} else
+		/* normal energy requirements */
+		energy = level_speed(&p_ptr->wpos) / p_ptr->num_fire;
+#else
+	energy = level_speed(&p_ptr->wpos) / p_ptr->num_fire;
+#endif
+
+	if (p_ptr && p_ptr->energy >= energy) {
 		/* Sanity check */
 		if (bad_dir1(player, &dir)) return 1;
 
