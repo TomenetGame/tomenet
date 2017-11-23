@@ -9463,8 +9463,13 @@ static int Receive_use(int ind) {
 			return 1;
 		}
 
+#ifdef XID_REPEAT
 		/* Hack for repeated id-commands from !X: We're already at the correct index! */
 		if (p_ptr->command_rep == PKT_USE) item = p_ptr->delayed_index;
+#else
+		if (p_ptr->delayed_index != -1 && p_ptr->current_item != -1) item = p_ptr->delayed_index;
+#endif
+
 		do_cmd_use_staff(player, item);
 		return 2;
 	} else if (p_ptr) {
@@ -9602,8 +9607,13 @@ static int Receive_zap(int ind) {
 			return 1;
 		}
 
+#ifdef XID_REPEAT
 		/* Hack for repeated id-commands from !X: We're already at the correct index! */
 		if (p_ptr->command_rep == PKT_ZAP) item = p_ptr->delayed_index;
+#else
+		if (p_ptr->delayed_index != -1 && p_ptr->current_item != -1) item = p_ptr->delayed_index;
+#endif
+
 		do_cmd_zap_rod(player, item, 0);
 		if (p_ptr->command_rep) p_ptr->command_rep_discard = PKT_ZAP;
 		return 2;
@@ -9859,8 +9869,13 @@ static int Receive_activate(int ind) {
 			return 1;
 		}
 
+#ifdef XID_REPEAT
 		/* Hack for repeated id-commands from !X: We're already at the correct index! */
 		if (p_ptr->command_rep == PKT_ACTIVATE) item = p_ptr->delayed_index;
+#else
+		if (p_ptr->delayed_index != -1 && p_ptr->current_item != -1) item = p_ptr->delayed_index;
+#endif
+
 		do_cmd_activate(player, item, 0);
 		return 2;
 	} else if (p_ptr) {

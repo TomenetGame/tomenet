@@ -1156,6 +1156,8 @@ void XID_paranoia(player_type *p_ptr) {
 #ifdef XID_REPEAT
 	p_ptr->command_rep_temp = 0;
 	p_ptr->delayed_spell_temp = 0;
+#else
+	p_ptr->delayed_index = -1; //different kind of paranoia..
 #endif
 	p_ptr->delayed_spell = 0; //paranoia inside paranoia
 }
