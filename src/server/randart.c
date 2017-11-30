@@ -2216,6 +2216,19 @@ artifact_type *randart_make(object_type *o_ptr) {
 	/* Fixing final limits */
 	artifact_fix_limits_afterwards(a_ptr, k_ptr);
 
+	/* Tweak light-type of light-emitting artifacts.
+	   If a base item already gives off light, its base flags already decide whether it has white light or not. */
+	if (!(k_ptr->flags3 & TR3_LITE1) && !(k_ptr->flags4 & (TR4_LITE2 | TR4_LITE3))) {
+		/* For all other items, ie those that only have +light because they're an artifact, decide here.. */
+		if (a_ptr->flags3 & TR3_SH_FIRE) ; //not white
+		else if (a_ptr->flags3 & (TR3_SH_COLD | TR3_SH_ELEC)) a_ptr->flags5 |= TR5_WHITE_LIGHT; //white, assuming the light is consistent with the aura sort of
+		else if (a_ptr->flags1 & TR1_BRAND_FIRE) ; //not white
+		else if (a_ptr->flags1 & (TR1_BRAND_COLD | TR1_BRAND_ELEC)) a_ptr->flags5 |= TR5_WHITE_LIGHT; //white, assuming the light is consistent with the brand sort of
+		//else if (rand_int(2)) a_ptr->flags5 |= TR5_WHITE_LIGHT; //just decide randomly on all other items? strange that it would flicker like fire though.. so better instead:
+		else a_ptr->flags5 |= TR5_WHITE_LIGHT; //give all other artifacts white light, as no flames seem to be involved here!
+	}
+
+
 	a_ptr->cost = (ap - RANDART_QUALITY + 50);
 	if (a_ptr->cost < 0) {
 		a_ptr->cost = 0;
