@@ -2225,7 +2225,30 @@ artifact_type *randart_make(object_type *o_ptr) {
 		else if (a_ptr->flags1 & TR1_BRAND_FIRE) ; //not white
 		else if (a_ptr->flags1 & (TR1_BRAND_COLD | TR1_BRAND_ELEC)) a_ptr->flags5 |= TR5_WHITE_LIGHT; //white, assuming the light is consistent with the brand sort of
 		//else if (rand_int(2)) a_ptr->flags5 |= TR5_WHITE_LIGHT; //just decide randomly on all other items? strange that it would flicker like fire though.. so better instead:
-		else a_ptr->flags5 |= TR5_WHITE_LIGHT; //give all other artifacts white light, as no flames seem to be involved here!
+		else {
+			/* Exception: Jewels may flicker like fire even though they don't provide brand or aura.. */
+			switch (k_ptr->tval) {
+			case TV_CROWN:
+				if (k_ptr->sval != SV_JEWELED_CROWN) {
+					a_ptr->flags5 |= TR5_WHITE_LIGHT;
+					break;
+				}
+				//fall through
+			case TV_RING:
+			case TV_AMULET:
+				if ((a_ptr->flags2 & (TR2_RES_FIRE | TR2_RES_COLD)) || (a_ptr->flags2 & (TR2_IM_FIRE | TR2_IM_COLD))) {
+					if (!rand_int(4)) a_ptr->flags5 |= TR5_WHITE_LIGHT; //rarely white light
+				} else if ((a_ptr->flags1 & TR1_STR) || (a_ptr->flags3 & TR3_REGEN)) {
+					if (!rand_int(2)) a_ptr->flags5 |= TR5_WHITE_LIGHT; //randomly white light
+				} else {
+					if (rand_int(5)) a_ptr->flags5 |= TR5_WHITE_LIGHT; //rarely fiery light
+				}
+				break;
+			default:
+				/* Give all other artifacts white light, as no flames seem to be involved here! */
+				a_ptr->flags5 |= TR5_WHITE_LIGHT;
+			}
+		}
 	}
 
 
