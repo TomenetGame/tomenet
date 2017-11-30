@@ -5172,6 +5172,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 
 		if (radius > LITE_CAP) radius = LITE_CAP; /* LITE_MAX ? */
 
+		//maybe todo: distinguish TR5_WHITE_LIGHT?
 		if (f4 & TR4_FUEL_LITE)
 			fprintf(fff, "It provides light (radius %d) when fueled.\n", radius);
 		else if (radius)
