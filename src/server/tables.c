@@ -4172,7 +4172,7 @@ player_class class_info[MAX_CLASS] = {
  #endif
 		{ SKILL_SWORD,
 			'+', 0,
-			'+', 825, }, //x1.1 (replacement for MA x1.3 bonus we're missing out on)
+			'+', 750, }, //will get x1.1'd (replacement for MA x1.3 bonus we're missing out on)
  #if 1 /* re-allow */
 		{ SKILL_BLUNT,
 			'+', 0,
@@ -4180,7 +4180,7 @@ player_class class_info[MAX_CLASS] = {
  #endif
 		{ SKILL_AXE,
 			'+', 0,
-			'+', 975, }, //swapped with former blunt ratio, x1.3
+			'+', 750, }, //swapped with former blunt ratio, will get x1.3'ed to 975
 		{ SKILL_POLEARM,
 			'+', 0,
 			'+', 750, }, //falls through
@@ -4285,7 +4285,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 400, },//800
 		{ SKILL_SWORD, //additionally to blunt! (or instead of it, under 1st CPRIEST version, before blunt was re-allowed)
 			'+', 0,
-			'+', 650, },
+			'+', 500, },
  #if 1 /* re-allow */
 		{ SKILL_BLUNT,
 			'+', 0,
@@ -4293,7 +4293,8 @@ player_class class_info[MAX_CLASS] = {
  #endif
 		{ SKILL_MARTIAL_ARTS,
 			'+', 0,
-			'+', 650, }, //450
+//			'+', 650, }, //450
+			'+', 500, }, //450 --normal priests have 500. gets boosted by Corrupted trait x1.3 -> 0.65
 		{ SKILL_MAGIC,
 			'+', 2000,
 			'+', 900, },

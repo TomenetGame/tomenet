@@ -3826,6 +3826,15 @@ void shape_Maia_skills(int Ind) {
 
 	switch (p_ptr->ptrait) {
 	case TRAIT_CORRUPTED:
+		/* Special fix for characters that got their skills admin-reset:
+		   These already are HK/CP and would ignore these class checks, so revert them first.. */
+#ifdef ENABLE_HELLKNIGHT
+		if (p_ptr->pclass == CLASS_HELLKNIGHT) p_ptr->pclass = CLASS_PALADIN;
+#endif
+#ifdef ENABLE_CPRIEST
+		if (p_ptr->pclass == CLASS_CPRIEST) p_ptr->pclass = CLASS_PRIEST;
+#endif
+
 #ifdef ENABLE_HELLKNIGHT
 		if (p_ptr->pclass == CLASS_PALADIN) {
 			respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
@@ -3858,7 +3867,7 @@ void shape_Maia_skills(int Ind) {
 			do_Maia_skill2(Ind, SKILL_BLUNT, 0, (600 * 11) / 10); //swap with Axe and gain x1.1, to not lag behind original Paladin skill too much
   #endif
  #endif
-			do_Maia_skill2(Ind, SKILL_AXE, 0, 750); //swap with Blunt (and get buffed then canonically further down)
+			do_Maia_skill2(Ind, SKILL_AXE, 0, (750 * 13) / 10); //swap with Blunt (and get buffed then canonically further down)
 			do_Maia_skill2(Ind, SKILL_SWORD, 0, (750 * 11) / 10); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
 			//Note: SKILL_POLEARM just falls through, kept at usual 0.750
 
