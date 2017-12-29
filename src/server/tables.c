@@ -4201,11 +4201,11 @@ player_class class_info[MAX_CLASS] = {
  #ifdef ENABLE_OCCULT /* Occult */
   #ifdef ENABLE_OHERETICISM
 		{ SKILL_OHERETICISM,
-			'+', 0,
+			'+', 1000,
 			'+', 700, },
   #else
 		{ SKILL_OSHADOW, /* emergency replacement skill if Hereticism isn't available for some reason */
-			'+', 0,
+			'+', 1000,
 			'+', 700, },
   #endif
  #endif
@@ -4311,13 +4311,17 @@ player_class class_info[MAX_CLASS] = {
 			'+', 900,
 			},,*/
 #ifdef ENABLE_OCCULT
+ #ifdef ENABLE_OHERETICISM
 		{ SKILL_OSHADOW,
 			'+', 0,
 			'+', 800, },
- #ifdef ENABLE_OHERETICISM
 		{ SKILL_OHERETICISM,
-			'+', 0,
+			'+', 1000,
 			'+', 1050, },
+ #else
+		{ SKILL_OSHADOW,
+			'+', 1000,
+			'+', 800, },
  #endif
 #endif
 		{ SKILL_DEVICE,
