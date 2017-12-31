@@ -6830,6 +6830,7 @@ if (cfg.unikill_format) {
 	    ((r_ptr->flags3 & (RF3_ORC | RF3_TROLL | RF3_GIANT)) || /*note: demons/undead don't do fireworks..*/
 	    (strchr("hHkpty", r_ptr->d_char))) &&
 	    !(r_ptr->flags7 & RF7_AQUATIC) &&
+	    //maybe: doesn't explode on death/attack :p
 #if 0
 	    /* Monster does usually drop at least one item? Then it's eligible. */
 	    do_item &&
