@@ -1147,14 +1147,14 @@ static void process_effects(void) {
 #ifdef USE_SOUND_2010
 					if (e_ptr->rad == e_ptr->time) {
 						if ((e_ptr->flags & EFF_FIREWORKS3))
-							//sound_near_site(e_ptr->cy, e_ptr->cx, wpos, 0, "fireworks_big", "", SFX_TYPE_AMBIENT, FALSE);
-							sound_floor_vol(wpos, "fireworks_big", "", SFX_TYPE_AMBIENT, randint(26) + 75);
+							//sound_near_site(e_ptr->cy, e_ptr->cx, wpos, 0, "fireworks_big", "", SFX_TYPE_MISC, FALSE);
+							sound_floor_vol(wpos, "fireworks_big", "", SFX_TYPE_MISC, randint(26) + 75);
 						else if ((e_ptr->flags & EFF_FIREWORKS2))
-							//sound_near_site(e_ptr->cy, e_ptr->cx, wpos, 0, "fireworks_norm", "", SFX_TYPE_AMBIENT, FALSE);
-							sound_floor_vol(wpos, "fireworks_norm", "", SFX_TYPE_AMBIENT, randint(26) + 75);
+							//sound_near_site(e_ptr->cy, e_ptr->cx, wpos, 0, "fireworks_norm", "", SFX_TYPE_MISC, FALSE);
+							sound_floor_vol(wpos, "fireworks_norm", "", SFX_TYPE_MISC, randint(26) + 75);
 						else
-							//sound_near_site(e_ptr->cy, e_ptr->cx, wpos, 0, "fireworks_small", "", SFX_TYPE_AMBIENT, FALSE);
-							sound_floor_vol(wpos, "fireworks_small", "", SFX_TYPE_AMBIENT, randint(26) + 75);
+							//sound_near_site(e_ptr->cy, e_ptr->cx, wpos, 0, "fireworks_small", "", SFX_TYPE_MISC, FALSE);
+							sound_floor_vol(wpos, "fireworks_small", "", SFX_TYPE_MISC, randint(26) + 75);
 					}
 #endif
 

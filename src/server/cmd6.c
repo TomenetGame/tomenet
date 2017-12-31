@@ -2860,7 +2860,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			}
 			cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * 7 + o_ptr->xtra2); //size, colour
 #ifdef USE_SOUND_2010
-			sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_AMBIENT, TRUE, 50);
+			sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_MISC, TRUE, 50);
 #endif
 			ident = TRUE;
 			break;
