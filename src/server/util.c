@@ -7798,6 +7798,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	}
 #endif
 
+#if 0 /* moved directly to Send_ambient_sfx(), or there'll be a glitch in call order (cyclic), resulting in volume 'spike'. */
 	/* Hack: Inns count as houses too */
 	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || inn || p_ptr->store_num != -1) {
 		if (!p_ptr->grid_house) {
@@ -7809,6 +7810,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		p_ptr->grid_house = FALSE;
 		if (p_ptr->sfx_house_quiet || !p_ptr->sfx_house) Send_sfx_volume(Ind, 100, 100);
 	}
+#endif
 
 	/* Renew music too? */
 	if (!music && ox == -1) handle_music(Ind);

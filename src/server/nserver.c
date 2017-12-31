@@ -2452,12 +2452,25 @@ static void sync_options(int Ind, bool *options) {
 	p_ptr->sfx_house = !options[107];
 	p_ptr->sfx_am = !options[108];
 
+	/* Glitch: Even if the character has set sfx_house 0, it will still be received as 1 here for some reason on 1st option-sync after char login. */
 	if (p_ptr->sfx_house != sfx_house ||
 	    p_ptr->sfx_house_quiet != sfx_house_quiet) {
 		if (p_ptr->grid_house) {
 			if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
-			else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
-			else Send_sfx_volume(Ind, 100, 100);
+			else {
+				if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
+				else Send_sfx_volume(Ind, 100, 100);
+
+#if 1
+				/* Hack: Set AMBIENT_NONE to correct ambient sfx again.
+				   This became necessary with the hack used in Send_sfx_ambient(). */
+				cave_type **zcave = getcave(&p_ptr->wpos);
+				if (zcave) {
+					handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, FALSE);
+					s_printf("%d,%d,%d - %d,%d\n", p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py);
+				}
+#endif
+			}
 		}
 	}
 
@@ -7231,7 +7244,10 @@ int Send_music(int Ind, int music, int musicalt) {
 	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
 }
 int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
-	connection_t *connp = Conn[Players[Ind]->conn];
+	player_type *p_ptr = Players[Ind];
+	cave_type *c_ptr, **zcave;
+
+	connection_t *connp = Conn[p_ptr->conn];
 
 	/* translate: ambient sfx index -> sound index */
 	int i = -1;
@@ -7254,6 +7270,30 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	}
 	/* paranoia */
 	if (i == SOUND_MAX_2010) i = -2;
+
+
+	/* Hack: Play inn fireplace sfx right away at correct (normal/quiet/off) volume,
+	   instead of flaring up to 100% vol first and then reducing it a turn later (glitch).. */
+	//grid_affects_player(Ind, Players[Ind]->px, Players[Ind]->py);
+	/* Hack: Inns count as houses too */
+	if (!(zcave = getcave(&p_ptr->wpos))) return -1; //paranoia
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || inside_inn(p_ptr, c_ptr) || p_ptr->store_num != -1) {
+		if (!p_ptr->grid_house) {
+			p_ptr->grid_house = TRUE;
+			if (!p_ptr->sfx_house) {
+				Send_sfx_volume(Ind, 0, 0);
+				//fadeout any ambient sound:
+				i = -1;
+				sfx_ambient = SFX_AMBIENT_NONE;
+			}
+			else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, sfx_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
+		}
+	} else if (p_ptr->grid_house) {
+		p_ptr->grid_house = FALSE;
+		if (p_ptr->sfx_house_quiet || !p_ptr->sfx_house) Send_sfx_volume(Ind, 100, 100);
+	}
+
 
 	/* Mind-linked to someone? Send him our sound too! */
 	player_type *p_ptr2 = NULL;
