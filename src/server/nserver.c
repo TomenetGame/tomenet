@@ -2456,8 +2456,12 @@ static void sync_options(int Ind, bool *options) {
 	if (p_ptr->sfx_house != sfx_house ||
 	    p_ptr->sfx_house_quiet != sfx_house_quiet) {
 		if (p_ptr->grid_house) {
-			if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
-			else {
+			if (!p_ptr->sfx_house) {
+				/* Workaround login glitch */
+				if (p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE) Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, FALSE); //stop immediately
+
+				Send_sfx_volume(Ind, 0, 0);
+			} else {
 				if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
 				else Send_sfx_volume(Ind, 100, 100);
 
