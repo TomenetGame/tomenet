@@ -957,7 +957,9 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			if (left_shop) {
 				/* Copy/paste from player_can_enter(), could replace it with that (with comfortably=TRUE flag) */
 				if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
-				    zcave[y][x].feat == FEAT_DEEP_LAVA)
+				    zcave[y][x].feat == FEAT_DEEP_LAVA ||
+				    zcave[y][x].feat == FEAT_FIRE ||
+				    zcave[y][x].feat == FEAT_GREAT_FIRE)
 					if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire)))
 						continue;
 				if (zcave[y][x].feat == FEAT_DEEP_WATER)
@@ -1174,7 +1176,9 @@ void teleport_player_to(int Ind, int ny, int nx) {
 
 		if (town) {
 			if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
-			    zcave[y][x].feat == FEAT_DEEP_LAVA)
+			    zcave[y][x].feat == FEAT_DEEP_LAVA ||
+			    zcave[y][x].feat == FEAT_FIRE ||
+			    zcave[y][x].feat == FEAT_GREAT_FIRE)
 				if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire))) {
 					/* Occasionally advance the distance */
 					if (++ctr > (4 * dis * dis + 4 * dis + 1)) {

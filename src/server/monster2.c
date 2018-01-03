@@ -5767,8 +5767,10 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b 
 		else return FALSE;
 	}
 	/* Lava */
-	else if ((feat == FEAT_SHAL_LAVA) ||
-	    (feat == FEAT_DEEP_LAVA)) {
+	else if (feat == FEAT_SHAL_LAVA ||
+	    feat == FEAT_DEEP_LAVA ||
+	    feat == FEAT_FIRE ||
+	    feat == FEAT_GREAT_FIRE) {
 		if ((r_ptr->flags3 & RF3_IM_FIRE) ||
 		    (r_ptr->flags9 & RF9_RES_FIRE) ||
 		    (r_ptr->flags7 & RF7_CAN_FLY))
@@ -5792,6 +5794,8 @@ void set_mon_num2_hook(int feat) {
 		break;
 	case FEAT_DEEP_LAVA:
 	case FEAT_SHAL_LAVA:
+	case FEAT_FIRE: //added the 'fires', dunno..
+	case FEAT_GREAT_FIRE:
 		get_mon_num2_hook = monster_lava;
 		break;
 	default:

@@ -9093,7 +9093,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 	switch (c_ptr->feat) {
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
-	case FEAT_FIRE:
+	case FEAT_FIRE: //allow 'fires' too
 	case FEAT_GREAT_FIRE:
 		break;
 	default:
@@ -9102,9 +9102,6 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 
 	/* lands safely on top of a loot pile? :-p */
 	if (c_ptr->o_idx) return FALSE;
-
-	/* doesn't land in lava? */
-	if (c_ptr->feat != FEAT_SHAL_LAVA && c_ptr->feat != FEAT_DEEP_LAVA) return FALSE;
 
 	/* destroy it and weaken Sauron! */
 	handle_art_d(ART_POWER);
