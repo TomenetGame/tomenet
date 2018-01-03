@@ -5535,6 +5535,8 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 
 		case FEAT_SHAL_LAVA:
 		case FEAT_DEEP_LAVA:
+		case FEAT_FIRE:
+		case FEAT_GREAT_FIRE:
 			if (comfortably && !p_ptr->immune_fire &&
 			    !(p_ptr->resist_fire && p_ptr->oppose_fire))
 				return FALSE;
