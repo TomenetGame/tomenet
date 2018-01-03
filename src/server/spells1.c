@@ -954,7 +954,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			/* Prevent landing onto a store entrance */
 			if (zcave[y][x].feat == FEAT_SHOP) continue;
 
-			if (left_shop) {
+			if (left_shop && dis <= 5) {
 				/* Copy/paste from player_can_enter(), could replace it with that (with comfortably=TRUE flag) */
 				if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
 				    zcave[y][x].feat == FEAT_DEEP_LAVA ||
