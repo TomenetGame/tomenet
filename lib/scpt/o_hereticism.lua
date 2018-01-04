@@ -290,7 +290,7 @@ FIRESTORM = add_spell {
 	["fail"] = 	-75,
 	--["stat"] = 	A_WIS,
 	["spell"] = 	function(args)
-			fire_wave(Ind, GF_HELL_FIRE, 0, 114 + get_level(Ind, FIRESTORM, 258), 1, 25 + get_level(Ind, FIRESTORM, 50), 8, EFF_STORM, " conjures hellfire for")
+			fire_wave(Ind, GF_HELLFIRE, 0, 114 + get_level(Ind, FIRESTORM, 258), 1, 25 + get_level(Ind, FIRESTORM, 50), 8, EFF_STORM, " conjures hellfire for")
 		end,
 	["info"] = 	function()
 			return "dam "..(114 + get_level(Ind, FIRESTORM, 258)).." rad 1 dur "..(25 + get_level(Ind, FIRESTORM, 50))
@@ -310,7 +310,7 @@ HELLFIRE_III = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_HELL_FIRE, args.dir, 300 + get_level(Ind, HELLFIRE_III, 400), 2 + 1 + get_level(Ind, HELLFIRE_II, 2), " casts a ball of hellfire for")
+			fire_ball(Ind, GF_HELLFIRE, args.dir, 300 + get_level(Ind, HELLFIRE_III, 400), 2 + 1 + get_level(Ind, HELLFIRE_II, 2), " casts a ball of hellfire for")
 		end,
 	["info"] = 	function()
 			return "dam "..(300 + get_level(Ind, HELLFIRE_II, 400)).." rad "..(2 + 1 + get_level(Ind, HELLFIRE_II, 2))

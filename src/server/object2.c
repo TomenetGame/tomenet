@@ -4651,7 +4651,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf) {
 						GF_NETHER, GF_NEXUS, GF_TIME,
 						GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
 						GF_TURN_ALL, GF_NUKE, //GF_STUN,
-						GF_DISINTEGRATE, GF_HELL_FIRE };
+						GF_DISINTEGRATE, GF_HELLFIRE };
 
 						//                                o_ptr->pval2 = power[rand_int(25)];
 					o_ptr->pval = power[rand_int(27)];

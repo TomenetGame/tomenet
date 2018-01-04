@@ -4653,7 +4653,7 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 		case GF_PSI:
 		case GF_HOLY_FIRE:
 		case GF_DISINTEGRATE:
-		case GF_HELL_FIRE:
+		case GF_HELLFIRE:
 		case GF_MAKE_GLYPH:
 		case GF_CURSE:
 		case GF_WATERPOISON:

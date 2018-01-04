@@ -1305,7 +1305,7 @@ static struct {
 	{"ROCKET", GF_ROCKET},
 	{"NUKE", GF_NUKE},
 	{"HOLY_FIRE", GF_HOLY_FIRE},
-	{"HELL_FIRE", GF_HELL_FIRE},
+	{"HELLFIRE", GF_HELLFIRE},
 	{"DISINTEGRATE", GF_DISINTEGRATE},
 #if 0	// implement them first
 	{"DESTRUCTION", GF_DESTRUCTION},

@@ -5542,7 +5542,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		case GF_NUKE: fprintf(fff, "It explodes with radiation.\n"); break;
 		case GF_STUN: fprintf(fff, "It explodes with stun.\n"); break;
 		case GF_DISINTEGRATE: fprintf(fff, "It explodes with disintegration.\n"); break;
-		case GF_HELL_FIRE: fprintf(fff, "It explodes with hell fire.\n"); break;
+		case GF_HELLFIRE: fprintf(fff, "It explodes with hellfire.\n"); break;
 	}
 
 	/* special artifacts hardcoded - C. Blue */

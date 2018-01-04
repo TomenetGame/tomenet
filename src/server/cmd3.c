@@ -2355,7 +2355,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			case GF_NUKE: strcat(powins, "Toxic waste"); break;
 			case GF_STUN: strcat(powins, "Stun"); break; //disabled
 			case GF_DISINTEGRATE: strcat(powins, "Disintegration"); break;
-			case GF_HELL_FIRE: strcat(powins, "Hellfire"); break;
+			case GF_HELLFIRE: strcat(powins, "Hellfire"); break;
 			}
 			strcat(powins, ")");
 		}

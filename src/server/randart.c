@@ -2141,7 +2141,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 			GF_NETHER, GF_NEXUS, GF_TIME,
 			GF_GRAVITY, GF_KILL_WALL, GF_AWAY_ALL,
 			GF_TURN_ALL, GF_NUKE, //GF_STUN,
-			GF_DISINTEGRATE, GF_HELL_FIRE };
+			GF_DISINTEGRATE, GF_HELLFIRE };
 			a_ptr->pval = power[rand_int(27)];
 		}
 	}
@@ -2297,7 +2297,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		case GF_POIS: case GF_COLD: a_ptr->level += 2; cost += 10000; break;
 		case GF_FIRE: case GF_ELEC: case GF_ACID: a_ptr->level += 2; cost += 15000; break;
 		case GF_LITE: case GF_DARK: case GF_ICE: case GF_SHARDS: case GF_NUKE: a_ptr->level += 2; cost += 20000; break;
-		case GF_MANA: case GF_METEOR: case GF_CHAOS: case GF_NETHER: case GF_HELL_FIRE: case GF_TIME: a_ptr->level += 5; cost += 30000; break;
+		case GF_MANA: case GF_METEOR: case GF_CHAOS: case GF_NETHER: case GF_HELLFIRE: case GF_TIME: a_ptr->level += 5; cost += 30000; break;
 		case GF_CONFUSION: case GF_INERTIA: a_ptr->level += 4; cost += 20000; break;
 		case GF_NEXUS: case GF_GRAVITY: case GF_AWAY_ALL: case GF_TURN_ALL: a_ptr->level += 5; cost += 15000; break;
 		case GF_PLASMA: case GF_SOUND: case GF_FORCE: case GF_STUN: a_ptr->level += 6; cost += 35000; break;

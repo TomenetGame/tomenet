@@ -959,7 +959,7 @@ D:2:a lava wall blocking your way
 N:178:great fire
 G:%:v
 S:R:R:y:v:y:v:R
-E:150d2:10:HELL_FIRE
+E:150d2:10:HELLFIRE
 F:ATTR_MULTI
 F:FLOOR | REMEMBER | NOTICE | PERMANENT
 D:0:This fire is so powerful it could destroy even the most powerful artifacts.

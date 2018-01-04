@@ -109,7 +109,7 @@
 #define GF_PSI			79
 #define GF_HOLY_FIRE		80
 #define GF_DISINTEGRATE		81
-#define GF_HELL_FIRE		82 /* was HOLY_ORB */
+#define GF_HELLFIRE		82 /* was HOLY_ORB */
 #define GF_NETHER_WEAK		83 /* special version of GF_NETHER, solely for Vampires smashing Potions of Death */
 #define GF_REMCURSE_PLAYER	84
 #define GF_KILL_GLYPH		85
@@ -235,7 +235,7 @@
 #define GF_DEATH_RAY		77
 #define GF_STUN			78
 #define GF_HOLY_FIRE		79
-#define GF_HELL_FIRE		80
+#define GF_HELLFIRE		80
 #define GF_DISINTEGRATE		81
 #define GF_CHARM		82
 #define GF_CONTROL_UNDEAD	83

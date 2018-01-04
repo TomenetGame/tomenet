@@ -1599,7 +1599,7 @@ byte spell_color(int type) {
 	//case GF_HOLY_ORB:	return (TERM_L_DARK);
 	case GF_HOLY_ORB:	return (randint(6) == 1 ? TERM_ORANGE : TERM_L_DARK);
 	case GF_HOLY_FIRE:	return (randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
-	case GF_HELL_FIRE:	return (randint(5) == 1 ? TERM_RED : TERM_L_DARK);
+	case GF_HELLFIRE:	return (randint(5) == 1 ? TERM_RED : TERM_L_DARK);
 	case GF_MANA:		return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
 	case GF_ARROW:		return (TERM_L_UMBER);
 	case GF_WATER:		return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
@@ -1666,7 +1666,7 @@ bool spell_color_animation(int type) {
 	//case GF_HOLY_ORB:	return FALSE;
 	case GF_HOLY_ORB:	return TRUE;//(randint(6)==1?TERM_ORANGE:TERM_L_DARK);
 	case GF_HOLY_FIRE:	return TRUE;//(randint(3)!=1?TERM_ORANGE:(randint(2)==1?TERM_YELLOW:TERM_WHITE));
-	case GF_HELL_FIRE:	return TRUE;//(randint(5)==1?TERM_RED:TERM_L_DARK);
+	case GF_HELLFIRE:	return TRUE;//(randint(5)==1?TERM_RED:TERM_L_DARK);
 	case GF_MANA:		return TRUE;//(randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
 	case GF_ARROW:		return FALSE;
 	case GF_WATER:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
@@ -1734,7 +1734,7 @@ byte spell_color(int type) {
 	//case GF_HOLY_ORB:	return (TERM_L_DARK);
 	case GF_HOLY_ORB:	return (TERM_HOLYORB);
 	case GF_HOLY_FIRE:	return (TERM_HOLYFIRE);
-	case GF_HELL_FIRE:	return (TERM_HELLFIRE);
+	case GF_HELLFIRE:	return (TERM_HELLFIRE);
 	case GF_MANA:		return (TERM_MANA);
 	case GF_ARROW:		return (TERM_L_UMBER);
 	case GF_VAPOUR:		return (TERM_L_BLUE);//animate with some dark blue maybe?
@@ -4152,7 +4152,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_FIRE:
 	case GF_METEOR:
 	case GF_PLASMA:
-	case GF_HELL_FIRE:
+	case GF_HELLFIRE:
 	case GF_INFERNO:
 	//GF_DETONATION and GF_ROCKET disintegrate anyway
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
@@ -5151,7 +5151,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 
-		case GF_HELL_FIRE:
+		case GF_HELLFIRE:
 			do_smash_effect = TRUE;
 			if (hates_fire(o_ptr)) {
 				do_kill = TRUE;
@@ -5973,7 +5973,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 		break;
 
-	case GF_HELL_FIRE:
+	case GF_HELLFIRE:
 		if (seen) obvious = TRUE;
 		if (r_ptr->flags3 & (RF3_GOOD)) {
 			if (r_ptr->flags3 & RF3_IM_FIRE) {
@@ -9382,7 +9382,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 #endif
 
-	case GF_HELL_FIRE:
+	case GF_HELLFIRE:
 		if (p_ptr->body_monster && (r_ptr->flags3 & RF3_GOOD)) dam *= 2;
 		if (p_ptr->suscep_good) dam = (dam * 3) / 4;
 		if (p_ptr->suscep_evil) dam *= 2;
@@ -11564,7 +11564,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			case GF_FIRE: terrain_damage = 100; break;
 			case GF_METEOR: terrain_damage = 150; break;
 			case GF_PLASMA: terrain_damage = 120; break;
-			case GF_HELL_FIRE: terrain_damage = 130; break;
+			case GF_HELLFIRE: terrain_damage = 130; break;
 			default: terrain_damage = -1; break;
 			}
 		}
@@ -12541,7 +12541,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 			dam *= 2;
 		break;
 
-	case GF_HELL_FIRE:
+	case GF_HELLFIRE:
 		if (r_ptr->flags3 & (RF3_GOOD)) {
 			if (r_ptr->flags3 & RF3_IM_FIRE) {
 				dam *= 2; dam = (dam * 2) / 3;

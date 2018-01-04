@@ -6891,7 +6891,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			break;
 		case ART_HELLFIRE:
 			sprintf(p_ptr->attacker, " conjures up hellfire for");
-			fire_ball(Ind, GF_HELL_FIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 3, p_ptr->attacker);
+			fire_ball(Ind, GF_HELLFIRE, dir, 400 + get_skill_scale(p_ptr, SKILL_DEVICE, 200), 3, p_ptr->attacker);
 			o_ptr->recharging = randint(10) + 30;
 			break;
 		case ART_HAVOC:
