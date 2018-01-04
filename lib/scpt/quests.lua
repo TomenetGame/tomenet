@@ -5,6 +5,10 @@
 -- Purpose: The Town Elder gives you advice based on your actual current character's details!
 function quest_towneltalk(Ind, msg)
 	if player.admin_dm ~= 0 then admin = 1 else admin = 0 end
+
+	--tips regarding equipping,skilling,dungeoneering,events,partying
+	--warn about redundant resses/encumberments/hunger/light
+
 	if player.pclass == CLASS_WARRIOR or player.pclass == CLASS_PALADIN or player.pclass == CLASS_MIMIC or player.pclass == CLASS_ROGUE or admin then
 		if player.num_blow < 2 then
 			msg_print(Ind, "\252\255UFor a "..msg.." you attack too slowly. Your number of blows per round (BpR) should at least be 2!")

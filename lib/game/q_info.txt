@@ -94,11 +94,22 @@ V:1.0.0
 
 # New (2018): Most text lines (W:, yR:, X:, x:, Wr:) can call a lua function. It must begin with two slashes and nothing else must be in the line.
 # Parameters are possible. As usual, ':' symbols are not allowed anywhere. Lua functions cannot change any quest parameters except for flags.
-# If a lua function is supposed to be able to read and/or write flags, its first parameter must be named <flags>. If it needs to actually modify the flags,
-# the first parameter must instead be <flags!> and the function must return a string containing two comma-separated 16-bit values, set-flag-mask and clear-flag-mask again. Eg:
-# yR:-://qtestlua1("Hello.")
-# Wr:0:0://qtestlua2(flags!, "$$Q That's not the right password, $$r!")  and this function would:
+# If a lua function is supposed to be able to read and/or write flags, it must have a parameter named <?flags?>. If it needs to actually modify the flags,
+# it must have a parameter named <!flags!> and the function must return a string containing two comma-separated 16-bit values, set-flag-mask and clear-flag-mask again.
+# The !flags! or ?flags? parameter must always be the FIRST parameter specified. Eg:
+# yR:-://qtestlua1("Hello.", 3)
+# Wr:0:0://qtestlua2(!flags!, "$$Q That's not the right password, $$r!")  and this function would:
 #   return set_mask .. "," .. clear_mask    --- or as a specific min/max example:    return 0 .. "," .. 65535
+# Note that the actual lua function will always need to have an 'Ind' parameter before all other custom parameters from the call definition in q_info.txt.
+# If the function queries or even modifies flags, the '?flags?' or '!flags!' will translate to  just <flags> as the FIRST parameter in the function call.
+# All further parameters, if any, come after that. Eg (in regards to above examples):
+#   function qtestlua1(Ind, message, number)
+#     ....
+#   end
+#   function qtestlua2(flags, Ind, message)
+#     ....
+#     return set_mark..","..clear_mask
+#   end
 
 # Further notes:
 # -The index number must just be counting up for each quest added to this file, starting with 0.
