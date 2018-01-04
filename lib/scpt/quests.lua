@@ -3,7 +3,7 @@
 -- all be named 'quest_' and end on the 'internal quest codename'.  - C. Blue
 
 -- Purpose: The Town Elder gives you advice based on your actual current character's details!
-function quest_towneltalk(msg)
+function quest_towneltalk(Ind, msg)
 	lua_s_print("q-towneltalk: "..msg.."\n")
-	msg_print(Ind, "q-towneltalk: "..msg)
+	msg_print(Ind, "q-towneltalk: "..msg.. " - "..players(Ind).num_blow)
 end

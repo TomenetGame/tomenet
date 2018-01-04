@@ -70,7 +70,9 @@
    Syntax is  ...://luafunctionname(flags!, "...")  where flags! can also be flags or left out:
    //luafn("...") - basic function,
    //luafn(flags, "...") - function that can read quest flags,
-   //luafn(flags!, "...") - function that can read quest flags and will write them back (lua function must return flags). */
+   //luafn(flags!, "...") - function that can read quest flags and will write them back (lua function must return flags).
+   Note that the actual lua function will have an 'Ind' parameter inserted right before the custom parameters (but after a possible 'flags' parameter):
+   function luafn(flags, Ind, "..."). */
 #define QUESTS_ALLOW_LUA
 
 
@@ -2864,7 +2866,9 @@ static bool quest_calls_lua(int Ind, int q_idx, char *text) {
 	char *argflags, *argflagsrw, *custom, *separator;
 	char luaparm[99], flagcombo[39];
 
-	if (text[0] != '/' || text[1] != '/') return FALSE;
+	if (text[0] != '/' || text[1] != '/'
+	    || !strchr(text + 2, '(')) //don't crash on erroneous q_info.txt format..
+		return FALSE;
 
 	strcpy(luaparm, text + 2);
 	argflags = strstr(text + 2, "flags");
@@ -2876,8 +2880,10 @@ static bool quest_calls_lua(int Ind, int q_idx, char *text) {
 		if (!custom || (custom > argflagsrw && separator)) {
 			argflagsrw = strstr(luaparm, "flags!"); //reset to work with cloned string instead
 			strcpy(argflagsrw, format("%d", flags));
+			strcat(luaparm, format(",%d", Ind)); //inject Ind, so we can access the players(Ind) in our lua function if we need to
 			if (custom) strcat(luaparm, separator);
 			else strcat(luaparm, ")");
+			s_printf("QUESTS_ALLOW_LUA: calling (rw) %s\n", luaparm); //debug info
 			sprintf(flagcombo, "%s", string_exec_lua(Ind, format("%s", luaparm)));
 			/* Check for validity. Must be format: 16bit value , 16bit value. */
 			if ((separator = strchr(flagcombo, ','))) {
@@ -2892,11 +2898,22 @@ static bool quest_calls_lua(int Ind, int q_idx, char *text) {
 		if (!custom || (custom > argflagsrw && separator)) {
 			argflags = strstr(luaparm, "flags"); //reset to work with cloned string instead
 			strcpy(argflagsrw, format("%d", flags));
+			strcat(luaparm, format(",%d", Ind)); //inject Ind, so we can access the players(Ind) in our lua function if we need to
 			if (custom) strcat(luaparm, separator);
 			else strcat(luaparm, ")");
+			s_printf("QUESTS_ALLOW_LUA: calling (r) %s\n", luaparm); //debug info
 			(void)exec_lua(Ind, format("%s", luaparm));
 		}
-	} else (void)exec_lua(Ind, format("%s", luaparm));
+	} else {
+		//inject Ind, so we can access the players(Ind) in our lua function if we need to
+		separator = strchr(luaparm, '(');
+		strcpy(separator + 1, format("%d,", Ind));
+		separator = strchr(text + 2, '(');
+		strcat(luaparm, separator + 1);
+
+		s_printf("QUESTS_ALLOW_LUA: calling %s\n", luaparm); //debug info
+		(void)exec_lua(Ind, format("%s", luaparm));
+	}
 	return TRUE;
 }
 #endif
