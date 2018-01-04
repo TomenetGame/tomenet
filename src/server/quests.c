@@ -379,7 +379,7 @@ static cave_type **quest_prepare_zcave(struct worldpos *wpos, bool stat, cptr tp
    thereby personalising it for dialogues and narrations. */
 static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 	char *textp, *textp2;
-	int pos = 0;
+	int pos = 0, lp;
 
 	/* no placeholder detected? */
 	if (!(textp = strstr(src, "$$"))) {
@@ -409,23 +409,28 @@ static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 			break;
 		case 'n':
 			strcat(dest, p_ptr->name);
-			dest[pos] = tolower(dest[pos]);
+			lp = pos - 1;
+			while (dest[++lp]) dest[lp] = tolower(dest[lp]);
 			break;
 		case 't':
 			strcat(dest, get_ptitle(p_ptr, FALSE));
-			dest[pos] = tolower(dest[pos]);
+			lp = pos - 1;
+			while (dest[++lp]) dest[lp] = tolower(dest[lp]);
 			break;
 		case 'r':
 			strcat(dest, race_info[p_ptr->prace].title);
-			dest[pos] = tolower(dest[pos]);
+			lp = pos - 1;
+			while (dest[++lp]) dest[lp] = tolower(dest[lp]);
 			break;
 		case 'a':
 			strcat(dest, get_prace(p_ptr));
-			dest[pos] = tolower(dest[pos]);
+			lp = pos - 1;
+			while (dest[++lp]) dest[lp] = tolower(dest[lp]);
 			break;
 		case 'c':
 			strcat(dest, class_info[p_ptr->pclass].title);
-			dest[pos] = tolower(dest[pos]);
+			lp = pos - 1;
+			while (dest[++lp]) dest[lp] = tolower(dest[lp]);
 			break;
 		}
 
