@@ -84,6 +84,9 @@ pern_dofile(Ind, "mikaelh.lua")
 -- 10) every 24 hours: cron_24h(string time, int h, int m, int s)
 pern_dofile(Ind, "custom.lua")
 
+-- Super-experimental: Special lua functions called by the quests framework in q_info.txt.
+pern_dofile(Ind, "quests.lua")
+
 
 -- Restore a good neat handler
 _ALERT = __old_ALERT
