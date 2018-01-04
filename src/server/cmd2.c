@@ -5627,7 +5627,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 	if (!returning && !ethereal
 	    && p_ptr->warning_autopickup < p_ptr->lev) { /* wow - repeat this hint every level =P */
-		if (strstr(o_name, "!=")) p_ptr->warning_autopickup = PY_MAX_LEVEL;
+		if (strchr(o_name, '!') && o_ptr->sval != SV_AMMO_MAGIC) p_ptr->warning_autopickup = PY_MAX_LEVEL;
 		else {
 			p_ptr->warning_autopickup = p_ptr->lev;
 			msg_print(Ind, "\374\377yHINT: Press '\377o{\377y' key and inscribe your ammunition '\377o!=\377y' to pick it up automatically!");
