@@ -343,6 +343,12 @@ yY:*dank*
 #yY:thanks:thank you:thankyou:thanks you:thx:merci:danke:gracias:grazie:arigato:arigatou:xiexie:xie xie:spacibo:spasibo
 yR:-:You are welcome!
 
+Y:0:0:-:*advice*:-:255
+Y:0:0:-:*advise*:-:255
+y:-1:-1:-:*advice*
+yY:*advise*
+yR:-://quest_towneltalk("$$c!")
+
 #Y:0:0:-:*bye*:-:1
 #Y:0:0:-:*see*you*:-:1
 #Y:0:0:-:*fare*well*:-:1
