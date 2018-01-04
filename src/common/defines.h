@@ -4925,9 +4925,9 @@
 #define TR5_IGNORE_WATER	0x00040000L		/* Item ignores Water damage */
 #define TR5_RES_TIME		0x00080000L
 #define TR5_RES_MANA			0x00100000L
- #define TR5_REDUC_FIRE			0x00002000L	/* Later */
- #define TR5_REDUC_COLD			0x00004000L	/* Later */
- #define TR5_REDUC_ELEC			0x00008000L	/* Later */
+ #define TR5_REDUC_FIRE			0x00200000L	/* Later */
+ #define TR5_REDUC_COLD			0x00400000L	/* Later */
+ #define TR5_REDUC_ELEC			0x00800000L	/* Later */
  #define TR5_REDUC_ACID		0x01000000L		/* Later */
 #define TR5_DISARM		0x02000000L
 #define TR5_NO_ENCHANT		0x04000000L
