@@ -7900,7 +7900,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'W' for conversation */
 		if (buf[0] == 'W') {
-			/* we have 2 sub-types of 'X' lines */
+			/* we have 2 sub-types of 'W' lines */
 			if (buf[1] == ':') { /* init */
 				int examine;
 
