@@ -403,7 +403,7 @@ static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 			strcat(dest, get_prace(p_ptr));
 			break;
 		case 'C':
-			strcat(dest, race_info[p_ptr->pclass].title);
+			strcat(dest, class_info[p_ptr->pclass].title);
 			break;
 		case 'n':
 			strcat(dest, p_ptr->name);
@@ -422,7 +422,7 @@ static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 			dest[pos] = tolower(dest[pos]);
 			break;
 		case 'c':
-			strcat(dest, race_info[p_ptr->pclass].title);
+			strcat(dest, class_info[p_ptr->pclass].title);
 			dest[pos] = tolower(dest[pos]);
 			break;
 		}
