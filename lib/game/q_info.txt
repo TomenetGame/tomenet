@@ -65,7 +65,7 @@ V:1.0.0
 # (optional - after a y-line) yY:list of further keywords for which this reply is valid, separated by colons
 # (optional - after a y-line) yQ:list of further questors for which this reply is valid, separated by colons
 # (optional - after a y-line) yS:list of further stages during which this reply is valid, separated by colons
-# (optional - after a y-line, 15x repeatable) YR:flags:reply convo line
+# (optional - after a y-line, 15x repeatable) yR:flags:reply convo line
 
 # goals to kill specific monsters:
 # (optional) k:stage:goal:minlev:maxlev:number
@@ -91,6 +91,13 @@ V:1.0.0
 # (up to 5x) G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here) to progress to next stage
 # (optional) O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
 # (optional, up to 10x - rewards) R:stage:define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward 0..5:gold:exp:specialstatuseffect
+
+# New (2018): Most text lines (W:, yR:, X:, x:, Wr:) can call a lua function. It must be placed inside two bracers and nothing else must be in the line.
+# Parameters are possible. As usual, ':' symbols are not allowed anywhere. Lua functions cannot change any quest parameters except for flags.
+# If a lua function is supposed to be able to read and/or write flags, its first parameter must be named <flags>. If it needs to actually modify the flags,
+# the first parameter must instead be <flags!> and the function must return a value of flags again. Eg:
+# yR:-:{{qtestlua1("Hello.")}}
+# Wr:0:0:{{qtestlua2(flags!, "$$Q That's not the right password, $$r!")}}
 
 # Further notes:
 # -The index number must just be counting up for each quest added to this file, starting with 0.
