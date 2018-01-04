@@ -65,6 +65,14 @@
    when it spawns? Otherwise it'll just drop on top of them. */
 #define QUESTOR_OBJECT_CRUSHES
 
+/* Can certain text lines call lua functions instead of outputting a text? Those would be:
+   W: (talk), yR: (reply), X: (narration), x: (log), Wr: (default_reply).
+   Syntax is  ...://luafunctionname(flags!, "...")  where flags! can also be flags or left out:
+   //luafn("...") - basic function,
+   //luafn(flags, "...") - function that can read quest flags,
+   //luafn(flags!, "...") - function that can read quest flags and will write them back (lua function must return flags). */
+#define QUESTS_ALLOW_LUA
+
 
 static void quest_goal_check_reward(int pInd, int q_idx);
 static bool quest_goal_check(int pInd, int q_idx, bool interacting);
@@ -2850,6 +2858,49 @@ static void quest_imprint_stage(int Ind, int q_idx, int py_q_idx) {
 	quest_imprint_tracking_information(Ind, py_q_idx, FALSE);
 }
 
+#ifdef QUESTS_ALLOW_LUA
+static bool quest_calls_lua(int Ind, int q_idx, char *text) {
+	u16b flags = quest_get_flags(Ind, q_idx), setflags, clearflags;
+	char *argflags, *argflagsrw, *custom, *separator;
+	char luaparm[99], flagcombo[39];
+
+	if (text[0] != '/' || text[1] != '/') return FALSE;
+
+	strcpy(luaparm, text + 2);
+	argflags = strstr(text + 2, "flags");
+	argflagsrw = strstr(text + 2, "flags!");
+	custom = strchr(text + 2, '"');
+	separator = strchr(text + 2, ',');
+
+	if (argflagsrw) {
+		if (!custom || (custom > argflagsrw && separator)) {
+			argflagsrw = strstr(luaparm, "flags!"); //reset to work with cloned string instead
+			strcpy(argflagsrw, format("%d", flags));
+			if (custom) strcat(luaparm, separator);
+			else strcat(luaparm, ")");
+			sprintf(flagcombo, "%s", string_exec_lua(Ind, format("%s", luaparm)));
+			/* Check for validity. Must be format: 16bit value , 16bit value. */
+			if ((separator = strchr(flagcombo, ','))) {
+				*separator = 0;
+				setflags = atoi(flagcombo);
+				clearflags = atoi(separator + 1);
+				s_printf("QUESTS_ALLOW_LUA: setflags %d, clearflags %d\n", setflags, clearflags); //debug info
+				quest_set_flags(Ind, q_idx, setflags, clearflags);
+			}
+		}
+	} else if (argflags) {
+		if (!custom || (custom > argflagsrw && separator)) {
+			argflags = strstr(luaparm, "flags"); //reset to work with cloned string instead
+			strcpy(argflagsrw, format("%d", flags));
+			if (custom) strcat(luaparm, separator);
+			else strcat(luaparm, ")");
+			(void)exec_lua(Ind, format("%s", luaparm));
+		}
+	} else (void)exec_lua(Ind, format("%s", luaparm));
+	return TRUE;
+}
+#endif
+
 /* Helper function for quest_set_stage(), to re-individualise quests that just
    finished a timer/walk sequence and hence were 'temporarily global' of some sort.
    'final_player' must be TRUE for the last player that this function gets called
@@ -2898,6 +2949,9 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 				msg_format(Ind, "\374\377U%s", q_stage->narration[k]);
 #else /* allow placeholders */
 				quest_text_replace(text, q_stage->narration[k], p_ptr);
+ #ifdef QUESTS_ALLOW_LUA
+				if (!quest_calls_lua(Ind, q_idx, text))
+ #endif
 				msg_format(Ind, "\374\377U%s", text);
 #endif
 			}
@@ -3063,6 +3117,9 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 						msg_format(i, "\374\377U%s", q_stage->narration[k]);
 #else /* allow placeholders */
 						quest_text_replace(text, q_stage->narration[k], p_ptr);
+ #ifdef QUESTS_ALLOW_LUA
+						if (!quest_calls_lua(i, q_idx, text))
+ #endif
 						msg_format(i, "\374\377U%s", text);
 #endif
 					}
@@ -3634,6 +3691,9 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 				msg_format(Ind, "\374\377U%s", q_stage_talk->talk[questor_idx][i]);
 #else /* allow placeholders */
 				quest_text_replace(text, q_stage_talk->talk[questor_idx][i], p_ptr);
+ #ifdef QUESTS_ALLOW_LUA
+				if (!quest_calls_lua(Ind, q_idx, text))
+ #endif
 				msg_format(Ind, "\374\377U%s", text);
 #endif
 
@@ -3907,6 +3967,9 @@ void quest_reply(int Ind, int q_idx, char *str) {
 						msg_format(Ind, "\374\377U%s", q_kwr->reply[j]);
 #else /* allow placeholders */
 						quest_text_replace(text, q_kwr->reply[j], p_ptr);
+ #ifdef QUESTS_ALLOW_LUA
+						if (!quest_calls_lua(Ind, q_idx, text))
+ #endif
 						msg_format(Ind, "\374\377U%s", text);
 #endif
 					}
@@ -3981,6 +4044,9 @@ void quest_reply(int Ind, int q_idx, char *str) {
 			msg_format(Ind, "\374\377%c%s", pasv ? 'u' : 'U', text);
 #else /* allow placeholders */
 			quest_text_replace(text2, text, p_ptr);
+ #ifdef QUESTS_ALLOW_LUA
+			if (!quest_calls_lua(Ind, q_idx, text2))
+ #endif
 			msg_format(Ind, "\374\377%c%s", pasv ? 'u' : 'U', text2);
 #endif
 		}
@@ -5344,6 +5410,9 @@ void quest_log(int Ind, int py_q_idx) {
 		msg_format(Ind, "\377U%s", q_stage->log[k]);
 #else /* allow placeholders */
 		quest_text_replace(text, q_stage->log[k], p_ptr);
+ #ifdef QUESTS_ALLOW_LUA
+		if (!quest_calls_lua(Ind, q_idx, text))
+ #endif
 		msg_format(Ind, "\377U%s", text);
 #endif
 	}
