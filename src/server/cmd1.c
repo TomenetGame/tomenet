@@ -3988,13 +3988,6 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 				k = damroll(ma_ptr->dd, ma_ptr->ds);
 
-#if 1 /* Apply do_nazgul() idea to martial arts too */
-				if (!((p_ptr->slay | p_ptr->slay_melee) & (TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_KILL_UNDEAD))) {
-					msg_print(Ind, "The Ringwraith is IMPERVIOUS to your mundane attacks.");
-					k = 0;
-				}
-#endif
-
 				if (ma_ptr->effect == MA_KNEE) {
 #if 0 /* less message order problems */
 					if (r_ptr->flags1 & RF1_MALE) {
@@ -4061,6 +4054,11 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
+				if (!instakills(Ind)) {
+					do_nazgul(Ind, &k, r_ptr, slot);
+					if (k == 0) k2 = 0;
+				}
+
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
@@ -4068,6 +4066,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				k3 += k2;
 #else
 				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
+
+				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, slot);
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -4257,7 +4257,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				}
 
 				/* heheheheheh */
-				if (!instakills(Ind)) do_nazgul(Ind, &k, &num, r_ptr, slot);
+				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, slot);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -4286,8 +4286,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			} else {
 				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 
+				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, slot);
+
 				/* Apply the player damage boni */
-				/* (should this also cancelled by nazgul? no, because only dice-damage is cancelled usually) */
+				/* (should this also cancelled by nazgul? not for now) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
 				k3 = k;
@@ -5156,23 +5158,27 @@ void py_touch_zap_player(int Ind, int Ind2) {
 /* Apply nazgul effects */
 /* Mega Hack -- Hitting Nazgul is REALY dangerous
  * (ideas from Akhronath) */
-//void do_nazgul(int *k, int *num, int num_blow, int weap, monster_race *r_ptr, object_type *o_ptr)
-void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
+void do_nazgul(int Ind, int *k, monster_race *r_ptr, int slot) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[slot];
+	object_type *o_ptr = (slot == -1 ? NULL : &p_ptr->inventory[slot]);
 	char o_name[ONAME_LEN];
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!(r_ptr->flags7 & RF7_NAZGUL)) return;
 
-	//int weap = 0;	// Hack!  <- ???
-	u32b f1, f2, f3, f4, f5, f6, esp;
-
-	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	if (o_ptr) object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	else f1 = 0x0;
 
 	f1 |= p_ptr->slay | p_ptr->slay_melee;
 
-	if ((!o_ptr->name2) && (!artifact_p(o_ptr))) {
-		if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {
+	if (!o_ptr) {
+		/* Martial arts or bare-handed attacks */
+		if (!(f1 & (TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_KILL_UNDEAD))) {
+			msg_print(Ind, "The Ringwraith is IMPERVIOUS to your mundane strikes.");
+			*k = 0;
+		}
+	} else if ((!o_ptr->name2) && (!artifact_p(o_ptr))) {
+		if (!(f1 & (TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_KILL_UNDEAD))) {
 			msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 			*k = 0;
 		}
@@ -5190,11 +5196,9 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 			//inven_item_optimize(Ind, INVEN_WIELD + weap);
 			inven_item_increase(Ind, slot, -1); /* this way using slot we can handle dual-wield */
 			inven_item_optimize(Ind, slot);
-			/* To stop attacking */
-			//*num = num_blow;
 		}
 	} else if (like_artifact_p(o_ptr)) {
-		if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
+		if (!(f1 & (TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_KILL_UNDEAD))
 		    && !(f4 & TR4_BLACK_BREATH)) { /* there are no (pseudo)artifact Morgul weapons atm, but anyway.. */
 			msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 			*k = 0;
@@ -5219,12 +5223,9 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 			//inven_item_optimize(Ind, INVEN_WIELD + weap);
 			inven_item_increase(Ind, slot, -1);
 			inven_item_optimize(Ind, slot);
-
-			/* To stop attacking */
-			//*num = num_blow;
 		}
 	} else if (o_ptr->name2) {
-		if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
+		if (!(f1 & (TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_KILL_UNDEAD))
 		    && !(f4 & TR4_BLACK_BREATH)) { /* :-O for Morgul weapons */
 			msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
 			*k = 0;
@@ -5247,20 +5248,17 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 			//inven_item_optimize(Ind, INVEN_WIELD + weap);
 			inven_item_increase(Ind, slot, -1);
 			inven_item_optimize(Ind, slot);
-
-			/* To stop attacking */
-			//*num = num_blow;
 		}
 	}
 
-	/* If any damage is done, then 25% chance of getting the Black Breath */
-	//if ((*k) && magik(25) && !p_ptr->black_breath) {
+	/* Chance of getting the Black Breath */
 	if (
 #ifdef VAMPIRES_BB_IMMUNE
 	    p_ptr->prace != RACE_VAMPIRE &&
 #endif
 	    !p_ptr->black_breath &&
-	    magik(p_ptr->suscep_life ? 5 : 15)) {
+	    /* Hobbits and undead forms resist slightly, non-weapon attacks are especially susceptible */
+	    magik((p_ptr->prace == RACE_HOBBIT || p_ptr->suscep_life ? 5 : 10) + (o_ptr ? 0 : 10))) {
 		s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", p_ptr->name);
 		set_black_breath(Ind);
 	}

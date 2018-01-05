@@ -613,7 +613,7 @@ extern void py_attack(int Ind, int y, int x, byte old);
 extern void spin_attack(int Ind);
 extern void touch_zap_player(int Ind, int m_idx);
 extern void py_touch_zap_player(int Ind, int Ind2);
-extern void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot);
+extern void do_nazgul(int Ind, int *k, monster_race *r_ptr, int slot);
 extern void set_black_breath(int Ind);
 extern bool do_prob_travel(int Ind, int dir);
 extern void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy);
