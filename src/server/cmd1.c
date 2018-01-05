@@ -323,7 +323,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 	monster_brand[4] = 0;
 	monster_brand[5] = 0;
 
-	bool melee = (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
+	bool melee = !o_ptr || (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
 
 
 	if (Ind > 0) {
@@ -338,7 +338,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 
 	/* Extract the flags */
-	if (o_ptr->k_idx) {
+	if (o_ptr && o_ptr->k_idx) {
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Hack -- extract temp branding */
@@ -382,14 +382,14 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 			/* If monster is fighting without weapons, the player gets the brand(s) only if
 			he fights with bare hands/martial arts */
 			default:
-			if (!o_ptr->k_idx) apply_monster_brands = TRUE;
+			if (!o_ptr || !o_ptr->k_idx) apply_monster_brands = TRUE;
 			break;
 		}
 		/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
 #endif
 #if 0
 		/* If monster is using range weapons, the player gets the brand(s) even on range attacks */
-		if ((!pr_ptr->flags4 & RF4_ARROW_1) && is_ammo(o_ptr->tval))
+		if ((!pr_ptr->flags4 & RF4_ARROW_1) && o_ptr && is_ammo(o_ptr->tval))
 			apply_monster_brands = FALSE;
 		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
 		/* If monster is fighting without weapons, the player gets the brand(s) only if
@@ -397,14 +397,14 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
 		gets the brand(s) on ranged attacks */
 		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
-		    is_melee_weapon(o_ptr->tval))
-			if (o_ptr->k_idx) apply_monster_brands = FALSE;
+		    o_ptr && o_ptr->k_idx && is_melee_weapon(o_ptr->tval))
+			apply_monster_brands = FALSE;
 #endif
 		/* The player never gets brands on ranged attacks from a form */
 		if (!melee)
 			apply_monster_brands = FALSE;
 		/* The player doesn't get brands if he uses a weapon but the monster doesn't */
-		if ((o_ptr->k_idx) && (!pr_ptr->body_parts[BODY_WEAPON]))
+		if (o_ptr && o_ptr->k_idx && (!pr_ptr->body_parts[BODY_WEAPON]))
 			apply_monster_brands = FALSE;
 
 		/* Get monster brands. If monster has several, choose one randomly */
@@ -445,47 +445,30 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 		if (apply_monster_brands) f1 |= monster_brand_chosen;
 	}
 
-	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
-	if (p_ptr) for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-		e_ptr = &p_ptr->inventory[i];
-		/* k_ptr = &k_info[e_ptr->k_idx];
-		pval = e_ptr->pval; not needed */
-		/* Skip missing items */
-		if (!e_ptr->k_idx) continue;
-		/* Extract the item flags */
-		object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
+	/* Add bow branding on correct ammo types */
+	if (p_ptr && o_ptr) {
+		e_ptr = &p_ptr->inventory[INVEN_BOW];
+		if (e_ptr->k_idx && e_ptr->tval == TV_BOW) {
+			/* Extract the item flags */
+			object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
 
-		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
-		/* All other items have general effect! */
-		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL) &&
-		    (i != INVEN_ARM || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) /* dual-wielders */
-			f1 |= ef1;
-
-		/* Add bow branding on correct ammo types */
-		if (i == INVEN_BOW && e_ptr->tval == TV_BOW) {
-			if(( (e_ptr->sval == SV_SHORT_BOW || e_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
+			if (( (e_ptr->sval == SV_SHORT_BOW || e_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
 			   ( (e_ptr->sval == SV_LIGHT_XBOW || e_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
 			   (e_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))
 				f1 |= ef1;
 		}
 	}
 
-	/* From Draconian traits */
-	if (p_ptr) {
-		if (p_ptr->brand_elec) f1 |= TR1_BRAND_ELEC;
-		if (p_ptr->brand_cold) f1 |= TR1_BRAND_COLD;
-		if (p_ptr->brand_fire) f1 |= TR1_BRAND_FIRE;
-		if (p_ptr->brand_acid) f1 |= TR1_BRAND_ACID;
-		if (p_ptr->brand_pois) f1 |= TR1_BRAND_POIS;
-	}
+	/* Draconian traits, skills, enlighted slay.. */
+	if (p_ptr) f1 |= p_ptr->slay;
 
 	/* Extra melee branding */
 	if (p_ptr && melee) {
-		/* Apply brands from (powerful) auras! */
-		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
-		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
+		/* holy curing only so far? */
+		f1 |= p_ptr->slay_melee;
+
 		/* Temporary weapon branding */
-		if (p_ptr->melee_brand && o_ptr->k_idx) {
+		if (p_ptr->melee_brand && o_ptr && o_ptr->k_idx) {
 			switch (p_ptr->melee_brand_t) {
 			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
@@ -525,268 +508,243 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 	if ((f1 & TR1_BRAND_COLD) && (fx & TBRAND_HELLFIRE))
 		f1 &= ~TR1_BRAND_COLD; //hellfire gets priority
 
-	/* Some "weapons" and "ammo" do extra damage */
-	switch (o_ptr->tval) {
-		/*case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_DIGGING:
-		case TV_BOOMERANG:*/
-		default:
-		{
-			/* Slay Animal */
-			if ((f1 & TR1_SLAY_ANIMAL) &&
-			    (r_ptr->flags3 & RF3_ANIMAL)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ANIMAL;*/
 
-				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
-				if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
-			}
+	/* Apply all slays and brands */
+	/* Slay Animal */
+	if ((f1 & TR1_SLAY_ANIMAL) &&
+	    (r_ptr->flags3 & RF3_ANIMAL)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ANIMAL;*/
 
-			/* Slay Evil */
-			if (((f1 & TR1_SLAY_EVIL) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
-#ifdef ENABLE_MAIA
-			    || (p_ptr && p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
-#endif
-			    ) && (r_ptr->flags3 & RF3_EVIL)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
-				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
-				if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
-			}
+		if (mult < FACTOR_HURT) mult = FACTOR_HURT;
+		if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
+	}
 
-			/* Slay Undead */
-			if (((f1 & TR1_SLAY_UNDEAD) ||
-			    (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 30) ||
-#ifdef ENABLE_OCCULT /* Occult */
-			    (p_ptr && get_skill(p_ptr, SKILL_OSPIRIT) >= 40) ||
-#endif
-			    (p_ptr && get_skill(p_ptr, SKILL_HCURING) >= 50 && melee)) &&
-			    (r_ptr->flags3 & RF3_UNDEAD)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
+	/* Slay Evil */
+	if ((f1 & TR1_SLAY_EVIL) && (r_ptr->flags3 & RF3_EVIL)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
+		if (mult < FACTOR_HURT) mult = FACTOR_HURT;
+		if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
+	}
 
-			/* Slay Demon */
-			if (((f1 & TR1_SLAY_DEMON) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 40)) &&
-			    (r_ptr->flags3 & RF3_DEMON)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
+	/* Slay Undead */
+	if ((f1 & TR1_SLAY_UNDEAD) && (r_ptr->flags3 & RF3_UNDEAD)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
 
-			/* Slay Orc */
-			if ((f1 & TR1_SLAY_ORC) &&
-			    (r_ptr->flags3 & RF3_ORC)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ORC;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
+	/* Slay Demon */
+	if ((f1 & TR1_SLAY_DEMON) && (r_ptr->flags3 & RF3_DEMON)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
 
-			/* Slay Troll */
-			if ((f1 & TR1_SLAY_TROLL) &&
-			    (r_ptr->flags3 & RF3_TROLL)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_TROLL;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
+	/* Slay Orc */
+	if ((f1 & TR1_SLAY_ORC) &&
+	    (r_ptr->flags3 & RF3_ORC)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ORC;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
 
-			/* Slay Giant */
-			if ((f1 & TR1_SLAY_GIANT) &&
-			    (r_ptr->flags3 & RF3_GIANT)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_GIANT;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
+	/* Slay Troll */
+	if ((f1 & TR1_SLAY_TROLL) &&
+	    (r_ptr->flags3 & RF3_TROLL)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_TROLL;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
 
-			/* Slay Dragon  */
-			if ((f1 & TR1_SLAY_DRAGON) &&
-			    (r_ptr->flags3 & RF3_DRAGON)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
+	/* Slay Giant */
+	if ((f1 & TR1_SLAY_GIANT) &&
+	    (r_ptr->flags3 & RF3_GIANT)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_GIANT;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
 
-			/* Execute Dragon */
-			if ((f1 & TR1_KILL_DRAGON) &&
-			    (r_ptr->flags3 & RF3_DRAGON)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
-				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
-				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
-			}
+	/* Slay Dragon  */
+	if ((f1 & TR1_SLAY_DRAGON) &&
+	    (r_ptr->flags3 & RF3_DRAGON)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
 
-			/* Execute Undead */
-			if ((f1 & TR1_KILL_UNDEAD) &&
-			    (r_ptr->flags3 & RF3_UNDEAD)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
-				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
-				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
-			}
+	/* Execute Dragon */
+	if ((f1 & TR1_KILL_DRAGON) &&
+	    (r_ptr->flags3 & RF3_DRAGON)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
+		if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+		if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
+	}
 
-			/* Execute Undead */
-			if ((f1 & TR1_KILL_DEMON) &&
-			    (r_ptr->flags3 & RF3_DEMON)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
-				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
-				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
-			}
+	/* Execute Undead */
+	if ((f1 & TR1_KILL_UNDEAD) &&
+	    (r_ptr->flags3 & RF3_UNDEAD)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
+		if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+		if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
+	}
+
+	/* Execute Undead */
+	if ((f1 & TR1_KILL_DEMON) &&
+	    (r_ptr->flags3 & RF3_DEMON)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
+		if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+		if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
+	}
 
 
-			/* Brand (Acid) */
-			if (f1 & TR1_BRAND_ACID) {
-				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_ACID) {
-					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_ACID;*/
-				}
-				/* Notice susceptibility */
-				else if (r_ptr->flags9 & (RF9_SUSCEP_ACID)) {
+	/* Brand (Acid) */
+	if (f1 & TR1_BRAND_ACID) {
+		/* Notice immunity */
+		if (r_ptr->flags3 & RF3_IM_ACID) {
+			/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_ACID;*/
+		}
+		/* Notice susceptibility */
+		else if (r_ptr->flags9 & (RF9_SUSCEP_ACID)) {
 #if 0
-					if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_ACID);
+			if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_ACID);
 #endif
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				} else if (r_ptr->flags9 & RF9_RES_ACID) {
-					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (r_ptr->flags9 & RF9_RES_ACID) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
 
-			/* Brand (Elec) */
-			if (f1 & TR1_BRAND_ELEC) {
-				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_ELEC) {
-					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_ELEC;*/
-				}
-				/* Notice susceptibility */
-				else if (r_ptr->flags9 & (RF9_SUSCEP_ELEC)) {
+	/* Brand (Elec) */
+	if (f1 & TR1_BRAND_ELEC) {
+		/* Notice immunity */
+		if (r_ptr->flags3 & RF3_IM_ELEC) {
+			/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_ELEC;*/
+		}
+		/* Notice susceptibility */
+		else if (r_ptr->flags9 & (RF9_SUSCEP_ELEC)) {
 #if 0
-					if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_ELEC);
+			if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_ELEC);
 #endif
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				} else if (r_ptr->flags9 & RF9_RES_ELEC) {
-				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (r_ptr->flags9 & RF9_RES_ELEC) {
+		    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
 
-			/* Brand (Fire) */
-			if (f1 & TR1_BRAND_FIRE) {
-				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_FIRE) {
-					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_FIRE;*/
-				}
-				/* Notice susceptibility */
-				else if (r_ptr->flags3 & (RF3_SUSCEP_FIRE)) {
+	/* Brand (Fire) */
+	if (f1 & TR1_BRAND_FIRE) {
+		/* Notice immunity */
+		if (r_ptr->flags3 & RF3_IM_FIRE) {
+			/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_FIRE;*/
+		}
+		/* Notice susceptibility */
+		else if (r_ptr->flags3 & (RF3_SUSCEP_FIRE)) {
 #if 0
-					if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_FIRE);
+			if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_FIRE);
 #endif
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				} else if (r_ptr->flags9 & RF9_RES_FIRE) {
-				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (r_ptr->flags9 & RF9_RES_FIRE) {
+		    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
 
-			/* Brand (Cold) */
-			if (f1 & TR1_BRAND_COLD) {
-				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_COLD) {
-					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_COLD;*/
-				}
-				/* Notice susceptibility */
-				else if (r_ptr->flags3 & (RF3_SUSCEP_COLD)) {
+	/* Brand (Cold) */
+	if (f1 & TR1_BRAND_COLD) {
+		/* Notice immunity */
+		if (r_ptr->flags3 & RF3_IM_COLD) {
+			/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_COLD;*/
+		}
+		/* Notice susceptibility */
+		else if (r_ptr->flags3 & (RF3_SUSCEP_COLD)) {
 #if 0
-					if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_COLD);
+			if (m_ptr->ml) r_ptr->r_flags3 |= (RF3_SUSCEP_COLD);
 #endif
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-				else if (r_ptr->flags9 & RF9_RES_COLD) {
-				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+		else if (r_ptr->flags9 & RF9_RES_COLD) {
+		    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
 
 
-			/* Brand (Pois) */
-			if (f1 & TR1_BRAND_POIS) {
-				/* Notice immunity */
-				if (r_ptr->flags3 & RF3_IM_POIS) {
-					/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_POIS;*/
-				}
-				/* Notice susceptibility */
-				else if (r_ptr->flags9 & (RF9_SUSCEP_POIS)) {
+	/* Brand (Pois) */
+	if (f1 & TR1_BRAND_POIS) {
+		/* Notice immunity */
+		if (r_ptr->flags3 & RF3_IM_POIS) {
+			/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_IM_POIS;*/
+		}
+		/* Notice susceptibility */
+		else if (r_ptr->flags9 & (RF9_SUSCEP_POIS)) {
 #if 0
-					if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_POIS);
+			if (m_ptr->ml) r_ptr->r_flags9 |= (RF9_SUSCEP_POIS);
 #endif
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					//if (magik(95)) *special |= SPEC_POIS;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				} else if (r_ptr->flags9 & RF9_RES_POIS) {
-				    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			//if (magik(95)) *special |= SPEC_POIS;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else if (r_ptr->flags9 & RF9_RES_POIS) {
+		    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
 
-			/* Brand (Hellfire) */
-			if (fx & TBRAND_HELLFIRE) {
-				if (r_ptr->flags3 & RF3_GOOD) {
-					if (r_ptr->flags3 & RF3_IM_FIRE) {
-						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					} else if (r_ptr->flags9 & RF9_RES_FIRE) {
-						if (mult < FACTOR_BRAND_STRONG) mult = FACTOR_BRAND_STRONG;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					} else {
-						if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					}
-				} else {
-					if (r_ptr->flags3 & RF3_IM_FIRE) {
-						if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-						if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
-					} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
-						if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					} else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags3 & RF3_DEMON)) {
-						if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-						if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
-					} else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON)) {
-						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-						if (bonus < FLAT_HALF_BONUS) bonus = FLAT_HALF_BONUS;
-					} else {
-						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					}
-				}
+	/* Brand (Hellfire) */
+	if (fx & TBRAND_HELLFIRE) {
+		if (r_ptr->flags3 & RF3_GOOD) {
+			if (r_ptr->flags3 & RF3_IM_FIRE) {
+				if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			} else if (r_ptr->flags9 & RF9_RES_FIRE) {
+				if (mult < FACTOR_BRAND_STRONG) mult = FACTOR_BRAND_STRONG;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			} else {
+				if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 			}
-
-			break;
+		} else {
+			if (r_ptr->flags3 & RF3_IM_FIRE) {
+				if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+				if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
+			} else if (r_ptr->flags3 & RF3_SUSCEP_FIRE) {
+				if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			} else if ((r_ptr->flags9 & RF9_RES_FIRE) && (r_ptr->flags3 & RF3_DEMON)) {
+				if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+				if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
+			} else if ((r_ptr->flags9 & RF9_RES_FIRE) || (r_ptr->flags3 & RF3_DEMON)) {
+				if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				if (bonus < FLAT_HALF_BONUS) bonus = FLAT_HALF_BONUS;
+			} else {
+				if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			}
 		}
 	}
 
@@ -803,12 +761,12 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
 	/* Ranged weapons (except for boomerangs) get less benefit from brands */
-	if (is_ammo(o_ptr->tval))
+	if (o_ptr && is_ammo(o_ptr->tval))
 		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 //		return ((tdam * mult) / FACTOR_MULT);
 
-	/* Martial Arts styles get less benefit from brands */
-	if (!o_ptr->k_idx)
+	/* Martial Arts styles (and bare-handed) get less benefit from brands */
+	if (!o_ptr || !o_ptr->k_idx)
 		return ((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 2 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
 
 	/* Return the total damage */
@@ -839,7 +797,9 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	monster_brand[4] = 0;
 	monster_brand[5] = 0;
 
-	bool melee = (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
+	bool melee = !o_ptr || (!is_ammo(o_ptr->tval) && o_ptr->tval != TV_BOOMERANG);
+
+	u32b q_flags3 = 0x0;
 
 
 	if (Ind > 0) {
@@ -848,7 +808,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	}
 
 	/* Extract the flags */
-	if (o_ptr->k_idx)
+	if (o_ptr && o_ptr->k_idx)
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	else {
 		f1 = 0; f2 = 0; f3 = 0; f4 = 0; f5 = 0;
@@ -866,14 +826,14 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 			/* If monster is fighting without weapons, the player gets the brand(s) only if
 			he fights with bare hands/martial arts */
 			default:
-			if (!o_ptr->k_idx) apply_monster_brands = TRUE;
+			if (!o_ptr || !o_ptr->k_idx) apply_monster_brands = TRUE;
 			break;
 		}
 		/* change a.m.b.=TRUE to =FALSE at declaration above if u use this if0-part again */
 #endif
 #if 0
 		/* If monster is using range weapons, the player gets the brand(s) even on range attacks */
-		if ((!pr_ptr->flags4 & RF4_ARROW_1) && is_ammo(o_ptr->tval))
+		if ((!pr_ptr->flags4 & RF4_ARROW_1) && o_ptr && is_ammo(o_ptr->tval))
 			apply_monster_brands = FALSE;
 		/* If monster is fighting with a weapon, the player gets the brand(s) even with a weapon */
 		/* If monster is fighting without weapons, the player gets the brand(s) only if
@@ -881,14 +841,14 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		/* However, if the monster doesn't use weapons but nevertheless fires ammo, the player
 		gets the brand(s) on ranged attacks */
 		if ((!pr_ptr->body_parts[BODY_WEAPON]) &&
-		    is_melee_weapon(o_ptr->tval))
+		    o_ptr && is_melee_weapon(o_ptr->tval))
 			apply_monster_brands = FALSE;
 #endif
 		/* The player never gets brands on ranged attacks from a form */
 		if (!melee)
 			apply_monster_brands = FALSE;
 		/* The player doesn't get brands if he uses a weapon but the monster doesn't */
-		if ((o_ptr->k_idx) && (!pr_ptr->body_parts[BODY_WEAPON]))
+		if (o_ptr && o_ptr->k_idx && (!pr_ptr->body_parts[BODY_WEAPON]))
 			apply_monster_brands = FALSE;
 
 		/* Get monster brands. If monster has several, choose one randomly */
@@ -929,39 +889,30 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		if (apply_monster_brands) f1 |= monster_brand_chosen;
 	}
 
-	/* Add brands/slaying from non-weapon items (gloves, frost-armour) */
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-		e_ptr = &p_ptr->inventory[i];
-		/* k_ptr = &k_info[e_ptr->k_idx];
-		pval = e_ptr->pval; not needed */
-		/* Skip missing items */
-		if (!e_ptr->k_idx) continue;
-		/* Extract the item flags */
-		object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
+	/* Add bow branding on correct ammo types */
+	if (p_ptr && o_ptr) {
+		e_ptr = &p_ptr->inventory[INVEN_BOW];
+		if (e_ptr->k_idx && e_ptr->tval == TV_BOW) {
+			/* Extract the item flags */
+			object_flags(e_ptr, &ef1, &ef2, &ef3, &ef4, &ef5, &ef6, &eesp);
 
-		/* Weapon/Bow/Ammo/Tool brands don't have general effect on all attacks */
-		/* All other items have general effect! */
-		if ((i != INVEN_WIELD) && (i != INVEN_BOW) && (i != INVEN_AMMO) && (i != INVEN_TOOL) &&
-		    (i != INVEN_ARM || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) /* dual-wielders */
-			f1 |= ef1;
+			if (( (e_ptr->sval == SV_SHORT_BOW || e_ptr->sval == SV_LONG_BOW) && o_ptr->tval == TV_ARROW) ||
+			   ( (e_ptr->sval == SV_LIGHT_XBOW || e_ptr->sval == SV_HEAVY_XBOW) && o_ptr->tval == TV_BOLT) ||
+			   (e_ptr->sval == SV_SLING && o_ptr->tval == TV_SHOT))
+				f1 |= ef1;
+		}
 	}
 
-	/* From Draconian traits */
-	if (p_ptr) {
-		if (p_ptr->brand_elec) f1 |= TR1_BRAND_ELEC;
-		if (p_ptr->brand_cold) f1 |= TR1_BRAND_COLD;
-		if (p_ptr->brand_fire) f1 |= TR1_BRAND_FIRE;
-		if (p_ptr->brand_acid) f1 |= TR1_BRAND_ACID;
-		if (p_ptr->brand_pois) f1 |= TR1_BRAND_POIS;
-	}
+	/* Draconian traits, skills, enlighted slay.. */
+	if (p_ptr) f1 |= p_ptr->slay;
 
 	/* Extra melee branding */
 	if (p_ptr && melee) {
-		/* Apply brands from (powerful) auras! */
-		if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) f1 |= TR1_BRAND_COLD;
-		if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) f1 |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
+		/* holy curing only so far? */
+		f1 |= p_ptr->slay_melee;
+
 		/* Temporary weapon branding */
-		if (p_ptr->melee_brand && o_ptr->k_idx) {
+		if (p_ptr->melee_brand && o_ptr && o_ptr->k_idx) {
 			switch (p_ptr->melee_brand_t) {
 			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
@@ -999,247 +950,213 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		else f1 &= ~TR1_BRAND_COLD;
 	}
 
-	/* Some "weapons" and "ammo" do extra damage */
-	switch (o_ptr->tval) {
-		/*case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_DIGGING:
-		case TV_BOOMERANG:*/
-		default:
-		{
-			u32b q_flags3 = 0x0;
 
-			/* emulate slay-susceptibilities */
-			if (q_ptr->body_monster) q_flags3 |= r_info[q_ptr->body_monster].flags3;
-			if (q_ptr->suscep_good) q_flags3 |= RF3_EVIL;
-			if (q_ptr->suscep_evil) q_flags3 |= RF3_GOOD; //unused (enlightened maia)
-			if (q_ptr->suscep_life) q_flags3 |= RF3_UNDEAD; //covers RACE_VAMPIRE
-			if (q_ptr->prace == RACE_DRACONIAN) q_flags3 |= RF3_DRAGON;
-			if (q_ptr->ptrait == TRAIT_CORRUPTED) q_flags3 |= RF3_DEMON;
-			if (q_ptr->prace == RACE_YEEK) q_flags3 |= RF3_ANIMAL; // D:
-			if (q_ptr->prace == RACE_HALF_ORC) q_flags3 |= RF3_ORC;
+	/* emulate slay-susceptibilities */
+	if (q_ptr->body_monster) q_flags3 |= r_info[q_ptr->body_monster].flags3;
+	if (q_ptr->suscep_good) q_flags3 |= RF3_EVIL;
+	if (q_ptr->suscep_evil) q_flags3 |= RF3_GOOD; //unused (enlightened maia)
+	if (q_ptr->suscep_life) q_flags3 |= RF3_UNDEAD; //covers RACE_VAMPIRE
+	if (q_ptr->prace == RACE_DRACONIAN) q_flags3 |= RF3_DRAGON;
+	if (q_ptr->ptrait == TRAIT_CORRUPTED) q_flags3 |= RF3_DEMON;
+	if (q_ptr->prace == RACE_YEEK) q_flags3 |= RF3_ANIMAL; // D:
+	if (q_ptr->prace == RACE_HALF_ORC) q_flags3 |= RF3_ORC;
 
-			/* Slay Animal */
-			if ((f1 & TR1_SLAY_ANIMAL) &&
-			    (q_flags3 & RF3_ANIMAL)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ANIMAL;*/
 
-				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
-				if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
+	/* Apply all slays/brands */
+	/* Slay Animal */
+	if ((f1 & TR1_SLAY_ANIMAL) && (q_flags3 & RF3_ANIMAL)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ANIMAL;*/
+
+		if (mult < FACTOR_HURT) mult = FACTOR_HURT;
+		if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
+	}
+
+	/* Slay Evil */
+	if ((f1 & TR1_SLAY_EVIL) && (q_flags3 & RF3_EVIL)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
+		if (mult < FACTOR_HURT) mult = FACTOR_HURT;
+		if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
+	}
+
+	/* Slay Undead */
+	if ((f1 & TR1_SLAY_UNDEAD) && (q_flags3 & RF3_UNDEAD)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
+
+	/* Slay Demon */
+	if ((f1 & TR1_SLAY_DEMON) && (q_flags3 & RF3_DEMON)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
+
+	/* Slay Orc */
+	if ((f1 & TR1_SLAY_ORC) && (q_flags3 & RF3_ORC)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ORC;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
+
+	/* Slay Troll */
+	if ((f1 & TR1_SLAY_TROLL) && (q_flags3 & RF3_TROLL)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_TROLL;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
+
+	/* Slay Giant */
+	if ((f1 & TR1_SLAY_GIANT) && (q_flags3 & RF3_GIANT)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_GIANT;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
+
+	/* Slay Dragon  */
+	if ((f1 & TR1_SLAY_DRAGON) && (q_flags3 & RF3_DRAGON)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
+		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
+		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
+	}
+
+	/* Execute Dragon */
+	if ((f1 & TR1_KILL_DRAGON) && (q_flags3 & RF3_DRAGON)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
+		if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+		if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
+	}
+
+	/* Execute Undead */
+	if ((f1 & TR1_KILL_UNDEAD) && (q_flags3 & RF3_UNDEAD)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
+		if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+		if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
+	}
+
+	/* Execute Undead */
+	if ((f1 & TR1_KILL_DEMON) && (q_flags3 & RF3_DEMON)) {
+		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
+		if (mult < FACTOR_KILL) mult = FACTOR_KILL;
+		if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
+	}
+
+
+	/* Brand (Acid) */
+	if (f1 & TR1_BRAND_ACID) {
+		/* Notice immunity */
+		if (q_ptr->immune_acid) ;
+		else if (q_ptr->resist_acid) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else if (q_ptr->suscep_acid) {
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
+
+	/* Brand (Elec) */
+	if (f1 & TR1_BRAND_ELEC) {
+		/* Notice immunity */
+		if (q_ptr->immune_elec) ;
+		else if (q_ptr->resist_elec) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else if (q_ptr->suscep_elec) {
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
+
+	/* Brand (Fire) */
+	if (f1 & TR1_BRAND_FIRE) {
+		/* Notice immunity */
+		if (q_ptr->immune_fire) ;
+		else if (q_ptr->resist_fire) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else if (q_ptr->suscep_fire) {
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
+
+	/* Brand (Cold) */
+	if (f1 & TR1_BRAND_COLD) {
+		/* Notice immunity */
+		if (q_ptr->immune_cold) ;
+		else if (q_ptr->resist_cold) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else if (q_ptr->suscep_cold) {
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
+
+	/* Brand (Poison) */
+	if (f1 & TR1_BRAND_POIS) {
+		/* Notice immunity */
+		if (q_ptr->immune_poison) ;
+		else if (q_ptr->resist_pois) {
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+		}
+		/* Otherwise, take the damage */
+		else if (q_ptr->suscep_pois) {
+			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		} else {
+			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+		}
+	}
+
+	/* Brand (Hellfire) */
+	if (fx & TBRAND_HELLFIRE) {
+		if (q_flags3 & RF3_GOOD) {
+			if (q_ptr->immune_fire) {
+				if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			} else if (q_ptr->resist_fire) {
+				if (mult < FACTOR_BRAND_STRONG) mult = FACTOR_BRAND_STRONG;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			} else {
+				if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 			}
-
-			/* Slay Evil */
-			if (((f1 & TR1_SLAY_EVIL) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 50)
-#ifdef ENABLE_MAIA
-			    || (p_ptr && p_ptr->prace == RACE_MAIA && (p_ptr->ptrait == TRAIT_ENLIGHTENED) && p_ptr->lev >= 50)
-#endif
-			    ) && (q_flags3 & RF3_EVIL)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_EVIL;*/
-				if (mult < FACTOR_HURT) mult = FACTOR_HURT;
-				if (bonus < FLAT_HURT_BONUS) bonus = FLAT_HURT_BONUS;
+		} else {
+			if (q_ptr->immune_fire) {
+				if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+				if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
+			} else if (q_ptr->suscep_fire) {
+				if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			} else if (q_ptr->resist_fire && (q_flags3 & RF3_DEMON)) {
+				if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+				if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
+			} else if (q_ptr->resist_fire || (q_flags3 & RF3_DEMON)) {
+				if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				if (bonus < FLAT_HALF_BONUS) bonus = FLAT_HALF_BONUS;
+			} else {
+				if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
+				if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 			}
-
-			/* Slay Undead */
-			if (((f1 & TR1_SLAY_UNDEAD) ||
-			    (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 30) ||
-#ifdef ENABLE_OCCULT /* Occult */
-			    (p_ptr && get_skill(p_ptr, SKILL_OSPIRIT) >= 40) ||
-#endif
-			    (p_ptr && get_skill(p_ptr, SKILL_HCURING) >= 50 && melee)) &&
-			    (q_flags3 & RF3_UNDEAD)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
-
-			/* Slay Demon */
-			if (((f1 & TR1_SLAY_DEMON) || (p_ptr && get_skill(p_ptr, SKILL_HOFFENSE) >= 40)) &&
-			    (q_flags3 & RF3_DEMON)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
-
-			/* Slay Orc */
-			if ((f1 & TR1_SLAY_ORC) &&
-			    (q_flags3 & RF3_ORC)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_ORC;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
-
-			/* Slay Troll */
-			if ((f1 & TR1_SLAY_TROLL) &&
-			    (q_flags3 & RF3_TROLL)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_TROLL;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
-
-			/* Slay Giant */
-			if ((f1 & TR1_SLAY_GIANT) &&
-			    (q_flags3 & RF3_GIANT)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_GIANT;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
-
-			/* Slay Dragon  */
-			if ((f1 & TR1_SLAY_DRAGON) &&
-			    (q_flags3 & RF3_DRAGON)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
-				if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
-				if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
-			}
-
-			/* Execute Dragon */
-			if ((f1 & TR1_KILL_DRAGON) &&
-			    (q_flags3 & RF3_DRAGON)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
-				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
-				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
-			}
-
-			/* Execute Undead */
-			if ((f1 & TR1_KILL_UNDEAD) &&
-			    (q_flags3 & RF3_UNDEAD)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_UNDEAD;*/
-				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
-				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
-			}
-
-			/* Execute Undead */
-			if ((f1 & TR1_KILL_DEMON) &&
-			    (q_flags3 & RF3_DEMON)) {
-				/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DEMON;*/
-				if (mult < FACTOR_KILL) mult = FACTOR_KILL;
-				if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
-			}
-
-
-			/* Brand (Acid) */
-			if (f1 & TR1_BRAND_ACID) {
-				/* Notice immunity */
-				if (q_ptr->immune_acid) ;
-				else if (q_ptr->resist_acid) {
-					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else if (q_ptr->suscep_acid) {
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				} else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
-
-			/* Brand (Elec) */
-			if (f1 & TR1_BRAND_ELEC) {
-				/* Notice immunity */
-				if (q_ptr->immune_elec) ;
-				else if (q_ptr->resist_elec) {
-					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else if (q_ptr->suscep_elec) {
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				} else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
-
-			/* Brand (Fire) */
-			if (f1 & TR1_BRAND_FIRE) {
-				/* Notice immunity */
-				if (q_ptr->immune_fire) ;
-				else if (q_ptr->resist_fire) {
-					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else if (q_ptr->suscep_fire) {
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				} else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
-
-			/* Brand (Cold) */
-			if (f1 & TR1_BRAND_COLD) {
-				/* Notice immunity */
-				if (q_ptr->immune_cold) ;
-				else if (q_ptr->resist_cold) {
-					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else if (q_ptr->suscep_cold) {
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				} else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
-
-			/* Brand (Poison) */
-			if (f1 & TR1_BRAND_POIS) {
-				/* Notice immunity */
-				if (q_ptr->immune_poison) ;
-				else if (q_ptr->resist_pois) {
-					if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-				}
-				/* Otherwise, take the damage */
-				else if (q_ptr->suscep_pois) {
-					if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				} else {
-					if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-					if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-				}
-			}
-
-			/* Brand (Hellfire) */
-			if (fx & TBRAND_HELLFIRE) {
-				if (q_flags3 & RF3_GOOD) {
-					if (q_ptr->immune_fire) {
-						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					} else if (q_ptr->resist_fire) {
-						if (mult < FACTOR_BRAND_STRONG) mult = FACTOR_BRAND_STRONG;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					} else {
-						if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					}
-				} else {
-					if (q_ptr->immune_fire) {
-						if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-						if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
-					} else if (q_ptr->suscep_fire) {
-						if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					} else if (q_ptr->resist_fire && (q_flags3 & RF3_DEMON)) {
-						if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
-						if (bonus < FLAT_MIN_BONUS) bonus = FLAT_MIN_BONUS;
-					} else if (q_ptr->resist_fire || (q_flags3 & RF3_DEMON)) {
-						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-						if (bonus < FLAT_HALF_BONUS) bonus = FLAT_HALF_BONUS;
-					} else {
-						if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-						if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
-					}
-				}
-			}
-
-			break;
 		}
 	}
 
@@ -1248,11 +1165,11 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
 	/* Ranged weapons (except for boomerangs) get less benefit from brands */
-	if (is_ammo(o_ptr->tval))
+	if (o_ptr && is_ammo(o_ptr->tval))
 		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
 
 	/* Martial Arts styles get less benefit from brands */
-	if (!o_ptr->k_idx)
+	if (!o_ptr || !o_ptr->k_idx)
 		return ((bonus * 2) / 3 + ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT)));
 
 	/* Return the total damage */
@@ -3046,7 +2963,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
+				k = tot_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
 				/* Apply the player damage boni */
@@ -3055,7 +2972,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0);
 				k3 += k2;
 #else
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
+				k = tot_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -3204,7 +3121,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
-				k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
+				k = tot_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -4071,6 +3988,13 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 				k = damroll(ma_ptr->dd, ma_ptr->ds);
 
+#ifdef MA_NAZGUL
+				if (!((p_ptr->slay | p_ptr->slay_melee) & (TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_KILL_UNDEAD)))
+					msg_print(Ind, "The Ringwraith is IMPERVIOUS to your mundane attacks.");
+					k = 0;
+				}
+#endif
+
 				if (ma_ptr->effect == MA_KNEE) {
 #if 0 /* less message order problems */
 					if (r_ptr->flags1 & RF1_MALE) {
@@ -4134,7 +4058,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
 				/* Apply the player damage boni */
@@ -4143,7 +4067,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, FALSE, 0);
 				k3 += k2;
 #else
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -4360,10 +4284,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
-				k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 
 				/* Apply the player damage boni */
-				/* (should this also cancelled by nazgul?(for now not)) */
+				/* (should this also cancelled by nazgul? no, because only dice-damage is cancelled usually) */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
 
 				k3 = k;
@@ -5238,107 +5162,107 @@ void do_nazgul(int Ind, int *k, int *num, monster_race *r_ptr, int slot) {
 	object_type *o_ptr = &p_ptr->inventory[slot];
 	char o_name[ONAME_LEN];
 
-	if (r_ptr->flags7 & RF7_NAZGUL) {
-		//int weap = 0;	// Hack!  <- ???
-		u32b f1, f2, f3, f4, f5, f6, esp;
+	if (!(r_ptr->flags7 & RF7_NAZGUL)) return;
 
-		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	//int weap = 0;	// Hack!  <- ???
+	u32b f1, f2, f3, f4, f5, f6, esp;
 
-		if ((!o_ptr->name2) && (!artifact_p(o_ptr))) {
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
-			    && get_skill(p_ptr, SKILL_HOFFENSE) < 30) {
-				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
-				*k = 0;
-			}
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-			/* Dark Swords resist somewhat */
-			if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(15) : magik(100)) {
-				object_desc(0, o_name, o_ptr, TRUE, 3);
-				s_printf("NAZGUL_DISI_NORM: %s : %s.\n", p_ptr->name, o_name);
+	f1 |= p_ptr->slay | p_ptr->slay_melee;
 
-#ifdef USE_SOUND_2010
-				sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
-#endif
-				msg_print(Ind, "\376\377rYour weapon *DISINTEGRATES*!");
-				//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-				//inven_item_optimize(Ind, INVEN_WIELD + weap);
-				inven_item_increase(Ind, slot, -1); /* this way using slot we can handle dual-wield */
-				inven_item_optimize(Ind, slot);
-				/* To stop attacking */
-				//*num = num_blow;
-			}
-		} else if (like_artifact_p(o_ptr)) {
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
-			    && get_skill(p_ptr, SKILL_HOFFENSE) < 30) {
-				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
-				*k = 0;
-			}
-
-			//apply_disenchant(Ind, INVEN_WIELD + weap);
-			//apply_disenchant(Ind, weap);
-
-			/* 1/1000 chance of getting destroyed.
-			   Exploit-fix here for permacursed items. (Grond only) */
-			if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE)) {
-				object_desc(0, o_name, o_ptr, TRUE, 3);
-				s_printf("NAZGUL_DISI_ARTLIKE: %s : %s.\n", p_ptr->name, o_name);
-
-#ifdef USE_SOUND_2010
-				sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
-#endif
-
-				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
-				msg_print(Ind, "\376\377rYour weapon is destroyed!");
-				//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-				//inven_item_optimize(Ind, INVEN_WIELD + weap);
-				inven_item_increase(Ind, slot, -1);
-				inven_item_optimize(Ind, slot);
-
-				/* To stop attacking */
-				//*num = num_blow;
-			}
-		} else if (o_ptr->name2) {
-			if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
-			    && !(f4 & TR4_BLACK_BREATH) /* :-O (for VAMPIRES_INV_CURSED, but makes sense in general!) */
-			    && get_skill(p_ptr, SKILL_HOFFENSE) < 30) {
-				msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
-				*k = 0;
-			}
-
-			/* Dark Swords and *Slay Undead* weapons resist the Nazgul,
-			   other (ego) weapons have a high chance of getting destroyed */
-			if ((f4 & TR4_BLACK_BREATH) ? (!rand_int(1000)) : ( /* see explanation above */
-			    ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)
-			    || o_ptr->name2 == EGO_KILL_UNDEAD || o_ptr->name2b == EGO_KILL_UNDEAD
-			    ) ? magik(3) : magik(20))) {
-				object_desc(0, o_name, o_ptr, TRUE, 3);
-				s_printf("NAZGUL_DISI_EGO: %s : %s.\n", p_ptr->name, o_name);
-#ifdef USE_SOUND_2010
-				sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
-#endif
-
-				msg_print(Ind, "\376\377rYour weapon is destroyed!");
-				//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
-				//inven_item_optimize(Ind, INVEN_WIELD + weap);
-				inven_item_increase(Ind, slot, -1);
-				inven_item_optimize(Ind, slot);
-
-				/* To stop attacking */
-				//*num = num_blow;
-			}
+	if ((!o_ptr->name2) && (!artifact_p(o_ptr))) {
+		if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)) {
+			msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
+			*k = 0;
 		}
 
-		/* If any damage is done, then 25% chance of getting the Black Breath */
-		//if ((*k) && magik(25) && !p_ptr->black_breath) {
-		if (
+		/* Dark Swords resist somewhat */
+		if ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD) ? magik(15) : magik(100)) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("NAZGUL_DISI_NORM: %s : %s.\n", p_ptr->name, o_name);
+
+#ifdef USE_SOUND_2010
+			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
+#endif
+			msg_print(Ind, "\376\377rYour weapon *DISINTEGRATES*!");
+			//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+			//inven_item_optimize(Ind, INVEN_WIELD + weap);
+			inven_item_increase(Ind, slot, -1); /* this way using slot we can handle dual-wield */
+			inven_item_optimize(Ind, slot);
+			/* To stop attacking */
+			//*num = num_blow;
+		}
+	} else if (like_artifact_p(o_ptr)) {
+		if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
+		    && !(f4 & TR4_BLACK_BREATH)) { /* there are no (pseudo)artifact Morgul weapons atm, but anyway.. */
+			msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
+			*k = 0;
+		}
+
+		//apply_disenchant(Ind, INVEN_WIELD + weap);
+		//apply_disenchant(Ind, weap);
+
+		/* 1/1000 chance of getting destroyed.
+		   Exploit-fix here for permacursed items. (Grond only) */
+		if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE)) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("NAZGUL_DISI_ARTLIKE: %s : %s.\n", p_ptr->name, o_name);
+
+#ifdef USE_SOUND_2010
+			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
+#endif
+
+			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+			msg_print(Ind, "\376\377rYour weapon is destroyed!");
+			//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+			//inven_item_optimize(Ind, INVEN_WIELD + weap);
+			inven_item_increase(Ind, slot, -1);
+			inven_item_optimize(Ind, slot);
+
+			/* To stop attacking */
+			//*num = num_blow;
+		}
+	} else if (o_ptr->name2) {
+		if (!(f1 & TR1_SLAY_EVIL) && !(f1 & TR1_SLAY_UNDEAD) && !(f1 & TR1_KILL_UNDEAD)
+		    && !(f4 & TR4_BLACK_BREATH)) { /* :-O for Morgul weapons */
+			msg_print(Ind, "The Ringwraith is IMPERVIOUS to the mundane weapon.");
+			*k = 0;
+		}
+
+		/* Dark Swords and *Slay Undead* weapons resist the Nazgul,
+		   other (ego) weapons have a high chance of getting destroyed */
+		if ((f4 & TR4_BLACK_BREATH) ? (!rand_int(1000)) : ( /* see explanation above */
+		    ((o_ptr->tval == TV_SWORD && o_ptr->sval == SV_DARK_SWORD)
+		    || o_ptr->name2 == EGO_KILL_UNDEAD || o_ptr->name2b == EGO_KILL_UNDEAD
+		    ) ? magik(3) : magik(20))) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("NAZGUL_DISI_EGO: %s : %s.\n", p_ptr->name, o_name);
+#ifdef USE_SOUND_2010
+			sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_");
+#endif
+
+			msg_print(Ind, "\376\377rYour weapon is destroyed!");
+			//inven_item_increase(Ind, INVEN_WIELD + weap, -1);
+			//inven_item_optimize(Ind, INVEN_WIELD + weap);
+			inven_item_increase(Ind, slot, -1);
+			inven_item_optimize(Ind, slot);
+
+			/* To stop attacking */
+			//*num = num_blow;
+		}
+	}
+
+	/* If any damage is done, then 25% chance of getting the Black Breath */
+	//if ((*k) && magik(25) && !p_ptr->black_breath) {
+	if (
 #ifdef VAMPIRES_BB_IMMUNE
-		    p_ptr->prace != RACE_VAMPIRE &&
+	    p_ptr->prace != RACE_VAMPIRE &&
 #endif
-		    !p_ptr->black_breath &&
-		    magik(p_ptr->suscep_life ? 5 : 15)) {
-			s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", p_ptr->name);
-			set_black_breath(Ind);
-		}
+	    !p_ptr->black_breath &&
+	    magik(p_ptr->suscep_life ? 5 : 15)) {
+		s_printf("EFFECT: BLACK-BREATH - %s was infected by a Nazgul\n", p_ptr->name);
+		set_black_breath(Ind);
 	}
 }
 

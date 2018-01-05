@@ -2337,11 +2337,6 @@ struct player_type {
 	s16b melee_brand;			/* Timed -- Weapon Branding (used by runecraft) */
 	u16b melee_brand_t;			/* Timed -- Weapon Branding */
 	s16b melee_brand_d;			/* Timed -- Weapon Branding */
-	bool brand_fire;		/* Added for Draconians, but could clean up a lot of tot_dam_aux.. code too */
-	bool brand_cold;
-	bool brand_elec;
-	bool brand_acid;
-	bool brand_pois;
 	s16b prob_travel;		/* Timed -- Probability travel */
 	s16b st_anchor;			/* Timed -- Space/Time Anchor */
 	s16b tim_esp;			/* Timed -- ESP */
@@ -2643,6 +2638,7 @@ struct player_type {
 	int vampiric_melee;		/* vampiric in close combat? */
 	int vampiric_ranged;		/* shots have vampiric effects? */
 	int vamp_fed_midx;		/* monster we fed from */
+	u32b slay, slay_melee;		/* intrinsic slay flags gained by non-weapon items, skills, traits.. */
 
 	bool ty_curse;			/* revived these two, in different forms */
 	bool dg_curse;

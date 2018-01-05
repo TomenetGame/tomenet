@@ -3116,11 +3116,6 @@ void calc_boni(int Ind) {
 	p_ptr->sh_fire = p_ptr->sh_fire_fix = FALSE;
 	p_ptr->sh_elec = p_ptr->sh_elec_fix = FALSE;
 	p_ptr->sh_cold = p_ptr->sh_cold_fix = FALSE;
-	p_ptr->brand_fire = FALSE;
-	p_ptr->brand_cold = FALSE;
-	p_ptr->brand_elec = FALSE;
-	p_ptr->brand_acid = FALSE;
-	p_ptr->brand_pois = FALSE;
 	p_ptr->auto_tunnel = FALSE;
 	p_ptr->levitate = FALSE;
 	p_ptr->can_swim = FALSE;
@@ -3184,6 +3179,7 @@ void calc_boni(int Ind) {
 	p_ptr->resist_continuum = FALSE;
 	p_ptr->vampiric_melee = 0;
 	p_ptr->vampiric_ranged = 0;
+	p_ptr->slay = p_ptr->slay_melee = 0x0;
 
 	/* nastiness */
 	p_ptr->ty_curse = FALSE;
@@ -3202,6 +3198,8 @@ void calc_boni(int Ind) {
 	p_ptr->tval_xtra = 0;
 	/* Reset the "ammo" tval */
 	p_ptr->tval_ammo = 0;
+
+
 
 	/* Base infravision (purely racial) */
 	p_ptr->see_infra = p_ptr->rp_ptr->infra;
@@ -3465,7 +3463,7 @@ void calc_boni(int Ind) {
 
 		if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
 			if (p_ptr->lev >= 20) csheet_boni[14].cb[6] |= CB7_IFOOD;
-			if (p_ptr->lev >= 50) csheet_boni[14].cb[9] |= CB10_SEVIL;
+			if (p_ptr->lev >= 50) { p_ptr->slay |= TR1_SLAY_EVIL; csheet_boni[14].cb[9] |= CB10_SEVIL; }
 			p_ptr->suscep_evil = TRUE;
 
 			p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV;
@@ -3535,7 +3533,7 @@ void calc_boni(int Ind) {
 		break;
 #ifdef ENABLE_DRACONIAN_TRAITS
 	case TRAIT_BLUE: /* Draconic Blue */
-		if (p_ptr->lev >= 5) { p_ptr->brand_elec = TRUE; csheet_boni[14].cb[10] |= CB11_BELEC; }
+		if (p_ptr->lev >= 5) { p_ptr->slay |= TR1_BRAND_ELEC; csheet_boni[14].cb[10] |= CB11_BELEC; }
 		if (p_ptr->lev >= 15) { p_ptr->sh_elec = TRUE; csheet_boni[14].cb[10] |= CB11_AELEC; }
 		if (p_ptr->lev < 25) { p_ptr->resist_elec = TRUE; csheet_boni[14].cb[0] |= CB1_RELEC; }
 		else { p_ptr->immune_elec = TRUE; csheet_boni[14].cb[1] |= CB2_IELEC; }
@@ -3650,6 +3648,10 @@ void calc_boni(int Ind) {
 		p_ptr->antimagic_dis += 1 + (get_skill(p_ptr, SKILL_ANTIMAGIC) / 10); /* was /11, but let's reward max skill! */
 #endif
 	}
+
+	/* Apply brands from (powerful) auras! */
+	if (get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) p_ptr->slay_melee |= TR1_BRAND_COLD;
+	if (get_skill(p_ptr, SKILL_AURA_DEATH) >= 40) p_ptr->slay_melee |= (TR1_BRAND_COLD | TR1_BRAND_FIRE);
 
 	/* Ghost */
 	if (p_ptr->ghost) {
@@ -4309,22 +4311,42 @@ void calc_boni(int Ind) {
 		}
 
 		/* Brands/slays */
-		if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM;
-		if (f1 & TR1_SLAY_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL;
-		if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD;
-		if (f1 & TR1_SLAY_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN;
-		if (f1 & TR1_SLAY_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS;
-		if (f1 & TR1_SLAY_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL;
-		if (f1 & TR1_SLAY_GIANT) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN;
-		if (f1 & TR1_SLAY_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN;
-		if (f1 & TR1_KILL_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN;
-		if (f1 & TR1_KILL_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN;
-		if (f1 & TR1_KILL_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD;
-		if (f1 & TR1_BRAND_POIS) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS;
-		if (f1 & TR1_BRAND_ACID) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID;
-		if (f1 & TR1_BRAND_ELEC) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC;
-		if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
-		if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
+		if (i == INVEN_WIELD || (i == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD /* dual-wielders */ )
+		    || i == INVEN_AMMO || i == INVEN_BOW || i == INVEN_TOOL) {
+			if (f1 & TR1_SLAY_ANIMAL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM;
+			if (f1 & TR1_SLAY_EVIL) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL;
+			if (f1 & TR1_SLAY_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD;
+			if (f1 & TR1_SLAY_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN;
+			if (f1 & TR1_SLAY_ORC) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS;
+			if (f1 & TR1_SLAY_TROLL) csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL;
+			if (f1 & TR1_SLAY_GIANT) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN;
+			if (f1 & TR1_SLAY_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN;
+			if (f1 & TR1_KILL_DRAGON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN;
+			if (f1 & TR1_KILL_DEMON) csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN;
+			if (f1 & TR1_KILL_UNDEAD) csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD;
+			if (f1 & TR1_BRAND_POIS) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS;
+			if (f1 & TR1_BRAND_ACID) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID;
+			if (f1 & TR1_BRAND_ELEC) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC;
+			if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
+			if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
+		} else {
+			if (f1 & TR1_SLAY_ANIMAL) { p_ptr->slay |= TR1_SLAY_ANIMAL; csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM; }
+			if (f1 & TR1_SLAY_EVIL) { p_ptr->slay |= TR1_SLAY_EVIL; csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL; }
+			if (f1 & TR1_SLAY_UNDEAD) { p_ptr->slay |= TR1_SLAY_UNDEAD; csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD; }
+			if (f1 & TR1_SLAY_DEMON) { p_ptr->slay |= TR1_SLAY_DEMON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN; }
+			if (f1 & TR1_SLAY_ORC) { p_ptr->slay |= TR1_SLAY_ORC; csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS; }
+			if (f1 & TR1_SLAY_TROLL) { p_ptr->slay |= TR1_SLAY_TROLL;  csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL; }
+			if (f1 & TR1_SLAY_GIANT) { p_ptr->slay |= TR1_SLAY_GIANT; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN; }
+			if (f1 & TR1_SLAY_DRAGON) { p_ptr->slay |= TR1_SLAY_DRAGON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN; }
+			if (f1 & TR1_KILL_DRAGON) { p_ptr->slay |= TR1_KILL_DRAGON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN; }
+			if (f1 & TR1_KILL_DEMON) { p_ptr->slay |= TR1_KILL_DEMON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN; }
+			if (f1 & TR1_KILL_UNDEAD) { p_ptr->slay |= TR1_KILL_UNDEAD; csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD; }
+			if (f1 & TR1_BRAND_POIS) { p_ptr->slay |= TR1_BRAND_POIS; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS; }
+			if (f1 & TR1_BRAND_ACID) { p_ptr->slay |= TR1_BRAND_ACID; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID; }
+			if (f1 & TR1_BRAND_ELEC) { p_ptr->slay |= TR1_BRAND_ELEC; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC; }
+			if (f1 & TR1_BRAND_FIRE) { p_ptr->slay |= TR1_BRAND_FIRE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE; }
+			if (f1 & TR1_BRAND_COLD) { p_ptr->slay |= TR1_BRAND_COLD; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD; }
+		}
 		if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
 
 		/* Hack -- do not apply "weapon", "bow", "ammo", or "tool"  boni */
@@ -5983,14 +6005,14 @@ void calc_boni(int Ind) {
 	if (get_skill(p_ptr, SKILL_HSUPPORT) >= 50) csheet_boni[14].cb[6] |= CB7_IFOOD;
 
 	/* slay/brand boni check here... */
-	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) csheet_boni[14].cb[9] |= CB10_SEVIL;
-	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) csheet_boni[14].cb[8] |= CB9_SDEMN;
-	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) csheet_boni[14].cb[9] |= CB10_SUNDD;
-	//prob: it's melee only! if (get_skill(p_ptr, SKILL_HCURING) >= 50) csheet_boni[14].cb[9] |= CB10_SUNDD;
+	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 30) { p_ptr->slay |= TR1_SLAY_UNDEAD; csheet_boni[14].cb[9] |= CB10_SUNDD; }
+	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 40) { p_ptr->slay |= TR1_SLAY_DEMON; csheet_boni[14].cb[8] |= CB9_SDEMN; }
+	if (get_skill(p_ptr, SKILL_HOFFENSE) >= 50) { p_ptr->slay |= TR1_SLAY_EVIL; csheet_boni[14].cb[9] |= CB10_SEVIL; }
+	if (get_skill(p_ptr, SKILL_HCURING) >= 50) { p_ptr->slay_melee |= TR1_SLAY_UNDEAD; } //prob: it's melee only: csheet_boni[14].cb[9] |= CB10_SUNDD;
 
 #ifdef ENABLE_OCCULT /* Occult */
 	/* Should Occult schools really give boni? */
-	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 40) csheet_boni[14].cb[9] |= CB10_SUNDD;
+	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 40) { p_ptr->slay |= TR1_SLAY_UNDEAD; csheet_boni[14].cb[9] |= CB10_SUNDD; }
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 30) {
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		/* Stealth bonus: */
