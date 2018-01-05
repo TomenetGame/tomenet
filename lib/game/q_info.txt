@@ -356,18 +356,58 @@ yY:*dank*
 #yY:thanks:thank you:thankyou:thanks you:thx:merci:danke:gracias:grazie:arigato:arigatou:xiexie:xie xie:spacibo:spasibo
 yR:-:You are welcome!
 
+Y:0:0:-:*cafe*:-:255
+y:-1:-1:-:*cafe*
+yR:-:Thanks, but I prefer tea.
+
+Y:0:0:-:*help*:-:255
+y:-1:-1:-:*help*
+yR:-:Have you come to seek [[advice]]? I might be able to tell you something.
+
 Y:0:0:-:*advice*:-:255
 Y:0:0:-:*advise*:-:255
 y:-1:-1:-:*advice*
 yY:*advise*
-yR:-://quest_towneltalk("$$c")
+#yR:-://quest_towneltalk("$$c")
+yR:-:Hm hm, what do you need advice on?
+yR:-:How to properly [[prepare]] yourself for venturing into the unknown?, picking
+yR:-:an unknown dungeon to [[explore]]? Honing your [[skills]]?
+yR:-:Or are you wondering about the public [[events]] that are taking place from
+yR:-:time to time? You might also be interested in forming a [[party]] with fellow
+yR:-:adventurers, as it tends to increase chances of survival!
+yR:-:I could also have a look at your [[equipment]] and [[status]] of your
+yR:-:well-being in general.
 
-#Y:0:0:-:*bye*:-:1
-#Y:0:0:-:*see*you*:-:1
-#Y:0:0:-:*fare*well*:-:1
-#y:-1:-1:-:*bye*
-#yY:*see*you*:*fare*well*
-#yR:-:Take care.
+Y:0:0:-:*prepar*:-:255
+Y:0:0:-:*inven*:-:255
+Y:0:0:-:*pack*:-:255
+y:-1:-1:-:*prepar*
+yY:*inven*:*pack*
+yR:-://quest_towneltalk("$$c", 0)
+
+Y:0:0:-:*equip*:-:255
+y:-1:-1:-:*equip*
+yR:-://quest_towneltalk("$$c", 1)
+
+Y:0:0:-:*skill*:-:255
+y:-1:-1:-:*skill*
+yR:-://quest_towneltalk("$$c", 2)
+
+Y:0:0:-:*stat*:-:255
+y:-1:-1:-:*stat*
+yR:-://quest_towneltalk("$$c", 3)
+
+Y:0:0:-:*part*:-:255
+y:-1:-1:-:*part*
+yR:-://quest_towneltalk("$$c", 4)
+
+Y:0:0:-:*explor*:-:255
+y:-1:-1:-:*explor*
+yR:-://quest_towneltalk("$$c", 5)
+
+Y:0:0:-:*event*:-:255
+y:-1:-1:-:*event*
+yR:-://quest_towneltalk("$$c", 6)
 
 
 #Talk to a roaming guard who patrols Menegroth

@@ -3,11 +3,14 @@
 -- all be named 'quest_' and end on the 'internal quest codename'.  - C. Blue
 
 -- Purpose: The Town Elder gives you advice based on your actual current character's details!
-function quest_towneltalk(Ind, msg)
+function quest_towneltalk(Ind, msg, topic)
 	if player.admin_dm ~= 0 then admin = 1 else admin = 0 end
 
-	--tips regarding equipping,skilling,dungeoneering,events,partying
-	--warn about redundant resses/encumberments/hunger/light
+	--tips regarding equipping [prepare|preparing|preparationS],skilling [skillS],
+	-- dungeoneering [explore|exploring|exploration],events [eventS],partying [partyING|parties]
+	--warn about redundant resses [equipMENT]/ encumberments/hunger/light [status|state]
+
+	if admin then msg_print(Ind, "Topic #"..topic) end
 
 	if player.pclass == CLASS_WARRIOR or player.pclass == CLASS_PALADIN or player.pclass == CLASS_MIMIC or player.pclass == CLASS_ROGUE or admin then
 		if player.num_blow < 2 then
