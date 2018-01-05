@@ -376,7 +376,12 @@ static cave_type **quest_prepare_zcave(struct worldpos *wpos, bool stat, cptr tp
 }
 
 /* Replace placeholders $$n/N, $$t/T, $$r/R, $$a/A and $$c/C in a string,
-   thereby personalising it for dialogues and narrations. */
+   thereby personalising it for dialogues and narrations.
+   New addition: $$P (party members, 0 = no party, 1 = only yourself, 2+..).
+
+   Note that similar placeholders are already used in other places exclusively:
+   $$p1..5 for randomized passwords.
+   $$q/Q for questor name. */
 static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 	char *textp, *textp2;
 	int pos = 0, lp;
@@ -407,6 +412,7 @@ static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 		case 'C':
 			strcat(dest, class_info[p_ptr->pclass].title);
 			break;
+
 		case 'n':
 			strcat(dest, p_ptr->name);
 			lp = pos - 1;
@@ -431,6 +437,10 @@ static void quest_text_replace(char *dest, cptr src, player_type *p_ptr) {
 			strcat(dest, class_info[p_ptr->pclass].title);
 			lp = pos - 1;
 			while (dest[++lp]) dest[lp] = tolower(dest[lp]);
+			break;
+
+		case 'P':
+			strcat(dest, format("%d", !p_ptr->party ? 0 : parties[p_ptr->party].members));
 			break;
 		}
 
