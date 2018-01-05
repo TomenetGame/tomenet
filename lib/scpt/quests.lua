@@ -12,6 +12,8 @@ function quest_towneltalk(Ind, msg, topic)
 
 	if admin then msg_print(Ind, "Topic #"..topic) end
 
+	--*** generic advice that is so important that it's always given ***
+	--BpR:
 	if player.pclass == CLASS_WARRIOR or player.pclass == CLASS_PALADIN or player.pclass == CLASS_MIMIC or player.pclass == CLASS_ROGUE or admin then
 		if player.num_blow < 2 then
 			msg_print(Ind, "\252\255UFor a "..msg.." you attack too slowly. Your number of blows per round (BpR) should at least be 2!")
@@ -25,5 +27,33 @@ function quest_towneltalk(Ind, msg, topic)
 		end
 	else
 		msg_print(Ind, "\252\255UYou seem to be doing fine, "..msg..".")
+	end
+
+	--*** preparation/inventory ***
+	if topic == 0 then
+	end
+
+	--*** equipment ***
+	if topic == 1 then
+	end
+
+	--*** skills ***
+	if topic == 2 then
+	end
+
+	--*** status ***
+	if topic == 3 then
+	end
+
+	--*** partying ***
+	if topic == 4 then
+	end
+
+	--*** dungeon exploration ***
+	if topic == 5 then
+	end
+
+	--*** events ***
+	if topic == 6 then
 	end
 end
