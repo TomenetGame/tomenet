@@ -3988,8 +3988,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 				k = damroll(ma_ptr->dd, ma_ptr->ds);
 
-#ifdef MA_NAZGUL
-				if (!((p_ptr->slay | p_ptr->slay_melee) & (TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_KILL_UNDEAD)))
+#if 1 /* Apply do_nazgul() idea to martial arts too */
+				if (!((p_ptr->slay | p_ptr->slay_melee) & (TR1_SLAY_EVIL | TR1_SLAY_UNDEAD | TR1_KILL_UNDEAD))) {
 					msg_print(Ind, "The Ringwraith is IMPERVIOUS to your mundane attacks.");
 					k = 0;
 				}
