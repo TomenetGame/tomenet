@@ -460,7 +460,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 	}
 
 	/* Draconian traits, skills, enlighted slay.. */
-	if (p_ptr) f1 |= p_ptr->slay;
+	if (p_ptr) f1 |= p_ptr->slay | p_ptr->slay_equip;
 
 	/* Extra melee branding */
 	if (p_ptr && melee) {
@@ -904,7 +904,7 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 	}
 
 	/* Draconian traits, skills, enlighted slay.. */
-	if (p_ptr) f1 |= p_ptr->slay;
+	if (p_ptr) f1 |= p_ptr->slay | p_ptr->slay_equip;
 
 	/* Extra melee branding */
 	if (p_ptr && melee) {
@@ -5166,10 +5166,9 @@ void do_nazgul(int Ind, int *k, monster_race *r_ptr, int slot) {
 
 	if (!(r_ptr->flags7 & RF7_NAZGUL)) return;
 
-	if (o_ptr) object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-	else f1 = 0x0;
-
-	f1 |= p_ptr->slay | p_ptr->slay_melee;
+	if (o_ptr) object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp); /* Weapons do not gain slay mods from other items! Only from skills. */
+	else f1 = p_ptr->slay_equip; /* Bare-handed combat does gain slay mods from other items! */
+	f1 |= p_ptr->slay | p_ptr->slay_melee; /* Apply all skill/trait slays. */
 
 	if (!o_ptr) {
 		/* Martial arts or bare-handed attacks */

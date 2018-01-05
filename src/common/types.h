@@ -2638,7 +2638,7 @@ struct player_type {
 	int vampiric_melee;		/* vampiric in close combat? */
 	int vampiric_ranged;		/* shots have vampiric effects? */
 	int vamp_fed_midx;		/* monster we fed from */
-	u32b slay, slay_melee;		/* intrinsic slay flags gained by non-weapon items, skills, traits.. */
+	u32b slay, slay_melee, slay_equip;	/* intrinsic slay flags gained by skills, traits (slay/slay_melee) and by non-weapon items (slay_equip) */
 
 	bool ty_curse;			/* revived these two, in different forms */
 	bool dg_curse;

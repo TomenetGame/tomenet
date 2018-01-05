@@ -3179,7 +3179,7 @@ void calc_boni(int Ind) {
 	p_ptr->resist_continuum = FALSE;
 	p_ptr->vampiric_melee = 0;
 	p_ptr->vampiric_ranged = 0;
-	p_ptr->slay = p_ptr->slay_melee = 0x0;
+	p_ptr->slay = p_ptr->slay_melee = p_ptr->slay_equip = 0x0;
 
 	/* nastiness */
 	p_ptr->ty_curse = FALSE;
@@ -4330,22 +4330,22 @@ void calc_boni(int Ind) {
 			if (f1 & TR1_BRAND_FIRE) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE;
 			if (f1 & TR1_BRAND_COLD) csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD;
 		} else {
-			if (f1 & TR1_SLAY_ANIMAL) { p_ptr->slay |= TR1_SLAY_ANIMAL; csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM; }
-			if (f1 & TR1_SLAY_EVIL) { p_ptr->slay |= TR1_SLAY_EVIL; csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL; }
-			if (f1 & TR1_SLAY_UNDEAD) { p_ptr->slay |= TR1_SLAY_UNDEAD; csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD; }
-			if (f1 & TR1_SLAY_DEMON) { p_ptr->slay |= TR1_SLAY_DEMON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN; }
-			if (f1 & TR1_SLAY_ORC) { p_ptr->slay |= TR1_SLAY_ORC; csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS; }
-			if (f1 & TR1_SLAY_TROLL) { p_ptr->slay |= TR1_SLAY_TROLL;  csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL; }
-			if (f1 & TR1_SLAY_GIANT) { p_ptr->slay |= TR1_SLAY_GIANT; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN; }
-			if (f1 & TR1_SLAY_DRAGON) { p_ptr->slay |= TR1_SLAY_DRAGON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN; }
-			if (f1 & TR1_KILL_DRAGON) { p_ptr->slay |= TR1_KILL_DRAGON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN; }
-			if (f1 & TR1_KILL_DEMON) { p_ptr->slay |= TR1_KILL_DEMON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN; }
-			if (f1 & TR1_KILL_UNDEAD) { p_ptr->slay |= TR1_KILL_UNDEAD; csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD; }
-			if (f1 & TR1_BRAND_POIS) { p_ptr->slay |= TR1_BRAND_POIS; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS; }
-			if (f1 & TR1_BRAND_ACID) { p_ptr->slay |= TR1_BRAND_ACID; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID; }
-			if (f1 & TR1_BRAND_ELEC) { p_ptr->slay |= TR1_BRAND_ELEC; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC; }
-			if (f1 & TR1_BRAND_FIRE) { p_ptr->slay |= TR1_BRAND_FIRE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE; }
-			if (f1 & TR1_BRAND_COLD) { p_ptr->slay |= TR1_BRAND_COLD; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD; }
+			if (f1 & TR1_SLAY_ANIMAL) { p_ptr->slay_equip |= TR1_SLAY_ANIMAL; csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SANIM; }
+			if (f1 & TR1_SLAY_EVIL) { p_ptr->slay_equip |= TR1_SLAY_EVIL; csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SEVIL; }
+			if (f1 & TR1_SLAY_UNDEAD) { p_ptr->slay_equip |= TR1_SLAY_UNDEAD; csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_SUNDD; }
+			if (f1 & TR1_SLAY_DEMON) { p_ptr->slay_equip |= TR1_SLAY_DEMON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDEMN; }
+			if (f1 & TR1_SLAY_ORC) { p_ptr->slay_equip |= TR1_SLAY_ORC; csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_SORCS; }
+			if (f1 & TR1_SLAY_TROLL) { p_ptr->slay_equip |= TR1_SLAY_TROLL;  csheet_boni[i-INVEN_WIELD].cb[7] |= CB8_STROL; }
+			if (f1 & TR1_SLAY_GIANT) { p_ptr->slay_equip |= TR1_SLAY_GIANT; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SGIAN; }
+			if (f1 & TR1_SLAY_DRAGON) { p_ptr->slay_equip |= TR1_SLAY_DRAGON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_SDRGN; }
+			if (f1 & TR1_KILL_DRAGON) { p_ptr->slay_equip |= TR1_KILL_DRAGON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDRGN; }
+			if (f1 & TR1_KILL_DEMON) { p_ptr->slay_equip |= TR1_KILL_DEMON; csheet_boni[i-INVEN_WIELD].cb[8] |= CB9_KDEMN; }
+			if (f1 & TR1_KILL_UNDEAD) { p_ptr->slay_equip |= TR1_KILL_UNDEAD; csheet_boni[i-INVEN_WIELD].cb[9] |= CB10_KUNDD; }
+			if (f1 & TR1_BRAND_POIS) { p_ptr->slay_equip |= TR1_BRAND_POIS; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BPOIS; }
+			if (f1 & TR1_BRAND_ACID) { p_ptr->slay_equip |= TR1_BRAND_ACID; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BACID; }
+			if (f1 & TR1_BRAND_ELEC) { p_ptr->slay_equip |= TR1_BRAND_ELEC; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BELEC; }
+			if (f1 & TR1_BRAND_FIRE) { p_ptr->slay_equip |= TR1_BRAND_FIRE; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BFIRE; }
+			if (f1 & TR1_BRAND_COLD) { p_ptr->slay_equip |= TR1_BRAND_COLD; csheet_boni[i-INVEN_WIELD].cb[10] |= CB11_BCOLD; }
 		}
 		if (f5 & TR5_VORPAL) csheet_boni[i-INVEN_WIELD].cb[11] |= CB12_BVORP;
 

@@ -2363,21 +2363,27 @@ Your weapon itself will not damage the Nazgul if it doesn't have one of the
 mods SLAY_EVIL, SLAY_UNDEAD or KILL_UNDEAD and if it isn't a Morgul weapon.
 However, you will still be able to damage the Nazgul, if your raw to-dam
 bonus is high enough. Enchantments from rings, gloves or other items and the
-damage bonus from your skills will be the only factors which decide the damage
-you deal, in that case.
+damage bonus from your skills and strength will be the only factors which
+decide the damage you deal, in that case.
 For weapons which damage dice and to-dam bonus will not be counted (ie non-
 SLAY/KILL EVIL/UNDEAD or Morgul weapons) you'll see the message:
 "The Ringwraith is IMPERVIOUS to the mundane weapon."
+The same is true for Martial Arts, which style boni will be nullified if you
+don't have one of the slay-undead/slay-evil flags.
 
-Note: Having those slay/kill mods on gloves (or other items) instead of the
-      weapon does not help! They will not count.
+Note: For weapon attacks, having those slay/kill mods on gloves (or other
+      items) instead of the weapon does not help! They will not count.
+      For martial arts/bare-handed attacks, having the slay flags on other
+      items (for example gloves) WILL count!
 
       However - the 'slay undead' bonus received from Holy Offense school at a
-      skill of 30.000 will infuse your weapon and will make its dice and damage
-      count again, as if the weapon itself had the slay mod!
+      skill of 30.000 will infuse your weapon (and bare-handed combat too of
+      course) and will make its dice and damage count again, as if the weapon
+      itself had the slay mod!
 
-Martial Arts users can fight relatively efficiently against Nazgul, but their
-chance to receive Black Breath is higher than for weapon users.
+Martial Arts users can fight relatively efficiently against Nazgul since they
+don't have to worry about their weapon breaking, but their chance to receive
+Black Breath is higher than for weapon users.
 
 If you come in contact with a Nazgul or a very powerful undead creature there
 is a chance that you will be infected by the Black Breath. This dark aura is
