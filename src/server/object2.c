@@ -229,6 +229,19 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	}
 #endif
 
+	/* Extra logging for those cases of "where did my randart disappear to??1" */
+	if (o_ptr->name1 == ART_RANDART) {
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+
+		s_printf("%s DELETE_OBJECT_IDX random artifact at (%d,%d,%d):\n  %s\n",
+		    showtime(),
+		    wpos->wx, wpos->wy, wpos->wz,
+		    o_name);
+	}
+
+
 	/* Artifact becomes 'not found' status */
 	if (true_artifact_p(o_ptr) && unfound_art)
 		handle_art_d(o_ptr->name1);
