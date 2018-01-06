@@ -1471,6 +1471,17 @@ static void store_delete(store_type *st_ptr) {
 		handle_art_d(o_ptr->name1);
 	}
 	questitem_d(o_ptr, o_ptr->number);
+	/* Extra logging for those cases of "where did my randart disappear to??1" */
+	if (o_ptr->name1 == ART_RANDART) {
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+
+		s_printf("%s store_delete(%d) random artifact at (%d,%d,%d):\n  %s\n",
+		    showtime(),
+		    st_ptr->st_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz,
+		    o_name);
+	}
 
 	/*
 	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
@@ -3986,6 +3997,18 @@ void store_confirm(int Ind) {
 		/* Make artifact findable - mikaelh */
 		if (true_artifact_p(&sold_obj)) handle_art_d(sold_obj.name1);
 		questitem_d(&sold_obj, sold_obj.number);
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s dungeon store (%d) eats random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    p_ptr->store_num, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+			    o_name);
+		}
 	}
 #endif
 	/* Resend the basic store info */

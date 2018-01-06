@@ -649,6 +649,18 @@ void wipe_o_list(struct worldpos *wpos) {
 		}
 		questitem_d(o_ptr, o_ptr->number);
 
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s wipe_o_list random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
+
 #ifdef MONSTER_INVENTORY
 		/* Monster */
 		if (o_ptr->held_m_idx) {
@@ -723,6 +735,18 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 			handle_art_d(o_ptr->name1);
 		}
 
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s wipe_o_list_safely random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
+
 #ifdef MONSTER_INVENTORY
 		/* Monster */
 		if (o_ptr->held_m_idx) {
@@ -783,6 +807,18 @@ void wipe_o_list_special(struct worldpos *wpos) {
 			handle_art_d(o_ptr->name1);
 		}
 		questitem_d(o_ptr, o_ptr->number);
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s wipe_o_list_special random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
 
 #ifdef MONSTER_INVENTORY
 		/* Monster */
@@ -9385,6 +9421,19 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 
 		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 		questitem_d(o_ptr, o_ptr->number);
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s drop_near flag eats random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
+
 		return (-1);
 	}
 
@@ -9451,6 +9500,29 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 #endif
 		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
 		questitem_d(o_ptr, o_ptr->number);
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s (BUG?) drop_near kills random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
+		/* err, this shouldn't happen? but we DO call handle_art_d() above..? */
+		else if (o_ptr->name1) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s (BUG?) drop_near kills true artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
 		return (-1);
 	}
 
@@ -9543,6 +9615,19 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 			{
 				if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
 				questitem_d(o_ptr, o_ptr->number);
+
+				/* Extra logging for those cases of "where did my randart disappear to??1" */
+				if (o_ptr->name1 == ART_RANDART) {
+					char o_name[ONAME_LEN];
+
+					object_desc(0, o_name, o_ptr, TRUE, 3);
+
+					s_printf("%s drop_near MAX_ITEMS_STACKING kills random artifact at (%d,%d,%d):\n  %s\n",
+					    showtime(),
+					    wpos->wx, wpos->wy, wpos->wz,
+					    o_name);
+				}
+
 				return (-1);
 			}
 		}
@@ -9648,6 +9733,18 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 		} else /* paranoia: couldn't allocate a new object */ {
 			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 			questitem_d(o_ptr, o_ptr->number);
+
+			/* Extra logging for those cases of "where did my randart disappear to??1" */
+			if (o_ptr->name1 == ART_RANDART) {
+				char o_name[ONAME_LEN];
+
+				object_desc(0, o_name, o_ptr, TRUE, 3);
+
+				s_printf("%s drop_near couldn't allocate random artifact at (%d,%d,%d):\n  %s\n",
+				    showtime(),
+				    wpos->wx, wpos->wy, wpos->wz,
+				    o_name);
+			}
 		}
 	}
 

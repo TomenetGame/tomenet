@@ -6930,6 +6930,7 @@ void kill_house_contents(house_type *h_ptr) {
 	/* hack: for PLAYER_STORES actually allocate the cave temporarily,
 	   just for delete_object()->delete_object_idx() to find any offered items and log their removal. */
 	bool must_alloc = (getcave(wpos) == NULL);
+
 	if (must_alloc) {
 		alloc_dungeon_level(wpos);
 		generate_cave(wpos, NULL);
@@ -6981,6 +6982,18 @@ void kill_house_contents(house_type *h_ptr) {
 			    o_ptr->ix, o_ptr->iy, i);
 		}
 #endif
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s kill_house_contents random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    wpos->wx, wpos->wy, wpos->wz,
+			    o_name);
+		}
 
 		invwipe(o_ptr);
 	}
@@ -8089,6 +8102,18 @@ void player_death(int Ind) {
 			/* set the artifact as unfound */
 			if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 			questitem_d(o_ptr, o_ptr->number);
+
+			/* Extra logging for those cases of "where did my randart disappear to??1" */
+			if (o_ptr->name1 == ART_RANDART) {
+				char o_name[ONAME_LEN];
+
+				object_desc(0, o_name, o_ptr, TRUE, 3);
+
+				s_printf("%s Death-cannot-drop random artifact at (%d,%d,%d):\n  %s\n",
+				    showtime(),
+				    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+				    o_name);
+			}
 		}
 
 		/* No more item */

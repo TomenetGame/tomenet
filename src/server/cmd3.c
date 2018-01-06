@@ -1913,6 +1913,18 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 	questitem_d(o_ptr, quantity);
 
+	/* Extra logging for those cases of "where did my randart disappear to??1" */
+	if (o_ptr->name1 == ART_RANDART) {
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+
+		s_printf("%s do_cmd_destroy random artifact at (%d,%d,%d):\n  %s\n",
+		    showtime(),
+		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+		    o_name);
+	}
+
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, quantity);
 
 	/* Eliminate the item (from the pack) */

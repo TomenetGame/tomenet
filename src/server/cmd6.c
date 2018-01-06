@@ -1252,6 +1252,18 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 	questitem_d(o_ptr, 1);
 
+	/* Extra logging for those cases of "where did my randart disappear to??1" */
+	if (o_ptr->name1 == ART_RANDART) {
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+
+		s_printf("%s quaffed random artifact at (%d,%d,%d):\n  %s\n",
+		    showtime(),
+		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+		    o_name);
+	}
+
 	/* Destroy a potion in the pack */
 	if (item >= 0) {
 		inven_item_increase(Ind, item, -1);
@@ -1841,8 +1853,19 @@ bool curse_armor(int Ind) {
 		/* Oops */
 		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
 
-		if (true_artifact_p(o_ptr))
-			handle_art_d(o_ptr->name1);
+		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s curse_armour on random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+			    o_name);
+		}
 
 		/* Blast the armor */
 		o_ptr->name1 = 0;
@@ -1912,8 +1935,19 @@ bool curse_weapon(int Ind) {
 		/* Oops */
 		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
 
-		if (true_artifact_p(o_ptr))
-			handle_art_d(o_ptr->name1);
+		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s curse_weapon on random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+			    o_name);
+		}
 
 		/* Shatter the weapon */
 		o_ptr->name1 = 0;
@@ -1986,8 +2020,19 @@ bool curse_an_item(int Ind, int slot) {
 		/* Oops */
 		msg_format(Ind, "A terrible black aura blasts your %s!", o_name);
 
-		if (true_artifact_p(o_ptr))
-			handle_art_d(o_ptr->name1);
+		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (o_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+
+			s_printf("%s curse_an_item on random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+			    o_name);
+		}
 
 		/* Blast the armor */
 		o_ptr->name1 = 0;
@@ -3090,6 +3135,18 @@ s_printf("PLAYER_STORE_CASH: %s +%d (%s).\n", p_ptr->name, value, o_ptr->note ? 
 
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
 	questitem_d(o_ptr, 1);
+
+	/* Extra logging for those cases of "where did my randart disappear to??1" */
+	if (o_ptr->name1 == ART_RANDART) {
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+
+		s_printf("%s read random artifact at (%d,%d,%d):\n  %s\n",
+		    showtime(),
+		    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+		    o_name);
+	}
 
 	/* Destroy a scroll in the pack */
 	if (item >= 0) {

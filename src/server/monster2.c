@@ -5675,6 +5675,18 @@ void monster_carry(monster_type *m_ptr, int m_idx, object_type *q_ptr) {
 		/* Hack -- Preserve artifacts */
 		if (true_artifact_p(q_ptr)) handle_art_d(q_ptr->name1);
 		questitem_d(q_ptr, q_ptr->number);
+
+		/* Extra logging for those cases of "where did my randart disappear to??1" */
+		if (q_ptr->name1 == ART_RANDART) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, q_ptr, TRUE, 3);
+
+			s_printf("%s monster_carry ate random artifact at (%d,%d,%d):\n  %s\n",
+			    showtime(),
+			    m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz,
+			    o_name);
+		}
 	}
 }
 
