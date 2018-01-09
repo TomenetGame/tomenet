@@ -4055,7 +4055,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
 				if (!instakills(Ind)) {
-					do_nazgul(Ind, &k, r_ptr, slot);
+					do_nazgul(Ind, &k, r_ptr, -1);
 					if (k == 0) k2 = 0;
 				}
 
@@ -4067,7 +4067,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #else
 				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 
-				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, slot);
+				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, -1);
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -4286,7 +4286,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			} else {
 				k = tot_dam_aux(Ind, NULL, k, m_ptr, FALSE);
 
-				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, slot);
+				if (!instakills(Ind)) do_nazgul(Ind, &k, r_ptr, -1);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul? not for now) */
