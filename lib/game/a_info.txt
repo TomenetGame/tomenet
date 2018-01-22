@@ -2855,7 +2855,7 @@ W:65:40:380:100000
 P:60:2d5:-8:0:0
 F:RES_MANA | NO_MAGIC |
 F:RES_ACID | IM_ELEC | RES_DISEN
-D:Made of this rare black ore this mighty armour has an extraordinarily hard
+D:Made of rare black ore this mighty armour has an extraordinarily hard
 D:surface. It also seems to absorb any form of energy.
 
 
