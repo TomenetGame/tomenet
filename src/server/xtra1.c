@@ -9178,6 +9178,9 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		*str2ptr = str[i];
 		*(str2ptr + 1) = 0;
 
+		/* Empty order string? */
+		if (!str2[0]) return;
+
 		/* allow specifying a number */
 		str2ptr = str2;
 		if (str2[0] == 'a') {
