@@ -171,7 +171,7 @@ bool go_game_up;		/* A game of Go is actually being played right now? */
 u32b go_engine_player_id;	/* Player ID of the player who plays a game of Go right now. */
 static char avatar_name[40];
 #if defined(ENGINE_GNUGO) || defined(HS_ENGINE_GNUGOMC) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
-static FILE *sgf;
+static FILE *sgf = NULL;
 static char sgf_name[1024];
 #endif
 
@@ -1633,6 +1633,11 @@ static int verify_move_human(void) {
 		go_challenge_cleanup(FALSE);
 		return -1;
 	}
+	/* Timing issue: See verify_move_CPU(). Putting it here too for paranoia. */
+	if (!sgf) {
+		s_printf("GO_GAME: verify_move_human() called after game was cancelled.\n");
+		return -1;
+	}
 
 	/* Catch timeout! Oops. */
 	if (engine_api == EAPI_FUEGO && !strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
@@ -1745,6 +1750,13 @@ static int verify_move_CPU(void) {
 	/* Player still with us? */
 	if (!(Ind = lookup_player_ind(go_engine_player_id))) {
 		go_challenge_cleanup(FALSE);
+		return -1;
+	}
+	/* Timing issue: Player left the shop right when CPU move came in.
+	   Will try to write the CPU move to sgf which has already been fclose()'d,
+	   freezing the server in panic save. */
+	if (!sgf) {
+		s_printf("GO_GAME: verify_move_CPU() called after game was cancelled.\n");
 		return -1;
 	}
 
@@ -1910,6 +1922,9 @@ static void go_engine_move_result(int move_result) {
 		go_challenge_cleanup(FALSE);
 		return;
 	}
+
+	/* ... todo? catch -1 from verify_move..()? ... */
+
 	p_ptr = Players[Ind];
 
 	switch (move_result) {
@@ -2955,6 +2970,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 			}
 			fclose(fp);
 			fclose(sgf);
+			sgf = NULL;
 
 			remove("tmp$$$.sgf");
 		}
@@ -2968,6 +2984,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 		if (sgf) {
 			fprintf(sgf, ")\n");
 			fclose(sgf);
+			sgf = NULL;
 
 			/* Fix sgf displaying correct +1 bonus point on w 1st pass */
 			if (current_komi) {
@@ -2987,6 +3004,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 				}
 				fclose(fp);
 				fclose(sgf);
+				sgf = NULL;
 
 				remove("tmp$$$.sgf");
 			}
