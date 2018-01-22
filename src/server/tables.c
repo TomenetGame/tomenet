@@ -3093,7 +3093,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000,
 			'+', 0, },
 #ifdef DUAL_WIELD /* rangers get an exception for now. hoping it'll balance out with giving them stances as well! */
-			{ /* dual-wield */ SKILL_DUAL,
+		{ /* dual-wield */ SKILL_DUAL,
 			'+', 1000,
 			'+', 0, },
 #endif
@@ -4167,6 +4167,11 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0, },
  #ifdef ENABLE_STANCES
 		{ SKILL_STANCE,
+			'+', 1000,
+			'+', 0, },
+ #endif
+ #ifdef DUAL_WIELD /* experimental - khorne berzerkers ^^ */
+		{ /* dual-wield */ SKILL_DUAL,
 			'+', 1000,
 			'+', 0, },
  #endif
