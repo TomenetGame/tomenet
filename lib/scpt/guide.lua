@@ -167,7 +167,7 @@ guide_school = {
     "Astral Knowledge -",
 }
 
-guide_spells = 177
+guide_spells = 178
 guide_spell = {
     "Manathrust",
     "Recharge",
@@ -312,10 +312,11 @@ guide_spell = {
     "Flame Wave",
     "Demonic Strength",
     --"Chaos Bolt", --duplicate (Shadow)
+    "Boundless Rage",
     "Wicked Oath",
     "Levitation",
     "Robes of Havoc",
-    "Blood Sacrifice", --129
+    "Blood Sacrifice", --130
 
     "Nature's Call",
     "Toxic Moisture",
@@ -327,7 +328,7 @@ guide_spell = {
     "Quickfeet",
     "Herbal Tea",
     "Extra Growth",
-    "Focus", --139
+    "Focus", --140
 
     "Psychic Hammer",
     "Psychokinesis",
@@ -347,7 +348,7 @@ guide_spell = {
     "Accelerate Nerves",
     "Telepathy",
     "Recognition",
-    "Stabilize Thoughts", --157
+    "Stabilize Thoughts", --158
 
     "Psionic Blast",
     "Psi Storm",
@@ -369,5 +370,5 @@ guide_spell = {
     "Empowerment",
     "The Silent Force",
     "Sphere of Destruction",
-    "Gateway", --177
+    "Gateway", --178
 }
