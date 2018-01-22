@@ -4233,13 +4233,189 @@ void interact_macros(void) {
 					/* '^%c' : ctrl + a simple key */
 					m_ctrl = TRUE; /* not testing for the '^' actually, we assume it must be there.. */
 					sprintf(t_key, "%c        ", buf[1]);
+
+					/* Some special keys are represented by CTRL+<normal letter> combo.. >_> */
+					if (buf[1] == 'b') strcat(t_key, " (BACK)"); // and also 'Del' key!
+					if (buf[1] == 'r') strcat(t_key, " (ENTER)");
+					if (buf[1] == 's') strcat(t_key, " (SPACE)");
+					if (buf[1] == 't') strcat(t_key, " (TAB)");
 				} else {
 					/* special key, possibly with shift and/or ctrl */
+					int keycode;
+
 					bptr = buf + 2;
 					if (*bptr == 'N') { m_ctrl = TRUE; bptr++; }
 					if (*bptr == 'S') { m_shift = TRUE; bptr++; }
 					if (*bptr == 'O') { m_alt = TRUE; bptr++; }
 					bptr++;
+
+					/* Translate keycode to some human-readable key (keyboard-layout-dependant hit or miss tho...) */
+#ifdef WINDOWS
+					/* Windows keycode */
+					if (bptr[0] == 'F' && bptr[1] == 'F') {
+						bptr[4] = 0;
+						keycode = strtol(bptr + 2, NULL, 16);
+
+						switch (keycode) {
+						case 0xBE: strcpy(bptr,  "F1"); break;
+						case 0xBF: strcpy(bptr,  "F2"); break;
+						case 0xC0: strcpy(bptr,  "F3"); break;
+						case 0xC1: strcpy(bptr,  "F4"); break;
+						case 0xC2: strcpy(bptr,  "F5"); break;
+						case 0xC3: strcpy(bptr,  "F6"); break;
+						case 0xC4: strcpy(bptr,  "F7"); break;
+						case 0xC5: strcpy(bptr,  "F8"); break;
+						case 0xC6: strcpy(bptr,  "F9"); break;
+						case 0xC7: strcpy(bptr,  "F10"); break;
+						case 0xC8: strcpy(bptr,  "F11"); break;
+						case 0xC9: strcpy(bptr,  "F12"); break;
+
+						case 0x61: strcpy(bptr,  "PrtScr"); break;
+						case 0x14: strcpy(bptr,  "Scroll"); break;
+						case 0x13: strcpy(bptr,  "Pause"); break;
+
+						/* Arrow keys et al, also number pad at numlock off */
+						case 0x52: strcpy(bptr,  "Up"); break;
+						case 0x54: strcpy(bptr,  "Down"); break;
+						case 0x51: strcpy(bptr,  "Left"); break;
+						case 0x53: strcpy(bptr,  "Right"); break;
+						case 0x63: strcpy(bptr,  "Ins"); break; // 'Del' is ctrl+b!
+						case 0x55: strcpy(bptr,  "PageUp"); break;
+						case 0x56: strcpy(bptr,  "PageDn"); break;
+						case 0x50: strcpy(bptr,  "Home"); break;
+						case 0x57: strcpy(bptr,  "End"); break;
+
+						/* Numper pad (Numlock independant) */
+						case 0xAF: strcpy(bptr,  "Num/"); break;
+						case 0xAA: strcpy(bptr,  "Num*"); break;
+						case 0xAD: strcpy(bptr,  "Num-"); break;
+						case 0xAB: strcpy(bptr,  "Num+"); break;
+						case 0x8D: strcpy(bptr,  "NumRet"); break;
+
+						/* Numper pad (Numlock off) */
+						case 0x9F: strcpy(bptr,  "num."); break;
+						case 0x9E: strcpy(bptr,  "num0"); break;
+						case 0x9C: strcpy(bptr,  "num1"); break;
+						case 0x99: strcpy(bptr,  "num2"); break;
+						case 0x9B: strcpy(bptr,  "num3"); break;
+						case 0x96: strcpy(bptr,  "num4"); break;
+						case 0x9D: strcpy(bptr,  "num5"); break;
+						case 0x98: strcpy(bptr,  "num6"); break;
+						case 0x95: strcpy(bptr,  "num7"); break;
+						case 0x97: strcpy(bptr,  "num8"); break;
+						case 0x9A: strcpy(bptr,  "num9"); break;
+
+						/* Numper pad (Numlock off) */
+						case 0xAC: strcpy(bptr,  "NUM."); break;
+						case 0xB0: strcpy(bptr,  "NUM0"); break;
+						case 0xB1: strcpy(bptr,  "NUM1"); break;
+						case 0xB2: strcpy(bptr,  "NUM2"); break;
+						case 0xB3: strcpy(bptr,  "NUM3"); break;
+						case 0xB4: strcpy(bptr,  "NUM4"); break;
+						case 0xB5: strcpy(bptr,  "NUM5"); break;
+						case 0xB6: strcpy(bptr,  "NUM6"); break;
+						case 0xB7: strcpy(bptr,  "NUM7"); break;
+						case 0xB8: strcpy(bptr,  "NUM8"); break;
+						case 0xB9: strcpy(bptr,  "NUM9"); break;
+
+						/* Number pad duplicate, apparently numbers only, no idea.. */
+						case 0xD8: strcpy(bptr,  "Num7"); break;
+						case 0xD9: strcpy(bptr,  "Num8"); break;
+						case 0xDA: strcpy(bptr,  "Num9"); break;
+						case 0xDB: strcpy(bptr,  "Num4"); break;
+						case 0xDC: strcpy(bptr,  "Num5"); break;
+						case 0xDD: strcpy(bptr,  "Num6"); break;
+						case 0xDE: strcpy(bptr,  "Num1"); break;
+						case 0xDF: strcpy(bptr,  "Num2"); break;
+						case 0xE0: strcpy(bptr,  "Num3"); break;
+						}
+					} else if (bptr[0] == '_') {
+						//???
+					}
+#else
+					/* Linux keycode */
+					if (bptr[0] == 'F' && bptr[1] == 'F') {
+						bptr[4] = 0;
+						keycode = strtol(bptr + 2, NULL, 16);
+
+						switch (keycode) {
+						case 0xBE: strcpy(bptr,  "F1"); break;
+						case 0xBF: strcpy(bptr,  "F2"); break;
+						case 0xC0: strcpy(bptr,  "F3"); break;
+						case 0xC1: strcpy(bptr,  "F4"); break;
+						case 0xC2: strcpy(bptr,  "F5"); break;
+						case 0xC3: strcpy(bptr,  "F6"); break;
+						case 0xC4: strcpy(bptr,  "F7"); break;
+						case 0xC5: strcpy(bptr,  "F8"); break;
+						case 0xC6: strcpy(bptr,  "F9"); break;
+						case 0xC7: strcpy(bptr,  "F10"); break;
+						case 0xC8: strcpy(bptr,  "F11"); break;
+						case 0xC9: strcpy(bptr,  "F12"); break;
+
+						case 0x61: strcpy(bptr,  "PrtScr"); break;
+						case 0x14: strcpy(bptr,  "Scroll"); break;
+						case 0x13: strcpy(bptr,  "Pause"); break;
+
+						/* Arrow keys et al, also number pad at numlock off */
+						case 0x52: strcpy(bptr,  "Up"); break;
+						case 0x54: strcpy(bptr,  "Down"); break;
+						case 0x51: strcpy(bptr,  "Left"); break;
+						case 0x53: strcpy(bptr,  "Right"); break;
+						case 0x63: strcpy(bptr,  "Ins"); break; // 'Del' is ctrl+b!
+						case 0x55: strcpy(bptr,  "PageUp"); break;
+						case 0x56: strcpy(bptr,  "PageDn"); break;
+						case 0x50: strcpy(bptr,  "Home"); break;
+						case 0x57: strcpy(bptr,  "End"); break;
+
+						/* Numper pad (Numlock independant) */
+						case 0xAF: strcpy(bptr,  "Num/"); break;
+						case 0xAA: strcpy(bptr,  "Num*"); break;
+						case 0xAD: strcpy(bptr,  "Num-"); break;
+						case 0xAB: strcpy(bptr,  "Num+"); break;
+						case 0x8D: strcpy(bptr,  "NumRet"); break;
+
+						/* Numper pad (Numlock off) */
+						case 0x9F: strcpy(bptr,  "num."); break;
+						case 0x9E: strcpy(bptr,  "num0"); break;
+						case 0x9C: strcpy(bptr,  "num1"); break;
+						case 0x99: strcpy(bptr,  "num2"); break;
+						case 0x9B: strcpy(bptr,  "num3"); break;
+						case 0x96: strcpy(bptr,  "num4"); break;
+						case 0x9D: strcpy(bptr,  "num5"); break;
+						case 0x98: strcpy(bptr,  "num6"); break;
+						case 0x95: strcpy(bptr,  "num7"); break;
+						case 0x97: strcpy(bptr,  "num8"); break;
+						case 0x9A: strcpy(bptr,  "num9"); break;
+
+						/* Numper pad (Numlock off) */
+						case 0xAC: strcpy(bptr,  "NUM."); break;
+						case 0xB0: strcpy(bptr,  "NUM0"); break;
+						case 0xB1: strcpy(bptr,  "NUM1"); break;
+						case 0xB2: strcpy(bptr,  "NUM2"); break;
+						case 0xB3: strcpy(bptr,  "NUM3"); break;
+						case 0xB4: strcpy(bptr,  "NUM4"); break;
+						case 0xB5: strcpy(bptr,  "NUM5"); break;
+						case 0xB6: strcpy(bptr,  "NUM6"); break;
+						case 0xB7: strcpy(bptr,  "NUM7"); break;
+						case 0xB8: strcpy(bptr,  "NUM8"); break;
+						case 0xB9: strcpy(bptr,  "NUM9"); break;
+
+						/* Number pad duplicate, apparently numbers only, no idea.. */
+						case 0xD8: strcpy(bptr,  "Num7"); break;
+						case 0xD9: strcpy(bptr,  "Num8"); break;
+						case 0xDA: strcpy(bptr,  "Num9"); break;
+						case 0xDB: strcpy(bptr,  "Num4"); break;
+						case 0xDC: strcpy(bptr,  "Num5"); break;
+						case 0xDD: strcpy(bptr,  "Num6"); break;
+						case 0xDE: strcpy(bptr,  "Num1"); break;
+						case 0xDF: strcpy(bptr,  "Num2"); break;
+						case 0xE0: strcpy(bptr,  "Num3"); break;
+						}
+					} else if (bptr[0] == '_') {
+						//???
+					}
+#endif
+
 					sprintf(t_key, "%-9.9s", bptr);
 					/* ensure termination (in paranoid case of overflow) */
 					t_key[9] = '\0';
