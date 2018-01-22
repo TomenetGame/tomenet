@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. Januar 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 22. Januar 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -153,13 +153,13 @@ Contents
     (6.3)   Abilities
     (6.4)   Races
     (6.5)   Classes/Professions, titles, melee blows/round
-    (6.5a)  Start-up Blows/Round Table
+    (6.5a)  Start-up Blows/Round Table (BpR)
     (6.6)   Sanity (or insanity)
     (6.7)   Mimicry details
     (6.7a)  Polymorph rings
     (6.7b)  Druid form details
     (6.7c)  Useful low-level humanoid forms for weapon-using mimics
-    (6.8)   Magic spells and prayers
+    (6.8)   Spells and prayers
     (6.8a)  Mimic powers
     (6.8b)  Runes & Runemastery
     (6.8c)  Runespell tables
@@ -14329,8 +14329,8 @@ Note that a (heavier) startup weapon at 2 BpR might beat a very light weapon at
 for a little a bit until spending $ on it.
 
 
-(6.5a) Start-up Blows/Round Table
----------------------------------
+(6.5a) Start-up Blows/Round Table (BpR)
+---------------------------------------
 Here is a table, showing you some BpR numbers you can expect your newly
 created character to have, depending on certain combinations of class, STR,
 DEX, given for both, lightest possible weapon and startup weapon:
@@ -15219,8 +15219,8 @@ Commonly seen advanced forms: Bloodletter of Khorne, Storm Giant, Dragonriders.
 
 
 
-(6.8) Magic spells and prayers
-------------------------------
+(6.8) Spells and prayers
+------------------------
 Istari (mages), rangers, rogues, priests, paladins, druids, shamans,
 mindcrafters and even adventurers can cast magic spells, use telepathic powers
 (which are the same as spells, technically) or speak prayers.
@@ -15990,11 +15990,14 @@ school.
                     Required skill level for first spell level: 1.
 
     Holy Light      Creates a globe of pure light.
-                    Lv3:  Hurts monsters that are susceptible to light.
-                    Lv19: Calls a more powerful kind of light. This light
-                         hurts all types of monsters.
-                         Radius and damage will further increase.
                     Required skill level for first spell level: 2.
+                    Lv3:  Hurts monsters that are susceptible to light.
+                    Shared spell (see above): H.Offense, H.Support.
+
+                    Tier II: Level 20.
+                    Calls a more powerful kind of light. This light hurts all
+                    types of monsters.
+                    Radius and damage will further increase.
                     Shared spell (see above): H.Offense, H.Support.
 
     Detect Evil     Detects evil monsters.
@@ -16196,7 +16199,7 @@ school.
                     All physical attacks have a chance to miss you, at the cost
                     of your mana.
 
-    Rites of Purification
+    Purification Rites
                     *Dispels undead* in your field of view.
                     Required skill level for first spell level: 30.
 
