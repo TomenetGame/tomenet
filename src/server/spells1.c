@@ -2447,6 +2447,10 @@ static bool hates_elec(object_type *o_ptr) {
 	case TV_RING:
 	case TV_WAND:
 		return (TRUE);
+	/* New: MC crystals - compare get_book_name_color() */
+	case TV_BOOK:
+		if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return (TRUE);
+		return FALSE;
 	}
 
 	return (FALSE);
