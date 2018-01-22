@@ -39,10 +39,14 @@ function quest_towneltalk(Ind, msg, topic)
 
 	--*** skills ***
 	if topic == 2 then
+		--if someone has trained spell skills, tell him to actually get the important spell scrolls for those
+		
 	end
 
 	--*** status ***
 	if topic == 3 then
+		--check for rather low attributes, eg CON, with advice how to improve it
+		
 	end
 
 	--*** partying ***
