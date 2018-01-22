@@ -2049,6 +2049,16 @@ void cmd_the_guide(void) {
 				}
 				if (chapter[0]) continue;
 
+				/* New, for 'Curses' vs 'Remove Curses': Do an 'exact match' search on guide chapters */
+				for (i = 0; i < guide_chapters; i++) {
+					if (strcasecmp(guide_chapter[i], buf)) continue;
+					strcpy(chapter, "(");
+					strcat(chapter, guide_chapter_no[i]);
+					strcat(chapter, ")");
+					break;
+				}
+				if (chapter[0]) continue;
+
 				//race/class prefix match
 				for (i = 0; i < guide_races; i++) {
 					if (my_strcasestr(guide_race[i], buf) != guide_race[i]) continue;
@@ -2112,6 +2122,12 @@ void cmd_the_guide(void) {
 					if (strcasecmp(guide_spell[i], buf)) continue;
 					strcpy(chapter, "    ");
 					strcat(chapter, guide_spell[i]);
+					/* Enforce 'direct match over partial match' eg 'Lightning' vs 'Lightning Bolt' via silyl hack:
+					   If spell name contains no space then after the spell's name at least 2 spaces must follow.. ehe
+					   This keenly assumes that 1) spaceless spell names are short enough to not force a line break before
+					   the spell detail text starts, 2) spaceless spell names are short enough that not just one space follows
+					   before the spell detail text starts. */
+					if (!strchr(guide_spell[i], ' ')) strcat(chapter, "  ");
 					break;
 				}
 				if (chapter[0]) continue;
