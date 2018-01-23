@@ -2120,6 +2120,9 @@ struct player_type {
 	bool last_words;
 	bool limit_chat;
 	bool no_afk_msg;
+	bool diz_unique;
+	bool diz_artifact;
+	bool diz_death;
 	/* bool speak_unique; */
 
 	/* 'make clean; make' consumes time :) */
@@ -3287,6 +3290,9 @@ struct client_opts {
 	bool recall_flicker;
 	bool no_verify_destroy;
 	bool no_verify_sell;
+	bool diz_unique;
+	bool diz_artifact;
+	bool diz_death;
 
     //page 5
 	bool auto_afk; //50

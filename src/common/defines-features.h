@@ -138,6 +138,9 @@
 /* Load 'D:' tags from k_info.txt file and display them on examining - C. Blue */
 #define KIND_DIZ
 
+/* Load 'D:' tags from r_info.txt file and display them on kill if enabled - C. Blue */
+#define RACE_DIZ
+
 /* Allow kings/queens/emperors/empresses to team up for Nether Realm.
    Must be at the worldmap sector of NR entrance, or inside NR. */
 #define ALLOW_NR_CROSS_PARTIES

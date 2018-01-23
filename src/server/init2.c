@@ -1017,7 +1017,7 @@ static errr init_r_info(void) {
 
 	/* Assume the size of "r_name" and "r_text" */
 	fake_name_size = 20 * 1024L;
-	fake_text_size = 60 * 1024L;
+	fake_text_size = 60 * 1024L * 3; //increased *3 for RACE_DIZ addition, first time we actually try and load r-dizzes..
 
 	/* Allocate the "r_info" array */
 	C_MAKE(r_info, r_head->info_num, monster_race);
@@ -1059,6 +1059,14 @@ static errr init_r_info(void) {
 		quit("Error in 'r_info.txt' file.");
 	}
 
+#if 0 /* debug */
+#ifdef RACE_DIZ
+for (i = 0; i < MAX_R_IDX; i++) {
+	if (!(r_info[i].flags1 & RF1_UNIQUE)) continue;
+	s_printf("%d:\n%s\n", i, r_text + r_info[i].text);
+}
+#endif
+#endif
 
 	/* Sort uniques for client-side list on chardump - C. Blue */
 	for (i = 0; i < MAX_R_IDX; i++) {
@@ -3698,7 +3706,6 @@ static errr reinit_r_info(void) {
 		/* Quit */
 		quit("Error in 'r_info.txt' file.");
 	}
-
 
 	/* Sort uniques for client-side list on chardump - C. Blue */
 	for (i = 0; i < MAX_R_IDX; i++) {

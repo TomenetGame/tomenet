@@ -3543,7 +3543,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 	//int i;
 	int i, cur_r = -1, cur_t = 0, j;
 	char *s, *t;
-#ifdef ART_DIZ
+#ifdef EGO_DIZ
 	char tmp[MSG_LEN];
 #endif
 
@@ -4004,6 +4004,9 @@ if (season_halloween) {
 errr init_r_info_txt(FILE *fp, char *buf) {
 	int i, j;
 	char *s, *t;
+#ifdef RACE_DIZ
+	char tmp[MSG_LEN];
+#endif
 	/* Not ready yet */
 	bool okay = FALSE;
 	/* Current entry */
@@ -4129,21 +4132,36 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'D' for "Description" */
 		if (buf[0] == 'D') {
-#if 0	// I've never seen this used :)		- Jir -
+#ifdef RACE_DIZ
+			/* Required, or all monsters after 730 will have garbled diz */
+			if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+
 			/* Acquire the text */
 			s = buf + 2;
 
+ #if 0
+			strcpy(tmp, "\377u");
+			strcat(tmp, s);
+			strcat(tmp, "\n");
+ #else
+			if (r_ptr->text && *(r_text + r_head->text_size - 1) != ' ') {
+				/* last line didn't end on a space, so insert one for concatenation */
+				strcpy(tmp, " ");
+				strcat(tmp, s);
+			} else strcpy(tmp, s);
+ #endif
+
 			/* Hack -- Verify space */
-			if (r_head->text_size + strlen(s) + 8 > fake_text_size) return (7);
+			if (r_head->text_size + strlen(tmp) + 8 > fake_text_size) return (7);
 
 			/* Advance and Save the text index */
 			if (!r_ptr->text) r_ptr->text = ++r_head->text_size;
 
 			/* Append chars to the name */
-			strcpy(r_text + r_head->text_size, s);
+			strcpy(r_text + r_head->text_size, tmp);
 
 			/* Advance the index */
-			r_head->text_size += strlen(s);
+			r_head->text_size += strlen(tmp);
 #endif
 
 			/* Next... */

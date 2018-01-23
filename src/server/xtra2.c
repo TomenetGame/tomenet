@@ -5953,6 +5953,26 @@ if (cfg.unikill_format) {
 		/* Log event */
 		s_printf("%s was slain by %s.\n", r_name_get(m_ptr), p_ptr->name);
 
+#ifdef RACE_DIZ
+		/* Tell player the unique monster's lore? (4.7.1b feature) */
+		if (p_ptr->diz_unique) {
+			char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
+
+			strcpy(diz, r_text + r_info[m_ptr->r_idx].text);
+			while (strlen(dizptr) > 80 - 0) {
+				strncpy(tmp, dizptr, 80 - 0);
+				tmp[80 - 0] = 0;
+
+				tmpend = &tmp[80 - 1];
+				while (isalpha(*tmpend)) tmpend--;
+				*(tmpend + 1) = 0;
+
+				msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
+				dizptr += strlen(tmp);
+			}
+			if (*dizptr) msg_format(Ind, "\374\377u%s", dizptr);
+		}
+#endif
 	}
     }
 
