@@ -2244,7 +2244,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->sfx_magicattack = TRUE;
 		p_ptr->sfx_defense = TRUE;
 		p_ptr->sfx_monsterattack = TRUE;
-		p_ptr->sfx_shriek = TRUE;
+		p_ptr->quiet_sfx_shriek = FALSE;
 		p_ptr->sfx_store = FALSE;
 		p_ptr->sfx_house_quiet = TRUE;
 		p_ptr->sfx_house = TRUE;
@@ -2262,8 +2262,8 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->sfx_magicattack = !options[48];
 		p_ptr->sfx_defense = !options[49];
 		p_ptr->sfx_monsterattack = !options[93];
-		p_ptr->sfx_shriek = !options[94];
-		p_ptr->sfx_store = !options[96];
+		p_ptr->quiet_sfx_shriek = options[94];
+		p_ptr->sfx_store = TRUE; //!options[96];
 		p_ptr->sfx_house_quiet = options[97];
 		p_ptr->sfx_house = !options[98];
 		if (p_ptr->sfx_house != sfx_house || p_ptr->sfx_house_quiet != sfx_house_quiet) {
@@ -2446,11 +2446,11 @@ static void sync_options(int Ind, bool *options) {
 	p_ptr->half_sfx_attack = options[96];
 	p_ptr->cut_sfx_attack = options[97];
 	p_ptr->sfx_monsterattack = !options[103];
-	p_ptr->sfx_shriek = !options[104];
-	p_ptr->sfx_store = !options[105];
+	p_ptr->quiet_sfx_shriek = options[104];
+	p_ptr->sfx_store = TRUE;//!options[105];
 	p_ptr->sfx_house_quiet = options[106];
 	p_ptr->sfx_house = !options[107];
-	p_ptr->sfx_am = !options[108];
+	p_ptr->sfx_am = TRUE;//!options[108];
 
 	/* Glitch: Even if the character has set sfx_house 0, it will still be received as 1 here for some reason on 1st option-sync after char login. */
 	if (p_ptr->sfx_house != sfx_house ||

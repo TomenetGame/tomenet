@@ -2897,7 +2897,7 @@ struct player_type {
 #endif
 	bool cut_sfx_attack, half_sfx_attack, half_sfx_attack_state;
 	int count_cut_sfx_attack;
-	bool sfx_combat, sfx_magicattack, sfx_defense, sfx_monsterattack, sfx_shriek, sfx_store, sfx_house_quiet, sfx_house, sfx_am;
+	bool sfx_combat, sfx_magicattack, sfx_defense, sfx_monsterattack, quiet_sfx_shriek, sfx_store, sfx_house_quiet, sfx_house, sfx_am;
 
 	/* various flags/counters to check if a character is 'freshly made' and/or has already interacted in certain ways.
 	   Mostly to test if he/she is eglibile to join events. */
@@ -3347,11 +3347,11 @@ struct client_opts {
 	bool ovl_sfx_mon_spell;
 	bool ovl_sfx_mon_misc;
 	bool no_monsterattack_sfx;
-	bool no_shriek_sfx;
-	bool no_store_bell;
+	bool quiet_shriek_sfx;
+	bool no_store_bell;//disabled, use =n
 	bool quiet_house_sfx;
 	bool no_house_sfx;
-	bool no_am_sfx;
+	bool no_am_sfx;//disabled, use =n
 
     //unmutable, pfft
 	bool use_color;

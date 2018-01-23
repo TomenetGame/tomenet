@@ -1309,12 +1309,16 @@ void sound_near(int Ind, cptr name, cptr alternative, int type) {
 		if (d > MAX_SIGHT) continue;
 
 #ifndef SFX_SHRIEK_VOLUME
-		if (strcmp(name, "shriek") || Players[i]->sfx_shriek)
+		if (strcmp(name, "shriek") || !Players[i]->quiet_sfx_shriek)
 			sound(i, name, alternative, type, FALSE);
+		else
+			sound_vol(i, name, alternative, type, FALSE, 33);
 #else
 		if (strcmp(name, "shriek"))
 			sound(i, name, alternative, type, FALSE);
-		else if (Players[i]->sfx_shriek)
+		else if (Players[i]->quiet_sfx_shriek)
+			sound_vol(i, name, alternative, type, FALSE, SFX_SHRIEK_VOLUME / 3);
+		else
 			sound_vol(i, name, alternative, type, FALSE, SFX_SHRIEK_VOLUME);
 #endif
 	}
