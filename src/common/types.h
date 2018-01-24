@@ -85,18 +85,12 @@ struct header {
 	byte	v_patch;		/* Version -- patch */
 	byte	v_extra;		/* Version -- extra */
 
-
 	u32b	info_num;		/* Number of "info" records */
-
 	u32b	info_len;		/* Size of each "info" record */
 
-
 	u32b	head_size;		/* Size of the "header" in bytes */
-
 	u32b	info_size;		/* Size of the "info" array in bytes */
-
 	u32b	name_size;		/* Size of the "name" array in bytes */
-
 	u32b	text_size;		/* Size of the "text" array in bytes */
 };
 
@@ -411,7 +405,7 @@ struct monster_blow {
 typedef struct monster_race monster_race;
 struct monster_race {
 	u16b name;				/* Name (offset) */
-	u16b text;				/* Text (offset) */
+	u32b text;				/* Text (offset) */
 	u16b dup_idx;				/* For mimicry: Race idx of duplicate that differs only in FRIENDS flag */
 
 	u16b hdice;				/* Creatures hit dice count */

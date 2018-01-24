@@ -4133,8 +4133,8 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		/* Process 'D' for "Description" */
 		if (buf[0] == 'D') {
 #ifdef RACE_DIZ
-			/* Required, or all monsters after 730 will have garbled diz */
-			if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+			/* Required to prevent overflow if r_ptr->text is only u16b. Extended to u32b now though. */
+			//if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
 
 			/* Acquire the text */
 			s = buf + 2;

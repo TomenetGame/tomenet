@@ -3665,7 +3665,7 @@ static errr reinit_r_info(void) {
 
 	/* Assume the size of "r_name" and "r_text" */
 	fake_name_size = 20 * 1024L;
-	fake_text_size = 60 * 1024L;
+	fake_text_size = 60 * 1024L * 3;
 
 	/* Allocate the "r_info" array */
 	C_WIPE(r_info, r_head->info_num, monster_race);

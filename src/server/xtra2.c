@@ -7311,45 +7311,43 @@ static void equip_death_damage(int Ind, int verbose) {
 static void display_diz_death(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
+	char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
 
-	/* Tell player the monster's lore? (4.7.1b feature) */
-	if (p_ptr->diz_death && p_ptr->died_from_ridx && !is_admin(p_ptr)) {
-		char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
+	if (!p_ptr->diz_death || !p_ptr->died_from_ridx || is_admin(p_ptr)) return;
 
-		strcpy(diz, r_text + r_info[p_ptr->died_from_ridx].text);
-		while (strlen(dizptr) > 80 - 0) {
-			strncpy(tmp, dizptr, 80 - 0);
-			tmp[80 - 0] = 0;
+	strcpy(diz, r_text + r_info[p_ptr->died_from_ridx].text);
+	while (strlen(dizptr) > 80 - 0) {
+		strncpy(tmp, dizptr, 80 - 0);
+		tmp[80 - 0] = 0;
 
-			tmpend = &tmp[80 - 1];
-			while (isalpha(*tmpend)) tmpend--;
-			*(tmpend + 1) = 0;
+		tmpend = &tmp[80 - 1];
+		while (isalpha(*tmpend)) tmpend--;
+		*(tmpend + 1) = 0;
 
-			msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
-			dizptr += strlen(tmp);
+		msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
+		dizptr += strlen(tmp);
 
-			/* diz_death_any: */
-			for (i = 1; i < NumPlayers; i++) {
-				/* Skip disconnected players */
-				if (Players[i]->conn == NOT_CONNECTED) continue;
-				/* Skip ourself */
-				if (i == Ind) continue;
-				/* Display lore? */
-				if (Players[i]->diz_death_any) msg_format(i, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
-			}
+		/* diz_death_any: */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* Skip disconnected players */
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			/* Skip ourself */
+			if (i == Ind) continue;
+			/* Display lore? */
+			if (Players[i]->diz_death_any) msg_format(i, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
 		}
-		if (*dizptr) {
-			msg_format(Ind, "\374\377u%s", dizptr);
+	}
+	if (*dizptr) {
+		msg_format(Ind, "\374\377u%s", dizptr);
 
-			/* diz_death_any: */
-			for (i = 1; i < NumPlayers; i++) {
-				/* Skip disconnected players */
-				if (Players[i]->conn == NOT_CONNECTED) continue;
-				/* Skip ourself */
-				if (i == Ind) continue;
-				/* Display lore? */
-				if (Players[i]->diz_death_any) msg_format(i, "\374\377u%s", dizptr);
-			}
+		/* diz_death_any: */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* Skip disconnected players */
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			/* Skip ourself */
+			if (i == Ind) continue;
+			/* Display lore? */
+			if (Players[i]->diz_death_any) msg_format(i, "\374\377u%s", dizptr);
 		}
 	}
 }
