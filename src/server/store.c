@@ -3055,6 +3055,7 @@ void store_stole(int Ind, int item) {
 		/* Let the player carry it (as if he picked it up) */
 		can_use(Ind, &sell_obj);//##UNH
 		sell_obj.iron_trade = p_ptr->iron_trade;
+		sell_obj.iron_turn = -1;
 		item_new = inven_carry(Ind, &sell_obj);
 
 		/* Describe the final result */
@@ -3493,6 +3494,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				//note regarding quests: The item here gets owned first, then inven-carried, so it doesn't give credit!
 				can_use(Ind, &sell_obj);//##UNH
 				sell_obj.iron_trade = p_ptr->iron_trade;
+				sell_obj.iron_turn = -1;
 				item_new = inven_carry(Ind, &sell_obj);
 
 				/* Describe the final result */
@@ -4383,6 +4385,7 @@ void do_cmd_store(int Ind) {
 			forge.ident |= ID_MENTAL;
 			forge.note = quark_add(format("%s Delivery", st_name + st_info[p_ptr->item_order_store - 1].name));
 			forge.iron_trade = p_ptr->iron_trade;
+			forge.iron_turn = -1;
 			slot = inven_carry(Ind, &forge);
 			if (slot != -1) {
 				object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);

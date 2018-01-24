@@ -2826,6 +2826,12 @@ void do_cmd_steal(int Ind, int dir) {
 		if (!is_admin(p_ptr)) return;
 	}
 #endif
+#ifdef IDDC_RESTRICTED_TRADING
+	if (in_irondeepdive(&p_ptr->wpos) && (!p_ptr->party || p_ptr->party != q_ptr->party)) {
+		msg_print(Ind, "\377yYou cannot take items from outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
 
 	/* Small delay to prevent crazy steal-spam */
 	if (p_ptr->pstealing) {
@@ -2936,6 +2942,13 @@ void do_cmd_steal(int Ind, int dir) {
 				s_printf("StealingPvP: %s fails to steal %d gold from %s (chance %d%%): money belt.\n", p_ptr->name, amt, q_ptr->name, success);
 			}
 
+#ifdef IDDC_RESTRICTED_TRADING
+			if (in_irondeepdive(&p_ptr->wpos)) {
+				msg_print(Ind, "\377yYou cannot steal money in the Ironman Deep Dive Challenge.");
+				if (!is_admin(p_ptr)) amt = 0;
+			}
+#endif
+
 			/* Transfer gold */
 			if (amt) {
 				/* Move from target to thief */
@@ -3000,6 +3013,12 @@ void do_cmd_steal(int Ind, int dir) {
 			    ) {
 				msg_print(Ind, "The object itself seems to evade your hand!");
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (2).\n", p_ptr->name, q_ptr->name, success);
+#ifdef IDDC_RESTRICTED_TRADING
+			} else if (in_irondeepdive(&p_ptr->wpos) &&
+			    (o_ptr->iron_trade != p_ptr->iron_trade || o_ptr->iron_turn < p_ptr->iron_turn)) {
+				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (3).\n", p_ptr->name, q_ptr->name, success);
+#endif
 			} else {
 				/* Turn level 0 food into level 1 food - mikaelh */
 				if (o_ptr->level == 0 && shareable_starter_item(o_ptr)) {
@@ -3284,6 +3303,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 			o_ptr->number--;
 			p_ptr->total_weight -= tmp_obj.weight;
 			tmp_obj.iron_trade = o_ptr->iron_trade;
+			tmp_obj.iron_turn = o_ptr->iron_turn;
 			item = inven_carry(Ind, &tmp_obj);
 
 			/* Message */

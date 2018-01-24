@@ -9602,6 +9602,12 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 #endif
+#ifdef IDDC_RESTRICTED_TRADING
+		if (in_irondeepdive(&wpos)) {
+			msg_print(Ind, "\377yUnfortunately the Ironman Deep Dive Challenge is out of our reach.");
+			return;
+		}
+#endif
 
 		/* Cannot remove cursed items */
 		if (cursed_p(o_ptr)
@@ -9748,6 +9754,12 @@ void handle_request_return_str(int Ind, int id, char *str) {
 #ifdef IRON_IRON_TEAM
 		if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && p_ptr->party != i) {
 			msg_print(Ind, "\377yUnfortunately we cannot transfer to that person.");
+			return;
+		}
+#endif
+#ifdef IDDC_RESTRICTED_TRADING
+		if (in_irondeepdive(&wpos)) {
+			msg_print(Ind, "\377yUnfortunately the Ironman Deep Dive Challenge is out of our reach.");
 			return;
 		}
 #endif

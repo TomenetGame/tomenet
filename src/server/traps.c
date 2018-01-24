@@ -181,6 +181,7 @@ static bool do_player_trap_garbage(int Ind, int times) {
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->iron_trade = p_ptr->iron_trade;
+		o_ptr->iron_turn = turn;
 
 		ident = TRUE;
 		if (inven_carry(Ind, o_ptr) < 0)
@@ -2166,6 +2167,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			o_ptr->level = 0;
 			o_ptr->note = quark_add("!*");
 			o_ptr->iron_trade = p_ptr->iron_trade;
+			o_ptr->iron_turn = turn;
 			(void)inven_carry(Ind, o_ptr);
 
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -2402,6 +2404,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				q_ptr->owner = p_ptr->id;
 				q_ptr->mode = p_ptr->mode;
 				q_ptr->iron_trade = p_ptr->iron_trade;
+				q_ptr->iron_turn = turn;
 				(void)inven_carry(Ind, q_ptr);
 
 				/* This trap is polite */

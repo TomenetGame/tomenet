@@ -7730,12 +7730,13 @@ Ironman Deep Dive Challenge (IDDC)
     enter will give you a progressively increasing (with floor depth) luck
     bonus, making it more and more likely to obtain better items.
 
-    The IDDC does not allow forming a party or adding someone to an existing
-    party, so you have to do this while everyone who wants to join the party is
-    still outside of the IDDC.
     IDDC allows partying and trading between everlasting and non-everlasting
     characters. To form a party between those, everyone must be within the
     worldmap sector where the IDDC entrance is located.
+    However, an item can only be traded between characters in the IDDC if both
+    players are in the same party and the item was found after the player who
+    wants to receive it joined the party. Gold and items purchased from shops
+    cannot be traded in the IDDC.
     Level requirements on items are not in effect while inside the ironman deep
     dive challenge either, so item levels are meaningless.
 

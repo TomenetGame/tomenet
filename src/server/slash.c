@@ -3478,13 +3478,19 @@ void do_slash_cmd(int Ind, char *message) {
 
 #ifdef IDDC_IRON_COOP
 			if (in_irondeepdive(&q_ptr->wpos) && (!q_ptr->party || q_ptr->party != p_ptr->party)) {
-				msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
+				msg_print(Ind, "\377yYou cannot give money to outsiders.");
 				if (!is_admin(p_ptr)) return;
 			}
 #endif
 #ifdef IRON_IRON_TEAM
 			if (q_ptr->party && (parties[q_ptr->party].mode & PA_IRONTEAM) && q_ptr->party != p_ptr->party) {
-				msg_print(Ind, "\377yYou cannot pick up money from outsiders.");
+				msg_print(Ind, "\377yYou cannot give money to outsiders.");
+				if (!is_admin(p_ptr)) return;
+			}
+#endif
+#ifdef IDDC_RESTRICTED_TRADING
+			if (in_irondeepdive(&q_ptr->wpos)) {
+				msg_print(Ind, "\377yYou cannot give money in the Ironman Deep Dive Challenge.");
 				if (!is_admin(p_ptr)) return;
 			}
 #endif

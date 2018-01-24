@@ -1653,6 +1653,7 @@ void do_cmd_fill_bottle(int Ind) {
 			object_aware(Ind, q_ptr);
 			object_known(q_ptr);
 			q_ptr->iron_trade = p_ptr->iron_trade;
+			q_ptr->iron_turn = turn;
 			item = inven_carry(Ind, q_ptr);
 			if (item >= 0) inven_item_describe(Ind, item);
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -1733,6 +1734,7 @@ void do_cmd_fill_bottle(int Ind) {
 	if (q_ptr->sval == SV_POTION_BLOOD) q_ptr->timeout = 1750 + rand_int(501);//goes bad after a while!
 #endif
 	q_ptr->iron_trade = p_ptr->iron_trade;
+	q_ptr->iron_turn = turn;
 	item = inven_carry(Ind, q_ptr);
 	if (item >= 0) inven_item_describe(Ind, item);
 
@@ -1812,6 +1814,7 @@ void do_cmd_empty_potion(int Ind, int slot) {
 
 	/* let the player carry the bottle */
 	q_ptr->iron_trade = p_ptr->iron_trade;
+	q_ptr->iron_turn = turn;
 	slot = inven_carry(Ind, q_ptr);
 	if (slot >= 0) inven_item_describe(Ind, slot);
 
@@ -5521,6 +5524,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				byte number = o_ptr->number;
 				s16b note = o_ptr->note;
 				s32b iron_trade = o_ptr->iron_trade;
+				s32b iron_turn = o_ptr->iron_turn;
 
 				/* Rune Preservation? */
 				if (check_guard_inscription(o_ptr->note, 'R')) {
@@ -5553,6 +5557,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 					q_ptr->number = number;
 					q_ptr->note = note;
 					q_ptr->iron_trade = iron_trade;
+					q_ptr->iron_turn = iron_turn;
 
 					/* Create the rune stack */
 					inven_carry(Ind, q_ptr);
@@ -7456,6 +7461,7 @@ void create_sling_ammo_aux(int Ind) {
 	invcopy(q_ptr, lookup_kind(TV_SHOT, m_bonus(2, tlev)));
 	q_ptr->number = (byte)rand_range(15,30);
 	q_ptr->iron_trade = p_ptr->iron_trade;
+	q_ptr->iron_turn = turn;
 	do_fletchery_aux();
 
 	if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) q_ptr->number /= ETHEREAL_AMMO_REDUCTION;
@@ -7598,6 +7604,7 @@ void do_cmd_fletchery(int Ind) {
 
 		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= ETHEREAL_AMMO_REDUCTION;
 		q_ptr->iron_trade = p_ptr->iron_trade;
+		q_ptr->iron_turn = turn;
 
 		while (raw_amount > 99) {
 			q_ptr->number = 99;
@@ -7656,6 +7663,7 @@ void do_cmd_fletchery(int Ind) {
 
 		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= ETHEREAL_AMMO_REDUCTION;
 		q_ptr->iron_trade = p_ptr->iron_trade;
+		q_ptr->iron_turn = turn;
 
 		while (raw_amount > 99) {
 			q_ptr->number = 99;
@@ -7714,6 +7722,7 @@ void do_cmd_fletchery(int Ind) {
 
 		if (q_ptr->name2 == EGO_ETHEREAL || q_ptr->name2b == EGO_ETHEREAL) raw_amount /= ETHEREAL_AMMO_REDUCTION;
 		q_ptr->iron_trade = p_ptr->iron_trade;
+		q_ptr->iron_turn = turn;
 
 		while (raw_amount > 99) {
 			q_ptr->number = 99;
@@ -8535,6 +8544,7 @@ bool create_snowball(int Ind, cave_type *c_ptr) {
 		forge.level = 1; //not 0 :)
 		forge.ident |= ID_MENTAL;
 		forge.iron_trade = p_ptr->iron_trade;
+		forge.iron_turn = turn; //=_=
 
 		/* Can melt: We don't use o_ptr->timeout because
 		    a) it needs too many extra checks everywhere and

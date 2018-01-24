@@ -990,6 +990,7 @@ bool warding_rune(int Ind, byte projection, byte imperative, byte skill) {
 		o_ptr->mode = mode;
 		o_ptr->note = cs_ptr->sc.rune.note;
 		o_ptr->iron_trade = p_ptr->iron_trade;
+		o_ptr->iron_turn = -1; //=_=
 		if (compat_mode(p_ptr->mode, mode)) drop_near(0, o_ptr, -1, wpos, y, x);
 		else {
 			x = inven_carry(Ind, o_ptr); //let's automatically throw it in the pack
@@ -1174,6 +1175,7 @@ bool warding_rune_break(int m_idx) {
 		o_ptr->owner = cs_ptr->sc.rune.id;
 		o_ptr->mode = lookup_player_mode(cs_ptr->sc.rune.id); //Ew, what if they're dead? - Kurzel
 		//o_ptr->iron_trade = ...; todo
+		o_ptr->iron_turn = -1; //=_=
 		o_ptr->note = cs_ptr->sc.rune.note;
 		drop_near(0, o_ptr, -1, wpos, my, mx);
 	}

@@ -786,6 +786,8 @@ struct object_type {
 	byte temp;			/* any local hacks */
 	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
 	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
+	/* ..and for IDDC_RESTRICTED_TRADING : */
+	s32b iron_turn;			/* Turn when it was picked up, to compare with player's party-join turn. */
 };
 
 /*
@@ -2942,6 +2944,8 @@ struct player_type {
 	byte IDDC_flags;		/* added for IDDC special hack: Make it easier to find up to two speed rings */
 	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
 	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
+	/* ..and for IDDC_RESTRICTED_TRADING : */
+	s32b iron_turn;			/* When player joined his current party */
 
 	bool insta_res;			/* Instant resurrection */
 	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever */

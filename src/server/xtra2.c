@@ -6106,6 +6106,7 @@ if (cfg.unikill_format) {
 					qq_ptr->owner = p_ptr->id;
 					qq_ptr->mode = p_ptr->mode;
 					qq_ptr->iron_trade = p_ptr->iron_trade;
+					qq_ptr->iron_turn = turn;
 					determine_artifact_timeout(a_idx, wpos);
 				}
 #endif
@@ -6140,6 +6141,7 @@ if (cfg.unikill_format) {
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade;
+			qq_ptr->iron_turn = turn;
 			if (true_artifact_p(qq_ptr)) determine_artifact_timeout(qq_ptr->name1, wpos);
 #endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
@@ -6372,6 +6374,7 @@ if (cfg.unikill_format) {
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade; //not sure if Nazgul rings should really be tradeable in IDDC..
+			qq_ptr->iron_turn = -1;
 #endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
@@ -6413,6 +6416,7 @@ if (cfg.unikill_format) {
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade;
+			qq_ptr->iron_turn = -1;
 #endif
 #endif
 
@@ -6589,6 +6593,7 @@ if (cfg.unikill_format) {
 			qq_ptr->mode = p_ptr->mode;
 			//learning potion must never be tradeable. for non-IDDC_IRON_COOP it actually would be, if any mob dropped it - which none does, fortunately:
 			//qq_ptr->iron_trade = p_ptr->iron_trade;
+			qq_ptr->iron_turn = -1;
 //#endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
@@ -6668,6 +6673,7 @@ if (cfg.unikill_format) {
 			qq_ptr->mode = p_ptr->mode;
 			//learning potion must never be tradeable. for non-IDDC_IRON_COOP it actually would be, if any mob dropped it - which none does, fortunately:
 			//qq_ptr->iron_trade = p_ptr->iron_trade;
+			qq_ptr->iron_turn = -1;
 //#endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
@@ -6795,6 +6801,7 @@ if (cfg.unikill_format) {
 					qq_ptr->owner = p_ptr->id;
 					qq_ptr->mode = p_ptr->mode;
 					qq_ptr->iron_trade = p_ptr->iron_trade;
+					qq_ptr->iron_turn = turn;
 					determine_artifact_timeout(a_idx, wpos);
 #endif
 					drop_near(0, qq_ptr, -1, wpos, y, x);
@@ -8052,6 +8059,12 @@ void player_death(int Ind) {
 #endif
 
 	/* Drop gold if player has any -------------------------------------- */
+#ifdef IDDC_RESTRICTED_TRADING
+	if (in_iddc) {
+		s_printf("gold_lost: carried %d.\n", p_ptr->au);
+		p_ptr->au = 0;
+	}
+#endif
 	if (p_ptr->alive && p_ptr->au) {
 		/* Put the player's gold in the overflow slot */
 		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
@@ -8789,6 +8802,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->iron_trade = p_ptr->iron_trade;
+		o_ptr->iron_turn = turn;
 		o_ptr->level = 0;
 		o_ptr->note = quark_add(format("# of %s", p_ptr->name));
 		/* o_ptr->note = quark_add(format("#of %s", p_ptr->name));
@@ -8820,6 +8834,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		o_ptr->owner = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->iron_trade = p_ptr->iron_trade;
+		o_ptr->iron_turn = turn;
 		o_ptr->level = 1;
 		(void)inven_carry(Ind, o_ptr);
 	}
@@ -9144,11 +9159,13 @@ void kill_xorder(int Ind) {
 		if (!o_ptr->note) o_ptr->note = quark_add(temp);
 		o_ptr->note_utag = strlen(temp);
 		o_ptr->iron_trade = p_ptr->iron_trade;
+		o_ptr->iron_turn = turn;
 		inven_carry(Ind, o_ptr);
 #else
 		acquirement_direct(o_ptr, &p_ptr->wpos, great, verygreat, resf);
 		//s_printf("object rewarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
 		o_ptr->iron_trade = p_ptr->iron_trade;
+		o_ptr->iron_turn = turn;
 		inven_carry(Ind, o_ptr);
 #endif
 		unique_quark = 0;
@@ -11904,6 +11921,18 @@ void telekinesis_aux(int Ind, int item) {
 	if (p2_ptr->party && (parties[p2_ptr->party].mode & PA_IRONTEAM) && p2_ptr->party != p_ptr->party) {
 		msg_print(Ind, "\377yYou cannot contact outsiders.");
 		if (!is_admin(p_ptr)) return;
+	}
+#endif
+#ifdef IDDC_RESTRICTED_TRADING
+	if (in_irondeepdive(&p2_ptr->wpos)) {
+		if (!p2_ptr->party || p2_ptr->party != p_ptr->party) {
+			msg_print(Ind, "\377yYou cannot contact outsiders.");
+			if (!is_admin(p_ptr)) return;
+		}
+		if (q_ptr->iron_trade != p2_ptr->iron_trade || q_ptr->iron_turn < p2_ptr->iron_turn) {
+			msg_format(Ind, "\377yThis item cannot be sent to that player as it predates %s.", p2_ptr->male ? "him" : "her");
+			if (!is_admin(p_ptr)) return;
+		}
 	}
 #endif
 

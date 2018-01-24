@@ -2186,6 +2186,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 			o_ptr->owner = Players[py]->id;
 			o_ptr->mode = Players[py]->mode;
 			o_ptr->iron_trade = Players[py]->iron_trade;
+			o_ptr->iron_turn = turn;
 			inven_carry(py, o_ptr);
 			q_ptr->objects_registered++;
 			continue;
@@ -4848,6 +4849,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
 		o_ptr->iron_trade = Players[pInd]->iron_trade;
+		o_ptr->iron_turn = turn;
 		inven_carry(pInd, o_ptr);
 		return;
 	}
@@ -4872,6 +4874,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 
 		/* hand him out the reward too */
 		o_ptr->iron_trade = Players[i]->iron_trade;
+		o_ptr->iron_turn = turn;
 		inven_carry(i, o_ptr);
 	}
 }
@@ -5107,6 +5110,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 						o_ptr->owner = Players[pInd]->id;
 						o_ptr->mode = Players[pInd]->mode;
 						o_ptr->iron_trade = Players[pInd]->iron_trade;
+						o_ptr->iron_turn = turn;
 						if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &wpos);
 					}
 #endif
@@ -5124,6 +5128,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 						o_ptr->owner = Players[pInd]->id;
 						o_ptr->mode = Players[pInd]->mode;
 						o_ptr->iron_trade = Players[pInd]->iron_trade;
+						o_ptr->iron_turn = turn;
 						if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &wpos);
 					}
 #endif
@@ -6066,6 +6071,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->owner = Players[Ind]->id;
 			o_ptr->mode = Players[Ind]->mode;
 			o_ptr->iron_trade = Players[Ind]->iron_trade;
+			o_ptr->iron_turn = turn;
 			if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, wpos);
 #endif
 		} else {
@@ -6081,6 +6087,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->owner = Players[Ind]->id;
 			o_ptr->mode = Players[Ind]->mode;
 			o_ptr->iron_trade = Players[Ind]->iron_trade;
+			o_ptr->iron_turn = turn;
 			if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, wpos);
 #endif
 		}

@@ -908,19 +908,27 @@
 #define IRONDEEPDIVE_ALLOW_INCOMPAT
 
 /* Real Iron: Un-cheeze IDDC, also indirectly removing shop-scumming craziness from infinite money supplies:
-   Allow forming a party _outside_ of the IDDC but within the IDDC sector.
-   Cannot re-party inside the IDDC.
-   Can only trade with party members.
+   - Allow forming a party _outside_ of the IDDC but within the IDDC sector.
+   - Cannot re-party inside the IDDC.
+   - Can only trade with party members.
    Note: These rules are applied to 'Iron Team' type parties in IDDC too. */
-#define IDDC_IRON_COOP
+//#define IDDC_IRON_COOP
+/* Make 'Iron Team' the only possible party mode in IDDC.
+   Note: IRON_IRON_TEAM or IDDC_IRON_COOP should be enabled for this, to enforce the trading rules too. */
+//#define IDDC_IRON_TEAM_ONLY
 
-/* Specialty: Make normal 'Iron Teams' (anywhere, outside of the IDDC too) same as parties within IDDC,
-   applying the IDDC_IRON_COOP rules to them too! */
+/* Specialty: Apply the trading rules that are used for IDDC_IRON_COOP to the 'Iron Team'
+   party type (anywhere, outside of the IDDC too) same as parties within IDDC:
+   - Can only trade with party members.
+   (This modifier works completely independant from whether IDDC_IRON_COOP is enabled or not.) */
 #define IRON_IRON_TEAM
 
-/* Make 'Iron Team' the only possible party mode in IDDC.
-   Note: IRON_IRON_TEAM or IDDC_IRON_COOP should be enabled for this, to enforce trading rules too. */
-#define IDDC_IRON_TEAM_ONLY
+/* Alternative IDDC anti-cheeze if IDDC_IRON_COOP is too harsh:
+   Allow any form of partying, but
+   - don't allow trading items that were found before an involved party member had joined the party
+   - don't allow trading gold or items bought from shops. */
+#define IDDC_RESTRICTED_TRADING
+
 
 /* Special anti-cheeze hack: Disallow carrying items from town to IDDC and
    giving them to another character inside IDDC, for the first n floors. */

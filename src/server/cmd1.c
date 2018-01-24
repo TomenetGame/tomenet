@@ -1466,6 +1466,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (!is_admin(p_ptr)) return;
 		}
 #endif
+#ifdef IDDC_RESTRICTED_TRADING
+		if (o_ptr->owner && o_ptr->owner != p_ptr->id && in_irondeepdive(&p_ptr->wpos)) {
+			msg_print(Ind, "\377yYou cannot transfer money in the Ironman Deep Dive Challenge.");
+			if (!is_admin(p_ptr)) return;
+		}
+#endif
 
 #ifdef NEWBIES_CANT_GRAB_IN_BREE
 		/* Avoid people picking up things that they cannot drop again? */
@@ -1640,6 +1646,18 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		    && o_ptr->iron_trade != p_ptr->iron_trade) {
 			msg_print(Ind, "\377yYou cannot pick up starter items or items from outsiders.");
 			if (!is_admin(p_ptr)) return;
+		}
+#endif
+#ifdef IDDC_RESTRICTED_TRADING
+		if (in_irondeepdive(&p_ptr->wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+			if (!p_ptr->party || p_ptr->iron_trade != o_ptr->iron_trade) {
+				msg_print(Ind, "\377yYou cannot take items from outsiders.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (p_ptr->iron_turn > o_ptr->iron_turn) {
+				msg_print(Ind, "\377yYou cannot take this item as it predates you joining the party.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 #endif
 
@@ -2115,6 +2133,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					o_ptr->mode = p_ptr->mode;
 					/* Actually only imprint iron_trade on newly owned items. This allows us to have stolen items be unexchangeable in IDDC if we want that: */
 					o_ptr->iron_trade = p_ptr->iron_trade;
+					o_ptr->iron_turn = turn;
 
 #if CHEEZELOG_LEVEL > 2
 					if (k_info[o_ptr->k_idx].cost >= 150000)

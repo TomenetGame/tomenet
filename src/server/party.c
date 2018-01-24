@@ -1269,6 +1269,8 @@ int guild_create(int Ind, cptr name) {
 	o_ptr->owner = p_ptr->id;
 	o_ptr->mode = p_ptr->mode;
 	o_ptr->iron_trade = p_ptr->iron_trade;
+	//o_ptr->iron_turn = turn;
+	o_ptr->iron_turn = 2147483647; //=_='
 	object_known(o_ptr);
 	object_aware(Ind, o_ptr);
 	(void)inven_carry(Ind, o_ptr);
