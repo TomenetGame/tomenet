@@ -1109,7 +1109,7 @@ A:2:1:3:0:0:0
 O:30:31:32:33:30:33
 G:5:B
 W:36
-F:BUY67 | RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | NO_DISCOUNT2 | PRICE2
+F:BUY67 | RANDOM | MEDIUM_LEVEL | DEPEND_LEVEL | NO_DISCOUNT | PRICE2
 F:VHARD_STEAL
 
 # ..or 'The Bridge Inn' maybe (IDDC towns)
@@ -1123,6 +1123,7 @@ A:2:4:5:6:7:16
 O:69:69:69:69:69:69
 G:+:u
 W:8
+F:NO_DISCOUNT
 
 
 ##################################################################################################
@@ -1136,7 +1137,7 @@ I:100:& Wooden Torch~
 I:100:& Wooden Torch~
 I:100:& Wooden Torch~
 I:100:& Wooden Torch~
-I:100:& Wooden Torch~
+#I:100:& Wooden Torch~
 I:100:& Brass Lantern~
 I:100:& Brass Lantern~
 I:100:& Brass Lantern~
@@ -1165,6 +1166,7 @@ T:100:35:256
 #T:30:15:1
 T:100:15:256
 T:100:15:256
+T:100:15:256
 #trapping kits
 #T:20:46:1
 #T:5:46:2
@@ -1182,7 +1184,7 @@ A:2:1:3:0:0:0
 O:0:5:6:7:1:35
 G:1:U
 W:60
-F:HARD_STEAL | GOOD | FLAT_BASE
+F:HARD_STEAL | MEDIUM_LEVEL | GREAT | FLAT_BASE | EGO | RARE_EGO | NO_DISCOUNT | BUY67
 
 N:71:Armoury
 # Offer ALL armour, except rare base types
@@ -1212,7 +1214,7 @@ O:8:9:10:11:38:20
 G:2:s
 #W:24
 W:96
-F:HARD_STEAL | GOOD | FLAT_BASE
+F:HARD_STEAL | GOOD | FLAT_BASE | GREAT | NO_DISCOUNT | BUY67
 
 N:72:Weaponsmith
 # Offer ALL weapons, except rare base types
@@ -1238,7 +1240,7 @@ O:12:13:14:15:44:68
 G:3:w
 #W:24
 W:96
-F:HARD_STEAL | GOOD | FLAT_BASE
+F:HARD_STEAL | GOOD | FLAT_BASE | GREAT | NO_DISCOUNT | BUY67
 
 # less etiquettes,rll,wor,rc so weapons show up more often in relation
 N:73:Temple
@@ -1298,7 +1300,7 @@ O:26:27:28:29:26:43
 G:4:g
 #W:24
 W:60
-F:HARD_STEAL | GOOD
+F:HARD_STEAL | GOOD | MEDIUM_LEVEL | EGO | RARE_EGO | NO_DISCOUNT | BUY67
 
 N:74:Alchemy Shop
 I:100:Enchant Weapon To-Hit
@@ -1372,6 +1374,7 @@ G:5:b
 #W:24
 W:36
 #F:HARD_STEAL	(removed for IDDC_IRON_COOP)
+F:NO_DISCOUNT | BUY67
 
 # less tele/perc/cantrips, more mage staves
 N:75:Magic Shop
@@ -1436,7 +1439,7 @@ O:34:35:36:37:46:49
 G:6:r
 #W:24
 W:72
-F:HARD_STEAL | GOOD | MEDIUM_LEVEL | FLAT_BASE
+F:HARD_STEAL | GOOD | MEDIUM_LEVEL | FLAT_BASE | EGO | NO_DISCOUNT | BUY67
 
 N:76:Black Market
 # --- EXTRA: normal BM doesn't have this: ---
@@ -1485,7 +1488,8 @@ A:2:1:3:0:0:0
 #O:38:39:40:41:42:
 O:39:40:41:39:40:41
 G:7:D
-F:ALL_ITEM | MEDIUM_LEVEL | PRICE4 | HARD_STEAL
+F:ALL_ITEM | MEDIUM_LEVEL | PRICE2 | HARD_STEAL
+F:GREAT | EGO | RARE_EGO | NO_DISCOUNT | BUY67
 #W:36
 W:60
 
@@ -1511,7 +1515,7 @@ G:9:o
 W:96
 # more fireproof spell scrolls and codices:
 #F:GOOD
-F:GREAT
+F:GREAT | NO_DISCOUNT | BUY67
 #F:HARD_STEAL	(removed for IDDC_IRON_COOP)
 
 #N:79:Pet Shop
@@ -1544,7 +1548,7 @@ T:20:107:20
 A:2:1:3:4:0:0
 O:46:47:48:46:47:48
 G:+:B
-F:MEDIUM_LEVEL
+F:MEDIUM_LEVEL | NO_DISCOUNT | BUY67
 #F:HARD_STEAL	(removed for IDDC_IRON_COOP)
 W:24
 
