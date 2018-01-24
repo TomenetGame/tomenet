@@ -845,7 +845,13 @@ static void rd_monster_race(monster_race *r_ptr) {
 	int i;
 
 	rd_u16b(&r_ptr->name);
-	rd_u16b(&r_ptr->text);
+	if (!s_older_than(4, 7, 4)) rd_u32b(&r_ptr->text);
+	else {
+		//rd_u16b(&tmp16b);
+		rd_byte(&tmpbyte);
+		rd_byte(&tmpbyte);
+		//r_ptr->text = &tmp16b; -- don't assign actually! We do that in init1/2.c on initializing r_info.txt!
+	}
 	rd_byte(&tmpbyte);
 	r_ptr->hdice = tmpbyte;
 	rd_byte(&tmpbyte);

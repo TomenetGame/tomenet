@@ -220,7 +220,7 @@ static void wr_monster_race(monster_race *r_ptr) {
 	int i;
 
 	wr_u16b(r_ptr->name);
-	wr_u16b(r_ptr->text);
+	wr_u32b(r_ptr->text);
 	wr_byte(r_ptr->hdice);
 	wr_byte(r_ptr->hside);
 	wr_s16b(r_ptr->ac);
