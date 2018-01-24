@@ -7320,7 +7320,7 @@ static void display_diz_death(int Ind) {
 	int i;
 	char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
 
-	if (!p_ptr->diz_death || !p_ptr->died_from_ridx || is_admin(p_ptr)) return;
+	if (!p_ptr->died_from_ridx || is_admin(p_ptr)) return;
 
 	strcpy(diz, r_text + r_info[p_ptr->died_from_ridx].text);
 	while (strlen(dizptr) > 80 - 0) {
@@ -7331,8 +7331,10 @@ static void display_diz_death(int Ind) {
 		while (isalpha(*tmpend)) tmpend--;
 		*(tmpend + 1) = 0;
 
-		msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
 		dizptr += strlen(tmp);
+
+		/* diz_death: */
+		if (p_ptr->diz_death) msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
 
 		/* diz_death_any: */
 		for (i = 1; i <= NumPlayers; i++) {
@@ -7345,7 +7347,8 @@ static void display_diz_death(int Ind) {
 		}
 	}
 	if (*dizptr) {
-		msg_format(Ind, "\374\377u%s", dizptr);
+		/* diz_death: */
+		if (p_ptr->diz_death) msg_format(Ind, "\374\377u%s", dizptr);
 
 		/* diz_death_any: */
 		for (i = 1; i <= NumPlayers; i++) {
