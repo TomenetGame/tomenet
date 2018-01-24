@@ -561,7 +561,8 @@ static void rd_item(object_type *o_ptr) {
 		rd_u16b(&o_ptr->housed);
 
 	if (!older_than(4, 7, 5)) {
-		rd_byte(&o_ptr->NR_tradable);
+		rd_byte(&tmpbyte);
+		o_ptr->NR_tradable = tmpbyte;
 		rd_s32b(&o_ptr->iron_trade);
 		rd_s32b(&o_ptr->iron_turn);
 	}
