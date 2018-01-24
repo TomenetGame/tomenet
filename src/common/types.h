@@ -2121,7 +2121,6 @@ struct player_type {
 	bool limit_chat;
 	bool no_afk_msg;
 	bool diz_unique;
-	bool diz_artifact;
 	bool diz_death;
 	/* bool speak_unique; */
 
@@ -3291,7 +3290,6 @@ struct client_opts {
 	bool no_verify_destroy;
 	bool no_verify_sell;
 	bool diz_unique;
-	bool diz_artifact;
 	bool diz_death;
 
     //page 5

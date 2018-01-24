@@ -2488,12 +2488,10 @@ static void sync_options(int Ind, bool *options) {
 
 	if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) { //4.7.1b+
 		p_ptr->diz_unique = FALSE;
-		p_ptr->diz_artifact = FALSE;
 		p_ptr->diz_death = FALSE;
 	} else {
 		p_ptr->diz_unique = options[119];
-		p_ptr->diz_artifact = options[120];
-		p_ptr->diz_death = options[121];
+		p_ptr->diz_death = options[120];
 	}
     }
 }

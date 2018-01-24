@@ -506,9 +506,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
     /* 4.7.2: */
 	{ &c_cfg.diz_unique,		FALSE,	6,	0, 119, TRUE,
 	    "diz_unique",		"Displays lore when killing a unique monster" },
-	{ &c_cfg.diz_artifact,		FALSE,	6,	0, 120, TRUE,
-	    "diz_artifact",		"Displays lore on pickup/id of a true artifact" },
-	{ &c_cfg.diz_death,		FALSE,	6,	0, 121, TRUE,
+	{ &c_cfg.diz_death,		FALSE,	6,	0, 120, TRUE,
 	    "diz_death",		"Displays lore on monster that killed you" },
 };
 
