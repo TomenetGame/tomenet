@@ -2133,7 +2133,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					o_ptr->mode = p_ptr->mode;
 					/* Actually only imprint iron_trade on newly owned items. This allows us to have stolen items be unexchangeable in IDDC if we want that: */
 					o_ptr->iron_trade = p_ptr->iron_trade;
-					o_ptr->iron_turn = turn;
+					if (o_ptr->iron_turn != -1) //paranoia
+						o_ptr->iron_turn = turn;
 
 #if CHEEZELOG_LEVEL > 2
 					if (k_info[o_ptr->k_idx].cost >= 150000)

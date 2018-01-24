@@ -211,6 +211,10 @@ static void wr_item(object_type *o_ptr) {
 
 	wr_s32b((s32b)o_ptr->appraised_value); //HOME_APPRAISAL
 	wr_u16b(o_ptr->housed); //EXPORT_PLAYER_STORE_OFFERS
+
+	wr_byte(o_ptr->NR_tradable);
+	wr_s32b(o_ptr->iron_trade);
+	wr_s32b(o_ptr->iron_turn);
 }
 
 /*

@@ -1474,6 +1474,7 @@ int party_create(int Ind, cptr name) {
 	p_ptr->party = index;
 	parties[index].members = 1;
 	p_ptr->iron_trade = parties[index].iron_trade;
+	p_ptr->iron_turn = turn;
 	clockin(Ind, 2);
 
 	/* Set the "creation time" */
@@ -1606,6 +1607,7 @@ int party_create_ironteam(int Ind, cptr name) {
 	p_ptr->party = index;
 	parties[index].members = 1;
 	p_ptr->iron_trade = parties[index].iron_trade;
+	p_ptr->iron_turn = turn;
 	clockin(Ind, 2);
 
 	/* Set the "creation time" */
@@ -1992,6 +1994,7 @@ int party_add(int adder, cptr name) {
 	/* Set his party number */
 	p_ptr->party = party_id;
 	p_ptr->iron_trade = parties[party_id].iron_trade;
+	p_ptr->iron_turn = turn;
 	clockin(Ind, 2);
 
 	/* Resend info */
@@ -2104,6 +2107,7 @@ int party_add_self(int Ind, cptr party) {
 	/* Set his party number */
 	p_ptr->party = party_id;
 	p_ptr->iron_trade = parties[party_id].iron_trade;
+	p_ptr->iron_turn = turn;
 	clockin(Ind, 2);
 
 	/* Resend info */
