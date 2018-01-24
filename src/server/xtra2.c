@@ -8169,7 +8169,7 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 
 #if CHATTERBOX_LEVEL > 2
 			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
-				msg_broadcast(Ind, "Suddenly a thought comes to your mind:");
+				msg_broadcast(0, "Suddenly a thought comes to your mind:");
 				msg_broadcast(0, "Who let the dogs out?");
 			} else if (p_ptr->last_words) {
 				char death_message[80];
@@ -8213,7 +8213,10 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 				s_printf("(%s's ghost was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
 #if CHATTERBOX_LEVEL > 2
-			if (p_ptr->last_words) {
+			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
+				msg_broadcast(0, "Suddenly a thought comes to your mind:");
+				msg_broadcast(0, "Who let the dogs out?");
+			} else if (p_ptr->last_words) {
 				char death_message[80];
 
 				(void)get_rnd_line("death.txt", 0, death_message, 80);
@@ -8298,7 +8301,10 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n", pvp ? "PVP" : "NOGHOST", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 
 #if CHATTERBOX_LEVEL > 2
-			if (p_ptr->last_words) {
+			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
+				msg_broadcast(0, "Suddenly a thought comes to your mind:");
+				msg_broadcast(0, "Who let the dogs out?");
+			} else if (p_ptr->last_words) {
 				char death_message[80];
 				(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
@@ -8618,7 +8624,10 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	msg_print(Ind, "\374\377RYou die.");
 	//msg_print(Ind, NULL);
 #if CHATTERBOX_LEVEL > 2
-	if (p_ptr->last_words) {
+	if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
+		msg_broadcast(0, "Suddenly a thought comes to your mind:");
+		msg_broadcast(0, "Who let the dogs out?");
+	} else if (p_ptr->last_words) {
 		char death_message[80];
 
 		(void)get_rnd_line("death.txt", 0, death_message, 80);
