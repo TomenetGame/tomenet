@@ -1567,7 +1567,7 @@ static int kind_is_storeok(int k_idx, u32b resf) {
 static void store_create(store_type *st_ptr) {
 	int i = 0, tries, level, chance, item;
 	int floor_level = 0, p;
-	int value, rarity; /* for ego power checks */
+	int value, rarity, rarity2; /* for ego power checks */
 
 	object_type tmp_obj;
 	object_type *o_ptr = &tmp_obj;
@@ -1958,14 +1958,15 @@ static void store_create(store_type *st_ptr) {
 		/* Shop has extra rare egos? */
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_RARE_EGO) && o_ptr->name2) {
 			value = e_ptr->cost + flag_cost(o_ptr, o_ptr->pval);
-			rarity = e_ptr->mrarity / e_ptr->rarity;
+			rarity = 1000 * e_ptr->mrarity / (e_ptr->rarity + 1); //eg W:1:100 -> rarity=1, mrarity=100 : rand_int(100)>1 -> fail
 			if (o_ptr->name2b) {
 				value += e2_ptr->cost;
+				rarity2 = 1000 * e2_ptr->mrarity / (e2_ptr->rarity + 1);
 				/* Take rarer of both powers */
-				if (e2_ptr->mrarity / e2_ptr->rarity > rarity)
-					rarity = e2_ptr->mrarity / e2_ptr->rarity;
+				if (rarity2 > rarity) rarity = rarity2;
 			}
 			if ((rarity < 7 || value < 9000) && magik(75)) continue;
+			//if (rand_int(e_ptr->mrarity) > e_ptr->rarity) continue;
 		}
 
 		/* Is the item too cheap for this shop? */
