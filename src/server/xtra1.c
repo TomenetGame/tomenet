@@ -8313,7 +8313,7 @@ static void process_global_event(int ge_id) {
 				    && Players[i]->global_event_type[ge_id] == GE_HIGHLANDER) {
 					msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
 					strcpy(Players[i]->died_from,"a mysterious accident");
-					p_ptr->died_from_ridx = 0;
+					Players[i]->died_from_ridx = 0;
 					Players[i]->global_event_temp = PEVF_NONE; /* clear no-WoR/perma-death/no-death flags */
 					Players[i]->deathblow = 0;
 					player_death(i);
