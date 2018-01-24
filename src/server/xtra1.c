@@ -1040,6 +1040,7 @@ static void calc_sanity(int Ind) {
 				/* Hack -- Note death */
 				msg_print(Ind, "\377vYou turn into an unthinking vegetable.");
 				(void)strcpy(p_ptr->died_from, "insanity");
+				p_ptr->died_from_ridx = 0;
 				(void)strcpy(p_ptr->really_died_from, "insanity");
 				if (!p_ptr->ghost) {
 					strcpy(p_ptr->died_from_list, "insanity");
@@ -8293,6 +8294,7 @@ static void process_global_event(int ge_id) {
 					if (p_ptr->wpos.wz && !p_ptr->admin_dm) {
 						msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
 						strcpy(p_ptr->died_from,"a mysterious accident");
+						p_ptr->died_from_ridx = 0;
 						p_ptr->global_event_temp = PEVF_NONE; /* clear no-WoR/perma-death/no-death flags */
 						p_ptr->deathblow = 0;
 						player_death(i);
@@ -8311,6 +8313,7 @@ static void process_global_event(int ge_id) {
 				    && Players[i]->global_event_type[ge_id] == GE_HIGHLANDER) {
 					msg_print(i, "\377rThe whole dungeon suddenly COLLAPSES!");
 					strcpy(Players[i]->died_from,"a mysterious accident");
+					p_ptr->died_from_ridx = 0;
 					Players[i]->global_event_temp = PEVF_NONE; /* clear no-WoR/perma-death/no-death flags */
 					Players[i]->deathblow = 0;
 					player_death(i);

@@ -2122,6 +2122,7 @@ struct player_type {
 	bool no_afk_msg;
 	bool diz_unique;
 	bool diz_death;
+	bool diz_death_any;
 	/* bool speak_unique; */
 
 	/* 'make clean; make' consumes time :) */
@@ -2180,6 +2181,7 @@ struct player_type {
 	char really_died_from[MAX_CHARS]; /* What off-ed him */
 	char died_from_list[MAX_CHARS]; /* what goes on the high score list */
 	s16b died_from_depth;		/* what depth we died on */
+	int died_from_ridx;		/* which creature (race) he died from, for diz_death */
 
 	u16b total_winner;		/* Is this guy the winner */
 	u16b once_winner;		/* Has this guy ever been a winner */
@@ -3289,8 +3291,7 @@ struct client_opts {
 	bool recall_flicker;
 	bool no_verify_destroy;
 	bool no_verify_sell;
-	bool diz_unique;
-	bool diz_death;
+	//more see at the end..
 
     //page 5
 	bool auto_afk; //50
@@ -3404,6 +3405,10 @@ struct client_opts {
 
 	bool last_words;
 	bool disturb_see; //118
+
+	bool diz_unique; //page 3 cont. (4.7.1b)
+	bool diz_death;
+	bool diz_death_any; //121
 };
 
 /*

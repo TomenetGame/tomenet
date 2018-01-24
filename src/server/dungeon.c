@@ -2040,7 +2040,7 @@ static void process_world_player(int Ind) {
 //	    !(turn % ((5100L - p_ptr->lev * 50)*GHOST_FADING)))
 	    !(turn % (GHOST_FADING / p_ptr->lev * 50)))
 //		(rand_int(10000) < p_ptr->lev * p_ptr->lev))
-		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L, "fading", TRUE, TRUE, FALSE);
+		take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 10000L, "fading", TRUE, TRUE, FALSE, 0);
 #endif	// GHOST_FADING
 
 }
@@ -3379,6 +3379,7 @@ void recall_player(int Ind, char *message) {
 			if (p_ptr->mode & MODE_DED_IDDC) {
 				msg_print(Ind, "\377RYou failed to complete the Ironman Deep Dive Challenge!");
 				strcpy(p_ptr->died_from, "indetermination");
+				p_ptr->died_from_ridx = 0;
 				p_ptr->deathblow = 0;
 				p_ptr->death = TRUE;
 				return;
@@ -4854,7 +4855,7 @@ static bool process_player_end_aux(int Ind) {
 	    p_ptr->wpos.wz != 0 ? (isdungeontown(&p_ptr->wpos) ? 0 : 50) :
 	    (istownarea(&p_ptr->wpos, MAX_TOWNAREA) ? 0 : 25)) / (p_ptr->prace == RACE_VAMPIRE ? 2 : 1)
 	    ) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
-		//take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE, FALSE);
+		//take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE, FALSE, 0);
 		/* Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula.. */
 	{
 		long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 2000L;
@@ -4875,7 +4876,7 @@ static bool process_player_end_aux(int Ind) {
 #endif
 
 		/* Drain it! */
-		if (exploss > 0) take_xp_hit(Ind, exploss, "Draining", TRUE, FALSE, FALSE);
+		if (exploss > 0) take_xp_hit(Ind, exploss, "Draining", TRUE, FALSE, FALSE, 0);
 	}
 
 #if 0
@@ -4901,7 +4902,7 @@ static bool process_player_end_aux(int Ind) {
 			if (rand_int(2))
 			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
 			else if (!p_ptr->keep_life) lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE);
-			/* take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "an ancient foul curse", TRUE, TRUE, TRUE); */
+			/* take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "an ancient foul curse", TRUE, TRUE, TRUE, 0); */
 #else
 			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
 #endif
@@ -4941,7 +4942,7 @@ static bool process_player_end_aux(int Ind) {
 	    rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) < (p_ptr->prace == RACE_HOBBIT || p_ptr->suscep_life ? 2 : 5)) {
 		(void)do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 25, 0, TRUE);
 		take_xp_hit(Ind, 1 + p_ptr->lev * 3 + p_ptr->max_exp / 5000L,
-		    "Black Breath", TRUE, TRUE, TRUE);
+		    "Black Breath", TRUE, TRUE, TRUE, 0);
 	}
 
 	/* Drain Mana */
@@ -8872,6 +8873,7 @@ void shutdown_server(void) {
 
 		/* Indicate cause */
 		strcpy(p_ptr->died_from, "server shutdown");
+		p_ptr->died_from_ridx = 0;
 
 		/* Try to save */
 		if (!save_player(1)) Destroy_connection(p_ptr->conn, "Server shutdown (save failed)");

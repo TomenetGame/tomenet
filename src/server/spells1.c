@@ -2074,6 +2074,7 @@ destined_defeat:
 
 		(void)strcpy(p_ptr->died_from, hit_from); /* todo: blindness/no esp (fuzzy like for spell hits) */
 		(void)strcpy(p_ptr->really_died_from, hit_from_real);
+		p_ptr->died_from_ridx = IS_MONSTER(Ind_attacker) ? m_list[-Ind_attacker].r_idx : 0;
 		if (!p_ptr->ghost) {
 			strcpy(p_ptr->died_from_list, hit_from_real);
 			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
@@ -2106,7 +2107,7 @@ destined_defeat:
 
 
 /* Decrease player's sanity. This is a copy of the function above. */
-void take_sanity_hit(int Ind, int damage, cptr hit_from) {
+void take_sanity_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 #if 0
 	int old_csane = p_ptr->csane;
@@ -2222,6 +2223,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from) {
 
 		(void)strcpy(p_ptr->died_from, "insanity");
 		(void)strcpy(p_ptr->really_died_from, hit_from);
+		p_ptr->died_from_ridx = IS_MONSTER(Ind_attacker) ? m_list[-Ind_attacker].r_idx : 0;
 		if (!p_ptr->ghost) {
 			strcpy(p_ptr->died_from_list, "insanity");
 			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
@@ -2274,7 +2276,7 @@ void take_sanity_hit(int Ind, int damage, cptr hit_from) {
  * if not permanent nor fatal, use lose_exp instead.
  * - Jir -
  */
-void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool disturb) {
+void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool disturb, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Amulet of Immortality */
@@ -2356,6 +2358,7 @@ void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool
 		   depth, use died_from_depth. */
 
 		(void)strcpy(p_ptr->died_from, hit_from);
+		p_ptr->died_from_ridx = IS_MONSTER(Ind_attacker) ? m_list[-Ind_attacker].r_idx : 0;
 		if (!p_ptr->ghost) {
 			strcpy(p_ptr->died_from_list, hit_from);
 			p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
@@ -3938,6 +3941,7 @@ static void apply_morph(int Ind, int power, char * killer, int Ind_attacker) {
 				msg_print(Ind, "\377yYou have been turned into a fruit bat!");
 				strcpy(p_ptr->died_from, killer);
 				strcpy(p_ptr->really_died_from, killer);
+				p_ptr->died_from_ridx = IS_MONSTER(Ind_attacker) ? m_list[-Ind_attacker].r_idx : 0;
 				p_ptr->fruit_bat = -1;
 				p_ptr->deathblow = 0;
 				player_death(Ind);
@@ -8773,6 +8777,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Get the monster's real name */
 		monster_desc(Ind, p_ptr->really_died_from, who, 0x188);
 
+		/* Save for diz_death */
+		p_ptr->died_from_ridx = m_list[who].r_idx;
+
 		/* Unique monsters cause different damage message colour */
 		if (race_inf(m_ptr)->flags1 & RF1_UNIQUE) damcol = 'L';
 	}
@@ -8883,6 +8890,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		} else
 			sprintf(m_name_gen, "its");
 		strcpy(p_ptr->really_died_from, Players[0 - who]->name);
+		p_ptr->died_from_ridx = 0;
 
 		/* Do not become hostile if it was a friendly spell */
 		if ((typ != GF_HEAL_PLAYER) && (typ != GF_AWAY_ALL) &&
@@ -9304,7 +9312,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			*/
 		}
 		take_hit(Ind, dam, killer, -who);
-		if (!IS_PVP) take_sanity_hit(Ind, dam / 8, killer); /* note: traps deal ~130..320 damage (depth 0..100) */
+		if (!IS_PVP) take_sanity_hit(Ind, dam / 8, killer, -who); /* note: traps deal ~130..320 damage (depth 0..100) */
 		break;
 
 	/* Standard damage -- hurts inventory too */

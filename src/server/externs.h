@@ -1493,8 +1493,9 @@ extern byte spell_color(int type);
 #ifndef EXTENDED_TERM_COLOURS
 extern bool spell_color_animation(int type);
 #endif
-extern void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool disturb);
-extern void take_sanity_hit(int Ind, int damage, cptr hit_from);
+extern void take_hit(int Ind, int damage, cptr kb_str, int Ind_attacker);
+extern void take_xp_hit(int Ind, int damage, cptr hit_from, bool mode, bool fatal, bool disturb, int Ind_attacker);
+extern void take_sanity_hit(int Ind, int damage, cptr hit_from, int Ind_attacker);
 extern s16b poly_r_idx(int r_idx);
 extern bool check_st_anchor(struct worldpos *wpos, int y, int x);
 extern bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2);
@@ -1507,7 +1508,6 @@ extern void teleport_player_level(int Ind, bool force);
 extern void teleport_players_level(struct worldpos *wpos);
 extern bool bypass_invuln;
 extern bool bypass_inscrption;
-extern void take_hit(int Ind, int damage, cptr kb_str, int Ind_attacker);
 extern int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker);
 extern int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker);
 extern int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker);

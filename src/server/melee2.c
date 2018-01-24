@@ -2953,8 +2953,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 			msg_print(Ind, "You resist the effects!");
 		} else {
 			msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
-			//take_hit(Ind, damroll(8, 8), ddesc, 0);
-			take_sanity_hit(Ind, damroll(6, 6), ddesc);/* 8,8 was too powerful */
+			//take_hit(Ind, damroll(8, 8), ddesc, -m_idx);
+			take_sanity_hit(Ind, damroll(6, 6), ddesc, -m_idx);/* 8,8 was too powerful */
 			if (!p_ptr->resist_conf)
 				(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 
@@ -2975,8 +2975,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 			msg_print(Ind, "You resist the effects!");
 		} else {
 			msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
-			//take_hit(Ind, damroll(12, 15), ddesc, 0);
-			take_sanity_hit(Ind, damroll(9,9), ddesc);/* 12,15 was too powerful */
+			//take_hit(Ind, damroll(12, 15), ddesc, -m_idx);
+			take_sanity_hit(Ind, damroll(9,9), ddesc, -m_idx);/* 12,15 was too powerful */
 			if (!p_ptr->resist_blind)
 				(void)set_blind(Ind, p_ptr->blind + 8 + rand_int(8));
 			if (!p_ptr->resist_conf)
@@ -3015,7 +3015,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else
-				take_hit(Ind, damroll(3, 8), ddesc, 0);
+				take_hit(Ind, damroll(3, 8), ddesc, -m_idx);
 			break;
 		}
 		/* RF5_CAUSE_2 */
@@ -3033,8 +3033,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				take_hit(Ind, damroll(8, 8), ddesc, 0);
-				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), 0);
+				take_hit(Ind, damroll(8, 8), ddesc, -m_idx);
+				(void)set_cut(Ind, p_ptr->cut + damroll(2, 3), -m_idx);
 			}
 			break;
 		}
@@ -3053,8 +3053,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				take_hit(Ind, damroll(10, 15), ddesc, 0);
-				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), 0);
+				take_hit(Ind, damroll(10, 15), ddesc, -m_idx);
+				(void)set_cut(Ind, p_ptr->cut + damroll(5, 5), -m_idx);
 			}
 			break;
 		}
@@ -3073,9 +3073,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (rand_int(100) < p_ptr->skill_sav || p_ptr->no_cut)
 				msg_print(Ind, "You resist the effects!");
 			else {
-				//take_hit(Ind, damroll(15, 15), ddesc, 0);
-				take_hit(Ind, damroll(power / 4, 15), ddesc, 0);
-				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), 0);
+				//take_hit(Ind, damroll(15, 15), ddesc, -m_idx);
+				take_hit(Ind, damroll(power / 4, 15), ddesc, -m_idx);
+				(void)set_cut(Ind, p_ptr->cut + damroll(10, 10), -m_idx);
 			}
 			break;
 		}
@@ -3322,7 +3322,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			if (p_ptr->chp - dummy < 1) dummy = p_ptr->chp - 1;
 			msg_print(Ind, "You feel your life fade away!");
 			bypass_invuln = TRUE;
-			take_hit(Ind, dummy, m_name, 0);
+			take_hit(Ind, dummy, m_name, -m_idx);
 			bypass_invuln = FALSE;
 			curse_equipment(Ind, 100, 20);
 //			if (p_ptr->chp < 1) p_ptr->chp = 1;

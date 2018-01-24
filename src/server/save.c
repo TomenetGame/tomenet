@@ -1897,6 +1897,7 @@ bool load_player(int Ind) {
 		if (p_ptr->chp >= 0) {
 			/* Reset cause of death */
 			(void)strcpy(p_ptr->died_from, "(alive and well)");
+			p_ptr->died_from_ridx = 0;
 		}
 
 		p_ptr->body_changed = TRUE;

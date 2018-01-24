@@ -352,7 +352,7 @@ void do_cmd_ghost_power(int Ind, int ability) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	take_xp_hit(Ind, s_ptr->slevel * s_ptr->smana,
-	    "the strain of ghostly powers", TRUE, TRUE, TRUE);
+	    "the strain of ghostly powers", TRUE, TRUE, TRUE, 0);
 }
 
 
@@ -402,7 +402,7 @@ void do_cmd_ghost_power_aux(int Ind, int dir) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	take_xp_hit(Ind, s_ptr->slevel * s_ptr->smana,
-	    "the strain of ghostly powers", TRUE, TRUE, TRUE);
+	    "the strain of ghostly powers", TRUE, TRUE, TRUE, 0);
 }
 
 /* old spinning, now unused. Added spin_attack() to replace it - C. Blue */

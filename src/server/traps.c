@@ -952,7 +952,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				//int dam = damroll(2, 8);
 				//take_hit(Ind, dam, name, 0);
 				take_hit(Ind, damroll(2, 8), "a trap door", 0);
-				//take_sanity_hit(Ind, damroll(1, 2), "a trap door");
+				//take_sanity_hit(Ind, damroll(1, 2), "a trap door", 0);
 			}
 			do_player_trap_change_depth(Ind, -1);
 			break;
@@ -1881,7 +1881,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				inven_damage(Ind, set_all_destroy, 3 * k);
 
 				take_hit(Ind, l, "a chasm", 0);
-				//take_sanity_hit(Ind, 1U << k, "a chasm");
+				//take_sanity_hit(Ind, 1U << k, "a chasm", 0);
 			}
 
 			do_player_trap_change_depth(Ind, -k);
@@ -1906,7 +1906,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				//take_hit(Ind, dam, name, 0);
 				take_hit(Ind, l, "a pit", 0);
-				//take_sanity_hit(Ind, 1, "a pit");
+				//take_sanity_hit(Ind, 1, "a pit", 0);
 
 				/* Maybe better make them other types of traps? */
 				if (glev > 29) {

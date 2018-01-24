@@ -2637,7 +2637,7 @@ void do_cmd_open(int Ind, int dir) {
 					p_ptr->silly_door_exp++;
 					if (p_ptr->silly_door_exp >= 100) {
 						msg_print(Ind, "Botting never pays off...");
-						take_xp_hit(Ind, 1, "botting", TRUE, FALSE, TRUE);
+						take_xp_hit(Ind, 1, "botting", TRUE, FALSE, TRUE, 0);
 					} else {
 						/* Experience */
 						if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, 1);

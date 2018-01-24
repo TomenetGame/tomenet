@@ -4943,7 +4943,7 @@ void touch_zap_player(int Ind, int m_idx) {
 			if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
-			take_hit(Ind, aura_damage, aura_dam, 0);
+			take_hit(Ind, aura_damage, aura_dam, -m_idx);
 #ifdef OLD_MONSTER_LORE
 			r_ptr->r_flags2 |= RF2_AURA_FIRE;
 #endif
@@ -4966,7 +4966,7 @@ void touch_zap_player(int Ind, int m_idx) {
 			if (p_ptr->suscep_elec) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
-			take_hit(Ind, aura_damage, aura_dam, 0);
+			take_hit(Ind, aura_damage, aura_dam, -m_idx);
 #ifdef OLD_MONSTER_LORE
 			r_ptr->r_flags2 |= RF2_AURA_ELEC;
 #endif
@@ -4989,7 +4989,7 @@ void touch_zap_player(int Ind, int m_idx) {
 			if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
-			take_hit(Ind, aura_damage, aura_dam, 0);
+			take_hit(Ind, aura_damage, aura_dam, -m_idx);
 #ifdef OLD_MONSTER_LORE
 			r_ptr->r_flags3 |= RF3_AURA_COLD;
 #endif

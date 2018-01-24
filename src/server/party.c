@@ -3197,6 +3197,7 @@ s_printf("ADD_HOSTILITY: not found.\n");
 	if (p_ptr->pvpexception == 3) {
 		p_ptr->chp = -3;
 		strcpy(p_ptr->died_from, "adrenaline poisoning");
+		p_ptr->died_from_ridx = 0;
 		p_ptr->deathblow = 0;
 		p_ptr->energy = -666;
 		//p_ptr->death = TRUE;

@@ -979,6 +979,7 @@ void do_cmd_suicide(int Ind) {
 	if (!p_ptr->ghost) {
 		//strcpy(p_ptr->died_from, "");
 		strcpy(p_ptr->died_from_list, "self-inflicted wounds");
+		p_ptr->died_from_ridx = 0;
 		p_ptr->died_from_depth = getlevel(&p_ptr->wpos);
 	}
 
@@ -1002,8 +1003,7 @@ void do_cmd_suicide(int Ind) {
 /*
  * Save a character
  */
-void do_cmd_save_game(int Ind)
-{
+void do_cmd_save_game(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Disturb the player */
@@ -1020,27 +1020,22 @@ void do_cmd_save_game(int Ind)
 
 	/* The player is not dead */
 	(void)strcpy(p_ptr->died_from, "(saved)");
+	p_ptr->died_from_ridx = 0;
 
 	/* Forbid suspend */
 	signals_ignore_tstp();
 
 	/* Save the player */
-	if (save_player(Ind))
-	{
-		msg_print(Ind, "Saving game... done.");
-	}
-
+	if (save_player(Ind)) msg_print(Ind, "Saving game... done.");
 	/* Save failed (oops) */
-	else
-	{
-		msg_print(Ind, "Saving game... failed!");
-	}
+	else msg_print(Ind, "Saving game... failed!");
 
 	/* Allow suspend again */
 	signals_handle_tstp();
 
 	/* Note that the player is not dead */
 	(void)strcpy(p_ptr->died_from, "(alive and well)");
+	p_ptr->died_from_ridx = 0;
 }
 
 
@@ -2153,6 +2148,7 @@ void kingly(int Ind, int type) {
 	case 3: strcpy(p_ptr->died_from_list, "iron champion"); break; //made it through IDDC
 	case 4: strcpy(p_ptr->died_from_list, "iron emperor"); break; //made it through IDDC and killed Morgoth
 	}
+	p_ptr->died_from_ridx = 0;
 
 	/* Restore the experience */
 	p_ptr->exp = p_ptr->max_exp;
@@ -2666,6 +2662,7 @@ void exit_game_panic(void) {
 
 		/* Indicate panic save */
 		(void)strcpy(p_ptr->died_from, "(panic save)");
+		p_ptr->died_from_ridx = 0;
 
 		/* Remember depth in the log files */
 		s_printf("Trying panic saving %s on %d %d %d..\n", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
@@ -2741,13 +2738,14 @@ void save_game_panic(void) {
 
 		/* Indicate panic save */
 //		(void)strcpy(p_ptr->died_from, "(panic save)");
+//		p_ptr->died_from_ridx = 0;
 
 		/* Remember depth in the log files */
 		s_printf("Trying panic saving %s on %d %d %d..\n", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		/* Panic save */
 		save_player(i);
-	    	i++;
+		i++;
 	}
 
 //	wipeout_needless_objects();

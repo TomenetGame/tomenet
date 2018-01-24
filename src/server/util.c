@@ -4584,6 +4584,7 @@ static void player_talk_aux(int Ind, char *message) {
 			case 5:
 				p_ptr->chp = -3;
 				strcpy(p_ptr->died_from, "hypoxia");
+				p_ptr->died_from_ridx = 0;
 				p_ptr->spam = 1;
 				p_ptr->deathblow = 0;
 				player_death(Ind);

@@ -4567,6 +4567,7 @@ void check_experience(int Ind) {
 					//msg_print(Ind, "\377RYou don't deserve to live.");
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 					strcpy(p_ptr->died_from, "indecisiveness");
+					p_ptr->died_from_ridx = 0;
 					p_ptr->deathblow = 0;
 					p_ptr->death = TRUE;
 				}
@@ -4579,6 +4580,7 @@ void check_experience(int Ind) {
 			    p_ptr->r_killed[RI_DARKLING] != 0) {
 				msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
 				strcpy(p_ptr->died_from, "indecisiveness");
+				p_ptr->died_from_ridx = 0;
 				p_ptr->deathblow = 0;
 				p_ptr->death = TRUE;
 				/* End of story, next.. */
@@ -4793,6 +4795,7 @@ void gain_exp(int Ind, s64b amount) {
 #if 0 /* poof when gaining exp prematurely */
 		msg_print(Ind, "\377RYou failed to enter the Ironman Deep Dive Challenge!");
 		strcpy(p_ptr->died_from, "indetermination");
+		p_ptr->died_from_ridx = 0;
 		p_ptr->deathblow = 0;
 		p_ptr->death = TRUE;
 		return;
@@ -7303,6 +7306,55 @@ static void equip_death_damage(int Ind, int verbose) {
 	}
 }
 
+#ifdef RACE_DIZ
+/* Tell player the monster's lore? (4.7.1b feature) */
+static void display_diz_death(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+
+	/* Tell player the monster's lore? (4.7.1b feature) */
+	if (p_ptr->diz_death && p_ptr->died_from_ridx && !is_admin(p_ptr)) {
+		char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
+
+		strcpy(diz, r_text + r_info[p_ptr->died_from_ridx].text);
+		while (strlen(dizptr) > 80 - 0) {
+			strncpy(tmp, dizptr, 80 - 0);
+			tmp[80 - 0] = 0;
+
+			tmpend = &tmp[80 - 1];
+			while (isalpha(*tmpend)) tmpend--;
+			*(tmpend + 1) = 0;
+
+			msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
+			dizptr += strlen(tmp);
+
+			/* diz_death_any: */
+			for (i = 1; i < NumPlayers; i++) {
+				/* Skip disconnected players */
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				/* Skip ourself */
+				if (i == Ind) continue;
+				/* Display lore? */
+				if (Players[i]->diz_death_any) msg_format(i, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
+			}
+		}
+		if (*dizptr) {
+			msg_format(Ind, "\374\377u%s", dizptr);
+
+			/* diz_death_any: */
+			for (i = 1; i < NumPlayers; i++) {
+				/* Skip disconnected players */
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				/* Skip ourself */
+				if (i == Ind) continue;
+				/* Display lore? */
+				if (Players[i]->diz_death_any) msg_format(i, "\374\377u%s", dizptr);
+			}
+		}
+	}
+}
+#endif
+
 /*
  * Handle the death of a player and drop their stuff.
  */
@@ -7621,7 +7673,13 @@ void player_death(int Ind) {
 		}
 
 		/* Wow! You may return!! */
-		if (!ge_secure) p_ptr->soft_deaths++;
+		if (!ge_secure) p_ptr->soft_deaths++; /* Note: no diz_death here actually */
+#ifdef TEST_SERVER /* ..only on test server for testing actually */
+#ifdef RACE_DIZ
+		if (!ge_secure) //in Training Tower
+			display_diz_death(Ind);
+#endif
+#endif
 		return;
 	}
 
@@ -7786,6 +7844,22 @@ void player_death(int Ind) {
 
 			/* Tell him what happened -- moved the messages up here so they get onto the chardump! */
 			msg_format(Ind, "\374\377RYou were defeated by %s, but the priests have saved you.", p_ptr->died_from);
+
+#if CHATTERBOX_LEVEL > 2
+			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
+				msg_broadcast(0, "Suddenly a thought comes to your mind:");
+				msg_broadcast(0, "Who let the dogs out?");
+			} else if (p_ptr->last_words) {
+				char death_message[80];
+
+				(void)get_rnd_line("death.txt", 0, death_message, 80);
+				msg_print(Ind, death_message);
+			}
+#endif	// CHATTERBOX_LEVEL
+
+#ifdef RACE_DIZ
+			display_diz_death(Ind);
+#endif
 
 			/* new - death dump for insta-res too! */
 			Send_chardump(Ind, "-death");
@@ -8335,12 +8409,16 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 
 		if (is_admin(p_ptr)) snprintf(buf, sizeof(buf), "\376\377D%s bids farewell to this plane.", p_ptr->name);
 
-		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)){
+		if ((!p_ptr->admin_dm) || (!cfg.secret_dungeon_master)) {
 #ifdef TOMENET_WORLDS
 			if (cfg.worldd_pdeath) world_msg(buf);
 #endif
 			msg_broadcast(Ind, buf);
 		}
+
+#ifdef RACE_DIZ
+		display_diz_death(Ind);
+#endif
 
 		/* Reward the killer if it was a PvP-mode char */
 		if (pvp) {
@@ -8422,6 +8500,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 		} else { /* wasn't a pvp-mode death */
 			/* copy/paste from above pvp section, just for info */
 			int killer = name_lookup(Ind, p_ptr->really_died_from, FALSE, FALSE, TRUE);
+
 			if (killer) {
 				if (Players[killer]->max_plv > p_ptr->max_plv) Players[killer]->kills_lower++;
 				else if (Players[killer]->max_plv < p_ptr->max_plv) Players[killer]->kills_higher++;
@@ -8672,6 +8751,10 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
 		msg_format(Ind, "\374\377RYou have been annihilated by %s.", p_ptr->died_from);
 	else msg_format(Ind, "\374\377RYou have been vaporized by %s.", p_ptr->died_from);
+
+#ifdef RACE_DIZ
+	display_diz_death(Ind);
+#endif
 
 #if (MAX_PING_RECVS_LOGGED > 0)
 	/* Print last ping reception times */
@@ -13021,6 +13104,7 @@ bool master_player(int Ind, char *parms){
 			q_ptr = Players[Ind2];
 			msg_print(Ind2, "\377rYou are hit by a bolt from the blue!");
 			strcpy(q_ptr->died_from,"divine wrath");
+			q_ptr->died_from_ridx = 0;
 			if (i == 2) q_ptr->global_event_temp |= PEVF_NOGHOST_00; //hack: no-ghost death
 			q_ptr->deathblow = 0;
 			player_death(Ind2);

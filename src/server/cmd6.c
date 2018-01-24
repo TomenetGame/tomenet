@@ -142,7 +142,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 	case SV_FOOD_HALLUCINATION:
 		if (!p_ptr->resist_chaos) {
-			take_sanity_hit(Ind, 2, "drugs");
+			take_sanity_hit(Ind, 2, "drugs", 0);
 			if (set_image(Ind, p_ptr->image + rand_int(250) + 250))
 				ident = TRUE;
 		}
@@ -307,7 +307,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 			if (magik(TRUE? 50 : 10)){
 				set_image(Ind, p_ptr->image + 10 + randint(10));
-				take_sanity_hit(Ind, 1, "ale");
+				take_sanity_hit(Ind, 1, "ale", 0);
 			}
 			if (magik(TRUE? 10 : 20))
 				set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
@@ -380,7 +380,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 			if (magik(o_ptr->name2? 50 : 10)){
 				set_image(Ind, p_ptr->image + 10 + randint(10));
-				take_sanity_hit(Ind, 1, "ale");
+				take_sanity_hit(Ind, 1, "ale", 0);
 			}
 			if (magik(o_ptr->name2? 10 : 20))
 				set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
@@ -1049,12 +1049,15 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				if (!msg) {
 					strcpy(p_ptr->died_from,"a potion of Chauve-Souris");
 					strcpy(p_ptr->really_died_from,"a potion of Chauve-Souris");
+					p_ptr->died_from_ridx = 0;
 				} else if (msg == 1) {
 					strcpy(p_ptr->died_from,"a fountain of Chauve-Souris");
 					strcpy(p_ptr->really_died_from,"a fountain of Chauve-Souris");
+					p_ptr->died_from_ridx = 0;
 				} else {
 					strcpy(p_ptr->died_from,"Chauve-Souris");
 					strcpy(p_ptr->really_died_from,"Chauve-Souris");
+					p_ptr->died_from_ridx = 0;
 				}
 				p_ptr->fruit_bat = -1;
 				p_ptr->deathblow = 0;
@@ -1111,12 +1114,15 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				if (!msg) {
 					strcpy(p_ptr->died_from,"a potion of Chauve-Souris");
 					strcpy(p_ptr->really_died_from,"a potion of Chauve-Souris");
+					p_ptr->died_from_ridx = 0;
 				} else if (msg == 1) {
 					strcpy(p_ptr->died_from,"a fountain of Chauve-Souris");
 					strcpy(p_ptr->really_died_from,"a fountain of Chauve-Souris");
+					p_ptr->died_from_ridx = 0;
 				} else {
 					strcpy(p_ptr->died_from,"Chauve-Souris");
 					strcpy(p_ptr->really_died_from,"Chauve-Souris");
+					p_ptr->died_from_ridx = 0;
 				}
 				p_ptr->fruit_bat = -1;
 				p_ptr->deathblow = 0;
@@ -5104,7 +5110,7 @@ static void ring_of_power(int Ind, int dir) {
 		(void)dec_stat(Ind, A_CHR, 50, STAT_DEC_NORMAL);
 
 		/* Lose some experience (permanently) */
-		take_xp_hit(Ind, p_ptr->exp / 50, "Ring of Power", TRUE, FALSE, TRUE);
+		take_xp_hit(Ind, p_ptr->exp / 50, "Ring of Power", TRUE, FALSE, TRUE, 0);
 		break;
 
 	case 3:
@@ -6045,7 +6051,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		case ART_KNOWLEDGE:
 			identify_fully(Ind);
 			msg_print(Ind, "\377RYou hear horrible, otherworldy sounds of the dead in your head..");
-			take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead");
+			take_sanity_hit(Ind, damroll(2, 7), "the sounds of the dead", 0);
 			//take_hit(Ind, damroll(10, 7), "the sounds of the dead", 0);
 			o_ptr->recharging = rand_int(100) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;

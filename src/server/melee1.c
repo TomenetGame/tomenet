@@ -343,8 +343,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 
 /* Have fun */
 /* returns 'TRUE' if the partner will blink away. */
-static bool do_seduce(int Ind, int m_idx)
-{
+static bool do_seduce(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	monster_type    *m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
@@ -359,8 +358,7 @@ static bool do_seduce(int Ind, int m_idx)
 	cave_type *c_ptr;
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 
-	for (d = 1; d <= 9; d++)
-	{
+	for (d = 1; d <= 9; d++) {
 		if (d == 5) continue;
 
 		tx = p_ptr->px + ddx[d];
@@ -372,8 +370,7 @@ static bool do_seduce(int Ind, int m_idx)
 		if (c_ptr->m_idx) crowd++;
 	}
 
-	if (crowd > 1)
-	{
+	if (crowd > 1) {
 		msg_print(Ind, "Two of you feel disturbed.");
 		return (TRUE);
 	}
@@ -395,8 +392,7 @@ static bool do_seduce(int Ind, int m_idx)
 	/* From what you'll undress? */
 	d = rand_int(6);
 
-	for (i = 0; i < 6; i++)
-	{
+	for (i = 0; i < 6; i++) {
 		j = INVEN_BODY + ((i + d) % 6);
 
 		/* Get the item to take off */
@@ -409,8 +405,7 @@ static bool do_seduce(int Ind, int m_idx)
 		/* Hack -- cannot take off, not counted */
 		if (f3 & TR3_PERMA_CURSE) continue;
 
-		if (!magik(chance))
-		{
+		if (!magik(chance)) {
 			/* Describe the result */
 			object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
@@ -426,8 +421,7 @@ static bool do_seduce(int Ind, int m_idx)
 	}
 
 	if (piece || magik(chance)) return (FALSE);
-	if (p_ptr->chp < 4)
-	{
+	if (p_ptr->chp < 4) {
 		msg_print(Ind, "You're too tired..");
 		return (TRUE);
 	}
@@ -435,11 +429,9 @@ static bool do_seduce(int Ind, int m_idx)
 	msg_format(Ind, "You yield yourself to %s...", m_name);
 
 	/* let's not make it too abusable.. */
-	while (!done)
-	{
+	while (!done) {
 		d = randint(9);
-		switch (d)
-		{
+		switch (d) {
 			case 1:
 				if (!p_ptr->csp) continue;
 				msg_print(Ind, "You feel drained of energy!");
@@ -451,7 +443,7 @@ static bool do_seduce(int Ind, int m_idx)
 			case 2:
 				msg_print(Ind, "Darn, you've caught a disease!");
 				/* bypass resistance */
-				set_poisoned(Ind, p_ptr->poisoned + rand_int(40) + 40, 0);
+				set_poisoned(Ind, p_ptr->poisoned + rand_int(40) + 40, -m_idx);
 				done = TRUE;
 				break;
 
@@ -1152,7 +1144,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					break;
 
@@ -1184,11 +1176,11 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Take "poison" effect */
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison)) {
-						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, 0))
+						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, -m_idx))
 							obvious = TRUE;
 					}
 
@@ -1224,7 +1216,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Allow complete resist */
 					if (!p_ptr->resist_disen) {
@@ -1263,7 +1255,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					if (safe_area(Ind)) break;
 
@@ -1418,7 +1410,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Obvious */
 					obvious = TRUE;
@@ -1488,7 +1480,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Saving throw (unless paralyzed) based on dex and level */
 #if 0
@@ -1566,7 +1558,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					if (safe_area(Ind)) break;
 
@@ -1632,7 +1624,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take some damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					if (safe_area(Ind)) break;
 
@@ -1666,7 +1658,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					msg_print(Ind, "You are covered in acid!");
 
 					/* Special damage */
-					dam_ele = acid_dam(Ind, damage, ddesc, 0); /* suffer strong elemental effects */
+					dam_ele = acid_dam(Ind, damage, ddesc, -m_idx); /* suffer strong elemental effects */
 					switch (method) {
 					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
@@ -1686,7 +1678,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					damage = damage + dam_ele;
 
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_ACID);
@@ -1701,7 +1693,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					msg_print(Ind, "You are struck by electricity!");
 
 					/* Special damage */
-					dam_ele = elec_dam(Ind, damage, ddesc, 0); /* suffer strong elemental effects */
+					dam_ele = elec_dam(Ind, damage, ddesc, -m_idx); /* suffer strong elemental effects */
 					switch (method) {
 					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
@@ -1724,7 +1716,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_ELEC);
@@ -1739,7 +1731,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					msg_print(Ind, "You are enveloped in flames!");
 
 					/* Special damage */
-					dam_ele = fire_dam(Ind, damage, ddesc, 0); /* suffer strong elemental effects */
+					dam_ele = fire_dam(Ind, damage, ddesc, -m_idx); /* suffer strong elemental effects */
 					switch (method) {
 					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
@@ -1759,7 +1751,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					damage = damage + dam_ele;
 
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_FIRE);
@@ -1774,7 +1766,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					msg_print(Ind, "You are covered with frost!");
 
 					/* Special damage */
-					dam_ele = cold_dam(Ind, damage, ddesc, 0); /* suffer strong elemental effects */
+					dam_ele = cold_dam(Ind, damage, ddesc, -m_idx); /* suffer strong elemental effects */
 					switch (method) {
 					case RBM_HIT: case RBM_PUNCH: case RBM_KICK:
 					case RBM_CLAW: case RBM_BITE: case RBM_STING:
@@ -1794,7 +1786,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					damage = damage + dam_ele;
 
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Learn about the player */
 					update_smart_learn(m_idx, DRS_COLD);
@@ -1828,7 +1820,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Increase "blind" */
 					if (!p_ptr->resist_blind) {
@@ -1868,7 +1860,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Increase "confused" */
 					if (!p_ptr->resist_conf) {
@@ -1908,7 +1900,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Increase "afraid" */
 					if (p_ptr->resist_fear) {
@@ -1954,7 +1946,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Increase "paralyzed" */
 					if (p_ptr->free_act) {
@@ -1999,7 +1991,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -2032,7 +2024,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_INT, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -2065,7 +2057,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_WIS, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -2098,7 +2090,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_DEX, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -2131,7 +2123,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_CON, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -2164,7 +2156,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Damage (stat) */
 					if (do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -2197,7 +2189,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Damage (physical) */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Damage (stats) */
 					if (do_dec_stat(Ind, A_STR, STAT_DEC_NORMAL)) obvious = TRUE;
@@ -2218,7 +2210,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Radius 8 earthquake centered at the monster */
 					/* Morgoth overrides LF1_NO_DESTROY */
@@ -2257,7 +2249,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					if (p_ptr->hold_life && (rand_int(100) < 95))
 						msg_print(Ind, "You keep hold of your life force!");
@@ -2303,7 +2295,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					if (p_ptr->hold_life && (rand_int(100) < 90))
 						msg_print(Ind, "You keep hold of your life force!");
@@ -2349,7 +2341,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					if (p_ptr->hold_life && (rand_int(100) < 75))
 						msg_print(Ind, "You keep hold of your life force!");
@@ -2395,7 +2387,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					if (p_ptr->hold_life && (rand_int(100) < 50))
 						msg_print(Ind, "You keep hold of your life force!");
@@ -2440,16 +2432,16 @@ bool make_attack_melee(int Ind, int m_idx) {
 					/* Take some damage */
 					//                                        carried_monster_hit = TRUE;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 #if 0 /* keep consistent with do_seduce(), which has disease effect too, which currently bypasses any poison resistance! */
 					/* Take "poison" effect */
 					if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison)) {
-						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, 0))
+						if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, -m_idx))
 							obvious = TRUE;
 					}
 #else
-					if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, 0)) {
+					if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, -m_idx)) {
 						msg_print(Ind, "You caught a disease!");
 						obvious = TRUE;
 					}
@@ -2497,7 +2489,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Increase "image" */
 					if (!p_ptr->resist_chaos) {
@@ -2566,9 +2558,9 @@ bool make_attack_melee(int Ind, int m_idx) {
 						break;
 					}
 					}
-					//                                        carried_monster_hit = TRUE;
+					//carried_monster_hit = TRUE;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 					break;
 
 				case RBE_SANITY:
@@ -2605,7 +2597,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					/* (I left out an additional (totally averaging) '..+r_ptr->dd' to allow
 					   tweaking the limit a bit by choosing appropriate values in r_info.txt */
 
-					take_sanity_hit(Ind, damage, ddesc);
+					take_sanity_hit(Ind, damage, ddesc, -m_idx);
 					break;
 
 				case RBE_DISARM: /* Note: Shields cannot be disarmed, only weapons can */
@@ -2632,12 +2624,12 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 					/* Take damage */
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
-					take_hit(Ind, damage, ddesc, 0);
+					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Bare-handed? oh.. */
 					if (!o_ptr->k_idx) {
 						msg_format(Ind, "\377o%^s cuts deep in your arms and hands", m_name);
-						(void)set_cut(Ind, p_ptr->cut + 100, 0);
+						(void)set_cut(Ind, p_ptr->cut + 100, -m_idx);
 						break;
 					}
 
@@ -3022,7 +3014,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 				}
 
 				/* Apply the cut */
-				if (k) (void)set_cut(Ind, p_ptr->cut + k, 0);
+				if (k) (void)set_cut(Ind, p_ptr->cut + k, -m_idx);
 			}
 #ifndef SUPPRESS_MONSTER_STUN // HERESY !
 			/* That's overdone; \
@@ -3535,6 +3527,7 @@ bool monster_attack_normal(int tm_idx, int m_idx) {
 #ifdef RPG_SERVER
 			if (dead && m_ptr->pet) {
 				char monster_name[MNAME_LEN];
+
 				monster_desc(find_player(m_ptr->owner), monster_name, tm_idx, 0x04&0x08);
 				msg_format(find_player(m_ptr->owner), "\377yYour pet killed %s.", monster_name);
 				if (!(Players[find_player(m_ptr->owner)]->mode & MODE_PVP))
@@ -3567,10 +3560,10 @@ bool monster_attack_normal(int tm_idx, int m_idx) {
 				case 6: k = 300; break;
 				default: k = 500; break;
 				}
-#if 0//todo:implement
+ #if 0//todo:implement
 				/* Apply the cut */
 				if (k) (void)set_cut(Ind, p_ptr->cut + k);
-#endif
+ #endif
 			}
 #endif
 #if 0//todo:implement
