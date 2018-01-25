@@ -156,5 +156,5 @@ end
 
 -- Experimental beta-test features:
 function beta(Ind, code)
-	msg_print(Ind, "beta="..code)
+	--msg_print(Ind, "beta="..code)
 end
