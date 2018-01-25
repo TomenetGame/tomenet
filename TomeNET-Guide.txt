@@ -17635,8 +17635,8 @@ The techniques are as follows:
         blows/round!
         (Spinning around costs a turn of energy.)
     Berserk             10 stamina   (warriors only)
-        Similar to potions of berserk strength, also giving you +1 blow/round.
-        (Entering berserk rage does not cost energy.)
+        Similar to potions of berserk strength, additionally giving you
+        +1 blow/round. (Entering berserk rage does not cost energy.)
 
     Rogue-specific fighting techniques:
     -----------------------------------
