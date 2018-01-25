@@ -6245,7 +6245,7 @@ void display_equip(int Ind) {
 	object_type	*o_ptr;
 	byte		attr = TERM_WHITE;
 	char		tmp_val[80];
-	char		o_name[ONAME_LEN];
+	char		o_name[ONAME_LEN + 4]; //+4 is sigil hack, see further below
 	int		wgt;
 
 	/* Display the equipment */
@@ -6273,6 +6273,14 @@ void display_equip(int Ind) {
 
 		/* Obtain the length of the description */
 		//n = strlen(o_name);
+
+		/* Hack for sigiled items: Extend o_name by 4 spaces to make the client
+		   overwrite the old item name properly instead of discounting 4 characters
+		   which were taken up by the colour code of the sigil,
+		   resulting in the final 4 characters not getting erased.
+		   Eg: Uninscribe a sigiled item to cause this problem. */
+		if (o_ptr->sigil) strcat(o_name, "    ");
+		o_name[ONAME_LEN - 1] = 0; //fix in case our 4 spaces caused the string to exceed ONAME_LEN
 
 		/* Get the color */
 		attr = get_attr_from_tval(o_ptr);
