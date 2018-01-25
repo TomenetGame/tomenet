@@ -153,3 +153,8 @@ function cron_24h(timestamp, h, m, s, dwd, dd, dm, dy)
 	cur_weekday = dwd
 	cur_year = dy
 end
+
+-- Experimental beta-test features:
+function beta(Ind, code)
+	msg_print(Ind, "beta="..code)
+end

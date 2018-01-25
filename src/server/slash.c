@@ -4340,6 +4340,17 @@ void do_slash_cmd(int Ind, char *message) {
 #endif
 			return;
 		}
+		/* Hack for experimentally enabling beta-test features, that usually would require a client update first.
+		   Usage: "/beta0"..."/beta9". */
+		else if (prefix(message, "/beta")) {
+			i = message2[5] - 48;
+			if (i < 0 || i > 9) {
+				msg_print(Ind, "\377yUsage: /beta0 ... /beta9");
+				return;
+			}
+			exec_lua(0, format("beta(%d,%d)", Ind, i));
+			return;
+		}
 
 
 
