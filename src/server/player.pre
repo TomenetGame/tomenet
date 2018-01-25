@@ -866,6 +866,12 @@ struct player_type
 #ifdef ENABLE_ITEM_ORDER
 	s32b item_order_turn; /* server turn counter overflow debug */
 #endif
+
+	/* TEMPORARILY EXPOSED FLAGS:
+	   Hack to experimentally beta-test upcoming features with outdated clients that don't actually support them yet: */
+	bool diz_unique;
+	bool diz_death;
+	bool diz_death_any;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */
