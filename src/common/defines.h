@@ -928,6 +928,11 @@
    - don't allow trading items that were found before an involved party member had joined the party
    - don't allow trading gold or items bought from shops. */
 #define IDDC_RESTRICTED_TRADING
+/* Addition for IDDC_RESTRICTED_TRADING:
+   Only allow partying when already inside the IDDC, by erasing any party membership on entering it,
+   except for the party owner.
+   Further, you cannot add someone who already has another character in that party. */
+#define IDDC_RESTRICTED_PARTYING
 
 
 /* Special anti-cheeze hack: Disallow carrying items from town to IDDC and

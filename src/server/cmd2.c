@@ -342,6 +342,15 @@ void do_cmd_go_up(int Ind) {
 			if (!is_admin(p_ptr)) return;
 		}
 #endif
+#ifdef IDDC_RESTRICTED_PARTYING
+		/* Force him to re-party once he entered the IDDC.
+		   This is required for enforcing the single-char-per-party IDDC rule. */
+		if (p_ptr->party) {
+			msg_print(Ind, "\377yYou cannot enter the IDDC while already in a party.");
+			if (!is_admin(p_ptr)) return;
+		}
+#endif
+
 		/* disable WoR hint */
 		p_ptr->warning_wor = 1;
 #if 1
@@ -1100,6 +1109,14 @@ void do_cmd_go_down(int Ind) {
 #ifdef IDDC_IRON_TEAM_ONLY
 		if (p_ptr->party && !(parties[p_ptr->party].mode & PA_IRONTEAM)) {
 			msg_print(Ind, "\377yYour party must be an 'Iron Team' to enter the Ironman Deep Dive Challenge.");
+			if (!is_admin(p_ptr)) return;
+		}
+#endif
+#ifdef IDDC_RESTRICTED_PARTYING
+		/* Force him to re-party once he entered the IDDC.
+		   This is required for enforcing the single-char-per-party IDDC rule. */
+		if (p_ptr->party) {
+			msg_print(Ind, "\377yYou cannot enter the IDDC while already in a party.");
 			if (!is_admin(p_ptr)) return;
 		}
 #endif

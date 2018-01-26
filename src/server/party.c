@@ -1949,6 +1949,46 @@ int party_add(int adder, cptr name) {
 	}
 #endif
 
+#ifdef IDDC_RESTRICTED_PARTYING
+	/* Prevent someone inside IDDC adding someone outside or vice versa. */
+	if ((in_irondeepdive(&p_ptr->wpos) || in_irondeepdive(&q_ptr->wpos)) &&
+	    !(in_irondeepdive(&p_ptr->wpos) && in_irondeepdive(&q_ptr->wpos))) {
+		msg_print(adder, "\377yCharacters outside of the IDDC cannot team up with characters inside.");
+		return FALSE;
+	}
+	/* Disallow adding someone to an IDDC party who already has another character in that party. */
+	if (in_irondeepdive(&p_ptr->wpos)) {
+		int *id_list, ids;
+		struct account acc;
+		bool success;
+
+		/* check if he has a character in there already */
+		success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
+		/* paranoia */
+		if (!success) {
+			/* uhh.. */
+			msg_print(Ind, "Sorry, adding has failed.");
+			return FALSE;
+		}
+		success = FALSE;
+		ids = player_id_list(&id_list, acc.id);
+		for (i = 0; i < ids; i++) {
+			if (lookup_player_party(id_list[i]) == party_id) {
+				/* success */
+				success = TRUE;
+				break;
+			}
+		}
+		if (ids) C_KILL(id_list, ids, int);
+
+		/* success = fail! */
+		if (success) {
+			msg_print(adder, "\377yThat player already has another character in that same IDDC party.");
+			return FALSE;
+		}
+ #endif
+	}
+
 	if (
 #ifdef ALLOW_NR_CROSS_PARTIES /* Note: Currently unnecessarily restricted: Actually q_ptr check is not needed, also not enabled for party_add_self(). */
 	    (!q_ptr->total_winner || !p_ptr->total_winner ||
@@ -2022,6 +2062,13 @@ int party_add_self(int Ind, cptr party) {
 	bool success;
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 	struct worldpos wpos_other = { -1, -1, -1};
+#endif
+
+#ifdef IDDC_RESTRICTED_PARTYING
+	if (in_irondeepdive(&p_ptr->wpos)) {
+		msg_print(Ind, "You cannot add yourself to a party when inside the IDDC.");
+		return FALSE;
+	}
 #endif
 
 	if (party_id == -1) {
