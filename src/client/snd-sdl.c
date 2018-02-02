@@ -277,7 +277,7 @@ static bool open_audio(void) {
  */
 static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
-	char buffer0[2048], *buffer = buffer0;
+	char buffer0[2048], *buffer = buffer0, bufferx[2048];
 	FILE *fff;
 	int i;
 	char out_val[160];
@@ -389,6 +389,21 @@ static bool sound_sdl_init(bool no_cache) {
 		char *cur_token;
 		char *next_token;
 		int event;
+
+#if 1 /* linewrap via trailing ' \' */
+		strcpy(bufferx, buffer0);
+		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
+		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && buffer0[strlen(buffer0) - 2] == ' ') {
+			if (strlen(bufferx) + strlen(buffer0) >= 2048) continue; /* String overflow protection: Discard all that is too much. */
+			buffer0[strlen(buffer0) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
+			if (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
+				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
+				if (buffer0[0] != ' ' && buffer0[0]) strcat(bufferx, " ");
+				strcat(bufferx, buffer0);
+			}
+		}
+		strcpy(buffer0, bufferx);
+#endif
 
 		/* Lines starting on ';' count as 'provided event' but actually
 		   remain silent, as a way of disabling effects/songs without
@@ -623,6 +638,21 @@ static bool sound_sdl_init(bool no_cache) {
 		char *cur_token;
 		char *next_token;
 		int event;
+
+#if 1 /* linewrap via trailing ' \' */
+		strcpy(bufferx, buffer0);
+		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
+		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && buffer0[strlen(buffer0) - 2] == ' ') {
+			if (strlen(bufferx) + strlen(buffer0) >= 2048) continue; /* String overflow protection: Discard all that is too much. */
+			buffer0[strlen(buffer0) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
+			if (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
+				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
+				if (buffer0[0] != ' ' && buffer0[0]) strcat(bufferx, " ");
+				strcat(bufferx, buffer0);
+			}
+		}
+		strcpy(buffer0, bufferx);
+#endif
 
 		/* Lines starting on ';' count as 'provided event' but actually
 		   remain silent, as a way of disabling effects/songs without
