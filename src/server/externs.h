@@ -2283,6 +2283,7 @@ extern void lua_forget_flavours(int Ind);
 extern void lua_forget_map(int Ind);
 extern void lua_forget_parties(void);
 extern void lua_forget_guilds(void);
+extern void fix_acc_house_limit(int Ind);
 
 #ifdef ENABLE_GO_GAME
 /* go.c - C. Blue */
