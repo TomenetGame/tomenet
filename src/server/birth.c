@@ -3163,8 +3163,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->pvpexception = (acc.flags & ACC_PVP) ? 1 : (acc.flags & ACC_NOPVP) ? 2 : (acc.flags & ACC_ANOPVP) ? 3 : 0;
 		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
-		s_printf("(%s) ACC1:Player %s has flags %d\n", showtime(), accname, acc.flags);
 		acc_houses = acc.houses;
+		s_printf("(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
 	}
 
 	/* handle banned player 1/2 */
