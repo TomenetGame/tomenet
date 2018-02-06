@@ -1465,6 +1465,6 @@ void fix_acc_house_limit(int Ind) {
 
 	if (i != j) {
 		acc_set_houses(p_ptr->accountname, j);
-		s_printf("fix_acc_house_limit: FIXED '%s'('%d'): %d houses are really -> %d.\n", p_ptr->name, p_ptr->accountname, i, j);
+		s_printf("fix_acc_house_limit: FIXED '%s'('%s'): %d houses are really -> %d.\n", p_ptr->name, p_ptr->accountname, i, j);
 	}
 }
