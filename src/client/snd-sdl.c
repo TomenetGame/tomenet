@@ -92,10 +92,10 @@ static Mix_Music* load_song(int idx, int subidx);
 #define MAX_CHANNELS	32
 
 /* Arbitary limit on number of samples per event [8] */
-#define MAX_SAMPLES	32
+#define MAX_SAMPLES	64
 
 /* Arbitary limit on number of music songs per situation [3] */
-#define MAX_SONGS	32
+#define MAX_SONGS	64
 
 /* Exponential volume level table
  * evlt[i] = round(0.09921 * exp(2.31 * i / 100))
