@@ -277,7 +277,7 @@ static bool open_audio(void) {
  */
 static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
-	char buffer0[2048], *buffer = buffer0, bufferx[2048];
+	char buffer0[4096], *buffer = buffer0, bufferx[4096];
 	FILE *fff;
 	int i;
 	char out_val[160];
@@ -394,7 +394,7 @@ static bool sound_sdl_init(bool no_cache) {
 		strcpy(bufferx, buffer0);
 		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
 		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && buffer0[strlen(buffer0) - 2] == ' ') {
-			if (strlen(bufferx) + strlen(buffer0) >= 2048) continue; /* String overflow protection: Discard all that is too much. */
+			if (strlen(bufferx) + strlen(buffer0) >= 4096) continue; /* String overflow protection: Discard all that is too much. */
 			buffer0[strlen(buffer0) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
 			if (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
@@ -643,7 +643,7 @@ static bool sound_sdl_init(bool no_cache) {
 		strcpy(bufferx, buffer0);
 		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
 		while (strlen(buffer0) >= 2 && buffer0[strlen(buffer0) - 1] == '\\' && buffer0[strlen(buffer0) - 2] == ' ') {
-			if (strlen(bufferx) + strlen(buffer0) >= 2048) continue; /* String overflow protection: Discard all that is too much. */
+			if (strlen(bufferx) + strlen(buffer0) >= 4096) continue; /* String overflow protection: Discard all that is too much. */
 			buffer0[strlen(buffer0) - 2] = 0; /* Discard the '\' and the space (we re-insert the space next, if required) */
 			if (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
 				/* If the continuation of the wrapped line doesn't start on a space, re-insert a space to ensure proper parameter separation */
@@ -2196,7 +2196,7 @@ void do_cmd_options_sfx_sdl(void) {
 	byte a, a2;
 	cptr lua_name;
 	bool go = TRUE, dis;
-	char buf[1024], buf2[1024], out_val[2048], out_val2[2048], *p, evname[2048];
+	char buf[1024], buf2[1024], out_val[4096], out_val2[4096], *p, evname[4096];
 	FILE *fff, *fff2;
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
@@ -2306,7 +2306,7 @@ void do_cmd_options_sfx_sdl(void) {
 				return;
 			}
 			while (TRUE) {
-				if (!fgets(out_val, 2048, fff)) {
+				if (!fgets(out_val, 4096, fff)) {
 					if (ferror(fff)) {
 						c_msg_print("Error: Failed to read from file 'sound.cfg'.");
 					}
@@ -2477,7 +2477,7 @@ void do_cmd_options_mus_sdl(void) {
 	byte a, a2;
 	cptr lua_name;
 	bool go = TRUE;
-	char buf[1024], buf2[1024], out_val[2048], out_val2[2048], *p, evname[2048];
+	char buf[1024], buf2[1024], out_val[4096], out_val2[4096], *p, evname[4096];
 	FILE *fff, *fff2;
 #ifdef ENABLE_JUKEBOX
  #ifdef JUKEBOX_INSTANT_PLAY
@@ -2606,7 +2606,7 @@ void do_cmd_options_mus_sdl(void) {
 				return;
 			}
 			while (TRUE) {
-				if (!fgets(out_val, 2048, fff)) {
+				if (!fgets(out_val, 4096, fff)) {
 					if (ferror(fff)) {
 						c_msg_print("Error: Failed to read from file 'music.cfg'.");
 					}
