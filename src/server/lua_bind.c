@@ -1432,7 +1432,7 @@ void lua_forget_guilds(void) {
 
 /* Workaround for ACC_HOUSE_LIMIT bug:
    Just recount houses after every login, this should fix the glitch where people can suddenly have 33 (instead of the limit of 30) houses or more.. */
-void fix_acc_house_limit(int Ind) {
+void lua_fix_acc_house_limit(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i, j;
 	struct account acc;
@@ -1445,7 +1445,7 @@ void fix_acc_house_limit(int Ind) {
 	i = acc_get_houses(p_ptr->accountname);
 
 	if (!GetAccount(&acc, p_ptr->accountname, NULL, FALSE)) {
-		s_printf("fix_acc_house_limit: Couldn't find that account.\n");
+		s_printf("lua_fix_acc_house_limit: Couldn't find that account.\n");
 		return;
 	}
 
@@ -1465,6 +1465,6 @@ void fix_acc_house_limit(int Ind) {
 
 	if (i != j) {
 		acc_set_houses(p_ptr->accountname, j);
-		s_printf("fix_acc_house_limit: FIXED '%s'('%s'): %d houses are really -> %d.\n", p_ptr->name, p_ptr->accountname, i, j);
+		s_printf("lua_fix_acc_house_limit: FIXED '%s'('%s'): %d houses are really -> %d.\n", p_ptr->name, p_ptr->accountname, i, j);
 	}
 }

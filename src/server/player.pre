@@ -931,3 +931,4 @@ extern void shape_Maia_skills(int Ind);
 
 extern void lua_fix_max_depth(int Ind);
 extern void lua_fix_max_depth_bug(int Ind);
+extern void lua_fix_acc_house_limit(int Ind);
