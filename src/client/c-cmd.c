@@ -2174,6 +2174,10 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "    Character level");
 					continue;
 				}
+				if (my_strcasestr(buf, "Dung") && (my_strcasestr(buf, "typ") || my_strcasestr(buf, "Col"))) { //dungeon types/colours, same as staircases below
+					strcpy(chapter, "Dungeon types");
+					continue;
+				}
 				if (my_strcasestr(buf, "Dung")) { //dungeons
 					strcpy(chapter, "Dungeon                 ");
 					continue;
@@ -2182,7 +2186,7 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "Dungeon, sorted by depth");
 					continue;
 				}
-				if (my_strcasestr(buf, "Stair") || my_strcasestr(buf, "Typ") ) { //staircase colours/dungeon types
+				if (my_strcasestr(buf, "Stair") || my_strcasestr(buf, "typ") ) { //staircase types, same as 'Dungeon types'
 					strcpy(chapter, "Dungeon types");
 					continue;
 				}
