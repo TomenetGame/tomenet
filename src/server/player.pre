@@ -872,6 +872,7 @@ struct player_type
 	bool diz_unique;
 	bool diz_death;
 	bool diz_death_any;
+	bool diz_first;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */

@@ -2490,10 +2490,12 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->diz_unique = FALSE;
 		p_ptr->diz_death = FALSE;
 		p_ptr->diz_death_any = FALSE;
+		p_ptr->diz_first = FALSE;
 	} else {
 		p_ptr->diz_unique = options[119];
 		p_ptr->diz_death = options[120];
 		p_ptr->diz_death_any = options[121];
+		p_ptr->diz_first = options[122];
 	}
     }
 }

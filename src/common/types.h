@@ -2119,6 +2119,7 @@ struct player_type {
 	bool diz_unique;
 	bool diz_death;
 	bool diz_death_any;
+	bool diz_first;
 	/* bool speak_unique; */
 
 	/* 'make clean; make' consumes time :) */
@@ -3406,7 +3407,8 @@ struct client_opts {
 
 	bool diz_unique; //page 3 cont. (4.7.1b)
 	bool diz_death;
-	bool diz_death_any; //121
+	bool diz_death_any;
+	bool diz_first; //122
 };
 
 /*

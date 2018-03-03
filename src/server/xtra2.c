@@ -5775,6 +5775,27 @@ bool monster_death(int Ind, int m_idx) {
 	/* Get kill credit for non-uniques (important for mimics) */
 	//HACK: added test for m_ptr->r_idx to suppress bad msgs about 0 forms learned (exploders?)
 	} else {
+#ifdef RACE_DIZ
+		/* Tell player the monster's lore on first kill? (4.7.1b feature)
+		   - not sure if it should require an r_killed credit to show lore, or on just clone kill too maybe? */
+		if (!p_ptr->r_killed[r_idx] && p_ptr->diz_first) {
+			char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
+
+			strcpy(diz, r_text + r_info[m_ptr->r_idx].text);
+			while (strlen(dizptr) > 80 - 0) {
+				strncpy(tmp, dizptr, 80 - 0);
+				tmp[80 - 0] = 0;
+
+				tmpend = &tmp[80 - 1];
+				while (isalpha(*tmpend)) tmpend--;
+				*(tmpend + 1) = 0;
+
+				msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
+				dizptr += strlen(tmp);
+			}
+			if (*dizptr) msg_format(Ind, "\374\377u%s", dizptr);
+		}
+#endif
 
 		/* Normal kill count */
 		if (p_ptr->r_killed[r_idx] < 10000) p_ptr->r_killed[r_idx]++;
