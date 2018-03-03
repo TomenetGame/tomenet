@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. Januar 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 3. March 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1750,10 +1750,10 @@ Now you have just set up an auto-inscription that will automatically inscribe
 Note that auto-inscriptions are case-sensitive, and only the first one in the
 list that actually matches an item is applied to it.
 
-You can use '?' as wildcard in the search string. For example if you want to
-distinguish between Rod(s) of Healing and Potion(s) of Healing, you can use
-'Rod?Healing' and 'Potion?Healing' respectively.
-('?' stands for any number (including zero) of any characters.)
+You can use '#' as wildcard in the search string (was '?' before v4.7.1a).
+For example if you want to distinguish between Rod(s) of Healing and Potion(s)
+of Healing, you can use 'Rod#Healing' and 'Potion#Healing' respectively.
+So '#' stands for any number (including zero) or sequence of characters.
 
 If you put a '!' as first character of a search string, it will force the
 inscription to overwrite existing inscriptions in any case (usually it only
@@ -5639,6 +5639,7 @@ staircase colours (also visible on the world map):
  Sending items via telekinesis to a player who is currently in a no-recall
  dungeon/tower will only work if both players are on the same dungeon floor.
  Ghosts of dead players can still float up/down.
+ (Killing Sauron is an exception, allowing you to recall from Mt Doom!)
  No-recall dungeons/towers are marked by a red < or > symbol.
 
 -FORCE_DOWN. Same as NO_UP, but you can only recall at the bottom of the
@@ -7234,6 +7235,12 @@ Stun    -Stun           Reduces to-hit and to-dam.
 
                         Melee-based stun can be caused by HIT, PUNCH, KICK,
                         BUTT and CRUSH type attacks, also see (*) below.
+
+        Most means of Curing, Cure Critical Wounds and Healing will also remove
+        any stun. Therefore it is recommended to treat any form of stun
+        immediately, before it builds up. In unlucky cases a normal Stun might
+        even turn straight into a Knocked out state, so even a light 'Stun'
+        should be cured right away.
 
 Cut                     Cuts will make you lose HP continuously.
 (Graze, Light cut, Bad cut, Nasty cut, Severe cut, Deep gash, Mortal wound)
@@ -10350,7 +10357,8 @@ Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     wear a mummy wrapping.
                     Hint: Polymorphing into a vampire bat may improve hit
                     point regeneration rate.
-Picklock            When equipped, improves your trap-disarming ability.
+Picklock            When equipped, improves your trap-disarming (and therefore
+                    also your lockpicking) ability.
 Rubble ':' on the floor You can create sling ammo from this. You cannot pick
                         up rubble, just stand next to it (see (6.12)).
 Skeletons/Bones/Skulls  You can craft ammunition from these if your Archery
@@ -11898,7 +11906,7 @@ Intelligence (INT)
     -Has influence on your mana pool size. (class-dependant)
     -How well can you cast spells that use INT to determine failure rate?
     -Has influence on your ability to activate magic devices.
-    -Has influence on your trap-disarming ability.
+    -Has influence on your trap-disarming (includes lock-picking) ability.
     -Do you notice if someone tries to steal from you?
     Also see (6.10) for more information about the 'Magic Device' skill.
 Wisdom (WIS)
@@ -11921,7 +11929,7 @@ Dexterity (DEX)
     -How likely are items or money stolen from you?
     -Can you prevent getting stunned from bashing a door clumsily?
     -Allows you to try hard to swim and not drown in deep water.
-    -Has influence on your trap-disarming ability.
+    -Has influence on your trap-disarming (includes lock-picking) ability.
 Constitution (CON)
     -How many HP (hit points) do you have? Very essential.
      Note that CON effect caps depending on your character level. Roughly:
@@ -12939,7 +12947,7 @@ Note that not every skill is available to every profession (class).
                                 See (4.7) for details about monster traps.
 
                                 Trapping also improves your disarming ability,
-                                making it safer to pick locks and to disarm
+                                making it easier to pick locks and to disarm
                                 traps via the manual disarm command. (The
                                 experience you gain from manually disarming
                                 traps is not affected by the skill but only by
@@ -13200,6 +13208,7 @@ Searching
 Disarming
     How well you can disarm traps (without setting them off), and how likely
     you avoid known traps if you accidentally step on them again.
+    Disarming also improves your chances to pick locks.
     (Note that manually disarming traps like this will yield experience points
     if successful, while disarming via magic or magic devices won't.)
 Magic Device
@@ -15857,7 +15866,7 @@ school.
                     repelled, thereby preventing them from actually hitting
                     you.
                     Works very well, as long as the creature isn't of a higher
-                    level than you.
+                    level than you (same as the scroll effect).
                     Required skill level for first spell level: 12.
 
     Dispel Magic    Removes magical influences.
@@ -16197,7 +16206,7 @@ school.
     Guardian Spirit
                     Invokes your guardian spirit, guiding and protecting you.
                     Your saving throw is maximised and you are protected from
-                    evil.
+                    evil (same as scroll effect).
                     Required skill level for first spell level: 25.
 
                     Tier II: Level 45.
