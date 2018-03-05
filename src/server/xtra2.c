@@ -5100,6 +5100,50 @@ static int get_coin_type(monster_race *r_ptr) {
 }
 
 
+/* Helper function, check in advance if a monster kill will be credited.
+   Note: These checks need to be kept in sync with the same checks in monster_death() (from which they were copy-pasted here). */
+static bool r_killed_creditable(int Ind, int m_idx) {
+	player_type *p_ptr = Players[Ind];
+
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
+	bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);
+	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3);
+
+	bool henc_cheezed = FALSE;
+
+
+#ifdef RPG_SERVER
+	if (m_ptr->pet) return FALSE;
+#endif
+
+	/* Log-scumming in IDDC is like fighting clones */
+	if (p_ptr->IDDC_logscum) return FALSE;
+	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
+	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+	    && r_ptr->mexp) /* Allow kills in Bree */
+		return FALSE;
+
+	/* clones don't drop treasure or complete quests.. */
+	if (m_ptr->clone) return FALSE;
+	/* ..neither do cheezed kills */
+	if (henc_cheezed &&
+	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
+	    !is_Pumpkin) /* allow a mixed hunting group */
+		return FALSE;
+
+	if (cfg.henc_strictness && !p_ptr->total_winner &&
+	    /* p_ptr->lev more logical but harsh: */
+#if 1 /* player should always seek not too high-level party members compared to player's current real level? */
+	    m_ptr->henc - p_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1)
+#else /* players may seek higher-level party members to team up with if he's died before? Weird combination so not recommended! */
+	    m_ptr->henc - p_ptr->max_plv > MAX_PARTY_LEVEL_DIFF + 1)
+#endif
+		return FALSE;
+
+	return TRUE;
+}
+
 /*
  * Handle the "death" of a monster.
  *
@@ -5775,28 +5819,6 @@ bool monster_death(int Ind, int m_idx) {
 	/* Get kill credit for non-uniques (important for mimics) */
 	//HACK: added test for m_ptr->r_idx to suppress bad msgs about 0 forms learned (exploders?)
 	} else {
-#ifdef RACE_DIZ
-		/* Tell player the monster's lore on first kill? (4.7.1b feature)
-		   - not sure if it should require an r_killed credit to show lore, or on just clone kill too maybe? */
-		if (!p_ptr->r_killed[r_idx] && p_ptr->diz_first) {
-			char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
-
-			strcpy(diz, r_text + r_info[m_ptr->r_idx].text);
-			while (strlen(dizptr) > 80 - 0) {
-				strncpy(tmp, dizptr, 80 - 0);
-				tmp[80 - 0] = 0;
-
-				tmpend = &tmp[80 - 1];
-				while (isalpha(*tmpend)) tmpend--;
-				*(tmpend + 1) = 0;
-
-				msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
-				dizptr += strlen(tmp);
-			}
-			if (*dizptr) msg_format(Ind, "\374\377u%s", dizptr);
-		}
-#endif
-
 		/* Normal kill count */
 		if (p_ptr->r_killed[r_idx] < 10000) p_ptr->r_killed[r_idx]++;
 
@@ -9574,10 +9596,13 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		char m_name[MNAME_LEN], m_name_real[MNAME_LEN];
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
 		bool necro = get_skill(p_ptr, SKILL_NECROMANCY) && !p_ptr->anti_magic && !get_skill(p_ptr, SKILL_ANTIMAGIC);
+#ifdef RACE_DIZ
+		bool lore = FALSE;
+#endif
 
 #ifdef ARCADE_SERVER
 		cave_set_feat(&m_ptr->wpos, m_ptr->fy, m_ptr->fx, 172); /* drop "blood"? */
-		if(m_ptr->hp < -1000) {
+		if (m_ptr->hp < -1000) {
 
 			object_type forge, *o_ptr;
 			o_ptr = &forge;
@@ -9643,9 +9668,21 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		sound(Ind, SOUND_KILL);
 #endif
 
+#ifdef RACE_DIZ
+		/* Tell player the monster's lore? (4.7.1b feature) */
+		if (p_ptr->diz_first && !p_ptr->r_killed[m_ptr->r_idx]
+		    && !(r_ptr->flags1 & RF1_UNIQUE) && r_killed_creditable(Ind, m_idx))
+			lore = TRUE;
+#endif
+
 		/* Death by Missile/Spell attack */
 		/* DEG modified spell damage messages. */
 		if (note) {
+#ifdef RACE_DIZ
+			/* Tell player the monster's lore? (4.7.1b feature) */
+			if (lore) msg_format(Ind, "\374\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
+			else
+#endif
 			msg_format(Ind, "\377y%^s%s from \377g%d \377ydamage.", m_name, note, dam);
 			msg_print_near_monvar(Ind, m_idx,
 			    format("\377y%^s%s from \377g%d \377ydamage.", m_name_real, note, dam),
@@ -9655,6 +9692,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		/* Death by physical attack -- invisible monster */
 		else if (!p_ptr->mon_vis[m_idx]) {
+#ifdef RACE_DIZ
+			/* Tell player the monster's lore? (4.7.1b feature) */
+			if (lore) msg_format(Ind, "\374\377yYou have killed %s.", m_name);
+			else
+#endif
 			msg_format(Ind, "\377yYou have killed %s.", m_name);
 			/* other player(s) can maybe see it, so get at least 'killed' vs 'destroyed' right for them */
 			if ((r_ptr->flags3 & RF3_DEMON) ||
@@ -9677,6 +9719,11 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		    (r_ptr->flags3 & RF3_UNDEAD) ||
 		    (r_ptr->flags2 & RF2_STUPID) ||
 		    (strchr("Evg", r_ptr->d_char))) {
+#ifdef RACE_DIZ
+			/* Tell player the monster's lore? (4.7.1b feature) */
+			if (lore) msg_format(Ind, "\374\377yYou have destroyed %s.", m_name);
+			else
+#endif
 			msg_format(Ind, "\377yYou have destroyed %s.", m_name);
 			msg_print_near_monvar(Ind, m_idx,
 			    format("\377y%^s has been destroyed from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
@@ -9686,11 +9733,34 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 		/* Death by Physical attack -- living monster */
 		else {
+#ifdef RACE_DIZ
+			/* Tell player the monster's lore? (4.7.1b feature) */
+			if (lore) msg_format(Ind, "\374\377yYou have slain %s.", m_name);
+			else
+#endif
 			msg_format(Ind, "\377yYou have slain %s.", m_name);
 			msg_print_near_monvar(Ind, m_idx,
 			    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name_real, dam, p_ptr->name),
 			    format("\377y%^s has been slain from \377g%d \377ydamage by %s.", m_name, dam, p_ptr->name),
 			    format("\377yIt has been slain from \377g%d \377ydamage by %s.", dam, p_ptr->name));
+		}
+
+		if (lore) {
+			char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
+
+			strcpy(diz, r_text + r_info[m_ptr->r_idx].text);
+			while (strlen(dizptr) > 80 - 0) {
+				strncpy(tmp, dizptr, 80 - 0);
+				tmp[80 - 0] = 0;
+
+				tmpend = &tmp[80 - 1];
+				while (isalpha(*tmpend)) tmpend--;
+				*(tmpend + 1) = 0;
+
+				msg_format(Ind, "\374\377u%s", *tmp == ' ' ? tmp + 1 : tmp);
+				dizptr += strlen(tmp);
+			}
+			if (*dizptr) msg_format(Ind, "\374\377u%s", dizptr);
 		}
 
 		/* Check if it's cloned unique, ie "someone else's spawn" */
