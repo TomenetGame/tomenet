@@ -2539,8 +2539,8 @@ struct player_type {
 	byte tval_ammo;			/* Correct ammo tval */
 	s16b pspeed;			/* Current speed */
 
- 	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
- 	s16b r_mimicry[MAX_R_IDX];	/* Monster kill count or mimicry */
+	s16b r_killed[MAX_R_IDX];	/* Monsters killed (and credited) */
+	s16b r_mimicry[MAX_R_IDX];	/* Monster kill count or mimicry */
 
 	s32b melee_techniques_old;	/* melee techniques before last skill point update */
 	s32b melee_techniques;		/* melee techniques */
