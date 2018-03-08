@@ -120,6 +120,9 @@ void do_cmd_check_artifacts(int Ind, int line) {
 		/* Skip "hidden" artifacts */
 		if (admin_artifact_p(&forge) && !admin) continue;
 
+		/* Skip disabled (or bugged, if that happens) artifacts */
+		if (a_ptr->cur_num == 1 && !a_ptr->carrier && !admin) continue;
+
 		/* Assume okay */
 		okay[k] = TRUE;
 	}

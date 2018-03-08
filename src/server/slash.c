@@ -5115,6 +5115,7 @@ void do_slash_cmd(int Ind, char *message) {
 						a_info[k].cur_num = 1;
 						a_info[k].known = TRUE;
 						msg_format(Ind, "Artifact %d is now \377runfindable\377w.", k);
+						a_info[k].carrier = 0; /* don't accidentally claim it's carried by a 'dead player' */
 					}
 				}
 				else if (tk > 0 && prefix(token[1], "show")) {
