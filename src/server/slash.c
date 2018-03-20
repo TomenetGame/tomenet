@@ -9124,6 +9124,35 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_print(Ind, "...done.");
 				return;
 			}
+			/* Backs up contents of all houses owned by a specific character and gives ownership to a specific character. */
+			else if (prefix(message, "/backup_char_estate")) {
+				s32b hid, pid;
+				char *pid_name;
+
+				if (!tk || !strchr(message3, ':')) {
+					msg_print(Ind, "Usage: /backup_char_estate <character name src>:<character name dest>");
+					return;
+				}
+				message3[0] = toupper(message3[0]); /* char names always start on upper-case */
+				pid_name = strchr(message3, ':');
+				*pid_name = 0;
+				pid_name++;
+				if (!(hid = lookup_player_id(message3))) {
+					msg_print(Ind, "That src character name doesn't exist.");
+					return;
+				}
+				if (!(pid = lookup_player_id(pid_name))) {
+					msg_print(Ind, "That dest character name doesn't exist.");
+					return;
+				}
+				msg_format(Ind, "Backing up all real estate of character '%s'\n and give it to character '%s'...", message3, pid_name);
+				if (!backup_char_estate(hid, pid)) {
+					msg_print(Ind, "...failed.");
+					return;
+				}
+				msg_print(Ind, "...done.");
+				return;
+			}
 			/* backup all account<-character relations from 'server' savefile,
 			   so it could be deleted without everyone having to remember their
 			   char names because they get confronted with 'empty' character lists.

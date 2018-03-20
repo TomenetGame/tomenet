@@ -7316,6 +7316,21 @@ bool backup_estate(bool partial) {
 	s_printf("done.\n");
 	return TRUE;
 }
+/* Backup all houses that belong to a specific character and give content ownership to another character */
+bool backup_char_estate(s32b h_id, s32b id) {
+	int i;
+	bool res = FALSE;
+
+	for (i = 0; i < num_houses; i++) {
+		struct dna_type *dna = houses[i].dna;
+
+		if (!dna->owner) continue; /* not owned */
+		if ((dna->owner_type == OT_PLAYER) && (dna->owner == h_id))
+			res = backup_one_estate(&houses[i].wpos, houses[i].x, houses[i].y, id);
+	}
+	return res;
+}
+/* Backup one house and give content ownership to a specific character */
 bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CHARACTERNAME_LEN], c;
