@@ -6604,12 +6604,16 @@ void do_slash_cmd(int Ind, char *message) {
 					struct dna_type *dna = houses[i].dna;
 					if (!dna->owner) ;
 						/* not owned */
-					else if ((dna->owner_type == OT_PLAYER) && (dna->owner == lookup_player_id(message2 + 12)))
+					else if ((dna->owner_type == OT_PLAYER) && (dna->owner == lookup_player_id(message2 + 12))) {
+						msg_format(Ind, " \377BOT_PLAYER at (%d,%d) %d,%d.", houses[i].wpos.wx, houses[i].wpos.wy, houses[i].x, houses[i].y);
 						cp++;
-					else if ((dna->owner_type == OT_PARTY) && (!strcmp(parties[dna->owner].name, message2 + 12)))
+					} else if ((dna->owner_type == OT_PARTY) && (!strcmp(parties[dna->owner].name, message2 + 12))) {
+						msg_format(Ind, " \377GOT_PARTY at (%d,%d) %d,%d.", houses[i].wpos.wx, houses[i].wpos.wy, houses[i].x, houses[i].y);
 						cy++;
-					else if ((dna->owner_type == OT_GUILD) && (!strcmp(guilds[dna->owner].name, message2 + 12)))
+					} else if ((dna->owner_type == OT_GUILD) && (!strcmp(guilds[dna->owner].name, message2 + 12))) {
+						msg_format(Ind, " \377UOT_GUILD at (%d,%d) %d,%d.", houses[i].wpos.wx, houses[i].wpos.wy, houses[i].x, houses[i].y);
 						cg++;
+					}
 				}
 				msg_format(Ind, "%s has houses: Player %d, Party %d, Guild %d.", message2 + 12, cp, cy, cg);
 				return;
