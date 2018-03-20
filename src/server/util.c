@@ -7317,16 +7317,18 @@ bool backup_estate(bool partial) {
 	return TRUE;
 }
 /* Backup all houses that belong to a specific character and give content ownership to another character */
-bool backup_char_estate(s32b h_id, s32b id) {
+bool backup_char_estate(int Ind, s32b h_id, s32b id) {
 	int i;
-	bool res = FALSE;
+	bool res = TRUE;
 
 	for (i = 0; i < num_houses; i++) {
 		struct dna_type *dna = houses[i].dna;
 
 		if (!dna->owner) continue; /* not owned */
-		if ((dna->owner_type == OT_PLAYER) && (dna->owner == h_id))
-			res = backup_one_estate(&houses[i].wpos, houses[i].x, houses[i].y, id);
+		if ((dna->owner_type == OT_PLAYER) && (dna->owner == h_id)) {
+			if (Ind) msg_format(Ind, "House %d at (%d,%d) %d,%d:", i, houses[i].wpos.wx, houses[i].wpos.wy, houses[i].dx, houses[i].dy);
+			if (!backup_one_estate(&houses[i].wpos, houses[i].dx, houses[i].dy, id)) res = FALSE;
+		}
 	}
 	return res;
 }

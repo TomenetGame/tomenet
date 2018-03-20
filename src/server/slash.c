@@ -6605,13 +6605,13 @@ void do_slash_cmd(int Ind, char *message) {
 					if (!dna->owner) ;
 						/* not owned */
 					else if ((dna->owner_type == OT_PLAYER) && (dna->owner == lookup_player_id(message2 + 12))) {
-						msg_format(Ind, " \377BOT_PLAYER at (%d,%d) %d,%d.", houses[i].wpos.wx, houses[i].wpos.wy, houses[i].x, houses[i].y);
+						msg_format(Ind, " \377BOT_PLAYER at (%d,%d) %d,%d.", houses[i].wpos.wx, houses[i].wpos.wy, houses[i].dx, houses[i].dy);
 						cp++;
 					} else if ((dna->owner_type == OT_PARTY) && (!strcmp(parties[dna->owner].name, message2 + 12))) {
-						msg_format(Ind, " \377GOT_PARTY at (%d,%d) %d,%d.", houses[i].wpos.wx, houses[i].wpos.wy, houses[i].x, houses[i].y);
+						msg_format(Ind, " \377GOT_PARTY at (%d,%d) %d,%d.", houses[i].wpos.wx, houses[i].wpos.wy, houses[i].dx, houses[i].dy);
 						cy++;
 					} else if ((dna->owner_type == OT_GUILD) && (!strcmp(guilds[dna->owner].name, message2 + 12))) {
-						msg_format(Ind, " \377UOT_GUILD at (%d,%d) %d,%d.", houses[i].wpos.wx, houses[i].wpos.wy, houses[i].x, houses[i].y);
+						msg_format(Ind, " \377UOT_GUILD at (%d,%d) %d,%d.", houses[i].wpos.wx, houses[i].wpos.wy, houses[i].dx, houses[i].dy);
 						cg++;
 					}
 				}
@@ -9137,20 +9137,22 @@ void do_slash_cmd(int Ind, char *message) {
 				pid_name = strchr(message3, ':');
 				*pid_name = 0;
 				pid_name++;
+				pid_name[0] = toupper(pid_name[0]); /* char names always start on upper-case */
 				if (!(hid = lookup_player_id(message3))) {
-					msg_print(Ind, "That src character name doesn't exist.");
+					msg_format(Ind, "That src character name '%s' doesn't exist.", message3);
 					return;
 				}
 				if (!(pid = lookup_player_id(pid_name))) {
-					msg_print(Ind, "That dest character name doesn't exist.");
+					msg_format(Ind, "That dest character name '%s' doesn't exist.", pid_name);
 					return;
 				}
-				msg_format(Ind, "Backing up all real estate of character '%s'\n and give it to character '%s'...", message3, pid_name);
-				if (!backup_char_estate(hid, pid)) {
-					msg_print(Ind, "...failed.");
+				msg_format(Ind, "Backing up all estate of character '%s' (%d)", message3, hid);
+				msg_format(Ind, " and give it to character '%s' (%d)...", pid_name, pid);
+				if (!backup_char_estate(Ind, hid, pid)) {
+					msg_print(Ind, "At least one failed.");
 					return;
 				}
-				msg_print(Ind, "...done.");
+				msg_print(Ind, "All succeeded.");
 				return;
 			}
 			/* backup all account<-character relations from 'server' savefile,
