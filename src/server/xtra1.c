@@ -3453,7 +3453,7 @@ void calc_boni(int Ind) {
 		//if (p_ptr->lev >= 30) p_ptr->levitate = TRUE; can poly into bat instead
 
 #ifdef ENABLE_DEATHKNIGHT
-		if (p_ptr->pclass == CLASS_DEATHKNIGHT) p_ptr->resist_fear = TRUE;
+		if (p_ptr->pclass == CLASS_DEATHKNIGHT) { p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR; }
 #endif
 	}
 #ifdef ENABLE_MAIA
