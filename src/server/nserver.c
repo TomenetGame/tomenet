@@ -2487,10 +2487,19 @@ static void sync_options(int Ind, bool *options) {
 	}
 
 	if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) { //4.7.1b+
+/* Before 4.7.1.2 release, set them all to disabled by default for non-test clients */
+#if VERSION_MAJOR < 4 || (VERSION_MAJOR == 4 && VERSION_MINOR < 7) || (VERSION_MAJOR == 4 && VERSION_MINOR == 7 && VERSION_PATCH < 1) || (VERSION_MAJOR == 4 && VERSION_MINOR == 7 && VERSION_PATCH == 1 && VERSION_EXTRA == 1)
 		p_ptr->diz_unique = FALSE;
 		p_ptr->diz_death = FALSE;
 		p_ptr->diz_death_any = FALSE;
 		p_ptr->diz_first = FALSE;
+#else
+/* After 4.7.1.2 release, set them all to enabled by default for outdated clients */
+		p_ptr->diz_unique = TRUE;
+		p_ptr->diz_death = TRUE;
+		p_ptr->diz_death_any = TRUE;
+		p_ptr->diz_first = TRUE;
+#endif
 	} else {
 		p_ptr->diz_unique = options[119];
 		p_ptr->diz_death = options[120];
