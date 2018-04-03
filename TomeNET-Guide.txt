@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. March 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 3. April 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15698,7 +15698,7 @@ school.
     Magelock        Magically locks a door.
                     Required skill level for first spell level: 1.
 
-                    Tier II: Level 40.
+                    Tier II: Level 41.
                     Creates a Glyph of Warding on the ground that stops
                     monsters from crossing the field or summoning on it.
                     Powerful monsters may be able to break glyphs.
