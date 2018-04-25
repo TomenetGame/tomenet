@@ -4068,7 +4068,7 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u32
 		/* Allow non-dropchosen/specialgene winner arts */
 		if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY)) continue;
 
-		/* Sauron-slayers can't find The One Ring anymore */
+		/* Sauron-slayers and players currently in Mt Doom can't find The One Ring (anymore) */
 		if (i == ART_POWER && (resf & RESF_SAURON)) continue;
 
 		/* Artifact "rarity roll" */
@@ -11205,6 +11205,8 @@ u32b make_resf(player_type *p_ptr) {
 
 	/* don't generate The One Ring if player killed Sauron */
 	if (p_ptr->r_killed[RI_SAURON] == 1) f |= RESF_SAURON;
+	/* Also abuse for: The One Ring cannot drop in Mt Doom! (Happened last night, it got insta-annihilated hehee) */
+	if (in_mtdoom(&p_ptr->wpos)) f |= RESF_SAURON;
 
 	return (f);
 }

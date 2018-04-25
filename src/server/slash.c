@@ -5988,6 +5988,9 @@ void do_slash_cmd(int Ind, char *message) {
 							} else if (d_ptr->type == DI_HALLS_OF_MANDOS) {
 								hallsofmandos_wpos_x = x;
 								hallsofmandos_wpos_y = y;
+							} else if (d_ptr->type == DI_MT_DOOM) {
+								mtdoom_wpos_x = x;
+								mtdoom_wpos_y = y;
 							}
 
 							msg_format(Ind, "Tower states swapped (%d,%d).", x, y);
@@ -6030,6 +6033,10 @@ void do_slash_cmd(int Ind, char *message) {
 							else if (d_ptr->type == DI_HALLS_OF_MANDOS) {
 								hallsofmandos_wpos_x = x;
 								hallsofmandos_wpos_y = y;
+							}
+							else if (d_ptr->type == DI_MT_DOOM) {
+								mtdoom_wpos_x = x;
+								mtdoom_wpos_y = y;
 							}
 
 							msg_format(Ind, "Dungeon states swapped (%d,%d).", x, y);
