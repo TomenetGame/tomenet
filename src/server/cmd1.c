@@ -758,12 +758,15 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 
 	/* If the object was thrown, reduce brand effect by 75%
 	   to avoid insane damage. */
-	if (thrown) return ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
+	if (thrown)
+		//return ((tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
+		return (bonus / 2 + (tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// hm, give bonus, see ammo comment below
 
 	/* Ranged weapons (except for boomerangs) get less benefit from brands */
 	if (o_ptr && is_ammo(o_ptr->tval))
-		return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
-//		return ((tdam * mult) / FACTOR_MULT);
+		//return ((tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// no 'bonus'
+		return (bonus / 2 + (tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT));// hm, rather give bonus, or some slays with 1d4 ammo will just not show ANY increase :/
+		//return ((tdam * mult) / FACTOR_MULT);
 
 	/* Martial Arts styles (and bare-handed) get less benefit from brands */
 	if (!o_ptr || !o_ptr->k_idx)
