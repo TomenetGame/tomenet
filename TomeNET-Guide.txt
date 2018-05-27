@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. May 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 27. May 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4049,7 +4049,7 @@ a Chain Mail {0,+} (-2) [14,+0]
 
     Likewise, if you fight an acidic monster for example, the acid might damage
     your Chain Mail, and turn it into for example a Chain Mail [14,-2].
-    This Chain Mail only provides you with 12 AC. You could 'repair' it 
+    This Chain Mail only provides you with 12 AC. You could 'repair' it
     by buying two 'Scrolls of enchant armour' from store 5 in town to enchant
     it back to +0, but the cheaper way would be to use the 'repair' service
     instead which is offered in the armoury (and also at the weaponsmith's).
@@ -14426,285 +14426,285 @@ being awarded at level 99, the maximum level reachable.
 Class           Male                    Female
 ----------------------------------------------------------------
 Warrior
-                Rookie                  Rookie
-                Mercenary               Mercenary
-                Soldier                 Soldier
-                Veteran                 Veteran
-                Captain                 Captain
-                Champion                Champion
+                            Rookie
+                            Mercenary
+                            Soldier
+                            Veteran
+                            Captain
+                            Champion
                 Hero                    Heroine
-                General                 General
+                            General
                 Baron                   Baroness
                 Duke                    Duchess
                 Lord                    Lady
 
-                Highlord                Highlord
-                Overlord                Overlord
-                Destroyer               Destroyer
-                Annihilator             Annihilator
-                Titan                   Titan
+                            Highlord
+                            Overlord
+                            Destroyer
+                            Annihilator
+                            Titan
 
 Istar
-                Novice                  Novice
-                Apprentice              Apprentice
-                Trickster               Trickster
-                Illusionist             Illusionist
-                Spellbinder             Spellbinder
-                Spellweaver             Spellweaver
-                Evoker                  Evoker
-                Conjurer                Conjurer
+                            Novice
+                            Apprentice
+                            Trickster
+                            Illusionist
+                            Spellbinder
+                            Spellweaver
+                            Evoker
+                            Conjurer
                 Sorcerer                Sorceress
-                Warlock                 Warlock
-                Archmage                Archmage
+                            Warlock
+                            Archmage
 
-                Savant                  Savant
-                Grand Wizard            Grand Wizard
+                            Savant
+                            Grand Wizard
                 Dragon Lord             Dragon Lady
-                Dimensionalist          Dimensionalist
-                Omiscient               Omniscient
+                            Dimensionalist
+                            Omiscient
 
 Priest
-                Acolyte                 Acolyte
-                Adept                   Adept
-                Curate                  Curate
-                Canon                   Canon
+                            Acolyte
+                            Adept
+                            Curate
+                            Canon
                 Priest                  Priestess
-                Exorcist                Exorcist
-                Bishop                  Bishop
-                Arch-Bishop             Arch-Bishop
-                Cardinal                Cardinal
+                            Exorcist
+                            Bishop
+                            Arch-Bishop
+                            Cardinal
                 High Priest             High Priestess
                 Patriarch               Matriarch
 
-                Protonotary             Protonotary
-                Saint                   Saint
-                Ascended                Ascended
-                Demi                    Demi
-                Divine                  Divine
+                            Protonotary
+                            Saint
+                            Ascended
+                            Demi
+                            Divine
 
 Rogue
-                Vagabond                Vagabond
-                Cutpurse                Cutpurse
-                Robber                  Robber
-                Burglar                 Burglar
-                Filcher                 Filcher
-                Sharper                 Sharper
-                Thief                   Thief
-                Master Thief            Master Thief
-                Infiltrator             Infiltrator
-                Grandmaster Thief       Grandmaster Thief
-                Assassin                Assassin
+                            Vagabond
+                            Cutpurse
+                            Robber
+                            Burglar
+                            Filcher
+                            Sharper
+                            Thief
+                            Master Thief
+                            Infiltrator
+                            Grandmaster Thief
+                            Assassin
 
-                Phantom                 Phantom
-                Myth                    Myth
-                Nightmare               Nightmare
-                Terror                  Terror
-                Death Fate              Death Fate
+                            Phantom
+                            Myth
+                            Nightmare
+                            Terror
+                            Death Fate
 
 Mimic
-                Pretender               Pretender
-                Modifier                Modifier
-                Elastic                 Elastic
-                Copier                  Copier
-                Multiple (1st)          Multiple (1st)
-                Multiple (2nd)          Multiple (2nd)
-                Metamorph               Metamorph
-                Many-Faced              Many-Faced
-                Changer                 Changer
-                Master Changer          Master Changer
-                Grandmaster Changer     Grandmaster Changer
+                            Pretender
+                            Modifier
+                            Elastic
+                            Copier
+                            Multiple (1st)
+                            Multiple (2nd)
+                            Metamorph
+                            Many-Faced
+                            Changer
+                            Master Changer
+                            Grandmaster Changer
 
-                Faker                   Faker
-                Doppelganger            Doppelganger
-                Transformer             Transformer
-                Replicator              Replicator
-                Limitless               Limitless
+                            Faker
+                            Doppelganger
+                            Transformer
+                            Replicator
+                            Limitless
 
 Archer
-                Elite Archer            Elite Archer
-                Grand Elite Archer      Grand Elite Archer
-                Legendary Archer        Legendary Archer
-                Sirring Death           Sirring Death
-                Golden Eye              Golden Eye
-
-                Rock Thrower            Rock Thrower
-                Slinger                 Slinger
-                Great Slinger           Great Slinger
+                            Rock Thrower
+                            Slinger
+                            Great Slinger
                 Bowman                  Bowmaiden
-                Marksman                Marksman
-                Archer                  Archer
-                Sharpshooter            Sharpshooter
-                Veteran Archer          Veteran Archer
-                Master Archer           Master Archer
-                Grandmaster Archer      Grandmaster Archer
-                Deadeye                 Deadeye
+                            Marksman
+                            Archer
+                            Sharpshooter
+                            Veteran Archer
+                            Master Archer
+                            Grandmaster Archer
+                            Deadeye
+
+                            Elite Archer
+                            Grand Elite Archer
+                            Legendary Archer
+                            Sirring Death
+                            Golden Eye
 
 Paladin
-                Page                    Page
-                Squire                  Squire
-                Faithful                Faithful
-                Zealot                  Zealot
-                Chaplain                Chaplain
-                Defender                Defender
-                Crusader                Crusader
-                Knight                  Knight
-                Banneret                Banneret
-                Paladin                 Paladin
-                Knight Commander        Knight Commander
+                            Page
+                            Squire
+                            Faithful
+                            Zealot
+                            Chaplain
+                            Defender
+                            Crusader
+                            Knight
+                            Banneret
+                            Paladin
+                            Knight Commander
 
-                Sacred Defender         Sacred Defender
-                Venerable Templar       Venerable Templar
-                Holy Avenger            Holy Avenger
+                            Sacred Defender
+                            Venerable Templar
+                            Holy Avenger
                 Holy King               Holy Queen
-                God's Hand              God's Hand
+                            God's Hand
 
 Ranger
-                Rookie                  Rookie
-                Path Finder             Path Finder
-                Deputy                  Deputy
-                Guard                   Guard
-                Scout                   Scout
-                Sentry                  Sentry
-                Overseer                Overseer
-                Guard Captain           Guard Captain
-                Supervisor              Supervisor
-                High Ranger             High Ranger
-                Ranger Chieftain        Ranger Chieftain
+                            Rookie
+                            Path Finder
+                            Deputy
+                            Guard
+                            Scout
+                            Sentry
+                            Overseer
+                            Guard Captain
+                            Supervisor
+                            High Ranger
+                            Ranger Chieftain
 
-                Elite Ranger            Elite Ranger
-                Champion of Law         Champion of Law
+                            Elite Ranger
+                            Champion of Law
                 Lord of Law             Lady of Law
-                Legend                  Legend
-                Justice                 Justice
+                            Legend
+                            Justice
 
 Adventurer
-                Rambler                 Rambler
-                Walker                  Walker
-                Tripper                 Tripper
-                Tourist                 Tourist
-                Strider                 Strider
-                Traveller               Traveller
-                Discoverer              Discoverer
-                Spelunker               Spelunker
-                Voyager                 Voyager
-                Navigator               Navigator
-                Explorer                Explorer
+                            Rambler
+                            Walker
+                            Tripper
+                            Tourist
+                            Strider
+                            Traveller
+                            Discoverer
+                            Spelunker
+                            Voyager
+                            Navigator
+                            Explorer
 
-                Seasoned Adventurer     Seasoned Adventurer
-                Famous Adventurer       Famous Adventurer
-                Grand Adventurer        Grand Adventurer
-                Legendary Adventurer    Legendary Adventurer
-                Mythical Adventurer     Mythical Adventurer
+                            Seasoned Adventurer
+                            Famous Adventurer
+                            Grand Adventurer
+                            Legendary Adventurer
+                            Mythical Adventurer
 
 Druid
-                Green                   Green
-                Tree Hugger             Tree Hugger
+                            Green
+                            Tree Hugger
                 Flower Boy              Flower Girl
-                Herbalist               Herbalist
-                Spiritualist            Spiritualist
-                Elder                   Elder
-                Druid                   Druid
-                High Druid              High Druid
-                Master Druid            Master Druid
-                Wildlife Preserver      Wildlife Preserver
-                Arch-Druid              Arch-Druid
+                            Herbalist
+                            Spiritualist
+                            Elder
+                            Druid
+                            High Druid
+                            Master Druid
+                            Wildlife Preserver
+                            Arch-Druid
 
-                Forest Guardian         Forest Guardian
-                Wind Evoker             Wind Evoker
-                Forest Keeper           Forest keeper
-                Autumn                  Autumn
-                Evergreen               Evergreen
+                            Forest Guardian
+                            Wind Evoker
+                            Forest Keeper
+                            Autumn
+                            Evergreen
 
 Shaman
-                Smoker                  Smoker
-                Novice Walker           Novice Walker
-                Walker                  Walker
-                Spiritwalker            Spiritwalker
-                Bonecaster              Bonecaster
-                Bonefletcher            Bonefletcher
-                Cursed                  Cursed
+                            Smoker
+                            Novice Walker
+                            Walker
+                            Spiritwalker
+                            Bonecaster
+                            Bonefletcher
+                            Cursed
                 Chanter                 Chantress
                 Elder Chanter           Elder Chantress
-                Shaman                  Shaman
-                Elder Shaman            Elder Shamana
+                            Shaman
+                            Elder Shaman
 
-                Spirit Keeper           Spirit Keeper
-                Spirit Master           Spirit Master
-                Grand Sage              Grand Sage
-                Realm Keeper            Realm Keeper
-                Presence                Presence
+                            Spirit Keeper
+                            Spirit Master
+                            Grand Sage
+                            Realm Keeper
+                            Presence
 
 Runemaster
-                Digger                  Digger
-                Rune Tracer             Rune Tracer
-                Rock Collector          Rock Collector
-                Fire Starter            Fire Starter
-                Treasure Hunter         Treasure Hunter
-                Archaeologist           Archaeologist
-                Earth Guard             Earth Guard
-                Rune Knight             Rune Knight
-                Rune Keeper             Rune Keeper
-                Runemaster              Runemaster
-                Grand Runemaster        Grand Runemaster
+                            Digger
+                            Rune Tracer
+                            Rock Collector
+                            Fire Starter
+                            Treasure Hunter
+                            Archaeologist
+                            Earth Guard
+                            Rune Knight
+                            Rune Keeper
+                            Runemaster
+                            Grand Runemaster
 
-                Runescribe              Runescribe
-                Elemental Master        Elemental Master
-                Force Master            Force Master
-                Grand Channelist        Grand Channelist
-                Vortex                  Vortex
+                            Runescribe
+                            Elemental Master
+                            Force Master
+                            Grand Channelist
+                            Vortex
 
 Mindcrafter
-                Wary                    Wary
-                Fathomer                Fathomer
-                Thinker                 Thinker
-                Biaser                  Biaser
-                Convincer               Convincer
-                Warper                  Warper
-                Psychic                 Psychic
-                Telepath                Telepath
-                Manipulator             Manipulator
-                Controller              Controller
-                Master Mindcrafter      Master Mindcrafter
+                            Wary
+                            Fathomer
+                            Thinker
+                            Biaser
+                            Convincer
+                            Warper
+                            Psychic
+                            Telepath
+                            Manipulator
+                            Controller
+                            Master Mindcrafter
 
-                Master Manipulator      Master Manipulator
-                Master Controller       Master Controller
-                Alterator               Alterator
-                Reality Shifter         Reality Shifter
-                Truth                   Truth
+                            Master Manipulator
+                            Master Controller
+                            Alterator
+                            Reality Shifter
+                            Truth
 
 Death Knight (aka Vampire Paladin)
-                Faithless               Faithless
-                Forfeit                 Forfeit
-                Unresting               Unresting
-                Hungering               Hungering
-                Tainted                 Tainted
-                Unhallowed              Unhallowed
-                Dark Adept              Dark Adept
-                Crypt Keeper            Crypt keeper
-                Fallen Champion         Fallen Champion
-                Antipaladin             Antipaladin
-                Death Knight            Death knight
+                            Faithless
+                            Forfeit
+                            Unresting
+                            Hungering
+                            Tainted
+                            Unhallowed
+                            Dark Adept
+                            Crypt Keeper
+                            Fallen Champion
+                            Antipaladin
+                            Death Knight
 
                 Crypt Lord              Crypt Lady
-                Herald of Ruin          Herald of Ruin
-                Dark Legate             Dark Legate
+                            Herald of Ruin
+                            Dark Legate
                 Unholy King             Unholy Queen
-                Death's Hand            Death's Hand
+                            Death's Hand
 
 Hell Knight (aka Corrupted Maia Paladin)
         -The first four titles do not exist as this class cannot be acquired
          before reaching level 20, up to which the Paladin titles are used.-
-                Traitor                 Traitor
-                Fanatic                 Fanatic
-                Cultist                 Cultist
-                Heretic                 Heretic
-                Chosen                  Chosen
-                Unholy Zealot           Unholy Zealot
-                Hell Knight             Hell Knight
+                            Traitor
+                            Fanatic
+                            Cultist
+                            Heretic
+                            Chosen
+                            Unholy Zealot
+                            Hell Knight
 
-                Plague Champion         Plague Champion
-                Grand Tormentor         Grand Tormentor
-                Vizier of Chaos         Vizier of Chaos
+                            Plague Champion
+                            Grand Tormentor
+                            Vizier of Chaos
                 Demon Prince            Demon Princess
                 Demon King              Demon Queen
 
@@ -14712,18 +14712,18 @@ Corrupted Priest (aka Corrupted Maia Priest)
         -The first four titles do not exist as this class cannot be acquired
          before reaching level 20, up to which the Priest titles are used.-
                 Priest                  Priestess
-                Execrator               Execrator
-                Bishop                  Bishop
-                Arch-Bishop             Arch-Bishop
-                Cardinal                Cardinal
-                High Priest             High Priest
-                Patriarch               Patriarch
+                            Execrator
+                            Bishop
+                            Arch-Bishop
+                            Cardinal
+                High Priest             High Priestess
+                Patriarch               Matriarch
 
-                Protonotary             Protonotary
-                Great Deceiver          Great Deceiver
-                Ascended                Ascended
-                Demi                    Demi
-                Chaos God               Chaos God
+                            Protonotary
+                            Great Deceiver
+                            Ascended
+                            Demi
+                            Chaos God
 
 
 
