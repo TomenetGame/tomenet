@@ -8403,7 +8403,7 @@ extern int PlayerUID;
 #define T_BALL 0x0008
 
 #define T_WAVE 0x0010
-#define T_SIGL 0x0020
+#define T_GLPH 0x0020
 #define T_BURS 0x0040
 
 

@@ -1879,8 +1879,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 			color = 'G';
 			if (penalty) color = 'y';
 			if (p_ptr->csp < cost) color = 'o';
-			if (r_imperatives[imperative].flag == I_ENHA && !has_rune) color = 'R';
-			//if (p_ptr->anti_magic && r_types[i].flag != T_SIGL) color = 'r'; //#define ENABLE_SHELL_ENCHANT
+			//if (p_ptr->anti_magic && r_types[i].flag != T_GLPH) color = 'r'; //#define ENABLE_SHELL_ENCHANT
 			if (p_ptr->anti_magic) color = 'r';
 		}
 		else color = 'D';
@@ -1908,7 +1907,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 				}
 			break; }
 
-			case T_SIGN: { //Glyph
+			case T_SIGN: { //Seal
 				if (!has_rune && color != 'D') color = 'R';
 				if (r_imperatives[imperative].flag != I_ENHA) {
 					switch (projection) {
@@ -2016,8 +2015,26 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 
 					}
 				} else {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
-					color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection));
+					// Hack - Describe elements without an according resist! - Kurzel
+          switch (projection) {
+            case SV_R_INER: { // TR2_FREE_ACT
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% free action",
+              color, 'a' + i, "seal", sdiff, cost, fail);
+						break; }
+            case SV_R_GRAV: { // TR3_FEATHER
+							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% feather falling",
+              color, 'a' + i, "seal", sdiff, cost, fail);
+						break; }
+            case SV_R_ICEE:   // TR2_RES_COLD | TR2_RES_SHARDS
+						case SV_R_PLAS: { // TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND
+              sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% multiple resists",
+              color, 'a' + i, "seal", sdiff, cost, fail);
+						break; }
+            default: {
+              sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% %s resistance",
+              color, 'a' + i, "seal", sdiff, cost, fail, r_projections[projection].name);
+            break; }
+          }
 				}
 			break; }
 
@@ -2036,37 +2053,19 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
 					color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius);
 				} else {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
-					color, 'a' + i, "surge", sdiff, cost, fail, damage*2);
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3)",
+					color, 'a' + i, "surge", sdiff, cost, fail, rget_level(damage));
 				}
 			break; }
 
-			case T_SIGL: { //Boon
+			case T_GLPH: { //Sigil
 				if (!has_rune && color != 'D') color = 'R';
 				if (r_imperatives[imperative].flag != I_ENHA) {
-          // Hack - Describe elements without an according resist! - Kurzel
-          switch (projection) {
-            case SV_R_INER: { // TR2_FREE_ACT
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% free action",
-              color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-						break; }
-            case SV_R_GRAV: { // TR3_FEATHER
-							sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% feather falling",
-              color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-						break; }
-            case SV_R_ICEE:   // TR2_RES_COLD | TR2_RES_SHARDS
-						case SV_R_PLAS: { // TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND
-              sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% multiple resists",
-              color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-						break; }
-            default: {
-              sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% %s resistance",
-              color, 'a' + i, r_types[i].name, sdiff, cost, fail, r_projections[projection].name);
-            break; }
-          }
+          sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
+					color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2);
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% miscellaneous boni",
-					color, 'a' + i, "boon", sdiff, cost, fail);
+					color, 'a' + i, "sigil", sdiff, cost, fail);
 				}
 			break; }
 
@@ -2197,18 +2196,18 @@ static void rcraft_print_imperatives(u16b e_flags, u16b m_flags) {
 	byte element[RCRAFT_MAX_ELEMENTS];
 	byte elements = flags_to_elements(element, e_flags);
 	/* Rune check for the restricted spells; enhanced, sign, glyph, sigil, boon. - Kurzel */
-	byte projection = flags_to_projection(e_flags);
-	bool has_rune = 0;
-	for (i = 0; i < INVEN_PACK; i++) {
-		if (inventory[i].tval == TV_RUNE && inventory[i].sval == projection) has_rune = 1;
-	}
+	// byte projection = flags_to_projection(e_flags);
+	// bool has_rune = 0;
+	// for (i = 0; i < INVEN_PACK; i++) {
+		// if (inventory[i].tval == TV_RUNE && inventory[i].sval == projection) has_rune = 1;
+	// }
 	byte skill = rspell_skill(element, elements);
 
 	/* Fill the list */
 	for (i = 0; i < RCRAFT_MAX_IMPERATIVES; i++) {
 
 		/* Get the line color */
-		if (r_imperatives[i].level+4 < skill) color = (r_imperatives[i].flag == I_ENHA && !has_rune) ? 'R' : 'G'; //Ew, hardcode the 1st spell type level-1 - Kurzel
+		if (r_imperatives[i].level+4 < skill) color = 'G'; //Ew, hardcode the 1st spell type level-1 - Kurzel
 		else color = 'D';
 
 		/* Fill a line */
@@ -2503,9 +2502,9 @@ void do_runespell() {
 		if (!get_dir(&dir)) return;
 
 	/* Request the Item */
-	if ((m_flags & T_SIGL) == T_SIGL) {
+	if ((((m_flags & T_SIGN) == T_SIGN) || ((m_flags & T_GLPH) == T_GLPH)) && ((m_flags & I_ENHA) == I_ENHA)) {
 		item_tester_hook = item_tester_hook_sigil;
-		if (!c_get_item(&item, "Place a rune on which item? ", (USE_EQUIP))) return;
+		if (!c_get_item(&item, "Trace a rune on which item? ", (USE_EQUIP))) return;
 	}
 
 	Term_load();

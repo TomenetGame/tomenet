@@ -2307,7 +2307,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 			/* Validate Form */
 			if (*inscription != '\0') {
 				m_index = *inscription - 'a';
-				if (m_index < 0 || m_index > RCRAFT_MAX_TYPES || r_types[m_index].flag == T_SIGL //Sigil spells aren't suitable.
+				if (m_index < 0 || m_index > RCRAFT_MAX_TYPES || r_types[m_index].flag == T_GLPH //Sigil spells aren't suitable.
 				|| (r_types[m_index].flag == T_SIGN && (m_flags & I_ENHA) == I_ENHA)  //Glyphs too.
 				|| (r_types[m_index].flag == T_SIGN && !((o_ptr->sval == SV_R_LITE) || (o_ptr->sval == SV_R_NETH)))) //And all non-damaging Signs. - Kurzel
 					return (p_ptr->fail_no_melee);

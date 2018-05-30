@@ -4216,6 +4216,97 @@ bool recharge_aux(int Ind, int item, int pow) {
 	return (TRUE);
 }
 
+/*
+ * Generate a cloud effect directly under all viewable monsters.
+ * 'Surge' effect for runies, replacing 'Dispel'. - Kurzel
+ */
+bool project_los_wall(int Ind, int typ, int dam, int time, int interval, char *attacker) {
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
+	int		i, x, y;
+	int		flg = PROJECT_NORF | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
+  bool		obvious = FALSE;
+	char		pattacker[80];
+
+	if (Ind) snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
+	else snprintf(pattacker, 80, "Something%s", attacker);
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+	/* Affect all (nearby) monsters */
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+
+		/* Skip monsters not on this depth */
+		if(!inarea(wpos, &m_ptr->wpos)) continue;
+
+		/* Location */
+		y = m_ptr->fy;
+		x = m_ptr->fx;
+
+		/* Require line of sight */
+		if (!player_has_los_bold(Ind, y, x)) continue;
+
+		/* Don't exceed max range (which may be < sight range)! */
+		if (distance(p_ptr->py, p_ptr->px, y, x) > MAX_RANGE) continue;
+		/* Maybe also check for BLOCK_LOS/BLOCK_CONTACT grids? (glass walls..) */
+		if (!projectable_wall(wpos, p_ptr->py, p_ptr->px, y, x, MAX_RANGE)) continue;
+
+		/* Jump directly to the target monster */
+    project_time_effect = 0;
+    project_interval = interval;
+    project_time = time;
+		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, pattacker)) obvious = TRUE;
+	}
+
+#if 1	//this would require to differ between project_los calls that are meant
+	//to work on players and those that are meant to work on monsters only
+	//like GF_OLD_SPEED, GF_OLD_HEAL, etc. If this is done, an attacker string
+	//should be added as well, however.
+
+	/* Affect all (nearby) non-partied players */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* If he's not playing, skip him */
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		/* If he's not here, skip him */
+		if (!inarea(wpos, &Players[i]->wpos))
+			continue;
+
+		/* Ignore players we aren't hostile to */
+		//if (!check_hostile(Ind, i)) continue;
+
+		/* if we are in the same party, don't affect target player */
+		if (p_ptr->party && (player_in_party(p_ptr->party, i)))
+			continue;
+
+		/* Location */
+		y = Players[i]->py;
+		x = Players[i]->px;
+
+		/* Require line of sight */
+		if (!player_has_los_bold(Ind, y, x)) continue;
+
+		/* Jump directly to the target player */
+    project_time_effect = 0;
+    project_interval = interval;
+    project_time = time;
+		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, pattacker)) obvious = TRUE;
+	}
+#endif
+
+	/* Result */
+	return (obvious);
+}
 
 
 /*
