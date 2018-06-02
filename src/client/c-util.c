@@ -5593,8 +5593,8 @@ Chain_Macro:
 										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
 										color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius);
 									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3)",
-										color, 'a' + i, "surge", sdiff, cost, fail, rget_level(damage));
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur 2",
+										color, 'a' + i, "surge", sdiff, cost, fail, rget_level(damage)/2);
 									}
 								break; }
 

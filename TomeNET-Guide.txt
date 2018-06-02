@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. May 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 2. June 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -14198,16 +14198,15 @@ create a character!):
     their lack of dedication leaves 'Weaponmastery' as an unattainable goal.
     Runemasters are unable to to train in the martial arts, but are adept with
     boomerangs. High level users of runecraft may eventually enhance their
-    armor and weapon with runic 'sigils', applying some resistance or boni
-    according to the involved element. Elemental resistances are of particular
-    importance to runemasters, who suffer a backlash of the according element
-    instead of outright spell failure.
+    armor and weapon with runic 'sigils', benefitting from elemental boons.
+    Elemental resistances are of particular importance to runemasters, who
+    suffer backlash from the evoked element instead of outright spell failure.
 
     For more information about runecraft, see '(6.8b) Runes & Runemastery'.
     Note that physical runes are not required to cast most runespells.
-    However, having the physical runes are required for Sign, Sigil, and
-    Enhanced spells. The last rune of a stack may be preserved with the !R
-    inscription, to prevent unintentional loss of access to these spells.
+    However, having the physical runes are required for Sign and Glyph spells.
+    The last rune of a stack may be preserved with the !R inscription, to
+    prevent unintentional loss of access to auto-retaliation inscriptions.
 
     Hint: Runespells cause backlash of the active element on spell failure.
     For that reason you might use basic elemental spells in the beginning,
@@ -17080,50 +17079,32 @@ Cause Amnesia           Confuses a target.
 --------------------------
 Runes are magical symbols used to summon and manipulate the raw elemental
 forces which sustain the world of life. They are the motivating force behind
-the traditional systems of magic in TomeNET. The istari spell scrolls, for
-example, are composed of a series of complicated runes which both protect the
-mage from immediate harm, and create the desired effect: from fireballs to
-magical satiation.
-
-Runemasters are less methodical in their approach to magic. Having learned
-to summon elemental forces without the aid of the traditional precautions,
-limitations and potential inefficiencies of the complex istari spell system,
-runemasters deal directly with the 'pure' substance of magic, and are limited
-only by their wits, their strength and their skill. Runemasters only require
-a physical rune to cast the Sign, Sigil, and Enhanced spell types.
+some of the traditional systems of magic in TomeNET. Istari spell scrolls, for
+example, are composed entirely of a series of complex runes. These runes both
+protect the caster from immediate harm and evoke the intended effect: from
+fireballs to magical satiation. Runecraft, however, is a much less methodical
+approach to magic. Having learned to invoke the elements without traditional
+precautions (and thus potential inefficiencies) of other schools, runemasters
+trace runes directly from the pure substances of magic, drafting evocations
+limited only by application of wit, strength and skill.
 
 This approach is not necessarily a safe one. Whereas traditional spells from
 other schools of magic fail outright when something goes awry, the primordial
 energy incumbent to a runespell instead erupts forth, damaging the caster in
-the form of an elemental backlash.
+the form of an elemental backlash. Nearly all rune spells still produce the
+intended effect in this case, whether or not the caster survives.
 
-As runemastery does not rely on books or spell scrolls to guide its magic,
+As runecraft does not rely on books or spell scrolls to guide its magic,
 runespells may be cast while blinded, although at increased rate of failure.
 Spell failure likewise increases while stunned, or simply when attempting a
-powerful spell. While an istar is always prevented from casting outside of
-his or her ability, a runemaster may continue making spell attempts until the
-backlash proves fatal. Runemasters are able to cast many kinds of spells, but
-it's important to note that some are much more difficult to manage than
-others. All runespells can either be projected at the world or a monster, or
-directed at the caster for a different result. Runespells that are cast onto
-the floor are 'glyphs' aka rune-traps, and prevent summoning as usual. Those
-remain on the floor and explode if a monster triggers them. The runemaster can
-retrieve the rune used to place the glyph with another cast (refunds the rune).
+powerful spell. While an istar is always prevented from casting outside of his
+or her ability, a runemaster may continue to attempt spells until the backlash
+proves fatal. Runemasters are able to cast many kinds of spells, but it is
+important to note that some spells are more difficult to manage than others.
 
-In addition, runespells fueled by physical runes may be used to emblazon
-non-artifact equipment that is wielded by the runemaster. The strength and
-success rates of these 'sigils' depend both on the skill of the runemaster
-and the power of the item that would result. At most a runemaster may have
-one armor sigil and one weapon sigil. Sigils vanish from the equipment when
-dropped, sold, taken off, disarmed, etc. being linked directly to the
-runemaster and the consumed physical rune for their power. Physical runes
-may be activated to combine or decombine in stacks with other runes,
-sharing level requirement, inscription and discount (use 'A').
-
-Runemastery requires dexterous physical and intellectual manipulation of
-the rune forms, requiring high INT and DEX character stats. For this reason,
-runemasters also make decent thieves and fighters. To some extent,
-runemasters will need to experiment to find out their own capabilities.
+Tracing runes safely requires both intellectual and physical agility, so high
+intelligence and dexterity are strongly recommended. To some extent, runecraft
+practitioners must check and balance spells for their own safety.
 
 
 Runespells:
@@ -17132,49 +17113,75 @@ To cast a runespell, enter the m-key menu and select 'Draw a rune'.
 (Note: The ability code for drawing a rune is 12.)
 
 Runespells are made up of three components:
-    1. A single rune or combination of two runes
-    2. A spell modifier (minimized, brief, etc.)
-    3. A spell type (glyph, bolt, ball, etc.)
+    1. A single elemental rune or combination of two elemental runes.
+    2. A spell modifier (minimized, expanded, brief, etc).
+    3. A spell type (glyph, bolt, ball, etc).
 
 Each component has different associated parameters, summarized in the menu.
 When selecting runes, press return once you are finished, or enter the
 maximum of two runes and continue to the modifier selection. The menu will
-prompt for a direction if it is required after you're done. If the spell
-targets an item, you must supply the letter corresponding to your choice of
-equipment.
+prompt for a direction if it is required for the spell you've created. If the
+spell targets an item, you must supply the letter corresponding to your
+choice of inventory or equipment.
 
 
 Runespell Failure & Backlash:
 -----------------------------
-Runemasters can only truly fail Sigil type (item-enhancing) spells. Spell
-failure instead causes elemental backlash against the caster, while the
-effects of the spell, if it is not a sigil type spell, resolve normally.
+Runemasters can only truly fail sign and glyph spell types. Spell failure
+causes elemental backlash to damage the caster, while the effects of the
+spell, if it is not a sign or glyph type spell, will resolve normally.
 Resisting one's own spells can be an important factor for survival in
-critical situations. For this reason, beginner runemasters are advised to
-use basic elemental spells that they can easily acquire the according
-resistance for or stick to the Mana element, which has few adverse effects.
+critical situations. For this reason, aspiring runemasters are advised to
+start with basic elemental spells for which they can easily acquire the
+according resistance. Mana (as an element of choice) is also viable for
+beginners. Although backlash damage from mana may be high when unresisted,
+it has no otherwise adverse effects which might cripple the caster.
 
 Intelligence, dexterity, and skill level affect spell failure rates for
-runespells. Runespell type generally governs the level of a spell, and is
-further modified by the runespell modifier. Highly experienced and talented
-runemasters may achieve 0% spell failure rates, but should be cautioned
-against stunned and blinded statuses, which will each increase runespell
-failure, and thus the chance of backlash directly.
+runespells. Runespell type determines the base level of a spell, which is
+further modified by a runespell modifier. Highly experienced and talented
+runemasters may achieve 0% spell failure rates for many spells, but should be
+cautioned against casting while stunned or blind. Inattentive runemasters may
+even fall victim to unexpected backlash from spells previously mastered.
+
+
+Physical Runes:
+---------------
+Physical runes empower the required, elemental links for sign and glyph spells,
+but do not otherwise shield the runemaster from backlash or assist runecraft in
+any way. Physical runes of the associated element are required to even attampt
+a sign or glyph spell, and failing a spell of these types results in especially
+damaging backlash as the rune is destroyed. Enhanced versions of these spells
+always consume a rune, without damaging the caster if successful.
+
+Physical runes may be activated to combine or decombine in stacks with other
+runes, sharing level requirement, inscription and discount (use 'A').
+
+
+Seals & Sigils:
+---------------
+Enhanced sign and glyph spells may enhance wielded, non-artifact equipment.
+Seals always grant resistances or boni that reduce associated elemental damage.
+Sigils may grant immunities, or a variety of specific, miscellaneous boni. The
+process for determining success and which boni is applied depends entirely on
+rules similar to artifact creation (see (8.4) Artifact Creation). The strength
+and type of existing enchantments (eg. PVAL) may synergize or couteract some
+boni. At most, one seal or sigil maybe be applied to one armor and one weapon.
+
+An additional seal or sign spell targetting the same equipment dispels the
+previous one, consuming a new rune to power the new effect (even if identical).
+Enhancements vanish from the equipment when dropped, taken off, disarmed, etc.
 
 
 Other Uses for Runes:
 ---------------------
-Runes are required to cast Sign, Sigil and Enhanced spells. The Glyph type
-spell may be cast again to disarm a glyph and recover the original physical
-rune at no additional rune cost. Sigil spells on the other hand consume a
-rune forever, remaining in effect only so long as the runemaster continues
-to wear/wield the enhanced equipment. An additional sigil spell on the same
-equipment overrides the previous one, consuming a new rune as before.
+Runes may be placed in magic traps, for a damaging effect similar to glyphs.
+Traps do not provide an anti-summoning effect, as do glyphs produced by magic.
 
 
 Macros & Spell Construction:
 ----------------------------
-Runemastery macros look like this (key translation in parenthesis):
+Runecraft macros look like this (key translation in parenthesis):
 (Note: m@12\r invokes the m-key menu command for 'Draw a rune'.)
 
 Targetted runespells use the following format:
@@ -17198,8 +17205,7 @@ Here is a single rune example, invoking the element 'light' (rune 'a'):
     \e)*tm@12\ra\raa-  (light--return--minimized--bolt)
 
 This spell launches a minimized bolt of light, a targetted projection
-affecting up to a single opponent, dealing light damage if it successfully
-connects.
+affecting up to a single opponent, dealing light damage if it connects.
 
 A fire ball spell might look like this (runes 'a' and 'e' for 'fire'):
     \e)*tm@12\raedd-  (light--chaos--moderate--ball)
@@ -17213,7 +17219,7 @@ sounds bigger, ie. choose a spell modifier that increases radius.
 A maximized ball of fire:
     \e)*tm@12\raegd-  (light--chaos--maximized--ball)
 
-Or an expanded ball of fire, to produce something much larger:
+Or an expanded ball of fire, to produce something even larger:
     \e)*tm@12\raeed-  (light--chaos--expanded--ball)
 
 Note that failure rate may become an obstacle to advanced spells at low
@@ -17223,7 +17229,7 @@ Advanced runemasters may wish to create macro sets which construct spells
 on the fly, swap macro sets containing preset runespells, or set up
 combinations of macros to chain together spells quickly and efficiently.
 Spells with a lowered casting time might even be combined in one macro,
-creating a 'dual-cast' effect (especially true with the 'brief' modifier).
+creating a 'dual-cast' effect (enabled by selecting the brief modifier).
 
 Note that every modifier has drawbacks associated with the benefits of using
 it: higher cost, level, reduced damage, increased failure rates- check the
@@ -17235,22 +17241,23 @@ Auto-retaliation:
 -----------------
 If you inscribe @O[a-g][a-g] on a rune in your inventory, you will retaliate
 with a spell of the selected modifier and type. For example, if you set the
-inscription to @Oad on a rune of light, the 'ball’ spell type will be
-selected, with a 'minimized' spell modifier.
+inscription to @Oad on a rune of light, the 'ball’ spell type will be selected,
+with a 'minimized' spell modifier. Prepend 't' like @Otad to restrict
+auto-retaliation of the specified runespell to towns only.
 
-Although you can set most spells for retaliation, some spells may make poor
-choices for auto-retaliation. Retaliation is disabled completely if you
-select a non-damaging runespell (most Sign spells, and all Sigil spells).
+Although you can set most runespells for retaliation, some may make poor
+choices if repeat casting is not desirable. Retaliation is also disabled
+completely if you select a non-damaging runespell (most signs and glyphs).
 
 
 Hints:
 ------
 The casting adjective will further elaborate on the difficulty of a spell
 compared to your skill. Ideally, choose spells where the average outcome
-is 'efficiently', or better, or cast while at near full HP and with the
-according resistance. You can use the mkey * display to see a list of spell
+is 'efficiently' or better, and cast dangerous spells with full HP or the
+associated resistances. You can use the mkey * display to see a list of spell
 failure rates, or go through the macro wizard to display the specific
-attributes of spells.
+attributes of any spell. Your abilities are included in the calculations.
 
 Beginners may wish to play a race with intrinsic resistance to their element
 or elements of choice, or choose combinations of skills to produce a 'base'
@@ -17266,7 +17273,8 @@ resisted, see (5.6) Resistances & caps, Immunities, Susceptibilities for info.
 
 (6.8c) Runespell Tables
 -----------------------
-Runemastery covers a breadth of effects, catalogued in the tables below.
+Runecraft enables a breadth of effects, catalogued in the tables below.
+
 
 Elements
 --------
@@ -17274,7 +17282,7 @@ A table of every projectable element accessed through one or two rune skills.
 Weight is the relative base damage for an element, which is similar to the
 maximum damage caps per element listed in section (5.6). This value is averaged
 towards half the magic damage cap of 1600 (so 800, by level 50) to produce the
-approximate damage cap for any given runespell. ie. Fire damage >> Mana damage!
+approximate damage cap for any given runespell. ie. Fire damage >> mana damage!
 Artifacts and certain items may be unaffected by the various elemental effects.
 See section (5.6) for more information about elemental attacks.
 -------------------------------------------------------------------------------
@@ -17303,13 +17311,11 @@ Nether   | Chaos    | Disenchantment |   500  |                | Magical Items
 Nether   | Mana     | Ice            |   933  | Cuts           | Potion/Scrolls
 Chaos    | Mana     | Plasma         |   933  | Stun           | Many Items
 
+
 Spell Modifiers
 ---------------
 A table of every runespell modifier. Modifiers alter the nature of a runespell,
 influencing level, cost, fail rate, damage, casting time, radius, and duration.
-The Enhanced modifier (noted with a (&) in the Name column) requires at least
-one appropriate rune to be present in your inventory for the spell to be cast.
-Enhanced Signs are an exception to this rule, but only when retrieving a glyph.
 -------------------------------------------------------------------------------
 Name         | Lvl | Description
 -------------------------------------------------------------------------------
@@ -17317,55 +17323,60 @@ Minimized    | + 0 | Best efficiency, worst damage, poor radius and duration.
 Extended     | + 2 | Good efficiency, poor damage, best duration.
 Compressed   | + 3 | Good efficiency and duration, worst radius.
 Moderate     | + 5 | Balanced spell parameters.
-Expanded     | + 7 | Poor efficiency and duration, best radius. Projects Signs.
-Brief        | + 8 | Poor efficiency, good damage, worst duration. Half energy!
+Expanded     | + 7 | Poor efficiency and duration, best radius. Projects signs.
+Brief        | + 8 | Poor efficiency, good damage, worst duration. Half energy.
 Maximized    | +10 | Worst efficiency, best damage, good radius and duration.
-Enhanced (&) | +10 | Unique spell parameters, see Enhanced Spell Types.
+Enhanced     | +10 | Specific form or other effect, see Enhanced Spell Types.
+
 
 Spell Types
 -----------
 A table of basic runespell types. Type controls the form of the runespell, also
 influencing level, cost, fail rate, damage, casting time, radius, and duration.
-Spell types followed by a (&) consume a rune (cost 1 rune) to cast. Sign (*)
-is an exception to this rule, only requiring that the physical rune be carried.
+Spell types followed by (&) consume a rune and produce no spell effect upon
+failure, instead resulting in an increased backlash to the caster compared to
+other spell types. You must carry at least one physical rune of the associated
+element to even attempt a sign or glyph spell (including enhanced versions).
 -------------------------------------------------------------------------------
 Name       | Lvl | Description                                       | Enhanced
 -------------------------------------------------------------------------------
 Bolt       |   5 | Fires a single target bolt, may be reflected.     | Beam
 Cloud      |  10 | Damages an area about your target over time.      | Storm
-Sign   (*) |  15 | Specific buff or effect, see Sign Effects.        | Glyph
+Sign   (&) |  15 | Specific buff or other effect, see Sign Effects.  | Seal
 Ball       |  20 | Targeted area damage that diminishes with radius. | Swarm
 Wave       |  25 | High damage in an expanding area about yourself.  | Surge
-Sigil  (&) |  30 | Grants worn equipment the according resistance*.  | Boon
+Glyph  (&) |  30 | Set a glyph of warding that explodes when broken. | Sigil
 Burst      |  35 | Focussed area damage, full damage across radius.  | Flare
--------------------------------------------------------------------------------
-* Elements that don't have a resistance grant these associated boni, instead:
-    Inertia  |  free action
-    Gravity  |  feather falling
-    Ice      |  cold and shards resistance
-    Plasma   |  fire, electricity and sound resistance
--------------------------------------------------------------------------------
+
 
 Enhanced Spell Types
 --------------------
-A table of runespell types enabled by choosing the "Enhanced" spell modifier.
+A table of runespell types enabled by choosing the enhanced spell modifier.
 These runespells use fixed attributes, since they are exclusively accessed.
-Spell types followed by a (&) consume a rune (cost 1 rune) to cast. Glyph (*)
-is an exception to this rule, but only when retrieving the set rune (a refund).
+Spell types followed by (&) consume a rune of the associated element when cast.
 -------------------------------------------------------------------------------
 Name       | Lvl | Description                                       | Basic
 -------------------------------------------------------------------------------
 Beam       |  15 | Fires a beam, damaging all grids in a line.       | Bolt
 Storm      |  20 | A high damage, radius 1 cloud that follows you.   | Cloud
-Glyph  (*) |  25 | Set or retrieve a damaging glyph of warding.      | Sign
-Swarm      |  30 | Fires a spread of level/10, radius 1 mini balls.  | Ball
-Surge      |  35 | Instantly damages all monsters in line of sight.  | Wave
-Boon   (&) |  40 | Enhances worn equipment, see Enhanced Sigil Boni. | Sigil
+Seal   (&) |  25 | Enhances equipment with an elemental resistance*. | Sign
+Swarm      |  30 | Fires a spread of level/10, radius 1 mini-balls.  | Ball
+Surge      |  35 | Envelops all nearby monsters in damaging clouds.  | Wave
+Sigil  (&) |  40 | Further enhances worn equipment, see Sigil Boni.  | Glyph
 Flare      |  45 | High damage non-reflectable bolt, 33% backlash.   | Burst
+-------------------------------------------------------------------------------
+* Some elements grant these associated boni instead of a specific resistance:
+  Inertia  |  Free Action
+  Gravity  |  Feather Falling
+  Ice      |  Cold and Shard Resistances
+  Plasma   |  Fire, Electricity and Sound Resistances
+-------------------------------------------------------------------------------
+
 
 Sign Effects
 ------------
-Effects followed by a (P) are projectable when cast with the Expanded modifier.
+A table of runespell effects enabled by choosing the sign spell type. Effects
+followed by a (P) are projectable when cast with the expanded modifier.
 -------------------------------------------------------------------------------
 Rune     | Rune     | Element        | Sign Effect       | Description
 -------------------------------------------------------------------------------
@@ -17392,15 +17403,14 @@ Nether   | Chaos    | Disenchantment | Resistance    (P) | Base (four) resists.
 Nether   | Mana     | Ice            | Ice Shield        | +AC, ice damage.
 Chaos    | Mana     | Plasma         | Plasma Shield     | +AC, plasma damage.
 
-Enhanced Sigil Boni
--------------------
-A table cross referencing boni to element and item TVAL (type value). Boni are
-restricted as with artifact creation regarding PVAL modifiers. Stat boni have
-a chance to include a sustain, and boni occuring both generally and on the
-item type are more likely to occur. Some weapon/helm boni are specific to mage
-staves, boomerangs, and crowns (see (8.4) Artifact Creation).
 
-Note: Non-enhanced sigils will always produce the element's according resist.
+Sigil Boni
+----------
+A table cross referencing boni to element and item TVAL (type value). Boni are
+restricted as with artifact creation regarding PVAL modifiers. Stat enhancing
+boni have a chance to include a sustain, and boni occuring both generally and
+on the item type specifically are more likely to occur. Some weapon/helm boni
+are specific to staves, boomerangs, and crowns (see (8.4) Artifact Creation).
 
 Abbreviations (in alphabetical order):
 AM - Anti-magic shell (see (5.8) under NO_MAGIC)
@@ -17428,7 +17438,7 @@ NT - Anti-Teleportation
 Re - Reflection
 Rh - Regen health
 Rm - Regen mana
-RR - Random res (acid/elec/fire/cold/pois/conf/blin/shar/soun/neth/nexu/disi)
+RR - Random resist from the "general mods" list, see (8.4) Artifact Creation
 S+ - Strength bonus (PVAL Required)
 SD - Slow digestion
 SI - See invisible

@@ -850,7 +850,8 @@ s_printf("Duration: %d\n", duration);
             break; }
           }
         } else {
-          rspell_sigil(Ind, projection, type, item);
+          if (item != 0) //Sanity!! Old Clients might cast this spell (was Glyph) without an item selected! - Kurzel
+            rspell_sigil(Ind, projection, type, item);
         }
       }
 		break; }
@@ -864,7 +865,7 @@ s_printf("Duration: %d\n", duration);
 		case T_WAVE: { //Surge
 			sprintf(p_ptr->attacker, " %s traces %s %s %s of %s for", msg_q, ((r_imperatives[imperative].flag == I_EXPA) || (r_imperatives[imperative].flag == I_ENHA)) ? "an" : "a", r_imperatives[imperative].name, r_types[type].name, r_projections[projection].name);
 			if (r_imperatives[imperative].flag != I_ENHA) fire_wave(Ind, gf_type, 0, rget_level(damage), 1, radius, 3, EFF_WAVE, p_ptr->attacker);
-			else project_los_wall(Ind, gf_type, rget_level(damage), 6, 9, p_ptr->attacker);
+			else project_los_wall(Ind, gf_type, rget_level(damage)/2, 6, 9, p_ptr->attacker);
 		break; }
 
 		case T_GLPH: { //Sigil

@@ -2044,7 +2044,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
 				} else {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d or %d (x%d)",
-					color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((3+(sdiff-1)/10) > 3) ? (3+(sdiff-1)/10) : 3));
+					color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((3+(sdiff-1)/10) > 3) ? (3+(sdiff-1)/10) : 3));
 				}
 			break; }
 
@@ -2053,8 +2053,8 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
 					color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius);
 				} else {
-					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3)",
-					color, 'a' + i, "surge", sdiff, cost, fail, rget_level(damage));
+					sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur 2",
+					color, 'a' + i, "surge", sdiff, cost, fail, rget_level(damage)/2);
 				}
 			break; }
 
