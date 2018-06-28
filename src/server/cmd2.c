@@ -2710,6 +2710,9 @@ void do_cmd_open(int Ind, int dir) {
 					everyone_lite_spot(wpos, y, x);
 					/* Update some things */
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+				} else if (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) {
+					/* Never get stuck inside a house that we don't have access to! */
+					teleport_player(Ind, 1, TRUE);
 				} else {
 					struct dna_type *dna = cs_ptr->sc.ptr;
 					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) {
