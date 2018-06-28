@@ -5,6 +5,7 @@
 
 #define PR_MANA		0x00000080L	/* Display Mana */
 
+#define PR_STATE	0x00100000L	/* Display Extra (State) */
 
 /*
  * Number of effects
