@@ -9954,6 +9954,13 @@ void do_slash_cmd(int Ind, char *message) {
 					h = lua_count_houses_id(id_list[i]);
 					msg_format(Ind, " Char '%s' owns %d houses (stored %d)", lookup_player_name(id_list[i]), h, ptr->houses);
 					ht += h;
+
+					if (prefix(message, "/ahlfix")) {
+						if (h != ptr->houses) {
+							msg_format(Ind, " ..fixed hashed character's houses %d -> %d (real count).", ptr->houses, h);
+							clockin_id(id_list[i], 8, h, 0);
+						}
+					}
 				}
 				if (ids) C_KILL(id_list, ids, int);
 
