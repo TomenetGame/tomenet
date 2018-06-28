@@ -6393,16 +6393,18 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		if (r_ptr->flags4 & RF4_BR_INER) {
 			note = " resists";
 			dam *= 3; dam /= (randint(6) + 6);
-		}
-		/* Powerful monsters can resist */
-		else if (r_ptr->flags1 & RF1_UNIQUE) {
-		} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
-		} else if (RES_OLD(r_ptr->level, dam)) {
-		} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
-		//else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
-		{
-			//if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
+		} else if (r_ptr->flags1 & RF1_UNIQUE) {
+			/* cannot be slowed */
+		} else if ((r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) /* cannot randint higher? (see 'resist' branch below) */
+		    || (RES_OLD(r_ptr->level, dam))) {
+			/* Allow un-hasting a monster! - suggested by Dj_Wolf */
+			if (m_ptr->mspeed >= m_ptr->speed + 3) {
+				m_ptr->mspeed -= 3;
+				note = " starts moving less fast again";
+			}
+		} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) { /* Normal monsters slow down */
 			m_ptr->mspeed -= 10;
+			if (m_ptr->mspeed < m_ptr->speed - 10) m_ptr->mspeed = m_ptr->speed - 10;
 			note = " starts moving slower";
 		}
 
@@ -6815,17 +6817,26 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note = " is unaffected";
 			obvious = FALSE;
 		} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
-			note = " resists easily"; /* vs damaging it's "resists a lot" and vs effects it's "resists easily" :-o */
-			obvious = FALSE;
+			/* Allow un-hasting a monster! - suggested by Dj_Wolf */
+			if (m_ptr->mspeed >= m_ptr->speed + 3) {
+				m_ptr->mspeed -= 3;
+				note = " starts moving less fast again";
+			} else {
+				note = " resists easily"; /* vs damaging it's "resists a lot" and vs effects it's "resists easily" :-o */
+				obvious = FALSE;
+			}
 		} else if (RES_OLD(r_ptr->level, dam)) {
-			note = " resists";
-			obvious = FALSE;
-		}
-		else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) /* Normal monsters slow down */
-		//else if (m_ptr->mspeed >= 100) /* Normal monsters slow down */
-		{
-			//if (m_ptr->mspeed > 100) m_ptr->mspeed -= 10;
+			/* Allow un-hasting a monster! - suggested by Dj_Wolf */
+			if (m_ptr->mspeed >= m_ptr->speed + 3) {
+				m_ptr->mspeed -= 3;
+				note = " starts moving less fast again";
+			} else {
+				note = " resists";
+				obvious = FALSE;
+			}
+		} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) { /* Normal monsters slow down */
 			m_ptr->mspeed -= 10;
+			if (m_ptr->mspeed < m_ptr->speed - 10) m_ptr->mspeed = m_ptr->speed - 10;
 			note = " starts moving slower";
 		} else {
 			note = " is unaffected";
@@ -6981,8 +6992,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		obvious = FALSE;
 		int curse = randint(3);
 		if (curse == 1) { //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_OLD_SLOW
-			/*if (((r_ptr->flags1 & RF1_UNIQUE) && magik(r_ptr->level * 4)) ||
-				magik(r_ptr->level * 2)) {*/
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags4 & RF4_BR_INER)) {
 				note = " is unaffected";
@@ -6990,6 +6999,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " resists";
 			} else if (m_ptr->mspeed > 100 && m_ptr->mspeed > m_ptr->speed - 10) {
 				m_ptr->mspeed -= 10;
+				if (m_ptr->mspeed < m_ptr->speed - 10) m_ptr->mspeed = m_ptr->speed - 10;
 				note = " starts moving slower";
 				if (seen) obvious = TRUE;
 			} else {
@@ -7008,7 +7018,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			{
 				note = " resists";
 				if (r_ptr->flags1 & RF1_UNIQUE) note = " is unaffected";
-
 
 				/* Memorize a flag */
 				if (r_ptr->flags3 & RF3_NO_CONF) {
