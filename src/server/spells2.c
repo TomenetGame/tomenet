@@ -1020,6 +1020,7 @@ bool do_dec_stat_time(int Ind, int stat, int mode, int sust_chance, int reductio
 		case A_DEX: if (p_ptr->sustain_dex) sust = TRUE; break;
 		case A_CON: if (p_ptr->sustain_con) sust = TRUE; break;
 		case A_CHR: if (p_ptr->sustain_chr) sust = TRUE; break;
+		default: return FALSE;
 	}
 
 	if (p_ptr->stat_cur[stat] <= 3) return(FALSE);

@@ -1004,7 +1004,7 @@ void flavor_hacks(void) {
 			/* Already comes with correct colour assigned? */
 			if (k_info[i].k_attr == ring_col[k_info[i].sval]
 			    //special hack for The One Ring: (part 3/3)
-			    && !(k_info[i].sval == SV_RING_POWER && strcmp(ring_adj[j], "Plain Gold")))
+			    && !(k_info[i].sval == SV_RING_POWER && strcmp(ring_adj[k_info[i].sval], "Plain Gold"))) //hopefully correct
 				continue;
 			/* Find a fitting colour and switch the current object's colour with it */
 			for (j = 0; j < MAX_ROCKS; j++) {
@@ -1016,7 +1016,7 @@ void flavor_hacks(void) {
 				/* Don't steal colour of another INSTA_ART that has already found its fitting colour */
 				k = lookup_kind(TV_RING, j);
 				if ((k_info[k].flags3 & TR3_INSTA_ART) && amulet_col[j] == k_info[k].k_attr
-				    && k_info[i].sval != SV_RING_POWER) //special hack fo The One Ring: (part 2/3)
+				    && k_info[i].sval != SV_RING_POWER) //special hack for The One Ring: (part 2/3)
 					continue;
 				/* Ok! Switch them */
 				temp_col = ring_col[k_info[i].sval];
