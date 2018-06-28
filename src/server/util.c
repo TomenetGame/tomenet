@@ -6014,11 +6014,11 @@ cptr get_month_name(int day, bool full, bool compact) {
 	}
 	/* 'Normal' months + Enderi */
 	default: {
-		char buf2[20];
-		char buf3[20];
+		char buf2[6];
+		char buf3[6];
 
-		snprintf(buf2, 20, "%s", get_day(day + 1 - month_day[i]));
-		snprintf(buf3, 20, "%s", get_day(day + 1));
+		snprintf(buf2, 6, "%s", get_day(day + 1 - month_day[i]));
+		snprintf(buf3, 6, "%s", get_day(day + 1));
 
 		if (full) snprintf(buf, 40, "%s day of %s (%s day)", buf2, month_name[i], buf3);
 		else if (compact) snprintf(buf, 40, "%s day of %s", buf2, month_name[i]);

@@ -6082,7 +6082,7 @@ void do_cmd_fire(int Ind, int dir) {
 					    !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) && !m_ptr->csleep && m_ptr->stunned <= 100 && !m_ptr->confused
 					    && !rand_int(24 - r_ptr->level / 10)) { /* small chance to block arrows */
 						if (visible) {
-							char hit_desc[MAX_CHARS];
+							char hit_desc[MAX_CHARS + 12];
 							sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
 							hit_desc[2] = toupper(hit_desc[2]);
 							msg_print(Ind, hit_desc);
@@ -7229,7 +7229,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				    !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) && !m_ptr->csleep && m_ptr->stunned <= 100 && !m_ptr->confused
 				    && !rand_int(5 - r_ptr->level / 50)) { /* decent chance to block throws */
 					if (visible) {
-						char hit_desc[MAX_CHARS];
+						char hit_desc[MAX_CHARS + 12];
 						sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
 						hit_desc[2] = toupper(hit_desc[2]);
 						msg_print(Ind, hit_desc);

@@ -3694,7 +3694,7 @@ void do_cmd_look(int Ind, int dir) {
 	struct c_special *cs_ptr;
 
 	char o_name[ONAME_LEN];
-	char out_val[ONAME_LEN], tmp_val[ONAME_LEN];
+	char out_val[MSG_LEN], tmp_val[MSG_LEN];
 
 	if(!(zcave = getcave(wpos))) return;
 
@@ -4012,7 +4012,7 @@ void do_cmd_locate(int Ind, int dir) {
 	int	prow = p_ptr->panel_row;
 	int	pcol = p_ptr->panel_col;
 	char	tmp_val[MAX_CHARS];
-	char	out_val[MAX_CHARS_WIDE];
+	char	out_val[MSG_LEN];
 	char trad_val[23];
 
 

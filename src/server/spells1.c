@@ -5619,7 +5619,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_NODF)) /* only for fire_bolt() */
 	    && !rand_int(52 - r_ptr->level / 3)) { /* small chance to block spells */
 		if (seen) {
-			char hit_desc[MAX_CHARS];
+			char hit_desc[MAX_CHARS + 12];
 
 			sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
 			hit_desc[2] = toupper(hit_desc[2]);
