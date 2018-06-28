@@ -9934,7 +9934,7 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 			else if (prefix(message, "/ahl")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
-				int i, h, ht = 0, ids, *id_list;
+				int i, h, ht = 0, ids, *id_list, n;
 				struct account acc;
 				hash_entry *ptr;
 
@@ -9957,8 +9957,16 @@ void do_slash_cmd(int Ind, char *message) {
 
 					if (prefix(message, "/ahlfix")) {
 						if (h != ptr->houses) {
-							msg_format(Ind, " ..fixed hashed character's houses %d -> %d (real count).", ptr->houses, h);
+							msg_format(Ind, "\377y ..fixed hashed character's houses %d -> %d (real count).", ptr->houses, h);
 							clockin_id(id_list[i], 8, h, 0);
+
+							//Problem: the savegame's 'houses' isn't modified and will be add_player_name() next time he logs in again, over-clockin-the correct value in the hash table,
+							//so at least fix it for live players, so they'd have to log on one by one if multiple chars on an acc have wrong house #, and /ahlfix each of them:
+							for (n = 1; n <= NumPlayers; n++) {
+								if (!strcmp(Players[n]->name, lookup_player_name(id_list[i]))) lua_count_houses(n);
+								msg_print(Ind, "\377y ..fixed live house count of that character as (s)he is online right now.");
+								break;
+							}
 						}
 					}
 				}
@@ -9968,9 +9976,9 @@ void do_slash_cmd(int Ind, char *message) {
 				i = acc_sum_houses(&acc);
 				msg_format(Ind, "Account '%s' got id-based sum of houses of %d vs a real house count of %d.", message3, i, ht);
 
-				if (prefix(message, "/ahlfix")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
+				if (prefix(message, "/ahlfix") && i != ht) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
 					acc_set_houses(message3, ht);
-					msg_format(Ind, "Account '%s' has been initialised to real world house count of %d.", message3, ht);
+					msg_format(Ind, "\377yAccount '%s' has been initialised to real world house count of %d.", message3, ht);
 					s_printf("ACC_HOUSE_LIMIT_INIT_MANUAL: initialised %s with %d.\n", message3, i);
 				}
 				return;
