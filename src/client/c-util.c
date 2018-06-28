@@ -7964,6 +7964,12 @@ void do_cmd_options(void) {
 	/* for exp_need option changes: */
 	if (changed1 != c_cfg.exp_need || changed2 != c_cfg.exp_bar || changed3 != c_cfg.font_map_solid_walls)
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
+	/* in case hp/mp/st are displayed as bars */
+	if (changed3 != c_cfg.font_map_solid_walls) {
+		prt_hp(hp_max, hp_cur, hp_bar);
+		prt_sp(sp_max, sp_cur, sp_bar);
+		prt_stamina(st_max, st_cur, st_bar);
+	}
 
 	inkey_msg = inkey_msg_old;
 

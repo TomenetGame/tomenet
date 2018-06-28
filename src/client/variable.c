@@ -467,3 +467,10 @@ bool win_dontmoveuser = FALSE;
 #endif
 
 bool showing_inven = FALSE, showing_equip = FALSE;
+
+int hp_max, hp_cur;
+bool hp_bar;
+int sp_max, sp_cur;
+bool sp_bar;
+int st_max, st_cur;
+bool st_bar;

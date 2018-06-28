@@ -1554,6 +1554,7 @@ int Receive_hp(void) {
 #ifdef USE_SOUND_2010
 	static int prev_chp = 0;
 #endif
+	bool bar = FALSE;
 
 	if (is_newer_than(&server_version, 4, 7, 0, 2, 0, 1)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%c", &ch, &max, &cur, &drain)) <= 0)
@@ -1562,6 +1563,12 @@ int Receive_hp(void) {
 		drain = FALSE;
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
 			return n;
+	}
+
+	/* Display hack */
+	if (max > 10000) {
+		max -= 10000;
+		bar = TRUE;
 	}
 
 	p_ptr->mhp = max;
@@ -1575,7 +1582,7 @@ int Receive_hp(void) {
 
 	if (screen_icky) Term_switch(0);
 
-	prt_hp(max, cur);
+	prt_hp(max, cur, bar);
 	if (c_cfg.alert_hitpoint && (cur < max / 5)) {
 		warning_page();
 		c_msg_print("\377R*** LOW HITPOINT WARNING! ***");
@@ -1593,15 +1600,22 @@ int Receive_stamina(void) {
 	int	n;
 	char 	ch;
 	s16b	max, cur;
+	bool	bar = FALSE;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0)
 		return n;
+
+	/* Display hack */
+	if (max > 10000) {
+		max -= 10000;
+		bar = TRUE;
+	}
 
 	p_ptr->mst = max;
 	p_ptr->cst = cur;
 
 	if (screen_icky) Term_switch(0);
-	prt_stamina(max, cur);
+	prt_stamina(max, cur, bar);
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -2110,8 +2124,15 @@ int Receive_sp(void) {
 	int	n;
 	char	ch;
 	s16b	max, cur;
+	bool	bar = FALSE;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &max, &cur)) <= 0) return n;
+
+	/* Display hack */
+	if (max > 10000) {
+		max -= 10000;
+		bar = TRUE;
+	}
 
 	if (c_cfg.alert_mana && max != -9999 && (cur < max / 5)) {
 		warning_page();
@@ -2122,7 +2143,7 @@ int Receive_sp(void) {
 	p_ptr->csp = cur;
 
 	if (screen_icky) Term_switch(0);
-	prt_sp(max, cur);
+	prt_sp(max, cur, bar);
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */

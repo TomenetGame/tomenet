@@ -5405,6 +5405,9 @@ int Send_hp(int Ind, int mhp, int chp) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 	char drain = p_ptr->hp_drained ? 1 : 0;
 
+	/* Display hack */
+	if (p_ptr->health_bar) mhp += 10000;
+
 	/* Always start assuming that all further hp loss from now on was just to equipment-induced life draining */
 	p_ptr->hp_drained = TRUE;
 
@@ -5431,6 +5434,9 @@ int Send_sp(int Ind, int msp, int csp) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 
+	/* Display hack */
+	if (p_ptr->mana_bar) msp += 10000;
+
 #if 1 /* can we use mana at all? */
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 3, 0, 0) &&
 	    (p_ptr->pclass == CLASS_WARRIOR || p_ptr->pclass == CLASS_ARCHER)) {
@@ -5455,6 +5461,9 @@ int Send_sp(int Ind, int msp, int csp) {
 int Send_stamina(int Ind, int mst, int cst) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
+
+	/* Display hack */
+	if (p_ptr->stamina_bar) mst += 10000;
 
 #ifndef ENABLE_TECHNIQUES
  #ifdef ENABLE_DRACONIAN_TRAITS

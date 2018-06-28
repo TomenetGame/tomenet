@@ -1978,8 +1978,13 @@ static bool rd_extra(int Ind) {
 		p_ptr->fluent_artifact_reset = FALSE;
 	}
 
-	if (!older_than(4, 5, 14)) rd_byte(&p_ptr->sanity_bar);
-	else {
+	if (!older_than(4, 5, 14)) {
+		rd_byte(&p_ptr->sanity_bar);
+		p_ptr->health_bar = p_ptr->sanity_bar & 0x04;
+		p_ptr->mana_bar = p_ptr->sanity_bar & 0x08;
+		p_ptr->stamina_bar = p_ptr->sanity_bar & 0x10;
+		p_ptr->sanity_bar = p_ptr->sanity_bar & 0x03;
+	} else {
 		int skill = get_skill(p_ptr, SKILL_HEALTH);
 
 		strip_bytes(1);

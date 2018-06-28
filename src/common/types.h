@@ -2576,6 +2576,9 @@ struct player_type {
 	s16b csane;			/* Cur sanity */
 	u16b csane_frac;		/* Cur sanity frac */
 	byte sanity_bar;		/* preferred type of SN: bar, if player has sufficient Health skill */
+	byte health_bar;
+	byte mana_bar;
+	byte stamina_bar;
 	u16b csane_prev;		/* Previous value of 'Cur sanity' (for alert_offpanel_dam) */
 
 	/* elements under this line won't be saved...for now. - Jir - */

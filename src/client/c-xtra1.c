@@ -314,10 +314,14 @@ void prt_ac(int ac) {
 /*
  * Prints Max/Cur hit points
  */
-void prt_hp(int max, int cur) {
+void prt_hp(int max, int cur, bool bar) {
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
+
+	hp_max = max;
+	hp_cur = cur;
+	hp_bar = bar;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -358,32 +362,72 @@ void prt_hp(int max, int cur) {
 
 		c_put_str(color, tmp, ROW_CURHP, COL_CURHP + 7);
 #else
-		put_str("HP:    /", ROW_MAXHP, 0);
-		if (max == -9999) sprintf(tmp, "   -"); /* wonder whether this will ever be used */
-		else sprintf(tmp, "%4d", max);
-		color = TERM_L_GREEN;
-		c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP);
-		if (cur == -9999) sprintf(tmp, "   -"); /* wonder whether this will ever be used */
-		else sprintf(tmp, "%4d", cur);
-		if (cur >= max)	color = TERM_L_GREEN;
-		else if (cur > max / 10) color = TERM_YELLOW;
-		else color = TERM_RED;
-		c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
+		if (!bar) {
+			put_str("HP:    /", ROW_MAXHP, 0);
+			if (max == -9999) sprintf(tmp, "   -"); /* wonder whether this will ever be used */
+			else sprintf(tmp, "%4d", max);
+			color = TERM_L_GREEN;
+			c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP);
+			if (cur == -9999) sprintf(tmp, "   -"); /* wonder whether this will ever be used */
+			else sprintf(tmp, "%4d", cur);
+			if (cur >= max) ;
+			else if (cur > max / 2) color = TERM_YELLOW;
+			else if (cur > max / 6) color = TERM_ORANGE;
+			else color = TERM_RED;
+			c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
+		} else {
+			color = TERM_L_GREEN;
+			put_str("HP          ", ROW_MAXHP, 0);
+			if (max == -9999) sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
+			else {
+				int c, n = (9 * cur) / max;
+				char bar_char;
+#if 0 /* looks too strange with all 3 bars above each other */
+ #ifdef WINDOWS
+				if (c_cfg.font_map_solid_walls) bar_char = 127; /* :-p hack */
+ #else
+				if (c_cfg.font_map_solid_walls) bar_char = 2; /* :-p hack */
+ #endif
+				else
+#endif
+					bar_char = '#';
+
+				if (cur >= max) ;
+				else if (cur > max / 2) color = TERM_YELLOW;
+				else if (cur > max / 6) color = TERM_ORANGE;
+				else color = TERM_RED;
+
+				tmp[0] = 0;
+				for (c = 0; c < n; c++) tmp[c] = bar_char;
+				tmp[c] = 0;
+				if (cur <= 0) strcpy(tmp, "-");
+				else if (!tmp[0]) {
+					tmp[0] = bar_char; //always display at least one tick (still we probably don't just want to round up instead)
+					tmp[1] = 0;
+				}
+			}
+			c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
+		}
 #endif
 
 		/* restore cursor position */
 		Term_gotoxy(x, y);
 	}
 }
-void prt_stamina(int max, int cur) {
+void prt_stamina(int max, int cur, bool bar) {
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
+
+	st_max = max;
+	st_cur = cur;
+	st_bar = bar;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
 #ifdef CONDENSED_HP_SP
+	if (!bar) {
 		put_str("ST:    /", ROW_MAXST, 0);
 		if (max == -9999) sprintf(tmp, "   -");
 		else sprintf(tmp, "%4d", max);
@@ -392,9 +436,44 @@ void prt_stamina(int max, int cur) {
 		if (cur == -9999) sprintf(tmp, "   -");
 		else sprintf(tmp, "%4d", cur);
 		if (cur >= max)	color = TERM_L_GREEN;
-		else if (cur > max / 10) color = TERM_YELLOW;
+		else if (cur > max / 2) color = TERM_YELLOW;
+		else if (cur > max / 6) color = TERM_ORANGE;
 		else color = TERM_RED;
 		c_put_str(color, tmp, ROW_CURST, COL_CURST);
+	} else {
+		char bar_char;
+#if 0 /* looks too strange with all 3 bars above each other */
+ #ifdef WINDOWS
+		if (c_cfg.font_map_solid_walls) bar_char = 127; /* :-p hack */
+ #else
+		if (c_cfg.font_map_solid_walls) bar_char = 2; /* :-p hack */
+ #endif
+		else
+#endif
+			bar_char = '#';
+
+		color = TERM_L_GREEN;
+		put_str("ST          ", ROW_MAXST, 0);
+		if (max == -9999) sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
+		else {
+			int c, n = (9 * cur) / max;
+
+			if (cur >= max) ;
+			else if (cur > max / 2) color = TERM_YELLOW;
+			else if (cur > max / 6) color = TERM_ORANGE;
+			else color = TERM_RED;
+
+			tmp[0] = 0;
+			for (c = 0; c < n; c++) tmp[c] = bar_char;
+			tmp[c] = 0;
+			if (cur <= 0) strcpy(tmp, "-");
+			else if (!tmp[0]) {
+				tmp[0] = bar_char; //always display at least one tick (still we probably don't just want to round up instead)
+				tmp[1] = 0;
+			}
+		}
+		c_put_str(color, tmp, ROW_CURST, COL_CURST);
+	}
 #endif
 
 	/* restore cursor position */
@@ -456,10 +535,14 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
 /*
  * Prints Max/Cur spell points
  */
-void prt_sp(int max, int cur) {
+void prt_sp(int max, int cur, bool bar) {
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
+
+	sp_max = max;
+	sp_cur = cur;
+	sp_bar = bar;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -503,17 +586,53 @@ void prt_sp(int max, int cur) {
 
 		c_put_str(color, tmp, ROW_CURSP, COL_CURSP + 7);
 #else
-		put_str("MP:    /", ROW_MAXSP, 0);
-		if (max == -9999) sprintf(tmp, "   -");
-		else sprintf(tmp, "%4d", max);
-		color = TERM_L_GREEN;
-		c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP);
-		if (cur == -9999) sprintf(tmp, "   -");
-		else sprintf(tmp, "%4d", cur);
-		if (cur >= max) color = TERM_L_GREEN;
-		else if (cur > max / 10) color = TERM_YELLOW;
-		else color = TERM_RED;
-		c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
+		if (!bar) {
+			put_str("MP:    /", ROW_MAXSP, 0);
+			if (max == -9999) sprintf(tmp, "   -");
+			else sprintf(tmp, "%4d", max);
+			color = TERM_L_GREEN;
+			c_put_str(color, tmp, ROW_MAXSP, COL_MAXSP);
+			if (cur == -9999) sprintf(tmp, "   -");
+			else sprintf(tmp, "%4d", cur);
+			if (cur >= max) color = TERM_L_GREEN;
+			else if (cur > max / 2) color = TERM_YELLOW;
+			else if (cur > max / 6) color = TERM_ORANGE;
+			else color = TERM_RED;
+			c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
+		} else {
+			char bar_char;
+#if 0 /* looks too strange with all 3 bars above each other */
+ #ifdef WINDOWS
+			if (c_cfg.font_map_solid_walls) bar_char = 127; /* :-p hack */
+ #else
+			if (c_cfg.font_map_solid_walls) bar_char = 2; /* :-p hack */
+ #endif
+			else
+#endif
+				bar_char = '#';
+
+			color = TERM_L_GREEN;
+			put_str("MP          ", ROW_MAXSP, 0);
+			if (max == -9999) sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
+			else {
+				int c, n = (9 * cur) / max;
+
+				if (cur >= max) ;
+				else if (cur > max / 2) color = TERM_YELLOW;
+				else if (cur > max / 6) color = TERM_ORANGE;
+				else color = TERM_RED;
+
+				tmp[0] = 0;
+				for (c = 0; c < n; c++) tmp[c] = bar_char;
+				tmp[c] = 0;
+				if (cur <= 0) strcpy(tmp, "-");
+				else if (!tmp[0]) {
+					tmp[0] = bar_char; //always display at least one tick (still we probably don't just want to round up instead)
+					tmp[1] = 0;
+				}
+			}
+			c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
+		}
 #endif
 	}
 

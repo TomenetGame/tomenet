@@ -627,10 +627,9 @@ extern void prt_title(cptr title);
 extern void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv, s32b adv_prev);
 extern void prt_gold(int gold);
 extern void prt_ac(int ac);
-extern void prt_hp(int max, int cur);
-extern void prt_hp(int max, int cur);
+extern void prt_hp(int max, int cur, bool bar);
 extern void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp);
-extern void prt_sp(int max, int cur);
+extern void prt_sp(int max, int cur, bool bar);
 extern void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cptr buf);
 extern void prt_hunger(int food);
 extern void prt_blind(bool blind);
@@ -655,7 +654,7 @@ extern void prt_AFK(byte afk);
 extern void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
     byte icky_wield, byte awkward_wield, byte easy_wield, byte cumber_weight, byte monk_heavyarmor, byte rogue_heavyarmor, byte awkward_shoot);
 extern void prt_extra_status(cptr status);
-extern void prt_stamina(int max, int cur);
+extern void prt_stamina(int max, int cur, bool bar);
 extern void display_lagometer(bool display_commands);
 extern void update_lagometer(void);
 extern void prt_lagometer(int lag);
@@ -1014,3 +1013,10 @@ extern char guide_chapter[256][MAX_CHARS], guide_chapter_no[256][8];
 extern int guide_chapters, guide_endofcontents;
 
 extern bool showing_inven, showing_equip;
+
+extern int hp_max, hp_cur;
+extern bool hp_bar;
+extern int sp_max, sp_cur;
+extern bool sp_bar;
+extern int st_max, st_cur;
+extern bool st_bar;

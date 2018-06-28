@@ -4103,6 +4103,30 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->redraw |= PR_SANITY;
 			return;
 		}
+		else if (prefix(message, "/hpbar")) {
+			if (p_ptr->health_bar) p_ptr->health_bar = FALSE;
+			else p_ptr->health_bar = TRUE;
+			if (p_ptr->health_bar) msg_print(Ind, "Hit points are now displayed as bar.");
+			else msg_print(Ind, "Hit points are now displayed as label.");
+			p_ptr->redraw |= PR_HP;
+			return;
+		}
+		else if (prefix(message, "/mpbar")) {
+			if (p_ptr->mana_bar) p_ptr->mana_bar = FALSE;
+			else p_ptr->mana_bar = TRUE;
+			if (p_ptr->mana_bar) msg_print(Ind, "Mana is now displayed as bar.");
+			else msg_print(Ind, "Mana is now displayed as label.");
+			p_ptr->redraw |= PR_MANA;
+			return;
+		}
+		else if (prefix(message, "/stbar")) {
+			if (p_ptr->stamina_bar) p_ptr->stamina_bar = FALSE;
+			else p_ptr->stamina_bar = TRUE;
+			if (p_ptr->stamina_bar) msg_print(Ind, "Stamina is now displayed as bar.");
+			else msg_print(Ind, "Stamina is now displayed as label.");
+			p_ptr->redraw |= PR_STAMINA;
+			return;
+		}
 		else if (prefix(message, "/seen")) {
 			char response[MAX_CHARS_WIDE];
 			get_laston(message3, response, admin_p(Ind), TRUE);
