@@ -5408,6 +5408,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	/* Test the item */
 	if (!item_tester_hook_activate(Ind, o_ptr)) {
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
+
 		/* Hack -- activating bottles */
 		if (o_ptr->tval == TV_BOTTLE) {
 			do_cmd_fill_bottle(Ind);
@@ -5460,6 +5467,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	}
 
 	process_hooks(HOOK_ACTIVATE, "d", Ind);
+
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+		p_ptr->current_item = -1;
+		XID_paranoia(p_ptr);
+ #endif
+#endif
 
 	if (o_ptr->tval != TV_RUNE) { //Disable rune 'you activate it' text.
 		if (o_ptr->tval != TV_BOOK) {
@@ -6727,6 +6741,13 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	bool done = FALSE;
 
 	item = p_ptr->current_activation;
+
+#ifdef ENABLE_XID_MDEV
+ #ifndef XID_REPEAT
+	p_ptr->current_item = -1;
+	XID_paranoia(p_ptr);
+ #endif
+#endif
 
 	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
