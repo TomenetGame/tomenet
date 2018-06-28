@@ -9933,12 +9933,13 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				if (ids) C_KILL(id_list, ids, int);
 
-				msg_format(Ind, "Account '%s' had sum of houses of %d.", message3, acc_get_houses(message3));
+				msg_format(Ind, "Account '%s' supposedly had %d houses in total (acc-stamp).", message3, acc_get_houses(message3));
 				i = acc_sum_houses(&acc);
-				msg_format(Ind, "Account '%s' got sum of houses of %d (counted %d).", message3, i, ht);
+				msg_format(Ind, "Account '%s' got id-based sum of houses of %d vs a real house count of %d.", message3, i, ht);
 
 				if (prefix(message, "/ahlfix")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
-					acc_set_houses(message3, i);
+					acc_set_houses(message3, ht);
+					msg_format(Ind, "Account '%s' has been initialised to real world house count of %d.", message3, ht);
 					s_printf("ACC_HOUSE_LIMIT_INIT_MANUAL: initialised %s with %d.\n", message3, i);
 				}
 				return;
