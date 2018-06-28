@@ -7584,7 +7584,8 @@ void process_player_change_wpos(int Ind) {
 		do {
 			starty = rand_int(l_ptr->hgt - 3) + 1;
 			startx = rand_int(l_ptr->wid - 3) + 1;
-			if (cave_floor_bold(zcave, starty, startx)) {
+			if (cave_floor_bold(zcave, starty, startx)
+			    && !(zcave[starty][startx].info & CAVE_STCK)) {
 				emergency_x = startx;
 				emergency_y = starty;
 			}
@@ -7600,7 +7601,6 @@ void process_player_change_wpos(int Ind) {
 
 	//printf("finding area (%d,%d)\n",startx,starty);
 	/* Place the player in an empty space */
-	//for (j = 0; j < 1500; ++j)
 	for (j = 0; j < 5000; j++) {
 		/* Increasing distance */
 		d = (j + 149) / 150;
@@ -7648,25 +7648,26 @@ void process_player_change_wpos(int Ind) {
 	if (j == 5000) {
 		x = startx;
 		y = starty;
+
+		/* REALLY don't recall/probtravel into no-tele.. */
+		if ((zcave[y][x].info & (CAVE_STCK | CAVE_NEST_PIT)) &&
+		    (p_ptr->new_level_method == LEVEL_RECALL_UP || p_ptr->new_level_method == LEVEL_RECALL_DOWN ||
+		    p_ptr->new_level_method == LEVEL_RAND || p_ptr->new_level_method == LEVEL_OUTSIDE_RAND ||
+		    p_ptr->new_level_method == LEVEL_PROB_TRAVEL)
+		    && !(p_ptr->global_event_temp & PEVF_STCK_OK)) {
+			for (starty = 1; starty < p_ptr->cur_hgt - 1; starty++) {
+				for (startx = 1; startx < p_ptr->cur_wid - 1; startx++) {
+					if ((zcave[starty][startx].info & CAVE_STCK) &&
+					    cave_empty_bold(zcave, y, x)) {
+						x = startx;
+						y = starty;
+						break;
+					}
+				}
+			}
+		}
 	}
 
-#if 0
-	/* Place the player in an empty space */
-	for (j = 0; j < 1500; ++j) {
-		/* Increasing distance */
-		d = (j + 149) / 150;
-
-		/* Pick a location */
-		scatter(wpos, &y, &x, starty, startx, d, 1);
-
-		/* Must have an "empty" grid */
-		if (!cave_empty_bold(zcave, y, x)) continue;
-
-		/* Not allowed to go onto a icky location (house) if Depth <= 0 */
-		if ((wpos->wz == 0) && (zcave[y][x].info & CAVE_ICKY))
-			break;
-	}
-#endif /*0*/
 	p_ptr->py = y;
 	p_ptr->px = x;
 
