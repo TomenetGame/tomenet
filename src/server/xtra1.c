@@ -1204,20 +1204,29 @@ void calc_mana(int Ind) {
 	   Removed ranger mana penalty here, added handicap in spells1.c
 	   where disruption shield is calculated. (C. Blue) */
 	switch(p_ptr->pclass) {
+
+	/* Mostly pure casters */
 	case CLASS_MAGE:
-	case CLASS_RANGER:
+	case CLASS_RUNEMASTER:
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
 		break;
-	case CLASS_ADVENTURER:
+
+	/* Holy classes and hybrids with focus on attack-casting*/
 	case CLASS_SHAMAN:
+	case CLASS_RANGER:
+	case CLASS_MINDCRAFTER:
 	case CLASS_DRUID:
-	/* in theory these actually don't use 'magic mana' at all?: */
+	case CLASS_MIMIC:
 #ifdef ENABLE_CPRIEST
 	case CLASS_CPRIEST:
 #endif
 	case CLASS_PRIEST: /* maybe Shamans are treated too good in comparison here */
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 130;
 		break;
+
+	/* Hybrids without focus on attack-casting */
+	case CLASS_ADVENTURER:
+	case CLASS_ROGUE:
 #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
 #endif
@@ -1225,22 +1234,12 @@ void calc_mana(int Ind) {
 	case CLASS_HELLKNIGHT:
 #endif
 	case CLASS_PALADIN:
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 200;
-		break;
-	/* non-holy again: -- hm not sure if they still need to get reduced effect*/
-	case CLASS_MIMIC:
-	case CLASS_ROGUE:
-#if 0
 		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 150;
-#else /* why not.. */
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
-#endif
 		break;
-	/* hybrids & more */
-	case CLASS_MINDCRAFTER:
-	case CLASS_RUNEMASTER:
+
+	/* Default */
 	default:
-		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 100;
+		if (p_ptr->to_m) new_mana += new_mana * p_ptr->to_m / 150;
 		break;
 	}
 
