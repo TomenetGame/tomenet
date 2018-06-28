@@ -16976,7 +16976,7 @@ F:NO_CONF | NO_SLEEP | NO_FEAR |
 F:MORTAL | PERNANGBAND
 F:MULTIPLY
 D:A kind of carnivorous giant mycorhiza: originally from the far system
-D:of Rukbat in which orbits the plant Pern, home of the Dragonriders.
+D:of Rukbat in which orbits the planet Pern, home of the Dragonriders.
 
 N:961:Gorlim, Betrayer of Barahir
 G:p:s
