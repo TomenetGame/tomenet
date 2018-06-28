@@ -11908,8 +11908,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			{
 				c_ptr2 = &zcave[y][x];
 				if (cave_valid_bold(zcave,y,x))
-//						&& (cave[y][x].feat < FEAT_PATTERN_START
-//						 || cave[y][x].feat > FEAT_PATTERN_XTRA2))
+//					&& (cave[y][x].feat < FEAT_PATTERN_START
+//					|| cave[y][x].feat > FEAT_PATTERN_XTRA2))
 				{
 					if (
 						//(c_ptr->feat != FEAT_WATER) &&
@@ -11924,11 +11924,14 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 						(c_ptr2->feat != FEAT_HOME_OPEN) &&
 						(c_ptr2->feat != FEAT_HOME))
 					{
-						if (allow_terraforming(wpos, FEAT_TREE)) {
+						if (allow_terraforming(wpos, FEAT_TREE)
+						    && c_ptr2->feat != FEAT_MON_TRAP /* Experimental: Let monster traps survive! Idea: Allow multi-detonation-potion-traps. */
+						    ) {
 							if (randint(2) == 1)
 								cave_set_feat_live(wpos, y, x, FEAT_FLOOR);
 							else
 								cave_set_feat_live(wpos, y, x, FEAT_ASH);
+
 							/* Cleanup Runemaster Glyphs - Kurzel */
 							struct c_special *cs_ptr;
 							cs_ptr = GetCS(c_ptr2, CS_RUNE);
