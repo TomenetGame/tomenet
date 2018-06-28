@@ -4379,7 +4379,7 @@ void do_slash_cmd(int Ind, char *message) {
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
 					break;
-				case 1: msg_format(Ind, "\377rAccount %s already completely valid", message3);
+				case 1: msg_format(Ind, "\377oAccount %s already completely valid", message3);
 				}
 				return;
 			}
@@ -4391,7 +4391,7 @@ void do_slash_cmd(int Ind, char *message) {
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
 					break;
-				case 1: msg_format(Ind, "\377rAccount %s already completely invalid", message3);
+				case 1: msg_format(Ind, "\377oAccount %s already completely invalid", message3);
 					break;
 				case 2: msg_print(Ind, "\377rYou may not invalidate admin accounts");
 					s_printf("ATTEMPT_INVAL_ADMIN: %s -> %s\n", p_ptr->name, message3);
@@ -4528,7 +4528,7 @@ void do_slash_cmd(int Ind, char *message) {
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
 					break;
-				case 1: msg_format(Ind, "\377rAccount %s already completely valid", message3);
+				case 1: msg_format(Ind, "\377oAccount %s already completely valid", message3);
 				}
 				return;
 			}
@@ -4540,7 +4540,7 @@ void do_slash_cmd(int Ind, char *message) {
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
 					break;
-				case 1: msg_format(Ind, "\377rAccount %s already completely invalid", message3);
+				case 1: msg_format(Ind, "\377oAccount %s already completely invalid", message3);
 					break;
 				case 2: msg_print(Ind, "\377rAdmin accounts must be validated via accedit.");
 					s_printf("CANNOT_INVAL_ADMIN: %s -> %s\n", p_ptr->name, message3);
