@@ -1203,6 +1203,9 @@ void calc_mana(int Ind) {
 	   priests won't become OoD wizards.. (C. Blue)
 	   Removed ranger mana penalty here, added handicap in spells1.c
 	   where disruption shield is calculated. (C. Blue) */
+	/* 2018 - C. Blue:
+	   Paladins/Death Knights/Hell Knights benefit more than before, but still overall the least, together with Rogues and Adventurers.
+	   All other hybrids/holy classes benefit less than Mages/Runemasters (who benefit fully). */
 	switch(p_ptr->pclass) {
 
 	/* Mostly pure casters */
