@@ -2213,6 +2213,9 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 
 	/* Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now. */
 	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return colour;
+	/* Also don't shade TERM_L_UMBER doors to TERM_UMBER while we're at it. */
+	if (c_ptr->feat == FEAT_OPEN || c_ptr->feat == FEAT_BROKEN || c_ptr->feat == FEAT_SHOP ||
+	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return colour;
 
 	/* To use always the same feats for this everytime the player
 	   enters a worldmap sector, we seed the RNG with that particular
@@ -2385,6 +2388,9 @@ static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int 
 
 	/* Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now. */
 	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return colour;
+	/* Also don't shade TERM_L_UMBER doors to TERM_UMBER while we're at it. */
+	if (c_ptr->feat == FEAT_OPEN || c_ptr->feat == FEAT_BROKEN || c_ptr->feat == FEAT_SHOP ||
+	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return colour;
 
 	/* Darkness on the world surface at night. Darken all colours. */
 	if (night_surface &&
@@ -2755,7 +2761,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 				(*cp) = st_info[cs_ptr->sc.omni].d_char;
 				a = st_info[cs_ptr->sc.omni].d_attr;
 
-				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
+				//a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
 			}
 
 			/* apply colour to OPEN house doors (which have FF1_FLOOR,
@@ -2763,7 +2769,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 			else if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
 				a = access_door_colour(Ind, cs_ptr->sc.ptr);
 
-				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
+				//a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
 			}
 
 			/* don't apply special lighting/shading on traps/montraps/runes! */

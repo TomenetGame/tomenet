@@ -7008,9 +7008,9 @@ dungeon on level -100ft (2nd dungeon level).
 (4.10) Houses
 -------------
 There are two types of houses, private houses and (very few) public houses.
-Public houses have walls of slate colour, while private houses have white
-walls. Public houses always have a light brown house door and can be entered
-by anyone, they cannot be bought.
+Public houses have walls of slate colour or in the case of wood cabins brown
+walls, while private houses have white walls. Public houses always have a light
+brown house door and can be entered by anyone, they cannot be bought.
 
 Private houses can actually be bought by a player, and their access can be
 configured for example to allow everyone in your party to enter it.
@@ -7040,8 +7040,7 @@ ie which players may access it:
  to party access for your party.
 
 -a violet door indicates that you may access this house because you're in the
- same guild as the owner, ie the house is set to 'guild access'.
- (Note: Guild access is currently disabled.)
+ same guild as the house is owned by, ie the house is actually your guild hall.
 
 -a yellow door indicates that you will have access to this house, as soon as
  your level matches the level restriction set by its owner.
@@ -7067,10 +7066,6 @@ If you forgot which houses you own, type ~9 or use the /houses command to see a
 list of your houses.
 The house owner can always access his house and cannot lock himself out by
 setting restrictions. The door will always be displayed light green to him.
-
-Note: The colour of house walls and doors are affected by day/night, so in the
-night the colours will not be accurate but darker, until you come close enough
-that the door is within your lamp's light radius.
 
 Special gimmick: You can press 'h' or use the /paint command to paint your
 house, see the "/paint" command in (0.2b) for more information.
