@@ -6234,7 +6234,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Chaos -- Chaos breathers resist */
 	case GF_CHAOS:
 		if (seen) obvious = TRUE;
-		if (rand_int(r_ptr->level) < 15) do_poly = TRUE;
+		if (!rand_int(r_ptr->level)) do_poly = TRUE;
 		do_conf = (5 + randint(11)) / div;
 		if ((r_ptr->flags4 & RF4_BR_CHAO) || (r_ptr->flags9 & RF9_RES_CHAOS)) {
 			note = " resists";
