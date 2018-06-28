@@ -6488,6 +6488,77 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 #endif
 
+#if 0 /* Disabled - Idea doesn't work, because AP in general for cursed randarts is very low. There is no use in the items generated, except maybe lucky ID hat.. */
+		/* For DK/HK: Let these guys drop some heavily cursed, powerful randart for itemization fun.. */
+		} else if (strstr((r_name + r_ptr->name),"Vlad Dracula") || strstr((r_name + r_ptr->name),"Mephistopheles")) {
+			int tv = 0, k_idx, tries = 1000;
+			artifact_type *a_ptr;
+			char o_name[ONAME_LEN];
+
+			/* Get local object */
+			qq_ptr = &forge;
+
+			/* Pick either a weapon or (semi-heavy/heavy) armour. The weapon should match our skill though, specialty. */
+			if (rand_int(2)) {
+				if (p_ptr->s_info[SKILL_AXE].value >= 10) tv = TV_AXE;
+				else if (p_ptr->s_info[SKILL_SWORD].value >= 10) tv = TV_SWORD;
+				else if (p_ptr->s_info[SKILL_POLEARM].value >= 10) tv = TV_POLEARM;
+				else if (p_ptr->s_info[SKILL_BLUNT].value >= 10) tv = TV_BLUNT; //wut
+			}
+			if (!tv) switch (rand_int(4)) {
+				case 0:
+					tv = TV_HELM;
+					break;
+				default:
+					tv = TV_HARD_ARMOR;
+					break;
+			}
+			get_obj_num_hook = NULL;
+			get_obj_num_prep_tval(tv, resf_drops | RESF_STOREFLAT); //Hack: Make all item sub-types equally probable, for more chances to get non-boring base types.
+			k_idx = get_obj_num(m_ptr->level, resf_drops | RESF_STOREFLAT); //Hack: We ignore floor depth, taking only the monster level into account, hehe.
+			invcopy(qq_ptr, k_idx);
+
+			/* Megahack -- specify the ego */
+			qq_ptr->name1 = ART_RANDART;
+
+			do { /* Try to create a heavily cursed randart.. */
+				/* Piece together a 32-bit random seed */
+				qq_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
+				qq_ptr->name3 += rand_int(0xFFFF);
+
+				apply_magic(wpos, qq_ptr, 90, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART);
+
+				tries--;
+				if (!tries) break;
+
+				a_ptr = randart_make(qq_ptr);
+				if (!(a_ptr->flags3 & TR3_HEAVY_CURSE)) continue;
+				if (artifact_power(a_ptr) < -30) continue;
+				break;
+			} while (TRUE);
+			object_desc(0, o_name, qq_ptr, TRUE, 3);
+			s_printf("(%s):AP=%d\n", o_name, artifact_power(a_ptr));
+
+#if 0
+			/* hack for a good result */
+			if (is_weapon(qq_ptr)) {
+				qq_ptr->to_h = -17 - rand_int(14);
+				qq_ptr->to_d = -17 - rand_int(14);
+			}
+#endif
+
+#ifdef PRE_OWN_DROP_CHOSEN
+			qq_ptr->level = 0;
+			qq_ptr->owner = p_ptr->id;
+			qq_ptr->mode = p_ptr->mode;
+			qq_ptr->iron_trade = p_ptr->iron_trade;
+			qq_ptr->iron_turn = -1;
+#endif
+
+			/* Drop it in the dungeon */
+			drop_near(0, qq_ptr, -1, wpos, y, x);
+#endif
+
 		} else if (m_ptr->r_idx == RI_LIVING_LIGHTNING) {
 			int tries = 100;
 			object_type forge_bak, forge_fallback;
