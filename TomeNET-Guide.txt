@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. June 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 28. June 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10169,11 +10169,8 @@ Drain Life      Wand/rod: Drains 10..20% life from your target, giving you 25%
                 can resist. The damage drained caps at 900.
 Enlightenment   Magically maps your surroundings.
 Genocide        See 'Scrolls'.
-Havoc           Fires balls or beams of random type, the exact outcome is hard
-                to tell.. it's very powerful though. Beams may be fired either
-                at your target or in all directions, balls might be fired
-                either on your own position, at your target, or in all
-                directions.
+Havoc           Fires a strong initial havoc ball that leaves a lingering
+                havoc cloud behind, dealing additional damage over time.
 Healing         Staves:
                 Heals 250 to 400 hit points, depending on magic device skill,
                 cures stun and cuts.
