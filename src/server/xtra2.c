@@ -6539,24 +6539,96 @@ if (cfg.unikill_format) {
 			object_desc(0, o_name, qq_ptr, TRUE, 3);
 			s_printf("(%s):AP=%d\n", o_name, artifact_power(a_ptr));
 
-#if 0
+ #if 0
 			/* hack for a good result */
 			if (is_weapon(qq_ptr)) {
 				qq_ptr->to_h = -17 - rand_int(14);
 				qq_ptr->to_d = -17 - rand_int(14);
 			}
-#endif
+ #endif
 
-#ifdef PRE_OWN_DROP_CHOSEN
+ #ifdef PRE_OWN_DROP_CHOSEN
 			qq_ptr->level = 0;
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = -1;
-#endif
+ #endif
 
 			/* Drop it in the dungeon */
 			drop_near(0, qq_ptr, -1, wpos, y, x);
+#else
+		/* For DK/HK: Let these guys drop some heavily cursed trueart for itemization fun.. */
+		} else if ((strstr((r_name + r_ptr->name),"Vlad Dracula") || strstr((r_name + r_ptr->name),"Mephistopheles"))
+ #ifndef TEST_SERVER
+		    && !(resf_drops & RESF_NOTRUEART)
+ #endif
+		    ) {
+			char o_name[ONAME_LEN];
+
+			artifact_type *a_ptr;
+			int i, im, a_map[MAX_A_IDX];
+
+
+			/* Get local object */
+			qq_ptr = &forge;
+
+			/* shuffle art indices for fairness */
+			for (i = 0; i < MAX_A_IDX; i++) a_map[i] = i;
+			intshuffle(a_map, MAX_A_IDX);
+
+			/* grab the first heavily cursed one we find, except for The One Ring.. */
+			for (im = 0; im < MAX_A_IDX; im++) {
+				i = a_map[im];
+				a_ptr = &a_info[i];
+
+				/* Skip "empty" items */
+				if (!a_ptr->name) continue;
+
+				/* Hack: "Disabled" */
+				if (a_ptr->rarity == 255) continue;
+
+				/* Must be heavily cursed! */
+				if (!(a_ptr->flags3 & TR3_HEAVY_CURSE)) continue;
+
+				/* Not The One Ring or anything silyl... */
+				if (a_ptr->level >= 100) continue;
+
+				/* Cannot make an artifact twice */
+				if (a_ptr->cur_num) continue;
+
+				/* Cannot generate some artifacts because they can only exists in special dungeons/quests/... */
+				//if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
+				if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
+
+				/* No winner arts for this.. */
+				if (a_ptr->flags5 & TR5_WINNERS_ONLY) continue;
+
+
+				/* SUCCESS */
+
+				invwipe(qq_ptr);
+				invcopy(qq_ptr, lookup_kind(a_ptr->tval, a_ptr->sval));
+				qq_ptr->name1 = i;
+				handle_art_inum(qq_ptr->name1);
+				qq_ptr->note = local_quark;
+				qq_ptr->note_utag = strlen(quark_str(local_quark));
+				apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, FALSE, resf_drops);
+
+ #ifdef PRE_OWN_DROP_CHOSEN
+				qq_ptr->level = 0;
+				qq_ptr->owner = p_ptr->id;
+				qq_ptr->mode = p_ptr->mode;
+				qq_ptr->iron_trade = p_ptr->iron_trade;
+				qq_ptr->iron_turn = -1;
+ #endif
+
+				/* Log, drop it in the dungeon, done */
+				object_desc(0, o_name, qq_ptr, TRUE, 3);
+				s_printf("DROP_CHOSEN: Heavily Cursed Trueart <%s>\n", o_name);
+				drop_near(0, qq_ptr, -1, wpos, y, x);
+				break;
+			}
 #endif
 
 		} else if (m_ptr->r_idx == RI_LIVING_LIGHTNING) {
