@@ -3248,19 +3248,15 @@ void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mod
 		/* Save the "aware" flag */
 		hack_aware = p_ptr->obj_aware[o_ptr->k_idx];
 
-		/* Save the "known" flag */
-		hack_known = (o_ptr->ident & ID_KNOWN) ? TRUE : FALSE;
-	}
-
-	/* Set the "known" flag */
-	o_ptr->ident |= ID_KNOWN;
-
-	/* Valid players only */
-	if (Ind) {
 		/* Force "aware" for description */
 		p_ptr->obj_aware[o_ptr->k_idx] = TRUE;
 	}
 
+	/* Save the "known" flag */
+	hack_known = (o_ptr->ident & ID_KNOWN) ? TRUE : FALSE;
+
+	/* Force "known" flag for description */
+	o_ptr->ident |= ID_KNOWN;
 
 	/* Describe the object */
 	object_desc(Ind, buf, o_ptr, pref, mode);
@@ -3269,10 +3265,9 @@ void object_desc_store(int Ind, char *buf, object_type *o_ptr, int pref, int mod
 	if (Ind) {
 		/* Restore "aware" flag */
 		p_ptr->obj_aware[o_ptr->k_idx] = hack_aware;
-
-		/* Clear the known flag */
-		if (!hack_known) o_ptr->ident &= ~ID_KNOWN;
 	}
+	/* Restore the known flag */
+	if (!hack_known) o_ptr->ident &= ~ID_KNOWN;
 }
 
 
