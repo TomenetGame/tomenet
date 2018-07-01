@@ -371,7 +371,7 @@ void prt_hp(int max, int cur, bool bar) {
 			if (cur == -9999) sprintf(tmp, "   -"); /* wonder whether this will ever be used */
 			else sprintf(tmp, "%4d", cur);
 			if (cur >= max) ;
-			else if (cur > max / 2) color = TERM_YELLOW;
+			else if (cur > (max * 2) / 5) color = TERM_YELLOW;
 			else if (cur > max / 6) color = TERM_ORANGE;
 			else color = TERM_RED;
 			c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
@@ -393,7 +393,7 @@ void prt_hp(int max, int cur, bool bar) {
 					bar_char = '#';
 
 				if (cur >= max) ;
-				else if (cur > max / 2) color = TERM_YELLOW;
+				else if (cur > (max * 2) / 5) color = TERM_YELLOW;
 				else if (cur > max / 6) color = TERM_ORANGE;
 				else color = TERM_RED;
 
@@ -436,7 +436,7 @@ void prt_stamina(int max, int cur, bool bar) {
 		if (cur == -9999) sprintf(tmp, "   -");
 		else sprintf(tmp, "%4d", cur);
 		if (cur >= max)	color = TERM_L_GREEN;
-		else if (cur > max / 2) color = TERM_YELLOW;
+		else if (cur > (max * 2) / 5) color = TERM_YELLOW;
 		else if (cur > max / 6) color = TERM_ORANGE;
 		else color = TERM_RED;
 		c_put_str(color, tmp, ROW_CURST, COL_CURST);
@@ -459,7 +459,7 @@ void prt_stamina(int max, int cur, bool bar) {
 			int c, n = (9 * cur) / max;
 
 			if (cur >= max) ;
-			else if (cur > max / 2) color = TERM_YELLOW;
+			else if (cur > (max * 2) / 5) color = TERM_YELLOW;
 			else if (cur > max / 6) color = TERM_ORANGE;
 			else color = TERM_RED;
 
@@ -595,7 +595,7 @@ void prt_sp(int max, int cur, bool bar) {
 			if (cur == -9999) sprintf(tmp, "   -");
 			else sprintf(tmp, "%4d", cur);
 			if (cur >= max) color = TERM_L_GREEN;
-			else if (cur > max / 2) color = TERM_YELLOW;
+			else if (cur > (max * 2) / 5) color = TERM_YELLOW;
 			else if (cur > max / 6) color = TERM_ORANGE;
 			else color = TERM_RED;
 			c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
@@ -618,7 +618,7 @@ void prt_sp(int max, int cur, bool bar) {
 				int c, n = (9 * cur) / max;
 
 				if (cur >= max) ;
-				else if (cur > max / 2) color = TERM_YELLOW;
+				else if (cur > (max * 2) / 5) color = TERM_YELLOW;
 				else if (cur > max / 6) color = TERM_ORANGE;
 				else color = TERM_RED;
 
