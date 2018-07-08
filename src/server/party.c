@@ -4541,11 +4541,6 @@ void erase_player_name(char *pname) {
 	int slot;
 	hash_entry *ptr, *pptr = NULL;
 	object_type *o_ptr;
-#ifdef ENABLE_MERCHANT_MAIL
-	/* send it back */
-	char tmp[NAME_LEN];
-	u32b pid;
-#endif
 
 	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		pptr = NULL;
