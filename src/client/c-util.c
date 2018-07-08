@@ -4711,6 +4711,11 @@ void interact_macros(void) {
 				sprintf(buf, "%s.prf", race_info[race].title);
 				process_pref_file(buf);
 			}
+			/* Access the "trait" pref file */
+			if (race < Setup.max_trait) {
+				sprintf(buf, "%s.prf", trait_info[trait].title);
+				process_pref_file(buf);
+			}
 			/* Access the "class" pref file */
 			if (class < Setup.max_class) {
 				sprintf(buf, "%s.prf", class_info[class].title);
@@ -4760,6 +4765,11 @@ void interact_macros(void) {
 			/* Access the "race" pref file */
 			if (race < Setup.max_race) {
 				sprintf(buf, "%s.prf", race_info[race].title);
+				process_pref_file(buf);
+			}
+			/* Access the "trait" pref file */
+			if (race < Setup.max_trait) {
+				sprintf(buf, "%s.prf", trait_info[trait].title);
 				process_pref_file(buf);
 			}
 			/* Access the "class" pref file */
@@ -4817,6 +4827,11 @@ void interact_macros(void) {
 				sprintf(buf, "%s.prf", race_info[race].title);
 				process_pref_file(buf);
 			}
+			/* Access the "trait" pref file */
+			if (trait < Setup.max_trait) {
+				sprintf(buf, "%s.prf", trait_info[trait].title);
+				process_pref_file(buf);
+			}
 			/* Access the "class" pref file */
 			if (class < Setup.max_class) {
 				sprintf(buf, "%s.prf", class_info[class].title);
@@ -4871,6 +4886,11 @@ void interact_macros(void) {
 				sprintf(buf, "%s.prf", race_info[race].title);
 				process_pref_file(buf);
 			}
+			/* Access the "trait" pref file */
+			if (trait < Setup.max_trait) {
+				sprintf(buf, "%s.prf", trait_info[trait].title);
+				process_pref_file(buf);
+			}
 			/* Access the "class" pref file */
 			if (class < Setup.max_class) {
 				sprintf(buf, "%s.prf", class_info[class].title);
@@ -4883,8 +4903,9 @@ void interact_macros(void) {
 
 			macro_processing_exclusive = FALSE;
 			c_msg_print("Reninitialized all macros, omitting all usually customized prf-files:");
-			c_msg_format(" 'global.prf', '%s.prf', '%s.prf', '%s.prf'", cname,
+			c_msg_format(" 'global.prf', '%s.prf', '%s.prf', '%s.prf, '%s.prf'", cname,
 			    race < Setup.max_race ? race_info[race].title : "NO_RACE",
+			    trait < Setup.max_trait ? trait_info[trait].title : "NO_TRAIT",
 			    class < Setup.max_class ? class_info[class].title : "NO_CLASS");
 		}
 
@@ -4942,6 +4963,11 @@ void interact_macros(void) {
 			/* Access the "race" pref file */
 			if (race < Setup.max_race) {
 				sprintf(buf, "%s.prf", race_info[race].title);
+				process_pref_file(buf);
+			}
+			/* Access the "trait" pref file */
+			if (trait < Setup.max_trait) {
+				sprintf(buf, "%s.prf", trait_info[trait].title);
 				process_pref_file(buf);
 			}
 			/* Access the "class" pref file */
@@ -7478,7 +7504,7 @@ errr options_dump(cptr fname) {
 
 static void do_cmd_options_install_audio_packs(void) {
 	FILE *fff;
-	char path[1024], c, ch, out_val[1024];
+	char path[1024], c, ch, out_val[1024 + 28];
 	int r;
 
 #ifdef WINDOWS /* use windows registry to locate 7-zip */
@@ -8890,7 +8916,7 @@ u32b parse_color_code(const char *str) {
     "Access the "visual" system pref file (if any)". */
 #define CUSTOM_FONT_PRF /* enable custom pref files? */
 void handle_process_font_file(void) {
-	char buf[1024];
+	char buf[1024 + 17];
 #ifdef CUSTOM_FONT_PRF
 	char fname[1024];
 	int i;
