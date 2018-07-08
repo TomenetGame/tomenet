@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. June 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 8. July 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5996,6 +5996,24 @@ The 1..9 are standard shops, namely..
                         item to other players.
                         Several towns have a subsidiary, you can globally
                         access your bank account and mail from any of those.
+
+                        Explanation of the mail system's details:
+                        You can choose to send money or an item to another
+                        character. All usual trading restrictions apply.
+                        It costs a small fee depending on the value sent,
+                        which can also be imposed on the receipient (COD,
+                        collect on delivery) if the sender wishes so.
+                        Mail will arrive after about a minute real-time and
+                        then allow for a one week real-time span to get picked
+                        up by the receipient. If it expires it will be sent
+                        back and again the original sender has one week to pick
+                        it up. If this time frame expires too the mail will be
+                        erased and therefore the money or item will be lost
+                        irrevocably.
+                        If the receipient dies before he can pick up the mail
+                        then the mail will be returned to the sender too who
+                        then again has one week to pick it up until it expires
+                        and gets deleted irrevocably.
         Rune Repository
                         Sells and buys runes used by Runemasters.
         Casino          Minas Anor has a casino. Go and try your luck!
