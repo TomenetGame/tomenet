@@ -2,6 +2,7 @@
 -- radius is {1 .. 10}, cost {5 .. 40}
 NATURESCALL = add_spell {
 	["name"] = 	"Nature's Call",
+	["name2"] = 	"NatCall",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	15,
@@ -24,6 +25,7 @@ NATURESCALL = add_spell {
 -- This one is water/poison (_not_ unbreath) which will eventually turn into ice(water/shards)/poison (not unbreath)
 WATERPOISON_I = add_spell {
 	["name"] = 	"Toxic Moisture I",
+	["name2"] = 	"Tox I",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	3,
@@ -42,6 +44,7 @@ WATERPOISON_I = add_spell {
 }
 WATERPOISON_II = add_spell {
 	["name"] = 	"Toxic Moisture II",
+	["name2"] = 	"Tox II",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -60,6 +63,7 @@ WATERPOISON_II = add_spell {
 }
 WATERPOISON_III = add_spell {
 	["name"] = 	"Toxic Moisture III",
+	["name2"] = 	"Tox III",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	33,
@@ -80,6 +84,7 @@ WATERPOISON_III = add_spell {
 -- Do we want druids to have an id spell? I do =) he he. remove if otherwise
 BAGIDENTIFY = add_spell {
 	["name"] = 	"Ancient Lore",
+	["name2"] = 	"ALore",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -101,6 +106,7 @@ BAGIDENTIFY = add_spell {
 -- For each wall on level: (spell_lvl)% chance for it to get turned to a tree!
 REPLACEWALL = add_spell {
 	["name"] = 	"Garden of the Gods",
+	["name2"] = 	"Garden",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	35,
@@ -126,6 +132,7 @@ REPLACEWALL = add_spell {
 -- Muahaha
 BANISHANIMALS = add_spell {
 	["name"] = 	"Call of the Forest",
+	["name2"] = 	"CotF",
 	["school"] = 	{SCHOOL_DRUID_ARCANE},
 	["spell_power"] = 0,
 	["level"] = 	40,

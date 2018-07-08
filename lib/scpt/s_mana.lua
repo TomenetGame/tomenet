@@ -13,6 +13,7 @@ end
 
 MANATHRUST_I = add_spell {
 	["name"] = 	"Manathrust I",
+	["name2"] = 	"MThrust I",
 	["school"] = 	SCHOOL_MANA,
 	["level"] = 	1,
 	["mana"] = 	2,
@@ -33,6 +34,7 @@ MANATHRUST_I = add_spell {
 }
 MANATHRUST_II = add_spell {
 	["name"] = 	"Manathrust II",
+	["name2"] = 	"MThrust II",
 	["school"] = 	SCHOOL_MANA,
 	["level"] = 	20,
 	["mana"] = 	7,
@@ -53,6 +55,7 @@ MANATHRUST_II = add_spell {
 }
 MANATHRUST_III = add_spell {
 	["name"] = 	"Manathrust III",
+	["name2"] = 	"MThrust III",
 	["school"] = 	SCHOOL_MANA,
 	["level"] = 	40,
 	["mana"] = 	25,
@@ -74,6 +77,7 @@ MANATHRUST_III = add_spell {
 
 DELCURSES_I = add_spell {
 	["name"] = 	"Remove Curses I",
+	["name2"] = 	"RCurs I",
 	["school"] = 	SCHOOL_MANA,
 	["level"] = 	20,
 	["mana"] = 	20,
@@ -91,6 +95,7 @@ DELCURSES_I = add_spell {
 }
 DELCURSES_II = add_spell {
 	["name"] = 	"Remove Curses II",
+	["name2"] = 	"RCurs II",
 	["school"] = 	SCHOOL_MANA,
 	["level"] = 	40,
 	["mana"] = 	50,
@@ -120,6 +125,7 @@ function get_recharge_pow(Ind, limit_lev)
 end
 RECHARGE_I = add_spell {
 	["name"] = 	"Recharge I",
+	["name2"] = 	"Rech I",
 	["school"] = 	{SCHOOL_MANA},
 	["level"] = 	5,
 	["mana"] = 	10,
@@ -137,6 +143,7 @@ RECHARGE_I = add_spell {
 }
 RECHARGE_II = add_spell {
 	["name"] = 	"Recharge II",
+	["name2"] = 	"Rech II",
 	["school"] = 	{SCHOOL_MANA},
 	["level"] = 	25,
 	["mana"] = 	30,
@@ -154,6 +161,7 @@ RECHARGE_II = add_spell {
 }
 RECHARGE_III = add_spell {
 	["name"] = 	"Recharge III",
+	["name2"] = 	"Rech III",
 	["school"] = 	{SCHOOL_MANA},
 	["level"] = 	40,
 	["mana"] = 	100,
@@ -172,6 +180,7 @@ RECHARGE_III = add_spell {
 
 --[[PROJECT_SPELLS = add_spell {
 	["name"] = 	"Project Spells",
+	["name2"] = 	"ProjS",
 	["school"] = 	{SCHOOL_MANA},
 	["level"] = 	10,
 	["mana"] = 	0,
@@ -199,6 +208,7 @@ RECHARGE_III = add_spell {
 
 DISPERSEMAGIC = add_spell {
 	["name"] = 	"Disperse Magic",
+	["name2"] = 	"Disperse",
 	["school"] = 	{SCHOOL_MANA},
 	["level"] = 	15,
 	["mana"] = 	30,
@@ -234,6 +244,7 @@ DISPERSEMAGIC = add_spell {
 
 MANASHIELD = add_spell {
 	["name"] = 	"Disruption Shield",
+	["name2"] = 	"DShield",
 	["school"] = 	SCHOOL_MANA,
 --	["level"] = 	45,
 	["level"] = 	35,

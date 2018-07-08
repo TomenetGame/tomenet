@@ -3,6 +3,7 @@
 --[[
 OCURSE = add_spell {
 	["name"] = 	"Curse",
+	["name2"] = 	"Curse",
 	["school"] = 	{SCHOOL_},
 	["am"] = 	75,
 	["spell_power"] = 0,
@@ -58,6 +59,7 @@ end
 
 OFEAR_I = add_spell {
 	["name"] = 	"Cause Fear I",
+	["name2"] = 	"Fear I",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	1,
@@ -77,6 +79,7 @@ OFEAR_I = add_spell {
 __lua_OFEAR = OFEAR_I
 OFEAR_II = add_spell {
 	["name"] = 	"Cause Fear II",
+	["name2"] = 	"Fear II",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	18,
@@ -96,6 +99,7 @@ OFEAR_II = add_spell {
 
 OBLIND_I = add_spell {
 	["name"] = 	"Blindness",
+	["name2"] = 	"Blind",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	3,
@@ -113,6 +117,7 @@ OBLIND_I = add_spell {
 }
 OBLIND_II = add_spell {
 	["name"] = 	"Darkness",
+	["name2"] = 	"Dark",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	18,
@@ -135,6 +140,7 @@ OBLIND_II = add_spell {
 
 DETECTINVIS = add_spell {
 	["name"] = 	"Detect Invisible",
+	["name2"] = 	"DetInv",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	3,
@@ -154,6 +160,7 @@ DETECTINVIS = add_spell {
 --[[
 POISONFOG_I = add_spell {
 	["name"] = 	"Poisonous Fog I",
+	["name2"] = 	"Fog I",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	8,
@@ -174,6 +181,7 @@ POISONFOG_I = add_spell {
 }
 POISONFOG_II = add_spell {
 	["name"] = 	"Poisonous Fog II",
+	["name2"] = 	"Fog II",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -194,6 +202,7 @@ POISONFOG_II = add_spell {
 }
 POISONFOG_III = add_spell {
 	["name"] = 	"Poisonous Fog III",
+	["name2"] = 	"Fog III",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	33,
@@ -216,6 +225,7 @@ POISONFOG_III = add_spell {
 
 OSLEEP_I = add_spell {
 	["name"] = 	"Veil of Night I",
+	["name2"] = 	"VoN I",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	5,
@@ -234,6 +244,7 @@ OSLEEP_I = add_spell {
 }
 OSLEEP_II = add_spell {
 	["name"] = 	"Veil of Night II",
+	["name2"] = 	"VoN II",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	20,--22
@@ -266,6 +277,7 @@ function get_darkbolt_dam(Ind, limit_lev)
 end
 DARKBOLT_I = add_spell {
 	["name"] = 	"Shadow Bolt I",
+	["name2"] = 	"SBolt I",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	10,
@@ -287,6 +299,7 @@ DARKBOLT_I = add_spell {
 }
 DARKBOLT_II = add_spell {
 	["name"] = 	"Shadow Bolt II",
+	["name2"] = 	"SBolt II",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	25,
@@ -308,6 +321,7 @@ DARKBOLT_II = add_spell {
 }
 DARKBOLT_III = add_spell {
 	["name"] = 	"Shadow Bolt III",
+	["name2"] = 	"SBolt III",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -330,6 +344,7 @@ DARKBOLT_III = add_spell {
 
 POISONRES = add_spell {
 	["name"] = 	"Aspect of Peril",
+	["name2"] = 	"AoP",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	14,
@@ -355,6 +370,7 @@ POISONRES = add_spell {
 
 SHADOWGATE = add_spell {
 	["name"] = 	"Shadow Gate",
+	["name2"] = 	"SGate",
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_CONVEYANCE},
 	["am"] = 	75,
 	["spell_power"] = 0,
@@ -374,6 +390,7 @@ SHADOWGATE = add_spell {
 
 OINVIS = add_spell {
 	["name"] = 	"Shadow Shroud",
+	["name2"] = 	"Shroud",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	30,
@@ -400,6 +417,7 @@ function get_chaosbolt_dam(Ind)
 end
 CHAOSBOLT = add_spell {
 	["name"] = 	"Chaos Bolt",
+	["name2"] = 	"CBolt",
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["level"] = 	30,
@@ -431,6 +449,7 @@ function get_netherbolt_dam(Ind)
 end
 NETHERBOLT = add_spell {
 	["name"] = 	"Nether Bolt",
+	["name2"] = 	"NBolt",
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_NECROMANCY},
 	["spell_power"] = 0,
 	["level"] = 	30,
@@ -454,6 +473,7 @@ NETHERBOLT = add_spell {
 --[[
 ODRAINLIFE_I = add_spell {
 	["name"] = 	"Drain Life I",
+	["name2"] = 	"Drain I",
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_NECROMANCY},
 	["am"] = 	75,
 	["spell_power"] = 0,
@@ -474,6 +494,7 @@ ODRAINLIFE_I = add_spell {
 }
 ODRAINLIFE = add_spell {
 	["name"] = 	"Drain Life",
+	["name2"] = 	"Drain",
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_NECROMANCY},
 	["am"] = 	75,
 	["spell_power"] = 0,
@@ -494,6 +515,7 @@ ODRAINLIFE = add_spell {
 }]]--
 ODRAINLIFE = add_spell {
 	["name"] = 	"Drain Life",
+	["name2"] = 	"Drain",
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_NECROMANCY},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -516,6 +538,7 @@ ODRAINLIFE = add_spell {
 
 DARKBALL = add_spell {
 	["name"] = 	"Darkness Storm",
+	["name2"] = 	"DStorm",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	42,

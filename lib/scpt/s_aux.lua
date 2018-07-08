@@ -58,6 +58,7 @@ function finish_spell(must_i)
 	s = __tmp_spells[must_i]
 
 	assert(s.name, "No spell name!")
+	assert(s.name2, "No short name!")
 	assert(s.school, "No spell school!")
 	assert(s.level, "No spell level!")
 	assert(s.mana, "No spell mana!")
@@ -83,6 +84,7 @@ function finish_spell(must_i)
 		spell(i).spell_power = 1
 	end
 	__spell_spell[i] = s.spell
+	__spell_name2[i] = s.name2
 	__spell_info[i] = s.info
 	__spell_desc[i] = s.desc
 	return i
@@ -90,6 +92,7 @@ end
 
 -- Creates the school books array
 __spell_spell = {}
+__spell_name2 = {}
 __spell_info = {}
 __spell_desc = {}
 __spell_school = {}

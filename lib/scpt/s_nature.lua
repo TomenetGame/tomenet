@@ -38,6 +38,7 @@ end
 
 GROWTREE = add_spell {
 	["name"] = 	"Grow Trees",
+	["name2"] = 	"GTrees",
 	--["school"] = 	{SCHOOL_NATURE, SCHOOL_TEMPORAL},
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	30,
@@ -55,6 +56,7 @@ GROWTREE = add_spell {
 
 HEALING_I = add_spell {
 	["name"] = 	"Healing I",
+	["name2"] = 	"Heal I",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	1,
 	["mana"] = 	13,
@@ -73,6 +75,7 @@ HEALING_I = add_spell {
 }
 HEALING_II = add_spell {
 	["name"] = 	"Healing II",
+	["name2"] = 	"Heal II",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	20,
 	["mana"] = 	28,
@@ -91,6 +94,7 @@ HEALING_II = add_spell {
 }
 HEALING_III = add_spell {
 	["name"] = 	"Healing III",
+	["name2"] = 	"Heal III",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	40,
 	["mana"] = 	80,
@@ -110,6 +114,7 @@ HEALING_III = add_spell {
 
 RECOVERY_I = add_spell	{
 	["name"] = 	"Recovery I",
+	["name2"] = 	"Recov I",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	15,
 	["mana"] = 	10,
@@ -133,6 +138,7 @@ RECOVERY_I = add_spell	{
 }
 RECOVERY_II = add_spell	{
 	["name"] = 	"Recovery II",
+	["name2"] = 	"Recov II",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	35,
 	["mana"] = 	40,
@@ -165,6 +171,7 @@ RECOVERY_II = add_spell	{
 
 REGENERATION = add_spell {
 	["name"] = 	"Regeneration",
+	["name2"] = 	"Regen",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	20,
 	["mana"] = 	40,
@@ -181,6 +188,7 @@ REGENERATION = add_spell {
 
 VERMINCONTROL = add_spell {
 	["name"] = 	"Vermin Control",
+	["name2"] = 	"VermC",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	10,
 	["mana"] = 	30,
@@ -199,6 +207,7 @@ VERMINCONTROL = add_spell {
 
 RESISTS_I = add_spell {
 	["name"] = 	"Elemental Shield I",
+	["name2"] = 	"EleSh I",
 	--["school"] = 	SCHOOL_NATURE,
 	["school"] = 	{SCHOOL_FIRE,SCHOOL_WATER},
 	["level"] = 	15,
@@ -221,6 +230,7 @@ RESISTS_I = add_spell {
 }
 RESISTS_II = add_spell {
 	["name"] = 	"Elemental Shield II",
+	["name2"] = 	"EleSh II",
 	--["school"] = 	SCHOOL_NATURE,
 	["school"] = 	{SCHOOL_FIRE,SCHOOL_WATER,SCHOOL_AIR,SCHOOL_EARTH},
 	["level"] = 	20,
@@ -250,6 +260,7 @@ RESISTS_II = add_spell {
 --[[
 SUMMONANIMAL = add_spell {
 	["name"] = 	"Summon Animal",
+	["name2"] = 	"SummAni",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	25,
 	["mana"] = 	25,

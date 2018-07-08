@@ -27,6 +27,7 @@ end
 
 MSCARE_I = add_spell {
 	["name"] = 	"Scare I",
+	["name2"] = 	"Scare I",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -46,6 +47,7 @@ MSCARE_I = add_spell {
 __lua_MSCARE = MSCARE_I
 MSCARE_II = add_spell {
 	["name"] = 	"Scare II",
+	["name2"] = 	"Scare II",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -65,6 +67,7 @@ MSCARE_II = add_spell {
 
 MCONFUSE_I = add_spell {
 	["name"] = 	"Confuse I",
+	["name2"] = 	"Conf I",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -83,6 +86,7 @@ MCONFUSE_I = add_spell {
 }
 MCONFUSE_II = add_spell {
 	["name"] = 	"Confuse II",
+	["name2"] = 	"Conf II",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -102,6 +106,7 @@ MCONFUSE_II = add_spell {
 
 MSLEEP_I = add_spell {
 	["name"] = 	"Hypnosis I",
+	["name2"] = 	"Hyp I",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	33,
 	["spell_power"] = 0,
@@ -120,6 +125,7 @@ MSLEEP_I = add_spell {
 }
 MSLEEP_II = add_spell {
 	["name"] = 	"Hypnosis II",
+	["name2"] = 	"Hyp II",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	33,
 	["spell_power"] = 0,
@@ -139,6 +145,7 @@ MSLEEP_II = add_spell {
 
 MSLOWMONSTER_I = add_spell {
 	["name"] = 	"Drain Strength I",
+	["name2"] = 	"DStr I",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -157,6 +164,7 @@ MSLOWMONSTER_I = add_spell {
 }
 MSLOWMONSTER_II = add_spell {
 	["name"] = 	"Drain Strength II",
+	["name2"] = 	"DStr II",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -176,6 +184,7 @@ MSLOWMONSTER_II = add_spell {
 
 MMINDBLAST_I = add_spell {
 	["name"] = 	"Psionic Blast I",
+	["name2"] = 	"PsiBlast I",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -199,6 +208,7 @@ MMINDBLAST_I = add_spell {
 }
 MMINDBLAST_II = add_spell {
 	["name"] = 	"Psionic Blast II",
+	["name2"] = 	"PsiBlast II",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -222,6 +232,7 @@ MMINDBLAST_II = add_spell {
 }
 MMINDBLAST_III = add_spell {
 	["name"] = 	"Psionic Blast III",
+	["name2"] = 	"PsiBlast III",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -246,6 +257,7 @@ MMINDBLAST_III = add_spell {
 
 MPSISTORM_I = add_spell {
 	["name"] = 	"Psi Storm I",
+	["name2"] = 	"PStorm I",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -271,6 +283,7 @@ MPSISTORM_I = add_spell {
 }
 MPSISTORM_II = add_spell {
 	["name"] = 	"Psi Storm II",
+	["name2"] = 	"PStorm II",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -297,6 +310,7 @@ MPSISTORM_II = add_spell {
 
 MSILENCE = add_spell {
 	["name"] = 	"Psychic Suppression",
+	["name2"] = 	"Supp",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -318,6 +332,7 @@ MSILENCE = add_spell {
 
 MMAP = add_spell {
 	["name"] = 	"Remote Vision",
+	["name2"] = 	"Vision",
 	["school"] = 	{SCHOOL_MINTRUSION},
 --	["school"] = 	{SCHOOL_MINTRUSION, SCHOOL_TCONTACT}
 	["am"] = 	50,
@@ -348,6 +363,7 @@ MMAP = add_spell {
 --[[ Old version, requiring pets. Not cool though. See new variant below!
 MCHARM = add_spell {
 	["name"] = 	"Charm",
+	["name2"] = 	"Charm",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -380,6 +396,7 @@ MCHARM = add_spell {
 -- New idea: works like *invincibility*: monsters will ignore you (and often your party members too ;)
 MCHARM = add_spell {
 	["name"] = 	"Charm",
+	["name2"] = 	"Charm",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -414,6 +431,7 @@ MCHARM = add_spell {
 
 MSTOPCHARM = add_spell {
 	["name"] = 	"Stop Charm",
+	["name2"] = 	"SCharm",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	0,
 	["spell_power"] = 0,

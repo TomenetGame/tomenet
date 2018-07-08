@@ -1629,11 +1629,13 @@ Item power inscription (added in 4.7.1):
                special powers. Only works with *identified* items.
                The @@ part must always be in the beginning of the inscription,
                after it you can append more things if you like to.
+               Can also be used on custom spell books.
     @@@        Redux version. Avoids stats, extra might since it's obvious,
                infra-vision, searching, and mods that are obvious because they
                can only come from base item type (disarm, digging, luck),
                light radius, slays and brands except for kill-flags, and
                partial ESPs.
+               Can also be used on custom spell books, will shorten the names.
 
     Resulting inscription details:
     _S                sustain stat (S/I/W/D/C/H, where H is cHarisma)

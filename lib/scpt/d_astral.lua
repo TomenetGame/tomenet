@@ -38,6 +38,7 @@ end
 
 POWERBOLT_I = add_spell {
 	["name"] = 	"Power Bolt I",
+	["name2"] = 	"PBolt I",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	1,
@@ -69,6 +70,7 @@ POWERBOLT_I = add_spell {
 }
 POWERBOLT_II = add_spell {
 	["name"] = 	"Power Bolt II",
+	["name2"] = 	"PBolt II",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -100,6 +102,7 @@ POWERBOLT_II = add_spell {
 }
 POWERBOLT_III = add_spell {
 	["name"] = 	"Power Bolt III",
+	["name2"] = 	"PBolt III",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -129,6 +132,7 @@ POWERBOLT_III = add_spell {
 
 POWERBEAM_I = add_spell {
 	["name"] = 	"Power Ray I",
+	["name2"] = 	"PRay I",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	5,
@@ -160,6 +164,7 @@ POWERBEAM_I = add_spell {
 }
 POWERBEAM_II = add_spell {
 	["name"] = 	"Power Ray II",
+	["name2"] = 	"PRay II",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -191,6 +196,7 @@ POWERBEAM_II = add_spell {
 }
 POWERBEAM_III = add_spell {
 	["name"] = 	"Power Ray III",
+	["name2"] = 	"PRay III",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -220,6 +226,7 @@ POWERBEAM_III = add_spell {
 
 POWERBALL_I = add_spell {
 	["name"] = 	"Power Blast I",
+	["name2"] = 	"PBlast I",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	10,
@@ -251,6 +258,7 @@ POWERBALL_I = add_spell {
 }
 POWERBALL_II = add_spell {
 	["name"] = 	"Power Blast II",
+	["name2"] = 	"PBlast II",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	25,
@@ -279,6 +287,7 @@ POWERBALL_II = add_spell {
 }
 POWERBALL_III = add_spell {
 	["name"] = 	"Power Blast III",
+	["name2"] = 	"PBlast III",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	45,
@@ -308,6 +317,7 @@ POWERBALL_III = add_spell {
 
 RELOCATION = add_spell {
 	["name"] = 	"Relocation",
+	["name2"] = 	"Reloc",
 	["school"] = 	SCHOOL_ASTRAL,
 	["level"] = 	22, --the same level that one gets initiated (!) (ie 20 + 2)
 	["mana"] = 	20,
@@ -330,6 +340,7 @@ RELOCATION = add_spell {
 
 VENGEANCE = add_spell {
 	["name"] = 	"Vengeance",
+	["name2"] = 	"Veng",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	30,
@@ -354,6 +365,7 @@ VENGEANCE = add_spell {
 }
 EMPOWERMENT = add_spell {
 	["name"] = 	"Empowerment",
+	["name2"] = 	"Empow",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -392,6 +404,7 @@ EMPOWERMENT = add_spell {
 }
 INTENSIFY = add_spell {
 	["name"] = 	"The Silent Force",
+	["name2"] = 	"TSF",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	45,
@@ -434,6 +447,7 @@ INTENSIFY = add_spell {
 
 POWERCLOUD = add_spell {
 	["name"] = 	"Sphere of Destruction",
+	["name2"] = 	"Sphere",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	50,
@@ -462,6 +476,7 @@ POWERCLOUD = add_spell {
 
 GATEWAY = add_spell {
 	["name"] = 	"Gateway",
+	["name2"] = 	"Gate",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	40,

@@ -11,6 +11,7 @@ function get_frostbolt_dam(Ind, limit_lev)
 end
 FROSTBOLT_I = add_spell {
 	["name"] = 	"Frost Bolt I",
+	["name2"] = 	"FrBolt I",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	8,
 	["mana"] = 	2,
@@ -31,6 +32,7 @@ FROSTBOLT_I = add_spell {
 }
 FROSTBOLT_II = add_spell {
 	["name"] = 	"Frost Bolt II",
+	["name2"] = 	"FrBolt II",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	22,
 	["mana"] = 	5,
@@ -51,6 +53,7 @@ FROSTBOLT_II = add_spell {
 }
 FROSTBOLT_III = add_spell {
 	["name"] = 	"Frost Bolt III",
+	["name2"] = 	"FrBolt III",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	40,
 	["mana"] = 	10,
@@ -81,6 +84,7 @@ function get_waterbolt_dam(Ind, limit_lev)
 end
 WATERBOLT_I = add_spell {
 	["name"] = 	"Water Bolt I",
+	["name2"] = 	"WBolt I",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	14,
 	["mana"] = 	4,
@@ -101,6 +105,7 @@ WATERBOLT_I = add_spell {
 }
 WATERBOLT_II = add_spell {
 	["name"] = 	"Water Bolt II",
+	["name2"] = 	"WBolt II",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	24,
 	["mana"] = 	8,
@@ -121,6 +126,7 @@ WATERBOLT_II = add_spell {
 }
 WATERBOLT_III = add_spell {
 	["name"] = 	"Water Bolt III",
+	["name2"] = 	"WBolt III",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	40,
 	["mana"] = 	17,
@@ -142,6 +148,7 @@ WATERBOLT_III = add_spell {
 
 TIDALWAVE_I = add_spell {
 	["name"] = 	"Tidal Wave I",
+	["name2"] = 	"Wave I",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	16,
 	["mana"] = 	20,
@@ -160,6 +167,7 @@ TIDALWAVE_I = add_spell {
 }
 TIDALWAVE_II = add_spell {
 	["name"] = 	"Tidal Wave II",
+	["name2"] = 	"Wave II",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	36,
 	["mana"] = 	50,
@@ -179,6 +187,7 @@ TIDALWAVE_II = add_spell {
 
 ICESTORM_I = add_spell {
 	["name"] = 	"Frost Barrier I",
+	["name2"] = 	"Barrier I",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	22,
 	["mana"] = 	30,
@@ -194,6 +203,7 @@ ICESTORM_I = add_spell {
 }
 ICESTORM_II = add_spell {
 	["name"] = 	"Frost Barrier II",
+	["name2"] = 	"Barrier II",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	37,
 	["mana"] = 	60,
@@ -210,6 +220,7 @@ ICESTORM_II = add_spell {
 
 ENTPOTION = add_spell {
 	["name"] = 	"Ent's Potion",
+	["name2"] = 	"Potion",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	6,
 	["mana"] = 	10,
@@ -248,6 +259,7 @@ ENTPOTION = add_spell {
 
 VAPOR_I = add_spell {
 	["name"] = 	"Vapor I",
+	["name2"] = 	"Vapor I",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	2,
 	["mana"] = 	2,
@@ -263,6 +275,7 @@ VAPOR_I = add_spell {
 }
 VAPOR_II = add_spell {
 	["name"] = 	"Vapor II",
+	["name2"] = 	"Vapor II",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	20,
 	["mana"] = 	5,
@@ -278,6 +291,7 @@ VAPOR_II = add_spell {
 }
 VAPOR_III = add_spell {
 	["name"] = 	"Vapor III",
+	["name2"] = 	"Vapor III",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	40,
 	["mana"] = 	12,
@@ -294,6 +308,7 @@ VAPOR_III = add_spell {
 
 FROSTBALL_I = add_spell {
 	["name"] = 	"Frost Ball I",
+	["name2"] = 	"FrBall I",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	22,
 	["mana"] = 	9,
@@ -311,6 +326,7 @@ FROSTBALL_I = add_spell {
 }
 FROSTBALL_II = add_spell {
 	["name"] = 	"Frost Ball II",
+	["name2"] = 	"FrBall II",
 	["school"] = 	{SCHOOL_WATER},
 	["level"] = 	40,
 	["mana"] = 	23,

@@ -2,6 +2,7 @@
 
 RECHARGE_I = add_spell {
 	["name"] = 	"Recharge I",
+	["name2"] = 	"Rech I",
 	["school"] = 	{SCHOOL_META},
 	["level"] = 	5,
 	["mana"] = 	10,
@@ -18,6 +19,7 @@ RECHARGE_I = add_spell {
 }
 RECHARGE_II = add_spell {
 	["name"] = 	"Recharge II",
+	["name2"] = 	"Rech II",
 	["school"] = 	{SCHOOL_META},
 	["level"] = 	25,
 	["mana"] = 	30,
@@ -34,6 +36,7 @@ RECHARGE_II = add_spell {
 }
 RECHARGE_III = add_spell {
 	["name"] = 	"Recharge III",
+	["name2"] = 	"Rech III",
 	["school"] = 	{SCHOOL_META},
 	["level"] = 	40,
 	["mana"] = 	100,
@@ -51,6 +54,7 @@ RECHARGE_III = add_spell {
 
 PROJECT_SPELLS = add_spell {
 	["name"] = 	"Project Spells",
+	["name2"] = 	"ProjS",
 	["school"] = 	{SCHOOL_META},
 	["level"] = 	10,
 	["mana"] = 	0,
@@ -78,6 +82,7 @@ PROJECT_SPELLS = add_spell {
 
 DISPERSEMAGIC = add_spell {
 	["name"] = 	"Disperse Magic",
+	["name"] = 	"DispMag",
 	["school"] = 	{SCHOOL_META},
 	["level"] = 	15,
 	["mana"] = 	30,
@@ -113,6 +118,7 @@ DISPERSEMAGIC = add_spell {
 
 DELCURSES_I = add_spell {
 	["name"] = 	"Remove Curses I",
+	["name2"] = 	"RCurs I",
 	["school"] = 	SCHOOL_META,
 	["level"] = 	15,
 	["mana"] = 	20,
@@ -129,6 +135,7 @@ DELCURSES_I = add_spell {
 }
 DELCURSES_II = add_spell {
 	["name"] = 	"Remove Curses II",
+	["name2"] = 	"RCurs II",
 	["school"] = 	SCHOOL_META,
 	["level"] = 	40,
 	["mana"] = 	50,

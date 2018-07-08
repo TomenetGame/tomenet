@@ -2,6 +2,7 @@
 
 HBLESSING_I = add_spell {
 	["name"] = 	"Blessing I",
+	["name2"] = 	"Bless I",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -30,6 +31,7 @@ HBLESSING_I = add_spell {
 __lua_HBLESSING = HBLESSING_I
 HBLESSING_II = add_spell {
 	["name"] = 	"Blessing II",
+	["name2"] = 	"Bless II",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -57,6 +59,7 @@ HBLESSING_II = add_spell {
 }
 HBLESSING_III = add_spell {
 	["name"] = 	"Blessing III",
+	["name2"] = 	"Bless III",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -85,6 +88,7 @@ HBLESSING_III = add_spell {
 
 HRESISTS_I = add_spell {
 	["name"] = 	"Holy Resistance I",
+	["name2"] = 	"HRes I",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -112,6 +116,7 @@ HRESISTS_I = add_spell {
 }
 HRESISTS_II = add_spell {
 	["name"] = 	"Holy Resistance II",
+	["name2"] = 	"HRes II",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -143,6 +148,7 @@ HRESISTS_II = add_spell {
 }
 HRESISTS_III = add_spell {
 	["name"] = 	"Holy Resistance III",
+	["name2"] = 	"HRes III",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -177,6 +183,7 @@ HRESISTS_III = add_spell {
 
 HPROTEVIL = add_spell {
 	["name"] = 	"Protection from Evil",
+	["name2"] = 	"PfE",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -196,6 +203,7 @@ HPROTEVIL = add_spell {
 
 DISPELMAGIC = add_spell {
 	["name"] = 	"Dispel Magic",
+	["name2"] = 	"DispMag",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["level"] = 	18,
 	["mana"] = 	30,
@@ -231,6 +239,7 @@ DISPELMAGIC = add_spell {
 
 HRUNEPROT = add_spell {
 	["name"] = 	"Glyph of Warding",
+	["name2"] = 	"Glyph",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -253,6 +262,7 @@ HRUNEPROT = add_spell {
 
 HMARTYR = add_spell {
 	["name"] = 	"Martyrdom",
+	["name2"] = 	"Martyr",
 	["school"] = 	{SCHOOL_HDEFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,

@@ -3,6 +3,7 @@
 --[[
 STONESKIN = add_spell {
 	["name"] = 	"Stone Skin",
+	["name2"] = 	"SSkin",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	1,
 	["mana"] = 	1,
@@ -32,6 +33,7 @@ STONESKIN = add_spell {
 ]]
 DIG = add_spell {
 	["name"] = 	"Dig",
+	["name2"] = 	"Dig",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	12,
 	["mana"] = 	14,
@@ -58,6 +60,7 @@ function get_acidbolt_dam(Ind, limit_lev)
 end
 ACIDBOLT_I = add_spell {
 	["name"] = 	"Acid Bolt I",
+	["name2"] = 	"ABolt I",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	12,
 	["mana"] = 	3,
@@ -78,6 +81,7 @@ ACIDBOLT_I = add_spell {
 }
 ACIDBOLT_II = add_spell {
 	["name"] = 	"Acid Bolt II",
+	["name2"] = 	"ABolt II",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	24,
 	["mana"] = 	7,
@@ -98,6 +102,7 @@ ACIDBOLT_II = add_spell {
 }
 ACIDBOLT_III = add_spell {
 	["name"] = 	"Acid Bolt III",
+	["name2"] = 	"ABolt III",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	40,
 	["mana"] = 	13,
@@ -119,6 +124,7 @@ ACIDBOLT_III = add_spell {
 
 STONEPRISON = add_spell {
 	["name"] = 	"Stone Prison",
+	["name2"] = 	"Prison",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	25,
 	["mana"] = 	50,
@@ -136,6 +142,7 @@ STONEPRISON = add_spell {
 
 STRIKE_I = add_spell {
 	["name"] = 	"Strike I",
+	["name2"] = 	"Strike I",
 	["school"] = 	{SCHOOL_EARTH},
 	["level"] = 	25,
 	["mana"] = 	30,
@@ -152,6 +159,7 @@ STRIKE_I = add_spell {
 }
 STRIKE_II = add_spell {
 	["name"] = 	"Strike II",
+	["name2"] = 	"Strike II",
 	["school"] = 	{SCHOOL_EARTH},
 	["level"] = 	37,
 	["mana"] = 	50,
@@ -169,6 +177,7 @@ STRIKE_II = add_spell {
 
 SHAKE = add_spell {
 	["name"] = 	"Shake",
+	["name2"] = 	"Shake",
 	["school"] = 	{SCHOOL_EARTH},
 	["level"] = 	35,
 	["mana"] = 	60,

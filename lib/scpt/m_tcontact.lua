@@ -4,6 +4,7 @@
 --[[
 MTAUNT = add_spell {
 	["name"] = 	"Cause Agression",
+	["name2"] = 	"Aggr",
 	["school"] = 	{SCHOOL_TCONTACT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -22,6 +23,7 @@ MTAUNT = add_spell {
 
 MDISTRACT = add_spell {
 	["name"] = 	"Divert Attention",
+	["name2"] = 	"Divert",
 	["school"] = 	{SCHOOL_TCONTACT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -45,6 +47,7 @@ MDISTRACT = add_spell {
 
 MSELFKNOW = add_spell {
 	["name"] = 	"Self-Reflection",
+	["name2"] = 	"Reflect",
 	["school"] = 	{SCHOOL_TCONTACT},
 	["am"] = 	33,
 	["spell_power"] = 0,
@@ -64,6 +67,7 @@ MSELFKNOW = add_spell {
 
 MBOOST = add_spell {
 	["name"] = 	"Willpower",
+	["name2"] = 	"Will",
 	["school"] = 	{SCHOOL_TCONTACT},
 	["am"] = 	33,
 	["spell_power"] = 0,
@@ -92,6 +96,7 @@ MBOOST = add_spell {
 
 MHASTE = add_spell {
 	["name"] = 	"Accelerate Nerves",
+	["name2"] = 	"Accel",
 	["school"] = 	{SCHOOL_TCONTACT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -124,6 +129,7 @@ MHASTE = add_spell {
 
 MCURE = add_spell {
 	["name"] = 	"Clear Mind",
+	["name2"] = 	"Clear",
 	["school"] = 	{SCHOOL_TCONTACT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -168,6 +174,7 @@ MCURE = add_spell {
 
 MSANITY = add_spell {
 	["name"] = 	"Stabilize Thoughts",
+	["name2"] = 	"Stabilize",
 	["school"] = 	{SCHOOL_TCONTACT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -201,6 +208,7 @@ MSANITY = add_spell {
 
 MSENSEMON = add_spell {
 	["name"] = 	"Telepathy",
+	["name2"] = 	"Telep",
 	["school"] = 	{SCHOOL_TCONTACT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -231,6 +239,7 @@ MSENSEMON = add_spell {
 
 MIDENTIFY = add_spell {
 	["name"] = 	"Recognition",
+	["name2"] = 	"Recog",
 	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_MINTRUSION},
 	["am"] = 	33,
 	["spell_power"] = 0,
@@ -250,6 +259,7 @@ MIDENTIFY = add_spell {
 if (def_hack("TEMP1", nil) == 0) then
 MTELEKINESIS = add_spell {
 	["name"] = 	"Telekinesis II",
+	["name2"] = 	"TK II",
 	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -291,6 +301,7 @@ MTELEKINESIS = add_spell {
 else
 MTELEKINESIS = add_spell {
 	["name"] = 	"Telekinesis II",
+	["name2"] = 	"TK II",
 	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,

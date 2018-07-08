@@ -4,6 +4,7 @@
 
 TERROR_I = add_spell {
 	["name"] = 	"Terror I",
+	["name2"] = 	"Terror I",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -23,6 +24,7 @@ TERROR_I = add_spell {
 }
 TERROR_II = add_spell {
 	["name"] = 	"Terror II",
+	["name2"] = 	"Terror II",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -42,6 +44,7 @@ TERROR_II = add_spell {
 
 ODELFEAR2 = add_spell {
 	["name"] = 	"Ignore Fear",
+	["name2"] = 	"IgnFear",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["am"] = 	0,
@@ -71,6 +74,7 @@ function get_firebolt2_dam(Ind, limit_lev)
 end
 OFIREBOLT_I = add_spell {
 	["name"] = 	"Fire Bolt I",
+	["name2"] = 	"FBolt I",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["level"] = 	10,
@@ -92,6 +96,7 @@ OFIREBOLT_I = add_spell {
 }
 OFIREBOLT_II = add_spell {
 	["name"] = 	"Fire Bolt II",
+	["name2"] = 	"FBolt II",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["level"] = 	25,
@@ -113,6 +118,7 @@ OFIREBOLT_II = add_spell {
 }
 OFIREBOLT_III = add_spell {
 	["name"] = 	"Fire Bolt III",
+	["name2"] = 	"FBolt III",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -135,6 +141,7 @@ OFIREBOLT_III = add_spell {
 
 FIRERES = add_spell {
 	["name"] = 	"Wrathflame",
+	["name2"] = 	"Wrath",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	12,
@@ -166,6 +173,7 @@ FIRERES = add_spell {
 
 OEXTRASTATS = add_spell {
 	["name"] = 	"Demonic Strength",
+	["name2"] = 	"Strength",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	23,
@@ -192,6 +200,7 @@ function get_chaosbolt2_dam(Ind)
 end
 CHAOSBOLT2 = add_spell {
 	["name"] = 	"Chaos Bolt",
+	["name2"] = 	"CBolt",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	29,
@@ -216,6 +225,7 @@ CHAOSBOLT2 = add_spell {
 
 ORESTORING = add_spell {
 	["name"] = 	"Wicked Oath",
+	["name2"] = 	"Oath",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -241,6 +251,7 @@ ORESTORING = add_spell {
 
 --[[SAPLIFE = add_spell {
 	["name"] = 	"Sap Life",
+	["name2"] = 	"Sap",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -263,6 +274,7 @@ ORESTORING = add_spell {
 
 LEVITATION = add_spell {
 	["name"] = 	"Levitation",
+	["name2"] = 	"Lev",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	39,
@@ -282,6 +294,7 @@ LEVITATION = add_spell {
 
 FIRESTORM = add_spell {
 	["name"] = 	"Robes of Havoc",
+	["name2"] = 	"RoH",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	44,
@@ -322,6 +335,7 @@ HELLFIRE_III = add_spell {
 --martyr's twin
 BLOODSACRIFICE = add_spell {
 	["name"] = 	"Blood Sacrifice",
+	["name2"] = 	"BSac",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["am"] = 	75,
 	["spell_power"] = 0,
@@ -352,6 +366,7 @@ BLOODSACRIFICE = add_spell {
 
 FLAMEWAVE_I = add_spell {
 	["name"] = 	"Flame Wave I",
+	["name2"] = 	"FWave I",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -368,6 +383,7 @@ FLAMEWAVE_I = add_spell {
 }
 FLAMEWAVE_II = add_spell {
 	["name"] = 	"Flame Wave II",
+	["name2"] = 	"FWave II",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	35,
@@ -385,6 +401,7 @@ FLAMEWAVE_II = add_spell {
 
 RAGE_I = add_spell {
 	["name"] = 	"Boundless Rage I",
+	["name2"] = 	"Rage I",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["am"] = 	50,
@@ -407,6 +424,7 @@ RAGE_I = add_spell {
 
 RAGE_II = add_spell {
 	["name"] = 	"Boundless Rage II",
+	["name2"] = 	"Rage II",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["am"] = 	50,

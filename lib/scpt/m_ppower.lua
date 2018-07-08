@@ -24,6 +24,7 @@ end
 
 MBASH = add_spell {
 	["name"] = 	"Psychic Hammer",
+	["name2"] = 	"PsyHammer",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -43,6 +44,7 @@ MBASH = add_spell {
 
 MBLINK = add_spell {
 	["name"] = 	"Autokinesis I",
+	["name2"] = 	"AK I",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -62,6 +64,7 @@ MBLINK = add_spell {
 
 MTELEPORT = add_spell {
 	["name"] = 	"Autokinesis II",
+	["name2"] = 	"AK II",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -81,6 +84,7 @@ MTELEPORT = add_spell {
 
 MTELETOWARDS = add_spell {
 	["name"] = 	"Autokinesis III",
+	["name2"] = 	"AK III",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -99,6 +103,7 @@ MTELETOWARDS = add_spell {
 
 MTELEAWAY = add_spell {
 	["name"] = 	"Psychic Warp",
+	["name2"] = 	"PsyWarp",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -118,6 +123,7 @@ MTELEAWAY = add_spell {
 
 MDISARM = add_spell {
 	["name"] = 	"Psychokinesis",
+	["name2"] = 	"Psychok",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -165,6 +171,7 @@ MPSISTORM = add_spell {
 
 MFEEDBACK = add_spell {
 	["name"] = 	"Feedback",
+	["name2"] = 	"Fback",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -190,6 +197,7 @@ MFEEDBACK = add_spell {
 
 MPYROKINESIS_I = add_spell {
 	["name"] = 	"Pyrokinesis I",
+	["name2"] = 	"Pyro I",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -212,6 +220,7 @@ MPYROKINESIS_I = add_spell {
 }
 MPYROKINESIS_II = add_spell {
 	["name"] = 	"Pyrokinesis II",
+	["name2"] = 	"Pyro II",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -235,6 +244,7 @@ MPYROKINESIS_II = add_spell {
 
 MCRYOKINESIS_I = add_spell {
 	["name"] = 	"Cryokinesis I",
+	["name2"] = 	"Cryo I",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -258,6 +268,7 @@ MCRYOKINESIS_I = add_spell {
 }
 MCRYOKINESIS_II = add_spell {
 	["name"] = 	"Cryokinesis II",
+	["name2"] = 	"Cryo II",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -282,6 +293,7 @@ MCRYOKINESIS_II = add_spell {
 
 MSHIELD = add_spell {
 	["name"] = 	"Kinetic Shield",
+	["name2"] = 	"KShield",
 	["school"] = 	{SCHOOL_PPOWER},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -306,6 +318,7 @@ MSHIELD = add_spell {
 if (def_hack("TEST_SERVER", nil)) then
 MFUSION = add_spell {
 	["name"] = 	"Mental Fusion",
+	["name2"] = 	"MFusion",
 --	["name"] = 	"Corporeal Fusion",
 --	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER, SCHOOL_MINTRUSION},
 	["school"] = 	{SCHOOL_TCONTACT, SCHOOL_PPOWER},

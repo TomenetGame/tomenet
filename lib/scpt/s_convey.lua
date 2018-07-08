@@ -2,6 +2,7 @@
 
 BLINK = add_spell {
 	["name"] = 	"Phase Door",
+	["name2"] = 	"Phase",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	2,
 	["mana"] = 	3,
@@ -19,6 +20,7 @@ BLINK = add_spell {
 
 DISARM = add_spell {
 	["name"] = 	"Disarm",
+	["name2"] = 	"Disarm",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	5,
 	["mana"] = 	4,
@@ -35,6 +37,7 @@ DISARM = add_spell {
 
 TELEPORT = add_spell {
 	["name"] = 	"Teleportation",
+	["name2"] = 	"Tele",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	10,
 	["mana"] = 	12,
@@ -52,6 +55,7 @@ TELEPORT = add_spell {
 
 TELEAWAY_I = add_spell {
 	["name"] = 	"Teleport Away I",
+	["name2"] = 	"TAway I",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	23,
 	["mana"] = 	15,
@@ -68,6 +72,7 @@ TELEAWAY_I = add_spell {
 }
 TELEAWAY_II = add_spell {
 	["name"] = 	"Teleport Away II",
+	["name2"] = 	"TAway II",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	43,
 	["mana"] = 	40,
@@ -85,6 +90,7 @@ TELEAWAY_II = add_spell {
 
 RECALL = add_spell {
 	["name"] = 	"Recall",
+	["name2"] = 	"Rec",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	30,
 	["mana"] = 	25,
@@ -108,6 +114,7 @@ RECALL = add_spell {
 
 PROBABILITY_TRAVEL = add_spell {
 	["name"] = 	"Probability Travel",
+	["name2"] = 	"Prob",
 	["school"] = 	{SCHOOL_CONVEYANCE},
 	["level"] = 	35,
 	["mana"] = 	50,

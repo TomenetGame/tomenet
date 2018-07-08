@@ -13,6 +13,7 @@ end
 
 HEALINGCLOUD_I = add_spell {
 	["name"] = 	"Forest's Embrace I",
+	["name2"] = 	"Embrace I",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	18,
@@ -32,6 +33,7 @@ HEALINGCLOUD_I = add_spell {
 }
 HEALINGCLOUD_II = add_spell {
 	["name"] = 	"Forest's Embrace II",
+	["name2"] = 	"Embrace II",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	29,
@@ -51,6 +53,7 @@ HEALINGCLOUD_II = add_spell {
 }
 HEALINGCLOUD_III = add_spell {
 	["name"] = 	"Forest's Embrace III",
+	["name2"] = 	"Embrace III",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -73,6 +76,7 @@ HEALINGCLOUD_III = add_spell {
 -- This one adds {1 .. 10} to player's speed, and affects all in radius 2
 QUICKFEET = add_spell {
 	["name"] = 	"Quickfeet",
+	["name2"] = 	"Quick",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	13,
@@ -94,6 +98,7 @@ QUICKFEET = add_spell {
 -- A curing spell
 HERBALTEA = add_spell {
 	["name"] = 	"Herbal Tea",
+	["name2"] = 	"Tea",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	3,
@@ -150,6 +155,7 @@ HERBALTEA = add_spell {
 -- +stats booster!
 EXTRASTATS_I = add_spell {
 	["name"] = 	"Extra Growth I",
+	["name2"] = 	"Growth I",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	15,
@@ -173,6 +179,7 @@ EXTRASTATS_I = add_spell {
 }
 EXTRASTATS_II = add_spell {
 	["name"] = 	"Extra Growth II",
+	["name2"] = 	"Growth II",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	25,
@@ -199,6 +206,7 @@ EXTRASTATS_II = add_spell {
 -- but also decreases his/her speed!
 FOCUS = add_spell {
 	["name"] = 	"Focus",
+	["name2"] = 	"Focus",
 	["school"] = 	{SCHOOL_DRUID_PHYSICAL},
 	["spell_power"] = 0,
 	["level"] = 	1,

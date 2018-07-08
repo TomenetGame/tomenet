@@ -3,6 +3,7 @@
 --[[
 OCURSE = add_spell {
 	["name"] = 	"Curse",
+	["name2"] = 	"Curse",
 	["school"] = 	{SCHOOL_},
 	["am"] = 	75,
 	["spell_power"] = 0,
@@ -34,6 +35,7 @@ OCURSE = add_spell {
 
 OCURSEDD_I = add_spell {
 	["name"] = 	"Cause Wounds I",
+	["name2"] = 	"Cause I",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -55,6 +57,7 @@ OCURSEDD_I = add_spell {
 }
 OCURSEDD_II = add_spell {
 	["name"] = 	"Cause Wounds II",
+	["name2"] = 	"Cause II",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -76,6 +79,7 @@ OCURSEDD_II = add_spell {
 }
 OCURSEDD_III = add_spell {
 	["name"] = 	"Cause Wounds III",
+	["name2"] = 	"Cause III",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -98,6 +102,7 @@ OCURSEDD_III = add_spell {
 
 ODELFEAR = add_spell {
 	["name"] = 	"Tame Fear",
+	["name2"] = 	"TFear",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	50,
@@ -122,6 +127,7 @@ ODELFEAR = add_spell {
 
 STARLIGHT_I = add_spell {
 	["name"] = 	"Starlight I",
+	["name2"] = 	"StarL I",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["level"] = 	2,
@@ -150,6 +156,7 @@ STARLIGHT_I = add_spell {
 }
 STARLIGHT_II = add_spell {
 	["name"] = 	"Starlight II",
+	["name2"] = 	"StarL II",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["level"] = 	22,
@@ -169,6 +176,7 @@ STARLIGHT_II = add_spell {
 
 MEDITATION = add_spell {
 	["name"] = 	"Meditation",
+	["name2"] = 	"Medi",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -208,6 +216,7 @@ MEDITATION = add_spell {
 
 DETECTCREATURES = add_spell {
 	["name"] = 	"Ethereal Eye", --this name for if it really detects ALL monsters
+	["name2"] = 	"Eye",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["level"] = 	28,
@@ -236,6 +245,7 @@ function get_litebeam_dam(Ind, limit_lev)
 end
 LITEBEAM_I = add_spell {
 	["name"] = 	"Spear of Light I",
+	["name2"] = 	"Spear I",
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	10,
@@ -258,6 +268,7 @@ LITEBEAM_I = add_spell {
 }
 LITEBEAM_II = add_spell {
 	["name"] = 	"Spear of Light II",
+	["name2"] = 	"Spear II",
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	25,
@@ -280,6 +291,7 @@ LITEBEAM_II = add_spell {
 }
 LITEBEAM_III = add_spell {
 	["name"] = 	"Spear of Light III",
+	["name2"] = 	"Spear III",
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -312,6 +324,7 @@ function get_olightningbolt_dam(Ind, limit_lev)
 end
 OLIGHTNINGBOLT_I = add_spell {
 	["name"] = 	"Lightning I",
+	["name2"] = 	"Ltng I",
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	10,
@@ -333,6 +346,7 @@ OLIGHTNINGBOLT_I = add_spell {
 }
 OLIGHTNINGBOLT_II = add_spell {
 	["name"] = 	"Lightning II",
+	["name2"] = 	"Ltng II",
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	25,
@@ -354,6 +368,7 @@ OLIGHTNINGBOLT_II = add_spell {
 }
 OLIGHTNINGBOLT_III = add_spell {
 	["name"] = 	"Lightning III",
+	["name2"] = 	"Ltng III",
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -376,6 +391,7 @@ OLIGHTNINGBOLT_III = add_spell {
 
 ODELCURSES_I = add_spell {
 	["name"] = 	"Lift Curses I",
+	["name2"] = 	"LCurs I",
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	15,
@@ -395,6 +411,7 @@ ODELCURSES_I = add_spell {
 }
 ODELCURSES_II = add_spell {
 	["name"] = 	"Lift Curses II",
+	["name2"] = 	"LCurs II",
 	["school"] = 	SCHOOL_OSPIRIT,
 	["spell_power"] = 0,
 	["level"] = 	35,
@@ -415,6 +432,7 @@ ODELCURSES_II = add_spell {
 
 TRANCE = add_spell {
 	["name"] = 	"Trance",
+	["name2"] = 	"Trance",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	33,
 	["spell_power"] = 0,
@@ -439,6 +457,7 @@ TRANCE = add_spell {
 --pet version
 --[[POSSESS = add_spell {
 	["name"] = 	"Possess",
+	["name2"] = 	"Poss",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -465,6 +484,7 @@ TRANCE = add_spell {
 --placeholder version
 POSSESS = add_spell {
 	["name"] = 	"Possess",
+	["name2"] = 	"Poss",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -498,6 +518,7 @@ POSSESS = add_spell {
 
 STOPPOSSESS = add_spell {
 	["name"] = 	"Stop Possess",
+	["name2"] = 	"SPoss",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	0,
 	["spell_power"] = 0,
@@ -518,6 +539,7 @@ STOPPOSSESS = add_spell {
 
 GUARDIANSPIRIT_I = add_spell {
 	["name"] = 	"Guardian Spirit I",
+	["name2"] = 	"Guard I",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -542,6 +564,7 @@ GUARDIANSPIRIT_I = add_spell {
 }
 GUARDIANSPIRIT_II = add_spell {
 	["name"] = 	"Guardian Spirit II",
+	["name2"] = 	"Guard II",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -572,6 +595,7 @@ GUARDIANSPIRIT_II = add_spell {
 
 RITES_I = add_spell {
 	["name"] = 	"Purification Rites I",
+	["name2"] = 	"Rites I",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -590,6 +614,7 @@ RITES_I = add_spell {
 }
 RITES_II = add_spell {
 	["name"] = 	"Purification Rites II",
+	["name2"] = 	"Rites II",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["spell_power"] = 0,
 	["am"] = 	75,

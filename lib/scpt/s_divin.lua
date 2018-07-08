@@ -3,6 +3,7 @@
 
 STARIDENTIFY = add_spell {
 	["name"] = 	"Greater Identify",
+	["name2"] = 	"GID",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	35,
 	["mana"] = 	30,
@@ -28,6 +29,7 @@ STARIDENTIFY = add_spell {
 
 IDENTIFY_I = add_spell {
 	["name"] = 	"Identify I",
+	["name2"] = 	"ID I",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	8,
 	["mana"] = 	10,
@@ -44,6 +46,7 @@ IDENTIFY_I = add_spell {
 }
 IDENTIFY_II = add_spell {
 	["name"] = 	"Identify II",
+	["name2"] = 	"ID II",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	25,
 	["mana"] = 	30,
@@ -60,6 +63,7 @@ IDENTIFY_II = add_spell {
 }
 IDENTIFY_III = add_spell {
 	["name"] = 	"Identify III",
+	["name2"] = 	"ID III",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	35,
 	["mana"] = 	50,
@@ -81,6 +85,7 @@ IDENTIFY_III = add_spell {
 
 VISION_I = add_spell {
 	["name"] = 	"Vision I",
+	["name2"] = 	"Vis I",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	18,
 	["mana"] = 	7,
@@ -101,6 +106,7 @@ VISION_I = add_spell {
 }
 VISION_II = add_spell {
 	["name"] = 	"Vision II",
+	["name2"] = 	"Vis II",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	40,
 	["mana"] = 	55,
@@ -122,6 +128,7 @@ VISION_II = add_spell {
 
 SENSEHIDDEN_I = add_spell {
 	["name"] = 	"Sense Hidden I",
+	["name2"] = 	"SHidden I",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	5,
 	["mana"] = 	2,
@@ -142,6 +149,7 @@ SENSEHIDDEN_I = add_spell {
 }
 SENSEHIDDEN_II = add_spell {
 	["name"] = 	"Sense Hidden II",
+	["name2"] = 	"SHidden II",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	20,
 	["mana"] = 	10,
@@ -167,6 +175,7 @@ SENSEHIDDEN_II = add_spell {
 
 REVEALWAYS = add_spell {
 	["name"] = 	"Reveal Ways",
+	["name2"] = 	"Reveal",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	9,
 	["mana"] = 	3,
@@ -188,6 +197,7 @@ REVEALWAYS = add_spell {
 
 DETECTMONSTERS = add_spell {
 	["name"] = 	"Detect Monsters",
+	["name2"] = 	"DetMon",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	3,
 	["mana"] = 	3,

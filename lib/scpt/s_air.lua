@@ -2,6 +2,7 @@
 
 NOXIOUSCLOUD_I = add_spell {
 	["name"] = 	"Noxious Cloud I",
+	["name2"] = 	"Nox I",
 	["school"] = 	{SCHOOL_AIR},
 	["level"] = 	3,
 	["mana"] = 	5,
@@ -21,6 +22,7 @@ NOXIOUSCLOUD_I = add_spell {
 }
 NOXIOUSCLOUD_II = add_spell {
 	["name"] = 	"Noxious Cloud II",
+	["name2"] = 	"Nox II",
 	["school"] = 	{SCHOOL_AIR},
 	["level"] = 	18,
 	["mana"] = 	20,
@@ -40,6 +42,7 @@ NOXIOUSCLOUD_II = add_spell {
 }
 NOXIOUSCLOUD_III = add_spell {
 	["name"] = 	"Noxious Cloud III",
+	["name2"] = 	"Nox III",
 	["school"] = 	{SCHOOL_AIR},
 	["level"] = 	33,
 	["mana"] = 	40,
@@ -70,6 +73,7 @@ end
 
 LIGHTNINGBOLT_I = add_spell {
 	["name"] = 	"Lightning Bolt I",
+	["name2"] = 	"LBolt I",
 	["school"] = 	SCHOOL_AIR,
 	["level"] = 	6,
 	["mana"] = 	2,
@@ -91,6 +95,7 @@ LIGHTNINGBOLT_I = add_spell {
 }
 LIGHTNINGBOLT_II = add_spell {
 	["name"] = 	"Lightning Bolt II",
+	["name2"] = 	"LBolt II",
 	["school"] = 	SCHOOL_AIR,
 	["level"] = 	21,
 	["mana"] = 	6,
@@ -112,6 +117,7 @@ LIGHTNINGBOLT_II = add_spell {
 }
 LIGHTNINGBOLT_III = add_spell {
 	["name"] = 	"Lightning Bolt III",
+	["name2"] = 	"LBolt III",
 	["school"] = 	SCHOOL_AIR,
 	["level"] = 	40,
 	["mana"] = 	11,
@@ -134,6 +140,7 @@ LIGHTNINGBOLT_III = add_spell {
 
 AIRWINGS = add_spell {
 	["name"] = 	"Wings of Winds",
+	["name2"] = 	"WoW",
 	["school"] = 	{SCHOOL_AIR, SCHOOL_CONVEYANCE},
 	["level"] = 	16,
 	["mana"] = 	30,
@@ -155,6 +162,7 @@ AIRWINGS = add_spell {
 
 INVISIBILITY = add_spell {
 	["name"] = 	"Invisibility",
+	["name2"] = 	"Inv",
 	["school"] = 	{SCHOOL_AIR},
 	["level"] = 	30,
 	["mana"] = 	35,
@@ -174,6 +182,7 @@ INVISIBILITY = add_spell {
 
 POISONBLOOD = add_spell {
 	["name"] = 	"Poison Blood",
+	["name2"] = 	"PBlood",
 	--["school"] = 	{SCHOOL_AIR},
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	30,
@@ -197,6 +206,7 @@ POISONBLOOD = add_spell {
 
 THUNDERSTORM = add_spell {
 	["name"] = 	"Thunderstorm",
+	["name2"] = 	"Thunder",
 	["school"] = 	{SCHOOL_AIR, SCHOOL_NATURE},
 	["level"] = 	15,
 	["mana"] = 	10,

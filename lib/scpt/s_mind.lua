@@ -3,6 +3,7 @@
 --[[ Enable when we get pets
 CHARM = add_spell {
 	["name"] = 	"Charm",
+	["name2"] = 	"Charm",
 	["school"] = 	{SCHOOL_MIND},
 	["level"] = 	1,
 	["mana"] = 	1,
@@ -31,6 +32,7 @@ CHARM = add_spell {
 ]]
 CONFUSE_I = add_spell {
 	["name"] = 	"Confusion I",
+	["name2"] = 	"Conf I",
 	["school"] = 	{SCHOOL_MIND},
 	["level"] = 	5,
 	["mana"] = 	5,
@@ -48,6 +50,7 @@ CONFUSE_I = add_spell {
 }
 CONFUSE_II = add_spell {
 	["name"] = 	"Confusion II",
+	["name2"] = 	"Conf II",
 	["school"] = 	{SCHOOL_MIND},
 	["level"] = 	20,
 	["mana"] = 	15,
@@ -66,6 +69,7 @@ CONFUSE_II = add_spell {
 
 STUN_I = add_spell {
 	["name"] = 	"Stun I",
+	["name2"] = 	"Stun I",
 	["school"] = 	{SCHOOL_MIND},
 	["level"] = 	15,
 	["mana"] = 	20,
@@ -83,6 +87,7 @@ STUN_I = add_spell {
 }
 STUN_II = add_spell {
 	["name"] = 	"Stun II",
+	["name2"] = 	"Stun II",
 	["school"] = 	{SCHOOL_MIND},
 	["level"] = 	40,
 	["mana"] = 	60,
@@ -102,6 +107,7 @@ STUN_II = add_spell {
 if (def_hack("TEMP1", nil) == 0) then
 TELEKINESIS = add_spell {
 	["name"] = 	"Telekinesis I",
+	["name2"] = 	"TK I",
 	["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
 	["level"] = 	35,
 	["mana"] = 	25,
@@ -139,6 +145,7 @@ TELEKINESIS = add_spell {
 else
 TELEKINESIS = add_spell {
 	["name"] = 	"Telekinesis I",
+	["name2"] = 	"TK I",
 	["school"] = 	{SCHOOL_MIND, SCHOOL_CONVEYANCE},
 	["level"] = 	35,
 	["mana"] = 	25,
@@ -161,6 +168,7 @@ end
 
 SENSEMONSTERS = add_spell {
 	["name"] = 	"Sense Minds",
+	["name2"] = 	"Sense",
 	["school"] = 	{SCHOOL_MIND},
 	["level"] = 	30,
 	["mana"] = 	25,

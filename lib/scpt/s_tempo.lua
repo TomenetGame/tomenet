@@ -2,6 +2,7 @@
 
 MAGELOCK_I = add_spell {
 	["name"] = 	"Magelock I",
+	["name2"] = 	"MLock I",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	1,
 	["mana"] = 	1,
@@ -18,6 +19,7 @@ MAGELOCK_I = add_spell {
 }
 MAGELOCK_II = add_spell {
 	["name"] = 	"Magelock II",
+	["name2"] = 	"MLock II",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	41,
 	["mana"] = 	60,
@@ -38,6 +40,7 @@ MAGELOCK_II = add_spell {
 
 SLOWMONSTER_I = add_spell {
 	["name"] = 	"Slow Monster I",
+	["name2"] = 	"Slow I",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	10,
 	["mana"] = 	7,
@@ -54,6 +57,7 @@ SLOWMONSTER_I = add_spell {
 }
 SLOWMONSTER_II = add_spell {
 	["name"] = 	"Slow Monster II",
+	["name2"] = 	"Slow II",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	30,
 	["mana"] = 	15,
@@ -71,6 +75,7 @@ SLOWMONSTER_II = add_spell {
 
 ESSENSESPEED = add_spell {
 	["name"] = 	"Essence of Speed",
+	["name2"] = 	"EoSpd",
 	["school"] = 	{SCHOOL_TEMPORAL},
 	["level"] = 	15,
 	["mana"] = 	35,
@@ -109,6 +114,7 @@ ESSENSESPEED = add_spell {
 
 MASSWARP = add_spell {
 	["name"] = 	"Mass Stasis",
+	["name2"] = 	"MStasis",
 	["school"] = 	{SCHOOL_TEMPORAL, SCHOOL_CONVEYANCE},
 	["level"] = 	45,
 	["mana"] = 	50,

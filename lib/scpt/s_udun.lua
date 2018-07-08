@@ -7,6 +7,7 @@ end
 --[[
 DRAIN = add_spell {
 	["name"] = 	"Drain",
+	["name2"] = 	"Drain",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	1,
 	["mana"] = 	0,
@@ -59,6 +60,7 @@ DRAIN = add_spell {
 ]]
 GENOCIDE_I = add_spell {
 	["name"] = 	"Genocide",
+	["name2"] = 	"Geno",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	25,
 	["mana"] = 	50,
@@ -75,6 +77,7 @@ GENOCIDE_I = add_spell {
 }
 GENOCIDE_II = add_spell {
 	["name"] = 	"Obliteration",
+	["name2"] = 	"Oblit",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	40,
 	["mana"] = 	50,
@@ -92,6 +95,7 @@ GENOCIDE_II = add_spell {
 
 WRAITHFORM = add_spell {
 	["name"] = 	"Wraithform",
+	["name2"] = 	"Wraith",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	35,
 	["mana"] = 	40,
@@ -112,6 +116,7 @@ WRAITHFORM = add_spell {
 --[[
 FLAMEOFUDUN = add_spell {
 	["name"] = 	"Flame of Udun",
+	["name2"] = 	"FoUdun",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	35,
 	["mana"] = 	70,
@@ -129,6 +134,7 @@ FLAMEOFUDUN = add_spell {
 
 DISEBOLT = add_spell {
 	["name"] = 	"Disenchantment Ray",
+	["name2"] = 	"DisRay",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	40,
 	["mana"] = 	50,
@@ -153,6 +159,7 @@ DISEBOLT = add_spell {
 
 HELLFIRE_I = add_spell {
 	["name"] = 	"Hellfire I",
+	["name2"] = 	"HFire I",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	20,
 	["mana"] = 	15,
@@ -170,6 +177,7 @@ HELLFIRE_I = add_spell {
 }
 HELLFIRE_II = add_spell {
 	["name"] = 	"Hellfire II",
+	["name2"] = 	"HFire II",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	40,
 	["mana"] = 	40,
@@ -188,6 +196,7 @@ HELLFIRE_II = add_spell {
 
 STOPWRAITH = add_spell {
 	["name"] = 	"Stop Wraithform",
+	["name2"] = 	"SWraith",
 	["school"] = 	{SCHOOL_UDUN},
 	["level"] = 	20,
 	["mana"] = 	0,

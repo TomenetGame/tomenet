@@ -2,6 +2,7 @@
 
 HCURSE_I = add_spell {
 	["name"] = 	"Curse I",
+	["name2"] = 	"Curse I",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -21,6 +22,7 @@ HCURSE_I = add_spell {
 }
 HCURSE_II = add_spell {
 	["name"] = 	"Curse II",
+	["name2"] = 	"Curse II",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -43,6 +45,7 @@ HCURSE_II = add_spell {
 }
 HCURSE_III = add_spell {
 	["name"] = 	"Curse III",
+	["name2"] = 	"Curse III",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -66,6 +69,7 @@ HCURSE_III = add_spell {
 
 HGLOBELIGHT_I = add_spell {
 	["name"] = 	"Holy Light I",
+	["name2"] = 	"HLight I",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -96,6 +100,7 @@ HGLOBELIGHT_I = add_spell {
 }
 HGLOBELIGHT_II = add_spell {
 	["name"] = 	"Holy Light II",
+	["name2"] = 	"HLight II",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -118,6 +123,7 @@ HGLOBELIGHT_II = add_spell {
 if (def_hack("TEST_SERVER", nil)) then
 HCURSEDD = add_spell {
 	["name"] = 	"Cause wounds",
+	["name2"] = 	"Cause",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -139,6 +145,7 @@ end
 
 HORBDRAIN_I = add_spell {
 	["name"] = 	"Orb of Draining I",
+	["name2"] = 	"OoD I",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -161,6 +168,7 @@ HORBDRAIN_I = add_spell {
 }
 HORBDRAIN_II = add_spell {
 	["name"] = 	"Orb of Draining II",
+	["name2"] = 	"OoD II",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -186,6 +194,7 @@ HORBDRAIN_II = add_spell {
 
 HEXORCISM_I = add_spell {
 	["name"] = 	"Exorcism I",
+	["name2"] = 	"Exo I",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -204,6 +213,7 @@ HEXORCISM_I = add_spell {
 }
 HEXORCISM_II = add_spell {
 	["name"] = 	"Exorcism II",
+	["name2"] = 	"Exo II",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -223,6 +233,7 @@ HEXORCISM_II = add_spell {
 
 HRELSOULS_I = add_spell {
 	["name"] = 	"Redemption I",
+	["name2"] = 	"Red I",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -241,6 +252,7 @@ HRELSOULS_I = add_spell {
 }
 HRELSOULS_II = add_spell {
 	["name"] = 	"Redemption II",
+	["name2"] = 	"Red II",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -259,6 +271,7 @@ HRELSOULS_II = add_spell {
 }
 HRELSOULS_III = add_spell {
 	["name"] = 	"Redemption III",
+	["name2"] = 	"Red III",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -283,6 +296,7 @@ else
 end
 HDRAINCLOUD = add_spell {
 	["name"] = 	"Doomed Grounds",
+	["name2"] = 	"Doom",
 	["school"] = 	HDCS,
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -310,6 +324,7 @@ HDRAINCLOUD = add_spell {
 
 EARTHQUAKE = add_spell {
 	["name"] = 	"Earthquake",
+	["name2"] = 	"Quake",
 	["school"] = 	{SCHOOL_HOFFENSE},
 	["level"] = 	42,
 	["mana"] = 	50,
@@ -328,6 +343,7 @@ EARTHQUAKE = add_spell {
 --[[
 HHOLYWORD = add_spell {
 	["name"] = 	"Holy Word",
+	["name2"] = 	"HWord",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,

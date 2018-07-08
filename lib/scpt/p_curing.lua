@@ -62,6 +62,7 @@ end
 --improved cure serious wounds
 HCUREWOUNDS_I = add_spell {
 	["name"] = 	"Cure Wounds I",
+	["name2"] = 	"CW I",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -93,6 +94,7 @@ HCUREWOUNDS_I = add_spell {
 --cure critical wounds
 HCUREWOUNDS_II = add_spell {
 	["name"] = 	"Cure Wounds II",
+	["name2"] = 	"CW II",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -124,6 +126,7 @@ HCUREWOUNDS_II = add_spell {
 
 HHEALING_I = add_spell {
 	["name"] = 	"Heal I",
+	["name2"] = 	"Heal I",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -147,6 +150,7 @@ HHEALING_I = add_spell {
 __lua_HHEALING = HHEALING_I
 HHEALING_II = add_spell {
 	["name"] = 	"Heal II",
+	["name2"] = 	"Heal II",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -169,6 +173,7 @@ HHEALING_II = add_spell {
 }
 HHEALING_III = add_spell {
 	["name"] = 	"Heal III",
+	["name2"] = 	"Heal III",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -192,6 +197,7 @@ HHEALING_III = add_spell {
 
 HDELCURSES_I = add_spell {
 	["name"] = 	"Break Curses I",
+	["name2"] = 	"BCurs I",
 	["school"] = 	SCHOOL_HCURING,
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -212,6 +218,7 @@ HDELCURSES_I = add_spell {
 }
 HDELCURSES_II = add_spell {
 	["name"] = 	"Break Curses II",
+	["name2"] = 	"BCurs II",
 	["school"] = 	SCHOOL_HCURING,
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -233,6 +240,7 @@ HDELCURSES_II = add_spell {
 
 HHEALING2_I = add_spell {
 	["name"] = 	"Cleansing Light I",
+	["name2"] = 	"CleansL I",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -253,6 +261,7 @@ HHEALING2_I = add_spell {
 }
 HHEALING2_II = add_spell {
 	["name"] = 	"Cleansing Light II",
+	["name2"] = 	"CleansL II",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -273,6 +282,7 @@ HHEALING2_II = add_spell {
 }
 HHEALING2_III = add_spell {
 	["name"] = 	"Cleansing Light III",
+	["name2"] = 	"CleansL III",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -294,6 +304,7 @@ HHEALING2_III = add_spell {
 
 HCURING_I = add_spell {
 	["name"] = 	"Curing I",
+	["name2"] = 	"Curing I",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -322,6 +333,7 @@ HCURING_I = add_spell {
 }
 HCURING_II = add_spell {
 	["name"] = 	"Curing II",
+	["name2"] = 	"Curing II",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -353,6 +365,7 @@ HCURING_II = add_spell {
 }
 HCURING_III = add_spell {
 	["name"] = 	"Curing III",
+	["name2"] = 	"Curing III",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -387,6 +400,7 @@ HCURING_III = add_spell {
 
 HRESTORING = add_spell {
 	["name"] = 	"Restoration",
+	["name2"] = 	"Resto",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -419,6 +433,7 @@ HRESTORING = add_spell {
 -- increased max_mana from 100 to 150
 HSANITY = add_spell {
 	["name"] = 	"Faithful Focus",
+	["name2"] = 	"FFocus",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -452,6 +467,7 @@ HSANITY = add_spell {
 
 HRESURRECT = add_spell {
 	["name"] = 	"Resurrection",
+	["name2"] = 	"Res",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	100,
@@ -474,6 +490,7 @@ HRESURRECT = add_spell {
 
 HDELBB = add_spell {
 	["name"] = 	"Soul Curing",
+	["name2"] = 	"Soul",
 	["school"] = 	{SCHOOL_HCURING},
 	["spell_power"] = 0,
 	["am"] = 	75,

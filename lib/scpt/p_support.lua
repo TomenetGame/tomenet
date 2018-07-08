@@ -2,6 +2,7 @@
 
 HDELFEAR = add_spell {
 	["name"] = 	"Remove Fear",
+	["name2"] = 	"RemFear",
 	["school"] = 	{SCHOOL_HSUPPORT},
 	["spell_power"] = 0,
 	["am"] = 	0,
@@ -26,6 +27,7 @@ HDELFEAR = add_spell {
 
 HSANCTUARY_I = add_spell {
 	["name"] = 	"Sanctuary I",
+	["name2"] = 	"Sanc I",
 	["school"] = 	{SCHOOL_HSUPPORT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -45,6 +47,7 @@ HSANCTUARY_I = add_spell {
 }
 HSANCTUARY_II = add_spell {
 	["name"] = 	"Sanctuary II",
+	["name2"] = 	"Sanc II",
 	["school"] = 	{SCHOOL_HSUPPORT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -65,6 +68,7 @@ HSANCTUARY_II = add_spell {
 
 HSATISFYHUNGER = add_spell {
 	["name"] = 	"Satisfy Hunger",
+	["name2"] = 	"SatHunger",
 	["school"] = 	{SCHOOL_HSUPPORT},
 	["spell_power"] = 0,
 	["am"]  = 	75,
@@ -88,6 +92,7 @@ HSATISFYHUNGER = add_spell {
 
 HSENSE_I = add_spell {
 	["name"] = 	"Sense Surroundings I",
+	["name2"] = 	"SSurr I",
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -106,6 +111,7 @@ HSENSE_I = add_spell {
 }
 HSENSE_II = add_spell {
 	["name"] = 	"Sense Surroundings II",
+	["name2"] = 	"SSurr II",
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -125,6 +131,7 @@ HSENSE_II = add_spell {
 
 HDETECTEVIL = add_spell {
 	["name"] = 	"Detect Evil",
+	["name2"] = 	"DetEvil",
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -143,6 +150,7 @@ HDETECTEVIL = add_spell {
 }
 HSENSEMON = add_spell {
 	["name"] = 	"Sense Monsters",
+	["name2"] = 	"SenseMon",
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -162,6 +170,7 @@ HSENSEMON = add_spell {
 
 HZEAL_I = add_spell {
 	["name"] = 	"Zeal I",
+	["name2"] = 	"Zeal I",
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	50,
@@ -184,6 +193,7 @@ HZEAL_I = add_spell {
 }
 HZEAL_II = add_spell {
 	["name"] = 	"Zeal II",
+	["name2"] = 	"Zeal II",
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	50,
@@ -206,6 +216,7 @@ HZEAL_II = add_spell {
 }
 HZEAL_III = add_spell {
 	["name"] = 	"Zeal III",
+	["name2"] = 	"Zeal III",
 	["school"] = 	SCHOOL_HSUPPORT,
 	["spell_power"] = 0,
 	["am"] = 	50,
