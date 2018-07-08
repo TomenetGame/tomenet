@@ -2033,7 +2033,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN], modins[MAX_CHARS];
 	const char *qins;
-	char *c;
+	char *c, *pi_pos, *pir_pos;
 
 
 	/* Get the item (in the pack) */
@@ -2058,13 +2058,14 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		return;
 	}
 
-	/* Describe the activity */
+	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription */
-	if (!strncmp(inscription, "@@", 2)) {
-		bool redux = !strncmp(inscription, "@@@", 3);//, reduxx = !strncmp(inscription, "@@@@", 4);
-		char powins[1024]; //powins[MAX_CHARS_WIDE];  --let's play it safe..
+	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
+	   Side note: If @@@ is present, an additional @@ will simply be ignored. */
+	if ((pi_pos = strstr(inscription, "@@"))) {
+		bool redux = FALSE;
+		char powins[1024]; //even more than just MAX_CHARS_WIDE, let's play it safe..
 		u32b f1, f2, f3, f4, f5, f6, esp, tmpf1, tmpf2, tmpf3, tmp;
 		bool i_f = FALSE, i_c = FALSE, i_e = FALSE, i_a = FALSE, i_p = FALSE, i_w = FALSE, i_n = FALSE;
 
@@ -2073,10 +2074,20 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 			return;
 		}
 
+		/* Check for redux version of power inscription */
+		if ((pir_pos = strstr(inscription, "@@@"))) {
+			pi_pos = pir_pos;
+			redux = TRUE;
+		}
+		//reduxx = strstr(inscription, "@@@@");
+
 		msg_format(Ind, "Power-inscribing %s.", o_name);
 		msg_print(Ind, NULL);
 
-		powins[0] = 0;
+		/* Copy part of the inscription before @@/@@@ */
+		strcpy(powins, inscription);
+		powins[pi_pos - inscription] = 0;
+
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* specialty: recognize custom spell books and inscribe with their spell names! */
@@ -2405,7 +2416,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		}
 
 		/* Append the rest of the inscription, if any */
-		strcat(powins, inscription + (redux ? 3 : 2));
+		strcat(powins, pi_pos + (redux ? 3 : 2));
 
 		/* Watch total object name length */
 		o_ptr->note = o_ptr->note_utag = 0;
