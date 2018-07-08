@@ -1714,6 +1714,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) && (a_ptr->flags1 & TR1_MANA)) {
 		a_ptr->pval /= 2;
 		if (!a_ptr->pval) a_ptr->pval = 1;
+		if (a_ptr->pval > 4) a_ptr->pval = 4;
 	}
 	/* If an item increases two of SPEED, CRIT, MANA by over 7
 	   then reduce pval to 2/3 to balance */
@@ -1722,6 +1723,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	    ((a_ptr->flags1 & TR1_MANA) && (a_ptr->flags5 & TR5_CRIT)))) {
 		a_ptr->pval = (a_ptr->pval * 2) / 3;
 		if (!a_ptr->pval) a_ptr->pval = 1;
+		if (a_ptr->pval > 6) a_ptr->pval = 6;
 	}
 
 	/* Never more than +3 EA, +2 on gloves */
@@ -2603,6 +2605,7 @@ try_an_other_ego:
 	if ((a_ptr->flags1 & TR1_SPEED) && (a_ptr->flags5 & TR5_CRIT) && (a_ptr->flags1 & TR1_MANA)) {
 		a_ptr->pval /= 2;
 		if (!a_ptr->pval) a_ptr->pval = 1;
+		if (a_ptr->pval > 4) a_ptr->pval = 4;
 	}
 	/* If an item increases two of SPEED, CRIT, MANA by over 7
 	   then reduce pval to 2/3 to balance */
@@ -2611,6 +2614,7 @@ try_an_other_ego:
 	    ((a_ptr->flags1 & TR1_MANA) && (a_ptr->flags5 & TR5_CRIT)))) {
 		a_ptr->pval = (a_ptr->pval * 2) / 3;
 		if (!a_ptr->pval) a_ptr->pval = 1;
+		if (a_ptr->pval > 6) a_ptr->pval = 6;
 	}
 	/* While +MANA is capped at 10 for randarts, it's 12 for egos(!) */
 	if ((a_ptr->flags1 & TR1_MANA) && a_ptr->pval > 12) a_ptr->pval = 12;
