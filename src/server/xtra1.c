@@ -9559,7 +9559,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		str[0] = toupper(str[0]);
 		pid = lookup_player_id(str);
 		if (!pid) {
-			msg_format(Ind, "\377ySorry, there is no character named %s.", str);
+			msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
 			return;
 		}
 		acc = lookup_accountname(pid);
@@ -9724,7 +9724,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		str[0] = toupper(str[0]);
 		pid = lookup_player_id(str);
 		if (!pid) {
-			msg_format(Ind, "\377ySorry, there is no character named %s.", str);
+			msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
 			return;
 		}
 		acc = lookup_accountname(pid);
@@ -9856,8 +9856,8 @@ void handle_request_return_num(int Ind, int id, int num) {
 			msg_print(Ind, "\377yThe requested payment must be at least 1 Au.");
 			return;
 		}
-		if (num > 2000000000) {
-			msg_print(Ind, "\377yThat is too much, the maximum allowed amount is 2 000 000 000 Au.");
+		if (num > 2000000000 / 2) { //let's play it safe..
+			msg_print(Ind, "\377yThat is too much, the maximum allowed amount is 1 000 000 000 Au.");
 			return;
 		}
 		p_ptr->mail_xfee = num;
@@ -10058,6 +10058,21 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 				merchant_mail_delivery(Ind);
 			}
 		} else {
+#ifndef MERCHANT_MAIL_INFINITE
+			/* catch the case of this already being returned mail, because it wasn't picked up by its original receipient.
+			   Note that this will only happen if
+			     1) MERCHANT_MAIL_INFINITE is NOT defined, or
+			     2) if it is defined and the original receipient died, so it cannot be bounced anymore. */
+			if (mail_timeout[i] < 0) {
+ #if 0 /* too harsh, instead allow the whole timeout duration for still deciding to pay the fee. Also, this is too prone to misclick -> oops erased! */
+				/* erase it */
+				//msg_format(Ind, "\377yAlright, %s. Without legal receipient, we'll be confiscating it.", p_ptr->male ? "sir" : "ma'am");
+ #else
+				msg_format(Ind, "\377yWell %s, you can still decide to pay the fee before the package expires. If you do not, however, we will have no choice but confiscate it and then it will be irrevocably gone.", p_ptr->male ? "Sir" : "Ma'am");
+				return;
+ #endif
+			}
+#endif
 			/* return to sender */
 			msg_format(Ind, "Alright, %s. We're sending it back.", p_ptr->male ? "sir" : "ma'am");
 			mail_timeout[i] = -2;

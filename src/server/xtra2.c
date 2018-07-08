@@ -7313,6 +7313,64 @@ static void check_killing_reward(int Ind) {
 	}
 }
 
+#ifdef ENABLE_MERCHANT_MAIL
+/* Return any pending mail this character hasn't picked up yet to its senders.
+   Erase any mail that was returned to this character already because the original receipient also no longer existed.
+   Set any MERCHANT_MAIL_INFINITE mode mail to actually expire in case we who just died were the original sender! */
+void merchant_mail_death(const char pname[NAME_LEN]) {
+	int i;
+	char tmp[NAME_LEN];
+	u32b pid;
+
+	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+		if (!mail_sender[i][0]) continue;
+
+		/* We are the original sender and in infinite-bounce mode? Stop bouncing by making this mail finite now. */
+ #ifdef MERCHANT_MAIL_INFINITE
+		if (!strcasecmp(mail_sender[i], pname)) {
+			if (mail_timeout[i] > 0) mail_timeout[i] = - 2 - mail_timeout[i];
+			if (mail_duration[i] > 0) mail_duration[i] = -mail_duration[i];
+		}
+ #endif
+
+		if (strcasecmp(mail_target[i], pname)) continue;
+
+		/* Mail was already returned because original receipient didn't exist anymore? */
+		if (mail_timeout[i] < 0) {
+			s_printf("MAIL_ERROR_RETURN: dead sender and dead receipient - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+			s_printf("MAIL_ERROR_ERASED.\n");
+			/* delete mail! */
+			mail_sender[i][0] = 0;
+			continue;
+		}
+
+ #ifndef MERCHANT_MAIL_INFINITE
+		mail_timeout[i] = - 2 - MERCHANT_MAIL_TIMEOUT;
+		mail_duration[i] = -MERCHANT_MAIL_DURATION;
+ #else
+		mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
+		mail_duration[i] = MERCHANT_MAIL_DURATION;
+ #endif
+
+		s_printf("MAIL_ERROR_RETURN: dead receipient - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+		strcpy(tmp, mail_sender[i]);
+		strcpy(mail_sender[i], mail_target[i]);
+		strcpy(mail_target[i], tmp);
+
+		pid = lookup_player_id(mail_target[i]);
+		if (!pid) {
+			s_printf("MAIL_ERROR: no pid - Sender %s, Target %s\n", mail_sender[i], mail_target[i]);
+			/* special: the mail bounced back to a character that no longer exists!
+			   Since the receipient just died, the mail now gets deleted,
+			   since noone can pick it up anymore. */
+			s_printf("MAIL_ERROR_ERASED.\n");
+			/* delete mail! */
+			mail_sender[i][0] = 0;
+		}
+	}
+}
+#endif
+
 /* deletes a ghost-dead player, cleans up his business, and disconnects him */
 static void erase_player(int Ind, int death_type, bool static_floor) {
 	player_type *p_ptr = Players[Ind];
@@ -7327,6 +7385,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	kill_houses(p_ptr->id, OT_PLAYER);
 	rem_xorder(p_ptr->xorder_id);
 	kill_objs(p_ptr->id);
+	merchant_mail_death(p_ptr->name);
 	p_ptr->death = TRUE;
 
 #ifdef AUCTION_SYSTEM

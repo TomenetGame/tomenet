@@ -2130,6 +2130,10 @@ extern int det_req_level(int plev);
 extern s64b det_exp_level(s64b exp, int plev, int dlev);
 extern void shape_Maia_skills(int Ind);
 
+#ifdef ENABLE_MERCHANT_MAIL
+void merchant_mail_death(const char pname[NAME_LEN]);
+#endif
+
 /*
  * Hack -- conditional (or "bizarre") externs
  */

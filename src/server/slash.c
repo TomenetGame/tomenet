@@ -10193,6 +10193,19 @@ void do_slash_cmd(int Ind, char *message) {
 				dbgvars[0] = 0;
 				return;
 			}
+#ifdef ENABLE_MERCHANT_MAIL
+			else if (prefix(message, "/mgmail")) { //debug merchants guild mail
+				int i;
+
+				msg_print(Ind, "Currently active merchants guild mail:");
+				for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+					if (!mail_sender[i][0]) continue;
+					msg_format(Ind, " %s->%s dur %d timeout %d", mail_sender[i], mail_target[i], mail_duration[i], mail_timeout[i]);
+				}
+				msg_print(Ind, "End of merchants guild mail list.");
+				return;
+			}
+#endif
 		}
 	}
 

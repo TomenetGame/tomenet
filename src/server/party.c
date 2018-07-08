@@ -4541,6 +4541,11 @@ void erase_player_name(char *pname) {
 	int slot;
 	hash_entry *ptr, *pptr = NULL;
 	object_type *o_ptr;
+#ifdef ENABLE_MERCHANT_MAIL
+	/* send it back */
+	char tmp[NAME_LEN];
+	u32b pid;
+#endif
 
 	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		pptr = NULL;
@@ -4580,6 +4585,9 @@ void erase_player_name(char *pname) {
 				rem_xorder(ptr->xorder);
 				/* Added this one.. should work well? */
 				kill_objs(ptr->id);
+#ifdef ENABLE_MERCHANT_MAIL
+				merchant_mail_death(ptr->name);
+#endif
 
 #ifdef AUCTION_SYSTEM
 				auction_player_death(ptr->id);

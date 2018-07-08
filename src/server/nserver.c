@@ -2990,8 +2990,12 @@ static int Handle_login(int ind) {
 		if (!strcmp(mail_target_acc[i], connp->nick)) {
 			if (strcmp(mail_target[i], p_ptr->name))
 				msg_print(NumPlayers, "\374\377yThe merchants guild has mail for another character of yours!");
- #ifndef MERCHANT_MAIL_INFINITE
+ #if 0 /* incorrect */
+  #ifndef MERCHANT_MAIL_INFINITE
 				if (mail_timeout[i] < -2) msg_print(NumPlayers, "\374\377yWarning - if you don't pick it up in time, the guild bureau will confiscate it!");
+  #endif
+ #else
+				if (mail_timeout[i] < 0) msg_print(NumPlayers, "\374\377yWarning - if you don't pick it up in time, the guild bureau will confiscate it!");
  #endif
 			else if (!you) {
 				msg_print(NumPlayers, "\374\377yThe merchants guild has mail for you!");

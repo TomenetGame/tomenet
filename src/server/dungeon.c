@@ -6967,30 +6967,25 @@ static void process_merchant_mail(void) {
 				erase = TRUE;
  #endif
 			} else
-			/* normal case (1st send, or infinite bouncing enabled) */
-			mail_duration[i]--;
+				/* normal case (1st send, or infinite bouncing enabled) */
+				mail_duration[i]--;
 
 			if (!mail_duration[i]) {
 				int j;
 
 				/* set timeout for expiry */
-				if (lookup_player_id(mail_target[i]))
+				if (lookup_player_id(mail_target[i])) {
 					/* normal */
  #ifdef MERCHANT_MAIL_INFINITE
 					mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
  #else
-				{
 					if (erase) mail_timeout[i] = - 2 - MERCHANT_MAIL_TIMEOUT;
 					else mail_timeout[i] = MERCHANT_MAIL_TIMEOUT;
-				}
  #endif
-				else
-					/* hack for players who no longer exist */
-					mail_timeout[i] = -1;
 
-				/* notify him */
-				for (j = 1; j <= NumPlayers; j++) {
-					if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
+					/* notify him */
+					for (j = 1; j <= NumPlayers; j++) {
+						if (strcmp(Players[j]->accountname, mail_target_acc[i])) continue;
 						if (strcmp(Players[j]->name, mail_target[i])) {
 							msg_print(j, "\374\377yThe merchants guild has mail for another character of yours!");
  #ifndef MERCHANT_MAIL_INFINITE
@@ -7007,6 +7002,9 @@ static void process_merchant_mail(void) {
 								merchant_mail_delivery(j);
 							} else {
 								msg_print(j, "\374\377yThe merchants guild has mail for you!");
+								/* This doesn't work well right now because the receipient might have re-created a character of the same name,
+								   which would cause this message to get omitted, confusingly for the sender: */
+								//if (!lookup_player_id(mail_sender[i])) msg_print(j, "\374\377yAccording to the offices' information the receipient unfortunately is deceased.");
  #ifndef MERCHANT_MAIL_INFINITE
 								if (erase) msg_print(j, "\374\377yWarning - if you don't pick it up in time, the guild bureau will confiscate it!");
  #endif
@@ -7016,7 +7014,9 @@ static void process_merchant_mail(void) {
 							}
 						}
 					}
-				}
+				} else
+					/* hack for players who no longer exist */
+					mail_timeout[i] = -1; //This hack is no longer in use, as this is now taken care of directly in erase_player() and erase_player_name()
 			}
 		} else if (mail_timeout[i] != 0) {
 			bool erase, quiet;
