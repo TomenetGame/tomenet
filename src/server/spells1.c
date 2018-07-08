@@ -8133,6 +8133,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 	}
 
+	/* Do not affect invincible questors with status effects, especially not polymorphing */
+	if (m_ptr->questor_invincible) {
+		do_fear = FALSE;
+		do_conf = FALSE;
+		do_blind = FALSE;
+		do_sleep = FALSE;
+		do_stun = FALSE;
+		do_poly = FALSE;
+		do_dist = FALSE; //Redundant. Questors are IM_TELE by default anyway though. Otherwise they could still be TELE_TO'ed.
+	}
+
 	/* "Unique" monsters cannot be polymorphed */
 	if (r_ptr->flags1 & RF1_UNIQUE) do_poly = FALSE;
 	/* nor IM_TELE monsters.. */
