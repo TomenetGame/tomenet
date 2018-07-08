@@ -19388,7 +19388,7 @@ pre-enchantment and with the highest base level. Usually you won't need to pay
 attention to this though, because the higher level items are automatically the
 better items anyway and hence you will pick them without much thinking. :-p
 
-The base Item's weight, price or rarity (not to be confused with the item's
+The base item's weight, price or rarity (not to be confused with the item's
 base level, which however only matters for armour pieces as explained above)
 do not have any influence on the randart creation process.
 
@@ -19412,11 +19412,6 @@ For example an item that provides critical strike and strength bonus might at
 first randomly obtain a +8 bonus for its critical strike mod, but then the
 strength mod will cut down the final randart bonus to a +5, because items
 aren't allowed to give more than +5 to any character stat (str, int, etc).
-
-Similarly, stealth is limited to +5 on most items except for cloaks, so you
-cannot get Witan Boots that give more than +5 to speed, since they also always
-modify stealth (because the base item type modifies stealth), and stealth is
-capped at +5. (Exception: If they get aggravation flag.)
 
 On boots, +speed mod takes precedence over most other limiting mods, which
 means that speed-limiting mods will be erased from the boots in most cases if
