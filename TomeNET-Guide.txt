@@ -6022,6 +6022,9 @@ The 1..9 are standard shops, namely..
                         then the mail will be returned to the sender too who
                         then again has one week to pick it up until it expires
                         and gets deleted irrevocably.
+                        If the mail gets returned to the sender for any reason
+                        but the sender character no longer exists, the mail
+                        will also get erased irrevocably.
         Rune Repository
                         Sells and buys runes used by Runemasters.
         Casino          Minas Anor has a casino. Go and try your luck!
