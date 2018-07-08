@@ -1761,8 +1761,8 @@ inscription to overwrite existing inscriptions in any case (usually it only
 overwrites trivial inscriptions such as price discount tags).
 
 Auto-inscription files can be saved and will be loaded automatically in the
-same manner as macro files, if the filename matches your race, class, account
-or character name.
+same manner as macro files, if the filename matches your race, trait, class or
+character name (compare (3.6), 'Loading macros automatically').
 If multiple matching files are found, the game will attempt to merge them
 accordingly.
 
@@ -4296,13 +4296,14 @@ to have them loaded automatically.
 Note: If you're using a Linux version, remember that the file system is
 case-sensitive, so don't save your macros to 'kinkan.prf' since your character
 actually starts with a capital 'K' or the file won't be loaded. Make sure
-the filename and character-, class- or race-name are exactly the same
-('Dwarf.prf', 'High-Elf.prf', 'Ranger.prf'..).
+the filename and character-, class-, race- or trait-name are exactly the same
+('Dwarf.prf', 'High-Elf.prf', 'Ranger.prf', 'Enlightened.prf'..).
 Another option is to save the macros to a file named 'global.prf' (all lower
 case letters). This is a special macro file that will always be loaded, for
 all characters of yours.
-You can also save macros to <racename>.prf or to <classname>.prf, like
-Warrior.prf to have them being auto-loaded on all characters of that class.
+You can also save macros to <racename>.prf, to <classname>.prf and to
+<traitname>.prf, like Warrior.prf to have them being auto-loaded on all
+characters of that class/race/trait.
 Priority order (latter one overrides prior one):
 
 These files are meant to store client options and configuration,
@@ -4321,10 +4322,11 @@ These files can be used for saving your macros to without problems:
 'global.prf' (is always loaded for any character the player logs in with.
                be sure to use all lower-case letters, not 'Global.prf'!)
 <race>.prf (for the specific race)
+<trait>.prf (for the specific trait, particularly useful for Maiar)
 <class>.prf (for the specific class)
 <character name>.prf (for the specific character the player logged in with)
 
-It is recommended to use only race/class/character preference files
+It is recommended to use only race/trait/class/character preference files
 for storing your macros.
 
 
