@@ -108,7 +108,7 @@ V:1.0.0
 #   end
 #   function qtestlua2(flags, Ind, message)
 #     ....
-#     return set_mark..","..clear_mask
+#     return set_mask..","..clear_mask
 #   end
 
 # Further notes:
@@ -368,8 +368,8 @@ Y:0:0:-:*advice*:-:255
 Y:0:0:-:*advise*:-:255
 y:-1:-1:-:*advice*
 yY:*advise*
-#yR:-://quest_towneltalk("$$c")
-yR:-:Hm hm, what do you need advice on?
+yR:-://quest_towneltalk("$$c", -1)
+#yR:-:Hm hm, what do you need advice on?  --moved to quest_towneltalk() actually, as it depends on above function call to sound proper.
 yR:-:How to properly [[prepare]] yourself for venturing into the unknown?, picking
 yR:-:an unknown dungeon to [[explore]]? Honing your [[skills]]?
 yR:-:Or are you wondering about the public [[events]] that are taking place from
