@@ -2883,7 +2883,7 @@ struct player_type {
 	/* note: a sort of "warning_skills" is already implemented, in a different manner */
 	char warning_cloak, warning_macros, warning_numpadmove;
 	char warning_ammotype, warning_ai_annoy;
-	char warning_fountain, warning_voidjumpgate, warning_staircase, warning_worldmap, warning_dungeon;
+	char warning_fountain, warning_voidjumpgate, warning_staircase, warning_worldmap, warning_dungeon, warning_staircase_oneway;
 	/* For the 4.4.8.1.0.0 lua update crash bug */
 	char warning_lua_update, warning_lua_count;
 	char warning_tunnel, warning_tunnel2, warning_tunnel3, warning_trap, warning_tele, warning_fracexp;

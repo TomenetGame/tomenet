@@ -2846,6 +2846,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_fountain = 1;
 		p_ptr->warning_voidjumpgate = 1;
 		p_ptr->warning_staircase = 1;
+		p_ptr->warning_staircase_oneway = 1;
 		p_ptr->warning_worldmap = 1;
 		p_ptr->warning_dungeon = 1;
 		p_ptr->warning_tunnel = 1;
@@ -3036,6 +3037,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_dual_mode = 1;
 		p_ptr->warning_hungry = 2;
 		p_ptr->warning_lite_refill = 1;
+		p_ptr->warning_staircase_oneway = 1;
 	}
 	if (p_ptr->max_plv >= 25) {
 		/* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */
