@@ -4471,37 +4471,40 @@ void merchant_mail_delivery(int Ind) {
 
 	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
 		if (!mail_sender[i][0] || mail_duration[i]) continue;
+		if (strcasecmp(mail_target[i], p_ptr->name)) continue;
 
-		if (!strcasecmp(mail_target[i], p_ptr->name)) {
-			if (mail_xfee[i]) {
-				p_ptr->mail_fee = 0;
-				if (mail_COD[i]) {
-					if (mail_forge[i].tval == TV_GOLD) p_ptr->mail_fee += mail_forge[i].pval / 20;
-					else p_ptr->mail_fee += object_value_real(0, &mail_forge[i]) / 20;
-					if (p_ptr->mail_fee < 5) p_ptr->mail_fee = 5;
-				}
-				p_ptr->mail_fee += mail_xfee[i];
-
-				p_ptr->mail_item = i; //reuse mail_item for this
-				msg_print(Ind, "\374\377yA mail package for you has arrived! The sender has made a payment request.");
-				Send_request_cfr(Ind, RID_SEND_FEE_PAY, format("Do you accept the sender's payment request over %d Au?", p_ptr->mail_fee), 0);
-				/* get those COD mails one by one.. */
-				return;
-			}
+		/* Sender wants money in exchange? */
+		if (mail_xfee[i]) {
+			p_ptr->mail_fee = 0;
 			if (mail_COD[i]) {
-				if (mail_forge[i].tval == TV_GOLD) p_ptr->mail_fee = mail_forge[i].pval / 20;
-				else p_ptr->mail_fee = object_value_real(0, &mail_forge[i]) / 20;
+				if (mail_forge[i].tval == TV_GOLD) p_ptr->mail_fee += mail_forge[i].pval / 20;
+				else p_ptr->mail_fee += object_value_real(0, &mail_forge[i]) / 20;
 				if (p_ptr->mail_fee < 5) p_ptr->mail_fee = 5;
-
-				p_ptr->mail_item = i; //reuse mail_item for this
-				msg_print(Ind, "\374\377yA COD mail package for you has arrived!");
-				Send_request_cfr(Ind, RID_SEND_FEE, format("Do you accept the fee of %d Au?", p_ptr->mail_fee), 0);
-				/* get those COD mails one by one.. */
-				return;
 			}
-			/* just hand it over */
-			merchant_mail_carry(Ind, i);
+			p_ptr->mail_fee += mail_xfee[i];
+
+			p_ptr->mail_item = i; //reuse mail_item for this
+			msg_print(Ind, "\374\377yA mail package for you has arrived! The sender has made a payment request.");
+			Send_request_cfr(Ind, RID_SEND_FEE_PAY, format("Do you accept the sender's payment request over %d Au?", p_ptr->mail_fee), 0);
+			/* get those COD mails one by one.. */
+			return;
 		}
+
+		/* Receipient has to pay the Merchants Guild fee? */
+		if (mail_COD[i]) {
+			if (mail_forge[i].tval == TV_GOLD) p_ptr->mail_fee = mail_forge[i].pval / 20;
+			else p_ptr->mail_fee = object_value_real(0, &mail_forge[i]) / 20;
+			if (p_ptr->mail_fee < 5) p_ptr->mail_fee = 5;
+
+			p_ptr->mail_item = i; //reuse mail_item for this
+			msg_print(Ind, "\374\377yA COD mail package for you has arrived!");
+			Send_request_cfr(Ind, RID_SEND_FEE, format("Do you accept the fee of %d Au?", p_ptr->mail_fee), 0);
+			/* get those COD mails one by one.. */
+			return;
+		}
+
+		/* just hand it over */
+		merchant_mail_carry(Ind, i);
 	}
 }
 #endif
