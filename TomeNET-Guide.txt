@@ -5993,16 +5993,24 @@ The 1..9 are standard shops, namely..
                         a bank account to deposit your money in so you won't
                         lose it accidentally on a dungeon trip,
                         and a mail service that allows you to send money or an
-                        item to other players.
+                        item to other players for a fee, and optionally impose
+                        a price on an item you send that the receipient must
+                        pay you in return for accepting it.
                         Several towns have a subsidiary, you can globally
                         access your bank account and mail from any of those.
 
                         Explanation of the mail system's details:
+
                         You can choose to send money or an item to another
                         character. All usual trading restrictions apply.
                         It costs a small fee depending on the value sent,
                         which can also be imposed on the receipient (COD,
                         collect on delivery) if the sender wishes so.
+                        Further, when sending an item, you may optionally force
+                        the receipient to pay a price in order to receive it
+                        which will be sent back to you by the Merchants Guild,
+                        making it useful for asynchronous item trading too.
+
                         Mail will arrive after about a minute real-time and
                         then allow for a one week real-time span to get picked
                         up by the receipient. If it expires it will be sent
