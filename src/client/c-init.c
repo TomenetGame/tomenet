@@ -280,6 +280,13 @@ void initialize_player_pref_files(void){
 		process_pref_file(buf);
 	}
 
+	/* For Enlightened/Corrupted Maiar in particular: */
+	if (trait < Setup.max_trait) {
+		sprintf(buf, "%s.prf", trait_info[trait].title);
+		/* Process that file */
+		process_pref_file(buf);
+	}
+
 	/* Access the "class" pref file */
 	if (class < Setup.max_class) {
 		sprintf(buf, "%s.prf", class_info[class].title);
@@ -321,6 +328,12 @@ void initialize_player_ins_files(void) {
 	/* Access the "race" ins file */
 	if (race < Setup.max_race) {
 		sprintf(buf, "%s.ins", race_info[race].title);
+		load_auto_inscriptions(buf);
+	}
+
+	/* Access the "trait" ins file */
+	if (trait < Setup.max_trait) {
+		sprintf(buf, "%s.ins", trait_info[trait].title);
 		load_auto_inscriptions(buf);
 	}
 
