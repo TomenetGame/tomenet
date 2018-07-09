@@ -5015,6 +5015,13 @@ void do_ping() {
 		update_lagometer();
 
 		Send_ping();
+
+#if 0 /* testing palette animation :O - abuserino */
+ #ifdef WINDOWS
+  #warning "WINDOWS-animate_palette"
+		animate_palette();
+ #endif
+#endif
 	}
 
 	/* abusing it for weather for now - C. Blue */

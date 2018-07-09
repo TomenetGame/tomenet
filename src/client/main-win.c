@@ -4143,4 +4143,103 @@ void get_screen_font_name(char *buf) {
 	if (data[0].font_file) strcpy(buf, data[0].font_file);
 	else strcpy(buf, "");
 }
+
+/* Palette animation - 2018 *testing* */
+void animate_palette(void) {
+	byte i;
+	byte rv, gv, bv;
+	COLORREF code;
+
+	static bool init = FALSE;
+	static unsigned char ac = 0x00; //animatio
+
+
+	/* Initialise the palette once. For some reason colour_table[] is all zero'ed again at the beginning. */
+	if (!init) {
+		for (i = 0; i < 16; i++) {
+			/* Extract desired values */
+			rv = color_table[i][1];
+			gv = color_table[i][2];
+			bv = color_table[i][3];
+
+			/* Extract a full color code */
+			code = PALETTERGB(rv, gv, bv);
+
+			//c_message_add(format("currently: [%d] %d -> %d (%d,%d,%d)", i, win_clr[i], code, rv, gv, bv));
+
+			/* Save the "complex" codes */
+			color_table[i][1] = GetRValue(win_clr[i]);
+			color_table[i][2] = GetGValue(win_clr[i]);
+			color_table[i][3] = GetBValue(win_clr[i]);
+
+			/* Save the "simple" code */
+			color_table[i][0] = win_pal[i];
+		}
+		init = TRUE;
+		return;
+	}
+
+
+	/* Animate! */
+	ac = (ac + 0x10) % 0x100;
+
+	color_table[1][1] = 0;
+	color_table[1][2] = 0xFF - ac;
+	color_table[1][3] = 0xFF - ac;
+	color_table[9][1] = ac;
+	color_table[9][2] = 0;
+	color_table[9][3] = 0;
+
+
+	/* Simple color (nope) */
+	if (colors16) {
+		c_message_add(format("animating %d (simple)", (ac >> 4) & 0x0F));
+
+		/* Save the default colors */
+		for (i = 0; i < 16; i++) {
+			/* Simply accept the desired colors */
+			win_pal[i] = color_table[i][0] = (ac >> 4) & 0x0F;
+		}
+	}
+	/* Complex color (yes) */
+	else {
+		//c_message_add(format("animating %d (complex)", ac));
+
+		/* Save the default colors */
+		for (i = 0; i < 16; i++) {
+			/* Extract desired values */
+			rv = color_table[i][1];
+			gv = color_table[i][2];
+			bv = color_table[i][3];
+
+			/* Extract a full color code */
+			code = PALETTERGB(rv, gv, bv);
+
+			/* Activate changes */
+			if (win_clr[i] != code) {
+				/* Apply the desired color */
+				win_clr[i] = code;
+				//c_message_add(format("changed [%d] %d -> %d (%d,%d,%d)", i, win_clr[i], code, rv, gv, bv));
+			}
+		}
+
+		/* Activate the palette */
+		new_palette();
+	}
+
+	/* Refresh aka redraw windows with new colour */
+	for (i = 0; i < MAX_TERM_DATA; i++) {
+		term *old = Term;
+		term_data *td = &data[i];
+
+		/* Activate */
+		Term_activate(&td->t);
+
+		/* Redraw the contents */
+		Term_redraw();
+
+		/* Restore */
+		Term_activate(old);
+	}
+}
 #endif /* _Windows */

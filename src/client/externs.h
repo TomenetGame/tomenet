@@ -907,6 +907,7 @@ extern bool ask_for_bigmap(void);
 extern bool check_dir(cptr s);
 extern void get_screen_font_name(char *buf);
 extern bool win_dontmoveuser;
+extern void animate_palette(void);
 #endif
 extern void store_crecedentials(void);
 
