@@ -9012,10 +9012,11 @@ void process_timers() {
 	/* reduce warning_rest cooldown */
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
+		if (p_ptr->conn == NOT_CONNECTED) continue;
 		if (p_ptr->warning_rest_cooldown) {
 			p_ptr->warning_rest_cooldown--;
 			if (!p_ptr->warning_rest_cooldown &&
-			    (p_ptr->chp * 10 / p_ptr->mhp <= 5 || p_ptr->csp * 10 / p_ptr->msp <= 2)) {
+			    ((p_ptr->chp * 10) / p_ptr->mhp <= 5 || (p_ptr->msp && ((p_ptr->csp * 10) / p_ptr->msp <= 2)))) {
 				msg_print(i, "\374\377RHINT: Press \377oSHIFT+r\377R to rest, so your hit points will");
 				msg_print(i, "\374\377R      regenerate faster! Also true for mana and stamina!");
 				p_ptr->warning_rest++;
