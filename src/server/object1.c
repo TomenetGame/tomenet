@@ -3545,13 +3545,13 @@ cptr item_activation(object_type *o_ptr) {
 		return "wraithform every 25..50+d50 turns";
 
 	if (is_ego_p(o_ptr, EGO_CLOAK_LORDLY_RES))
-		return "temporary resistance every 50..150+d40 turns";
+		return "temporary resistance every 50..150+d20 turns";
 	if (is_ego_p(o_ptr, EGO_AURA_FIRE2))
-		return "temporary fire resistance every 50..150+d40 turns";
+		return "temporary fire resistance every 50..150+d20 turns";
 	if (is_ego_p(o_ptr, EGO_AURA_ELEC2))
-		return "temporary lighting resistance every 50..150+d40 turns";
+		return "temporary lighting resistance every 50..150+d20 turns";
 	if (is_ego_p(o_ptr, EGO_AURA_COLD2))
-		return "temporary frost resistance every 50..150+d40 turns";
+		return "temporary frost resistance every 50..150+d20 turns";
 
 	//EGO_MUSIC_ELDAR, EGO_MUSIC_POWER
 
