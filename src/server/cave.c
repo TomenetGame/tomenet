@@ -2667,11 +2667,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 	/* hack for questor hard-coded lighting:
 	   Replace any permanent (daylight/townstore) light by 'fake' light source 'carried' by the questor */
 	if (c_ptr->info & CAVE_GLOW_HACK) {
-		c_ptr->info &= ~CAVE_GLOW;
+		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
 		c_ptr->info |= (CAVE_LITE | CAVE_LITE_WHITE);
 	}
 	else if (c_ptr->info & CAVE_GLOW_HACK_LAMP) {
-		c_ptr->info &= ~CAVE_GLOW;
+		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
 		c_ptr->info |= CAVE_LITE;
 	}
 
@@ -7343,11 +7343,10 @@ void wiz_dark(int Ind) {
 
 				/* Process the grid */
 				*w_ptr &= ~CAVE_MARK;
-				c_ptr->info &= ~CAVE_GLOW;
+				if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
 
 				/* Forget every object */
-				if (c_ptr->o_idx)
-				{
+				if (c_ptr->o_idx) {
 					/* Forget the object */
 					p_ptr->obj_vis[c_ptr->o_idx] = FALSE;
 				}
@@ -7450,6 +7449,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 
 	/* Change the feature */
 	c_ptr->feat = feat;
+	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 	aquatic_terrain_hack(zcave, x, y);
 
 	if (level_generation_time) return;
@@ -7734,6 +7734,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
 	c_ptr->feat = feat;
+	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];

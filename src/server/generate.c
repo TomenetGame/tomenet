@@ -1731,7 +1731,8 @@ static void lake_level(struct worldpos *wpos)
 					c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 					/* No longer illuminated or known */
-					c_ptr->info &= ~CAVE_GLOW;
+					if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW))
+						c_ptr->info &= ~CAVE_GLOW;
 				}
 			}
 		}
@@ -1807,7 +1808,8 @@ static void destroy_level(struct worldpos *wpos) {
 					c_ptr->info &= ~(CAVE_ROOM | CAVE_ICKY);
 
 					/* No longer illuminated or known */
-					c_ptr->info &= ~CAVE_GLOW;
+					if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW))
+						c_ptr->info &= ~CAVE_GLOW;
 				}
 			}
 		}

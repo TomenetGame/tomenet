@@ -6034,7 +6034,7 @@ static void cave_temp_room_unlite(int Ind) {
 		c_ptr->info &= ~CAVE_TEMP;
 
 		/* Darken the grid */
-		c_ptr->info &= ~CAVE_GLOW;
+		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
 
 		/* Hack -- Forget "boring" grids */
 //		if (c_ptr->feat <= FEAT_INVIS)

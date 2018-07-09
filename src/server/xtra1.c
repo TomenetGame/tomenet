@@ -8768,7 +8768,6 @@ static void process_global_event(int ge_id) {
 				}
 				if (!n) continue;
 				cave_set_feat_live(&wpos, y, x, FEAT_BEACON);
-				zcave[y][x].info |= CAVE_GLOW; /* make it 100% non-annoying ^^ */
 				bx[k] = x; by[k] = y;
 				k++;
 			}

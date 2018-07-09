@@ -6109,6 +6109,7 @@
 #define FF2_NO_LITE_WHITEN	0x00000020L	/* Won't change to WHITE or L_WHITE lamp light colour. For tiles that are affected from yellow light but retain their colour in white light. */
 #define FF2_LAMP_LITE_OPTIONAL	0x00000040L	/* For more floor/wall grids: Get coloured by floor/wall_lighting, if user has toggled the according option. */
 #define FF2_NO_ARTICLE		0x00000080L	/* floor feat doesn't have an article ('a(n)'/'the') in front of it when being described */
+#define FF2_GLOW		0x00000100L	/* Always visible, lit via CAVE_GLOW */
 //hole
 #define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 

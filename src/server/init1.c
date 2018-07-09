@@ -1038,7 +1038,7 @@ static cptr f_info_flags2[] = {
 	"LAMP_LITE_OPTIONAL",
 	"NO_ARTICLE",
 
-	"XXX",
+	"GLOW",
 	"XXX",
 	"XXX",
 	"XXX",

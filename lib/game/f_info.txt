@@ -625,7 +625,7 @@ G:~:R
 S:r:R:R:R:y:o:R
 E:8d4:2:FIRE
 F:ATTR_MULTI
-F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
 D:0:The lava BURNS you.
 
 N:86:stream of shallow lava
@@ -633,7 +633,7 @@ G:.:r
 S:r:R:R:R:R:R:r
 E:4d4:2:FIRE
 F:ATTR_MULTI
-F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
 D:0:The lava burns you.
 
 N:87:dark pit
@@ -781,7 +781,7 @@ S:b:B:B:B:B:b:B
 F:ATTR_MULTI
 #F:FLOOR | CAN_FEATHER | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | CAN_RUN
 F:DONT_NOTICE_RUNNING | NO_ARTICLE
-F:WALL | NO_WALK | NO_VISION | PERMANENT | BOUNDARY
+F:WALL | NO_WALK | NO_VISION | PERMANENT | BOUNDARY | GLOW
 
 #impassable by admins, like PERM_FEAT_SOLID just as mountain chain
 N:104:high mountain chain
@@ -795,7 +795,7 @@ D:2:a very hard stone block blocking your way
 #just a functional-less marker for divine_gateway(), to look cool */
 N:105:unstable void jumpgate
 G:+:M
-F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+F:FLOOR | NOTICE | REMEMBER | CAN_RUN | GLOW
 D:0:An unstable silhouette of a void jumpgate in the making
 
 N:106:abyss
@@ -883,7 +883,7 @@ D:1:You cannot break down these bars.
 
 N:160:void jumpgate
 G:+:v
-F:FLOOR | REMEMBER | NOTICE | PERMANENT | CAN_RUN
+F:FLOOR | REMEMBER | NOTICE | PERMANENT | CAN_RUN | GLOW
 D:0:A dark rift opens to the void here.
 
 
@@ -945,14 +945,14 @@ F:FLOOR
 
 N:176:Transport beacon
 G:>:G
-F:FLOOR | REMEMBER | NOTICE | PERMANENT | CAN_RUN
+F:FLOOR | REMEMBER | NOTICE | PERMANENT | CAN_RUN | GLOW
 D:0:A teleporter beacon.
 
 N:177:lava wall
 G:#:R
 S:R:R:r:r:U:u:R
 F:ATTR_MULTI
-F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING
+F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | GLOW
 D:1:The lava is far too hot to tunnel into it.
 D:2:a lava wall blocking your way
 
@@ -961,7 +961,7 @@ G:%:v
 S:R:R:y:v:y:v:R
 E:150d2:10:HELLFIRE
 F:ATTR_MULTI
-F:FLOOR | REMEMBER | NOTICE | PERMANENT
+F:FLOOR | REMEMBER | NOTICE | PERMANENT | GLOW
 D:0:This fire is so powerful it could destroy even the most powerful artifacts.
 
 N:179:path to the next area
@@ -1106,7 +1106,7 @@ S:y:y:y:R:r:y:R
 E:2d5:2:FIRE
 D:0:The blazing fire burns you!
 F:ATTR_MULTI
-F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT
+F:FLOOR | CAN_LEVITATE | REMEMBER | SUPPORT_LIGHT | GLOW
 F:DONT_NOTICE_RUNNING
 
 # Permanent rubble -- town use
@@ -1196,7 +1196,7 @@ D:2:a very hard stone block blocking your way
 N:218:decorative deep lava
 G:~:R
 S:R:R:r:R:R:o:y
-F:ATTR_MULTI | NO_ARTICLE
+F:ATTR_MULTI | NO_ARTICLE | GLOW
 F:WALL | NO_WALK | NO_VISION | PERMANENT | DONT_NOTICE_RUNNING | SUPPORT_LIGHT
 
 N:219:bush
