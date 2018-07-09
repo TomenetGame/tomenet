@@ -2555,7 +2555,7 @@ static void player_setup(int Ind, bool new) {
 		if (i == 3000) s_printf("failed!\n");
 	}
 	/* top paranoia check - if whole level is walled, place him in a wall instead of into another creature! */
-	if (zcave[p_ptr->py][p_ptr->px].m_idx) {
+	if (zcave[p_ptr->py][p_ptr->px].m_idx && zcave[p_ptr->py][p_ptr->px].m_idx != -Ind) {
 		if (!l_ptr) { /* so we put paranoia in your paranoia */
 			s_printf("PS: No empty space (2). Failed due to non-existing floor!\n");
 			/* We cannot allow logging in under such circumstances.. */

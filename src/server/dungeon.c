@@ -7669,7 +7669,7 @@ void process_player_change_wpos(int Ind) {
 			s_printf("PPCW: No empty space (2).\n");
 	}
 	/* top paranoia check - if whole level is walled, place him in a wall instead of into another creature! */
-	if (zcave[y][x].m_idx) {
+	if (zcave[y][x].m_idx && zcave[y][x].m_idx != -Ind) {
 		s_printf("PPCW: No empty space (3) checking..");
 		for (starty = 1; starty < p_ptr->cur_hgt - 1; starty++) {
 			for (startx = 1; startx < p_ptr->cur_wid - 1; startx++) {
