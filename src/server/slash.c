@@ -4572,6 +4572,42 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				return;
 			}
+			else if (prefix(message, "/privilege")) {
+				if (!tk) return;
+				/* added checking for account existence - mikaelh */
+				switch(privilege(message3, 1)) {
+				case -1: msg_format(Ind, "\377GPrivileging %s", message3);
+					break;
+				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
+					break;
+				case 1: msg_format(Ind, "\377oAccount %s already privileged", message3);
+				}
+				return;
+			}
+			else if (prefix(message, "/vprivilege")) {
+				if (!tk) return;
+				/* added checking for account existence - mikaelh */
+				switch(privilege(message3, 2)) {
+				case -1: msg_format(Ind, "\377GVery-privileging %s", message3);
+					break;
+				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
+					break;
+				case 1: msg_format(Ind, "\377oAccount %s already very privileged", message3);
+				}
+				return;
+			}
+			else if (prefix(message, "/unprivilege")) {
+				if (!tk) return;
+				/* added checking for account existence - mikaelh */
+				switch(privilege(message3, 0)) {
+				case -1: msg_format(Ind, "\377GUnprivileging %s", message3);
+					break;
+				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
+					break;
+				case 1: msg_format(Ind, "\377oAccount %s already unprivileged", message3);
+				}
+				return;
+			}
 			else if (prefix(message, "/makeadmin")){
 				if(!tk) return;
 				/* added checking for account existence - mikaelh */
@@ -6967,7 +7003,7 @@ void do_slash_cmd(int Ind, char *message) {
 				}
 				msg_format(Ind, "Looking up account %s.", message3);
 				if (Admin_GetAccount(&acc, message3)) {
-					msg_format(Ind, " (Normalised name is <%s>)", acc.name_normalised);
+					msg_format(Ind, " (Normalised name is <%s>, privileges: %d)", acc.name_normalised, (acc.flags & ACC_VPRIVILEGED) ? 2 : (acc.flags & ACC_PRIVILEGED) ? 1 : 0);
 					n = player_id_list(&id_list, acc.id);
 					/* Display all account characters here */
 					for (i = 0; i < n; i++) {

@@ -193,6 +193,56 @@ int invalidate(char *name, bool admin) {
 	return(1);
 }
 
+int privilege(char *name, int level) {
+	struct account acc;
+	int i;
+	bool effect = FALSE;
+
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
+
+	/* Modify account flags */
+	switch (level) {
+	case 0:
+		if (acc.flags & (ACC_VPRIVILEGED | ACC_PRIVILEGED)) {
+			effect = TRUE;
+			acc.flags &= ~(ACC_VPRIVILEGED | ACC_PRIVILEGED);
+		}
+		break;
+	case 1:
+		if (!(acc.flags & ACC_PRIVILEGED)) {
+			effect = TRUE;
+			acc.flags |= ACC_PRIVILEGED;
+		}
+		break;
+	case 2:
+		if (!(acc.flags & ACC_VPRIVILEGED)) {
+			effect = TRUE;
+			acc.flags |= ACC_VPRIVILEGED;
+		}
+		break;
+	}
+
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
+
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	/* Re-privilege the player too */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->account == acc.id) {
+			if (Players[i]->privileged != level) effect = TRUE;
+			Players[i]->privileged = level;
+		}
+	}
+
+	/* Return value of -1 indicates no effect */
+	if (effect) return(-1);
+
+	/* Success */
+	return(1);
+}
 int makeadmin(char *name) {
 	struct account acc;
 	int i;
