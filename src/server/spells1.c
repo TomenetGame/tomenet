@@ -824,7 +824,8 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	dun_level *l_ptr;
 
 	bool look = TRUE;
-	bool left_shop = (dis == 1) || istown(wpos) //istown hack: prevent teleporting people who can't swim into the lake in Bree
+	bool left_shop = (dis == 1);
+	bool town = istown(wpos) //istown hack: prevent teleporting people who can't swim into the lake in Bree
 	    || isdungeontown(wpos); //for IDDC random towns to avoid lava/water item destruction on logging in
 
 	/* Space/Time Anchor */
@@ -837,7 +838,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return FALSE;
 
 	/* Hack -- Teleportation when died is always allowed */
-	if (!p_ptr->death) {
+	if (!p_ptr->death && !left_shop) {
 		if (p_ptr->mode & MODE_PVP) {
 #ifdef HOSTILITY_ABORTS_RUNNING
  #if 1
@@ -920,7 +921,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			/* Ignore illegal locations */
 			if (!in_bounds4(l_ptr, y, x)) continue;
 
-			if (!left_shop) {
+			if (!left_shop && !town) {
 				/* Require floor space if not ghost */
 				if (!p_ptr->ghost && !cave_free_bold(zcave, y, x)) continue;
 
@@ -938,7 +939,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 					continue;
 			}
 
-			/* Require empty space if a ghost */
+			/* Require empty space if a ghost too */
 			if (p_ptr->ghost && zcave[y][x].m_idx) continue;
 
 			/* No teleporting into vaults and such */
@@ -4668,7 +4669,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!quiet && player_can_see_bold(Ind, y, x)) obvious = TRUE;
 
 		/* Turn off the light. */
-		c_ptr->info &= ~CAVE_GLOW;
+		if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)) c_ptr->info &= ~CAVE_GLOW;
 
 		/* Hack -- Forget "boring" grids */
 		    //if (c_ptr->feat <= FEAT_INVIS)
