@@ -7644,6 +7644,7 @@ void process_player_change_wpos(int Ind) {
 	}
 	/* this is required to make sense, isn't it.. */
 	if (j == 5000) {
+		s_printf("PPCW: No empty space (1).\n");
 		x = startx;
 		y = starty;
 
@@ -7656,7 +7657,7 @@ void process_player_change_wpos(int Ind) {
 			for (starty = 1; starty < p_ptr->cur_hgt - 1; starty++) {
 				for (startx = 1; startx < p_ptr->cur_wid - 1; startx++) {
 					if (!(zcave[starty][startx].info & CAVE_STCK) &&
-					    cave_empty_bold(zcave, y, x)) {
+					    cave_empty_bold(zcave, starty, startx)) {
 						x = startx;
 						y = starty;
 						break;
@@ -7664,18 +7665,25 @@ void process_player_change_wpos(int Ind) {
 				}
 			}
 		}
+		if (starty == p_ptr->cur_hgt - 1 && startx == p_ptr->cur_wid - 1)
+			s_printf("PPCW: No empty space (2).\n");
 	}
 	/* top paranoia check - if whole level is walled, place him in a wall instead of into another creature! */
 	if (zcave[y][x].m_idx) {
+		s_printf("PPCW: No empty space (3) checking..");
 		for (starty = 1; starty < p_ptr->cur_hgt - 1; starty++) {
 			for (startx = 1; startx < p_ptr->cur_wid - 1; startx++) {
-				if (!(zcave[starty][startx].info & CAVE_STCK) && !zcave[y][x].m_idx) {
+				if (!(zcave[starty][startx].info & CAVE_STCK) && !zcave[starty][startx].m_idx) {
 					x = startx;
 					y = starty;
+					s_printf("success.\n");
+					j = 0;
 					break;
 				}
 			}
+			if (!j) break;
 		}
+		if (j) s_printf("failed!\n");
 	}
 
 	p_ptr->py = y;

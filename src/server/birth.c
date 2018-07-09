@@ -2538,6 +2538,7 @@ static void player_setup(int Ind, bool new) {
 
 	/* Don't stack with another player */
 	if (zcave[y][x].m_idx && zcave[y][x].m_idx != 0 - Ind) {
+		s_printf("PS: No empty space (1)..");
 		for (i = 0; i < 3000; i++) {
 			d = (i + 9) / 10;
 			//scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 0);
@@ -2545,12 +2546,42 @@ static void player_setup(int Ind, bool new) {
 			scatter(wpos, &y, &x, p_ptr->py, p_ptr->px, d, 1);
 
 			if (!in_bounds(y, x) || !cave_empty_bold(zcave, y, x)) continue;
-			else {
-				p_ptr->px = x;
-				p_ptr->py = y;
-			}
 
+			p_ptr->px = x;
+			p_ptr->py = y;
+			s_printf("success.\n");
 			break;
+		}
+		if (i == 3000) s_printf("failed!\n");
+	}
+	/* top paranoia check - if whole level is walled, place him in a wall instead of into another creature! */
+	if (zcave[p_ptr->py][p_ptr->px].m_idx) {
+		if (!l_ptr) { /* so we put paranoia in your paranoia */
+			s_printf("PS: No empty space (2). Failed due to non-existing floor!\n");
+			/* We cannot allow logging in under such circumstances.. */
+			Destroy_connection(p_ptr->conn, "Non-existant level!");
+			return;
+		} else {
+			s_printf("PS: No empty space (2) checking..");
+			i = 1;
+			for (y = 1; y < l_ptr->hgt - 1; y++) {
+				for (x = 1; x < l_ptr->wid - 1; x++) {
+					if (!(zcave[y][x].info & CAVE_STCK) && !zcave[y][x].m_idx) {
+						p_ptr->px = x;
+						p_ptr->py = y;
+						s_printf("success.\n");
+						i = 0;
+						break;
+					}
+				}
+				if (!i) break;
+			}
+			if (i) {
+				s_printf("failed!\n");
+				/* We cannot allow logging in under such circumstances.. */
+				Destroy_connection(p_ptr->conn, "Inaccessible level!");
+				return;
+			}
 		}
 	}
 
