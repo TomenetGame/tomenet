@@ -19646,7 +19646,7 @@ Shields cannot gain +speed mod.
 Boomerangs cannot gain +speed mod.
 
 +Hit points mod (LIFE) caps at +3 and can only spawn on..
- melee weapons (caps at +2 if the weapon can be dual-wielded),
+ melee weapons (caps at +1 if the weapon can be dual-wielded, +2 on 1.5h/2h),
  hats, gloves and body armour.
 
 
