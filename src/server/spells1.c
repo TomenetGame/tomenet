@@ -1856,10 +1856,18 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 			p_ptr->paging = 1;
 #endif
 		}
-
+		else if (p_ptr->alert_starvation && !strcmp(hit_from, "starvation")
+#ifdef USE_SOUND_2010
+		    )
+			Send_warning_beep(Ind);
+			//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);
+#else
+		    && p_ptr->paging == 0)
+			p_ptr->paging = 1;
+#endif
 #if 0 /* Since 4.6.2 covered by 'alert_offpanel_dam' */
 		/* warn if taking (continuous) damage while inside a store! */
-		if (p_ptr->store_num != -1) {
+		else if (p_ptr->store_num != -1) {
  #ifdef USE_SOUND_2010
 			Send_warning_beep(Ind);
 			//sound(Ind, "warning", "page", SFX_TYPE_MISC, FALSE);

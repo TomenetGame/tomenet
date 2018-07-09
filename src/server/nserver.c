@@ -2500,11 +2500,13 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->diz_death_any = TRUE;
 		p_ptr->diz_first = TRUE;
 #endif
+		p_ptr->alert_starvation = TRUE;
 	} else {
 		p_ptr->diz_unique = options[119];
 		p_ptr->diz_death = options[120];
 		p_ptr->diz_death_any = options[121];
 		p_ptr->diz_first = options[122];
+		p_ptr->alert_starvation = options[123];
 	}
     }
 }

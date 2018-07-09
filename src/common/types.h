@@ -2084,6 +2084,7 @@ struct player_type {
 	bool alert_mana;
 	bool alert_afk_dam;
 	bool alert_offpanel_dam;
+	bool alert_starvation;
 	bool no_alert;
 	bool auto_afk;
 	bool newb_suicide;
@@ -3261,8 +3262,8 @@ struct client_opts {
 	bool alert_mana;
 	bool alert_afk_dam;
 	bool alert_offpanel_dam; //20
-	bool exp_bar;
     //page 2
+	bool exp_bar;
 	bool uniques_alive;
 	bool warn_unique_credit;
 	bool limit_chat;
@@ -3408,10 +3409,11 @@ struct client_opts {
 	bool last_words;
 	bool disturb_see; //118
 
-	bool diz_unique; //page 3 cont. (4.7.1b)
+	bool diz_unique; //page 3 cont. 4.7.1b / 4.7.2
 	bool diz_death;
 	bool diz_death_any;
 	bool diz_first; //122
+	bool alert_starvation;
 };
 
 /*

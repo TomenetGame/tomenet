@@ -246,7 +246,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.alert_offpanel_dam,	FALSE,	1,	0, 20, TRUE,
 	    "alert_offpanel_dam",	"Beep when taking damage while looking elsewhere" },
 
-	{ &c_cfg.exp_bar,		TRUE,	1,	9, 21, TRUE,
+	{ &c_cfg.exp_bar,		TRUE,	4,	9, 21, TRUE, //moved to page 2 in 4.7.2 to make room for alert_starvation
 	    "exp_bar",			"Show experience bar instead of a number" },
 
     //page 2 - 22
@@ -316,7 +316,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_verify_sell",		"Skip safety question when selling items" },
 	{ &c_cfg.no_verify_destroy,	FALSE,	6,	0, 49, TRUE,
 	    "no_verify_destroy",	"Skip safety question when destroying items" },
-	//HOLE:14
+	//HOLE:13
 
     //page 4 - 49
 	{ &c_cfg.auto_afk,		TRUE,	2,	1, 50, TRUE,
@@ -512,6 +512,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "diz_death_any",		"Displays lore on monster that kills anyone" },
 	{ &c_cfg.diz_first,		TRUE,	6,	0, 122, TRUE,
 	    "diz_first",		"Displays lore on first-time monster kill" },
+	{ &c_cfg.alert_starvation,	TRUE,	1,	0, 123, TRUE, //moved exp_bar to page 2 to make room for this
+	    "alert_starvation",		"Beep when taking damage from starvation" },
 };
 
 
