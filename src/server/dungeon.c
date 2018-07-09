@@ -1854,7 +1854,8 @@ void world_surface_night(struct worldpos *wpos) {
 
 		/* darken all */
 		if (!(f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
-		    !(c_ptr->info & CAVE_ROOM)) { /* keep houses' contents lit */
+		    !(c_ptr->info & CAVE_ROOM) && /* keep houses' contents lit */
+		    !(f_info[c_ptr->feat].flags2 & FF2_GLOW)) {
 			c_ptr->info &= ~CAVE_GLOW;
 			c_ptr->info |= CAVE_DARKEN;
 		}
@@ -7654,12 +7655,24 @@ void process_player_change_wpos(int Ind) {
 		    && !(p_ptr->global_event_temp & PEVF_STCK_OK)) {
 			for (starty = 1; starty < p_ptr->cur_hgt - 1; starty++) {
 				for (startx = 1; startx < p_ptr->cur_wid - 1; startx++) {
-					if ((zcave[starty][startx].info & CAVE_STCK) &&
+					if (!(zcave[starty][startx].info & CAVE_STCK) &&
 					    cave_empty_bold(zcave, y, x)) {
 						x = startx;
 						y = starty;
 						break;
 					}
+				}
+			}
+		}
+	}
+	/* top paranoia check - if whole level is walled, place him in a wall instead of into another creature! */
+	if (zcave[y][x].m_idx) {
+		for (starty = 1; starty < p_ptr->cur_hgt - 1; starty++) {
+			for (startx = 1; startx < p_ptr->cur_wid - 1; startx++) {
+				if (!(zcave[starty][startx].info & CAVE_STCK) && !zcave[y][x].m_idx) {
+					x = startx;
+					y = starty;
+					break;
 				}
 			}
 		}
