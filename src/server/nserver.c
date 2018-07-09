@@ -3063,7 +3063,7 @@ static int Handle_login(int ind) {
 	}
 
 	/* warning_rest only occurs once per account */
-	if (acc_get_flags(p_ptr->accountname) & ACC_WARN_REST) p_ptr->warning_rest = 3;
+	if (acc_get_flags(p_ptr->accountname) & ACC_WARN_REST) p_ptr->warning_rest = WARNING_REST_TIMES;
 #else
 	/* no greeting */
 	greeting = FALSE;
@@ -10938,7 +10938,9 @@ static int Receive_rest(int ind) {
 		if ((p_ptr->energy) >= (level_speed(&p_ptr->wpos) * 2) - 1) {
 			/* Set flag */
 			p_ptr->resting = TRUE;
-			p_ptr->warning_rest = 3;
+			/* Actually don't clear warning completely =p. Keep +1 warning in reserve..uhh */
+			if (p_ptr->warning_rest < WARNING_REST_TIMES - 1) p_ptr->warning_rest = WARNING_REST_TIMES - 1;
+			else p_ptr->warning_rest = WARNING_REST_TIMES;
 
 			/* Make sure we aren't running */
 			p_ptr->running = FALSE;

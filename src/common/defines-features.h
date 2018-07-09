@@ -81,6 +81,8 @@
 #define HOME_APPRAISAL		/* Displays player store price when inspecting an item at home */
 #define EXPORT_PLAYER_STORE_OFFERS	60	/* Export all player store items to an external list every n minutes [60] */
 
+#define WARNING_REST_TIMES	6	/* Warn this often about 'R'esting */
+
 #ifndef WIN32
  #define ENABLE_GO_GAME		/* Allows players to play vs CPU games of Go/Weiqi/Baduk. - C. Blue */
 #endif

@@ -2822,7 +2822,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_lite = 1;
 		p_ptr->warning_lite_refill = 1;
 		p_ptr->warning_wield_combat = 1;
-		p_ptr->warning_rest = 3;
+		p_ptr->warning_rest = WARNING_REST_TIMES;
 		p_ptr->warning_mimic = 1;
 		p_ptr->warning_dual = 1;
 		p_ptr->warning_dual_mode = 1;
@@ -3015,7 +3015,6 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_fountain = 1;
 	}
 	if (p_ptr->max_plv > 10) {
-		p_ptr->warning_ghost = 1;
 		p_ptr->warning_dual = 1;
 		p_ptr->warning_run_lite = 10;
 		p_ptr->warning_ranged_autoret = 1;
@@ -3027,21 +3026,21 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	}
 	if (p_ptr->max_plv > 15) {
 		p_ptr->warning_bpr = 1;
-		p_ptr->warning_rest = 3;
+		p_ptr->warning_rest = WARNING_REST_TIMES;
 		p_ptr->warning_hungry = 1;
 		p_ptr->warning_macros = 1;
 		p_ptr->warning_boomerang = 1;
 		p_ptr->warning_inspect = 1;
 	}
 	if (p_ptr->max_plv > 20) {
+		p_ptr->warning_ghost = 1;
 		p_ptr->warning_dual_mode = 1;
 		p_ptr->warning_hungry = 2;
 		p_ptr->warning_lite_refill = 1;
 		p_ptr->warning_staircase_oneway = 1;
 	}
 	if (p_ptr->max_plv >= 25) {
-		/* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */
-		p_ptr->warning_ai_annoy = 1;
+		p_ptr->warning_ai_annoy = 1; /* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */
 	}
 	if (p_ptr->max_plv > 30) {
 		p_ptr->warning_instares = 1;

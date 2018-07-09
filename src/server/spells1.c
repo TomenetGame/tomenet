@@ -2093,16 +2093,7 @@ destined_defeat:
 		return;
 	}
 
-	if (p_ptr->warning_rest != 3 && !p_ptr->warning_rest_cooldown
-	    && p_ptr->max_plv >= 3
-	    && p_ptr->chp * 10 / p_ptr->mhp <= 5) {
-		msg_print(Ind, "\374\377oHINT: Press \377RSHIFT+r\377o to rest, so your hit points will");
-		msg_print(Ind, "\374\377o      regenerate faster. (Also true for mana and stamina.)");
-		p_ptr->warning_rest++;
-		p_ptr->warning_rest_cooldown = 3;//minutes
-		acc_set_flags(p_ptr->accountname, ACC_WARN_REST, TRUE);
-		s_printf("warning_rest: %s\n", p_ptr->name);
-	}
+	if (p_ptr->warning_rest != WARNING_REST_TIMES && p_ptr->warning_rest_cooldown < 10) p_ptr->warning_rest_cooldown = 10;
 }
 
 
