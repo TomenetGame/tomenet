@@ -1933,15 +1933,141 @@ static void night_falls() {
 	if (season_newyearseve) fireworks = 1;
 }
 
+#ifdef EXTENDED_COLOURS_PALANIM
+static void world_surface_palette(int skystate, int substate) {
+	int i, tmp;
+
+	s_printf("world_surface_palette(%d,%d)\n", skystate, substate);
+
+	switch (skystate) {
+	case 0: //getting less dark
+		substate += 2 * 12; //proactive for skystate 1
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			//black stays black
+			Send_palette(i, 17, 0xff - substate * 2, 0xff - substate * 2, 0xff - substate * 2);	//white			<-slate
+			Send_palette(i, 18, 0x9d - substate * 1, 0x9d - substate * 1, 0x9d - substate * 1);	//slate			<-l-dark
+			Send_palette(i, 19, 0xff - substate * 1, 0x8d - substate * 1, 0x00);			//orange		<-umber
+			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red			<-%
+			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green			<-%
+			Send_palette(i, 22, 0x00, 0x33, 0xff);							//blue (readable)	<-%
+			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber			<-%
+			Send_palette(i, 24, 0x66, 0x66, 0x66);							//l-dark (distinct)	<-%
+			Send_palette(i, 25, 0xd7 - substate * 2, 0xd7 - substate * 2, 0xd7 - substate * 2);	//l-white		<-slate
+			Send_palette(i, 26, 0xaf, 0x00, 0xff);							//violet		<-%
+			Send_palette(i, 27, 0xff - substate * 1, 0xff - substate * 1, 0x00 + substate * 1);	//yellow		<-l-umber
+			Send_palette(i, 28, 0xff - substate * 1, 0x30 - substate * 1, 0x30 - substate * 1);	//l-red			<-red
+			Send_palette(i, 29, 0x00, 0xff - substate * 1, 0x00 + substate * 1);			//l-green		<-green
+			Send_palette(i, 30, 0x00, 0xff - substate * 3, 0xff);					//l-blue		<-blue
+			Send_palette(i, 31, 0xc7 - substate * 1, 0x9d - substate * 1, 0x55 - substate * 2);	//l-umber		<-umber
+		}
+		break;
+	case 1: //DAYBREAK! -- darkness ceases (this entry has all correct colours)
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			//black stays black
+			Send_palette(i, 17, 0xff - substate * 2, 0xff - substate * 2, 0xff - substate * 2);	//white			<-slate
+			Send_palette(i, 18, 0x9d - substate * 1, 0x9d - substate * 1, 0x9d - substate * 1);	//slate			<-l-dark
+			Send_palette(i, 19, 0xff - substate * 1, 0x8d - substate * 1, 0x00);			//orange		<-umber
+			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red			<-%
+			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green			<-%
+			Send_palette(i, 22, 0x00, 0x33, 0xff);							//blue (readable)	<-%
+			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber			<-%
+			Send_palette(i, 24, 0x66, 0x66, 0x66);							//l-dark (distinct)	<-%
+			Send_palette(i, 25, 0xd7 - substate * 2, 0xd7 - substate * 2, 0xd7 - substate * 2);	//l-white		<-slate
+			Send_palette(i, 26, 0xaf, 0x00, 0xff);							//violet		<-%
+			Send_palette(i, 27, 0xff - substate * 1, 0xff - substate * 1, 0x00 + substate * 1);	//yellow		<-l-umber
+			Send_palette(i, 28, 0xff - substate * 1, 0x30 - substate * 1, 0x30 - substate * 1);	//l-red			<-red
+			Send_palette(i, 29, 0x00, 0xff - substate * 1, 0x00 + substate * 1);			//l-green		<-green
+			Send_palette(i, 30, 0x00, 0xff - substate * 3, 0xff);					//l-blue		<-blue
+			Send_palette(i, 31, 0xc7 - substate * 1, 0x9d - substate * 1, 0x55 - substate * 2);	//l-umber		<-umber
+		}
+		break;
+	case 2: //getting yellowish/less bright
+		substate /= 6; //6 hours daytime, reduced to 1 hour effectiveness
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			//black stays black
+			Send_palette(i, 17, 0xff - substate * 1, 0xff - substate * 1, 0xff - substate * 2);	//white
+			Send_palette(i, 18, 0x9d - substate * 0, 0x9d - substate * 0, 0x9d - substate * 1);	//slate
+			Send_palette(i, 19, 0xff, 0x8d, 0x00);							//orange
+			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red
+			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green
+			Send_palette(i, 22, 0x00, 0x33, 0xff);							//blue (readable)
+			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber
+			Send_palette(i, 24, 0x66, 0x66, 0x66);							//l-dark (distinct)
+			Send_palette(i, 25, 0xd7 - substate * 1, 0xd7 - substate * 1, 0xd7 - substate * 2);	//l-white
+			Send_palette(i, 26, 0xaf, 0x00, 0xff);							//violet
+			Send_palette(i, 27, 0xff - substate * 1, 0xff, 0x00);					//yellow
+			Send_palette(i, 28, 0xff, 0x30, 0x30);							//l-red
+			Send_palette(i, 29, 0x00, 0xff, 0x00);							//l-green
+			Send_palette(i, 30, 0x00, 0xff - substate * 1, 0xff);					//l-blue
+			Send_palette(i, 31, 0xc7, 0x9d, 0x55);							//l-umber
+		}
+		break;
+	case 3: //sunsetty and darkish
+		tmp = substate;
+		substate += 12; //inherited form skystate 2: 1 hour of effectiveness predating skystate 3
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			//black stays black
+			Send_palette(i, 17, 0xff - substate * 1, 0xff - substate * 2, 0xff - substate * 3);	//white
+			Send_palette(i, 18, 0x9d - substate * 0, 0x9d - substate * 1, 0x9d - substate * 2);	//slate
+			Send_palette(i, 19, 0xff, 0x8d, 0x00);							//orange
+			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red
+			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green
+			Send_palette(i, 22, 0x00 + tmp * 1, 0x33 - tmp * 1, 0xff);				//blue (readable)
+			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber
+			Send_palette(i, 24, 0x66 - tmp * 1, 0x66 - tmp * 1, 0x66 - tmp * 1);			//l-dark (distinct)
+			Send_palette(i, 25, 0xd7 - substate * 1, 0xd7 - substate * 2, 0xd7 - substate * 3);	//l-white
+			Send_palette(i, 26, 0xaf - tmp * 1, 0x00, 0xff - tmp * 1);				//violet
+			Send_palette(i, 27, 0xff - substate * 1, 0xff - substate * 1, 0x00);			//yellow
+			Send_palette(i, 28, 0xff - tmp * 1, 0x30 - tmp * 1, 0x30 - tmp * 1);			//l-red
+			Send_palette(i, 29, 0x00, 0xff - tmp * 1, 0x00);					//l-green
+			Send_palette(i, 30, 0x00 + tmp * 1, 0xff - substate * 1, 0xff);				//l-blue
+			Send_palette(i, 31, 0xc7 - tmp * 1, 0x9d - tmp * 1, 0x55 - tmp * 1);			//l-umber
+		}
+		break;
+	case 4: //NIGHTFALL! -- getting dark
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			//black stays black
+			Send_palette(i, 17, 0x9d + substate * 2, 0x9d + substate * 2, 0x9d + substate * 2);	//white			<-slate
+			Send_palette(i, 18, 0x66 + substate * 1, 0x66 + substate * 1, 0x66 + substate * 1);	//slate			<-l-dark
+			Send_palette(i, 19, 0x8d + substate * 1, 0x66 + substate * 1, 0x00);			//orange		<-umber
+			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red			<-%
+			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green			<-%
+			Send_palette(i, 22, 0x00, 0x33, 0xff);							//blue (readable)	<-%
+			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber			<-%
+			Send_palette(i, 24, 0x66, 0x66, 0x66);							//l-dark (distinct)	<-%
+			Send_palette(i, 25, 0x9d + substate * 2, 0x9d + substate * 2, 0x9d + substate * 2);	//l-white		<-slate
+			Send_palette(i, 26, 0xaf, 0x00, 0xff);							//violet		<-%
+			Send_palette(i, 27, 0xc7 + substate * 1, 0x9d + substate * 1, 0x55 - substate * 1);	//yellow		<-l-umber
+			Send_palette(i, 28, 0xb7 + substate * 1, 0x00 + substate * 1, 0x00 + substate * 1);	//l-red			<-red
+			Send_palette(i, 29, 0x00, 0x9d + substate * 1, 0x44 - substate * 1);			//l-green		<-green
+			Send_palette(i, 30, 0x00, 0x33 + substate * 3, 0xff);					//l-blue		<-blue
+			Send_palette(i, 31, 0x8d + substate * 1, 0x66 + substate * 1, 0x00 + substate * 2);	//l-umber		<-umber
+		}
+		break;
+	}
+}
+#endif
+
 /* take care of day/night changes, on world surface.
    NOTE: assumes that it gets called every HOUR turns only! */
 static void process_day_and_night() {
 	bool sunrise, nightfall;
+#ifdef EXTENDED_COLOURS_PALANIM
+	int t = (turn / (HOUR / 12)) % (24 * 12); //5 minute intervals, ie 1/12 hour
+#endif
 
 	/* Check for sunrise or nightfall */
 	sunrise = (((turn / HOUR) % 24) == SUNRISE) && IS_DAY; /* IS_DAY checks for events, that's why it's here. - C. Blue */
 	nightfall = (((turn / HOUR) % 24) == NIGHTFALL) && IS_NIGHT; /* IS_NIGHT is pointless at the time of coding this, just for consistencies sake with IS_DAY above. */
 
+#ifdef EXTENDED_COLOURS_PALANIM
+    if (!(turn % HOUR)) {
+#endif
 	/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! -- covered by IS_DAY now. */
 	if (sunrise)
 		sun_rises();
@@ -1949,6 +2075,23 @@ static void process_day_and_night() {
 	   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
 	else if (nightfall && !night_surface)
 		night_falls();
+#ifdef EXTENDED_COLOURS_PALANIM
+    }
+#endif
+
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* Check for smooth dark/light transitions every 5 minutes (in-game time). (6h..20h is daylight) */
+	/* 5:00h..6:00h - getting less dark */
+	if (t >= 5 * 12 && t < 6 * 12) world_surface_palette(0, 6 * 12 - t);
+	/* 6:00h..8:00h - DAYBREAK - darkness ceases */
+	else if (t >= 6 * 12 && t <= 8 * 12) world_surface_palette(1, 8 * 12 - t);
+	/* 13:00h..19:00h - getting yellowish/less bright */
+	else if (t >= 13 * 12 && t < 19 * 12) world_surface_palette(2, t - 13 * 12);
+	/* 19:00h..20:00h - sunsetty, getting darkish */
+	else if (t >= 19 * 12 && t < 20 * 12) world_surface_palette(3, t - 19 * 12);
+	/* 20:00h..21:00h - NIGHTFALL - getting dark */
+	else if (t >= 20 * 12 && t <= 21 * 12) world_surface_palette(4, 21 * 12 - t);
+#endif
 }
 
 /* Called when the server starts up */
@@ -8422,7 +8565,11 @@ void dungeon(void) {
 #endif
 
 	/* Process day/night changes on world_surface */
+#ifndef EXTENDED_COLOURS_PALANIM
 	if (!(turn % HOUR)) process_day_and_night();
+#else /* '>_> */
+	if (!(turn % (HOUR / 12))) process_day_and_night();
+#endif
 
 	/* Refresh everybody's displays */
 	for (i = 1; i <= NumPlayers; i++) {

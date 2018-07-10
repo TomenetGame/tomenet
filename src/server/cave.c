@@ -2442,6 +2442,7 @@ static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int 
 	if (c_ptr->feat == FEAT_OPEN || c_ptr->feat == FEAT_BROKEN || c_ptr->feat == FEAT_SHOP ||
 	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return colour;
 
+#ifndef EXTENDED_COLOURS_PALANIM
 	/* Darkness on the world surface at night. Darken all colours. */
 	if (night_surface &&
 	    (!(c_ptr->info & (CAVE_GLOW | CAVE_LITE)) ||
@@ -2465,6 +2466,9 @@ static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int 
 		case TERM_L_UMBER: return TERM_UMBER;
 		}
 	}
+#else
+	/* Experimental: Let world_surface_palette() take care of it.. exploitable, yes ;) */
+#endif
 
 	return colour;
 }
@@ -2677,14 +2681,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 	int a_org;
 	bool lite_snow, keep = FALSE;
 
-#if 0 /* probably better here than in manipulate_cave_colour..() -- but moved to calling functions for efficiency */
-#ifdef EXTENDED_COLOURS_PALANIM
-	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
-#else
-	bool palanim = FALSE;
-#endif
-#endif
-
 	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
@@ -2695,6 +2691,19 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 
 	/* Feature code */
 	feat = c_ptr->feat;
+
+#if 0 /* probably better here than in manipulate_cave_colour..() -- but moved to calling functions for efficiency */
+ #ifdef EXTENDED_COLOURS_PALANIM
+	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+ #else
+	bool palanim = FALSE;
+ #endif
+#else
+	/* In the night, lit grids are not palette-animation-shaded in any way */
+	if (night_surface && (c_ptr->info & (CAVE_GLOW | CAVE_LITE))) palanim = FALSE;
+	/* Also, lamp-lit grids are never palette-animation-shaded, for now.. */
+	else if (c_ptr->info & CAVE_LITE) palanim = FALSE;
+#endif
 
 #if 0
 	/* bad hack to display visible wall instead of clear wall in sector00 events */
