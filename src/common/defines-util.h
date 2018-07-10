@@ -89,12 +89,44 @@
  #define TERM_STARLITE	57
  #define TERM_HAVOC	58
 
- #ifdef EXTENDED_BG_COLOURS
-  #define TERM2_BLUE	63
+ #ifdef EXTENDED_COLOURS_PALANIM
+  /* Clones of the 16 default colours, aka 'really used' colours (non-compounds), for palette animation. */
+  #define TERMA_DARK	64
+  #define TERMA_WHITE	65
+  #define TERMA_SLATE	66
+  #define TERMA_ORANGE	67
+  #define TERMA_RED	68
+  #define TERMA_GREEN	69
+  #define TERMA_BLUE	70
+  #define TERMA_UMBER	71
+  #define TERMA_L_DARK	72
+  #define TERMA_L_WHITE	73
+  #define TERMA_VIOLET	74
+  #define TERMA_YELLOW	75
+  #define TERMA_L_RED	76
+  #define TERMA_L_GREEN	77
+  #define TERMA_L_BLUE	78
+  #define TERMA_L_UMBER	79
+
+  /* Problem: Not enough colours! So we need to change these masks to actual colours. */
+  #define TERM_BNW	249	/* black & white, for admin wizards and pandas */
+  #define TERM_BNWM	250	/* black & white + holyfire, for martyr */
+  #define TERM_BNWSR	251	/* black & white + blue, for shadow running */
+  #define TERM_BNWKS	252	/* black & white + psi, for kinetic shield */
+  #define TERM_BNWKS2	253	/* black & white + orange, for kinetic shield running out */
+  #define TERM_PVPBB	254	/* black/slate/yellow, for bloodbond */
+  #define TERM_PVP	255	/* black/yellow/red, for active PvP-hostility (or stormbringer) */
+  /* For compatibility with old clients: */
+  #define TERM_OLD2_BNW	0x40	/* 64: black & white MASK, for admin wizards */
+  #define TERM_OLD2_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */
+ #else
+  #define TERM_BNW	0x40	/* 64: black & white MASK, for admin wizards */
+  #define TERM_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */
  #endif
 
- #define TERM_BNW	0x40	/* 64: black & white MASK, for admin wizards */
- #define TERM_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */
+  #ifdef EXTENDED_BG_COLOURS
+   #define TERM2_BLUE	63
+  #endif
 #else
  #define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
  #define TERM_PVP	0x40	/* 64: black & red MASK, for active PvP-hostility (or stormbringer) */

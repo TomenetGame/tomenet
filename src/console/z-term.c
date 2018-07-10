@@ -512,6 +512,7 @@ byte flick_colour(byte attr){
 	byte flags = attr;//(remember flags) obsolete: & 0xE0;
 	attr = attr & 0x1F; /* cut flags off actual colour */
 
+#ifndef EXTENDED_COLOURS_PALANIM
 	/* additional flickering from 'black'n'white' flag? */
 	if (flags & TERM_BNW) {
 		if (rand_int(7) < 5) return(attr);
@@ -525,6 +526,49 @@ byte flick_colour(byte attr){
 		case 3: return TERM_YELLOW;
 		}
 	}
+#else
+	switch (attr) {
+	/* flickering from 'black'n'white' flag? */
+	case TERM_BNW: return (randint(2) < 2 ? TERM_L_DARK : TERM_WHITE);
+	case TERM_BNWM:
+		switch (randint(3)) {
+		case 1: return TERM_L_DARK;
+		case 2: return TERM_L_SLATE;
+		case 3: return TERM_HOLYFIRE;
+		}
+	case TERM_BNWSR:
+		switch (randint(3)) {
+		case 1: return TERM_L_DARK;
+		case 2: return TERM_L_SLATE;
+		case 3: return TERM_BLUE;
+		}
+	case TERM_BNWKS:
+		switch (randint(3)) {
+		case 1: return TERM_L_DARK;
+		case 2: return TERM_L_SLATE;
+		case 3: return TERM_PSI;
+		}
+	case TERM_BNWKS2:
+		switch (randint(3)) {
+		case 1: return TERM_L_DARK;
+		case 2: return TERM_L_SLATE;
+		case 3: return TERM_ORANGE;
+		}
+	/* flickering from 'pvp' flag? */
+	case TERM_PVPBB:
+		switch (randint(3)) {
+		case 1: return TERM_L_DARK;
+		case 2: return TERM_L_SLATE;
+		case 3: return TERM_YELLOW;
+		}
+	case TERM_PVP:
+		switch (randint(3)) {
+		case 1: return TERM_L_DARK;
+		case 2: return TERM_L_RED;
+		case 3: return TERM_YELLOW;
+		}
+	}
+#endif
 
 	if (attr == TERM_SHIELDM) {
 /*	if ((attr >= TERM_SHIELDM) && (attr < TERM_SHIELDI)){

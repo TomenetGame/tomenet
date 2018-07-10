@@ -6510,7 +6510,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 #ifdef EXTENDED_TERM_COLOURS
 		if (old_colours) {
 		    a_c = a & ~(TERM_BNW | TERM_PVP);
-		    if (a_c == 29 || a_c == 30 || a_c >= 32)
+		    if (a_c == TERM_CURSE || a_c == TERM_ANNI || a_c >= TERM_PSI)
 			a = TERM_WHITE; /* use white to indicate that client needs updating */
 		}
 #endif
@@ -6675,7 +6675,7 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 #ifdef EXTENDED_TERM_COLOURS
 		if (old_colours) {
 		    a_c = a & ~(TERM_BNW | TERM_PVP);
-		    if (a_c == 29 || a_c == 30 || a_c >= 32)
+		    if (a_c == TERM_CURSE || a_c == TERM_ANNI || a_c >= TERM_PSI)
 			a = TERM_WHITE; /* use white to indicate that client needs updating */
 		}
 #endif

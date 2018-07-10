@@ -179,12 +179,19 @@
    Same for servers. */
 #define EXTENDED_TERM_COLOURS
 
+/* (EXPERIMENTAL) Add another set of 16 colours to the normal 16 colours the game uses,
+   which are clones of those, but are only used for drawing the main (map_info aka game) screen.
+   Purpose: Allow for palette animation, intended for smooth day/night lighting changes. - C. Blue
+   Note: This changes TERM_BNW and TERM_PVP to be normal animated colours instead of masks,
+         because otherwise there would not be enough colours available to accomodate for this addition! */
+#define EXTENDED_COLOURS_PALANIM
+
 /* Special extended colours that make use of background colouring - C. Blue
    Note: This is highly EXPERIMENTAL and not even implemented atm.,
          the only thing that works is proof of concept code that displays
-         rain in alternating colours, TERM_ORANGE and (newly added for this) TERM2_BLUE. */
+         rain in alternating colours, TERM_ORANGE and (newly added for this) TERM2_BLUE.
+   Currently has NO EFFECT if EXTENDED_COLOURS_PALANIM is enabled at the same time! */
 //#define EXTENDED_BG_COLOURS
-
 
 /* better chance for non-low +hit,+dam on randart melee weapons and boomerangs */
 #define RANDART_WEAPON_BUFF

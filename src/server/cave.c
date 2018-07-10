@@ -1828,8 +1828,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
 }
 
 /* Despite of its name, this gets both, attr and char, for a monster race.. */
-static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr, byte *ap, char *cp)
-{
+static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr, byte *ap, char *cp) {
 	player_type *p_ptr = Players[Ind];
 	byte a;
 	char c;
@@ -1973,7 +1972,13 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 			(*ap) = TERM_OLD_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
 		else
  #endif
+ #ifndef EXTENDED_COLOURS_PALANIM
 			(*ap) = TERM_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
+ #else
+			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) (*ap) = TERM_OLD2_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
+			/* Just discarding base attr for now. The Panda is the only monster using this so it's fine because it's B+W only anyway. */
+			else (*ap) = TERM_BNW;
+ #endif
 #endif
 	}
 	/* Normal monster (not "clear" in any way) */
@@ -2053,12 +2058,20 @@ static byte player_color(int Ind) {
 
 	/* Ghosts are black */
 	if (p_ptr->ghost) {
-		if (p_ptr->admin_wiz)
+		if (p_ptr->admin_wiz) {
 #ifdef EXTENDED_TERM_COLOURS
+ #ifndef EXTENDED_COLOURS_PALANIM
 			return (TERM_L_DARK | (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW));
+ #else
+			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
+				if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) return (TERM_L_DARK | TERM_OLD_BNW);
+				else return (TERM_L_DARK | TERM_OLD2_BNW);
+			} else return TERM_BNW;
+ #endif
 #else
 			return (TERM_L_DARK | TERM_BNW);
 #endif
+		}
 		return TERM_L_DARK;
 	}
 
@@ -2091,26 +2104,52 @@ static byte player_color(int Ind) {
 		else if (p_ptr->tim_manashield) return TERM_NEXU;
 
 		if (p_ptr->invuln > 5) return TERM_SHIELDI;
-		else if (p_ptr->invuln && p_ptr->invuln_dur >= 5) return TERM_NUKE;
+		else if (p_ptr->invuln
+		    && p_ptr->invuln_dur >= 5) /* avoid animating normal stair-GoI */
+			return TERM_NUKE;
 
-		if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_BNW;
-		else if (p_ptr->kinetic_shield) return pcolor |= TERM_BNW; //no alternative atm
+ #ifndef EXTENDED_COLOURS_PALANIM
+		if (p_ptr->kinetic_shield) {
+			if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_BNW;
+			else return pcolor |= TERM_BNW; //no alternative
+		}
+ #else
+		if (p_ptr->kinetic_shield) {
+			if (p_ptr->kinetic_shield > 10) {
+				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) return pcolor |= TERM_OLD2_BNW;
+				return TERM_BNWKS;
+			}
+			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) return pcolor |= TERM_OLD2_BNW; //no alternative
+			else return TERM_BNWKS2;
+		}
+ #endif
 	} else
 #endif
 	{
 		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
 		if (p_ptr->invuln > 5) return TERM_SHIELDI;
-		if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_BNW;
+		if (p_ptr->kinetic_shield) {
+			if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_OLD_BNW;
+			else return pcolor |= TERM_OLD_BNW; //no alternative
+		}
 	}
 
 	/* Holy Martyr or shadow running */
 	/* Admin wizards sometimes flicker black & white (TERM_BNW) */
-	if (p_ptr->shadow_running || p_ptr->admin_wiz)
+	if (p_ptr->shadow_running || p_ptr->admin_wiz) {
 #ifdef EXTENDED_TERM_COLOURS
+ #ifndef EXTENDED_COLOURS_PALANIM
 		pcolor |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+ #else
+		if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
+			if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) pcolor |= TERM_OLD_BNW;
+			else pcolor |= TERM_OLD2_BNW;
+		} else pcolor = p_ptr->shadow_running ? TERM_BNWSR : TERM_BNW;
+ #endif
 #else
 		pcolor |= TERM_BNW;
 #endif
+	}
 	if (p_ptr->martyr) { //'holy fire'
 #ifdef EXTENDED_TERM_COLOURS
 		if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) pcolor |= TERM_OLD_BNW;
@@ -2147,8 +2186,7 @@ static byte player_color(int Ind) {
 	return pcolor;
 }
 
-byte get_trap_color(int Ind, int t_idx, int feat)
-{
+byte get_trap_color(int Ind, int t_idx, int feat) {
 	player_type *p_ptr = Players[Ind];
 	byte a;
 
@@ -3294,18 +3332,33 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 			/* TERM_BNW if blood bonded - mikaelh */
 			if (check_blood_bond(Ind, Ind2))
 #ifdef EXTENDED_TERM_COLOURS
+ #ifndef EXTENDED_COLOURS_PALANIM
 				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+ #else
+				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
+					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
+					else a |= TERM_OLD2_BNW;
+				} else a = TERM_PVPBB;
+ #endif
 #else
 				a |= TERM_BNW;
 #endif
 			/* new: renamed TERM_RLE (unused) to TERM_PVP for use for this: - C. Blue */
 			else if (is_newer_than(&p_ptr->version, 4, 4, 2, 0, 0, 0) &&
-			    (check_hostile(Ind, Ind2) || p2_ptr->stormbringer))
+			    (check_hostile(Ind, Ind2) || p2_ptr->stormbringer)) {
 #ifdef EXTENDED_TERM_COLOURS
+ #ifndef EXTENDED_COLOURS_PALANIM
 				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_PVP : TERM_PVP;
+ #else
+				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
+					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_PVP;
+					else a |= TERM_OLD2_PVP;
+				} else a = TERM_PVP;
+ #endif
 #else
 				a |= TERM_PVP;
 #endif
+			}
 
 			if (((p2_ptr->chp * 95) / (p2_ptr->mhp * 10)) > TURN_CHAR_INTO_NUMBER) {
 				/* part 'A' used to be here */
@@ -3589,43 +3642,72 @@ void lite_spot(int Ind, int y, int x) {
 				if (p_ptr->cloak_neutralized) a = TERM_SLATE;
 				else a = TERM_L_DARK;
 			}
+
 			/* Mana Shield and GOI also flicker */
 			if (p_ptr->tim_manashield && rand_int(2)) {
-				if (p_ptr->tim_manashield > 15) {
-					/* prevent too much violet colour in our mix.. */
-					if (a != TERM_VIOLET)
-						a = (randint(2) < 2) ? TERM_VIOLET : TERM_ORANGE;
-					else
-						a = (randint(2) < 2) ? TERM_L_RED : TERM_ORANGE;
-				} else {
-					a = TERM_BNW; // todo? -> TERM_NEXU:
-				}
+				if (p_ptr->tim_manashield > 15) a = TERM_SHIELDM;
+				else a = TERM_NEXU;
 			}
 			if (p_ptr->invuln && rand_int(4)) {
-				if (p_ptr->invuln > 5) {
-					switch (randint(5)) {
-					case 1: a = TERM_L_RED; break;
-					case 2: a = TERM_L_GREEN; break;
-					case 3: a = TERM_L_BLUE; break;
-					case 4: a = TERM_YELLOW; break;
-					case 5: a = TERM_VIOLET; break;
-					}
-				} else if (p_ptr->invuln_dur >= 5) { /* avoid animating normal stair-GoI */
-					a = TERM_BNW; // todo? -> TERM_NUKE:
-				}
+				if (p_ptr->invuln > 5) a = TERM_SHIELDI;
+				else if (p_ptr->invuln_dur >= 5) /* avoid animating normal stair-GoI */
+					a = TERM_NUKE;
 			}
+
+			/* All kinds of BNW states: */
 			if (p_ptr->martyr)
 #ifdef EXTENDED_TERM_COLOURS
+ #ifndef EXTENDED_COLOURS_PALANIM
 				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+ #else
+				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
+					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
+					else a |= TERM_OLD2_BNW;
+				} else a = TERM_BNWM;
+ #endif
 #else
 				a |= TERM_BNW;
 #endif
-			if (p_ptr->kinetic_shield)
+			else if (p_ptr->kinetic_shield)
 #ifdef EXTENDED_TERM_COLOURS
+ #ifndef EXTENDED_COLOURS_PALANIM
 				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+ #else
+				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
+					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
+					else a |= TERM_OLD2_BNW;
+				} else a = (p_ptr->kinetic_shield > 10 ? TERM_BNWKS : TERM_BNWKS2);
+ #endif
 #else
 				a |= TERM_BNW;
 #endif
+			else if (p_ptr->shadow_running)
+#ifdef EXTENDED_TERM_COLOURS
+ #ifndef EXTENDED_COLOURS_PALANIM
+				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+ #else
+				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
+					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
+					else a |= TERM_OLD2_BNW;
+				} else a = TERM_BNWSR;
+ #endif
+#else
+				a |= TERM_BNW;
+#endif
+			else if (p_ptr->admin_wiz) {
+#ifdef EXTENDED_TERM_COLOURS
+ #ifndef EXTENDED_COLOURS_PALANIM
+				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
+ #else
+				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
+					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
+					else a |= TERM_OLD2_BNW;
+				} else a = TERM_BNW;
+ #endif
+#else
+				a |= TERM_BNW;
+#endif
+			}
 
 			/* notice own Black Breath by colour instead just from occasional message */
 			if (p_ptr->black_breath && magik(50)) a = TERM_L_DARK;
@@ -3647,15 +3729,6 @@ void lite_spot(int Ind, int y, int x) {
 					c = '@';
 				}
 			}
-
-			/* Holy Martyr */
-			/* Admin wizards sometimes flicker black & white (TERM_BNW) */
-			if (p_ptr->shadow_running || p_ptr->martyr || p_ptr->admin_wiz)
-#ifdef EXTENDED_TERM_COLOURS
-				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
-#else
-				a |= TERM_BNW;
-#endif
 
 			if (p_ptr->team) {
 				if (magik(25)) { /* chance for showing him/her which team (s)he's in - mikaelh */

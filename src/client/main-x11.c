@@ -1211,12 +1211,15 @@ static infoclr *xor;
 /*
  * Color table
  */
-#ifndef EXTENDED_BG_COLOURS
-static infoclr *clr[16];
+#ifndef EXTENDED_COLOURS_PALANIM
+ #ifndef EXTENDED_BG_COLOURS
+  static infoclr *clr[16];
+ #else
+  static infoclr *clr[16 + 1];
+ #endif
 #else
-static infoclr *clr[16 + 1];
+ static infoclr *clr[16 * 2];
 #endif
-
 /*
  * Forward declare
  */
@@ -1225,8 +1228,7 @@ typedef struct term_data term_data;
 /*
  * A structure for each "term"
  */
-struct term_data
-{
+struct term_data {
 	term t;
 
 	infofnt *fnt;
@@ -1977,10 +1979,14 @@ static errr Term_curs_x11(int x, int y)
 static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 {
 	/* Draw the text in Xor */
-#ifndef EXTENDED_BG_COLOURS
+#ifndef EXTENDED_COLOURS_PALANIM
+ #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
-#else
+ #else
 	if (a == TERM2_BLUE) a = 0xF + 1;
+	Infoclr_set(clr[a & 0x1F]);
+ #endif
+#else
 	Infoclr_set(clr[a & 0x1F]);
 #endif
 
@@ -2192,44 +2198,56 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
  *
  * These colors may no longer be valid...
  */
-static char color_name[16][8] =
-{
-#if 0
-	"black",        /* BLACK */
-	"white",        /* WHITE */
-	"#d7d7d7",      /* GRAY */
-	"#ff9200",      /* ORANGE */
-	"#ff0000",      /* RED */
-	"#00cd00",      /* GREEN */
-	"#0000fe",      /* BLUE */
-	"#c86400",      /* BROWN */
-	"#a3a3a3",      /* DARKGRAY */
-	"#ebebeb",      /* LIGHTGRAY */
-	"#a500ff",      /* PURPLE */
-	"#fffd00",      /* YELLOW */
-	"#ff00bc",      /* PINK */
-	"#00ff00",      /* LIGHTGREEN */
-	"#00c8ff",      /* LIGHTBLUE */
-	"#ffcc80",      /* LIGHTBROWN */
-#else /* same as main-win.c, which is reference */
+#ifndef EXTENDED_COLOURS_PALANIM
+static char color_name[16][8] = {
+#else
+static char color_name[16 * 2][8] = {
+#endif
 	"#000000",      /* BLACK */
 	"#ffffff",      /* WHITE */
 	"#9d9d9d",      /* GRAY */
 	"#ff8d00",      /* ORANGE */
 	"#b70000",      /* RED */
 	"#009d44",      /* GREEN */
-#ifndef READABILITY_BLUE
+ #ifndef READABILITY_BLUE
 	"#0000ff",      /* BLUE */
-#else
+ #else
 	"#0033ff",      /* BLUE */
-#endif
+ #endif
 	"#8d6600",      /* BROWN */
-#ifndef DISTINCT_DARK
+ #ifndef DISTINCT_DARK
 	"#747474",      /* DARKGRAY */
-#else
+ #else
 	//"#585858",      /* DARKGRAY */
 	"#666666",      /* DARKGRAY */
-#endif
+ #endif
+	"#d7d7d7",      /* LIGHTGRAY */
+	"#af00ff",      /* PURPLE */
+	"#ffff00",      /* YELLOW */
+	"#ff3030",      /* PINK */
+	"#00ff00",      /* LIGHTGREEN */
+	"#00ffff",      /* LIGHTBLUE */
+	"#c79d55",      /* LIGHTBROWN */
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* And clone the above 16 standard colours again here: */
+	"#000000",      /* BLACK */
+	"#ffffff",      /* WHITE */
+	"#9d9d9d",      /* GRAY */
+	"#ff8d00",      /* ORANGE */
+	"#b70000",      /* RED */
+	"#009d44",      /* GREEN */
+ #ifndef READABILITY_BLUE
+	"#0000ff",      /* BLUE */
+ #else
+	"#0033ff",      /* BLUE */
+ #endif
+	"#8d6600",      /* BROWN */
+ #ifndef DISTINCT_DARK
+	"#747474",      /* DARKGRAY */
+ #else
+	//"#585858",      /* DARKGRAY */
+	"#666666",      /* DARKGRAY */
+ #endif
 	"#d7d7d7",      /* LIGHTGRAY */
 	"#af00ff",      /* PURPLE */
 	"#ffff00",      /* YELLOW */
@@ -2240,8 +2258,7 @@ static char color_name[16][8] =
 #endif
 };
 #ifdef EXTENDED_BG_COLOURS
-static cptr color_ext_name[1][2] =
-{
+ static cptr color_ext_name[1][2] = {
 	{"#0000ff", "#444444", },
 };
 #endif
@@ -2522,6 +2539,7 @@ errr init_x11(void) {
 	Infoclr_set (xor);
 	Infoclr_init_ccn ("fg", "bg", "xor", 0);
 
+#ifndef EXTENDED_COLOURS_PALANIM
 	/* Prepare the colors (including "black") */
 	for (i = 0; i < 16; ++i) {
 		cptr cname = color_name[0];
@@ -2531,8 +2549,8 @@ errr init_x11(void) {
 		else if (i) cname = color_name[1];
 		Infoclr_init_ccn (cname, "bg", "cpy", 0);
 	}
-#ifdef EXTENDED_BG_COLOURS
-	/* Prepare the colors (including "black") */
+ #ifdef EXTENDED_BG_COLOURS
+	/* Prepare the extended background-using colors */
 	for (i = 0; i < 1; ++i) {
 		cptr cname = color_name[0], cname2 = color_name[0];
 		MAKE(clr[16 + i], infoclr);
@@ -2543,7 +2561,19 @@ errr init_x11(void) {
 		}
 		Infoclr_init_ccn (cname, cname2, "cpy", 0);
 	}
+ #endif
+#else
+	/* Prepare the colors (including "black") */
+	for (i = 0; i < 16 * 2; ++i) {
+		cptr cname = color_name[0];
+		MAKE(clr[i], infoclr);
+		Infoclr_set (clr[i]);
+		if (Metadpy->color) cname = color_name[i];
+		else if (i) cname = color_name[1];
+		Infoclr_init_ccn (cname, "bg", "cpy", 0);
+	}
 #endif
+
 
 { /* Main window is always visible */
 	/* Check environment for "screen" font */
