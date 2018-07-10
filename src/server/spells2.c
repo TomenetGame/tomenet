@@ -2162,7 +2162,7 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 			p_ptr->mon_vis[i] = TRUE;
 
 			/* Get the look of the monster */
-			map_info(Ind, y, x, &a, &c);
+			map_info(Ind, y, x, &a, &c, FALSE);
 
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
@@ -2236,7 +2236,7 @@ bool detect_creatures_xxx(int Ind, u32b match_flag) {
 			p_ptr->play_vis[i] = TRUE;
 
 			/* Get the look of the player */
-			map_info(Ind, py, px, &a, &c);
+			map_info(Ind, py, px, &a, &c, FALSE);
 
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
@@ -2357,7 +2357,7 @@ bool detect_invisible(int Ind) {
 			p_ptr->mon_vis[i] = TRUE;
 
 			/* Get the look of the monster */
-			map_info(Ind, fy, fx, &a, &c);
+			map_info(Ind, fy, fx, &a, &c, FALSE);
 
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
@@ -2400,7 +2400,7 @@ bool detect_invisible(int Ind) {
 			p_ptr->play_vis[i] = TRUE;
 
 			/* Get the look of the player */
-			map_info(Ind, py, px, &a, &c);
+			map_info(Ind, py, px, &a, &c, FALSE);
 
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
@@ -2483,7 +2483,7 @@ bool detect_creatures(int Ind) {
 			p_ptr->mon_vis[i] = TRUE;
 
 			/* Get the look of the monster */
-			map_info(Ind, fy, fx, &a, &c);
+			map_info(Ind, fy, fx, &a, &c, FALSE);
 
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
@@ -2526,7 +2526,7 @@ bool detect_creatures(int Ind) {
 			p_ptr->play_vis[i] = TRUE;
 
 			/* Get the look of the player */
-			map_info(Ind, py, px, &a, &c);
+			map_info(Ind, py, px, &a, &c, FALSE);
 
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
@@ -2612,7 +2612,7 @@ bool detect_noise(int Ind) {
 			/* Hack - Temporarily visible */
 			p_ptr->mon_vis[i] = TRUE;
 			/* Get the look of the monster */
-			map_info(Ind, fy, fx, &a, &c);
+			map_info(Ind, fy, fx, &a, &c, FALSE);
 			/* No longer visible */
 			p_ptr->mon_vis[i] = FALSE;
 			/* Draw the monster on the screen */
@@ -2650,7 +2650,7 @@ bool detect_noise(int Ind) {
 			/* Hack - Temporarily visible */
 			p_ptr->play_vis[i] = TRUE;
 			/* Get the look of the player */
-			map_info(Ind, py, px, &a, &c);
+			map_info(Ind, py, px, &a, &c, FALSE);
 			/* No longer visible */
 			p_ptr->play_vis[i] = FALSE;
 			/* Draw the player on the screen */

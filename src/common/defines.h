@@ -7093,6 +7093,7 @@ extern int PlayerUID;
  #define TERM_HAVOC	58
 
  #ifdef EXTENDED_COLOURS_PALANIM
+  #define TERMA_OFFSET	64
   /* Clones of the 16 default colours, aka 'really used' colours (non-compounds), for palette animation. */
   #define TERMA_DARK	64
   #define TERMA_WHITE	65
@@ -7112,13 +7113,14 @@ extern int PlayerUID;
   #define TERMA_L_UMBER	79
 
   /* Problem: Not enough colours! So we need to change these masks to actual colours. */
-  #define TERM_BNW	249	/* black & white, for admin wizards and pandas */
-  #define TERM_BNWM	250	/* black & white + holyfire, for martyr */
-  #define TERM_BNWSR	251	/* black & white + blue, for shadow running */
-  #define TERM_BNWKS	252	/* black & white + psi, for kinetic shield */
-  #define TERM_BNWKS2	253	/* black & white + orange, for kinetic shield running out */
-  #define TERM_PVPBB	254	/* black/slate/yellow, for bloodbond */
-  #define TERM_PVP	255	/* black/yellow/red, for active PvP-hostility (or stormbringer) */
+  #define TERM_BNW	248	/* black & white, for admin wizards and pandas */
+  #define TERM_BNWM	249	/* black & white + holyfire, for martyr */
+  #define TERM_BNWSR	250	/* black & white + blue, for shadow running */
+  #define TERM_BNWKS	251	/* black & white + psi, for kinetic shield */
+  #define TERM_BNWKS2	252	/* black & white + orange, for kinetic shield running out */
+  #define TERM_PVPBB	253	/* black/slate/yellow, for bloodbond */
+  #define TERM_PVP	254	/* black/yellow/red, for active PvP-hostility (or stormbringer) */
+  /* Note: 0xFF (255) is reserved for RLE, see Send_line_info(). */
   /* For compatibility with old clients: */
   #define TERM_OLD2_BNW	0x40	/* 64: black & white MASK, for admin wizards */
   #define TERM_OLD2_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */

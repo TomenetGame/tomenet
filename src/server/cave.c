@@ -2245,6 +2245,13 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 	bool old_rand = Rand_quick;
 	u32b tmp_seed = Rand_value; /* save RNG */
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
+#if 0 /* hmm, maybe map_info() is the right place really */
+#ifdef EXTENDED_COLOURS_PALANIM
+	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+#else
+	bool palanim = FALSE;
+#endif
+#endif
 
 	/* World surface manipulation only */
 	if (wpos->wz) return colour;
@@ -2254,6 +2261,11 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 	/* Also don't shade TERM_L_UMBER doors to TERM_UMBER while we're at it. */
 	if (c_ptr->feat == FEAT_OPEN || c_ptr->feat == FEAT_BROKEN || c_ptr->feat == FEAT_SHOP ||
 	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return colour;
+
+#if 0
+	/* Use palette-animated colours if available (even if we don't apply manipulation here) */
+	if (palanim) colour += TERMA_OFFSET;
+#endif
 
 	/* To use always the same feats for this everytime the player
 	   enters a worldmap sector, we seed the RNG with that particular
@@ -2649,7 +2661,7 @@ void get_object_visuals(char *cp, byte *ap, object_type *o_ptr, player_type *p_p
  * "x_ptr->xxx", is quicker than "x_info[x].xxx", if this is incorrect
  * then a whole lot of code should be changed...  XXX XXX
  */
-void map_info(int Ind, int y, int x, byte *ap, char *cp) {
+void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 	player_type *p_ptr = Players[Ind];
 
 	cave_type *c_ptr;
@@ -2664,6 +2676,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 
 	int a_org;
 	bool lite_snow, keep = FALSE;
+
+#if 0 /* probably better here than in manipulate_cave_colour..() -- but moved to calling functions for efficiency */
+#ifdef EXTENDED_COLOURS_PALANIM
+	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+#else
+	bool palanim = FALSE;
+#endif
+#endif
 
 	cave_type **zcave;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
@@ -2882,6 +2902,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 			}
 			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
 
+#if 1
+			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
+			if (palanim && !keep) a += TERMA_OFFSET;
+#endif
+
 			/* The attr */
 			(*ap) = a;
 		}
@@ -3076,6 +3101,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 			/* Display vault walls in a more distinguishable colour, if desired */
 			if (p_ptr->permawalls_shade && (feat == FEAT_PERM_INNER || feat == FEAT_PERM_OUTER)) a = TERM_L_UMBER;
 
+#if 1
+			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
+			if (palanim && !keep) a += TERMA_OFFSET;
+#endif
+
 			/* The attr */
 			(*ap) = a;
 
@@ -3123,12 +3153,18 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 #if 1
 		/* Multi-hued attr */
 		/* TODO: this should be done in client-side too, so that
-		 * they shimmer when player isn't moving */
+		 * they shimmer when player isn't moving.
+		   -- Well, actually for water at least that would be kinda annoying though to look at, too flickery! */
 		else if (f_ptr->flags1 & FF1_ATTR_MULTI) {
 			a = f_ptr->shimmer[rand_int(7)];
 
 			if (rand_int(8) != 1)
 				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
+
+#if 1
+			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
+			if (palanim && !keep) a += TERMA_OFFSET;
+#endif
 
 			(*ap) = a;
 		}
@@ -3389,7 +3425,6 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp) {
 			}
 		}
 	}
-
 
 	/* Special 'dummy' effects that are purely for adding unusual visuals */
 	if (!c_ptr->effect) return;
@@ -3812,8 +3847,13 @@ void lite_spot(int Ind, int y, int x) {
 
 		/* Normal (not player coords) */
 		else {
+#ifdef EXTENDED_COLOURS_PALANIM
+			bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+#else
+			bool palanim = FALSE;
+#endif
 			/* Examine the grid */
-			map_info(Ind, y, x, &a, &c);
+			map_info(Ind, y, x, &a, &c, palanim);
 		}
 
 		/* Hack -- fake monochrome */
@@ -3971,6 +4011,12 @@ void prt_map(int Ind, bool scr_only) {
 	byte a;
 	char c;
 
+#ifdef EXTENDED_COLOURS_PALANIM
+	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+#else
+	bool palanim = FALSE;
+#endif
+
 	/* Make sure he didn't just change depth */
 	if (p_ptr->new_level_flag) return;
 
@@ -3989,7 +4035,7 @@ void prt_map(int Ind, bool scr_only) {
 		/* Scan the columns of row "y" */
 		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++) {
 			/* Determine what is there */
-			map_info(Ind, y, x, &a, &c);
+			map_info(Ind, y, x, &a, &c, palanim);
 
 			/* Hack -- fake monochrome */
 			if (!use_color) a = TERM_WHITE;
@@ -4247,6 +4293,12 @@ void display_map(int Ind, int *cy, int *cx) {
 	bool old_floor_lighting;
 	bool old_wall_lighting;
 
+#ifdef EXTENDED_COLOURS_PALANIM
+	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+#else
+	bool palanim = FALSE;
+#endif
+
 
 	/* Save lighting effects */
 	old_floor_lighting = p_ptr->floor_lighting;
@@ -4272,7 +4324,7 @@ void display_map(int Ind, int *cy, int *cx) {
 			y = j / RATIO + 1;
 
 			/* Extract the current attr/char at that map location */
-			map_info(Ind, j, i, &ta, &tc);
+			map_info(Ind, j, i, &ta, &tc, palanim);
 
 			/* Extract the priority of that attr/char */
 			tp = priority(ta, tc);

@@ -534,7 +534,7 @@ byte flick_colour(byte attr){
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
 		case 2: return TERM_L_SLATE;
-		case 3: return TERM_HOLYFIRE;
+		case 3: return flick_colour(TERM_HOLYFIRE);
 		}
 	case TERM_BNWSR:
 		switch (randint(3)) {
@@ -546,7 +546,7 @@ byte flick_colour(byte attr){
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
 		case 2: return TERM_L_SLATE;
-		case 3: return TERM_PSI;
+		case 3: return flick_colour(TERM_PSI);
 		}
 	case TERM_BNWKS2:
 		switch (randint(3)) {
@@ -647,7 +647,7 @@ byte flick_colour(byte attr){
 
 extern term *ang_term[];
 
-void flicker(){
+void flicker() {
 	int y, x, i;
 	char ch, attr;
 	term *tterm, *old;
@@ -660,6 +660,9 @@ void flicker(){
 		for (y = 0; y < tterm->hgt; y++) {
 			for (x = 0; x < tterm->wid; x++) {
 				if (tterm->scr->a[y][x] < TERM_MULTI) continue;
+#ifdef EXTENDED_COLOURS_PALANIM
+				if (tterm->scr->a[y][x] >= TERMA_DARK && tterm->scr->a[y][x] <= TERMA_L_UMBER) continue;
+#endif
 				ch = tterm->scr->c[y][x];
 				attr = flick_colour(tterm->scr->a[y][x]);
 				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));
@@ -724,8 +727,7 @@ void flicker(){
  * "Term->always_text" flag will disable the use of the "Term_wipe()"
  * function hook entirely.
  */
-static void Term_fresh_row_text_wipe(int y)
-{
+static void Term_fresh_row_text_wipe(int y) {
 	int x;
 
 	byte *old_aa = Term->old->a[y];
@@ -754,8 +756,7 @@ static void Term_fresh_row_text_wipe(int y)
 
 
 	/* Scan the columns marked as "modified" */
-	for (x = Term->x1[y]; x <= Term->x2[y]; x++)
-	{
+	for (x = Term->x1[y]; x <= Term->x2[y]; x++) {
 		/* See what is currently here */
 		oa = old_aa[x];
 		oc = old_cc[x];
@@ -765,25 +766,16 @@ static void Term_fresh_row_text_wipe(int y)
 		nc = old_cc[x] = scr_cc[x];
 
 		/* Notice unchanged areas */
-		if ((na == oa) && (nc == oc))
-		{
+		if ((na == oa) && (nc == oc)) {
 			/* Flush as needed (see above) */
-			if (n)
-			{
+			if (n) {
 				/* Terminate the thread */
 				text[n] = '\0';
 
 				/* Draw the pending chars */
-				if (fa)
-				{
-					(void)((*Term->text_hook)(fx, y, n, fa, text));
-				}
-
+				if (fa) (void)((*Term->text_hook)(fx, y, n, fa, text));
 				/* Hack -- Erase "leading" spaces */
-				else
-				{
-					(void)((*Term->wipe_hook)(fx, y, n));
-				}
+				else (void)((*Term->wipe_hook)(fx, y, n));
 
 				/* Forget the pending thread */
 				n = 0;
@@ -794,34 +786,27 @@ static void Term_fresh_row_text_wipe(int y)
 		}
 
 		/* Notice new color */
-		if (fa != na)
-		{
+		if (fa != na) {
 			/* Flush as needed (see above) */
-			if (n)
-			{
+			if (n) {
 				/* Terminate the thread */
 				text[n] = '\0';
 
 				/* Draw the pending chars */
-				if (fa)
-				{
-					(void)((*Term->text_hook)(fx, y, n, fa, text));
-				}
-
+				if (fa) (void)((*Term->text_hook)(fx, y, n, fa, text));
 				/* Hack -- Erase "leading" spaces */
-				else
-				{
-					(void)((*Term->wipe_hook)(fx, y, n));
-				}
+				else (void)((*Term->wipe_hook)(fx, y, n));
 
 				/* Forget the pending thread */
 				n = 0;
 			}
 			/* Save the new color */
-			if (na >= TERM_MULTI)
-				fa = flick_colour(na);
+#ifdef EXTENDED_COLOURS_PALANIM
+			if (na >= TERMA_DARK && na <= TERMA_L_UMBER) fa = na - TERMA_OFFSET + 16; /* Translate to actual extended terminal colour (16..31) */
 			else
-				fa = na;
+#endif
+			if (na >= TERM_MULTI) fa = flick_colour(na);
+			else fa = na;
 		}
 
 		/* Start a new thread, if needed */
@@ -832,22 +817,14 @@ static void Term_fresh_row_text_wipe(int y)
 	}
 
 	/* Flush the pending thread, if any */
-	if (n)
-	{
+	if (n) {
 		/* Terminate the thread */
 		text[n] = '\0';
 
 		/* Draw the pending chars */
-		if (fa)
-		{
-			(void)((*Term->text_hook)(fx, y, n, fa, text));
-		}
-
+		if (fa) (void)((*Term->text_hook)(fx, y, n, fa, text));
 		/* Hack -- Erase fully blank lines */
-		else
-		{
-			(void)((*Term->wipe_hook)(fx, y, n));
-		}
+		else (void)((*Term->wipe_hook)(fx, y, n));
 	}
 }
 

@@ -539,7 +539,7 @@ extern byte get_trap_color(int Ind, int t_idx, int feat);
 extern byte get_monster_trap_color(int Ind, int o_idx, int feat);
 extern byte get_rune_color(int Ind, int typ);
 extern void get_object_visuals(char *cp, byte *ap, object_type *o_ptr, player_type *p_ptr);
-extern void map_info(int Ind, int y, int x, byte *ap, char *cp);
+extern void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim);
 extern void move_cursor_relative(int row, int col);
 extern void print_rel(char c, byte a, int y, int x);
 extern void note_spot(int Ind, int y, int x);

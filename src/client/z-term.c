@@ -497,13 +497,13 @@ static errr Term_text_hack(int x, int y, int n, byte a, cptr s) {
  */
 static char get_shimmer_color() {
 	switch (randint(7)) {
-		case 1: return TERM_RED;
-		case 2: return TERM_L_RED;
-		case 3: return TERM_WHITE;
-		case 4: return TERM_L_GREEN;
-		case 5: return TERM_BLUE;
-		case 6: return TERM_L_DARK;
-		case 7: return TERM_GREEN;
+	case 1: return TERM_RED;
+	case 2: return TERM_L_RED;
+	case 3: return TERM_WHITE;
+	case 4: return TERM_L_GREEN;
+	case 5: return TERM_BLUE;
+	case 6: return TERM_L_DARK;
+	case 7: return TERM_GREEN;
 	}
 	return (TERM_VIOLET);
 }
@@ -628,113 +628,113 @@ byte flick_colour(byte attr) {
 */		}
 	}
 	switch (attr) {
-		case TERM_MULTI:
-			return(randint(15));
-		case TERM_FIRE:
-			return(randint(7) > 6 ? TERM_YELLOW : rand_int(3) > 1 ? TERM_RED : TERM_L_RED);
-		case TERM_POIS:
-			return(randint(6) > 4 ? TERM_GREEN : TERM_L_GREEN);
-		case TERM_COLD:
-			return(randint(5) > 3 ? TERM_WHITE : TERM_L_WHITE);
-		case TERM_ELEC:
-			return(randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE));
-		case TERM_HALF:
-			return(get_shimmer_color());
-		case TERM_ACID:
-			return(randint(5) > 4 ? TERM_L_DARK : TERM_SLATE);
-		case TERM_CONF:
-			return(randint(5) > 3 ? TERM_UMBER : TERM_L_UMBER);
-		case TERM_SOUN:
-			return(randint(5) > 3 ? TERM_L_UMBER : TERM_YELLOW);
-		case TERM_SHAR:
-			return(randint(5) > 3 ? TERM_UMBER : TERM_SLATE);
-		case TERM_LITE:
-			return(randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW);
-		case TERM_DARKNESS:
-			return(randint(5) > 4 ? TERM_SLATE : TERM_L_DARK);
-		/* NOTE: TERM_SHAL_LAVA, TERM_DEEP_LAVA, TERM_SHAL_WATER,
-		 * TERM_DEEP_WATER would be nice for terrains  - Jir - */
+	case TERM_MULTI:
+		return(randint(15));
+	case TERM_FIRE:
+		return(randint(7) > 6 ? TERM_YELLOW : rand_int(3) > 1 ? TERM_RED : TERM_L_RED);
+	case TERM_POIS:
+		return(randint(6) > 4 ? TERM_GREEN : TERM_L_GREEN);
+	case TERM_COLD:
+		return(randint(5) > 3 ? TERM_WHITE : TERM_L_WHITE);
+	case TERM_ELEC:
+		return(randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE));
+	case TERM_HALF:
+		return(get_shimmer_color());
+	case TERM_ACID:
+		return(randint(5) > 4 ? TERM_L_DARK : TERM_SLATE);
+	case TERM_CONF:
+		return(randint(5) > 3 ? TERM_UMBER : TERM_L_UMBER);
+	case TERM_SOUN:
+		return(randint(5) > 3 ? TERM_L_UMBER : TERM_YELLOW);
+	case TERM_SHAR:
+		return(randint(5) > 3 ? TERM_UMBER : TERM_SLATE);
+	case TERM_LITE:
+		return(randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW);
+	case TERM_DARKNESS:
+		return(randint(5) > 4 ? TERM_SLATE : TERM_L_DARK);
+	/* NOTE: TERM_SHAL_LAVA, TERM_DEEP_LAVA, TERM_SHAL_WATER,
+	 * TERM_DEEP_WATER would be nice for terrains  - Jir - */
 #ifdef EXTENDED_TERM_COLOURS /* C. Blue */
-		case TERM_CURSE:
-			return(randint(2) == 1 ? (randint(5) > 4 ? TERM_SLATE : TERM_L_DARK) : TERM_L_DARK);//note (...) is TERM_DARKNESS
-		case TERM_ANNI:
-			return (randint(2) == 1 ? (randint(5) > 4 ? TERM_SLATE : TERM_L_DARK) : TERM_L_DARK);//note (...) is TERM_DARKNESS
-		case TERM_PSI:
-			return (randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : 127) : TERM_WHITE);
-		case TERM_NEXU:
-			return (randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
-		case TERM_NETH:
-			return (randint(4) == 1 ? TERM_L_GREEN : TERM_L_DARK);
-		case TERM_DISE:
-			return (randint(4) != 1 ? TERM_ORANGE : TERM_BLUE);
-		case TERM_INER:
-			return (randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
-		case TERM_FORC:
-			return (randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
-		case TERM_GRAV:
-			return (randint(3) == 1 ? TERM_L_UMBER : TERM_SLATE);//was L_UMBER+UMBER
-		case TERM_TIME:
-			return (randint(3) == 1 ? TERM_L_GREEN : TERM_L_BLUE);
-		case TERM_METEOR:
-			return (randint(3) == 1 ? TERM_RED : TERM_UMBER);
-		case TERM_MANA:
-			return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
-		case TERM_WATE:
-			return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
-		case TERM_ICE:
-			return (randint(4) == 1 ? TERM_L_BLUE : TERM_WHITE);
-		case TERM_PLAS:
-			return (randint(5) == 1 ? TERM_RED : TERM_L_RED);
-		case TERM_DETO:
-			return (randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
-		case TERM_DISI:
-			return (randint(3) != 1 ? TERM_L_DARK : (randint(2) == 1 ? TERM_ORANGE : TERM_VIOLET));
-		case TERM_NUKE:
-			return (mh_attr(2));
-		case TERM_UNBREATH:
-			return (randint(7) < 3 ? TERM_L_GREEN : TERM_GREEN);
-		case TERM_HOLYORB:
-			return (randint(6) == 1 ? TERM_ORANGE : TERM_L_DARK);
-		case TERM_HOLYFIRE:
-			return (randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
-		case TERM_HELLFIRE:
-			return (randint(5) == 1 ? TERM_RED : TERM_L_DARK);
-		case TERM_THUNDER:
-			return (randint(3) != 1 ? (randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE))
-			    : (randint(2) == 1 ? TERM_YELLOW : (randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW)));//note 1st (...) is TERM_ELEC, last (...) is TERM_LITE
+	case TERM_CURSE:
+		return(randint(2) == 1 ? (randint(5) > 4 ? TERM_SLATE : TERM_L_DARK) : TERM_L_DARK);//note (...) is TERM_DARKNESS
+	case TERM_ANNI:
+		return (randint(2) == 1 ? (randint(5) > 4 ? TERM_SLATE : TERM_L_DARK) : TERM_L_DARK);//note (...) is TERM_DARKNESS
+	case TERM_PSI:
+		return (randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : 127) : TERM_WHITE);
+	case TERM_NEXU:
+		return (randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
+	case TERM_NETH:
+		return (randint(4) == 1 ? TERM_L_GREEN : TERM_L_DARK);
+	case TERM_DISE:
+		return (randint(4) != 1 ? TERM_ORANGE : TERM_BLUE);
+	case TERM_INER:
+		return (randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
+	case TERM_FORC:
+		return (randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
+	case TERM_GRAV:
+		return (randint(3) == 1 ? TERM_L_UMBER : TERM_SLATE);//was L_UMBER+UMBER
+	case TERM_TIME:
+		return (randint(3) == 1 ? TERM_L_GREEN : TERM_L_BLUE);
+	case TERM_METEOR:
+		return (randint(3) == 1 ? TERM_RED : TERM_UMBER);
+	case TERM_MANA:
+		return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
+	case TERM_WATE:
+		return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
+	case TERM_ICE:
+		return (randint(4) == 1 ? TERM_L_BLUE : TERM_WHITE);
+	case TERM_PLAS:
+		return (randint(5) == 1 ? TERM_RED : TERM_L_RED);
+	case TERM_DETO:
+		return (randint(6) < 4 ? TERM_L_RED : (randint(4) == 1 ? TERM_RED : TERM_L_UMBER));
+	case TERM_DISI:
+		return (randint(3) != 1 ? TERM_L_DARK : (randint(2) == 1 ? TERM_ORANGE : TERM_VIOLET));
+	case TERM_NUKE:
+		return (mh_attr(2));
+	case TERM_UNBREATH:
+		return (randint(7) < 3 ? TERM_L_GREEN : TERM_GREEN);
+	case TERM_HOLYORB:
+		return (randint(6) == 1 ? TERM_ORANGE : TERM_L_DARK);
+	case TERM_HOLYFIRE:
+		return (randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
+	case TERM_HELLFIRE:
+		return (randint(5) == 1 ? TERM_RED : TERM_L_DARK);
+	case TERM_THUNDER:
+		return (randint(3) != 1 ? (randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE))
+		    : (randint(2) == 1 ? TERM_YELLOW : (randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW)));//note 1st (...) is TERM_ELEC, last (...) is TERM_LITE
 
-		case TERM_LAMP:
-			return (rand_term_lamp ? TERM_YELLOW : TERM_ORANGE);
-		case TERM_LAMP_DARK:
-			return (rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
+	case TERM_LAMP:
+		return (rand_term_lamp ? TERM_YELLOW : TERM_ORANGE);
+	case TERM_LAMP_DARK:
+		return (rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
 
-		case TERM_EMBER:
-			return (rand_int(6) ? TERM_RED : (rand_int(2) ? TERM_ORANGE : TERM_L_RED));
+	case TERM_EMBER:
+		return (rand_int(6) ? TERM_RED : (rand_int(2) ? TERM_ORANGE : TERM_L_RED));
 
-		case TERM_STARLITE:
-			return (rand_int(16) ? TERM_WHITE : (rand_int(4) ? TERM_BLUE : TERM_L_BLUE));
+	case TERM_STARLITE:
+		return (rand_int(16) ? TERM_WHITE : (rand_int(4) ? TERM_BLUE : TERM_L_BLUE));
 
-		case TERM_HAVOC: //inferno(deto) but fire looks better/mana/chaos ^^
-			switch (rand_int(9)) {
-			case 0: case 1:
-			//case 2:
-				return TERM_VIOLET;//(mana) omit the light blue part
-			//case 3: return flick_colour(TERM_MULTI);//(chaos) omit completely, too colourful, the other colours will no longer have much effect
-			case 3: return TERM_ORANGE; //a little bit more fiery
-			case 4: return TERM_L_DARK; //some ash/hellishness?
-			default:
-				return flick_colour(TERM_DETO);//(inferno aka deto)
-				//return flick_colour(TERM_FIRE);//(inferno aka deto) instead use fire
-			}
+	case TERM_HAVOC: //inferno(deto) but fire looks better/mana/chaos ^^
+		switch (rand_int(9)) {
+		case 0: case 1:
+		//case 2:
+			return TERM_VIOLET;//(mana) omit the light blue part
+		//case 3: return flick_colour(TERM_MULTI);//(chaos) omit completely, too colourful, the other colours will no longer have much effect
+		case 3: return TERM_ORANGE; //a little bit more fiery
+		case 4: return TERM_L_DARK; //some ash/hellishness?
+		default:
+			return flick_colour(TERM_DETO);//(inferno aka deto)
+			//return flick_colour(TERM_FIRE);//(inferno aka deto) instead use fire
+		}
 
  #ifdef ATMOSPHERIC_INTRO
-		case TERM_FIRETHIN: /* for ascii-art in client login screen */
-			//return (!rand_int(2) ? (randint(5) > 3 ? TERM_ORANGE : (rand_int(2) ? TERM_YELLOW : TERM_RED)) : TERM_DARK);
-			return (!rand_int(2) ? (rand_int(2) ? TERM_YELLOW : (rand_int(2) ? TERM_L_RED : TERM_RED)) : TERM_DARK);
+	case TERM_FIRETHIN: /* for ascii-art in client login screen */
+		//return (!rand_int(2) ? (randint(5) > 3 ? TERM_ORANGE : (rand_int(2) ? TERM_YELLOW : TERM_RED)) : TERM_DARK);
+		return (!rand_int(2) ? (rand_int(2) ? TERM_YELLOW : (rand_int(2) ? TERM_L_RED : TERM_RED)) : TERM_DARK);
  #endif
 #endif
-		default:
-			return(attr);
+	default:
+		return(attr);
 	}
 }
 
@@ -957,18 +957,16 @@ static void Term_fresh_row_text_wipe(int y) {
 
 			/* Save the new color */
 #ifdef EXTENDED_COLOURS_PALANIM
-			if (na >= TERM_MULTI && (na < TERMA_DARK || na > TERMA_L_UMBER)) {
+			if (na >= TERMA_DARK && na <= TERMA_L_UMBER) fa = na - TERMA_OFFSET + 16; /* Use 'real' extended terminal colours ie 16..31 */
+			else
+#endif
+#ifdef EXTENDED_BG_COLOURS
+			if (na >= TERM_MULTI && na != TERM2_BLUE)
 #else
- #ifdef EXTENDED_BG_COLOURS
-			if (na >= TERM_MULTI && na != TERM2_BLUE) {
- #else
-			if (na >= TERM_MULTI) {
- #endif
+			if (na >= TERM_MULTI)
 #endif
 				fa = flick_colour(na);
-			} else {
-				fa = na;
-			}
+			else fa = na;
 		}
 
 		/* Start a new thread, if needed */
@@ -1000,18 +998,16 @@ static void Term_fresh_row_text_wipe(int y) {
 
 			/* Save the new color */
 #ifdef EXTENDED_COLOURS_PALANIM
-			if (na >= TERM_MULTI && (na < TERMA_DARK || na > TERMA_L_UMBER)) {
+			if (na >= TERMA_DARK && na <= TERMA_L_UMBER) fa = na - TERMA_OFFSET + 16; /* Use 'real' extended terminal colours ie 16..31 */
+			else
+#endif
+#ifdef EXTENDED_BG_COLOURS
+			if (na >= TERM_MULTI && na != TERM2_BLUE)
 #else
- #ifdef EXTENDED_BG_COLOURS
-			if (na >= TERM_MULTI && na != TERM2_BLUE) {
- #else
-			if (na >= TERM_MULTI) {
- #endif
+			if (na >= TERM_MULTI)
 #endif
 				fa = flick_colour(na);
-			} else {
-				fa = na;
-			}
+			else fa = na;
 
 			fx = x;
 		}
