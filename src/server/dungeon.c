@@ -1699,7 +1699,7 @@ bool player_day(int Ind) {
 	p_ptr->window |= (PW_OVERHEAD);
 
 #ifdef EXTENDED_COLOURS_PALANIM
-	world_surface_palette_player(Ind);
+	//world_surface_palette_player(Ind);
 #endif
 
 #ifdef USE_SOUND_2010
@@ -1761,7 +1761,7 @@ bool player_night(int Ind) {
 	p_ptr->window |= (PW_OVERHEAD);
 
 #ifdef EXTENDED_COLOURS_PALANIM
-	world_surface_palette_player(Ind);
+//	world_surface_palette_player(Ind);
 #endif
 
 #ifdef USE_SOUND_2010
@@ -2356,7 +2356,7 @@ void world_surface_palette_player(int Ind) {
 
 	get_world_surface_palette_state(&sky, &sub, TRUE);
 
-	s_printf("wspp: Ind %d, sky %d, sub %d\n", Ind, sky, sub);
+	//s_printf("wspp: Ind %d, sky %d, sub %d\n", Ind, sky, sub); //DEBUG
 
 	world_surface_palette_player_do(Ind, sky, sub);
 }
@@ -7883,6 +7883,10 @@ void process_player_change_wpos(int Ind) {
 	if (!wpos->wz) {
 		if (IS_DAY) player_day(Ind);
 		else player_night(Ind);
+
+#ifdef EXTENDED_COLOURS_PALANIM
+		world_surface_palette_player(Ind);
+#endif
 	}
 
 	/* Determine starting location */
