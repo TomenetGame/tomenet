@@ -4283,7 +4283,8 @@ void do_slash_cmd(int Ind, char *message) {
 					col = 'w';
 				}
 
-				msg_format(Ind, "That level %d \377%c%s %s\377w belongs to account: \377s%s%s",
+				msg_format(Ind, "That %slevel %d \377%c%s %s\377w belongs to account: \377s%s%s",
+				    (lookup_player_winner(p_id) & 0x01) ? "royal " : "",
 				    lev, col,
 				    //race_info[ptype & 0xff].title,
 				    special_prace_lookup[ptype & 0xff],
@@ -7019,7 +7020,7 @@ void do_slash_cmd(int Ind, char *message) {
 						if (tmpm & MODE_DED_IDDC) strcat(colour_sequence, "*");
 						if (tmpm & MODE_DED_PVP) strcat(colour_sequence, "*");
 
-						msg_format(Ind, "Character #%d: %s%s (%s %s, %d) (ID: %d) (%d,%d,%d)", i+1, colour_sequence, lookup_player_name(id_list[i]),
+						msg_format(Ind, "%sCharacter #%d: %s%s (%s %s, %d) (ID: %d) (%d,%d,%d)", (lookup_player_winner(id_list[i]) & 0x01) ? "\377v" : "", i+1, colour_sequence, lookup_player_name(id_list[i]),
 						    special_prace_lookup[ptype & 0xff], class_info[ptype >> 8].title,
 						    lookup_player_level(id_list[i]), id_list[i], wpos.wx, wpos.wy, wpos.wz);
 					}
@@ -7072,7 +7073,7 @@ void do_slash_cmd(int Ind, char *message) {
 						else strcpy(colour_sequence, "\377W");
 						if (tmpm & MODE_DED_IDDC) strcat(colour_sequence, "*");
 						if (tmpm & MODE_DED_PVP) strcat(colour_sequence, "*");
-						msg_format(Ind, "Character #%d: %s%s (%d) (ID: %d)", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
+						msg_format(Ind, "%sCharacter #%d: %s%s (%d) (ID: %d)", (lookup_player_winner(id_list[i]) & 0x01) ? "\377v" : "", i+1, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), id_list[i]);
 					}
 					if (n) C_KILL(id_list, n, int);
 				}
