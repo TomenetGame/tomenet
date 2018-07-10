@@ -10243,7 +10243,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 #endif
 			else if (prefix(message, "/setpalette")) { //debug set_palette() etc
-				int c = (tk ? k : 1); // 1 is TERM_WHITE
+				int c = (tk ? k : 1); // 1 is TERM_WHITE, but note in mind that these aren't TERM_ values but actually 0..15 + 16..31 real term colour indices!
 				int r = rand_int(256), g = rand_int(256), b = rand_int(256);
 
 				msg_format(Ind, "<set_palette(%d, %d, %d, %d)>", c, r, g, b);
