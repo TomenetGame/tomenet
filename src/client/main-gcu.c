@@ -910,26 +910,21 @@ errr init_gcu(void) {
 	/* Attempt to use customized colors */
 	if (can_fix_color) {
 		/* Prepare the color pairs */
-		init_pair(0, 0, COLOR_BLACK);	/*black */
-		init_pair(1, 1, COLOR_BLACK);	/*white */
-		init_pair(2, 2, COLOR_BLACK);	/*grey */
-		init_pair(3, 3, COLOR_BLACK);	/*orange */
-		init_pair(4, 4, COLOR_BLACK);	/*red */
-		init_pair(5, 5, COLOR_BLACK);	/*green */
-		init_pair(6, 6, COLOR_BLACK);	/*blue */
-		init_pair(7, 7, COLOR_BLACK);	/*umber */
-		init_pair(8, 8, COLOR_BLACK);	/*dark grey */
-		init_pair(9, 9, COLOR_BLACK);	/*light grey */
-		init_pair(10, 10, COLOR_BLACK);	/*violet */
-		init_pair(11, 11, COLOR_BLACK);	/*yellow */
-		init_pair(12, 12, COLOR_BLACK);	/*light red */
-		init_pair(13, 13, COLOR_BLACK);	/*light green */
-		init_pair(14, 14, COLOR_BLACK);	/*light blue */
-		init_pair(15, 15, COLOR_BLACK);	/*light umber */
+ #ifndef EXTENDED_COLOURS_PALANIM
+		for (i = 0; i < 16; i++)
+ #else
+		for (i = 0; i < 16 + 16; i++)
+ #endif
+			init_pair(i, i, COLOR_BLACK);	/*black */
 
 		/* XXX XXX XXX Take account of "gamma correction" */
 
-		for (i = 0; i < 16; i++) color_content(i, &cor[i], &cog[i], &cob[i]);
+ #ifndef EXTENDED_COLOURS_PALANIM
+		for (i = 0; i < 16; i++)
+ #else
+		for (i = 0; i < 16 + 16; i++)
+ #endif
+			color_content(i, &cor[i], &cog[i], &cob[i]);
 
 		/* Using the real colours if terminal supports redefining -  thanks Pepe for the patch */
 		/* Prepare the "Angband Colors" */
@@ -937,28 +932,20 @@ errr init_gcu(void) {
 		#define RED(i)   (((client_color_map[i] >> 16 & 0xff) * 1000 + 127) / 255)
 		#define GREEN(i) (((client_color_map[i] >> 8 & 0xff) * 1000 + 127) / 255)
 		#define BLUE(i)  (((client_color_map[i] & 0xff) * 1000 + 127) / 255)
-		for (i = 0; i < 16; i++) {
+ #ifndef EXTENDED_COLOURS_PALANIM
+		for (i = 0; i < 16; i++)
+ #else
+		for (i = 0; i < 16 + 16; i++)
+ #endif
 			init_color(i, RED(i), GREEN(i), BLUE(i));
-		}
 
 		/* Prepare the "Angband Colors" */
-		colortable[0] = (COLOR_PAIR(0) | A_NORMAL);	/* Black */
-		colortable[1] = (COLOR_PAIR(1) | A_NORMAL);	/* White */
-		colortable[2] = (COLOR_PAIR(2) | A_NORMAL);	/* Grey XXX */
-		colortable[3] = (COLOR_PAIR(3) | A_NORMAL);	/* Orange XXX */
-		colortable[4] = (COLOR_PAIR(4) | A_NORMAL);	/* Red */
-		colortable[5] = (COLOR_PAIR(5) | A_NORMAL);	/* Green */
-		colortable[6] = (COLOR_PAIR(6) | A_NORMAL);	/* Blue */
-		colortable[7] = (COLOR_PAIR(7) | A_NORMAL);	/* Umber */
-
-		colortable[8] = (COLOR_PAIR(8) | A_NORMAL);	/* Dark-grey XXX */
-		colortable[9] = (COLOR_PAIR(9) | A_NORMAL);	/* Light-grey XXX */
-		colortable[10] = (COLOR_PAIR(10) | A_NORMAL);	/* Purple */
-		colortable[11] = (COLOR_PAIR(11) | A_NORMAL);	/* Yellow */
-		colortable[12] = (COLOR_PAIR(12) | A_NORMAL);	/* Light Red XXX */
-		colortable[13] = (COLOR_PAIR(13) | A_NORMAL);	/* Light Green */
-		colortable[14] = (COLOR_PAIR(14) | A_NORMAL);	/* Light Blue */
-		colortable[15] = (COLOR_PAIR(15) | A_NORMAL);	/* Light Umber XXX */
+ #ifndef EXTENDED_COLOURS_PALANIM
+		for (i = 0; i < 16; i++)
+ #else
+		for (i = 0; i < 16 + 16; i++)
+ #endif
+			colortable[i] = (COLOR_PAIR(i) | A_NORMAL);
 	}
 
 	else if (can_use_256_color) {
@@ -977,6 +964,7 @@ errr init_gcu(void) {
 			int want_blue = BLUE(i);
 			int best_idx = COLOR_WHITE;
 			int best_distance = 3 * 256;
+
 			for (j = 0; j < 256; j++) {
 				int distance = abs(want_red - cor[j]) + abs(want_green - cog[j]) + abs(want_blue - cob[j]);
 				if (distance < best_distance) {
@@ -985,31 +973,27 @@ errr init_gcu(void) {
 				}
 			}
 			color_palette[i] = best_idx;
+ #ifdef EXTENDED_COLOURS_PALANIM
+			/* Clonerino */
+			color_palette[i + 16] = color_palette[i];
+ #endif
 		}
 
 		/* Prepare the color pairs */
-		for (i = 0; i < 16; i++) {
+ #ifndef EXTENDED_COLOURS_PALANIM
+		for (i = 0; i < 16; i++)
+ #else
+		for (i = 0; i < 16 + 16; i++)
+ #endif
 			init_pair(i, color_palette[i], COLOR_BLACK);
-		}
 
 		/* Prepare the "Angband Colors" */
-		colortable[0] = (COLOR_PAIR(0) | A_NORMAL);	/* Black */
-		colortable[1] = (COLOR_PAIR(1) | A_NORMAL);	/* White */
-		colortable[2] = (COLOR_PAIR(2) | A_NORMAL);	/* Grey XXX */
-		colortable[3] = (COLOR_PAIR(3) | A_NORMAL);	/* Orange XXX */
-		colortable[4] = (COLOR_PAIR(4) | A_NORMAL);	/* Red */
-		colortable[5] = (COLOR_PAIR(5) | A_NORMAL);	/* Green */
-		colortable[6] = (COLOR_PAIR(6) | A_NORMAL);	/* Blue */
-		colortable[7] = (COLOR_PAIR(7) | A_NORMAL);	/* Umber */
-
-		colortable[8] = (COLOR_PAIR(8) | A_NORMAL);	/* Dark-grey XXX */
-		colortable[9] = (COLOR_PAIR(9) | A_NORMAL);	/* Light-grey XXX */
-		colortable[10] = (COLOR_PAIR(10) | A_NORMAL);	/* Purple */
-		colortable[11] = (COLOR_PAIR(11) | A_NORMAL);	/* Yellow */
-		colortable[12] = (COLOR_PAIR(12) | A_NORMAL);	/* Light Red XXX */
-		colortable[13] = (COLOR_PAIR(13) | A_NORMAL);	/* Light Green */
-		colortable[14] = (COLOR_PAIR(14) | A_NORMAL);	/* Light Blue */
-		colortable[15] = (COLOR_PAIR(15) | A_NORMAL);	/* Light Umber XXX */
+ #ifndef EXTENDED_COLOURS_PALANIM
+		for (i = 0; i < 16; i++)
+ #else
+		for (i = 0; i < 16 + 16; i++)
+ #endif
+			colortable[i] = (COLOR_PAIR(i) | A_NORMAL);
 	}
 
 	/* Attempt to use colors */
@@ -1041,6 +1025,10 @@ errr init_gcu(void) {
 		colortable[13] = (COLOR_PAIR(2) | A_BRIGHT);	/* Light Green */
 		colortable[14] = (COLOR_PAIR(4) | A_BRIGHT);	/* Light Blue */
 		colortable[15] = (COLOR_PAIR(3) | A_NORMAL);	/* Light Umber XXX */
+ #ifdef EXTENDED_COLOURS_PALANIM
+		for (i = 0; i < 16 + 16; i++)
+			colortable[i + 16] = colortable[i]; //just clone
+ #endif
 	}
 #endif
 

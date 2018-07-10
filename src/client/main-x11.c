@@ -2264,8 +2264,14 @@ static char color_name[16 * 2][8] = {
 #endif
 static void enable_common_colormap_x11() {
 	int i;
+
+#ifndef EXTENDED_COLOURS_PALANIM
 	for (i = 0; i < 16; i++) {
+#else
+	for (i = 0; i < 16 + 16; i++) {
+#endif
 		unsigned long c = client_color_map[i];
+
 		sprintf(color_name[i], "#%06lx", c & 0xffffffL);
 	}
 }

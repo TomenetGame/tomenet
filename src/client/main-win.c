@@ -462,8 +462,11 @@ static cptr ANGBAND_DIR_XTRA_SOUND;
  *
  * XXX XXX XXX The color codes below were taken from "main-ibm.c".
  */
-static COLORREF win_clr[16] =
-{
+#ifndef EXTENDED_COLOURS_PALANIM
+static COLORREF win_clr[16] = {
+#else
+static COLORREF win_clr[16 * 2] = {
+#endif
 	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
 	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
 	PALETTERGB(0x9D, 0x9D, 0x9D),  /* 2 2 2  Slate */
@@ -489,16 +492,51 @@ static COLORREF win_clr[16] =
 	PALETTERGB(0x00, 0xFF, 0x00),  /* 0 4 0  Lt. Green */
 	PALETTERGB(0x00, 0xFF, 0xFF),  /* 0 4 4  Lt. Blue */
 	PALETTERGB(0xC7, 0x9D, 0x55)   /* 3 2 1  Lt. Umber */
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* And clone the above 16 standard colours again here: */
+	,
+	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
+	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
+	PALETTERGB(0x9D, 0x9D, 0x9D),  /* 2 2 2  Slate */
+	PALETTERGB(0xFF, 0x8D, 0x00),  /* 4 2 0  Orange */
+	PALETTERGB(0xB7, 0x00, 0x00),  /* 3 0 0  Red (was 0xD7,0,0) - making shaman/istar more distinguishable */
+	PALETTERGB(0x00, 0x9D, 0x44),  /* 0 2 1  Green */
+ #ifndef READABILITY_BLUE
+	PALETTERGB(0x00, 0x00, 0xFF),  /* 0 0 4  Blue */
+ #else
+	PALETTERGB(0x00, 0x33, 0xFF),  /* 0 0 4  Blue */
+ #endif
+	PALETTERGB(0x8D, 0x66, 0x00),  /* 2 1 0  Umber */
+ #ifndef DISTINCT_DARK
+	PALETTERGB(0x74, 0x74, 0x74),  /* 1 1 1  Lt. Dark */
+ #else
+	//PALETTERGB(0x58, 0x58, 0x58),  /* 1 1 1  Lt. Dark */
+	PALETTERGB(0x66, 0x66, 0x66),  /* 1 1 1  Lt. Dark */
+ #endif
+	PALETTERGB(0xD7, 0xD7, 0xD7),  /* 3 3 3  Lt. Slate */
+	PALETTERGB(0xAF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
+	PALETTERGB(0xFF, 0xFF, 0x00),  /* 4 4 0  Yellow */
+	PALETTERGB(0xFF, 0x30, 0x30),  /* 4 0 0  Lt. Red (was 0xFF,0,0) - see 'Red' - C. Blue */
+	PALETTERGB(0x00, 0xFF, 0x00),  /* 0 4 0  Lt. Green */
+	PALETTERGB(0x00, 0xFF, 0xFF),  /* 0 4 4  Lt. Blue */
+	PALETTERGB(0xC7, 0x9D, 0x55)   /* 3 2 1  Lt. Umber */
+#endif
 };
 void enable_readability_blue_win(void) {
 	client_color_map[6] = 0x0033ff;
 }
 static void enable_common_colormap_win(void) {
 	int i;
+
 	#define RED(i)   (client_color_map[i] >> 16 & 0xFF)
 	#define GREEN(i) (client_color_map[i] >> 8 & 0xFF)
 	#define BLUE(i)  (client_color_map[i] & 0xFF)
+
+#ifndef EXTENDED_COLOURS_PALANIM
 	for (i = 0; i < 16; i++) {
+#else
+	for (i = 0; i < 16 * 2; i++) {
+#endif
 		win_clr[i] = PALETTERGB(RED(i), GREEN(i), BLUE(i));
 	}
 }
@@ -982,12 +1020,19 @@ static void load_prefs(void)
 	for (i = 0; i < 16; i++) {
 		char key_name[12] = { '\0' };
 		snprintf(key_name, sizeof(key_name), "Colormap_%d", i);
+
 		char default_color[8] = { '\0' };
 		unsigned long c = client_color_map[i];
 		snprintf(default_color, sizeof(default_color), "#%06lx", c);
+
 		char want_color[8] = { '\0' };
 		GetPrivateProfileString("Base", key_name, default_color, want_color, sizeof(want_color), ini_file);
+
 		client_color_map[i] = parse_color_code(want_color);
+#ifdef EXTENDED_COLOURS_PALANIM
+		/* Clone it */
+		client_color_map[i + 16] = client_color_map[i];
+#endif
 	}
 	enable_common_colormap_win();
 
@@ -1070,8 +1115,7 @@ static void load_prefs(void)
  *
  * This function is never called before all windows are ready.
  */
-static void new_palette(void)
-{
+static void new_palette(void) {
 	HPALETTE       hBmPal;
 	HPALETTE       hNewPal;
 	HDC            hdc;

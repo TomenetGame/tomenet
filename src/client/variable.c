@@ -423,7 +423,11 @@ bool macro_processing_exclusive;
 /* Default color map */
 /* These can be overriden using TomeNET.ini or .tomenetrc */
 /* The colors are stored as 32-bit integers, .e.g. #112233 -> 0x112233 */
+#ifndef EXTENDED_COLOURS_PALANIM
 u32b client_color_map[16] = {
+#else
+u32b client_color_map[16 * 2] = {
+#endif
 	0x000000,	/* BLACK */
 	0xffffff,	/* WHITE */
 	0x9d9d9d,	/* GRAY */
@@ -440,6 +444,25 @@ u32b client_color_map[16] = {
 	0x00ff00,	/* LIGHT GREEN */
 	0x00ffff,	/* LIGHT BLUE */
 	0xc79d55,	/* LIGHT UMBER */
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* clone them again, for palette animation */
+	0x000000,	/* BLACK */
+	0xffffff,	/* WHITE */
+	0x9d9d9d,	/* GRAY */
+	0xff8d00,	/* ORANGE */
+	0xb70000,	/* RED */
+	0x009d44,	/* GREEN */
+	0x0000ff,	/* BLUE */
+	0x8d6600,	/* UMBER */
+	0x666666,	/* DARK GRAY */
+	0xd7d7d7,	/* LIGHT GRAY */
+	0xaf00ff,	/* VIOLET */
+	0xffff00,	/* YELLOW */
+	0xff3030,	/* LIGHT RED */
+	0x00ff00,	/* LIGHT GREEN */
+	0x00ffff,	/* LIGHT BLUE */
+	0xc79d55,	/* LIGHT UMBER */
+#endif
 };
 
 /* Allow code in src/common/ to dynamically check that this is the client */

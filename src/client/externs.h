@@ -992,7 +992,11 @@ extern bool macro_processing_exclusive;
 
 extern int max_chars_per_account;
 
+#ifndef EXTENDED_COLOURS_PALANIM
 extern u32b client_color_map[16];
+#else
+extern u32b client_color_map[16 * 2];
+#endif
 
 #ifdef RETRY_LOGIN
 extern bool rl_connection_destructible, rl_connection_destroyed, rl_password;
