@@ -10242,6 +10242,14 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 #endif
+			else if (prefix(message, "/setpalette")) { //debug set_palette() etc
+				int c = (tk ? 1 : 64 + 1); //TERM_WHITE : TERMA_WHITE
+				int r = rand_int(256), g = rand_int(256), b = rand_int(256);
+
+				msg_format(Ind, "<set_palette(%d, %d, %d, %d)>", c, r, g, b);
+				Send_palette(Ind, c, r, g, b);
+				return;
+			}
 		}
 	}
 

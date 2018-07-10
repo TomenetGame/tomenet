@@ -31,6 +31,7 @@ extern void resize_main_window_x11(int cols, int rows);
 extern bool ask_for_bigmap(void);
 extern void get_screen_font_name(char *buf);
 extern void animate_palette(void);
+extern void set_palette(byte c, byte r, byte g, byte b);
 #endif
 
 #ifdef USE_XAW
@@ -909,6 +910,7 @@ extern bool check_dir(cptr s);
 extern void get_screen_font_name(char *buf);
 extern bool win_dontmoveuser;
 extern void animate_palette(void);
+extern void set_palette(byte c, byte r, byte g, byte b);
 #endif
 extern void store_crecedentials(void);
 

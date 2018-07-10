@@ -8312,6 +8312,19 @@ int Send_item_newest(int Ind, int item) {
 	return Packet_printf(&connp->c, "%c%c", PKT_ITEM_NEWEST, (char)item);
 }
 
+int Send_palette(int Ind, byte c, byte r, byte g, byte b) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!is_newer_than(&connp->version, 4, 7, 1, 1, 0, 0)) return(0);
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for palette (%d.%d.%d)",
+		    Ind, connp->state, connp->id));
+		return 0;
+	}
+	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_PALETTE, c, r, g, b);
+}
+
 
 
 /*

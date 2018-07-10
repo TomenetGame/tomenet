@@ -4286,4 +4286,36 @@ void animate_palette(void) {
 		Term_activate(old);
 	}
 }
+void set_palette(byte c, byte r, byte g, byte b) {
+	COLORREF code;
+	term *term_old = Term;
+
+	/* Need complex color mode for palette animation */
+	if (colors16) return;
+
+	color_table[c][1] = r;
+	color_table[c][2] = g;
+	color_table[c][3] = b;
+
+	/* Extract a full color code */
+	code = PALETTERGB(r, g, b);
+
+	/* Activate changes */
+	if (win_clr[c] != code) {
+		/* Apply the desired color */
+		win_clr[c] = code;
+	}
+
+	/* Activate the palette */
+	new_palette();
+
+	/* Refresh aka redraw main window with new colour */
+	term_data *td = &data[0];
+	/* Activate */
+	Term_activate(&td->t);
+	/* Redraw the contents */
+	Term_redraw();
+	/* Restore */
+	Term_activate(term_old);
+}
 #endif /* _Windows */

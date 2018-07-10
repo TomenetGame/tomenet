@@ -166,7 +166,8 @@ static void Receive_init(void) {
 	receive_tbl[PKT_STORE_SPECIAL_CHAR]	= Receive_store_special_char;
 	receive_tbl[PKT_STORE_SPECIAL_CLR]	= Receive_store_special_clr;
 
-	receive_tbl[PKT_MARTYR]			= Receive_martyr;
+	receive_tbl[PKT_MARTYR]		= Receive_martyr;
+	receive_tbl[PKT_PALETTE]	= Receive_palette;
 }
 
 
@@ -4098,6 +4099,20 @@ int Receive_inventory_revision(void) {
 
 	return 1;
 }
+
+int Receive_palette(void) {
+	int	n;
+	char 	ch;
+	byte	c, r, g, b;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &c, &r, &g, &b)) <= 0) return n;
+
+	//c_message_add(format("palette %d -> %d, %d, %d", c, r, g, b));
+	set_palette(c, r, g, b);
+
+	return 1;
+}
+
 
 /* Apply client-side auto-inscriptions - C. Blue
    'force': overwrite existing non-trivial inscription. */

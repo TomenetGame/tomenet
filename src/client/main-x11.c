@@ -3186,4 +3186,41 @@ void animate_palette(void) {
 		Term_activate(&old_td->t);
 	}
 }
+void set_palette(byte c, byte r, byte g, byte b) {
+	unsigned long code;
+	char cn[8];
+	cptr cname = color_name[0];
+	term_data *old_td = (term_data*)(Term->data);
+
+	color_table[c][1] = r;
+	color_table[c][2] = g;
+	color_table[c][3] = b;
+
+	/* Extract a full color code */
+	code = (r << 16) | (g << 8) | b;
+	sprintf(cn, "#%06lx", code);
+
+	/* Activate changes */
+	if (strcmp(color_name[c], cn))
+		/* Apply the desired color */
+		strcpy(color_name[c], cn);
+
+	/* Activate the palette */
+	MAKE(clr[c], infoclr);
+	Infoclr_set (clr[c]);
+#if 0 /*wut is diz?*/
+	if (Metadpy->color) cname = color_name[c];
+	else if (c) cname = color_name[c];
+#else
+	cname = color_name[c];
+#endif
+	Infoclr_init_ccn(cname, "bg", "cpy", 0);
+
+	/* Refresh aka redraw the main window with new colour */
+	if (!term_prefs[0].visible) return;
+	if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
+	Term_activate(&term_idx_to_term_data(0)->t);
+	Term_redraw();
+	Term_activate(&old_td->t);
+}
 #endif

@@ -157,8 +157,9 @@
 #define PKT_MINI_MAP_POS	134
 #define PKT_AUTOINSCRIBE	135
 #define PKT_MARTYR		136	/* client lua notification client for updating spell mana costs */
+#define PKT_PALETTE		137	/* Since 4.7.1.2+ */
 
-//XXX 137-143
+//XXX 138-143
 
 //debugging:
 #define PKT_CLIENT_SETUP_U	140

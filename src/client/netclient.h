@@ -110,3 +110,4 @@ int Receive_request_cfr(void);
 int Receive_request_abort(void);
 int Receive_apply_auto_insc(void);
 int Receive_martyr(void);
+int Receive_palette(void);
