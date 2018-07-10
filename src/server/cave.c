@@ -2432,7 +2432,7 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 	Rand_value = tmp_seed; /* restore RNG */
 	return colour;
 }
-static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
+static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour, bool palanim) {
 	/* World surface manipulation only */
 	if (wpos->wz) return colour;
 
@@ -2442,7 +2442,11 @@ static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int 
 	if (c_ptr->feat == FEAT_OPEN || c_ptr->feat == FEAT_BROKEN || c_ptr->feat == FEAT_SHOP ||
 	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return colour;
 
-#ifndef EXTENDED_COLOURS_PALANIM
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* Experimental: Let world_surface_palette() take care of it.. exploitable, yes ;) */
+	if (palanim) return colour;
+#endif
+
 	/* Darkness on the world surface at night. Darken all colours. */
 	if (night_surface &&
 	    (!(c_ptr->info & (CAVE_GLOW | CAVE_LITE)) ||
@@ -2466,15 +2470,12 @@ static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int 
 		case TERM_L_UMBER: return TERM_UMBER;
 		}
 	}
-#else
-	/* Experimental: Let world_surface_palette() take care of it.. exploitable, yes ;) */
-#endif
 
 	return colour;
 }
-static int manipulate_cave_colour(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
+static int manipulate_cave_colour(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour, bool palanim) {
 	colour = manipulate_cave_colour_season(c_ptr, wpos, x,  y,  colour);
-	return manipulate_cave_colour_daytime(c_ptr, wpos, x,  y,  colour);
+	return manipulate_cave_colour_daytime(c_ptr, wpos, x,  y,  colour, palanim);
 }
 #ifdef SHADE_ALL_FLOOR
 static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour) {
@@ -2851,7 +2852,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
 			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
 			    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra))) {
-				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
+				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org, palanim);
 
 				/* Handle "blind" */
 				if (p_ptr->blind) {
@@ -2909,7 +2910,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 					}
 				}
 			}
-			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
+			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
 
 #if 1
 			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
@@ -3019,7 +3020,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			    (a_org == TERM_WHITE || a_org == TERM_L_WHITE))) ||
 			    (f_ptr->flags2 & (FF2_LAMP_LITE | FF2_SPECIAL_LITE)) ||
 			    ((f_ptr->flags2 & FF2_LAMP_LITE_OPTIONAL) && p_ptr->view_lite_extra))) {
-				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org);
+				a = manipulate_cave_colour_daytime(c_ptr, &p_ptr->wpos, x, y, a_org, palanim);
 
 				/* Handle "blind" */
 				if (p_ptr->blind) {
@@ -3105,7 +3106,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 #endif
 				}
 			}
-			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
+			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
 
 			/* Display vault walls in a more distinguishable colour, if desired */
 			if (p_ptr->permawalls_shade && (feat == FEAT_PERM_INNER || feat == FEAT_PERM_OUTER)) a = TERM_L_UMBER;
@@ -3168,7 +3169,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			a = f_ptr->shimmer[rand_int(7)];
 
 			if (rand_int(8) != 1)
-				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a);
+				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
 
 #if 1
 			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
