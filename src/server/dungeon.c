@@ -2011,12 +2011,12 @@ static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
 	/* 5:00h..6:00h - getting less dark */
 	if (t >= 5 * 12 && t < 6 * 12) {
 		(*sky) = 0;
-		(*sub) = t - 5 * 12;
+		(*sub) = 8 * 12 - t; //sic, coop with sky==1
 	}
 	/* 6:00h..8:00h - DAYBREAK - darkness ceases */
 	else if (t >= 6 * 12 && t <= 8 * 12) {
 		(*sky) = 1;
-		(*sub) = t - 6 * 12;
+		(*sub) = 8 * 12 - t;
 	}
 	/* 13:00h..19:00h - getting yellowish/less bright */
 	else if (t >= 13 * 12 && t < 19 * 12) {
@@ -2037,7 +2037,7 @@ static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
 	else if (fill) {
 		if (t > 8 * 12 && t < 13 * 12) {
 			(*sky) = 1;
-			(*sub) = 8 * 12 - 6 * 12;
+			(*sub) = 0;
 		}
 		else if (t > 21 * 12 || t < 5 * 12) {
 			(*sky) = 4;
@@ -2056,17 +2056,17 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 		//proactive for sky 1; starting from darkest colours (night theme)
 			//black stays black
 			Send_palette(i, 17,		//white			<-slate
-			    COLOUR_R(TERM_SLATE) + COLOUR_STEP_R(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
-			    COLOUR_G(TERM_SLATE) + COLOUR_STEP_G(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
-			    COLOUR_B(TERM_SLATE) + COLOUR_STEP_B(TERM_WHITE, TERM_SLATE, 3 * 12) * sub);
+			    COLOUR_R(TERM_WHITE) - COLOUR_STEP_R(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_G(TERM_WHITE) - COLOUR_STEP_G(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_B(TERM_WHITE) - COLOUR_STEP_B(TERM_WHITE, TERM_SLATE, 3 * 12) * sub);
 			Send_palette(i, 18,		//slate			<-l-dark
-			    COLOUR_R(TERM_L_DARK) + COLOUR_STEP_R(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
-			    COLOUR_G(TERM_L_DARK) + COLOUR_STEP_G(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
-			    COLOUR_B(TERM_L_DARK) + COLOUR_STEP_B(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub);
+			    COLOUR_R(TERM_SLATE) - COLOUR_STEP_R(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
+			    COLOUR_G(TERM_SLATE) - COLOUR_STEP_G(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
+			    COLOUR_B(TERM_SLATE) - COLOUR_STEP_B(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub);
 			Send_palette(i, 19,		//orange		<-umber
-			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
-			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
-			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub);
+			    COLOUR_R(TERM_ORANGE) - COLOUR_STEP_R(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_ORANGE) - COLOUR_STEP_G(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_ORANGE) - COLOUR_STEP_B(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub);
 #if 0 /* unchanged */
 			Send_palette(i, 20,;		//red			<-%
 			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
@@ -2080,50 +2080,50 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
 #endif
 			Send_palette(i, 25,		//l-white		<-slate
-			    COLOUR_R(TERM_SLATE) + COLOUR_STEP_R(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
-			    COLOUR_G(TERM_SLATE) + COLOUR_STEP_G(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
-			    COLOUR_B(TERM_SLATE) + COLOUR_STEP_B(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub);
+			    COLOUR_R(TERM_L_WHITE) - COLOUR_STEP_R(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_WHITE) - COLOUR_STEP_G(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_WHITE) - COLOUR_STEP_B(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub);
 #if 0 /* unchanged */
 			Send_palette(i, 26,		//violet		<-%
 			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
 #endif
 			Send_palette(i, 27,		//yellow		<-l-umber
-			    COLOUR_R(TERM_L_UMBER) + COLOUR_STEP_R(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
-			    COLOUR_G(TERM_L_UMBER) + COLOUR_STEP_G(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
-			    COLOUR_B(TERM_L_UMBER) + COLOUR_STEP_B(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub);
+			    COLOUR_R(TERM_YELLOW) - COLOUR_STEP_R(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_YELLOW) - COLOUR_STEP_G(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_YELLOW) - COLOUR_STEP_B(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub);
 			Send_palette(i, 28,		//l-red			<-red
-			    COLOUR_R(TERM_RED) + COLOUR_STEP_R(TERM_L_RED, TERM_RED, 3 * 12) * sub,
-			    COLOUR_G(TERM_RED) + COLOUR_STEP_G(TERM_L_RED, TERM_RED, 3 * 12) * sub,
-			    COLOUR_B(TERM_RED) + COLOUR_STEP_B(TERM_L_RED, TERM_RED, 3 * 12) * sub);
+			    COLOUR_R(TERM_L_RED) - COLOUR_STEP_R(TERM_L_RED, TERM_RED, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_RED) - COLOUR_STEP_G(TERM_L_RED, TERM_RED, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_RED) - COLOUR_STEP_B(TERM_L_RED, TERM_RED, 3 * 12) * sub);
 			Send_palette(i, 29,		//l-green		<-green
-			    COLOUR_R(TERM_GREEN) + COLOUR_STEP_R(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
-			    COLOUR_G(TERM_GREEN) + COLOUR_STEP_G(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
-			    COLOUR_B(TERM_GREEN) + COLOUR_STEP_B(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub);
+			    COLOUR_R(TERM_L_GREEN) - COLOUR_STEP_R(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_GREEN) - COLOUR_STEP_G(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_GREEN) - COLOUR_STEP_B(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub);
 			Send_palette(i, 30,		//l-blue		<-blue
-			    COLOUR_R(TERM_BLUE) + COLOUR_STEP_R(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
-			    COLOUR_G(TERM_BLUE) + COLOUR_STEP_G(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
+			    COLOUR_R(TERM_L_BLUE) - COLOUR_STEP_R(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_BLUE) - COLOUR_STEP_G(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
 			    COLOUR_B(TERM_L_BLUE)); //BLUE and L_BLUE are both 0xff
 			Send_palette(i, 31,		//l-umber		<-umber
-			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
-			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
-			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub);
+			    COLOUR_R(TERM_L_UMBER) - COLOUR_STEP_R(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_UMBER) - COLOUR_STEP_G(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_UMBER) - COLOUR_STEP_B(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub);
 		break;
 	case 1: //DAYBREAK! -- darkness ceases (this entry has all correct colours) (24 steps)
 		//continuing from sky 0, ending at brightest colours (day theme)
-		sub += 12; //count the steps from skystage 0 proactively for us
+		//-changed to subtraction..- sub += 12; //count the steps from skystage 0 proactively for us
 			//black stays black
 			Send_palette(i, 17,		//white			<-slate
-			    COLOUR_R(TERM_SLATE) + COLOUR_STEP_R(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
-			    COLOUR_G(TERM_SLATE) + COLOUR_STEP_G(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
-			    COLOUR_B(TERM_SLATE) + COLOUR_STEP_B(TERM_WHITE, TERM_SLATE, 3 * 12) * sub);
+			    COLOUR_R(TERM_WHITE) - COLOUR_STEP_R(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_G(TERM_WHITE) - COLOUR_STEP_G(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_B(TERM_WHITE) - COLOUR_STEP_B(TERM_WHITE, TERM_SLATE, 3 * 12) * sub);
 			Send_palette(i, 18,		//slate			<-l-dark
-			    COLOUR_R(TERM_L_DARK) + COLOUR_STEP_R(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
-			    COLOUR_G(TERM_L_DARK) + COLOUR_STEP_G(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
-			    COLOUR_B(TERM_L_DARK) + COLOUR_STEP_B(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub);
+			    COLOUR_R(TERM_SLATE) - COLOUR_STEP_R(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
+			    COLOUR_G(TERM_SLATE) - COLOUR_STEP_G(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
+			    COLOUR_B(TERM_SLATE) - COLOUR_STEP_B(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub);
 			Send_palette(i, 19,		//orange		<-umber
-			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
-			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
-			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub);
+			    COLOUR_R(TERM_ORANGE) - COLOUR_STEP_R(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_ORANGE) - COLOUR_STEP_G(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_ORANGE) - COLOUR_STEP_B(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub);
 #if 0 /* unchanged */
 			Send_palette(i, 20,;		//red			<-%
 			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
@@ -2137,33 +2137,33 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
 #endif
 			Send_palette(i, 25,		//l-white		<-slate
-			    COLOUR_R(TERM_SLATE) + COLOUR_STEP_R(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
-			    COLOUR_G(TERM_SLATE) + COLOUR_STEP_G(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
-			    COLOUR_B(TERM_SLATE) + COLOUR_STEP_B(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub);
+			    COLOUR_R(TERM_L_WHITE) - COLOUR_STEP_R(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_WHITE) - COLOUR_STEP_G(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_WHITE) - COLOUR_STEP_B(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub);
 #if 0 /* unchanged */
 			Send_palette(i, 26,		//violet		<-%
 			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
 #endif
 			Send_palette(i, 27,		//yellow		<-l-umber
-			    COLOUR_R(TERM_L_UMBER) + COLOUR_STEP_R(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
-			    COLOUR_G(TERM_L_UMBER) + COLOUR_STEP_G(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
-			    COLOUR_B(TERM_L_UMBER) + COLOUR_STEP_B(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub);
+			    COLOUR_R(TERM_YELLOW) - COLOUR_STEP_R(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_YELLOW) - COLOUR_STEP_G(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_YELLOW) - COLOUR_STEP_B(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub);
 			Send_palette(i, 28,		//l-red			<-red
-			    COLOUR_R(TERM_RED) + COLOUR_STEP_R(TERM_L_RED, TERM_RED, 3 * 12) * sub,
-			    COLOUR_G(TERM_RED) + COLOUR_STEP_G(TERM_L_RED, TERM_RED, 3 * 12) * sub,
-			    COLOUR_B(TERM_RED) + COLOUR_STEP_B(TERM_L_RED, TERM_RED, 3 * 12) * sub);
+			    COLOUR_R(TERM_L_RED) - COLOUR_STEP_R(TERM_L_RED, TERM_RED, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_RED) - COLOUR_STEP_G(TERM_L_RED, TERM_RED, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_RED) - COLOUR_STEP_B(TERM_L_RED, TERM_RED, 3 * 12) * sub);
 			Send_palette(i, 29,		//l-green		<-green
-			    COLOUR_R(TERM_GREEN) + COLOUR_STEP_R(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
-			    COLOUR_G(TERM_GREEN) + COLOUR_STEP_G(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
-			    COLOUR_B(TERM_GREEN) + COLOUR_STEP_B(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub);
+			    COLOUR_R(TERM_L_GREEN) - COLOUR_STEP_R(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_GREEN) - COLOUR_STEP_G(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_GREEN) - COLOUR_STEP_B(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub);
 			Send_palette(i, 30,		//l-blue		<-blue
-			    COLOUR_R(TERM_BLUE) + COLOUR_STEP_R(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
-			    COLOUR_G(TERM_BLUE) + COLOUR_STEP_G(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
+			    COLOUR_R(TERM_L_BLUE) - COLOUR_STEP_R(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_BLUE) - COLOUR_STEP_G(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
 			    COLOUR_B(TERM_L_BLUE)); //BLUE and L_BLUE are both 0xff
 			Send_palette(i, 31,		//l-umber		<-umber
-			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
-			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
-			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub);
+			    COLOUR_R(TERM_L_UMBER) - COLOUR_STEP_R(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_UMBER) - COLOUR_STEP_G(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_UMBER) - COLOUR_STEP_B(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub);
 		break;
 	case 2: //getting yellowish/less bright (72 steps)
 		//going from brightest colours (day theme) to yellowish/orangeish colours
