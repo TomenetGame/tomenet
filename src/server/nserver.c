@@ -2947,6 +2947,10 @@ static int Handle_login(int ind) {
 		if (!(i % 5)) strcat(traffic, "* "); else strcat(traffic, "*");
 	p_printf("%s +  %03d  %s\n", showtime(), NumPlayers, traffic);
 
+#ifdef EXTENDED_COLOURS_PALANIM
+	world_surface_palette_player(NumPlayers);
+#endif
+
 	/* Initialize his mimic spells. - C. Blue
 	   Note: This is actually done earlier in time via calc_body_bonus(),
 	   but at that point, the connection is not yet ready to receive spell info. */

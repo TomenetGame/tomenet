@@ -2726,7 +2726,6 @@ static void player_setup(int Ind, bool new) {
 	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
 #endif
 
-
 	/* Tell the server to redraw the player's display */
 	p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS;
 	p_ptr->redraw |= PR_PLUSSES | PR_STATE;

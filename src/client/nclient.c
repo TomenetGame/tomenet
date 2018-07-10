@@ -4107,7 +4107,9 @@ int Receive_palette(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &c, &r, &g, &b)) <= 0) return n;
 
-	//c_message_add(format("palette %d -> %d, %d, %d", c, r, g, b));
+#if 0 /* debug */
+	c_message_add(format("palette %d -> %d, %d, %d", c, r, g, b));
+#endif
 	set_palette(c, r, g, b);
 
 	return 1;

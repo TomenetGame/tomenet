@@ -1698,6 +1698,10 @@ bool player_day(int Ind) {
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
 
+#ifdef EXTENDED_COLOURS_PALANIM
+	world_surface_palette_player(Ind);
+#endif
+
 #ifdef USE_SOUND_2010
 	if (p_ptr->is_day) return FALSE;
 	p_ptr->is_day = TRUE;
@@ -1755,6 +1759,10 @@ bool player_night(int Ind) {
 	p_ptr->redraw |= (PR_MAP);
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
+
+#ifdef EXTENDED_COLOURS_PALANIM
+	world_surface_palette_player(Ind);
+#endif
 
 #ifdef USE_SOUND_2010
 	if (!p_ptr->is_day) return FALSE;
@@ -1934,122 +1942,423 @@ static void night_falls() {
 }
 
 #ifdef EXTENDED_COLOURS_PALANIM
-static void world_surface_palette(int skystate, int substate) {
-	int i, tmp;
+static unsigned int colour_std[16] = {
+	0x000000,      /* BLACK */
+	0xffffff,      /* WHITE */
+	0x9d9d9d,      /* SLATE */
+	0xff8d00,      /* ORANGE */
+	0xb70000,      /* RED */
+	0x009d44,      /* GREEN */
+ #ifndef READABILITY_BLUE
+	0x0000ff,      /* BLUE */
+ #else
+	0x0033ff,      /* BLUE */
+ #endif
+	0x8d6600,      /* UMBER */
+ #ifndef DISTINCT_DARK
+	0x747474,      /* LDARK */
+ #else
+	//0x585858,      /* LDARK */
+	0x666666,      /* LDARK */
+ #endif
+	0xd7d7d7,      /* LWHITE */
+	0xaf00ff,      /* VIOLET */
+	0xffff00,      /* YELLOW */
+	0xff3030,      /* LRED */
+	0x00ff00,      /* LGREEN */
+	0x00ffff,      /* LBLUE */
+	0xc79d55,      /* LUMBER */
+};
 
-	s_printf("world_surface_palette(%d,%d)\n", skystate, substate);
+#define COLOUR_R(i) ((colour_std[i] & 0xff0000) >> 16)
+#define COLOUR_G(i) ((colour_std[i] & 0x00ff00) >> 8)
+#define COLOUR_B(i) (colour_std[i] & 0x0000ff)
 
-	switch (skystate) {
-	case 0: //getting less dark
-		substate += 2 * 12; //proactive for skystate 1
-		for (i = 1; i <= NumPlayers; i++) {
-			if (Players[i]->conn == NOT_CONNECTED) continue;
-			//black stays black
-			Send_palette(i, 17, 0xff - substate * 2, 0xff - substate * 2, 0xff - substate * 2);	//white			<-slate
-			Send_palette(i, 18, 0x9d - substate * 1, 0x9d - substate * 1, 0x9d - substate * 1);	//slate			<-l-dark
-			Send_palette(i, 19, 0xff - substate * 1, 0x8d - substate * 1, 0x00);			//orange		<-umber
-			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red			<-%
-			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green			<-%
-			Send_palette(i, 22, 0x00, 0x33, 0xff);							//blue (readable)	<-%
-			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber			<-%
-			Send_palette(i, 24, 0x66, 0x66, 0x66);							//l-dark (distinct)	<-%
-			Send_palette(i, 25, 0xd7 - substate * 2, 0xd7 - substate * 2, 0xd7 - substate * 2);	//l-white		<-slate
-			Send_palette(i, 26, 0xaf, 0x00, 0xff);							//violet		<-%
-			Send_palette(i, 27, 0xff - substate * 1, 0xff - substate * 1, 0x00 + substate * 1);	//yellow		<-l-umber
-			Send_palette(i, 28, 0xff - substate * 1, 0x30 - substate * 1, 0x30 - substate * 1);	//l-red			<-red
-			Send_palette(i, 29, 0x00, 0xff - substate * 1, 0x00 + substate * 1);			//l-green		<-green
-			Send_palette(i, 30, 0x00, 0xff - substate * 3, 0xff);					//l-blue		<-blue
-			Send_palette(i, 31, 0xc7 - substate * 1, 0x9d - substate * 1, 0x55 - substate * 2);	//l-umber		<-umber
+#define COLOUR_DIFF_R(i,j) (COLOUR_R(i) - COLOUR_R(j))
+#define COLOUR_DIFF_G(i,j) (COLOUR_G(i) - COLOUR_G(j))
+#define COLOUR_DIFF_B(i,j) (COLOUR_B(i) - COLOUR_B(j))
+#define COLOUR_STEP_R(i,j,s) (COLOUR_DIFF_R(i,j) / s)
+#define COLOUR_STEP_G(i,j,s) (COLOUR_DIFF_G(i,j) / s)
+#define COLOUR_STEP_B(i,j,s) (COLOUR_DIFF_B(i,j) / s)
+
+#define COLOUR_DIFF_CR(c,j) (c - COLOUR_R(j))
+#define COLOUR_DIFF_CG(c,j) (c - COLOUR_G(j))
+#define COLOUR_DIFF_CB(c,j) (c - COLOUR_B(j))
+#define COLOUR_STEP_CR(c,j,s) (COLOUR_DIFF_CR(c,j) / s)
+#define COLOUR_STEP_CG(c,j,s) (COLOUR_DIFF_CG(c,j) / s)
+#define COLOUR_STEP_CB(c,j,s) (COLOUR_DIFF_CB(c,j) / s)
+
+#define COLOUR_DIFF_RC(i,c) (i - c)
+#define COLOUR_DIFF_GC(i,c) (i - c)
+#define COLOUR_DIFF_BC(i,c) (i - c)
+#define COLOUR_STEP_RC(i,c,s) (COLOUR_DIFF_CRC(i,c) / s)
+#define COLOUR_STEP_GC(i,c,s) (COLOUR_DIFF_CGC(i,c) / s)
+#define COLOUR_STEP_BC(i,c,s) (COLOUR_DIFF_CBC(i,c) / s)
+
+#define COLOUR_DIFF_CRC(c,d) (c - d)
+#define COLOUR_DIFF_CGC(c,d) (c - d)
+#define COLOUR_DIFF_CBC(c,d) (c - d)
+#define COLOUR_STEP_CRC(c,d,s) (COLOUR_DIFF_CRC(c,d) / s)
+#define COLOUR_STEP_CGC(c,d,s) (COLOUR_DIFF_CGC(c,d) / s)
+#define COLOUR_STEP_CBC(c,d,s) (COLOUR_DIFF_CBC(c,d) / s)
+
+/* Helper function to determine sky state and sub-state over the day time cycle.
+   'fill' will return filler values for time intervals between the actual switching times. */
+static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
+	int t = (turn / (HOUR / 12)) % (24 * 12); //5 minute intervals, ie 1/12 hour
+
+	/* Check for smooth dark/light transitions every 5 minutes (in-game time). (6h..20h is daylight) */
+	/* 5:00h..6:00h - getting less dark */
+	if (t >= 5 * 12 && t < 6 * 12) {
+		(*sky) = 0;
+		(*sub) = t - 5 * 12;
+	}
+	/* 6:00h..8:00h - DAYBREAK - darkness ceases */
+	else if (t >= 6 * 12 && t <= 8 * 12) {
+		(*sky) = 1;
+		(*sub) = t - 6 * 12;
+	}
+	/* 13:00h..19:00h - getting yellowish/less bright */
+	else if (t >= 13 * 12 && t < 19 * 12) {
+		(*sky) = 2;
+		(*sub) = t - 13 * 12;
+	}
+	/* 19:00h..20:00h - sunsetty, getting darkish */
+	else if (t >= 19 * 12 && t < 20 * 12) {
+		(*sky) = 3;
+		(*sub) = t - 19 * 12;
+	}
+	/* 20:00h..21:00h - NIGHTFALL - getting dark */
+	else if (t >= 20 * 12 && t <= 21 * 12) {
+		(*sky) = 4;
+		(*sub) = 21 * 12 - t;
+	}
+	/* other -- fill? */
+	else if (fill) {
+		if (t > 8 * 12 && t < 13 * 12) {
+			(*sky) = 1;
+			(*sub) = 8 * 12 - 6 * 12;
 		}
+		else if (t > 21 * 12 || t < 5 * 12) {
+			(*sky) = 4;
+			(*sub) = 21 * 12 - 21 * 12;
+		}
+	}
+	else {
+		(*sky) = -1;
+		(*sub) = 0;
+	}
+}
+/* Local helper function */
+static void world_surface_palette_player_do(int i, int sky, int sub) {
+	switch (sky) {
+	case 0: //getting less dark (12 steps)
+		//proactive for sky 1; starting from darkest colours (night theme)
+			//black stays black
+			Send_palette(i, 17,		//white			<-slate
+			    COLOUR_R(TERM_SLATE) + COLOUR_STEP_R(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_G(TERM_SLATE) + COLOUR_STEP_G(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_B(TERM_SLATE) + COLOUR_STEP_B(TERM_WHITE, TERM_SLATE, 3 * 12) * sub);
+			Send_palette(i, 18,		//slate			<-l-dark
+			    COLOUR_R(TERM_L_DARK) + COLOUR_STEP_R(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_DARK) + COLOUR_STEP_G(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_DARK) + COLOUR_STEP_B(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub);
+			Send_palette(i, 19,		//orange		<-umber
+			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub);
+#if 0 /* unchanged */
+			Send_palette(i, 20,;		//red			<-%
+			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+			Send_palette(i, 21,		//green			<-%
+			    COLOUR_R(TERM_GREEN), COLOUR_G(TERM_GREEN), COLOUR_B(TERM_GREEN));
+			Send_palette(i, 22,		//blue (readable)	<-%
+			    COLOUR_R(TERM_BLUE), COLOUR_G(TERM_BLUE), COLOUR_B(TERM_BLUE));
+			Send_palette(i, 23,		//umber			<-%
+			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+			Send_palette(i, 24,		//l-dark (distinct)	<-%
+			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+#endif
+			Send_palette(i, 25,		//l-white		<-slate
+			    COLOUR_R(TERM_SLATE) + COLOUR_STEP_R(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_G(TERM_SLATE) + COLOUR_STEP_G(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_B(TERM_SLATE) + COLOUR_STEP_B(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub);
+#if 0 /* unchanged */
+			Send_palette(i, 26,		//violet		<-%
+			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+#endif
+			Send_palette(i, 27,		//yellow		<-l-umber
+			    COLOUR_R(TERM_L_UMBER) + COLOUR_STEP_R(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_UMBER) + COLOUR_STEP_G(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_UMBER) + COLOUR_STEP_B(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub);
+			Send_palette(i, 28,		//l-red			<-red
+			    COLOUR_R(TERM_RED) + COLOUR_STEP_R(TERM_L_RED, TERM_RED, 3 * 12) * sub,
+			    COLOUR_G(TERM_RED) + COLOUR_STEP_G(TERM_L_RED, TERM_RED, 3 * 12) * sub,
+			    COLOUR_B(TERM_RED) + COLOUR_STEP_B(TERM_L_RED, TERM_RED, 3 * 12) * sub);
+			Send_palette(i, 29,		//l-green		<-green
+			    COLOUR_R(TERM_GREEN) + COLOUR_STEP_R(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
+			    COLOUR_G(TERM_GREEN) + COLOUR_STEP_G(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
+			    COLOUR_B(TERM_GREEN) + COLOUR_STEP_B(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub);
+			Send_palette(i, 30,		//l-blue		<-blue
+			    COLOUR_R(TERM_BLUE) + COLOUR_STEP_R(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
+			    COLOUR_G(TERM_BLUE) + COLOUR_STEP_G(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_BLUE)); //BLUE and L_BLUE are both 0xff
+			Send_palette(i, 31,		//l-umber		<-umber
+			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub);
 		break;
-	case 1: //DAYBREAK! -- darkness ceases (this entry has all correct colours)
-		for (i = 1; i <= NumPlayers; i++) {
-			if (Players[i]->conn == NOT_CONNECTED) continue;
+	case 1: //DAYBREAK! -- darkness ceases (this entry has all correct colours) (24 steps)
+		//continuing from sky 0, ending at brightest colours (day theme)
+		sub += 12; //count the steps from skystage 0 proactively for us
 			//black stays black
-			Send_palette(i, 17, 0xff - substate * 2, 0xff - substate * 2, 0xff - substate * 2);	//white			<-slate
-			Send_palette(i, 18, 0x9d - substate * 1, 0x9d - substate * 1, 0x9d - substate * 1);	//slate			<-l-dark
-			Send_palette(i, 19, 0xff - substate * 1, 0x8d - substate * 1, 0x00);			//orange		<-umber
-			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red			<-%
-			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green			<-%
-			Send_palette(i, 22, 0x00, 0x33, 0xff);							//blue (readable)	<-%
-			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber			<-%
-			Send_palette(i, 24, 0x66, 0x66, 0x66);							//l-dark (distinct)	<-%
-			Send_palette(i, 25, 0xd7 - substate * 2, 0xd7 - substate * 2, 0xd7 - substate * 2);	//l-white		<-slate
-			Send_palette(i, 26, 0xaf, 0x00, 0xff);							//violet		<-%
-			Send_palette(i, 27, 0xff - substate * 1, 0xff - substate * 1, 0x00 + substate * 1);	//yellow		<-l-umber
-			Send_palette(i, 28, 0xff - substate * 1, 0x30 - substate * 1, 0x30 - substate * 1);	//l-red			<-red
-			Send_palette(i, 29, 0x00, 0xff - substate * 1, 0x00 + substate * 1);			//l-green		<-green
-			Send_palette(i, 30, 0x00, 0xff - substate * 3, 0xff);					//l-blue		<-blue
-			Send_palette(i, 31, 0xc7 - substate * 1, 0x9d - substate * 1, 0x55 - substate * 2);	//l-umber		<-umber
-		}
+			Send_palette(i, 17,		//white			<-slate
+			    COLOUR_R(TERM_SLATE) + COLOUR_STEP_R(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_G(TERM_SLATE) + COLOUR_STEP_G(TERM_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_B(TERM_SLATE) + COLOUR_STEP_B(TERM_WHITE, TERM_SLATE, 3 * 12) * sub);
+			Send_palette(i, 18,		//slate			<-l-dark
+			    COLOUR_R(TERM_L_DARK) + COLOUR_STEP_R(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_DARK) + COLOUR_STEP_G(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_DARK) + COLOUR_STEP_B(TERM_SLATE, TERM_L_DARK, 3 * 12) * sub);
+			Send_palette(i, 19,		//orange		<-umber
+			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_ORANGE, TERM_UMBER, 3 * 12) * sub);
+#if 0 /* unchanged */
+			Send_palette(i, 20,;		//red			<-%
+			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+			Send_palette(i, 21,		//green			<-%
+			    COLOUR_R(TERM_GREEN), COLOUR_G(TERM_GREEN), COLOUR_B(TERM_GREEN));
+			Send_palette(i, 22,		//blue (readable)	<-%
+			    COLOUR_R(TERM_BLUE), COLOUR_G(TERM_BLUE), COLOUR_B(TERM_BLUE));
+			Send_palette(i, 23,		//umber			<-%
+			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+			Send_palette(i, 24,		//l-dark (distinct)	<-%
+			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+#endif
+			Send_palette(i, 25,		//l-white		<-slate
+			    COLOUR_R(TERM_SLATE) + COLOUR_STEP_R(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_G(TERM_SLATE) + COLOUR_STEP_G(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub,
+			    COLOUR_B(TERM_SLATE) + COLOUR_STEP_B(TERM_L_WHITE, TERM_SLATE, 3 * 12) * sub);
+#if 0 /* unchanged */
+			Send_palette(i, 26,		//violet		<-%
+			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+#endif
+			Send_palette(i, 27,		//yellow		<-l-umber
+			    COLOUR_R(TERM_L_UMBER) + COLOUR_STEP_R(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_L_UMBER) + COLOUR_STEP_G(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_UMBER) + COLOUR_STEP_B(TERM_YELLOW, TERM_L_UMBER, 3 * 12) * sub);
+			Send_palette(i, 28,		//l-red			<-red
+			    COLOUR_R(TERM_RED) + COLOUR_STEP_R(TERM_L_RED, TERM_RED, 3 * 12) * sub,
+			    COLOUR_G(TERM_RED) + COLOUR_STEP_G(TERM_L_RED, TERM_RED, 3 * 12) * sub,
+			    COLOUR_B(TERM_RED) + COLOUR_STEP_B(TERM_L_RED, TERM_RED, 3 * 12) * sub);
+			Send_palette(i, 29,		//l-green		<-green
+			    COLOUR_R(TERM_GREEN) + COLOUR_STEP_R(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
+			    COLOUR_G(TERM_GREEN) + COLOUR_STEP_G(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub,
+			    COLOUR_B(TERM_GREEN) + COLOUR_STEP_B(TERM_L_GREEN, TERM_GREEN, 3 * 12) * sub);
+			Send_palette(i, 30,		//l-blue		<-blue
+			    COLOUR_R(TERM_BLUE) + COLOUR_STEP_R(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
+			    COLOUR_G(TERM_BLUE) + COLOUR_STEP_G(TERM_L_BLUE, TERM_BLUE, 3 * 12) * sub,
+			    COLOUR_B(TERM_L_BLUE)); //BLUE and L_BLUE are both 0xff
+			Send_palette(i, 31,		//l-umber		<-umber
+			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub,
+			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_L_UMBER, TERM_UMBER, 3 * 12) * sub);
 		break;
-	case 2: //getting yellowish/less bright
-		substate /= 6; //6 hours daytime, reduced to 1 hour effectiveness
-		for (i = 1; i <= NumPlayers; i++) {
-			if (Players[i]->conn == NOT_CONNECTED) continue;
+	case 2: //getting yellowish/less bright (72 steps)
+		//going from brightest colours (day theme) to yellowish/orangeish colours
+		sub /= 6; //6 hours daytime, reduced to 1 hour effectiveness
 			//black stays black
-			Send_palette(i, 17, 0xff - substate * 1, 0xff - substate * 1, 0xff - substate * 2);	//white
-			Send_palette(i, 18, 0x9d - substate * 0, 0x9d - substate * 0, 0x9d - substate * 1);	//slate
-			Send_palette(i, 19, 0xff, 0x8d, 0x00);							//orange
-			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red
-			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green
-			Send_palette(i, 22, 0x00, 0x33, 0xff);							//blue (readable)
-			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber
-			Send_palette(i, 24, 0x66, 0x66, 0x66);							//l-dark (distinct)
-			Send_palette(i, 25, 0xd7 - substate * 1, 0xd7 - substate * 1, 0xd7 - substate * 2);	//l-white
-			Send_palette(i, 26, 0xaf, 0x00, 0xff);							//violet
-			Send_palette(i, 27, 0xff - substate * 1, 0xff, 0x00);					//yellow
-			Send_palette(i, 28, 0xff, 0x30, 0x30);							//l-red
-			Send_palette(i, 29, 0x00, 0xff, 0x00);							//l-green
-			Send_palette(i, 30, 0x00, 0xff - substate * 1, 0xff);					//l-blue
-			Send_palette(i, 31, 0xc7, 0x9d, 0x55);							//l-umber
-		}
+			Send_palette(i, 17,		//white
+			    COLOUR_R(TERM_WHITE) - COLOUR_STEP_RC(TERM_WHITE, 0xdf, 12) * sub,
+			    COLOUR_G(TERM_WHITE),
+			    COLOUR_B(TERM_WHITE) - COLOUR_STEP_BC(TERM_WHITE, 0xa0, 12) * sub);
+			Send_palette(i, 18,		//slate
+			    COLOUR_R(TERM_SLATE) - COLOUR_STEP_RC(TERM_SLATE, 0x8d, 12) * sub,
+			    COLOUR_G(TERM_SLATE),
+			    COLOUR_B(TERM_SLATE) - COLOUR_STEP_BC(TERM_SLATE, 0x7d, 12) * sub);
+#if 0 /* unchanged */
+			Send_palette(i, 19,		//orange
+			    COLOUR_R(TERM_ORANGE), COLOUR_G(TERM_ORANGE), COLOUR_B(TERM_ORANGE));
+			Send_palette(i, 20,		//red
+			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+			Send_palette(i, 21,		//green
+			    COLOUR_R(TERM_GREEN), COLOUR_G(TERM_GREEN), COLOUR_B(TERM_GREEN));
+			Send_palette(i, 22,		//blue (readable)
+			    COLOUR_R(TERM_BLUE), COLOUR_G(TERM_BLUE), COLOUR_B(TERM_BLUE));
+			Send_palette(i, 23,		//umber
+			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+			Send_palette(i, 24,;		//l-dark (distinct)
+			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+#endif
+			Send_palette(i, 25,		//l-white
+			    COLOUR_R(TERM_L_WHITE) - COLOUR_STEP_RC(TERM_L_WHITE, 0xbf, 12) * sub,
+			    COLOUR_G(TERM_L_WHITE),
+			    COLOUR_B(TERM_L_WHITE) - COLOUR_STEP_BC(TERM_L_WHITE, 0x90, 12) * sub);
+#if 0 /* unchanged */
+			Send_palette(i, 26,		//violet
+			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+#endif
+			Send_palette(i, 27,		//yellow
+			    COLOUR_R(TERM_YELLOW),
+			    COLOUR_G(TERM_YELLOW) - COLOUR_STEP_GC(TERM_YELLOW, 0xdf, 12) * sub,
+			    COLOUR_B(TERM_YELLOW));
+#if 0 /* unchanged */
+			Send_palette(i, 28,		//l-red
+			    COLOUR_R(TERM_L_RED), COLOUR_G(TERM_L_RED), COLOUR_B(TERM_L_RED));
+			Send_palette(i, 29,		//l-green
+			    COLOUR_R(TERM_L_GREEN), COLOUR_G(TERM_L_GREEN), COLOUR_B(TERM_L_GREEN));
+			Send_palette(i, 30,		//l-blue
+			    COLOUR_R(TERM_L_BLUE), COLOUR_G(TERM_L_BLUE), COLOUR_B(TERM_L_BLUE));
+			Send_palette(i, 31,		//l-umber
+			    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
+#endif
 		break;
-	case 3: //sunsetty and darkish
-		tmp = substate;
-		substate += 12; //inherited form skystate 2: 1 hour of effectiveness predating skystate 3
-		for (i = 1; i <= NumPlayers; i++) {
-			if (Players[i]->conn == NOT_CONNECTED) continue;
+	case 3: //sunsetty and darkish (12 steps)
+		//picking up sky 2, continuing to orangish/reddish/purpleish/maybe darker colours
+		sub += 12; //inherited form sky 2: 1 hour of effectiveness predating sky 3
 			//black stays black
-			Send_palette(i, 17, 0xff - substate * 1, 0xff - substate * 2, 0xff - substate * 3);	//white
-			Send_palette(i, 18, 0x9d - substate * 0, 0x9d - substate * 1, 0x9d - substate * 2);	//slate
-			Send_palette(i, 19, 0xff, 0x8d, 0x00);							//orange
-			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red
-			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green
-			Send_palette(i, 22, 0x00 + tmp * 1, 0x33 - tmp * 1, 0xff);				//blue (readable)
-			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber
-			Send_palette(i, 24, 0x66 - tmp * 1, 0x66 - tmp * 1, 0x66 - tmp * 1);			//l-dark (distinct)
-			Send_palette(i, 25, 0xd7 - substate * 1, 0xd7 - substate * 2, 0xd7 - substate * 3);	//l-white
-			Send_palette(i, 26, 0xaf - tmp * 1, 0x00, 0xff - tmp * 1);				//violet
-			Send_palette(i, 27, 0xff - substate * 1, 0xff - substate * 1, 0x00);			//yellow
-			Send_palette(i, 28, 0xff - tmp * 1, 0x30 - tmp * 1, 0x30 - tmp * 1);			//l-red
-			Send_palette(i, 29, 0x00, 0xff - tmp * 1, 0x00);					//l-green
-			Send_palette(i, 30, 0x00 + tmp * 1, 0xff - substate * 1, 0xff);				//l-blue
-			Send_palette(i, 31, 0xc7 - tmp * 1, 0x9d - tmp * 1, 0x55 - tmp * 1);			//l-umber
-		}
+			Send_palette(i, 17,		//white
+			    0xdf,
+			    COLOUR_G(TERM_WHITE) - COLOUR_STEP_GC(TERM_WHITE, 0x7f, 12) * sub,
+			    0xa0 - COLOUR_STEP_CBC(0xa0, 0x7f, 12) * sub);
+			Send_palette(i, 18,		//slate
+			    0x8d,
+			    COLOUR_G(TERM_SLATE) - COLOUR_STEP_GC(TERM_SLATE, 0x4f, 12) * sub,
+			    0x7d - COLOUR_STEP_CBC(0x7d, 0x5f, 12) * sub);
+#if 0 /* unchanged */
+			Send_palette(i, 19,		//orange
+			    COLOUR_R(TERM_ORANGE), COLOUR_G(TERM_ORANGE), COLOUR_B(TERM_ORANGE));
+			Send_palette(i, 20,		//red
+			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+#endif
+			Send_palette(i, 21,		//green
+			    COLOUR_R(TERM_GREEN) + COLOUR_STEP_CR(0x2f, TERM_GREEN, 12) * sub,
+			    COLOUR_G(TERM_GREEN) - COLOUR_STEP_GC(TERM_GREEN, 0x7f, 12) * sub,
+			    COLOUR_B(TERM_GREEN)); //maybe reduce this too? would then become smaller than TERM_GREEN base value though, need to adjust it suddenly when night time hits :/
+			Send_palette(i, 22,		//blue (readable)
+			    COLOUR_R(TERM_BLUE) + COLOUR_STEP_CR(0x3f, TERM_BLUE, 12) * sub,
+			    COLOUR_G(TERM_BLUE) - COLOUR_STEP_GC(TERM_BLUE, 0x2f, 12) * sub,
+			    COLOUR_B(TERM_BLUE));
+#if 0 /* unchanged */
+			Send_palette(i, 23,		//umber
+			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+			Send_palette(i, 24,;		//l-dark (distinct)
+			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+#endif
+			Send_palette(i, 25,		//l-white
+			    0xbf,
+			    COLOUR_G(TERM_L_WHITE) - COLOUR_STEP_GC(TERM_L_WHITE, 0x69, 12) * sub,
+			    0x90 - COLOUR_STEP_CBC(0x90, 0x6f, 12) * sub);
+#if 0 /* unchanged */
+			Send_palette(i, 26,		//violet
+			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+#endif
+			Send_palette(i, 27,		//yellow
+			    COLOUR_R(TERM_YELLOW),
+			    0xdf - COLOUR_STEP_CGC(0xdf, 0xbf, 12) * sub,
+			    COLOUR_B(TERM_YELLOW));
+#if 0 /* unchanged */
+			Send_palette(i, 28,		//l-red
+			    COLOUR_R(TERM_L_RED), COLOUR_G(TERM_L_RED), COLOUR_B(TERM_L_RED));
+#endif
+			Send_palette(i, 29,		//l-green
+			    COLOUR_R(TERM_L_GREEN) + COLOUR_STEP_CR(0x3f, TERM_L_GREEN, 12) * sub,
+			    COLOUR_G(TERM_L_GREEN),
+			    COLOUR_B(TERM_L_GREEN) - COLOUR_STEP_BC(TERM_L_GREEN, 0xaf, 12) * sub);
+			Send_palette(i, 30,		//l-blue
+			    COLOUR_R(TERM_L_BLUE) + COLOUR_STEP_CR(0x3f, TERM_L_BLUE, 12) * sub,
+			    COLOUR_G(TERM_L_BLUE) - COLOUR_STEP_GC(TERM_L_BLUE, 0xaf, 12) * sub,
+			    COLOUR_B(TERM_L_BLUE));
+#if 0 /* unchanged */
+			Send_palette(i, 31,		//l-umber
+			    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
+#endif
 		break;
-	case 4: //NIGHTFALL! -- getting dark
-		for (i = 1; i <= NumPlayers; i++) {
-			if (Players[i]->conn == NOT_CONNECTED) continue;
+	case 4: //NIGHTFALL! -- getting dark (12 steps)
+		//leading sky 3 final colours to darkest colours (night theme)
 			//black stays black
-			Send_palette(i, 17, 0x9d + substate * 2, 0x9d + substate * 2, 0x9d + substate * 2);	//white			<-slate
-			Send_palette(i, 18, 0x66 + substate * 1, 0x66 + substate * 1, 0x66 + substate * 1);	//slate			<-l-dark
-			Send_palette(i, 19, 0x8d + substate * 1, 0x66 + substate * 1, 0x00);			//orange		<-umber
-			Send_palette(i, 20, 0xb7, 0x00, 0x00);							//red			<-%
-			Send_palette(i, 21, 0x00, 0x9d, 0x44);							//green			<-%
-			Send_palette(i, 22, 0x00, 0x33, 0xff);							//blue (readable)	<-%
-			Send_palette(i, 23, 0x8d, 0x66, 0x00);							//umber			<-%
-			Send_palette(i, 24, 0x66, 0x66, 0x66);							//l-dark (distinct)	<-%
-			Send_palette(i, 25, 0x9d + substate * 2, 0x9d + substate * 2, 0x9d + substate * 2);	//l-white		<-slate
-			Send_palette(i, 26, 0xaf, 0x00, 0xff);							//violet		<-%
-			Send_palette(i, 27, 0xc7 + substate * 1, 0x9d + substate * 1, 0x55 - substate * 1);	//yellow		<-l-umber
-			Send_palette(i, 28, 0xb7 + substate * 1, 0x00 + substate * 1, 0x00 + substate * 1);	//l-red			<-red
-			Send_palette(i, 29, 0x00, 0x9d + substate * 1, 0x44 - substate * 1);			//l-green		<-green
-			Send_palette(i, 30, 0x00, 0x33 + substate * 3, 0xff);					//l-blue		<-blue
-			Send_palette(i, 31, 0x8d + substate * 1, 0x66 + substate * 1, 0x00 + substate * 2);	//l-umber		<-umber
-		}
+			Send_palette(i, 17,		//white			<-slate
+			    COLOUR_R(TERM_SLATE) - COLOUR_STEP_RC(TERM_SLATE, 0xdf, 12) * sub,
+			    COLOUR_G(TERM_SLATE) - COLOUR_STEP_GC(TERM_SLATE, 0x7f, 12) * sub,
+			    COLOUR_B(TERM_SLATE) - COLOUR_STEP_BC(TERM_SLATE, 0x7f, 12) * sub);
+			Send_palette(i, 18,		//slate			<-l-dark
+			    COLOUR_R(TERM_L_DARK) - COLOUR_STEP_RC(TERM_L_DARK, 0x8d, 12) * sub,
+			    COLOUR_G(TERM_L_DARK) - COLOUR_STEP_GC(TERM_L_DARK, 0x4f, 12) * sub,
+			    COLOUR_B(TERM_L_DARK) - COLOUR_STEP_BC(TERM_L_DARK, 0x5f, 12) * sub);
+			Send_palette(i, 19,		//orange		<-umber
+			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_ORANGE, TERM_UMBER, 12) * sub,
+			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_ORANGE, TERM_UMBER, 12) * sub,
+			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_ORANGE, TERM_UMBER, 12) * sub);
+			Send_palette(i, 20,		//red			<-%
+			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+			Send_palette(i, 21,		//green			<-%
+			    COLOUR_R(TERM_GREEN) - COLOUR_STEP_RC(TERM_GREEN, 0x2f, 12) * sub,
+			    COLOUR_G(TERM_GREEN) - COLOUR_STEP_GC(TERM_GREEN, 0x7f, 12) * sub,
+			    COLOUR_B(TERM_GREEN));
+			Send_palette(i, 22,		//blue (readable)	<-%
+			    COLOUR_R(TERM_BLUE) - COLOUR_STEP_RC(TERM_BLUE, 0x3f, 12) * sub,
+			    COLOUR_G(TERM_BLUE) - COLOUR_STEP_GC(TERM_BLUE, 0x2f, 12) * sub,
+			    COLOUR_B(TERM_BLUE));
+#if 0 /* unchanged */
+			Send_palette(i, 23,		//umber			<-%
+			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+			Send_palette(i, 24,		//l-dark (distinct)	<-%
+			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+#endif
+			Send_palette(i, 25,		//l-white		<-slate
+			    COLOUR_R(TERM_SLATE) - COLOUR_STEP_RC(TERM_SLATE, 0xbf, 12) * sub,
+			    COLOUR_G(TERM_SLATE) - COLOUR_STEP_GC(TERM_SLATE, 0x69, 12) * sub,
+			    COLOUR_B(TERM_SLATE) - COLOUR_STEP_BC(TERM_SLATE, 0x6f, 12) * sub);
+#if 0 /* unchanged */
+			Send_palette(i, 26,		//violet		<-%
+			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+#endif
+			Send_palette(i, 27,		//yellow		<-l-umber
+			    COLOUR_R(TERM_L_UMBER) - COLOUR_STEP_R(TERM_L_UMBER, TERM_YELLOW, 12) * sub,
+			    COLOUR_G(TERM_L_UMBER) - COLOUR_STEP_GC(TERM_L_UMBER, 0xbf, 12) * sub,
+			    COLOUR_B(TERM_L_UMBER) - COLOUR_STEP_B(TERM_L_UMBER, TERM_YELLOW, 12) * sub);
+			Send_palette(i, 28,		//l-red			<-red
+			    COLOUR_R(TERM_RED) + COLOUR_STEP_R(TERM_L_RED, TERM_RED, 12) * sub,
+			    COLOUR_G(TERM_RED) + COLOUR_STEP_G(TERM_L_RED, TERM_RED, 12) * sub,
+			    COLOUR_B(TERM_RED) + COLOUR_STEP_B(TERM_L_RED, TERM_RED, 12) * sub);
+			Send_palette(i, 29,		//l-green		<-green
+			    COLOUR_R(TERM_GREEN) - COLOUR_STEP_RC(TERM_GREEN, 0x3f, 12) * sub,
+			    COLOUR_G(TERM_GREEN) - COLOUR_STEP_G(TERM_GREEN, TERM_L_GREEN, 12) * sub,
+			    COLOUR_B(TERM_GREEN) - COLOUR_STEP_BC(TERM_GREEN, 0xaf, 12) * sub);
+			Send_palette(i, 30,		//l-blue		<-blue
+			    COLOUR_R(TERM_BLUE) - COLOUR_STEP_RC(TERM_BLUE, 0x3f, 12) * sub,
+			    COLOUR_G(TERM_BLUE) - COLOUR_STEP_GC(TERM_BLUE, 0xaf, 12) * sub,
+			    COLOUR_B(TERM_BLUE)); //BLUE and L_BLUE are both 0xff
+			Send_palette(i, 31,		//l-umber		<-umber
+			    COLOUR_R(TERM_UMBER) + COLOUR_STEP_R(TERM_L_UMBER, TERM_UMBER, 12) * sub,
+			    COLOUR_G(TERM_UMBER) + COLOUR_STEP_G(TERM_L_UMBER, TERM_UMBER, 12) * sub,
+			    COLOUR_B(TERM_UMBER) + COLOUR_STEP_B(TERM_L_UMBER, TERM_UMBER, 12) * sub);
 		break;
 	}
+}
+/* Re-colour the world palette depending on sky-state (time intervals of specific colour-transshading purpose)
+   and the sky-state's substate (linearly interpolated 5 minute intervals within each sky-state interval) - C. Blue */
+static void world_surface_palette(void) {
+	int i, sky, sub;
+
+	get_world_surface_palette_state(&sky, &sub, FALSE);
+	if (sky == -1) return; /* right now is not a time to change any colour */
+
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		world_surface_palette_player_do(i, sky, sub);
+	}
+}
+/* Update world palette for one player (i means Ind). */
+void world_surface_palette_player(int Ind) {
+	int sky, sub;
+
+	get_world_surface_palette_state(&sky, &sub, TRUE);
+
+	s_printf("wspp: Ind %d, sky %d, sub %d\n", Ind, sky, sub);
+
+	world_surface_palette_player_do(Ind, sky, sub);
 }
 #endif
 
@@ -2057,9 +2366,6 @@ static void world_surface_palette(int skystate, int substate) {
    NOTE: assumes that it gets called every HOUR turns only! */
 static void process_day_and_night() {
 	bool sunrise, nightfall;
-#ifdef EXTENDED_COLOURS_PALANIM
-	int t = (turn / (HOUR / 12)) % (24 * 12); //5 minute intervals, ie 1/12 hour
-#endif
 
 	/* Check for sunrise or nightfall */
 	sunrise = (((turn / HOUR) % 24) == SUNRISE) && IS_DAY; /* IS_DAY checks for events, that's why it's here. - C. Blue */
@@ -2080,17 +2386,7 @@ static void process_day_and_night() {
 #endif
 
 #ifdef EXTENDED_COLOURS_PALANIM
-	/* Check for smooth dark/light transitions every 5 minutes (in-game time). (6h..20h is daylight) */
-	/* 5:00h..6:00h - getting less dark */
-	if (t >= 5 * 12 && t < 6 * 12) world_surface_palette(0, 6 * 12 - t);
-	/* 6:00h..8:00h - DAYBREAK - darkness ceases */
-	else if (t >= 6 * 12 && t <= 8 * 12) world_surface_palette(1, 8 * 12 - t);
-	/* 13:00h..19:00h - getting yellowish/less bright */
-	else if (t >= 13 * 12 && t < 19 * 12) world_surface_palette(2, t - 13 * 12);
-	/* 19:00h..20:00h - sunsetty, getting darkish */
-	else if (t >= 19 * 12 && t < 20 * 12) world_surface_palette(3, t - 19 * 12);
-	/* 20:00h..21:00h - NIGHTFALL - getting dark */
-	else if (t >= 20 * 12 && t <= 21 * 12) world_surface_palette(4, 21 * 12 - t);
+	world_surface_palette();
 #endif
 }
 

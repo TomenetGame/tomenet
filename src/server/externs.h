@@ -812,6 +812,9 @@ extern void world_surface_night(struct worldpos *wpos);
 extern bool player_day(int Ind);
 extern bool player_night(int Ind);
 extern void player_dungeontown(int Ind);
+#ifdef EXTENDED_COLOURS_PALANIM
+extern void world_surface_palette_player(int i);
+#endif
 
 extern void process_timers(void);
 extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;
