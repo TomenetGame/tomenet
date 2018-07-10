@@ -5017,8 +5017,8 @@ void do_ping() {
 		Send_ping();
 
 #if 0 /* testing palette animation :O - abuserino */
- #ifdef WINDOWS
-  #warning "WINDOWS-animate_palette"
+ #if defined(WINDOWS) || defined(USE_X11)
+  #warning " << animate_palette >> "
 		animate_palette();
  #endif
 #endif

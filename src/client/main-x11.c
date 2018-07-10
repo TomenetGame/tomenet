@@ -2549,6 +2549,7 @@ errr init_x11(void) {
 	/* Prepare the colors (including "black") */
 	for (i = 0; i < 16; ++i) {
 		cptr cname = color_name[0];
+
 		MAKE(clr[i], infoclr);
 		Infoclr_set (clr[i]);
 		if (Metadpy->color) cname = color_name[i];
@@ -2559,6 +2560,7 @@ errr init_x11(void) {
 	/* Prepare the extended background-using colors */
 	for (i = 0; i < 1; ++i) {
 		cptr cname = color_name[0], cname2 = color_name[0];
+
 		MAKE(clr[16 + i], infoclr);
 		Infoclr_set (clr[16 + i]);
 		if (Metadpy->color) {
@@ -2572,6 +2574,7 @@ errr init_x11(void) {
 	/* Prepare the colors (including "black") */
 	for (i = 0; i < 16 * 2; ++i) {
 		cptr cname = color_name[0];
+
 		MAKE(clr[i], infoclr);
 		Infoclr_set (clr[i]);
 		if (Metadpy->color) cname = color_name[i];
@@ -3073,5 +3076,114 @@ void get_screen_font_name(char *buf) {
 
 	if (screen.fnt->name) strcpy(buf, screen.fnt->name);
 	else strcpy(buf, "");
+}
+/* Palette animation - 2018 *testing* */
+void animate_palette(void) {
+	byte i;
+	byte rv, gv, bv;
+	unsigned long code;
+	char cn[8], tmp[3];
+
+	static bool init = FALSE;
+	static unsigned char ac = 0x00; //animatio
+
+
+	/* Initialise the palette once. For some reason colour_table[] is all zero'ed again at the beginning. */
+	tmp[2] = 0;
+	if (!init) {
+		for (i = 0; i < 16; i++) {
+			/* Extract desired values */
+			rv = color_table[i][1];
+			gv = color_table[i][2];
+			bv = color_table[i][3];
+
+			/* Extract a full color code */
+			code = (rv << 16) | (gv << 8) | bv;
+			sprintf(cn, "#%06lx", code);
+
+			c_message_add(format("currently: [%d] %s -> %d (%d,%d,%d)", i, color_name[i], cn, rv, gv, bv));
+
+			/* Save the "complex" codes */
+			tmp[0] = color_name[i][1];
+			tmp[1] = color_name[i][2];
+			rv = strtol(tmp, NULL, 16);
+			color_table[i][1] = rv;
+			tmp[0] = color_name[i][3];
+			tmp[1] = color_name[i][4];
+			gv = strtol(tmp, NULL, 16);
+			color_table[i][2] = gv;
+			tmp[0] = color_name[i][5];
+			tmp[1] = color_name[i][6];
+			bv = strtol(tmp, NULL, 16);
+			color_table[i][3] = bv;
+
+			c_message_add(format("init to: %s = %d,%d,%d", color_name[i], rv, gv, bv));
+
+			/* Save the "simple" code */
+			//color_table[i][0] = win_pal[i];
+			color_table[i][0] = '#';
+		}
+		init = TRUE;
+		return;
+	}
+
+
+	/* Animate! */
+	ac = (ac + 0x10) % 0x100;
+
+	color_table[1][1] = 0;
+	color_table[1][2] = 0xFF - ac;
+	color_table[1][3] = 0xFF - ac;
+	color_table[9][1] = ac;
+	color_table[9][2] = 0;
+	color_table[9][3] = 0;
+
+
+	/* Save the default colors */
+	for (i = 0; i < 16; i++) {
+		/* Extract desired values */
+		rv = color_table[i][1];
+		gv = color_table[i][2];
+		bv = color_table[i][3];
+
+		/* Extract a full color code */
+		//code = PALETTERGB(rv, gv, bv);
+		code = (rv << 16) | (gv << 8) | bv;
+		sprintf(cn, "#%06lx", code);
+
+		/* Activate changes */
+		if (strcmp(color_name[i], cn)) {
+			/* Apply the desired color */
+			sprintf(color_name[i], "#%06lx", code & 0xffffffL);
+			c_message_add(format("changed [%d] %d -> %d (%d,%d,%d)", i, color_name[i], code, rv, gv, bv));
+		}
+	}
+
+	/* Activate the palette */
+	for (i = 0; i < 16; ++i) {
+		cptr cname = color_name[0];
+
+		MAKE(clr[i], infoclr);
+		Infoclr_set (clr[i]);
+#if 0 /*wut is diz?*/
+		if (Metadpy->color) cname = color_name[i];
+		else if (i) cname = color_name[1];
+#else
+		cname = color_name[i];
+#endif
+		Infoclr_init_ccn (cname, "bg", "cpy", 0);
+	}
+
+	/* Refresh aka redraw windows with new colour */
+	for (i = 0; i <= 7; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
+		term_data *old_td = (term_data*)(Term->data);
+
+		if (!term_prefs[i].visible) continue;
+		if (term_prefs[i].x == -32000 || term_prefs[i].y == -32000) continue;
+
+		Term_activate(&term_idx_to_term_data(i)->t);
+		Term_redraw();
+		Term_activate(&old_td->t);
+	}
 }
 #endif

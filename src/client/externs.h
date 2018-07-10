@@ -30,6 +30,7 @@ extern void x11win_getinfo(int term_idx, int *x, int *y, int *c, int *r, char *f
 extern void resize_main_window_x11(int cols, int rows);
 extern bool ask_for_bigmap(void);
 extern void get_screen_font_name(char *buf);
+extern void animate_palette(void);
 #endif
 
 #ifdef USE_XAW
