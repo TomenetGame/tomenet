@@ -2247,7 +2247,7 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 #if 0 /* hmm, maybe map_info() is the right place really */
 #ifdef EXTENDED_COLOURS_PALANIM
-	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
 #else
 	bool palanim = FALSE;
 #endif
@@ -2695,7 +2695,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 
 #if 0 /* probably better here than in manipulate_cave_colour..() -- but moved to calling functions for efficiency */
  #ifdef EXTENDED_COLOURS_PALANIM
-	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
  #else
 	bool palanim = FALSE;
  #endif
@@ -3858,7 +3858,7 @@ void lite_spot(int Ind, int y, int x) {
 		/* Normal (not player coords) */
 		else {
 #ifdef EXTENDED_COLOURS_PALANIM
-			bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+			bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
 #else
 			bool palanim = FALSE;
 #endif
@@ -4022,7 +4022,7 @@ void prt_map(int Ind, bool scr_only) {
 	char c;
 
 #ifdef EXTENDED_COLOURS_PALANIM
-	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
 #else
 	bool palanim = FALSE;
 #endif
@@ -4304,7 +4304,7 @@ void display_map(int Ind, int *cy, int *cx) {
 	bool old_wall_lighting;
 
 #ifdef EXTENDED_COLOURS_PALANIM
-	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
 #else
 	bool palanim = FALSE;
 #endif

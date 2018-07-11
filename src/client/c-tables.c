@@ -514,6 +514,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "diz_first",		"Displays lore on first-time monster kill" },
 	{ &c_cfg.alert_starvation,	TRUE,	1,	0, 123, TRUE, //moved exp_bar to page 2 to make room for this
 	    "alert_starvation",		"Beep when taking damage from starvation" },
+	{ &c_cfg.palette_animation,	TRUE,	1,	0, 124, TRUE, //moved exp_bar to page 2 to make room for this
+	    "palette_animation",	"Shade world surface colours depending on daytime" },
 };
 
 

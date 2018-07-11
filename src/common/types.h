@@ -2104,6 +2104,7 @@ struct player_type {
 	bool view_animated_lite;
 	bool view_lite_extra;
 	bool permawalls_shade;
+	bool palette_animation;
 	bool live_timeouts;
 
 	/* TomeNET additions -- consider using macro or bitfield */
@@ -3414,6 +3415,7 @@ struct client_opts {
 	bool diz_death_any;
 	bool diz_first; //122
 	bool alert_starvation;
+	bool palette_animation;
 };
 
 /*

@@ -2501,12 +2501,15 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->diz_first = TRUE;
 #endif
 		p_ptr->alert_starvation = TRUE;
+		p_ptr->palette_animation = FALSE;
 	} else {
 		p_ptr->diz_unique = options[119];
 		p_ptr->diz_death = options[120];
 		p_ptr->diz_death_any = options[121];
 		p_ptr->diz_first = options[122];
 		p_ptr->alert_starvation = options[123];
+		tmp = p_ptr->palette_animation;
+		if ((p_ptr->palette_animation = options[124]) != tmp) p_ptr->redraw |= PR_MAP;
 	}
     }
 }
