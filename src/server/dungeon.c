@@ -1977,30 +1977,30 @@ static unsigned int colour_std[16] = {
 #define COLOUR_DIFF_R(i,j) (COLOUR_R(i) - COLOUR_R(j))
 #define COLOUR_DIFF_G(i,j) (COLOUR_G(i) - COLOUR_G(j))
 #define COLOUR_DIFF_B(i,j) (COLOUR_B(i) - COLOUR_B(j))
-#define COLOUR_STEP_R(i,j,s,n) ((((1000L * COLOUR_DIFF_R(i,j)) * n) / s) / 1000)
-#define COLOUR_STEP_G(i,j,s,n) ((((1000L * COLOUR_DIFF_G(i,j)) * n) / s) / 1000)
-#define COLOUR_STEP_B(i,j,s,n) ((((1000L * COLOUR_DIFF_B(i,j)) * n) / s) / 1000)
+#define COLOUR_STEP_R(i,j,s,n) ((((1000L * COLOUR_DIFF_R(i,j)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_G(i,j,s,n) ((((1000L * COLOUR_DIFF_G(i,j)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_B(i,j,s,n) ((((1000L * COLOUR_DIFF_B(i,j)) * (n)) / (s)) / 1000)
 
 #define COLOUR_DIFF_CR(c,i) (c - COLOUR_R(i))
 #define COLOUR_DIFF_CG(c,i) (c - COLOUR_G(i))
 #define COLOUR_DIFF_CB(c,i) (c - COLOUR_B(i))
-#define COLOUR_STEP_CR(c,i,s,n) ((((1000L * COLOUR_DIFF_CR(c,i)) * n) / s) / 1000)
-#define COLOUR_STEP_CG(c,i,s,n) ((((1000L * COLOUR_DIFF_CG(c,i)) * n) / s) / 1000)
-#define COLOUR_STEP_CB(c,i,s,n) ((((1000L * COLOUR_DIFF_CB(c,i)) * n) / s) / 1000)
+#define COLOUR_STEP_CR(c,i,s,n) ((((1000L * COLOUR_DIFF_CR(c,i)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_CG(c,i,s,n) ((((1000L * COLOUR_DIFF_CG(c,i)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_CB(c,i,s,n) ((((1000L * COLOUR_DIFF_CB(c,i)) * (n)) / (s)) / 1000)
 
 #define COLOUR_DIFF_RC(i,c) (COLOUR_R(i) - c)
 #define COLOUR_DIFF_GC(i,c) (COLOUR_G(i) - c)
 #define COLOUR_DIFF_BC(i,c) (COLOUR_B(i) - c)
-#define COLOUR_STEP_RC(i,c,s,n) ((((1000L * COLOUR_DIFF_RC(i,c)) * n) / s) / 1000)
-#define COLOUR_STEP_GC(i,c,s,n) ((((1000L * COLOUR_DIFF_GC(i,c)) * n) / s) / 1000)
-#define COLOUR_STEP_BC(i,c,s,n) ((((1000L * COLOUR_DIFF_BC(i,c)) * n) / s) / 1000)
+#define COLOUR_STEP_RC(i,c,s,n) ((((1000L * COLOUR_DIFF_RC(i,c)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_GC(i,c,s,n) ((((1000L * COLOUR_DIFF_GC(i,c)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_BC(i,c,s,n) ((((1000L * COLOUR_DIFF_BC(i,c)) * (n)) / (s)) / 1000)
 
 #define COLOUR_DIFF_CRC(c,d) (c - d)
 #define COLOUR_DIFF_CGC(c,d) (c - d)
 #define COLOUR_DIFF_CBC(c,d) (c - d)
-#define COLOUR_STEP_CRC(c,d,s,n) ((((1000L * COLOUR_DIFF_CRC(c,d)) * n) / s) / 1000)
-#define COLOUR_STEP_CGC(c,d,s,n) ((((1000L * COLOUR_DIFF_CGC(c,d)) * n) / s) / 1000)
-#define COLOUR_STEP_CBC(c,d,s,n) ((((1000L * COLOUR_DIFF_CBC(c,d)) * n) / s) / 1000)
+#define COLOUR_STEP_CRC(c,d,s,n) ((((1000L * COLOUR_DIFF_CRC(c,d)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_CGC(c,d,s,n) ((((1000L * COLOUR_DIFF_CGC(c,d)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_CBC(c,d,s,n) ((((1000L * COLOUR_DIFF_CBC(c,d)) * (n)) / (s)) / 1000)
 
 /* Helper function to determine sky state and sub-state over the day time cycle.
    'fill' will return filler values for time intervals between the actual switching times. */
@@ -2355,13 +2355,12 @@ void world_surface_palette_player(int Ind) {
 	int sky, sub;
 
 	get_world_surface_palette_state(&sky, &sub, TRUE);
-
 	//s_printf("wspp: Ind %d, sky %d, sub %d\n", Ind, sky, sub); //DEBUG
-
 	world_surface_palette_player_do(Ind, sky, sub);
 }
 /* Debugging */
 void set_pal_debug(int Ind, int k) {
+	msg_format(Ind, "called set_pal_debug(%d, %d) -> CR: %d - %d = %d, CSR: %d", Ind, k, COLOUR_R(TERM_WHITE), COLOUR_R(TERM_SLATE), COLOUR_DIFF_R(TERM_WHITE, TERM_SLATE), COLOUR_STEP_R(TERM_WHITE, TERM_SLATE, 3 * 12, k));
 	Send_palette(Ind, 17,//white
 	    COLOUR_R(TERM_WHITE) - COLOUR_STEP_R(TERM_WHITE, TERM_SLATE, 3 * 12, k),
 	    COLOUR_G(TERM_WHITE) - COLOUR_STEP_G(TERM_WHITE, TERM_SLATE, 3 * 12, k),

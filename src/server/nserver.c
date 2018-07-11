@@ -8326,6 +8326,8 @@ int Send_palette(int Ind, byte c, byte r, byte g, byte b) {
 		    Ind, connp->state, connp->id));
 		return 0;
 	}
+
+	//s_printf("Send_palette(%d, %d, %d,%d,%d)\n", Ind, c, r, g, b);//DEBUG
 	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_PALETTE, c, r, g, b);
 }
 
