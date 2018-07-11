@@ -10290,6 +10290,11 @@ void do_slash_cmd(int Ind, char *message) {
 					else if (m > mc) turn += (24 - (hc - h)) * HOUR + (m - mc - 1) * MINUTE;
 					else turn += (24 - (hc - h) - 1) * HOUR + (60 - (mc - m) - 1) * MINUTE;
 				}
+
+				/* handle day/night changes of world surface (CAVE_GLOW..) */
+				verify_day_and_night();
+
+				/* report for verification */
 				do_cmd_time(Ind);
 				return;
 			}

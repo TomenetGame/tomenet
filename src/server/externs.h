@@ -816,6 +816,7 @@ extern void player_dungeontown(int Ind);
 extern void world_surface_palette_player(int i);
 extern void set_pal_debug(int Ind, int k);
 #endif
+extern void verify_day_and_night(void);
 
 extern void process_timers(void);
 extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;

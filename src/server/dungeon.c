@@ -2403,6 +2403,11 @@ static void init_day_and_night() {
 	else /* assume IS_NIGHT ;) */
 		night_falls();
 }
+/* Called if time is manipulated by a god - via /settime, use with utmost care (mess up logs/stats etc), on TEST_SERVER only! */
+void verify_day_and_night() {
+	if (IS_DAY && night_surface) sun_rises();
+	else if (IS_NIGHT && !night_surface) night_falls();
+}
 
 /*
  * Handle certain things once every 50 game turns
