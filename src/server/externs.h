@@ -1207,6 +1207,7 @@ extern int Send_confirm(int Ind, int confirmed_command);
 extern int Send_item_newest(int Ind, int item);
 
 extern int Send_reliable(int ind);
+//extern int Send_palette(int Ind, int c, int r, int g, int b);
 extern int Send_palette(int Ind, byte c, byte r, byte g, byte b);
 
 
