@@ -2373,6 +2373,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			object_type *o_ptr;
 			object_type     forge;
 			object_type     *q_ptr = &forge;
+			bool iddc = in_irondeepdive(wpos);
 
 			for (i = 0; i < INVEN_PACK; i++) {
 				o_ptr = &p_ptr->inventory[i];
@@ -2386,7 +2387,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				j = o_ptr->number;
 				/* j = randint(j < 20 ? j : 20); not cool for *healings* */
-				j = randint(j < 30 ? j / 2 : 15);
+				j = randint((j < 30 ? j / 2 : 15) / (iddc ? 3 : 1));
+				if (!j) j = 1;
 				bottles += j;
 
 				inven_item_increase(Ind, i, -j);
