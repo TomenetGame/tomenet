@@ -1974,30 +1974,30 @@ static unsigned int colour_std[16] = {
 #define COLOUR_G(i) ((colour_std[i] & 0x00ff00) >> 8)
 #define COLOUR_B(i) (colour_std[i] & 0x0000ff)
 
-#define COLOUR_DIFF_R(i,j) (COLOUR_R(i) - COLOUR_R(j))
-#define COLOUR_DIFF_G(i,j) (COLOUR_G(i) - COLOUR_G(j))
-#define COLOUR_DIFF_B(i,j) (COLOUR_B(i) - COLOUR_B(j))
-#define COLOUR_STEP_R(i,j,s,n) ((((1000L * COLOUR_DIFF_R(i,j)) * (n)) / (s)) / 1000)
-#define COLOUR_STEP_G(i,j,s,n) ((((1000L * COLOUR_DIFF_G(i,j)) * (n)) / (s)) / 1000)
-#define COLOUR_STEP_B(i,j,s,n) ((((1000L * COLOUR_DIFF_B(i,j)) * (n)) / (s)) / 1000)
+#define COLOUR_DIFF_R(i,j) ((int)COLOUR_R(i) - (int)COLOUR_R(j))
+#define COLOUR_DIFF_G(i,j) ((int)COLOUR_G(i) - (int)COLOUR_G(j))
+#define COLOUR_DIFF_B(i,j) ((int)COLOUR_B(i) - (int)COLOUR_B(j))
+#define COLOUR_STEP_R(i,j,s,n) ((((1000 * COLOUR_DIFF_R(i,j)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_G(i,j,s,n) ((((1000 * COLOUR_DIFF_G(i,j)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_B(i,j,s,n) ((((1000 * COLOUR_DIFF_B(i,j)) * (n)) / (s)) / 1000)
 
-#define COLOUR_DIFF_CR(c,i) (c - COLOUR_R(i))
-#define COLOUR_DIFF_CG(c,i) (c - COLOUR_G(i))
-#define COLOUR_DIFF_CB(c,i) (c - COLOUR_B(i))
-#define COLOUR_STEP_CR(c,i,s,n) ((((1000L * COLOUR_DIFF_CR(c,i)) * (n)) / (s)) / 1000)
-#define COLOUR_STEP_CG(c,i,s,n) ((((1000L * COLOUR_DIFF_CG(c,i)) * (n)) / (s)) / 1000)
-#define COLOUR_STEP_CB(c,i,s,n) ((((1000L * COLOUR_DIFF_CB(c,i)) * (n)) / (s)) / 1000)
+#define COLOUR_DIFF_CR(c,i) ((int)(c) - (int)COLOUR_R(i))
+#define COLOUR_DIFF_CG(c,i) ((int)(c) - (int)COLOUR_G(i))
+#define COLOUR_DIFF_CB(c,i) ((int)(c) - (int)COLOUR_B(i))
+#define COLOUR_STEP_CR(c,i,s,n) ((((1000 * COLOUR_DIFF_CR(c,i)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_CG(c,i,s,n) ((((1000 * COLOUR_DIFF_CG(c,i)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_CB(c,i,s,n) ((((1000 * COLOUR_DIFF_CB(c,i)) * (n)) / (s)) / 1000)
 
-#define COLOUR_DIFF_RC(i,c) (COLOUR_R(i) - c)
-#define COLOUR_DIFF_GC(i,c) (COLOUR_G(i) - c)
-#define COLOUR_DIFF_BC(i,c) (COLOUR_B(i) - c)
-#define COLOUR_STEP_RC(i,c,s,n) ((((1000L * COLOUR_DIFF_RC(i,c)) * (n)) / (s)) / 1000)
-#define COLOUR_STEP_GC(i,c,s,n) ((((1000L * COLOUR_DIFF_GC(i,c)) * (n)) / (s)) / 1000)
-#define COLOUR_STEP_BC(i,c,s,n) ((((1000L * COLOUR_DIFF_BC(i,c)) * (n)) / (s)) / 1000)
+#define COLOUR_DIFF_RC(i,c) ((int)COLOUR_R(i) - (int)(c))
+#define COLOUR_DIFF_GC(i,c) ((int)COLOUR_G(i) - (int)(c))
+#define COLOUR_DIFF_BC(i,c) ((int)COLOUR_B(i) - (int)(c))
+#define COLOUR_STEP_RC(i,c,s,n) ((((1000 * COLOUR_DIFF_RC(i,c)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_GC(i,c,s,n) ((((1000 * COLOUR_DIFF_GC(i,c)) * (n)) / (s)) / 1000)
+#define COLOUR_STEP_BC(i,c,s,n) ((((1000 * COLOUR_DIFF_BC(i,c)) * (n)) / (s)) / 1000)
 
-#define COLOUR_DIFF_CRC(c,d) (c - d)
-#define COLOUR_DIFF_CGC(c,d) (c - d)
-#define COLOUR_DIFF_CBC(c,d) (c - d)
+#define COLOUR_DIFF_CRC(c,d) ((int)(c) - (int)(d))
+#define COLOUR_DIFF_CGC(c,d) ((int)(c) - (int)(d))
+#define COLOUR_DIFF_CBC(c,d) ((int)(c) - (int)(d))
 #define COLOUR_STEP_CRC(c,d,s,n) ((((1000L * COLOUR_DIFF_CRC(c,d)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_CGC(c,d,s,n) ((((1000L * COLOUR_DIFF_CGC(c,d)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_CBC(c,d,s,n) ((((1000L * COLOUR_DIFF_CBC(c,d)) * (n)) / (s)) / 1000)
@@ -2041,7 +2041,7 @@ static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
 		}
 		else if (t > 21 * 12 || t < 5 * 12) {
 			(*sky) = 4;
-			(*sub) = 21 * 12 - 21 * 12;
+			(*sub) = 0;
 		}
 	}
 	else {
@@ -2263,11 +2263,11 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 			    COLOUR_R(TERM_L_RED), COLOUR_G(TERM_L_RED), COLOUR_B(TERM_L_RED));
 #endif
 			Send_palette(i, 29,		//l-green
-			    COLOUR_R(TERM_L_GREEN) + COLOUR_STEP_CR(0x3f, TERM_L_GREEN, 12, sub),
+			    COLOUR_R(TERM_L_GREEN) - COLOUR_STEP_RC(TERM_L_GREEN, 0x3f, 12, sub),
 			    COLOUR_G(TERM_L_GREEN),
 			    COLOUR_B(TERM_L_GREEN) - COLOUR_STEP_BC(TERM_L_GREEN, 0xaf, 12, sub));
 			Send_palette(i, 30,		//l-blue
-			    COLOUR_R(TERM_L_BLUE) + COLOUR_STEP_CR(0x3f, TERM_L_BLUE, 12, sub),
+			    COLOUR_R(TERM_L_BLUE) - COLOUR_STEP_RC(TERM_L_BLUE, 0x3f, 12, sub),
 			    COLOUR_G(TERM_L_BLUE) - COLOUR_STEP_GC(TERM_L_BLUE, 0xaf, 12, sub),
 			    COLOUR_B(TERM_L_BLUE));
 #if 0 /* unchanged */
