@@ -2360,6 +2360,13 @@ void world_surface_palette_player(int Ind) {
 
 	world_surface_palette_player_do(Ind, sky, sub);
 }
+/* Debugging */
+void set_pal_debug(int Ind, int k) {
+	Send_palette(Ind, 17,//white
+	    COLOUR_R(TERM_WHITE) - COLOUR_STEP_R(TERM_WHITE, TERM_SLATE, 3 * 12, k),
+	    COLOUR_G(TERM_WHITE) - COLOUR_STEP_G(TERM_WHITE, TERM_SLATE, 3 * 12, k),
+	    COLOUR_B(TERM_WHITE) - COLOUR_STEP_B(TERM_WHITE, TERM_SLATE, 3 * 12, k));
+}
 #endif
 
 /* take care of day/night changes, on world surface.

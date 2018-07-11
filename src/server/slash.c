@@ -10243,6 +10243,7 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 #endif
+#ifdef EXTENDED_COLOURS_PALANIM
 			else if (prefix(message, "/setpalette")) { //debug set_palette() etc
 				int c = (tk ? k : 1); // 1 is TERM_WHITE, but note in mind that these aren't TERM_ values but actually 0..15 + 16..31 real term colour indices!
 				int r = rand_int(256), g = rand_int(256), b = rand_int(256);
@@ -10251,6 +10252,48 @@ void do_slash_cmd(int Ind, char *message) {
 				Send_palette(Ind, c, r, g, b);
 				return;
 			}
+			else if (prefix(message, "/set2pal")) { //debug set_palette() etc
+				if (!tk) k = 0;
+				set_pal_debug(Ind, k);
+				return;
+			}
+#endif
+#ifdef TEST_SERVER
+			else if (prefix(message, "/settime")) {
+				int h, m, hc, mc;
+
+				if (!tk) k = 0;
+				h = (message3[0] - 48) * 10 + message3[1] - 48;
+				m = (message3[2] - 48) * 10 + message3[3] - 48;
+				if (h < 0 || h > 23 || m < 0 || m > 60) {
+					msg_print(Ind, "Usage: /settime HHMM");
+					return;
+				}
+
+				hc = (turn / HOUR) % 60;
+				mc = (turn / MINUTE) % 60;
+
+				// '- 1' : shortly BEFORE the desired minute hits
+				if (h == hc) {
+					if (m == mc) {
+						msg_print(Ind, "That's the current time.");
+						return;
+					}
+					else if (m > mc) turn += (m - mc - 1) * MINUTE;
+					else turn += 23 * HOUR + (60 - (mc - m) - 1) * MINUTE;
+				} else if (h > hc) {
+					if (m == mc) turn += (h - hc) * HOUR - 1 * MINUTE;
+					else if (m > mc) turn += (h - hc) * HOUR + (m - mc - 1) * MINUTE;
+					else turn += (h - hc - 1) * HOUR + (60 - (mc - m) - 1) * MINUTE;
+				} else {
+					if (m == mc) turn += (24 - (hc - h)) * HOUR - 1 * MINUTE;
+					else if (m > mc) turn += (24 - (hc - h)) * HOUR + (m - mc - 1) * MINUTE;
+					else turn += (24 - (hc - h) - 1) * HOUR + (60 - (mc - m) - 1) * MINUTE;
+				}
+				do_cmd_time(Ind);
+				return;
+			}
+#endif
 		}
 	}
 
