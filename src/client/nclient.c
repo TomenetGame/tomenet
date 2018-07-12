@@ -5029,7 +5029,7 @@ void do_ping() {
 
 		Send_ping();
 
-#if 0 /* testing palette animation :O - abuserino */
+#if 1 /* testing palette animation :O - abuserino */
  #if defined(WINDOWS) || defined(USE_X11)
   #warning " << animate_palette >> "
 		animate_palette();

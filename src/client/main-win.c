@@ -1141,18 +1141,15 @@ static void new_palette(void) {
 #ifdef USE_GRAPHICS
 
 	/* Check windows */
-	for (i = MAX_TERM_DATA - 1; i >= 0; i--)
-	{
-		if (data[i].graf_file)
-		{
+	for (i = MAX_TERM_DATA - 1; i >= 0; i--) {
+		if (data[i].graf_file) {
 			/* Check the bitmap palette */
 			hBmPal = data[i].infGraph.hPalette;
 		}
 	}
 
 	/* Use the bitmap */
-	if (hBmPal)
-	{
+	if (hBmPal) {
 		lppeSize = 256*sizeof(PALETTEENTRY);
 		lppe = (LPPALETTEENTRY)mem_alloc(lppeSize);
 		nEntries = GetPaletteEntries(hBmPal, 0, 255, lppe);
@@ -1163,8 +1160,11 @@ static void new_palette(void) {
 #endif
 
 	/* Size of palette */
+#ifndef EXTENDED_COLOURS_PALANIM
 	pLogPalSize = sizeof(LOGPALETTE) + (16+nEntries)*sizeof(PALETTEENTRY);
-
+#else
+	pLogPalSize = sizeof(LOGPALETTE) + (16+16+nEntries)*sizeof(PALETTEENTRY);
+#endif
 	/* Allocate palette */
 	pLogPal = (LPLOGPALETTE)mem_alloc(pLogPalSize);
 
@@ -1172,17 +1172,21 @@ static void new_palette(void) {
 	pLogPal->palVersion = 0x300;
 
 	/* Make room for bitmap and normal data */
+#ifndef EXTENDED_COLOURS_PALANIM
 	pLogPal->palNumEntries = nEntries + 16;
-
+#else
+	pLogPal->palNumEntries = nEntries + 16 + 16;
+#endif
 	/* Save the bitmap data */
 	for (i = 0; i < nEntries; i++)
-	{
 		pLogPal->palPalEntry[i] = lppe[i];
-	}
 
 	/* Save the normal data */
-	for (i = 0; i < 16; i++)
-	{
+#ifndef EXTENDED_COLOURS_PALANIM
+	for (i = 0; i < 16; i++) {
+#else
+	for (i = 0; i < 16 + 16; i++) {
+#endif
 		LPPALETTEENTRY p;
 
 		/* Access the entry */
@@ -1215,8 +1219,7 @@ static void new_palette(void) {
 	if (i == 0) quit("Cannot realize palette");
 
 	/* Check windows */
-	for (i = 1; i < MAX_TERM_DATA; i++)
-	{
+	for (i = 1; i < MAX_TERM_DATA; i++) {
 		hdc = GetDC(data[i].w);
 		SelectPalette(hdc, hNewPal, 0);
 		ReleaseDC(data[i].w, hdc);
@@ -1233,8 +1236,7 @@ static void new_palette(void) {
 /*
  * Resize a window
  */
-static void term_window_resize(term_data *td)
-{
+static void term_window_resize(term_data *td) {
 
 	/* Require window */
 	if (!td->w) return;
@@ -1416,24 +1418,16 @@ static errr term_force_font(term_data *td, cptr name) {
  *
  * This function returns zero only if everything succeeds.
  */
-static errr term_force_graf(term_data *td, cptr name)
-{
+static errr term_force_graf(term_data *td, cptr name) {
 	int i;
-
 	int wid, hgt;
-
 	cptr s;
-
 	char base[16];
-
 	char base_graf[16];
-
 	char buf[1024];
 
-
 	/* Forget old stuff */
-	if (td->graf_file)
-	{
+	if (td->graf_file) {
 		/* Free the old information */
 		if (td->infGraph.hDIB) GlobalFree(td->infGraph.hDIB);
 		if (td->infGraph.hPalette) DeleteObject(td->infGraph.hPalette);
@@ -1465,8 +1459,7 @@ static errr term_force_graf(term_data *td, cptr name)
 	hgt = 0;
 
 	/* Copy, capitalize, remove suffix, extract width */
-	for (i = 0; (i < 16 - 1) && s[i] && (s[i] != '.'); i++)
-	{
+	for (i = 0; (i < 16 - 1) && s[i] && (s[i] != '.'); i++) {
 		/* Capitalize */
 		base[i] = FORCEUPPER(s[i]);
 
@@ -1497,9 +1490,7 @@ static errr term_force_graf(term_data *td, cptr name)
 
 	/* Load the bitmap or quit */
 	if (!ReadDIB(td->w, buf, &td->infGraph))
-	{
 		quit_fmt("Bitmap corrupted:\n%s", buf);
-	}
 
 	/* Save the new sizes */
 	td->infGraph.CellWidth = wid;
@@ -1520,8 +1511,7 @@ static errr term_force_graf(term_data *td, cptr name)
  *
  * XXX XXX XXX This is only called for non-graphic windows
  */
-static void term_change_font(term_data *td)
-{
+static void term_change_font(term_data *td) {
 #ifdef USE_LOGFONT
 	CHOOSEFONT cf;
 
@@ -1530,8 +1520,7 @@ static void term_change_font(term_data *td)
 	cf.Flags = CF_SCREENFONTS | CF_FIXEDPITCHONLY | CF_NOVERTFONTS | CF_INITTOLOGFONTSTRUCT;
 	cf.lpLogFont = &(td->lf);
 
-	if (ChooseFont(&cf))
-	{
+	if (ChooseFont(&cf)) {
 		/* Force the font */
 		term_force_font(td, NULL);
 
@@ -1562,11 +1551,9 @@ static void term_change_font(term_data *td)
 	ofn.lpstrDefExt = "fon";
 
 	/* Force choice if legal */
-	if (GetOpenFileName(&ofn))
-	{
+	if (GetOpenFileName(&ofn)) {
 		/* Force the font */
-		if (term_force_font(td, tmp))
-		{
+		if (term_force_font(td, tmp)) {
 			/* Oops */
 			(void)term_force_font(td, DEFAULT_FONTNAME);
 		}
@@ -1584,10 +1571,8 @@ static void term_change_font(term_data *td)
  * changes the font and the bitmap for the window, and is
  * only called if "use_graphics" is true.
  */
-static void term_change_bitmap(term_data *td)
-{
+static void term_change_bitmap(term_data *td) {
 	OPENFILENAME ofn;
-
 	char tmp[128] = "";
 
 	/* Extract a default if possible */
@@ -1606,14 +1591,12 @@ static void term_change_bitmap(term_data *td)
 	ofn.lpstrDefExt = "bmp";
 
 	/* Force choice if legal */
-	if (GetOpenFileName(&ofn))
-	{
+	if (GetOpenFileName(&ofn)) {
 		/* XXX XXX XXX */
 
 		/* Force the requested font and bitmap */
 		if (term_force_font(td, tmp) ||
-		    term_force_graf(td, tmp))
-		{
+		    term_force_graf(td, tmp)) {
 			/* Force the "standard" font */
 			(void)term_force_font(td, DEFAULT_FONTNAME);
 
@@ -1629,8 +1612,7 @@ static void term_change_bitmap(term_data *td)
 /*
  * Hack -- redraw a term_data
  */
-static void term_data_redraw(term_data *td)
-{
+static void term_data_redraw(term_data *td) {
 	/* Activate the term */
 	Term_activate(&td->t);
 
@@ -1645,8 +1627,7 @@ static void term_data_redraw(term_data *td)
 /*
  * Hack -- redraw a term_data
  */
-static void term_data_redraw_section(term_data *td, int x1, int y1, int x2, int y2)
-{
+static void term_data_redraw_section(term_data *td, int x1, int y1, int x2, int y2) {
     /* Activate the term */
     Term_activate(&td->t);
 
@@ -1663,8 +1644,7 @@ static void term_data_redraw_section(term_data *td, int x1, int y1, int x2, int 
  * must be followed by a TERM_XTRA_FRESH so that the DC gets released.
  *  - mikaelh
  */
-static HDC myGetDC(HWND hWnd)
-{
+static HDC myGetDC(HWND hWnd) {
 #ifdef OPTIMIZE_DRAWING
 	term_data *td = (term_data*)(Term->data);
 
@@ -1692,8 +1672,7 @@ static HDC myGetDC(HWND hWnd)
 /*
  * Interact with the User
  */
-static errr Term_user_win(int n)
-{
+static errr Term_user_win(int n) {
 	/* Success */
 	return (0);
 }
@@ -1702,8 +1681,7 @@ static errr Term_user_win(int n)
 /*
  * React to global changes
  */
-static errr Term_xtra_win_react(void)
-{
+static errr Term_xtra_win_react(void) {
 	int i;
 /*	I added this USE_GRAPHICS because we lost color support as well. -GP */
 #ifdef USE_GRAPHICS
@@ -1714,28 +1692,26 @@ static errr Term_xtra_win_react(void)
 
 
 	/* Simple color */
-	if (colors16)
-	{
+	if (colors16) {
 		/* Save the default colors */
-		for (i = 0; i < 16; i++)
-		{
+		for (i = 0; i < 16; i++) {
 			/* Simply accept the desired colors */
 			win_pal[i] = color_table[i][0];
 		}
 	}
 
 	/* Complex color */
-	else
-	{
+	else {
 		COLORREF code;
-
 		byte rv, gv, bv;
-
 		bool change = FALSE;
 
 		/* Save the default colors */
-		for (i = 0; i < 16; i++)
-		{
+#ifndef EXTENDED_COLOURS_PALANIM
+		for (i = 0; i < 16; i++) {
+#else
+		for (i = 0; i < 16 + 16; i++) {
+#endif
 			/* Extract desired values */
 			rv = color_table[i][1];
 			gv = color_table[i][2];
@@ -1745,8 +1721,7 @@ static errr Term_xtra_win_react(void)
 			code = PALETTERGB(rv, gv, bv);
 
 			/* Activate changes */
-			if (win_clr[i] != code)
-			{
+			if (win_clr[i] != code) {
 				/* Note the change */
 				change = TRUE;
 
@@ -1763,8 +1738,7 @@ static errr Term_xtra_win_react(void)
 #ifdef USE_GRAPHICS
 
 	/* XXX XXX XXX Check "use_graphics" */
-	if (use_graphics && !old_use_graphics)
-	{
+	if (use_graphics && !old_use_graphics) {
 		/* Hack -- set the player picture */
 //		r_info[0].x_attr = 0x87;
 //		r_info[0].x_char = 0x80 | (10 * p_ptr->pclass + p_ptr->prace);
@@ -1777,8 +1751,7 @@ static errr Term_xtra_win_react(void)
 
 
 	/* Clean up windows */
-	for (i = 0; i < MAX_TERM_DATA; i++)
-	{
+	for (i = 0; i < MAX_TERM_DATA; i++) {
 		term *old = Term;
 		term_data *td = &data[i];
 
@@ -2246,8 +2219,7 @@ static errr Term_pict_win(int x, int y, byte a, char c)
  * telling a window what color it should be using to draw with, but
  * perhaps simply changing it every time is not too inefficient.
  */
-static errr Term_text_win(int x, int y, int n, byte a, const char *s)
-{
+static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	term_data *td = (term_data*)(Term->data);
 	RECT rc;
 	HDC  hdc;
@@ -2266,13 +2238,9 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s)
 	if (old_attr != a) {
 		/* Foreground color */
 		if (colors16)
-		{
 			SetTextColor(hdc, PALETTEINDEX(win_pal[a&0x0F]));
-		}
 		else
-		{
 			SetTextColor(hdc, win_clr[a&0x0F]);
-		}
 		old_attr = a;
 	}
 
@@ -2285,13 +2253,9 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s)
 
 	/* Foreground color */
 	if (colors16)
-	{
 		SetTextColor(hdc, PALETTEINDEX(win_pal[a&0x0F]));
-	}
 	else
-	{
 		SetTextColor(hdc, win_clr[a&0x0F]);
-	}
 
 	/* Use the font */
 	SelectObject(hdc, td->font_id);
@@ -3811,8 +3775,7 @@ static void turn_off_numlock(void) {
 }
 
 int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
-                       LPSTR lpCmdLine, int nCmdShow)
-{
+                       LPSTR lpCmdLine, int nCmdShow) {
 	WNDCLASS wc;
 	HDC      hdc;
 	MSG      msg;
@@ -3878,8 +3841,11 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	ReleaseDC(NULL, hdc);
 #ifdef USE_GRAPHICS
 	/* Initialize "color_table" */
-	for (i = 0; i < 16; i++)
-	{
+ #ifndef EXTENDED_COLOURS_PALANIM
+	for (i = 0; i < 16; i++) {
+ #else
+	for (i = 0; i < 16 + 16; i++) {
+ #endif
 		/* Save the "complex" codes */
 		color_table[i][1] = GetRValue(win_clr[i]);
 		color_table[i][2] = GetGValue(win_clr[i]);
@@ -4200,7 +4166,11 @@ void animate_palette(void) {
 
 	/* Initialise the palette once. For some reason colour_table[] is all zero'ed again at the beginning. */
 	if (!init) {
+#ifndef EXTENDED_COLOURS_PALANIM
 		for (i = 0; i < 16; i++) {
+#else
+		for (i = 0; i < 16 + 16; i++) {
+#endif
 			/* Extract desired values */
 			rv = color_table[i][1];
 			gv = color_table[i][2];
@@ -4233,6 +4203,9 @@ void animate_palette(void) {
 	color_table[9][1] = ac;
 	color_table[9][2] = 0;
 	color_table[9][3] = 0;
+	color_table[29][1] = ac;
+	color_table[29][2] = 0;
+	color_table[29][3] = 0;
 
 
 	/* Simple color (nope) */
@@ -4250,7 +4223,11 @@ void animate_palette(void) {
 		//c_message_add(format("animating %d (complex)", ac));
 
 		/* Save the default colors */
+#ifndef EXTENDED_COLOURS_PALANIM
 		for (i = 0; i < 16; i++) {
+#else
+		for (i = 0; i < 16 + 16; i++) {
+#endif
 			/* Extract desired values */
 			rv = color_table[i][1];
 			gv = color_table[i][2];
@@ -4293,20 +4270,25 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	if (!c_cfg.palette_animation) return;
 
 	/* Need complex color mode for palette animation */
-	if (colors16) return;
+	if (colors16) {
+		c_message_add("Palette animation failed! Disable it in = 3 'palette_animation'!");
+		return;
+	}
 
 	color_table[c][1] = r;
 	color_table[c][2] = g;
 	color_table[c][3] = b;
+	//c_message_add(format("palette %d -> %d, %d, %d", c, r, g, b));
 
 	/* Extract a full color code */
 	code = PALETTERGB(r, g, b);
 
-	/* Activate changes */
-	if (win_clr[c] != code) {
-		/* Apply the desired color */
-		win_clr[c] = code;
-	}
+	/* Activate changes if any */
+	if (win_clr[c] == code) return;
+
+	/* Apply the desired color */
+	win_clr[c] = code;
+	//c_message_add("palette changed");
 
 	/* Activate the palette */
 	new_palette();
