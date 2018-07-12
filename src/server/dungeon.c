@@ -2020,6 +2020,9 @@ static unsigned int colour_std[16] = {
 #define COLOUR_CALC_CGC(c,d,s,n) ((int)(c) - COLOUR_STEP_CGC(c,d,s,n))
 #define COLOUR_CALC_CBC(c,d,s,n) ((int)(c) - COLOUR_STEP_CBC(c,d,s,n))
 
+/* Todo: Finish un-sunset stage 4 and commented this out to enable it */
+#define STRETCHEDSUNSET /* laziness/todo */
+
 /* --- Usage: ---
  COLOUR_CALC_...(target colour, starting colour, steps, current step)
 */
@@ -2042,21 +2045,34 @@ static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
 		(*sky) = 1;
 		(*sub) = 8 * PALANIM_HOUR_DIV - t;
 	}
-	/* 13:00h..18:00h - getting yellowish/less bright */
-	else if (t >= 13 * PALANIM_HOUR_DIV && t < 18 * PALANIM_HOUR_DIV) {
+	/* 13:00h..18:30h - getting yellowish/less bright */
+	else if (t >= 13 * PALANIM_HOUR_DIV && t < 18 * PALANIM_HOUR_DIV + PALANIM_HOUR_DIV / 2) {
 		(*sky) = 2;
-		(*sub) = 18 * PALANIM_HOUR_DIV - t;
+		(*sub) = 18 * PALANIM_HOUR_DIV + PALANIM_HOUR_DIV / 2 - t;
 	}
-	/* 18:00h..19:00h - sunsetty, getting darkish */
-	else if (t >= 18 * PALANIM_HOUR_DIV && t < 19 * PALANIM_HOUR_DIV) {
+	/* 18:30h..19:00h - sunsetty, getting darkish */
+	else if (t >= 18 * PALANIM_HOUR_DIV + PALANIM_HOUR_DIV / 2 && t < 19 * PALANIM_HOUR_DIV) {
 		(*sky) = 3;
 		(*sub) = 19 * PALANIM_HOUR_DIV - t;
 	}
-	/* 19:00h..20:00h - move from sunset to NIGHTFALL - getting dark */
-	else if (t >= 19 * PALANIM_HOUR_DIV && t <= 20 * PALANIM_HOUR_DIV) {
+#ifndef STRETCHEDSUNSET /* finish more realistic, quicker sunset, then '0 this */
+	/* 19:00h..19:30h - un-sunset, returning hues to normal */
+	else if (t >= 19 * PALANIM_HOUR_DIV && t < 19 * PALANIM_HOUR_DIV + PALANIM_HOUR_DIV / 2) {
 		(*sky) = 4;
+		(*sub) = 19 * PALANIM_HOUR_DIV + PALANIM_HOUR_DIV / 2 - t;
+	}
+	/* 19:30h..20:00h - move from sunset to NIGHTFALL - getting dark */
+	else if (t >= 19 * PALANIM_HOUR_DIV + PALANIM_HOUR_DIV && t <= 20 * PALANIM_HOUR_DIV) {
+		(*sky) = 5;
 		(*sub) = 20 * PALANIM_HOUR_DIV - t;
 	}
+#else
+	/* 19:00h..20:00h - move from sunset to NIGHTFALL - getting dark */
+	else if (t >= 19 * PALANIM_HOUR_DIV && t <= 20 * PALANIM_HOUR_DIV) {
+		(*sky) = 5;
+		(*sub) = 20 * PALANIM_HOUR_DIV - t;
+	}
+#endif
 	/* other -- fill? */
 	else if (fill) {
 		if (t > 8 * PALANIM_HOUR_DIV && t < 13 * PALANIM_HOUR_DIV) {
@@ -2064,7 +2080,7 @@ static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
 			(*sub) = 0;
 		}
 		else if (t > 20 * PALANIM_HOUR_DIV || t < 5 * PALANIM_HOUR_DIV) {
-			(*sky) = 4;
+			(*sky) = 5;
 			(*sub) = 0;
 		}
 	}
@@ -2080,286 +2096,407 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 	switch (sky) {
 	case 0: //getting less dark (PALANIM_HOUR_DIV steps) (05:00<06:00)
 		sub += 2 * PALANIM_HOUR_DIV; //proactive for sky 1; starting from darkest colours (night theme)
-			//black stays black
-			Send_palette(i, 17,		//white			<-slate
-			    COLOUR_CALC_R(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_R(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_R(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 18,		//slate			<-l-dark
-			    COLOUR_CALC_R(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 19,		//orange		<-umber
-			    COLOUR_CALC_R(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub));
+		//black stays black
+		Send_palette(i, 17,		//white		<-slate
+		    COLOUR_CALC_R(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_R(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_R(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 18,		//slate		<-l-dark
+		    COLOUR_CALC_R(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 19,		//orange		<-umber
+		    COLOUR_CALC_R(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub));
 #if 0 /* unchanged */
-			Send_palette(i, 20,;		//red			<-%
-			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
-			Send_palette(i, 21,		//green			<-%
-			    COLOUR_R(TERM_GREEN), COLOUR_G(TERM_GREEN), COLOUR_B(TERM_GREEN));
-			Send_palette(i, 22,		//blue (readable)	<-%
-			    COLOUR_R(TERM_BLUE), COLOUR_G(TERM_BLUE), COLOUR_B(TERM_BLUE));
-			Send_palette(i, 23,		//umber			<-%
-			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
-			Send_palette(i, 24,		//l-dark (distinct)	<-%
-			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+		Send_palette(i, 20,;		//red		<-%
+		    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+		Send_palette(i, 21,		//green		<-%
+		    COLOUR_R(TERM_GREEN), COLOUR_G(TERM_GREEN), COLOUR_B(TERM_GREEN));
+		Send_palette(i, 22,		//blue (readable)	<-%
+		    COLOUR_R(TERM_BLUE), COLOUR_G(TERM_BLUE), COLOUR_B(TERM_BLUE));
+		Send_palette(i, 23,		//umber		<-%
+		    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+		Send_palette(i, 24,		//l-dark (distinct)	<-%
+		    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
 #endif
-			Send_palette(i, 25,		//l-white		<-slate
-			    COLOUR_CALC_R(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 25,		//l-white		<-slate
+		    COLOUR_CALC_R(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub));
 #if 0 /* unchanged */
-			Send_palette(i, 26,		//violet		<-%
-			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+		Send_palette(i, 26,		//violet		<-%
+		    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
 #endif
-			Send_palette(i, 27,		//yellow		<-l-umber
-			    COLOUR_CALC_R(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 28,		//l-red			<-red
-			    COLOUR_CALC_R(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 29,		//l-green		<-green
-			    COLOUR_CALC_R(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 30,		//l-blue		<-blue
-			    COLOUR_CALC_R(TERM_L_BLUE, TERM_BLUE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_BLUE, TERM_BLUE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_L_BLUE)); //BLUE and L_BLUE are both 0xff
-			Send_palette(i, 31,		//l-umber		<-umber
-			    COLOUR_CALC_R(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 27,		//yellow		<-l-umber
+		    COLOUR_CALC_R(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 28,		//l-red		<-red
+		    COLOUR_CALC_R(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 29,		//l-green		<-green
+		    COLOUR_CALC_R(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 30,		//l-blue		<-blue
+		    COLOUR_CALC_R(TERM_L_BLUE, TERM_BLUE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_BLUE, TERM_BLUE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_B(TERM_L_BLUE)); //BLUE and L_BLUE are both 0xff
+		Send_palette(i, 31,		//l-umber		<-umber
+		    COLOUR_CALC_R(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub));
 		break;
 	case 1: //DAYBREAK! -- darkness ceases (this entry has all correct colours) (24 steps) (06:00-08:00)
 		//continuing from sky 0, ending at brightest colours (day theme)
 		//we continue where skystage 0 left off, at (1 * PALANIM_HOUR_DIV) steps
-			//black stays black
-			Send_palette(i, 17,		//white			<-slate
-			    COLOUR_CALC_R(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 18,		//slate			<-l-dark
-			    COLOUR_CALC_R(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 19,		//orange		<-umber
-			    COLOUR_CALC_R(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub));
+		//black stays black
+		Send_palette(i, 17,		//white		<-slate
+		    COLOUR_CALC_R(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 18,		//slate		<-l-dark
+		    COLOUR_CALC_R(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_SLATE, TERM_L_DARK, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 19,		//orange		<-umber
+		    COLOUR_CALC_R(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_ORANGE, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub));
 #if 0 /* unchanged */
-			Send_palette(i, 20,;		//red			<-%
-			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
-			Send_palette(i, 21,		//green			<-%
-			    COLOUR_R(TERM_GREEN), COLOUR_G(TERM_GREEN), COLOUR_B(TERM_GREEN));
-			Send_palette(i, 22,		//blue (readable)	<-%
-			    COLOUR_R(TERM_BLUE), COLOUR_G(TERM_BLUE), COLOUR_B(TERM_BLUE));
-			Send_palette(i, 23,		//umber			<-%
-			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
-			Send_palette(i, 24,		//l-dark (distinct)	<-%
-			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+		Send_palette(i, 20,;		//red		<-%
+		    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+		Send_palette(i, 21,		//green		<-%
+		    COLOUR_R(TERM_GREEN), COLOUR_G(TERM_GREEN), COLOUR_B(TERM_GREEN));
+		Send_palette(i, 22,		//blue (readable)	<-%
+		    COLOUR_R(TERM_BLUE), COLOUR_G(TERM_BLUE), COLOUR_B(TERM_BLUE));
+		Send_palette(i, 23,		//umber		<-%
+		    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+		Send_palette(i, 24,		//l-dark (distinct)	<-%
+		    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
 #endif
-			Send_palette(i, 25,		//l-white		<-slate
-			    COLOUR_CALC_R(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 25,		//l-white		<-slate
+		    COLOUR_CALC_R(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_WHITE, TERM_SLATE, 3 * PALANIM_HOUR_DIV, sub));
 #if 0 /* unchanged */
-			Send_palette(i, 26,		//violet		<-%
-			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+		Send_palette(i, 26,		//violet		<-%
+		    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
 #endif
-			Send_palette(i, 27,		//yellow		<-l-umber
-			    COLOUR_CALC_R(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 28,		//l-red			<-red
-			    COLOUR_CALC_R(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 29,		//l-green		<-green
-			    COLOUR_CALC_R(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 30,		//l-blue		<-blue
-			    COLOUR_CALC_R(TERM_L_BLUE, TERM_BLUE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_BLUE, TERM_BLUE, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_L_BLUE)); //BLUE and L_BLUE are both 0xff
-			Send_palette(i, 31,		//l-umber		<-umber
-			    COLOUR_CALC_R(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 27,		//yellow		<-l-umber
+		    COLOUR_CALC_R(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_YELLOW, TERM_L_UMBER, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 28,		//l-red		<-red
+		    COLOUR_CALC_R(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_RED, TERM_RED, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 29,		//l-green		<-green
+		    COLOUR_CALC_R(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_GREEN, TERM_GREEN, 3 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 30,		//l-blue		<-blue
+		    COLOUR_CALC_R(TERM_L_BLUE, TERM_BLUE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_BLUE, TERM_BLUE, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_B(TERM_L_BLUE)); //BLUE and L_BLUE are both 0xff
+		Send_palette(i, 31,		//l-umber		<-umber
+		    COLOUR_CALC_R(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub));
 		break;
-	case 2: //getting yellowish/less bright (72 steps) (13:00<18:00)
+	case 2: //getting yellowish/less bright (72 steps) (13:00<18:30)
 		//going from brightest colours (day theme) to yellowish/orangeish colours
-			//black stays black
-			Send_palette(i, 17,		//white
-			    COLOUR_CALC_CR(0xef, TERM_WHITE, 5 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0xef, TERM_WHITE, 5 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CB(0xa0, TERM_WHITE, 5 * PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 18,		//slate
-			    COLOUR_CALC_CR(0x8d, TERM_SLATE, 5 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0x8d, TERM_SLATE, 5 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CB(0x70, TERM_SLATE, 5 * PALANIM_HOUR_DIV, sub));
+		//black stays black
+		Send_palette(i, 17,		//white
+		    COLOUR_CALC_CR(0xef, TERM_WHITE, 5 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_CG(0xef, TERM_WHITE, 5 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_CB(0xa0, TERM_WHITE, 5 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 18,		//slate
+		    COLOUR_CALC_CR(0x8d, TERM_SLATE, 5 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_CG(0x8d, TERM_SLATE, 5 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_CB(0x70, TERM_SLATE, 5 * PALANIM_HOUR_DIV, sub));
 #if 0 /* unchanged */
-			Send_palette(i, 19,		//orange
-			    COLOUR_R(TERM_ORANGE), COLOUR_G(TERM_ORANGE), COLOUR_B(TERM_ORANGE));
-			Send_palette(i, 20,		//red
-			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
-			Send_palette(i, 21,		//green
-			    COLOUR_R(TERM_GREEN), COLOUR_G(TERM_GREEN), COLOUR_B(TERM_GREEN));
-			Send_palette(i, 22,		//blue (readable)
-			    COLOUR_R(TERM_BLUE), COLOUR_G(TERM_BLUE), COLOUR_B(TERM_BLUE));
-			Send_palette(i, 23,		//umber
-			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
-			Send_palette(i, 24,;		//l-dark (distinct)
-			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+		Send_palette(i, 19,		//orange
+		    COLOUR_R(TERM_ORANGE), COLOUR_G(TERM_ORANGE), COLOUR_B(TERM_ORANGE));
+		Send_palette(i, 20,		//red
+		    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+		Send_palette(i, 21,		//green
+		    COLOUR_R(TERM_GREEN), COLOUR_G(TERM_GREEN), COLOUR_B(TERM_GREEN));
+		Send_palette(i, 22,		//blue (readable)
+		    COLOUR_R(TERM_BLUE), COLOUR_G(TERM_BLUE), COLOUR_B(TERM_BLUE));
+		Send_palette(i, 23,		//umber
+		    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+		Send_palette(i, 24,;		//l-dark (distinct)
+		    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
 #endif
-			Send_palette(i, 25,		//l-white
-			    COLOUR_CALC_CR(0xbf, TERM_L_WHITE, 5 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0xbf, TERM_L_WHITE, 5 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CB(0x90, TERM_L_WHITE, 5 * PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 25,		//l-white
+		    COLOUR_CALC_CR(0xbf, TERM_L_WHITE, 5 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_CG(0xbf, TERM_L_WHITE, 5 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_CB(0x90, TERM_L_WHITE, 5 * PALANIM_HOUR_DIV, sub));
 #if 0 /* unchanged */
-			Send_palette(i, 26,		//violet
-			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+		Send_palette(i, 26,		//violet
+		    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
 #endif
-			Send_palette(i, 27,		//yellow
-			    COLOUR_R(TERM_YELLOW),
-			    COLOUR_CALC_CG(0xdf, TERM_YELLOW, 5 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_YELLOW));
+		Send_palette(i, 27,		//yellow
+		    COLOUR_R(TERM_YELLOW),
+		    COLOUR_CALC_CG(0xdf, TERM_YELLOW, 5 * PALANIM_HOUR_DIV, sub),
+		    COLOUR_B(TERM_YELLOW));
 #if 0 /* unchanged */
-			Send_palette(i, 28,		//l-red
-			    COLOUR_R(TERM_L_RED), COLOUR_G(TERM_L_RED), COLOUR_B(TERM_L_RED));
-			Send_palette(i, 29,		//l-green
-			    COLOUR_R(TERM_L_GREEN), COLOUR_G(TERM_L_GREEN), COLOUR_B(TERM_L_GREEN));
-			Send_palette(i, 30,		//l-blue
-			    COLOUR_R(TERM_L_BLUE), COLOUR_G(TERM_L_BLUE), COLOUR_B(TERM_L_BLUE));
-			Send_palette(i, 31,		//l-umber
-			    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
+		Send_palette(i, 28,		//l-red
+		    COLOUR_R(TERM_L_RED), COLOUR_G(TERM_L_RED), COLOUR_B(TERM_L_RED));
+		Send_palette(i, 29,		//l-green
+		    COLOUR_R(TERM_L_GREEN), COLOUR_G(TERM_L_GREEN), COLOUR_B(TERM_L_GREEN));
+		Send_palette(i, 30,		//l-blue
+		    COLOUR_R(TERM_L_BLUE), COLOUR_G(TERM_L_BLUE), COLOUR_B(TERM_L_BLUE));
+		Send_palette(i, 31,		//l-umber
+		    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
 #endif
 		break;
-	case 3: //sunsetty and darkish (PALANIM_HOUR_DIV steps) (18:00<19:00)
+	case 3: //sunsetty and darkish (PALANIM_HOUR_DIV steps) (18:30<19:00)
 		//picking up sky 2, continuing to orangish/reddish/purpleish/maybe darker colours
-		sub += PALANIM_HOUR_DIV; //inherited form sky 2: 1 hour of effectiveness predating sky 3
-			//black stays black
-			Send_palette(i, 17,		//white
-			    0xef,
-			    COLOUR_CALC_CGC(0xcf, 0xef, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CBC(0xa0, 0xaf, PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 18,		//slate
-			    0x8d,
-			    COLOUR_CALC_CGC(0x7d, 0x8d, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CBC(0x5f, 0x70, PALANIM_HOUR_DIV, sub));
+		//black stays black
+		Send_palette(i, 17,		//white
+		    0xef,
+		    COLOUR_CALC_CGC(0xb0, 0xef, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CBC(0xa0, 0xaf, PALANIM_HOUR_DIV / 2, sub));
+		Send_palette(i, 18,		//slate
+		    0x8d,
+		    COLOUR_CALC_CGC(0x6f, 0x8d, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CBC(0x5f, 0x70, PALANIM_HOUR_DIV / 2, sub));
 #if 0 /* unchanged */
-			Send_palette(i, 19,		//orange
-			    COLOUR_R(TERM_ORANGE), COLOUR_G(TERM_ORANGE), COLOUR_B(TERM_ORANGE));
-			Send_palette(i, 20,		//red
-			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+		Send_palette(i, 19,		//orange
+		    COLOUR_R(TERM_ORANGE), COLOUR_G(TERM_ORANGE), COLOUR_B(TERM_ORANGE));
+		Send_palette(i, 20,		//red
+		    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
 #endif
-			Send_palette(i, 21,		//green
-			    COLOUR_CALC_CR(0x2f, TERM_GREEN, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0x7f, TERM_GREEN, PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_GREEN)); //maybe reduce this too? would then become smaller than TERM_GREEN base value though, need to adjust it suddenly when night time hits :/
-			Send_palette(i, 22,		//blue (readable)
-			    COLOUR_CALC_CR(0x3f, TERM_BLUE, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0x2f, TERM_BLUE, PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_BLUE));
+		Send_palette(i, 21,		//green
+		    COLOUR_CALC_CR(0x2f, TERM_GREEN, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CG(0x7f, TERM_GREEN, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_B(TERM_GREEN)); //maybe reduce this too? would then become smaller than TERM_GREEN base value though, need to adjust it suddenly when night time hits :/
+		Send_palette(i, 22,		//blue (readable)
+		    COLOUR_CALC_CR(0x3f, TERM_BLUE, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CG(0x2f, TERM_BLUE, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_B(TERM_BLUE));
 #if 0 /* unchanged */
-			Send_palette(i, 23,		//umber
-			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
-			Send_palette(i, 24,;		//l-dark (distinct)
-			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+		Send_palette(i, 23,		//umber
+		    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+		Send_palette(i, 24,;		//l-dark (distinct)
+		    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
 #endif
-			Send_palette(i, 25,		//l-white
-			    0xbf,
-			    COLOUR_CALC_CGC(0x9f, 0xbf, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CBC(0x80, 0x90, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 25,		//l-white
+		    0xbf,
+		    COLOUR_CALC_CGC(0x90, 0xbf, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CBC(0x80, 0x90, PALANIM_HOUR_DIV / 2, sub));
 #if 0 /* unchanged */
-			Send_palette(i, 26,		//violet
-			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+		Send_palette(i, 26,		//violet
+		    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
 #endif
-			Send_palette(i, 27,		//yellow
-			    COLOUR_R(TERM_YELLOW),
-			    COLOUR_CALC_CGC(0xbf, 0xdf, PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_YELLOW));
+		Send_palette(i, 27,		//yellow
+		    COLOUR_R(TERM_YELLOW),
+		    COLOUR_CALC_CGC(0xbf, 0xdf, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_B(TERM_YELLOW));
 #if 0 /* unchanged */
-			Send_palette(i, 28,		//l-red
-			    COLOUR_R(TERM_L_RED), COLOUR_G(TERM_L_RED), COLOUR_B(TERM_L_RED));
+		Send_palette(i, 28,		//l-red
+		    COLOUR_R(TERM_L_RED), COLOUR_G(TERM_L_RED), COLOUR_B(TERM_L_RED));
 #endif
-			Send_palette(i, 29,		//l-green
-			    COLOUR_CALC_CR(0x3f, TERM_L_GREEN, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0xcf, TERM_L_GREEN, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CB(0x2f, TERM_L_GREEN, PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 30,		//l-blue
-			    COLOUR_CALC_CR(0x3f, TERM_L_BLUE, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0xaf, TERM_L_BLUE, PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_L_BLUE));
+		Send_palette(i, 29,		//l-green
+		    COLOUR_CALC_CR(0x3f, TERM_L_GREEN, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CG(0xcf, TERM_L_GREEN, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CB(0x2f, TERM_L_GREEN, PALANIM_HOUR_DIV / 2, sub));
+		Send_palette(i, 30,		//l-blue
+		    COLOUR_CALC_CR(0x3f, TERM_L_BLUE, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CG(0xaf, TERM_L_BLUE, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_B(TERM_L_BLUE));
 #if 0 /* unchanged */
-			Send_palette(i, 31,		//l-umber
-			    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
+		Send_palette(i, 31,		//l-umber
+		    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
 #endif
 		break;
-	case 4: //NIGHTFALL! -- getting dark (PALANIM_HOUR_DIV steps) (19:00-20:00)
+#ifndef STRETCHEDSUNSET /* todo: enable this more realistic, unstretched sunset */
+	case 4: //un-sunset (remove the reddish tones, and yellowish too actually) (19:00<19:30)
+		//black stays black
+		Send_palette(i, 17,		//white
+		    0xef,
+		    COLOUR_CALC_CGC(0xb0, 0xef, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CBC(0xa0, 0xaf, PALANIM_HOUR_DIV / 2, sub));
+		Send_palette(i, 18,		//slate
+		    0x8d,
+		    COLOUR_CALC_CGC(0x6f, 0x8d, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CBC(0x5f, 0x70, PALANIM_HOUR_DIV / 2, sub));
+ #if 0 /* unchanged */
+		Send_palette(i, 19,		//orange
+		    COLOUR_R(TERM_ORANGE), COLOUR_G(TERM_ORANGE), COLOUR_B(TERM_ORANGE));
+		Send_palette(i, 20,		//red
+		    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+ #endif
+		Send_palette(i, 21,		//green
+		    COLOUR_CALC_CR(0x2f, TERM_GREEN, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CG(0x7f, TERM_GREEN, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_B(TERM_GREEN)); //maybe reduce this too? would then become smaller than TERM_GREEN base value though, need to adjust it suddenly when night time hits :/
+		Send_palette(i, 22,		//blue (readable)
+		    COLOUR_CALC_CR(0x3f, TERM_BLUE, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CG(0x2f, TERM_BLUE, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_B(TERM_BLUE));
+ #if 0 /* unchanged */
+		Send_palette(i, 23,		//umber
+		    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+		Send_palette(i, 24,;		//l-dark (distinct)
+		    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+ #endif
+		Send_palette(i, 25,		//l-white
+		    0xbf,
+		    COLOUR_CALC_CGC(0x90, 0xbf, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CBC(0x80, 0x90, PALANIM_HOUR_DIV / 2, sub));
+ #if 0 /* unchanged */
+		Send_palette(i, 26,		//violet
+		    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+ #endif
+		Send_palette(i, 27,		//yellow
+		    COLOUR_R(TERM_YELLOW),
+		    COLOUR_CALC_CGC(0xbf, 0xdf, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_B(TERM_YELLOW));
+ #if 0 /* unchanged */
+		Send_palette(i, 28,		//l-red
+		    COLOUR_R(TERM_L_RED), COLOUR_G(TERM_L_RED), COLOUR_B(TERM_L_RED));
+ #endif
+		Send_palette(i, 29,		//l-green
+		    COLOUR_CALC_CR(0x3f, TERM_L_GREEN, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CG(0xcf, TERM_L_GREEN, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CB(0x2f, TERM_L_GREEN, PALANIM_HOUR_DIV / 2, sub));
+		Send_palette(i, 30,		//l-blue
+		    COLOUR_CALC_CR(0x3f, TERM_L_BLUE, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_CALC_CG(0xaf, TERM_L_BLUE, PALANIM_HOUR_DIV / 2, sub),
+		    COLOUR_B(TERM_L_BLUE));
+ #if 0 /* unchanged */
+		Send_palette(i, 31,		//l-umber
+		    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
+ #endif
+		break;
+	case 5: //NIGHTFALL! -- getting dark (PALANIM_HOUR_DIV steps) (19:00-20:00)
 		//leading sky 3 final colours to darkest colours (night theme)
-			//black stays black
-			Send_palette(i, 17,		//white			<-slate
-			    COLOUR_CALC_RC(TERM_SLATE, 0xef, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_GC(TERM_SLATE, 0xcf, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_BC(TERM_SLATE, 0xa0, PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 18,		//slate			<-l-dark
-			    COLOUR_CALC_RC(TERM_L_DARK, 0x8d, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_GC(TERM_L_DARK, 0x7d, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_BC(TERM_L_DARK, 0x5f, PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 19,		//orange		<-umber
-			    COLOUR_CALC_R(TERM_UMBER, TERM_ORANGE, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_UMBER, TERM_ORANGE, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_UMBER, TERM_ORANGE, PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 20,		//red			<-%
-			    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
-			Send_palette(i, 21,		//green			<-%
-			    COLOUR_CALC_RC(TERM_GREEN, 0x2f, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_GC(TERM_GREEN, 0x7f, PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_GREEN));
-			Send_palette(i, 22,		//blue (readable)	<-%
-			    COLOUR_CALC_RC(TERM_BLUE, 0x3f, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_GC(TERM_BLUE, 0x2f, PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_BLUE));
-#if 0 /* unchanged */
-			Send_palette(i, 23,		//umber			<-%
-			    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
-			Send_palette(i, 24,		//l-dark (distinct)	<-%
-			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
-#endif
-			Send_palette(i, 25,		//l-white		<-slate
-			    COLOUR_CALC_RC(TERM_SLATE, 0xbf, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_GC(TERM_SLATE, 0x90, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_BC(TERM_SLATE, 0x80, PALANIM_HOUR_DIV, sub));
-#if 0 /* unchanged */
-			Send_palette(i, 26,		//violet		<-%
-			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
-#endif
-			Send_palette(i, 27,		//yellow		<-l-umber
-			    COLOUR_CALC_R(TERM_L_UMBER, TERM_YELLOW, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_GC(TERM_L_UMBER, 0xbf, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_L_UMBER, TERM_YELLOW, PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 28,		//l-red			<-red
-			    COLOUR_CALC_R(TERM_RED, TERM_L_RED, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_RED, TERM_L_RED, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_RED, TERM_L_RED, PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 29,		//l-green		<-green
-			    COLOUR_CALC_RC(TERM_GREEN, 0x3f, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_GC(TERM_GREEN, 0xcf, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_BC(TERM_GREEN, 0x2f, PALANIM_HOUR_DIV, sub));
-			Send_palette(i, 30,		//l-blue		<-blue
-			    COLOUR_CALC_RC(TERM_BLUE, 0x3f, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_GC(TERM_BLUE, 0xaf, PALANIM_HOUR_DIV, sub),
-			    COLOUR_B(TERM_BLUE)); //BLUE and L_BLUE are both 0xff
-			Send_palette(i, 31,		//l-umber		<-umber
-			    COLOUR_CALC_R(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_G(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_B(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub));
+		//black stays black
+		Send_palette(i, 17,		//white		<-slate
+		    COLOUR_CALC_RC(TERM_SLATE, 0xef, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_SLATE, 0xb0, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_BC(TERM_SLATE, 0xa0, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 18,		//slate		<-l-dark
+		    COLOUR_CALC_RC(TERM_L_DARK, 0x8d, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_L_DARK, 0x6f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_BC(TERM_L_DARK, 0x5f, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 19,		//orange		<-umber
+		    COLOUR_CALC_R(TERM_UMBER, TERM_ORANGE, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_UMBER, TERM_ORANGE, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_UMBER, TERM_ORANGE, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 20,		//red		<-%
+		    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+		Send_palette(i, 21,		//green		<-%
+		    COLOUR_CALC_RC(TERM_GREEN, 0x2f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_GREEN, 0x7f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_B(TERM_GREEN));
+		Send_palette(i, 22,		//blue (readable)	<-%
+		    COLOUR_CALC_RC(TERM_BLUE, 0x3f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_BLUE, 0x2f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_B(TERM_BLUE));
+ #if 0 /* unchanged */
+		Send_palette(i, 23,		//umber		<-%
+		    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+		Send_palette(i, 24,		//l-dark (distinct)	<-%
+		    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+ #endif
+		Send_palette(i, 25,		//l-white		<-slate
+		    COLOUR_CALC_RC(TERM_SLATE, 0xbf, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_SLATE, 0x90, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_BC(TERM_SLATE, 0x80, PALANIM_HOUR_DIV, sub));
+ #if 0 /* unchanged */
+		Send_palette(i, 26,		//violet		<-%
+		    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+ #endif
+		Send_palette(i, 27,		//yellow		<-l-umber
+		    COLOUR_CALC_R(TERM_L_UMBER, TERM_YELLOW, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_L_UMBER, 0xbf, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_UMBER, TERM_YELLOW, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 28,		//l-red		<-red
+		    COLOUR_CALC_R(TERM_RED, TERM_L_RED, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_RED, TERM_L_RED, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_RED, TERM_L_RED, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 29,		//l-green		<-green
+		    COLOUR_CALC_RC(TERM_GREEN, 0x3f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_GREEN, 0xcf, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_BC(TERM_GREEN, 0x2f, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 30,		//l-blue		<-blue
+		    COLOUR_CALC_RC(TERM_BLUE, 0x3f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_BLUE, 0xaf, PALANIM_HOUR_DIV, sub),
+		    COLOUR_B(TERM_BLUE)); //BLUE and L_BLUE are both 0xff
+		Send_palette(i, 31,		//l-umber		<-umber
+		    COLOUR_CALC_R(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub));
 		break;
+#else
+	case 5: //NIGHTFALL! -- getting dark (PALANIM_HOUR_DIV steps) (19:00-20:00)
+		//leading sky 3 final colours to darkest colours (night theme)
+		//black stays black
+		Send_palette(i, 17,		//white		<-slate
+		    COLOUR_CALC_RC(TERM_SLATE, 0xef, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_SLATE, 0xb0, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_BC(TERM_SLATE, 0xa0, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 18,		//slate		<-l-dark
+		    COLOUR_CALC_RC(TERM_L_DARK, 0x8d, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_L_DARK, 0x6f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_BC(TERM_L_DARK, 0x5f, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 19,		//orange		<-umber
+		    COLOUR_CALC_R(TERM_UMBER, TERM_ORANGE, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_UMBER, TERM_ORANGE, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_UMBER, TERM_ORANGE, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 20,		//red		<-%
+		    COLOUR_R(TERM_RED), COLOUR_G(TERM_RED), COLOUR_B(TERM_RED));
+		Send_palette(i, 21,		//green		<-%
+		    COLOUR_CALC_RC(TERM_GREEN, 0x2f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_GREEN, 0x7f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_B(TERM_GREEN));
+		Send_palette(i, 22,		//blue (readable)	<-%
+		    COLOUR_CALC_RC(TERM_BLUE, 0x3f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_BLUE, 0x2f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_B(TERM_BLUE));
+ #if 0 /* unchanged */
+		Send_palette(i, 23,		//umber		<-%
+		    COLOUR_R(TERM_UMBER), COLOUR_G(TERM_UMBER), COLOUR_B(TERM_UMBER));
+		Send_palette(i, 24,		//l-dark (distinct)	<-%
+		    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
+ #endif
+		Send_palette(i, 25,		//l-white		<-slate
+		    COLOUR_CALC_RC(TERM_SLATE, 0xbf, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_SLATE, 0x90, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_BC(TERM_SLATE, 0x80, PALANIM_HOUR_DIV, sub));
+ #if 0 /* unchanged */
+		Send_palette(i, 26,		//violet		<-%
+		    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
+ #endif
+		Send_palette(i, 27,		//yellow		<-l-umber
+		    COLOUR_CALC_R(TERM_L_UMBER, TERM_YELLOW, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_L_UMBER, 0xbf, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_L_UMBER, TERM_YELLOW, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 28,		//l-red		<-red
+		    COLOUR_CALC_R(TERM_RED, TERM_L_RED, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_RED, TERM_L_RED, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_RED, TERM_L_RED, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 29,		//l-green		<-green
+		    COLOUR_CALC_RC(TERM_GREEN, 0x3f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_GREEN, 0xcf, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_BC(TERM_GREEN, 0x2f, PALANIM_HOUR_DIV, sub));
+		Send_palette(i, 30,		//l-blue		<-blue
+		    COLOUR_CALC_RC(TERM_BLUE, 0x3f, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_GC(TERM_BLUE, 0xaf, PALANIM_HOUR_DIV, sub),
+		    COLOUR_B(TERM_BLUE)); //BLUE and L_BLUE are both 0xff
+		Send_palette(i, 31,		//l-umber		<-umber
+		    COLOUR_CALC_R(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_G(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub),
+		    COLOUR_CALC_B(TERM_UMBER, TERM_L_UMBER, PALANIM_HOUR_DIV, sub));
+		break;
+#endif
 	}
 }
 /* Re-colour the world palette depending on sky-state (time intervals of specific colour-transshading purpose)
