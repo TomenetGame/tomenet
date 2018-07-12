@@ -2042,20 +2042,20 @@ static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
 		(*sky) = 1;
 		(*sub) = 8 * PALANIM_HOUR_DIV - t;
 	}
-	/* 13:00h..19:00h - getting yellowish/less bright */
-	else if (t >= 13 * PALANIM_HOUR_DIV && t < 19 * PALANIM_HOUR_DIV) {
+	/* 13:00h..18:00h - getting yellowish/less bright */
+	else if (t >= 13 * PALANIM_HOUR_DIV && t < 18 * PALANIM_HOUR_DIV) {
 		(*sky) = 2;
+		(*sub) = 18 * PALANIM_HOUR_DIV - t;
+	}
+	/* 18:00h..19:00h - sunsetty, getting darkish */
+	else if (t >= 18 * PALANIM_HOUR_DIV && t < 19 * PALANIM_HOUR_DIV) {
+		(*sky) = 3;
 		(*sub) = 19 * PALANIM_HOUR_DIV - t;
 	}
-	/* 19:00h..20:00h - sunsetty, getting darkish */
-	else if (t >= 19 * PALANIM_HOUR_DIV && t < 20 * PALANIM_HOUR_DIV) {
-		(*sky) = 3;
-		(*sub) = 20 * PALANIM_HOUR_DIV - t;
-	}
-	/* 20:00h..21:00h - NIGHTFALL - getting dark */
-	else if (t >= 20 * PALANIM_HOUR_DIV && t <= 21 * PALANIM_HOUR_DIV) {
+	/* 19:00h..20:00h - move from sunset to NIGHTFALL - getting dark */
+	else if (t >= 19 * PALANIM_HOUR_DIV && t <= 20 * PALANIM_HOUR_DIV) {
 		(*sky) = 4;
-		(*sub) = 21 * PALANIM_HOUR_DIV - t;
+		(*sub) = 20 * PALANIM_HOUR_DIV - t;
 	}
 	/* other -- fill? */
 	else if (fill) {
@@ -2063,7 +2063,7 @@ static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
 			(*sky) = 1;
 			(*sub) = 0;
 		}
-		else if (t > 21 * PALANIM_HOUR_DIV || t < 5 * PALANIM_HOUR_DIV) {
+		else if (t > 20 * PALANIM_HOUR_DIV || t < 5 * PALANIM_HOUR_DIV) {
 			(*sky) = 4;
 			(*sub) = 0;
 		}
