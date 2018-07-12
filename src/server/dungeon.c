@@ -1986,9 +1986,9 @@ static unsigned int colour_std[16] = {
 #define COLOUR_STEP_R(i,j,s,n) ((((1000 * COLOUR_DIFF_R(i,j)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_G(i,j,s,n) ((((1000 * COLOUR_DIFF_G(i,j)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_B(i,j,s,n) ((((1000 * COLOUR_DIFF_B(i,j)) * (n)) / (s)) / 1000)
-#define COLOUR_CALC_R(i,j,s,n) (COLOUR_R(i) - ((((1000 * COLOUR_DIFF_R(i,j)) * (n)) / (s)) / 1000))
-#define COLOUR_CALC_G(i,j,s,n) (COLOUR_G(i) - ((((1000 * COLOUR_DIFF_G(i,j)) * (n)) / (s)) / 1000))
-#define COLOUR_CALC_B(i,j,s,n) (COLOUR_B(i) - ((((1000 * COLOUR_DIFF_B(i,j)) * (n)) / (s)) / 1000))
+#define COLOUR_CALC_R(i,j,s,n) (COLOUR_R(i) - COLOUR_STEP_R(i,j,s,n))
+#define COLOUR_CALC_G(i,j,s,n) (COLOUR_G(i) - COLOUR_STEP_G(i,j,s,n))
+#define COLOUR_CALC_B(i,j,s,n) (COLOUR_B(i) - COLOUR_STEP_B(i,j,s,n))
 
 #define COLOUR_DIFF_CR(c,i) ((int)(c) - (int)COLOUR_R(i))
 #define COLOUR_DIFF_CG(c,i) ((int)(c) - (int)COLOUR_G(i))
@@ -1996,9 +1996,9 @@ static unsigned int colour_std[16] = {
 #define COLOUR_STEP_CR(c,i,s,n) ((((1000 * COLOUR_DIFF_CR(c,i)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_CG(c,i,s,n) ((((1000 * COLOUR_DIFF_CG(c,i)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_CB(c,i,s,n) ((((1000 * COLOUR_DIFF_CB(c,i)) * (n)) / (s)) / 1000)
-#define COLOUR_CALC_CR(c,i,s,n) ((int)(c) - ((((1000 * COLOUR_DIFF_CR(c,i)) * (n)) / (s)) / 1000))
-#define COLOUR_CALC_CG(c,i,s,n) ((int)(c) - ((((1000 * COLOUR_DIFF_CG(c,i)) * (n)) / (s)) / 1000))
-#define COLOUR_CALC_CB(c,i,s,n) ((int)(c) - ((((1000 * COLOUR_DIFF_CB(c,i)) * (n)) / (s)) / 1000))
+#define COLOUR_CALC_CR(c,i,s,n) ((int)(c) - COLOUR_STEP_CR(c,i,s,n))
+#define COLOUR_CALC_CG(c,i,s,n) ((int)(c) - COLOUR_STEP_CG(c,i,s,n))
+#define COLOUR_CALC_CB(c,i,s,n) ((int)(c) - COLOUR_STEP_CB(c,i,s,n))
 
 #define COLOUR_DIFF_RC(i,c) ((int)COLOUR_R(i) - (int)(c))
 #define COLOUR_DIFF_GC(i,c) ((int)COLOUR_G(i) - (int)(c))
@@ -2006,9 +2006,9 @@ static unsigned int colour_std[16] = {
 #define COLOUR_STEP_RC(i,c,s,n) ((((1000 * COLOUR_DIFF_RC(i,c)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_GC(i,c,s,n) ((((1000 * COLOUR_DIFF_GC(i,c)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_BC(i,c,s,n) ((((1000 * COLOUR_DIFF_BC(i,c)) * (n)) / (s)) / 1000)
-#define COLOUR_CALC_RC(i,c,s,n) (COLOUR_R(i) - ((((1000 * COLOUR_DIFF_RC(i,c)) * (n)) / (s)) / 1000))
-#define COLOUR_CALC_GC(i,c,s,n) (COLOUR_G(i) - ((((1000 * COLOUR_DIFF_GC(i,c)) * (n)) / (s)) / 1000))
-#define COLOUR_CALC_BC(i,c,s,n) (COLOUR_B(i) - ((((1000 * COLOUR_DIFF_BC(i,c)) * (n)) / (s)) / 1000))
+#define COLOUR_CALC_RC(i,c,s,n) (COLOUR_R(i) - COLOUR_STEP_RC(i,c,s,n))
+#define COLOUR_CALC_GC(i,c,s,n) (COLOUR_G(i) - COLOUR_STEP_GC(i,c,s,n))
+#define COLOUR_CALC_BC(i,c,s,n) (COLOUR_B(i) - COLOUR_STEP_BC(i,c,s,n))
 
 #define COLOUR_DIFF_CRC(c,d) ((int)(c) - (int)(d))
 #define COLOUR_DIFF_CGC(c,d) ((int)(c) - (int)(d))
@@ -2016,9 +2016,9 @@ static unsigned int colour_std[16] = {
 #define COLOUR_STEP_CRC(c,d,s,n) ((((1000L * COLOUR_DIFF_CRC(c,d)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_CGC(c,d,s,n) ((((1000L * COLOUR_DIFF_CGC(c,d)) * (n)) / (s)) / 1000)
 #define COLOUR_STEP_CBC(c,d,s,n) ((((1000L * COLOUR_DIFF_CBC(c,d)) * (n)) / (s)) / 1000)
-#define COLOUR_CALC_CRC(c,d,s,n) ((int)(c) - ((((1000 * COLOUR_DIFF_CRC(c,d)) * (n)) / (s)) / 1000))
-#define COLOUR_CALC_CGC(c,d,s,n) ((int)(c) - ((((1000 * COLOUR_DIFF_CGC(c,d)) * (n)) / (s)) / 1000))
-#define COLOUR_CALC_CBC(c,d,s,n) ((int)(c) - ((((1000 * COLOUR_DIFF_CBC(c,d)) * (n)) / (s)) / 1000))
+#define COLOUR_CALC_CRC(c,d,s,n) ((int)(c) - COLOUR_STEP_CRC(c,d,s,n))
+#define COLOUR_CALC_CGC(c,d,s,n) ((int)(c) - COLOUR_STEP_CGC(c,d,s,n))
+#define COLOUR_CALC_CBC(c,d,s,n) ((int)(c) - COLOUR_STEP_CBC(c,d,s,n))
 
 /* --- Usage: ---
  COLOUR_CALC_...(target colour, starting colour, steps, current step)
@@ -2078,7 +2078,7 @@ static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
    Note: For consistency we use Send_palette(<targetcol> - <targetcol - currentcol>) */
 static void world_surface_palette_player_do(int i, int sky, int sub) {
 	switch (sky) {
-	case 0: //getting less dark (PALANIM_HOUR_DIV steps) (05:00-06:00)
+	case 0: //getting less dark (PALANIM_HOUR_DIV steps) (05:00<06:00)
 		sub += 2 * PALANIM_HOUR_DIV; //proactive for sky 1; starting from darkest colours (night theme)
 			//black stays black
 			Send_palette(i, 17,		//white			<-slate
@@ -2191,17 +2191,17 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 			    COLOUR_CALC_G(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub),
 			    COLOUR_CALC_B(TERM_L_UMBER, TERM_UMBER, 3 * PALANIM_HOUR_DIV, sub));
 		break;
-	case 2: //getting yellowish/less bright (72 steps) (13:00-19:00)
+	case 2: //getting yellowish/less bright (72 steps) (13:00<18:00)
 		//going from brightest colours (day theme) to yellowish/orangeish colours
 			//black stays black
 			Send_palette(i, 17,		//white
-			    COLOUR_CALC_CR(0xef, TERM_WHITE, 6 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0xef, TERM_WHITE, 6 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CB(0xa0, TERM_WHITE, 6 * PALANIM_HOUR_DIV, sub));
+			    COLOUR_CALC_CR(0xef, TERM_WHITE, 5 * PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_CG(0xef, TERM_WHITE, 5 * PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_CB(0xa0, TERM_WHITE, 5 * PALANIM_HOUR_DIV, sub));
 			Send_palette(i, 18,		//slate
-			    COLOUR_CALC_CR(0x8d, TERM_SLATE, 6 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0x8d, TERM_SLATE, 6 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CB(0x70, TERM_SLATE, 6 * PALANIM_HOUR_DIV, sub));
+			    COLOUR_CALC_CR(0x8d, TERM_SLATE, 5 * PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_CG(0x8d, TERM_SLATE, 5 * PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_CB(0x70, TERM_SLATE, 5 * PALANIM_HOUR_DIV, sub));
 #if 0 /* unchanged */
 			Send_palette(i, 19,		//orange
 			    COLOUR_R(TERM_ORANGE), COLOUR_G(TERM_ORANGE), COLOUR_B(TERM_ORANGE));
@@ -2217,16 +2217,16 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 			    COLOUR_R(TERM_L_DARK), COLOUR_G(TERM_L_DARK), COLOUR_B(TERM_L_DARK));
 #endif
 			Send_palette(i, 25,		//l-white
-			    COLOUR_CALC_CR(0xbf, TERM_L_WHITE, 6 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CG(0xbf, TERM_L_WHITE, 6 * PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_CB(0x90, TERM_L_WHITE, 6 * PALANIM_HOUR_DIV, sub));
+			    COLOUR_CALC_CR(0xbf, TERM_L_WHITE, 5 * PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_CG(0xbf, TERM_L_WHITE, 5 * PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_CB(0x90, TERM_L_WHITE, 5 * PALANIM_HOUR_DIV, sub));
 #if 0 /* unchanged */
 			Send_palette(i, 26,		//violet
 			    COLOUR_R(TERM_VIOLET), COLOUR_G(TERM_VIOLET), COLOUR_B(TERM_VIOLET));
 #endif
 			Send_palette(i, 27,		//yellow
 			    COLOUR_R(TERM_YELLOW),
-			    COLOUR_CALC_CG(0xdf, TERM_YELLOW, 6 * PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_CG(0xdf, TERM_YELLOW, 5 * PALANIM_HOUR_DIV, sub),
 			    COLOUR_B(TERM_YELLOW));
 #if 0 /* unchanged */
 			Send_palette(i, 28,		//l-red
@@ -2239,13 +2239,13 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 			    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
 #endif
 		break;
-	case 3: //sunsetty and darkish (PALANIM_HOUR_DIV steps) (19:00-20:00)
+	case 3: //sunsetty and darkish (PALANIM_HOUR_DIV steps) (18:00<19:00)
 		//picking up sky 2, continuing to orangish/reddish/purpleish/maybe darker colours
 		sub += PALANIM_HOUR_DIV; //inherited form sky 2: 1 hour of effectiveness predating sky 3
 			//black stays black
 			Send_palette(i, 17,		//white
 			    0xef,
-			    COLOUR_CALC_CGC(0xaf, 0xef, PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_CGC(0xcf, 0xef, PALANIM_HOUR_DIV, sub),
 			    COLOUR_CALC_CBC(0xa0, 0xaf, PALANIM_HOUR_DIV, sub));
 			Send_palette(i, 18,		//slate
 			    0x8d,
@@ -2273,7 +2273,7 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 #endif
 			Send_palette(i, 25,		//l-white
 			    0xbf,
-			    COLOUR_CALC_CGC(0x90, 0xbf, PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_CGC(0x9f, 0xbf, PALANIM_HOUR_DIV, sub),
 			    COLOUR_CALC_CBC(0x80, 0x90, PALANIM_HOUR_DIV, sub));
 #if 0 /* unchanged */
 			Send_palette(i, 26,		//violet
@@ -2300,12 +2300,12 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 			    COLOUR_R(TERM_L_UMBER), COLOUR_G(TERM_L_UMBER), COLOUR_B(TERM_L_UMBER));
 #endif
 		break;
-	case 4: //NIGHTFALL! -- getting dark (PALANIM_HOUR_DIV steps) (20:00-21:00)
+	case 4: //NIGHTFALL! -- getting dark (PALANIM_HOUR_DIV steps) (19:00-20:00)
 		//leading sky 3 final colours to darkest colours (night theme)
 			//black stays black
 			Send_palette(i, 17,		//white			<-slate
 			    COLOUR_CALC_RC(TERM_SLATE, 0xef, PALANIM_HOUR_DIV, sub),
-			    COLOUR_CALC_GC(TERM_SLATE, 0xaf, PALANIM_HOUR_DIV, sub),
+			    COLOUR_CALC_GC(TERM_SLATE, 0xcf, PALANIM_HOUR_DIV, sub),
 			    COLOUR_CALC_BC(TERM_SLATE, 0xa0, PALANIM_HOUR_DIV, sub));
 			Send_palette(i, 18,		//slate			<-l-dark
 			    COLOUR_CALC_RC(TERM_L_DARK, 0x8d, PALANIM_HOUR_DIV, sub),
