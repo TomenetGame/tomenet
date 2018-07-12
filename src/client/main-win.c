@@ -4290,6 +4290,8 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	COLORREF code;
 	term *term_old = Term;
 
+	if (!c_cfg.palette_animation) return;
+
 	/* Need complex color mode for palette animation */
 	if (colors16) return;
 

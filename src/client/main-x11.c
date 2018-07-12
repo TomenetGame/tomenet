@@ -3192,6 +3192,8 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	cptr cname = color_name[0];
 	term_data *old_td = (term_data*)(Term->data);
 
+	if (!c_cfg.palette_animation) return;
+
 	color_table[c][1] = r;
 	color_table[c][2] = g;
 	color_table[c][3] = b;
