@@ -2702,8 +2702,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 #else
 	/* In the night, lit grids are not palette-animation-shaded in any way */
 	if (night_surface && (c_ptr->info & (CAVE_GLOW | CAVE_LITE))) palanim = FALSE;
-	/* Also, lamp-lit grids are never palette-animation-shaded, for now.. */
-	else if (c_ptr->info & CAVE_LITE) palanim = FALSE;
+	/* Also, lamp-lit grids or shops/monster-traps/etc are never palette-animation-shaded, for now.. */
+	else if ((c_ptr->info & CAVE_LITE) || c_ptr->special) palanim = FALSE;
 #endif
 
 #if 0
