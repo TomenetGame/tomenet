@@ -234,8 +234,7 @@ static bool read_mangrc(cptr filename) {
 			}
 
 			/* Color map */
-			if (!strncmp(buf, "colormap_", 9))
-			{
+			if (!strncmp(buf, "colormap_", 9)) {
 				int colornum = atoi(buf + 9);
 				char *p;
 
@@ -244,9 +243,7 @@ static bool read_mangrc(cptr filename) {
 				p = strtok(NULL, "\t\n");
 
 				u32b c = parse_color_code(p);
-				if (colornum >= 0 && colornum <= 15 && c < 0x01000000) {
-					client_color_map[colornum] = c;
-				}
+				if (colornum >= 0 && colornum < 16 && c < 0x01000000) client_color_map[colornum] = c;
 			}
 
 #ifdef USE_GRAPHICS
