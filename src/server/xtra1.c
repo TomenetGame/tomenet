@@ -7477,7 +7477,7 @@ int start_global_event(int Ind, int getype, char *parm) {
  */
 void stop_global_event(int Ind, int n) {
 	global_event_type *ge = &global_event[n];
-	msg_format(Ind, "Wiping event #%d of type %d.", n+1, ge->getype);
+	if (Ind) msg_format(Ind, "Wiping event #%d of type %d.", n+1, ge->getype);
 	s_printf("%s EVENT_STOP: #%d of type %d\n", showtime(), n+1, ge->getype);
 	if (ge->getype) msg_broadcast_format(0, "\377y[Event '%s' (%d) was cancelled.]", ge->title, n+1);
 #if 0

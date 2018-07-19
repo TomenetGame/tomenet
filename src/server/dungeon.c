@@ -8657,7 +8657,7 @@ void process_player_change_wpos(int Ind) {
  */
 
 void dungeon(void) {
-	int i;
+	int i, k;
 	static int export_turns = 1; // Setting this to '1' makes it run on server startup
 	player_type *p_ptr;
 
@@ -8735,18 +8735,30 @@ void dungeon(void) {
 		/* Players will probably timeout */
 		turn = 1;
 
-#if 0
-		//fix:
-		st_ptr->last_theft = st_ptr->tim_watch = 0;
-		p_ptr->test_turn =
-		st_ptr->last_visit =
-		p_ptr->item_order_turn =
-		p_ptr->last_gold_drop_timer = 0;
-		xorders[].turn =
-		p_ptr->go_turn = 0;
-		ge->start_turn
-		ge->end_turn
-#endif
+		/* Fix/reset turn-related durations/timeouts */
+		for (k = 0; k < numtowns; k++) {
+			for (i = 0; i < max_st_idx; i++) {
+				store_type *st_ptr = &town[k].townstore[i];
+
+				st_ptr->last_theft = st_ptr->tim_watch = 0;
+				st_ptr->last_visit = 0;
+			}
+		}
+		for (i = 1; i <= NumPlayers; i++) {
+			Players[i]->last_gold_drop_timer = 0;
+			Players[i]->go_turn = 0;
+			Players[i]->item_order_turn = turn + HOUR; //ew, well this should be fine
+
+			/* Pft: */
+			Players[i]->test_turn = 0;
+		}
+		/* Reset to full duration again, lucky hunters */
+		for (i = 0; i < MAX_XORDERS; i++)
+			if (xorders[i].active && xorders[i].id) xorders[i].turn = 0;
+		/* Events will have wrong timings or display absurd durations,
+		   affected: ge->start_turn, ge->end_turn */
+		for (i = 0; i < MAX_GLOBAL_EVENTS; i++)
+			stop_global_event(0, i);
 
 		/* Log it */
 		s_printf("%s: TURN COUNTER RESET (%d)\n", showtime(), turn_overflow);
