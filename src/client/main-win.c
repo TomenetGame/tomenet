@@ -4407,7 +4407,6 @@ void set_palette(byte c, byte r, byte g, byte b) {
 
 	if (!c_cfg.palette_animation) return;
 
-c_message_add(format("received %d: %d,%d,%d", c, r, g, b)); //debug
 #ifdef PALANIM_OPTIMIZED
 	/* Check for refresh market at the end of a palette data transmission */
 	if (c == 127) {

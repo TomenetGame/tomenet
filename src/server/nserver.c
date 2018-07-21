@@ -8330,7 +8330,6 @@ int Send_palette(int Ind, byte c, byte r, byte g, byte b) {
 		return 0;
 	}
 
-s_printf("sending %d: %d,%d,%d\n", c, r, g, b);//debug
 	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_PALETTE, c, r, g, b);
 }
 
