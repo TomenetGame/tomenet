@@ -4470,7 +4470,8 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	Term_activate(&td->t);
 	/* Redraw the contents */
 	//Term_redraw(); //uses total_erase, maybe causing unnecessary flicker, instead:
-	Term_fresh();
+	//Term_fresh();
+	Term_xtra(TERM_XTRA_FRESH, 0);
 	/* Restore */
 	Term_activate(term_old);
 #endif
