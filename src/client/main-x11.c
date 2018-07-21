@@ -3186,6 +3186,7 @@ void animate_palette(void) {
 		Term_activate(&old_td->t);
 	}
 }
+#define PALANIM_OPTIMIZED /* KEEP SAME AS SERVER! */
 void set_palette(byte c, byte r, byte g, byte b) {
 	unsigned long code;
 	char cn[8];
@@ -3193,6 +3194,21 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	term_data *old_td = (term_data*)(Term->data);
 
 	if (!c_cfg.palette_animation) return;
+
+#ifdef PALANIM_OPTIMIZED
+	/* Check for refresh market at the end of a palette data transmission */
+	if (c == 127) {
+		/* Refresh aka redraw the main window with new colour */
+		if (!term_prefs[0].visible) return;
+		if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
+		Term_activate(&term_idx_to_term_data(0)->t);
+		Term_redraw();
+		Term_activate(&old_td->t);
+		return;
+	}
+#else
+	if (c == 127) return; //just discard refresh marker
+#endif
 
 	color_table[c][1] = r;
 	color_table[c][2] = g;
@@ -3218,11 +3234,13 @@ void set_palette(byte c, byte r, byte g, byte b) {
 #endif
 	Infoclr_init_ccn(cname, "bg", "cpy", 0);
 
+#ifndef PALANIM_OPTIMIZED
 	/* Refresh aka redraw the main window with new colour */
 	if (!term_prefs[0].visible) return;
 	if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
 	Term_activate(&term_idx_to_term_data(0)->t);
 	Term_redraw();
 	Term_activate(&old_td->t);
+#endif
 }
 #endif
