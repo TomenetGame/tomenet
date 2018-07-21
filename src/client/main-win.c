@@ -299,6 +299,15 @@ unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 #define VUD_BRIGHT	0x80
 
 
+/* Swap colour indices used for palette animation with their originals.
+   For some reason this may be required on Windows:
+   The colours 0-15 can be animated just fine and flicker-free.
+   The colours 16-31 cause flickering on animation.
+   So on Win we just do it the opposite way round and animate 0-15 and
+   use 16-31 for static colours. - C. Blue */
+//#define PALANIM_SWAP
+
+
 void resize_main_window_win(int cols, int rows);
 
 
@@ -1231,7 +1240,115 @@ static void new_palette(void) {
 	/* Save new palette */
 	hPal = hNewPal;
 }
+#ifdef PALANIM_SWAP
+/* Special version of new_palette() for just animating colours 0-15. */
+static void new_palette_ps(void) {
+	HPALETTE       hBmPal;
+	HPALETTE       hNewPal;
+	HDC            hdc;
+	int            i, nEntries;
+	int            pLogPalSize;
+	int            lppeSize;
+	LPLOGPALETTE   pLogPal;
+	LPPALETTEENTRY lppe;
 
+
+	/* Cannot handle palettes */
+	if (!paletted) return;
+
+
+	/* No palette */
+	hBmPal = NULL;
+
+	/* No bitmap */
+	lppeSize = 0;
+	lppe = NULL;
+	nEntries = 0;
+
+ #ifdef USE_GRAPHICS
+
+	/* Check windows */
+	for (i = MAX_TERM_DATA - 1; i >= 0; i--) {
+		if (data[i].graf_file) {
+			/* Check the bitmap palette */
+			hBmPal = data[i].infGraph.hPalette;
+		}
+	}
+
+	/* Use the bitmap */
+	if (hBmPal) {
+		lppeSize = 256*sizeof(PALETTEENTRY);
+		lppe = (LPPALETTEENTRY)mem_alloc(lppeSize);
+		nEntries = GetPaletteEntries(hBmPal, 0, 255, lppe);
+		if (nEntries == 0) quit("Corrupted bitmap palette");
+		if (nEntries > 220) quit("Bitmap must have no more than 220 colors");
+	}
+
+ #endif
+
+	/* Size of palette */
+	pLogPalSize = sizeof(LOGPALETTE) + (16+nEntries)*sizeof(PALETTEENTRY);
+
+	/* Allocate palette */
+	pLogPal = (LPLOGPALETTE)mem_alloc(pLogPalSize);
+
+	/* Version */
+	pLogPal->palVersion = 0x300;
+
+	/* Make room for bitmap and normal data */
+	pLogPal->palNumEntries = nEntries + 16;
+
+	/* Save the bitmap data */
+	for (i = 0; i < nEntries; i++)
+		pLogPal->palPalEntry[i] = lppe[i];
+
+	/* Save the normal data */
+	for (i = 0; i < 16; i++) {
+		LPPALETTEENTRY p;
+
+		/* Access the entry */
+		p = &(pLogPal->palPalEntry[i+nEntries]);
+
+		/* Save the colors */
+		p->peRed = GetRValue(win_clr[i]);
+		p->peGreen = GetGValue(win_clr[i]);
+		p->peBlue = GetBValue(win_clr[i]);
+
+		/* Save the flags */
+		p->peFlags = PC_NOCOLLAPSE;
+	}
+
+	/* Free something */
+	if (lppe) mem_free(lppe);
+
+	/* Create a new palette, or fail */
+	hNewPal = CreatePalette(pLogPal);
+	if (!hNewPal) quit("Cannot create palette");
+
+	/* Free the palette */
+	mem_free(pLogPal);
+
+
+	hdc = GetDC(data[0].w);
+	SelectPalette(hdc, hNewPal, 0);
+	i = RealizePalette(hdc);
+	ReleaseDC(data[0].w, hdc);
+	if (i == 0) quit("Cannot realize palette");
+
+	/* Check windows */
+	for (i = 1; i < MAX_TERM_DATA; i++) {
+		hdc = GetDC(data[i].w);
+		SelectPalette(hdc, hNewPal, 0);
+		ReleaseDC(data[i].w, hdc);
+	}
+
+	/* Delete old palette */
+	if (hPal) DeleteObject(hPal);
+
+	/* Save new palette */
+	hPal = hNewPal;
+}
+#endif
 
 /*
  * Resize a window
@@ -2234,13 +2351,21 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	/* Acquire DC */
 	hdc = myGetDC(td->w);
 
+#ifdef PALANIM_SWAP
+	a = (a + 16) % 32;
+#endif
+
 #ifdef OPTIMIZE_DRAWING
 	if (old_attr != a) {
 		/* Foreground color */
 		if (colors16)
-			SetTextColor(hdc, PALETTEINDEX(win_pal[a&0x0F]));
+			SetTextColor(hdc, PALETTEINDEX(win_pal[a & 0x0F]));
 		else
-			SetTextColor(hdc, win_clr[a&0x0F]);
+ #ifndef EXTENDED_COLOURS_PALANIM
+			SetTextColor(hdc, win_clr[a & 0x0F]);
+ #else
+			SetTextColor(hdc, win_clr[a & 0x1F]);
+ #endif
 		old_attr = a;
 	}
 
@@ -2253,9 +2378,13 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 
 	/* Foreground color */
 	if (colors16)
-		SetTextColor(hdc, PALETTEINDEX(win_pal[a&0x0F]));
+		SetTextColor(hdc, PALETTEINDEX(win_pal[a & 0x0F]));
 	else
-		SetTextColor(hdc, win_clr[a&0x0F]);
+ #ifndef EXTENDED_COLOURS_PALANIM
+		SetTextColor(hdc, win_clr[a & 0x0F]);
+ #else
+		SetTextColor(hdc, win_clr[a & 0x1F]);
+ #endif
 
 	/* Use the font */
 	SelectObject(hdc, td->font_id);
@@ -3273,8 +3402,8 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 				Term_keypress('x');
 
 				/* Encode the hexidecimal scan code */
-				Term_keypress(hexsym[i/16]);
-				Term_keypress(hexsym[i%16]);
+				Term_keypress(hexsym[i / 16]);
+				Term_keypress(hexsym[i % 16]);
 
 				/* End the macro trigger */
 				Term_keypress(13);
@@ -3756,7 +3885,7 @@ static void turn_off_numlock(void) {
 	r = SendInput(1, &inp, sizeof(INPUT));
 	if (!r) {
 		DWORD err = GetLastError();
-		char *msg = (char*)malloc(sizeof(char)*50);
+		char *msg = (char*)malloc(sizeof(char) * 50);
 		sprintf(msg, "SendInput error (down): %lu", err);
 		plog(msg);
 	}
@@ -3768,7 +3897,7 @@ static void turn_off_numlock(void) {
 	r = SendInput(1, &inp, sizeof(INPUT));
 	if (!r) {
 		DWORD err = GetLastError();
-		char *msg = (char*)malloc(sizeof(char)*50);
+		char *msg = (char*)malloc(sizeof(char) * 50);
 		sprintf(msg, "SendInput error (up): %lu", err);
 		plog(msg);
 	}
@@ -4169,7 +4298,11 @@ void animate_palette(void) {
 #ifndef EXTENDED_COLOURS_PALANIM
 		for (i = 0; i < 16; i++) {
 #else
+ #ifdef PALANIM_SWAP
+		for (i = 0; i < 16; i++) {
+ #else
 		for (i = 0; i < 16 + 16; i++) {
+ #endif
 #endif
 			/* Extract desired values */
 			rv = color_table[i][1];
@@ -4226,7 +4359,11 @@ void animate_palette(void) {
 #ifndef EXTENDED_COLOURS_PALANIM
 		for (i = 0; i < 16; i++) {
 #else
+ #ifdef PALANIM_SWAP
+		for (i = 0; i < 16; i++) {
+ #else
 		for (i = 0; i < 16 + 16; i++) {
+ #endif
 #endif
 			/* Extract desired values */
 			rv = color_table[i][1];
@@ -4263,11 +4400,41 @@ void animate_palette(void) {
 		Term_activate(old);
 	}
 }
+#define PALANIM_OPTIMIZED /* KEEP SAME AS SERVER! */
 void set_palette(byte c, byte r, byte g, byte b) {
 	COLORREF code;
 	term *term_old = Term;
 
 	if (!c_cfg.palette_animation) return;
+
+c_message_add(format("received %d: %d,%d,%d", c, r, g, b)); //debug
+#ifdef PALANIM_OPTIMIZED
+	/* Check for refresh market at the end of a palette data transmission */
+	if (c == 127) {
+		/* Activate the palette */
+ #ifdef PALANIM_SWAP
+		new_palette_ps();
+ #else
+		new_palette();
+ #endif
+
+		/* Refresh aka redraw main window with new colour */
+		term_data *td = &data[0];
+		/* Activate */
+		Term_activate(&td->t);
+		/* Redraw the contents */
+		Term_redraw();
+		/* Restore */
+		Term_activate(term_old);
+		return;
+	}
+#else
+	if (c == 127) return; //just discard refresh marker
+#endif
+
+#ifdef PALANIM_SWAP
+	c = (c + 16) % 32;
+#endif
 
 	/* Need complex color mode for palette animation */
 	if (colors16) {
@@ -4290,8 +4457,13 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	win_clr[c] = code;
 	//c_message_add("palette changed");
 
+#ifndef PALANIM_OPTIMIZED
 	/* Activate the palette */
+ #ifdef PALANIM_SWAP
+	new_palette_ps();
+ #else
 	new_palette();
+ #endif
 
 	/* Refresh aka redraw main window with new colour */
 	term_data *td = &data[0];
@@ -4301,5 +4473,6 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	Term_redraw();
 	/* Restore */
 	Term_activate(term_old);
+#endif
 }
 #endif /* _Windows */

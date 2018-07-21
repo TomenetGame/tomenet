@@ -2092,6 +2092,7 @@ static void get_world_surface_palette_state(int *sky, int *sub, bool fill) {
 }
 /* Local helper function for actually animating the palette.
    Note: For consistency we use Send_palette(<targetcol> - <targetcol - currentcol>) */
+#define PALANIM_OPTIMIZED /* KEEP SAME AS CLIENT! */
 static void world_surface_palette_player_do(int i, int sky, int sub) {
 	switch (sky) {
 	case 0: //getting less dark (PALANIM_HOUR_DIV steps) (05:00<06:00)
@@ -2498,6 +2499,10 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 		break;
 #endif
 	}
+#ifdef PALANIM_OPTIMIZED
+	/* Send 'end of palette data' refresh marker */
+	Send_palette(i, 127, 0, 0, 0);
+#endif
 }
 /* Re-colour the world palette depending on sky-state (time intervals of specific colour-transshading purpose)
    and the sky-state's substate (linearly interpolated 5 minute intervals within each sky-state interval) - C. Blue */
