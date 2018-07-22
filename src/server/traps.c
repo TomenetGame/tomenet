@@ -930,7 +930,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 
 		/* Trap of Sinking */
-		case TRAP_OF_SINKING:
+		case TRAP_OF_SINKING: {
+			bool iddc = in_irondeepdive(wpos);
+
 			/* MEGAHACK: Ignore Wilderness trap doors. */
 			vanish = 100;
 			if (!can_go_down(wpos, 0xF)) {
@@ -948,7 +950,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				msg_print(Ind, "You float gently down to the next level.");
 			} else {
 				/* Inventory damage (Hack - use 'cold' type) */
-				inven_damage(Ind, set_cold_destroy, damroll(2, 8));
+				inven_damage(Ind, set_cold_destroy, damroll(2, iddc ? 3 : 8));
 
 				//int dam = damroll(2, 8);
 				//take_hit(Ind, dam, name, 0);
@@ -957,6 +959,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 			do_player_trap_change_depth(Ind, -1);
 			break;
+		}
 
 		/* Trap of Mana Drain */
 		case TRAP_OF_MANA_DRAIN:
@@ -1845,6 +1848,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			int maxfall = 0;
 			struct wilderness_type *wild;
 			wild = &wild_info[wpos->wy][wpos->wx];
+			bool iddc = in_irondeepdive(wpos);
 
 			/* MEGAHACK: Ignore Wilderness chasm. */
 			vanish = 100;
@@ -1878,8 +1882,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				//take_hit(Ind, dam, name, 0);
 
 				/* Inventory damage (Hack - use 'cold' type) */
-				inven_damage(Ind, set_cold_destroy, 15 * k);
-				inven_damage(Ind, set_all_destroy, 3 * k);
+				inven_damage(Ind, set_cold_destroy, (iddc ? 4: 15) * k);
+				inven_damage(Ind, set_all_destroy, (iddc ? 1 : 3) * k);
 
 				take_hit(Ind, l, "a chasm", 0);
 				//take_sanity_hit(Ind, 1U << k, "a chasm", 0);
@@ -1889,7 +1893,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 		}
 
-		case TRAP_OF_PIT:
+		case TRAP_OF_PIT: {
+			bool iddc = in_irondeepdive(wpos);
+
 			ident = TRUE;
 			vanish = 0;
 			if (p_ptr->levitate) {
@@ -1900,7 +1906,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if (p_ptr->feather_fall || p_ptr->tim_wraith)
 				msg_print(Ind, "You float gently to the bottom of the pit.");
 			else {
-				l = damroll(1, 8);
+				l = damroll(1, iddc ? 4 : 8);
 
 				/* Inventory damage */
 				inven_damage(Ind, set_impact_destroy, l);
@@ -1922,6 +1928,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 			}
 			break;
+		}
 
 		/* Steal Item Trap */
 		case TRAP_OF_SEASONED_TRAVELER:
