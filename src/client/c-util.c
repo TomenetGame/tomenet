@@ -1967,20 +1967,26 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 	/* Add this to the history */
 	if (mode & ASKFOR_CHATTING) {
-		strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat) - 1);
-		message_history_chat[hist_chat_end][sizeof(*message_history_chat) - 1] = '\0';
-		hist_chat_end++;
-		if (hist_chat_end >= MSG_HISTORY_MAX) {
-			hist_chat_end = 0;
-			hist_chat_looped = TRUE;
+		/* Only add to history if it isn't a repetition of our previous message */
+		if (!hist_chat_end || strncmp(message_history_chat[hist_chat_end - 1], buf, sizeof(*message_history_chat) - 1)) {
+			strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat) - 1);
+			message_history_chat[hist_chat_end][sizeof(*message_history_chat) - 1] = '\0';
+			hist_chat_end++;
+			if (hist_chat_end >= MSG_HISTORY_MAX) {
+				hist_chat_end = 0;
+				hist_chat_looped = TRUE;
+			}
 		}
 	} else {
-		strncpy(message_history[hist_end], buf, sizeof(*message_history) - 1);
-		message_history[hist_end][sizeof(*message_history) - 1] = '\0';
-		hist_end++;
-		if (hist_end >= MSG_HISTORY_MAX) {
-			hist_end = 0;
-			hist_looped = TRUE;
+		/* Only add to history if it isn't a repetition of our previous message */
+		if (!hist_end || strncmp(message_history_chat[hist_end - 1], buf, sizeof(*message_history) - 1)) {
+			strncpy(message_history[hist_end], buf, sizeof(*message_history) - 1);
+			message_history[hist_end][sizeof(*message_history) - 1] = '\0';
+			hist_end++;
+			if (hist_end >= MSG_HISTORY_MAX) {
+				hist_end = 0;
+				hist_looped = TRUE;
+			}
 		}
 	}
 
