@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. July 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 22. July 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17763,6 +17763,9 @@ While a guild is leaderless, three restrictions apply:
 
 PvP outside of the dedicated 'PvP' character mode:
 --------------------------------------------------
+This is usually disabled in standard server settings, so you won't see these
+options in the party menu:
+
 -Specify player to attack
     Now you are hostile to that player and you will hurt each other like
     when fighting a monster (this includes auto-retaliating and targetting).
@@ -17793,7 +17796,7 @@ The guild master is the only person who can change back ownership of the guild
 hall or even sell it if the guild for example wants to migrate to a bigger
 guild hall.
 
-The appromimate guild hall location can be viewed by all guild members by
+The approximate guild hall location can be viewed by all guild members by
 pressing SHIFT+P and then choosing 'e)'.
 
 The door of a guild hall is displayed in violet colour to all eligible members.
