@@ -7972,7 +7972,7 @@ void player_death(int Ind) {
 		s_printf("Somethin weird with %s. GET is %d\n", p_ptr->name, p_ptr->global_event_temp);
 		msg_broadcast(0, "Uh oh, somethin's not right here.");
 	}
-	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && (p_ptr->csane >= 0) && p_ptr->wpos.wx == WPOS_SECTOR00_X && p_ptr->wpos.wy == WPOS_SECTOR00_Y && p_ptr->wpos.wz != 0) {
+	if ((p_ptr->global_event_temp & PEVF_SAFEDUN_00) && p_ptr->csane >= 0 && in_sector00_dun(&p_ptr->wpos)) {
 		s_printf("DEBUG_TOURNEY: player %s revived.\n", p_ptr->name);
 		s_printf("%s (%d) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
