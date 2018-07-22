@@ -4422,7 +4422,11 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		/* Activate */
 		Term_activate(&td->t);
 		/* Redraw the contents */
+ #if 0 /* no flickering here when animating colours 0..15, even though set_palette() flickers. Maybe because of colours 16-31 for some reason? */
 		Term_redraw();
+ #else /* trying this instead, should be identical ie no flickering, as it's the minimal possible version simply */
+		Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
+ #endif
 		/* Restore */
 		Term_activate(term_old);
 		return;
@@ -4469,9 +4473,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	/* Activate */
 	Term_activate(&td->t);
 	/* Redraw the contents */
-	//Term_redraw(); //uses total_erase, maybe causing unnecessary flicker, instead:
-	//Term_fresh();
-	Term_xtra(TERM_XTRA_FRESH, 0);
+	Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
 	/* Restore */
 	Term_activate(term_old);
 #endif

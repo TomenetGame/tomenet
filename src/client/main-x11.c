@@ -3182,7 +3182,8 @@ void animate_palette(void) {
 		if (term_prefs[i].x == -32000 || term_prefs[i].y == -32000) continue;
 
 		Term_activate(&term_idx_to_term_data(i)->t);
-		Term_redraw();
+		//Term_redraw(); --stripped down to just:
+		Term_xtra(TERM_XTRA_FRESH, 0);
 		Term_activate(&old_td->t);
 	}
 }
@@ -3239,8 +3240,6 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	if (!term_prefs[0].visible) return;
 	if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
 	Term_activate(&term_idx_to_term_data(0)->t);
-	//Term_redraw(); //even though on X11 no flickering has been observed, we don't require total_erase for this, so instead just do:
-	//Term_fresh();
 	Term_xtra(TERM_XTRA_FRESH, 0);
 	Term_activate(&old_td->t);
 #endif
