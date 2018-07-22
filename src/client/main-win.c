@@ -299,6 +299,14 @@ unsigned _cdecl _dos_getfileattr(const char *, unsigned *);
 #define VUD_BRIGHT	0x80
 
 
+/* Optimize palette-animation? [EXTENDED_COLOURS_PALANIM] */
+#define PALANIM_OPTIMIZED /* KEEP SAME AS SERVER! */
+#ifdef PALANIM_OPTIMIZED
+ #define PALANIM_OPTIMIZED2 /* Will batch colour updates together */
+#endif
+
+
+
 /* Swap colour indices used for palette animation with their originals.
    For some reason this may be required on Windows:
    The colours 0-15 can be animated just fine and flicker-free.
@@ -472,9 +480,12 @@ static cptr ANGBAND_DIR_XTRA_SOUND;
  * XXX XXX XXX The color codes below were taken from "main-ibm.c".
  */
 #ifndef EXTENDED_COLOURS_PALANIM
-static COLORREF win_clr[16] = {
+ static COLORREF win_clr[16] = {
 #else
-static COLORREF win_clr[16 * 2] = {
+ #ifdef PALANIM_OPTIMIZED2
+  static COLORREF win_clr_buf[16 * 2];
+ #endif
+ static COLORREF win_clr[16 * 2] = {
 #endif
 	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
 	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
@@ -547,6 +558,9 @@ static void enable_common_colormap_win(void) {
 	for (i = 0; i < 16 * 2; i++) {
 #endif
 		win_clr[i] = PALETTERGB(RED(i), GREEN(i), BLUE(i));
+#ifdef PALANIM_OPTIMIZED2
+		win_clr_buf[i] = win_clr[i];
+#endif
 	}
 }
 
@@ -4400,7 +4414,6 @@ void animate_palette(void) {
 		Term_activate(old);
 	}
 }
-#define PALANIM_OPTIMIZED /* KEEP SAME AS SERVER! */
 void set_palette(byte c, byte r, byte g, byte b) {
 	COLORREF code;
 	term *term_old = Term;
@@ -4410,6 +4423,21 @@ void set_palette(byte c, byte r, byte g, byte b) {
 #ifdef PALANIM_OPTIMIZED
 	/* Check for refresh market at the end of a palette data transmission */
 	if (c == 127) {
+ #ifdef PALANIM_OPTIMIZED2
+		int i;
+		/* Batch-apply all colour changes */
+  #ifndef EXTENDED_COLOURS_PALANIM
+		for (i = 0; i < 16; i++)
+  #else
+   #ifdef PALANIM_SWAP
+		for (i = 0; i < 16; i++)
+   #else
+		for (i = 0; i < 16 + 16; i++)
+   #endif
+  #endif
+			win_clr[i] = win_clr_buf[i];
+ #endif
+
 		/* Activate the palette */
  #ifdef PALANIM_SWAP
 		new_palette_ps();
@@ -4454,10 +4482,18 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	code = PALETTERGB(r, g, b);
 
 	/* Activate changes if any */
+#ifndef PALANIM_OPTIMIZED2
 	if (win_clr[c] == code) return;
+#else
+	if (win_clr_buf[c] == code) return;
+#endif
 
 	/* Apply the desired color */
+#ifndef PALANIM_OPTIMIZED2
 	win_clr[c] = code;
+#else
+	win_clr_buf[c] = code;
+#endif
 	//c_message_add("palette changed");
 
 #ifndef PALANIM_OPTIMIZED
