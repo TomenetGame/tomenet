@@ -1539,6 +1539,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 	int l = 0; /* Is the cursor location on line */
 	int j = 0; /* Loop iterator */
 
+	bool search = FALSE;
+	int s;
+
 	bool tail = FALSE;
 	int l_old = l;
 	bool modify_ok = TRUE;
@@ -1622,6 +1625,22 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 		case '\n':
 		case '\r':
+			/* Catch searching mode */
+			if (search) {
+				/* We didn't find any match? */
+				if (s == MSG_HISTORY_MAX) continue;
+
+				/* Replace our search string by the actual match and go with that */
+				if (mode & ASKFOR_CHATTING) strncpy(buf, message_history_chat[s], len);
+				else strncpy(buf, message_history[s], len);
+
+				buf[len] = '\0';
+				k = l = strlen(buf);
+				done = TRUE;
+				break;
+			}
+
+			/* Proceed normally */
 			k = strlen(buf);
 			done = TRUE;
 			break;
@@ -1852,7 +1871,6 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 			k = l = strlen(buf);
 			break;
-
 		case KTRL('P'):
 			if (nohist) break;
 			if (mode & ASKFOR_CHATTING) {
@@ -1872,6 +1890,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 			}
 
 			k = l = strlen(buf);
+			break;
+		case KTRL('C'): /* Allow searching for text in a previously entered chat message */
+			if (nohist) break;
+			search = !search;
 			break;
 
 		/* word-size backspace */
@@ -1934,6 +1956,30 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 		/* Terminate */
 		buf[k] = '\0';
+
+		/* Are we in message-history-searching mode? */
+		if (search) {
+			if (mode & ASKFOR_CHATTING) {
+				//Term_erase(x, y, vis_len);
+				for (s = 0; s < MSG_HISTORY_MAX; s++) {
+					if (!strstr(message_history_chat[s], buf)) continue;
+					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+					c_prt(TERM_YELLOW, message_history_chat[s], y, x);
+					break;
+				}
+				if (s == MSG_HISTORY_MAX) c_prt(TERM_ORANGE, buf, y, x);
+			} else {
+				//Term_erase(x, y, vis_len);
+				for (s = 0; s < MSG_HISTORY_MAX; s++) {
+					if (!strstr(message_history[s], buf)) continue;
+					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+					c_prt(TERM_YELLOW, buf, y, x);
+					break;
+				}
+				if (s == MSG_HISTORY_MAX) c_prt(TERM_ORANGE, buf, y, x);
+			}
+			continue;
+		}
 
 		/* Update the entry */
 		if (!(mode & ASKFOR_PRIVATE)) {
