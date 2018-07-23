@@ -8655,6 +8655,12 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 #endif
 
+		/* no mana-draining weapons for mana users... */
+		if (p_ptr->msg &&
+		    (o_ptr->name2 == EGO_ELEMENTAL || o_ptr->name2b == EGO_ELEMENTAL ||
+		    o_ptr->name2 == EGO_FURY || o_ptr->name2b == EGO_FURY))
+			continue;
+
 		/* no anti-undead items for vampires */
 		if (anti_undead(o_ptr, p_ptr)) continue;
 		/* no anti-demon items for hell knights */
