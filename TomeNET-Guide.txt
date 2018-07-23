@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. July 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 23. July 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9657,7 +9657,8 @@ LUCK ('It affects your luck.')
         is by your personal ooc luck I guess :-p).
         'Great' means that an item has ego powers or is an artifact. Luck does
         not affect how great its ego power or artifact abilities will be!
-        Note: Luck has NO effect on 'acquirement' and 'artifact creation'.
+        Note: Luck has NO effect on 'acquirement', 'artifact creation' or on
+        items you obtain from chests.
         Note: Luck does NOT affect which base item type drops, ie whether it is
         a dragon scale mail or a cloth hat.
 NO_MAGIC ('Anti-magic shell')
