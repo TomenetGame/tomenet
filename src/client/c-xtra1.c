@@ -610,7 +610,7 @@ void prt_sp(int max, int cur, bool bar) {
 			else
 #endif
 				bar_char = '#';
-
+ #if 0 /* use same colours as for HP/SN bars? */
 			color = TERM_L_GREEN;
 			put_str("MP          ", ROW_MAXSP, 0);
 			if (max == -9999) sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
@@ -631,6 +631,28 @@ void prt_sp(int max, int cur, bool bar) {
 					tmp[1] = 0;
 				}
 			}
+ #else /* use blue theme for mana instead? */
+			color = TERM_L_BLUE;
+			put_str("MP          ", ROW_MAXSP, 0);
+			if (max == -9999) sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
+			else {
+				int c, n = (9 * cur) / max;
+
+				if (cur >= max) ;
+				else if (cur >= (max * 4) / 9) color = TERM_L_BLUE; //same!
+				else if (cur >= (max * 2) / 9) color = TERM_BLUE;
+				else color = TERM_VIOLET;
+
+				tmp[0] = 0;
+				for (c = 0; c < n; c++) tmp[c] = bar_char;
+				tmp[c] = 0;
+				if (cur <= 0) strcpy(tmp, "-");
+				else if (!tmp[0]) {
+					tmp[0] = bar_char; //always display at least one tick (still we probably don't just want to round up instead)
+					tmp[1] = 0;
+				}
+			}
+ #endif
 			c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
 		}
 #endif
