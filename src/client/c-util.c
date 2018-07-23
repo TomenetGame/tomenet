@@ -1540,7 +1540,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 	int j = 0; /* Loop iterator */
 
 	bool search = FALSE;
-	int s;
+	int s, s2;
 
 	bool tail = FALSE;
 	int l_old = l;
@@ -1626,32 +1626,87 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case KTRL('C'): /* Allow searching for text in a previously entered chat message */
 			if (nohist) break;
 			if (!search) {
+				/* Begin searching mode */
 				search = TRUE;
 				break;
 			}
-			/* Fall through! */
+
+			/* Continue search by looking for next match */
+			if (s == MSG_HISTORY_MAX) continue; /* No match exists at all */
+			if (mode & ASKFOR_CHATTING) {
+				/* Look for further match.. */
+				for (s2 = s + 1; s2 < MSG_HISTORY_MAX; s2++) {
+					if (!strstr(message_history_chat[s2], buf)) continue;
+					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+					c_prt(TERM_YELLOW, format("%s: %s", buf, message_history_chat[s2]), y, x);
+					s = s2;
+					break;
+				}
+				if (s2 == MSG_HISTORY_MAX) { /* No further match found */
+					/* Start from the beginning again, at this point we know there must be at least one match we can find now (again) */
+					for (s2 = 0; s2 <= s; s2++) {
+						if (!strstr(message_history_chat[s2], buf)) continue;
+						/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+						c_prt(TERM_YELLOW, format("%s: %s", buf, message_history_chat[s2]), y, x);
+						s = s2;
+						break;
+					}
+				}
+			} else {
+				/* Look for further match.. */
+				for (s2 = s + 1; s2 < MSG_HISTORY_MAX; s2++) {
+					if (!strstr(message_history[s2], buf)) continue;
+					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+					c_prt(TERM_YELLOW, format("%s: %s", buf, message_history[s2]), y, x);
+					s = s2;
+					break;
+				}
+				if (s2 == MSG_HISTORY_MAX) { /* No further match found */
+					/* Start from the beginning again, at this point we know there must be at least one match we can find now (again) */
+					for (s2 = 0; s2 <= s; s2++) {
+						if (!strstr(message_history[s2], buf)) continue;
+						/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+						c_prt(TERM_YELLOW, format("%s: %s", buf, message_history[s2]), y, x);
+						s = s2;
+						break;
+					}
+				}
+			}
+			continue;
 		case '\n':
 		case '\r':
 			/* Catch searching mode */
 			if (search) {
 				/* We didn't find any match? */
-				if (s == MSG_HISTORY_MAX) continue;
+				if (s == MSG_HISTORY_MAX) {
+#if 0
+					continue;
+#else /* Actually switch to normal text input instead of just having to discard the unmatched search string: */
+					search = FALSE;
+					buf[len] = '\0';
+					k = l = strlen(buf);
+					c_prt(TERM_WHITE, buf, y, x);
+					/* Note: For some reason the cursor becomes invisible here */
+ #if 0 /* This code works randomly. Sometimes it does NOT restore cursor visibility. */
+					Term_set_cursor(1);
+					Term_xtra(TERM_XTRA_SHAPE, 1);
+ #endif
+					continue;
+#endif
+				}
 
 				/* Replace our search string by the actual match and go with that */
 				if (mode & ASKFOR_CHATTING) strncpy(buf, message_history_chat[s], len);
 				else strncpy(buf, message_history[s], len);
-
-				buf[len] = '\0';
+				search = FALSE;
 				k = l = strlen(buf);
-				if (i != KTRL('C')) done = TRUE;
-				else search = FALSE;
-				break;
+				c_prt(TERM_WHITE, buf, y, x);
+				continue;
 			}
-
 			/* Proceed normally */
-			k = strlen(buf);
-			if (i != KTRL('C')) done = TRUE;
-			else search = FALSE;
+			buf[len] = '\0';
+			k = l = strlen(buf);
+			done = TRUE;
 			break;
 
 #if 0 /* urxvt actually seems to recognize 0x7F as BACKSPACE, unlike other terminals \
@@ -1956,21 +2011,26 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 		/* Are we in message-history-searching mode? */
 		if (search) {
+			/* empty search string initially */
+			if (!buf[0]) {
+				/* just skip.. */
+				Term_erase(x, y, vis_len);
+				s = MSG_HISTORY_MAX;
+				continue;
+			}
 			if (mode & ASKFOR_CHATTING) {
-				//Term_erase(x, y, vis_len);
 				for (s = 0; s < MSG_HISTORY_MAX; s++) {
 					if (!strstr(message_history_chat[s], buf)) continue;
 					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-					c_prt(TERM_YELLOW, message_history_chat[s], y, x);
+					c_prt(TERM_YELLOW, format("%s: %s", buf, message_history_chat[s]), y, x);
 					break;
 				}
 				if (s == MSG_HISTORY_MAX) c_prt(TERM_ORANGE, buf, y, x);
 			} else {
-				//Term_erase(x, y, vis_len);
 				for (s = 0; s < MSG_HISTORY_MAX; s++) {
 					if (!strstr(message_history[s], buf)) continue;
 					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-					c_prt(TERM_YELLOW, buf, y, x);
+					c_prt(TERM_YELLOW, format("%s: %s", buf, message_history[s]), y, x);
 					break;
 				}
 				if (s == MSG_HISTORY_MAX) c_prt(TERM_ORANGE, buf, y, x);
@@ -1999,8 +2059,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 	/* The top line is OK now */
 	topline_icky = FALSE;
-	if(!c_quit)
-		Flush_queue();
+	if (!c_quit) Flush_queue();
 
 	/* Aborted */
 	if (i == ESCAPE) return (FALSE);
