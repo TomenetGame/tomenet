@@ -7025,7 +7025,7 @@ static void process_various(void) {
 				reserved_name_timeout[i]--;
 				continue;
 			}
-			s_printf("RESERVED_NAMES: free'd \"%s\"\n", reserved_name_character[i]); //debug
+			s_printf("RESERVED_NAMES: free'd \"%s\" (%s) at %d\n", reserved_name_character[i], reserved_name_account[i], i); //debug
 			for (j = i + 1; j < MAX_RESERVED_NAMES; j++) {
 				if (!reserved_name_character[j][0]) {
 					reserved_name_character[j - 1][0] = '\0';
