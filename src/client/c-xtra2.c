@@ -21,7 +21,8 @@
 /* TODO: those functions should be bandled in one or two generic function(s).
  */
 void do_cmd_messages(void) {
-	int i, j, k, n, nn, q, r, s, t = 0;
+	int i, j, k, n, nn, q, r, s, t = 0, p;
+	byte a, ab, ap;
 
 	char shower[80] = "";
 	char finder[80] = "";
@@ -79,13 +80,14 @@ void do_cmd_messages(void) {
 		s = 0;	/* how many lines Saved */
 		k = 0;	/* end of buffer flag */
 
+		ap = TERM_WHITE;
 
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j + s < n); j++) {
-			byte a = TERM_WHITE;
+			a = TERM_WHITE;
 
 			msg2 = msg;
-			msg = message_recall[i+j+s];
+			msg = message_recall[i + j + s];
 
 			/* Handle repeated messages */
 			if (msg == msg2) {
@@ -97,12 +99,25 @@ void do_cmd_messages(void) {
 			}
 
 			if (r) {
-				Term_putstr(t < 72 ? t : 72, 21 + HGT_PLUS-j+1-k, -1, a, format(" (x%d)", r + 1));
+				Term_putstr(t < 72 ? t : 72, 21 + HGT_PLUS - j + 1 - k, -1, a, format(" (x%d)", r + 1));
 				r = 0;
 			}
 
 			/* Apply horizontal scroll */
+			msg2 = msg;
 			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
+
+			/* For horizontal scrolling: Parse correct colour code that we might have skipped */
+			if (q) {
+				for (p = 0; p < q; p++) {
+					if (msg2[p] != '\377') continue;
+					if (msg2[p + 1] == '.') a = ap;
+					else if (isalpha(msg2[p + 1]) || isdigit(msg2[p + 1])) {
+						ap = ab;
+						a = ab = color_char_to_attr(msg2[p + 1]);
+					}
+				}
+			}
 
 			/* Handle "shower" */
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
@@ -114,7 +129,7 @@ void do_cmd_messages(void) {
 
 		/* Display header XXX XXX XXX */
 		prt(format("Message Recall (%d-%d of %d), Offset %d",
-					i, i+j-1, n, q), 0, 0);
+		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
 		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23 + HGT_PLUS, 0);
@@ -307,10 +322,13 @@ void do_cmd_messages(void) {
    It simply is a buffer of 'very important' messages, as already
    stated above by Zz ;) - C. Blue */
 void do_cmd_messages_chatonly(void) {
-	int i, j, k, n, nn, q;
+	int i, j, k, n, nn, q, p;
+	byte a, ab, ap;
 
 	char shower[80] = "";
 	char finder[80] = "";
+
+	cptr msg, msg2;
 
 	/* Create array to store message buffer for important messags  */
 	/* (This is an expensive hit, move to c-init.c?  But this only */
@@ -328,7 +346,7 @@ void do_cmd_messages_chatonly(void) {
 	/* Filter message buffer for "important messages" add to message_chat*/
 //	for (i = 0; i < n; i++)
 	for (i = n - 1; i >= 0; i--) { /* traverse from oldest to newest message */
-		cptr msg = message_str(i);
+		msg = message_str(i);
 
 		if (msg[0] == '\376') {
 			/* strip control code */
@@ -367,25 +385,41 @@ void do_cmd_messages_chatonly(void) {
 
 		/* Use last element in message_chat as  message_num() */
 		n = nn;
+
+		ap = TERM_WHITE;
+
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
-			byte a = TERM_WHITE;
-			cptr msg = message_chat[nn - 1 - (i+j)]; /* because of inverted traversal direction, see further above */
-//			cptr msg = message_chat[i+j];
+			msg = message_chat[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
+			//cptr msg = message_chat[i + j];
+			a = TERM_WHITE;
 
 			/* Apply horizontal scroll */
+			msg2 = msg;
 			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
+
+			/* For horizontal scrolling: Parse correct colour code that we might have skipped */
+			if (q) {
+				for (p = 0; p < q; p++) {
+					if (msg2[p] != '\377') continue;
+					if (msg2[p + 1] == '.') a = ap;
+					else if (isalpha(msg2[p + 1]) || isdigit(msg2[p + 1])) {
+						ap = ab;
+						a = ab = color_char_to_attr(msg2[p + 1]);
+					}
+				}
+			}
 
 			/* Handle "shower" */
 			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21 + HGT_PLUS-j, -1, a, (char*)msg);
+			Term_putstr(0, 21 + HGT_PLUS - j, -1, a, (char*)msg);
 		}
 
 		/* Display header XXX XXX XXX */
 		prt(format("Message Recall (%d-%d of %d), Offset %d",
-					i, i+j-1, n, q), 0, 0);
+		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
 		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23 + HGT_PLUS, 0);
