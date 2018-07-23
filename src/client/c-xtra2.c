@@ -80,11 +80,9 @@ void do_cmd_messages(void) {
 		s = 0;	/* how many lines Saved */
 		k = 0;	/* end of buffer flag */
 
-		ap = TERM_WHITE;
-
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j + s < n); j++) {
-			a = TERM_WHITE;
+			a = ab = ap = TERM_WHITE;
 
 			msg2 = msg;
 			msg = message_recall[i + j + s];
@@ -386,13 +384,11 @@ void do_cmd_messages_chatonly(void) {
 		/* Use last element in message_chat as  message_num() */
 		n = nn;
 
-		ap = TERM_WHITE;
-
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
 			msg = message_chat[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
 			//cptr msg = message_chat[i + j];
-			a = TERM_WHITE;
+			a = ab = ap = TERM_WHITE;
 
 			/* Apply horizontal scroll */
 			msg2 = msg;

@@ -1201,6 +1201,7 @@ void peruse_file(void) {
 
 	/* Initialize */
 	cur_line = 0;
+	cur_col = 0;
 	special_page_size = 20 + HGT_PLUS; /* assume 'non-odd_line' aka normal page size (vs 21 or --2) */
 
 	/* Save the old screen */
@@ -1312,6 +1313,26 @@ void peruse_file(void) {
 
 		/* Exit on escape */
 		if (k == ESCAPE || k == KTRL('Q')) break;
+
+
+		/* Horizontal scroll */
+		if (k == '4' || k == '<' || k == 'h') {
+			/* Scroll left */
+			cur_col = (cur_col >= 40) ? (cur_col - 40) : 0;
+
+			/* Success */
+			continue;
+		}
+
+		/* Horizontal scroll */
+		if (k == '6' || k == '>' || k == 'l') {
+			/* Scroll right */
+			cur_col = cur_col + 40;
+
+			/* Success */
+			continue;
+		}
+
 
 		/* Check maximum line */
 #if 1 /* don't allow 'empty lines' at end of list but wrap around immediately */

@@ -3377,8 +3377,8 @@ int Receive_boni_col(void) {
 }
 
 int Receive_special_line(void) {
-	int	n;
-	char	ch, attr;
+	int	n, p;
+	char	ch, attr, ab, ap;
 	s32b	max, line;
 	char	buf[ONAME_LEN]; /* Allow colour codes! (was: MAX_CHARS, which is just 80) */
 	int	x, y, phys_line;
@@ -3391,6 +3391,9 @@ int Receive_special_line(void) {
 		max = old_max;
 		line = old_line;
 	}
+
+	ab = attr;
+	ap = TERM_WHITE;
 
 	/* Hack - prepare for a special sized page (# of lines divisable by n) */
 	if (line >= 21 + HGT_PLUS) {
@@ -3455,7 +3458,22 @@ int Receive_special_line(void) {
 			Term_erase(0, phys_line, 255);
 		}
 
-		c_put_str(attr, buf, phys_line, 0);
+		/* Apply horizontal scroll */
+		/* For horizontal scrolling: Parse correct colour code that we might have skipped */
+		if (cur_col) {
+			for (p = 0; p < cur_col; p++) {
+				if (buf[p] != '\377') continue;
+				if (buf[p + 1] == '.') attr = ap;
+				else if (isalpha(buf[p + 1]) || isdigit(buf[p + 1])) {
+					ap = ab;
+					attr = ab = color_char_to_attr(buf[p + 1]);
+				}
+			}
+		}
+
+		/* Finally print the actual line */
+		if (strlen(buf) >= cur_col) /* catch too far horizontal scrolling */
+			c_put_str(attr, buf + cur_col, phys_line, 0);
 
 		/* restore cursor position */
 		Term_gotoxy(x, y);

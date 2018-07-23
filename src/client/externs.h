@@ -177,6 +177,7 @@ extern bool shopping, perusing;
 extern s16b last_line_info;
 extern s32b cur_line;
 extern s32b max_line;
+extern int cur_col;
 #ifdef BIGMAP_MINDLINK_HACK
 extern s16b last_line_y;
 #endif
