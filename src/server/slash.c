@@ -9915,9 +9915,9 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "flags2 = %u", l_ptr->flags2);
 				return;
 			}
-			else if (prefix(message, "/reservednames")) {
+			else if (prefix(message, "/reservednames")) { /* any parm to not stop at 1st 'nulled' name found */
 				for (i = 0; i < MAX_RESERVED_NAMES; i++) {
-					if (!reserved_name_character[i][0]) break;
+					if (!tk && !reserved_name_character[i][0]) break;
 					msg_format(Ind, "%s by account %s for %d minutes",
 					    reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i]);
 				}
