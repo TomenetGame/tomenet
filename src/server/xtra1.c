@@ -1359,6 +1359,7 @@ void calc_mana(int Ind) {
 //	if (((cur_wgt - max_wgt) / 10) > 0) {
 	if ((cur_wgt - max_wgt) > 0) {
 		/* Reduce mana */
+
 //		new_mana -= ((cur_wgt - max_wgt) * 2 / 3);
 
 		/* square root - C. Blue */
@@ -1374,7 +1375,12 @@ void calc_mana(int Ind) {
 		tmp2 /= 1000;
 		new_mana *= (10 - tmp2);
 */
-		new_mana -= (new_mana * (cur_wgt - max_wgt > 100 ? 100 : cur_wgt - max_wgt)) / 100;
+
+		/* At least reduce by 1 -_- */
+		int malus = (new_mana * (cur_wgt - max_wgt > 100 ? 100 : cur_wgt - max_wgt)) / 100;
+
+		if (!malus) malus = 1;
+		new_mana -= malus;
 
 		/* Encumbered */
 		p_ptr->awkward_armor = TRUE;
@@ -1384,15 +1390,15 @@ void calc_mana(int Ind) {
 
 	/* --- finalize --- */
 
-	/* give at least 1 MP under normal circumstances */
-	if (new_mana <= 0) new_mana = 1;
-
-	if (Ind2) new_mana += p_ptr2->msp / 2;
-
 	/* Istari being purely mana-based thanks to mana shield don't need @ form at all,
 	   so vampire istari could get free permanent +5 speed from vampire bat form.
 	   Prevent that here: */
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) new_mana /= 3; //for both, RI_VAMPIRE_BAT and RI_VAMPIRIC_MIST
+
+	/* give at least 1 MP under normal circumstances */
+	if (new_mana <= 0) new_mana = 1;
+
+	if (Ind2) new_mana += p_ptr2->msp / 2;
 
 	/* Some classes dont use mana */
 	if ((p_ptr->pclass == CLASS_WARRIOR) ||
