@@ -148,9 +148,11 @@ function chat_handler()
 		ties = 0;
 	end
 
+[[--
 	if (find("^help$")) then
                 if (randint(3) == 2) then bot ("RTFM: tomenet-bin/TomeNET-Guide.txt"); end
 	end
+]]
 	if (find ("start me") and state == 0) then
 		haha("You wake up feeling a sharp pain on the base of your neck")
 		haha("You see a half-empty glass of water on the bedside table")
@@ -219,12 +221,14 @@ function chat_handler()
 	if (find("run to the hills")) then
 		bot("Run for your life!");
 	end
+[[--
 	if (what == "sup" or what == "hi" or what == "hello" or what == "heya") then
 		bot("Good day, "..who);
 	end
 	if (find("good") and (find("morning") or find("afternoon") or find("evening"))) then
 		bot("Hello, "..who);
 	end
+]]
 	if (find("dude")) then
 		bot("Dude!");
 	end
@@ -294,18 +298,22 @@ function chat_handler()
  ]]
 		end
 	end
+[[--
 	if (find("which") and find("wear")) then
 		bot ("Wear nothing-- donate the stuff to the Mathom!");
 	end
+]]
 	if (find("god") and (find("kill") or find ("die"))) then
 		bot ("Gods can't die? I can kick the gods out though. ^^");
 	end
+[[--
 	if (find("cya") or find ("l8r")) then
 		bot ("Thank you, come again!");
 	end 
 	if (find("xmas") or find ("merry christmas")) then
 		bot ("Christmas is over. Find another event, f00s");
 	end
+]]
 
 if(find("^tbot:") and find("macro")) then
 pbot("You must macro ':command: fire 1' ':command: fire 2' etc to a 3*3 block of keys. There is no 'fire 5' but a 'cease fire' command stops firing. It's like you're sending private messages to a guy named 'Command' to control yourself. Another helpful command is 'play smash' to start the game.")
