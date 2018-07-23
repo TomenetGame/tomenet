@@ -1623,6 +1623,13 @@ bool askfor_aux(char *buf, int len, char mode) {
 			done = TRUE;
 			break;
 
+		case KTRL('C'): /* Allow searching for text in a previously entered chat message */
+			if (nohist) break;
+			if (!search) {
+				search = TRUE;
+				break;
+			}
+			/* Fall through! */
 		case '\n':
 		case '\r':
 			/* Catch searching mode */
@@ -1636,13 +1643,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 				buf[len] = '\0';
 				k = l = strlen(buf);
-				done = TRUE;
+				if (i != KTRL('C')) done = TRUE;
+				else search = FALSE;
 				break;
 			}
 
 			/* Proceed normally */
 			k = strlen(buf);
-			done = TRUE;
+			if (i != KTRL('C')) done = TRUE;
+			else search = FALSE;
 			break;
 
 #if 0 /* urxvt actually seems to recognize 0x7F as BACKSPACE, unlike other terminals \
@@ -1652,24 +1661,24 @@ bool askfor_aux(char *buf, int len, char mode) {
 #endif
 		case KTRL('D'):
 			if (k > l) {
-			  /* Move the rest of the line one back */
-			  for (j = l + 1; j < k; j++) buf[j - 1] = buf[j];
-			  k--;
+				/* Move the rest of the line one back */
+				for (j = l + 1; j < k; j++) buf[j - 1] = buf[j];
+				k--;
 			}
 			break;
 
 		case 0x7F: /* well...not DEL but Backspace too it seems =P */
 		case '\010': /* Backspace removes char before cursor */
 			if (k == l && k > 0) {
-			  k--;
-			  l--;
+				k--;
+				l--;
 			}
 			if (k > l && l > 0) {
 			  /* Move the rest of the line one back, including
 			     char under cursor and cursor) */
-			  for (j = l; j < k; j++) buf[j - 1] = buf[j];
-			  l--;
-			  k--;
+				for (j = l; j < k; j++) buf[j - 1] = buf[j];
+				l--;
+				k--;
 			}
 			break;
 
@@ -1721,8 +1730,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (mode & ASKFOR_CHATTING) {
 				/* Change chatting mode - mikaelh */
 				chat_mode++;
-				if (chat_mode > CHAT_MODE_GUILD)
-					chat_mode = CHAT_MODE_NORMAL;
+				if (chat_mode > CHAT_MODE_GUILD) chat_mode = CHAT_MODE_NORMAL;
 
 				/* HACK - Change the prompt */
 				switch (chat_mode) {
@@ -1760,8 +1768,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (mode & ASKFOR_CHATTING) {
 				/* Reverse change chatting mode */
 				chat_mode--;
-				if (chat_mode < CHAT_MODE_NORMAL)
-					chat_mode = CHAT_MODE_GUILD;
+				if (chat_mode < CHAT_MODE_NORMAL) chat_mode = CHAT_MODE_GUILD;
 
 				/* HACK - Change the prompt */
 				switch (chat_mode) {
@@ -1855,16 +1862,14 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 			if (mode & ASKFOR_CHATTING) {
 				if ((!hist_chat_looped && hist_chat_end < cur_hist) ||
-					(hist_chat_looped && cur_hist >= MSG_HISTORY_MAX)) {
+				    (hist_chat_looped && cur_hist >= MSG_HISTORY_MAX))
 					cur_hist = 0;
-				}
 				strncpy(buf, message_history_chat[cur_hist], len);
 				buf[len] = '\0';
 			} else {
 				if ((!hist_looped && hist_end < cur_hist) ||
-					(hist_looped && cur_hist >= MSG_HISTORY_MAX)) {
+				    (hist_looped && cur_hist >= MSG_HISTORY_MAX))
 					cur_hist = 0;
-				}
 				strncpy(buf, message_history[cur_hist], len);
 				buf[len] = '\0';
 			}
@@ -1875,25 +1880,17 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (nohist) break;
 			if (mode & ASKFOR_CHATTING) {
 				if (cur_hist) cur_hist--;
-				else {
-					cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end;
-				}
+				else cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end;
 				strncpy(buf, message_history_chat[cur_hist], len);
 				buf[len] = '\0';
 			} else {
 				if (cur_hist) cur_hist--;
-				else {
-					cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end;
-				}
+				else cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end;
 				strncpy(buf, message_history[cur_hist], len);
 				buf[len] = '\0';
 			}
 
 			k = l = strlen(buf);
-			break;
-		case KTRL('C'): /* Allow searching for text in a previously entered chat message */
-			if (nohist) break;
-			search = !search;
 			break;
 
 		/* word-size backspace */
@@ -1932,20 +1929,20 @@ bool askfor_aux(char *buf, int len, char mode) {
 				break;
 			}
 			/* Place character at end of line and increment k and l */
-			if (k == l){
-			  if ((k < len) && (isprint(i))) {
-			    buf[k++] = i;
-			    l++;
-			  }
+			if (k == l) {
+				if ((k < len) && (isprint(i))) {
+					buf[k++] = i;
+					l++;
+				}
 			}
 			/* Place character at currect cursor position after moving
 			   the rest of the line one step forward */
-			else if (k > l){
-			  if ((k < len) && (isprint(i))) {
-			    for (j = k;j>=l;j--) buf[j+1] = buf[j];
-			    buf[l++] = i;
-			    k++;
-			  }
+			else if (k > l) {
+				if ((k < len) && (isprint(i))) {
+					for (j = k; j >= l; j--) buf[j + 1] = buf[j];
+					buf[l++] = i;
+					k++;
+				}
 			}
 			else bell();
 			break;
@@ -2077,8 +2074,7 @@ bool askfor_aux(char *buf, int len, char mode) {
  *
  * We clear the input, and return FALSE, on "ESCAPE".
  */
-bool get_string(cptr prompt, char *buf, int len)
-{
+bool get_string(cptr prompt, char *buf, int len) {
 	bool res;
 	char askfor_mode = 0x00;
 
@@ -2130,8 +2126,7 @@ bool get_string(cptr prompt, char *buf, int len)
  *
  * Returns TRUE unless the character is "Escape"
  */
-bool get_com(cptr prompt, char *command)
-{
+bool get_com(cptr prompt, char *command) {
 	/* The top line is "icky" */
 	topline_icky = TRUE;
 
