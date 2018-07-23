@@ -3365,9 +3365,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			if (p_ptr->consistent_players) {
 				c = '@';
 				a = TERM_L_DARK;
-				if (p2_ptr->black_breath && magik(50)) {
-					a = TERM_SLATE;
-				}
+				if (p2_ptr->black_breath && magik(50)) a = TERM_SLATE;
 			}
 
 			/* snowed by a snowball hit? */
@@ -3688,15 +3686,16 @@ void lite_spot(int Ind, int y, int x) {
 				else a = TERM_L_DARK;
 			}
 
+			/* notice own Black Breath by colour instead just from occasional message */
+			if (p_ptr->black_breath && magik(50)) a = TERM_L_DARK;
+
+			/* see oneself burning in the sun */
+			if (p_ptr->sun_burn && magik(33)) a = TERM_FIRE;
+
 			/* Mana Shield and GOI also flicker */
 			if (p_ptr->tim_manashield && rand_int(2)) {
 				if (p_ptr->tim_manashield > 15) a = TERM_SHIELDM;
 				else a = TERM_NEXU;
-			}
-			if (p_ptr->invuln && rand_int(4)) {
-				if (p_ptr->invuln > 5) a = TERM_SHIELDI;
-				else if (p_ptr->invuln_dur >= 5) /* avoid animating normal stair-GoI */
-					a = TERM_NUKE;
 			}
 
 			/* All kinds of BNW states: */
@@ -3754,11 +3753,11 @@ void lite_spot(int Ind, int y, int x) {
 #endif
 			}
 
-			/* notice own Black Breath by colour instead just from occasional message */
-			if (p_ptr->black_breath && magik(50)) a = TERM_L_DARK;
-
-			/* see oneself burning in the sun */
-			if (p_ptr->sun_burn && magik(33)) a = TERM_FIRE;
+			if (p_ptr->invuln && rand_int(4)) {
+				if (p_ptr->invuln > 5) a = TERM_SHIELDI;
+				else if (p_ptr->invuln_dur >= 5) /* avoid animating normal stair-GoI */
+					a = TERM_NUKE;
+			}
 
 			/* Polymorph ring power running out */
 			if (p_ptr->tim_mimic
@@ -3794,6 +3793,7 @@ void lite_spot(int Ind, int y, int x) {
 
 			if (p_ptr->consistent_players) {
 				a = TERM_WHITE;
+				if (p_ptr->black_breath && magik(50)) a = TERM_SLATE;
 				if (p_ptr->tim_mimic > 0 && p_ptr->body_monster == p_ptr->tim_mimic_what) {
 					if (
 #ifdef ENABLE_HELLKNIGHT
@@ -3807,11 +3807,15 @@ void lite_spot(int Ind, int y, int x) {
 					else a = TERM_ORANGE;
 				}
 				if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
-					a = TERM_YELLOW;
+					if (p_ptr->tim_manashield > 15) a = TERM_YELLOW;
+					else a = TERM_ORANGE;
 				}
-				if (p_ptr->black_breath && magik(50)) {
-					a = TERM_SLATE;
+				if (p_ptr->kinetic_shield && p_ptr->msp > 0 && p_ptr->csp > 0) {
+					if (p_ptr->kinetic_shield > 10) a = TERM_YELLOW;
+					else a = TERM_ORANGE;
 				}
+				if (p_ptr->martyr) a = TERM_L_UMBER;
+				if (p_ptr->invuln && p_ptr->invuln_dur >= 5) a = TERM_VIOLET;
 			}
 
 #ifdef ENABLE_SELF_FLASHING
