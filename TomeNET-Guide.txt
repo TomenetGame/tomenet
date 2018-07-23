@@ -919,6 +919,9 @@ CTRL+E      Delete word before the cursor.
 CTRL+A/S    Move cursor back/forward by one character.
 CTRL+D      Delete character under the cursor.
 
+CTRL+C      Search history of chat messages you typed. Press CTRL+C again for
+            next match. Press ENTER to choose or ESC to cancel.
+
 
 (0.2b) Slash commands
 ---------------------
