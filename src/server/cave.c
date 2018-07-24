@@ -2237,6 +2237,24 @@ byte get_rune_color(int Ind, int typ) {
 	return a;
 }
 
+/* Helper function to check whether a player is affected by day/night time colour shading/switching. */
+bool outdoor_affects(struct worldpos *wpos) {
+	dungeon_type *d_ptr = getdungeon(wpos);
+	struct dun_level *l_ptr = getfloor(wpos);
+
+	/* Definitely excluded locations */
+	if ((in_sector00(wpos) && (sector00flags2 & LF2_INDOORS))
+	    || (l_ptr && (l_ptr->flags2 & LF2_INDOORS)))
+		return FALSE;
+
+	/* Otherwise included locations */
+	if (!wpos->wz || /* World surface */
+	    (d_ptr && d_ptr->type == DI_CLOUD_PLANES)) /* The Cloud Planes */
+		return TRUE;
+
+	/* Default */
+	return FALSE;
+}
 /*
  * Manipulate map grid colours, for example outside on world surface,
  * depending on clima or daytime!  - C. Blue
@@ -2245,27 +2263,15 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 	bool old_rand = Rand_quick;
 	u32b tmp_seed = Rand_value; /* save RNG */
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
-#if 0 /* hmm, maybe map_info() is the right place really */
-#ifdef EXTENDED_COLOURS_PALANIM
-	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
-#else
-	bool palanim = FALSE;
-#endif
-#endif
 
 	/* World surface manipulation only */
-	if (wpos->wz) return colour;
+	if (!outdoor_affects(wpos)) return colour;
 
 	/* Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now. */
 	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return colour;
 	/* Also don't shade TERM_L_UMBER doors to TERM_UMBER while we're at it. */
 	if (c_ptr->feat == FEAT_OPEN || c_ptr->feat == FEAT_BROKEN || c_ptr->feat == FEAT_SHOP ||
 	    (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL)) return colour;
-
-#if 0
-	/* Use palette-animated colours if available (even if we don't apply manipulation here) */
-	if (palanim) colour += TERMA_OFFSET;
-#endif
 
 	/* To use always the same feats for this everytime the player
 	   enters a worldmap sector, we seed the RNG with that particular
@@ -2433,8 +2439,8 @@ int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y
 	return colour;
 }
 static int manipulate_cave_colour_daytime(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour, bool palanim) {
-	/* World surface manipulation only */
-	if (wpos->wz) return colour;
+	/* World surface (and CP!) manipulation only */
+	if (!outdoor_affects(wpos)) return colour;
 
 	/* Avoid TERM_L_GREEN vs TERM_GREEN confusion, since using TERM_GREEN for account-check now. */
 	if (c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN) return colour;
@@ -2693,18 +2699,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 	/* Feature code */
 	feat = c_ptr->feat;
 
-#if 0 /* probably better here than in manipulate_cave_colour..() -- but moved to calling functions for efficiency */
- #ifdef EXTENDED_COLOURS_PALANIM
-	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
- #else
-	bool palanim = FALSE;
- #endif
-#else
 	/* In the night, lit grids are not palette-animation-shaded in any way */
 	if (night_surface && (c_ptr->info & (CAVE_GLOW | CAVE_LITE))) palanim = FALSE;
 	/* Also, lamp-lit grids or shops/monster-traps/etc are never palette-animation-shaded, for now.. */
 	else if ((c_ptr->info & CAVE_LITE) || c_ptr->special) palanim = FALSE;
-#endif
 
 #if 0
 	/* bad hack to display visible wall instead of clear wall in sector00 events */
@@ -3862,7 +3860,7 @@ void lite_spot(int Ind, int y, int x) {
 		/* Normal (not player coords) */
 		else {
 #ifdef EXTENDED_COLOURS_PALANIM
-			bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+			bool palanim = palette_affects(Ind);
 #else
 			bool palanim = FALSE;
 #endif
@@ -4026,7 +4024,7 @@ void prt_map(int Ind, bool scr_only) {
 	char c;
 
 #ifdef EXTENDED_COLOURS_PALANIM
-	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
+	bool palanim = palette_affects(Ind);
 #else
 	bool palanim = FALSE;
 #endif
@@ -4307,12 +4305,6 @@ void display_map(int Ind, int *cy, int *cx) {
 	bool old_floor_lighting;
 	bool old_wall_lighting;
 
-#ifdef EXTENDED_COLOURS_PALANIM
-	bool palanim = is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->palette_animation && !p_ptr->wpos.wz && !(p_ptr->global_event_temp & PEVF_INDOORS_00) && !(in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS));
-#else
-	bool palanim = FALSE;
-#endif
-
 
 	/* Save lighting effects */
 	old_floor_lighting = p_ptr->floor_lighting;
@@ -4338,7 +4330,7 @@ void display_map(int Ind, int *cy, int *cx) {
 			y = j / RATIO + 1;
 
 			/* Extract the current attr/char at that map location */
-			map_info(Ind, j, i, &ta, &tc, palanim);
+			map_info(Ind, j, i, &ta, &tc, FALSE);
 
 			/* Extract the priority of that attr/char */
 			tp = priority(ta, tc);

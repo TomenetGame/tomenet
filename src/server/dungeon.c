@@ -1675,10 +1675,14 @@ bool player_day(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int x, y;
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	bool ret = FALSE;
 
-	if (p_ptr->wpos.wz) return FALSE;
-	if (in_sector00(&p_ptr->wpos))
-		return FALSE;
+	if (outdoor_affects(&p_ptr->wpos)) {
+		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
+		ret = TRUE;
+	}
+	if (p_ptr->wpos.wz) return ret;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return FALSE;
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
 
 	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
@@ -1704,10 +1708,6 @@ bool player_day(int Ind) {
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
 
-#ifdef EXTENDED_COLOURS_PALANIM
-	//world_surface_palette_player(Ind);
-#endif
-
 #ifdef USE_SOUND_2010
 	if (p_ptr->is_day) return FALSE;
 	p_ptr->is_day = TRUE;
@@ -1730,12 +1730,16 @@ bool player_night(int Ind) {
 	cave_type **zcave = getcave(&p_ptr->wpos);
 	int x, y;
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	bool ret = FALSE;
 
 	if (!zcave) return FALSE; /* paranoia */
 
-	if (p_ptr->wpos.wz) return FALSE;
-	if (in_sector00(&p_ptr->wpos))
-		return FALSE;
+	if (outdoor_affects(&p_ptr->wpos)) {
+		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
+		ret = TRUE;
+	}
+	if (p_ptr->wpos.wz) return ret;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) return FALSE;
 	if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) return FALSE;
 
 	//if (p_ptr->tim_watchlist) p_ptr->tim_watchlist--;
@@ -1765,10 +1769,6 @@ bool player_night(int Ind) {
 	p_ptr->redraw |= (PR_MAP);
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
-
-#ifdef EXTENDED_COLOURS_PALANIM
-//	world_surface_palette_player(Ind);
-#endif
 
 #ifdef USE_SOUND_2010
 	if (!p_ptr->is_day) return FALSE;
@@ -2504,6 +2504,20 @@ static void world_surface_palette_player_do(int i, int sky, int sub) {
 	Send_palette(i, 127, 0, 0, 0);
 #endif
 }
+/* Helper function to check whether a player is affected by palette animation in his current location. */
+bool palette_affects(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)
+	    || !p_ptr->palette_animation
+	    || (p_ptr->global_event_temp & PEVF_INDOORS_00))
+		return FALSE;
+
+	if (outdoor_affects(&p_ptr->wpos)) return TRUE;
+
+	/* Not affected */
+	return FALSE;
+}
 /* Re-colour the world palette depending on sky-state (time intervals of specific colour-transshading purpose)
    and the sky-state's substate (linearly interpolated 5 minute intervals within each sky-state interval) - C. Blue */
 static void world_surface_palette(void) {
@@ -2514,6 +2528,7 @@ static void world_surface_palette(void) {
 
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (!palette_affects(i)) continue;
 		world_surface_palette_player_do(i, sky, sub);
 	}
 }
@@ -2521,8 +2536,8 @@ static void world_surface_palette(void) {
 void world_surface_palette_player(int Ind) {
 	int sky, sub;
 
+	if (!palette_affects(Ind)) return;
 	get_world_surface_palette_state(&sky, &sub, TRUE);
-	//s_printf("wspp: Ind %d, sky %d, sub %d\n", Ind, sky, sub); //DEBUG
 	world_surface_palette_player_do(Ind, sky, sub);
 }
 /* Debugging */
@@ -2551,7 +2566,7 @@ static void process_day_and_night() {
 	sunrise = (((turn / HOUR) % 24) == SUNRISE) && IS_DAY; /* IS_DAY checks for events, that's why it's here. - C. Blue */
 	nightfall = (((turn / HOUR) % 24) == NIGHTFALL) && IS_NIGHT; /* IS_NIGHT is pointless at the time of coding this, just for consistencies sake with IS_DAY above. */
 
-#ifdef EXTENDED_COLOURS_PALANIM
+#ifdef EXTENDED_COLOURS_PALANIM /* We're called every (HOUR / PALANIM_HOUR_DIV) instead of just every hour? */
     if (!(turn % HOUR)) {
 #endif
 	/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! -- covered by IS_DAY now. */
@@ -2563,9 +2578,8 @@ static void process_day_and_night() {
 		night_falls();
 #ifdef EXTENDED_COLOURS_PALANIM
     }
-#endif
 
-#ifdef EXTENDED_COLOURS_PALANIM
+	/* Called every (HOUR / PALANIM_HOUR_DIV) [5 min in-game time] */
 	world_surface_palette();
 #endif
 }
@@ -8068,11 +8082,10 @@ void process_player_change_wpos(int Ind) {
 	if (!wpos->wz) {
 		if (IS_DAY) player_day(Ind);
 		else player_night(Ind);
-
-#ifdef EXTENDED_COLOURS_PALANIM
-		world_surface_palette_player(Ind);
-#endif
 	}
+#ifdef EXTENDED_COLOURS_PALANIM
+	world_surface_palette_player(Ind);
+#endif
 
 	/* Determine starting location */
 	switch (p_ptr->new_level_method) {
@@ -9064,7 +9077,7 @@ void dungeon(void) {
 	/* Process day/night changes on world_surface */
 #ifndef EXTENDED_COLOURS_PALANIM
 	if (!(turn % HOUR)) process_day_and_night();
-#else /* '>_> */
+#else /* call it once every palette-animation-step time interval */
 	if (!(turn % (HOUR / PALANIM_HOUR_DIV))) process_day_and_night();
 #endif
 

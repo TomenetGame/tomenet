@@ -590,6 +590,7 @@ extern void update_players(void);
 extern int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags);
 extern bool allow_terraforming(struct worldpos *wpos, byte feat);
 extern void everyone_lite_later_spot(struct worldpos *wpos, int y, int x);
+extern bool outdoor_affects(struct worldpos *wpos);
 extern int manipulate_cave_colour_season(cave_type *c_ptr, worldpos *wpos, int x, int y, int colour);
 extern void season_change(int s, bool force);
 extern void player_weather(int Ind, bool entered_level, bool weather_changed, bool panel_redraw);
@@ -815,6 +816,7 @@ extern void player_dungeontown(int Ind);
 #ifdef EXTENDED_COLOURS_PALANIM
 extern void world_surface_palette_player(int i);
 extern void set_pal_debug(int Ind, int k);
+extern bool palette_affects(int Ind);
 #endif
 extern void verify_day_and_night(void);
 
