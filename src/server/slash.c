@@ -10270,7 +10270,7 @@ void do_slash_cmd(int Ind, char *message) {
 					return;
 				}
 
-				hc = (turn / HOUR) % 60;
+				hc = (turn / HOUR) % 24;
 				mc = (turn / MINUTE) % 60;
 
 				// '- 1' : shortly BEFORE the desired minute hits
