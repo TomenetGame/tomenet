@@ -100,7 +100,7 @@ WRAITHFORM = add_spell {
 	["level"] = 	43,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	0,
+	["fail"] = 	-40,
 	["spell"] = 	function()
 			local dur = randint(30) + 20 + get_level(Ind, WRAITHFORM, 40)
 			set_tim_wraith(Ind, dur)
