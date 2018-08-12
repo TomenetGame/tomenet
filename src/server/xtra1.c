@@ -4421,7 +4421,12 @@ void calc_boni(int Ind) {
 	if (p_ptr->mode & MODE_HARD) p_ptr->to_m = (p_ptr->to_m * 2) / 3;
 
 	/* Check for temporary blessings */
-	if (p_ptr->bless_temp_luck && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
+	if (p_ptr->bless_temp_luck
+#if 0
+	    && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
+#else
+	    && p_ptr->wpos.wz) {
+#endif
 		p_ptr->luck += p_ptr->bless_temp_luck_power;
 		/* abuse '@ form' luck column for this for now */
 		csheet_boni[14].luck += p_ptr->bless_temp_luck_power;

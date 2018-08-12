@@ -5300,7 +5300,13 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Temporary blessing of luck */
-	if (p_ptr->bless_temp_luck && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) (void)bless_temp_luck(Ind, p_ptr->bless_temp_luck_power, p_ptr->bless_temp_luck - 1);
+	if (p_ptr->bless_temp_luck
+#if 0
+	    && !istownarea(&p_ptr->wpos, MAX_TOWNAREA))
+#else
+	    && p_ptr->wpos.wz)
+#endif
+		(void)bless_temp_luck(Ind, p_ptr->bless_temp_luck_power, p_ptr->bless_temp_luck - 1);
 
 	/* Temporary auras */
 	if (p_ptr->sh_fire_tim) (void)set_sh_fire_tim(Ind, p_ptr->sh_fire_tim - minus_magic);
