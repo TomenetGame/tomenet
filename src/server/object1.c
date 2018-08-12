@@ -5310,13 +5310,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		if (f2 & (TR2_SUST_CHR))
 			fprintf(fff, "It sustains your charisma.\n");
 		if (f2 & (TR2_IM_FIRE))
-			fprintf(fff, "It provides immunity to fire.\n");
+			fprintf(fff, "It provides \377Uimmunity\377- to fire.\n");
 		if (f2 & (TR2_IM_COLD))
-			fprintf(fff, "It provides immunity to cold.\n");
+			fprintf(fff, "It provides \377Uimmunity\377- to cold.\n");
 		if (f2 & (TR2_IM_ELEC))
-			fprintf(fff, "It provides immunity to electricity.\n");
+			fprintf(fff, "It provides \377Uimmunity\377- to electricity.\n");
 		if (f2 & (TR2_IM_ACID))
-			fprintf(fff, "It provides immunity to acid.\n");
+			fprintf(fff, "It provides \377Uimmunity\377- to acid.\n");
 	}
 #if 1
 	else {
@@ -5341,27 +5341,27 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	}
 #endif
 	if (f2 & (TR2_IM_POISON))
-		fprintf(fff, "It provides immunity to poison.\n");
+		fprintf(fff, "It provides \377Uimmunity\377- to poison.\n");
 
 	if (o_ptr->tval == TV_DRAG_ARMOR && o_ptr->sval == SV_DRAGON_MULTIHUED) {
 		if (!(f2 & (TR2_IM_FIRE))) {
-			if (eff_full && (o_ptr->xtra2 & 0x01)) fprintf(fff, "It provides immunity to fire.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x01)) fprintf(fff, "It provides \377Uimmunity\377- to fire.\n");
 			else fprintf(fff, "It provides resistance to fire.\n");
 		}
 		if (!(f2 & (TR2_IM_COLD))) {
-			if (eff_full && (o_ptr->xtra2 & 0x02)) fprintf(fff, "It provides immunity to cold.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x02)) fprintf(fff, "It provides \377Uimmunity\377- to cold.\n");
 			else fprintf(fff, "It provides resistance to cold.\n");
 		}
 		if (!(f2 & (TR2_IM_ELEC))) {
-			if (eff_full && (o_ptr->xtra2 & 0x04)) fprintf(fff, "It provides immunity to electricity.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x04)) fprintf(fff, "It provides \377Uimmunity\377- to electricity.\n");
 			else fprintf(fff, "It provides resistance to electricity.\n");
 		}
 		if (!(f2 & (TR2_IM_ACID))) {
-			if (eff_full && (o_ptr->xtra2 & 0x08)) fprintf(fff, "It provides immunity to acid.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x08)) fprintf(fff, "It provides \377Uimmunity\377- to acid.\n");
 			else fprintf(fff, "It provides resistance to acid.\n");
 		}
 		if (!(f2 & (TR2_IM_POISON))) {
-			if (eff_full && (o_ptr->xtra2 & 0x10)) fprintf(fff, "It provides immunity to poison.\n");
+			if (eff_full && (o_ptr->xtra2 & 0x10)) fprintf(fff, "It provides \377Uimmunity\377- to poison.\n");
 			else fprintf(fff, "It provides resistance to poison.\n");
 		}
 	} else {
@@ -5382,11 +5382,11 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	}
 
 	if (f2 & (TR2_IM_WATER))
-		fprintf(fff, "It provides complete protection from unleashed water.\n");
+		fprintf(fff, "It provides \377Ucomplete protection\377- from unleashed water.\n");
 	else if (f2 & (TR2_RES_WATER))
 		fprintf(fff, "It provides resistance to unleashed water.\n");
 	if (f2 & (TR2_IM_NETHER))
-		fprintf(fff, "It provides immunity to nether.\n");
+		fprintf(fff, "It provides \377Uimmunity\377- to nether.\n");
 	else if (f2 & (TR2_RES_NETHER))
 		fprintf(fff, "It provides resistance to nether.\n");
 
