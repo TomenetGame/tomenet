@@ -65,7 +65,7 @@ GENOCIDE_I = add_spell {
 	["level"] = 	30,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	0,
+	["fail"] = 	-10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			genocide(Ind)
@@ -100,7 +100,7 @@ WRAITHFORM = add_spell {
 	["level"] = 	43,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	20,
+	["fail"] = 	0,
 	["spell"] = 	function()
 			local dur = randint(30) + 20 + get_level(Ind, WRAITHFORM, 40)
 			set_tim_wraith(Ind, dur)
