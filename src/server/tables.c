@@ -4217,7 +4217,8 @@ player_class class_info[MAX_CLASS] = {
 #if 1 /* EXPERIMENTAL: Allow Udun access for HK/CP? */
 		{ SKILL_UDUN,
 			'+', 0,
-			'+', 600, },
+			//'+', 0.441, }, //pseudo '600' (this skill doesn't receive the initial Maia x0.7 modifier, hence..)
+			'+', 0.3675, }, //pseudo '500' (this skill doesn't receive the initial Maia x0.7 modifier, hence..)
 #endif
 #if 0
 		{ SKILL_SPELL,
@@ -4337,7 +4338,7 @@ player_class class_info[MAX_CLASS] = {
 #if 1 /* EXPERIMENTAL: Allow Udun access for HK/CP? */
 		{ SKILL_UDUN,
 			'+', 0,
-			'+', 700, },
+			'+', 0.5145, }, //pseudo '700' (this skill doesn't receive the initial Maia x0.7 modifier, hence..)
 #endif
 		{ SKILL_DEVICE,
 			'+', 1000,

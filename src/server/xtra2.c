@@ -3739,6 +3739,17 @@ bool bless_temp_luck(int Ind, int pow, int dur) {
 	return (TRUE);
 }
 
+/* 'Manually' set a skill ratio to a specific value. Used for manipulating Maia skills via lua. */
+void hack_skill(int Ind, int s, int v, int m) {
+	Players[Ind]->s_info[s].value = v;
+	/* Cap at 2.000 gain */
+	if (m > 2000) m = 2000;
+	Players[Ind]->s_info[s].mod = m;
+
+	/* Update it after the re-increasing has been finished */
+	Send_skill_info(Ind, s, FALSE);
+}
+
 #ifdef ENABLE_MAIA
 /* helper function to modify Maia skills when they get a trait - C. Blue
    NOTE: IF THIS IS CALLED TOO MANY TIMES IN A ROW IT
@@ -3752,7 +3763,7 @@ static void do_Maia_skill(int Ind, int s, int m) {
 
 	/* Modify skill, avoiding overflow (mod is u16b) */
 	tmp_val = (tmp_val * m) / 10;
-	/* Cap to 2.0 */
+	/* Cap at 2.000 gain */
 	if (tmp_val > 2000) tmp_val = 2000;
 	Players[Ind]->s_info[s].mod = tmp_val;
 
@@ -3791,7 +3802,7 @@ static void do_Maia_skill2(int Ind, int s, int v, int m) {
 
 	/* Modify skill, avoiding overflow (mod is u16b) */
 	Players[Ind]->s_info[s].value = v;
-	/* Cap to 2.0 */
+	/* Cap at 2.000 gain */
 	if (m > 2000) m = 2000;
 	Players[Ind]->s_info[s].mod = m;
 
@@ -3928,7 +3939,7 @@ void shape_Maia_skills(int Ind) {
 		p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
 
 #ifdef ENABLE_OCCULT
-		do_Maia_skill(Ind, SKILL_OSHADOW, 21);
+		do_Maia_skill(Ind, SKILL_OSHADOW, 17);
 		//respec_skill(Ind, SKILL_OSPIRIT, FALSE, FALSE);
 		p_ptr->s_info[SKILL_OSPIRIT].mod = 0;
  #ifdef ENABLE_OHERETICISM

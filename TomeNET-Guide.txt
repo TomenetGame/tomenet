@@ -13168,12 +13168,13 @@ Modifications for becoming 'corrupted':
   Fire, Air, Conveyance school x 1.7.
   Udun school x 2.0.
   Darkness and Nether runes x 1.7.
-  Shadow school x 2.1.
+  Shadow school x 1.7.
   All Blood Magic schools x 3.0.
 
   Paladins/priests:
    The four holy schools get completely reset, disabled and their points are
    fully refunded.
+   They gain access to Udun school from the Wizardry school array.
 
 Note: After a skill's gain ratio has been boosted as stated above, it will be
       capped against a maximum value of 2.000, which cannot be exceeded.
