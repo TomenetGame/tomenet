@@ -4165,24 +4165,24 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_TECHNIQUE,
 			'+', 1000,
 			'+', 0, },
- #ifdef ENABLE_STANCES
+#ifdef ENABLE_STANCES
 		{ SKILL_STANCE,
 			'+', 1000,
 			'+', 0, },
- #endif
- #ifdef DUAL_WIELD /* experimental - khorne berzerkers ^^ */
+#endif
+#ifdef DUAL_WIELD /* experimental - khorne berzerkers ^^ */
 		{ /* dual-wield */ SKILL_DUAL,
 			'+', 1000,
 			'+', 0, },
- #endif
+#endif
 		{ SKILL_SWORD,
 			'+', 0,
 			'+', 750, }, //will get x1.1'd (replacement for MA x1.3 bonus we're missing out on)
- #if 1 /* re-allow */
+#if 1 /* re-allow */
 		{ SKILL_BLUNT,
 			'+', 0,
 			'+', 660, }, //swapped with former axe ratio, x1.1 (replacement for MA x1.3 bonus we're missing out on)
- #endif
+#endif
 		{ SKILL_AXE,
 			'+', 0,
 			'+', 750, }, //swapped with former blunt ratio, will get x1.3'ed to 975
@@ -4195,35 +4195,40 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_XBOW,
 			'+', 0,
 			'+', 300, },
- #if 0 /* same as paladin */
+#if 0 /* same as paladin */
 		{  SKILL_MARTIAL_ARTS, /* let's keep it low for now - offbalancing */
 			'+', 0,
 			'+', 500, },
- #endif
+#endif
 		{ SKILL_MAGIC,
 			'+', 1000,
 			'+', 600, },
- #ifdef ENABLE_OCCULT /* Occult */
-  #ifdef ENABLE_OHERETICISM
+#ifdef ENABLE_OCCULT /* Occult */
+ #ifdef ENABLE_OHERETICISM
 		{ SKILL_OHERETICISM,
 			'+', 1000,
 			'+', 700, },
-  #else
+ #else
 		{ SKILL_OSHADOW, /* emergency replacement skill if Hereticism isn't available for some reason */
 			'+', 1000,
 			'+', 700, },
-  #endif
  #endif
- #if 0
+#endif
+#if 1 /* EXPERIMENTAL: Allow Udun access for HK/CP? */
+		{ SKILL_UDUN,
+			'+', 0,
+			'+', 600, },
+#endif
+#if 0
 		{ SKILL_SPELL,
 			'+', 0,
 			'+', 350, },
- #endif
- #if 1
+#endif
+#if 1
 		{ SKILL_NECROMANCY,
 			'+', 0,
 			'+', 1300, },
- #endif
+#endif
 		{ SKILL_TRAUMATURGY,
 			'+', 0,
 			'+', 1500, },
@@ -4233,11 +4238,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_AURA_SHIVER,
 			'+', 0,
 			'+', 1400, },
- #if 1
+#if 1
 		{ SKILL_AURA_DEATH,
 			'+', 0,
 			'+', 1300, },
- #endif
+#endif
 		{ SKILL_DEVICE,
 			'+', 1000,
 			'+', 800, },
@@ -4291,11 +4296,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_SWORD, //additionally to blunt! (or instead of it, under 1st CPRIEST version, before blunt was re-allowed)
 			'+', 0,
 			'+', 500, },
- #if 1 /* re-allow */
+#if 1 /* re-allow */
 		{ SKILL_BLUNT,
 			'+', 0,
 			'+', 600, },
- #endif
+#endif
 		{ SKILL_MARTIAL_ARTS,
 			'+', 0,
 //			'+', 650, }, //450
@@ -4329,6 +4334,11 @@ player_class class_info[MAX_CLASS] = {
 			'+', 800, },
  #endif
 #endif
+#if 1 /* EXPERIMENTAL: Allow Udun access for HK/CP? */
+		{ SKILL_UDUN,
+			'+', 0,
+			'+', 700, },
+#endif
 		{ SKILL_DEVICE,
 			'+', 1000,
 			'+', 900, },
@@ -4354,12 +4364,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_INTERCEPT,
 			'+', 1000,
 			'+', 600, }, //400
-
- #if 1
+#if 1
 		{ SKILL_NECROMANCY,
 			'+', 0,
 			'+', 1400, },
- #endif
+#endif
 		{ SKILL_TRAUMATURGY,
 			'+', 0,
 			'+', 1400, },
@@ -4369,11 +4378,11 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_AURA_SHIVER,
 			'+', 0,
 			'+', 1300, },
- #if 1
+#if 1
 		{ SKILL_AURA_DEATH,
 			'+', 0,
 			'+', 1300, },
- #endif
+#endif
 		}, },
 #endif
 };
