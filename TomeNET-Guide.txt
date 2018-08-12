@@ -15894,17 +15894,17 @@ school.
                     Temporary resistance to heat, cold, lightning and acid.
                     Shared spell (see above): Fire, Water, Earth, Air.
 
-    Stone Prison    Creates a prison of granite walls around you.
-                    Required skill level for first spell level: 25.
-
     Strike          Creates a force bolt that may stun enemies.
                     Required skill level for first spell level: 25.
 
                     Tier III: Level 37.
                     It's a small ball instead of a bolt.
 
+    Stone Prison    Creates a prison of granite walls around you.
+                    Required skill level for first spell level: 33.
+
     Shake           Creates a local earthquake.
-                    Required skill level for first spell level: 35.
+                    Required skill level for first spell level: 37.
 
     BONI:           Shard resistance at 40,
                     Great damage reduction against earthquakes at 50.
@@ -16089,11 +16089,7 @@ school.
                     please see (5.9) scroll of geno/oblit.
                     (This spell uses WISDOM to determine fail-rates!
                     Genocide-type spells do not yield experience or loot.)
-                    Required skill level for first spell level: 25.
-
-    Wraithform      Temporarily turns your form immaterial.
-                    Required skill level for first spell level: 35.
-    Stop Wraithform Turns you back to material form immediately.
+                    Required skill level for first spell level: 30.
 
     Disenchantment Beam
                     Conjures a powerful and nearly irresistible beam.
@@ -16105,6 +16101,10 @@ school.
                     (This spell uses WISDOM to determine fail-rates!
                     Genocide-type spells do not yield experience or loot.)
                     Required skill level for first spell level: 40.
+
+    Wraithform      Temporarily turns your form immaterial.
+                    Required skill level for first spell level: 43.
+    Stop Wraithform Turns you back to material form immediately.
 
     BONI:           Hold life at 40.
 
