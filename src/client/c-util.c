@@ -5218,9 +5218,9 @@ void interact_macros(void) {
 #define mw_abilityt 'M'
 #define mw_custom 'n'
 #define mw_load 'o'
-#define mw_equip 'q'
+#define mw_equip 'p'
 
-#define mw_LAST 'q'
+#define mw_LAST 'p'
 
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
@@ -5265,7 +5265,7 @@ Chain_Macro:
 					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Use a magic device or activate an item");
 					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target (Draconian breath)");
 					Term_putstr(8, 22, -1, TERM_L_GREEN, "n)   Enter a custom action (same as pressing 'a' in macro screen)");
-					Term_putstr(8, 23, -1, TERM_L_GREEN, "o/q) Load a macro file / change equipment (wield/takeoff/swap)");
+					Term_putstr(8, 23, -1, TERM_L_GREEN, "o/p) Load a macro file / change equipment (wield/takeoff/swap)");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
