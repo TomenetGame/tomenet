@@ -34,7 +34,7 @@ p  Open mind   \{yO  Party menu\{w    ~  Knowledge menu  ^S  Spike a door
 q  Quaff       \{yQ  Suicide\{w       +  Dig             ^T  Screenshot
 r  Read scroll R  Rest          {  Inscribe        \{y^Q  Quit the game (and
 s  Search      #  Search mode   }  Uninscribe        \{y(auto-save window layout)
-T  Take off       (toggle)      |  Uniques
+\{yT  Take off\{w       (toggle)      |  Uniques
 Z  Use staff   +  Tunnel (dig)  '  Inspect nearby/lowbie players/party members
 v  Throw       V  Cloak         _  Sip from fountain/show item on the floor
 \{yw  Wear/Wield\{w  ^W Wear/Wield 2  =  Options
