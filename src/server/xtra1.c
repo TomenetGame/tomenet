@@ -8075,18 +8075,22 @@ static void process_global_event(int ge_id) {
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
 			wipe_o_list_safely(&wpos); /* and objects too */
 			unstatic_level(&wpos);/* get rid of any other person, by unstaticing ;) */
-
-			if (!getcave(&wpos)) alloc_dungeon_level(&wpos);
+			/* allocate wilderness if needed */
+			if (!(zcave = getcave(&wpos))) {
+				alloc_dungeon_level(&wpos);
+				zcave = getcave(&wpos);
+			}
 			/* generate solid battleground, not oceans and stuff */
 			ge->extra[1] = wild_info[wpos.wy][wpos.wx].type;
 			s_printf("EVENT_LAYOUT: Generating wild %d at %d,%d,%d\n", ge->extra[2], wpos.wx, wpos.wy, wpos.wz);
 			wild_info[wpos.wy][wpos.wx].type = ge->extra[2];
 			wilderness_gen(&wpos);
+			/* light it up */
+			for (x = 0; x < MAX_WID; x++) for (y = 0; y < MAX_HGT; y++) zcave[y][x].info |= CAVE_GLOW;
 			/* make it static */
-//			static_level(&wpos); /* preserve layout while players dwell in dungeon (for arena layouts) */
+			//static_level(&wpos); /* preserve layout while players dwell in dungeon (for arena layouts) */
 			new_players_on_depth(&wpos, 1, FALSE);
 			/* wipe obstacles away so ranged chars vs melee chars won't end in people waiting inside trees */
-			zcave = getcave(&wpos);
 			for (x = 1; x < MAX_WID - 1; x++)
 			for (y = 1; y < MAX_HGT - 1; y++) {
 				c_ptr = &zcave[y][x];
