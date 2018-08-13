@@ -4330,8 +4330,22 @@ void interact_macros(void) {
 				macro__buf[159] = '\0';
 				ascii_to_text(buf2, macro__buf);
 
+#if 0 /* not a glitch maybe, just treat them @ len>2 clause.. */
+#ifdef WINDOWS
+				/* 'Glitch': Macros read from file have a trailing \r linefeed -_- */
+				if (strlen(buf) > 2 && buf[strlen(buf) - 2] == '\\' && buf[strlen(buf) - 1] == 'r') buf[strlen(buf) - 2] = 0; //trim it
+#endif
+#endif
+
 				/* Make the trigger human-readable */
 				m_ctrl = m_alt = m_shift = FALSE;
+#if 0 /* For debugging only: Code exclusion */
+				if (TRUE) {
+					sprintf(t_key, "%-9.9s", buf);
+					/* ensure termination (in paranoid case of overflow) */
+					t_key[9] = '\0';
+				} else
+#endif
 				if (strlen(buf) == 1) {
 					/* just a simple key */
 					sprintf(t_key, "%c        ", buf[0]);
@@ -4350,9 +4364,14 @@ void interact_macros(void) {
 					int keycode;
 
 					bptr = buf + 2;
+					/* Linux */
 					if (*bptr == 'N') { m_ctrl = TRUE; bptr++; }
 					if (*bptr == 'S') { m_shift = TRUE; bptr++; }
 					if (*bptr == 'O') { m_alt = TRUE; bptr++; }
+					/* Windows */
+					if (*bptr == 'C') { m_ctrl = TRUE; bptr++; }
+					if (*bptr == 'S') { m_shift = TRUE; bptr++; }
+					if (*bptr == 'A') { m_alt = TRUE; bptr++; }
 					bptr++;
 
 					/* Translate keycode to some human-readable key (keyboard-layout-dependant hit or miss tho...) */
@@ -4434,6 +4453,76 @@ void interact_macros(void) {
 						case 0xDE: strcpy(bptr,  "Num1"); break;
 						case 0xDF: strcpy(bptr,  "Num2"); break;
 						case 0xE0: strcpy(bptr,  "Num3"); break;
+						}
+					} else if (*(bptr - 1) == 'x') {
+						bptr[2] = 0;
+						keycode = strtol(bptr, NULL, 16);
+
+						switch (keycode) {
+						case 0x3B: strcpy(bptr,  "F1"); break;
+						case 0x3C: strcpy(bptr,  "F2"); break;
+						case 0x3D: strcpy(bptr,  "F3"); break;
+						case 0x3E: strcpy(bptr,  "F4"); break;
+						case 0x3F: strcpy(bptr,  "F5"); break;
+						case 0x40: strcpy(bptr,  "F6"); break;
+						case 0x41: strcpy(bptr,  "F7"); break;
+						case 0x42: strcpy(bptr,  "F8"); break;
+						case 0x43: strcpy(bptr,  "F9"); break;
+						case 0x44: strcpy(bptr,  "F10"); break;
+						case 0x57: strcpy(bptr,  "F11"); break;
+						case 0x58: strcpy(bptr,  "F12"); break;
+
+						//? case 0x61: strcpy(bptr,  "PrtScr"); break;
+						//? case 0x14: strcpy(bptr,  "Scroll"); break;
+						//? case 0x13: strcpy(bptr,  "Pause"); break;
+
+						/* Arrow keys et al, also number pad at numlock off */
+						case 0x48: strcpy(bptr,  "Up"); break;
+						case 0x50: strcpy(bptr,  "Down"); break;
+						case 0x4A: strcpy(bptr,  "num-"); break;
+						case 0x4B: strcpy(bptr,  "Left"); break;
+						case 0x4C: strcpy(bptr,  "num5"); break;
+						case 0x4D: strcpy(bptr,  "Right"); break;
+						case 0x4E: strcpy(bptr,  "num+"); break;
+						case 0x52: strcpy(bptr,  "Ins"); break;
+						case 0x53: strcpy(bptr,  "Del"); break;
+						case 0x49: strcpy(bptr,  "PageUp"); break;
+						case 0x51: strcpy(bptr,  "PageDn"); break;
+						case 0x47: strcpy(bptr,  "Home"); break;
+						case 0x4F: strcpy(bptr,  "End"); break;
+
+						/* Numper pad (Numlock off) */
+						/* -- duplicates of the normal keyboard key block listed above, while numlock is off! --
+						case 0x53: strcpy(bptr,  "num."); break;
+						case 0x52: strcpy(bptr,  "num0"); break;
+						case 0x4F: strcpy(bptr,  "num1"); break;
+						case 0x50: strcpy(bptr,  "num2"); break;
+						case 0x51: strcpy(bptr,  "num3"); break;
+						case 0x4B: strcpy(bptr,  "num4"); break;
+						//(unusable with numlock off) case 0x: strcpy(bptr,  "num5"); break;
+						case 0x4D: strcpy(bptr,  "num6"); break;
+						case 0x47: strcpy(bptr,  "num7"); break;
+						case 0x48: strcpy(bptr,  "num8"); break;
+						case 0x49: strcpy(bptr,  "num9"); break;
+						---- */
+
+						/* Numper pad (Numlock on)
+						   - same as the normal keyboard keys with corresponding symbols! - */
+
+						/* Strange codes left over.. looking like numpad */
+						case 0x77: strcpy(bptr,  "Num7"); break;
+						case 0x8D: strcpy(bptr,  "Num8"); break;
+						case 0x84: strcpy(bptr,  "Num9"); break;
+						case 0x8E: strcpy(bptr,  "Num-"); break;
+						case 0x73: strcpy(bptr,  "Num4"); break;
+						case 0x8F: strcpy(bptr,  "Num5"); break;
+						case 0x74: strcpy(bptr,  "Num6"); break;
+						case 0x90: strcpy(bptr,  "Num+"); break;
+						case 0x75: strcpy(bptr,  "Num1"); break;
+						case 0x91: strcpy(bptr,  "Num2"); break;
+						case 0x76: strcpy(bptr,  "Num3"); break;
+						case 0x92: strcpy(bptr,  "Num0"); break;
+						case 0x93: strcpy(bptr,  "Num."); break;
 						}
 					} else if (bptr[0] == '_') {
 						//???
