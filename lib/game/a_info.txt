@@ -3403,7 +3403,7 @@ W:57:60:20:150000
 P:0:1d5:0:0:0
 F:MANA | REGEN_MANA | ACTIVATE
 F:RES_DARK | RES_NETHER | RES_ELEC | RES_COLD | ESP_GOOD
-D:An long sceptre crowned with a ram's skull, imbued with magic allowing you to
+D:A long sceptre crowned with a ram's skull, imbued with magic allowing you to
 D:sense those who oppose evil and to unleash devastating forces on your foe.
 D:A white glow emanates from its hollow eyes as you channel its powers.
 
