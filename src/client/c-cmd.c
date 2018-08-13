@@ -1854,6 +1854,9 @@ void cmd_the_guide(void) {
 
 				chapter[0] = 0;
 
+				/* Expand 'AC' to 'Armour Class' */
+				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
+
 				/* Misc chapters, hardcoded: */
 				if (!strcasecmp(buf, "Bree")
 				    || my_strcasestr(buf, "Barr")
