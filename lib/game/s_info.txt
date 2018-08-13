@@ -315,6 +315,7 @@ F:MKEY_HARDCODE
 
 N:47:Axe-mastery
 D:Allows more skillful use of axe-type weapons.
+D:This is a primary skill for melee fighters.
 I:1000:0
 
 N:48:Conveyance
