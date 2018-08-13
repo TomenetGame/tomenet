@@ -12614,6 +12614,8 @@ Note that not every skill is available to every profession (class).
                                 receive a small bonus in their favour.
                                 It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
+                                Typing '/ex' command into chat will display the
+                                state of all your auras.
                                 Being blood magic, auras will feed from your
                                 blood. This means that the speed of your hit
                                 point regeneration will be reduced while the
@@ -12634,6 +12636,8 @@ Note that not every skill is available to every profession (class).
                                 arts will be branded by it (cold brand).
                                 It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
+                                Typing '/ex' command into chat will display the
+                                state of all your auras.
                                 Being blood magic, auras will feed from your
                                 blood. This means that the speed of your hit
                                 point regeneration will be reduced while the
@@ -12649,6 +12653,8 @@ Note that not every skill is available to every profession (class).
                                 or cold brand).
                                 It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
+                                Typing '/ex' command into chat will display the
+                                state of all your auras.
                                 Being blood magic, auras will feed from your
                                 blood. This means that the speed of your hit
                                 point regeneration will be reduced while the
