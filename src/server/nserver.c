@@ -905,6 +905,9 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 	if (nick_name[0] < 'A' || nick_name[0] > 'Z') return E_LETTER;
 	if (strchr(nick_name, ':')) return E_INVAL;
 
+	/* Account/Character names must be at least of length 2 */
+	if (strlen(nick_name) < ACC_CHAR_MIN_LEN) return E_LENGTH; //Account name
+
 	if (check_for_resume) {
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn != NOT_CONNECTED ) {
@@ -4160,6 +4163,8 @@ static int Receive_login(int ind) {
 		if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE)) != SUCCESS) {
 			if (res == E_LETTER)
 				Destroy_connection(ind, "Your accountname must start on a letter (A-Z).");
+			else if (res == E_LENGTH)
+				Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
 			else
 				Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
 			return(-1);
@@ -4343,6 +4348,12 @@ static int Receive_login(int ind) {
 		/* If already exists, change capitalization to match */
 		if (fix_player_case(choice)) s_printf("Name capitalization: -> '%s'\n", choice);
 
+		/* Account/Character names must be at least of length 2 (E_LENGTH) */
+		if (strlen(choice) < ACC_CHAR_MIN_LEN) {
+			Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
+			return -1;
+		}
+
 		/* Check for forbidden names (technical/lore reasons) */
 		if (forbidden_name(choice)) {
 //			Packet_printf(&connp->c, "%c", E_INVAL);
@@ -4496,6 +4507,8 @@ static int Receive_login(int ind) {
 				Destroy_connection(ind, "Your charactername must start on a letter (A-Z).");
 			else if (res == E_INVAL)
 				Destroy_connection(ind, "Your charactername contains invalid characters"); //user+host names have already been checked previously (on account login)
+			else if (res == E_LENGTH)
+				Destroy_connection(ind, format("Account and character names must be at least 2 characters long.", ACC_CHAR_MIN_LEN));
 			else
 				//Destroy_connection(ind, "Security violation");
 				Destroy_connection(ind, "Login not possible because you are still logged in from another IP address.");

@@ -267,6 +267,7 @@
 #define E_INVITE	0x0B
 #define E_BANNED	0x0C
 #define E_VERSION_UNKNOWN	0x0D
+#define E_LENGTH	0x0E
 #ifdef CLIENT_SIDE /* RETRY_LOGIN: */
  #define E_RETRY_CONTACT	0xFF
  #define E_RETRY_LOGIN		0xFE
