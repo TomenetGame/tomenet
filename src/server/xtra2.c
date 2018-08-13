@@ -122,6 +122,13 @@
 /* Prolly no longer needed, since a player cannot gain exp from books now */
 //#define LEVEL_GAINING_LIMIT
 
+/* Add specific colour code or anything else in front of a death message in the log file? */
+#if 0
+ #define FORMATDEATH ""
+#else
+ #define FORMATDEATH "\377r"
+#endif
+
 
 /*
  * Thresholds for scrolling.	[3,8] [2,4]
@@ -8075,7 +8082,7 @@ void player_death(int Ind) {
  #endif
 
 			/* Log it */
-			s_printf("%s - %s (%d) was defeated by %s for %d damage at %d, %d, %d. (INSTARES)\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s (%d) was defeated by %s for %d damage at %d, %d, %d. (INSTARES)\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || insanity || p_ptr->image)
 				s_printf("(%s was really defeated by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -8507,7 +8514,7 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s %s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, titlebuf, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
 			else
 			snprintf(buf, sizeof(buf), "\374\377%c**\377r%s (%d) was destroyed by \377m%s\377r.\377%c**", msg_layout, p_ptr->name, p_ptr->lev, p_ptr->died_from, msg_layout);
-			s_printf("%s - %s (%d) was destroyed by %s for %d damage at %d, %d, %d.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s (%d) was destroyed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -8552,7 +8559,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 					snprintf(buf, sizeof(buf), "\374\377a**\377r%s's (%d) ghost was destroyed by %s.\377a**", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 				}
 			}
-			s_printf("%s - %s's (%d) ghost was destroyed by %s for %d damage on %d, %d, %d.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s's (%d) ghost was destroyed by %s for %d damage on %d, %d, %d.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s's ghost was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -8638,7 +8645,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 #ifdef MORGOTH_FUNKY_KILL_MSGS
 			}
 #endif
-			s_printf("%s - %s (%d) was killed and destroyed by %s for %d damage at %d, %d, %d.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+			s_printf("%s%s - %s (%d) was killed and destroyed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s was really killed and destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -8862,7 +8869,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 				snprintf(buf, sizeof(buf), "\374\377r%s (%d) was vaporized by %s.", p_ptr->name, p_ptr->lev, p_ptr->died_from);
 			}
 		}
-		s_printf("%s - %s (%d) was killed by %s for %d damage at %d, %d, %d.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		s_printf("%s%s - %s (%d) was killed by %s for %d damage at %d, %d, %d.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev, p_ptr->died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 			s_printf("(%s was really killed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
@@ -8876,7 +8883,7 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 			snprintf(buf, sizeof(buf), "\374\377sThe iron champion %s has retired to a warm, sunny climate.", p_ptr->name);
 			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired as an iron champion\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
-		s_printf("%s - %s (%d) retired to a warm, sunny climate.\n", showtime(), p_ptr->name, p_ptr->lev);
+		s_printf("%s%s - %s (%d) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev);
 		retire = TRUE;
 		death_type = DEATH_QUIT;
 s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
@@ -8897,7 +8904,7 @@ s_printf("CHARACTER_TERMINATION: SUICIDE race=%s ; class=%s ; trait=%s ; %d deat
 			snprintf(buf, sizeof(buf), "\374\377vThe unbeatable %s has retired to a warm, sunny climate.", p_ptr->name);
 			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired to a warm, sunny climate\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
-		s_printf("%s - %s (%d) retired to a warm, sunny climate.\n", showtime(), p_ptr->name, p_ptr->lev);
+		s_printf("%s%s - %s (%d) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev);
 		retire = TRUE;
 		death_type = DEATH_QUIT;
 s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
