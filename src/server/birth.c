@@ -3195,13 +3195,15 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
 		acc_houses = acc.houses;
-		s_printf("(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
+		/* Colour invalidated accounts in the log file (for /cheeze) */
+		if (p_ptr->inval) s_printf("\377R(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
+		else s_printf("(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
 	}
 
 	/* handle banned player 1/2 */
 	if (acc_banned) {
 		msg_print(Ind, "\377R*** Your account is temporarily suspended ***");
-		s_printf("Refused ACC_BANNED account %s (character %s)\n.", accname, name);
+		s_printf("\377RRefused ACC_BANNED account %s (character %s)\n.", accname, name); /* Coloured for /cheeze */
 		return FALSE;
 	}
 
