@@ -1893,7 +1893,7 @@ F:EVIL | UNDEAD | IM_POIS | RES_COLD |
 F:NO_CONF | NO_SLEEP | HURT_LITE | BASEANGBAND | NO_CUT
 S:1_IN_10
 S:CURSE | S_UNDEAD
-D:A frightening skeletal figures in a black robe.
+D:A frightening skeletal figure in a black robe.
 
 N:125:Rotting corpse
 G:z:R
