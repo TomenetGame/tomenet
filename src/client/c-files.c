@@ -1379,7 +1379,7 @@ errr file_character(cptr name, bool full) {
 	cptr		paren = ")";
 	int		fd = -1;
 	FILE		*fff = NULL;
-	char		buf[1024], *cp;
+	char		buf[1024], *cp, linebuf[1024];
 	(void) full; /* suppress compiler warning */
 
 	/* Build the filename */
@@ -1470,7 +1470,11 @@ errr file_character(cptr name, bool full) {
 		}
 		buf[x] = 0;
 
-		fprintf(fff, "%c%s %s\n", index_to_label(i), paren, buf);
+		/* trim lines to 80 chars */
+		sprintf(linebuf, "%c%s %s\n", index_to_label(i), paren, buf);
+		//linebuf[80] = 0; --not for now
+
+		fprintf(fff, "%s", linebuf);
 	}
 	fprintf(fff, "\n\n");
 
@@ -1478,7 +1482,12 @@ errr file_character(cptr name, bool full) {
 	fprintf(fff, "  [Character Inventory]\n\n");
 	for (i = 0; i < INVEN_PACK; i++) {
 		if (!strncmp(inventory_name[i], "(nothing)", 9)) continue;
-		fprintf(fff, "%c%s %s\n", index_to_label(i), paren, inventory_name[i]);
+
+		/* trim lines to 80 chars */
+		sprintf(linebuf, "%c%s %s\n", index_to_label(i), paren, inventory_name[i]);
+		//linebuf[80] = 0; --not for now
+
+		fprintf(fff, "%s", linebuf);
 	}
 	fprintf(fff, "\n\n");
 
