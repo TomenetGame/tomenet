@@ -10309,9 +10309,15 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (dam > p_ptr->lev / 3) dam = p_ptr->lev / 3; /* works less well for low level targets */
 		if (dam < 1) dam = 1;
 
+		/* Don't override higher speed */
+		if (p_ptr->fast && p_ptr->fast_mod > dam) {
+			dam = 0;
+			break;
+		}
+
 		if (fuzzy) msg_print(Ind, "You feel faster!");
 		else msg_format(Ind, "%^s speeds you up!", killer);
-		(void)set_fast(Ind, 10 + (dam * 5), dam); /* removed stacking */
+		(void)set_fast(Ind, 10 + rand_int(10) + dam * 3, dam); /* removed stacking */
 		dam = 0;
 		break;
 
@@ -10747,6 +10753,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_OLD_SPEED:
 		if (fuzzy) msg_print(Ind, "You are hit by something!");
+
+		/* Don't override higher speed */
+		if (p_ptr->fast && p_ptr->fast_mod > 10) {
+			dam = 0;
+			break;
+		}
+
 		(void)set_fast(Ind, randint(5), 10);
 		dam = 0;
 		break;
