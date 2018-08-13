@@ -11024,6 +11024,9 @@ For details about parrying and blocking see (6.11).
 
 Armour class:
 -------------
+First off: Armour class does not help against ranged attacks or spells, only
+against melee attacks (hits, kicks, etc)!
+
 Armour class helps you twice:
 -It makes monsters miss you more often with attacks that don't bypass armour.
  The more AC the better, it's weighed against the level of the attacking
