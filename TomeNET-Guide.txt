@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. July 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 13. August 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18320,6 +18320,8 @@ Low level character (up to 15)
 + Some Scrolls of Word of Recall
 + Some Scrolls of Identify
   These will allow you to identify unknown items that you may find!
++ Archers might find rods/wands/staves of light useful to create LoS
+  (line-of-sight) opportunities for killing monsters from afar down hallways.
 
 
 Medium level character (up to 25)
