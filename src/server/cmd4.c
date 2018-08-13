@@ -193,14 +193,15 @@ void do_cmd_check_artifacts(int Ind, int line) {
 			/* Hack -- Build the artifact name */
 			if (admin) {
 				char timeleft[10], c = 'w';
-				int timeout = FALSE
+				int divisor = FALSE
 #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
 				    || a_ptr->iddc
 #endif
 #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
 				    || a_ptr->winner
 #endif
-				     ? a_ptr->timeout / 2 : a_ptr->timeout;
+				     ? 2 : 1;
+				int timeout = a_ptr->timeout / divisor;
 
 				/* bad: should just use determine_artifact_timeout() for consistency, instead of hard-coding */
 				int long_timeout = winner_artifact_p(&forge) ? 60 * 2 : 60;
@@ -209,9 +210,9 @@ void do_cmd_check_artifacts(int Ind, int line) {
 #endif
 
 				if (timeout <= 0 || cfg.persistent_artifacts) sprintf(timeleft, "\377s  - ");
-				else if (timeout < 60 * 2) sprintf(timeleft, "\377r%3dm", timeout);
-				else if (timeout < 60 * 24 * 2) sprintf(timeleft, "\377y%3dh", timeout / 60);
-				else if (timeout < long_timeout * 24 * (FLUENT_ARTIFACT_WEEKS * 7 - 1))
+				else if (timeout < (60 * 2) / divisor) sprintf(timeleft, "\377r%3dm", timeout);
+				else if (timeout < (60 * 24 * 2) / divisor) sprintf(timeleft, "\377y%3dh", timeout / 60);
+				else if (timeout < (long_timeout * 24 * (FLUENT_ARTIFACT_WEEKS * 7 - 1)) / divisor)
 					sprintf(timeleft, "\377s%3dd", timeout / 60 / 24);
 				else sprintf(timeleft, "\377G%3dd", timeout / 60 / 24); /* indicate very recently found arts */
 
