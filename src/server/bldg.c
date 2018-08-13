@@ -1361,7 +1361,8 @@ static bool repair_item(int Ind, int i, bool iac) {
 			msg_print(Ind, "Sorry, but that piece of armour is beyond repair.");
 			return FALSE;
 		}
-		cost -= o_ptr->to_a * 35;
+		//cost -= o_ptr->to_a * 35;
+		cost += (((o_ptr->to_a - 3) * (o_ptr->to_a - 3)) / 8 - 1) * 35; //increase slightly superlinearly, ie earlier repair is cheaper
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
 			msg_print(Ind, "That is not a weapon.");
@@ -1378,7 +1379,8 @@ static bool repair_item(int Ind, int i, bool iac) {
 			msg_print(Ind, "Sorry, but that weapon is beyond repair.");
 			return FALSE;
 		}
-		cost -= o_ptr->to_d * 35;
+		//cost -= o_ptr->to_d * 35;
+		cost += (((o_ptr->to_d - 3) * (o_ptr->to_d - 3)) / 8 - 1) * 35; //increase slightly superlinearly, ie earlier repair is cheaper
 	}
 
 	if (!is_enchantable(o_ptr)) {
