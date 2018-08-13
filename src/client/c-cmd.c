@@ -3152,8 +3152,8 @@ void cmd_check_misc(void) {
 	Term_clear();
 	//Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
 
-	Term_putstr( 5,  3, -1, TERM_WHITE, "(\377y1\377w) Artifacts");
-	Term_putstr( 5,  4, -1, TERM_WHITE, "(\377y2\377w) Monsters");
+	Term_putstr( 5,  3, -1, TERM_WHITE, "(\377y1\377w) Artifacts found");
+	Term_putstr( 5,  4, -1, TERM_WHITE, "(\377y2\377w) Monsters killed");
 	Term_putstr( 5,  5, -1, TERM_WHITE, "(\377y3\377w) Unique monsters");
 	Term_putstr( 5,  6, -1, TERM_WHITE, "(\377y4\377w) Objects");
 	Term_putstr( 5,  7, -1, TERM_WHITE, "(\377y5\377w) Traps");
