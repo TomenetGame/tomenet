@@ -1011,7 +1011,7 @@ errr get_obj_num_prep(u32b resf) {
 			}
 			if (resf & RESF_COND_RANGED) { //force generation of a ranged weapon (or ammo)
 				if (!is_ranged_weapon(tval) && !is_ammo(tval)) p = 0;
-				else if (is_ammo(tval)) p = 3000;
+				else if (is_ammo(tval)) p = 10000; //was 3000 - but we need moar ammo in IDDC!
 				else if (tval == TV_BOOMERANG) p = 3000;
 				else p = 10000; //sling/bow/crossbow
 			}
@@ -7564,7 +7564,11 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	if ((resf & RESF_CONDF_NOSWORD) && is_melee_weapon(forge.tval) && forge.tval != TV_SWORD) place_object_restrictor |= RESF_CONDF_NOSWORD; //note: only melee weapons can clear this, not ranged weapons
 	if ((resf & RESF_CONDF_MSTAFF) && forge.tval == TV_MSTAFF) place_object_restrictor |= RESF_CONDF_MSTAFF;
 	if ((resf & RESF_COND_SLING) && forge.tval == TV_BOW && forge.sval == SV_SLING) place_object_restrictor |= RESF_COND_SLING; //note: sling ammo can't clear it, need an actual sling
+#if 0
 	if ((resf & RESF_COND_RANGED) && is_ranged_weapon(forge.tval)) place_object_restrictor |= RESF_COND_RANGED; //note: ammo can't clear it, need a ranged weapon
+#else
+	if ((resf & RESF_COND_RANGED) && (is_ranged_weapon(forge.tval) || is_ammo(forge.tval))) place_object_restrictor |= RESF_COND_RANGED; //experimental: ammo can clear the condition too
+#endif
 	if ((resf & RESF_CONDF_RUNE) && forge.tval == TV_RUNE) place_object_restrictor |= RESF_CONDF_RUNE;
 }
 
