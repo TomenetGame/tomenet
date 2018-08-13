@@ -2191,7 +2191,8 @@ static Mix_Music* load_song(int idx, int subidx) {
 /* Display options page UI that allows to comment out sounds easily */
 void do_cmd_options_sfx_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
-	int y = 0, j_sel = 0, tmp;
+	static int y = 0, j_sel = 0;
+	int tmp;
 	char ch;
 	byte a, a2;
 	cptr lua_name;
@@ -2472,7 +2473,7 @@ void do_cmd_options_sfx_sdl(void) {
 /* Display options page UI that allows to comment out music easily */
 void do_cmd_options_mus_sdl(void) {
 	int i, i2, j, d, vertikal_offset = 3, horiz_offset = 5;
-	int y = 0, j_sel = 0;//, max_events = 0;
+	static int y = 0, j_sel = 0;//, max_events = 0;
 	char ch;
 	byte a, a2;
 	cptr lua_name;
