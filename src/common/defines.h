@@ -6497,14 +6497,13 @@
 #define true_artifact_p(T) \
         (artifact_p(T) && ((T)->name1 != ART_RANDART))
 
-/* artifacts that can occur multiple times legally */
-#define multiple_artifact_p(T) \
-        ((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || \
-	(T)->name1 == ART_CLOAK_DM || (T)->name1 == ART_GOGGLES_DM || (T)->name1 == ART_SCYTHE_DM)
-
 /* artifacts that aren't supposed to show up in non-admins' art lists */
 #define admin_artifact_p(T) \
 	((T)->name1 == ART_CLOAK_DM || (T)->name1 == ART_GOGGLES_DM || (T)->name1 == ART_SCYTHE_DM)
+
+/* artifacts that can occur multiple times legally */
+#define multiple_artifact_p(T) \
+        ((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || admin_artifact_p(T))
 
 /* artifacts that as an exception can by used by winners */
 #define winner_artifact_p(T) \
