@@ -10381,6 +10381,15 @@ void get_laston(char *name, char *response, bool admin, bool colour) {
 		}
 	/* neither char nor acc_found? */
 	} else if (!acc_found) {
+		/* last resort: Check reserved names list, ie deceased characters */
+		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+			if (!reserved_name_character[i][0]) break;
+			if (strcmp(reserved_name_character[i], nameproc)) continue;
+			sprintf(response, "The character \377s%s\377w unfortunately is deceased.", nameproc);
+			return;
+		}
+
+		/* Really non-existing */
 		sprintf(response, "Sorry, couldn't find anyone named %s.", nameproc);
 		return;
 	}
