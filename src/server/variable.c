@@ -1069,3 +1069,4 @@ int dbgvar1b = 0, dbgvar2b = 0, dbgvar3b = 0, dbgvar4b = 0, dbgvar5b = 0, dbgvar
 char dbgvars[MAX_CHARS] = { 0 };
 
 bool pvp_disabled = FALSE;
+byte Morgoth_x = -1, Morgoth_y = 0, Morgoth_z = 0;

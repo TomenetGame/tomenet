@@ -2143,6 +2143,9 @@ extern void shape_Maia_skills(int Ind);
 void merchant_mail_death(const char pname[NAME_LEN]);
 #endif
 
+extern byte Morgoth_x, Morgoth_y, Morgoth_z;
+
+
 /*
  * Hack -- conditional (or "bizarre") externs
  */

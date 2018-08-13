@@ -422,6 +422,8 @@ void delete_monster_idx(int i, bool unfound_arts) {
 		m_ptr->charmedignore = 0;
 	}
 
+	if (m_ptr->r_idx == RI_MORGOTH && !in_irondeepdive(wpos)) Morgoth_x = -1;
+
 	/* Wipe the Monster */
 	FREE(m_ptr->r_ptr, monster_race);
 	WIPE(m_ptr, monster_type);
@@ -3672,6 +3674,13 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 			}
 		/* if it was a live spawn, adjust his power according to amount of players on his floor */
 		if (!level_generation_time) check_Morgoth(0);
+
+		/* Just for some misc death message stuff */
+		if (!in_irondeepdive(wpos)) {
+			Morgoth_x = wpos->wx;
+			Morgoth_y = wpos->wy;
+			Morgoth_z = wpos->wz;
+		}
 	}
 	if (r_idx == RI_TIK_SRVZLLAT) s_printf("Tik'Svrzllat was created on %d\n", dlev);
 	if (r_idx == RI_HELLRAISER) s_printf("The Hellraiser was created on %d\n", dlev);
