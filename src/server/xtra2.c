@@ -7585,6 +7585,15 @@ static void display_diz_death(int Ind) {
 
 	if (!p_ptr->died_from_ridx || is_admin(p_ptr)) return;
 
+	if (streq(p_ptr->died_from, "It") ||
+	    streq(p_ptr->died_from, "insanity") ||
+	    streq(p_ptr->died_from, "poison")
+	    || streq(p_ptr->died_from, "indecisiveness")
+	    || streq(p_ptr->died_from, "indetermination")
+	    || streq(p_ptr->died_from, "starvation")
+	    || streq(p_ptr->died_from, "poisonous food"))
+		return;
+
 	strcpy(diz, r_text + r_info[p_ptr->died_from_ridx].text);
 	while (strlen(dizptr) > 80 - 0) {
 		strncpy(tmp, dizptr, 80 - 0);
