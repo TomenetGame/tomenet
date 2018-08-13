@@ -1432,6 +1432,7 @@ void cmd_the_guide(void) {
 #endif
 	int i;
 	char *res;
+	bool search_uppercase = FALSE;
 
 	/* empty file? */
 	if (guide_lastline == -1) return;
@@ -1640,7 +1641,7 @@ void cmd_the_guide(void) {
 					restore_pos = TRUE;
 					break;
 				/* We found a result */
-				} else if (my_strcasestr_skipcol(buf2, search)) {
+				} else if (my_strcasestr_skipcol(buf2, search, search_uppercase)) {
 					/* Reverse again to normal direction/location */
 					if (backwards) {
 						backwards = FALSE;
@@ -1670,7 +1671,7 @@ void cmd_the_guide(void) {
 			}
 
 			/* Colour all search finds */
-			if (withinsearch[0] && my_strcasestr_skipcol(buf2, withinsearch)) {
+			if (withinsearch[0] && my_strcasestr_skipcol(buf2, withinsearch, search_uppercase)) {
 				strcpy(buf, buf2);
 
 				cp = buf;
@@ -1699,8 +1700,8 @@ void cmd_the_guide(void) {
 						continue;
 					}
 
-					//if (!strncasecmp_skipcol(cp, withinsearch, strlen(withinsearch))) { --no need to define an extra function, just reuse my_strcasestr_skipcol() simply:
-					if (my_strcasestr_skipcol(cp, withinsearch) == cp) {
+					//if (!strncasecmp_skipcol(cp, withinsearch, strlen(withinsearch, search_uppercase))) { --no need to define an extra function, just reuse my_strcasestr_skipcol() simply:
+					if (my_strcasestr_skipcol(cp, withinsearch, search_uppercase) == cp) {
 						/* begin of colourizing */
 						*cp2++ = '\377';
 						*cp2++ = 'R';
@@ -2287,6 +2288,14 @@ void cmd_the_guide(void) {
 			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 
+			/* Hack: If we enter all upper-case, search for exactly that, case sensitively */
+			search_uppercase = TRUE;
+			for (c = 0; search[c]; c++) {
+				if (search[c] == toupper(search[c])) continue;
+				search_uppercase = FALSE;
+				break;
+			}
+
 			strcpy(lastsearch, search);
 			searchline = line - 1; //init searchline for string-search
 			continue;
@@ -2354,7 +2363,7 @@ void cmd_the_guide(void) {
 			Term_putstr( 0,  6, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
 			Term_putstr( 0,  7, -1, TERM_WHITE, "  Space or 'n':    Move down by one page");
 			Term_putstr( 0,  8, -1, TERM_WHITE, "  'p'         :    Move up by one page");
-			Term_putstr( 0,  9, -1, TERM_WHITE, "  's'         :    Search for a text string");
+			Term_putstr( 0,  9, -1, TERM_WHITE, "  's'         :    Search for a text string (use all upper-case for strict mode)");
 			Term_putstr( 0, 10, -1, TERM_WHITE, "  'd'         :    ..after 's', this jumps to the next match");
 			Term_putstr( 0, 11, -1, TERM_WHITE, "  'D' or 'f'  :    ..after 's', this jumps to the previous match");
 			Term_putstr( 0, 12, -1, TERM_WHITE, "  'S'         :    ..resets screen to where you were before you did a search.");

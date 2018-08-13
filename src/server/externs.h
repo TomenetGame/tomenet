@@ -33,7 +33,7 @@ extern char color_attr_to_char(int a);
 extern void version_build(void);
 extern byte mh_attr(int max);
 extern const char *my_strcasestr(const char *big, const char *little);
-extern const char *my_strcasestr_skipcol(const char *big, const char *little);
+extern const char *my_strcasestr_skipcol(const char *big, const char *little, bool strict);
 
 
 /* common/files.c */

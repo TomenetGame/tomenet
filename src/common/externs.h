@@ -733,7 +733,7 @@ extern bool c_get_item(int *cp, cptr pmt, bool equip, bool inven, bool floor);
 extern int find_realm(int book);
 extern void version_build(void);
 extern const char *my_strcasestr(const char *big, const char *little);
-extern const char *my_strcasestr_skipcol(const char *big, const char *little);
+extern const char *my_strcasestr_skipcol(const char *big, const char *little, bool strict);
 
 /*
  * Hack -- conditional (or "bizarre") externs
