@@ -10076,8 +10076,8 @@ void process_monsters(void) {
 			if (!adj &&
 			    (p_ptr->s_info[SKILL_SWORD].value + p_ptr->s_info[SKILL_BLUNT].value +
 			    p_ptr->s_info[SKILL_AXE].value + p_ptr->s_info[SKILL_POLEARM].value +
-			    p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= (p_ptr->max_plv * 2000L) / 3 ||
-			    p_ptr->s_info[SKILL_INTERCEPT].value >= (p_ptr->max_plv * 3000L) / 4 ||
+			    p_ptr->s_info[SKILL_MARTIAL_ARTS].value >= (p_ptr->max_plv * 1000L) / 2 ||
+			    p_ptr->s_info[SKILL_INTERCEPT].value >= (p_ptr->max_plv * 1000L) / 2 ||
 			    p_ptr->antimagic >= 40)) {
 				if (!(r_info[m_ptr->r_idx].flags7 & RF7_AI_ANNOY)) {
 					r_info[m_ptr->r_idx].flags7 |= RF7_AI_ANNOY;
