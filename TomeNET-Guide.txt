@@ -5,6 +5,7 @@
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
+| Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
 |
 | IF YOU GOT THIS GUIDE WITH THE PROGRAM DOWNLOAD, IE IN A CLIENT ZIP FILE,
 | THEN FIRST THING YOU SHOULD DO NOW IS GO TO www.tomenet.eu AND DOWNLOAD THE
