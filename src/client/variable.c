@@ -498,3 +498,6 @@ int sp_max, sp_cur;
 bool sp_bar;
 int st_max, st_cur;
 bool st_bar;
+
+char cfg_soundpackfolder[1024];
+char cfg_musicpackfolder[1024];

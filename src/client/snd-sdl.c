@@ -305,7 +305,7 @@ static bool sound_sdl_init(bool no_cache) {
 	/* ------------------------------- Init Sounds */
 
 	/* Build the "sound" path */
-	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "sound");
+	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, cfg_soundpackfolder);
 #ifndef SEGFAULT_HACK
 	ANGBAND_DIR_XTRA_SOUND = string_make(path);
 #else
@@ -554,7 +554,7 @@ static bool sound_sdl_init(bool no_cache) {
 	buffer = buffer0;
 
 	/* Build the "music" path */
-	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, "music");
+	path_build(path, sizeof(path), ANGBAND_DIR_XTRA, cfg_musicpackfolder);
 #ifndef SEGFAULT_HACK
 	ANGBAND_DIR_XTRA_MUSIC = string_make(path);
 #else

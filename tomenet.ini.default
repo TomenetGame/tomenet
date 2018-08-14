@@ -65,6 +65,10 @@ Graphics=0
 ; - enable audio in general (0 = off, 1 = on)
 Sound=1
 
+; - subfolders within lib/xtra folder that contain audio packs
+SoundpackFolder=sound
+MusicpackFolder=music
+
 ; pre-cache audio (defaults to on; recommended)
 CacheAudio=1
 

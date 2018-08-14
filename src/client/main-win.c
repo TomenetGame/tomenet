@@ -608,8 +608,7 @@ byte old_attr = -1;
 /*
  * Hack -- given a pathname, point at the filename
  */
-static cptr extract_file_name(cptr s)
-{
+static cptr extract_file_name(cptr s) {
 	cptr p;
 
 	/* Start at the end */
@@ -627,8 +626,7 @@ static cptr extract_file_name(cptr s)
 /*
  * Check for existence of a file
  */
-static bool check_file(cptr s)
-{
+static bool check_file(cptr s) {
 	char path[1024];
 
 #ifdef WIN32
@@ -676,10 +674,8 @@ static bool check_file(cptr s)
 /*
  * Check for existence of a directory
  */
-bool check_dir(cptr s)
-{
+bool check_dir(cptr s) {
 	int i;
-
 	char path[1024];
 
 #ifdef WIN32
@@ -733,34 +729,27 @@ bool check_dir(cptr s)
 /*
  * Validate a file
  */
-static void validate_file(cptr s)
-{
+static void validate_file(cptr s) {
 	/* Verify or fail */
 	if (!check_file(s))
-	{
 		quit_fmt("Cannot find required file:\n%s", s);
-	}
 }
 
 
 /*
  * Validate a directory
  */
-static void validate_dir(cptr s)
-{
+static void validate_dir(cptr s) {
 	/* Verify or fail */
 	if (!check_dir(s))
-	{
 		quit_fmt("Cannot find required directory:\n%s", s);
-	}
 }
 
 
 /*
  * Get the "size" for a window
  */
-static void term_getsize(term_data *td)
-{
+static void term_getsize(term_data *td) {
 	RECT        rc;
 
 	/* Paranoia */
@@ -806,8 +795,7 @@ static void term_getsize(term_data *td)
 /*
  * Write the "preference" data for single term
  */
-static void save_prefs_aux(term_data *td, cptr sec_name)
-{
+static void save_prefs_aux(term_data *td, cptr sec_name) {
 	char buf[32];
 
 	/* Visible (Sub-windows) */
@@ -827,16 +815,12 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
 #else
 	/* Desired font */
 	if (td->font_file)
-	{
 		WritePrivateProfileString(sec_name, "Font", td->font_file, ini_file);
-	}
 #endif
 
 	/* Desired graf */
 	if (td->graf_file)
-	{
 		WritePrivateProfileString(sec_name, "Graf", td->graf_file, ini_file);
-	}
 
 	if (td != &data[0]) {
 		/* Current size (x) */
@@ -885,8 +869,7 @@ static void save_prefs_aux(term_data *td, cptr sec_name)
  *
  * We assume that the windows have all been initialized
  */
-static void save_prefs(void)
-{
+static void save_prefs(void) {
 #if defined(USE_GRAPHICS) || defined(USE_SOUND)
 	char       buf[32];
 #endif
@@ -900,6 +883,8 @@ static void save_prefs(void)
 	WritePrivateProfileString("Base", "Sound", buf, ini_file);
 
  #ifdef USE_SOUND_2010
+	WritePrivateProfileString("Base", "SoundpackFolder", cfg_soundpackfolder, ini_file);
+	WritePrivateProfileString("Base", "MusicpackFolder", cfg_musicpackfolder, ini_file);
 	strcpy(buf, cfg_audio_master ? "1" : "0");
 	WritePrivateProfileString("Base", "AudioMaster", buf, ini_file);
 	strcpy(buf, cfg_audio_music ? "1" : "0");
@@ -919,21 +904,13 @@ static void save_prefs(void)
  #endif
 #endif
 	save_prefs_aux(&data[0], "Main window");
-
 	/* XXX XXX XXX XXX */
-
 	save_prefs_aux(&data[1], "Mirror window");
-
 	save_prefs_aux(&data[2], "Recall window");
-
 	save_prefs_aux(&data[3], "Choice window");
-
 	save_prefs_aux(&data[4], "Term-4 window");
-
 	save_prefs_aux(&data[5], "Term-5 window");
-
 	save_prefs_aux(&data[6], "Term-6 window");
-
 	save_prefs_aux(&data[7], "Term-7 window");
 }
 
@@ -941,8 +918,7 @@ static void save_prefs(void)
 /*
  * Load preference for a single term
  */
-static void load_prefs_aux(term_data *td, cptr sec_name)
-{
+static void load_prefs_aux(term_data *td, cptr sec_name) {
 	char tmp[128];
 	int i = 0;
 
@@ -998,8 +974,7 @@ static void load_prefs_aux(term_data *td, cptr sec_name)
  */
 #ifdef USE_SOUND
 #ifndef USE_SOUND_2010
-static void load_prefs_sound(int i)
-{
+static void load_prefs_sound(int i) {
 	char aux[128];
 	char wav[128];
 	char tmp[128];
@@ -1028,8 +1003,7 @@ static void load_prefs_sound(int i)
 /*
  * Load the preferences from the .INI file
  */
-static void load_prefs(void)
-{
+static void load_prefs(void) {
 	int i;
 
 	/* Extract the "disable_numlock" flag */
@@ -1077,6 +1051,8 @@ static void load_prefs(void)
 	cfg_max_channels = GetPrivateProfileInt("Base", "MaxChannels", 32, ini_file);
 	cfg_audio_buffer = GetPrivateProfileInt("Base", "AudioBuffer", 1024, ini_file);
 	cfg_audio_master = (GetPrivateProfileInt("Base", "AudioMaster", 1, ini_file) != 0);
+	GetPrivateProfileString("Base", "SoundpackFolder", "sound", cfg_soundpackfolder, 127, ini_file);
+	GetPrivateProfileString("Base", "MusicpackFolder", "music", cfg_musicpackfolder, 127, ini_file);
 	cfg_audio_music = (GetPrivateProfileInt("Base", "AudioMusic", 1, ini_file) != 0);
 	cfg_audio_sound = (GetPrivateProfileInt("Base", "AudioSound", 1, ini_file) != 0);
 	cfg_audio_weather = (GetPrivateProfileInt("Base", "AudioWeather", 1, ini_file) != 0);

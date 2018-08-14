@@ -589,6 +589,7 @@ extern void my_memfrob(void *s, int n);
 extern bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 #ifdef USE_SOUND_2010
 extern void interact_audio(void);
+extern void audio_pack_selector(void);
 extern void toggle_music(void);
 extern void toggle_audio(void);
 extern bool sound_bell(void);
@@ -1029,3 +1030,6 @@ extern int sp_max, sp_cur;
 extern bool sp_bar;
 extern int st_max, st_cur;
 extern bool st_bar;
+
+extern char cfg_soundpackfolder[1024];
+extern char cfg_musicpackfolder[1024];

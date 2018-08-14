@@ -97,6 +97,10 @@ sound			1
 ##   smaller = skipping on slow machines. 128..8192)
 audioBuffer		1024
 
+## - Subfolders within lib/xtra folder that contain audio packs
+soundpackFolder		sound
+musicpackFolder		music
+
 ## - Turn various things on(1) or off(0)
 audioMaster		1
 audioMusic		1

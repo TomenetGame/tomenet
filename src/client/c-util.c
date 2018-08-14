@@ -8053,9 +8053,9 @@ void do_cmd_options(void) {
 
 		Term_putstr(3,12, -1, TERM_SLATE, "The following options are all saved automatically on quitting via CTRL+Q:");
 		if (c_cfg.rogue_like_commands)
-			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+F hotkey)");
+			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
 		else
-			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w) Audio mixer (also accessible via CTRL+U hotkey)");
+			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
 
 		Term_putstr(3,14, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
 
@@ -8160,6 +8160,8 @@ void do_cmd_options(void) {
 
 		/* Access audio mixer */
 		else if (k == 'x') interact_audio();
+
+		else if (k == 'X') audio_pack_selector();
 
 		else if (k == 'I') do_cmd_options_install_audio_packs();
 
@@ -8687,7 +8689,7 @@ void set_mixing(void) {
 }
 
 void interact_audio(void) {
-	int i, j, item_x[8] = {2, 12, 22, 32, 42, 52, 62, 72};
+	int i, j, item_x[8] = {2, 12, 22, 32, 42, 52, 62, 72}, k;
 	static int cur_item = 0;
 	int y_label = 20, y_toggle = 12, y_slider = 18;
 	bool redraw = TRUE, quit = FALSE;
@@ -8695,7 +8697,8 @@ void interact_audio(void) {
 	/* Save screen */
 	Term_save();
 
-	/* Prevent hybrid macros from triggering in here */
+	/* suppress hybrid macros */
+	bool inkey_msg_old = inkey_msg;
 	inkey_msg = TRUE;
 
 	/* Process requests until done */
@@ -8777,7 +8780,8 @@ void interact_audio(void) {
 		inkey_flag = TRUE;
 
 		/* Wait for keypress */
-		switch (inkey()) {
+		k = inkey();
+		switch (k) {
 		case KTRL('T'):
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
@@ -8909,7 +8913,7 @@ void interact_audio(void) {
 	Flush_queue();
 
 	/* Re-enable hybrid macros */
-	inkey_msg = FALSE;
+	inkey_msg = inkey_msg_old;
 }
 void toggle_music(void) {
 	cfg_audio_music = !cfg_audio_music;
@@ -8920,6 +8924,151 @@ void toggle_audio(void) {
 	set_mixing();
 }
 #endif
+
+/* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
+#define MAX_PACKS 100
+#define PACKS_SCREEN 10
+void audio_pack_selector(void) {
+	int k, soundpacks = 0, musicpacks = 0;
+	static int cur_sp = 0, cur_mp = 0;
+	bool redraw = TRUE, quit = FALSE;
+	char buf[1024], path[1024];
+	char sp_dir[MAX_PACKS][MAX_CHARS], mp_dir[MAX_PACKS][MAX_CHARS];
+	char sp_name[MAX_PACKS][MAX_CHARS], mp_name[MAX_PACKS][MAX_CHARS];
+	char sp_diz[MAX_PACKS][MAX_CHARS * 3], mp_diz[MAX_PACKS][MAX_CHARS * 3];
+
+	FILE *fff;
+#ifndef WINDOWS
+	int r;
+#endif
+
+	/* suppress hybrid macros */
+	bool inkey_msg_old = inkey_msg;
+	inkey_msg = TRUE;
+
+	/* Save screen */
+	Term_save();
+
+	/* Get list of all folders starting on 'music' or 'sound' within lib/xtra */
+	fff = fopen("__tomenet.tmp", "w"); //just make sure the file always exists, for easier file-reading handling.. pft */
+	fclose(fff);
+#ifdef WINDOWS
+	_spawnl(_P_WAIT, "cmd", "cmd", "/c", "dir", ANGBAND_DIR_XTRA, "/a:d", "/b", ">", "__tomenet.tmp", NULL);
+#else /* assume POSIX */
+	r = system(format("cd %s && ls -d */ -1 > __tomenet.tmp", ANGBAND_DIR_XTRA)); // or "ls -d */ | cat > __tomenet.tmp" in case -1 isnt supported?
+#endif
+	path_build(path, 1024, ANGBAND_DIR_XTRA, "__tomenet.tmp");
+	fff = fopen(path, "r");
+	while (!feof(fff)) {
+		if (!fgets(buf, 1024, fff)) break;
+#ifndef WINDOWS
+		buf[strlen(buf) - 2] = 0; //'ls' command outputs trailing '/' on each line
+#endif
+		/* Found a sound pack folder? */
+		if (!strncmp(buf, "sound", 5)) {
+			if (soundpacks < MAX_PACKS) {
+				strcpy(sp_dir[soundpacks], buf);
+				strcpy(sp_name[soundpacks], "");
+				strcpy(sp_diz[soundpacks], "");
+				soundpacks++;
+			}
+		}
+		/* Found a music pack folder? */
+		if (!strncmp(buf, "music", 5)) {
+			if (musicpacks < MAX_PACKS) {
+				strcpy(mp_dir[musicpacks], buf);
+				strcpy(mp_name[musicpacks], "");
+				strcpy(mp_diz[musicpacks], "");
+				musicpacks++;
+			}
+		}
+	}
+	fclose(fff);
+	remove(path);
+	(void)r; //slay compiler warning -_-;;;
+
+	while (1) {
+		if (redraw) {
+			/* Clear screen */
+			Term_clear();
+
+			/* Describe */
+			Term_putstr(25,  0, -1, TERM_L_UMBER, "*** Audio Pack Selector ***");
+			Term_putstr(1, 1, -1, TERM_L_WHITE, "Press \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, ESC to accept.");
+			Term_putstr(5, 3, -1, TERM_L_UMBER, "Available sound packs:");
+			Term_putstr(45, 3, -1, TERM_L_UMBER, "Available music packs:");
+
+			for (k = 0; k < soundpacks; k++)
+				Term_putstr(0, 4 + k, -1, TERM_L_WHITE, sp_dir[k]);
+			for (k = 0; k < musicpacks; k++)
+				Term_putstr(40, 4 + k, -1, TERM_L_WHITE, mp_dir[k]);
+
+			Term_putstr(3, 15, -1, TERM_L_UMBER, "Selected sound pack:");
+			Term_putstr(3, 16, -1, TERM_YELLOW, sp_name[cur_sp]);
+			Term_putstr(3, 17, -1, TERM_WHITE, sp_diz[cur_sp]);
+			if (strlen(sp_diz[cur_sp]) >= 80) Term_putstr(3, 18, -1, TERM_WHITE, &sp_diz[cur_sp][80]);
+			if (strlen(sp_diz[cur_sp]) >= 160) Term_putstr(3, 19, -1, TERM_WHITE, &sp_diz[cur_sp][160]);
+			Term_putstr(3, 20, -1, TERM_L_UMBER, "Selected music pack:");
+			Term_putstr(3, 21, -1, TERM_YELLOW, mp_name[cur_mp]);
+			Term_putstr(3, 22, -1, TERM_WHITE, mp_diz[cur_mp]);
+			if (strlen(mp_diz[cur_mp]) >= 80) Term_putstr(3, 23, -1, TERM_WHITE, &mp_diz[cur_mp][80]);
+			if (strlen(mp_diz[cur_mp]) >= 160) Term_putstr(3, 24, -1, TERM_WHITE, &mp_diz[cur_mp][160]);
+		}
+		redraw = TRUE;
+
+		/* make cursor invisible */
+		Term_set_cursor(0);
+		inkey_flag = TRUE;
+
+		/* Wait for keypress */
+		k = inkey();
+		switch (k) {
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			redraw = FALSE;
+			break;
+		case ESCAPE:
+			quit = TRUE; /* hack to leave loop */
+			break;
+		case 'a':
+			cur_sp++;
+			if (cur_sp > 7) cur_sp = 0;
+			redraw = FALSE;
+			break;
+		case 'q':
+			cur_sp--;
+			if (cur_sp < 0) cur_sp = 7;
+			redraw = FALSE;
+			break;
+		case 'w':
+			cur_mp++;
+			if (cur_mp > 7) cur_mp = 0;
+			redraw = FALSE;
+			break;
+		case 's':
+			cur_mp--;
+			if (cur_mp < 0) cur_mp = 7;
+			redraw = FALSE;
+			break;
+		default:
+			/* Oops */
+			bell();
+		}
+
+		/* Leave */
+		if (quit) break;
+	}
+
+	/* Reload screen */
+	Term_load();
+
+	/* Flush the queue */
+	Flush_queue();
+
+	/* Re-enable hybrid macros */
+	inkey_msg = inkey_msg_old;
+}
 
 /* For pasting monster lore into chat, also usable for item-pasting. - C. Blue
    Important feature: Replaces first ':' by '::' if sending to normal chat. */

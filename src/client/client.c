@@ -257,7 +257,7 @@ static bool read_mangrc(cptr filename) {
 #endif
 #ifdef USE_SOUND
 			/* sound */
-			if (!strncmp(buf, "sound", 5)) {
+			if (!strncmp(buf, "sound", 5) && strncmp(buf, "soundpackFolder", 15)) {
 				char *p;
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
@@ -297,6 +297,20 @@ static bool read_mangrc(cptr filename) {
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) cfg_audio_buffer = atoi(p);
+			}
+			/* Folder of the currently selected sound pack */
+			if (!strncmp(buf, "soundpackFolder", 15)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) strcpy(cfg_soundpackfolder, p);
+			}
+			/* Folder of the currently selected music pack */
+			if (!strncmp(buf, "musicpackFolder", 15)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) strcpy(cfg_musicpackfolder, p);
 			}
 			/* audio mixer settings */
 			if (!strncmp(buf, "audioMaster", 11)) {
@@ -500,6 +514,8 @@ bool write_mangrc(bool creds_only) {
 	char config_name2[100];
 	FILE *config, *config2;
 	char buf[1024];
+	/* backward compatibility */
+	bool compat_apf = FALSE;
 
 	buf[0] = 0;//valgrind warning it seems..?
 
@@ -519,10 +535,26 @@ bool write_mangrc(bool creds_only) {
     if (!creds_only) {
 #ifdef USE_SOUND_2010
 			/* modify the line */
+			if (!strncmp(buf, "soundpackFolder", 15)) {
+				strcpy(buf, "soundpackFolder\t\t");
+				strcat(buf, cfg_soundpackfolder);
+				strcat(buf, "\n");
+				compat_apf = TRUE;
+			} else if (!strncmp(buf, "musicpackFolder", 15)) {
+				strcpy(buf, "musicpackFolder\t\t");
+				strcat(buf, cfg_musicpackfolder);
+				strcat(buf, "\n");
+			}
 			/* audio mixer settings */
 			if (!strncmp(buf, "audioMaster", 11)) {
 				strcpy(buf, "audioMaster\t\t");
 				strcat(buf, cfg_audio_master ? "1\n" : "0\n");
+
+				/* add newly released entries to older config file versions */
+				if (!compat_apf) {
+					fputs("\nsoundpackFolder\t\tsound\n", config2);
+					fputs("musicpackFolder\t\tmusic\n\n", config2);
+				}
 			} else if (!strncmp(buf, "audioMusic", 10)) {
 				strcpy(buf, "audioMusic\t\t");
 				strcat(buf, cfg_audio_music ? "1\n" : "0\n");
@@ -600,7 +632,7 @@ bool write_mangrc(bool creds_only) {
 #ifdef USE_SOUND_2010
     if (!creds_only) {
 			/* hack: disable one-time hint */
-			if (!strncmp(buf, "sound", 5) && sound_hint) fputs("hintSound\n", config2);
+			if (!strncmp(buf, "sound", 5) && strncmp(buf, "soundpackFolder", 15) && sound_hint) fputs("hintSound\n", config2);
     }
 #endif
 		}
@@ -696,7 +728,8 @@ bool write_mangrc(bool creds_only) {
 		fputs(format("audioSampleRate\t\t%d\n", cfg_audio_rate), config2);
 		fputs(format("audioChannels\t\t%d\n", cfg_max_channels), config2);
 		fputs(format("audioBuffer\t\t%d\n", cfg_audio_buffer), config2);
-
+		fputs(format("soundpackFolder\t\t%s\n", cfg_soundpackfolder), config2);
+		fputs(format("musicpackFolder\t\t%s\n", cfg_musicpackfolder), config2);
 		fputs(format("audioMaster\t\t%s\n", cfg_audio_master ? "1" : "0"), config2);
 		fputs(format("audioMusic\t\t%s\n", cfg_audio_music ? "1" : "0"), config2);
 		fputs(format("audioSound\t\t%s\n", cfg_audio_sound ? "1" : "0"), config2);
@@ -801,6 +834,10 @@ int main(int argc, char **argv) {
 
 	/* Acquire the version strings */
 	version_build();
+
+	/* assume defaults */
+	strcpy(cfg_soundpackfolder, "sound");
+	strcpy(cfg_musicpackfolder, "music");
 
 	/* read default rc file */
 	skip = read_mangrc("");
