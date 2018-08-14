@@ -22,6 +22,7 @@ function quest_towneltalk(Ind, msg, topic)
 			msg_print(Ind, "\252\255UOh "..msg..", I have bad news - for you seem to have died and are now a ghost!")
 			msg_print(Ind, "\252\255U Seek out the temple (4) or another powerful holy eminence to have you resurrected again!")
 			hinted = 1
+			--maybe add dual-wield cheap hint for warriors/rangers/HK
 		else
 			--Black Breath:
 			if player.black_breath ~= 0 then
@@ -86,6 +87,8 @@ function quest_towneltalk(Ind, msg, topic)
 					hinted = 1
 				end
 			end
+			--Critical encumberments:
+			
 		end
 
 		--Give proper question about advice topics
@@ -108,12 +111,15 @@ function quest_towneltalk(Ind, msg, topic)
 
 	--*** equipment ***
 	if topic == 1 then
-		--resistances, encumberments
+		--resistances, encumberments, redundant flags
+		--if we dual-wield a wrong weapon type, tell about one-hand mode
+		--maybe add dual-wield cheap hint for warriors/rangers/HK that are naked
 	end
 
 	--*** skills ***
 	if topic == 2 then
 		--if someone has trained spell skills, tell him to actually get the important spell scrolls for those
+		--tell him how to create macros
 		
 	end
 
