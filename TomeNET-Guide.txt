@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. August 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 14. August 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7327,11 +7327,15 @@ always has a chance to stun you, even if your AC is very high.
 (4.11a) Drain effects
 ---------------------
 Apart from the effects listed above which are indicated in the status bar at
-the bottom of the main window, there are three 'drain' effects that can occur.
-These can be caused by items, monsters or terrain, and are:
+the bottom of the main window, there are three 'drain' effects that can be
+caused by items and three other 'drain' effects that can be caused by monsters,
+traps or elemental attacks you suffer (possibly from terrain too).
 
+
+Drain effects caused by items:
+------------------------------
 Experience drain ('Drains your life force')
-    Having 'Hold Life' does not protect against this.
+    Having 'Hold Life' does not protect against this..
     If you equip multiple items that drain experience, the total drain will
     diminish with each further item though instead of adding up, so for example
     using two rings of power will be less severe than than one might expect.
@@ -7351,7 +7355,8 @@ Mana drain ('Drains your magic')
 Hit point drain ('Drains your hit points')
     Drains your hit points down to zero, then stops. This means that this
     effect won't kill you, but can make it extremely risky to go AFK in an
-    unsafe place. Well, going AFK in an unsafe place can kill you anyway.
+    unsafe place, as any further damage you suffer from whatever reason would
+    finish you off. Well, going AFK in an unsafe place can kill you anyway.
 
     HP drain stacks and is given by:
      -Items that just drain your HP
@@ -7371,6 +7376,104 @@ Hit point drain ('Drains your hit points')
     which all stack too.
 
 Also see (5.17) for how these drain effects stack or may be cancelled out.
+
+
+Drain effects caused by monsters, traps or elemental attacks including terrain:
+-------------------------------------------------------------------------------
+Experience drain
+    'You feel your life draining away!' - the normal message.
+    'You feel your life slipping away!' - you suffer less drain, happens if you
+                                          acquired the 'Hold life' power, which
+                                          is the specific resistance meant to
+                                          counter experience drain.
+    'You keep hold of your life force!' - you suffer no drain! Happens if you
+                                          have 'Hold life' and get lucky.
+    'You are unaffected!'               - you are completely unaffected by
+                                          experience drain ('Keep life').
+                                          To acquire this ability you need to
+                                          be either level 99 or have Necromancy
+                                          skill trained to 50.000 (maxed out).
+    Some of your experience points will be drained. If this happens a lot, you
+    might even lose one or more character levels! (You retain all your skill
+    points though.)
+    When your experience is drained this way, it will be displayed in yellow
+    colour instead of light green on your character sheet (SHIFT+C) and in your
+    'XP' bar on the main screen.
+    The game remembers your original amount of experience though and you can
+    restore it by purchasing a potion of 'Restore Life Levels' from the temple
+    in town or by corresponding restoration magic of various sorts.
+    It is recommended to restore your experience ASAP because any further gain
+    of experience points while in drained state will only count towards your
+    original maximum by 10% of its real value, resulting in large amounts of XP
+    being wasted.
+
+Stat drain
+    This type of drain will lower your atttributes, which can be:
+    STR (strength), INT (intelligence), WIS (wisdom), DEX (dexterity),
+    CON (constitution) and CHR (charisma).
+    While drained, these will be displayed in yellow colour instead of light
+    green on your character sheet (SHIFT+C) and in your 'XP' bar on the main
+    screen.
+    The game remembers your original stats though and you can restore any stat
+    by purchasing a potion of 'Restore <stat name>' from the alchemist in town
+    or by corresponding restoration magic of various sorts.
+
+    Note however that there are three tiers of stat drain:
+    I:   Temporary drain. Low-level traps will often do this. Also this might
+         happen to your strength stat if you overexert yourself at swimming.
+         You can just sit it out and after some time it will automatically
+         restore itself back to normal (colour changes from yellow to light
+         green again accordingly).
+    II:  Persistent drain. Medium level traps, monster attacks and certain
+         elemental damage you suffer can cause this.
+         Again the drained stat will be displayed in yellow, but unlike tier I
+         drain it will not self-restore. Instead you will need to purchase
+         a potion from the alchemist or use other means of restoration magic.
+    III: Permanent drain. High level traps are the only way to suffer this.
+         Your stat will actually not turn yellow, but remain light green and
+         its reduction cannot be undone by restoration magic!
+         The only way to counter this is by finding stat potions. These in turn
+         permanently increase a stat. So high-level characters might want to
+         always keep some of those potions in reserve even if they already
+         maxed out a stat.
+
+    It is especially nasty when your primary stats are drained. For a melee
+    fighter these are usually STR and DEX, as these determine your attack speed
+    aka BpR (blows per round). If you suffer stat drain here and notice that
+    your BpR just dropped for example from 3 to 2, it means you just lost
+    33% of your attack power! So you might want to return to town immediately
+    to restore the affected stats.
+    For a magic user it might be INT or WIS, depending on the type of magic
+    they use. If these get drained it will not only reduce their mana pool
+    (MP) but also increase the fail rates of their spells, so again you might
+    want to restore your primary stats as soon as possible.
+    Note that WIS drain can under certain circumstances be especially nasty as
+    WIS is the stat that mostly determines your sanity pool. So if you are
+    planning to fight a monster that can drain your sanity, make sure your WIS
+    stat is fully restored before you engage.
+
+    Notes:
+    - 'Sustenance' powers will help to prevent all three tiers of stat drain!
+    - Drinking a stat potion will automatically restore your stat if it was
+      drained, before permanently increasing it. So you don't need to purchase
+      an extra restoration potion before drinking a stat potion.
+    - While items cannot drain stats in general, there is one single exception:
+      If an item possesses the 'TY_CURSE', a special, strong curse (see (5.14)).
+
+Sanity drain
+    The most dangerous drain effect of all.
+    Some traps can cause this, drinking too much booze might also do its share
+    but mostly it will be from monster attacks, which can be ranged psychic
+    attacks as well as certain melee attacks.
+    If your sanity (see 'SN' indicator in the main window) gets drained too far
+    you will start hallucinating and if it reaches zero you will turn into an
+    unthinking vegetable, effectively erasing your character even if it is
+    'everlasting' mode and without any way of resurrecting!
+    So never let your character run out of sanity or it will die permanently!
+
+    Fortunately there are potions (and certain curing magic) to restore sanity,
+    albeit they cannot be purchased in normal stores.
+    See (6.6) for more information about sanity.
 
 
 
