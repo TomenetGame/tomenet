@@ -901,7 +901,8 @@ void warding_glyph(int Ind) {
 
 	if (!allow_terraforming(&p_ptr->wpos, FEAT_GLYPH) && !is_admin(p_ptr)) return;
 
-	cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH);
+	if (!cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_GLYPH))
+		msg_print(Ind, "\377yThe glyph fails to get placed here!");
 }
 
 
