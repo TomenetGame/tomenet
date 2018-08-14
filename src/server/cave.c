@@ -3759,11 +3759,13 @@ void lite_spot(int Ind, int y, int x) {
 
 			/* Polymorph ring power running out */
 			if (p_ptr->tim_mimic
+#if 1 /* Don't flicker Bloodthirster form on running low? */
 #ifdef ENABLE_HELLKNIGHT
 			    && p_ptr->pclass != CLASS_HELLKNIGHT
  #ifdef ENABLE_CPRIEST
 			    && p_ptr->pclass != CLASS_CPRIEST
  #endif
+#endif
 #endif
 			    && p_ptr->body_monster == p_ptr->tim_mimic_what && p_ptr->tim_mimic <= 100) {
 				if (!rand_int(10)) {
