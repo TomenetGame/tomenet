@@ -9936,7 +9936,7 @@ for(mx = 1; mx < 131; mx++) {
 /* NOTE: This function no longer is used for normal town generation;
  * this can be used to build 'extra' towns for some purpose, though.
  */
-//TL;DR: nowadays _only_ used in town_gen_hack(), for dungeon (ironman) towns - C. Blue
+//TL;DR: nowadays _only_ used in town_gen_hack(), for dungeon (ironman) towns or 'generic' wilderness towns - C. Blue
 static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 	int i, y, x, y0, x0, y1, x1, y2, x2, tmp;
 	int size = 0;
@@ -9975,7 +9975,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 	x1 = x0 - randint(5);
 	x2 = x0 + randint(5);
 
-	/* Hack -- make building 9's as large as possible */
+	/* Hack -- make building 9's as large as possible -- er why? It's just the bookstore =_= */
 	if (n == STORE_NINE) {
 		y1 = y0 - 3;
 		y2 = y0 + 3;
@@ -10029,7 +10029,7 @@ static void build_store(struct worldpos *wpos, int n, int yy, int xx) {
 				c_ptr = &zcave[y][x];
 
 				/* Clear contents */
-				c_ptr->feat = FEAT_FLOOR;
+				c_ptr->feat = FEAT_PROTECTED; //FEAT_FLOOR;
 
 				/* Declare this to be a room */
 				c_ptr->info |= (CAVE_ROOM | CAVE_GLOW | CAVE_NOPK);
