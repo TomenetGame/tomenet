@@ -10495,9 +10495,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (dam & 0x2) { /* Ungorge */
 			if (p_ptr->food >= PY_FOOD_MAX) set_food(Ind, PY_FOOD_MAX - 1);
 		}
-		if (dam & 0x4) /* Neutralise Poison */
+		if (dam & 0x4) { /* Neutralise Poison */
 			(void)set_poisoned(Ind, 0, 0);
 			(void)set_diseased(Ind, 0, 0); //mh
+		}
 		if (dam & 0x8) /* Close cuts */
 			(void)set_cut(Ind, 0, 0);
 		if (dam & 0x10) { /* Remove conf/blind/stun */
