@@ -2504,8 +2504,7 @@ int Receive_confused(void) {
 
 int Receive_poison(void) {
 	int	n;
-	char	ch;
-	bool	poison;
+	char	ch, poison;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &poison)) <= 0) return n;
 

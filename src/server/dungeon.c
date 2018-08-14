@@ -4421,6 +4421,12 @@ static bool process_player_end_aux(int Ind) {
 			take_hit(Ind, 1, "poison", p_ptr->poisoned_attacker);
 		}
 	}
+	/* Suffer from disease */
+	if (p_ptr->diseased) {
+		/* Take damage */
+		p_ptr->died_from_ridx = 0;
+		take_hit(Ind, 1, "disease", p_ptr->poisoned_attacker);
+	}
 
 	/* Misc. terrain effects */
 	if (!p_ptr->ghost) {
@@ -4816,7 +4822,7 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->tim_regen) regen_amount += p_ptr->tim_regen_pow;
 
 	/* Poisoned or cut yields no healing */
-	if (p_ptr->poisoned || p_ptr->cut || p_ptr->sun_burn)
+	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->cut || p_ptr->sun_burn)
 		regen_amount = 0;
 
 	/* But Biofeedback always helps */
@@ -5269,6 +5275,17 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_poisoned(Ind, p_ptr->poisoned - (adjust + minus_health) * (minus_health + 1), p_ptr->poisoned_attacker);
 
 		if (!p_ptr->poisoned) p_ptr->slow_poison = 0;
+	}
+
+	/* Disease */
+	if (p_ptr->diseased) {
+		int adjust = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
+
+		/* Apply some healing */
+		if (get_skill(p_ptr, SKILL_HCURING) >= 30) adjust *= 2;
+
+		//(void)set_diseased(Ind, p_ptr->diseased - adjust - minus_health * 2, p_ptr->poisoned_attacker);
+		(void)set_diseased(Ind, p_ptr->diseased - (adjust + minus_health) * (minus_health + 1), p_ptr->poisoned_attacker);
 	}
 
 	/* Stun */

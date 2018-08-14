@@ -2276,6 +2276,7 @@ struct player_type {
 	s16b image;			/* Timed -- Hallucination */
 	s16b poisoned;			/* Timed -- Poisoned */
 	s16b slow_poison;
+	s16b diseased;			/* Timed -- Diseased */
 	int poisoned_attacker;		/* Who poisoned the player - used for blood bond */
 	s16b cut;			/* Timed -- Cut */
 	int cut_attacker;		/* Who cut the player - used for blood bond */

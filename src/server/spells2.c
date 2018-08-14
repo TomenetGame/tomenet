@@ -1530,6 +1530,7 @@ void self_knowledge(int Ind) {
 	if (p_ptr->cut) fprintf(fff, "\377rYou are bleeding.\n");
 	if (p_ptr->stun) fprintf(fff, "\377oYou are stunned.\n");
 	if (p_ptr->poisoned) fprintf(fff, "\377GYou are poisoned.\n");
+	if (p_ptr->diseased) fprintf(fff, "\377GYou have caught a disease.\n");
 	if (p_ptr->image) fprintf(fff, "You are hallucinating.\n");
 
 	if (p_ptr->aggravate) fprintf(fff, "You aggravate monsters.\n");

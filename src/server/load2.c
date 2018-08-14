@@ -2026,8 +2026,9 @@ static bool rd_extra(int Ind) {
 		p_ptr->recall_pos.wz = p_ptr->max_dlv;
 	}
 
+	rd_s16b(&p_ptr->diseased);
 	/* Future use */
-	strip_bytes(6);			//hole
+	strip_bytes(4);			//hole
 
 #ifdef SOLO_REKING
 	rd_s32b(&p_ptr->solo_reking);

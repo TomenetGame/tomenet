@@ -225,6 +225,7 @@ static void reset_tim_flags() {
 	p_ptr->afraid = 0;          /* Timed -- Fear */
 	p_ptr->image = 0;           /* Timed -- Hallucination */
 	p_ptr->poisoned = 0;        /* Timed -- Poisoned */
+	p_ptr->diseased = 0;        /* Timed -- Poisoned */
 	p_ptr->cut = 0;             /* Timed -- Cut */
 	p_ptr->stun = 0;            /* Timed -- Stun */
 
@@ -773,7 +774,7 @@ static bool inn_comm(int Ind, int cmd)
 #endif	// 0
 
 			/* Must cure HP draining status first */
-			if ((p_ptr->poisoned > 0) || (p_ptr->cut > 0))
+			if ((p_ptr->poisoned > 0) || (p_ptr->diseased > 0) || (p_ptr->cut > 0))
 			{
 				msg_print(Ind, "You need a healer, not a room.");
 				// msg_print(Ind, NULL);
@@ -2090,6 +2091,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		case BACT_STAR_HEAL:
 			hp_player(Ind, 200);
 			set_poisoned(Ind, 0, 0);
+			set_diseased(Ind, 0, 0);
 			set_blind(Ind, 0);
 			set_confused(Ind, 0);
 			set_cut(Ind, 0, 0);
@@ -2104,6 +2106,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		case BACT_HEALING:
 			hp_player(Ind, 200);
 			set_poisoned(Ind, 0, 0);
+			//set_diseased(Ind, 0, 0);
 			set_blind(Ind, 0);
 			set_confused(Ind, 0);
 			set_cut(Ind, 0, 0);

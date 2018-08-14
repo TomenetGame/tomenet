@@ -400,8 +400,9 @@ static void prt_afraid(int Ind) {
 static void prt_poisoned(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	if (p_ptr->poisoned) Send_poison(Ind, TRUE);
-	else Send_poison(Ind, FALSE);
+	if (p_ptr->diseased) Send_poison(Ind, 2);
+	else if (p_ptr->poisoned) Send_poison(Ind, 1);
+	else Send_poison(Ind, 0);
 }
 
 
@@ -8401,6 +8402,7 @@ static void process_global_event(int ge_id) {
 
 			/* avoid him dying */
 			set_poisoned(j, 0, 0);
+			set_diseased(j, 0, 0);
 			set_cut(j, 0, 0);
 			set_food(j, PY_FOOD_FULL);
 			hp_player_quiet(j, 5000, TRUE);

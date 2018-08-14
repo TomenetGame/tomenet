@@ -6142,7 +6142,7 @@ int Send_fear(int Ind, bool fear) {
 	return Packet_printf(&connp->c, "%c%c", PKT_FEAR, fear);
 }
 
-int Send_poison(int Ind, bool poisoned) {
+int Send_poison(int Ind, char poisoned) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 
@@ -10972,7 +10972,7 @@ static int Receive_rest(int ind) {
 
 		/* Don't rest if we are poisoned or at max hit points and max spell points
 		   and max stamina */
-		if ((p_ptr->poisoned) || (p_ptr->cut) || (p_ptr->sun_burn) ||
+		if ((p_ptr->poisoned) || (p_ptr->diseased) || (p_ptr->cut) || (p_ptr->sun_burn) ||
 		    ((p_ptr->chp == p_ptr->mhp) &&
 		    (p_ptr->csp == p_ptr->msp) &&
 		    (p_ptr->cst == p_ptr->mst)

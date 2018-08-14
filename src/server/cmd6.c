@@ -251,6 +251,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 	case SV_FOOD_ATHELAS:
 		msg_print(Ind, "A fresh, clean essence rises, driving away wounds and poison.");
 		ident = set_poisoned(Ind, 0, 0) |
+			set_diseased(Ind, 0, 0) |
 			set_stun(Ind, 0) |
 			set_cut(Ind, 0, 0);
 		if (p_ptr->black_breath) {
@@ -283,6 +284,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		if (!p_ptr->suscep_life && !p_ptr->suscep_good) {
 			msg_print(Ind, "That tastes very good.");
 			(void)set_poisoned(Ind, 0, 0);
+			(void)set_diseased(Ind, 0, 0);
 			(void)set_image(Ind, 0);	// ok?
 			(void)hp_player(Ind, damroll(5, 8));
 			set_food(Ind, PY_FOOD_MAX - 1);
@@ -829,6 +831,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
 			break;
@@ -842,6 +845,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			}
 			else hp_player(Ind, 700);
 			(void)set_poisoned(Ind, 0, 0);
+			(void)set_diseased(Ind, 0, 0);
 			(void)set_blind(Ind, 0);
 			(void)set_confused(Ind, 0);
 			(void)set_image(Ind, 0);
@@ -994,6 +998,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (hp_player(Ind, 50)) ident = TRUE;
 			if (set_blind(Ind, 0)) ident = TRUE;
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_confused(Ind, 0)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
 			if (set_cut(Ind, 0, 0)) ident = TRUE;
@@ -3300,6 +3305,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		if (set_image(Ind, 0)) ident = TRUE;
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+		if (set_diseased(Ind, 0, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, 0, 0)) ident = TRUE;
@@ -3368,6 +3374,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 			k = get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			if (set_protevil(Ind, randint(15) + 30 + k)) ident = TRUE; /* removed stacking */
 			if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+			if (set_diseased(Ind, 0, 0)) ident = TRUE;
 			if (set_afraid(Ind, 0)) ident = TRUE;
 			if (hp_player(Ind, 50)) ident = TRUE;
 			if (set_stun(Ind, 0)) ident = TRUE;
@@ -4236,6 +4243,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 		if (set_image(Ind, 0)) ident = TRUE;
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+		if (set_diseased(Ind, 0, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, 0, 0)) ident = TRUE;
@@ -4934,6 +4942,7 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		if (set_image(Ind, 0)) ident = TRUE;
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_poisoned(Ind, 0, 0)) ident = TRUE;
+		if (set_diseased(Ind, 0, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (set_stun(Ind, 0)) ident = TRUE;
 		if (set_cut(Ind, 0, 0)) ident = TRUE;
@@ -5703,6 +5712,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			(void)set_afraid(Ind, 0);
 			(void)set_res_fear(Ind, 5);
 			(void)set_poisoned(Ind, 0, 0);
+			(void)set_diseased(Ind, 0, 0);
 			o_ptr->recharging = 5;
 			break;
 		case ART_RINGIL:
@@ -6193,6 +6203,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			heal_insanity(Ind, 50);
 			set_blind(Ind, 0);
 			set_poisoned(Ind, 0, 0);
+			set_diseased(Ind, 0, 0);
 			set_confused(Ind, 0);
 			set_stun(Ind, 0);
 			set_cut(Ind, 0, 0);

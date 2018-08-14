@@ -8158,7 +8158,7 @@ void do_slash_cmd(int Ind, char *message) {
 				Send_blind(Ind, TRUE);
 				Send_confused(Ind, TRUE);
 				Send_fear(Ind, TRUE);
-				Send_poison(Ind, TRUE);
+				Send_poison(Ind, 2);
 				Send_state(Ind, TRUE, TRUE, TRUE);
 				Send_speed(Ind, 210);
 				if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0))

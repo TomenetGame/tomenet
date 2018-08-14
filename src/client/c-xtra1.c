@@ -812,13 +812,15 @@ void prt_afraid(bool fear) {
 /*
  * Prints poisoned status
  */
-void prt_poisoned(bool poisoned) {
+void prt_poisoned(char poisoned) {
 	int x, y;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (poisoned)
+	if (poisoned & 0x2)
+		c_put_str(TERM_ORANGE, "Diseased", ROW_POISONED, COL_POISONED);
+	else if (poisoned)
 		c_put_str(TERM_ORANGE, "Poisoned", ROW_POISONED, COL_POISONED);
 	else
 		put_str("        ", ROW_POISONED, COL_POISONED);

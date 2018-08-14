@@ -1526,6 +1526,61 @@ bool set_poisoned(int Ind, int v, int attacker) {
 	/* Result */
 	return (TRUE);
 }
+bool set_diseased(int Ind, int v, int attacker) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	if (v) {
+		if (p_ptr->martyr) return FALSE;
+		if (p_ptr->prace == RACE_VAMPIRE || p_ptr->prace == RACE_MAIA) return FALSE;
+	}
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+/* instead put into dungeon.c for faster recovery
+	if (get_skill(p_ptr, SKILL_HCURING) >= 30) v /= 2;
+*/
+	/* Open */
+	if (v) {
+		if (!p_ptr->diseased) {
+			//msg_print(Ind, "You are diseased!");
+			notice = TRUE;
+
+			/* Remember who did it - mikaelh */
+			p_ptr->poisoned_attacker = attacker;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->diseased) {
+			msg_print(Ind, "You are no longer diseased.");
+			notice = TRUE;
+
+			/* Forget who did it - mikaelh */
+			if (!p_ptr->poisoned) p_ptr->poisoned_attacker = 0;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->diseased = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Redraw the "diseased" */
+	p_ptr->redraw |= (PR_POISONED);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
 
 
 /*
@@ -7867,6 +7922,7 @@ void player_death(int Ind) {
 		if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
 		if (p_ptr->confused) (void)set_confused(Ind, 0);
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
+		if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 		if (p_ptr->stun) (void)set_stun(Ind, 0);
 		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		/* if (p_ptr->food < PY_FOOD_ALERT) */
@@ -8004,6 +8060,7 @@ void player_death(int Ind) {
 		s_printf("%s (%d) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", p_ptr->name, p_ptr->lev, p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
+		if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 		if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
@@ -8153,6 +8210,7 @@ void player_death(int Ind) {
 			if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
 			if (p_ptr->confused) (void)set_confused(Ind, 0);
 			if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
+			if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 			if (p_ptr->stun) (void)set_stun(Ind, 0);
 			if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 			(void)set_food(Ind, PY_FOOD_FULL - 1);
@@ -9018,6 +9076,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	if (p_ptr->paralyzed) (void)set_paralyzed(Ind, 0);
 	if (p_ptr->confused) (void)set_confused(Ind, 0);
 	if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
+	if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 	if (p_ptr->stun) (void)set_stun(Ind, 0);
 	if (p_ptr->cut) (void)set_cut(Ind, 0, 0);
 	/* if (p_ptr->food < PY_FOOD_FULL) */

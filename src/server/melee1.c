@@ -441,9 +441,9 @@ static bool do_seduce(int Ind, int m_idx) {
 				break;
 
 			case 2:
-				msg_print(Ind, "Darn, you've caught a disease!");
 				/* bypass resistance */
-				set_poisoned(Ind, p_ptr->poisoned + rand_int(40) + 40, -m_idx);
+				if (set_diseased(Ind, p_ptr->diseased + rand_int(40) + 40, -m_idx))
+					msg_print(Ind, "Darn, you've caught a disease!");
 				done = TRUE;
 				break;
 
@@ -2441,7 +2441,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							obvious = TRUE;
 					}
 #else
-					if (set_poisoned(Ind, p_ptr->poisoned + randint(rlev) + 5, -m_idx)) {
+					if (set_diseased(Ind, p_ptr->diseased + randint(rlev) + 5, -m_idx)) {
 						msg_print(Ind, "You caught a disease!");
 						obvious = TRUE;
 					}

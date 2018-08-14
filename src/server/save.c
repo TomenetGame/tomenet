@@ -902,8 +902,9 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->recall_pos.wy);
 	wr_s16b(p_ptr->recall_pos.wz);
 
+	wr_s16b(p_ptr->diseased);
 	/* Future use */
-	for (i = 0; i < 6; i++) wr_byte(0);
+	for (i = 0; i < 4; i++) wr_byte(0);
 
 #ifdef SOLO_REKING
 	wr_s32b(p_ptr->solo_reking);
