@@ -5930,10 +5930,30 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 			colour = TERM_L_BLUE;
 		/* in a town? ignore town level */
 		else if (ville || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour = TERM_WHITE;
-		/* way too low to get good exp? */
-		else if (dlev < det_req_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
+		/* too low to get any exp? */
+		else if (dlev < det_req_level(p_ptr->lev) - 5) {
+			colour = TERM_L_DARK;
+			if (p_ptr->warning_depth != 2) {
+				msg_print(Ind, "\377yYour level is very high compared to the dungeon floor you're currently on!");
+				msg_print(Ind, "\377YFor that reason the depth is shown in grey colour (instead of white) in the");
+				msg_print(Ind, "\377ybottom right corner of the main window, indicating that you will not gain any");
+				msg_print(Ind, "\377yexperience from monster kills here due to the very low amount of threat.");
+				s_printf("warning_depth=2: %s\n", p_ptr->name);
+				p_ptr->warning_depth = 2;
+			}
+		}
 		/* too low to get 100% exp? */
-		else if (dlev < det_req_level(p_ptr->lev)) colour = TERM_YELLOW;
+		else if (dlev < det_req_level(p_ptr->lev)) {
+			colour = TERM_YELLOW;
+			if (!p_ptr->warning_depth) {
+				msg_print(Ind, "\377yYour level is quite high compared to the dungeon floor you're currently on!");
+				msg_print(Ind, "\377YFor that reason the depth is shown in yellow colour (instead of white) in the");
+				msg_print(Ind, "\377ybottom right corner of the main window, indicating that you will gain reduced");
+				msg_print(Ind, "\377yamounts of experience from monster kills here due to the low amount of threat.");
+				s_printf("warning_depth=1: %s\n", p_ptr->name);
+				p_ptr->warning_depth = 1;
+			}
+		}
 		/* normal exp depth or deeper (default) */
 		else colour = TERM_WHITE;
 	} else {
@@ -11220,6 +11240,7 @@ static int Receive_options(int ind) {
 
 	if (player) {
 		bool options[OPT_MAX];
+		player_type *p_ptr = Players[player];
 
 		if (is_newer_than(&connp->version, 4, 5, 8, 1, 0, 1)) {
 			for (i = 0; i < OPT_MAX; i++) {
@@ -11249,6 +11270,18 @@ static int Receive_options(int ind) {
 
 		/* Sync named options */
 		sync_options(player, options);
+
+		/* Messages that require options to be synched */
+		if ((connp->state & CONN_PLAYING) && !p_ptr->initial_options_sync) {
+			p_ptr->initial_options_sync = TRUE;
+			if (p_ptr->newbie_hints) {
+				if (p_ptr->max_plv <= 10 && p_ptr->ghost) {
+					msg_format(NumPlayers, "\377yYou died some time ago, so you are a ghost right now!");
+					msg_format(NumPlayers, "\377yYou may go to the temple (4) to revive, or press 'Q' to erase your character.");
+				} else if (p_ptr->pclass == CLASS_ARCHER && p_ptr->max_plv == 1)
+					msg_format(NumPlayers, "\377yYou have a predefined 'shoot' macro on your \377oF1\377y key!");
+			}
+		}
 	}
 
 	return 1;

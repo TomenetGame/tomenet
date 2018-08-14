@@ -2880,6 +2880,13 @@ int equip_damage(int Ind, int typ) {
 	/* Damage the item */
 	o_ptr->to_a--;
 
+	if (!p_ptr->warning_repair && o_ptr->to_a < 0) {
+		msg_print(Ind, "\377yYou can get it repaired at the armoury in town.");
+		msg_print(Ind, "\377y Enter it and press '\377oR\377y' key, then select the item.");
+		p_ptr->warning_repair = 1;
+		s_printf("warning_repair: %s\n", p_ptr->name);
+	}
+
 	/* Calculate bonuses */
 	p_ptr->update |= (PU_BONUS);
 
@@ -2942,6 +2949,13 @@ int shield_takes_damage(int Ind, int typ) {
 
 	/* Damage the item */
 	o_ptr->to_a--;
+
+	if (!p_ptr->warning_repair && o_ptr->to_a < 0) {
+		msg_print(Ind, "\377yYou can get it repaired at the armoury in town.");
+		msg_print(Ind, "\377y Enter it and press '\377oR\377y' key, then select your shield.");
+		p_ptr->warning_repair = 1;
+		s_printf("warning_repair: %s\n", p_ptr->name);
+	}
 
 	/* Calculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -3009,6 +3023,13 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 
 	/* Damage the item */
 	o_ptr->to_d--;
+
+	if (!p_ptr->warning_repair && o_ptr->to_d < 0) {
+		msg_print(Ind, "\377yYou can get it repaired at the weaponsmith in town.");
+		msg_print(Ind, "\377y Enter it and press '\377oR\377y' key, then select the item.");
+		p_ptr->warning_repair = 1;
+		s_printf("warning_repair: %s\n", p_ptr->name);
+	}
 
 	/* Calculate bonuses */
 	p_ptr->update |= (PU_BONUS);
@@ -3603,6 +3624,23 @@ bool apply_disenchant(int Ind, int mode) {
 	msg_format(Ind, "\376\377oYour %s (%c) %s disenchanted!",
 			   o_name, index_to_label(t),
 			   ((o_ptr->number != 1) ? "were" : "was"));
+
+#if 0 /* nonsense, disenchant goes down to 0, but repairing starts below 0 */
+	if (!p_ptr->warning_repair &&
+	    !((f5 & TR5_NO_ENCHANT) || o_ptr->name1) && is_enchantable(o_ptr)) {
+		if (is_weapon(o_ptr->tval)) {
+			msg_print(Ind, "\377yYou can get it repaired at the weaponsmith in town.");
+			msg_print(Ind, "\377y Enter it and press '\377oR\377y' key, then select your shield.");
+			p_ptr->warning_repair = 1;
+			s_printf("warning_repair: %s\n", p_ptr->name);
+		} else if (is_armour(o_ptr->tval)) {
+			msg_print(Ind, "\377yYou can get it repaired at the armoury in town.");
+			msg_print(Ind, "\377y Enter it and press '\377oR\377y' key, then select your shield.");
+			p_ptr->warning_repair = 1;
+			s_printf("warning_repair: %s\n", p_ptr->name);
+		}
+	}
+#endif
 
 	/* Recalculate bonuses */
 	p_ptr->update |= (PU_BONUS);

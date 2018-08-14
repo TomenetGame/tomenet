@@ -8642,6 +8642,27 @@ void process_player_change_wpos(int Ind) {
 		}
 	} else p_ptr->town_pass_trees = FALSE;
 
+	/* Give warning message to use word-of-recall, aimed at newbies */
+	if (!p_ptr->warning_wor2 && p_ptr->wpos.wx == 32 && p_ptr->wpos.wy == 32 && p_ptr->wpos.wz == -1 && p_ptr->max_plv <= 10) {
+		/* scan inventory for any scrolls */
+		bool found_items = FALSE;
+		int i;
+		for (i = 0; i < INVEN_PACK; i++) {
+			if (!p_ptr->inventory[i].k_idx) continue;
+			if (!object_known_p(Ind, &p_ptr->inventory[i])) continue;
+			if (p_ptr->inventory[i].tval == TV_SCROLL &&
+			    p_ptr->inventory[i].sval == SV_SCROLL_WORD_OF_RECALL)
+				found_items = TRUE;
+		}
+		if (!found_items) {
+			msg_print(Ind, "\374\377yHINT: You can use scrolls of \377Rword-of-recall\377y to teleport out of a dungeon");
+			msg_print(Ind, "\374\377y      or back into it, making the tedious search for stairs obsolete!");
+			s_printf("warning_wor2: %s\n", p_ptr->name);
+		}
+		p_ptr->warning_wor2 = 1;
+	}
+
+
 #if 0 /* since digging is pretty awesome now, this is too much, and we should be glad that treasure detection items have some use now actually! */
 	/* High digging results in auto-treasure detection */
 	if (get_skill(p_ptr, SKILL_DIG) >= 30) floor_detect_treasure(Ind);
@@ -8667,6 +8688,9 @@ void process_player_change_wpos(int Ind) {
 	grid_affects_player(Ind, -1, -1);
 
 	clockin(Ind, 7); /* Remember his wpos */
+
+	/* Note: IDDC is already covered in cmd2.c when taking entrance staircases */
+	if (in_hallsofmandos(wpos)) p_ptr->warning_depth = p_ptr->warning_wor = p_ptr->warning_wor2 = 1;
 }
 
 

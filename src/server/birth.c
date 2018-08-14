@@ -2858,6 +2858,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_dual_mode = 1;
 		p_ptr->warning_potions = 1;
 		p_ptr->warning_wor = 1;
+		p_ptr->warning_wor2 = 1;
 		p_ptr->warning_ghost = 1;
 		p_ptr->warning_instares = 1;
 		p_ptr->warning_autoret = 99;//p_ptr->warning_autoret_ok = ;
@@ -2890,6 +2891,9 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_boomerang = 1;
 		p_ptr->warning_bash = 1;
 		p_ptr->warning_inspect = 1;
+		p_ptr->warning_repair = 1;
+		p_ptr->warning_depth = 1;
+		p_ptr->warning_partyexp = 1;
 		return;
 	}
 
@@ -2994,6 +2998,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 #ifdef RPG_SERVER
 	/* No need for WoR hints in an all-Ironman environment */
 	p_ptr->warning_wor = 1;
+	p_ptr->warning_wor2 = 1;
 #endif
 
 	if (!(p_ptr->mode & MODE_EVERLASTING))
@@ -3002,8 +3007,10 @@ void disable_specific_warnings(player_type *p_ptr) {
 	if ((p_ptr->mode & (MODE_DED_IDDC | MODE_PVP)))
 		p_ptr->warning_dungeon = 1;
 
-	if ((p_ptr->mode & MODE_DED_IDDC))
+	if ((p_ptr->mode & MODE_DED_IDDC)) {
 		p_ptr->warning_wor = 1;
+		p_ptr->warning_wor2 = 1;
+	}
 
 	if ((p_ptr->mode & (MODE_NO_GHOST | MODE_PVP))) {
 		p_ptr->warning_ghost = 1;
@@ -3068,6 +3075,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_hungry = 2;
 		p_ptr->warning_lite_refill = 1;
 		p_ptr->warning_staircase_oneway = 1;
+		p_ptr->warning_repair = 1;
 	}
 	if (p_ptr->max_plv >= 25) {
 		p_ptr->warning_ai_annoy = 1; /* mimics, as the latest learners, learn sprint at 15 and taunt at 20 */
@@ -3076,6 +3084,8 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_instares = 1;
 		p_ptr->warning_death = 1;
 		p_ptr->warning_drained = 1;
+		p_ptr->warning_depth = 1;
+		p_ptr->warning_partyexp = 1;
 	}
 }
 

@@ -1334,7 +1334,8 @@ static bool repair_item(int Ind, int i, bool iac) {
 	/* eligible item in this equipment slot? */
 	if (iac) {
 		if (!is_armour(o_ptr->tval)) {
-			msg_print(Ind, "That is not a piece of armour.");
+			if (is_weapon(o_ptr->tval)) msg_print(Ind, "I only repair armour. For repairing a weapon go see the weaponsmith, next door.");
+			else msg_print(Ind, "That is not a piece of armour.");
 			return FALSE;
 		}
 
@@ -1365,7 +1366,8 @@ static bool repair_item(int Ind, int i, bool iac) {
 		cost += (((o_ptr->to_a - 3) * (o_ptr->to_a - 3)) / 8 - 1) * 35; //increase slightly superlinearly, ie earlier repair is cheaper
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
-			msg_print(Ind, "That is not a weapon.");
+			if (is_armour(o_ptr->tval)) msg_print(Ind, "I only repair weapons. For repairing armour go to the armoury, next door.");
+			else msg_print(Ind, "That is not a weapon.");
 			return FALSE;
 		}
 

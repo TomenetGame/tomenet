@@ -3891,9 +3891,11 @@ void do_slash_cmd(int Ind, char *message) {
 				p_ptr->warning_worldmap = 1;
 				p_ptr->warning_dungeon = 1;
 				p_ptr->warning_wor = 1;
+				p_ptr->warning_wor2 = 1;
 				p_ptr->warning_ghost = 1;
 				p_ptr->warning_death = 1;
 				p_ptr->warning_instares = 1;
+				p_ptr->warning_depth = 1;
 #endif
 				return;
 			}

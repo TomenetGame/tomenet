@@ -353,6 +353,8 @@ void do_cmd_go_up(int Ind) {
 
 		/* disable WoR hint */
 		p_ptr->warning_wor = 1;
+		p_ptr->warning_wor2 = 1;
+		p_ptr->warning_depth = 1;
 #if 1
 		/* Give him some free ID scrolls when entering IDDC? */
 		{ object_type forge;
@@ -1123,6 +1125,8 @@ void do_cmd_go_down(int Ind) {
 
 		/* disable WoR hint */
 		p_ptr->warning_wor = 1;
+		p_ptr->warning_wor2 = 1;
+		p_ptr->warning_depth = 1;
 #if 1
 		/* Give him some free ID scrolls when entering IDDC? */
 		{ object_type forge;

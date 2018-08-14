@@ -10080,7 +10080,14 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			    m_ptr->henc - p_ptr->max_plv > MAX_PARTY_LEVEL_DIFF + 1)
 #endif
 				tmp_exp = 0; /* zonk */
-
+#if 0 /* not really a party thing here, just the monster's henc */
+				if (!p_ptr->warning_partyexp) {
+					msg_print(Ind, "\377yYou didn't gain experience points for a monster kill right now because the");
+					msg_print(Ind, "\377y player level difference within your party is too big! (See ~ g c par).");
+					s_printf("warning_partyexp: %s\n", p_ptr->name);
+					p_ptr->warning_partyexp = 1;
+				}
+#endif
 			else {
 				/* Higher characters who farm monsters on low levels compared to
 				   their clvl will gain less exp. */

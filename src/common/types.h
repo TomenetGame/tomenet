@@ -1855,6 +1855,7 @@ struct player_type {
 	//unsigned int version;		/* His version */
 	version_type version;
 	bool v_outdated, v_latest, v_test, v_test_latest, v_unknown;
+	bool initial_options_sync;
 	bool rogue_like_commands;
 
 	s32b id;			/* Unique ID to each player */
@@ -2891,6 +2892,9 @@ struct player_type {
 	char warning_tunnel, warning_tunnel2, warning_tunnel3, warning_trap, warning_tele, warning_fracexp;
 	char warning_death;
 	char warning_drained, warning_boomerang, warning_bash, warning_inspect;
+	/* 4.7.1b+ additions */
+	char warning_repair, warning_partyexp, warning_wor2, warning_depth; //repair weapon/armour, no xp sharing, wor INTO dun (display at -50 BD when char is hilev), low/no exp on grey/yellow
+	//not for now, unnecessary spam: , warning_xpdrained, 10% gain while drained
 
 #ifdef USE_SOUND_2010
 	int music_current, musicalt_current, music_monster; //background music currently playing for him/her; an overriding monster music

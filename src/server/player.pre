@@ -814,10 +814,14 @@ struct player_type
 	char warning_dual;
 	char warning_potions;
 	char warning_wor;
+	char warning_wor2;
 	char warning_ghost;
 	char warning_instares;
 	char warning_ma_weapon;
 	char warning_ma_shield;
+	char warning_repair;
+	char warning_depth;
+	char warning_partyexp;
 
 #ifdef USE_SOUND_2010
 	int music_current;

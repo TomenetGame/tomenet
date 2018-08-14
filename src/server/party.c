@@ -3158,18 +3158,33 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 			   henc penalty (AMES-LEV) or exp penalty (AMES-EXP) applies to us. */
  #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
 			 /* avg lev compariso, weighing a bit less than max_lev comparison */
-			if (htop - (q_ptr->max_lev + q_ptr->max_plv) / 2 > ((MAX_PARTY_LEVEL_DIFF + 1) * 3) / 2) continue; /* zonk, bam */
+			if (htop - (q_ptr->max_lev + q_ptr->max_plv) / 2 > ((MAX_PARTY_LEVEL_DIFF + 1) * 3) / 2) {
+				if (!p_ptr->warning_partyexp) {
+					msg_print(Ind, "\377yYou didn't gain experience points for a monster kill right now because the");
+					msg_print(Ind, "\377y player level difference within your party is too big! (See ~ g c par).");
+					s_printf("warning_partyexp: %s\n", p_ptr->name);
+					p_ptr->warning_partyexp = 1;
+				}
+				continue; /* zonk, bam */
+			}
  #else
   #ifdef ANTI_MAXPLV_EXPLOIT_SOFTEXP
 			diff = htop - (q_ptr->max_lev + q_ptr->max_plv) / 2 - (MAX_PARTY_LEVEL_DIFF + 1);
 			if (diff > 0) new_amount = (new_amount * 4) / (4 + diff);
   #else
 			 /* avg lev comparison in the same way as max_lev comparison */
-			if (htop - (q_ptr->max_lev + q_ptr->max_plv) / 2 > MAX_PARTY_LEVEL_DIFF + 1) continue; /* zonk, bam */
+			if (htop - (q_ptr->max_lev + q_ptr->max_plv) / 2 > MAX_PARTY_LEVEL_DIFF + 1) {
+				if (!p_ptr->warning_partyexp) {
+					msg_print(Ind, "\377yYou didn't gain experience points for a monster kill right now because the");
+					msg_print(Ind, "\377y player level difference within your party is too big! (See ~ g c par).");
+					s_printf("warning_partyexp: %s\n", p_ptr->name);
+					p_ptr->warning_partyexp = 1;
+				}
+				continue; /* zonk, bam */
+			}
   #endif
  #endif
 #endif
-
 			/* Don't allow cheap support from super-high level characters */
 			if (eff_henc - q_ptr->max_lev > MAX_PARTY_LEVEL_DIFF + 1) continue; /* zonk */
 		}
