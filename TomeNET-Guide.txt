@@ -16248,7 +16248,7 @@ school.
                     Tier II: Level 30.
                     Also resist lightning and acid.            (auto-project)
 
-                    Tier II: Level 40.
+                    Tier III: Level 40.
                     Also resist poison.                        (auto-project)
 
     Glyph of Warding
