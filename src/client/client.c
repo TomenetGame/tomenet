@@ -510,7 +510,7 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 }
 #endif
 /* linux clients: save some prefs to .tomenetrc - C. Blue */
-bool write_mangrc(bool creds_only) {
+bool write_mangrc(bool creds_only, bool audiopacks_only) {
 	char config_name2[100];
 	FILE *config, *config2;
 	char buf[1024];
@@ -532,6 +532,19 @@ bool write_mangrc(bool creds_only) {
 		while (!feof(config)) {
 			/* Get a line */
 			if (!fgets(buf, 1024, config)) break;
+  if (audiopacks_only) {
+			/* modify the line */
+			if (!strncmp(buf, "soundpackFolder", 15)) {
+				strcpy(buf, "soundpackFolder\t\t");
+				strcat(buf, cfg_soundpackfolder);
+				strcat(buf, "\n");
+				compat_apf = TRUE;
+			} else if (!strncmp(buf, "musicpackFolder", 15)) {
+				strcpy(buf, "musicpackFolder\t\t");
+				strcat(buf, cfg_musicpackfolder);
+				strcat(buf, "\n");
+			}
+  } else {
     if (!creds_only) {
 #ifdef USE_SOUND_2010
 			/* modify the line */
@@ -625,7 +638,7 @@ bool write_mangrc(bool creds_only) {
 			}
 
 			/*** Everything else is ignored ***/
-
+  }
 			/* copy the line over */
 			fputs(buf, config2);
 

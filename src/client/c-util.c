@@ -8930,14 +8930,14 @@ void toggle_audio(void) {
 #define PACKS_SCREEN 10
 void audio_pack_selector(void) {
 	int k, soundpacks = 0, musicpacks = 0;
-	static int cur_sp = 0, cur_mp = 0;
+	static int cur_sp = 0, cur_mp = 0, cur_sy = 0, cur_my = 0;
 	bool redraw = TRUE, quit = FALSE;
-	char buf[1024], path[1024];
+	char buf[1024], path[1024], path2[1024];
 	char sp_dir[MAX_PACKS][MAX_CHARS], mp_dir[MAX_PACKS][MAX_CHARS];
 	char sp_name[MAX_PACKS][MAX_CHARS], mp_name[MAX_PACKS][MAX_CHARS];
 	char sp_diz[MAX_PACKS][MAX_CHARS * 3], mp_diz[MAX_PACKS][MAX_CHARS * 3];
 
-	FILE *fff;
+	FILE *fff, *fff2;
 #ifndef WINDOWS
 	int r;
 #endif
@@ -8967,20 +8967,62 @@ void audio_pack_selector(void) {
 		/* Found a sound pack folder? */
 		if (!strncmp(buf, "sound", 5)) {
 			if (soundpacks < MAX_PACKS) {
+				if (!strcmp(buf, cfg_soundpackfolder)) {
+					cur_sp = soundpacks; //currently used pack
+					cur_sy = cur_sp > PACKS_SCREEN ? PACKS_SCREEN : cur_sp;
+				}
 				strcpy(sp_dir[soundpacks], buf);
-				strcpy(sp_name[soundpacks], "");
-				strcpy(sp_diz[soundpacks], "");
+				/* read [Title] metadata */
+				strcpy(sp_name[soundpacks], "No name");
+				strcpy(sp_diz[soundpacks], "No description");
+				path_build(path2, 1024, ANGBAND_DIR_XTRA, format("%s/sound.cfg", buf));
+				fff2 = fopen(path2, "r");
+				while (!feof(fff2)) {
+					if (!fgets(buf, 1024, fff2)) break;
+					buf[strlen(buf) - 1] = 0;
+					if (!strncmp(buf, "packname = ", 11)) {
+						strcpy(sp_name[soundpacks], buf + 11);
+						continue;
+					}
+					if (!strncmp(buf, "description = ", 14)) {
+						strcpy(sp_diz[soundpacks], buf + 14);
+						continue;
+					}
+				}
+				fclose(fff2);
 				soundpacks++;
 			}
+			continue;
 		}
 		/* Found a music pack folder? */
 		if (!strncmp(buf, "music", 5)) {
 			if (musicpacks < MAX_PACKS) {
+				if (!strcmp(buf, cfg_soundpackfolder)) {
+					cur_mp = musicpacks; //currently used pack
+					cur_my = cur_mp > PACKS_SCREEN ? PACKS_SCREEN : cur_mp;
+				}
 				strcpy(mp_dir[musicpacks], buf);
-				strcpy(mp_name[musicpacks], "");
-				strcpy(mp_diz[musicpacks], "");
+				/* read [Title] metadata */
+				strcpy(mp_name[musicpacks], "No name");
+				strcpy(mp_diz[musicpacks], "No description");
+				path_build(path2, 1024, ANGBAND_DIR_XTRA, format("%s/music.cfg", buf));
+				fff2 = fopen(path2, "r");
+				while (!feof(fff2)) {
+					if (!fgets(buf, 1024, fff2)) break;
+					buf[strlen(buf) - 1] = 0;
+					if (!strncmp(buf, "packname = ", 11)) {
+						strcpy(mp_name[musicpacks], buf + 11);
+						continue;
+					}
+					if (!strncmp(buf, "description = ", 14)) {
+						strcpy(mp_diz[musicpacks], buf + 14);
+						continue;
+					}
+				}
+				fclose(fff2);
 				musicpacks++;
 			}
+			continue;
 		}
 	}
 	fclose(fff);
@@ -8994,25 +9036,35 @@ void audio_pack_selector(void) {
 
 			/* Describe */
 			Term_putstr(25,  0, -1, TERM_L_UMBER, "*** Audio Pack Selector ***");
-			Term_putstr(1, 1, -1, TERM_L_WHITE, "Press \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, ESC to accept.");
+			Term_putstr(1, 1, -1, TERM_L_WHITE, "Press \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377yESC\377w to accept.");
 			Term_putstr(5, 3, -1, TERM_L_UMBER, "Available sound packs:");
 			Term_putstr(45, 3, -1, TERM_L_UMBER, "Available music packs:");
 
-			for (k = 0; k < soundpacks; k++)
-				Term_putstr(0, 4 + k, -1, TERM_L_WHITE, sp_dir[k]);
-			for (k = 0; k < musicpacks; k++)
-				Term_putstr(40, 4 + k, -1, TERM_L_WHITE, mp_dir[k]);
+			for (k = 0; k < PACKS_SCREEN; k++) {
+				if (k - cur_sy + cur_sp >= soundpacks) break;
+				if (k == cur_sy)
+					Term_putstr(0, 4 + k, -1, TERM_ORANGE, sp_dir[cur_sp + k - cur_sy]);
+				else
+					Term_putstr(0, 4 + k, -1, TERM_L_WHITE, sp_dir[cur_sp + k - cur_sy]);
+			}
+			for (k = 0; k < PACKS_SCREEN; k++) {
+				if (k - cur_my + cur_mp >= musicpacks) break;
+				if (k == cur_my)
+					Term_putstr(40, 4 + k, -1, TERM_ORANGE, mp_dir[cur_mp + k - cur_my]);
+				else
+					Term_putstr(40, 4 + k, -1, TERM_L_WHITE, mp_dir[cur_mp + k - cur_my]);
+			}
 
-			Term_putstr(3, 15, -1, TERM_L_UMBER, "Selected sound pack:");
-			Term_putstr(3, 16, -1, TERM_YELLOW, sp_name[cur_sp]);
-			Term_putstr(3, 17, -1, TERM_WHITE, sp_diz[cur_sp]);
-			if (strlen(sp_diz[cur_sp]) >= 80) Term_putstr(3, 18, -1, TERM_WHITE, &sp_diz[cur_sp][80]);
-			if (strlen(sp_diz[cur_sp]) >= 160) Term_putstr(3, 19, -1, TERM_WHITE, &sp_diz[cur_sp][160]);
-			Term_putstr(3, 20, -1, TERM_L_UMBER, "Selected music pack:");
-			Term_putstr(3, 21, -1, TERM_YELLOW, mp_name[cur_mp]);
-			Term_putstr(3, 22, -1, TERM_WHITE, mp_diz[cur_mp]);
-			if (strlen(mp_diz[cur_mp]) >= 80) Term_putstr(3, 23, -1, TERM_WHITE, &mp_diz[cur_mp][80]);
-			if (strlen(mp_diz[cur_mp]) >= 160) Term_putstr(3, 24, -1, TERM_WHITE, &mp_diz[cur_mp][160]);
+			Term_putstr(0, 15, -1, TERM_L_UMBER, "Selected sound pack:");
+			Term_putstr(22, 15, -1, TERM_YELLOW, sp_name[cur_sp]);
+			Term_putstr(0, 16, -1, TERM_WHITE, sp_diz[cur_sp]);
+			if (strlen(sp_diz[cur_sp]) >= 80) Term_putstr(0, 17, -1, TERM_WHITE, &sp_diz[cur_sp][80]);
+			if (strlen(sp_diz[cur_sp]) >= 160) Term_putstr(0, 18, -1, TERM_WHITE, &sp_diz[cur_sp][160]);
+			Term_putstr(0, 20, -1, TERM_L_UMBER, "Selected music pack:");
+			Term_putstr(22, 20, -1, TERM_YELLOW, mp_name[cur_mp]);
+			Term_putstr(0, 21, -1, TERM_WHITE, mp_diz[cur_mp]);
+			if (strlen(mp_diz[cur_mp]) >= 80) Term_putstr(0, 22, -1, TERM_WHITE, &mp_diz[cur_mp][80]);
+			if (strlen(mp_diz[cur_mp]) >= 160) Term_putstr(0, 23, -1, TERM_WHITE, &mp_diz[cur_mp][160]);
 		}
 		redraw = TRUE;
 
@@ -9032,24 +9084,32 @@ void audio_pack_selector(void) {
 			quit = TRUE; /* hack to leave loop */
 			break;
 		case 'a':
-			cur_sp++;
-			if (cur_sp > 7) cur_sp = 0;
-			redraw = FALSE;
+			if (cur_sp < soundpacks - 1) {
+				cur_sp++;
+				if (cur_sy < PACKS_SCREEN - 1) cur_sy++;
+			}
+			//redraw = FALSE;
 			break;
 		case 'q':
-			cur_sp--;
-			if (cur_sp < 0) cur_sp = 7;
-			redraw = FALSE;
+			if (cur_sp) {
+				cur_sp--;
+				if (cur_sy) cur_sy--;
+			}
+			//redraw = FALSE;
 			break;
 		case 'w':
-			cur_mp++;
-			if (cur_mp > 7) cur_mp = 0;
-			redraw = FALSE;
+			if (cur_mp < musicpacks - 1) {
+				cur_mp++;
+				if (cur_my < PACKS_SCREEN - 1) cur_my++;
+			}
+			//redraw = FALSE;
 			break;
 		case 's':
-			cur_mp--;
-			if (cur_mp < 0) cur_mp = 7;
-			redraw = FALSE;
+			if (cur_mp) {
+				cur_mp--;
+				if (cur_my) cur_my--;
+			}
+			//redraw = FALSE;
 			break;
 		default:
 			/* Oops */
@@ -9059,6 +9119,16 @@ void audio_pack_selector(void) {
 		/* Leave */
 		if (quit) break;
 	}
+
+	strcpy(cfg_soundpackfolder, sp_dir[cur_sp]);
+	strcpy(cfg_musicpackfolder, mp_dir[cur_mp]);
+#ifdef WINDOWS
+	WritePrivateProfileString("Base", "SoundpackFolder", cfg_soundpackfolder, ini_file);
+	WritePrivateProfileString("Base", "MusicpackFolder", cfg_musicpackfolder, ini_file);
+#else /* assume POSIX */
+	write_mangrc(FALSE, TRUE);
+#endif
+	c_message_add("\377RAfter changing audio packs, a game client restart is required!");
 
 	/* Reload screen */
 	Term_load();

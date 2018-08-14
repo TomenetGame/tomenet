@@ -3145,7 +3145,7 @@ static void quit_hook(cptr s) {
 #endif
 
 #ifndef WINDOWS
-	write_mangrc(FALSE);
+	write_mangrc(FALSE, FALSE);
 #endif
 
 #ifdef UNIX_SOCKETS
@@ -3262,7 +3262,7 @@ void client_init(char *argv1, bool skip) {
 	   The reason we do it *right now* is that it generates visual glitches later
 	   and prevents plog() output from being displayed.
 	   We only call a 'light' version (TRUE) in case .tomenetrc already exists. */
-	write_mangrc(TRUE);
+	write_mangrc(TRUE, FALSE);
 #endif
 
 	/* Set the "plog hook" */
