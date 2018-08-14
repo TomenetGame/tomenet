@@ -4268,6 +4268,10 @@ void store_crecedentials(void) {
 
 	memset(tmp, 0, MAX_CHARS);
 }
+void store_audiopackfolders(void) {
+	WritePrivateProfileString("Base", "SoundpackFolder", cfg_soundpackfolder, ini_file);
+	WritePrivateProfileString("Base", "MusicpackFolder", cfg_musicpackfolder, ini_file);
+}
 void get_screen_font_name(char *buf) {
 	if (data[0].font_file) strcpy(buf, data[0].font_file);
 	else strcpy(buf, "");

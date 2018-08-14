@@ -913,6 +913,7 @@ extern void get_screen_font_name(char *buf);
 extern bool win_dontmoveuser;
 extern void animate_palette(void);
 extern void set_palette(byte c, byte r, byte g, byte b);
+extern void store_audiopackfolders(void);
 #endif
 extern void store_crecedentials(void);
 

@@ -9027,7 +9027,9 @@ void audio_pack_selector(void) {
 	}
 	fclose(fff);
 	remove(path);
+#ifndef WINDOWS
 	(void)r; //slay compiler warning -_-;;;
+#endif
 
 	while (1) {
 		if (redraw) {
@@ -9123,8 +9125,7 @@ void audio_pack_selector(void) {
 	strcpy(cfg_soundpackfolder, sp_dir[cur_sp]);
 	strcpy(cfg_musicpackfolder, mp_dir[cur_mp]);
 #ifdef WINDOWS
-	WritePrivateProfileString("Base", "SoundpackFolder", cfg_soundpackfolder, ini_file);
-	WritePrivateProfileString("Base", "MusicpackFolder", cfg_musicpackfolder, ini_file);
+	store_audiopackfolders();
 #else /* assume POSIX */
 	write_mangrc(FALSE, TRUE);
 #endif
