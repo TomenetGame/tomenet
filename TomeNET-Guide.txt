@@ -14106,6 +14106,9 @@ create a character!):
     They have the same abilities as paladins in all regards but they are not
     able to utilize any kind of prayers and are susceptible to holy effects,
     instead they command blood magic and heretic magic of flame and chaos.
+    Unlike paladins they can actually also dual-wield two one-handed weapons at
+    once, although they will need to use light armour for this strategy to be
+    effective (see (6.2)).
     Similar to Vampires, Hell Knights can wield some heavily cursed items to
     great effect, flipping their negative boni to positive ones. (With the same
     exception as for vampires: Weapons "of nothingness" will do them no good
@@ -14117,7 +14120,7 @@ create a character!):
 - Ranger
     Second only to adventurers regarding versatility rangers excel at a lot of
     skills: They are able to fight well in close combat and may even dual-wield
-    two one-handed weapons at once which requires light armour to be efficient.
+    two one-handed weapons at once which requires light armour to be effective.
     This goes well with magic or archery which also would suffer from heavy
     armour.
     Devoted to nature in a similar way as druids rangers will avoid corrupted
