@@ -8932,7 +8932,7 @@ void audio_pack_selector(void) {
 	int k, soundpacks = 0, musicpacks = 0;
 	static int cur_sp = 0, cur_mp = 0, cur_sy = 0, cur_my = 0;
 	bool redraw = TRUE, quit = FALSE;
-	char buf[1024], path2[1024];
+	char buf[1024], path[1024];
 	char sp_dir[MAX_PACKS][MAX_CHARS], mp_dir[MAX_PACKS][MAX_CHARS];
 	char sp_name[MAX_PACKS][MAX_CHARS], mp_name[MAX_PACKS][MAX_CHARS];
 	char sp_diz[MAX_PACKS][MAX_CHARS * 3], mp_diz[MAX_PACKS][MAX_CHARS * 3];
@@ -8940,10 +8940,6 @@ void audio_pack_selector(void) {
 	FILE *fff, *fff2;
 #ifndef WINDOWS
 	int r;
-#else
- #if 0
-	char *c;
- #endif
 #endif
 
 	/* suppress hybrid macros */
@@ -8955,38 +8951,29 @@ void audio_pack_selector(void) {
 
 	/* Get list of all folders starting on 'music' or 'sound' within lib/xtra */
 	fff = fopen("__tomenet.tmp", "w"); //just make sure the file always exists, for easier file-reading handling.. pft */
+	if (!fff) {
+		c_message_add("\377oError: Couldn't write temporary file.");
+		return;
+	}
 	fclose(fff);
 #ifdef WINDOWS
- #if 0
-	c = buf;
-	k = 0;
-	while (ANGBAND_DIR_XTRA[k]) {
-		if (ANGBAND_DIR_XTRA[k] == '\\') {
-			*c = '\\';
-			c++;
-			*c = '\\';
-			c++;
-		} else {
-			*c = ANGBAND_DIR_XTRA[k];
-			c++;
-		}
-		k++;
-	}
-	*c = 0;
- #endif
 	fff = fopen("__tomenethelper.bat", "w");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't write temporary file.");
+		return;
+	}
 	fprintf(fff, "@dir %s /a:d /b > __tomenet.tmp\n", ANGBAND_DIR_XTRA);
 	fclose(fff);
- #if 0
-	_spawnl(_P_WAIT, "C:\\Windows\\System32\\cmd", "cmd", "/c", "__tomenethelper.bat", NULL); //nasty path guess hardcoding here =P
- #else
-	strcpy(buf, getenv("winsysdir"));
-	_spawnl(_P_WAIT, format("%s\\cmd", buf), "cmd", "/c", "__tomenethelper.bat", NULL); //nasty path guess hardcoding here =P
- #endif
+	strcpy(buf, getenv("ComSpec"));
+	_spawnl(_P_WAIT, buf, "cmd", "/c", "__tomenethelper.bat", NULL); //nasty path guess hardcoding here =P
 #else /* assume POSIX */
 	r = system(format("ls %s/*/ -d -1 > __tomenet.tmp", ANGBAND_DIR_XTRA)); // or "ls -d */ | cat > __tomenet.tmp" in case -1 isnt supported?
 #endif
 	fff = fopen("__tomenet.tmp", "r");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't scan audio pack folders.");
+		return;
+	}
 	while (!feof(fff)) {
 		if (!fgets(buf, 1024, fff)) break;
 #ifndef WINDOWS
@@ -8997,8 +8984,8 @@ void audio_pack_selector(void) {
 
 #ifndef WINDOWS
 		/* crop xtra path */
-		strcpy(path2, buf + strlen(ANGBAND_DIR_XTRA) + 1);
-		strcpy(buf, path2);
+		strcpy(path, buf + strlen(ANGBAND_DIR_XTRA) + 1);
+		strcpy(buf, path);
 #endif
 
 		/* Found a sound pack folder? */
@@ -9012,8 +8999,13 @@ void audio_pack_selector(void) {
 				/* read [Title] metadata */
 				strcpy(sp_name[soundpacks], "No name");
 				strcpy(sp_diz[soundpacks], "No description");
-				path_build(path2, 1024, ANGBAND_DIR_XTRA, format("%s/sound.cfg", buf));
-				fff2 = fopen(path2, "r");
+#ifdef WINDOWS
+				path_build(path, 1024, ANGBAND_DIR_XTRA, format("%s\\sound.cfg", buf));
+#else
+				path_build(path, 1024, ANGBAND_DIR_XTRA, format("%s/sound.cfg", buf));
+#endif
+				fff2 = fopen(path, "r");
+				if (!fff2) continue;
 				while (!feof(fff2)) {
 					if (!fgets(buf, 1024, fff2)) break;
 					buf[strlen(buf) - 1] = 0;
@@ -9042,8 +9034,13 @@ void audio_pack_selector(void) {
 				/* read [Title] metadata */
 				strcpy(mp_name[musicpacks], "No name");
 				strcpy(mp_diz[musicpacks], "No description");
-				path_build(path2, 1024, ANGBAND_DIR_XTRA, format("%s/music.cfg", buf));
-				fff2 = fopen(path2, "r");
+#ifdef WINDOWS
+				path_build(path, 1024, ANGBAND_DIR_XTRA, format("%s\\music.cfg", buf));
+#else
+				path_build(path, 1024, ANGBAND_DIR_XTRA, format("%s/music.cfg", buf));
+#endif
+				fff2 = fopen(path, "r");
+				if (!fff2) continue;
 				while (!feof(fff2)) {
 					if (!fgets(buf, 1024, fff2)) break;
 					buf[strlen(buf) - 1] = 0;
@@ -9138,14 +9135,14 @@ void audio_pack_selector(void) {
 			}
 			//redraw = FALSE;
 			break;
-		case 'w':
+		case 's':
 			if (cur_mp < musicpacks - 1) {
 				cur_mp++;
 				if (cur_my < PACKS_SCREEN - 1) cur_my++;
 			}
 			//redraw = FALSE;
 			break;
-		case 's':
+		case 'w':
 			if (cur_mp) {
 				cur_mp--;
 				if (cur_my) cur_my--;
