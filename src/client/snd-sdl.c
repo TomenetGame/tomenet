@@ -152,6 +152,7 @@ typedef struct {
 	int num;
 	Mix_Music *wavs[MAX_SONGS];
 	const char *paths[MAX_SONGS];
+	bool initial[MAX_SONGS];	/* Is it an 'initial' song? An initial song is played first and only once when a music event gets activated. */
 	bool disabled;
 	bool config;
 } song_list;
@@ -638,6 +639,7 @@ static bool sound_sdl_init(bool no_cache) {
 		char *cur_token;
 		char *next_token;
 		int event;
+		bool initial;
 
 #if 1 /* linewrap via trailing ' \' */
 		strcpy(bufferx, buffer0);
@@ -696,6 +698,12 @@ static bool sound_sdl_init(bool no_cache) {
 
 		/* Terminate the current token */
 		cur_token = song_list;
+		/* Handle '!' indicator for 'initial' songs */
+		if (cur_token[0] == '!') {
+			cur_token++;
+			initial = TRUE;
+		} else initial = FALSE;
+		/* Handle song names within quotes */
 		if (cur_token[0] == '\"') {
 			cur_token++;
 			search = strchr(cur_token, '\"');
@@ -730,6 +738,8 @@ static bool sound_sdl_init(bool no_cache) {
 				goto next_token_mus;
 			}
 
+			songs[event].initial[num] = initial;
+
 			/* Don't load now if we're not caching */
 			if (no_cache) {
 				/* Just save the path for later */
@@ -760,6 +770,11 @@ static bool sound_sdl_init(bool no_cache) {
 			/* Figure out next token */
 			cur_token = next_token;
 			if (next_token) {
+				/* Handle '!' indicator for 'initial' songs */
+				if (cur_token[0] == '!') {
+					cur_token++;
+					initial = TRUE;
+				} else initial = FALSE;
 				/* Try to find a space */
 				if (cur_token[0] == '\"') {
 					cur_token++;
@@ -1684,6 +1699,8 @@ void ambient_handle_fading(void) {
  * Play a music of type "event".
  */
 static bool play_music(int event) {
+	int n, initials = 0;
+
 	/* Paranoia */
 	if (event < -4 || event >= MUSIC_MAX) return FALSE;
 
@@ -1732,7 +1749,20 @@ static bool play_music(int event) {
 		return TRUE; //pretend we played it
 
 	music_next = event;
-	music_next_song = rand_int(songs[music_next].num);
+	/* handle 'initial' songs with priority */
+	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
+	/* no initial songs - just pick a song normally */
+	if (!initials) music_next_song = rand_int(songs[music_next].num);
+	/* pick an initial song first */
+	else {
+		initials = randint(initials);
+		for (n = 0; n < songs[music_next].num; n++) {
+			if (!songs[music_next].initial[n]) continue;
+			initials--;
+			if (initials) continue;
+			music_next_song = n;
+		}
+	}
 
 	/* new: if upcoming music file is same as currently playing one, don't do anything */
 	if (music_cur != -1 && music_cur_song != -1 &&
@@ -1766,15 +1796,32 @@ static void fadein_next_music(void) {
 
 	/* Catch music_next == -1, this can now happen with shuffle_music option, since songs are no longer looped if it's enabled */
 	if (c_cfg.shuffle_music && music_next == -1) {
+		int tries, mcs;
+		int n, initials = 0, noinit_map[MAX_SONGS], ni = 0;
+
 		/* Catch disabled songs */
 		if (songs[music_cur].disabled) return;
 
-		/* stick with music event, but play different song, randomly */
-		int tries = songs[music_cur].num == 1 ? 1 : 100, mcs = music_cur_song;
 		if (songs[music_cur].num < 1) return; //paranoia
+
+		/* don't sequence-shuffle 'initial' songs */
+		for (n = 0; n < songs[music_cur].num; n++) {
+			if (songs[music_cur].initial[n]) {
+				initials++;
+				continue;
+			}
+			noinit_map[ni] = n;
+			ni++;
+		}
+		/* no non-initial songs found? Don't play any subsequent music then. */
+		if (!ni) return;
+
+		/* stick with music event, but play different song, randomly */
+		tries = songs[music_cur].num == 1 ? 1 : 100;
+		mcs = music_cur_song;
 		while (tries--) {
-			mcs = rand_int(songs[music_cur].num);
-			if (music_cur_song != mcs) break;
+			mcs = noinit_map[rand_int(ni)];
+			if (music_cur_song != mcs) break; //find some other song than then one we've just played, or it's not really 'shuffle'..
 		}
 		music_cur_song = mcs;
 
@@ -1826,8 +1873,11 @@ static void fadein_next_music(void) {
 	music_cur_song = music_next_song;
 //#endif
 	music_next = -1;
-//	Mix_PlayMusic(wave, c_cfg.shuffle_music ? 0 : -1);//-1 infinite, 0 once, or n times
-	Mix_FadeInMusic(wave, c_cfg.shuffle_music ? 0 : -1, 1000);
+	/* Actually don't repeat 'initial' songs */
+	if (!songs[music_cur].initial[music_cur_song]) {
+		//Mix_PlayMusic(wave, c_cfg.shuffle_music ? 0 : -1);//-1 infinite, 0 once, or n times
+		Mix_FadeInMusic(wave, c_cfg.shuffle_music ? 0 : -1, 1000);
+	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music ? 0 : 0, 1000);
 }
 
 #ifdef JUKEBOX_INSTANT_PLAY
@@ -1860,7 +1910,7 @@ static bool play_music_instantly(int event) {
 		return FALSE;
 	}
 
-	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music here. */
+	/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music (or 'initial' song status) here. */
 	Mix_PlayMusic(wave, -1);
 	return TRUE;
 }

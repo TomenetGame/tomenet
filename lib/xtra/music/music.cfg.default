@@ -8,6 +8,11 @@
 # Where the situation names are listed in audio_bgm[] in lib/scpt/audio.lua.
 # One of the songs will be randomly picked, up to 32 songs may be specified.
 # Note: If song name contains spaces then it must be put in quotes.
+# Song names preceded by a '!' mark will be designated as 'initial' songs.
+# One of these will be played first when a music event starts, and it will not
+# be looped. When it ends, non-initial (ie normal) songs are picked (and may be
+# looped, depending on 'shuffle_music' client option). For filenames enclosed
+# in quotes the '!' mark must come before the quotes (eg: !"my music.mp3").
 # Make sure that there aren't any spaces or tabs after the '=' in lines which
 # don't contain any song file name at all, or it will give an error.
 # Supported music formats are WAVE, MOD (includes S3M, IT, XM), MIDI, OGG, MP3.
