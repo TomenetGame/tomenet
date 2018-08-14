@@ -3401,7 +3401,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (apply_monster_effects) {
 					switch (monster_effect_chosen) {
 					case RBE_DISEASE:
-						/* Take "poison" effect */
+						/* Take "poison" effect (for now mimic form brand just disease->poison) */
 						if (q_ptr->resist_pois || q_ptr->oppose_pois || q_ptr->immune_poison) {
 							msg_format(Ind, "%^s is unaffected.", q_name);
 						} else if (rand_int(100) < q_ptr->skill_sav) {
