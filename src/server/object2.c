@@ -2047,21 +2047,64 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_BOOK:
 		if (o_ptr->sval == SV_SPELLBOOK) {
+			int skill_level = 0, ego_value, ev;
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
-			/*  */
-			byte skill_level = 0;
-			if (o_ptr->pval < max_spells) {
-				skill_level = school_spells[o_ptr->pval].skill_level;
-			}
-			int sl = skill_level + 5,
-			    ego_value = value - k_ptr->cost,
-			    ev = ego_value > 700 ? 700 : ego_value;
+			ego_value = value - k_ptr->cost;
+			ev = ego_value > 700 ? 700 : ego_value;
+			if (o_ptr->pval < max_spells) skill_level = school_spells[o_ptr->pval].skill_level + 5;
 			/* override k_info.txt to have easier handling of possible changes here */
 			value = 4;
 			/* Pay extra for the spell */
-			value = value * (sl * sl);
+			value = value * (skill_level * skill_level);
 			/* Add up 'fireproof' etc cost, but related it to the actual scroll cost. */
 			value += value < ego_value ? (value < ev ? ev : value) : ego_value;
+		} else if (is_custom_tome(o_ptr->sval)) {
+			/* Actually price these depending on the spells they contain :) */
+			int sl = 0, ego_value, ev;
+			long v = 0;
+			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
+			ego_value = value - k_ptr->cost;
+			ev = ego_value > 700 ? 700 : ego_value;
+			/* override k_info.txt to have easier handling of possible changes here */
+			value = 2; //half value!
+			if ((sl = o_ptr->xtra1) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra2) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra3) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra4) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra5) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra6) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra7) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra8) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra9) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			/* Add up 'fireproof' etc cost, but related it to the actual book cost. */
+			value = k_ptr->cost + v + (v < ego_value ? (v < ev ? ev : v) : ego_value);
 		}
 		/* Done */
 		break;
@@ -2934,16 +2977,60 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_BOOK:
 		if (o_ptr->sval == SV_SPELLBOOK) {
+			int skill_level = 0;
 			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
-			byte skill_level = 0;
-			if (o_ptr->pval < max_spells) {
-				skill_level = school_spells[o_ptr->pval].skill_level;
-			}
-			int sl = skill_level + 5;
+			if (o_ptr->pval < max_spells) skill_level = school_spells[o_ptr->pval].skill_level + 5;
 			/* override k_info.txt to have easier handling of possible changes here */
 			value = 4;
 			/* Pay extra for the spell */
-			value = value * (sl * sl);
+			value = value * (skill_level * skill_level);
+		} else if (is_custom_tome(o_ptr->sval)) {
+			/* Actually price these depending on the spells they contain :) */
+			int sl = 0, ego_value, ev;
+			long v = 0;
+			/* 1: 145, 2: 240, 3: 375, 4: 540, 5: 735 */
+			ego_value = value - k_ptr->cost;
+			ev = ego_value > 700 ? 700 : ego_value;
+			/* override k_info.txt to have easier handling of possible changes here */
+			value = 2; //half value!
+			if ((sl = o_ptr->xtra1) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra2) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra3) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra4) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra5) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra6) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra7) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra8) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			if ((sl = o_ptr->xtra9) && sl <= max_spells) {
+				sl = school_spells[sl - 1].skill_level + 5;
+				v += value * (sl * sl);
+			}
+			/* Add up 'fireproof' etc cost, but related it to the actual book cost. */
+			value = k_ptr->cost + v + (v < ego_value ? (v < ev ? ev : v) : ego_value);
 		}
 		/* Done */
 		break;
