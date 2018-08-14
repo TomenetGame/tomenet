@@ -9026,7 +9026,7 @@ void audio_pack_selector(void) {
 		/* Found a music pack folder? */
 		if (!strncmp(buf, "music", 5)) {
 			if (musicpacks < MAX_PACKS) {
-				if (!strcmp(buf, cfg_soundpackfolder)) {
+				if (!strcmp(buf, cfg_musicpackfolder)) {
 					cur_mp = musicpacks; //currently used pack
 					cur_my = cur_mp > PACKS_SCREEN ? PACKS_SCREEN : cur_mp;
 				}
