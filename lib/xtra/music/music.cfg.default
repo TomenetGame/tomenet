@@ -22,4 +22,8 @@
 #
 
 
+[title]
+packname = None
+description = No music.
+
 [generic]

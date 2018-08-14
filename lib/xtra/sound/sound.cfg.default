@@ -22,6 +22,10 @@
 #
 
 
+[title]
+packname = None
+description = No sound effects except for basic alerts.
+
 [player]
 
 [player/alert]
