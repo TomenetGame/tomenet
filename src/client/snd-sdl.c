@@ -2255,6 +2255,10 @@ void do_cmd_options_sfx_sdl(void) {
 		c_msg_print("Client is running in quiet mode, sounds are not available.");
 		return;
 	}
+	if (!audio_sfx) {
+		c_msg_print("No sound effects available.");
+		return;
+	}
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
@@ -2540,6 +2544,10 @@ void do_cmd_options_mus_sdl(void) {
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
 		c_msg_print("Client is running in quiet mode, music is not available.");
+		return;
+	}
+	if (!audio_music) {
+		c_msg_print("No music available.");
 		return;
 	}
 
