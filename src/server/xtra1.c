@@ -9681,6 +9681,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 
+		if ((f4 & TR4_CURSE_NO_DROP) && (cursed_p(o_ptr) || (f3 & TR3_AUTO_CURSE))) {
+			msg_print(Ind, "\377ySorry, we don't ship items cursed in a way that may prevent dropping them.");
+			return;
+		}
+
 		/* le paranoid double-check */
 		for (i = 0; i < MAX_MERCHANT_MAILS; i++)
 			if (!mail_sender[i][0]) break;
