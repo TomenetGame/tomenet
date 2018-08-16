@@ -403,15 +403,13 @@ static bool do_seduce(int Ind, int m_idx) {
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Hack -- cannot take off, not counted */
-		if (f3 & TR3_PERMA_CURSE) continue;
+		if (cursed_p(o_ptr)) continue;
+		//if (f3 & TR3_PERMA_CURSE) continue;
 
 		if (!magik(chance)) {
 			/* Describe the result */
 			object_desc(Ind, o_name, o_ptr, FALSE, 0);
-
-			msg_format(Ind, "%^s seduces you and you take off your %s...",
-					m_name, o_name);
-
+			msg_format(Ind, "%^s seduces you and you take off your %s...", m_name, o_name);
 			bypass_inscrption = TRUE;
 			inven_takeoff(Ind, j, 255, FALSE);
 			break;
