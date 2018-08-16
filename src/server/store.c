@@ -4452,7 +4452,10 @@ bool merchant_mail_carry(int Ind, int i) {
 			return FALSE;
 		}
 		msg_format(Ind, "\374\377yThe accountant hands you a package from %s!", mail_sender[i]);
+
 		slot = inven_carry(Ind, &mail_forge[i]);
+		can_use(Ind, &p_ptr->inventory[slot]);
+
 		object_desc(Ind, o_name, &mail_forge[i], TRUE, 3);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
  #ifdef USE_SOUND_2010
@@ -4464,6 +4467,9 @@ bool merchant_mail_carry(int Ind, int i) {
 			msg_print(Ind, "You gain a tiny bit of experience from trading a used item.");
 			gain_exp(Ind, 1);
 		}
+
+		/* Check whether this item was requested by an item-retrieval quest */
+		if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, &p_ptr->inventory[slot]);
 	}
 
 	/* reset mail slot */

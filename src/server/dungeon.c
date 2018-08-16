@@ -7756,6 +7756,8 @@ static void process_merchant_mail(void) {
 				strcpy(mail_sender[i], mail_target[i]);
 				strcpy(mail_target[i], tmp);
 
+				/* If it was COD mail, don't ask for a fee! (It might have been a typo and outrageous, in which case the item would now be lost) */
+				mail_COD[i] = 0;
 
 				pid = lookup_player_id(mail_target[i]);
 				if (!pid) {
