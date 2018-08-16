@@ -2291,7 +2291,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				break;
 			}
 			for (i = price = 0; i < INVEN_TOTAL; i++)
-				price += object_value_real(&inventory[i]);
+				price += object_value_real(&inventory[i]); //missing "* inventory[i].number"?
 
 			/* hack: prevent s32b overflow */
 			if (2000000000 - p_ptr->au < price) {
@@ -2621,7 +2621,7 @@ if (is_admin(p_ptr))
 				break;
 			}
 
-			fee = object_value_real(0, o_ptr) / 20;
+			fee = (object_value_real(0, o_ptr) * o_ptr->number) / 20;
 			if (fee < 5) fee = 5;
 
 			p_ptr->mail_item = item;

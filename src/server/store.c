@@ -4489,7 +4489,7 @@ void merchant_mail_delivery(int Ind) {
 			p_ptr->mail_fee = 0;
 			if (mail_COD[i]) {
 				if (mail_forge[i].tval == TV_GOLD) p_ptr->mail_fee += mail_forge[i].pval / 20;
-				else p_ptr->mail_fee += object_value_real(0, &mail_forge[i]) / 20;
+				else p_ptr->mail_fee += (object_value_real(0, &mail_forge[i]) * mail_forge[i].number) / 20;
 				if (p_ptr->mail_fee < 5) p_ptr->mail_fee = 5;
 			}
 			p_ptr->mail_fee += mail_xfee[i];
@@ -4504,7 +4504,7 @@ void merchant_mail_delivery(int Ind) {
 		/* Receipient has to pay the Merchants Guild fee? */
 		if (mail_COD[i]) {
 			if (mail_forge[i].tval == TV_GOLD) p_ptr->mail_fee = mail_forge[i].pval / 20;
-			else p_ptr->mail_fee = object_value_real(0, &mail_forge[i]) / 20;
+			else p_ptr->mail_fee = (object_value_real(0, &mail_forge[i]) * mail_forge[i].number) / 20;
 			if (p_ptr->mail_fee < 5) p_ptr->mail_fee = 5;
 
 			p_ptr->mail_item = i; //reuse mail_item for this
