@@ -6445,7 +6445,7 @@ The Illusory Castle            |  1750..2600/ 35..52   |       10
 The Sacred Land of Mountains   |  2000..2250/ 40..45   |       20
 Erebor                         |  2500..3050/ 50..61   |       35
 Dol Guldur                     |  2850..3550/ 57..71   |       28
-Mount Doom                     |  4250..5000/ 85..99   |       38
+Mount Doom                     |  4250..4950/ 85..99   |       38
 The Cloud Planes               |  6500..7450/130..149  |       40 (****)
 Nether Realm                   |  8300..9800/166..196  |       40 (*****)
 
