@@ -3281,7 +3281,7 @@ D:stone corrupted by chaos, called a Warp Stone.
 
 N:218:Baby bronze dragon
 G:d:U
-I:110:10d10:20:30:70
+I:110:10d10:20:35:70
 W:9:2:4000:35
 E:0:1:0:6:1:2
 O:0:0:0:0
@@ -3300,7 +3300,7 @@ D:its scales a dull bronze.
 
 N:219:Baby gold dragon
 G:d:y
-I:110:10d10:20:30:70
+I:110:10d10:20:35:70
 W:9:2:4000:35
 E:0:1:0:6:1:2
 O:0:0:0:0
@@ -7236,7 +7236,7 @@ D:deep green in hue. Foul gas seeps through its scales.
 
 N:462:Young bronze dragon
 G:d:U
-I:110:27d10:20:50:70
+I:110:27d10:20:60:70
 W:29:1:20000:500
 E:0:1:2:6:1:2
 O:20:80:0:0
@@ -8995,7 +8995,7 @@ D:A large dragon, scales tinted deep green.
 
 N:562:Mature bronze dragon
 G:d:U
-I:110:50d10:20:70:70
+I:110:50d10:20:80:70
 W:34:1:110000:1200
 E:0:1:2:6:1:2
 O:20:80:0:0
@@ -9734,7 +9734,7 @@ D:A huge draconic form. Lightning crackles along its length.
 
 N:602:Ancient bronze dragon
 G:D:U
-I:120:72d15:20:110:80
+I:120:72d15:20:120:80
 W:40:1:170000:2000
 E:0:1:2:6:1:2
 O:20:80:0:0
@@ -10535,7 +10535,7 @@ D:extreme heat surrounding it makes you gasp for breath.
 
 N:645:Ancient gold dragon
 G:D:y
-I:120:100d15:20:110:80
+I:120:100d15:20:120:80
 W:41:1:170000:2500
 E:0:1:2:6:1:2
 O:20:80:0:0
@@ -19737,7 +19737,7 @@ $ENABLE_MAIA$D:enlightenment.
 #Why didn't we have silver dragons all this time? They're part of D&D too after all.. -C. Blue
 N:1106:Baby silver dragon
 G:d:s
-I:110:10d10:20:30:70
+I:110:10d10:20:35:70
 W:9:2:4000:35
 E:0:1:0:6:1:2
 O:0:0:0:0
@@ -19756,7 +19756,7 @@ D:its scales a pale silver.
 
 N:1107:Young silver dragon
 G:d:s
-I:110:28d10:20:55:70
+I:110:28d10:20:60:70
 W:30:1:20000:600
 E:0:1:0:6:1:2
 O:20:80:0:0
@@ -19776,7 +19776,7 @@ D:shining silvery gleam, and its shape masks its true form.
 
 N:1108:Mature silver dragon
 G:d:s
-I:110:56d10:20:75:70
+I:110:56d10:20:80:70
 W:35:1:110000:1400
 E:0:1:2:6:1:2
 O:20:80:0:0
@@ -19794,7 +19794,7 @@ D:A large dragon with scales of radiating silver.
 
 N:1109:Ancient silver dragon
 G:D:s
-I:120:90d15:20:110:80
+I:120:90d15:20:120:80
 W:41:1:170000:2400
 E:0:1:2:6:1:2
 O:20:80:0:0
