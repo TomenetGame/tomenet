@@ -1176,11 +1176,12 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 #ifdef PLAYER_STORES
 	if (!st_ptr->player_owner) /* don't erase inscriptions in player stores */
 #endif
+#ifndef TEST_SERVER /* redundant? inscription is already erased on selling an item in store_sell()! */
 	if (!(st_info[st_ptr->st_idx].flags1 & SF1_MUSEUM)) {
 		o_ptr->note = 0;
 		o_ptr->note_utag = 0;
 	}
-
+#endif
 #ifdef PLAYER_STORES
 	/* don't combine items in player stores!
 	   Otherwise, referring to the original item will fail for mang-houses. */
@@ -3693,7 +3694,11 @@ void store_sell(int Ind, int item, int amt) {
 	object_desc(Ind, o_name, &sold_obj, TRUE, 3);
 
 	/* Remove any inscription for stores */
-	if (p_ptr->store_num != STORE_HOME) {
+	if (p_ptr->store_num != STORE_HOME
+#ifdef TEST_SERVER
+	    && !is_admin(p_ptr)
+#endif
+	    ) {
 		sold_obj.note = 0;
 		sold_obj.note_utag = 0;
 	}
