@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 14. August 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 16. August 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7347,7 +7347,13 @@ Experience drain ('Drains your life force')
     Experience drain is on hold while you are in town areas, this includes
     dungeon towns.
     All the rings of power that are dropped by Nazgul drain experience (and
-    turn you invisible).
+    turn you invisible). Note that having multiple items that drain experience
+    will not result in a linear increase of the drained amount. Instead, each
+    further draining item will drain less, making it more feasible for exampe
+    to equip two rings of power.
+    The higher the experience gain ratio of a character is (depending on its
+    race/class combination) the worse it will be hit by experience drain from
+    items, with Maiar being the class that has the most trouble compensating.
 
 Mana drain ('Drains your magic')
     Drains your mana pool over time while you have this item equipped.
@@ -7380,7 +7386,7 @@ Also see (5.17) for how these drain effects stack or may be cancelled out.
 
 Drain effects caused by monsters, traps or elemental attacks including terrain:
 -------------------------------------------------------------------------------
-Experience drain
+Experience drain from monster attacks, traps or elemental damage you suffer
     'You feel your life draining away!' - the normal message.
     'You feel your life slipping away!' - you suffer less drain, happens if you
                                           acquired the 'Hold life' power, which
@@ -7406,6 +7412,10 @@ Experience drain
     of experience points while in drained state will only count towards your
     original maximum by 10% of its real value, resulting in large amounts of XP
     being wasted.
+
+Experience drain from Black Breath
+    This is especially nasty as being infected with Black Breath will drain
+    experience permanently instead of temporarily.
 
 Stat drain
     This type of drain will lower your atttributes, which can be:
@@ -7457,8 +7467,11 @@ Stat drain
     - Drinking a stat potion will automatically restore your stat if it was
       drained, before permanently increasing it. So you don't need to purchase
       an extra restoration potion before drinking a stat potion.
+    - If you are infected with Black Breath, it can also drain your stats
+      randomly (yellow aka tier II kind of drain).
     - While items cannot drain stats in general, there is one single exception:
-      If an item possesses the 'TY_CURSE', a special, strong curse (see (5.14)).
+      If an item possesses the 'TY_CURSE', a special, strong curse (see (5.14))
+      this curse can cause a tier II drain (aka yellow stat colour).
 
 Sanity drain
     The most dangerous drain effect of all.
