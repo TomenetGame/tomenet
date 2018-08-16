@@ -12,6 +12,7 @@ s5
 45
 a 5
 as 5
+as @S
 as sa
 as sc
 as se
@@ -52,14 +53,23 @@ assura
 assure
 assyr
 badass
+bada$$
 bad-ass
+bad-a$$
 bad ass
+bad a$$
 kickass
+kicka$$
 kick ass
 kick-ass
+kick a$$
+kick-a$$
 asskick
+a$$kick
 ass-kick
+a$$-kick
 ass kick
+a$$ kick
 kick some ass
 embarass
 harass
