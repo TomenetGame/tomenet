@@ -5500,7 +5500,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 	case TV_BOOK:
 		/* Randomize random books */
 		if (o_ptr->sval == SV_SPELLBOOK) {
-			int  i = 0, tries = 1000;
+			int i = 0, tries = 1000;
 
 			while (tries) {
 				tries--;
@@ -5518,17 +5518,16 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 				}
 			}
 			/* Use globe of light(or the first one) */
-			if (!tries)
-				o_ptr->pval = 0;
-			else
-				o_ptr->pval = i;
+			if (!tries) o_ptr->pval = 0;
+			else o_ptr->pval = i;
 		}
 
 		break;
 
 	case TV_LITE:
-
-		o_ptr->to_h = o_ptr->to_d = o_ptr->to_a = 0;
+		/* Don't kill eg -30 AC from Palantir of Minas Ithil.
+		   Actually this line could just be removed completely maybe? Seems to do nothing helpful. */
+		if (!o_ptr->name1 || o_ptr->name1 == ART_RANDART) o_ptr->to_h = o_ptr->to_d = o_ptr->to_a = 0;
 
 		/* Hack -- Torches -- random fuel */
 		if (f4 & TR4_FUEL_LITE) {
