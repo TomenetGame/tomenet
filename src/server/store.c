@@ -275,7 +275,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	ot_ptr = &ow_info[st_ptr->owner];
 
 #if 1 /* IDDC-only mode characters -- EXPERIMENTAL */
-	if ((Players[Ind]->mode & MODE_DED_IDDC) && in_bree(&Players[Ind]->wpos) && !Players[Ind]->iron_winner_ded) {
+	if ((p_ptr->mode & MODE_DED_IDDC) && in_bree(&p_ptr->wpos) && !p_ptr->iron_winner_ded) {
 		int dis = o_ptr->discount;
 
 		/* IDDC-mode characters get at least a 50% discount on all town store items in Bree */
