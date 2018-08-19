@@ -2664,6 +2664,7 @@
 #define ART_ENDOFDAYS		279
 #define ART_WARPSPEAR		280
 #define ART_UTUMNO		281
+#define ART_ANCHORING		282
 /* #define ART_ANGTIRCALAD	*/
 
 
