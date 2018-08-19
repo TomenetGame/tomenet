@@ -3444,8 +3444,56 @@ D:Wielded by Lugh, hero of the skies, this sling will match the skill of even
 D:the greatest of fighters.
 
 
-#weapon base items that don't have arts yet:
-#Awl-Pike, Rhomphaia, Infernal Axe
+# The Set of Cesti 'Fist of Chaos'
+
+N:278:'Fist of Chaos'
+I:31:5:-1
+W:65:40:40:0
+P:5:1d1:9:10:-17
+Z:hellfire brand
+F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | STR | CON | BLOWS
+F:BRAND_FIRE | FREE_ACT | RES_FEAR | RES_CHAOS | RES_FIRE | CHAOTIC
+D:Countless souls have fallen to the armoured fists of chaos. Even the most
+D:resilient foes shall get incinerated by its hellfire when invoked.
+
+
+# Infernal Axe 'End of Days'
+
+N:279:'End of Days'
+I:24:32:6
+W:95:40:400:0
+P:0:7d10:-22:30:0
+F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | STR | IM_FIRE
+F:BRAND_FIRE | SLAY_ANIMAL | SLAY_GIANT | SLAY_UNDEAD | SLAY_DEMON | KILL_DRAGON
+#F:AGGRAVATE
+D:"I had a dream, which was not all a dream. The bright sun was extinguish'd,
+D:and the stars did wander darkling in the eternal space, rayless, and pathless,
+D:and the icy earth swung blind and blackening in the moonless air. And the
+D:clouds perish'd, Darkness had no need of aid from them, she was the Universe."
+
+
+# The Awl-Pike 'Warp Spear'
+
+N:280:'Warp Spear'
+I:22:4:0
+W:55:30:100:0
+P:0:2d20:20:-20:0
+F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | CHAOTIC | RES_CHAOS
+D:A strange, translucent weapon with flashes of blue light running through it
+D:and along its surface. It feels surprisingly light. At first the wielder may
+D:not notice how deeply imbued by corruption this object is.
+
+# The Rhomphaia of Utumno
+
+N:281:of Utumno
+I:22:9:-9
+W:40:40:130:0
+P:0:3d4:16:26:0
+F:SHOW_MODS | CURSED | HEAVY_CURSE | ESP_GOOD | INT | WIS | DEX | SLAY_ANIMAL
+F:RES_FIRE | RES_ACID | RES_COLD | RES_ELEC | IM_POISON | RES_DARK | RES_NEXUS
+D:A relic from the fallen stronghold of Melkor. It will grant its powers only
+D:to those who have become as corrupted as the dwellers of Utumno.
+
 
 
 # Combined item (3 pieces) Halberd 'Ang-Tir-Calad'

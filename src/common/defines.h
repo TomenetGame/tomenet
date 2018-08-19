@@ -2555,8 +2555,10 @@
 #define ART_DEATHWREAKER	121
 #define ART_TURMIL		122
 #define ART_GOTHMOG		123
-#define ART_AXE_GOTHMOG		145
 #define ART_SKULLCLEAVER	177
+
+/* Axes */
+#define ART_AXE_GOTHMOG		145
 
 #define ART_NAIN		174
 
@@ -2591,7 +2593,6 @@
 
 /* ToME-NET additions */
 #define ART_GIVEROFSLEEP	209
-#define ART_MOLTOR		210 /* was ETERNALPEACE */
 #define ART_METHODIQUE		211
 #define ART_SCHMERZGLAUBE	212
 #define ART_DOUBLEZEE		213
@@ -2599,7 +2600,8 @@
 #define ART_HALFLINGS		215
 #define ART_DWARVEN_ALE		216
 
-/* C. Blue (arts > 216) */
+/* More additions - C. Blue */
+#define ART_MOLTOR		210 /* was ETERNALPEACE */
 #define ART_OCEAN_SOUL		217
 #define ART_CLOAK_DM		218
 #define ART_IRONFOOT		219
@@ -2658,6 +2660,10 @@
 #define ART_EOWYN		275
 #define ART_SMASHER		276
 #define ART_LAMFADA		277
+#define ART_FISTS		278
+#define ART_ENDOFDAYS		279
+#define ART_WARPSPEAR		280
+#define ART_UTUMNO		281
 /* #define ART_ANGTIRCALAD	*/
 
 
