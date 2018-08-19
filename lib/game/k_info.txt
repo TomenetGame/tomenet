@@ -324,7 +324,7 @@ W:70:0:180:4000
 A:70/8
 P:0:5d5:5:5:0
 F:RES_CHAOS | CHAOTIC | SHOW_MODS | SHOULD2H
-F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER
+F:IGNORE_FIRE | IGNORE_ACID | IGNORE_WATER | EVIL
 
 N:37:& Espadon~
 G:|:W
@@ -6668,7 +6668,7 @@ I:21:21:0
 W:20:0:60:190
 A:20/2
 P:0:3d2:0:0:0
-F:SHOW_MODS
+F:SHOW_MODS | STARTUP
 
 N:916:& Mummy Wrapping~
 G:`:D
@@ -7430,7 +7430,7 @@ W:65:0:360:2100
 A:65/8
 P:0:7d6:0:0:0
 #P:0:5d9:0:0:0
-F:SHOW_MODS | MUST2H | IGNORE_FIRE | BRAND_FIRE
+F:SHOW_MODS | MUST2H | IGNORE_FIRE | BRAND_FIRE | EVIL
 
 #Placeholder that prevents item corruption in case k_info.txt doesn't meet
 #saved items in the server's savefile anymore after having been edited. - C. Blue

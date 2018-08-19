@@ -4959,7 +4959,7 @@
 
 
 #define TR6_INSTA_EGO		0x00000001L		/* Similar to INSTA_ART, this item is always an ego item */
-#define TR6_STARTUP		0x00000002L		/* For weapons: Can be picked for starter item on character creation */
+#define TR6_STARTUP		0x00000002L		/* For weapons: Can be picked for starter item on character creation, without passing the (level<=15 && dam>=0) check. */
  #define TR6_EVENT_HALLOWEEN	0x00000004L		/* Item not available if no event is running -- unused */
  #define TR6_EVENT_XMAS		0x00000008L		/* Item not available if no event is running -- unused */
 /* Not yet implemented/used: Susceptibilities. Cold might be needed. For monsters, even susc-poison is implemented.
@@ -4970,6 +4970,7 @@
  #define TR6_SENS_ELEC			0x00000080L	/* makes user susceptible to lightning -- unused  */
 //Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define TR6_OFTEN_EGO		0x00000100L		/* Item has higher chance to be generated with ego power */
+#define TR6_EVIL		0x00000200L		/* Item never receives flags that hurt an undead/demonic wielder, from ego or art powers */
 
 
 /* Character Sheet Boni Data Flags for Char/Byte PKT Transfer - Kurzel */
