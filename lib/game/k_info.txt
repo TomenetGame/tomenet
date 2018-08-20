@@ -2613,7 +2613,7 @@ D:Detects all nearby invisible creatures.
 N:314:Speed
 G:_:d
 I:55:22:0
-W:40:0:50:2500
+W:40:0:50:5000
 A:40/1
 P:0:1d2:0:0:0
 D:Temporarily increases your speed by 10.
@@ -2686,7 +2686,7 @@ D:Darkens your close surroundings or a whole room.
 N:323:Genocide
 G:_:d
 I:55:27:0
-W:70:0:50:5000
+W:70:0:50:7500
 A:70/4
 P:0:1d2:0:0:0
 D:Annihilates a certain type of monster on the level, determined by which monster
