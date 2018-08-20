@@ -323,6 +323,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 				price += r_info[o_ptr->pval].level * 100;
 				//price += (r_info[o_ptr->pval].level * r_info[o_ptr->pval].mexp) / 500;
 			}
+			if (o_ptr->name2) price += e_info[o_ptr->name2b].cost; /* 'Indestructible' ego, pft */
 		}
 
 		/* Mega-Hack -- Black market sucks */
