@@ -80,7 +80,7 @@ static artifact_type randart;
  * Calculate the multiplier we'll get with a given bow type.
  * This is done differently in 2.8.2 than it was in 2.8.1.
  */
-static int bow_multiplier (int sval) {
+static int bow_multiplier(int sval) {
 	switch (sval) {
 	case SV_SLING: case SV_SHORT_BOW: return 2;
 	case SV_LONG_BOW: case SV_LIGHT_XBOW: return 3;
@@ -96,7 +96,7 @@ static int bow_multiplier (int sval) {
  * Make sure it's not zero.  If it's currently negative, leave
  * it negative (heh heh).
  */
-static void do_pval (artifact_type *a_ptr) {
+static void do_pval(artifact_type *a_ptr) {
 	/* Add some pval */
 	if (a_ptr->pval == 0)
 		a_ptr->pval = 1 + rand_int(3);
@@ -115,7 +115,7 @@ static void do_pval (artifact_type *a_ptr) {
 /*
  * Make it bad, or if it's already bad, make it worse!
  */
-static void do_curse (artifact_type *a_ptr) {
+static void do_curse(artifact_type *a_ptr) {
 	/* Some chance of picking up these flags */
 	if (rand_int(3) == 0) a_ptr->flags3 |= TR3_AGGRAVATE;
 	if (!is_ammo(a_ptr->tval)) {
@@ -138,8 +138,7 @@ static void do_curse (artifact_type *a_ptr) {
 	if ((a_ptr->to_d < 0) && (rand_int(4) == 0)) a_ptr->to_d -= 3 + rand_int(6);
 
 	/* If it is cursed, we can heavily curse it */
-	if (a_ptr->flags3 & TR3_CURSED)
-	{
+	if (a_ptr->flags3 & TR3_CURSED) {
 		if (rand_int(2) == 0) a_ptr->flags3 |= TR3_HEAVY_CURSE;
 		if (rand_int(15) == 0) a_ptr->flags4 |= TR4_CURSE_NO_DROP;
 		return;
@@ -501,7 +500,7 @@ static void remove_redundant_esp(artifact_type *a_ptr) {
  * Randomly select an extra ability to be added to the artifact in question.
  * This function is way too large.
  */
-static void add_ability (artifact_type *a_ptr) {
+static void add_ability(artifact_type *a_ptr) {
 	int r = rand_int(100);
 	bool type_dependant_mod = FALSE;
 	object_kind *k_ptr = &k_info[lookup_kind(a_ptr->tval, a_ptr->sval)];
@@ -552,7 +551,7 @@ static void add_ability (artifact_type *a_ptr) {
 				if (rand_int(4) > 0) a_ptr->flags2 |= TR2_RES_POIS;
 			} else if (r < 4) {
 				a_ptr->flags1 |= TR1_WIS;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
 				/* chaotic and blessed are exclusive atm */
 				if (!(a_ptr->flags5 & TR5_CHAOTIC) &&
@@ -655,7 +654,7 @@ static void add_ability (artifact_type *a_ptr) {
 				if (a_ptr->tval == TV_BOOMERANG) a_ptr->flags3 |= TR3_XTRA_SHOTS;
 				else {
 					a_ptr->flags1 |= TR1_BLOWS;
-					do_pval (a_ptr);
+					do_pval(a_ptr);
 					if (a_ptr->pval > 3) a_ptr->pval = 3;
 				}
 			} else if (r < 74) {
@@ -666,7 +665,7 @@ static void add_ability (artifact_type *a_ptr) {
 					//melee weapons only:
 					a_ptr->flags1 |= TR1_LIFE;
 					if (k_ptr->flags4 & (TR4_SHOULD2H | TR4_MUST2H)) {
-						do_pval (a_ptr);
+						do_pval(a_ptr);
 						if (a_ptr->pval > 2) a_ptr->pval = 2;
 					} else a_ptr->pval = 1;
 				}
@@ -681,7 +680,7 @@ static void add_ability (artifact_type *a_ptr) {
 				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int(8);
 				else if (rand_int(2) == 0) a_ptr->pval++;
 			} else if (r < 97) {
-				switch(a_ptr->tval) {
+				switch (a_ptr->tval) {
 				case TV_DIGGING:
 					a_ptr->pval++;
 					break;
@@ -769,7 +768,7 @@ static void add_ability (artifact_type *a_ptr) {
 				if (a_ptr->tval == TV_BOOTS && a_ptr->sval == SV_PAIR_OF_WITAN_BOOTS) break;
 #endif
 				a_ptr->flags1 |= TR1_STEALTH;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			} else if (r < 95) {
 				a_ptr->flags1 |= TR1_SPEED;
 				if (a_ptr->pval < 0) break;
@@ -788,22 +787,22 @@ static void add_ability (artifact_type *a_ptr) {
 			{
 				a_ptr->flags1 |= TR1_MANA;
 				if (a_ptr->pval == 0) a_ptr->pval = 5 + rand_int(6);
-				else do_pval (a_ptr);
+				else do_pval(a_ptr);
 				if (a_ptr->pval < 0) a_ptr->pval = 2;
 			} else if (r < 26) a_ptr->flags4 |= TR4_AUTO_ID;
 			else if (r < 36) {
 				a_ptr->flags1 |= TR1_DEX;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			} else if (r < 46) {
 				a_ptr->flags1 |= TR1_STR;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			} else if (r < 51) {
 				a_ptr->flags1 |= TR1_BLOWS;
 				if (rand_int(3)) a_ptr->pval = 1;
 				else a_ptr->pval = 2;
 			} else if (r < 53) {
 				a_ptr->flags1 |= TR1_LIFE;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
 			} else if (r < 58) {
 				a_ptr->flags5 |= TR5_CRIT;
@@ -862,7 +861,7 @@ static void add_ability (artifact_type *a_ptr) {
 		case TV_HELM:
 			if (r < 2) {
 				a_ptr->flags1 |= TR1_LIFE;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
 			} else if (r < 12) a_ptr->flags2 |= TR2_RES_BLIND;
 			else if (r < 17) {
@@ -871,7 +870,7 @@ static void add_ability (artifact_type *a_ptr) {
 			} else if (r < 25) a_ptr->flags4 |= TR4_AUTO_ID;
 			else if (r < 30) {
 				a_ptr->flags1 |= TR1_WIS;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			}
 			//else if (r < 45) a_ptr->flags3 |= TR3_TELEPATHY;
 			//else if (r < 45) a_ptr->esp |= (ESP_ALL);
@@ -892,7 +891,7 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 54) a_ptr->flags3 |= TR3_SEE_INVIS;
 			else if (r < 63) {
 				a_ptr->flags1 |= TR1_INT;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			}
 			else if (r < 70) a_ptr->flags2 |= TR2_RES_CONF;
 			else if (r < 75) a_ptr->flags2 |= TR2_RES_FEAR;
@@ -905,7 +904,7 @@ static void add_ability (artifact_type *a_ptr) {
 		case TV_CROWN:
 			if (r < 2) {
 				a_ptr->flags1 |= TR1_LIFE;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
 			} else if (r < 14) a_ptr->flags2 |= TR2_RES_BLIND;
 			else if (r < 17) {
@@ -935,10 +934,10 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 53) a_ptr->flags3 |= TR3_SEE_INVIS;
 			else if (r < 62) {
 				a_ptr->flags1 |= TR1_WIS;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			} else if (r < 71) {
 				a_ptr->flags1 |= TR1_INT;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			} else if (r < 77) a_ptr->flags2 |= TR2_RES_CONF;
 			else if (r < 81) a_ptr->flags2 |= TR2_RES_FEAR;
 #ifndef TO_AC_CAP_30
@@ -972,12 +971,12 @@ static void add_ability (artifact_type *a_ptr) {
 		case TV_CLOAK:
 			if (r < 5) {
 				a_ptr->flags3 |= TR3_FEATHER;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			} else if (r < 10) { //30
 				if (!(a_ptr->flags3 & TR3_SH_FIRE ||
 				     a_ptr->flags3 & TR3_SH_COLD ||
 				     a_ptr->flags3 & TR3_SH_ELEC)) {
-					switch(rand_int(3)) {
+					switch (rand_int(3)) {
 					case 0:	a_ptr->flags3 |= TR3_SH_FIRE;
 						a_ptr->flags2 |= TR2_RES_FIRE;
 						break;
@@ -992,7 +991,7 @@ static void add_ability (artifact_type *a_ptr) {
 			} else if (r < 20) a_ptr->flags5 |= TR5_INVIS;//33
 			else if (r < 34) { //55
 				a_ptr->flags1 |= TR1_STEALTH;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			} else if (r < 45) a_ptr->flags2 |= TR2_RES_SHARDS;
 			else if (r < 50) a_ptr->flags4 |= TR4_LEVITATE;
 			else if (r < 55) a_ptr->flags2 |= TR2_HOLD_LIFE;
@@ -1011,17 +1010,17 @@ static void add_ability (artifact_type *a_ptr) {
 			if (r < 15) a_ptr->flags2 |= TR2_HOLD_LIFE;
 			else if (r < 30) {
 				a_ptr->flags1 |= TR1_CON;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0)
 					a_ptr->flags2 |= TR2_SUST_CON;
 			} else if (r < 45) {
 				a_ptr->flags1 |= TR1_STR;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0)
 					a_ptr->flags2 |= TR2_SUST_STR;
 			} else if (r < 50) {
 				a_ptr->flags1 |= TR1_LIFE;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
 #ifndef TO_AC_CAP_30
 			} else a_ptr->to_a += 1 + rand_int(4);
@@ -1043,7 +1042,7 @@ static void add_ability (artifact_type *a_ptr) {
 				else if (rr < 95) a_ptr->flags2 |= TR2_IM_COLD;
 				else {
 					a_ptr->flags1 |= TR1_LIFE;
-					do_pval (a_ptr);
+					do_pval(a_ptr);
 					if (a_ptr->pval > 3) a_ptr->pval = 3;
 				}
 				break;
@@ -1052,11 +1051,11 @@ static void add_ability (artifact_type *a_ptr) {
 		case TV_SOFT_ARMOR:
 			if (r < 8) {
 				a_ptr->flags1 |= TR1_STEALTH;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 			} else if (r < 16) a_ptr->flags2 |= TR2_HOLD_LIFE;
 			else if (r < 22) {
 				a_ptr->flags1 |= TR1_CON;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0)
 					a_ptr->flags2 |= TR2_SUST_CON;
 			} else if (r < 34) a_ptr->flags2 |= TR2_RES_ACID;
@@ -1065,7 +1064,7 @@ static void add_ability (artifact_type *a_ptr) {
 			else if (r < 70) a_ptr->flags2 |= TR2_RES_COLD;
 			else if (r < 72) {
 				a_ptr->flags1 |= TR1_LIFE;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (a_ptr->pval > 3) a_ptr->pval = 3;
 			} else if (r < 80) a_ptr->weight = (a_ptr->weight * 9) / 10;
 #ifndef TO_AC_CAP_30
@@ -1106,17 +1105,17 @@ static void add_ability (artifact_type *a_ptr) {
 			switch (r) {
 			case 0:
 				a_ptr->flags1 |= TR1_STR;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_STR;
 				break;
 			case 1:
 				a_ptr->flags1 |= TR1_INT;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_INT;
 				break;
 			case 2:
 				a_ptr->flags1 |= TR1_WIS;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
 				if ((a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM)
 				    && !(k_ptr->flags6 & TR6_EVIL))
@@ -1124,26 +1123,26 @@ static void add_ability (artifact_type *a_ptr) {
 				break;
 			case 3:
 				a_ptr->flags1 |= TR1_DEX;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_DEX;
 				break;
 			case 4:
 				a_ptr->flags1 |= TR1_CON;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_CON;
 				break;
 			case 5:
 				a_ptr->flags1 |= TR1_CHR;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_CHR;
 				break;
 			case 6:
 				a_ptr->flags1 |= TR1_STEALTH;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				break;
 			case 7:
 				a_ptr->flags1 |= TR1_SEARCH;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				break;
 			case 8:
 				/* Nazgul rings never have NO_MAGIC, wouldn't make sense lore-wise */
@@ -1169,27 +1168,27 @@ static void add_ability (artifact_type *a_ptr) {
 
 				a_ptr->flags1 |= TR1_SPEED;
 				if (a_ptr->pval == 0) a_ptr->pval = 3 + rand_int(3);
-				else do_pval (a_ptr);
+				else do_pval(a_ptr);
 				break;
 			case 10:
 				a_ptr->flags2 |= TR2_SUST_STR;
 				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_STR;
-					do_pval (a_ptr);
+					do_pval(a_ptr);
 				}
 				break;
 			case 11:
 				a_ptr->flags2 |= TR2_SUST_INT;
 				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_INT;
-					do_pval (a_ptr);
+					do_pval(a_ptr);
 				}
 				break;
 			case 12:
 				a_ptr->flags2 |= TR2_SUST_WIS;
 				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_WIS;
-					do_pval (a_ptr);
+					do_pval(a_ptr);
 					if ((a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM)
 					    && !(k_ptr->flags6 & TR6_EVIL))
 						a_ptr->flags3 |= TR3_BLESSED;
@@ -1199,21 +1198,21 @@ static void add_ability (artifact_type *a_ptr) {
 				a_ptr->flags2 |= TR2_SUST_DEX;
 				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_DEX;
-					do_pval (a_ptr);
+					do_pval(a_ptr);
 				}
 				break;
 			case 14:
 				a_ptr->flags2 |= TR2_SUST_CON;
 				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_CON;
-					do_pval (a_ptr);
+					do_pval(a_ptr);
 				}
 				break;
 			case 15:
 				a_ptr->flags2 |= TR2_SUST_CHR;
 				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_CHR;
-					do_pval (a_ptr);
+					do_pval(a_ptr);
 				}
 				break;
 			case 16:
@@ -1285,7 +1284,7 @@ static void add_ability (artifact_type *a_ptr) {
 #if 0 /* only for helms/crowns */
 			case 44:
 				a_ptr->flags1 |= TR1_INFRA;
-				do_pval (a_ptr);
+				do_pval(a_ptr);
 				break;
 #endif
 			}
@@ -2298,7 +2297,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 		cost += a_ptr->to_h * 3000;
 		a_ptr->level += a_ptr->to_d;
 		cost += a_ptr->to_d * 8000;
-		switch(a_ptr->pval) {
+		switch (a_ptr->pval) {
 		case GF_POIS: case GF_COLD: a_ptr->level += 2; cost += 10000; break;
 		case GF_FIRE: case GF_ELEC: case GF_ACID: a_ptr->level += 2; cost += 15000; break;
 		case GF_LITE: case GF_DARK: case GF_ICE: case GF_SHARDS: case GF_NUKE: a_ptr->level += 2; cost += 20000; break;
@@ -2734,7 +2733,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 
 	if (fego1 & ETR1_SUSTAIN) {
 		/* Make a random sustain */
-		switch(randint(6)) {
+		switch (randint(6)) {
 		case 1: a_ptr->flags2 |= TR2_SUST_STR; break;
 		case 2: a_ptr->flags2 |= TR2_SUST_INT; break;
 		case 3: a_ptr->flags2 |= TR2_SUST_WIS; break;
@@ -3095,7 +3094,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
  */
 
 //void random_resistance (object_type * o_ptr, bool is_scroll, int specific)
-void random_resistance (artifact_type * a_ptr, bool is_scroll, int specific) {
+void random_resistance(artifact_type * a_ptr, bool is_scroll, int specific) {
 	if (!specific) { /* To avoid a number of possible bugs */
 		if (artifact_bias == BIAS_ACID) {
 			if (!(a_ptr->flags2 & TR2_RES_ACID)) {
