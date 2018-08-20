@@ -84,6 +84,7 @@ struct object_type
         byte ds;			/* Damage dice/sides */
 
 	long timeout;			/* Timeout Counter */
+	long timeout_magic;		/* Timeout Counter */
 
 	byte ident;			/* Special flags  */
 
