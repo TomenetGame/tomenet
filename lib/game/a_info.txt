@@ -1297,7 +1297,7 @@ D:owner as they inflict wounds that will never heal.
 N:92:'Vorpal Blade'
 I:23:31:2
 W:60:30:60:160000
-P:0:5d5:32:32:0
+P:0:5d4:32:32:0
 F:VORPAL | SLAY_EVIL | HIDE_TYPE
 F:FREE_ACT | SEE_INVIS | SLOW_DIGEST | REGEN | SPEED | STR | DEX
 # | WOUNDING
@@ -2942,7 +2942,7 @@ D:Gauntlets that convert the wielder's anger to strength in combat.
 N:235:'Artery Cutter'
 I:23:31:10
 W:65:50:50:200000
-P:0:3d5:24:18:0
+P:0:3d4:24:18:0
 F:CRIT | SHOW_MODS | VORPAL | RES_ELEC | SEE_INVIS
 D:A blade which can even cut the skin of stone giants,
 D:and without fail strikes the vital points of any creature.
