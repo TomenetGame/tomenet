@@ -1039,7 +1039,8 @@ They all start with a slash '/' hence they're called slash commands:
             scale mails, leaving them intact.
 
 /dis a      DESTROYS items like '/dis', and additionally destroys all items
-            that have no inscription at all.
+            that have no inscription at all or just a price discount tag
+            (discount tags don't count as real inscriptions).
             Also see /tag and /untag.
 
 /dis b      DESTROYS items like '/dis a' does, but skips identified ego items,
