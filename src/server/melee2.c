@@ -222,6 +222,9 @@
  #define MONSTER_SFX_WAY 1
 #endif
 
+/* Hack to make monsters that can summon high uniques do so more often instead of using other summoning spells they may have (Chance: 1 in n, [4]) */
+#define PRIORITY_S_HI_UNIQUE 4
+
 /*
  * DRS_SMART_OPTIONS is not available for now.
  */
@@ -2319,6 +2322,17 @@ bool make_attack_spell(int Ind, int m_idx) {
 		f6 &= ~(RF6_SUMMON_MASK);
 		f0 &= ~(RF0_SUMMON_MASK);
 	}
+
+	/* Experimental: Use S_HI_UNIQUE more often than other summon spells! */
+#ifdef PRIORITY_S_HI_UNIQUE
+	if ((f0 & RF0_S_HI_UNIQUE) && !rand_int(PRIORITY_S_HI_UNIQUE)) {
+		f4 &= ~(RF4_SUMMON_MASK);
+		f5 &= ~(RF5_SUMMON_MASK);
+		f6 &= ~(RF6_SUMMON_MASK);
+		f0 &= ~(RF0_SUMMON_MASK);
+		f0 |= RF0_S_HI_UNIQUE;
+	}
+#endif
 
 	/* No spells left */
 	if (!f4 && !f5 && !f6 && !f0) return (FALSE);
