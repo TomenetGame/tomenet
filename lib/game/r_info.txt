@@ -18332,9 +18332,9 @@ F:INVISIBLE | COLD_BLOOD | PASS_WALL | WEIRD_MIND | RES_NETH | RES_DARK |
 F:EVIL | UNDEAD | IM_COLD | IM_FIRE | IM_ACID | IM_ELEC | AURA_COLD |
 F:IM_POIS | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT | RES_SOUND
 S:1_IN_2 |
-S:S_UNDEAD | S_DEMON | S_DRAGON |
-S:S_UNIQUE | S_NAZGUL | S_HI_DEMONS |
-S:S_HI_UNDEAD | S_HI_DRAGONS | S_KIN |
+#S:S_UNDEAD | S_DEMON | S_DRAGON |
+#S:S_UNIQUE | S_NAZGUL |
+S:S_HI_DEMONS | S_HI_UNDEAD | S_HI_DRAGONS | S_KIN | S_HI_UNIQUE
 S:BR_DISE | BA_NETH
 D:A disembodied and barely sentient mind, Tik'srvzllat floated
 D:through the void for eons before being awakened by sorcery, pulled
