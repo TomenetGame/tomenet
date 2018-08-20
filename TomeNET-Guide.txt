@@ -14231,7 +14231,7 @@ create a character!):
     great effect, flipping their negative boni to positive ones. (With the same
     exception as for vampires: Weapons "of nothingness" will do them no good
     either.)
-    Hell Hnights have a very high chance to resist the adverse effects of
+    Hell Knights have a very high chance to resist the adverse effects of
     encountering an eldritch horror (see (6.3) under 'Saving Throw' for details
     on those).
 
