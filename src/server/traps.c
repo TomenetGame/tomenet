@@ -849,6 +849,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Multiplication Trap */
 		case TRAP_OF_MULTIPLICATION:
 			msg_print(Ind, "You hear a loud click.");
+			if (istownarea(wpos, MAX_TOWNAREA)) break;
 			for (k = -1; k <= 1; k++)
 				for (l = -1; l <= 1; l++) {
 					/* let's keep its spot empty if the multiplication trap runs out? */
@@ -1249,6 +1250,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		{
 			struct c_special *cs_ptr;
 			cs_ptr = GetCS(c_ptr, CS_TRAPS);
+			if (istownarea(wpos, MAX_TOWNAREA)) {
+				msg_print(Ind, "You hear a noise.");
+				break;
+			}
 			/* if we're on a floor or on a door, place a new trap */
 			if ((item == -1) || (item == -2)) {
 				cs_erase(c_ptr, cs_ptr);
@@ -2209,6 +2214,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			int ix, iy;
 			char o_name[ONAME_LEN];
 
+			if (istownarea(wpos, MAX_TOWNAREA)) break;
+
 			/* Delete the existing objects */
 			for (k = 1; k < o_max; k++) {
 				object_type *o_ptr = &o_list[k];
@@ -2258,6 +2265,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		}
 		/* Preparation Trap */
 		case TRAP_OF_PREPARE:
+			if (istownarea(wpos, MAX_TOWNAREA)) break;
 			/* Look for the existing objects */
 			for (k = 1; k < o_max; k++) {
 				object_type *o_ptr = &o_list[k];
@@ -2274,7 +2282,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			break;
 
 		case TRAP_OF_MOAT_I:
-			if (p_ptr->levitate){
+			if (p_ptr->levitate) {
 				/* dont notice it */
 				vanish = 0;
 				break;
