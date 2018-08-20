@@ -23,7 +23,8 @@
 
 
 [title]
-packname = None
+packname = None (basic alert effects only)
+author = C. Blue
 description = No sound effects except for basic alerts.
 
 [player]
