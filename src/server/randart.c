@@ -556,6 +556,7 @@ static void add_ability (artifact_type *a_ptr) {
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
 				/* chaotic and blessed are exclusive atm */
 				if (!(a_ptr->flags5 & TR5_CHAOTIC) &&
+				    !(k_ptr->flags6 & TR6_EVIL) &&
 				    (is_melee_weapon(a_ptr->tval) || a_ptr->tval == TV_BOOMERANG))
 					a_ptr->flags3 |= TR3_BLESSED;
 			} else if (r < 7) {
@@ -1117,7 +1118,8 @@ static void add_ability (artifact_type *a_ptr) {
 				a_ptr->flags1 |= TR1_WIS;
 				do_pval (a_ptr);
 				if (rand_int(2) == 0) a_ptr->flags2 |= TR2_SUST_WIS;
-				if (a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM)
+				if ((a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM)
+				    && !(k_ptr->flags6 & TR6_EVIL))
 					a_ptr->flags3 |= TR3_BLESSED;
 				break;
 			case 3:
@@ -1188,7 +1190,8 @@ static void add_ability (artifact_type *a_ptr) {
 				if (rand_int(2) == 0) {
 					a_ptr->flags1 |= TR1_WIS;
 					do_pval (a_ptr);
-					if (a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM)
+					if ((a_ptr->tval == TV_SWORD || a_ptr->tval == TV_POLEARM)
+					    && !(k_ptr->flags6 & TR6_EVIL))
 						a_ptr->flags3 |= TR3_BLESSED;
 				}
 				break;

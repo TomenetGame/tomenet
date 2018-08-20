@@ -4390,6 +4390,8 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 		if (good && (!e_ptr->cost)) continue;
 		if ((!good) && e_ptr->cost) continue;
 
+		/* (Handling of TR6_EVIL is done via e_info.txt tval/sval restriction entry instead of a check here, unlike for randarts) */
+
 		/* ok */
 		ok_ego[ok_num++] = e_tval[tval][i];
 	}
@@ -4588,6 +4590,18 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 					i = 0;
 					break;
 				}
+				break;
+			case EGO_CHAOTIC:
+				if (i == EGO_HA) continue;
+				break;
+			case EGO_HA:
+				if (i == EGO_CHAOTIC) continue;
+				break;
+			case EGO_MORGUL:
+				if (i == EGO_BLESS_BLADE) continue;
+				break;
+			case EGO_BLESS_BLADE:
+				if (i == EGO_MORGUL) continue;
 				break;
 			}
 
@@ -11162,7 +11176,7 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-	if (f5 & TR5_CHAOTIC) return FALSE; //assume that CHAOTIC and BLESSED cannot coincide!
+	if (f5 & TR5_CHAOTIC) return FALSE; //assume that CHAOTIC and BLESSED cannot coincide! - Can still be Chaotic of *slay undead* though, which is considered 'fine' for now?
 
 	if (f3 & TR3_LITE1) l++;
 	if (f4 & TR4_LITE2) l += 2;
@@ -11221,7 +11235,7 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-	if (f5 & TR5_CHAOTIC) return FALSE; //assume that CHAOTIC and BLESSED cannot coincide!
+	if (f5 & TR5_CHAOTIC) return FALSE; //assume that CHAOTIC and BLESSED cannot coincide! - Can still be Chaotic of *slay demon* though, which is considered 'fine' for now?
 
 	if (f3 & TR3_LITE1) l++;
 	if (f4 & TR4_LITE2) l += 2;
