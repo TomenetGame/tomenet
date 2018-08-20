@@ -676,7 +676,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			break;
 #endif
 		case SV_POTION_SLEEP:
-			if (!p_ptr->free_act)
+			if (!p_ptr->free_act && p_ptr->prace != RACE_VAMPIRE)
 				if (set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4)) ident = TRUE;
 			break;
 		case SV_POTION_LOSE_MEMORIES:
