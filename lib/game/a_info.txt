@@ -3122,10 +3122,11 @@ D:Driving right through the chest, piercing strongest armour.
 
 N:250:of Kronos
 I:22:3:5
-W:80:60:50:70000
-P:0:5d3:111:15:0
+W:80:60:50:100000
+P:0:5d3:111:20:0
 F:SHOW_MODS | VORPAL | INFRA | REGEN | SLAY_ANIMAL |
-F:BRAND_ACID | RES_ACID | DRAIN_MANA | SPECIAL_GENE
+F:BRAND_ACID | RES_ACID | SPECIAL_GENE
+#DRAIN_MANA |
 D:A sickle gleaming with unmatched sharpness.
 
 
