@@ -612,7 +612,11 @@ void do_slash_cmd(int Ind, char *message) {
 
 							/* keep inscribed items? */
 							if (!nontag && o_ptr->note) {
-								if (!noidx) return;
+								if (!noidx) {
+									/* Take total of one turn */
+									p_ptr->energy -= level_speed(&p_ptr->wpos);
+									return;
+								}
 								o_ptr = &o_list[noidx];
 								continue;
 							}
@@ -623,16 +627,28 @@ void do_slash_cmd(int Ind, char *message) {
 							    /* let exploding ammo count as ego.. pft */
 							    (is_ammo(o_ptr->tval) && o_ptr->pval))
 							    && !cursed_p(o_ptr)) {
-								if (!noidx) return;
+								if (!noidx) {
+									/* Take total of one turn */
+									p_ptr->energy -= level_speed(&p_ptr->wpos);
+									return;
+								}
 								o_ptr = &o_list[noidx];
 								continue;
 							}
 
 							do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number);
+							/* Hack - Don't take a turn here */
+							p_ptr->energy += level_speed(&p_ptr->wpos);
 
-							if (!noidx) return;
+							if (!noidx) {
+								/* Take total of one turn */
+								p_ptr->energy -= level_speed(&p_ptr->wpos);
+								return;
+							}
 							o_ptr = &o_list[noidx];
 						}
+						/* Take total of one turn */
+						p_ptr->energy -= level_speed(&p_ptr->wpos);
 						return;
 					} else {
 						/* Get the object */
