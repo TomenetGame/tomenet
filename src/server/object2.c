@@ -8679,8 +8679,13 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (o_ptr->name2 == EGO_COMBAT //(exclude EGO_AGILITY from above)
 			    && (spell_choice || ranged_choice) && !melee_choice)
 				continue;
-		case EGO_SLAYING:
 		case EGO_THIEVERY:
+			if (f1 & TR1_SPEED) break; /* +speed items are always fine */
+			/* exception: martial artists can't benefit from +BPR */
+			if (melee_choice == 5) continue;
+			/* make them useful for weapon-users */
+			if (o_ptr->pval < 3) o_ptr->pval = 3 + rand_int(3);
+		case EGO_SLAYING:
 			switch (p_ptr->pclass) {
 			case CLASS_WARRIOR:
 			case CLASS_MIMIC:
