@@ -6891,8 +6891,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #ifdef ENABLE_OCCULT
 		/* hack for Occult school's "Trance" spell */
 		if (dam & 0x400) {
-			/* fails? (not a ghost, spirit or elemental) */
-			if (r_ptr->d_char != 'G' && r_ptr->d_char != 'E' && r_ptr->d_char != 'X') {
+			/* fails? (not a ghost, spirit, elemental or vortex) */
+			if (r_ptr->d_char != 'G' && r_ptr->d_char != 'E' && r_ptr->d_char != 'X' && r_ptr->d_char != 'v') {
 				dam = 0;
 				quiet_dam = TRUE;
 				quiet = TRUE;
