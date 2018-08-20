@@ -4096,6 +4096,7 @@ void interact_macros(void) {
 			    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
 			    (*buf >= 'a' && *buf <= 'w') || /* inventory */
 			    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
+			    *buf == ' ' || /* spacebar is used almost everywhere, should only be command macro */
 			    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
 			    )
 				c_msg_print("\377oWarning: This key may only work with command macros, not hybrid or normal ones!");
@@ -4127,6 +4128,7 @@ void interact_macros(void) {
 			    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
 			    (*buf >= 'a' && *buf <= 'w') || /* inventory */
 			    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
+			    *buf == ' ' || /* spacebar is used almost everywhere, should only be command macro */
 			    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
 			    )
 				c_msg_print("\377oWarning: This key may only work with command macros, not hybrid or normal ones!");
@@ -4779,7 +4781,7 @@ void interact_macros(void) {
 				/* Automatically choose usually best fitting macro type,
 				   depending on chosen trigger key! */
 				//[normal macros: F-keys (only keys that aren't used for any text input)]
-				//command macros: / * a..w (all keys that are used in important standard prompts: inventory)
+				//command macros: / * a..w (all keys that are used in important standard prompts: inventory) and spacebar
 				//hybrid macros: all others, maybe even also normal-macro-keys
 				if (!strcmp(buf, "/") || !strcmp(buf, "*") || /* windows */
 				    (strlen(buf) == 10 && (buf[8] == '/' || buf[8] == '*')) || /* x11 - to do: fix this crap */
@@ -4789,6 +4791,7 @@ void interact_macros(void) {
 				    (*buf >= 'a' && *buf <= 'z') || /* command keys - you shouldn't really put macros on these, but w/e.. */
 				    (*buf >= 'A' && *buf <= 'Z') ||
 				    (*buf >= '0' && *buf <= '9') || /* menu choices. Especially for ~ menu it is required that these are command macros so they don't trigger there.. */
+				    *buf == ' ' || /* spacebar is used almost everywhere, should only be command macro */
 #endif
 				    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 				    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
@@ -6583,6 +6586,7 @@ Chain_Macro:
 					    (*buf >= 'a' && *buf <= 'z') || /* command keys - you shouldn't really put macros on these, but w/e.. */
 					    (*buf >= 'A' && *buf <= 'Z') ||
 					    (*buf >= '0' && *buf <= '9') || /* menu choices. Especially for ~ menu it is required that these are command macros so they don't trigger there.. */
+					    *buf == ' ' || /* spacebar is used almost everywhere, should only be command macro */
 #endif
 					    *buf == '+' || *buf == '-' || /* the '+' and '-' keys are used in certain input prompts (targetting, drop newest item) */
 					    (buf[0] == 1 && buf[1] == 0) /* CTRL+A glitch */
