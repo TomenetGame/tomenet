@@ -184,10 +184,10 @@ OEXTRASTATS = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			--(lv=30 -> +4 at 50)
-			do_xtra_stats(Ind, 4, 2 + get_level(Ind, OEXTRASTATS, 50) / 7, rand_int(7) + 22 + get_level(Ind, OEXTRASTATS, 30))
+			do_xtra_stats(Ind, 4, 2 + get_level(Ind, OEXTRASTATS, 50) / 7, rand_int(7) + 22 + get_level(Ind, OEXTRASTATS, 17))
 			end,
 	["info"] = 	function()
-			return "+" .. (2 + get_level(Ind, OEXTRASTATS, 50) / 7) .. " dur d7+" .. (22 + get_level(Ind, OEXTRASTATS, 30))
+			return "+" .. (2 + get_level(Ind, OEXTRASTATS, 50) / 7) .. " dur d7+" .. (22 + get_level(Ind, OEXTRASTATS, 17))
 			end,
 	["desc"] = 	{ "Temporarily increases and sustains strength and constitution.", }
 }
