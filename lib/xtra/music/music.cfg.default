@@ -28,7 +28,10 @@
 
 
 [title]
+
 packname = None
+author = nobody
 description = No music.
+
 
 [generic]
