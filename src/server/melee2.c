@@ -3217,6 +3217,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a magic missile of", m_name);
+		/* Hack: Tone down sparkling vermin clones early on */
+		if (rlev < 9) bolt(Ind, m_idx, GF_MISSILE, damroll(2, 2) + (rlev / 2), SFX_BOLT_MAGIC);
+		else /* normal default: */
 		bolt(Ind, m_idx, GF_MISSILE, damroll(2, 6) + (rlev / 3), SFX_BOLT_MAGIC);
 		break;
 
@@ -7530,9 +7533,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 	/* attempt to "mutiply" if able and allowed */
 
-	//if((r_ptr->flags7 & RF7_MULTIPLY) &&
+#if 1
+	if ((r_ptr->flags7 & RF7_MULTIPLY) &&
+#else /* Taken care of in re_info.txt 'Sparkling' via O:MULTIPLY */
 	//Let's not allow mobs that can fire missiles to multiply..
-	if((r_ptr->flags7 & RF7_MULTIPLY) && (!(r_ptr->flags5 & RF5_MISSILE)) &&
+	if ((r_ptr->flags7 & RF7_MULTIPLY) && (!(r_ptr->flags5 & RF5_MISSILE)) &&
+#endif
 	    (!istown(wpos) && (m_ptr->wpos.wz != 0 ||
 	     wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].radius >= MAX_TOWNAREA) ) &&
 	    (num_repro < MAX_REPRO))
