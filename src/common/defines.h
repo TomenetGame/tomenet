@@ -8287,7 +8287,11 @@ extern int PlayerUID;
 /* Can the player operate doors (and other things?) or is it not possible because he doesn't have a material body needed for that? */
 #define CANNOT_OPERATE_SPECTRAL (p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
 /* Can the player operate doors (and other things?) or is it not possible because of the monster form he's using (despite being material)? */
-#define CANNOT_OPERATE_FORM (p_ptr->body_monster && p_ptr->pclass != CLASS_DRUID && !((r_info[p_ptr->body_monster].flags2 & RF2_OPEN_DOOR) || (r_info[p_ptr->body_monster].body_parts[BODY_FINGER] && r_info[p_ptr->body_monster].body_parts[BODY_WEAPON])))
+#if 0 /* Druids can always operate doors even if their form cannot? */
+ #define CANNOT_OPERATE_FORM (p_ptr->body_monster && p_ptr->pclass != CLASS_DRUID && !((r_info[p_ptr->body_monster].flags2 & RF2_OPEN_DOOR) || (r_info[p_ptr->body_monster].body_parts[BODY_FINGER] && r_info[p_ptr->body_monster].body_parts[BODY_WEAPON])))
+#else /* Standard behaviour: No exception for druids. */
+ #define CANNOT_OPERATE_FORM (p_ptr->body_monster && !((r_info[p_ptr->body_monster].flags2 & RF2_OPEN_DOOR) || (r_info[p_ptr->body_monster].body_parts[BODY_FINGER] && r_info[p_ptr->body_monster].body_parts[BODY_WEAPON])))
+#endif
 /* Can the player operate things? */
 #define CANNOT_OPERATE (CANNOT_OPERATE_SPECTRAL || CANNOT_OPERATE_FORM)
 
