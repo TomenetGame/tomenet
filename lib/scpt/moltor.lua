@@ -148,7 +148,7 @@ function chat_handler()
 		ties = 0;
 	end
 
-[[--
+--[[
 	if (find("^help$")) then
                 if (randint(3) == 2) then bot ("RTFM: tomenet-bin/TomeNET-Guide.txt"); end
 	end
@@ -221,7 +221,7 @@ function chat_handler()
 	if (find("run to the hills")) then
 		bot("Run for your life!");
 	end
-[[--
+--[[
 	if (what == "sup" or what == "hi" or what == "hello" or what == "heya") then
 		bot("Good day, "..who);
 	end
@@ -298,7 +298,7 @@ function chat_handler()
  ]]
 		end
 	end
-[[--
+--[[
 	if (find("which") and find("wear")) then
 		bot ("Wear nothing-- donate the stuff to the Mathom!");
 	end
@@ -306,7 +306,7 @@ function chat_handler()
 	if (find("god") and (find("kill") or find ("die"))) then
 		bot ("Gods can't die? I can kick the gods out though. ^^");
 	end
-[[--
+--[[
 	if (find("cya") or find ("l8r")) then
 		bot ("Thank you, come again!");
 	end 
