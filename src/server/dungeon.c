@@ -1656,6 +1656,11 @@ static void regen_monsters(void) {
 			/* Hack -- Some monsters regenerate quickly */
 			if (r_ptr->flags2 & RF2_REGENERATE) frac *= 2;
 
+#if 1
+			/* Experimental - Trolls are super-regenerators (hard-coded) */
+			if (r_ptr->d_char == 'T') frac *= 2;
+#endif
+
 			/* Hack -- Regenerate */
 			m_ptr->hp += frac;
 

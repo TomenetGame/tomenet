@@ -2406,7 +2406,6 @@ void do_cmd_open(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
-	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
 	int y, x, i, j;
 	int flag;
@@ -2415,8 +2414,8 @@ void do_cmd_open(int Ind, int dir) {
 	object_type *o_ptr;
 
 	bool more = FALSE;
-	bool cannot_spectral = p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST);
-	bool cannot_form = p_ptr->body_monster && !((r_ptr->flags2 & RF2_OPEN_DOOR) || (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_WEAPON]));
+	bool cannot_spectral = CANNOT_OPERATE_SPECTRAL;
+	bool cannot_form = CANNOT_OPERATE_FORM;
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -2841,21 +2840,20 @@ void do_cmd_open(int Ind, int dir) {
  */
 void do_cmd_close(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
-	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	struct worldpos *wpos = &p_ptr->wpos;
 
 	int                     y, x;
 	cave_type               *c_ptr;
 
 	bool more = FALSE;
+	bool cannot_spectral = CANNOT_OPERATE_SPECTRAL;
+	bool cannot_form = CANNOT_OPERATE_FORM;
+
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot close ; not in WRAITHFORM */
-	if (((p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) && !is_admin(p_ptr)) ||
-	    (p_ptr->body_monster && !((r_ptr->flags2 & RF2_OPEN_DOOR) || (r_ptr->body_parts[BODY_FINGER] && r_ptr->body_parts[BODY_WEAPON]))))
-	    //&& !strchr("thpkng", r_info[p_ptr->body_monster].d_char)))
-	{
+	if ((cannot_spectral && !is_admin(p_ptr)) || cannot_form) {
 		msg_print(Ind, "You cannot close things!");
 		return;
 	}
@@ -3006,8 +3004,7 @@ void do_cmd_close(int Ind, int dir) {
  * Check the terrain around the location to see if erosion takes place.
  * TODO: expand this for more generic terrain types		- Jir -
  */
-byte twall_erosion(worldpos *wpos, int y, int x)
-{
+byte twall_erosion(worldpos *wpos, int y, int x) {
 	int tx, ty, d;
 	byte feat = FEAT_FLOOR; /* todo: use something like 'place_floor'*/
 	cave_type **zcave;
@@ -3047,8 +3044,7 @@ byte twall_erosion(worldpos *wpos, int y, int x)
  * This will, however, produce grids which are NOT illuminated
  * (or darkened) along with the rest of the room.
  */
-bool twall(int Ind, int y, int x)
-{
+bool twall(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	byte *w_ptr = &p_ptr->cave_flag[y][x];
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -3110,10 +3106,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
-	if (((p_ptr->ghost) || (p_ptr->tim_wraith) || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
-	    && !is_admin(p_ptr)) {
+	if (CANNOT_OPERATE_SPECTRAL && !is_admin(p_ptr)) {
 		/* Message */
-		msg_print(Ind, "You cannot tunnel.");
+		msg_print(Ind, "You cannot tunnel without a material body.");
 		return;
 	}
 
@@ -3912,10 +3907,10 @@ void do_cmd_disarm(int Ind, int dir) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot disarm ; not in WRAITHFORM */
-	if ((p_ptr->ghost) || (p_ptr->tim_wraith) || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
-		msg_print(Ind, "You cannot disarm things!");
+	if (CANNOT_OPERATE_SPECTRAL) {
+		msg_print(Ind, "Without a material body you cannot disarm things!");
 		if (!is_admin(p_ptr)) return;
-	}
+	} //todo maybe: Add CANNOT_OPERATE_FORM check too?
 
 	break_shadow_running(Ind);
 
@@ -4262,9 +4257,9 @@ void do_cmd_bash(int Ind, int dir) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot bash ; not in WRAITHFORM */
-	if (p_ptr->ghost || p_ptr->tim_wraith || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+	if (CANNOT_OPERATE_SPECTRAL) {
 		/* Message */
-		msg_print(Ind, "You cannot bash things!");
+		msg_print(Ind, "You cannot bash things without a material body!");
 		if (!is_admin(p_ptr)) return;
 	}
 
@@ -4555,10 +4550,9 @@ void do_cmd_spike(int Ind, int dir) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Ghosts cannot spike ; not in WRAITHFORM */
-	if ((p_ptr->ghost) || (p_ptr->tim_wraith) || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+	if (CANNOT_OPERATE_SPECTRAL && !is_admin(p_ptr)) {
 		/* Message */
-		msg_print(Ind, "You cannot spike doors!");
-
+		msg_print(Ind, "You cannot spike doors without a material body!");
 		return;
 	}
 
@@ -4682,8 +4676,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			    p_ptr->easy_open &&
 			    (c_ptr->feat >= FEAT_DOOR_HEAD) &&
 			    (c_ptr->feat <= FEAT_DOOR_TAIL) &&
-			    !p_ptr->ghost && !p_ptr->tim_wraith && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) /* players in WRAITHFORM can't open doors - mikaelh */
-			{
+			    !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
 				do_cmd_open(Ind, dir);
 				return;
 			}
@@ -4691,8 +4684,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
 			    p_ptr->easy_open &&
 			    (c_ptr->feat == FEAT_HOME_HEAD) &&
-			    !p_ptr->ghost && !p_ptr->tim_wraith && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) /* players in WRAITHFORM can't open doors - mikaelh */
-			{
+			    !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
 				if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) { /* orig house failure */
 					if ((!(cfg.door_bump_open & BUMP_OPEN_HOUSE) ||
 					    !access_door(Ind, cs_ptr->sc.ptr, FALSE)) &&
@@ -4764,8 +4756,7 @@ int do_cmd_run(int Ind, int dir) {
 		/* Make sure we have an empty space to run into */
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px)) {
 			/* Handle the cfg_door_bump option */
-			if (cfg.door_bump_open && p_ptr->easy_open && !p_ptr->ghost && !p_ptr->tim_wraith /* players in WRAITHFORM can't open doors - mikaelh */
-			    && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+			if (cfg.door_bump_open && p_ptr->easy_open && !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
 				/* Get requested grid */
 				c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 

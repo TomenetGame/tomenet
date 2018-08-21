@@ -7577,7 +7577,7 @@ void do_cmd_fletchery(int Ind) {
 			    q_ptr = &o_list[0 - item];
 #endif
 
-			if (p_ptr->tim_wraith) { /* Not in WRAITHFORM ^^ */
+			if (CANNOT_OPERATE_SPECTRAL) { /* Not in WRAITHFORM ^^ */
 				msg_print(Ind, "You can't pick up rubble in incorporeal form!");
 				return;
 			}
