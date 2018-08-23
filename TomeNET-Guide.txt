@@ -10197,8 +10197,8 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 It will also fail on dungeon floors that do not allow
                 *destruction* magic explicitely (orange floor feeling saying
                 "The walls here seem very solid.", also see (4.8)).
-                (You do not get experience, loot or credit for monsters erased
-                by *destruction*, same as for genocide-type spells.)
+                (*Destruction* does not yield any kind of credit such as
+                experience points, loot or monster-form for mimics.)
 Enchant
   Sub-types: weapon to-dam, weapon to-hit, armour.
                 Will attempt to enchant weapon/ammunition or armour.
