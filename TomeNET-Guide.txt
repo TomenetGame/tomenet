@@ -10231,7 +10231,8 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
-                (Genocide-type spells do not yield experience or loot.)
+                (Genocide-type spells do not yield any kind of credit such as
+                experience points, loot or monster-form for mimics.)
 Golem Creation  Allows you to create a golem which follows you and which you
                 can control to some extent, see (8.3) for more information.
 Life            Resurrects another player's ghost if standing on a directly
@@ -10260,7 +10261,8 @@ Obliteration    Removes all monsters that are close to you.
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
-                (Genocide-type spells do not yield experience or loot.)
+                (Genocide-type spells do not yield any kind of credit such as
+                experience points, loot or monster-form for mimics.)
 Parchments      These contain informations about the game, they won't
                 disappear if you read them.
 Protection from evil    Repels evil creatures that try to attack you in melee.
