@@ -1665,8 +1665,8 @@ Item power inscription (added in 4.7.1):
     Refl/Inv/AM/Bless reflection/invisibility/anti-magic shell/Blessed
     ID                auto-ID
     Climb/Swim/Wraith climbing/swimming/wraithform
-    AE/AC/AF          aura of fire/cold/electricity
-    BE/BC/BF/BA/BP    brand of fire/cold/electricity/acid/poison
+    AE/C/F            aura of fire/cold/electricity
+    BE/C/F/A/P        brand of fire/cold/electricity/acid/poison
     +oTPaWUDEvil      slay orc/troll/giant/animal/undead/demon/dragon/evil
     *WUD              kill undead/demon/dragon
     ~oTPaWUEvil       ESP orc/troll/giant/animal/undead/demon/dragon/evil

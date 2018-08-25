@@ -2296,14 +2296,16 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 		if (tmp) {
 			if (powins[0] && powins[strlen(powins) - 1] != ',') strcat(powins, ",");
 
-			if (f3 & (TR3_SH_ELEC)) strcat(powins, "AE");
-			if (f3 & (TR3_SH_COLD)) strcat(powins, "AC");
-			if (f3 & (TR3_SH_FIRE)) strcat(powins, "AF");
-			if (f1 & (TR1_BRAND_ELEC)) strcat(powins, "BE");
-			if (f1 & (TR1_BRAND_COLD)) strcat(powins, "BC");
-			if (f1 & (TR1_BRAND_FIRE)) strcat(powins, "BF");
-			if (f1 & (TR1_BRAND_ACID)) strcat(powins, "BA");
-			if (f1 & (TR1_BRAND_POIS)) strcat(powins, "BP");
+			if (f3 & (TR3_SH_ELEC | TR3_SH_COLD | TR3_SH_FIRE)) strcat(powins, "A");
+			if (f3 & TR3_SH_ELEC) strcat(powins, "E");
+			if (f3 & TR3_SH_COLD) strcat(powins, "C");
+			if (f3 & TR3_SH_FIRE) strcat(powins, "F");
+			if (f1 & (TR1_BRAND_ELEC | TR1_BRAND_COLD | TR1_BRAND_FIRE | TR1_BRAND_ACID | TR1_BRAND_POIS)) strcat(powins, "B");
+			if (f1 & TR1_BRAND_ELEC) strcat(powins, "E");
+			if (f1 & TR1_BRAND_COLD) strcat(powins, "C");
+			if (f1 & TR1_BRAND_FIRE) strcat(powins, "F");
+			if (f1 & TR1_BRAND_ACID) strcat(powins, "A");
+			if (f1 & TR1_BRAND_POIS) strcat(powins, "P");
 
 			if (f1 & (TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_ORC | TR1_SLAY_TROLL | TR1_SLAY_GIANT | TR1_SLAY_ANIMAL | TR1_SLAY_UNDEAD | TR1_SLAY_DEMON | TR1_SLAY_DRAGON | TR1_SLAY_EVIL)) {
 				strcat(powins, "+");
