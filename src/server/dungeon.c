@@ -7069,14 +7069,13 @@ static void process_various(void) {
 			}
 			s_printf("RESERVED_NAMES: free'd \"%s\" (%s) at %d\n", reserved_name_character[i], reserved_name_account[i], i); //debug
 			for (j = i + 1; j < MAX_RESERVED_NAMES; j++) {
-				if (!reserved_name_character[j][0]) {
-					reserved_name_character[j - 1][0] = '\0';
-					break;
-				}
+				if (!reserved_name_character[j][0]) break;
 				strcpy(reserved_name_character[j - 1], reserved_name_character[j]);
 				strcpy(reserved_name_account[j - 1], reserved_name_account[j]);
 				reserved_name_timeout[j - 1] = reserved_name_timeout[j];
 			}
+			reserved_name_character[j - 1][0] = '\0';
+			i--;
 			break;
 		}
 	}

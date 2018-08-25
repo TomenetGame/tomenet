@@ -4132,6 +4132,7 @@ static int Receive_login(int ind) {
 			if (strcmp(reserved_name_character[i], connp->nick)) continue;
 
 			if (!strcmp(reserved_name_account[i], connp->nick)) {
+				s_printf("RESERVED_NAMES: Account '%s' cleared '%s' (#%d)\n", connp->nick, reserved_name_character[i], i);
 				reserved_name_character[i][0] = '\0'; //clear reservation
 				break;
 			}
@@ -4342,11 +4343,12 @@ static int Receive_login(int ind) {
 #endif
 
 		/* Prevent EXPLOIT (adding a SPACE to foreign charname) */
-		s_printf("Player %s chooses character '%s' (strlen=%d)\n", connp->nick, choice, (int)strlen(choice));
+		s_printf("Player %s chooses character '%s' (strlen=%d)", connp->nick, choice, (int)strlen(choice));
 		Trim_name(choice);
 
 		/* If already exists, change capitalization to match */
 		if (fix_player_case(choice)) s_printf("Name capitalization: -> '%s'\n", choice);
+		s_printf(" processed: '%s'\n", choice);
 
 		/* Account/Character names must be at least of length 2 (E_LENGTH) */
 		if (strlen(choice) < ACC_CHAR_MIN_LEN) {
@@ -4379,10 +4381,12 @@ static int Receive_login(int ind) {
 
 			if (!strcmp(reserved_name_account[i], connp->nick)) {
 				reserved_name_character[i][0] = '\0'; //clear reservation
+				s_printf("Found on reserved names list - passed.\n");
 				took_reservation = TRUE;
 				break;
 			}
 
+			s_printf("Found on reserved names list - unauthorized.\n");
 			Destroy_connection(ind, "Name already in use by another player.");
 			return(-1);
 		}
@@ -4414,7 +4418,7 @@ static int Receive_login(int ind) {
 		if (!lookup_player_id(choice) && lookup_similar_account(choice, connp->nick)
 		    /* exception! reserved character names have priority.
 		       Otherwise someone could create an account meanwhile to block this player's reincarnation.
-		       Ok, far-fetched paranoia, but still >_>.. */
+		       Actually this happens sometimes, not on purpose, but account name is just sort of similar (need to make checks less strict maybe) */
 		    && !took_reservation
 		    /* Exempt similar-checking for when the character name is exactly the same as his account name - that should always be allowed! */
 		    && strcmp(choice, connp->nick)) {
