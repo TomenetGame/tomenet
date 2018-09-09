@@ -520,13 +520,19 @@ void Receive_login(void) {
 		if (s_DED_PVP) max_cpa_plus++;
 	}
 
-	if (s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'ARCADE_SERVER' settings.", 21, 10);
+	if (s_ARCADE) {
+		c_put_str(TERM_SLATE, "The server is running 'ARCADE_SERVER' settings.", 21, 10);
+		/* Reset default values (2+1) back to zero */
+		max_ded_pvp_chars = max_ded_iddc_chars = 0;
+	}
 	if (s_RPG) {
 		if (!s_ARCADE) c_put_str(TERM_SLATE, "The server is running 'IRONMAN_SERVER' settings.", 21, 10);
 		if (!s_RPG_ADMIN) {
 			max_cpa = 1;
 			max_cpa_plus = 0;
 		}
+		/* Reset default values (2+1) back to zero */
+		max_ded_pvp_chars = max_ded_iddc_chars = 0;
 	}
 	if (s_TEST) c_put_str(TERM_SLATE, "The server is running 'TEST_SERVER' settings.", 22, 25);
 	else if (s_FUN) c_put_str(TERM_SLATE, "The server is running 'FUN_SERVER' settings.", 22, 25);
@@ -594,7 +600,7 @@ void Receive_login(void) {
 	    (n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%hd%hd", &ch, &mode, colour_sequence, c_name, &level, &c_race, &c_class)) :
 	    (n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class))))
 	    > 0) {
-//	while ((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) > 0) {
+	//while ((n = Packet_scanf(&rbuf, "%c%s%s%hd%hd%hd", &ch, colour_sequence, c_name, &level, &c_race, &c_class)) > 0) {
 		/* End of character list is designated by a 'zero' character */
 		if (!c_name[0]) break;
 
@@ -668,6 +674,8 @@ void Receive_login(void) {
 	}
 
 	offset += max_cpa + 1;
+	/* Fix GUI visuals for IRONMAN_SERVER (RPG_SERVER): */
+	if (max_cpa < 11) offset += (11 - max_cpa);
 
 	/* Only exclusive-slots left? Then don't display 'N' option. */
 	if (i - ded_pvp - ded_iddc >= max_cpa - max_ded_pvp_chars - max_ded_iddc_chars) new_ok = FALSE;
