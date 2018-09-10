@@ -158,8 +158,8 @@
 #define PKT_AUTOINSCRIBE	135
 #define PKT_MARTYR		136	/* client lua notification client for updating spell mana costs */
 #define PKT_PALETTE		137	/* Since 4.7.1.2+ */
-
-//XXX 138-143
+#define PKT_IDLE		138	/* for mute_when_idle option */
+//XXX 139
 
 //debugging:
 #define PKT_CLIENT_SETUP_U	140

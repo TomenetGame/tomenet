@@ -2515,6 +2515,8 @@ static void sync_options(int Ind, bool *options) {
 		tmp = p_ptr->palette_animation;
 		if ((p_ptr->palette_animation = options[124]) != tmp) p_ptr->redraw |= PR_MAP;
 		p_ptr->mute_when_idle = options[125];
+		if (p_ptr->mute_when_idle && !p_ptr->muted_when_idle && (p_ptr->afk || p_ptr->idle_char >= 120) && istown(&p_ptr->wpos)) Send_idle(Ind, TRUE);
+		if (!p_ptr->mute_when_idle && p_ptr->muted_when_idle) Send_idle(Ind, FALSE);
 	}
     }
 }
@@ -3098,7 +3100,7 @@ static int Handle_login(int ind) {
 	/* Since 4.5.7 we can now distinguish (client-side) between disabled and unavailable audio */
 	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 90)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
-	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 31)
+	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 38)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---"); //-5 for 5 optional songs in 4.6.2 (user's choic)
 
 	/* Admin messages */
@@ -7339,6 +7341,8 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	int i = -1;
 	cptr name = NULL;
 
+	if (p_ptr->muted_when_idle && sfx_ambient != SFX_AMBIENT_NONE) return 1;
+
 	//-1: smooth (poor with WoR, otherwise great), -2: sudden (needed for WoR/staircases)
 	switch (sfx_ambient) {
 	case SFX_AMBIENT_NONE:		i = (smooth ? -1 : -2); break;
@@ -8372,6 +8376,33 @@ int Send_palette(int Ind, byte c, byte r, byte g, byte b) {
 	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_PALETTE, c, r, g, b);
 }
 
+int Send_idle(int Ind, bool idle) {
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn];
+	int res;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for idle (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	if (idle) {
+		p_ptr->muted_when_idle = TRUE;
+		res = Packet_printf(&connp->c, "%c%c", PKT_IDLE, idle ? 1 : 0);
+		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, FALSE);
+	} else {
+		cave_type **zcave = getcave(&p_ptr->wpos);;
+
+		p_ptr->muted_when_idle = FALSE;
+		res = Packet_printf(&connp->c, "%c%c", PKT_IDLE, idle ? 1 : 0);
+		if (zcave) handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, FALSE);
+	}
+
+	return res;
+}
+
 
 
 /*
@@ -8410,6 +8441,7 @@ static int Receive_keepalive(int ind) {
 
 		p_ptr->idle += 2;
 		p_ptr->idle_char += 2;
+		if (p_ptr->idle_char >= 120 && p_ptr->mute_when_idle && !p_ptr->muted_when_idle && istown(&p_ptr->wpos)) Send_idle(Ind, TRUE);
 
 		/* Kick a starving player */
 		if (p_ptr->idle_starve_kick && p_ptr->food < PY_FOOD_WEAK && connp->inactive_keepalive > STARVE_KICK_TIMER / 2) {
@@ -12030,6 +12062,7 @@ static int Receive_ping(int ind) {
 
 			p_ptr->idle++;
 			p_ptr->idle_char++;
+			if (p_ptr->idle_char >= 120 && p_ptr->mute_when_idle && !p_ptr->muted_when_idle && istown(&p_ptr->wpos)) Send_idle(Ind, TRUE);
 
 #if (MAX_PING_RECVS_LOGGED > 0)
 			/* Get the exact time and save it */

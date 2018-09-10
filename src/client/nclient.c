@@ -168,6 +168,7 @@ static void Receive_init(void) {
 
 	receive_tbl[PKT_MARTYR]		= Receive_martyr;
 	receive_tbl[PKT_PALETTE]	= Receive_palette;
+	receive_tbl[PKT_IDLE]		= Receive_idle;
 }
 
 
@@ -4133,6 +4134,29 @@ int Receive_palette(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &c, &r, &g, &b)) <= 0) return n;
 
 	set_palette(c, r, g, b);
+	return 1;
+}
+
+int Receive_idle(void) {
+	int	n;
+	char 	ch, idle;
+	static bool idle_muted_music = TRUE, idle_muted_weather = TRUE;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &idle)) <= 0) return n;
+
+	if (idle) {
+		if (cfg_audio_music) {
+			toggle_music(TRUE);
+			idle_muted_music = TRUE;
+		} else if (idle_muted_music) idle_muted_music = FALSE;
+		if (cfg_audio_weather) {
+			toggle_weather();
+			idle_muted_weather = TRUE;
+		} else if (idle_muted_weather) idle_muted_weather = FALSE;
+	} else {
+		if (!cfg_audio_music && idle_muted_music) toggle_music(TRUE);
+		if (!cfg_audio_weather && idle_muted_weather) toggle_weather();
+	}
 	return 1;
 }
 

@@ -7936,8 +7936,12 @@ return;
     }
 
 	/* S(he) is no longer afk */
-//	if (p_ptr->afk) toggle_afk(Ind, "");
+#if 0
+	un_afk_idle(Ind);
+#else
 	p_ptr->idle_char = 0;
+	if (p_ptr->muted_when_idle) Send_idle(Ind, FALSE);
+#endif
 
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);

@@ -2040,6 +2040,8 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = getfloor(wpos);
 
+	if (p_ptr->muted_when_idle) return;
+
 	/* sounds that guaranteedly override everthing */
 	if (in_valinor(wpos)) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_SHORE, TRUE);
@@ -5204,6 +5206,7 @@ void un_afk_idle(int Ind) {
 	Players[Ind]->idle_char = 0;
 	if (Players[Ind]->afk && !(Players[Ind]->admin_dm && cfg.secret_dungeon_master)) toggle_afk(Ind, "");
 	stop_cloaking(Ind);
+	if (Players[Ind]->muted_when_idle) Send_idle(Ind, FALSE);
 }
 
 /*
@@ -5255,6 +5258,7 @@ void toggle_afk(int Ind, char *msg)
 				snprintf(afk, sizeof(afk) - 1, "\377%c%s has returned from AFK. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = FALSE;
+		if (p_ptr->muted_when_idle) Send_idle(Ind, FALSE);
 
 		/* Clear everyone's afk_noticed */
 		for (i = 1; i <= NumPlayers; i++)
@@ -5281,6 +5285,7 @@ void toggle_afk(int Ind, char *msg)
 				snprintf(afk, sizeof(afk) - 1, "\377%c%s seems to be AFK now. (%s\377%c)", COLOUR_AFK, p_ptr->name, p_ptr->afk_msg, COLOUR_AFK);
 		}
 		p_ptr->afk = TRUE;
+		if (p_ptr->mute_when_idle && !p_ptr->muted_when_idle && istown(&p_ptr->wpos)) Send_idle(Ind, TRUE);
 
 #if 0 /* not anymore */
 		/* actually a hint for newbie rogues couldn't hurt */
@@ -7820,7 +7825,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	}
 #endif
 
-#if 0 /* moved directly to Send_ambient_sfx(), or there'll be a glitch in call order (cyclic), resulting in volume 'spike'. */
+#if 0 /* moved directly to Send_sfx_ambient(), or there'll be a glitch in call order (cyclic), resulting in volume 'spike'. */
 	/* Hack: Inns count as houses too */
 	if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || inn || p_ptr->store_num != -1) {
 		if (!p_ptr->grid_house) {
