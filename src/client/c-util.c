@@ -8815,12 +8815,6 @@ void interact_audio(void) {
 		case '8':
 		case '+':
 			switch (cur_item) {
-#if 0
-			case 0: cfg_audio_master = !cfg_audio_master; break;
-			case 1: cfg_audio_music = !cfg_audio_music; break;
-			case 2: cfg_audio_sound = !cfg_audio_sound; break;
-			case 3: cfg_audio_weather = !cfg_audio_weather; break;
-#endif
 			case 0:
 			case 4: if (cfg_audio_master_volume <= 90) cfg_audio_master_volume += 10; else cfg_audio_master_volume = 100; break;
 			case 1:
@@ -8835,12 +8829,6 @@ void interact_audio(void) {
 		case '2':
 		case '-':
 			switch (cur_item) {
-#if 0
-			case 0: cfg_audio_master = !cfg_audio_master; break;
-			case 1: cfg_audio_music = !cfg_audio_music; break;
-			case 2: cfg_audio_sound = !cfg_audio_sound; break;
-			case 3: cfg_audio_weather = !cfg_audio_weather; break;
-#endif
 			case 0:
 			case 4: if (cfg_audio_master_volume >= 10) cfg_audio_master_volume -= 10; else cfg_audio_master_volume = 0; break;
 			case 1:
@@ -8855,23 +8843,19 @@ void interact_audio(void) {
 		case KTRL('N'):
 		case KTRL('V'): //rl
 		case 'a':
-			cfg_audio_master = !cfg_audio_master;
-			set_mixing();
+			toggle_master(TRUE);
 			break;
 		case KTRL('C'):
 		case KTRL('X'): //rl
 		case 'c':
 		case 'm':
-			cfg_audio_music = !cfg_audio_music;
-			set_mixing();
+			toggle_music(TRUE);
 			break;
 		case 's':
-			cfg_audio_sound = !cfg_audio_sound;
-			set_mixing();
+			toggle_sound();
 			break;
 		case 'w':
-			cfg_audio_weather = !cfg_audio_weather;
-			set_mixing();
+			toggle_weather();
 			break;
 		case 'A':
 			cur_item = 0;
@@ -8890,16 +8874,23 @@ void interact_audio(void) {
 		case '\r':
 		case ' ':
 			switch (cur_item) {
-			case 0: cfg_audio_master = !cfg_audio_master; break;
-			case 1: cfg_audio_music = !cfg_audio_music; break;
-			case 2: cfg_audio_sound = !cfg_audio_sound; break;
-			case 3: cfg_audio_weather = !cfg_audio_weather; break;
-			case 4: if (cfg_audio_master_volume <= 90) cfg_audio_master_volume += 10; else cfg_audio_master_volume = 0; break;
-			case 5: if (cfg_audio_music_volume <= 90) cfg_audio_music_volume += 10; else cfg_audio_music_volume = 0; break;
-			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 0; break;
-			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 0; break;
+			case 0: toggle_master(TRUE); break;
+			case 1: toggle_music(TRUE); break;
+			case 2: toggle_sound(); break;
+			case 3: toggle_weather(); break;
+			case 4: if (cfg_audio_master_volume <= 90) cfg_audio_master_volume += 10; else cfg_audio_master_volume = 0;
+				set_mixing();
+				break;
+			case 5: if (cfg_audio_music_volume <= 90) cfg_audio_music_volume += 10; else cfg_audio_music_volume = 0;
+				set_mixing();
+				break;
+			case 6: if (cfg_audio_sound_volume <= 90) cfg_audio_sound_volume += 10; else cfg_audio_sound_volume = 0;
+				set_mixing();
+				break;
+			case 7: if (cfg_audio_weather_volume <= 90) cfg_audio_weather_volume += 10; else cfg_audio_weather_volume = 0;
+				set_mixing();
+				break;
 			}
-			set_mixing();
 			break;
 		default:
 			/* Oops */
@@ -8919,12 +8910,24 @@ void interact_audio(void) {
 	/* Re-enable hybrid macros */
 	inkey_msg = inkey_msg_old;
 }
-void toggle_music(void) {
-	cfg_audio_music = !cfg_audio_music;
+void toggle_master(bool gui) {
+	cfg_audio_master = !cfg_audio_master;
+	//if (!gui) c_message_add(format("\377yAudio is now %s.", cfg_audio_master ? "ON" : "OFF"));
 	set_mixing();
 }
-void toggle_audio(void) {
-	cfg_audio_master = !cfg_audio_master;
+void toggle_music(bool gui) {
+	cfg_audio_music = !cfg_audio_music;
+	//if (!gui) c_message_add(format("\377yMusic is now %s.", cfg_audio_music ? "ON" : "OFF"));
+	set_mixing();
+}
+void toggle_sound(void) {
+	cfg_audio_sound = !cfg_audio_sound;
+	//c_message_add(format("\377ySound is now %s.", cfg_audio_sound ? "ON" : "OFF"));
+	set_mixing();
+}
+void toggle_weather(void) {
+	cfg_audio_weather = !cfg_audio_weather;
+	//c_message_add(format("\377yWeather sound effects are now %s.", cfg_audio_weather ? "ON" : "OFF"));
 	set_mixing();
 }
 #endif

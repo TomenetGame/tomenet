@@ -338,8 +338,8 @@ void process_command() {
 #ifdef USE_SOUND_2010
 	case KTRL('U'): interact_audio(); break;
 	//case KTRL('M'): //this is same as '\r' and hence doesn't work..
-	case KTRL('C'): toggle_music(); break;
-	case KTRL('N'): toggle_audio(); break;
+	case KTRL('C'): toggle_music(FALSE); break;
+	case KTRL('N'): toggle_master(FALSE); break;
 #endif
 
 	case '!': cmd_BBS(); break;
@@ -452,10 +452,10 @@ void cmd_map(char mode) {
 			/* user abort? */
 			else if (ch == ESCAPE || ch == 'M') break;
 #ifdef USE_SOUND_2010
-			else if (ch == KTRL('C')) toggle_music();
-			else if (ch == KTRL('N')) toggle_audio();
-			else if (ch == KTRL('X')) toggle_music();//rl
-			else if (ch == KTRL('V')) toggle_audio();//rl
+			else if (ch == KTRL('C')) toggle_music(FALSE);
+			else if (ch == KTRL('N')) toggle_master(FALSE);
+			else if (ch == KTRL('X')) toggle_music(FALSE);//rl
+			else if (ch == KTRL('V')) toggle_master(FALSE);//rl
 #endif
 
 			continue;

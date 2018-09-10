@@ -590,8 +590,10 @@ extern bool is_newer_than(version_type *version, int major, int minor, int patch
 #ifdef USE_SOUND_2010
 extern void interact_audio(void);
 extern void audio_pack_selector(void);
-extern void toggle_music(void);
-extern void toggle_audio(void);
+extern void toggle_master(bool gui);
+extern void toggle_music(bool gui);
+extern void toggle_sound(void);
+extern void toggle_weather(void);
 extern bool sound_bell(void);
 extern bool sound_page(void);
 extern bool sound_warning(void);
