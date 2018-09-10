@@ -7745,7 +7745,7 @@ s_printf("EPSO-DEBUG: coverage=%d,coverage_trad=%d,copied=%d,opened=%d\n",covera
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 			(*export_turns) = 0; //don't re-call us again, we're done for this time
 
-#if 0
+#if 1
 			/* Bugfix for crash on my_fclose() for a server that doesn't have any objects offered at all! */
 			coverage = 0;
 			coverage_trad = FALSE;
