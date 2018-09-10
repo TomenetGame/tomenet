@@ -389,6 +389,14 @@ audio_bgm = {
     "sickbay",
     "jail",
     "winner",
+    "ghost",
+    "dungeonboss_slain",
+    "sauron_slain",
+    "zuaon_slain",
+
+    "store_town",
+    "store_blackmarket",
+    "store_dungeon",
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end
