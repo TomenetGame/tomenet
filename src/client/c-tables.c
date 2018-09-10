@@ -523,6 +523,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.palette_animation,	TRUE,	6,	0, 124, TRUE,
 	    "palette_animation",	"Shade world surface colours depending on daytime" },
 #endif
+	{ &c_cfg.mute_when_idle,	FALSE,	5,	0, 125, TRUE,
+	    "mute_when_idle",		"Mute music+ambient sfx while AFK/idle in town" },
 };
 
 

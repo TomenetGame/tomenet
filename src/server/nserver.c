@@ -2505,6 +2505,7 @@ static void sync_options(int Ind, bool *options) {
 #endif
 		p_ptr->alert_starvation = TRUE;
 		p_ptr->palette_animation = FALSE;
+		p_ptr->mute_when_idle = FALSE;
 	} else {
 		p_ptr->diz_unique = options[119];
 		p_ptr->diz_death = options[120];
@@ -2513,6 +2514,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->alert_starvation = options[123];
 		tmp = p_ptr->palette_animation;
 		if ((p_ptr->palette_animation = options[124]) != tmp) p_ptr->redraw |= PR_MAP;
+		p_ptr->mute_when_idle = options[125];
 	}
     }
 }

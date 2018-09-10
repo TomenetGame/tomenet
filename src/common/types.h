@@ -2107,6 +2107,7 @@ struct player_type {
 	bool permawalls_shade;
 	bool palette_animation;
 	bool live_timeouts;
+	bool mute_when_idle;
 
 	/* TomeNET additions -- consider using macro or bitfield */
 	bool easy_open;
@@ -3421,6 +3422,7 @@ struct client_opts {
 	bool diz_first; //122
 	bool alert_starvation;
 	bool palette_animation;
+	bool mute_when_idle;
 };
 
 /*

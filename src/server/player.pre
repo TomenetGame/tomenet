@@ -880,6 +880,7 @@ struct player_type
 	bool diz_death_any;
 	bool diz_first;
 	bool palette_animation;
+	bool mute_when_idle;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */
