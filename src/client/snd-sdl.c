@@ -276,6 +276,7 @@ static bool open_audio(void) {
  * Read sound.cfg and map events to sounds; then load all the sounds into
  * memory to avoid I/O latency later.
  */
+#define MAX_REFERENCES 100
 static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
 	char buffer0[4096], *buffer = buffer0, bufferx[4096];
@@ -285,6 +286,12 @@ static bool sound_sdl_init(bool no_cache) {
 	bool disabled;
 
 	bool events_loaded_semaphore;
+
+	int references = 0;
+	int referencer[MAX_REFERENCES];
+	bool reference_initial[MAX_REFERENCES];
+	char referenced_event[MAX_REFERENCES][40];
+
 
 	load_sample_mutex_entrance = SDL_CreateMutex();
 	load_song_mutex_entrance = SDL_CreateMutex();
@@ -438,7 +445,7 @@ static bool sound_sdl_init(bool no_cache) {
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
 		if (event < 0) {
-			fprintf(stderr, "Sample '%s' not in audio.lua\n", cfg_name);
+			fprintf(stderr, "Sound effect '%s' not in audio.lua\n", cfg_name);
 			continue;
 		}
 
@@ -639,7 +646,7 @@ static bool sound_sdl_init(bool no_cache) {
 		char *cur_token;
 		char *next_token;
 		int event;
-		bool initial;
+		bool initial, reference;
 
 #if 1 /* linewrap via trailing ' \' */
 		strcpy(bufferx, buffer0);
@@ -688,7 +695,7 @@ static bool sound_sdl_init(bool no_cache) {
 			if (strcmp(cfg_name, lua_name) == 0) break;
 		}
 		if (event < 0) {
-			fprintf(stderr, "Song '%s' not in audio.lua\n", cfg_name);
+			fprintf(stderr, "Music event '%s' not in audio.lua\n", cfg_name);
 			continue;
 		}
 
@@ -703,6 +710,12 @@ static bool sound_sdl_init(bool no_cache) {
 			cur_token++;
 			initial = TRUE;
 		} else initial = FALSE;
+		/* Handle '+' indicator for 'referenced' music events */
+		reference = FALSE;
+		if (cur_token[0] == '+') {
+			reference = TRUE;
+			cur_token++;
+		}
 		/* Handle song names within quotes */
 		if (cur_token[0] == '\"') {
 			cur_token++;
@@ -731,6 +744,29 @@ static bool sound_sdl_init(bool no_cache) {
 			/* Don't allow too many songs */
 			if (num >= MAX_SONGS) break;
 
+			/* Handle reference */
+			if (reference) {
+				/* Too many references already? Skip it */
+				if (references >= MAX_REFERENCES) goto next_token_mus;
+				/* Make sure this is a valid event name */
+				for (event = MUSIC_MAX - 1; event >= 0; event--) {
+					sprintf(out_val, "return get_music_name(%d)", event);
+					lua_name = string_exec_lua(0, out_val);
+					if (!strlen(lua_name)) continue;
+					if (strcmp(cur_token, lua_name) == 0) break;
+				}
+				if (event < 0) {
+					fprintf(stderr, "Referenced music event '%s' not in audio.lua\n", cur_token);
+					goto next_token_mus;
+				}
+				/* Remember reference for handling them all later, to avoid cycling reference problems */
+				referencer[references] = event;
+				reference_initial[references] = initial;
+				strcpy(referenced_event[references], cur_token);
+				references++;
+				goto next_token_mus;
+			}
+
 			/* Build the path to the sample */
 			path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, cur_token);
 			if (!my_fexists(path)) {
@@ -748,9 +784,9 @@ static bool sound_sdl_init(bool no_cache) {
 				/* Load the file now */
 				songs[event].wavs[num] = Mix_LoadMUS(path);
 				if (!songs[event].wavs[num]) {
-//					puts(format("PRBPATH: lua_name %s, ev %d, num %d, path %s", lua_name, event, num, path));
+					//puts(format("PRBPATH: lua_name %s, ev %d, num %d, path %s", lua_name, event, num, path));
 					plog_fmt("%s: %s", SDL_GetError(), strerror(errno));
-//					puts(format("%s: %s", SDL_GetError(), strerror(errno)));//DEBUG USE_SOUND_2010
+					//puts(format("%s: %s", SDL_GetError(), strerror(errno)));//DEBUG USE_SOUND_2010
 					goto next_token_mus;
 				}
 			}
@@ -775,7 +811,13 @@ static bool sound_sdl_init(bool no_cache) {
 					cur_token++;
 					initial = TRUE;
 				} else initial = FALSE;
-				/* Try to find a space */
+				/* Handle '+' indicator for 'referenced' music events */
+				reference = FALSE;
+				if (cur_token[0] == '+') {
+					reference = TRUE;
+					cur_token++;
+				}
+				/* Handle song names within quotes */
 				if (cur_token[0] == '\"') {
 					cur_token++;
 					search = strchr(cur_token, '\"');
@@ -784,6 +826,7 @@ static bool sound_sdl_init(bool no_cache) {
 						search = strchr(search + 1, ' ');
 					}
 				} else {
+					/* Try to find a space */
 					search = strchr(cur_token, ' ');
 				}
 				/* If we can find one, terminate, and set new "next" */
@@ -799,6 +842,48 @@ static bool sound_sdl_init(bool no_cache) {
 
 		/* disable this song? */
 		if (disabled) songs[event].disabled = TRUE;
+	}
+
+	/* Solve all stored references now */
+plog(format("references=%d", references));
+	for (i = 0; i < references; i++) {
+		int num, event, event_ref, j;
+		cptr lua_name;
+		bool initial;
+		char cur_token[40];
+
+		strcpy(cur_token, referenced_event[i]);
+		/* Make sure this is a valid event name */
+		for (event = MUSIC_MAX - 1; event >= 0; event--) {
+			sprintf(out_val, "return get_music_name(%d)", event);
+			lua_name = string_exec_lua(0, out_val);
+			if (!strlen(lua_name)) continue;
+			if (strcmp(cur_token, lua_name) == 0) break;
+		}
+		if (event < 0) {
+			fprintf(stderr, "Referenced music event '%s' not in audio.lua\n", cur_token);
+			continue;
+		}
+		event_ref = event;
+
+		/* Handle.. */
+		event = referencer[i];
+		initial = reference_initial[i];
+		num = songs[event].num;
+
+		for (j = 0; j < songs[event_ref].num; j++) {
+			/* Don't allow too many songs */
+			if (num >= MAX_SONGS) break;
+
+			/* Never reference initial songs */
+			if (songs[event_ref].initial[j]) continue;
+
+			songs[event].wavs[num] = songs[event_ref].wavs[j];
+			songs[event].initial[num] = initial;
+			songs[event].num++;
+			/* for do_cmd_options_...(): remember that this sample was mentioned in our config file */
+			songs[event].config = TRUE;
+		}
 	}
 
 	/* Close the file */

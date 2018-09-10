@@ -13,6 +13,10 @@
 # be looped. When it ends, non-initial (ie normal) songs are picked (and may be
 # looped, depending on 'shuffle_music' client option). For filenames enclosed
 # in quotes the '!' mark must come before the quotes (eg: !"my music.mp3").
+# You can reference to other events by entering that event name, preceeded by a
+# '+' symbol (eg: Bree_night = BNight.mp3 +Bree  <-would, during night in Bree,
+# play BNight.mp3 and additionally all music that is defined for Bree daytime).
+# Note that 'initial' songs in a referenced music event will be ignored though.
 # Make sure that there aren't any spaces or tabs after the '=' in lines which
 # don't contain any song file name at all, or it will give an error.
 # Supported music formats are WAVE, MOD (includes S3M, IT, XM), MIDI, OGG, MP3.
