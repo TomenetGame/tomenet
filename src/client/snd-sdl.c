@@ -748,17 +748,6 @@ static bool sound_sdl_init(bool no_cache) {
 			if (reference) {
 				/* Too many references already? Skip it */
 				if (references >= MAX_REFERENCES) goto next_token_mus;
-				/* Make sure this is a valid event name */
-				for (event = MUSIC_MAX - 1; event >= 0; event--) {
-					sprintf(out_val, "return get_music_name(%d)", event);
-					lua_name = string_exec_lua(0, out_val);
-					if (!strlen(lua_name)) continue;
-					if (strcmp(cur_token, lua_name) == 0) break;
-				}
-				if (event < 0) {
-					fprintf(stderr, "Referenced music event '%s' not in audio.lua\n", cur_token);
-					goto next_token_mus;
-				}
 				/* Remember reference for handling them all later, to avoid cycling reference problems */
 				referencer[references] = event;
 				reference_initial[references] = initial;
@@ -845,7 +834,6 @@ static bool sound_sdl_init(bool no_cache) {
 	}
 
 	/* Solve all stored references now */
-plog(format("references=%d", references));
 	for (i = 0; i < references; i++) {
 		int num, event, event_ref, j;
 		cptr lua_name;
@@ -878,9 +866,11 @@ plog(format("references=%d", references));
 			/* Never reference initial songs */
 			if (songs[event_ref].initial[j]) continue;
 
+			songs[event].paths[num] = songs[event_ref].paths[j];
 			songs[event].wavs[num] = songs[event_ref].wavs[j];
 			songs[event].initial[num] = initial;
-			songs[event].num++;
+			num++;
+			songs[event].num = num;
 			/* for do_cmd_options_...(): remember that this sample was mentioned in our config file */
 			songs[event].config = TRUE;
 		}
