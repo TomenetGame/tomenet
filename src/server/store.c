@@ -7569,9 +7569,6 @@ void export_player_store_offers(int *export_turns) {
 #endif
 
 	/* init exporting? */
-#ifdef RPG_SERVER
-s_printf("EPSO-DEBUG: coverage=%d,coverage_trad=%d,copied=%d,opened=%d\n",coverage,coverage_trad,copied,opened);
-#endif
 	if (!coverage && !coverage_trad) {
 		if (!copied) {
 			if (!opened) {
