@@ -1727,7 +1727,7 @@ bool inside_inn(player_type *p_ptr, cave_type *c_ptr) {
 	if ((c_ptr)->feat == FEAT_SHOP) shop = GetCS(c_ptr, CS_SHOP)->sc.omni;
 	if (((f_info[(c_ptr)->feat].flags1 & FF1_PROTECTED) &&
 	    (istown(&(p_ptr)->wpos) || isdungeontown(&(p_ptr)->wpos))) ||
-	    shop == STORE_HOME || shop == STORE_HOME_DUN || (p_ptr)->store_num == STORE_INN)
+	    shop == STORE_HOME || shop == STORE_HOME_DUN || (p_ptr)->store_num == STORE_INN || (p_ptr)->store_num == STORE_DUNGEON_INN)
 		return TRUE;
 	return FALSE;
 }

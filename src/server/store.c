@@ -3407,7 +3407,7 @@ void store_purchase(int Ind, int item, int amt) {
 	best = price_item(Ind, &sell_obj, ot_ptr->min_inflate, FALSE);
 
 	/* Attempt to buy it */
-	if (p_ptr->store_num != STORE_HOME) {
+	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) {
 		/* For now, I'm assuming everything's price is "fixed" */
 		/* Fixed price, quick buy */
 #if 0
@@ -3695,7 +3695,8 @@ void store_sell(int Ind, int item, int amt) {
 	object_desc(Ind, o_name, &sold_obj, TRUE, 3);
 
 	/* Remove any inscription for stores */
-	if (p_ptr->store_num != STORE_HOME
+	if (p_ptr->store_num != STORE_HOME &&
+	    p_ptr->store_num != STORE_HOME_DUN
 #ifdef TEST_SERVER
 	    && !is_admin(p_ptr)
 #endif
@@ -3739,7 +3740,7 @@ void store_sell(int Ind, int item, int amt) {
 	}
 
 	/* Real store */
-	if (p_ptr->store_num != STORE_HOME) {
+	if ( p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) {
 		/* Describe the transaction */
 		msg_format(Ind, "Selling %s (%c).", o_name, index_to_label(item));
 
@@ -4209,10 +4210,11 @@ void do_cmd_store(int Ind) {
 	handle_stuff(Ind); /* update stealth/search display now */
 
 #ifdef USE_SOUND_2010
+	/* Ring door bell for shops that offer either buying or selling of items */
 	if (p_ptr->sfx_store)
-		for (i = 0; i < 6; i++)
-			if (st_info[st_ptr->st_idx].actions[i] == 1 ||
-			    st_info[st_ptr->st_idx].actions[i] == 2) {
+		for (i = 0; i < STORE_MAX_ACTION; i++)
+			if (st_info[st_ptr->st_idx].actions[i] == 1 || //sell item
+			    st_info[st_ptr->st_idx].actions[i] == 2) { //purchase item
 				sound(Ind, "store_doorbell_enter", NULL, SFX_TYPE_MISC, FALSE);
 				break;
 			}
@@ -4894,7 +4896,7 @@ void store_exec_command(int Ind, int action, int item, int item2, int amt, int g
 	int i;
 
 	/* MEGAHACK -- accept house extension command */
-	if (p_ptr->store_num == STORE_HOME) {
+	if (p_ptr->store_num == STORE_HOME || p_ptr->store_num == STORE_HOME_DUN) {
 		if (ba_info[action].action == BACT_EXTEND_HOUSE) home_extend(Ind);
 		return;
 	}
@@ -5528,7 +5530,7 @@ void home_sell(int Ind, int item, int amt) {
 	house_type		*h_ptr;
 
 	/* This should never happen */
-	if (p_ptr->store_num != STORE_HOME) {
+	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) {
 		msg_print(Ind,"You left the house!");
 		return;
 	}
@@ -5729,7 +5731,7 @@ void home_purchase(int Ind, int item, int amt) {
 	}
 
 	/* This should never happen */
-	if (p_ptr->store_num != STORE_HOME) return;
+	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) return;
 
 	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	if (h_idx == -1) return;
@@ -5954,7 +5956,7 @@ void home_examine(int Ind, int item) {
 	house_type *h_ptr;
 
 	/* This should never happen */
-	if (p_ptr->store_num != STORE_HOME) return;
+	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) return;
 
 	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	if (h_idx == -1) return;
@@ -6000,7 +6002,7 @@ void home_extend(int Ind) {
 	house_type *h_ptr;
 
 	/* This should never happen */
-	if (p_ptr->store_num != STORE_HOME) return;
+	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) return;
 
 	h_idx = pick_house(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	if (h_idx == -1) return;
@@ -6052,7 +6054,7 @@ void display_house_entry(int Ind, int pos, house_type *h_ptr) {
 
 
 	/* This should never happen */
-	if (p_ptr->store_num != STORE_HOME) return;
+	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) return;
 
 	/* Get the item */
 	o_ptr = &h_ptr->stock[pos];
@@ -6098,7 +6100,7 @@ void display_house_inventory(int Ind, house_type *h_ptr) {
 	int k;
 
 	/* This should never happen */
-	if (p_ptr->store_num != STORE_HOME) return;
+	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) return;
 
 	/* Display the next 48 items */
 	for (k = 0; k < STORE_INVEN_MAX; k++) {
@@ -6123,7 +6125,7 @@ void display_trad_house(int Ind, house_type *h_ptr) {
 	else c = c >= 100 ? c - 100 : c;
 
 	/* This should never happen */
-	if (p_ptr->store_num != STORE_HOME) return;
+	if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN) return;
 
 	/* Send the house info */
 	/* our own house */
@@ -7328,6 +7330,9 @@ void handle_store_leave(int Ind) {
 
 	/* We're no longer busy with anything */
 	p_ptr->store_action = 0;
+
+	/* For store-specific music */
+	handle_music(Ind);
 
 	/* Do nothing if pointer is not valid - mikaelh */
 	if (!st_ptr) return;

@@ -5264,6 +5264,7 @@ bool monster_death(int Ind, int m_idx) {
 	monster_race *r_ptr = race_inf(m_ptr);
 	bool is_Morgoth = (m_ptr->r_idx == RI_MORGOTH);
 	bool is_Sauron = (m_ptr->r_idx == RI_SAURON);
+	bool is_ZuAon = (m_ptr->r_idx == RI_ZU_AON);
 	bool is_Pumpkin = (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3);
 	int credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 	int r_idx = m_ptr->r_idx;
@@ -5296,7 +5297,7 @@ bool monster_death(int Ind, int m_idx) {
 
 
 	/* experimental: Zu-Aon drops only randarts */
-	if (m_ptr->r_idx == RI_ZU_AON || m_ptr->r_idx == RI_BAD_LUCK_BAT)
+	if (is_ZuAon || m_ptr->r_idx == RI_BAD_LUCK_BAT)
 		resf_drops |= (RESF_FORCERANDART | RESF_NOTRUEART);
 	/* Morgoth never drops true artifacts */
 	if (is_Morgoth) resf_drops |= RESF_NOTRUEART;
@@ -5986,7 +5987,7 @@ if (cfg.unikill_format) {
 		if (is_Morgoth)
 			snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s %s.\377v**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 #ifdef ZU_AON_FLASHY_MSG
-		else if (m_ptr->r_idx == RI_ZU_AON)
+		else if (is_ZuAon)
 			snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s %s.\377x**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 #endif
 		else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
@@ -6005,7 +6006,7 @@ if (cfg.unikill_format) {
 			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s.\377v**", r_name_get(m_ptr), p_ptr->name);
 #ifdef ZU_AON_FLASHY_MSG
-			else if (m_ptr->r_idx == RI_ZU_AON)
+			else if (is_ZuAon)
 				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s.\377x**", r_name_get(m_ptr), p_ptr->name);
 #endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
@@ -6020,7 +6021,7 @@ if (cfg.unikill_format) {
 			if (is_Morgoth)
 				snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by fusion %s-%s.\377v**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 #ifdef ZU_AON_FLASHY_MSG
-			else if (m_ptr->r_idx == RI_ZU_AON)
+			else if (is_ZuAon)
 				snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by fusion %s-%s.\377x**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 #endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
@@ -6042,7 +6043,7 @@ if (cfg.unikill_format) {
 					if (is_Morgoth)
 						snprintf(buf, sizeof(buf), "\374\377v**\377L%s was slain by %s of %s.\377v**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 #ifdef ZU_AON_FLASHY_MSG
-					else if (m_ptr->r_idx == RI_ZU_AON)
+					else if (is_ZuAon)
 						snprintf(buf, sizeof(buf), "\374\377x**\377c%s was slain by %s of %s.\377x**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 #endif
 					else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
@@ -6135,6 +6136,11 @@ if (cfg.unikill_format) {
 		else sauron_weakened = FALSE;
 	}
 
+	/* Dungeon-boss-slain music if available client-side */
+	if (is_Sauron) Send_music(Ind, 91, -1);
+	//else if (is_Morgoth) Send_music(Ind, 88, -1); //handled in handle_music() already
+	else if (is_ZuAon) Send_music(Ind, 92, -1);
+
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 		msg_format(Ind, "\374\377UYou have conquered %s!", d_name +
@@ -6144,6 +6150,8 @@ if (cfg.unikill_format) {
 		    d_info[d_ptr->type].name
 #endif
 		    );
+		/* Dungeon-boss-slain music if available client-side */
+		if (!is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 90, -1);
 
 		if ((
 #ifdef IRONDEEPDIVE_MIXED_TYPES
@@ -6885,7 +6893,7 @@ if (cfg.unikill_format) {
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		/* dungeon boss, but drops multiple items */
-		} else if (m_ptr->r_idx == RI_ZU_AON) {
+		} else if (is_ZuAon) {
 			dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 			l_ptr->flags2 |= LF2_COLLAPSING;
@@ -9124,6 +9132,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 
 	/* Turn him into a ghost */
 	p_ptr->ghost = 1;
+	handle_music(Ind); //possibly ghostly music!
 	/* Prevent accidental floating up/downwards depending on client option. - C. Blue */
 	if (p_ptr->safe_float) p_ptr->safe_float_turns = 5;
 
@@ -9269,6 +9278,7 @@ void resurrect_player(int Ind, int loss_factor) {
 
 	/* Reset ghost flag */
 	p_ptr->ghost = 0;
+	handle_music(Ind); //possibly no longer ghostly music
 
 	disturb(Ind, 1, 0);
 

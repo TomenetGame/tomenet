@@ -2617,7 +2617,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		return;
 	}
 
-	if (q_ptr->store_num == STORE_HOME) {
+	if (q_ptr->store_num == STORE_HOME || q_ptr->store_num == STORE_HOME_DUN) {
 		/* Message */
 		//msg_format(Ind, "You are too afraid to attack %s!", q_name);
 

@@ -1814,12 +1814,41 @@ void handle_music(int Ind) {
 		return;
 	}
 
+	/* Ghost-specific music if available client-side */
+	if (p_ptr->ghost) Send_music(Ind, 89, -1);
+
 	/* rest of the music has lower priority than already running, boss-specific music */
 	if (p_ptr->music_monster != -1
 	    /* hacks for sickbay, tavern and jail music */
 	    && p_ptr->music_monster != -3 && p_ptr->music_monster != -4 && p_ptr->music_monster != -5)
 		return;
 
+	/* Shopping music ^^ */
+	if (p_ptr->store_num >= 0) {
+		int a;
+
+		switch (p_ptr->store_num) {
+		//black markets
+		case STORE_BLACK:
+		case STORE_BLACKX:
+		case STORE_BLACKS:
+		case STORE_BLACK_DUN:
+			Send_music(Ind, 94, -1);
+			break;
+		//casino music! Could contain a lot of pseudo ambient sfx too ;)
+		case STORE_CASINO:
+			Send_music(Ind, 96, -1);
+			break;
+		}
+		/* Hack: Shops that don't offer the option to buy (store action '2') anything, aka 'service shops' */
+		for (a = 0; a < STORE_MAX_ACTION; a++)
+			if (st_info[p_ptr->store_num].actions[a] == 2) break;
+		if (a == STORE_MAX_ACTION) Send_music(Ind, 97, -1); //service shop music
+		/* Normal shops (in town or elsewhere) */
+		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) Send_music(Ind, 95, -1); //dungeon shops (and strange world-surface shops not attached to any town, if they exist oO)
+		else Send_music(Ind, 93, -1); //town shops
+		return;
+	}
 
 	/* on world surface */
 	if (p_ptr->wpos.wz == 0) {
