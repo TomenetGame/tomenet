@@ -7569,6 +7569,9 @@ void export_player_store_offers(int *export_turns) {
 #endif
 
 	/* init exporting? */
+#ifdef RPG_SERVER
+s_prinf("EPSO-DEBUG: coverage=%d,coverage_trad=%d,copied=%d,opened=%d\n",coverage,coverage_trad,copied,opened);
+#endif
 	if (!coverage && !coverage_trad) {
 		if (!copied) {
 			if (!opened) {
@@ -7741,6 +7744,15 @@ void export_player_store_offers(int *export_turns) {
 			my_fclose(fp);
 			s_printf("EXPORT_PLAYER_STORE_OFFERS: o_list export completed.\n");
 			(*export_turns) = 0; //don't re-call us again, we're done for this time
+
+#if 0
+			/* Bugfix for crash on my_fclose() for a server that doesn't have any objects offered at all! */
+			coverage = 0;
+			coverage_trad = FALSE;
+			copied = opened = FALSE;
+			//num_houses_bak = -1;
+#endif
+
 			goto timing_before_return; // HACK - Execute timing code before returning
 			return;
 		}
