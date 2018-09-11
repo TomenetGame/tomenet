@@ -3101,7 +3101,7 @@ static int Handle_login(int ind) {
 	   The minus constant is for optional songs, ie songs that have a commented out music.cfg entry by default (user's choice to enable them). */
 	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 90)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
-	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 39)
+	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 40) //(-39)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---");
 
 	/* Admin messages */
@@ -7329,7 +7329,7 @@ int Send_music(int Ind, int music, int musicalt) {
 		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
 	else if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0))
 		return(-1);
-//	s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, Players[Ind]->name, Ind);//debug
+	//s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, Players[Ind]->name, Ind);//debug
 	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
 }
 int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
