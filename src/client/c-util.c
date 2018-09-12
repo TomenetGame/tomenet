@@ -7706,6 +7706,7 @@ static void do_cmd_options_install_audio_packs(void) {
 	//char path[1024], out_val[1024 + 28];
 	char c, ch, pack_name[1024];
 	int r;
+	bool picked = FALSE;
 
 #ifdef WINDOWS /* use windows registry to locate 7-zip */
 	HKEY hTestKey;
@@ -7867,19 +7868,17 @@ static void do_cmd_options_install_audio_packs(void) {
 			if (!strncmp(pack_name, "TomeNET-soundpack", 17)) sound_pack = TRUE;
 			if (!strncmp(pack_name, "TomeNET-musicpack", 17)) music_pack = TRUE;
 
-			Term_putstr(0, 3, -1, TERM_ORANGE, format("Found file ''. Install this one? [Y/n]", pack_name));
+			Term_putstr(0, 3, -1, TERM_ORANGE, format("Found file '%s'. Install this one? [Y/n]", pack_name));
 			while (TRUE) {
 				c = inkey();
 				if (c == 'n' || c == 'N') break;
-				if (c == 'y' || c == 'Y' || c == ' ' || c == '\n') break;
+				if (c == 'y' || c == 'Y' || c == ' ' || c == '\r') break;
 			}
-			if (c == 'n' || c == 'N') {
-				pack_name[0] = 0;
-				continue;
-			}
+			if (c == 'n' || c == 'N') continue;
 
 			if (!strncmp(pack_name, "TomeNET-soundpack", 17)) music_pack = FALSE;
 			if (!strncmp(pack_name, "TomeNET-musicpack", 17)) sound_pack = FALSE;
+			picked = TRUE;
 			break;
 		}
 	}
@@ -7903,15 +7902,13 @@ static void do_cmd_options_install_audio_packs(void) {
 			while (TRUE) {
 				c = inkey();
 				if (c == 'n' || c == 'N') break;
-				if (c == 'y' || c == 'Y' || c == ' ' || c == '\n') break;
+				if (c == 'y' || c == 'Y' || c == ' ' || c == '\r') break;
 			}
-			if (c == 'n' || c == 'N') {
-				pack_name[0] = 0;
-				continue;
-			}
+			if (c == 'n' || c == 'N') continue;
 
 			if (!strncmp(pack_name, "TomeNET-soundpack", 17)) music_pack = FALSE;
 			if (!strncmp(pack_name, "TomeNET-musicpack", 17)) sound_pack = FALSE;
+			picked = TRUE;
 			break;
 		}
 	}
@@ -7925,8 +7922,8 @@ static void do_cmd_options_install_audio_packs(void) {
 		inkey();
 		return;
 	}
-	if (!pack_name[0]) {
-		Term_putstr(0, 3, -1, TERM_ORANGE, "You skipped all available audio packs, hence none wer installed.      ");
+	if (!picked) {
+		Term_putstr(0, 3, -1, TERM_ORANGE, "You skipped all available audio packs, hence none were installed.     ");
 		Term_putstr(0, 4, -1, TERM_ORANGE, "Aborting audio pack installation.                                     ");
 		Term_putstr(0, 9, -1, TERM_WHITE, "Press any key to return to options menu...                             ");
 		inkey();
@@ -7992,7 +7989,7 @@ static void do_cmd_options_install_audio_packs(void) {
     }
  #endif
 #endif
-		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed.                                              ");
+		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed. You can select it via '\377gX\377G' in the '=' menu.   ");
 		Term_putstr(0, 4, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
 	}
 
@@ -8102,7 +8099,7 @@ static void do_cmd_options_install_audio_packs(void) {
 #endif
 
 		if (password_ok) {
-			Term_putstr(0, 6, -1, TERM_L_GREEN, "Music pack has been installed.             ");
+			Term_putstr(0, 6, -1, TERM_L_GREEN, "Music pack has been installed. You can select it via '\377gX\377G' in the '=' menu.   ");
 			Term_putstr(0, 7, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
 		} else {
 			Term_putstr(0, 6, -1, TERM_L_RED, "You entered a wrong password. Music pack could not be installed.");
