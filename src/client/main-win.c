@@ -3911,6 +3911,10 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 	/* make version strings. */
 	version_build();
 
+	/* assume defaults */
+	strcpy(cfg_soundpackfolder, "sound");
+	strcpy(cfg_musicpackfolder, "music");
+
 	/* set OS-specific resize_main_window() hook */
 	resize_main_window = resize_main_window_win;
 
