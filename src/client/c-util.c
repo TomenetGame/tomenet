@@ -8935,6 +8935,9 @@ void toggle_weather(void) {
 /* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
 #define MAX_PACKS 100
 #define PACKS_SCREEN 10
+#ifdef WINDOWS
+ #include <dirent.h>
+#endif
 void audio_pack_selector(void) {
 	int k, soundpacks = 0, musicpacks = 0;
 	static int cur_sp = 0, cur_mp = 0, cur_sy = 0, cur_my = 0;
@@ -8965,6 +8968,7 @@ void audio_pack_selector(void) {
 	}
 	fclose(fff);
 #ifdef WINDOWS
+ #if 0 /* use system calls - easy, but has drawback of cmd shell window popup -_- */
 	fff = fopen("__tomenethelper.bat", "w");
 	if (!fff) {
 		c_message_add("\377oError: Couldn't write temporary file.");
@@ -8972,8 +8976,27 @@ void audio_pack_selector(void) {
 	}
 	fprintf(fff, "@dir %s /a:d /b > __tomenet.tmp\n", ANGBAND_DIR_XTRA);
 	fclose(fff);
-	strcpy(buf, getenv("ComSpec"));
-	_spawnl(_P_WAIT, buf, "cmd", "/c", "__tomenethelper.bat", NULL); //nasty path guess hardcoding here =P
+	/* Nasty path-guessing hardcoding here =p. */
+	//strcpy(buf, getenv("ComSpec"));
+	//_spawnl(_P_WAIT, buf, buf, "/c", "__tomenethelper.bat", NULL);
+	_spawnl(_P_WAIT, "__tomenethelper.bat", "__tomenethelper.bat", NULL);
+ #else
+    { /* Use native Windows functions from dirent to query directory structure directly */
+	struct dirent *de;
+	DIR *dr = opendir(ANGBAND_DIR_XTRA);
+
+	if (dr == NULL) {
+		c_message_add("\377oError: Couldn't scan audio pack folders.");
+		return;
+	}
+
+	fff = fopen("__tomenet.tmp", "w"); //o lazy
+	while ((de = readdir(dr)) != NULL) fprintf(fff, "%s\n", de->d_name);
+	fclose(fff);
+
+	closedir(dr);
+    }
+ #endif
 #else /* assume POSIX */
 	r = system(format("ls %s/*/ -d -1 > __tomenet.tmp", ANGBAND_DIR_XTRA)); // or "ls -d */ | cat > __tomenet.tmp" in case -1 isnt supported?
 #endif
