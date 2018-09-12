@@ -7703,7 +7703,7 @@ errr options_dump(cptr fname) {
 
 static void do_cmd_options_install_audio_packs(void) {
 	FILE *fff;
-	//char path[1024], out_val[1024 + 28];
+	char path[1024], out_val[1024+28];
 	char c, ch, pack_name[1024];
 	int r;
 	bool picked = FALSE;
@@ -7893,12 +7893,12 @@ static void do_cmd_options_install_audio_packs(void) {
 	}
 	while (!feof(fff)) {
 		if (!fgets(pack_name, 1024, fff)) break;
-		pack_name[strlen(pack_name) - 2] = 0; //'ls' command outputs trailing '/' on each line
+		pack_name[strlen(pack_name) - 1] = 0; //'ls' command outputs trailing '/' on each line
 		if (!strncmp(pack_name, "TomeNET-soundpack", 17) || !strncmp(pack_name, "TomeNET-musicpack", 17)) {
 			if (!strncmp(pack_name, "TomeNET-soundpack", 17)) sound_pack = TRUE;
 			if (!strncmp(pack_name, "TomeNET-musicpack", 17)) music_pack = TRUE;
 
-			Term_putstr(0, 3, -1, TERM_ORANGE, format("Found file ''. Install this one? [Y/n]", pack_name));
+			Term_putstr(0, 3, -1, TERM_ORANGE, format("Found file '%s'. Install this one? [Y/n]", pack_name));
 			while (TRUE) {
 				c = inkey();
 				if (c == 'n' || c == 'N') break;
@@ -7912,6 +7912,7 @@ static void do_cmd_options_install_audio_packs(void) {
 			break;
 		}
 	}
+	fclose(fff);
 	remove("__tomenet.tmp");
 #endif
 
@@ -7930,21 +7931,87 @@ static void do_cmd_options_install_audio_packs(void) {
 		return;
 	}
 
-#if 0 /* we support multiple packs now, so this check is too much of a hassle to keep and adjust for that properly */
-	/* verify if we'd be overwriting stuff */
-	if (sound_pack && sound_already) {
-		Term_putstr(0, 3, -1, TERM_YELLOW, "It seems a sound pack is already installed.");
-		Term_putstr(0, 4, -1, TERM_YELLOW, "Do you want to extract 'TomeNET-soundpack.7z' and overwrite it? (y/n)");
-		while (TRUE) {
-			c = inkey();
-			if (c == 'n' || c == 'N') {
-				sound_pack = FALSE;
-				break;
-			}
-			if (c == 'y' || c == 'Y') break;
-		}
+	/* Check what folder name the pack wants to extract to, whether that folder already exists, and allow to cancel the process. */
+#ifdef WINDOWS
+	/* uhoh: 7zG actually does NOT support 'l' command, lol. Need to trust that we can run 7z in the same folder for that, I guess */
+	strcpy(out_val, path_7z);
+	out_val[strlen(out_val) - 5] = 0;
+	strcat(out_val, ".exe"); //'''>_> {cough}
+ #if 0
+	_spawnl(_P_WAIT, out_val, format("\"%s\"", out_val), "l", pack_name, ">", "__tomenet.tmp", NULL);
+ #else
+	fff = fopen("__tomenethelper.bat", "w");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't write temporary file.");
+		return;
 	}
+	fprintf(fff, format("@\"%s\" l %s > __tomenet.tmp\n", out_val, pack_name));
+	fclose(fff);
+	_spawnl(_P_WAIT, "__tomenethelper.bat", "__tomenethelper.bat", NULL);
+	remove("__tomenethelper.bat");
+ #endif
+#else /* assume POSIX */
+    if (!strcmp(ANGBAND_SYS, "x11")) {
+	r = system(format("7z l %s > __tomenet.tmp", pack_name));
+    } else { /* gcu */
+	r = system(format("7z l %s > __tomenet.tmp", pack_name));
+    }
 #endif
+	fff = fopen("__tomenet.tmp", "r");
+	if (!fff) {
+		c_message_add("\377oError: Couldn't scan 7z file.");
+		return;
+	}
+	while (!feof(fff)) {
+		if (!fgets(out_val, 1024, fff)) break;
+		/* Scan for folder names */
+		if (!strstr(out_val, "D....")) continue;
+		if (sound_pack) {
+			/* The first folder must start on 'sound' */
+			if (!strstr(out_val, " sound") || strchr(out_val, '/')) {
+				c_message_add("\377oError: Invalid sound pack file. Has no top folder 'sound*'.");
+				fclose(fff);
+				remove("__tomenet.tmp");
+				return;
+			}
+			picked = FALSE;//abuse
+			strcpy(path, strstr(out_val, "sound"));
+		}
+		if (music_pack) {
+			/* The first folder must start on 'music' */
+			if (!strstr(out_val, " music") || strchr(out_val, '/')) {
+				c_message_add("\377oError: Invalid music pack file. Has no top folder 'music*'.");
+				fclose(fff);
+				remove("__tomenet.tmp");
+				return;
+			}
+			picked = FALSE;//abuse
+			strcpy(path, strstr(out_val, "music"));
+		}
+		if (!picked) break;
+	}
+	fclose(fff);
+	remove("__tomenet.tmp");
+	if (picked) {
+		c_message_add("\377oError: Invalid audio pack file. Has no top folder.");
+		return;
+	}
+	Term_putstr(0, 3, -1, TERM_YELLOW, "That pack wants to install to this target folder. Is that ok? (y/n):");
+#ifdef WINDOWS
+	path[strlen(path) - 1] = 0; //trailing newline
+	Term_putstr(0, 4, -1, TERM_YELLOW, format(" '%s\\%s'", ANGBAND_DIR_XTRA, path));
+#else
+	path[strlen(path) - 1] = 0; //trailing newline
+	Term_putstr(0, 4, -1, TERM_YELLOW, format(" '%s/%s'", ANGBAND_DIR_XTRA, path));
+#endif
+	while (TRUE) {
+		c = inkey();
+		if (c == 'n' || c == 'N') {
+			c_message_add("\377yInstallation process has been cancelled.");
+			return;
+		}
+		if (c == 'y' || c == 'Y') break;
+	}
 
 	/* install sound pack */
 	if (sound_pack) {
@@ -7952,62 +8019,18 @@ static void do_cmd_options_install_audio_packs(void) {
 		Term_putstr(0, 4, -1, TERM_WHITE, "                                                                            ");
 		Term_fresh();
 		Term_flush();
-#if 0 /* todo: check for and verify/modify custom destination folder name variants */
- #if defined(WINDOWS)
-		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-soundpack.7z", NULL);
-		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
-		sprintf(out_val, "xcopy /I /E /Q /Y /H sound %s", path);
-		r = system(out_val);
-		r = system("rmdir /S /Q sound");
- #else /* assume posix */
-    if (!strcmp(ANGBAND_SYS, "x11")) {
-		r = system("7zG x TomeNET-soundpack.7z");
-		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
-		//r = system(format("mv sound %s", path));
-		mkdir(path, 0777); /* in case someone deleted his whole sound folder */
-		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
-		r = system(out_val);
-		r = system("rm -rf sound");
-    } else { /* gcu */
-		r = system("7z x TomeNET-soundpack.7z");
-		path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
-		//r = system(format("mv sound %s", path));
-		mkdir(path, 0777); /* in case someone deleted his whole sound folder */
-		sprintf(out_val, "cp --recursive -f sound/* %s/", path);
-		r = system(out_val);
-		r = system("rm -rf sound");
-    }
- #endif
-#else
- #if defined(WINDOWS)
+#if defined(WINDOWS)
 		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-o%s", ANGBAND_DIR_XTRA), pack_name, NULL);
- #else /* assume posix */
+#else /* assume posix */
     if (!strcmp(ANGBAND_SYS, "x11")) {
 		r = system(format("7zG x -o%s %s", ANGBAND_DIR_XTRA, pack_name));
     } else { /* gcu */
 		r = system(format("7z x -o%s %s", ANGBAND_DIR_XTRA, pack_name));
     }
- #endif
 #endif
 		Term_putstr(0, 3, -1, TERM_L_GREEN, "Sound pack has been installed. You can select it via '\377gX\377G' in the '=' menu.   ");
 		Term_putstr(0, 4, -1, TERM_L_GREEN, "YOU NEED TO RESTART TomeNET FOR THIS TO TAKE EFFECT.                        ");
 	}
-
-#if 0 /* we support multiple packs now, so this check is too much of a hassle to keep and adjust for that properly */
-	/* verify if we'd be overwriting stuff */
-	if (music_pack && music_already) {
-		Term_putstr(0, 6, -1, TERM_YELLOW, "It seems a music pack is already installed.");
-		Term_putstr(0, 7, -1, TERM_YELLOW, "Do you want to extract 'TomeNET-musicpack.7z' and overwrite it? (y/n)");
-		while (TRUE) {
-			c = inkey();
-			if (c == 'n' || c == 'N') {
-				music_pack = FALSE;
-				break;
-			}
-			if (c == 'y' || c == 'Y') break;
-		}
-	}
-#endif
 
 	/* install music pack */
 	if (music_pack) {
@@ -8015,64 +8038,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		Term_putstr(0, 7, -1, TERM_WHITE, "                                                                            ");
 		Term_fresh();
 		Term_flush();
-#if 0 /* todo: check for and verify/modify custom destination folder name variants */
- #if defined(WINDOWS)
-		remove("music/music.cfg"); //just for password_ok check below
-
-		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", "TomeNET-musicpack.7z", NULL);
-
-		/* actually check for successful password, by checking whether at least music.cfg was extracted */
-		if (!(fff = fopen("music/music.cfg", "r"))) password_ok = FALSE;
-		else if (fgetc(fff) == EOF) { //paranoia
-			password_ok = FALSE;
-			fclose(fff);
-		} else fclose(fff);
-
-		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
-		sprintf(out_val, "xcopy /I /E /Q /Y /H music %s", path);
-		r = system(out_val);
-		r = system("rmdir /S /Q music");
- #else /* assume posix */
-    if (!strcmp(ANGBAND_SYS, "x11")) {
-		remove("music/music.cfg"); //just for password_ok check below
-
-		r = system("7zG x TomeNET-musicpack.7z");
-
-		/* actually check for successful password, by checking whether at least music.cfg was extracted */
-		if (!(fff = fopen("music/music.cfg", "r"))) password_ok = FALSE;
-		else if (fgetc(fff) == EOF) { //paranoia
-			password_ok = FALSE;
-			fclose(fff);
-		} else fclose(fff);
-
-		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
-		//r = system(format("mv music %s", path));
-		mkdir(path, 0777); /* in case someone deleted his whole music folder */
-		sprintf(out_val, "cp --recursive -f music/* %s/", path);
-		r = system(out_val);
-		r = system("rm -rf music");
-    } else { /* gcu */
-		remove("music/music.cfg"); //just for password_ok check below
-
-		r = system("7z x TomeNET-musicpack.7z");
-
-		/* actually check for successful password, by checking whether at least music.cfg was extracted */
-		if (!(fff = fopen("music/music.cfg", "r"))) password_ok = FALSE;
-		else if (fgetc(fff) == EOF) { //paranoia
-			password_ok = FALSE;
-			fclose(fff);
-		} else fclose(fff);
-
-		path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
-		//r = system(format("mv music %s", path));
-		mkdir(path, 0777); /* in case someone deleted his whole music folder */
-		sprintf(out_val, "cp --recursive -f music/* %s/", path);
-		r = system(out_val);
-		r = system("rm -rf music");
-    }
- #endif
-#else
- #if defined(WINDOWS)
+#if defined(WINDOWS)
 		//todo: custom foldernames-- remove("music/music.cfg"); //just for password_ok check below
 
 		_spawnl(_P_WAIT, path_7z, path_7z_quoted, "x", format("-o%s", ANGBAND_DIR_XTRA), pack_name, NULL);
@@ -8085,7 +8051,7 @@ static void do_cmd_options_install_audio_packs(void) {
 			fclose(fff);
 		} else fclose(fff);
 		*/
- #else /* assume posix */
+#else /* assume posix */
     if (!strcmp(ANGBAND_SYS, "x11")) {
 		//todo: custom foldernames-- remove("music/music.cfg"); //just for password_ok check below
 		r = system(format("7zG x -o%s %s", ANGBAND_DIR_XTRA, pack_name));
@@ -8095,7 +8061,6 @@ static void do_cmd_options_install_audio_packs(void) {
 		r = system(format("7z x -o%s %s", ANGBAND_DIR_XTRA, pack_name));
 		/*todo: custom foldernames password check... (see above) */
     }
- #endif
 #endif
 
 		if (password_ok) {
