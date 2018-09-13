@@ -6298,7 +6298,12 @@ void view_exploration_history(int Ind) {
 	int i;
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
-	bool none = TRUE, admin = admin_p(Ind);
+	bool none = TRUE;
+#if 0
+	bool admin = admin_p(Ind); //use ~8 for full info instead..
+#else
+	bool admin = FALSE; //..and here just display knowledge as it's available to players
+#endif
 	byte known;
 	struct dungeon_type *d_ptr;
 	char boss_name[MNAME_LEN], *bn = boss_name, *bnc, *bn1, *bn2, *bn3;
