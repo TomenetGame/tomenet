@@ -20,6 +20,15 @@
 # Example:
 # hit_weapon = player/combat/hit.wav "player/combat/hit steel.ogg"
 #
+# Naming and meta data conventions:
+# Make sure to edit the info in the [title] tag to provide accurate information
+# about your self-made audio packs. Further, use 7-zip to create a .7z file of
+# your audio pack with a filename like this: TomeNET-soundpack*.7z
+# where the '*' symbol stands for anything you like, example:
+# TomeNET-soundpack-mycoolpack.v14a-rldude.7z
+# The important part for it to get recognized by the in-game audio pack install
+# routine, via = I, is that it's a 7z file and starts on 'TomeNET-soundpack'.
+#
 
 
 [title]
