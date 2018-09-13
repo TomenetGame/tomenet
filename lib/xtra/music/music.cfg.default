@@ -7,7 +7,7 @@
 # <situation name> = <song names seperated by spaces>
 #
 # Where the situation names are listed in audio_bgm[] in lib/scpt/audio.lua.
-# One of the songs will be randomly picked, up to 32 songs may be specified.
+# One of the songs will be randomly picked, up to 64 songs may be specified.
 # Note: If song name contains spaces then it must be put in quotes.
 # Song names preceded by a '!' mark will be designated as 'initial' songs.
 # One of these will be played first when a music event starts, and it will not

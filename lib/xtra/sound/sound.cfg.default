@@ -7,7 +7,7 @@
 # <event name> = <sample-names seperated by spaces>
 #
 # Where the event names are listed in audio_sfx[] in lib/scpt/audio.lua.
-# One of the samples will be randomly picked, up to 32 samples may be specified.
+# One of the samples will be randomly picked, up to 64 samples may be specified.
 # Note: If sample name contains spaces then it must be put in quotes.
 # Make sure that there aren't any spaces or tabs after the '=' in lines which
 # don't contain any song file name at all, or it will give an error.
