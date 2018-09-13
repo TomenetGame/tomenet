@@ -3211,6 +3211,58 @@ static void init_sound() {
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
 #endif
 }
+/* Try to re-init specifically SDL-audio.
+   Purpose: Avoid need for client restart on switching audio packs live. */
+void re_init_sound() {
+#ifdef USE_SOUND_2010
+	int i;
+
+	if (!use_sound) {
+		/* Don't initialize sound modules */
+		return;
+	}
+
+	/* Scan specifically for SDL-module */
+	for (i = 0; i < N_ELEMENTS(sound_modules); i++) {
+		if (strcmp(sound_modules[i].name, "sdl")) continue;
+		/* Try to re-init it */
+		if (!sound_modules[i].init) {
+			puts("ERROR: SDL audio has no init function.");
+			return;
+		}
+		if (0 == re_init_sound_sdl()) {
+ #ifdef DEBUG_SOUND
+			puts(format("USE_SOUND_2010: successfully loaded module %d.", i));
+ #endif
+			break;
+		} else {
+			puts("ERROR: SDL audio failed to re-initialize.");
+			return;
+		}
+	}
+ #ifdef DEBUG_SOUND
+	puts("USE_SOUND_2010: done scanning modules");
+ #endif
+	if (i == N_ELEMENTS(sound_modules)) {
+		puts("ERROR: No SDL audio module found.");
+		return;
+	}
+
+	/* initialize mixer, putting configuration read from rc file live */
+	set_mixing();
+
+	/* remember indices of sounds that are hardcoded on client-side anyway, for efficiency */
+	bell_sound_idx = exec_lua(0, "return get_sound_index(\"bell\")");
+	page_sound_idx = exec_lua(0, "return get_sound_index(\"page\")");
+	warning_sound_idx = exec_lua(0, "return get_sound_index(\"warning\")");
+	rain1_sound_idx = exec_lua(0, "return get_sound_index(\"rain_soft\")");
+	rain2_sound_idx = exec_lua(0, "return get_sound_index(\"rain_storm\")");
+	snow1_sound_idx = exec_lua(0, "return get_sound_index(\"snow_soft\")");
+	snow2_sound_idx = exec_lua(0, "return get_sound_index(\"snow_storm\")");
+	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
+	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
+#endif
+}
 
 
 /*

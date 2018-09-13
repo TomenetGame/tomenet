@@ -952,9 +952,11 @@ extern int grid_weather_volume, grid_ambient_volume, grid_weather_volume_goal, g
 extern bool sound_hint;
 
 extern const struct module sound_modules[];
+extern void re_init_sound();
 
  #ifdef SOUND_SDL
  extern errr init_sound_sdl(int argc, char **argv);
+ extern errr re_init_sound_sdl(void);
  extern void do_cmd_options_sfx_sdl(void);
  extern void do_cmd_options_mus_sdl(void);
  #endif

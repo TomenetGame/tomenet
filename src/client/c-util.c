@@ -9261,14 +9261,35 @@ void audio_pack_selector(void) {
 		if (quit) break;
 	}
 
-	strcpy(cfg_soundpackfolder, sp_dir[cur_sp]);
-	strcpy(cfg_musicpackfolder, mp_dir[cur_mp]);
+	/* No changes were made? */
+	if (!strcmp(cfg_soundpackfolder, sp_dir[cur_sp]) && !strcmp(cfg_musicpackfolder, mp_dir[cur_mp])) {
+		/* Reload screen */
+		Term_load();
+
+		/* Flush the queue */
+		Flush_queue();
+
+		/* Re-enable hybrid macros */
+		inkey_msg = inkey_msg_old;
+
+		return;
+	}
+
+	/* Sound or music pack were changed - notify, apply and re-init audio system (if SDL): */
+	if (strcmp(cfg_soundpackfolder, sp_dir[cur_sp])) {
+		c_message_add(format("Switched sound pack to '%s'.", sp_dir[cur_sp]));
+		strcpy(cfg_soundpackfolder, sp_dir[cur_sp]);
+	}
+	if (strcmp(cfg_musicpackfolder, mp_dir[cur_mp])) {
+		c_message_add(format("Switched music pack to '%s'.", mp_dir[cur_mp]));
+		strcpy(cfg_musicpackfolder, mp_dir[cur_mp]);
+	}
+
 #ifdef WINDOWS
 	store_audiopackfolders();
 #else /* assume POSIX */
 	write_mangrc(FALSE, TRUE);
 #endif
-	c_message_add("\377RAfter changing audio packs, a game client restart is required!");
 
 	/* Reload screen */
 	Term_load();
@@ -9278,6 +9299,12 @@ void audio_pack_selector(void) {
 
 	/* Re-enable hybrid macros */
 	inkey_msg = inkey_msg_old;
+
+	/* Switch it live! */
+	re_init_sound();
+
+	//No longer true (for SDL, our only sound sytem at this point basically):
+	//c_message_add("\377RAfter changing audio packs, a game client restart is required!");
 }
 
 /* For pasting monster lore into chat, also usable for item-pasting. - C. Blue

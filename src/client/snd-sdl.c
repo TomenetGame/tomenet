@@ -2170,6 +2170,153 @@ errr init_sound_sdl(int argc, char **argv) {
 	/* Success */
 	return (0);
 }
+/* Try to allow re-initializing audio.
+   Purpose: Switching between audio packs live, without need for client restart. */
+errr re_init_sound_sdl(void) {
+	int i, j;
+
+
+	/* --- exit --- */
+
+	/* Close audio first, then try to open it again */
+	close_audio();
+
+	/* Reset variables (closing audio doesn't do this since it assumes program exit anyway) */
+	for (i = 0; i < SOUND_MAX_2010; i++) {
+		samples[i].num = 0;
+		samples[i].config = FALSE;
+		samples[i].disabled = FALSE;
+		for (j = 0; j < MAX_SAMPLES; j++) {
+			samples[i].wavs[j] = NULL;
+			samples[i].paths[j] = NULL;
+		}
+	}
+	for (i = 0; i < MUSIC_MAX; i++) {
+		songs[i].num = 0;
+		songs[i].config = FALSE;
+		songs[i].disabled = FALSE;
+		for (j = 0; j < MAX_SONGS; j++) {
+			songs[i].wavs[j] = NULL;
+			songs[i].paths[j] = NULL;
+		}
+	}
+
+	for (i = 0; i < MAX_CHANNELS; i++) {
+		channel_sample[i] = -1;
+		channel_type[i] = 0;
+		channel_volume[i] = 0;
+		channel_player_id[i] = 0;
+	}
+
+	audio_sfx = 0;
+	audio_music = 0;
+
+	/*void (*mixing_hook)(void);
+	bool (*sound_hook)(int sound, int type, int vol, s32b player_id);
+	void (*sound_ambient_hook)(int sound_ambient);
+	void (*sound_weather_hook)(int sound);
+	void (*sound_weather_hook_vol)(int sound, int vol);
+	bool (*music_hook)(int music);*/
+
+	//cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 1024;
+
+	music_cur = -1;
+	music_cur_song = -1;
+	music_next = -1;
+	music_next_song = -1;
+
+	weather_channel = -1;
+	weather_current = -1;
+	weather_current_vol = -1;
+	weather_channel_volume = 0;
+
+	ambient_channel = -1;
+	ambient_current = -1;
+	ambient_channel_volume = 0;
+
+	//weather_particles_seen, weather_sound_change, weather_fading, ambient_fading;
+	//wind_noticable = FALSE;
+#if 1 /* WEATHER_VOL_PARTICLES */
+	//weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];
+#endif
+
+	//cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE, weather_resume = FALSE, ambient_resume = FALSE;
+	//cfg_audio_master_volume = 75, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
+
+	//grid_weather_volume = 100, grid_ambient_volume = 100, grid_weather_volume_goal = 100, grid_ambient_volume_goal = 100, grid_weather_volume_step, grid_ambient_volume_step;
+	bell_sound_idx = -1, page_sound_idx = -1, warning_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1;
+
+
+	/* --- init --- */
+
+	//if (no_cache_audio) plog("Audio cache disabled.");
+
+#ifdef DEBUG_SOUND
+	puts(format("re_init_sound_sdl() init%s", no_cache_audio == FALSE ? " (cached)" : " (not cached)"));
+#endif
+
+	/* Load sound preferences if requested */
+#if 0
+	if (!sound_sdl_init(no_cache_audio)) {
+#else /* never cache audio right at program start, because it creates an annoying delay! */
+	if (!sound_sdl_init(TRUE)) {
+#endif
+		plog("Failed to re-initialise audio.");
+
+		/* Failure */
+		return (1);
+	}
+
+	/* Set the mixing hook */
+	mixing_hook = set_mixing_sdl;
+
+	/* Enable sound */
+	sound_hook = play_sound;
+
+	/* Enable music */
+	music_hook = play_music;
+
+	/* Enable weather noise overlay */
+	sound_weather_hook = play_sound_weather;
+	sound_weather_hook_vol = play_sound_weather_vol;
+
+	/* Enable ambient sfx overlay */
+	sound_ambient_hook = play_sound_ambient;
+
+	/* clean-up hook */
+	atexit(close_audio);
+
+	/* start caching audio in a separate thread to eliminate startup loading time */
+	if (!no_cache_audio) {
+#ifdef DEBUG_SOUND
+		puts("Audio cache: Creating thread..");
+#endif
+		load_audio_thread = SDL_CreateThread(thread_load_audio, NULL);
+		if (load_audio_thread == NULL) {
+#ifdef DEBUG_SOUND
+			puts("Audio cache: Thread creation failed.");
+#endif
+			plog(format("Audio cache: Unable to create thread: %s\n", SDL_GetError()));
+
+			/* load manually instead, with annoying delay ;-p */
+			thread_load_audio(NULL);
+		}
+#ifdef DEBUG_SOUND
+		else puts("Audio cache: Thread creation succeeded.");
+#endif
+	}
+
+#ifdef DEBUG_SOUND
+	puts("re_init_sound_sdl() completed.");
+#endif
+
+
+	/* --- refresh active audio --- */
+	Send_redraw(2);
+
+	/* Success */
+	return (0);
+}
 
 /* on game termination */
 void mixer_fadeall(void) {

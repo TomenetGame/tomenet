@@ -10947,10 +10947,18 @@ static int Receive_redraw(int ind) {
 		return n;
 	}
 
+	/* We abuse redraw-request from client to refresh audio after a live audio pack switch */
+	if (mode == 2) {
+		if (!player) return 0; //paranoia?
+		handle_music(player);
+		handle_ambient_sfx(player, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
+		return 1;
+	}
+
 	if (player && !p_ptr->redraw_cooldown) {
 		if (!is_admin(p_ptr)) p_ptr->redraw_cooldown = 3;
 
-//		p_ptr->store_num = -1;
+		//p_ptr->store_num = -1;
 		p_ptr->redraw |= (PR_BASIC | PR_EXTRA | PR_MAP);
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		p_ptr->update |= (PU_BONUS | PU_VIEW | PU_MANA | PU_HP | PU_SANITY);
@@ -10958,7 +10966,7 @@ static int Receive_redraw(int ind) {
 		/* Do 'Heavy' redraw if requested.
 		 * TODO: One might wish to add more detailed modes
 		 */
-		if (mode) {
+		if (mode == 1) {
 			/* Tell the server to redraw the player's display */
 			p_ptr->redraw |= PR_MAP | PR_EXTRA | PR_BASIC | PR_HISTORY | PR_VARIOUS | PR_STATE;
 			p_ptr->redraw |= PR_PLUSSES;
