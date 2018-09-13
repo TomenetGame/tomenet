@@ -2,6 +2,7 @@
 #
 # Configuration file for TomeNET background music
 #
+#
 # The format is:
 # <situation name> = <song names seperated by spaces>
 #
@@ -29,14 +30,19 @@
 # Example:
 # BarrowDowns = dungeons/bd1.mp3 "otherstuff/da dee doo.ogg"
 #
+#
 # Naming and meta data conventions:
-# Make sure to edit the info in the [title] tag to provide accurate information
-# about your self-made audio packs. Further, use 7-zip to create a .7z file of
-# your audio pack with a filename like this: TomeNET-musicpack*.7z
-# where the '*' symbol stands for anything you like, example:
-# TomeNET-musicpack-mycoolpack.v14a-rldude.7z
-# The important part for it to get recognized by the in-game audio pack install
-# routine, via = I, is that it's a 7z file and starts on 'TomeNET-musicpack'.
+#
+# Edit the info in the [title] tag to provide accurate information about your
+# self-made audio packs, as these will be displayed in the audio pack selector.
+#
+# Further, use 7-zip (www.7-zip.org) to create a .7z file of your audio pack
+# with a filename starting on 'TomeNET-musicpack' and ending on '.7z'.
+# Example: 'TomeNET-musicpack-mycoolpack.v14a-rldude.7z'
+#
+# Make sure that the 7-zip file contains exactly one top-level folder, its name
+# starting on 'music', with everything else (including the music.cfg file)
+# inside of it. Following the above imaginary guy's example: 'music.rldude'.
 #
 
 
