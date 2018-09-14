@@ -10923,11 +10923,16 @@ static int Receive_redraw(int ind) {
 	int player = -1, n;
 	char ch, mode;
 
+	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &mode)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
 		p_ptr = Players[player];
 
-		if (p_ptr->esp_link_type && p_ptr->esp_link) {
+		if (p_ptr->esp_link_type && p_ptr->esp_link && mode != 2) { //DEBUG-paranoia: Mode-check is actually not needed.
 			int Ind2 = find_player(p_ptr->esp_link);
 
 			if (!Ind2)
@@ -10942,22 +10947,16 @@ static int Receive_redraw(int ind) {
 	}
 	else player = 0;
 
-	if ((n = Packet_scanf(&connp->r, "%c%c", &ch, &mode)) <= 0) {
-		if (n == -1) Destroy_connection(ind, "read error");
-		return n;
-	}
-
 	/* We abuse redraw-request from client to refresh audio after a live audio pack switch */
 	if (mode == 2) {
 		u32b f;
 		int i;
 
 		if (!player) return 0; //paranoia?
-
 		if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) {
 			for (i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->esp_link == p_ptr->id) {
-//s_printf("View-linked %d ('%s') from %d ('%s').\n", player, p_ptr->name, i, Players[i]->name); //DEBUG
+s_printf("View-linked %d ('%s') from %d ('%s').\n", player, p_ptr->name, i, Players[i]->name); //DEBUG
 					f = p_ptr->esp_link_flags;
 					p_ptr->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
 					Send_music(player, Players[i]->music_current, Players[i]->musicalt_current);
@@ -10970,6 +10969,7 @@ static int Receive_redraw(int ind) {
 			handle_music(player);
 			handle_ambient_sfx(player, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
 		}
+
 		return 1;
 	}
 
