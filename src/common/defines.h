@@ -5353,8 +5353,7 @@
  * New monster race bit flags
  */
 #define RF1_UNIQUE			0x00000001	/* Unique Monster */
-#define RF1_QUESTOR			0x00000002	/* Quest Monster */
-//HOLE^unused
+#define RF1_RAND_100			0x00000002	/* 100% random movement */
 #define RF1_MALE			0x00000004	/* Male gender */
 #define RF1_FEMALE			0x00000008	/* Female gender */
 #define RF1_CHAR_CLEAR		0x00000010	/* Absorbs symbol */
@@ -5528,7 +5527,7 @@
 #define RF5_MIND_BLAST		0x00000400	/* Blast Mind */
 #define RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
 #define RF5_CURSE			0x00001000	/* Cause Light Wound */
-#define RF5_RAND_100			0x00002000	/* 100% random movement */
+#define RF5_BO_CODE			0x00002000
 #define RF5_BA_NUKE			0x00004000  /* TY: Nuke Ball */
 #define RF5_BA_CHAO			0x00008000  /* Chaos Ball */
 #define RF5_BO_ACID		0x00010000	/* Acid Bolt */

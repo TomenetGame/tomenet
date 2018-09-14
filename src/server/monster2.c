@@ -502,8 +502,8 @@ void compact_monsters(int size, bool purge) {
 
 #if 0
 			/* Skip monsters that are 'trapped' in houses */
-	//		& CAVE_ICKY
-//			if((zcave = getcave(wpos))) zcave[ny][nx].m_idx = i;
+			//& CAVE_ICKY
+			//if((zcave = getcave(wpos))) zcave[ny][nx].m_idx = i;
 #else
 			/* Skip golems/pets */
 			if (m_ptr->pet || m_ptr->owner) continue;
@@ -528,7 +528,7 @@ void compact_monsters(int size, bool purge) {
 			chance = 90;
 
 			/* Only compact "Quest" Monsters in emergencies */
-			if ((r_ptr->flags1 & RF1_QUESTOR) && (cnt < 1000)) chance = 100;
+			//if ((r_ptr->flags1 & RF1_QUESTOR) && (cnt < 1000)) chance = 100; --GENO_NO_THIN is used for this atm
 
 			/* Try not to compact Unique Monsters */
 			if (r_ptr->flags1 & RF1_UNIQUE) chance = 99;
@@ -536,7 +536,7 @@ void compact_monsters(int size, bool purge) {
 			/* Monsters in town don't have much of a chance */
 			if (istown(&m_ptr->wpos)) chance = 70;
 
-//			if (!getcave(&m_ptr->wpos)) chance = 0;
+			//if (!getcave(&m_ptr->wpos)) chance = 0;
 
 			/* All monsters get a saving throw */
 			if (rand_int(100) < chance) continue;
@@ -1117,7 +1117,7 @@ bool mon_allowed(monster_race *r_ptr) {
 		return(FALSE);
 
 	/* No quest NPCs - they are to be created explicitely by quest code */
-	if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
+	//if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
 
 	/* Base monsters allowed ? or not ? */
 	if ((r_ptr->flags8 & RF8_ANGBAND) && i > cfg.vanilla_monsters) return(FALSE);
@@ -1146,7 +1146,7 @@ bool mon_allowed_chance(monster_race *r_ptr) {
 	if (r_ptr->flags7 & (RF7_PET | RF7_NEUTRAL)) return(cfg.pet_monsters);
 
 	/* No quest NPCs - they are to be created explicitely by quest code */
-	if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
+	//if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
 
 	/* Base monsters allowed ? or not ? */
 	if (r_ptr->flags8 & RF8_ANGBAND) return(cfg.vanilla_monsters);
@@ -1178,7 +1178,7 @@ bool mon_allowed_view(monster_race *r_ptr) {
 		return(FALSE);
 
 	/* No quest NPCs - they are to be created explicitely by quest code */
-	if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
+	//if ((r_ptr->flags1 & RF1_QUESTOR)) return(FALSE);
 
 	/* Base monsters allowed ? or not ? */
 	if (i > cfg.vanilla_monsters && (r_ptr->flags8 & RF8_ANGBAND)) return(FALSE);

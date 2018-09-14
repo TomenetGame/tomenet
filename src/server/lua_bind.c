@@ -462,7 +462,7 @@ static bool lua_mon_hook_bounty(int r_idx) {
 	if ((r_ptr->flags1 & RF1_UNIQUE)) return (FALSE);
 
 	/* Reject quest NPCs */
-	if ((r_ptr->flags1 & RF1_QUESTOR)) return (FALSE);
+	//if ((r_ptr->flags1 & RF1_QUESTOR)) return (FALSE);
 
 	/* Reject those who cannot leave anything */
 	if (!(r_ptr->flags9 & RF9_DROP_CORPSE)) return (FALSE);

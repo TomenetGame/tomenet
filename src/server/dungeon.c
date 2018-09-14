@@ -7033,7 +7033,7 @@ static void process_various(void) {
 
 			/* Hack -- Sauron and Morgoth are exceptions (and all > Morgy-uniques)
 			   --- QUESTOR is currently NOT used!! - C. Blue */
-			if (r_ptr->flags1 & RF1_QUESTOR) continue;
+			//if (r_ptr->flags1 & RF1_QUESTOR) continue;
 			/* ..hardcoding them instead: */
 			if (r_ptr->level >= 98) continue; /* Not Michael either */
 			/* Redundant, since he's a dungeon boss, but anyway: (He's linked to Sauron) */

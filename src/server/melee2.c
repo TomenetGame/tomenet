@@ -6834,7 +6834,7 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
 	s16b inv, mlv;
 
 	if (r_ptr->flags2 & RF2_INVISIBLE ||
-	    r_ptr->flags1 & RF1_QUESTOR ||
+	    //r_ptr->flags1 & RF1_QUESTOR ||
 	    r_ptr->flags3 & RF3_DRAGONRIDER)	/* have ESP */
 		return(FALSE);
 	/* since RF1_QUESTOR is currently not used/completely implemented,
@@ -7663,7 +7663,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 
 	/* Confused -- 100% random */
-	if (m_ptr->confused || force_random_movement || (r_ptr->flags5 & RF5_RAND_100)) {
+	if (m_ptr->confused || force_random_movement || (r_ptr->flags1 & RF1_RAND_100)) {
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 		random_move = TRUE;
@@ -9978,8 +9978,7 @@ void process_monsters(void) {
 					   doesn't really care about a player being nearby or not,
 					   and hence keep up the random movement, except using attack
 					   spells on the cloaked player! */
-					if ((r_ptr->flags1 & RF1_RAND_50) ||
-					    (r_ptr->flags5 & RF5_RAND_100)) {
+					if (r_ptr->flags1 & (RF1_RAND_50 | RF1_RAND_100)) {
 						/* 'remember' closest cloaked player */
 						if (j < may_move_dis) {
 							may_move_Ind = pl;

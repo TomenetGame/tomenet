@@ -154,7 +154,7 @@ static cptr r_info_blow_effect[] = {
  */
 static cptr r_info_flags1[] = {
 	"UNIQUE",
-	"QUESTOR",
+	"RAND_100", //was: "QUESTOR",
 	"MALE",
 	"FEMALE",
 	"CHAR_CLEAR",
@@ -320,7 +320,7 @@ static cptr r_info_flags5[] = {
 	"MIND_BLAST",
 	"BRAIN_SMASH",
 	"CURSE",	//	"CAUSE_1",
-	"RAND_100",		//	"CAUSE_2",
+	"BO_CODE",
 	"BA_NUKE",	// "XXX5X4",
 	"BA_CHAO",	// "XXX7X4",
 	"BO_ACID",

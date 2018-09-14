@@ -5245,20 +5245,21 @@ bool monster_death(int Ind, int m_idx) {
 	player_type *p_ptr = Players[Ind];
 	player_type *q_ptr = Players[Ind];
 
-	int	i, j, y, x, ny, nx;
+	int	i, j, y, x;//, ny, nx;
 	int	tmp_luck = p_ptr->luck;
 
-	//int	dump_item = 0;
-	//int	dump_gold = 0;
-
 	int	number = 0;
-	int	total = 0;
 
 	char buf[160], m_name[MAX_CHARS], o_name[ONAME_LEN];
 	cptr titlebuf;
 
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
-	cave_type *c_ptr;
+
+	//Variables only for RF1_QUESTOR:
+	//int	dump_item = 0;
+	//int	dump_gold = 0;
+	//int	total = 0;
+	//cave_type *c_ptr;
 
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
@@ -7163,6 +7164,9 @@ if (cfg.unikill_format) {
 
 	//if ((!force_coin) && (randint(100) < 50)) place_corpse(m_ptr);
 
+#if 1
+	return TRUE; //removed RF1_QUESTOR
+#else
 	/* Only process "Quest Monsters" */
 	if (!(r_ptr->flags1 & RF1_QUESTOR)) return TRUE;
 
@@ -7214,6 +7218,7 @@ if (cfg.unikill_format) {
 	FREE(m_ptr->r_ptr, monster_race);
 
 	return TRUE;
+#endif
 }
 
 /* FIXME: this function is known to be bypassable by nominally
