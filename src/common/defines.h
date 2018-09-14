@@ -2335,6 +2335,7 @@
 #define FEAT_ESCAPE_DOOR	230	/* for quests - it's a one-way door!  */
 #define FEAT_SICKBAY_DOOR	231	/* for insta-res in town (or in general), to avoid kill-instares-loops while afk */
 #define FEAT_SICKBAY_AREA	232
+#define FEAT_GRAND_MIRROR	233
 
 /* number of connected void gates or something? */
 #define MAX_BETWEEN_EXITS	2
