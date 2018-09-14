@@ -396,7 +396,7 @@ extern bool place_monster_aux(int Depth, int y, int x, int r_idx, bool slp, bool
 extern bool place_monster(int Depth, int y, int x, bool slp, bool grp);
 extern bool alloc_monster(int Depth, int dis, int slp);
 extern bool multiply_monster(int m_idx);
-extern void update_smart_learn(int m_idx, int what);
+extern void update_smart_learn(int Ind, int m_idx, int what);
 
 /* netserver.c */
 /*extern void Contact(int fd, void *arg);*/

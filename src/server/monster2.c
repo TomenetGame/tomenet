@@ -5108,14 +5108,11 @@ void message_pain(int Ind, int m_idx, int dam) {
 /*
  * Learn about an "observed" resistance.
  */
-void update_smart_learn(int m_idx, int what) {
-
+void update_smart_learn(int Ind, int m_idx, int what) {
 #ifdef DRS_SMART_OPTIONS
-
 	monster_type *m_ptr = &m_list[m_idx];
-
 	monster_race *r_ptr = race_inf(m_ptr);
-
+	player_type *p_ptr = Players[Ind];
 
 	/* Not allowed to learn */
 	if (!smart_learn) return;
@@ -5130,95 +5127,105 @@ void update_smart_learn(int m_idx, int what) {
 	/* XXX XXX XXX */
 
 	/* Analyze the knowledge */
-	switch (what)
-	{
-		case DRS_ACID:
+	switch (what) {
+	case DRS_ACID:
 		if (p_ptr->resist_acid) m_ptr->smart |= SM_RES_ACID;
 		if (p_ptr->oppose_acid) m_ptr->smart |= SM_OPP_ACID;
 		if (p_ptr->immune_acid) m_ptr->smart |= SM_IMM_ACID;
 		break;
 
-		case DRS_ELEC:
+	case DRS_ELEC:
 		if (p_ptr->resist_elec) m_ptr->smart |= SM_RES_ELEC;
 		if (p_ptr->oppose_elec) m_ptr->smart |= SM_OPP_ELEC;
 		if (p_ptr->immune_elec) m_ptr->smart |= SM_IMM_ELEC;
 		break;
 
-		case DRS_FIRE:
+	case DRS_FIRE:
 		if (p_ptr->resist_fire) m_ptr->smart |= SM_RES_FIRE;
 		if (p_ptr->oppose_fire) m_ptr->smart |= SM_OPP_FIRE;
 		if (p_ptr->immune_fire) m_ptr->smart |= SM_IMM_FIRE;
 		break;
 
-		case DRS_COLD:
+	case DRS_COLD:
 		if (p_ptr->resist_cold) m_ptr->smart |= SM_RES_COLD;
 		if (p_ptr->oppose_cold) m_ptr->smart |= SM_OPP_COLD;
 		if (p_ptr->immune_cold) m_ptr->smart |= SM_IMM_COLD;
 		break;
 
-		case DRS_POIS:
+	case DRS_POIS:
 		if (p_ptr->resist_pois) m_ptr->smart |= SM_RES_POIS;
 		if (p_ptr->oppose_pois) m_ptr->smart |= SM_OPP_POIS;
+		if (p_ptr->immune_poison) m_ptr->smart |= SM_IMM_POIS;
 		break;
 
-
-		case DRS_NETH:
+	case DRS_NETH:
 		if (p_ptr->resist_neth) m_ptr->smart |= SM_RES_NETH;
-		if (p_ptr->immune_neth) m_ptr->smart |= SM_RES_NETH;
+		if (p_ptr->immune_neth) m_ptr->smart |= SM_IMM_NETH;
 		break;
 
-		case DRS_LITE:
+	case DRS_WATER:
+		if (p_ptr->resist_neth) m_ptr->smart |= SM_RES_WATE;
+		if (p_ptr->immune_neth) m_ptr->smart |= SM_IMM_WATE;
+		break;
+
+	case DRS_LITE:
 		if (p_ptr->resist_lite) m_ptr->smart |= SM_RES_LITE;
 		break;
 
-		case DRS_DARK:
+	case DRS_DARK:
 		if (p_ptr->resist_dark) m_ptr->smart |= SM_RES_DARK;
 		break;
 
-		case DRS_FEAR:
+	case DRS_FEAR:
 		if (p_ptr->resist_fear) m_ptr->smart |= SM_RES_FEAR;
 		break;
 
-		case DRS_CONF:
+	case DRS_CONF:
 		if (p_ptr->resist_conf) m_ptr->smart |= SM_RES_CONF;
 		break;
 
-		case DRS_CHAOS:
+	case DRS_CHAOS:
 		if (p_ptr->resist_chaos) m_ptr->smart |= SM_RES_CHAOS;
 		break;
 
-		case DRS_DISEN:
+	case DRS_DISEN:
 		if (p_ptr->resist_disen) m_ptr->smart |= SM_RES_DISEN;
 		break;
 
-		case DRS_BLIND:
+	case DRS_BLIND:
 		if (p_ptr->resist_blind) m_ptr->smart |= SM_RES_BLIND;
 		break;
 
-		case DRS_NEXUS:
+	case DRS_NEXUS:
 		if (p_ptr->resist_nexus) m_ptr->smart |= SM_RES_NEXUS;
 		break;
 
-		case DRS_SOUND:
+	case DRS_SOUND:
 		if (p_ptr->resist_sound) m_ptr->smart |= SM_RES_SOUND;
 		break;
 
-		case DRS_SHARD:
+	case DRS_SHARD:
 		if (p_ptr->resist_shard) m_ptr->smart |= SM_RES_SHARD;
 		break;
 
+	case DRS_TIME:
+		if (p_ptr->resist_time) m_ptr->smart |= SM_RES_TIME;
+		break;
 
-		case DRS_FREE:
+	case DRS_MANA:
+		if (p_ptr->resist_mana) m_ptr->smart |= SM_RES_MANA;
+		break;
+
+	case DRS_FREE:
 		if (p_ptr->free_act) m_ptr->smart |= SM_IMM_FREE;
 		break;
 
-		case DRS_MANA:
+	case DRS_SMANA:
 		if (!p_ptr->msp) m_ptr->smart |= SM_IMM_MANA;
 		break;
+
 	}
-
 #endif /* DRS_SMART_OPTIONS */
-
 }
 
 /*

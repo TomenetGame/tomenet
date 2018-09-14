@@ -1182,7 +1182,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_POIS);
+					update_smart_learn(Ind, m_idx, DRS_POIS);
 
 					break;
 
@@ -1222,7 +1222,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_DISEN);
+					update_smart_learn(Ind, m_idx, DRS_DISEN);
 
 					break;
 
@@ -1595,6 +1595,9 @@ bool make_attack_melee(int Ind, int m_idx) {
 					break;
 
 				case RBE_EAT_LITE:
+					/* Access the lite */
+					o_ptr = &p_ptr->inventory[INVEN_LITE];
+
 #ifdef EXPERIMENTAL_MITIGATION
 					/* Special damage -- we assume the 'elemental' part stands for the attack
 					   being sort of a critical hit that doesn't allow AC mitigation! >;-D */
@@ -1615,6 +1618,9 @@ bool make_attack_melee(int Ind, int m_idx) {
  #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
  #endif
+					/* Reduce the eat-lite damage part if we don't have (much) light */
+					if (dam_ele > o_ptr->timeout / 250) dam_ele = p_ptr->csp;
+
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 #endif
@@ -1624,9 +1630,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 					take_hit(Ind, damage, ddesc, -m_idx);
 
 					if (safe_area(Ind)) break;
-
-					/* Access the lite */
-					o_ptr = &p_ptr->inventory[INVEN_LITE];
 
 					/* Drain fuel */
 					//if ((o_ptr->pval > 0) && (o_ptr->sval < SV_LITE_DWARVEN))
@@ -1678,7 +1681,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_ACID);
+					update_smart_learn(Ind, m_idx, DRS_ACID);
 
 					break;
 
@@ -1716,7 +1719,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_ELEC);
+					update_smart_learn(Ind, m_idx, DRS_ELEC);
 
 					break;
 
@@ -1751,7 +1754,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_FIRE);
+					update_smart_learn(Ind, m_idx, DRS_FIRE);
 
 					break;
 
@@ -1786,7 +1789,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_COLD);
+					update_smart_learn(Ind, m_idx, DRS_COLD);
 
 					break;
 
@@ -1826,7 +1829,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_BLIND);
+					update_smart_learn(Ind, m_idx, DRS_BLIND);
 
 					break;
 
@@ -1866,7 +1869,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_CONF);
+					update_smart_learn(Ind, m_idx, DRS_CONF);
 
 					break;
 
@@ -1912,7 +1915,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_FEAR);
+					update_smart_learn(Ind, m_idx, DRS_FEAR);
 
 					break;
 
@@ -1958,7 +1961,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					}
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_FREE);
+					update_smart_learn(Ind, m_idx, DRS_FREE);
 
 					break;
 
@@ -2550,6 +2553,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					//carried_monster_hit = TRUE;
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, -m_idx);
+					update_smart_learn(Ind, m_idx, DRS_TIME);
 					break;
 
 				case RBE_SANITY:
@@ -2916,7 +2920,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 							obvious = TRUE;
 
 					/* Learn about the player */
-					update_smart_learn(m_idx, DRS_BLIND);
+					update_smart_learn(Ind, m_idx, DRS_BLIND);
+					update_smart_learn(Ind, m_idx, DRS_LITE);
 					break;
 
 				case RBE_EAT_MANA:
@@ -2940,6 +2945,9 @@ bool make_attack_melee(int Ind, int m_idx) {
  #ifdef ELEMENTAL_AC_MITIGATION
 					damage -= (damage * ((ac < AC_CAP) ? ac : AC_CAP) / (AC_CAP_DIV + 100)); /* + 100: harder to absorb */
  #endif
+					/* Reduce the eat-mana damage part if we don't have (much) mana */
+					if (dam_ele > p_ptr->csp) dam_ele = p_ptr->csp;
+
 					/* unify elemental and physical damage again: */
 					damage = damage + dam_ele;
 #endif
@@ -2949,9 +2957,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 					take_hit(Ind, damage, ddesc, 0);
 
 					if (safe_area(Ind)) break;
-
-					/* Access the lite */
-					o_ptr = &p_ptr->inventory[INVEN_LITE];
 
 					/* Drain mana */
 					if (p_ptr->csp > 0) {
@@ -2965,8 +2970,9 @@ bool make_attack_melee(int Ind, int m_idx) {
 						p_ptr->redraw |= PR_MANA;
 						if (!obvious) msg_print(Ind, "Your psychic energy gets drained.");
 						obvious = TRUE;
-					}
 
+						update_smart_learn(Ind, m_idx, DRS_LITE);
+					}
 					break;
 			}
 

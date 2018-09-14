@@ -1053,7 +1053,7 @@ extern bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_id
 extern bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char num);
 extern int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone);
 extern bool multiply_monster(int m_idx);
-extern void update_smart_learn(int m_idx, int what);
+extern void update_smart_learn(int Ind, int m_idx, int what);
 extern void setup_monsters(void);
 extern int race_index(char * name);
 extern int monster_gain_exp(int m_idx, u32b exp, bool silent);
