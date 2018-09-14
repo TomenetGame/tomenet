@@ -20421,6 +20421,31 @@ D:you in the shadow. It is my cry that wakes you in the night, and my body that
 D:crouches in the shadow. I am Tzeentch and you are the puppet that dances to my
 D:tune.."
 
+#Strange guy..
+N:1152:strange guy
+G:p:b
+I:130:100d100:0:50:0
+W:127:255:150:0
+E:1:1:2:2:1:2
+O:0:0:0:0
+B:TOUCH:*
+F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP |
+D:A strange guy in blue clothes, speaking with an unknown foreign accent.
+D:He looks around with an odd mixture of annoyance, surprise and impatience
+D:and mutters unintelligibly about 'fixing' bugs of some sort..
+
+#The hero's mirror image, in the Death Fate
+N:1153:Mirror Image
+G:p:c
+I:110:3d6:0:3:0
+W:127:255:150:0
+E:1:1:2:2:1:2
+O:0:0:0:0
+B:TOUCH:*
+F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP |
+D:When the hero looked into the grand mirror, it shattered and his image stood
+D:before him! Showing no hesitation, empathy or doubt it attacked immediately!
+
 
 # N: serial number : monster name
 # G: symbol : color
