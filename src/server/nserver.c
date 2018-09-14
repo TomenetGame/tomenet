@@ -10953,10 +10953,14 @@ static int Receive_redraw(int ind) {
 		int i;
 
 		if (!player) return 0; //paranoia?
+
+		/* Allow re-sending the same music we're already listening to, otherwise Send_music() would just 'optimize it out'.. */
+		p_ptr->music_current = -1;
+		p_ptr->musicalt_current = -1;
+
 		if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) {
 			for (i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->esp_link == p_ptr->id) {
-s_printf("View-linked %d ('%s') from %d ('%s').\n", player, p_ptr->name, i, Players[i]->name); //DEBUG
 					f = p_ptr->esp_link_flags;
 					p_ptr->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
 					Send_music(player, Players[i]->music_current, Players[i]->musicalt_current);
