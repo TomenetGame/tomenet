@@ -1288,6 +1288,14 @@ G:_:u
 F:FLOOR | CAN_RUN | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT
 
+N:233:grand mirror
+G:&:c
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | NOTICE
+D:0:A great mirror stands before you. Suddenly your image moves!
+#D:1:You bash the mirror and it shatters into a thousand pieces!
+D:2:A great mirror stands before you. Suddenly your image moves!
+
 
 # NOTE: 255 is reserved for special purpose ('not done yet' indicator)
 
