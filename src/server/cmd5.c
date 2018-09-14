@@ -1122,13 +1122,13 @@ void do_mimic_power_aux(int Ind, int dir) {
     case 49:
 	sprintf(p_ptr->attacker, " casts a lightning bolt for");
 	msg_print(Ind, "You cast a lightning bolt.");
-	fire_bolt(Ind, GF_ELEC, dir, damroll(4, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
+	fire_bolt(Ind, GF_ELEC, dir, damroll(5, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
 	break;
 // RF5_BO_FIRE			0x00040000	/* Fire Bolt */
     case 50:
 	sprintf(p_ptr->attacker, " casts a fire bolt for");
 	msg_print(Ind, "You cast a fire bolt.");
-	fire_bolt(Ind, GF_FIRE, dir, damroll(9, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
+	fire_bolt(Ind, GF_FIRE, dir, damroll(8, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
 	break;
 // RF5_BO_COLD			0x00080000	/* Cold Bolt */
     case 51:
@@ -1140,7 +1140,7 @@ void do_mimic_power_aux(int Ind, int dir) {
     case 52:
 	sprintf(p_ptr->attacker, " casts a poison bolt for");
 	msg_print(Ind, "You cast a poison bolt.");
-	fire_bolt(Ind, GF_POIS, dir, damroll(3, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
+	fire_bolt(Ind, GF_POIS, dir, damroll(6, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
 	break;
 // RF5_BO_NETH			0x00200000	/* Nether Bolt */
     case 53:
