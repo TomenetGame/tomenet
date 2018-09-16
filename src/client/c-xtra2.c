@@ -149,7 +149,7 @@ void do_cmd_messages(void) {
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
-			if (askfor_aux(tmp, 80, 0)) {
+			if (askfor_aux(tmp, 79, 0)) {
 				i = atoi(tmp);
 				i = i > 0 ? (i < n ? i : n - 1) : 0;
 			}
@@ -183,7 +183,7 @@ void do_cmd_messages(void) {
 			prt("Show: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "shower" string, or continue */
-			if (!askfor_aux(shower, 80, 0)) {
+			if (!askfor_aux(shower, 79, 0)) {
 				inkey_msg = inkey_msg_old;
 				continue;
 			}
@@ -205,7 +205,7 @@ void do_cmd_messages(void) {
 			prt("Find: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "finder" string, or continue */
-			if (!askfor_aux(finder, 80, 0)) {
+			if (!askfor_aux(finder, 79, 0)) {
 				inkey_msg = inkey_msg_old;
 				continue;
 			}
@@ -437,7 +437,7 @@ void do_cmd_messages_chatonly(void) {
 			char tmp[80];
 			prt(format("Goto Line(max %d): ", n), 23 + HGT_PLUS, 0);
 			strcpy(tmp, "0");
-			if (askfor_aux(tmp, 80, 0)) {
+			if (askfor_aux(tmp, 79, 0)) {
 				i = atoi(tmp);
 				i = i > 0 ? (i < n ? i : n - 1) : 0;
 			}
@@ -472,7 +472,7 @@ void do_cmd_messages_chatonly(void) {
 			prt("Show: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "shower" string, or continue */
-			if (!askfor_aux(shower, 80, 0)) {
+			if (!askfor_aux(shower, 79, 0)) {
 				inkey_msg = inkey_msg_old;
 				continue;
 			}
@@ -494,7 +494,7 @@ void do_cmd_messages_chatonly(void) {
 			prt("Find: ", 23 + HGT_PLUS, 0);
 
 			/* Get a "finder" string, or continue */
-			if (!askfor_aux(finder, 80, 0)) {
+			if (!askfor_aux(finder, 79, 0)) {
 				inkey_msg = inkey_msg_old;
 				continue;
 			}

@@ -30,7 +30,7 @@ static bool enter_server_name(void)
 
 
 	/* Ask for server name */
-	return askfor_aux(server_name, 80, 0);
+	return askfor_aux(server_name, 79, 0);
 }
 
 

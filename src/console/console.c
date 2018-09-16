@@ -188,7 +188,7 @@ static bool modify_unique(void)
 				strcpy(killer, "nobody");
 
 				/* Get an input */
-				askfor_aux(killer, 80, 0);
+				askfor_aux(killer, 79, 0);
 
 				/* Never send a null-length string */
 				if (!strlen(killer)) strcpy(killer, "nobody");
@@ -247,7 +247,7 @@ static bool kick_player(void)
 	strcpy(name, "");
 
 	/* Get name */
-	askfor_aux(name, 80, 0);
+	askfor_aux(name, 79, 0);
 
 	/* Never send null-length string */
 	if (!strlen(name)) return FALSE;

@@ -1841,7 +1841,7 @@ void cmd_the_guide(void) {
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
 			//askfor_aux(buf, 7, 0)); //was: numerical chapters only
-			askfor_aux(buf, MAX_CHARS, 0); //allow entering chapter terms too
+			askfor_aux(buf, MAX_CHARS - 1, 0); //allow entering chapter terms too
 			inkey_msg = inkey_msg_old;
 			if (!buf[0]) continue;
 
@@ -2277,7 +2277,7 @@ void cmd_the_guide(void) {
 #endif
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
-			askfor_aux(search, MAX_CHARS, 0);
+			askfor_aux(search, MAX_CHARS - 1, 0);
 			inkey_msg = inkey_msg_old;
 			if (!search[0]) continue;
 
