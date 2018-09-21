@@ -257,6 +257,7 @@ S:1_IN_3 | BA_COLD | BA_FIRE | BA_ACID | BO_ELEC | DARKNESS | HEAL | HOLD
 S:HASTE | TELE_AWAY
 #T:MF_ALL
 
+#Note: We don't have 'l' monsters in the game currently ^^. That's probably from when lice were 'l' instead of 'I'.
 N:19:Sparkling
 G:*:*
 I:+0:+0d+0:+20:+0:=0
