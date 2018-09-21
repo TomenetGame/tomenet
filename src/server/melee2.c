@@ -3266,8 +3266,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a magic missile of", m_name);
-		/* Hack: Tone down sparkling vermin clones early on */
-		if (rlev < 9) bolt(Ind, m_idx, GF_MISSILE, damroll(2, 2) + (rlev / 2), SFX_BOLT_MAGIC);
+		/* Hack: Tone down low-level sparkling vermin clones early on */
+		if (m_ptr->ego == 19 && rlev < 9) bolt(Ind, m_idx, GF_MISSILE, damroll(2, 2) + (rlev / 2), SFX_BOLT_MAGIC);
 		else /* normal default: */
 		bolt(Ind, m_idx, GF_MISSILE, damroll(2, 6) + (rlev / 3), SFX_BOLT_MAGIC);
 		break;
