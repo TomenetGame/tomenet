@@ -388,7 +388,10 @@ static bool read_mangrc(cptr filename) {
 #endif
 
 			/* big_map hint */
-			if (!strncmp(buf, "hintBigmap", 10)) bigmap_hint = FALSE;
+			if (!strncmp(buf, "hintBigmap", 10)) {
+				if (bigmap_hint) firstrun = FALSE;
+				bigmap_hint = FALSE;
+			}
 
 			/*** Everything else is ignored ***/
 		}

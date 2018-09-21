@@ -1312,7 +1312,7 @@ static bool choose_stat_order(void) {
 			if (c == '\b') {
 				for (i = 0; i < 6; i++) stat_order[i] = stat_order_tmp[i];
 
-				for (i = 3; i < 12; i++) Term_erase(30, i, 255);
+				for (i = DIZ_ROW; i <= DIZ_ROW + 8; i++) Term_erase(30, i, 255);
 				clear_from(rowA);
 
 				return FALSE;
@@ -1323,7 +1323,7 @@ static bool choose_stat_order(void) {
 						if (dna_stat_order[i] > 7 || dna_stat_order[i] < 18) stat_order[i] = dna_stat_order[i];
 						else stat_order[i] = 8;
 					}
-					for (i = 3; i < 12; i++) Term_erase(30, i, 255);
+					for (i = DIZ_ROW; i <= DIZ_ROW + 8; i++) Term_erase(30, i, 255);
 					clear_from(rowA);
 					return TRUE;
 				} else {
@@ -1339,7 +1339,7 @@ static bool choose_stat_order(void) {
 			}
 		}
 
-		for (i = 3; i < 12; i++) Term_erase(30, i, 255);
+		for (i = DIZ_ROW; i <= DIZ_ROW + 8; i++) Term_erase(30, i, 255);
 		clear_from(rowA);
 	}
 	return TRUE;
@@ -1459,9 +1459,9 @@ static bool choose_mode(void) {
 	put_str("e) Everlasting", 18, 2);
 	c_put_str(TERM_SLATE, "(You may resurrect infinite times, but cannot enter highscore)", 18, 17);
 	/* hack: no weird modi on first client startup!
-	   To find out whether it's 1st or not we check bigmap_hint and # of existing characters.
+	   To find out whether it's 1st or not we check firstrun and # of existing characters.
 	   However, we just don't display the choices, they're still choosable! */
-	if (!bigmap_hint || existing_characters) {
+	if (!firstrun || existing_characters) {
 #if 0
 		put_str("h) Hard", 19, 2);
 		c_put_str(TERM_SLATE, "('Purgatorial' - like normal, with nasty additional penalties)", 19, 10);
@@ -1603,9 +1603,9 @@ static bool choose_body_modification(void) {
 
 	put_str("n) Normal body", 20, 2);
 	/* hack: no weird modi on first client startup!
-	   To find out whether it's 1st or not we check bigmap_hint and # of existing characters.
+	   To find out whether it's 1st or not we check firstrun and # of existing characters.
 	   However, we just don't display the choices, they're still choosable! */
-	if (!bigmap_hint || existing_characters) {
+	if (!firstrun || existing_characters) {
 		put_str("f) Fruit bat", 21, 2);
 		if (class == CLASS_MIMIC || class == CLASS_DRUID || class == CLASS_SHAMAN)
 			c_put_str(TERM_SLATE, "(not recommended for shapeshifters: Mimics, Druids, Shamans!)", 21, 15);

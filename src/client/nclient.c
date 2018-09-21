@@ -687,9 +687,9 @@ void Receive_login(void) {
 		if (new_ok) c_put_str(CHARSCREEN_COLOUR, "N) Create a new character", offset, 2);
 		if (exclusive_ok) {
 			/* hack: no weird modi on first client startup!
-			   To find out whether it's 1st or not we check bigmap_hint and # of existing characters.
-			   However, we just don't display the choice, it's still choosable! */
-			if (!bigmap_hint || existing_characters)
+			   To find out whether it's 1st or not we check firstrun and # of existing characters.
+			   However, we just don't display the choice, but it's still choosable by pressing the key anyway! */
+			if (!firstrun || existing_characters)
 				c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character (IDDC or PvP only)", offset + 1, 2);
 		}
 	} else {

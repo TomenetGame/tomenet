@@ -403,7 +403,7 @@ char last_prompt[MSG_LEN] = { 0 };
 bool last_prompt_macro = FALSE;
 
 int screen_wid = SCREEN_WID, screen_hgt = SCREEN_HGT;
-bool bigmap_hint = TRUE, global_big_map_hold = FALSE;
+bool bigmap_hint = TRUE, global_big_map_hold = FALSE, firstrun = TRUE;
 bool in_game = FALSE;
 bool rand_term_lamp;
 int rand_term_lamp_ticks;
