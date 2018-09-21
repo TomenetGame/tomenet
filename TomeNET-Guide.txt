@@ -2550,6 +2550,9 @@ Enter the 'tomenet/' folder and type:
         ./tomenet
 to start the game.
 
+If you get a font-related error ("Font not found: 9x15") please see PROBLEM 55
+in chapter Troubleshooting (8.8).
+
 
 Linux (compiling from source):
 ------------------------------
@@ -2590,6 +2593,9 @@ IMPORTANT NOW: You need to move the binary 'tomenet' that was just created one
 Go up one level into your 'tomenet/' folder. There type:
         ./tomenet
 to start the game.
+
+If you get a font-related error ("Font not found: 9x15") please see PROBLEM 55
+in chapter Troubleshooting (8.8).
 
 
 Configure TomeNET on Linux by editing config files or setting environment vars:
@@ -20884,8 +20890,8 @@ SOLUTION:   If you're on Windows and using a game version greater than 4.6.1a,
             7 will severly limit access to the Program Files folder.)
 
 PROBLEM 55: On a fresh TomeNET installation on Linux, the game will fail to
-            start, giving a font-not-found error (usually about font '9x15'
-            not being found).
+            start, giving a font-not-found error (usually about font '9x15'),
+            like this: "Font not found: 9x15".
 SOLUTION:   TomeNET uses basic linux system fonts (and allows you to switch to
             fonts of your own choice instead, if you want to). Some Linux
             distributions do not have these installed by default though, for
