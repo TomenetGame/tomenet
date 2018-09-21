@@ -20883,4 +20883,15 @@ SOLUTION:   If you're on Windows and using a game version greater than 4.6.1a,
             (The reason the game does this is that Windows starting at version
             7 will severly limit access to the Program Files folder.)
 
+PROBLEM 55: On a fresh TomeNET installation on Linux, the game will fail to
+            start, giving a font-not-found error (usually about font '9x15'
+            not being found).
+SOLUTION:   TomeNET uses basic linux system fonts (and allows you to switch to
+            fonts of your own choice instead, if you want to). Some Linux
+            distributions do not have these installed by default though, for
+            example Antergos.
+            Install the necessary fonts packages on your system, using the
+            system's package manager. It should usually be 'xorg-fonts-misc'.
+            After installation, reboot your system to ensure they work.
+
 ==============================================================================
