@@ -400,7 +400,7 @@ void do_cmd_go_up(int Ind) {
 		if (surface) {
 			dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 
-			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
+			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, d_ptr, 0, FALSE));
 #ifdef DED_IDDC_AWARE
 			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");
 #endif
@@ -411,7 +411,7 @@ void do_cmd_go_up(int Ind) {
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
+					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, TRUE, d_ptr, 0, FALSE));
 			}
 #endif
 #ifdef ENABLE_INSTANT_RES
@@ -422,7 +422,7 @@ void do_cmd_go_up(int Ind) {
 #endif
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			/* we now 'learned' the base level of this dungeon */
-			d_ptr->known |= 0x2;
+			if (!is_admin(p_ptr)) d_ptr->known |= 0x2;
 #endif
 			/* for jail dungeons, not actually needed, just to stay clean */
 			p_ptr->house_num = 0;
@@ -567,7 +567,7 @@ void do_cmd_go_up(int Ind) {
 			msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			/* we now 'learned' the base level of this dungeon */
-			wild_info[wpos->wy][wpos->wx].tower->known |= 0x2;
+			if (!is_admin(p_ptr)) wild_info[wpos->wy][wpos->wx].tower->known |= 0x2;
 #endif
 		}
 		else if (wpos->wz == -1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
@@ -1172,7 +1172,7 @@ void do_cmd_go_down(int Ind) {
 		if (surface) {
 			dungeon_type *d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 
-			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
+			msg_format(Ind, "\377%cYou enter %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, d_ptr, 0, FALSE));
 #ifdef DED_IDDC_AWARE
 			if (obtained) msg_print(Ind, "\377gYou obtain some item knowledge.");
 #endif
@@ -1183,7 +1183,7 @@ void do_cmd_go_down(int Ind) {
 				if (i == Ind) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
-					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
+					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, FALSE, d_ptr, 0, FALSE));
 			}
 #endif
 #ifdef ENABLE_INSTANT_RES
@@ -1339,7 +1339,7 @@ void do_cmd_go_down(int Ind) {
 			msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			/* we now 'learned' the base level of this dungeon */
-			wild_info[wpos->wy][wpos->wx].dungeon->known |= 0x2;
+			if (!is_admin(p_ptr)) wild_info[wpos->wy][wpos->wx].dungeon->known |= 0x2;
 #endif
 		}
 		else if (wpos->wz == 1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));

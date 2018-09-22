@@ -9890,8 +9890,10 @@ void process_monsters(void) {
 						//Sauron; overrides all others
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 						/* we now 'learned' who is the boss of this dungeon */
-						if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= 0x8;
-						else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
+						if (!is_admin(p_ptr)) {
+							if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= 0x8;
+							else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
+						}
  #endif
 						Send_music(pl, (p_ptr->music_monster = 43), -1);
 					}
@@ -9901,8 +9903,10 @@ void process_monsters(void) {
 						if (r_ptr->flags0 & RF0_FINAL_GUARDIAN) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 							/* we now 'learned' who is the boss of this dungeon */
-							if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= 0x8;
-							else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
+							if (!is_admin(p_ptr)) {
+								if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= 0x8;
+								else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
+							}
  #endif
 							Send_music(pl, (p_ptr->music_monster = 41), -1);
 						//Special Unique (non-respawning)? Can't override dungeon boss..

@@ -3199,7 +3199,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		    }
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 		    /* player has seen the entrance on the actual main screen -> add it to global exploration history knowledge */
-		    d_ptr->known |= 0x1;
+		    if (!is_admin(p_ptr)) d_ptr->known |= 0x1;
  #endif
 		}
 #endif
