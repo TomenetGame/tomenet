@@ -1194,7 +1194,7 @@ void do_cmd_go_down(int Ind) {
 #endif
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			/* we now 'learned' the base level of this dungeon */
-			d_ptr->known |= 0x2;
+			if (!is_admin(p_ptr)) d_ptr->known |= 0x2;
 #endif
 			/* for jail dungeons, not actually needed, just to stay clean */
 			p_ptr->house_num = 0;
