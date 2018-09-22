@@ -4563,8 +4563,10 @@ static void wild_display_map(int Ind, char mode) {
 				if (dun && !strcmp(d_info[dun->type].name + d_name, "The Shores of Valinor") && !admin) dun = NULL;
 				if (tow && !strcmp(d_info[tow->type].name + d_name, "The Shores of Valinor") && !admin) tow = NULL;
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-				if (dun && !dun->known) dun = NULL;
-				if (tow && !tow->known) tow = NULL;
+				if (!admin) {
+					if (dun && !dun->known) dun = NULL;
+					if (tow && !tow->known) tow = NULL;
+				}
  #endif
 				if (dun) {
 					if (tow) {
