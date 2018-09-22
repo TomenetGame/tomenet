@@ -25,6 +25,9 @@
 #define STARTING_STAT_LIMIT
 #endif
 
+/* Colourize log entries of invalid logins? (Deprecated - done in do_cmd_help_aux().) */
+//#define LOG_COLOUR_INVAL
+
 /*
  * Forward declare
  */
@@ -3205,9 +3208,13 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
 		acc_houses = acc.houses;
+#ifdef LOG_COLOUR_INVAL
 		/* Colour invalidated accounts in the log file (for /cheeze) */
 		if (p_ptr->inval) s_printf("\377R(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
 		else s_printf("(%s) ACC1:Player %s has flags %d (and %d houses)\n", showtime(), accname, acc.flags, acc_houses);
+#else
+		s_printf("(%s) ACC1:Player %s has flags %d%s and %d houses.\n", showtime(), accname, acc.flags, p_ptr->inval ? "[INVAL]" : "", acc_houses);
+#endif
 	}
 
 	/* handle banned player 1/2 */

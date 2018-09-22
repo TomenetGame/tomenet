@@ -123,7 +123,7 @@
 //#define LEVEL_GAINING_LIMIT
 
 /* Add specific colour code or anything else in front of a death message in the log file? (for /cheeze) */
-#if 0
+#if 1
  #define FORMATDEATH ""
 #else
  #define FORMATDEATH "\377r"
