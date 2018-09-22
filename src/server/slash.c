@@ -6039,9 +6039,9 @@ void do_slash_cmd(int Ind, char *message) {
 						type = d_ptr->type;
 						if (type == k) {
 							/* simply swap the tower */
-							d_ptr_tmp = wild_new->dungeon;
-							wild_new->dungeon = wild->dungeon;
-							wild->dungeon = d_ptr_tmp;
+							d_ptr_tmp = wild_new->tower;
+							wild_new->tower = wild->tower;
+							wild->tower = d_ptr_tmp;
 
 							flags = (wild_new->flags & WILD_F_UP);
 							wild->flags &= (~WILD_F_UP);
