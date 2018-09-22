@@ -13984,7 +13984,7 @@ create a character!):
     suppress any sort of magic from occurring around them at high probability,
     which is dubbed 'anti-magic field'. They can further strengthen it by
     wielding a Dark Sword (see (5.9)).
-    Warriors can also choose to become monk-like fighters, by training the
+    Warriors can also choose to become weaponless fighters, by training the
     'Martial Arts' skill. This will require them to wear no armour or only very
     light armour later on.
     The warrior class is recommended for beginners because it's forgiving in
@@ -14038,6 +14038,8 @@ create a character!):
     have a fair fighting potential with blunt or blessed weapons. If a priest
     wields a blessed weapon he will get his 'Blunt-mastery' skill applied to it
     even if it's not actually a blunt-type weapon.
+    Alternatively to blunt weapons, priests can choose the way of the monk by
+    training Martial Arts instead, to fight without weapons.
     Priests can learn many spells that are helpful to their party members. They
     use mainly wisdom for their prayers, determining the amount of mana and how
     low their failure rate is.
