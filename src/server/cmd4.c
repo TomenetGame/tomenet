@@ -1951,13 +1951,13 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 					if (p_ptr->depth_in_feet)
 						fprintf(fff, "  L \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max %6dft",
-								(d_ptr->known & 0x2) ? 'w' : 'D', (d_ptr->known & 0x4) ? 'w' : 'D',
-								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
+								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, 50 * get_recall_depth(&wpos, p_ptr));
 					else
 						fprintf(fff, "  L \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max Lv%4d",
-								(d_ptr->known & 0x2) ? 'w' : 'D', (d_ptr->known & 0x4) ? 'w' : 'D',
-								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
+								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, get_recall_depth(&wpos, p_ptr));
  #else
 					if (p_ptr->depth_in_feet)
@@ -2068,13 +2068,13 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 					if (p_ptr->depth_in_feet)
 						fprintf(fff, "  L \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max %6dft",
-								(d_ptr->known & 0x2) ? 'w' : 'D', (d_ptr->known & 0x4) ? 'w' : 'D',
-								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
+								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, -50 * get_recall_depth(&wpos, p_ptr));
 					else
 						fprintf(fff, "  L \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max Lv%4d",
-								(d_ptr->known & 0x2) ? 'w' : 'D', (d_ptr->known & 0x4) ? 'w' : 'D',
-								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
+								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
+								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, -get_recall_depth(&wpos, p_ptr));
  #else
 					if (p_ptr->depth_in_feet)
