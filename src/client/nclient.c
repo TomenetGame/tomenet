@@ -2969,8 +2969,8 @@ int Receive_mini_map_pos(void) {
 		Term_putstr(1, 1, -1, TERM_WHITE, "Selected:");
 		Term_putstr(1, 2, -1, TERM_WHITE, format("(%2d,%2d)", minimap_posx, minimap_posy));
 #endif
-#endif
 	}
+#endif
 
 	return 1;
 }
