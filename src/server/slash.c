@@ -6137,6 +6137,29 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format(Ind, "Set x=%d, y=%d for this wpos.", atoi(token[1]), atoi(token[2]));
 				return;
 			}
+			else if (prefix(message, "/forgetdun")) {
+				worldpos *tpos = &p_ptr->wpos;
+				cave_type **zcave, *c_ptr;
+				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+				struct dungeon_type *d_ptr;
+
+				if (!(zcave = getcave(tpos))) {
+					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
+					return;
+				}
+				c_ptr = &zcave[p_ptr->py][p_ptr->px];
+				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
+					msg_print(Ind, "Error: Not standing on a staircase grid.");
+					return;
+				}
+
+				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
+				else d_ptr = wild->dungeon;
+
+				d_ptr->known = 0x0;
+				msg_print(Ind, "Dungeon is know UNKNOWN.");
+				return;
+			}
 			else if (prefix(message, "/anotes")) {
 				int notes = 0;
 				for (i = 0; i < MAX_ADMINNOTES; i++) {
