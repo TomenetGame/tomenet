@@ -573,7 +573,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 	/* Path buffer */
 	char path[MAX_PATH_LENGTH];
 	/* General buffer */
-	char buf[1024];
+	char buf[1024], buf_tmp[1024];
 	/* Sub-menu information */
 	char hook[10][32];
 	/* Stationary title bar, derived from 1st line of the file or from 'what' parm. */
@@ -663,11 +663,13 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 
 
 	/* Pre-Parse the file */
+	buf_tmp[0] = '\377';
+	buf_tmp[1] = 's';
 	while (TRUE) {
 		/* Read a line or stop */
 		if (my_fgets(fff, buf, 1024, FALSE)) break;
 
-		/* XXX Parse "menu" items */
+		/* For help file: XXX Parse "menu" items */
 		if (prefix(buf, "***** ")) {
 			char b1 = '[', b2 = ']';
 
@@ -772,6 +774,13 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 
 		/* Hack -- show matches */
 		if (shower[0] && strstr(buf, shower)) attr = TERM_YELLOW;
+
+		/* Hack for log file: Colourize chat lines for better visual distinguishability */
+		if (buf[0] == '[') {
+			strncpy(buf_tmp + 2, buf, 1021);
+			buf_tmp[1023] = 0;
+			strcpy(buf, buf_tmp);
+		}
 
 		/* Dump the line */
 #if 0	// see above
