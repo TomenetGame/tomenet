@@ -4437,6 +4437,12 @@ void display_map(int Ind, int *cy, int *cx) {
 
 
 #define WILDMAP_SHOWS_STAIRS
+/* Mode flag: Set center point:
+   =0x01: reset to player pos
+   |0x02: y-9
+   |0x04: x+9
+   |0x08: y+9
+   |0x10: x-9 */
 static void wild_display_map(int Ind, char mode) {
 	player_type *p_ptr = Players[Ind];
 

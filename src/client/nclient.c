@@ -2960,6 +2960,18 @@ int Receive_mini_map_pos(void) {
 	minimap_attr = a;
 	minimap_char = c;
 
+#if 0
+	if (minimap_posx != -1) {// && screen_icky) {
+#if 0
+		c_put_str(TERM_WHITE, "Selected:", 0, 1);
+		c_put_str(TERM_WHITE, format("(%2d,%2d)", minimap_posx, minimap_posy), 0, 2);
+#else
+		Term_putstr(1, 1, -1, TERM_WHITE, "Selected:");
+		Term_putstr(1, 2, -1, TERM_WHITE, format("(%2d,%2d)", minimap_posx, minimap_posy));
+#endif
+#endif
+	}
+
 	return 1;
 }
 
