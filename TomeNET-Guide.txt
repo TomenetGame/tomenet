@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. August 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 22. September 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5689,6 +5689,7 @@ staircase colours (also visible on the world map):
 -NO_DEATH. The Training Tower in Bree has this flag. Players who die inside a
  no-death dungeon won't turn into a ghost if they 'die' but just be teleported
  back to town! They still lose about 20% experience (and gold) though.
+ They will not lose their winner (King/Queen/Emperor/Empress) state though.
  No-death dungeons/towers are marked by a green < or > symbol.
 
 -Unescapable dungeons. There is usually only one such dungeon and that is the
