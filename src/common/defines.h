@@ -1310,6 +1310,8 @@
 #define RI_TARGET_DUMMYA1	1144	/* normal armoured version */
 #define RI_TARGET_DUMMYA2	1145	/* snow-covered armoured version */
 #define RI_HORNED_REAPER_GE	1146	/* low-power Horned Reaper for 'Dungeon Keeper' event */
+#define RI_BLUE			1152
+#define RI_MIRROR		1153
 
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */

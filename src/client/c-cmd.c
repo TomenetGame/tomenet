@@ -445,8 +445,10 @@ void cmd_map(char mode) {
 			/* Wait for net input, or a key */
 			ch = inkey();
 
+			/* Allow to chat, to tell exact macros to other people easily */
+			if (ch == ':') cmd_message();
 			/* Take a screenshot */
-			if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
+			else if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
 			/* locate map (normal / rogue-like keys) */
 			else if (ch == '2' || ch == 'j') {
 				if (sel) {

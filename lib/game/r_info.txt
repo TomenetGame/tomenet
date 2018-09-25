@@ -20435,7 +20435,7 @@ D:He looks around with an odd mixture of annoyance, surprise and impatience
 D:and mutters unintelligibly about 'fixing' bugs of some sort..
 
 #The hero's mirror image, in the Death Fate
-N:1153:Mirror Image
+N:1153:mirror image
 G:p:c
 I:110:3d6:0:3:0
 W:127:255:150:0

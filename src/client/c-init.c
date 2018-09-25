@@ -434,6 +434,9 @@ static void init_monster_list() {
 			multihued = FALSE;
 			breathhued = FALSE;
 			basehued = FALSE;
+
+			/* hard-skip specialties */
+			if (atoi(buf + 2) == RI_BLUE || atoi(buf + 2) == RI_MIRROR) discard = TRUE;
 		}
 		if (buf[0] == 'F' && strstr(buf, "JOKEANGBAND")) discard = TRUE;
 		if (buf[0] == 'F' && strstr(buf, "PET")) discard = TRUE;
