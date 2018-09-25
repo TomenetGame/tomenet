@@ -3916,6 +3916,9 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 			return;
+		} else if (prefix(message, "/pclose")) { /* Hack for older clients/testing */
+			party_close(Ind);
+			return;
 		} else if (prefix(message, "/pquit") || prefix(message, "/pleave")) {
 			if (!p_ptr->party) {
 				msg_print(Ind, "You are not in a party.");
