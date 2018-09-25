@@ -2818,6 +2818,71 @@ int Receive_line_info(void) {
 #else
 	draw = TRUE;
 #endif
+
+	/* Hack: Mark minimap transmission as complete, so we can start adding some extra info to it, such as coordinates. */
+	if (ch == PKT_MINI_MAP && y == -1) {
+		int wx, wy, n = 1;
+		/* Deduce the currently selected world coords from our worldpos and the currently (client-side) selected grid.. */
+		if (screen_icky && minimap_posx != -1) {
+			Term_putstr(0, n++, -1, TERM_WHITE, "=World=");
+			Term_putstr(0, n++, -1, TERM_WHITE, "  Map");
+			n += 3;
+
+			Term_putstr(0, n++, -1, TERM_WHITE, "  You");
+			Term_putstr(0, n++, -1, TERM_WHITE, format("(%2d,%2d)", p_ptr->wpos.wx, p_ptr->wpos.wy));
+			n++;
+
+			if (minimap_selx != -1) {
+				wx = p_ptr->wpos.wx + minimap_selx - minimap_posx;
+				wy = p_ptr->wpos.wy - minimap_sely + minimap_posy;
+				Term_putstr(0, n++, -1, TERM_WHITE, " Select");
+				Term_putstr(0, n++, -1, TERM_WHITE, format("(%2d,%2d)", wx, wy));
+			} else {
+				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
+				Term_putstr(0, n++, -1, TERM_WHITE, "        ");
+			}
+			n += 3;
+
+			Term_putstr(0, n++, -1, TERM_WHITE, "\377ys\377w+\377ydir\377w:");
+			Term_putstr(0, n++, -1, TERM_WHITE, " Select");
+			n++;
+			Term_putstr(0, n++, -1, TERM_WHITE, "\377yr\377w/\377y5\377w:");
+			Term_putstr(0, n++, -1, TERM_WHITE, " Reset");
+			n++;
+			Term_putstr(0, n++, -1, TERM_WHITE, "\377yESC\377w:");
+			Term_putstr(0, n++, -1, TERM_WHITE, " Exit");
+			n += 5;
+
+			/* Specialty: Only display map key if in bigmap mode.
+			   (Note: This is the only check of this kind currently) */
+			if (screen_hgt == MAX_SCREEN_HGT) { //(c_cfg.big_map) {
+				Term_putstr(0, n++, -1, TERM_WHITE, "@ You");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377yT\377w Town");
+				Term_putstr(0, n++, -1, TERM_WHITE, "> Dung.");
+				Term_putstr(0, n++, -1, TERM_WHITE, "< Tower");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377g.\377w Grass");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377g*\377w Woods");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377s*\377w Thick");
+				Term_putstr(0, n++, -1, TERM_WHITE, "  woods");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377v%\377w Swamp");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377U,\377w Coast");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377B~\377w River");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377b%\377w Ocean");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377D^\377w Mount");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377r^\377w Volca");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377y.\377w Deser");
+				Term_putstr(0, n++, -1, TERM_WHITE, "\377w.\377w Icy");
+				Term_putstr(0, n++, -1, TERM_WHITE, "  waste");
+				n++;
+			}
+
+			/* Hack: Hide cursor */
+			Term->scr->cx = Term->wid;
+			Term->scr->cu = 1;
+		}
+		return 1;
+	}
+
 	/* Check the max line count */
 	if (y > last_line_info)
 		last_line_info = y;
@@ -2908,6 +2973,7 @@ int Receive_line_info(void) {
 	return 0;
 }
 
+#if 0 /* Instead, Receive_line_info() is used, with PKT_MINI_MAP as 'calling' packet */
 /*
  * Note that this function does not honor the "screen_icky"
  * flag, as it is only used for displaying the mini-map,
@@ -2922,6 +2988,20 @@ int Receive_mini_map(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%hd", &ch, &y)) <= 0) return n;
 
 	bytes_read = 3;
+
+	/* Hack: Mark minimap transmission as complete, so we can start adding some extra info to it, such as coordinates. */
+	if (y == -1) {
+		if (screen_icky && minimap_posx != -1) {
+ #if 0
+			c_put_str(TERM_WHITE, "Selected:", 0, 1);
+			c_put_str(TERM_WHITE, format("(%2d,%2d)", p_ptr->wpos.wx, p_ptr->wpos.wy), 0, 2);
+ #else
+			Term_putstr(1, 1, -1, TERM_WHITE, "Selected:");
+			Term_putstr(1, 2, -1, TERM_WHITE, format("(%2d,%2d)", p_ptr->wpos.wx, p_ptr->wpos.wy));
+ #endif
+		}
+		return 1;
+	}
 
 	/* Check the max line count */
 	if (y > last_line_info)
@@ -2946,6 +3026,7 @@ int Receive_mini_map(void) {
 
 	return 1;
 }
+#endif
 
 int Receive_mini_map_pos(void) {
 	char	ch, c;
@@ -2960,17 +3041,8 @@ int Receive_mini_map_pos(void) {
 	minimap_attr = a;
 	minimap_char = c;
 
-#if 0
-	if (minimap_posx != -1) {// && screen_icky) {
-#if 0
-		c_put_str(TERM_WHITE, "Selected:", 0, 1);
-		c_put_str(TERM_WHITE, format("(%2d,%2d)", minimap_posx, minimap_posy), 0, 2);
-#else
-		Term_putstr(1, 1, -1, TERM_WHITE, "Selected:");
-		Term_putstr(1, 2, -1, TERM_WHITE, format("(%2d,%2d)", minimap_posx, minimap_posy));
-#endif
-	}
-#endif
+	//Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+	minimap_selx = -1; //reset grid selection
 
 	return 1;
 }

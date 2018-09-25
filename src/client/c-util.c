@@ -577,6 +577,13 @@ static char inkey_aux(void) {
 					Term_draw(minimap_posx, minimap_posy, TERM_WHITE, '@');
 				else
 					Term_draw(minimap_posx, minimap_posy, minimap_attr, minimap_char);
+				/* New: Grid selection possible, to verify coordinates */
+				if (minimap_selx != -1) {
+					if ((ticks % 6) < 3)
+						Term_draw(minimap_selx, minimap_sely, TERM_ORANGE, 'X');
+					else
+						Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+				}
 			}
 
 			/* Look for a keypress */

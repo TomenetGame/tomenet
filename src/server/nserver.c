@@ -6825,6 +6825,9 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
 	Packet_printf(&connp->c, "%c%hd", PKT_MINI_MAP, y);
 	if (Ind2) Packet_printf(&connp2->c, "%c%hd", PKT_MINI_MAP, y);
 
+	/* Hack: Just a 'transmission finished' marker packet? */
+	if (y == -1) return 1;
+
 	/* Each column */
 	for (x = 0; x < 80; x++) {
 		/* Obtain the char/attr pair */

@@ -409,9 +409,9 @@ bool in_game = FALSE;
 bool rand_term_lamp;
 int rand_term_lamp_ticks;
 
-int minimap_posx = -1, minimap_posy;
-byte minimap_attr;
-char minimap_char;
+int minimap_posx = -1, minimap_posy, minimap_selx = -1, minimap_sely;
+byte minimap_attr, minimap_selattr;
+char minimap_char, minimap_selchar;
 
 /* To suppress positive confirmation messages on automated char dumps/screen shots */
 bool silent_dump = FALSE;

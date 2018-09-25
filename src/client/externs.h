@@ -991,9 +991,9 @@ extern bool in_game;
 extern bool rand_term_lamp;
 extern int rand_term_lamp_ticks;
 
-extern int minimap_posx, minimap_posy;
-extern byte minimap_attr;
-extern char minimap_char;
+extern int minimap_posx, minimap_posy, minimap_selx, minimap_sely;
+extern byte minimap_attr, minimap_selattr;
+extern char minimap_char, minimap_selchar;
 
 extern bool silent_dump;
 extern bool equip_no_weapon;

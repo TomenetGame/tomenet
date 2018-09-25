@@ -4699,6 +4699,9 @@ static void wild_display_map(int Ind, char mode) {
 		Send_mini_map(Ind, y, sa, sc);
 	}
 
+	/* Indicate 'finished sending', so the client can add some extra info to the map */
+	if (!is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) Send_mini_map(Ind, -1, 0, 0);
+
 	/* Restore lighting effects */
 	p_ptr->floor_lighting = old_floor_lighting;
 	p_ptr->wall_lighting = old_wall_lighting;

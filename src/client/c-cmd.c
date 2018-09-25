@@ -391,14 +391,23 @@ void cmd_stay_one(void) {
 	Send_stay_one();
 }
 
+/* Mode:
+   0 = current floor or worldmap
+   1 = force worldmap
+*/
 void cmd_map(char mode) {
 	char ch, dir = 0;
+	bool sel = FALSE;
 
 	/* Hack -- if the screen is already icky, ignore this command */
 	if (screen_icky && !mode) return;
 
 	/* Save the screen */
 	Term_save();
+
+	/* Reset grid selection if any */
+	//Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+	minimap_selx = -1;
 
 	while (TRUE) {
 		/* Send the request */
@@ -408,8 +417,26 @@ void cmd_map(char mode) {
 		last_line_info = 0;
 
 		while (TRUE) {
+			/* Remember the grid below our grid-selection marker */
+			if (sel) {
+				minimap_selattr = Term->scr->a[minimap_sely][minimap_selx];
+				minimap_selchar = Term->scr->c[minimap_sely][minimap_selx];
+			}
+
 			/* Wait until we get the whole thing */
 			if (last_line_info == 23 + HGT_PLUS) {
+				/* Abuse this for drawing selection cursor */
+				int wx, wy;
+				if (minimap_selx != -1) {
+					wx = p_ptr->wpos.wx + minimap_selx - minimap_posx;
+					wy = p_ptr->wpos.wy - minimap_sely + minimap_posy;
+					Term_putstr(0, 9, -1, TERM_WHITE, " Select");
+					Term_putstr(0, 10, -1, TERM_WHITE, format("(%2d,%2d)", wx, wy));
+				} else {
+					Term_putstr(0, 9, -1, TERM_WHITE, "        ");
+					Term_putstr(0, 10, -1, TERM_WHITE, "        ");
+				}
+
 				/* Hack - Get rid of the cursor - mikaelh */
 				Term->scr->cx = Term->wid;
 				Term->scr->cu = 1;
@@ -422,32 +449,108 @@ void cmd_map(char mode) {
 			if (ch == KTRL('T')) xhtml_screenshot("screenshot????");
 			/* locate map (normal / rogue-like keys) */
 			else if (ch == '2' || ch == 'j') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					if (minimap_sely < CL_WINDOW_HGT - 2) minimap_sely++;
+					continue;
+				}
 				dir = 0x2;
 				break;
 			} else if (ch == '6' || ch == 'l') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					if (minimap_selx < 8 + 64 - 1) minimap_selx++;
+					continue;
+				}
 				dir = 0x4;
 				break;
 			} else if (ch == '8' || ch == 'k') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					if (minimap_sely > 1) minimap_sely--;
+					continue;
+				}
 				dir = 0x8;
 				break;
 			} else if (ch == '4' || ch == 'h') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					if (minimap_selx > 8) minimap_selx--;
+					continue;
+				}
 				dir = 0x10;
 				break;
 			} else if (ch == '1' || ch == 'b') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					if (minimap_sely < CL_WINDOW_HGT - 2) minimap_sely++;
+					if (minimap_selx > 8) minimap_selx--;
+					continue;
+				}
 				dir = 0x2 | 0x10;
 				break;
 			} else if (ch == '3' || ch == 'n') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					if (minimap_sely < CL_WINDOW_HGT - 2) minimap_sely++;
+					if (minimap_selx < 8 + 64 - 1) minimap_selx++;
+					continue;
+				}
 				dir = 0x2 | 0x4;
 				break;
 			} else if (ch == '9' || ch == 'u') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					if (minimap_sely > 1) minimap_sely--;
+					if (minimap_selx < 8 + 64 - 1) minimap_selx++;
+					continue;
+				}
 				dir = 0x8 | 0x10;
 				break;
 			} else if (ch == '7' || ch == 'y') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					if (minimap_sely > 1) minimap_sely--;
+					if (minimap_selx > 8) minimap_selx--;
+					continue;
+				}
 				dir = 0x8 | 0x4;
 				break;
 			} else if (ch == '5' || ch == ' ') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					minimap_selx = minimap_posx;
+					minimap_sely = minimap_posy;
+					minimap_selattr = minimap_attr;
+					minimap_selchar = minimap_char;
+					continue;
+				}
 				dir = 0;
 				break;
+			}
+			/* manual grid selection on the map */
+			else if (ch == 's') {
+				if (sel) {
+					Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+					sel = FALSE;
+					minimap_selx = -1;
+				} else {
+					sel = TRUE;
+					minimap_selx = minimap_posx;
+					minimap_sely = minimap_posy;
+					minimap_selattr = minimap_attr;
+					minimap_selchar = minimap_char;
+				}
+			} else if (ch == 'r' && sel) {
+				Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+				minimap_selx = minimap_posx;
+				minimap_sely = minimap_posy;
+				minimap_selattr = minimap_attr;
+				minimap_selchar = minimap_char;
+			} else if (ch == ESCAPE && sel == TRUE) {
+				Term_draw(minimap_selx, minimap_sely, minimap_selattr, minimap_selchar);
+				sel = FALSE;
+				minimap_selx = -1;
 			}
 			/* user abort? */
 			else if (ch == ESCAPE || ch == 'M') break;
