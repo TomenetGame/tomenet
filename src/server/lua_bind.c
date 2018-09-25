@@ -598,7 +598,7 @@ void lua_count_houses(int Ind) {
 		}
 }
 int lua_count_houses_id(s32b id) {
-	int i, ho = 0, co = 0, lev = lookup_player_level(id);
+	int i, ho = 0, co = 0, lev = lookup_player_maxplv(id);
 
 	for (i = 0; i < num_houses; i++)
 		if ((houses[i].dna->owner_type == OT_PLAYER) &&

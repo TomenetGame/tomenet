@@ -3555,6 +3555,11 @@ int Receive_party(void) {
 	strcpy(party_info_members, pmembers);
 	strcpy(party_info_owner, powner);
 
+	/* Check for iron team state */
+	if (!strncmp(party_info_name, "Iron Team", 9)) party_info_mode = PA_IRONTEAM; /* Normal (open) iron team */
+	else if (!strncmp(party_info_name + 2, "Iron Team", 9)) party_info_mode = (PA_IRONTEAM | PA_IRONTEAM_CLOSED); /* Prefixed colour code indicates 'closed' iron team */
+	else party_info_mode = PA_NORMAL; /* Normal party (or no party!) */
+
 	/* Re-show party info */
 	if (party_mode) {
 		if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
@@ -3564,8 +3569,15 @@ int Receive_party(void) {
 			if (strlen(pname)) Term_putstr(0, 21, -1, TERM_WHITE, format("%s (%s, %s)", pname, pmembers, powner));
 			else Term_putstr(0, 21, -1, TERM_SLATE, "(You are not in a party.)");
 
-                        if (party_info_name[0]) Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add a player to party");
-                        else Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add yourself to party");
+			if (party_info_name[0]) Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add a player to party");
+			else Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add yourself to party");
+
+			if (is_newer_than(&server_version, 4, 7, 1, 1, 0, 0)) {
+				if ((party_info_mode & PA_IRONTEAM) && !(party_info_mode & PA_IRONTEAM_CLOSED))
+					Term_putstr(40, 6, -1, TERM_WHITE, "(\377G0\377w) Close your iron team");
+				else
+					Term_putstr(40, 6, -1, TERM_WHITE, "                              ");
+			}
 		} else {
 			Term_erase(0, 18, 70);
 			Term_erase(0, 20, 90);

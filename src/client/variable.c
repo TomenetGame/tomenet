@@ -42,7 +42,8 @@ s16b store_num;				/* The current store number */
 /* XXX Mergin for future expansion -- this should be handled in Net_setup */
 char spell_info[MAX_REALM + 9][9][9][80];		/* Spell information */
 
-char party_info_name[MAX_CHARS];		/* Information about your party: */
+byte party_info_mode = 0x0;			/* Information about your party: */
+char party_info_name[MAX_CHARS];
 char party_info_members[MAX_CHARS];
 char party_info_owner[MAX_CHARS];
 char guild_info_name[MAX_CHARS];		/* Information about your guild: */

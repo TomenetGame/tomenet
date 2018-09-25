@@ -89,7 +89,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	7
-#define SF_VERSION_PATCH	5
+#define SF_VERSION_PATCH	6
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -944,6 +944,12 @@
  #define IDDC_NO_TRADE_CHEEZE 5
 #endif
 
+/* Do not allow an iron team owner to add any further players as soon as he hits level 9.
+   This allows for creating a sort of 'no-trading-allowed' character,
+   if he's the only member of his iron team, starting at level 9, guaranteedly.
+   NOTE: Alternatively the PA_IRONTEAM_CLOSED flag can simply be used. */
+//#define IRON_TEAM_LEVEL9
+
 /* Give a crazy form learning boost inside Ironman Deep Dive Challenge? [9] */
 #define IDDC_MIMICRY_BOOST 9
 
@@ -1214,12 +1220,14 @@
 #define PARTY_HOSTILE		5
 #define PARTY_PEACE		6
 #define PARTY_CREATE_IRONTEAM	7
+#define PARTY_CLOSE		8
 
 /*
  * Party modes
  */
-#define PA_NORMAL	0
-#define PA_IRONTEAM	1
+#define PA_NORMAL		0x0
+#define PA_IRONTEAM		0x1
+#define PA_IRONTEAM_CLOSED	0x2	/* Not implemented. Could replace IRON_TEAM_LEVEL9: Allow owner to manually close the party to newcomers. */
 
 /*
  * Guild commands

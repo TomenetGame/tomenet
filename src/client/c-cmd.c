@@ -3604,6 +3604,10 @@ void cmd_party(void) {
 		} else Term_putstr(5, 4, -1, TERM_WHITE, "(\377G3\377w) Add a player to party");
 		Term_putstr(5, 5, -1, TERM_WHITE, "(\377G4\377w) Delete a player from party");
 		Term_putstr(5, 6, -1, TERM_WHITE, "(\377G5\377w) Leave your current party");
+		if ((party_info_mode & PA_IRONTEAM) && !(party_info_mode & PA_IRONTEAM_CLOSED))
+			Term_putstr(40, 6, -1, TERM_WHITE, "(\377G0\377w) Close your iron team");
+		else
+			Term_putstr(40, 6, -1, TERM_WHITE, "                              ");
 
 		Term_putstr(5, 8, -1, TERM_WHITE, "(\377Ua\377w) Create a new guild");
 		if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
@@ -3683,6 +3687,11 @@ void cmd_party(void) {
 		else if (i == '5') {
 			/* Send the command */
 			Send_party(PARTY_REMOVE_ME, "");
+		}
+
+		else if (i == '0' && (party_info_mode & PA_IRONTEAM) && !(party_info_mode & PA_IRONTEAM_CLOSED)) {
+			if (get_check2("Close your Iron Team?", FALSE))
+				Send_party(PARTY_CLOSE, "");
 		}
 
 		/* Attack player/party */
@@ -4914,7 +4923,7 @@ static void cmd_master_aux_system() {
 static void cmd_master(void) {
 	char i = 0;
 
-	party_mode = TRUE;
+	//party_mode = TRUE;
 
 	/* Save screen */
 	Term_save();
@@ -4978,7 +4987,7 @@ static void cmd_master(void) {
 	Term_load();
 
 	/* No longer in party mode */
-	party_mode = FALSE;
+	//party_mode = FALSE;
 
 	/* Flush any events */
 	Flush_queue();

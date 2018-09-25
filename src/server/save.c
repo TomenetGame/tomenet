@@ -1967,6 +1967,7 @@ static void wr_player_names(void) {
 			wr_byte(ptr->class);
 			wr_byte(ptr->mode);
 			wr_byte(ptr->level);
+			wr_byte(ptr->max_plv);
 			wr_u16b(ptr->party); /* changed to u16b to allow more parties */
 			wr_byte(ptr->guild);
 			wr_u32b(ptr->guild_flags);

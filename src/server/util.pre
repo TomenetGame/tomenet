@@ -43,6 +43,8 @@ struct hash_entry
 
 	time_t laston;			/* Last on time */
 	struct hash_entry *next;	/* Next entry in the chain */
+
+	/* ..and more that has been added..*/
 };
 
 extern struct hash_entry *lookup_player(int id);

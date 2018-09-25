@@ -771,7 +771,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	}
 	if (q_ptr->party) {
 		fprintf(fff, " '%s%s\377U'",
-		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
+		(parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
 		parties[q_ptr->party].name);
 	}
  } else { /* COMPACT_ALT */
@@ -898,7 +898,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->party) {
 		if (!q_ptr->guild) fprintf(fff, ", Party:");
 		fprintf(fff, " '%s%s\377U'",
-		(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
+		(parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
 		parties[q_ptr->party].name);
 	}
  }
@@ -1059,7 +1059,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			if (q_ptr->party) {
 				if (!q_ptr->guild) fprintf(fff, ", Party:");
 				fprintf(fff, " '%s%s\377U'",
-				(parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
+				(parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
 				parties[q_ptr->party].name);
 			}
 		} else fprintf(fff, "  \377U(%s\377U)", q_ptr->info_msg);
@@ -1282,7 +1282,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->party)
 		fprintf(fff, "%s '%s%s\377U'",
 		    q_ptr->guild ? "" : ", Party:",
-		    (parties[q_ptr->party].mode == PA_IRONTEAM) ? "\377s" : "",
+		    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
 		    parties[q_ptr->party].name);
   #endif // 0
  } //#endif	/* ULTRA_COMPACT_PLAYERLIST */

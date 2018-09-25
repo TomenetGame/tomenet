@@ -4342,6 +4342,9 @@ void check_experience(int Ind) {
 
 		/* Window stuff - Items might be come (un)usable depending on level! */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+		/* Update player level in the database */
+		clockin(Ind, 1);
 	}
 
 	if (!newlv) {
@@ -4367,7 +4370,7 @@ void check_experience(int Ind) {
 
 	snprintf(str, 160, "\374\377G%s has attained level %d.", p_ptr->name, p_ptr->lev);
 	s_printf("%s has attained level %d.\n", p_ptr->name, p_ptr->lev);
-	clockin(Ind, 1);	/* Set player level */
+	clockin(Ind, 11); /* Update player maximum level in the database */
 #ifdef TOMENET_WORLDS
 	if (cfg.worldd_lvlup) world_msg(str);
 #endif
@@ -4905,7 +4908,7 @@ return;
 #ifdef IRON_TEAM_EXPERIENCE
 	/* moved here from party_gain_exp() for implementing the 'sync'-exception */
 	/* Iron Teams only get exp if the whole team is on the same floor! - C. Blue */
-	if (p_ptr->party && parties[p_ptr->party].mode == PA_IRONTEAM) {
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM)) {
 		for (i = 1; i <= NumPlayers; i++) {
 			if (p_ptr->conn == NOT_CONNECTED) continue;
 
@@ -5039,7 +5042,7 @@ return;
 
 #ifdef IRON_TEAM_EXPERIENCE
 	/* possibly set new maximum for iron team */
-	if (p_ptr->party && parties[p_ptr->party].mode == PA_IRONTEAM &&
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) &&
 	    p_ptr->max_exp > parties[p_ptr->party].experience)
 		parties[p_ptr->party].experience = p_ptr->max_exp;
 #endif

@@ -7691,7 +7691,7 @@ int Send_party(int Ind, bool leave, bool clear) {
 	char bufn_compat[90], bufm_compat[20], bufo_compat[50];
 
 	/* prepare data for outdated clients */
-	if (pa_ptr->mode == PA_IRONTEAM)
+	if (pa_ptr->mode & PA_IRONTEAM)
 		snprintf(bufn_compat, 90, "Party (Iron Team): %s", pa_ptr->name);
 	else
 		snprintf(bufn_compat, 90, "Party  : %s", pa_ptr->name);
@@ -7719,9 +7719,12 @@ int Send_party(int Ind, bool leave, bool clear) {
 	}
 
 	/* prepare data for clients */
-	if (pa_ptr->mode == PA_IRONTEAM)
-		snprintf(bufn, 90, "Iron Team: '\377%c%s\377w'", COLOUR_CHAT_PARTY, pa_ptr->name);
-	else
+	if (pa_ptr->mode & PA_IRONTEAM) {
+		if (pa_ptr->mode & PA_IRONTEAM_CLOSED)
+			snprintf(bufn, 90, "\377sIron Team: '\377%c%s\377s'", COLOUR_CHAT_PARTY, pa_ptr->name);
+		else
+			snprintf(bufn, 90, "Iron Team: '\377%c%s\377w'", COLOUR_CHAT_PARTY, pa_ptr->name);
+	} else
 		snprintf(bufn, 90, "Party: '\377%c%s\377w'", COLOUR_CHAT_PARTY, pa_ptr->name);
 	snprintf(buf, 10, "%d", pa_ptr->members);
 	strcpy(bufm, buf);
@@ -11499,12 +11502,14 @@ static int Receive_party(int ind) {
 	int player = -1, n;
 	char ch, buf[MAX_CHARS];
 	s16b command;
+	player_type *p_ptr;
 
 	if (connp->id != -1) player = GetInd[connp->id];
-		else return 1;
+	else return 1;
+	p_ptr = Players[player];
 
 	/* pvp-mode characters don't get a choice */
-	if (Players[player]->mode & MODE_PVP) {
+	if (p_ptr->mode & MODE_PVP) {
 		msg_print(player, "\377oAs pvp-mode character you cannot use the party menu.");
 		return 1;
 	}
@@ -11527,7 +11532,7 @@ static int Receive_party(int ind) {
 		party_create_ironteam(player, buf);
 		break;
 	case PARTY_ADD:
-		if (!Players[player]->party) party_add_self(player, buf);
+		if (!p_ptr->party) party_add_self(player, buf);
 		else party_add(player, buf);
 		break;
 	case PARTY_DELETE:
@@ -11541,6 +11546,9 @@ static int Receive_party(int ind) {
 		break;
 	case PARTY_PEACE:
 		remove_hostility(player, buf);
+		break;
+	case PARTY_CLOSE:
+		party_close(player);
 		break;
 	}
 

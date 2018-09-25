@@ -3386,7 +3386,7 @@ errr rd_server_savefile() {
 	/* Read the player name database if new enough */
 	{
 		char name[80];
-		byte level, old_party, guild, race, class, mode;
+		byte level, max_plv, old_party, guild, race, class, mode;
 		u32b acct, guild_flags;
 		u16b party;
 		u16b xorder;
@@ -3412,6 +3412,8 @@ errr rd_server_savefile() {
 			rd_byte(&class);
 			if (!s_older_than(4, 2, 2)) rd_byte(&mode); else mode = 0;
 			rd_byte(&level);
+			if (s_older_than(4, 7, 6)) max_plv = level;
+			else rd_byte(&max_plv);
 			if (s_older_than(4, 2, 4)) {
 				rd_byte(&old_party);
 				party = old_party; /* convert old byte to u16b - mikaelh */
@@ -3443,7 +3445,7 @@ errr rd_server_savefile() {
 			else winner = 0;
 
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, mode, level, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner);
+			add_player_name(name, tmp32s, acct, race, class, mode, level, max_plv, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner);
 		}
 		s_printf("Read %d player name records.\n", tmp32u);
 	}

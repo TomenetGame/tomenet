@@ -158,6 +158,7 @@ extern s16b store_num;
 
 extern char spell_info[MAX_REALM + 9][9][9][80];
 
+extern byte party_info_mode;
 extern char party_info_name[MAX_CHARS];
 extern char party_info_members[MAX_CHARS];
 extern char party_info_owner[MAX_CHARS];

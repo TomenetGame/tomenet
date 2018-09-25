@@ -3655,7 +3655,9 @@ struct hash_entry {
 	byte mode;			/* Character mode (for account overview screen) */
 
 	/* new in 3.4.2 */
-	byte level;			/* Player maximum level */
+	byte level;			/* Player level. (In the very distant past: Player maximum level.) */
+	/* new in 3.7.1b+ */
+	byte max_plv;			/* Player maximum level */
 	/* changed from byte to u16b - mikaelh */
 	u16b party;			/* Player party */
 	/* 3.5.0 */
