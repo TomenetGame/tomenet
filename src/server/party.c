@@ -2727,6 +2727,7 @@ void party_close(int Ind) {
 	}
 
 	msg_print(Ind, "\377DYour iron team is now closed off to anyone who is not already a member!");
+	s_printf("IRON_TEAM_CLOSED: %s (%d/%d) closed '%s' (%d members)\n", p_ptr->name, p_ptr->lev, p_ptr->max_plv, parties[party_id].name, parties[party_id].members);
 	parties[party_id].mode |= PA_IRONTEAM_CLOSED;
 	/* Update info for client */
 	Send_party(Ind, FALSE, FALSE);

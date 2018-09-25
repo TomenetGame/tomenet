@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. September 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 25. September 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.1a - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1858,6 +1858,8 @@ Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
             Also, members can only trade items and money with other members.
+            The owner can decide to 'close' an iron team in the party menu,
+            which will permanently disallow addition of any further members.
 
 kinging     The process of beating Morgoth, the game boss, and thereby
             acquiring a royal title (king/queen/emperor/empress).
@@ -17835,6 +17837,14 @@ Parties:
     Note that if you leave an iron team and your character has already gained
     experience you will be unable to join again.
     If the owner leaves his own party, the whole party is disbanded.
+
+-Close your iron team
+    The owner of an iron team can decide to 'close' an iron team here, which
+    will permanently disallow addition of any further members. Use with care
+    as this is irreversible.
+    Note that this option allows you to create a 'no-trading-allowed' character
+    by creating an iron team with your character being the only member of it,
+    and then closing it immediately.
 
 
 Guilds:
