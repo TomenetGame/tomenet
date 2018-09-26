@@ -369,6 +369,9 @@ s32b lua_spell_chance(int i, s32b chance, int level, int skill_level, int mana, 
 	if (p_ptr->stun > 50) chance += 25;
 	else if (p_ptr->stun) chance += 15;
 
+	/* icky_wield increases fail chance */
+	if (p_ptr->icky_wield) chance += 15;
+
 	/* Always a 5 percent chance of working */
 	if (chance > 95) chance = 95;
 

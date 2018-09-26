@@ -2508,6 +2508,10 @@ int Receive_confused(void) {
 	if (screen_icky) Term_switch(0);
 	prt_confused(confused);
 	if (screen_icky) Term_switch(0);
+
+	/* We need this for client-side spell chance calc: */
+	p_ptr->confused = confused;
+
 	return 1;
 }
 
@@ -2611,6 +2615,10 @@ int Receive_blind(void) {
 	if (screen_icky) Term_switch(0);
 	prt_blind(blind);
 	if (screen_icky) Term_switch(0);
+
+	/* We need this for client-side spell chance calc: */
+	p_ptr->blind = blind;
+
 	return 1;
 }
 
@@ -2624,6 +2632,10 @@ int Receive_stun(void) {
 	if (screen_icky) Term_switch(0);
 	prt_stun(stun);
 	if (screen_icky) Term_switch(0);
+
+	/* We need this for client-side spell chance calc: */
+	p_ptr->stun = stun;
+
 	return 1;
 }
 
@@ -3967,6 +3979,9 @@ int Receive_encumberment(void) {
 	    icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
 
 	if (screen_icky) Term_switch(0);
+
+	/* We need this for client-side spell chance calc: */
+	p_ptr->icky_wield = icky_wield;
 
 	return 1;
 }
