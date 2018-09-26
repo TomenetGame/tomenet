@@ -770,9 +770,14 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		fprintf(fff, " \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 	}
 	if (q_ptr->party) {
-		fprintf(fff, " '%s%s\377U'",
-		(parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-		parties[q_ptr->party].name);
+		if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+			fprintf(fff, " \377D<%s%s\377D>\377U",
+			    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+			    parties[q_ptr->party].name);
+		else
+			fprintf(fff, " '%s%s\377U'",
+			    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+			    parties[q_ptr->party].name);
 	}
  } else { /* COMPACT_ALT */
 	/* Print a message */
@@ -897,9 +902,14 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	}
 	if (q_ptr->party) {
 		if (!q_ptr->guild) fprintf(fff, ", Party:");
-		fprintf(fff, " '%s%s\377U'",
-		(parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-		parties[q_ptr->party].name);
+		if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+			fprintf(fff, " \377D<%s%s\377D>\377U",
+			    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+			    parties[q_ptr->party].name);
+		else
+			fprintf(fff, " '%s%s\377U'",
+			    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+			    parties[q_ptr->party].name);
 	}
  }
 
@@ -1058,9 +1068,14 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 				fprintf(fff, ", \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 			if (q_ptr->party) {
 				if (!q_ptr->guild) fprintf(fff, ", Party:");
-				fprintf(fff, " '%s%s\377U'",
-				(parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-				parties[q_ptr->party].name);
+				if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+					fprintf(fff, " \377D<%s%s\377D>\377U",
+					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+					    parties[q_ptr->party].name);
+				else
+					fprintf(fff, " '%s%s\377U'",
+					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+					    parties[q_ptr->party].name);
 			}
 		} else fprintf(fff, "  \377U(%s\377U)", q_ptr->info_msg);
 	} else fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
@@ -1279,11 +1294,17 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	if (q_ptr->guild)
 		fprintf(fff, ", \377y[\377%c%s\377y]\377U",
 		    COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
-	if (q_ptr->party)
-		fprintf(fff, "%s '%s%s\377U'",
-		    q_ptr->guild ? "" : ", Party:",
-		    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-		    parties[q_ptr->party].name);
+	if (q_ptr->party) {
+		if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+			fprintf(fff, " \377D<%s%s\377D>\377U",
+			    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+			    parties[q_ptr->party].name);
+		else
+			fprintf(fff, "%s '%s%s\377U'",
+			    q_ptr->guild ? "" : ", Party:",
+			    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+			    parties[q_ptr->party].name);
+	}
   #endif // 0
  } //#endif	/* ULTRA_COMPACT_PLAYERLIST */
 }//#endif /* COMPACT_PLAYERLIST */
