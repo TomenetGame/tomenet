@@ -5467,12 +5467,13 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 			else if (prefix(message, "/enlight") || prefix(message, "/en")) {
 				wiz_lite(Ind);
-				(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
-				(void)detect_object(Ind, DEFAULT_RADIUS * 2);
+				//(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
+				//(void)detect_object(Ind, DEFAULT_RADIUS * 2);
+				(void)detect_treasure_object(Ind, DEFAULT_RADIUS * 2);
 				(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
 				(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
 				if (k) {
-//					(void)detect_trap(Ind);
+					//(void)detect_trap(Ind);
 					identify_pack(Ind);
 					self_knowledge(Ind);
 

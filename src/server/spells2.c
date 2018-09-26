@@ -2694,8 +2694,9 @@ bool detection(int Ind, int rad) {
 	bool	detect = FALSE;
 
 	/* Detect the easy things */
-	if (detect_treasure(Ind, rad)) detect = TRUE;
-	if (detect_object(Ind, rad)) detect = TRUE;
+	//if (detect_treasure(Ind, rad)) detect = TRUE;
+	//if (detect_object(Ind, rad)) detect = TRUE;
+	if (detect_treasure_object(Ind, rad)) detect = TRUE;
 	if (detect_trap(Ind, rad)) detect = TRUE;
 	if (detect_sdoor(Ind, rad)) detect = TRUE;
 	if (detect_creatures(Ind)) detect = TRUE;	/* not radius-ed for now */
@@ -2900,6 +2901,104 @@ bool detect_object(int Ind, int rad) {
 
 				/* Redraw */
 				lite_spot(Ind, i, j);
+			}
+		}
+	}
+
+	return (detect);
+}
+
+/* Combine treasure and object detection */
+bool detect_treasure_object(int Ind, int rad) {
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr;
+	int		py = p_ptr->py, px = p_ptr->px;
+
+	int		y, x;
+	bool	detect = FALSE;
+
+	cave_type	*c_ptr;
+	byte		*w_ptr;
+	object_type	*o_ptr;
+	cave_type **zcave;
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	l_ptr = getfloor(wpos);
+
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+
+	/* Scan the current panel */
+//	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
+	for (y = py - rad; y <= py + rad; y++) {
+//		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
+		for (x = px - rad; x <= px + rad; x++) {
+			/* Reject locations outside of dungeon */
+			if (!in_bounds4(l_ptr, y, x)) continue;
+
+			/* Reject those out of radius */
+			if (distance(py, px, y, x) > rad) continue;
+
+			c_ptr = &zcave[y][x];
+			w_ptr = &p_ptr->cave_flag[y][x];
+
+			o_ptr = &o_list[c_ptr->o_idx];
+
+			/* Magma/Quartz + Known Gold */
+			if ((c_ptr->feat == FEAT_MAGMA_K) ||
+			    (c_ptr->feat == FEAT_QUARTZ_K) ||
+			    (c_ptr->feat == FEAT_SANDWALL_K))
+			{
+				/* Notice detected gold */
+				if (!(*w_ptr & CAVE_MARK)) {
+					/* Detect */
+					detect = TRUE;
+
+					/* Hack -- memorize the feature */
+					*w_ptr |= CAVE_MARK;
+
+					/* Redraw */
+					lite_spot(Ind, y, x);
+				}
+			}
+
+			/* Notice embedded gold */
+			if ((c_ptr->feat == FEAT_MAGMA_H) ||
+			    (c_ptr->feat == FEAT_QUARTZ_H) ||
+			    (c_ptr->feat == FEAT_SANDWALL_H))
+			{
+				/* Expose the gold */
+				c_ptr->feat += 0x02;
+
+				/* Detect */
+				detect = TRUE;
+
+				/* Hack -- memorize the item */
+				*w_ptr |= CAVE_MARK;
+
+				/* Redraw */
+				lite_spot(Ind, y, x);
+			}
+
+			/* Noticing gold is covered by noticing objects, below */
+
+			/* No objects here */
+			if (!(c_ptr->o_idx)) continue;
+
+			/* Note new objects */
+			if (!(p_ptr->obj_vis[c_ptr->o_idx])) {
+				/* Detect */
+				detect = TRUE;
+
+				/* Hack -- memorize it */
+				p_ptr->obj_vis[c_ptr->o_idx] = TRUE;
+
+				/* Redraw */
+				lite_spot(Ind, y, x);
 			}
 		}
 	}

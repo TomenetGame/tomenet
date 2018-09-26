@@ -964,8 +964,9 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			wiz_lite(Ind);
 			(void)do_inc_stat(Ind, A_INT);
 			(void)do_inc_stat(Ind, A_WIS);
-			(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
-			(void)detect_object(Ind, DEFAULT_RADIUS * 2);
+			//(void)detect_treasure(Ind, DEFAULT_RADIUS * 2);
+			//(void)detect_object(Ind, DEFAULT_RADIUS * 2);
+			(void)detect_treasure_object(Ind, DEFAULT_RADIUS * 2);
 			(void)detect_sdoor(Ind, DEFAULT_RADIUS * 2);
 			(void)detect_trap(Ind, DEFAULT_RADIUS * 2);
 			identify_pack(Ind);
@@ -2611,10 +2612,10 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			break;
 
 		case SV_SCROLL_DETECT_GOLD:
-			if (detect_treasure(Ind, DEFAULT_RADIUS * 2)) ident = TRUE;
+			//if (detect_treasure(Ind, DEFAULT_RADIUS * 2)) ident = TRUE;
+			if (detect_treasure_object(Ind, DEFAULT_RADIUS * 3)) ident = TRUE;
 			break;
-
-		case SV_SCROLL_DETECT_ITEM:
+		case SV_SCROLL_DETECT_ITEM://replaced by above
 			if (detect_object(Ind, DEFAULT_RADIUS * 3)) ident = TRUE;
 			break;
 
@@ -3269,10 +3270,10 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		break;
 
 	case SV_STAFF_DETECT_GOLD:
-		if (detect_treasure(Ind, rad * 2)) ident = TRUE;
+		//if (detect_treasure(Ind, rad * 2)) ident = TRUE;
+		if (detect_treasure_object(Ind, rad * 3)) ident = TRUE;
 		break;
-
-	case SV_STAFF_DETECT_ITEM:
+	case SV_STAFF_DETECT_ITEM://replaced by above
 		if (detect_object(Ind, rad * 3)) ident = TRUE;
 		break;
 
