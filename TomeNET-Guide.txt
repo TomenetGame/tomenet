@@ -1669,7 +1669,7 @@ Item power inscription (added in 4.7.1):
     BE/C/F/A/P        brand of fire/cold/electricity/acid/poison
     +oTPaWUDEvil      slay orc/troll/giant/animal/undead/demon/dragon/evil
     *WUD              kill undead/demon/dragon
-    ~oTPaWUEvil       ESP orc/troll/giant/animal/undead/demon/dragon/evil
+    ~oTPaWUDEvil      ESP orc/troll/giant/animal/undead/demon/dragon/evil
      SDRAgUni             spider/dragonrider/angel/nonliving/unique
     ESP               telepathy (full ESP)
     Tele/NT           induces random teleportation/allows no teleportation
