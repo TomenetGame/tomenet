@@ -2913,14 +2913,13 @@ bool detect_treasure_object(int Ind, int rad) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
-	int		py = p_ptr->py, px = p_ptr->px;
+	int py = p_ptr->py, px = p_ptr->px;
 
-	int		y, x;
-	bool	detect = FALSE;
+	int y, x;
+	bool detect = FALSE;
 
-	cave_type	*c_ptr;
-	byte		*w_ptr;
-	object_type	*o_ptr;
+	cave_type *c_ptr;
+	byte *w_ptr;
 	cave_type **zcave;
 
 	/* anti-exploit */
@@ -2933,9 +2932,9 @@ bool detect_treasure_object(int Ind, int rad) {
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
 
 	/* Scan the current panel */
-//	for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
+	//for (y = p_ptr->panel_row_min; y <= p_ptr->panel_row_max; y++)
 	for (y = py - rad; y <= py + rad; y++) {
-//		for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
+		//for (x = p_ptr->panel_col_min; x <= p_ptr->panel_col_max; x++)
 		for (x = px - rad; x <= px + rad; x++) {
 			/* Reject locations outside of dungeon */
 			if (!in_bounds4(l_ptr, y, x)) continue;
@@ -2945,8 +2944,6 @@ bool detect_treasure_object(int Ind, int rad) {
 
 			c_ptr = &zcave[y][x];
 			w_ptr = &p_ptr->cave_flag[y][x];
-
-			o_ptr = &o_list[c_ptr->o_idx];
 
 			/* Magma/Quartz + Known Gold */
 			if ((c_ptr->feat == FEAT_MAGMA_K) ||
