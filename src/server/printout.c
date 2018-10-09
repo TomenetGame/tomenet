@@ -27,6 +27,9 @@ static int initp = FALSE;
 static FILE *fpl = NULL;	/* the 'legends.log' file */
 static int initl = FALSE;
 
+static FILE *fps = NULL;	/* the 'superuniques.log' file */
+static int inits = FALSE;
+
 /* s_print_only_to_file 
  * Controls if we should only print to file
  * FALSE = screen and file
@@ -352,5 +355,24 @@ extern int p_printf(char *str, ...) {
 	vfprintf(fpp, str, va);
 	va_end(va);
 	fflush(fpp);
+	return(TRUE);
+}
+
+/* Log superunique kills - C. Blue */
+extern int su_print(char *str) {
+	char path[MAX_PATH_LENGTH];
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "superuniques.log");
+	int dwd = 0, dd = 0, dm = 0, dy = 0;
+
+	get_date(&dwd, &dd, &dm, &dy);
+
+	if (inits == FALSE) { /* in case we don't start her up properly */
+		fps = fopen(path, "a+");
+		inits = TRUE;
+	}
+
+	fprintf(fps, format("%04d-%02d-%02d : %s", dy, dm, dd, str));
+	fflush(fps);
+
 	return(TRUE);
 }
