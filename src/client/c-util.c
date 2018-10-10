@@ -6662,7 +6662,7 @@ void auto_inscriptions(void) {
 
 			/* Describe */
 			Term_putstr(20,  0, -1, TERM_L_UMBER, "*** Current Auto-Inscriptions List ***");
-			Term_putstr(5, 21, -1, TERM_L_UMBER, "[Press 'n' for next, 'p' for previous, 'C' to chat-paste, ESC to exit]");
+			Term_putstr(5, 21, -1, TERM_L_UMBER, "[Press 'n' for next, 'p' for previous, 'P' to chat-paste, ESC to exit]");
 			Term_putstr(12, 22, -1, TERM_L_UMBER, "(l/s) Load/save auto-inscriptions from/to an '.ins' file");
 			Term_putstr(4, 23, -1, TERM_L_UMBER, "(e/d/c) Edit current ('#' wildcard, '!' forces)/delete current/CLEAR ALL");
 
@@ -6698,7 +6698,7 @@ void auto_inscriptions(void) {
 			/* Allow to chat, to tell exact inscription-related stuff to other people easily */
 			cmd_message();
 			break;
-		case 'C':
+		case 'P':
 			/* Paste currently selected entry to chat */
 			strcpy(match_buf, "\377s<\377w");
 			strcat(match_buf, auto_inscription_match[cur_line]);
