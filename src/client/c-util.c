@@ -6662,7 +6662,7 @@ void auto_inscriptions(void) {
 
 			/* Describe */
 			Term_putstr(20,  0, -1, TERM_L_UMBER, "*** Current Auto-Inscriptions List ***");
-			Term_putstr(14, 21, -1, TERM_L_UMBER, "[Press 'n' for next, 'p' for previous, ESC to exit]");
+			Term_putstr(5, 21, -1, TERM_L_UMBER, "[Press 'n' for next, 'p' for previous, 'C' to chat-paste, ESC to exit]");
 			Term_putstr(12, 22, -1, TERM_L_UMBER, "(l/s) Load/save auto-inscriptions from/to an '.ins' file");
 			Term_putstr(4, 23, -1, TERM_L_UMBER, "(e/d/c) Edit current ('#' wildcard, '!' forces)/delete current/CLEAR ALL");
 
@@ -6673,7 +6673,7 @@ void auto_inscriptions(void) {
 				strcat(match_buf, "\377s>");
 				strcpy(tag_buf, "\377y");
 				strcat(tag_buf, auto_inscription_tag[i]);
-				sprintf(fff, "%2d) %-46s      %s", i + 1, match_buf, tag_buf);
+				sprintf(fff, "%2d) %-46s      <%s\377s>", i + 1, match_buf, tag_buf);
 
 				Term_putstr(5, i + 1, -1, TERM_WHITE, fff);
 			}
@@ -6692,6 +6692,21 @@ void auto_inscriptions(void) {
 		case KTRL('T'):
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
+			redraw = FALSE;
+			break;
+		case ':':
+			/* Allow to chat, to tell exact inscription-related stuff to other people easily */
+			cmd_message();
+			break;
+		case 'C':
+			/* Paste currently selected entry to chat */
+			strcpy(match_buf, "\377s<\377w");
+			strcat(match_buf, auto_inscription_match[cur_line]);
+			strcat(match_buf, "\377s>");
+			strcpy(tag_buf, "\377y");
+			strcat(tag_buf, auto_inscription_tag[cur_line]);
+			sprintf(tmp, "\377sAuto-inscription %2d: %s <%s\377s>", cur_line + 1, match_buf, tag_buf);
+			Send_paste_msg(tmp);
 			redraw = FALSE;
 			break;
 		case ESCAPE:
