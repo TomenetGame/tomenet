@@ -1358,11 +1358,11 @@ static bool choose_mode(void) {
 		put_str("i) Ironman Deep Dive Challenge", 16, 2);
 		c_put_str(TERM_SLATE, "(Unworldly - one life only.)", 16, 33);
 		put_str("s) Ironman Deep Dive Challenge Soloist", 17, 2);
-		c_put_str(TERM_SLATE, "(Cannot trade with other players)", 17, 49);
+		c_put_str(TERM_SLATE, "(Cannot trade with other players)", 17, 41);
 		put_str("H) Hellish Ironman Deep Dive Challenge", 18, 2);
 		c_put_str(TERM_SLATE, "(Extra hard, sort of ridiculous)", 18, 41);
-		put_str("p) PvP", 20, 2);
-		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 20, 9);
+		put_str("p) PvP", 19, 2);
+		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 19, 9);
 
 		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 		if (valid_dna) {
