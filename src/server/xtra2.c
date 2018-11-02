@@ -12319,6 +12319,11 @@ void telekinesis_aux(int Ind, int item) {
 	}
 #endif
 
+	if ((p_ptr->mode & MODE_SOLO) || (p2_ptr->mode & MODE_SOLO)) {
+		msg_print(Ind, "\377ySoloist characters cannot exchange goods or money with other players.");
+		if (!is_admin(p_ptr)) return;
+	}
+
 	if (p2_ptr->ghost && !is_admin(p_ptr)) {
 		msg_print(Ind, "You cannot send items to ghosts!");
 		return;

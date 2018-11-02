@@ -1747,7 +1747,7 @@ static void player_outfit(int Ind) {
 	object_type     forge;
 	object_type     *o_ptr = &forge;
 
-	body = (p_ptr->mode & MODE_FRUIT_BAT) ? 1 : 0;
+	body = (p_ptr->fruit_bat == 1) ? 1 : 0;
 
 	/* Hack -- Give the player some water */
 	if (p_ptr->prace == RACE_ENT) {
@@ -3154,7 +3154,6 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if (race < 0 || race >= MAX_RACE) race = 0;
 	if (class < 0 || class >= MAX_CLASS) class = 0;
 	if (trait < 0 || trait >= MAX_TRAIT) trait = 0;
-//	if (sex < 0 || sex > 7) sex = 0;
 	/* Check for legal class */
 	if ((race_info[race].choice & BITS(class)) == 0) {
 		s_printf("%s EXPLOIT_CLASS_CHOICE: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
@@ -3327,15 +3326,22 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* paranoia? */
 	p_ptr->skill_points = 0;
 
-	/* Set info */
-	p_ptr->mode |= sex & ~MODE_MALE;
-
-#if 1 /* keep for now to stay compatible, doesn't hurt us */
-	if (sex > 511) {
-		sex -= 512;
-		p_ptr->mode |= MODE_FRUIT_BAT;
-	}
+	if (is_older_than(&connp->version, 4, 7, 1, 2, 0, 0)) {
+		if (sex & MODE_MALE_OLD) sex |= MODE_MALE;
+#if 1 /* keep for now to stay compatible to some super-old version (I guess nobody knows anymore which one :p), doesn't hurt us */
+		if (sex > 511) {
+			sex -= 512;
+			sex |= MODE_FRUIT_BAT;
+		}
 #endif
+		if (sex & MODE_FRUIT_BAT_OLD) {
+			sex &= ~MODE_FRUIT_BAT_OLD;
+			sex |= MODE_FRUIT_BAT;
+		}
+	}
+	/* Set info -
+	   First byte of 'sex' carries the 'mode', the second byte carries extra mode info that needs to be translated. */
+	p_ptr->mode = (sex & 0xFF);
 
 #if 0
 	/* hack? disallow 'pvp mode' for new players? */
@@ -3356,12 +3362,19 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* fix potential exploits */
 	if (p_ptr->mode & MODE_EVERLASTING) p_ptr->mode &= ~(MODE_HARD | MODE_NO_GHOST);
-	if (p_ptr->mode & MODE_PVP) p_ptr->mode &= ~(MODE_EVERLASTING | MODE_HARD | MODE_NO_GHOST | MODE_FRUIT_BAT);
+	if (p_ptr->mode & MODE_PVP) {
+		p_ptr->mode &= ~(MODE_EVERLASTING | MODE_HARD | MODE_NO_GHOST | MODE_SOLO);
+		sex &= ~MODE_FRUIT_BAT;
+	}
+	if (p_ptr->mode & MODE_SOLO) {
+		p_ptr->mode |= MODE_NO_GHOST;
+		p_ptr->mode &= ~MODE_EVERLASTING;
+	}
 
-	if (p_ptr->mode & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1;
+	if (sex & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1;
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
 	p_ptr->dna |= (randint(65535) << 16);
-	p_ptr->male = sex & 1;
+	p_ptr->male = (sex & MODE_MALE) ? 1 : 0;
 	p_ptr->pclass = class;
 	p_ptr->align_good = 0x7fff;	/* start neutral */
 	p_ptr->align_law = 0x7fff;
@@ -3588,7 +3601,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* Fruit bats get some skills nulled that they cannot put to use anyway,
 	   just to clean up and avoid newbies accidentally putting points into them. */
-	if (p_ptr->mode & MODE_FRUIT_BAT) fruit_bat_skills(p_ptr);
+	if (p_ptr->fruit_bat == 1) fruit_bat_skills(p_ptr);
 
 	/* special outfits for admin (pack overflows!) */
 	if (is_admin(p_ptr)) {

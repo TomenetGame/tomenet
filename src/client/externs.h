@@ -509,7 +509,7 @@ extern errr get_safe_file(char *buf, cptr file);
 extern void xhtml_screenshot(cptr name);
 extern void save_auto_inscriptions(cptr name);
 extern void load_auto_inscriptions(cptr name);
-extern void save_birth_file(cptr name);
+extern void save_birth_file(cptr name, bool touch);
 extern void load_birth_file(cptr name);
 
 /* c-init.c */

@@ -1912,7 +1912,8 @@ int Receive_char_info(void) {
 	p_ptr->ptrait = trait;
 	p_ptr->tp_ptr = &trait_info[trait];
 	p_ptr->male = sex;
-	p_ptr->mode = mode;
+	if (p_ptr->mode & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1; else p_ptr->fruit_bat = 0; //track native fruit bat state
+	p_ptr->mode = mode & 0xFF;
 
 	/* Load preferences once */
 	if (!player_pref_files_loaded) {

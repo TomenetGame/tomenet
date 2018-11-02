@@ -2209,17 +2209,19 @@ void display_player(int hist) {
 		c_put_str(TERM_L_BLUE, class_info[class].title, y_row1 + 3, 15);
 		c_put_str(TERM_L_BLUE, c_p_ptr->body_name, y_row1 + 4, 15);
 		if (p_ptr->mode & MODE_PVP)
-			c_put_str(TERM_L_BLUE, "PvP (one life)", y_rowmode, 15);
+			c_put_str(TERM_YELLOW, "PvP (one life)", y_rowmode, 15);
 		else if (p_ptr->mode & MODE_EVERLASTING)
 			c_put_str(TERM_L_BLUE, "Everlasting (infinite lives)", y_rowmode, 15);
 		else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_HARD))
-			c_put_str(TERM_L_BLUE, "Hellish (one life, extra hard)", y_rowmode, 15);
+			c_put_str(TERM_RED, "Hellish (one life, extra hard)", y_rowmode, 15);
+		else if ((p_ptr->mode & MODE_NO_GHOST) && (p_ptr->mode & MODE_SOLO))
+			c_put_str(TERM_L_DARK, "Soloist (one life)", y_rowmode, 15);
 		else if (p_ptr->mode & MODE_NO_GHOST)
-			c_put_str(TERM_L_BLUE, "Unworldly (one life)", y_rowmode, 15);
+			c_put_str(TERM_L_DARK, "Unworldly (one life)", y_rowmode, 15);
 		else if (p_ptr->mode & MODE_HARD)
-			c_put_str(TERM_L_BLUE, "Hard (3 lives, extra hard)", y_rowmode, 15);
+			c_put_str(TERM_SLATE, "Hard (3 lives, extra hard)", y_rowmode, 15);
 		else /*(p_ptr->mode == MODE_NORMAL)*/
-			c_put_str(TERM_L_BLUE, "Normal (3 lives)", y_rowmode, 15);
+			c_put_str(TERM_WHITE, "Normal (3 lives)", y_rowmode, 15);
 
 		/* Age, Height, Weight, Social */
 		prt_num("Age          ", (int)p_ptr->age, y_row1, 32, TERM_L_BLUE);
@@ -2508,7 +2510,7 @@ void display_player(int hist) {
 			if (csheet_boni[i].cb[12] & CB13_XSTAR) color = TERM_L_UMBER;
 			if (csheet_boni[i].cb[12] & CB13_XCRSE) color = TERM_RED;
 			if (csheet_boni[i].cb[12] & CB13_XNOEQ) color = TERM_L_DARK;
-			if (i == 14) color = (p_ptr->ghost) ? TERM_L_DARK : (p_ptr->mode & MODE_FRUIT_BAT) ? TERM_ORANGE : TERM_WHITE;
+			if (i == 14) color = (p_ptr->ghost) ? TERM_L_DARK : (p_ptr->fruit_bat == 1) ? TERM_ORANGE : TERM_WHITE;
 			for (j = 0; j < 5; j++) {
 				switch (i) {
 				case 0: { c_put_str(color, "a", 0, 5 + j * 20 + i); break; }
@@ -2525,7 +2527,7 @@ void display_player(int hist) {
 				case 11: { c_put_str(color, "l", 0, 5 + j * 20 + i); break; }
 				case 12: { c_put_str(color, "m", 0, 5 + j * 20 + i); break; }
 				case 13: { c_put_str(color, "n", 0, 5 + j * 20 + i); break; }
-				case 14: { c_put_str(color, (p_ptr->mode & MODE_FRUIT_BAT) ? "b" : "@", 0, 5 + j * 20 + i); break; }
+				case 14: { c_put_str(color, (p_ptr->fruit_bat == 1) ? "b" : "@", 0, 5 + j * 20 + i); break; }
 				}
 			}
 
@@ -2617,7 +2619,7 @@ void display_player(int hist) {
 					c_put_str(TERM_WHITE, "*", 14, 25 + i); header_color[1][13] = TERM_WHITE;
 				} else { c_put_str(TERM_WHITE, "+", 14, 25 + i); header_color[1][13] = TERM_WHITE; }
 			}
-			if (p_ptr->mode & MODE_FRUIT_BAT && p_ptr->body_monster == 0) { c_put_str(TERM_WHITE, "+", 14, 25 + 14); header_color[1][13] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
+			if (p_ptr->fruit_bat == 1 && p_ptr->body_monster == 0) { c_put_str(TERM_WHITE, "+", 14, 25 + 14); header_color[1][13] = TERM_WHITE; } //Mega Hack: Hardcode 50% vamp as a fruit bat! Maybe incorrect for mimics? - Kurzel
 			if (csheet_boni[i].cb[6] & CB7_RAUID) { c_put_str(TERM_WHITE, "+", 15, 25 + i); header_color[1][14] = TERM_WHITE; }
 			if (csheet_boni[i].cb[6] & CB7_RREFL) { c_put_str(TERM_WHITE, "+", 16, 25 + i); header_color[1][15] = TERM_WHITE; }
 			if (csheet_boni[i].cb[6] & CB7_RAMSH) { c_put_str(TERM_YELLOW, "+", 17, 25 + i); header_color[1][16] = TERM_YELLOW; }

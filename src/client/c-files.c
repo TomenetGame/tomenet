@@ -2072,7 +2072,7 @@ void load_auto_inscriptions(cptr name) {
 }
 
 /* Save Character-Birth file (*.dna) */
-void save_birth_file(cptr name) {
+void save_birth_file(cptr name, bool touch) {
 	FILE *fp;
 	char buf[1024];
 	char file_name[256];
@@ -2104,15 +2104,27 @@ void save_birth_file(cptr name) {
 	fprintf(fp, "Character birth file for TomeNET v%d.%d.%d%s\n",
 		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
 
-	/* Info */
-	fprintf(fp, "%d\n", sex); //Sex/Body/Mode
-	fprintf(fp, "%d\n", class); //Class
-	fprintf(fp, "%d\n", race); //Race
-	fprintf(fp, "%d\n", trait); //Trait
+	if (!touch) {
+		/* Info */
+		fprintf(fp, "%d\n", sex); //Sex/Body/Mode
+		fprintf(fp, "%d\n", class); //Class
+		fprintf(fp, "%d\n", race); //Race
+		fprintf(fp, "%d\n", trait); //Trait
 
-	/* Stats */
-	for (i = 0; i < 6; i++)
-		fprintf(fp, "%d\n", stat_order[i]);
+		/* Stats */
+		for (i = 0; i < 6; i++)
+			fprintf(fp, "%d\n", stat_order[i]);
+	} else {
+		/* Info */
+		fprintf(fp, "%d\n", dna_sex); //Sex/Body/Mode
+		fprintf(fp, "%d\n", dna_class); //Class
+		fprintf(fp, "%d\n", dna_race); //Race
+		fprintf(fp, "%d\n", dna_trait); //Trait
+
+		/* Stats */
+		for (i = 0; i < 6; i++)
+			fprintf(fp, "%d\n", dna_stat_order[i]);
+	}
 
 	/* Done */
 	fclose(fp);
@@ -2124,13 +2136,13 @@ void load_birth_file(cptr name) {
 	char buf[1024];
 	char file_name[256];
 
-#if 0 /* for future enhancements */
 	int vm = 0, vi = 0, vp = 0;
 	char vt = '%', *p;
-#endif
+	bool update = FALSE;
 
 	strncpy(file_name, name, 249);
 	file_name[249] = '\0';
+	int tmp, i, r;
 
 	/* add '.dna' extension if not already existing */
 	if (strlen(name) > 4) {
@@ -2156,7 +2168,6 @@ void load_birth_file(cptr name) {
 		return;
 	}
 
-#if 0 /* for future enhancements */
 	/* scan header for version */
 	if ((p = strstr(buf, "TomeNET v"))) {
 		vm = atoi(p + 9);
@@ -2164,16 +2175,37 @@ void load_birth_file(cptr name) {
 		vp = atoi(p + 13);
 		vt = *(p + 14);
 		if (!vt) vt = '-';//note: '-' > '%'
+	} else {
+		fclose(fp);
+		return; //error reading file format
 	}
-#endif
 
 	/* Info */
-	int tmp, i, r;
 	r = fscanf(fp, "\n%d", &tmp); //Sex/Body/Mode
-	if (r == EOF || r == 0) return; // Failed to read from file
+	if (r == EOF || r == 0) {
+		fclose(fp);
+		return; // Failed to read from file
+	}
 	dna_sex = (s16b)tmp;
+
+	/* Translate outdated flags */
+	if (vm < 4 || (vm == 4 && vi < 7) || (vm == 4 && vi == 7 && vp < 1) || (vm == 4 && vi == 7 && vp == 1 && vt < 'b')) { //note that '-' and '%' are also < 'b'
+		update = TRUE;
+		if (dna_sex & MODE_MALE_OLD) {
+			dna_sex &= ~MODE_MALE_OLD;
+			dna_sex |= MODE_MALE;
+		}
+		if (dna_sex & MODE_FRUIT_BAT_OLD) {
+			dna_sex &= ~MODE_FRUIT_BAT_OLD;
+			dna_sex |= MODE_FRUIT_BAT;
+		}
+	}
+
 	r = fscanf(fp, "\n%d", &tmp); //Class
-	if (r == EOF || r == 0) return; // Failed to read from file
+	if (r == EOF || r == 0) {
+		fclose(fp);
+		return; // Failed to read from file
+	}
 	dna_class = (s16b)tmp;
 
 	dna_class_title = class_info[dna_class].title;
@@ -2184,16 +2216,25 @@ void load_birth_file(cptr name) {
 	} else if (class_info[dna_class].hidden) dna_class = class_info[dna_class].base_class;
 
 	r = fscanf(fp, "\n%d", &tmp); //Race
-	if (r == EOF || r == 0) return; // Failed to read from file
+	if (r == EOF || r == 0) {
+		fclose(fp);
+		return; // Failed to read from file
+	}
 	dna_race = (s16b)tmp;
 	r = fscanf(fp, "\n%d", &tmp); //Trait
-	if (r == EOF || r == 0) return; // Failed to read from file
+	if (r == EOF || r == 0) {
+		fclose(fp);
+		return; // Failed to read from file
+	}
 	dna_trait = (s16b)tmp;
 
 	/* Stats */
 	for (i = 0; i < 6; i++) {
 		r = fscanf(fp, "\n%d", &tmp);
-		if (r == EOF || r == 0) return; // Failed to read from file
+		if (r == EOF || r == 0) {
+			fclose(fp);
+			return; // Failed to read from file
+		}
 		dna_stat_order[i] = (s16b)tmp;
 	}
 
@@ -2208,4 +2249,7 @@ void load_birth_file(cptr name) {
 
 	/* Done */
 	fclose(fp);
+
+	/* Update an outdated dna file version? */
+	if (update) save_birth_file(name, TRUE);
 }

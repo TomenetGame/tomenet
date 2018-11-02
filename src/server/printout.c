@@ -371,7 +371,7 @@ extern int su_print(char *str) {
 		inits = TRUE;
 	}
 
-	fprintf(fps, format("%04d-%02d-%02d : %s", dy, dm, dd, str));
+	fprintf(fps, "%04d-%02d-%02d : %s", dy, dm, dd, str);
 	fflush(fps);
 
 	return(TRUE);

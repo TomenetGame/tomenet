@@ -220,11 +220,14 @@ static bool choose_sex(void) {
 	bool hazard = FALSE;
 	bool parity = magik(50);
 
+	/* Note: 'sex' also contains all 'mode' information. This is split up and processed on server-side. */
+	sex = 0x0000;
+
 	put_str("m) Male", 21, parity ? 2 : 17);
 	put_str("f) Female", 21, parity ? 17 : 2);
 	put_str("      ", 4, CHAR_COL);
 	if (valid_dna) {
-		if (dna_sex % 2) c_put_str(TERM_SLATE, "Male", 4, CHAR_COL);
+		if (dna_sex & MODE_MALE) c_put_str(TERM_SLATE, "Male", 4, CHAR_COL);
 		else c_put_str(TERM_SLATE, "Female", 4, CHAR_COL);
 	}
 
@@ -250,12 +253,11 @@ static bool choose_sex(void) {
 		if (rl_connection_destroyed) return FALSE;
 #endif
 		if (c == 'm') {
-			sex = 1;
+			sex |= MODE_MALE;
 			put_str("      ", 4, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Male", 4, CHAR_COL);
 			break;
 		} else if (c == 'f') {
-			sex = 0;
 			put_str("      ", 4, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Female", 4, CHAR_COL);
 			break;
@@ -274,7 +276,7 @@ static bool choose_sex(void) {
 		}
 		else if (c == '#') {
 			if (valid_dna) {
-				if (dna_sex % 2) c = 'm';
+				if (dna_sex & MODE_MALE) c = 'm';
 				else c = 'f';
 				hazard = TRUE;
 			} else {
@@ -1355,15 +1357,17 @@ static bool choose_mode(void) {
 	if (dedicated) {
 		put_str("i) Ironman Deep Dive Challenge", 16, 2);
 		c_put_str(TERM_SLATE, "(Unworldly - one life only.)", 16, 33);
-		put_str("H) Hellish Ironman Deep Dive Challenge", 17, 2);
-		c_put_str(TERM_SLATE, "(Extra hard, sort of ridiculous)", 17, 41);
-		put_str("p) PvP", 18, 2);
-		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 18, 9);
+		put_str("s) Ironman Deep Dive Challenge Soloist", 17, 2);
+		c_put_str(TERM_SLATE, "(Cannot trade with other players)", 17, 49);
+		put_str("H) Hellish Ironman Deep Dive Challenge", 18, 2);
+		c_put_str(TERM_SLATE, "(Extra hard, sort of ridiculous)", 18, 41);
+		put_str("p) PvP", 20, 2);
+		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 20, 9);
 
 		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 		if (valid_dna) {
 			if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c_put_str(TERM_SLATE, "Hellish", 9, CHAR_COL);
-			else if ((dna_sex & MODE_HARD) == MODE_HARD) c_put_str(TERM_SLATE, "Hard", 9, CHAR_COL);
+			else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c_put_str(TERM_SLATE, "Soloist", 9, CHAR_COL);
 			else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);
 			else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
 			else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
@@ -1395,27 +1399,30 @@ static bool choose_mode(void) {
 			if (c == '\b') {
 				clear_from(15);
 				return FALSE;
-			}
-			else if (c == 'p') {
-				sex += MODE_PVP;
+			} else if (c == 'p') {
+				sex |= MODE_PVP;
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
 				break;
 			} else if (c == 'i') {
-				sex += MODE_NO_GHOST;
+				sex |= MODE_NO_GHOST;
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 				break;
-			}
-			else if (c == 'H') {
-				sex += (MODE_NO_GHOST + MODE_HARD);
+			} else if (c == 'H') {
+				sex |= (MODE_NO_GHOST | MODE_HARD);
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "Hellish", 9, CHAR_COL);
+				break;
+			} else if (c == 's') {
+				sex |= (MODE_NO_GHOST | MODE_SOLO);
+				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
+				c_put_str(TERM_L_BLUE, "Soloist", 9, CHAR_COL);
 				break;
 			} else if (c == '?') {
 				/*do_cmd_help("help.hlp");*/
 			} else if (c == '*') {
-				switch (rand_int(3 - 1)) {
+				switch (rand_int(4)) {
 					case 0:
 						c = 'i';
 						break;
@@ -1425,12 +1432,16 @@ static bool choose_mode(void) {
 					case 2:
 						c = 'H';
 						break;
+					case 3:
+						c = 's';
+						break;
 				}
 				hazard = TRUE;
 			} else if (c == '#') {
 				if (valid_dna) {
 					if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
 					else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'H';
+					else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c = 's';
 					else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'i';
 					else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'i';
 					else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
@@ -1456,26 +1467,24 @@ static bool choose_mode(void) {
 	c_put_str(TERM_SLATE, "(3 lifes)", 16, 12);
 	put_str("g) No Ghost", 17, 2);
 	c_put_str(TERM_SLATE, "('Unworldly' - One life only. The traditional rogue-like way)", 17, 14);
-	put_str("e) Everlasting", 18, 2);
-	c_put_str(TERM_SLATE, "(You may resurrect infinite times, but cannot enter highscore)", 18, 17);
+	put_str("s) Soloist", 18, 2);
+	c_put_str(TERM_SLATE, "(Same as 'No Ghost' but cannot exchange gold/items with anybody)", 18, 14);
+	put_str("e) Everlasting", 19, 2);
+	c_put_str(TERM_SLATE, "(You may resurrect infinite times but cannot enter highscore)", 19, 17);
 	/* hack: no weird modi on first client startup!
 	   To find out whether it's 1st or not we check firstrun and # of existing characters.
 	   However, we just don't display the choices, they're still choosable! */
 	if (!firstrun || existing_characters) {
-#if 0
-		put_str("h) Hard", 19, 2);
-		c_put_str(TERM_SLATE, "('Purgatorial' - like normal, with nasty additional penalties)", 19, 10);
-#endif
-		put_str("H) Hellish", 20 - 1, 2);
-		c_put_str(TERM_SLATE, "(Like 'unworldly' mode, but extra hard - sort of ridiculous)", 20 - 1, 13);
-		put_str("p) PvP", 21 - 1, 2);
-		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21 - 1, 9);
+		put_str("H) Hellish", 20, 2);
+		c_put_str(TERM_SLATE, "(Like 'Unworldly' mode but extra hard - sort of ridiculous)", 20, 13);
+		put_str("p) PvP", 21, 2);
+		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21, 9);
 	}
 
 	c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 	if (valid_dna) {
 		if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c_put_str(TERM_SLATE, "Hellish", 9, CHAR_COL);
-		else if ((dna_sex & MODE_HARD) == MODE_HARD) c_put_str(TERM_SLATE, "Hard", 9, CHAR_COL);
+		else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c_put_str(TERM_SLATE, "Soloist", 9, CHAR_COL);
 		else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);
 		else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
 		else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
@@ -1509,7 +1518,7 @@ static bool choose_mode(void) {
 			return FALSE;
 		}
 		else if (c == 'p') {
-			sex += MODE_PVP;
+			sex |= MODE_PVP;
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
 			break;
@@ -1518,59 +1527,54 @@ static bool choose_mode(void) {
 			c_put_str(TERM_L_BLUE, "Normal", 9, CHAR_COL);
 			break;
 		} else if (c == 'g') {
-			sex += MODE_NO_GHOST;
+			sex |= MODE_NO_GHOST;
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 			break;
-		}
-#if 0
-		else if (c == 'h') {
-			sex += (MODE_HARD);
+		} else if (c == 's') {
+			sex |= MODE_NO_GHOST | MODE_SOLO;
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
-			c_put_str(TERM_L_BLUE, "Hard", 9, CHAR_COL);
+			c_put_str(TERM_L_BLUE, "Soloist", 9, CHAR_COL);
 			break;
 		}
-#endif
 		else if (c == 'H') {
-			sex += (MODE_NO_GHOST + MODE_HARD);
+			sex |= (MODE_NO_GHOST | MODE_HARD);
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Hellish", 9, CHAR_COL);
 			break;
 		} else if (c == 'e') {
-			sex += MODE_EVERLASTING;
+			sex |= MODE_EVERLASTING;
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Everlasting", 9, CHAR_COL);
 			break;
 		} else if (c == '?') {
 			/*do_cmd_help("help.hlp");*/
 		} else if (c == '*') {
-			switch (rand_int(5 - 1)) {
-				case 0:
-					c = 'n';
-					break;
-				case 1:
-					c = 'p';
-					break;
-				case 2:
-					c = 'g';
-					break;
-#if 0
-				case 3:
-					c = 'h';
-					break;
-#endif
-				case 4 - 1:
-					c = 'H';
-					break;
-				case 5 - 1:
-					c = 'e';
-					break;
+			switch (rand_int(6)) {
+			case 0:
+				c = 'n';
+				break;
+			case 1:
+				c = 'p';
+				break;
+			case 2:
+				c = 'g';
+				break;
+			case 3:
+				c = 'H';
+				break;
+			case 4:
+				c = 'e';
+				break;
+			case 5:
+				c = 's';
+				break;
 			}
 			hazard = TRUE;
 		} else if (c == '#') {
 			if (valid_dna) {
 				if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
-				else if ((dna_sex & MODE_HARD) == MODE_HARD) c = 'h';
+				else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c = 's';
 				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
 				else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
 				else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
@@ -1646,7 +1650,7 @@ static bool choose_body_modification(void) {
 			return FALSE;
 		}
 		else if (c == 'f') {
-			sex += MODE_FRUIT_BAT;
+			sex |= MODE_FRUIT_BAT;
 			c_put_str(TERM_L_BLUE, "                    ", 8, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Fruit bat", 8, CHAR_COL);
 			break;
@@ -1812,7 +1816,7 @@ void get_char_info(void) {
 	/* Title everything */
 	put_str("Sex   :", 4, 1);
 	if (valid_dna) {
-		if (dna_sex % 2) c_put_str(TERM_SLATE, "Male", 4, CHAR_COL);
+		if (dna_sex & MODE_MALE) c_put_str(TERM_SLATE, "Male", 4, CHAR_COL);
 		else c_put_str(TERM_SLATE, "Female", 4, CHAR_COL);
 	}
 #ifndef CLASS_BEFORE_RACE
@@ -1864,6 +1868,7 @@ void get_char_info(void) {
 	if (valid_dna) {
 		if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c_put_str(TERM_SLATE, "Hellish", 9, CHAR_COL);
 		else if ((dna_sex & MODE_HARD) == MODE_HARD) c_put_str(TERM_SLATE, "Hard", 9, CHAR_COL);
+		else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST && (dna_sex & MODE_SOLO) == MODE_SOLO) c_put_str(TERM_SLATE, "Soloist", 9, CHAR_COL);
 		else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);
 		else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
 		else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
@@ -2018,7 +2023,7 @@ cstats:
 	}
 
 	/* Save Birth DNA */
-	save_birth_file(cname);
+	save_birth_file(cname, FALSE);
 
 	/* Message */
 	put_str("Entering game...  [Hit any key]", 21, 1);

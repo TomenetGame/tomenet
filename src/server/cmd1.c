@@ -1453,6 +1453,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			return;
 		}
 
+		if ((p_ptr->mode & MODE_SOLO) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+			msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+			if (!is_admin(p_ptr)) return;
+		}
 #ifdef IDDC_IRON_COOP
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    //&& (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
@@ -1635,6 +1639,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (!is_admin(p_ptr)) return;
 		}
 
+		if ((p_ptr->mode & MODE_SOLO) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+			msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+			if (!is_admin(p_ptr)) return;
+		}
 #ifdef IDDC_IRON_COOP
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    //&& (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {

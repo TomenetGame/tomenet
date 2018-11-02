@@ -2839,6 +2839,10 @@ void do_cmd_steal(int Ind, int dir) {
 		return;
 	}
 
+	if (p_ptr->mode & MODE_SOLO) {
+		msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+		if (!is_admin(p_ptr)) return;
+	}
 #ifdef IDDC_IRON_COOP
 	if (in_irondeepdive(&p_ptr->wpos) && (!p_ptr->party || p_ptr->party != q_ptr->party)) {
 		msg_print(Ind, "\377yYou cannot take items from outsiders.");

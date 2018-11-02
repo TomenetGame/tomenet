@@ -4646,8 +4646,8 @@ static int Receive_play(int ind) {
 			}
 		}
 
-		/* Dedicated IDDC characters are always no-ghost */
-		if (sex & MODE_DED_IDDC) {
+		/* Dedicated IDDC characters and Soloists are always no-ghost */
+		if (sex & (MODE_DED_IDDC | MODE_SOLO)) {
 			sex &= ~MODE_EVERLASTING;
 			sex |= MODE_NO_GHOST;
 		}
@@ -5546,6 +5546,9 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, c
 #ifndef ENABLE_DRACONIAN_TRAITS
 	if (race == RACE_DRACONIAN) trait = 0;
 #endif
+
+	/* Hack: Transmitted 'mode' is int, not char, so we can stuff this in */
+	if (!is_older_than(&Players[Ind]->version, 4, 7, 1, 1, 0, 0) && Players[Ind]->fruit_bat == 1) mode |= MODE_FRUIT_BAT;
 
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {

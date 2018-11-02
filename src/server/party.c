@@ -1286,6 +1286,10 @@ int guild_create(int Ind, cptr name) {
 		msg_print(Ind, "\377yPvP characters may not create a guild.");
 		return FALSE;
 	}
+	if ((p_ptr->mode & MODE_SOLO)) {
+		msg_print(Ind, "\377ySoloist characters may not create a guild.");
+		return FALSE;
+	}
 
 	/* anti-cheeze: People could get an extra house on each character.
 	   So we allow only one guild master per player account to at least
@@ -1374,7 +1378,7 @@ int guild_create(int Ind, cptr name) {
 	/* broadcast the news */
 	snprintf(temp, 160, "\374\377yA new guild '\377%c%s\377y' has been created.", COLOUR_CHAT_GUILD, guilds[index].name);
 	msg_broadcast(0, temp);
-//	msg_print(Ind, "\374\377Gou can adjust guild options with the '/guild_cfg' command.");
+	//msg_print(Ind, "\374\377Gou can adjust guild options with the '/guild_cfg' command.");
 	s_printf("GUILD_CREATE: (by %s) '%s'\n", p_ptr->name, guilds[index].name);
 	l_printf("%s \\{yA new guild '%s' has been created\n", showdate(), guilds[index].name);
 
@@ -1442,7 +1446,7 @@ void account_check(int Ind) { /* Temporary Ind */
 	hash_entry *ptr;
 	int i, del;
 	struct account acc;
-//	player_type *p_ptr = Players[Ind];
+	//player_type *p_ptr = Players[Ind];
 
 	/* Search in each array slot */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
@@ -1476,6 +1480,16 @@ int party_create(int Ind, cptr name) {
 
 	strcpy(temp, name);
 	if (!party_name_legal(Ind, temp)) return FALSE;
+
+	/* zonk */
+	if ((p_ptr->mode & MODE_PVP)) {
+		msg_print(Ind, "\377yPvP characters may not create a party.");
+		return FALSE;
+	}
+	if ((p_ptr->mode & MODE_SOLO)) {
+		msg_print(Ind, "\377ySoloist characters may not create a party.");
+		return FALSE;
+	}
 
 	/* If he's party owner, it's name change */
 	if (streq(parties[p_ptr->party].owner, p_ptr->name)) {
@@ -1575,6 +1589,11 @@ int party_create_ironteam(int Ind, cptr name) {
 
 	strcpy(temp, name);
 	if (!party_name_legal(Ind, temp)) return FALSE;
+
+	if ((p_ptr->mode & MODE_SOLO)) {
+		msg_print(Ind, "\377ySoloist characters may not create a party.");
+		return FALSE;
+	}
 
 	/* Only newly created characters can create an iron team */
 	if (p_ptr->max_exp > 0 || p_ptr->max_plv > 1) {
@@ -1697,6 +1716,11 @@ int guild_add(int adder, cptr name) {
 		return FALSE;
 	}
 
+	if (p_ptr->mode & MODE_SOLO) {
+		msg_print(Ind, "\377yThat player is a soloist. Those cannot join guilds.");
+		return FALSE;
+	}
+
 	/* Make sure this added person is neutral */
 	if (p_ptr->guild != 0) {
 		/* Message */
@@ -1795,6 +1819,11 @@ int guild_add_self(int Ind, cptr guild) {
 	/* no guild name specified? */
 	if (!guild[0]) return FALSE;
 
+	if (p_ptr->mode & MODE_SOLO) {
+		msg_print(Ind, "\377yAs a soloist you cannot join guilds.");
+		return FALSE;
+	}
+
 	if (guild_id == -1) {
 		msg_print(Ind, "That guild does not exist.");
 		return FALSE;
@@ -1892,6 +1921,8 @@ int guild_auto_add(int Ind, int guild_id, char *message) {
 	if (!guild_id) return FALSE;
 	if (p_ptr->guild) return FALSE;
 
+	if (p_ptr->mode & MODE_SOLO) return FALSE;
+
 	if (!(guilds[guild_id].flags & GFLG_AUTO_READD)) return FALSE;
 
 	/* currently not eligible */
@@ -1982,6 +2013,11 @@ int party_add(int adder, cptr name) {
 #endif
 	if (parties[party_id].mode & PA_IRONTEAM_CLOSED) {
 		msg_print(adder, "\377yThis Iron Team has been closed, not allowing adding any further members.");
+		return FALSE;
+	}
+
+	if (p_ptr->mode & MODE_SOLO) {
+		msg_print(Ind, "\377yThat player is a soloist. Those cannot join parties.");
 		return FALSE;
 	}
 
@@ -2119,6 +2155,11 @@ int party_add_self(int Ind, cptr party) {
 #ifdef IRONDEEPDIVE_ALLOW_INCOMPAT
 	struct worldpos wpos_other = { -1, -1, -1};
 #endif
+
+	if (p_ptr->mode & MODE_SOLO) {
+		msg_print(Ind, "\377yAs a soloist you cannot join parties.");
+		return FALSE;
+	}
 
 #ifdef IDDC_RESTRICTED_PARTYING
 	if (in_irondeepdive(&p_ptr->wpos)) {

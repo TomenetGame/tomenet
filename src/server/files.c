@@ -1857,12 +1857,12 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 			strcpy(modestr, "unworldly ");
 			strcpy(modecol, "\377D");
 	                break;
-		case (MODE_HARD + MODE_NO_GHOST):
+		case (MODE_HARD | MODE_NO_GHOST):
 			strcpy(modestr, "hellish ");
 			strcpy(modecol, "\377D");
 			break;
                 case MODE_NORMAL:
-//			strcpy(modecol, "\377w");
+			//strcpy(modecol, "\377w");
                         break;
 		}
 

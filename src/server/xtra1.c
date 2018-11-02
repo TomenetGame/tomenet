@@ -9600,6 +9600,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 
+		if ((p_ptr->mode & MODE_SOLO) || (lookup_player_mode(pid) & MODE_SOLO)) {
+			msg_print(Ind, "\377ySoloists cannot exchange goods or money with other players.");
+			return;
+		}
+
 		/* These anti-ironman checks take care of possible IDDC_IRON_COOP too */
 		d_ptr = getdungeon(&p_ptr->wpos);
 		if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
@@ -9753,6 +9758,11 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		if (acc) strcpy(accname, acc);
 		else { //paranoia
 			msg_format(Ind, "\377ySorry, that character does not have an account.");
+			return;
+		}
+
+		if ((p_ptr->mode & MODE_SOLO) || (lookup_player_mode(pid) & MODE_SOLO)) {
+			msg_print(Ind, "\377ySoloists cannot exchange goods or money with other players.");
 			return;
 		}
 
