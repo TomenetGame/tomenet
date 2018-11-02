@@ -1880,6 +1880,10 @@ static void fadein_next_music(void) {
 		int tries, mcs;
 		int n, initials = 0, noinit_map[MAX_SONGS], ni = 0;
 
+		/* We're not currently playing any music? -- This can happen when we quickly exit the game and return to music-less account screen
+		   and would cause a segfault when trying to access songs[-1]: */
+		if (music_cur == -1) return;
+
 		/* Catch disabled songs */
 		if (songs[music_cur].disabled) return;
 
