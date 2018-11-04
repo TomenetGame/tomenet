@@ -3327,7 +3327,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->skill_points = 0;
 
 	if (is_older_than(&connp->version, 4, 7, 1, 2, 0, 0)) {
-		if (sex & MODE_MALE_OLD) sex |= MODE_MALE;
+		if (sex & MODE_MALE_OLD) {
+			sex &= ~MODE_MALE_OLD;
+			sex |= MODE_MALE;
+		}
 #if 1 /* keep for now to stay compatible to some super-old version (I guess nobody knows anymore which one :p), doesn't hurt us */
 		if (sex > 511) {
 			sex -= 512;
