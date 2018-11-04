@@ -2871,6 +2871,48 @@ void store_stole(int Ind, int item) {
 		return;
 	}
 
+	if ((p_ptr->mode & MODE_SOLO) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+		msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+		if (!is_admin(p_ptr)) return;
+	}
+#ifdef IRON_IRON_TEAM
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
+	    //&& lookup_player_party(o_ptr->owner) != p_ptr->party) {
+	    && o_ptr->iron_trade != p_ptr->iron_trade) {
+		msg_print(Ind, "\377yYou cannot pick up starter items or items from outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+	/* cannot carry the same questor twice */
+	if (o_ptr->questor) {
+		int i;
+		object_type *qo_ptr;
+
+		for (i = 0; i < INVEN_PACK; i++) {
+			qo_ptr = &p_ptr->inventory[i];
+			if (!qo_ptr->k_idx || !qo_ptr->questor) continue;
+			if (qo_ptr->quest != o_ptr->quest || qo_ptr->questor_idx != o_ptr->questor_idx) continue;
+			msg_print(Ind, "\377yYou cannot carry more than one object of this type!");
+			return;
+		}
+	}
+	/* prevent winners picking up true arts accidentally */
+	if (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
+	    p_ptr->total_winner && cfg.kings_etiquette) {
+		msg_print(Ind, "Royalties may not own true artifacts!");
+		if (!is_admin(p_ptr)) return;
+	}
+	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
+#ifdef FALLEN_WINNERSONLY
+	    !p_ptr->once_winner
+#else
+	    !p_ptr->total_winner
+#endif
+	    ) {
+		msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
+		if (!is_admin(p_ptr)) return;
+	}
+
 	if (compat_pomode(Ind, o_ptr)) {
 		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
 		return;
@@ -3110,9 +3152,11 @@ void store_stole(int Ind, int item) {
 		}
 		//suppress_message = FALSE;
 
-	}
-
-	else {
+		if (!p_ptr->max_exp) {
+			msg_print(Ind, "You gain a tiny bit of experience from first-time successful stealing.");
+			gain_exp(Ind, 1);
+		}
+	} else {
 //s_printf("Stealing: %s (%d) fail. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance<10?10:chance), chance);
 s_printf("Stealing: %s (%d) fail. %s (chance %ld%%0 (%ld) %d,%d,%d).\n", p_ptr->name, p_ptr->lev, o_name, 10000 / (chance<10?10:chance), chance, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 		/* Complain */
@@ -3195,7 +3239,7 @@ void store_purchase(int Ind, int item, int amt) {
 
 	if (amt < 1) {
 		s_printf("$INTRUSION$ Bad amount %d! Bought by %s.\n", amt, p_ptr->name);
-//		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		//msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
 	}
 
@@ -3227,7 +3271,7 @@ void store_purchase(int Ind, int item, int amt) {
 	} else
 #endif
 	st_ptr = &town[i].townstore[p_ptr->store_num];
-//	ot_ptr = &owners[st][st_ptr->owner];
+	//ot_ptr = &owners[st][st_ptr->owner];
 	ot_ptr = &ow_info[st_ptr->owner];
 
 	if (!store_attest_command(p_ptr->store_num, BACT_BUY)) {
@@ -3330,10 +3374,35 @@ void store_purchase(int Ind, int item, int amt) {
 	/* check whether client tries to buy more than the store has */
 	if (o_ptr->number < amt) {
 		s_printf("$INTRUSION$ Too high amount %d of %d! Bought by %s.\n", amt, o_ptr->number, p_ptr->name);
-//		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		//msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
 	}
 
+	if ((p_ptr->mode & MODE_SOLO) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+		msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+		if (!is_admin(p_ptr)) return;
+	}
+#ifdef IRON_IRON_TEAM
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
+	    //&& lookup_player_party(o_ptr->owner) != p_ptr->party) {
+	    && o_ptr->iron_trade != p_ptr->iron_trade) {
+		msg_print(Ind, "\377yYou cannot pick up starter items or items from outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+	/* cannot carry the same questor twice */
+	if (o_ptr->questor) {
+		int i;
+		object_type *qo_ptr;
+
+		for (i = 0; i < INVEN_PACK; i++) {
+			qo_ptr = &p_ptr->inventory[i];
+			if (!qo_ptr->k_idx || !qo_ptr->questor) continue;
+			if (qo_ptr->quest != o_ptr->quest || qo_ptr->questor_idx != o_ptr->questor_idx) continue;
+			msg_print(Ind, "\377yYou cannot carry more than one object of this type!");
+			return;
+		}
+	}
 	if (compat_pomode(Ind, o_ptr)) {
 		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
 		return;
@@ -3596,7 +3665,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
  */
 void store_sell(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
-//	store_type *st_ptr;
+	//store_type *st_ptr;
 
 	s64b		price;
 	//int		choice;
@@ -5721,7 +5790,7 @@ void home_purchase(int Ind, int item, int amt) {
 
 	if (amt < 1) {
 		s_printf("$INTRUSION(HOME)$ Bad amount %d! (Home) Bought by %s.", amt, p_ptr->name);
-//		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		//msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
 	}
 
@@ -5757,10 +5826,35 @@ void home_purchase(int Ind, int item, int amt) {
 	/* check whether client tries to buy more than the store has */
 	if (o_ptr->number < amt) {
 		s_printf("$INTRUSION(HOME)$ Too high amount %d of %d! Bought by %s.\n", amt, o_ptr->number, p_ptr->name);
-//		msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
+		//msg_print(Ind, "\377RInvalid amount. Your attempt has been logged.");
 		return;
 	}
 
+	if ((p_ptr->mode & MODE_SOLO) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+		msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+		if (!is_admin(p_ptr)) return;
+	}
+#ifdef IRON_IRON_TEAM
+	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
+	    //&& lookup_player_party(o_ptr->owner) != p_ptr->party) {
+	    && o_ptr->iron_trade != p_ptr->iron_trade) {
+		msg_print(Ind, "\377yYou cannot pick up starter items or items from outsiders.");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+	/* cannot carry the same questor twice */
+	if (o_ptr->questor) {
+		int i;
+		object_type *qo_ptr;
+
+		for (i = 0; i < INVEN_PACK; i++) {
+			qo_ptr = &p_ptr->inventory[i];
+			if (!qo_ptr->k_idx || !qo_ptr->questor) continue;
+			if (qo_ptr->quest != o_ptr->quest || qo_ptr->questor_idx != o_ptr->questor_idx) continue;
+			msg_print(Ind, "\377yYou cannot carry more than one object of this type!");
+			return;
+		}
+	}
 	if (compat_pomode(Ind, o_ptr)) {
 		msg_format(Ind, "You cannot take items of %s players!", compat_pomode(Ind, o_ptr));
 		return;
