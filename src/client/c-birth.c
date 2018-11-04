@@ -1353,6 +1353,8 @@ static bool choose_mode(void) {
 	char c = '\0';
 	bool hazard = FALSE;
 
+	/* Note: Currently, RPG server (s_RPG) does not allow PvP/Everlasting/Normal modes. */
+
 	/* specialty: slot-exclusive-mode char? */
 	if (dedicated) {
 		put_str("i) Ironman Deep Dive Challenge", 16, 2);
@@ -1361,8 +1363,10 @@ static bool choose_mode(void) {
 		c_put_str(TERM_SLATE, "(Cannot trade with other players)", 17, 41);
 		put_str("H) Hellish Ironman Deep Dive Challenge", 18, 2);
 		c_put_str(TERM_SLATE, "(Extra hard, sort of ridiculous)", 18, 41);
-		put_str("p) PvP", 19, 2);
-		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 19, 9);
+		if (!s_RPG) {
+			put_str("p) PvP", 19, 2);
+			c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 19, 9);
+		}
 
 		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 		if (valid_dna) {
@@ -1399,7 +1403,7 @@ static bool choose_mode(void) {
 			if (c == '\b') {
 				clear_from(15);
 				return FALSE;
-			} else if (c == 'p') {
+			} else if (c == 'p' && !s_RPG) {
 				sex |= MODE_PVP;
 				c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 				c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
@@ -1422,19 +1426,19 @@ static bool choose_mode(void) {
 			} else if (c == '?') {
 				/*do_cmd_help("help.hlp");*/
 			} else if (c == '*') {
-				switch (rand_int(4)) {
-					case 0:
-						c = 'i';
-						break;
-					case 1:
-						c = 'p';
-						break;
-					case 2:
-						c = 'H';
-						break;
-					case 3:
-						c = 's';
-						break;
+				switch (rand_int(s_RPG ? 3 : 4)) {
+				case 0:
+					c = 'i';
+					break;
+				case 1:
+					c = 's';
+					break;
+				case 2:
+					c = 'H';
+					break;
+				case 3:
+					c = 'p';
+					break;
 				}
 				hazard = TRUE;
 			} else if (c == '#') {
@@ -1444,7 +1448,7 @@ static bool choose_mode(void) {
 					else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c = 's';
 					else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'i';
 					else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'i';
-					else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
+					else if ((dna_sex & MODE_PVP) == MODE_PVP && !s_RPG) c = 'p';
 					else c = 'i';
 					hazard = TRUE;
 				} else {
@@ -1463,22 +1467,28 @@ static bool choose_mode(void) {
 		return TRUE;
 	}
 
-	put_str("n) Normal", 16, 2);
-	c_put_str(TERM_SLATE, "(3 lifes)", 16, 12);
+	if (!s_RPG) {
+		put_str("n) Normal", 16, 2);
+		c_put_str(TERM_SLATE, "(3 lifes)", 16, 12);
+	}
 	put_str("g) No Ghost", 17, 2);
 	c_put_str(TERM_SLATE, "('Unworldly' - One life only. The traditional rogue-like way)", 17, 14);
 	put_str("s) Soloist", 18, 2);
 	c_put_str(TERM_SLATE, "(Same as 'No Ghost' but cannot exchange gold/items with anybody)", 18, 14);
-	put_str("e) Everlasting", 19, 2);
-	c_put_str(TERM_SLATE, "(You may resurrect infinite times but cannot enter highscore)", 19, 17);
+	if (!s_RPG) {
+		put_str("e) Everlasting", 19, 2);
+		c_put_str(TERM_SLATE, "(You may resurrect infinite times but cannot enter highscore)", 19, 17);
+	}
 	/* hack: no weird modi on first client startup!
 	   To find out whether it's 1st or not we check firstrun and # of existing characters.
 	   However, we just don't display the choices, they're still choosable! */
 	if (!firstrun || existing_characters) {
 		put_str("H) Hellish", 20, 2);
 		c_put_str(TERM_SLATE, "(Like 'Unworldly' mode but extra hard - sort of ridiculous)", 20, 13);
-		put_str("p) PvP", 21, 2);
-		c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21, 9);
+		if (!s_RPG) {
+			put_str("p) PvP", 21, 2);
+			c_put_str(TERM_SLATE, "(Can't beat the game, instead special 'player vs player' rules apply)", 21, 9);
+		}
 	}
 
 	c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
@@ -1486,9 +1496,9 @@ static bool choose_mode(void) {
 		if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c_put_str(TERM_SLATE, "Hellish", 9, CHAR_COL);
 		else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c_put_str(TERM_SLATE, "Soloist", 9, CHAR_COL);
 		else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c_put_str(TERM_SLATE, "No Ghost", 9, CHAR_COL);
-		else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
-		else if ((dna_sex & MODE_PVP) == MODE_PVP) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
-		else c_put_str(TERM_SLATE, "Normal", 9, CHAR_COL);
+		else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING && !s_RPG) c_put_str(TERM_SLATE, "Everlasting", 9, CHAR_COL);
+		else if ((dna_sex & MODE_PVP) == MODE_PVP && !s_RPG) c_put_str(TERM_SLATE, "PvP", 9, CHAR_COL);
+		else if (!s_RPG) c_put_str(TERM_SLATE, "Normal", 9, CHAR_COL);
 	}
 
 	if (auto_reincarnation) {
@@ -1508,6 +1518,14 @@ static bool choose_mode(void) {
 		Term->scr->cu = 1;
 
 		if (!hazard) c = inkey();
+
+		if (s_RPG) switch (c) {
+			case 'n': //normal
+			case 'p': //pvp
+			case 'e': //everlasting
+				bell();
+				continue;
+		}
 
 		if (c == 'Q' || c == KTRL('Q')) quit(NULL);
 #ifdef RETRY_LOGIN
@@ -1550,24 +1568,24 @@ static bool choose_mode(void) {
 		} else if (c == '?') {
 			/*do_cmd_help("help.hlp");*/
 		} else if (c == '*') {
-			switch (rand_int(6)) {
+			switch (rand_int(s_RPG ? 3 : 6)) {
 			case 0:
-				c = 'n';
-				break;
-			case 1:
-				c = 'p';
-				break;
-			case 2:
 				c = 'g';
 				break;
-			case 3:
+			case 1:
 				c = 'H';
+				break;
+			case 2:
+				c = 's';
+				break;
+			case 3:
+				c = 'p';
 				break;
 			case 4:
 				c = 'e';
 				break;
 			case 5:
-				c = 's';
+				c = 'n';
 				break;
 			}
 			hazard = TRUE;
@@ -1576,9 +1594,9 @@ static bool choose_mode(void) {
 				if (((dna_sex & MODE_HARD) == MODE_HARD) && ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST)) c = 'H';
 				else if (((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) && ((dna_sex & MODE_SOLO) == MODE_SOLO)) c = 's';
 				else if ((dna_sex & MODE_NO_GHOST) == MODE_NO_GHOST) c = 'g';
-				else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING) c = 'e';
-				else if ((dna_sex & MODE_PVP) == MODE_PVP) c = 'p';
-				else c = 'n';
+				else if ((dna_sex & MODE_EVERLASTING) == MODE_EVERLASTING && !s_RPG) c = 'e';
+				else if ((dna_sex & MODE_PVP) == MODE_PVP && !s_RPG) c = 'p';
+				else if (!s_RPG) c = 'n';
 				hazard = TRUE;
 			} else {
 				auto_reincarnation = FALSE;
@@ -1996,12 +2014,16 @@ cstats:
 
 
 	/* Choose character mode */
+#if 0 /* RPG server now supports the new 'Soloist' mode too, instead of just 'Unworldly' so far. Also should allow 'Hellish' actually. */
 	if (!s_RPG || s_RPG_ADMIN) {
 		if (!choose_mode()) goto cstats;
 	} else {
 		c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 		c_put_str(TERM_L_BLUE, "No Ghost", 9, CHAR_COL);
 	}
+#else
+	if (!choose_mode()) goto cstats;
+#endif
 #ifdef RETRY_LOGIN
 	if (rl_connection_destroyed) return;
 #endif
