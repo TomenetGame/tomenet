@@ -1,8 +1,8 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 25. September 2018 - written by C. Blue (c_blue@gmx.net)
-| for TomeNET version v4.7.1a - official websites are:
+| Latest update: 05. October 2018 - written by C. Blue (c_blue@gmx.net)
+| for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
@@ -271,6 +271,10 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 
  Now you're in the game and should see the town of Bree.
 
+ Note that all following keys mentioned assume that you use the normal
+ (aka non-roguelike) keymap! If you use rogue-like keymap, refer to (0.2) for
+ a full list of command keys under that setting.
+
 -To chat, press the colon key ':' . Don't hesitate to ask other players
  if you have any problems with getting started.
  (For details about chat features see (3.3).)
@@ -350,18 +354,21 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  'Ironman Deep Dive Challenge' dungeon.
 
 -A few other important keys are:
- ~  knowledge menu (all of your character's knowledge, plus artifact/monster
-    spoilers under ~6 and ~7 respectively.)
- =  game options menu.
- %  macro menu ('macros' are hotkeys, allowing you to bind certain actions to a
-    single key press). (More about macros in (3.6) up to (3.9b).)
+ ~   knowledge menu (all of your character's knowledge, plus artifact/monster
+     spoilers under ~6 and ~7 respectively.)
+ =   game options menu.
+ %   macro menu ('macros' are hotkeys, allowing you to bind certain actions to
+     a single key press). (More about macros in (3.6) up to (3.9b).)
  SHIFT+P  form a party with your buddies. You share experience in a party and
           you can always see each other on the map and your team mates' current
           world location in the player list (accessed with '@' key).
+          (SHIFT+O if you are using rogue-like key map.)
  SHIFT+L  look around the map. Very useful to locate team mates ;).
- CTRL+U  the audio mixer menu (the hotkeys for toggling master/music work
-         outside of this menu too).
- CTRL+Q  quit the game. Safest way is to quit in a town, not in the dungeon!
+          (SHIFT+W if you are using rogue-like key map.)
+ CTRL+U   the audio mixer menu (the hotkeys for toggling master/music work
+          outside of this menu too).
+          (CTRL+F if you are using rogue-like key map.)
+ CTRL+Q   quit the game. Safest way is to quit in a town, not in the dungeon!
 
 
 -Note that your character's "speed" may change. Speed is the factor telling you
@@ -2908,7 +2915,7 @@ instead of editing the config file's 'Sound' entry you can just use the '-q'
 command-line option.
 
 If you want to use your own sound and music, and create audio packs for other
-players, read (2.1b) below.
+players, read (2.1c) below.
 
 
 (2.1c) Manually editing sound and music configuration
@@ -2956,21 +2963,54 @@ A) You already have the official sound/music packs installed.
 B) You have no packs installed. In this case, you will have pretty bare example
    configuration files in these two folders mentioned in 'A)', which are named
    sound.cfg.default and music.cfg.default.
-   What you have to do in this case is:
-   1) Do not edit these default files. Instead, make a copy of each, and call
-      those copies 'sound.cfg' and 'music.cfg' respectively, and edit these!
-   2) Since they're still pretty empty, you will have no ideas of the sound and
-      music event names, save for the sound effects 'page', 'warning' and
-      'greeting' which are specified by default.
-      So to find out all the other event names, open the file 'audio.lua' in
-      any text editor. This file is found in folder TomeNET/lib/scpt/.
-      Now you can just add new lines to your sound.cfg and music.cfg files
-      using the event names you see in audio.lua, in the same manner as the
-      three already existing entries in sound.cfg.
+   What you have to do in this case is either work with these or instead
+   download full-fledged cfg-files from the downloads section of the official
+   TomeNET website (recommended):
 
-      MAKE SURE you read the instructions written in the beginning of the files
-      sound.cfg and music.cfg. They also tell you which audio formats you can
-      use.
+   i)  Downloading full-fledged template files (music.cfg and/or sound.cfg)
+       from the official TomeNET website - this is the recommended way:
+       Just edit these cfg-files to insert your own music files as you see fit.
+
+   ii) Starting out with bare minimum files *.cfg.default (the hard way):
+       1) Do not edit these default files. Instead, make a copy of each, and
+          call those copies 'sound.cfg' and 'music.cfg' respectively, and edit
+          these!
+       2) Since they're still pretty empty, you will have no ideas of the sound
+          and music event names, save for the sound effects 'page', 'warning'
+          and 'greeting' which are specified by default.
+          So to find out all the other event names, open the file 'audio.lua'
+          in any text editor. This file is found in folder TomeNET/lib/scpt/.
+          Now you can just add new lines to your sound.cfg and music.cfg files
+          using the event names you see in audio.lua, in the same manner as the
+          three already existing entries in sound.cfg.
+
+  MAKE SURE you read the instructions written in the beginning of the files
+  sound.cfg and music.cfg. They also tell you which audio formats you can
+  use.
+
+  Note that the official cfg-files (both, the ones in the actual packs and the
+  pure template ones) actually do NOT fully utilize ALL available sound and
+  music events supported by the game!
+  Randomly picked examples (at the time of writing this here - may change):
+  Currently, the official music pack does not contain any songs for the
+  character creation screen or the sickbay (among others, these two are just a
+  few of the unused opportunities), and the official sound pack for example
+  currently has no sound effects for bashing or cloaking.
+  Just look through the music.cfg and sound.cfg files for lines starting on a
+  '#' character. It means that the line is currently disabled. This way you can
+  easily spot all the places where you could add additional sound/music effects
+  that are supported by the game but currently unused by the official packs!
+
+  To test your changes live while you're logged into the game, press CTRL+U
+  (or CTRL+F if you use rogue-like keymap) and then CTRL+R to reload and
+  reset all audio pack information on the fly. Changes to the files on disk
+  will be applied immediately to the live client this way.
+
+  Do not forget to fill out the [title] section in your cfg-files so people
+  who use your audio pack will know about it and who made it, so you get
+  proper credit. :)
+
+  To switch between different audio packs in-game, press = and then X.
 
 Note: Do not MODIFY the file audio.lua, it has nothing to do with editing your
       sound or music. Don't worry though if you accidentally modified it, it'll
@@ -3601,6 +3641,15 @@ Unworldly characters are like normal characters, but they have only one life.
 So if they die they cannot revive but are completely erased (no ghost will be
 created.)
 Note: This is the traditional rogue-like gaming mode.
+
+Mode: 'Soloist' (no-ghost and no PC-trading)
+--------------------------------------------
+This is exactly like above 'Unworldly' mode, except you cannot do any trading
+ie exchange of items or gold with other player characters. You can use all NPC
+stores as usual though.
+This mode allows you to have a 'single-player' experience of traditional
+rogue-like gaming. But of course you could still ask other players in chat to
+help you out of a dire situation..
 
 Mode: 'Hellish' (extra hard no-ghost)
 -------------------------------------
