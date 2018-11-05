@@ -8800,10 +8800,12 @@ void interact_audio(void) {
 
 			/* Describe */
 			Term_putstr(30,  0, -1, TERM_L_UMBER, "*** Audio Mixer ***");
-			Term_putstr(3, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN/SPACE to toggle, ESC to leave.");
+			//Term_putstr(3, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN/SPACE to toggle, ESC to leave.");
+			Term_putstr(3, 1, -1, TERM_L_UMBER, "Press \377yarrow keys\377U to navigate/modify, \377yRETURN\377U/\377ySPACE\377U to toggle, \377yESC\377U to leave.");
 			//Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
 			//Term_putstr(7, 3, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
-			Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
+			//Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
+			Term_putstr(2, 2, -1, TERM_L_UMBER, "Shortcuts: '\377ya\377U','\377yw\377U','\377ys\377U','\377yc\377U'/'\377ym\377U'. \377yShift+shortcut\377U to jump. \377yCTRL+R\377U reloads packs.");
 
 			if (quiet_mode) Term_putstr(12, 4, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
 			else if (audio_sfx > 3 && audio_music > 0) Term_putstr(12, 4, -1, TERM_L_GREEN, "     Sound pack and music pack have been detected.      ");
@@ -8978,6 +8980,9 @@ void interact_audio(void) {
 				set_mixing();
 				break;
 			}
+			break;
+		case KTRL('R'):
+			if (re_init_sound() == 0) c_message_add("Audio packs have been reloaded successfully.");
 			break;
 		default:
 			/* Oops */
@@ -9323,7 +9328,7 @@ void audio_pack_selector(void) {
 	inkey_msg = inkey_msg_old;
 
 	/* Switch it live! */
-	re_init_sound();
+	(void)re_init_sound();
 
 	//No longer true (for SDL, our only sound sytem at this point basically):
 	//c_message_add("\377RAfter changing audio packs, a game client restart is required!");

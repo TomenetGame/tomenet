@@ -3216,13 +3216,13 @@ static void init_sound() {
 }
 /* Try to re-init specifically SDL-audio.
    Purpose: Avoid need for client restart on switching audio packs live. */
-void re_init_sound() {
+int re_init_sound() {
 #ifdef USE_SOUND_2010
-	int i;
+	int i, err;
 
 	if (!use_sound) {
 		/* Don't initialize sound modules */
-		return;
+		return 0;
 	}
 
 	/* Scan specifically for SDL-module */
@@ -3231,16 +3231,16 @@ void re_init_sound() {
 		/* Try to re-init it */
 		if (!sound_modules[i].init) {
 			puts("ERROR: SDL audio has no init function.");
-			return;
+			return -1;
 		}
-		if (0 == re_init_sound_sdl()) {
+		if ((err = re_init_sound_sdl()) == 0) {
  #ifdef DEBUG_SOUND
 			puts(format("USE_SOUND_2010: successfully loaded module %d.", i));
  #endif
 			break;
 		} else {
 			puts("ERROR: SDL audio failed to re-initialize.");
-			return;
+			return err;
 		}
 	}
  #ifdef DEBUG_SOUND
@@ -3248,7 +3248,7 @@ void re_init_sound() {
  #endif
 	if (i == N_ELEMENTS(sound_modules)) {
 		puts("ERROR: No SDL audio module found.");
-		return;
+		return -2;
 	}
 
 	/* initialize mixer, putting configuration read from rc file live */
@@ -3265,6 +3265,8 @@ void re_init_sound() {
 	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
 #endif
+
+	return 0;
 }
 
 
