@@ -1839,21 +1839,23 @@ void handle_music(int Ind) {
 		//black markets
 		case STORE_BLACK:
 		case STORE_BLACKX:
-		case STORE_BLACKS:
-		case STORE_BLACK_DUN:
-			Send_music(Ind, 94, -1);
-			break;
+		case STORE_BLACK_DUN: //dungeon town black market
+			Send_music(Ind, 94, 93);
+			return;
+		case STORE_BLACKS: //dungeon store
+			Send_music(Ind, 94, 95);
+			return;
 		//casino music! Could contain a lot of pseudo ambient sfx too ;)
 		case STORE_CASINO:
-			Send_music(Ind, 96, -1);
-			break;
+			Send_music(Ind, 96, 93);
+			return;
 		}
 		/* Hack: Shops that don't offer the option to buy (store action '2') anything, aka 'service shops' */
 		for (a = 0; a < STORE_MAX_ACTION; a++)
 			if (st_info[p_ptr->store_num].actions[a] == 2) break;
 		if (a == STORE_MAX_ACTION) Send_music(Ind, 97, -1); //service shop music
 		/* Normal shops (in town or elsewhere) */
-		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) Send_music(Ind, 95, -1); //dungeon shops (and strange world-surface shops not attached to any town, if they exist oO)
+		else if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) Send_music(Ind, 95, -1); //dungeon shops (and strange world-surface shops not attached to any town, if they exist oO)
 		else Send_music(Ind, 93, -1); //town shops
 		return;
 	}
