@@ -1697,6 +1697,14 @@ void sound_near_monster_atk(int m_idx, int Ind, cptr name, cptr alternative, int
 }
 
 /* Find correct music for the player based on his current location - C. Blue
+ * A value of -1 just means not to change anything, used for secondary music if there is no
+   desired secondary music for an event.
+ * An alternative music value of -2 means that the primary music is just optional ie non-canon
+   (not set in the basic official music pack) and we should not stop playing our current music
+   just because we cannot play the primary music wish.
+ * (-3 is used internally for handling changes to shuffle option.)
+ * A value of -4 means to fade out current music. Can be used as secondary music to stop playing
+   in case the primary music could not be played.
  * Note - rarely played music:
  *     dungeons - generic/ironman/forcedownhellish
  *     towns - generic day/night (used for Menegroth/Nargothrond at times)
@@ -1815,7 +1823,7 @@ void handle_music(int Ind) {
 	}
 
 	/* Ghost-specific music if available client-side */
-	if (p_ptr->ghost) Send_music(Ind, 89, -2);
+	if (p_ptr->ghost) Send_music(Ind, 89, -1);
 
 	/* rest of the music has lower priority than already running, boss-specific music */
 	if (p_ptr->music_monster != -1
@@ -1833,20 +1841,20 @@ void handle_music(int Ind) {
 		case STORE_BLACKX:
 		case STORE_BLACKS:
 		case STORE_BLACK_DUN:
-			Send_music(Ind, 94, -2);
+			Send_music(Ind, 94, -1);
 			break;
 		//casino music! Could contain a lot of pseudo ambient sfx too ;)
 		case STORE_CASINO:
-			Send_music(Ind, 96, -2);
+			Send_music(Ind, 96, -1);
 			break;
 		}
 		/* Hack: Shops that don't offer the option to buy (store action '2') anything, aka 'service shops' */
 		for (a = 0; a < STORE_MAX_ACTION; a++)
 			if (st_info[p_ptr->store_num].actions[a] == 2) break;
-		if (a == STORE_MAX_ACTION) Send_music(Ind, 97, -2); //service shop music
+		if (a == STORE_MAX_ACTION) Send_music(Ind, 97, -1); //service shop music
 		/* Normal shops (in town or elsewhere) */
-		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) Send_music(Ind, 95, -2); //dungeon shops (and strange world-surface shops not attached to any town, if they exist oO)
-		else Send_music(Ind, 93, -2); //town shops
+		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos)) Send_music(Ind, 95, -1); //dungeon shops (and strange world-surface shops not attached to any town, if they exist oO)
+		else Send_music(Ind, 93, -1); //town shops
 		return;
 	}
 

@@ -3375,8 +3375,8 @@ int Receive_music(void) {
 	/* Play background music (if enabled) */
 	if (!use_sound) return 1;
 	/* Try to play music, if fails try alternative music, if fails too stop playing any music.
-	   A secondary parameter value of -2 means 'just keep playing the current music instead of stopping it, if the desired music is not available'. */
-	if (!music(m) && !(music(m2) || m2 == -2)) music(-2);
+	   Special codes -1, -2 and -4 can be used here to induce alternate behaviour (see handle_music()). */
+	if (!music(m)) music(m2);
 #endif
 
 	return 1;
