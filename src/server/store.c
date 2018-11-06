@@ -4278,17 +4278,6 @@ void do_cmd_store(int Ind) {
 	stop_shooting_till_kill(Ind);
 	handle_stuff(Ind); /* update stealth/search display now */
 
-#ifdef USE_SOUND_2010
-	/* Ring door bell for shops that offer either buying or selling of items */
-	if (p_ptr->sfx_store)
-		for (i = 0; i < STORE_MAX_ACTION; i++)
-			if (st_info[st_ptr->st_idx].actions[i] == 1 || //sell item
-			    st_info[st_ptr->st_idx].actions[i] == 2) { //purchase item
-				sound(Ind, "store_doorbell_enter", NULL, SFX_TYPE_MISC, FALSE);
-				break;
-			}
-#endif
-
 	/* process theft watch list of the store owner */
 	if (st_ptr->tim_watch) {
 		if ((turn - st_ptr->last_theft) / cfg.fps > st_ptr->tim_watch)
@@ -4327,7 +4316,20 @@ void do_cmd_store(int Ind) {
 
 	/* Save the store number */
 	p_ptr->store_num = which;
-	
+
+#ifdef USE_SOUND_2010
+	/* Ring door bell for shops that offer either buying or selling of items */
+	if (p_ptr->sfx_store)
+		for (i = 0; i < STORE_MAX_ACTION; i++)
+			if (st_info[st_ptr->st_idx].actions[i] == 1 || //sell item
+			    st_info[st_ptr->st_idx].actions[i] == 2) { //purchase item
+				sound(Ind, "store_doorbell_enter", NULL, SFX_TYPE_MISC, FALSE);
+				break;
+			}
+	/* Possibly store-specific music */
+	handle_music(Ind);
+#endif
+
 	/* Save the store and owner pointers */
 	/*st_ptr = &store[p_ptr->store_num];
 	ot_ptr = &owners[p_ptr->store_num][st_ptr->owner];*/
