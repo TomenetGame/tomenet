@@ -7207,11 +7207,24 @@ extern int PlayerUID;
  #define SFX_TYPE_AMBIENT	8
  #define SFX_TYPE_STOP		9	/* stop playing this sfx, if it is. stop playing any SFX_TYPE_NO_OVERLAP sfx if no sfx is specified. */
 
- /* new in 2013: for ambient sound fx channel (inn fireplace!) */
+ /* new in 2013: for ambient sound fx channel (inn fireplace!) -- all 'persistent' ambient sfx. */
  #define SFX_AMBIENT_NONE	-1
  #define SFX_AMBIENT_FIREPLACE	0
  #define SFX_AMBIENT_SHORE	1
  #define SFX_AMBIENT_LAKE	2
+ #define SFX_AMBIENT_STORE_GENERAL	3
+ #define SFX_AMBIENT_STORE_ARMOUR	4
+ #define SFX_AMBIENT_STORE_WEAPON	5
+ #define SFX_AMBIENT_STORE_TEMPLE	6
+ #define SFX_AMBIENT_STORE_ALCHEMY	7
+ #define SFX_AMBIENT_STORE_MAGIC	8
+ #define SFX_AMBIENT_STORE_BLACK	9
+ #define SFX_AMBIENT_STORE_BOOK		10
+ #define SFX_AMBIENT_STORE_RUNE		11
+ #define SFX_AMBIENT_STORE_MERCHANTS	12
+ #define SFX_AMBIENT_STORE_OFFICIAL	13
+ #define SFX_AMBIENT_STORE_CASINO	14
+ #define SFX_AMBIENT_STORE_MISC		15
 
  /* Reduction in percent (on linear scale) of ambient/weather sfx
     depending on which grid the player is on (ie inside house or outside): [40] */

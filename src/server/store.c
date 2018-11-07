@@ -4192,7 +4192,7 @@ void do_cmd_store(int Ind) {
 
 	/* Access the player grid */
 	cave_type **zcave;
-	if(!(zcave = getcave(&p_ptr->wpos))) return;
+	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	town_idx = i = gettown(Ind);
@@ -4328,6 +4328,8 @@ void do_cmd_store(int Ind) {
 			}
 	/* Possibly store-specific music */
 	handle_music(Ind);
+	/* Possibly store-specific ambient sfx */
+	handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
 #endif
 
 	/* Save the store and owner pointers */
@@ -7405,6 +7407,7 @@ void handle_store_leave(int Ind) {
 	int i = gettown(Ind);
 	store_type *st_ptr = NULL;
 	player_type *p_ptr = Players[Ind];
+	cave_type **zcave = getcave(&p_ptr->wpos);
 
 	/* hack: non-town stores (ie dungeon, but could also be wild) */
 	if (i == -1) i = gettown_dun(Ind);
@@ -7432,8 +7435,10 @@ void handle_store_leave(int Ind) {
 	/* We're no longer busy with anything */
 	p_ptr->store_action = 0;
 
-	/* For store-specific music */
+	/* For possible store-specific music */
 	handle_music(Ind);
+	/* For possible store-specific ambient sfx */
+	if (zcave) handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
 
 	/* Do nothing if pointer is not valid - mikaelh */
 	if (!st_ptr) return;

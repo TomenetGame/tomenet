@@ -2272,7 +2272,28 @@ static void sync_options(int Ind, bool *options) {
 		if (p_ptr->sfx_house != sfx_house || p_ptr->sfx_house_quiet != sfx_house_quiet) {
 			if (p_ptr->grid_house) {
 				if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
-				else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
+				else if (p_ptr->sfx_house_quiet) {
+					switch (p_ptr->sound_ambient) {
+					case SFX_AMBIENT_FIREPLACE:
+					case SFX_AMBIENT_STORE_GENERAL:
+					case SFX_AMBIENT_STORE_ARMOUR:
+					case SFX_AMBIENT_STORE_WEAPON:
+					case SFX_AMBIENT_STORE_TEMPLE:
+					case SFX_AMBIENT_STORE_ALCHEMY:
+					case SFX_AMBIENT_STORE_MAGIC:
+					case SFX_AMBIENT_STORE_BLACK:
+					case SFX_AMBIENT_STORE_BOOK:
+					case SFX_AMBIENT_STORE_RUNE:
+					case SFX_AMBIENT_STORE_MERCHANTS:
+					case SFX_AMBIENT_STORE_OFFICIAL:
+					case SFX_AMBIENT_STORE_CASINO:
+					case SFX_AMBIENT_STORE_MISC:
+						Send_sfx_volume(Ind, 100, GRID_SFX_REDUCTION);
+						break;
+					default:
+						Send_sfx_volume(Ind, GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
+					}
+				}
 				else Send_sfx_volume(Ind, 100, 100);
 			}
 		}
@@ -2465,8 +2486,28 @@ static void sync_options(int Ind, bool *options) {
 
 				Send_sfx_volume(Ind, 0, 0);
 			} else {
-				if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, p_ptr->sound_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
-				else Send_sfx_volume(Ind, 100, 100);
+				if (p_ptr->sfx_house_quiet) {
+					switch (p_ptr->sound_ambient) {
+					case SFX_AMBIENT_FIREPLACE:
+					case SFX_AMBIENT_STORE_GENERAL:
+					case SFX_AMBIENT_STORE_ARMOUR:
+					case SFX_AMBIENT_STORE_WEAPON:
+					case SFX_AMBIENT_STORE_TEMPLE:
+					case SFX_AMBIENT_STORE_ALCHEMY:
+					case SFX_AMBIENT_STORE_MAGIC:
+					case SFX_AMBIENT_STORE_BLACK:
+					case SFX_AMBIENT_STORE_BOOK:
+					case SFX_AMBIENT_STORE_RUNE:
+					case SFX_AMBIENT_STORE_MERCHANTS:
+					case SFX_AMBIENT_STORE_OFFICIAL:
+					case SFX_AMBIENT_STORE_CASINO:
+					case SFX_AMBIENT_STORE_MISC:
+						Send_sfx_volume(Ind, 100, GRID_SFX_REDUCTION);
+						break;
+					default:
+						Send_sfx_volume(Ind, GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
+					}
+				} else Send_sfx_volume(Ind, 100, 100);
 
 #if 1
 				/* Hack: Set AMBIENT_NONE to correct ambient sfx again.
@@ -3099,7 +3140,7 @@ static int Handle_login(int ind) {
 #endif
 	/* Since 4.5.7 we can now distinguish (client-side) between disabled and unavailable audio.
 	   The minus constant is for optional songs, ie songs that have a commented out music.cfg entry by default (user's choice to enable them). */
-	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 90)
+	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 103)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
 	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 40) //(-39)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---");
@@ -7352,10 +7393,23 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 
 	//-1: smooth (poor with WoR, otherwise great), -2: sudden (needed for WoR/staircases)
 	switch (sfx_ambient) {
-	case SFX_AMBIENT_NONE:		i = (smooth ? -1 : -2); break;
-	case SFX_AMBIENT_FIREPLACE:	name = "ambient_fireplace"; break;
-	case SFX_AMBIENT_SHORE:		name = "ambient_shore"; break;
-	case SFX_AMBIENT_LAKE:		name = "ambient_lake"; break;
+	case SFX_AMBIENT_NONE:			i = (smooth ? -1 : -2); break;
+	case SFX_AMBIENT_FIREPLACE:		name = "ambient_fireplace"; break;
+	case SFX_AMBIENT_SHORE:			name = "ambient_shore"; break;
+	case SFX_AMBIENT_LAKE:			name = "ambient_lake"; break;
+	case SFX_AMBIENT_STORE_GENERAL:		name = "ambient_store_general"; break;
+	case SFX_AMBIENT_STORE_ARMOUR:		name = "ambient_store_armour"; break;
+	case SFX_AMBIENT_STORE_WEAPON:		name = "ambient_store_weapon"; break;
+	case SFX_AMBIENT_STORE_TEMPLE:		name = "ambient_store_temple"; break;
+	case SFX_AMBIENT_STORE_ALCHEMY:		name = "ambient_store_alchemy"; break;
+	case SFX_AMBIENT_STORE_MAGIC:		name = "ambient_store_magic"; break;
+	case SFX_AMBIENT_STORE_BLACK:		name = "ambient_store_black"; break;
+	case SFX_AMBIENT_STORE_BOOK:		name = "ambient_store_book"; break;
+	case SFX_AMBIENT_STORE_RUNE:		name = "ambient_store_rune"; break;
+	case SFX_AMBIENT_STORE_MERCHANTS:	name = "ambient_store_merchants"; break;
+	case SFX_AMBIENT_STORE_OFFICIAL:	name = "ambient_store_official"; break;
+	case SFX_AMBIENT_STORE_CASINO:		name = "ambient_store_casino"; break;
+	case SFX_AMBIENT_STORE_MISC:		name = "ambient_store_misc"; break;
 	}
 
 	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
@@ -7383,8 +7437,28 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 				//fadeout any ambient sound:
 				i = -1;
 				sfx_ambient = SFX_AMBIENT_NONE;
+			} else if (p_ptr->sfx_house_quiet) {
+				switch (sfx_ambient) {
+				case SFX_AMBIENT_FIREPLACE:
+				case SFX_AMBIENT_STORE_GENERAL:
+				case SFX_AMBIENT_STORE_ARMOUR:
+				case SFX_AMBIENT_STORE_WEAPON:
+				case SFX_AMBIENT_STORE_TEMPLE:
+				case SFX_AMBIENT_STORE_ALCHEMY:
+				case SFX_AMBIENT_STORE_MAGIC:
+				case SFX_AMBIENT_STORE_BLACK:
+				case SFX_AMBIENT_STORE_BOOK:
+				case SFX_AMBIENT_STORE_RUNE:
+				case SFX_AMBIENT_STORE_MERCHANTS:
+				case SFX_AMBIENT_STORE_OFFICIAL:
+				case SFX_AMBIENT_STORE_CASINO:
+				case SFX_AMBIENT_STORE_MISC:
+					Send_sfx_volume(Ind, 100, GRID_SFX_REDUCTION);
+					break;
+				default:
+					Send_sfx_volume(Ind, GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
+				}
 			}
-			else if (p_ptr->sfx_house_quiet) Send_sfx_volume(Ind, sfx_ambient == SFX_AMBIENT_FIREPLACE ? 100 : GRID_SFX_REDUCTION, GRID_SFX_REDUCTION);
 		}
 	} else if (p_ptr->grid_house) {
 		p_ptr->grid_house = FALSE;
