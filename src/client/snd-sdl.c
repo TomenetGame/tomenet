@@ -458,7 +458,17 @@ static bool sound_sdl_init(bool no_cache) {
 
 		/* Terminate the current token */
 		cur_token = sample_list;
-		search = strchr(cur_token, ' ');
+		/* Handle sample names within quotes */
+		if (cur_token[0] == '\"') {
+			cur_token++;
+			search = strchr(cur_token, '\"');
+			if (search) {
+				search[0] = '\0';
+				search = strchr(search + 1, ' ');
+			}
+		} else {
+			search = strchr(cur_token, ' ');
+		}
 		if (search) {
 			search[0] = '\0';
 			next_token = search + 1;
@@ -741,7 +751,7 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 
 		/*
-		 * Now we find all the sample names and add them one by one
+		 * Now we find all the song names and add them one by one
 		*/
 		events_loaded_semaphore = FALSE;
 		while (cur_token) {
