@@ -7439,6 +7439,9 @@ void handle_store_leave(int Ind) {
 	handle_music(Ind);
 	/* For possible store-specific ambient sfx */
 	if (zcave) handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
+	/* Restore correct weather volume */
+	p_ptr->grid_house = FALSE; //just assume we did not get kicked out 'into' an inn.. (shouldn't happen)
+	if (p_ptr->sfx_house_quiet || !p_ptr->sfx_house) Send_sfx_volume(Ind, 100, 100);
 
 	/* Do nothing if pointer is not valid - mikaelh */
 	if (!st_ptr) return;
