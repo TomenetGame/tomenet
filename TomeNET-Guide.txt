@@ -14445,9 +14445,11 @@ create a character!):
     Hint: Runespells cause backlash of the active element on spell failure.
     For that reason you might use basic elemental spells in the beginning,
     against which you can easily acquire the required resistance, for example
-    by buying a ring or amulet from the magic store. If you want to test rune
-    combinations that pose a risk of going wrong badly, do so in the arena of
-    the 'Arena Monster Challenge' event so you will get away unscathed.
+    by buying a ring or amulet from the magic store or maybe even by choosing
+    a race that has intrinsic resistance to the element you are planning to use
+    mainly. If you want to test rune combinations that pose a risk of going
+    wrong badly, do so in the arena of the 'Arena Monster Challenge' event so
+    you will get away unscathed.
 
 - Mindcrafter
     Mindcrafters are great melee fighters who additionally train the use of
