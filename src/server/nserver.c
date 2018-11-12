@@ -4642,6 +4642,25 @@ static int Receive_play(int ind) {
 				return -1;
 			}
 		}
+
+		/* Backward compatibility */
+		if (is_older_than(&connp->version, 4, 7, 1, 2, 0, 0)) {
+			if (sex & MODE_MALE_OLD) {
+				sex &= ~MODE_MALE_OLD;
+				sex |= MODE_MALE;
+			}
+#if 1 /* keep for now to stay compatible to some super-old version (I guess nobody knows anymore which one :p), doesn't hurt us */
+			if (sex > 511) {
+				sex -= 512;
+				sex |= MODE_FRUIT_BAT;
+			}
+#endif
+			if (sex & MODE_FRUIT_BAT_OLD) {
+				sex &= ~MODE_FRUIT_BAT_OLD;
+				sex |= MODE_FRUIT_BAT;
+			}
+		}
+
 #ifdef ENABLE_DEATHKNIGHT
 		/* Unhack duplicate class slot usage (Paladin/Death Knight) */
 		if (race == RACE_VAMPIRE && class == CLASS_PALADIN) class = CLASS_DEATHKNIGHT;
