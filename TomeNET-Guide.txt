@@ -17960,13 +17960,12 @@ Guilds:
     The next player from that guild who grabs the guild key becomes the new
     guild master.
 
-A player of a leaderless guild who grabs the guild key becomes the new
-guild master. Keys are indestructible, they can be lost though..
-
 While a guild is leaderless, three restrictions apply:
     1) No new members can be added to the guild.
     2) Items and gold cannot be picked up from the guild hall anymore.
-    3) The guild will cease to exist if it is leaderless for more than a week!
+    3) The guild will CEASE TO EXIST if it is leaderless for more than a week!
+
+Guild keys are indestructible, they can be lost though..
 
 
 PvP outside of the dedicated 'PvP' character mode:
@@ -17988,6 +17987,8 @@ options in the party menu:
 ------------------
 A guild may have a guild hall. That is a house owned by the guild, which will
 persist until the guild is disbanded or it is sold by the guild master.
+Note that a guild that is leaderless for more than a week is automatically
+disbanded! (See (6.9) above for more info.)
 
 To get a guild hall, the current guild master must buy a house and transfer
 ownership to the guild. He does this by standing next to the house door,
