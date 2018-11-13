@@ -3331,6 +3331,8 @@ static bool vault_aux_chapel(int r_idx) {
 
 	/* Decline unique monsters */
 	if (r_ptr->flags1 & (RF1_UNIQUE)) return (FALSE);
+	/* Oops, anti-paladins! */
+	if (r_ptr->flags3 & (RF3_EVIL)) return (FALSE);
 
 	/* Require "priest" or Angel */
 	if (!((r_ptr->d_char == 'A') ||
