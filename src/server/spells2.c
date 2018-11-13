@@ -545,26 +545,26 @@ bool do_banish_animals(int Ind, int chance) {
 		}
 	}
 	if (j < 5) {
-		msg_print(Ind, "\337gA few here long for their gardens.");
-		msg_format_near(Ind, "\337g%s tries hard but alas can only convert a few animals.", p_ptr->name);
+		msg_print(Ind, "\377gA few here long for their gardens.");
+		msg_format_near(Ind, "\377g%s tries hard but alas can only convert a few animals.", p_ptr->name);
 	} else if (j < 10) {
-		msg_print(Ind, "\337gA handful here longs for their gardens.");
-		msg_format_near(Ind, "\337g%s tries hard but alas can only convert a handful of animals.", p_ptr->name);
+		msg_print(Ind, "\377gA handful here longs for their gardens.");
+		msg_format_near(Ind, "\377g%s tries hard but alas can only convert a handful of animals.", p_ptr->name);
 	} else if (j < 20) {
-		msg_print(Ind, "\337gA pack here abandoned evil to retire in their gardens.");
-		msg_format_near(Ind, "\337g%s tries hard and you notice animals going away.", p_ptr->name);
+		msg_print(Ind, "\377gA pack here abandoned evil to retire in their gardens.");
+		msg_format_near(Ind, "\377g%s tries hard and you notice animals going away.", p_ptr->name);
 	} else if (j < 50) {
-		msg_print(Ind, "\337gIt's a near-miracle!");
-		msg_format_near(Ind, "\337g%s banishes animals with conviction.", p_ptr->name);
+		msg_print(Ind, "\377gIt's a near-miracle!");
+		msg_format_near(Ind, "\377g%s banishes animals with conviction.", p_ptr->name);
 	} else {
-		msg_print(Ind, "\337gThe Day of Returning is here!.");
+		msg_print(Ind, "\377gThe Day of Returning is here!.");
 		/* lol */
 		switch (p_ptr->name[strlen(p_ptr->name) - 1]) {
 		case 's': case 'x': case 'z':
-			msg_format_near(Ind, "\337gYou see %s' tears of joy at the number of returning animals.", p_ptr->name);
+			msg_format_near(Ind, "\377gYou see %s' tears of joy at the number of returning animals.", p_ptr->name);
 			break;
 		default:
-			msg_format_near(Ind, "\337gYou see %s's tears of joy at the number of returning animals.", p_ptr->name);
+			msg_format_near(Ind, "\377gYou see %s's tears of joy at the number of returning animals.", p_ptr->name);
 		}
 	}
 	return (TRUE);
