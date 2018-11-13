@@ -2545,6 +2545,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	for (; *s; s++) {
 		/* Pluralizer */
 		if (*s == '~') {
+			/* Hack -- The only one of its kind - 'No more Tunic of the Wind' instead of 'Tunics' */
+			if (known && artifact_p(o_ptr)) continue;
+
 			/* Add a plural if needed */
 			if (o_ptr->number != 1) {
 				char k = t[-1], k2 = t[-2];
@@ -4613,7 +4616,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 
 	/* Describe */
 	msg_format(Ind, "\377s%s:", o_name);
-	// ?<-->if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:", o_name + 77);
+	// ?	if (strlen(o_name) > 77) msg_format(Ind, "\377s%s:", o_name + 77);
 
 	/* Sigil */
 	if (o_ptr->sigil) msg_format(Ind, "\377B  It is emblazoned with a sigil of %s.", r_projections[o_ptr->sigil-1].name);
