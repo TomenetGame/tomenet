@@ -3206,12 +3206,17 @@ static int Handle_login(int ind) {
 #endif
 		if (p_ptr->lives-1 == 1)
     			msg_print(NumPlayers, "\377GYou have no more resurrections left!");
-	        else
-			msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+		else {
+			if (p_ptr->lives-1-1 == 1) msg_print(NumPlayers, "\377GYou have 1 resurrection left.");
+			else msg_format(NumPlayers, "\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+		}
 	}
 
 	/* for PvP mode chars */
-	if (p_ptr->free_mimic) msg_format(NumPlayers, "\377GYou have %d free mimicry transformation left.", p_ptr->free_mimic);
+	if (p_ptr->free_mimic) {
+		if (p_ptr->free_mimic == 1) msg_print(NumPlayers, "\377GYou have 1 free mimicry transformation left.");
+		else msg_format(NumPlayers, "\377GYou have %d free mimicry transformations left.", p_ptr->free_mimic);
+	}
 
 	/* receive previously buffered global-event-contender-deed from other character of her/his account */
 	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++) {

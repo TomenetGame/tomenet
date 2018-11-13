@@ -9342,8 +9342,10 @@ void resurrect_player(int Ind, int loss_factor) {
 		if (cfg.lifes) {
 			if (p_ptr->lives == 1+1)
 				msg_print(Ind, "\376\377GYou have no more resurrections left!");
-			else
-				msg_format(Ind, "\376\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+			else {
+				if (p_ptr->lives-1-1 == 1) msg_print(Ind, "\376\377GYou have 1 resurrection left.");
+				else msg_format(Ind, "\376\377GYou have %d resurrections left.", p_ptr->lives-1-1);
+			}
 		}
 	}
 
