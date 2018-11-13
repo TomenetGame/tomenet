@@ -3818,7 +3818,7 @@ bool ident_spell(int Ind) {
 		return TRUE;
 	}
 
-	get_item(Ind, ITH_NONE);
+	get_item(Ind, ITH_ID);
 
 	/* Clear any other pending actions - mikaelh */
 	clear_current(Ind);
@@ -3919,7 +3919,7 @@ bool identify_fully(int Ind) {
 		return TRUE;
 	}
 
-	get_item(Ind, ITH_NONE);
+	get_item(Ind, ITH_STARID);
 
 	/* Clear any other pending actions - mikaelh */
 	clear_current(Ind);

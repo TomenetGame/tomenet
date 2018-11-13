@@ -1828,6 +1828,19 @@ static bool item_tester_hook_sigil(object_type *o_ptr) {
 	return FALSE;
 }
 
+/* For only showing unidentified items */
+bool item_tester_hook_id(object_type *o_ptr) {
+	if (!c_cfg.id_selection) return TRUE;
+	if ((o_ptr->ident & 0x6)) return FALSE;
+	return TRUE;
+}
+/* For only showing non-*identified* items */
+bool item_tester_hook_starid(object_type *o_ptr) {
+	if (!c_cfg.id_selection) return TRUE;
+	if ((o_ptr->ident & 0x4)) return FALSE;
+	return TRUE;
+}
+
 static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 	int col = 13, j = 2, i, color;
 	char tmpbuf[80];

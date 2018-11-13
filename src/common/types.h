@@ -3423,6 +3423,7 @@ struct client_opts {
 	bool alert_starvation;
 	bool palette_animation;
 	bool mute_when_idle;
+	bool id_selection;
 };
 
 /*

@@ -525,6 +525,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 #endif
 	{ &c_cfg.mute_when_idle,	FALSE,	5,	0, 125, TRUE,
 	    "mute_when_idle",		"Mute music+ambient sfx while AFK/idle in town" },
+	{ &c_cfg.id_selection,		TRUE,	6,	0, 126, TRUE,
+	    "id_selection",		"Show/accept only eligible items for ID/*ID*" },
 };
 
 

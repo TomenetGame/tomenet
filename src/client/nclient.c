@@ -1701,7 +1701,8 @@ int Receive_inven(void) {
 	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
-	inventory[pos - 'a'].uses_dir = uses_dir;
+	inventory[pos - 'a'].uses_dir = uses_dir & 0x1;
+	inventory[pos - 'a'].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
 
 	/* check for special "fake-artifact" inscription using '#' char */
 	if ((insc = strchr(name, '\373'))) {
@@ -1726,13 +1727,17 @@ int Receive_inven(void) {
 int Receive_inven_wide(void) {
 	int	n;
 	char	ch;
-	char pos, attr, tval, sval, *insc;
+	char pos, attr, tval, sval, *insc, ident = 0;
 	s16b xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 	byte xtra1b, xtra2b, xtra3b, xtra4b, xtra5b, xtra6b, xtra7b, xtra8b, xtra9b;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
 
-	if (is_newer_than(&server_version, 4, 7, 0, 0, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 7, 1, 1, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
+		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name, &ident)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 7, 0, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
 		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9, name)) <= 0)
 			return n;
@@ -1773,6 +1778,7 @@ int Receive_inven_wide(void) {
 	inventory[pos - 'a'].attr = attr;
 	inventory[pos - 'a'].weight = wgt;
 	inventory[pos - 'a'].number = amt;
+	inventory[pos - 'a'].ident = ident;
 
 	inventory[pos - 'a'].xtra1 = xtra1;
 	inventory[pos - 'a'].xtra2 = xtra2;
@@ -1866,7 +1872,8 @@ int Receive_equip(void) {
 	inventory[pos - 'a' + INVEN_WIELD].attr = attr;
 	inventory[pos - 'a' + INVEN_WIELD].weight = wgt;
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
-	inventory[pos - 'a' + INVEN_WIELD].uses_dir = uses_dir;
+	inventory[pos - 'a' + INVEN_WIELD].uses_dir = uses_dir & 0x1;
+	inventory[pos - 'a' + INVEN_WIELD].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
 
 	if (!strcmp(name, "(nothing)"))
 		strcpy(inventory_name[pos - 'a' + INVEN_WIELD], equipment_slot_names[pos - 'a']);
@@ -2690,6 +2697,16 @@ int Receive_item(void) {
 			get_item_extra_hook = get_item_hook_find_obj;
 			item_tester_hook = item_tester_hook_armour_no_shield;
 			get_item_hook_find_obj_what = "Armour name? ";
+			break;
+		case ITH_ID:
+			get_item_extra_hook = get_item_hook_find_obj;
+			item_tester_hook = item_tester_hook_id;
+			get_item_hook_find_obj_what = "Which item? ";
+			break;
+		case ITH_STARID:
+			get_item_extra_hook = get_item_hook_find_obj;
+			item_tester_hook = item_tester_hook_starid;
+			get_item_hook_find_obj_what = "Which item? ";
 			break;
 		}
 

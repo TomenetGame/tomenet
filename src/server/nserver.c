@@ -5695,10 +5695,14 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	/* Mark activatable items that require a direction */
 	if (activation_requires_direction(o_ptr)
-//appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
+	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
 	    ) {
 		uses_dir = 1;
 	}
+
+	/* Hack: Abuse uses_dir to also store ID / *ID* status */
+	if (is_newer_than(&Players[Ind]->version, 4, 7, 1, 1, 0, 0))
+		uses_dir += (object_known_p(Ind, o_ptr) ? 2 : 0) + (object_fully_known_p(Ind, o_ptr) ? 4 : 0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -5729,9 +5733,11 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 }
 
+/* Added for custom books */
 int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr name) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+	char ident = 0;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -5740,9 +5746,16 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 		return 0;
 	}
 
+	/* Also send ID / *ID* status */
+	ident += (object_known_p(Ind, o_ptr) ? 2 : 0) + (object_fully_known_p(Ind, o_ptr) ? 4 : 0);
+
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&p_ptr2->version, 4, 7, 0, 0, 0, 0))
+		if (is_newer_than(&p_ptr2->version, 4, 7, 1, 1, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+			    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
+			    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name, ident);
+		else if (is_newer_than(&p_ptr2->version, 4, 7, 0, 0, 0, 0))
 			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
 			    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 			    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name);
@@ -5758,7 +5771,11 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 			    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
 	}
 
-	if (is_newer_than(&Players[Ind]->version, 4, 7, 0, 0, 0, 0))
+	if (is_newer_than(&Players[Ind]->version, 4, 7, 1, 1, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
+		    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
+		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name, ident);
+	else if (is_newer_than(&Players[Ind]->version, 4, 7, 0, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
 		    o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
 		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name);
@@ -5783,10 +5800,14 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	/* Mark activatable items that require a direction */
 	if (activation_requires_direction(o_ptr)
-//appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
+	    //appearently not for A'able items >_>	    || !object_aware_p(Ind, o_ptr))
 	    ) {
 		uses_dir = 1;
 	}
+
+	/* Hack: Abuse uses_dir to also store ID / *ID* status */
+	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
+		uses_dir += (object_known_p(Ind, o_ptr) ? 2 : 0) + (object_fully_known_p(Ind, o_ptr) ? 4 : 0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
