@@ -5413,11 +5413,13 @@ static bool process_player_end_aux(int Ind) {
 		    && !(o_ptr->sval == SV_LITE_FEANOR) && (o_ptr->pval > 0) && (!o_ptr->name1))
 #endif
 
-			/* Extract the item flags */
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		/* Extract the item flags */
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Hack -- Use some fuel */
-		if ((f4 & TR4_FUEL_LITE) && (o_ptr->timeout > 0)) {
+		if ((f4 & TR4_FUEL_LITE) && o_ptr->timeout > 0
+		    && !(get_skill(p_ptr, SKILL_TEMPORAL) >= 20 && rand_int(2))
+		    ) {
 			/* Decrease life-span */
 			o_ptr->timeout--;
 

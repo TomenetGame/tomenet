@@ -16268,7 +16268,8 @@ school.
                     Required skill level for first spell level: 45.
                     Shared spell (see above): Temporal, Conveyance.
 
-    BONI:           Time resistance at 50.
+    BONI:           Prolonged light source fuel at 20.
+                    Time resistance at 50.
 
 
 - Udun
