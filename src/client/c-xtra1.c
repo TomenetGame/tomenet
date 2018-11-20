@@ -458,10 +458,10 @@ void prt_stamina(int max, int cur, bool bar) {
 		else {
 			int c, n = (9 * cur) / max;
 
-			if (cur >= max) ;
-			else if (cur > (max * 2) / 5) color = TERM_YELLOW;
-			else if (cur > max / 6) color = TERM_ORANGE;
-			else color = TERM_RED;
+			if (cur >= max) color = TERM_L_WHITE;//TERM_L_GREEN;
+			else if (cur > (max * 2) / 5) color = TERM_SLATE;//TERM_YELLOW;
+			else if (cur > max / 6) color = TERM_L_DARK;//TERM_ORANGE;
+			else color = TERM_L_DARK;//TERM_RED;
 
 			tmp[0] = 0;
 			for (c = 0; c < n; c++) tmp[c] = bar_char;
