@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 05. October 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 20. November 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15882,13 +15882,12 @@ school.
 
     Recharge        Recharges a magic staff or wand.
                     Required skill level for first spell level: 5.
-                    Level 21: Also recharges rods.
 
                     Tier II: Level 25.
                     Can also recharge rods. At the skill level you learn this
                     tier, the 1st tier spell can actually recharge rods too.
 
-                    Tier II: Level 40.
+                    Tier III: Level 40.
 
     Disperse Magic  Removes magical influences.
                     Required skill level for first spell level: 15.
@@ -15986,14 +15985,14 @@ school.
 
                     Tier II: Level 22.
 
-                    Tier II: Level 40.
+                    Tier III: Level 40.
 
     Water Bolt      Fires a water bolt at a target.
                     Required skill level for first spell level: 14.
 
                     Tier II: Level 24.
 
-                    Tier II: Level 40.
+                    Tier III: Level 40.
 
     Elemental Shield
                     Temporary resistance to heat and cold.     (auto-project)
@@ -16223,7 +16222,7 @@ school.
                     Tier II: Level 25.
                     Identifies all items that you carry or have equipped.
 
-                    Tier II: Level 35.
+                    Tier III: Level 35.
                     Identifies all items that you carry or have equipped and
                     identifies all items on the floor around you.
 
@@ -16409,7 +16408,7 @@ school.
                     Tier II: Level 15.
                     Same effect as scroll of Holy Chant.       (auto-project)
 
-                    Tier II: Level 30.
+                    Tier III: Level 30.
                     Same effect as scroll of Holy Prayer.      (auto-project)
 
     Protection from evil
