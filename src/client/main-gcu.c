@@ -240,7 +240,12 @@ static int can_use_256_color = TRUE;
 /*
  * Simple Angband to Curses color conversion table
  */
-static int colortable[16];
+
+ #ifndef EXTENDED_COLOURS_PALANIM
+ static int colortable[16];
+ #else
+ static int colortable[16 + 16];
+ #endif
 
 #endif
 
@@ -945,12 +950,16 @@ errr init_gcu(void) {
  #else
 		for (i = 0; i < 16 + 16; i++)
  #endif
-			colortable[i] = (COLOR_PAIR(i) | A_NORMAL);
+			colortable[i] = (COLOR_PAIR(i % 16) | A_NORMAL);
 	}
 
 	else if (can_use_256_color) {
 		int j;
+ #ifndef EXTENDED_COLOURS_PALANIM
 		int color_palette[16] = { 0 };
+ #else
+		int color_palette[16 + 16] = { 0 };
+ #endif
 		
 		/* Read the fixed color palette */
 		for (i = 0; i < 256; i++) {
@@ -1026,7 +1035,8 @@ errr init_gcu(void) {
 		colortable[14] = (COLOR_PAIR(4) | A_BRIGHT);	/* Light Blue */
 		colortable[15] = (COLOR_PAIR(3) | A_NORMAL);	/* Light Umber XXX */
  #ifdef EXTENDED_COLOURS_PALANIM
-		for (i = 0; i < 16 + 16; i++)
+		//for (i = 0; i < 16 + 16; i++)
+		for (i = 0; i < 16; i++)
 			colortable[i + 16] = colortable[i]; //just clone
  #endif
 	}

@@ -1547,7 +1547,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 	int j = 0; /* Loop iterator */
 
 	bool search = FALSE;
-	int s, s2;
+	int s = 0, s2; //todo: check if s=0 is correct
 
 	bool tail = FALSE;
 	int l_old = l;
