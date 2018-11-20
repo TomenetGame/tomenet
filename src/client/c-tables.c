@@ -302,7 +302,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "player_list2",		"Compacts the player list in @ screen even more" },
 
     //page 3 - 44
-	{ &c_cfg.flash_player,		FALSE,	6,	1, 44, TRUE,
+	{ &c_cfg.flash_player,		TRUE,	6,	1, 44, TRUE,
 	    "flash_player",		"Flash own character icon after far relocation" },
     //todo: fix/implement good cursor on *nix/osx
 	{ &c_cfg.hilite_player,		FALSE,	6,	1, 45, FALSE,

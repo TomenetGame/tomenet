@@ -123,7 +123,7 @@ X:hilite_player
 X:alert_mana
 Y:exp_bar
 X:consistent_players
-X:flash_player
+Y:flash_player
 X:alert_offpanel_dam
 Y:idle_starve_kick
 
