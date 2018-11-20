@@ -259,12 +259,17 @@ X11BASE = /usr/X11R6
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIC
 CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl-config --cflags` -D_DEFAULT_SOURCE -DACC32 -fPIC -Wno-format-truncation
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
-#new weird error, may occur for some, not for others oO. Added -ltinfo to fix (thanks Mikael):
-LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer -ltinfo
+LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm `sdl-config --libs` -lSDL_mixer
 ##
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+
+# Some Linux distributions have a separate libtinfo, attempt to detect it
+HAVE_TINFO = $(shell ldconfig -p | grep -c libtinfo)
+ifneq (${HAVE_TINFO}, 0)
+	LIBS += -ltinfo
+endif
 
 
 ##
