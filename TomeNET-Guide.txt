@@ -20752,6 +20752,8 @@ SOLUTION:   Closing a sub-window sets it to 'invisible'. To change that, there
             1) in game: Press = and then f for the window flags menu, select
             the affected window and press 'v' to toggle its visibility. You
             will need to restart the game for the change to take effect.
+            Note that this might fail on Windows 10, in which case you'll need
+            to manually edit your TomeNET.ini file, or even delete it.
             2) close TomeNET first, then edit the file 'TomeNET.ini' which is
             located in your TomeNET folder with any text editor, locate the
             particular window, and you'll see a line saying "Visibility=0".
