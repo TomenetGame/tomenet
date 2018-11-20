@@ -6011,8 +6011,8 @@ Chain_Macro:
 						case 'd': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GLightn");
 							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Rod of Lightning Bolts'.");
 							break;
-						case 'e': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GFrostweav");
-							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Cloak of Frostweaving'.");
+						case 'e': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GFrostw");
+							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Frostwoven Cloak'.");
 							break;
 						case 'f': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GSerpen");
 							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use an 'Amulet of the Serpents'.");
