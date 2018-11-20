@@ -4024,7 +4024,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1500, },
 		{ SKILL_INTERCEPT,
 			'+', 0,
-			'+', 600, },
+			'+', 700, },
  #ifdef EXP_NECRO
 		{ SKILL_NECROMANCY,
 			'+', 0,
