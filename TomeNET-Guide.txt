@@ -16540,7 +16540,7 @@ school.
                     it is trained above 30.
                     (Stacks with other regeneration effects and item flag.)
                     Reduces duration of various bad effects on the body at
-                    30 (blindness, poison) / 40 (stun, cuts) / 50
+                    30 (blindness, poison, disease) / 40 (stun, cuts) / 50
                     (hallucination).
                     Less frequent suffering from black breath,
                     adds slay undead to all (physical) melee attacks and
