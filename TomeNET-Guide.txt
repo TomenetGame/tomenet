@@ -21014,7 +21014,8 @@ SOLUTION:   TomeNET uses basic linux system fonts (and allows you to switch to
             distributions do not have these installed by default though, for
             example Antergos.
             Install the necessary fonts packages on your system, using the
-            system's package manager. It should usually be 'xorg-fonts-misc'.
+            system's package manager. It should usually be 'xorg-fonts-misc' or
+            'linux-fonts-misc'.
             After installation, reboot your system to ensure they work.
 
 ==============================================================================
