@@ -1567,7 +1567,7 @@ void self_knowledge(int Ind) {
 	if (p_ptr->can_swim) fprintf(fff, "You can swim easily.\n");
 #endif	// 0
 	if (p_ptr->free_act) fprintf(fff, "You have free action.\n");
-	if (p_ptr->regenerate) fprintf(fff, "You regenerate quickly.\n");
+	if (p_ptr->regenerate || p_ptr->xtrastat_tim) fprintf(fff, "You regenerate quickly.\n");
 	if (p_ptr->resist_time) fprintf(fff, "You are resistant to time.\n");
 	if (p_ptr->resist_mana) fprintf(fff, "You are resistant to magical energy.\n");
 	if (p_ptr->immune_water) fprintf(fff, "You are completely protected from unleashed water.\n");

@@ -189,7 +189,10 @@ OEXTRASTATS = add_spell {
 	["info"] = 	function()
 			return "+" .. (2 + get_level(Ind, OEXTRASTATS, 50) / 7) .. " dur d7+" .. (22 + get_level(Ind, OEXTRASTATS, 17))
 			end,
-	["desc"] = 	{ "Temporarily increases and sustains strength and constitution.", }
+	["desc"] = 	{
+			"Temporarily increases and sustains strength and constitution.",
+			"Also grants hitpoint regeneration power.",
+	}
 }
 
 function get_chaosbolt2_dam(Ind)

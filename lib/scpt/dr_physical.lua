@@ -175,7 +175,9 @@ EXTRASTATS_I = add_spell {
 			return "+" .. (1 + get_level(Ind, EXTRASTATS_I, 50) / 9) .. " dur d5+" .. (17 + get_level(Ind, EXTRASTATS_I, 10))
 			end,
 	["desc"] = 	{ "At level 1 increases your strength.",
-			  "At level 5 also increases your dexterity.", }
+			  "At level 5 also increases your dexterity.",
+			  "Also grants hitpoint regeneration power.",
+			}
 }
 EXTRASTATS_II = add_spell {
 	["name"] = 	"Extra Growth II",
@@ -199,7 +201,9 @@ EXTRASTATS_II = add_spell {
 			return "+" .. (1 + get_level(Ind, EXTRASTATS_I, 50) / 9) .. " dur d5+" .. (17 + get_level(Ind, EXTRASTATS_I, 10))
 			end,
 	["desc"] = 	{ "Increases strength, dexterity, constitution.",
-			  "At level 11 also increases your intelligence.", }
+			  "At level 11 also increases your intelligence.",
+			  "Also grants hitpoint regeneration power.",
+			}
 }
 
 -- A shot that increases a players SPR (if wearing a shooter)

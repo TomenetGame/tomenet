@@ -4692,8 +4692,8 @@ static bool process_player_end_aux(int Ind) {
 				/* Biofeedback takes more food */
 				if (p_ptr->biofeedback) i *= 2;
 
-				/* Regeneration takes more food */
-				if (p_ptr->regenerate) i += 30;
+				/* Regeneration and extra-growth takes more food */
+				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
 
 				/* Regeneration takes more food */
 				if (p_ptr->tim_regen && p_ptr->prace != RACE_VAMPIRE) i += p_ptr->tim_regen_pow / 10;
@@ -4809,8 +4809,8 @@ static bool process_player_end_aux(int Ind) {
 			regenmana(Ind, ((regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1)) / 3);
 	}
 
-	/* Regeneration ability */
-	if (p_ptr->regenerate)
+	/* Regeneration ability - now implied by do_xtra_stats()! */
+	if (p_ptr->regenerate || p_ptr->xtrastat_tim)
 		regen_amount = regen_amount * 2;
 
 	/* Health skill improves regen_amount */
