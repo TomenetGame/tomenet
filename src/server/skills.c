@@ -122,24 +122,22 @@ s16b get_skill_scale_fine(player_type *p_ptr, int skill, u32b scale)
 }
 
 /* Will add, sub, .. */
-static s32b modify_aux(s32b a, s32b b, char mod)
-{
-	switch (mod)
-	{
-		case '+':
-			return (a + b);
-			break;
-		case '-':
-			return (a - b);
-			break;
-		case '=':
-			return (b);
-			break;
-		case '%':
-			return ((a * b) / 100);
-			break;
-		default:
-			return (0);
+static s32b modify_aux(s32b a, s32b b, char mod) {
+	switch (mod) {
+	case '+':
+		return (a + b);
+		break;
+	case '-':
+		return (a - b);
+		break;
+	case '=':
+		return (b);
+		break;
+	case '%':
+		return ((a * b) / 100);
+		break;
+	default:
+		return (0);
 	}
 }
 
@@ -147,22 +145,32 @@ static s32b modify_aux(s32b a, s32b b, char mod)
 /*
  * Gets the base value of a skill, given a race/class/...
  */
-void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
-{
+void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i) {
 	s32b value = 0, mod = 0, j;
 
 	/***** class skills *****/
 
 	/* find the skill mods for that class */
 	for (j = 0; j < MAX_SKILLS; j++) {
+#ifdef ENABLE_UNLIFE
+		/* Hack for Vampire Istari (note that vampires cannot be shamans):
+		   Gain access to Unlife school with the multiplier that istari usually have on Nature school. */
+		if (i == SKILL_OUNLIFE && p_ptr->prace == RACE_VAMPIRE && p_ptr->pclass == CLASS_MAGE && class_info[CLASS_MAGE].skills[j].skill == SKILL_NATURE) {
+			value = p_ptr->cp_ptr->skills[j].value;
+			mod = p_ptr->cp_ptr->skills[j].mod;
+
+			*v = modify_aux(*v, value, p_ptr->cp_ptr->skills[j].vmod);
+			*m = modify_aux(*m, mod, p_ptr->cp_ptr->skills[j].mmod);
+			continue;
+		}
+#endif
+
 		if (p_ptr->cp_ptr->skills[j].skill == i) {
 			value = p_ptr->cp_ptr->skills[j].value;
 			mod = p_ptr->cp_ptr->skills[j].mod;
 
-			*v = modify_aux(*v,
-					value, p_ptr->cp_ptr->skills[j].vmod);
-			*m = modify_aux(*m,
-					mod, p_ptr->cp_ptr->skills[j].mmod);
+			*v = modify_aux(*v, value, p_ptr->cp_ptr->skills[j].vmod);
+			*m = modify_aux(*m, mod, p_ptr->cp_ptr->skills[j].mmod);
 		}
 	}
 
@@ -172,10 +180,8 @@ void compute_skills(player_type *p_ptr, s32b *v, s32b *m, int i)
 			value = p_ptr->rp_ptr->skills[j].value;
 			mod = p_ptr->rp_ptr->skills[j].mod;
 
-			*v = modify_aux(*v,
-					value, p_ptr->rp_ptr->skills[j].vmod);
-			*m = modify_aux(*m,
-					mod, p_ptr->rp_ptr->skills[j].mmod);
+			*v = modify_aux(*v, value, p_ptr->rp_ptr->skills[j].vmod);
+			*m = modify_aux(*m, mod, p_ptr->rp_ptr->skills[j].mmod);
 		}
 	}
 }
@@ -532,6 +538,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		}
 		break;
 	case SKILL_TEMPORAL:
+		if (old_value < 200 && new_value >= 200) {
+			msg_print(Ind, "\374\377GYou prolong the life of your light sources.");
+		}
 		if (old_value < 500 && new_value >= 500
 		    && p_ptr->prace != RACE_HIGH_ELF && p_ptr->prace != RACE_VAMPIRE) {
 			msg_print(Ind, "\374\377GYou don't fear time attacks as much anymore.");
@@ -540,7 +549,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_UDUN:
 		if (old_value < 400 && new_value >= 400
 		    && p_ptr->prace != RACE_VAMPIRE) {
-			msg_print(Ind, "\374\377GYou have strong control over your life force.");
+			msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
 		}
 		break;
 	case SKILL_META: /* + continuous effect */
@@ -590,7 +599,8 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		}
 		break;
 	case SKILL_OSPIRIT:
-		if (old_value < 300 && new_value >= 300) {
+		if (old_value < 300 && new_value >= 300
+		    && p_ptr->prace != RACE_VAMPIRE) { //Vampires obviously cannot train Spirit anyway, but w/e..
 			msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
 		} if (old_value < 400 && new_value >= 400) {
 			msg_print(Ind, "\374\377GYou fight against undead with holy wrath.");
@@ -611,6 +621,17 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYou feel resistant against chaos.");
 		}
   #endif
+ #endif
+ #ifdef ENABLE_OUNLIFE
+	case SKILL_OUNLIFE:
+		if (old_value < 300 && new_value >= 300
+		    && p_ptr->prace != RACE_VAMPIRE) {
+			msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
+		}
+		if (old_value < 450 && new_value >= 450
+		    && p_ptr->prace != RACE_VAMPIRE) {
+			msg_print(Ind, "\374\377GYou feel resistant against nether.");
+		}
  #endif
 		break;
 #endif
@@ -887,14 +908,12 @@ void increase_skill(int Ind, int i, bool quiet)
  * Given the name of a skill, returns skill index or -1 if no
  * such skill is found
  */
-s16b find_skill(cptr name)
-{
+s16b find_skill(cptr name) {
 	u16b i;
 
 	/* Scan skill list */
-//	for (i = 1; i < max_s_idx; i++)
-	for (i = 0; i < MAX_SKILLS; i++)
-	{
+	//for (i = 1; i < max_s_idx; i++)
+	for (i = 0; i < MAX_SKILLS; i++) {
 		/* The name matches */
 		if (streq(s_info[i].name + s_name, name)) return (i);
 	}
@@ -922,9 +941,9 @@ static s32b modified_by_related(player_type *p_ptr, int i) {
 			jv = 0; jm = 0;
 			compute_skills(p_ptr, &jv, &jm, j);
 			/* calc amount of points the user spent into the increasing skill */
-//			if (jm)
+			//if (jm)
 			if (p_ptr->s_info[j].mod)
-//				points = (p_ptr->s_info[j].value - p_ptr->s_info[j].base_value - modified_by_related(p_ptr, j)) / jm;
+				//points = (p_ptr->s_info[j].value - p_ptr->s_info[j].base_value - modified_by_related(p_ptr, j)) / jm;
 				points = (p_ptr->s_info[j].value - p_ptr->s_info[j].base_value - modified_by_related(p_ptr, j)) / p_ptr->s_info[j].mod;
 			else
 				points = 0;
@@ -985,7 +1004,7 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 	   various other skills -> would end at -1.000) */
 	if (real_user_increase < 0) real_user_increase = 0;
 	/* calculate skill points spent into this skill */
-//	spent_points = real_user_increase / m;
+	//spent_points = real_user_increase / m;
 	if (p_ptr->s_info[i].mod)
 		spent_points = real_user_increase / p_ptr->s_info[i].mod;
 	else
@@ -1001,7 +1020,7 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 			jv = 0; jm = 0;
 			compute_skills(p_ptr, &jv, &jm, j);
 			/* Turn it on again (!) */
-//			p_ptr->s_info[j].value = jv;
+			//p_ptr->s_info[j].value = jv;
 			p_ptr->s_info[j].value = p_ptr->s_info[j].base_value;
 		} else { /* Non-exclusive skills */
 			/* Decrease with a % */

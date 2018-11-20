@@ -32,6 +32,8 @@
 #define TBRAND_BALL_SOUN	0x1000
 //hereticism:
 #define TBRAND_HELLFIRE		0x2000
+//unlife:
+#define TBRAND_VAMPIRIC		0x4000
 
 
 /*

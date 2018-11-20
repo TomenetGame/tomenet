@@ -577,6 +577,12 @@ A:12:Draw a rune
 I:1000:105
 F:MKEY_HARDCODE
 
+$ENABLE_OUNLIFE$N:105:Unlife
+$ENABLE_OUNLIFE$D:Ability to learn and use spells from the Unlife school.
+$ENABLE_OUNLIFE$D:Spells use the wisdom stat.
+$ENABLE_OUNLIFE$A:11:Cast a spell
+$ENABLE_OUNLIFE$I:1000:111
+
 N:109:Blood Magic
 D:
 I:1000:0
@@ -741,6 +747,7 @@ $ENABLE_MCRAFT$E:Mental Intrusion:Anti-magic
 $ENABLE_OCCULT$E:Shadow:Anti-magic
 $ENABLE_OCCULT$E:Spirit:Anti-magic
 $ENABLE_OHERETICISM$E:Hereticism:Anti-magic
+$ENABLE_OUNLIFE$E:Unlife:Anti-magic
 
 E:Light:Anti-magic
 E:Darkness:Anti-magic
@@ -797,6 +804,7 @@ $ENABLE_MCRAFT$f:Mental Intrusion:Magic%10
 $ENABLE_OCCULT$f:Shadow:Magic%10
 $ENABLE_OCCULT$f:Spirit:Magic%10
 $ENABLE_OHERETICISM$f:Hereticism:Magic%10
+$ENABLE_OUNLIFE$f:Unlife:Magic%10
 
 f:Light:Magic%15
 f:Darkness:Magic%15
@@ -913,6 +921,7 @@ $ENABLE_MCRAFT$T:Mindcraft:Mental Intrusion
 $ENABLE_OCCULT$T:Occultism:Shadow
 $ENABLE_OCCULT$T:Occultism:Spirit
 $ENABLE_OHERETICISM$T:Occultism:Hereticism
+$ENABLE_OUNLIFE$T:Occultism:Unlife
 
 T:Runecraft:Light
 T:Runecraft:Darkness

@@ -1127,10 +1127,14 @@ static int get_spellbook_store_order(int pval) {
 	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return 4;
 #ifdef ENABLE_OCCULT
 	/* Occult */
- #ifdef ENABLE_OHERETICISM
-	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OHERETICISM) return 6;
+ #ifdef ENABLE_OUNLIFE
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OUNLIFE) return 6;
  #else
+  #ifdef ENABLE_OHERETICISM
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OHERETICISM) return 6;
+  #else
 	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return 6;
+  #endif
  #endif
 #endif
 	/* light blue for the rest (istari schools) */

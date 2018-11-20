@@ -6048,6 +6048,10 @@ void calc_boni(int Ind) {
 	else if (get_skill(p_ptr, SKILL_OHERETICISM) >= 30 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 30 && p_ptr->reduce_insanity < 2) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND; }
 	else if (get_skill(p_ptr, SKILL_OHERETICISM) >= 15 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 15 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
  #endif
+ #ifdef ENABLE_OUNLIFE
+	if (get_skill(p_ptr, SKILL_OUNLIFE) >= 30) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
+	if (get_skill(p_ptr, SKILL_OUNLIFE) >= 45) { p_ptr->resist_neth = TRUE; csheet_boni[14].cb[2] |= CB3_RNETH; }
+ #endif
 #endif
 
 	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50) { p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }

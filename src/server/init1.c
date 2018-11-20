@@ -1522,6 +1522,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "ENABLE_OHERETICISM") && negation) invalid = TRUE;
 #endif
+#ifndef ENABLE_OUNLIFE
+		if (streq(m, "ENABLE_OUNLIFE") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_OUNLIFE") && negation) invalid = TRUE;
+#endif
 
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
@@ -1544,6 +1549,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_ITEM_ORDER") &&
 		    strcmp(m, "ENABLE_OCCULT") &&
 		    strcmp(m, "ENABLE_OHERETICISM") &&
+		    strcmp(m, "ENABLE_OUNLIFE") &&
 			TRUE)
 			invalid = TRUE;
 	}

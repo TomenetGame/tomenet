@@ -7278,6 +7278,8 @@ extern int PlayerUID;
 #define TBRAND_BALL_SOUN	0x1000
 //hereticism:
 #define TBRAND_HELLFIRE		0x2000
+//unlife:
+#define TBRAND_VAMPIRIC		0x4000
 
 /* Client modes (e) */
 #define CLIENT_NORMAL		0x0000
@@ -7996,6 +7998,9 @@ extern int PlayerUID;
  #define SKILL_SCHOOL_OCCULT	89
  //#ifdef ENABLE_OHERETICISM
   #define SKILL_OHERETICISM	94
+ //#endif
+ //#ifdef ENABLE_OUNLIFE
+  #define SKILL_OUNLIFE		105
  //#endif
 //#endif
 

@@ -272,9 +272,14 @@ void set_server_features() {
 	lua_settop(L, oldtop);
 #endif
 
-//	sflags_TEMP |= 0x00000010;
+#ifdef ENABLE_OUNLIFE
+	sflags_TEMP |= 0x00000010;
+	lua_dostring(L, "TEMP4 = 1");
+	lua_settop(L, oldtop);
+#else
 	lua_dostring(L, "TEMP4 = 0");
 	lua_settop(L, oldtop);
+#endif
 
 //	sflags_TEMP |= 0x00000020;
 	lua_dostring(L, "TEMP5 = 0");
@@ -341,6 +346,9 @@ void init_lua() {
 	SCHOOL_OSPIRIT = exec_lua(0, "return SCHOOL_OSPIRIT");
  #ifdef ENABLE_OHERETICISM
 	SCHOOL_OHERETICISM = exec_lua(0, "return SCHOOL_OHERETICISM");
+ #endif
+ #ifdef ENABLE_OUNLIFE
+	SCHOOL_OUNLIFE = exec_lua(0, "return SCHOOL_OUNLIFE");
  #endif
 #endif
 

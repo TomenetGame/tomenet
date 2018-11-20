@@ -12698,6 +12698,8 @@ Note that not every skill is available to every profession (class).
     +Occultism
         .Shadow                 Learn spells of the Shadow branch.
         .Spirit                 Learn spells of the Spirit branch.
+        .Hereticism             Learn spells of the Hereticism branch.
+        .Unlife                 Learn spells of the Unlife branch.
 
     +Druidism
         .Arcane Lore            Learn druid magic taught by arcane lore.
@@ -13914,7 +13916,7 @@ create a character!):
                   Blunt-mastery ratio receives a x 1.1 bonus; because its ratio
                   ends up lower than before, its points will be all refunded.
         Axe-mastery and Martial Arts skill ratios x 1.3.
-        Fire, Air, Conveyance school ratios x 1.7, Udun x 2.0, Shadow x 2.1.
+        Fire, Air, Conveyance school ratios x 1.7, Udun x 2.0, Shadow x 1.7.
         Darkness and Nether rune ratios x 1.7, all Blood Magic ratios x 3.0.
 
     Maiar start with a low profile skill chart which gets boosted on initiation
@@ -14275,7 +14277,7 @@ create a character!):
     die in peace they rose again as bloodthirsty, undead warriors.
     They have the same abilities as paladins in all regards but they are not
     able to utilize any kind of prayers and are susceptible to holy effects,
-    instead they command unholy blood and shadow magic.
+    instead they command unholy blood, unlife and shadow magic.
     Death knights resist fear intrinsically.
 
 - Hell Knight
@@ -16659,12 +16661,6 @@ school.
                     Shared spell (see above): O.Shadow, H.Offense.
                     This spell cannot be found in the Holy Offense tome.
 
-    Nether Bolt     Channels lingering nether into a bolt attack.
-                    (This spell uses WISDOM to determine fail-rates!)
-                    Required skill level for first spell level: 30.
-                    Shared spell (see above): O.Shadow, Necromancy.
-                    (Necromancy isn't actually a school, but a normal skill.)
-
     Drain Life      Drains life from a non-undead and non-nonliving creature
                     and returns a part of it to your hit points.
                     Unique monsters may resist, undead and nonliving monsters
@@ -16775,6 +16771,7 @@ school.
 
 
 - Hereticism
+
     Terror          Casts fear and confusion into the hearts of others.
                     Required skill level for first spell level: 3.
 
@@ -16868,6 +16865,59 @@ school.
                     insanity-inducing effects become somewhat less effective.
                     If both Hereticism and Traumaturgy are at least 45.000,
                     insanity-inducing effects become less effective.
+
+- Unlife
+
+    Fatigue         Slows your target down, draining power from its muscles.
+                    Required skill level for first spell level: 5.
+
+                    Tier II: Level 20.
+                    Affects all monsters in LoS.
+
+    Tainted Grounds Prevents any vermin from multiplying any further,
+                    effective on the whole dungeon level.
+                    Required skill level for first spell level: 17.
+
+    Nether Sap      Draws from nether undercurrents to continuously replenish
+                    your health at the cost of draining your mana.
+                    The duration and conversion ratio of the spell depend on
+                    the current spell level.
+                    Required skill level for first spell level: 22.
+                    --- This spell is only usable by true vampires! ---
+
+    Subjugation     Attempt to place all undead of lesser level than you under
+                    your control. If successful, the undead creatures will
+                    enter stasis for a while. The stasis is broken immediately
+                    if they take damage.
+                    Required skill level for first spell level: 26.
+                    Shared spell (see above): O.Unlife, Necromancy.
+
+    Nether Bolt     Channels lingering nether into a bolt attack.
+                    Required skill level for first spell level: 30.
+
+    Sense Lifeforce Temporarily sense all living creatures.
+                    Required skill level for first spell level: 32.
+
+    Permeation      Let a stream of nether force cleanse your body and mind,
+                    restoring drained stats and experience.
+                    Required skill level for first spell level: 35.
+                    --- This spell is only usable by true vampires! ---
+
+    Touch of Hunger Temporarily imbue your melee weapon with vampiric power,
+                    making it drain life force from your opponents which
+                    replenishes your own. (100% vampirism.)
+                    Required skill level for first spell level: 42.
+
+    Wraithstep      Renders you temporarily immaterial, allowing you to step
+                    into and pass solid walls. However, the effect will cease
+                    immediately as soon as you step from walls back into open
+                    space again.
+                    Required skill level for first spell level: 46.
+                    Shared spell (see above): O.Unlife, O.Shadow.
+                    This spell cannot be found in the Shadow tome.
+
+    BONI:           At 30 grants strong hold of your life force.
+                    At 45 grants resistance to nether.
 
 
 - Druidism -
@@ -17088,7 +17138,7 @@ school.
                     Tier II: Level 20.
                     Affects all monsters in LoS.
 
-    Drain Strength  Slows your target down, draining power from its muscles.
+    Apathy          Slows your target down, draining power from its muscles.
                     Required skill level for first spell level: 7.
 
                     Tier II: Level 22.

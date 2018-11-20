@@ -2321,6 +2321,7 @@ struct player_type {
 	s16b tim_invis;			/* Timed -- See Invisible */
 	s16b tim_infra;			/* Timed -- Infra Vision */
 	s16b tim_wraith;		/* Timed -- Wraithform */
+	byte tim_extra;			/* Timed -- Extra info flags */
 	u16b tim_jail;			/* Timed -- Jailed */
 	u16b tim_susp;			/* Suspended sentence (dungeon) */
 	u16b house_num;			/* Added for easier jail-leaving handling: House index of jail we're in */

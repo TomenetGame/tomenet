@@ -144,8 +144,8 @@ MSLEEP_II = add_spell {
 }
 
 MSLOWMONSTER_I = add_spell {
-	["name"] = 	"Drain Strength I",
-	["name2"] = 	"DStr I",
+	["name"] = 	"Apathy I",
+	["name2"] = 	"Apa I",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -160,11 +160,11 @@ MSLOWMONSTER_I = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSLOWMONSTER_I, 100))
 			end,
-	["desc"] = 	{ "Drains power from the muscles of your opponent, slowing it down.", }
+	["desc"] = 	{ "Makes an opponent falter, slowing it down.", }
 }
 MSLOWMONSTER_II = add_spell {
-	["name"] = 	"Drain Strength II",
-	["name2"] = 	"DStr II",
+	["name"] = 	"Apathy II",
+	["name2"] = 	"Apa II",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
@@ -179,7 +179,7 @@ MSLOWMONSTER_II = add_spell {
 	["info"] = 	function()
 				return "power "..(5 + get_level(Ind, MSLOWMONSTER_I, 100))
 			end,
-	["desc"] = 	{ "Drains power from the muscles of all opponents in sight, slowing them down.", }
+	["desc"] = 	{ "Makes all opponents in sight falter, slowing them down.", }
 }
 
 MMINDBLAST_I = add_spell {

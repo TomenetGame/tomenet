@@ -108,10 +108,7 @@ WRAITHFORM = add_spell {
 	["info"] = 	function()
 			return "dur "..(20 + get_level(Ind, WRAITHFORM, 40)).."+d30"
 	end,
-	["desc"] = 	{
-			"Turns you into an immaterial being.",
-			"***Automatically projecting***",
-	}
+	["desc"] = 	{ "Turns you into an immaterial being.", }
 }
 --[[
 FLAMEOFUDUN = add_spell {

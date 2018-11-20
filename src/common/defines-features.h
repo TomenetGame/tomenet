@@ -316,6 +316,11 @@
    #define ENABLE_CPRIEST	/* Allow 'Corrupted Priest', keeping its normal class name. Should assume ENABLE_HELLKNIGHT. */
   #endif
  //#endif
+
+ #define ENABLE_OUNLIFE	/* Enable 'Nether' occult school for Death Knights */
+ #ifdef ENABLE_OUNLIFE /* forced implication code-wise! */
+  #define ENABLE_OHERETICISM
+ #endif
 #endif
 
 

@@ -313,6 +313,47 @@ bool set_tim_regen(int Ind, int v, int p) {
 	/* Result */
 	return (TRUE);
 }
+/* Variant of set_tim_regen() that drains MP to replenish HP, for Unlife school: */
+bool set_tim_mp2hp(int Ind, int v, int p) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_regen) {
+			msg_print(Ind, "Your body regeneration abilities greatly increase!");
+			notice = TRUE;
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_regen) {
+			p = 0;
+			msg_print(Ind, "Your body regeneration abilities becomes normal again.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_regen = v;
+	p_ptr->tim_regen_pow = p;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
 
 /*
  * Set "p_ptr->tim_ffall"
@@ -583,7 +624,6 @@ bool set_tim_esp(int Ind, int v) {
 	return (TRUE);
 }
 
-
 /*
  * Set "p_ptr->st_anchor", notice observable changes
  */
@@ -755,6 +795,10 @@ bool set_melee_brand(int Ind, int v, u16b t, int p) {
 				if (plural) msg_format(Ind, "%s are branded with hellfire!", weapons);
 				else msg_format(Ind, "%s is branded with hellfire!", weapons);
 				break;
+			case TBRAND_VAMPIRIC:
+				if (plural) msg_format(Ind, "%s are branded with vampiric hunger!", weapons);
+				else msg_format(Ind, "%s is branded with vampiric hunger!", weapons);
+				break;
 			}
 			notice = TRUE;
 		}
@@ -791,6 +835,10 @@ bool set_melee_brand(int Ind, int v, u16b t, int p) {
 				case TBRAND_HELLFIRE:
 					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377rhellfire\377W.");
 					else msg_format(Ind, "\377WYour weapon is no longer branded with \377rhellfire\377W.");
+				break;
+				case TBRAND_VAMPIRIC:
+					if (plural) msg_format(Ind, "\377WYour weapons are no longer branded with \377Dvampirism\377W.");
+					else msg_format(Ind, "\377WYour weapon is no longer branded with \377Dvampirism\377W.");
 				break;
 				default:
 					if (plural) msg_print(Ind, "\377WYour weapons are no longer branded.");
@@ -882,6 +930,9 @@ bool set_ammo_brand(int Ind, int v, u16b t, int p) {
 				break;
 			case TBRAND_HELLFIRE:
 				msg_print(Ind, "Your ammunition burns hellishly!");
+				break;
+			case TBRAND_VAMPIRIC:
+				msg_print(Ind, "Your ammunition hungers for life force!");
 				break;
 			}
 			notice = TRUE;
@@ -1247,12 +1298,109 @@ bool set_tim_wraith(int Ind, int v) {
 				p_ptr->redraw |= PR_BPR_WRAITH;
 			}
 		}
+		p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 #if 0	// I can't remember what was it for..
 		// but for sure it's wrong
 //it was probably for the old hack to prevent wraithing in/around town and breaking into houses that way - C. Blue
 		else if(!p_ptr->wpos.wz && cave_floor_bold(zcave, p_ptr->py, p_ptr->px))
 			return(FALSE);
 #endif	// 0
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->tim_wraith) {
+			/* In town it only runs out if you are not on a wall
+			 * To prevent breaking into houses */
+			/* important! check for illegal spaces */
+			cave_type **zcave;
+			zcave = getcave(&p_ptr->wpos);
+
+			/* prevent running out of wraithform if we have a permanent source -> refresh it */
+			if (zcave && in_bounds(p_ptr->py, p_ptr->px)) {
+				if (p_ptr->body_monster && (r_info[p_ptr->body_monster].flags2 & RF2_PASS_WALL)) v = 10000;
+				else {
+					/* if a worn item grants wraith form, don't let it run out */
+					u32b f1, f2, f3, f4, f5, f6, esp;
+					object_type *o_ptr;
+					int i;
+
+					/* Scan the usable inventory */
+					for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+						o_ptr = &p_ptr->inventory[i];
+
+						/* Skip missing items */
+						if (!o_ptr->k_idx) continue;
+
+						/* Extract the item flags */
+						object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+						if (f3 & (TR3_WRAITH)) {
+							//p_ptr->wraith_form = TRUE;
+							v = 10000;
+							break;
+						}
+					}
+				}
+				if (v != 10000) {
+					msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
+					msg_print(Ind, "You lose your wraith powers.");
+					p_ptr->redraw |= PR_BPR_WRAITH;
+					notice = TRUE;
+
+					/* That will hopefully prevent game hinging when loading */
+					if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
+				}
+			}
+			else v = 1;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->tim_wraith = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+/* Unlife school's "Wraithstep" variant (only one can be active at a time): */
+bool set_tim_wraithstep(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+	cave_type **zcave;
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+	if (!(zcave = getcave(&p_ptr->wpos))) return FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->tim_wraith) {
+			if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) ||
+			    (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
+				msg_print(Ind, "You feel different for a moment.");
+				v = 0;
+			} else {
+				msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
+				msg_print(Ind, "You turn into a wraith!");
+				notice = TRUE;
+
+				p_ptr->wraith_in_wall = TRUE;
+				p_ptr->redraw |= PR_BPR_WRAITH;
+			}
+		}
+		p_ptr->tim_extra |= 0x1; //hack: mark as wraithstep, to distinguish from normal wraithform
 	}
 
 	/* Shut */
@@ -4002,6 +4150,9 @@ void shape_Maia_skills(int Ind) {
 
 #ifdef ENABLE_OCCULT
 		do_Maia_skill(Ind, SKILL_OSHADOW, 17);
+ #ifdef ENABLE_OUNLIFE
+		do_Maia_skill(Ind, SKILL_OUNLIFE, 17);
+ #endif
 		//respec_skill(Ind, SKILL_OSPIRIT, FALSE, FALSE);
 		p_ptr->s_info[SKILL_OSPIRIT].mod = 0;
  #ifdef ENABLE_OHERETICISM
@@ -4075,6 +4226,9 @@ void shape_Maia_skills(int Ind) {
 
 #ifdef ENABLE_OCCULT
 		p_ptr->s_info[SKILL_OSHADOW].mod = 0;
+ #ifdef ENABLE_OUNLIFE
+		p_ptr->s_info[SKILL_OUNLIFE].mod = 0;
+ #endif
 		do_Maia_skill(Ind, SKILL_OSPIRIT, 21);
  #ifdef ENABLE_OHERETICISM
 		p_ptr->s_info[SKILL_OHERETICISM].mod = 0;

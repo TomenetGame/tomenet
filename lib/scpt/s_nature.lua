@@ -176,7 +176,7 @@ REGENERATION = add_spell {
 	["level"] = 	20,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	20,
+	["fail"] = 	0,
 	["spell"] = 	function()
 			set_tim_regen(Ind, randint(10) + 5 + get_level(Ind, REGENERATION, 50), 300 + get_level(Ind, REGENERATION, 700))
 	end,

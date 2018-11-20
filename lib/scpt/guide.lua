@@ -134,7 +134,7 @@ guide_skill = {
 }
 
 --(note: Sorcery isn't a school)
-guide_schools = 29
+guide_schools = 30
 guide_school = {
     "Wizardry -",
     "Mana",
@@ -165,9 +165,10 @@ guide_school = {
     "Attunement",
     "Mental Intrusion",
     "Astral Knowledge -",
+    "Unlife",
 }
 
-guide_spells = 178
+guide_spells = 186
 guide_spell = {
     "Manathrust",
     "Recharge",
@@ -288,9 +289,8 @@ guide_spell = {
     "Shadow Gate",
     "Shadow Shroud",
     "Chaos Bolt",
-    "Nether Bolt",
     "Drain Life",
-    "Darkness Storm", --107
+    "Darkness Storm", --106
 
     "Cause Wounds",
     "Tame Fear",
@@ -302,7 +302,7 @@ guide_spell = {
     "Lift Curses",
     "Ethereal Eye",
     "Possess",
-    "Guardian Spirit", --118
+    "Guardian Spirit", --117
     "Purification Rites",
 
     "Terror",
@@ -316,7 +316,7 @@ guide_spell = {
     "Wicked Oath",
     "Levitation",
     "Robes of Havoc",
-    "Blood Sacrifice", --130
+    "Blood Sacrifice", --129
 
     "Nature's Call",
     "Toxic Moisture",
@@ -328,7 +328,7 @@ guide_spell = {
     "Quickfeet",
     "Herbal Tea",
     "Extra Growth",
-    "Focus", --140
+    "Focus", --139
 
     "Psychic Hammer",
     "Psychokinesis",
@@ -348,14 +348,14 @@ guide_spell = {
     "Accelerate Nerves",
     "Telepathy",
     "Recognition",
-    "Stabilize Thoughts", --158
+    "Stabilize Thoughts", --157
 
     "Psionic Blast",
     "Psi Storm",
     "Scare",
     "Confuse",
     "Hypnosis",
-    "Drain Strength",
+    "Apathy",
     "Psychic Suppression",
     "Remote Vision",
     "Recognition",
@@ -370,5 +370,15 @@ guide_spell = {
     "Empowerment",
     "The Silent Force",
     "Sphere of Destruction",
-    "Gateway", --178
+    "Gateway", --177
+
+    "Fatigue",
+    "Detect Lifeforce",
+    "Tainted Grounds",
+    "Nether Sap",
+    "Subjugation",
+    "Nether Bolt",
+    "Permeation",
+    "Touch of Hunger",
+    "Wraithstep", --186
 }

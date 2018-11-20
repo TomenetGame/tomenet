@@ -75,7 +75,12 @@ function showskills(name)
 	if get_skill_value(p, SKILL_MINTRUSION) > 0 then	msg_print(Ind, "     . Mental Intrusion           " .. get_skill_formatted(p, SKILL_MINTRUSION)) end
 -- Occult
 --if (def_hack("TEST_SERVER", nil)) then
-if (def_hack("TEMP3", nil)) then
+if (def_hack("TEMP4", nil)) then
+	if get_skill_value(p, SKILL_OSHADOW) > 0 then		msg_print(Ind, "     . Shadow                     " .. get_skill_formatted(p, SKILL_OSHADOW)) end
+	if get_skill_value(p, SKILL_OSPIRIT) > 0 then		msg_print(Ind, "     . Spirit                     " .. get_skill_formatted(p, SKILL_OSPIRIT)) end
+	if get_skill_value(p, SKILL_OHERETICISM) > 0 then	msg_print(Ind, "     . Hereticism                 " .. get_skill_formatted(p, SKILL_OHERETICISM)) end
+	if get_skill_value(p, SKILL_OUNLIFE) > 0 then		msg_print(Ind, "     . Unlife                     " .. get_skill_formatted(p, SKILL_OUNLIFE)) end
+elseif (def_hack("TEMP3", nil)) then
 	if get_skill_value(p, SKILL_OSHADOW) > 0 then		msg_print(Ind, "     . Shadow                     " .. get_skill_formatted(p, SKILL_OSHADOW)) end
 	if get_skill_value(p, SKILL_OSPIRIT) > 0 then		msg_print(Ind, "     . Spirit                     " .. get_skill_formatted(p, SKILL_OSPIRIT)) end
 	if get_skill_value(p, SKILL_OHERETICISM) > 0 then	msg_print(Ind, "     . Hereticism                 " .. get_skill_formatted(p, SKILL_OHERETICISM)) end

@@ -7644,7 +7644,27 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 		break;
 
-	case GF_HOLD:
+	case GF_HOLD: /* Paralyze - TODO: Currently it's sleep, so monster wakes up on taking damage! */
+		if (seen) obvious = TRUE;
+
+		/* Attempt a saving throw */
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags3 & RF3_UNDEAD) ||
+		    (r_ptr->flags3 & RF3_NO_STUN) ||
+		    (r_ptr->flags3 & RF3_NO_SLEEP) ||
+		    RES_OLD(r_ptr->level, dam)) {
+			note = " is unaffected";
+			obvious = FALSE;
+		} else {
+			/* Go to sleep (much) later */
+			note = " is paralyzed";
+			do_sleep = 3 + rand_int(3) + dam / 15;
+		}
+
+		/* No "real" damage */
+		dam = 0;
+		quiet_dam = TRUE;
+		break;
 	case GF_DOMINATE:
 		if (!quiet) {
 			if ((!(r_ptr->flags1 & (RF1_UNIQUE|RF1_NEVER_MOVE)) &&
@@ -7746,6 +7766,31 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Sleep (Use "dam" as "power") */
 	case GF_STASIS:
 		if (seen) obvious = TRUE;
+
+		/* Hack: Subjugation (Unlife) */
+		if (dam >= 1000) {
+			dam -= 1000;
+
+			/* Attempt a saving throw */
+			if ((r_ptr->flags1 & (RF1_UNIQUE)) ||
+			    !(r_ptr->flags3 & RF3_UNDEAD) ||
+			    p_ptr->lev <= r_ptr->level) {
+				note = " is unaffected";
+				obvious = FALSE;
+			} else if (!rand_int(p_ptr->lev + 3 - r_ptr->level)) {
+				note = " resists";
+				obvious = FALSE;
+			} else {
+				/* Go to sleep (much) later */
+				note = " has been subjugated";
+				do_sleep = dam;
+			}
+
+			/* No "real" damage */
+			dam = 0;
+			quiet_dam = TRUE;
+			break;
+		}
 
 		/* Attempt a saving throw */
 		if ((r_ptr->flags1 & (RF1_UNIQUE)) ||

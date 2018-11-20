@@ -7892,13 +7892,15 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		music = TRUE;
 #endif
 
-		msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his" : "her");
-		msg_print(Ind, "You lose your wraith powers.");
+		if (p_ptr->tim_wraith) {
+			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his" : "her");
+			msg_print(Ind, "You lose your wraith powers.");
 
-		/* Automatically disable permanent wraith form (set_tim_wraith) */
-		p_ptr->tim_wraith = 0; //avoid duplicate message
-		p_ptr->update |= PU_BONUS;
-		p_ptr->redraw |= PR_BPR_WRAITH;
+			/* Automatically disable permanent wraith form (set_tim_wraith) */
+			p_ptr->tim_wraith = 0; //avoid duplicate message
+			p_ptr->update |= PU_BONUS;
+			p_ptr->redraw |= PR_BPR_WRAITH;
+		}
 	}
 	if (ox != -1 && (zcave[oy][ox].info & CAVE_STCK) && !(zcave[y][x].info & CAVE_STCK)) {
 		msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
@@ -7913,6 +7915,13 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		/* Automatically re-enable permanent wraith form (set_tim_wraith) */
 		p_ptr->update |= PU_BONUS;
 	}
+
+#ifdef ENABLE_OUNLIFE
+	if (p_ptr->tim_wraith && (p_ptr->tim_extra & 0x1)) {
+		if (cave_floor_grid(&zcave[y][x]) && (ox == -1 || !cave_floor_grid(&zcave[oy][ox])))
+			set_tim_wraithstep(Ind, 0);
+	}
+#endif
 
 #ifdef USE_SOUND_2010
 	/* Handle entering a sickbay area (only possible via logging on into one) */

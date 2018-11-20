@@ -1231,11 +1231,11 @@ void lua_fix_skill_chart(int Ind) {
 		p_ptr->s_info[i].dev = FALSE;
 #endif
 	for (i = 0; i < MAX_SKILLS; i++) {
-//		s32b value = 0, mod = 0;
+		//s32b value = 0, mod = 0;
 		/* Make sure all are touched */
 		p_ptr->s_info[i].touched = TRUE;
-//		compute_skills(p_ptr, &value, &mod, i);
-//		init_skill(p_ptr, value, mod, i);
+		//compute_skills(p_ptr, &value, &mod, i);
+		//init_skill(p_ptr, value, mod, i);
 		/* pseudo-init-skill */
 #if 0 //SMOOTH_SKILLS
 		if (s_info[i].flags1 & SKF1_HIDDEN) {

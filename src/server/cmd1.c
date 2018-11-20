@@ -363,6 +363,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 			case TBRAND_HELLFIRE:
 				fx = TBRAND_HELLFIRE;
 				break;
+			case TBRAND_VAMPIRIC:
+				fx = TBRAND_VAMPIRIC;
+				break;
 			}
 		}
 	} else {
@@ -494,6 +497,9 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 			/* flags that exist in temporary form only */
 			case TBRAND_HELLFIRE:
 				fx = TBRAND_HELLFIRE;
+				break;
+			case TBRAND_VAMPIRIC:
+				fx = TBRAND_VAMPIRIC;
 				break;
 			}
 		}
@@ -941,6 +947,9 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 			/* flags that exist in temporary form only */
 			case TBRAND_HELLFIRE:
 				fx = TBRAND_HELLFIRE;
+				break;
+			case TBRAND_VAMPIRIC:
+				fx = TBRAND_VAMPIRIC;
 				break;
 			}
 		}
@@ -2779,7 +2788,8 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		}
 
 		/* check whether this weapon or we in general, are vampiric */
-		if ((f1 & TR1_VAMPIRIC)) vampiric_melee = 100; /* weapon chance is always 100% */
+		if (p_ptr->melee_brand && p_ptr->melee_brand_t == TBRAND_VAMPIRIC) vampiric_melee = 100;
+		else if ((f1 & TR1_VAMPIRIC)) vampiric_melee = 100; /* weapon chance is always 100% */
 		else vampiric_melee = p_ptr->vampiric_melee; /* non-weapon chance from other items is applied from xtra1.c */
 #ifdef TEST_SERVER
 		msg_format(Ind, "slot %d vamp %d", slot, vampiric_melee);
@@ -3916,7 +3926,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		}
 
 		/* check whether this weapon or we in general, are vampiric */
-		if (f1 & TR1_VAMPIRIC) vampiric_melee = 100; /* weapon chance is always 100% */
+		if (p_ptr->melee_brand && p_ptr->melee_brand_t == TBRAND_VAMPIRIC) vampiric_melee = 100;
+		else if (f1 & TR1_VAMPIRIC) vampiric_melee = 100; /* weapon chance is always 100% */
 		else vampiric_melee = p_ptr->vampiric_melee; /* non-weapon chance from other items is applied from xtra1.c */
 
 		/* Calculate the "attack quality" */

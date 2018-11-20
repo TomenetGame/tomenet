@@ -2687,6 +2687,123 @@ bool detect_noise(int Ind) {
 	return (flag);
 }
 
+/* For Death Knights et al: Detect living creatures. */
+bool detect_living(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	int	i;
+	bool	flag = FALSE;
+	dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+	/* anti-exploit */
+	if (!local_panel(Ind)) return FALSE;
+
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_DETECT)) return FALSE;
+	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_DETECT)) return FALSE;
+
+	/* Clear previously detected stuff */
+	clear_ovl(Ind);
+
+	/* Detect (even invisible) monsters */
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
+		monster_race *r_ptr = race_inf(m_ptr);
+		int fy = m_ptr->fy;
+		int fx = m_ptr->fx;
+
+		/* Paranoia -- Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+		/* Skip visible monsters */
+		if (p_ptr->mon_vis[i]) continue;
+		/* Skip monsters not on this depth */
+		if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+
+		/* Specialties for 'living' -
+		   for now demons and angels both don't count as "living" either.
+		   This makes sense but they are often treated as an exception in the code,
+		   eg for vampirism application. */
+		if ((r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON)) || r_ptr->d_char == 'A') continue;
+
+		/* Detect all monsters */
+		if (panel_contains(fy, fx)) {
+			byte a;
+			char c;
+
+			/* Hack - Temporarily visible */
+			p_ptr->mon_vis[i] = TRUE;
+			/* Get the look of the monster */
+			map_info(Ind, fy, fx, &a, &c, FALSE);
+			/* No longer visible */
+			p_ptr->mon_vis[i] = FALSE;
+			/* Draw the monster on the screen */
+			draw_spot_ovl(Ind, fy, fx, a, c);
+
+			flag = TRUE;
+		}
+	}
+
+	/* Detect (even invisible) players */
+	for (i = 1; i <= NumPlayers; i++) {
+		player_type *q_ptr = Players[i];
+		int py = q_ptr->py;
+		int px = q_ptr->px;
+
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+		/* Skip ourself */
+		if (i == Ind) continue;
+		/* Skip players not on this depth */
+		if (!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
+		/* Never detect the dungeon master! */
+		if (q_ptr->admin_dm && !player_sees_dm(Ind)) continue;
+		/* Skip visible players */
+		if (p_ptr->play_vis[i]) continue;
+
+		/* Life force specialty! */
+		if (p_ptr->prace == RACE_VAMPIRE) continue;
+
+		/* Detect all players */
+		if (panel_contains(py, px)) {
+			byte a;
+			char c;
+
+			/* Hack - Temporarily visible */
+			p_ptr->play_vis[i] = TRUE;
+			/* Get the look of the player */
+			map_info(Ind, py, px, &a, &c, FALSE);
+			/* No longer visible */
+			p_ptr->play_vis[i] = FALSE;
+			/* Draw the player on the screen */
+			draw_spot_ovl(Ind, py, px, a, c);
+
+			flag = TRUE;
+		}
+	}
+
+	/* Describe and clean up */
+	if (flag) {
+		/* Describe, and wait for acknowledgement */
+		msg_print(Ind, "You sense life force nearby!");
+		msg_print(Ind, NULL);
+
+#if 0 /* this is #if 0'd to produce old behaviour w/o the pause - mikaelh */
+		/* Wait */
+		Send_pause(Ind);
+
+		/* Mega-Hack -- Fix the monsters and players */
+		update_monsters(FALSE);
+		update_players();
+#endif
+	} else {
+//#ifdef DETECT_ABSENCE
+		msg_print(Ind, "You cannot sense any life force nearby.");
+		msg_print(Ind, NULL);
+//#endif
+	}
+
+	/* Result */
+	return (flag);
+}
+
 /*
  * Detect everything
  */

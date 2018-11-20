@@ -4696,7 +4696,7 @@ static bool process_player_end_aux(int Ind) {
 				if (p_ptr->regenerate) i += 30;
 
 				/* Regeneration takes more food */
-				if (p_ptr->tim_regen) i += p_ptr->tim_regen_pow / 10;
+				if (p_ptr->tim_regen && p_ptr->prace != RACE_VAMPIRE) i += p_ptr->tim_regen_pow / 10;
 
 				j = 0;
 
@@ -4824,7 +4824,15 @@ static bool process_player_end_aux(int Ind) {
 	regen_amount = regen_amount / (1 + (p_ptr->aura[0] ? 1 : 0) + (p_ptr->aura[1] ? 1 : 0) + (p_ptr->aura[2] ? 1 : 0));
 
 	/* Increase regen by tim regen */
-	if (p_ptr->tim_regen) regen_amount += p_ptr->tim_regen_pow;
+	if (p_ptr->tim_regen) {
+		if (p_ptr->prace != RACE_VAMPIRE) regen_amount += p_ptr->tim_regen_pow;
+		else if (p_ptr->csp) {
+			p_ptr->csp--;
+			hp_player_quiet(Ind, p_ptr->tim_regen_pow, TRUE);
+			p_ptr->redraw |= (PR_MANA | PR_HP);
+			p_ptr->window |= (PW_PLAYER);
+		}
+	}
 
 	/* Poisoned or cut yields no healing */
 	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->cut || p_ptr->sun_burn)
@@ -5185,8 +5193,12 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_tim_lev(Ind, p_ptr->tim_lev - 1);
 
 	/* Timed regen */
-	if (p_ptr->tim_regen)
-		(void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
+	if (p_ptr->tim_regen) {
+		if (p_ptr->prace == RACE_VAMPIRE)
+			(void)set_tim_mp2hp(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
+		else
+			(void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
+	}
 
 	/* Thunderstorm */
 	if (p_ptr->tim_thunder) {

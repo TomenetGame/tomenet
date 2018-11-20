@@ -2122,6 +2122,11 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_OSPIRIT,
 			'+', 0,
 			'%', 0, },
+ #ifdef ENABLE_OUNLIFE
+		{ SKILL_OUNLIFE,
+			'+', 0,
+			'%', 115, },
+ #endif
 #endif
 		{ SKILL_R_LITE, /* cannot train Light runecraft well */
 			'+', 0,
@@ -2221,6 +2226,11 @@ Only 70%-ify the skills that could potentially be updated when the player mutate
 			'%', 70, },
  #ifdef ENABLE_OHERETICISM /* unused actually, can't get this skill at birth */
 		{ SKILL_OHERETICISM,
+			'+', 0,
+			'%', 70, },
+ #endif
+ #ifdef ENABLE_OUNLIFE
+		{ SKILL_OUNLIFE,
 			'+', 0,
 			'%', 70, },
  #endif
@@ -3351,6 +3361,11 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 450, },
  #endif
+ #ifdef ENABLE_OUNLIFE
+		{ SKILL_OUNLIFE,
+			'+', 0,
+			'+', 450, },
+ #endif
 #endif
 		{ SKILL_R_LITE,
 			'+', 0,
@@ -4090,7 +4105,16 @@ player_class class_info[MAX_CLASS] = {
 			'+', 600, },
  #ifdef ENABLE_OCCULT /* Occult */
 		{ SKILL_OSHADOW,
+  #ifndef ENABLE_OUNLIFE
 			'+', 1000,
+  #else
+			'+', 1000, // <- actually start with 1.000 here too, since 'Cause Fear I' is level 1, while 'Fatigue I' is level 5 -_-
+  #endif
+			'+', 700, },
+ #endif
+ #ifdef ENABLE_OUNLIFE
+		{ SKILL_OUNLIFE,
+			'+', 0, // <- should have 1.000, but it's too much to start with that in two schools at once. Shadow is picked instead for now because of Cause Fear I.
 			'+', 700, },
  #endif
  #if 0

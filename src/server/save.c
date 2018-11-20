@@ -837,7 +837,7 @@ static void wr_extra(int Ind) {
 	wr_s16b(p_ptr->blessed);
 	wr_s16b(p_ptr->tim_invis);
 	wr_byte(p_ptr->go_level_top);//ENABLE_GO_GAME
-	wr_byte(0x0);				//hole
+	wr_byte(p_ptr->tim_extra);
 	wr_s16b(p_ptr->see_infra);
 	wr_s16b(p_ptr->tim_infra);
 	wr_s16b(p_ptr->oppose_fire);

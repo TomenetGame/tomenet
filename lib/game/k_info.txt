@@ -3842,7 +3842,18 @@ F:EASY_KNOW
 D:Releases a magical firework rocket.
 #D:Can only be used during new years eve season.
 
-# HOLE 447-458
+
+$ENABLE_OUNLIFE$N:447:& Tainted Tome~ of Unlife
+$ENABLE_OUNLIFE$G:?:n
+$ENABLE_OUNLIFE$I:111:25:0
+$ENABLE_OUNLIFE$W:50:0:30:25000
+$ENABLE_OUNLIFE$A:50/50:100/50
+$ENABLE_OUNLIFE$P:0:1d1:0:0:0
+$ENABLE_OUNLIFE$F:FULL_NAME | EASY_KNOW | IGNORE_WATER
+
+
+# HOLE 448-458
+
 
 ##### Additional skeletons #####
 

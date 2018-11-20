@@ -1,62 +1,5 @@
 -- handle the occultism school ('shadow magic')
 
---[[
-OCURSE = add_spell {
-	["name"] = 	"Curse",
-	["name2"] = 	"Curse",
-	["school"] = 	{SCHOOL_},
-	["am"] = 	75,
-	["spell_power"] = 0,
-	["level"] = 	1,
-	["mana"] = 	2,
-	["mana_max"] = 	30,
-	["fail"] = 	10,
-	["stat"] = 	A_WIS,
-	["direction"] = function () if get_level(Ind, OCURSE, 50) >= 25 then return FALSE else return TRUE end end,
-	["spell"] = 	function(args)
-		if get_level(Ind, OCURSE, 50) >= 25 then
-			project_los(Ind, GF_CURSE, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
-		elseif get_level(Ind, OCURSE, 50) >= 15 then
-			fire_beam(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
-		else
-			fire_grid_bolt(Ind, GF_CURSE, args.dir, 10 + get_level(Ind, OCURSE, 150), "points and curses for")
-		end
-	end,
-	["info"] = 	function()
-		return "power "..(10 + get_level(Ind, OCURSE, 150))
-	end,
-	["desc"] = {
-		"Randomly causes confusion damage, slowness or blindness.",
-		"At level 15 it passes through monsters, affecting those behind as well.",
-		"At level 25 it affects all monsters in sight.",
-	}
-}
-
-if (def_hack("TEST_SERVER", nil)) then
-OCURSEDD = add_spell {
-	["name"] = 	"Cause wounds",
-	["school"] = 	{SCHOOL_},
-	["spell_power"] = 0,
-	["am"] = 	75,
-	["level"] = 	5,
-	["mana"] = 	1,
-	["mana_max"] = 	20,
-	["fail"] = 	15,
-	["stat"] = 	A_WIS,
-	["ftk"] = 1,
-	["spell"] = 	function(args)
-		fire_grid_bolt(Ind, GF_MISSILE, args.dir, 10 + get_level(Ind, OCURSEDD, 300), "points and curses for")
-	end,
-	["info"] = 	function()
-		return "power "..(10 + get_level(Ind, OCURSEDD, 300))
-	end,
-	["desc"] = 	{
-		"Curse an enemy, causing wounds.",
-	}
-}
-end
-]]
-
 OFEAR_I = add_spell {
 	["name"] = 	"Cause Fear I",
 	["name2"] = 	"Fear I",
@@ -438,6 +381,7 @@ CHAOSBOLT = add_spell {
 	["desc"] = 	{ "Channels the powers of chaos into a bolt.", }
 }
 
+if (not(def_hack("TEMP4", nil))) then
 --ENABLE_DEATHKNIGHT:
 function get_netherbolt_dam(Ind)
 	local lev
@@ -469,6 +413,7 @@ NETHERBOLT = add_spell {
 	end,
 	["desc"] = 	{ "Channels lingering nether into a bolt.", }
 }
+end --TEMP4
 
 --[[
 ODRAINLIFE_I = add_spell {

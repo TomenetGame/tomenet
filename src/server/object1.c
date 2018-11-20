@@ -4970,6 +4970,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		case TBRAND_HELLFIRE:
 			fprintf(fff, "\377BHellfire brand has been applied to it temporarily.\n");
 			break;
+		case TBRAND_VAMPIRIC:
+			fprintf(fff, "\377BVampirism brand has been applied to it temporarily.\n");
+			break;
 		//other brands are unused atm (possibly not fully implemented even)
 		}
 	//Note: ammo_brand_t is unused atm (possibly not fully implemented even)
@@ -6553,10 +6556,14 @@ byte get_book_name_color(object_type *o_ptr) {
 		else if (o_ptr->sval >= 19 && o_ptr->sval <= 21) return TERM_YELLOW;
 #ifdef ENABLE_OCCULT
 		/* Occult */
- #ifdef ENABLE_OHERETICISM
-		else if (o_ptr->sval >= 22 && o_ptr->sval <= 24) return TERM_BLUE;
+ #ifdef ENABLE_OUNLIFE
+		else if (o_ptr->sval >= 22 && o_ptr->sval <= 25) return TERM_BLUE;
  #else
+  #ifdef ENABLE_OHERETICISM
+		else if (o_ptr->sval >= 22 && o_ptr->sval <= 24) return TERM_BLUE;
+  #else
 		else if (o_ptr->sval >= 22 && o_ptr->sval <= 23) return TERM_BLUE;
+  #endif
  #endif
 #endif
 		/* mages (default) */
@@ -6603,10 +6610,14 @@ byte get_spellbook_name_colour(int pval) {
 	if (spell_school[pval] >= SCHOOL_PPOWER && spell_school[pval] <= SCHOOL_MINTRUSION) return TERM_YELLOW;
 #ifdef ENABLE_OCCULT
 	/* blue for Occult */
- #ifdef ENABLE_OHERETICISM
-	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OHERETICISM) return TERM_BLUE;
+ #ifdef ENABLE_OUNLIFE
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OUNLIFE) return TERM_BLUE;
  #else
+  #ifdef ENABLE_OHERETICISM
+	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OHERETICISM) return TERM_BLUE;
+  #else
 	if (spell_school[pval] >= SCHOOL_OSHADOW && spell_school[pval] <= SCHOOL_OSPIRIT) return TERM_BLUE;
+  #endif
  #endif
 #endif
 	/* light blue for the rest (istari schools) */
