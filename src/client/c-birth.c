@@ -1292,9 +1292,9 @@ static bool choose_stat_order(void) {
 					c_put_str(TERM_YELLOW, "   Shops will offer you wares at better prices. ", DIZ_ROW + 1, 30);
 					c_put_str(TERM_YELLOW, "    (Note that shop keepers are also influenced ", DIZ_ROW + 2, 30);
 					c_put_str(TERM_YELLOW, "    by your character's race.)                  ", DIZ_ROW + 3, 30);
-					c_put_str(TERM_YELLOW, "   Helps you to resist seducing attacks.        ", DIZ_ROW + 4, 30);
-					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 5, 30);
-					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 6, 30);
+					c_put_str(TERM_YELLOW, "   Also affects house prices.                   ", DIZ_ROW + 4, 30);
+					c_put_str(TERM_YELLOW, "   Helps you to resist seducing attacks.        ", DIZ_ROW + 5, 30);
+					c_put_str(TERM_YELLOW, "   Affects mindcrafters' mana pool somewhat.    ", DIZ_ROW + 6, 30);
 					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 7, 30);
 					c_put_str(TERM_YELLOW, "                                                ", DIZ_ROW + 8, 30);
 					break;
