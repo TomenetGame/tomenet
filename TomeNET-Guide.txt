@@ -16873,6 +16873,10 @@ school.
                     Tier II: Level 20.
                     Affects all monsters in LoS.
 
+    Detect Lifeforce
+                    Detect all living creatures nearby.
+                    Required skill level for first spell level: 12.
+
     Tainted Grounds Prevents any vermin from multiplying any further,
                     effective on the whole dungeon level.
                     Required skill level for first spell level: 17.
@@ -16893,9 +16897,6 @@ school.
 
     Nether Bolt     Channels lingering nether into a bolt attack.
                     Required skill level for first spell level: 30.
-
-    Sense Lifeforce Temporarily sense all living creatures.
-                    Required skill level for first spell level: 32.
 
     Permeation      Let a stream of nether force cleanse your body and mind,
                     restoring drained stats and experience.
