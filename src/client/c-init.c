@@ -215,11 +215,14 @@ void initialize_main_pref_files(void) {
 	process_pref_file(buf);
 
 
-	/* Hack: command-line client cannot handle big_map */
 	if (!strcmp(ANGBAND_SYS, "gcu")) {
+		/* Hack: command-line client cannot handle big_map */
 		c_cfg.big_map = FALSE;
 		(*option_info[CO_BIGMAP].o_var) = FALSE;
 		Client_setup.options[CO_BIGMAP] = FALSE;
+
+		/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
+		c_cfg.palette_animation = FALSE;
 	}
 
 
