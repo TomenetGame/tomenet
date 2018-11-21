@@ -1337,6 +1337,7 @@ bool set_tim_wraith(int Ind, int v) {
 						if (f3 & (TR3_WRAITH)) {
 							//p_ptr->wraith_form = TRUE;
 							v = 10000;
+							p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 							break;
 						}
 					}
@@ -1349,6 +1350,8 @@ bool set_tim_wraith(int Ind, int v) {
 
 					/* That will hopefully prevent game hinging when loading */
 					if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
+
+					p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 				}
 			}
 			else v = 1;
@@ -1433,6 +1436,7 @@ bool set_tim_wraithstep(int Ind, int v) {
 						if (f3 & (TR3_WRAITH)) {
 							//p_ptr->wraith_form = TRUE;
 							v = 10000;
+							p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 							break;
 						}
 					}
@@ -1445,6 +1449,8 @@ bool set_tim_wraithstep(int Ind, int v) {
 
 					/* That will hopefully prevent game hinging when loading */
 					if (cave_floor_bold(zcave, p_ptr->py, p_ptr->px)) p_ptr->wraith_in_wall = FALSE;
+
+					p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 				}
 			}
 			else v = 1;

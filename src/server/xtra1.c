@@ -2359,6 +2359,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			//BAD!(recursion)	set_tim_wraith(Ind, 10000);
 			if (!p_ptr->tim_wraith) p_ptr->redraw |= PR_BPR_WRAITH;
 			p_ptr->tim_wraith = 10000; csheet_boni->cb[5] |= CB6_RWRTH;
+			p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 		}
 		p_ptr->drain_life++; csheet_boni->cb[5] |= CB6_SRGHP;
 	}
@@ -3681,6 +3682,7 @@ void calc_boni(int Ind) {
 		p_ptr->levitate = TRUE; csheet_boni[14].cb[5] |= CB6_RLVTN; /* redundant */
 		p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL;
 		/*p_ptr->tim_wraith = 10000; redundant*/
+		//p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 		//p_ptr->invis += 5; */ /* No. */
 	}
 
@@ -4214,6 +4216,7 @@ void calc_boni(int Ind) {
 			    !(p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC))) {
 				//BAD!(recursion)	set_tim_wraith(Ind, 10000);
 				p_ptr->tim_wraith = 10000; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_RWRTH;
+				p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 			}
 		}
 		if (f4 & (TR4_LEVITATE)) {

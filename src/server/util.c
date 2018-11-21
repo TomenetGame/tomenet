@@ -7898,6 +7898,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 			/* Automatically disable permanent wraith form (set_tim_wraith) */
 			p_ptr->tim_wraith = 0; //avoid duplicate message
+			p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 			p_ptr->update |= PU_BONUS;
 			p_ptr->redraw |= PR_BPR_WRAITH;
 		}

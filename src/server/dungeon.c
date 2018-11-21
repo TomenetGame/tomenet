@@ -5901,6 +5901,7 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->tim_wraith) {
 		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) {
 			p_ptr->tim_wraith = 0;
+			p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 			msg_print(Ind, "You lose your wraith powers.");
 			p_ptr->redraw |= PR_BPR_WRAITH;
 			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
@@ -5908,6 +5909,7 @@ static bool process_player_end_aux(int Ind) {
 		/* No wraithform on NO_MAGIC levels - C. Blue */
 		else if (p_ptr->wpos.wz && l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) {
 			p_ptr->tim_wraith = 0;
+			p_ptr->tim_extra &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 			msg_print(Ind, "You lose your wraith powers.");
 			p_ptr->redraw |= PR_BPR_WRAITH;
 			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
