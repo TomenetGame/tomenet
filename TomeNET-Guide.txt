@@ -9059,15 +9059,15 @@ are unaffected by any attack of that type and won't take damage.
 Taking damage means that weapons will lose +dam enchantment, and armour will
 will lose +AC enchantment, so you can repair them again by either using the
 armoury's repair service or -in tougher cases- reenchanting them.
-If your character resists a specific element, the chance of any item getting
-damaged by it is reduced. Having double resistance will reduce it much further
-even.
+If your character resists a specific element, the chance of any equipped item
+getting damaged by it is reduced. Having double resistance will reduce it even
+further.
 Note that double resistance will completely prevent any inventory damage from
-the elements; this is especially important for characters who carry a lot of
-potions that they don't want to get destroyed by cold-based attacks.
-If your character is immune to an element (see further down), that  will
+the resisted element; this is especially important for characters who carry a
+lot of potions that they don't want to get destroyed by cold-based attacks.
+If your character is immune to an element (see further down), that will
 completely prevent any sort of damage from that particular element for any item
-you carry, wield or wear.
+you carry, wield or wear (both inventory and equipment).
 All artifacts are completely immune to any elemental damage with the exception
 of disenchantment effects, which -albeit with a low success chance- may reduce
 an artifact's enchantments.
@@ -9323,12 +9323,14 @@ Nexus-related teleportation is also affected by this, gravity however is not.
 
 Immunities
 ----------
-Players can become immune to the basic elements and poison by wearing
+Players can become immune to the basic elements, water and poison by wearing
 items (for example dragon scale mails of the corresponding colour) or by
 transforming into a monster shape that carries the according immunities
 (see (6.7) about mimicry details).
 If a player is immune to an element, (s)he won't take any damage from those
-attacks nor be affected by any side-effects.
+attacks nor be affected by any side-effects and all items in the player's
+inventory and also all equipped items are completely protected from damage
+from that element.
 Example: Wearing the unique cape 'Ocean Soul' which as a special feature
 provides water immunity makes the player take 0 damage from a water bolt attack
 and also protect him from the stun+confuse effect of water bolts.
