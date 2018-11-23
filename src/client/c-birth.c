@@ -1629,7 +1629,10 @@ static bool choose_body_modification(void) {
 	   However, we just don't display the choices, they're still choosable! */
 	if (!firstrun || existing_characters) {
 		put_str("f) Fruit bat", 21, 2);
-		if (class == CLASS_MIMIC || class == CLASS_DRUID || class == CLASS_SHAMAN)
+		if (class == CLASS_ARCHER) {
+			c_put_str(TERM_L_DARK, "f) Fruit bat", 21, 2);
+			c_put_str(TERM_L_DARK, "(WARNING: Do not pick this as Archer, as bats cannot use bows!)", 21, 15);
+		} else if (class == CLASS_MIMIC || class == CLASS_DRUID || class == CLASS_SHAMAN)
 			c_put_str(TERM_SLATE, "(not recommended for shapeshifters: Mimics, Druids, Shamans!)", 21, 15);
 		else
 			c_put_str(TERM_SLATE, "(Bats are faster and vampiric, but can't wear certain items)", 21, 15);
