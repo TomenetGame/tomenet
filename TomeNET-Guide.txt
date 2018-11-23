@@ -9068,7 +9068,9 @@ potions that they don't want to get destroyed by cold-based attacks.
 If your character is immune to an element (see further down), that  will
 completely prevent any sort of damage from that particular element for any item
 you carry, wield or wear.
-All artifacts are completely immune to any elemental damage.
+All artifacts are completely immune to any elemental damage with the exception
+of disenchantment effects, which -albeit with a low success chance- may reduce
+an artifact's enchantments.
 
 Breath damage before capping is monster HP/3. Damage of these attacks is capped
 at 1200 (always before resistances are applied).
