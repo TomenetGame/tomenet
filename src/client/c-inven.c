@@ -558,6 +558,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	bool extra = FALSE, limit = FALSE;
 	bool special_req = FALSE;
 	bool newest = FALSE;
+	bool equip_first = FALSE;
 
 	bool safe_input = FALSE;
 
@@ -576,14 +577,15 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	/* Clear previous flag */
 	verified_item = FALSE;
 
-	if (mode & (USE_EQUIP)) equip = TRUE;
-	if (mode & (USE_INVEN)) inven = TRUE;
-	//if (mode & (USE_FLOOR)) floor = TRUE;
-	if (mode & (USE_EXTRA)) extra = TRUE;
-	if (mode & (SPECIAL_REQ)) special_req = TRUE;
-	//if (mode & (NEWEST))
+	if (mode & USE_EQUIP) equip = TRUE;
+	if (mode & USE_INVEN) inven = TRUE;
+	//if (mode & (USE_FLOOR) floor = TRUE;
+	if (mode & USE_EXTRA) extra = TRUE;
+	if (mode & SPECIAL_REQ) special_req = TRUE;
+	//if (mode & NEWEST)
 	newest = (item_newest != -1); /* experimental: always on if available */
-	if (mode & (USE_LIMIT)) limit = TRUE;
+	if (mode & USE_LIMIT) limit = TRUE;
+	if (mode & EQUIP_FIRST) equip_first = TRUE;
 
 	/* Too long description - shorten? */
 	if (special_req && newest) spammy = TRUE;
@@ -682,6 +684,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		/* Use equipment if allowed */
 		else if (equip) command_wrk = TRUE;
 	}
+
+	/* Start with equipment? ('A'ctivate command) */
+	if (equip_first) command_wrk = TRUE;
 
 	/* Redraw inventory */
 	p_ptr->window |= PW_INVEN;

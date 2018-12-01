@@ -4260,6 +4260,7 @@
 #define NEWEST		0x0100	/* Allow pressing '+' key to re-use the newest item we previously acquired */
 #define CHECK_CHARGED	0x0200	/* For Havoc rods: Try to find non-charging ones */
 #define NO_FAIL_MSG	0x0400	/* Don't display 'You do not have an eligible item.' message. Because our calling function will give a more specific message instead. */
+#define EQUIP_FIRST	0x0800	/* Item selection: Display equipment first (for item 'A'ctivation) */
 
 /*
  * Bit flags for the "p_ptr->notice" variable

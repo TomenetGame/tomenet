@@ -1239,6 +1239,9 @@ void cmd_activate(void) {
 	get_item_hook_find_obj_what = "Activatable item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
+	/* Currently, most activatable items must be worn as they are equippable items.
+	   Exceptions are: Custom books, book of the dead, golem scrolls and runes. */
+	//if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | EQUIP_FIRST | USE_EXTRA)))
 	if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA)))
 		return;
 
