@@ -8670,6 +8670,12 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Don't generate cursed randarts.. */
 		if (cursed_p(o_ptr)) continue;
 
+		/* Limit items to not substitute endgame (Morgoth) gear (part 1/2) */
+		/* Limit ranged weapons: No XM+XS combined. (Instead wait for EGO_EXTRA_MIGHT/EGO_EXTRA_SHOTS/EGO_NUMENOR.) */
+		if (o_ptr->name2 == EGO_LORIEN || o_ptr->name2 == EGO_HARADRIM || o_ptr->name2 == EGO_BUCKLAND ||
+		    o_ptr->name2b == EGO_LORIEN || o_ptr->name2b == EGO_HARADRIM || o_ptr->name2b == EGO_BUCKLAND)
+			continue;
+
 		/* melee/ranged ego (ie non-spellonly): */
 		switch (o_ptr->name2) {
 		case EGO_AGILITY:
@@ -8912,16 +8918,14 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* - prevent +1 speed boots! */
 		if ((o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) && o_ptr->pval == 1) continue;
 #endif
-		/* - prevent shields of reflection */
+		/* - prevent shields of reflection as it's a bit too boring */
 		if (o_ptr->name2 == EGO_REFLECT || o_ptr->name2b == EGO_REFLECT) continue;
+
 		/* - it's a bit sad to get super-low mage staves (of Mana, +1..4) */
 		if (o_ptr->name2 == EGO_MMANA || o_ptr->name2b == EGO_MMANA)
 			//continue;
 			if (o_ptr->pval < 4) o_ptr->pval = 4;
 		//note: thievery gloves +1 speed are ok!
-
-		/* Limit for mage staves so they don't end up as top end gear (Wiz: 8..10) */
-		if ((o_ptr->name2 == EGO_MWIZARDRY || o_ptr->name2b == EGO_MWIZARDRY) && o_ptr->pval > 7) o_ptr->pval = 7;
 
 		/* specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
 		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
@@ -9135,6 +9139,21 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 			/* correct +CON */
 			o_ptr->bpval = k_info[o_ptr->k_idx].pval;
+		}
+
+		/* Limit items to not substitute endgame (Morgoth) gear (part 2/2) */
+		/* Mage staves (and Magi gloves as a side-effect) */
+		if ((f1 & TR1_MANA) && o_ptr->pval > 6) o_ptr->pval = 6;
+		/* Limit melee weapons */
+		if (f1 & TR1_BLOWS) {
+			if (o_ptr->name2 == EGO_HA || o_ptr->name2b == EGO_HA) o_ptr->pval = 1;
+			else if (o_ptr->pval > 2) o_ptr->pval = 2;
+		}
+		if ((f5 & TR5_CRIT) && o_ptr->pval > 6) o_ptr->pval = 6;
+		/* Limit all weapons */
+		if (is_weapon(o_ptr->tval)) {
+			if (o_ptr->to_h > 20) o_ptr->to_h = 20;
+			if (o_ptr->to_d > 15) o_ptr->to_d = 15;
 		}
 
 		break;
