@@ -9147,7 +9147,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Limit melee weapons */
 		if (f1 & TR1_BLOWS) {
 			if (o_ptr->name2 == EGO_HA || o_ptr->name2b == EGO_HA) o_ptr->pval = 1;
-			else if (o_ptr->pval > 2) o_ptr->pval = 2;
+			else if (o_ptr->pval > 1) o_ptr->pval--;
 		}
 		if ((f5 & TR5_CRIT) && o_ptr->pval > 6) o_ptr->pval = 6;
 		/* Limit all weapons */
