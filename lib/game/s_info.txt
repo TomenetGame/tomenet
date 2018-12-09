@@ -814,18 +814,15 @@ f:Chaos:Magic%15
 f:Mana :Magic%15
 
 f:Stealth:Sneakiness%15
-f:Disarming:Sneakiness%10
-f:Trapping:Sneakiness%15
+#f:Disarming:Sneakiness%10
+f:Trapping:Sneakiness%20
 #f:Trapping:Disarming%15
 f:Backstabbing:Sneakiness%5
 f:Stealing:Sneakiness%20
-f:Dodging:Sneakiness%10
-
-#f:Calmness:Dodging%20
-#f:Interception:Dodging%20
-#f:Calmness:Sneakiness%7
-f:Calmness:Sneakiness%10
+f:Dodging:Sneakiness%15
+f:Calmness:Sneakiness%15
 #f:Interception:Sneakiness%7
+
 f:Interception:Combat%10
 
 
