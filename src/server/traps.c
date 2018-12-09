@@ -1279,8 +1279,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			struct c_special *cs_ptr;
 			/* Get a nice thing */
 			msg_print(Ind, "You notice something falling off the trap.");
-			acquirement(wpos, y, x, 1, TRUE, TRUE, make_resf(p_ptr));
-			//			 acquirement(wpos, y, x, 1, TRUE, FALSE);	// last is 'known' flag
+			acquirement(Ind, wpos, y, x, 1, TRUE, TRUE, make_resf(p_ptr));
+			//acquirement(wpos, y, x, 1, TRUE, FALSE);	// last is 'known' flag
 
 			cs_ptr = GetCS(c_ptr, CS_TRAPS);
 			cs_erase(c_ptr, cs_ptr);
@@ -3911,11 +3911,11 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			identify_mon_trap_load(who, o_ptr);
 			return(TRUE);
 		case SV_SCROLL_ACQUIREMENT:
-			acquirement(&wpos, y, x, 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
+			acquirement(who, &wpos, y, x, 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
 			identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_STAR_ACQUIREMENT:
-			acquirement(&wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
+			acquirement(who, &wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
 			identify_mon_trap_load(who, o_ptr);
 			return (FALSE);
 		case SV_SCROLL_REMOVE_CURSE:

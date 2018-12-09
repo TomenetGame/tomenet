@@ -2728,7 +2728,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			object_level = getlevel(&p_ptr->wpos);
 			if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
 			s_printf("%s: ACQ_SCROLL: by player %s\n", showtime(), p_ptr->name);
-			acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
+			acquirement(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
 			object_discount = 0;
 			object_level = obj_tmp; /*just paranoia, dunno if needed.*/
 			ident = TRUE;
@@ -2743,7 +2743,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			object_level = getlevel(&p_ptr->wpos);
 			if (o_ptr->discount == 100) object_discount = 100; /* stolen? */
 			s_printf("%s: *ACQ_SCROLL*: by player %s\n", showtime(), p_ptr->name);
-			acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
+			acquirement(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px, randint(2) + 1, TRUE, (p_ptr->wpos.wz != 0), make_resf(p_ptr));
 			object_discount = 0;
 			object_level = obj_tmp; /*just paranoia, dunno if needed.*/
 			ident = TRUE;
