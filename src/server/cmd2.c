@@ -1548,37 +1548,35 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 		/* let's not be scrooges =) - C. Blue */
 		cash = (((o_ptr->level + 10) * (o_ptr->level + 10)) * 3) / number;
 
+		/* Opening a chest -- this hack makes sure we don't find a chest in a chest, even though yo like chests */
+		opening_chest = TRUE;
+		/* for anti-cheeze make the dropped items o_ptr->owner = p_ptr->id (loot might be piled btw) */
+		opening_chest_owner = p_ptr->id;
+		opening_chest_mode = p_ptr->mode;
+
+		/* Determine the "value" of the items */
+		//object_level = ABS(o_ptr->pval) + 10;
+		object_level = ABS(o_ptr->level) + 10;
+		place_object_restrictor = RESF_NONE;
+
 		/* Drop some objects (non-chests) */
 		for (; number > 0; --number) {
-				/* Opening a chest -- this hack makes sure we don't find a chest in a chest, even though yo like chests */
-				opening_chest = TRUE;
-				opening_chest_owner = o_ptr->owner;
-				opening_chest_mode = o_ptr->mode;
-
-				/* Determine the "value" of the items */
-				//object_level = ABS(o_ptr->pval) + 10;
-				object_level = ABS(o_ptr->level) + 10;
-
 				/* Small chests often drop gold */
 				if (little && magik(75))
 					place_gold(wpos, y, x, cash);
 				else if (!little && magik(20))
 					place_gold(wpos, y, x, cash);
 				/* Otherwise drop an item */
-				else {
-					place_object_restrictor = RESF_NONE;
+				else
 					/* mostly DROP_GOOD */
 					place_object(wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
-				}
-
-				/* for anti-cheeze make the dropped items o_ptr->owner = p_ptr->id (loot might be piled btw) */
-
-				/* Reset the object level */
-				object_level = getlevel(wpos);
-
-				/* No longer opening a chest */
-				opening_chest = FALSE;
 		}
+
+		/* Reset the object level */
+		object_level = getlevel(wpos);
+
+		/* No longer opening a chest */
+		opening_chest = FALSE;
 	}
 
 	/* Empty */
@@ -3348,6 +3346,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							generate_object(&forge, wpos, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
 								default_obj_theme, p_ptr->luck);
 							object_desc(0, o_name, &forge, TRUE, 3);
+							item_killer = p_ptr->id;
 							s_printf("DIGGING: %s found item: %s.\n", p_ptr->name, o_name);
 							drop_near(0, &forge, -1, wpos, y, x);
 #else
