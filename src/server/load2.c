@@ -562,7 +562,8 @@ static void rd_item(object_type *o_ptr) {
 
 	if (!older_than(4, 7, 5)) {
 		rd_byte(&tmpbyte);
-		o_ptr->NR_tradable = tmpbyte;
+		o_ptr->NR_tradable = (tmpbyte & 0x1) != 0x0;
+		o_ptr->no_soloist = (tmpbyte & 0x2) != 0x0;
 		rd_s32b(&o_ptr->iron_trade);
 		rd_s32b(&o_ptr->iron_turn);
 	}

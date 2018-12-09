@@ -2879,6 +2879,10 @@ void store_stole(int Ind, int item) {
 		msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
 		if (!is_admin(p_ptr)) return;
 	}
+	if ((p_ptr->mode & MODE_SOLO) && o_ptr->no_soloist) { /* No real use yet - only if in the future perhaps shops start offering items that are for some odd reason not meant for soloists.. */
+		msg_print(Ind, "\377yThis item is not eligible for Soloists.");
+		if (!is_admin(p_ptr)) return;
+	}
 #ifdef IRON_IRON_TEAM
 	if (p_ptr->party && (parties[p_ptr->party].mode & PA_IRONTEAM) && o_ptr->owner && o_ptr->owner != p_ptr->id
 	    //&& lookup_player_party(o_ptr->owner) != p_ptr->party) {
@@ -3384,6 +3388,10 @@ void store_purchase(int Ind, int item, int amt) {
 
 	if ((p_ptr->mode & MODE_SOLO) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
 		msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+		if (!is_admin(p_ptr)) return;
+	}
+	if ((p_ptr->mode & MODE_SOLO) && o_ptr->no_soloist) { /* No real use yet - only if in the future perhaps shops start offering items that are for some odd reason not meant for soloists.. */
+		msg_print(Ind, "\377yThis item is not eligible for Soloists.");
 		if (!is_admin(p_ptr)) return;
 	}
 #ifdef IRON_IRON_TEAM

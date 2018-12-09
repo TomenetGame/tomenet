@@ -7643,6 +7643,10 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 	}
 #endif
 
+	/* Hack: Abuse Sauron flag ("don't drop the one ring") for no_soloist flag (for Santa Claus drops).
+	   Distinguishing criterion: Sauron can never spawn on the world surface unless admin-summoned. */
+	if ((resf & RESF_SAURON) && !wpos->wz) forge.no_soloist = TRUE;
+
 	forge.marked2 = removal_marker;
 	forge.discount = object_discount; /* usually 0, except for creation from stolen acquirement scrolls */
 	drop_near(0, &forge, -1, wpos, y, x);

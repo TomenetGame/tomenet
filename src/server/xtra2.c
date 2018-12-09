@@ -5542,6 +5542,7 @@ bool monster_death(int Ind, int m_idx) {
 			msg_broadcast_format(0, "\374\377L**\377oSanta dropped the presents near %s!\377L**", p_ptr->name);
 			s_printf("XMAS: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, m_name);
 			santa_claus_timer = 60 + rand_int(120);
+			resf_drops |= RESF_SAURON; //We abuse Sauron's "no one ring" flag for setting no_soloist flag!
 		}
 		/* Actually restore town music (or whichever) if Santa had his own music event */
 		for (i = 1; i <= NumPlayers; i++) {

@@ -783,6 +783,7 @@ struct object_type {
 	u16b housed;			/* <house index + 1> or 0 for not currently inside a house */
 	bool changed;			/* dummy flag to refresh item if o_name changed, but memory copy didn't */
 	bool NR_tradable;		/* for ALLOW_NR_CROSS_ITEMS */
+	bool no_soloist;		/* item may not be picked up by Soloists. Used for "unpersonalized" event rewards eg Santa drops. */
 	byte temp;			/* any local hacks */
 	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
 	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */

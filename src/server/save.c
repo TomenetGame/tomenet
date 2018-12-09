@@ -115,6 +115,8 @@ static void write_buffer() {
  * Write an "item" record
  */
 static void wr_item(object_type *o_ptr) {
+	byte tmp8u = 0;
+
 	wr_s32b(o_ptr->owner);
 	wr_s16b(o_ptr->level);
 	wr_byte(o_ptr->mode);
@@ -212,7 +214,11 @@ static void wr_item(object_type *o_ptr) {
 	wr_s32b((s32b)o_ptr->appraised_value); //HOME_APPRAISAL
 	wr_u16b(o_ptr->housed); //EXPORT_PLAYER_STORE_OFFERS
 
-	wr_byte(o_ptr->NR_tradable);
+	tmp8u = 0x0;
+	if (o_ptr->NR_tradable) tmp8u |= 0x1;
+	if (o_ptr->no_soloist) tmp8u |= 0x2;
+	wr_byte(tmp8u);
+
 	wr_s32b(o_ptr->iron_trade);
 	wr_s32b(o_ptr->iron_turn);
 }
