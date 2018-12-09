@@ -1462,13 +1462,19 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			return;
 		}
 
-		if ((p_ptr->mode & MODE_SOLO) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
-			msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
-			if (!is_admin(p_ptr)) return;
-		}
-		if ((p_ptr->mode & MODE_SOLO) && o_ptr->no_soloist) {
-			msg_print(Ind, "\377yDue to its origin this item is not eligible for Soloists.");
-			if (!is_admin(p_ptr)) return;
+		if (p_ptr->mode & MODE_SOLO) {
+			if (o_ptr->owner && o_ptr->owner != p_ptr->id) {
+				msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (!o_ptr->owner && o_ptr->killer && o_ptr->killer != p_ptr->id) {
+				msg_print(Ind, "\377yYou cannot take loot that does not belong to you.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (o_ptr->no_soloist) {
+				msg_print(Ind, "\377yDue to its origin this item is not eligible for Soloists.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 #ifdef IDDC_IRON_COOP
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
@@ -1652,13 +1658,19 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (!is_admin(p_ptr)) return;
 		}
 
-		if ((p_ptr->mode & MODE_SOLO) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
-			msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
-			if (!is_admin(p_ptr)) return;
-		}
-		if ((p_ptr->mode & MODE_SOLO) && o_ptr->no_soloist) {
-			msg_print(Ind, "\377yDue to its origin this item is not eligible for Soloists.");
-			if (!is_admin(p_ptr)) return;
+		if (p_ptr->mode & MODE_SOLO) {
+			if (o_ptr->owner && o_ptr->owner != p_ptr->id) {
+				msg_print(Ind, "\377yYou cannot exchange goods or money with other players.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (!o_ptr->owner && o_ptr->killer && o_ptr->killer != p_ptr->id) {
+				msg_print(Ind, "\377yYou cannot take loot that does not belong to you.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (o_ptr->no_soloist) {
+				msg_print(Ind, "\377yDue to its origin this item is not eligible for Soloists.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 #ifdef IDDC_IRON_COOP
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
@@ -1764,6 +1776,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (o_ptr->owner && o_ptr->owner != p_ptr->id) {
 				msg_print(Ind, "\377yYou cannot pick up someone else's goods or your life would be forfeit.");
 				return;
+			}
+			if (!o_ptr->owner && o_ptr->killer && o_ptr->killer != p_ptr->id) {
+				msg_print(Ind, "\377yYou cannot take loot that does not belong to you.");
+				if (!is_admin(p_ptr)) return;
 			}
 			if (o_ptr->no_soloist) {
 				msg_print(Ind, "\377yDue to its origin you cannot pick up this item.");

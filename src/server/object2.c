@@ -7382,11 +7382,11 @@ u32b place_object_restrictor = RESF_NONE;
  * This routine requires a clean floor grid destination.
  */
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
-void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker) {
+void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker, bool preown) {
 	int prob, base, tmp_luck, i, dlev;
 	int tries = 0, k_idx, debug_k_idx = 0;
 
-	object_type		forge;
+	object_type forge;
 	dun_level *l_ptr = getfloor(wpos);
 	dungeon_type *d_ptr;
 	cave_type **zcave;
@@ -7534,7 +7534,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 
 			/* Allow all other items here - mikaelh */
 			break;
-		} while(tries < 10);
+		} while (tries < 10);
 
 		/* Note that if we run out of 'tries', the last tested object WILL be used,
 		   except if we clear k_idx now. */
@@ -7578,10 +7578,16 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 		forge.note_utag = strlen(quark_str(unique_quark)); /* mark this note as 'unique monster quark' */
 	}
 
-	if (opening_chest) {
-		forge.owner = opening_chest_owner;
-		forge.mode = opening_chest_mode;
-		if (true_artifact_p(&forge)) determine_artifact_timeout(forge.name1, wpos);
+	if (Ind) {
+		forge.killer = Players[Ind]->id;
+		if (preown) {
+			forge.owner = forge.killer;
+			forge.mode = Players[Ind]->mode;
+			if (true_artifact_p(&forge)) {
+				determine_artifact_timeout(forge.name1, wpos);
+				a_info[forge.name1].carrier = forge.owner;
+			}
+		}
 	}
 
 #ifdef IDDC_ID_BOOST /* experimental */
@@ -7677,7 +7683,7 @@ void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bo
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */
-void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck) {
+void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck) {
 	int prob, base, tmp_luck, i, dlev;;
 	int tries = 0, k_idx;
 	dungeon_type *d_ptr;
@@ -7846,6 +7852,8 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 		o_ptr->note = unique_quark;
 		o_ptr->note_utag = strlen(quark_str(unique_quark)); /* mark this note as 'unique monster quark' */
 	}
+
+	if (Ind) o_ptr->killer = Players[Ind]->id;
 //s_printf("object generated %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
 }
 
@@ -7853,7 +7861,7 @@ void generate_object(object_type *o_ptr, struct worldpos *wpos, bool good, bool 
 /*
  * Scatter some "great" objects near the player
  */
-void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf) {
+void acquirement(int Ind, struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u32b resf) {
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
@@ -7861,7 +7869,7 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 	for (; num > 0; --num) {
 		/* Place a good (or great) object */
 		place_object_restrictor = RESF_NONE;
-		place_object(wpos, y1, x1, TRUE, great, verygreat, resf, acquirement_obj_theme, 0, ITEM_REMOVAL_NORMAL);
+		place_object(Ind, wpos, y1, x1, TRUE, great, verygreat, resf, acquirement_obj_theme, 0, ITEM_REMOVAL_NORMAL, FALSE);
 		/* Notice */
 		note_spot_depth(wpos, y1, x1);
 		/* Redraw */
@@ -7871,13 +7879,13 @@ void acquirement(struct worldpos *wpos, int y1, int x1, int num, bool great, boo
 /*
  * Same as acquirement, except it doesn't drop the item to the floor. Creates one "great" object.
  */
-void acquirement_direct(object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf) {
+void acquirement_direct(int Ind, object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u32b resf) {
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Place a good (or great) object */
 	place_object_restrictor = RESF_NONE;
-	generate_object(o_ptr, wpos, TRUE, great, verygreat, resf, acquirement_obj_theme, 0);
+	generate_object(Ind, o_ptr, wpos, TRUE, great, verygreat, resf, acquirement_obj_theme, 0);
 }
 
 
@@ -9199,7 +9207,7 @@ void give_reward(int Ind, u32b resf, cptr quark, int level, int discount) {
  */
 /*note: This function uses completely bad values for picking a gold 'colour' at first and should be rewritten.
   I added a hack that resets the colour to something feasible so not almost every high level pile is adamantite. */
-void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
+void place_gold(int Ind, struct worldpos *wpos, int y, int x, int bonus) {
 	int i, k_idx;
 	s32b base;
 	object_type forge;
@@ -9214,7 +9222,7 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
 	if (in_valinor(wpos)) return;
 
 	/* Require clean floor grid */
-//	if (!cave_clean_bold(zcave, y, x)) return;
+	//if (!cave_clean_bold(zcave, y, x)) return;
 
 	/* Hack -- Pick a Treasure variety */
 	i = ((randint(object_level + 2) + 2) / 2);
@@ -9234,7 +9242,7 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
 	invcopy(&forge, k_idx);
 
 	/* Hack -- Base coin cost */
-//	base = k_info[OBJ_GOLD_LIST+i].cost;
+	//base = k_info[OBJ_GOLD_LIST+i].cost;
 	base = k_info[k_idx].cost;
 
 	/* Determine how much the treasure is "worth" */
@@ -9250,9 +9258,12 @@ void place_gold(struct worldpos *wpos, int y, int x, int bonus) {
 		forge.sval = k_info[forge.k_idx].sval;
 	}
 
-	if (opening_chest) {
-		forge.owner = opening_chest_owner;
-		forge.mode = opening_chest_mode;
+	if (Ind) {
+		forge.killer = Players[Ind]->id;
+		if (opening_chest) {
+			forge.owner = forge.killer;
+			forge.mode = Players[Ind]->mode;
+		}
 	}
 
 	/* Drop it */

@@ -1550,9 +1550,6 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 
 		/* Opening a chest -- this hack makes sure we don't find a chest in a chest, even though yo like chests */
 		opening_chest = TRUE;
-		/* for anti-cheeze make the dropped items o_ptr->owner = p_ptr->id (loot might be piled btw) */
-		opening_chest_owner = p_ptr->id;
-		opening_chest_mode = p_ptr->mode;
 
 		/* Determine the "value" of the items */
 		//object_level = ABS(o_ptr->pval) + 10;
@@ -1563,13 +1560,13 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 		for (; number > 0; --number) {
 				/* Small chests often drop gold */
 				if (little && magik(75))
-					place_gold(wpos, y, x, cash);
+					place_gold(Ind, wpos, y, x, cash);
 				else if (!little && magik(20))
-					place_gold(wpos, y, x, cash);
+					place_gold(Ind, wpos, y, x, cash);
 				/* Otherwise drop an item */
 				else
 					/* mostly DROP_GOOD */
-					place_object(wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NORMAL);
+					place_object(Ind, wpos, y, x, magik(75) ? TRUE : FALSE, FALSE, FALSE, make_resf(p_ptr), default_obj_theme, 0, ITEM_REMOVAL_NORMAL, TRUE);
 		}
 
 		/* Reset the object level */
@@ -3343,15 +3340,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 						} else if (rand_int(120) < 10 + mining) {
 							place_object_restrictor = RESF_NONE;
 #if 1
-							generate_object(&forge, wpos, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
+							generate_object(Ind, &forge, wpos, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
 								default_obj_theme, p_ptr->luck);
 							object_desc(0, o_name, &forge, TRUE, 3);
-							item_killer = p_ptr->id;
 							s_printf("DIGGING: %s found item: %s.\n", p_ptr->name, o_name);
 							drop_near(0, &forge, -1, wpos, y, x);
 #else
-							place_object(wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
-								default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL);
+							place_object(Ind, wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
+								default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
 							s_printf("DIGGING: %s found a random item.\n", p_ptr->name);
 #endif
 							if (player_can_see_bold(Ind, y, x))
@@ -3561,7 +3557,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							tval = rand_int(mining / 5);
 							for (sval = 0; sval <= tval; sval++) {
 								/* Place some gold */
-								place_gold(wpos, y, x, 0);
+								place_gold(Ind, wpos, y, x, 0);
 							}
 							object_level = old_object_level;
 						}
@@ -4144,7 +4140,8 @@ void do_cmd_disarm(int Ind, int dir) {
 
 				/* Traps of missing money can drop some of their stolen cash ;) */
 				if (t_idx == TRAP_OF_MISSING_MONEY && rand_int(4))
-					place_gold(&p_ptr->wpos, y, x, 0);//rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos) / 2));
+					place_gold(Ind, &p_ptr->wpos, y, x, 0);//rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos) / 2));
+					//NOTE: In theory this can be abused to transfer gold cross-mode/to soloists even, but the amount is negligible.
 
 				/* Reward */
 				if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));

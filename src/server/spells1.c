@@ -4522,7 +4522,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_SAND : feat);
 
 				/* Place some gold */
-				if (!istown(wpos)) place_gold(wpos, y, x, 0);
+				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 0);
 			}
 			/* Granite */
 			else if (c_ptr->feat >= FEAT_WALL_EXTRA) {
@@ -4548,7 +4548,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 
 				/* Place some gold */
-				if (!istown(wpos)) place_gold(wpos, y, x, 0);
+				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 0);
 			}
 
 			/* Quartz / Magma */
@@ -4585,7 +4585,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					/* Place object */
 					if (!istown(wpos)) {
 						place_object_restrictor = RESF_NONE;
-						place_object(wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL);
+						place_object(Ind, wpos, y, x, FALSE, FALSE, FALSE, make_resf(p_ptr) | RESF_LOW, default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
 					}
 				}
 			}
@@ -9105,6 +9105,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 	}
 
+	/* Soloists cannot be supported by other players! */
+	if ((p_ptr->mode & MODE_SOLO) && friendly_player && !self) return FALSE;
 
 	/* PvP often gives same message output as fuzzy */
 	if (!strcmp(attacker,"") || !strcmp(m_name,"")) fuzzy = TRUE;

@@ -5933,7 +5933,7 @@ bool monster_death(int Ind, int m_idx) {
 
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50))) {
-				place_gold(wpos, y, x, 0);
+				place_gold(Ind, wpos, y, x, 0);
 				//if (player_can_see_bold(Ind, ny, nx)) dump_gold++;
 			}
 
@@ -5969,7 +5969,7 @@ bool monster_death(int Ind, int m_idx) {
  #endif
 #endif
 				/* generate an object and place it */
-				place_object(wpos, y, x, good, great, FALSE, resf_drops, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL);
+				place_object(Ind, wpos, y, x, good, great, FALSE, resf_drops, r_ptr->drops, tmp_luck, ITEM_REMOVAL_NORMAL, FALSE);
 #if FORCED_DROPS != 0
 				/* lift force, except if we're planning a dual-drop */
 				if (!j) {
@@ -6587,7 +6587,7 @@ if (cfg.unikill_format) {
 			/* Special reward: 1 *great* acquirement item per player. */
 			i = object_level;
 			object_level = 127;
-			acquirement(wpos, y, x, num, TRUE, TRUE, RESF_WINNER | RESF_LIFE | RESF_NOTRUEART | RESF_EGOHI);
+			acquirement(0, wpos, y, x, num, TRUE, TRUE, RESF_WINNER | RESF_LIFE | RESF_NOTRUEART | RESF_EGOHI);
 			object_level = i;
 
 		    } /* Paranoia tag */
@@ -9688,7 +9688,7 @@ void kill_xorder(int Ind) {
 		o_ptr->iron_turn = turn;
 		inven_carry(Ind, o_ptr);
 #else
-		acquirement_direct(o_ptr, &p_ptr->wpos, great, verygreat, resf);
+		acquirement_direct(Ind, o_ptr, &p_ptr->wpos, great, verygreat, resf);
 		//s_printf("object rewarded %d,%d,%d\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx);
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
@@ -10576,6 +10576,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	return (FALSE);
 }
 
+/* NOTE: This function lacks all of the specialties of monster_death() still, such as conditioned drops. */
 void monster_death_mon(int am_idx, int m_idx) {
 	int i, j, y, x, ny, nx;
 	int number = 0;
@@ -10667,11 +10668,11 @@ void monster_death_mon(int am_idx, int m_idx) {
 
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50)))
-				place_gold(wpos, ny, nx, 0);
+				place_gold(m_ptr->owner, wpos, ny, nx, 0);
 			/* Place Object */
 			else {
 				place_object_restrictor = RESF_NONE;
-				place_object(wpos, ny, nx, good, great, FALSE, RESF_LOW, r_ptr->drops, 0, ITEM_REMOVAL_NORMAL);
+				place_object(m_ptr->owner, wpos, ny, nx, good, great, FALSE, RESF_LOW, r_ptr->drops, 0, ITEM_REMOVAL_NORMAL, FALSE);
 			}
 
 			/* Reset the object level */
@@ -13399,7 +13400,7 @@ bool master_acquire(int Ind, char * parms) {
 	player_type * p_ptr = Players[Ind];
 
 	if (!is_admin(p_ptr)) return FALSE;
-	acquirement(&p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, TRUE, make_resf(p_ptr));
+	acquirement(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, 1, TRUE, TRUE, make_resf(p_ptr));
 	return TRUE;
 }
 
@@ -13701,7 +13702,7 @@ bool master_player(int Ind, char *parms){
 		Ind2 = name_lookup(Ind, &parms[1], FALSE, FALSE, TRUE);
 		if (Ind2) {
 			player_type *p_ptr2 = Players[Ind2];
-			acquirement(&p_ptr2->wpos, p_ptr2->py, p_ptr2->px, 1, TRUE, TRUE, make_resf(p_ptr2));
+			acquirement(0, &p_ptr2->wpos, p_ptr2->py, p_ptr2->px, 1, TRUE, TRUE, make_resf(p_ptr2));
 			msg_format(Ind, "%s is granted an item.", p_ptr2->name);
 			msg_print(Ind2, "You feel a divine favor!");
 			return(FALSE);
