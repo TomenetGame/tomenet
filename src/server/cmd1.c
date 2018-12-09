@@ -2209,6 +2209,11 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 						msg_print(Ind, "Due to the item's origin you gain a tiny bit of experience from picking it up.");
 						gain_exp(Ind, 1);
 					}
+					/* Prevent IDDC cheeze */
+					else if (wpos->wz && !p_ptr->max_exp) {
+						msg_print(Ind, "You gain a tiny bit of experience from picking up your first item in a dungeon.");
+						gain_exp(Ind, 1);
+					}
 				}
 
 #if CHEEZELOG_LEVEL > 2
