@@ -1760,10 +1760,15 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (!is_admin(p_ptr)) return;
 		}
 
-		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
-		    && o_ptr->owner && o_ptr->owner != p_ptr->id) {
-			msg_print(Ind, "\377yYou cannot pick up someone else's goods or your life would be forfeit.");
-			return;
+		if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)) {
+			if (o_ptr->owner && o_ptr->owner != p_ptr->id) {
+				msg_print(Ind, "\377yYou cannot pick up someone else's goods or your life would be forfeit.");
+				return;
+			}
+			if (o_ptr->no_soloist) {
+				msg_print(Ind, "\377yDue to its origin you cannot pick up this item.");
+				return;
+			}
 		}
 
 /*#ifdef RPG_SERVER -- let's do this also for normal server */
@@ -2198,6 +2203,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #endif
 					/* log the encounters of players with special heavy armour, just for informative purpose */
 					if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) s_printf("%s FOUND_WINNERS_ONLY: %s (%d) %s\n", showtime(), p_ptr->name, p_ptr->wpos.wz, o_name_real);
+
+					/* Some events don't allow transactions before they begin. Extend this to no_soloist-event-drops (Santa Claus). */
+					if (o_ptr->no_soloist && !p_ptr->max_exp) {
+						msg_print(Ind, "Due to the item's origin you gain a tiny bit of experience from picking it up.");
+						gain_exp(Ind, 1);
+					}
 				}
 
 #if CHEEZELOG_LEVEL > 2
