@@ -136,6 +136,29 @@ static void print_mimic_spells() {
 			k = 1;
 		}
 	}
+	for (i = 0; i < 32; i++) {
+		/* Check for end of the book */
+		if (!(p_ptr->innate_spells[3] & (1L << i)))
+			continue;
+
+		fail = (innate_powers[i + 96].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
+		if (fail < 1) fail = 1;
+		if (fail > 99) fail = 99;
+
+		/* fill right side of the list with blanks, in case we don't have 2 columns of spells - looks better */
+		if (!k) put_str("                                 ", j, col + 33);
+
+		/* Dump the info */
+		sprintf(buf, " %c) %-22s \377y%2d \377B%2d ", I2A(j - 2 + k * 16), monster_spells0[i].name,
+		    fail, innate_powers[i + 96].smana);
+		Term_putstr(col + k * 33, j++, -1, TERM_WHITE, buf);
+
+		/* check for beginning of 2nd column */
+		if (j > 21) {
+			j = 6;
+			k = 1;
+		}
+	}
 
 	/* Clear the bottom line(s) */
 	if (k) prt("", 22, col);
@@ -438,7 +461,12 @@ static int get_mimic_spell(int *sn) {
 			/* Find the power it is related to */
 			for (i = 0; i < num; i++) {
 				c = corresp[i];
-				if (c >= 64 + 4) {
+				if (c >= 96 + 4) {
+					if (!strcasecmp(buf, monster_spells0[c - 96 - 4].name)) {
+						flag = TRUE;
+						break;
+					}
+				} else if (c >= 64 + 4) {
 					if (!strcasecmp(buf, monster_spells6[c - 64 - 4].name)) {
 						flag = TRUE;
 						break;
@@ -720,7 +748,8 @@ void do_mimic() {
 		spell--; //easy backward compatibility, spell == 3 has already been taken care of by 20000 hack
 		if (j < 32) uses_dir = monster_spells4[j].uses_dir;
 		else if (j < 64) uses_dir = monster_spells5[j - 32].uses_dir;
-		else uses_dir = monster_spells6[j - 64].uses_dir;
+		else if (j < 96) uses_dir = monster_spells6[j - 64].uses_dir;
+		else uses_dir = monster_spells0[j - 96].uses_dir;
 
 		if (uses_dir) {
 			if (get_dir(&dir))

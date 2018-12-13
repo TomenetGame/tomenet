@@ -2780,6 +2780,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 						break;
 					case 2: dir = monster_spells6[power - 64].uses_dir;
 						break;
+					case 3: dir = monster_spells0[power - 96].uses_dir;
+						break;
 					}
 					do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
 					return TRUE;
@@ -3008,6 +3010,8 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		case 1: dir = monster_spells5[power - 32].uses_dir;
 			break;
 		case 2: dir = monster_spells6[power - 64].uses_dir;
+			break;
+		case 3: dir = monster_spells0[power - 96].uses_dir;
 			break;
 		}
 

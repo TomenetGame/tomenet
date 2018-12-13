@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. November 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 13. December 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17366,6 +17366,8 @@ Teleport To             Tries to teleport a monster towards you.
 Teleport Away           Tries to teleport monsters away (it's a beam!).
 Darkness                Unlights the area around you.
 Cause Amnesia           Confuses a target.
+Disenchantment Bolt     ..
+Breathe Water           ..
 
 
 (6.8b) Runes & Runemastery

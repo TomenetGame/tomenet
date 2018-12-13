@@ -150,7 +150,7 @@ byte adj_int_pow[] = {
  * Mimic 'spells' -- they should be integrated to the realm spells
  * (slevel, smana, sfail, sexp, ftk)
  */
-magic_type innate_powers[96] = {
+magic_type innate_powers[128] = {
 /* 0(lev), mana, fail, 0(exp), ftk */
 // RF4_SHRIEK                   0x00000001      /* Shriek for help */
   {0, 2, 0, 0, 0},
@@ -318,6 +318,84 @@ magic_type innate_powers[96] = {
   {0, 15, 25, 0, 0},
 // RF6_FORGET                   0x00004000      /* Cause amnesia */
   {0, 25, 35, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF6_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+
+/*
+ * New monster race bit flags
+ */
+// RF0_XXX3                     0x00000040      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_BO_DISE
+  {0, 15, 20, 0, 1},
+// RF0_BA_DISE
+  {0, 30, 40, 0, 1},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000800      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_BR_ICE
+  {0, 20, 27, 0, 2},
+// RF0_BR_WATER
+  {0, 25, 30, 0, 2},
 
 };
 
@@ -431,6 +509,48 @@ monster_spell_type monster_spells6[32] = {
   {"XXX", TRUE},
   {"XXX", TRUE},
   {"XXX", TRUE},
+
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+};
+
+monster_spell_type monster_spells0[32] = {
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"Disenchantment Bolt", TRUE},
+
+  {"Disenchantment Ball", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+
+  {"XXX", TRUE},
+  {"XXX", TRUE},
+  {"Breathe Ice", TRUE},
+  {"Breathe Water", TRUE},
 
   {"XXX", TRUE},
   {"XXX", TRUE},

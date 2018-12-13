@@ -140,7 +140,7 @@ extern cptr spell_names[MAX_REALM][64];
 extern byte chest_traps[64];
 extern cptr player_title[MAX_CLASS][11][4];
 extern cptr player_title_special[MAX_CLASS][5][4];
-extern magic_type innate_powers[96];
+extern magic_type innate_powers[128];
 extern martial_arts ma_blows[MAX_MA];
 extern int skill_tree_init[MAX_SKILLS][2];
 
@@ -152,6 +152,7 @@ extern int p_tough_ac[51];
 extern monster_spell_type monster_spells4[32];
 extern monster_spell_type monster_spells5[32];
 extern monster_spell_type monster_spells6[32];
+extern monster_spell_type monster_spells0[32];
 
 extern byte mtech_lev[MAX_CLASS][16];
 
