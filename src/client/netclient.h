@@ -54,6 +54,7 @@ int Receive_stun(void);
 int Receive_item(void);
 int Receive_spell_request(void);
 int Receive_spell_info(void);
+int Receive_powers_info(void);
 int Receive_technique_info(void);
 int Receive_direction(void);
 int Receive_flush(void);

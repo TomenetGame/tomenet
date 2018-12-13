@@ -6483,6 +6483,19 @@ int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val) {
 	return Packet_printf(&connp->c, "%c%d%d%d%hu%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], realm, book, i, out_val);
 }
 
+int Send_powers_info(int Ind) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+	player_type *p_ptr = Players[Ind];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for spell info (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+	return Packet_printf(&connp->c, "%c%d%d%d%d", PKT_POWERS_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], p_ptr->innate_spells[3]);
+}
+
 /* Implementing fighting/shooting techniques, but maybe using a lua 'school' file would be better instead - C. Blue */
 int Send_technique_info(int Ind) {
 #ifndef ENABLE_TECHNIQUES

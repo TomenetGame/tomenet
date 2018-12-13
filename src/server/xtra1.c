@@ -2598,7 +2598,9 @@ void calc_body_spells(int Ind) {
 	p_ptr->innate_spells[0] = r_ptr->flags4 & RF4_PLAYER_SPELLS;
 	p_ptr->innate_spells[1] = r_ptr->flags5 & RF5_PLAYER_SPELLS;
 	p_ptr->innate_spells[2] = r_ptr->flags6 & RF6_PLAYER_SPELLS;
-	Send_spell_info(Ind, 0, 0, 0, "nothing");
+	p_ptr->innate_spells[3] = r_ptr->flags0 & RF0_PLAYER_SPELLS;
+	if (is_older_than(&p_ptr->version, 4, 7, 2, 0, 0, 1)) Send_spell_info(Ind, 0, 0, 0, "");
+	else Send_powers_info(Ind);
 }
 
 #if 0	// moved to defines.h
@@ -3272,7 +3274,11 @@ void calc_boni(int Ind) {
 		p_ptr->innate_spells[0] = 0x0;
 		p_ptr->innate_spells[1] = 0x0;
 		p_ptr->innate_spells[2] = 0x0;
-		if (!suppress_boni && logged_in) Send_spell_info(Ind, 0, 0, 0, "nothing");
+		p_ptr->innate_spells[3] = 0x0;
+		if (!suppress_boni && logged_in) {
+			if (is_older_than(&p_ptr->version, 4, 7, 2, 0, 0, 1)) Send_spell_info(Ind, 0, 0, 0, "");
+			else Send_powers_info(Ind);
+		}
 
 		/* Start with "normal" speed */
 		p_ptr->pspeed = 110;

@@ -517,7 +517,7 @@ struct player_type {
  	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
  	s16b r_mimicry[MAX_R_IDX];	/* Monster kill count for mimicry */
 
-	s32b innate_spells[3]; /* Monster spells */
+	s32b innate_spells[4]; /* Monster spells */
 	bool body_changed;
 
 	bool anti_magic;	/* Can the player resist magic */

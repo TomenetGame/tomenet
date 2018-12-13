@@ -2698,7 +2698,7 @@ static int retaliate_mimic_power(int Ind, int choice) {
 	int i, k, num = 3;
 
 	/* Check for "okay" spells */
-	for (k = 0; k < 3; k++) {
+	for (k = 0; k <= 3; k++) {
 		for (i = 0; i < 32; i++) {
 			/* Look for "okay" spells */
 			if (p_ptr->innate_spells[k] & (1U << i)) {
@@ -2985,9 +2985,9 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	int ar = p_ptr->autoret;
 
 	/* Is it variant @Ot for town-only auto-retaliation? - C. Blue */
-	if (ar >= 100) {
+	if (ar >= 128) {
 		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
-		ar -= 100;
+		ar -= 128;
 	}
 
 	/* no autoret set? */

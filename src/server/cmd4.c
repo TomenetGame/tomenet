@@ -3595,7 +3595,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 
 #ifdef AUTO_RET_CMD
 	if (p_ptr->autoret) {
-		if (p_ptr->autoret >= 100) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", p_ptr->autoret - 101 + 'a');
+		if (p_ptr->autoret >= 128) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", p_ptr->autoret - 128 - 1 + 'a');
 		else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
 	}
 #endif

@@ -4014,8 +4014,8 @@ void do_slash_cmd(int Ind, char *message) {
 			/* Set up a spell by name for auto-retaliation, so mimics can use it too */
 			if (!tk) {
 				if (p_ptr->autoret) {
-					if (p_ptr->autoret >= 100)
-						msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", p_ptr->autoret - 101 + 'a');
+					if (p_ptr->autoret >= 128)
+						msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", p_ptr->autoret - 128 - 1 + 'a');
 					else
 						msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
 				} else {
@@ -4035,7 +4035,7 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			if (*p == 't') {
-				p_ptr->autoret = 100;
+				p_ptr->autoret = 128;
 				p++;
 			}
 			else p_ptr->autoret = 0;

@@ -437,6 +437,7 @@ extern int Send_direction(int Ind);
 extern int Send_message(int Ind, cptr msg);
 extern int Send_char(int Ind, int x, int y, byte a, char c);
 extern int Send_spell_info(int Ind, int i, cptr out_val);
+extern int Send_powers_info(int Ind);
 extern int Send_item_request(int Ind);
 extern int Send_state(int Ind, bool paralyzed, bool searching);
 extern int Send_beep(int Ind);

@@ -169,6 +169,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_MARTYR]		= Receive_martyr;
 	receive_tbl[PKT_PALETTE]	= Receive_palette;
 	receive_tbl[PKT_IDLE]		= Receive_idle;
+	receive_tbl[PKT_POWERS_INFO]	= Receive_powers_info;
 }
 
 
@@ -2741,7 +2742,7 @@ int Receive_spell_request(void) {
 	return 1;
 }
 
-int Receive_spell_info(void) {
+int Receive_spell_info(void) { /* deprecated - doesn't transmit RF0_ powers either. See Receive_powers_info(). */
 	char	ch;
 	int	n;
 	u16b	realm, book, line;
@@ -2755,6 +2756,25 @@ int Receive_spell_info(void) {
 	p_ptr->innate_spells[0] = spells[0];
 	p_ptr->innate_spells[1] = spells[1];
 	p_ptr->innate_spells[2] = spells[2];
+
+	/* Assume that this was in response to a shapeshift command we issued */
+	command_confirmed = PKT_ACTIVATE_SKILL;
+
+	return 1;
+}
+
+int Receive_powers_info(void) {
+	char	ch;
+	int	n;
+	s32b    spells[4];
+
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &spells[0], &spells[1], &spells[2], &spells[3])) <= 0) return n;
+
+	/* Save the info */
+	p_ptr->innate_spells[0] = spells[0];
+	p_ptr->innate_spells[1] = spells[1];
+	p_ptr->innate_spells[2] = spells[2];
+	p_ptr->innate_spells[3] = spells[3];
 
 	/* Assume that this was in response to a shapeshift command we issued */
 	command_confirmed = PKT_ACTIVATE_SKILL;

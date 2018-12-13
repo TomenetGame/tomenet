@@ -159,7 +159,7 @@
 #define PKT_MARTYR		136	/* client lua notification client for updating spell mana costs */
 #define PKT_PALETTE		137	/* Since 4.7.1.2+ */
 #define PKT_IDLE		138	/* for mute_when_idle option */
-//XXX 139
+#define PKT_POWERS_INFO		139	/* Mimic spells */
 
 //debugging:
 #define PKT_CLIENT_SETUP_U	140

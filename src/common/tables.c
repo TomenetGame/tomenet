@@ -356,45 +356,45 @@ magic_type innate_powers[128] = {
 /*
  * New monster race bit flags
  */
-// RF0_XXX3                     0x00000040      /* (unavailable) */
+// RF0_XXX3                     0x00000001      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00000002      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00000004      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00000008      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00000010      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00000020      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00000040      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_BO_DISE
+// RF0_BO_DISE			0x00000080
   {0, 15, 20, 0, 1},
-// RF0_BA_DISE
+// RF0_BA_DISE			0x00000100
   {0, 30, 40, 0, 1},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00000200      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00000400      /* (unavailable) */
   {0, 0, 0, 0, 0},
 // RF0_XXX5                     0x00000800      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00001000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00002000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00004000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00008000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00010000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
+// RF0_XXX5                     0x00020000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x00000800      /* (unavailable) */
-  {0, 0, 0, 0, 0},
-// RF0_BR_ICE
+// RF0_BR_ICE			0x00040000
   {0, 20, 27, 0, 2},
-// RF0_BR_WATER
+// RF0_BR_WATER			0x00080000
   {0, 25, 30, 0, 2},
 
 };

@@ -2554,7 +2554,7 @@ struct player_type {
 	s32b melee_techniques;		/* melee techniques */
 	s32b ranged_techniques_old;	/* ranged techniques before last skill point update */
 	s32b ranged_techniques;		/* ranged techniques */
-	s32b innate_spells[3];		/* Monster spells */
+	s32b innate_spells[4];		/* Monster spells */
 	bool body_changed;
 
 	bool anti_magic;		/* Can the player resist magic */

@@ -388,7 +388,13 @@ static int get_mimic_spell(int *sn) {
 			num++;
 		}
 	}
-
+	for (i = 0; i < 32; i++) {
+		/* Look for "okay" spells */
+		if (p_ptr->innate_spells[3] & (1L << i)) {
+			corresp[num] = i + 96 + 4;
+			num++;
+		}
+	}
 
 	/* Assume cancelled */
 	(*sn) = -1;

@@ -689,7 +689,7 @@ struct player_type
 
 	s32b melee_techniques; /* for weaponmastery */
 	s32b ranged_techniques; /* for archery */
-	s32b innate_spells[3]; /* Monster spells */
+	s32b innate_spells[4]; /* Monster spells */
 	bool body_changed;
 
 	bool anti_magic;	/* Can the player resist magic */

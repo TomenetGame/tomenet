@@ -1129,6 +1129,7 @@ extern int Send_direction(int Ind);
 extern int Send_message(int Ind, cptr msg);
 extern int Send_char(int Ind, int x, int y, byte a, char c);
 extern int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val);
+extern int Send_powers_info(int Ind);
 extern int Send_technique_info(int Ind); /* for MKEY_MELEE and MKEY_RANGED */
 extern int Send_item_request(int Ind, signed char tester_hook); //paranoia @ 'signed' char =-p
 extern int Send_spell_request(int Ind, int item);
