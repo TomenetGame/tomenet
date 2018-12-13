@@ -126,13 +126,16 @@ void handle(struct client *ccl) {
 	wproto(ccl);
 }
 
+//#define WP_CHAT_DEFAULT_COLOUR 'w'
+#define WP_CHAT_DEFAULT_COLOUR 's'
+#define WP_CHAT_PROHIBIT_COLOURS
 void wproto(struct client *ccl) {
 	int client_chat, client_all, client_ctrlo;
 	struct wpacket *wpk = (struct wpacket*)ccl->buf;
-        while (ccl->blen >= sizeof(struct wpacket)) {
-                fprintf(stderr, "protoing... type %d\n", wpk->type);
+	while (ccl->blen >= sizeof(struct wpacket)) {
+		fprintf(stderr, "protoing... type %d\n", wpk->type);
 		client_chat = client_all = client_ctrlo = 0;
-                switch (wpk->type) {
+		switch (wpk->type) {
 			case WP_LACCOUNT:
 				/* ignore unauthed servers
 				   only legitimate servers should
@@ -177,12 +180,28 @@ void wproto(struct client *ccl) {
 						client_ctrlo = 1;
 						p++;
 					}
-//					snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
-					snprintf(msg, MSG_LEN, "%s%s\377%c[%d]\377w %s%c",
+
+#ifdef WP_CHAT_PROHIBIT_COLOURS
+					/* strip colour codes */
+					char *p2 = p, tmp[MSG_LEN];
+					int i = 0;
+					while ((*p2)) {
+						if (*p2 == '\377') {
+							p2++;
+							if (*p2 == '\377') tmp[i++] = '{';
+						} else tmp[i++] = *p2;
+						p2++;
+					}
+					tmp[i] = 0;
+					strcpy(p, tmp);
+#endif
+
+					//snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+					snprintf(msg, MSG_LEN, "%s%s\377%c[%d]\377%c %s%c",
 					    client_all ? "\374" : (client_chat ? "\375" : ""),
 					    client_ctrlo ? "\376" : "",
-					    (ccl->authed>0 ? 'g' : 'r'), ccl->authed, p, '\0');
-//					msg[MSG_LEN - 1] = '\0';
+					    (ccl->authed>0 ? 'g' : 'r'), ccl->authed, WP_CHAT_DEFAULT_COLOUR, p, '\0');
+					//msg[MSG_LEN - 1] = '\0';
 					strncpy(wpk->d.chat.ctxt, msg, MSG_LEN);
 					relay(wpk, ccl);
 				}
@@ -205,12 +224,12 @@ void wproto(struct client *ccl) {
 						client_ctrlo = 1;
 						p++;
 					}
-//					snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
+					//snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
 					snprintf(msg, MSG_LEN, "%s%s\377%c(IRC)\377w %s%c",
 					    client_all ? "\374" : (client_chat ? "\375" : ""),
 					    client_ctrlo ? "\376" : "",
 					    (ccl->authed > 0 ? 'g' : 'r'), p, '\0');
-//					msg[MSG_LEN - 1] = '\0';
+					//msg[MSG_LEN - 1] = '\0';
 					strncpy(wpk->d.chat.ctxt, msg, MSG_LEN);
 					relay(wpk, ccl);
 				}

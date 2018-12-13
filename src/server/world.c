@@ -99,7 +99,8 @@ bool world_check_ignore(int Ind, uint32_t id, int16_t server) {
 
 void world_comm(int fd, int arg) {
 	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *wmsg_ptr, *wmsg_ptr2;
-	char cbuf[sizeof(struct wpacket)], *p;
+	char cbuf[sizeof(struct wpacket)];
+	char *p;
 	static short bpos = 0;
 	static short blen = 0;
 	int x, i;
@@ -134,18 +135,15 @@ void world_comm(int fd, int arg) {
 				break;
 			case WP_CHAT:
 				/* TEMPORARY chat broadcast method */
+#if 0
 				/* strip special chat codes \374/5/6 before testing prefix() */
 				p = wpk->d.chat.ctxt;
 				if (*p == '\374') p++;
 				else if (*p == '\375') p++;
 				if (*p == '\376') p++;
-
-#if 0 /* see #else below */
-				if (!(cfg.worldd_pubchat || (cfg.worldd_broadcast && prefix(p, "\377r[\377"))))
-					break; /* Filter incoming public chat and broadcasts here now - mikaelh */
-#else /* Consistency: Let world's 'server' flags decide about filtering our incoming messages */
 #endif
 
+				/* World's 'server' flags decides about filtering our incoming messages */
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->conn != NOT_CONNECTED) {
 						/* lame method just now */
