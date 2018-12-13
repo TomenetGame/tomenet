@@ -5707,7 +5707,7 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	/* Hack: Abuse uses_dir to also store ID / *ID* status */
 	if (is_newer_than(&Players[Ind]->version, 4, 7, 1, 1, 0, 0))
-		uses_dir += (object_known_p(Ind, o_ptr) ? 2 : 0) + (object_fully_known_p(Ind, o_ptr) ? 4 : 0);
+		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -5812,7 +5812,7 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	/* Hack: Abuse uses_dir to also store ID / *ID* status */
 	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
-		uses_dir += (object_known_p(Ind, o_ptr) ? 2 : 0) + (object_fully_known_p(Ind, o_ptr) ? 4 : 0);
+		uses_dir |= ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0) | ((object_fully_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x4 : 0x0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
