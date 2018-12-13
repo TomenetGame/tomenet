@@ -3260,6 +3260,7 @@ bool xorder_aux(int r_idx) {
 	/* Reject monsters that require winner-status to encounter, if player isn't a winner */
 	if ((r_ptr->flags8 & RF8_NETHER_REALM) && !xorder_aux_extra)
 		return FALSE;
+	if (r_idx == RI_BAHAMUT) return FALSE; //Cloud Planes only
 
 	/* Reject 'non-spawning' monsters */
 	if (!r_ptr->rarity) return (FALSE);

@@ -281,6 +281,7 @@ static bool int_outof(monster_race *r_ptr, int prob) {
 /*
  * Remove the "bad" spells from a spell list
  */
+#define SMART_COMPOUND_ELEMENTS /* reduce chance to cast partially resisted/immune'd spells? */
 static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *f0p) {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
@@ -374,45 +375,78 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_ELEC;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BA_ELEC;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_ELEC;
+#ifdef SMART_COMPOUND_ELEMENTS
+		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_PLAS;
+		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BO_PLAS;
+#endif
 	} else if ((smart & SM_OPP_ELEC) && (smart & SM_RES_ELEC)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_ELEC;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BA_ELEC;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_ELEC;
+#ifdef SMART_COMPOUND_ELEMENTS
+		if (int_outof(r_ptr, 35)) f4 &= ~RF4_BR_PLAS;
+		if (int_outof(r_ptr, 35)) f5 &= ~RF5_BO_PLAS;
+#endif
 	} else if ((smart & SM_OPP_ELEC) || (smart & SM_RES_ELEC)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_ELEC;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_ELEC;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_ELEC;
+#ifdef SMART_COMPOUND_ELEMENTS
+		if (int_outof(r_ptr, 20)) f4 &= ~RF4_BR_PLAS;
+		if (int_outof(r_ptr, 20)) f5 &= ~RF5_BO_PLAS;
+#endif
 	}
 
 	if (smart & SM_IMM_FIRE) {
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_FIRE;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_FIRE;
+#ifdef SMART_COMPOUND_ELEMENTS
+		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_PLAS;
+		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BO_PLAS;
+#endif
 	} else if ((smart & SM_OPP_FIRE) && (smart & SM_RES_FIRE)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_FIRE;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_FIRE;
+#ifdef SMART_COMPOUND_ELEMENTS
+		if (int_outof(r_ptr, 35)) f4 &= ~RF4_BR_PLAS;
+		if (int_outof(r_ptr, 35)) f5 &= ~RF5_BO_PLAS;
+#endif
 	} else if ((smart & SM_OPP_FIRE) || (smart & SM_RES_FIRE)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_FIRE;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_FIRE;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_FIRE;
+#ifdef SMART_COMPOUND_ELEMENTS
+		if (int_outof(r_ptr, 20)) f4 &= ~RF4_BR_PLAS;
+		if (int_outof(r_ptr, 20)) f5 &= ~RF5_BO_PLAS;
+#endif
 	}
 
 	if (smart & SM_IMM_COLD) {
 		if (int_outof(r_ptr, 100)) f4 &= ~RF4_BR_COLD;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BA_COLD;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_COLD;
-		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_ICEE;
+#ifdef SMART_COMPOUND_ELEMENTS
+		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BO_ICEE;
+		if (int_outof(r_ptr, 50)) f0 &= ~RF0_BR_ICE;
+#endif
 	} else if ((smart & SM_OPP_COLD) && (smart & SM_RES_COLD)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_COLD;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BA_COLD;
 		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_COLD;
-		if (int_outof(r_ptr, 80)) f5 &= ~RF5_BO_ICEE;
+#ifdef SMART_COMPOUND_ELEMENTS
+		if (int_outof(r_ptr, 35)) f5 &= ~RF5_BO_ICEE;
+		if (int_outof(r_ptr, 35)) f0 &= ~RF0_BR_ICE;
+#endif
 	} else if ((smart & SM_OPP_COLD) || (smart & SM_RES_COLD)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_COLD;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BA_COLD;
 		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_COLD;
-		if (int_outof(r_ptr, 30)) f5 &= ~RF5_BO_ICEE;
+#ifdef SMART_COMPOUND_ELEMENTS
+		if (int_outof(r_ptr, 20)) f5 &= ~RF5_BO_ICEE;
+		if (int_outof(r_ptr, 20)) f0 &= ~RF0_BR_ICE;
+#endif
 	}
 
 	if (smart & SM_IMM_POIS) {
@@ -441,9 +475,11 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 	if (smart & SM_IMM_WATE) {
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BA_WATE;
 		if (int_outof(r_ptr, 100)) f5 &= ~RF5_BO_WATE;
+		if (int_outof(r_ptr, 100)) f0 &= ~RF0_BR_WATER;
 	} else if (smart & SM_RES_WATE) {
 		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BA_WATE;
 		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BO_WATE;
+		if (int_outof(r_ptr, 50)) f0 &= ~RF0_BR_WATER;
 	}
 	if (smart & SM_RES_LITE) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_LITE;
@@ -3962,6 +3998,26 @@ bool make_attack_spell(int Ind, int m_idx) {
 		count += summon_specific(wpos, ys, xs, rlev, s_clone, SUMMON_HI_DRAGON, 1, clone_summoning);
 		HANDLE_SUMMON2("You feel a powerful entity appear nearby.", "ancient dragon")
 		break;
+
+	/* RF0_BR_ICE */
+	case RF0_OFFSET+18:
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s breathes.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes ice for", m_name);
+		breath(Ind, m_idx, GF_ICE, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_SHARD);
+		update_smart_learn(Ind, m_idx, DRS_COLD);
+		break;
+
+	/* RF0_BR_WATER */
+	case RF0_OFFSET+19:
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s breathes.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes water for", m_name);
+		breath(Ind, m_idx, GF_WATER, ((m_ptr->hp / 5) > 300 ? 300 : (m_ptr->hp / 5)), y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_WATER);
+		break;
+
 	}
 
 

@@ -746,6 +746,22 @@ static void do_mimic_power(int Ind, int power, int dir) {
 //      msg_print(Ind, "Haha, you wish ... :)");
 	break;
 
+
+/* RF_0 ------------------------------------------------------------------------------------------------- */
+
+//#define RF0_BO_DISE
+    case 96+7:
+//#define RF0_BA_DISE
+    case 96+8:
+//#define RF0_BR_ICE
+    case 96+18:
+//#define RF0_BR_WATER
+    case 96+19:
+	p_ptr->current_spell = j;
+	get_aim_dir(Ind);
+	return;
+
+
 //following flags are just RF6_S_... summoning spells */
     default:
 	msg_format(Ind, "Bad innate power %d.", power);
@@ -1247,6 +1263,18 @@ void do_mimic_power_aux(int Ind, int dir) {
 	msg_print(Ind, "You cast a  disenchantment ball.");
 	//fire_ball(Ind, GF_DISENCHANT, dir, (rlev * 2) + damroll(10, 10) + rlev_bonus, 4, p_ptr->attacker);
 	fire_ball(Ind, GF_DISENCHANT, dir, 60 + damroll(10, 10) + rlev + rlev_bonus, rad, p_ptr->attacker);
+	break;
+// RF0_BR_ICE
+    case 96+18:
+	sprintf(p_ptr->attacker, " breathes ice for");
+	msg_print(Ind, "You breathe ice.");
+	fire_ball(Ind, GF_ICE, dir, ((p_ptr->chp / 4) > 350) ? 350 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
+	break;
+// RF5_BR_WATER
+    case 96+19:
+	sprintf(p_ptr->attacker, " breathes water for");
+	msg_print(Ind, "You breathe water.");
+	fire_ball(Ind, GF_WATER, dir, ((p_ptr->chp / 4) > 300) ? 300 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
 	break;
 
 	default: /* For some reason we got called for a spell that

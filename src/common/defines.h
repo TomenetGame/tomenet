@@ -1309,9 +1309,10 @@
 #define RI_ROBIN		1142
 #define RI_TARGET_DUMMYA1	1144	/* normal armoured version */
 #define RI_TARGET_DUMMYA2	1145	/* snow-covered armoured version */
-#define RI_HORNED_REAPER_GE	1146	/* low-power Horned Reaper for 'Dungeon Keeper' event */
+#define RI_BAHAMUT		1146
 #define RI_BLUE			1152
 #define RI_MIRROR		1153
+#define RI_HORNED_REAPER_GE	1154	/* low-power Horned Reaper for 'Dungeon Keeper' event */
 
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
@@ -5707,7 +5708,7 @@
 #define RF9_SUSCEP_POIS		0x00000100      /* Susceptible to poison */
 #define RF9_KILL_TREES		0x00000200      /* Monster can eat trees */
 #define RF9_WYRM_PROTECT	0x00000400      /* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
-#define RF9_DOPPLEGANGER	0x00000800      /* The monster looks like you - UNUSED */
+#define RF9_DOPPELGANGER	0x00000800      /* The monster looks like you - UNUSED */
 //HOLE^
 #define RF9_ONLY_DEPTH			0x00001000      /* The monster can only be generated at the GIVEN depth */
 #define RF9_SPECIAL_GENE		0x00002000      /* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
@@ -5758,18 +5759,21 @@
 #define RF0_S_DRAGONS			0x00008000	/* Summon Dragons -- unused */
 #define RF0_S_HI_DEMON		0x00010000	/* Summon Greater Demon (Tzeentch) */
 #define RF0_S_HI_DRAGON		0x00020000	/* Summon Ancient Dragon -- unused */
+#define RF0_BR_ICE		0x00040000	/* For Bahamuth */
+#define RF0_BR_WATER		0x00080000	/* Finally no more antimagic field vs water hounds :p */
 
 #define RF0_NO_GROUP_MASK	(RF0_NO_ESCORT)		/* | RF0_NO_NEST */
 
 #define RF0_PLAYER_SPELLS (0L)
 /* monster spells are currently RF4+RF5+RF6 only (todo: add RF0)
-#define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE)
+#define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 */
-#define RF0_RADIUS_SPELLS (RF0_BA_DISE)
+#define RF0_RADIUS_SPELLS (RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 
 /* Special addition, since RF0_ mixes quite different types of flags.
    This is to sort them out a bit. */
-#define RF0_ACTIVE_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON)
+#define RF0_ACTIVE_MASK (RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | \
+			RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | RF0_BR_ICE | RF0_BR_WATER)
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
 #define RF1_DISABLE_MASK	(0x0)

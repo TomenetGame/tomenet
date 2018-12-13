@@ -144,7 +144,7 @@ function allmons(name)
     if (p == -1) then return -1 end
 --    p = Ind
     for i = 1, MAX_R_IDX do
-	players(p).r_killed[i] = 666
+	players(p).r_killed[i] = 1
     end
 end
 

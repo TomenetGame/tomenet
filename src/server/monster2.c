@@ -3172,7 +3172,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 				return 25;
 			}
 			/* generating the boss is ok. go on. */
-//			s_printf("allowed FINAL_GUARDIAN %d\n", r_idx);
+			//s_printf("allowed FINAL_GUARDIAN %d\n", r_idx);
 		}
 
 		/* Also use for DUN_xx dungeon-restricted monsters */
@@ -3189,6 +3189,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 				if (r_ptr->restrict_dun != d_ptr->type) return 27;
 			}
 		}
+
+		/* Hack: Bahamut is restricted to Cloud Planes only, upper levels only */
+		if (r_idx == RI_BAHAMUT && (dlev < 145 || dlev > 149)) return 53;
 
 		/* Couple of Nether Realm-only monsters hardcoded here */
 		if ((r_ptr->flags8 & RF8_NETHER_REALM) && !netherrealm_level)
@@ -3370,7 +3373,6 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
 #endif
 
-
 	/* Uniques monster consistency - stuff that is exempt from overriding really */
 	if (r_ptr->flags1 & RF1_UNIQUE) {
 		/* Ego Uniques are NOT to be created */
@@ -3433,7 +3435,6 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 #endif
-
 
 	/* Now could we generate an Ego Monster */
 	r_ptr = race_info_idx(r_idx, ego, randuni);
@@ -3506,7 +3507,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 			if (m_ptr->speed < j) m_ptr->speed = 255;//overflow paranoia
 		}
 
-//		if (i) m_ptr->speed += rand_spread(0, i);
+		//if (i) m_ptr->speed += rand_spread(0, i);
 	}
 	/* Set monster cur speed to normal base speed */
 	m_ptr->mspeed = m_ptr->speed;
@@ -3591,7 +3592,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		m_ptr->csleep = ((val * 2) + randint(val * 10));
 	}
 
-/*	if(m_ptr->hold_o_idx){
+	/*if(m_ptr->hold_o_idx){
 		s_printf("AHA! monster created with an object in hand!\n");
 		m_ptr->hold_o_idx = 0;
 	}*/
@@ -3654,8 +3655,8 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		}
 	}
 #ifdef ENABLE_MAIA
-//	if (r_idx == RI_CANDLEBEARER) s_printf("Candlebearer was created on %d\n", dlev);
-//	if (r_idx == RI_DARKLING) s_printf("Darkling was created on %d\n", dlev);
+	//if (r_idx == RI_CANDLEBEARER) s_printf("Candlebearer was created on %d\n", dlev);
+	//if (r_idx == RI_DARKLING) s_printf("Darkling was created on %d\n", dlev);
 #endif
 	if (r_idx == RI_MORGOTH) {
 		s_printf("Morgoth was created on %d\n", dlev);

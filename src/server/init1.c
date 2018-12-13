@@ -479,7 +479,7 @@ static cptr r_info_flags9[] = {
 	"SUSCEP_POIS",
 	"KILL_TREES",
 	"WYRM_PROTECT",
-	"DOPPLEGANGER",
+	"DOPPELGANGER",
 
 	"ONLY_DEPTH",
 	"SPECIAL_GENE",
@@ -529,8 +529,8 @@ static cptr r_info_flags0[] = {
 	"S_DRAGONS",//16
 	"S_HI_DEMON",
 	"S_HI_DRAGON",
-	"X00040000",
-	"X00080000",//20
+	"BR_ICE",
+	"BR_WATER",//20
 	"X00100000",
 	"X00200000",
 	"X00400000",
