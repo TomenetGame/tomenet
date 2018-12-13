@@ -3779,7 +3779,7 @@ void calc_boni(int Ind) {
 		}
 
 #ifdef EQUIPMENT_SET_BONUS
-		if (o_ptr->name1 == ART_RANDART) {
+		if (o_ptr->name1 == ART_RANDART && !(o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL)) {
 			/* paranoia maybe? Make sure name4 field has been set: */
 			randart_name(o_ptr, NULL, tmp_name);
 			/* compare */
@@ -3799,7 +3799,7 @@ void calc_boni(int Ind) {
 				/* and for true arts: */
 				strcpy(equipment_set_name[j], tmp_name);
 			}
-		} else if (o_ptr->name1) {
+		} else if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) {
 			strcpy(tmp_name, a_name + a_info[o_ptr->name1].name);
 			tmp_name_ptr = tmp_name;
 			/* trim leading and terminating ' characters */
