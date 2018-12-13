@@ -19631,7 +19631,7 @@ F:IM_ACID | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | ATTR_MULTI | IM_PSI
 F:RES_SOUND
 S:1_IN_1
 S:BR_LITE | HOLD | BR_COLD
-D:An undeviable presence, designated to watch the entrance gate of valinor.
+D:An undeviable presence, designated to watch the entrance gate of Valinor.
 D:Its aura is pure beyond expression, its eyes reflect supreme laws
 D:beyond comprehension, daring to look at it will drive you insane,
 D:let alone fighting it!
