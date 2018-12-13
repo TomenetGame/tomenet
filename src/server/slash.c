@@ -464,10 +464,10 @@ void do_slash_cmd(int Ind, char *message) {
 
 	else {
 		/* cut tokens off (thx Asclep(DEG)) */
-		if ((token[0] = strtok(message," "))) {
+		if ((token[0] = strtok(message, " "))) {
 //			s_printf("%d : %s", tk, token[0]);
-			for (i = 1 ;i < 9; i++) {
-				token[i] = strtok(NULL," ");
+			for (i = 1; i < 9; i++) {
+				token[i] = strtok(NULL, " ");
 				if (token[i] == NULL)
 					break;
 				tk = i;
@@ -899,8 +899,8 @@ void do_slash_cmd(int Ind, char *message) {
 			int book, whichplayer, whichspell;
 			bool ami = FALSE;
   #if 0
-			token[0] = strtok(message," ");
-			if (token[0] == NULL) {
+			token[1] = strtok(message," ");
+			if (token[1] == NULL) {
 				msg_print(Ind, "\377oUsage: /cast (Book) (Spell) [Playername]");
 				return;
 			}
@@ -5263,7 +5263,7 @@ void do_slash_cmd(int Ind, char *message) {
 			else if (prefix(message, "/uniques")) {
 				monster_race *r_ptr;
 				if (!tk) {
-					msg_print(Ind, "Usage: /uniques (seen | unseen | kill | nonkill)");
+					msg_print(Ind, "Usage: /uniques <seen|unseen|kill|nonkill>");
 					return;
 				}
 				if (prefix(token[tk], "unseen")) {
@@ -5296,6 +5296,38 @@ void do_slash_cmd(int Ind, char *message) {
 						r_ptr->r_tkills = 1;
 					}
 					msg_print(Ind, "All the uniques are set as '\377okilled\377'.");
+				}
+				return;
+			}
+			else if (prefix(message, "/unique")) {
+				monster_race *r_ptr;
+
+				if (tk < 2) {
+					msg_print(Ind, "Usage: /unique <index> <seen|unseen|kill|nonkill>");
+					return;
+				}
+				if (k < 1 || k > MAX_R_IDX) {
+					msg_print(Ind, "Error: Invalid monster index.");
+					return;
+				}
+				r_ptr = &r_info[k];
+				if (!(r_ptr->flags1 & RF1_UNIQUE)) {
+					msg_print(Ind, "Error: That monster is not a unique.");
+					return;
+				}
+
+				if (streq(token[2], "unseen")) {
+					r_ptr->r_sights = 0;
+					msg_print(Ind, "Unique is set as '\377onot seen\377'.");
+				} else if (streq(token[2], "nonkill")) {
+					r_ptr->r_tkills = 0;
+					msg_print(Ind, "Unique is set as '\377onever killed\377'.");
+				} else if (prefix(token[2], "seen")) {
+					r_ptr->r_sights = 1;
+					msg_print(Ind, "Unique is set as '\377oseen\377'.");
+				} else if (prefix(token[2], "kill")) {
+					r_ptr->r_tkills = 1;
+					msg_print(Ind, "Unique is set as '\377okilled\377'.");
 				}
 				return;
 			}
@@ -5765,8 +5797,8 @@ void do_slash_cmd(int Ind, char *message) {
 				bool always_relocate_x = FALSE, always_relocate_y = FALSE, personal_relocate = FALSE;
 
 				if (tk) personal_relocate = TRUE;
-				if (tk && token[0][0] != 'y') always_relocate_x = TRUE;
-				if (tk && token[0][0] != 'x') always_relocate_y = TRUE;
+				if (tk && token[1][0] != 'y') always_relocate_x = TRUE;
+				if (tk && token[1][0] != 'x') always_relocate_y = TRUE;
 
 				tpos.wz = 0;
 				for (wx = 0; wx < MAX_WILD_X; wx++) {
