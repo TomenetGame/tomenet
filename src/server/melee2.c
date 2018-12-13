@@ -4004,7 +4004,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes ice for", m_name);
-		breath(Ind, m_idx, GF_ICE, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_ICE, ((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_SHARD);
 		update_smart_learn(Ind, m_idx, DRS_COLD);
 		break;
