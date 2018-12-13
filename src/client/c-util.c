@@ -5280,7 +5280,7 @@ Chain_Macro:
 					while (TRUE) {
 						switch (choice = inkey()) {
 						case ESCAPE:
-						case 'p':
+						//case 'p': <-this is mw_equip now
 						case '\010': /* backspace */
 							i = -1; /* leave */
 							break;
@@ -5314,6 +5314,7 @@ Chain_Macro:
 						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to quaff a 'Potion of Cure Critical Wounds'.");
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
 						break;
+
 					case mw_read:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the scroll's name or inscription.");
 						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
@@ -5321,6 +5322,7 @@ Chain_Macro:
 						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial scroll name or inscription:");
 						break;
+
 					case mw_any:
 					case mw_anydir:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
@@ -5335,6 +5337,7 @@ Chain_Macro:
 						}
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial potion name or inscription:");
 						break;
+
 					case mw_schoolnt:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
@@ -5342,6 +5345,7 @@ Chain_Macro:
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
+
 					case mw_mimicnt:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");//and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
@@ -5349,6 +5353,7 @@ Chain_Macro:
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
+
 					case mw_schoolt:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
@@ -5356,6 +5361,7 @@ Chain_Macro:
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
+
 					case mw_mimict:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
@@ -5363,6 +5369,7 @@ Chain_Macro:
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
+
 					case mw_mimicidx:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter a spell number, starting from 1, which is");
 						Term_putstr(10, 11, -1, TERM_GREEN, "the first spell after the 3 basic powers and immunity");
@@ -5371,6 +5378,7 @@ Chain_Macro:
 						Term_putstr(10, 14, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter spell index number:");
 						break;
+
 					case mw_fight:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact technique name.");// and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
@@ -5378,6 +5386,7 @@ Chain_Macro:
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact technique name:");
 						break;
+
 					case mw_stance:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please pick a stance:");
 						Term_putstr(10, 11, -1, TERM_GREEN, "  \377Ga\377g) Balanced stance (standard)");
@@ -5410,6 +5419,7 @@ Chain_Macro:
 						buf[0] = choice;
 						choice = mw_stance;
 						break;
+
 					case mw_shoot:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact technique name.");// and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
@@ -5417,6 +5427,7 @@ Chain_Macro:
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a technique before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact technique name:");
 						break;
+
 					case mw_poly:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact monster name OR its code. (You can find");
 						Term_putstr(10, 11, -1, TERM_GREEN, "codes you have already learned by pressing  \377s~ 2  \377gin the game");
@@ -5428,6 +5439,7 @@ Chain_Macro:
 						Term_putstr(1, 17, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
 						should_wait = TRUE;
 						break;
+
 					case mw_prfimm:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an immunity preference:");
 						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Lightning  \377Gb\377g) Frost  \377Gc\377g) Acid  \377Gd\377g) Fire  \377Ge\377g) Poison  \377Gf\377g) Water");
@@ -5472,6 +5484,7 @@ Chain_Macro:
 
 						choice = mw_prfimm; /* hack - remember */
 						break;
+
 					case mw_rune: //Hardcoded, so must be maintained. - Kurzel
 						strcpy(buf2, "");
 						strcpy(buf, "");
@@ -5657,199 +5670,174 @@ Chain_Macro:
 
 							/* Fill a line */
 							switch (r_types[i].flag) {
-
-								case T_BOLT: { //Beam
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
-										color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
-										color, 'a' + i, "beam", sdiff, cost, fail, dx, dy);
-									}
+							case T_BOLT: { //Beam
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
+									color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d",
+									color, 'a' + i, "beam", sdiff, cost, fail, dx, dy);
+								}
 								break; }
-
-								case T_CLOU: { //Storm
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-										color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius, duration);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
-										color, 'a' + i, "storm", sdiff, cost, fail, rget_level(damage)*15/10, 1, duration*2);
-									}
+							case T_CLOU: { //Storm
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
+									color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius, duration);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d dur %d",
+									color, 'a' + i, "storm", sdiff, cost, fail, rget_level(damage)*15/10, 1, duration*2);
+								}
 								break; }
-
-								case T_SIGN: { //Seal
-									if (!has_rune && color != 'D') color = 'R';
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										switch (projection) {
-
-											case SV_R_LITE: { //Illumination
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d illumination",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/4, 3+radius*2);
-											break; }
-
-											case SV_R_DARK: { //Invisibility
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d pow %d invisibility",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, damage);
-											break; }
-
-											case SV_R_NEXU: { //Teleportation
-												switch (r_imperatives[imperative].flag) {
-													//Manual tuning; Phase Door (6-12), Blink (10), Teleport (100), Spell (100-200) - Kurzel
-													case I_MINI: { radius = 12 + rget_level(12); break; }
-													case I_LENG: { radius = 25 + rget_level(25); break; }
-													case I_COMP: { radius =  6 + rget_level( 6); break; }
-													case I_MODE: { radius = 25 + rget_level(25); break; }
-													case I_EXPA: { radius = 75 + rget_level(75); break; }
-													case I_BRIE: { radius = 25 + rget_level(25); break; }
-													case I_MAXI: { radius = 50 + rget_level(50); break; }
-												}
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d teleportation",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
-											break; }
-
-											case SV_R_NETH: { //Annihilation
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d annihilation (bolt)",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, 8+(damage+5)/10);
-											break; }
-
-											case SV_R_CHAO: { //Polymorph Self
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph self",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-											break; }
-
-											case SV_R_MANA: { //Recharging
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d recharging",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage);
-											break; }
-
-											case SV_R_CONF: { //Reflection
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d reflection",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2);
-											break; }
-
-											case SV_R_INER: { //Mass Stasis
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d mass stasis",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*2);
-											break; }
-
-											case SV_R_ELEC:
-											case SV_R_FIRE:
-											case SV_R_COLD:
-											case SV_R_ACID:
-											case SV_R_POIS: { //Infusion
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d %s infusion",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, r_projections[projection].name);
-											break; }
-
-											case SV_R_WATE: { //Quench Thirst
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% quench thirst",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-											break; }
-
-											case SV_R_GRAV: { //Mass Teleport-To
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d mass teleport-to",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*2);
-											break; }
-
-											case SV_R_SHAR: { //Dig
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dig (bolt)",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail);
-											break; }
-
-											case SV_R_SOUN: { //Disarm
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d disarm",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
-											break; }
-
-											case SV_R_TIME: { //Haste
-												damage = rget_level(15) * r_imperatives[imperative].damage / 10;
-												if (damage < 1) damage = 1;
-												if (damage > 10) damage = 10;
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d +%d speed",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, damage);
-											break; }
-
-											case SV_R_DISE: { //Resistance
-												sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d base resistance",
-												color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2);
-											break; }
-
-											case SV_R_ICEE:
-											case SV_R_PLAS: { //Shield
-													damage = rget_level(20) * r_imperatives[imperative].damage / 10;
-													if (damage < 1) damage = 1;
-													if (damage > 20) damage = 20;
-													sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d dur %d+1d%d +%d AC",
-													color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy, duration/2, duration/2, damage);
-											break; }
-
+							case T_SIGN: { //Seal
+								if (!has_rune && color != 'D') color = 'R';
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									switch (projection) {
+									case SV_R_LITE: { //Illumination
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d illumination",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/4, 3+radius*2);
+										break; }
+									case SV_R_DARK: { //Invisibility
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d pow %d invisibility",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, damage);
+										break; }
+									case SV_R_NEXU: { //Teleportation
+										switch (r_imperatives[imperative].flag) {
+										//Manual tuning; Phase Door (6-12), Blink (10), Teleport (100), Spell (100-200) - Kurzel
+										case I_MINI: { radius = 12 + rget_level(12); break; }
+										case I_LENG: { radius = 25 + rget_level(25); break; }
+										case I_COMP: { radius =  6 + rget_level( 6); break; }
+										case I_MODE: { radius = 25 + rget_level(25); break; }
+										case I_EXPA: { radius = 75 + rget_level(75); break; }
+										case I_BRIE: { radius = 25 + rget_level(25); break; }
+										case I_MAXI: { radius = 50 + rget_level(50); break; }
 										}
-									} else {
-                    // Hack - Describe elements without an according resist! - Kurzel
-                    switch (projection) {
-                      case SV_R_INER: { // TR2_FREE_ACT
-                        sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% free action",
-                        color, 'a' + i, "seal", sdiff, cost, fail);
-                      break; }
-                      case SV_R_GRAV: { // TR3_FEATHER
-                        sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% feather falling",
-                        color, 'a' + i, "seal", sdiff, cost, fail);
-                      break; }
-                      case SV_R_ICEE:   // TR2_RES_COLD | TR2_RES_SHARDS
-                      case SV_R_PLAS: { // TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND
-                        sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% multiple resists",
-                        color, 'a' + i, "seal", sdiff, cost, fail);
-                      break; }
-                      default: {
-                        sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% %s resistance",
-                        color, 'a' + i, "seal", sdiff, cost, fail, r_projections[projection].name);
-                      break; }
-                    }
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d teleportation",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+										break; }
+									case SV_R_NETH: { //Annihilation
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d annihilation (bolt)",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, 8+(damage+5)/10);
+										break; }
+									case SV_R_CHAO: { //Polymorph Self
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% polymorph self",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										break; }
+									case SV_R_MANA: { //Recharging
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d recharging",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage);
+										break; }
+									case SV_R_CONF: { //Reflection
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d reflection",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2);
+										break; }
+									case SV_R_INER: { //Mass Stasis
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d mass stasis",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*2);
+										break; }
+									case SV_R_ELEC:
+									case SV_R_FIRE:
+									case SV_R_COLD:
+									case SV_R_ACID:
+									case SV_R_POIS: { //Infusion
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d %s infusion",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, r_projections[projection].name);
+										break; }
+									case SV_R_WATE: { //Quench Thirst
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% quench thirst",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										break; }
+									case SV_R_GRAV: { //Mass Teleport-To
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% pow %d mass teleport-to",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage*2);
+										break; }
+									case SV_R_SHAR: { //Dig
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dig (bolt)",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail);
+										break; }
+									case SV_R_SOUN: { //Disarm
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% rad %d disarm",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, radius);
+										break; }
+									case SV_R_TIME: { //Haste
+										damage = rget_level(15) * r_imperatives[imperative].damage / 10;
+										if (damage < 1) damage = 1;
+										if (damage > 10) damage = 10;
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d +%d speed",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2, damage);
+										break; }
+									case SV_R_DISE: { //Resistance
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dur %d+1d%d base resistance",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, duration/2, duration/2);
+										break; }
+									case SV_R_ICEE:
+									case SV_R_PLAS: { //Shield
+										damage = rget_level(20) * r_imperatives[imperative].damage / 10;
+										if (damage < 1) damage = 1;
+										if (damage > 20) damage = 20;
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %dd%d dur %d+1d%d +%d AC",
+										color, 'a' + i, r_types[i].name, sdiff, cost, fail, dx, dy, duration/2, duration/2, damage);
+										break; }
 									}
-								break; }
-
-								case T_BALL: { //Swarm
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
-										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d or %d (x%d)",
-										color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((3+(sdiff-1)/10) > 3) ? (3+(sdiff-1)/10) : 3));
+								} else {
+									// Hack - Describe elements without an according resist! - Kurzel
+									switch (projection) {
+									case SV_R_INER: { // TR2_FREE_ACT
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% free action",
+										color, 'a' + i, "seal", sdiff, cost, fail);
+										break; }
+									case SV_R_GRAV: { // TR3_FEATHER
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% feather falling",
+										color, 'a' + i, "seal", sdiff, cost, fail);
+										break; }
+									case SV_R_ICEE:   // TR2_RES_COLD | TR2_RES_SHARDS
+									case SV_R_PLAS: { // TR2_RES_ELEC | TR2_RES_FIRE | TR2_RES_SOUND
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% multiple resists",
+										color, 'a' + i, "seal", sdiff, cost, fail);
+										break; }
+									default: {
+										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% %s resistance",
+										color, 'a' + i, "seal", sdiff, cost, fail, r_projections[projection].name);
+										break; }
 									}
+								}
 								break; }
-
-								case T_WAVE: { //Surge
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
-										color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur 2",
-										color, 'a' + i, "surge", sdiff, cost, fail, rget_level(damage)/2);
-									}
+							case T_BALL: { //Swarm
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
+									color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d or %d (x%d)",
+									color, 'a' + i, "swarm", sdiff, cost, fail, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection)/2, rspell_damage(&dx, &dy, flags_to_imperative(I_MINI), flags_to_type(T_BALL), skill, projection), (((3+(sdiff-1)/10) > 3) ? (3+(sdiff-1)/10) : 3));
+								}
 								break; }
-
-								case T_GLPH: { //Sigil
-									if (!has_rune && color != 'D') color = 'R';
-									if (r_imperatives[imperative].flag != I_ENHA) {
-                    sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
-										color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% miscellaneous boni",
-										color, 'a' + i, "sigil", sdiff, cost, fail);
-									}
+							case T_WAVE: { //Surge
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (x3) rad %d",
+									color, 'a' + i, r_types[i].name, sdiff, cost, fail, rget_level(damage), radius);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d dur 2",
+									color, 'a' + i, "surge", sdiff, cost, fail, rget_level(damage)/2);
+								}
 								break; }
-
-								case T_BURS: { //Flare
-									if (r_imperatives[imperative].flag != I_ENHA) {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
-										color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
-									} else {
-										sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (33%% backlash)",
-										color, 'a' + i, "flare", sdiff, cost, fail, dx*dy);
-									}
+							case T_GLPH: { //Sigil
+								if (!has_rune && color != 'D') color = 'R';
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d",
+									color, 'a' + i, "glyph", sdiff, cost, fail, rspell_damage(&dx, &dy, imperative, flags_to_type(T_BALL), skill, projection)/2);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% miscellaneous boni",
+									color, 'a' + i, "sigil", sdiff, cost, fail);
+								}
 								break; }
-
+							case T_BURS: { //Flare
+								if (r_imperatives[imperative].flag != I_ENHA) {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d rad %d",
+									color, 'a' + i, r_types[i].name, sdiff, cost, fail, damage, radius);
+								} else {
+									sprintf(tmpbuf, "\377%c%c) %-7s %5d %4d %3d%% dam %d (33%% backlash)",
+									color, 'a' + i, "flare", sdiff, cost, fail, dx*dy);
+								}
+								break; }
 							}
 							Term_putstr(10, 14 + i, -1, TERM_L_GREEN, tmpbuf);
 						}
@@ -5898,6 +5886,7 @@ Chain_Macro:
 						choice = mw_rune;
 						i = 1;
 						break;
+
 					case mw_trap:
 						/* ---------- Enter trap kit name ---------- */
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the trap kit name or inscription.");
@@ -5939,6 +5928,7 @@ Chain_Macro:
 						strcat(buf, "@");
 						strcat(buf, buf2);
 						break;
+
 					case mw_device:
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose the type of magic device you want to use:");
 						Term_putstr(15, 12, -1, TERM_L_GREEN, "a) a wand");
