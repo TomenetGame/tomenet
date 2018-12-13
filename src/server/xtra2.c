@@ -5626,10 +5626,12 @@ bool monster_death(int Ind, int m_idx) {
 
 	/* Easteregg, sort of: Killing the Horned Reaper in Dungeon Keeper event gives you a reward worth the 180k you likely spend to achieve this :-p */
 	if (r_idx == RI_HORNED_REAPER_GE) {
-		i = object_level;
-		object_level = 127;
-		acquirement(0, wpos, y, x, 1, TRUE, TRUE, RESF_NONE);
-		object_level = i;
+		qq_ptr = &forge;
+		object_wipe(qq_ptr);
+		invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_ACQUIREMENT));
+		qq_ptr->number = 1;
+		apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
+		drop_near(0, qq_ptr, -1, wpos, y, x);
 	}
 
 	/* Let monsters explode! */
