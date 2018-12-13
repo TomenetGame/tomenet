@@ -14905,7 +14905,7 @@ D:chaos forever beyond the nethermost outposts of space and time!"
 N:846:Fenris Wolf
 G:C:D
 I:130:70d100:80:90:40
-W:90:2:0:35000
+W:77:2:0:35000
 E:0:1:0:2:1:4
 O:20:0:80:0
 B:BITE:HURT:20d6
@@ -15000,7 +15000,7 @@ D:but appearances can be deceiving.
 N:850:Carcharoth, the Jaws of Thirst
 G:C:D
 I:130:90d100:80:110:10
-W:94:1:3400:40000
+W:86:1:3400:40000
 E:0:1:0:2:1:4
 O:30:10:60:0
 B:CLAW:POISON:9d12
@@ -15079,7 +15079,7 @@ D:accursed flutes."
 N:853:Huan, Wolfhound of the Valar
 G:C:W
 I:130:90d100:50:160:10
-W:93:2:3400:40000
+W:85:2:3400:40000
 E:0:1:0:2:1:4
 O:30:10:60:0
 B:CLAW:COLD:9d12
