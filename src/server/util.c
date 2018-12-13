@@ -4926,7 +4926,11 @@ static void player_talk_aux(int Ind, char *message) {
 				/* prevent buffer overflow */
 				message[MSG_LEN - strlen(p_ptr->name) - 7 - 8 - strlen(w_player->name) + target_raw_len] = 0;//8 are world server tax
 				world_pmsg_send(p_ptr->id, p_ptr->name, w_player->name, colon + 1);
+ #if 0
 				msg_format(Ind, "\375\377s[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
+ #else /* world server handles the colour codes */
+				msg_format(Ind, "\375[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
+ #endif
 
 				/* hack: assume that the target player will become the
 				   one we want to 'reply' to, afterwards, if we don't
