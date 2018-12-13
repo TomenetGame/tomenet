@@ -97,6 +97,7 @@ bool world_check_ignore(int Ind, uint32_t id, int16_t server) {
 	return(FALSE);
 }
 
+#define WP_PMSG_DEFAULT_COLOUR 'W'
 void world_comm(int fd, int arg) {
 	static char buffer[1024], msg[MSG_LEN], *msg_ptr, *wmsg_ptr, *wmsg_ptr2;
 	char cbuf[sizeof(struct wpacket)];
@@ -186,7 +187,7 @@ void world_comm(int fd, int arg) {
 				for (i = 1; i <= NumPlayers; i++) {
 					if (!strcmp(Players[i]->name, wpk->d.pmsg.victim)) {
 						if (!world_check_ignore(i, wpk->d.pmsg.id, wpk->serverid)) {
-							msg_format(i, "\375\377s[%s:%s] %s", wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
+							msg_format(i, "\375\377%c[%s:%s] %s", WP_PMSG_DEFAULT_COLOUR, wpk->d.pmsg.player, Players[i]->name, wpk->d.pmsg.ctxt);
 							/* Remember sender for quick replying */
 							strcpy(Players[i]->reply_name, wpk->d.pmsg.player);
 						}
@@ -435,7 +436,7 @@ int world_remote_players(FILE *fff) {
 			slp = slp->next;
 		}
 		
-//		fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
+		//fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
 		fprintf(fff, "\377s %s\377%c %s\n", servername, c_pl->server ? 'w' : 'W', c_pl->name);
 		num++;
 		lp = lp->next;
