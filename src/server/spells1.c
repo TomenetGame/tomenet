@@ -6538,7 +6538,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		//do_stun = randint(15) / div;
 		k = dam;
 
-		dam = (k * 3) / 5;/* 60% COLD damage */
+		dam = (k * 2) / 5;/* 40% COLD damage */
 		if (r_ptr->flags3 & RF3_IM_COLD) {
 			note = " is immune to cold";
 			dam = 0;
@@ -6559,7 +6559,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 		}
 
-		k = (k * 2) / 5;/* 40% SHARDS damage */
+		k = (k * 3) / 5;/* 60% SHARDS damage */
 		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
 			//note = " resists";
 			k = (k * 3) / (randint(6) + 6);
@@ -7147,10 +7147,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Random between ice (shards+water) and poison. At the moment its 3:1:1 shards:water:poison chance 
 			- the_sandman */
 	case GF_ICEPOISON:
-		switch (randint(5)) {
+		switch (randint(10)) {
 		case 1:  // Shards
+		case 2:
 		case 3:
-		case 5:
+		case 4:
 			if (seen) obvious = TRUE;
 			if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS)) {
 				note = " resists";
@@ -7160,7 +7161,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam /= 2;
 			}
 			break;
-		case 2: // Water
+		case 5: // Water
+		case 6:
+		case 7:
 			if (seen) obvious = TRUE;
 			if (r_ptr->flags9 & RF9_IM_WATER) {
 				note = " is immune";
@@ -9978,8 +9981,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Ice -- cold plus stun plus cuts */
 	case GF_ICE:
 		k = dam;
-		dam = (k * 3) / 5;/* 60% COLD damage, total cold damage is saved in 'dam' */
-		k = (k * 2) / 5;/* 40% SHARDS damage, total shard damage is saved in 'k' */
+		dam = (k * 2) / 5;/* 40% COLD damage, total cold damage is saved in 'dam' */
+		k = (k * 3) / 5;/* 60% SHARDS damage, total shard damage is saved in 'k' */
 		if (p_ptr->biofeedback) k = (k * 2) / 3;
 		if (p_ptr->resist_shard) { k *= 6; k /= (randint(6) + 6); }
 		dam = cold_dam(Ind, dam, killer, -who);
@@ -10074,19 +10077,22 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		break;
 
-	/* Druid's higher tox spell: 60%shards, 10%water, 10%poison. No side effects from water/shards. */
+	/* Druid's higher tox spell: 40%shards, 30%water, 30%poison. No side effects from water/shards. */
 	case GF_ICEPOISON:
-		switch (randint(5)) {
+		switch (randint(10)) {
 		case 1:  // Shards
+		case 2:
 		case 3:
-		case 5:
+		case 4:
 			if (p_ptr->biofeedback) dam /= 2;
 			if (p_ptr->resist_shard) { dam *= 6; dam /= (randint(6) + 6); }
 			if (fuzzy) msg_format(Ind, "You are hit by something sharp for \377%c%d \377wdamage!", damcol, dam);
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			take_hit(Ind, dam, killer, -who);
 			break;
-		case 2: // Water
+		case 5: // Water
+		case 6:
+		case 7:
 			if (p_ptr->body_monster && (r_ptr->flags7 & RF7_AQUATIC)) dam = (dam + 3) / 4;
 			if (p_ptr->immune_water) {
 				dam = 0;
@@ -12955,7 +12961,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		//do_stun = 8;
 		k = dam;
 
-		dam = (k * 3) / 5;/* 60% COLD damage */
+		dam = (k * 2) / 5;/* 40% COLD damage */
 		if (r_ptr->flags3 & RF3_IM_COLD)
 			dam = 0;
 		else if (r_ptr->flags9 & RF9_RES_COLD)
@@ -12963,7 +12969,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
 			dam *= 2;
 
-		k = (k * 2) / 5;/* 40% SHARDS damage */
+		k = (k * 3) / 5;/* 60% SHARDS damage */
 		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 			k /= 3;
 		else if (r_ptr->flags8 & RF8_NO_CUT)
@@ -13140,23 +13146,23 @@ int approx_damage(int m_idx, int dam, int typ) {
 		break;
 
 	case GF_ICEPOISON:
-		k = (dam * 3) / 5;
+		k = (dam * 2) / 5;
 		if ((r_ptr->flags4 & RF4_BR_SHAR) || (r_ptr->flags9 & RF9_RES_SHARDS))
 			k /= 3;
 		else if (r_ptr->flags8 & RF8_NO_CUT)
 			k /= 2;
 		j = k;
 
-		k = dam / 5;
-		if (r_ptr->flags9 & RF9_IM_WATER)
+		k = (dam * 3) / 10;
+		if (r_ptr->flags3 & RF3_IM_COLD)
 			k = 0;
-		else if (r_ptr->flags7 & RF7_AQUATIC)
-			k /= 9;
-		else if (r_ptr->flags3 & RF3_RES_WATE)
+		else if (r_ptr->flags9 & RF9_RES_COLD)
 			k /= 4;
+		else if (r_ptr->flags3 & RF3_SUSCEP_COLD)
+			k *= 2;
 		j += k;
 
-		k = dam / 5;
+		k = (dam * 3) / 10;
 		if ((r_ptr->flags3 & RF3_IM_POIS) ||
 		    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
 		    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
