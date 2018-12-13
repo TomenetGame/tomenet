@@ -5461,7 +5461,7 @@ bool monster_death(int Ind, int m_idx) {
 
 
 	/* experimental: Zu-Aon drops only randarts */
-	if (is_ZuAon || m_ptr->r_idx == RI_BAD_LUCK_BAT)
+	if (is_ZuAon || r_idx == RI_BAD_LUCK_BAT)
 		resf_drops |= (RESF_FORCERANDART | RESF_NOTRUEART);
 	/* Morgoth never drops true artifacts */
 	if (is_Morgoth) resf_drops |= RESF_NOTRUEART;
@@ -5527,7 +5527,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	if (season_halloween) {
 		/* let everyone know, so they are prepared.. >:) */
-		if ((m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)
+		if ((r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3)
 		    && !m_ptr->clone) {
 			msg_broadcast_format(0, "\374\377L**\377o%s has defeated a tasty halloween spirit!\377L**", p_ptr->name);
 			s_printf("HALLOWEEN: %s (%d/%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev, m_name);
@@ -5537,7 +5537,7 @@ bool monster_death(int Ind, int m_idx) {
 			strcpy(great_pumpkin_killer2, p_ptr->accountname);
 		}
 	} else if (season_xmas) {
-		if ((m_ptr->r_idx == RI_SANTA1 || m_ptr->r_idx == RI_SANTA2)
+		if ((r_idx == RI_SANTA1 || r_idx == RI_SANTA2)
 		    && !m_ptr->clone) {
 			msg_broadcast_format(0, "\374\377L**\377oSanta dropped the presents near %s!\377L**", p_ptr->name);
 			s_printf("XMAS: %s (%d) has defeated %s.\n", p_ptr->name, p_ptr->max_plv, m_name);
@@ -5622,6 +5622,14 @@ bool monster_death(int Ind, int m_idx) {
 				summon_override_checks = SO_NONE;
 			}
 		}
+	}
+
+	/* Easteregg, sort of: Killing the Horned Reaper in Dungeon Keeper event gives you a reward worth the 180k you likely spend to achieve this :-p */
+	if (r_idx == RI_HORNED_REAPER_GE) {
+		i = object_level;
+		object_level = 127;
+		acquirement(0, wpos, y, x, 1, TRUE, TRUE, RESF_NONE);
+		object_level = i;
 	}
 
 	/* Let monsters explode! */
@@ -5796,7 +5804,7 @@ bool monster_death(int Ind, int m_idx) {
 		break;
 	/* switch to r_info next: */
 	default:
-		switch (m_ptr->r_idx) {
+		switch (r_idx) {
 		case 1048: //unbeliever with FRIENDS
 			if (!rand_int(3)) resf_drops |= RESF_COND_DARKSWORD;
 			resf_drops |= RESF_COND2_HARMOUR;
@@ -5854,7 +5862,7 @@ bool monster_death(int Ind, int m_idx) {
 			break;
 		/* -- only do flexible vs tough armour choice for the remaining monsters here -- */
 		default:
-			switch (m_ptr->r_idx) {
+			switch (r_idx) {
 			/* monsters that don't fall into the usual colouring scheme */
 			case 370: case 492: //monks
 			case 532: //dagashi too
@@ -6017,7 +6025,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	/* Maia traitage */
 	if (p_ptr->prace == RACE_MAIA && !p_ptr->ptrait) {
-		switch (m_ptr->r_idx) {
+		switch (r_idx) {
 		case RI_CANDLEBEARER:
 			if (p_ptr->r_killed[RI_DARKLING] != 0)
 				msg_print(Ind, "\377rYour presence in the realm is forfeit.");
@@ -6036,8 +6044,8 @@ bool monster_death(int Ind, int m_idx) {
 	/* Get credit for unique monster kills */
 	if (r_ptr->flags1 & RF1_UNIQUE) {
 		/* Set unique monster to 'killed' for this player */
-		p_ptr->r_killed[m_ptr->r_idx] = 1;
-		Send_unique_monster(Ind, m_ptr->r_idx);
+		p_ptr->r_killed[r_idx] = 1;
+		Send_unique_monster(Ind, r_idx);
 		/* Set unique monster to 'helped with' for all other nearby players
 		   who haven't explicitely killed it yet - C. Blue */
 		for (i = 1; i <= NumPlayers; i++) {
@@ -6050,13 +6058,13 @@ bool monster_death(int Ind, int m_idx) {
 			if (!Players[i]->party || p_ptr->party != Players[i]->party) continue;
 
 			/* Hack: '2' means 'helped' instead of 'killed' */
-			if (!Players[i]->r_killed[m_ptr->r_idx]) {
-				Players[i]->r_killed[m_ptr->r_idx] = 2;
-				Send_unique_monster(i, m_ptr->r_idx);
+			if (!Players[i]->r_killed[r_idx]) {
+				Players[i]->r_killed[r_idx] = 2;
+				Send_unique_monster(i, r_idx);
 			}
 		}
 	/* Get kill credit for non-uniques (important for mimics) */
-	//HACK: added test for m_ptr->r_idx to suppress bad msgs about 0 forms learned (exploders?)
+	//HACK: added test for r_idx to suppress bad msgs about 0 forms learned (exploders?)
 	} else {
 		/* Normal kill count */
 		if (p_ptr->r_killed[r_idx] < 10000) p_ptr->r_killed[r_idx]++;
@@ -6082,9 +6090,9 @@ bool monster_death(int Ind, int m_idx) {
 			/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away
 			 * to make it easier (at least statistically) getting forms in the iron server. Plus,
 			 * mimicked speed and hp are lowered already anyway.	- the_sandman */
-			if ( ( r_info[m_ptr->r_idx].level - p_ptr->r_mimicry[credit_idx] > 0 ) &&
-			     ( (randint((r_info[m_ptr->r_idx].level - p_ptr->r_mimicry[credit_idx]) *
-			    (r_info[m_ptr->r_idx].level - p_ptr->r_mimicry[credit_idx])) == 1))) {
+			if ( ( r_info[r_idx].level - p_ptr->r_mimicry[credit_idx] > 0 ) &&
+			     ( (randint((r_info[r_idx].level - p_ptr->r_mimicry[credit_idx]) *
+			    (r_info[r_idx].level - p_ptr->r_mimicry[credit_idx])) == 1))) {
 			    p_ptr->r_mimicry[credit_idx] = r_info[credit_idx].level;
 			} else { /* Badluck */
 				p_ptr->r_mimicry[credit_idx]++;
@@ -6243,7 +6251,7 @@ if (cfg.unikill_format) {
 			if (p_ptr->diz_unique) {
 				char diz[2048], tmp[MSG_LEN], *dizptr = diz, *tmpend;
 
-				strcpy(diz, r_text + r_info[m_ptr->r_idx].text);
+				strcpy(diz, r_text + r_info[r_idx].text);
 				while (strlen(dizptr) > 80 - 0) {
 					strncpy(tmp, dizptr, 80 - 0);
 					tmp[80 - 0] = 0;
@@ -6659,7 +6667,7 @@ if (cfg.unikill_format) {
 			/* Save the inscription */
 			/* (pfft, not so smart..) */
 			/*qq_ptr->note = quark_add(format("#of %s", r_name + r_ptr->name));*/
-			qq_ptr->bpval = m_ptr->r_idx;
+			qq_ptr->bpval = r_idx;
 
 			/* Drop it in the dungeon */
 #ifdef PRE_OWN_DROP_CHOSEN
@@ -6881,7 +6889,7 @@ if (cfg.unikill_format) {
 			}
 #endif
 
-		} else if (m_ptr->r_idx == RI_LIVING_LIGHTNING) {
+		} else if (r_idx == RI_LIVING_LIGHTNING) {
 			int tries = 100;
 			object_type forge_bak, forge_fallback;
 			qq_ptr = &forge;
@@ -6990,7 +6998,7 @@ if (cfg.unikill_format) {
 			qq_ptr->timeout_magic = 0;
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
-		} else if (m_ptr->r_idx == RI_HELLRAISER) {
+		} else if (r_idx == RI_HELLRAISER) {
 			/* Get local object */
 			qq_ptr = &forge;
 
@@ -7033,7 +7041,7 @@ if (cfg.unikill_format) {
 //#endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
-		} else if (m_ptr->r_idx == RI_DOR) {
+		} else if (r_idx == RI_DOR) {
 			/* Get local object */
 			qq_ptr = &forge;
 
