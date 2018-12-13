@@ -7043,7 +7043,7 @@ int Send_mini_map_pos(int Ind, int x, int y, byte a, char c) {
 }
 
 //int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name)
-int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval) {
+int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval, char *powers) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
@@ -7067,14 +7067,18 @@ int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cpt
 #ifdef MINDLINK_STORE
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&p_ptr2->version, 4, 4, 7, 0, 0, 0))
+		if (is_newer_than(&p_ptr2->version, 4, 7, 2, 0, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%S%c%c%hd%s", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval, "");
+		else if (is_newer_than(&p_ptr2->version, 4, 4, 7, 0, 0, 0))
 			Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%S%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
 		else
 			Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
 	}
 #endif
 
-	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0))
+	if (is_newer_than(&Players[Ind]->version, 4, 7, 2, 0, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd%s", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval, powers);
+	else if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
 	else
 		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);

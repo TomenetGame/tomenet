@@ -696,6 +696,7 @@ extern void do_cmd_look(int Ind, int dir);
 extern void do_cmd_locate(int Ind, int dir);
 extern void do_cmd_query_symbol(int Ind, char sym);
 extern bool item_tester_hook_wear(int Ind, int slot);
+extern void power_inscribe(object_type *o_ptr, bool redux, char *powins);
 
 /* cmd4.c */
 extern void do_cmd_check_artifacts(int Ind, int line);
@@ -1139,7 +1140,7 @@ extern int Send_line_info(int Ind, int y, bool scr_only);
 extern int Send_line_info_forward(int Ind, int Ind_src, int y);
 extern int Send_mini_map(int Ind, int y, byte *sa, char *sc);
 extern int Send_mini_map_pos(int Ind, int x, int y, byte a, char c);
-extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval);
+extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval, char *powers);
 extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, char tval, char sval, s16b pval,
     s16b xtra1, s16b xtra2, s16b xtra3, s16b xtra4, s16b xtra5, s16b xtra6, s16b xtra7, s16b xtra8, s16b xtra9);
 extern int Send_store_special_str(int ind, char line, char col, char attr, char *str);
@@ -1214,7 +1215,7 @@ extern int Send_idle(int Ind, bool idle);
 
 
 /* object1.c */
-extern bool maybe_hidden_powers(int Ind, object_type *o_ptr);
+extern bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id);
 /* object2.c */
 extern void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt);
 extern void discharge_rod(object_type *o_ptr, int c);

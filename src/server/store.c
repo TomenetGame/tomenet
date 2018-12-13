@@ -2304,7 +2304,7 @@ static void display_entry(int Ind, int pos) {
 	object_type	*o_ptr;
 	s64b		x;
 
-	char		o_name[ONAME_LEN];
+	char		o_name[ONAME_LEN], powers[MAX_CHARS];
 	byte		attr;
 	int		wgt;
 	int		i;
@@ -2379,13 +2379,13 @@ static void display_entry(int Ind, int pos) {
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
 			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
-				Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+				Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval, "");
 			} else {
 				Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
 				    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
 			}
 		} else {
-			Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+			Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval, "");
 		}
 	}
 	/* Describe an item (fully) in a store */
@@ -2489,16 +2489,21 @@ static void display_entry(int Ind, int pos) {
 		if (o_ptr->note) player_stores_cut_inscription(o_name);
 #endif
 
+		powers[0] = 0;
+		if ((o_ptr->name1 == ART_RANDART || (!o_ptr->name1 && wearable_p(o_ptr)))
+		    && maybe_hidden_powers(Ind, o_ptr, TRUE))
+			power_inscribe(o_ptr, FALSE, powers);
+
 		/* Send the info */
 		if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
 			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
-				Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+				Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval, powers);
 			} else {
 				Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
 				    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
 			}
 		} else {
-			Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+			Send_store(Ind, pos, attr, wgt, o_ptr->number, x, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval, powers);
 		}
 	}
 }
@@ -2535,7 +2540,7 @@ static void display_inventory(int Ind) {
 		/* Display that line */
 		display_entry(Ind, k);
 	}
-	//if (k < 1) Send_store(Ind, 0, 0, 0, 0, 0, "", 0, 0);
+	//if (k < 1) Send_store(Ind, 0, 0, 0, 0, 0, "", 0, 0, "");
 }
 
 
@@ -6188,13 +6193,13 @@ void display_house_entry(int Ind, int pos, house_type *h_ptr) {
 	/* Send the info */
 	if (is_newer_than(&p_ptr->version, 4, 4, 3, 0, 0, 4)) {
 		if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
-			Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+			Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval, "");
 		} else {
 			Send_store_wide(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval,
 			    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
 		}
 	} else {
-		Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval);
+		Send_store(Ind, pos, attr, wgt, o_ptr->number, 0, o_name, o_ptr->tval, o_ptr->sval, o_ptr->pval, "");
 	}
 }
 

@@ -4517,14 +4517,16 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 	p_ptr->tim_wraith = tim_wraith;
 }
 
-/* New helper function for @@/@@@ inscriptions: Check if item might have hidden powers (in which case the inscription is declined). */
-bool maybe_hidden_powers(int Ind, object_type *o_ptr) {
+/* New helper function for @@/@@@ inscriptions: Check if item might have hidden powers (in which case the inscription is declined).
+  ignore_id: If true, the function will return TRUE independantly of whether the item has already been *identified*. Added for shop-pasting.
+*/
+bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
 	bool aware = object_aware_p(Ind, o_ptr);
 	ego_item_type *e_ptr;
 	int j;
 
 	/* item not already *id*ed or well known (flavoured item)? */
-	if ((o_ptr->ident & ID_MENTAL) ||
+	if ((!ignore_id && (o_ptr->ident & ID_MENTAL)) ||
 	    (k_info[o_ptr->k_idx].easy_know && aware && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->name2b)) return FALSE;
 
 	/* Un-*id*-ed artifacts can (and will) always have hidden powers.. */

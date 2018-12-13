@@ -3136,11 +3136,14 @@ int Receive_store_action(void) {
 
 int Receive_store(void) {
 	int	n, price;
-	char	ch, pos, name[ONAME_LEN], tval, sval;
+	char	ch, pos, name[ONAME_LEN], tval, sval, powers[MAX_CHARS];
 	byte	attr;
 	s16b	wgt, num, pval;
 
-	if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 7, 2, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%hd%s", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval, &powers)) <= 0)
+			return n;
+	} else if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%hd", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval)) <= 0)
 			return n;
 	} else {
@@ -3157,6 +3160,8 @@ int Receive_store(void) {
 	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].attr = attr;
 	store.stock[(int)pos].pval = pval;
+	strncpy(store_powers[(int) pos], powers, MAX_CHARS - 1);
+	store_powers[(int) pos][MAX_CHARS - 1] = 0;
 
 	/* Request a redraw of the store inventory */
 	redraw_store = TRUE;
@@ -3195,9 +3200,9 @@ int Receive_store_wide(void) {
 	store.stock[(int)pos].sval = sval;
 	store.stock[(int)pos].weight = wgt;
 	store.stock[(int)pos].number = num;
-	store_prices[(int) pos] = price;
-	strncpy(store_names[(int) pos], name, ONAME_LEN - 1);
-	store_names[(int) pos][ONAME_LEN - 1] = 0;
+	store_prices[(int)pos] = price;
+	strncpy(store_names[(int)pos], name, ONAME_LEN - 1);
+	store_names[(int)pos][ONAME_LEN - 1] = 0;
 	store.stock[(int)pos].tval = tval;
 	store.stock[(int)pos].attr = attr;
 	store.stock[(int)pos].pval = pval;
@@ -3210,6 +3215,7 @@ int Receive_store_wide(void) {
 	store.stock[(int)pos].xtra7 = xtra7;
 	store.stock[(int)pos].xtra8 = xtra8;
 	store.stock[(int)pos].xtra9 = xtra9;
+	store_powers[(int)pos][0] = 0;
 
 	/* Request a redraw of the store inventory */
 	redraw_store = TRUE;
@@ -3329,7 +3335,7 @@ int Receive_sell(void) {
 	/* Tell the user about the price */
 	if (c_cfg.no_verify_sell) Send_store_confirm();
 	else {
-		if (store_num == 57) sprintf(buf, "Really donate it?");
+		if (store_num == STORE_MATHOM_HOUSE) sprintf(buf, "Really donate it?");
 		else sprintf(buf, "Accept %d gold?", price);
 
 		if (get_check2(buf, FALSE))

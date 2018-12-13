@@ -37,6 +37,7 @@ store_type store;			/* The general info about the current store */
 c_store_extra c_store;	/* Extra info about the current store */
 int store_prices[STORE_INVEN_MAX];			/* The prices of the items in the store */
 char store_names[STORE_INVEN_MAX][ONAME_LEN];		/* The names of the stuff in the store */
+char store_powers[STORE_INVEN_MAX][MAX_CHARS];		/* For chat-pasting: Add '@@'-info so everyone knows what the store item can do. Equippables only, hidden-powers-egos only. */
 s16b store_num;				/* The current store number */
 
 /* XXX Mergin for future expansion -- this should be handled in Net_setup */

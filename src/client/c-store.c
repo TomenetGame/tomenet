@@ -346,7 +346,8 @@ void store_paste_item(char *out_val, int item) {
 		sprintf(out_val, " %s", store_names[item]);
 	/* Player stores with '@S-' inscription neither (museum mode) */
 	} else if (store_prices[item] < 0) {
-		sprintf(out_val, " %s", store_names[item]);
+		if (store_powers[item][0]) sprintf(out_val, " %s (%s)", store_names[item], store_powers[item]);
+		else sprintf(out_val, " %s", store_names[item]);
 	/* Normal [player-]store */
 	} else {
 		/* Convert the price to more readable format */
@@ -357,7 +358,8 @@ void store_paste_item(char *out_val, int item) {
 		else
 			snprintf(price, 16, "%d", store_prices[item]);
 
-		sprintf(out_val, "%s (%s Au)", store_names[item], price);
+		if (store_powers[item][0]) sprintf(out_val, "%s (%s Au) (%s)", store_names[item], price, store_powers[item]);
+		else sprintf(out_val, "%s (%s Au)", store_names[item], price);
 	}
 }
 
