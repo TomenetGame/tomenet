@@ -278,10 +278,10 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 #endif
 		break;
 	case TV_RING:
-	case TV_AMULET:
-		p += 20;
 		/* hack -- Nazgul rings */
 		if (a_ptr->sval == SV_RING_SPECIAL) p += 20;
+	case TV_AMULET:
+		p += 20;
 		break;
 	}
 
