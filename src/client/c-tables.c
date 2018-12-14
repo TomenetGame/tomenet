@@ -527,6 +527,12 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "mute_when_idle",		"Mute music+ambient sfx while AFK/idle in town" },
 	{ &c_cfg.id_selection,		TRUE,	6,	0, 126, TRUE,
 	    "id_selection",		"Show/accept only eligible items for ID/*ID*" },
+	{ &c_cfg.hp_bar,		FALSE,	6,	0, 127, TRUE,
+	    "hp_bar",			"Display hit points as bar instead of numbers" },
+	{ &c_cfg.mp_bar,		FALSE,	6,	0, 128, TRUE,
+	    "mp_bar",			"Display mana pool as bar instead of numbers" },
+	{ &c_cfg.st_bar,		FALSE,	6,	0, 129, TRUE,
+	    "st_bar",			"Display stamina as bar instead of numbers" },
 };
 
 

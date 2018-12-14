@@ -8105,6 +8105,7 @@ void do_cmd_options(void) {
 	char tmp[1024];
 
 	bool changed1 = c_cfg.exp_need, changed2 = c_cfg.exp_bar, changed3 = c_cfg.font_map_solid_walls;
+	bool changed4a = c_cfg.hp_bar, changed4b = c_cfg.mp_bar, changed4c = c_cfg.st_bar;
 
 	/* Save the screen */
 	Term_save();
@@ -8268,8 +8269,13 @@ void do_cmd_options(void) {
 	/* for exp_need option changes: */
 	if (changed1 != c_cfg.exp_need || changed2 != c_cfg.exp_bar || changed3 != c_cfg.font_map_solid_walls)
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
-	/* in case hp/mp/st are displayed as bars */
-	if (changed3 != c_cfg.font_map_solid_walls) {
+	/* in case hp/mp/st are displayed as bars,
+	   or hp/mp/st have just been switched between number form and bar form */
+	if (changed3 != c_cfg.font_map_solid_walls ||
+	    changed4a != c_cfg.hp_bar || changed4b != c_cfg.mp_bar || changed4c != c_cfg.st_bar) {
+		if (changed4a != c_cfg.hp_bar) hp_bar = c_cfg.hp_bar;
+		if (changed4b != c_cfg.mp_bar) sp_bar = c_cfg.mp_bar;
+		if (changed4c != c_cfg.st_bar) st_bar = c_cfg.st_bar;
 		prt_hp(hp_max, hp_cur, hp_bar);
 		prt_sp(sp_max, sp_cur, sp_bar);
 		prt_stamina(st_max, st_cur, st_bar);

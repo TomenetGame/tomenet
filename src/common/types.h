@@ -3427,6 +3427,9 @@ struct client_opts {
 	bool palette_animation;
 	bool mute_when_idle;
 	bool id_selection;
+	bool hp_bar;
+	bool mp_bar;
+	bool st_bar; //129
 };
 
 /*

@@ -145,3 +145,6 @@ Y:diz_first
 Y:alert_starvation
 Y:palette_animation
 Y:id_selection
+X:hp_bar
+X:mp_bar
+X:st_bar

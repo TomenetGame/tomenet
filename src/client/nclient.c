@@ -1581,6 +1581,8 @@ int Receive_hp(void) {
 		max -= 10000;
 		bar = TRUE;
 	}
+	/* .. and new, clean way: It's a client option now */
+	if (c_cfg.hp_bar) bar = TRUE;
 
 	p_ptr->mhp = max;
 	p_ptr->chp = cur;
@@ -1621,6 +1623,8 @@ int Receive_stamina(void) {
 		max -= 10000;
 		bar = TRUE;
 	}
+	/* .. and new, clean way: It's a client option now */
+	if (c_cfg.st_bar) bar = TRUE;
 
 	p_ptr->mst = max;
 	p_ptr->cst = cur;
@@ -2152,6 +2156,8 @@ int Receive_sp(void) {
 		max -= 10000;
 		bar = TRUE;
 	}
+	/* .. and new, clean way: It's a client option now */
+	if (c_cfg.mp_bar) bar = TRUE;
 
 	if (c_cfg.alert_mana && max != -9999 && (cur < max / 5)) {
 		warning_page();
