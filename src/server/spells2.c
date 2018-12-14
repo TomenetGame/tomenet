@@ -8689,11 +8689,11 @@ bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr) {
 
 	/* spell continuously burns mana! */
 	if (turn % (cfg.fps / 10) == 0) {
-		if (q_ptr->csp < 1) {
+		if (q_ptr->cmp < 1) {
 			do_mstopcharm(Ind_charmer);
 			return FALSE;
 		}
-		q_ptr->csp -= 1;
+		q_ptr->cmp -= 1;
 		q_ptr->redraw |= PR_MANA;
 	}
 

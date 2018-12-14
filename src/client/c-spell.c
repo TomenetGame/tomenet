@@ -1926,7 +1926,7 @@ static void rcraft_print_types(u16b e_flags, u16b m_flags) {
 		if (diff > 0) {
 			color = 'G';
 			if (penalty) color = 'y';
-			if (p_ptr->csp < cost) color = 'o';
+			if (p_ptr->cmp < cost) color = 'o';
 			//if (p_ptr->anti_magic && r_types[i].flag != T_GLPH) color = 'r'; //#define ENABLE_SHELL_ENCHANT
 			if (p_ptr->anti_magic) color = 'r';
 		}

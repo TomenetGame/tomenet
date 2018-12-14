@@ -2009,8 +2009,8 @@
 #define CLIENT_PARTY_ROWHP	8
 #define CLIENT_PARTY_COLHP	0
 
-#define CLIENT_PARTY_ROWSP	9
-#define CLIENT_PARTY_COLSP	0
+#define CLIENT_PARTY_ROWMP	9
+#define CLIENT_PARTY_COLMP	0
 
 #define CLIENT_PARTY_ROWMBR	11
 #define CLIENT_PARTY_COLMBR	0
@@ -2039,22 +2039,22 @@
 #define ROW_AC			16
 #define COL_AC			0	/* "Cur AC xxxxx" */
 
-#define CONDENSED_HP_SP		/* reduce HP and SP to 1 line each, instead of 1 line for max and 1 line for cur values? */
+#define CONDENSED_HP_MP		/* reduce HP and MP to 1 line each, instead of 1 line for max and 1 line for cur values? */
 
-#ifndef CONDENSED_HP_SP
+#ifndef CONDENSED_HP_MP
  #define ROW_MAXHP		16
  #define COL_MAXHP		0	/* "Max HP xxxxx" */
 
  #define ROW_CURHP		17
  #define COL_CURHP		0	/* "Cur HP xxxxx" */
 
- #define ROW_MAXSP		18
- #define COL_MAXSP		0	/* "Max SP xxxxx" */
+ #define ROW_MAXMP		18
+ #define COL_MAXMP		0	/* "Max MP xxxxx" */
 
- #define ROW_CURSP		19
- #define COL_CURSP		0	/* "Cur SP xxxxx" */
+ #define ROW_CURMP		19
+ #define COL_CURMP		0	/* "Cur MP xxxxx" */
 
- #define ROW_EXSTA		-1      /* extra status, requires CONDENSED_HP_SP ! */
+ #define ROW_EXSTA		-1      /* extra status, requires CONDENSED_HP_MP ! */
  #define COL_EXSTA		-1
 #else
  #define ROW_MAXHP		17
@@ -2063,11 +2063,11 @@
  #define ROW_CURHP		17
  #define COL_CURHP		3	/* "Cur HP xxxxx" */
 
- #define ROW_MAXSP		18
- #define COL_MAXSP		8	/* "Max SP xxxxx" */
+ #define ROW_MAXMP		18
+ #define COL_MAXMP		8	/* "Max MP xxxxx" */
 
- #define ROW_CURSP		18
- #define COL_CURSP		3	/* "Cur SP xxxxx" */
+ #define ROW_CURMP		18
+ #define COL_CURMP		3	/* "Cur MP xxxxx" */
  
  #define ROW_MAXST		19	/* current stamina */
  #define COL_MAXST		8
@@ -2075,7 +2075,7 @@
  #define ROW_CURST		19	/* current stamina */
  #define COL_CURST		3
 
- #define ROW_EXSTA		20      /* extra status, requires CONDENSED_HP_SP ! */
+ #define ROW_EXSTA		20      /* extra status, requires CONDENSED_HP_MP ! */
  #define COL_EXSTA		0
 #endif
 
@@ -4279,7 +4279,7 @@
 #define PU_SKILL_INFO	0x00000004L	/* Update client skill info */
 #define PU_SANITY	0x00000008L     /* Calculate csane and msane */
 #define PU_HP		0x00000010L	/* Calculate chp and mhp */
-#define PU_MANA		0x00000020L	/* Calculate csp and msp */
+#define PU_MANA		0x00000020L	/* Calculate cmp and mmp */
 /* xxx */
 #define PU_SKILL_MOD	0x00000080L	/* Update client skill values/... */
 /* xxx (many) */
@@ -4763,7 +4763,7 @@
 #define TR1_DEX			0x00000008L	/* DEX += "pval" */
 #define TR1_CON				0x00000010L	/* CON += "pval" */
 #define TR1_CHR				0x00000020L	/* CHR += "pval" */
-#define TR1_MANA			0x00000040L	/* SP += "pval" * SP / 10 */
+#define TR1_MANA			0x00000040L	/* MP += "pval" * MP / 10 */
 /* #define TR1_SPELL_SPEED		0x00000080L */	/* Spell Speed += pval */
  #define TR1_SPELL			0x00000080L	/* Spell Speed += pval -- unused, remove me -- */
 //HOLE
