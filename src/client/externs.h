@@ -689,7 +689,7 @@ extern errr dump_messages(cptr name, int lines, int mode);
 extern void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color);
 
 /* client.c */
-extern bool write_mangrc(bool creds_only, bool audiopacks_only);
+extern bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only);
 typedef struct {
 	bool visible;
 	int x, y;

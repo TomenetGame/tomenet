@@ -3151,7 +3151,7 @@ static void quit_hook(cptr s) {
 #endif
 
 #ifndef WINDOWS
-	write_mangrc(FALSE, FALSE);
+	write_mangrc(FALSE, FALSE, FALSE);
 #endif
 
 #ifdef UNIX_SOCKETS
@@ -3322,7 +3322,7 @@ void client_init(char *argv1, bool skip) {
 	   The reason we do it *right now* is that it generates visual glitches later
 	   and prevents plog() output from being displayed.
 	   We only call a 'light' version (TRUE) in case .tomenetrc already exists. */
-	write_mangrc(TRUE, FALSE);
+	write_mangrc(TRUE, FALSE, FALSE);
 #endif
 
 	/* Set the "plog hook" */
@@ -3424,10 +3424,8 @@ void client_init(char *argv1, bool skip) {
 	/* don't memfrob an already memfrobbed password */
 	if (!rl_auto_relogin)
 #endif
-	if (server_protocol >= 2) {
-		/* Use memfrob on the password */
-		my_memfrob(pass, strlen(pass));
-	}
+	/* Use memfrob on the password */
+	my_memfrob(pass, strlen(pass));
 
 	/* Capitalize the name */
 	nick[0] = toupper(nick[0]);
@@ -3543,7 +3541,7 @@ void client_init(char *argv1, bool skip) {
 			case E_GAME_FULL:
 				quit("Sorry, the game is full.  Try again later.");
 			case E_IN_USE:
-				quit("That nickname is already in use.  If it is your nickname, wait 30 seconds and try again.");
+				quit("That nickname is already in use. If it is your nickname, wait 30 seconds and try again.");
 			case E_INVAL:
 				quit("The server didn't like your nickname, realname, or hostname.");
 				//note: not a good case for RETRY_LOGIN, since a name or even the hostname might be asian/cyrillic or so.. not easily solvable maybe
@@ -3595,6 +3593,7 @@ void client_init(char *argv1, bool skip) {
 		if (status == E_RETRY_CONTACT) {
 			Net_cleanup();
 			c_quit = FALSE; //un-quit, paranoia at this point though (only needed for Input_loop())
+			if (!rl_auto_relogin) my_memfrob(pass, strlen(pass)); //need to un-frob the password as it will get refrobbed right over there again
 			goto retry_contact;
 		}
 		/* bad character name? */

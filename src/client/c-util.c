@@ -8652,6 +8652,9 @@ void my_memfrob(void *s, int n) {
 	int i;
 	char *str;
 
+	/* Ancient servers don't know this */
+	if (server_protocol < 2) return;
+
 	str = (char*) s;
 
 	for (i = 0; i < n; i++) {
@@ -9305,7 +9308,7 @@ void audio_pack_selector(void) {
 #ifdef WINDOWS
 	store_audiopackfolders();
 #else /* assume POSIX */
-	write_mangrc(FALSE, TRUE);
+	write_mangrc(FALSE, FALSE, TRUE);
 #endif
 
 	/* Reload screen */

@@ -3065,7 +3065,7 @@ bool term_get_visibility(int term_idx) {
 
 /* automatically store name+password to ini file if we're a new player? */
 void store_crecedentials(void) {
-	write_mangrc(TRUE, FALSE);
+	write_mangrc(TRUE, TRUE, FALSE);
 }
 void get_screen_font_name(char *buf) {
 	/* fonts aren't available in command-line mode */

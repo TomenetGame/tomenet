@@ -1762,11 +1762,13 @@ void get_char_name(void) {
 		if (enter_password()) break;
 	}
 
+#if 0 /* let's only store crecedentials after an actually successful login instead, ie in nclient.c */
 //#ifdef WINDOWS
 	/* erase crecedentials? */
 	if (!strlen(nick) || !strlen(pass))
 		store_crecedentials();
 //#endif
+#endif
 
 	/* Message */
 	put_str("Connecting to server....", 21, 1);

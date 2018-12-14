@@ -512,8 +512,11 @@ static void write_mangrc_aux_line(int t, cptr sec_name, char *buf_org) {
 	strcpy(buf_org, buf);
 }
 #endif
-/* linux clients: save some prefs to .tomenetrc - C. Blue */
-bool write_mangrc(bool creds_only, bool audiopacks_only) {
+/* linux clients: save some prefs to .tomenetrc - C. Blue
+   If creds_only is TRUE, all other settings will be skipped. This is used to instantiate nick+pass in case they were still commented out. (1st run)
+   Already existing nick+pass will only be updated if update_creds is TRUE.
+   If audiopacks_only is TRUE, all other settings except for sound+music pack will be skipped. */
+bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 	char config_name2[100];
 	FILE *config, *config2;
 	char buf[1024];
@@ -530,263 +533,286 @@ bool write_mangrc(bool creds_only, bool audiopacks_only) {
 
 	/* Attempt to open file */
 	if (config2) {
-	    if (config) {
-		/* Read until end */
-		while (!feof(config)) {
-			/* Get a line */
-			if (!fgets(buf, 1024, config)) break;
-  if (audiopacks_only) {
-			/* modify the line */
-			if (!strncmp(buf, "soundpackFolder", 15)) {
-				strcpy(buf, "soundpackFolder\t\t");
-				strcat(buf, cfg_soundpackfolder);
-				strcat(buf, "\n");
-				compat_apf = TRUE;
-			} else if (!strncmp(buf, "musicpackFolder", 15)) {
-				strcpy(buf, "musicpackFolder\t\t");
-				strcat(buf, cfg_musicpackfolder);
-				strcat(buf, "\n");
-			}
-  } else {
-    if (!creds_only) {
-#ifdef USE_SOUND_2010
-			/* modify the line */
-			if (!strncmp(buf, "soundpackFolder", 15)) {
-				strcpy(buf, "soundpackFolder\t\t");
-				strcat(buf, cfg_soundpackfolder);
-				strcat(buf, "\n");
-				compat_apf = TRUE;
-			} else if (!strncmp(buf, "musicpackFolder", 15)) {
-				strcpy(buf, "musicpackFolder\t\t");
-				strcat(buf, cfg_musicpackfolder);
-				strcat(buf, "\n");
-			}
-			/* audio mixer settings */
-			if (!strncmp(buf, "audioMaster", 11)) {
-				strcpy(buf, "audioMaster\t\t");
-				strcat(buf, cfg_audio_master ? "1\n" : "0\n");
+		if (config) {
+			/* Read until end */
+			while (!feof(config)) {
+				/* Get a line */
+				if (!fgets(buf, 1024, config)) break;
 
-				/* add newly released entries to older config file versions */
-				if (!compat_apf) {
-					fputs("\nsoundpackFolder\t\tsound\n", config2);
-					fputs("musicpackFolder\t\tmusic\n\n", config2);
-				}
-			} else if (!strncmp(buf, "audioMusic", 10)) {
-				strcpy(buf, "audioMusic\t\t");
-				strcat(buf, cfg_audio_music ? "1\n" : "0\n");
-			} else if (!strncmp(buf, "audioSound", 10)) {
-				strcpy(buf, "audioSound\t\t");
-				strcat(buf, cfg_audio_sound ? "1\n" : "0\n");
-			} else if (!strncmp(buf, "audioWeather", 12)) {
-				strcpy(buf, "audioWeather\t\t");
-				strcat(buf, cfg_audio_weather ? "1\n" : "0\n");
-			} else if (!strncmp(buf, "audioVolumeMaster", 17)) {
-				strcpy(buf, "audioVolumeMaster\t");
-				strcat(buf, format("%d\n", cfg_audio_master_volume));
-			} else if (!strncmp(buf, "audioVolumeMusic", 16)) {
-				strcpy(buf, "audioVolumeMusic\t");
-				strcat(buf, format("%d\n", cfg_audio_music_volume));
-			} else if (!strncmp(buf, "audioVolumeSound", 16)) {
-				strcpy(buf, "audioVolumeSound\t");
-				strcat(buf, format("%d\n", cfg_audio_sound_volume));
-			} else if (!strncmp(buf, "audioVolumeWeather", 18)) {
-				strcpy(buf, "audioVolumeWeather\t");
-				strcat(buf, format("%d\n", cfg_audio_weather_volume));
-			}
+				if (audiopacks_only) {
+					/* modify the line */
+					if (!strncmp(buf, "soundpackFolder", 15)) {
+						strcpy(buf, "soundpackFolder\t\t");
+						strcat(buf, cfg_soundpackfolder);
+						strcat(buf, "\n");
+						compat_apf = TRUE;
+					} else if (!strncmp(buf, "musicpackFolder", 15)) {
+						strcpy(buf, "musicpackFolder\t\t");
+						strcat(buf, cfg_musicpackfolder);
+						strcat(buf, "\n");
+					}
+				} else {
+					if (!creds_only) {
+#ifdef USE_SOUND_2010
+						/* modify the line */
+						if (!strncmp(buf, "soundpackFolder", 15)) {
+							strcpy(buf, "soundpackFolder\t\t");
+							strcat(buf, cfg_soundpackfolder);
+							strcat(buf, "\n");
+							compat_apf = TRUE;
+						} else if (!strncmp(buf, "musicpackFolder", 15)) {
+							strcpy(buf, "musicpackFolder\t\t");
+							strcat(buf, cfg_musicpackfolder);
+							strcat(buf, "\n");
+						}
+						/* audio mixer settings */
+						if (!strncmp(buf, "audioMaster", 11)) {
+							strcpy(buf, "audioMaster\t\t");
+							strcat(buf, cfg_audio_master ? "1\n" : "0\n");
+
+							/* add newly released entries to older config file versions */
+							if (!compat_apf) {
+								fputs("\nsoundpackFolder\t\tsound\n", config2);
+								fputs("musicpackFolder\t\tmusic\n\n", config2);
+							}
+						} else if (!strncmp(buf, "audioMusic", 10)) {
+							strcpy(buf, "audioMusic\t\t");
+							strcat(buf, cfg_audio_music ? "1\n" : "0\n");
+						} else if (!strncmp(buf, "audioSound", 10)) {
+							strcpy(buf, "audioSound\t\t");
+							strcat(buf, cfg_audio_sound ? "1\n" : "0\n");
+						} else if (!strncmp(buf, "audioWeather", 12)) {
+							strcpy(buf, "audioWeather\t\t");
+							strcat(buf, cfg_audio_weather ? "1\n" : "0\n");
+						} else if (!strncmp(buf, "audioVolumeMaster", 17)) {
+							strcpy(buf, "audioVolumeMaster\t");
+							strcat(buf, format("%d\n", cfg_audio_master_volume));
+						} else if (!strncmp(buf, "audioVolumeMusic", 16)) {
+							strcpy(buf, "audioVolumeMusic\t");
+							strcat(buf, format("%d\n", cfg_audio_music_volume));
+						} else if (!strncmp(buf, "audioVolumeSound", 16)) {
+							strcpy(buf, "audioVolumeSound\t");
+							strcat(buf, format("%d\n", cfg_audio_sound_volume));
+						} else if (!strncmp(buf, "audioVolumeWeather", 18)) {
+							strcpy(buf, "audioVolumeWeather\t");
+							strcat(buf, format("%d\n", cfg_audio_weather_volume));
+						}
 #endif
 
 #ifdef USE_X11
-			/* Don't do this in terminal mode ('-c') */
-			if (!strcmp(ANGBAND_SYS, "x11")) {
-				/* new: save window positions/sizes/visibility (and possibly fonts) */
-				if (!strncmp(buf, "Mainwindow", 10))
-					write_mangrc_aux_line(0, "Mainwindow", buf);
-				else if (!strncmp(buf, "Mirrorwindow", 12))
-					write_mangrc_aux_line(1, "Mirrorwindow", buf);
-				else if (!strncmp(buf, "Recallwindow", 12))
-					write_mangrc_aux_line(2, "Recallwindow", buf);
-				else if (!strncmp(buf, "Choicewindow", 12))
-					write_mangrc_aux_line(3, "Choicewindow", buf);
-				else if (!strncmp(buf, "Term-4window", 12))
-					write_mangrc_aux_line(4, "Term-4window", buf);
-				else if (!strncmp(buf, "Term-5window", 12))
-					write_mangrc_aux_line(5, "Term-5window", buf);
-				else if (!strncmp(buf, "Term-6window", 12))
-					write_mangrc_aux_line(6, "Term-6window", buf);
-				else if (!strncmp(buf, "Term-7window", 12))
-					write_mangrc_aux_line(7, "Term-7window", buf);
+						/* Don't do this in terminal mode ('-c') */
+						if (!strcmp(ANGBAND_SYS, "x11")) {
+							/* new: save window positions/sizes/visibility (and possibly fonts) */
+							if (!strncmp(buf, "Mainwindow", 10))
+								write_mangrc_aux_line(0, "Mainwindow", buf);
+							else if (!strncmp(buf, "Mirrorwindow", 12))
+								write_mangrc_aux_line(1, "Mirrorwindow", buf);
+							else if (!strncmp(buf, "Recallwindow", 12))
+								write_mangrc_aux_line(2, "Recallwindow", buf);
+							else if (!strncmp(buf, "Choicewindow", 12))
+								write_mangrc_aux_line(3, "Choicewindow", buf);
+							else if (!strncmp(buf, "Term-4window", 12))
+								write_mangrc_aux_line(4, "Term-4window", buf);
+							else if (!strncmp(buf, "Term-5window", 12))
+								write_mangrc_aux_line(5, "Term-5window", buf);
+							else if (!strncmp(buf, "Term-6window", 12))
+								write_mangrc_aux_line(6, "Term-6window", buf);
+							else if (!strncmp(buf, "Term-7window", 12))
+								write_mangrc_aux_line(7, "Term-7window", buf);
  #if 0 /* keep n/a for now, not really needed */
-				else if (!strncmp(buf, "Term-8window", 12))
-					write_mangrc_aux_line(8, "Term-8window", buf);
-				else if (!strncmp(buf, "Term-9window", 12))
-					write_mangrc_aux_line(9, "Term-9window", buf);
+							else if (!strncmp(buf, "Term-8window", 12))
+								write_mangrc_aux_line(8, "Term-8window", buf);
+							else if (!strncmp(buf, "Term-9window", 12))
+								write_mangrc_aux_line(9, "Term-9window", buf);
  #endif
-			}
+						}
 #endif /* USE_X11 */
-    }
-			if (!strncmp(buf, "#nick", 5) && nick[0] && pass[0]) {
-				strcpy(buf, "nick\t\t");
-				strcat(buf, nick);
-				strcat(buf, "\n");
-			}
-			if (!strncmp(buf, "#pass", 5) && nick[0] && pass[0]) {
-				char tmp[MAX_CHARS];
+					}
 
-				strcpy(tmp, pass);
-				my_memfrob(tmp, strlen(tmp));
-				strcpy(buf, "pass\t\t");
-				strcat(buf, tmp); //security hole here, buf doesn't get zero'ed
-				memset(tmp, 0, MAX_CHARS);
-				strcat(buf, "\n");
-			}
+					if (!strncmp(buf, "#nick", 5) && nick[0] && pass[0]) {
+						/* Set accountname for the first time */
+						strcpy(buf, "nick\t\t");
+						strcat(buf, nick);
+						strcat(buf, "\n");
+					} else if (update_creds && !strncmp(buf, "nick", 4) && nick[0] && pass[0]) {
+						/* Set/update accountname */
+						strcpy(buf, "nick\t\t");
+						strcat(buf, nick);
+						strcat(buf, "\n");
+					}
 
-			/*** Everything else is ignored ***/
-  }
-			/* copy the line over */
-			fputs(buf, config2);
+					if (!strncmp(buf, "#pass", 5) && nick[0] && pass[0]) {
+						/* Set password for the first time */
+						char tmp[MAX_CHARS];
+
+						strcpy(tmp, pass);
+						my_memfrob(tmp, strlen(tmp));
+						strcpy(buf, "pass\t\t");
+						strcat(buf, tmp); //security hole here, buf doesn't get zero'ed
+						memset(tmp, 0, MAX_CHARS);
+						strcat(buf, "\n");
+					} else if (update_creds && !strncmp(buf, "pass", 4) && nick[0] && pass[0]) {
+						/* Set/update password */
+						char tmp[MAX_CHARS];
+
+						strcpy(tmp, pass);
+						my_memfrob(tmp, strlen(tmp));
+						strcpy(buf, "pass\t\t");
+						strcat(buf, tmp); //security hole here, buf doesn't get zero'ed
+						memset(tmp, 0, MAX_CHARS);
+						strcat(buf, "\n");
+					}
+
+					/*** Everything else is ignored ***/
+				}
+
+				/* copy the line over */
+				fputs(buf, config2);
 
 #ifdef USE_SOUND_2010
-    if (!creds_only) {
-			/* hack: disable one-time hint */
-			if (!strncmp(buf, "sound", 5) && strncmp(buf, "soundpackFolder", 15) && sound_hint) fputs("hintSound\n", config2);
-    }
+				if (!creds_only) {
+					/* hack: disable one-time hint */
+					if (!strncmp(buf, "sound", 5) && strncmp(buf, "soundpackFolder", 15) && sound_hint) fputs("hintSound\n", config2);
+				}
 #endif
-		}
+			}
 
-    if (!creds_only) {
-		/* hack: disable one-time hint */
-		if (bigmap_hint) fputs("\nhintBigmap\n", config2);
-    }
+			if (!creds_only) {
+				/* hack: disable one-time hint */
+				if (bigmap_hint) fputs("\nhintBigmap\n", config2);
+			}
 
-		fclose(config);
-		fclose(config2);
+			fclose(config);
+			fclose(config2);
 
-		/* replace old by new */
-		remove(mangrc_filename);
-		rename(config_name2, mangrc_filename);
+			/* replace old by new */
+			remove(mangrc_filename);
+			rename(config_name2, mangrc_filename);
 
-		return (TRUE); //success
-	    } else {
-		/* create .tomenetrc file, because it doesn't exist yet */
-		fputs("# TomeNET config file\n", config2);
-		fputs("# (basic version - generated automatically because it was missing)\n", config2);
-		fputs("\n\n", config2);
+			return (TRUE); //success
 
-		if (nick[0] && pass[0]) {
-			char tmp[MAX_CHARS];
-
-			fputs(format("nick\t\t%s\n", nick), config2);
-			strcpy(tmp, pass);
-			my_memfrob(tmp, strlen(tmp));
-			fputs(format("pass\t\t%s\n", tmp), config2);
-			memset(tmp, 0, MAX_CHARS);
 		} else {
-			fputs(format("#nick\t\t%s\n", nick), config2);
-			fputs(format("#pass\t\t%s\n", ""), config2);//keep pass secure maybe
-		}
-		fputs(format("#name\t\t%s\n", cname), config2);
-		fputs("\n", config2);
+			/* create .tomenetrc file, because it doesn't exist yet */
+			fputs("# TomeNET config file\n", config2);
+			fputs("# (basic version - generated automatically because it was missing)\n", config2);
+			fputs("\n\n", config2);
 
-		fputs(format("#meta\t\t%s\n", ""), config2);//keep using internal defaults
-		fputs(format("#server\t\t%s\n", svname), config2);
+			if (nick[0] && pass[0]) {
+				char tmp[MAX_CHARS];
+
+				fputs(format("nick\t\t%s\n", nick), config2);
+				strcpy(tmp, pass);
+				my_memfrob(tmp, strlen(tmp));
+				fputs(format("pass\t\t%s\n", tmp), config2);
+				memset(tmp, 0, MAX_CHARS);
+			} else {
+				fputs(format("#nick\t\t%s\n", nick), config2);
+				fputs(format("#pass\t\t%s\n", ""), config2);//keep pass secure maybe
+			}
+			fputs(format("#name\t\t%s\n", cname), config2);
+			fputs("\n", config2);
+
+			fputs(format("#meta\t\t%s\n", ""), config2);//keep using internal defaults
+			fputs(format("#server\t\t%s\n", svname), config2);
 #if 0 /* let's keep empty in case newbie accidentally went to RPG server first and then uncomments this entry */
-		fputs(format("#port\t\t%d\n", cfg_game_port), config2);
+			fputs(format("#port\t\t%d\n", cfg_game_port), config2);
 #else
-		fputs(format("#port\t\t%s\n", ""), config2);
+			fputs(format("#port\t\t%s\n", ""), config2);
 #endif
-		fputs("\n", config2);
+			fputs("\n", config2);
 
-		fputs(format("fps\t\t%d\n", cfg_client_fps), config2);//or maybe just write '100'?
-		fputs(format("#realname\t%s\n", real_name), config2);
-		fputs(format("#path\t\t%s\n", path), config2);
-		fputs("\n", config2);
+			fputs(format("fps\t\t%d\n", cfg_client_fps), config2);//or maybe just write '100'?
+			fputs(format("#realname\t%s\n", real_name), config2);
+			fputs(format("#path\t\t%s\n", path), config2);
+			fputs("\n", config2);
 
-		fputs("#fullauto\n", config2);
-		fputs("\n", config2);
+			fputs("#fullauto\n", config2);
+			fputs("\n", config2);
 
-		fputs("# Use lighter 'dark blue' colour to increase readability on some screens\n", config2);
-		fputs("# Sets blue to #0033ff instead of #0000ff\n", config2);
-		fputs("lighterDarkBlue\n", config2);
-		fputs("\n", config2);
+			fputs("# Use lighter 'dark blue' colour to increase readability on some screens\n", config2);
+			fputs("# Sets blue to #0033ff instead of #0000ff\n", config2);
+			fputs("lighterDarkBlue\n", config2);
+			fputs("\n", config2);
 
-		fputs("# Full color remapping\n", config2);
-		fputs("# 0 = black, 1 = white, 2 = gray, 3 = orange, 4 = red, 5 = green, 6 = blue\n", config2);
-		fputs("# 7 = umber, 8 = dark gray, 9 = light gray, 10 = violet, 11 = yellow\n", config2);
-		fputs("# 12 = light red, 13 = light green, 14 = light blue, 15 = light umber\n", config2);
-		fputs("#colormap_0\t\t#000000\n", config2);
-		fputs("#colormap_1\t\t#ffffff\n", config2);
-		fputs("#colormap_2\t\t#9d9d9d\n", config2);
-		fputs("#colormap_3\t\t#ff8d00\n", config2);
-		fputs("#colormap_4\t\t#b70000\n", config2);
-		fputs("#colormap_5\t\t#009d44\n", config2);
-		fputs("#colormap_6\t\t#0000ff\n", config2);
-		fputs("#colormap_7\t\t#8d6600\n", config2);
-		fputs("#colormap_8\t\t#666666\n", config2);
-		fputs("#colormap_9\t\t#d7d7d7\n", config2);
-		fputs("#colormap_10\t\t#af00ff\n", config2);
-		fputs("#colormap_11\t\t#ffff00\n", config2);
-		fputs("#colormap_12\t\t#ff3030\n", config2);
-		fputs("#colormap_13\t\t#00ff00\n", config2);
-		fputs("#colormap_14\t\t#00ffff\n", config2);
-		fputs("#colormap_15\t\t#c79d55\n", config2);
-		fputs("\n", config2);
+			fputs("# Full color remapping\n", config2);
+			fputs("# 0 = black, 1 = white, 2 = gray, 3 = orange, 4 = red, 5 = green, 6 = blue\n", config2);
+			fputs("# 7 = umber, 8 = dark gray, 9 = light gray, 10 = violet, 11 = yellow\n", config2);
+			fputs("# 12 = light red, 13 = light green, 14 = light blue, 15 = light umber\n", config2);
+			fputs("#colormap_0\t\t#000000\n", config2);
+			fputs("#colormap_1\t\t#ffffff\n", config2);
+			fputs("#colormap_2\t\t#9d9d9d\n", config2);
+			fputs("#colormap_3\t\t#ff8d00\n", config2);
+			fputs("#colormap_4\t\t#b70000\n", config2);
+			fputs("#colormap_5\t\t#009d44\n", config2);
+			fputs("#colormap_6\t\t#0000ff\n", config2);
+			fputs("#colormap_7\t\t#8d6600\n", config2);
+			fputs("#colormap_8\t\t#666666\n", config2);
+			fputs("#colormap_9\t\t#d7d7d7\n", config2);
+			fputs("#colormap_10\t\t#af00ff\n", config2);
+			fputs("#colormap_11\t\t#ffff00\n", config2);
+			fputs("#colormap_12\t\t#ff3030\n", config2);
+			fputs("#colormap_13\t\t#00ff00\n", config2);
+			fputs("#colormap_14\t\t#00ffff\n", config2);
+			fputs("#colormap_15\t\t#c79d55\n", config2);
+			fputs("\n", config2);
 
 //#ifdef USE_GRAPHICS
-		fputs(format("graphics\t\t%s\n", use_graphics ? "1" : "0"), config2);
-		fputs("\n", config2);
+			fputs(format("graphics\t\t%s\n", use_graphics ? "1" : "0"), config2);
+			fputs("\n", config2);
 //#endif
 //#ifdef USE_SOUND
-		fputs(format("sound\t\t\t%s\n", use_sound_org ? "1" : "0"), config2);
+			fputs(format("sound\t\t\t%s\n", use_sound_org ? "1" : "0"), config2);
 //#endif
 //#ifdef USE_SOUND_2010
-		fputs("hintSound\n", config2);
-		fputs(format("cacheAudio\t\t%s\n", no_cache_audio ? "0" : "1"), config2);
-		fputs(format("audioSampleRate\t\t%d\n", cfg_audio_rate), config2);
-		fputs(format("audioChannels\t\t%d\n", cfg_max_channels), config2);
-		fputs(format("audioBuffer\t\t%d\n", cfg_audio_buffer), config2);
-		fputs(format("soundpackFolder\t\t%s\n", cfg_soundpackfolder), config2);
-		fputs(format("musicpackFolder\t\t%s\n", cfg_musicpackfolder), config2);
-		fputs(format("audioMaster\t\t%s\n", cfg_audio_master ? "1" : "0"), config2);
-		fputs(format("audioMusic\t\t%s\n", cfg_audio_music ? "1" : "0"), config2);
-		fputs(format("audioSound\t\t%s\n", cfg_audio_sound ? "1" : "0"), config2);
-		fputs(format("audioWeather\t\t%s\n", cfg_audio_weather ? "1" : "0"), config2);
-		fputs(format("audioVolumeMaster\t%d\n", cfg_audio_master_volume), config2);
-		fputs(format("audioVolumeMusic\t%d\n", cfg_audio_music_volume), config2);
-		fputs(format("audioVolumeSound\t%d\n", cfg_audio_sound_volume), config2);
-		fputs(format("audioVolumeWeather\t%d\n", cfg_audio_weather_volume), config2);
-		fputs("\n", config2);
+			fputs("hintSound\n", config2);
+			fputs(format("cacheAudio\t\t%s\n", no_cache_audio ? "0" : "1"), config2);
+			fputs(format("audioSampleRate\t\t%d\n", cfg_audio_rate), config2);
+			fputs(format("audioChannels\t\t%d\n", cfg_max_channels), config2);
+			fputs(format("audioBuffer\t\t%d\n", cfg_audio_buffer), config2);
+			fputs(format("soundpackFolder\t\t%s\n", cfg_soundpackfolder), config2);
+			fputs(format("musicpackFolder\t\t%s\n", cfg_musicpackfolder), config2);
+			fputs(format("audioMaster\t\t%s\n", cfg_audio_master ? "1" : "0"), config2);
+			fputs(format("audioMusic\t\t%s\n", cfg_audio_music ? "1" : "0"), config2);
+			fputs(format("audioSound\t\t%s\n", cfg_audio_sound ? "1" : "0"), config2);
+			fputs(format("audioWeather\t\t%s\n", cfg_audio_weather ? "1" : "0"), config2);
+			fputs(format("audioVolumeMaster\t%d\n", cfg_audio_master_volume), config2);
+			fputs(format("audioVolumeMusic\t%d\n", cfg_audio_music_volume), config2);
+			fputs(format("audioVolumeSound\t%d\n", cfg_audio_sound_volume), config2);
+			fputs(format("audioVolumeWeather\t%d\n", cfg_audio_weather_volume), config2);
+			fputs("\n", config2);
 //#endif
 
 #ifdef USE_X11
 ///LINUX_TERM_CFG
 /* Don't do this in terminal mode ('-c') */
-if (!strcmp(ANGBAND_SYS, "x11")) {
-		write_mangrc_aux(0, "Mainwindow", config2);
-		write_mangrc_aux(1, "Mirrorwindow", config2);
-		write_mangrc_aux(2, "Recallwindow", config2);
-		write_mangrc_aux(3, "Choicewindow", config2);
-		write_mangrc_aux(4, "Term-4window", config2);
-		write_mangrc_aux(5, "Term-5window", config2);
-		write_mangrc_aux(6, "Term-6window", config2);
-		write_mangrc_aux(7, "Term-7window", config2);
-#if 0 /* keep n/a for now, not really needed */
-		write_mangrc_aux(8, "Term-8window", config2);
-		write_mangrc_aux(9, "Term-9window", config2);
+			if (!strcmp(ANGBAND_SYS, "x11")) {
+				write_mangrc_aux(0, "Mainwindow", config2);
+				write_mangrc_aux(1, "Mirrorwindow", config2);
+				write_mangrc_aux(2, "Recallwindow", config2);
+				write_mangrc_aux(3, "Choicewindow", config2);
+				write_mangrc_aux(4, "Term-4window", config2);
+				write_mangrc_aux(5, "Term-5window", config2);
+				write_mangrc_aux(6, "Term-6window", config2);
+				write_mangrc_aux(7, "Term-7window", config2);
+ #if 0 /* keep n/a for now, not really needed */
+				write_mangrc_aux(8, "Term-8window", config2);
+				write_mangrc_aux(9, "Term-9window", config2);
+ #endif
+			}
 #endif
-}
-#endif
 
-    if (!creds_only) {
-		fputs("\n", config2);
-		fputs("hintBigmap\n", config2);
-    }
+			if (!creds_only) {
+				fputs("\n", config2);
+				fputs("hintBigmap\n", config2);
+			}
 
-		fclose(config2);
+			fclose(config2);
 
-		/* rename temporary file to new ".tomenetrc" */
-		rename(config_name2, mangrc_filename);
-	    }
-	//shouldn't really happen, but Matfil had a weird bug where only 'hintBigMap' is left in his .tomenetrc as the only line, so maybe:
+			/* rename temporary file to new ".tomenetrc" */
+			rename(config_name2, mangrc_filename);
+		}
+
+	/* shouldn't really happen, but Matfil had a weird bug where only 'hintBigMap' is left in his .tomenetrc as the only line, so maybe: */
 	} else if (config) fclose(config);
 
 	return (FALSE); //failure
