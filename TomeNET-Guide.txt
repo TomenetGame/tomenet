@@ -13058,6 +13058,9 @@ Note that not every skill is available to every profession (class).
                                 owned by a player, ie an item that has been
                                 sold to the shop, is especially hard.
 
+                                Training the 'Stealing' skill will carry over
+                                strongly into its parent skill 'Sneakiness'.
+
     .Backstabbing               Lets you backstab enemies, afflicting high
                                 damage. Works if the opponent is asleep or
                                 running away in fear, exposing his back to you.
