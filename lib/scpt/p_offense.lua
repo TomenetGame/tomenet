@@ -314,7 +314,7 @@ HDRAINCLOUD = add_spell {
 			--                                                      -the_sandman
 	end,
 	["info"] = 	function()
-			return "dam ".."var".." rad 3 dur "..(5 + get_level(Ind, HDRAINCLOUD, 39) / 4)
+			return "dam 3% rad 3 dur "..(5 + get_level(Ind, HDRAINCLOUD, 39) / 4)
 	end,
 	["desc"] = 	{
 			"Curses an area temporarily, damaging those walking across.",

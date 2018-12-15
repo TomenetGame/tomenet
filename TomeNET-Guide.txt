@@ -16393,8 +16393,9 @@ school.
                     Shared spell (see above): O.Shadow, H.Offense.
                     This spell cannot be found in the Holy Offense tome.
 
-    Doomed Grounds  Has an annihilation effect, much weaker, but affecting a
-                    whole area. Unique monsters may resist.
+    Doomed Grounds  Has an annihilation effect, much weaker, but affecting
+                    a whole area, draining a small percentage of an enemy's
+                    hit points. Unique monsters may resist.
                     Required skill level for first spell level: 40.
                     Shared spell (see above): H.Offense, O.Shadow.
                     This spell cannot be found in the Shadow tome.
