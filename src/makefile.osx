@@ -153,7 +153,7 @@ X11BASE = /usr/X11R6
 ##
 ## With SDL
 #CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -lX11 -lgcrypt -lm -lSDL_mixer
+#LIBS = -lX11 -lm -lSDL_mixer
 #LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
@@ -161,7 +161,7 @@ X11BASE = /usr/X11R6
 ##
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0
-#LIBS = -lX11 -lgcrypt -lm
+#LIBS = -lX11 -lm
 #LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib
 
 
@@ -170,7 +170,7 @@ X11BASE = /usr/X11R6
 ##
 ## With SDL
 CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags` -DACC32
-LIBS = -lX11 -lncurses -lgcrypt -lm -lSDL_mixer
+LIBS = -lX11 -lncurses -lm -lSDL_mixer
 LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
@@ -178,7 +178,7 @@ LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 ##
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0
-#LIBS = -lX11 -lncurses -lgcrypt -lm
+#LIBS = -lX11 -lncurses -lm
 #LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib
 
 
@@ -187,7 +187,7 @@ LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 ##
 ## With SDL
 #CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -lncurses -lgcrypt -lm -lSDL_mixer
+#LIBS = -lncurses -lm -lSDL_mixer
 #LDFLAGS = -L/usr/local/lib `sdl-config --libs`
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
@@ -195,7 +195,7 @@ LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 ##
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0
-#LIBS = -lncurses -lgcrypt -lm
+#LIBS = -lncurses -lm
 #LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib
 
 
