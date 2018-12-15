@@ -235,7 +235,7 @@ function status(name)
 
     msg_print(Ind, "\255UStatus for "..players(p).name.." (Ind "..p..", id "..players(p).id..", party "..players(p).party..", \255"..cmode.."\255U)")
     msg_print(Ind, "Race: "..race_info[players(p).prace + 1].title.." ("..players(p).prace..")  Class: "..class_info[players(p).pclass + 1].title.." ("..players(p).pclass..")  Trait: "..trait_info[players(p).ptrait + 1].title.." ("..players(p).ptrait..")  Go: "..players(p).go_level)
-    msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."  MP: "..players(p).cmp.."/"..players(p).mmp.."  SN: "..players(p).csane.."/"..players(p).msane.."  St: "..players(p).cst.."/"..players(p).mst.."  Crt: "..players(p).xtra_crit.."  Lu: "..players(p).luck..ks)
+    msg_print(Ind, "HP: "..players(p).chp.."/"..players(p).mhp.."  MP: "..players(p).csp.."/"..players(p).msp.."  SN: "..players(p).csane.."/"..players(p).msane.."  St: "..players(p).cst.."/"..players(p).mst.."  Crt: "..players(p).xtra_crit.."  Lu: "..players(p).luck..ks)
 
     line1 = "Base Spd: "..bspeed.."   Spd: "..players(p).pspeed.."  MDLev: "..players(p).max_dlv
     linetab = ""
@@ -854,7 +854,7 @@ end
 
 --refills own spell points
 function fsp()
-    player.cmp = player.mmp
+    player.csp = player.msp
 end
 
 --display number of kills of a certain monster

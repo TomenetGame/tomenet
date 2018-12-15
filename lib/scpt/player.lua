@@ -44,14 +44,14 @@ end
 -- returns TRUE if there is a pb
 function increase_mana(i, amt)
 	local player = players(i)
-	player.cmp = player.cmp + amt
+	player.csp = player.csp + amt
 	player.redraw = bor(player.redraw, PR_MANA)
-	if (player.cmp < 0) then
-		player.cmp = 0
+	if (player.csp < 0) then
+		player.csp = 0
 		return TRUE
 	end
-	if (player.cmp > player.mmp) then
-		player.cmp = player.mmp
+	if (player.csp > player.msp) then
+		player.csp = player.msp
 	end
 	return FALSE
 end
