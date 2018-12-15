@@ -818,7 +818,7 @@ f:Stealth:Sneakiness%15
 f:Trapping:Sneakiness%20
 #f:Trapping:Disarming%15
 f:Backstabbing:Sneakiness%5
-f:Stealing:Sneakiness%20
+f:Stealing:Sneakiness%35
 f:Dodging:Sneakiness%15
 f:Calmness:Sneakiness%15
 #f:Interception:Sneakiness%7
