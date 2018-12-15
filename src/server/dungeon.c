@@ -795,36 +795,36 @@ static void regenhp(int Ind, int percent) {
 static void regenmana(int Ind, int percent) {
 	player_type *p_ptr = Players[Ind];
 	s32b        new_mana, new_mana_frac;
-	int                   old_cmp;
+	int                   old_csp;
 
 #ifdef MARTYR_NO_MANA
 	if (p_ptr->martyr) return;
 #endif
 
-	old_cmp = p_ptr->cmp;
-	new_mana = ((s32b)p_ptr->mmp) * percent + PY_REGEN_MNBASE;
+	old_csp = p_ptr->csp;
+	new_mana = ((s32b)p_ptr->msp) * percent + PY_REGEN_MNBASE;
 
-	p_ptr->cmp += new_mana >> 16;	/* div 65536 */
+	p_ptr->csp += new_mana >> 16;	/* div 65536 */
 	/* check for overflow */
-	if ((p_ptr->cmp < 0) && (old_cmp > 0))
-		p_ptr->cmp = MAX_SHORT;
+	if ((p_ptr->csp < 0) && (old_csp > 0))
+		p_ptr->csp = MAX_SHORT;
 
-	new_mana_frac = (new_mana & 0xFFFF) + p_ptr->cmp_frac;	/* mod 65536 */
+	new_mana_frac = (new_mana & 0xFFFF) + p_ptr->csp_frac;	/* mod 65536 */
 	if (new_mana_frac >= 0x10000L) {
-		p_ptr->cmp_frac = new_mana_frac - 0x10000L;
-		p_ptr->cmp++;
+		p_ptr->csp_frac = new_mana_frac - 0x10000L;
+		p_ptr->csp++;
 	} else {
-		p_ptr->cmp_frac = new_mana_frac;
+		p_ptr->csp_frac = new_mana_frac;
 	}
 
 	/* Must set frac to zero even if equal */
-	if (p_ptr->cmp >= p_ptr->mmp) {
-		p_ptr->cmp = p_ptr->mmp;
-		p_ptr->cmp_frac = 0;
+	if (p_ptr->csp >= p_ptr->msp) {
+		p_ptr->csp = p_ptr->msp;
+		p_ptr->csp_frac = 0;
 	}
 
 	/* Redraw mana */
-	if (old_cmp != p_ptr->cmp) {
+	if (old_csp != p_ptr->csp) {
 		/* Redraw */
 		p_ptr->redraw |= (PR_MANA);
 
@@ -2756,7 +2756,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 				} else {
 					int power = retaliate_mimic_power(Ind, choice - 1); /* immunity preference */
 					bool dir = FALSE;
-					if (innate_powers[power].smana > p_ptr->cmp && fallback) return (p_ptr->fail_no_melee);
+					if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
 #if 0
 					if (power) {
 						/* undirected power? */
@@ -2915,11 +2915,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 			}
 
 			cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
-			if (cost > p_ptr->cmp && fallback) return (p_ptr->fail_no_melee);
+			if (cost > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
 
 			/* Check that it's ok... more checks needed here? */
 			/* Limit amount of mana used? */
-			if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->cmp && 
+			if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->csp && 
 				exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell)))
 			{
 				cast_school_spell(Ind, item, spell, 5, -1, 0);
@@ -3003,7 +3003,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 
 		int power = retaliate_mimic_power(Ind, choice - 1);
 		bool dir = FALSE;
-		if (innate_powers[power].smana > p_ptr->cmp && fallback) return (p_ptr->fail_no_melee);
+		if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
 		switch (power / 32) {
 		case 0: dir = monster_spells4[power].uses_dir;
 			break;
@@ -4576,7 +4576,7 @@ static bool process_player_end_aux(int Ind) {
 				/* Currently it only serves to reduce 'stuck' players' HP,
 				   so we might lower it a bit - C. Blue */
 				int amt = 1 + ((p_ptr->lev)/10) + p_ptr->mhp / 100;
-				int amt2 = p_ptr->mmp / 35;
+				int amt2 = p_ptr->msp / 35;
 
 				/* hack: disruption shield suffers a lot if it's got to withstand the walls oO */
 				if (p_ptr->tim_manashield) {
@@ -4584,10 +4584,10 @@ static bool process_player_end_aux(int Ind) {
 
 					/* Be nice and don't let the disruption shield dissipate */
 					if (p_ptr->pclass == CLASS_MAGE) {
-						if (amt > p_ptr->cmp - 1) amt = p_ptr->cmp - 1;
+						if (amt > p_ptr->csp - 1) amt = p_ptr->csp - 1;
 					} else {
 						/* Other classes take double damage */
-						if (2 * amt > p_ptr->cmp - 1) amt = (p_ptr->cmp - 1) / 2;
+						if (2 * amt > p_ptr->csp - 1) amt = (p_ptr->csp - 1) / 2;
 					}
 
 					/* Disruption shield protects from this type of damage */
@@ -4806,7 +4806,7 @@ static bool process_player_end_aux(int Ind) {
 	p_ptr->regen_mana = TRUE;
 #endif
 	/* Hack -- regenerate mana 5/3 times faster */
-	if (p_ptr->cmp < p_ptr->mmp) {
+	if (p_ptr->csp < p_ptr->msp) {
 		if (in_pvparena(&p_ptr->wpos))
 			regenmana(Ind, ((regen_amount * 5 * PVP_MANA_REGEN_BOOST) * (p_ptr->regen_mana ? 2 : 1)) / 3);
 		else
@@ -4830,8 +4830,8 @@ static bool process_player_end_aux(int Ind) {
 	/* Increase regen by tim regen */
 	if (p_ptr->tim_regen) {
 		if (p_ptr->prace != RACE_VAMPIRE) regen_amount += p_ptr->tim_regen_pow;
-		else if (p_ptr->cmp) {
-			p_ptr->cmp--;
+		else if (p_ptr->csp) {
+			p_ptr->csp--;
 			hp_player_quiet(Ind, p_ptr->tim_regen_pow, TRUE);
 			p_ptr->redraw |= (PR_MANA | PR_HP);
 			p_ptr->window |= (PW_PLAYER);
@@ -4877,7 +4877,7 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Disturb if we are done resting */
-	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->cmp == p_ptr->mmp) && (p_ptr->cst == p_ptr->mst)
+	if ((p_ptr->resting) && (p_ptr->chp == p_ptr->mhp) && (p_ptr->csp == p_ptr->msp) && (p_ptr->cst == p_ptr->mst)
 	    && !(p_ptr->prace == RACE_ENT && p_ptr->food < PY_FOOD_FULL))
 		disturb(Ind, 0, 0);
 
@@ -5634,11 +5634,11 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Drain Mana */
-	if (p_ptr->drain_mana && p_ptr->cmp) {
-		p_ptr->cmp -= p_ptr->drain_mana;
-		if (magik(30)) p_ptr->cmp -= p_ptr->drain_mana;
+	if (p_ptr->drain_mana && p_ptr->csp) {
+		p_ptr->csp -= p_ptr->drain_mana;
+		if (magik(30)) p_ptr->csp -= p_ptr->drain_mana;
 
-		if (p_ptr->cmp < 0) p_ptr->cmp = 0;
+		if (p_ptr->csp < 0) p_ptr->csp = 0;
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_MANA);
@@ -9746,7 +9746,7 @@ void process_timers() {
 		if (p_ptr->warning_rest_cooldown) {
 			p_ptr->warning_rest_cooldown--;
 			if (!p_ptr->warning_rest_cooldown &&
-			    ((p_ptr->chp * 10) / p_ptr->mhp <= 5 || (p_ptr->mmp && ((p_ptr->cmp * 10) / p_ptr->mmp <= 2)))) {
+			    ((p_ptr->chp * 10) / p_ptr->mhp <= 5 || (p_ptr->msp && ((p_ptr->csp * 10) / p_ptr->msp <= 2)))) {
 				msg_print(i, "\374\377RHINT: Press \377oSHIFT+r\377R to rest, so your hit points will");
 				msg_print(i, "\374\377R      regenerate faster! Also true for mana and stamina!");
 				p_ptr->warning_rest++;

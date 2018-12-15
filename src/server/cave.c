@@ -3414,10 +3414,10 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			}
 
 			/* admins sees intensity of mana shields */
-			if (p_ptr->admin_dm && p2_ptr->tim_manashield && p2_ptr->mmp > 0) {
-				if (((p2_ptr->cmp * 100) / (p2_ptr->mmp * 10)) < 10) {
+			if (p_ptr->admin_dm && p2_ptr->tim_manashield && p2_ptr->msp > 0) {
+				if (((p2_ptr->csp * 100) / (p2_ptr->msp * 10)) < 10) {
 					int num;
-					num = (p2_ptr->cmp * 100) / (p2_ptr->mmp * 10);
+					num = (p2_ptr->csp * 100) / (p2_ptr->msp * 10);
 					c = '0' + num;
 				}
 			}
@@ -3806,11 +3806,11 @@ void lite_spot(int Ind, int y, int x) {
 						a = TERM_WHITE;
 					else a = TERM_ORANGE;
 				}
-				if (p_ptr->tim_manashield && p_ptr->mmp > 0 && p_ptr->cmp > 0) {
+				if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
 					if (p_ptr->tim_manashield > 15) a = TERM_YELLOW;
 					else a = TERM_ORANGE;
 				}
-				if (p_ptr->kinetic_shield && p_ptr->mmp > 0 && p_ptr->cmp > 0) {
+				if (p_ptr->kinetic_shield && p_ptr->msp > 0 && p_ptr->csp > 0) {
 					if (p_ptr->kinetic_shield > 10) a = TERM_YELLOW;
 					else a = TERM_ORANGE;
 				}
@@ -3844,10 +3844,10 @@ void lite_spot(int Ind, int y, int x) {
 					num = (p_ptr->chp * 95) / (p_ptr->mhp * 10);
 					c = '0' + num;
 				}
-			} else if (p_ptr->mmp > 0) {
-				if (((p_ptr->cmp * 95) / (p_ptr->mmp * 10)) <= TURN_CHAR_INTO_NUMBER) {
+			} else if (p_ptr->msp > 0) {
+				if (((p_ptr->csp * 95) / (p_ptr->msp * 10)) <= TURN_CHAR_INTO_NUMBER) {
 					int num;
-					num = (p_ptr->cmp * 95) / (p_ptr->mmp * 10);
+					num = (p_ptr->csp * 95) / (p_ptr->msp * 10);
 					c = '0' + num;
 				}
 			}

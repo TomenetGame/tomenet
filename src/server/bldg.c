@@ -804,7 +804,7 @@ static bool inn_comm(int Ind, int cmd)
 
 			/* Regen */
 			p_ptr->chp = p_ptr->mhp;
-			p_ptr->cmp = p_ptr->mmp;
+			p_ptr->csp = p_ptr->msp;
 
 			/* Restore status */
 			set_blind(Ind, 0);

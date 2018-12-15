@@ -47,7 +47,7 @@ void transform_level(int Ind, byte feat, int chance) {
 }
 
 //Returns 0 if successful
-//Else, return MP needed
+//Else, return SP needed
 int do_use_mp(int Ind, int mod, float mul) {
 	player_type *p_ptr = Players[Ind];
 	int cost = RUNE_DMG;
@@ -90,12 +90,12 @@ int do_use_mp(int Ind, int mod, float mul) {
 	if (p_ptr->rune_num_of_buffs)
 		cost += (1<<(p_ptr->rune_num_of_buffs + 3));
 
-	if (p_ptr->cmp < cost) {
+	if (p_ptr->csp < cost) {
 		return cost;
 	}
 
 	else {
-		p_ptr->cmp -= cost;
+		p_ptr->csp -= cost;
 	}
 
 	p_ptr->redraw |= PR_MANA; 
@@ -400,10 +400,10 @@ void cast_rune_spell (int Ind, int dir) {
 			break;
 	} 
 
-	//Failed to cast-- out of MP!
+	//Failed to cast-- out of SP!
 	if (notice) {
 		msg_format(Ind, "\377rYou don't have the energy: %d/%d. Needed: %d", 
-				p_ptr->cmp, p_ptr->mmp, notice);
+				p_ptr->csp, p_ptr->msp, notice);
 		return;
 #ifdef ALLOW_PERFECT_RUNE_CASTING
 	} else if (magik(chance_to_break)) {

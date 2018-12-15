@@ -58,8 +58,8 @@ bool lua_spell_success(magic_power *spell, int stat, char *oups_fct) {
 	chance -= adj_mag_stat[p_ptr->stat_ind[stat]] - 3;
 
 	/* Not enough mana to cast */
-	if (spell->mana_cost > p_ptr->cmp) {
-		chance += 5 * (spell->mana_cost - p_ptr->cmp);
+	if (spell->mana_cost > p_ptr->csp) {
+		chance += 5 * (spell->mana_cost - p_ptr->csp);
 	}
 
 	/* Extract the minimum failure rate */

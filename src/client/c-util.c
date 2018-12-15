@@ -5662,7 +5662,7 @@ Chain_Macro:
 							if (diff > 0) {
 								color = 'G';
 								if (penalty) color = 'y';
-								if (p_ptr->mmp < cost) color = 'o';
+								if (p_ptr->msp < cost) color = 'o';
 								//if (p_ptr->anti_magic && r_types[i].flag != T_GLPH) color = 'r'; //#define ENABLE_SHELL_ENCHANT
 								if (p_ptr->anti_magic) color = 'r';
 							}
@@ -8274,10 +8274,10 @@ void do_cmd_options(void) {
 	if (changed3 != c_cfg.font_map_solid_walls ||
 	    changed4a != c_cfg.hp_bar || changed4b != c_cfg.mp_bar || changed4c != c_cfg.st_bar) {
 		if (changed4a != c_cfg.hp_bar) hp_bar = c_cfg.hp_bar;
-		if (changed4b != c_cfg.mp_bar) mp_bar = c_cfg.mp_bar;
+		if (changed4b != c_cfg.mp_bar) sp_bar = c_cfg.mp_bar;
 		if (changed4c != c_cfg.st_bar) st_bar = c_cfg.st_bar;
 		prt_hp(hp_max, hp_cur, hp_bar);
-		prt_mp(mp_max, mp_cur, mp_bar);
+		prt_sp(sp_max, sp_cur, sp_bar);
 		prt_stamina(st_max, st_cur, st_bar);
 	}
 

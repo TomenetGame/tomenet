@@ -552,12 +552,12 @@ s_printf("Type: %s\n", r_types[type].name);
 	byte cost = rspell_cost(imperative, type, skill);
 
 	/* Not enough MP */
-	if (p_ptr->cmp < cost) {
+	if (p_ptr->csp < cost) {
 #ifdef LIFE_CASTING
  #ifdef SAFE_RETALIATION
 		if (retaliate) return 2;
  #endif
-		penalty += (cost - p_ptr->cmp);
+		penalty += (cost - p_ptr->csp);
  #ifdef FEEDBACK_MESSAGE
 		msg_1 = "\377rExhausted\377s, you";
  #endif
@@ -904,10 +904,10 @@ s_printf("Duration: %d\n", duration);
 
 	/* Mana */
 	calc_mana(Ind);
-	if (p_ptr->cmp > cost) p_ptr->cmp -= cost;
+	if (p_ptr->csp > cost) p_ptr->csp -= cost;
 	else { /* The damage is implied by the "Exhausted, ..." message, so not explicitly stated. */
-		take_hit(Ind, (cost-p_ptr->cmp), "magical exhaustion", 0);
-		p_ptr->cmp = 0;
+		take_hit(Ind, (cost-p_ptr->csp), "magical exhaustion", 0);
+		p_ptr->csp = 0;
 		p_ptr->shooting_till_kill = FALSE;
 	}
 	p_ptr->redraw |= PR_MANA;
