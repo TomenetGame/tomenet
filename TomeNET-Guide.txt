@@ -13203,7 +13203,9 @@ Note that not every skill is available to every profession (class).
                                 disarm it!
 
                                 Hint: Inscribe all your trapping components
-                                      '!=' for easy auto-pickup.
+                                      '!=' for easy auto-pickup and make sure
+                                      to create macros so you can place a trap
+                                      by simply pressing a single button.
 
 +Health                         Increases your hit points by 2 for each point.
                                 Note that this gain stacks with +LIFE items
