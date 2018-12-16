@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. December 2018 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 16. December 2018 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3647,6 +3647,9 @@ Mode: 'Soloist' (no-ghost and no PC-trading)
 This is exactly like above 'Unworldly' mode, except you cannot do any trading
 ie exchange of items or gold with other player characters. You can use all NPC
 stores as usual though.
+Furthermore, Soloists will not be affected by buff-spells other players cast on
+them, and they cannot pick up any items dropped by monsters that they didn't
+kill themselves.
 This mode allows you to have a 'single-player' experience of traditional
 rogue-like gaming. But of course you could still ask other players in chat to
 help you out of a dire situation..
