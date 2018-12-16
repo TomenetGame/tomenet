@@ -924,6 +924,7 @@ s16b find_skill(cptr name) {
 
 /* return value by which a skill was auto-modified by related skills
    instead of real point distribution by the player */
+//NOTE: Big problem - .action is not stored in the player's real skill info, so if it was changed meanwhile, the wrong value (the new one) will be used!
 static s32b modified_by_related(player_type *p_ptr, int i) {
 	int j, points;
 	s32b val = 0, jv, jm;
@@ -982,6 +983,7 @@ static s32b modified_by_related(player_type *p_ptr, int i) {
    So it wouldn't hurt really, if we allow this to correct any waste
    of skill points the user did. - C. Blue
    update_skills: Change base values and base mods to up-to-date values. */
+//NOTE: Big problem - .action is not stored in the player's real skill info, so if it was changed meanwhile, the wrong value (the new one) will be used!
 void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 	player_type *p_ptr = Players[Ind];
 	int j;
@@ -1142,6 +1144,7 @@ void respec_skills(int Ind, bool update_skills) {
 }
 
 /* return amount of points that were invested into a skill */
+//NOTE: Big problem - .action is not stored in the player's real skill info, so if it was changed meanwhile, the wrong value (the new one) will be used!
 int invested_skill_points(int Ind, int i) {
 	player_type *p_ptr = Players[Ind];
 	s32b v = 0, m = 0; /* base starting skill value, skill modifier */
