@@ -3435,13 +3435,24 @@ static void identify_mon_trap_load(int who, object_type *o_ptr) {
 	//p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 }
 
+/* For code convenience - standard way of sound effect when a monster hits a monster trap: */
+#ifdef USE_SOUND_2010
+ #if 1 /* let everyone nearby the trap hear it */
+  #define sound_mon_trap_aux(sfx) \
+	sound_near_monster(m_idx, sfx, NULL, SFX_TYPE_MON_SPELL)
+ #else /* let only the trapper hear it */
+  #define sound_mon_trap_aux(sfx) \
+	if (who > 0) sound(who, sfx, NULL, SFX_TYPE_MON_SPELL, FALSE);
+ #endif
+#endif
+
 /*
  * Monster hitting a rod trap -MWK-
  *
  * Return TRUE if the monster died
  */
 static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
-	int dam = 0, typ = 0, rad = 0;//unused huh, cloud = 0, cloudi = 0;
+	int dam = 0, typ = 0, rad = 0;
 	monster_type *m_ptr = &m_list[m_idx];
 	//monster_race    *r_ptr = race_inf(m_ptr);
 	int y = m_ptr->fy;
@@ -3563,6 +3574,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 		dam = 200;
 		rad = 5;
 		flg &= ~(PROJECT_LODF);
+		//+cloud hack, see below
 		break;
 	default:
 		return (FALSE);
@@ -3579,8 +3591,29 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 	}
 
+#ifdef USE_SOUND_2010
+	if (dam) {
+		if (rad) {
+			if (typ == GF_ROCKET) sound_mon_trap_aux("rocket");
+			else if (typ == GF_DETONATION) sound_mon_trap_aux("detonation");
+			else if (flg & PROJECT_STAY) sound_mon_trap_aux("cast_cloud");
+			else sound_mon_trap_aux("cast_ball");
+		}
+		else if (flg & PROJECT_EVSG) sound_mon_trap_aux("cast_bolt");
+	}
+#endif
+
 	/* Actually hit the monster */
-	if (typ) (void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
+	if (typ) {
+		(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
+		/* Hack for Havoc: It consists of ball+cloud */
+		if (typ == GF_HAVOC) {
+			project_time = 4;
+			project_interval = 10;
+			flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
+			(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam / 8, typ, flg, "");
+		}
+	}
 
 	/* Set rod recharge time */
 #ifndef NEW_MDEV_STACKING
@@ -3604,7 +3637,8 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 	//monster_race    *r_ptr = race_inf(m_ptr);
 	worldpos wpos = m_ptr->wpos;
-	int dam = 0, typ = 0, rad = 0;//unused huh   , cloud = 0, cloudi = 0;
+	int dam = 0, typ = 0, rad = 0;
+	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODO | PROJECT_LODF;
 	int k;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
@@ -3614,136 +3648,134 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 
 	/* Depend on staff type */
 	switch (o_ptr->sval) {
-		case SV_STAFF_IDENTIFY:
-		case SV_STAFF_DETECT_DOOR:
-		case SV_STAFF_DETECT_INVIS:
-		case SV_STAFF_DETECT_EVIL:
-		case SV_STAFF_DETECT_GOLD:
-		case SV_STAFF_DETECT_ITEM:
-		case SV_STAFF_MAPPING:
-		case SV_STAFF_PROBING:
-		case SV_STAFF_THE_MAGI:
-			return (FALSE);
+	case SV_STAFF_IDENTIFY:
+	case SV_STAFF_DETECT_DOOR:
+	case SV_STAFF_DETECT_INVIS:
+	case SV_STAFF_DETECT_EVIL:
+	case SV_STAFF_DETECT_GOLD:
+	case SV_STAFF_DETECT_ITEM:
+	case SV_STAFF_MAPPING:
+	case SV_STAFF_PROBING:
+	case SV_STAFF_THE_MAGI:
+		return (FALSE);
 
-		case SV_STAFF_REMOVE_CURSE:
-			typ = GF_DISP_UNDEAD;
-			rad = 3;
-			dam = 50;
-			break;
-		case SV_STAFF_DARKNESS:
-			//unlite_room(y, x);
-			typ = GF_DARK;//GF_DARK_WEAK;
-			dam = 20;
-			rad = 3;
-			break;
-		case SV_STAFF_SLOWNESS:
-			typ = GF_OLD_SLOW;
-			dam = damroll(5, 10);
-			rad = 3;
-			break;
-		case SV_STAFF_HASTE_MONSTERS:
-			typ = GF_OLD_SPEED;
-			dam = damroll(5, 10);
-			rad = 2;
-			break;
-		case SV_STAFF_SUMMONING:
-			for (k = 0; k < randint(4) ; k++)
-				id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0);
-			if (id) {
-				identify_mon_trap_load(who, o_ptr);
+	case SV_STAFF_REMOVE_CURSE:
+		typ = GF_DISP_UNDEAD;
+		rad = 3;
+		dam = 50;
+		break;
+	case SV_STAFF_DARKNESS:
+		//unlite_room(y, x);
+		typ = GF_DARK;//GF_DARK_WEAK;
+		dam = 20;
+		rad = 3;
+		break;
+	case SV_STAFF_SLOWNESS:
+		typ = GF_OLD_SLOW;
+		dam = damroll(5, 10);
+		rad = 3;
+		break;
+	case SV_STAFF_HASTE_MONSTERS:
+		typ = GF_OLD_SPEED;
+		dam = damroll(5, 10);
+		rad = 2;
+		break;
+	case SV_STAFF_SUMMONING:
+		for (k = 0; k < randint(4) ; k++)
+			id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0);
+		if (id) {
+			identify_mon_trap_load(who, o_ptr);
 #ifdef USE_SOUND_2010
-				sound_near_site(y, x, &wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			sound_mon_trap_aux("summon");
 #endif
-			}
-			return (FALSE);
-		case SV_STAFF_TELEPORTATION:
-			typ = GF_AWAY_ALL;
-			dam = 100;
-			break;
-		case SV_STAFF_STARLITE:
-			/* Hack */
-			typ = GF_STARLITE;//GF_LITE;//GF_LITE_WEAK;
-			dam = damroll(6, 8);
-			rad = 3;
-			break;
-		case SV_STAFF_LITE:
-//			lite_room(y, x);
-			typ = GF_LITE;//GF_LITE_WEAK;
-			dam = damroll(3, 8);
-			rad = 2;
-			break;
-		case SV_STAFF_DETECT_TRAP:
-//                        m_ptr->smart |= SM_NOTE_TRAP;
-			return (FALSE);
-		case SV_STAFF_CURE_SERIOUS:
-			typ = GF_OLD_HEAL;
-			dam = damroll(6, 8);
-			break;
-		case SV_STAFF_CURING:
-			typ = GF_CURING; //GF_OLD_HEAL;
-			dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //randint(4); /* hack */
-			break;
-		case SV_STAFF_HEALING:
-			typ = GF_OLD_HEAL;
-			dam = 300;
-			break;
-		case SV_STAFF_SLEEP_MONSTERS:
-			typ = GF_OLD_SLEEP;
-			dam = damroll(5, 10);
-			rad = 3;
-			break;
-		case SV_STAFF_SLOW_MONSTERS:
-			typ = GF_OLD_SLOW;
-			dam = damroll(5, 10);
-			rad = 3;
-			break;
-		case SV_STAFF_SPEED:
-			typ = GF_OLD_SPEED;
-			dam = damroll(5, 10);
-			break;
-		case SV_STAFF_DISPEL_EVIL:
-			typ = GF_DISP_EVIL;
-			dam = 60;
-			rad = 3;
-			break;
-		case SV_STAFF_POWER:
-			typ = GF_DISP_ALL;
-			dam = 80;
-			rad = 3;
-			break;
-		case SV_STAFF_HOLINESS:
-			typ = GF_DISP_EVIL;
-			dam = 100;
-			rad = 3;
-			break;
+		}
+		return (FALSE);
+	case SV_STAFF_TELEPORTATION:
+		typ = GF_AWAY_ALL;
+		dam = 100;
+		break;
+	case SV_STAFF_STARLITE:
+		/* Hack */
+		typ = GF_STARLITE;//GF_LITE;//GF_LITE_WEAK;
+		dam = damroll(6, 8);
+		rad = 3;
+		break;
+	case SV_STAFF_LITE:
+		//lite_room(y, x);
+		typ = GF_LITE;//GF_LITE_WEAK;
+		dam = damroll(3, 8);
+		rad = 2;
+		break;
+	case SV_STAFF_DETECT_TRAP:
+		//m_ptr->smart |= SM_NOTE_TRAP;
+		return (FALSE);
+	case SV_STAFF_CURE_SERIOUS:
+		typ = GF_OLD_HEAL;
+		dam = damroll(6, 8);
+		break;
+	case SV_STAFF_CURING:
+		typ = GF_CURING; //GF_OLD_HEAL;
+		dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //randint(4); /* hack */
+		break;
+	case SV_STAFF_HEALING:
+		typ = GF_OLD_HEAL;
+		dam = 300;
+		break;
+	case SV_STAFF_SLEEP_MONSTERS:
+		typ = GF_OLD_SLEEP;
+		dam = damroll(5, 10);
+		rad = 3;
+		break;
+	case SV_STAFF_SLOW_MONSTERS:
+		typ = GF_OLD_SLOW;
+		dam = damroll(5, 10);
+		rad = 3;
+		break;
+	case SV_STAFF_SPEED:
+		typ = GF_OLD_SPEED;
+		dam = damroll(5, 10);
+		break;
+	case SV_STAFF_DISPEL_EVIL:
+		typ = GF_DISP_EVIL;
+		dam = 60;
+		rad = 3;
+		break;
+	case SV_STAFF_POWER:
+		typ = GF_DISP_ALL;
+		dam = 80;
+		rad = 3;
+		break;
+	case SV_STAFF_HOLINESS:
+		typ = GF_DISP_EVIL;
+		dam = 100;
+		rad = 3;
+		break;
 #if 0
-		case SV_STAFF_GENOCIDE:
-		{
-			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-                        genocide_aux(FALSE, r_ptr->d_char);
-			/* although there's no point in a multiple genocide trap... */
-                        return (cave[y][x].m_idx == 0 ? TRUE : FALSE);
+	case SV_STAFF_GENOCIDE: {
+		monster_race *r_ptr = &r_info[m_ptr->r_idx];
+		genocide_aux(FALSE, r_ptr->d_char);
+		/* although there's no point in a multiple genocide trap... */
+		return (cave[y][x].m_idx == 0 ? TRUE : FALSE);
 		}
-#endif	// 0
-		case SV_STAFF_GENOCIDE:
-		{
-			monster_race    *r_ptr = race_inf(m_ptr);
-			genocide_aux(0, &wpos, r_ptr->d_char);
-			identify_mon_trap_load(who, o_ptr);
-			/* although there's no point in a multiple genocide trap...
-			   ..monsters could resist at 1st attempt maybe? */
-			return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+#endif
+	case SV_STAFF_GENOCIDE: {
+		monster_race    *r_ptr = race_inf(m_ptr);
+		genocide_aux(0, &wpos, r_ptr->d_char);
+		identify_mon_trap_load(who, o_ptr);
+		/* although there's no point in a multiple genocide trap...
+		   ..monsters could resist at 1st attempt maybe? */
+		return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 		}
-		case SV_STAFF_EARTHQUAKES:
-			earthquake(&wpos, y, x, 10);
-			identify_mon_trap_load(who, o_ptr);
-			return (FALSE);
-		case SV_STAFF_DESTRUCTION:
-			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
-			identify_mon_trap_load(who, o_ptr);
-			return (FALSE);
-		default:
-			return (FALSE);
+	case SV_STAFF_EARTHQUAKES:
+		earthquake(&wpos, y, x, 10);
+		identify_mon_trap_load(who, o_ptr);
+		return (FALSE);
+	case SV_STAFF_DESTRUCTION:
+		destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
+		identify_mon_trap_load(who, o_ptr);
+		return (FALSE);
+	default:
+		return (FALSE);
 	}
 
 	identify_mon_trap_load(who, o_ptr);
@@ -3756,8 +3788,20 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 	/* ..and new, also radius (if any, and if not kind of stone-prison like effect (rad 1) - which is paranoia since we don't have that atm) */
 	if (rad >= 2) rad += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty / 15;
 
+#ifdef USE_SOUND_2010
+	if (dam) {
+		if (rad) {
+			if (typ == GF_ROCKET) sound_mon_trap_aux("rocket");
+			else if (typ == GF_DETONATION) sound_mon_trap_aux("detonation");
+			else if (flg & PROJECT_STAY) sound_mon_trap_aux("cast_cloud");
+			else sound_mon_trap_aux("cast_ball");
+		}
+		else if (flg & PROJECT_EVSG) sound_mon_trap_aux("cast_bolt");
+	}
+#endif
+
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODO | PROJECT_LODF, "");
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -3770,7 +3814,8 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 	worldpos wpos = m_ptr->wpos;
-	int dam = 0, typ = 0, rad = 0;//unused huh  , cloud = 0, cloudi = 0;
+	int dam = 0, typ = 0, rad = 0;
+	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODO | PROJECT_LODF;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	int k;
@@ -3783,185 +3828,195 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 
 	/* Depend on scroll type */
 	switch (o_ptr->sval) {
-		case SV_SCROLL_CURSE_ARMOR:
-		case SV_SCROLL_CURSE_WEAPON:
-		case SV_SCROLL_TRAP_CREATION: /* these don't work :-( */
-		case SV_SCROLL_WORD_OF_RECALL: /* should these? */
-		case SV_SCROLL_IDENTIFY:
-		case SV_SCROLL_STAR_IDENTIFY:
-		case SV_SCROLL_MAPPING:
-		case SV_SCROLL_DETECT_GOLD:
-		case SV_SCROLL_DETECT_ITEM:
-		case SV_SCROLL_ENCHANT_ARMOR:
-		case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
-		case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
-		case SV_SCROLL_STAR_ENCHANT_ARMOR:
-		case SV_SCROLL_STAR_ENCHANT_WEAPON:
-		case SV_SCROLL_RECHARGING:
-		case SV_SCROLL_DETECT_DOOR:
-		case SV_SCROLL_DETECT_INVIS:
-		case SV_SCROLL_SATISFY_HUNGER:
-		case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
-			return (FALSE);
+	case SV_SCROLL_CURSE_ARMOR:
+	case SV_SCROLL_CURSE_WEAPON:
+	case SV_SCROLL_TRAP_CREATION: /* these don't work :-( */
+	case SV_SCROLL_WORD_OF_RECALL: /* should these? */
+	case SV_SCROLL_IDENTIFY:
+	case SV_SCROLL_STAR_IDENTIFY:
+	case SV_SCROLL_MAPPING:
+	case SV_SCROLL_DETECT_GOLD:
+	case SV_SCROLL_DETECT_ITEM:
+	case SV_SCROLL_ENCHANT_ARMOR:
+	case SV_SCROLL_ENCHANT_WEAPON_TO_HIT:
+	case SV_SCROLL_ENCHANT_WEAPON_TO_DAM:
+	case SV_SCROLL_STAR_ENCHANT_ARMOR:
+	case SV_SCROLL_STAR_ENCHANT_WEAPON:
+	case SV_SCROLL_RECHARGING:
+	case SV_SCROLL_DETECT_DOOR:
+	case SV_SCROLL_DETECT_INVIS:
+	case SV_SCROLL_SATISFY_HUNGER:
+	case SV_SCROLL_TRAP_DOOR_DESTRUCTION:
+		return (FALSE);
 
-		case SV_SCROLL_RUNE_OF_PROTECTION:
-			typ = GF_STOP;
-			dam = 100;
-		case SV_SCROLL_PROTECTION_FROM_EVIL:
-			typ = GF_DISP_EVIL;
-			dam = 100;
-			rad = 3;
-		case SV_SCROLL_DARKNESS:
-			//unlite_room(y, x);
-			typ = GF_DARK;//GF_DARK_WEAK;
-			dam = 15;
-			rad = 3;
-			break;
-		case SV_SCROLL_AGGRAVATE_MONSTER:
-			if (who > 0) {
-				identify_mon_trap_load(who, o_ptr);
-
+	case SV_SCROLL_RUNE_OF_PROTECTION:
+		typ = GF_STOP;
+		dam = 100;
+	case SV_SCROLL_PROTECTION_FROM_EVIL:
+		typ = GF_DISP_EVIL;
+		dam = 100;
+		rad = 3;
+	case SV_SCROLL_DARKNESS:
+		//unlite_room(y, x);
+		typ = GF_DARK;//GF_DARK_WEAK;
+		dam = 15;
+		rad = 3;
+		break;
+	case SV_SCROLL_AGGRAVATE_MONSTER:
+		if (who > 0) { /* TODO: Make aggravate_monsters() independant of Ind! */
+			identify_mon_trap_load(who, o_ptr);
 #ifdef USE_SOUND_2010
-				sound_near(who, "shriek", NULL, SFX_TYPE_MON_SPELL);
+			sound_mon_trap_aux("shriek");
 #endif
-				msg_print(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
-				msg_print_near(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
-				aggravate_monsters(who, m_idx);
-			}
-			return (FALSE);
-		case SV_SCROLL_SUMMON_MONSTER:
-			if (no_summon) return FALSE;
-			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3) ; k++) id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0);
-			summon_override_checks = SO_NONE;
-			if (id) {
-				identify_mon_trap_load(who, o_ptr);
+			msg_print(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
+			msg_print_near(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
+		} else
+		return (FALSE);
+	case SV_SCROLL_SUMMON_MONSTER:
+		if (no_summon) return FALSE;
+		summon_override_checks = SO_IDDC;
+		for (k = 0; k < randint(3) ; k++) id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_ALL_U98, 1, 0);
+		summon_override_checks = SO_NONE;
+		if (id) {
+			identify_mon_trap_load(who, o_ptr);
 #ifdef USE_SOUND_2010
-				sound_near_site(y, x, &wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			sound_mon_trap_aux("summon");
 #endif
-			}
-			return (FALSE);
-		case SV_SCROLL_SUMMON_UNDEAD:
-			if (no_summon) return FALSE;
-			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3) ; k++) id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD, 1, 0);
-			summon_override_checks = SO_NONE;
-			if (id) {
-				identify_mon_trap_load(who, o_ptr);
+		}
+		return (FALSE);
+	case SV_SCROLL_SUMMON_UNDEAD:
+		if (no_summon) return FALSE;
+		summon_override_checks = SO_IDDC;
+		for (k = 0; k < randint(3) ; k++) id |= summon_specific(&wpos, y, x, getlevel(&wpos), 0, SUMMON_UNDEAD, 1, 0);
+		summon_override_checks = SO_NONE;
+		if (id) {
+			identify_mon_trap_load(who, o_ptr);
 #ifdef USE_SOUND_2010
-				sound_near_site(y, x, &wpos, 0, "summon", NULL, SFX_TYPE_MON_SPELL, FALSE);
+			sound_mon_trap_aux("summon");
 #endif
-			}
-			return (FALSE);
-		case SV_SCROLL_PHASE_DOOR:
-			typ = GF_AWAY_ALL;
-			dam = 10;
-			break;
-		case SV_SCROLL_TELEPORT:
-			typ = GF_AWAY_ALL;
-			dam = 100;
-			break;
-		case SV_SCROLL_TELEPORT_LEVEL:
+		}
+		return (FALSE);
+	case SV_SCROLL_PHASE_DOOR:
+		typ = GF_AWAY_ALL;
+		dam = 10;
+		break;
+	case SV_SCROLL_TELEPORT:
+		typ = GF_AWAY_ALL;
+		dam = 100;
+		break;
+	case SV_SCROLL_TELEPORT_LEVEL:
+		delete_monster(&wpos, y, x, TRUE);
+		identify_mon_trap_load(who, o_ptr);
+		return (TRUE);
+	case SV_SCROLL_LIGHT:
+		//lite_room(y, x);
+		typ = GF_LITE;//GF_LITE_WEAK;
+		dam = damroll(3, 6);
+		rad = 2;
+		break;
+	case SV_SCROLL_DETECT_TRAP:
+		//m_ptr->smart |= SM_NOTE_TRAP;
+		return (FALSE);
+	/* Hrm aren't they too small..? */
+	case SV_SCROLL_BLESSING:
+		typ = GF_HOLY_FIRE;
+		dam = damroll(3, 4);
+		break;
+	case SV_SCROLL_HOLY_CHANT:
+		typ = GF_HOLY_FIRE;
+		dam = damroll(10, 4);
+		break;
+	case SV_SCROLL_HOLY_PRAYER:
+		typ = GF_HOLY_FIRE;
+		dam = damroll(30, 4);
+		break;
+	case SV_SCROLL_MONSTER_CONFUSION:
+		typ = GF_OLD_CONF;
+		dam = damroll(5, 10);
+		break;
+	case SV_SCROLL_STAR_DESTRUCTION:
+		destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
+		identify_mon_trap_load(who, o_ptr);
+		return (FALSE);
+	case SV_SCROLL_DISPEL_UNDEAD:
+		typ = GF_DISP_UNDEAD;
+		rad = 5;
+		dam = 100;
+		break;
+	case SV_SCROLL_GENOCIDE:
+		genocide_aux(0, &wpos, r_ptr->d_char);
+		/* although there's no point in a multiple genocide trap... */
+		//return (!(r_ptr->flags1 & RF1_UNIQUE));
+		identify_mon_trap_load(who, o_ptr);
+		return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
+	case SV_SCROLL_OBLITERATION:
+		obliteration(-m_idx);
+		identify_mon_trap_load(who, o_ptr);
+		return(TRUE);
+	case SV_SCROLL_ACQUIREMENT:
+		acquirement(who, &wpos, y, x, 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
+		identify_mon_trap_load(who, o_ptr);
+		return (FALSE);
+	case SV_SCROLL_STAR_ACQUIREMENT:
+		acquirement(who, &wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
+		identify_mon_trap_load(who, o_ptr);
+		return (FALSE);
+	case SV_SCROLL_REMOVE_CURSE:
+		typ = GF_DISP_UNDEAD;
+		rad = 5;
+		dam = 30;
+		break;
+	case SV_SCROLL_STAR_REMOVE_CURSE:
+		typ = GF_DISP_UNDEAD;
+		rad = 5;
+		dam = 200;
+		break;
+	case SV_SCROLL_LIFE:
+		if (r_ptr->d_char == 'G') {
 			delete_monster(&wpos, y, x, TRUE);
 			identify_mon_trap_load(who, o_ptr);
-			return (TRUE);
-		case SV_SCROLL_LIGHT:
-			//lite_room(y, x);
-			typ = GF_LITE;//GF_LITE_WEAK;
-			dam = damroll(3, 6);
-			rad = 2;
-			break;
-		case SV_SCROLL_DETECT_TRAP:
-			//m_ptr->smart |= SM_NOTE_TRAP;
-			return (FALSE);
-		/* Hrm aren't they too small..? */
-		case SV_SCROLL_BLESSING:
-			typ = GF_HOLY_FIRE;
-			dam = damroll(3, 4);
-			break;
-		case SV_SCROLL_HOLY_CHANT:
-			typ = GF_HOLY_FIRE;
-			dam = damroll(10, 4);
-			break;
-		case SV_SCROLL_HOLY_PRAYER:
-			typ = GF_HOLY_FIRE;
-			dam = damroll(30, 4);
-			break;
-		case SV_SCROLL_MONSTER_CONFUSION:
-			typ = GF_OLD_CONF;
-			dam = damroll(5, 10);
-			break;
-		case SV_SCROLL_STAR_DESTRUCTION:
-			destroy_area(&wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
-			identify_mon_trap_load(who, o_ptr);
-			return (FALSE);
-		case SV_SCROLL_DISPEL_UNDEAD:
-			typ = GF_DISP_UNDEAD;
-			rad = 5;
-			dam = 100;
-			break;
-		case SV_SCROLL_GENOCIDE:
-			genocide_aux(0, &wpos, r_ptr->d_char);
-			/* although there's no point in a multiple genocide trap... */
-			//return (!(r_ptr->flags1 & RF1_UNIQUE));
-			identify_mon_trap_load(who, o_ptr);
-			return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
-		case SV_SCROLL_OBLITERATION:
-			obliteration(-m_idx);
-			identify_mon_trap_load(who, o_ptr);
-			return(TRUE);
-		case SV_SCROLL_ACQUIREMENT:
-			acquirement(who, &wpos, y, x, 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
-			identify_mon_trap_load(who, o_ptr);
-			return (FALSE);
-		case SV_SCROLL_STAR_ACQUIREMENT:
-			acquirement(who, &wpos, y, x, randint(2) + 1, TRUE, (wpos.wz != 0), make_resf(Players[who]));
-			identify_mon_trap_load(who, o_ptr);
-			return (FALSE);
-		case SV_SCROLL_REMOVE_CURSE:
-			typ = GF_DISP_UNDEAD;
-			rad = 5;
-			dam = 30;
-			break;
-		case SV_SCROLL_STAR_REMOVE_CURSE:
-			typ = GF_DISP_UNDEAD;
-			rad = 5;
-			dam = 200;
-			break;
-		case SV_SCROLL_LIFE:
-			if (r_ptr->d_char == 'G') {
-				delete_monster(&wpos, y, x, TRUE);
-				identify_mon_trap_load(who, o_ptr);
-			}
-			return (TRUE);
-		case SV_SCROLL_FIRE:
-			typ = GF_FIRE;
-			rad = 3;
-			dam = 100;
-			break;
-		case SV_SCROLL_ICE:
-			typ = GF_ICE;
-			rad = 3;
-			//dam = 200;
-			dam = 90;
-			break;
-		case SV_SCROLL_CHAOS:
-			typ = GF_CHAOS;
-			rad = 3;
-			dam = 110;
-			break;
-		default:
-			return (FALSE);
+		}
+		return (TRUE);
+	case SV_SCROLL_FIRE:
+		typ = GF_FIRE;
+		rad = 3;
+		dam = 100;
+		break;
+	case SV_SCROLL_ICE:
+		typ = GF_ICE;
+		rad = 3;
+		//dam = 200;
+		dam = 90;
+		break;
+	case SV_SCROLL_CHAOS:
+		typ = GF_CHAOS;
+		rad = 3;
+		dam = 110;
+		break;
+	default:
+		return (FALSE);
 	}
 
 	identify_mon_trap_load(who, o_ptr);
+
+#ifdef USE_SOUND_2010
+	if (dam) {
+		if (rad) {
+			if (typ == GF_ROCKET) sound_mon_trap_aux("rocket");
+			else if (typ == GF_DETONATION) sound_mon_trap_aux("detonation");
+			else if (flg & PROJECT_STAY) sound_mon_trap_aux("cast_cloud");
+			else sound_mon_trap_aux("cast_ball");
+		}
+		else if (flg & PROJECT_EVSG) sound_mon_trap_aux("cast_bolt");
+	}
+#endif
 
 	/* Trapping skill influences damage - C. Blue */
 	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 4;
 
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODO | PROJECT_LODF, "");
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -3972,7 +4027,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
  */
 static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
-	int dam = 0, typ = 0, rad = 0;//, cloud = 0, cloudi = 0;
+	int dam = 0, typ = 0, rad = 0;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	cave_type **zcave;
@@ -3982,166 +4037,175 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 
 	/* Depend on wand type */
 	switch ((o_ptr->sval == SV_WAND_WONDER) ? rand_int(SV_WAND_WONDER) : o_ptr->sval) {
-		case SV_WAND_HEAL_MONSTER:
-			typ = GF_OLD_HEAL;
-			dam = damroll(4, 6);
-			break;
-		case SV_WAND_HASTE_MONSTER:
-			typ = GF_OLD_SPEED;
-			dam = damroll(5, 10);
-			break;
-		case SV_WAND_CLONE_MONSTER:
-			typ = GF_OLD_CLONE;
-			break;
-		case SV_WAND_TELEPORT_AWAY:
-			typ = GF_AWAY_ALL;
-			dam = MAX_SIGHT * 5;
-		        break;
-		case SV_WAND_DISARMING:
-			return (FALSE);
-		case SV_WAND_TRAP_DOOR_DEST:
-			return (FALSE);
-		case SV_WAND_STONE_TO_MUD:
-			typ = GF_KILL_WALL;
-			dam = 50 + randint(30);
-			break;
-		case SV_WAND_LITE:
-			typ = GF_LITE;//GF_LITE_WEAK;
-			dam = damroll(6, 8);
-			flg &= ~(PROJECT_NODF);
-			break;
-		case SV_WAND_SLEEP_MONSTER:
-			typ = GF_OLD_SLEEP;
-			dam = damroll(5, 10);
-			break;
-		case SV_WAND_SLOW_MONSTER:
-			typ = GF_OLD_SLOW;
-			dam = damroll(5, 10);
-			break;
-		case SV_WAND_CONFUSE_MONSTER:
-			typ = GF_OLD_CONF;
-			dam = damroll(5, 10);
-			break;
-		case SV_WAND_FEAR_MONSTER:
-			typ = GF_TURN_ALL;
-			dam = damroll(5, 10);
-			break;
-		case SV_WAND_DRAIN_LIFE:
-			typ = GF_OLD_DRAIN;
-			dam = 10 + rand_int(5);
-			perc = TRUE;
-			break;
-		case SV_WAND_POLYMORPH:
-			typ = GF_OLD_POLY;
-			dam = damroll(5, 10);
-			break;
-		case SV_WAND_STINKING_CLOUD:
-			typ = GF_POIS;
-			dam = 20;//4 (if cloud)
-			rad = 2;
-			//cloud = 4;
-			//cloudi = 9;
-			break;
-		case SV_WAND_MAGIC_MISSILE:
-			typ = GF_MISSILE;
-			dam = damroll(3, 6);
-			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
-			break;
-		case SV_WAND_ACID_BOLT:
-			typ = GF_ACID;
-			dam = damroll(6, 8);
-			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
-			flg |= PROJECT_EVSG;
-			break;
-		case SV_WAND_FIRE_BOLT:
-			typ = GF_FIRE;
-			dam = damroll(6, 8);
-			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
-			flg |= PROJECT_EVSG;
-			break;
-		case SV_WAND_ELEC_BOLT:
-			typ = GF_ELEC;
-			dam = damroll(5, 8);
-			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
-			flg |= PROJECT_EVSG;
-			break;
-		case SV_WAND_COLD_BOLT:
-			typ = GF_COLD;
-			dam = damroll(5, 8);
-			flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
-			flg |= PROJECT_EVSG;
-			break;
-		case SV_WAND_ACID_BALL:
-			typ = GF_ACID;
-			rad = 2;
-			dam = 60;
-			flg &= ~(PROJECT_NODF);
-			break;
-		case SV_WAND_ELEC_BALL:
-			typ = GF_ELEC;
-			rad = 2;
-			dam = 52;
-			flg &= ~(PROJECT_NODF);
-			break;
-		case SV_WAND_FIRE_BALL:
-			typ = GF_FIRE;
-			rad = 2;
-			dam = 68;
-			flg &= ~(PROJECT_NODF);
-			break;
-		case SV_WAND_COLD_BALL:
-			typ = GF_COLD;
-			dam = 60;
-			rad = 2;
-			flg &= ~(PROJECT_NODF);
-			break;
-		case SV_WAND_ANNIHILATION:
-			typ = GF_ANNIHILATION;
-			//dam = 15 + get_skill_scale(...who > 0.., SKILL_TRAPPING, 15); --hmm, maybe not, trap is the caster after all
-			dam = 10 + randint(10); //raise the base a bit.. for now.
-			perc = TRUE;
-			break;
-		case SV_WAND_DRAGON_FIRE:
-			typ = GF_FIRE;
-			dam = 200;
-			rad = 3;
-			flg &= ~(PROJECT_NODF);
-			break;
-		case SV_WAND_DRAGON_COLD:
-			typ = GF_COLD;
-			dam = 170;
-			rad = 3;
-			flg &= ~(PROJECT_NODF);
-			break;
-		case SV_WAND_DRAGON_BREATH:
-			switch(randint(5)) {
-				case 1: typ = GF_FIRE; break;
-				case 2: typ = GF_ELEC; break;
-				case 3: typ = GF_ACID; break;
-				case 4: typ = GF_COLD; break;
-				case 5: typ = GF_POIS; break;
-			}
-			dam = 250;
-			rad = 3;
-			break;
-		case SV_WAND_TELEPORT_TO:
-			typ = GF_TELE_TO;
-			break;
-		case SV_WAND_ROCKETS:
-			typ = GF_ROCKET;
-			dam = 300;
-			rad = 3;
-			flg &= ~(PROJECT_NODF);
-			break;
-		case SV_WAND_WALL_CREATION:
-			identify_mon_trap_load(who, o_ptr);
-			/* create a stone prison same as the istar spell - C. Blue */
-			project(PROJECTOR_TRAP, 1, &m_ptr->wpos, y, x, 1, GF_STONE_WALL,
-				PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO | PROJECT_NODF, "trap of walls"); /* shouldn't this strictly speaking be a projection from '0 - who' too?.. */
-			return (FALSE);
+	case SV_WAND_HEAL_MONSTER:
+		typ = GF_OLD_HEAL;
+		dam = damroll(4, 6);
+		break;
+	case SV_WAND_HASTE_MONSTER:
+		typ = GF_OLD_SPEED;
+		dam = damroll(5, 10);
+		break;
+	case SV_WAND_CLONE_MONSTER:
+		typ = GF_OLD_CLONE;
+		break;
+	case SV_WAND_TELEPORT_AWAY:
+		typ = GF_AWAY_ALL;
+		dam = MAX_SIGHT * 5;
+		break;
+	case SV_WAND_DISARMING:
+		return (FALSE);
+	case SV_WAND_TRAP_DOOR_DEST:
+		return (FALSE);
+	case SV_WAND_STONE_TO_MUD:
+		typ = GF_KILL_WALL;
+		dam = 50 + randint(30);
+		break;
+	case SV_WAND_LITE:
+		typ = GF_LITE;//GF_LITE_WEAK;
+		dam = damroll(6, 8);
+		flg &= ~(PROJECT_NODF);
+		break;
+	case SV_WAND_SLEEP_MONSTER:
+		typ = GF_OLD_SLEEP;
+		dam = damroll(5, 10);
+		break;
+	case SV_WAND_SLOW_MONSTER:
+		typ = GF_OLD_SLOW;
+		dam = damroll(5, 10);
+		break;
+	case SV_WAND_CONFUSE_MONSTER:
+		typ = GF_OLD_CONF;
+		dam = damroll(5, 10);
+		break;
+	case SV_WAND_FEAR_MONSTER:
+		typ = GF_TURN_ALL;
+		dam = damroll(5, 10);
+		break;
+	case SV_WAND_DRAIN_LIFE:
+		typ = GF_OLD_DRAIN;
+		dam = 10 + rand_int(5);
+		perc = TRUE;
+		break;
+	case SV_WAND_POLYMORPH:
+		typ = GF_OLD_POLY;
+		dam = damroll(5, 10);
+		break;
+	case SV_WAND_STINKING_CLOUD:
+		typ = GF_POIS;
+		rad = 2;
+#if 0 /* ball? */
+		dam = 20;
+#else /* cloud? */
+		dam = 4;
+		flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
+		//project_time_effect = 0;
+		project_time = 4;
+		project_interval = 9;
+#endif
+		break;
+	case SV_WAND_MAGIC_MISSILE:
+		typ = GF_MISSILE;
+		dam = damroll(3, 6);
+		flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
+		break;
+	case SV_WAND_ACID_BOLT:
+		typ = GF_ACID;
+		dam = damroll(6, 8);
+		flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
+		flg |= PROJECT_EVSG;
+		break;
+	case SV_WAND_FIRE_BOLT:
+		typ = GF_FIRE;
+		dam = damroll(6, 8);
+		flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
+		flg |= PROJECT_EVSG;
+		break;
+	case SV_WAND_ELEC_BOLT:
+		typ = GF_ELEC;
+		dam = damroll(5, 8);
+		flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
+		flg |= PROJECT_EVSG;
+		break;
+	case SV_WAND_COLD_BOLT:
+		typ = GF_COLD;
+		dam = damroll(5, 8);
+		flg &= ~(PROJECT_NORF | PROJECT_NODO | PROJECT_NODF);
+		flg |= PROJECT_EVSG;
+		break;
+	case SV_WAND_ACID_BALL:
+		typ = GF_ACID;
+		rad = 2;
+		dam = 60;
+		flg &= ~(PROJECT_NODF);
+		break;
+	case SV_WAND_ELEC_BALL:
+		typ = GF_ELEC;
+		rad = 2;
+		dam = 52;
+		flg &= ~(PROJECT_NODF);
+		break;
+	case SV_WAND_FIRE_BALL:
+		typ = GF_FIRE;
+		rad = 2;
+		dam = 68;
+		flg &= ~(PROJECT_NODF);
+		break;
+	case SV_WAND_COLD_BALL:
+		typ = GF_COLD;
+		dam = 60;
+		rad = 2;
+		flg &= ~(PROJECT_NODF);
+		break;
+	case SV_WAND_ANNIHILATION:
+		typ = GF_ANNIHILATION;
+		//dam = 15 + get_skill_scale(...who > 0.., SKILL_TRAPPING, 15); --hmm, maybe not, trap is the caster after all
+		dam = 10 + randint(10); //raise the base a bit.. for now.
+		perc = TRUE;
+		break;
+	case SV_WAND_DRAGON_FIRE:
+		typ = GF_FIRE;
+		dam = 200;
+		rad = 3;
+		flg &= ~(PROJECT_NODF);
+		break;
+	case SV_WAND_DRAGON_COLD:
+		typ = GF_COLD;
+		dam = 170;
+		rad = 3;
+		flg &= ~(PROJECT_NODF);
+		break;
+	case SV_WAND_DRAGON_BREATH:
+		switch(randint(5)) {
+		case 1: typ = GF_FIRE; break;
+		case 2: typ = GF_ELEC; break;
+		case 3: typ = GF_ACID; break;
+		case 4: typ = GF_COLD; break;
+		case 5: typ = GF_POIS; break;
+		}
+		dam = 250;
+		rad = 3;
+		break;
+	case SV_WAND_TELEPORT_TO:
+		typ = GF_TELE_TO;
+		break;
+	case SV_WAND_ROCKETS:
+		typ = GF_ROCKET;
+		dam = 300;
+		rad = 3;
+		flg &= ~(PROJECT_NODF);
+		break;
+	case SV_WAND_WALL_CREATION:
+		identify_mon_trap_load(who, o_ptr);
+		/* create a stone prison same as the istar spell - C. Blue */
+#ifdef USE_SOUND_2010
+		sound_mon_trap_aux("stone_wall");
+#endif
+		project(PROJECTOR_TRAP, 1, &m_ptr->wpos, y, x, 1, GF_STONE_WALL,
+			PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO | PROJECT_NODF, "trap of walls"); /* shouldn't this strictly speaking be a projection from '0 - who' too?.. */
+		return (FALSE);
 
-		default:
-			return (FALSE);
+	default:
+		return (FALSE);
 	}
 
 	identify_mon_trap_load(who, o_ptr);
@@ -4157,12 +4221,15 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 	}
 
 #ifdef USE_SOUND_2010
-	if (rad && who > 0) { /* TODO: make it audible for ALL players in LOS maybe? probably too much */
-		if (typ == GF_ROCKET) sound(who, "rocket", NULL, SFX_TYPE_MISC, FALSE);
-		else if (typ == GF_DETONATION) sound(who, "detonation", NULL, SFX_TYPE_MISC, FALSE);
-		else sound(who, "cast_ball", NULL, SFX_TYPE_MISC, FALSE);
+	if (dam) {
+		if (rad) {
+			if (typ == GF_ROCKET) sound_mon_trap_aux("rocket");
+			else if (typ == GF_DETONATION) sound_mon_trap_aux("detonation");
+			else if (flg & PROJECT_STAY) sound_mon_trap_aux("cast_cloud");
+			else sound_mon_trap_aux("cast_ball");
+		}
+		else if (flg & PROJECT_EVSG) sound_mon_trap_aux("cast_bolt");
 	}
-//	else sound(Ind, "", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 	/* Actually hit the monster */
@@ -4178,7 +4245,8 @@ static bool mon_hit_trap_aux_wand(int who, int m_idx, object_type *o_ptr) {
 static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 	//monster_race *r_ptr = &r_info[m_ptr->r_idx];
-	int dam = 0, typ = 0, rad = 1;//, cloud = 0, cloudi = 0;
+	int dam = 0, typ = 0, rad = 1;
+	u32b flg = PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF;
 	//int i;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
@@ -4286,10 +4354,16 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_POTION_POISON:
 			typ = GF_POIS;
-			dam = damroll(8, 6);
 			rad = 3;
-			//cloud = 3;
-			//cloudi = 5;
+#if 0 /* ball? */
+			dam = damroll(8, 6);
+#else /* cloud? */
+			dam = damroll(2, 5);
+			flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
+			//project_time_effect = 0;
+			project_time = 4;
+			project_interval = 9;
+#endif
 			break;
 		case SV_POTION_CONFUSION:
 			rad = 3;
@@ -4407,9 +4481,21 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 		dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1;
 	}
 
+#ifdef USE_SOUND_2010
+	if (dam) {
+		if (rad) {
+			if (typ == GF_ROCKET) sound_mon_trap_aux("rocket");
+			else if (typ == GF_DETONATION) sound_mon_trap_aux("detonation");
+			else if (flg & PROJECT_STAY) sound_mon_trap_aux("cast_cloud");
+			else sound_mon_trap_aux("cast_ball");
+		}
+		else if (flg & PROJECT_EVSG) sound_mon_trap_aux("cast_bolt");
+	}
+#endif
+
 	/* Actually hit the monster */
 	//(void) project_m(who, y, x, 0, y, x, dam, typ);
-	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF), "");
+	(void) project(0 - who, rad, &m_ptr->wpos, y, x, dam, typ, flg, "");
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -4417,6 +4503,7 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 	monster_type *m_ptr = &m_list[m_idx];
 	worldpos wpos = m_ptr->wpos;
 	int dam = 0, typ = 0, rad = 0;
+	u32b flg = PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODO | PROJECT_LODF;
 	int y = m_ptr->fy;
 	int x = m_ptr->fx;
 	cave_type **zcave;
@@ -4536,8 +4623,20 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 	dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 3); dam /= 50;
 	dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
 
+#ifdef USE_SOUND_2010
+	if (dam) {
+		if (rad) {
+			if (typ == GF_ROCKET) sound_mon_trap_aux("rocket");
+			else if (typ == GF_DETONATION) sound_mon_trap_aux("detonation");
+			else if (flg & PROJECT_STAY) sound_mon_trap_aux("cast_cloud");
+			else sound_mon_trap_aux("cast_ball");
+		}
+		else if (flg & PROJECT_EVSG) sound_mon_trap_aux("cast_bolt");
+	}
+#endif
+
 	/* Actually hit the monster */
-	(void) project(0 - who, rad, &wpos, y, x, dam, typ, PROJECT_NORF | PROJECT_KILL | PROJECT_ITEM | PROJECT_JUMP | PROJECT_NODO | PROJECT_LODF, "");
+	(void) project(0 - who, rad, &wpos, y, x, dam, typ, flg, "");
 	return (zcave[y][x].m_idx == 0 ? TRUE : FALSE);
 }
 
@@ -4553,7 +4652,7 @@ static bool mon_hit_trap_aux_rune(int who, int m_idx, object_type *o_ptr) {
 bool mon_hit_trap(int m_idx) {
 	player_type *p_ptr = (player_type*)NULL;
 	monster_type *m_ptr = &m_list[m_idx];
-	//	monster_race *r_ptr = &r_info[m_ptr->r_idx];
+	//monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 #if 0 /* DGDGDGDG */
 	monster_lore *lore_ptr = &l_list[m_ptr->r_idx];
@@ -4838,6 +4937,14 @@ bool mon_hit_trap(int m_idx) {
 
 					/* No negative damage */
 					if (dam < 0) dam = 0;
+
+#ifdef USE_SOUND_2010
+					switch (kit_o_ptr->sval) {
+					case SV_TRAPKIT_SLING: sound_near_monster(m_idx, "fire_shot", NULL, SFX_TYPE_ATTACK); break;
+					case SV_TRAPKIT_BOW: sound_near_monster(m_idx, "fire_arrow", NULL, SFX_TYPE_ATTACK); break;
+					case SV_TRAPKIT_XBOW: sound_near_monster(m_idx, "fire_bolt", NULL, SFX_TYPE_ATTACK); break;
+					}
+#endif
 
 					/* If another monster did the damage, hurt the monster by hand */
 					if (who <= 0) {
