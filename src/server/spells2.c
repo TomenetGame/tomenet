@@ -4321,7 +4321,7 @@ bool recharge_aux(int Ind, int item, int pow) {
 		}
 	}
 
-	/* Recharge wand/staff */
+	/* Recharge wand/staff -- Note: Currently charge_wand()/charge_staff() are used only for item generation but not here. */
 	else {
 		/* Recharge power */
 		i = (pow + 100 - lev - (10 * o_ptr->pval)) / 15;

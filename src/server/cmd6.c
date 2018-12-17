@@ -3959,7 +3959,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	case SV_WAND_STINKING_CLOUD:
 		msg_format_near(Ind, "%s fires a stinking cloud.", p_ptr->name);
 		sprintf(p_ptr->attacker, " fires a stinking cloud for");
-//		fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
+		//fire_ball(Ind, GF_POIS, dir, 12 + get_skill_scale(p_ptr, SKILL_DEVICE, 50), 2, p_ptr->attacker);
 		fire_cloud(Ind, GF_POIS, dir, 4 + get_skill_scale(p_ptr, SKILL_DEVICE, 17), 2, 4, 9, p_ptr->attacker);
 		ident = TRUE;
 		break;
