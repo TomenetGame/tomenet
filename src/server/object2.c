@@ -4628,41 +4628,41 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 
 
 /*
- * Charge a new wand.
+ * Charge a new wand. -- Note: Currently only used for item generation, not for actual recharging.
  */
 static void charge_wand(object_type *o_ptr) {
 	switch (o_ptr->sval) {
-	case SV_WAND_HEAL_MONSTER:              o_ptr->pval = randint(20) + 8; break;
-	case SV_WAND_HASTE_MONSTER:             o_ptr->pval = randint(20) + 8; break;
-	case SV_WAND_CLONE_MONSTER:             o_ptr->pval = randint(5)  + 3; break;
-	case SV_WAND_TELEPORT_AWAY:             o_ptr->pval = randint(5)  + 6; break;
-	case SV_WAND_DISARMING:                 o_ptr->pval = randint(5)  + 4; break;
-	case SV_WAND_TRAP_DOOR_DEST:            o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_STONE_TO_MUD:              o_ptr->pval = randint(8)  + 3; break;
-	case SV_WAND_LITE:                      o_ptr->pval = randint(10) + 6; break;
-	case SV_WAND_SLEEP_MONSTER:             o_ptr->pval = randint(15) + 8; break;
-	case SV_WAND_SLOW_MONSTER:              o_ptr->pval = randint(10) + 6; break;
-	case SV_WAND_CONFUSE_MONSTER:           o_ptr->pval = randint(12) + 6; break;
-	case SV_WAND_FEAR_MONSTER:              o_ptr->pval = randint(5)  + 3; break;
-	case SV_WAND_DRAIN_LIFE:                o_ptr->pval = randint(3)  + 3; break;
-	case SV_WAND_WALL_CREATION:             o_ptr->pval = randint(4)  + 3; break;
-	case SV_WAND_POLYMORPH:                 o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_STINKING_CLOUD:            o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_MAGIC_MISSILE:             o_ptr->pval = randint(10) + 6; break;
-	case SV_WAND_ACID_BOLT:                 o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_CHARM_MONSTER:             o_ptr->pval = randint(6)  + 2; break;
-	case SV_WAND_FIRE_BOLT:                 o_ptr->pval = randint(8)  + 6; break;
-	case SV_WAND_COLD_BOLT:                 o_ptr->pval = randint(5)  + 6; break;
-	case SV_WAND_ACID_BALL:                 o_ptr->pval = randint(5)  + 2; break;
-	case SV_WAND_ELEC_BALL:                 o_ptr->pval = randint(8)  + 4; break;
-	case SV_WAND_FIRE_BALL:                 o_ptr->pval = randint(4)  + 2; break;
-	case SV_WAND_COLD_BALL:                 o_ptr->pval = randint(6)  + 2; break;
-	case SV_WAND_WONDER:                    o_ptr->pval = randint(15) + 8; break;
-	case SV_WAND_ANNIHILATION:              o_ptr->pval = randint(2)  + 1; break;
-	case SV_WAND_DRAGON_FIRE:               o_ptr->pval = randint(3)  + 1; break;
-	case SV_WAND_DRAGON_COLD:               o_ptr->pval = randint(3)  + 1; break;
-	case SV_WAND_DRAGON_BREATH:             o_ptr->pval = randint(3)  + 1; break;
-	case SV_WAND_ROCKETS:                   o_ptr->pval = randint(2)  + 1; break;
+	case SV_WAND_HEAL_MONSTER:		o_ptr->pval = randint(20) + 8; break;
+	case SV_WAND_HASTE_MONSTER:		o_ptr->pval = randint(20) + 8; break;
+	case SV_WAND_CLONE_MONSTER:		o_ptr->pval = randint(5)  + 3; break;
+	case SV_WAND_TELEPORT_AWAY:		o_ptr->pval = randint(5)  + 6; break;
+	case SV_WAND_DISARMING:			o_ptr->pval = randint(5)  + 4; break;
+	case SV_WAND_TRAP_DOOR_DEST:		o_ptr->pval = randint(8)  + 6; break;
+	case SV_WAND_STONE_TO_MUD:		o_ptr->pval = randint(8)  + 3; break;
+	case SV_WAND_LITE:			o_ptr->pval = randint(10) + 6; break;
+	case SV_WAND_SLEEP_MONSTER:		o_ptr->pval = randint(15) + 8; break;
+	case SV_WAND_SLOW_MONSTER:		o_ptr->pval = randint(10) + 6; break;
+	case SV_WAND_CONFUSE_MONSTER:		o_ptr->pval = randint(12) + 6; break;
+	case SV_WAND_FEAR_MONSTER:		o_ptr->pval = randint(5)  + 3; break;
+	case SV_WAND_DRAIN_LIFE:		o_ptr->pval = randint(3)  + 3; break;
+	case SV_WAND_WALL_CREATION:		o_ptr->pval = randint(4)  + 3; break;
+	case SV_WAND_POLYMORPH:			o_ptr->pval = randint(8)  + 6; break;
+	case SV_WAND_STINKING_CLOUD:		o_ptr->pval = randint(8)  + 6; break;
+	case SV_WAND_MAGIC_MISSILE:		o_ptr->pval = randint(10) + 6; break;
+	case SV_WAND_ACID_BOLT:			o_ptr->pval = randint(8)  + 6; break;
+	case SV_WAND_CHARM_MONSTER:		o_ptr->pval = randint(6)  + 2; break;
+	case SV_WAND_FIRE_BOLT:			o_ptr->pval = randint(8)  + 6; break;
+	case SV_WAND_COLD_BOLT:			o_ptr->pval = randint(5)  + 6; break;
+	case SV_WAND_ACID_BALL:			o_ptr->pval = randint(5)  + 2; break;
+	case SV_WAND_ELEC_BALL:			o_ptr->pval = randint(8)  + 4; break;
+	case SV_WAND_FIRE_BALL:			o_ptr->pval = randint(4)  + 2; break;
+	case SV_WAND_COLD_BALL:			o_ptr->pval = randint(6)  + 2; break;
+	case SV_WAND_WONDER:			o_ptr->pval = randint(15) + 8; break;
+	case SV_WAND_ANNIHILATION:		o_ptr->pval = randint(2)  + 1; break;
+	case SV_WAND_DRAGON_FIRE:		o_ptr->pval = randint(3)  + 1; break;
+	case SV_WAND_DRAGON_COLD:		o_ptr->pval = randint(3)  + 1; break;
+	case SV_WAND_DRAGON_BREATH:		o_ptr->pval = randint(3)  + 1; break;
+	case SV_WAND_ROCKETS:			o_ptr->pval = randint(2)  + 1; break;
 	case SV_WAND_ELEC_BOLT:			o_ptr->pval = randint(8)  + 6; break;
 	case SV_WAND_TELEPORT_TO:		o_ptr->pval = randint(3)  + 3; break;
 	}
@@ -4671,7 +4671,7 @@ static void charge_wand(object_type *o_ptr) {
 
 
 /*
- * Charge a new staff.
+ * Charge a new staff. -- Note: Currently only used for item generation, not for actual recharging.
  */
 static void charge_staff(object_type *o_ptr) {
 	switch (o_ptr->sval) {
