@@ -12313,9 +12313,9 @@ Note that not every skill is available to every profession (class).
                                 skill.
                                 Crit boni on weapons only apply to the weapon
                                 itself, while bonus on other items such as
-                                gloves or rings count for all kind of attacks.
-                                (Same goes for slaying/brand mods on items by
-                                the way.)
+                                gloves or rings count for all kind of physical
+                                attacks. (Same goes for slaying/brand mods on
+                                items by the way.)
                                 For weapon users, the weight of their weapon
                                 affects their critical hits:
                                 If your weapon is lighter than 10.0 lb, your
