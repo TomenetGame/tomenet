@@ -4613,21 +4613,10 @@ void calc_boni(int Ind) {
 	/* XXX this can be out of place; maybe better done
 	 * after skill bonuses are added?	- Jir - */
 	if (p_ptr->searching) {
-		int stealth = get_skill(p_ptr, SKILL_STEALTH);
 		int sneakiness = get_skill(p_ptr, SKILL_SNEAKINESS);
+
 		p_ptr->pspeed -= 10 - sneakiness / 7;
 		csheet_boni[14].spd -= 10 - sneakiness / 7;
-#if 1
-		if (stealth >= 10) {
-			p_ptr->skill_stl = p_ptr->skill_stl + stealth / 10;
-		}
-#endif
-		if (sneakiness >= 0) {
-			/* prevent TLs from getting glitched abysmal stealth here.. */
-			if (p_ptr->skill_srh >= 0) p_ptr->skill_srh = (p_ptr->skill_srh * (sneakiness + 50)) / 50;
-			//p_ptr->skill_srh = p_ptr->skill_srh + sneakiness / 3;
-			//p_ptr->skill_fos = p_ptr->skill_fos * sneakiness / 10;
-		}
 	}
 
 	if (p_ptr->cloaked) {
@@ -5960,12 +5949,12 @@ void calc_boni(int Ind) {
 	/* Affect Skill -- stealth (Level, by Class) */
 	p_ptr->skill_stl += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
 	csheet_boni[14].slth += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
-	
+
 	/* Affect Skill -- search ability (Level, by Class) */
-	p_ptr->skill_srh += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh * 2));// + get_skill(p_ptr, SKILL_SNEAKINESS);
+	p_ptr->skill_srh += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh)) + get_skill_scale(p_ptr, SKILL_TRAPPING, 30);
 
 	/* Affect Skill -- search frequency (Level, by Class) */
-	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos * 2));// + get_skill(p_ptr, SKILL_SNEAKINESS);
+	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos));
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
         p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((2 * get_skill(p_ptr, SKILL_MASTERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);

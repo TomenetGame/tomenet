@@ -13204,6 +13204,10 @@ Note that not every skill is available to every profession (class).
                                 disarming it will also increase with higher
                                 Trapping skill.
 
+                                And being more proficient in trapping will also
+                                increase your chances of spotting traps, ie
+                                improving your 'Searching' ability.
+
                                 Last but not least Trapping gives you a chance
                                 (depending on your skill) to salvage a trap kit
                                 from any trap you disarm!
