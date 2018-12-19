@@ -12390,7 +12390,7 @@ bool set_recall_timer(int Ind, int v) {
 
 	/* don't accidentally recall players in Ironman Deep Dive Challenge
 	   by some effect (spell/Morgoth) */
-	if (!is_admin(p_ptr) && ((l_ptr->flags2 & LF2_NO_TELE) ||
+	if (!is_admin(p_ptr) && ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) ||
 #ifdef ANTI_TELE_CHEEZE
 	    p_ptr->anti_tele ||
  #ifdef ANTI_TELE_CHEEZE_ANCHOR
@@ -12448,7 +12448,7 @@ bool set_recall(int Ind, int v, object_type *o_ptr) {
 
 	/* don't accidentally recall players in Ironman Deep Dive Challenge
 	   by some effect (spell/Morgoth) */
-	if (!is_admin(p_ptr) && ((l_ptr->flags2 & LF2_NO_TELE) ||
+	if (!is_admin(p_ptr) && ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) ||
 #ifdef ANTI_TELE_CHEEZE
 	    p_ptr->anti_tele ||
  #ifdef ANTI_TELE_CHEEZE_ANCHOR

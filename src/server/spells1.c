@@ -10459,7 +10459,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->afk) break;
 
 		/* prevent silly things */
-		if (iddc_recall_fail(p_ptr, l_ptr) || (l_ptr->flags2 & LF2_NO_TELE)
+		if (iddc_recall_fail(p_ptr, l_ptr) || (l_ptr && (l_ptr->flags2 & LF2_NO_TELE))
 #ifdef ANTI_TELE_CHEEZE
 		    || p_ptr->anti_tele
  #ifdef ANTI_TELE_CHEEZE_ANCHOR
