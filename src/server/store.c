@@ -794,6 +794,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		/* and now new... :) */
 		case TV_TRAPKIT:
 		case TV_BOOMERANG:
+		/* mayyyyybe... */
+		case TV_FIRESTONE:
 			break;
 		default:
 			return (FALSE);
@@ -839,7 +841,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_POLEARM:
 		case TV_SWORD:
 		case TV_AXE:
-//		case TV_MSTAFF:
+		//case TV_MSTAFF:
 		case TV_BOOMERANG:
 			break;
 		default:
@@ -875,6 +877,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_SCROLL:
 		case TV_POTION:
 		case TV_POTION2:
+		/* mayyyyybe... */
+		case TV_FIRESTONE:
 			break;
 		default:
 			return (FALSE);
@@ -924,7 +928,7 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		break;
 
 	/* Pet Shop */
-//	case STORE_PET:
+	//case STORE_PET:
 	case STORE_RUNE:
 	case STORE_RUNE_DUN:
 		/* Analyze the type */
