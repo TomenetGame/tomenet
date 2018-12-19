@@ -5250,7 +5250,7 @@ F:INSTA_ART
 N:648:& Small Wooden Boomerang~
 G:{:y
 I:15:1:0
-W:5:0:60:30
+W:5:0:30:30
 A:5/1
 P:0:2d2:0:0:0
 F:IGNORE_WATER
@@ -5258,7 +5258,7 @@ F:IGNORE_WATER
 N:649:& Wooden Boomerang~
 G:{:y
 I:15:2:0
-W:10:0:60:45
+W:10:0:45:45
 A:10/1
 P:0:2d4:0:0:0
 F:IGNORE_WATER
@@ -5266,7 +5266,7 @@ F:IGNORE_WATER
 N:650:& Small Metal Boomerang~
 G:{:y
 I:15:3:0
-W:15:0:60:40
+W:15:0:40:40
 A:15/1
 P:0:2d3:0:0:0
 
