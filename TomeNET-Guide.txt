@@ -12422,7 +12422,7 @@ Note that not every skill is available to every profession (class).
                                 if your character's class can dual-wield, else
                                 at zero. (So it's basically a switch.)
                                 Classes that are able to dual-wield are
-                                warriors, rangers and rogues.
+                                warriors, rangers, rogues and hell knights.
                                 Note that both weapons must be 1-handed.
                                 1,5- or 2-handed weapons cannot be used.
 
