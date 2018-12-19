@@ -1725,6 +1725,9 @@ void xhtml_screenshot(cptr name) {
 		for (x = 0; x < Term->wid; x++) {
 			if (scr_aa[x] != cur_attr) {
 				cur_attr = scr_aa[x];
+#ifdef EXTENDED_COLOURS_PALANIM
+				if (cur_attr >= TERMA_DARK && cur_attr <= TERMA_L_UMBER) cur_attr = cur_attr - TERMA_OFFSET; /* Use the basic colours instead of the palette-animated ones */
+#endif
 
 				strcpy(&buf[bytes], "</span><span style=\"color: ");
 				bytes += 27;
