@@ -5051,8 +5051,10 @@ bool mon_hit_trap(int m_idx) {
 						kit_o_ptr->next_o_idx = 0;
 					}
 
-					/* Drop (or break) near that location */
-					if (!load_o_ptr->pval) drop_near(0, j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
+					/* Drop (or break) near that location,
+					   but only if non-exploding and non-ethereal. */
+					if (!load_o_ptr->pval && load_o_ptr->name2 != EGO_ETHEREAL && load_o_ptr->name2b != EGO_ETHEREAL)
+						drop_near(0, j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
 				}
 
 			}
