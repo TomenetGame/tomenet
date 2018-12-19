@@ -309,6 +309,7 @@ struct player_type
 	bool find_ignore_doors;
 	bool find_cut;
 	bool find_examine;
+	bool find_ignore_montraps;
 	bool disturb_move;
 	bool disturb_near;
 	bool disturb_see;

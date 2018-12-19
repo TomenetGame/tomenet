@@ -2073,6 +2073,7 @@ struct player_type {
 
 	bool find_ignore_stairs;
 	bool find_ignore_doors;
+	bool find_ignore_montraps;
 	bool find_cut;
 	bool find_examine;
 	bool disturb_move;
@@ -3429,7 +3430,8 @@ struct client_opts {
 	bool id_selection;
 	bool hp_bar;
 	bool mp_bar;
-	bool st_bar; //129
+	bool st_bar;
+	bool find_ignore_montraps; //130, (page 6)
 };
 
 /*

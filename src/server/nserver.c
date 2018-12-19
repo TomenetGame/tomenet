@@ -2559,6 +2559,9 @@ static void sync_options(int Ind, bool *options) {
 		if (p_ptr->mute_when_idle && !p_ptr->muted_when_idle && (p_ptr->afk || p_ptr->idle_char >= 120) && istown(&p_ptr->wpos)) Send_idle(Ind, TRUE);
 		if (!p_ptr->mute_when_idle && p_ptr->muted_when_idle) Send_idle(Ind, FALSE);
 	}
+
+	if (!is_older_than(&p_ptr->version, 4, 7, 2, 0, 0, 1)) p_ptr->find_ignore_montraps = options[130];
+	else p_ptr->find_ignore_montraps = TRUE;
     }
 }
 

@@ -7178,6 +7178,15 @@ static bool run_test(int Ind) {
 					break;
 				}
 
+				case FEAT_MON_TRAP:
+				{
+					/* Option -- ignore */
+					if (p_ptr->find_ignore_montraps) notice = FALSE;
+
+					/* Done */
+					break;
+				}
+
 				/* Water */
 				case FEAT_DEEP_WATER:
 				{

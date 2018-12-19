@@ -533,6 +533,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "mp_bar",			"Display mana pool as bar instead of numbers" },
 	{ &c_cfg.st_bar,		FALSE,	6,	0, 129, TRUE,
 	    "st_bar",			"Display stamina as bar instead of numbers" },
+
+	{ &c_cfg.find_ignore_montraps,	TRUE,	3,	0, 130, TRUE,
+	    "find_ignore_montraps",	"Run through monster traps" },
 };
 
 
