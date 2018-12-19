@@ -70,8 +70,12 @@
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_VERSION_TAG	""
-
+#define CLIENT_TAG		""
+#ifndef TEST_CLIENT
+ #define CLIENT_VERSION_TAG	CLIENT_TAG
+#else
+ #define CLIENT_VERSION_TAG	CLIENT_TAG"Test"
+#endif
 
 /* Minimum client version required to be allowed to log in */
 #define MIN_VERSION_MAJOR	4
