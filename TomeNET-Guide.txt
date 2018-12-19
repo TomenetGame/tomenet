@@ -12236,8 +12236,8 @@ Note that not every skill is available to every profession (class).
                                 usefulness of ranged weapons and ammunition
                                 more distinctively, even if (s)he's not
                                 knowledgeable in archery otherwise.
-                                A very powerful one (combat 41) can also
-                                roughly estimate usefulness of magical items.
+                                A very powerful one (combat 41) can also notice
+                                curses on all kinds of items.
                                 The further you train Combat, the faster you
                                 will pseudo-id items.
 
@@ -13179,12 +13179,19 @@ Note that not every skill is available to every profession (class).
                                 place a trap if a monster is close to you and
                                 trying to interfere. Also, monsters will have
                                 a harder time to discover your traps.
-                                Last but not least you learn to optimize your
-                                traps for higher damage output.
+                                By training Trapping you also learn to optimize
+                                your traps for higher damage output.
                                 (Note that 'Magic Device' or 'Runecraft' skill
                                 have no effect on trap damage output, even if
                                 it is loaded with a device or a rune.)
                                 See (4.7) for details about monster traps.
+
+                                Improves your ability to recognize traps:
+                                Lets you pseudo-id trap kits, the more often
+                                the higher your skill.
+                                If increased to at least 11, pseudo-id will
+                                give you more distinctive feelings instead of
+                                just 'good' or 'cursed'.
 
                                 Trapping also improves your disarming ability,
                                 making it easier to pick locks and to disarm
@@ -13192,12 +13199,13 @@ Note that not every skill is available to every profession (class).
                                 experience you gain from manually disarming
                                 traps is not affected by the skill but only by
                                 the traps' level).
-                                The chance to identify a trap on disarming it
-                                will also increase with higher Trapping skill.
+                                The chance to identify the type of a trap on
+                                disarming it will also increase with higher
+                                Trapping skill.
 
                                 Last but not least Trapping gives you a chance
-                                to salvage a trap kit from any trap when you
-                                disarm it!
+                                (depending on your skill) to salvage a trap kit
+                                from any trap you disarm!
 
                                 Hint: Inscribe all your trapping components
                                       '!=' for easy auto-pickup and make sure

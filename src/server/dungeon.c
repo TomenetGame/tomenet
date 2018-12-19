@@ -362,8 +362,8 @@ static void sense_inventory(int Ind) {
 
 	int i, dur;
 
-	bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE;
-	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE;
+	bool heavy = FALSE, heavy_magic = FALSE, heavy_archery = FALSE, heavy_traps = FALSE;
+	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE, ok_traps = FALSE;
 	bool ok_curse = FALSE, force_curse = FALSE;
 
 	cptr feel;
@@ -392,26 +392,19 @@ static void sense_inventory(int Ind) {
 		ok_magic = TRUE;
 		ok_curse = TRUE;
 	}
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_TRAPPING, 80) + 20) - 28)) ok_traps = TRUE;
 	/* note: SKILL_PRAY is currently unused */
 	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse = TRUE;
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 31 && ok_combat) {
-#if 1 /* (apply 33% chance, see below) - allow basic feelings */
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 31 && ok_combat)
+		/* (apply 33% chance, see below) - allow basic feelings */
 		ok_archery = TRUE;
-#else /* (apply 33% chance, see below) - allow more distinctive feelings */
-		heavy_archery = TRUE;
-#endif
-	}
 
 	/* A very powerful warrior can even distinguish magic items */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 41 && ok_combat) {
-#if 0 /* too much? */
-		ok_magic = TRUE;
-#endif
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 41 && ok_combat)
 		ok_curse = TRUE;
-	}
 
 	/* extra class-specific boni */
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) force_curse = ok_curse = TRUE;
@@ -425,11 +418,12 @@ static void sense_inventory(int Ind) {
 	}
 
 	/* nothing to feel? exit */
-	if (!ok_combat && !ok_magic && !ok_archery && !ok_curse) return;
+	if (!ok_combat && !ok_magic && !ok_archery && !ok_traps && !ok_curse) return;
 
 	heavy = (get_skill(p_ptr, SKILL_COMBAT) >= 11) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 11) ? TRUE : FALSE;
 	heavy_archery = (get_skill(p_ptr, SKILL_ARCHERY) >= 11) ? TRUE : FALSE;
+	heavy_traps = (get_skill(p_ptr, SKILL_TRAPPING) >= 11) ? TRUE : FALSE;
 
 	/*** Sense everything ***/
 
@@ -451,7 +445,7 @@ static void sense_inventory(int Ind) {
 			/* usually fail, except if we're forced to insta-sense a curse */
 			if (!force_curse || fail) continue;
 			/* if we're forced to insta-sense a curse, do just that */
-			ok_magic = ok_combat = ok_archery = FALSE;
+			ok_magic = ok_combat = ok_archery = ok_traps = FALSE;
 		}
 
 		feel = NULL;
@@ -475,7 +469,6 @@ static void sense_inventory(int Ind) {
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
 		case TV_AXE:
-		case TV_TRAPKIT:
 			if (fail && !heavy) continue; //finally fail
 			if (ok_combat) {
 				feel = (heavy ? value_check_aux1(o_ptr) :
@@ -517,6 +510,14 @@ static void sense_inventory(int Ind) {
 				feel = (heavy_archery ? value_check_aux1(o_ptr) :
 				    value_check_aux2(o_ptr));
 				if (heavy_archery) felt_heavy = TRUE;
+			}
+			break;
+		case TV_TRAPKIT:
+			if (fail && !heavy_traps) continue; //finally fail
+			if (ok_traps) {
+				feel = (heavy_traps ? value_check_aux1(o_ptr) :
+						value_check_aux2(o_ptr));
+				if (heavy_traps) felt_heavy = TRUE;
 			}
 			break;
 		}
