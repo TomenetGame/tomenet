@@ -6174,6 +6174,11 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 			o_ptr->recharging = 10 - get_skill_scale(p_ptr, SKILL_DEVICE, 6);
 			break;
+		case ART_ANCHOR:
+			msg_print(Ind, "A sphere of green light rapidly expands from the anchor, then comes to a halt.");
+			set_st_anchor(Ind, 10);
+			o_ptr->recharging = 300 - get_skill_scale(p_ptr, SKILL_DEVICE, 200) + randint(20);
+			break;
 		case ART_MEDIATOR:
 			p_ptr->current_activation = item;
 			get_aim_dir(Ind);
@@ -6451,8 +6456,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 						break;
 					}
 				}
-				if (((p_ptr->anti_tele ||
-				    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px))
+				if (((p_ptr->anti_tele || check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px))
 				     && !(l_ptr && (l_ptr->flags2 & LF2_NO_TELE))) ||
 				    p_ptr->store_num != -1 ||
 				    (zcave && zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) {

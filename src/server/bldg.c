@@ -2143,9 +2143,16 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			paid = fix_item(Ind, INVEN_BOW, INVEN_BOW, 0, FALSE, BACT_ENCHANT_BOW, set_reward);
 			break;
 #if 0
-		case BACT_RECALL:
+		case BACT_RECALL: {
+			struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+			if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) ||
  #ifdef ANTI_TELE_CHEEZE
-			if (p_ptr->anti_tele) {
+			    p_ptr->anti_tele ||
+  #ifdef ANTI_TELE_CHEEZE_ANCHOR
+			    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)
+  #endif
+			    ) {
 				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
 				break;
 			}
@@ -2153,15 +2160,28 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			p_ptr->word_recall = 1;
 			msg_print(Ind, "\377oThe air about you becomes charged...");
 			paid = TRUE;
-			break;
-		case BACT_TELEPORT_LEVEL:
+			break; }
+		case BACT_TELEPORT_LEVEL: {
 			break;//disabled
+			struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+			if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) ||
+ #ifdef ANTI_TELE_CHEEZE
+			    p_ptr->anti_tele ||
+  #ifdef ANTI_TELE_CHEEZE_ANCHOR
+			    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)
+  #endif
+			    ) {
+				msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
+				break;
+			}
+ #endif
 			if (reset_recall(FALSE)) {
 				p_ptr->word_recall = 1;
 				msg_print(Ind, "\377oThe air about you becomes charged...");
 				paid = TRUE;
 			}
-			break;
+			break; }
 		case BACT_BUYFIRESTONE:
 			amt = get_quantity("How many firestones (2000 gold each)? ", 10);
 			if (amt > 0) {

@@ -3620,17 +3620,21 @@ bool make_attack_spell(int Ind, int m_idx) {
 			break;
 		} */
 		disturb(Ind, 1, 0);
-		if (m_ptr->r_idx != RI_ZU_AON) { /* can always TELE_TO */
+		if (m_ptr->r_idx == RI_ZU_AON) { /* Hack: Can always TELE_TO */
+			stop_shooting_till_kill(Ind);
+			msg_format(Ind, "%^s commands you to return.", m_name);
+			teleport_player_to_force(Ind, m_ptr->fy, m_ptr->fx);
+		} else {
 			if (p_ptr->res_tele) chance >>= 1;
-			/* Hack -- duplicated check to avoid silly message */
-			if (p_ptr->anti_tele || check_st_anchor(wpos, p_ptr->py, p_ptr->px) || magik(chance)) {
+			/* Hack -- duplicated check to avoid silly message. A bit annoying that check_st_anchor..() is called twice in the process..pft */
+			if (p_ptr->anti_tele || check_st_anchor2(wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) || magik(chance)) {
 				msg_format(Ind, "%^s commands you to return, but you don't care.", m_name);
 				break;
 			}
+			stop_shooting_till_kill(Ind);
+			msg_format(Ind, "%^s commands you to return.", m_name);
+			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
 		}
-		stop_shooting_till_kill(Ind);
-		msg_format(Ind, "%^s commands you to return.", m_name);
-		teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
 		break;
 		}
 

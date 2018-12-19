@@ -3433,12 +3433,6 @@ s_printf("ADD_HOSTILITY: not found.\n");
 		h_ptr->next = p_ptr->hostile;
 		p_ptr->hostile = h_ptr;
 
-#if 0
-		/* prevent anti-tele amulet instant recall into barrow-downs and crap */
-		if (p_ptr->word_recall) //&& istown(&p_ptr->wpos)
-			set_recall_timer(Ind, 0);
-#endif
-
 		/* Message */
 		if (bb) {
 			msg_format(Ind, "\377yYou are now hostile toward %s.", q_ptr->name);

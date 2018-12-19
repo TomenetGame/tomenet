@@ -3189,7 +3189,6 @@ void calc_boni(int Ind) {
 	p_ptr->suscep_evil = FALSE;
 	p_ptr->suscep_life = FALSE;
 	p_ptr->demon = FALSE;
-	p_ptr->resist_continuum = FALSE;
 	p_ptr->vampiric_melee = 0;
 	p_ptr->vampiric_ranged = 0;
 	p_ptr->slay = p_ptr->slay_melee = p_ptr->slay_equip = 0x0;
@@ -3862,16 +3861,11 @@ void calc_boni(int Ind) {
 			}
 		}
 
-		/* MEGA ugly hack -- set spacetime distortion resistance */
-		if (o_ptr->name1 == ART_ANCHOR) {
-			p_ptr->resist_continuum = TRUE;
-		}
 #if 0
 		/* another bad hack, for when Morgoth's crown gets its pval
 		   reduced experimentally, to keep massive +IV (for Q-quests^^): */
-		if (o_ptr->name1 == ART_MORGOTH) {
+		if (o_ptr->name1 == ART_MORGOTH)
 			p_ptr->see_infra += 50;
-		}
 #endif
 
 		/* Hack -- first add any "base bonuses" of the item.  A new
@@ -4610,13 +4604,6 @@ void calc_boni(int Ind) {
 
 	/* Hack -- See Invis Change */
 	if (p_ptr->see_inv != old_see_inv) p_ptr->update |= (PU_MONSTERS);
-
-	/* Temporary space-time anchor */
-	if (p_ptr->st_anchor) {
-		p_ptr->anti_tele = TRUE;
-		p_ptr->resist_continuum = TRUE;
-	}
-
 
 	/* Bloating slows the player down (a little) */
 	if (p_ptr->food >= PY_FOOD_MAX) p_ptr->pspeed -= 10;
@@ -6396,6 +6383,22 @@ void calc_boni(int Ind) {
 	if ((p_ptr->num_blow > 20) && !is_admin(p_ptr)) p_ptr->num_blow = 20;
 	/* ghost-dive limit to not destroy the real gameplay */
 	if (p_ptr->ghost && !is_admin(p_ptr)) p_ptr->num_blow = (p_ptr->lev + 15) / 16;
+
+	/* Gaining anti_tele will cancel all active Word-of-Recall */
+#ifdef ANTI_TELE_CHEEZE
+	if (p_ptr->anti_tele
+ #ifdef ANTI_TELE_CHEEZE_ANCHOR
+	    || p_ptr->st_anchor
+ #endif
+	    && p_ptr->word_recall) {
+		msg_print(Ind, "\377oThere is some static discharge in the air around you.");
+		p_ptr->word_recall = 0;
+		if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+		/* Redraw the depth(colour) */
+		p_ptr->redraw |= (PR_DEPTH);
+		handle_stuff(Ind);
+	}
+#endif
 
 
 

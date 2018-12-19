@@ -1615,16 +1615,13 @@ void self_knowledge(int Ind) {
 		else fprintf(fff, "You are surrounded by a feeble anti-magic field.\n");
 
 	}
-#if 1
-        if (p_ptr->anti_magic)	// newer (saving-throw boost)
-                fprintf(fff, "You are surrounded by an anti-magic shell.\n");
-#endif	// 0
+
+	if (p_ptr->anti_magic)	// newer (saving-throw boost)
+		fprintf(fff, "You are surrounded by an anti-magic shell.\n");
 	if (p_ptr->hold_life) fprintf(fff, "You have a firm hold on your life force.\n");
-#if 1	// somewhat hacky
 	if (p_ptr->lite) fprintf(fff, "You are carrying a permanent light.\n");
-#endif	// 0
-	if (p_ptr->auto_id) fprintf(fff, "You can sense magic.\n");
-#if 1
+	if (p_ptr->auto_id) fprintf(fff, "You can instantly sense magic properties of items.\n");
+
 	if (p_ptr->reflect) fprintf(fff, "You reflect arrows and bolts.\n");
 	if (p_ptr->no_cut) fprintf(fff, "You cannot be cut.\n");
 
@@ -1647,10 +1644,9 @@ void self_knowledge(int Ind) {
 	if (p_ptr->sh_elec) fprintf(fff, "You are surrounded with electricity.\n");
 	if (p_ptr->sh_cold) fprintf(fff, "You are surrounded with a freezing aura.\n");
 
-	if (p_ptr->resist_continuum) fprintf(fff, "The space-time continuum cannot be disrupted near you.\n");
+	if (p_ptr->st_anchor) fprintf(fff, "The space-time continuum around you cannot be disrupted.\n");
 	if (p_ptr->anti_tele) fprintf(fff, "You are surrounded by an anti-teleportation field.\n");
 	if (p_ptr->res_tele) fprintf(fff, "You resist incoming teleportation effects.\n");
-#endif	// 0
 
 	if (p_ptr->immune_acid) fprintf(fff, "You are completely immune to acid.\n");
 	else if ((p_ptr->resist_acid) && (p_ptr->oppose_acid))

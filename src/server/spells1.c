@@ -446,16 +446,10 @@ s16b poly_r_idx(int r_idx) {
 }
 
 /*
- * It is radius-based now.
- *
- * TODO:
- * - give some messages
- * - allow monsters to have st-anchor?
+ * Check for Space-time anchor being currently activated nearby, affecting a specific floor grid.
  */
-//bool check_st_anchor(struct worldpos *wpos)
 bool check_st_anchor(struct worldpos *wpos, int y, int x) {
 	int i;
-	//dun_level *l_ptr = getfloor(wpos);
 
 	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
@@ -468,14 +462,10 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x) {
 
 		/* Maybe CAVE_ICKY/CAVE_STCK can be checked here */
 
-		//if (!q_ptr->st_anchor) continue;
-		//if (!q_ptr->anti_tele) continue;
-		//if ((!q_ptr->res_tele) && (rand_int(100) < 67)) continue;
-		if (!q_ptr->resist_continuum) continue;
+		if (!q_ptr->st_anchor) continue;
 
 		/* Compute distance */
-		if (distance(y, x, q_ptr->py, q_ptr->px) > ST_ANCHOR_DIS)
-			continue;
+		if (distance(y, x, q_ptr->py, q_ptr->px) > ST_ANCHOR_DIS) continue;
 
 		//if(istown(wpos) && randint(100)>q_ptr->lev) continue;
 
@@ -488,7 +478,6 @@ bool check_st_anchor(struct worldpos *wpos, int y, int x) {
 /* Like check_st_anchor() but also checks for destination grid to be anchored. */
 bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2) {
 	int i;
-	//dun_level *l_ptr = getfloor(wpos);
 
 	for (i = 1; i <= NumPlayers; i++) {
 		player_type *q_ptr = Players[i];
@@ -501,10 +490,7 @@ bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2) {
 
 		/* Maybe CAVE_ICKY/CAVE_STCK can be checked here */
 
-		//if (!q_ptr->st_anchor) continue;
-		//if (!q_ptr->anti_tele) continue;
-		//if ((!q_ptr->res_tele) && (rand_int(100) < 67)) continue;
-		if (!q_ptr->resist_continuum) continue;
+		if (!q_ptr->st_anchor) continue;
 
 		/* Compute distance */
 		if (distance(y, x, q_ptr->py, q_ptr->px) > ST_ANCHOR_DIS &&
@@ -682,13 +668,9 @@ void teleport_to_player(int Ind, int m_idx) {
 	struct worldpos *wpos = &m_ptr->wpos;
 	dun_level *l_ptr;
 	cave_type **zcave;
-	//if(p_ptr->resist_continuum) {msg_print("The space-time continuum can't be disrupted."); return;}
 
 	/* Paranoia */
 	if (!m_ptr->r_idx) return;
-
-	/* "Skill" test */
-	//if (randint(100) > m_ptr->level) return;	/* not here */
 
 	if (!(zcave = getcave(wpos))) return;
 	l_ptr = getfloor(wpos);
@@ -699,7 +681,6 @@ void teleport_to_player(int Ind, int m_idx) {
 
 	/* Hrm, I cannot remember/see why it's commented out..
 	 * maybe pets and golems need it? */
-	//if (check_st_anchor(wpos)) return;
 	if (check_st_anchor(wpos, oy, ox)) return;
 
 	/* don't teleport out of no-tele */
@@ -830,7 +811,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 	/* Space/Time Anchor */
 	cave_type **zcave;
-	if(!(zcave = getcave(wpos))) return FALSE;
+	if (!(zcave = getcave(wpos))) return FALSE;
 	l_ptr = getfloor(wpos);
 
 	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return FALSE;
@@ -970,7 +951,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 			}
 
 			/* Never break into st-anchor */
-			if (!p_ptr->death && check_st_anchor(wpos, y, x)) return FALSE;
+			if (check_st_anchor(wpos, y, x)) return FALSE;
 
 			/* This grid looks good */
 			look = FALSE;
@@ -1156,8 +1137,8 @@ void teleport_player_to(int Ind, int ny, int nx) {
 	if (ny > MAX_HGT - 2) ny = MAX_HGT - 2;
 	if (nx > MAX_WID - 2) nx = MAX_WID - 2;
 
-	/* Space/Time Anchor */
-	if (check_st_anchor(wpos, ny, nx)) return;
+	/* Space/Time Anchor -- note that atm we don't check for p_ptr->death flag here.. */
+	if (check_st_anchor2(wpos, p_ptr->py, p_ptr->px, ny, nx)) return;
 
 	/* Find a usable location */
 	while (tries) {
@@ -1344,8 +1325,7 @@ void teleport_player_level(int Ind, bool force) {
 	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return;
 
 	/* Space/Time Anchor */
-	if (p_ptr->anti_tele && !force) return;
-	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) && !force) return;
+	if ((p_ptr->anti_tele || check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) && !force) return;
 
 	wpcopy(&old_wpos, wpos);
 	wpcopy(&new_depth, wpos);
@@ -3835,11 +3815,6 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 
 	switch (randint((safe_area(Ind) || (p_ptr->mode & MODE_PVP)) ? 5 : 8)) { /* don't do baaad things in Monster Arena Challenge */
 	case 4: case 5:
-		if (m_ptr) {
-			if (check_st_anchor2(&p_ptr->wpos, p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx)) break;
-		} else {
-			if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
-		}
 		if (p_ptr->anti_tele) {
 			msg_print(Ind, "You are unaffected!");
 			break;
@@ -3851,7 +3826,6 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 		else teleport_player(Ind, 200, TRUE);
 		break;
 	case 1: case 2: case 3:
-		if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break;
 		if (p_ptr->anti_tele) {
 			msg_print(Ind, "You are unaffected!");
 			break;
@@ -3862,7 +3836,6 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 		teleport_player(Ind, 200, TRUE);
 		break;
 	case 6:
-		//if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) break; checked in teleport_player_level()
 		if (p_ptr->anti_tele) {
 			msg_print(Ind, "You are unaffected!");
 			break;
@@ -10486,9 +10459,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->afk) break;
 
 		/* prevent silly things */
-		if (iddc_recall_fail(p_ptr, l_ptr)
+		if (iddc_recall_fail(p_ptr, l_ptr) || (l_ptr->flags2 & LF2_NO_TELE)
 #ifdef ANTI_TELE_CHEEZE
 		    || p_ptr->anti_tele
+ #ifdef ANTI_TELE_CHEEZE_ANCHOR
+		    || check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)
+ #endif
 #endif
 		    ) {
 			msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");
@@ -10859,49 +10835,56 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_TELE_TO:
 		{
-			//bool resists_tele = FALSE;
-			//dun_level *l_ptr = getfloor(wpos);
-			int chance = (195 - p_ptr->skill_sav) / 2;
+			int chance = (195 - p_ptr->skill_sav) / (p_ptr->res_tele ? 4 : 2);
+			cave_type **zcave;
+			cave_type *c_ptr;
+			player_type *q_ptr;
 
 			/* No "real" damage */
 			dam = 0;
-			break;
 
-			if (p_ptr->martyr) break;
-			if (IS_PVP) {
-				/* protect players in inns */
-				cave_type **zcave;
-				cave_type *c_ptr;
-				if ((zcave = getcave(wpos))) {
-					c_ptr = &zcave[p_ptr->py][p_ptr->px];
-					if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) break;
+			if (!IS_PVP) break; //GF_TELE_TO can only be caused by other players
+			q_ptr = Players[0 - who];
+
+			/* protect players in inns */
+			if ((zcave = getcave(wpos))) {
+				c_ptr = &zcave[p_ptr->py][p_ptr->px];
+				if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) {
+					msg_format(Ind, "%^s commands you to return, but you are unaffected.", q_ptr->name);
+					break;
 				}
-
-				/* protect AFK players */
-				if (p_ptr->afk) break;
-
-				/* Log PvP teleports - mikaelh */
-				s_printf("%s teleported (GF_TELE_TO) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
-				    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-
-				/* Tell the one who caused it */
-				msg_format(0 - who, "You command %s to return.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
 			}
 
-			/* Teleport to nowhere..? */
-			if (who >= 0 || who <= PROJECTOR_UNUSUAL) break;
-
-			if (p_ptr->res_tele) chance >>= 1;
-			if (p_ptr->anti_tele) msg_print(Ind, "You are unaffected!");
-			else if (magik(chance)) msg_print(Ind, "You resist the effect!");
-			else {
-				player_type *q_ptr = Players[0 - who];
-
-				msg_format(Ind, "%^s commands you to return.", q_ptr->name);
-
-				/* Prepare to teleport */
-				teleport_player_to(Ind, q_ptr->py, q_ptr->px);
+			/* protect AFK players */
+			if (p_ptr->afk) {
+				msg_format(Ind, "%^s commands you to return, but you are unaffected.", q_ptr->name);
+				break;
 			}
+
+			if (p_ptr->martyr) {
+				msg_format(Ind, "%^s commands you to return, but you don't care.", q_ptr->name);
+				break;
+			}
+
+			if (p_ptr->anti_tele || check_st_anchor2(&p_ptr->wpos, p_ptr->py, p_ptr->px, q_ptr->py, q_ptr->px)) {
+				msg_format(Ind, "%^s commands you to return, but you don't care.", q_ptr->name);
+				break;
+			}
+
+			if (magik(chance)) {
+				msg_format(Ind, "%^s commands you to return, but you don't care.", q_ptr->name);
+				break;
+			}
+
+			/* Log PvP teleports - mikaelh */
+			s_printf("%s teleported (GF_TELE_TO) %s at (%d,%d,%d).\n", Players[0 - who]->name, p_ptr->name,
+			    p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+
+			/* Tell the one who caused it */
+			msg_format(0 - who, "You command %s to return.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
+
+			/* Prepare to teleport */
+			teleport_player_to(Ind, q_ptr->py, q_ptr->px);
 		}
 
 	/* Hand of Doom */

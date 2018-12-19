@@ -3455,11 +3455,13 @@ cptr item_activation(object_type *o_ptr) {
 		return "healing (800) every 100+d200 turns";
 	case ART_VILYA:
 		return "greater healing (900) every 200+d200 turns";
-#endif	// 0
+#endif
 	case ART_POWER:
 		return "powerful things every 450+d450 turns";
 	case ART_STONE_LORE:
 		return "perilous identify every 4..10 turns (drains 20 mp)";
+	case ART_ANCHOR:
+		return "Space-time barrier every 100..300+d20 turns";
 	case ART_DOR: case ART_GORLIM:
 		return "rays of fear in every direction every 3x(lev+10) turns";
 	case ART_GANDALF:
@@ -5188,7 +5190,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 
 	/* Mega Hack^3 -- describe the Anchor of Space-time */
 	if (o_ptr->name1 == ART_ANCHOR && full)
-		fprintf(fff, "It prevents the space-time continuum from being disrupted.\n");
+		fprintf(fff, "When activated prevents the space-time continuum from being disrupted.\n");
 
 	am = ((f4 & (TR4_ANTIMAGIC_50)) ? 50 : 0)
 	    + ((f4 & (TR4_ANTIMAGIC_30)) ? 30 : 0)

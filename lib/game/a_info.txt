@@ -233,12 +233,11 @@ N:14:of Space-Time
 I:39:105:0
 W:30:12:15:50000
 P:0:1d1:0:0:0
-F:INSTA_ART | SPECIAL_GENE | LITE3 | WHITE_LIGHT | RES_TIME
+F:INSTA_ART | SPECIAL_GENE | LITE3 | WHITE_LIGHT | RES_TIME | ACTIVATE
 # ST-anchor is hard-coded!
 #F:NO_TELE
-D:A powerful stone that provides a strong light for any who
-D:wields it. It is rumored that it may even protect the wearer from
-D:the passing of the time.
+D:A powerful stone that provides a strong light for any who wields it. It is
+D:rumored that it may even protect the wearer from the passing of the time.
 
 
 # This artifact has a low artifact level to prevent it being worthless for

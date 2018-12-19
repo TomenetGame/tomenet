@@ -2642,7 +2642,7 @@ struct player_type {
 	byte antimagic_dis;		/* Radius of the anti magic field */
 	bool anti_tele;			/* Prevent any teleportation + phasing + recall */
 	bool res_tele;			/* Prevents being teleported from someone else */
-	bool resist_continuum;		/* non-timed -- Space/Time Anchor - in PernM, it's same as st_anchor */
+	bool resist_continuum;		/* OBSOLETE -- Was used for space/time-anchor. Currently obsolete though, as st_anchor is sufficient. */
 	bool admin_wiz;			/* Is this char Wizard? */
 	bool admin_dm;			/* or Dungeon Master? */
 	bool admin_dm_chat;		/* allow players to send private chat to an invisible DM */

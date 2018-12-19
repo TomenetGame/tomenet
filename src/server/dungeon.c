@@ -4907,17 +4907,18 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_ammo_brand(Ind, p_ptr->ammo_brand - minus_magic, p_ptr->ammo_brand_t, p_ptr->ammo_brand_d);
 
 	/* weapon brand time */
-	if (p_ptr->melee_brand) {
+	if (p_ptr->melee_brand)
 		(void)set_melee_brand(Ind, p_ptr->melee_brand - minus_magic, p_ptr->melee_brand_t, p_ptr->melee_brand_d);
-	}
 
 	/* Hack -- Timed ESP */
 	if (p_ptr->tim_esp)
 		(void)set_tim_esp(Ind, p_ptr->tim_esp - minus_magic);
 
+#if 0 /* moved to process_player_end() */
 	/* Hack -- Space/Time Anchor */
 	if (p_ptr->st_anchor)
 		(void)set_st_anchor(Ind, p_ptr->st_anchor - minus_magic);
+#endif
 
 	/* Hack -- Prob travel */
 	if (p_ptr->prob_travel)
@@ -5870,25 +5871,30 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Delayed Word-of-Recall */
 	if (p_ptr->word_recall) {
+		if ((l_ptr && (l_ptr->flags2 & LF2_NO_TELE))
 #ifdef ANTI_TELE_CHEEZE
-		if (p_ptr->anti_tele || check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) {
+		    || p_ptr->anti_tele
+ #ifdef ANTI_TELE_CHEEZE_ANCHOR
+		    || check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)
+ #endif
+#endif
+		    ) {
 			msg_print(Ind, "\377oA tension leaves the air around you...");
 			p_ptr->word_recall = 0;
 			if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 			/* Redraw the depth(colour) */
 			p_ptr->redraw |= (PR_DEPTH);
 			handle_stuff(Ind);
-		} else
-#endif
-		{
+		} else {
 			/* Count down towards recall */
 			p_ptr->word_recall--;
 
 			/* MEGA HACK: no recall if icky, or in a shop */
 			if (!p_ptr->word_recall) {
-				if (((p_ptr->anti_tele ||
-				    (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) && !p_ptr->admin_dm))
-				     && !(l_ptr && (l_ptr->flags2 & LF2_NO_TELE))) ||
+				if (
+#ifndef ANTI_TELE_CHEEZE
+				    p_ptr->anti_tele || (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) && !p_ptr->admin_dm) ||
+#endif
 				    p_ptr->store_num != -1 ||
 				    zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)
 					p_ptr->word_recall = 1;
@@ -6176,10 +6182,10 @@ static void process_player_end(int Ind) {
 
 	process_games(Ind);
 
-	/* Added for Holy Martyr, which was previously in process_player_end_aux():
-	   Process it independantly of level speed, in real time instead.
-	   Otherwise it gives the player too much action time on deep levels at high speeds. */
+	/* Added for Holy Martyr, which was previously in process_player_end_aux() */
 	if (!(turn % cfg.fps)) {
+		/* Process Martyr independantly of level speed, in real time instead.
+		   Otherwise it gives the player too much action time on deep levels at high speeds. */
 		if (p_ptr->martyr) (void)set_martyr(Ind, p_ptr->martyr - 1);
 		if (p_ptr->martyr_timeout) {
 			p_ptr->martyr_timeout--;
@@ -6197,6 +6203,9 @@ static void process_player_end(int Ind) {
 				msg_print(Ind, "\376The heavens are ready to accept your martyrium.");
 			}
 		}
+
+		/* Process space/time anchor's no-tele field (used to be in process_player_end_aux()). */
+		if (p_ptr->st_anchor) (void)set_st_anchor(Ind, p_ptr->st_anchor - 1);
 	}
 
 	/* Process things such as regeneration. */

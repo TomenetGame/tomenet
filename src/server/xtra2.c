@@ -638,7 +638,7 @@ bool set_st_anchor(int Ind, int v) {
 	if (v) {
 		if (!p_ptr->st_anchor) {
 			//msg_print(Ind, "The Space/Time Continuum seems to solidify !");
-			msg_print(Ind, "The air feels very still.");
+			msg_print(Ind, "\377sThe air feels very still.");
 			notice = TRUE;
 		}
 	}
@@ -647,7 +647,7 @@ bool set_st_anchor(int Ind, int v) {
 	else {
 		if (p_ptr->st_anchor) {
 			//msg_print(Ind, "The Space/Time Continuum seems more flexible.");
-			msg_print(Ind, "The air feels fresh again.");
+			msg_print(Ind, "\377gThe air feels fresh again.");
 			notice = TRUE;
 		}
 	}
@@ -12390,9 +12390,12 @@ bool set_recall_timer(int Ind, int v) {
 
 	/* don't accidentally recall players in Ironman Deep Dive Challenge
 	   by some effect (spell/Morgoth) */
-	if (!is_admin(p_ptr) && (
+	if (!is_admin(p_ptr) && ((l_ptr->flags2 & LF2_NO_TELE) ||
 #ifdef ANTI_TELE_CHEEZE
 	    p_ptr->anti_tele ||
+ #ifdef ANTI_TELE_CHEEZE_ANCHOR
+	    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) ||
+ #endif
 #endif
 	    iddc_recall_fail(p_ptr, l_ptr))) {
 		if (p_ptr->word_recall) v = 0;
@@ -12445,9 +12448,12 @@ bool set_recall(int Ind, int v, object_type *o_ptr) {
 
 	/* don't accidentally recall players in Ironman Deep Dive Challenge
 	   by some effect (spell/Morgoth) */
-	if (!is_admin(p_ptr) && (
+	if (!is_admin(p_ptr) && ((l_ptr->flags2 & LF2_NO_TELE) ||
 #ifdef ANTI_TELE_CHEEZE
 	    p_ptr->anti_tele ||
+ #ifdef ANTI_TELE_CHEEZE_ANCHOR
+	    check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px) ||
+ #endif
 #endif
 	    iddc_recall_fail(p_ptr, l_ptr))) {
 		msg_print(Ind, "\377oThere is some static discharge in the air around you, but nothing happens.");

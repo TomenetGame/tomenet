@@ -284,6 +284,10 @@
 
 /* Anti-teleportation will cancel Word-of-recall instead of delaying it. */
 #define ANTI_TELE_CHEEZE
+/* ..Additionally cancel Word-of-recall inside space-time-anchor fields, instead of delaying it? */
+#ifdef ANTI_TELE_CHEEZE
+ //#define ANTI_TELE_CHEEZE_ANCHOR
+#endif
 
 /* Update item timeouts in realtime? (Torches/lanterns/Poly-rings/Blood-potions) */
 #define LIVE_TIMEOUTS

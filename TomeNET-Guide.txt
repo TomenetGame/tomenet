@@ -6644,12 +6644,9 @@ In this light, Tik'srvzllat could be seen as Angband's final boss.
 Also, Morgoth, the Lord of Darkness is encountered in Angband at -1700 ft or
 deeper. See (1.3), (1.3a) and (1.3b) for more information.
 
-(**) A space-time anchor is an anti-teleportation field of radius 12 that will
-prevent all teleportation and stall all Word of Recall attempts within.
-(Note: It actually prevents all teleportation attempts that originate from
-       within it and also prevents all teleportation targets to be moved away
-       from within it, but does not prevent a teleportation from dropping its
-       target into them.)
+(**) The space-time anchor is a special light source that can be activated to
+create a temporary anti-teleportation field of radius 12 that will prevent all
+teleportation from and to, and stall all Word of Recall attempts within.
 
 (***) While Sauron, the Sorceror, boss of Mount Doom, does not drop any
 specific artifact, he is still a required kill before you are able to encounter
