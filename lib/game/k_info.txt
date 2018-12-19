@@ -6643,7 +6643,7 @@ N:911:& Flint~
 G:~:r
 I:12:6:0
 W:0:0:3:100
-A:3/3:5/3:7/3
+A:3/7:5/4:7/10
 P:0:1d1:0:0:0
 F:EASY_KNOW
 D:Automatically refills your light source if you carry appropriate items.
