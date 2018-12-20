@@ -441,13 +441,6 @@ static void prt_speed(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i = p_ptr->pspeed;
 
-#if 0	/* methinks we'd better tell it to players.. - Jir - */
-	/* Hack -- Visually "undo" the Search Mode Slowdown */
-	/* And this formula can be wrong for hellish */
-//	if (p_ptr->searching) i += (p_ptr->mode & MODE_HARD ? 5 : 10);
-	if (p_ptr->searching) i += 10;
-#endif	// 0
-
 	Send_speed(Ind, i - 110);
 }
 
@@ -4609,14 +4602,17 @@ void calc_boni(int Ind) {
 	if (p_ptr->food >= PY_FOOD_MAX) p_ptr->pspeed -= 10;
 
 	/* Searching slows the player down */
-	/* -APD- adding "stealth mode" for rogues... will probably need to tweek this */
-	/* XXX this can be out of place; maybe better done
-	 * after skill bonuses are added?	- Jir - */
 	if (p_ptr->searching) {
 		int sneakiness = get_skill(p_ptr, SKILL_SNEAKINESS);
 
 		p_ptr->pspeed -= 10 - sneakiness / 7;
 		csheet_boni[14].spd -= 10 - sneakiness / 7;
+
+#if 0 /* no, because 'S' is just a shortcut for moving+'s' on each grid */
+		/* Receive a searching bonus while in 'S'earching mode? */
+		p_ptr->skill_srh = p_ptr->skill_srh + 10;
+		csheet_boni[14].srch += 10;
+#endif
 	}
 
 	if (p_ptr->cloaked) {
