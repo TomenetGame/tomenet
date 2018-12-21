@@ -2223,7 +2223,7 @@
 /* Explosive rune */
 #define FEAT_RUNE		0x40
 
-/* Pattern */
+/* Pattern (Amber) -- Not implemented workingly (supposed to prevent teleport and summoning onto it and doesn't get wiped by deto/rocket/disi) */
 #define FEAT_PATTERN_START	0x41
 #define FEAT_PATTERN_1		0x42
 #define FEAT_PATTERN_2		0x43

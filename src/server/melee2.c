@@ -783,8 +783,6 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 		if (zcave[y][x].feat == FEAT_GLYPH) continue;
 		if (zcave[y][x].feat == FEAT_RUNE) continue;
 #if 0
-		if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
-
 		/* Nor on the between */
 		if (cave[y][x].feat == FEAT_BETWEEN) return (FALSE);
 
@@ -816,8 +814,6 @@ static bool summon_possible(worldpos *wpos, int y1, int x1) {
 			if (zcave[y][x].feat == FEAT_GLYPH) continue;
 			if (zcave[y][x].feat == FEAT_RUNE) continue;
 #if 0
-			if (cave[y][x].feat == FEAT_MINOR_GLYPH) continue;
-
 			/* Nor on the between */
 			if (cave[y][x].feat == FEAT_BETWEEN) return (FALSE);
 
@@ -4701,125 +4697,11 @@ static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr,
 	dam = e_ptr->dam;
 	//name = r_name_get(m_ptr);
 
-#if 0
-	/* XXX Make sure to add whatever might be needed!
-	   Maybe use approx_damage() for this - C. Blue */
-	switch (e_ptr->type) {
-		case GF_ACID:
-			if (r_ptr->flags3 & RF3_IM_ACID) dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_ACID) dam /= 4;
-			break;
-		case GF_ELEC:
-			if (r_ptr->flags3 & RF3_IM_ELEC) dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_ELEC) dam /= 4;
-			break;
-		case GF_FIRE:
-			if (r_ptr->flags3 & RF3_IM_FIRE) dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_FIRE) dam /= 4;
-			break;
-		case GF_COLD:
-			if (r_ptr->flags3 & RF3_IM_COLD) dam = 0;
-			else if (r_ptr->flags3 & RF3_UNDEAD) dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_COLD) dam /= 4;
-			break;
-		case GF_POIS:
-			if (r_ptr->flags3 & RF3_IM_POIS) dam = 0;
-			else if (r_ptr->flags3 & RF3_UNDEAD) dam = 0;
-			else if (r_ptr->flags3 & RF3_NONLIVING) dam = 0;
-			else if (r_ptr->d_char == 'A') dam = 0;
-			else if (r_ptr->flags9 & RF9_RES_POIS) dam /= 4;
-			break;
-		case GF_WATER:
-		case GF_VAPOUR:
-		case GF_WAVE:
-			if (r_ptr->flags9 & RF9_IM_WATER) dam = 0;
-			else if (r_ptr->flags7 & RF7_AQUATIC) dam /= 9;
-			else if (r_ptr->flags3 & RF3_RES_WATE) dam /= 4;
-			break;
-
-		/* all effects that are bad for monsters: */
-		case GF_PLASMA:
-		case GF_HOLY_ORB:
-		case GF_LITE:
-		case GF_DARK:
-		case GF_LITE_WEAK:
-		case GF_STARLITE:
-		case GF_DARK_WEAK:
-		case GF_SHARDS:
-		case GF_SOUND:
-		case GF_CONFUSION:
-		case GF_FORCE:
-		case GF_INERTIA:
-		case GF_MANA:
-		case GF_METEOR:
-		case GF_ICE:
-		case GF_CHAOS:
-		case GF_NETHER:
-		case GF_DISENCHANT:
-		case GF_NEXUS:
-		case GF_TIME:
-		case GF_GRAVITY:
-		case GF_KILL_WALL:
-		case GF_OLD_POLY:
-		case GF_OLD_SLOW:
-		case GF_OLD_CONF:
-		case GF_OLD_SLEEP:
-		case GF_OLD_DRAIN:
-		case GF_AWAY_UNDEAD:
-		case GF_AWAY_EVIL:
-		case GF_AWAY_ALL:
-		case GF_TURN_UNDEAD:
-		case GF_TURN_EVIL:
-		case GF_TURN_ALL:
-		case GF_DISP_UNDEAD:
-		case GF_DISP_EVIL:
-		case GF_DISP_ALL:
-		case GF_EARTHQUAKE:
-		case GF_STUN:
-		case GF_PSI:
-		case GF_HOLY_FIRE:
-		case GF_DISINTEGRATE:
-		case GF_HELLFIRE:
-		case GF_MAKE_GLYPH:
-		case GF_CURSE:
-		case GF_WATERPOISON:
-		case GF_ICEPOISON:
-		case GF_HAVOC:
-		case GF_INFERNO:
-		case GF_DETONATION:
-		case GF_ROCKET:
-		case GF_DEC_STR:
-		case GF_DEC_DEX:
-		case GF_DEC_CON:
-		case GF_RUINATION:
-		case GF_NUKE:
-		case GF_BLIND:
-		case GF_HOLD:
-//		case GF_DOMINATE:
-		case GF_UNBREATH:
-		case GF_WAVE:
-		case GF_DISP_DEMON:
-//		case GF_HAND_DOOM:
-		case GF_STOP:
-		case GF_STASIS:
-		/* To remove some hacks? */
-		case GF_THUNDER:
-		case GF_ANNIHILATION:
-			break;
-
-		default: /* no need to avoid healing cloud or similar effects - C. Blue */
-			dam = 0;
-	}
-#else
 	/* Use new function 'approx_damage()' for this - C. Blue */
 	dam = approx_damage(m_idx, dam, e_ptr->type);
-#endif
 
-#if 0 /* original */
-	return (m_ptr->hp >= dam * 30);
-#else /* less exploitable, ie avoid pushing monsters around without them able to retaliate */
+	/* Was 30, now less exploitable, ie avoid pushing monsters around without them able to retaliate */
 	return (m_ptr->hp >= dam * 20);
-#endif
 }
 
 #if 0	/* Replaced by monster_can_cross_terrain */

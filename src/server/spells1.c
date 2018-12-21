@@ -726,8 +726,6 @@ void teleport_to_player(int Ind, int m_idx) {
 			if (zcave[ny][nx].feat == FEAT_GLYPH) continue;
 			if (zcave[ny][nx].feat == FEAT_RUNE) continue;
 #if 0
-			if (cave[ny][nx].feat == FEAT_MINOR_GLYPH) continue;
-
 			/* ...nor onto the Pattern */
 			if ((cave[ny][nx].feat >= FEAT_PATTERN_START) &&
 				(cave[ny][nx].feat <= FEAT_PATTERN_XTRA2)) continue;
@@ -4709,17 +4707,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (c_ptr->feat == FEAT_GLYPH || c_ptr->feat == FEAT_RUNE)
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
 		}
-
-	/* from PernA	- Jir - */
-#if 0
-	case GF_MAKE_GLYPH:
-		/* Require a "naked" floor grid */
-		if (!cave_clean_bold(zcave, y, x)) break;
-		if((f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) break;
-		if (allow_terraforming(&p_ptr->wpos, FEAT_GLYPH))
-			cave_set_feat_live(wpos, y, x, FEAT_GLYPH);
-		break;
-#endif
 
 	// GF_ROCKET and GF_DISINTEGRATE are handled in project()
 
@@ -12010,50 +11997,40 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			if (distance(y, x, y1, x1) > MAX_RANGE) continue;
 #endif
 
-#if 1
+			/* Floor destruction of Disintegration, Rocket and Detonation is handled here instead of in project_f(): */
 			if ((typ == GF_DISINTEGRATE) ||
 			    /* Reduce disintegration effect of rockets to radius 1 - C. Blue */
-			    ((typ == GF_ROCKET || typ == GF_DETONATION) && (ABS(y - y2) <= 1) && (ABS(x - x2) <= 1)) )
-			{
+			    ((typ == GF_ROCKET || typ == GF_DETONATION) && (ABS(y - y2) <= 1) && (ABS(x - x2) <= 1)) ) {
 				c_ptr2 = &zcave[y][x];
-				if (cave_valid_bold(zcave,y,x))
-//					&& (cave[y][x].feat < FEAT_PATTERN_START
-//					|| cave[y][x].feat > FEAT_PATTERN_XTRA2))
-				{
-					if (
-						//(c_ptr->feat != FEAT_WATER) &&
-						(c_ptr2->feat != FEAT_SHAL_WATER) &&
-						(c_ptr2->feat != FEAT_DEEP_WATER) &&
-						(c_ptr2->feat != FEAT_TAINTED_WATER) &&
-						(c_ptr2->feat != FEAT_DEEP_LAVA) &&
-						(c_ptr2->feat != FEAT_SHAL_LAVA) &&
-						//(c_ptr2->feat != FEAT_ASH) &&
-						(c_ptr2->feat != FEAT_MUD) &&
-						(c_ptr2->feat != FEAT_DIRT) &&
-						(c_ptr2->feat != FEAT_HOME_OPEN) &&
-						(c_ptr2->feat != FEAT_HOME))
-					{
-						if (allow_terraforming(wpos, FEAT_TREE)
-						    && c_ptr2->feat != FEAT_MON_TRAP /* Experimental: Let monster traps survive! Idea: Allow multi-detonation-potion-traps. */
-						    ) {
-							if (randint(2) == 1)
-								cave_set_feat_live(wpos, y, x, FEAT_FLOOR);
-							else
-								cave_set_feat_live(wpos, y, x, FEAT_ASH);
 
-							/* Cleanup Runemaster Glyphs - Kurzel */
-							struct c_special *cs_ptr;
-							cs_ptr = GetCS(c_ptr2, CS_RUNE);
-							if (cs_ptr) cs_erase(c_ptr2, cs_ptr);
-						}
-					}
+				if (cave_valid_bold(zcave,y,x) && /* <- implies !FF1_PERMANENT */
+				    //(cave[y][x].feat < FEAT_PATTERN_START || cave[y][x].feat > FEAT_PATTERN_XTRA2) &&
+				    (c_ptr2->feat != FEAT_SHAL_WATER) &&
+				    (c_ptr2->feat != FEAT_DEEP_WATER) &&
+				    (c_ptr2->feat != FEAT_TAINTED_WATER) &&
+				    (c_ptr2->feat != FEAT_DEEP_LAVA) &&
+				    (c_ptr2->feat != FEAT_SHAL_LAVA) &&
+				    //(c_ptr2->feat != FEAT_ASH) &&
+				    (c_ptr2->feat != FEAT_MUD) &&
+				    (c_ptr2->feat != FEAT_DIRT) &&
+				    (c_ptr2->feat != FEAT_HOME_OPEN) &&
+				    (c_ptr2->feat != FEAT_HOME) &&
+				    allow_terraforming(wpos, FEAT_TREE)
+				    && (typ == GF_DISINTEGRATE || c_ptr2->feat != FEAT_MON_TRAP)) { /* Experimental: Let monster traps survive! Idea: Allow multi-detonation-potion-traps. */
+					if (randint(2) == 1)
+						cave_set_feat_live(wpos, y, x, FEAT_FLOOR);
+					else
+						cave_set_feat_live(wpos, y, x, FEAT_ASH);
 
-				/* Update some things -- similar to GF_KILL_WALL */
-				//p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+					/* Cleanup Runemaster Glyphs - Kurzel */
+					struct c_special *cs_ptr;
+					cs_ptr = GetCS(c_ptr2, CS_RUNE);
+					if (cs_ptr) cs_erase(c_ptr2, cs_ptr);
+
+					/* Update some things -- similar to GF_KILL_WALL */
+					//p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 				}
 			}
-#endif	/* 1 */
-			/* else */ /* HERE!!!!*/
 			/* Ball explosions are stopped by walls */
 			if (!los(wpos, y2, x2, y, x)) continue;
 
@@ -12063,46 +12040,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			grids++;
 			if(grids > 500) printf("grids %d\n", grids);
 		}
-
-#if 0
-		/* Determine the blast area, work from the inside out */
-		for (dist = 0; dist <= rad; dist++) {
-			/* Scan the maximal blast area of radius "dist" */
-			for (y = y2 - dist; y <= y2 + dist; y++) {
-				for (x = x2 - dist; x <= x2 + dist; x++) {
-					/* Ignore "illegal" locations */
-					if (!in_bounds2(wpos, y, x)) continue;
-
-					/* Enforce a "circular" explosion */
-					if (distance(y2, x2, y, x) != dist) continue;
-
- #if 0
-					if (typ == GF_DISINTEGRATE) {
-						if (cave_valid_bold(y,x) &&
-						    (cave[y][x].feat < FEAT_PATTERN_START
-						    || cave[y][x].feat > FEAT_PATTERN_XTRA2))
-							cave_set_feat_live(y, x, FEAT_FLOOR);
-
-						/* Update some things -- similar to GF_KILL_WALL */
-						p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
-					}
- #endif	/* 0 */
-					/* else */ /* HERE!!!!*/
-					/* Ball explosions are stopped by walls */
-					if (!los(wpos, y2, x2, y, x)) continue;
-
-					/* Save this grid */
-					gy[grids] = y;
-					gx[grids] = x;
-					grids++;
-					if(grids>500) printf("grids %d\n", grids);
-				}
-			}
-
-			/* Encode some more "radius" info */
-			gm[dist+1] = grids;
-		}
-#endif	// 0
 	}
 
 	/* Speed -- ignore "non-explosions" */
