@@ -2631,6 +2631,8 @@ if (is_admin(p_ptr))
 
 			for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
 				if (!mail_sender[i][0]) break;
+
+				if (!admin_p(Ind)) continue;
 				if (!strcmp(mail_sender[i], p_ptr->name)) {
 					msg_print(Ind, "\377yYou can only have one active shipment at a time.");
 					return FALSE;
@@ -2661,6 +2663,8 @@ if (is_admin(p_ptr))
 
 			for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
 				if (!mail_sender[i][0]) break;
+
+				if (admin_p(Ind)) continue;
 				if (!strcmp(mail_sender[i], p_ptr->name)) {
 					msg_print(Ind, "\377yYou can only have one active shipment at a time.");
 					return FALSE;

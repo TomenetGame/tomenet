@@ -9595,88 +9595,95 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 
-		comp = compat_mode(p_ptr->mode, lookup_player_mode(pid));
-		if (comp) {
-			msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
-			return;
-		}
+		if (!admin_p(Ind)) {
+			if ((p_ptr->mode & MODE_SOLO) || (lookup_player_mode(pid) & MODE_SOLO)) {
+				msg_print(Ind, "\377ySoloists cannot exchange goods or money with other players.");
+				return;
+			}
 
-		if ((p_ptr->mode & MODE_SOLO) || (lookup_player_mode(pid) & MODE_SOLO)) {
-			msg_print(Ind, "\377ySoloists cannot exchange goods or money with other players.");
-			return;
-		}
+			comp = compat_mode(p_ptr->mode, lookup_player_mode(pid));
+			if (comp) {
+				msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
+				return;
+			}
 
-		/* These anti-ironman checks take care of possible IDDC_IRON_COOP too */
-		d_ptr = getdungeon(&p_ptr->wpos);
-		if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
-			msg_print(Ind, "Sorry, we are unable to ship from this location.");
-			return;
-		}
-		wpos = lookup_player_wpos(pid);
-		d_ptr = getdungeon(&wpos);
-		if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
-			msg_print(Ind, "Sorry, we are unable to ship to that player's location.");
-			return;
-		}
+			/* These anti-ironman checks take care of possible IDDC_IRON_COOP too */
+			d_ptr = getdungeon(&p_ptr->wpos);
+			if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+				msg_print(Ind, "Sorry, we are unable to ship from this location.");
+				return;
+			}
+			wpos = lookup_player_wpos(pid);
+			d_ptr = getdungeon(&wpos);
+			if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+				msg_print(Ind, "Sorry, we are unable to ship to that player's location.");
+				return;
+			}
 
 #ifdef IRON_IRON_TEAM
-		if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && o_ptr->owner != pid
-		    //&& o_ptr->iron_trade != lookup_player_iron_trade(pid) {  --currently no lookup_player_iron_trade() function :-p just use this for now:
-		    && p_ptr->party != i) {
-			msg_print(Ind, "\377yUnfortunately we cannot ship to that person.");
-			return;
-		}
+			if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && o_ptr->owner != pid
+			    //&& o_ptr->iron_trade != lookup_player_iron_trade(pid) {  --currently no lookup_player_iron_trade() function :-p just use this for now:
+			    && p_ptr->party != i) {
+				msg_print(Ind, "\377yUnfortunately we cannot ship to that person.");
+				return;
+			}
 #endif
 #ifdef IDDC_RESTRICTED_TRADING
-		if (in_irondeepdive(&wpos)) {
-			msg_print(Ind, "\377yUnfortunately the Ironman Deep Dive Challenge is out of our reach.");
-			return;
-		}
+			if (in_irondeepdive(&wpos)) {
+				msg_print(Ind, "\377yUnfortunately the Ironman Deep Dive Challenge is out of our reach.");
+				return;
+			}
 #endif
 
-		/* Cannot remove cursed items */
-		if (cursed_p(o_ptr)
-		    && !(is_admin(p_ptr) /* Hack -- DM can */
+			/* Cannot remove cursed items */
+			if (cursed_p(o_ptr) && !(
 #if 1 /* allow Bloodthirster to take off/drop heavily cursed items? */
  #ifdef ENABLE_HELLKNIGHT
-		    /* note: only for corrupted priests/paladins: */
-		    || ((p_ptr->pclass == CLASS_HELLKNIGHT
+			    /* note: only for corrupted priests/paladins: */
+			    (p_ptr->pclass == CLASS_HELLKNIGHT
   #ifdef ENABLE_CPRIEST
-		    || p_ptr->pclass == CLASS_CPRIEST
+			    || p_ptr->pclass == CLASS_CPRIEST
   #endif
-		    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE))
+			    ) && p_ptr->body_monster == RI_BLOODTHIRSTER && !(f3 & TR3_PERMA_CURSE)
  #endif
 #endif
-		    )) {
-			if ((p_ptr->mail_item >= INVEN_WIELD) ) {
-				/* Oops */
-				msg_print(Ind, "\377yHmmm, the item seems to be cursed.");
-				/* Nope */
-				return;
-			} else if (f4 & TR4_CURSE_NO_DROP) {
-				/* Oops */
-				msg_print(Ind, "\377yHmmm, you seem to be unable to let go of that item.");
-				/* Nope */
+			    )) {
+				if ((p_ptr->mail_item >= INVEN_WIELD) ) {
+					/* Oops */
+					msg_print(Ind, "\377yHmmm, the item seems to be cursed.");
+					/* Nope */
+					return;
+				} else if (f4 & TR4_CURSE_NO_DROP) {
+					/* Oops */
+					msg_print(Ind, "\377yHmmm, you seem to be unable to let go of that item.");
+					/* Nope */
+					return;
+				}
+			}
+
+			/* true artifact restrictions */
+			if (true_artifact_p(o_ptr)) {
+				if (cfg.anti_arts_hoard || p_ptr->total_winner) {
+					msg_print(Ind, "\377yAs a royalty, you cannot hand over true artifacts.");
+					return;
+				}
+				if (!winner_artifact_p(o_ptr) && cfg.kings_etiquette && total_winner) {
+					msg_print(Ind, "\377yRoyalties may not own true artifacts.");
+					return;
+				}
+				if (cfg.anti_arts_pickup && o_ptr->level > lookup_player_level(pid)) {
+					msg_print(Ind, "\377yThe receipient must match the level of a true artifact.");
+					return;
+				}
+			}
+
+			if ((f4 & TR4_CURSE_NO_DROP) && (cursed_p(o_ptr) || (f3 & TR3_AUTO_CURSE))) {
+				msg_print(Ind, "\377ySorry, we don't ship items cursed in a way that may prevent dropping them.");
 				return;
 			}
 		}
 
-		/* true artifact restrictions */
-		if (true_artifact_p(o_ptr)) {
-			if (cfg.anti_arts_hoard || p_ptr->total_winner) {
-				msg_print(Ind, "\377yAs a royalty, you cannot hand over true artifacts.");
-				return;
-			}
-			if (!winner_artifact_p(o_ptr) && cfg.kings_etiquette && total_winner) {
-				msg_print(Ind, "\377yRoyalties may not own true artifacts.");
-				return;
-			}
-			if (cfg.anti_arts_pickup && o_ptr->level > lookup_player_level(pid)) {
-				msg_print(Ind, "\377yThe receipient must match the level of a true artifact.");
-				return;
-			}
-		}
-		/* WINNERS_ONLY item restrictions */
+		/* WINNERS_ONLY item restrictions - even for admins ;) */
 		if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) &&
 #ifdef FALLEN_WINNERSONLY
 		    !once_winner
@@ -9688,10 +9695,6 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 
-		if ((f4 & TR4_CURSE_NO_DROP) && (cursed_p(o_ptr) || (f3 & TR3_AUTO_CURSE))) {
-			msg_print(Ind, "\377ySorry, we don't ship items cursed in a way that may prevent dropping them.");
-			return;
-		}
 
 		/* le paranoid double-check */
 		for (i = 0; i < MAX_MERCHANT_MAILS; i++)
@@ -9762,42 +9765,44 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			return;
 		}
 
-		if ((p_ptr->mode & MODE_SOLO) || (lookup_player_mode(pid) & MODE_SOLO)) {
-			msg_print(Ind, "\377ySoloists cannot exchange goods or money with other players.");
-			return;
-		}
+		if (!admin_p(Ind)) {
+			if ((p_ptr->mode & MODE_SOLO) || (lookup_player_mode(pid) & MODE_SOLO)) {
+				msg_print(Ind, "\377ySoloists cannot exchange goods or money with other players.");
+				return;
+			}
 
-		comp = compat_mode(p_ptr->mode, lookup_player_mode(pid));
-		if (comp) {
-			msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
-			return;
-		}
+			comp = compat_mode(p_ptr->mode, lookup_player_mode(pid));
+			if (comp) {
+				msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
+				return;
+			}
 
-		/* These anti-ironman checks take care of possible IDDC_IRON_COOP too */
-		d_ptr = getdungeon(&p_ptr->wpos);
-		if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
-			msg_print(Ind, "Sorry, we are unable to transfer from this location.");
-			return;
-		}
-		wpos = lookup_player_wpos(pid);
-		d_ptr = getdungeon(&wpos);
-		if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
-			msg_print(Ind, "Sorry, we are unable to transfer to that player's location.");
-			return;
-		}
+			/* These anti-ironman checks take care of possible IDDC_IRON_COOP too */
+			d_ptr = getdungeon(&p_ptr->wpos);
+			if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+				msg_print(Ind, "Sorry, we are unable to transfer from this location.");
+				return;
+			}
+			wpos = lookup_player_wpos(pid);
+			d_ptr = getdungeon(&wpos);
+			if (d_ptr && ((d_ptr->flags2 & (DF2_IRON | DF2_NO_RECALL_INTO)) || (d_ptr->flags1 & DF1_NO_RECALL))) {
+				msg_print(Ind, "Sorry, we are unable to transfer to that player's location.");
+				return;
+			}
 
 #ifdef IRON_IRON_TEAM
-		if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && p_ptr->party != i) {
-			msg_print(Ind, "\377yUnfortunately we cannot transfer to that person.");
-			return;
-		}
+			if ((i = lookup_player_party(pid)) && (parties[i].mode & PA_IRONTEAM) && p_ptr->party != i) {
+				msg_print(Ind, "\377yUnfortunately we cannot transfer to that person.");
+				return;
+			}
 #endif
 #ifdef IDDC_RESTRICTED_TRADING
-		if (in_irondeepdive(&wpos)) {
-			msg_print(Ind, "\377yUnfortunately the Ironman Deep Dive Challenge is out of our reach.");
-			return;
-		}
+			if (in_irondeepdive(&wpos)) {
+				msg_print(Ind, "\377yUnfortunately the Ironman Deep Dive Challenge is out of our reach.");
+				return;
+			}
 #endif
+		}
 
 		/* le paranoid double-check */
 		for (i = 0; i < MAX_MERCHANT_MAILS; i++)
