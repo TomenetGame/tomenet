@@ -12017,15 +12017,21 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 				    (c_ptr2->feat != FEAT_HOME) &&
 				    allow_terraforming(wpos, FEAT_TREE)
 				    && (typ == GF_DISINTEGRATE || c_ptr2->feat != FEAT_MON_TRAP)) { /* Experimental: Let monster traps survive! Idea: Allow multi-detonation-potion-traps. */
+					struct c_special *cs_ptr;
+
+					/* Cleanup Runemaster Glyphs - Kurzel */
+					cs_ptr = GetCS(c_ptr2, CS_RUNE);
+					if (cs_ptr) cs_erase(c_ptr2, cs_ptr);
+
+					/* Cleanup monster traps */
+					cs_ptr = GetCS(c_ptr2, CS_MON_TRAP);
+					if (cs_ptr) cs_erase(c_ptr2, cs_ptr);
+
+					/* Burn floor somewhat */
 					if (randint(2) == 1)
 						cave_set_feat_live(wpos, y, x, FEAT_FLOOR);
 					else
 						cave_set_feat_live(wpos, y, x, FEAT_ASH);
-
-					/* Cleanup Runemaster Glyphs - Kurzel */
-					struct c_special *cs_ptr;
-					cs_ptr = GetCS(c_ptr2, CS_RUNE);
-					if (cs_ptr) cs_erase(c_ptr2, cs_ptr);
 
 					/* Update some things -- similar to GF_KILL_WALL */
 					//p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
