@@ -7102,11 +7102,6 @@ static bool run_test(int Ind) {
 				if (p_ptr->find_ignore_stairs) notice = FALSE;
 				/* Done */
 				break;
-			case FEAT_MON_TRAP:
-				/* Option -- ignore */
-				if (p_ptr->find_ignore_montraps) notice = FALSE;
-				/* Done */
-				break;
 			/* Water */
 			case FEAT_DEEP_WATER:
 				if (aqua) notice = FALSE;
@@ -7127,6 +7122,9 @@ static bool run_test(int Ind) {
 			/* The grid is "visible" */
 			inv = FALSE;
 		}
+
+		/* Option -- ignore */
+		if (c_ptr->feat == FEAT_MON_TRAP && !p_ptr->find_ignore_montraps) return TRUE;
 
 		/* Analyze unknown grids and floors */
 		/* wilderness hack to run from one level to the next */

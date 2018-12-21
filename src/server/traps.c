@@ -3334,6 +3334,15 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 
 	/* Actually set the trap */
 	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
+#if 0
+	/* Remember the trap on our automap -
+	   I added this actually just because CAVE_MARK is required for the new find_ignore_montrap option to work
+	   (and seems like a cool convenience feat for trappers so they notice whenever something happens to their trap, hehe) - C. Blue
+	   .. however, I just if0'ed it again, because CAVE_MARK would remain after the trap got disarmed and make things look strange.
+	   It also might not be trivial to sort out whether to unMARK the cave after the trap is gone or not. So I just resorted to
+	   coding FEAT_MON_TRAP directly in run_test() instead. */
+	p_ptr->cave_flag[py][px] |= CAVE_MARK;
+#endif
 }
 
 /*
