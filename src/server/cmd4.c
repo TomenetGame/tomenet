@@ -3466,7 +3466,15 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	int ahou = acc_get_houses(p_ptr->accountname);
 
 	msg_print(Ind, " ");
-	if (admin) msg_format(Ind, "The game turn: %d", turn);
+#ifndef TEST_SERVER
+	if (admin) {
+#endif
+		u32b td = (cfg.fps * 86400 - (turn % (cfg.fps * 86400))) / cfg.fps;
+		int h = td / 3600, m = (td - h * 3600) / 60, s = td - h * 3600 - m * 60;
+		msg_format(Ind, "The game turn: %d (CRON_24H in %02d:%02d:%02d)", turn, h, m, s);
+#ifndef TEST_SERVER
+	}
+#endif
 
 	do_cmd_time(Ind);
 
