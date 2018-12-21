@@ -6971,20 +6971,21 @@ static bool run_test(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	int                     prev_dir, new_dir, check_dir = 0;
+	int prev_dir, new_dir, check_dir = 0;
 
-	int                     row, col;
-	int                     i, max, inv;
-	int                     option, option2;
+	int row, col;
+	int i, max, inv;
+	int option, option2;
 	bool aqua = p_ptr->can_swim || p_ptr->levitate || (get_skill_scale(p_ptr, SKILL_SWIM, 500) >= 7) ||
 	    ((p_ptr->body_monster) && (
 	    (r_info[p_ptr->body_monster].flags7 & RF7_AQUATIC) ||
 	    (r_info[p_ptr->body_monster].flags3 & RF3_UNDEAD) ));
 
-	cave_type               *c_ptr;
-	byte                    *w_ptr;
+	cave_type *c_ptr;
+	byte *w_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	/* XXX -- Ghosts never stop running */
@@ -6997,10 +6998,8 @@ static bool run_test(int Ind) {
 	/* Where we came from */
 	prev_dir = p_ptr->find_prevdir;
 
-
 	/* Range of newly adjacent grids */
 	max = (prev_dir & 0x01) + 1;
-
 
 	/* Look at every newly adjacent square. */
 	for (i = -max; i <= max; i++) {
@@ -7051,8 +7050,7 @@ static bool run_test(int Ind) {
 #endif
 
 		/* Visible objects abort running */
-		if (c_ptr->o_idx)
-		{
+		if (c_ptr->o_idx) {
 			/* Visible object */
 			if (p_ptr->obj_vis[c_ptr->o_idx]) return (TRUE);
 		}
@@ -7061,8 +7059,7 @@ static bool run_test(int Ind) {
 		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && cs_ptr->sc.trap.found) return TRUE;
 
 		/* Hack -- basically stop in water */
-		if (c_ptr->feat == FEAT_DEEP_WATER && !aqua)
-			return TRUE;
+		if (c_ptr->feat == FEAT_DEEP_WATER && !aqua) return TRUE;
 
 		/* Assume unknown */
 		inv = TRUE;
@@ -7073,140 +7070,56 @@ static bool run_test(int Ind) {
 
 			/* Examine the terrain */
 			switch (c_ptr->feat) {
-#if 0
-				/* Floors */
-				case FEAT_FLOOR:
-
-				/* Invis traps */
-//				case FEAT_INVIS:
-
-				/* Secret doors */
-				case FEAT_SECRET:
-
-				/* Normal veins */
-				case FEAT_MAGMA:
-				case FEAT_QUARTZ:
-				case FEAT_SANDWALL:
-
-				/* Hidden treasure */
-				case FEAT_MAGMA_H:
-				case FEAT_QUARTZ_H:
-				case FEAT_SANDWALL_H:
-
-				/* Grass, trees, and dirt */
-				case FEAT_GRASS:
-				case FEAT_TREE:
-				case FEAT_DIRT:
-
-				/* Walls */
-				case FEAT_WALL_EXTRA:
-				case FEAT_WALL_INNER:
-				case FEAT_WALL_OUTER:
-				case FEAT_WALL_SOLID:
-				case FEAT_PERM_EXTRA:
-				case FEAT_PERM_INNER:
-				case FEAT_PERM_OUTER:
-				case FEAT_PERM_SOLID:
-				case FEAT_PERM_FILL:
-				case FEAT_PERM_CLEAR:
-				case FEAT_PERM_SPIRIT:
-				{
-					/* Ignore */
-					notice = FALSE;
-
-					/* Done */
-					break;
-				}
-#endif	// 0
-
-				/* FIXME: this can be funny with running speed boost */
-				case FEAT_DEEP_LAVA:
-				case FEAT_SHAL_LAVA:
-				{
-					/* Ignore */
-					if (p_ptr->invuln || p_ptr->immune_fire) notice = FALSE;
-
-					/* Done */
-					break;
-				}
-
-#if 0
-				case FEAT_DEEP_WATER:
-				{
-					/* Ignore */
-					if (aqua) notice = FALSE;
-
-					/* Done */
-					break;
-				}
-#endif	// 0
-				case FEAT_ICE:
-				{
-					/* Ignore */
-					if (p_ptr->feather_fall || p_ptr->levitate || p_ptr->tim_wraith) notice = FALSE;
-
-					/* Done */
-					break;
-				}
-
-				/* Open doors */
-				case FEAT_OPEN:
-				case FEAT_BROKEN:
-				{
-					/* Option -- ignore */
-					if (p_ptr->find_ignore_doors) notice = FALSE;
-
-					/* Done */
-					break;
-				}
-
-				/* Stairs */
-				case FEAT_LESS:
-				case FEAT_MORE:
-				case FEAT_WAY_LESS:
-				case FEAT_WAY_MORE:
-				case FEAT_SHAFT_UP:
-				case FEAT_SHAFT_DOWN:
-				/* XXX */
-				case FEAT_BETWEEN:
-				case FEAT_BEACON:
-				{
-					/* Option -- ignore */
-					if (p_ptr->find_ignore_stairs) notice = FALSE;
-
-					/* Done */
-					break;
-				}
-
-				case FEAT_MON_TRAP:
-				{
-					/* Option -- ignore */
-					if (p_ptr->find_ignore_montraps) notice = FALSE;
-
-					/* Done */
-					break;
-				}
-
-				/* Water */
-				case FEAT_DEEP_WATER:
-				{
-					if (aqua) notice = FALSE;
-
-					/* Done */
-					break;
-				}
-				
-				/* allow to run through wilderness transitions - C. Blue (compare see_wall comments) */
-				case FEAT_PERM_CLEAR:
-					notice = FALSE;
-					break;
+			/* FIXME: this can be funny with running speed boost */
+			case FEAT_DEEP_LAVA:
+			case FEAT_SHAL_LAVA:
+				/* Ignore */
+				if (p_ptr->invuln || p_ptr->immune_fire) notice = FALSE;
+				/* Done */
+				break;
+			case FEAT_ICE:
+				/* Ignore */
+				if (p_ptr->feather_fall || p_ptr->levitate || p_ptr->tim_wraith) notice = FALSE;
+				/* Done */
+				break;
+			/* Open doors */
+			case FEAT_OPEN:
+			case FEAT_BROKEN:
+				/* Option -- ignore */
+				if (p_ptr->find_ignore_doors) notice = FALSE;
+				/* Done */
+				break;
+			/* Stairs */
+			case FEAT_LESS:
+			case FEAT_MORE:
+			case FEAT_WAY_LESS:
+			case FEAT_WAY_MORE:
+			case FEAT_SHAFT_UP:
+			case FEAT_SHAFT_DOWN:
+			case FEAT_BETWEEN:
+			case FEAT_BEACON:
+				/* Option -- ignore */
+				if (p_ptr->find_ignore_stairs) notice = FALSE;
+				/* Done */
+				break;
+			case FEAT_MON_TRAP:
+				/* Option -- ignore */
+				if (p_ptr->find_ignore_montraps) notice = FALSE;
+				/* Done */
+				break;
+			/* Water */
+			case FEAT_DEEP_WATER:
+				if (aqua) notice = FALSE;
+				/* Done */
+				break;
+			/* allow to run through wilderness transitions - C. Blue (compare see_wall comments) */
+			case FEAT_PERM_CLEAR:
+				notice = FALSE;
+				break;
 			}
 
 			/* Check the "don't notice running" flag */
-			if (f_info[c_ptr->feat].flags1 & FF1_DONT_NOTICE_RUNNING)
-			{
-				notice = FALSE;
-			}
+			if (f_info[c_ptr->feat].flags1 & FF1_DONT_NOTICE_RUNNING) notice = FALSE;
 
 			/* Interesting feature */
 			if (notice) return (TRUE);
@@ -7222,43 +7135,27 @@ static bool run_test(int Ind) {
 		    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
 		    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)
 			&& cave_running_bold_trees(p_ptr, zcave, row, col)) )
-		    
-		    )
-		{
+		    ) {
 			/* Looking for open area */
-			if (p_ptr->find_openarea)
-			{
-				/* Nothing */
-			}
+			if (p_ptr->find_openarea) ; /* Nothing */
 
 			/* The first new direction. */
-			else if (!option)
-			{
-				option = new_dir;
-			}
+			else if (!option) option = new_dir;
 
 			/* Three new directions. Stop running. */
-			else if (option2)
-			{
-				return (TRUE);
-			}
+			else if (option2) return (TRUE);
 
 			/* Two non-adjacent new directions.  Stop running. */
-			else if (option != cycle[chome[prev_dir] + i - 1])
-			{
-				return (TRUE);
-			}
+			else if (option != cycle[chome[prev_dir] + i - 1]) return (TRUE);
 
 			/* Two new (adjacent) directions (case 1) */
-			else if (new_dir & 0x01)
-			{
+			else if (new_dir & 0x01) {
 				check_dir = cycle[chome[prev_dir] + i - 2];
 				option2 = new_dir;
 			}
 
 			/* Two new (adjacent) directions (case 2) */
-			else
-			{
+			else {
 				check_dir = cycle[chome[prev_dir] + i + 1];
 				option2 = option;
 				option = new_dir;
@@ -7267,40 +7164,31 @@ static bool run_test(int Ind) {
 
 		/* Obstacle, while looking for open area */
 		/* When in the town/wilderness, don't break left/right. */
-		else
-		{
-			if (p_ptr->find_openarea)
-			{
-				if (i < 0)
-				{
+		else {
+			if (p_ptr->find_openarea) {
+				if (i < 0) {
 					/* Break to the right */
-//					if (p_ptr->wpos.wz)
-						p_ptr->find_breakright = (TRUE);
-				}
-
-				else if (i > 0)
-				{
+					//if (p_ptr->wpos.wz)
+					p_ptr->find_breakright = (TRUE);
+				} else if (i > 0) {
 					/* Break to the left */
-//					if (p_ptr->wpos.wz)
-						p_ptr->find_breakleft = (TRUE);
+					//if (p_ptr->wpos.wz)
+					p_ptr->find_breakleft = (TRUE);
 				}
 			}
 		}
 	}
 
-
 	/* Looking for open area */
-	if (p_ptr->find_openarea)
-	{
+	if (p_ptr->find_openarea) {
 		/* Hack -- look again */
-		for (i = -max; i < 0; i++)
-		{
+		for (i = -max; i < 0; i++) {
 			new_dir = cycle[chome[prev_dir] + i];
 
 			row = p_ptr->py + ddy[new_dir];
 			col = p_ptr->px + ddx[new_dir];
 
-//			if ((!in_bounds(row, col)) && (wpos->wz == 0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
+			//if ((!in_bounds(row, col)) && (wpos->wz == 0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
 
 			/* Unknown grid or floor */
 			if  (!(p_ptr->cave_flag[row][col] & CAVE_MARK) ||
@@ -7309,35 +7197,25 @@ static bool run_test(int Ind) {
 			    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
 			    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)
 			       && cave_running_bold_trees(p_ptr, zcave, row, col)) )
-			    )
-			{
+			    ) {
 				/* Looking to break right */
-				if (p_ptr->find_breakright)
-				{                                                                       
-					return (TRUE);
-				}
+				if (p_ptr->find_breakright) return (TRUE);
 			}
-
 			/* Obstacle */
-			else
-			{
+			else {
 				/* Looking to break left */
-				if (p_ptr->find_breakleft)
-				{                                       
-					return (TRUE);
-				}
+				if (p_ptr->find_breakleft) return (TRUE);
 			}
 		}
 
 		/* Hack -- look again */
-		for (i = max; i > 0; i--)
-		{
+		for (i = max; i > 0; i--) {
 			new_dir = cycle[chome[prev_dir] + i];
 
 			row = p_ptr->py + ddy[new_dir];
 			col = p_ptr->px + ddx[new_dir];
 
-//			if ((!in_bounds(row, col)) && (wpos->wz == 0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
+			//if ((!in_bounds(row, col)) && (wpos->wz == 0)) continue; /* FIX_RUNNING_DEBUG_WILDTRANSITION */
 
 			/* Unknown grid or floor */
 			if (!(p_ptr->cave_flag[row][col] & CAVE_MARK) ||
@@ -7346,40 +7224,25 @@ static bool run_test(int Ind) {
 			    /* If player is running on floor grids right now, don't treat tree grids as "passable" even if he could pass them: */
 			    && !(cave_running_bold_notrees(p_ptr, zcave, p_ptr->py, p_ptr->px)
 			       && cave_running_bold_trees(p_ptr, zcave, row, col)) )
-			    )
-			{
+			    ) {
 				/* Looking to break left */
-				if (p_ptr->find_breakleft)
-				{                               
-					return (TRUE);
-				}
+				if (p_ptr->find_breakleft) return (TRUE);
 			}
-
 			/* Obstacle */
-			else
-			{
+			else {
 				/* Looking to break right */
-				if (p_ptr->find_breakright)
-				{
-					return (TRUE);
-				}
+				if (p_ptr->find_breakright) return (TRUE);
 			}
 		}
 	}
 
-
 	/* Not looking for open area */
-	else
-	{
+	else {
 		/* No options */
-		if (!option)
-		{
-			return (TRUE);
-		}
+		if (!option) return (TRUE);
 
 		/* One option */
-		else if (!option2)
-		{
+		else if (!option2) {
 			/* Primary option */
 			p_ptr->find_current = option;
 
@@ -7388,8 +7251,7 @@ static bool run_test(int Ind) {
 		}
 
 		/* Two options, examining corners */
-		else if (p_ptr->find_examine && !p_ptr->find_cut)
-		{
+		else if (p_ptr->find_examine && !p_ptr->find_cut) {
 			/* Primary option */
 			p_ptr->find_current = option;
 
@@ -7398,8 +7260,7 @@ static bool run_test(int Ind) {
 		}
 
 		/* Two options, pick one */
-		else
-		{
+		else {
 			/* Get next location */
 			row = p_ptr->py + ddy[option];
 			col = p_ptr->px + ddx[option];
@@ -7407,49 +7268,37 @@ static bool run_test(int Ind) {
 			/* Don't see that it is closed off. */
 			/* This could be a potential corner or an intersection. */
 			if (!see_wall(Ind, option, row, col) ||
-			    !see_wall(Ind, check_dir, row, col))
-			{
+			    !see_wall(Ind, check_dir, row, col)) {
 				/* Can not see anything ahead and in the direction we */
 				/* are turning, assume that it is a potential corner. */
 				if (p_ptr->find_examine &&
 				    see_nothing(option, Ind, row, col) &&
-				    see_nothing(option2, Ind, row, col))
-				{
+				    see_nothing(option2, Ind, row, col)) {
 					p_ptr->find_current = option;
 					p_ptr->find_prevdir = option2;
 				}
 
 				/* STOP: we are next to an intersection or a room */
-				else
-				{
-					return (TRUE);
-				}
+				else return (TRUE);
 			}
 
 			/* This corner is seen to be enclosed; we cut the corner. */
-			else if (p_ptr->find_cut)
-			{
+			else if (p_ptr->find_cut) {
 				p_ptr->find_current = option2;
 				p_ptr->find_prevdir = option2;
 			}
 
 			/* This corner is seen to be enclosed, and we */
 			/* deliberately go the long way. */
-			else
-			{
+			else {
 				p_ptr->find_current = option;
 				p_ptr->find_prevdir = option2;
 			}
 		}
 	}
 
-
 	/* About to hit a known wall, stop */
-	if (see_wall(Ind, p_ptr->find_current, p_ptr->py, p_ptr->px))
-	{
-		return (TRUE);
-	}
-
+	if (see_wall(Ind, p_ptr->find_current, p_ptr->py, p_ptr->px))return (TRUE);
 
 	/* Failure */
 	return (FALSE);
