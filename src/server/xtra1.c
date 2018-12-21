@@ -9671,7 +9671,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				msg_print(Ind, "\377yRoyalties may not own true artifacts.");
 				return;
 			}
-			if (cfg.anti_arts_pickup && o_ptr->level < lookup_player_level(pid)) {
+			if (cfg.anti_arts_pickup && o_ptr->level > lookup_player_level(pid)) {
 				msg_print(Ind, "\377yThe receipient must match the level of a true artifact.");
 				return;
 			}
