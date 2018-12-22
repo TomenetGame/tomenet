@@ -3717,7 +3717,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 		else msg_format(Ind, "%^s gestures in shadow.", m_name);
-		(void)unlite_area(Ind, 0, 3);
+		(void)unlite_area(Ind, FALSE, 0, 3);
 		break;
 
 	/* RF6_TRAPS */

@@ -734,7 +734,8 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	break;
 // RF6_DARKNESS		0x00001000	/* Create Darkness */
     case 76:
-	unlite_area(Ind, 10, 3);
+	//unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px); --not really useful, instead let's buff it:
+	unlite_area(Ind, TRUE, 10, 3); //causes darkness damage around the player!
       break;
 // RF6_TRAPS			0x00002000	/* Create Traps */
     case 77:

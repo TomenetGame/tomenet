@@ -2345,7 +2345,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			object_type *o_ptr = &p_ptr->inventory[INVEN_LITE];
 			u32b f1, f2, f3, f4, f5, f6, esp;
 
-			(void)unlite_area(Ind, 0, 3);
+			(void)unlite_area(Ind, FALSE, 0, 3);
 			ident = TRUE;
 
 			if (!o_ptr->k_idx) break;

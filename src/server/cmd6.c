@@ -2357,7 +2357,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			break;
 
 		case SV_SCROLL_DARKNESS:
-			if (unlite_area(Ind, 10, 6)) ident = TRUE;
+			if (unlite_area(Ind, TRUE, 10, 6)) ident = TRUE;
 			if (!p_ptr->resist_dark)
 				(void)set_blind(Ind, p_ptr->blind + 3 + randint(5));
 			break;
@@ -3191,7 +3191,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 	/* Analyze the staff */
 	switch (sval) {
 	case SV_STAFF_DARKNESS:
-		if (unlite_area(Ind, 10, 3)) ident = TRUE;
+		if (unlite_area(Ind, TRUE, 10, 3)) ident = TRUE;
 		if (!p_ptr->resist_blind && !p_ptr->resist_dark) {
 			if (set_blind(Ind, p_ptr->blind + 3 + randint(5) - get_skill_scale_fine(p_ptr, SKILL_DEVICE, 3))) ident = TRUE;
 		}
@@ -6087,7 +6087,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_UNDEATH:
 			msg_print(Ind, "The phial wells with dark light...");
-			unlite_area(Ind, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
+			unlite_area(Ind, TRUE, damroll(2, 15 + get_skill_scale(p_ptr, SKILL_DEVICE, 50)), 3);
 			take_hit(Ind, damroll(10, 10), "activating The Phial of Undeath", 0);
 			if (!p_ptr->suscep_life) {
 				(void)dec_stat(Ind, A_DEX, 25, STAT_DEC_PERMANENT);

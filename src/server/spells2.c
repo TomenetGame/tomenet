@@ -6413,18 +6413,20 @@ bool lite_area(int Ind, int dam, int rad) {
  * Hack -- call darkness around the player
  * Affect all monsters in the projection radius
  */
-bool unlite_area(int Ind, int dam, int rad) {
+bool unlite_area(int Ind, bool player, int dam, int rad) {
 	player_type *p_ptr = Players[Ind];
 	int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_NODO | PROJECT_NODF;
-
-	/* WRAITHFORM reduces damage/effect! */
-	if (p_ptr->tim_wraith) proj_dam_wraith(GF_DARK_WEAK, &dam);
 
 	/* Hack -- Message */
 	if (!p_ptr->blind) msg_print(Ind, "Darkness surrounds you.");
 
-	/* Hook into the "project()" function */
-	(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg, "");
+	if (player) { /* cast by a player? */
+		/* WRAITHFORM reduces damage/effect! */
+		if (p_ptr->tim_wraith) proj_dam_wraith(GF_DARK_WEAK, &dam);
+
+		/* Hook into the "project()" function */
+		(void)project(0 - Ind, rad, &p_ptr->wpos, p_ptr->py, p_ptr->px, dam, GF_DARK_WEAK, flg, "");
+	}
 
 	/* Lite up the room */
 	unlite_room(Ind, &p_ptr->wpos, p_ptr->py, p_ptr->px);
