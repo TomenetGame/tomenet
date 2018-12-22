@@ -2637,8 +2637,8 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	if (p_ptr->tim_wraith && !q_ptr->tim_wraith) return;
 
 	/* Disturb both players */
-	disturb(Ind, 0, 0);
-	disturb(0 - c_ptr->m_idx, 0, 0);
+	disturb(Ind, 1, 0);
+	disturb(0 - c_ptr->m_idx, 1, 0);
 
 	/* Extract name */
 	//strcpy(q_name, q_ptr->name);
@@ -2686,8 +2686,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	break_shadow_running(Ind);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
-	/* Disturb the player */
-	//q_ptr->sleep = 0;
+
 #ifndef KURZEL_PK
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
 		if (!(q_ptr->pkill & PKILL_KILLABLE)) {
@@ -3747,7 +3746,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	}
 
 	/* Disturb the player */
-	disturb(Ind, 0, 0);
+	disturb(Ind, 1, 0);
 
 	/* Extract monster name (or "it") */
 	monster_desc(Ind, m_name, c_ptr->m_idx, 0);
