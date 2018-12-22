@@ -3350,7 +3350,8 @@ s64b object_value(int Ind, object_type *o_ptr) {
  * 'tolerance' flag:
  * 0	- no tolerance
  * +0x1	- tolerance for ammo to_h and to_d enchantment
- * +0x2	- tolerance for level 0 items
+ * +0x2	- manual 'force stack' by the player: tolerance for level 0 items (starter items)
+          and for trapping kits with different (+h,+d) enchantments (like !M works for ammo)
  * +0x4 - tolerance for discount and inscription
  *        (added for dropping items on top of stacks inside houses)
  * +0x8 - ignore non-matching inscriptions. For player stores, which erase inscriptions on purchase anyway!
@@ -3604,20 +3605,40 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_BOLT:
 		case TV_ARROW:
 		case TV_SHOT:
+			/* Fall through */
+
+			/* ---- All above items that made it through to here: ---- */
+
 #if 0 /* no, because then if you find a stack of unidentified ammo and you shoot those arrows and pick them up again they won't stack anymore! */
 			/* For ammo too! */
 			if (unknown) return (FALSE);
 #endif
 
-			/* Require identical "boni" -
-			   except for ammunition which carries special inscription (will merge!) - C. Blue */
-			if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) ||
-						    artifact_p(o_ptr) || artifact_p(j_ptr))) ||
-			    (!is_ammo(o_ptr->tval) ||
-			    (!check_guard_inscription(o_ptr->note, 'M') && !check_guard_inscription(j_ptr->note, 'M')))) {
+			/* Verify matching (+hit,+dam) enchantment: */
+
+			/* Ammo has special 0x1 tolerance option (exclusively for !M inscribed ammo so far) */
+			if (is_ammo(o_ptr->tval)) {
+				if (!((tolerance & 0x1) && !(cursed_p(o_ptr) || cursed_p(j_ptr) || artifact_p(o_ptr) || artifact_p(j_ptr))) ||
+				    (!check_guard_inscription(o_ptr->note, 'M') && !check_guard_inscription(j_ptr->note, 'M'))) {
+					if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
+					if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
+				}
+			}
+			/* Trapkits have special 0x2 tolerance option (that is also used for stacking level 0 items in general) */
+			else if (o_ptr->tval == TV_TRAPKIT) {
+				if (!((tolerance & 0x2) && !(cursed_p(o_ptr) || cursed_p(j_ptr) || artifact_p(o_ptr) || artifact_p(j_ptr)))) {
+					if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
+					if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
+				}
+			}
+			/* All other items */
+			else {
 				if (o_ptr->to_h != j_ptr->to_h) return (FALSE);
 				if (o_ptr->to_d != j_ptr->to_d) return (FALSE);
 			}
+
+			/* Verify further enchantments matching.. */
+
 			if (o_ptr->to_a != j_ptr->to_a) return (FALSE);
 
 			/* Require identical "pval" code */
@@ -3629,25 +3650,20 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			/* Require identical "ego-item" names.
 			   Allow swapped ego powers: Ie Arrow (SlayDragon,Ethereal) combines with Arrow (Ethereal,SlayDragon).
 			   Note: This code assumes there's no ego power which can be both prefix and postfix. */
-#if 0
-			/* This is buggy, it allows stacking of normal items with items that only have one ego power - mikaelh */
-			if ((o_ptr->name2 != j_ptr->name2) && (o_ptr->name2 != j_ptr->name2b)) return (FALSE);
-			if ((o_ptr->name2b != j_ptr->name2) && (o_ptr->name2b != j_ptr->name2b)) return (FALSE);
-#else
 			/* This one only allows name2 and name2b to be swapped */
-			if (! ((o_ptr->name2 == j_ptr->name2b) && (o_ptr->name2b == j_ptr->name2)))
-			{
+			if (! ((o_ptr->name2 == j_ptr->name2b) && (o_ptr->name2b == j_ptr->name2))) {
 				if (o_ptr->name2 != j_ptr->name2) return (FALSE);
 				if (o_ptr->name2b != j_ptr->name2b) return (FALSE);
 			}
-#endif
 
-			/* Require identical random seeds
-			   hack: fix 'old' ammo that didn't have NO_SEED flag yet.. */
-			if (!is_ammo(o_ptr->tval) && o_ptr->name3 != j_ptr->name3) return (FALSE);
+			/* Require identical random seeds */
+			if (o_ptr->name3 != j_ptr->name3
+			    && !is_ammo(o_ptr->tval) /* hack: fix 'old' ammo that didn't have NO_SEED flag yet.. */
+			    && o_ptr->tval != TV_TRAPKIT) /* doh, also fix trapkits */
+				return (FALSE);
 
 			/* Hack -- Never stack "powerful" items */
-//			if (o_ptr->xtra1 || j_ptr->xtra1) return (FALSE);
+			//if (o_ptr->xtra1 || j_ptr->xtra1) return (FALSE);
 
 			/* Hack -- Never stack recharging items */
 			if (o_ptr->timeout != j_ptr->timeout) return (FALSE);
@@ -3744,8 +3760,16 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	bool merge_inscriptions = check_guard_inscription(o_ptr->note, 'M') || check_guard_inscription(j_ptr->note, 'M');
 	bool merge_ammo = (is_ammo(o_ptr->tval) && merge_inscriptions);
 
-	/* Combine ammo even of different enchantment grade! - C. Blue */
+	/* Combine ammo even of different (+hit,+dam) enchantment, if desired - C. Blue */
 	if (merge_ammo) {
+		o_ptr->to_h = ((o_ptr->to_h * o_ptr->number) + (j_ptr->to_h * j_ptr->number)) / (o_ptr->number + j_ptr->number);
+		o_ptr->to_d = ((o_ptr->to_d * o_ptr->number) + (j_ptr->to_d * j_ptr->number)) / (o_ptr->number + j_ptr->number);
+	}
+	/* Combine trapkits of different (+hit,+dam) enchantments, if desired - C. Blue
+	   (We assume that object_absorb() is only called if object_similar() was successful,
+	   which checks for use of the force-stack command on differently enchanted trapkits,
+	   so we should be ok here by just merging them if they made it this far: */
+	else if (o_ptr->tval == TV_TRAPKIT) {
 		o_ptr->to_h = ((o_ptr->to_h * o_ptr->number) + (j_ptr->to_h * j_ptr->number)) / (o_ptr->number + j_ptr->number);
 		o_ptr->to_d = ((o_ptr->to_d * o_ptr->number) + (j_ptr->to_d * j_ptr->number)) / (o_ptr->number + j_ptr->number);
 	}
