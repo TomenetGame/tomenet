@@ -4520,6 +4520,8 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		if (r_info[i].flags4 & RF4_BR_INER) r_info[i].flags3 |= RF3_NO_STUN;
 		//if (r_info[i].flags4 & RF4_BR_GRAV) r_info[i].flags9 |= RF9_RES_; //feather falling
 		if (r_info[i].flags4 & RF4_BR_SHAR) r_info[i].flags9 |= RF9_RES_SHARDS;
+		if (r_info[i].flags0 & RF0_BR_ICE) r_info[i].flags9 |= (RF9_RES_SHARDS | RF9_RES_COLD);
+		if (r_info[i].flags0 & RF0_BR_WATER) r_info[i].flags3 |= RF3_RES_WATE;
 		/* Newer fix, plasma implies fire/elec/sound. */
 		if (r_info[i].flags4 & RF4_BR_PLAS) {
 			r_info[i].flags3 |= RF3_IM_FIRE;

@@ -2525,6 +2525,13 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		{ p_ptr->reduce_insanity = 2; csheet_boni->cb[3] |= CB5_XMIND; }
 
 	/* as long as not all resistances are implemented in r_info, use workaround via breaths */
+	//(Note: the 4 base + pois should actually be covered in r_info..)
+	if (r_info[i].flags4 & RF4_BR_ACID) { p_ptr->resist_acid = TRUE; csheet_boni->cb[1] |= CB2_RACID; }
+	if (r_info[i].flags4 & RF4_BR_ELEC) { p_ptr->resist_elec = TRUE; csheet_boni->cb[0] |= CB1_RELEC; }
+	if (r_info[i].flags4 & RF4_BR_FIRE) { p_ptr->resist_fire = TRUE; csheet_boni->cb[0] |= CB1_RFIRE; }
+	if (r_info[i].flags4 & RF4_BR_COLD) { p_ptr->resist_cold = TRUE; csheet_boni->cb[0] |= CB1_RCOLD; }
+	if (r_info[i].flags4 & RF4_BR_POIS) { p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS; }
+
 	if (r_ptr->flags4 & RF4_BR_LITE) { p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE; }
 	if (r_ptr->flags4 & RF4_BR_DARK) { p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK; }
 	/* if (r_ptr->flags & RF__) p_ptr->resist_blind = TRUE; */
@@ -2549,6 +2556,11 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 	/* res_neth_somewhat: (r_ptr->flags3 & RF3_EVIL) */
 	if (r_ptr->flags4 & RF4_BR_NEXU) { p_ptr->resist_nexus = TRUE; csheet_boni->cb[2] |= CB3_RNEXU; }
 	if (r_ptr->flags4 & RF4_BR_DISE) { p_ptr->resist_disen = TRUE; csheet_boni->cb[3] |= CB4_RDISE; }
+	if (r_ptr->flags0 & RF0_BR_ICE) {
+		p_ptr->resist_shard = TRUE; csheet_boni->cb[2] |= CB3_RSHRD;
+		p_ptr->resist_cold = TRUE; csheet_boni->cb[0] |= CB1_RCOLD;
+	}
+	if (r_ptr->flags0 & RF0_BR_WATER) { p_ptr->resist_water = TRUE; csheet_boni->cb[3] |= CB4_RWATR; }
 
 	/* The following BR-to-RES will be needed even with all of above RES implemented: */
 	if (r_ptr->flags4 & RF4_BR_GRAV) { p_ptr->feather_fall = TRUE; csheet_boni->cb[5] |= CB6_RFFAL; }

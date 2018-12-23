@@ -4420,7 +4420,7 @@
 #define SUMMON_LUA			58
 /* Again, TomeNET one(s)	- Jir - */
 #define SUMMON_VERMIN			59
-#define SUMMON_PATIENT			60
+#define SUMMON_PATIENT			60 /* monsters that don't have any ranged attacks */
 /* New stuff (RF0_) - C. Blue */
 #define SUMMON_HI_MONSTER		61
 #define SUMMON_HI_UNIQUE		62
@@ -5467,6 +5467,7 @@
 #define RF3_RES_TELE			0x00200000      /* Resist teleportation */
 #define RF3_RES_NETH			0x00400000	/* Resist nether a lot */
 #define RF3_RES_WATE			0x00800000	/* Resist water */
+//HOLE:
 #define RF3_XXX			0x01000000 //unused- was plasma res
 #define RF3_RES_NEXU		0x02000000	/* Resist nexus */
 #define RF3_RES_DISE		0x04000000	/* Resist disenchantment */
@@ -5933,7 +5934,7 @@
 	(RF6_HAND_DOOM)
 
 #define RF0_ATTACK_MASK \
-	(RF0_BO_DISE | RF0_BA_DISE)
+	(RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
 
 
 /*
@@ -6000,7 +6001,7 @@
 
 /* Masks to find out if a monster is really a spellcaster,
    which uses magic spells, or if the 'spells' are merely
-   actions as firing arrows or hurling boulders.. - C. Blue */
+   actions as firing arrows, breathing or hurling boulders.. - C. Blue */
 #define	RF4_SPELLCASTER_MASK \
 	(RF4_S_ANIMAL)
 #define	RF5_SPELLCASTER_MASK \

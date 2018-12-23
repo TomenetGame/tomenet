@@ -945,131 +945,6 @@ static bool clean_shot_wall(worldpos *wpos, int y1, int x1, int y2, int x2, int 
 }
 
 
-#if 0	// obsolete
-/*
- * Return TRUE if a spell is good for hurting the player (directly).
- */
-static bool spell_attack(byte spell) {
-	/* All RF4 spells hurt (except for shriek) */
-	if (spell < 128 && spell > 96) return (TRUE);
-
-	/* Various "ball" spells */
-	if (spell >= 128 && spell <= 128 + 8) return (TRUE);
-
-	/* Unmagic is not */
-	if (spell == 128 + 15) return (FALSE);
-
-	/* "Cause wounds" and "bolt" spells */
-	if (spell >= 128 + 12 && spell <= 128 + 27) return (TRUE);
-	
-	/* Hand of Doom */
-	if (spell == 160 + 1) return (TRUE);
-	
-	/* Doesn't hurt */
-	return (FALSE);
-}
-
-
-/*
- * Return TRUE if a spell is good for escaping.
- */
-static bool spell_escape(byte spell) {
-	/* Blink or Teleport */
-	if (spell == 160 + 4 || spell == 160 + 5) return (TRUE);
-
-	/* Teleport the player away */
-	if (spell == 160 + 9 || spell == 160 + 10) return (TRUE);
-
-	/* Isn't good for escaping */
-	return (FALSE);
-}
-
-/*
- * Return TRUE if a spell is good for annoying the player.
- */
-static bool spell_annoy(byte spell) {
-	/* Shriek */
-	if (spell == 96 + 0) return (TRUE);
-
-	/* Brain smash, et al (added curses) */
-//	if (spell >= 128 + 9 && spell <= 128 + 14) return (TRUE);
-	/* and unmagic */
-	if (spell >= 128 + 9 && spell <= 128 + 15) return (TRUE);
-
-	/* Scare, confuse, blind, slow, paralyze */
-	if (spell >= 128 + 27 && spell <= 128 + 31) return (TRUE);
-
-	/* Teleport to */
-	if (spell == 160 + 8) return (TRUE);
-
-#if 0
-	/* Hand of Doom */
-	if (spell == 160 + 1) return (TRUE);
-#endif
-
-	/* Darkness, make traps, cause amnesia */
-	if (spell >= 160 + 12 && spell <= 160 + 14) return (TRUE);
-
-	/* Doesn't annoy */
-	return (FALSE);
-}
-
-/*
- * Return TRUE if a spell summons help.
- */
-static bool spell_summon(byte spell) {
-	/* All summon spells */
-//	if (spell >= 160 + 13) return (TRUE);
-	if (spell >= 160 + 15) return (TRUE);
-
-	/* My interpretation of what it should be - evileye */
-	if (spell == 160 + 3) return (TRUE);
-	if (spell == 160 + 7) return (TRUE);
-	if (spell == 160 + 11) return (TRUE);
-	/* summon animal */
-//	if (spell = 96 + 2) return (TRUE);
-
-	/* Doesn't summon */
-	return (FALSE);
-}
-
-/*
- * Return TRUE if a spell is good in a tactical situation.
- */
-static bool spell_tactic(byte spell) {
-	/* Blink */
-	if (spell == 160 + 4) return (TRUE);
-
-	/* Not good */
-	return (FALSE);
-}
-
-
-/*
- * Return TRUE if a spell hastes.
- */
-static bool spell_haste(byte spell) {
-	/* Haste self */
-	if (spell == 160 + 0) return (TRUE);
-
-	/* Not a haste spell */
-	return (FALSE);
-}
-
-
-/*
- * Return TRUE if a spell is good for healing.
- */
-static bool spell_heal(byte spell) {
-	/* Heal */
-	if (spell == 160 + 2) return (TRUE);
-
-	/* No healing */
-	return (FALSE);
-}
-#endif	// 0
-
-
 /*
  * Offsets for the spell indices
  */
@@ -1093,114 +968,6 @@ static bool spell_heal(byte spell) {
  *
  * This function may well be an efficiency bottleneck.
  */
-#if 0
-static int choose_attack_spell(int Ind, int m_idx, byte spells[], byte num) {
-	player_type *p_ptr = Players[Ind];
-	monster_type *m_ptr = &m_list[m_idx];
-	monster_race *r_ptr = race_inf(m_ptr);
-
-	byte escape[96], escape_num = 0;
-	byte attack[96], attack_num = 0;
-	byte summon[96], summon_num = 0;
-	byte tactic[96], tactic_num = 0;
-	byte annoy[96], annoy_num = 0;
-	byte haste[96], haste_num = 0;
-	byte heal[96], heal_num = 0;
-
-	int i;
-
- #if 0
-	/* Stupid monsters choose randomly */
-	if (r_ptr->flags2 & (RF2_STUPID)) {
-		/* Pick at random */
-		return (spells[rand_int(num)]);
-	}
- #endif	// 0
-
-	/* Categorize spells */
-	for (i = 0; i < num; i++) {
-		/* Escape spell? */
-		if (spell_escape(spells[i])) escape[escape_num++] = spells[i];
-
-		/* Attack spell? */
-		if (spell_attack(spells[i])) attack[attack_num++] = spells[i];
-
-		/* Summon spell? */
-		if (spell_summon(spells[i])) summon[summon_num++] = spells[i];
-
-		/* Tactical spell? */
-		if (spell_tactic(spells[i])) tactic[tactic_num++] = spells[i];
-
-		/* Annoyance spell? */
-		if (spell_annoy(spells[i])) annoy[annoy_num++] = spells[i];
-
-		/* Haste spell? */
-		if (spell_haste(spells[i])) haste[haste_num++] = spells[i];
-
-		/* Heal spell? */
-		if (spell_heal(spells[i])) heal[heal_num++] = spells[i];
-	}
-
-	/*** Try to pick an appropriate spell type ***/
-
-	/* Hurt badly or afraid, attempt to flee */
-	if ((m_ptr->hp < m_ptr->maxhp / 3) || m_ptr->monfear) {
-		/* Choose escape spell if possible */
-		if (escape_num) return (escape[rand_int(escape_num)]);
-	}
-
-	/* Still hurt badly, couldn't flee, attempt to heal */
-	if (m_ptr->hp < m_ptr->maxhp / 3 || m_ptr->stunned) {
-		/* Choose heal spell if possible */
-		if (heal_num) return (heal[rand_int(heal_num)]);
-	}
-
-	/* Player is close and we have attack spells, blink away */
-	if ((distance(p_ptr->py, p_ptr->px, m_ptr->fy, m_ptr->fx) < 4) && attack_num && (rand_int(100) < 75)) {
-		/* Choose tactical spell */
-		if (tactic_num) return (tactic[rand_int(tactic_num)]);
-	}
-
-	/* We're hurt (not badly), try to heal */
-	if ((m_ptr->hp < m_ptr->maxhp * 3 / 4) && (rand_int(100) < 75)) {
-		/* Choose heal spell if possible */
-		if (heal_num) return (heal[rand_int(heal_num)]);
-	}
-
-	/* Summon if possible (sometimes) */
-	if (summon_num && (rand_int(100) < 50)) {
-		/* Choose summon spell */
-		return (summon[rand_int(summon_num)]);
-	}
-
-	/* Attack spell (most of the time) */
-	if (attack_num && (rand_int(100) < 85)) {
-		/* Choose attack spell */
-		return (attack[rand_int(attack_num)]);
-	}
-
-	/* Try another tactical spell (sometimes) */
-	if (tactic_num && (rand_int(100) < 50)) {
-		/* Choose tactic spell */
-		return (tactic[rand_int(tactic_num)]);
-	}
-
-	/* Haste self if we aren't already somewhat hasted (rarely) */
-	if (haste_num && (rand_int(100) < (20 + m_ptr->speed - m_ptr->mspeed))) {
-		/* Choose haste spell */
-		return (haste[rand_int(haste_num)]);
-	}
-
-	/* Annoy player (most of the time) */
-	if (annoy_num && (rand_int(100) < 85)) {
-		/* Choose annoyance spell */
-		return (annoy[rand_int(annoy_num)]);
-	}
-
-	/* Choose no spell */
-	return (0);
-}
-#else	// 0
 /*
  * Faster and smarter code, borrowed from (Vanilla) Angband 3.0.0.
  */
@@ -1209,7 +976,7 @@ static int choose_attack_spell(int Ind, int m_idx, u32b f4, u32b f5, u32b f6, u3
 	//player_type *p_ptr = Players[Ind];
 
 	int i, num = 0;
-	byte spells[96];
+	int spells[128];
 
 #ifndef STUPID_MONSTER_SPELLS
 	u32b f4_mask = 0L;
@@ -1453,7 +1220,6 @@ if (season_halloween) {
 	/* Pick at random */
 	return (spells[rand_int(num)]);
 }
-#endif	// 0
 
 /* Check if player intercept's a monster's attempt to do something */
 //bool monst_check_grab(int Ind, int m_idx, cptr desc)
@@ -2089,7 +1855,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	dun_level	*l_ptr = getfloor(wpos);
 	int		k, chance, thrown_spell, rlev; // , failrate;
-	//byte		spell[96], num = 0;
+	//byte		spell[128], num = 0;
 	u32b		f4, f5, f6, f7, f0;
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race	*r_ptr = race_inf(m_ptr);
@@ -2401,28 +2167,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 	if (!f4 && !f5 && !f6 && !f0) return (FALSE);
 #endif	// STUPID_MONSTER_SPELLS
 
-#if 0
-	/* Extract the "innate" spells */
-	for (k = 0; k < 32; k++) {
-		if (f4 & (1U << k)) spell[num++] = k + RF4_OFFSET;
-		if (f5 & (1U << k)) spell[num++] = k + RF5_OFFSET;
-		if (f6 & (1U << k)) spell[num++] = k + RF6_OFFSET;
-		if (f0 & (1U << k)) spell[num++] = k + RF0_OFFSET;
-	}
-
-	/* Extract the "normal" spells */
-	for (k = 0; k < 32; k++)
-		if (f5 & (1U << k)) spell[num++] = k + RF5_OFFSET;
-	/* Extract the "bizarre" spells */
-	for (k = 0; k < 32; k++)
-		if (f6 & (1U << k)) spell[num++] = k + RF6_OFFSET;
-	/* Extract the "extra" spells */
-	for (k = 0; k < 32; k++)
-		if (f0 & (1U << k)) spell[num++] = k + RF0_OFFSET;
-	/* No spells left */
-	if (!num) return (FALSE);
-#endif	// 0
-
 	/* Stop if player is dead or gone */
 	if (!p_ptr->alive || p_ptr->death || p_ptr->new_level_flag) return (FALSE);
 
@@ -2478,7 +2222,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* Hack -- Get the "died from" name */
 	monster_desc(Ind, ddesc, m_idx, 0x0188);
-
 
 	/* Cast the spell. */
 	switch (thrown_spell) {
@@ -2541,42 +2284,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 		update_smart_learn(Ind, m_idx, DRS_SOUND);
 		update_smart_learn(Ind, m_idx, DRS_FIRE);
 		break;
-
-#if 0
-	/* RF4_ARROW_1 */
-	case RF4_OFFSET+4:
-		disturb(Ind, 1, 0);
-		if (blind) msg_print(Ind, "You hear a strange noise.");
-		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%^s fires an arrow for", m_name);
-		bolt(Ind, m_idx, GF_ARROW, damroll(1, 6), SFX_BOLT_ARROW);
-		break;
-
-	/* RF4_ARROW_2 */
-	case RF4_OFFSET+5:
-		disturb(Ind, 1, 0);
-		if (blind) msg_print(Ind, "You hear a strange noise.");
-		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%^s fires an arrow for", m_name);
-		bolt(Ind, m_idx, GF_ARROW, damroll(3, 6), SFX_BOLT_ARROW);
-		break;
-
-	/* RF4_ARROW_3 */
-	case RF4_OFFSET+6:
-		disturb(Ind, 1, 0);
-		if (blind) msg_format(Ind, "%^s makes a strange noise.", m_name);
-		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a missile for", m_name);
-		bolt(Ind, m_idx, GF_ARROW, damroll(5, 6), SFX_BOLT_MISSILE);
-		break;
-
-	/* RF4_ARROW_4 */
-	case RF4_OFFSET+7:
-		disturb(Ind, 1, 0);
-		if (blind) msg_print(Ind, "You hear a strange noise.");
-		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a missile for", m_name);
-		bolt(Ind, m_idx, GF_ARROW, damroll(7, 6), SFX_BOLT_MISSILE);
-		break;
-
-#endif	// 0
-
 
 	/* RF4_ARROW_1 (arrow, light) */
 	case RF4_OFFSET+4: {
@@ -4018,6 +3725,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 		update_smart_learn(Ind, m_idx, DRS_WATER);
 		break;
 
+	default:
+		/* catch any non-existant spells */
+		s_printf("ERROR: Invalid monster spell %d for r_idx %d. (f4=%d,f5=%d,f6=%d,f0=%d)\n", thrown_spell, m_ptr->r_idx, f4, f5, f6, f0);
 	}
 
 
