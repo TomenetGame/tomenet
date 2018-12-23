@@ -9322,7 +9322,7 @@ static int Receive_activate_skill(int ind) {
 						p_ptr->mimic_immunity = 6;
 						msg_print(player, "\377WPreferred form immunity is now \377Bwater.");
 						if (p_ptr->body_monster &&
-						    (r_info[p_ptr->body_monster].flags9 & RF9_IM_WATER))
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_WATER))
 							calc_boni(player);
 						break;
 					default:

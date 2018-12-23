@@ -5771,7 +5771,7 @@ bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b 
 	if (feat == FEAT_DEEP_WATER) {
 		if ((r_ptr->flags7 & RF7_AQUATIC) ||
 		    (r_ptr->flags7 & RF7_CAN_FLY) ||
-		    (r_ptr->flags9 & RF9_IM_WATER) ||
+		    (r_ptr->flags3 & RF3_IM_WATER) ||
 		    (r_ptr->flags7 & RF7_CAN_SWIM))
 			return TRUE;
 		else

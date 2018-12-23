@@ -6202,7 +6202,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_WATER:
 	case GF_VAPOUR:
 		if (seen) obvious = TRUE;
-		if (r_ptr->flags9 & RF9_IM_WATER) {
+		if (r_ptr->flags3 & RF3_IM_WATER) {
 			note = " is immune";
 			dam = 0;
 		} else if (r_ptr->flags7 & RF7_AQUATIC) {
@@ -6217,7 +6217,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Wave = Water + Force */
 	case GF_WAVE:
 		if (seen) obvious = TRUE;
-		if (r_ptr->flags9 & RF9_IM_WATER) {
+		if (r_ptr->flags3 & RF3_IM_WATER) {
 			note = " is immune";
 			dam = 0;
 		} else if (r_ptr->flags7 & RF7_AQUATIC) {
@@ -7091,7 +7091,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		default: // Water
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags9 & RF9_IM_WATER) {
+			if (r_ptr->flags3 & RF3_IM_WATER) {
 				note = " is immune";
 				dam = 0;
 			} else if (r_ptr->flags7 & RF7_AQUATIC) {
@@ -7125,7 +7125,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		case 6:
 		case 7:
 			if (seen) obvious = TRUE;
-			if (r_ptr->flags9 & RF9_IM_WATER) {
+			if (r_ptr->flags3 & RF3_IM_WATER) {
 				note = " is immune";
 				dam = 0;
 			} else if (r_ptr->flags7 & RF7_AQUATIC) {
@@ -12701,7 +12701,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 
 	case GF_WATER:
 	case GF_VAPOUR:
-		if (r_ptr->flags9 & RF9_IM_WATER)
+		if (r_ptr->flags3 & RF3_IM_WATER)
 			dam = 0;
 		else if (r_ptr->flags7 & RF7_AQUATIC)
 			dam /= 9;
@@ -12710,7 +12710,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		break;
 
 	case GF_WAVE:
-		if (r_ptr->flags9 & RF9_IM_WATER)
+		if (r_ptr->flags3 & RF3_IM_WATER)
 			dam = 0;
 		else if (r_ptr->flags7 & RF7_AQUATIC)
 			dam /= 9;
@@ -13062,7 +13062,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		j = k;
 
 		k = dam / 2;
-		if (r_ptr->flags9 & RF9_IM_WATER)
+		if (r_ptr->flags3 & RF3_IM_WATER)
 			k = 0;
 		else if (r_ptr->flags7 & RF7_AQUATIC)
 			k /= 9;

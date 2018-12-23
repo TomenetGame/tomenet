@@ -5467,8 +5467,7 @@
 #define RF3_RES_TELE			0x00200000      /* Resist teleportation */
 #define RF3_RES_NETH			0x00400000	/* Resist nether a lot */
 #define RF3_RES_WATE			0x00800000	/* Resist water */
-//HOLE:
-#define RF3_XXX			0x01000000 //unused- was plasma res
+#define RF3_IM_WATER		0x01000000L	/* Water immunity, should also let you breathe under water */
 #define RF3_RES_NEXU		0x02000000	/* Resist nexus */
 #define RF3_RES_DISE		0x04000000	/* Resist disenchantment */
 #define RF3_AI_HYBRID		0x08000000	/* Monster is AI_ANNOY while target player isn't in melee (aka on adjacent grid) */
@@ -5735,7 +5734,8 @@
 #define RF9_RES_CHAOS		0x02000000L
 #define RF9_RES_TIME		0x04000000L
 #define RF9_RES_MANA		0x08000000L
-#define RF9_IM_WATER			0x10000000L	/* Water immunity, should also let you breathe under water */
+//HOLE:
+//#define RF9_XXX			0x10000000L	//HOLE
 /* Hm, fits in perfectly :) Fate? */
 /* these flags are not in PernA nor in PernM-monsters,
  * but the code for them already exists in our code..

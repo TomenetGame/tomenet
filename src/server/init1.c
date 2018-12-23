@@ -253,7 +253,7 @@ static cptr r_info_flags3[] = {
 	"RES_TELE",	// "IM_PSI",
 	"RES_NETH",
 	"RES_WATE",
-	"XXX",
+	"IM_WATER",
 	"RES_NEXU",
 	"RES_DISE",
 	"AI_HYBRID",
@@ -501,7 +501,7 @@ static cptr r_info_flags9[] = {
 	"RES_TIME",
 	"RES_MANA",
 
-	"IM_WATER",
+	"X10000000",
 	"IM_TELE",
 	"IM_PSI",
 	"RES_PSI",
@@ -4622,7 +4622,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 		/* For d_info rules: Formally an immunity implies the according resistance. */
 		if ((r_info[i].flags9 & RF9_IM_PSI)) r_info[i].flags9 |= RF9_RES_PSI;
-		if ((r_info[i].flags9 & RF9_IM_WATER)) r_info[i].flags3 |= RF3_RES_WATE;
+		if ((r_info[i].flags3 & RF3_IM_WATER)) r_info[i].flags3 |= RF3_RES_WATE;
 		if ((r_info[i].flags3 & RF3_IM_POIS)) r_info[i].flags9 |= RF9_RES_POIS;
 		if ((r_info[i].flags3 & RF3_IM_ELEC)) r_info[i].flags9 |= RF9_RES_ELEC;
 		if ((r_info[i].flags3 & RF3_IM_COLD)) r_info[i].flags9 |= RF9_RES_COLD;

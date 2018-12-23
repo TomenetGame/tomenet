@@ -2415,7 +2415,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		immunity[immunities] = 5;
 		p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS;
 	}
-	if (r_ptr->flags9 & RF9_IM_WATER) {
+	if (r_ptr->flags3 & RF3_IM_WATER) {
 		immunities += 1;
 		immunity[immunities] = 6;
 		p_ptr->resist_water = TRUE; csheet_boni->cb[3] |= CB4_RWATR;
@@ -2429,7 +2429,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		if (r_ptr->flags3 & RF3_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni->cb[0] |= CB1_IFIRE; }
 		if (r_ptr->flags3 & RF3_IM_COLD) { p_ptr->immune_cold = TRUE; csheet_boni->cb[0] |= CB1_ICOLD; }
 		if (r_ptr->flags3 & RF3_IM_POIS) { p_ptr->immune_poison = TRUE; csheet_boni->cb[1] |= CB2_IPOIS; }
-		if (r_ptr->flags9 & RF9_IM_WATER) { p_ptr->immune_water = TRUE; csheet_boni->cb[3] |= CB4_IWATR; }
+		if (r_ptr->flags3 & RF3_IM_WATER) { p_ptr->immune_water = TRUE; csheet_boni->cb[3] |= CB4_IWATR; }
 	} else if (immunities) {
 		immrand = 1 + rand_int(immunities);
 
@@ -2450,7 +2450,7 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 			if (r_ptr->flags3 & RF3_IM_POIS) immunity[immrand] = 5;
 			break;
 		case 6:
-			if (r_ptr->flags9 & RF9_IM_WATER) immunity[immrand] = 6;
+			if (r_ptr->flags3 & RF3_IM_WATER) immunity[immrand] = 6;
 			break;
 		}
 //s_printf("MIMIC_IMMUNITY_CALC (%s): %s(%d) having %d sets imm[%d] to %d\n", showtime(), p_ptr->name, p_ptr->body_monster, p_ptr->mimic_immunity, immrand, immunity[immrand]);
