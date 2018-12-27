@@ -4996,7 +4996,7 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 #ifdef ENABLE_HELLKNIGHT
 	/* Hell Knight (Corrupted Paladin) */
 	{
-		{"Plague Champion", "Plague Champion", "Pl. Champion", "Pl. Champion", },
+		{"Plaguebringer", "Plaguebringer", "Pl.bringer", "Pl.bringer", },
 		{"Grand Tormentor", "Grand Tormentor", "Gr.Tormentor", "Gr.Tormentor", },
 		{"Vizier of Chaos", "Vizier of Chaos", "Vizier o.C.", "Vizier o.C.", },
 		{"Demon Prince", "Demon Princess", "Demon Prince", "Dmn.Princess", },
