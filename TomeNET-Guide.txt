@@ -2400,13 +2400,16 @@ Note: For weapon attacks, having those slay/kill mods on gloves (or other
 
 Martial Arts users can fight relatively efficiently against Nazgul since they
 don't have to worry about their weapon breaking, but their chance to receive
-Black Breath is higher than for weapon users.
+Black Breath is higher than for weapon users:
 
 If you come in contact with a Nazgul or a very powerful undead creature there
 is a chance that you will be infected by the Black Breath. This dark aura is
 able to infect other players if you come too close to them. It will drain your
 stats and permanently drain your experience. Slowly, but steadily. There are
-several possibilities to cure Black Breath, for example Sprigs of Athelas.
+several possibilities to cure Black Breath, such as eating a Sprig of Athelas,
+asking another player for help who is able to command the required healing
+magic, or -if everything else is not available- visiting the Earth-Dome in
+Gondolin, where you can receive 'Herbal Healing' for a (somewhat high) price.
 Players cannot infect other players with Black Breath if they are in Bree or in
 the Training Tower, those are safe zones.
 
@@ -6104,19 +6107,19 @@ The 1..9 are standard shops, namely..
                         Get your Go game records emailed to you via "/kifu".)
                         For details about the gambling rules of the casino, see
                         subsequent (4.5a2) paragraph.
-        Mass Identify Service
+        Mass Identify Service (Minstrels Haven)
                         Will identify all items you currently carry for a fee.
                         See (5.7) for more information about identification.
-        *Identify* Service
+        *Identify* Service (Library)
                         Will *identify* an item for a fee.
                         See (5.7) for more information about ID, *ID*, shops!
-        Herbal Healing Service
+        Herbal Healing Service (Earth-Dome)
                         Will cure black breath for a high fee. (See (1.3a) for
                         more information about Black Breath.)
-        Morph Restoration Service
+        Morph Restoration Service (Sea-Dome)
                         Restores your form to normal in case you were
                         polymorphed (for example by a potion of Chauve-Souris).
-        Enchant Services
+        Enchant Services (various stores)
                         These will enchant weapons, arrows, or armour you have
                         equipped.
                         For weapons, this will attempt to enchant a main-hand
@@ -6145,12 +6148,12 @@ The 1..9 are standard shops, namely..
                         In the hazardous city of Khazad-Dum is a store that
                         offers some goods found to be useful by the miners
                         in the mountain depths.
-        Donate gold and pray to the gods  (EXPERIMENTAL: allows to solo reking)
-                        This is a special option in The Mirror in Lothlorien
-                        which allows fallen kings and queens to get their fate
-                        changed by the gods: Their Morgoth kill will be undone
-                        so they may challenge him once more, to regain their
-                        royal title!
+        Donate gold and pray to the gods (The Mirror)
+                        (EXPERIMENTAL: allows a fallen winner to solo-reking.)
+                        This is a special option which allows fallen kings and
+                        queens to get their fate changed by the gods:
+                        Their Morgoth kill will be undone so they may challenge
+                        him once more, to regain their royal title!
                         (In game slang, this is called 'solo-rekinging'.)
                         This service is useful if you do not have any team mate
                         who still hasn't killed Morgoth yet, to kill Morgoth in
