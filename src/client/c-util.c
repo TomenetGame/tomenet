@@ -5321,9 +5321,11 @@ Chain_Macro:
 						Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
 						Term_putstr(5, 12, -1, TERM_GREEN, "if you want to read a 'Scroll of Phase Door'.");
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial scroll name or inscription:");
+						should_wait = TRUE; /* recharge scrolls mostly; id/enchant scrolls.. */
 						break;
 
 					case mw_any:
+						should_wait = TRUE; /* Just to be on the safe side, if the item picked is one that might require waiting (eg scroll of recharging in a chained macro). */
 					case mw_anydir:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
 						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");
@@ -5344,6 +5346,7 @@ Chain_Macro:
 						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
+						should_wait = TRUE; /* identify/recharge spells */
 						break;
 
 					case mw_mimicnt:
@@ -5966,19 +5969,19 @@ Chain_Macro:
 						if (c_cfg.rogue_like_commands) {
 							switch (choice) {
 							case 'a': strcpy(buf2, "\\e)z@"); j = 1; break;
-							case 'b': strcpy(buf2, "\\e)Z@"); break;
-							case 'c': strcpy(buf2, "\\e)a@"); break;
+							case 'b': strcpy(buf2, "\\e)Z@"); should_wait = TRUE; /* For staves of perception */ break;
+							case 'c': strcpy(buf2, "\\e)a@"); should_wait = TRUE; /* For rods of perception */ break;
 							case 'd': strcpy(buf2, "\\e)a@"); j = 1; break;
-							case 'e': strcpy(buf2, "\\e)A@"); break;
+							case 'e': strcpy(buf2, "\\e)A@"); should_wait = TRUE; /* For eg stone of lore */ break;
 							case 'f': strcpy(buf2, "\\e)A@"); j = 1; break;
 							}
 						} else {
 							switch (choice) {
 							case 'a': strcpy(buf2, "\\e)a@"); j = 1; break;
-							case 'b': strcpy(buf2, "\\e)u@"); break;
-							case 'c': strcpy(buf2, "\\e)z@"); break;
+							case 'b': strcpy(buf2, "\\e)u@"); should_wait = TRUE; /* For staves of perception */ break;
+							case 'c': strcpy(buf2, "\\e)z@"); should_wait = TRUE; /* For rods of perception */ break;
 							case 'd': strcpy(buf2, "\\e)z@"); j = 1; break;
-							case 'e': strcpy(buf2, "\\e)A@"); break;
+							case 'e': strcpy(buf2, "\\e)A@"); should_wait = TRUE; /* For eg stone of lore */ break;
 							case 'f': strcpy(buf2, "\\e)A@"); j = 1; break;
 							}
 						}
@@ -6012,7 +6015,6 @@ Chain_Macro:
 
 						/* hack before we exit: remember menu choice 'magic device' */
 						choice = mw_device;
-
 						break;
 
 					case mw_abilitynt:
