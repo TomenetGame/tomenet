@@ -172,7 +172,8 @@ bool test_hit_melee(int chance, int ac, int vis) {
 	return (TRUE);
 }
 
-
+/* Check for rogueish melee skills eligibility, that is Critical-Strike and Backstabbing. Note that polearms are now allowed as a specialty (experimental). */
+#define rogue_armed_melee(o_ptr, p_ptr)	(((o_ptr)->tval == TV_SWORD || (o_ptr)->tval == TV_POLEARM) && (o_ptr)->weight <= 100 && !((p_ptr)->rogue_heavyarmor))
 
 /*
  * Critical hits (from objects thrown by player)
@@ -2580,7 +2581,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	int fear_chance;
 	bool pierced;
 
-	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0);
+	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0 && !p_ptr->rogue_heavyarmor);
 	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
 	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the player? */
 	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
@@ -2806,9 +2807,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		/* Manage backstabbing and 'flee-stabbing' */
 		//todo: vortices, oozes, elementals, constructs, undead, plants, swarms, some undead maybe, incorporeal undead if you aren't incorporeal
 		//..also no-cut
-		if (stab_skill && /* Need TV_SWORD type weapon or martial arts to backstab */
+		if (stab_skill && /* Need appropriate melee weapon or martial arts to backstab */
 		    p_ptr->mon_vis[c_ptr->m_idx] &&
-		    (o_ptr->tval == TV_SWORD ||
+		    (rogue_armed_melee(o_ptr, p_ptr) ||
 		    (martial && (!q_ptr->body_monster || (qr_ptr->body_parts[BODY_HEAD] && qr_ptr->body_parts[BODY_TORSO]))))) {
 			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
 				backstab = TRUE;
@@ -3187,10 +3188,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr));
 				k3 += k2;
 #else
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr));
 #endif
 				k2 = k; /* remember damage before crit */
 #ifdef CRIT_VS_BACKSTAB
@@ -3689,7 +3690,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	bool		fear = FALSE;
 	int 		fear_chance;
 
-	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0);
+	bool		stab_skill = (get_skill(p_ptr, SKILL_BACKSTAB) != 0 && !p_ptr->rogue_heavyarmor);
 	bool		sleep_stab = TRUE, cloaked_stab = (p_ptr->cloaked == 1), shadow_stab = (p_ptr->shadow_running); /* can player backstab the monster? */
 	bool		backstab = FALSE, stab_fleeing = FALSE; /* does player backstab the monster? */
 	bool		primary_wield = (p_ptr->inventory[INVEN_WIELD].k_idx != 0);
@@ -3944,9 +3945,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		o_ptr = &p_ptr->inventory[slot];
 
 		/* Manage backstabbing and 'flee-stabbing' */
-		if (stab_skill && /* Need TV_SWORD type weapon or martial arts to backstab */
+		if (stab_skill && /* Need appropriate melee weapon or martial arts to backstab */
 		    p_ptr->mon_vis[c_ptr->m_idx] &&
-		    (o_ptr->tval == TV_SWORD ||
+		    (rogue_armed_melee(o_ptr, p_ptr) ||
 		    (martial && r_ptr->body_parts[BODY_HEAD] && r_ptr->body_parts[BODY_TORSO]))) {
 			if (sleep_stab || cloaked_stab || shadow_stab) { /* Note: Cloaked backstab takes precedence over backstabbing a fleeing monster */
 				backstab = TRUE;
@@ -4349,10 +4350,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				with light weapons, which have low dice. So for gain
 				we need the full damage including all to-dam boni */
 #ifdef CRIT_UNBRANDED
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k - k2, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr));
 				k3 += k2;
 #else
-				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, ((o_ptr->tval == TV_SWORD) && (o_ptr->weight <= 100) && !p_ptr->rogue_heavyarmor), calc_crit_obj(Ind, o_ptr));
+				k3 = critical_melee(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_melee, k, rogue_armed_melee(o_ptr, p_ptr), calc_crit_obj(Ind, o_ptr));
 #endif
 #ifdef CRIT_VS_VORPAL
 				k2 = k; /* remember damage before crit */
