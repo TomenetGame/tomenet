@@ -727,6 +727,7 @@ extern void do_cmd_cast(int Ind, int book, int spell);
 extern void do_cmd_cast_aux(int Ind, int dir);
 extern void do_cmd_sorc(int Ind, int book, int spell);
 extern void do_cmd_sorc_aux(int Ind, int dir);
+extern bool mimic_power_hindered(int Ind);
 extern void do_mimic_change(int Ind, int r_idx, bool force);
 extern void do_mimic_power_aux(int Ind, int dir);
 extern void do_cmd_mimic(int Ind, int spell, int dir);/*w0t0w*/

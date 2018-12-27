@@ -9252,6 +9252,9 @@ static int Receive_activate_skill(int ind) {
 		case MKEY_MIMICRY:
 			if (get_skill(p_ptr, SKILL_MIMIC)) {
 				if (spell == 25000 && dir) {
+					/* Character is unable to change preferred immunity? */
+					if (dir >= 2 && dir <= 8 && mimic_power_hindered(player)) return 2;
+
 //s_printf("MIMIC_IMMUNITY (%s): %s(%d) having %d calls %d(%d),%d\n", showtime(), p_ptr->name, p_ptr->body_monster, p_ptr->mimic_immunity, spell, dir - 2, dir);
 					switch (dir) {
 					case 1:

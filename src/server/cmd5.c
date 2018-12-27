@@ -421,6 +421,40 @@ void do_spin(int Ind) {
 	}
 }
 
+bool mimic_power_hindered(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	/* No magic */
+	if (p_ptr->anti_magic) {
+		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
+		return TRUE;
+	}
+	if (p_ptr->antimagic) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
+		return TRUE;
+	}
+
+	/* Not when confused */
+	if (p_ptr->confused) {
+		/* Paranoia? Cease fire-till-kill! */
+		p_ptr->shooting_till_kill = FALSE;
+		p_ptr->shooty_till_kill = FALSE;
+		p_ptr->shoot_till_kill_mimic = 0;
+
+		msg_print(Ind, "You are too confused!");
+		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
+		return TRUE;
+	}
+
+	/* power successfully used */
+	return FALSE;
+}
+
 static void do_mimic_power(int Ind, int power, int dir) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -432,29 +466,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-	/* No magic */
-	if (p_ptr->anti_magic) {
-		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
-	if (p_ptr->antimagic) {
-#ifdef USE_SOUND_2010
-		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
-
-	/* Not when confused */
-	if (p_ptr->confused) {
-		msg_print(Ind, "You are too confused!");
-
-		/* Paranoia? Cease fire-till-kill! */
-		p_ptr->shooting_till_kill = FALSE;
-		p_ptr->shooty_till_kill = FALSE;
-		p_ptr->shoot_till_kill_mimic = 0;
-		return;
-	}
+	if (mimic_power_hindered(Ind)) return;
 
 	j = power / 32;
 
@@ -828,6 +840,9 @@ void do_mimic_power_aux(int Ind, int dir) {
 		if (dir == 5) p_ptr->shooty_till_kill = TRUE; /* so for now we are just ATTEMPTING to shoot till kill (assumed we have a monster for target) */
 	}
 #endif
+
+	/* We need to check again here, in case we're called from handle_direction(), even though it's slightly paranoiish */
+	if (mimic_power_hindered(Ind)) return;
 
 	if (rlev > 50) rlev = 50;
 	rlev_bonus = (rlev * rlev) / 10; /* polynomially growing summand for bolt and ball spells */
@@ -1388,27 +1403,7 @@ void do_mimic_change(int Ind, int r_idx, bool force) {
 		return;
 	}
 
-	/* No magic */
-	if (p_ptr->anti_magic && !force) {
-		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
-		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-		return;
-	}
-	/* Antimagic */
-	if (p_ptr->antimagic && !force) {
-#ifdef USE_SOUND_2010
-		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-		return;
-	}
-	/* Not when confused */
-	if (p_ptr->confused && !force) {
-		msg_print(Ind, "You are too confused!");
-		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-		return;
-	}
+	if (!force && mimic_power_hindered(Ind)) return;
 
 #if 1
 	/* Corrupted Priest: Reverse all heavy-cursed boni for true demon form - the only time during which they too get flipped item boni. */
