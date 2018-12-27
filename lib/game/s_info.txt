@@ -53,7 +53,7 @@ I:1000:0
 
 N:4:Critical-strike
 D:Increases chance to land high-damage critical strikes.
-D:Only applies to sword-type weapons weighing up to 10.0 lbs.
+D:Only applies to sword/polearm-type weapons weighing up to 10.0 lbs.
 I:1000:0
 
 N:5:Polearm-mastery
@@ -92,8 +92,7 @@ I:1000:0
 
 N:11:Backstabbing
 D:Ability to backstab sleeping and fleeing monsters.
-D:*** REQUIRES SWORD-TYPE WEAPONS OR MARTIAL ARTS***
-#D:*** REQUIRES SWORD-TYPE WEAPONS ***
+D:*** REQUIRES SWORD/POLEARM-TYPE WEAPONS OR MARTIAL ARTS***
 #D:Much more effective in the dark
 I:1000:0
 
