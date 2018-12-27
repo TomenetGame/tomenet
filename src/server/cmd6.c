@@ -1069,9 +1069,10 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				p_ptr->deathblow = 0;
 				player_death(Ind);
 				ident = TRUE;
-			} else if(p_ptr->fruit_bat == 2) {
+			} else if (p_ptr->fruit_bat == 2) {
 				msg_print(Ind, "You have been restored!");
 				p_ptr->fruit_bat = 0;
+				p_ptr->body_monster = p_ptr->body_monster_prev;
 				p_ptr->update |= (PU_BONUS | PU_HP);
 				ident = TRUE;
 			}
@@ -1134,10 +1135,11 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				p_ptr->deathblow = 0;
 				player_death(Ind);
 				ident = TRUE;
-			} else if(p_ptr->fruit_bat == 2) {
+			} else if (p_ptr->fruit_bat == 2) {
 				msg_print(Ind, "You have been restored!");
 				p_ptr->fruit_bat = 0;
 				p_ptr->update |= (PU_BONUS | PU_HP);
+				p_ptr->body_monster = p_ptr->body_monster_prev;
 				ident = TRUE;
 			}
 			//else msg_print(Ind, "You feel certain you are a fruit bat!"); <-wouldn't this msg require 'ident' too? disabled for now

@@ -3960,6 +3960,7 @@ static void apply_morph(int Ind, int power, char * killer, int Ind_attacker) {
 			msg_print(Ind, "You have been restored!");
 			p_ptr->fruit_bat = 0;
 			p_ptr->update |= (PU_BONUS | PU_HP);
+			p_ptr->body_monster = p_ptr->body_monster_prev;
 		} else {
 			msg_print(Ind, "You feel certain you are a fruit bat!");
 		}
