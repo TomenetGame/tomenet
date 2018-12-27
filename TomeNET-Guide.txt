@@ -8903,6 +8903,7 @@ Some special abilities depend on armour weight (including shield) too.
 Those are..
 -dodge chance from 'Dodging' skill.
 -critical hit bonus from 'Critical-strike' skill.
+-stabbing attacks from 'Backstabbing' skill.
 -extra parry bonus from dual-wielding two weapons. (Also see (6.11).)
 -extra blow/round bonus from dual-wielding two weapons.
 -area searching for the 'Rogue' class (exclusive ability).
