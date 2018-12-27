@@ -8393,7 +8393,7 @@ will be multiplied by 2 if the target doesn't resist that brand.
 See (5.3) to get an easy overview.
 
 Characters using weapons have a limited number of melee attacks per round,
-depending on the character class . A table showing the blows/round limits
+depending on the character class. A table showing the blows/round limits
 is at section (6.5).
 
 There are four different classes of melee weapons,
