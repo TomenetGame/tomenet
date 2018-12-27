@@ -3031,8 +3031,33 @@ void calc_boni(int Ind) {
 	/* Clear the stat modifiers */
 	for (i = 0; i < 6; i++) p_ptr->stat_add[i] = 0;
 
+#if defined(ENABLE_OHERETICISM) && defined(ENABLE_HELLKNIGHT)
+	/* Hack: Blood Sacrifice form may give double-immunity!
+	   Reason is that the player gains IM_FIRE at 50 intrinsically, so he'd like IM_POIS from the form, not a redundant IM_FIRE.
+	   But the spell is already learnt at 45, when the player doesn't IM_FIRE yet. Now, it'd be weird if the form gave IM_POIS or even a choice instead,
+	   especially since the player cannot use 'Select preferred immunity' function due to missing Mimicry skill.
+	   So we'll just be generous at levels 45 to 49 and give IM_FIRE for free :-p as at 50 it'll not matter anymore. */
+	if (p_ptr->body_monster == RI_BLOODTHIRSTER
+	    && (p_ptr->pclass == CLASS_HELLKNIGHT
+ #ifdef CLASS_CPRIEST
+	    || p_ptr->pclass == CLASS_CPRIEST
+ #endif
+	    )) {
+		/* Bloodthirster form includes the benefits of 'Demonic Strength' (+max power of the spell).
+		   Note that the order is important, as 'Demonic Strength' might still be at a level where it only gives +5 instead of +6! */
+		p_ptr->stat_add[A_STR] = 6; csheet_boni[14].pstr += 6;
+		p_ptr->stat_add[A_CON] = 6; csheet_boni[14].pcon += 6;
+		p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
+		p_ptr->sustain_con = TRUE; csheet_boni[14].cb[11] |= CB12_RSCON;
+		/* ..Demonic Strength in turn implies Regeneration -- redundant though because Bloodthirster form has REGENERATE too. */
+		p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP;
+	}
+#endif
 	/* Originally Druidism bonuses */
-	if (p_ptr->xtrastat_tim)
+	else if (p_ptr->xtrastat_tim) {
+		/* Extra Growth / Demonic Strength now imply Regeneration */
+		p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP;
+
 		switch (p_ptr->xtrastat_which) {
 #ifdef ENABLE_HELLKNIGHT
 		case 4: /* Hell Knight's Demonic Strength */
@@ -3048,26 +3073,7 @@ void calc_boni(int Ind) {
 		case 1: p_ptr->stat_add[A_DEX] = p_ptr->xtrastat_pow; csheet_boni[14].pdex += p_ptr->xtrastat_pow;
 		case 0: p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow; csheet_boni[14].pstr += p_ptr->xtrastat_pow;
 		}
-#if defined(ENABLE_OHERETICISM) && defined(ENABLE_HELLKNIGHT)
-	/* Hack: Blood Sacrifice form may give double-immunity!
-	   Reason is that the player gains IM_FIRE at 50 intrinsically, so he'd like IM_POIS from the form, not a redundant IM_FIRE.
-	   But the spell is already learnt at 45, when the player doesn't IM_FIRE yet. Now, it'd be weird if the form gave IM_POIS or even a choice instead,
-	   especially since the player cannot use 'Select preferred immunity' function due to missing Mimicry skill.
-	   So we'll just be generous at levels 45 to 49 and give IM_FIRE for free :-p as at 50 it'll not matter anymore. */
-	else if (p_ptr->body_monster == RI_BLOODTHIRSTER
-	    && (p_ptr->pclass == CLASS_HELLKNIGHT
- #ifdef CLASS_CPRIEST
-	    || p_ptr->pclass == CLASS_CPRIEST
- #endif
-	    )) {
-		/* Bloodthirster form includes the benefits of 'Demonic Strength' (+max power of the spell) */
-		p_ptr->stat_add[A_STR] = 4; csheet_boni[14].pstr += 6;
-		p_ptr->stat_add[A_CON] = 4; csheet_boni[14].pcon += 6;
-		p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
-		p_ptr->sustain_con = TRUE; csheet_boni[14].cb[11] |= CB12_RSCON;
 	}
-#endif
-
 
 	/* Clear the Displayed/Real armor class */
 	p_ptr->dis_ac = p_ptr->ac = 0;

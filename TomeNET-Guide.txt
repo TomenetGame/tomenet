@@ -16832,7 +16832,8 @@ school.
 
     Demonic Strength
                     Temporarily increases and sustains strength and
-                    constitution.
+                    constitution. Also grants HP regeneration (same as for
+                    example an amulet of regeneration, so it doesn't stack).
                     Required skill level for first spell level: 23.
 
     Boundless Rage  Your melee strikes are furious, granting you one
@@ -17008,7 +17009,9 @@ school.
 
                     Tier III: Level 40.
 
-    Extra Growth    Increases your attributes temporarily.
+    Extra Growth    Increases your attributes temporarily and also grants HP
+                    regeneration (same as for example an amulet of regeneration
+                    so the effect doesn't stack).
                     Lv1: Increases strength.
                     Lv5: Also increases dexterity.
                     Required skill level for first spell level: 15.

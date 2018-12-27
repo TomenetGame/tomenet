@@ -4814,13 +4814,11 @@ static bool process_player_end_aux(int Ind) {
 			regenmana(Ind, ((regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1)) / 3);
 	}
 
-	/* Regeneration ability - now implied by do_xtra_stats()! */
-	if (p_ptr->regenerate || p_ptr->xtrastat_tim)
-		regen_amount = regen_amount * 2;
+	/* Regeneration ability */
+	if (p_ptr->regenerate) regen_amount = regen_amount * 2;
 
 	/* Health skill improves regen_amount */
-	if (minus_health)
-		regen_amount = regen_amount * 3 / 2;
+	if (minus_health) regen_amount = regen_amount * 3 / 2;
 
 	/* Holy curing gives improved regeneration ability */
 	if (get_skill(p_ptr, SKILL_HCURING) >= 30) regen_amount = (regen_amount * (get_skill(p_ptr, SKILL_HCURING) - 10)) / 20;
