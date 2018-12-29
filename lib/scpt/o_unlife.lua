@@ -31,6 +31,7 @@ OSLOWMONSTER_I = add_spell {
 	["mana"] = 	5,
 	["mana_max"] = 	5,
 	["fail"] = 	10,
+	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 				fire_grid_bolt(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, OSLOWMONSTER_I, 100), "drains power from your muscles")
@@ -49,6 +50,7 @@ OSLOWMONSTER_II = add_spell {
 	["mana"] = 	20,
 	["mana_max"] = 	20,
 	["fail"] = 	-20,
+	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 				project_los(Ind, GF_OLD_SLOW, 5 + get_level(Ind, OSLOWMONSTER_I, 100), "drains power from your muscles")
@@ -70,6 +72,7 @@ OSENSELIFE = add_spell {
 	["mana_max"] = 	3,
 	--["fail"] = 	-20,
 	["fail"] = 	15,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			--set_tim_espInd, 20 + randint(10) + get_level(Ind, OSENSELIFE, 50))
 			detect_living(Ind)
@@ -93,6 +96,7 @@ OVERMINCONTROL = add_spell {
 	["mana"] = 	30,
 	["mana_max"] = 	30,
 	["fail"] = 	20,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			do_vermin_control(Ind)
 	end,
@@ -111,6 +115,7 @@ OREGEN = add_spell {
 	["mana"] = 	40,
 	["mana_max"] = 	40,
 	["fail"] = 	0,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			set_tim_mp2hp(Ind, randint(10) + 5 + get_level(Ind, OREGEN, 50), 8 + get_level(Ind, OREGEN, 50) / 4)
 	end,
@@ -132,6 +137,7 @@ OSUBJUGATION = add_spell {
 	["mana"] = 	30,
 	["mana_max"] = 	30,
 	["fail"] = 	-10,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			project_los(Ind, GF_STASIS, 1000 + 5 + get_level(Ind, OSUBJUGATION, 50), "casts a spell")
 	end,
@@ -228,6 +234,7 @@ OWRAITHSTEP = add_spell {
 	["mana"] = 	60,
 	["mana_max"] = 	60,
 	["fail"] = 	-80,
+	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			set_tim_wraithstep(Ind, randint(30) + 20 + get_level(Ind, OWRAITHSTEP, 40))
 	end,
