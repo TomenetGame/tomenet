@@ -704,6 +704,83 @@ bool lookup_similar_account(cptr name, cptr accname) {
 	return FALSE;
 }
 
+/* Check for a character of similar name to 'name'. If one is found, the name
+   will be forbiden to be used, except if 'accname' is identical to the found
+   character's account name. - C. Blue */
+/* Super-strict mode? Disallow (non-trivial) char/acc names that only have 1+
+   _letter_ inserted somewhere compared to existing account names */
+#define STRICT_SIMILAR_NAMES
+/* Only apply super-strict check above to account names being created,
+   let character names be created without this extra check. */
+//#define SIMILAR_CHARNAMES_OK
+bool lookup_similar_character(cptr name, cptr accname) {
+	FILE *fp;
+	char buf[1024], tmpname[ACCOUNTNAME_LEN > CHARACTERNAME_LEN ? ACCOUNTNAME_LEN : CHARACTERNAME_LEN];
+	struct account acc;
+return FALSE; //TODO: Implement
+
+	if (allow_similar_names) return FALSE; //hack: always allow?
+
+	/* special exceptions (admins and their player accounts) */
+	if (!strcasecmp(name, "mikaelh") || /* vs 'mikael' */
+	    !strcasecmp(name, "c. blue")) /* vs 'c.blue' */
+		return FALSE; //allow!
+
+	WIPE(&acc, struct account);
+
+	condense_name(tmpname, name);
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb");
+	if (!fp) {
+		s_printf("ERROR: COULDN'T ACCESS ACCOUNT FILE IN lookup_similar_character()!\n");
+		return FALSE; /* cannot access account file */
+	}
+	while (fread(&acc, sizeof(struct account), 1, fp)) {
+		/* Make sure passwords don't leak */
+		memset(acc.pass, 0, sizeof(acc.pass));
+
+		/* Skip deleted entries */
+		if (acc.flags & ACC_DELD) continue;
+
+		/* We may create character names similar to our own account name as we like */
+		if (accname && !strcmp(acc.name, accname)) {
+			continue;
+		}
+
+#ifdef STRICT_SIMILAR_NAMES
+		if (
+ #ifdef SIMILAR_CHARNAMES_OK
+		    /*only apply this check to account names being created, be lenient for character names */
+		    !accname &&
+ #endif
+		    similar_names(name, acc.name)) {
+			s_printf("lookup_similar_character failed.\n");
+			return TRUE;
+		}
+#endif
+
+		/* Differring normalised names? Skip. */
+		if (strcmp(acc.name_normalised, tmpname)) continue;
+
+		/* We found same normalised names. Check! */
+		fclose(fp);
+
+		/* Identical name (account vs character)? that's fine. */
+		if (!strcmp(acc.name, name)) {
+			return FALSE;
+		}
+
+		/* not identical but just too similar? forbidden! */
+		s_printf("lookup_similar_character (4): name '%s', aname '%s' (tmp '%s')\n", name, acc.name, tmpname);
+		return TRUE;
+	}
+	fclose(fp);
+
+	/* no identical/similar account found, all green! */
+	return FALSE;
+}
+
 /* Return account name of a specified PLAYER id */
 cptr lookup_accountname(int p_id) {
 	FILE *fp;
@@ -808,7 +885,7 @@ int check_account(char *accname, char *c_name, int *Ind) {
 	   This is important for new feat of messaging to an account instead of character name. - C. Blue */
 	char c2_name[MAX_CHARS];
 	strcpy(c2_name, c_name);
-//	c2_name[0] = toupper(c2_name[0]);
+	//c2_name[0] = toupper(c2_name[0]);
 	bool acc1_success = GetAccount(&acc, accname, NULL, FALSE);
 	bool acc2_success = GetAccount(&acc2, c2_name, NULL, FALSE);
 	if (acc1_success && acc2_success && acc.id != acc2.id) {
@@ -816,13 +893,12 @@ int check_account(char *accname, char *c_name, int *Ind) {
 		   rule for newly created characters, to avoid someone being unable to login on
 		   an already existing character that unfortunately violates this rule :/ */
 		int *id_list, chars;
+
 		chars = player_id_list(&id_list, acc.id);
 		for (i = 0; i < chars; i++)
 			if (!strcmp(c_name, lookup_player_name(id_list[i]))) break;
 		if (chars) C_KILL(id_list, chars, int);
-		if (i == chars) {
-			return 0; /* 'name already in use' */
-		}
+		if (i == chars) return 0; /* 'name already in use' */
 	} else if (!acc1_success && acc2_success) {
 		return 0; /* we don't even have an account yet? 'name already in use' for sure */
 	}
@@ -832,6 +908,7 @@ int check_account(char *accname, char *c_name, int *Ind) {
 #ifndef RPG_SERVER
 		int max_cpa = MAX_CHARS_PER_ACCOUNT, max_cpa_plus = 0, plus_free = 0;
 #endif
+
 		chars = player_id_list(&id_list, acc.id);
 #ifdef RPG_SERVER /* Allow only up to 1 character per account! */
 		/* If this account DOES have characters, but the chosen character name is
@@ -856,6 +933,7 @@ int check_account(char *accname, char *c_name, int *Ind) {
 		ded_pvp = 0;
 		for (i = 0; i < chars; i++) {
 			int m = lookup_player_mode(id_list[i]);
+
 			if ((m & MODE_DED_IDDC) && ded_iddc < MAX_DED_IDDC_CHARS) {
 				ded_iddc++;
 				plus_free--;

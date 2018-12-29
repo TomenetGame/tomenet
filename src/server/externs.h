@@ -34,7 +34,7 @@ extern void version_build(void);
 extern byte mh_attr(int max);
 extern const char *my_strcasestr(const char *big, const char *little);
 extern const char *my_strcasestr_skipcol(const char *big, const char *little, bool strict);
-
+extern char *roman_suffix(char* cname);
 
 /* common/files.c */
 extern int local_file_init(int ind, unsigned short fnum, char *fname);
@@ -1464,6 +1464,7 @@ extern hash_entry *hash_table[NUM_HASH_ENTRIES];
 extern bool guild_rename(int Ind, char *new_name);
 extern void get_laston(char *name, char *response, bool admin, bool colour);
 extern bool lookup_similar_account(cptr name, cptr accname);
+extern bool lookup_similar_character(cptr name, cptr accname);
 extern char acc_sum_houses(struct account *acc);
 extern char acc_get_houses(const char *name);
 extern int acc_set_houses(const char *name, char houses);

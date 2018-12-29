@@ -8,13 +8,17 @@
 
 #include "angband.h"
 #ifdef TOMENET_WORLDS
-#include "../world/world.h"
+ #include "../world/world.h"
 #endif
 
 /* For gettimeofday */
 #include <sys/time.h>
 
 static void console_talk_aux(char *message);
+
+
+/* Ignore roman number suffix when checking for similar names? */
+#define SIMILAR_ROMAN
 
 
 #ifndef HAS_MEMSET
@@ -8302,9 +8306,21 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
 
 /* Condense an (account) name into a 'normalised' version, used to prevent
    new players from creating account names too similar to existing ones. - C. Blue */
+#ifndef SIMILAR_ROMAN
 void condense_name(char *condensed, const char *name) {
+#else
+void condense_name(char *condensed, const char *name_raw) {
+#endif
 	char *bufptr = condensed, current, multiple = 0, *ptr;
 	bool space = TRUE;
+
+#ifdef SIMILAR_ROMAN
+	char name[NAME_LEN];
+
+	strcpy(name, name_raw);
+	if ((ptr = roman_suffix(name))) *(ptr - 1) = 0;
+plog(format("condense: n='%s'", name));
+#endif
 
 	for (ptr = (char*)name; *ptr; ptr++) {
 		/* skip spaces in the beginning */
@@ -8343,13 +8359,27 @@ void condense_name(char *condensed, const char *name) {
 
 /* Helper function to check account/character/guild.. names for too great similarity:
    Super-strict mode: Disallow (non-trivial) names that only have 1+ letter inserted somewhere. */
+#ifndef SIMILAR_ROMAN
 int similar_names(const char *name1, const char *name2) {
+#else
+int similar_names(const char *name1_raw, const char *name2_raw) {
+#endif
 	char tmpname[MAX_CHARS];
 	const char *ptr, *ptr2;
 	char *ptr3;
 	int diff, min, diff_bonus;
 	int diff_loc, diff2;
 	bool words = FALSE;
+
+#ifdef SIMILAR_ROMAN
+	char name1[NAME_LEN], name2[NAME_LEN];
+
+	strcpy(name1, name1_raw);
+	strcpy(name2, name2_raw);
+	if ((ptr3 = roman_suffix(name1))) *(ptr3 - 1) = 0;
+	if ((ptr3 = roman_suffix(name2))) *(ptr3 - 1) = 0;
+plog(format("similar: n1='%s',n2='%s'", name1, name2));
+#endif
 
 	if (strlen(name1) < 5 || strlen(name2) < 5) return 0; //trivial length, it's ok to be similar
 

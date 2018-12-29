@@ -42,6 +42,11 @@
 #define PANEL_Y	(SCREEN_PAD_TOP)
 
 
+/* When Highlighting/beeping when character name is mentioned in chat:
+   Recognize and ignore any roman number suffix attached to our 'real' character name? */
+#define CHARNAME_ROMAN
+
+
 extern void flicker(void);
 
 int			ticks = 0; /* Keeps track of time in 100ms "ticks" */
@@ -2254,144 +2259,6 @@ int Receive_char(void) {
 	return 1;
 }
 
-/* Provide extra convenience for character names that end on roman numbers to count their reincarnations,
-   for highlighting/beeping on personal chat messages, specifically allowing the sender to omit the roman number
-   at the end of our character name, assuming it is separated by at least one space;
-   also for 'similar names' checks regarding choosing a character name on character creation!
-   Its numerical value specifies the maximum length of the roman number.
-   Note that this function also verifies the actual validity of the roman numbers.. :-p - C. Blue */
-#define CHARNAME_ROMAN
-#ifdef CHARNAME_ROMAN
-char *roman_suffix(char* cname) {
-	char *p, *p0;
-	int arabic = 0, rome_prev = 0;
-	bool maybe_prefix = FALSE;
-
-	/* Not long enough to contain roman number? */
-	if (strlen(cname) < 3) return NULL;
-	/* No separator between name and number? */
-	if (!strchr(cname, ' ')) return NULL;
-
-	/* Locate begin of the roman number */
-	p = cname + strlen(cname) - 1;
-	while (*p != ' ') p--;
-	p0 = p + 1;
-
-	/* Extract and validate roman number */
-	while (*(++p)) {
-		switch (*p) {
-		case 'I':
-			if (arabic % 5 >= 3) return NULL; //this digit may never occur more than 3 times in a row
-
-			if (maybe_prefix) arabic += rome_prev; //prefix was not a prefix but a normal digit ('I' cannot get a prefix)
-			if (arabic % 5 == 0) maybe_prefix = TRUE;
-			else {
-				arabic++;
-				maybe_prefix = FALSE;
-			}
-			rome_prev = 1;
-			break;
-		case 'V':
-			if (rome_prev) {
-				if (rome_prev == 5) return NULL; //this specific digit is never allowed to repeat
-				if (rome_prev < 5 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-			}
-
-			if (maybe_prefix) { //was prefix a prefix or a normal digit?
-				if (rome_prev == 1) arabic--;
-				else arabic += rome_prev;
-			}
-			arabic += 5;
-			maybe_prefix = FALSE;
-			rome_prev = 5;
-			break;
-		case 'X':
-			if (arabic % 50 >= 30) return NULL; //this digit may never occur more than 3 times in a row
-			if (rome_prev) {
-				if (rome_prev < 10 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-			}
-
-			if (maybe_prefix) { //was prefix a prefix or a normal digit?
-				if (rome_prev == 1) arabic--;
-				else arabic += rome_prev;
-			}
-			if (arabic % 50 == 0) maybe_prefix = TRUE;
-			else {
-				arabic += 10;
-				maybe_prefix = FALSE;
-			}
-			rome_prev = 10;
-			break;
-		case 'L':
-			if (rome_prev) {
-				if (rome_prev == 50) return NULL; //this specific digit is never allowed to repeat
-				if (rome_prev < 50 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-				if (rome_prev < 10) return NULL; //catch previous digits that can be prefix but are too small to work as prefix for the current digit
-			}
-
-			if (maybe_prefix) { //was prefix a prefix or a normal digit?
-				if (rome_prev == 10) arabic -= 10;
-				else arabic += rome_prev;
-			}
-			arabic += 50;
-			maybe_prefix = FALSE;
-			rome_prev = 50;
-			break;
-		case 'C':
-			if (arabic % 500 >= 300) return NULL; //this digit may never occur more than 3 times in a row
-			if (rome_prev) {
-				if (rome_prev < 100 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-				if (rome_prev < 10) return NULL; //catch previous digits that can be prefix but are too small to work as prefix for the current digit
-			}
-
-			if (maybe_prefix) { //was prefix a prefix or a normal digit?
-				if (rome_prev == 10) arabic -= 10;
-				else arabic += rome_prev;
-			}
-			if (arabic % 500 == 0) maybe_prefix = TRUE;
-			else {
-				arabic += 100;
-				maybe_prefix = FALSE;
-			}
-			rome_prev = 100;
-			break;
-		case 'D':
-			if (rome_prev) {
-				if (rome_prev == 500) return NULL; //this specific digit is never allowed to repeat
-				if (rome_prev < 500 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-				if (rome_prev < 100) return NULL; //catch previous digits that can be prefix but are too small to work as prefix for the current digit
-			}
-
-			if (maybe_prefix) { //was prefix a prefix or a normal digit?
-				if (rome_prev == 100) arabic -= 100;
-				else arabic += rome_prev;
-			}
-			arabic += 500;
-			maybe_prefix = FALSE;
-			rome_prev = 500;
-			break;
-		case 'M':
-			// (no limit for amount of Ms occurring in a row..)
-			if (rome_prev) {
-				if (rome_prev < 1000 && !maybe_prefix) return NULL; //smaller digits before us are only allowed if they can be a subtractive prefix to us
-				if (rome_prev < 100) return NULL; //catch previous digits that can be prefix but are too small to work as prefix for the current digit
-			}
-
-			if (maybe_prefix) { //was prefix a prefix or a normal digit?
-				if (rome_prev == 100) arabic -= 100;
-				//else arabic += rome_prev; //not needed because of 'irregular' below: maybe_prefix can never be set to true from an 'M', so we don't need to catch that case <-here.
-			}
-			arabic += 1000;
-			maybe_prefix = FALSE; //irregular ;) simply as it's the highest roman number..
-			rome_prev = 1000;
-			break;
-		}
-	}
-
-	/* Success, return starting position of the roman number */
-	return p0;
-}
-#endif
 int Receive_message(void) {
 	int	n, c;
 	char	ch;

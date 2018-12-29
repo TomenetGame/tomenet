@@ -4195,13 +4195,13 @@ static int Receive_login(int ind) {
 			return(-0);
 		}
 
-		/* Check if a too similar name already exists --
+		/* Check if an account name already exists that is too similar to the new account name to be created --
 		   must be called before GetAccount() is called, because that function
 		   imprints the condensed name onto a newly created account.
 		   Don't prevent already existing accounts from logging in though. */
 		if (!Admin_GetAccount(&acc, connp->nick) && lookup_similar_account(connp->nick, NULL)) {
 			//Destroy_connection(ind, "A too similar name is already in use. Check lower/upper case."); //<- if not doing any 'similar' checks, it makes sense to point out case-sensitivity
-			Destroy_connection(ind, "A too similar name is already in use, or you made a typo in the name or password.");
+			Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password.");
 			return -1;
 		}
 		WIPE(&acc, struct account);
@@ -4467,7 +4467,7 @@ static int Receive_login(int ind) {
 			}
 		}
 
-		/* Check if a too similar account name already exists.
+		/* Check if an account name already exists that is too similar to the new character name to be created.
 		   Only for characters that don't exist yet and would be newly created. */
 		if (!lookup_player_id(choice) && lookup_similar_account(choice, connp->nick)
 		    /* exception! reserved character names have priority.
@@ -4551,7 +4551,7 @@ static int Receive_login(int ind) {
 			if (connp2->c_name && !strcasecmp(connp2->c_name, choice) &&
 			    strcasecmp(connp2->nick, connp->nick)) { /* check that it's a different account, too */
 				/* Fail login */
-				Destroy_connection(ind, "Character name already in use.");
+				Destroy_connection(ind, "Character name already logged in or currently logging in.");
 				s_printf("(Prevented simultaneous creation of same character.)\n");
 				return(-1);
 			}
@@ -4572,6 +4572,21 @@ static int Receive_login(int ind) {
 				Destroy_connection(ind, "Login not possible because you are still logged in from another IP address.");
 			return(-1);
 		}
+
+#if 1
+		/* Optional: Additionally check for similar character names? */
+		if (lookup_similar_character(choice, connp->nick)
+		    /* exception! reserved character names have priority.
+		       Otherwise someone could create an account meanwhile to block this player's reincarnation. */
+		    && !took_reservation
+		    /* Exempt similar-checking for when the character name is exactly the same as his account name - that should always be allowed! */
+		    && strcmp(choice, connp->nick)) {
+			Destroy_connection(ind, "A too similar character name exists. Please choose a different name.");
+			return -1;
+		}
+#endif
+
+
 		Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
 		connp->c_name = strdup(choice);
 	} else {
