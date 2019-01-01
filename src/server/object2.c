@@ -9252,6 +9252,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (o_ptr->to_d > 15) o_ptr->to_d = 15;
 		}
 
+		/* Specialty: Lower limits: Don't make negative enchantments too negative (mainly Shields of Preservation) */
+		if (o_ptr->to_h < -3) o_ptr->to_h = o_ptr->to_h / 2 - 1;
+		if (o_ptr->to_d < -3) o_ptr->to_d = o_ptr->to_d / 2 - 1;
+		if (o_ptr->to_a < -3) o_ptr->to_a = o_ptr->to_a / 2 - 1;
+
 		break;
 	} while (tries < (verygreat ? 20 : 100));
 
