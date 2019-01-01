@@ -8063,7 +8063,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	//int base = 100;
 	int tries = 0, i = 0, j = 0;
 	char o_name[ONAME_LEN];
-	u32b f1, f2, f3, f4, f5, f6, esp;
+	u32b f1, f2, f3, f4, f5, f6, esp, tmp;
 	bool mha, rha; /* monk heavy armor, rogue heavy armor */
 	bool go_heavy = TRUE; /* new special thingy: don't pick super light cloth armour if we're not specifically light-armour oriented */
 	bool caster = FALSE;
@@ -8971,15 +8971,22 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			bool rneth = (p_ptr->s_info[SKILL_R_NETH].value > 0);
 			bool rchao = (p_ptr->s_info[SKILL_R_CHAO].value > 0);
 			bool rmana = (p_ptr->s_info[SKILL_R_MANA].value > 0);
+			/* Note: We ignore all hard-to-acquire resistances that we cannot reasonably expect to show up on an item */
 			bool rconf = (rlite && rdark);
+			//(inertia)
 			bool relec = (rlite && rneth);
 			bool rfire = (rlite && rchao);
+			//bool rwate = (rlite && rmana);
+			//(gravity)
 			bool rcold = (rdark && rneth);
 			bool racid = (rdark && rchao);
 			bool rpois = (rdark && rmana);
-			bool rsoun = (rnexu && rchao);
 			bool rshar = (rnexu && rmana);
+			bool rsoun = (rnexu && rchao);
+			//bool rtime = (rnexu && rmana);
 			bool rdise = (rneth && rchao);
+			//bool rice  = (rneth && rmana);
+			//bool rplas = (rchao && rmana);
 			u32b relem2;
 
 			if (p_ptr->resist_fire || p_ptr->immune_fire) rfire = FALSE;
@@ -8990,7 +8997,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (p_ptr->resist_lite) rlite = FALSE;
 			if (p_ptr->resist_dark) rdark = FALSE;
 			if (p_ptr->resist_nexus) rnexu = FALSE;
-			if (p_ptr->resist_neth) rneth = FALSE;
+			if (p_ptr->resist_neth || p_ptr->immune_neth) rneth = FALSE;
 			if (p_ptr->resist_chaos) rchao = rconf = FALSE;
 			if (p_ptr->resist_conf) rconf = FALSE;
 			if (p_ptr->resist_sound) rsoun = FALSE;
@@ -9010,69 +9017,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (relem2 && !(f2 & relem2)) continue;
 		}
 
-		/* If the item only has high resistance, and no immunity, make sure that we don't already resist it. */
-		if (!(f2 & (TR2_IM_FIRE | TR2_IM_COLD | TR2_IM_ACID | TR2_IM_ELEC | TR2_IM_POISON))) {
-			int hres = 0;
-			int pres = 0;
-
-			if (f2 & TR2_RES_NEXUS) {
-				hres++;
-				if (p_ptr->resist_nexus) pres++;
-			}
-			if (f2 & TR2_RES_NETHER) {
-				hres++;
-				if (p_ptr->resist_neth) pres++;
-			}
-			if (f2 & TR2_RES_CHAOS) {
-				hres++;
-				if (p_ptr->resist_chaos) pres++;
-			}
-			if (f2 & TR2_RES_POIS) {
-				hres++;
-				if (p_ptr->resist_pois) pres++;
-			}
-			if (f2 & TR2_RES_SOUND) {
-				hres++;
-				if (p_ptr->resist_sound) pres++;
-			}
-			if (f2 & TR2_RES_SHARDS) {
-				hres++;
-				if (p_ptr->resist_shard) pres++;
-			}
-			if (f2 & TR2_RES_DISEN) {
-				hres++;
-				if (p_ptr->resist_disen) pres++;
-			}
-
-			/* semi-great */
-			if (f2 & TR2_RES_DARK) {
-				hres++;
-				if (p_ptr->resist_dark) pres++;
-			}
-			if (f2 & TR2_RES_LITE) {
-				hres++;
-				if (p_ptr->resist_lite) pres++;
-			}
-
-			/* less great */
-			if (f2 & TR2_RES_CONF) {
-				hres++;
-				if (p_ptr->resist_conf) pres++;
-			}
-			if (f2 & TR2_RES_BLIND) {
-				hres++;
-				if (p_ptr->resist_blind) pres++;
-			}
-
-			/* misc */
-			//if (f2 & TR2_RES_WATER) hres++;
-			//PLASMA, MANA, TIME, FEAR
-			//don't check for FA, to make sure Vampires/GreenD don't get mirkwood boots
-
-			if (hres && pres == hres) continue;
-		}
-
-		/* If the item is a dragon scale mail and we're draconian, prevent redundant immunity.
+		/* If the item is a dragon scale mail and we're draconian or vampire, prevent redundant lineage/immunity.
+		   We still want to grant the player a DSM instead of just discarding it, so we'll just modify its type.
 		   (Very ugly hacking, since we change sval and k_idx on the fly and
 		    just assume that no other base item features need to be modified.
 		    bpval is corrected afterwads.) */
@@ -9176,6 +9122,120 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			/* correct +CON */
 			o_ptr->bpval = k_info[o_ptr->k_idx].pval;
 		}
+
+
+		/* If the item only has high resistance, and no immunity (that we don't already have),
+		   make sure that we don't already resist all the high resistances (or are immune to them) already too. */
+
+		/* Preparation: Ignore all immunities on the item that our character actually possesses: */
+		tmp = f2;
+		/* Draconians don't get their immunity right from the start, but still the item should be made to last a bit more.. */
+		switch (p_ptr->prace) {
+		case RACE_DRACONIAN:
+			switch (p_ptr->ptrait) {
+			case TRAIT_BLUE:
+				tmp &= ~TR2_IM_ELEC;
+				break;
+			case TRAIT_WHITE:
+				tmp &= ~TR2_IM_COLD;
+				break;
+			case TRAIT_RED:
+				tmp &= ~TR2_IM_FIRE;
+				break;
+			case TRAIT_BLACK:
+				tmp &= ~TR2_IM_ACID;
+				break;
+			case TRAIT_GREEN:
+				tmp &= ~TR2_IM_POISON;
+				break;
+			}
+			break;
+		}
+		/* Most other imms here are just paranoia at this time, as they don't exist as intrinsic immunities for low-level characters -
+		   except if the player already found an item granting one (!) oho. But seems not exploitable. */
+		if (p_ptr->immune_elec) tmp &= ~TR2_IM_ELEC;
+		if (p_ptr->immune_cold) tmp &= ~TR2_IM_COLD;
+		if (p_ptr->immune_fire) tmp &= ~TR2_IM_FIRE;
+		if (p_ptr->immune_acid) tmp &= ~TR2_IM_ACID;
+		if (p_ptr->immune_poison) tmp &= ~TR2_IM_POISON; //Vampires, the only intrinsic imm at this time of writing really
+		if (p_ptr->immune_neth) tmp &= ~TR2_IM_NETHER;
+		if (p_ptr->immune_water) tmp &= ~TR2_IM_WATER;
+
+		/* Main check: */
+		if (!(tmp & (TR2_IM_FIRE | TR2_IM_COLD | TR2_IM_ACID | TR2_IM_ELEC | TR2_IM_POISON | TR2_IM_WATER | TR2_IM_NETHER))) {
+			int hres = 0;
+			int pres = 0;
+
+			if (f2 & TR2_RES_NEXUS) {
+				hres++;
+				if (p_ptr->resist_nexus) pres++;
+			}
+			if (f2 & TR2_RES_NETHER) {
+				hres++;
+				if (p_ptr->resist_neth || p_ptr->immune_neth) pres++;
+			}
+			if (f2 & TR2_RES_CHAOS) {
+				hres++;
+				if (p_ptr->resist_chaos) pres++;
+			}
+			if (f2 & TR2_RES_POIS) {
+				hres++;
+				if (p_ptr->resist_pois || p_ptr->immune_poison) pres++;
+			}
+			if (f2 & TR2_RES_SOUND) {
+				hres++;
+				if (p_ptr->resist_sound) pres++;
+			}
+			if (f2 & TR2_RES_SHARDS) {
+				hres++;
+				if (p_ptr->resist_shard) pres++;
+			}
+			if (f2 & TR2_RES_DISEN) {
+				hres++;
+				if (p_ptr->resist_disen) pres++;
+			}
+
+			/* semi-great */
+			if (f2 & TR2_RES_DARK) {
+				hres++;
+				if (p_ptr->resist_dark) pres++;
+			}
+			if (f2 & TR2_RES_LITE) {
+				hres++;
+				if (p_ptr->resist_lite) pres++;
+			}
+
+			/* less great */
+			if (f2 & TR2_RES_CONF) {
+				hres++;
+				if (p_ptr->resist_conf) pres++;
+			}
+			if (f2 & TR2_RES_BLIND) {
+				hres++;
+				if (p_ptr->resist_blind) pres++;
+			}
+			/* We don't check for FA, to make sure Vampires don't get mirkwood boots;
+			   for Green Draconians it's ok though as they will profit from the RES_DARK,
+			   which by this check will be enforced for mirkies to pass. */
+
+			/* unusual */
+			if (f2 & TR2_RES_WATER) {
+				hres++;
+				if (p_ptr->resist_water || p_ptr->immune_water) pres++;
+			}
+			if (f5 & TR5_RES_TIME) {
+				hres++;
+				if (p_ptr->resist_time) pres++;
+			}
+			if (f5 & TR5_RES_MANA) {
+				hres++;
+				if (p_ptr->resist_mana) pres++;
+			}
+			//PLASMA (no longer exists as atomic res), FEAR (too weak to count)
+
+			if (hres && pres == hres) continue;
+		}
+
 
 		/* Limit items to not substitute endgame (Morgoth) gear (part 2/2) */
 		/* Mage staves (and Magi gloves as a side-effect) */
