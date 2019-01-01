@@ -12786,7 +12786,8 @@ Note that not every skill is available to every profession (class).
 
                                 Traumaturgy has insanity-reducing synergy when
                                 trained together with Hereticism. It also can
-                                prolong the 'Boundless Rage' spell. See (6.8)
+                                prolong the 'Boundless Rage' spell, the better
+                                the higher Traumaturgy is trained. See (6.8)
                                 for details.
 
                                 A natural vampire race character who has both
@@ -16841,8 +16842,9 @@ school.
                     This spell has a special synergy with 'Traumaturgy' skill:
                     If you keep hitting opponents in melee that are affected by
                     Traumaturgy while under the effect of Boundless Rage, their
-                    pain will continue to fuel your rage and keep extending the
-                    spell's duration.
+                    pain will continue to fuel your rage and keep prolonging
+                    the spell's duration, the better the higher Traumaturgy has
+                    been trained.
                     Required skill level for first spell level: 29.
 
                     Tier II: Level 41.
