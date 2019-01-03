@@ -1130,32 +1130,32 @@ $NEW_SHIELDS_NO_AC$F:EASY_KNOW
 N:132:Might
 G:=:d
 I:45:24:0
-W:25:0:2:500
-A:25/1
+W:15:0:2:500
+A:15/1
 F:STR | CON | HIDE_TYPE
 F:SUST_STR | SUST_CON
 
 N:133:Cunningness
 G:=:d
 I:45:26:0
-W:25:0:2:500
-A:25/1
+W:15:0:2:500
+A:15/1
 F:DEX | INT | HIDE_TYPE
 F:SUST_DEX | SUST_INT
 
 N:134:Toughness
 G:=:d
 I:45:27:0
-W:25:0:2:500
-A:25/1
+W:15:0:2:500
+A:15/1
 F:CON | DEX | HIDE_TYPE
 F:SUST_CON | SUST_DEX
 
 N:135:Ready Wit
 G:=:d
 I:45:25:0
-W:25:0:2:500
-A:25/1
+W:15:0:2:500
+A:15/1
 F:STR | INT | HIDE_TYPE
 F:SUST_STR | SUST_INT
 
@@ -1212,8 +1212,8 @@ F:FEATHER | EASY_KNOW
 N:143:Poison Resistance
 G:=:d
 I:45:20:0
-W:40:0:2:12000
-A:60/2
+W:30:0:2:7000
+A:30/2
 F:RES_POIS | EASY_KNOW
 
 N:144:Free Action
@@ -1233,8 +1233,8 @@ F:CURSED | STR | HIDE_TYPE
 N:146:Flames
 G:=:d
 I:45:18:0
-W:50:0:2:5000
-A:50/1
+W:20:0:2:5000
+A:20/3
 P:0:0d0:0:0:15
 F:RES_FIRE | ACTIVATE | BRAND_FIRE
 D:Affects your armour class.
@@ -1242,8 +1242,8 @@ D:Affects your armour class.
 N:147:Acid
 G:=:d
 I:45:17:0
-W:50:0:2:5000
-A:50/1
+W:20:0:2:5000
+A:20/3
 P:0:0d0:0:0:15
 F:RES_ACID | ACTIVATE | BRAND_ACID
 D:Affects your armour class.
@@ -1251,8 +1251,8 @@ D:Affects your armour class.
 N:148:Ice
 G:=:d
 I:45:19:0
-W:50:0:2:5000
-A:50/1
+W:20:0:2:5000
+A:20/3
 P:0:0d0:0:0:15
 F:RES_COLD | ACTIVATE | BRAND_COLD
 D:Affects your armour class.
@@ -1274,15 +1274,15 @@ F:CURSED | INT | HIDE_TYPE
 N:151:Damage
 G:=:d
 I:45:29:0
-W:15:0:2:500
-A:15/1
+W:17:0:2:500
+A:17/1
 D:Affects damage you deal in melee combat.
 
 N:152:Accuracy
 G:=:d
 I:45:28:0
-W:10:0:2:500
-A:10/1
+W:15:0:2:500
+A:15/1
 D:Affects your chance to hit in melee or ranged combat.
 
 N:153:Protection
@@ -1309,32 +1309,32 @@ F:SEE_INVIS | EASY_KNOW
 N:156:Steadiness
 G:=:d
 I:45:10:0
-W:25:0:2:500
-A:25/1
+W:15:0:2:500
+A:15/1
 F:CON | WIS | HIDE_TYPE
 F:SUST_CON | SUST_WIS
 
 N:157:Tenacity
 G:=:d
 I:45:11:0
-W:25:0:2:500
-A:25/1
+W:15:0:2:500
+A:15/1
 F:STR | WIS | HIDE_TYPE
 F:SUST_STR | SUST_WIS
 
 N:158:Preparedness
 G:=:d
 I:45:12:0
-W:25:0:2:500
-A:25/1
+W:15:0:2:500
+A:15/1
 F:CON | INT | HIDE_TYPE
 F:SUST_CON | SUST_INT
 
 N:159:Gallantry
 G:=:d
 I:45:13:0
-W:25:0:2:500
-A:25/1
+W:15:0:2:500
+A:15/1
 F:DEX | WIS | HIDE_TYPE
 F:SUST_DEX | SUST_WIS
 
@@ -3681,8 +3681,8 @@ F:RES_FEAR | EASY_KNOW
 N:426:Light and Darkness Resistance
 G:=:d
 I:45:39:0
-W:30:0:2:3000
-A:30/2
+W:25:0:2:3000
+A:25/2
 F:RES_LITE | RES_DARK | EASY_KNOW
 
 N:427:Nether Resistance
@@ -3717,9 +3717,8 @@ F:RES_CONF | EASY_KNOW
 N:431:Stone Skin
 G:=:d
 I:45:44:0
-#W:25:0:2:3000
-W:25:0:2:2500
-A:25/2
+W:20:0:2:2500
+A:20/2
 F:RES_SHARDS | EASY_KNOW
 
 N:432:Disenchantment Resistance
@@ -3739,8 +3738,8 @@ F:RES_CHAOS | RES_CONF | EASY_KNOW
 N:434:Blindness Resistance
 G:=:d
 I:45:47:0
-W:30:0:2:6500
-A:30/2
+W:20:0:2:4500
+A:20/2
 F:RES_BLIND | EASY_KNOW
 
 N:435:Lordly Protection
@@ -4739,8 +4738,8 @@ F:SHOW_MODS | MUST2H | REGEN_MANA
 N:578:Lightning
 G:=:d
 I:45:56:0
-W:50:0:2:5000
-A:50/1
+W:20:0:2:5000
+A:20/3
 P:0:0d0:0:0:15
 F:RES_ELEC | IGNORE_ELEC | ACTIVATE | BRAND_ELEC
 D:Affects your armour class.
