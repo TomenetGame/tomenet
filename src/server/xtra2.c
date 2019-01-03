@@ -8638,6 +8638,20 @@ void player_death(int Ind) {
 #ifdef DEATH_EQ_ITEM_LOST
 	if (p_ptr->alive) equip_death_damage(Ind, FALSE);
 #endif
+	/* Soloists: Kill more items! Soloists are not really meant to interact with others much. */
+#ifdef DEATH_PACK_ITEM_LOST
+	if ((p_ptr->mode & MODE_SOLO) && p_ptr->alive) inven_death_damage(Ind, FALSE);
+#endif
+#ifdef DEATH_EQ_ITEM_LOST
+	if ((p_ptr->mode & MODE_SOLO) && p_ptr->alive) {
+		equip_death_damage(Ind, FALSE);
+		equip_death_damage(Ind, FALSE);
+		equip_death_damage(Ind, FALSE);
+		equip_death_damage(Ind, FALSE);
+		equip_death_damage(Ind, FALSE);
+		equip_death_damage(Ind, FALSE);
+	}
+#endif
 
 	/* Setup the sorter */
 	ang_sort_comp = ang_sort_comp_value;
@@ -8657,6 +8671,12 @@ void player_death(int Ind) {
 
 		if (o_ptr->questor) { /* questor items cannot be 'dropped', only destroyed! */
 			questitem_d(o_ptr, o_ptr->number);
+			continue;
+		}
+
+		/* Eat all true artifacts of Soloists */
+		if ((p_ptr->mode & MODE_SOLO) && true_artifact_p(o_ptr)) {
+			handle_art_d(o_ptr->name1);
 			continue;
 		}
 
