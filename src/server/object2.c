@@ -5214,6 +5214,8 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 		case SV_RING_ACID:
 		case SV_RING_ICE:
 		case SV_RING_ELEC:
+		/* Former "Shard Resistance" ring, buffed with additional +AC now: */
+		case SV_RING_RES_SHARDS:
 			/* Bonus to armor class */
 			o_ptr->to_a = 5 + randint(5) + m_bonus(10, level);
 			break;

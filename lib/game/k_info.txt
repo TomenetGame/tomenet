@@ -3706,10 +3706,12 @@ W:22:0:2:3000
 A:22/2
 F:RES_CONF | EASY_KNOW
 
-N:431:Shard Resistance
+#N:431:Shard Resistance
+N:431:Stone Skin
 G:=:d
 I:45:44:0
-W:25:0:2:3000
+#W:25:0:2:3000
+W:25:0:2:2500
 A:25/2
 F:RES_SHARDS | EASY_KNOW
 
