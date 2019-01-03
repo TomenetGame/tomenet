@@ -1126,7 +1126,6 @@ $NEW_SHIELDS_NO_AC$F:EASY_KNOW
 
 ##### Rings #####
 
-#(simply dropping +'Ability' and +'Brilliance/Power')
 
 N:132:Might
 G:=:d
@@ -1134,6 +1133,7 @@ I:45:24:0
 W:25:0:2:500
 A:25/1
 F:STR | CON | HIDE_TYPE
+F:SUST_STR | SUST_CON
 
 N:133:Ready Wit
 G:=:d
@@ -1141,6 +1141,7 @@ I:45:26:0
 W:25:0:2:500
 A:25/1
 F:DEX | INT | HIDE_TYPE
+F:SUST_DEX | SUST_INT
 
 N:134:Toughness
 G:=:d
@@ -1148,15 +1149,15 @@ I:45:27:0
 W:25:0:2:500
 A:25/1
 F:CON | DEX | HIDE_TYPE
+F:SUST_CON | SUST_DEX
 
 N:135:Cunningness
 G:=:d
 I:45:25:0
 W:25:0:2:500
 A:25/1
-#STR + INT overpowered? for Rangers more blows AND more mana/better spells..
-#			for Istari the weak strength attribute gets boosted
 F:STR | INT | HIDE_TYPE
+F:SUST_STR | SUST_INT
 
 N:136:Speed
 G:=:d
@@ -1305,47 +1306,48 @@ W:20:0:2:340
 A:30/1
 F:SEE_INVIS | EASY_KNOW
 
-N:156:Sustain Might
-G:=:d
-I:45:10:0
-W:8:0:2:400
-A:8/2:20/1
-F:SUST_STR | SUST_CON | EASY_KNOW
+#N:156:Sustain Might
+#G:=:d
+#I:45:10:0
+#W:8:0:2:400
+#A:8/2:20/1
+#F:SUST_STR | SUST_CON | EASY_KNOW
 
-N:157:Sustain Brilliance
+N:157:Tenacity
 G:=:d
-I:45:11:0
-W:8:0:2:400
-A:8/2:20/1
-F:SUST_INT | SUST_WIS | EASY_KNOW
+I:45:25:0
+W:25:0:2:500
+A:25/1
+F:STR | WIS | HIDE_TYPE
+F:SUST_STR | SUST_WIS
 
-N:158:Sustain Ability
-G:=:d
-I:45:12:0
-W:8:0:2:400
-A:8/2:20/1
-F:SUST_STR | SUST_DEX | EASY_KNOW
+#N:158:Sustain Ability
+#G:=:d
+#I:45:12:0
+#W:8:0:2:400
+#A:8/2:20/1
+#F:SUST_STR | SUST_DEX | EASY_KNOW
 
-N:159:Sustain Ready Wit
-G:=:d
-I:45:13:0
-W:8:0:2:400
-A:8/2:20/1
-F:SUST_DEX | SUST_INT | SUST_CHR | EASY_KNOW
+#N:159:Sustain Ready Wit
+#G:=:d
+#I:45:13:0
+#W:8:0:2:400
+#A:8/2:20/1
+#F:SUST_DEX | SUST_INT | EASY_KNOW
 
-N:160:Sustain Steadiness
-G:=:d
-I:45:14:0
-W:8:0:2:400
-A:8/2:20/1
-F:SUST_CON | SUST_WIS | EASY_KNOW
+#N:160:Sustain Steadiness
+#G:=:d
+#I:45:14:0
+#W:8:0:2:400
+#A:8/2:20/1
+#F:SUST_CON | SUST_WIS | EASY_KNOW
 
-N:161:Sustain Cunningness
-G:=:d
-I:45:15:0
-W:8:0:2:400
-A:8/2:20/1
-F:SUST_STR | SUST_INT | SUST_CHR | EASY_KNOW
+#N:161:Sustain Cunningness
+#G:=:d
+#I:45:15:0
+#W:8:0:2:400
+#A:8/2:20/1
+#F:SUST_STR | SUST_INT | EASY_KNOW
 
 N:162:Slaying
 G:=:d
