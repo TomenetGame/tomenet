@@ -314,6 +314,7 @@ void prt_ac(int ac) {
 /*
  * Prints Max/Cur hit points
  */
+#define HP_MP_ST_BAR_HALFSTEPS
 void prt_hp(int max, int cur, bool bar) {
 	char tmp[32];
 	byte color;
@@ -378,25 +379,36 @@ void prt_hp(int max, int cur, bool bar) {
 		} else {
 			color = TERM_L_GREEN;
 			put_str("HP          ", ROW_MAXHP, 0);
-			if (max == -9999) sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
-			else {
+			if (max == -9999) {
+				sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
+				c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
+			} else {
 				int c, n = (9 * cur) / max;
-				char bar_char;
-#if 0 /* looks too strange with all 3 bars above each other */
- #ifdef WINDOWS
-				if (c_cfg.font_map_solid_walls) bar_char = 127; /* :-p hack */
- #else
-				if (c_cfg.font_map_solid_walls) bar_char = 2; /* :-p hack */
+ #ifdef HP_MP_ST_BAR_HALFSTEPS
+				int half = ((2 * 9 * cur) / max);
  #endif
+				char bar_char;
+ #if 0 /* looks too strange with all 3 bars above each other */
+  #ifdef WINDOWS
+				if (c_cfg.font_map_solid_walls) bar_char = 127; /* :-p hack */
+  #else
+				if (c_cfg.font_map_solid_walls) bar_char = 2; /* :-p hack */
+  #endif
 				else
-#endif
+ #endif
 					bar_char = '#';
 
+ #ifndef HP_MP_ST_BAR_HALFSTEPS
 				if (cur >= max) ;
 				else if (cur > (max * 2) / 5) color = TERM_YELLOW;
 				else if (cur > max / 6) color = TERM_ORANGE;
-				else color = TERM_RED;
-
+				else color = TERM_L_RED;
+ #else
+				if (cur >= max) ;
+				else if (half >= 8) color = TERM_YELLOW;
+				else if (half >= 4) color = TERM_ORANGE;
+				else color = TERM_L_RED;
+ #endif
 				tmp[0] = 0;
 				for (c = 0; c < n; c++) tmp[c] = bar_char;
 				tmp[c] = 0;
@@ -405,8 +417,22 @@ void prt_hp(int max, int cur, bool bar) {
 					tmp[0] = bar_char; //always display at least one tick (still we probably don't just want to round up instead)
 					tmp[1] = 0;
 				}
+
+				c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
+
+ #ifdef HP_MP_ST_BAR_HALFSTEPS
+				/* Do we show a half step? */
+				if ((half % 2) && n > 0) {
+					switch (color) {
+					case TERM_L_GREEN: color = TERM_GREEN; break;
+					case TERM_YELLOW: color = TERM_L_UMBER; break;
+					case TERM_ORANGE: color = TERM_UMBER; break;
+					case TERM_L_RED: color = TERM_RED; break;
+					}
+					c_put_str(color, format("%c", bar_char), ROW_CURHP, COL_CURHP + n);
+				}
+ #endif
 			}
-			c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
 		}
 #endif
 
@@ -454,9 +480,16 @@ void prt_stamina(int max, int cur, bool bar) {
 
 		color = TERM_L_GREEN;
 		put_str("ST          ", ROW_MAXST, 0);
-		if (max == -9999) sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
-		else {
+		if (max == -9999) {
+			sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
+			c_put_str(color, tmp, ROW_CURST, COL_CURST);
+		} else {
 			int c, n = (9 * cur) / max;
+ #if 0 /* since stamina only goes from 0 to 10, this doesn't make sense and looks bad */
+ #ifdef HP_MP_ST_BAR_HALFSTEPS
+			int half = (2 * 9 * cur) / max;
+ #endif
+ #endif
 
 			if (cur >= max) color = TERM_L_WHITE;//TERM_L_GREEN;
 			else if (cur > (max * 2) / 5) color = TERM_SLATE;//TERM_YELLOW;
@@ -471,8 +504,22 @@ void prt_stamina(int max, int cur, bool bar) {
 				tmp[0] = bar_char; //always display at least one tick (still we probably don't just want to round up instead)
 				tmp[1] = 0;
 			}
+
+			c_put_str(color, tmp, ROW_CURST, COL_CURST);
+ #if 0 /* since stamina only goes from 0 to 10, this doesn't make sense and looks bad */
+ #ifdef HP_MP_ST_BAR_HALFSTEPS
+			/* Do we show a half step? */
+			if ((half % 2) && n > 0) {
+				switch (color) {
+				case TERM_L_WHITE: color = TERM_SLATE; break;
+				case TERM_SLATE: color = TERM_L_DARK; break;
+				case TERM_L_DARK: color = TERM_DARK; break; //hack: don't print half step
+				}
+				if (color != TERM_DARK) c_put_str(color, format("%c", bar_char), ROW_CURST, COL_CURST + n);
+			}
+ #endif
+ #endif
 		}
-		c_put_str(color, tmp, ROW_CURST, COL_CURST);
 	}
 #endif
 
@@ -634,15 +681,26 @@ void prt_sp(int max, int cur, bool bar) {
  #else /* use blue theme for mana instead? */
 			color = TERM_L_BLUE;
 			put_str("MP          ", ROW_MAXSP, 0);
-			if (max == -9999) sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
-			else {
+			if (max == -9999) {
+				sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
+				c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
+			} else {
 				int c, n = (9 * cur) / max;
+  #ifdef HP_MP_ST_BAR_HALFSTEPS
+				int half = (2 * 9 * cur) / max;
+  #endif
 
+  #ifndef HP_MP_ST_BAR_HALFSTEPS
 				if (cur >= max) ;
 				else if (cur >= (max * 4) / 9) color = TERM_L_BLUE; //same!
 				else if (cur >= (max * 2) / 9) color = TERM_BLUE;
 				else color = TERM_VIOLET;
-
+  #else
+				if (cur >= max) ;
+				else if (half >= 8) color = TERM_L_BLUE; //same!
+				else if (half >= 4) color = TERM_BLUE;
+				else color = TERM_VIOLET;
+  #endif
 				tmp[0] = 0;
 				for (c = 0; c < n; c++) tmp[c] = bar_char;
 				tmp[c] = 0;
@@ -651,9 +709,22 @@ void prt_sp(int max, int cur, bool bar) {
 					tmp[0] = bar_char; //always display at least one tick (still we probably don't just want to round up instead)
 					tmp[1] = 0;
 				}
+
+				c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
+
+  #ifdef HP_MP_ST_BAR_HALFSTEPS
+				/* Do we show a half step? */
+				if ((half % 2) && n > 0) {
+					switch (color) {
+					case TERM_L_BLUE: color = TERM_BLUE; break;
+					case TERM_BLUE: color = TERM_L_DARK; break;
+					case TERM_VIOLET: color = TERM_L_DARK; break;
+					}
+					c_put_str(color, format("%c", bar_char), ROW_CURSP, COL_CURSP + n);
+				}
+  #endif
 			}
  #endif
-			c_put_str(color, tmp, ROW_CURSP, COL_CURSP);
 		}
 #endif
 	}
