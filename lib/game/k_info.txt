@@ -1372,7 +1372,7 @@ G:":d
 I:40:7:0
 W:20:0:3:500
 A:20/1
-F:CHR | HIDE_TYPE
+F:CHR | SUST_CHR | HIDE_TYPE
 
 N:165:Searching
 G:":d
