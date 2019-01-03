@@ -1964,6 +1964,9 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 				    (o_ptr->sval == SV_RING_READYWIT) ||
 				    (o_ptr->sval == SV_RING_TOUGHNESS) ||
 				    (o_ptr->sval == SV_RING_TENACITY) ||
+				    (o_ptr->sval == SV_RING_STEADINESS) ||
+				    (o_ptr->sval == SV_RING_PREPAREDNESS) ||
+				    (o_ptr->sval == SV_RING_GALLANTRY) ||
 				    (o_ptr->sval == SV_RING_CUNNINGNESS))
 				    ) {
 					count /= 2;
@@ -2900,6 +2903,9 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 			    (o_ptr->sval == SV_RING_READYWIT) ||
 			    (o_ptr->sval == SV_RING_TOUGHNESS) ||
 			    (o_ptr->sval == SV_RING_TENACITY) ||
+			    (o_ptr->sval == SV_RING_STEADINESS) ||
+			    (o_ptr->sval == SV_RING_PREPAREDNESS) ||
+			    (o_ptr->sval == SV_RING_GALLANTRY) ||
 			    (o_ptr->sval == SV_RING_CUNNINGNESS))) {
 				count /= 2;
 				if (count) value += count * PRICE_BOOST((count + pval), 2, 1) * 300L;
@@ -5149,6 +5155,9 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 		case SV_RING_TOUGHNESS:
 		case SV_RING_CUNNINGNESS:
 		case SV_RING_TENACITY:
+		case SV_RING_STEADINESS:
+		case SV_RING_PREPAREDNESS:
+		case SV_RING_GALLANTRY:
 			/* Stat bonus */
 			o_ptr->bpval = 1 + m_bonus(4, level); /* (5, level) for single-stat rings (traditional) */
 
@@ -6141,6 +6150,9 @@ void determine_level_req(int level, object_type *o_ptr) {
 		case SV_RING_READYWIT:
 		case SV_RING_CUNNINGNESS:
 		case SV_RING_TENACITY:
+		case SV_RING_STEADINESS:
+		case SV_RING_PREPAREDNESS:
+		case SV_RING_GALLANTRY:
 			if (level < 25) level = 25;
 			break;
 		}
@@ -6261,6 +6273,9 @@ void determine_level_req(int level, object_type *o_ptr) {
 		case SV_RING_TOUGHNESS:
 		case SV_RING_CUNNINGNESS:
 		case SV_RING_TENACITY:
+		case SV_RING_STEADINESS:
+		case SV_RING_PREPAREDNESS:
+		case SV_RING_GALLANTRY:
 			base += o_ptr->bpval * 9;
 			break;
 		}
