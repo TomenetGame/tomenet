@@ -3720,6 +3720,7 @@ I:45:44:0
 W:25:0:2:2500
 A:25/2
 F:RES_SHARDS | EASY_KNOW
+D:Affects your armour class.
 
 N:432:Disenchantment Resistance
 G:=:d
