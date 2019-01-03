@@ -5160,6 +5160,18 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u32b resf) {
 			break;
 
 		case SV_RING_SEARCHING:
+			/* Stat bonus */
+			o_ptr->bpval = randint(2) + m_bonus(5, level);
+
+			/* Cursed */
+			if (power < 0) {
+				/* Cursed */
+				o_ptr->ident |= (ID_CURSED);
+
+				/* Reverse bpval */
+				o_ptr->bpval = 0 - (o_ptr->bpval);
+			}
+			break;
 		case SV_RING_STEALTH:
 			/* Stat bonus */
 			o_ptr->bpval = 1 + m_bonus(5, level);
