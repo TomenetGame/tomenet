@@ -1233,8 +1233,8 @@ F:CURSED | STR | HIDE_TYPE
 N:146:Flames
 G:=:d
 I:45:18:0
-W:20:0:2:5000
-A:20/3
+W:25:0:2:5000
+A:25/3
 P:0:0d0:0:0:15
 F:RES_FIRE | ACTIVATE | BRAND_FIRE
 D:Affects your armour class.
@@ -1242,8 +1242,8 @@ D:Affects your armour class.
 N:147:Acid
 G:=:d
 I:45:17:0
-W:20:0:2:5000
-A:20/3
+W:25:0:2:5000
+A:25/3
 P:0:0d0:0:0:15
 F:RES_ACID | ACTIVATE | BRAND_ACID
 D:Affects your armour class.
@@ -1251,8 +1251,8 @@ D:Affects your armour class.
 N:148:Ice
 G:=:d
 I:45:19:0
-W:20:0:2:5000
-A:20/3
+W:25:0:2:5000
+A:25/3
 P:0:0d0:0:0:15
 F:RES_COLD | ACTIVATE | BRAND_COLD
 D:Affects your armour class.
@@ -3717,8 +3717,8 @@ F:RES_CONF | EASY_KNOW
 N:431:Stone Skin
 G:=:d
 I:45:44:0
-W:20:0:2:2500
-A:20/2
+W:25:0:2:2500
+A:25/2
 F:RES_SHARDS | EASY_KNOW
 
 N:432:Disenchantment Resistance
@@ -4738,8 +4738,8 @@ F:SHOW_MODS | MUST2H | REGEN_MANA
 N:578:Lightning
 G:=:d
 I:45:56:0
-W:20:0:2:5000
-A:20/3
+W:25:0:2:5000
+A:25/3
 P:0:0d0:0:0:15
 F:RES_ELEC | IGNORE_ELEC | ACTIVATE | BRAND_ELEC
 D:Affects your armour class.
