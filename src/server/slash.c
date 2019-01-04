@@ -2733,6 +2733,8 @@ void do_slash_cmd(int Ind, char *message) {
 		else if (prefix(message, "/bbs")) { /* write a short text line to the server's in-game message board,
 						    readable by all players via '!' key. For example to warn about
 						    static (deadly) levels - C. Blue */
+			byte a;
+
 			if (!strcmp(message3, "")) {
 #if 0
 				msg_print(Ind, "Usage: /bbs <line of text for others to read>");
@@ -2761,13 +2763,17 @@ void do_slash_cmd(int Ind, char *message) {
 			/* cut off 7 bytes + 1 reserve to avoid overflow */
 			message3[MAX_SLASH_LINE_LEN - 8] = 0;
 
+			if (p_ptr->mode & MODE_EVERLASTING) a = 'B';
+			else if (p_ptr->mode & MODE_PVP) a = COLOUR_MODE_PVP;
+			else a = 's';
+
 			censor_message = TRUE;
 			censor_length = strlen(message3);
-			msg_broadcast_format(0, "\374\377s[%s->BBS]\377W %s", p_ptr->name, message3);
+			msg_broadcast_format(0, "\374\377s[\377%c%s\377s->BBS]\377W %s", a, p_ptr->name, message3);
 			censor_message = FALSE;
 			handle_punish(Ind, censor_punish);
-//			bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
-			bbs_add_line(format("\377s%s %s:\377W %s",showdate(), p_ptr->name, message3));
+			//bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
+			bbs_add_line(format("\377s%s \377%c%s\377s:\377W %s",showdate(), a, p_ptr->name, message3));
 			return;
 		}
 		else if (prefix(message, "/stime")) { /* show time / date */
