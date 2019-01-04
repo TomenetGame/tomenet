@@ -1338,21 +1338,21 @@ A:15/1
 F:DEX | WIS | HIDE_TYPE
 F:SUST_DEX | SUST_WIS
 
-#N:160:
-#G:=:d
-#I:45:14:0
-#W:25:0:2:500
-#A:25/1
-#F: | HIDE_TYPE
-#F:SUST_
+#deprecated! (just kept unsealed to not upset characters' flavour-id knowledge, need better solution)
+N:160:Sustain Steadiness
+G:=:d
+I:45:14:0
+W:127:0:2:400
+A:127/0
+F:SUST_CON | SUST_WIS | EASY_KNOW
 
-#N:161:
-#G:=:d
-#I:45:15:0
-#W:25:0:2:500
-#A:25/1
-#F: | HIDE_TYPE
-#F:SUST_
+#deprecated! (just kept unsealed to not upset characters' flavour-id knowledge, need better solution)
+N:161:Sustain Cunningness
+G:=:d
+I:45:15:0
+W:127:0:2:400
+A:127/0
+F:SUST_STR | SUST_INT | EASY_KNOW
 
 N:162:Slaying
 G:=:d
