@@ -7462,7 +7462,8 @@ Experience drain from monster attacks, traps or elemental damage you suffer
                                           experience drain ('Keep life').
                                           To acquire this ability you need to
                                           be either level 99 or have Necromancy
-                                          skill trained to 50.000 (maxed out).
+                                          and Unlife skill both maxed out at
+                                          50.000.
     Some of your experience points will be drained. If this happens a lot, you
     might even lose one or more character levels! (You retain all your skill
     points though.)
@@ -12757,7 +12758,8 @@ Note that not every skill is available to every profession (class).
                                 are different effects that don't overlap in
                                 any way.)
 
-                                At 50.000 the character gains ultimate hold
+                                If a character has Unlife and Necromancy both
+                                at 50.000 the character gains ultimate hold
                                 on his life force, rendering him immune to
                                 experience drain.
 
@@ -16948,8 +16950,12 @@ school.
                     Shared spell (see above): O.Unlife, O.Shadow.
                     This spell cannot be found in the Shadow tome.
 
-    BONI:           At 30 grants strong hold of your life force.
-                    At 45 grants resistance to nether.
+    BONI:           At 30 it grants HP regeneration to true vampires (same as
+                    from item flag) and strong hold of your life force for
+                    other races.
+                    At if both Unlife and Necromancy are at 50.000, it grants
+                    ultimate hold on one's own life force, rendering oneself
+                    immune to experience drain.
 
 
 - Druidism -

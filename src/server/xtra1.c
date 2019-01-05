@@ -6048,12 +6048,18 @@ void calc_boni(int Ind) {
 	else if (get_skill(p_ptr, SKILL_OHERETICISM) >= 15 && get_skill(p_ptr, SKILL_TRAUMATURGY) >= 15 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
  #endif
  #ifdef ENABLE_OUNLIFE
-	if (get_skill(p_ptr, SKILL_OUNLIFE) >= 30) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
-	if (get_skill(p_ptr, SKILL_OUNLIFE) >= 45) { p_ptr->resist_neth = TRUE; csheet_boni[14].cb[2] |= CB3_RNETH; }
+	if (get_skill(p_ptr, SKILL_OUNLIFE) >= 30) {
+		/* For non-vampires */
+		p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE;
+		/* For true vampires */
+		p_ptr->regenerate = TRUE; csheet_boni[14].cb[5] |= CB6_RRGHP;
+	}
+	//if (get_skill(p_ptr, SKILL_OUNLIFE) >= 45) { p_ptr->resist_neth = TRUE; csheet_boni[14].cb[2] |= CB3_RNETH; }
  #endif
 #endif
 
-	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50) { p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }
+	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50 && get_skill(p_ptr, SKILL_OUNLIFE) >= 50)
+		{ p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }
 
 	/* Fear Resistance from aura */
 	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 20)

@@ -428,85 +428,77 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 			msg_print(Ind, "\374\377GYour ability to craft ammunition improved remarkably!");
 		if (old_value < 250 && new_value >= 250)
 			msg_print(Ind, "\374\377GYou learn the shooting technique 'Barrage'!");
-//		if (old_value < 500 && new_value >= 500)
-//			msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
+		//if (old_value < 500 && new_value >= 500)
+			//msg_print(Ind, "\374\377GYour general shooting power gains extra might due to your training!");
 		break;
 	case SKILL_COMBAT:
-		if (old_value < 110 && new_value >= 110) {
+		if (old_value < 110 && new_value >= 110)
 			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown weapons.");
 #if 0
-		} if (old_value < 310 && new_value >= 310) {
+		if (old_value < 310 && new_value >= 310)
 			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown ranged weapons and ammo.");
-		} if (old_value < 410 && new_value >= 410) {
+		if (old_value < 410 && new_value >= 410)
 			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown magical items.");
 #else /* more true messages: */
-		} if (old_value < 310 && new_value >= 310) {
+		if (old_value < 310 && new_value >= 310)
 			if (get_skill(p_ptr, SKILL_ARCHERY) < 11)
 				msg_print(Ind, "\374\377GYou somewhat recognize the usefulness of unknown ranged weapons and ammo.");
-		} if (old_value < 410 && new_value >= 410) {
+		if (old_value < 410 && new_value >= 410)
 			/* message somewhat redudant with classes/other skills which also give
 			   ok_curse, but seems impractical to sort out really */
 			msg_print(Ind, "\374\377GYou feel able to sense curses on all types of items.");
 #endif
-		}
 		break;
 	case SKILL_MAGIC:
 		if (old_value < 110 && new_value >= 110
-		    && get_skill(p_ptr, SKILL_DIVINATION) < 50) { //auto-id
+		    && get_skill(p_ptr, SKILL_DIVINATION) < 50) //auto-id
 			msg_print(Ind, "\374\377GYou got better at recognizing the power of unknown magical items.");
-		}
 		break;
 
 	case SKILL_EARTH:
-		if (old_value < 400 && new_value >= 400) {
+		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou feel able to prevent shards of rock from striking you.");
-		} if (old_value < 500 && new_value >= 500) {
+		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYou feel able to prevent large masses of rock from striking you.");
-		}
 		break;
 	case SKILL_AIR:
 		if (old_value < 300 && new_value >= 300
-		    && p_ptr->prace != RACE_YEEK && p_ptr->prace != RACE_DRACONIAN && p_ptr->fruit_bat != 1) {
+		    && p_ptr->prace != RACE_YEEK && p_ptr->prace != RACE_DRACONIAN && p_ptr->fruit_bat != 1)
 			msg_print(Ind, "\374\377GYou feel light as a feather.");
-		} if (old_value < 400 && new_value >= 400
+		if (old_value < 400 && new_value >= 400
 		    && p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_KOBOLD && (p_ptr->prace != RACE_MAIA || p_ptr->lev < 50)
-		    && p_ptr->ptrait != TRAIT_GREEN && p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_SILVER) {
+		    && p_ptr->ptrait != TRAIT_GREEN && p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_SILVER)
 			msg_print(Ind, "\374\377GYou feel able to breathe within poisoned air."); //res-poison
-		} if (old_value < 500 && new_value >= 500
-		    && (p_ptr->prace != RACE_DRACONIAN || p_ptr->lev < 30) && p_ptr->fruit_bat != 1) {
+		if (old_value < 500 && new_value >= 500
+		    && (p_ptr->prace != RACE_DRACONIAN || p_ptr->lev < 30) && p_ptr->fruit_bat != 1)
 			msg_print(Ind, "\374\377GYou feel levitating is easy.");
-		}
 		break;
 	case SKILL_WATER:
 		if (old_value < 300 && new_value >= 300
-		    && p_ptr->prace != RACE_ENT && p_ptr->pclass != CLASS_RANGER) {
+		    && p_ptr->prace != RACE_ENT && p_ptr->pclass != CLASS_RANGER)
 			msg_print(Ind, "\374\377GYou feel able to move through water easily.");
-		} if (old_value < 400 && new_value >= 400
-		    && p_ptr->prace != RACE_ENT) {
+		if (old_value < 400 && new_value >= 400
+		    && p_ptr->prace != RACE_ENT)
 			msg_print(Ind, "\374\377GYou feel able to prevent water streams from striking you.");
-		} if (old_value < 500 && new_value >= 500) {
+		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYou feel able to prevent tidal waves from striking you.");
-		}
 		break;
 	case SKILL_FIRE:
 		if (old_value < 300 && new_value >= 300
 		    && p_ptr->ptrait != TRAIT_CORRUPTED
-		    && p_ptr->ptrait != TRAIT_RED && p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_GOLD) {
+		    && p_ptr->ptrait != TRAIT_RED && p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_GOLD)
 			msg_print(Ind, "\374\377GYou feel able to resist fire easily.");
-		} if (old_value < 500 && new_value >= 500) {
+		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYou feel that fire cannot harm you anymore.");
-		}
 		break;
 	case SKILL_MANA:
-		if (old_value < 400 && new_value >= 400) {
+		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou feel able to defend from mana attacks easily.");
-		}
 		break;
 	case SKILL_CONVEYANCE:
 		if (old_value < 400 && new_value >= 400 &&
-		    get_skill(p_ptr, SKILL_UDUN) < 30) {
+		    get_skill(p_ptr, SKILL_UDUN) < 30)
 			msg_print(Ind, "\374\377GYou are impervious to feeble teleportation attacks.");
-		}
 		break;
 	case SKILL_DIVINATION:
 		if (old_value < 500 && new_value >= 500) {
@@ -517,67 +509,62 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_NATURE:
 		if (old_value < 300 && new_value >= 300
 		    && p_ptr->prace != RACE_YEEK && p_ptr->prace != RACE_ENT
-		    && p_ptr->pclass != CLASS_RANGER && p_ptr->pclass != CLASS_DRUID) {
+		    && p_ptr->pclass != CLASS_RANGER && p_ptr->pclass != CLASS_DRUID)
 			msg_print(Ind, "\374\377GYour magic allows you to pass trees and forests easily.");
-		} if (old_value < 300 && new_value >= 300
-		    && p_ptr->prace != RACE_ENT && p_ptr->pclass != CLASS_RANGER) {
+		if (old_value < 300 && new_value >= 300
+		    && p_ptr->prace != RACE_ENT && p_ptr->pclass != CLASS_RANGER)
 			msg_print(Ind, "\374\377GYour magic allows you to pass water easily.");
-		} if (old_value < 400 && new_value >= 400) {
+		if (old_value < 300 && new_value >= 300 && p_ptr->prace != RACE_HALF_TROLL)
+			msg_print(Ind, "\374\377GYour health regenerates especially fast.");
+		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou feel able to breathe within poisoned air.");
-		}
 		/* + continuous effect */
 		break;
 	case SKILL_MIND:
-		if (old_value < 300 && new_value >= 300) {
+		if (old_value < 300 && new_value >= 300)
 			msg_print(Ind, "\374\377GYou feel strong against confusion and hallucinations.");
-		} if (old_value < 400 && new_value >= 400
-		    && p_ptr->prace != RACE_VAMPIRE) {
+		if (old_value < 400 && new_value >= 400
+		    && p_ptr->prace != RACE_VAMPIRE)
 			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity somewhat.");
-		} if (old_value < 500 && new_value >= 500) {
+		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYou learn to keep hold of your sanity somewhat better.");
-		}
 		break;
 	case SKILL_TEMPORAL:
-		if (old_value < 200 && new_value >= 200) {
+		if (old_value < 200 && new_value >= 200)
 			msg_print(Ind, "\374\377GYou prolong the life of your light sources.");
-		}
 		if (old_value < 500 && new_value >= 500
-		    && p_ptr->prace != RACE_HIGH_ELF && p_ptr->prace != RACE_VAMPIRE) {
+		    && p_ptr->prace != RACE_HIGH_ELF && p_ptr->prace != RACE_VAMPIRE)
 			msg_print(Ind, "\374\377GYou don't fear time attacks as much anymore.");
-		}
 		break;
 	case SKILL_UDUN:
 		if (old_value < 400 && new_value >= 400
-		    && p_ptr->prace != RACE_VAMPIRE) {
+		    && p_ptr->prace != RACE_VAMPIRE)
 			msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
-		}
 		break;
 	case SKILL_META: /* + continuous effect */
 		break;
 	case SKILL_HOFFENSE:
-		if (old_value < 300 && new_value >= 300) {
+		if (old_value < 300 && new_value >= 300)
 			msg_print(Ind, "\374\377GYou fight against undead with holy wrath.");
-		} if (old_value < 400 && new_value >= 400) {
+		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou fight against demons with holy wrath.");
-		} if (old_value < 500 && new_value >= 500) {
+		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYou fight against evil with holy fury.");
-		}
 		break;
 	case SKILL_HDEFENSE:
-		if (old_value < 300 && new_value >= 300) {
+		if (old_value < 300 && new_value >= 300)
 			msg_print(Ind, "\374\377GYou stand fast against undead.");
-		} if (old_value < 400 && new_value >= 400) {
+		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou stand fast against demons.");
-		} if (old_value < 500 && new_value >= 500) {
+		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYou stand fast against evil.");
-		}
 		break;
 	case SKILL_HCURING:
-		if (old_value < 300 && new_value >= 300) {
+		if (old_value < 300 && new_value >= 300)
 			msg_print(Ind, "\374\377GYou feel strong against blindness and poison.");
-		} if (old_value < 400 && new_value >= 400) {
+		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou feel strong against stun and cuts.");
-		} if (old_value < 500 && new_value >= 500) {
+		if (old_value < 500 && new_value >= 500) {
 			msg_print(Ind, "\374\377GYou feel strong against hallucination and black breath.");
 			msg_print(Ind, "\374\377GYour melee attacks inflict greater damage on undead.");
 			msg_print(Ind, "\374\377GYour soul escapes less quickly on death.");
@@ -585,85 +572,75 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		/* + continuous effect */
                 break;
 	case SKILL_HSUPPORT:
-		if (old_value < 400 && new_value >= 400) {
+		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou feel superior to ancient curses.");
-		}
-		if (old_value < 500 && new_value >= 500 && p_ptr->prace != RACE_MAIA) {
+		if (old_value < 500 && new_value >= 500 && p_ptr->prace != RACE_MAIA)
 			msg_print(Ind, "\374\377GYou don't feel hunger for worldly food anymore.");
-		}
 		break;
 #ifdef ENABLE_OCCULT /* Occult */
 	case SKILL_OSHADOW:
-		if (old_value < 300 && new_value >= 300) {
+		if (old_value < 300 && new_value >= 300)
 			msg_print(Ind, "\374\377GYou feel strong against darkness.");
-		}
 		break;
 	case SKILL_OSPIRIT:
 		if (old_value < 300 && new_value >= 300
-		    && p_ptr->prace != RACE_VAMPIRE) { //Vampires obviously cannot train Spirit anyway, but w/e..
+		    && p_ptr->prace != RACE_VAMPIRE) //Vampires obviously cannot train Spirit anyway, but w/e..
 			msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
-		} if (old_value < 400 && new_value >= 400) {
+		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou fight against undead with holy wrath.");
-		} if (old_value < 500 && new_value >= 500) {
+		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYour soul escapes less quickly on death.");
-		}
 		break;
  #ifdef ENABLE_OHERETICISM
 	case SKILL_OHERETICISM:
 		if (old_value < 300 && new_value >= 300
 		    && p_ptr->ptrait != TRAIT_CORRUPTED
-		    && p_ptr->ptrait != TRAIT_RED && p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_GOLD) {
+		    && p_ptr->ptrait != TRAIT_RED && p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_GOLD)
 			msg_print(Ind, "\374\377GYou feel resistant against fire.");
-		}
   #if 1
 		if (old_value < 450 && new_value >= 450
-		    && p_ptr->ptrait != TRAIT_CHAOS) {
+		    && p_ptr->ptrait != TRAIT_CHAOS)
 			msg_print(Ind, "\374\377GYou feel resistant against chaos.");
-		}
   #endif
  #endif
  #ifdef ENABLE_OUNLIFE
 	case SKILL_OUNLIFE:
-		if (old_value < 300 && new_value >= 300
-		    && p_ptr->prace != RACE_VAMPIRE) {
-			msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
+		if (old_value < 300 && new_value >= 300) {
+			if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
+			else msg_print(Ind, "\374\377GYour health regenerates especially fast.");
 		}
-		if (old_value < 450 && new_value >= 450
-		    && p_ptr->prace != RACE_VAMPIRE) {
+  #if 0
+		if (old_value < 450 && new_value >= 450 && p_ptr->prace != RACE_VAMPIRE)
 			msg_print(Ind, "\374\377GYou feel resistant against nether.");
-		}
+  #endif
+		if (old_value < 500 && new_value >= 500 && get_skill(p_ptr, SKILL_NECROMANCY) >= 50) msg_print(Ind, "\374\377GYou gain ultimate hold of your life force.");
  #endif
 		break;
 #endif
 
 	case SKILL_SWORD: case SKILL_AXE: case SKILL_BLUNT: case SKILL_POLEARM:
-		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
+		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500))
 			msg_print(Ind, "\374\377GYour melee attack speed has become faster due to your training!");
-		}
 		break;
 	case SKILL_SLING:
 		if ((old_value < 100 && new_value >= 100) || (old_value < 200 && new_value >= 200) ||
-		    (old_value < 300 && new_value >= 300) || (old_value < 400 && new_value >= 400) || (old_value < 500 && new_value >= 500)) {
+		    (old_value < 300 && new_value >= 300) || (old_value < 400 && new_value >= 400) || (old_value < 500 && new_value >= 500))
 			msg_print(Ind, "\374\377GYour shooting speed with slings has become faster due to your training!");
-		}
 		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYour shooting power with slings gains extra might due to your training!");
 		break;
 	case SKILL_BOW:
 		if ((old_value < 125 && new_value >= 125) || (old_value < 250 && new_value >= 250) ||
-		    (old_value < 375 && new_value >= 375) || (old_value < 500 && new_value >= 500)) {
+		    (old_value < 375 && new_value >= 375) || (old_value < 500 && new_value >= 500))
 			msg_print(Ind, "\374\377GYour shooting speed with bows has become faster due to your training!");
-		}
 		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYour shooting power with bows gains extra might due to your training!");
 		break;
 	case SKILL_XBOW:
-		if ((old_value < 125 && new_value >= 125) || (old_value < 375 && new_value >= 375)) {
+		if ((old_value < 125 && new_value >= 125) || (old_value < 375 && new_value >= 375))
 			msg_print(Ind, "\374\377GYour shooting power with crossbows gains extra might due to your training!");
-		}
-		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500)) {
+		if ((old_value < 250 && new_value >= 250) || (old_value < 500 && new_value >= 500))
 			msg_print(Ind, "\374\377GYour shooting speed with crossbows has become faster due to your training!");
-		}
 		if (old_value < 500 && new_value >= 500)
 			msg_print(Ind, "\374\377GYour shooting power with crossbows gains extra might due to your training!");
 		break;
@@ -672,18 +649,16 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	case SKILL_XBOW:
 */	case SKILL_BOOMERANG:
 		if ((old_value < 166 && new_value >= 166) || (old_value < 333 && new_value >= 333) ||
-		    (old_value < 500 && new_value >= 500)) {
+		    (old_value < 500 && new_value >= 500))
 			msg_print(Ind, "\374\377GYour boomerang throwing speed has become faster due to your training!");
-		}
 		break;
 	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
 	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[1] = TRUE; break;
 	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[2] = TRUE; break;
 #if 0 /* obsolete */
 	case SKILL_DIG:
-		if (old_value < 300 && new_value >= 300) {
+		if (old_value < 300 && new_value >= 300)
 			msg_print(Ind, "\374\377GYou've become much better at prospecting.");
-		}
 		break;
 #endif
 	case SKILL_HEALTH:
@@ -710,7 +685,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 	/* New odd combo traits, mostly for Necro/Trauma related things, for DK/HK */
 	switch (i) {
 	case SKILL_NECROMANCY:
-		if (old_value < 500 && new_value >= 500) msg_print(Ind, "\374\377GYou gain ultimate hold of your life force.");
+		if (old_value < 500 && new_value >= 500 && get_skill(p_ptr, SKILL_OUNLIFE) >= 50) msg_print(Ind, "\374\377GYou gain ultimate hold of your life force.");
 		n = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 500);
 		if (p_ptr->prace == RACE_VAMPIRE
 		    && new_value >= 250 && n >= 250 && new_value + n > 500
@@ -810,18 +785,14 @@ static void increase_related_skills(int Ind, int i, bool quiet) {
  * modify related skills
  * note that we *MUST* send back a skill_info packet
  */
-void increase_skill(int Ind, int i, bool quiet)
-{
+void increase_skill(int Ind, int i, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	int old_value;
-//	int as, ws, new_value;
-//	int can_regain;
+	//int as, ws, new_value;
+	//int can_regain;
 
 	/* Sanity check - mikaelh */
-	if (i < 0 || i >= MAX_SKILLS)
-	{
-		return;
-	}
+	if (i < 0 || i >= MAX_SKILLS) return;
 
 	/* No skill points to be allocated */
 	if (p_ptr->skill_points <= 0) {
@@ -852,7 +823,7 @@ void increase_skill(int Ind, int i, bool quiet)
 
 	/* Cannot allocate more than player level + 2 levels */
 	if ((p_ptr->s_info[i].value / SKILL_STEP) >= p_ptr->lev + 2)  /* <- this allows limit breaks at very high step values  -- handled in GET_SKILL now! */
-//	if ((((p_ptr->s_info[i].value + p_ptr->s_info[i].mod) * 10) / SKILL_STEP) > (p_ptr->lev * 10) + 20)  /* <- this often doesn't allow proper increase to +2 at high step values */
+	//if ((((p_ptr->s_info[i].value + p_ptr->s_info[i].mod) * 10) / SKILL_STEP) > (p_ptr->lev * 10) + 20)  /* <- this often doesn't allow proper increase to +2 at high step values */
 	{
 		if (!quiet) Send_skill_info(Ind, i, TRUE);
 		return;
@@ -863,7 +834,7 @@ void increase_skill(int Ind, int i, bool quiet)
 
 	/* Save previous value for telling the player about newly gained
 	   abilities later on. Round down extra-safely (just paranoia). */
-//	old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % SKILL_STEP)) / SKILL_STEP;
+	//old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % SKILL_STEP)) / SKILL_STEP;
 	/*multiply by 10, so we get +1 digit*/
 	old_value = (p_ptr->s_info[i].value - (p_ptr->s_info[i].value % (SKILL_STEP / 10))) / (SKILL_STEP / 10);
 
