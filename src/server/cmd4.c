@@ -948,7 +948,15 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		if (admin) fprintf(fff, ", %s", wpos_format(1, &q_ptr->wpos));
 		else fprintf(fff, ", %s", wpos_format(-1, &q_ptr->wpos));
   #else /* ..so give everyone exact wpos, like otherwise only admins get */
+#if 0 /* normal */
 		fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
+#else /* hack: admins see coloured depth, colour indicating how close to game bosses [Sauron/Morgoth/Tik and beyond] they are */
+		bool col = (admin && attr != 'G') ? ((getlevel(&q_ptr->wpos) >= 98 && !q_ptr->total_winner) || getlevel(&q_ptr->wpos) >= 126) : FALSE;
+		fprintf(fff, ", %s%s%s",
+		    col ? "\377R" : "",
+		    wpos_format_compact(Ind, &q_ptr->wpos),
+		    col ? "\377-" : "");
+#endif
   #endif
 
 		fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
