@@ -12758,6 +12758,12 @@ Note that not every skill is available to every profession (class).
                                 are different effects that don't overlap in
                                 any way.)
 
+                                Necromancy will reduce the chance of your life
+                                force (experience points) getting drained by
+                                nether or chaos or by experience-draining melee
+                                attacks by +1% per point, up to 50% at 50.000.
+                                (This is cumulative with the 'hold life' flag.)
+
                                 If a character has Unlife and Necromancy both
                                 at 50.000 the character gains ultimate hold
                                 on his life force, rendering him immune to

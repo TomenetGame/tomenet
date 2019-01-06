@@ -327,6 +327,9 @@
  #endif
 #endif
 
+/* 'Necromancy' skill gives an additional chance to keep hold of your life force */
+#define NECROMANCY_HOLDS_LIFE
+
 
 /* --------------------- Server-type dependant features -------------------- */
 

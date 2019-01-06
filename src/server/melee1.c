@@ -2251,14 +2251,19 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, -m_idx);
 
-					if (p_ptr->hold_life && (rand_int(100) < 95))
+					if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
+#ifdef NECROMANCY_HOLDS_LIFE
+					else if (rand_int(100) < get_skill(p_ptr, SKILL_NECROMANCY))
+						msg_print(Ind, "You keep hold of your life force!");
+#endif
+					else if (p_ptr->hold_life && (rand_int(100) < 95))
 						msg_print(Ind, "You keep hold of your life force!");
 					else {
-						s32b d = damroll(10, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
-						else if (p_ptr->hold_life) {
+						s32b d = damroll(10, 6) + (p_ptr->exp / 100) * MON_DRAIN_LIFE;
+
+						if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
-							lose_exp(Ind, d/10);
+							lose_exp(Ind, d / 10);
 						} else {
 							msg_print(Ind, "You feel your life draining away!");
 							lose_exp(Ind, d);
@@ -2297,14 +2302,19 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, -m_idx);
 
-					if (p_ptr->hold_life && (rand_int(100) < 90))
+					if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
+#ifdef NECROMANCY_HOLDS_LIFE
+					else if (rand_int(100) < get_skill(p_ptr, SKILL_NECROMANCY))
+						msg_print(Ind, "You keep hold of your life force!");
+#endif
+					else if (p_ptr->hold_life && (rand_int(100) < 90))
 						msg_print(Ind, "You keep hold of your life force!");
 					else {
-						s32b d = damroll(20, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
-						else if (p_ptr->hold_life) {
+						s32b d = damroll(20, 6) + (p_ptr->exp / 100) * MON_DRAIN_LIFE;
+
+						if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
-							lose_exp(Ind, d/10);
+							lose_exp(Ind, d / 10);
 						} else {
 							msg_print(Ind, "You feel your life draining away!");
 							lose_exp(Ind, d);
@@ -2343,14 +2353,19 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, -m_idx);
 
-					if (p_ptr->hold_life && (rand_int(100) < 75))
+					if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
+#ifdef NECROMANCY_HOLDS_LIFE
+					else if (rand_int(100) < get_skill(p_ptr, SKILL_NECROMANCY))
+						msg_print(Ind, "You keep hold of your life force!");
+#endif
+					else if (p_ptr->hold_life && (rand_int(100) < 75))
 						msg_print(Ind, "You keep hold of your life force!");
 					else {
-						s32b d = damroll(40, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
-						else if (p_ptr->hold_life) {
+						s32b d = damroll(40, 6) + (p_ptr->exp / 100) * MON_DRAIN_LIFE;
+
+						if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
-							lose_exp(Ind, d/10);
+							lose_exp(Ind, d / 10);
 						} else {
 							msg_print(Ind, "You feel your life draining away!");
 							lose_exp(Ind, d);
@@ -2389,14 +2404,19 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (dam_msg[0]) msg_format(Ind, dam_msg, damage);
 					take_hit(Ind, damage, ddesc, -m_idx);
 
-					if (p_ptr->hold_life && (rand_int(100) < 50))
+					if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
+#ifdef NECROMANCY_HOLDS_LIFE
+					else if (rand_int(100) < get_skill(p_ptr, SKILL_NECROMANCY))
+						msg_print(Ind, "You keep hold of your life force!");
+#endif
+					else if (p_ptr->hold_life && (rand_int(100) < 50))
 						msg_print(Ind, "You keep hold of your life force!");
 					else {
-						s32b d = damroll(80, 6) + (p_ptr->exp/100) * MON_DRAIN_LIFE;
-						if (p_ptr->keep_life) msg_print(Ind, "You are unaffected!");
-						else if (p_ptr->hold_life) {
+						s32b d = damroll(80, 6) + (p_ptr->exp / 100) * MON_DRAIN_LIFE;
+
+						if (p_ptr->hold_life) {
 							msg_print(Ind, "You feel your life slipping away!");
-							lose_exp(Ind, d/10);
+							lose_exp(Ind, d / 10);
 						} else {
 							msg_print(Ind, "You feel your life draining away!");
 							lose_exp(Ind, d);

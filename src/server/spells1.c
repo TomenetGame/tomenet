@@ -9604,6 +9604,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (p_ptr->keep_life || (p_ptr->mode & MODE_PVP))
 				msg_print(Ind, "You are unaffected!");
+#ifdef NECROMANCY_HOLDS_LIFE
+			else if (rand_int(100) < get_skill(p_ptr, SKILL_NECROMANCY))
+				msg_print(Ind, "You keep hold of your life force!");
+#endif
 			else if (p_ptr->hold_life && (rand_int(100) < 75))
 				msg_print(Ind, "You keep hold of your life force!");
 			else if (p_ptr->hold_life) {
@@ -9711,6 +9715,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!p_ptr->resist_neth && !p_ptr->resist_chaos) {
 			if (p_ptr->keep_life || (p_ptr->mode & MODE_PVP))
 				msg_print(Ind, "You are unaffected!");
+#ifdef NECROMANCY_HOLDS_LIFE
+			else if (rand_int(100) < get_skill(p_ptr, SKILL_NECROMANCY))
+				msg_print(Ind, "You keep hold of your life force!");
+#endif
 			else if (p_ptr->hold_life && (rand_int(100) < 75))
 				msg_print(Ind, "You keep hold of your life force!");
 			else if (p_ptr->hold_life) {
