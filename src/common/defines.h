@@ -164,7 +164,6 @@
 #define SFLG1_LIMIT_SPELLS	0x00000008
 
 
-
 /* Determine fundamental server type (Normal, RPG, Arcade, Fun flagged). */
 #include "defines-local.h"
 
@@ -175,103 +174,28 @@
 #include "colours.h"
 
 
-
 /* Characters disallowed in save files */
 #define SF_BAD_CHARS ":!?\\/()\"@. _"
 
-/* Keys are safe from monsters? (taking/killing/stealing) */
-//#define MON_IGNORE_KEYS
-
-#ifdef MONSTER_ASTAR
- /* max size of open/closed pathfinding table in an A* instance.
-    4000: Can track reasonably over a complete big level with non-trivial layout.
-          This is enough to cover a big 'maze' layout almost completely, except when
-          hidint in the very, diagonally opposite, corners. Maybe add another 500..?
-    2000: Can track reasonably over a complete big level of the usual, normal layout
-          w/ rooms and hallways. However, practically no monsters have this AAF.
-    1000: Can track ok over 3 sectors of usual layout. [RECOMMENDED]
-     500: Can track ok over 2 sectors of usual layout.
-     300: Can track ok within a distance of 1 sector.
-     100: Can find lesser, local shortcuts. */
- #define ASTAR_MAX_NODES	1000
- /* how many spawned monsters can use A* at once (Sauron + 9 Nazgul = 10? Adunaphel has PASS_WALL though.) */
- #define ASTAR_MAX_INSTANCES	10
- /* Heuristics function: Guesstimate distance from an inbetween grid sx,sy to our destination grid dx,dy */
- #define ASTAR_HEURISTICS(sx,sy,dx,dy)	(ABS((sx) - (dx)) > ABS((sy) - (dy)) ? ABS((sx) - (dx)) : ABS((sy) - (dy)))
- /* Distribute calculations onto multiple server frames?
-    Assumption: Monster doesn't really move INSANELY fast: Divide cfg.fps by how often it can move at most per second.
-                Test results for ASTAR_MAX_NODES 1000 and monster vision 200:
-                 3 is not enough for a +20 monster at very shallow dungeon depths.
-                 4 is fine even for +40 there, if it's not a huge maze.
-                 5 works even in a maze.
-                Suggested default: 5 times.
-    Note that it's still really bad at huge maze levels. */
- #define ASTAR_DISTRIBUTE	(ASTAR_MAX_NODES / (cfg.fps / 5))
-#endif
-
-/* for MONSTER_FLOW_BY_SOUND */
-/* Range limit? */
-#define MONSTER_FLOW_BY_SOUND_DEPTH	64
-/* Time limit? */
-#define MONSTER_FLOW_BY_SOUND_TIME	50
-
-/* for MONSTER_FLOW_BY_SMELL */
-/* Range limit? */
-#define MONSTER_FLOW_BY_SMELL_DEPTH	200
-/* Time limit? */
-#define MONSTER_FLOW_BY_SMELL_TIME	50
-/* Scent radius surrounding a player. Note: not implemented yet, but it doesn't bring additional cost, so adding it. - C. Blue */
-#define MONSTER_FLOW_BY_SMELL_RADIUS	2
-
-/* for MONSTER_FLOW_BY_ESP */
-/* Total flow depth? Might be superfluous, just flood whole level, and let sound/smell take care of the rest.. - C. Blue */
-#define MONSTER_FLOW_DEPTH		32
-
-/* Sort the monster list by level before displaying it? */
-#define MONS_PRE_SORT
-
-
-/* The four seasons - C. Blue */
-#define SEASON_SPRING 0
-#define SEASON_SUMMER 1
-#define SEASON_AUTUMN 2
-#define SEASON_WINTER 3
-
-
-/* Client-side: Maximum amount of terminal windows the client may have. */
-#define ANGBAND_TERM_MAX 8
-
-
-/* Define this to make 'exp ratio' determine exp-gain instead of exp-to-adv:
-   (has no effect if KINGCAP_EXP is defined) */
-#define ALT_EXPRATIO
-
-
-/* Startup equipment treatment: [3]
-   0 = like any item
-   1 = level 0 (unusable by others), can be sold by anyone, not throwable/droppable till charlevel cfg.newbies_cannot_drop
-   2 = level 0 (unusable by others), can be sold by yourself only, dropped items turn {+,0} before charlevel cfg.newbies_cannot_drop
-   3 = level 0 (unusable by others), can't be sold at all, dropped items turn {+,0} before charlevel cfg.newbies_cannot_drop
-   Note: 2 and 3 imply that all level 0 items in the game can only be sold by their owners. */
-#define STARTEQ_TREATMENT 3
-
-
+/* max range of arrows in do_cmd_fire.
+ * the aim is to prevent 'out-of-range attack' abuse.
+ * [MAX_RANGE] */
+/* commented out due to monster AI improvements.
+ * activate it if STUPID_MONSTER_SPELLS is defined!
+ * --actually this should always be enabled and set to MAX_RANGE, that limit is also used for spellcasting.
+ */
+#define ARROW_DIST_LIMIT MAX_RANGE
 
 /* Maximum number of different characters one player account may hold - C. Blue */
 #define MAX_CHARS_PER_ACCOUNT	9
 #define MAX_DED_IDDC_CHARS	2	/* additional iddc-only characters (needs ALLOW_DED_IDDC_MODE) */
 #define MAX_DED_PVP_CHARS	1	/* additional pvp-only characters (needs ALLOW_DED_PVP_MODE) */
 
-
 /* What kind of character creation method does the server use? - C. Blue
    currently (since 4.2.0):     0 = traditional random rolling (1 try)
                                 1 = player can set his stats manually */
 /* I'm using 0x02 for sending the server version - mikaelh */
 #define CHAR_CREATION_FLAGS	1
-
-
-/* Does drinking from fountains bear the possibility of conjuring a guardian monster? */
-#define FOUNTAIN_GUARDS		10	/* chance of appearing */
 
 
 /*
@@ -355,58 +279,16 @@
 #define CHARACTER_EXPIRY_DAYS 367
 
 
-/* maximum respawn time for uniques.... from japanese patch */
-#define COME_BACK_TIME_MAX 600
-
-
-/* For flash player option, cfg.fps/n, for teleport [6] */
-#define FLASH_SELF_DIV 4
-/* For flash player option, cfg.fps/n, for floor change [4] */
-#define FLASH_SELF_DIV2 3
-
-
-/* Time to be idle for auto-afk to kick in, in seconds [60] */
-#define AUTO_AFK_TIMER 60
-
-/* Time to be idle and starving for auto-kick to kick in, in seconds [30] */
-#define STARVE_KICK_TIMER 30
-
-
-/* Do artifacts time out after a while to prevent hoarding?
-   (Fluent artifact reset system vs static reset schedules) - C. Blue */
-#define FLUENT_ARTIFACT_RESETS
-/* Warn a player if an artifact is about to timeout [4 hours] */
-#define FLUENT_ARTIFACT_WARNING (60 * 4)
-/* Default time in weeks until a true artifact times out.
-   Gets doubled for winner-arts and doubled on rpg-server (cumulative). */
-#define FLUENT_ARTIFACT_WEEKS 5
-
-#ifdef FLUENT_ARTIFACT_RESETS
-/* The One Ring/Bladeturner don't get their timeout duration halved when their wearer wins */
- #define L100_ARTS_LAST
-#endif
-
-/* Sort the artifact list by tval/sval before displaying it? */
-#define ARTS_PRE_SORT
-
-
-/* Can staticed levels no longer get their static-timeout 'reset' by someone
-   logging on on them and leaving again? */
-#define NO_STATIC_TIMER_RESET
-/* Allow exception for someone dying there when it's already stale, if his
-   level is at least 1/4 of the depth and >= cfg.newbies_cannot_drop? */
-#define STATIC_TIMER_RESETS_ON_DEATH
-/* Sauron's floor in Mt Doom has a shorter static timer */
-#define SAURON_FLOOR_FAST_UNSTAT
-
-
-
 /*
  * The types of communication that we send to the metaserver
  */
 #define META_START	0x01
 #define META_DIE	0x02
 #define META_UPDATE	0x04
+
+
+/* Client-side: Maximum amount of terminal windows the client may have. */
+#define ANGBAND_TERM_MAX 8
 
 
 /* Traditional hard-coded number of grids used to display the dungeon,
@@ -576,12 +458,10 @@
  #define MAX_CLASS	13
 #endif
 
-
 /*
  * Maximum number of character traits. Originally added for Draconians - C. Blue
  */
 #define MAX_TRAIT	32	/* 0 = N/A; 13 dragon flavours; 2 Maiar flavours; ... */
-
 
 /*
  * Maximum NPC robots to allow.
@@ -627,18 +507,6 @@
 #define NUM_HASH_ENTRIES	256
 
 
-/* Turn currently invalid items into seals? Otherwise they are simply deleted. */
-#define SEAL_INVALID_OBJECTS
-
-/* Pre-set owner for DROP_CHOSEN items, so you can't cheeze them to someone else
-   by ground-IDing them, then have someone else to pick them up! (especially for Nazgul rings) */
-#define PRE_OWN_DROP_CHOSEN
-
-/* Base level for speed rings of bpval >= 0 that gets added to their bpval. [31..35]
-   At 35 this results in level 50 for +15 speed rings, so that should be max. */
-#define SPEED_RING_BASE_LEVEL	35
-
-
 /*
  * Maximum array bounds for template based arrays
  */
@@ -680,7 +548,6 @@
 
 /* Client-side unique list */
 #define MAX_UNIQUES		300
-
 
 
 /*
@@ -754,6 +621,12 @@
 /* Number of text lines for the in-game BBS */
 #define BBS_LINES 15
 
+/* Max amount of swear words */
+#define MAX_SWEAR 100
+
+/* Max amount of legal words that override swear words */
+#define MAX_NONSWEAR 200
+
 /*
  * Maximum size of the "view" array (see "cave.c")
  * Note that the "view radius" will NEVER exceed 20, and even if the "view"
@@ -816,32 +689,104 @@
  */
 #define MAX_PATH_LENGTH	128
 
-/* Maximum level difference for party members,
-   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
-#define MAX_PARTY_LEVEL_DIFF 7
 
-/* Maximum level difference for winner-party members,
-   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
-#define MAX_KING_PARTY_LEVEL_DIFF 11
+/* The four seasons - C. Blue */
+#define SEASON_SPRING 0
+#define SEASON_SUMMER 1
+#define SEASON_AUTUMN 2
+#define SEASON_WINTER 3
 
-/* Max amount of swear words */
-#define MAX_SWEAR 100
-
-/* Max amount of legal words that override swear words */
-#define MAX_NONSWEAR 200
-
-
-/* only imprison within town area? Otherwise it can be exploited for world travel. */
-#define JAIL_TOWN_AREA
-/* does the Jailer remove WoR scrolls and discharge WoR rods? */
-//#define JAILER_KILLS_WOR
-/* crime sentences */
+/* Jail - crime sentences */
 #define JAIL_MURDER 100
 #define JAIL_MURDER_KPK 500
 #define JAIL_STEALING 500
 #define JAIL_SWEARING 20
 #define JAIL_SPAM 30
 #define JAIL_OLD_CRIMES 0
+
+
+/* ---------------------------------------------------------------- (Rather fundamental 'features')  ---------------------------------------------------------------- */
+
+/* Define this to make 'exp ratio' determine exp-gain instead of exp-to-adv:
+   (has no effect if KINGCAP_EXP is defined) */
+#define ALT_EXPRATIO
+
+/* for PvP mode: */
+#define MIN_PVP_LEVEL	10
+#define MID_PVP_LEVEL	20
+#define MAX_PVP_LEVEL	30
+
+#ifdef MONSTER_ASTAR
+ /* max size of open/closed pathfinding table in an A* instance.
+    4000: Can track reasonably over a complete big level with non-trivial layout.
+          This is enough to cover a big 'maze' layout almost completely, except when
+          hidint in the very, diagonally opposite, corners. Maybe add another 500..?
+    2000: Can track reasonably over a complete big level of the usual, normal layout
+          w/ rooms and hallways. However, practically no monsters have this AAF.
+    1000: Can track ok over 3 sectors of usual layout. [RECOMMENDED]
+     500: Can track ok over 2 sectors of usual layout.
+     300: Can track ok within a distance of 1 sector.
+     100: Can find lesser, local shortcuts. */
+ #define ASTAR_MAX_NODES	1000
+ /* how many spawned monsters can use A* at once (Sauron + 9 Nazgul = 10? Adunaphel has PASS_WALL though.) */
+ #define ASTAR_MAX_INSTANCES	10
+ /* Heuristics function: Guesstimate distance from an inbetween grid sx,sy to our destination grid dx,dy */
+ #define ASTAR_HEURISTICS(sx,sy,dx,dy)	(ABS((sx) - (dx)) > ABS((sy) - (dy)) ? ABS((sx) - (dx)) : ABS((sy) - (dy)))
+ /* Distribute calculations onto multiple server frames?
+    Assumption: Monster doesn't really move INSANELY fast: Divide cfg.fps by how often it can move at most per second.
+                Test results for ASTAR_MAX_NODES 1000 and monster vision 200:
+                 3 is not enough for a +20 monster at very shallow dungeon depths.
+                 4 is fine even for +40 there, if it's not a huge maze.
+                 5 works even in a maze.
+                Suggested default: 5 times.
+    Note that it's still really bad at huge maze levels. */
+ #define ASTAR_DISTRIBUTE	(ASTAR_MAX_NODES / (cfg.fps / 5))
+#endif
+
+/* for MONSTER_FLOW_BY_SOUND */
+/* Range limit? */
+#define MONSTER_FLOW_BY_SOUND_DEPTH	64
+/* Time limit? */
+#define MONSTER_FLOW_BY_SOUND_TIME	50
+
+/* for MONSTER_FLOW_BY_SMELL */
+/* Range limit? */
+#define MONSTER_FLOW_BY_SMELL_DEPTH	200
+/* Time limit? */
+#define MONSTER_FLOW_BY_SMELL_TIME	50
+/* Scent radius surrounding a player. Note: not implemented yet, but it doesn't bring additional cost, so adding it. - C. Blue */
+#define MONSTER_FLOW_BY_SMELL_RADIUS	2
+
+/* for MONSTER_FLOW_BY_ESP */
+/* Total flow depth? Might be superfluous, just flood whole level, and let sound/smell take care of the rest.. - C. Blue */
+#define MONSTER_FLOW_DEPTH		32
+
+/* Sort the monster list by level before displaying it? */
+#define MONS_PRE_SORT
+
+#if 0 //unused
+/* maximum respawn time for uniques.... from japanese patch */
+ #define COME_BACK_TIME_MAX 600
+#endif
+
+/* For flash player option, cfg.fps/n, for teleport [6] */
+#define FLASH_SELF_DIV 4
+/* For flash player option, cfg.fps/n, for floor change [4] */
+#define FLASH_SELF_DIV2 3
+
+/* Time to be idle for auto-afk to kick in, in seconds [60] */
+#define AUTO_AFK_TIMER 60
+
+/* Time to be idle and starving for auto-kick to kick in, in seconds [30] */
+#define STARVE_KICK_TIMER 30
+
+/* Approximate cap of a monster's average raw melee damage output per turn
+   (before AC of the target is even incorporated)	[700] */
+#define AVG_MELEE_CAP		700
+/* Non-magical ranged monsters' damage cap */
+#define RANGED_CAP		500	/* UNUSED currently */
+/* Generic magical damage cap (BEFORE susceptibilities, for those it may still be doubled) */
+#define MAGICAL_CAP		1600
 
 /* Maximum armour class value that yields in a reduction of damage.
    Note: The chance to get hit still goes down further above this value.
@@ -869,6 +814,7 @@
    Should range from 75..80%, maybe make skill & DS percentage
    multiply instead of sum up. - C. Blue */
 #define ANTIMAGIC_CAP		75
+
 /* Cap for AM field radius. 9 is implied by skill+darksword,
    if monster form AM is added it could stack up to 12 though,
    which seems out of line --
@@ -877,19 +823,86 @@
 
 /* Limit effectiveness of interception/martial arts [50..80] */
 #define INTERCEPT_CAP		70
+
+/* If both interception and antimagic field suppress the same casting attempt of the same monster,
+   reduce the combined chance somewhat: from 92% (1 in 12) to 83% (1 in 6) to stay sane. */
+#define COMBO_AM_IC_CAP		83
+
+/* upper limit of dodging chance. [80] */
+#define DODGE_CAP		80
+
+/* Maximum level difference for party members,
+   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
+#define MAX_PARTY_LEVEL_DIFF 7
+
+/* Maximum level difference for winner-party members,
+   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
+#define MAX_KING_PARTY_LEVEL_DIFF 11
+
+
+/* ----------------------------------------------- (Rather specific 'features', could go to defines-features.h instead)  ----------------------------------------------- */
+
 /* Give all characters a basic interception chance depending on level
    and to compensate reduce the additional bonus from the skill somewhat.
    Also this makes Interception skill actually scale properly for low skill levels vs
    high monster levels instead of the investment being completely effectless (!). */
 #define GENERIC_INTERCEPTION
 
-/* If both interception and antimagic field suppress the same casting attempt of the same monster,
-   reduce the combined chance somewhat: from 92% (1 in 12) to 83% (1 in 6) to stay sane. */
-#define COMBO_AM_IC_CAP 83
+/* Startup equipment treatment: [3]
+   0 = like any item
+   1 = level 0 (unusable by others), can be sold by anyone, not throwable/droppable till charlevel cfg.newbies_cannot_drop
+   2 = level 0 (unusable by others), can be sold by yourself only, dropped items turn {+,0} before charlevel cfg.newbies_cannot_drop
+   3 = level 0 (unusable by others), can't be sold at all, dropped items turn {+,0} before charlevel cfg.newbies_cannot_drop
+   Note: 2 and 3 imply that all level 0 items in the game can only be sold by their owners. */
+#define STARTEQ_TREATMENT 3
 
-/* upper limit of dodging chance. [80] */
-#define DODGE_CAP		80
+/* Do artifacts time out after a while to prevent hoarding?
+   (Fluent artifact reset system vs static reset schedules) - C. Blue */
+#define FLUENT_ARTIFACT_RESETS
+/* Warn a player if an artifact is about to timeout [4 hours] */
+#define FLUENT_ARTIFACT_WARNING (60 * 4)
+/* Default time in weeks until a true artifact times out.
+   Gets doubled for winner-arts and doubled on rpg-server (cumulative). */
+#define FLUENT_ARTIFACT_WEEKS 5
 
+#ifdef FLUENT_ARTIFACT_RESETS
+/* The One Ring/Bladeturner don't get their timeout duration halved when their wearer wins */
+ #define L100_ARTS_LAST
+#endif
+
+/* Sort the artifact list by tval/sval before displaying it? */
+#define ARTS_PRE_SORT
+
+/* Can staticed levels no longer get their static-timeout 'reset' by someone
+   logging on on them and leaving again? */
+#define NO_STATIC_TIMER_RESET
+/* Allow exception for someone dying there when it's already stale, if his
+   level is at least 1/4 of the depth and >= cfg.newbies_cannot_drop? */
+#define STATIC_TIMER_RESETS_ON_DEATH
+/* Sauron's floor in Mt Doom has a shorter static timer */
+#define SAURON_FLOOR_FAST_UNSTAT
+
+/* Turn currently invalid items into seals? Otherwise they are simply deleted. */
+#define SEAL_INVALID_OBJECTS
+
+/* Pre-set owner for DROP_CHOSEN items, so you can't cheeze them to someone else
+   by ground-IDing them, then have someone else to pick them up! (especially for Nazgul rings) */
+#define PRE_OWN_DROP_CHOSEN
+
+/* Base level for speed rings of bpval >= 0 that gets added to their bpval. [31..35]
+   At 35 this results in level 50 for +15 speed rings, so that should be max. */
+#define SPEED_RING_BASE_LEVEL	35
+
+/* Does drinking from fountains bear the possibility of conjuring a guardian monster? */
+#define FOUNTAIN_GUARDS		10	/* chance of appearing */
+
+/* Keys are safe from monsters? (taking/killing/stealing) */
+//#define MON_IGNORE_KEYS
+
+/* only imprison within town area? Otherwise it can be exploited for world travel. */
+#define JAIL_TOWN_AREA
+/* does the Jailer remove WoR scrolls and discharge WoR rods? */
+//#define JAILER_KILLS_WOR
 
 /* Monster interception ("interference") will not cancel FTK (fire-till-kill)?
    -- TODO: implement for spells/runecraft/mimicpowers (those have 0 interference chance atm though so it doesn't matter) */
@@ -898,7 +911,6 @@
   will not break FTK. This is useful to zap a rod of healing or speed in between without losing the target.
   (So far the only item type where this was possible were potions.) */
 #define CONTINUE_FTK
-
 
 /* Total size of internal IDDC depth table */
 #define IDDC_HIGHSCORE_SIZE 50
@@ -1020,7 +1032,6 @@
  #define MORGOTH_NO_LIVE_SPAWN
 #endif
 
-
 /* Make Sauron more dangerous for AM or Intercepters,
    by giving him AI_ANNOY vs melee targets. */
 #define SAURON_ANTI_MELEE
@@ -1032,10 +1043,8 @@
 /* Set Sauron's boost factor (1/n chance to cast spells) [67,75] */
 #define SAURON_SPELL_BOOST	67
 
-
 /* Disallow instant resurrection in the Nether Realm */
 #define INSTANT_RES_EXCEPTION
-
 
 /* Auto-retaliation: */
 /* No class restriction; limit to non-escape mechanisms. */
@@ -1044,7 +1053,6 @@
    This is especially to enable mimics to use their powers in auto-retaliation,
    if this option is enabled, they will be unable to use @OM inscription for that instead. */
 #define AUTO_RET_CMD
-
 
 /* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?
    Exploding before it means that players standing in walls will only take 50%
@@ -1070,7 +1078,6 @@
    Note: Shooting arrows/bolts/shots/missiles is casting bolt spells too. */
 #define MON_BOLT_ON_WALL
 
-
 /* Reduce the effect of aggravating equipment on the player
    and especially fellow players? - C. Blue */
 #define REDUCED_AGGRAVATION
@@ -1080,46 +1087,8 @@
    1 = ring gets destroyed on activation and effect is timed */
 #define POLY_RING_METHOD 1
 
-/* SLAY and KILL (ie *SLAY*) multiplier */
-#if 0 /* from old times when 2-handed weapons had very low dice */
- #define FACTOR_MULT 1	/* multiplier for actual FACTOR_ values, for finer resolution */
- #define FACTOR_HURT 2	/* slay animal/evil */
- #define FACTOR_SLAY 3
- #define FACTOR_KILL 5
- #define FACTOR_BRAND_RES 2
- #define FACTOR_BRAND 3
- #define FACTOR_BRAND_SUSC 6
-#else /* adjusted for modern weapon dice to prevent insane output */
- #define FACTOR_MULT		10	/* multiplier for actual FACTOR_ values, for finer resolution */
- #define FACTOR_HURT		15	/* slay animal/evil */
- #define FACTOR_SLAY		20
- #define FACTOR_KILL		30
- #define FACTOR_BRAND_RES	15
- #define FACTOR_BRAND		20
- #define FACTOR_BRAND_STRONG	30	/* added for Hellfire vs <Good && Resist> */
- #define FACTOR_BRAND_SUSC	40
-#endif
-/* Apply flat brand/slay +todam bonus too (for low-dice weapons)? - C. Blue */
-#define FLAT_MIN_BONUS		1	/* added for Hellfire vs <Good && Immune> */
-#define FLAT_HALF_BONUS		2	/* added for Hellfire vs <Good && Resist> */
-#define FLAT_HURT_BONUS		3
-#define FLAT_BRAND_BONUS	4	/* same for susceptible monsters, none for resisting monsters */
-#define FLAT_SLAY_BONUS		4
-#define FLAT_KILL_BONUS		5
-
-
-/* Approximate cap of a monster's average raw melee damage output per turn
-   (before AC of the target is even incorporated)	[700] */
-#define AVG_MELEE_CAP		700
-/* Non-magical ranged monsters' damage cap */
-#define RANGED_CAP		500	/* UNUSED currently */
-/* Generic magical damage cap (BEFORE susceptibilities, for those it may still be doubled) */
-#define MAGICAL_CAP		1600
-
-
 /* Divide stack size of ethereal ammunition by this to make it rarer */
 #define ETHEREAL_AMMO_REDUCTION 2
-
 
 /* Various melee/ranged combat settings for cmd1.c and cmd2.c mostly */
 
@@ -1130,16 +1099,6 @@
 #define MAX_VAMPIRIC_DRAIN_RANGED 10    /* was 25 - note: this counts per shot, not per turn */
 #define WEAPON_VAMPIRIC_CHANCE_RANGED 50
 #define NON_WEAPON_VAMPIRIC_CHANCE_RANGED 33 /* chance to drain if VAMPIRIC is given be a non-weapon/non-ammo item */
-
-/* max range of arrows in do_cmd_fire.
- * the aim is to prevent 'out-of-range attack' abuse.
- * [MAX_RANGE] */
-/* commented out due to monster AI improvements.
- * activate it if STUPID_MONSTER_SPELLS is defined!
- * --actually this should always be enabled and set to MAX_RANGE, that limit is also used for spellcasting.
- */
-#define ARROW_DIST_LIMIT MAX_RANGE
-
 
 /* Reduce damage in PvP by this factor */
 #define PVP_MELEE_DAM_REDUCTION 3
@@ -1175,13 +1134,11 @@
    getting hit or after entering the pvp arena. - C. Blue */
 #define PVP_COOLDOWN_TELEPORT 30
 
-
 /* Not allowed to steal while in town? */
 #define TOWN_NO_STEALING
 
 /* Not allowed to steal on protected floor grids (Inns)? */
 #define PROTECTED_NO_STEALING
-
 
 /*
  * Allow wraith-formed player to pass through permawalls on the surface.
@@ -1200,18 +1157,84 @@
 /* At which % should a char turn into a number? (10 = always, -1 = never) default: [6] */
 #define TURN_CHAR_INTO_NUMBER 7
 
-
 /* Martyrdom doesn't allow to restore mana? (deprecated, we use half damage
    output for GF_DISP_xxx damage types instead of this penalty) */
 //#define MARTYR_NO_MANA
 /* Martyrdom reduces damage output of all GF_DISP_xxx to anti-cheeze pit sweeping? */
 #define MARTYR_CUT_DISP
 
+/* A random, rarely visited dungeon has a (slim) chance for firework drops */
+#define FIREWORK_DUNGEON
 
-/* for PvP mode: */
-#define MIN_PVP_LEVEL	10
-#define MID_PVP_LEVEL	20
-#define MAX_PVP_LEVEL	30
+#ifdef HOUSE_PAINTING
+ /* Don't display house paint of mode-wise unusable player stores? */
+ #define HOUSE_PAINTING_HIDE_BAD_MODE
+ /* Don't display house paint of stores that contain more unsellable items than sellable ones? */
+ //TODO:implement fully
+ //#define HOUSE_PAINTING_HIDE_UNSELLABLE
+ /* Don't display house paint of 'museum' like player stores, where most sellable items are priced > 50x value? Added new '@S-' for this! */
+ //TODO:implement fully
+ //#define HOUSE_PAINTING_HIDE_MUSEUM
+#endif
+
+/* Different items stacking may at most pile up to this many items (0 = no limit) */
+//#define MAX_ITEMS_STACKING		10
+
+/* Bad hack: Witan boots retain -STEALTH as artifacts.. ew */
+#define ART_WITAN_STEALTH
+
+/* Allow fallen winners to wear/wield WINNERS_ONLY items? */
+#define FALLEN_WINNERSONLY
+
+/* Force certain items to drop from certain monsters, to fit their lore? - C. Blue
+   Eg swords from swordmasters, blunt weapons from priests.
+   Note: We ignore books/crystals at this time, also distinguishing between those would use too many flags.
+   0: off, 1: way 1 (soft), 2: way 2 (hard) -- utilizes RESF_COND... flags. [2] */
+#define FORCED_DROPS 2
+/* Artificial generation chance when we try hard to generate a fitting item (overrides normal item probabilities): (1 in n) [50] */
+#define FORCE_DROPS_PROBABLE 50
+
+/* minimum time required to stay on current floor in order to get an extra feeling on next floor */
+#define TURNS_FOR_EXTRA_FEELING		(cfg.fps * 120)
+
+/* Enable strict probability-travel prevention by NO_MAGIC floor flag, even in up/down direction? */
+//#define NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
+
+/* Prevent probtravelling players ruining experience on floors of other players:
+   Skip a floor if it already has players on it who are all not in your party. */
+#define PROBTRAVEL_AVOIDS_OTHERS
+
+#define CONDENSED_HP_SP		/* reduce HP and SP to 1 line each, instead of 1 line for max and 1 line for cur values? */
+
+/* ----------------------------------------------------------------------- (End of 'features')  ----------------------------------------------------------------------- */
+
+
+/* SLAY and KILL (ie *SLAY*) multiplier */
+#if 0 /* from old times when 2-handed weapons had very low dice */
+ #define FACTOR_MULT 1	/* multiplier for actual FACTOR_ values, for finer resolution */
+ #define FACTOR_HURT 2	/* slay animal/evil */
+ #define FACTOR_SLAY 3
+ #define FACTOR_KILL 5
+ #define FACTOR_BRAND_RES 2
+ #define FACTOR_BRAND 3
+ #define FACTOR_BRAND_SUSC 6
+#else /* adjusted for modern weapon dice to prevent insane output */
+ #define FACTOR_MULT		10	/* multiplier for actual FACTOR_ values, for finer resolution */
+ #define FACTOR_HURT		15	/* slay animal/evil */
+ #define FACTOR_SLAY		20
+ #define FACTOR_KILL		30
+ #define FACTOR_BRAND_RES	15
+ #define FACTOR_BRAND		20
+ #define FACTOR_BRAND_STRONG	30	/* added for Hellfire vs <Good && Resist> */
+ #define FACTOR_BRAND_SUSC	40
+#endif
+/* Apply flat brand/slay +todam bonus too (for low-dice weapons)? - C. Blue */
+#define FLAT_MIN_BONUS		1	/* added for Hellfire vs <Good && Immune> */
+#define FLAT_HALF_BONUS		2	/* added for Hellfire vs <Good && Resist> */
+#define FLAT_HURT_BONUS		3
+#define FLAT_BRAND_BONUS	4	/* same for susceptible monsters, none for resisting monsters */
+#define FLAT_SLAY_BONUS		4
+#define FLAT_KILL_BONUS		5
 
 
 /*
@@ -1695,20 +1718,6 @@
  */
 #define MAX_REPRO	100
 
-/* A random, rarely visited dungeon has a (slim) chance for firework drops */
-#define FIREWORK_DUNGEON
-
-#ifdef HOUSE_PAINTING
- /* Don't display house paint of mode-wise unusable player stores? */
- #define HOUSE_PAINTING_HIDE_BAD_MODE
- /* Don't display house paint of stores that contain more unsellable items than sellable ones? */
- //TODO:implement fully
- //#define HOUSE_PAINTING_HIDE_UNSELLABLE
- /* Don't display house paint of 'museum' like player stores, where most sellable items are priced > 50x value? Added new '@S-' for this! */
- //TODO:implement fully
- //#define HOUSE_PAINTING_HIDE_MUSEUM
-#endif
-
 
 /*
  * Player constants
@@ -1820,10 +1829,6 @@
  * A "stack" of items is limited to less than 100 items (hard-coded).
  */
 #define MAX_STACK_SIZE			100
-
-/* Different items stacking may at most pile up to this many items (0 = no limit) */
-//#define MAX_ITEMS_STACKING		10
-
 
 
 /*
@@ -2043,7 +2048,6 @@
 #define ROW_AC			16
 #define COL_AC			0	/* "Cur AC xxxxx" */
 
-#define CONDENSED_HP_SP		/* reduce HP and SP to 1 line each, instead of 1 line for max and 1 line for cur values? */
 
 #ifndef CONDENSED_HP_SP
  #define ROW_MAXHP		16
@@ -3218,10 +3222,12 @@
 #define SV_CHEST_LARGE_IRON		6
 #define SV_CHEST_LARGE_STEEL		7
 
+#if 0 //deprecated
 /*
  * Special "sval" limit -- first "good" magic/prayer book
  */
-#define SV_BOOK_MIN_GOOD	4
+ #define SV_BOOK_MIN_GOOD	4
+#endif
 
 /*
  * Special "sval" limit -- last gold
@@ -4690,12 +4696,14 @@
 
 
 
+#if 0 //deprecated
 /*
  * Hack -- first "normal" artifact in the artifact list.  All of
  * the artifacts with indexes from 1 to 15 are "special" (lights,
  * rings, amulets), and the ones from 16 to 127 are "normal".
  */
-#define ART_MIN_NORMAL		16
+ #define ART_MIN_NORMAL		16
+#endif
 
 
 /*
@@ -4707,11 +4715,6 @@
 #define EGO_XTRA_POWER		2
 /* Special ability */
 #define EGO_XTRA_ABILITY	3
-
-
-/* Bad hack: Witan boots retain -STEALTH as artifacts.. ew */
-#define ART_WITAN_STEALTH
-
 
 
 
@@ -5131,9 +5134,6 @@
 
 /* Added CB14 CB15 and CB16 for now - Kurzel */
 
-/* Allow fallen winners to wear/wield WINNERS_ONLY items? */
-#define FALLEN_WINNERSONLY
-
 
 /* Item-generation restriction flags */
 #define RESF_NONE		0x00000000
@@ -5190,14 +5190,6 @@
 
 #define RESF_COND_MASK		(RESF_COND_SWORD | RESF_COND_LSWORD | RESF_COND_DARKSWORD | RESF_COND_BLUNT | RESF_CONDF_NOSWORD | RESF_CONDF_MSTAFF | RESF_COND_SLING | RESF_COND_RANGED | RESF_CONDF_RUNE)
 
-/* Force certain items to drop from certain monsters, to fit their lore? - C. Blue
-   Eg swords from swordmasters, blunt weapons from priests.
-   Note: We ignore books/crystals at this time, also distinguishing between those would use too many flags.
-   0: off, 1: way 1 (soft), 2: way 2 (hard) -- utilizes RESF_COND... flags. [2] */
-#define FORCED_DROPS 2
-/* Artificial generation chance when we try hard to generate a fitting item (overrides normal item probabilities): (1 in n) [50] */
-#define FORCE_DROPS_PROBABLE 50
-
 
 /* ESP defines */
 #define ESP_ORC			0x00000001L
@@ -5221,9 +5213,11 @@
 
 #define ESP_R_MASK		(R_ESP_LOW | R_ESP_HIGH | R_ESP_ANY)
 
+#if 0 //unused
 /* Number of group of flags to choose from */
-#define MAX_FLAG_GROUP		12
-#define NEW_GROUP_CHANCE	40      /* Chance to get a new group */
+ #define MAX_FLAG_GROUP		12
+ #define NEW_GROUP_CHANCE	40      /* Chance to get a new group */
+#endif
 
 
 /*** Ego flags ***/
@@ -6389,18 +6383,6 @@
 #define LF2_DUN_BOSS		0x00200000L
 #define LF2_COLLAPSING		0x00400000L	/* audiovisual show when Zu-Aon is defeated ;) - C. Blue */
 #define LF2_NO_SUMMON		0x00800000L	/* disallow any summoning (to go with NO_TELE :) for new experimental dungeoneering) */
-
-
-/* minimum time required to stay on current floor in order to get an extra feeling on next floor */
-#define TURNS_FOR_EXTRA_FEELING		(cfg.fps * 120)
-
-
-/* Enable strict probability-travel prevention by NO_MAGIC floor flag, even in up/down direction? */
-//#define NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
-
-/* Prevent probtravelling players ruining experience on floors of other players:
-   Skip a floor if it already has players on it who are all not in your party. */
-#define PROBTRAVEL_AVOIDS_OTHERS
 
 
 /* vault flags for v_info */
