@@ -7724,7 +7724,7 @@ extern int PlayerUID;
 #define monk_heavy_armor(p_ptr) \
 	(get_skill(p_ptr, SKILL_MARTIAL_ARTS) && \
 	 armour_weight(p_ptr) > \
-	 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 210))
+	 50 + get_skill_scale(p_ptr, SKILL_MARTIAL_ARTS, 220))
 
 /* encumberment check for rogueish skill, abilities and techniques.
    Was 200+..50, but increased it to +60, for wearing Morgoth's crown + DSM
@@ -7737,7 +7737,7 @@ extern int PlayerUID;
 	   (get_skill(p_ptr, SKILL_DODGE)) || \
 	   (get_skill(p_ptr, SKILL_CRITS))) && \
 	 (armour_weight(p_ptr) > \
-	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 60)))
+	 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 70)))
 
 /* maximum weapon weight to allow dual-wielding, 999 for no limit	[999] */
 #define DUAL_MAX_WEIGHT 999

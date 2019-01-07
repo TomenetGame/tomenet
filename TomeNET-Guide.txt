@@ -8697,8 +8697,8 @@ Here's a table to tell you the values for str_wgt:
         14          12                      30          18/50-18/220+
         15          13
 
-The armour weight limit is 5.0 lb + Martial Arts skill level * 0.42 lb.
-So for MA 50 it is 5.0 + 21.0 = 26.0 lb.
+The armour weight limit is 5.0 lb + Martial Arts skill level * 0.44 lb.
+So for MA 50 it is 5.0 + 21.0 = 27.0 lb.
 If your armour becomes too heavy, you will see this warning message:
 "Your armour weight strains your martial arts performance."
 
@@ -8917,7 +8917,7 @@ If the armour becomes too heavy to perform those, a message will appear:
 "The weight of your armour strains your flexibility and awareness."
 
 This 'rogueish weight limit' (the skills are mostly used by rogues) is:
-20.0 + (Combat skill * 6 / 50) lb, ie max 26.0 lb.
+20.0 + Combat skill * 0.14 lb, ie max 27.0 lb (20.0 + 50 * 0.14).
 
 IMPORTANT: If you get the above flexibility warning message, that means your
            secondary weapon is NOT APPLIED AT ALL!
