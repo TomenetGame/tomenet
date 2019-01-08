@@ -9038,8 +9038,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 #endif
 
 		/* a reward should have some value: */
-		if (object_value_real(0, o_ptr) < 5000) continue;
+		if (object_value_real(0, o_ptr) < 5000) continue; //note that apply_magic() (via RESF_BOOST_PVAL) already checks for >=~9000, so this is probably redundant at this point..
 #if 0 /* these no-weak-ego checks are basically already covered by above EGO_ checks. Here they actually hinder trap kit generation badly, so these should just remain disabled. */
+    /* ..actually this kind of check is already done in apply_magic() too (see RESF_BOOST_PVAL) */
 		if (o_ptr->name2) { /* should always be true actually! just paranoia */
 			if (e_info[o_ptr->name2].cost <= 2000) {
 				if (o_ptr->name2b) {
