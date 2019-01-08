@@ -6054,6 +6054,53 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		//NO:	if (!verygreat || object_value_real(0, o_ptr) >= 7000) break; <- arrows (+36,+42) -> lol. - C. Blue
 		if (!verygreat) break;
 
+		/* When called from create_reward() exclusively:
+		   Allow rewards that are useful provided their pval is high enough and boost their pval as required. */
+		if (resf & RESF_BOOST_PVAL) {
+#if 1
+			/* no pval +1 items, as the bonus is maybe too weak - especially: Cloak of the Magi
+			   -- note: this prevents 1h +LIFE weapons as a side-effect */
+			if (resf & RESF_NOHIVALUE) { /* eg Dungeon Keeper */
+				/* prevent */
+				if (o_ptr->pval == 1) continue;
+			} else { /* eg Highlander */
+				/* boost */
+				if (o_ptr->pval == 1 && o_ptr->name2 != EGO_LIFE && o_ptr->name2b != EGO_LIFE) o_ptr->pval = 2;
+			}
+#else
+			/* - prevent +1 speed boots! */
+			if ((o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) && o_ptr->pval == 1) continue;
+#endif
+			/* single-ego restrictions - don't generate items that are too worthless at low pval */
+			if (!o_ptr->name2b) {
+				switch (o_ptr->name2) {
+				case EGO_INTELLIGENCE:
+				case EGO_WISDOM:
+					if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
+					break;
+				case EGO_BRILLIANCE:
+					if (o_ptr->pval < 3) o_ptr->pval = 3 + (rand_int(3) ? 0 : 1);
+					break;
+				case EGO_OFTHEMAGI:
+					if (o_ptr->pval < 5) o_ptr->pval = 5; //higher pvals are commonly used towards end-game, no need to hack it up further now
+					break;
+				case EGO_AGILITY:
+					if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
+					break;
+				/* melee/ranged ego (ie non-spellonly): */
+				case EGO_THIEVERY:
+					/* make them useful for weapon-users */
+					if (!(f1 & TR1_SPEED) && o_ptr->pval < 3) o_ptr->pval = 3 + rand_int(3);
+					break;
+				}
+			}
+			/* - it's a bit sad to get super-low mage staves (of Mana, +1..4) */
+			if (o_ptr->name2 == EGO_MMANA || o_ptr->name2b == EGO_MMANA)
+				//continue;
+				if (o_ptr->pval < 4) o_ptr->pval = 4;
+			//note: thievery gloves +1 speed are ok!
+		}
+
 		object_desc(0, o_name, o_ptr, FALSE, 3);
 		ovr = object_value_real(0, o_ptr);
 		fc = flag_cost(o_ptr, o_ptr->pval);
@@ -6068,12 +6115,34 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		s_printf("dpt %ld, dptval %ld, egoval %d / %d, realval %d, flags %d (%s), resf %d\n",
 		    depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name, resf);
 
-		if (!is_ammo(o_ptr->tval)) {
-			if ((ego_value1 >= depth_value) || (ego_value2 >= depth_value) ||
-			    (object_value_real(0, o_ptr) >= depth * 300)) break;
+		/* When called from create_reward() exclusively:
+		   Less harsh value checks as we know the item is _useful_ so it doesn't need to necessarily also be over the top _valuable_.
+		   Also, depth_value has randomness in it, which isn't feasible for reward-creation. */
+		if (resf & RESF_BOOST_PVAL) {
+			if (o_ptr->tval == TV_TRAPKIT) {
+				/* Trapkit egos don't cost much, so just let them all pass, as long as there is some ego/art power at least.
+				   (Side note: This will block all non-firearm-trapkits if TRAPKIT_EGO_ALL isn't defined.) */
+				if (o_ptr->name2 || o_ptr->name2b || o_ptr->name1) break;
+			} else if (!is_ammo(o_ptr->tval)) {
+				if ((ego_value1 >= depth * 21) || (ego_value2 >= depth * 21) || /* 21: ~[2000] at depth [95] */
+				    (object_value_real(0, o_ptr) >= depth * 94)) break; /* 52: ~[5000] at depth [95], 94: ~[9000] at depth [95] */
+			} else {
+				/* Ammo amount is increased in place_object */
+				if (object_value_real(0, o_ptr) >= depth) break; /* (lowered especially, but ammo isn't generated in create_reward() at all at this time anyway) */
+			}
+		/* Normal call */
 		} else {
-			/* Ammo amount is increased in place_object */
-			if (object_value_real(0, o_ptr) >= depth + 150) break;
+			if (o_ptr->tval == TV_TRAPKIT) {
+				/* Trapkit egos don't cost much, so just let them all pass, as long as there is some ego/art power at least.
+				   (Side note: This will block all non-firearm-trapkits if TRAPKIT_EGO_ALL isn't defined.) */
+				if (o_ptr->name2 || o_ptr->name2b || o_ptr->name1) break;
+			} else if (!is_ammo(o_ptr->tval)) {
+				if ((ego_value1 >= depth_value) || (ego_value2 >= depth_value) ||
+				    (object_value_real(0, o_ptr) >= depth * 300)) break;
+			} else {
+				/* Ammo amount is increased in place_object */
+				if (object_value_real(0, o_ptr) >= depth + 150) break;
+			}
 		}
 	} /* verygreat-loop end */
 
@@ -8102,6 +8171,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	bool go_heavy = TRUE; /* new special thingy: don't pick super light cloth armour if we're not specifically light-armour oriented */
 	bool caster = FALSE;
 	bool antimagic = p_ptr->s_info[SKILL_ANTIMAGIC].value;
+	object_type forge_fallback;
 
 	/* for analysis functions and afterwards for determining concrete reward */
 	int maxweight_melee = adj_str_hold[p_ptr->stat_ind[A_STR]] * 10;
@@ -8703,21 +8773,32 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	}
 	if (spell_choice) caster = TRUE;
 
+
 	/* apply_magic to that item, until we find a fitting one */
 	tries = 0;
 	i = o_ptr->k_idx;
+	invwipe(&forge_fallback);
 	do {
 		tries++;
 		invwipe(o_ptr);
 		invcopy(o_ptr, i);
 
 		/* Apply magic (allow artifacts) */
-		apply_magic_depth(base, o_ptr, base, TRUE, good, great, verygreat, resf);
+		apply_magic_depth(base, o_ptr, base, TRUE, good, great, verygreat, resf | RESF_BOOST_PVAL); //base [95]
 		s_printf("REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d), resf %d\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, resf);
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-		/* Avoid simple Dragon Helmets etc */
-		if (!o_ptr->name2 && !o_ptr->name2b && o_ptr->name1 &&
+
+		/* --- Note: None of the following checks will actually increase the item's pval.
+		       A modification like that needs to be done within apply_magic() and is indeed applied,
+		       thanks to usage of RESF_BOOST_PVAL flag above.
+		       The reason is that apply_magic() already runs important item-value and ego-value checks against the 'base' level
+		       and hence for the item to not get discarded in apply_magic() prematurely we already need to increase its pval in there
+		       so it passes the subsequent value-checks. --- */
+
+
+		/* Avoid simple Dragon Helmets, Shields etc */
+		if (!o_ptr->name2 && !o_ptr->name2b && !o_ptr->name1 &&
 		    o_ptr->tval != TV_DRAG_ARMOR && o_ptr->tval != TV_RING && o_ptr->tval != TV_AMULET) continue;
 
 		/* This should have already been checked in apply_magic_depth above itself,
@@ -8740,11 +8821,13 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Don't generate cursed randarts.. */
 		if (cursed_p(o_ptr)) continue;
 
+
 		/* Limit items to not substitute endgame (Morgoth) gear (part 1/2) */
 		/* Limit ranged weapons: No XM+XS combined. (Instead wait for EGO_EXTRA_MIGHT/EGO_EXTRA_SHOTS/EGO_NUMENOR.) */
 		if (o_ptr->name2 == EGO_LORIEN || o_ptr->name2 == EGO_HARADRIM || o_ptr->name2 == EGO_BUCKLAND ||
 		    o_ptr->name2b == EGO_LORIEN || o_ptr->name2b == EGO_HARADRIM || o_ptr->name2b == EGO_BUCKLAND)
 			continue;
+
 
 		/* melee/ranged ego (ie non-spellonly): */
 		switch (o_ptr->name2) {
@@ -8759,8 +8842,6 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (f1 & TR1_SPEED) break; /* +speed items are always fine */
 			/* exception: martial artists can't benefit from +BPR */
 			if (melee_choice == 5) continue;
-			/* make them useful for weapon-users */
-			if (o_ptr->pval < 3) o_ptr->pval = 3 + rand_int(3);
 		case EGO_SLAYING:
 			switch (p_ptr->pclass) {
 			case CLASS_WARRIOR:
@@ -8894,33 +8975,28 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* single-ego restrictions */
 		if (!o_ptr->name2b) {
 			switch (o_ptr->name2) {
-			/* don't generate items that are too worthless at low pval */
-			case EGO_INTELLIGENCE:
-			case EGO_WISDOM:
-				if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
-				break;
-			case EGO_BRILLIANCE:
-				if (o_ptr->pval < 3) o_ptr->pval = 3 + (rand_int(3) ? 0 : 1);
-				break;
-			case EGO_OFTHEMAGI:
-				if (o_ptr->pval < 5) o_ptr->pval = 5; //higher pvals are commonly used towards end-game, no need to hack it up further now
-				break;
-			case EGO_AGILITY:
-				if (o_ptr->pval < 4) o_ptr->pval = 4 + rand_int(2);
-				break;
 			/* Don't generate (possibly expensive due to high bpval or high +ac, hence passed up till here) definite crap */
-			case EGO_CONCENTRATION:
+			case EGO_LBOLDNESS: //lite
+
+			case EGO_FREE_ACTION: //gloves
+			case EGO_CHARMING:
+
+			case EGO_CONCENTRATION: //hats
+			case EGO_REGENERATION:
 			case EGO_INFRAVISION:
 			case EGO_BEAUTY:
-			case EGO_CHARMING:
 			case EGO_NOLDOR: //well, could give +1 BPR and useful in Orc Cave actually =P -- still leaving it here though because pval is limited to just +2 in e_info
 				continue;
 
+			case EGO_LEVITATION: //boots
+			case EGO_MOTION:
+				continue;
 			case EGO_SLOW_DESCENT: //has a high res, but still maybe not helpful enough
 #if 1
 				/* about 2.5x as common as STABILITY/MIRKWOOD.. so maybe adjust here: */
 				if (rand_int(2)) continue;
 #endif
+				break;
 			case EGO_STABILITY: //since EGO_SLOW_DESCENT was added too..
 #if 0 /* With a high res, these are definitely useful! (Without high res they won't pass the min-value check.) */
 				continue;
@@ -8928,7 +9004,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				break;
 #endif
 
-			case EGO_MARTIAL:
+			case EGO_MARTIAL: //body armour
 			case EGO_FROCK_PIETY:
 			case EGO_ROBE_MAGI:
 				continue;
@@ -8973,83 +9049,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 #endif
 
-		/* prevent rewards that pass the min price check but are still not useful enough: */
-#if 1
-		/* no pval +1 items, as the bonus is maybe too weak - especially: Cloak of the Magi
-		   -- note: this prevents 1h +LIFE weapons as a side-effect */
-		if (resf & RESF_NOHIVALUE) { /* eg Dungeon Keeper */
-			/* prevent */
-			if (o_ptr->pval == 1) continue;
-		} else { /* eg Highlander */
-			/* boost */
-			if (o_ptr->pval == 1 && o_ptr->name2 != EGO_LIFE && o_ptr->name2b != EGO_LIFE) o_ptr->pval = 2;
-		}
-#else
-		/* - prevent +1 speed boots! */
-		if ((o_ptr->name2 == EGO_SPEED || o_ptr->name2b == EGO_SPEED) && o_ptr->pval == 1) continue;
-#endif
+
 		/* - prevent shields of reflection as it's a bit too boring */
 		if (o_ptr->name2 == EGO_REFLECT || o_ptr->name2b == EGO_REFLECT) continue;
 
-		/* - it's a bit sad to get super-low mage staves (of Mana, +1..4) */
-		if (o_ptr->name2 == EGO_MMANA || o_ptr->name2b == EGO_MMANA)
-			//continue;
-			if (o_ptr->pval < 4) o_ptr->pval = 4;
-		//note: thievery gloves +1 speed are ok!
-
-		/* specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
-		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
-			bool rlite = (p_ptr->s_info[SKILL_R_LITE].value > 0);
-			bool rdark = (p_ptr->s_info[SKILL_R_DARK].value > 0);
-			bool rnexu = (p_ptr->s_info[SKILL_R_NEXU].value > 0);
-			bool rneth = (p_ptr->s_info[SKILL_R_NETH].value > 0);
-			bool rchao = (p_ptr->s_info[SKILL_R_CHAO].value > 0);
-			bool rmana = (p_ptr->s_info[SKILL_R_MANA].value > 0);
-			/* Note: We ignore all hard-to-acquire resistances that we cannot reasonably expect to show up on an item */
-			bool rconf = (rlite && rdark);
-			//(inertia)
-			bool relec = (rlite && rneth);
-			bool rfire = (rlite && rchao);
-			//bool rwate = (rlite && rmana);
-			//(gravity)
-			bool rcold = (rdark && rneth);
-			bool racid = (rdark && rchao);
-			bool rpois = (rdark && rmana);
-			bool rshar = (rnexu && rmana);
-			bool rsoun = (rnexu && rchao);
-			//bool rtime = (rnexu && rmana);
-			bool rdise = (rneth && rchao);
-			//bool rice  = (rneth && rmana);
-			//bool rplas = (rchao && rmana);
-			u32b relem2;
-
-			if (p_ptr->resist_fire || p_ptr->immune_fire) rfire = FALSE;
-			if (p_ptr->resist_cold || p_ptr->immune_cold) rcold = FALSE;
-			if (p_ptr->resist_acid || p_ptr->immune_acid) racid = FALSE;
-			if (p_ptr->resist_elec || p_ptr->immune_elec) relec = FALSE;
-			if (p_ptr->resist_pois || p_ptr->immune_poison) rpois = FALSE;
-			if (p_ptr->resist_lite) rlite = FALSE;
-			if (p_ptr->resist_dark) rdark = FALSE;
-			if (p_ptr->resist_nexus) rnexu = FALSE;
-			if (p_ptr->resist_neth || p_ptr->immune_neth) rneth = FALSE;
-			if (p_ptr->resist_chaos) rchao = rconf = FALSE;
-			if (p_ptr->resist_conf) rconf = FALSE;
-			if (p_ptr->resist_sound) rsoun = FALSE;
-			if (p_ptr->resist_shard) rshar = FALSE;
-			if (p_ptr->resist_disen) rdise = FALSE;
-
-			/* note: skip hard/impossible to acquire elements */
-			relem2 = ((rlite ? TR2_RES_LITE : 0x0) | (rdark ? TR2_RES_DARK : 0x0) |
-			    (rnexu ? TR2_RES_NEXUS : 0x0) | (rneth ? TR2_RES_NETHER : 0x0) |
-			    (rchao ? TR2_RES_CHAOS : 0x0) |
-			    (rfire ? TR2_RES_FIRE | TR2_IM_FIRE : 0x0) | (rcold ? TR2_RES_COLD | TR2_IM_COLD : 0x0) |
-			    (relec ? TR2_RES_ELEC | TR2_IM_ELEC : 0x0) | (racid ? TR2_RES_ACID | TR2_IM_ACID : 0x0) |
-			    (rpois ? TR2_RES_POIS | TR2_IM_POISON : 0x0) |
-			    (rconf ? TR2_RES_CONF | TR2_RES_CHAOS : 0x0) | (rsoun ? TR2_RES_SOUND : 0x0) |
-			    (rshar ? TR2_RES_SHARDS : 0x0) | (rdise ? TR2_RES_DISEN : 0x0));
-
-			if (relem2 && !(f2 & relem2)) continue;
-		}
 
 		/* If the item is a dragon scale mail and we're draconian or vampire, prevent redundant lineage/immunity.
 		   We still want to grant the player a DSM instead of just discarding it, so we'll just modify its type.
@@ -9291,8 +9294,76 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		if (o_ptr->to_d < -3) o_ptr->to_d = o_ptr->to_d / 2 - 1;
 		if (o_ptr->to_a < -3) o_ptr->to_a = o_ptr->to_a / 2 - 1;
 
+
+		/* If we made it up to here, the item is pretty much eligible enough to keep it as emergency fallback solution. */
+		forge_fallback = *o_ptr;
+
+		/* Specialty: for runemasters, if it's armour, make sure it resists (backlash) at least one of the elements we can cast :) */
+		if (p_ptr->pclass == CLASS_RUNEMASTER && is_armour(o_ptr->tval)) {
+			bool rlite = (p_ptr->s_info[SKILL_R_LITE].value > 0);
+			bool rdark = (p_ptr->s_info[SKILL_R_DARK].value > 0);
+			bool rnexu = (p_ptr->s_info[SKILL_R_NEXU].value > 0);
+			bool rneth = (p_ptr->s_info[SKILL_R_NETH].value > 0);
+			bool rchao = (p_ptr->s_info[SKILL_R_CHAO].value > 0);
+			bool rmana = (p_ptr->s_info[SKILL_R_MANA].value > 0);
+			/* Note: We ignore all hard-to-acquire resistances that we cannot reasonably expect to show up on an item */
+			bool rconf = (rlite && rdark);
+			//(inertia)
+			bool relec = (rlite && rneth);
+			bool rfire = (rlite && rchao);
+			//bool rwate = (rlite && rmana);
+			//(gravity)
+			bool rcold = (rdark && rneth);
+			bool racid = (rdark && rchao);
+			bool rpois = (rdark && rmana);
+			bool rshar = (rnexu && rmana);
+			bool rsoun = (rnexu && rchao);
+			//bool rtime = (rnexu && rmana);
+			bool rdise = (rneth && rchao);
+			//bool rice  = (rneth && rmana);
+			//bool rplas = (rchao && rmana);
+			u32b relem2;
+
+			if (p_ptr->resist_fire || p_ptr->immune_fire) rfire = FALSE;
+			if (p_ptr->resist_cold || p_ptr->immune_cold) rcold = FALSE;
+			if (p_ptr->resist_acid || p_ptr->immune_acid) racid = FALSE;
+			if (p_ptr->resist_elec || p_ptr->immune_elec) relec = FALSE;
+			if (p_ptr->resist_pois || p_ptr->immune_poison) rpois = FALSE;
+			if (p_ptr->resist_lite) rlite = FALSE;
+			if (p_ptr->resist_dark) rdark = FALSE;
+			if (p_ptr->resist_nexus) rnexu = FALSE;
+			if (p_ptr->resist_neth || p_ptr->immune_neth) rneth = FALSE;
+			if (p_ptr->resist_chaos) rchao = rconf = FALSE;
+			if (p_ptr->resist_conf) rconf = FALSE;
+			if (p_ptr->resist_sound) rsoun = FALSE;
+			if (p_ptr->resist_shard) rshar = FALSE;
+			if (p_ptr->resist_disen) rdise = FALSE;
+
+			/* note: skip hard/impossible to acquire elements */
+			relem2 = ((rlite ? TR2_RES_LITE : 0x0) | (rdark ? TR2_RES_DARK : 0x0) |
+			    (rnexu ? TR2_RES_NEXUS : 0x0) | (rneth ? TR2_RES_NETHER : 0x0) |
+			    (rchao ? TR2_RES_CHAOS : 0x0) |
+			    (rfire ? TR2_RES_FIRE | TR2_IM_FIRE : 0x0) | (rcold ? TR2_RES_COLD | TR2_IM_COLD : 0x0) |
+			    (relec ? TR2_RES_ELEC | TR2_IM_ELEC : 0x0) | (racid ? TR2_RES_ACID | TR2_IM_ACID : 0x0) |
+			    (rpois ? TR2_RES_POIS | TR2_IM_POISON : 0x0) |
+			    (rconf ? TR2_RES_CONF | TR2_RES_CHAOS : 0x0) | (rsoun ? TR2_RES_SOUND : 0x0) |
+			    (rshar ? TR2_RES_SHARDS : 0x0) | (rdise ? TR2_RES_DISEN : 0x0));
+
+			if (relem2 && !(f2 & relem2)) {
+				/* We want to 'continue'.
+				   However, if we're running out of tries, we might need to fall back onto something.. */
+				continue;
+			}
+		}
+
+		/* Passed all checks (even the ridiculous Runemaster-resistance one)! */
 		break;
-	} while (tries < (verygreat ? 20 : 100));
+	} while (tries < (verygreat ? 25 : 100));
+	/* Did a silly check make us fail? Fallback to another non-terrible solution then. */
+	if (tries == (verygreat ? 25 : 100)) {
+		s_printf("create_reward() FALLBACK!\n");
+		*o_ptr = forge_fallback;
+	}
 
 	/* more loggin' */
 	object_desc(0, o_name, o_ptr, TRUE, 2+8+16);
