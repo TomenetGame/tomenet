@@ -8643,6 +8643,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		int weapon_bpr = 0; /* try that the reward weapon does not reduce bpr compared to current bpr */
 		bool weapon_2h = FALSE; /* make the reward weapon 2-handed if we're using 2-handed */
 
+		s_printf("CREATE_REWARD: Determining sval.\n");
+
 		if (is_melee_weapon(reward_tval)) { /* melee weapon */
 			if (p_ptr->inventory[INVEN_WIELD].k_idx) {
 				i = calc_blows_obj(Ind, &p_ptr->inventory[INVEN_WIELD]);
