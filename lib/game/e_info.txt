@@ -1937,7 +1937,7 @@ X:A:35:20
 W:0:2:30:7000
 T:30:0:99
 R:100
-F:RES_NEXUS | FEATHER
+F:RES_NEXUS | RES_TELE | FEATHER
 
 # Boots of Elvenkind (leather boots only)
 N:175:of Elvenkind
