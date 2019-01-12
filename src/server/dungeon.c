@@ -7678,7 +7678,7 @@ static void process_merchant_mail(void) {
 					for (j = 1; j <= NumPlayers; j++) {
 						if (strcmp(Players[j]->accountname, mail_target_acc[i])) continue;
 						if (strcmp(Players[j]->name, mail_target[i])) {
-							msg_print(j, "\374\377yThe merchants guild has mail for another character of yours!");
+							msg_format(j, "\374\377yThe merchants guild has mail for your character '%s'!", mail_target[i]);
  #ifndef MERCHANT_MAIL_INFINITE
 							if (erase) msg_print(j, "\374\377yWarning - if you don't pick it up in time, the guild bureau will confiscate it!");
  #endif
