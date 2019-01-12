@@ -944,6 +944,8 @@ errr get_obj_num_prep(u32b resf) {
 		/* Access the index */
 		k_idx = entry->index;
 
+		if (!(resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)) continue;
+
 		/* Call the hook and adjust the probability */
 		if (hook) {
 			adj = (*hook)(k_idx, resf);
@@ -1125,8 +1127,9 @@ errr get_obj_num_prep_tval(int tval, u32b resf) {
 		if (p && (resf & RESF_STOREFLAT)) p = 100;
 
 		/* Only accept a specific tval */
-		if (k_info[table[i].index].tval != tval)
-			continue;
+		if (k_info[k_idx].tval != tval) continue;
+
+		if (!(resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)) continue;
 
 		/* Save the probability */
 		entry->prob2 = p;
@@ -4283,7 +4286,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 			if (a_ptr->flags3 & TR3_INSTA_ART) continue;
 
 			/* Cannot generate some artifacts because they can only exists in special dungeons/quests/... */
-	//		if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
+			//if ((a_ptr->flags4 & TR4_SPECIAL_GENE) && (!a_allow_special[i]) && (!vanilla_town)) continue;
 			if (a_ptr->flags4 & TR4_SPECIAL_GENE) continue;
 
 			/* Allow non-dropchosen/specialgene winner arts */
@@ -6048,7 +6051,8 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
 		if (resf & RESF_EGOHI) {
 			/* Skip single-ego slays/brands/etc.. */
-			if (ego_value1 + ego_value2 <= 6000) continue;
+			//if (ego_value1 + ego_value2 <= 6000) continue;
+			if (ego_value1 <= 6000 && ego_value2 <= 6000) continue;
 			/* Catch 3 not-so-great egos that cost 6000+ too */
 			if (!ego_value2 && (ego_value1 == EGO_KILL_UNDEAD || ego_value1 == EGO_KILL_DEMON || ego_value1 == EGO_KILL_DRAGON)) continue;
 		}
@@ -6132,7 +6136,8 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 				/* For weapons, 'emulate' RESF_EGOHI: */
 				if (is_weapon(o_ptr->tval)) {
 					/* Skip single-ego slays/brands/etc.. */
-					if (ego_value1 + ego_value2 <= 6000) continue;
+					//if (ego_value1 + ego_value2 <= 6000) continue;
+					if (ego_value1 <= 6000 && ego_value2 <= 6000) continue;
 					/* Catch 3 not-so-great egos that cost 6000+ too */
 					if (!ego_value2 && (ego_value1 == EGO_KILL_UNDEAD || ego_value1 == EGO_KILL_DEMON || ego_value1 == EGO_KILL_DRAGON)) continue;
 				}
@@ -7668,7 +7673,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 
 			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
 
-			if (!(resf & RESF_WINNER) && k_info[k_idx].flags5 & TR5_WINNERS_ONLY) continue;
+			if (!(resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)) continue;
 
 			if ((k_info[k_idx].flags5 & TR5_FORCE_DEPTH) && dlev < k_info[k_idx].level) continue;
 
@@ -7939,7 +7944,7 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 
 			if ((resf & RESF_NOTRUEART) && (k_info[k_idx].flags3 & TR3_INSTA_ART)) continue;
 
-			if (!(resf & RESF_WINNER) && k_info[k_idx].flags5 & TR5_WINNERS_ONLY) continue;
+			if (!(resf & RESF_WINNER) && (k_info[k_idx].flags5 & TR5_WINNERS_ONLY)) continue;
 
 			/* Allow all other items here - mikaelh */
 			break;
@@ -8756,8 +8761,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	/* hack - fix the shit with an ugly workaround for now (shouldn't happen anymore) */
 	if (!o_ptr->sval) {
 		for (i = 1; i < max_k_idx; i++)
-			if (k_info[i].tval == reward_tval && k_info[k_idx].weight <= reward_maxweight) {
+			if (k_info[i].tval == reward_tval && k_info[i].weight <= reward_maxweight) {
+				if (!(resf & RESF_WINNER) && (k_info[i].flags5 & TR5_WINNERS_ONLY)) continue;
 				reward_sval = k_info[i].sval;
+				s_printf("REWARD_HACK: sval:=%d.\n", reward_sval);
 				break;
 			}
 		invcopy(o_ptr, lookup_kind(reward_tval, reward_sval));
@@ -11548,8 +11555,8 @@ u32b make_resf(player_type *p_ptr) {
 			f |= RESF_NOTRUEART; /* player is a fallen winner? Then don't find true arts! */
 			/* since fallen kings are already kinda punished by their status, cut them some slack here?: */
 			if (p_ptr->lev >= 50) {
-//				f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items, if player won once but can't get true arts */
-//				f |= RESF_LIFE; /* allowed to find +LIFE artifacts; hack: and WINNERS_ONLY artifacts too */
+				//f |= RESF_WINNER; /* allow generation of WINNERS_ONLY items, if player won once but can't get true arts */
+				//f |= RESF_LIFE; /* allowed to find +LIFE artifacts; hack: and WINNERS_ONLY artifacts too */
 			}
 		}
 	}
