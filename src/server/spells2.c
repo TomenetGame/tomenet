@@ -5439,8 +5439,8 @@ bool probing(int Ind) {
 				msg_format(Ind, "%^s (%d) has unknown hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->ac, m_ptr->mspeed - 110);
 			else
 				msg_format(Ind, "%^s (%d) has %d hp, %d ac, %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
-			/* include m_idx for admins */
-			if (is_admin(p_ptr)) msg_format(Ind, "%^s (Lv%d,%d) %s.", m_name, m_ptr->level, i, buf);
+			/* include m_idx and ego for admins */
+			if (is_admin(p_ptr)) msg_format(Ind, "%^s (Lv%d,%d,%d) %s.", m_name, m_ptr->level, i, m_ptr->ego, buf);
 			else msg_format(Ind, "%^s (Lv%d) %s.", m_name, m_ptr->level, buf);
 
 			/* Learn all of the non-spell, non-treasure flags */
