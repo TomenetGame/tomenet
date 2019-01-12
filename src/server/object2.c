@@ -6046,7 +6046,12 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		if (o_ptr->name2) ego_value1 = e_info[o_ptr->name2].cost; else ego_value1 = 0;
 		if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
-		if ((resf & RESF_EGOHI) && ego_value1 + ego_value2 < 9000) continue;
+		if (resf & RESF_EGOHI) {
+			/* Skip single-ego slays/brands/etc.. */
+			if (ego_value1 + ego_value2 <= 6000) continue;
+			/* Catch 3 not-so-great egos that cost 6000+ too */
+			if (!ego_value2 && (ego_value1 == EGO_KILL_UNDEAD || ego_value1 == EGO_KILL_DEMON || ego_value1 == EGO_KILL_DRAGON)) continue;
+		}
 
 		/* "verygreat" check: */
 		/* 2000 to exclude res, light, reg, etc */
@@ -6124,6 +6129,14 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 				   (Side note: This will block all non-firearm-trapkits if TRAPKIT_EGO_ALL isn't defined.) */
 				if (o_ptr->name2 || o_ptr->name2b || o_ptr->name1) break;
 			} else if (!is_ammo(o_ptr->tval)) {
+				/* For weapons, 'emulate' RESF_EGOHI: */
+				if (is_weapon(o_ptr->tval)) {
+					/* Skip single-ego slays/brands/etc.. */
+					if (ego_value1 + ego_value2 <= 6000) continue;
+					/* Catch 3 not-so-great egos that cost 6000+ too */
+					if (!ego_value2 && (ego_value1 == EGO_KILL_UNDEAD || ego_value1 == EGO_KILL_DEMON || ego_value1 == EGO_KILL_DRAGON)) continue;
+				}
+				/* Skip too cheap stuff */
 				if ((ego_value1 >= depth * 21) || (ego_value2 >= depth * 21) || /* 21: ~[2000] at depth [95] */
 				    (object_value_real(0, o_ptr) >= depth * 94)) break; /* 52: ~[5000] at depth [95], 94: ~[9000] at depth [95] */
 			} else {
