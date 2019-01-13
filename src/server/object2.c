@@ -6050,11 +6050,11 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		if (o_ptr->name2) ego_value1 = e_info[o_ptr->name2].cost; else ego_value1 = 0;
 		if (o_ptr->name2b) ego_value2 = e_info[o_ptr->name2b].cost; else ego_value2 = 0;
 		if (resf & RESF_EGOHI) {
-			/* Skip single-ego slays/brands/etc.. */
+			/* Skip weak egos such as slays/brands/basic resists etc if not combined with a more valuable ego at least */
 			//if (ego_value1 + ego_value2 <= 6000) continue;
 			if (ego_value1 <= 6000 && ego_value2 <= 6000) continue;
-			/* Catch 3 not-so-great egos that cost 6000+ too */
-			if (!ego_value2 && (ego_value1 == EGO_KILL_UNDEAD || ego_value1 == EGO_KILL_DEMON || ego_value1 == EGO_KILL_DRAGON)) continue;
+			/* Catch 3 not-so-great single-egos that cost 6000+ too */
+			if (!ego_value2 && (o_ptr->name2 == EGO_KILL_UNDEAD || o_ptr->name2 == EGO_KILL_DEMON || o_ptr->name2 == EGO_KILL_DRAGON)) continue;
 		}
 
 		/* "verygreat" check: */
@@ -6104,9 +6104,10 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 				}
 			}
 			/* - it's a bit sad to get super-low mage staves (of Mana, +1..4) */
-			if (o_ptr->name2 == EGO_MMANA || o_ptr->name2b == EGO_MMANA)
+			if (o_ptr->name2 == EGO_MMANA || o_ptr->name2b == EGO_MMANA) {
 				//continue;
 				if (o_ptr->pval < 4) o_ptr->pval = 4;
+			}
 			//note: thievery gloves +1 speed are ok!
 		}
 
@@ -6121,7 +6122,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			resf_fallback = FALSE;
 		} else continue;
 
-		s_printf("dpt %ld, dptval %ld, egoval %d / %d, realval %d, flags %d (%s), resf %d\n",
+		s_printf(" dpt %ld, dptval %ld, egoval %d / %d, realval %d, flags %d (%s), resf %d\n",
 		    depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name, resf);
 
 		/* When called from create_reward() exclusively:
@@ -6133,17 +6134,22 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 				   (Side note: This will block all non-firearm-trapkits if TRAPKIT_EGO_ALL isn't defined.) */
 				if (o_ptr->name2 || o_ptr->name2b || o_ptr->name1) break;
 			} else if (!is_ammo(o_ptr->tval)) {
-				/* For weapons, 'emulate' RESF_EGOHI: */
+				/* Specifically for weapons 'emulate' RESF_EGOHI: */
 				if (is_weapon(o_ptr->tval)) {
-					/* Skip single-ego slays/brands/etc.. */
+					/* Skip weak egos such as slays/brands/etc if not combined with a more valuable ego at least  */
 					//if (ego_value1 + ego_value2 <= 6000) continue;
 					if (ego_value1 <= 6000 && ego_value2 <= 6000) continue;
-					/* Catch 3 not-so-great egos that cost 6000+ too */
-					if (!ego_value2 && (ego_value1 == EGO_KILL_UNDEAD || ego_value1 == EGO_KILL_DEMON || ego_value1 == EGO_KILL_DRAGON)) continue;
+					/* Catch 3 not-so-great egos that cost 6000+ too unless combined with another ego of any type.
+					   Note that this still allows non-very-useful combos such as <Frozen Weapon of *Slay Undead*>. */
+					if (!ego_value2 && (o_ptr->name2 == EGO_KILL_UNDEAD || o_ptr->name2 == EGO_KILL_DEMON || o_ptr->name2 == EGO_KILL_DRAGON)) continue;
 				}
-				/* Skip too cheap stuff */
+				/* Skip too cheap stuff (not using depth_value here, see introductory comment further above) */
+#if 0 /* 0'ed: Ego value was tested for weapons already, and further usefulness is tested in detail in create_reward() */
 				if ((ego_value1 >= depth * 21) || (ego_value2 >= depth * 21) || /* 21: ~[2000] at depth [95] */
 				    (object_value_real(0, o_ptr) >= depth * 94)) break; /* 52: ~[5000] at depth [95], 94: ~[9000] at depth [95] */
+#else /* Ensure expensive ego price or at least good enchantments (ego usability will be checked in create_reward() anyway) */
+				if (object_value_real(0, o_ptr) >= depth * 94) break; /* 52: ~[5000] at depth [95], 94: ~[9000] at depth [95] */
+#endif
 			} else {
 				/* Ammo amount is increased in place_object */
 				if (object_value_real(0, o_ptr) >= depth) break; /* (lowered especially, but ammo isn't generated in create_reward() at all at this time anyway) */
@@ -6168,13 +6174,15 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	   available is a bad one (0 value) or vice versa.. */
 	if ((k_info[o_ptr->k_idx].flags6 & TR6_INSTA_EGO) && !o_ptr->name2 && !o_ptr->name2b) {
 		invwipe(o_ptr);
+		s_printf("..failed!\n");
 		return; /* failed to generate */
 	}
+	if (i == 25) s_printf("(out of tries)\n");
 
 	if (verygreat) {
 		if (resf_fallback) {
 			/* Fallback to lowest value item in case resf proved too strict - mikaelh */
-			s_printf("lowest value fallback used in apply_magic (resf = %#x)\n", resf);
+			s_printf(" lowest value fallback used in apply_magic (resf = %#x)\n", resf);
 
 			object_copy(o_ptr, o_ptr_lowest);
 
@@ -6186,12 +6194,12 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			fc = flag_cost(o_ptr, o_ptr->pval);
 
 			/* Dump information about the item */
-			s_printf("dpt %ld, dptval %ld, egoval %d / %d, realval %d, flags %d (%s)\n",
+			s_printf(" dpt %ld, dptval %ld, egoval %d / %d, realval %d, flags %d (%s)\n",
 			depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name);
 
-			s_printf("taken\n");
+			s_printf("..taken.\n");
 		} else {
-		        s_printf("taken\n");
+			s_printf("..taken.\n");
 			object_copy(o_ptr, o_ptr_highest);
 		}
 	}
@@ -8209,6 +8217,8 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	int force_tval = o_ptr->tval;
 
 
+	s_printf("CREATE_REWARD: '%s'['%s'] (L%d %s %s)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, get_prace(p_ptr), class_info[p_ptr->prace].title);
+
 	/* Anti-cheeze, added specifically for 'antimagic' actually:
 	   Don't allow undoing skill points after receiving a reward. */
 	p_ptr->reskill_possible = FALSE;
@@ -8242,7 +8252,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		    (armor_choice == 2 || armor_choice == 3))
 			armor_choice = 1;
 	} else { /* player didn't distribute ANY skill points, sigh */
-		s_printf("CREATE_REWARD: no skills\n");
+		s_printf(" CREATE_REWARD: no skills\n");
 		melee_choice = 0;
 		mha = FALSE;
 		rha = FALSE;
@@ -8412,7 +8422,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 	/* admin-hacked? */
 	if (force_tval) {
-		s_printf("CREATE_REWARD: forced tval %d.\n", force_tval);
+		s_printf(" CREATE_REWARD: forced tval %d.\n", force_tval);
 		reward_tval = force_tval;
 
 		/* reverse-hack choice parms just for cleanliness */
@@ -8534,14 +8544,14 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 #endif
 		    ) {
 			/* shouldn't happen, but.. */
-			s_printf("CREATE_REWARD_PARANOIA: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+			s_printf(" CREATE_REWARD_PARANOIA: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
 			    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
 			    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
 			    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
 			invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
 			o_ptr->note = quark_add("a Cake");
 			o_ptr->xtra1 = 15;
-			s_printf("REWARD_CREATED: (%s) a Cake (1)\n", p_ptr->name);
+			s_printf(" REWARD_CREATED: (%s) a Cake (1)\n", p_ptr->name);
 			/* serious alternatives: digger, magic device, a set of consumables */
 			return;
 		}
@@ -8568,7 +8578,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				/* we cannot wear ANY item? =P */
 				if (!wearables) {
 					/* this is silly, someone polymorphed into limbless form to turn in the reward deed?.. */
-					s_printf("CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+					s_printf(" CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
 					    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
 					    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
 					    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
@@ -8576,14 +8586,14 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 					invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
 					o_ptr->note = quark_add("a Cake");
 					o_ptr->xtra1 = 15;
-					s_printf("REWARD_CREATED: (%s) a Cake (2)\n", p_ptr->name);
+					s_printf(" REWARD_CREATED: (%s) a Cake (2)\n", p_ptr->name);
 					/* serious alternatives: digger, magic device, a set of consumables */
 					return;
 				}
 #else
 					/* let's not make this 'exploitable' to obtain special things */
 					reward_tval = TV_CLOAK;
-					s_printf("REWARD_CANNOT_WEAR: default to TV_CLOAK.\n");
+					s_printf(" REWARD_CANNOT_WEAR: default to TV_CLOAK.\n");
 				} else
 #endif
 				{
@@ -8591,7 +8601,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 					if (i <= wearable[0]) reward_tval = TV_LITE;
 					else if (i <= wearable[0] + wearable[1]) reward_tval = TV_AMULET;
 					else if (i <= wearable[0] + wearable[1] + wearable[2]) reward_tval = TV_RING;
-					s_printf("REWARD_CANNOT_WEAR: changed to %d\n", reward_tval);
+					s_printf(" REWARD_CANNOT_WEAR: changed to %d\n", reward_tval);
 				}
 			} else { /* we can wear some sort of armour */
 				i = randint(wearables);
@@ -8610,7 +8620,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				else if (i <= wearable[0] + wearable[1] + wearable[2]) reward_tval = (rand_int(3) ? TV_HELM : TV_CROWN);
 				else if (i <= wearable[0] + wearable[1] + wearable[2] + wearable[3]) reward_tval = TV_GLOVES;
 				else if (i <= wearable[0] + wearable[1] + wearable[2] + wearable[3] + wearable[4]) reward_tval = TV_BOOTS;
-				s_printf("REWARD_CANNOT_WEAR: changed to %d\n", reward_tval);
+				s_printf(" REWARD_CANNOT_WEAR: changed to %d\n", reward_tval);
 			}
 		}
 
@@ -8620,19 +8630,19 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* for other items: */
 		else {
 			/* shouldn't happen, but.. */
-			s_printf("CREATE_REWARD_PARANOIA: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+			s_printf(" CREATE_REWARD_PARANOIA: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
 			    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
 			    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
 			    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
 			invcopy(o_ptr, lookup_kind(TV_SPECIAL, SV_CUSTOM_OBJECT));
 			o_ptr->note = quark_add("a Cake");
 			o_ptr->xtra1 = 15;
-			s_printf("REWARD_CREATED: (%s) a Cake (3)\n", p_ptr->name);
+			s_printf(" REWARD_CREATED: (%s) a Cake (3)\n", p_ptr->name);
 			/* serious alternatives: digger, magic device, a set of consumables */
 			return;
 		}
 	} else
-		s_printf("CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
+		s_printf(" CREATE_REWARD: body %d, tv,sv = %d,%d; final %d, rha %d, mha %d, maxweights: a,m,r,s %d,%d,%d,%d, choices: m,r,a,s,i %d,%d,%d,%d,%d\n",
 		    p_ptr->body_monster, tmp_obj.tval, tmp_obj.sval, final_choice, rha, mha,
 		    maxweight_armor, maxweight_melee, maxweight_ranged, maxweight_shield,
 		    melee_choice, ranged_choice, armor_choice, spell_choice, misc_choice);
@@ -8643,7 +8653,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		int weapon_bpr = 0; /* try that the reward weapon does not reduce bpr compared to current bpr */
 		bool weapon_2h = FALSE; /* make the reward weapon 2-handed if we're using 2-handed */
 
-		s_printf("CREATE_REWARD: Determining sval.\n");
+		s_printf(" CREATE_REWARD: Determining sval.\n");
 
 		if (is_melee_weapon(reward_tval)) { /* melee weapon */
 			if (p_ptr->inventory[INVEN_WIELD].k_idx) {
@@ -8756,7 +8766,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	}
 
 	/* debug log */
-	s_printf("REWARD_RAW: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d%s)\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, go_heavy ? " go_heavy" : "");
+	s_printf(" REWARD_RAW: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d%s)\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, go_heavy ? " go_heavy" : "");
 	if (is_admin(p_ptr))
 		msg_format(Ind, "Reward: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d%s)", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, go_heavy ? " go_heavy" : "");
 
@@ -8766,11 +8776,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (k_info[i].tval == reward_tval && k_info[i].weight <= reward_maxweight) {
 				if (!(resf & RESF_WINNER) && (k_info[i].flags5 & TR5_WINNERS_ONLY)) continue;
 				reward_sval = k_info[i].sval;
-				s_printf("REWARD_HACK: sval:=%d.\n", reward_sval);
+				s_printf(" REWARD_HACK: sval:=%d.\n", reward_sval);
 				break;
 			}
 		invcopy(o_ptr, lookup_kind(reward_tval, reward_sval));
-		s_printf("REWARD_UGLY (%d,%d)\n", o_ptr->tval, o_ptr->sval);
+		s_printf(" REWARD_UGLY (%d,%d)\n", o_ptr->tval, o_ptr->sval);
 	}
 
 	/* are we definitely going to use spells? (used for AM/MPDrain check) */
@@ -8807,7 +8817,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 		/* Apply magic (allow artifacts) */
 		apply_magic_depth(base, o_ptr, base, TRUE, good, great, verygreat, resf | RESF_BOOST_PVAL); //base [95]
-		s_printf("REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d), resf %d\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, resf);
+		if (!o_ptr->tval) {
+			s_printf(" REWARD_WIPED\n");
+			continue; //shouldn't happen for this specific apply_magic() call, but better safe than sorry anyway [paranoia] */
+		}
+		s_printf(" REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d), resf %d\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, resf);
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 
@@ -8840,9 +8854,10 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 250000)) continue;
 		}
 
+		s_printf(" REWARD_PASSING (0)\n");
+
 		/* Don't generate cursed randarts.. */
 		if (cursed_p(o_ptr)) continue;
-
 
 		/* Limit items to not substitute endgame (Morgoth) gear (part 1/2) */
 		/* Limit ranged weapons: No XM+XS combined. (Instead wait for EGO_EXTRA_MIGHT/EGO_EXTRA_SHOTS/EGO_NUMENOR.) */
@@ -8850,65 +8865,79 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		    o_ptr->name2b == EGO_LORIEN || o_ptr->name2b == EGO_HARADRIM || o_ptr->name2b == EGO_BUCKLAND)
 			continue;
 
+		/* Prevent too boring single-egos, even if their/item's monetary value is high or anything.. */
+		if (!o_ptr->name2b) {
+			switch (o_ptr->name2) {
+			//lite
+			case EGO_LBOLDNESS:
 
-		/* melee/ranged ego (ie non-spellonly): */
+			//gloves
+			case EGO_FREE_ACTION:
+			case EGO_CHARMING:
+
+			//hats
+			case EGO_CONCENTRATION:
+			case EGO_REGENERATION:
+			case EGO_INFRAVISION:
+			case EGO_BEAUTY:
+			case EGO_NOLDOR: //well, could give +1 BPR and useful in Orc Cave actually =P -- still leaving it here though because pval is limited to just +2 in e_info
+
+			//boots
+			case EGO_LEVITATION:
+			case EGO_MOTION:
+			//case EGO_JUMPING: //hmmm
+
+			//body armour
+			case EGO_MARTIAL:
+			case EGO_FROCK_PIETY:
+			case EGO_ROBE_MAGI:
+
+			case EGO_REFLECT: //shields
+				continue;
+			}
+		}
+
+		/* melee/ranged ego handling, not suited for spells-only: */
 		switch (o_ptr->name2) {
 		case EGO_AGILITY:
 			/* exception: martial artists can't benefit from +BPR */
 			if (melee_choice == 5) continue;
+			break;
 		case EGO_COMBAT:
-			if (o_ptr->name2 == EGO_COMBAT //(exclude EGO_AGILITY from above)
-			    && (spell_choice || ranged_choice) && !melee_choice)
-				continue;
+			if ((spell_choice || ranged_choice) && !melee_choice) continue;
+			break;
 		case EGO_THIEVERY:
 			if (f1 & TR1_SPEED) break; /* +speed items are always fine */
 			/* exception: martial artists can't benefit from +BPR */
-			if (melee_choice == 5) continue;
+			if (melee_choice == 5 || !melee_choice) continue;
+			break;
 		case EGO_SLAYING:
-			switch (p_ptr->pclass) {
-			case CLASS_WARRIOR:
-			case CLASS_MIMIC:
-			case CLASS_RANGER:
-			case CLASS_ROGUE:
-			case CLASS_MINDCRAFTER:
-#ifdef ENABLE_CPRIEST
-			case CLASS_CPRIEST:
-#endif
-			case CLASS_PRIEST:
-			case CLASS_PALADIN:
-#ifdef ENABLE_DEATHKNIGHT
-			case CLASS_DEATHKNIGHT:
-#endif
-#ifdef ENABLE_HELLKNIGHT
-			case CLASS_HELLKNIGHT:
-#endif
-			case CLASS_DRUID:
-				/* ok, we pay heed to weird skilling aka all-spells MC */
-				if (spell_choice && !melee_choice && !ranged_choice
-				    && !o_ptr->name2b) //no double-egos exist for this combo though, iirc, w/e
-					continue;
-				break;
-			default:
-				if (!o_ptr->name2b) //no double-egos exist for this combo though, iirc, w/e
-					continue;
-			}
+			if (spell_choice && !melee_choice && !ranged_choice
+			    && !o_ptr->name2b) //no double-egos exist for this combo though, iirc, w/e
+				continue;
+			break;
 		//EGO_POWER is treated as generically beneficial
 		}
+
+		s_printf(" REWARD_PASSING (1)\n");
 
 		/* analyze class (so far nothing is done here, but everything is determined by skills instead) -
 		   headgear ego: */
 		switch (p_ptr->pclass) {
+		/* Non-spell-users - nothing to handle here */
 		case CLASS_WARRIOR:
 		case CLASS_ARCHER:
 			break;
-		case CLASS_SHAMAN:
-			if (!melee_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue;
+		/* WIS/INT users cascade */
 		case CLASS_ADVENTURER:
 			if ((p_ptr->stat_max[A_INT] > p_ptr->stat_max[A_WIS]) &&
 			    (o_ptr->name2 == EGO_WISDOM && !o_ptr->name2b)) continue;
 			if ((p_ptr->stat_max[A_WIS] > p_ptr->stat_max[A_INT]) &&
 			    (o_ptr->name2 == EGO_INTELLIGENCE && !o_ptr->name2b)) continue;
+		case CLASS_SHAMAN:
+			if (!melee_choice && !ranged_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue; //ranged_choice for Adventurers falling through
 			break;
+		/* INT users cascade */
 		case CLASS_MAGE:
 			if ((o_ptr->name2 == EGO_MIGHT || o_ptr->name2 == EGO_LORDLINESS) && !o_ptr->name2b) continue;
 		case CLASS_RUNEMASTER:
@@ -8918,6 +8947,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		case CLASS_MINDCRAFTER:
 			if (o_ptr->name2 == EGO_WISDOM && !o_ptr->name2b) continue;
 			break;
+		/* WIS users cascade */
 #ifdef ENABLE_CPRIEST
 		case CLASS_CPRIEST:
 #endif
@@ -8935,20 +8965,6 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			break;
 		}
 
-#if 0 /* let the hres/pres check take care of this */
-		if (o_ptr->name2 == EGO_MIRKWOOD && !o_ptr->name2b) {
-			if (p_ptr->prace == RACE_VAMPIRE ||
-			    (p_ptr->prace == RACE_DRACONIAN && p_ptr->ptrait == TRAIT_GREEN))
-				continue;
-		}
-#endif
-
-		/* no mana-draining weapons for mana users... */
-		if (p_ptr->msg &&
-		    (o_ptr->name2 == EGO_ELEMENTAL || o_ptr->name2b == EGO_ELEMENTAL ||
-		    o_ptr->name2 == EGO_FURY || o_ptr->name2b == EGO_FURY))
-			continue;
-
 		/* no anti-undead items for vampires */
 		if (anti_undead(o_ptr, p_ptr)) continue;
 		/* no anti-demon items for hell knights */
@@ -8956,20 +8972,27 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* no BLESSED items for evil */
 		if (p_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED)) continue;
 
-		/* Don't generate NO_MAGIC or DRAIN_MANA items if we do use magic */
-		if (caster) {
+		/* Don't generate NO_MAGIC or DRAIN_MANA items if we do use magic. Or simply have mana even? */
+		if (caster
+#if 0 /* disabled to actually allow for example a melee+magicdevices ranger who does not use his MP! :o */
+		    || p_ptr->msp
+#endif
+		    ) {
 			if (f5 & TR5_DRAIN_MANA) continue;
 			if (f3 & TR3_NO_MAGIC) continue;
 		}
 		/* Don't generate +MANA items for AM */
-		else if (antimagic && (f1 & TR1_MANA)) continue;
+		if (antimagic && (f1 & TR1_MANA)) continue;
 
 		/* Don't generate DRAIN_HP items (Spectral) - except for Vampires who are unaffected */
 		if (f5 & TR5_DRAIN_HP) {
 			if ((o_ptr->name2 != EGO_SPECTRAL && o_ptr->name2b != EGO_SPECTRAL) || p_ptr->prace != RACE_VAMPIRE) continue;
 		}
+
 		/* Don't generate problematic items at all */
 		if (f3 & (TR3_AGGRAVATE | TR3_DRAIN_EXP | TR3_NO_TELE)) continue;
+
+		s_printf(" REWARD_PASSING (2)\n");
 
 		/* Don't generate too useless rewards depending on intrinsic character abilities */
 		if ((p_ptr->hold_life || p_ptr->free_act) &&
@@ -8994,42 +9017,15 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			}
 		}
 
-		/* single-ego restrictions */
+		/* single-ego restrictions: Rarity adjustments */
 		if (!o_ptr->name2b) {
 			switch (o_ptr->name2) {
-			/* Don't generate (possibly expensive due to high bpval or high +ac, hence passed up till here) definite crap */
-			case EGO_LBOLDNESS: //lite
-
-			case EGO_FREE_ACTION: //gloves
-			case EGO_CHARMING:
-
-			case EGO_CONCENTRATION: //hats
-			case EGO_REGENERATION:
-			case EGO_INFRAVISION:
-			case EGO_BEAUTY:
-			case EGO_NOLDOR: //well, could give +1 BPR and useful in Orc Cave actually =P -- still leaving it here though because pval is limited to just +2 in e_info
-				continue;
-
-			case EGO_LEVITATION: //boots
-			case EGO_MOTION:
-				continue;
-			case EGO_SLOW_DESCENT: //has a high res, but still maybe not helpful enough
-#if 1
+			case EGO_SLOW_DESCENT: //probably useful enough with its high res
 				/* about 2.5x as common as STABILITY/MIRKWOOD.. so maybe adjust here: */
 				if (rand_int(2)) continue;
-#endif
 				break;
-			case EGO_STABILITY: //since EGO_SLOW_DESCENT was added too..
-#if 0 /* With a high res, these are definitely useful! (Without high res they won't pass the min-value check.) */
-				continue;
-#else
+			case EGO_STABILITY: //useful enough, just keeping it here to easily adjust its frequency if needed
 				break;
-#endif
-
-			case EGO_MARTIAL: //body armour
-			case EGO_FROCK_PIETY:
-			case EGO_ROBE_MAGI:
-				continue;
 			}
 		}
 
@@ -9059,22 +9055,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 #endif
 
-		/* a reward should have some value: */
-		if (object_value_real(0, o_ptr) < 5000) continue; //note that apply_magic() (via RESF_BOOST_PVAL) already checks for >=~9000, so this is probably redundant at this point..
-#if 0 /* these no-weak-ego checks are basically already covered by above EGO_ checks. Here they actually hinder trap kit generation badly, so these should just remain disabled. */
-    /* ..actually this kind of check is already done in apply_magic() too (see RESF_BOOST_PVAL) */
-		if (o_ptr->name2) { /* should always be true actually! just paranoia */
-			if (e_info[o_ptr->name2].cost <= 2000) {
-				if (o_ptr->name2b) {
-					if (e_info[o_ptr->name2b].cost <= 2000) continue;
-				} else continue;
-			}
-		}
-#endif
-
-
-		/* - prevent shields of reflection as it's a bit too boring */
-		if (o_ptr->name2 == EGO_REFLECT || o_ptr->name2b == EGO_REFLECT) continue;
+		s_printf(" REWARD_PASSING (3)\n");
 
 
 		/* If the item is a dragon scale mail and we're draconian or vampire, prevent redundant lineage/immunity.
@@ -9384,13 +9365,13 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	} while (tries < (verygreat ? 25 : 100));
 	/* Did a silly check make us fail? Fallback to another non-terrible solution then. */
 	if (tries == (verygreat ? 25 : 100)) {
-		s_printf("create_reward() FALLBACK!\n");
+		s_printf(" create_reward() FALLBACK!\n");
 		*o_ptr = forge_fallback;
 	}
 
 	/* more loggin' */
 	object_desc(0, o_name, o_ptr, TRUE, 2+8+16);
-	s_printf("REWARD_CREATED: (%s) %s\n", p_ptr->name, o_name);
+	s_printf(" REWARD_CREATED: (%s) %s\n", p_ptr->name, o_name);
 
 	/* Give the object to the player who is to be rewarded */
 /*	inven_carry(Ind, o_ptr); <- not neccessarily >;) */
@@ -9686,7 +9667,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 		     && !(allow_stairs && is_stair(c_ptr->feat))
 #endif
 		     ))
-		        continue;
+			continue;
 
 		/* not on open house doors! -
 		   added this to prevent items landing ON an open door of a list house,
@@ -9771,7 +9752,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 
 		/* Message */
 		/*msg_format("The %s disappear%s.",
-		           o_name, ((o_ptr->number == 1) ? "s" : ""));*/
+			   o_name, ((o_ptr->number == 1) ? "s" : ""));*/
 
 #if 1 /* extra logging for artifact timeout debugging */
 		if (true_artifact_p(o_ptr) && o_ptr->owner) {
@@ -10640,7 +10621,7 @@ bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 s16b inven_carry(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
-	int         i, j, k;
+	int	 i, j, k;
 	int		n = -1;
 
 	object_type	*j_ptr;
@@ -11756,8 +11737,8 @@ void determine_artifact_timeout(int a_idx, struct worldpos *wpos) {
 s_printf("A_TIMEOUT: Called (%d)!\n", a_idx);
 
 	i = lookup_kind(a_info[a_idx].tval, a_info[a_idx].sval);
-        if (i) invcopy(&forge, i);
-        else { /* paranoia */
+	if (i) invcopy(&forge, i);
+	else { /* paranoia */
 		s_printf("DETERMINE_ARTIFACT_TIMEOUT: Cannot find item %d,%d (aidx %d)!\n", a_info[a_idx].tval, a_info[a_idx].sval, a_idx);
 		/* try to hack it manually, really paranoid */
 		forge.k_idx = 0;
@@ -11962,8 +11943,8 @@ void erase_artifact(int a_idx) {
 		}
 	}
 	/* unhack */
-        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
-        KILL(p_ptr, player_type);
+	C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+	KILL(p_ptr, player_type);
 	NumPlayers--;
 
 	/* Paranoia: Failed to locate the artifact. Shouldn't happen! */
@@ -12153,8 +12134,8 @@ void hack_particular_item(void) {
 		}
 	}
 	/* unhack */
-        C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
-        KILL(p_ptr, player_type);
+	C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
+	KILL(p_ptr, player_type);
 	NumPlayers--;
 
 	s_printf("hack_particular_item: found+replaced %d occurances\n", found);
