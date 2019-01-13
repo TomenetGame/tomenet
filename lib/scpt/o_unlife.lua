@@ -218,7 +218,7 @@ OIMBUE = add_spell {
 	["fail"] = 	-70,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			set_melee_brand(Ind, randint(10) + 10 + get_level(Ind, OIMBUE, 25), TBRAND_VAMP, 10)
+			set_melee_brand(Ind, randint(10) + 10 + get_level(Ind, OIMBUE, 25), TBRAND_VAMPIRIC, 10)
 			end,
 	["info"] = 	function()
 			return ""
