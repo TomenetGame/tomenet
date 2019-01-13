@@ -4104,6 +4104,10 @@ void shape_Maia_skills(int Ind) {
 			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1400 * 7) / 10 * 3);
 			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1400 * 7) / 10 * 3);
 			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3);
+
+			p_ptr->s_info[SKILL_SCHOOL_MAGIC].dev = TRUE; //expand Wizardry, to notice newly acquired Udun school (EXP, compare tables.c)
+			do_Maia_skill2(Ind, SKILL_UDUN, 0, 368); //will get x2 below
+
 			Send_reliable(p_ptr->conn);
 		}
 #endif
@@ -4145,6 +4149,10 @@ void shape_Maia_skills(int Ind) {
 			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1500 * 7) / 10 * 3);
 			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1300 * 7) / 10 * 3);
 			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3);
+
+			p_ptr->s_info[SKILL_SCHOOL_MAGIC].dev = TRUE; //expand Wizardry, to notice newly acquired Udun school (EXP, compare tables.c)
+			do_Maia_skill2(Ind, SKILL_UDUN, 0, 515); //will get x2 below
+
 			Send_reliable(p_ptr->conn);
 		}
 #endif
