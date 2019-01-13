@@ -5020,9 +5020,11 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->tim_meditation)
 		(void)set_tim_meditation(Ind, p_ptr->tim_meditation - minus);
 
-	/* Hack -- Wraithform */
-	if (p_ptr->tim_wraith)
-		(void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus_magic);
+	/* Hack -- Wraithform/Wraithstep */
+	if (p_ptr->tim_wraith) {
+		if (p_ptr->tim_extra & 0x1) (void)set_tim_wraithstep(Ind, p_ptr->tim_wraith - minus_magic);
+		else (void)set_tim_wraith(Ind, p_ptr->tim_wraith - minus_magic);
+	}
 
 	/* Hack -- Hallucinating */
 	if (p_ptr->image) {
