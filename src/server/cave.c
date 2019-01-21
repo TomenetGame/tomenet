@@ -7880,6 +7880,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	c_ptr->feat = feat;
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 
+	/* Area of view for a player might have changed, among other consequences.. */
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
@@ -7903,6 +7904,9 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 
 		//p_ptr->redraw |= PR_MAP;
 		//p_ptr->window |= PW_OVERHEAD;
+
+		/* Wraithstep spell might stop */
+		if (p_ptr->tim_wraith && (p_ptr->tim_extra & 0x1)) set_tim_wraithstep(i, 0);
 	}
 	return TRUE;
 }
