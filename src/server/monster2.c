@@ -3191,7 +3191,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");
 		}
 
 		/* Hack: Bahamut is restricted to Cloud Planes only, upper levels only */
-		if (r_idx == RI_BAHAMUT && (dlev < 144 || dlev > 149)) return 53;
+		if (r_idx == RI_BAHAMUT && (dlev < 144 || dlev > 149)) return 53; //(DI_CLOUD_PLANES + depth restriction)
 
 		/* Couple of Nether Realm-only monsters hardcoded here */
 		if ((r_ptr->flags8 & RF8_NETHER_REALM) && !netherrealm_level)
