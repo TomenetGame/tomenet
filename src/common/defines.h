@@ -655,8 +655,11 @@
  * OPTION: Maximum number of "quarks" (see "io.c")
  * Default: assume at most 512 different inscriptions are used
  * Hm, 8k worked well for the past 10 years :) but now not anymore..
+ * 2019-04-14: 16k is not enough either anymore :D extending to 32k.
+ *  Possibly the last increase happened before the world reshaping,
+ *  which added many more houses for item storage.
  */
-#define QUARK_MAX	16384
+#define QUARK_MAX	32768
 
 /*
  * OPTION: Maximum number of messages to remember (see "io.c")
