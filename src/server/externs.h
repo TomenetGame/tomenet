@@ -46,7 +46,7 @@ extern int local_file_ack(int ind, unsigned short fnum);
 extern int local_file_err(int ind, unsigned short fnum);
 extern void do_xfers(void);
 extern void kill_xfers(int ind);
-extern int check_return(int ind, unsigned short fnum, unsigned long sum, int Ind);
+extern int check_return(int ind, unsigned short fnum, u32b sum, int Ind);
 extern int check_return_new(int ind, unsigned short fnum, const unsigned char digest[16], int Ind);
 extern int remote_update(int ind, cptr fname, unsigned short chunksize);
 extern void remote_update_lua(int Ind, cptr file);
