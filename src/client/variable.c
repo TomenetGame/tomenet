@@ -71,7 +71,8 @@ s16b last_line_y = 0;			/* for big_map mindlink differences */
 
 player_type Players_client[2];			/* The client-side copy of some of the player information */
 player_type *p_ptr = &Players_client[1];
-player_type **Players = &Players_client;
+player_type *Players_pointers[2] = { Players_client, Players_client + 1 };
+player_type **Players = Players_pointers;
 
 c_player_extra c_player;
 c_player_extra *c_p_ptr = &c_player;
