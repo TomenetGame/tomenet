@@ -185,7 +185,8 @@ extern int cur_col;
 extern s16b last_line_y;
 #endif
 
-extern player_type Players[2];
+extern player_type Players_client[2];
+extern player_type **Players;
 extern player_type *p_ptr;
 
 extern c_player_extra c_player;

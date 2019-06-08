@@ -69,8 +69,9 @@ int cur_col;
 s16b last_line_y = 0;			/* for big_map mindlink differences */
 #endif
 
-player_type Players[2];			/* The client-side copy of some of the player information */
-player_type *p_ptr = &Players[1];
+player_type Players_client[2];			/* The client-side copy of some of the player information */
+player_type *p_ptr = &Players_client[1];
+player_type **Players = &Players_client;
 
 c_player_extra c_player;
 c_player_extra *c_p_ptr = &c_player;
