@@ -8217,7 +8217,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	int force_tval = o_ptr->tval;
 
 
-	s_printf("CREATE_REWARD: '%s'['%s'] (L%d %s %s)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, get_prace(p_ptr), class_info[p_ptr->prace].title);
+	s_printf("CREATE_REWARD: '%s'['%s'] (L%d %s %s)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, get_prace(p_ptr), class_info[p_ptr->pclass].title);
 
 	/* Anti-cheeze, added specifically for 'antimagic' actually:
 	   Don't allow undoing skill points after receiving a reward. */
