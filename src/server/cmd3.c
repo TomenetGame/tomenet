@@ -778,6 +778,7 @@ void do_takeoff_impossible(int Ind) {
  * 1 = equip in first slot that fits, replacing the item if any
  * 2 = equip in second slot that fits, replacing the item if any
  * 4 = don't equip if slot is already occupied (ie don't replace by taking off an item)
+ * 8 = swap the two weapon slots (4.7.3+)
  * Note: Rings make an exception in 4: First ring always goes in second ring slot.
  */
 void do_cmd_wield(int Ind, int item, u16b alt_slots) {
@@ -801,6 +802,116 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5, f6 = 0, esp = 0;
 	bool highlander = FALSE, warn_takeoff = FALSE;
 
+
+	/* Specialty in 4.7.3+: swap the two weapon slots.
+	   Notes: There is no inscription to prevent this (eg !w or !t).
+	          'item' is actually ignored for this function. */
+	if ((alt_slots & 0x8) != 0) {
+		/* paranoia? could probably be caused by bad timing, disarming, etc */
+		if (!(slot1 && slot2)) {
+			msg_print(Ind, "Swapping weapons failed, as you no longer wield two weapons.");
+			Send_confirm(Ind, PKT_WIELD3);
+			return;
+		}
+
+		/* Cannot swap a shield into main hand slot */
+		if (slot2 && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+			msg_print(Ind, "Shields must remain in the secondary weapon slot.");
+			Send_confirm(Ind, PKT_WIELD3);
+			return;
+		}
+
+		/* Cannot swap any cursed item */
+		slot = INVEN_WIELD;
+		if (cursed_p(&p_ptr->inventory[slot])) num = 2; //abuse num
+		if (cursed_p(&p_ptr->inventory[INVEN_ARM])) {
+			if (num == 2) all_cursed = TRUE;
+			else {
+				slot = INVEN_ARM;
+				num = 2;
+			}
+		}
+		if (num == 2) { //num abused as marker: anything cursed?
+			if (all_cursed)
+				msg_format(Ind, "Both items you are wielding appear to be cursed.");
+			else {
+				object_desc(Ind, o_name, &(p_ptr->inventory[slot]), FALSE, 0);
+				msg_format(Ind, "The %s you are %s appears to be cursed.", o_name, describe_use(Ind, slot));
+			}
+
+			/* Cancel the command */
+			Send_confirm(Ind, PKT_WIELD3);
+			return;
+		}
+
+		msg_print(Ind, "You swap hands of two weapons.");
+
+		/* ---- copy-paste from normal 'wield' code further below ---- */
+		/* Take a turn */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+		/* Switch slots */
+		tmp_obj = p_ptr->inventory[INVEN_WIELD];
+		p_ptr->inventory[INVEN_WIELD] = p_ptr->inventory[INVEN_ARM];
+		p_ptr->inventory[INVEN_ARM] = tmp_obj;
+
+		/* Handle auto-cursing items in either slot */
+		o_ptr = &p_ptr->inventory[INVEN_WIELD];
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		if (f3 & TR3_AUTO_CURSE) o_ptr->ident |= ID_CURSED;
+		if (cursed_p(o_ptr)) {
+			msg_print(Ind, "Oops! It feels deathly cold!");
+			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+#ifdef VAMPIRES_INV_CURSED
+			if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+			else if (p_ptr->pclass == CLASS_HELLKNIGHT) inverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+			else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) inverse_cursed(o_ptr);
+ #endif
+#endif
+			note_toggle_cursed(o_ptr, TRUE);
+			/* Force dual-hand mode if wielding cursed weapon(s) */
+			if (get_skill(p_ptr, SKILL_DUAL)) {
+				p_ptr->dual_mode = TRUE;
+				p_ptr->redraw |= PR_STATE;
+			}
+		}
+		o_ptr = &p_ptr->inventory[INVEN_ARM];
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		if (f3 & TR3_AUTO_CURSE) o_ptr->ident |= ID_CURSED;
+		if (cursed_p(o_ptr)) {
+			msg_print(Ind, "Oops! It feels deathly cold!");
+			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+#ifdef VAMPIRES_INV_CURSED
+			if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+			else if (p_ptr->pclass == CLASS_HELLKNIGHT) inverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+			else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) inverse_cursed(o_ptr);
+ #endif
+#endif
+			note_toggle_cursed(o_ptr, TRUE);
+			/* Force dual-hand mode if wielding cursed weapon(s) */
+			if (get_skill(p_ptr, SKILL_DUAL)) {
+				p_ptr->dual_mode = TRUE;
+				p_ptr->redraw |= PR_STATE;
+			}
+		}
+
+		/* Recalculate all boni */
+		p_ptr->update |= (PU_BONUS);
+		p_ptr->update |= (PU_TORCH);
+		p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+		p_ptr->redraw |= (PR_PLUSSES | PR_ARMOR);
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		/* ---- copy-paste end. ---- */
+
+		Send_confirm(Ind, PKT_WIELD3);
+		return;
+	}
 
 	/* Catch items that we have already equipped -
 	   this can happen when entering items by name (@ key)

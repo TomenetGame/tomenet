@@ -806,6 +806,7 @@ extern int Send_sip(void);
 extern int Send_telekinesis(void);
 extern int Send_BBS(void);
 extern int Send_wield2(int item);
+extern int Send_wield3(void);
 extern int Send_cloak(void);
 extern int Send_inventory_revision(int revision);
 extern int Send_account_info(void);

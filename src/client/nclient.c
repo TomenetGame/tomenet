@@ -5423,6 +5423,12 @@ int Send_wield2(int item) {
 	return 1;
 }
 
+int Send_wield3(void) {
+	int	n;
+	if ((n = Packet_printf(&wbuf, "%c", PKT_WIELD3)) <= 0) return n;
+	return 1;
+}
+
 int Send_cloak(void) {
 	int	n;
 	if ((n = Packet_printf(&wbuf, "%c", PKT_CLOAK)) <= 0) return n;

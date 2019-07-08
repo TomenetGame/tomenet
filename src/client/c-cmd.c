@@ -928,6 +928,7 @@ void cmd_take_off(void) {
 
 void cmd_swap(void) {
 	int item;
+	char insc[4], *c;
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
@@ -938,8 +939,6 @@ void cmd_swap(void) {
 	/* For items that can go into multiple slots (weapons and rings),
 	   check @xN inscriptions on source and destination to pick slot */
 	if (item < INVEN_PACK) {
-		char insc[4], *c;
-
 		/* smart handling of @xN swapping with equipped items that have alternative slot options */
 		if (is_weapon(inventory[item].tval) && is_weapon(inventory[INVEN_ARM].tval) &&
 		    (c = strstr(inventory_name[item], "@x"))) {
@@ -981,8 +980,15 @@ void cmd_swap(void) {
 
 		/* default */
 		Send_wield(item);
-	}
-	else Send_take_off(item);
+	/* special case for DUAL_WIELD: Swap two dual-wielded weapons, useful for main-hand mode: */
+	} else if (item == INVEN_WIELD && inventory[INVEN_ARM].tval && (c = strstr(inventory_name[INVEN_WIELD], "@x"))) {
+		strncpy(insc, c, 3);
+		insc[3] = 0;
+		if (strstr(inventory_name[INVEN_ARM], insc)) {
+			Send_wield3();
+			return;
+		} else Send_take_off(item); //fallback
+	} else Send_take_off(item);
 }
 
 

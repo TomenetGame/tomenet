@@ -370,6 +370,7 @@ static void Init_receive(void) {
 	playing_receive[PKT_TELEKINESIS]	= Receive_telekinesis;
 	playing_receive[PKT_BBS]		= Receive_BBS;
 	playing_receive[PKT_WIELD2]		= Receive_wield2;
+	playing_receive[PKT_WIELD3]		= Receive_wield3;
 	playing_receive[PKT_CLOAK]		= Receive_cloak;
 	playing_receive[PKT_INVENTORY_REV]	= Receive_inventory_revision;
 	playing_receive[PKT_ACCOUNT_INFO]	= Receive_account_info;
@@ -12444,6 +12445,40 @@ static int Receive_wield2(int ind) {
 		return 2;
 	} else if (p_ptr) {
 		Packet_printf(&connp->q, "%c%hd", ch, item);
+		return 0;
+	}
+	return 1;
+}
+
+static int Receive_wield3(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+
+	char ch;
+	int n, player = -1;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		use_esp_link(&player, LINKF_OBJ);
+		p_ptr = Players[player];
+	}
+	if ((n = Packet_scanf(&connp->r, "%c", &ch)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+		/* Note that wield3 requires both INVEN_WIELD and INVEN_ARM to have an item.
+		   Not sure if this replay-code check here makes any sense.. */
+		s16b item = replay_inven_changes(player, INVEN_WIELD);
+		if (item == 0xFF) {
+			msg_print(player, "Command failed because item is gone.");
+			return 1;
+		}
+		do_cmd_wield(player, INVEN_WIELD, 0x8); //slot is just a dummy
+		return 2;
+	} else if (p_ptr) {
+		Packet_printf(&connp->q, "%c", ch);
 		return 0;
 	}
 	return 1;
