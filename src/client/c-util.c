@@ -5253,6 +5253,9 @@ Chain_Macro:
 			i = choice = 0;
 
 			while (i != -1) {
+				/* Restart wizard from a wrong choice? */
+				if (i == -2) i = choice = chain_macro_buf[0] = should_wait = tmp[0] = buf[0] = buf2[0] = 0;
+
 				Term_putstr(12, 2, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
 				Term_putstr(12, 3, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and targetting method.");
 				Term_putstr(12, 4, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
@@ -5401,7 +5404,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -1; /* leave */
+								i = -2; /* leave */
 								break;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -5417,7 +5420,7 @@ Chain_Macro:
 							break;
 						}
 						/* exit? */
-						if (i == -1) continue;
+						if (i == -2) continue;
 
 						buf[0] = choice;
 						choice = mw_stance;
@@ -5455,7 +5458,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -1; /* leave */
+								i = -2; /* leave */
 								break;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -5464,14 +5467,14 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if ((choice < 'a' || choice > 'f') && choice != '?' && choice != '*') {
-									//i = -1;
+									//i = -2;
 									continue;
 								}
 							}
 							break;
 						}
 						/* exit? */
-						if (i == -1) continue;
+						if (i == -2) continue;
 
 						/* build macro part */
 						switch (choice) {
@@ -5501,9 +5504,9 @@ Chain_Macro:
 
 						Term_putstr(4, 13, -1, TERM_GREEN, "(Select the \377Usame \377grune twice or press \377sENTER \377gto cast a single rune spell!)");
 
-						i = 0;
+						i = 1;//paranoia/redundant (i is used in for loop)
 						for (j = 0; j < 2; j++) {
-							if (i == -1 || i == -2) continue; //invalid action -OR- drawing less than the maximum number of runes
+							if (i < 0) continue; //invalid action -OR- drawing less than the maximum number of runes
 
 							clear_from(14);
 							//Term_putstr(10, 14, -1, TERM_GREEN, format("Selected runes: \377s%s", buf2)); //Redundant unless RCRAFT_MAX_ELEMENTS > 2
@@ -5519,12 +5522,12 @@ Chain_Macro:
 
 							switch (choice = inkey()) {
 							case '\r':
-								if (j > 0) i = -2; //Are we on the second iteration? (Don't exit with 0 runes!)
+								if (j > 0) i = -3; //Are we on the second iteration? (Don't exit with 0 runes!)
 								else j--;
 								break;
 							case ESCAPE:
 							case '\010': /* backspace */
-								i = -1; /* leave */
+								i = -2; /* leave */
 								continue;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -5548,7 +5551,8 @@ Chain_Macro:
 							/* build macro part: 'a'..'p' or '\r' */
 							strcat(buf, format("%c", choice));
 						}
-						if (i == -1) continue; //invalid action -> exit
+						if (i == -2) continue; //invalid action -> exit
+						i = 1; //(paranoia?) in case it was -3, just clearing it here to be safe.. but it's used in for loop below anyway
 
 						/* ---------- Select imperative ---------- */
 
@@ -5597,7 +5601,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -1; /* leave */
+								i = -2; /* leave */
 								break;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -5613,7 +5617,7 @@ Chain_Macro:
 							break;
 						}
 						/* exit? */
-						if (i == -1) continue;
+						if (i == -2) continue;
 
 						/* Store the imperative */
 						m_flags |= r_imperatives[choice - 'a'].flag;
@@ -5850,7 +5854,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -1; /* leave */
+								i = -2; /* leave */
 								break;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -5866,7 +5870,7 @@ Chain_Macro:
 							break;
 						}
 						/* exit? */
-						if (i == -1) continue;
+						if (i == -2) continue;
 
 						/* Store the type */
 						m_flags |= r_types[choice - 'a'].flag;
@@ -5902,7 +5906,7 @@ Chain_Macro:
 						Term_gotoxy(50, 16);
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
-							i = -1;
+							i = -2;
 							continue;
 						}
 						strcat(buf, "\\r");
@@ -5921,7 +5925,7 @@ Chain_Macro:
 						Term_gotoxy(50, 17);
 						strcpy(buf2, "");
 						if (!askfor_aux(buf2, 159, 0)) {
-							i = -1;
+							i = -2;
 							continue;
 						}
 						/* Choose ammo manually? Terminate partial macro here. */
@@ -5946,7 +5950,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -1; /* leave */
+								i = -2; /* leave */
 								break;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -5962,7 +5966,7 @@ Chain_Macro:
 							break;
 						}
 						/* exit? */
-						if (i == -1) continue;
+						if (i == -2) continue;
 
 						/* build macro part */
 						j = 0; /* hack: != 1 means 'undirectional' device */
@@ -6067,7 +6071,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -1; /* leave */
+								i = -2; /* leave */
 								break;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -6084,7 +6088,7 @@ Chain_Macro:
 							break;
 						}
 						/* exit? */
-						if (i == -1) continue;
+						if (i == -2) continue;
 
 						clear_from(10);
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
@@ -6105,7 +6109,7 @@ Chain_Macro:
 						/* Get an item/spell name */
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
-							i = -1;
+							i = -2;
 							continue;
 						}
 					}
@@ -6116,7 +6120,7 @@ Chain_Macro:
 							Term_gotoxy(47, 16);
 							strcpy(buf, "");
 							if (!askfor_aux(buf, 159, 0)) {
-								i = -1;
+								i = -2;
 								break;
 							}
 							/* not a number/invalid? retry (we have slots d)..z)) */
@@ -6126,7 +6130,7 @@ Chain_Macro:
 							strcpy(buf, format("%c", 'd' + atoi(buf)));
 							break;
 						}
-						if (i == -1) continue;
+						if (i == -2) continue;
 					}
 					/* no need for inputting an item/spell to use with the macro? */
 					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance) {
@@ -6137,7 +6141,7 @@ Chain_Macro:
 						/* Get an item/spell name */
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
-							i = -1;
+							i = -2;
 							continue;
 						}
 
@@ -6367,68 +6371,32 @@ Chain_Macro:
 					    && choice != mw_load /* (paranoia) */
 					    && choice != mw_custom
 					    ) {
-						clear_from(8);
-						Term_putstr(10, 8, -1, TERM_GREEN, "Please choose the targetting method:");
-
-						//Term_putstr(10, 11, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
-						Term_putstr(10, 10, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
-						Term_putstr(10, 11, -1, TERM_L_GREEN, "   otherwise cancel action. (\377URecommended in most cases!\377G)");
-						Term_putstr(10, 12, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
-						Term_putstr(10, 13, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
-						Term_putstr(10, 14, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
-						Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise target own grid.");
-						Term_putstr(10, 16, -1, TERM_L_GREEN, "d) Fire into a fixed direction or prompt for direction.");
-						Term_putstr(10, 17, -1, TERM_L_GREEN, "e) Target own grid (ie yourself).");
-
-						Term_putstr(10, 19, -1, TERM_L_GREEN, "f) Target most wounded friendly player,");
-						Term_putstr(10, 20, -1, TERM_L_GREEN, "   cancel action if no player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
-						Term_putstr(10, 21, -1, TERM_L_GREEN, "g) Target most wounded friendly player,");
-						Term_putstr(10, 22, -1, TERM_L_GREEN, "   target own grid instead if no player is nearby.");
-
 						while (TRUE) {
-							switch (choice = inkey()) {
-							case ESCAPE:
-							case 'p':
-							case '\010': /* backspace */
-								i = -1; /* leave */
-								break;
-							case KTRL('T'):
-								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
-								continue;
-							default:
-								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'g') {
-									//i = -1;
-									continue;
-								}
-							}
-							break;
-						}
-						/* exit? */
-						if (i == -1) continue;
-
-						/* Get a specific fixed direction */
-						if (choice == 'd') {
+							i = 1; //clearing it in case it was set to -3 below
 							clear_from(8);
-							Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction or '?':");
+							Term_putstr(10, 8, -1, TERM_GREEN, "Please choose the targetting method:");
 
-							Term_putstr(25, 13, -1, TERM_L_GREEN, " 7  8  9");
-							Term_putstr(25, 14, -1, TERM_GREEN, "  \\ | / ");
-							Term_putstr(25, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
-							Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\         \377G?\377g = 'Prompt for direction each time'");
-							Term_putstr(25, 17, -1, TERM_L_GREEN, " 1  2  3");
+							//Term_putstr(10, 11, -1, TERM_GREEN, "(\377UHINT: \377gAlso inscribe your ammo '!=' for auto-pickup!)");
+							Term_putstr(10, 10, -1, TERM_L_GREEN, "a) Target closest monster if such exists,");
+							Term_putstr(10, 11, -1, TERM_L_GREEN, "   otherwise cancel action. (\377URecommended in most cases!\377G)");
+							Term_putstr(10, 12, -1, TERM_L_GREEN, "b) Target closest monster if such exists,");
+							Term_putstr(10, 13, -1, TERM_L_GREEN, "   otherwise prompt for direction.");
+							Term_putstr(10, 14, -1, TERM_L_GREEN, "c) Target closest monster if such exists,");
+							Term_putstr(10, 15, -1, TERM_L_GREEN, "   otherwise target own grid.");
+							Term_putstr(10, 16, -1, TERM_L_GREEN, "d) Fire into a fixed direction or prompt for direction.");
+							Term_putstr(10, 17, -1, TERM_L_GREEN, "e) Target own grid (ie yourself).");
 
-							Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '?') ");
+							Term_putstr(10, 19, -1, TERM_L_GREEN, "f) Target most wounded friendly player,");
+							Term_putstr(10, 20, -1, TERM_L_GREEN, "   cancel action if no player is nearby. (\377UEg for 'Cure Wounds'.\377G)");
+							Term_putstr(10, 21, -1, TERM_L_GREEN, "g) Target most wounded friendly player,");
+							Term_putstr(10, 22, -1, TERM_L_GREEN, "   target own grid instead if no player is nearby.");
 
-							/* hack: temporarily enable macro parsing for using numpad keys without numlock to specify a direction */
-							inkey_interact_macros = FALSE;
 							while (TRUE) {
-								switch (target_dir = inkey()) {
+								switch (choice = inkey()) {
 								case ESCAPE:
 								case 'p':
 								case '\010': /* backspace */
-									i = -1; /* leave */
+									i = -2; /* leave */
 									break;
 								case KTRL('T'):
 									/* Take a screenshot */
@@ -6436,18 +6404,60 @@ Chain_Macro:
 									continue;
 								default:
 									/* invalid action -> exit wizard */
-									if ((target_dir < '1' || target_dir > '9') && target_dir != '?') {
-										//i = -1;
+									if (choice < 'a' || choice > 'g') {
+										//i = -2;
 										continue;
 									}
 								}
 								break;
 							}
-							/* disable macro parsing again */
-							inkey_interact_macros = TRUE;
 							/* exit? */
-							if (i == -1) continue;
+							if (i == -2) break;
+
+							/* Get a specific fixed direction */
+							if (choice == 'd') {
+								clear_from(8);
+								Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction or '?':");
+
+								Term_putstr(25, 13, -1, TERM_L_GREEN, " 7  8  9");
+								Term_putstr(25, 14, -1, TERM_GREEN, "  \\ | / ");
+								Term_putstr(25, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
+								Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\         \377G?\377g = 'Prompt for direction each time'");
+								Term_putstr(25, 17, -1, TERM_L_GREEN, " 1  2  3");
+
+								Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '?') ");
+
+								/* hack: temporarily enable macro parsing for using numpad keys without numlock to specify a direction */
+								inkey_interact_macros = FALSE;
+								while (TRUE) {
+									switch (target_dir = inkey()) {
+									case ESCAPE:
+									case 'p':
+									case '\010': /* backspace */
+										i = -3; /* leave */
+										break;
+									case KTRL('T'):
+										/* Take a screenshot */
+										xhtml_screenshot("screenshot????");
+										continue;
+									default:
+										/* invalid action -> exit wizard */
+										if ((target_dir < '1' || target_dir > '9') && target_dir != '?') {
+											//i = -3;
+											continue;
+										}
+									}
+									break;
+								}
+								/* disable macro parsing again */
+								inkey_interact_macros = TRUE;
+								/* exit? */
+								if (i == -3) continue;
+							}
+							/* successfully done this step */
+							break;
 						}
+						if (i == -2) continue;
 
 						if (choice != 'c') {
 							/* choose initial targetting mechanics */
@@ -6513,7 +6523,7 @@ Chain_Macro:
 						if (!strcmp(buf, "\e")) {
 							c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 							if (!strcmp(buf, "\e")) {
-								i = -1; /* leave */
+								i = -2; /* leave */
 								break;
 							}
 							continue;
@@ -6570,7 +6580,7 @@ Chain_Macro:
 						break;
 					}
 					/* exit? */
-					if (i == -1) continue;
+					if (i == -2) continue;
 
 					/* Automatically choose usually best fitting macro type,
 					   depending on chosen trigger key! */
