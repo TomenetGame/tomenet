@@ -8272,7 +8272,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 #if 1 /* special item consumers, hard-coded */
 				/* Pick up the item */
 				else if (m_ptr->r_idx == RI_PANDA &&
-				    o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT &&
+				    //o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_CUSTOM_OBJECT && --just consume any 'bamboo' item (well, there is just 'bamboo staff' atm)
 				    (strstr(o_name, "bamboo") || strstr(o_name, "Bamboo"))) {
 					s_printf("ITEM_CONSUMED: %s by %s\n", o_name, m_name_real);
 
