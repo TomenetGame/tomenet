@@ -1470,17 +1470,17 @@ void do_slash_cmd(int Ind, char *message) {
 			int r_idx, num, numf;
 			monster_race *r_ptr;
 			if (!tk) {
-				do_cmd_show_monster_killed_letter(Ind, NULL, 0);
+				do_cmd_show_monster_killed_letter(Ind, NULL, 0, FALSE);
 				return;
 			}
 
 			/* Handle specification like 'D', 'k' */
 			if (strlen(token[1]) == 1) {
-				if (tk == 2) do_cmd_show_monster_killed_letter(Ind, token[1], atoi(token[2]));
-				else do_cmd_show_monster_killed_letter(Ind, token[1], 0);
+				if (tk == 2) do_cmd_show_monster_killed_letter(Ind, token[1], atoi(token[2]), FALSE);
+				else do_cmd_show_monster_killed_letter(Ind, token[1], 0, FALSE);
 				return;
 			} else if (token[1][0] == '+') {
-				do_cmd_show_monster_killed_letter(Ind, NULL, atoi(token[1]));
+				do_cmd_show_monster_killed_letter(Ind, NULL, atoi(token[1]), FALSE);
 				return;
 			}
 

@@ -5454,7 +5454,7 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 
 	int force_coin = get_coin_type(r_ptr);
-	s16b local_quark = 0;
+	s32b local_quark = 0;
 	object_type forge;
 	object_type *qq_ptr;
 	struct worldpos *wpos;

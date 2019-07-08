@@ -757,7 +757,7 @@ struct object_type {
 	byte questor_invincible;	/* invincible to players/monsters? */
 	bool quest_credited;		/* ugly hack for inven_carry() usage within carry(), to avoid double-crediting */
 
-	u16b note;			/* Inscription index */
+	u32b note;			/* Inscription index */
 	char note_utag;			/* Added for making pseudo-id overwrite unique loot tags */
 
 #if 0	/* from pernA.. consumes memory, but quick. shall we? */

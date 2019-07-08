@@ -11386,12 +11386,13 @@ static int Receive_special_line(int ind) {
 	if (player) {
 		/* Hacks for monster/item information */
 		char kludge[2] = "", minlev = 0;
+		bool uniques = FALSE;
 
 		switch (type) {
 		case SPECIAL_FILE_NONE:
 			Players[player]->special_file_type = FALSE;
 			/* Remove the file */
-/*			if (!strcmp(Players[player]->infofile, Players[player]->cur_file)) */
+			/*if (!strcmp(Players[player]->infofile, Players[player]->cur_file)) */
 				fd_kill(Players[player]->infofile);
 			break;
 		case SPECIAL_FILE_UNIQUE:
@@ -11435,13 +11436,17 @@ static int Receive_special_line(int ind) {
 			do_cmd_check_server_settings(player);
 			break;
 		case SPECIAL_FILE_MONSTER:
-			/* abused 'line' to encode both, monster type and minimum level */
+			/* abused 'line' to encode both, monster type and minimum level, and now also 'uniques only' choice */
+			if (line >= 100000000) {
+				line -= 100000000;
+				uniques = TRUE;
+			}
 			minlev = line / 100000;
 			line = line % 100000;
 			kludge[0] = (char) line;
 			kludge[1] = '\0';
-			do_cmd_show_monster_killed_letter(player, kludge, minlev);
- 			break;
+			do_cmd_show_monster_killed_letter(player, kludge, minlev, uniques);
+			break;
 		case SPECIAL_FILE_OBJECT:
 			/* abused 'line' to encode item type */
 			line = line % 0xFF;

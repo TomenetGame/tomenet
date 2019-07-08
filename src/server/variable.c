@@ -303,7 +303,7 @@ byte temp_x[TEMP_MAX];
 /*
  * The number of quarks
  */
-s16b quark__num;
+s32b quark__num;
 
 /*
  * The pointers to the quarks [QUARK_MAX]

@@ -2440,13 +2440,11 @@ void sound_item(int Ind, int tval, int sval, cptr action) {
 /*
  * Add a new "quark" to the set of quarks.
  */
-s16b quark_add(cptr str)
-{
-	int i;
+s32b quark_add(cptr str) {
+	s32b i;
 
 	/* Look for an existing quark */
-	for (i = 1; i < quark__num; i++)
-	{
+	for (i = 1; i < quark__num; i++) {
 		/* Check for equality */
 		if (streq(quark__str[i], str)) return (i);
 	}
@@ -2468,8 +2466,7 @@ s16b quark_add(cptr str)
 /*
  * This function looks up a quark
  */
-cptr quark_str(s16b i)
-{
+cptr quark_str(s32b i) {
 	cptr q;
 
 	/* Verify */

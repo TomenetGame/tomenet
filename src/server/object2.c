@@ -7520,7 +7520,7 @@ static int kind_is_good_reward(int k_idx, u32b resf) {
 
 
 /* Hack -- inscribe items that a unique drops */
-s16b unique_quark = 0;
+s32b unique_quark = 0;
 
 /* Restrict the type of placed objects */
 u32b place_object_restrictor = RESF_NONE;

@@ -3263,7 +3263,7 @@ void cmd_check_misc(void) {
 	char i = 0, choice;
 	int second = 10;
 	/* suppress hybrid macros in some submenus */
-	bool inkey_msg_old;
+	bool inkey_msg_old, uniques;
 
 	Term_save();
 	Term_clear();
@@ -3314,14 +3314,21 @@ void cmd_check_misc(void) {
 			case '2':
 				inkey_msg_old = inkey_msg;
 				inkey_msg = TRUE;
-				get_com("What kind of monsters? (ESC for all, @ for learnt):", &choice);
+				get_com("What kind of monsters? (ESC for all, @ for learnt, SPACE for uniques):", &choice);
 				inkey_msg = inkey_msg_old;
 				if (choice <= ESCAPE) choice = 0;
+				if (choice == ' ') {
+					choice = 0;
+					uniques = TRUE;
+				} else uniques = FALSE;
 
 				/* allow specifying minlev? */
 				if (is_newer_than(&server_version, 4, 5, 4, 0, 0, 0)) {
-					second = c_get_quantity("Specify minimum level? (ESC for none): ", -1);
-					Send_special_line(SPECIAL_FILE_MONSTER, choice + second * 100000);
+					second = c_get_quantity("Specify minimum level? (ESC for none): ", 0);
+					if (is_newer_than(&server_version, 4, 7, 2, 0, 0, 0))
+						Send_special_line(SPECIAL_FILE_MONSTER, choice + second * 100000 + (uniques ? 100000000 : 0));
+					else
+						Send_special_line(SPECIAL_FILE_MONSTER, choice + second * 100000);
 				} else
 					Send_special_line(SPECIAL_FILE_MONSTER, choice);
 				break;

@@ -40,10 +40,10 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. BUILD == 1 means 'test build' */
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		7
-#define VERSION_PATCH		2
+#define VERSION_PATCH		3
 #define VERSION_EXTRA		0
 #define VERSION_BRANCH		0
-#define VERSION_BUILD		1
+#define VERSION_BUILD		0
 
 /* MAJOR/MINOR/PATCH version that counts as 'latest' (should be 0-15).
    If a player is online with a version > this && <= current version (VERSION_)

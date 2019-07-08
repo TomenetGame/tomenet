@@ -2688,7 +2688,7 @@ void do_cmd_check_server_settings(int Ind) {
  * Tell players of the # of monsters killed, using temporary file. - Jir -
  * New hack: @ results in learned form list (Arjen's suggestion) - C. Blue
  */
-void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
+void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev, bool uniques) {
 	player_type *p_ptr = Players[Ind];
 
 	int i, j, num, numf, total = 0, forms = 0, forms_learnt = 0;
@@ -2743,6 +2743,8 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev) {
 		//if (letter && *letter != r_ptr->d_char) continue;
 		if (!all && !strchr(letter, r_ptr->d_char)) continue;
 		if (r_ptr->level < minlev) continue;
+		if (uniques && !(r_ptr->flags1 & RF1_UNIQUE)) continue;
+		if (learnt && (r_ptr->flags1 & RF1_UNIQUE)) continue;
 
 		num = p_ptr->r_killed[i];
 		numf = p_ptr->r_mimicry[i];
