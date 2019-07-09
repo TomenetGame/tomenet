@@ -144,7 +144,7 @@ CLI_LUAOBJS = \
 #MINGW_TARGET = i586-mingw32msvc
 
 # C. Blue's system (Arch Linux)
-MINGW_TARGET = i486-mingw32
+MINGW_TARGET = i686-w64-mingw32
 
 #
 # Path to sdl-config
@@ -152,7 +152,8 @@ MINGW_TARGET = i486-mingw32
 # You may need to replace /usr/mingw32 by whatever prefix your
 # cross-compiling tools use.
 #
-SDL_CONFIG = /usr/$(MINGW_TARGET)/usr/bin/sdl-config
+SDL_CONFIG = sdl-config
+#SDL_CONFIG = /usr/$(MINGW_TARGET)/usr/bin/sdl-config
 
 #
 # Alternatively, specify include and lib paths for SDL
@@ -162,8 +163,10 @@ SDL_CONFIG = /usr/$(MINGW_TARGET)/usr/bin/sdl-config
 #SDL_LIB_PATH = /usr/$(MINGW_TARGET)/usr/lib
 
 # C. Blue's system
-SDL_INCLUDE_PATH = /usr/$(MINGW_TARGET)/include/SDL
-SDL_LIB_PATH = /usr/$(MINGW_TARGET)/lib
+#SDL_INCLUDE_PATH = /usr/$(MINGW_TARGET)/include/SDL
+#SDL_INCLUDE_PATH = `sdl-config --cflags` -I/usr/include
+SDL_INCLUDE_PATH = $(shell $(SDL_CONFIG) --cflags)
+SDL_LIB_PATH = $(shell $(SDL_CONFIG) --libs)
 
 ##
 ## Variation -- MinGW on Linux
@@ -178,8 +181,9 @@ LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 #LIBS += -lSDL -lSDL_mixer `$(SDL_CONFIG) --libs`
 ##
 ## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually above:
-CFLAGS += -DSOUND_SDL -I$(SDL_INCLUDE_PATH)
-LIBS += -lSDL -lSDL_mixer -L$(SDL_LIB_PATH)
+CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
+#LIBS += -lSDL -lSDL_mixer $(SDL_LIB_PATH)
+LIBS += $(SDL_LIB_PATH) -lSDL_mixer
 
 # Added the according preprocessor for 'preproc' - C. Blue
 # If your system doesnt have a dedicated cpp command, you might
@@ -192,19 +196,7 @@ LIBS += -lSDL -lSDL_mixer -L$(SDL_LIB_PATH)
 #CPP = $(MINGW_TARGET)-gcc
 #CPPFLAGS = -x c -E -Wp,-C,-P
 
-# Use these on Ubuntu
-#CC = i586-mingw32msvc-gcc
-#WINDRES = i586-mingw32msvc-windres
-#CPP = i586-mingw32msvc-cpp
-#CPPFLAGS = -C -P
-
-# MinGW compiler, linker and preprocessor on mine - C. Blue
-#CC = i486-mingw32-gcc
-#WINDRES = i486-mingw32-windres
-#CPP = i486-mingw32-gcc
-#CPPFLAGS = -x c -E -Wp,-C,-P
-
-# New: Construct CC, WINDRES, CPP and CPPFLAGS from MINGW_TARGET
+# New: Construct CC, WINDRES, CPP and CPPFLAGS from MINGW_TARGET - C. Blue
 CC = $(MINGW_TARGET)-gcc
 WINDRES = $(MINGW_TARGET)-windres
 CPP = $(MINGW_TARGET)-gcc
