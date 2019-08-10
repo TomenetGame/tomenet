@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. January 2019 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 10. August 2019 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2342,6 +2342,8 @@ Morgoth, the god of destruction, has reinforced his surroundings to be
 especially devastating to all living beings:
 If you get killed on a level where Morgoth, Lord of Darkness walks, your
 ghost will be destroyed too, even if you are everlasting! Beware!
+Note that on a floor where Morgoth currently resides, all vaults will turn into
+no-tele vaults, even if they normally aren't!
 
 If you team up against him, he will grow stronger for every additional player
 who enters his dungeon level. Growing stronger in fact means that he gains a
@@ -6714,6 +6716,13 @@ wall structure or permanent walls (not all vaults have those) doesn't already
 give it away.
 Another very early indication for a vault on your dungeon level are the floor
 feelings displayed in yellow colour, see (4.8).
+Among the most dangerous vaults are "no-teleport" (or for short "no-tele")
+vaults. These prohibit all teleportation effects including word-of-recall.
+That means when you get into a bad situation you cannot easily escape!
+No-tele areas will give you certain warning indicators when you enter them,
+see "Vault feelings" in (4.8), the first one listed ("still air").
+Note that on a floor where Morgoth currently resides, all vaults will turn into
+no-tele vaults, even if they normally aren't!
 
 A vault can be a real adventure of its own! If your character isn't very
 powerful compared to the dungeon level, you better stay out of vaults if their
