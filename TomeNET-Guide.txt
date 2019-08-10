@@ -29,7 +29,7 @@
 Contents
 --------
 (0) Quickstart (If you don't like to read much :)
-    (0.1)   Start & play
+    (0.1)   Start & play, Character validation
     (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
     (0.2b)  Slash command reference
@@ -197,8 +197,8 @@ Contents
 (0) Quickstart
 ==============
 
-(0.1) Start & play
-------------------
+(0.1) Start & play, Character validation
+----------------------------------------
 If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing/updating TomeNET'.
 
@@ -328,17 +328,8 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  suicide by pressing SHIFT+q or CTRL+k and double-confirming the following
  questions with 'y' and '@'.
 
--To drop items, privately chat with other players, or advance beyond a certain
- level you will need an admin to 'validate' your account.
- Usually, all you have to do is to keep playing/stay online for a bit until an
- admin logs in, notices that you are new, and validates your account.
- If that doesn't seem to happen, just ask in chat openly. Some players have
- validation privileges too and can help you out.
-
 -Press '@' key to see a list of players who're currently online.
 
- A yellow '(I)' before a name stands for 'invalid', and means that this player
- is still awaiting account validation by an admin.
  A grey '(O)' is in front of a player name, it means that player is using an
  outdated client. It's very important to keep your client up to date!
 
@@ -379,6 +370,25 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  If your character loses speed, for example by carrying around too many heavy
  items in your inventory, you will see a light brown indicator (for example
  'Slow -3') at the bottom line instead.
+
+
+Character validation
+--------------------
+When you create a new account, it will always start out as "invalid". This just
+means that it is in a trial phase and needs to be approved by an admin or
+another player who has validation privileges. This is done to prevent spam.
+
+Invalid characters cannot drop items, privately chat with other players, or
+advance beyond level 25.
+
+Usually, all you have to do is to keep playing/stay online for a bit until an
+admin or someone else who possesses validation powers logs in, notices that you
+are new, apparently not a spammer or duplicate, and validates your account.
+If that doesn't seem to happen, just ask in chat openly.
+
+Pressing '@' key will show the list of logged in players. A yellow '(I)' before
+a name will indicate an 'invalid' account.
+
 
 You could continue reading at (3.2) now, which explains the user interface,
 or glance at (7.1), (7.2) or (7.3) first which explain some basic strategy.
