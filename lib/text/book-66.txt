@@ -1,7 +1,7 @@
             ,----------------------------------------------+
            /                                              /
            |                                              |
-           |     Deed that confirms the escape from       |
+           |       This deed confirms escape from         |
            |                                              |
            |     ** The Dungeon Keeper's Labyrinth **     |
            |                                              |

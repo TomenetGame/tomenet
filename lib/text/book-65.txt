@@ -1,7 +1,7 @@
             ,----------------------------------------------+
            /                                              /
            |                                              |
-           |     Deed that confirms career start of       |
+           |    This deed confirms start of career of     |
            |                                              |
            |   ** a new gladiator, fighting to death **   |
            |                                              |
