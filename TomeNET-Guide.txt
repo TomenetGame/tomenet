@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 10. August 2019 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 22. August 2019 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4068,21 +4068,22 @@ give you some sort of idea what the item is good for, along with some cryptic
 numbers and brackets.
 The meaning of these will be explained here:
 
-a Ration of Food {0,+}
+a Ration of Food {+,0}
     Pretty straightforward, this is an item that you can consume if you get
     hungry. To do so, use SHIFT+e to 'eat' this item.
     The {..} part means the following:
 
-    The number in it is the level required to use this item. 0 means that you
-    started out with this item, ie it was given to your character on birth.
+    The number in it is the level required to use this item. 0 means that it
+    was given to a character by the system on birth, or some other special
+    event and cannot be traded to other players.
 
-    The '+' symbol means that you OWN the item. If it was someone else's ration
+    The '+' symbol means that you own the item. If it was someone else's ration
     then you would see his name written there instead of the '+', for example:
-    a Ration of Food {0,Gandalf}.
+    a Ration of Food {Gandalf,0}.
     If the owner died and the item hasn't been picked up yet by someone else
     who meets the level requirements, it will display a '-' instead of a name,
     meaning it has been owned, but the owner died. Example:
-    a Ration of Food {0,-}.
+    a Ration of Food {-,0}.
 
     If you own an item or found an item, then the level requirements won't
     matter. Even if they are much higher than your level, you can still use it.
@@ -4095,7 +4096,9 @@ a Ration of Food {0,+}
     indicating that it isn't usable yet.
 
     Note that you usually can neither trade nor sell items that are level 0.
-    Food is an exception to this rule, since it can be traded (but not sold).
+    Food (and possibly some other very basic items such as torches) is an
+    exception to this rule, since it can be traded (but not sold) even if it
+    is level 0.
 
     For those interested in more details, that item level is roughly determined
     based on the following factors:
@@ -4105,7 +4108,7 @@ a Ration of Food {0,+}
     Some items have special level requirement calculations, for example the
     level of a ring of speed is directly tied to its +speed value.
 
-a Chain Mail {0,+} (-2) [14,+0]
+a Chain Mail {+,0} (-2) [14,+0]
     The {..} part is already known, it's the same as for the ration described
     above. What's new is the [..] part, which all types of armour have:
 
@@ -4138,7 +4141,7 @@ a Chain Mail {0,+} (-2) [14,+0]
     Note that enchanting items by using scrolls to anything above +0 has a
     chance to fail, depending on how high it has already been enchanted.
 
-a Long Sword {0,+} (2d6) (+0,+0)
+a Long Sword {+,0} (2d6) (+0,+0)
     Again the {..} part is already know. What's new for all types of weapons is
     the (2d6) and the (+0,+0) part:
 
@@ -4179,7 +4182,7 @@ a Long Sword {0,+} (2d6) (+0,+0)
     and skill, and the number of blows/round you get with each weapon, to find
     out which setup is best for your character at a given time.
 
-a Long Bow {0,+} (x3) (+0,+0)
+a Long Bow {+,0} (x3) (+0,+0)
     Ranged weapons all have a 'multiplier' given in the first pair of round
     brackets, and the (+hit,+dam) enchantments already known from normal melee
     weapons.
@@ -4195,7 +4198,7 @@ a Long Bow {0,+} (x3) (+0,+0)
     soon as possible to buy some 'Scrolls of enchant weapon to-dam' from it,
     to enchant their bows or other ranged weapons.
 
-a Wooden Torch {0,+} (with 2500 turns of light)
+a Wooden Torch {+,0} (with 2500 turns of light)
     Not much new here, except that this item has a 'timeout' given in turns.
     After having this item equipped for 2500 turns (about half of that in
     seconds, very roughly), the torch will be depleted and not produce any
