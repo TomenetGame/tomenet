@@ -3471,7 +3471,7 @@ void do_cmd_check_other(int Ind, s32b line) {
 void do_cmd_check_extra_info(int Ind, bool admin) {
 	player_type *p_ptr = Players[Ind];
 	byte max_houses = (p_ptr->lev < 50 ? p_ptr->lev : 50) / cfg.houses_per_player;
-	char buf[MAX_CHARS];
+	char buf[MAX_CHARS_WIDE];
 	int alim = cfg.acc_house_limit;
 	int ahou = acc_get_houses(p_ptr->accountname);
 
