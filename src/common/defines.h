@@ -187,7 +187,7 @@
 #define ARROW_DIST_LIMIT MAX_RANGE
 
 /* Maximum number of different characters one player account may hold - C. Blue */
-#define MAX_CHARS_PER_ACCOUNT	9
+#define MAX_CHARS_PER_ACCOUNT	11
 #define MAX_DED_IDDC_CHARS	2	/* additional iddc-only characters (needs ALLOW_DED_IDDC_MODE) */
 #define MAX_DED_PVP_CHARS	1	/* additional pvp-only characters (needs ALLOW_DED_PVP_MODE) */
 

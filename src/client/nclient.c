@@ -594,7 +594,19 @@ void Receive_login(void) {
 	if (total_cpa <= 12) {
 		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 2);
 		offset = 4;
-	} else offset = 3;
+	} else if (total_cpa <= 15) {
+		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 2, 2);
+		offset = 3;
+	} else if (total_cpa <= 16) {
+		offset = 2;
+	} else {
+		// --- hypothetical screen overflow case (more than 16 characters in total)  ---
+		//TODO: Not enough space on character screen to show more character slots!
+		offset = 2;
+		//temporarily fix via hack, urgh:
+		max_cpa = 16 - max_cpa_plus;
+		total_cpa = 16;
+	}
 
 	max_cpa += max_cpa_plus; /* for now, don't keep them in separate list positions
 				    but just use the '*' marker attached at server side
