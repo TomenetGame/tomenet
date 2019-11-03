@@ -3689,7 +3689,8 @@ cptr item_activation(object_type *o_ptr) {
 #endif
 
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
-		return "transcribing a spell scroll or spell crystal into it";
+		//return "transcribing a spell scroll or spell crystal into it";
+		return format("transcribing up to %d spell scrolls or spell crystals into it", o_ptr->bpval);
 
 	if (o_ptr->tval == TV_RUNE) {
 		if (o_ptr->sval < RCRAFT_MAX_ELEMENTS)
