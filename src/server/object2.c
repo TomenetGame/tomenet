@@ -11410,6 +11410,8 @@ byte anti_undead(object_type *o_ptr, player_type *p_ptr) {
 
 	/* hack: it's carried by the wight-king! */
 	if (o_ptr->name1 == ART_STONE_LORE) return FALSE;
+	/* hack: special event */
+	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2)) return FALSE;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
@@ -11469,6 +11471,8 @@ byte anti_demon(object_type *o_ptr, player_type *p_ptr) {
 
 	/* hack: it's carried by the wight-king! */
 	if (o_ptr->name1 == ART_STONE_LORE) return FALSE;
+	/* hack: special event */
+	if ((o_ptr->tval == TV_AMULET) && (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2)) return FALSE;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
