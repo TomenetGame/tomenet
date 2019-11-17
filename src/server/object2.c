@@ -9519,6 +9519,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 		for (k = m_top - 1; k >= 0; k--) {
 			m_ptr = &m_list[m_fast[k]];
 			if (m_ptr->r_idx != RI_SAURON) continue;
+			if (!in_irondeepdive(&m_ptr->wpos)) continue;
 
 			found = TRUE;
 			m_ptr->speed -= 5;
@@ -9537,6 +9538,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 		for (k = m_top - 1; k >= 0; k--) {
 			m_ptr = &m_list[m_fast[k]];
 			if (m_ptr->r_idx != RI_SAURON) continue;
+			if (in_irondeepdive(&m_ptr->wpos)) continue;
 
 			found = TRUE;
 			m_ptr->speed -= 5;

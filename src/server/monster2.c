@@ -3643,6 +3643,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 				m_ptr->hp = (m_ptr->hp * 1) / 2;
 				m_ptr->maxhp = (m_ptr->maxhp * 1) / 2;
 				s_printf("Sauron was created on %d (weakened)\n", dlev);
+				//note: we don't reset the weakened-flag here, in case player decides not to take on this particular spawned instance of Sauron but chooses to regenerate the floor instead
 			} else s_printf("Sauron was created on %d\n", dlev);
 		} else {
 			if (sauron_weakened) {
@@ -3651,6 +3652,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 				m_ptr->hp = (m_ptr->hp * 1) / 2;
 				m_ptr->maxhp = (m_ptr->maxhp * 1) / 2;
 				s_printf("Sauron was created on %d (weakened)\n", dlev);
+				//note: we don't reset the weakened-flag here, in case player decides not to take on this particular spawned instance of Sauron but chooses to regenerate the floor instead
 			} else s_printf("Sauron was created on %d\n", dlev);
 		}
 	}
