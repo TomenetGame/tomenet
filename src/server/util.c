@@ -3713,6 +3713,12 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			is_leet = TRUE;//(i != 0);//meaning 'i > 0', for efficiency
 #endif
 
+			/* NOTE: If HIGHLY_EFFECTIVE_CENSOR is on, we must here replace any non-alpha character by an alpha-character as placeholder,
+			   for any non-alpha character that is considered relevant for disturbing a swear-word.
+			   Example: For some time, '2' was missing in the list below, resulting it to get dropped in HIGHLY_EFFECTIVE_CENSOR,
+			   resulting in "(20k" becoming "(0k" and therefore "cok" triggering "cock" swearing. ^^
+			   A special exception for "(0k)" could be added to nonswearing word list I guess. */
+
 			/* keep table of leet chars consistent with the one in censor() */
 			switch (lcopy[i]) {
 			case '@': lcopy[i] = 'a'; break;
@@ -3722,6 +3728,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '$': lcopy[i] = 's'; break;
 			case '+': lcopy[i] = 't'; break;
 			case '1': lcopy[i] = 'i'; break;
+			case '2': lcopy[i] = 'z'; break;//added to break "(20k" -> "c ok", but makes sense anyway apart from this
 			case '3': lcopy[i] = 'e'; break;
 			case '4': lcopy[i] = 'a'; break;
 			case '5': lcopy[i] = 's'; break;
@@ -3737,8 +3744,8 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			   false positives. Eg 'headless (h, l27, 427)' would otherwise wrongly turn
 			   into 'headlesshltxaxtx' and trigger false 'shit' positive. */
 			case '(': lcopy[i] = 'c'; break; //all of these could be c,i,l I guess.. pick the least problematic one (i)
-			case ')': lcopy[i] = 'i'; break; // l prob: "mana/" -> mANAL :-p
-			case '/': lcopy[i] = 'i'; break;
+			case ')': lcopy[i] = 'i'; break;
+			case '/': lcopy[i] = 'i'; break; // l prob: "mana/" -> mANAL :-p
 			case '\\': lcopy[i] = 'i'; break;
 
 #ifdef HIGHLY_EFFECTIVE_CENSOR
@@ -4090,6 +4097,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			}
 			/* see right above - MUST be disabled: */
 			//lcopy[pos + j] = '*';
+#endif
+
+#if 1 //for debugging only
+			s_printf("SWEARING: Matched '%s'\n", swear[i].word);
 #endif
 			level = MAX(level, swear[i].level);
 		}
