@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. August 2019 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 19. November 2019 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -13384,12 +13384,11 @@ Take care on the following combinations:
 
 (6.2a) Maiar skill modifications
 --------------------------------
-Maiar start with a low-profile skill chart, which gets boosted or diminished
-depending on their alignment (enlightened vs corrupted) on initiation.
-
-(Low-profile means that their "good" and "evil" skills - the four holy schools,
-necromancy, traumaturgy and the three auras - are all reduced to 70% of the
-character classes' usual ratio.)
+Maiar start with a low-profile skill chart, which on initiation gets multiplied
+or diminished depending on their alignment (enlightened vs corrupted).
+Low-profile means that their "good" and "evil" skills - all holy schools and
+all occult schools if available, as well as all Blood Magic schools - are all
+about 30% lower compared to what most other races start out with.
 
 When a skill's ratio has been modified on initiation, the skill will
 automatically be set as close as possible to its previous value, and the extra
@@ -13417,7 +13416,8 @@ Modifications for becoming 'corrupted':
   Fire, Air, Conveyance school x 1.7.
   Udun school x 2.0.
   Darkness and Nether runes x 1.7.
-  Shadow school x 1.7.
+  Shadow and Unlife school x 1.7.
+  Hereticism school x 2.1.
   All Blood Magic schools x 3.0.
 
   Paladins/priests:
