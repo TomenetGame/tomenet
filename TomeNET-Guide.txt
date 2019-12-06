@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. November 2019 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 6. December 2019 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1874,7 +1874,9 @@ ID, *ID*    Identify and *Identify* magic respectively, which is used to
 Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
-            Also, members can only trade items and money with other members.
+            Also, members can only trade items and money with other members,
+            or you will get the message "ou cannot take items from outsiders."
+            (same message as appears for IDDC trading restrictions actually).
             The owner can decide to 'close' an iron team in the party menu,
             which will permanently disallow addition of any further members.
 
@@ -7864,8 +7866,8 @@ Ironman Deep Dive Challenge (IDDC)
     If you make a 'slot-exclusive' IDDC character, it will start out with 300
     extra gold, get at least a 50% discount in all shops in Bree, and in turn
     will automatically be unable to pick up any more gold or items of other
-    players, and it won't get experience from eating bad food either. (It
-    cannot buy houses either, but you won't need those anyway.)
+    players outside of the IDDC, and it won't get experience from eating bad
+    food either. (It cannot buy houses either, which are useless for IDDC.)
 
     As IDDC-exclusive character you will get no experience when you kill a
     monsters outside of the IDDC. As a little extra bonus, slot-exclusive IDDC
@@ -7980,8 +7982,10 @@ Ironman Deep Dive Challenge (IDDC)
     worldmap sector where the IDDC entrance is located.
     However, an item can only be traded between characters in the IDDC if both
     players are in the same party and the item was found after the player who
-    wants to receive it joined the party. Gold and items purchased from shops
-    cannot be traded in the IDDC.
+    wants to receive it joined the party, otherwise you will get the message
+    "You cannot take items from outsiders." (same message as for iron team
+    trading restrictions actually). Gold and items purchased from
+    shops cannot be traded in the IDDC.
     Level requirements on items are not in effect while inside the ironman deep
     dive challenge either, so item levels are meaningless.
 
