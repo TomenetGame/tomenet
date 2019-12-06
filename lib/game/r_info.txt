@@ -19114,7 +19114,7 @@ S:BA_MANA | S_ANGEL
 S:BR_DISE
 #since Blades have it too, what gives..:
 S:TELE_TO
-D:Through many succeeding cycles of time, as ray after ray provided The pathway
+D:Through many succeeding cycles of time, as ray after ray provided the pathway
 D:for the descent of new spirits, lord Michael has remained as the guardian
 D:overlord of the angelic host, the elemental kingdom and humanity. He shall
 D:not fold his cosmic wings about him to return home until the final angelic
