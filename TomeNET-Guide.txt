@@ -7708,12 +7708,14 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     The winner will receive a deed that can be 'r'ead, and turned in at Bree's
     Mayor Office for either an item that fits the needs of the character (it
     checks which skills you have trained to determine the item), or the deed
-    can be turned in for a temporary luck boost. Usually you will want the
-    item. However, you can trade the deed to someone else, who can then go and
-    redeem it for luck for that character of his (although the luck bonus he
-    gets will be somewhat lower than what the original owner would receive).
+    can be turned in for a temporary luck boost (multiple deed buffs don't
+    stack). Usually you will want the item. However, you can trade the deed to
+    someone else, who can then go and redeem it for luck for that character of
+    his (although the luck bonus he gets will be somewhat lower than what the
+    original owner would receive).
     All losers will also receive a deed on the next character they log in with
-    which can be turned in for a small temporary luck bonus.
+    which can be turned in for a small temporary luck bonus (multiple deed
+    buffs don't stack).
     For details about luck see LUCK flag in (5.8).
 
     Detailed course of the event:
@@ -7745,14 +7747,16 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     When only one player is left, he will be the designated winner, and
     teleported back to Bree. He automatically receives a victory deed in his
     inventory which he can exchange at the Mayor's office in the town hall.
-    It can be exchanged for eiter an item or a temporary luck bonus.
+    It can be exchanged for eiter an item or a temporary luck bonus (multiple
+    deed buffs don't stack).
     He can also give this deed to another character if he wishes, although in
     that case it can only be exchanged for a luck bonus, not an item, and the
     bonus will be somewhat lower than for the Highlander champion himself.
 
     All losers will also receive a 'contenders deed' on the next character they
     log on with, which can be exchanged at the Mayor's office for small
-    temporary luck bonus (note that it vanishes when you log off).
+    temporary luck bonus (note that it vanishes when you log off, and multiple
+    deed buffs don't stack).
 
     A note regarding turning in a deed for an item:
     The item you get will be random but still depend on your character's skill
@@ -10280,6 +10284,11 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 Press 'r' to read a deed, which will usually tell you what to
                 do with it. In most cases, you have to turn it in at the
                 mayor's office in Bree (one of the '+' doors in town).
+                Some deeds can be traded to other characters, but usually they
+                will get a lesser reward (eg a luck buff instead of an item)
+                than the original owner could have gotten.
+                Note that temporary luck buffs from deeds do not stack and also
+                will end prematurely when you log out before the buff ran out.
 *Destruction*   Causes a local earthquake, nearly completely wiping the area
                 of monsters and objects (see (5.13) about earthquakes).
                 Extremely powerful magic which causes a searing blast of light
