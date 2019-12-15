@@ -97,6 +97,9 @@ struct object_type
 	s16b quest;
 	s16b quest_stage;
 	s16b questor_idx;
+
+	s32b iron_trade;
+	s32b iron_turn;
 };
 
 /*
@@ -880,6 +883,9 @@ struct player_type
 
 	s32b item_order_turn; /* server turn counter overflow debug */
 #endif
+
+	s32b iron_trade;
+	s32b iron_turn;
 
 	/* TEMPORARILY EXPOSED FLAGS:
 	   Hack to experimentally beta-test upcoming features with outdated clients that don't actually support them yet: */
