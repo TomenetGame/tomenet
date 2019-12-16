@@ -1432,6 +1432,9 @@ static void rd_party(int n) {
 		}
 	}
 
+	/* Iron Team max exp */
+	if (!s_older_than(4, 7, 7)) rd_s32b(&party_ptr->experience);
+
 	if (!s_older_than(4, 4, 19)) rd_u32b(&party_ptr->flags);
 
 	/* Hack -- repair dead parties
@@ -1444,6 +1447,9 @@ static void rd_party(int n) {
 		   party_ptr->members = 0;
 		   */
 	}
+
+	/* Iron Team / IDDC trading restrictions */
+	if (!s_older_than(4, 7, 7)) rd_s32b(&party_ptr->iron_trade);
 }
 
 /*

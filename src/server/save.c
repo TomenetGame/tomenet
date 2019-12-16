@@ -586,9 +586,14 @@ static void wr_party(party_type *party_ptr) {
 	/* Save the creator's character mode */
 	wr_byte(party_ptr->cmode);
 
+	/* Iron Team max exp */
+	wr_s32b(party_ptr->experience);
+
 	/* New - party flags, maybe */
 	wr_u32b(party_ptr->flags);
 
+	/* Iron Team / IDDC trading restrictions */
+	wr_s32b(party_ptr->iron_trade);
 }
 
 static void wr_wild(wilderness_type *w_ptr) {

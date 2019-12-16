@@ -1550,8 +1550,7 @@ typedef struct party_type {
 	byte mode;		/* 'Iron Team' or normal party? (C. Blue) */
 	s32b experience;	/* For 'Iron Teams': Max experienc of members. */
 	u32b flags;		/* Party rules flags */
-	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
-	s32b iron_trade;
+	s32b iron_trade;	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
 } party_type;
 
 /*
