@@ -1729,7 +1729,13 @@ static bool rd_extra(int Ind) {
 	if (!p_ptr->id)
 		p_ptr->id = newid();
 
+#if 0
 	strip_bytes(20);	/* transient stats - these get ignored by both save and load atm. */
+#else
+	strip_bytes(12); //unused
+	rd_s32b(&p_ptr->iron_trade);
+	rd_s32b(&p_ptr->iron_turn);
+#endif
 
 	rd_s32b(&p_ptr->au);
 
