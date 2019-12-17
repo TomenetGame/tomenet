@@ -7912,11 +7912,11 @@ Ironman Deep Dive Challenge (IDDC)
     To provide some more support, this dungeon will have additional, generic
     town levels at -1000 ft and -3000 ft. Monsters cannot spawn in any kind of
     dungeon town.
-    Those towns remain static for only 5 minutes after dying, all other IDDC
-    floors will remain static for 10 minutes, giving other players a chance to
-    loot items and money. An exception are floors 50 ft..350ft which only stay
-    static for 2 minutes, still giving you a chance to reconnect if you get
-    disconnected without the floor turning stale.
+    Those towns, as well as any other IDDC floors, remain static for (only)
+    5 minutes after dying, giving other players a chance to loot items and
+    money. An exception are floors 50 ft..350ft which only stay static for
+    2 minutes, still giving you a chance to reconnect if you get disconnected
+    without the floor turning stale.
 
     Also, starting at dungeon level 8, a hidden library may appear randomly
     (that's a book store with a red '9' for entrance), allowing you to purchase
