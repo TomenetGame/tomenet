@@ -952,7 +952,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
 #else /* hack: admins see coloured depth, colour indicating how close to game bosses [Sauron/Morgoth/Tik and beyond] they are */
 		char col = '\0';
-		if (admin && attr != 'G' && q_ptr->wpos.wz) {
+		if (admin && attr != 'G' && q_ptr->wpos.wz && !isdungeontown(&q_ptr->wpos)) {
 			int lv = getlevel(&q_ptr->wpos);
 			struct dungeon_type *d_ptr = getdungeon(&q_ptr->wpos);
 
