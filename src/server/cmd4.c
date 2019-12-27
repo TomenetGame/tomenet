@@ -3854,5 +3854,12 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	}
 #endif
 
+	if (admin) {
+		msg_format(Ind, "season_halloween: %d, season_xmas: %d, season_newyearseve: %d.", season_halloween, season_xmas, season_newyearseve);
+		alim = (turn % (cfg.fps * 86400)) / (cfg.fps * 60); //abuse alim by reuse
+		if (alim < 60) msg_format(Ind, "Next 24h maintenance cycle in %d minutes.", alim);
+		else msg_format(Ind, "Next 24h maintenance cycle in %d hours %d minutes.", alim / 60, alim % 60);
+	}
+
 	msg_print(Ind, " ");
 }
