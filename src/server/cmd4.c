@@ -951,11 +951,14 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 #if 0 /* normal */
 		fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
 #else /* hack: admins see coloured depth, colour indicating how close to game bosses [Sauron/Morgoth/Tik and beyond] they are */
-		bool col = (admin && attr != 'G') ? ((getlevel(&q_ptr->wpos) >= 98 && !q_ptr->total_winner) || getlevel(&q_ptr->wpos) >= 126) : FALSE;
-		fprintf(fff, ", %s%s%s",
-		    col ? "\377R" : "",
-		    wpos_format_compact(Ind, &q_ptr->wpos),
-		    col ? "\377-" : "");
+		char col = '\0';
+		if (admin && attr != 'G') {
+			if ((getlevel(&q_ptr->wpos) >= 98 && !q_ptr->total_winner) || getlevel(&q_ptr->wpos) >= 126) col = 'R';
+			/* extended hack: see orange colour for 'engaged' characters, ie not in town and not afk */
+			else if (q_ptr->wpos.wz && !q_ptr->afk) col = 'o';
+		}
+		if (col) fprintf(fff, ", %s%c%s%s", "\377", col, wpos_format_compact(Ind, &q_ptr->wpos), "\377-");
+		else fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
 #endif
   #endif
 
