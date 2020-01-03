@@ -8936,6 +8936,7 @@ void dungeon(void) {
 		if (shutdown_recall_timer) shutdown_recall_timer--;
 
 		/* process certain player-related timers */
+		k = 0; //party-colourization
 		for (i = 1; i <= NumPlayers; i++) {
 			/* CTRL+R spam control */
 			if (Players[i]->redraw_cooldown) Players[i]->redraw_cooldown--;
@@ -8950,8 +8951,17 @@ void dungeon(void) {
 			/* Kifu email spam control */
 			if (Players[i]->go_mail_cooldown) Players[i]->go_mail_cooldown--;
 #endif
+
+			/* Party-colorization (admins only): not player-specific, but iterates over all online players anyway */
+			if (Players[i]->party && !parties[Players[i]->party].attr) {
+				parties[Players[i]->party].attr = ++k;
+				k = k % TERM_MULTI;
+			}
 		}
 	}
+	if ((turn % cfg.fps) == cfg.fps - 1)
+		for (i = 1; i <= NumPlayers; i++)
+			parties[Players[i]->party].attr = 0;
 
 	/* Nether Realm collapsing animations - process every 1/5th second */
 	if (!(turn % (cfg.fps / 5))) {

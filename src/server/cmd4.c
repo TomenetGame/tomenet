@@ -1085,14 +1085,28 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 				fprintf(fff, ", \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 			if (q_ptr->party) {
 				if (!q_ptr->guild) fprintf(fff, ", Party:");
-				if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
-					fprintf(fff, " \377D<%s%s\377D>\377U",
-					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-					    parties[q_ptr->party].name);
-				else
-					fprintf(fff, " '%s%s\377U'",
-					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-					    parties[q_ptr->party].name);
+				if (admin) { /* colourize (non-iron) party names for admins, for easy visual overview */
+					char pcol[3];
+					pcol[0] = '\377'; pcol[2] = 0;
+					pcol[1] = color_attr_to_char(parties[q_ptr->party].attr);
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, " '%s%s\377U'",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+				} else {
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, " '%s%s\377U'",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+				}
 			}
 		} else fprintf(fff, "  \377U(%s\377U)", q_ptr->info_msg);
 		if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");

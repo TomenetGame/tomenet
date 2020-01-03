@@ -1551,6 +1551,8 @@ typedef struct party_type {
 	s32b experience;	/* For 'Iron Teams': Max experienc of members. */
 	u32b flags;		/* Party rules flags */
 	s32b iron_trade;	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
+	/* non-saved stuff */
+	byte attr;
 } party_type;
 
 /*
