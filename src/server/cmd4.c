@@ -350,7 +350,7 @@ void do_cmd_check_uniques(int Ind, int line) {
 	byte ok;
 	bool full;
 
-	int k, l, total = 0, own_highest = 0, own_highest_level = 0;
+	int k, l, total = 0, own_highest = 0, own_highest_level = 0, killed = 0;
 	byte attr;
 
 	FILE *fff;
@@ -382,17 +382,23 @@ void do_cmd_check_uniques(int Ind, int line) {
 			if (r_ptr->r_sights && mon_allowed_view(r_ptr))
 				idx[total++] = k;
 
-			/* remember highest unique the viewing player actually killed */
-			if ((q_ptr->r_killed[k] == 1) && (own_highest_level <= r_ptr->level)) {
-				own_highest = k;
-				own_highest_level = r_ptr->level;
+			if (q_ptr->r_killed[k] == 1) {
+				killed++;
+				/* remember highest unique the viewing player actually killed */
+				if (own_highest_level <= r_ptr->level) {
+					own_highest = k;
+					own_highest_level = r_ptr->level;
+				}
 			}
 		}
 	}
 
-	if (!own_highest)
+	if (!own_highest) {
 		if (!(p_ptr->uniques_alive))
-			fprintf(fff, "\377U  (you haven't killed any unique monster so far)\n");
+			fprintf(fff, "\377U  (You haven't killed any unique monster so far.)\n");
+	} else {
+		fprintf(fff, "\377sYou have killed %d of %d known unique monsters.\n\n", killed, total);
+	}
 
 	if (total) {
 		byte c_out;
