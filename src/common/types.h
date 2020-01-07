@@ -1552,6 +1552,7 @@ typedef struct party_type {
 	u32b flags;		/* Party rules flags */
 	s32b iron_trade;	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
 	/* non-saved stuff */
+	bool set_attr;
 	byte attr;
 } party_type;
 

@@ -8953,7 +8953,8 @@ void dungeon(void) {
 #endif
 
 			/* Party-colorization (admins only): not player-specific, but iterates over all online players anyway */
-			if (Players[i]->party && !parties[Players[i]->party].attr) {
+			if (Players[i]->party && parties[Players[i]->party].set_attr == TRUE) {
+				parties[Players[i]->party].set_attr = FALSE;
 				if (k == TERM_L_DARK - 1) k++; //reserved for iron teams
 				if (k == TERM_SLATE - 1) k++; //skip too similar white tone maybe, QoL
 				if (k == TERM_L_WHITE - 1) k++; //skip too similar white tone maybe, QoL
@@ -8964,7 +8965,7 @@ void dungeon(void) {
 	}
 	if ((turn % cfg.fps) == cfg.fps - 1)
 		for (i = 1; i <= NumPlayers; i++)
-			parties[Players[i]->party].attr = 0;
+			parties[Players[i]->party].set_attr = TRUE;
 
 	/* Nether Realm collapsing animations - process every 1/5th second */
 	if (!(turn % (cfg.fps / 5))) {
