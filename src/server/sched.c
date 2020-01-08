@@ -292,7 +292,9 @@ void sched(void) {
 			int i;
 			for (i = max_fd; i >= 0; i--) {
 				if (FD_ISSET(i, &readmask)) {
-					(*input_handlers[i].func)(i, input_handlers[i].arg);
+					if (input_handlers[i].func) {
+						(*input_handlers[i].func)(i, input_handlers[i].arg);
+					}
 					if (--n == 0) {
 						break;
 					}
@@ -301,7 +303,9 @@ void sched(void) {
 			
 			for (i = max_fd; i >= 0; i--) {
 				if (FD_ISSET(i, &writemask)) {
-					(*output_handlers[i].func)(i, output_handlers[i].arg);
+					if (output_handlers[i].func) {
+						(*output_handlers[i].func)(i, output_handlers[i].arg);
+					}
 					if (--n == 0) {
 						break;
 					}
