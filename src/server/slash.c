@@ -4419,7 +4419,16 @@ void do_slash_cmd(int Ind, char *message) {
 			exec_lua(0, format("beta(%d,%d)", Ind, i));
 			return;
 		}
-
+		else if (prefix(message, "/colours")) {
+			msg_print(Ind, "\377wColour table:");
+			msg_print(Ind, "  (0) black:  \377dblack\377w,  (1) white: \377wwhite\377w, (2) gray:      \377sslate");
+			msg_print(Ind, "  (3) orange: \377oorange\377w, (4) red:   \377rred\377w,   (5) green:     \377ggreen");
+			msg_print(Ind, "  (6) blue:   \377bblue\377w,   (7) brown: \377uumber\377w, (8) dark gray: \377Dldark");
+			msg_print(Ind, "  (9) light gray:  \377Wlwhite\377w, (10) violet:      \377vviolet\377w, (11) yellow: \377yyellow");
+			msg_print(Ind, " (12) light red:   \377Rlred\377w,   (13) light green: \377Glgreen\377w, (14) cyan:   \377Blblue");
+			msg_print(Ind, " (15) light brown: \377Ulumber");
+			return;
+		}
 
 
 		/*
