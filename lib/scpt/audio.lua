@@ -195,6 +195,17 @@ audio_sfx = {
     "monster_wail",
     "monster_whisper",
 
+    "monster_stirring",
+    "monster_roar",
+    -- 'notice' sfx by priority, from lowest to highest:
+    "monster_notice_animal_small", --hiss
+    "monster_notice_animal_large", --growl
+    "monster_notice_humanoid", --speech-like
+    "monster_notice_grunt", --orcs, trolls, ogres, giants, hybrids maybe
+    "monster_notice_undead",
+    "monster_notice_demon",
+    "monster_notice_dragon",
+
     --[misc]
     "shriek",
     "earthquake",

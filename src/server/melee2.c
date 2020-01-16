@@ -1600,7 +1600,7 @@ static bool monst_check_antimagic(int Ind, int m_idx) {
 			} else
 				msg_format(Ind, "\377%cAn anti-magic field disrupts your attempts.", COLOUR_AM_MON);
 #ifdef USE_SOUND_2010
-			sound_near_monster(m_idx, "am_field", NULL, SFX_TYPE_MONSTER_MISC, FALSE);
+			sound_near_monster(m_idx, "am_field", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 			return TRUE;
@@ -9576,6 +9576,13 @@ void process_monsters(void) {
 					//Santa Claus
 					Send_music(pl, (p_ptr->music_monster = 67), -1);
 				}
+			}
+
+			/* Morgoth: Battleshout when spotting a player for the first time */
+			//if (m_ptr->r_idx == RI_MORGOTH && !m_ptr->extra && new_los && p_ptr->mon_vis[i])  {
+			if (m_ptr->r_idx == RI_MORGOTH  && !m_ptr->extra && j <= 20) {
+				m_ptr->extra = 1;
+				sound_floor_vol(&m_ptr->wpos, "monster_roar", NULL, SFX_TYPE_MISC, 100);
 			}
 #endif
 
