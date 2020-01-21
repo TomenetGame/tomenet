@@ -8338,6 +8338,7 @@ void player_death(int Ind) {
 		/* Check that the player has enough money */
 		if (instant_res_cost > p_ptr->au + p_ptr->balance) {
 			msg_print(Ind, "\376\377yYou do not have sufficient funds for instant-resurrection!");
+			s_printf("INSTARES: Not enough funds (%d of %d): %s\n.", instant_res_cost, p_ptr->au + p_ptr->balance, p_ptr->name);
 			instant_res_possible = FALSE;
 		}
 
