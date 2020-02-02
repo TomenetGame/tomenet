@@ -8438,6 +8438,45 @@ void player_death(int Ind) {
 			equip_death_damage(Ind, TRUE);
  #endif
 
+			/* Remove wielded Morgul weapon(s) if not immune to Black Breath, to avoid death-cascade.
+			   Note: We assume here that Morgul weapons are the only equipment that can give Black Breath. */
+			if (p_ptr->inventory[INVEN_WIELD].k_idx &&
+ #ifdef VAMPIRES_BB_IMMUNE
+			    p_ptr->prace != RACE_VAMPIRE &&
+ #endif
+			    (p_ptr->inventory[INVEN_WIELD].name2 == EGO_MORGUL || p_ptr->inventory[INVEN_WIELD].name2b == EGO_MORGUL))
+			{
+				object_type *o_ptr;
+				char o_name[ONAME_LEN];
+
+				o_ptr = &p_ptr->inventory[INVEN_WIELD];
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				s_printf("item_lost_forced: %s (slot %d)\n", o_name, INVEN_WIELD);
+
+				inven_item_increase(Ind, INVEN_WIELD, -1);
+				inven_item_optimize(Ind, INVEN_WIELD);
+
+				msg_format(Ind, "\376\377oYour %s disintegrates!", o_name);
+			}
+			if (p_ptr->inventory[INVEN_ARM].k_idx && is_weapon(p_ptr->inventory[INVEN_ARM].tval) &&
+ #ifdef VAMPIRES_BB_IMMUNE
+			    p_ptr->prace != RACE_VAMPIRE &&
+ #endif
+			    (p_ptr->inventory[INVEN_ARM].name2 == EGO_MORGUL || p_ptr->inventory[INVEN_ARM].name2b == EGO_MORGUL))
+			{
+				object_type *o_ptr;
+				char o_name[ONAME_LEN];
+
+				o_ptr = &p_ptr->inventory[INVEN_ARM];
+				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+				s_printf("item_lost_forced: %s (slot %d)\n", o_name, INVEN_ARM);
+
+				inven_item_increase(Ind, INVEN_ARM, -1);
+				inven_item_optimize(Ind, INVEN_ARM);
+
+				msg_format(Ind, "\376\377oYour %s disintegrates!", o_name);
+			}
+
 			/* Extract the cost */
 			p_ptr->au -= instant_res_cost;
 			if (p_ptr->au < 0) {
