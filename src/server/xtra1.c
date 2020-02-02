@@ -2979,6 +2979,7 @@ void calc_boni(int Ind) {
 	bool melee_weapon;
 
 	bool old_sun_burn;
+	bool old_black_breath = p_ptr->black_breath_tmp;
 
 	int lite_inc_norm = 0, lite_inc_white = 0, old_lite_type;
 
@@ -4290,8 +4291,10 @@ void calc_boni(int Ind) {
 #ifdef VAMPIRES_BB_IMMUNE
 		    && p_ptr->prace != RACE_VAMPIRE
 #endif
-		    )
+		    ) {
 			p_ptr->black_breath_tmp = TRUE;
+			if (!old_black_breath) s_printf("BLACK-BREATH (Morgul): %s\n", p_ptr->name);
+		}
 
 		//if (f5 & (TR5_IMMOVABLE)) p_ptr->immovable = TRUE;
 
