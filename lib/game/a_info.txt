@@ -3451,8 +3451,8 @@ W:65:40:40:0
 P:5:1d1:9:10:-23
 Z:hellfire brand
 F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | STR | CON | BLOWS
-F:BRAND_FIRE | FREE_ACT | RES_FEAR | RES_CHAOS | RES_FIRE | CHAOTIC
-D:Countless souls have fallen to the armoured fists of chaos. Even the most
+F:BRAND_FIRE | ACTIVATE | FREE_ACT | RES_FEAR | RES_CHAOS | RES_FIRE | CHAOTIC
+D:Countless souls have fallen to the armoured fist of chaos. Even the most
 D:resilient foes shall get incinerated by its hellfire when invoked.
 
 
