@@ -107,7 +107,7 @@ bool WriteAccount(struct account *r_acc, bool new) {
  Get an existing account and set default valid flags on it
  That will be SCORE on only (hack it for MULTI)
  Modified to return 0 if not found, 1 if found but already 100% validated,
- and -1 if found and there was still something invalid about it - C. Blue
+ and -1 if found and there was still a character to validate on that account - C. Blue
  */
 int validate(char *name) {
 	struct account acc;
@@ -115,9 +115,7 @@ int validate(char *name) {
 	bool effect = FALSE;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) {
-		return(0);
-	}
+	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
 
 	/* Modify account flags */
 	if (acc.flags & ACC_TRIAL) {
@@ -133,19 +131,19 @@ int validate(char *name) {
 
 	/* Validate the player too */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->account == acc.id) {
-			if (Players[i]->inval) effect = TRUE;
-			Players[i]->inval = 0;
-			msg_print(i, "\377G -- Welcome to TomeNET, your account has just been validated!");
-			msg_print(i, "\377G    You can press \377B?\377G key to see a list of all command keys.");
-			msg_print(i, "\377G    Just ask in chat if you have any questionr or need help. Enjoy! --");
-		}
+		if (Players[i]->account != acc.id) continue;
+		if (!Players[i]->inval) continue;
+
+		effect = TRUE;
+		Players[i]->inval = 0;
+		msg_print(i, "\377G -- Welcome to TomeNET, your account has just been validated!");
+		msg_print(i, "\377G    You can press \377B?\377G key to see a list of all command keys.");
+		msg_print(i, "\377G    Just ask in chat if you have any questionr or need help. Enjoy! --");
 	}
 
-	/* Return value of -1 indicates no effect */
-	if (effect) return(-1);
-
 	/* Success */
+	if (effect) return(-1);
+	/* Found but already all characters valid */
 	return(1);
 }
 
@@ -156,9 +154,7 @@ int invalidate(char *name, bool admin) {
 	bool effect = FALSE;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) {
-		return(0);
-	}
+	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
 
 	/* Security check: Only admins can invalidate admin accounts */
 	if (!admin && (acc.flags & ACC_ADMIN)) {
@@ -180,16 +176,16 @@ int invalidate(char *name, bool admin) {
 
 	/* Invalidate the player too */
 	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->account == acc.id) {
-			if (!Players[i]->inval) effect = TRUE;
-			Players[i]->inval = 1;
-		}
+		if (Players[i]->account != acc.id) continue;
+		if (Players[i]->inval) continue;
+
+		effect = TRUE;
+		Players[i]->inval = 1;
 	}
 
-	/* Return value of -1 indicates no effect */
-	if (effect) return(-1);
-
 	/* Success */
+	if (effect) return(-1);
+	/* Found but already all characters invalid */
 	return(1);
 }
 
