@@ -4404,6 +4404,7 @@ int newid() {
 void sf_delete(const char *name) {
 	int i, k = 0;
 	char temp[128],fname[MAX_PATH_LENGTH];
+
 	/* Extract "useful" letters */
 	for (i = 0; name[i]; i++) {
 		char c = name[i];
@@ -4415,8 +4416,55 @@ void sf_delete(const char *name) {
 		else if (strchr(SF_BAD_CHARS, c)) temp[k++] = '_';
 	}
 	temp[k] = '\0';
+
 	path_build(fname, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, temp);
 	unlink(fname);
+}
+/* Back up a player save file instead of just deleting it */
+static void sf_rename(const char *name) {
+	int i, k = 0;
+	char temp[128], fname[MAX_PATH_LENGTH], fname_new[MAX_PATH_LENGTH];
+
+	/* Extract "useful" letters */
+	for (i = 0; name[i]; i++) {
+		char c = name[i];
+
+		/* Accept some letters */
+		if (isalpha(c) || isdigit(c)) temp[k++] = c;
+
+		/* Convert space, dot, and underscore to underscore */
+		else if (strchr(SF_BAD_CHARS, c)) temp[k++] = '_';
+	}
+	temp[k] = '\0';
+
+	path_build(fname, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, temp);
+	path_build(fname_new, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "__bak__");
+	strcat(fname_new, temp); //note: might theoretically exceed MAX_PATH_LENGTH, but practically not really :-p
+	rename(fname, fname_new);
+}
+/* Rename an estate savefile (without changing the owner's name, just a simple file rn) */
+static void ef_rename(const char *name) {
+	int i, k = 0;
+	char temp[128], fname[MAX_PATH_LENGTH], fname_new[MAX_PATH_LENGTH];
+	char epath[MAX_PATH_LENGTH];
+
+	/* Extract "useful" letters */
+	for (i = 0; name[i]; i++) {
+		char c = name[i];
+
+		/* Accept some letters */
+		if (isalpha(c) || isdigit(c)) temp[k++] = c;
+
+		/* Convert space, dot, and underscore to underscore */
+		else if (strchr(SF_BAD_CHARS, c)) temp[k++] = '_';
+	}
+	temp[k] = '\0';
+
+	path_build(epath, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+	path_build(fname, MAX_PATH_LENGTH, epath, temp);
+	path_build(fname_new, MAX_PATH_LENGTH, epath, "__bak__");
+	strcat(fname_new, temp); //note: might theoretically exceed MAX_PATH_LENGTH, but practically not really :-p
+	rename(fname, fname_new);
 }
 
 /* For marking accounts active */
@@ -4427,10 +4475,8 @@ static bool *account_active = NULL;
  */
 void scan_players() {
 	int slot, amt = 0;
-	int i, j;
 	hash_entry *ptr, *pptr = NULL;
 	time_t now;
-	object_type *o_ptr;
 
 #if 0 /* Low-performance version */
 	struct account acc;
@@ -4457,57 +4503,8 @@ void scan_players() {
 		ptr = hash_table[slot];
 		while (ptr) {
 			if (ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)) {/*15552000; 7776000 = 90 days at 60fps*/
-				hash_entry *dptr;
-				cptr acc;
-
-				acc = lookup_accountname(ptr->id);
-				if (!acc) acc = "(no account)";
-				s_printf("  Removing player: %s (%s)\n", ptr->name, acc);
-
 				if (ptr->level >= 50 && ptr->admin == 0) l_printf("%s \\{D%s, level %d, was erased by timeout\n", showdate(), ptr->name, ptr->level);
-
-				for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
-					if (streq(parties[i].owner, ptr->name)) {
-						s_printf("  Disbanding party: %s\n",parties[i].name);
-						del_party(i);
-						/* remove pending notes to his party -C. Blue */
-						for (j = 0; j < MAX_PARTYNOTES; j++) {
-							if (!strcmp(party_note_target[j], parties[i].name)) {
-								strcpy(party_note_target[j], "");
-								strcpy(party_note[j], "");
-							}
-						}
-						break;
-					}
-				}
-				kill_houses(ptr->id, OT_PLAYER);
-				rem_xorder(ptr->xorder);
-				/* Added this one.. should work well? */
-				kill_objs(ptr->id);
-
-#ifdef AUCTION_SYSTEM
-				auction_player_death(ptr->id);
-#endif
-
-				/* Wipe Artifacts (s)he had  -C. Blue */
-				for (i = 0; i < o_max; i++) {
-					o_ptr = &o_list[i];
-					if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
-						delete_object_idx(i, TRUE);
-				}
-
-				amt++;
-				sf_delete(ptr->name);	/* a sad day ;( */
-				if (!pptr) hash_table[slot] = ptr->next;
-				else pptr->next = ptr->next;
-				/* Free the memory in the player name */
-				free((char *)(ptr->name));
-
-				dptr = ptr;	/* safe storage */
-				ptr = ptr->next;	/* advance */
-
-				/* Free the memory for this struct */
-				KILL(dptr, hash_entry);
+				erase_player_hash(slot, pptr, ptr);
 				continue;
 			} else {
 #if 0 /* Low-performance version */
@@ -4767,79 +4764,116 @@ void rename_character(char *pnames){
 	NumPlayers--;
 }
 
+/* Erase a player by hash - C. Blue */
+#define SAFETY_BACKUP_PLAYER 40 /* create backup when erasing a player whose level is >= this. [40] because that's minimum kinging level. */
+void erase_player_hash(int slot, hash_entry *pptr, hash_entry *ptr) {
+	int i, j;
+	hash_entry *dptr;
+	cptr acc;
+	object_type *o_ptr;
+	bool backup = FALSE, accok = FALSE;
+
+	acc = lookup_accountname(ptr->id);
+	if (!acc) acc = "(no account)";
+	else accok = TRUE;
+
+	s_printf("Removing player: %s (%s)\n", ptr->name, acc);
+
+#ifdef SAFETY_BACKUP_PLAYER
+	/* Not sure if hash table level is already updated to live player level, so double check here: */
+	j = ptr->level;
+	for (i = 1; i <= NumPlayers; i++) {
+		if (strcmp(Players[i]->name, ptr->name)) continue;
+		if (Players[i]->max_lev > j) {
+			s_printf("(max_lev %d > hash level %d)", Players[i]->max_lev, j);
+			j = Players[i]->max_lev;
+		}
+		break;
+	}
+	if (j < SAFETY_BACKUP_PLAYER)
+		s_printf("(Skipping safety backup (level %d < %d))\n", j, SAFETY_BACKUP_PLAYER);
+	else {
+		s_printf("(Creating safety backup (level %d >= %d)\n", j, SAFETY_BACKUP_PLAYER);
+
+		/* rename savefile to backup (side note: unlink() will fail to delete it then later) */
+		sf_rename(ptr->name);
+		backup = TRUE;
+
+		/* save all real estate.. */
+		if (!backup_char_estate(0, ptr->id, ptr->id))
+			s_printf("(Estate backup: At least one house failed!)\n");
+		/* ..and rename estate file to indicate it's just a backup! */
+		ef_rename(ptr->name);
+	}
+#endif
+
+	for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
+		if (streq(parties[i].owner, ptr->name)) {
+			s_printf("Disbanding party: %s\n",parties[i].name);
+			del_party(i);
+			/* remove pending notes to his party -C. Blue */
+			for (j = 0; j < MAX_PARTYNOTES; j++) {
+				if (!strcmp(party_note_target[j], parties[i].name)) {
+					strcpy(party_note_target[j], "");
+					strcpy(party_note[j], "");
+				}
+			}
+			break;
+		}
+	}
+
+	if (accok) {
+		//ACC_HOUSE_LIMIT
+		i = acc_get_houses(acc);
+		i -= ptr->houses;
+		acc_set_houses(acc, i);
+	}
+	kill_houses(ptr->id, OT_PLAYER);
+
+	rem_xorder(ptr->xorder);
+	/* Added this one.. should work well? */
+	kill_objs(ptr->id);
+#ifdef ENABLE_MERCHANT_MAIL
+	merchant_mail_death(ptr->name);
+#endif
+
+#ifdef AUCTION_SYSTEM
+	auction_player_death(ptr->id);
+#endif
+
+	/* Wipe Artifacts (s)he had  -C. Blue */
+	for (i = 0; i < o_max; i++) {
+		o_ptr = &o_list[i];
+		if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
+			delete_object_idx(i, TRUE);
+	}
+
+	if (!backup) sf_delete(ptr->name); /* a sad day ;( */
+	if (!pptr) hash_table[slot] = ptr->next;
+	else pptr->next = ptr->next;
+	/* Free the memory in the player name */
+	free((char *)(ptr->name));
+
+	dptr = ptr;	/* safe storage */
+	ptr = ptr->next;	/* advance */
+
+	/* Free the memory for this struct */
+	KILL(dptr, hash_entry);
+}
+
 /*
  *  Erase a player by charfile-name - C. Blue
  */
 void erase_player_name(char *pname) {
 	int slot;
 	hash_entry *ptr, *pptr = NULL;
-	object_type *o_ptr;
 
 	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		pptr = NULL;
 		ptr = hash_table[slot];
 		while (ptr) {
 			if (!strcmp(ptr->name, pname)) {
-				int i,j;
-				hash_entry *dptr;
-				cptr acc;
-
-				acc = lookup_accountname(ptr->id);
-				if (!acc) acc = "(no account)";
-				else {
-					//ACC_HOUSE_LIMIT
-					i = acc_get_houses(acc);
-					i -= ptr->houses;
-					acc_set_houses(acc, i);
-				}
-				s_printf("Removing player: %s (%s)\n", ptr->name, acc);
-
-				for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
-					if (streq(parties[i].owner, ptr->name)) {
-						s_printf("Disbanding party: %s\n",parties[i].name);
-						del_party(i);
-						/* remove pending notes to his party -C. Blue */
-						for (j = 0; j < MAX_PARTYNOTES; j++) {
-							if (!strcmp(party_note_target[j], parties[i].name)) {
-								strcpy(party_note_target[j], "");
-								strcpy(party_note[j], "");
-							}
-						}
-						break;
-					}
-				}
-
-				kill_houses(ptr->id, OT_PLAYER);
-				rem_xorder(ptr->xorder);
-				/* Added this one.. should work well? */
-				kill_objs(ptr->id);
-#ifdef ENABLE_MERCHANT_MAIL
-				merchant_mail_death(ptr->name);
-#endif
-
-#ifdef AUCTION_SYSTEM
-				auction_player_death(ptr->id);
-#endif
-
-				/* Wipe Artifacts (s)he had  -C. Blue */
-				for (i = 0; i < o_max; i++) {
-					o_ptr = &o_list[i];
-					if (true_artifact_p(o_ptr) && (o_ptr->owner == ptr->id))
-						delete_object_idx(i, TRUE);
-				}
-
-				sf_delete(ptr->name);	/* a sad day ;( */
-				if (!pptr) hash_table[slot] = ptr->next;
-				else pptr->next = ptr->next;
-				/* Free the memory in the player name */
-				free((char *)(ptr->name));
-
-				dptr = ptr;	/* safe storage */
-				ptr = ptr->next;	/* advance */
-
-				/* Free the memory for this struct */
-				KILL(dptr, hash_entry);
-
+				erase_player_hash(slot, pptr, ptr);
 				continue;
 			}
 			pptr = ptr;
