@@ -7645,7 +7645,11 @@ void merchant_mail_death(const char pname[NAME_LEN]) {
 }
 #endif
 
-/* deletes a ghost-dead player, cleans up his business, and disconnects him */
+/* Deletes a ghost-dead player, cleans up his business, and disconnects him.
+   NOTE:
+   This function will be called when a player actually dies.
+   It will not erase his savefile or create backup data for later restoring,
+   unlike erase_player_name() and erase_player_hash() both do! */
 static void erase_player(int Ind, int death_type, bool static_floor) {
 	player_type *p_ptr = Players[Ind];
 	char buf[1024];
