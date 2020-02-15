@@ -4504,7 +4504,7 @@ void scan_players() {
 		while (ptr) {
 			if (ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)) {/*15552000; 7776000 = 90 days at 60fps*/
 				if (ptr->level >= 50 && ptr->admin == 0) l_printf("%s \\{D%s, level %d, was erased by timeout\n", showdate(), ptr->name, ptr->level);
-				erase_player_hash(slot, pptr, ptr);
+				erase_player_hash(slot, &pptr, &ptr);
 				amt++;
 				continue;
 			} else {
@@ -4768,9 +4768,9 @@ void rename_character(char *pnames){
 /* Erase a player by hash - C. Blue
    NOTE: This is NOT used for deaths, but ONLY for /erasechar command or for inactivity timeout. */
 #define SAFETY_BACKUP_PLAYER 40 /* create backup when erasing a player whose level is >= this. [40] because that's minimum kinging level. */
-void erase_player_hash(int slot, hash_entry *pptr, hash_entry *ptr) {
+void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 	int i, j;
-	hash_entry *dptr;
+	hash_entry *dptr, *pptr = *p_pptr, *ptr = *p_ptr;
 	cptr acc;
 	object_type *o_ptr;
 	bool backup = FALSE, accok = FALSE;
@@ -4862,6 +4862,10 @@ void erase_player_hash(int slot, hash_entry *pptr, hash_entry *ptr) {
 
 	/* Free the memory for this struct */
 	KILL(dptr, hash_entry);
+
+	/* write back the modified pointers */
+	*p_pptr = pptr;
+	*p_ptr = ptr;
 }
 
 /*
@@ -4876,7 +4880,7 @@ void erase_player_name(char *pname) {
 		ptr = hash_table[slot];
 		while (ptr) {
 			if (!strcmp(ptr->name, pname)) {
-				erase_player_hash(slot, pptr, ptr);
+				erase_player_hash(slot, &pptr, &ptr);
 				continue;
 			}
 			pptr = ptr;

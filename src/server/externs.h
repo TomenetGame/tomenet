@@ -1443,7 +1443,7 @@ extern int newid(void);
 
 extern void scan_players(void);
 extern void scan_accounts(void);
-extern void erase_player_hash(int slot, hash_entry *pptr, hash_entry *ptr);
+extern void erase_player_hash(int slot, hash_entry **pptr, hash_entry **ptr);
 extern void erase_player_name(char *pname);
 extern void rename_character(char *pnames);
 extern void checkexpiry(int Ind, int days);
