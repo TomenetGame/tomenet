@@ -4779,7 +4779,6 @@ void erase_player_hash(int slot, hash_entry *pptr, hash_entry *ptr) {
 	else accok = TRUE;
 
 	s_printf("Removing player: %s (%s)\n", ptr->name, acc);
-	s_printf("(%s) %s (%s)\n", showtime(), ptr->name, acc);
 	e_printf("(%s) %s (%s)\n", showtime(), ptr->name, acc); /* log to erasure.log file for compact overview */
 
 #ifdef SAFETY_BACKUP_PLAYER
