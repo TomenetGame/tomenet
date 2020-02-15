@@ -4505,6 +4505,7 @@ void scan_players() {
 			if (ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)) {/*15552000; 7776000 = 90 days at 60fps*/
 				if (ptr->level >= 50 && ptr->admin == 0) l_printf("%s \\{D%s, level %d, was erased by timeout\n", showdate(), ptr->name, ptr->level);
 				erase_player_hash(slot, pptr, ptr);
+				amt++;
 				continue;
 			} else {
 #if 0 /* Low-performance version */
