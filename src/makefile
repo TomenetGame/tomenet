@@ -316,6 +316,8 @@ endif
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 
+#GCC on Archlinux enabled “--enable-default-pie" by default at some point, so we add this or preproc will fail to build:
+LDFLAGS += -no-pie
 
 ## Added by thaler, 6/28/97
 ## Variation -- Only support "main-gcu.c" (not "main-x11.c") on localhost
@@ -412,7 +414,7 @@ accedit: account/accedit.o
 #
 
 preproc/preproc: preproc/preproc.o
-	$(CC) $(CFLAGS) -o preproc/preproc preproc/preproc.o
+	$(CC) $(CFLAGS) $(LDFLAGS) -o preproc/preproc preproc/preproc.o
 
 
 #
