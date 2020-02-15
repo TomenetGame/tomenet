@@ -4473,8 +4473,8 @@ static bool *account_active = NULL;
 /*
  *  Called once every 24 hours. Deletes unused IDs.
  */
-void scan_players() {
-	int slot, amt = 0;
+void scan_characters() {
+	int slot, amt = 0, total = 0;
 	hash_entry *ptr, *pptr = NULL;
 	time_t now;
 
@@ -4483,11 +4483,11 @@ void scan_players() {
 #endif
 
 #ifdef PLAYERS_NEVER_EXPIRE
-	s_printf("(scan_players() disabled due to PLAYERS_NEVER_EXPIRE (DEF).)\n");
+	s_printf("(scan_characters() disabled due to PLAYERS_NEVER_EXPIRE (DEF).)\n");
 	return;
 #else
 	if (cfg.players_never_expire) {
-		s_printf("(scan_players() disabled due to PLAYERS_NEVER_EXPIRE (cfg).)\n");
+		s_printf("(scan_characters() disabled due to PLAYERS_NEVER_EXPIRE (cfg).)\n");
 		return;
 	}
 #endif
@@ -4502,6 +4502,7 @@ void scan_players() {
 		pptr = NULL;
 		ptr = hash_table[slot];
 		while (ptr) {
+			total++;
 			if (ptr->laston && (now - ptr->laston > 3600 * 24 * CHARACTER_EXPIRY_DAYS)) {/*15552000; 7776000 = 90 days at 60fps*/
 				if (ptr->level >= 50 && ptr->admin == 0) l_printf("%s \\{D%s, level %d, was erased by timeout\n", showdate(), ptr->name, ptr->level);
 				erase_player_hash(slot, &pptr, &ptr);
@@ -4532,12 +4533,13 @@ void scan_players() {
 		}
 	}
 
-	s_printf("  %d players expired.\n", amt);
+	s_printf("  %d players expired\n", amt);
+	s_printf("  %d players old total, %d new total\n", total, total - amt);
 	s_printf("Finished player inactivity check.\n");
 }
 /*
  *  Called once every 24 hours. Deletes unused Account IDs.
- *  It's called straight after scan_players, usually.
+ *  It's called straight after scan_characters, usually.
  *  Unused means that there aren't any characters on it,
  *  and it's not been used to log in with for a certain amount of time. - C. Blue
  */
@@ -4562,7 +4564,7 @@ void scan_accounts() {
 	now = time(NULL);
 
 	if (!account_active) {
-		s_printf("scan_players() must be called before scan_accounts() is called!\n");
+		s_printf("scan_characters() must be called before scan_accounts() is called!\n");
 		return;
 	}
 

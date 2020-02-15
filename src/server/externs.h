@@ -1441,7 +1441,7 @@ extern void clockin(int Ind, int type);
 extern void clockin_id(s32b id, int type, int parm, u32b parm2);
 extern int newid(void);
 
-extern void scan_players(void);
+extern void scan_characters(void);
 extern void scan_accounts(void);
 extern void erase_player_hash(int slot, hash_entry **pptr, hash_entry **ptr);
 extern void erase_player_name(char *pname);

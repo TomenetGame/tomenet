@@ -6864,7 +6864,7 @@ static void process_various(void) {
 	/* daily maintenance */
 	if (!(turn % (cfg.fps * 86400))) {
 		s_printf("24 hours maintenance cycle\n");
-		scan_players();
+		scan_characters();
 		scan_accounts();
 		scan_houses();
 #ifdef IRONDEEPDIVE_MIXED_TYPES
@@ -9582,7 +9582,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 		quit("Couldn't set up net server");
 
 	/* scan for inactive players */
-	scan_players();
+	scan_characters();
 	scan_accounts();
 	scan_houses();
 	
