@@ -4764,7 +4764,8 @@ void rename_character(char *pnames){
 	NumPlayers--;
 }
 
-/* Erase a player by hash - C. Blue */
+/* Erase a player by hash - C. Blue
+   NOTE: This is NOT used for deaths, but ONLY for /erasechar command or for inactivity timeout. */
 #define SAFETY_BACKUP_PLAYER 40 /* create backup when erasing a player whose level is >= this. [40] because that's minimum kinging level. */
 void erase_player_hash(int slot, hash_entry *pptr, hash_entry *ptr) {
 	int i, j;
@@ -4778,6 +4779,8 @@ void erase_player_hash(int slot, hash_entry *pptr, hash_entry *ptr) {
 	else accok = TRUE;
 
 	s_printf("Removing player: %s (%s)\n", ptr->name, acc);
+	s_printf("(%s) %s (%s)\n", showtime(), ptr->name, acc);
+	e_printf("(%s) %s (%s)\n", showtime(), ptr->name, acc); /* log to erasure.log file for compact overview */
 
 #ifdef SAFETY_BACKUP_PLAYER
 	/* Not sure if hash table level is already updated to live player level, so double check here: */

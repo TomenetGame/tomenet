@@ -1483,6 +1483,7 @@ extern int p_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
 extern int l_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
 extern int reverse_lines(cptr input_file, cptr output_file);
 extern int su_print(char *str);
+extern int e_printf(char *str, ...) __attribute__ ((format (printf, 1, 2)));
 
 /* save.c */
 extern bool save_player(int Ind);

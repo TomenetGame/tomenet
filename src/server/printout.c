@@ -30,46 +30,37 @@ static int initl = FALSE;
 static FILE *fps = NULL;	/* the 'superuniques.log' file */
 static int inits = FALSE;
 
+static FILE *fpe = NULL;	/* the 'erasure.log' file */
+static int inite = FALSE;
+
 /* s_print_only_to_file 
  * Controls if we should only print to file
  * FALSE = screen and file
  * TRUE = only to a file
  */
-extern int s_print_only_to_file(int which)
-{
+extern int s_print_only_to_file(int which) {
 	print_to_file = which;
 	return(TRUE);
 }
 
 
-extern int s_setup(char *str)
-{
-
-	if(init == FALSE)
-	{
-		if( (fp = fopen(str, "w+")) == NULL )
-		{
-			quit("Cannot Open Log file\n");
-		}
+extern int s_setup(char *str) {
+	if (init == FALSE) {
+		if ((fp = fopen(str, "w+")) == NULL) quit("Cannot Open Log file\n");
 		init = TRUE;
 	}
 	return(TRUE);
 }
 
-extern int s_shutdown( void )
-{
-	if( fp != NULL)
-		fclose(fp);
-
+extern int s_shutdown( void ) {
+	if (fp != NULL) fclose(fp);
 	return(TRUE);
 }
 
-extern int s_printf(const char *str, ...)
-{
+extern int s_printf(const char *str, ...) {
 	va_list va;
 
-	if(init == FALSE)   /* in case we don't start her up properly */
-	{
+	if (init == FALSE) {  /* in case we don't start her up properly */
 		fp = fopen("tomenet.log", "w+");
 		init = TRUE;
 	}
@@ -96,14 +87,9 @@ extern int s_printf(const char *str, ...)
 static FILE *fpr = NULL;
 static int initr = FALSE;
 
-
-extern bool s_setupr(char *str)
-{
-
-	if(initr == FALSE)
-	{
-		if( (fpr = fopen(str, "a+")) == NULL )
-		{
+extern bool s_setupr(char *str) {
+	if (initr == FALSE) {
+		if ((fpr = fopen(str, "a+")) == NULL) {
 //			quit("Cannot Open Log file\n");
 			s_printf("Cannot Open RFE file\n");
 		}
@@ -112,12 +98,10 @@ extern bool s_setupr(char *str)
 	return(TRUE);
 }
 
-extern bool rfe_printf(char *str, ...)
-{
+extern bool rfe_printf(char *str, ...) {
 	va_list va;
 
-	if(initr == FALSE)   /* in case we don't start her up properly */
-	{
+	if (initr == FALSE) { /* in case we don't start her up properly */
 		fpr = fopen("tomenet.rfe", "a+");
 		initr = TRUE;
 	}
@@ -140,8 +124,7 @@ extern bool rfe_printf(char *str, ...)
 
 #if 1	// obsolete, use do_cmd_check_other_prepare() instead!
 /* better move to cmd4.c? */
-extern bool do_cmd_view_rfe(int Ind, char *str, int line)
-{
+extern bool do_cmd_view_rfe(int Ind, char *str, int line) {
 	//player_type *p_ptr = Players[Ind];
 	/* Path buffer */
 	char    path[MAX_PATH_LENGTH];
@@ -175,9 +158,7 @@ int reverse_lines(cptr input_file, cptr output_file) {
 
 	/* Open the input file */
 	fd1 = open(input_file, O_RDONLY);
-	if (fd1 == -1) {
-		return -1;
-	}
+	if (fd1 == -1) return -1;
 
 	fp1 = fdopen(fd1, "rb");
 	if (!fp1) {
@@ -194,9 +175,7 @@ int reverse_lines(cptr input_file, cptr output_file) {
 	file_size = stbuf.st_size;
 
 	buf = mem_alloc(file_size);
-	if (!buf) {
-		return -4;
-	}
+	if (!buf) return -4;
 
 	/* Read the whole input file */
 	if (fread(buf, 1, file_size, fp1) < file_size) {
@@ -374,5 +353,24 @@ extern int su_print(char *str) {
 	fprintf(fps, "%04d-%02d-%02d : %s", dy, dm, dd, str);
 	fflush(fps);
 
+	return(TRUE);
+}
+
+/* Log character erasures. Note that these aren't caused by death,
+   but instead from either /erasechar command or inactivity timeout. */
+extern int e_printf(char *str, ...) {
+	char path[MAX_PATH_LENGTH];
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "erasure.log");
+	va_list va;
+
+	if (inite == FALSE) { /* in case we don't start her up properly */
+		fpe = fopen(path, "a+");
+		inite = TRUE;
+	}
+
+	va_start(va, str);
+	vfprintf(fpe, str, va);
+	va_end(va);
+	fflush(fpe);
 	return(TRUE);
 }
