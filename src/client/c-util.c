@@ -7749,6 +7749,7 @@ static void do_cmd_options_install_audio_packs(void) {
 	Term_clear();
 	Term_putstr(0, 0, -1, TERM_WHITE, "Install a sound or music pack from \377y7z\377w files within your \377yTomeNET\377w folder...");
 	Term_fresh();
+#if 0 /* hmm why not? */
 	if (quiet_mode) {
 		Term_putstr(0, 1, -1, TERM_RED, "Client is running in 'quiet mode'. Cannot install audio packs!");
 		Term_putstr(0, 2, -1, TERM_RED, "(Restart TomeNET client with 'Sound=1' and without '-q'.)");
@@ -7756,6 +7757,7 @@ static void do_cmd_options_install_audio_packs(void) {
 		inkey();
 		return;
 	}
+#endif
 
 	/* test for availability of unarchiver */
 #ifdef WINDOWS
@@ -8036,6 +8038,9 @@ static void do_cmd_options_install_audio_packs(void) {
 		}
 		if (c == 'y' || c == 'Y') break;
 	}
+
+	/* Windows OS: Need to close all related files so they can actually be overwritten, esp. the .cfg files */
+	if (!quiet_mode) close_audio_sdl();
 
 	/* install sound pack */
 	if (sound_pack) {

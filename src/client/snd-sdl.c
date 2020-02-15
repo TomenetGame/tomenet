@@ -222,6 +222,11 @@ static void close_audio(void) {
 	SDL_Quit();
 }
 
+/* Just for external call when using  = I  to install an audio pack while already running */
+void close_audio_sdl(void) {
+	close_audio();
+}
+
 
 /*
  * Initialise SDL and open the mixer
