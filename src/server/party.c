@@ -4788,7 +4788,7 @@ void erase_player_hash(int slot, hash_entry *pptr, hash_entry *ptr) {
 	for (i = 1; i <= NumPlayers; i++) {
 		if (strcmp(Players[i]->name, ptr->name)) continue;
 		if (Players[i]->max_lev > j) {
-			s_printf("(max_lev %d > hash level %d)", Players[i]->max_lev, j);
+			s_printf("(max_lev %d > hash level %d)\n", Players[i]->max_lev, j);
 			j = Players[i]->max_lev;
 		}
 		break;
