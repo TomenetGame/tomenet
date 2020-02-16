@@ -7464,7 +7464,8 @@ bool backup_estate(bool partial) {
 	s_printf("done.\n");
 	return TRUE;
 }
-/* Backup all houses that belong to a specific character and give content ownership to another character */
+/* Backup all houses that belong to a specific character and give content ownership to another character:
+   h_id = character who owns the houses, id = character name to use for the estate savefile. */
 bool backup_char_estate(int Ind, s32b h_id, s32b id) {
 	int i;
 	bool res = TRUE;
