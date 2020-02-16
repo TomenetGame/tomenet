@@ -200,7 +200,7 @@ LIBS += $(SDL_LIB_PATH) -lSDL_mixer
 CC = $(MINGW_TARGET)-gcc
 WINDRES = $(MINGW_TARGET)-windres
 CPP = $(MINGW_TARGET)-gcc
-CPPFLAGS = -x c -E -Wp,-C,-P
+CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc
 
 # Alternative CPP and CPPFLAGS definitions
 #CPP = $(MINGW_TARGET)-cpp

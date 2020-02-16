@@ -198,7 +198,7 @@ CC = gcc
 #
 # cpp variant:
 CPP = cpp
-CPPFLAGS = -C -P
+CPPFLAGS = -C -P -nostdinc
 # gcc variant:
 #CPP = gcc
 #CPPFLAGS = -x c -E -Wp,-C,-P

@@ -139,7 +139,7 @@ CC = gcc
 # 2) the option that turns off generation of a preprocessor header
 #    (lines starting on '# '). Usually this is '-P'.
 CPP = gcc
-CPPFLAGS = -x c -E -Wp,-C,-P
+CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc
 
 X11BASE = /usr/X11R6
 
