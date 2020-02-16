@@ -1317,7 +1317,7 @@ s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 	return (TRUE);
 }
 
-static int repair_cost(k_idx, to_x) {
+static int repair_cost(int k_idx, int to_x) {
 	int cost = (k_info[k_idx].cost >> 3) + 10;
 	//dagger:11, cutlass:23, broad sword/war maul:28, zweihander:46
 	return (((to_x - 3) * (to_x - 3)) / 8 - 1) * cost / 2; //increase slightly superlinearly, ie earlier repair is cheaper
