@@ -1317,6 +1317,13 @@ s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 	return (TRUE);
 }
 
+static int repair_cost(k_idx, to_x) {
+	int cost = (k_info[k_idx].cost >> 3) + 10;
+	//dagger:11, cutlass:23, broad sword/war maul:28, zweihander:46
+	return (((to_x - 3) * (to_x - 3)) / 8 - 1) * cost / 2; //increase slightly superlinearly, ie earlier repair is cheaper
+	//-1:1, -2:2, -3:3, -4:5, -5:7, -6:9, -7:11, -8:14, -9:17, -10:20
+}
+
 /* Repair an item (no enchantment!) */
 static bool repair_item(int Ind, int i, bool iac) {
 	player_type *p_ptr = Players[Ind];
@@ -1329,8 +1336,6 @@ static bool repair_item(int Ind, int i, bool iac) {
 
 	o_ptr = &p_ptr->inventory[i];
 	if (!o_ptr->tval) return FALSE;
-
-	cost = (k_info[o_ptr->k_idx].cost >> 2) + 20;
 
 	/* eligible item in this equipment slot? */
 	if (iac) {
@@ -1363,13 +1368,20 @@ static bool repair_item(int Ind, int i, bool iac) {
 			msg_print(Ind, "Sorry, but that piece of armour is beyond repair.");
 			return FALSE;
 		}
-		//cost -= o_ptr->to_a * 35;
-		cost += (((o_ptr->to_a - 3) * (o_ptr->to_a - 3)) / 8 - 1) * 35; //increase slightly superlinearly, ie earlier repair is cheaper
+		cost = repair_cost(o_ptr->k_idx, o_ptr->to_a);
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
 			if (is_armour(o_ptr->tval)) msg_print(Ind, "I only repair weapons. For repairing armour go to the armoury, next door.");
 			else msg_print(Ind, "That is not a weapon.");
 			return FALSE;
+		}
+
+		/* Easteregg, well, or not: Repair Narsil to create Anduril - C. Blue */
+		if (o_ptr->name1 == ART_NARSIL) {
+			/* Cost should be the a_info.txt cost diff between those two! [70000] */
+			Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("That'll cost %d Au to repair, accept?", a_info[ART_ANDURIL].cost - a_info[ART_NARSIL].cost), 0);
+			p_ptr->request_extra = i + 1;
+			return TRUE;
 		}
 
 		minenchant = -10; //weapon max damage
@@ -1382,8 +1394,7 @@ static bool repair_item(int Ind, int i, bool iac) {
 			msg_print(Ind, "Sorry, but that weapon is beyond repair.");
 			return FALSE;
 		}
-		//cost -= o_ptr->to_d * 35;
-		cost += (((o_ptr->to_d - 3) * (o_ptr->to_d - 3)) / 8 - 1) * 35; //increase slightly superlinearly, ie earlier repair is cheaper
+		cost = repair_cost(o_ptr->k_idx, o_ptr->to_d);
 	}
 
 	if (!is_enchantable(o_ptr)) {
@@ -1433,8 +1444,6 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 	o_ptr = &p_ptr->inventory[i];
 	if (!o_ptr->tval) return FALSE;
 
-	cost = (k_info[o_ptr->k_idx].cost >> 2) + 20;
-
 	/* eligible item in this equipment slot? */
 	if (iac) {
 		if (!is_armour(o_ptr->tval)) {
@@ -1465,11 +1474,45 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 			msg_print(Ind, "Sorry, but that piece of armour is beyond repair.");
 			return FALSE;
 		}
-		cost -= o_ptr->to_a * 35;
+		cost = repair_cost(o_ptr->k_idx, o_ptr->to_a);
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
 			msg_print(Ind, "That is not a weapon.");
 			return FALSE;
+		}
+
+		if (o_ptr->name1 == ART_NARSIL) {
+			bool id = o_ptr->ident & ID_KNOWN;
+
+			cost = a_info[ART_ANDURIL].cost - a_info[ART_NARSIL].cost;
+
+			object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
+			if (p_ptr->au < cost) {
+				msg_print(Ind, "You do not have enough money!");
+				return FALSE;
+			}
+			p_ptr->au -= cost;
+			p_ptr->redraw |= PR_GOLD;
+
+			msg_format(Ind, "Your sword looks as good as new again!");
+
+			s_printf("BACT_REPAIR: %s reforged Narsil into Anduril\n", p_ptr->name);
+
+			handle_art_d(o_ptr->name1);
+			invcopy(o_ptr, lookup_kind(TV_SWORD, SV_CLAYMORE));
+			o_ptr->name1 = ART_ANDURIL;
+			apply_magic(&p_ptr->wpos, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+			o_ptr->level = 30; //a little bonus - Anduril/Claymore have base level 40 actually
+			if (id) o_ptr->ident |= ID_KNOWN;
+			can_use(Ind, o_ptr);
+
+			/* We might be wearing/wielding the item */
+			p_ptr->update |= PU_BONUS;
+			p_ptr->redraw |= (PR_PLUSSES | PR_ARMOR);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+			return (TRUE);
 		}
 
 		minenchant = -10; //weapon max damage
@@ -1482,7 +1525,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 			msg_print(Ind, "Sorry, but that weapon is beyond repair.");
 			return FALSE;
 		}
-		cost -= o_ptr->to_d * 35;
+		cost = repair_cost(o_ptr->k_idx, o_ptr->to_d);
 	}
 
 	if (!is_enchantable(o_ptr)) {
@@ -1528,6 +1571,7 @@ s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
 
 	/* We might be wearing/wielding the item */
 	p_ptr->update |= PU_BONUS;
+	p_ptr->redraw |= (PR_PLUSSES | PR_ARMOR);
 
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);

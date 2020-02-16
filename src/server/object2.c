@@ -4297,6 +4297,10 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 			if (a_ptr->tval != o_ptr->tval) continue;
 			if (a_ptr->sval != o_ptr->sval) continue;
 
+			/* Special hack: Narsil and Anduril cannot coexist */
+			if (i == ART_NARSIL && a_info[ART_ANDURIL].cur_num) continue;
+			if (i == ART_ANDURIL && a_info[ART_NARSIL].cur_num) continue;
+
 			/* We must make the "rarity roll" */
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
 			if (rand_int(a_ptr->rarity >> difficulty) != 0) continue;
