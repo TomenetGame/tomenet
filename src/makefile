@@ -214,12 +214,22 @@ CC = gcc
 # Also, if your system doesnt have a dedicated cpp command, you might
 # need to use the gcc invocation below instead.
 #
+
 # cpp variant:
 CPP = cpp
-CPPFLAGS = -C -P
+#CPPFLAGS = -C -P
+#cpp by default generates a big comment blob at the beginning of the file
+#implicitely from it's features.h. However, some versions of it generate
+#the URL gnu.org/license in a broken way, some in the correct way. Now the fun
+#thing is, that the correctly transcribed URL will actually make tolua choke.
+#So, -nostdinc will prevent the whole own comment blob of cpp to get generated
+#in the first place, as we never asked for it:
+CPPFLAGS = -C -P -nostdinc
+
 # gcc variant:
 #CPP = gcc
 #CPPFLAGS = -x c -E -Wp,-C,-P
+
 
 
 # For variations with X11
