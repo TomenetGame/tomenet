@@ -7541,7 +7541,6 @@ void do_cmd_purchase_house(int Ind, int dir) {
 	struct worldpos *wpos = &p_ptr->wpos;
 
 	int y, x, h_idx;
-	int factor;
 	//int64_t price; /* I'm hoping this will be 64 bits.  I dont know if it will be portable. */
 	//s64b price;
 	s32b price;
