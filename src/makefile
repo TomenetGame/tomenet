@@ -327,7 +327,7 @@ endif
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 
 #GCC on Archlinux enabled “--enable-default-pie" by default at some point, so we add this or preproc will fail to build:
-LDFLAGS += -no-pie
+#LDFLAGS += -no-pie
 
 ## Added by thaler, 6/28/97
 ## Variation -- Only support "main-gcu.c" (not "main-x11.c") on localhost
