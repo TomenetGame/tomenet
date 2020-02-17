@@ -7340,9 +7340,10 @@ bool backup_estate(bool partial) {
 
 		wpos = &h_ptr->wpos;
 		dna = h_ptr->dna;
-		/* assume worst possible charisma (3) */
-		au = dna->price / 100 * adj_chr_gold[0];
-		if (au < 100) au = 100;
+		/* assume worst possible charisma (3 (0))? */
+		/* assume decent charisma (18 (aka 15 as it starts at 3) -> 100%)
+		   still a 25% gain is possible with this for those who bought it at *** CHR originally here.. >,>  */
+		au = house_price_player(dna->price, 15);
 		//h_ptr->dy,dx
 
 		/* WARNING: For now unable to save guild halls */
@@ -7546,8 +7547,15 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 		fprintf(fp, "%s\n", ESTATE_BACKUP_VERSION);
 	}
 
+#if 0
 	/* add house price to his backup file -- nope */
 	fprintf(fp, "AU:%d\n", 1); //0 Au = 'corrupted' error ;-p
+#else /* as this function is called for character-erasure backups, we need the house cost here too */
+	/* assume worst possible charisma (3 (0))? */
+	/* assume decent charisma (18 (aka 15 as it starts at 3) -> 100%)
+	   still a 25% gain is possible with this for those who bought it at *** CHR originally here.. >,>  */
+	fprintf(fp, "AU:%d\n", house_price_player(h_ptr->dna->price, 15));
+#endif
 
 	/* scan house contents and add them to his backup file */
 	/* traditional house? */

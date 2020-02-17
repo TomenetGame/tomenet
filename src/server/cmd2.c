@@ -2714,11 +2714,7 @@ void do_cmd_open(int Ind, int dir) {
 				} else {
 					struct dna_type *dna = cs_ptr->sc.ptr;
 					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) {
-						int factor, price;
-						factor = (100 + adj_chr_gold[p_ptr->stat_ind[A_CHR]]) / 2;
-						price = dna->price / 100 * factor;
-						if (price < 100) price = 100;
-						msg_format(Ind, "\377oThat house costs %d gold.", price);
+						msg_format(Ind, "\377oThat house costs %d gold.", house_price_player(dna->price, p_ptr->stat_ind[A_CHR]));
 #ifdef USE_SOUND_2010
 						//sound(Ind, "open_door_stuck", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
@@ -7600,17 +7596,11 @@ void do_cmd_purchase_house(int Ind, int dir) {
 			return;
 		}
 
-
-		/* Take player's CHR into account somewhat */
-		factor = (100 + adj_chr_gold[p_ptr->stat_ind[A_CHR]]) / 2;
-
 		/* Check for already-owned house */
 		if (dna->owner) {
-			price = dna->price / factor * 100;
-			if (price < 100) price = 100;
-
 			if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
 				if (p_ptr->dna == dna->creator) {
+					price = house_price_player(dna->price, p_ptr->stat_ind[A_CHR]);
 					if (!gain_au(Ind, price / 2, FALSE, FALSE)) return;
 #ifdef USE_SOUND_2010
 					sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
@@ -7663,9 +7653,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 		}
 
 		/* we are buying */
-		price = dna->price / 100 * factor;
-		if (price < 100) price = 100;
-
+		price = house_price_player(dna->price, p_ptr->stat_ind[A_CHR]);
 		if (price > p_ptr->au) {
 			msg_print(Ind,"You do not have enough gold!");
 			return;

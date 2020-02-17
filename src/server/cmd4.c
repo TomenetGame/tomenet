@@ -2952,12 +2952,8 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 		    //h_ptr->wpos.wz*50, h_ptr->wpos.wx, h_ptr->wpos.wy);
 
 		if (dna->creator == p_ptr->dna) {
-			/* Take player's CHR into account */
-			int factor = adj_chr_gold[p_ptr->stat_ind[A_CHR]];
-			int price = dna->price / 100 * factor;
-
-			if (price < 100) price = 100;
-			fprintf(fff, "  %dau", price / 2);
+			s32b price = house_price_player(dna->price, p_ptr->stat_ind[A_CHR]);
+			fprintf(fff, "  %dau", price);
 		}
 
 		if (admin) {

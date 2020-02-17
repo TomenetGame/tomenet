@@ -935,6 +935,7 @@ extern void knock_house(int Ind, int x, int y);
 extern void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave);
 extern s32b house_price_area(int area, bool has_moat, bool random);
 extern s32b initial_house_price(house_type *h_ptr);
+extern s32b house_price_player(s32b house_price, int charisma);
 extern int wild_gettown(int x, int y);
 
 /* init-txt.c */

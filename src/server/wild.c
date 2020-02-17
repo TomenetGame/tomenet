@@ -4679,6 +4679,12 @@ s32b initial_house_price(house_type *h_ptr) {
 	return price;
 }
 
+s32b house_price_player(s32b house_price, int charisma) {
+	house_price = ((house_price / 20) * (100 + adj_chr_gold[charisma])) / 10; //max base house price value before int overflow: 180M Au
+	if (house_price < 100) house_price = 100;
+	return house_price;
+}
+
 /* Returns town if we're within a town area of radius MAX_TOWNAREA (housing!).
    NOTE: This function assumes that towns have a minimum distance of 6,
    even diagonally! */
