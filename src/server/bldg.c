@@ -260,74 +260,73 @@ static void reset_tim_flags() {
 /*
  * arena commands
  */
-static void arena_comm(int cmd)
-{
+static void arena_comm(int cmd) {
 	char tmp_str[80];
 	monster_race *r_ptr;
 	cptr name;
 
 	switch(cmd) {
-		case BACT_ARENA:
-		{
-			if (p_ptr->arena_number == MAX_ARENA_MONS) {
-				clear_bldg(5,19);
-				prt("               Arena Victor!", 5, 0);
-				prt("Congratulations!  You have defeated all before you.", 7, 0);
-				prt("For that, receive the prize: 10,000 gold pieces", 8, 0);
-				prt("",10,0);
-				prt("", 11, 0);
+	case BACT_ARENA:
+	{
+		if (p_ptr->arena_number == MAX_ARENA_MONS) {
+			clear_bldg(5,19);
+			prt("               Arena Victor!", 5, 0);
+			prt("Congratulations!  You have defeated all before you.", 7, 0);
+			prt("For that, receive the prize: 10,000 gold pieces", 8, 0);
+			prt("",10,0);
+			prt("", 11, 0);
 
-				gain_au(Ind, 10000, FALSE, FALSE);
+			gain_au(Ind, 10000, FALSE, FALSE);
 
-				msg_print("Press the space bar to continue");
-				msg_print(NULL);
-				p_ptr->arena_number++;
-			} else if (p_ptr->arena_number > MAX_ARENA_MONS) {
-				msg_print("You enter the arena briefly and bask in your glory.");
-				msg_print(NULL);
-			} else {
-				p_ptr->inside_arena = TRUE;
-				p_ptr->exit_bldg = FALSE;
-				reset_tim_flags();
-				p_ptr->leaving = TRUE;
-				p_ptr->oldpx = px;
-				p_ptr->oldpy = py;
-				leave_bldg = TRUE;
-			}
-
-			break;
+			msg_print("Press the space bar to continue");
+			msg_print(NULL);
+			p_ptr->arena_number++;
+		} else if (p_ptr->arena_number > MAX_ARENA_MONS) {
+			msg_print("You enter the arena briefly and bask in your glory.");
+			msg_print(NULL);
+		} else {
+			p_ptr->inside_arena = TRUE;
+			p_ptr->exit_bldg = FALSE;
+			reset_tim_flags();
+			p_ptr->leaving = TRUE;
+			p_ptr->oldpx = px;
+			p_ptr->oldpy = py;
+			leave_bldg = TRUE;
 		}
 
-		case BACT_POSTER:
-		{
-			if (p_ptr->arena_number == MAX_ARENA_MONS)
-				msg_print("You are victorious. Enter the arena for the ceremony.");
-			else if (p_ptr->arena_number > MAX_ARENA_MONS)
-				msg_print("You have won against all foes.");
-			else {
-				r_ptr = &r_info[arena_monsters[p_ptr->arena_number]];
-				name = (r_name + r_ptr->name);
-				strnfmt(tmp_str, 80, "Do I hear any challenges against: %s", name);
-				msg_print(tmp_str);
-				msg_print(NULL);
-			}
+		break;
+	}
 
-			break;
+	case BACT_POSTER:
+	{
+		if (p_ptr->arena_number == MAX_ARENA_MONS)
+			msg_print("You are victorious. Enter the arena for the ceremony.");
+		else if (p_ptr->arena_number > MAX_ARENA_MONS)
+			msg_print("You have won against all foes.");
+		else {
+			r_ptr = &r_info[arena_monsters[p_ptr->arena_number]];
+			name = (r_name + r_ptr->name);
+			strnfmt(tmp_str, 80, "Do I hear any challenges against: %s", name);
+			msg_print(tmp_str);
+			msg_print(NULL);
 		}
 
-		case BACT_ARENA_RULES:
-		{
-			/* Save screen */
-			screen_save();
+		break;
+	}
 
-			/* Peruse the arena help file */
-			(void)show_file("arena.txt", NULL, 0, 0, 0);
+	case BACT_ARENA_RULES:
+	{
+		/* Save screen */
+		screen_save();
 
-			/* Load screen */
-			screen_load();
+		/* Peruse the arena help file */
+		(void)show_file("arena.txt", NULL, 0, 0, 0);
 
-			break;
-		}
+		/* Load screen */
+		screen_load();
+
+		break;
+	}
 	}
 }
 
@@ -335,10 +334,8 @@ static void arena_comm(int cmd)
 /*
  * display fruit for dice slots
  */
-static void display_fruit(int row, int col, int fruit)
-{
-	switch(fruit)
-	{
+static void display_fruit(int row, int col, int fruit) {
+	switch(fruit) {
 		case 0: /* lemon */
 		{
 			c_put_str(TERM_YELLOW,"   ####.",row,col);
@@ -711,11 +708,9 @@ static bool gamble_comm(int Ind, int cmd, int gold)
  * ghost code does become a reality again. Does help to avoid filthy urchins.
  * Resting at night is also a quick way to restock stores -KMW-
  */
-static bool inn_comm(int Ind, int cmd)
-{
+static bool inn_comm(int Ind, int cmd) {
 	player_type *p_ptr = Players[Ind];
 	bool vampire = FALSE;
-
 
 #if 0
 	/* Extract race info */
@@ -723,17 +718,14 @@ static bool inn_comm(int Ind, int cmd)
 #endif	// 0
 	vampire = p_ptr->suscep_life;
 
-	switch(cmd)
-	{
+	switch(cmd) {
 		case BACT_FOOD: /* Buy food & drink */
 		{
-			if (!vampire)
-			{
+			if (!vampire) {
 				msg_print(Ind, "The barkeep gives you some gruel and a beer.");
 				// msg_print(Ind, NULL);
 				(void) set_food(Ind, PY_FOOD_MAX - 1);
-			}
-			else {
+			} else {
 				msg_print(Ind, "You're a vampire and I don't have any food for you!");
 				return(FALSE);
 			}
@@ -757,16 +749,14 @@ static bool inn_comm(int Ind, int cmd)
 			nighttime = ((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL));
 
 			/* Normal races rest at night */
-			if (!vampire && !nighttime)
-			{
+			if (!vampire && !nighttime) {
 				msg_print(Ind, "The rooms are available only at night.");
 				msg_print(Ind, NULL);
 				return(FALSE);
 			}
 
 			/* Vampires rest during daytime */
-			if (vampire && nighttime)
-			{
+			if (vampire && nighttime) {
 				msg_print(Ind, "The rooms are available only at daylight for the Undeads.");
 				msg_print(Ind, NULL);
 				return(FALSE);
@@ -774,8 +764,7 @@ static bool inn_comm(int Ind, int cmd)
 #endif	// 0
 
 			/* Must cure HP draining status first */
-			if ((p_ptr->poisoned > 0) || (p_ptr->diseased > 0) || (p_ptr->cut > 0))
-			{
+			if ((p_ptr->poisoned > 0) || (p_ptr->diseased > 0) || (p_ptr->cut > 0)) {
 				msg_print(Ind, "You need a healer, not a room.");
 				// msg_print(Ind, NULL);
 				msg_print(Ind, "Sorry, but don't want anyone dying in here.");
@@ -784,21 +773,14 @@ static bool inn_comm(int Ind, int cmd)
 
 #if 0
 			/* Let the time pass XXX XXX XXX */
-			if (vampire)
-			{
+			if (vampire) {
 				/* Wait for sunset */
 				while ((bst(HOUR, turn) >= SUNRISE) && (bst(HOUR, turn) < NIGHTFALL))
-				{
 					turn += (10L * MINUTE);
-				}
-			}
-			else
-			{
+			} else {
 				/* Wait for sunrise */
 				while ((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL))
-				{
 					turn += (10L * MINUTE);
-				}
 			}
 #endif	// 0
 
@@ -865,8 +847,7 @@ static bool inn_comm(int Ind, int cmd)
 /*
  * share gold for thieves
  */
-static void share_gold(void)
-{
+static void share_gold(void) {
 	int i;
 
 	i = (p_ptr->lev * 2) * 10;
@@ -881,10 +862,8 @@ static void share_gold(void)
 /*
  * Display quest information
  */
-static void get_questinfo(int questnum)
-{
+static void get_questinfo(int questnum) {
 	int i;
-
 
 	/* Print the quest info */
 	prt(format("Quest Information (Danger level: %d)", quest[questnum].level), 5, 0);
@@ -901,12 +880,9 @@ static void get_questinfo(int questnum)
 /*
  * Request a quest from the Lord.
  */
-static bool castle_quest(int y, int x)
-{
+static bool castle_quest(int y, int x) {
 	int             plot = 0;
-
 	quest_type      *q_ptr;
-
 
 	clear_bldg(7,18);
 
@@ -970,8 +946,7 @@ static bool castle_quest(int y, int x)
 /*
  * Displaying town history -KMW-
  */
-static void town_history(void)
-{
+static void town_history(void) {
 	/* Save screen */
 	screen_save();
 
@@ -986,8 +961,7 @@ static void town_history(void)
 /*
  * compare_weapon_aux2 -KMW-
  */
-static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, int mult, int bonus, char attr[80], u32b f1, u32b f2, u32b f3, byte color)
-{
+static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, int mult, int bonus, char attr[80], u32b f1, u32b f2, u32b f3, byte color) {
 	char tmp_str[80];
 
 	c_put_str(color,attr,r,c);
@@ -995,11 +969,11 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, 
 	if (o_ptr->tval == TV_BOW || is_ammo(o_ptr->tval))
 		strnfmt(tmp_str, 80, "Attack: %d-%d damage",
 		    numblows * (((o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d),
-	    	    numblows * (((o_ptr->ds * o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d));
+		    numblows * (((o_ptr->ds * o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d));
 	else
 		strnfmt(tmp_str, 80, "Attack: %d-%d damage",
 		    numblows * (((o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d + bonus),
-	    	    numblows * (((o_ptr->ds * o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d + bonus));
+		    numblows * (((o_ptr->ds * o_ptr->dd * mult) / FACTOR_MULT) + o_ptr->to_d + bonus));
 
 	put_str(tmp_str,r,c+8);
 	r++;
@@ -1009,77 +983,59 @@ static void compare_weapon_aux2(object_type *o_ptr, int numblows, int r, int c, 
 /*
  * compare_weapon_aux1 -KMW-
  */
-static void compare_weapon_aux1(object_type *o_ptr, int col, int r)
-{
+static void compare_weapon_aux1(object_type *o_ptr, int col, int r) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
-
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 
-	if (f1 & (TR1_SLAY_ANIMAL)) {
+	if (f1 & (TR1_SLAY_ANIMAL))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, FLAT_HURT_BONUS, "Animals:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_SLAY_ORC)) {
+	if (f1 & (TR1_SLAY_ORC))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Orcs:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_SLAY_TROLL)) {
+	if (f1 & (TR1_SLAY_TROLL))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Trolls:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_SLAY_GIANT)) {
+	if (f1 & (TR1_SLAY_GIANT))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Giants:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_SLAY_EVIL)) {
+	if (f1 & (TR1_SLAY_EVIL))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_HURT, FLAT_HURT_BONUS, "Evil:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_KILL_UNDEAD)) {
+	if (f1 & (TR1_KILL_UNDEAD))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, FLAT_KILL_BONUS, "Undead:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	else if (f1 & (TR1_SLAY_UNDEAD)) {
+	else if (f1 & (TR1_SLAY_UNDEAD))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Undead:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_KILL_DEMON)) {
+	if (f1 & (TR1_KILL_DEMON))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, FLAT_KILL_BONUS, "Demons:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	else if (f1 & (TR1_SLAY_DEMON)) {
+	else if (f1 & (TR1_SLAY_DEMON))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Demons:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_KILL_DRAGON)) {
+	if (f1 & (TR1_KILL_DRAGON))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_KILL, FLAT_KILL_BONUS, "Dragons:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	else if (f1 & (TR1_SLAY_DRAGON)) {
+	else if (f1 & (TR1_SLAY_DRAGON))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_SLAY, FLAT_SLAY_BONUS, "Dragons:",
 		                    f1, f2, f3, TERM_YELLOW);
-	}
-	if (f1 & (TR1_BRAND_ACID)) {
+	if (f1 & (TR1_BRAND_ACID))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Acid:",
 		                    f1, f2, f3, TERM_RED);
-	}
-	if (f1 & (TR1_BRAND_ELEC)) {
+	if (f1 & (TR1_BRAND_ELEC))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Elec:",
 		                    f1, f2, f3, TERM_RED);
-	}
-	if (f1 & (TR1_BRAND_FIRE)) {
+	if (f1 & (TR1_BRAND_FIRE))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Fire:",
 		                    f1, f2, f3, TERM_RED);
-	}
-	if (f1 & (TR1_BRAND_COLD)) {
+	if (f1 & (TR1_BRAND_COLD))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Cold:",
 		                    f1, f2, f3, TERM_RED);
-	}
-	if (f1 & (TR1_BRAND_POIS)) {
+	if (f1 & (TR1_BRAND_POIS))
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Poison:",
 		                    f1, f2, f3, TERM_RED);
-	}
 }
 
 
@@ -1114,20 +1070,14 @@ static void list_weapon(object_type *o_ptr, int row, int col)
 /*
  * compare_weapons -KMW-
  */
-static bool compare_weapons(void)
-{
+static bool compare_weapons(void) {
 	int item, item2, i;
-
 	object_type *o1_ptr, *o2_ptr, *orig_ptr;
-
 	object_type *i_ptr;
-
 	cptr q, s;
-
+	o1_ptr = NULL; o2_ptr = NULL; i_ptr = NULL;
 
 	clear_bldg(6,18);
-
-	o1_ptr = NULL; o2_ptr = NULL; i_ptr = NULL;
 
 	/* Store copy of original wielded weapon in pack slot */
 	i_ptr = &inventory[INVEN_WIELD];
@@ -1138,21 +1088,18 @@ static bool compare_weapons(void)
 	/* Get an item */
 	q = "What is your first weapon? ";
 	s = "You have nothing to compare.";
-	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN)))
-	{
+	if (!get_item(&item, q, s, (USE_EQUIP | USE_INVEN))) {
 		inven_item_increase(INVEN_PACK, -1);
 		inven_item_optimize(INVEN_PACK);
 		return(FALSE);
 	}
 
 	/* Get the item (in the pack) */
-	if (item >= 0)
-		o1_ptr = &inventory[item];
+	if (item >= 0) o1_ptr = &inventory[item];
 
 	/* To remove a warning */
 	if (((o1_ptr->tval < TV_BOW) || (o1_ptr->tval > TV_AXE)) &&
-	    (o1_ptr->tval != TV_MSTAFF))
-	{
+	    (o1_ptr->tval != TV_MSTAFF)) {
 		msg_print("Not a weapon! Try again.");
 		msg_print(NULL);
 		inven_item_increase(INVEN_PACK, -1);
@@ -1163,8 +1110,7 @@ static bool compare_weapons(void)
 	/* Get an item */
 	q = "What is your second weapon? ";
 	s = "You have nothing to compare.";
-	if (!get_item(&item2, q, s, (USE_EQUIP | USE_INVEN)))
-	{
+	if (!get_item(&item2, q, s, (USE_EQUIP | USE_INVEN))) {
 		inven_item_increase(INVEN_PACK, -1);
 		inven_item_optimize(INVEN_PACK);
 		return(FALSE);
@@ -1175,8 +1121,7 @@ static bool compare_weapons(void)
 
 	/* To remove a warning */
 	if (((o2_ptr->tval < TV_BOW) || (o2_ptr->tval > TV_AXE)) &&
-	    (o2_ptr->tval != TV_MSTAFF))
-	{
+	    (o2_ptr->tval != TV_MSTAFF)) {
 		msg_print("Not a weapon! Try again.");
 		msg_print(NULL);
 		inven_item_increase(INVEN_PACK, -1);
@@ -1194,10 +1139,8 @@ static bool compare_weapons(void)
 	compare_weapon_aux1(o1_ptr, 2, i+8);
 
 	i_ptr = &inventory[INVEN_WIELD];
-	if (item2 == INVEN_WIELD)
-		object_copy(i_ptr, orig_ptr);
-	else
-		object_copy(i_ptr, o2_ptr);
+	if (item2 == INVEN_WIELD) object_copy(i_ptr, orig_ptr);
+	else object_copy(i_ptr, o2_ptr);
 	calc_boni();
 
 	list_weapon(o2_ptr,i,40);
@@ -2761,15 +2704,11 @@ if (is_admin(p_ptr))
 /*
  * Enter quest level
  */
-void enter_quest(void)
-{
-	if (!(cave[py][px].feat == FEAT_QUEST_ENTER))
-	{
+void enter_quest(void) {
+	if (!(cave[py][px].feat == FEAT_QUEST_ENTER)) {
 		msg_print("You see no quest level here.");
 		return;
-	}
-	else
-	{
+	} else {
 		/* Player enters a new quest */
 		p_ptr->oldpy = py;
 		p_ptr->oldpx = px;
@@ -2788,8 +2727,7 @@ void enter_quest(void)
 /*
  * Do building commands
  */
-void do_cmd_bldg(void)
-{
+void do_cmd_bldg(void) {
 	int i,which, x = px, y = py;
 	char command;
 	bool validcmd;
@@ -2798,8 +2736,7 @@ void do_cmd_bldg(void)
 	store_action_type *ba_ptr;
 
 
-	if (cave[py][px].feat != FEAT_SHOP)
-	{
+	if (cave[py][px].feat != FEAT_SHOP) {
 		msg_print("You see no building here.");
 		return;
 	}
@@ -2829,27 +2766,22 @@ void do_cmd_bldg(void)
 	show_building(s_ptr);
 	leave_bldg = FALSE;
 
-	while (!leave_bldg)
-	{
+	while (!leave_bldg) {
 		validcmd = FALSE;
 		prt("",1,0);
 		command = inkey();
 
-		if (command == ESCAPE)
-		{
+		if (command == ESCAPE) {
 			leave_bldg = TRUE;
 			p_ptr->inside_arena = FALSE;
 			break;
 		}
 
-		for (i = 0; i < 6; i++)
-		{
+		for (i = 0; i < 6; i++) {
 			ba_ptr = &ba_info[st_info->actions[i]];
 
-			if (ba_ptr->letter)
-			{
-				if (ba_ptr->letter == command)
-				{
+			if (ba_ptr->letter) {
+				if (ba_ptr->letter == command) {
 					validcmd = TRUE;
 					break;
 				}
