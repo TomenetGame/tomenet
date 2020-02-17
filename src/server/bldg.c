@@ -1283,15 +1283,15 @@ static bool repair_item(int Ind, int i, bool iac) {
 	/* eligible item in this equipment slot? */
 	if (iac) {
 		if (!is_armour(o_ptr->tval)) {
-			if (is_weapon(o_ptr->tval)) msg_print(Ind, "I only repair armour. For repairing a weapon go see the weaponsmith, next door.");
-			else msg_print(Ind, "That is not a piece of armour.");
+			if (is_weapon(o_ptr->tval)) msg_print(Ind, "'I only repair armour. For weapons go see the weaponsmith, next door.'");
+			else msg_print(Ind, "'That is not a piece of armour.'");
 			return FALSE;
 		}
 
 		if (o_ptr->tval == TV_SHIELD)
 #ifdef NEW_SHIELDS_NO_AC
 		{
-			msg_print(Ind, "That item isn't damaged.");
+			msg_print(Ind, "'That item isn't damaged.'");
 			return FALSE;
 		}
 #else
@@ -1304,25 +1304,49 @@ static bool repair_item(int Ind, int i, bool iac) {
 		else minenchant = -o_ptr->ac;
 
 		if (o_ptr->to_a >= 0) {
-			msg_print(Ind, "That looks pretty fine already.");
+			msg_print(Ind, "'That looks pretty fine already.'");
 			return FALSE;
 		}
 		if (o_ptr->to_a < minenchant) {
-			msg_print(Ind, "Sorry, but that piece of armour is beyond repair.");
+			msg_print(Ind, "'Sorry, but that piece of armour is beyond repair.'");
 			return FALSE;
 		}
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_a);
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
-			if (is_armour(o_ptr->tval)) msg_print(Ind, "I only repair weapons. For repairing armour go to the armoury, next door.");
-			else msg_print(Ind, "That is not a weapon.");
+			if (is_armour(o_ptr->tval)) msg_print(Ind, "'I only repair weapons. For armour go to the armoury, next door.'");
+			else msg_print(Ind, "'That is not a weapon.'");
 			return FALSE;
 		}
 
 		/* Easteregg, well, or not: Repair Narsil to create Anduril - C. Blue */
 		if (o_ptr->name1 == ART_NARSIL) {
+			/* Requires Elven smith in Lothlorien or Gondolin */
+			store_type *st_ptr;
+			owner_type *ot_ptr;
+			int t;
+
+			t = gettown(Ind);
+			if (t != 1 && t != 3) {
+				msg_print(Ind, "\374'Hmm, this broken sword seems special..");
+				msg_print(Ind, "\374 I have to admit it is beyond my abilities to repair this item!");
+				msg_print(Ind, "\374 You might try to seek out a famed elven smith in one of their cities.'");
+				return FALSE;
+			}
+
+			st_ptr = &town[t].townstore[p_ptr->store_num];
+			ot_ptr = &ow_info[st_ptr->owner];
+			if (!strstr(ow_name + ot_ptr->name, "Elf)")) {
+				msg_print(Ind, "\374'Hmm, I must admit it is beyond my ability to repair this sword.");
+				msg_print(Ind, "\374 But fret not, you have come to the right place!");
+				msg_print(Ind, "\374 Just wait for an elven smith I share shifts with, to look at this.'");
+				return FALSE;
+			}
+
+			msg_print(Ind, "'That is a quite special broken sword you have there!'");
+
 			/* Cost should be the a_info.txt cost diff between those two! [70000] */
-			Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("That'll cost %d Au to repair, accept?", a_info[ART_ANDURIL].cost - a_info[ART_NARSIL].cost), 0);
+			Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("'That'll cost %d Au to repair, accept?'", a_info[ART_ANDURIL].cost - a_info[ART_NARSIL].cost), 0);
 			p_ptr->request_extra = i + 1;
 			return TRUE;
 		}
@@ -1330,24 +1354,24 @@ static bool repair_item(int Ind, int i, bool iac) {
 		minenchant = -10; //weapon max damage
 
 		if (o_ptr->to_d >= 0) {
-			msg_print(Ind, "That looks pretty fine already.");
+			msg_print(Ind, "'That looks pretty fine already.'");
 			return FALSE;
 		}
 		if (o_ptr->to_d < minenchant) {
-			msg_print(Ind, "Sorry, but that weapon is beyond repair.");
+			msg_print(Ind, "'Sorry, but that weapon is beyond repair.'");
 			return FALSE;
 		}
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_d);
 	}
 
 	if (!is_enchantable(o_ptr)) {
-		msg_print(Ind, "That item cannot be repaired.");
+		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
 		return FALSE;
 	}
 
 	/* Artifacts cannot be repaired. */
 	if (artifact_p(o_ptr)) {
-		msg_print(Ind, "Artifacts cannot be repaired.");
+		msg_print(Ind, "'Sorry, but artifacts cannot be repaired.'");
 		return FALSE;
 	}
 
@@ -1356,20 +1380,20 @@ static bool repair_item(int Ind, int i, bool iac) {
 
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) {
-		msg_print(Ind, "That item cannot be repaired.");
+		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
 		return FALSE;
 	}
 
 	/* No easy fix for nothingness/morgul items */
 	if (cursed_p(o_ptr)) {
-		msg_print(Ind, "Cursed items cannot be repaired.");
+		msg_print(Ind, "'Cursed items cannot be repaired!'");
 		return FALSE;
 	}
 
 	object_desc(Ind, tmp_str, o_ptr, FALSE, 1);
 
-	if (iac) Send_request_cfr(Ind, RID_REPAIR_ARMOUR, format("That'll cost %d Au to repair, accept?", cost), 0);
-	else Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("That'll cost %d Au to repair, accept?", cost), 0);
+	if (iac) Send_request_cfr(Ind, RID_REPAIR_ARMOUR, format("'That'll cost %d Au to repair, accept?'", cost), 0);
+	else Send_request_cfr(Ind, RID_REPAIR_WEAPON, format("'That'll cost %d Au to repair, accept?'", cost), 0);
 	p_ptr->request_extra = i + 1;
 	return (TRUE);
 }
@@ -1390,14 +1414,14 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 	/* eligible item in this equipment slot? */
 	if (iac) {
 		if (!is_armour(o_ptr->tval)) {
-			msg_print(Ind, "That is not a piece of armour.");
+			msg_print(Ind, "'That is not a piece of armour.'");
 			return FALSE;
 		}
 
 		if (o_ptr->tval == TV_SHIELD)
 #ifdef NEW_SHIELDS_NO_AC
 		{
-			msg_print(Ind, "That item isn't damaged.");
+			msg_print(Ind, "'That item isn't damaged.'");
 			return FALSE;
 		}
 #else
@@ -1410,17 +1434,17 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 		else minenchant = -o_ptr->ac;
 
 		if (o_ptr->to_a >= 0) {
-			msg_print(Ind, "That looks pretty fine already.");
+			msg_print(Ind, "A-'That looks pretty fine already.'");
 			return FALSE;
 		}
 		if (o_ptr->to_a < minenchant) {
-			msg_print(Ind, "Sorry, but that piece of armour is beyond repair.");
+			msg_print(Ind, "'Sorry, but that piece of armour is beyond repair.'");
 			return FALSE;
 		}
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_a);
 	} else {
 		if (!is_weapon(o_ptr->tval)) {
-			msg_print(Ind, "That is not a weapon.");
+			msg_print(Ind, "W-'That is not a weapon.'");
 			return FALSE;
 		}
 
@@ -1461,24 +1485,24 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 		minenchant = -10; //weapon max damage
 
 		if (o_ptr->to_d >= 0) {
-			msg_print(Ind, "That looks pretty fine already.");
+			msg_print(Ind, "'That looks pretty fine already.'");
 			return FALSE;
 		}
 		if (o_ptr->to_d < minenchant) {
-			msg_print(Ind, "Sorry, but that weapon is beyond repair.");
+			msg_print(Ind, "'Sorry, but that weapon is beyond repair.'");
 			return FALSE;
 		}
 		cost = repair_cost(o_ptr->k_idx, o_ptr->to_d);
 	}
 
 	if (!is_enchantable(o_ptr)) {
-		msg_print(Ind, "That item cannot be repaired.");
+		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
 		return FALSE;
 	}
 
 	/* Artifacts cannot be repaired. */
 	if (artifact_p(o_ptr)) {
-		msg_print(Ind, "Artifacts cannot be repaired.");
+		msg_print(Ind, "'Sorry, but artifacts cannot be repaired.'");
 		return FALSE;
 	}
 
@@ -1487,13 +1511,13 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 
 	/* Unenchantable items always fail */
 	if (f5 & TR5_NO_ENCHANT) {
-		msg_print(Ind, "That item cannot be repaired.");
+		msg_print(Ind, "'Sorry, but that item cannot be repaired.'");
 		return FALSE;
 	}
 
 	/* No easy fix for nothingness/morgul items */
 	if (cursed_p(o_ptr)) {
-		msg_print(Ind, "Cursed items cannot be repaired.");
+		msg_print(Ind, "'Cursed items cannot be repaired!'");
 		return FALSE;
 	}
 
@@ -1526,8 +1550,7 @@ s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
 /*
  * Research Item
  */
-static bool research_item(void)
-{
+static bool research_item(void) {
 	clear_bldg(5,18);
 	identify_fully();
 	return (TRUE);
@@ -1537,10 +1560,8 @@ static bool research_item(void)
 /*
  * Show the current quest monster.
  */
-static void show_quest_monster(void)
-{
+static void show_quest_monster(void) {
 	monster_race* r_ptr = &r_info[bounties[0][0]];
-
 
 	msg_format("Quest monster: %s. "
 	           "Need to turn in %d corpse%s to receive reward.",
@@ -1553,8 +1574,7 @@ static void show_quest_monster(void)
 /*
  * Show the current bounties.
  */
-static void show_bounties(void)
-{
+static void show_bounties(void) {
 	int i, j = 6;
 	monster_race* r_ptr;
 	char buff[80];
@@ -1581,10 +1601,8 @@ static void show_bounties(void)
 /*
  * Filter for corpses that currently have a bounty on them.
  */
-static bool item_tester_hook_bounty(object_type* o_ptr)
-{
+static bool item_tester_hook_bounty(object_type* o_ptr) {
 	int i;
-
 
 	if (o_ptr->tval == TV_CORPSE) {
 		for (i = 1; i < MAX_BOUNTIES; i++) {
@@ -1596,8 +1614,7 @@ static bool item_tester_hook_bounty(object_type* o_ptr)
 }
 
 /* Filter to match the quest monster's corpse. */
-static bool item_tester_hook_quest_monster(object_type* o_ptr)
-{
+static bool item_tester_hook_quest_monster(object_type* o_ptr) {
 	if ((o_ptr->tval == TV_CORPSE) &&
 		(o_ptr->pval2 == bounties[0][0])) return (TRUE);
 	return (FALSE);
@@ -1608,8 +1625,7 @@ static bool item_tester_hook_quest_monster(object_type* o_ptr)
  * Return the boost in the corpse's value depending on how rare the body
  * part is.
  */
-static int corpse_value_boost(int sval)
-{
+static int corpse_value_boost(int sval) {
 	switch (sval) {
 		case SV_CORPSE_HEAD:
 		case SV_CORPSE_SKULL:
@@ -1623,8 +1639,7 @@ static int corpse_value_boost(int sval)
 /*
  * Sell a corpse, if there's currently a bounty on it.
  */
-static void sell_corpses(void)
-{
+static void sell_corpses(void) {
 	object_type* o_ptr;
 	int i, boost = 0;
 	s16b value;
@@ -1672,14 +1687,12 @@ static void sell_corpses(void)
 /*
  * Hook for bounty monster selection.
  */
-static bool mon_hook_bounty(int r_idx)
-{
+static bool mon_hook_bounty(int r_idx) {
 	return (lua_moon_hook_bounty(r_idx));
 }
 
 
-static void select_quest_monster(void)
-{
+static void select_quest_monster(void) {
 	monster_race* r_ptr;
 	int amt;
 
@@ -1720,8 +1733,7 @@ static void select_quest_monster(void)
 /*
  * Sell a corpse for a reward.
  */
-static void sell_quest_monster(void)
-{
+static void sell_quest_monster(void) {
 	object_type* o_ptr;
 	int item;
 
@@ -1797,7 +1809,6 @@ static void sell_quest_monster(void)
 
 		msg_print(NULL);
 		select_quest_monster();
-
 	} else {
 		msg_format("Well done, only %d more to go.", bounties[0][1]);
 		msg_print(NULL);
@@ -1813,10 +1824,8 @@ static void sell_quest_monster(void)
 /*
  * Fill the bounty list with monsters.
  */
-void select_bounties(void)
-{
+void select_bounties(void) {
 	int i, j;
-
 
 	select_quest_monster();
 
