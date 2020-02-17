@@ -6662,7 +6662,7 @@ void do_slash_cmd(int Ind, char *message) {
 				deltown(Ind);
 				return;
 			}
-			else if (prefix(message, "/chouse")) { //count houses/castles
+			else if (prefix(message, "/chouse")) { //count houses/castles -- USE THIS TO FIX BUGS LIKE "character cannot own more than 1" but has actually 0 houses
 				if (!tk) {
 					msg_print(Ind, "Usage: /chouse <character name>");
 					return;
@@ -10079,6 +10079,7 @@ void do_slash_cmd(int Ind, char *message) {
 				return;
 			}
 			else if (prefix(message, "/ahl")) { /* ACC_HOUSE_LIMIT - just in case anything goes wrong.. */
+				//instead, USE '/chouse' THIS TO FIX CHAR-SPECIFIC BUGS LIKE "character cannot own more than 1" but has actually 0 houses
 				int i, h, ht = 0, ids, *id_list, n;
 				struct account acc;
 				hash_entry *ptr;
