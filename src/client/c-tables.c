@@ -536,6 +536,12 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.find_ignore_montraps,	TRUE,	3,	0, 130, TRUE,
 	    "find_ignore_montraps",	"Run through monster traps" },
+
+#if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
+    /* 4.7.3 */
+	{ &c_cfg.extra_indicators,	FALSE,	6,	0, 131, TRUE,
+	    "extra_indicators",		"Flicker status bar elements to indicate temp buffs" },
+#endif
 };
 
 
