@@ -4781,8 +4781,7 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 	if (!acc) acc = "(no account)";
 	else accok = TRUE;
 
-	s_printf("Removing player: %s (%s)\n", ptr->name, acc);
-	e_printf("(%s) %s (%s)\n", showtime(), ptr->name, acc); /* log to erasure.log file for compact overview */
+	s_printf("Removing player: %s (%d, %s)\n", ptr->name, ptr->level, acc);
 
 #ifdef SAFETY_BACKUP_PLAYER
 	/* Not sure if hash table level is already updated to live player level, so double check here: */
@@ -4795,9 +4794,11 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 		}
 		break;
 	}
-	if (j < SAFETY_BACKUP_PLAYER)
+	if (j < SAFETY_BACKUP_PLAYER) {
+		e_printf("(%s) %s (%d, %s)\n", showtime(), ptr->name, ptr->level, acc); /* log to erasure.log file for compact overview */
 		s_printf("(Skipping safety backup (level %d < %d))\n", j, SAFETY_BACKUP_PLAYER);
-	else {
+	} else {
+		e_printf("(%s) %s (%d, %s) BACKUP\n", showtime(), ptr->name, ptr->level, acc); /* log to erasure.log file for compact overview */
 		s_printf("(Creating safety backup (level %d >= %d)\n", j, SAFETY_BACKUP_PLAYER);
 
 		/* rename savefile to backup (side note: unlink() will fail to delete it then later) */
@@ -4810,6 +4811,8 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 		/* ..and rename estate file to indicate it's just a backup! */
 		ef_rename(ptr->name);
 	}
+#else
+	e_printf("(%s) %s (%d, %s)\n", showtime(), ptr->name, ptr->level, acc); /* log to erasure.log file for compact overview */
 #endif
 
 	for (i = 1; i < MAX_PARTIES; i++) { /* was i = 0 but real parties start from i = 1 - mikaelh */
