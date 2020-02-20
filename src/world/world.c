@@ -128,6 +128,7 @@ void handle(struct client *ccl) {
 
 //#define WP_CHAT_DEFAULT_COLOUR 'w'
 #define WP_CHAT_DEFAULT_COLOUR 's'
+//#define WP_CHAT_UNIFORM_COLOUR
 #define WP_CHAT_PROHIBIT_COLOURS
 void wproto(struct client *ccl) {
 	int client_chat, client_all, client_ctrlo;
@@ -181,8 +182,8 @@ void wproto(struct client *ccl) {
 						p++;
 					}
 
-#ifdef WP_CHAT_PROHIBIT_COLOURS
-					/* strip colour codes */
+#ifdef WP_CHAT_UNIFORM_COLOUR
+					/* strip all colour codes form chat lines (even from name, ie character-mode specific colouring) */
 					char *p2 = p, tmp[MSG_LEN];
 					int i = 0;
 					while ((*p2)) {
@@ -194,6 +195,24 @@ void wproto(struct client *ccl) {
 					}
 					tmp[i] = 0;
 					strcpy(p, tmp);
+#else
+ #ifdef WP_CHAT_PROHIBIT_COLOURS
+					/* strip colour codes added by player as is feasible (cannot catch name-backward colouring) */
+					char *p2 = p, tmp[MSG_LEN];
+					int i = 0;
+					if ((p2 = strchr(p2, ']')) && *(p2 + 1) && *(p2 + 2)) { /* is it a chat line? (note: this also skips /me types of chat lines) */
+						p2 += 2;
+						while ((*p2)) {
+							if (*p2 == '\377') {
+								p2++;
+								if (*p2 == '\377') tmp[i++] = '{';
+							} else tmp[i++] = *p2;
+							p2++;
+						}
+						tmp[i] = 0;
+						strcpy(p, tmp);
+					}
+ #endif
 #endif
 
 					//snprintf(msg, MSG_LEN, "\377o[\377%c%d\377o] %s", (ccl->authed>0 ? 'g' : 'r'), ccl->authed, wpk->d.chat.ctxt);
