@@ -200,8 +200,8 @@ void wproto(struct client *ccl) {
 					/* strip colour codes added by player as is feasible (cannot catch name-backward colouring) */
 					char *p2 = p, tmp[MSG_LEN];
 					int i = 0;
-					if ((p2 = strchr(p2, ']')) && *(p2 + 1) && *(p2 + 2)) { /* is it a chat line? (note: this also skips /me types of chat lines) */
-						p2 += 2;
+					if ((p2 = strchr(p2, ']')) && *(p2 + 1) && *(p2 + 2) && *(p2 + 3)) { /* is it a chat line? (note: this also skips /me types of chat lines) */
+						p2 += 3;
 						while ((*p2)) {
 							if (*p2 == '\377') {
 								p2++;
