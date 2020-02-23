@@ -502,7 +502,7 @@ HDELBB = add_spell {
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			msg_print(Ind, "You feel a calming warmth touching your soul.");
-			if (player.black_breath) then
+			if (player.black_breath == TRUE) then
 				msg_print(Ind, "The hold of the Black Breath on you is broken!");
 				player.black_breath = FALSE
 			end
