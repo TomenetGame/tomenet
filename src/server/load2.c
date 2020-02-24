@@ -3186,6 +3186,7 @@ errr rd_server_savefile() {
 
 #ifdef ALLOW_EXCESS_DATA
 	u32b overflow; /* For discarding data that is too much to fit in */
+	char overflow_msg[MSG_LEN];
 	object_type o_dummy;
 #endif
 
@@ -3404,7 +3405,11 @@ errr rd_server_savefile() {
 
 #ifdef ALLOW_EXCESS_DATA
 	/* Just discard excess data */
-	for (i = 0; i < overflow; i++) rd_item(&o_dummy);
+	for (i = 0; i < overflow; i++) {
+		rd_item(&o_dummy);
+		object_desc(0, overflow_msg, &o_dummy, FALSE, 0);
+		s_printf(" DISCARDED: %s\n", overflow_msg);
+	}
 #endif
 
 	/* Set the maximum object number */
