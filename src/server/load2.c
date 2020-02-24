@@ -3163,6 +3163,9 @@ static bool file_exist(char *buf) {
 	else return (FALSE);
 }
 
+/* Just discard exceeding data instead of terminating with incompatibility error?
+   Currently only implemented for MAX_O_IDX. */
+#define ALLOW_EXCESS_DATA
 errr rd_server_savefile() {
 	unsigned int i;
 #ifdef MONSTER_ASTAR
@@ -3180,6 +3183,12 @@ errr rd_server_savefile() {
 	s16b tmp16s;
 	u32b tmp32u;
 	s32b tmp32s;
+
+#ifdef ALLOW_EXCESS_DATA
+	u32b overflow; /* For discarding data that is too much to fit in */
+	object_type o_dummy;
+#endif
+
 
 	/* Savefile name */
 	path_build(savefile, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "server");
@@ -3246,11 +3255,14 @@ errr rd_server_savefile() {
 	/* Later use (always zero) */
 	rd_u32b(&tmp32u);
 
+
+
 	/* Monster Memory */
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_R_IDX) {
+//todo: ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) monster races!\n", tmp16u);
 		return (21);
 	}
@@ -3261,11 +3273,14 @@ errr rd_server_savefile() {
 		rd_global_lore(i);
 	}
 
+
+
 	/* Load the Artifacts */
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_A_IDX) {
+//todo: ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) artifacts!\n", tmp16u);
 		return (24);
 	}
@@ -3300,10 +3315,13 @@ errr rd_server_savefile() {
 		}
 	}
 
+
+
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_PARTIES) {
+//todo: ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) parties!\n", tmp16u);
 		return (25);
 	}
@@ -3327,9 +3345,12 @@ errr rd_server_savefile() {
 	new_rd_wild();
 	new_rd_floors();
 
+
+
 	/* get the number of monsters to be loaded */
 	rd_u32b(&tmp32u);
 	if (tmp32u > MAX_M_IDX) {
+//todo: ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) monsters!\n", tmp16u);
 		return (29);
 	}
@@ -3359,20 +3380,37 @@ errr rd_server_savefile() {
 	}
 #endif
 
+
+
 	/* Read object info if new enough */
 	rd_u16b(&tmp16u);
 
 	/* Incompatible save files */
 	if (tmp16u > MAX_O_IDX) {
+#ifndef ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) objects!\n", tmp16u);
 		return (26);
+#else
+		s_printf("Too many (%u) objects! Discarding %d beyond %d.\n", tmp16u, tmp16u - MAX_O_IDX, MAX_O_IDX);
+		overflow = tmp16u - MAX_O_IDX;
+		tmp16u = MAX_O_IDX;
+	} else {
+		overflow = 0;
+#endif
 	}
 
 	/* Read the available records */
 	for (i = 0; i < tmp16u; i++) rd_item(&o_list[i]);
 
+#ifdef ALLOW_EXCESS_DATA
+	/* Just discard excess data */
+	for (i = 0; i < overflow; i++) rd_item(&o_dummy);
+#endif
+
 	/* Set the maximum object number */
 	o_max = tmp16u;
+
+
 
 	/* Read house info if new enough */
 	rd_s32b(&num_houses);
@@ -3385,6 +3423,7 @@ errr rd_server_savefile() {
 
 	/* Incompatible save files */
 	if (num_houses > MAX_HOUSES) {
+//todo: ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) houses!\n", num_houses);
 		return (27);
 	}
@@ -3462,6 +3501,8 @@ errr rd_server_savefile() {
 		}
 		s_printf("Read %d player name records.\n", tmp32u);
 	}
+
+
 
 	rd_u32b(&seed_flavor);
 	rd_u32b(&seed_town);
