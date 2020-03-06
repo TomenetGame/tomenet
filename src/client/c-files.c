@@ -1198,6 +1198,7 @@ void show_motd(int delay) {
  */
 void peruse_file(void) {
 	char k = 0;
+	bool guide_hack = FALSE;
 
 	/* Initialize */
 	cur_line = 0;
@@ -1333,6 +1334,11 @@ void peruse_file(void) {
 			continue;
 		}
 
+		/* Hack: Pressing ? while already in ? invokes the guide */
+		if (k == '?' && special_line_type == SPECIAL_FILE_HELP) {
+			guide_hack = TRUE;
+			break;
+		}
 
 		/* Check maximum line */
 #if 1 /* don't allow 'empty lines' at end of list but wrap around immediately */
@@ -1364,6 +1370,12 @@ void peruse_file(void) {
 
 	/* Flush any events that came in */
 	Flush_queue();
+
+	/* Hack: ? + ? = Guide */
+	if (guide_hack) {
+		cmd_the_guide();
+		Flush_queue();//needed?
+	}
 }
 
 /*

@@ -496,6 +496,7 @@ extern void cmd_telekinesis(void);
 extern void cmd_cloak(void);
 extern void cmd_lagometer(void);
 extern void cmd_force_stack(void);
+extern void cmd_the_guide(void);
 
 /* c-files.c */
 extern void text_to_ascii(char *buf, cptr str);
