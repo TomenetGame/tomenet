@@ -1529,7 +1529,7 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 }
 #endif
 void cmd_the_guide(void) {
-	static int line = 0, line_before_search = 0;
+	static int line = 0, line_before_search = 0, jumped_to_line = 0;
 	static char lastsearch[MAX_CHARS] = "";
 	static char lastchapter[MAX_CHARS] = "";
 
@@ -2455,7 +2455,7 @@ void cmd_the_guide(void) {
 		case '#':
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter line number to jump to: ");
-			buf[0] = 0;
+			sprintf(buf, "%d", jumped_to_line);
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
 			if (!askfor_aux(buf, 7, 0)) {
@@ -2463,6 +2463,7 @@ void cmd_the_guide(void) {
 				continue;
 			}
 			inkey_msg = inkey_msg_old;
+			jumped_to_line = atoi(buf); //Remember, just as a small QoL thingy
 
 			line = atoi(buf) - 1;
 			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
