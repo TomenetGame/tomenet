@@ -1776,14 +1776,8 @@ static void player_outfit(int Ind) {
 		do_player_outfit();
 	}
 
-	/* vampires get mummy wrapping against the burning sunlight */
-	if (p_ptr->prace == RACE_VAMPIRE) {
-		invcopy(o_ptr, lookup_kind(TV_TOOL, SV_TOOL_WRAPPING));
-		o_ptr->number = 1;
-		do_player_outfit();
-	}
-	/* vampires feed off living prey, using their vampiric life leech *exclusively* */
-	else if (p_ptr->prace != RACE_ELF && p_ptr->prace != RACE_HALF_ELF && p_ptr->prace != RACE_HIGH_ELF
+	/* vampires feed off living prey, using their vampiric life leech exclusively. Elves prefer Lembas. Ents drink water. */
+	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_ELF && p_ptr->prace != RACE_HALF_ELF && p_ptr->prace != RACE_HIGH_ELF
 	    && p_ptr->prace != RACE_ENT) {
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
 		o_ptr->number = rand_range(3, 7);
@@ -2061,6 +2055,13 @@ static void player_outfit(int Ind) {
 
 		invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
 		o_ptr->number = rand_range(3, 7);
+		do_player_outfit();
+	}
+
+	/* vampires get mummy wrapping against the burning sunlight */
+	if (p_ptr->prace == RACE_VAMPIRE) {
+		invcopy(o_ptr, lookup_kind(TV_TOOL, SV_TOOL_WRAPPING));
+		o_ptr->number = 1;
 		do_player_outfit();
 	}
 
