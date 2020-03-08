@@ -4367,19 +4367,18 @@ void do_cmd_store(int Ind) {
 	/* Temple cures some maladies and gives some bread if starving ;-o */
 	if (!p_ptr->ghost &&
 	    !p_ptr->tim_blacklist && (which == STORE_TEMPLE || which == STORE_TEMPLE_DUN) && !p_ptr->suscep_life) {
-		if (p_ptr->food < PY_FOOD_ALERT) {
-			msg_print(Ind, "The temple priest hands you a slice of bread.");
-			set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
-		}
+		if (p_ptr->chp < p_ptr->mhp / 2 || p_ptr->cut) msg_print(Ind, "A temple priest applies a bandage.");
+		if (p_ptr->chp < p_ptr->mhp / 2) hp_player_quiet(Ind, p_ptr->mhp / 3, TRUE);
+		if (p_ptr->cut) set_cut(Ind, 0, 0);
 
-		if (p_ptr->blind || p_ptr->confused) msg_print(Ind, "The temple priest cures you.");
+		if (p_ptr->blind || p_ptr->confused || p_ptr->poisoned) msg_print(Ind, "A temple priest speaks a prayer of curing.");
 		if (p_ptr->blind) set_blind(Ind, 0);
 		if (p_ptr->confused) set_confused(Ind, 0);
+		if (p_ptr->poisoned) set_poisoned(Ind, 0, 0);
 
-		if (p_ptr->chp < p_ptr->mhp / 2 || p_ptr->cut) {
-			msg_print(Ind, "The temple priest applies a bandage.");
-			hp_player_quiet(Ind, p_ptr->mhp / 2, TRUE);
-			set_cut(Ind, 0, 0);
+		if (p_ptr->food < PY_FOOD_ALERT) {
+			msg_print(Ind, "A temple priest hands you a slice of bread.");
+			set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
 		}
 	}
 
