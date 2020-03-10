@@ -777,6 +777,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
                         The player has used the '/ic *' (or alias /dnd) command
                         to ignore all chat except for party messages and
                         private messages from party members.
+        (Note that none of these chat restrictions will prevent you from seeing
+        administrative broadcasts or messages - those are always visible.)
 
         If the server has specific PK-rules enabled, there are additionally:
         'PK'            Player participates in player-killing.
