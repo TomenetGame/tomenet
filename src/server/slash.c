@@ -2614,11 +2614,22 @@ void do_slash_cmd(int Ind, char *message) {
 					if (n == 1) msg_print(Ind, "\377WCurrently ongoing events:");
 					/* Event still in announcement phase? */
 					at = global_event[i].announcement_time - (turn - global_event[i].start_turn) / cfg.fps;
-					if (at > 0)
-						//msg_format(Ind, " %d) '%s' \377grecruits\377w for %d mins.", i+1, global_event[i].title, at / 60);
-						msg_format(Ind, "  \377U%d\377W) '%s' recruits for %ld more minute%s.", i+1, global_event[i].title, at / 60, at / 60 == 1 ? "" : "s");
+					if (at > 0) {
+						/* are we signed up for it? Mark it then to indicate that */
+						global_event_type *ge = &global_event[i];
+						for (j = 0; j < MAX_GE_PARTICIPANTS; j++) {
+							if (!ge->participant[j]) continue;
+							if (p_ptr->id == ge->participant[j]) break;
+						}
+						/* ..yes, we are a participant */
+						if (j != MAX_GE_PARTICIPANTS)
+							msg_format(Ind, "\377c* \377U%d\377W) '%s' recruits for %ld more minute%s.", i+1, global_event[i].title, at / 60, at / 60 == 1 ? "" : "s");
+						/* ..no, we haven't signed up for this */
+						else
+							//msg_format(Ind, " %d) '%s' \377grecruits\377w for %d mins.", i+1, global_event[i].title, at / 60);
+							msg_format(Ind, "  \377U%d\377W) '%s' recruits for %ld more minute%s.", i+1, global_event[i].title, at / 60, at / 60 == 1 ? "" : "s");
 					/* or has already begun? */
-					else	msg_format(Ind, "  \377U%d\377W) '%s' began %ld minute%s ago.", i+1, global_event[i].title, -at / 60, -at / 60 == 1 ? "" : "s");
+					} else	msg_format(Ind, "  \377U%d\377W) '%s' began %ld minute%s ago.", i+1, global_event[i].title, -at / 60, -at / 60 == 1 ? "" : "s");
 				}
 				if (!n) msg_print(Ind, "\377WNo events are currently running.");
 				else {
