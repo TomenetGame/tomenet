@@ -1736,7 +1736,7 @@ void xhtml_screenshot(cptr name) {
 	if (cur_attr >= TERMA_DARK && cur_attr <= TERMA_L_UMBER) cur_attr = cur_attr - TERMA_OFFSET; /* Use the basic colours instead of the palette-animated ones */
 #endif
 	prt_attr = flick_colour(cur_attr);
-	if (prt_attr > sizeof(color_table) - 1) prt_attr = sizeof(color_table) - 1;
+	if (prt_attr > N_ELEMENTS(color_table) - 1) prt_attr = N_ELEMENTS(color_table) - 1;
 	fprintf(fp, "<span style=\"color: %s\">", color_table[prt_attr]);
 
 	size_t bytes = 0;
@@ -1757,7 +1757,7 @@ void xhtml_screenshot(cptr name) {
 				/* right now just pick a random colour for flickering colours
 				 * maybe add some javascript for real flicker later */
 				prt_attr = flick_colour(cur_attr);
-				if (prt_attr > sizeof(color_table) - 1) prt_attr = sizeof(color_table) - 1;
+				if (prt_attr > N_ELEMENTS(color_table) - 1) prt_attr = N_ELEMENTS(color_table) - 1;
 				strcpy(&buf[bytes], color_table[prt_attr]);
 				bytes += 7;
 
