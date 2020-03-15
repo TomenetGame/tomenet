@@ -606,6 +606,13 @@ static char inkey_aux(void) {
 				continue;
 			}
 
+			/* Hack for auto-pressing spacebar while in player-list */
+			if (within_cmd_player && within_cmd_player_triggered) {
+				within_cmd_player_triggered = FALSE;
+				ch = ' ';
+				break;
+			}
+
 			/* If we got a key, break */
 			if (ch) break;
 

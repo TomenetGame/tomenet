@@ -517,6 +517,7 @@ extern void save_auto_inscriptions(cptr name);
 extern void load_auto_inscriptions(cptr name);
 extern void save_birth_file(cptr name, bool touch);
 extern void load_birth_file(cptr name);
+extern bool within_cmd_player, within_cmd_player_triggered;
 
 /* c-init.c */
 extern void init_schools(s16b new_size);
