@@ -506,4 +506,5 @@ bool st_bar;
 char cfg_soundpackfolder[1024];
 char cfg_musicpackfolder[1024];
 
-bool within_cmd_player = FALSE, within_cmd_player_triggered = FALSE;
+bool within_cmd_player = FALSE;
+int within_cmd_player_ticks;

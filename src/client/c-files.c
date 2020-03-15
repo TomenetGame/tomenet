@@ -1244,15 +1244,14 @@ void peruse_file(void) {
 		   hack: update max_line to its real value as soon as possible */
 		if (!max_line) inkey_max_line = TRUE;
 
-#ifdef TEST_CLIENT
 		/* Are we in the players list (cmd_players())? Special hack to
 		   auto-update the list if players join/leave meanwhile.. */
 		if (special_line_type == SPECIAL_FILE_PLAYER) {
 			within_cmd_player = TRUE;
+			within_cmd_player_ticks = ticks;
 			k = inkey();
 			within_cmd_player = FALSE;
 		} else
-#endif
 
 		k = inkey();
 		if (k == 1) continue;

@@ -607,8 +607,8 @@ static char inkey_aux(void) {
 			}
 
 			/* Hack for auto-pressing spacebar while in player-list */
-			if (within_cmd_player && within_cmd_player_triggered) {
-				within_cmd_player_triggered = FALSE;
+			if (within_cmd_player && ticks - within_cmd_player_ticks >= 50) {
+				within_cmd_player_ticks = ticks;
 				ch = ' ';
 				break;
 			}

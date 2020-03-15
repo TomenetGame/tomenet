@@ -2433,15 +2433,6 @@ int Receive_message(void) {
 
 	c_msg_print(buf);
 
-	/* Hack: Auto-refresh @-list if we're in it right now and getting any join/leave-related messages about other players */
-	if (!strchr(buf, '[')) {
-		if (strstr(buf, " into the world.") || strstr(buf, " has entered the game.")
-		    || strstr(buf, " has left the game.")
-		    || (strstr(buf, " was killed ") && strstr(buf, ".**"))
-		    || (strstr(buf, " was destroyed ") && strstr(buf, ".**")))
-			within_cmd_player_triggered = TRUE;
-	}
-
 	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
 	return 1;
