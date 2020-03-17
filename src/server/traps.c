@@ -4942,7 +4942,7 @@ bool mon_hit_trap(int m_idx) {
 					/* Apply slays, brand, critical hits */
 					// dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, &special);
 					dam = tot_dam_aux(0, load_o_ptr, dam, m_ptr, FALSE);
-					dam = critical_shot(0, load_o_ptr->weight + trapping * 10, load_o_ptr->to_h, dam, FALSE);
+					dam = critical_shot(0, load_o_ptr->weight + trapping * 10, load_o_ptr->to_h, dam, FALSE, FALSE);
 
 					/* No negative damage */
 					if (dam < 0) dam = 0;

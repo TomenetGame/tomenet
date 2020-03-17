@@ -178,11 +178,11 @@ bool test_hit_melee(int chance, int ac, int vis) {
 /*
  * Critical hits (from objects thrown by player)
  * Factor in item weight, total plusses, and player level.
+ * shot: TRUE for actual shooting, FALSE for throwing (boomerangs and items from inventory): It applies 'Archery' skill.
  */
-s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision) {
+s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision, bool shot) {
 	player_type *p_ptr = NULL;
 	int i, k;
-	bool boomerang = FALSE;
 	//int xtra_crit = p_ptr->xtra_crit + p_ptr->inventory;
 	//if xtra_crit > 50 cap
 	//xtra_crit = 65 - (975 / (xtra_crit + 15));
@@ -190,10 +190,8 @@ s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision) {
 	/* Extract "shot" power */
 	if (Ind > 0) {
 		p_ptr = Players[Ind];
-		if (p_ptr->inventory[INVEN_BOW].tval == TV_BOOMERANG) boomerang = TRUE;
-
 		i = (weight + ((p_ptr->to_h + plus) * 5) +
-		    (boomerang ? 0 : get_skill_scale(p_ptr, SKILL_ARCHERY, 150)));
+		    (shot ? get_skill_scale(p_ptr, SKILL_ARCHERY, 150) : 0));
 		i += 50 * BOOST_CRIT(p_ptr->xtra_crit); //0..2350; 10->1010, 20->1650, 35->2100, 50->2350
 	}
 	else i = weight;
@@ -201,8 +199,7 @@ s16b critical_shot(int Ind, int weight, int plus, int dam, bool precision) {
 	/* Critical hit */
 	if (precision || randint(3500) <= i) {
 		k = weight + randint(700);
-
-		if (Ind > 0) k += (boomerang ? 0 : get_skill_scale(p_ptr, SKILL_ARCHERY, 100)) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20)));
+		if (Ind > 0) k += (shot ? get_skill_scale(p_ptr, SKILL_ARCHERY, 100) : 0) + randint(600 - (12000 / (BOOST_CRIT(p_ptr->xtra_crit) + 20)));
 
 		if (precision) {
 			if (k < 650) k = 650;

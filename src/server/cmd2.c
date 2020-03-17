@@ -5913,7 +5913,7 @@ void do_cmd_fire(int Ind, int dir) {
 								tdam *= tmul;
 
 								/* Apply special damage XXX XXX XXX */
-								if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE);
+								if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE, !boomerang);
 
 								/* factor in AC */
 								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
@@ -5925,7 +5925,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 								/* Precision shot skips most AC reduction (since that was applied above) */
 								if (p_ptr->ranged_precision) {
-									tdam = critical_shot(Ind, o_ptr->weight, (o_ptr->to_h + p_ptr->to_h_ranged) * 2 + 100, tdam, TRUE);
+									tdam = critical_shot(Ind, o_ptr->weight, (o_ptr->to_h + p_ptr->to_h_ranged) * 2 + 100, tdam, TRUE, !boomerang);
 									p_ptr->ranged_precision = FALSE;
 								}
 
@@ -6119,7 +6119,7 @@ void do_cmd_fire(int Ind, int dir) {
 					tdam *= tmul;
 
 					/* Apply special damage XXX XXX XXX */
-					if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE);
+					if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE, !boomerang);
 
 					/* Maybe in the future: apply monster AC for damage reduction here */
 
@@ -6127,7 +6127,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 					/* Precision shot usually skips most AC reduction -- but AC is currently only applied in PvP anyway */
 					if (p_ptr->ranged_precision) {
-						tdam = critical_shot(Ind, o_ptr->weight, (o_ptr->to_h + p_ptr->to_h_ranged) * 3 + 500, tdam, TRUE);
+						tdam = critical_shot(Ind, o_ptr->weight, (o_ptr->to_h + p_ptr->to_h_ranged) * 3 + 500, tdam, TRUE, !boomerang);
 						p_ptr->ranged_precision = FALSE;
 					}
 
@@ -6918,8 +6918,12 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		if (tdis < 5) tdis = 5;
 	}
 
-	/* Max distance of 10 */
-	if (tdis > 10) tdis = 10;
+	/* Max distance of 10 for not effectively throwable weapons */
+	if (is_throwing_weapon(o_ptr)) {
+		if (tdis > 15) tdis = 15;
+	} else {
+		if (tdis > 10) tdis = 10;
+	}
 
 	/* Fruit bat/water bashing? Actually limit throwing too! */
 	if (bashing == 3) tdis = 0; /* non-fruit bats too: for bashing an item that is on our own grid */
@@ -7123,8 +7127,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam = damroll(o_ptr->dd, o_ptr->ds);
 					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, TRUE);
 					tdam += o_ptr->to_d;
+					/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
+					if (is_throwing_weapon(o_ptr)) tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+					else if (is_weapon(o_ptr->tval)) tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 					/* Apply special damage XXX XXX XXX */
-					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE);
+					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE, FALSE);
 
 					/* No negative damage */
 					if (tdam < 0) tdam = 0;
@@ -7248,8 +7255,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				tdam = damroll(o_ptr->dd, o_ptr->ds);
 				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, TRUE);
 				tdam += o_ptr->to_d;
+				/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
+				if (is_throwing_weapon(o_ptr)) tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+				else if (is_weapon(o_ptr->tval)) tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 				/* Apply special damage XXX XXX XXX */
-				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE);
+				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE, FALSE);
 
 				/* No negative damage */
 				if (tdam < 0) tdam = 0;

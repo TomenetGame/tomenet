@@ -3037,6 +3037,9 @@
 #define is_ammo(tval)	(((tval) == TV_SHOT) || ((tval) == TV_ARROW) || ((tval) == TV_BOLT))
 #define is_melee_weapon(tval)	(((tval) == TV_SWORD) || ((tval) == TV_BLUNT) || ((tval) == TV_AXE) || ((tval) == TV_POLEARM))
 #define is_ranged_weapon(tval)	((tval) == TV_BOW || (tval) == TV_BOOMERANG)
+#define is_throwing_weapon(o_ptr)	(((o_ptr)->tval == TV_SWORD && ((o_ptr)->sval == SV_DAGGER || (o_ptr)->sval == SV_MAIN_GAUCHE)) || \
+					((o_ptr)->tval == TV_POLEARM && ((o_ptr)->sval == SV_HUNTING_SPEAR || (o_ptr)->sval == SV_SPEAR || (o_ptr)->sval == SV_TRIDENT || (o_ptr)->sval == SV_BROAD_SPEAR || (o_ptr)->sval == SV_TRIFURCATE_SPEAR)) || \
+					(o_ptr)->tval == TV_AXE)
 #define is_weapon(tval)		(is_melee_weapon(tval) || is_ranged_weapon(tval))
 #define is_rare_weapon(tval,sval) ( \
 	(((tval) == TV_SWORD) && ((sval) >= SV_BLADE_OF_CHAOS)) || /* blade of chaos, dark sword, bluesteel, shadow */ \
