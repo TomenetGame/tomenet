@@ -3096,7 +3096,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 	int old_object_level = object_level;
-	int find_level = getlevel(&p_ptr->wpos);
+	int find_level = getlevel(&p_ptr->wpos), find_level_base;
 
 	object_type *o2_ptr = &p_ptr->inventory[INVEN_WIELD];
 	object_type *o3_ptr = &p_ptr->inventory[INVEN_ARM];
@@ -3163,7 +3163,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	if (p_ptr->s_info[SKILL_R_MANA].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_MANA].value;
 	rune_proficiency /= 1000;
 
-	object_level = find_level;
+	find_level_base = find_level;
 	if (mining > find_level * 2) mining = find_level * 2;
 	find_level += mining / 2;
 
@@ -3377,15 +3377,19 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 						} else if (rand_int(120) < 10 + mining) {
 							place_object_restrictor = RESF_NONE;
 #if 1
+							object_level = find_level_base;
 							generate_object(Ind, &forge, wpos, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
 								default_obj_theme, p_ptr->luck);
+							object_level = old_object_level;
 							object_desc(0, o_name, &forge, TRUE, 3);
 							s_printf("DIGGING: %s found item: %s.\n", p_ptr->name, o_name);
 							drop_near(0, &forge, -1, wpos, y, x);
 #else
+							object_level = find_level_base;
 							place_object(Ind, wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
 								default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
 							s_printf("DIGGING: %s found a random item.\n", p_ptr->name);
+							object_level = old_object_level;
 #endif
 							if (player_can_see_bold(Ind, y, x))
 								msg_print(Ind, "You have found something!");
@@ -3630,8 +3634,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							s_printf("DIGGING: %s found a metal piece.\n", p_ptr->name);
 						} else {
 							object_level = find_level;
-							/* abuse tval and sval as simple counters */
-							tval = rand_int(mining / 5) + (nonobvious ? randint(mining / 16) : 0);
+							/* abuse tval and sval as simple counters; reward the special effort at lower character levels.. */
+							tval = rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
 							for (sval = 0; sval <= tval; sval++) {
 								/* Place some gold */
 								place_gold(Ind, wpos, y, x, 0);
