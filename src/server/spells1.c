@@ -4484,7 +4484,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Sandwall with treasure */
 			else if (c_ptr->feat == FEAT_SANDWALL_H || c_ptr->feat == FEAT_SANDWALL_K) {
 				int old_object_level = object_level;
-				int object_level = getlevel(&p_ptr->wpos);
 
 				/* Message */
 				if (!quiet && (*w_ptr & CAVE_MARK)) {
@@ -4497,6 +4496,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_SAND : feat);
 
 				/* Place some gold */
+				object_level = getlevel(&p_ptr->wpos);
 				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 0);
 				object_level = old_object_level;
 			}
@@ -4514,7 +4514,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Quartz / Magma with treasure */
 			else if (c_ptr->feat >= FEAT_MAGMA_H) {
 				int old_object_level = object_level;
-				int object_level = getlevel(&p_ptr->wpos);
 
 				/* Message */
 				if (!quiet && (*w_ptr & CAVE_MARK)) {
@@ -4527,6 +4526,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_MUD : feat);
 
 				/* Place some gold */
+				object_level = getlevel(&p_ptr->wpos);
 				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 0);
 				object_level = old_object_level;
 			}
