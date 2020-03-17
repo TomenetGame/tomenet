@@ -7209,8 +7209,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, TRUE);
 					tdam += o_ptr->to_d;
 					/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
-					if (is_throwing_weapon(o_ptr)) tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-					else if (is_weapon(o_ptr->tval)) {
+					if (is_throwing_weapon(o_ptr)) {
+						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+						/* About adding weight-damage, we have to be a bit careful, as heavier weapons already receive greater melee damage dice anyway: */
+						tdam += (50 / (380 / (o_ptr->weight + 5) + 4)) - 1;
+					} else if (is_weapon(o_ptr->tval)) {
 						tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 					}
@@ -7340,8 +7343,13 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, TRUE);
 				tdam += o_ptr->to_d;
 				/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
-				if (is_throwing_weapon(o_ptr)) tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-				else if (is_weapon(o_ptr->tval)) {
+				if (is_throwing_weapon(o_ptr)) {
+					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
+					/* About adding weight-damage, we have to be a bit careful, as heavier weapons already receive greater melee damage dice anyway: */
+					tdam += (50 / (380 / (o_ptr->weight + 5) + 4)) - 1;//^^ ->
+					//(10~) dagger +0, 30 (main gauche) +2, 60 (spears/tomahawk) +4 (!), 90 (trident/broad spear) +5, 120 (trifurcate spear, light war axe) +6, 170 (battle axe) +7, 240 (heavy war axe) +8, 380 (thunder axe) +9
+					//(note: no axe near 90 lbs for the +5 dmg; tomahawk is 80 lbs.)
+				} else if (is_weapon(o_ptr->tval)) {
 					tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
 					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
 				}
