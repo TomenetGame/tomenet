@@ -7129,7 +7129,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam += o_ptr->to_d;
 					/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
 					if (is_throwing_weapon(o_ptr)) tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-					else if (is_weapon(o_ptr->tval)) tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
+					else if (is_weapon(o_ptr->tval)) {
+						tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
+						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+					}
 					/* Apply special damage XXX XXX XXX */
 					tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE, FALSE);
 
@@ -7257,7 +7260,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				tdam += o_ptr->to_d;
 				/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
 				if (is_throwing_weapon(o_ptr)) tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
-				else if (is_weapon(o_ptr->tval)) tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
+				else if (is_weapon(o_ptr->tval)) {
+					tdam = (tdam * 2) / 3; /* assumption: Weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
+					tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128) / 2;
+				}
 				/* Apply special damage XXX XXX XXX */
 				tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h, tdam, FALSE, FALSE);
 
