@@ -2276,7 +2276,7 @@
 #define FEAT_TREE		0x60
 #define FEAT_MOUNTAIN		0x61
 #define FEAT_SANDWALL		0x62
-#define FEAT_SANDWALL_H		0x63	/* hidden treasure -- not generated atm */
+#define FEAT_SANDWALL_H		0x63	/* hidden treasure (requires treasure detection to become visible) -- not generated atm */
 #define FEAT_SANDWALL_K		0x64	/* known treasure */
 #define FEAT_HIGH_MOUNTAIN	0x65
 #define FEAT_NETHER_MIST	0x66
@@ -4146,7 +4146,7 @@
 #define CAVE_LITE	0x00000010	/* lite flag  */
 #define CAVE_VIEW	0x00000020	/* view flag */
 #define CAVE_TEMP	0x00000040	/* temp flag */
-#define CAVE_XTRA	0x00000080	/* misc flag */
+#define CAVE_XTRA	0x00000080	/* misc flag, used for temporary short-term operations just like CAVE_TEMP. Hance not feasible for actual storage of any info. */
 
 #define CAVE_NOPK	0x00000100	/* no pkill (arena?, tavern) */
 #define CAVE_STCK	0x00000200	/* sticky (no-tele vault), not icky (prison?) */
@@ -4166,6 +4166,7 @@
 #define CAVE_SWITCH	0x00100000	/* Players can always switch position here, like on staircase grids (for grids around stores) */
 #define CAVE_GLOW_HACK	0x00200000	/* bad hack for hard-coded questor lights for now // self-illuminating */
 #define CAVE_GLOW_HACK_LAMP	0x00400000 	/* bad hack for hard-coded questor lights for now // self-illuminating, in fire-flickering style (TERM_LAMP) */
+#define CAVE_ENCASED	0x00800000	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
 
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */

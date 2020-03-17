@@ -300,7 +300,8 @@ struct stairs_list {
 /* Final guardians are guaranteed spawns instead of rolling against their r-rarity? */
 #define IDDC_GUARANTEED_FG
 
-/* experimental - this might be too costly on cpu: add volcanic floor around lava rivers - C. Blue */
+/* experimental - this might be too costly on cpu: add volcanic floor around lava rivers - C. Blue
+   --actually I now used the same for-loops for checking treasure veins for being CAVE_ENCASED -_- so whatever - C. Blue */
 #define VOLCANIC_FLOOR
 
 
@@ -9256,48 +9257,62 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			}
 		}
 
-#ifdef VOLCANIC_FLOOR /* experimental - this might be too costly on cpu: add volcanic floor around lava rivers - C. Blue */
 		for (x = 0; x < dun->l_ptr->wid; x++)
 			for (y = 0; y < dun->l_ptr->hgt; y++) {
-				if (zcave[y][x].feat != FEAT_SHAL_LAVA && zcave[y][x].feat != FEAT_DEEP_LAVA) continue;
-				for (i = 0; i < 4; i++) {
-					k = zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat;
-					switch (k) {
-					case FEAT_WEB:
-					case FEAT_CROP:
-					case FEAT_FLOWER:
-					case FEAT_IVY:
-					case FEAT_GRASS:
-						/* never persist */
-						zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_ASH;
-						continue;
-					case FEAT_SNOW:
-					case FEAT_SHAL_WATER:
-					case FEAT_DARK_PIT:
-					case FEAT_ICE:
-					case FEAT_MUD:
-					case FEAT_ICE_WALL:
-						/* never persist */
-						zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
-						continue;
-					case FEAT_TREE:
-					case FEAT_BUSH://mh
-						/* never persist */
-						zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_DEAD_TREE;
-						continue;
-					case FEAT_SAND:
-					case FEAT_FLOOR:
-					case FEAT_LOOSE_DIRT:
-					case FEAT_DIRT:
-						/* rarely persist */
-						if (!rand_int(7)) continue;
-						zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
-					default:
-						continue;
+				/* check treasure veins for being remotely encased, making them more valuable to dig up, hah! - C. Blue */
+				switch (zcave[y][x].feat) {
+				case FEAT_MAGMA_K:
+				case FEAT_MAGMA_H:
+				case FEAT_QUARTZ_K:
+				case FEAT_QUARTZ_H:
+					k = 0;
+					for (i = 7; i >= 0; i--)
+						if (cave_floor_bold(zcave, y + ddy_ddd[i], x + ddx_ddd[i])) k++;
+					/* allow for 'holes' here and then.. whatever.. could also just be strict and say == 0 though */
+					if (k <= 1) c_ptr->info |= CAVE_ENCASED;
+					break;
+#ifdef VOLCANIC_FLOOR /* experimental - add volcanic floor around lava rivers - C. Blue */
+				case FEAT_SHAL_LAVA:
+				case FEAT_DEEP_LAVA:
+					for (i = 0; i < 4; i++) {
+						k = zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat;
+						switch (k) {
+						case FEAT_WEB:
+						case FEAT_CROP:
+						case FEAT_FLOWER:
+						case FEAT_IVY:
+						case FEAT_GRASS:
+							/* never persist */
+							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_ASH;
+							continue;
+						case FEAT_SNOW:
+						case FEAT_SHAL_WATER:
+						case FEAT_DARK_PIT:
+						case FEAT_ICE:
+						case FEAT_MUD:
+						case FEAT_ICE_WALL:
+							/* never persist */
+							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
+							continue;
+						case FEAT_TREE:
+						case FEAT_BUSH://mh
+							/* never persist */
+							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_DEAD_TREE;
+							continue;
+						case FEAT_SAND:
+						case FEAT_FLOOR:
+						case FEAT_LOOSE_DIRT:
+						case FEAT_DIRT:
+							/* rarely persist */
+							if (!rand_int(7)) continue;
+							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
+						default:
+							continue;
+						}
 					}
+#endif
 				}
 			}
-#endif
 
 		/* Destroy the level if necessary */
 		if (destroyed) destroy_level(wpos);
@@ -10671,7 +10686,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 	/* Dungeon towns get some extra treatment: */
 	if (dungeon_town) {
 		/* make dungeon towns look more destroyed */
-		if (rand_int(2)) build_streamer(wpos, FEAT_TREE, 0, TRUE);
+		if (rand_int(2)) build_streamer(wpos, FEAT_TREE, 0, TRUE); //NOTE: What about build_streamer2()?
 		if (rand_int(2)) build_streamer(wpos, FEAT_IVY, 0, TRUE);
 #if 0 /* these obstruct stores a bit too much maybe */
 		if (rand_int(2)) build_streamer(wpos, FEAT_QUARTZ, 0, TRUE);

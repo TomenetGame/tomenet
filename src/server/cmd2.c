@@ -3068,13 +3068,29 @@ bool twall(int Ind, int y, int x) {
  */
 /* XXX possibly wrong */
 /* Reveal a secret door if tunnelling triggered a trap on it? */
+/* New Digging features: Uncover features or find objects - (C. Blue)
+   -Only possible when digging by hand/tool, not via any magic.
+   -Rubble: Staircase, Fountain, Lava/Water,
+            Chest, Random item, Golem limb, Rune
+   -Tree: Golem body (wood), Piece of Wood
+   -Quartz/Magma obvious treasure vein: Fountain, Lava/Water,
+            Golem body (metal), Rune
+   -Quartz/Magma hidden treasure vein: Fountain, Lava/Water,
+            Golem body (metal), Rune (high chance if proficient)
+   -Granite Wall: Fountain, Lava/Water
+            Rune
+    The highest proficiency in any rune-skill decides how much the chance to
+    find a rune (in whichever above case it is possible generally) will be
+    boosted further.
+*/
 #define TRAP_REVEALS_DOOR
 void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
 	struct worldpos *wpos = &p_ptr->wpos;
 
-	int y, x, power = p_ptr->skill_dig + (quiet_borer ? 20000 : 0);
+	int cfeat, y, x, power = p_ptr->skill_dig + (quiet_borer ? 20000 : 0);
+	u32b cinfo;
 	int mining = get_skill(p_ptr, SKILL_DIG);
 	int dug_feat = FEAT_NONE, tval = 0, sval = 0, special_k_idx = 0; //chest / golem base material / rune
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -3085,6 +3101,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	object_type *o2_ptr = &p_ptr->inventory[INVEN_WIELD];
 	object_type *o3_ptr = &p_ptr->inventory[INVEN_ARM];
 	int wood_power = 0, fibre_power = 0;
+
+	int rune_proficiency = 0;
 
 	cave_type *c_ptr;
 	bool old_floor = FALSE, more = FALSE, no_quake = FALSE;
@@ -3136,6 +3154,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* axes/swords help as well as certain slicing polearms against webs */
 	if (wood_power > fibre_power) fibre_power = wood_power;
 
+	/* find highest rune skill to determine our rune-proficiency */
+	if (p_ptr->s_info[SKILL_R_LITE].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_LITE].value;
+	if (p_ptr->s_info[SKILL_R_DARK].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_DARK].value;
+	if (p_ptr->s_info[SKILL_R_NEXU].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_NEXU].value;
+	if (p_ptr->s_info[SKILL_R_NETH].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_NETH].value;
+	if (p_ptr->s_info[SKILL_R_CHAO].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_CHAO].value;
+	if (p_ptr->s_info[SKILL_R_MANA].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_MANA].value;
+	rune_proficiency /= 1000;
+
 	object_level = find_level;
 	if (mining > find_level * 2) mining = find_level * 2;
 	find_level += mining / 2;
@@ -3163,22 +3190,23 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 		/* Get grid */
 		c_ptr = &zcave[y][x];
-
-		f_ptr = &f_info[c_ptr->feat];
+		cfeat = c_ptr->feat;
+		cinfo = c_ptr->info;
+		f_ptr = &f_info[cfeat];
 
 		/* Check the floor-hood */
 		old_floor = cave_floor_bold(zcave, y, x);
 
 		/* No tunnelling through emptiness */
-		if ((cave_floor_bold(zcave, y, x)) || (c_ptr->feat == FEAT_PERM_CLEAR)) {
+		if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
 			msg_print(Ind, "You see nothing there to tunnel through.");
 			disturb(Ind, 0, 0);
 			return;
 		}
 
 		/* No tunnelling through doors */
-		//else if (c_ptr->feat < FEAT_SECRET && c_ptr->feat >= FEAT_HOME_HEAD)
-		else if ((f_info[c_ptr->feat].flags1 & FF1_DOOR) && c_ptr->feat != FEAT_SECRET) {
+		//else if (cfeat < FEAT_SECRET && cfeat >= FEAT_HOME_HEAD)
+		else if ((f_ptr->flags1 & FF1_DOOR) && cfeat != FEAT_SECRET) {
 			//msg_print(Ind, "You cannot tunnel through doors.");
 
 			/* Try opening it instead */
@@ -3258,6 +3286,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
 				    }
 				}
+
+				/* hack 1/2: rune proficiency adds to chance for 'special feature' uncovering giving a rune */
+				if (dug_feat == FEAT_NONE && !tval && rand_int(1000) < rune_proficiency) {
+					tval = TV_RUNE;
+					get_obj_num_hook = NULL;
+					get_obj_num_prep_tval(tval, RESF_MID);
+					special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+				}
 			}
 			/* if in monster KILL_WALL form or via magic */
 			else if (l_ptr && quiet_borer) {
@@ -3268,15 +3304,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 #if 0
 			/* Titanium */
-			if (c_ptr->feat >= FEAT_PERM_EXTRA)
+			if (cfeat >= FEAT_PERM_EXTRA)
 				msg_print(Ind, "This seems to be permanent rock.");
 #else	// 0
 			//do_cmd_tunnel_test(int y, int x, FALSE)
 			/* Must be tunnelable */
-			if (!(f_info[c_ptr->feat].flags1 & FF1_TUNNELABLE) ||
-			    (f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) {
+			if (!(f_ptr->flags1 & FF1_TUNNELABLE) ||
+			    (f_ptr->flags1 & FF1_PERMANENT)) {
 				/* Message */
-				msg_print(Ind, f_text + f_info[c_ptr->feat].tunnel);
+				msg_print(Ind, f_text + f_ptr->tunnel);
 
 				/* Nope */
 				return;
@@ -3290,7 +3326,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 
 			/* Rubble */
-			else if (c_ptr->feat == FEAT_RUBBLE) {
+			else if (cfeat == FEAT_RUBBLE) {
 				no_quake = TRUE;
 
 				/* Remove the rubble */
@@ -3318,8 +3354,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							} else {
 //								s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 							}
-						//no golem materials from rubble */
-						} else if (special_k_idx && tval != TV_GOLEM) {
+						} else if (special_k_idx) {
+							/* no golem body pieces from rubble, instead allow limbs! */
+							if (tval == TV_GOLEM) {
+								if (rand_int(2)) sval = SV_GOLEM_ARM;
+								else sval = SV_GOLEM_LEG;
+								special_k_idx = lookup_kind(tval, sval);
+							}
 							invcopy(&forge, special_k_idx);
 							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
@@ -3368,7 +3409,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				}
 			}
 
-			else if (c_ptr->feat == FEAT_TREE) {
+			else if (cfeat == FEAT_TREE) {
 				no_quake = TRUE;
 
 				/* mow down the vegetation */
@@ -3418,7 +3459,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
-			} else if (c_ptr->feat == FEAT_BUSH) {
+			} else if (cfeat == FEAT_BUSH) {
 				no_quake = TRUE;
 
 				/* mow down the vegetation */
@@ -3444,7 +3485,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
-			} else if (c_ptr->feat == FEAT_IVY) {
+			} else if (cfeat == FEAT_IVY) {
 				no_quake = TRUE;
 
 				/* mow down the vegetation */
@@ -3468,7 +3509,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				}
-			} else if (c_ptr->feat == FEAT_DEAD_TREE) {
+			} else if (cfeat == FEAT_DEAD_TREE) {
 				no_quake = TRUE;
 
 				/* mow down the vegetation */
@@ -3495,28 +3536,45 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 
 			/* Quartz / Magma */
-//			else if (c_ptr->feat >= FEAT_MAGMA)
+//			else if (cfeat >= FEAT_MAGMA)
 			/* Quartz / Magma / Sandwall */
-			else if (((c_ptr->feat >= FEAT_MAGMA) &&
-				(c_ptr->feat <= FEAT_QUARTZ_K)) ||
-				((c_ptr->feat >= FEAT_SANDWALL) &&
-				 (c_ptr->feat <= FEAT_SANDWALL_K))) {
+			else if (((cfeat >= FEAT_MAGMA) &&
+				(cfeat <= FEAT_QUARTZ_K)) ||
+				((cfeat >= FEAT_SANDWALL) &&
+				 (cfeat <= FEAT_SANDWALL_K))) {
 				bool okay = FALSE;
 				bool gold = FALSE;
 				bool hard = FALSE;
 				bool soft = FALSE;
+				bool nonobvious = (cfeat == FEAT_QUARTZ_H || cfeat == FEAT_MAGMA_H || cfeat == FEAT_SANDWALL_H); //these hidden treasure veins are currently not generated, so..
+				//actually make 'non-obvious' also mean treasure veins that aren't generated out in the open, but enclosed in streamers:
+				if (cinfo & CAVE_ENCASED) nonobvious = TRUE;
+
+				/* Non-mapped treasure (ie treasure that requires detection or digging it up for LoS, to find it) */
+				if (l_ptr && !quiet_borer &&
+				    (dug_feat == FEAT_NONE || dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) &&
+				    !(special_k_idx && tval == TV_GOLEM) &&
+				    nonobvious) {
+					/* hack 2/2: rune proficiency for 'special feature' uncovering */
+					if (rand_int(1000) < rune_proficiency) {
+						tval = TV_RUNE;
+						get_obj_num_hook = NULL;
+						get_obj_num_prep_tval(tval, RESF_MID);
+						special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+					}
+				}
 
 				/* Found gold */
-				if ((c_ptr->feat >= FEAT_MAGMA_H) &&
-				    (c_ptr->feat <= FEAT_QUARTZ_K)) gold = TRUE;
+				if ((cfeat >= FEAT_MAGMA_H) &&
+				    (cfeat <= FEAT_QUARTZ_K)) gold = TRUE;
 
-				if ((c_ptr->feat == FEAT_SANDWALL_H) ||
-				    (c_ptr->feat == FEAT_SANDWALL_K)) {
+				if ((cfeat == FEAT_SANDWALL_H) ||
+				    (cfeat == FEAT_SANDWALL_K)) {
 					gold = TRUE;
 					soft = TRUE;
 				} else
 				/* Extract "quartz" flag XXX XXX XXX */
-				if ((c_ptr->feat - FEAT_MAGMA) & 0x01) hard = TRUE;
+				if ((cfeat - FEAT_MAGMA) & 0x01) hard = TRUE;
 
 				/* Quartz */
 				if (hard)
@@ -3538,6 +3596,29 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 
 					/* Found treasure */
+
+					/* Non-mapped treasure (ie treasure that requires detection or digging it up for LoS, to find it):
+					   If no other feature/item was planned, give extra chance for instant-rune instead of just cash. */
+					if (gold && l_ptr && !quiet_borer &&
+					    (dug_feat == FEAT_NONE || dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) &&
+					    !(special_k_idx && tval == TV_GOLEM) &&
+					    nonobvious &&
+					    /* hack 2/2: rune proficiency for 'special feature' uncovering */
+					    rand_int(1000) < rune_proficiency) {
+						tval = TV_RUNE;
+						get_obj_num_hook = NULL;
+						get_obj_num_prep_tval(tval, RESF_MID);
+						special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+						invcopy(&forge, special_k_idx);
+						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+						forge.number = 1;
+						//forge.level = ;
+						forge.marked2 = ITEM_REMOVAL_NORMAL;
+						msg_print(Ind, "You have found something!");
+						drop_near(0, &forge, -1, wpos, y, x);
+						s_printf("DIGGING: %s found a rune (nonobvious vein).\n", p_ptr->name);
+					} else
+					/* Normal results */
 					if (gold) {
 						if (special_k_idx && tval == TV_GOLEM) {
 							invcopy(&forge, special_k_idx);
@@ -3550,7 +3631,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 						} else {
 							object_level = find_level;
 							/* abuse tval and sval as simple counters */
-							tval = rand_int(mining / 5);
+							tval = rand_int(mining / 5) + (nonobvious ? randint(mining / 16) : 0);
 							for (sval = 0; sval <= tval; sval++) {
 								/* Place some gold */
 								place_gold(Ind, wpos, y, x, 0);
@@ -3578,7 +3659,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							cave_set_feat_live(wpos, y, x, dug_feat);
 							//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 						}
-					} else if (!rand_int(10) && special_k_idx && (tval == TV_RUNE)) {
+					} else if (!rand_int(10) && special_k_idx && tval == TV_RUNE) {
 							invcopy(&forge, special_k_idx);
 							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
@@ -3623,7 +3704,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 
 			/* Default to secret doors */
-			else if (c_ptr->feat == FEAT_SECRET) {
+			else if (cfeat == FEAT_SECRET) {
 #if 0
 				/* Message, keep digging */
 				msg_print(Ind, "You tunnel into the granite wall.");
@@ -3633,7 +3714,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #endif
 #else
 				struct c_special *cs_ptr;
-				int featm = c_ptr->feat; /* just to kill compiler warning */
+				int featm = cfeat; /* just to kill compiler warning */
 				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 					featm = cs_ptr->sc.omni;
 				else /* Apply "mimic" field */
@@ -3652,7 +3733,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				if (power > 40 + rand_int(1600)) { /* just assume 1600 as for Granite Wall */
 					struct c_special *cs_ptr;
 					msg_print(Ind, "You have found a secret door!");
-					c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+					cfeat = FEAT_DOOR_HEAD + 0x00;
 					/* Clear mimic feature */
 					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 
@@ -3682,7 +3763,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					/* Message */
 					msg_print(Ind, "You have found a secret door.");
 					/* Pick a door XXX XXX XXX */
-					c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+					cfeat = FEAT_DOOR_HEAD + 0x00;
 					/* Clear mimic feature */
 					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 
@@ -3697,7 +3778,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				if (more) search(Ind);
 			}
 			/* Granite + misc (Ice..) */
-			else if (c_ptr->feat >= FEAT_WALL_EXTRA) {
+			else if (cfeat >= FEAT_WALL_EXTRA) {
 				/* Tunnel */
 				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x)) { /* 1600 */
 					msg_print(Ind, "You have finished the tunnel.");
@@ -3722,7 +3803,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 								cave_set_feat_live(wpos, y, x, dug_feat);
 								//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 							}
-						} else if (!rand_int(20) && special_k_idx && (tval == TV_RUNE)) {
+						} else if (!rand_int(20) && special_k_idx && tval == TV_RUNE) {
 							invcopy(&forge, special_k_idx);
 							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 							forge.number = 1;
@@ -3748,7 +3829,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 
 			/* Spider Webs */
-			else if (c_ptr->feat == FEAT_WEB) {
+			else if (cfeat == FEAT_WEB) {
 				no_quake = TRUE;
 
 				/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
