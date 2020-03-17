@@ -7876,7 +7876,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		cs_erase(c_ptr, cs_ptr);
 
 	/* Change the feature */
-	if (c_ptr->feat != feat) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
+	if (c_ptr->feat != feat) c_ptr->info &= ~(CAVE_NEST_PIT | CAVE_ENCASED); /* clear teleport protection for nest grid if it gets changed; clear treasure vein remote-flag too */
 	c_ptr->feat = feat;
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 
