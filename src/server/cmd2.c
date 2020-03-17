@@ -5007,6 +5007,13 @@ int breakage_chance(object_type *o_ptr) {
 		if (o_ptr->sval <= SV_GOLEM_ADAM) return 0; /* massive piece */
 		if (o_ptr->sval >= SV_GOLEM_ATTACK) return 25; /* scroll */
 		return 10; /* arm/leg */
+
+	/* for throwing weapons: Weapons in general are meant to be used for hitting, so should be ok */
+	case TV_SWORD:
+	case TV_AXE:
+	case TV_BLUNT:
+	case TV_POLEARM:
+		return 3;
 	}
 
 	/* Default: Rarely break */
