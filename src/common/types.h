@@ -726,7 +726,7 @@ struct object_type {
 	s16b xtra6;			/* Extra info */
 	s16b xtra7;			/* Extra info */
 	s16b xtra8;			/* Extra info */
-	s16b xtra9;			/* Extra info */
+	s16b xtra9;			/* Extra info -- marks starter items as such. (This would collide if there ever existed a custom book with 9 spells in it.) */
 
 	char uses_dir;			/* Client-side: Uses a direction or not? (for rods) */
 

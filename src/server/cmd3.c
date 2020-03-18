@@ -1739,14 +1739,14 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
 		/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
 		if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
-		else o_ptr->xtra9 = 1; //mark as unsellable
+		o_ptr->xtra9 = 1; //mark as unsellable
 	}
  #else
 	if (o_ptr->owner == p_ptr->id && p_ptr->max_plv < 2 && !is_admin(p_ptr) &&
 	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
 		/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
 		if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
-		else o_ptr->xtra9 = 1; //mark as unsellable
+		o_ptr->xtra9 = 1; //mark as unsellable
 	}
  #endif
 #endif

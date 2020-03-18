@@ -5576,7 +5576,7 @@ void do_cmd_fire(int Ind, int dir) {
 	    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
 		/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
 		if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
-		else o_ptr->xtra9 = 1; //mark as unsellable
+		o_ptr->xtra9 = 1; //mark as unsellable
 	}
 #endif
 
@@ -6921,7 +6921,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		    o_ptr->tval != TV_GAME && o_ptr->tval != TV_KEY && o_ptr->tval != TV_SPECIAL) {
 			/* not for basic arrows, a bit too silyl compared to the annoyment/newbie confusion */
 			if (!is_ammo(o_ptr->tval) || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
-			else o_ptr->xtra9 = 1; //mark as unsellable
+			o_ptr->xtra9 = 1; //mark as unsellable
 		}
 #endif
 	}

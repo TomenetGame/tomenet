@@ -7735,7 +7735,8 @@ static void inven_death_damage(int Ind, int verbose) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 	int shuffle[INVEN_PACK];
-	int inventory_loss = 0;
+	int inventory_loss = 0, inventory_loss_max = p_ptr->max_plv >= 30 ? 4 : (p_ptr->max_plv >= 20 ? 3 : (p_ptr->max_plv >= 10 ? 2 : 1));
+	bool inventory_loss_starteritems = (p_ptr->max_plv >= 10);
 	int i, j, k;
 
 	for (i = 0; i < INVEN_PACK; i++) shuffle[i] = i;
@@ -7764,6 +7765,8 @@ static void inven_death_damage(int Ind, int verbose) {
 		    && rand_int(2))
 			continue;
 #endif
+		/* protect starter items? this is mainly for starter spell books.. */
+		if (!inventory_loss_starteritems && o_ptr->xtra9 == 1) continue;
 
 		if (magik(DEATH_PACK_ITEM_LOST)) {
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -7785,9 +7788,7 @@ static void inven_death_damage(int Ind, int verbose) {
 			inven_item_optimize(Ind, j);
 			inventory_loss++;
 
-			if (inventory_loss >= 4) {
-				break;
-			}
+			if (inventory_loss >= inventory_loss_max) break;
 		}
 	}
 }
