@@ -7785,6 +7785,7 @@ Arena Monster Challenge (no losses or gains, for testing your abilities)
     the /scream command while it's in your line of sight.
     Inventory and equipment cannot be damaged/destroyed or disenchanted in this
     event, and you cannot get disarmed either.
+    NOTE: PvP-mode characters are exempt from safety and can die for real!
 
 Dungeon Keeper (everyone can win, 1+ participants)
     (You should enable 'easy_open' option in  = 6  for this event, which is

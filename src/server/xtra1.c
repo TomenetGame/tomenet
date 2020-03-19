@@ -7439,9 +7439,9 @@ int start_global_event(int Ind, int getype, char *parm) {
 		strcpy(ge->description[4], " of you, created by the wizards of 'Arena Monster Challenge (tm)' will ");
 		strcpy(ge->description[5], " actually do the fighting. For the duration of the spell it will seem  ");
 		strcpy(ge->description[6], " completely real to you though, and you can even use and consume items!");
+		strcpy(ge->description[7], " (PvP-mode characters are an exception and will actually die for real!)");
 		//strcpy(ge->description[7], " (Note: Some creatures might be beyond the wizards' abilities.)");
-		strcpy(ge->description[7], format(" (Example: '\377U/evsign %d black orc vet\377w' gets you a veteran archer!)", n+1));
-		strcpy(ge->description[8], "");
+		strcpy(ge->description[8], format(" (Example: '\377U/evsign %d black orc vet\377w' gets you a veteran archer!)", n+1));
 		strcpy(ge->description[9], "");
 		ge->end_turn = ge->start_turn + cfg.fps * 60 * 30 ; /* 30 minutes max. duration, insta-start */
 #if 0
