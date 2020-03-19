@@ -4132,8 +4132,13 @@
 /* Extend 'Digging' skill to become 'Excavation', adding craftable demolition charges
    that can also be applied to ranged ammunition or traps for various effects  - C. Blue */
 #ifdef ENABLE_EXCAVATION
-/* Notes about ingredients regarding the crafting process -
- * Ammonia: heat animal dung (camels^^'), charcoal: burn trees :D, saltpeter (bird guano, others), sulfur (volcanic and undersea) */
+/* Notes about ingredients regarding the crafting process (anyone read the Dr Stone manga?) -
+   charcoal: burn trees :D, saltpeter (bird guano, others), sulfur (volcanic and undersea),
+   ammonia: heat animal dung (camels^^'), metal powder (specifically aluminium, but maybe too rare),
+   hydroxides(*): salt water + rust(!) (not exactly, and unfeasible metal types, but w/e),
+   metalperoxide: metaloxides + hydroxides(*) (soooorta...again),
+   perchlorates: acid (let's just assume it's hydrochloric acid by chance -_-) + aluminium (we dont have magnesium..) or kalium (from saltpeter maybe?)
+    */
 /* TV_CHARGE svals */
  #define SV_CHARGE_BLAST		1
  #define SV_CHARGE_XBLAST		2
@@ -4145,8 +4150,9 @@
  #define SV_CHARGE_WRECKING		8	/* create rubble */
  #define SV_CHARGE_CASCADING		9	/* wall creation */
  #define SV_CHARGE_TACTICAL		10	/* stone prison */
- #define SV_CHARGE_CONCUSSION		11	/* extra stun effect */
- #define SV_CHARGE_XCONCUSSION		12	/* extra STUN effect */
+ #define SV_CHARGE_FLASHBOMB		11	/* blind effect */
+ #define SV_CHARGE_CONCUSSION		12	/* extra stun effect */
+ #define SV_CHARGE_XCONCUSSION		13	/* extra STUN effect */
 #endif
 
 /* svals for TV_SPECIAL */

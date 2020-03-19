@@ -7903,19 +7903,28 @@ A:127/255
 F:EASY_KNOW
 D:Allows proficient demolitionists to collapse structures in a specific way
 
-# stun-effect
-N:1052:Concussive charge
+# blind effect
+N:1052:Flash bomb
 G:%:U
 I:47:11:0
+W:10:0:5:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to cause an extremely bright explosion
+
+# stun effect
+N:1053:Concussive charge
+G:%:U
+I:47:12:0
 W:15:0:20:0
 A:127/255
 F:EASY_KNOW
 D:Allows proficient demolitionists to emphasize a concussive effect
 
-# greater stun-effect
-N:1053:Large Concussive charge
+# greater stun effect
+N:1054:Large Concussive charge
 G:%:U
-I:47:12:0
+I:47:13:0
 W:25:0:30:0
 A:127/255
 F:EASY_KNOW
