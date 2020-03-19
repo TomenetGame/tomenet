@@ -3636,6 +3636,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							object_level = find_level;
 							/* abuse tval and sval as simple counters; reward the special effort at lower character levels.. */
 							tval = rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
+							if (nonobvious) s_printf("DIGGING: %s digs nonobvious (x%d).\n", p_ptr->name, tval);
 							for (sval = 0; sval <= tval; sval++) {
 								/* Place some gold */
 								place_gold(Ind, wpos, y, x, 0);
