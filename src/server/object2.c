@@ -6842,6 +6842,9 @@ static int which_theme(int tval) {
 
 	case TV_FIRESTONE:
 	case TV_FOOD:
+#ifdef ENABLE_EXCAVATION
+	case TV_CHEMICAL:
+#endif
 		return 0; //junk
 
 	case TV_CHEST:
@@ -6899,6 +6902,9 @@ static int which_theme(int tval) {
 	case TV_TOOL:
 	case TV_INSTRUMENT:
 	case TV_TRAPKIT:
+#ifdef ENABLE_EXCAVATION
+	case TV_CHARGE:
+#endif
 		return 4; //tools
 
 	default: //paranoia

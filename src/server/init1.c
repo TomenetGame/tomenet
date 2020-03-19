@@ -1527,7 +1527,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "ENABLE_OUNLIFE") && negation) invalid = TRUE;
 #endif
-
+#ifndef ENABLE_EXCAVATION
+		if (streq(m, "ENABLE_EXCAVATION") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_EXCAVATION") && negation) invalid = TRUE;
+#endif
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
 		    strcmp(m, "RPG_SERVER") &&
@@ -1550,6 +1554,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_OCCULT") &&
 		    strcmp(m, "ENABLE_OHERETICISM") &&
 		    strcmp(m, "ENABLE_OUNLIFE") &&
+		    strcmp(m, "ENABLE_EXCAVATION") &&
 			TRUE)
 			invalid = TRUE;
 	}

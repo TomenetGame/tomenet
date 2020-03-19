@@ -2981,6 +2981,7 @@
 #define TV_TRAPKIT	46      /* Trapkits */
 #ifdef ENABLE_EXCAVATION
  #define TV_CHARGE	47	/* Demolition charges for 'Excavation' skill */
+ #define TV_CHEMICAL	48	/* Ingredients for crafting demolition charges for 'Excavation' skill */
 #endif
 #define TV_TOTEM	54      /* Summoner totems */
 #define TV_STAFF	55
@@ -4133,10 +4134,14 @@
    that can also be applied to ranged ammunition or traps for various effects  - C. Blue */
 #ifdef ENABLE_EXCAVATION
 /* Notes about ingredients regarding the crafting process (anyone read the Dr Stone manga?) -
-   charcoal: burn trees :D, saltpeter (bird guano, others), sulfur (volcanic and undersea),
-   ammonia: heat animal dung (camels^^'), metal powder (specifically aluminium, but maybe too rare),
-   hydroxides(*): salt water + rust(!) (not exactly, and unfeasible metal types, but w/e),
-   metalperoxide: metaloxides + hydroxides(*) (soooorta...again),
+   charcoal: burn trees :D, saltpeter (bird guano, others), sulfur (volcanic and undersea, mining!),
+   ammonia (alternative to metal-saltpeter): heat animal dung (camels^^') - maybe even extract from poison/gas breath? oO far stretch yeah,
+    maybe just make it already 'ammonia salt' straight away aka Gwihabaite (ammonia-saltpeter, ready for use as saltpeter alternative),
+    we can consider it to be more porous and combinable with lamp oil, just those two are fit for industrial mining operations already!:
+    less potent and not waterproof but easier to use/cheaper,
+   metal powder: specifically aluminium, but maybe too rare,
+   (metal)hydroxides(*): salt water + rust(!) (not exactly, and unfeasible metal types, but w/e),
+   metalperoxide: metaloxides (or ammonia) + hydroxides(*) (soooorta...again, so it'll just be MORE saltwater with rust, lul),
    perchlorates: acid (let's just assume it's hydrochloric acid by chance -_-) + aluminium (we dont have magnesium..) or kalium (from saltpeter maybe?)
     */
 /* TV_CHARGE svals */
@@ -4153,6 +4158,15 @@
  #define SV_CHARGE_FLASHBOMB		11	/* blind effect */
  #define SV_CHARGE_CONCUSSION		12	/* extra stun effect */
  #define SV_CHARGE_XCONCUSSION		13	/* extra STUN effect */
+/* TV_CHEMICAL svals */
+ #define SV_CHARCOAL		1	/* small amount, your basic fuel ingredient to burn shits (>' ')> */
+ #define SV_SULFUR		2	/* small amount, easens combustion */
+ #define SV_SALTPETRE		3	/* large amount, oxygen source boosting combustion speed */
+ #define SV_AMMONIA_SALT	4	/* alternative to saltpetre, provides option: just lamp oil as 2nd ingredient! (huge amount salt, tiny amount oil) */
+ #define SV_METAL_POWDER	5	/* for flashy effects *_* */
+ #define SV_METAL_HYDROXIDE	6	/* additional tier I oxygen source - make shit more potent */
+ #define SV_METAL_PEROXIDE	7	/* additional tier II oxygen source - make shit MORE potent */
+ #define SV_METAL_PERCHLORATE	8	/* additional tier III oxygen source - make shit *MORE* potent */
 #endif
 
 /* svals for TV_SPECIAL */
