@@ -4158,6 +4158,7 @@
  #define SV_CHARGE_FLASHBOMB		11	/* blind effect */
  #define SV_CHARGE_CONCUSSION		12	/* extra stun effect */
  #define SV_CHARGE_XCONCUSSION		13	/* extra STUN effect */
+ #define SV_CHARGE_UNDERGROUND		14	/* create water/lava (blast open a hidden underground vein) */
 /* TV_CHEMICAL svals */
  #define SV_CHARCOAL		1	/* small amount, your basic fuel ingredient to burn shits (>' ')> */
  #define SV_SULFUR		2	/* small amount, easens combustion */

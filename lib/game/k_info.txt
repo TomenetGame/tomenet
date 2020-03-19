@@ -5716,7 +5716,16 @@ $ENABLE_EXCAVATION$A:127/255
 $ENABLE_EXCAVATION$F:EASY_KNOW
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to greatly emphasize a concussive effect
 
-# HOLE 715-719
+$ENABLE_EXCAVATION$# create water/lava (depending on the dungeon)
+$ENABLE_EXCAVATION$N:715:& Underground charge~
+$ENABLE_EXCAVATION$G:%:y
+$ENABLE_EXCAVATION$I:47:14:0
+$ENABLE_EXCAVATION$W:20:0:30:0
+$ENABLE_EXCAVATION$A:127/255
+$ENABLE_EXCAVATION$F:EASY_KNOW
+$ENABLE_EXCAVATION$D:Allows proficient demolitionists to blast open buried water or lava veins
+
+# HOLE 716-719
 
 
 # The Scroll of Deincarnation (now an artifact)
