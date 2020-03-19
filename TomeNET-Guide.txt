@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. March 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 19. March 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -19460,6 +19460,8 @@ To create a golem, you will need these parts:
  acquire that type of scroll afterwards! So make sure you carry all 3 command
  scrolls before creating it.
  (Command scrolls are not consumed upon golem creation.)
+-Optionally, further items can be provided to add extra properties to the
+ golem, see a bit further down in this paragraph about '@G' inscription.
 
 After the golem has been created it will start out passively, not following any
 particular command. It will just sit there doing nothing. To actually control
