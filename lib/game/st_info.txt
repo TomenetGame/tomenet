@@ -1483,6 +1483,10 @@ T:5:71:37
 #mummy wrapping
 T:5:12:7
 I:50:Blood Bond
+#extra: higher end amulets- weaponmastery/rage/speed
+T:1:40:24
+T:1:40:34
+T:1:40:31
 #A:30:0:1:2:3:0
 A:2:1:3:0:0:0
 #O:38:39:40:41:42:
