@@ -360,7 +360,11 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 			else price *= 16;
 		}
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE4) price *= 4;
-		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE2) price *= 2;
+		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE2) {
+			price *= 2;
+			/* Bad hack: IDDC BM should still offer jewelry at 4x price, the 2x is mainly for consumables.. */
+			if (st_ptr->st_idx == STORE_BLACK_DUN && (o_ptr->tval == TV_AMULET || o_ptr->tval == TV_RING)) price *= 2;
+		}
 		if (st_info[st_ptr->st_idx].flags1 & SF1_PRICE1) price = (price * 3) / 2;
 		/* hack - make speed/poly rings 'affordable' (2/2) -- not speed rings here anymore! */
 		if ((o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) &&
