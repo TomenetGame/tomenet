@@ -3851,7 +3851,6 @@ F:EASY_KNOW
 D:Releases a magical firework rocket.
 #D:Can only be used during new years eve season.
 
-
 $ENABLE_OUNLIFE$N:447:& Tainted Tome~ of Unlife
 $ENABLE_OUNLIFE$G:?:n
 $ENABLE_OUNLIFE$I:111:25:0
@@ -7819,6 +7818,108 @@ F:EASY_KNOW | IGNORE_WATER | IGNORE_FIRE | IGNORE_ACID | IGNORE_COLD | IGNORE_EL
 D:(This is a quest item)
 
 # 1041 = Handbook of Transportation
+
+# for new 'Excavation' skill that replaces 'Digging' - C. Blue
+N:1042:Blast charge
+G:%:o
+I:47:1:0
+W:5:0:10:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to cause a major explosion
+
+N:1043:Large blast charge
+G:%:o
+I:47:2:0
+W:10:0:20:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to cause a huge explosion
+
+N:1044:Ground-shaking charge
+G:%:R
+I:47:3:0
+W:30:0:50:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to cause a local earthquake
+
+N:1045:Destructor-charge
+G:%:R
+I:47:4:0
+W:40:0:100:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to *destroy* a large area
+
+N:1046:Fire charge
+G:%:r
+I:47:5:0
+W:5:0:10:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to cause a strong conflagration
+
+N:1047:Firestorm charge
+G:%:r
+I:47:6:0
+W:15:0:25:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to create a storm of conflagration
+
+N:1048:Firewall charge
+G:%:r
+I:47:7:0
+W:10:0:15:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to create an alley of fire
+
+# create rubble
+N:1049:Wrecking charge
+G:%:y
+I:47:8:0
+W:10:0:10:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to block a passage
+
+# wall creation
+N:1050:Cascading charge
+G:%:y
+I:47:9:0
+W:20:0:20:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to chain a series of debris-creating blasts
+
+# stone prison
+N:1051:Tactical charge
+G:%:y
+I:47:10:0
+W:25:0:20:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to collapse structures in a specific way
+
+# stun-effect
+N:1052:Concussive charge
+G:%:U
+I:47:11:0
+W:15:0:20:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to emphasize a concussive effect
+
+# greater stun-effect
+N:1053:Large Concussive charge
+G:%:U
+I:47:12:0
+W:25:0:30:0
+A:127/255
+F:EASY_KNOW
+D:Allows proficient demolitionists to greatly emphasize a concussive effect
 
 
 

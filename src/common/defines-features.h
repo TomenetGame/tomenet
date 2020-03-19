@@ -366,6 +366,8 @@
  #define TELEPORT_SURPRISES	/* monsters are surprised for a short moment if a player long-range teleported next to them */
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
+
+ #define ENABLE_EXCAVATION	/* Allow creation of demolition charges for 'Digging'-renamed-to-'Excavation' skill */
 #endif
 
 #ifdef ARCADE_SERVER

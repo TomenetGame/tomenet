@@ -2979,6 +2979,9 @@
 #define TV_AMULET	40      /* Amulets (including Specials) */
 #define TV_RING		45      /* Rings (including Specials) */
 #define TV_TRAPKIT	46      /* Trapkits */
+#ifdef ENABLE_EXCAVATION
+ #define TV_CHARGE	47	/* Demolition charges for 'Excavation' skill */
+#endif
 #define TV_TOTEM	54      /* Summoner totems */
 #define TV_STAFF	55
 #define TV_WAND		65
@@ -2991,7 +2994,7 @@
 #define TV_FOOD		80
 #define TV_HYPNOS	99      /* To wield monsters !:) */
 #define TV_GOLD		100     /* Gold can only be picked up by players(?) */
-#define TV_RANDART	102     /* Random Artifacts */
+#define TV_RANDART	102     /* Random Artifacts -- unused */
 
 /* Runecraft */
 #define TV_RUNE		107
@@ -4125,6 +4128,22 @@
 
 /* sub-section of "unobtainium": specific mobs drop this. take out of the group */
 #define SV_PRECIOUS_STONE_DORS_EYE	41 // Dor's Eye... Guess where it's going to be dropped by? 
+
+#ifdef ENABLE_EXCAVATION
+/* TV_CHARGE svals */
+ #define SV_CHARGE_BLAST		1
+ #define SV_CHARGE_XBLAST		2
+ #define SV_CHARGE_QUAKE		3
+ #define SV_CHARGE_DESTRUCTION		4
+ #define SV_CHARGE_FIRE			5
+ #define SV_CHARGE_FIRESTORM		6
+ #define SV_CHARGE_FIREWALL		7
+ #define SV_CHARGE_WRECKING		8	/* create rubble */
+ #define SV_CHARGE_CASCADING		9	/* wall creation */
+ #define SV_CHARGE_TACTICAL		10	/* stone prison */
+ #define SV_CHARGE_CONCUSSION		11	/* extra stun effect */
+ #define SV_CHARGE_XCONCUSSION		12	/* extra STUN effect */
+#endif
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */
