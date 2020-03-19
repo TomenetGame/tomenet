@@ -4129,7 +4129,11 @@
 /* sub-section of "unobtainium": specific mobs drop this. take out of the group */
 #define SV_PRECIOUS_STONE_DORS_EYE	41 // Dor's Eye... Guess where it's going to be dropped by? 
 
+/* Extend 'Digging' skill to become 'Excavation', adding craftable demolition charges
+   that can also be applied to ranged ammunition or traps for various effects  - C. Blue */
 #ifdef ENABLE_EXCAVATION
+/* Notes about ingredients regarding the crafting process -
+ * Ammonia: heat animal dung (camels^^'), charcoal: burn trees :D, saltpeter (bird guano, others), sulfur (volcanic and undersea) */
 /* TV_CHARGE svals */
  #define SV_CHARGE_BLAST		1
  #define SV_CHARGE_XBLAST		2
