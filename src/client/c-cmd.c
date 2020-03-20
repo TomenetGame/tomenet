@@ -1973,6 +1973,8 @@ void cmd_the_guide(void) {
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
 				/* Misc chapters, hardcoded: */
+				if (!strcasecmp(buf, "inst")) strcpy(buf, "Temple  ");
+
 				if (!strcasecmp(buf, "Bree")
 				    || my_strcasestr(buf, "Barr")
 				    || my_strcasestr(buf, "Downs")
