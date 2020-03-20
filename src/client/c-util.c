@@ -609,7 +609,7 @@ static char inkey_aux(void) {
 			/* Hack for auto-pressing spacebar while in player-list */
 			if (within_cmd_player && ticks - within_cmd_player_ticks >= 50) {
 				within_cmd_player_ticks = ticks;
-				ch = ' ';
+				ch = 1; //refresh our current player list view
 				break;
 			}
 
