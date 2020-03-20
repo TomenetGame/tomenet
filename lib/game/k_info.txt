@@ -5826,6 +5826,7 @@ $ENABLE_EXCAVATION$A:127/255
 $ENABLE_EXCAVATION$F:EASY_KNOW
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
+#pouch? dash?
 $ENABLE_EXCAVATION$N:732:*:& Smattering~ of ammonia salt
 $ENABLE_EXCAVATION$G:*:w
 $ENABLE_EXCAVATION$I:48:4:0
