@@ -9412,7 +9412,7 @@ void give_reward(int Ind, u32b resf, cptr quark, int level, int discount) {
 /*
  * Places a treasure (Gold or Gems) at given location
  * The location must be a valid, empty, floor grid.
- * bonus gets added to the sum, bonusmult increases the multiplier of the total result to (1+bonusmult).
+ * bonus gets added to the sum (usually 0), mult is the multiplier of the total result (usually 1).
  */
 /*note: This function uses completely bad values for picking a gold 'colour' at first and should be rewritten.
   I added a hack that resets the colour to something feasible so not almost every high level pile is adamantite. */
