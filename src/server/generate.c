@@ -1320,7 +1320,7 @@ static void alloc_object(struct worldpos *wpos, int set, int typ, int num, playe
 			break;
 
 		case ALLOC_TYP_GOLD:
-			place_gold(0, wpos, y, x, 0);
+			place_gold(0, wpos, y, x, 1, 0);
 			/* hack -- trap can be hidden under gold */
 			if (rand_int(100) < 3) place_trap(wpos, y, x, 0);
 			break;
@@ -1850,7 +1850,7 @@ static void vault_objects(struct worldpos *wpos, int y, int x, int num, player_t
 
 			/* Place gold */
 			else
-				place_gold(0, wpos, j, k, 0);
+				place_gold(0, wpos, j, k, 1, 0);
 
 			/* Placement accomplished */
 			break;
@@ -3196,7 +3196,7 @@ s_printf("ROOM4_TREASURE (%d,%d,%d)\n", wpos->wx, wpos->wy, wpos->wz);
 				//for (x = xval; x <= xval; x++)
 			for (y = y1; y <= y2; y++)
 				for (x = x1; x <= x2; x++)
-					if (!rand_int(5)) place_gold(0, wpos, y, x, 0);
+					if (!rand_int(5)) place_gold(0, wpos, y, x, 1, 0);
 
 			/* Place a monster in the room - ideas: creeping coins or treasure hoarders? */
 			if (rand_int(2)) {
@@ -9265,6 +9265,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				case FEAT_MAGMA_H:
 				case FEAT_QUARTZ_K:
 				case FEAT_QUARTZ_H:
+				case FEAT_SANDWALL_K:
+				case FEAT_SANDWALL_H:
 					k = 0;
 					for (i = 7; i >= 0; i--)
 						if (cave_floor_bold(zcave, y + ddy_ddd[i], x + ddx_ddd[i])) k++;

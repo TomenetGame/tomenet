@@ -5951,7 +5951,7 @@ bool monster_death(int Ind, int m_idx) {
 
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50))) {
-				place_gold(Ind, wpos, y, x, 0);
+				place_gold(Ind, wpos, y, x, 1, 0);
 				//if (player_can_see_bold(Ind, ny, nx)) dump_gold++;
 			}
 
@@ -10751,7 +10751,7 @@ void monster_death_mon(int am_idx, int m_idx) {
 
 			/* Place Gold */
 			if (do_gold && (!do_item || (rand_int(100) < 50)))
-				place_gold(m_ptr->owner, wpos, ny, nx, 0);
+				place_gold(m_ptr->owner, wpos, ny, nx, 1, 0);
 			/* Place Object */
 			else {
 				place_object_restrictor = RESF_NONE;

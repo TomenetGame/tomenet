@@ -1560,9 +1560,9 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 		for (; number > 0; --number) {
 				/* Small chests often drop gold */
 				if (little && magik(75))
-					place_gold(Ind, wpos, y, x, cash);
+					place_gold(Ind, wpos, y, x, 1, cash);
 				else if (!little && magik(20))
-					place_gold(Ind, wpos, y, x, cash);
+					place_gold(Ind, wpos, y, x, 1, cash);
 				/* Otherwise drop an item */
 				else
 					/* mostly DROP_GOOD */
@@ -3634,13 +3634,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							s_printf("DIGGING: %s found a metal piece.\n", p_ptr->name);
 						} else {
 							object_level = find_level;
-							/* abuse tval and sval as simple counters; reward the special effort at lower character levels.. */
-							tval = rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
+							/* abuse tval: reward the special effort at lower character levels..
+							   and add a basic x3 bonus for gold from veins in general. */
+							tval = 3 * (1 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0));
 							if (nonobvious) s_printf("DIGGING: %s digs nonobvious (x%d).\n", p_ptr->name, tval);
-							for (sval = 0; sval <= tval; sval++) {
-								/* Place some gold */
-								place_gold(Ind, wpos, y, x, 0);
-							}
+							place_gold(Ind, wpos, y, x, tval, 0);
 							object_level = old_object_level;
 						}
 						note_spot_depth(wpos, y, x);
@@ -4222,7 +4220,7 @@ void do_cmd_disarm(int Ind, int dir) {
 
 				/* Traps of missing money can drop some of their stolen cash ;) */
 				if (t_idx == TRAP_OF_MISSING_MONEY && rand_int(4))
-					place_gold(Ind, &p_ptr->wpos, y, x, 0);//rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos) / 2));
+					place_gold(Ind, &p_ptr->wpos, y, x, 1, 0);//rand_int(getlevel(&p_ptr->wpos) * getlevel(&p_ptr->wpos) / 2));
 					//NOTE: In theory this can be abused to transfer gold cross-mode/to soloists even, but the amount is negligible.
 
 				/* Reward */

@@ -4497,7 +4497,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Place some gold */
 				object_level = getlevel(&p_ptr->wpos);
-				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 0);
+				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 1, 0);
 				object_level = old_object_level;
 			}
 			/* Granite */
@@ -4527,7 +4527,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Place some gold */
 				object_level = getlevel(&p_ptr->wpos);
-				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 0);
+				if (!istown(wpos)) place_gold(Ind, wpos, y, x, 1, 0);
 				object_level = old_object_level;
 			}
 
