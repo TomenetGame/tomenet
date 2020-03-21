@@ -3636,7 +3636,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 							object_level = find_level;
 							/* abuse tval: reward the special effort at lower character levels..
 							   and add a basic x3 bonus for gold from veins in general. */
-							tval = 3 * (1 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0));
+							tval = 3 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
 							if (nonobvious) s_printf("DIGGING: %s digs nonobvious (x%d).\n", p_ptr->name, tval);
 							place_gold(Ind, wpos, y, x, tval, 0);
 							object_level = old_object_level;
