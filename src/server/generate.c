@@ -9268,8 +9268,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 					k = 0;
 					for (i = 7; i >= 0; i--)
 						if (cave_floor_bold(zcave, y + ddy_ddd[i], x + ddx_ddd[i])) k++;
-					/* allow for 'holes' here and then.. whatever.. could also just be strict and say == 0 though */
-					if (k <= 1) c_ptr->info |= CAVE_ENCASED;
+					if (!k) zcave[y][x].info |= CAVE_ENCASED;
 					break;
 #ifdef VOLCANIC_FLOOR /* experimental - add volcanic floor around lava rivers - C. Blue */
 				case FEAT_SHAL_LAVA:
