@@ -4134,7 +4134,7 @@
    that can also be applied to ranged ammunition or traps for various effects  - C. Blue */
 #ifdef ENABLE_EXCAVATION
 /* Notes about ingredients regarding the crafting process (anyone read the Dr Stone manga?) -
-   charcoal: burn trees :D, saltpeter (bird guano, others), sulfur (volcanic and undersea, mining!),
+   charcoal: burn trees :D, saltpeter (bird guano, others), sulfur (volcanic and undersea, mining!, red d/D),
    ammonia (alternative to metal-saltpeter): heat animal dung (camels^^') - maybe even extract from poison/gas breath? oO far stretch yeah,
     maybe just make it already 'ammonia salt' straight away aka Gwihabaite (ammonia-saltpeter, ready for use as saltpeter alternative),
     we can consider it to be more porous and combinable with lamp oil, just those two are fit for industrial mining operations already!:
