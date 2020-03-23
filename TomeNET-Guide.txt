@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. March 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 23. March 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2775,7 +2775,12 @@ then you might run into the following problems:
  LDFLAGS so it contains all lib paths.
 
 When you have successfully compiled TomeNET, see the paragraph above about
-"Mac OS X (using pre-compiled binary" for additional information on running it.
+"Mac OS X (using pre-compiled binary" for additional information on running it
+regarding X11 aka XQuartz.
+If you get an error that libraries are not found, try setting your library path
+to your TomeNET folder before running TomeNET:
+  export DYLD_LIBRARY_PATH=.
+  ./tomenet
 
 
 Configure TomeNET on Mac OS X:
