@@ -5659,9 +5659,15 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			msg_print(Ind, "The glass shard disintegrates in a flurry of colours...");
 			inven_item_increase(Ind, item, -1);
 			inven_item_optimize(Ind, item);
+			p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+			p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 			p_ptr->recall_pos.wz = 0;
-			//set_recall_timer(Ind, rand_int(20) + 15);
+#if 0
+			set_recall_timer(Ind, rand_int(20) + 15); //doesn't work because we don't ignore NO_RECALL flag
+#else
+			p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 			recall_player(Ind, "");
+#endif
 			return;
 		}
 		msg_print(Ind, "The glass shard sparkles and twinkles...");
