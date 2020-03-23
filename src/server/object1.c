@@ -3461,7 +3461,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_STONE_LORE:
 		return "perilous identify every 4..10 turns (drains 20 mp)";
 	case ART_ANCHOR:
-		return "Space-time barrier every 100..300+d20 turns";
+		return "a Space-time barrier every 100..300+d20 turns";
 	case ART_DOR: case ART_GORLIM:
 		return "rays of fear in every direction every 3x(lev+10) turns";
 	case ART_GANDALF:
@@ -3489,26 +3489,26 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_DRUEDAIN:
 		return "detection every 49..99 turns";
 	case ART_ROHAN:
-		return "heroism, berserker, haste every 100..250+d50 turns";
+		return "heroism, berserker rage, haste every 100..250+d50 turns";
 	case ART_HELM:
-		return "sound ball (300..600) every 300 turns";
+		return "a sound ball (300..600) every 300 turns";
 	case ART_BOROMIR:
 		return "mass human summoning every 500..1000 turns";
 
 	case ART_HURIN:
-		return "berserker and +10 to speed (50) every 75..175+d75 turns";
+		return "berserker rage and +10 to speed (50) every 75..175+d75 turns";
 	case ART_AXE_GOTHMOG:
-		return "fire ball (300..600) every 50..200+d200 turns";
+		return "a fire ball (300..600) every 50..200+d200 turns";
 	case ART_MELKOR:
-		return "darkness storm (150..300) every 20..100 turns";
+		return "a darkness storm (150..300) every 20..100 turns";
 	case ART_GROND:
-		return "alter reality every 20000 turns";
+		return "altering reality every 20000 turns";
 	case ART_ORCHAST:
-		return "detect orcs every 10 turns";
+		return "detecting orcs every 10 turns";
 	case ART_NIGHT:
-		return "drain life (3*7%) every 50..250 turns";
+		return "draining life (3*7%) every 50..250 turns";
 	case ART_NATUREBANE:
-		return "dispel monsters (300) every 100..200+d200 turns";
+		return "dispelling monsters (300) every 100..200+d200 turns";
 	case ART_BILBO:
 		return "destroying doors and traps every 5..30+d10 turns";
 	case ART_SOULCURE:
@@ -3526,7 +3526,7 @@ cptr item_activation(object_type *o_ptr) {
 	case ART_HAVOC:
 		return "invoking a force bolt (8..24d8) every 1+d2 turns";
 	case ART_SMASHER:
-		return "destroy doors every 10..15+d3 turns";
+		return "destroying doors every 10..15+d3 turns";
 	case ART_FISTS:
 		return "hellfire brand every 150..350+d50 turns";
 #if 0 /* no, eg randart serpent amulet should retain basic activation! */
@@ -3569,65 +3569,65 @@ cptr item_activation(object_type *o_ptr) {
 		/* Branch on the sub-type */
 		switch (o_ptr->sval) {
 		case SV_DRAGON_BLUE:
-			return "breathe lightning (600..1200) every 200+d100 turns";
+			return "breathing lightning (600..1200) every 200+d100 turns";
 			//return "polymorph into an Ancient Blue Dragon every 200+d100 turns";
 		case SV_DRAGON_WHITE:
-			return "breathe frost (600..1200) every 200+d100 turns";
+			return "breathing frost (600..1200) every 200+d100 turns";
 			//return "polymorph into an Ancient White Dragon every 200+d100 turns";
 		case SV_DRAGON_BLACK:
-			return "breathe acid (600..1200) every 200+d100 turns";
+			return "breathing acid (600..1200) every 200+d100 turns";
 			//return "polymorph into an Ancient Black Dragon every 200+d100 turns";
 		case SV_DRAGON_GREEN:
-			return "breathe poison (600..1200) every 200+d100 turns";
+			return "breathing poison (600..1200) every 200+d100 turns";
 			//return "polymorph into an Ancient Green Dragon every 200+d100 turns";
 		case SV_DRAGON_RED:
-			return "breathe fire (600..1200) every 200+d100 turns";
+			return "breathing fire (600..1200) every 200+d100 turns";
 			//return "polymorph into an Ancient Red Dragon every 200+d100 turns";
 		case SV_DRAGON_MULTIHUED:
-			return "breathe the elements (600..1200) every 200+d100 turns";
+			return "breathing the elements (600..1200) every 200+d100 turns";
 			//return "polymorph into an Ancient MultiHued Dragon every 200+d100 turns";
 		case SV_DRAGON_PSEUDO:
-			return "breathe light/dark (200..400) every 200+d100 turns";
+			return "breathing light/dark (200..400) every 200+d100 turns";
 			//return "polymorph into an Ethereal Drake every 200+d100 turns";
 			//return "polymorph into a Pseudo Dragon every 200+d100 turns";
 		case SV_DRAGON_BRONZE:
-			return "breathe confusion (300..600) every 200+d100 turns";
+			return "breathing confusion (300..600) every 200+d100 turns";
 			//return "polymorph into an Ancient Bronze Dragon every 200+d100 turns";
 		case SV_DRAGON_GOLD:
-			return "breathe sound (400..800) every 200+d100 turns";
+			return "breathing sound (400..800) every 200+d100 turns";
 			//return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
 		case SV_DRAGON_CHAOS:
-			return "breathe chaos (600..1200) every 200+d100 turns";
+			return "breathing chaos (600..1200) every 200+d100 turns";
 			//return "polymorph into a Great Wyrm of Chaos every 200+d100 turns";
 		case SV_DRAGON_LAW:
-			return "breathe shards/sound (400..800) every 200+d100 turns";
+			return "breathing shards/sound (400..800) every 200+d100 turns";
 			//return "polymorph into a Great Wyrm of Law every 200+d100 turns";
 		case SV_DRAGON_BALANCE:
-			return "breathe disenchantment (500..1000) every 200+d100 turns";
+			return "breathing disenchantment (500..1000) every 200+d100 turns";
 			//return "polymorph into a Great Wyrm of Balance every 200+d100 turns";
 		case SV_DRAGON_SHINING:
-			return "breathe light/dark (400..800) every 200+d100 turns";
+			return "breathing light/dark (400..800) every 200+d100 turns";
 			//return "polymorph into an Ethereal Dragon every 200+d100 turns";
 		case SV_DRAGON_POWER:
-			return "breathe havoc (675..1675) every 200+d100 turns";
+			return "breathing havoc (675..1675) every 200+d100 turns";
 			//return "polymorph into a Great Wyrm of Power every 200+d100 turns";
 		case SV_DRAGON_DEATH:
-			return "breathe nether (550..1050) every 200+d100 turns";
+			return "breathing nether (550..1050) every 200+d100 turns";
 			//return "polymorph into a death drake every 200+d100 turns";
 		case SV_DRAGON_CRYSTAL:
-			return "breathe shards (400..800) every 200+d100 turns";
+			return "breathing shards (400..800) every 200+d100 turns";
 			//return "polymorph into a great crystal drake every 200+d100 turns";
 		case SV_DRAGON_DRACOLICH:
-			return "breathe nether/cold (400..1200) every 200+d100 turns";
+			return "breathing nether/cold (400..1200) every 200+d100 turns";
 			//return "polymorph into a dracolich every 200+d100 turns";
 		case SV_DRAGON_DRACOLISK:
-			return "breathe fire/nexus (250..1200) every 200+d100 turns";
+			return "breathing fire/nexus (250..1200) every 200+d100 turns";
 			//return "polymorph into a dracolisk every 200+d100 turns";
 		case SV_DRAGON_SKY:
-			return "breathe electricity/light/gravity (300..1200) every 200+d100 turns";
+			return "breathing electricity/light/gravity (300..1200) every 200+d100 turns";
 			//return "polymorph into a sky drake every 200+d100 turns";
 		case SV_DRAGON_SILVER:
-			return "breathe inertia/cold (250..1200) every 200+d100 turns";
+			return "breathing inertia/cold (250..1200) every 200+d100 turns";
 			//return "polymorph into an Ancient Gold Dragon every 200+d100 turns";
 		}
 	}
@@ -3664,7 +3664,7 @@ cptr item_activation(object_type *o_ptr) {
 		switch(o_ptr->sval) {
 			/* The amulet of the moon can be activated for sleep */
 		case SV_AMULET_THE_MOON:
-			return "sleep monsters (lev +20..100) every 100+d100 turns";
+			return "sleeping monsters (lev +20..100) every 100+d100 turns";
 		case SV_AMULET_SERPENT:
 			return "breathing venom (100..300) every 40+d60 turns";
 		case SV_AMULET_RAGE:
@@ -3675,17 +3675,20 @@ cptr item_activation(object_type *o_ptr) {
 	if (o_ptr->tval == TV_GOLEM) {
 		switch (o_ptr->sval) {
 		case SV_GOLEM_ATTACK:
-			return ("command your golem to attack your target or stop doing so.");
+			return ("commanding your golem to attack your target or stop doing so.");
 		case SV_GOLEM_GUARD:
-			return ("command your golem to stay and guard its position or stop doing so.");
+			return ("commanding your golem to stay and guard its position or stop doing so.");
 		case SV_GOLEM_FOLLOW:
-			return ("command your golem to follow you or stop doing so.");
+			return ("commanding your golem to follow you or stop doing so.");
 		}
 	}
 
+	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD)
+		return ("altering a death fate");
+
 #if 0
 	if (o_ptr->tval == TV_PARCHMENT && o_ptr->sval == SV_PARCHMENT_DEATH)
-		return "Spiritual recall.");
+		return "Spiritual recall");
 #endif
 
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))

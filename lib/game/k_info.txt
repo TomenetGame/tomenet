@@ -4410,10 +4410,10 @@ F:SHOW_MODS
 N:534:& Shard~ of twinkling, silvery glass
 G:*:q
 I:11:5:0
-W:127:0:3:0
-A:127/0
+W:1:0:3:0
+A:127/255
 P:0:1d1:0:0:0
-F:EASY_KNOW | ACTIVATE
+F:EASY_KNOW | ACTIVATE | EASY_USE
 D:A silver glass shard, twinkling magically. Surprisingly, it reflects your
 D:own image, but not your surroundings! Instead, it shows only grey fog..
 

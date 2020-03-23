@@ -5652,6 +5652,22 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
+	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) {
+		struct dungeon_type *d_ptr;
+		d_ptr = getdungeon(&p_ptr->wpos);
+		if (d_ptr->type == DI_DEATH_FATE) {
+			msg_print(Ind, "The glass shard disintegrates in a flurry of colours...");
+			inven_item_increase(Ind, item, -1);
+			inven_item_optimize(Ind, item);
+			p_ptr->recall_pos.wz = 0;
+			//set_recall_timer(Ind, rand_int(20) + 15);
+			recall_player(Ind, "");
+			return;
+		}
+		msg_print(Ind, "The glass shard sparkles and twinkles...");
+		return;
+	}
+
 	/* add a single spell to the player's customizable tome */
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
 		/* free space left? */
