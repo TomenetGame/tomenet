@@ -21144,4 +21144,11 @@ SOLUTION:   Tell SDL to use Pulseaudio instead of ALSA, as your system is most
               export SDL_AUDIODRIVER=pulse
               ./tomenet $@
 
+PROBLEM 57: On OS X when I run TomeNET.command file, nothing happens, or when
+            I run it from within a terminal, TomeNET only starts in non-window
+            mode, ie terminal mode.
+SOLUTION:   TomeNET requires X11 to run in windowed mode. To provide X11 on
+            OS X, install 'XQuartz' and run the 'TomeNET.command' file from
+            within it.
+
 ==============================================================================
