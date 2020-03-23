@@ -4413,7 +4413,7 @@ I:11:5:0
 W:127:0:3:0
 A:127/0
 P:0:1d1:0:0:0
-F:EASY_KNOW
+F:EASY_KNOW | ACTIVATE
 D:A silver glass shard, twinkling magically. Surprisingly, it reflects your
 D:own image, but not your surroundings! Instead, it shows only grey fog..
 
