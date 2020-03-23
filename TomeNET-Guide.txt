@@ -2246,7 +2246,7 @@ Linux: Popular IRC clients for Linux are Pidgin (actually rather a multi-
        protocol messaging tool, pretty nifty), x-chat (GUI), Konversation (KDE
        GUI) or irssi (command-line).
 
-Mac OSX: For example Colloquy, X-Chat Aqua or Linkinus.
+Mac OS X: For example Colloquy, X-Chat Aqua or Linkinus.
 
 After installing your preferred IRC chat client, enter an username of your
 choice and set it up to connect to the "Freenode" IRC network.
@@ -2507,7 +2507,7 @@ has short instructions on how to compile 7-zip from source in Linux.
 
 Installation from scratch:
 --------------------------
-(Covered are Windows, Linux, OSX, FreeBSD.)
+(Covered are Windows, Linux, OS X, FreeBSD.)
 
 Go to http://www.tomenet.eu/ (or one of our personal pages) to download the
 latest client. Extract it to a new directory, preserving the pathnames.
@@ -2805,7 +2805,7 @@ Starting with client version 4.4.9, there is an automatic installer for sound
 and music pack:
 
 Step 1:
- WINDOWS/OSX:
+ WINDOWS/OS X:
  Make sure you have 7zip installed. It's a free, powerful multi-platform
  archiving tool (fit to replace WinRAR, WinZip etc).
  Get it from www.7-zip.org.
@@ -2952,7 +2952,7 @@ use an audio editor, for example:
 'Goldwave' is a good sound editor for Windows OS, which is free to use
   (although it asks for registration, but that's just optional.)
 Alternatively, the free open source audio editor 'Audacity' is available
-  for Linux, OSX and Windows.
+  for Linux, OS X and Windows.
 
 For more specific editing, open the files 'sound.cfg' (in the sound folder) or
 'music.cfg' (in the music folder, if a music pack has been installed) in any
@@ -3391,11 +3391,11 @@ font. These two keys allow you to switch through all fonts available in the
 lib/xtra/font folder.
 
 
-For the Linux/OSX client, the game doesn't use the lib/xtra/font folder but
+For the Linux/OS X client, the game doesn't use the lib/xtra/font folder but
 instead assumes that some standard fonts are provided by your system and tries
 to select those when cycling with 'c' key in the fonts menu.
 You can also set fonts manually with = f if you want to choose specific fonts
-available in your Linux/OSX installation.
+available in your Linux/OS X installation.
 
 
 (2.5a) Custom fonts
@@ -3469,8 +3469,8 @@ r_info.txt) without changing it.
 When using a custom font you probably want to turn off the option
 'font_map_solid_walls' in = 1, as it interferes with the mapping of various
 wall tiles: It will force-remap all affected wall tiles to character 127 for
-Windows clients and to character 1 for Linux/OSX clients and all treasure veins
-('*' symbol in the game, aka walls with treasure to mine) to character 1.
+Windows clients and to character 1 for Linux/OS X clients and all treasure
+veins ('*' symbol in the game, aka walls with treasure to mine) to character 1.
 
 
 Here is a list of all supported colours:
@@ -3494,7 +3494,7 @@ Animated (flickering in multiple hues) colours:
 (56 thin fire)     57  starlight
 
 
-For the Linux/OSX client you'll need to either convert FON fonts to PCF format
+For the Linux/OS X client you'll need to either convert FON fonts to PCF format
 (bitmap font files) or create fonts directly in PCF format.
 Add them to your system with the usual font-adding procedures for your specific
 Linux distribution, then you can select them in TomeNET via  = f  (or enter
@@ -20177,7 +20177,7 @@ Note: After logging in you may press '?' key for a help screen.
  If you log on to an Arcade Server, your client will automatically attempt to
  load the required macro file to play, which is
   - 'arcade-win.prf' on Windows OS
-  - 'arcade-x11.prf' on X11 (Linux/OSX)
+  - 'arcade-x11.prf' on X11 (Linux/OS X)
 
  If your client is older than 4.5.3 you probably don't have these macros.
  In that case you can download them at the bottom of the downloads page on
@@ -20899,7 +20899,7 @@ SOLUTION:   See (2.1a) for details on how to install audio packs. Also note
             is '7zip' (a sourceforge project at the time of writing)
             downloadable at:  http://www.7-zip.org/
 
-PROBLEM 33: On OSX when entering the game (right after picking a character) in
+PROBLEM 33: On OS X when entering the game (right after picking a character) in
             big_map mode with already large (46 lines) main window, the window
             will suddenly become small (24 lines) again.
             As of the time of writing this, the exact cause is still unknown.
@@ -20953,12 +20953,12 @@ SOLUTION:   You can resize windows that hold messages (chat and/or game
             remember its new size unless you also save your client options
             after you resized it (press '=' and then 's' to save those).
             Alternatively, you can edit the TomeNET.ini file (on Windows) or
-            the .tomenetrc file (on Linux or OSX) and change the amount of
+            the .tomenetrc file (on Linux or OS X) and change the amount of
             lines for each window manually.
             Other than that, you can also increase the font size (that is the
             text size) in TomeNET: Either press '=' key and then cycle through
             pre-defined font sizes by tapping 'f' key, or again you can edit
-            the TomeNET.ini file (Windows) or .tomenetrc file (Linux/OSX) to
+            the TomeNET.ini file (Windows) or .tomenetrc file (Linux/OS X) to
             set fonts manually for each game window.
             Well, and you could change your actual screen resolution of course.
 
@@ -21018,9 +21018,9 @@ SOLUTION:   This can happen on really bad/slow internet connections such as via
 
 PROBLEM 44: The dark blue colour is too dark on my screen to be readable.
 SOLUTION:   Edit your config file (TomeNET.ini on Windows, .tomenetrc on Linux
-            and OSX) and find the line 'lighterDarkBlue'. In TomeNET.ini set it
-            to 1 instead of 0, in .tomenetrc uncomment the line by removing the
-            leading '#' symbol. Restart your game client.
+            and OS X) and find the line 'lighterDarkBlue'. In TomeNET.ini set
+            it to 1 instead of 0, in .tomenetrc uncomment the line by removing
+            the leading '#' symbol. Restart your game client.
 
 PROBLEM 45: Sound sound effects, mostly the page sound (when someone pages you
             with the /page command) sounds oddly distorted.
