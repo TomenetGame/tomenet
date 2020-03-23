@@ -2359,6 +2359,7 @@
 #define FEAT_SICKBAY_AREA	232
 #define FEAT_IRID_GATE		233
 #define FEAT_GRAND_MIRROR	234
+#define FEAT_SHATTERED_MIRROR	235
 
 /* number of connected void gates or something? */
 #define MAX_BETWEEN_EXITS	2
@@ -3163,6 +3164,7 @@
 
 /* sval for TV_JUNK */
 #define SV_POTTERY			3
+#define SV_GLASS_SHARD			5	/* remains of the grand mirror */
 #define SV_WOODEN_STICK			6
 #define SV_WOOD_PIECE			7
 

@@ -4287,8 +4287,10 @@ I:45:37:0
 W:100:0:2:5000000
 F:INSTA_ART
 
+
 # HOLE 512-520
 ### Room for new objects added after 511 (Zangband 2.1.0): 512-575
+
 
 #521 and 522 cannot have EASY_KNOW because they may be cursed
 # ^ atm Anti-Magic amulet is never cursed, so EASY_KNOW now
@@ -4405,7 +4407,15 @@ A:2/1
 P:0:1d5:0:0:0
 F:SHOW_MODS
 
-# HOLE 534
+N:534:& Shard~ of twinkling, silvery glass
+G:*:q
+I:11:5:0
+W:127:0:3:0
+A:127/0
+P:0:1d1:0:0:0
+F:EASY_KNOW
+D:A silver glass shard, twinkling magically. Surprisingly, it reflects your
+D:own image, but not your surroundings! Instead, it shows only grey fog..
 
 ##### New armour #####
 
