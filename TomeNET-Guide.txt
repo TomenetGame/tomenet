@@ -2692,7 +2692,13 @@ Example:
 
 Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
 ----------------------------------------------------------------------
-Run the file 'TomeNET.run' to start the game.
+Run the file 'TomeNET.command' to start the game.
+
+If TomeNET starts only in console mode (or even not at all if you're not within
+a terminal but just clicking it from within a file manager window) that means
+that TomeNET didn't find X11.
+In this case, install XQuartz and run TomeNET.command from within it. TomeNET
+should now launch correctly with a GUI, ie various game windows.
 
 If you're tech savvy and want to manually edit the TomeNET configuration file,
 see "Configure TomeNET on Linux" further above.
@@ -2703,6 +2709,9 @@ Otherwise skip down to (2.1a) to continue reading.
 Mac OS X (compiling from source; tested with Snow Leopard 10.6.6):
 ------------------------------------------------------------------
 Basically use the same instructions as for Linux above. Additionally:
+
+-You probably want to have XQuartz (which provides X11) installed to run
+ TomeNET not just in console-only mode.
 
 -To actually install gcc you will need to install the 'xcode' package, which
  contains gcc. Download the correct xcode version for your Mac OS X version
@@ -2764,6 +2773,9 @@ then you might run into the following problems:
 -If the LDFLAGS are empty the linker will throw a not-found error 22. Fix this
  by moving (or copying) the -L... library search-folder parameters from LIBS to
  LDFLAGS so it contains all lib paths.
+
+When you have successfully compiled TomeNET, see the paragraph above about
+"Mac OS X (using pre-compiled binary" for additional information on running it.
 
 
 Configure TomeNET on Mac OS X:
