@@ -21132,7 +21132,19 @@ SOLUTION:   TomeNET uses basic linux system fonts (and allows you to switch to
             'linux-fonts-misc'.
             After installation, reboot your system to ensure they work.
 
-PROBLEM 56: On Linux, audio (sound/music) is not working in the way that the
+PROBLEM 56: On older Linux systems that do not use pulseaudio, audio (sound/
+            music) is not working at all. (First see PROBLEM 19 please.)
+SOLUTION:   Tell SDL explicitely to use ALSA. However, SDL is known for
+            producing quite some CPU overhead when enabling this, for no good
+            reason, so it is strongly recommended to install pulseaudio instead
+            (if there is a problem with TomeNET not using pulseaudio, see below
+            PROBLEM 57 that fixes this).
+            To tell SDL to emulate ALSA, do export SDL_AUDIODRIVER=alsa.
+            For example create a small script to start Tomenet, 'tomenet-alsa':
+              export SDL_AUDIODRIVER=alsa
+              ./tomenet $@
+
+PROBLEM 57: On Linux, audio (sound/music) is not working in the way that the
             client on starting up will report in the console:
             "ALSA lib pcm_dmix.c:1089:(snd_pcm_dmix_open) unable to open slave"
             and also a "Warning" in-game:
@@ -21144,7 +21156,7 @@ SOLUTION:   Tell SDL to use Pulseaudio instead of ALSA, as your system is most
               export SDL_AUDIODRIVER=pulse
               ./tomenet $@
 
-PROBLEM 57: On OS X when I run TomeNET.command file, nothing happens, or when
+PROBLEM 58: On OS X when I run TomeNET.command file, nothing happens, or when
             I run it from within a terminal, TomeNET only starts in non-window
             mode, ie terminal mode.
 SOLUTION:   TomeNET requires X11 to run in windowed mode. To provide X11 on
