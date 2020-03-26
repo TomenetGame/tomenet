@@ -864,8 +864,8 @@ struct player_type
 	bool exp_bar;
 	int limit_spells; /* LIMIT_SPELLS server-side */
 
-	bool dummy_option_7;
-	bool dummy_option_8;
+	byte temp_misc_1;
+	byte temp_misc_2;
 
 #ifdef SOLO_REKING
 	int solo_reking;

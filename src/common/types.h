@@ -2507,8 +2507,8 @@ struct player_type {
 	bool wide_scroll_margin;
 	bool always_repeat;
 	bool fail_no_melee;
-	bool dummy_option_7;
-	bool dummy_option_8;
+	byte temp_misc_1; //0x01: door-mimic open state; 0x02: ppage, 0x04: gpage
+	byte temp_misc_2; //0x01: snowed, 0x02: random dungeon town handling, 0x04: loading old savegames before separate depths;
 
 	bool page_on_privmsg;
 	bool page_on_afk_privmsg;
@@ -3335,7 +3335,7 @@ struct player_type {
 	s32b iron_turn;			/* When player joined his current party */
 
 	bool insta_res;			/* Instant resurrection */
-	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever */
+	s16b tmp_x, tmp_y;		/* temporary xtra stuff, can be used by whatever local hack, ie not concurrently with other stuff */
 	bool font_map_solid_walls;	/* Hack: Certain Windows bitmap fonts: Map walls to /127, solid block tile */
 	s16b flash_self;
 	bool flash_insane;

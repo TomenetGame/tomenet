@@ -7855,7 +7855,7 @@ void process_player_change_wpos(int Ind) {
 	bool smooth_ambient = FALSE, travel_ambient = FALSE;
 
 	/* un-snow */
-	p_ptr->dummy_option_8 = FALSE;
+	p_ptr->temp_misc_2 &= ~0x01;
 	//update_player(Ind); //un-snowing restores lack of visibility by others - required?
 
 	/* IDDC specialties */

@@ -3541,6 +3541,8 @@ static int Handle_login(int ind) {
 		return 0;
 	}
 
+	/* Non-admin character joined -> let everyone know */
+
 #ifdef TOMENET_WORLDS
 	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
@@ -3555,6 +3557,10 @@ static int Handle_login(int ind) {
 				msg_format(i, "\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name);
 		} else
 			msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
+
+		/* /ppage / /gpage command execution: */
+		if ((Players[i]->temp_misc_1 & 0x02) && Players[i]->afk && p_ptr->party && p_ptr->party == Players[i]->party) Players[i]->paging = 3;
+		else if ((Players[i]->temp_misc_1 & 0x04) && Players[i]->afk && p_ptr->guild && p_ptr->guild == Players[i]->guild) Players[i]->paging = 3;
 
 		/* print notification message about guild-auto-add now */
 		if (msgbuf[0] && Players[i]->guild == p_ptr->guild) msg_print(i, msgbuf);

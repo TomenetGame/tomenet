@@ -2487,8 +2487,8 @@ void do_cmd_open(int Ind, int dir) {
 			/* fun exception: open door mimic players */
 			if ((i = -c_ptr->m_idx) > 0) {
 				player_type *q_ptr = Players[i];
-				if (q_ptr->body_monster == RI_DOOR_MIMIC && !q_ptr->dummy_option_7) {
-					q_ptr->dummy_option_7 = TRUE; /* 'open' :-p */
+				if (q_ptr->body_monster == RI_DOOR_MIMIC && !(q_ptr->temp_misc_1 & 0x01)) {
+					q_ptr->temp_misc_1 |= 0x01; /* 'open' :-p */
 					msg_print(i, "That tickles!");
 					note_spot(i, q_ptr->py, q_ptr->px);
 					everyone_lite_spot(&q_ptr->wpos, q_ptr->py, q_ptr->px);
@@ -2875,8 +2875,8 @@ void do_cmd_close(int Ind, int dir) {
 			int i;
 			if ((i = -c_ptr->m_idx) > 0) {
 				player_type *q_ptr = Players[i];
-				if (q_ptr->body_monster == RI_DOOR_MIMIC && q_ptr->dummy_option_7) {
-					q_ptr->dummy_option_7 = FALSE; /* 'close' :-p */
+				if (q_ptr->body_monster == RI_DOOR_MIMIC && (q_ptr->temp_misc_1 & 0x01)) {
+					q_ptr->temp_misc_1 &= ~0x01; /* 'close' :-p */
 					msg_print(i, "That tickles!");
 					note_spot(i, q_ptr->py, q_ptr->px);
 					everyone_lite_spot(&q_ptr->wpos, q_ptr->py, q_ptr->px);
@@ -7175,7 +7175,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #ifdef USE_SOUND_2010
 				sound_near_site(q_ptr->py, q_ptr->px, &q_ptr->wpos, 0, "snowball", "", SFX_TYPE_COMMAND, TRUE);
 #endif
-				q_ptr->dummy_option_8 = TRUE; //snowed
+				q_ptr->temp_misc_2 |= 0x01; //snowed
 				note_spot(0 - c_ptr->m_idx, q_ptr->py, q_ptr->px);
 				update_player(0 - c_ptr->m_idx); //becomes visible!
 				everyone_lite_spot(&q_ptr->wpos, q_ptr->py, q_ptr->px);

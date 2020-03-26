@@ -552,6 +552,19 @@ void do_slash_cmd(int Ind, char *message) {
 			return;
 		}
 
+		else if (prefix(message, "/ppage")) {
+			p_ptr->temp_misc_1 ^= 0x02;
+			if (p_ptr->temp_misc_1 & 0x02) msg_print(Ind, "\377WYou will now be paged when a party member logs on while you are AFK!");
+			else msg_print(Ind, "\377WYou will no longer be paged when a party member logs on.");
+			return;
+		}
+		else if (prefix(message, "/gpage")) {
+			p_ptr->temp_misc_1 ^= 0x04;
+			if (p_ptr->temp_misc_1 & 0x04) msg_print(Ind, "\377WYou will now be paged when a guild member logs on while you are AFK!");
+			else msg_print(Ind, "\377WYou will no longer be paged when a guild member logs on.");
+			return;
+		}
+
 		/* Semi-auto item destroyer */
 		else if ((prefix(message, "/dispose")) || prefix(message, "/dis")) {
 			object_type *o_ptr;
@@ -3349,8 +3362,8 @@ void do_slash_cmd(int Ind, char *message) {
 			}
 
 			//unsnow
-			if (Players[j]->dummy_option_8) {
-				Players[j]->dummy_option_8 = FALSE;
+			if (Players[j]->temp_misc_2 & 0x01) {
+				Players[j]->temp_misc_2 &= ~0x01;
 				note_spot(j, Players[j]->py, Players[j]->px);
 				update_player(j); //may return to being invisible
 				everyone_lite_spot(&Players[j]->wpos, Players[j]->py, Players[j]->px);
@@ -6579,8 +6592,8 @@ void do_slash_cmd(int Ind, char *message) {
 				bypass_invuln = FALSE;
 
 				//unsnow
-				if (Players[j]->dummy_option_8) {
-					Players[j]->dummy_option_8 = FALSE;
+				if (Players[j]->temp_misc_2 & 0x01) {
+					Players[j]->temp_misc_2 &= ~0x01;
 					note_spot(j, Players[j]->py, Players[j]->px);
 					update_player(j); //may return to being invisible
 					everyone_lite_spot(&Players[j]->wpos, Players[j]->py, Players[j]->px);

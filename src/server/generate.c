@@ -8723,7 +8723,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			dun->l_ptr->flags1 |= LF1_IRON_RECALL;
 		/* IRONMAN allows recalling sometimes, if IRONFIX or IRONRND */
 		else if (d_ptr && (dun_lev >= 20) && ( /* was 30 */
-		    (!p_ptr->dummy_option_8 &&
+		    (!(p_ptr->temp_misc_2 & 0x02) &&
 		    (((d_ptr->flags2 & DF2_IRONRND1) && magik(20)) ||
 		    ((d_ptr->flags2 & DF2_IRONRND2) && magik(12)) ||
 		    ((d_ptr->flags2 & DF2_IRONRND3) && magik(8)) ||
@@ -8779,7 +8779,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	    (random_town_allowed &&
 	    (dun_lev < 100 && (!p_ptr->IDDC_found_rndtown || !in_irondeepdive(wpos)) && (
 	    ((d_ptr->flags2 & DF2_TOWNS_FIX) && !(dun_lev % 20)) ||
-	    (!p_ptr->dummy_option_8 && (d_ptr->flags2 & DF2_TOWNS_RND) &&
+	    (!(p_ptr->temp_misc_2 & 0x02) && (d_ptr->flags2 & DF2_TOWNS_RND) &&
  #if 0 /* for generic dungeons maybe */
 	     magik(30 / (ABS(((dun_lev + 10) % 20) - 10) + 1))
  #else /* irondeepdive specifically: no towns before 900 ft or around the static towns at 2k and 4k */

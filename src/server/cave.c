@@ -3352,7 +3352,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			else if (p2_ptr->body_monster) {
 				c = r_info[p2_ptr->body_monster].d_char;
 #if 1 /* just for fun */
-				if (p2_ptr->body_monster == RI_DOOR_MIMIC && p2_ptr->dummy_option_7) c = '\'';
+				if (p2_ptr->body_monster == RI_DOOR_MIMIC && (p2_ptr->temp_misc_1 & 0x01)) c = '\'';
 #endif
 			}
 			else if (p2_ptr->fruit_bat) c = 'b';
@@ -3367,7 +3367,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			}
 
 			/* snowed by a snowball hit? */
-			if (p2_ptr->dummy_option_8) a = TERM_WHITE;
+			if (p2_ptr->temp_misc_2 & 0x01) a = TERM_WHITE;
 
 			/* part 'A' end */
 
@@ -3671,7 +3671,7 @@ void lite_spot(int Ind, int y, int x) {
 			/* Get the "player" char */
 			c = r_ptr->d_char;
 #if 1 /* just for fun */
-			if (p_ptr->body_monster == RI_DOOR_MIMIC && p_ptr->dummy_option_7) c = '\'';
+			if (p_ptr->body_monster == RI_DOOR_MIMIC && (p_ptr->temp_misc_1 & 0x01)) c = '\'';
 #endif
 
 			/*if (p_ptr->invis && !p_ptr->body_monster) {  - hmm why not always TERM_VIOLET */
@@ -3853,7 +3853,7 @@ void lite_spot(int Ind, int y, int x) {
 			}
 
 			/* snowed by a snowball hit? */
-			if (p_ptr->dummy_option_8) a = TERM_WHITE;
+			if (p_ptr->temp_misc_2 & 0x01) a = TERM_WHITE;
 
 			/* >4.5.4: Mark that it is the player himself */
 			if (p_ptr->hilite_player) is_us = TRUE;

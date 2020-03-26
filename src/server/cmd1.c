@@ -5600,7 +5600,7 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 	struct c_special *cs_ptr;
 
 	/* un-snow */
-	p_ptr->dummy_option_8 = FALSE;
+	p_ptr->temp_misc_2 &= ~0x01;
 
 	grid_affects_player(Ind, ox, oy);
 
