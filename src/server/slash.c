@@ -553,12 +553,20 @@ void do_slash_cmd(int Ind, char *message) {
 		}
 
 		else if (prefix(message, "/ppage")) {
+			if (!p_ptr->party) {
+				msg_print(Ind, "You must be in a party to use this command.");
+				return;
+			}
 			p_ptr->temp_misc_1 ^= 0x02;
 			if (p_ptr->temp_misc_1 & 0x02) msg_print(Ind, "\377WYou will now be paged when a party member logs on while you are AFK!");
 			else msg_print(Ind, "\377WYou will no longer be paged when a party member logs on.");
 			return;
 		}
 		else if (prefix(message, "/gpage")) {
+			if (!p_ptr->guild) {
+				msg_print(Ind, "You must be in a guild to use this command.");
+				return;
+			}
 			p_ptr->temp_misc_1 ^= 0x04;
 			if (p_ptr->temp_misc_1 & 0x04) msg_print(Ind, "\377WYou will now be paged when a guild member logs on while you are AFK!");
 			else msg_print(Ind, "\377WYou will no longer be paged when a guild member logs on.");
