@@ -2151,8 +2151,18 @@ bool get_server_name(void) {
 	/* Wipe the buffer so valgrind doesn't complain - mikaelh */
 	C_WIPE(buf, 80192, char);
 
-	/* Read */
-	bytes = SocketRead(socket, buf, 80192);
+	/* Listen for reply (try ten times in ten seconds) */
+	for (int retries = 0; retries < 10; retries++) {
+		/* Set timeout */
+		SetTimeout(1, 0);
+
+		/* Wait for info */
+		if (!SocketReadable(socket)) continue;
+
+		/* Read */
+		bytes = SocketRead(socket, buf, 80192);
+		break;
+	}
 
 	/* Close the socket */
 	SocketClose(socket);

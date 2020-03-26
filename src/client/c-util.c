@@ -4366,15 +4366,30 @@ void interact_macros(void) {
 					/* just a simple key */
 					sprintf(t_key, "%c        ", buf[0]);
 				} else if (strlen(buf) == 2) {
-					/* '^%c' : ctrl + a simple key */
-					m_ctrl = TRUE; /* not testing for the '^' actually, we assume it must be there.. */
-					sprintf(t_key, "%c        ", buf[1]);
-
-					/* Some special keys are represented by CTRL+<normal letter> combo.. >_> */
-					if (buf[1] == 'b') strcat(t_key, " (BACK)"); // and also 'Del' key!
-					if (buf[1] == 'r') strcat(t_key, " (ENTER)");
-					if (buf[1] == 's') strcat(t_key, " (SPACE)");
-					if (buf[1] == 't') strcat(t_key, " (TAB)");
+					/* ctrl + a simple key ('^%c' uppercase) or a special key ('\%c' or '^%c' lowercase) keypress
+					 *
+					 * special keys are represented by \+<normal letter> (lowercase) combo
+					 * but comment from previous dev states:
+					 * "special keys are represented by ^+<normal letter> combo.. >_>"
+					 * so the code tries to consider both */
+					m_ctrl = FALSE;
+					bool is_simple = FALSE;
+					switch (buf[1]) {
+						/* a lowercase letter indicates special key */
+						case 'b': sprintf(t_key, "Bsp/Del  "); break; // 'Backspace' and also 'Del' key! why?
+						case 'r': sprintf(t_key, "Enter    "); break;
+						case 's': sprintf(t_key, "Space    "); break;
+						case 't': sprintf(t_key, "Tab      "); break;
+						case 'w': sprintf(t_key, "`        "); break; // a grave (`) on en_US keyboard
+						default: is_simple = TRUE;
+					}
+					if (is_simple) {
+						if (buf[0] != '\\') {
+							/* ctrl + a simple key */
+							m_ctrl = TRUE;
+							sprintf(t_key, "%c        ", buf[1]);
+						} else sprintf(t_key, "\\%c       ", buf[1]); /* an unknown special key */
+					}
 				} else {
 					/* special key, possibly with shift and/or ctrl */
 					int keycode;
