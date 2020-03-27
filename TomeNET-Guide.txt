@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. March 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 27. March 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1267,6 +1267,9 @@ They all start with a slash '/' hence they're called slash commands:
                         prevent getting paged by him.)
                         If you're on Linux and not hearing the page sounds,
                         see problem 19 in the troubleshooting section (8.8).
+
+/ppage, /gpage    These will toggle paging you when you're AFK and a party or a
+                  guild member respectively joins the server.
 
 /paint      (Also available by pressing 'h' for house menu.)
             Use a potion in your inventory to paint your house entrance in a
