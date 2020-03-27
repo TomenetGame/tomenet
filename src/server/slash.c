@@ -6385,11 +6385,12 @@ void do_slash_cmd(int Ind, char *message) {
 				object_type *o_ptr;
 				u32b f1, f2, f3, f4, f5, f6, esp;
 				int min_pval = -999, min_ap = -999, tries = 10000, min_todam = -999;
-				bool no_am = FALSE, no_aggr = FALSE;
+				bool no_am = FALSE, no_aggr = FALSE, no_curse = FALSE;
 				int th ,td ,ta; //for retaining jewelry properties in case they get inverted by cursing
 
 				if (tk < 1 || tk > 6) {
-					msg_print(Ind, "\377oUsage: /reart <inventory-slot> [+<min pval>] [<min artifact power>] [D<dam>] [A] [R]");
+					msg_print(Ind, "\377oUsage: /reart <slot> [+<min pval>] [<min artifact power>] [D<dam>] [A] [R] [C]");
+					msg_print(Ind, "A: No-AM, R: No Aggr, C: No curse.");
 					return;
 				}
 
@@ -6414,6 +6415,7 @@ void do_slash_cmd(int Ind, char *message) {
 					else if (token[i][0] == 'D') min_todam = atoi(token[i] + 1);
 					else if (token[i][0] == 'A') no_am = TRUE;
 					else if (token[i][0] == 'R') no_aggr = TRUE;
+					else if (token[i][0] == 'C') no_curse = TRUE;
 					else min_ap = atoi(token[i]);
 				}
 
@@ -6465,12 +6467,12 @@ void do_slash_cmd(int Ind, char *message) {
 						tries--;
 						continue;
 					}
-
-					if (o_ptr->pval >= min_pval &&
-					    artifact_power(randart_make(o_ptr)) >= min_ap &&
-					    o_ptr->to_d >= min_todam &&
-					    (!no_aggr || !(f3 & TR3_AGGRAVATE)) &&
-					    (!no_am || !(f3 & TR3_NO_MAGIC))) break;
+					if (o_ptr->pval < min_pval) continue;
+					if (artifact_power(randart_make(o_ptr)) < min_ap) continue;
+					if (o_ptr->to_d < min_todam) continue;
+					if (no_aggr && (f3 & TR3_AGGRAVATE)) continue;
+					if (no_am && (f3 & TR3_NO_MAGIC)) continue;
+					if (no_curse && cursed_p(o_ptr)) break;
 					tries--;
 				}
 				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries (10000))!");
