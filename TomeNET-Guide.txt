@@ -8005,13 +8005,17 @@ Ironman Deep Dive Challenge (IDDC)
     bonus, making it more and more likely to obtain better items.
 
     IDDC allows partying and trading between everlasting and non-everlasting
-    characters. To form a party, everyone must be inside the IDDC dungeon.
+    characters. To form a party, everyone must be inside the IDDC dungeon and
+    the person to be added must be on at least the same depth as the currently
+    deepest party member, or deeper.
     However, gold cannot be traded, and items can only be traded if both
-    players are in the same party and the item was found after the player who
-    wants to receive it joined the party, otherwise you will get the message
-    "You cannot take items from outsiders." (same message as for iron team
-    trading restrictions actually). Items purchased from shops cannot be traded
-    at all in the IDDC, only found items can be traded.
+    players are in the same party and the item was found when the finder was
+    already in the party and after the player who wants to receive it joined
+    the party, otherwise you will get the message
+      "You cannot take items from outsiders."
+    (same message as for iron team trading restrictions actually).
+    Items purchased from shops cannot be traded at all in the IDDC, only found
+    items can be traded. Items cannot be traded on stale floors.
     Level requirements on items are not in effect while inside the ironman deep
     dive challenge either, so item levels are meaningless.
 

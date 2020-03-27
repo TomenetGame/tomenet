@@ -12582,6 +12582,12 @@ void telekinesis_aux(int Ind, int item) {
 		return;
 	}
 
+	if ((in_irondeepdive(&p_ptr->wpos) || in_irondeepdive(&p2_ptr->wpos)) &&
+	    !(in_irondeepdive(&p_ptr->wpos) && in_irondeepdive(&p2_ptr->wpos))) {
+		msg_print(Ind, "\377yYou cannot send items into or out of the Ironman Deep Dive Challenge.");
+		return;
+	}
+
 	if (compat_pmode(Ind, Ind2, FALSE) && !is_admin(p_ptr)) {
 		msg_format(Ind, "You cannot contact %s beings!", compat_pmode(Ind, Ind2, FALSE));
 		return;
@@ -12607,6 +12613,16 @@ void telekinesis_aux(int Ind, int item) {
 		}
 		if (q_ptr->iron_trade != p2_ptr->iron_trade || q_ptr->iron_turn < p2_ptr->iron_turn) {
 			msg_format(Ind, "\377yThis item cannot be sent to that player as it predates %s.", p2_ptr->male ? "him" : "her");
+			if (!is_admin(p_ptr)) return;
+		}
+ #ifdef IDDC_NO_TRADE_CHEEZE /* new anti-cheeze hack: abuse NR_tradable for this */
+		if (in_irondeepdive(&p_ptr->wpos) && o_ptr->NR_tradable) {
+			msg_format(Ind, "\377yYou may not send items you brought from outside this dungeon until you reach at least floor %d.", IDDC_NO_TRADE_CHEEZE);
+			if (!is_admin(p_ptr)) return;
+		}
+ #endif
+		if (p2_ptr->IDDC_logscum) {
+			msg_print(Ind, "\377yYou cannot send items to players who are on stale floors in the IDDC.");
 			if (!is_admin(p_ptr)) return;
 		}
 	}

@@ -2972,9 +2972,21 @@ void do_cmd_steal(int Ind, int dir) {
 	}
 #endif
 #ifdef IDDC_RESTRICTED_TRADING
-	if (in_irondeepdive(&p_ptr->wpos) && (!p_ptr->party || p_ptr->party != q_ptr->party)) {
-		msg_print(Ind, "\377yYou cannot take items from outsiders.");
-		if (!is_admin(p_ptr)) return;
+	if (in_irondeepdive(&p_ptr->wpos)) {
+		if (!p_ptr->party || p_ptr->party != q_ptr->party) {
+			msg_print(Ind, "\377yYou cannot take items from outsiders.");
+			if (!is_admin(p_ptr)) return;
+		}
+ #ifdef IDDC_NO_TRADE_CHEEZE
+		if (ABS(p_ptr->wpos.wz) < IDDC_NO_TRADE_CHEEZE) {
+			msg_print(Ind, "\377yYou cannot steal items on shallow floors.");
+			if (!is_admin(p_ptr)) return;
+		}
+ #endif
+		if (p_ptr->IDDC_logscum) {
+			msg_print(Ind, "\377yYou cannot steal items on stale floors.");
+			if (!is_admin(p_ptr)) return;
+		}
 	}
 #endif
 

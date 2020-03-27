@@ -934,7 +934,7 @@
    - Cannot re-party inside the IDDC.
    - Can only trade with party members.
    Note: These rules are applied to 'Iron Team' type parties in IDDC too. */
-//#define IDDC_IRON_COOP
+//#define IDDC_IRON_COOP /* TODO: verify that ALL party members are actually outside, not just adder and addee! */
 /* Make 'Iron Team' the only possible party mode in IDDC.
    Note: IRON_IRON_TEAM or IDDC_IRON_COOP should be enabled for this, to enforce the trading rules too. */
 //#define IDDC_IRON_TEAM_ONLY
@@ -953,7 +953,9 @@
 /* Addition for IDDC_RESTRICTED_TRADING:
    Only allow partying when already inside the IDDC, by erasing any party membership on entering it,
    except for the party owner.
-   Further, you cannot add someone who already has another character in that party. */
+   Further, you cannot add someone who already has another character in that party,
+   and you can only add someone who is on the same floor or deeper as the deepest party member.
+   Last but not least, items cannot be traded on stale floors (could exploit via logging+farming the same floor over and over with new chars)! */
 #define IDDC_RESTRICTED_PARTYING
 
 
@@ -6198,6 +6200,7 @@
 #define FF2_LAMP_LITE_OPTIONAL	0x00000040L	/* For more floor/wall grids: Get coloured by floor/wall_lighting, if user has toggled the according option. */
 #define FF2_NO_ARTICLE		0x00000080L	/* floor feat doesn't have an article ('a(n)'/'the') in front of it when being described */
 #define FF2_GLOW		0x00000100L	/* Always visible, lit via CAVE_GLOW */
+#define FF2_ENTER_FROM_SPECIAL	0x00000200L	/* This grid can only be entered if the player is standing on CAVE_ICKY or FF1_PROTECTED */
 //hole
 #define FF2_BOUNDARY		0x80000000L	/* Is permanent wall that serves as boundary of a dungeon level - cannot even be crossed by admins */
 

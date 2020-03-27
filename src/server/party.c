@@ -2125,6 +2125,11 @@ int party_add(int adder, cptr name) {
 		struct account acc;
 		bool success;
 
+		int slot, p = q_ptr->party, max_depth = 0;
+		hash_entry *ptr;
+		char max_depth_name[NAME_LEN];
+
+
 		/* check if he has a character in there already */
 		success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE);
 		/* paranoia */
@@ -2147,6 +2152,22 @@ int party_add(int adder, cptr name) {
 		/* success = fail! */
 		if (success) {
 			msg_print(adder, "\377yThat player already has another character in that same IDDC party.");
+			return FALSE;
+		}
+
+		/* We can only add someone who is at least on the same floor as the currently deepest party member, for anti-cheeze of item farming */
+		for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+			ptr = hash_table[slot];
+			while (ptr) {
+				if (ptr->party == p && ABS(ptr->wpos.wz) > ABS(max_depth)) {
+					max_depth = ptr->wpos.wz;
+					strcpy(max_depth_name, ptr->name);
+				}
+				ptr = ptr->next;
+			}
+		}
+		if (ABS(p_ptr->wpos.wz) < ABS(max_depth)) {
+			msg_format(adder, "\377yPlayers must at least match the depth of the currently party member farthest into the IDDC, which is %s at %dft!", max_depth_name, max_depth * (WPOS_IRONDEEPDIVE_Z > 0 ? 50 : -50));
 			return FALSE;
 		}
  #endif

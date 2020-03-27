@@ -1700,6 +1700,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				msg_print(Ind, "\377yYou cannot take this item as it predates you joining the party.");
 				if (!is_admin(p_ptr)) return;
 			}
+			if (p_ptr->IDDC_logscum) {
+				msg_print(Ind, "\377yYou cannot take items on stale floors.");
+				if (!is_admin(p_ptr)) return;
+			}
 		}
 #endif
 
