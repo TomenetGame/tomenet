@@ -2167,7 +2167,7 @@ int party_add(int adder, cptr name) {
 			}
 		}
 		if (ABS(p_ptr->wpos.wz) < ABS(max_depth)) {
-			msg_format(adder, "\377yPlayers must at least match the depth of the party member currently farthest into the IDDC, which is %s at %dft!", max_depth_name, max_depth * (WPOS_IRONDEEPDIVE_Z > 0 ? 50 : -50));
+			msg_format(adder, "\377yPlayers must at least match the depth of the party member currently farthest into the IDDC, which is %s at %dft!", max_depth_name, max_depth * 50);
 			return FALSE;
 		}
  #endif
