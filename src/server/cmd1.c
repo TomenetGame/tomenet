@@ -753,11 +753,15 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 	}
 
 #ifdef TEST_SERVER
-	msg_format(Ind, "tdam %d, mult %d, FACTOR_MULT %d, thr: %d, ammo: %d, MA: %d, weap: %d", tdam, mult, FACTOR_MULT,
+	msg_format(Ind, "bonus %d, tdam %d, mult %d, FAC-MUL %d, thr: %d, ammo: %d, MA: %d, weap: %d", bonus, tdam, mult, FACTOR_MULT,
 	    (tdam * (((mult - FACTOR_MULT) * 10L) / 4 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT),
 	    (tdam * (((mult - FACTOR_MULT) * 20L) / 5 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT),
 	    (tdam * (((mult - FACTOR_MULT) * 10L) / 3 + 10 * FACTOR_MULT)) / (10 * FACTOR_MULT),
 	    (tdam * mult) / FACTOR_MULT);
+	if (thrown) msg_print(Ind, "thrown");
+	else if (o_ptr && is_ammo(o_ptr->tval)) msg_print(Ind, "shot");
+	else if (!o_ptr || !o_ptr->k_idx) msg_print(Ind, "ma/bare");
+	else msg_print(Ind, "weapon");
 #endif
 
 	/* If the object was thrown, reduce brand effect by 75%
