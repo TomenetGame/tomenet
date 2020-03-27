@@ -1257,7 +1257,7 @@
  */
 #define PA_NORMAL		0x0
 #define PA_IRONTEAM		0x1
-#define PA_IRONTEAM_CLOSED	0x2	/* Not implemented. Could replace IRON_TEAM_LEVEL9: Allow owner to manually close the party to newcomers. */
+#define PA_IRONTEAM_CLOSED	0x2	/* Could replace IRON_TEAM_LEVEL9: Allow owner to manually close the party to newcomers. */
 
 /*
  * Guild commands
