@@ -2840,6 +2840,7 @@ void do_slash_cmd(int Ind, char *message) {
 				p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 				recall_player(Ind, "");
 				msg_format(Ind, "\377%cYou leave the arena again.", COLOUR_DUNGEON);
+				if (!admin_p(Ind)) msg_broadcast(Ind, "\377cSomeone left the gladiators' arena.");
 				return;
 			}
 
