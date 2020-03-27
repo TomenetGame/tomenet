@@ -6441,7 +6441,7 @@ void do_slash_cmd(int Ind, char *message) {
 				if (ta < 0) ta = -ta;
 #endif
 
-				while (tries) {
+				while (--tries) {
 					/* Piece together a 32-bit random seed */
 					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 					o_ptr->name3 += rand_int(0xFFFF);
@@ -6464,7 +6464,6 @@ void do_slash_cmd(int Ind, char *message) {
 					    //|| !(f1 & TR1_VAMPIRIC) || !(f1 & TR1_BLOWS)
 					    //|| !(f3 & TR3_XTRA_MIGHT) || !(f3 & TR3_XTRA_SHOTS)
 					    ) {
-						tries--;
 						continue;
 					}
 					if (o_ptr->pval < min_pval) continue;
@@ -6472,8 +6471,8 @@ void do_slash_cmd(int Ind, char *message) {
 					if (o_ptr->to_d < min_todam) continue;
 					if (no_aggr && (f3 & TR3_AGGRAVATE)) continue;
 					if (no_am && (f3 & TR3_NO_MAGIC)) continue;
-					if (no_curse && cursed_p(o_ptr)) break;
-					tries--;
+					if (no_curse && cursed_p(o_ptr)) continue;
+					break;
 				}
 				if (!tries) msg_format(Ind, "Re-rolling failed (out of tries (10000))!");
 				else msg_format(Ind, "Re-rolled randart in inventory slot %d (Tries: %d).", atoi(token[1]), 10000 + 1 - tries);
