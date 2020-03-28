@@ -13609,7 +13609,6 @@ bool imprison(int Ind, u16b time, char *reason) {
 #endif
 	struct dna_type *dna;
 	player_type *p_ptr = Players[Ind];
-	char string[160];
 	cave_type **zcave, **nzcave;
 	struct worldpos old_wpos;
 
@@ -13761,13 +13760,19 @@ bool imprison(int Ind, u16b time, char *reason) {
 #endif
 
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
-	snprintf(string, sizeof(string), "\374\377o%s was jailed for %s.", p_ptr->name, reason);
-	msg_broadcast(Ind, string);
 	msg_format(Ind, "\374\377oYou have been jailed for %s.", reason);
 	p_ptr->tim_jail = time + p_ptr->tim_susp;
 	p_ptr->tim_susp = 0;
+	if (!(p_ptr->admin_dm && cfg.secret_dungeon_master)) {
+		char string[MAX_CHARS];
+		snprintf(string, sizeof(string), "\374\377o%s was jailed for %s.", p_ptr->name, reason);
+		msg_broadcast(Ind, string);
 #ifdef USE_SOUND_2010
-	sound(Ind, "jailed", NULL, SFX_TYPE_MISC, TRUE);
+		sound(Ind, "jailed", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+	}
+#ifdef USE_SOUND_2010
+	else sound(Ind, "jailed", NULL, SFX_TYPE_MISC, TRUE);
 #endif
 
 	s_printf("DONE.\n");
