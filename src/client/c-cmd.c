@@ -1973,7 +1973,28 @@ void cmd_the_guide(void) {
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
 				/* Misc chapters, hardcoded: */
-				if (!strcasecmp(buf, "inst")) strcpy(buf, "Temple  ");
+				if (strcasestr(buf, "instan")) { /* mustn't overlap with 'install' */
+					strcpy(buf, "Temple  ");
+
+					/* Hack: The temple is actually not a real chapter, so we must also switch back to normal search */
+					strcpy(search, buf);
+
+					line_before_search = line;
+					line_presearch = line;
+					/* Skip the line we're currently in, start with the next line actually */
+					line++;
+					if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
+					if (line < 0) line = 0;
+
+					search_uppercase = FALSE;
+
+					strcpy(lastsearch, search);
+					searchline = line - 1; //init searchline for string-search
+
+					/* Hack done */
+
+					continue;
+				}
 
 				if (!strcasecmp(buf, "Bree")
 				    || my_strcasestr(buf, "Barr")
