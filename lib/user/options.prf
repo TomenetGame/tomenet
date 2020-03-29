@@ -138,7 +138,7 @@ X:flash_insane
 X:disturb_see
 Y:last_words
 
-X:diz_unique
+Y:diz_unique
 Y:diz_death
 X:diz_death_any
 Y:diz_first

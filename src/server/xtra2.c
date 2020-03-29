@@ -10234,7 +10234,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 #ifdef RACE_DIZ
 		/* Tell player the monster's lore? (4.7.1b feature) */
 		if (p_ptr->diz_first && !p_ptr->r_killed[m_ptr->r_idx]
-		    && !(r_ptr->flags1 & RF1_UNIQUE) && r_killed_creditable(Ind, m_idx))
+		    && (!(r_ptr->flags1 & RF1_UNIQUE) || !p_ptr->diz_unique) /* prevent duplicate message for 1st kill and unique kill */
+		    && r_killed_creditable(Ind, m_idx))
 			lore = TRUE;
 #endif
 

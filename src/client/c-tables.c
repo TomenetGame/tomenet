@@ -504,7 +504,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.disturb_see,		FALSE,	3,	0, 118, TRUE,
 	    "disturb_see",		"Disturb whenever seeing any monster" },
     /* 4.7.2: */
-	{ &c_cfg.diz_unique,		FALSE,	6,	0, 119, TRUE,
+	{ &c_cfg.diz_unique,		TRUE,	6,	0, 119, TRUE,
 	    "diz_unique",		"Displays lore when killing a unique monster" },
 	{ &c_cfg.diz_death,		TRUE,	6,	0, 120, TRUE,
 	    "diz_death",		"Displays lore on monster that killed you" },
