@@ -7871,17 +7871,42 @@ Asides from extermination orders and events, there is another, permanently
 available challenge that waits for you to tackle it:
 
 Ironman Deep Dive Challenge (IDDC)
+  Structure, getting out:
     This is a special, gigantic ironman dungeon (or tower) which is 127 levels
     in size and does not allow recalling in between, except for in the two
-    'dungeon towns' which will be generated at dungeon level 40 and 80. (More
-    dungeon towns might spawn but won't allow recalling.) If you recall at such
-    a town it counts as withdrawing from the challenge and you won't make it on
-    the leaderboard that can be viewed at the mayor's office in Bree.
+    'dungeon towns' which will be generated at dungeon level 40 (Menegroth) and
+    80 (Nargothrond). There are two additional dungeon towns at level 20 and 60
+    but these won't allow recalling.
+    If you recall from a town it counts as withdrawing from the challenge and
+    you won't make it on the leaderboard that can be viewed at the
+    mayor's office in Bree.
     (Note that 'IDDC-exclusive' characters can NOT recall out at static towns.
     If they try, they are just 'killed by indetermnation' and erased.)
-    Monsters cannot spawn in the wilderness sector of the dungeon, so you can
-    just idle at the entrance, waiting for team mates.
 
+    Monsters cannot spawn in the wilderness sector of the dungeon entrance, so
+    you can just stay AFK at the entrance safely, waiting for team mates.
+    Monsters cannot spawn in any dungeon town either.
+
+    The towns, as well as any other IDDC floors, remain static for (only)
+    5 minutes after dying, giving other players a chance to loot items and
+    money. An exception are floors 50ft..350ft which only stay static for
+    2 minutes, still giving you a chance to reconnect if you get disconnected
+    without the floor turning 'stale' (see much further below).
+
+    Since you cannot recall out except from the two towns Menegroth and
+    Nargothrond, except if you reach the 127th floor (the final floor) of the
+    dungeon, it is extremely likely that you will die before making it through
+    all those floors. So this dungeon serves as a challenge of how far you can
+    make it before death!
+    The level reached will be recorded in the mayor's office in Bree ('n' key
+    inside the office, to view the records).
+
+    For servers running 'strict_etiquette', meaning that a player will lose all
+    true artifacts after winning (the official server does NOT run use this):
+    If Morgoth is defeated, players on his floor will be allowed to use
+    Word of Recall to leave the dungeon if they wish!
+
+  Requirements to enter, exclusive mode:
     The Deep Dive dungeon requires your character to have zero experience
     points in order to be eligible to enter.
     To fulfil that requirement you may not collect more than 300 Au (gold
@@ -7904,6 +7929,18 @@ Ironman Deep Dive Challenge (IDDC)
     All characters that enter the IDDC will also get 20 scrolls of identify
     for free, which will automatically be placed into their inventory.
 
+    An IDDC-slot-exclusive character that makes it out of the dungeon will be
+    restricted to the world surface. If it attempts to enter any dungeon or
+    tower it will automatically retire instantly. Note that it cannot buy any
+    houses, but it won't need those anyway.
+
+    You can use the command '/convertexclusive' to convert one of your
+    characters into a dedicated IDDC character, moving it to a specific
+    IDDC-only-character slot and freeing up the generic character slot again.
+    This of course only works if you still have a free IDDC-exclusive character
+    slot available.
+
+  Experience, items, shops:
     Players in the IDDC receive a 20% experience gain bonus in addition to the
     usual 15% experience bonus all ironman dungeons provide, so overall you
     gain +35% more experience in IDDC than in a normal, generic dungeon.
@@ -7925,24 +7962,11 @@ Ironman Deep Dive Challenge (IDDC)
     As soon as you find it, your chance to find further rings of speed will
     revert back to normal.
 
-    Since you cannot recall out aside from these two towns, except if you reach
-    the 127th floor of the dungeon, it is extremely likely that you will die
-    before making it through all those floors. So this dungeon serves as a
-    challenge of how far you can make it before death!
-    The level reached will be recorded in the mayor's office in Bree ('n' key
-    inside the office, to view the records).
+    Shops in the IDDC offer especially powerful items, and there are additional
+    special shops that are not found elsehwere.
 
-    To provide some more support, this dungeon will have additional, generic
-    town levels at -1000 ft and -3000 ft. Monsters cannot spawn in any kind of
-    dungeon town.
-    Those towns, as well as any other IDDC floors, remain static for (only)
-    5 minutes after dying, giving other players a chance to loot items and
-    money. An exception are floors 50 ft..350ft which only stay static for
-    2 minutes, still giving you a chance to reconnect if you get disconnected
-    without the floor turning stale.
-
-    Also, starting at dungeon level 8, a hidden library may appear randomly
-    (that's a book store with a red '9' for entrance), allowing you to purchase
+    Starting at dungeon level 8, a hidden library may appear randomly (that's
+    a book store with a red '9' as an entrance), allowing you to purchase
     magic spells you might be missing. It also offers a special service to
     identify all items you are carrying.
     On very deep floors after Nargothrond, a seasoned alchemist store may
@@ -7952,12 +7976,13 @@ Ironman Deep Dive Challenge (IDDC)
     weaponsmith, armoury, temple, magic shop, black market and the special
     potion store in the dungeon towns.
 
-    Inside the challenge dungeon you can acquire an extermination order via
-    /xorder command at level 1 already, instead of the usual minimum level 5.
-    On average, extermination orders in here require less monsters to be slain.
-    Also, the monster level of the order will depend on the floor level instead
-    of the player's level.
+    If you use stolen enchant scrolls on an item while you are in a town,
+    then the item will get a 100% off discount. If you want to use stolen
+    scrolls to enchant your items and keep the items sellable, then you have
+    to take the staircase to leave the town, and read the scrolls in an actual
+    dungeon level instead.
 
+  Layout, dungeon types and bosses:
     The IDDC is randomly using themes of all the other dungeons, the selection
     is randomly rerolled every 24 hours. The final floor of each theme might
     spawn the according dungeon boss if you are lucky. The chance for a boss to
@@ -7973,17 +7998,6 @@ Ironman Deep Dive Challenge (IDDC)
     have already defeated Sauron. He may spawn in any theme, on floor depths of
     level 100 or deeper.
 
-    For servers running 'strict_etiquette', meaning that a player will lose all
-    true artifacts after winning: If Morgoth is defeated, players on his floor
-    will be allowed to use Word of Recall to leave the dungeon if they wish!
-    (Alternatively they may go on and recall at the final floor, which is
-    level 127 aka -6350 ft.) 'Strict_etiquette' is usually turned off though.
-
-    An IDDC-slot-exclusive character that makes it out of the dungeon will be
-    restricted to the world surface. If it attempts to enter any dungeon or
-    tower it will automatically retire instantly. Note that it cannot buy any
-    houses, but it won't need those anyway.
-
     Usually unique monsters may not spawn in two or more places in the game
     world at once, but the IDDC is actually an exception. In here, a unique
     monster is allowed to spawn (once) on a floor even though another instance
@@ -7991,6 +8005,7 @@ Ironman Deep Dive Challenge (IDDC)
     This means that you don't have to worry which uniques other players are
     currently fighting - they can still spawn for you just fine.
 
+  Specialties:
     Mimicry users gain +9 extra kill credit on each kill, effectively
     learning forms TEN TIMES as fast. (However, if that character decides to
     withdraw from the challenge at a static town, it loses 2/3 of those extra
@@ -8004,10 +8019,23 @@ Ironman Deep Dive Challenge (IDDC)
     enter will give you a progressively increasing (with floor depth) luck
     bonus, making it more and more likely to obtain better items.
 
+    Monsters cannot spawn 'live' in the IDDC, but only at the time of creation
+    of each dungeon floor. Summon staves cannot be recharged in the IDDC and
+    polymorphing magic does not work.
+
+    Inside the challenge dungeon you can acquire an extermination order via
+    /xorder command at level 1 already, instead of the usual minimum level 5.
+    On average, extermination orders in here require less monsters to be slain.
+    Also, the monster level of the order will depend on the floor level instead
+    of the player's level.
+
+  Partying and trading:
     IDDC allows partying and trading between everlasting and non-everlasting
     characters. To form a party, everyone must be inside the IDDC dungeon and
     the person to be added must be on at least the same depth as the currently
     deepest party member, or deeper.
+    You cannot have more than one character in the same IDDC-Party at a time.
+
     However, gold cannot be traded, and items can only be traded if both
     players are in the same party and the item was found when the finder was
     already in the party and after the player who wants to receive it joined
@@ -8028,6 +8056,7 @@ Ironman Deep Dive Challenge (IDDC)
     ownership of the party is transferred to another party member. (Same as on
     Ironman server.)
 
+  Stale floors:
     In case you need to go offline you'll just have to log out inside the
     dungeon. Keep in mind that your character will stay in the game for about
     30 more seconds during which it could be killed if in an unsafe place.
@@ -8039,26 +8068,12 @@ Ironman Deep Dive Challenge (IDDC)
     the level has reset, then the level will be "stale" for you, the next time
     you log on, which will prevent you from getting any experience, items or
     gold until you move on by taking a staircase to the next floor.
+    You cannot trade with other players on stale floors either.
     Therefore, if you need to log out and stop playing, you should first clear
     as many monsters as you can on your current floor before logging out. That
     way you won't "waste" any experience points.
-    Note that dungeon towns never turn stale.
+    Dungeon towns never turn stale.
 
-    Monsters cannot spawn 'live' in the IDDC, but only at the time of creation
-    of each dungeon floor. Summon staves cannot be recharged in the IDDC and
-    polymorphing magic does not work.
-
-    NOTE: If you use stolen enchant scrolls on an item while you are in a town,
-    then the item will get a 100% off discount. If you want to use stolen
-    scrolls to enchant your items and keep the items sellable, then you have
-    to take the staircase to leave the town, and read the scrolls in an actual
-    dungeon level instead.
-
-    NOTE: You can use the command '/convertexclusive' to convert one of your
-    characters into a dedicated IDDC character, moving it to a specific
-    IDDC-only-character slot and freeing up the generic character slot again.
-    This of course only works if you still have a free IDDC-exclusive character
-    slot available.
 
 
 Seasonal events
