@@ -706,6 +706,7 @@
 #define JAIL_SWEARING 20
 #define JAIL_SPAM 30
 #define JAIL_OLD_CRIMES 0
+#define JAIL_VISIT 10
 
 
 /* ---------------------------------------------------------------- (Rather fundamental 'features')  ---------------------------------------------------------------- */
