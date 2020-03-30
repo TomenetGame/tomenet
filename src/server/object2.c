@@ -120,12 +120,15 @@ void excise_object_idx(int o_idx) {
 				o_ptr->next_o_idx = 0;
 
 				/* Done */
-				break;
+				return;
 			}
 
 			/* Save prev_o_idx */
 			prev_o_idx = this_o_idx;
 		}
+		/* Error! should not happen: An object that is supposedly carried
+		   by a monster could not be found in any monster's inventory. */
+		s_printf("EXCISE_OBJECT_IDX: Error, object not found in monster inventory!\n");
 		return;
 	}
 	else
@@ -11797,7 +11800,7 @@ s_printf("A_TIMEOUT: Called (%d)!\n", a_idx);
 /* Similarly to erase_guild_key() this function searches *everywhere* for a
    true artifact to erase it. Used for FLUENT_ARTIFACT_RESETS. - C. Blue */
 void erase_artifact(int a_idx) {
-	int i, this_o_idx, next_o_idx;
+	int i, j, this_o_idx, next_o_idx;
 	monster_type *m_ptr;
 	object_type *o_ptr, *q_ptr;
 	char m_name[MNAME_LEN], o_name[ONAME_LEN], o_name_short[ONAME_LEN];
@@ -11824,34 +11827,22 @@ void erase_artifact(int a_idx) {
 		/* in monster inventory */
 		if (o_ptr->held_m_idx) {
 			m_ptr = &m_list[o_ptr->held_m_idx];
-			/* 1st object held is the artifact? */
-			if (m_ptr->hold_o_idx == i) {
-				m_ptr->hold_o_idx = o_ptr->next_o_idx;
-				monster_desc(0, m_name, o_ptr->held_m_idx, 0);
-				s_printf("FLUENT_ARTIFACT_RESETS: %d - monster inventory (%d, '%s', #1)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, o_name);
-				delete_object_idx(i, TRUE);
-				msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
-				return;
-			} else {
-				i = 1;
-				q_ptr = &o_list[m_ptr->hold_o_idx];//compiler warning
-				for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
-					if (this_o_idx == i) {
-						q_ptr->next_o_idx = o_list[this_o_idx].next_o_idx;
-						monster_desc(0, m_name, o_ptr->held_m_idx, 0);
-						s_printf("FLUENT_ARTIFACT_RESETS: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, i, o_name);
-						delete_object_idx(this_o_idx, TRUE);
-						msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
-						return;
-					}
-					q_ptr = &o_list[this_o_idx];
-					next_o_idx = q_ptr->next_o_idx;
-					i++;
+			j = 1;
+			for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
+				q_ptr = &o_list[this_o_idx];
+				if (this_o_idx == i) {
+					monster_desc(0, m_name, o_ptr->held_m_idx, 0);
+					s_printf("FLUENT_ARTIFACT_RESETS: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, j, o_name);
+					delete_object_idx(this_o_idx, TRUE);
+					msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
+					return;
 				}
-				/* paranoid fail */
-				s_printf("FLUENT_ARTIFACT_RESETS_ERROR: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, i, o_name);
-				return;
+				next_o_idx = q_ptr->next_o_idx;
+				j++;
 			}
+			/* paranoid fail */
+			s_printf("FLUENT_ARTIFACT_RESETS_ERROR: %d - monster inventory (%d, '%s', #%d)\n  '%s'\n", a_idx, o_ptr->held_m_idx, m_name, i, o_name);
+			return;
 		}
 
 #ifdef PLAYER_STORES
@@ -11877,8 +11868,8 @@ void erase_artifact(int a_idx) {
 	}
 
 	/* Players online */
-	for (this_o_idx = 1; this_o_idx <= NumPlayers; this_o_idx++) {
-		p_ptr = Players[this_o_idx];
+	for (j = 1; j <= NumPlayers; j++) {
+		p_ptr = Players[j];
 		/* scan his inventory */
 		for (i = 0; i < INVEN_TOTAL; i++) {
 			o_ptr = &p_ptr->inventory[i];
@@ -11886,19 +11877,45 @@ void erase_artifact(int a_idx) {
 
 			if (o_ptr->name1 == a_idx) {
 				s_printf("FLUENT_ARTIFACT_RESETS: %d - player '%s'\n  '%s'\n", a_idx, p_ptr->name, o_name);
-				//object_desc(this_o_idx, o_name, o_ptr, FALSE, 3);
-				msg_format(this_o_idx, "\374\377R%s bids farewell to you...", o_name_short);
+				//object_desc(j, o_name, o_ptr, FALSE, 3);
+				msg_format(j, "\374\377R%s bids farewell to you...", o_name_short);
 				handle_art_d(a_idx);
-				inven_item_increase(this_o_idx, i, -99);
-				inven_item_describe(this_o_idx, i);
-				inven_item_optimize(this_o_idx, i);
-				msg_broadcast_format(this_o_idx, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
+				inven_item_increase(j, i, -99);
+				inven_item_describe(j, i);
+				inven_item_optimize(j, i);
+				msg_broadcast_format(j, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
 				return;
 			}
 		}
 	}
 
-	/* hack */
+	/* Check merchant mail */
+	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+		if (mail_sender[i][0]) continue;
+		if (mail_forge[i].name1 != a_idx) continue;
+
+		s_printf("MAIL_ERROR_ERASED:FLUENT_ARTIFACT_RESETS.\n");
+		/* delete mail! */
+		mail_sender[i][0] = 0;
+
+		/* notify player if he is online */
+		for (j = NumPlayers; j >= 1; j--) {
+			if (!strcmp(Players[j]->accountname, mail_target_acc[i])) {
+				if (strcmp(Players[j]->name, mail_target[i]))
+					msg_format(j, "\374\377y%s in a mail package for another character of yours just vanished into thin air.", o_name_short);
+				else
+					msg_format(j, "\374\377y%s in a mail package for you just vanished into thin air.", o_name_short);
+				break;
+			}
+		}
+		msg_broadcast_format(j, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
+
+		s_printf("FLUENT_ARTIFACT_RESETS: %d - player '%s'\n  '%s'\n", a_idx, mail_target[i], o_name);
+		handle_art_d(a_idx);
+		return;
+	}
+
+	/* hack - Check all players in the hash table */
 	NumPlayers++;
 	MAKE(Players[NumPlayers], player_type);
 	p_ptr = Players[NumPlayers];
