@@ -13625,7 +13625,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 
 	if (!jails_enabled) {
 		p_ptr->tim_susp = 0;
-		s_printf("DISABLED.\n", p_ptr->name);
+		s_printf("DISABLED.\n");
 		return FALSE;
 	}
 
