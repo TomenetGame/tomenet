@@ -3352,7 +3352,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name..");
+				return;
+			}
 
 			for (i = 1; i <= 9; i++) {
 				//if (i == 5) continue;
@@ -3394,7 +3397,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name..");
+				return;
+			}
 
 			for (i = 1; i <= 9; i++) {
 				//if (i == 5) continue;
@@ -3424,7 +3430,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name..");
+				return;
+			}
 
 			for (i = 1; i <= 9; i++) {
 				//if (i == 5) continue;
@@ -3454,7 +3463,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name..");
+				return;
+			}
 
 			for (i = 1; i <= 9; i++) {
 				//if (i == 5) continue;
@@ -3482,7 +3494,7 @@ void do_slash_cmd(int Ind, char *message) {
 				j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
 				if (!j || !p_ptr->play_vis[j] || j == Ind) return;
 				if (!target_able(Ind, -j)) {
-					msg_print(Ind, "Player is not within your line of sight.");
+					msg_print(Ind, "You don't see anyone of that name..");
 					return;
 				}
 
@@ -3525,7 +3537,10 @@ void do_slash_cmd(int Ind, char *message) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			j = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
-			if (!j || (!p_ptr->play_vis[j] && j != Ind)) return;
+			if (!j || (!p_ptr->play_vis[j] && j != Ind)) {
+				msg_print(Ind, "You don't see anyone of that name..");
+				return;
+			}
 
 			for (i = 1; i <= 9; i++) {
 				//if (i == 5) continue;
