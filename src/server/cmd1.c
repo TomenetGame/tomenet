@@ -1692,16 +1692,27 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #endif
 #ifdef IDDC_RESTRICTED_TRADING
 		if (in_irondeepdive(&p_ptr->wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
-			if (!p_ptr->party || p_ptr->iron_trade != o_ptr->iron_trade) {
-				msg_print(Ind, "\377yYou cannot take items from outsiders.");
+			if (p_ptr->IDDC_logscum) {
+				msg_print(Ind, "\377yYou cannot take items on stale floors.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (!o_ptr->iron_trade || !o_ptr->iron_turn) { /* includes the extra items every character who enters the IDDC gains as a starter bonus */
+				msg_print(Ind, "\377yYou cannot trade items that haven't been found in the IDDC.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (!p_ptr->party) {
+				msg_print(Ind, "\377yYou cannot take items from anyone not in your party.");
+				if (!is_admin(p_ptr)) return;
+			}
+			if (p_ptr->iron_trade != o_ptr->iron_trade) {
+				if (lookup_player_party(o_ptr->owner) != p_ptr->party)
+					msg_print(Ind, "\377yYou cannot take items from outsiders.");
+				else
+					msg_print(Ind, "\377yYou cannot take items whose owner found them before joining the party.");
 				if (!is_admin(p_ptr)) return;
 			}
 			if (p_ptr->iron_turn > o_ptr->iron_turn) {
 				msg_print(Ind, "\377yYou cannot take this item as it predates you joining the party.");
-				if (!is_admin(p_ptr)) return;
-			}
-			if (p_ptr->IDDC_logscum) {
-				msg_print(Ind, "\377yYou cannot take items on stale floors.");
 				if (!is_admin(p_ptr)) return;
 			}
 		}
