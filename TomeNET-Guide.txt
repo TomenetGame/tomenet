@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. March 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 30. March 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12285,9 +12285,16 @@ whole blocks of skills that you cannot or don't want to use anyway.
 
 Here is a list of the available skills and brief explanations to each one:
 Note that not every skill is available to every profession (class).
+For skills where it is not clear how much of an increase makes an actual
+difference for the skill's effect, that number is written in parentheses below
+it. Eg '(0.500)' means that each 0.500 step of this skill will improve it, and
+even having just a total skill level of 0.500 will already have an effect.
+Some skills require a minimum value (usually 1.000) to become effective despite
+having a finer grained resolution, in these cases the minimum value is also
+stated.
 
 +Combat                         Lets you wear heavier armour without mana
-                                points penalty.
+ (1/6)                          points penalty.
 
                                 Lets you wear heavier armour without losing
                                 dodge chance (gained from the 'Dodging' skill),
@@ -12341,7 +12348,7 @@ Note that not every skill is available to every profession (class).
                                 (6.11) for more details about parry/block.
 
     +Weaponmastery              Slightly increases melee to-dam and to-hit for
-                                armed combat: Hit gets increased by 1/3 of your
+     (1/3)                      armed combat: Hit gets increased by 1/3 of your
                                 skill, damage by 1/10.
                                 Improves your 'Fighting' ability somewhat,
                                 thereby further increasing your chance to hit
@@ -12358,11 +12365,11 @@ Note that not every skill is available to every profession (class).
                                 +20% for 2-handers.
 
         +Sword-mastery          Greatly improves to-hit/to-dam with swords.
-                                At 25 and 50 you will get +1 blow per round
+         (1.000)                At 25 and 50 you will get +1 blow per round
                                 while having a sword equipped.
 
             .Critical-strike    Increases your chance to score hits of
-                                extremely high damage. This skill improves
+             (0.025)            extremely high damage. This skill improves
                                 the chance to score critical hits and adds
                                 to critical-hit bonus from your equipment.
 
@@ -12436,11 +12443,11 @@ Note that not every skill is available to every profession (class).
                                 total of roughly +15 critical hit bonus.
 
         .Axe-mastery            See Sword-mastery
-
+         (1.000)
         .Blunt-mastery          See Sword-mastery
-
+         (1.000)
         .Polearm-mastery        See Sword-mastery
-
+         (1.000)
         .Combat Stances         Allows you to switch between one of three types
                                 of combat stance. You need to wield a weapon to
                                 use stances, certain restrictions apply and are
@@ -12544,7 +12551,7 @@ Note that not every skill is available to every profession (class).
                                 attack with both weapons, picked randomly.
 
     .Martial Arts               Ability to fight with bare hands.
-                                Martial Arts users do not and cannot wield any
+     (0.228)                    Martial Arts users do not and cannot wield any
                                 weapons or they get penalised heavily, except
                                 for boomerangs.
 
@@ -12617,7 +12624,7 @@ Note that not every skill is available to every profession (class).
                                 Martial Arts in general, see (5.3a)!
 
     .Interception               Ability to interfere with adjacent enemies.
-                                Can prevent them from teleporting, casting,
+     (0.500)                    Can prevent them from teleporting, casting,
                                 summoning, running away.
                                 The monster must be standing right beside you
                                 (horizontally, vertically or diagonally).
@@ -12672,7 +12679,7 @@ Note that not every skill is available to every profession (class).
                                 'Anti-magic' skill for details.
 
     +Archery                    Improves ranged to-damage bonus somewhat, by +1
-                                for every 5.000 increase in skill.
+     (1/3)                      for every 5.000 increase in skill.
                                 Also increases 'Bows/Throws' ability somewhat,
                                 which in turn further increases hit chance.
 
@@ -12747,7 +12754,7 @@ Note that not every skill is available to every profession (class).
    their school skill. Often their failure rate decreases, too. >>
 
 +Magic                          Increases your base mana by +4 per point.
-
+ (0.250)
                                 Lets you pseudo-id magic items, potions and
                                 scrolls faster the higher your skill is.
 
@@ -12816,13 +12823,14 @@ Note that not every skill is available to every profession (class).
                                 that are fueled by your own blood to work.
 
         .Necromancy             Drains life and mana from killed monsters,
-                                replenishing your HP and MP.
+         (0.500)                replenishing your HP and MP.
                                 Only works if you are able to see the target,
                                 and if you are not a player-ghost.
                                 The amount of points gained depends on the
                                 skill and the target's level. To get maximum
                                 drain, the skill should be at least half as
-                                high as the monster level.
+                                high as the monster level. There is always
+                                a gain of at least +1 HP and +1 SP.
                                 Necromancy has no effect on undead and
                                 nonliving (constructs) monsters.
 
@@ -12854,13 +12862,13 @@ Note that not every skill is available to every profession (class).
                                 100% when both schools reach 50.000.
 
         .Traumaturgy            Drains mana from monsters when you inflict
-                                damage on them, replenishing your MP.
+         (0.500)                damage on them, replenishing your MP.
                                 Only works if you are able to see the target.
                                 The amount of points gained depends linearly
                                 on your skill level and also somewhat on the
                                 damage you inflicted.
                                 Even if your inflicted damage and/or skill
-                                level is rather low, each attack still has a
+                                level is very low, each attack still has a
                                 (small) chance of replenishing at least 1 MP.
                                 Traumaturgy is most effective with spells that
                                 have an area of effect and can therefore hit
@@ -12883,7 +12891,7 @@ Note that not every skill is available to every profession (class).
                                 100% when both schools reach 50.000.
 
         .Aura of Fear           Monsters that hit you are stroke by fear.
-                                Undead and non-living monsters and those that
+         (0.500)                Undead and non-living monsters and those that
                                 resist fear (NO_FEAR) are not affected.
                                 The chance for the aura to trigger depends on
                                 your skill alone. Whether it has effect on your
@@ -12902,7 +12910,7 @@ Note that not every skill is available to every profession (class).
                                 fear resistance.
 
         .Shivering Aura         Monsters that hit you are stunned.
-                                Monsters that are immune to cold and those that
+         (0.500)                Monsters that are immune to cold and those that
                                 resist stun (NO_STUN) are not affected.
                                 The chance for the aura to trigger depends on
                                 your skill alone. Whether it has effect on your
@@ -12922,7 +12930,7 @@ Note that not every skill is available to every profession (class).
                                 aura is active.
 
         .Aura of Death          Monsters that hit you are hit by waves
-                                of plasma and ice, alternating randomly.
+         (1.000)                of plasma and ice, alternating randomly.
                                 The chance for the aura to trigger depends on
                                 your skill alone.
                                 At a skill of 40 the aura is so strong that
@@ -12939,7 +12947,7 @@ Note that not every skill is available to every profession (class).
                                 aura is active.
 
     .Mimicry                    Ability to shapechange into a monster!
-                                To learn a monster form you must kill an amount
+     (0.500)                    To learn a monster form you must kill an amount
                                 of it equal to its level, while your Mimicry
                                 skill must be at least half as high as the
                                 monster level for you to get credit.
@@ -12970,7 +12978,7 @@ Note that not every skill is available to every profession (class).
                                 Mimicry shapechanging will only take 1/4 turn.
 
     .Magic Device               Mainly reduces fail chance when trying to use
-                                magic devices (wands, staves, rods, activatable
+     (1/16)                     magic devices (wands, staves, rods, activatable
                                 items - see (5.9a)), increases their power and
                                 speeds up recharging of rods you carry.
                                 See (6.10) for more information on magic
@@ -12981,7 +12989,7 @@ Note that not every skill is available to every profession (class).
                                 displayed accordingly on inspecting the device.
 
 .Anti-magic                     Generated from your strong disbelief in magic
-                                an anti-magic field surrounds you, preventing
+ (1.000)                        an anti-magic field surrounds you, preventing
                                 nearby monsters and players from casting
                                 spells (but does not prevent them from using
                                 magic devices).
@@ -13038,14 +13046,14 @@ Note that not every skill is available to every profession (class).
                                 will actually come out somewhat reduced.
 
 +Sneakiness                     Slightly increases your character speed
-                                (+7 at 50, so approx +1 every 7..8 points).
+ (1.000)                        (+7 at 50, so approx +1 every 7..8 points).
                                 Slightly increases perception and searching.
                                 Slightly reduces speed loss while in searching
                                 mode, and very slightly while in rogues'
                                 cloaking mode.
 
     .Stealth                    Increases your stealth, which determines
-                                if monsters can hear you from a distance
+     (2.000)                    if monsters can hear you from a distance
                                 or if you can sneak past them.
                                 The stealth gain is half as much as from items
                                 that give +Stealth.
@@ -13056,7 +13064,7 @@ Note that not every skill is available to every profession (class).
                                 you will eventually see an improvement ;).
 
     .Stealing                   Ability to steal items from stores.
-                                If you get caught, you will be on the
+     (0.100, at least 1.000)    If you get caught, you will be on the
                                 'blacklist of merchants' for a minute up
                                 to 2 hours, depending on the item you tried to
                                 steal from a shop. During this time it's
@@ -13153,7 +13161,7 @@ Note that not every skill is available to every profession (class).
                                 strongly into its parent skill 'Sneakiness'.
 
     .Backstabbing               Lets you backstab enemies, afflicting high
-                                damage. Works if the opponent is asleep or
+     (1/7, at least 1.000)      damage. Works if the opponent is asleep or
                                 running away in fear, exposing his back to you.
                                 Also works when you are cloaked (only once per
                                 monster though, so re-cloaking won't help) or
@@ -13185,7 +13193,7 @@ Note that not every skill is available to every profession (class).
                                 backstabbing a sleeping opponent to death.
 
     .Dodging                    Ability to evade attacks. In order to get any
-                                benefits from doding skill at all, your armour
+     (1/3, at least 1.000)      benefits from doding skill at all, your armour
                                 mustn't be too heavy. If it is, you will get a
                                 flexibility warning (compare (5.5)).
                                 Also, you must not be using a shield.
@@ -13255,7 +13263,7 @@ Note that not every skill is available to every profession (class).
                                 monsters of twice your level.
 
     .Calmness                   Ability to not get hindered by enemies.
-                                Monsters can try to intercept some of your
+     (0.625)                    Monsters can try to intercept some of your
                                 actions, the Calmness skill counters these
                                 interception attempts. In detail: Monsters can
                                 interfere if they are standing on an adjacent
@@ -13266,7 +13274,7 @@ Note that not every skill is available to every profession (class).
                                 Calmness does not depend on the enemy's level.
 
     .Trapping                   Improves your ability to set traps:
-                                Gives you a higher chance to successfully
+     (0.450)                    Gives you a higher chance to successfully
                                 place a trap if a monster is close to you and
                                 trying to interfere. Also, monsters will have
                                 a harder time to discover your traps.
@@ -13308,7 +13316,7 @@ Note that not every skill is available to every profession (class).
                                       by simply pressing a single button.
 
 +Health                         Increases your hit points by 2 for each point.
-                                Note that this gain stacks with +LIFE items
+ (0.500)                        Note that this gain stacks with +LIFE items
                                 (compare '+LIFE' in (5.8)).
                                 Increases your hit point regeneration rate:
                                  (skill_level * 2)% chance to regenerate 1.5x
