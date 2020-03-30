@@ -5308,6 +5308,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					forge.owner = o_ptr->owner;
 					forge.mode = o_ptr->mode;
 					forge.number = 1;
+					forge.iron_trade = o_ptr->iron_trade;
+					forge.iron_turn = o_ptr->iron_turn;
 					s_printf("MELTING: Copper for %d by %s.\n", o_ptr->pval, p_ptr->name);
 					*o_ptr = forge;
 					break;
@@ -5317,6 +5319,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					forge.owner = o_ptr->owner;
 					forge.mode = o_ptr->mode;
 					forge.number = 1;
+					forge.iron_trade = o_ptr->iron_trade;
+					forge.iron_turn = o_ptr->iron_turn;
 					s_printf("MELTING: Silver for %d by %s.\n", o_ptr->pval, p_ptr->name);
 					*o_ptr = forge;
 					break;
@@ -5326,6 +5330,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					forge.owner = o_ptr->owner;
 					forge.mode = o_ptr->mode;
 					forge.number = 1;
+					forge.iron_trade = o_ptr->iron_trade;
+					forge.iron_turn = o_ptr->iron_turn;
 					s_printf("MELTING: Gold for %d by %s.\n", o_ptr->pval, p_ptr->name);
 					*o_ptr = forge;
 					break;
@@ -5344,6 +5350,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					forge.owner = o_ptr->owner;
 					forge.mode = o_ptr->mode;
 					forge.number = 1;
+					forge.iron_trade = o_ptr->iron_trade;
+					forge.iron_turn = o_ptr->iron_turn;
 					s_printf("MELTING: Iron '%s' for %d by %s.\n", o_name, val, p_ptr->name);
 					*o_ptr = forge;
 					break;
@@ -5361,6 +5369,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					forge.owner = o_ptr->owner;
 					forge.mode = o_ptr->mode;
 					forge.number = 1;
+					forge.iron_trade = o_ptr->iron_trade;
+					forge.iron_turn = o_ptr->iron_turn;
 					s_printf("MELTING: Silver '%s' for %d by %s.\n", o_name, val, p_ptr->name);
 					*o_ptr = forge;
 					break;
@@ -5378,6 +5388,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					forge.owner = o_ptr->owner;
 					forge.mode = o_ptr->mode;
 					forge.number = 1;
+					forge.iron_trade = o_ptr->iron_trade;
+					forge.iron_turn = o_ptr->iron_turn;
 					s_printf("MELTING: Gold '%s' for %d by %s.\n", o_name, val, p_ptr->name);
 					*o_ptr = forge;
 					break;

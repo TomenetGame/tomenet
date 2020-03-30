@@ -7749,6 +7749,9 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		if (preown) {
 			forge.owner = forge.killer;
 			forge.mode = Players[Ind]->mode;
+			forge.iron_trade = Players[Ind]->iron_trade;
+			if (opening_chest) forge.iron_turn = opening_chest;
+			else forge.iron_turn = turn;
 			if (true_artifact_p(&forge)) {
 				determine_artifact_timeout(forge.name1, wpos);
 				a_info[forge.name1].carrier = forge.owner;
@@ -9475,6 +9478,8 @@ void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonu
 		if (opening_chest) {
 			forge.owner = forge.killer;
 			forge.mode = Players[Ind]->mode;
+			forge.iron_trade = Players[Ind]->iron_trade; /* gold cannot be traded in IDDC anyway, so this has no effect.. */
+			forge.iron_turn = opening_chest;
 		}
 	}
 

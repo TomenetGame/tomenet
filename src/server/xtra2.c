@@ -8651,7 +8651,8 @@ void player_death(int Ind) {
 		/* Change the mode of the gold accordingly */
 		p_ptr->inventory[INVEN_PACK].mode = p_ptr->mode;
 		p_ptr->inventory[INVEN_PACK].owner = p_ptr->id; /* hack */
-		p_ptr->inventory[INVEN_PACK].iron_trade = p_ptr->iron_trade;
+		p_ptr->inventory[INVEN_PACK].iron_trade = p_ptr->iron_trade; /* well, gold cannot be traded in IDDC anyway, so this is effectless.. */
+		p_ptr->inventory[INVEN_PACK].iron_turn = turn;
 
 		/* Drop no more than 32000 gold */
 		//if (p_ptr->au > 32000) p_ptr->au = 32000;

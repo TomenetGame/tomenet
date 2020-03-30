@@ -1565,7 +1565,8 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 		cash = (((o_ptr->level + 10) * (o_ptr->level + 10)) * 3) / number;
 
 		/* Opening a chest -- this hack makes sure we don't find a chest in a chest, even though yo like chests */
-		opening_chest = TRUE;
+		if (!o_ptr->iron_turn) opening_chest = turn; //by now all existing chests should long have iron_turn set to something, so this check might not be needed anymore
+		else opening_chest = o_ptr->iron_turn;
 
 		/* Determine the "value" of the items */
 		//object_level = ABS(o_ptr->pval) + 10;
