@@ -13614,6 +13614,8 @@ bool imprison(int Ind, u16b time, char *reason) {
 	cave_type **zcave, **nzcave;
 	struct worldpos old_wpos;
 
+	s_printf("IMPRISON: '%s' (+%d for '%s') ", p_ptr->name, time, reason);
+
 	/* Can't jail ghosts */
 	if (p_ptr->ghost) {
 		p_ptr->tim_susp += time;
@@ -13623,13 +13625,14 @@ bool imprison(int Ind, u16b time, char *reason) {
 
 	if (!jails_enabled) {
 		p_ptr->tim_susp = 0;
-		s_printf("IMPRISON: '%s' DISABLED.\n", p_ptr->name);
+		s_printf("DISABLED.\n", p_ptr->name);
 		return FALSE;
 	}
 
-	if (!(zcave = getcave(&p_ptr->wpos))) return (FALSE);
-
-	s_printf("IMPRISON: '%s' ", p_ptr->name);
+	if (!(zcave = getcave(&p_ptr->wpos))) {
+		s_printf("NO CAVE.\n");
+		return (FALSE);
+	}
 
 	if (!p_ptr || !(id = lookup_player_id("Jailer"))) {
 		s_printf("NO_JAILER.\n");
@@ -13777,7 +13780,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 	else sound(Ind, "jailed", NULL, SFX_TYPE_MISC, TRUE);
 #endif
 
-	s_printf("DONE.\n");
+	s_printf("SUCCESS: %d.\n", p_ptr->tim_jail);
 	return (TRUE);
 }
 
