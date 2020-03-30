@@ -409,6 +409,7 @@ void do_cmd_go_up(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, TRUE, d_ptr, 0, FALSE));
@@ -438,6 +439,7 @@ void do_cmd_go_up(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
@@ -450,6 +452,7 @@ void do_cmd_go_up(int Ind) {
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->conn == NOT_CONNECTED) continue;
 					if (i == Ind) continue;
+					if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 					if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 					if (Players[i]->party == p_ptr->party)
 						msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
@@ -465,6 +468,7 @@ void do_cmd_go_up(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
@@ -478,6 +482,7 @@ void do_cmd_go_up(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party) {
@@ -492,6 +497,7 @@ void do_cmd_go_up(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party) {
@@ -509,6 +515,7 @@ void do_cmd_go_up(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party) {
@@ -523,6 +530,7 @@ void do_cmd_go_up(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz <= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party) {
@@ -1181,6 +1189,7 @@ void do_cmd_go_down(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, FALSE, d_ptr, 0, FALSE));
@@ -1210,6 +1219,7 @@ void do_cmd_go_down(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G[\377%c%s has entered %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
@@ -1222,6 +1232,7 @@ void do_cmd_go_down(int Ind) {
 				for (i = 1; i <= NumPlayers; i++) {
 					if (Players[i]->conn == NOT_CONNECTED) continue;
 					if (i == Ind) continue;
+					if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 					if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 					if (Players[i]->party == p_ptr->party)
 						msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, d_name + d_info[iddc[ABS(wpos->wz)+1].type].name);
@@ -1237,6 +1248,7 @@ void do_cmd_go_down(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->party == p_ptr->party)
 					msg_format(i, "\374\377G[\377%c%s has left %s..\377G]", COLOUR_DUNGEON, p_ptr->name, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
@@ -1250,6 +1262,7 @@ void do_cmd_go_down(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party) {
@@ -1264,6 +1277,7 @@ void do_cmd_go_down(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party) {
@@ -1281,6 +1295,7 @@ void do_cmd_go_down(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party) {
@@ -1295,6 +1310,7 @@ void do_cmd_go_down(int Ind) {
 			for (i = 1; i <= NumPlayers; i++) {
 			        if (Players[i]->conn == NOT_CONNECTED) continue;
 				if (i == Ind) continue;
+				if (p_ptr->admin_dm && cfg.secret_dm && !is_admin(Players[i])) continue;
 				if (Players[i]->wpos.wx != wpos->wx || Players[i]->wpos.wy != wpos->wy) continue;
 				if (Players[i]->wpos.wz >= 0) continue; /* must be in same dungeon/tower */
 				if (Players[i]->party == p_ptr->party) {
