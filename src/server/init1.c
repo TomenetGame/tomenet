@@ -1039,7 +1039,7 @@ static cptr f_info_flags2[] = {
 	"NO_ARTICLE",
 
 	"GLOW",
-	"XXX",
+	"ENTER_FROM_SPECIAL",
 	"XXX",
 	"XXX",
 

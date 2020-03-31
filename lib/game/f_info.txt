@@ -218,6 +218,9 @@ F:DONT_NOTICE_RUNNING | NIGHT_DARK | NO_SHADE
 #Note: For higher town houses, this must have NO_SHADE exactly when #60 has NO_SHADE too.
 
 
+# HOLE 29..31 -------------------------------------------------------------
+
+
 # 0x2x --> locked door (power 0)
 
 N:32:door
@@ -878,7 +881,7 @@ F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 D:1:You cannot break down these bars.
 
 
-# 121..159 unused -------------------------------------------------------------
+# HOLE 121..159 -------------------------------------------------------------
 
 
 N:160:void jumpgate
@@ -909,15 +912,9 @@ G:0:D
 F:FLOOR | REMEMBER | NOTICE | CAN_RUN
 D:0:Images of pain and death feels your mind.
 
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
-# XXX
+
+# HOLE 165..171 -------------------------------------------------------------
+
 
 # Used as a marked for random quests
 N:172:floor
@@ -997,7 +994,7 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE | BOUNDARY
 
 
-# XXX 184 - 186  unused -------------------------------------------------------------
+# HOLE 184..186 -------------------------------------------------------------
 
 
 # 187 --> terrain -- deep water
@@ -1243,7 +1240,7 @@ D:2:A hideous looking ornate door is blocking your way.
 
 N:225:unsealed door
 G:':r
-F:FLOOR | NOTICE | REMEMBER | CAN_RUN
+F:FLOOR | NOTICE | REMEMBER | CAN_RUN 
 
 N:226:highly protected floor
 G:.:U
@@ -1270,7 +1267,7 @@ D:1:You tunnel into the moving powerup.
 N:230:sealed door
 G:+:r
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | NOTICE
+F:DONT_NOTICE_RUNNING | NOTICE | ENTER_FROM_SPECIAL
 D:0:A hideous looking ornate door is blocking your way.
 D:1:You bash the door but it doesn't seem to move.
 D:2:A hideous looking ornate door is blocking your way.
@@ -1278,14 +1275,14 @@ D:2:A hideous looking ornate door is blocking your way.
 N:231:sickbay exit
 G:+:g
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | NOTICE
+F:DONT_NOTICE_RUNNING | NOTICE | ENTER_FROM_SPECIAL
 D:0:You are not allowed to enter the temple's sickbay.
 D:1:Please do not disturb the patients!
 D:2:You are not allowed to enter the temple's sickbay.
 
 N:232:sickbay area
 G:_:u
-F:FLOOR | CAN_RUN | SUPPORT_LIGHT
+F:FLOOR | CAN_RUN | SUPPORT_LIGHT | ENTER_FROM_SPECIAL
 F:DONT_NOTICE_RUNNING | PROTECTED | BLOCK_CONTACT
 
 N:233:Iridescent Gate
@@ -1307,6 +1304,10 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | NOTICE
 D:0:A shattered mirror lies on the floor, its shards twinkling magically.
 D:2:A shattered mirror lies on the floor, its shards twinkling magically.
+
+N:236:barred floor
+G:.:w
+F:FLOOR | DONT_NOTICE_RUNNING | SUPPORT_LIGHT | CAN_RUN | LAMP_LITE_SNOW | NO_ARTICLE | ENTER_FROM_SPECIAL
 
 
 # NOTE: 255 is reserved for special purpose ('not done yet' indicator)
