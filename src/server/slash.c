@@ -67,7 +67,7 @@ struct scmd scmd[] = {
  * updated slash command parser - evileye
  *
  */
-void do_slash_cmd(int Ind, char *message){
+void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 	int i, j;
 	player_type *p_ptr;
 
@@ -186,7 +186,7 @@ void sc_shutdown(int Ind, void *value) {
 
 void sc_wish(int Ind, void *argp){
 	char **args = (args);
-#if 0
+ #if 0
 	object_type	forge;
 	object_type	*o_ptr = &forge;
 
@@ -226,7 +226,7 @@ void sc_wish(int Ind, void *argp){
 	//o_ptr->owner = p_ptr->id;
 	o_ptr->level = 1;
 	(void)inven_carry(Ind, o_ptr);
-#endif
+ #endif
 }
 
 
@@ -303,7 +303,7 @@ static void do_cmd_refresh(int Ind) {
  * D:/lua (LUA script command)
  */
 
-void do_slash_cmd(int Ind, char *message) {
+void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 	int i = 0, j = 0, h = 0;
 	int k = 0, tk = 0;
 	player_type *p_ptr = Players[Ind];
@@ -380,9 +380,7 @@ void do_slash_cmd(int Ind, char *message) {
 	}
 	else if (prefix(messagelc, "/shout") || prefix(messagelc, "/sho") || prefix(messagelc, "/yell")) {
 		break_cloaking(Ind, 4);
-		if (colon++) {
-			censor_message = TRUE;
-			censor_length = strlen(colon);
+		if (colon && *(colon++)) {
 			if (prefix(messagelc, "/yell")) {
 				msg_format_near(Ind, "\374\377%c%^s yells: %s", COLOUR_CHAT, p_ptr->name, colon);
 				msg_format(Ind, "\374\377%cYou yell: %s", COLOUR_CHAT, colon);
@@ -390,8 +388,6 @@ void do_slash_cmd(int Ind, char *message) {
 				msg_format_near(Ind, "\374\377%c%^s shouts: %s", COLOUR_CHAT, p_ptr->name, colon);
 				msg_format(Ind, "\374\377%cYou shout: %s", COLOUR_CHAT, colon);
 			}
-			censor_message = FALSE;
-			handle_punish(Ind, censor_punish);
 		} else {
 			if (prefix(messagelc, "/yell")) {
 				msg_format_near(Ind, "\374\377%cYou hear %s yell out!", COLOUR_CHAT, p_ptr->name);
@@ -407,12 +403,8 @@ void do_slash_cmd(int Ind, char *message) {
 	else if (prefix(messagelc, "/scream") || prefix(messagelc, "/scr")) {
 		break_cloaking(Ind, 6);
 		if (colon++) {
-			censor_message = TRUE;
-			censor_length = strlen(colon);
 			msg_format_near(Ind, "\374\377%c%^s screams: %s", COLOUR_CHAT, p_ptr->name, colon);
 			msg_format(Ind, "\374\377%cYou scream: %s", COLOUR_CHAT, colon);
-			censor_message = FALSE;
-			handle_punish(Ind, censor_punish);
 		} else {
 			msg_format_near(Ind, "\374\377%cYou hear %s scream!", COLOUR_CHAT, p_ptr->name);
 			msg_format(Ind, "\374\377%cYou scream!", COLOUR_CHAT);
@@ -428,23 +420,21 @@ void do_slash_cmd(int Ind, char *message) {
 			msg_print(Ind, "What do you want to do?");
 			return;
 		}
-		censor_message = TRUE;
-		censor_length = strlen(colon);
+		/* check for genitivum */
+		if (prefix(messagelc, "/sayme'") || prefix(messagelc, "/sme'")) {
+			msg_format_near(Ind, "\374\377%c[%^s%s]", COLOUR_CHAT, p_ptr->name, strchr(message, '\''));
+			msg_format(Ind, "\374\377%c[%^s%s]", COLOUR_CHAT, p_ptr->name, strchr(message, '\''));
+			return;
+		}
 		msg_format_near(Ind, "\374\377%c[%^s %s]", COLOUR_CHAT, p_ptr->name, colon);
 		msg_format(Ind, "\374\377%c[%^s %s]", COLOUR_CHAT, p_ptr->name, colon);
-		censor_message = FALSE;
-		handle_punish(Ind, censor_punish);
 		return;
 // :)		break_cloaking(Ind, 3);
 	}
 	else if (prefix(messagelc, "/say") || (prefix(messagelc, "/s ") || !strcmp(message, "/s"))) {
 		if (colon++) {
-			censor_message = TRUE;
-			censor_length = strlen(colon);
 			msg_format_near(Ind, "\374\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, colon);
 			msg_format(Ind, "\374\377%cYou say: %s", COLOUR_CHAT, colon);
-			censor_message = FALSE;
-			handle_punish(Ind, censor_punish);
 		} else {
 			msg_format_near(Ind, "\374\377%c%s clears %s throat.", COLOUR_CHAT, p_ptr->name, p_ptr->male ? "his" : "her");
 			msg_format(Ind, "\374\377%cYou clear your throat.", COLOUR_CHAT);
@@ -454,12 +444,8 @@ void do_slash_cmd(int Ind, char *message) {
 	}
 	else if (prefix(messagelc, "/whisper") || (prefix(messagelc, "/wh") && !prefix(messagelc, "/who"))) {
 		if (colon++) {
-			censor_message = TRUE;
-			censor_length = strlen(colon);
 			msg_format_verynear(Ind, "\374\377%c%^s whispers: %s", COLOUR_CHAT, p_ptr->name, colon);
 			msg_format(Ind, "\374\377%cYou whisper: %s", COLOUR_CHAT, colon);
-			censor_message = FALSE;
-			handle_punish(Ind, censor_punish);
 		} else
 			msg_print(Ind, "What do you want to whisper?");
 		return;
@@ -2778,14 +2764,11 @@ void do_slash_cmd(int Ind, char *message) {
 				bool bbs_empty = TRUE;
 				/* Look at in-game bbs, instead of "usage" msg above */
 				msg_print(Ind, "\377sBulletin board (type '/bbs <text>' in chat to write something):");
-				censor_message = TRUE;
 				for (i = 0; i < BBS_LINES; i++)
 					if (strcmp(bbs_line[i], "")) {
-						censor_length = strlen(bbs_line[i]) + bbs_line[i] - strchr(bbs_line[i], ':') - 4;
 						msg_format(Ind, "\377s %s", bbs_line[i]);
 						bbs_empty = FALSE;
 					}
-				censor_message = FALSE;
 				if (bbs_empty) msg_print(Ind, "\377s <nothing has been written on the board so far>");
 #endif
 				return;
@@ -2803,11 +2786,7 @@ void do_slash_cmd(int Ind, char *message) {
 			else if (p_ptr->mode & MODE_PVP) a = COLOUR_MODE_PVP;
 			else a = 's';
 
-			censor_message = TRUE;
-			censor_length = strlen(message3);
 			msg_broadcast_format(0, "\374\377s[\377%c%s\377s->BBS]\377W %s", a, p_ptr->name, message3);
-			censor_message = FALSE;
-			handle_punish(Ind, censor_punish);
 			//bbs_add_line(format("%s %s: %s",showtime() + 7, p_ptr->name, message3));
 			bbs_add_line(format("\377s%s \377%c%s\377s:\377W %s",showdate(), a, p_ptr->name, message3));
 			return;

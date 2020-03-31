@@ -1388,7 +1388,13 @@ extern int party_remove(int remover, cptr name);
 extern void party_leave(int Ind, bool voluntarily);
 extern void party_close(int Ind);
 extern void party_msg(int party_id, cptr msg);
+extern void party_msg_ignoring(int sender, int party_id, cptr msg);
 extern void party_msg_format(int party_id, cptr fmt, ...) __attribute__ ((format (printf, 2, 3)));
+extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...) __attribute__ ((format (printf, 3, 4)));
+extern void guild_msg(int guild_id, cptr msg);
+extern void guild_msg_ignoring(int sender, int guild_id, cptr msg);
+extern void guild_msg_format(int guild_id, cptr fmt, ...) __attribute__ ((format (printf, 2, 3)));
+extern void guild_msg_format_ignoring(int sender, int guild_id, cptr fmt, ...) __attribute__ ((format (printf, 3, 4)));
 extern void floor_msg_format(struct worldpos *wpos, cptr fmt, ...) __attribute__ ((format (printf, 2, 3)));
 extern void world_surface_msg(cptr msg);
 extern void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int henc, int henc_top);
@@ -1400,8 +1406,6 @@ extern int guild_remove(int remover, cptr name);
 extern void guild_leave(int Ind, bool voluntarily);
 extern void del_guild(int id);
 extern void guild_timeout(int guild_id);
-extern void guild_msg(int guild_id, cptr msg);
-extern void guild_msg_format(int guild_id, cptr fmt, ...) __attribute__ ((format (printf, 2, 3)));
 extern bool add_hostility(int Ind, cptr name, bool initiator);
 extern bool remove_hostility(int Ind, cptr name);
 extern bool add_ignore(int Ind, cptr name);
@@ -1450,7 +1454,6 @@ extern void rename_character(char *pnames);
 extern void checkexpiry(int Ind, int days);
 extern void account_checkexpiry(int Ind);
 extern void party_check(int Ind);
-extern void party_msg_format_ignoring(int sender, int party_id, cptr fmt, ...) __attribute__ ((format (printf, 3, 4)));
 extern u16b lookup_player_type(int id);
 extern int check_account(char *accname, char *c_name, int *Ind);
 extern void strip_true_arts_from_hashed_players(void);
@@ -1802,8 +1805,7 @@ extern bool merchant_mail_carry(int Ind, int i);
 #endif
 
 /* util.c */
-extern bool suppress_message, censor_message, suppress_boni;
-extern int censor_length, censor_punish;
+extern bool suppress_message, suppress_boni;
 /* The next buffers are for catching the chat */
 extern char last_chat_line[MSG_LEN]; /* What was said */ 
 extern char last_chat_owner[NAME_LEN]; /* Who said it */
@@ -2300,7 +2302,7 @@ extern void lua_fix_skill_chart(int Ind);
 extern void lua_takeoff_costumes(int Ind);
 extern bool lua_is_unique(int r_idx);
 /* only called once, in util.c, referring to new file slash.c */
-extern void do_slash_cmd(int Ind, char *message);
+extern void do_slash_cmd(int Ind, char *message, char *message_uncensored);
 extern int global_luck; /* Global +LUCK modifier for the whole server (change the 'weather' - C. Blue) */
 extern void lua_intrusion(int Ind, char *problem_diz);
 extern bool lua_mimic_eligible(int Ind, int r_idx);
@@ -2512,7 +2514,6 @@ extern bool dungeon_tower[MAX_D_IDX * 2], dungeon_visit_check[MAX_D_IDX * 2];
 extern int dungeon_bonus[MAX_D_IDX * 2];
 #endif
 
-extern bool censor_swearing, censor_swearing_identity;
 extern bool jails_enabled;
 extern bool allow_requesting_estate;
 extern int netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_wpos_z, netherrealm_start, netherrealm_end;

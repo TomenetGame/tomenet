@@ -3053,8 +3053,22 @@ void guild_msg(int guild_id, cptr msg) {
 			msg_print(i, msg);
 	}
 }
+void guild_msg_ignoring(int sender, int guild_id, cptr msg) {
+	int i;
 
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
 
+		if (check_ignore(i, sender))
+			continue;
+
+		/* Check this guy */
+		if (guild_id == Players[i]->guild)
+			msg_print(i, msg);
+	}
+}
 /*
  * Send a formatted message to a guild.
  */
@@ -3073,6 +3087,22 @@ void guild_msg_format(int guild_id, cptr fmt, ...) {
 
 	/* Display */
 	guild_msg(guild_id, buf);
+}
+void guild_msg_format_ignoring(int sender, int guild_id, cptr fmt, ...) {
+	va_list vp;
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	guild_msg_ignoring(sender, guild_id, buf);
 }
 
 /*
@@ -3115,7 +3145,7 @@ void party_msg_format(int party_id, cptr fmt, ...) {
 /*
  * Send a message to everyone in a party, considering ignorance.
  */
-static void party_msg_ignoring(int sender, int party_id, cptr msg) {
+void party_msg_ignoring(int sender, int party_id, cptr msg) {
 	int i;
 
 	/* Check for this guy */

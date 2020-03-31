@@ -4150,7 +4150,6 @@ static int Receive_login(int ind) {
 
 	if (strlen(choice) == 0) { /* we have entered an account name */
 		u32b p_id;
-		bool censor_swearing_tmp = censor_swearing;
 		char tmp_name[ACCOUNTNAME_LEN], tmp_name2[ACCOUNTNAME_LEN];
 		char tmp_name_wide[MAX_CHARS_WIDE];
 
@@ -4262,27 +4261,22 @@ static int Receive_login(int ind) {
 		}
 		WIPE(&acc, struct account);
 
-		/* Check for forbidden names (swearing).
-		   Note: This overrides 'censor_swearing' and is always on! */
-		censor_swearing = censor_swearing_identity;
+		/* Check for forbidden names (swearing): */
+
 		/* Check account name for swearing.. */
 		strcpy(tmp_name, connp->nick);
 		if (handle_censor(tmp_name)) {
-			censor_swearing = censor_swearing_tmp;
 			Destroy_connection(ind, "This account name is not available. Please choose a different name.");
 			return(-1);
 		}
 #if 1		/* Check hostname too for swearing? */
 		strcpy(tmp_name_wide, connp->host);
 		if (handle_censor(tmp_name_wide)) {
-			censor_swearing = censor_swearing_tmp;
 			Destroy_connection(ind, format("Your host name is '%s' which is deemed offensive. Please change it.", connp->host));
 			return(-1);
 		}
 #endif
 		/* (Note: since 'real' name is always replaced by "PLAYER", we don't need to check that one for swearing.) */
-		/* Switch back to normal swearing checking. */
-		censor_swearing = censor_swearing_tmp;
 
 		/* Password obfuscation introduced in pre-4.4.1a client or 4.4.1.1 */
 		if (connp->pass && is_newer_than(&connp->version, 4, 4, 1, 0, 0, 0)) {
@@ -4400,7 +4394,7 @@ static int Receive_login(int ind) {
 
 	} else if (connp->password_verified) { /* we have entered a character name */
 		int check_account_reason = 0, err_Ind;
-		bool censor_swearing_tmp = censor_swearing, took_reservation = FALSE;
+		bool took_reservation = FALSE;
 		char tmp_name[CHARACTERNAME_LEN];
 
 #if 0
@@ -4431,16 +4425,12 @@ static int Receive_login(int ind) {
 			return(-1);
 		}
 
-		/* Check for forbidden names (swearing).
-		   Note: This overrides 'censor_swearing' and is always on! */
-		censor_swearing = censor_swearing_identity;
+		/* Check for forbidden names (swearing). */
 		strcpy(tmp_name, choice);
 		if (handle_censor(tmp_name)) {
-			censor_swearing = censor_swearing_tmp;
 			Destroy_connection(ind, "This character name is not available. Please choose a different name.");
 			return(-1);
 		}
-		censor_swearing = censor_swearing_tmp;
 
 		/* check if player tries to use one of the temporarily reserved character names */
 		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
@@ -12228,14 +12218,11 @@ static int Receive_raw_key(int ind) {
 				case '!':
 					/* Look at in-game bbs - C. Blue */
 					msg_print(player, "\377wBulletin board (type '/bbs <text>' in chat to write something) :");
-					censor_message = TRUE;
 					for (n = 0; n < BBS_LINES; n++)
 						if (strcmp(bbs_line[n], "")) {
-							censor_length = strlen(bbs_line[i]) + bbs_line[i] - strchr(bbs_line[i], ':') - 4;
 							msg_format(player, "\377s %s", bbs_line[n]);
 							bbs_empty = FALSE;
 						}
-					censor_message = FALSE;
 					if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
 					break;
 //					return 1; /* consume no energy/don't disturb character (resting mode) */
@@ -12408,14 +12395,11 @@ static int Receive_BBS(int ind) {
 	if (p_ptr) {
 		/* Look at in-game bbs - C. Blue */
 		msg_print(player, "\377sBulletin board (type '/bbs <text>' in chat to write something):");
-		censor_message = TRUE;
 		for (n = 0; n < BBS_LINES; n++)
 			if (strcmp(bbs_line[n], "")) {
-				censor_length = strlen(bbs_line[n]) + bbs_line[n] - strchr(bbs_line[n], ':') - 4;
 				msg_format(player, "\377s %s", bbs_line[n]);
 				bbs_empty = FALSE;
 			}
-		censor_message = FALSE;
 		if (bbs_empty) msg_print(player, "\377s <nothing has been written on the board so far>");
 		return 2; /* consume no energy/don't disturb character (resting mode) */
 	} else if (p_ptr) {

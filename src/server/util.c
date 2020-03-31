@@ -2566,8 +2566,7 @@ bool check_guard_inscription( s16b quark, char what ) {
  * XXX XXX XXX Note that "msg_print(NULL)" will clear the top line
  * even if no messages are pending.  This is probably a hack.
  */
-bool suppress_message = FALSE, censor_message = FALSE, suppress_boni = FALSE;
-int censor_length = 0, censor_punish = 0;
+bool suppress_message = FALSE, suppress_boni = FALSE;
 
 void msg_print(int Ind, cptr msg_raw) {
 	char msg_dup[MSG_LEN], *msg = msg_dup;
@@ -2596,14 +2595,6 @@ void msg_print(int Ind, cptr msg_raw) {
 	if (msg_raw == NULL) return;
 
 	strcpy(msg_dup, msg_raw); /* in case msg_raw was constant */
-	/* censor swear words? */
-	if (censor_message) {
-		/* skip the name of the sender, etc. */
-		censor_punish = handle_censor(msg + strlen(msg) - censor_length);
-		/* we just needed to get censor_punish at least once, above.
-		   Now don't really censor the string if the player doesn't want to.. */
-		if (!Players[Ind]->censor_swearing) strcpy(msg_dup, msg_raw);
-	}
 
 	/* marker for client: add message to 'chat-only buffer', not to 'nochat buffer' */
 	if (msg[0] == '\375') {
@@ -3622,32 +3613,32 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 		j = 0;
 		add = 0; /* track duplicte chars */
 
-#ifdef GET_MOST_DELAYED_MATCH
+ #ifdef GET_MOST_DELAYED_MATCH
 		/* if we already got a match and the test of the upfollowing
 		   position is negative, take that match, since we still want
 		   to get all occurances eventually, not just the last one. */
 		if (bufs[j] != bufl[i + j + add] && best) return best;
-#endif
+ #endif
 
 		while (bufs[j] == bufl[i + j + add]) {
 			if (bufs[j + 1] == '\0') {
 				*eff_len = j + add + 1;
-#ifndef GET_MOST_DELAYED_MATCH
+ #ifndef GET_MOST_DELAYED_MATCH
 				return &line[i]; /* FOUND */
-#else
+ #else
 				best = &line[i];
 				break;
-#endif
+ #endif
 			}
 			j++;
 
 			/* end of line? */
 			if (bufl[i + j + add] == '\0')
-#ifndef GET_MOST_DELAYED_MATCH
+ #ifndef GET_MOST_DELAYED_MATCH
 				return (char*)NULL; /* NOT FOUND */
-#else
+ #else
 				return best;
-#endif
+ #endif
 
 			/* reduce duplicate chars */
 			if (bufs[j] != bufl[i + j + add]) {
@@ -3658,11 +3649,11 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 		/* NOT FOUND so far */
 		i++;
 	}
-#ifndef GET_MOST_DELAYED_MATCH
+ #ifndef GET_MOST_DELAYED_MATCH
 	return (char*)NULL; /* NOT FOUND */
-#else
+ #else
 	return best;
-#endif
+ #endif
 }
 
 /* Censor swear words while keeping good words, and determining punishment level */
@@ -3679,22 +3670,22 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
 #define EXEMPT_VSHORT_COMBINED		/* Exempt very short swear words if they're part of a bigger 'word'?
 					   //(Problem: They could just be preceeded by 'the' or 'you' w/o a space) -
 					   //practically unfeasible (~1250+ words!) to utilize nonswear list for this ([enabled]) */
-#ifdef EXEMPT_VSHORT_COMBINED
- #define VSHORT_STEALTH_CHECK		/* Perform a check if the swear word is masked by things like 'the', 'you', 'a(n)'.. */
-#endif
+ #ifdef EXEMPT_VSHORT_COMBINED
+  #define VSHORT_STEALTH_CHECK		/* Perform a check if the swear word is masked by things like 'the', 'you', 'a(n)'.. */
+ #endif
 #define SMARTER_NONSWEARING		/* Match single spaces inside nonswearing words with any amount of consecutive insignificant characters in the chat */
 static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce) {
 	int i, j, k, offset, cc[MSG_LEN], pos, eff_len;
 	char line[MSG_LEN];
 	char *word, l0, l1, l2, l3;
 	int level = 0;
-#ifdef VSHORT_STEALTH_CHECK
+ #ifdef VSHORT_STEALTH_CHECK
 	bool masked;
-#endif
-#ifdef HEC_RESTRICTION
+ #endif
+ #ifdef HEC_RESTRICTION
 	char repeated = 0;
 	bool hec_seq = FALSE, ok1 = FALSE, ok2 = FALSE, ok3 = FALSE;
-#endif
+ #endif
 
 	/* create working copies */
 	strcpy(line, buf);
@@ -3703,15 +3694,15 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 
 	/* replace certain non-alpha chars by alpha chars (leet speak detection)? */
 	if (leet) {
-#ifdef HIGHLY_EFFECTIVE_CENSOR
+ #ifdef HIGHLY_EFFECTIVE_CENSOR
 		bool is_leet = FALSE, was_leet;
-#endif
+ #endif
 		i = 0;
 		while (lcopy[i]) {
-#ifdef HIGHLY_EFFECTIVE_CENSOR
+ #ifdef HIGHLY_EFFECTIVE_CENSOR
 			was_leet = is_leet;
 			is_leet = TRUE;//(i != 0);//meaning 'i > 0', for efficiency
-#endif
+ #endif
 
 			/* NOTE: If HIGHLY_EFFECTIVE_CENSOR is on, we must here replace any non-alpha character by an alpha-character as placeholder,
 			   for any non-alpha character that is considered relevant for disturbing a swear-word.
@@ -3719,7 +3710,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			   resulting in "(20k" becoming "(0k" and therefore "cok" triggering "cock" swearing. ^^
 			   A special exception for "(0k)" could be added to nonswearing word list I guess. */
 
-			/* keep table of leet chars consistent with the one in censor() */
+			/* keep table of leet chars consistent with the one in handle_censor() */
 			switch (lcopy[i]) {
 			case '@': lcopy[i] = 'a'; break;
 			case '<': lcopy[i] = 'c'; break;
@@ -3748,7 +3739,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			case '/': lcopy[i] = 'i'; break; // l prob: "mana/" -> mANAL :-p
 			case '\\': lcopy[i] = 'i'; break;
 
-#ifdef HIGHLY_EFFECTIVE_CENSOR
+ #ifdef HIGHLY_EFFECTIVE_CENSOR
 			/* hack: Actually _counter_ the capabilities of highly-effective
 			   censoring being done further below after this. Reason:
 			   Catch numerical expressions that probably aren't l33t sp34k,
@@ -3762,17 +3753,17 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 					/* replace by, say 'x' (harmless^^) (Note: Capital character doesn't work, gets filtered out futher below */
 					lcopy[i] = 'x';
 				break;
-#else
+ #else
 			default:
 				lcopy[i] = ' ';
- #if 0 /* nonsense, because nonswearing isn't applied after this anymore, but was long before in censor() already! */
+  #if 0 /* nonsense, because nonswearing isn't applied after this anymore, but was long before in handle_censor() already! */
 				lcopy[i] = '~'; /* ' ' is usually in use in nonswearing.txt,
 				    so it would need to be removed there whenever we turn off HIGHLY_EFFECTIVE_CENSOR
 				    and put back in when we reenable it. Using a non-used character instead of SPACE
 				    is therefore a much more comfortable way. */
- #endif
+  #endif
 				break;
-#endif
+ #endif
 			}
 
 			line[cc[i]] = lcopy[i];
@@ -3780,7 +3771,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 		}
 	}
 
-#ifdef REDUCE_H_CONSONANT
+ #ifdef REDUCE_H_CONSONANT
 	/* reduce 'h' before consonant */
 	//TODO: do HIGHLY_EFFECTIVE_CENSOR first probably
 	i = j = 0;
@@ -3840,16 +3831,16 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	/* ensure the reduced string is possibly terminated earlier */
 	lcopy[i] = '\0';
 	cc[i] = 0;
-#endif
+ #endif
 
-#ifdef HIGHLY_EFFECTIVE_CENSOR
+ #ifdef HIGHLY_EFFECTIVE_CENSOR
 	/* check for non-alpha chars and _drop_ them (!) */
 	i = j = 0;
 	while (lcopy[j]) {
 		/* non-alphanum symbol? */
 		if ((lcopy[j] < 'a' || lcopy[j] > 'z') &&
 		    lcopy[j] != 'Z') {
- #ifdef HEC_RESTRICTION
+  #ifdef HEC_RESTRICTION
 			/* new sequence to look ahead into? */
 			if (!hec_seq) {
 				hec_seq = TRUE;
@@ -3878,15 +3869,15 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 				j++;
 				continue;
 			}
- #else
+  #else
 			/* cut them out */
 			j++;
 			continue;
- #endif
+  #endif
 		}
- #ifdef HEC_RESTRICTION
+  #ifdef HEC_RESTRICTION
 		else hec_seq = FALSE;
- #endif
+  #endif
 
 		/* modify index map for stripped string */
 		cc[i] = cc[j];
@@ -3897,7 +3888,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 	/* ensure the reduced string is possibly terminated earlier */
 	lcopy[i] = '\0';
 	cc[i] = 0;
-#endif
+ #endif
 
 	/* reduce repeated chars (>3 for consonants, >2 for vowel) */
 	i = j = 0;
@@ -3968,7 +3959,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			/* prevent checking the same occurance repeatedly */
 			offset = pos + 1;
 
-#ifdef EXEMPT_BROKEN_SWEARWORDS
+ #ifdef EXEMPT_BROKEN_SWEARWORDS
 			/* hm, maybe don't track swear words if proceeded and postceeded by some other letters
 			   and separated by spaces inside it -- and if those nearby letters aren't the same letter,
 			   if someone just duplicates it like 'sshitt' */
@@ -3976,10 +3967,10 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			if (cc[pos] > 0 &&
 			    l1 >= 'a' && l1 <= 'z' &&
 			    (l1 != l0 || strlen(swear[i].word) <= 3)) {
-#ifdef EXEMPT_VSHORT_COMBINED
+  #ifdef EXEMPT_VSHORT_COMBINED
 				/* special treatment for swear words of <= 3 chars length: */
 				if (strlen(swear[i].word) <= 3) {
- #ifdef VSHORT_STEALTH_CHECK
+   #ifdef VSHORT_STEALTH_CHECK
 					/* check for masking by 'the', 'you', 'a(n)' etc. */
 					masked = TRUE;
 					if (cc[pos] == 1 || cc[pos] == 2) {
@@ -4016,9 +4007,9 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 					}
 				    /* so if it is already determined by now to be a masked swear word, skip the vshort-exemption-checks */
 				    if (!masked) {
- #endif
+   #endif
 
- #if 0 /* softened this up, see below */
+   #if 0 /* softened this up, see below */
 					/* if there's UP TO 2 other chars before it or exactly 1 non-duplicate char, it's exempt.
 					   (for more leading chars, nonswear has to be used.) */
 					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
@@ -4039,7 +4030,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 					}
 					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
 					//TODO maybe - or just use nonswear for that
- #else
+   #else
 					/* if there's at least 2 other chars before it, which aren't both duplicates, or
 					   if there's exactly 1 non-duplicate char before it, it's exempt. */
 					if (cc[pos] == 1 && l1 >= 'a' && l1 <= 'z' && l1 != l0) continue;
@@ -4052,12 +4043,12 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 					}
 					/* if there's no char before it but 2 other chars after it or 1 non-dup after it, it's exempt. */
 					//TODO maybe - or just use nonswear for that
- #endif
- #ifdef VSHORT_STEALTH_CHECK
+   #endif
+   #ifdef VSHORT_STEALTH_CHECK
 				    }
- #endif
+   #endif
 				}
-#endif
+  #endif
 
 				/* check that the swear word occurance was originally non-continuous, ie separated by space etc.
 				   (if this is FALSE then this is rather a case for nonswearwords.txt instead.) */
@@ -4073,18 +4064,18 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 					continue;
 				}
 			}
-#endif
+ #endif
 
 			/* we can skip ahead */
 			offset = pos + strlen(swear[i].word);
 
-#if 0
+ #if 0
 			/* censor it! */
 			for (j = 0; j < eff_len); j++) {
 				line[cc[pos + j]] = buf[cc[pos + j]] = '*';
 				lcopy[pos + j] = '*';
 			}
-#else
+ #else
 			/* actually censor separator chars too, just so it looks better ;) */
 			for (j = 0; j < eff_len - 1; j++) {
 				for (k = cc[pos + j]; k <= cc[pos + j + 1]; k++)
@@ -4097,44 +4088,45 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			}
 			/* see right above - MUST be disabled: */
 			//lcopy[pos + j] = '*';
-#endif
+ #endif
 
-#if 1 //for debugging only
+ #if 1 //for debugging only
 			s_printf("SWEARING: Matched '%s'\n", swear[i].word);
-#endif
+ #endif
 			level = MAX(level, swear[i].level);
 		}
 	}
 	return(level);
 }
 
-static int censor(char *line) {
+/* Check for swear words, censor + punish */
+int handle_censor(char *line) {
 	int i, j, im, jm, cc[MSG_LEN], offset;
-#ifdef CENSOR_LEET
+ #ifdef CENSOR_LEET
 	int j_pre = 0, cc_pre[MSG_LEN];
-#endif
+ #endif
 	char lcopy[MSG_LEN], lcopy2[MSG_LEN];
 	char tmp1[MSG_LEN], tmp2[MSG_LEN], tmp3[MSG_LEN], tmp4[MSG_LEN];
 	char *word;
 
-#ifdef SMARTER_NONSWEARING
+ #ifdef SMARTER_NONSWEARING
 	/* non-swearing extra check (reduces insignificant characters) */
 	bool reduce;
 	char ccns[MSG_LEN];
-#endif
+ #endif
 
 	strcpy(lcopy, line);
 
-#if 1	/* extra: also apply non-swearing in advance here, for exact matching (ie case-sensitive, non-alphanum, etc) */
+ #if 1	/* extra: also apply non-swearing in advance here, for exact matching (ie case-sensitive, non-alphanum, etc) */
 	/* Maybe todo: Also apply nonswear to lcopy2 (the non-reduced version of lcopy) afterwards */
 	for (i = 0; nonswear[i][0]; i++) {
- #ifndef HIGHLY_EFFECTIVE_CENSOR
+  #ifndef HIGHLY_EFFECTIVE_CENSOR
 		/* hack! If HIGHLY_EFFECTIVE_CENSOR is NOT enabled, skip all nonswearing-words that contain spaces!
 		   This is done because those nonswearing-words are usually supposed to counter wrong positives
 		   from HIGHLY_EFFECTIVE_CENSOR, and will lead to false negatives when it is disabled xD
 		   (eg: 'was shit' chat with "as sh" non-swear)  - C. Blue */
 		//if (strchr(nonswear[i], ' ')) continue; -- not here, in later application of non-swear yes
- #endif
+  #endif
 
 		offset = 0;
 		/* check for multiple occurrances of this nonswear word */
@@ -4164,7 +4156,7 @@ static int censor(char *line) {
 				lcopy[(word - lcopy) + j] = 'Z';
 		}
 	}
-#endif
+ #endif
 
 	/* special expressions to exempt: '@S...<.>blabla': '@S-.shards' -> '*****hards' :-p */
 	if ((word = strstr(lcopy, "@S"))) {
@@ -4223,7 +4215,7 @@ static int censor(char *line) {
 	lcopy[i] = '\0';
 	cc[i] = 0;
 
-#ifdef CENSOR_PH_TO_F
+ #ifdef CENSOR_PH_TO_F
 	/* reduce ph to f */
 	i = j = 0;
 	while (lcopy[j]) {
@@ -4244,9 +4236,9 @@ static int censor(char *line) {
 	}
 	lcopy[i] = '\0';
 	cc[i] = 0;
-#endif
+ #endif
 
-#ifdef REDUCE_DUPLICATE_H
+ #ifdef REDUCE_DUPLICATE_H
 	/* reduce hh to h */
 	i = j = 0;
 	while (lcopy[j]) {
@@ -4264,9 +4256,9 @@ static int censor(char *line) {
 	}
 	lcopy[i] = '\0';
 	cc[i] = 0;
-#endif
+ #endif
 
-#ifdef CENSOR_LEET
+ #ifdef CENSOR_LEET
 	/* special hardcoded case: variants of '455hole' leet-speak */
 	j = 0;
 	for (i = 0; i < strlen(lcopy); i++) {
@@ -4308,24 +4300,24 @@ static int censor(char *line) {
 				j_pre = swear[i].level;
 				/* if it was to get censored, do so */
 				if (j_pre) {
- #if 0
+  #if 0
 					for (offset = cc_pre[word - lcopy2]; offset <= cc_pre[(word - lcopy2) + 5]; offset++)
 						lcopy[offset] = '*';
- #endif
+  #endif
 					for (offset = cc[cc_pre[word - lcopy2]]; offset <= cc[cc_pre[(word - lcopy2) + 5]]; offset++)
 						line[offset] = '*';
 				}
 				break;
 			}
 		}
-#endif
+ #endif
 
 	/* check for legal words first */
 	//TODO: could be moved into censor_aux and after leet speek conversion, to allow leet speeking of non-swear words (eg "c00k")
 	strcpy(lcopy2, lcopy); /* use a 'working copy' to allow _overlapping_ nonswear words --- since we copy it below anyway, we don't need to create a working copy here */
 	/*TODO!!! non-split swear words should take precedence over split-up non-swear words: "was shit" -> "as sh" is 'fine'.. BEEP!
 	  however, this can be done by disabling HIGHLY_EFFECTIVE_CENSORING and enabling EXEMPT_BROKEN_SWEARWORDS as a workaround. */
-#ifdef SMARTER_NONSWEARING
+ #ifdef SMARTER_NONSWEARING
 	/* Replace insignificant symbols by spaces and reduce consecutive spaces to one */
 	reduce = FALSE;
 	j = 0;
@@ -4341,12 +4333,12 @@ static int censor(char *line) {
 		/* insignificant characters only, that won't break leet speak detection in censor_aux() if we filter them out here */
 		case '"':
 		case '\'':
- #if 1 /* need better way, but perfect solution impossible? ^^ -- for now benefit of doubt (these COULD be part of swearing): */
+  #if 1 /* need better way, but perfect solution impossible? ^^ -- for now benefit of doubt (these COULD be part of swearing): */
 		case '(':
 		case ')':
 		case '/':
 		case '\\':
- #endif
+  #endif
 			if (reduce) continue;
 			reduce = TRUE;
 			lcopy[j] = ' ';
@@ -4361,17 +4353,17 @@ static int censor(char *line) {
 		}
 	}
 	lcopy[j] = 0;
-#endif
+ #endif
 //s_printf("ns: '%s'  '%s'\n", lcopy, lcopy2); //DEBUG
 	/* Maybe todo: Also apply nonswear to lcopy2 (the non-reduced version of lcopy) afterwards */
 	for (i = 0; nonswear[i][0]; i++) {
-#ifndef HIGHLY_EFFECTIVE_CENSOR
+ #ifndef HIGHLY_EFFECTIVE_CENSOR
 		/* hack! If HIGHLY_EFFECTIVE_CENSOR is NOT enabled, skip all nonswearing-words that contain spaces!
 		   This is done because those nonswearing-words are usually supposed to counter wrong positives
 		   from HIGHLY_EFFECTIVE_CENSOR, and will lead to false negatives when it is disabled xD
 		   (eg: 'was shit' chat with "as sh" non-swear)  - C. Blue */
 		if (strchr(nonswear[i], ' ')) continue;
-#endif
+ #endif
 
 		offset = 0;
 		/* check for multiple occurrances of this nonswear word */
@@ -4395,15 +4387,15 @@ static int censor(char *line) {
 			}
 
 			/* prevent it from getting tested for swear words */
-#ifdef SMARTER_NONSWEARING
+ #ifdef SMARTER_NONSWEARING
 			im = ccns[word - lcopy];
 			jm = ccns[word - lcopy + strlen(nonswear[i]) - 1];
 			for (j = im; j <= jm; j++)
 				lcopy2[j] = 'Z';
-#else
+ #else
 			for (j = 0; j < strlen(nonswear[i]); j++)
 				lcopy2[(word - lcopy) + j] = 'Z';
-#endif
+ #endif
 		}
 	}
 
@@ -4415,34 +4407,34 @@ static int censor(char *line) {
 	strcpy(lcopy, lcopy2);
 	i = censor_aux(tmp1, lcopy, cc, FALSE, FALSE); /* continue with normal check */
 	strcpy(lcopy, lcopy2);
-#ifdef CENSOR_LEET
+ #ifdef CENSOR_LEET
 	j = censor_aux(tmp2, lcopy, cc, TRUE, FALSE); /* continue with leet speek check */
 	if (j_pre > j) j = j_pre; //pre-calculated special case
 	strcpy(lcopy, lcopy2);
-#else
+ #else
 	j = 0;
-#endif
+ #endif
 	im = censor_aux(tmp3, lcopy, cc, FALSE, TRUE); /* continue with normal check */
 	strcpy(lcopy, lcopy2);
-#ifdef CENSOR_LEET
+ #ifdef CENSOR_LEET
 	jm = censor_aux(tmp4, lcopy, cc, TRUE, TRUE); /* continue with leet speek check */
-#else
+ #else
 	jm = 0;
-#endif
+ #endif
 
 	/* combine all censored characters */
 	for (offset = 0; tmp1[offset]; offset++)
 		if (tmp1[offset] == '*') line[offset] = '*';
-#ifdef CENSOR_LEET
+ #ifdef CENSOR_LEET
 	for (offset = 0; tmp2[offset]; offset++)
 		if (tmp2[offset] == '*') line[offset] = '*';
-#endif
+ #endif
 	for (offset = 0; tmp3[offset]; offset++)
 		if (tmp3[offset] == '*') line[offset] = '*';
-#ifdef CENSOR_LEET
+ #ifdef CENSOR_LEET
 	for (offset = 0; tmp4[offset]; offset++)
 		if (tmp4[offset] == '*') line[offset] = '*';
-#endif
+ #endif
 
 	/* return 'worst' result */
 	if (j > i) i = j;
@@ -4450,7 +4442,24 @@ static int censor(char *line) {
 	if (jm > i) i = jm;
 	return i;
 }
+
+/* Handle punishment after running handle_censor() to determine the severity of a swearing word =p */
+void handle_punish(int Ind, int level) {
+	switch (level) {
+	case 0:
+		break;
+	case 1:
+		msg_print(Ind, "Please do not swear.");
+		break;
+	default:
+		imprison(Ind, level * JAIL_SWEARING, "swearing");
+	}
+}
+#else
+int handle_censor(char *line) return 0;
+void handle_punish(int Ind, int level) return 0;
 #endif
+
 
 /*
  * A message prefixed by a player name is sent only to that player.
@@ -4469,10 +4478,10 @@ static int censor(char *line) {
 static void player_talk_aux(int Ind, char *message) {
 	int i, len, target = 0, target_raw_len = 0;
 	char search[MSG_LEN], sender[MAX_CHARS];
-	char message2[MSG_LEN];
+	char message2[MSG_LEN], message_uncensored[MSG_LEN];
 	player_type *p_ptr = NULL, *q_ptr;
 	char *colon;
-	bool me = FALSE, me_gen = FALSE, log = TRUE, nocolon = FALSE;
+	bool rp_me = FALSE, rp_me_gen = FALSE, log = TRUE, nocolon = FALSE;
 	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
 #ifdef KURZEL_PK
 	char c_b = 'B';
@@ -4480,10 +4489,13 @@ static void player_talk_aux(int Ind, char *message) {
 	int mycolor = 0;
 	bool admin = FALSE;
 	bool broadcast = FALSE;
-
+	bool slash_command = FALSE, slash_command_chat = FALSE, slash_command_censorable = FALSE;
+	char messagelc[MSG_LEN];
 #ifdef TOMENET_WORLDS
 	char tmessage[MSG_LEN];		/* TEMPORARY! We will not send the name soon */
 #endif
+	int censor_punish = 0;
+
 
 	if (!Ind) {
 		console_talk_aux(message);
@@ -4674,9 +4686,30 @@ static void player_talk_aux(int Ind, char *message) {
 		}
 	}
 
+	strcpy(messagelc, message);
+	i = 0;
+	while (messagelc[++i]) messagelc[i] = tolower(messagelc[i]);
+
+	/* Special - shutdown command (for compatibility) */
+	if (prefix(message, "@!shutdown") && admin) {
+		/*world_reboot();*/
+		shutdown_server();
+		return;
+	}
+
+	/* '%:' at the beginning sends to self - mikaelh */
+	if ((strlen(message) >= 2) && (message[0] == '%') && (message[1] == ':')) {
+		/* prevent buffer overflow */
+		message[MSG_LEN - 1 + 2 - 8] = 0;
+		/* Send message to self */
+		msg_format(Ind, "\377o<%%>\377w %s", message + 2);
+		/* Done */
+		return;
+	}
+
 	/* don't log spammy slash commands */
-	if (prefix(message, "/untag ")
-	    || prefix(message, "/dis"))
+	if (prefix(messagelc, "/untag ")
+	    || prefix(messagelc, "/dis"))
 		log = FALSE;
 
 	/* no big brother */
@@ -4700,25 +4733,36 @@ static void player_talk_aux(int Ind, char *message) {
 		} else p_ptr->last_chat_line_cnt++;
 	}
 
-	/* Special - shutdown command (for compatibility) */
-	if (prefix(message, "@!shutdown") && admin) {
-		/*world_reboot();*/
-		shutdown_server();
-		return;
-	}
+	/* -- Finished pre-processing of the message far enough that it can be checked for swear words now,
+	      as the only thing left to pre-process is whether it's a slash command or direct chat. -- */
 
-	if (message[0] == '/' ){
-		if (!strncmp(message, "/me ", 4)) me = TRUE;
-		else if (!strncmp(message, "/me's", 4)) me = me_gen = TRUE;
-		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
+	if (message[0] == '/' ) {
+		if (!strncmp(messagelc, "/me ", 4)) rp_me = TRUE;
+		else if (!strncmp(messagelc, "/me'", 3)) rp_me = rp_me_gen = TRUE;
+		else if (!strncmp(messagelc, "/broadcast ", 11)) broadcast = TRUE;
 		else {
-			do_slash_cmd(Ind, message);	/* add check */
-			return;
+			slash_command = TRUE;
+			/* Is it a slash command that results in actual chat readable by others? */
+			if (prefix(messagelc, "/sho") || prefix(messagelc, "/yell") || prefix(messagelc, "/scr")
+			    || prefix(messagelc, "/sayme") || prefix(messagelc, "/sme")
+			    || prefix(messagelc, "/say") || prefix(messagelc, "/s ")
+			    || (prefix(messagelc, "/wh") && !prefix(messagelc, "/who"))
+			    || prefix(messagelc, "/afk")
+			    /* || prefix(messagelc, "/pnote") || prefix(messagelc, "/gnote") */
+			    || prefix(messagelc, "/note") || prefix(messagelc, "/bbs")
+			    /* || prefix(messagelc, "/pbbs") || prefix(messagelc, "/gbbs") */
+			    )
+				slash_command_chat = TRUE;
+			/* Is it a slash command that results in actual output readable by others? */
+			if (prefix(messagelc, "/info")
+			    || prefix(messagelc, "/tag") || prefix(messagelc, "/t ")
+			    )
+				slash_command_censorable = TRUE;
 		}
 	}
 
 #ifndef ARCADE_SERVER
-	if (!colon) p_ptr->msgcnt++; /* !colon -> only prevent spam if not in party/private chat */
+	if (!colon && (!slash_command || slash_command_chat)) p_ptr->msgcnt++; /* !colon -> only prevent spam if not in party/private chat */
 	if (p_ptr->msgcnt > 12) {
 		time_t last = p_ptr->msg;
 		time(&p_ptr->msg);
@@ -4745,12 +4789,34 @@ static void player_talk_aux(int Ind, char *message) {
 		if (p_ptr->msg - last > 240 && p_ptr->spam) p_ptr->spam--;
 		p_ptr->msgcnt = 0;
 	}
-	if (p_ptr->spam > 1 || p_ptr->muted) return;
+	if (p_ptr->spam > 1 || p_ptr->muted) {
+		/* still allow slash commands that don't output anything readble by others */
+		if (!slash_command || slash_command_chat /* || slash_command_censorable */)
+			return;
+	}
 #endif
-	process_hooks(HOOK_CHAT, "d", Ind);
+	if (!slash_command || slash_command_chat) process_hooks(HOOK_CHAT, "d", Ind);
 
 	if (++p_ptr->talk > 10) {
 		imprison(Ind, JAIL_SPAM, "talking too much.");
+		return;
+	}
+
+	if (!slash_command || slash_command_chat || slash_command_censorable) {
+		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
+		strcpy(message_uncensored, message);
+		/* Censor and get level of punishment. (Note: This if/else isn't really needed, we could just censor the complete message always..) */
+		if (!slash_command) censor_punish = handle_censor(message); /* For chat, censor the complete message. */
+		/* For commands, we can skip the actual command, just in caaaase part of the command somehow mixes up with the message to false-positive-trigger the censor check oO (paranoia?) */
+		else censor_punish = handle_censor(rp_me ? message + 4 : strchr(message, ' '));
+		/* The actual handle_punish() will be called right before returning from this function, so it appears _after_
+		   the censored (or uncensored, depending on the receiving player's setting) output has been displayed,
+		   not now, as that would be the wrong visual order. */
+	}
+
+	if (slash_command) {
+		do_slash_cmd(Ind, message, message_uncensored);
+		handle_punish(Ind, censor_punish);
 		return;
 	}
 
@@ -4759,6 +4825,8 @@ static void player_talk_aux(int Ind, char *message) {
 		Players[i]->talk = 0;
 	}
 
+
+	/* -- Finished pre-processing of the message. Now it IS a message and it is to be sent to some target user/group. -- */
 
 
 	/* Special function '!:' at beginning of message sends to own party - sorry for hack, C. Blue */
@@ -4784,10 +4852,10 @@ static void player_talk_aux(int Ind, char *message) {
 			message[MSG_LEN - 1 - 7 - strlen(sender) - strlen(parties[target].name)] = 0;
 			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2);
 #endif
-			//party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 1);
 		}
 
 		/* Done */
+		handle_punish(Ind, censor_punish);
 		return;
 	}
 
@@ -4805,15 +4873,10 @@ static void player_talk_aux(int Ind, char *message) {
 			msg_print(Ind, "You aren't in a dungeon or tower.");
 #else /* Darkie's idea: */
 			if (*(message + 2)) {
-				censor_message = TRUE;
-				censor_length = strlen(message + 2);
-
 				/* prevent buffer overflow */
 				message[MSG_LEN - 1 + 2 - strlen(p_ptr->name) - 9] = 0;
 				msg_format_near(Ind, "\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message + 2);
 				msg_format(Ind, "\377%cYou say: %s", COLOUR_CHAT, message + 2);
-
-				censor_message = FALSE;
 				handle_punish(Ind, censor_punish);
 			} else {
 				msg_format_near(Ind, "\377%c%s clears %s throat.", COLOUR_CHAT, p_ptr->name, p_ptr->male ? "his" : "her");
@@ -4825,27 +4888,11 @@ static void player_talk_aux(int Ind, char *message) {
 
 		/* Send message to target floor */
 		if (p_ptr->mutedchat < 2) {
-			censor_message = TRUE;
-			censor_length = strlen(message + 2);
-
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 + 2 - strlen(sender) - 6] = 0;
 			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\375\377%c[%s] %s", COLOUR_CHAT_LEVEL, sender, message + 2);
-
-			censor_message = FALSE;
 			handle_punish(Ind, censor_punish);
 		}
-
-		/* Done */
-		return;
-	}
-
-	/* '%:' at the beginning sends to self - mikaelh */
-	if ((strlen(message) >= 2) && (message[0] == '%') && (message[1] == ':') && (colon)) {
-		/* prevent buffer overflow */
-		message[MSG_LEN - 1 + 2 - 8] = 0;
-		/* Send message to self */
-		msg_format(Ind, "\377o<%%>\377w %s", message + 2);
 
 		/* Done */
 		return;
@@ -4891,15 +4938,16 @@ static void player_talk_aux(int Ind, char *message) {
 #ifdef GROUP_CHAT_NOCLUTTER
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 + 2 - strlen(sender) - 16] = 0;
-			guild_msg_format(p_ptr->guild, "\375\377y[\377%c(G) %s\377y]\377%c %s", COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
+			guild_msg_format_ignoring(Ind, p_ptr->guild, "\375\377y[\377%c(G) %s\377y]\377%c %s", COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
 #else
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 + 2 - strlen(sender) - strlen(guilds[p_ptr->guild].name) - 18] = 0;
-			guild_msg_format(p_ptr->guild, "\375\377y[\377%c%s\377y:\377%c%s\377y]\377%c %s", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name, COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
+			guild_msg_format_ignoring(Ind, p_ptr->guild, "\375\377y[\377%c%s\377y:\377%c%s\377y]\377%c %s", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name, COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
 #endif
 		}
 
 		/* Done */
+		handle_punish(Ind, censor_punish);
 		return;
 	}
 
@@ -4950,6 +4998,7 @@ static void player_talk_aux(int Ind, char *message) {
 				if (!strlen(p_ptr->reply_name))
 					strcpy(p_ptr->reply_name, w_player->name);
 
+				handle_punish(Ind, censor_punish);
 				return;
 			}
 		}
@@ -5036,6 +5085,7 @@ static void player_talk_aux(int Ind, char *message) {
 #endif
 
 			exec_lua(0, "chat_handler()");
+			handle_punish(Ind, censor_punish);
 			return;
 		} else {
 #if 1 /* keep consistent with paging */
@@ -5046,7 +5096,8 @@ static void player_talk_aux(int Ind, char *message) {
 		}
 	}
 
-	/* Send to appropriate party */
+	/* Send to appropriate party - only available to admins if not actually a member of party
+	   Hm, maybe this stuff could just be deleted, could maybe unnecessarily interfere with private messaging, if player has similar name as a party?.. */
 	if (len && target < 0) {
 		/* Can't send msg to party from 'outside' as non-admin */
 		if (p_ptr->party != 0 - target && !admin) {
@@ -5065,8 +5116,6 @@ static void player_talk_aux(int Ind, char *message) {
 		party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, colon);
 #endif
 
-		//party_msg_format_ignoring(Ind, 0 - target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[0 - target].name, sender, colon);
-
 		/* Also send back to sender if not in that party */
 		if (!player_in_party(0 - target, Ind)) {
 			msg_format(Ind, "\375\377%c[%s:%s] %s",
@@ -5076,6 +5125,7 @@ static void player_talk_aux(int Ind, char *message) {
 		exec_lua(0, "chat_handler()");
 
 		/* Done */
+		handle_punish(Ind, censor_punish);
 		return;
 	}
 
@@ -5110,17 +5160,12 @@ static void player_talk_aux(int Ind, char *message) {
 	if (admin) c_b = 'b';
 #endif
 
-
-	censor_message = TRUE;
-
 #ifdef TOMENET_WORLDS
 	if (broadcast) {
 		/* prevent buffer overflow */
 		message[MSG_LEN - 1 - strlen(sender) - 12 + 11] = 0;
-
 		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
-		censor_length = strlen(message + 11);
-	} else if (!me) {
+	} else if (!rp_me) {
 		/* prevent buffer overflow */
 		message[MSG_LEN - 1 - strlen(sender) - 8 + mycolor] = 0;
 
@@ -5129,19 +5174,15 @@ static void player_talk_aux(int Ind, char *message) {
  #else
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message + mycolor);
  #endif
-		censor_length = strlen(message + mycolor);
 	} else {
 		/* Why not... */
 		if (strlen(message) > 4) mycolor = (prefix(&message[4], "}") && (color_char_to_attr(*(message + 5)) != -1)) ? 2 : 0;
-		else {
-			censor_message = FALSE;
-			return;
-		}
+		else return;
 		if (mycolor) c_n = message[5];
 
 		/* prevent buffer overflow */
 		message[MSG_LEN - 1 - strlen(sender) - 10 + 4 + mycolor] = 0;
-		if (me_gen) {
+		if (rp_me_gen) {
  #ifndef KURZEL_PK
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s%s]", c_n, sender, message + 3 + mycolor);
  #else
@@ -5153,7 +5194,6 @@ static void player_talk_aux(int Ind, char *message) {
  #else
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4 + mycolor, c_b);
  #endif
-			censor_length = strlen(message + 4 + mycolor) + 1;
 		}
 	}
 
@@ -5195,14 +5235,10 @@ static void player_talk_aux(int Ind, char *message) {
 		if (broadcast) {
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - strlen(sender) - 12 + 11] = 0;
-
-			censor_length = strlen(message + 11);
 			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
-		} else if (!me) {
+		} else if (!rp_me) {
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - strlen(sender) - 12 + mycolor] = 0;
-
-			censor_length = strlen(message + mycolor);
  #ifndef KURZEL_PK
 			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
  #else
@@ -5213,28 +5249,28 @@ static void player_talk_aux(int Ind, char *message) {
 		else {
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - strlen(sender) - 1 + 4] = 0;
-
-			censor_length = strlen(message + 4);
-			if (me_gen)
-				msg_format(i, "%s%s", sender, message + 3);
-			else
-				msg_format(i, "%s %s", sender, message + 4);
+			if (rp_me_gen) msg_format(i, "%s%s", sender, message + 3);
+			else msg_format(i, "%s %s", sender, message + 4);
 		}
 	}
 #endif
 
-	censor_message = FALSE;
 	p_ptr->warning_chat = 1;
-	handle_punish(Ind, censor_punish);
+
+	/* go to jail as a visitor */
+	if (my_strcasestr(message, "please jail me")) imprison(Ind, JAIL_VISIT, "no reaon");
+	if (my_strcasestr(message, "i want to go to jail")) imprison(Ind, JAIL_VISIT, "no reaon");
+	if (my_strcasestr(message, "i would like to go to jail")) imprison(Ind, JAIL_VISIT, "no reaon");
+	if (my_strcasestr(message, "i'd like to go to jail")) imprison(Ind, JAIL_VISIT, "no reaon");
 
 	exec_lua(0, "chat_handler()");
-
+	handle_punish(Ind, censor_punish);
 }
 /* Console talk is automatically sent by 'Server Admin' which is treated as an admin */
 static void console_talk_aux(char *message) {
  	int i;
 	cptr sender = "Server Admin";
-	bool me = FALSE, log = TRUE;
+	bool rp_me = FALSE, log = TRUE;
 	char c_n = 'y'; /* colours of sender name and of brackets (unused atm) around this name */
 #ifdef KURZEL_PK
 	char c_b = 'y';
@@ -5263,7 +5299,7 @@ static void console_talk_aux(char *message) {
 	}
 
 	if (message[0] == '/' ) {
-		if (!strncmp(message, "/me ", 4)) me = TRUE;
+		if (!strncmp(message, "/me ", 4)) rp_me = TRUE;
 		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
 		else return;
 	}
@@ -5273,26 +5309,21 @@ static void console_talk_aux(char *message) {
 		Players[i]->talk = 0;
 	}
 
-	censor_message = TRUE;
-
 #ifdef TOMENET_WORLDS
 	if (broadcast) {
 		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
-		censor_length = strlen(message + 11);
-	} else if (!me) {
+	} else if (!rp_me) {
 #ifndef KURZEL_PK
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message);
 #else
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message);
 #endif
-		censor_length = strlen(message);
 	} else {
 #ifndef KURZEL_PK
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4);
 #else
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4, c_b);
 #endif
-		censor_length = strlen(message + 4);
 	}
 
 #else
@@ -5302,45 +5333,17 @@ static void console_talk_aux(char *message) {
 
 		/* Send message */
 		if (broadcast) {
-			censor_length = strlen(message + 11);
 			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
-		} else if (!me) {
-			censor_length = strlen(message);
+		} else if (!rp_me) {
 #ifndef KURZEL_PK
 			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message);
 #else
 			msg_format(i, "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message);
 #endif
-		}
-		else {
-			censor_length = strlen(message + 4);
-			msg_format(i, "%s %s", sender, message + 4);
-		}
+		} else msg_format(i, "%s %s", sender, message + 4);
 	}
 #endif
-
-	censor_message = FALSE;
-
 	exec_lua(0, "chat_handler()");
-}
-
-/* Check for swear words, censor + punish */
-int handle_censor(char *message) {
-#ifdef CENSOR_SWEARING
-	if (censor_swearing) return censor(message);
-#endif
-	return 0;
-}
-void handle_punish(int Ind, int level) {
-	switch (level) {
-	case 0:
-		break;
-	case 1:
-		msg_print(Ind, "Please do not swear.");
-		break;
-	default:
-		imprison(Ind, level * JAIL_SWEARING, "swearing");
-	}
 }
 
 /* toggle AFK mode off if it's currently on, also reset idle time counter for in-game character.
@@ -5545,6 +5548,11 @@ bool is_a_vowel(int ch) {
  * returns 0 if not found/error(, minus value if party.)
  *
  * if 'party' is TRUE, party name is also looked up.
+ * This is only used for 3 things:
+ * 1) Declaring hostility to a whole party
+ * 2) Ignoring a whole party
+ * 3) Sending a message to a party (only possible from outside for admins)
+ * NOTE: Now that we have guilds too, this might be deprecated kind of? Or should be extended in all 3 points for guilds too?..hmm
  */
 int name_lookup_loose(int Ind, cptr name, u16b party, bool include_account_names, bool quiet) {
 	int i, j, len, target = 0;
