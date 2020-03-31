@@ -9809,6 +9809,7 @@ void process_timers() {
 					}
 				}
 
+				//moar monsters: 196 (wolf), 313 (uruk), 278 (frost giant), 563 (y r dragon), 547 (mumak), 609 (baron of hell)
 				if (timer_pvparena3 == 0) { /* prepare first cycle */
 					y = 1;
 					x = (1 * 10) - 3;
