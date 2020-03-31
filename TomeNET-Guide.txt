@@ -6145,6 +6145,8 @@ The 1..9 are standard shops, namely..
                         pay you in return for accepting it.
                         Several towns have a subsidiary, you can globally
                         access your bank account and mail from any of those.
+                        (Of course, should your character die permanently then
+                        its account balance will be erased too.)
 
                         Explanation of the mail system's details:
 
