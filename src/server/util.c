@@ -3674,7 +3674,7 @@ static char* censor_strstr(char *line, char *word, int *eff_len) {
   #define VSHORT_STEALTH_CHECK		/* Perform a check if the swear word is masked by things like 'the', 'you', 'a(n)'.. */
  #endif
 #define SMARTER_NONSWEARING		/* Match single spaces inside nonswearing words with any amount of consecutive insignificant characters in the chat */
-static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce) {
+static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce, bool no_logging) {
 	int i, j, k, offset, cc[MSG_LEN], pos, eff_len;
 	char line[MSG_LEN];
 	char *word, l0, l1, l2, l3;
@@ -4089,9 +4089,8 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 			/* see right above - MUST be disabled: */
 			//lcopy[pos + j] = '*';
  #endif
-
  #if 1 //for debugging only
-			s_printf("SWEARING: Matched '%s'\n", swear[i].word);
+			if (!no_logging) s_printf("SWEARING: Matched '%s' (%d)\n", swear[i].word, swear[i].level);
  #endif
 			level = MAX(level, swear[i].level);
 		}
@@ -4405,19 +4404,19 @@ int handle_censor(char *line) {
 	strcpy(tmp3, line);
 	strcpy(tmp4, line);
 	strcpy(lcopy, lcopy2);
-	i = censor_aux(tmp1, lcopy, cc, FALSE, FALSE); /* continue with normal check */
+	i = censor_aux(tmp1, lcopy, cc, FALSE, FALSE, FALSE); /* continue with normal check */
 	strcpy(lcopy, lcopy2);
  #ifdef CENSOR_LEET
-	j = censor_aux(tmp2, lcopy, cc, TRUE, FALSE); /* continue with leet speek check */
+	j = censor_aux(tmp2, lcopy, cc, TRUE, FALSE, i); /* continue with leet speek check */
 	if (j_pre > j) j = j_pre; //pre-calculated special case
 	strcpy(lcopy, lcopy2);
  #else
 	j = 0;
  #endif
-	im = censor_aux(tmp3, lcopy, cc, FALSE, TRUE); /* continue with normal check */
+	im = censor_aux(tmp3, lcopy, cc, FALSE, TRUE, i || j); /* continue with normal check */
 	strcpy(lcopy, lcopy2);
  #ifdef CENSOR_LEET
-	jm = censor_aux(tmp4, lcopy, cc, TRUE, TRUE); /* continue with leet speek check */
+	jm = censor_aux(tmp4, lcopy, cc, TRUE, TRUE, i || j || im); /* continue with leet speek check */
  #else
 	jm = 0;
  #endif
