@@ -13614,7 +13614,10 @@ bool imprison(int Ind, u16b time, char *reason) {
 	cave_type **zcave, **nzcave;
 	struct worldpos old_wpos;
 
-	s_printf("IMPRISON: '%s' (+%d for '%s') ", p_ptr->name, time, reason);
+	s_printf("IMPRISON: '%s' (%d+%d for '%s') ", p_ptr->name, p_ptr->tim_susp, time, reason);
+
+	/* prevent overflow =p */
+	if (65535 - time < p_ptr->tim_susp) time = 65535 - p_ptr->tim_susp;
 
 	/* Can't jail ghosts */
 	if (p_ptr->ghost) {
@@ -13860,7 +13863,6 @@ bool master_player(int Ind, char *parms){
 	case 'B':
 		/* This could be fun - be wise dungeon master */
 		sprintf(buf, "\375\377r[\377%c%s\377r]\377%c %s", 'b', p_ptr->name, COLOUR_CHAT, &parms[1]); /* admin colour 'b' */
-		censor_length = 0;
 		msg_broadcast(0, buf);
 #ifdef TOMENET_WORLDS
 		if (cfg.worldd_broadcast) world_chat(0, buf);
