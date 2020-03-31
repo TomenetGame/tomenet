@@ -12071,8 +12071,8 @@ usual.
 
 Items that provide wraithform are:
 -Spectral weapons ('A' to activate them for temporary wraithform).
--Ethereal Dragon Scale Mail and Death Dragon Scale Mail (just wear it and you
- obtain wraithform until you take it off again).
+-Ethereal Dragon Scale Mail (just wear it and you obtain wraithform until you
+ take it off again).
 
 There is a confirmation message when using the Wraithform spell:
 "You turn into a wraith!" when you attain wraithform.
@@ -12082,6 +12082,9 @@ Wraithform is very powerful since it allows you to move around the dungeon
 without having to follow its room/passages structure, making it easy to pick
 encounters or loot items you detected on the ground via detection magic,
 and to escape dangerous situations easily (just retreat into walls).
+
+Note that it can be dangerous for melee classes to go AFK while in wraithform,
+because wraithform might impair auto-retaliation.
 
 
 
