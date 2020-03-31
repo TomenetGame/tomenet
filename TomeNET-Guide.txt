@@ -9593,10 +9593,10 @@ This is a magical whip. Magical, because its damage is enchanted to +3.
 It doesn't possess any further special abilities.
 
 Example 2:
-A Fiery Whip of Gondolin {+,24} (1d6) (+8,+11) (+3)
+A Fiery Whip of Gondolin {+,24} (1d6) (+8,+13) (+3)
 This is an ego-weapon ('of Gondolin') with a fire brand ('Fiery'). The
 base weapon type is a whip which makes it belong to the blunt weapons.
-Its to-hit and to-damage are magically enchanted to +8 and +11.
+Its to-hit and to-damage are magically enchanted to +8 and +13.
 Gondolin weapons increase strength and constitution (here +3).
 
 Ego-items or excellent magical items often have varying abilities.
@@ -19786,7 +19786,7 @@ HOW IT WORKS ON JEWELRY:
 
 -In general, it's not a good idea to try to turn a ring or amulet that
 has high bonus numbers into an artifact, like for example a ring of speed
-(+11) because these numbers will get erased and randomly re-rolled. Your great
+(+9) because these numbers will get erased and randomly re-rolled. Your great
 speed ring will not get more than +7 speed as a randart, much likely less, so
 speed rings in particular are very poor targets for artifact creation.
 So if you want to use the scroll on say a ring of extra attacks, you should
@@ -19797,8 +19797,8 @@ ring of extra attacks.
 However... read on:
 
 -On jewelry (+to-hit,+to-dam) and [+AC] will stay the same, for example a ring
-of slaying (+10,+15) will keep the (+10,+15) and an Amulet of Reflection [+11]
-will keep the [+11] to AC when turned into a randart.
+of slaying (+10,+15) will keep the (+10,+15) and an Amulet of Reflection [+13]
+will keep the [+13] to AC when turned into a randart.
 (Any dice (xdy) as well as _base_ AC [x,+0] on jewelry will always become 0,
 but there is currently no jewelry in the game that has damage dice or base AC.)
 
