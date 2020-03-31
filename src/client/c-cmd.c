@@ -1546,7 +1546,7 @@ void cmd_the_guide(void) {
 #endif
 	int i;
 	char *res;
-	bool search_uppercase = FALSE, fallback = FALSE;
+	bool search_uppercase = FALSE, search_uppercase_ok, fallback = FALSE;
 
 	/* empty file? */
 	if (guide_lastline == -1) return;
@@ -2475,11 +2475,14 @@ void cmd_the_guide(void) {
 
 			/* Hack: If we enter all upper-case, search for exactly that, case sensitively */
 			search_uppercase = TRUE;
+			search_uppercase_ok = FALSE;
 			for (c = 0; search[c]; c++) {
+				if (!search_uppercase_ok && isalpha(search[c])) search_uppercase_ok = TRUE;
 				if (search[c] == toupper(search[c])) continue;
 				search_uppercase = FALSE;
 				break;
 			}
+			if (!search_uppercase_ok) search_uppercase = FALSE; /* must contain at least 1 (upper-case) letter */
 
 			strcpy(lastsearch, search);
 			searchline = line - 1; //init searchline for string-search
