@@ -1546,7 +1546,7 @@ void cmd_the_guide(void) {
 #endif
 	int i;
 	char *res;
-	bool search_uppercase = FALSE;
+	bool search_uppercase = FALSE, fallback = FALSE;
 
 	/* empty file? */
 	if (guide_lastline == -1) return;
@@ -1566,6 +1566,26 @@ void cmd_the_guide(void) {
 	Term_save();
 
 	while (TRUE) {
+		/* We just wanted to do a chapter search which resulted a hard-coded substitution that isn't a real chapter but instead falls back to normal search? */
+		if (fallback) {
+			strcpy(search, buf);
+			fallback = FALSE;
+
+			/* Hack: Perform a normal search */
+
+			line_before_search = line;
+			line_presearch = line;
+			/* Skip the line we're currently in, start with the next line actually */
+			line++;
+			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
+			if (line < 0) line = 0;
+
+			search_uppercase = FALSE;
+
+			strcpy(lastsearch, search);
+			searchline = line - 1; //init searchline for string-search
+		}
+
 		if (!skip_redraw) Term_clear();
 		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
 		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
@@ -1973,34 +1993,17 @@ void cmd_the_guide(void) {
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
 				/* Expand 'pxx' and 'Pxx' to 'PROBLEM xx' */
-				if ((buf[0] == 'p' || buf[0] == 'P') && buf[1] >= '0' && buf[1] <= '9') {
-					strcpy(tmpbuf, "PROBLEM ");
-					strcat(tmpbuf, format("%s", atoi(buf + 1)));
+				if ((buf[0] == 'p' || buf[0] == 'P') && buf[1] && buf[1] >= '0' && buf[1] <= '9') {
+					sprintf(tmpbuf, format("PROBLEM %d:", atoi(buf + 1)));
 					strcpy(buf, tmpbuf);
-					strcat(buf, ":");
+					fallback = TRUE;
+					continue;
 				}
 
 				/* Misc chapters, hardcoded: */
 				if (strcasestr(buf, "instan")) { /* mustn't overlap with 'install' */
 					strcpy(buf, "Temple  ");
-
-					/* Hack: The temple is actually not a real chapter, so we must also switch back to normal search */
-					strcpy(search, buf);
-
-					line_before_search = line;
-					line_presearch = line;
-					/* Skip the line we're currently in, start with the next line actually */
-					line++;
-					if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
-					if (line < 0) line = 0;
-
-					search_uppercase = FALSE;
-
-					strcpy(lastsearch, search);
-					searchline = line - 1; //init searchline for string-search
-
-					/* Hack done */
-
+					fallback = TRUE;
 					continue;
 				}
 
