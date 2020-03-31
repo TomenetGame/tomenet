@@ -1992,6 +1992,43 @@ void cmd_the_guide(void) {
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
+				/* The chapter explaining 'stats' is actually titled 'Attributes' */
+				if (!strcasecmp(buf, "stats") || !strcasecmp(buf, "stat")) strcpy(buf, "Attributes");
+				/* Also allow directly jumping to any attribute */
+				if (!strcasecmp(buf, "str") || !strcasecmp(buf, "strength")) {
+					strcpy(buf, "Strength (STR)");
+					fallback = TRUE;
+					continue;
+				}
+				if (!strcasecmp(buf, "int") || !strcasecmp(buf, "intelligence")) {
+					strcpy(buf, "Intelligence (INT)");
+					fallback = TRUE;
+					continue;
+				}
+				if (!strcasecmp(buf, "wis") || !strcasecmp(buf, "wisdom")) {
+					strcpy(buf, "Wisdom (WIS)");
+					fallback = TRUE;
+					continue;
+				}
+				if (!strcasecmp(buf, "dex") || !strcasecmp(buf, "dexterity")) {
+					strcpy(buf, "Dexterity (DEX)");
+					fallback = TRUE;
+					continue;
+				}
+				if (!strcasecmp(buf, "con") || !strcasecmp(buf, "constitution")) {
+					strcpy(buf, "Constitution (CON)");
+					fallback = TRUE;
+					continue;
+				}
+				if (!strcasecmp(buf, "chr") || !strcasecmp(buf, "charisma")) {
+					strcpy(buf, "Charisma (CHR)");
+					fallback = TRUE;
+					continue;
+				}
+
+				/* Make searches for abilities not end up in 'probability travel'.. */
+				if (strcasestr(buf, "abi") == buf) strcpy(buf, "Abilities");
+
 				/* Expand 'pxx' and 'Pxx' to 'PROBLEM xx' */
 				if ((buf[0] == 'p' || buf[0] == 'P') && buf[1] && buf[1] >= '0' && buf[1] <= '9') {
 					sprintf(tmpbuf, format("PROBLEM %d:", atoi(buf + 1)));
@@ -2507,25 +2544,26 @@ void cmd_the_guide(void) {
 			Term_clear();
 			Term_putstr(23,  0, -1, TERM_L_BLUE, "[The Guide - navigation keys]");
 			Term_putstr( 0,  2, -1, TERM_WHITE, "At the bottom of the guide screen you will see the following line:");
-			Term_putstr( 8,  4, -1, TERM_L_BLUE, ",Space/n,p,Enter,Back,ESC; s,d,D/f,S,c,# srch,nxt,prv,reset,chapter,line");
-			Term_putstr( 0,  4, -1, TERM_YELLOW, "'?' Help");
-			Term_putstr( 0,  6, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
-			Term_putstr( 0,  7, -1, TERM_WHITE, "  Space or 'n':    Move down by one page");
-			Term_putstr( 0,  8, -1, TERM_WHITE, "  'p'         :    Move up by one page");
-			Term_putstr( 0,  9, -1, TERM_WHITE, "  's'         :    Search for a text string (use all upper-case for strict mode)");
-			Term_putstr( 0, 10, -1, TERM_WHITE, "  'd'         :    ..after 's', this jumps to the next match");
-			Term_putstr( 0, 11, -1, TERM_WHITE, "  'D' or 'f'  :    ..after 's', this jumps to the previous match");
-			Term_putstr( 0, 12, -1, TERM_WHITE, "  'S'         :    ..resets screen to where you were before you did a search.");
-			Term_putstr( 0, 13, -1, TERM_WHITE, "  'c'         :    Chapter Search. This is a special search that will skip most");
-			Term_putstr( 0, 14, -1, TERM_WHITE, "                   basic text and only match specific topics and keywords.");
-			Term_putstr( 0, 15, -1, TERM_WHITE, "                   Use this when searching for races, classes, skills, spells,");
-			Term_putstr( 0, 16, -1, TERM_WHITE, "                   schools, techniques, dungeons, bosses, events, lineages,");
-			Term_putstr( 0, 17, -1, TERM_WHITE, "                   depths, stair types, or actual chapter titles or indices.");
-			Term_putstr( 0, 18, -1, TERM_WHITE, "  '#'         :    Jump to a specific line number.");
-			Term_putstr( 0, 19, -1, TERM_WHITE, "  ESC         :    The Escape key will exit the guide screen.");
-			Term_putstr( 0, 20, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
-			Term_putstr( 0, 21, -1, TERM_WHITE, "PgUp/PgDn/Home/End should work both on the main keyboard and the number pad.");
-			Term_putstr( 0, 22, -1, TERM_WHITE, "This might depend on your specific OS flavour and desktop environment though.");
+			Term_putstr( 8,  3, -1, TERM_L_BLUE, ",Space/n,p,Enter,Back,ESC; s,d,D/f,S,c,# srch,nxt,prv,reset,chapter,line");
+			Term_putstr( 0,  3, -1, TERM_YELLOW, "'?' Help");
+			Term_putstr( 0,  4, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
+			Term_putstr( 0,  5, -1, TERM_WHITE, "  Space or 'n':    Move down by one page");
+			Term_putstr( 0,  6, -1, TERM_WHITE, "  'p'         :    Move up by one page");
+			Term_putstr( 0,  7, -1, TERM_WHITE, "  's'         :    Search for a text string (use all upper-case for strict mode)");
+			Term_putstr( 0,  8, -1, TERM_WHITE, "  'd'         :    ..after 's', this jumps to the next match");
+			Term_putstr( 0,  9, -1, TERM_WHITE, "  'D' or 'f'  :    ..after 's', this jumps to the previous match");
+			Term_putstr( 0, 10, -1, TERM_WHITE, "  'S'         :    ..resets screen to where you were before you did a search.");
+			Term_putstr( 0, 11, -1, TERM_WHITE, "  'c'         :    Chapter Search. This is a special search that will skip most");
+			Term_putstr( 0, 12, -1, TERM_WHITE, "                   basic text and only match specific topics and keywords.");
+			Term_putstr( 0, 13, -1, TERM_WHITE, "                   Use this when searching for races, classes, skills, spells,");
+			Term_putstr( 0, 14, -1, TERM_WHITE, "                   schools, techniques, dungeons, bosses, events, lineages,");
+			Term_putstr( 0, 15, -1, TERM_WHITE, "                   depths, stair types, or actual chapter titles or indices.");
+			Term_putstr( 0, 16, -1, TERM_WHITE, "  '#'         :    Jump to a specific line number.");
+			Term_putstr( 0, 17, -1, TERM_WHITE, "  ESC         :    The Escape key will exit the guide screen.");
+			Term_putstr( 0, 18, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
+			Term_putstr( 0, 19, -1, TERM_WHITE, "PgUp/PgDn/Home/End should work both on the main keyboard and the number pad.");
+			Term_putstr( 0, 20, -1, TERM_WHITE, "This might depend on your specific OS flavour and desktop environment though.");
+			Term_putstr( 0, 21, -1, TERM_WHITE, "Searching for all-caps only gives results in caps and at the start of a line.");
 			Term_putstr(23, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
 			inkey();
 			continue;
