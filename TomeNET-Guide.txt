@@ -30,6 +30,7 @@ Contents
 --------
 (0) Quickstart (If you don't like to read much :)
     (0.1)   Start & play, Character validation
+    (0.1a)  Colour blindness
     (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
     (0.2b)  Slash command reference
@@ -392,6 +393,35 @@ a name will indicate an 'invalid' account.
 
 You could continue reading at (3.2) now, which explains the user interface,
 or glance at (7.1), (7.2) or (7.3) first which explain some basic strategy.
+
+
+(0.1a)  Colour blindness
+------------------------
+You can modify the colours freely by editing the game's config file:
+On Windows OS that is TomeNET.ini (in your TomeNET folder) and on Linux and
+OS X that is .tomenetrc (in your user's home folder).
+
+The settings in these files are called 'Colormap_N=#xxxxxx' in TomeNET.ini and
+'colormap_N #xxxxxx' in .tomenetrc, where N is an index from 0 to 15 as TomeNET
+uses 16 different colours, and xxxxxx is a hexadecimal code where the first two
+digits determine the amount of 'red', the middle two the amount of 'green' and
+the last two the amount of 'blue'.
+
+Two-digit hexadecimal numbers go from 00 to ff instead of the decimal numbers'
+range which goes from 00 to 99. Basically, hex doesn't stop at 9 but at '15';
+'a' = 10, 'b' = 11, 'c' = 12, 'd' = 13, 'e' = 14, 'f' = 15.
+Also, '10' in hex does not mean ten, but sixteen (in our decimal system)!
+So a hex number #00001c means:  1 x 16  +  12  =  28.
+However, you don't really need to know all of this just to modify the colour
+values. Just now that after 99 the next higher step is 9a, up to 9f, and then
+the next is a0, with the maximum value being ff (which is 255 in decimal).
+
+When modifying the colour table in the config file, you can test the results in
+the game by logging in and typing the "/col" command in chat. It will display
+a table of all colours for you to check how they look like.
+
+Note that the colourmap entry #0 is fixed and cannot be changed, it is always
+#000000 aka black (no red + no green + no blue).
 
 
 
@@ -1010,6 +1040,10 @@ They all start with a slash '/' hence they're called slash commands:
 /coin       Flip a coin to get either heads or tails.
  or /flip   The result is random and can be seen by other players who stand
             nearby.
+
+/colours    Display all available colours for testing purpose, for example when
+ /colors    you are editing your Colormap_ entries in TomeNET.ini or colormap_
+ /col       entries in .tomenetrc respectively and want to test how it looks.
 
 /shuffle [32|52 <jokers>]
             Prepares a new deck of cards.
@@ -12059,32 +12093,41 @@ recharging, just don't go too crazy with the stacks size.
 
 (5.22) Wraithform
 -----------------
-Wraithform, or "pass wall" form is a character state obtained from the spell
-"Wraithform" (Udun school) or from certain items (either spectral weapons or
-items that give permanent wraithform: "It renders you incorporeal").
-It allows a character to pass through solid walls easily, but at the same time
-prevents them from attacking anything else in close combat, except if the
-target is also able to pass walls (ie possesses wraithform too, or is actually
-a ghost or other monster that can pass through walls).
-Also, spells cast while in wraithform will only deal half as much damage as
-usual.
+Wraithform, or "pass wall" form is a character state obtained by spell or item:
+-Spectral weapons ('A' to activate one for temporary wraithform).
+-Ethereal Dragon Scale Mail (just wear it and you obtain wraithform permanently
+ until you take it off again).
+-The artifact 'Spectral Shard' ('A' to activate it for temporary wraithform).
+-Wraithform spell (Udun school)
+-Wraithstep spell (Unlife school)
 
-Items that provide wraithform are:
--Spectral weapons ('A' to activate them for temporary wraithform).
--Ethereal Dragon Scale Mail (just wear it and you obtain wraithform until you
- take it off again).
+Items that permanently give you wraithform tell you on inspection:
+ "It renders you incorporeal").
 
 There is a confirmation message when using the Wraithform spell:
-"You turn into a wraith!" when you attain wraithform.
-"You lose your wraith powers." when your wraithform runs out.
+"You turn into a wraith!"       when you attain wraithform.
+"You lose your wraith powers."  when your wraithform spell runs out or
+                                when your environment hinders your wraithform
+                                powers!
+The latter happens in those types of vaults that prevent teleportation and can
+be very dangerous, as you might find yourself suddenly stuck and unable to
+escape quickly, if at all..
 
 Wraithform is very powerful since it allows you to move around the dungeon
 without having to follow its room/passages structure, making it easy to pick
 encounters or loot items you detected on the ground via detection magic,
 and to escape dangerous situations easily (just retreat into walls).
 
-Note that it can be dangerous for melee classes to go AFK while in wraithform,
-because wraithform might impair auto-retaliation.
+but at the same time wraithform prevents you from attacking anything else in
+close combat, except if the target is also able to pass walls (ie possesses
+wraithform too, or is actually a ghost or other monster that can pass through
+walls).
+For this reason it can be dangerous for melee classes to go AFK while in
+wraithform, because you will no longer melee-auto-retaliate against most kind
+of attackers..
+
+Last but not least, spells cast while in wraithform will only deal half as much
+damage as usual, even if the target is in wraithform too.
 
 
 
@@ -21199,5 +21242,10 @@ PROBLEM 59: On OS X when I run TomeNET.command file, nothing happens, or when
 Solution:   TomeNET requires X11 to run in windowed mode. To provide X11 on
             OS X, install 'XQuartz' and run the 'TomeNET.command' file from
             within it.
+
+PROBLEM 60: Editing the Colormap_0 entry (TomeNET.ini) or colormap_0 entry
+            (.tomenetrc) doesn't do anything, no matter which colour I choose.
+Solution:   Indeed the entry #0 cannot be changed and is always black ie
+            #000000. All other entries are freely modifiable though.
 
 ==============================================================================
