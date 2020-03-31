@@ -1972,6 +1972,14 @@ void cmd_the_guide(void) {
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
+				/* Expand 'pxx' and 'Pxx' to 'PROBLEM xx' */
+				if ((buf[0] == 'p' || buf[0] == 'P') && buf[1] >= '0' && buf[1] <= '9') {
+					strcpy(tmpbuf, "PROBLEM ");
+					strcat(tmpbuf, format("%s", atoi(buf + 1)));
+					strcpy(buf, tmpbuf);
+					strcat(buf, ":");
+				}
+
 				/* Misc chapters, hardcoded: */
 				if (strcasestr(buf, "instan")) { /* mustn't overlap with 'install' */
 					strcpy(buf, "Temple  ");

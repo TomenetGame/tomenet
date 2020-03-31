@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. March 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 31. March 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -675,7 +675,7 @@ H       CTRL+G  re-apply client-side and (if 'auto_inscribe' option is enabled)
 CTRL+U  CTRL+F  Displays/exits the audio mixer settings. (Also see (2.1a).)
                 Note: Mixer settings are saved automatically, provided you use
                 CTRL+Q to quit.
-                (Compare troubleshooting section (8.8), problem 21.)
+                (Compare troubleshooting section (8.8), PROBLEM 22.)
 
                 Here you can set audio volume for sound effects and music or
                 mute them separately. The hotkeys for muting work outside of
@@ -1266,7 +1266,7 @@ They all start with a slash '/' hence they're called slash commands:
                         attention. (Using /ignore on a player will also
                         prevent getting paged by him.)
                         If you're on Linux and not hearing the page sounds,
-                        see problem 19 in the troubleshooting section (8.8).
+                        see PROBLEM 20 in the troubleshooting section (8.8).
 
 /ppage, /gpage    These will toggle paging you when you're AFK and a party or a
                   guild member respectively joins the server.
@@ -2582,7 +2582,7 @@ Enter the 'tomenet/' folder and type:
         ./tomenet
 to start the game.
 
-If you get a font-related error ("Font not found: 9x15") please see PROBLEM 55
+If you get a font-related error ("Font not found: 9x15") please see PROBLEM 56
 in chapter Troubleshooting (8.8).
 
 
@@ -2626,7 +2626,7 @@ Go up one level into your 'tomenet/' folder. There type:
         ./tomenet
 to start the game.
 
-If you get a font-related error ("Font not found: 9x15") please see PROBLEM 55
+If you get a font-related error ("Font not found: 9x15") please see PROBLEM 56
 in chapter Troubleshooting (8.8).
 
 
@@ -2946,7 +2946,7 @@ rogue-like key map (or use CTRL+C to toggle music and CTRL+N to toggle the
 master mixer on/off, CTRL+V instead of CTRL+N on rogue-like key map).
 
 Note: Mixer settings are saved automatically, provided you use CTRL+Q to quit.
-(Compare troubleshooting section (8.8), problem 21.)
+(Compare troubleshooting section (8.8), PROBLEM 22.)
 
 Also be sure to press '=' key to have a look at the audio options.
 
@@ -20408,9 +20408,9 @@ that give extra attacks and would apply to both scenarios.
 ---------------------
 Note: Some of these problems are deprecated and don't exist in this form or at
 all anymore. Some messages might also vary slightly.
-For trouble with lagging out or freezing up, see PROBLEM 25 and 28.
+For trouble with lagging out or freezing up, see PROBLEM 26 and 29.
 
-PROBLEM 00: I am behind a firewall. What ports do I need to open in order to
+PROBLEM 1:  I am behind a firewall. What ports do I need to open in order to
             play TomeNET?
 SOLUTION:   If you want to connect directly to a specific server by specifying
             its address via command-line or config file, you only need to allow
@@ -20428,7 +20428,7 @@ SOLUTION:   If you want to connect directly to a specific server by specifying
             proxy server (on either the firewall machine or your PC at home or
             any other PC outside. Ask google for info about how to do that).
 
-PROBLEM 01: I don't get to see a server list when I start TomeNET.
+PROBLEM 2:  I don't get to see a server list when I start TomeNET.
             Instead, I am immediately asked for account and password.
 SOLUTION:   This is a typical problem on Windows XP. There are 3
             possible fixes:
@@ -20445,7 +20445,7 @@ SOLUTION:   This is a typical problem on Windows XP. There are 3
              specifying "HOST=europe.tomenet.eu".
              Or you can even give the IP address "HOST=37.187.75.24".
 
-PROBLEM 02: I get to a server list, but it doesn't show any servers. It just
+PROBLEM 3:  I get to a server list, but it doesn't show any servers. It just
             says 'Press Q to enter a server manually' and that's it.
 SOLUTION:   There are 2 possible solutions.
             -There is currently no public TomeNET server running. That can
@@ -20460,7 +20460,7 @@ SOLUTION:   There are 2 possible solutions.
              or (if that doesn't work either) directly to its IP adress:
              37.187.75.24
 
-PROBLEM 03: When I start TomeNET I don't see anything except a small hollow
+PROBLEM 4:  When I start TomeNET I don't see anything except a small hollow
             yellow rectangle (the cursor). All windows stay black. It seems
             that the cursor reacts to my inputs by printing out some black
             hence invisible text.
@@ -20475,7 +20475,7 @@ SOLUTION:   A rare problem that is not caused by TomeNET really, but usually
             your Windows user account out and then back in right away.
             (This usually only happens once, after updating the client.)
 
-PROBLEM 04: All windows _except for the main window_ stay empty / stay blank.
+PROBLEM 5:  All windows _except for the main window_ stay empty / stay blank.
 SOLUTION:   First make sure it's really a bug and not just missing window
             settings: Press '=' key and 'w' key and configure your windows
             appropriately. It is vital to set one of the windows to display
@@ -20492,7 +20492,7 @@ SOLUTION:   First make sure it's really a bug and not just missing window
             Also, you could adjust the width/height of the windows (to 80x24
             for example). Try other fonts too, maybe they work for you.
 
-PROBLEM 05: I cannot browse (some) spell books, I see some LUA error messages
+PROBLEM 6:  I cannot browse (some) spell books, I see some LUA error messages
             if I try or when I connect to the server.
 SOLUTION:   Your LUA script files are outdated. Those files are responsible
             for any spell-casting and some other things.
@@ -20505,8 +20505,8 @@ SOLUTION:   Your LUA script files are outdated. Those files are responsible
             Note: There was a bug in client 4.4.8, preventing it from auto-
             updating LUA files, which was fixed in 4.4.8a and higher again.
 
-PROBLEM 06: TomeNET seems to freeze up while playing. (Also see PROBLEM 25 and
-            28, which offer different solutions for similar issues!)
+PROBLEM 7:  TomeNET seems to freeze up while playing. (Also see PROBLEM 26 and
+            29, which offer different solutions for similar issues!)
 SOLUTION:   This can happen if your latency is relatively high and many
             messages are transported between the server and your client.
             In fact it's just your display that freezes up. In that state
@@ -20517,8 +20517,8 @@ SOLUTION:   This can happen if your latency is relatively high and many
             override the old connection, making your client quit with
             "resume connection" message.
 
-PROBLEM 07: I am disconnected during gameplay. (Note: If it seems to be a
-            lag-out or freeze problem, also see PROBLEM 25 and 28!)
+PROBLEM 8:  I am disconnected during gameplay. (Note: If it seems to be a
+            lag-out or freeze problem, also see PROBLEM 26 and 29!)
 SOLUTION:   This can have several reasons. On disconnection a message box will
             appear, telling you about the problem. The following messages
             might occur:
@@ -20585,7 +20585,7 @@ SOLUTION:   This can have several reasons. On disconnection a message box will
                     The login process couldn't be completed. Probably a network
                     problem, or really bad lag/timeout.
 
-PROBLEM 08: I am disconnected from the server with an error message, this
+PROBLEM 9:  I am disconnected from the server with an error message, this
             happens before I can even start playing.
 SOLUTION:   Read the error message displayed in a message box on quitting.
             Here is a list of possible errors and solutions:
@@ -20650,7 +20650,7 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
                     The client was unable to connect to the server you
                     specified. If you are sure that you have entered the
                     correct IP adress or hostname, check your firewall (see
-                    PROBLEM 00 for more information).
+                    PROBLEM 1 for more information).
                     NOTE: Servers might be down temporarily when they are
                     updated. So make sure to try again after a few minutes.
                     If the server really seems to be down for a longer period
@@ -20667,9 +20667,9 @@ SOLUTION:   Read the error message displayed in a message box on quitting.
                     Also happens (following a "No Verify Response") if your
                     connection to the server is *really* bad.
             If you get kicked out with an error message on the character
-            overview screen (which seems to be empty), also see PROBLEM 14.
+            overview screen (which seems to be empty), also see PROBLEM 15.
 
-PROBLEM 09: I can't connect to the meta-server (the server that displays you
+PROBLEM 10: I can't connect to the meta-server (the server that displays you
             a list of online TomeNET servers) or a specific TomeNET server.
             Instead my connection seems to time-out.
 SOLUTION:   If you are behind a firewall make sure that the TCP ports
@@ -20682,7 +20682,7 @@ SOLUTION:   If you are behind a firewall make sure that the TCP ports
             In case there is a DNS problem somewhere in the internet you could
             just edit TomeNET.ini and replace the hostname by its actual IP.
 
-PROBLEM 10: I'm not blocked by a firewall, but I still don't see the
+PROBLEM 11: I'm not blocked by a firewall, but I still don't see the
             metaserver when I run Tomenet. Instead after waiting for a short
             period of time I'm asked to enter a server manually.
 SOLUTION:   The meta-server might be down or a DNS problem might be occuring
@@ -20710,7 +20710,7 @@ SOLUTION:   The meta-server might be down or a DNS problem might be occuring
             IP adress:
             TomeNET.exe 37.187.75.24
 
-PROBLEM 11: The main window doesn't display the floor dots in town and in
+PROBLEM 12: The main window doesn't display the floor dots in town and in
             certain dungeons, like the Training Tower and Angband. Further,
             fields are sometimes not redrawn correctly, resulting in fake
             'trails'.
@@ -20722,7 +20722,7 @@ SOLUTION:   Seems to happen on MS Windows machines sometimes.
             'Commenting out' means that you simply put a '#' symbol at the
             beginning of a line.
 
-PROBLEM 12: Every time I connect to the server it will automatically download
+PROBLEM 13: Every time I connect to the server it will automatically download
             LUA script files. However, they will have a size of 0 Bytes.
 SOLUTION:   Possibly write-protection on existing files or the folder.
             Workaround: Make sure you really have the latest LUA files in
@@ -20731,7 +20731,7 @@ SOLUTION:   Possibly write-protection on existing files or the folder.
             files in that directory to write-protected. This will prevent
             TomeNET from overwriting them with 0 Byte files.
 
-PROBLEM 13: I seem to be able to login, create a new character or select a
+PROBLEM 14: I seem to be able to login, create a new character or select a
             character, and see the message of the day (login screen).
             But right before the actual game starts I get a broken pipe / no
             packet reply error.
@@ -20740,7 +20740,7 @@ SOLUTION:   This might be caused by a misconfigured router (some D-Link models
             the router to a machine outside of your LAN for port 18348 (TCP).
             (This might even reduce lag under certain circumstances.)
 
-PROBLEM 14: I get kicked out with an error message after entering an account
+PROBLEM 15: I get kicked out with an error message after entering an account
             name and password.
 SOLUTION:   It's most likely because that account name is already in use by
             someone else so your password was recognized as 'incorrect' since
@@ -20749,16 +20749,16 @@ SOLUTION:   It's most likely because that account name is already in use by
             Likewise, if that account indeed belongs to you, you have probably
             made a typo while entering your password.
 
-PROBLEM 15: The level completely changed while I was on it.
+PROBLEM 16: The level completely changed while I was on it.
 SOLUTION:   No real solution at this time, sorry. See (0.5) for more
             information about that problem. ('types of crashes')
             IMPORTANT: You should restart the client immediately and recall
             right after you logged back in, to avoid getting killed.
 
-PROBLEM 16: I cannot see monster x although I can 'See Invisible'.
+PROBLEM 17: I cannot see monster x although I can 'See Invisible'.
 SOLUTION:   Some monsters have no appeareance and cannot be seen at all.
 
-PROBLEM 17: After my character appears in the actual game, I receive an orange
+PROBLEM 18: After my character appears in the actual game, I receive an orange
             message saying "Receiving updated file ....", followed by a red
             message saying "No access to lib directory!".
 SOLUTION:   The first message means, that one or more magic spells or prayers
@@ -20774,7 +20774,7 @@ SOLUTION:   The first message means, that one or more magic spells or prayers
             manually.
             If auto-download fails, download the latest client manually again.
 
-PROBLEM 18: When I try to unpack the latest TomeNET ZIP file, I get strange
+PROBLEM 19: When I try to unpack the latest TomeNET ZIP file, I get strange
             messages telling of 'write-protected', 'read-only' or 'password-
             protected'. Afterwards, the client won't function properly.
 SOLUTION:   Make sure that TomeNET is NOT running while you try to install the
@@ -20782,7 +20782,7 @@ SOLUTION:   Make sure that TomeNET is NOT running while you try to install the
             overwrite the existing files! Shut down TomeNET, then extract the
             ZIP (overwriting everything), then start TomeNET again.
 
-PROBLEM 19: On GNU/Linux OS, When someone uses the /page command to page me,
+PROBLEM 20: On GNU/Linux OS, When someone uses the /page command to page me,
             I don't hear the three beeps.
 SOLUTION A: You are probably using OSS. If your soundcard or soundchip doesn't
             support mixing of multiple sources, that means only one program at
@@ -20804,7 +20804,7 @@ SOLUTION B: If you are using X11, this problem may occur depending on your
             system's beep (requires TomeNET v4.4.5 or higher).
             (See (2.1a) for more information about the audio system.)
 
-PROBLEM 20: Are 'ToME' and 'TomeNET' similar?
+PROBLEM 21: Are 'ToME' and 'TomeNET' similar?
 SOLUTION:   Despite similar name, the only thing these two games have in common
             is that they are both middle-earth themed, and some visuals might
             also be similar.
@@ -20813,14 +20813,14 @@ SOLUTION:   Despite similar name, the only thing these two games have in common
             Also, the two games are maintained and developed by completely
             different persons and teams.
 
-PROBLEM 21: My (mixer) settings or window positions (MS Windows only) aren't
+PROBLEM 22: My (mixer) settings or window positions (MS Windows only) aren't
             saved automatically as they should be, when I quit the game.
 SOLUTION:   Don't use ALT+F4 or the 'x' button in the title bar of the game
             window to quit the game. It will result in skipping the normal exit
             routine, which asks you to save chat and which also saves certain
             settings. Instead, use CTRL+Q for 'save & quit' (compare (0.2)).
 
-PROBLEM 22: When I try to login, I get a 'security violation'.
+PROBLEM 23: When I try to login, I get a 'security violation'.
 SOLUTION:   Either your host name (that's your PC's network name you can set in
             the Windows network settings) or network user name (usually same
             you use to login with, UNIX-style) is empty, or your TomeNET
@@ -20829,7 +20829,7 @@ SOLUTION:   Either your host name (that's your PC's network name you can set in
             trying to log in again from a different IP address. Resuming a
             connection is possible, but must be done from the same IP address.
 
-PROBLEM 23: I just quit the game, and tried to log in again with another
+PROBLEM 24: I just quit the game, and tried to log in again with another
             character of mine, but I get an error message saying
             "Multiple logins on the same account aren't allowed".
 SOLUTION:   When you quit the game while you are still inside a dungeon or a
@@ -20850,13 +20850,18 @@ SOLUTION:   When you quit the game while you are still inside a dungeon or a
             because you can't be sure what the situation around you will be
             the next time you log on again!
 
-PROBLEM 24: When trying to macro F-keys, they don't seem to work properly.
+PROBLEM 25: When trying to macro F-keys, they don't seem to work properly.
             Especially, when hitting F1, a window about MS Windows Help/Support
             pops up instead.
 SOLUTION:   When playing on a notebook, check the state of the 'Fn' special
             shift key, and toggle it accordingly.
+            You might be able to switch the Fn-key handling in the BIOS of the
+            notebook, a typical issue with some notebooks. If your BIOS doesn't
+            offer an option to switch the Fn key behaviour you should really
+            complain to your notebook manufacturer and try to get a BIOS update
+            that enables it.
 
-PROBLEM 25: The connection is surprisingly laggy. (Also see PROBLEM 28!)
+PROBLEM 26: The connection is surprisingly laggy. (Also see PROBLEM 29!)
 SOLUTION:   -If you're on Wifi (WLAN) plug in an ethernet cable instead!
             Wireless LAN connections can be pretty unreliable and cause
             periodic lag from trying to re-scan for available networks.
@@ -20869,18 +20874,18 @@ SOLUTION:   -If you're on Wifi (WLAN) plug in an ethernet cable instead!
             -Make sure you don't have downloads or uploads running in the
             background.
 
-PROBLEM 26: I resized some TomeNET windows by dragging them with the mouse,
+PROBLEM 27: I resized some TomeNET windows by dragging them with the mouse,
             but it seems it doesn't have the desired effect.
 SOLUTION:   After having resized windows via mouse, restart the game once
             by exiting with CTRL+Q key.
 
-PROBLEM 27: While I am creating a new character, I got disconnected with a
+PROBLEM 28: While I am creating a new character, I got disconnected with a
             "Timeout 04" error message.
 SOLUTION:   You have about 20 minutes to complete the character creation
             process. If you exceed this time, you will timeout and get
             disconnected.
 
-PROBLEM 28: If I or other players nearby fire a lot of arrows or cast a lot
+PROBLEM 29: If I or other players nearby fire a lot of arrows or cast a lot
             of spells, my client lags or freezes somewhat.
             Could also happen when taking staircases or when there are a lot of
             monsters on the screen.
@@ -20888,7 +20893,7 @@ SOLUTION:   Try to reduce or even disable flush-waits, by toggling the client
             options 'thin_down_flush' and if that's not enough also
             'disable_flush'. For details about these, see (2.3).
 
-PROBLEM 29: I accidenally closed one of the sub-windows and now it's gone.
+PROBLEM 30: I accidenally closed one of the sub-windows and now it's gone.
             How do I get it back?
 SOLUTION:   Closing a sub-window sets it to 'invisible'. To change that, there
             are two ways:
@@ -20905,7 +20910,7 @@ SOLUTION:   Closing a sub-window sets it to 'invisible'. To change that, there
             just set them to 0. Save the ini file when you are done and start
             TomeNET again.
 
-PROBLEM 30: Changes I do to my macros seem to not get saved or macros I deleted
+PROBLEM 31: Changes I do to my macros seem to not get saved or macros I deleted
             seem to still be there or client options I configured seem to reset
             to their previous values although I saved the macros/options to
             their respective .prf file.
@@ -20926,7 +20931,7 @@ SOLUTION:   Macros or client options can be saved to various .prf files which
             if those exist and also try to load a .prf file named like your
             account name.
 
-PROBLEM 31: After logging on, the file 'audio.lua' was updated automatically.
+PROBLEM 32: After logging on, the file 'audio.lua' was updated automatically.
             Now the wrong sound effects seem to be played for game events.
 SOLUTION:   Just log out and back in, and your sound should be fine again.
             This typically happens if 'audio.lua' was updated.
@@ -20935,7 +20940,7 @@ SOLUTION:   Just log out and back in, and your sound should be fine again.
             effects. Usually an update to file 'audio.lua' means that the sound
             pack has also been updated indeed.
 
-PROBLEM 32: When trying to extract a music or sound pack to my xtra folder in
+PROBLEM 33: When trying to extract a music or sound pack to my xtra folder in
             order to install it, I get an error message or it doesn't seem to
             work correctly.
 SOLUTION:   See (2.1a) for details on how to install audio packs. Also note
@@ -20945,7 +20950,7 @@ SOLUTION:   See (2.1a) for details on how to install audio packs. Also note
             is '7zip' (a sourceforge project at the time of writing)
             downloadable at:  http://www.7-zip.org/
 
-PROBLEM 33: On OS X when entering the game (right after picking a character) in
+PROBLEM 34: On OS X when entering the game (right after picking a character) in
             big_map mode with already large (46 lines) main window, the window
             will suddenly become small (24 lines) again.
             As of the time of writing this, the exact cause is still unknown.
@@ -20960,7 +20965,7 @@ PROBLEM 33: On OS X when entering the game (right after picking a character) in
              only when you actually log in with a character, thus circumventing
              the bug.
 
-PROBLEM 34: On certain terminal emulators, TomeNET when run in ncurses-mode
+PROBLEM 35: On certain terminal emulators, TomeNET when run in ncurses-mode
             ('-c' command-line option or just a GCU-only client) will display
             wrong colours. This used to happen on Xfce4's 'Terminal' up till
             TomeNET version 4.5.0 (but didn't happen on xterm).
@@ -20976,7 +20981,7 @@ SOLUTION:   Since TomeNET 4.5.0a a hack has been added to work with Xfce4's
               ./tomenet -c
             You can also try xterm-256color instead of xterm-16color.
 
-PROBLEM 35: When running the client in terminal-mode, messages like
+PROBLEM 36: When running the client in terminal-mode, messages like
             "ALSA lib pcm.c...:(snd_pcm_recover) underrun occurred"
             pop up, but the sound/music actually works ok.
             How to get rid of the messages?
@@ -20992,7 +20997,7 @@ SOLUTION:   Either tweak your sound settings (buffer size etc.) so ALSA doesn't
             to completely discard it:
               ./tomenet -c 2>/dev/null
 
-PROBLEM 36: Can I made the game windows larger?
+PROBLEM 37: Can I made the game windows larger?
 SOLUTION:   You can resize windows that hold messages (chat and/or game
             messages) simply by dragging the lower edge down/upwards with your
             mouse. This also works for the main window, but this one will not
@@ -21008,7 +21013,7 @@ SOLUTION:   You can resize windows that hold messages (chat and/or game
             set fonts manually for each game window.
             Well, and you could change your actual screen resolution of course.
 
-PROBLEM 37: When I join the server I get spammed with violet LUA error messages
+PROBLEM 38: When I join the server I get spammed with violet LUA error messages
             and also it will say in orange/dark-green that my LUA files are
             getting updated.
 SOLUTION:   This happens when your LUA files are quite outdated.
@@ -21017,7 +21022,7 @@ SOLUTION:   This happens when your LUA files are quite outdated.
             When that happened, quit and rejoin the server, the LUA errors
             should no longer happen now.
 
-PROBLEM 38: I want to edit my TomeNET.ini file to enter name and password, so I
+PROBLEM 39: I want to edit my TomeNET.ini file to enter name and password, so I
             don't have to type it in everytime I log on. But I don't see this
             file in my 'TomeNET' folder.
 SOLUTION:   Windows by default hides the extension of most files, this means
@@ -21033,26 +21038,26 @@ SOLUTION:   Windows by default hides the extension of most files, this means
                and browse to your TomeNET folder, and then type in
                'tomenet.ini' to have notepad open it.
 
-PROBLEM 39: I run the Windows client on Wine, and when I resize the main window
+PROBLEM 40: I run the Windows client on Wine, and when I resize the main window
             it doesn't resize properly or its contents aren't resized properly.
 SOLUTION:   You need at least Wine 1.5.20 for this to work properly.
             (That Wine got a bugfix for correctly dispatching WM_EXITSIZEMOVE).
 
-PROBLEM 40: I see black floor tiles that seem buggy. They can't be lit or they
+PROBLEM 41: I see black floor tiles that seem buggy. They can't be lit or they
             'smear' if other things pass over them.
 SOLUTION:   In a file explorer, navigate into the folder 'TomeNET/lib/user'
             and delete the file 'font-win.prf' in there.
 
-PROBLEM 41: Keyboard input on KDE/Linux is strangely laggy.
+PROBLEM 42: Keyboard input on KDE/Linux is strangely laggy.
 SOLUTION:   This is a weird one, but what has worked is to use smaller text
             fonts (at most 9X14).
 
-PROBLEM 42: Aww, the ego power "Holy Avenger" that I'm so fond of does not
+PROBLEM 43: Aww, the ego power "Holy Avenger" that I'm so fond of does not
             exist in TomeNET anymore.
 SOLUTION:   It does. It has just been renamed to "Aman", it does the same (and
             a little bit more even) as (Holy Avenger) items in other variants.
 
-PROBLEM 43: When trying to connect to the meta server I get an error message:
+PROBLEM 44: When trying to connect to the meta server I get an error message:
             "No setup info received" and the game terminates.
 SOLUTION:   This can happen on really bad/slow internet connections such as via
             mobile modems operating on arbitrarily (by the ISP) reduced
@@ -21062,18 +21067,18 @@ SOLUTION:   This can happen on really bad/slow internet connections such as via
             in parallel to increase your chances of successfully establishing a
             connection.
 
-PROBLEM 44: The dark blue colour is too dark on my screen to be readable.
+PROBLEM 45: The dark blue colour is too dark on my screen to be readable.
 SOLUTION:   Edit your config file (TomeNET.ini on Windows, .tomenetrc on Linux
             and OS X) and find the line 'lighterDarkBlue'. In TomeNET.ini set
             it to 1 instead of 0, in .tomenetrc uncomment the line by removing
             the leading '#' symbol. Restart your game client.
 
-PROBLEM 45: Sound sound effects, mostly the page sound (when someone pages you
+PROBLEM 46: Sound sound effects, mostly the page sound (when someone pages you
             with the /page command) sounds oddly distorted.
 SOLUTION:   Make sure that you don't have all four volume sliders at maximum:
             Just lower the master slider by 1 or 2 steps.
 
-PROBLEM 46: Testing your character's damage-per-second (dps) on the target
+PROBLEM 47: Testing your character's damage-per-second (dps) on the target
             dummies in Bree with melee weapons or ranged weapons (slings, bows
             or crossbows) has weird effects: You don't get more damage from
             increasing your number of attacks per round, even though all other
@@ -21083,7 +21088,7 @@ PROBLEM 46: Testing your character's damage-per-second (dps) on the target
 SOLUTION:   You are experiencing game engine limits regarding the world surface
             (including all towns, like Bree). See (8.7) for details.
 
-PROBLEM 47: The TomeNET-Updater for Windows gives a message about captcha when
+PROBLEM 48: The TomeNET-Updater for Windows gives a message about captcha when
             I try to update sound pack or music pack.
 SOLUTION:   Unfortunately the updater cannot defeat captchas of one-click
             hosters from where the audio packs are downloaded.
@@ -21093,7 +21098,7 @@ SOLUTION:   Unfortunately the updater cannot defeat captchas of one-click
             (In general, captcha requests tend to pop up when the file is very
             frequently accessed.)
 
-PROBLEM 48: On Linux/X11 I get 100% cpu usage unless I disable audio (with the
+PROBLEM 49: On Linux/X11 I get 100% cpu usage unless I disable audio (with the
             '-q' command-line option). This usually happens with more special
             audio hardware.
 SOLUTION:   Change the audio sample rate in '.tomenetrc' config file to match
@@ -21102,7 +21107,7 @@ SOLUTION:   Change the audio sample rate in '.tomenetrc' config file to match
             use a more sophisticated system that might run at higher rates such
             as 96000 aka 96kHz.
 
-PROBLEM 49: On Linux/X11 I get 100% cpu usage when switching workspace away
+PROBLEM 50: On Linux/X11 I get 100% cpu usage when switching workspace away
             from TomeNET when I have 'recall_flicker' option enabled.
             (The system on which this happened had AMD graphics drivers, but
             that might not be relevant.)
@@ -21111,7 +21116,7 @@ SOLUTION:   This is suspected to be a problem with 'Awesome' window manager.
               gnome-session --session=awesome
             has been reported to solve the problem.
 
-PROBLEM 50: I get an antivirus warning when I try to run the installer version
+PROBLEM 51: I get an antivirus warning when I try to run the installer version
             of TomeNET (the self-installing '.exe' file) or in general for the
             'install_tomenet' executable/process.
             Installation also fails or fails partially.
@@ -21123,21 +21128,21 @@ SOLUTION:   Avast and Trendmicro antivirus are known for causing trouble with
             sense since this installer indeed will attempt to kill any running
             TomeNET process before it updates, this is the intended behaviour.
 
-PROBLEM 51: On Windows 10 (maybe 8 too), the self-installer freezes on startup.
+PROBLEM 52: On Windows 10 (maybe 8 too), the self-installer freezes on startup.
 SOLUTION:   Why are you STILL using Windows.. Ok well, you can try to just sit
             it out, some people have reported that the NSIS installer is known
             to freeze for about 15 minutes on Windows 10. Maybe it will just
             continue if you wait for a while.
 
-PROBLEM 52: Windows OS: Using the 'Alt' modifier key in macros doesn't work.
+PROBLEM 53: Windows OS: Using the 'Alt' modifier key in macros doesn't work.
 SOLUTION:   None. Install Linux in addition to Windows (dual-boot).
 
-PROBLEM 53: I cannot select a server from the meta server list, it seems my key
+PROBLEM 54: I cannot select a server from the meta server list, it seems my key
             presses get ignored.
 SOLUTION:   If you are using a non-english keyboard layout with asian or
             cyrillic letters, switch it to english layout.
 
-PROBLEM 54: Editing config files of all kinds (ini/prf/opt/ins..) doesn't seem
+PROBLEM 55: Editing config files of all kinds (ini/prf/opt/ins..) doesn't seem
             to have any effect.
 SOLUTION:   If you're on Windows and using a game version greater than 4.6.1a,
             TomeNET will make copies of your 'scpt' and 'user' folders and work
@@ -21149,7 +21154,7 @@ SOLUTION:   If you're on Windows and using a game version greater than 4.6.1a,
             (The reason the game does this is that Windows starting at version
             7 will severly limit access to the Program Files folder.)
 
-PROBLEM 55: On a fresh TomeNET installation on Linux, the game will fail to
+PROBLEM 56: On a fresh TomeNET installation on Linux, the game will fail to
             start, giving a font-not-found error (usually about font '9x15'),
             like this: "Font not found: 9x15".
 SOLUTION:   TomeNET uses basic linux system fonts (and allows you to switch to
@@ -21161,19 +21166,19 @@ SOLUTION:   TomeNET uses basic linux system fonts (and allows you to switch to
             'linux-fonts-misc'.
             After installation, reboot your system to ensure they work.
 
-PROBLEM 56: On older Linux systems that do not use pulseaudio, audio (sound/
-            music) is not working at all. (First see PROBLEM 19 please.)
+PROBLEM 57: On older Linux systems that do not use pulseaudio, audio (sound/
+            music) is not working at all. (First see PROBLEM 20 please.)
 SOLUTION:   Tell SDL explicitely to use ALSA. However, SDL is known for
             producing quite some CPU overhead when enabling this, for no good
             reason, so it is strongly recommended to install pulseaudio instead
             (if there is a problem with TomeNET not using pulseaudio, see below
-            PROBLEM 57 that fixes this).
+            PROBLEM 58 that fixes this).
             To tell SDL to emulate ALSA, do export SDL_AUDIODRIVER=alsa.
             For example create a small script to start Tomenet, 'tomenet-alsa':
               export SDL_AUDIODRIVER=alsa
               ./tomenet $@
 
-PROBLEM 57: On Linux, audio (sound/music) is not working in the way that the
+PROBLEM 58: On Linux, audio (sound/music) is not working in the way that the
             client on starting up will report in the console:
             "ALSA lib pcm_dmix.c:1089:(snd_pcm_dmix_open) unable to open slave"
             and also a "Warning" in-game:
@@ -21185,7 +21190,7 @@ SOLUTION:   Tell SDL to use Pulseaudio instead of ALSA, as your system is most
               export SDL_AUDIODRIVER=pulse
               ./tomenet $@
 
-PROBLEM 58: On OS X when I run TomeNET.command file, nothing happens, or when
+PROBLEM 59: On OS X when I run TomeNET.command file, nothing happens, or when
             I run it from within a terminal, TomeNET only starts in non-window
             mode, ie terminal mode.
 SOLUTION:   TomeNET requires X11 to run in windowed mode. To provide X11 on
