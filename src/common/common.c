@@ -343,7 +343,11 @@ const char *my_strcasestr(const char *big, const char *little) {
 	} while (big[cnt] != '\0');
 	return NULL;
 }
-/* Same as my_strcasestr() but skips colour codes (added for guide search) */
+/* Same as my_strcasestr() but skips colour codes (added for guide search).
+   strict: search for occurances only at the beginning of a line (tolerating colour codes and spaces)
+           or only for all-caps, depending on defines. */
+#define STRICT_BEGINNING
+#define STRICT_CAPS
 const char *my_strcasestr_skipcol(const char *big, const char *little, bool strict) {
 	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0, cnt_offset;
@@ -355,48 +359,49 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, bool stri
 	if (*little == 0) return big;
 	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
 
-    if (strict) { /* switch to strict mode (was case-sensitive, but now just is 'first thing in the line' condition instead) */
-	bool fail = FALSE; /* special hack: Result must be at the beginning of the line (white spaces are tolerated) */
+    if (strict) { /* switch to strict mode */
+	bool just_spaces = TRUE;
 	do {
 		/* Skip colour codes */
-		if (big[cnt] == '\377') {
+		while (big[cnt] == '\377') {
 			cnt++;
 			if (big[cnt] != 0) cnt++; //paranoia: broken colour code
 		}
-
-		if (isalpha(big[cnt])) fail = TRUE;
+		if (!big[cnt]) return NULL;
+		if (big[cnt] != ' ') just_spaces = FALSE;
 
 		cnt2 = cnt_offset = 0;
 		l = 0;
 		while (little[cnt2] != 0) {
 			/* Skip colour codes */
-			if (big[cnt + cnt2 + cnt_offset] == '\377') {
+			while (big[cnt + cnt2 + cnt_offset] == '\377') {
 				cnt_offset++;
 				if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
-				continue;
 			}
+			if (!big[cnt + cnt2 + cnt_offset]) return NULL;
 
-#if 1 /* case-insensitive */
+#ifndef STRICT_CAPS /* case-insensitive */
 			if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == tolower(little[cnt2]) || big[cnt + cnt2 + cnt_offset] == toupper(little[cnt2])) l++;
 #else /* case-sensitive */
-			if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
+			if (big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
 #endif
 			else break;
 
 			if (l == 1) ret = big + cnt;
-
 			cnt2++;
 		}
 
 		if (L == l) return ret;
-		if (fail) return NULL;
+#ifdef STRICT_BEGINNING
+		if (!just_spaces) return NULL; /* failure: not at the beginning of the line (tolerating colour codes) */
+#endif
 		cnt++;
 	} while (big[cnt] != '\0');
 	return NULL;
     } else {
 	do {
 		/* Skip colour codes */
-		if (big[cnt] == '\377') {
+		while (big[cnt] == '\377') {
 			cnt++;
 			if (big[cnt] != 0) cnt++; //paranoia: broken colour code
 		}
@@ -405,17 +410,15 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, bool stri
 		l = 0;
 		while (little[cnt2] != 0) {
 			/* Skip colour codes */
-			if (big[cnt + cnt2 + cnt_offset] == '\377') {
+			while (big[cnt + cnt2 + cnt_offset] == '\377') {
 				cnt_offset++;
 				if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
-				continue;
 			}
 
 			if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == tolower(little[cnt2]) || big[cnt + cnt2 + cnt_offset] == toupper(little[cnt2])) l++;
 			else break;
 
 			if (l == 1) ret = big + cnt;
-
 			cnt2++;
 		}
 
