@@ -108,6 +108,7 @@ Contents
     (4.12)  Malicious effects monsters can suffer
     (4.13)  Extermination Orders, Events and Ironman Challenge
     (4.14)  In-game time system
+    (4.14a) In-game metrics
     (4.15)  Swimming
     (4.16)  Teleportation
 (5) Item and monster details
@@ -8306,6 +8307,26 @@ because the slower passing of turns counters the visual effect. In Khazad-dum
 however you'll see how astonishing fast they suddenly move. You wouldn't want
 to have to handle this time speed in the actual dungeon where you encounter
 the really bad guys..
+
+
+(4.14a) In-game metrics
+-----------------------
+The lore is, that a grid in the game has a size of 10x10 ft, aka 3x3 metres.
+Hence when a character has 40 ft infra-vision he will be able to spot monsters
+detectable by infra-vision no further than 4 grids away from him.
+
+However, since the game uses square grids instead of for example hexagonal
+grids, this has some implications for moving:
+Diagonal movement is more efficient than moving just horizontally and just
+vertically when your target location is not exactly horizontally or vertically
+away from you. Simply because by moving 1 grid diagonally you are twice as fast
+as if you had moved to the same grid by first moving 1 grid vertically and then
+1 grid horizontally.
+
+While this seems sort of obvious, it is easy to miss that for example in the
+'Dungeon Keeper' event whenever you enter another room, the next doors closest
+to you are actually diagonal of you! So now it might become clear how to do
+that event in the most effective way..
 
 
 
