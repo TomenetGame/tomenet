@@ -115,6 +115,7 @@ Contents
     (5.1a)  Melee weapon types
     (5.2)   Ranged weapons, brands
     (5.2a)  Fire-till-kill mode
+    (5.2b)  Throwing items
     (5.3)   Slaying vs brands
     (5.3a)  Martial Arts, brands
     (5.4)   Application of attack-affecting item mods
@@ -8694,6 +8695,50 @@ repeatable actions such as searching or tunnelling.
 
 Fire-till-kill does not work with any other type of attacks besides those
 mentioned above.
+
+
+(5.2b) Throwing items
+---------------------
+Slings, bows, crossbows and even boomerangs are placed in the "ranged weapon"
+equipment slot 'c)'and are then 'fired', even though in the case of Boomerangs
+of course the correct term would be 'thrown'.
+However, in TomeNET, throwing is already reserved for the action of throwing an
+item from your inventory - and while throwing plays no big role for high level
+characters it can make a difference in the early game!
+
+Throwing can be used to get rid of that pesky fruit bat, floating eye, or to
+inflict not just damage but status effects too on a monster or even a group of
+monsters.
+
+To throw an item, you'd press 'v'. While you can throw any item to inflict some
+damage, usually the more damage the bigger the item is, there are a couple of
+things to know about throwing:
+
+- Potions thrown at a something will shatter, often releasing an area effect.
+  If you have potions in your inventory that are pseudo-identified as 'bad'
+  just throw them at a monster or a pack of them.
+  For example a potion of salt water can temporarily blind monsters, while a
+  potion of weakness can reduce their melee damage.
+  Potions of slowness and potions of sleep are very effective too.
+- Some weapon types are especially effective at dealing damage when thrown,
+  much more so than other random items. These are:
+  - Daggers (main gauche counts as such as well),
+  - Axes
+  - Spears and tridents.
+- Flasks of oil can also be thrown for an extra fire damage effect.
+
+The effect a shattered potion applies is in general the same that a fumes trap
+loaded with that potion would cause, just that the fumes from the trap are
+usually more potent.
+
+Tip: To easily throw all 'bad' potions in your inventory create a throwing
+macro in the macro wizard ('%' and then 'z')  and when asked for the item name
+or inscription, just type 'bad', as that will automatically select a potion
+that has been automatically inscribed 'bad' by the pseudo-identification
+system of the game.
+
+However, another use for bad potions could be to use the '/empty' command on
+them to obtain empty bottles, and fill those at fountains.
 
 
 
