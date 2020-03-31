@@ -4470,7 +4470,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 			exec_lua(0, format("beta(%d,%d)", Ind, i));
 			return;
 		}
-		else if (prefix(messagelc, "/col")) {
+		else if (prefix(messagelc, "/col") || prefix(messagelc, "/colours") || prefix(messagelc, "/colors")) {
 			msg_print(Ind, "\377wColour table:");
 			msg_print(Ind, "  (0) black:  \377dblack\377w,  (1) white: \377wwhite\377w, (2) gray:      \377sslate");
 			msg_print(Ind, "  (3) orange: \377oorange\377w, (4) red:   \377rred\377w,   (5) green:     \377ggreen");
