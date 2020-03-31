@@ -7,13 +7,7 @@
 # +8 for ANIMAL behaviour (CAVE_ROOM)
 F: :1:11
 F:+:224:3
-# chambers CAVE_ICKY to prevent phasing out
-F:1:1:7:196:0:0:0:0:0
-F:2:1:7:313:0:0:0:0:0
-F:3:1:7:278:0:0:0:0:0
-F:4:1:7:563:0:0:0:0:0
-F:5:1:7:547:0:0:0:0:0
-F:6:1:7:609:0:0:0:0:0
+# chambers CAVE_ICKY to prevent phasing out (monsters) or in (players)
 F:0:1:15
 
 D:##################################################################
