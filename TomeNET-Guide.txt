@@ -7401,6 +7401,12 @@ To indicate that your house is a player store, you can use 'h' key or the
 "/paint" command to paint your house entrance for other players to see!
 Please see (0.2b) for more information about painting.
 
+All items put up in player stores will be listed on the "Player store search"
+webpage on the TomeNET website: Go to "Official Server Info" and there click
+"Player Stores". This list is usually updated once per hour, so items you just
+added to your store might not yet be displayed on the webpage. Similarly, items
+you already removed might linger there for a bit more.
+
 
 
 (4.11)  Malicious effects players can suffer
