@@ -20194,7 +20194,7 @@ General mods:
         Stealth
         Searching
         Speed
-            (cannot spawn on shields)
+            (cannot spawn on shields or boomerangs)
         Any base immunities:
             Acid, Electricity, Fire, Cold.
             (A randart cannot have more than two immunities at once.)
@@ -20242,6 +20242,9 @@ Items that add mana, give mana regeneration or are blessed will never have an
 Headgear cannot give more than +6 infra-vision.
 Headgear cannot give more than +3 speed.
 Headgear cannot give more than +3 mana.
+
+On items other than boots you cannot get more than +7 speed and getting that
+high a value is already *extremely rare*. Realistically think of +5 as superb.
 
 Gloves cannot get more than +6 to-hit or to-dam bonus, so (+6,+6) is max.
 Gloves cannot give more than +2 extra attacks.
