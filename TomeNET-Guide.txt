@@ -1728,7 +1728,7 @@ Item power inscription (added in 4.7.1):
     +oTPaWUDEvil      slay orc/troll/giant/animal/undead/demon/dragon/evil
     *WUD              kill undead/demon/dragon
     ~oTPaWUDEvil      ESP orc/troll/giant/animal/undead/demon/dragon/evil
-     SDRAgUni             spider/dragonrider/good('A')/nonliving('g')/unique
+     SDRAgUni          spider/dragonrider/good('A')/nonliving('g')/unique
     ESP               telepathy (full ESP)
     Tele/NT           induces random teleportation/allows no teleportation
     Dr/Drm/Drx/Aggr   drains hp/mana/experience / aggravates
@@ -1906,13 +1906,14 @@ ESP         Extrasensory perception. ESP is a telepathic power that allows you
             ESP powers can vary, from full telepathy (seeing all monsters that
             have a mind) to partial ESP that only detects specific kinds of
             monsters, such are:
-            Animals, Spiders, Orcs, Trolls, Giants, Undead (most lesser undead
-            are mindless though and therefore undetectable by ESP), Demons,
-            Dragons, Good (all monsters that have the 'GOOD' flag), Evil (all
-            monsters that have the 'EVIL' flag, which is quite a lot!),
-            Non-living (most of these don't have a mind though), Uniques.
-            In the early game, obtaining ESP-Evil is already a huge help, as it
-            will cover a lot of monsters.
+            Animals, Spiders, Orcs, Trolls, Giants, Dragonriders, Undead (most
+            lesser undead are mindless though and therefore undetectable by
+            ESP), Demons, Dragons (includes Dragonriders), Good (all monsters
+            that have the 'GOOD' flag), Evil (all monsters that have the 'EVIL'
+            flag, which is quite a lot), Non-living (most of these don't have a
+            mind though), Unique monsters.
+            In the early game, obtaining ESP-Evil, often from a weapon of *slay
+            evil*, is already a huge help, as it will cover a lot of monsters.
 
             ESP can be gained by magic or by items, typical items are:
              - Crowns of telepathy (full ESP, 'It gives telepathic powers.')
