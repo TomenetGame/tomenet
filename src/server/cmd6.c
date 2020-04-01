@@ -299,137 +299,109 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 	case SV_FOOD_PINT_OF_WINE:
 		/* as this counts as food and not as potion, there's a hack allowing ents to 'eat' this anyway.. */
 		if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
-		    if (!o_ptr) {
-			msg_format(Ind, "\377%c*HIC*", random_colour());
-			msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
+			if (!o_ptr) {
+				msg_format(Ind, "\377%c*HIC*", random_colour());
+				msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
 
-			if (magik(TRUE? 60 : 30))
-				set_confused(Ind, p_ptr->confused + 20 + randint(20));
-			if (magik(TRUE? 50 : 20))
-				set_stun_raw(Ind, p_ptr->stun + 10 + randint(10));
+				if (magik(TRUE? 60 : 30)) set_confused(Ind, p_ptr->confused + 20 + randint(20));
+				if (magik(TRUE? 50 : 20)) set_stun_raw(Ind, p_ptr->stun + 10 + randint(10));
+				if (magik(TRUE? 50 : 10)){
+					set_image(Ind, p_ptr->image + 10 + randint(10));
+					take_sanity_hit(Ind, 1, "ale", 0);
+				}
+				if (magik(TRUE? 10 : 20)) set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
+				if (magik(TRUE? 50 : 10)) set_hero(Ind, 10 + randint(10)); /* removed stacking */
+				if (magik(TRUE? 20 : 5)) set_shero(Ind, 5 + randint(10)); /* removed stacking */
+				if (magik(TRUE? 5 : 10)) set_afraid(Ind, p_ptr->afraid + 15 + randint(10));
 
-			if (magik(TRUE? 50 : 10)){
-				set_image(Ind, p_ptr->image + 10 + randint(10));
-				take_sanity_hit(Ind, 1, "ale", 0);
+				if (magik(TRUE? 5 : 10)) set_slow(Ind, p_ptr->slow + 10 + randint(10));
+				else if (magik(TRUE? 20 : 5)) set_fast(Ind, 10 + randint(10), 10); /* removed stacking */
+
+				/* Methyl! */
+				if (magik(TRUE? 0 : 3)) set_blind(Ind, p_ptr->blind + 10 + randint(10));
+
+				/* Had too much */
+				if (rand_int(100) < p_ptr->food * magik(TRUE? 40 : 60) / PY_FOOD_MAX) {
+					msg_print(Ind, "You become nauseous and vomit!");
+					msg_format_near(Ind, "%s vomits!", p_ptr->name);
+					(void)set_food(Ind, (p_ptr->food / 2));
+					(void)set_poisoned(Ind, 0, 0);
+					(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
+				}
+				if (magik(TRUE? 2 : 3)) (void)dec_stat(Ind, A_DEX, 1, STAT_DEC_TEMPORARY);
+				if (magik(TRUE? 2 : 3)) (void)dec_stat(Ind, A_WIS, 1, STAT_DEC_TEMPORARY);
+				if (magik(TRUE? 0 : 1)) (void)dec_stat(Ind, A_CON, 1, STAT_DEC_TEMPORARY);
+				//(void)dec_stat(Ind, A_STR, 1, STAT_DEC_TEMPORARY);
+				if (magik(TRUE? 3 : 5)) (void)dec_stat(Ind, A_CHR, 1, STAT_DEC_TEMPORARY);
+				if (magik(TRUE? 2 : 3)) (void)dec_stat(Ind, A_INT, 1, STAT_DEC_TEMPORARY);
 			}
-			if (magik(TRUE? 10 : 20))
-				set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
-			if (magik(TRUE? 50 : 10))
-				set_hero(Ind, 10 + randint(10)); /* removed stacking */
-			if (magik(TRUE? 20 : 5))
-				set_shero(Ind, 5 + randint(10)); /* removed stacking */
-			if (magik(TRUE? 5 : 10))
-				set_afraid(Ind, p_ptr->afraid + 15 + randint(10));
-			if (magik(TRUE? 5 : 10))
-				set_slow(Ind, p_ptr->slow + 10 + randint(10));
-			else if (magik(TRUE? 20 : 5))
-				set_fast(Ind, 10 + randint(10), 10); /* removed stacking */
-			/* Methyl! */
-			if (magik(TRUE? 0 : 3))
-				set_blind(Ind, p_ptr->blind + 10 + randint(10));
-			if (rand_int(100) < p_ptr->food * magik(TRUE? 40 : 60) / PY_FOOD_MAX)
-			{
-				msg_print(Ind, "You become nauseous and vomit!");
-				msg_format_near(Ind, "%s vomits!", p_ptr->name);
-				/* made salt water less deadly -APD */
-				(void)set_food(Ind, (p_ptr->food/2));
-				(void)set_poisoned(Ind, 0, 0);
-				(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
+			/* Let's make this usable... - the_sandman */
+			else if (o_ptr->name1 == ART_DWARVEN_ALE) {
+				msg_print(Ind, "\377gYou drank the liquior of the gods");
+				msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
+				switch (randint(10)) {
+				case 1:
+				case 2:
+				case 3:	// 3 in 10 for Hero effect
+					set_hero(Ind, 20 + randint(10)); break;
+				case 4:
+				case 5:
+				case 6:	// 3 in 10 for Speed
+					set_fast(Ind, 20 + randint(10), 10); break;
+				case 7:
+				case 8:
+				case 9: // 3 in 10 for Berserk
+					set_shero(Ind, 20 + randint(10)); break;
+				case 10:// 1 in 10 for confusion ;)
+				default:
+					if (!(p_ptr->resist_conf)) set_confused(Ind, randint(10));
+				}
+				p_ptr->food = PY_FOOD_FULL;	// A quaff will bring you to the norm sustenance level!
+			} else if (magik(o_ptr->name2? 50 : 20)) {
+				msg_format(Ind, "\377%c*HIC*", random_colour());
+				msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
+
+				if (magik(o_ptr->name2? 60 : 30)) set_confused(Ind, p_ptr->confused + 20 + randint(20));
+				if (magik(o_ptr->name2? 50 : 20)) set_stun_raw(Ind, p_ptr->stun + 10 + randint(10));
+
+				if (magik(o_ptr->name2? 50 : 10)) {
+					set_image(Ind, p_ptr->image + 10 + randint(10));
+					take_sanity_hit(Ind, 1, "ale", 0);
+				}
+				if (magik(o_ptr->name2? 10 : 20)) set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
+				if (magik(o_ptr->name2? 50 : 10)) set_hero(Ind, 10 + randint(10)); /* removed stacking */
+				if (magik(o_ptr->name2? 20 : 5)) set_shero(Ind, 5 + randint(10)); /* removed stacking */
+				if (magik(o_ptr->name2? 5 : 10)) set_afraid(Ind, p_ptr->afraid + 15 + randint(10));
+				if (magik(o_ptr->name2? 5 : 10)) set_slow(Ind, p_ptr->slow + 10 + randint(10));
+				else if (magik(o_ptr->name2? 20 : 5)) set_fast(Ind, 10 + randint(10), 10); /* removed stacking */
+
+				/* Methyl! */
+				if (magik(o_ptr->name2? 0 : 3)) set_blind(Ind, p_ptr->blind + 10 + randint(10));
+				if (rand_int(100) < p_ptr->food * magik(o_ptr->name2? 40 : 60) / PY_FOOD_MAX) {
+					msg_print(Ind, "You become nauseous and vomit!");
+					msg_format_near(Ind, "%s vomits!", p_ptr->name);
+					(void)set_food(Ind, (p_ptr->food/2));
+					(void)set_poisoned(Ind, 0, 0);
+					(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
+				}
+
+				/* Had too much.. */
+				if (magik(o_ptr->name2? 2 : 3)) (void)dec_stat(Ind, A_DEX, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 2 : 3)) (void)dec_stat(Ind, A_WIS, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 0 : 1)) (void)dec_stat(Ind, A_CON, 1, STAT_DEC_TEMPORARY);
+				//(void)dec_stat(Ind, A_STR, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 3 : 5)) (void)dec_stat(Ind, A_CHR, 1, STAT_DEC_TEMPORARY);
+				if (magik(o_ptr->name2? 2 : 3)) (void)dec_stat(Ind, A_INT, 1, STAT_DEC_TEMPORARY);
 			}
-			if (magik(TRUE? 2 : 3))
-				(void)dec_stat(Ind, A_DEX, 1, STAT_DEC_TEMPORARY);
-			if (magik(TRUE? 2 : 3))
-				(void)dec_stat(Ind, A_WIS, 1, STAT_DEC_TEMPORARY);
-			if (magik(TRUE? 0 : 1))
-				(void)dec_stat(Ind, A_CON, 1, STAT_DEC_TEMPORARY);
-			//			(void)dec_stat(Ind, A_STR, 1, STAT_DEC_TEMPORARY);
-			if (magik(TRUE? 3 : 5))
-				(void)dec_stat(Ind, A_CHR, 1, STAT_DEC_TEMPORARY);
-			if (magik(TRUE? 2 : 3))
-				(void)dec_stat(Ind, A_INT, 1, STAT_DEC_TEMPORARY);
+			else msg_print(Ind, "That tastes good.");
+		} else if (p_ptr->prace == RACE_ENT) {
+			if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
+				if (set_poisoned(Ind, p_ptr->poisoned + rand_int(5) + 5, 0)) ident = TRUE;
+		} else { /* not sure whether Vampires like alcohol? o_O */
+			msg_print(Ind, "That tastes fair but has no effect.");
 		}
-		/* Let's make this usable... - the_sandman */
-		else if (o_ptr->name1 == ART_DWARVEN_ALE) {
-			msg_print(Ind, "\377gYou drank the liquior of the gods");
-			msg_format_near(Ind, "\377gYou look enviously as %s took a sip of The Ale", p_ptr->name);
-			switch (randint(10)) {
-			case 1:
-			case 2:
-			case 3:	// 3 in 10 for Hero effect
-				set_hero(Ind, 20 + randint(10)); break;
-			case 4:
-			case 5:
-			case 6:	// 3 in 10 for Speed
-				set_fast(Ind, 20 + randint(10), 10); break;
-			case 7:
-			case 8:
-			case 9: // 3 in 10 for Berserk
-				set_shero(Ind, 20 + randint(10)); break;
-			case 10:// 1 in 10 for confusion ;)
-			default:
-				if (!(p_ptr->resist_conf)) {
-					set_confused(Ind, randint(10));
-				} break;
-			}
-			p_ptr->food = PY_FOOD_FULL;	// A quaff will bring you to the norm sustenance level!
-		} else if (magik(o_ptr->name2? 50 : 20)) {
-			msg_format(Ind, "\377%c*HIC*", random_colour());
-			msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
 
-			if (magik(o_ptr->name2? 60 : 30))
-				set_confused(Ind, p_ptr->confused + 20 + randint(20));
-			if (magik(o_ptr->name2? 50 : 20))
-				set_stun_raw(Ind, p_ptr->stun + 10 + randint(10));
-
-			if (magik(o_ptr->name2? 50 : 10)){
-				set_image(Ind, p_ptr->image + 10 + randint(10));
-				take_sanity_hit(Ind, 1, "ale", 0);
-			}
-			if (magik(o_ptr->name2? 10 : 20))
-				set_paralyzed(Ind, p_ptr->paralyzed + 10 + randint(10));
-			if (magik(o_ptr->name2? 50 : 10))
-				set_hero(Ind, 10 + randint(10)); /* removed stacking */
-			if (magik(o_ptr->name2? 20 : 5))
-				set_shero(Ind, 5 + randint(10)); /* removed stacking */
-			if (magik(o_ptr->name2? 5 : 10))
-				set_afraid(Ind, p_ptr->afraid + 15 + randint(10));
-			if (magik(o_ptr->name2? 5 : 10))
-				set_slow(Ind, p_ptr->slow + 10 + randint(10));
-			else if (magik(o_ptr->name2? 20 : 5))
-				set_fast(Ind, 10 + randint(10), 10); /* removed stacking */
-			/* Methyl! */
-			if (magik(o_ptr->name2? 0 : 3))
-				set_blind(Ind, p_ptr->blind + 10 + randint(10));
-			if (rand_int(100) < p_ptr->food * magik(o_ptr->name2? 40 : 60) / PY_FOOD_MAX)
-			{
-				msg_print(Ind, "You become nauseous and vomit!");
-				msg_format_near(Ind, "%s vomits!", p_ptr->name);
-				/* made salt water less deadly -APD */
-				(void)set_food(Ind, (p_ptr->food/2));
-				(void)set_poisoned(Ind, 0, 0);
-				(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
-			}
-			if (magik(o_ptr->name2? 2 : 3))
-				(void)dec_stat(Ind, A_DEX, 1, STAT_DEC_TEMPORARY);
-			if (magik(o_ptr->name2? 2 : 3))
-				(void)dec_stat(Ind, A_WIS, 1, STAT_DEC_TEMPORARY);
-			if (magik(o_ptr->name2? 0 : 1))
-				(void)dec_stat(Ind, A_CON, 1, STAT_DEC_TEMPORARY);
-			//			(void)dec_stat(Ind, A_STR, 1, STAT_DEC_TEMPORARY);
-			if (magik(o_ptr->name2? 3 : 5))
-				(void)dec_stat(Ind, A_CHR, 1, STAT_DEC_TEMPORARY);
-			if (magik(o_ptr->name2? 2 : 3))
-				(void)dec_stat(Ind, A_INT, 1, STAT_DEC_TEMPORARY);
-		}
-		else msg_print(Ind, "That tastes good.");
-	    } else if (p_ptr->prace == RACE_ENT) {
-		if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
-			if (set_poisoned(Ind, p_ptr->poisoned + rand_int(5) + 5, 0)) ident = TRUE;
-	    } else { /* not sure whether Vampires like alcohol? o_O */
-		msg_print(Ind, "That tastes fair but has no effect.");
-	    }
 		if (o_ptr && o_ptr->name1 == ART_DWARVEN_ALE) *keep = TRUE;
-
 		ident = TRUE;
 		break;
 
