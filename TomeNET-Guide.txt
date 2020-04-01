@@ -10603,6 +10603,8 @@ Enlightenment   Magically maps your surroundings.
 Genocide        See 'Scrolls'.
 Havoc           Fires a strong initial havoc ball that leaves a lingering
                 havoc cloud behind, dealing additional damage over time.
+                Note: Rods of Havoc do not stack! That means each rod you carry
+                will occupy one inventory slot.
 Healing         Staves:
                 Heals 250 to 400 hit points, depending on magic device skill,
                 cures stun and cuts.
