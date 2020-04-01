@@ -5438,6 +5438,10 @@ if they die.
 Everlasting characters may also use the 'Instant Resurrection' feature offered
 by town temples, see (4.5a), which will avoid turning into a ghost.
 
+Ghosts are very fragile, but can pass solid walls, float up and down freely
+using the < and > keys, their melee attacks can cause fear and they gain +3
+infra-vision.
+
 If a player ultimatively dies on a dungeon or tower floor, ie he didn't turn
 into a resurrectable ghost but got completely erased, then that particular
 floor he "perma-died" (also termed "ghost-died") on will remain static for
@@ -15718,7 +15722,7 @@ CHR     Dragonriders: +1
 
 Stealth         Body weight: -4..+3
 Infra-Vision    Undead in general: +1
-                Ghosts specifically: +3
+                Ghosts, Wraiths/Wights, Liches, Vampires : +3
 
 
 Intrinsic abilities that aren't kept when changing forms:
