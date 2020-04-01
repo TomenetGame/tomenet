@@ -1728,7 +1728,7 @@ Item power inscription (added in 4.7.1):
     +oTPaWUDEvil      slay orc/troll/giant/animal/undead/demon/dragon/evil
     *WUD              kill undead/demon/dragon
     ~oTPaWUDEvil      ESP orc/troll/giant/animal/undead/demon/dragon/evil
-     SDRAgUni             spider/dragonrider/angel/nonliving/unique
+     SDRAgUni             spider/dragonrider/good('A')/nonliving('g')/unique
     ESP               telepathy (full ESP)
     Tele/NT           induces random teleportation/allows no teleportation
     Dr/Drm/Drx/Aggr   drains hp/mana/experience / aggravates
@@ -1892,6 +1892,43 @@ Excellents  Items that pseudo-identified as 'excellent'.
 
 EA          Extra Attacks. Rings, gloves or weapons which increase your number
             of blows per round (BpR) with melee weapons. Quite expensive.
+
+ESP         Extrasensory perception. ESP is a telepathic power that allows you
+            to sense monsters even though they aren't in your line of sight but
+            far away. This is tremendously useful as you know what monsters are
+            lurking on the dungeon floor and where they are, so you won't run
+            into nasty surprises - except you cannot ESP monsters that don't
+            have a mind! And there might be special monsters that can cloak
+            their mind, also preventing detection.
+            Monster flags regarding ESP are EMPTY_MIND (the monster does not
+            have a mind) and WEIRD_MIND (the monster will flicker on ESP).
+
+            ESP powers can vary, from full telepathy (seeing all monsters that
+            have a mind) to partial ESP that only detects specific kinds of
+            monsters, such are:
+            Animals, Spiders, Orcs, Trolls, Giants, Undead (most lesser undead
+            are mindless though and therefore undetectable by ESP), Demons,
+            Dragons, Good (all monsters that have the 'GOOD' flag), Evil (all
+            monsters that have the 'EVIL' flag, which is quite a lot!),
+            Non-living (most of these don't have a mind though), Uniques.
+            In the early game, obtaining ESP-Evil is already a huge help, as it
+            will cover a lot of monsters.
+
+            ESP can be gained by magic or by items, typical items are:
+             - Crowns of telepathy (full ESP, 'It gives telepathic powers.')
+             - Weapons of *Slay Evil*, Aman, or Gondolin (ESP evil)
+             - Weapons of Westernesse (ESP orcs/trolls/giants)
+             - Dwarven Helmets (ESP dragons, rolls)
+             - Weapons of *Slay Troll* (ESP trolls)
+             The lower three are mainly listed for their troll-detection. While
+             trolls are not a major threat, the ESP can be utilized for finding
+             troll pits! These usually yield major amounts of experience in the
+             early gameplay. Typically, the player would enter a dungeon floor
+             and use Shift+L (Shift+W RL keymap) to scan the whole floor for a
+             possible troll pit.
+
+            Note that the rogue ability 'Cloaking' overrides ESP, so a cloaked
+            target cannot be spotted by ESP.
 
 FA          Free Action (immunity to paralysis).
 
@@ -13964,9 +14001,10 @@ create a character!):
     (See (5.9) for firestone details.)
     Draconians need a very long time to gain further experience and need to eat
     often. They have feather falling instrinsically from birth.
-    At level 5 they can spot dragons anywhere on the level. At level 6 they
-    acquire an intrinsic telepathic vision of all nearby creatures, the radius
-    expands as they gain levels. At level 30 they learn how to levitate.
+    At level 5 they gain intrinsic telepathic powers (ESP) to spot dragons
+    anywhere on the level. At level 6 this power advances to additionally being
+    able to notice all nearby creatures that have a mind and the radius expands
+    as the Draconian gains levels. At level 30 they learn how to levitate.
     Unlike other races, draconians are susceptible to the void connecting
     void jump gates and may get hurt by it when they travel through it,
     perceiving it as "cold" even if they resist or are immune to normal frost.
@@ -19059,7 +19097,7 @@ Medium level character (up to 25)
 + If you manage to find an item that lets you telepathically sense trolls, keep
   it. Use it to locate troll pits, those tend to give a lot of experience!
   Typical items that provide troll-ESP are dwarven helmets or weapons of
-  *slay troll*. (ESP = extra sensory perception, ie the ability to sense a
+  *slay troll*. (ESP = extrasensory perception, ie the ability to sense a
   presence telepathically without a direct line of sight).
 
 
@@ -19095,14 +19133,7 @@ Higher characters (up to 35)
   This prevents your life force from being drained, making you lose experience
   and going back in character level. Cloaks of Teleri Hold Life and provide
   Free Action too.
-+ Try to get items that provide ESP (extra sensory perception). ESP is a
-  telepathic power that allows you to sense monsters even though they aren't
-  in your line of sight! This is tremendously useful as you know what monsters
-  are lurking on the map and where, so you won't run into nasty surprises.
-  Typical item that provide ESP are:
-  Crowns of telepathy (full ESP!)
-  Weapons of *slay evil* (ESP evil), Weapons of Aman (ESP evil), Weapons of
-  Gondolin (ESP evil).
++ Try to get items that provide ESP.
 
 
 Very high characters (36 and above)
