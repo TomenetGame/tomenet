@@ -6304,7 +6304,8 @@ void calc_boni(int Ind) {
 
 /* -------------------- Limits -------------------- */
 
-	/* no_hp_regen special workings: Actually simulates having hp-drain and hp-regen at the same time, keeping each other in check */
+	/* no_hp_regen special workings: Actually simulates having hp-drain and hp-regen at the same time, keeping each other in check.
+	   Weakness: If the player has additional HP regen sources (skills) he will still effectively regen HP and setting the regenerate flag will even help him to do so. */
 	if (p_ptr->no_hp_regen) {
 		if (!p_ptr->drain_life) {
 			p_ptr->drain_life = 1;
