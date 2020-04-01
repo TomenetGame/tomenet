@@ -1610,15 +1610,16 @@ Other !-inscriptions:
     !U          This item will be displayed in dark grey colour in your
                 inventory. Can be useful for sorting loot.
 
-
 The # inscription:
     This one makes all following inscription be appended directly behind the
     actual item name, instead of at the end of the item's full description.
     It can be especially convenient if the item has a very long name.
     Sometimes you can also use this to confuse your fellow players :-p
 
-(The '..' inscription is no longer available since 'Thunderlord' ego weapons
-no longer have the TELEPORT flag.)
+Player-store inscription:
+    @S          This inscription has a variety of different usages and is used
+                for displaying items in your own shop that you can set up in
+                any of your houses. For more information see (4.10a).
 
 Items that 'can cause Earthquakes':
     !Q          Prevents the item from causing an earthquake. This usually
@@ -7322,6 +7323,8 @@ However, the following items have a default price of only 1x their base value:
 - Rings of Speed
 - Scrolls of Artifact Creation
 - Random artifacts
+To verify the appraised price, just inspect (Shift+I) an item inscribed '@S'
+while you are inside your house.
 
 If you want to set a higher price than the default price, you can inscribe the
 item with the price like this:
