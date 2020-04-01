@@ -1992,6 +1992,9 @@ void cmd_the_guide(void) {
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
+				/* There is no Black Breath chapter but it is explained fully in the chapter containing Nazgul info */
+				if (strcasestr(buf, "black") == buf || !strcasecmp(buf, "bb")) strcpy(buf, "nazgul");
+
 				/* The chapter explaining 'stats' is actually titled 'Attributes' */
 				if (!strcasecmp(buf, "stats") || !strcasecmp(buf, "stat")) strcpy(buf, "Attributes");
 				/* Also allow directly jumping to any attribute */
