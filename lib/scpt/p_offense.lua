@@ -68,8 +68,8 @@ HCURSE_III = add_spell {
 }
 
 HGLOBELIGHT_I = add_spell {
-	["name"] = 	"Holy Light I",
-	["name2"] = 	"HLight I",
+	["name"] = 	"Call Light I",
+	["name2"] = 	"CLight I",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
 	["spell_power"] = 0,
 	["am"] = 	75,
@@ -99,8 +99,8 @@ HGLOBELIGHT_I = add_spell {
 	}
 }
 HGLOBELIGHT_II = add_spell {
-	["name"] = 	"Holy Light II",
-	["name2"] = 	"HLight II",
+	["name"] = 	"Call Light II",
+	["name2"] = 	"CLight II",
 	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_HSUPPORT},
 	["spell_power"] = 0,
 	["am"] = 	75,

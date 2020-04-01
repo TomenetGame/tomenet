@@ -14388,7 +14388,7 @@ create a character!):
     at which they are able to notice curses almost instantly.
     Wisdom is the priest's primary stat and they get a bonus on 'Holy Curing'.
 
-    Hint: Note that their spell Holy Light can be used to deal decent damage
+    Hint: Note that their spell Call Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
     Priests aren't easy to play in the beginning, since they don't deal much
     damage and also can't take a lot of punishment, so they aren't recommended
@@ -14541,7 +14541,7 @@ create a character!):
     While they may train in all sorts of holy schools, they are slightly less
     adept at 'Holy Curing'.
 
-    Hint: Note that the spell Holy Light can be used to deal decent damage
+    Hint: Note that the spell Call Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
     Also make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, they are great for catching annoying monsters
@@ -16630,7 +16630,7 @@ school.
                     Tier III: Level 26.
                     Affects all monsters in line of sight.
 
-    Holy Light      Creates a globe of pure light.
+    Call Light      Creates a globe of pure light.
                     Required skill level for first spell level: 2.
                     Lv3:  Hurts monsters that are susceptible to light.
                     Shared spell (see above): H.Offense, H.Support.
@@ -16831,7 +16831,7 @@ school.
     Remove Fear     Keeps your heart boldened for a while.     (auto-project)
                     Required skill level for first spell level: 1.
 
-    Holy Light      Creates a globe of pure light.
+    Call Light      Creates a globe of pure light.
                     Required skill level for first spell level: 2.
                     Lv3:  Hurts monsters that are susceptible to light.
                     Shared spell (see above): H.Offense, H.Support.

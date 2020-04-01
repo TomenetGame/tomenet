@@ -245,7 +245,7 @@ guide_spell = {
     "Telekinesis I",
 
     "Curse",
-    "Holy Light",
+    "Call Light",
     "Exorcism",
     "Redemption",
     "Orb of Draining",
@@ -270,7 +270,7 @@ guide_spell = {
     "Soul Curing", --85
 
     "Remove Fear",
-    "Holy Light",
+    "Call Light",
     "Detect Evil",
     "Sense Monsters",
     "Sanctuary",

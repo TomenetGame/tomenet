@@ -59,7 +59,7 @@ __classes_diz = {
     "amount of mana and spell failure rate.",
     "Similar to istari, priests are somewhat weak in",
     "the beginning, since they cannot deal much damage",
-    "and not take much either. Holy Light and Curse are",
+    "and not take much either. Call Light and Curse are",
     "those spells often seen to be used by novices.",
     "Their saving throw is extraordinarily good.",},
 
