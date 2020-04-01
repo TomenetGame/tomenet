@@ -6282,7 +6282,8 @@ The 1..9 are standard shops, namely..
                         million or you can wait for about 2 weeks (real time,
                         you don't even need to be logged on!) or you can
                         gain about 5 million raw experience points or a mix of
-                        all these, up to your personal preference.
+                        all these, up to your personal preference. The two
+                        weeks begin to count immediately after you have died.
                         'Raw' experience means that it's simply the amount of
                         experience shown in the monster spoiler (~7) and the
                         only other factors are the monster's clone state and
