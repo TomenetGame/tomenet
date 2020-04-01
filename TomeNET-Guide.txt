@@ -12818,6 +12818,8 @@ stated.
                                 summoning, running away.
                                 The monster must be standing right beside you
                                 (horizontally, vertically or diagonally).
+                                To intercept an enemy it doesn't matter whether
+                                you have a weapon or shield equipped or not.
 
                                 Classes that have the Interception skill
                                 available for training will automatically gain
