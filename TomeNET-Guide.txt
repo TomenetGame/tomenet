@@ -12380,6 +12380,10 @@ Examples:
 18/120 is like 30 (ie 18+12).
 18/47 is like 22. The fraction 0.7 is not factoring into actual gameplay.
 
+The way stats are displayed can be toggled in  = 2  'linear_stats'. This will
+change them to numbers from 3 to 40, where 40 equals 18/220 and is similarly
+displayed as asterisks instead of a number to indicate that it's the limit.
+
 If you quaffed the maximum of "stat potions" (potions raising your stats), the
 maxed out attribute will be displayed in light umber.
 An attribute is maxed out at 18/100 +/- racial/class modifiers.
