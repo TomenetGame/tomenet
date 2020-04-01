@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 31. March 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 1. April 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10006,6 +10006,41 @@ LIFE ('It affects your hit points.')
 AGGRAVATE ('It aggravates nearby creatures.')
         Wakes up all monsters in whose radius of awareness you are.
         (Does not haste them as scrolls do, compare to (5.9)).
+DRAIN_MANA ('It drains your magic')
+        Slowly drains your MP over time down to zero. Can be countered if your
+        MP regeneration happens to be faster than the drain.
+        Multiple items draining mana will stack linearly.
+DRAIN_HP ('It drains your health')
+        Slowly drains your HP over time down to zero, but you cannot actually
+        die from this as it will stop at zero, and a character is still alive
+        at that point, as death occurs when your HP drop _below_ zero.
+        This effect can be countered if your HP regeneration happens to be
+        faster than the drain.
+        Multiple items draining HP will stack linearly.
+        Note that vampire race characters are immune to specifically the
+        DRAIN_HP effect on 'Spectral' ego weapons.
+DRAIN_EXP ('It drains your life force')
+        Your experience points are drained in random intervals. This effect
+        actually drains your maximum XP too, so it cannot be restored! To make
+        up for the lost XP you wil have to gain new XP, eg by killing monsters.
+        This effect will however stop at the level threshold, so it will not
+        delevel you. However, if your XP happen to fall below the threshold,
+        for example by suffering from temporary XP drain effects (for example
+        by monsters that attack in melee for XP drain, or a potion of lose
+        memory, or an unresisted nether attack etc..) so that you temporarily
+        lose a level, the DRAIN_EXP effect will kick in again (!) and further
+        drain your exp down to the next level threshold. For this reason it is
+        imperative to cure any temporary XP drain as soon as possible while
+        wearing DRAIN_EXP items.
+        Multiple items draining XP will stack with diminishing returns, meaning
+        that each further item will add less additional drain effect, making it
+        more feasible to for example equip two rings of power (obtained from
+        Nazguls) at the same time.
+        While the player is on the world surface, the effect is lessened
+        compared to being inside a dungeon/tower.
+        While in town areas (that means dungeon towns, normal towns and the
+        surrounding housing area) the drain effect will be on hold!
+        Vampire race characters suffer half as much from this effect as others.
 LUCK ('It affects your luck.')
         If you are lucky, your chance to find better items increases.
         Luck caps at 40, having higher bonus won't help any more.
@@ -11483,7 +11518,10 @@ EAT_xxx         DEX and stealing skill increase your chance to resist
                 Nothing helps against EAT_FOOD or EAT_LITE.
 UN_BONUS        disenchantment.
                 The damage can partially be mitigated by having the resistance.
-UN_POWER        no resistance. It drains charges/energy from your items.
+UN_POWER        no resistance. It drains charges/energy from your items:
+                "Energy drains from your pack" for magic devices or polymorph
+                rings in your inventory or "Energy drains from your equipment"
+                for worn polymorph rings.
                 Additionally it drains some of your mana.
 
                 Magic Device skill helps to prevent draining though.
