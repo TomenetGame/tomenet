@@ -11407,6 +11407,10 @@ DROP_GREAT      The monster usually drops items with ego powers or artifacts.
                 of their respective dungeon.
                 (For details on monster stats and flags, press ~ 7 in the game
                 to invoke the monster lore browser.)
+DROP_60         The monster has a 60%/90% chance to drop something (an item or
+ DROP_90        a gold pile).
+ONLY_GOLD       The monster drops only gold (and no items) or only items (and
+ ONLY_ITEM      no gold).
 
 
 
