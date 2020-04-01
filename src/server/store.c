@@ -4383,8 +4383,13 @@ void do_cmd_store(int Ind) {
 		if (p_ptr->poisoned) set_poisoned(Ind, 0, 0);
 
 		if (p_ptr->food < PY_FOOD_ALERT) {
-			msg_print(Ind, "A temple priest hands you a slice of bread.");
-			set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
+			if (p_ptr->prace == RACE_ENT) {
+				msg_print(Ind, "A temple priest hands you a bowl of water.");
+				set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
+			} else {
+				msg_print(Ind, "A temple priest hands you a slice of bread.");
+				set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
+			}
 		}
 	}
 

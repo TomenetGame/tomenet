@@ -5509,6 +5509,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Silyl fun stuff >:) - C. Blue */
 	if (p_ptr->corner_turn) {
 		p_ptr->corner_turn -= (p_ptr->corner_turn > 2 ? 2 : p_ptr->corner_turn);
+		if (p_ptr->martyr) p_ptr->corner_turn = 0;
 		if (p_ptr->corner_turn > 25) {
 			p_ptr->corner_turn = 0;
 			disturb(Ind, 0, 0);
@@ -5516,12 +5517,12 @@ static bool process_player_end_aux(int Ind) {
 			msg_format_near(Ind, "%s looks dizzy!", p_ptr->name);
 			set_confused(Ind, 10 + rand_int(5));
 			if (magik(50)) {
-				msg_print(Ind, "\377oYou vomit!");
-				msg_format_near(Ind, "%s vomits!", p_ptr->name);
-				take_hit(Ind, 1, "circulation collapse", 0);
-				if (!p_ptr->suscep_life) {
-					if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
-						if (p_ptr->food > PY_FOOD_FAINT - 1) (void)set_food(Ind, PY_FOOD_FAINT - 1);
+				if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
+					msg_print(Ind, "\377oYou vomit!");
+					msg_format_near(Ind, "%s vomits!", p_ptr->name);
+					take_hit(Ind, 1, "circulation collapse", 0);
+					//? if (p_ptr->chp < p_ptr->mhp) /* *invincibility* fix */
+					if (p_ptr->food > PY_FOOD_FAINT - 1) (void)set_food(Ind, PY_FOOD_FAINT - 1);
 					(void)set_poisoned(Ind, 0, 0);
 					if (!p_ptr->free_act && !p_ptr->slow_digest)
 					(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(10) + 10);

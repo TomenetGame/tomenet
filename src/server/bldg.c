@@ -722,7 +722,8 @@ static bool inn_comm(int Ind, int cmd) {
 		case BACT_FOOD: /* Buy food & drink */
 		{
 			if (!vampire) {
-				msg_print(Ind, "The barkeep gives you some gruel and a beer.");
+				if (p_ptr->prace == RACE_ENT) msg_print(Ind, "The barkeep gives you a bowl of water.");
+				else msg_print(Ind, "The barkeep gives you some gruel and a beer.");
 				// msg_print(Ind, NULL);
 				(void) set_food(Ind, PY_FOOD_MAX - 1);
 			} else {

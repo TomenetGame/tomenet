@@ -297,8 +297,9 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 	case SV_FOOD_PINT_OF_ALE:
 	case SV_FOOD_PINT_OF_WINE:
-	    if (!p_ptr->suscep_life) {
-		if (!o_ptr) {
+		/* as this counts as food and not as potion, there's a hack allowing ents to 'eat' this anyway.. */
+		if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
+		    if (!o_ptr) {
 			msg_format(Ind, "\377%c*HIC*", random_colour());
 			msg_format_near(Ind, "\377%c%s hiccups!", random_colour(), p_ptr->name);
 
@@ -421,7 +422,10 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 				(void)dec_stat(Ind, A_INT, 1, STAT_DEC_TEMPORARY);
 		}
 		else msg_print(Ind, "That tastes good.");
-	    } else {
+	    } else if (p_ptr->prace == RACE_ENT) {
+		if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
+			if (set_poisoned(Ind, p_ptr->poisoned + rand_int(5) + 5, 0)) ident = TRUE;
+	    } else { /* not sure whether Vampires like alcohol? o_O */
 		msg_print(Ind, "That tastes fair but has no effect.");
 	    }
 		if (o_ptr && o_ptr->name1 == ART_DWARVEN_ALE) *keep = TRUE;
@@ -652,6 +656,10 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				(void)set_food(Ind, (p_ptr->food / 2) - 400);
 				(void)set_poisoned(Ind, 0, 0);
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
+			} else if (p_ptr->prace == RACE_ENT) {
+				take_hit(Ind, damroll(2, 3), "ingesting salt water", 0);
+				if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
+					if (set_poisoned(Ind, p_ptr->poisoned + rand_int(5) + 5, 0)) ident = TRUE;
 			} else {
 				if (!msg) msg_print(Ind, "That potion tastes awfully salty.");
 				else if (msg == 1) msg_print(Ind, "The water tastes awfully salty.");
