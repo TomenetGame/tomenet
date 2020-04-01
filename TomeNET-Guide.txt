@@ -9979,7 +9979,7 @@ floor level is 127 and race level is 85.
 Now the higher of the two (floor and race) is 127. The difference of the result
 (106) to 127 is 21. This gets capped at 20 and is the random 'tolerance' for
 each item dropped by the wyrm.
-The treasure class of the wyrm is 50% treasure and 50% combat.
+The treasure class of the wyrm is 20% treasure and 80% combat.
 
 Let's look at 3 items it drops:
 
