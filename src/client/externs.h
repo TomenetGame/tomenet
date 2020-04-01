@@ -868,7 +868,7 @@ extern char color_attr_to_char(int a);
 extern int color_char_to_attr(char c);
 extern byte mh_attr(int max);
 extern const char *my_strcasestr(const char *big, const char *little);
-extern const char *my_strcasestr_skipcol(const char *big, const char *little, bool strict);
+extern const char *my_strcasestr_skipcol(const char *big, const char *little, byte strict);
 extern char *roman_suffix(char* cname);
 
 /* common/files.c */

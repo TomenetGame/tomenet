@@ -1546,7 +1546,7 @@ void cmd_the_guide(void) {
 #endif
 	int i;
 	char *res;
-	bool search_uppercase = FALSE, search_uppercase_ok, fallback = FALSE;
+	byte search_uppercase = 0, search_uppercase_ok, fallback = FALSE;
 
 	/* empty file? */
 	if (guide_lastline == -1) return;
@@ -1761,6 +1761,15 @@ void cmd_the_guide(void) {
 				searchline++;
 				/* Search wrapped around once and still no result? Finish. */
 				if (searchwrap && searchline == line) {
+					/* Hack: If we used search_uppercase == 2, then first do another search with search_uppercase == 1 before giving up. */
+					if (search_uppercase == 2) {
+						search_uppercase = 1;
+						searchwrap = FALSE;
+						n--;
+						continue;
+					}
+
+					/* We're done (unsuccessfully), clean up.. */
 					search[0] = 0;
 					searchwrap = FALSE;
 					withinsearch[0] = 0;
@@ -2477,7 +2486,7 @@ void cmd_the_guide(void) {
 			if (line < 0) line = 0;
 
 			/* Hack: If we enter all upper-case, search for exactly that, case sensitively */
-			search_uppercase = TRUE;
+			search_uppercase = 2;
 			search_uppercase_ok = FALSE;
 			for (c = 0; search[c]; c++) {
 				if (!search_uppercase_ok && isalpha(search[c])) search_uppercase_ok = TRUE;

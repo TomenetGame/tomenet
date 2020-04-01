@@ -344,11 +344,11 @@ const char *my_strcasestr(const char *big, const char *little) {
 	return NULL;
 }
 /* Same as my_strcasestr() but skips colour codes (added for guide search).
-   strict: search for occurances only at the beginning of a line (tolerating colour codes and spaces)
-           or only for all-caps, depending on defines. */
-#define STRICT_BEGINNING
-#define STRICT_CAPS
-const char *my_strcasestr_skipcol(const char *big, const char *little, bool strict) {
+   strict:
+    0 - not strict
+    1 - search for occurances only at the beginning of a line (tolerating colour codes and spaces)
+    2 - same as (1) and also search only for all-caps. */
+const char *my_strcasestr_skipcol(const char *big, const char *little, byte strict) {
 	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0, cnt_offset;
 	int L = strlen(little), l;
@@ -359,74 +359,73 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, bool stri
 	if (*little == 0) return big;
 	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
 
-    if (strict) { /* switch to strict mode */
-	bool just_spaces = TRUE;
-	do {
-		/* Skip colour codes */
-		while (big[cnt] == '\377') {
-			cnt++;
-			if (big[cnt] != 0) cnt++; //paranoia: broken colour code
-		}
-		if (!big[cnt]) return NULL;
-		if (big[cnt] != ' ') just_spaces = FALSE;
-
-		cnt2 = cnt_offset = 0;
-		l = 0;
-		while (little[cnt2] != 0) {
+	if (strict) { /* switch to strict mode */
+		bool just_spaces = TRUE;
+		do {
 			/* Skip colour codes */
-			while (big[cnt + cnt2 + cnt_offset] == '\377') {
-				cnt_offset++;
-				if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
+			while (big[cnt] == '\377') {
+				cnt++;
+				if (big[cnt] != 0) cnt++; //paranoia: broken colour code
 			}
-			if (!big[cnt + cnt2 + cnt_offset]) return NULL;
+			if (!big[cnt]) return NULL;
+			if (big[cnt] != ' ') just_spaces = FALSE;
 
-#ifndef STRICT_CAPS /* case-insensitive */
-			if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == tolower(little[cnt2]) || big[cnt + cnt2 + cnt_offset] == toupper(little[cnt2])) l++;
-#else /* case-sensitive */
-			if (big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
-#endif
-			else break;
+			cnt2 = cnt_offset = 0;
+			l = 0;
+			while (little[cnt2] != 0) {
+				/* Skip colour codes */
+				while (big[cnt + cnt2 + cnt_offset] == '\377') {
+					cnt_offset++;
+					if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
+				}
+				if (!big[cnt + cnt2 + cnt_offset]) return NULL;
 
-			if (l == 1) ret = big + cnt;
-			cnt2++;
-		}
+				if (strict == 2) { /* Case-sensitive: Caps only (the needle is actually all-caps) */
+					if (big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
+					else break;
+				} else {
+					if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == tolower(little[cnt2]) || big[cnt + cnt2 + cnt_offset] == toupper(little[cnt2])) l++;
+					else break;
+				}
 
-		if (L == l) return ret;
-#ifdef STRICT_BEGINNING
-		if (!just_spaces) return NULL; /* failure: not at the beginning of the line (tolerating colour codes) */
-#endif
-		cnt++;
-	} while (big[cnt] != '\0');
-	return NULL;
-    } else {
-	do {
-		/* Skip colour codes */
-		while (big[cnt] == '\377') {
-			cnt++;
-			if (big[cnt] != 0) cnt++; //paranoia: broken colour code
-		}
-
-		cnt2 = cnt_offset = 0;
-		l = 0;
-		while (little[cnt2] != 0) {
-			/* Skip colour codes */
-			while (big[cnt + cnt2 + cnt_offset] == '\377') {
-				cnt_offset++;
-				if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
+				if (l == 1) ret = big + cnt;
+				cnt2++;
 			}
 
-			if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == tolower(little[cnt2]) || big[cnt + cnt2 + cnt_offset] == toupper(little[cnt2])) l++;
-			else break;
+			if (L == l) return ret;
+			if (!just_spaces) return NULL; /* failure: not at the beginning of the line (tolerating colour codes) */
+			cnt++;
+		} while (big[cnt] != '\0');
+		return NULL;
+	} else {
+		do {
+			/* Skip colour codes */
+			while (big[cnt] == '\377') {
+				cnt++;
+				if (big[cnt] != 0) cnt++; //paranoia: broken colour code
+			}
 
-			if (l == 1) ret = big + cnt;
-			cnt2++;
-		}
+			cnt2 = cnt_offset = 0;
+			l = 0;
+			while (little[cnt2] != 0) {
+				/* Skip colour codes */
+				while (big[cnt + cnt2 + cnt_offset] == '\377') {
+					cnt_offset++;
+					if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
+				}
 
-		if (L == l) return ret;
-		cnt++;
-	} while (big[cnt] != '\0');
-	return NULL;
-    }
+				if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == tolower(little[cnt2]) || big[cnt + cnt2 + cnt_offset] == toupper(little[cnt2])) l++;
+				else break;
+
+				if (l == 1) ret = big + cnt;
+				cnt2++;
+			}
+
+			if (L == l) return ret;
+			cnt++;
+		} while (big[cnt] != '\0');
+		return NULL;
+	}
 }
 
 /* Provide extra convenience for character names that end on roman numbers to count their reincarnations,
