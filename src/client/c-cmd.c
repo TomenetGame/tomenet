@@ -2584,7 +2584,7 @@ void cmd_the_guide(void) {
 			Term_putstr( 0, 18, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
 			Term_putstr( 0, 19, -1, TERM_WHITE, "PgUp/PgDn/Home/End should work both on the main keyboard and the number pad.");
 			Term_putstr( 0, 20, -1, TERM_WHITE, "This might depend on your specific OS flavour and desktop environment though.");
-			Term_putstr( 0, 21, -1, TERM_WHITE, "Searching for all-caps only gives results in caps and at the start of a line.");
+			Term_putstr( 0, 21, -1, TERM_WHITE, "Searching for all-caps only gives 'emphasized' results first in a line (flags).");
 			Term_putstr(23, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
 			inkey();
 			continue;
