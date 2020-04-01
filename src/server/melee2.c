@@ -2321,7 +2321,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (monst_check_grab(m_idx, 100, "fire")) break;
 		if (blind) msg_print(Ind, "You hear a strange noise.");
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a shot for", m_name);
-		bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6), SFX_BOLT_SHOT);
+		bolt(Ind, m_idx, GF_SHOT, damroll(dice, 6), SFX_BOLT_SHOT);
 		break;
 		}
 
@@ -2338,7 +2338,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (monst_check_grab(m_idx, 100, "fire")) break;
 		if (blind) msg_print(Ind, "You hear a strange noise.");
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s fires a bolt for", m_name);
-		bolt(Ind, m_idx, GF_ARROW, damroll(dice, 6), SFX_BOLT_BOLT);
+		bolt(Ind, m_idx, GF_BOLT, damroll(dice, 6), SFX_BOLT_BOLT);
 		break;
 		}
 
@@ -2585,7 +2585,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_print(Ind, "You hear something grunt with exertion.");
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s hurls a boulder at you for", m_name);
-		bolt(Ind, m_idx, GF_ARROW, damroll(1 + r_ptr->level / 7, 12), SFX_BOLT_BOULDER);
+		bolt(Ind, m_idx, GF_BOULDER, damroll(1 + r_ptr->level / 7, 12), SFX_BOLT_BOULDER);
 		break;
 
 	/* RF5_BA_ACID */

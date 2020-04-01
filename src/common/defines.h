@@ -4506,8 +4506,12 @@
 #define GF_ACID			3
 #define GF_COLD			4
 #define GF_FIRE			5
+#define GF_SHOT			6
+#define GF_ARROW		7
+#define GF_BOLT			8
+#define GF_BOULDER		9
 #define GF_MISSILE		10
-#define GF_ARROW		11
+
 #define GF_PLASMA		12
 #define GF_HOLY_ORB		13
 #define GF_WATER		14

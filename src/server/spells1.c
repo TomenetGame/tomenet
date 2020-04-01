@@ -1580,7 +1580,10 @@ byte spell_color(int type) {
 	case GF_HOLY_FIRE:	return (randint(3) != 1 ? TERM_ORANGE : (randint(2) == 1 ? TERM_YELLOW : TERM_WHITE));
 	case GF_HELLFIRE:	return (randint(5) == 1 ? TERM_RED : TERM_L_DARK);
 	case GF_MANA:		return (randint(5) != 1 ? TERM_VIOLET : TERM_L_BLUE);
+	case GF_SHOT:		return (TERM_SLATE);
 	case GF_ARROW:		return (TERM_L_UMBER);
+	case GF_BOLT:		return (TERM_SLATE);
+	case GF_BOULDER:	return (TERM_UMBER);
 	case GF_WATER:		return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
 	case GF_WAVE:		return (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE);
 	case GF_VAPOUR:		return (randint(10) == 1 ? TERM_BLUE : TERM_L_BLUE);
@@ -1647,7 +1650,10 @@ bool spell_color_animation(int type) {
 	case GF_HOLY_FIRE:	return TRUE;//(randint(3)!=1?TERM_ORANGE:(randint(2)==1?TERM_YELLOW:TERM_WHITE));
 	case GF_HELLFIRE:	return TRUE;//(randint(5)==1?TERM_RED:TERM_L_DARK);
 	case GF_MANA:		return TRUE;//(randint(5)!=1?TERM_VIOLET:TERM_L_BLUE);
+	case GF_SHOT:		return FALSE;
 	case GF_ARROW:		return FALSE;
+	case GF_BOLT:		return FALSE;
+	case GF_BOULDER:	return FALSE;
 	case GF_WATER:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 	case GF_WAVE:		return TRUE;//(randint(4)==1?TERM_L_BLUE:TERM_BLUE);
 	case GF_VAPOUR:		return TRUE;
@@ -1715,7 +1721,10 @@ byte spell_color(int type) {
 	case GF_HOLY_FIRE:	return (TERM_HOLYFIRE);
 	case GF_HELLFIRE:	return (TERM_HELLFIRE);
 	case GF_MANA:		return (TERM_MANA);
+	case GF_SHOT:		return (TERM_SLATE);
 	case GF_ARROW:		return (TERM_L_UMBER);
+	case GF_BOLT:		return (TERM_SLATE);
+	case GF_BOULDER:	return (TERM_UMBER);
 	case GF_VAPOUR:		return (TERM_L_BLUE);//animate with some dark blue maybe?
 	case GF_WATER:		return (TERM_WATE);
 	case GF_WAVE:		return (TERM_WATE);
@@ -5839,7 +5848,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		dam = 0;
 		break;
 
-		/* Magic Missile -- pure damage */
+	/* Magic Missile -- pure damage */
 	case GF_MISSILE:
 		if (seen) obvious = TRUE;
 		break;
@@ -6163,7 +6172,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 
 	/* Arrow -- XXX no defense */
+	case GF_SHOT:
 	case GF_ARROW:
+	case GF_BOLT:
+	case GF_BOULDER:
 		if (seen) obvious = TRUE;
 		break;
 
@@ -9216,7 +9228,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 	/* pre-calc kinetic/spirit shield mana tax before doing the reflection check below */
 	if (physical_shield) {
-		if (!friendly_player && (typ == GF_ARROW || typ == GF_MISSILE)
+		if (!friendly_player && (typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE)
 		    && p_ptr->csp >= dam / 7 &&
 		    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
 		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO))) {
@@ -9235,13 +9247,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    || (p_ptr->reflect &&
 	     !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
 	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO)) &&
-	     rand_int(20) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 15 : 9))
+	     rand_int(20) < ((typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE) ? 15 : 9))
 #ifdef USE_BLOCKING
 	    /* using a shield? requires USE_BLOCKING */
 	    || (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect / 5)) &&
 	     !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
 	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO)) &&
-	     rand_int(20) < ((typ == GF_ARROW || typ == GF_MISSILE) ? 15 : 9))
+	     rand_int(20) < ((typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE) ? 15 : 9))
 #endif
 	    ))
 	{
@@ -9528,9 +9540,27 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* Arrow -- XXX no dodging */
+	case GF_SHOT:
+		if (p_ptr->biofeedback) dam /= 2;
+		if (fuzzy) msg_format(Ind, "You are hit by some small projectile for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer, -who);
+		break;
+	case GF_BOLT:
+		if (p_ptr->biofeedback) dam /= 2;
+		if (fuzzy) msg_format(Ind, "You are hit by some heavy projectile for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer, -who);
+		break;
 	case GF_ARROW:
 		if (p_ptr->biofeedback) dam /= 2;
-		if (fuzzy) msg_format(Ind, "You are hit by something sharp for \377%c%d \377wdamage!", damcol, dam);
+		if (fuzzy) msg_format(Ind, "You are hit by some sharp projectile for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer, -who);
+		break;
+	case GF_BOULDER:
+		//if (p_ptr->biofeedback) dam /= 2;
+		if (fuzzy) msg_format(Ind, "You are hit by something heavy for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
@@ -12690,7 +12720,10 @@ int approx_damage(int m_idx, int dam, int typ) {
 		}
 		break;
 
+	case GF_SHOT:
 	case GF_ARROW:
+	case GF_BOLT:
+	case GF_BOULDER:
 		break;
 
 	case GF_PLASMA:

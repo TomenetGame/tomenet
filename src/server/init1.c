@@ -1278,7 +1278,7 @@ static struct {
 	{"COLD", GF_COLD},
 	{"FIRE", GF_FIRE},
 	{"MISSILE", GF_MISSILE},
-	{"ARROW", GF_ARROW},
+	{"ARROW", GF_ARROW}, //maybe todo, although 'ARROW' is unused anyway as d-effect: add GF_SHOT/GF_BOLT (GF_BOULDER probably doesn't make sense)
 	{"PLASMA", GF_PLASMA},
 	{"WATER", GF_WATER},
 	{"LITE", GF_LITE},

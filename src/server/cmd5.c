@@ -886,13 +886,13 @@ void do_mimic_power_aux(int Ind, int dir) {
     case 5:
 	sprintf(p_ptr->attacker, " fires a shot for");
 	msg_print(Ind, "You fire a shot.");
-	fire_bolt(Ind, GF_ARROW, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
+	fire_bolt(Ind, GF_SHOT, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
 	break;
 //#define RF4_ARROW_3			0x00000040	/* Fire bolt (heavy) */
     case 6:
 	sprintf(p_ptr->attacker, " fires a bolt for");
 	msg_print(Ind, "You fire a bolt.");
-	fire_bolt(Ind, GF_ARROW, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
+	fire_bolt(Ind, GF_BOLT, dir, damroll(3 + rlev / 15, 6), p_ptr->attacker);
 	break;
 //#define RF4_ARROW_4			0x00000080	/* Fire generic missile (heavy) */
     case 7:
@@ -1038,7 +1038,7 @@ void do_mimic_power_aux(int Ind, int dir) {
     case 31:
 	sprintf(p_ptr->attacker, " hurls a boulder at you for");
 	msg_print(Ind, "You hurl a boulder.");
-	fire_bolt(Ind, GF_ARROW, dir, damroll(1 + rlev / 7, 12), p_ptr->attacker);
+	fire_bolt(Ind, GF_BOULDER, dir, damroll(1 + rlev / 7, 12), p_ptr->attacker);
 	break;
 
 /* RF5 */

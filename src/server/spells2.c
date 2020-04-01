@@ -7050,7 +7050,22 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
 #ifdef USE_SOUND_2010
-	if (Players[Ind]->sfx_magicattack) sound(Ind, "cast_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+	switch (typ) {
+	case GF_SHOT: //hmm, magic or combat sfx for these mimic powers?..
+		if (Players[Ind]->sfx_combat) sound(Ind, "fire_shot", NULL, SFX_TYPE_COMMAND, FALSE);
+		break;
+	case GF_ARROW:
+		if (Players[Ind]->sfx_combat) sound(Ind, "fire_arrow", NULL, SFX_TYPE_COMMAND, FALSE);
+		break;
+	case GF_BOLT:
+		if (Players[Ind]->sfx_combat) sound(Ind, "fire_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+		break;
+	case GF_BOULDER:
+		if (Players[Ind]->sfx_combat) sound(Ind, "throw_boulder", NULL, SFX_TYPE_COMMAND, FALSE);
+		break;
+	default:
+		if (Players[Ind]->sfx_magicattack) sound(Ind, "cast_bolt", NULL, SFX_TYPE_COMMAND, FALSE);
+	}
 #endif
 
 	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
