@@ -10776,9 +10776,9 @@ Device of theft prevention
                     in stealing items from your backpack.
 Empty bottles       You can /fill these at fountains to turn them into
                     potions. (See (0.2b) for more details.)
-(Small) Firestones  These can be eaten by Draconians and players in dragon
+Firestones          These can be eaten by Draconians and players in dragon
                     forms and have various random effects (small firestones
-                    have reduced duration):
+                    just have reduced duration):
                     - If the player isn't a Draconian but he is currently in
                       dragon form he will get some mana refilled.
                       ('You feel your head clearing')
