@@ -10697,16 +10697,14 @@ Amulet of Anti-Teleportation    If worn it will suppress all attemps to
                                 by himself. It will also prevent certain
                                 effects of unresisted nexus attacks.
 Amulets of Brilliance   increase intelligence and wisdom, provide light.
-Rings of Cunningness    increase strength and intelligence.
-Rings of Might          increase strength and constitution.
-Rings of Ready Wit      increase dexterity and intelligence.
-Rings of Toughness      increase dexterity and constitution.
-Rings of Sustain Ability        sustain strength and dexterity.
-Rings of Sustain Brilliance     sustain intelligence and wisdom.
-Rings of Sustain Cunningness    sustain strength, intelligence and charisma.
-Rings of Sustain Might          sustain strength and constitution.
-Rings of Sustain Ready Wit      sustain dexterity, intelligence and charisma.
-Rings of Sustain Steadiness     sustain wisdom and constitution.
+Rings of Cunningness    increase and sustain strength and intelligence.
+Rings of Tenacity       increase and sustain strength and wisdom.
+Rings of Might          increase and sustain strength and constitution.
+Rings of Ready Wit      increase and sustain dexterity and intelligence.
+Rings of Gallantry      increase and sustain dexterity and wisdom.
+Rings of Toughness      increase and sustain dexterity and constitution.
+Rings of Preparedness   increase and sustain constitution and intelligence.
+Rings of Steadiness     increase and sustain constitution and wisdom.
 Amulets of Sustenance           sustain all six attributes, provide 'Hold Life'
                                 aka resistance to experience-draining attacks,
                                 and provide slow digestion.
