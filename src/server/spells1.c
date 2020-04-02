@@ -5952,9 +5952,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Poison */
 	case GF_POIS:
 		if (seen) obvious = TRUE;
-		if ((r_ptr->flags3 & RF3_IM_POIS) ||
-		    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-		    (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
+		if ((r_ptr->flags3 & RF3_IM_POIS)) {
 			note = " is immune";
 			dam = 0;
 #ifdef OLD_MONSTER_LORE
@@ -6444,9 +6442,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Time -- breathers resist */
 	case GF_TIME:
 		if (seen) obvious = TRUE;
-		if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)
-		    || (r_ptr->flags3 & RF3_DEMON) || (r_ptr->flags3 & RF3_NONLIVING)
-		    || (r_ptr->flags3 & RF3_UNDEAD) || (r_ptr->d_char == 'A')) {
+		if ((r_ptr->flags4 & RF4_BR_TIME) || (r_ptr->flags9 & RF9_RES_TIME)) {
 			note = " resists";
 			dam *= 3; dam /= (randint(6) + 6);
 		}
@@ -7100,9 +7096,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		switch (randint(2)) {
 		case 1: // Poison!
 			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_POIS) ||
-			  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
+			if ((r_ptr->flags3 & RF3_IM_POIS)) {
 				note = " is immune";
 				dam = 0;
 #ifdef OLD_MONSTER_LORE
@@ -7171,10 +7165,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		default: // Poison
 			if (seen) obvious = TRUE;
-			if ((r_ptr->flags3 & RF3_IM_POIS) ||
-			  (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-			  (r_ptr->d_char == 'A') || (r_ptr->d_char == 'E') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON)))
-			{
+			if (r_ptr->flags3 & RF3_IM_POIS) {
 				note = " is immune";
 				dam = 0;
 #ifdef OLD_MONSTER_LORE
@@ -7601,10 +7592,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Nuclear waste */
 	case GF_NUKE:
 		if (seen) obvious = TRUE;
-
-		if ((r_ptr->flags3 & RF3_IM_POIS) ||
-		    (r_ptr->flags3 & (RF3_NONLIVING)) || (r_ptr->flags3 & (RF3_UNDEAD)) ||
-		    (r_ptr->d_char == 'A') || ((r_ptr->d_char == 'U') && (r_ptr->flags3 & RF3_DEMON))) {
+		if (r_ptr->flags3 & RF3_IM_POIS) {
 			note = " is immune";
 			dam = 0;
 #ifdef OLD_MONSTER_LORE

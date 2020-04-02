@@ -15673,10 +15673,11 @@ All undead creatures
 All greater undead creatures
                 See 'All undead creatures' above, and in addtion they get
                 another +4 bonus to infra-vision (ie +5 in total).
-All greater demons (capital 'U')
-                Resist poison (usually immunity, depends on ~7 flags) and time.
-                Take 2x damage from holy orbs or holy fire and suffer
+All demons      Take 2x damage from holy orbs or holy fire and suffer
                 from a couple of 'good' effects/spells (similar to undead).
+All greater demons (capital 'U')
+                See 'All demons' above, and in addition they
+                resist poison (usually immunity, depends on ~7 flags) and time.
 All non-living creatures
                 Resist poison (usually even immune, depends on ~7 flags)
                 and fear; insanity attacks are reduced somewhat (see (6.6)).
@@ -16088,7 +16089,7 @@ Level 50:
 ---------
 Spectral Tyrannosaur    speedy undead animal;
 (Code 705)              has 25% scaring attacks;
-                        resists nexus, teleportation attacks, nether,
+                        resists nexus, teleportation attacks, nether, time,
                         life drain, cold, acid and poison;
                         becomes immune to one of cold/acid/poison;
                         susceptible to 'good' and 'life';

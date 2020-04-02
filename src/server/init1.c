@@ -4553,19 +4553,24 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			if (r_info[i].d_char == 'U') r_info[i].flags9 |= (RF9_RES_POIS | RF9_RES_TIME);
 		}
 		if (r_info[i].flags3 & RF3_UNDEAD) {
-			r_info[i].flags9 |= (RF9_RES_DARK | RF9_RES_POIS | RF9_RES_TIME);
-			r_info[i].flags3 |= RF3_RES_NETH;
+			//r_info[i].flags9 |= (RF9_RES_DARK | RF9_RES_POIS | RF9_RES_TIME);
+			r_info[i].flags9 |= (RF9_RES_DARK | RF9_RES_TIME);
+			r_info[i].flags3 |= RF3_IM_POIS;
+			r_info[i].flags3 |= RF3_RES_NETH; //in fact they are treated as immune in spells1.c
 			//actually no intrinsic RES_COLD - think Fire Phantom :)
 			//note: UNDEAD don't get NO_FEAR at the moment, not even lesser ones
 			if (r_info[i].d_char == 'V' || r_info[i].d_char == 'G') r_info[i].flags3 |= RF3_HURT_LITE;
 		}
 		if (r_info[i].flags3 & RF3_NONLIVING) {
-			r_info[i].flags9 |= RF9_RES_POIS;
+			r_info[i].flags3 |= RF3_IM_POIS;
 			r_info[i].flags3 |= RF3_NO_FEAR;
 		}
+		if (r_info[i].d_char == 'E') r_info[i].flags3 |= RF3_IM_POIS;
 		if (r_info[i].d_char == 'A') {
-			r_info[i].flags9 |= (RF9_RES_LITE | RF9_RES_POIS | RF9_IM_PSI | RF9_RES_TIME);
-			r_info[i].flags3 |= (RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP);
+			//r_info[i].flags9 |= (RF9_RES_LITE | RF9_RES_POIS | RF9_IM_PSI | RF9_RES_TIME);
+			r_info[i].flags9 |= (RF9_RES_LITE | RF9_IM_PSI | RF9_RES_TIME);
+			//r_info[i].flags3 |= (RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP);
+			r_info[i].flags3 |= (RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP | RF3_IM_POIS);
 			if (my_strcasestr(r_name + r_info[i].name, "Fallen")) r_info[i].flags9 &= ~RF9_RES_LITE;
 		}
 
