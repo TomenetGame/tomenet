@@ -10730,7 +10730,7 @@ Ring of Gallantry       increase and sustain dexterity and wisdom.
 Ring of Toughness       increase and sustain dexterity and constitution.
 Ring of Preparedness    increase and sustain constitution and intelligence.
 Ring of Steadiness      increase and sustain constitution and wisdom.
-Ring of Flames, Ring of Frost, Ring of Acid, Ring of Lightning
+Ring of Flames, Ring of Ice, Ring of Acid, Ring of Lightning
                         Provide the according resistance and can be activated
                         for temporary resistance too, thereby temporarily
                         giving you "double resistance" (see (5.17) for
