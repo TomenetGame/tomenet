@@ -2444,7 +2444,7 @@ no-tele vaults, even if they normally aren't!
 If you team up against him, he will grow stronger for every additional player
 who enters his dungeon level. Growing stronger in fact means that he gains a
 hit point and speed bonus. If a player leaves his level, he will weaken again.
-See the following paragraph (1.6) for more information.
+See the following paragraph (1.3b) for more information.
 
 When a player lands the killing blow on Morgoth, everyone else who is in her or
 his party and also on the same dungeon floor will get credit for winning the
