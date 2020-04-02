@@ -8200,8 +8200,9 @@ Halloween
     except it won't show up on the first 19 floors in the Ironman Deep Dive
     Challenge.
     Players who are too high level (above 30 on main, above 35 on Ironman*)
-    will not be able to hunt him, for the others he will still be tough and
-    might require teamwork.
+    will not be able to hunt him, they will see a message:
+     "A ghostly force drives you out of this dungeon!"
+    but for all others he will still be tough and might require teamwork.
 
     The Great Pumpkin does not cause any damage but still has a few annoying
     spells at its disposal. It is level 127 and therefore can drop quite high-
