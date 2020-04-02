@@ -17268,7 +17268,7 @@ school.
     BONI:           At 30 it grants HP regeneration to true vampires (same as
                     from item flag) and strong hold of your life force for
                     other races.
-                    At if both Unlife and Necromancy are at 50.000, it grants
+                    If both Unlife and Necromancy are at 50.000, it grants
                     ultimate hold on one's own life force, rendering oneself
                     immune to experience drain.
 
