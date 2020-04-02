@@ -17659,6 +17659,8 @@ The monster spells ('S:' line in r_info.txt) are mostly also usable by a player
 transforming into the monster via Mimicry skill, these spells are also called
 'mimic powers', since they're not always spells in a strict sense of the word.
 (In general, monsters' summoning spells are never available as mimic powers.)
+Note that you cannot use any mimic powers if your skill is not a least 1.000,
+resulting in the failure message "You cannot control your form."
 
 All mimic powers use intelligence stat to determine their failure rate.
 Their power usually depends on the level of the monster whose form the
