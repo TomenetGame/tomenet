@@ -1762,14 +1762,8 @@ void cmd_the_guide(void) {
 				/* Search wrapped around once and still no result? Finish. */
 				if (searchwrap && searchline == line) {
 					/* Hack: search_uppercase searches have multiple tiers of strictness, that result in another search with lowered strictness before giving up. */
-					if (search_uppercase == 3) {
-						search_uppercase = 2;
-						searchwrap = FALSE;
-						n--;
-						continue;
-					}
-					else if (search_uppercase == 2) {
-						search_uppercase = 1;
+					if (search_uppercase > 1) {
+						search_uppercase--;
 						searchwrap = FALSE;
 						n--;
 						continue;
@@ -2492,7 +2486,7 @@ void cmd_the_guide(void) {
 			if (line < 0) line = 0;
 
 			/* Hack: If we enter all upper-case, search for exactly that, case sensitively */
-			search_uppercase = 3;
+			search_uppercase = 4;
 			search_uppercase_ok = FALSE;
 			for (c = 0; search[c]; c++) {
 				if (!search_uppercase_ok && isalpha(search[c])) search_uppercase_ok = TRUE;

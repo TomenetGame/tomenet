@@ -347,9 +347,9 @@ const char *my_strcasestr(const char *big, const char *little) {
    strict:
     0 - not strict
     1 - search for occurances only at the beginning of a line (tolerating colour codes and spaces)
-        and it must not start on a lower-case letter (to ensure it's not just inside some random text).
-    2 - same as (1) and also search only for all-caps
-    3 - same as (2) and it must be at the beginning of the line without tolerating spaces. */
+    2 - same as (1) and it must not start on a lower-case letter (to ensure it's not just inside some random text).
+    3 - same as (2) and also search only for all-caps (for item flags)
+    4 - same as (3) and it must be at the beginning of the line without tolerating spaces, to rule out that we're inside some paragraph already. */
 const char *my_strcasestr_skipcol(const char *big, const char *little, byte strict) {
 	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0, cnt_offset;
@@ -362,7 +362,7 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, byte stri
 	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
 
 	if (strict) { /* switch to strict mode */
-		bool just_spaces = strict == 3 ? FALSE : TRUE;
+		bool just_spaces = strict == 4 ? FALSE : TRUE;
 		do {
 			/* Skip colour codes */
 			while (big[cnt] == '\377') {
@@ -373,7 +373,7 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, byte stri
 			if (big[cnt] != ' ') just_spaces = FALSE;
 
 			/* Should not start on a lower-case letter, so we know we're not just in the middle of some random text.. */
-			if (isalpha(big[cnt]) && big[cnt] == tolower(big[cnt])) return NULL;
+			if (strict > 1 && isalpha(big[cnt]) && big[cnt] == tolower(big[cnt])) return NULL;
 
 			cnt2 = cnt_offset = 0;
 			l = 0;
