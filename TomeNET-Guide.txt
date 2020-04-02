@@ -11378,6 +11378,8 @@ NO_AUTORET      You won't use auto-retaliation against this entity.
 
 REFLECTING      The monster can deflect bolts and arrows, physical and magical
                 projectiles, prolonging the fight.
+                Also, the monster will resist any types of light-based attacks
+                greatly, not just attacks in bolt form.
 HURT_LITE       This monster is susceptible to light attacks.
 HURT_ROCK       This monster is susceptible to stone-to-mud attacks.
 
@@ -15529,9 +15531,11 @@ F: flag list
     REGENERATE  Faster hit point regeneration (same as item ability, doesn't
                 stack with regeneration obtained from item flag).
     REFLECTING  Gives 'reflect' ability to the player, see (5.8) for details.
+                Also gives resistance to light.
                 (Side note about monster reflection in general:
                 The 'REFLECTING' flag on monsters gives them a flat 50% chance
-                to reflect physical or magical projectiles.)
+                to reflect physical or magical projectiles and resistance to
+                any light-based attacks.)
     CAN_SWIM    The player can pass water fields without problems.
     CAN_FLY     The player can levitate.
     STUPID      -2 intelligence.

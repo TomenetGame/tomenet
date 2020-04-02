@@ -2505,7 +2505,10 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 		p_ptr->feather_fall = TRUE; csheet_boni->cb[5] |= CB6_RFFAL;
 	}
 	if (r_ptr->flags7 & RF7_CAN_SWIM) { p_ptr->can_swim = TRUE; csheet_boni->cb[12] |= CB13_XSWIM; }
-	if (r_ptr->flags2 & RF2_REFLECTING) { p_ptr->reflect = TRUE; csheet_boni->cb[6] |= CB7_RREFL; }
+	if (r_ptr->flags2 & RF2_REFLECTING) {
+		p_ptr->reflect = TRUE; csheet_boni->cb[6] |= CB7_RREFL;
+		p_ptr->resist_lite = TRUE; csheet_boni->cb[2] |= CB3_RLITE;
+	}
 	if (r_ptr->flags7 & RF7_DISBELIEVE) {
 #if 0
 		p_ptr->antimagic += r_ptr->level / 2 + 20; csheet_boni->amfi += r_ptr->level / 2 + 20;
