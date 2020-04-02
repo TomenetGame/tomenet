@@ -384,8 +384,9 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 				if (p_ptr->combat_stance == 2) p_ptr->combat_stance_power = 2;
 			}
 			break;
-		case CLASS_RANGER:
+
 		case CLASS_MINDCRAFTER:
+		case CLASS_RANGER:
 			if (old_value < 100 && new_value >= 100) msg_print(Ind, "\374\377GYou learn how to enter a defensive stance (rank I). ('\377gm\377G' key)");
 			if (old_value < 200 && new_value >= 200) {
 				msg_print(Ind, "\374\377GYou learn how to enter defensive stance rank II.");
@@ -663,14 +664,23 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 #endif
 	case SKILL_HEALTH:
 		if (old_value < 100 && new_value >= 100) {
-			p_ptr->sanity_bar = 1;
-			msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
+			if (p_ptr->pclass != CLASS_MINDCRAFTER || p_ptr->lev < 10) {
+				p_ptr->sanity_bar = 1;
+				p_ptr->redraw |= PR_SANITY;
+				msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
+			}
 		} else if (old_value < 200 && new_value >= 200) {
-			p_ptr->sanity_bar = 2;
-			msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
+			if (p_ptr->pclass != CLASS_MINDCRAFTER || p_ptr->lev < 20) {
+				p_ptr->sanity_bar = 2;
+				p_ptr->redraw |= PR_SANITY;
+				msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
+			}
 		} else if (old_value < 400 && new_value >= 400) {
-			p_ptr->sanity_bar = 3;
-			msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
+			if (p_ptr->pclass != CLASS_MINDCRAFTER || p_ptr->lev < 40) {
+				p_ptr->sanity_bar = 3;
+				p_ptr->redraw |= PR_SANITY;
+				msg_print(Ind, "\374\377GYour sanity indicator is more detailed now. Type '/snbar' to switch.");
+			}
 		}
 		break;
 	case SKILL_ANTIMAGIC:

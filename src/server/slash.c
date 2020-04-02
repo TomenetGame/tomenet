@@ -3075,6 +3075,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 		else if (prefix(messagelc, "/undoskills") || prefix(messagelc, "/undos")) {
 			/* Skill points gained */
 			int gain = p_ptr->skill_points_old - p_ptr->skill_points;
+			int skill = get_skill(p_ptr, SKILL_HEALTH), guis = 0;
 
 			if (gain && p_ptr->reskill_possible) {
 				memcpy(p_ptr->s_info, p_ptr->s_info_old, MAX_SKILLS * sizeof(skill_player));
@@ -3086,12 +3087,14 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				if (p_ptr->body_monster &&
 				    r_info[p_ptr->body_monster].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
 					do_mimic_change(Ind, 0, TRUE);
+
 				/* in case we changed meta skill */
 				if (p_ptr->spell_project &&
 				    get_skill(p_ptr, SKILL_META) < 10) { // WARNING, HARDCODED spell level from s_meta.lua
 					p_ptr->spell_project = 0;
 					msg_print(Ind, "Your utility spells will now only affect yourself.");
 				}
+
 				/* auras.. */
 				if (!get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[0]) {
 					msg_print(Ind, "Your aura of fear ceases.");
@@ -3105,22 +3108,21 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 					msg_print(Ind, "Your aura of death ceases.");
 					p_ptr->aura[2] = FALSE;
 				}
+
 				/* health (sanity display) */
-				if (get_skill(p_ptr, SKILL_HEALTH) < 10) {
-					if (p_ptr->sanity_bar > 0) {
-						p_ptr->sanity_bar = 0;
-						p_ptr->redraw |= PR_SANITY;
-					}
-				} else if (get_skill(p_ptr, SKILL_HEALTH) < 20) {
-					if (p_ptr->sanity_bar > 1) {
-						p_ptr->sanity_bar = 1;
-						p_ptr->redraw |= PR_SANITY;
-					}
-				} else if (get_skill(p_ptr, SKILL_HEALTH) < 40) {
-					if (p_ptr->sanity_bar > 2) {
-						p_ptr->sanity_bar = 2;
-						p_ptr->redraw |= PR_SANITY;
-					}
+				if (skill >= 40) guis = 3;
+				else if (skill >= 20) guis = 2;
+				else if (skill >= 10) guis = 1;
+
+				if (p_ptr->pclass == CLASS_MINDCRAFTER) {
+					if (p_ptr->lev >= 40) guis = 3;
+					else if (p_ptr->lev >= 20 && guis != 3) guis = 2;
+					else if (p_ptr->lev >= 10 && guis == 0) guis = 1;
+				}
+
+				if (p_ptr->sanity_bar > guis) {
+					p_ptr->sanity_bar = guis;
+					p_ptr->redraw |= PR_SANITY;
 				}
 
 				/* Update all skills */
@@ -4160,12 +4162,17 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 			return;
 		}
 		else if (prefix(messagelc, "/snbar")) {
-			int skill = get_skill(p_ptr, SKILL_HEALTH), guis;
+			int skill = get_skill(p_ptr, SKILL_HEALTH), guis = 1;
 
 			if (skill >= 40) guis = 4;
 			else if (skill >= 20) guis = 3;
 			else if (skill >= 10) guis = 2;
-			else guis = 1;
+
+			if (p_ptr->pclass == CLASS_MINDCRAFTER) {
+				if (p_ptr->lev >= 40) guis = 4;
+				else if (p_ptr->lev >= 20 && guis != 4) guis = 3;
+				else if (p_ptr->lev >= 10 && guis == 1) guis = 2;
+			}
 
 			p_ptr->sanity_bar = (p_ptr->sanity_bar + 1) % guis;
 			switch (p_ptr->sanity_bar) {

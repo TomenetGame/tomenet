@@ -245,21 +245,15 @@ static void prt_ac(int Ind) {
 }
 
 static void prt_sanity(int Ind) {
-#ifdef SHOW_SANITY	// No.
+#ifdef SHOW_SANITY
 	player_type *p_ptr = Players[Ind];
-#if 0
+ #if 0
 	Send_sanity(Ind, p_ptr->msane, p_ptr->csane);
-#else	// 0
+ #else	// 0
 	char buf[20];
 	byte attr = TERM_L_GREEN;
-	int skill = get_skill(p_ptr, SKILL_HEALTH);
 	int ratio;
 	ratio = p_ptr->msane ? (p_ptr->csane * 100) / p_ptr->msane : 100;
-
-	/* Mindcrafters get better sanity display for free by levelling up */
-	if (p_ptr->pclass == CLASS_MINDCRAFTER &&
-	    p_ptr->lev >= skill)
-		skill = p_ptr->lev;
 
 	/* Vague */
 	if (ratio < 0) {
@@ -267,7 +261,7 @@ static void prt_sanity(int Ind) {
 		attr = TERM_RED;
 		strcpy(buf, "Vegetable");
 	} else if (ratio < 10) {
-//		attr = TERM_RED;
+		//attr = TERM_RED;
 		attr = TERM_MULTI;
 		strcpy(buf, "      MAD");
 	} else if (ratio < 25) {
@@ -308,7 +302,7 @@ static void prt_sanity(int Ind) {
 	/* Send it */
 	Send_sanity(Ind, attr, buf);
 
-#endif	// 0
+ #endif	// 0
 #endif	// SHOW_SANITY
 }
 
