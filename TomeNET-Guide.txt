@@ -14628,7 +14628,8 @@ create a character!):
 
 - Hell Knight
     This ultimately corrupted paladin can only be brought into existance when
-    an astral spirit forsakes enlightenment and turns demonic instead.
+    an astral spirit on its way of becoming a paladin forsakes enlightenment
+    and turns into a demonic traitor instead.
     Imbued by the powers of chaos and hellflame, these warriors represent
     absolute treason without remorse.
     They have the same abilities as paladins in all regards but they are not
