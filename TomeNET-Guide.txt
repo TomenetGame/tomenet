@@ -10695,26 +10695,23 @@ Jewelry
 -------
 Talisman (Amulet)       Increases your luck, helping you finding better loot.
                         (See LUCK flag in (5.8) for details about luck.)
-Amulets of Adornment    They might be looking fancy, but they don't do
+Amulet of Adornment     They might be looking fancy, but they don't do
                         anything and have no effect on your character.
 Amulet of Anti-Magic    See (5.8), 'NO_MAGIC'
-Amulet of Anti-Teleportation    If worn it will suppress all attemps to
-                                teleport, phase or recall the wearer,
-                                regardless whether initiated by a monster or
-                                by himself. It will also prevent certain
-                                effects of unresisted nexus attacks.
-Amulets of Brilliance   increase intelligence and wisdom, provide light.
-Rings of Cunningness    increase and sustain strength and intelligence.
-Rings of Tenacity       increase and sustain strength and wisdom.
-Rings of Might          increase and sustain strength and constitution.
-Rings of Ready Wit      increase and sustain dexterity and intelligence.
-Rings of Gallantry      increase and sustain dexterity and wisdom.
-Rings of Toughness      increase and sustain dexterity and constitution.
-Rings of Preparedness   increase and sustain constitution and intelligence.
-Rings of Steadiness     increase and sustain constitution and wisdom.
-Amulets of Sustenance           sustain all six attributes, provide 'Hold Life'
-                                aka resistance to experience-draining attacks,
-                                and provide slow digestion.
+Amulet of Anti-Teleportation
+                        If worn it will suppress all attemps to teleport, phase
+                        or recall the wearer, regardless whether initiated by a
+                        monster or by himself. It will also prevent certain
+                        effects of unresisted nexus attacks.
+Amulet of Brilliance    increase intelligence and wisdom, provide light.
+Amulet of the Moon      Gives infra-vision, the power to see invisible, and it
+                        can be activated to sleep monsters nearby.
+                        It also improves your +hit and +dam boni.
+Amulet of Terken        Gives the power to see invisible, free action, and
+                        improves your searching (usually by quite a lot).
+Amulet of Sustenance    sustain all six attributes, provide 'Hold Life'
+                        resistance to experience-draining attacks,
+                        and provide slow digestion.
                         Sustenance of a stat will prevent it from being drained
                         by various sort of attacks, potions, or other effects.
                         For most things it works 100% of the time, but for some
@@ -10725,22 +10722,28 @@ Amulets of Sustenance           sustain all six attributes, provide 'Hold Life'
                         Ability can be helpful for melee fighters, especially
                         if they enter an ironman dungeon which they cannot
                         leave early in case they need to restore drained stats.
-Elemental rings (flames, frost, acid, lightning)
-                    Provide the according resistance and can be activated for
-                    temporary resistance too, thereby temporarily giving you
-                    "double resistance" (see (5.17) for details).
-                    They also brand your physical attacks with the according
-                    element.
-Rings of Lordly Protection      Resist poison, disenchantment, life drain and
-                                give free action (immunity to paralysis).
-Amulet of the Moon      Gives infra-vision, the power to see invisible, and it
-                        can be activated to sleep monsters nearby.
-                        It also improves your +hit and +dam boni.
-Rings/Amulets of Slow Digestion will slow your food digestion so you have to
-                        eat less often. Also prevents instant paralysation if
-                        your food state hits red 'weak'.
-Amulet of Terken        Gives the power to see invisible, free action, and
-                        improves your searching (usually by quite a lot).
+Ring of Cunningness     increase and sustain strength and intelligence.
+Ring of Tenacity        increase and sustain strength and wisdom.
+Ring of Might           increase and sustain strength and constitution.
+Ring of Ready Wit       increase and sustain dexterity and intelligence.
+Ring of Gallantry       increase and sustain dexterity and wisdom.
+Ring of Toughness       increase and sustain dexterity and constitution.
+Ring of Preparedness    increase and sustain constitution and intelligence.
+Ring of Steadiness      increase and sustain constitution and wisdom.
+Ring of Flames, Ring of Frost, Ring of Acid, Ring of Lightning
+                        Provide the according resistance and can be activated
+                        for temporary resistance too, thereby temporarily
+                        giving you "double resistance" (see (5.17) for
+                        details). They also brand your physical attacks with
+                        the according element.
+Ring of Lordly Protection
+                        Resist poison, disenchantment, life drain and give
+                        free action (immunity to paralysis).
+Amulet of Slow Digestion
+Ring of Slow Digestion
+                        will slow your food digestion so you have to eat less
+                        often. Also prevents instant paralysation if your food
+                        state hits red 'weak'.
 
 
 Misc
@@ -10852,10 +10855,12 @@ Mummy Wrapping      Reduces your charisma slightly, and prevents other players
                     point regeneration rate.
 Picklock            When equipped, improves your trap-disarming (and therefore
                     also your lockpicking) ability.
-Rubble ':' on the floor You can create sling ammo from this. You cannot pick
-                        up rubble, just stand next to it (see (6.12)).
-Skeletons/Bones/Skulls  You can craft ammunition from these if your Archery
-                        skill is sufficient (see (6.12)).
+Rubble ':' on the floor
+                    You can create sling ammo from this. You cannot pick up
+                    rubble, just stand next to it (see (6.12)).
+Skeletons/Bones/Skulls
+                    You can craft ammunition from these if your Archery skill
+                    is sufficient (see (6.12)).
 Spell scroll        Although called "scrolls" they actually persist and can be
                     used infinite times. They may however get destroyed by
                     certain damage effects (most notably fire and acid)
