@@ -3035,6 +3035,7 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int inv, hurt_eq;
+	bool breakable = TRUE;
 
 	dam -= (p_ptr->reduc_acid * dam) / 100;
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
@@ -3056,15 +3057,11 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (p_ptr->suscep_acid && !(p_ptr->resist_acid || p_ptr->oppose_acid)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
-	int breakable = 1;
-	if (IS_PLAYER(Ind_attacker)) {
-		if (check_blood_bond(Ind, Ind_attacker)) {
-			breakable = 0;
-		}
-	}
+	if (IS_PLAYER(Ind_attacker) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
+	/* ..or in AMC */
+	if (safe_area(Ind)) breakable = FALSE;
 
-	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) &&
-		randint(HURT_CHANCE) == 1 && breakable)
+	if ((!(p_ptr->oppose_acid || p_ptr->resist_acid)) && randint(HURT_CHANCE) == 1 && breakable)
 		(void) do_dec_stat(Ind, A_CHR, DAM_STAT_TYPE(inv));
 
 	/* If any armor gets hit, defend the player */
@@ -3091,6 +3088,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int inv;
+	bool breakable = TRUE;
 
 	dam -= (p_ptr->reduc_elec * dam) / 100;
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
@@ -3107,15 +3105,11 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (p_ptr->suscep_elec && !(p_ptr->resist_elec || p_ptr->oppose_elec)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
-	int breakable = 1;
-	if (IS_PLAYER(Ind_attacker)) {
-		if (check_blood_bond(Ind, Ind_attacker)) {
-			breakable = 0;
-		}
-	}
+	if (IS_PLAYER(Ind_attacker) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
+	/* ..or in AMC */
+	if (safe_area(Ind)) breakable = FALSE;
 
-	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) &&
-		randint(HURT_CHANCE) == 1 && breakable)
+	if ((!(p_ptr->oppose_elec || p_ptr->resist_elec)) && randint(HURT_CHANCE) == 1 && breakable)
 		(void) do_dec_stat(Ind, A_DEX, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
@@ -3134,6 +3128,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int inv, hurt_eq;
+	bool breakable = TRUE;
 
 	dam -= (p_ptr->reduc_fire * dam) / 100;
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
@@ -3154,15 +3149,11 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (p_ptr->suscep_fire && !(p_ptr->resist_fire || p_ptr->oppose_fire)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
-	int breakable = 1;
-	if (IS_PLAYER(Ind_attacker)) {
-		if (check_blood_bond(Ind, Ind_attacker)) {
-			breakable = 0;
-		}
-	}
+	if (IS_PLAYER(Ind_attacker) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
+	/* ..or in AMC */
+	if (safe_area(Ind)) breakable = FALSE;
 
-	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) &&
-		randint(HURT_CHANCE) == 1 && breakable)
+	if ((!(p_ptr->oppose_fire || p_ptr->resist_fire)) && randint(HURT_CHANCE) == 1 && breakable)
 		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	if (magik(hurt_eq) && breakable) {
@@ -3210,6 +3201,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
 	int inv;
+	bool breakable = TRUE;
 
 	dam -= (p_ptr->reduc_cold * dam) / 100;
 	inv = (dam < 30) ? 1 : (dam < 60) ? 2 : 3;
@@ -3226,15 +3218,11 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	if (p_ptr->suscep_cold && !(p_ptr->resist_cold || p_ptr->oppose_cold)) dam = dam * 2;
 
 	/* Don't kill inventory in bloodbond... */
-	int breakable = 1;
-	if (IS_PLAYER(Ind_attacker)) {
-		if (check_blood_bond(Ind, Ind_attacker)) {
-			breakable = 0;
-		}
-	}
+	if (IS_PLAYER(Ind_attacker) && check_blood_bond(Ind, Ind_attacker)) breakable = FALSE;
+	/* ..or in AMC */
+	if (safe_area(Ind)) breakable = FALSE;
 
-	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) &&
-		randint(HURT_CHANCE) == 1 && breakable)
+	if ((!(p_ptr->oppose_cold || p_ptr->resist_cold)) && randint(HURT_CHANCE) == 1 && breakable)
 		(void) do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
