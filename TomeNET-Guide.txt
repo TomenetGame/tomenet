@@ -10454,8 +10454,8 @@ Restore Life Levels
                 yellow colour instead of the usual light green.
                 Note that this potion does not restore experience you lost by
                 dying (there is no way to restore experience loss by death).
-Restore Mana    Restores 500 MP.
-*Restore Mana*  Restores 1000 MP.
+Restore Mana    Restores 500 MP. ('You feel your head clearing')
+*Restore Mana*  Restores 1000 MP. ('You feel your head clearing')
 Ruination       Take 10d10 damage. All stats are decreased by 25 (restorable).
 Self-Knowledge  Tells you everything about yourself and identifies your items.
 
@@ -10666,6 +10666,7 @@ Healing         Staves:
 Holiness        Dispels nearby evil. Also protects you from evil for a while.
                 Cures poison/cuts, removes fear/stun, heals you somewhat.
 Magi            Restores your intelligence and 500 mana points.
+                ('You feel your head clearing')
 Perception      Identifies a specific item.
 *Perception*    *Identifies* a specific item, you guessed it..
 Polymorph       Polymorphs your target randomly into another form.
@@ -10778,6 +10779,7 @@ Empty bottles       You can /fill these at fountains to turn them into
                     have reduced duration):
                     - If the player isn't a Draconian but he is currently in
                       dragon form he will get some mana refilled.
+                      ('You feel your head clearing')
                     - If he is a Draconian, the following effects can apply:
                         - Adrenaline:   Consume way more food.
                                         Get STR/CON/DEX bonus.
