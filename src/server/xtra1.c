@@ -4756,11 +4756,14 @@ void calc_boni(int Ind) {
 				msg_print(Ind, "\377RThe weight of your armour strains your flexibility and awareness.");
 				break_cloaking(Ind, 0);
 				break_shadow_running(Ind);
-				if (!p_ptr->warning_dual && p_ptr->dual_wield && p_ptr->pclass != CLASS_ROGUE) {
+				if (!p_ptr->warning_dual && p_ptr->dual_wield) {
 					p_ptr->warning_dual = 1;
-					msg_print(Ind, "\374\377yHINT: You cannot dual-wield effectively if your armour is too heavy!");
-					msg_print(Ind, "\374\377y      If you don't want to use lighter armour, consider using one weapon");
-					msg_print(Ind, "\374\377y      and a shield, or (if your STRength is VERY high) a two-handed weapon.");
+					msg_print(Ind, "\374\377yHINT: You cannot dual-wield effectively if your armour is too heavy:");
+					msg_print(Ind, "\374\377y      Your secondary weapon will count as \374R'does not exist'\374y, caution!");
+					if (p_ptr->pclass != CLASS_ROGUE) {
+						msg_print(Ind, "\374\377y      If you don't want to use lighter armour, consider using one weapon");
+						msg_print(Ind, "\374\377y      and a shield, or (if your STRength is VERY high) a two-handed weapon.");
+					}
 					s_printf("warning_dual: %s\n", p_ptr->name);
 				}
 			}

@@ -3070,7 +3070,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_fountain = 1;
 	}
 	if (p_ptr->max_plv > 10) {
-		p_ptr->warning_dual = 1;
+		//p_ptr->warning_dual = 1; -- to dangerous, should remain active
 		p_ptr->warning_run_lite = 10;
 		p_ptr->warning_ranged_autoret = 1;
 		p_ptr->warning_mimic = 1;
