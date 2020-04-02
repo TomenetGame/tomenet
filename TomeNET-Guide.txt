@@ -21429,4 +21429,9 @@ PROBLEM 60: Editing the Colormap_0 entry (TomeNET.ini) or colormap_0 entry
 Solution:   Indeed the entry #0 cannot be changed and is always black ie
             #000000. All other entries are freely modifiable though.
 
+PROBLEM 61: I changed a key in the macro menu and now it doesn't work anymore.
+Solution:   To restore a key's default behaviour, press % to enter the macro
+            menu and choose 'd' to delete a macro from a key, then press the
+            key in question.
+
 ==============================================================================
