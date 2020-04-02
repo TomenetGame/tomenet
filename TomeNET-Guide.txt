@@ -1028,6 +1028,8 @@ They all start with a slash '/' hence they're called slash commands:
             If <text> is omitted, the current BBS contents will be shown, same
             as using the '!' key.
 
+/bug        report a bug to the admin(s).
+
 /convertexclusive    Attempts to convert your current character into a
                      slot-exclusive character (either PvP-mode or IDDC aka
                      Ironman Deep Dive Challenge). Warning: This process is NOT
@@ -1389,9 +1391,8 @@ They all start with a slash '/' hence they're called slash commands:
 /ref        redraw the screen (do this if it's messed up for some reason).
  (/refresh, or simply hit CTRL+R)
 
-/bug        report a bug to the admin(s).
-
 /rfe        Store a message/suggestion for the admin(s).
+            (Request for enhancement)
 
 /say <text>
  (/s)       Speaks <text> to players who are currently nearby your position,
@@ -1966,7 +1967,7 @@ kinging     The process of beating Morgoth, the game boss, and thereby
             A player must be at least level 40 to get credit for beating
             Morgoth.
 
- rekinging  Fallen winners, ie players who beat Morgoth but later on died and
+rekinging   Fallen winners, ie players who beat Morgoth but later on died and
             thereby lost their royal title again, can attempt to regain it by
             teaming up with someone who has not yet defeated Morgoth.
             If that person lands the killing blow, everyone in her/his party
@@ -2109,6 +2110,9 @@ Randart     Randomly generated artifact. As opposed to 'Truearts' which are
             See (5.9b) for more information about artifacts.
 
 Res         Resistance.
+
+RFE         A request for enhancement, ie a suggestion, that players can send
+            to the game admins using the "/rfe" command.
 
 Room        The dungeon contains many rooms connected by passages. Some of the
             rooms are of special shape. Especially rooms containing a further,
