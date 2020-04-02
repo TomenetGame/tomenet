@@ -17604,6 +17604,10 @@ though, as all other magic schools do, not the astral level.)
     Empowerment     Enlightened: Incite self-fury.
                     Corrupted: Increases own hit points temporarily.
                     (This spell uses WISDOM to determine fail-rates!)
+                    Note that this effect is the same as and stacks with +LIFE
+                    on items and hence caps against a total of +3 with those
+                    items. So if you already have +3 LIFE from items the spell
+                    will have no effect as you already reached the max cap.
                     Required skill level for first spell level: 40.
                     This spell can be used even while blind.
 
