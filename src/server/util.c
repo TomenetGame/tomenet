@@ -4488,7 +4488,7 @@ static void player_talk_aux(int Ind, char *message) {
 	int mycolor = 0;
 	bool admin = FALSE;
 	bool broadcast = FALSE;
-	bool slash_command = FALSE, slash_command_chat = FALSE, slash_command_censorable = FALSE, is_public = TRUE;
+	bool slash_command = FALSE, slash_command_msg = FALSE, slash_command_censorable = FALSE, is_public = TRUE;
 	char messagelc[MSG_LEN];
 #ifdef TOMENET_WORLDS
 	char tmessage[MSG_LEN];		/* TEMPORARY! We will not send the name soon */
@@ -4741,24 +4741,23 @@ static void player_talk_aux(int Ind, char *message) {
 		else if (!strncmp(messagelc, "/broadcast ", 11)) broadcast = TRUE;
 		else {
 			slash_command = TRUE;
-			/* Is it a slash command that results in actual chat readable by others? */
+			/* Is it a slash command that results in actual message readable by others?
+			   A space has been cat'ed for commands that have only read-access per se */
 			if (prefix(messagelc, "/sho") || prefix(messagelc, "/yell") || prefix(messagelc, "/scr")
 			    || prefix(messagelc, "/sayme") || prefix(messagelc, "/sme")
-			    || prefix(messagelc, "/say") || prefix(messagelc, "/s ")
-			    || prefix(messagelc, "/afk"))
-				slash_command_chat = TRUE;
+			    || prefix(messagelc, "/say") || prefix(messagelc, "/s ") || !strcmp(messagelc, "/s")
+			    || prefix(messagelc, "/afk") || prefix(messagelc, "/bbs "))
+				slash_command_msg = TRUE;
 			if ((prefix(messagelc, "/wh") && !prefix(messagelc, "/who"))
-			    /* || prefix(messagelc, "/pnote") || prefix(messagelc, "/gnote") */
-			    || prefix(messagelc, "/note ") || prefix(messagelc, "/bbs ") //<- with space, otherwise it's just reading
-			    /* || prefix(messagelc, "/pbbs") || prefix(messagelc, "/gbbs") */
-			    ) {
-				slash_command_chat = TRUE;
+			    || prefix(messagelc, "/note ")
+			    || prefix(messagelc, "/pnote ") || prefix(messagelc, "/gnote ")
+			    || prefix(messagelc, "/pbbs ") || prefix(messagelc, "/gbbs ")) {
+				slash_command_msg = TRUE;
 				is_public = FALSE;
 			}
 			/* Is it a slash command that results in actual output readable by others? */
 			if (prefix(messagelc, "/info ")
-			    || prefix(messagelc, "/tag ") || prefix(messagelc, "/t ")
-			    )
+			    || prefix(messagelc, "/tag ") || prefix(messagelc, "/t "))
 				slash_command_censorable = TRUE;
 		}
 	}
@@ -4799,11 +4798,11 @@ static void player_talk_aux(int Ind, char *message) {
 		/* Still allow slash commands that don't output anything readble by others.
 		   (Note that this doesn't take care of LUA commands, but that's covered by
 		   exempting admins from the whole spam prevention code in the first place.) */
-		if (!slash_command || slash_command_chat /* || slash_command_censorable */)
+		if (!slash_command || slash_command_msg /* || slash_command_censorable */)
 			return;
 	}
 #endif
-	if (!slash_command || slash_command_chat) process_hooks(HOOK_CHAT, "d", Ind);
+	if (!slash_command || slash_command_msg) process_hooks(HOOK_CHAT, "d", Ind);
 
 	if (++p_ptr->talk > 10) {
 		imprison(Ind, JAIL_SPAM, "talking too much.");
@@ -4811,7 +4810,7 @@ static void player_talk_aux(int Ind, char *message) {
 	}
 
 	/* Check for nasty language in public chat */
-	if (is_public && (!slash_command || slash_command_chat || slash_command_censorable)) {
+	if (is_public && (!slash_command || slash_command_msg || slash_command_censorable)) {
 		char *c = strchr(message, ' ');
 		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
 		strcpy(message_uncensored, message);
