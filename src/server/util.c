@@ -4761,7 +4761,10 @@ static void player_talk_aux(int Ind, char *message) {
 	}
 
 #ifndef ARCADE_SERVER
-	if (!colon && (!slash_command || slash_command_chat)) p_ptr->msgcnt++; /* !colon -> only prevent spam if not in party/private chat */
+	if (!colon /* Only prevent spam if not in party/private chat */
+	    && (!slash_command || slash_command_chat) /* Slash commands that don't affect chat may be spammed */
+	    && !admin) /* Admins are exempt. This is required anyway for spamming LUA commands, as these aren't covered by 'slash commands' checks. */
+		p_ptr->msgcnt++; 
 	if (p_ptr->msgcnt > 12) {
 		time_t last = p_ptr->msg;
 		time(&p_ptr->msg);
@@ -4789,7 +4792,9 @@ static void player_talk_aux(int Ind, char *message) {
 		p_ptr->msgcnt = 0;
 	}
 	if (p_ptr->spam > 1 || p_ptr->muted) {
-		/* still allow slash commands that don't output anything readble by others */
+		/* Still allow slash commands that don't output anything readble by others.
+		   (Note that this doesn't take care of LUA commands, but that's covered by
+		   exempting admins from the whole spam prevention code in the first place.) */
 		if (!slash_command || slash_command_chat /* || slash_command_censorable */)
 			return;
 	}
