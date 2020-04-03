@@ -3091,6 +3091,7 @@ static void display_message(cptr msg, cptr title) {
  */
 static void quit_hook(cptr s) {
 	int j, res = save_chat;
+		FILE *f;
 
 #if 0
 #ifdef USE_SOUND_2010
@@ -3144,6 +3145,14 @@ static void quit_hook(cptr s) {
  #endif
 #endif
 #endif
+
+	/* Remember chat input history across logins */
+	f = fopen("chathist.tmp", "w");
+	for (j = 0; j < MSG_HISTORY_MAX; j++) {
+		if (!message_history_chat[j][0]) continue;
+		fprintf(f, "%s\n", message_history_chat[j]);
+	}
+	fclose(f);
 
 #ifdef RETRY_LOGIN
 	/* don't kill the windows and all */
@@ -3316,6 +3325,8 @@ void client_init(char *argv1, bool skip) {
 #ifdef RETRY_LOGIN
 	bool rl_auto_relogin = FALSE;
 #endif
+	FILE *f;
+
 
 #if defined(USE_X11) || defined(USE_GCU)
 	/* Force creation of fresh .tomenetrc file in case none existed yet.
@@ -3688,6 +3699,12 @@ void client_init(char *argv1, bool skip) {
 
 	/* Hack -- flush the key buffer */
 	Term_flush();
+
+	/* Remember chat input history across logins */
+	f = fopen("chathist.tmp", "r");
+	hist_chat_end = 0;
+	while (f && my_fgets(f, message_history_chat[hist_chat_end], MSG_LEN) == 0) hist_chat_end++;
+	if (f) fclose(f);
 
 	/* Turn the lag-o-meter on after we've logged in */
 	lagometer_enabled = TRUE;
