@@ -1,4 +1,4 @@
-.=========================+==--.
+ .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
 | Latest update: 1. April 2020 - written by C. Blue (c_blue@gmx.net)
@@ -10976,8 +10976,8 @@ in the list of its powers that you get when *identifying* it.
 Artifact ammunition never breaks or (in case of boomerangs) falls down to the
 floor instead of returning. Artifact weapons are harder to get disarmed.
 
-There are two classes of artifacts, 'true artifacts' (also called 'static
-artifacts') and 'random artifacts' or short 'randarts':
+There are two classes of artifacts, 'true artifacts' (or short 'truearts',
+also called 'static artifacts') and 'random artifacts' or short 'randarts':
 
 
 True artifacts
@@ -10994,20 +10994,24 @@ stay a while in the shop and can be bought by other players before they finally
 disappear from the stock.
 
 Usually true artifacts may not be dropped into a house (will just disappear!)
-and may not be carried by winners, ie characters that have beaten Morgoth.
+and may not be picked up by winners, ie characters that have beaten Morgoth.
 Since static artifacts are predefined and have fixed abilities, their number
 therefore is limited. Thanks to the existence of random artifacts (see below)
 this won't be able to cause any shortage of artifacts that can be found though.
 
 Static artifacts will also be erased if they are left on the ground and the
 dungeon level or worldmap sector gets 'unstaticed', that means it gets reset
-because no players have been on it for a while (can be a few seconds for world
+because no players have been on it for a while (can be instantaneous for world
 map sectors or dungeon floors that are left without any players on them, and up
 to many hours in case someone ghost-died on a dungeon level, which can render
 the dungeon level 'static' for that time to allow others to retrieve the loot).
 
+For that reason, if you want to drop an artifact and pick it up with another
+character, make sure you do this in town, not in a wilderness sector!
+
 Note that some cursed true artifacts can be sold to stores after you removed
-the curse.
+the curse. Having a curse does not necessarily mean the item's value is zero,
+but shops in general will not buy any item that still carries a curse.
 
 
 Random Artifacts
@@ -11024,9 +11028,9 @@ As was just mentioned, randarts can actually be created by players, using a
 'Scroll of Artifact Creation' which are somewhat often sold in the 'Expensive
 Black Market' in Minas Anor, but also may very rarely spawn in normal black
 markets.
-The advantage of creating an artifact is that the player can determine the base
-item type he wants to use. For more information about artifact creation see
-(8.4).
+The advantage of creating an artifact is that the player can determine the
+base item type he wants to use. For more information about artifact creation
+see (8.4).
 
 Note that randarts that don't auto-curse themselves can be sold after you
 removed the curse (except if the base item type is already worthless).
