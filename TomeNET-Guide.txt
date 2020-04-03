@@ -14218,9 +14218,12 @@ create a character!):
     darkling, a harbinger of demonkind (to become enlightened) before reaching
     level 20 or they will lose the ability to stay in the realm and their
     physical form will be destroyed.
-    Starting at level 15, they will also meet such a fate of being destroyed by
-    indecisiveness if they kill both of these kind indiscriminately before
-    having reached initiation, so take care.
+    Maiar who kill both, a darkling and a candlebearer, before initiation at
+    level 20, will also meet their fate and be destroyed by indecisiveness.
+    At level 13, maiar will get a reminder if they haven't killed any darkling
+    or candlebearer yet: "We all have to pick our own path some time..."
+    At level 19, there will be another reminder, as it's now their last chance:
+    "Your soul thirsts for shaping, either enlightenment or corruption!"
     After they underwent initiation at level 20, they may just kill all of them
     indiscriminately, same as any other monster.
     Using but their mind they can easily perceive both good and demonkind

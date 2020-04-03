@@ -4809,14 +4809,13 @@ void check_experience(int Ind) {
 		break;
 #ifdef ENABLE_MAIA
 	case RACE_MAIA:
-		if (p_ptr->ptrait) break; /* In case we got *bad* exp drain for some unfathomable reason ;) */
-		if (old_lev < 12 && p_ptr->lev >= 12) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
-		//if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
-		if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYour soul thirsts for shaping, either enlightenment or corruption!");
-		if (old_lev <= 19 && p_ptr->lev >= 15 && old_lev < p_ptr->lev) {
+		if (!p_ptr->ptrait) { /* In case we forged a mimic ring and lost all our kill credits(!), and/or got *bad* exp drain back from >= 20 to < 20.. */
 			/* Killed none? nothing happens except if we reached the threshold level */
-			if (p_ptr->r_killed[RI_CANDLEBEARER] == 0
-			    && p_ptr->r_killed[RI_DARKLING] == 0) {
+			if (p_ptr->r_killed[RI_CANDLEBEARER] == 0 && p_ptr->r_killed[RI_DARKLING] == 0) {
+				/* Warning messages to not forget killing one of the two harbinger types */
+				if (old_lev < 13 && p_ptr->lev >= 13) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
+				//if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
+				if (old_lev < 19 && p_ptr->lev >= 19) msg_print(Ind, "\374\377GYour soul thirsts for shaping, either enlightenment or corruption!");
 				/* Threshold level has been overstepped -> die */
 				if (old_lev <= 19 && p_ptr->lev >= 20) {
 					//msg_print(Ind, "\377RYou don't deserve to live.");
@@ -4828,44 +4827,43 @@ void check_experience(int Ind) {
 				}
 				/* We're done here.. */
 				break;
+			} else if (old_lev <= 19 && old_lev < p_ptr->lev) {
+				/* Killed both? -> you die */
+				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0 && p_ptr->r_killed[RI_DARKLING] != 0) {
+					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
+					strcpy(p_ptr->died_from, "indecisiveness");
+					p_ptr->died_from_ridx = 0;
+					p_ptr->deathblow = 0;
+					p_ptr->death = TRUE;
+					/* End of story, next.. */
+					break;
+				}
+
+				/* Don't initiate earlier than at threshold level, it's a ceremony ^^ */
+				if (p_ptr->lev < 20) break;
+
+				/* Modify skill tree */
+				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0) {
+					//A demon appears!
+					msg_print(Ind, "\374\377p*** \377GYour corruption grows well within you. \377p***");
+					p_ptr->ptrait = TRAIT_CORRUPTED;
+					msg_print(Ind, "\374\377GYou resist attacks based on fire or darkness!");
+				} else {
+					//An angel appears!
+					msg_print(Ind, "\374\377p*** \377sYou have been ordained to be order in presence of chaos. \377p***");
+					p_ptr->ptrait = TRAIT_ENLIGHTENED;
+					msg_print(Ind, "\374\377GYou resist light-based attacks and you can now see the invisible!");
+				}
+
+				msg_print(Ind, "\374\377GYou don't require worldly food anymore to sustain your body.");
+
+				shape_Maia_skills(Ind);
+				calc_techniques(Ind);
+
+				p_ptr->redraw |= PR_SKILLS | PR_MISC;
+				p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
 			}
-
-			/* Killed both? -> you die */
-			if (p_ptr->r_killed[RI_CANDLEBEARER] != 0 &&
-			    p_ptr->r_killed[RI_DARKLING] != 0) {
-				msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
-				strcpy(p_ptr->died_from, "indecisiveness");
-				p_ptr->died_from_ridx = 0;
-				p_ptr->deathblow = 0;
-				p_ptr->death = TRUE;
-				/* End of story, next.. */
-				break;
-			}
-
-			/* Don't initiate earlier than at threshold level, it's a ceremony ^^ */
-			if (p_ptr->lev <= 19) break;
-
-			/* Modify skill tree */
-			if (p_ptr->r_killed[RI_CANDLEBEARER] != 0) {
-				//A demon appears!
-				msg_print(Ind, "\374\377p*** \377GYour corruption grows well within you. \377p***");
-				p_ptr->ptrait = TRAIT_CORRUPTED;
-				msg_print(Ind, "\374\377GYou resist attacks based on fire or darkness!");
-			} else {
-				//An angel appears!
-				msg_print(Ind, "\374\377p*** \377sYou have been ordained to be order in presence of chaos. \377p***");
-				p_ptr->ptrait = TRAIT_ENLIGHTENED;
-				msg_print(Ind, "\374\377GYou resist light-based attacks and you can now see the invisible!");
-			}
-
-			shape_Maia_skills(Ind);
-			calc_techniques(Ind);
-
-			p_ptr->redraw |= PR_SKILLS | PR_MISC;
-			p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
 		}
-		if (old_lev < 20 && p_ptr->lev >= 20)
-			msg_print(Ind, "\374\377GYou don't require worldly food anymore to sustain your body.");
 		if (old_lev < 50 && p_ptr->lev >= 50)
 			//todo maybe?: aura msgs
 			switch (p_ptr->ptrait) {
