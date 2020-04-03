@@ -4748,13 +4748,13 @@ static void player_talk_aux(int Ind, char *message) {
 			    || (prefix(messagelc, "/wh") && !prefix(messagelc, "/who"))
 			    || prefix(messagelc, "/afk")
 			    /* || prefix(messagelc, "/pnote") || prefix(messagelc, "/gnote") */
-			    || prefix(messagelc, "/note") || prefix(messagelc, "/bbs")
+			    || prefix(messagelc, "/note ") || prefix(messagelc, "/bbs ") //<- with space, otherwise it's just reading
 			    /* || prefix(messagelc, "/pbbs") || prefix(messagelc, "/gbbs") */
 			    )
 				slash_command_chat = TRUE;
 			/* Is it a slash command that results in actual output readable by others? */
-			if (prefix(messagelc, "/info")
-			    || prefix(messagelc, "/tag") || prefix(messagelc, "/t ")
+			if (prefix(messagelc, "/info ")
+			    || prefix(messagelc, "/tag ") || prefix(messagelc, "/t ")
 			    )
 				slash_command_censorable = TRUE;
 		}
@@ -4762,9 +4762,9 @@ static void player_talk_aux(int Ind, char *message) {
 
 #ifndef ARCADE_SERVER
 	if (!colon /* Only prevent spam if not in party/private chat */
-	    && (!slash_command || slash_command_chat) /* Slash commands that don't affect chat may be spammed */
+	    && !slash_command /* Slash commands don't write to public chat, so they can just be /ignored by the target (eg /whisper) - /shout etc are used in the dungeon! */
 	    && !admin) /* Admins are exempt. This is required anyway for spamming LUA commands, as these aren't covered by 'slash commands' checks. */
-		p_ptr->msgcnt++; 
+		p_ptr->msgcnt++;
 	if (p_ptr->msgcnt > 12) {
 		time_t last = p_ptr->msg;
 		time(&p_ptr->msg);
