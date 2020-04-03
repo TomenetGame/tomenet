@@ -3569,6 +3569,14 @@ static void hook_quit(cptr str) {
 #endif
 #endif
 
+	/* Remember chat input history across logins */
+	f = fopen("chathist.tmp", "w");
+	for (j = 0; j < MSG_HISTORY_MAX; j++) {
+		if (!message_history_chat[j][0]) continue;
+		fprintf(f, "%s\n", message_history_chat[j]);
+	}
+	fclose(f);
+
 	/* Hack - Save the window positions before destroying them - mikaelh */
 	/* Main window */
 	GetWindowRect(data[0].w, &rc);
