@@ -4828,6 +4828,11 @@ void check_experience(int Ind) {
 				/* We're done here.. */
 				break;
 			} else if (old_lev <= 19 && old_lev < p_ptr->lev) {
+				/* forfeit from killing both was here, moved it down to happen only at 20 for the time being */
+
+				/* Don't initiate earlier than at threshold level, it's a ceremony ^^ */
+				if (p_ptr->lev < 20) break;
+
 				/* Killed both? -> you die */
 				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0 && p_ptr->r_killed[RI_DARKLING] != 0) {
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
@@ -4838,9 +4843,6 @@ void check_experience(int Ind) {
 					/* End of story, next.. */
 					break;
 				}
-
-				/* Don't initiate earlier than at threshold level, it's a ceremony ^^ */
-				if (p_ptr->lev < 20) break;
 
 				/* Modify skill tree */
 				if (p_ptr->r_killed[RI_CANDLEBEARER] != 0) {

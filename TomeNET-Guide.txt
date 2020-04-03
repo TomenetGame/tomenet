@@ -14219,7 +14219,8 @@ create a character!):
     level 20 or they will lose the ability to stay in the realm and their
     physical form will be destroyed.
     Maiar who kill both, a darkling and a candlebearer, before initiation at
-    level 20, will also meet their fate and be destroyed by indecisiveness.
+    level 20, will also meet their fate and be destroyed by indecisiveness:
+    "Your presence in the realm is forfeit."
     At level 13, maiar will get a reminder if they haven't killed any darkling
     or candlebearer yet: "We all have to pick our own path some time..."
     At level 19, there will be another reminder, as it's now their last chance:
