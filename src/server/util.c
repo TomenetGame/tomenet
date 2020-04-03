@@ -4808,6 +4808,10 @@ static void player_talk_aux(int Ind, char *message) {
 		imprison(Ind, JAIL_SPAM, "talking too much.");
 		return;
 	}
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		Players[i]->talk = 0;
+	}
 
 	/* Check for nasty language in public chat */
 	if (is_public && (!slash_command || slash_command_msg || slash_command_censorable)) {
@@ -4827,11 +4831,6 @@ static void player_talk_aux(int Ind, char *message) {
 		do_slash_cmd(Ind, message, message_uncensored);
 		handle_punish(Ind, censor_punish);
 		return;
-	}
-
-	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED) continue;
-		Players[i]->talk = 0;
 	}
 
 
