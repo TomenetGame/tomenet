@@ -4488,7 +4488,7 @@ static void player_talk_aux(int Ind, char *message) {
 	int mycolor = 0;
 	bool admin = FALSE;
 	bool broadcast = FALSE;
-	bool slash_command = FALSE, slash_command_chat = FALSE, slash_command_censorable = FALSE;
+	bool slash_command = FALSE, slash_command_chat = FALSE, slash_command_censorable = FALSE, is_public = TRUE;
 	char messagelc[MSG_LEN];
 #ifdef TOMENET_WORLDS
 	char tmessage[MSG_LEN];		/* TEMPORARY! We will not send the name soon */
@@ -4745,13 +4745,16 @@ static void player_talk_aux(int Ind, char *message) {
 			if (prefix(messagelc, "/sho") || prefix(messagelc, "/yell") || prefix(messagelc, "/scr")
 			    || prefix(messagelc, "/sayme") || prefix(messagelc, "/sme")
 			    || prefix(messagelc, "/say") || prefix(messagelc, "/s ")
-			    || (prefix(messagelc, "/wh") && !prefix(messagelc, "/who"))
-			    || prefix(messagelc, "/afk")
+			    || prefix(messagelc, "/afk"))
+				slash_command_chat = TRUE;
+			if ((prefix(messagelc, "/wh") && !prefix(messagelc, "/who"))
 			    /* || prefix(messagelc, "/pnote") || prefix(messagelc, "/gnote") */
 			    || prefix(messagelc, "/note ") || prefix(messagelc, "/bbs ") //<- with space, otherwise it's just reading
 			    /* || prefix(messagelc, "/pbbs") || prefix(messagelc, "/gbbs") */
-			    )
+			    ) {
 				slash_command_chat = TRUE;
+				is_public = FALSE;
+			}
 			/* Is it a slash command that results in actual output readable by others? */
 			if (prefix(messagelc, "/info ")
 			    || prefix(messagelc, "/tag ") || prefix(messagelc, "/t ")
@@ -4759,9 +4762,10 @@ static void player_talk_aux(int Ind, char *message) {
 				slash_command_censorable = TRUE;
 		}
 	}
+	if (colon) is_public = FALSE;
 
 #ifndef ARCADE_SERVER
-	if (!colon /* Only prevent spam if not in party/private chat */
+	if (is_public /* Only prevent spam if not in party/private chat */
 	    && !slash_command /* Slash commands don't write to public chat, so they can just be /ignored by the target (eg /whisper) - /shout etc are used in the dungeon! */
 	    && !admin) /* Admins are exempt. This is required anyway for spamming LUA commands, as these aren't covered by 'slash commands' checks. */
 		p_ptr->msgcnt++;
@@ -4806,7 +4810,8 @@ static void player_talk_aux(int Ind, char *message) {
 		return;
 	}
 
-	if (!slash_command || slash_command_chat || slash_command_censorable) {
+	/* Check for nasty language in public chat */
+	if (is_public && (!slash_command || slash_command_chat || slash_command_censorable)) {
 		char *c = strchr(message, ' ');
 		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
 		strcpy(message_uncensored, message);
