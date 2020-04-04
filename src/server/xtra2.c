@@ -4816,7 +4816,7 @@ void check_experience(int Ind) {
 				if (old_lev < 13 && p_ptr->lev >= 13) msg_print(Ind, "\374\377GWe all have to pick our own path some time...");
 				//if (old_lev < 14 && p_ptr->lev >= 14) msg_print(Ind, "\374\377GYou are thirsty for blood: be it good or evil");
 				if (old_lev < 19 && p_ptr->lev >= 19) msg_print(Ind, "\374\377GYour soul thirsts for shaping, either enlightenment or corruption!");
-				/* Threshold level has been overstepped -> die */
+				/* You had one job to do.. */
 				if (old_lev <= 19 && p_ptr->lev >= 20) {
 					//msg_print(Ind, "\377RYou don't deserve to live.");
 					msg_print(Ind, "\377RYour indecision proves you aren't ready yet to stay in this realm!");
