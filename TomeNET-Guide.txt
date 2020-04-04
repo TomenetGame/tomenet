@@ -21501,4 +21501,8 @@ Solution:   To restore a key's default behaviour, press % to enter the macro
             menu and choose 'd' to delete a macro from a key, then press the
             key in question.
 
-==============================================================================
+PROBLEM 62: I sometimes lose the ability to run for no apparent reason.
+Solution:   Make sure you don't trigger your NumLock key. For running, numlock
+            should be turned off all the time.
+
+===============================================================================
