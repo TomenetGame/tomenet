@@ -8405,6 +8405,10 @@ While this seems sort of obvious, it is easy to miss that for example in the
 to you are actually diagonal of you! So now it might become clear how to do
 that event in the most effective way..
 
+Note that the map coordinates you see when pressing SHIFT+L (SHIFT+W with rogue
+like keymap) can differ depending on if you have 'big_map' option enabled or
+not in  = 1  options menu.
+
 
 
 (4.15) Swimming
