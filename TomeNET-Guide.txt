@@ -136,6 +136,7 @@ Contents
     (5.11a) Monster flags
     (5.12)  Monster attack mechanism, Armour Class, damage caps
     (5.12a) Monster attack types and brands
+    (5.12b) Dispelling/Banishing/Turning monsters
     (5.13)  Earthquakes
     (5.14)  Curses
     (5.15)  Vampirism
@@ -11712,6 +11713,20 @@ HOLD            Although not so special and already mentioned in the text above
                 Ghouls can do this for example, so make sure that you get
                 Free Action as early as possible, definitely before venturing
                 into Mordor though.
+
+
+(5.12b) Dispelling/Banishing/Turning monsters
+---------------------------------------------
+The terms 'dispel' and 'banish' are unfortunately used in an ambiguous manner
+throughout the game.
+In most cases it just means that damage is afflicted to specific monster tupes
+but sometimes it can indeed mean that the target is teleported away or even
+removed completely from the floor, or at least that there is a chance (usually
+depending on the monster's level) for that to happen.
+
+The term 'turn' as in 'turn evil' however is used in only one way: It refers to
+a fear-like effect that makes them run away from you instead of approaching you
+as a target.
 
 
 
