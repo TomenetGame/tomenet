@@ -1463,19 +1463,30 @@ They all start with a slash '/' hence they're called slash commands:
             Allows you to target a specific grid specified by X,Y as offset
             to your current character position.
 
-/testyourmight [rs]
-or shorter: /tym [rs]
+/testyourmight <show|rs>
+or shorter: /tym <show|rs>
+            '/tym show' will display your damage/healing output so far and
+            '/tym rs' will reset the damage/healing counters.
+
             Displays damage and healing stats for your character, totals and
             averages over number of attacks and over time (# of seconds
             passed).
+
             Note: 'Numer of attacks' only counts successful attacks, ie not
-                  attacks that missed, were blocked/parried/dodged or
-                  nullified by invulnerability, etc.
-                  It however counts ALL attacks, for example aura hits too.
-            Note that for characters moving at high speed and having a high
+            attacks that missed, were blocked/parried/dodged or nullified by
+            invulnerability, etc. It however counts ALL attacks, for example
+            aura hits too.
+
+            WARNING: For characters moving at high speed and having a high
             number of blows per round, you might need to remove items giving
             +SPEED or +Extra Attacks for the test to be accurate, this is due
             to frame rate limits of the real-time engine, compare (8.7).
+            Then use the /ex command before and after taking off speed items to
+            see how often you can move per turn to calculate your real dps.
+
+            In general, if you want to compare different equipment sets,
+            taking off all extra (ie existing in both sets) items that give
+            +EA or +Speed is the best way to get accurate results!
 
 /time       Tells you the current in-game time, same as /ex does.
 

@@ -3779,16 +3779,16 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 		else if (prefix(messagelc, "/testyourmight")  ||
 		    prefix(messagelc, "/tym")) {
 			long tmp;
-			if (tk > 1 ||
-			    (tk == 1 && strcmp(token[1], "rs"))) {
-				msg_print(Ind, "Usage: /testyourmight [rs]");
-				msg_print(Ind, "       Just the command will display your current damage/heal stats,");
-				msg_print(Ind, "       based on your number of *successful* attacks and over the time");
-				msg_print(Ind, "       passed, in seconds.");
-				msg_print(Ind, "       Typing '/testyourmight rs' will reset the recorded stats to zero.");
+			if (tk != 1 || (tk == 1 && strcmp(token[1], "rs") && strcmp(token[1], "show"))) {
+				msg_print(Ind, "Usage: /testyourmight <show|rs>");
+				msg_print(Ind, "       '/testyourmight show' will display your current damage/heal stats,");
+				msg_print(Ind, "        based on your number of *successful* attacks and over the time");
+				msg_print(Ind, "        passed, in seconds.");
+				msg_print(Ind, "        \377yNOTE: Having high +Speed and +EA is a problem, see /tym in the guide!");
+				msg_print(Ind, "       '/testyourmight rs' will reset the recorded stats to zero.");
 				return;
 			}
-			if (tk) {
+			if (!strcmp(token[1], "rs")) {
 				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
 				p_ptr->test_turn = turn;
 				msg_print(Ind, "Attack count, damage and healing done have been reset to zero.");
@@ -3797,10 +3797,10 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 #endif
 				return;
 			}
-			msg_print(Ind, "Your total damage and healing done:");
+			msg_print(Ind, "Your total damage and healing done since login or last reset:");
 			msg_format(Ind, "    \377oTotal damage done   : %8d", p_ptr->test_dam);
 			msg_format(Ind, "    \377gTotal healing done  : %8d", p_ptr->test_heal);
-			msg_print(Ind, "Your damage and healing done over # of attacks and amount of time passed:");
+			msg_print(Ind, "  Damage and healing done over # of attacks and amount of time passed:");
 
 			if (p_ptr->test_count == 0)
 				msg_print(Ind,  "    \377sNo count-based result available: # of successful attacks is still zero.");
