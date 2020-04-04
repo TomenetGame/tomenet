@@ -3220,7 +3220,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			disturb(Ind, 0, 0);
 			return;
 		}
-
 		/* No tunnelling through doors */
 		//else if (cfeat < FEAT_SECRET && cfeat >= FEAT_HOME_HEAD)
 		else if ((f_ptr->flags1 & FF1_DOOR) && cfeat != FEAT_SECRET) {
@@ -3230,7 +3229,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			do_cmd_open(Ind, dir);
 			return;
 		}
-
 		/* A monster is in the way */
 		else if (c_ptr->m_idx > 0) {
 			/* Take a turn */
@@ -3241,7 +3239,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* Attack */
 			py_attack(Ind, y, x, TRUE);
 		}
-
 		/* Okay, try digging */
 		else {
 			/* S(he) is no longer afk */
@@ -3319,29 +3316,25 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
 			}
 
-#if 0
-			/* Titanium */
-			if (cfeat >= FEAT_PERM_EXTRA)
-				msg_print(Ind, "This seems to be permanent rock.");
-#else	// 0
+			if (p_ptr->IDDC_logscum) {
+				if (dug_feat == FEAT_FOUNTAIN) dug_feat = FEAT_NONE;
+				special_k_idx = 0;
+			}
+
 			//do_cmd_tunnel_test(int y, int x, FALSE)
 			/* Must be tunnelable */
 			if (!(f_ptr->flags1 & FF1_TUNNELABLE) ||
 			    (f_ptr->flags1 & FF1_PERMANENT)) {
 				/* Message */
 				msg_print(Ind, f_text + f_ptr->tunnel);
-
 				/* Nope */
 				return;
 			}
-#endif	// 0
-
 			/* No destroying of town layouts */
 			else if (!allow_terraforming(wpos, FEAT_TREE)) {
 				msg_print(Ind, "You may not tunnel in this area.");
 				return;
 			}
-
 			/* Rubble */
 			else if (cfeat == FEAT_RUBBLE) {
 				no_quake = TRUE;
@@ -3354,8 +3347,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
-					/* Hack -- place an object - Not in town (Khazad becomes l00t source) */
-					if (!istown(wpos)) {
+					/* Hack -- place an object - Not in town (Khazad becomes l00t source), not on stale IDDC floors */
+					if (!istown(wpos) && !p_ptr->IDDC_logscum) {
 						/* discovered a special feature? */
 						if (dug_feat == FEAT_FOUNTAIN) {
 							place_fountain(wpos, y, x);
@@ -3391,7 +3384,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 								s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 							else
 								s_printf("DIGGING: %s found a specific non-golem item.\n", p_ptr->name);
-						} else if (rand_int(120) < 10 + mining) {
+						} else if (rand_int(120) < 10 + mining && !p_ptr->IDDC_logscum) {
 							place_object_restrictor = RESF_NONE;
 #if 1
 							object_level = find_level_base;
@@ -3429,7 +3422,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 				}
 			}
-
 			else if (cfeat == FEAT_TREE) {
 				no_quake = TRUE;
 
@@ -3456,7 +3448,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 						msg_print(Ind, "You have found something!");
 						drop_near(0, &forge, -1, wpos, y, x);
 						s_printf("DIGGING: %s found a massive wood piece.\n", p_ptr->name);
-					} else if (!rand_int(65 - get_skill(p_ptr, SKILL_DIG) / 2)) {
+					} else if (!rand_int(65 - get_skill(p_ptr, SKILL_DIG) / 2) && !p_ptr->IDDC_logscum) {
 						/* for player store signs: (non-massive) wood pieces */
 						invcopy(&forge, lookup_kind(TV_JUNK, SV_WOOD_PIECE));
 						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
@@ -3555,9 +3547,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 				}
 			}
-
-			/* Quartz / Magma */
-//			else if (cfeat >= FEAT_MAGMA)
 			/* Quartz / Magma / Sandwall */
 			else if (((cfeat >= FEAT_MAGMA) &&
 				(cfeat <= FEAT_QUARTZ_K)) ||
@@ -3607,7 +3596,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				else
 					okay = (power > 10 + rand_int(400)); /* 400 */
 
-				if (istown(wpos)) gold = FALSE;
+				if (istown(wpos) || p_ptr->IDDC_logscum) gold = FALSE;
 
 				/* Success */
 				if (okay && twall(Ind, y, x)) {
@@ -3620,7 +3609,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 					/* Non-mapped treasure (ie treasure that requires detection or digging it up for LoS, to find it):
 					   If no other feature/item was planned, give extra chance for instant-rune instead of just cash. */
-					if (gold && l_ptr && !quiet_borer &&
+					if (gold && l_ptr && !quiet_borer && !p_ptr->IDDC_logscum &&
 					    (dug_feat == FEAT_NONE || dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) &&
 					    !(special_k_idx && tval == TV_GOLEM) &&
 					    nonobvious &&
@@ -3722,7 +3711,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				}
 #endif	/* 0 */
 			}
-
 			/* Default to secret doors */
 			else if (cfeat == FEAT_SECRET) {
 #if 0
@@ -3847,7 +3835,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 				}
 			}
-
 			/* Spider Webs */
 			else if (cfeat == FEAT_WEB) {
 				no_quake = TRUE;
