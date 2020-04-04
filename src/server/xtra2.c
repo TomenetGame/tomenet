@@ -57,13 +57,12 @@
 
 /* Loot item level is average of monster level and floor level - C. Blue
    Note: Imho the more floor level is taken into account, the more will
-         melee chars who aim at high level weapons and armour be at a
-         disadvantage, compared to light armour dropping everywhere.
+         melee chars who aim at high level weapons and (esp. royal) armour be
+         at a disadvantage, compared to light armour dropping everywhere.
          Also, floor level determines monster level of spawns anyway.
          However, contra side of disabling this is cheezy high unique
-         farming on harmless floors via vaults for great loot -
-         probably only affects melee chars though.
-   Disabling this definition will cause loot to depend more on monster level. */
+         farming on harmless floors via vaults for great loot.
+   Disabling this def will cause loot to depend by 2/3 on monster level: */
 #define TRADITIONAL_LOOT_LEVEL
 
 /* Should be defined to allow finding top-level items on non-NR floors
@@ -5961,7 +5960,7 @@ bool monster_death(int Ind, int m_idx) {
  #ifdef RANDOMIZED_LOOT_LEVEL
 			if (object_level < rlev) tol_lev = rlev - object_level;
 			else tol_lev = dlev - object_level;
-			if (tol_lev > 11) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters */
+			if (tol_lev > 13) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
 			object_level += rand_int(tol_lev);
  #endif
 #else
@@ -5970,7 +5969,7 @@ bool monster_death(int Ind, int m_idx) {
  #ifdef RANDOMIZED_LOOT_LEVEL
 			if (object_level < rlev) tol_lev = rlev - object_level;
 			else tol_lev = dlev - object_level;
-			if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters */
+			if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
 			object_level += rand_int(tol_lev);
  #endif
 #endif
@@ -10763,7 +10762,7 @@ void monster_death_mon(int am_idx, int m_idx) {
  #ifdef RANDOMIZED_LOOT_LEVEL
 			if (object_level < rlev) tol_lev = rlev - object_level;
 			else tol_lev = dlev - object_level;
-			if (tol_lev > 11) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters */
+			if (tol_lev > 13) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
 			object_level += rand_int(tol_lev);
  #endif
 #else
@@ -10772,7 +10771,7 @@ void monster_death_mon(int am_idx, int m_idx) {
  #ifdef RANDOMIZED_LOOT_LEVEL
 			if (object_level < rlev) tol_lev = rlev - object_level;
 			else tol_lev = dlev - object_level;
-			if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters */
+			if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
 			object_level += rand_int(tol_lev);
  #endif
 #endif
