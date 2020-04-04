@@ -3518,6 +3518,7 @@ static void hook_plog(cptr str)
 static void hook_quit(cptr str) {
 	RECT rc;
 	int i, res = save_chat;
+	char buf[1024];
 
 #if 0
 #ifdef USE_SOUND_2010
@@ -3570,7 +3571,8 @@ static void hook_quit(cptr str) {
 #endif
 
 	/* Remember chat input history across logins */
-	f = fopen("chathist.tmp", "w");
+	path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
+	f = fopen(buf, "w");
 	for (j = 0; j < MSG_HISTORY_MAX; j++) {
 		if (!message_history_chat[j][0]) continue;
 		fprintf(f, "%s\n", message_history_chat[j]);
