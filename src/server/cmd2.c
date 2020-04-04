@@ -3214,9 +3214,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	    ) {
 		u32b fx, f5;
 		object_flags(o_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
-		if (f5 & TR5_IMPACT) impact_power_tool = power; //1..530 (digging power is used)
-		if (impact_power_tool >= 201) impact_power_tool = 201; //cap for guaranteed success, aka 100%
-		impact_power_tool = (impact_power_tool - 1) / 2; /* calculate actual percentage for easier comparison with the other two candidates */
+		if (f5 & TR5_IMPACT) {
+			impact_power_tool = power; //1..530 (digging power is used)
+			if (impact_power_tool >= 201) impact_power_tool = 201; //cap for guaranteed success, aka 100%
+			if (impact_power_tool) impact_power_tool = (impact_power_tool - 1) / 2; /* calculate actual percentage for easier comparison with the other two candidates */
+		}
 	}
 	/* Check weapons */
 	if (o2_ptr->k_idx
@@ -3979,16 +3981,18 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
 			if (magik(impact_power_tool)) impact = TRUE;
 		}
+#if 0 /* no, weapons only really help with fiber and wood, which are 'soft' aka no_quake. This gets too crazy. */
 		/* We are digging with a weapon? */
 		else if (o2_ptr->k_idx || (o3_ptr->k_idx && is_weapon(o3_ptr->tval))) {
 			if (impact_power_weapon2 > impact_power_weapon) impact_power_weapon = impact_power_weapon2;
 			if (magik(impact_power_weapon)) impact = TRUE;
 		}
+#endif
 		/* Bare-handed o_o */
 		else if (magik(impact_power)) impact = TRUE;
 
 		/* Finally, quake maybe! */
-		if (magik(QUAKE_CHANCE)) {
+		if (impact && magik(QUAKE_CHANCE)) {
 			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 7);
 			more = FALSE;
 		}
