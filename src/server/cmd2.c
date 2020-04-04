@@ -3128,8 +3128,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	object_type forge;
 	char o_name[ONAME_LEN];
+	bool impact = FALSE;
+	int impact_power = 0, impact_power_tool = 0, impact_power_weapon = 0, impact_power_weapon2 = 0;
+
 
 	if (!(zcave = getcave(wpos))) return;
+
+	/* Get a direction to tunnel, or Abort */
+	if (!dir) return; /* dir == 0 is currently possible since bad_dir() is used in nserver.c, but client doesn't send such dir usually, and it has no use for digging atm. */
 
 	/* Ghosts have no need to tunnel ; not in WRAITHFORM */
 	if (CANNOT_OPERATE_SPECTRAL && !is_admin(p_ptr)) {
@@ -3185,10 +3191,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	find_level += mining / 2;
 
 	/* Must be have something to dig with, or power gets halved */
-	if (!p_ptr->inventory[INVEN_TOOL].k_idx ||
-	    (p_ptr->inventory[INVEN_TOOL].tval != TV_DIGGING)) {
+	if (!o_ptr->k_idx || o_ptr->tval != TV_DIGGING) {
 		power >>= 1;
-
 		if (!p_ptr->warning_tunnel3) {
 			msg_print(Ind, "\374\377yHINT: You can tunnel more effectively if you equip a digging tool.");
 			msg_print(Ind, "\374\377y      The general store in town sells some basic shovels and picks.");
@@ -3199,721 +3203,794 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* have at least 1 digging power so you can dig through rubble/organic stuff */
 	if (!power) power = 1;
 
-	/* Get a direction to tunnel, or Abort */
-	if (dir) {
-		/* Get location */
-		y = p_ptr->py + ddy[dir];
-		x = p_ptr->px + ddx[dir];
-
-		/* Get grid */
-		c_ptr = &zcave[y][x];
-		cfeat = c_ptr->feat;
-		cinfo = c_ptr->info;
-		f_ptr = &f_info[cfeat];
-
-		/* Check the floor-hood */
-		old_floor = cave_floor_bold(zcave, y, x);
-
-		/* No tunnelling through emptiness */
-		if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
-			msg_print(Ind, "You see nothing there to tunnel through.");
-			disturb(Ind, 0, 0);
-			return;
+	/* Check whether we cause an earthquake */
+	/* Check player himself */
+	if (p_ptr->impact) impact_power = adj_str_dig[p_ptr->stat_ind[A_STR]]; //0..100; actually there is no such item giving this flag atm
+	/* Check digging tool */
+	if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING
+#ifdef ALLOW_NO_QUAKE_INSCRIPTION
+	    && !check_guard_inscription(o_ptr->note, 'Q')
+#endif
+	    ) {
+		u32b fx, f5;
+		object_flags(o_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
+		if (f5 & TR5_IMPACT) impact_power_tool = power; //1..530 (digging power is used)
+		if (impact_power_tool >= 201) impact_power_tool = 201; //cap for guaranteed success, aka 100%
+		impact_power_tool = (impact_power_tool - 1) / 2; /* calculate actual percentage for easier comparison with the other two candidates */
+	}
+	/* Check weapons */
+	if (o2_ptr->k_idx
+#ifdef ALLOW_NO_QUAKE_INSCRIPTION
+	    && !check_guard_inscription(o2_ptr->note, 'Q')
+#else
+	    && (!check_guard_inscription(o2_ptr->note, 'Q') || o2_ptr->name1 != ART_GROND)
+#endif
+	    ) {
+		u32b fx, f5;
+		object_flags(o2_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
+		//~18 avg (6d6 weapon) -> 49% chance on attack; 5(best)..45(worst) total range
+		if (f5 & TR5_IMPACT) {
+			impact_power_weapon = 500 / (10 + (((o2_ptr->dd * (o2_ptr->ds + 1)) / 2) - o2_ptr->dd) * o2_ptr->dd * o2_ptr->ds / (o2_ptr->dd * (o2_ptr->ds - 1) + 1));
+			impact_power_weapon = 100 - impact_power_weapon * 100 / 35; /* calculate actual percentage for easier comparison with the other two candidates */
+			if (impact_power_weapon <= 0) impact_power_weapon = 1; //if the weapon doesn't totally suck we might be able to get a lucky roll instead of the average roll - give this case least priority though of all 3.
 		}
-		/* No tunnelling through doors */
-		//else if (cfeat < FEAT_SECRET && cfeat >= FEAT_HOME_HEAD)
-		else if ((f_ptr->flags1 & FF1_DOOR) && cfeat != FEAT_SECRET) {
-			//msg_print(Ind, "You cannot tunnel through doors.");
-
-			/* Try opening it instead */
-			do_cmd_open(Ind, dir);
-			return;
+	}
+	if (o3_ptr->k_idx && is_weapon(o3_ptr->tval)
+#ifdef ALLOW_NO_QUAKE_INSCRIPTION
+	    && !check_guard_inscription(o3_ptr->note, 'Q')
+#endif
+	    ) {
+		u32b fx, f5;
+		object_flags(o3_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
+		//~18 avg (6d6 weapon) -> 49% chance on attack; 5(best)..45(worst) total range
+		if (f5 & TR5_IMPACT) {
+			impact_power_weapon2 = 500 / (10 + (((o3_ptr->dd * (o3_ptr->ds + 1)) / 2) - o3_ptr->dd) * o3_ptr->dd * o3_ptr->ds / (o3_ptr->dd * (o3_ptr->ds - 1) + 1));
+			impact_power_weapon2 = 100 - impact_power_weapon2 * 100 / 35; /* calculate actual percentage for easier comparison with the other two candidates */
+			if (impact_power_weapon2 <= 0) impact_power_weapon2 = 1; //if the weapon doesn't totally suck we might be able to get a lucky roll instead of the average roll - give this case least priority though of all 3.
 		}
-		/* A monster is in the way */
-		else if (c_ptr->m_idx > 0) {
-			/* Take a turn */
+	}
+
+	/* Get location */
+	y = p_ptr->py + ddy[dir];
+	x = p_ptr->px + ddx[dir];
+
+	/* Get grid */
+	c_ptr = &zcave[y][x];
+	cfeat = c_ptr->feat;
+	cinfo = c_ptr->info;
+	f_ptr = &f_info[cfeat];
+
+	/* Check the floor-hood */
+	old_floor = cave_floor_bold(zcave, y, x);
+
+	/* No tunnelling through emptiness */
+	if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
+		/* Hack: Allow causing earthquakes with appropriate weapons (!) or diggers or p_ptr->impact (unavailable atm) by hitting the empty floor */
+		if (dir == 5 && cfeat != FEAT_PERM_CLEAR && !quiet_borer) {
+			/* we need to deduct one turn of energy appropriately */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-
-			msg_print(Ind, "There is a monster in the way!");
-
-			/* Attack */
-			py_attack(Ind, y, x, TRUE);
-		}
-		/* Okay, try digging */
-		else {
-			/* S(he) is no longer afk */
+			sound(Ind, "hit_floor", "tunnel_rock", SFX_TYPE_NO_OVERLAP, TRUE);
 			un_afk_idle(Ind);
 			break_cloaking(Ind, 0);
-			break_shadow_running(Ind);
-			/* we abuse stop_precision() to reset current_create_sling_ammo, so need this hack here: */
-			if (!p_ptr->current_create_sling_ammo) stop_precision(Ind);
+			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
+			disturb(Ind, 0, 0);
+			msg_print(Ind, "You hit the floor.");
 
-			/* Take a turn */
-			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			/* Apply earthquakes - maybe todo somehow: exempt sand floor/nether mist? =p */
 
-			/* not in monster KILL_WALL form or via magic; not on world surface: wpos->wz == 0 ! */
-			if (l_ptr && !quiet_borer) {
-				/* prepare to discover a special feature */
-				if ((rand_int(5000) <= mining + 5) && can_go_up(wpos, 0x1)) dug_feat = FEAT_WAY_LESS;
-				else if ((rand_int(5000) <= mining + 5) && can_go_down(wpos, 0x1)) dug_feat = FEAT_WAY_MORE;
-				else if ((rand_int(3000) <= mining + 10) && !(l_ptr->flags1 & LF1_NO_WATER)) dug_feat = FEAT_FOUNTAIN;
-				else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
-				else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
+			/* Pick our most promising source of earthquaking (barehanded vs digging tool vs weapon) */
+			if (impact_power_weapon2 > impact_power_weapon) impact_power_weapon = impact_power_weapon2;
+			if (impact_power > impact_power_tool) {
+				if (impact_power >= impact_power_weapon) impact_power_weapon = 0;
+				else impact_power = 0;
+				impact_power_tool = 0;
+			} else {
+				impact_power = 0;
+				if (impact_power_tool >= impact_power_weapon) impact_power_weapon = 0;
+				else impact_power_tool = 0;
+			}
+			/* Take our best pick and calculate if we succeed.. */
+			if (impact_power) {
+				if (magik(impact_power)) impact = TRUE;
+			} else if (impact_power_tool) {
+				if (magik(impact_power_tool)) impact = TRUE;
+			} else if (impact_power_weapon) {
+				if (magik(impact_power_weapon)) impact = TRUE;
+			}
 
-				/* prepare to find a special object */
-				else if (rand_int(2000) <= mining) {
-					tval = TV_CHEST;
+			/* Finally, quake maybe! */
+			if (impact && magik(QUAKE_CHANCE)) {
+				//sound(Ind, NULL, NULL, SFX_TYPE_STOP, TRUE); /* Stop "hit_floor"/"tunnel_rock" sfx */
+				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 7);
+			}
+			return;
+		}
+
+		msg_print(Ind, "You see nothing there to tunnel through.");
+		disturb(Ind, 0, 0);
+		return;
+	}
+
+	/* No tunnelling through doors */
+	if ((f_ptr->flags1 & FF1_DOOR) && cfeat != FEAT_SECRET) {
+		/* Try opening it instead */
+		do_cmd_open(Ind, dir);
+		return;
+	}
+
+	/* A monster is in the way */
+	if (c_ptr->m_idx > 0) {
+		/* Take a turn */
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
+		msg_print(Ind, "There is a monster in the way!");
+		/* Attack */
+		py_attack(Ind, y, x, TRUE);
+		return;
+	}
+
+	/* Okay, try digging */
+	un_afk_idle(Ind);
+	break_cloaking(Ind, 0);
+	break_shadow_running(Ind);
+
+	/* we abuse stop_precision() to reset current_create_sling_ammo, so need this hack here: */
+	if (!p_ptr->current_create_sling_ammo) stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+
+	/* Take a turn */
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
+
+	/* not in monster KILL_WALL form or via magic; not on world surface: wpos->wz == 0 ! */
+	if (l_ptr && !quiet_borer) {
+		/* prepare to discover a special feature */
+		if ((rand_int(5000) <= mining + 5) && can_go_up(wpos, 0x1)) dug_feat = FEAT_WAY_LESS;
+		else if ((rand_int(5000) <= mining + 5) && can_go_down(wpos, 0x1)) dug_feat = FEAT_WAY_MORE;
+		else if ((rand_int(3000) <= mining + 10) && !(l_ptr->flags1 & LF1_NO_WATER)) dug_feat = FEAT_FOUNTAIN;
+		else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
+		else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
+
+		/* prepare to find a special object */
+		else if (rand_int(2000) <= mining) {
+			tval = TV_CHEST;
 #if 1 /* maybe todo: use get_obj_num_prep_tval() instead of this hardcoding chances.. */
-					sval = rand_int(mining) * rand_int(50);
-					/* 1,2,3, 5,6,7 - according to k_info.txt */
-					if (sval > 1600) sval = SV_CHEST_LARGE_STEEL;
-					else if (sval > 1100) sval = SV_CHEST_LARGE_IRON;
-					else if (sval > 700) sval = SV_CHEST_LARGE_WOODEN;
-					else if (sval > 300) sval = SV_CHEST_SMALL_STEEL;
-					else if (sval > 100) sval = SV_CHEST_SMALL_IRON;
-					else sval = SV_CHEST_SMALL_WOODEN;
+			sval = rand_int(mining) * rand_int(50);
+			/* 1,2,3, 5,6,7 - according to k_info.txt */
+			if (sval > 1600) sval = SV_CHEST_LARGE_STEEL;
+			else if (sval > 1100) sval = SV_CHEST_LARGE_IRON;
+			else if (sval > 700) sval = SV_CHEST_LARGE_WOODEN;
+			else if (sval > 300) sval = SV_CHEST_SMALL_STEEL;
+			else if (sval > 100) sval = SV_CHEST_SMALL_IRON;
+			else sval = SV_CHEST_SMALL_WOODEN;
 #endif
-					special_k_idx = lookup_kind(tval, sval);
+			special_k_idx = lookup_kind(tval, sval);
 
-				} else if (rand_int(1000) < (mining + 2) / 2) {
-				    if (!rand_int(5)) {
-					tval = TV_GOLEM;
+		} else if (rand_int(1000) < (mining + 2) / 2) {
+		    if (!rand_int(5)) {
+			tval = TV_GOLEM;
 #if 1 /* maybe todo: use get_obj_num_prep_tval() instead of this hardcoding chances.. */
-					sval = rand_int(mining) * rand_int(40);
-					/* 0..7 - according to k_info.txt */
-					if (sval >= 1900) sval = SV_GOLEM_ADAM;
-					else if (sval >= 1800) sval = SV_GOLEM_MITHRIL;
-					else if (sval >= 1600) sval = SV_GOLEM_GOLD;
-					else if (sval >= 1300) sval = SV_GOLEM_SILVER;
-					else if (sval >= 900) sval = SV_GOLEM_ALUM;
-					else if (sval >= 500) sval = SV_GOLEM_IRON;
-					else sval = SV_GOLEM_COPPER;
-					//else sval = SV_GOLEM_WOOD; -- no wood from mining stone, reserve for tree-hacking
+			sval = rand_int(mining) * rand_int(40);
+			/* 0..7 - according to k_info.txt */
+			if (sval >= 1900) sval = SV_GOLEM_ADAM;
+			else if (sval >= 1800) sval = SV_GOLEM_MITHRIL;
+			else if (sval >= 1600) sval = SV_GOLEM_GOLD;
+			else if (sval >= 1300) sval = SV_GOLEM_SILVER;
+			else if (sval >= 900) sval = SV_GOLEM_ALUM;
+			else if (sval >= 500) sval = SV_GOLEM_IRON;
+			else sval = SV_GOLEM_COPPER;
+			//else sval = SV_GOLEM_WOOD; -- no wood from mining stone, reserve for tree-hacking
 #endif
-					special_k_idx = lookup_kind(tval, sval);
-				    }
-				    else {
-					tval = TV_RUNE;
-					get_obj_num_hook = NULL;
-					get_obj_num_prep_tval(tval, RESF_MID);
-					special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
-				    }
-				}
+			special_k_idx = lookup_kind(tval, sval);
+		    }
+		    else {
+			tval = TV_RUNE;
+			get_obj_num_hook = NULL;
+			get_obj_num_prep_tval(tval, RESF_MID);
+			special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+		    }
+		}
 
-				/* hack 1/2: rune proficiency adds to chance for 'special feature' uncovering giving a rune */
-				if (dug_feat == FEAT_NONE && !tval && rand_int(1000) < rune_proficiency) {
-					tval = TV_RUNE;
-					get_obj_num_hook = NULL;
-					get_obj_num_prep_tval(tval, RESF_MID);
-					special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
-				}
-			}
-			/* if in monster KILL_WALL form or via magic */
-			else if (l_ptr && quiet_borer) {
-				/* prepare to discover a special feature */
-				if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
-				else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
-			}
+		/* hack 1/2: rune proficiency adds to chance for 'special feature' uncovering giving a rune */
+		if (dug_feat == FEAT_NONE && !tval && rand_int(1000) < rune_proficiency) {
+			tval = TV_RUNE;
+			get_obj_num_hook = NULL;
+			get_obj_num_prep_tval(tval, RESF_MID);
+			special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+		}
+	}
+	/* if in monster KILL_WALL form or via magic */
+	else if (l_ptr && quiet_borer) {
+		/* prepare to discover a special feature */
+		if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
+		else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
+	}
 
-			if (p_ptr->IDDC_logscum) {
-				if (dug_feat == FEAT_FOUNTAIN) dug_feat = FEAT_NONE;
-				special_k_idx = 0;
-			}
+	if (p_ptr->IDDC_logscum) {
+		if (dug_feat == FEAT_FOUNTAIN) dug_feat = FEAT_NONE;
+		special_k_idx = 0;
+	}
 
-			//do_cmd_tunnel_test(int y, int x, FALSE)
-			/* Must be tunnelable */
-			if (!(f_ptr->flags1 & FF1_TUNNELABLE) ||
-			    (f_ptr->flags1 & FF1_PERMANENT)) {
-				/* Message */
-				msg_print(Ind, f_text + f_ptr->tunnel);
-				/* Nope */
-				return;
-			}
-			/* No destroying of town layouts */
-			else if (!allow_terraforming(wpos, FEAT_TREE)) {
-				msg_print(Ind, "You may not tunnel in this area.");
-				return;
-			}
-			/* Rubble */
-			else if (cfeat == FEAT_RUBBLE) {
-				no_quake = TRUE;
+	//do_cmd_tunnel_test(int y, int x, FALSE)
+	/* Must be tunnelable */
+	if (!(f_ptr->flags1 & FF1_TUNNELABLE) ||
+	    (f_ptr->flags1 & FF1_PERMANENT)) {
+		/* Message */
+		msg_print(Ind, f_text + f_ptr->tunnel);
+		/* Nope */
+		return;
+	}
+	/* No destroying of town layouts */
+	else if (!allow_terraforming(wpos, FEAT_TREE)) {
+		msg_print(Ind, "You may not tunnel in this area.");
+		return;
+	}
+	/* Rubble */
+	else if (cfeat == FEAT_RUBBLE) {
+		no_quake = TRUE;
 
-				/* Remove the rubble */
-				if (power > rand_int(200) && twall(Ind, y, x)) {
-					/* Message */
-					msg_print(Ind, "You have removed the rubble.");
+		/* Remove the rubble */
+		if (power > rand_int(200) && twall(Ind, y, x)) {
+			/* Message */
+			msg_print(Ind, "You have removed the rubble.");
 #ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
-					/* Hack -- place an object - Not in town (Khazad becomes l00t source), not on stale IDDC floors */
-					if (!istown(wpos) && !p_ptr->IDDC_logscum) {
-						/* discovered a special feature? */
-						if (dug_feat == FEAT_FOUNTAIN) {
-							place_fountain(wpos, y, x);
-							note_spot_depth(wpos, y, x);
-							everyone_lite_spot(wpos, y, x);
-							msg_print(Ind, "You have laid open a fountain!");
-							s_printf("DIGGING: %s found a fountain.\n", p_ptr->name);
-						} else if (dug_feat != FEAT_NONE) {
-							cave_set_feat_live(wpos, y, x, dug_feat);
-							if (dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) {
-								msg_print(Ind, "You have uncovered a stairway!");
-								s_printf("DIGGING: %s found a staircase.\n", p_ptr->name);
-							} else {
+			/* Hack -- place an object - Not in town (Khazad becomes l00t source), not on stale IDDC floors */
+			if (!istown(wpos) && !p_ptr->IDDC_logscum) {
+				/* discovered a special feature? */
+				if (dug_feat == FEAT_FOUNTAIN) {
+					place_fountain(wpos, y, x);
+					note_spot_depth(wpos, y, x);
+					everyone_lite_spot(wpos, y, x);
+					msg_print(Ind, "You have laid open a fountain!");
+					s_printf("DIGGING: %s found a fountain.\n", p_ptr->name);
+				} else if (dug_feat != FEAT_NONE) {
+					cave_set_feat_live(wpos, y, x, dug_feat);
+					if (dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) {
+						msg_print(Ind, "You have uncovered a stairway!");
+						s_printf("DIGGING: %s found a staircase.\n", p_ptr->name);
+					} else {
 //								s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
-							}
-						} else if (special_k_idx) {
-							/* no golem body pieces from rubble, instead allow limbs! */
-							if (tval == TV_GOLEM) {
-								if (rand_int(2)) sval = SV_GOLEM_ARM;
-								else sval = SV_GOLEM_LEG;
-								special_k_idx = lookup_kind(tval, sval);
-							}
-							invcopy(&forge, special_k_idx);
-							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-							forge.number = 1;
-//							forge.level = ;
-							forge.marked2 = ITEM_REMOVAL_NORMAL;
-							msg_print(Ind, "You have found something!");
-							drop_near(0, &forge, -1, wpos, y, x);
-							if (tval == TV_CHEST)
-								s_printf("DIGGING: %s found a chest.\n", p_ptr->name);
-							else if (tval == TV_RUNE)
-								s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
-							else
-								s_printf("DIGGING: %s found a specific non-golem item.\n", p_ptr->name);
-						} else if (rand_int(120) < 10 + mining && !p_ptr->IDDC_logscum) {
-							place_object_restrictor = RESF_NONE;
-#if 1
-							object_level = find_level_base;
-							generate_object(Ind, &forge, wpos, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
-								default_obj_theme, p_ptr->luck);
-							object_level = old_object_level;
-							object_desc(0, o_name, &forge, TRUE, 3);
-							s_printf("DIGGING: %s found item: %s.\n", p_ptr->name, o_name);
-							drop_near(0, &forge, -1, wpos, y, x);
-#else
-							object_level = find_level_base;
-							place_object(Ind, wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
-								default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
-							s_printf("DIGGING: %s found a random item.\n", p_ptr->name);
-							object_level = old_object_level;
-#endif
-							if (player_can_see_bold(Ind, y, x))
-								msg_print(Ind, "You have found something!");
-						}
 					}
-
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-
-					/* Display */
-					everyone_lite_spot(wpos, y, x);
-
-					if (p_ptr->current_create_sling_ammo) create_sling_ammo_aux(Ind);
-				} else {
-					/* Message, keep digging */
-					msg_print(Ind, "You dig in the rubble.");
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-			}
-			else if (cfeat == FEAT_TREE) {
-				no_quake = TRUE;
-
-				/* mow down the vegetation */
-				if (((power > wood_power ? power : wood_power) > rand_int(400)) && twall(Ind, y, x)) { /* 400 */
-					/* Message */
-					msg_print(Ind, "You hack your way through the vegetation.");
-					if (p_ptr->prace == RACE_ENT)
-						msg_print(Ind, "You have a bad feeling about it.");
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-
-					if (special_k_idx && tval == TV_GOLEM) {
-						/* trees can only give wood for golem material: */
-						sval = SV_GOLEM_WOOD;
+				} else if (special_k_idx) {
+					/* no golem body pieces from rubble, instead allow limbs! */
+					if (tval == TV_GOLEM) {
+						if (rand_int(2)) sval = SV_GOLEM_ARM;
+						else sval = SV_GOLEM_LEG;
 						special_k_idx = lookup_kind(tval, sval);
-
-						invcopy(&forge, special_k_idx);
-						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-						forge.number = 1;
-//						forge.level = ;
-						forge.marked2 = ITEM_REMOVAL_NORMAL;
-						msg_print(Ind, "You have found something!");
-						drop_near(0, &forge, -1, wpos, y, x);
-						s_printf("DIGGING: %s found a massive wood piece.\n", p_ptr->name);
-					} else if (!rand_int(65 - get_skill(p_ptr, SKILL_DIG) / 2) && !p_ptr->IDDC_logscum) {
-						/* for player store signs: (non-massive) wood pieces */
-						invcopy(&forge, lookup_kind(TV_JUNK, SV_WOOD_PIECE));
-						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-						forge.number = 1;
-//						forge.level = ;
-						forge.marked2 = ITEM_REMOVAL_NORMAL;
-						msg_print(Ind, "You have found something!");
-						drop_near(0, &forge, -1, wpos, y, x);
-						s_printf("DIGGING: %s found a wood piece.\n", p_ptr->name);
 					}
-
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-					/* Display */
-					everyone_lite_spot(wpos, y, x);
-				} else {
-					/* Message, keep digging */
-					msg_print(Ind, "You attempt to clear a path.");
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+					invcopy(&forge, special_k_idx);
+					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+					forge.number = 1;
+//							forge.level = ;
+					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					msg_print(Ind, "You have found something!");
+					drop_near(0, &forge, -1, wpos, y, x);
+					if (tval == TV_CHEST)
+						s_printf("DIGGING: %s found a chest.\n", p_ptr->name);
+					else if (tval == TV_RUNE)
+						s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
+					else
+						s_printf("DIGGING: %s found a specific non-golem item.\n", p_ptr->name);
+				} else if (rand_int(120) < 10 + mining && !p_ptr->IDDC_logscum) {
+					place_object_restrictor = RESF_NONE;
+#if 1
+					object_level = find_level_base;
+					generate_object(Ind, &forge, wpos, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
+						default_obj_theme, p_ptr->luck);
+					object_level = old_object_level;
+					object_desc(0, o_name, &forge, TRUE, 3);
+					s_printf("DIGGING: %s found item: %s.\n", p_ptr->name, o_name);
+					drop_near(0, &forge, -1, wpos, y, x);
+#else
+					object_level = find_level_base;
+					place_object(Ind, wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MID,
+						default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
+					s_printf("DIGGING: %s found a random item.\n", p_ptr->name);
+					object_level = old_object_level;
 #endif
-				}
-			} else if (cfeat == FEAT_BUSH) {
-				no_quake = TRUE;
-
-				/* mow down the vegetation */
-				if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 400 */
-					/* Message */
-					msg_print(Ind, "You hack your way through the vegetation.");
-					if (p_ptr->prace == RACE_ENT)
-						msg_print(Ind, "You have a bad feeling about it.");
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-
-					/* Display */
-					everyone_lite_spot(wpos, y, x);
-				} else {
-					/* Message, keep digging */
-					msg_print(Ind, "You attempt to clear a path.");
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-			} else if (cfeat == FEAT_IVY) {
-				no_quake = TRUE;
-
-				/* mow down the vegetation */
-				if (((power > fibre_power ? power : fibre_power) > rand_int(200)) && twall(Ind, y, x)) { /* 400 */
-					/* Message */
-					msg_print(Ind, "You hack your way through the vegetation.");
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-
-					/* Display */
-					everyone_lite_spot(wpos, y, x);
-				} else {
-					/* Message, keep digging */
-					msg_print(Ind, "You attempt to clear a path.");
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-			} else if (cfeat == FEAT_DEAD_TREE) {
-				no_quake = TRUE;
-
-				/* mow down the vegetation */
-				if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 600 */
-					/* Message */
-					msg_print(Ind, "You hack your way through the vegetation.");
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-
-					/* Display */
-					everyone_lite_spot(wpos, y, x);
-				} else {
-					/* Message, keep digging */
-					msg_print(Ind, "You attempt to clear a path.");
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
+					if (player_can_see_bold(Ind, y, x))
+						msg_print(Ind, "You have found something!");
 				}
 			}
-			/* Quartz / Magma / Sandwall */
-			else if (((cfeat >= FEAT_MAGMA) &&
-				(cfeat <= FEAT_QUARTZ_K)) ||
-				((cfeat >= FEAT_SANDWALL) &&
-				 (cfeat <= FEAT_SANDWALL_K))) {
-				bool okay = FALSE;
-				bool gold = FALSE;
-				bool hard = FALSE;
-				bool soft = FALSE;
-				bool nonobvious = (cfeat == FEAT_QUARTZ_H || cfeat == FEAT_MAGMA_H || cfeat == FEAT_SANDWALL_H); //these hidden treasure veins are currently not generated, so..
-				//actually make 'non-obvious' also mean treasure veins that aren't generated out in the open, but enclosed in streamers:
-				if (cinfo & CAVE_ENCASED) nonobvious = TRUE;
 
-				/* Non-mapped treasure (ie treasure that requires detection or digging it up for LoS, to find it) */
-				if (l_ptr && !quiet_borer &&
-				    (dug_feat == FEAT_NONE || dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) &&
-				    !(special_k_idx && tval == TV_GOLEM) &&
-				    nonobvious) {
-					/* hack 2/2: rune proficiency for 'special feature' uncovering */
-					if (rand_int(1000) < rune_proficiency) {
-						tval = TV_RUNE;
-						get_obj_num_hook = NULL;
-						get_obj_num_prep_tval(tval, RESF_MID);
-						special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
-					}
-				}
+			/* Notice */
+			note_spot_depth(wpos, y, x);
 
-				/* Found gold */
-				if ((cfeat >= FEAT_MAGMA_H) &&
-				    (cfeat <= FEAT_QUARTZ_K)) gold = TRUE;
+			/* Display */
+			everyone_lite_spot(wpos, y, x);
 
-				if ((cfeat == FEAT_SANDWALL_H) ||
-				    (cfeat == FEAT_SANDWALL_K)) {
-					gold = TRUE;
-					soft = TRUE;
-				} else
-				/* Extract "quartz" flag XXX XXX XXX */
-				if ((cfeat - FEAT_MAGMA) & 0x01) hard = TRUE;
-
-				/* Quartz */
-				if (hard)
-					okay = (power > 20 + rand_int(800)); /* 800 */
-				/* Sandwall */
-				else if (soft)
-					okay = (power > 5 + rand_int(250));
-				/* Magma */
-				else
-					okay = (power > 10 + rand_int(400)); /* 400 */
-
-				if (istown(wpos) || p_ptr->IDDC_logscum) gold = FALSE;
-
-				/* Success */
-				if (okay && twall(Ind, y, x)) {
-					msg_print(Ind, "You have finished the tunnel.");
+			if (p_ptr->current_create_sling_ammo) create_sling_ammo_aux(Ind);
+		} else {
+			/* Message, keep digging */
+			msg_print(Ind, "You dig in the rubble.");
+			more = TRUE;
 #ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+	}
+	else if (cfeat == FEAT_TREE) {
+		no_quake = TRUE;
+
+		/* mow down the vegetation */
+		if (((power > wood_power ? power : wood_power) > rand_int(400)) && twall(Ind, y, x)) { /* 400 */
+			/* Message */
+			msg_print(Ind, "You hack your way through the vegetation.");
+			if (p_ptr->prace == RACE_ENT)
+				msg_print(Ind, "You have a bad feeling about it.");
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 
-					/* Found treasure */
+			if (special_k_idx && tval == TV_GOLEM) {
+				/* trees can only give wood for golem material: */
+				sval = SV_GOLEM_WOOD;
+				special_k_idx = lookup_kind(tval, sval);
 
-					/* Non-mapped treasure (ie treasure that requires detection or digging it up for LoS, to find it):
-					   If no other feature/item was planned, give extra chance for instant-rune instead of just cash. */
-					if (gold && l_ptr && !quiet_borer && !p_ptr->IDDC_logscum &&
-					    (dug_feat == FEAT_NONE || dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) &&
-					    !(special_k_idx && tval == TV_GOLEM) &&
-					    nonobvious &&
-					    /* hack 2/2: rune proficiency for 'special feature' uncovering */
-					    rand_int(1000) < rune_proficiency) {
-						tval = TV_RUNE;
-						get_obj_num_hook = NULL;
-						get_obj_num_prep_tval(tval, RESF_MID);
-						special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
-						invcopy(&forge, special_k_idx);
-						apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-						forge.number = 1;
-						//forge.level = ;
-						forge.marked2 = ITEM_REMOVAL_NORMAL;
-						msg_print(Ind, "You have found something!");
-						drop_near(0, &forge, -1, wpos, y, x);
-						s_printf("DIGGING: %s found a rune (nonobvious vein).\n", p_ptr->name);
-					} else
-					/* Normal results */
-					if (gold) {
-						if (special_k_idx && tval == TV_GOLEM) {
-							invcopy(&forge, special_k_idx);
-							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-							forge.number = 1;
-							//forge.level = ;
-							forge.marked2 = ITEM_REMOVAL_NORMAL;
-							drop_near(0, &forge, -1, wpos, y, x);
-							s_printf("DIGGING: %s found a metal piece.\n", p_ptr->name);
-						} else {
-							object_level = find_level;
-							/* abuse tval: reward the special effort at lower character levels..
-							   and add a basic x3 bonus for gold from veins in general. */
-							tval = 3 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
-							if (nonobvious) s_printf("DIGGING: %s digs nonobvious (x%d).\n", p_ptr->name, tval);
-							place_gold(Ind, wpos, y, x, tval, 0);
-							object_level = old_object_level;
-						}
+				invcopy(&forge, special_k_idx);
+				apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+				forge.number = 1;
+//						forge.level = ;
+				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				msg_print(Ind, "You have found something!");
+				drop_near(0, &forge, -1, wpos, y, x);
+				s_printf("DIGGING: %s found a massive wood piece.\n", p_ptr->name);
+			} else if (!rand_int(65 - get_skill(p_ptr, SKILL_DIG) / 2) && !p_ptr->IDDC_logscum) {
+				/* for player store signs: (non-massive) wood pieces */
+				invcopy(&forge, lookup_kind(TV_JUNK, SV_WOOD_PIECE));
+				apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+				forge.number = 1;
+//						forge.level = ;
+				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				msg_print(Ind, "You have found something!");
+				drop_near(0, &forge, -1, wpos, y, x);
+				s_printf("DIGGING: %s found a wood piece.\n", p_ptr->name);
+			}
+
+			/* Notice */
+			note_spot_depth(wpos, y, x);
+			/* Display */
+			everyone_lite_spot(wpos, y, x);
+		} else {
+			/* Message, keep digging */
+			msg_print(Ind, "You attempt to clear a path.");
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+	} else if (cfeat == FEAT_BUSH) {
+		no_quake = TRUE;
+
+		/* mow down the vegetation */
+		if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 400 */
+			/* Message */
+			msg_print(Ind, "You hack your way through the vegetation.");
+			if (p_ptr->prace == RACE_ENT)
+				msg_print(Ind, "You have a bad feeling about it.");
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+
+			/* Notice */
+			note_spot_depth(wpos, y, x);
+
+			/* Display */
+			everyone_lite_spot(wpos, y, x);
+		} else {
+			/* Message, keep digging */
+			msg_print(Ind, "You attempt to clear a path.");
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+	} else if (cfeat == FEAT_IVY) {
+		no_quake = TRUE;
+
+		/* mow down the vegetation */
+		if (((power > fibre_power ? power : fibre_power) > rand_int(200)) && twall(Ind, y, x)) { /* 400 */
+			/* Message */
+			msg_print(Ind, "You hack your way through the vegetation.");
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+
+			/* Notice */
+			note_spot_depth(wpos, y, x);
+
+			/* Display */
+			everyone_lite_spot(wpos, y, x);
+		} else {
+			/* Message, keep digging */
+			msg_print(Ind, "You attempt to clear a path.");
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+	} else if (cfeat == FEAT_DEAD_TREE) {
+		no_quake = TRUE;
+
+		/* mow down the vegetation */
+		if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 600 */
+			/* Message */
+			msg_print(Ind, "You hack your way through the vegetation.");
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+
+			/* Notice */
+			note_spot_depth(wpos, y, x);
+
+			/* Display */
+			everyone_lite_spot(wpos, y, x);
+		} else {
+			/* Message, keep digging */
+			msg_print(Ind, "You attempt to clear a path.");
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+	}
+	/* Quartz / Magma / Sandwall */
+	else if (((cfeat >= FEAT_MAGMA) &&
+		(cfeat <= FEAT_QUARTZ_K)) ||
+		((cfeat >= FEAT_SANDWALL) &&
+		 (cfeat <= FEAT_SANDWALL_K))) {
+		bool okay = FALSE;
+		bool gold = FALSE;
+		bool hard = FALSE;
+		bool soft = FALSE;
+		bool nonobvious = (cfeat == FEAT_QUARTZ_H || cfeat == FEAT_MAGMA_H || cfeat == FEAT_SANDWALL_H); //these hidden treasure veins are currently not generated, so..
+		//actually make 'non-obvious' also mean treasure veins that aren't generated out in the open, but enclosed in streamers:
+		if (cinfo & CAVE_ENCASED) nonobvious = TRUE;
+
+		/* Non-mapped treasure (ie treasure that requires detection or digging it up for LoS, to find it) */
+		if (l_ptr && !quiet_borer &&
+		    (dug_feat == FEAT_NONE || dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) &&
+		    !(special_k_idx && tval == TV_GOLEM) &&
+		    nonobvious) {
+			/* hack 2/2: rune proficiency for 'special feature' uncovering */
+			if (rand_int(1000) < rune_proficiency) {
+				tval = TV_RUNE;
+				get_obj_num_hook = NULL;
+				get_obj_num_prep_tval(tval, RESF_MID);
+				special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+			}
+		}
+
+		/* Found gold */
+		if ((cfeat >= FEAT_MAGMA_H) &&
+		    (cfeat <= FEAT_QUARTZ_K)) gold = TRUE;
+
+		if ((cfeat == FEAT_SANDWALL_H) ||
+		    (cfeat == FEAT_SANDWALL_K)) {
+			gold = TRUE;
+			soft = TRUE;
+		} else
+		/* Extract "quartz" flag XXX XXX XXX */
+		if ((cfeat - FEAT_MAGMA) & 0x01) hard = TRUE;
+
+		/* Quartz */
+		if (hard)
+			okay = (power > 20 + rand_int(800)); /* 800 */
+		/* Sandwall */
+		else if (soft)
+			okay = (power > 5 + rand_int(250));
+		/* Magma */
+		else
+			okay = (power > 10 + rand_int(400)); /* 400 */
+
+		if (istown(wpos) || p_ptr->IDDC_logscum) gold = FALSE;
+
+		/* Success */
+		if (okay && twall(Ind, y, x)) {
+			msg_print(Ind, "You have finished the tunnel.");
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+
+			/* Found treasure */
+
+			/* Non-mapped treasure (ie treasure that requires detection or digging it up for LoS, to find it):
+			   If no other feature/item was planned, give extra chance for instant-rune instead of just cash. */
+			if (gold && l_ptr && !quiet_borer && !p_ptr->IDDC_logscum &&
+			    (dug_feat == FEAT_NONE || dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) &&
+			    !(special_k_idx && tval == TV_GOLEM) &&
+			    nonobvious &&
+			    /* hack 2/2: rune proficiency for 'special feature' uncovering */
+			    rand_int(1000) < rune_proficiency) {
+				tval = TV_RUNE;
+				get_obj_num_hook = NULL;
+				get_obj_num_prep_tval(tval, RESF_MID);
+				special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+				invcopy(&forge, special_k_idx);
+				apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+				forge.number = 1;
+				//forge.level = ;
+				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				msg_print(Ind, "You have found something!");
+				drop_near(0, &forge, -1, wpos, y, x);
+				s_printf("DIGGING: %s found a rune (nonobvious vein).\n", p_ptr->name);
+			} else
+			/* Normal results */
+			if (gold) {
+				if (special_k_idx && tval == TV_GOLEM) {
+					invcopy(&forge, special_k_idx);
+					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+					forge.number = 1;
+					//forge.level = ;
+					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					drop_near(0, &forge, -1, wpos, y, x);
+					s_printf("DIGGING: %s found a metal piece.\n", p_ptr->name);
+				} else {
+					object_level = find_level;
+					/* abuse tval: reward the special effort at lower character levels..
+					   and add a basic x3 bonus for gold from veins in general. */
+					tval = 3 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
+					if (nonobvious) s_printf("DIGGING: %s digs nonobvious (x%d).\n", p_ptr->name, tval);
+					place_gold(Ind, wpos, y, x, tval, 0);
+					object_level = old_object_level;
+				}
+				note_spot_depth(wpos, y, x);
+				everyone_lite_spot(wpos, y, x);
+				msg_print(Ind, "You have found something!");
+			} else if (istown(wpos)) {
+				/* nothing */
+			/* found special feature */
+			} else if (dug_feat == FEAT_FOUNTAIN) {
+				if (magik(35)) {
+					place_fountain(wpos, y, x);
+					note_spot_depth(wpos, y, x);
+					everyone_lite_spot(wpos, y, x);
+					msg_print(Ind, "You have laid open a fountain!");
+					s_printf("DIGGING: %s found a fountain.\n", p_ptr->name);
+				}
+			} else if (dug_feat != FEAT_NONE &&
+			    dug_feat != FEAT_WAY_MORE &&
+			    dug_feat != FEAT_WAY_LESS) {
+				if (magik(100)) {
+					cave_set_feat_live(wpos, y, x, dug_feat);
+					//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
+				}
+			} else if (!rand_int(10) && special_k_idx && tval == TV_RUNE) {
+					invcopy(&forge, special_k_idx);
+					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+					forge.number = 1;
+					//forge.level = ;
+					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					msg_print(Ind, "You have found something!");
+					drop_near(0, &forge, -1, wpos, y, x);
+					s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
+			}
+		}
+
+		/* Failure */
+		else {
+			/* Message, continue digging */
+			msg_print(Ind, f_text + f_ptr->tunnel);
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+#if 0
+		/* Failure (quartz) */
+		else if (hard) {
+			/* Message, continue digging */
+			msg_print(Ind, "You tunnel into the quartz vein.");
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+
+		/* Failure (magma) */
+		else {
+			/* Message, continue digging */
+			msg_print(Ind, "You tunnel into the magma vein.");
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+#endif	/* 0 */
+	}
+	/* Default to secret doors */
+	else if (cfeat == FEAT_SECRET) {
+		struct c_special *cs_ptr;
+		int featm = cfeat; /* just to kill compiler warning */
+		if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
+			featm = cs_ptr->sc.omni;
+		else /* Apply "mimic" field */
+			featm = f_info[featm].mimic;
+
+		/* Is the mimicked feat un-tunnelable? */
+		if (!(f_info[featm].flags1 & FF1_TUNNELABLE) ||
+		    (f_info[featm].flags1 & FF1_PERMANENT)) {
+			/* Message */
+			msg_print(Ind, f_text + f_info[featm].tunnel);
+			return;
+		}
+
+#if 0
+		/* This might give it away, maybe comment out.. */
+		no_quake = TRUE;
+#endif
+
+		/* hack: 'successful' tunnelling reveals the secret door */
+		if (power > 40 + rand_int(1600)) { /* just assume 1600 as for Granite Wall */
+			struct c_special *cs_ptr;
+			msg_print(Ind, "You have found a secret door!");
+			cfeat = FEAT_DOOR_HEAD + 0x00;
+			/* Clear mimic feature */
+			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
+
+			note_spot_depth(wpos, y, x);
+			everyone_lite_spot(wpos, y, x);
+		} else {
+			msg_print(Ind, f_text + f_info[featm].tunnel);
+			more = TRUE;
+		}
+
+#ifdef USE_SOUND_2010
+		/* sound: for now assume that only such features get mimicked that
+		   would cause 'tunnel_rock' sfx, eg no trees or rubble. - C. Blue */
+		if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+
+		/* Set off trap */
+		if (GetCS(c_ptr, CS_TRAPS)) {
+#ifdef TRAP_REVEALS_DOOR
+			struct c_special *cs_ptr;
+#endif
+			player_activate_door_trap(Ind, y, x);
+			/* got disturbed! */
+			more = FALSE;
+#ifdef TRAP_REVEALS_DOOR
+			/* Message */
+			msg_print(Ind, "You have found a secret door.");
+			/* Pick a door XXX XXX XXX */
+			cfeat = FEAT_DOOR_HEAD + 0x00;
+			/* Clear mimic feature */
+			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
+
+			/* Notice */
+			note_spot_depth(wpos, y, x);
+			/* Redraw */
+			everyone_lite_spot(wpos, y, x);
+#endif
+		}
+
+		/* Hack -- Search */
+		if (more) search(Ind);
+	}
+	/* Granite + misc (Ice..) */
+	else if (cfeat >= FEAT_WALL_EXTRA) {
+		/* Tunnel */
+		if ((power > 40 + rand_int(1600)) && twall(Ind, y, x)) { /* 1600 */
+			msg_print(Ind, "You have finished the tunnel.");
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+
+			if (!istown(wpos)) {
+				/* found special feature */
+				if (dug_feat == FEAT_FOUNTAIN) {
+					if (magik(50)) {
+						place_fountain(wpos, y, x);
 						note_spot_depth(wpos, y, x);
 						everyone_lite_spot(wpos, y, x);
-						msg_print(Ind, "You have found something!");
-					} else if (istown(wpos)) {
-						/* nothing */
-					/* found special feature */
-					} else if (dug_feat == FEAT_FOUNTAIN) {
-						if (magik(35)) {
-							place_fountain(wpos, y, x);
-							note_spot_depth(wpos, y, x);
-							everyone_lite_spot(wpos, y, x);
-							msg_print(Ind, "You have laid open a fountain!");
-							s_printf("DIGGING: %s found a fountain.\n", p_ptr->name);
-						}
-					} else if (dug_feat != FEAT_NONE &&
-					    dug_feat != FEAT_WAY_MORE &&
-					    dug_feat != FEAT_WAY_LESS) {
-						if (magik(100)) {
-							cave_set_feat_live(wpos, y, x, dug_feat);
-							//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
-						}
-					} else if (!rand_int(10) && special_k_idx && tval == TV_RUNE) {
-							invcopy(&forge, special_k_idx);
-							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-							forge.number = 1;
-							//forge.level = ;
-							forge.marked2 = ITEM_REMOVAL_NORMAL;
-							msg_print(Ind, "You have found something!");
-							drop_near(0, &forge, -1, wpos, y, x);
-							s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
+						msg_print(Ind, "You have laid open a fountain!");
+						s_printf("DIGGING: %s found a fountain.\n", p_ptr->name);
 					}
-				}
-
-				/* Failure */
-				else {
-					/* Message, continue digging */
-					msg_print(Ind, f_text + f_ptr->tunnel);
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-#if 0
-				/* Failure (quartz) */
-				else if (hard) {
-					/* Message, continue digging */
-					msg_print(Ind, "You tunnel into the quartz vein.");
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-
-				/* Failure (magma) */
-				else {
-					/* Message, continue digging */
-					msg_print(Ind, "You tunnel into the magma vein.");
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-#endif	/* 0 */
-			}
-			/* Default to secret doors */
-			else if (cfeat == FEAT_SECRET) {
-#if 0
-				/* Message, keep digging */
-				msg_print(Ind, "You tunnel into the granite wall.");
-				more = TRUE;
- #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
- #endif
-#else
-				struct c_special *cs_ptr;
-				int featm = cfeat; /* just to kill compiler warning */
-				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
-					featm = cs_ptr->sc.omni;
-				else /* Apply "mimic" field */
-					featm = f_info[featm].mimic;
-
-				/* Is the mimicked feat un-tunnelable? */
-				if (!(f_info[featm].flags1 & FF1_TUNNELABLE) ||
-				    (f_info[featm].flags1 & FF1_PERMANENT)) {
-					/* Message */
-					msg_print(Ind, f_text + f_info[featm].tunnel);
-					return;
-				}
-
-
-				/* hack: 'successful' tunnelling reveals the secret door */
-				if (power > 40 + rand_int(1600)) { /* just assume 1600 as for Granite Wall */
-					struct c_special *cs_ptr;
-					msg_print(Ind, "You have found a secret door!");
-					cfeat = FEAT_DOOR_HEAD + 0x00;
-					/* Clear mimic feature */
-					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
-
-					note_spot_depth(wpos, y, x);
-					everyone_lite_spot(wpos, y, x);
-				} else {
-					msg_print(Ind, f_text + f_info[featm].tunnel);
-					more = TRUE;
-				}
-
- #ifdef USE_SOUND_2010
-				/* sound: for now assume that only such features get mimicked that
-				   would cause 'tunnel_rock' sfx, eg no trees or rubble. - C. Blue */
-				if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
- #endif
-#endif
-
-				/* Set off trap */
-				if (GetCS(c_ptr, CS_TRAPS)) {
-#ifdef TRAP_REVEALS_DOOR
-					struct c_special *cs_ptr;
-#endif
-					player_activate_door_trap(Ind, y, x);
-					/* got disturbed! */
-					more = FALSE;
-#ifdef TRAP_REVEALS_DOOR
-					/* Message */
-					msg_print(Ind, "You have found a secret door.");
-					/* Pick a door XXX XXX XXX */
-					cfeat = FEAT_DOOR_HEAD + 0x00;
-					/* Clear mimic feature */
-					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
-
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
-#endif
-				}
-
-				/* Hack -- Search */
-				if (more) search(Ind);
-			}
-			/* Granite + misc (Ice..) */
-			else if (cfeat >= FEAT_WALL_EXTRA) {
-				/* Tunnel */
-				if ((power > 40 + rand_int(1600)) && twall(Ind, y, x)) { /* 1600 */
-					msg_print(Ind, "You have finished the tunnel.");
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-
-					if (!istown(wpos)) {
-						/* found special feature */
-						if (dug_feat == FEAT_FOUNTAIN) {
-							if (magik(50)) {
-								place_fountain(wpos, y, x);
-								note_spot_depth(wpos, y, x);
-								everyone_lite_spot(wpos, y, x);
-								msg_print(Ind, "You have laid open a fountain!");
-								s_printf("DIGGING: %s found a fountain.\n", p_ptr->name);
-							}
-						} else if (dug_feat != FEAT_NONE &&
-						    dug_feat != FEAT_WAY_MORE &&
-						    dug_feat != FEAT_WAY_LESS) {
-							if (magik(100)) {
-								cave_set_feat_live(wpos, y, x, dug_feat);
-								//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
-							}
-						} else if (!rand_int(20) && special_k_idx && tval == TV_RUNE) {
-							invcopy(&forge, special_k_idx);
-							apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-							forge.number = 1;
-							//forge.level = ;
-							forge.marked2 = ITEM_REMOVAL_NORMAL;
-							msg_print(Ind, "You have found something!");
-							drop_near(0, &forge, -1, wpos, y, x);
-							s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
-						}
+				} else if (dug_feat != FEAT_NONE &&
+				    dug_feat != FEAT_WAY_MORE &&
+				    dug_feat != FEAT_WAY_LESS) {
+					if (magik(100)) {
+						cave_set_feat_live(wpos, y, x, dug_feat);
+						//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 					}
-				}
-
-				/* Keep trying */
-				else {
-					/* We may continue tunelling */
-					//msg_print(Ind, "You tunnel into the granite wall.");
-					msg_print(Ind, f_text + f_ptr->tunnel);
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
+				} else if (!rand_int(20) && special_k_idx && tval == TV_RUNE) {
+					invcopy(&forge, special_k_idx);
+					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+					forge.number = 1;
+					//forge.level = ;
+					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					msg_print(Ind, "You have found something!");
+					drop_near(0, &forge, -1, wpos, y, x);
+					s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 				}
 			}
-			/* Spider Webs */
-			else if (cfeat == FEAT_WEB) {
-				no_quake = TRUE;
-
-				/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
-				if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, y, x)) {
-					msg_print(Ind, "You have cleared the web.");
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-				/* Keep trying */
-				else {
-					/* We may continue tunelling */
-					msg_print(Ind, "You try to clear the spider web.");
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-			}
-
-			/* Other stuff - Note: There is none left, actually.
-			   Ice walls are treated as 'Granite Wall' above already! */
-			else {
-				/* Tunnel */
-				if ((power > 30 + rand_int(1200)) && twall(Ind, y, x)) {
-					msg_print(Ind, "You have finished the tunnel.");
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-
-				/* Keep trying */
-				else {
-					/* We may continue tunelling */
-					msg_print(Ind, f_text + f_ptr->tunnel);
-					more = TRUE;
-#ifdef USE_SOUND_2010
-					if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
-#endif
-				}
-			}
-
-#ifdef USE_SOUND_2010
-			/* If we successfully tunneled this grid, stop sfx */
-			if (p_ptr->command_rep && p_ptr->command_rep != PKT_BASH && !more)
-				sound(Ind, NULL, NULL, SFX_TYPE_STOP, TRUE);
-#endif
-
 		}
 
-		/* Notice "blockage" changes */
-		if (old_floor != cave_floor_bold(zcave, y, x)) {
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+		/* Keep trying */
+		else {
+			/* We may continue tunelling */
+			//msg_print(Ind, "You tunnel into the granite wall.");
+			msg_print(Ind, f_text + f_ptr->tunnel);
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
 		}
-	} else { /* dir == 0 */
-		/* we didn't dig into anything, but since we might still cause earthquakes,
-		   we need to deduct one turn of energy appropriately:
-		   We basically stroke the floor to cause an earthquake instead. */
-		p_ptr->energy -= level_speed(&p_ptr->wpos);
+	}
+	/* Spider Webs */
+	else if (cfeat == FEAT_WEB) {
+		no_quake = TRUE;
+
+		/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
+		if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, y, x)) {
+			msg_print(Ind, "You have cleared the web.");
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+		/* Keep trying */
+		else {
+			/* We may continue tunelling */
+			msg_print(Ind, "You try to clear the spider web.");
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+	}
+	/* Other stuff - Note: There is none left, actually.
+	   Ice walls are treated as 'Granite Wall' above already! */
+	else {
+		/* Tunnel */
+		if ((power > 30 + rand_int(1200)) && twall(Ind, y, x)) {
+			msg_print(Ind, "You have finished the tunnel.");
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+		/* Keep trying */
+		else {
+			/* We may continue tunelling */
+			msg_print(Ind, f_text + f_ptr->tunnel);
+			more = TRUE;
+#ifdef USE_SOUND_2010
+			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+		}
+	}
+
+#ifdef USE_SOUND_2010
+	/* If we successfully tunneled this grid, stop sfx */
+	if (p_ptr->command_rep && p_ptr->command_rep != PKT_BASH && !more)
+		sound(Ind, NULL, NULL, SFX_TYPE_STOP, TRUE);
+#endif
+	/* Notice "blockage" changes */
+	if (old_floor != cave_floor_bold(zcave, y, x)) {
+		/* Update some things */
+		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
 	}
 
 	/* Apply Earthquakes */
-	if (!no_quake && /* don't quake from digging rather soft stuff */
-	    p_ptr->inventory[INVEN_TOOL].k_idx) {
-		u32b fx, f5;
-		object_flags(o_ptr, &fx, &fx, &fx, &fx, &f5, &fx, &fx);
-		if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
-		    (randint(200) < power) && magik(50)
-#ifdef ALLOW_NO_QUAKE_INSCRIPTION
-		    && !check_guard_inscription(o_ptr->note, 'Q')
-#endif
-		    ) {
+	if (!no_quake) { /* don't quake from digging rather soft stuff */
+		/* As we are digging and not just hitting the ground, pick our digging tool over our weapon.
+		   As for weapons used as digging tools - these do not concern feats that are hard enough to cause quakes (but only fibre/wood/webs etc). */
+		if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
+			if (magik(impact_power_tool)) impact = TRUE;
+		}
+		/* We are digging with a weapon? */
+		else if (o2_ptr->k_idx || (o3_ptr->k_idx && is_weapon(o3_ptr->tval))) {
+			if (impact_power_weapon2 > impact_power_weapon) impact_power_weapon = impact_power_weapon2;
+			if (magik(impact_power_weapon)) impact = TRUE;
+		}
+		/* Bare-handed o_o */
+		else if (magik(impact_power)) impact = TRUE;
+
+		/* Finally, quake maybe! */
+		if (magik(QUAKE_CHANCE)) {
 			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 7);
-			break_cloaking(Ind, 0); /* redundant, done above already */
-			stop_precision(Ind);
-			stop_shooting_till_kill(Ind);
+			more = FALSE;
 		}
 	}
 

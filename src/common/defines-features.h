@@ -110,7 +110,7 @@
 //#define MONSTER_FLOW_BY_ESP
 
 
-/* Allow use of '!E' inscription on any item to prevent earthquakes from TR5_IMPACT items?
+/* Allow use of '!Q' inscription on any item to prevent earthquakes from TR5_IMPACT items?
    If disabled, it's still allowed to be used on Grond (exclusively)! */
 //#define ALLOW_NO_QUAKE_INSCRIPTION
 

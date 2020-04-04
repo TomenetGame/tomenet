@@ -56,6 +56,7 @@ audio_sfx = {
     "tunnel_rock",
     "tunnel_rubble",
     "tunnel_tree",
+    "hit_floor",
     "zap_rod",
 
     "drop_gold",

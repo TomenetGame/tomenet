@@ -2375,9 +2375,9 @@ void do_cmd_check_server_settings(int Ind) {
 		fprintf(fff, "Monsters may summon up to %d times until the summons start to become clones.\n", cfg.clone_summoning);
 
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
-	fprintf(fff, "You may use !E inscription on items that cause earthquakes to suppress those.\n");
+	fprintf(fff, "You may use !Q inscription on items that cause earthquakes to suppress those.\n");
 #else
-	fprintf(fff, "You may use !E inscription to suppress earthquakes on Grond only.\n");
+	fprintf(fff, "You may use !Q inscription to suppress earthquakes on Grond only.\n");
 #endif
 
 	k = cfg.use_pk_rules;

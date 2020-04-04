@@ -3659,7 +3659,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	}
 
 	/* Mega-Hack -- apply earthquake brand */
-	if (do_quake && !p_ptr->quaked) {
+	if (do_quake && !p_ptr->quaked && magik(QUAKE_CHANCE)) {
 		if (o_ptr->k_idx
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
 		    && !check_guard_inscription(o_ptr->note, 'Q')
@@ -4224,6 +4224,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				   mostly don't cause earthquakes at all */
 				if ((p_ptr->impact || (f5 & TR5_IMPACT)) &&
 				    500 / (10 + (k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(35)) do_quake = TRUE;
+				    //5..10..45<randint (9d9..9d5..9d1 hit -> ~70% overall avg chance with Grond)
+				    //18 for 6d6 weapon at 6d3.5 roll -> 49% on average
+				    //25 for 4d5 weapon at 4d3 roll -> ~29% on average
 				    /* I made the new formula above, to get a better chance curve over all the different weapon types. -C. Blue- */
 				    /* Some old tries: */
 				//    130 - ((k - o_ptr->dd) * o_ptr->dd * o_ptr->ds / (o_ptr->dd * (o_ptr->ds - 1) + 1)) < randint(130)) do_quake = TRUE;
@@ -4886,7 +4889,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	}
 
 	/* Mega-Hack -- apply earthquake brand */
-	if (do_quake && !p_ptr->quaked) {
+	if (do_quake && !p_ptr->quaked && magik(QUAKE_CHANCE)) {
 		if (o_ptr->k_idx
 #ifdef ALLOW_NO_QUAKE_INSCRIPTION
 		    && !check_guard_inscription(o_ptr->note, 'Q')

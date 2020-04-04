@@ -8937,3 +8937,6 @@ extern int PlayerUID;
 #define RT_XXX4000	0x4000
 #define RT_XXX8000	0x8000
 
+/* Chance for weapons / digging tools / p_ptr->impact to cause an earthquake, even if all case-specific rolls already succeeded.
+   Unified value for digging and fighting here, as characters could use their weapons as digging tools just as well. */
+#define QUAKE_CHANCE	50

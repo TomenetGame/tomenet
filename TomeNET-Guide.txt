@@ -10193,8 +10193,8 @@ CHAOTIC ('It produces chaotic effects.')
         a) drain life (VAMPIRIC, see (5.15)) (very likely).
         b) earthquake (see (5.13) for details).
            (If enabled in the server settings, it can be suppressed with
-           the !E inscription. See (0.3) for !E settings or press ~d in game.
-           Usually, !E only works on the artifact "Grond".)
+           the !Q inscription. See (0.3) for !Q settings or press ~d in game.
+           Usually, !Q only works on the artifact "Grond".)
         c) confuse target (very likely).
         d) teleport target away.
         e) polymorph target.
@@ -10209,8 +10209,8 @@ IMPACT ('It can cause earthquakes.')
         Causes earthquakes if the damage is > 50. See (5.13) for details about
         earthquakes.
         (If enabled in the server settings, it can be suppressed with
-        the !E inscription. See (0.3) for !E settings or press ~d in game.
-        Usually, !E only works on the artifact "Grond".)
+        the !Q inscription. See (0.3) for !Q settings or press ~d in game.
+        Usually, !Q only works on the artifact "Grond".)
 FUEL_LITE ('It provides light when fueled.')
         A light source that needs to be fueled, otherwise it runs out.
         WARNING:
