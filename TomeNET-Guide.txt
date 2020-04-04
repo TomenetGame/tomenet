@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. April 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 4. April 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -8819,7 +8819,7 @@ things to know about throwing:
   potion of weakness can reduce their melee damage.
   Potions of slowness and potions of sleep are very effective too.
 - Some weapon types are especially effective at dealing damage when thrown,
-  much more so than other random items. These are:
+  much more so than other random items. These throwing weapons are:
   - Daggers (main gauche counts as such as well),
   - Axes
   - Spears and tridents.
@@ -11411,8 +11411,12 @@ NO_TARGET       This monster cannot be targetted with target command.
 NO_DEATH        This entity can never die.
 NO_AUTORET      You won't use auto-retaliation against this entity.
 
-REFLECTING      The monster can deflect bolts and arrows, physical and magical
-                projectiles, prolonging the fight.
+REFLECTING      The monster can deflect shots, arrows and bolts, physical and
+                magical projectiles, prolonging the fight.
+                Boomerangs cannot be deflected. For thrown items it depends on
+                their weight, only very light items can be deflected reasonably
+                well, and already middle-light items become undeflectable,
+                making throwing weapons an alternative (see (5.2b)).
                 Also, the monster will resist any types of light-based attacks
                 greatly, not just attacks in bolt form.
 HURT_LITE       This monster is susceptible to light attacks.

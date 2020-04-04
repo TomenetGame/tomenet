@@ -6155,12 +6155,8 @@ void do_cmd_fire(int Ind, int dir) {
 
 
 					/* Handle reflection - it's back, though weaker */
-#if 0 /* hm doesn't make sense, but is pretty unbalanced even :/ */
-					/* New: Boomerangs can't be deflected, nor can exploding ammo (!) - C. Blue */
-					if ((r_ptr->flags2 & RF2_REFLECTING) && !boomerang && !o_ptr->pval && magik(50)) {
-#else
-					if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50)) {
-#endif
+					/* Experimental: Boomerangs can't be deflected - C. Blue */
+					if (!boomerang && (r_ptr->flags2 & RF2_REFLECTING) && magik(50)) {
 						if (visible) msg_format(Ind, "The %s was deflected.", o_name);
 						num_ricochet = 1;
 						hit_body = 1;
@@ -6842,6 +6838,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	char            o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
+	bool throwing_weapon;
 
 	cave_type **zcave;
 	if (!(zcave = getcave(wpos))) return;
@@ -6988,6 +6985,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Use the local object */
 	o_ptr = &throw_obj;
+	throwing_weapon = is_throwing_weapon(o_ptr);
 
 	/* Description */
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
@@ -7236,7 +7234,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, TRUE);
 					tdam += o_ptr->to_d;
 					/* Specialty: Only daggers (includes main gauche), axes and spears/tridents can be thrown effectively) */
-					if (is_throwing_weapon(o_ptr)) {
+					if (throwing_weapon) {
 						tdam += ((int)(adj_str_td[p_ptr->stat_ind[A_STR]]) - 128);
 						/* About adding weight-damage, we have to be a bit careful, as heavier weapons already receive greater melee damage dice anyway: */
 						tdam += (50 / (380 / (o_ptr->weight + 5) + 4)) - 1;
@@ -7320,13 +7318,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					note_dies = " is destroyed";
 				}
 
-				/* Handle reflection - it's back, though weaker */
-#if 0 /* hm doesn't make sense, but is pretty unbalanced even :/ */
-				/* New: Boomerangs can't be deflected, nor can exploding ammo (!) - C. Blue */
-				if ((r_ptr->flags2 & RF2_REFLECTING) && !boomerang && !o_ptr->pval && magik(50)) {
-#else
-				if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50)) {
-#endif
+				/* Handle reflection - thrown items cannot really be deflected if they're bulky.
+				   This works well with throwing_weapon, as spears/hatchets start at 5.0, and for dagger weights it fits very nicely too! */
+				if ((r_ptr->flags2 & RF2_REFLECTING) && magik(50 - o_ptr->weight)) {
 					if (visible) msg_format(Ind, "The %s was deflected.", o_name);
 					break;
 				}
