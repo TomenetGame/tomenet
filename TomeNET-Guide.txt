@@ -12907,7 +12907,8 @@ stated.
                                 The monster must be standing right beside you
                                 (horizontally, vertically or diagonally).
                                 To intercept an enemy it doesn't matter whether
-                                you have a weapon or shield equipped or not.
+                                you have a weapon or shield equipped or not or
+                                whether you have autoretaliation on or off.
 
                                 Classes that have the Interception skill
                                 available for training will automatically gain

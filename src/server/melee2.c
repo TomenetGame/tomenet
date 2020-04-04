@@ -1247,7 +1247,7 @@ bool monst_check_grab(int m_idx, int mod, cptr desc) {
 #endif
 
 
-	/* hack: if we dont auto-retaliate vs a monster than we dont intercept either */
+	/* hack: if we cannot auto-retaliate vs a monster than we dont intercept either */
 	if (r_ptr->flags8 & RF8_NO_AUTORET) return FALSE;
 
 	/* cannot intercept elementals and vortices (not '#' at this time) */
