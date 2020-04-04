@@ -2530,9 +2530,14 @@ will always provide invisibility (5.16) and experience drain (5.19). They are
 also always heavily cursed, cannot be dropped while cursed, and can re-curse
 themselves (5.14).
 
-In order to find Morgoth, players have to defeat Sauron, the Sorceror first.
-For more information about encountering Sauron and Morgoth, see next paragraph
-(1.3b).
+In order to find Morgoth, players have to defeat Sauron, the Sorceror first,
+Morgoth's servant, who dwells at the bottom of Mount Doom. A player must get
+the killing blow on Sauron to get kill credit, so if you are in a party of
+several players who all haven't killed him yet, you must seek him out multiple
+times for every single party member who then has to get the last hit to get the
+kill credited.
+
+For more information about encountering Morgoth, see next paragraph (1.3b).
 It is noteworthy that Sauron is able to boost his own spell-casting speed for
 as long as he finds himself or the area around his target blocked by Glyphs of
 Warding (also called Runes of Protection).
