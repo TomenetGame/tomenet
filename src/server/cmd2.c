@@ -3117,6 +3117,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	object_type *o2_ptr = &p_ptr->inventory[INVEN_WIELD];
 	object_type *o3_ptr = &p_ptr->inventory[INVEN_ARM];
+	object_type *o23_ptr = o2_ptr;
 	int wood_power = 0, fibre_power = 0;
 
 	int rune_proficiency = 0;
@@ -3271,18 +3272,20 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if (dir == 5 && cfeat != FEAT_PERM_CLEAR && !quiet_borer) {
 			/* we need to deduct one turn of energy appropriately */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-			sound(Ind, "hit_floor", "tunnel_rock", SFX_TYPE_NO_OVERLAP, TRUE);
 			un_afk_idle(Ind);
 			break_cloaking(Ind, 0);
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
 			disturb(Ind, 0, 0);
-			msg_print(Ind, "You hit the floor.");
 
 			/* Apply earthquakes - maybe todo somehow: exempt sand floor/nether mist? =p */
 
 			/* Pick our most promising source of earthquaking (barehanded vs digging tool vs weapon) */
-			if (impact_power_weapon2 > impact_power_weapon) impact_power_weapon = impact_power_weapon2;
+			if (impact_power_weapon2 > impact_power_weapon) {
+				 //Secondary weapon is quakier than primary, so use it instead
+				o23_ptr = o3_ptr;
+				impact_power_weapon = impact_power_weapon2;
+			}
 			if (impact_power > impact_power_tool) {
 				if (impact_power >= impact_power_weapon) impact_power_weapon = 0;
 				else impact_power = 0;
@@ -3294,11 +3297,62 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 			/* Take our best pick and calculate if we succeed.. */
 			if (impact_power) {
+				msg_print(Ind, "You strike the ground.");
+				sound(Ind, "hit", "", SFX_TYPE_NO_OVERLAP, TRUE);
 				if (magik(impact_power)) impact = TRUE;
 			} else if (impact_power_tool) {
+				object_desc(0, o_name, o_ptr, TRUE, 256);
+				msg_format(Ind, "You strike the ground with your %s.", o_name);
+				sound(Ind, "hit_floor", "hit_blunt", SFX_TYPE_NO_OVERLAP, TRUE);
 				if (magik(impact_power_tool)) impact = TRUE;
 			} else if (impact_power_weapon) {
+				object_desc(0, o_name, o23_ptr, TRUE, 256);
+				msg_format(Ind, "You strike the ground with your %s.", o_name);
+				switch(o23_ptr->tval) {
+				case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+				case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
+						else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
+						break;
+				case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+				case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+				case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+				}
 				if (magik(impact_power_weapon)) impact = TRUE;
+			} else {
+				/* Futile attempt as we don't have any earthquake powers at all -
+				   anyway, just prioritize the digging tool then in this case just for picking the appropriate sfx =_= */
+				if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
+					object_desc(0, o_name, o_ptr, TRUE, 256);
+					msg_format(Ind, "You strike the ground with your %s.", o_name);
+					sound(Ind, "hit_floor", "hit_blunt", SFX_TYPE_NO_OVERLAP, TRUE);
+				} else if (o2_ptr->k_idx) {
+					object_desc(0, o_name, o2_ptr, TRUE, 256);
+					msg_format(Ind, "You strike the ground with your %s.", o_name);
+					switch(o2_ptr->tval) {
+					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+					case TV_BLUNT:	if (o2_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
+							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
+							break;
+					case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+					}
+				} else if (o3_ptr->k_idx && is_weapon(o3_ptr->tval)) {
+					object_desc(0, o_name, o3_ptr, TRUE, 256);
+					msg_format(Ind, "You strike the ground with your %s.", o_name);
+					switch(o3_ptr->tval) {
+					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+					case TV_BLUNT:	if (o3_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
+							else sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
+							break;
+					case TV_AXE: sound(Ind, "hit_axe", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
+					}
+				} else {
+					msg_print(Ind, "You strike the ground.");
+					sound(Ind, "hit", "", SFX_TYPE_NO_OVERLAP, TRUE);
+				}
 			}
 
 			/* Finally, quake maybe! */
