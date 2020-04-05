@@ -1724,13 +1724,11 @@ static errr CheckEvent(bool wait) {
 		{
 			/* Redraw (if allowed) */
 			if (iwin == td->inner) {
-				XExposeEvent ex = xev->xexpose;
-
-				/* Get the area that should be updated (rounding up/down) */
-				int x1 = ex.x / td->fnt->wid;
-				int y1 = ex.y / td->fnt->hgt;
-				int x2 = ((ex.x+ex.width) / td->fnt->wid) + 1;
-				int y2 = ((ex.y+ex.height) / td->fnt->hgt) + 1;
+				/* Get the area that should be updated */
+				int x1 = xev->xexpose.x / td->fnt->wid;
+				int y1 = xev->xexpose.y / td->fnt->hgt;
+				int x2 = ((xev->xexpose.x+xev->xexpose.width) / td->fnt->wid);
+				int y2 = ((xev->xexpose.y+xev->xexpose.height) / td->fnt->hgt);
 
 				/* Redraw section*/
 				Term_redraw_section(x1, y1, x2, y2);
