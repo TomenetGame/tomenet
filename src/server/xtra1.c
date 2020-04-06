@@ -3947,7 +3947,7 @@ void calc_boni(int Ind) {
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
 		k_ptr = &k_info[o_ptr->k_idx];
-		char c;
+		char32_t c;
 		byte a;
 
 		pval = o_ptr->pval;

@@ -11524,7 +11524,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					oc = r_info[j].x_char;
 					if (c && c != oc) continue;
 					if (p_ptr->r_char[j] == oc) continue;
-					msg_format(Ind, "%d (%d, '%c') -> %d '%c'", j, oc, oc, (unsigned char)p_ptr->r_char[j], p_ptr->r_char[j]);
+					msg_format(Ind, "%d (%d, '%c') -> %d '%c'", j, oc, oc, p_ptr->r_char[j], p_ptr->r_char[j]);
 				}
 #endif
 				return;
@@ -11571,7 +11571,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					oc = f_info[j].z_char;
 					if (c && c != oc) continue;
 					if (p_ptr->f_char[j] == oc) continue;
-					msg_format(Ind, "%d (%d, '%c') -> %d '%c'", j, oc, oc, (unsigned char)p_ptr->f_char[j], p_ptr->f_char[j]);
+					msg_format(Ind, "%d (%d, '%c') -> %d '%c'", j, oc, oc, p_ptr->f_char[j], p_ptr->f_char[j]);
 				}
 #endif
 				return;

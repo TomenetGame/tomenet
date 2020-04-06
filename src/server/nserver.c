@@ -2631,7 +2631,7 @@ static void set_player_font_definitions(int ind, int player) {
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = Players[player];
 	int i, j;
-	unsigned char unm_c_idx;
+	char32_t unm_c_idx;
 	bool custom_font = FALSE;
 
 	//paranoia
@@ -2665,7 +2665,7 @@ static void set_player_font_definitions(int ind, int player) {
 
 		/* Allow unmapping of custom fonts (for map-mindlinking) */
 		if (p_ptr->f_char[i]) {
-			unm_c_idx = (unsigned char)(p_ptr->f_char[i]);
+			unm_c_idx = p_ptr->f_char[i];
 #ifdef FONTMAP_F_FIRST
 			if (!p_ptr->f_char_mod[unm_c_idx])
 #endif
@@ -2800,7 +2800,7 @@ static void set_player_font_definitions(int ind, int player) {
 
 		/* Allow unmapping of custom fonts (for map-mindlinking) */
 		if (p_ptr->r_char[i]) {
-			unm_c_idx = (unsigned char)(p_ptr->r_char[i]);
+			unm_c_idx = p_ptr->r_char[i];
 #ifdef FONTMAP_R_FIRST
 			if (!p_ptr->r_char_mod[unm_c_idx])
 #endif
@@ -5103,7 +5103,13 @@ static int Receive_play(int ind) {
 
 		/* Read the "unknown" char/attrs */
 		for (i = 0; i < TV_MAX; i++) {
-			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+			connp->Client_setup.u_char[i] = 0; /* Needs to be initialized for proper packet read. */
+			/* 5.0.0 and newer clients use 32bit character size. */
+			if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0))
+				n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+			else
+				n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread unknown redefinitions");
@@ -5121,7 +5127,13 @@ static int Receive_play(int ind) {
 #endif
 		limit = MAX_F_IDX_COMPAT;
 		for (i = 0; i < limit; i++) {
-			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+			connp->Client_setup.f_char[i] = 0; /* Needs to be initialized for proper packet read. */
+			/* 5.0.0 and newer clients use 32bit character size. */
+			if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0))
+				n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+			else
+				n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread feature redefinitions");
@@ -5139,7 +5151,13 @@ static int Receive_play(int ind) {
 #endif
 		limit = MAX_K_IDX_COMPAT;
 		for (i = 0; i < limit; i++) {
-			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+			connp->Client_setup.k_char[i] = 0; /* Needs to be initialized for proper packet read. */
+			/* 5.0.0 and newer clients use 32bit character size. */
+			if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0))
+				n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+			else
+				n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread object redefinitions");
@@ -5157,7 +5175,13 @@ static int Receive_play(int ind) {
 #endif
 		limit = MAX_R_IDX_COMPAT;
 		for (i = 0; i < limit; i++) {
-			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+			connp->Client_setup.r_char[i] = 0; /* Needs to be initialized for proper packet read. */
+			/* 5.0.0 and newer clients use 32bit character size. */
+			if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0))
+				n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+			else
+				n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+
 			if (n <= 0) {
 #ifdef STRICT_RECEIVE_PLAY
 				Destroy_connection(ind, "Misread monster redefinitions");
@@ -6769,7 +6793,8 @@ int Send_message(int Ind, cptr msg) {
 	return Packet_printf(&connp->c, "%c%S", PKT_MESSAGE, buf);
 }
 
-int Send_char(int Ind, int x, int y, byte a, char c) {
+int Send_char(int Ind, int x, int y, byte a, char32_t c) {
+	connection_t *connp = Conn[Players[Ind]->conn];
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 
 	if (!BIT(Conn[Players[Ind]->conn]->state, CONN_PLAYING | CONN_READY))
@@ -6781,16 +6806,25 @@ int Send_char(int Ind, int x, int y, byte a, char c) {
 		if (BIT(Conn[p_ptr2->conn]->state, CONN_PLAYING | CONN_READY)) {
 			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 			   Maybe todo: also unmap attr? */
-			unsigned char unm_c_idx = (unsigned char)c;
-			char c2 = c;
+			char32_t unm_c_idx = c;
+			char32_t c2 = c;
 
 			if (p_ptr->r_char_mod[unm_c_idx]) c2 = p_ptr->r_char_mod[unm_c_idx];
 			else if (p_ptr->f_char_mod[unm_c_idx]) c2 = p_ptr->f_char_mod[unm_c_idx];
-			Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c2);
+
+			/* 5.0.0 and newer clients use 32bit character size. */
+			if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0))
+				Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c2);
+			else
+				Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c2);
 		}
 	}
 
-	return Packet_printf(&Conn[p_ptr->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, c);
+	/* 5.0.0 and newer clients use 32bit character size. */
+	if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0))
+		return Packet_printf(&Conn[p_ptr->conn]->c, "%c%c%c%c%u", PKT_CHAR, x, y, a, c);
+
+	return Packet_printf(&Conn[p_ptr->conn]->c, "%c%c%c%c%c", PKT_CHAR, x, y, a, (char)c);
 }
 
 int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val) {
@@ -6915,10 +6949,10 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
-	char c, c2, cu;
+	char32_t c, c2, cu;
 	byte a, a2;
 #ifdef LOCATE_KEEPS_OVL
-	char co;
+	char32_t co;
 	byte ao;
 	int ovl_offset_x = scr_only ? (p_ptr->panel_col - p_ptr->panel_col_old) * (p_ptr->screen_wid / 2) : 9999; //marker 'no'
 	int ovl_offset_y = scr_only ? (p_ptr->panel_row - p_ptr->panel_row_old) * (p_ptr->screen_hgt / 2) : 0;
@@ -6929,7 +6963,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
 	int a_c;
 #endif
-	unsigned char unm_c_idx;
+	char32_t unm_c_idx;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -7038,30 +7072,38 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2) {
+			/* 5.0.0 and newer clients use 32bit character size. */
+			if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+					Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+			}
 			/* 4.4.3.1 clients support new RLE */
-			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
+			else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* New RLE */
-				Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, n);
 			} else {
 				/* Old RLE */
-				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
+				Packet_printf(&connp->c, "%c%c%c", (char)c, a | 0x40, n);
 			}
 
 			if (Ind2) {
 				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 				   Maybe todo: also unmap attr? */
-				unm_c_idx = (unsigned char)c;
+				unm_c_idx = c;
 				if (p_ptr->r_char_mod[unm_c_idx]) cu = p_ptr->r_char_mod[unm_c_idx];
 				else if (p_ptr->f_char_mod[unm_c_idx]) cu = p_ptr->f_char_mod[unm_c_idx];
 				else cu = c;
 
+				/* 5.0.0 and newer clients use 32bit character size. */
+				if (is_atleast(&Conn[p_ptr2->conn]->version, 5, 0, 0, 0, 0, 0)) {
+						Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, n);
+				}
 				/* 4.4.3.1 clients support new RLE */
-				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
+				else if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* New RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", cu, TERM_RESERVED_RLE, a, n);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", (char)cu, TERM_RESERVED_RLE, a, n);
 				} else {
 					/* Old RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", cu, a | 0x40, n);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", (char)cu, a | 0x40, n);
 				}
 			}
 
@@ -7071,35 +7113,55 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			/* Normal, single grid */
 			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
-				Packet_printf(&connp->c, "%c%c", c, a & ~0xC0);
+				Packet_printf(&connp->c, "%c%c", (char)c, a & ~0xC0);
 			} else {
 				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
-					Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+					/* 5.0.0 and newer clients use 32bit character size. */
+					if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+					} else {
+						Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
+					}
 				} else {
 					/* Normal output */
-					Packet_printf(&connp->c, "%c%c", c, a);
+					/* 5.0.0 and newer clients use 32bit character size. */
+					if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+						Packet_printf(&connp->c, "%u%c", c, a);
+					} else {
+						Packet_printf(&connp->c, "%c%c", (char)c, a);
+					}
 				}
 			}
 
 			if (Ind2) {
 				/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 				   Maybe todo: also unmap attr? */
-				unm_c_idx = (unsigned char)c;
+				unm_c_idx = c;
 				if (p_ptr->r_char_mod[unm_c_idx]) cu = p_ptr->r_char_mod[unm_c_idx];
 				else if (p_ptr->f_char_mod[unm_c_idx]) cu = p_ptr->f_char_mod[unm_c_idx];
 				else cu = c;
 
 				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", cu, a & ~0xC0);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", (char)cu, a & ~0xC0);
 				} else {
 					if (a == TERM_RESERVED_RLE) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
-						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", cu, TERM_RESERVED_RLE, a, 1);
+						/* 5.0.0 and newer clients use 32bit character size. */
+						if (is_atleast(&Conn[p_ptr2->conn]->version, 5, 0, 0, 0, 0, 0)) {
+							Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c%c%c", cu, TERM_RESERVED_RLE, a, 1);
+						} else {
+							Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", (char)cu, TERM_RESERVED_RLE, a, 1);
+						}
 					} else {
 						/* Normal output */
-						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", cu, a);
+						/* 5.0.0 and newer clients use 32bit character size. */
+						if (is_atleast(&Conn[p_ptr2->conn]->version, 5, 0, 0, 0, 0, 0)) {
+							Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c", cu, a);
+						} else {
+							Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", (char)cu, a);
+						}
 					}
 				}
 			}
@@ -7116,9 +7178,9 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = Players[Ind_src];
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
-	char c, c1;
+	char32_t c, c1;
 	byte a, a1;
-	unsigned char unm_c_idx;
+	char32_t unm_c_idx;
 #ifdef EXTENDED_TERM_COLOURS
 	bool old_colours = is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0);
 	int a_c;
@@ -7142,7 +7204,7 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 
 		/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 		   Maybe todo: also unmap attr? */
-		unm_c_idx = (unsigned char)c;
+		unm_c_idx = c;
 		if (p_ptr2->r_char_mod[unm_c_idx]) c = p_ptr2->r_char_mod[unm_c_idx];
 		else if (p_ptr2->f_char_mod[unm_c_idx]) c = p_ptr2->f_char_mod[unm_c_idx];
 
@@ -7166,7 +7228,7 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 		a1 = p_ptr2->scr_info[y][x1].a;
 		/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 		   Maybe todo: also unmap attr? */
-		unm_c_idx = (unsigned char)c1;
+		unm_c_idx = c1;
 		if (p_ptr2->r_char_mod[unm_c_idx]) c1 = p_ptr2->r_char_mod[unm_c_idx];
 		else if (p_ptr2->f_char_mod[unm_c_idx]) c1 = p_ptr2->f_char_mod[unm_c_idx];
 
@@ -7179,20 +7241,24 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			a1 = p_ptr2->scr_info[y][x1].a;
 			/* Try to unmap custom font settings, so screen isn't garbage for someone without the same mapping.
 			   Maybe todo: also unmap attr? */
-			unm_c_idx = (unsigned char)c1;
+			unm_c_idx = c1;
 			if (p_ptr2->r_char_mod[unm_c_idx]) c1 = p_ptr2->r_char_mod[unm_c_idx];
 			else if (p_ptr2->f_char_mod[unm_c_idx]) c1 = p_ptr2->f_char_mod[unm_c_idx];
 		}
 
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2) {
+			/* 5.0.0 and newer clients use 32bit character size. */
+			if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+				Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+			}
 			/* 4.4.3.1 clients support new RLE */
-			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
+			else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* New RLE */
-				Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, n);
 			} else {
 				/* Old RLE */
-				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
+				Packet_printf(&connp->c, "%c%c%c", (char)c, a | 0x40, n);
 			}
 
 			/* Start again after the run */
@@ -7201,14 +7267,24 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			/* Normal, single grid */
 			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
-				Packet_printf(&connp->c, "%c%c", c, a & ~0xC0);
+				Packet_printf(&connp->c, "%c%c", (char)c, a & ~0xC0);
 			} else {
 				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
-					Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+					/* 5.0.0 and newer clients use 32bit character size. */
+					if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+					} else {
+						Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
+					}
 				} else {
 					/* Normal output */
-					Packet_printf(&connp->c, "%c%c", c, a);
+					/* 5.0.0 and newer clients use 32bit character size. */
+					if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+						Packet_printf(&connp->c, "%u%c", c, a);
+					} else {
+						Packet_printf(&connp->c, "%c%c", (char)c, a);
+					}
 				}
 			}
 		}
@@ -7220,11 +7296,11 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 	return 1;
 }
 
-int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
+int Send_mini_map(int Ind, int y, byte *sa, char32_t *sc) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
 	int x, x1, n;
-	char c;
+	char32_t c;
 	byte a;
 
 	int Ind2 = 0;
@@ -7274,23 +7350,31 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
 
 		/* RLE if there at least 2 similar grids in a row */
 		if (n >= 2) {
+			/* 5.0.0 and newer clients use 32bit character size. */
+			if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+					Packet_printf(&connp->c, "%u%c%c%c", c, 0xFF, a, n);
+			}
 			/* 4.4.3.1 clients support new RLE */
-			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
+			else if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* New RLE */
-				Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, n);
 			} else {
 				/* Old RLE */
-				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
+				Packet_printf(&connp->c, "%c%c%c", (char)c, a | 0x40, n);
 			}
 
 			if (Ind2) {
+				/* 5.0.0 and newer clients use 32bit character size. */
+				if (is_atleast(&Conn[p_ptr2->conn]->version, 5, 0, 0, 0, 0, 0)) {
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, n);
+				}
 				/* 4.4.3.1 clients support new RLE */
-				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
+				else if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* New RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, n);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, n);
 				} else {
 					/* Old RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", c, a | 0x40, n);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", (char)c, a | 0x40, n);
 				}
 			}
 
@@ -7300,28 +7384,48 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
 			/* Normal, single grid */
 			if (!is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
-				Packet_printf(&connp->c, "%c%c", c, a & ~0xD0);
+				Packet_printf(&connp->c, "%c%c", (char)c, a & ~0xD0);
 			} else {
 				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
-					Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+					/* 5.0.0 and newer clients use 32bit character size. */
+					if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+						Packet_printf(&connp->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+					} else {
+						Packet_printf(&connp->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
+					}
 				} else {
 					/* Normal output */
-					Packet_printf(&connp->c, "%c%c", c, a);
+					/* 5.0.0 and newer clients use 32bit character size. */
+					if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+						Packet_printf(&connp->c, "%u%c", c, a);
+					} else {
+						Packet_printf(&connp->c, "%c%c", (char)c, a);
+					}
 				}
 			}
 
 			if (Ind2) {
 				if (!is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0xD0);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", (char)c, a & ~0xD0);
 				} else {
 					if (a == TERM_RESERVED_RLE) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
-						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						/* 5.0.0 and newer clients use 32bit character size. */
+						if (is_atleast(&Conn[p_ptr2->conn]->version, 5, 0, 0, 0, 0, 0)) {
+							Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c%c%c", c, TERM_RESERVED_RLE, a, 1);
+						} else {
+							Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", (char)c, TERM_RESERVED_RLE, a, 1);
+						}
 					} else {
 						/* Normal output */
-						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a);
+						/* 5.0.0 and newer clients use 32bit character size. */
+						if (is_atleast(&Conn[p_ptr2->conn]->version, 5, 0, 0, 0, 0, 0)) {
+							Packet_printf(&Conn[p_ptr2->conn]->c, "%u%c", c, a);
+						} else {
+							Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", (char)c, a);
+						}
 					}
 				}
 			}
@@ -7334,7 +7438,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
 	return 1;
 }
 
-int Send_mini_map_pos(int Ind, int x, int y, byte a, char c) {
+int Send_mini_map_pos(int Ind, int x, int y, byte a, char32_t c) {
 	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[p_ptr->conn];
 	short int xs = (short int)x, ys = (short int)y; //note: this isn't required, can just use x and y instead
@@ -7359,7 +7463,9 @@ int Send_mini_map_pos(int Ind, int x, int y, byte a, char c) {
 #endif
 
 	/* Packet header */
-	if (is_newer_than(&p_ptr->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, xs, ys, a, c);
+	/* 5.0.0 and newer clients use 32bit character size. */
+	if (is_atleast(&p_ptr->version, 5, 0, 0, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%u", PKT_MINI_MAP_POS, xs, ys, a, c);
+	else if (is_newer_than(&p_ptr->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, xs, ys, a, (char)c);
 	//if (Ind2 && is_newer_than(&p_ptr2->version, 4, 5, 5, 0, 0, 0)) Packet_printf(&connp2->c, "%c%hd%hd%c%c", PKT_MINI_MAP_POS, xs, ys, a, c);
 
 	return 1;
@@ -8022,24 +8128,32 @@ int Send_boni_col(int Ind, boni_col c) {
 	}
 
 	if (!is_newer_than(&connp->version, 4, 5, 3, 2, 0, 0)) return(-1);
-	if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) {
+	/* 5.0.0 and newer clients use 32bit character size. */
+	if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%u", PKT_BONI_COL, //1+22+13+2 bytes in total
+				c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
+				c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+				c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, c.symbol);
+	}
+	else if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
-		c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
-		c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
-		c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
-		c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, c.symbol);
+				c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
+				c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+				c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, (char)c.symbol);
 	} else if (is_newer_than(&connp->version, 4, 5, 9, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
-		c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
-		c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
-		c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
-		c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+				c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
+				c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+				c.cb[10], c.cb[11], c.cb[12], c.color, (char)c.symbol);
 	} else {
 		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
-		c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
-		c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr,
-		c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
-		c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+				c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr,
+				c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+				c.cb[10], c.cb[11], c.cb[12], c.color, (char)c.symbol);
 	}
 }
 
@@ -13446,7 +13560,13 @@ static int Receive_client_setup(int ind) {
 
 	/* Read the "unknown" char/attrs */
 	for (i = 0; i < TV_MAX; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+		connp->Client_setup.u_char[i] = 0; /* Needs to be initialized for proper packet read. */
+		/* 5.0.0 and newer clients use 32bit character size. */
+		if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+			n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+		} else {
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+		}
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
@@ -13456,7 +13576,13 @@ static int Receive_client_setup(int ind) {
 
 	/* Read the "feature" char/attrs */
 	for (i = 0; i < MAX_F_IDX; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+		connp->Client_setup.f_char[i] = 0; /* Needs to be initialized for proper packet read. */
+		/* 5.0.0 and newer clients use 32bit character size. */
+		if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+			n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+		} else {
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+		}
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
@@ -13466,7 +13592,13 @@ static int Receive_client_setup(int ind) {
 
 	/* Read the "object" char/attrs */
 	for (i = 0; i < MAX_K_IDX; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+		connp->Client_setup.k_char[i] = 0; /* Needs to be initialized for proper packet read. */
+		/* 5.0.0 and newer clients use 32bit character size. */
+		if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+			n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+		} else {
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+		}
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
@@ -13476,7 +13608,13 @@ static int Receive_client_setup(int ind) {
 
 	/* Read the "monster" char/attrs */
 	for (i = 0; i < MAX_R_IDX; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+		connp->Client_setup.r_char[i] = 0; /* Needs to be initialized for proper packet read. */
+		/* 5.0.0 and newer clients use 32bit character size. */
+		if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+			n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+		} else {
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+		}
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
@@ -13524,7 +13662,12 @@ static int Receive_client_setup_U(int ind) {
 		return -1;
 	}
 	for (i = begin; i < end; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+		/* 5.0.0 and newer clients use 32bit character size. */
+		if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+			n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+		} else {
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.u_attr[i], &connp->Client_setup.u_char[i]);
+		}
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
@@ -13571,7 +13714,13 @@ static int Receive_client_setup_F(int ind) {
 		return -1;
 	}
 	for (i = begin; i < end; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+		connp->Client_setup.f_char[i] = 0; /* Needs to be initialized for proper packet read. */
+		/* 5.0.0 and newer clients use 32bit character size. */
+		if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+			n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+		} else {
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.f_attr[i], &connp->Client_setup.f_char[i]);
+		}
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
@@ -13618,7 +13767,13 @@ static int Receive_client_setup_K(int ind) {
 		return -1;
 	}
 	for (i = begin; i < end; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+		connp->Client_setup.k_char[i] = 0; /* Needs to be initialized for proper packet read. */
+		/* 5.0.0 and newer clients use 32bit character size. */
+		if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+			n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+		} else {
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.k_attr[i], &connp->Client_setup.k_char[i]);
+		}
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");
@@ -13665,7 +13820,13 @@ static int Receive_client_setup_R(int ind) {
 		return -1;
 	}
 	for (i = begin; i < end; i++) {
-		n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+		connp->Client_setup.r_char[i] = 0; /* Needs to be initialized for proper packet read. */
+		/* 5.0.0 and newer clients use 32bit character size. */
+		if (is_atleast(&connp->version, 5, 0, 0, 0, 0, 0)) {
+			n = Packet_scanf(&connp->r, "%c%u", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+		} else {
+			n = Packet_scanf(&connp->r, "%c%c", &connp->Client_setup.r_attr[i], &connp->Client_setup.r_char[i]);
+		}
 		if (n == 0) goto rollback;
 		else if (n < 0) {
 			Destroy_connection(ind, "read error");

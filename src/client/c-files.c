@@ -833,10 +833,7 @@ errr process_pref_file_aux(char *buf) {
 			if (n1) Client_setup.r_attr[i] = n1;
 			if (n2) {
 				Client_setup.r_char[i] = n2;
-				if (!monster_mapping_mod[n2]) {
-					if (n2 < 256) monster_mapping_mod[n2] = monster_mapping_org[i];
-					else printf("Warning - monster mapping exceeds 'char' data type range: %d->%d.", i, n2);
-				}
+				monster_mapping_mod = u32b_char_dict_set(monster_mapping_mod, n2, monster_mapping_org[i]);
 			}
 			return (0);
 		}
@@ -867,10 +864,7 @@ errr process_pref_file_aux(char *buf) {
 			if (n1) Client_setup.f_attr[i] = n1;
 			if (n2) {
 				Client_setup.f_char[i] = n2;
-				if (!floor_mapping_mod[n2]) {
-					if (n2 < 256) floor_mapping_mod[n2] = floor_mapping_org[i];
-					else printf("Warning - floor mapping exceeds 'char' data type range: %d->%d.", i, n2);
-				}
+				floor_mapping_mod = u32b_char_dict_set(floor_mapping_mod, n2, floor_mapping_org[i]);
 			}
 			return (0);
 		}
@@ -1401,7 +1395,7 @@ void peruse_file(void) {
 errr file_character(cptr name, bool quiet) {
 	int		i, x, y;
 	byte		a;
-	char		c;
+	char32_t		c;
 	cptr		paren = ")";
 	int		fd = -1;
 	FILE		*fff = NULL;
@@ -1444,8 +1438,10 @@ errr file_character(cptr name, bool quiet) {
 #endif
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
+			/* Characters above MAX_FONT_CHAR are graphical and will reported as MAX_FONT_CHAR. */
+			if (c > MAX_FONT_CHAR) c = MAX_FONT_CHAR;
 			/* Dump it */
-			buf[x] = c;
+			buf[x] = (char)c;
 		}
 		/* Terminate */
 		buf[x] = '\0';
@@ -1466,6 +1462,8 @@ errr file_character(cptr name, bool quiet) {
 #endif
 			/* Get the attr/char */
 			(void)(Term_what(x, y, &a, &c));
+			/* Characters above MAX_FONT_CHAR are graphical and will reported as MAX_FONT_CHAR. */
+			if (c > MAX_FONT_CHAR) c = MAX_FONT_CHAR;
 			/* Dump it */
 			buf[x] = c;
 		}
@@ -1529,6 +1527,8 @@ errr file_character(cptr name, bool quiet) {
 	for (y = 1; y < Term->hgt; y++) {
 		for (x = 0; x < Term->wid - 1; x++) { /* -1: Hack for angband.oook.cz ladder: 80 chars would cause extra linebreaks there :/ So we just discard the final column.. */
 			(void)(Term_what(x, y, &a, &c));
+			/* Characters above MAX_FONT_CHAR are graphical and will reported as MAX_FONT_CHAR. */
+			if (c > MAX_FONT_CHAR) c = MAX_FONT_CHAR;
 
 			switch (c) {
 			/* Windows client uses ASCII char 31 for paths */
@@ -1626,8 +1626,10 @@ void xhtml_screenshot(cptr name) {
 
 	FILE *fp;
 	byte *scr_aa;
-	char *scr_cc, unm_cc;
-	unsigned char unm_cc_idx;
+	char32_t *scr_cc;
+	char unm_cc;
+	char *unm_cc_ptr;
+	char32_t unm_cc_idx;
 	byte cur_attr, prt_attr;
 	int i, x, y, max;
 	char buf[1024];
@@ -1788,10 +1790,10 @@ void xhtml_screenshot(cptr name) {
 			}
 
 			/* unmap custom fonts, so screenshot becomes readable */
-			unm_cc_idx = (unsigned char)(scr_cc[x]);
-			if (monster_mapping_mod[unm_cc_idx]) unm_cc = monster_mapping_mod[unm_cc_idx];
-			else if (floor_mapping_mod[unm_cc_idx]) unm_cc = floor_mapping_mod[unm_cc_idx];
-			else unm_cc = scr_cc[x]; /* no custom mapping found, take as is */
+			unm_cc_idx = scr_cc[x];
+			if (NULL != (unm_cc_ptr = u32b_char_dict_get(monster_mapping_mod, unm_cc_idx))) unm_cc = *unm_cc_ptr;
+			else if (NULL != (unm_cc_ptr = u32b_char_dict_get(floor_mapping_mod, unm_cc_idx))) unm_cc = *unm_cc_ptr;
+			else unm_cc = (char) scr_cc[x]; /* no custom mapping found, take as is */
 
 			switch (unm_cc) {
 			/* revert special characters from font_map_solid_walls */
