@@ -1583,7 +1583,7 @@ F:DROP_90 |
 F:OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE |
 F:EVIL | RES_POIS | WILD_EASY |
 F:MORTAL | BASEANGBAND | HAS_LITE
-D:It a man-sized figure with the all too recognizable face of a kobold.
+D:It is a man-sized figure with the all too recognizable face of a kobold.
 
 N:103:Grey icky thing
 G:i:s
