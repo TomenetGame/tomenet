@@ -6365,7 +6365,7 @@ If the item is worth more than 300,000 Au maybe you can find a fellow player
 who is wealthy and in urgent need of your items.
 
 
-Item orders
+Item Orders
 -----------
 The basic town stores also allow you to order specific basic items that they
 usually offer in their store template. These items will come without any

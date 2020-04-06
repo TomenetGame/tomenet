@@ -2209,7 +2209,8 @@ void cmd_the_guide(void) {
 					continue;
 				}
 				if (!strcasecmp("XO", buf) || !strcasecmp("Extermination Orders", buf)
-				    || my_strcasestr(buf, "Extermination") || my_strcasestr(buf, "Order")) {
+				    || my_strcasestr(buf, "Extermination")
+				    || (my_strcasestr(buf, "Ex") && my_strcasestr(buf, "order"))) {
 					strcpy(chapter, "Extermination Orders");
 					continue;
 				}
@@ -2229,8 +2230,15 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "New year's eve");
 					continue;
 				}
+
 				if (!strcasecmp("ma", buf)) {
 					strcpy(chapter, ".Martial Arts");
+					continue;
+				}
+				if (!strcasecmp("IO", buf) || my_strcasestr("Orders", buf)
+				    || (my_strcasestr(buf, "Ord") && my_strcasestr(buf, "Item"))) {
+					strcpy(buf, "Item Orders");
+					fallback = TRUE;
 					continue;
 				}
 
