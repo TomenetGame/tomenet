@@ -2460,19 +2460,23 @@ who enters his dungeon level. Growing stronger in fact means that he gains a
 hit point and speed bonus. If a player leaves his level, he will weaken again.
 See the following paragraph (1.3b) for more information.
 
-When a player lands the killing blow on Morgoth, everyone else who is in her or
-his party and also on the same dungeon floor will get credit for winning the
-game too and receive a royal title accordingly. Even 'fallen winners' (players
-who have beaten Morgoth already but lost their royal title to death) can
-regain their title this way - by teaming up with someone who hasn't defeated
-Morgoth yet and making sure that that player lands the killing blow.
-Each player must be at least level 40 to get credit for beating Morgoth.
+When a player lands the killing blow on Morgoth, everyone else who is in the
+same party will get credit for winning the game too and receive a royal title
+accordingly, provided the player is currently on the actual dungeon floor where
+Morgoth falls of course. Note that for Morgoth the partied players don't need
+to be within the usual 7 character levels of each other to get kill credit.
+Even 'fallen winners' (players who have beaten Morgoth already but lost their
+royal title to death) can regain their title this way - by partying up with
+someone who hasn't defeated Morgoth yet and making sure that that player lands
+the killing blow.
+However: Each player must be at least level 40 to get credit for beating
+Morgoth and obtaining the royal title accordingly!
 A new (experimental) way to obtain a lost royal title again is to donate and
 pray in 'The Mirror' in Lothlorien, see (4.5a) for details.
 
-Morgoth always drops his crown and hammer. If he is defeated by a party, those
-two items will drop multiple times so that everyone can actually pick up one of
-each.
+Morgoth always drops his crown and hammer. If he is defeated by a party, he
+will drop exactly one crown and one hammer per party member, so everyone in the
+party can get both items.
 
 A very dangerous thing about Nazgul is that weapons get quickly destroyed if
 they come in contact with these corrupted beings.
@@ -11118,21 +11122,23 @@ The timer will also continue to run out while the owner/carrier of an artifact
 is offline.
 Trading artifacts between characters has no effect on the timeout.
 
-Grond and Morgoth's crown do not time out.
+Grond and Morgoth's crown do not time out. These are the only artifacts that
+can exist multiple times, ie are not unique, so every player can acquire them.
 
-Artifacts that can only be found by winners (kings/queens/emperors/empresses)
-have twice the timeout delay (10 weeks).
+There are a few special artifacts that can only be found by winners (kings/
+/queens/emperors/empresses). These have twice the timeout delay (10 weeks).
 
 If a character who is carrying true artifacts wins the game, ie beats Morgoth,
 all the true artifacts he is already carrying will from now on time out at
-double speed.
+double speed - except for artifacts that have a native level of 100, which
+currently are only The One Ring and the Power Dragon Scale Mail 'Bladeturner'.
 
 Characters that are inside the Ironman Deep Dive Challenge dungeon will always
 have all their true artifacts time out at double speed. (This is not cumulative
 with the doubling from 'winner' status mentioned above.)
 
-All artifact timeout delays are actually doubled on the Ironman server (5 weeks
-for regular true artifacts, 20 weeks for winners-only true artifacts).
+'Ironman' server: All artifact timeout delays are doubled here (10 weeks for
+regular true artifacts, 20 weeks for winners-only true artifacts).
 
 The Ring of Phasing has no timeout (!) but will instead immediately reset when
 someone else kills Zu-Aon. Until then its owner can keep it indefinitely.
