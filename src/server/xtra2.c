@@ -6603,7 +6603,7 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
 
 			prize.number = num;
-			prize.level = 45;
+			prize.level = 40;
 			prize.note = local_quark;
 			prize.note_utag = strlen(quark_str(local_quark));
 
@@ -6620,7 +6620,7 @@ if (cfg.unikill_format) {
 			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
 
 			prize.number = num;
-			prize.level = 45;
+			prize.level = 40;
 			prize.note = local_quark;
 			prize.note_utag = strlen(quark_str(local_quark));
 
