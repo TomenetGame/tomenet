@@ -187,6 +187,8 @@ typedef uint	(*func_hsh)(vptr, uint);
 typedef vptr	(*func_key)(vptr);
 
 
+/* Placeholder used to hold the value for visual world character printed on client. */
+typedef u32b char32_t;
 
 #endif
 

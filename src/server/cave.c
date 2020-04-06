@@ -1603,7 +1603,7 @@ static cptr image_monster_hack = \
 /*
  * Mega-Hack -- Hallucinatory monster
  */
-static void image_monster(byte *ap, char *cp) {
+static void image_monster(byte *ap, char32_t *cp) {
 	int n = strlen(image_monster_hack);
 
 	/* Random symbol from set above */
@@ -1623,11 +1623,11 @@ static cptr image_object_hack = \
 /*
  * Mega-Hack -- Hallucinatory object
  */
-static void image_object(byte *ap, char *cp) {
+static void image_object(byte *ap, char32_t *cp) {
 	int n = strlen(image_object_hack);
 
 	/* Random symbol from set above */
-	(*cp) = (image_object_hack[rand_int(n)]);
+	(*cp) = (char32_t)(image_object_hack[rand_int(n)]);
 
 	/* Random color */
 	(*ap) = randint(15);
@@ -1637,7 +1637,7 @@ static void image_object(byte *ap, char *cp) {
  * Mega-Hack -- Mimic outlook
  * (Pleaes bear with us till really implemented..)
  */
-static void mimic_object(byte *ap, char *cp, int seed) {
+static void mimic_object(byte *ap, char32_t *cp, int seed) {
 	int n = strlen(image_object_hack);
 
 	/* Random symbol from set above */
@@ -1651,7 +1651,7 @@ static void mimic_object(byte *ap, char *cp, int seed) {
 /*
  * Hack -- Random hallucination
  */
-static void image_random(byte *ap, char *cp) {
+static void image_random(byte *ap, char32_t *cp) {
 	/* Normally, assume monsters */
 	if (rand_int(100) < 75) image_monster(ap, cp);
 	/* Otherwise, assume objects */
@@ -1894,10 +1894,10 @@ static byte multi_hued_attr(monster_race *r_ptr) {
 }
 
 /* Despite of its name, this gets both, attr and char, for a monster race.. */
-static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr, byte *ap, char *cp) {
+static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr, byte *ap, char32_t *cp) {
 	player_type *p_ptr = Players[Ind];
 	byte a;
-	char c;
+	char32_t c;
 	//monster_race *r_ptr = race_inf(m_ptr);
 
 	/* Possibly GFX corrupts with egos;
@@ -1930,7 +1930,7 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 	}
 
 	/* Special attr/char codes */
-	else if ((a & 0x80) && (c & 0x80)) {
+	else if (c > MAX_FONT_CHAR) {
 		/* Use char */
 		(*cp) = c;
 
@@ -2112,7 +2112,7 @@ static byte player_color(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	//monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	byte pcolor = p_ptr->pclass;
-	char dummy;
+	char32_t dummy;
 	cave_type **zcave = getcave(&p_ptr->wpos);
 	cave_type *c_ptr;
 	pcolor = p_ptr->cp_ptr->color;
@@ -2580,7 +2580,7 @@ static int manipulate_cave_colour_shade(cave_type *c_ptr, worldpos *wpos, int x,
 
 /* Extracted this from map_info() so it can also be used by the character flags sheet.
    NOTE: p_ptr is actually used by object_char() and object_attr() macros! */
-void get_object_visuals(char *cp, byte *ap, object_type *o_ptr, player_type *p_ptr) {
+void get_object_visuals(char32_t *cp, byte *ap, object_type *o_ptr, player_type *p_ptr) {
 	/* Normal char */
 	(*cp) = object_char(o_ptr);
 
@@ -2743,7 +2743,7 @@ void get_object_visuals(char *cp, byte *ap, object_type *o_ptr, player_type *p_p
  * "x_ptr->xxx", is quicker than "x_info[x].xxx", if this is incorrect
  * then a whole lot of code should be changed...  XXX XXX
  */
-void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
+void map_info(int Ind, int y, int x, byte *ap, char32_t *cp, bool palanim) {
 	player_type *p_ptr = Players[Ind];
 
 	cave_type *c_ptr;
@@ -2754,7 +2754,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 	int feat;
 
 	byte a;
-	char c;
+	char32_t c;
 
 	int a_org;
 	bool lite_snow, keep = FALSE;
@@ -3893,7 +3893,7 @@ void lite_spot(int Ind, int y, int x) {
 		int dispx, dispy;
 
 		byte a;
-		char c;
+		char32_t c;
 
 		/* Handle "player" */
 		if ((y == p_ptr->py) && (x == p_ptr->px)) {
@@ -4166,7 +4166,7 @@ void lite_spot(int Ind, int y, int x) {
 /*
  * Draw something on the overlay layer.
  */
-void draw_spot_ovl(int Ind, int y, int x, byte a, char c) {
+void draw_spot_ovl(int Ind, int y, int x, byte a, char32_t c) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Redraw if on screen */
@@ -4279,7 +4279,7 @@ void prt_map(int Ind, bool scr_only) {
 	int x, y;
 	int dispx, dispy;
 	byte a;
-	char c;
+	char32_t c;
 
 #ifdef EXTENDED_COLOURS_PALANIM
 	bool palanim = palette_affects(Ind);
@@ -4490,7 +4490,7 @@ static byte priority_table[][2] = {
 /*
  * Hack -- a priority function (see below)
  */
-static byte priority(byte a, char c) {
+static byte priority(byte a, char32_t c) {
 	int i, p0, p1;
 
 	feature_type *f_ptr;
@@ -4548,17 +4548,17 @@ void display_map(int Ind, int *cy, int *cx) {
 	int i, j, x, y;
 
 	byte ta;
-	char tc;
+	char32_t tc;
 
 	byte tp;
 
 	byte ma[MAP_HGT + 2][MAP_WID + 2];
-	char mc[MAP_HGT + 2][MAP_WID + 2];
+	char32_t mc[MAP_HGT + 2][MAP_WID + 2];
 
 	byte mp[MAP_HGT + 2][MAP_WID + 2];
 
 	byte sa[80];
-	char sc[80];
+	char32_t sc[80];
 
 	bool old_floor_lighting;
 	bool old_wall_lighting;
@@ -4575,7 +4575,7 @@ void display_map(int Ind, int *cy, int *cx) {
 
 	/* Clear the chars and attributes */
 	memset(ma, TERM_WHITE, sizeof(ma));
-	memset(mc, ' ', sizeof(mc));
+	for (int yt=0; yt < MAP_HGT + 2; yt++) for (int xt=0; xt < MAP_WID + 2; xt++) mc[yt][xt] = ' ';
 
 	/* No priority */
 	memset(mp, 0, sizeof(mp));
@@ -4655,7 +4655,7 @@ void display_map(int Ind, int *cy, int *cx) {
 		   (or maybe instructions on how to navigate)
 		   to eg the left and right side of the map */
 		memset(sa, TERM_WHITE, sizeof(sa));
-		memset(sc, ' ', sizeof(sc));
+		for (int i=0; i < sizeof(sc)/sizeof(sc[0]); i++) sc[i] = ' ';
 #endif
 
      		/* Display the line */
@@ -4707,14 +4707,14 @@ static void wild_display_map(int Ind, char mode) {
 	int max_wy;//, offset_y;
 
 	byte ta;
-	char tc;
+	char32_t tc;
 
 	/* map is displayed "full-screen" ie we can use all of the main window */
 	byte ma[MAX_WINDOW_HGT][MAX_WINDOW_WID];
-	char mc[MAX_WINDOW_HGT][MAX_WINDOW_WID];
+	char32_t mc[MAX_WINDOW_HGT][MAX_WINDOW_WID];
 
 	byte sa[80];
-	char sc[80];
+	char32_t sc[80];
 
 	bool old_floor_lighting;
 	bool old_wall_lighting;
@@ -4753,7 +4753,7 @@ static void wild_display_map(int Ind, char mode) {
 
 	/* Clear the chars and attributes */
 	memset(ma, TERM_WHITE, sizeof(ma));
-	memset(mc, ' ', sizeof(mc));
+	for (int yt=0; yt < MAX_WINDOW_HGT; yt++) for (int xt=0; xt < MAX_WINDOW_WID; xt++) mc[yt][xt] = ' ';
 
 
 	/* Modify location */
@@ -4942,7 +4942,7 @@ static void wild_display_map(int Ind, char mode) {
 		   (or maybe instructions on how to navigate)
 		   to eg the left and right side of the map */
 		memset(sa, TERM_WHITE, sizeof(sa));
-		memset(sc, ' ', sizeof(sc));
+		for (int i=0; i < sizeof(sc)/sizeof(sc[0]); i++) sc[i] = ' ';
 #endif
 
 		/* Display the line */

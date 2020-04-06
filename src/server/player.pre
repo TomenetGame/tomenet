@@ -22,6 +22,7 @@ typedef signed short s16b;
 typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
+typedef u32b char32_t;
 
 
 struct worldpos{
@@ -297,13 +298,13 @@ struct player_type
 	bool trap_ident[MAX_T_IDX];	/* do we know the name */
 
 	byte d_attr[MAX_K_IDX];
-	char d_char[MAX_K_IDX];
+	char32_t d_char[MAX_K_IDX];
 	byte f_attr[MAX_F_IDX];
-	char f_char[MAX_F_IDX];
+	char32_t f_char[MAX_F_IDX];
 	byte k_attr[MAX_K_IDX];
-	char k_char[MAX_K_IDX];
+	char32_t k_char[MAX_K_IDX];
 	byte r_attr[MAX_R_IDX];
-	char r_char[MAX_R_IDX];
+	char32_t r_char[MAX_R_IDX];
 
 	bool carry_query_flag;
 	bool use_old_target;

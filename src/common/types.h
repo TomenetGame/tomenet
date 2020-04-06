@@ -162,10 +162,10 @@ struct feature_type {
 
 	/* NOTE: it's d_ and x_ in ToME */
 	byte f_attr;		/* Object "attribute" */
-	char f_char;		/* Object "symbol" */
+	char32_t f_char;		/* Object "symbol" */
 
 	byte z_attr;		/* The desired attr for this feature */
-	char z_char;		/* The desired char for this feature */
+	char32_t z_char;		/* The desired char for this feature */
 
 #if 1
 	byte shimmer[7];	/* Shimmer colors */
@@ -222,15 +222,15 @@ struct object_kind {
 
 
 	byte k_attr;		/* Standard object attribute */
-	char k_char;		/* Standard object character */
+	char32_t k_char;		/* Standard object character */
 
 
 	byte d_attr;		/* Default object attribute */
-	char d_char;		/* Default object character */
+	char32_t d_char;		/* Default object character */
 
 
 	byte x_attr;		/* Desired object attribute */
-	char x_char;		/* Desired object character */
+	char32_t x_char;		/* Desired object character */
 
 
 	bool has_flavor;	/* This object has a flavor */
@@ -450,11 +450,11 @@ struct monster_race {
 
 
 	byte d_attr;			/* Default monster attribute */
-	char d_char;			/* Default monster character */
+	char32_t d_char;			/* Default monster character */
 
 
 	byte x_attr;			/* Desired monster attribute */
-	char x_char;			/* Desired monster character */
+	char32_t x_char;			/* Desired monster character */
 
 
 	s32b max_num;			/* Maximum population allowed per level */
@@ -601,7 +601,7 @@ typedef struct cave_type cave_type;
 struct sfunc {
 	void (*load)(c_special *cs_ptr);		/* load function */
 	void (*save)(c_special *cs_ptr);		/* save function */
-	void (*see)(c_special *cs_ptr, char *c, byte *a, int Ind);	/* sets player view */
+	void (*see)(c_special *cs_ptr, char32_t *c, byte *a, int Ind);	/* sets player view */
 	int (*activate)(c_special *cs_ptr, int y, int x, int Ind);	/* walk on/bump */
 };
 
@@ -1532,10 +1532,10 @@ struct monster_ego {
 
 
 	byte d_attr;			/* Default monster attribute */
-	char d_char;			/* Default monster character */
+	char32_t d_char;			/* Default monster character */
 
-	char r_char[10];		/* Monster race allowed */
-	char nr_char[10];		/* Monster race not allowed */
+	char32_t r_char[10];		/* Monster race allowed */
+	char32_t nr_char[10];		/* Monster race not allowed */
 };
 
 
@@ -1592,16 +1592,16 @@ struct client_setup_t {
 	s16b screen_hgt;
 
 	byte u_attr[TV_MAX];
-	char u_char[TV_MAX];
+	char32_t u_char[TV_MAX];
 
 	byte f_attr[MAX_F_IDX];
-	char f_char[MAX_F_IDX];
+	char32_t f_char[MAX_F_IDX];
 
 	byte k_attr[MAX_K_IDX];
-	char k_char[MAX_K_IDX];
+	char32_t k_char[MAX_K_IDX];
 
 	byte r_attr[MAX_R_IDX];
-	char r_char[MAX_R_IDX];
+	char32_t r_char[MAX_R_IDX];
 };
 
 
@@ -1759,8 +1759,8 @@ struct dungeon_type {
 	byte maxdepth;		/* max height/depth */
 #if 0
 	rule_type rules[5];	/* Monster generation rules */
-	char r_char[10];	/* races allowed */
-	char nr_char[10];	/* races prevented */
+	char32_t r_char[10];	/* races allowed */
+	char32_t nr_char[10];	/* races prevented */
 #endif	/* 0 */
 	int store_timer;	/* control frequency of dungeon store generation (for misc iron stores mostly) */
 	byte theme;		/* inspired by IDDC themes - for 'wilderness' dungeons */
@@ -1869,10 +1869,10 @@ struct store_info_type {
 	u16b actions[6];		/* Actions(refers to ba_info) */
 
 	byte d_attr;			/* Default building attribute */
-	char d_char;			/* Default building character */
+	char32_t d_char;			/* Default building character */
 
 	byte x_attr;			/* Desired building attribute */
-	char x_char;			/* Desired building character */
+	char32_t x_char;			/* Desired building character */
 
 	u32b flags1;			/* Flags */
 };
@@ -2036,7 +2036,7 @@ struct player_trait {
 typedef struct cave_view_type cave_view_type;
 struct cave_view_type {
 	byte a;		/* Color attribute */
-	char c;		/* ASCII character */
+	char32_t c;		/* ASCII character (or image tile, if over MAX_FONT_CHAR) */
 };
 
 /*
@@ -2346,7 +2346,7 @@ struct boni_col {
 	/* Flags in char/byte chunks for PKT transfer */
 	byte cb[16]; //16 so far, hardcode and check compatibility, ew - Kurzel
 	/* Attr + Char */
-	byte color; char symbol;
+	byte color; char32_t symbol;
 };
 
 /*
@@ -2578,17 +2578,17 @@ struct player_type {
 	bool trap_ident[MAX_T_IDX];	/* do we know the name */
 
 	byte d_attr[MAX_K_IDX];
-	char d_char[MAX_K_IDX];
+	char32_t d_char[MAX_K_IDX];
 	byte f_attr[MAX_F_IDX];
 	byte f_attr_solid[MAX_F_IDX];
-	char f_char[MAX_F_IDX];
-	char f_char_solid[MAX_F_IDX];
-	char f_char_mod[256];
+	char32_t f_char[MAX_F_IDX];
+	char32_t f_char_solid[MAX_F_IDX];
+	char32_t f_char_mod[256];
 	byte k_attr[MAX_K_IDX];
-	char k_char[MAX_K_IDX];
+	char32_t k_char[MAX_K_IDX];
 	byte r_attr[MAX_R_IDX];
-	char r_char[MAX_R_IDX];
-	char r_char_mod[256];
+	char32_t r_char[MAX_R_IDX];
+	char32_t r_char_mod[256];
 
 	bool carry_query_flag;
 	bool use_old_target;
@@ -3602,7 +3602,7 @@ struct rule_type {
 	u32b mflags9;
 	u32b mflags0;
 
-	char r_char[10];			/* Monster race allowed */
+	char32_t r_char[10];			/* Monster race allowed */
 };
 
 #ifdef IRONDEEPDIVE_MIXED_TYPES
@@ -4030,7 +4030,7 @@ struct c_store_extra {
 
 	/* Store attr and char */
 	byte store_attr;
-	char store_char;
+	char32_t store_char;
 };
 
 /* from spells1.c */
@@ -4205,4 +4205,12 @@ struct hash_entry {
 	byte order;			/* custom order in account screen overview */
 
 	struct hash_entry *next;	/* Next entry in the chain */
+};
+
+/* Dictionary for storing character redefinitions mapping information. */
+typedef struct u32b_char_dict_t u32b_char_dict_t;
+struct u32b_char_dict_t {
+	struct u32b_char_dict_t *next;
+	uint32_t key;
+	char value;
 };

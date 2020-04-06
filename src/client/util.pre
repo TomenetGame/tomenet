@@ -20,6 +20,7 @@ typedef signed short s16b;
 typedef unsigned short u16b;
 typedef signed int s32b;
 typedef unsigned int u32b;
+typedef u32b char32_t;
 
 
 $extern s32b intMod(s32b a, s32b b);
@@ -133,7 +134,7 @@ extern int Send_activate_skill(int mkey, int book, int spell, int dir, int item,
 extern errr Term_fresh(void);
 extern errr Term_set_cursor(int v);
 extern errr Term_gotoxy(int x, int y);
-extern errr Term_draw(int x, int y, byte a, char c);
+extern errr Term_draw(int x, int y, byte a, char32_t c);
 extern errr Term_addch(byte a, char c);
 extern errr Term_addstr(int n, byte a, cptr s);
 extern errr Term_putch(int x, int y, byte a, char c);

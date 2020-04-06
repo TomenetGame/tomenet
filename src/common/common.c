@@ -714,3 +714,78 @@ bool wearable_p(object_type *o_ptr) {
 	/* Nope */
 	return (FALSE);
 }
+
+/* Very simple linked list for storing character redefinition mapping information. */
+/* Replace with better dictionary implementation (hashed, tsearch, ...) if speed is what you want. ;) */
+
+/* Inserts key, value pair into dictionary or overwrites previous key if found. */
+struct u32b_char_dict_t *u32b_char_dict_set(struct u32b_char_dict_t *start, uint32_t key, char value) {
+	if(start==NULL) {
+		start=(struct u32b_char_dict_t *)malloc(sizeof(struct u32b_char_dict_t));
+		start->key=key;
+		start->value=value;
+		start->next=NULL;
+		return start;
+	}
+
+	for(struct u32b_char_dict_t *cur = start;; cur=cur->next) {
+		if(key == cur->key) {
+			cur->value = value;
+			return start;
+		}
+		if(cur->next==NULL) {
+			cur->next=(struct u32b_char_dict_t *)malloc(sizeof(struct u32b_char_dict_t));
+			cur->next->key=key;
+			cur->next->value=value;
+			cur->next->next=NULL;
+			return start;
+		}
+	}
+}
+
+/* Returns not NULL pointer to char that is found uder key, NULL if not found. */
+char *u32b_char_dict_get(struct u32b_char_dict_t *start, uint32_t key) {
+	if (start == NULL) return NULL;
+
+	for(struct u32b_char_dict_t *cur=start;cur!=NULL;cur=cur->next) {
+		if(key == cur->key) {
+			return &cur->value;
+		}
+	}
+	return NULL;
+}
+
+/* Removes key, value pair from dictionary found under key. */
+struct u32b_char_dict_t *u32b_char_dict_unset(struct u32b_char_dict_t *start, uint32_t key) {
+       if (start == NULL) return start;
+
+       struct u32b_char_dict_t *prev = NULL;
+       struct u32b_char_dict_t *curr = start;
+       for (; curr != NULL; curr = curr->next) {
+               if(key == curr->key) break;
+               prev = curr;
+       }
+
+       if (curr == NULL) return start;
+
+       /* Found key */
+       struct u32b_char_dict_t *next = curr->next;
+       free(curr);
+
+       /* If the key was at start, return next. */
+       if (prev == NULL) return next;
+
+       /* The key was is between prev & next, chain them. */
+       prev->next = next;
+       return start;
+}
+
+/* Remove all entries at once. */
+struct u32b_char_dict_t *u32b_char_dict_free(struct u32b_char_dict_t *start) {
+	while (start != NULL) {
+		struct u32b_char_dict_t* next = start->next;
+		free(start);
+		start=next;
+	}
+	return NULL;
+}

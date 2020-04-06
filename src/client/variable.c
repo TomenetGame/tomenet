@@ -279,7 +279,7 @@ int weather_panel_x = -1, weather_panel_y = -1; /* part of the map we're viewing
 bool weather_panel_changed = FALSE; /* view got updated anyway by switching panel? */
 /* a client-side map_info buffer of current view panel (for weather) */
 byte panel_map_a[MAX_SCREEN_WID][MAX_SCREEN_HGT];
-char panel_map_c[MAX_SCREEN_WID][MAX_SCREEN_HGT];
+char32_t panel_map_c[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 /* is weather on current worldmap sector part of an elliptical cloud?: */
 int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10];
 int cloud_xm100[10], cloud_ym100[10]; /* cloud movement in 1/100 grid per s */
@@ -421,9 +421,9 @@ char kind_list_char[MAX_K_IDX], kind_list_attr[MAX_K_IDX];
 
 /* For screenshots, to unmap custom fonts back to normally readable characters */
 char monster_mapping_org[MAX_R_IDX + 1];
-char monster_mapping_mod[256];
+struct u32b_char_dict_t *monster_mapping_mod = NULL;
 char floor_mapping_org[MAX_F_IDX + 1];
-char floor_mapping_mod[256];
+struct u32b_char_dict_t *floor_mapping_mod = NULL;
 
 /* for DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
 char last_prompt[MSG_LEN] = { 0 };
@@ -437,7 +437,7 @@ int rand_term_lamp_ticks;
 
 int minimap_posx = -1, minimap_posy, minimap_selx = -1, minimap_sely;
 byte minimap_attr, minimap_selattr;
-char minimap_char, minimap_selchar;
+char32_t minimap_char, minimap_selchar;
 
 /* To suppress positive confirmation messages on automated char dumps/screen shots */
 bool silent_dump = FALSE;

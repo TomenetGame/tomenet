@@ -114,6 +114,9 @@ void (*resize_main_window)(int cols, int rows);
  * or the bizarre "emptiness" ("attr 0" and "char 0"), which is the
  * only way to place "char 0" codes in the "window" arrays.
  *
+ * Edit 2020: The char from attr/char pair is now 32 bit to be able to
+ * encode graphical characters. If character exceeds MAX_FONT_CHAR value
+ * and "higher_pict" flag is used, then tile will be drawn using "pict_hook".
  * The game "Angband" defines, in addition to "attr 0", all of the
  * attr codes from 1 to 15, using definitions in "defines.h", and
  * thus the "main-xxx.c" files used by Angband must handle these
@@ -293,11 +296,11 @@ static errr term_win_nuke(term_win *s, int w, int h) {
 
 	/* Free the window access arrays */
 	C_KILL(s->a, h, byte*);
-	C_KILL(s->c, h, char*);
+	C_KILL(s->c, h, char32_t*);
 
 	/* Free the window content arrays */
 	C_KILL(s->va, h * w, byte);
-	C_KILL(s->vc, h * w, char);
+	C_KILL(s->vc, h * w, char32_t);
 
 	/* Success */
 	return (0);
@@ -312,11 +315,11 @@ static errr term_win_init(term_win *s, int w, int h) {
 
 	/* Make the window access arrays */
 	C_MAKE(s->a, h, byte*);
-	C_MAKE(s->c, h, char*);
+	C_MAKE(s->c, h, char32_t*);
 
 	/* Make the window content arrays */
 	C_MAKE(s->va, h * w, byte);
-	C_MAKE(s->vc, h * w, char);
+	C_MAKE(s->vc, h * w, char32_t);
 
 	/* Prepare the window access arrays */
 	for (y = 0; y < h; y++) {
@@ -338,13 +341,13 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h) {
 	/* Copy contents */
 	for (y = 0; y < h; y++) {
 		byte *f_aa = f->a[y];
-		char *f_cc = f->c[y];
+		char32_t *f_cc = f->c[y];
 
 		byte *s_aa = s->a[y];
-		char *s_cc = s->c[y];
+		char32_t *s_cc = s->c[y];
 
 		memcpy(s_aa, f_aa, w);
-		memcpy(s_cc, f_cc, w);
+		memcpy(s_cc, f_cc, w*sizeof(f_cc[0]));
 	}
 
 	/* Copy cursor */
@@ -369,12 +372,12 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h) {
  *
  * Assumes given location and values are valid.
  */
-static void QueueAttrChar(int x, int y, byte a, char c) {
+static void QueueAttrChar(int x, int y, byte a, char32_t c) {
 	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
+	char32_t *scr_cc = Term->scr->c[y];
 
 	int oa = scr_aa[x];
-	int oc = scr_cc[x];
+	char32_t oc = scr_cc[x];
 
 	/* Hack -- Ignore non-changes */
 	if ((oa == a) && (oc == c)) return;
@@ -403,15 +406,15 @@ static void QueueAttrChar(int x, int y, byte a, char c) {
  * a valid location, so the first "n" characters of "s" can all be added
  * starting at (x,y) without causing any illegal operations.
  */
-static void QueueAttrChars(int x, int y, int n, byte a, cptr s) {
+static void QueueAttrChars(int x, int y, int n, byte a, char32_t *s) {
 	int x1 = -1, x2 = -1;
 
 	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
+	char32_t *scr_cc = Term->scr->c[y];
 
 #ifdef DRAW_LARGER_CHUNKS
 	memset(scr_aa + x, a, n);
-	memcpy(scr_cc + x, s, n);
+	memcpy(scr_cc + x, s, n*sizeof(s[0]));
 
 	x1 = x;
 	x2 = x + n;
@@ -505,7 +508,7 @@ static errr Term_wipe_hack(int x, int y, int n) {
  * Hack -- fake hook for "Term_pict()"
  * Draw a "special" attr/char pair at "(x,y)".
  */
-static errr Term_pict_hack(int x, int y, byte a, char c) {
+static errr Term_pict_hack(int x, int y, byte a, char32_t c) {
 	/* XXX XXX XXX */
 	if (x || y || a || c) return (-2);
 
@@ -928,7 +931,7 @@ extern term *ang_term[];
 
 void flicker() {
 	int y, x, y2, x2, i;
-	char ch;
+	char32_t ch;
 	byte attr;
 	term *tterm, *old;
 
@@ -984,7 +987,21 @@ void flicker() {
 					}
 #endif
 
-				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));
+				/* Hack -- use "Term_pict()" always */
+				if (Term->always_pict)
+					(void)((*Term->pict_hook)(x, y, attr, ch));
+				/* Hack -- use "Term_pict()" sometimes */
+				else if (Term->higher_pict && ch > MAX_FONT_CHAR)
+					(void)((*Term->pict_hook)(x, y, attr, ch));
+				/* Hack -- restore the actual character */
+				else if (attr || Term->always_text) {
+					char buf[2];
+					buf[0] = (char)ch;
+					buf[1] = '\0';
+					(void)((*Term->text_hook)(x, y, 1, attr, buf));
+				}
+				/* Hack -- erase the grid */
+				else (void)((*Term->wipe_hook)(x, y, 1));
 			}
 		}
 
@@ -1055,10 +1072,10 @@ static void Term_fresh_row_text_wipe(int y) {
 	int x;
 
 	byte *old_aa = Term->old->a[y];
-	char *old_cc = Term->old->c[y];
+	char32_t *old_cc = Term->old->c[y];
 
 	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
+	char32_t *scr_cc = Term->scr->c[y];
 
 	int x1 = Term->x1[y];
 	int x2 = Term->x2[y];
@@ -1075,7 +1092,7 @@ static void Term_fresh_row_text_wipe(int y) {
 	/* The "new" data */
 	int na;
 #ifndef DRAW_LARGER_CHUNKS
-	int nc;
+	char32_t nc;
 #endif
 
 	/* Max width is 255 */
@@ -1083,7 +1100,7 @@ static void Term_fresh_row_text_wipe(int y) {
 
 #ifdef DRAW_LARGER_CHUNKS
 	memcpy(old_aa + x1, scr_aa + x1, x2 - x1);
-	memcpy(old_cc + x1, scr_cc + x1, x2 - x1);
+	memcpy(old_cc + x1, scr_cc + x1, (x2 - x1)*sizeof(scr_cc[0]));
 #endif
 
 	/* Scan the columns marked as "modified" */
@@ -1091,7 +1108,7 @@ static void Term_fresh_row_text_wipe(int y) {
 #ifndef DRAW_LARGER_CHUNKS
 		/* See what is currently here */
 		int oa = old_aa[x];
-		int oc = old_cc[x];
+		char32_t oc = old_cc[x];
 
 		/* Save and remember the new contents */
 		na = old_aa[x] = scr_aa[x];
@@ -1141,7 +1158,7 @@ static void Term_fresh_row_text_wipe(int y) {
 		if (!n) fx = x;
 
 		/* Expand the current thread */
-		text[n++] = nc;
+		text[n++] = (char)nc;
 #else
 		/* Save and remember the new contents */
 		na = scr_aa[x];
@@ -1153,7 +1170,9 @@ static void Term_fresh_row_text_wipe(int y) {
 			/* Flush as needed (see above) */
 			if (n) {
 				/* Copy the chars */
-				memcpy(text, scr_cc + fx, n);
+				for (int i=0; i < n; i++) {
+					text[i]=(char)scr_cc[fx + i];
+				}
 
 				/* Terminate the thread */
 				text[n] = '\0';
@@ -1180,7 +1199,9 @@ static void Term_fresh_row_text_wipe(int y) {
 	if (n) {
 #ifdef DRAW_LARGER_CHUNKS
 		/* Copy the chars */
-		memcpy(text, scr_cc + fx, n);
+		for (int i=0; i < n; i++) {
+			text[i]=(char)scr_cc[fx + i];
+		}
 #endif
 
 		/* Terminate the thread */
@@ -1202,10 +1223,10 @@ static void Term_fresh_row_text_text(int y) {
 	int x;
 
 	byte *old_aa = Term->old->a[y];
-	char *old_cc = Term->old->c[y];
+	char32_t *old_cc = Term->old->c[y];
 
 	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
+	char32_t *scr_cc = Term->scr->c[y];
 
 	int x1 = Term->x1[y];
 	int x2 = Term->x2[y];
@@ -1230,7 +1251,7 @@ static void Term_fresh_row_text_text(int y) {
 
 #ifdef DRAW_LARGER_CHUNKS
 	memcpy(old_aa + x1, scr_aa + x1, x2 - x1);
-	memcpy(old_cc + x1, scr_cc + x1, x2 - x1);
+	memcpy(old_cc + x1, scr_cc + x1, (x2 - x1)*sizeof(scr_cc[0]));
 #endif
 
 	/* Scan the columns marked as "modified" */
@@ -1238,7 +1259,7 @@ static void Term_fresh_row_text_text(int y) {
 #ifndef DRAW_LARGER_CHUNKS
 		/* See what is currently here */
 		int oa = old_aa[x];
-		int oc = old_cc[x];
+		char32_t oc = old_cc[x];
 
 		/* Save and remember the new contents */
 		na = old_aa[x] = scr_aa[x];
@@ -1284,7 +1305,7 @@ static void Term_fresh_row_text_text(int y) {
 		if (!n) fx = x;
 
 		/* Expand the current thread */
-		text[n++] = nc;
+		text[n++] = (char)nc;
 #else
 		/* Save and remember the new contents */
 		na = scr_aa[x];
@@ -1296,7 +1317,9 @@ static void Term_fresh_row_text_text(int y) {
 			/* Flush as needed (see above) */
 			if (n) {
 				/* Copy the chars */
-				memcpy(text, scr_cc + fx, n);
+				for (int i=0; i < n; i++) {
+					text[i]=(char)scr_cc[fx + i];
+				}
 
 				/* Terminate the thread */
 				text[n] = '\0';
@@ -1321,7 +1344,9 @@ static void Term_fresh_row_text_text(int y) {
 	if (n) {
 #ifdef DRAW_LARGER_CHUNKS
 		/* Copy the chars */
-		memcpy(text, scr_cc + fx, n);
+		for (int i=0; i < n; i++) {
+			text[i]=(char)scr_cc[fx + i];
+		}
 #endif
 
 		/* Terminate the thread */
@@ -1341,10 +1366,10 @@ static void Term_fresh_row_both_wipe(int y) {
 	int x;
 
 	byte *old_aa = Term->old->a[y];
-	char *old_cc = Term->old->c[y];
+	char32_t *old_cc = Term->old->c[y];
 
 	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
+	char32_t *scr_cc = Term->scr->c[y];
 
 	int x1 = Term->x1[y];
 	int x2 = Term->x2[y];
@@ -1353,13 +1378,14 @@ static void Term_fresh_row_both_wipe(int y) {
 	int n = 0;
 
 	/* Pending text starts in the first column */
-	int fx = 0;
+	int fx = x1;
 
 	/* Pending text color is "blank" */
 	int fa = Term->attr_blank;
 
 	/* The "new" data */
-	int na, nc;
+	int na;
+	char32_t nc;
 
 	/* Max width is 255 */
 	char text[256];
@@ -1369,7 +1395,7 @@ static void Term_fresh_row_both_wipe(int y) {
 	for (x = x1; x <= x2; x++) {
 		/* See what is currently here */
 		int oa = old_aa[x];
-		int oc = old_cc[x];
+		char32_t oc = old_cc[x];
 
 		/* Save and remember the new contents */
 		na = old_aa[x] = scr_aa[x];
@@ -1396,7 +1422,7 @@ static void Term_fresh_row_both_wipe(int y) {
 		}
 
 		/* Use "Term_pict" for "special" data */
-		if ((na & 0x80) && (nc & 0x80)) {
+		if (nc > MAX_FONT_CHAR) {
 			/* Flush as needed (see above) */
 			if (n) {
 				/* Terminate the thread */
@@ -1442,7 +1468,7 @@ static void Term_fresh_row_both_wipe(int y) {
 		if (!n) fx = x;
 
 		/* Expand the current thread */
-		text[n++] = nc;
+		text[n++] = (char)nc;
 	}
 
 	/* Flush the pending thread, if any */
@@ -1466,10 +1492,10 @@ static void Term_fresh_row_both_text(int y) {
 	int x;
 
 	byte *old_aa = Term->old->a[y];
-	char *old_cc = Term->old->c[y];
+	char32_t *old_cc = Term->old->c[y];
 
 	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
+	char32_t *scr_cc = Term->scr->c[y];
 
 	int x1 = Term->x1[y];
 	int x2 = Term->x2[y];
@@ -1484,10 +1510,12 @@ static void Term_fresh_row_both_text(int y) {
 	int fa = Term->attr_blank;
 
 	/* The "old" data */
-	int oa, oc;
+	int oa;
+	char32_t oc;
 
 	/* The "new" data */
-	int na, nc;
+	int na;
+	char32_t nc;
 
 	/* Max width is 255 */
 	char text[256];
@@ -1522,7 +1550,7 @@ static void Term_fresh_row_both_text(int y) {
 		}
 
 		/* Use "Term_pict" for "special" data */
-		if ((na & 0x80) && (nc & 0x80)) {
+		if (nc > MAX_FONT_CHAR) {
 			/* Flush as needed (see above) */
 			if (n) {
 				/* Terminate the thread */
@@ -1564,7 +1592,7 @@ static void Term_fresh_row_both_text(int y) {
 		if (!n) fx = x;
 
 		/* Expand the current thread */
-		text[n++] = nc;
+		text[n++] = (char) nc;
 	}
 
 	/* Flush the pending thread, if any */
@@ -1586,19 +1614,21 @@ static void Term_fresh_row_pict(int y) {
 	int x;
 
 	byte *old_aa = Term->old->a[y];
-	char *old_cc = Term->old->c[y];
+	char32_t *old_cc = Term->old->c[y];
 
 	byte *scr_aa = Term->scr->a[y];
-	char *scr_cc = Term->scr->c[y];
+	char32_t *scr_cc = Term->scr->c[y];
 
 	int x1 = Term->x1[y];
 	int x2 = Term->x2[y];
 
 	/* The "old" data */
-	int oa, oc;
+	int oa;
+	char32_t oc;
 
 	/* The "new" data */
-	int na, nc;
+	int na;
+	char32_t nc;
 
 
 	/* Scan the columns marked as "modified" */
@@ -1704,22 +1734,21 @@ errr Term_fresh(void) {
 			int ty = old->cy;
 
 			byte *old_aa = old->a[ty];
-			char *old_cc = old->c[ty];
+			char32_t *old_cc = old->c[ty];
 
 			byte a = old_aa[tx];
-			char c = old_cc[tx];
+			char32_t c = old_cc[tx];
 
 			/* Hack -- use "Term_pict()" always */
 			if (Term->always_pict)
 				(void)((*Term->pict_hook)(tx, ty, a, c));
-
 			/* Hack -- use "Term_pict()" sometimes */
-			else if (Term->higher_pict && (a & 0x80) && (c & 0x80))
+			else if (Term->higher_pict && c > MAX_FONT_CHAR)
 				(void)((*Term->pict_hook)(tx, ty, a, c));
 			/* Hack -- restore the actual character */
 			else if (a || Term->always_text) {
 				char buf[2];
-				buf[0] = c;
+				buf[0] = (char)c;
 				buf[1] = '\0';
 				(void)((*Term->text_hook)(tx, ty, 1, a, buf));
 			}
@@ -1739,7 +1768,7 @@ errr Term_fresh(void) {
 	/* Handle "total erase" */
 	if (Term->total_erase) {
 		byte a = Term->attr_blank;
-		char c = Term->char_blank;
+		char32_t c = Term->char_blank;
 
 		/* Physically erase the entire window */
 		Term_xtra(TERM_XTRA_CLEAR, 0);
@@ -1750,7 +1779,7 @@ errr Term_fresh(void) {
 
 		/* Wipe the content arrays */
 		memset(old->va, a, w * h);
-		memset(old->vc, c, w * h);
+		for (int i = 0; i < w * h; i++) old->vc[i]=c;
 
 		/* Redraw every column */
 		memset(Term->x1, 0, h);
@@ -1981,7 +2010,7 @@ errr Term_gotoxy(int x, int y) {
  * Do not change the cursor position
  * No visual changes until "Term_fresh()".
  */
-errr Term_draw(int x, int y, byte a, char c) {
+errr Term_draw(int x, int y, byte a, char32_t c) {
 	int w = Term->wid;
 	int h = Term->hgt;
 	static bool semaphore = FALSE;
@@ -2043,7 +2072,7 @@ errr Term_addch(byte a, char c) {
 	if (!c) return (-2);
 
 	/* Queue the given character for display */
-	QueueAttrChar(Term->scr->cx, Term->scr->cy, a, c);
+	QueueAttrChar(Term->scr->cx, Term->scr->cy, a, (char32_t)c);
 
 	/* Advance the cursor */
 	Term->scr->cx++;
@@ -2096,8 +2125,12 @@ errr Term_addstr(int n, byte a, cptr s) {
 	/* React to reaching the edge of the screen */
 	if (Term->scr->cx + n >= w) res = n = w - Term->scr->cx;
 
+	/* Copy string characters to array of char32_t. */
+	char32_t wcs[n];
+	for (int i = 0; i < n; i++) wcs[i]=(char32_t)s[i];
+
 	/* Queue the first "n" characters for display */
-	QueueAttrChars(Term->scr->cx, Term->scr->cy, n, a, s);
+	QueueAttrChars(Term->scr->cx, Term->scr->cy, n, a, wcs);
 
 	/* Advance the cursor */
 	Term->scr->cx += n;
@@ -2253,10 +2286,10 @@ errr Term_erase(int x, int y, int n) {
 	int x2 = -1;
 
 	int na = Term->attr_blank;
-	int nc = Term->char_blank;
+	char32_t nc = Term->char_blank;
 
 	byte *scr_aa;
-	char *scr_cc;
+	char32_t *scr_cc;
 
 
 	/* Place cursor */
@@ -2271,7 +2304,7 @@ errr Term_erase(int x, int y, int n) {
 
 #ifdef DRAW_LARGER_CHUNKS
 	memset(scr_aa + x, na, n);
-	memset(scr_cc + x, nc, n);
+	for (int i = 0; i < n; i++) src_cc[x + i]=nc;
 
 	x1 = x;
 	x2 = x + n;
@@ -2324,7 +2357,7 @@ errr Term_clear(void) {
 	int h = Term->hgt;
 
 	byte a = Term->attr_blank;
-	char c = Term->char_blank;
+	char32_t c = Term->char_blank;
 
 
 	do_animate_lightning(TRUE);
@@ -2338,7 +2371,7 @@ errr Term_clear(void) {
 
 	/* Wipe the content arrays */
 	memset(Term->scr->va, a, w * h);
-	memset(Term->scr->vc, c, w * h);
+	for (int i = 0; i < w * h; i++) Term->scr->vc[i]=c;
 
 	/* Every column has changed */
 	memset(Term->x1, 0, h);
@@ -2396,7 +2429,7 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2) {
 
 	for (i = y1; i <= y2; i++) {
 		/* Put null characters in the old screen to force a redraw of the section */
-		memset(&Term->old->c[i][x1], 0, x2 - x1 + 1);
+		for (int j = x1; j < x2 + 1; j++) Term->old->c[i][j]=0;
 	}
 
 	/* Hack -- Refresh */
@@ -2459,7 +2492,7 @@ errr Term_locate(int *x, int *y) {
  * Note that this refers to what will be on the window after the
  * next call to "Term_fresh()".  It may or may not already be there.
  */
-errr Term_what(int x, int y, byte *a, char *c) {
+errr Term_what(int x, int y, byte *a, char32_t *c) {
 	int w = Term->wid;
 	int h = Term->hgt;
 

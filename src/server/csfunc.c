@@ -50,7 +50,7 @@ extern void rd_string(char *str, int max);
 
 #define CS_LOAD(xxx) void xxx(c_special *cs_ptr)
 #define CS_SAVE(xxx) void xxx(c_special *cs_ptr)
-#define CS_SEE(xxx) void xxx(c_special *cs_ptr, char *c, byte *a, int Ind)
+#define CS_SEE(xxx) void xxx(c_special *cs_ptr, char32_t *c, byte *a, int Ind)
 #define CS_HIT(xxx) int xxx(c_special *cs_ptr, int y, int x, int Ind)
 
 CS_LOAD(defload);
@@ -90,7 +90,7 @@ void defload(c_special *cs_ptr){
 }
 void defsave(c_special *cs_ptr){
 }
-void defsee(c_special *cs_ptr, char *c, byte *a, int Ind){
+void defsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
 	/* really do nothing */
 }
 int defhit(c_special *cs_ptr, int y, int x, int Ind){
@@ -120,7 +120,7 @@ int dnahit(c_special *cs_ptr, int y, int x, int Ind) {
 	return(FALSE);
 }
 
-void dnasee(c_special *cs_ptr, char *c, byte *a, int Ind){
+void dnasee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
 }
 
 void keyload(c_special *cs_ptr){
@@ -164,7 +164,7 @@ int keyhit(c_special *cs_ptr, int y, int x, int Ind){
 
 /* EXPERIMENTAL SEE CODE - I AM NOT INSISTING THAT WE SEE
    KEY DOORS ANY DIFFERENTLY - DO NOT DELETE !!! */
-void keysee(c_special *cs_ptr, char *c, byte *a, int Ind){
+void keysee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
 	struct player_type *p_ptr;
 	int j;
 	struct key_type *key = cs_ptr->sc.ptr;
@@ -201,7 +201,7 @@ void tsave(c_special *cs_ptr)
 	wr_byte(cs_ptr->sc.trap.t_idx);
 	wr_byte(cs_ptr->sc.trap.found);
 }
-void tsee(c_special *cs_ptr, char *c, byte *a, int Ind){
+void tsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
 //	printf("tsee %d\n", Ind);
 }
 
@@ -284,7 +284,7 @@ void betweensave(c_special *cs_ptr) {
 	wr_byte(cs_ptr->sc.between.fy);
 	wr_byte(cs_ptr->sc.between.fx);
 }
-void betweensee(c_special *cs_ptr, char *c, byte *a, int Ind){
+void betweensee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
 //	printf("tsee %d\n", Ind);
 }
 int betweenhit(c_special *cs_ptr, int y, int x, int Ind){
@@ -305,7 +305,7 @@ void fountsave(c_special *cs_ptr) {
 	wr_byte(cs_ptr->sc.fountain.rest);
 	wr_byte(cs_ptr->sc.fountain.known);
 }
-void fountsee(c_special *cs_ptr, char *c, byte *a, int Ind){
+void fountsee(c_special *cs_ptr, char32_t *c, byte *a, int Ind){
 	/* TODO: tell what kind if 'known' */
 //	printf("fountsee %d\n", Ind);
 }
