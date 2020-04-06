@@ -2478,8 +2478,8 @@ Morgoth always drops his crown and hammer. If he is defeated by a party, he
 will drop exactly one crown and one hammer per party member, so everyone in the
 party can get both items.
 
-A very dangerous thing about Nazgul is that weapons get quickly destroyed if
-they come in contact with these corrupted beings.
+A very dangerous thing about the Nazgul is that weapons get quickly destroyed
+if they come in contact with these corrupted beings.
 If you are a spell-caster who doesn't use his weapon to fight but just to
 profit from its magical abilities then it's strongly recommended to inscribe
 the weapon @Ox to avoid auto-retaliation, see (0.3) about inscriptions and
