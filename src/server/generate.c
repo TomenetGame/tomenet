@@ -9381,6 +9381,21 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 	}
 
+	/* Training Tower hack: Prevent those rare but occurring '<' on 50ft that completely entomb the newbie -_-
+	   Note: We assume that the TT is at the same position as the starter town (Bree). */
+	if (wpos->wx == cfg.town_x && wpos->wy == cfg.town_y && wpos->wz == 1) {
+		k = 0;
+		for (i = 7; i >= 0; i--)
+			if (!cave_floor_bold(zcave, dun->l_ptr->up_y + ddy_ddd[i], dun->l_ptr->up_x + ddx_ddd[i])) k++;
+		/* Will the player be entombed? */
+		if (k == 8) {
+			for (i = 7; i >= 0; i--)
+				/* Let's remove all wall grids, not just one.. */
+				if (zcave[dun->l_ptr->up_y + ddy_ddd[i]][dun->l_ptr->up_x + ddx_ddd[i]].feat == FEAT_WALL_EXTRA)
+					cave_set_feat(wpos, dun->l_ptr->up_y + ddy_ddd[i], dun->l_ptr->up_x + ddx_ddd[i], FEAT_FLOOR);
+		}
+	}
+
 #if 0
 	process_hooks(HOOK_GEN_LEVEL, "(d)", is_xorder(dun_lev));
 #endif
