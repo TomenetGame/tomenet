@@ -13270,6 +13270,7 @@ stated.
                                 speeds up recharging of rods you carry.
                                 See (6.10) for more information on magic
                                 devices, the skill and the ability.
+
                                 Note that it is not possible to achieve 100%
                                 success rate with any device. It is possible to
                                 gain more than 99% chance though, which will be
@@ -13283,13 +13284,24 @@ stated.
                                 This effect is cumulative with the anti-magic
                                 field of a Dark Sword. (See (5.9) for more info
                                 about dark swords.)
+
                                 It's capped at 75% chance of interrupting
                                 enemy spells. The capped chance is further
                                 quartered for party members, so they are hardly
                                 affected by your anti-magic field. Usage of
                                 magic devices by party members is not hindered.
+                                Note: While ball andbolt attacks are spells,
+                                breathing is not and is therefore not hindered.
+
                                 The radius of your anti-magic field is approx.
                                 the field's power / 9 and caps at range 9.
+                                (The field's "power" is its chance to interrupt
+                                spells, so 75% power / 9 results in radius 8.
+                                To get radius to 9 you'd have to equip another
+                                item that generates an AM field or shapechange
+                                into a form that generates an intrinsic AM
+                                field - these are rare edge cases though..)
+
                                 Each point in Anti-magic adds 1% to your
                                 AM chance, so the max gain is +50% from skill.
                                 If you use a dark sword that gives the maximum
@@ -13297,8 +13309,7 @@ stated.
                                 you only need Anti-magic skill at 45 instead of
                                 50 to reach the anti-magic cap value of 75%
                                 (30% from dark sword + 45% from skill = 75%).
-                                Note: While ball/bolt attacks are spells,
-                                      breathing is NOT.
+
                                 Warriors that specialize in Anti-magic are
                                 called 'Unbelievers' (The anti-magic powers
                                 result from their strong disbelief in magic).
