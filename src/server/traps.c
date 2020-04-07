@@ -1670,6 +1670,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 		/* Bolt Trap */
 		case TRAP_OF_ROCKET: ident = player_handle_breath_trap(Ind, 1, GF_ROCKET, trap); destroy_chest(i_ptr); break;
+		//case TRAP_OF_DEATH_RAY
 		case TRAP_OF_NUKE_BOLT: ident =player_handle_breath_trap(Ind, 1, GF_NUKE, trap); break;
 #if 1	// coming..when it comes :) //very pow erful btw. insta-kills weaker chars.
 		case TRAP_OF_HOLY_FIRE: ident = player_handle_breath_trap(Ind, 1, GF_HOLY_FIRE, trap); break;
@@ -2321,6 +2322,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Death Molds Trap */
 		case TRAP_OF_DEATH_MOLDS:
 		case TRAP_OF_DEATH_SWORDS:
+			/* this is way too dangerous for parties -- disabled */
 			l = rand_range(1, 2);
 			for (k = tdi[l]; k < tdi[l + 1]; k++) {
 				s16b cx = p_ptr->px + tdx[k];
@@ -2580,7 +2582,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 		/* Jack-in-the-box trap */
 		case TRAP_OF_JACK:
 			summon_override_checks = SO_IDDC;
-			for (k = 0; k < randint(3); k++)
+			//for (k = 0; k < randint(3); k++)
 				ident |= summon_specific(wpos, y, x, glev, 0, SUMMON_BIZARRE6, 1, 0);
 			summon_override_checks = SO_NONE;
 #if 0

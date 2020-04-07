@@ -38,6 +38,8 @@
 # I:diff:prob:            :minlevel:      :color
 # D:description
 
+# NOTE: To disable a trap, prob can be set to 0, but it's easier to just add SPECIAL_GENE flag!
+
 V:3.4.0
 
 #
@@ -282,6 +284,7 @@ N:46:Trap of Sliding
 I:8:50:50:4:8:0d0:r:10
 D:Your feet seem to have a life of their own!
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
 N:47:Trap of Charges Drain
 I:6:100:70:2:3:0d0:y:10
@@ -310,6 +313,7 @@ N:51:Trap of Decay
 I:4:100:50:4:4:0d0:r:10
 D:Your stomach isn't empty, but suddenly you think of food.
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
 N:52:Trap of Wasting Wands
 I:6:100:40:4:5:0d0:y:10
@@ -325,7 +329,6 @@ F:FLOOR | DOOR
 
 N:54:Trap of Drain Speed
 I:8:50:10:25:80:0d0:y:10
-I:8:0:10:25:80:0d0:y:10
 D:You suddenly seem to have more time to self-reflect...
 F:FLOOR | CHEST | DOOR
 F:SPECIAL_GENE
@@ -724,35 +727,44 @@ N:153:Trap of Aging
 I:5:50:5:0:15:1d8:r:10
 D:You suddenly age very fast!
 F:CHEST | DOOR
+F:SPECIAL_GENE
 
+#  --todo: make temporary
 N:154:Trap of Growing
 I:3:75:5:0:5:1d8:r:10
 D:You begin to grow!
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
+#  --todo: make temporary
 N:155:Trap of Shrinking
 I:3:75:5:0:5:1d8:r:10
 D:You begin to shrink!
 F:FLOOR | CHEST | DOOR
+F:SPECIAL_GENE
 
-N:156:UNUSED
-#DISABLED
+#  --UNUSED
+N:156:Trap of Eldritch Horror
 I:3:0:0:0:0:0d0:r:0
-D:UNUSED
+D:You shudder!
 F:FLOOR
+F:SPECIAL_GENE
 
+#  --uses unimplemented features
 N:157:Trap of Tanker Drain
 I:4:100:50:3:4:0d0:r:100
 D:You suddenly don't feel so clear anymore...
 F:FLOOR | CHEST | DOOR
 F:SPECIAL_GENE
 
+#  --uses unimplemented features
 N:158:Trap of Divine Anger
 I:6:100:5:0:15:0d0:G:10
 D:A voice booms out 'Have a care, mortal!'
 F:FLOOR | CHEST | DOOR | NO_ID
 F:SPECIAL_GENE
 
+#  --uses unimplemented features
 N:159:Trap of Divine Wrath
 I:9:50:5:0:30:0d0:G:10
 D:A voice booms out 'Sacrilege!'
@@ -776,6 +788,7 @@ I:6:80:5:6:15:10d12:g:10
 D:A jet of toxic waste hits you!
 F:FLOOR | CHEST | DOOR | LEVEL3
 
+#(HOLE)
 #N:163:Trap of Death Ray
 #I:8:80:5:9:25:15d16:g
 #D:A Ray of Death hits you!
@@ -796,7 +809,8 @@ I:6:80:5:6:15:10d12:g:10
 D:Your mind is suddenly blasted!
 F:FLOOR | CHEST | DOOR | LEVEL3
 
-#N:167:Psi Drain Trap
+#(HOLE)
+#N:167:Psi Drain Trap  --GF_DRAIN_PSI not implemented (and we do have TRAP_OF_MANA_DRAIN)
 #I:6:80:5:6:15:8d10:r
 #D:You suddenly can't think so clear any more...
 #F:FLOOR | CHEST | DOOR | LEVEL3
@@ -860,10 +874,12 @@ I:3:80:20:1:10:0d0:v:10
 D:Awwww! You feel itchy!
 F:FLOOR | CHEST | DOOR
 
+#this could turn out as _any_ trap and seems to not obey SPECIAL_GENE or prob rolls, so way too hazardous. And it's pointless.
 N:177:Multi-Flavor Trap
 I:3:60:5:5:10:0d0:v:10
 D:You feel uneasy.
 F:FLOOR | DOOR | CHANGE | NO_ID
+F:SPECIAL_GENE
 
 N:178:Amnesia Trap
 I:4:50:30:6:12:0d0:r:10
@@ -945,6 +961,7 @@ N:192:Wrong Target Trap
 I:7:40:5:5:22:0d0:w:10
 D:You feel uneasy.
 F:FLOOR | DOOR | CHEST
+F:SPECIAL_GENE
 
 N:193:Cleaning Trap
 I:6:20:0:10:38:0d0:o:10
@@ -952,7 +969,7 @@ D:Thank you for helping us to keep the dungeon clean.
 F:FLOOR
 
 N:194:Trap of Preparation
-#I:10:100:0:10:25:0d0:o:10 make it non-exploitable regarding exp from disarming
+#I:10:100:0:10:25:0d0:o:10  --make it non-exploitable regarding exp from disarming
 I:10:100:0:10:25:0d0:o:100
 D:You feel they are ready to welcome you!
 F:FLOOR | CHEST | DOOR
@@ -1035,7 +1052,9 @@ N:209:Jack-in-the-box Trap
 I:6:100:10:10:36:0d0:v:100
 D:Surprise!
 F:CHEST
-F:SPECIAL_GENE
+#F:SPECIAL_GENE
+
+#---- ARCADE_SERVER stuff ----
 
 N:210:Trap of Spread
 I:10:0:0:10:24:0d0:B:20
@@ -1056,6 +1075,8 @@ N:213:Trap of Healing
 I:10:0:0:10:24:0d0:G:20
 D:Makes you not hurt anymore.
 F:FLOOR | DOOR
+
+#-----------------------------
 
 N:214:Spooky Trap
 I:3:25:20:1:8:0d0:v:100
