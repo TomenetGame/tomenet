@@ -8958,6 +8958,7 @@ void dungeon(void) {
 				parties[Players[i]->party].set_attr = FALSE;
 				if (k == TERM_L_DARK - 1) k++; //reserved for iron teams
 				if (k == TERM_SLATE - 1) k++; //skip too similar white tone maybe, QoL
+				if (k == TERM_ORANGE - 1) k++; //slightly cluttery with orange-coloured depths
 				if (k == TERM_L_WHITE - 1) k++; //skip too similar white tone maybe, QoL
 				parties[Players[i]->party].attr = ++k;
 				k = k % TERM_MULTI;
