@@ -13301,6 +13301,8 @@ stated.
                                 item that generates an AM field or shapechange
                                 into a form that generates an intrinsic AM
                                 field - these are rare edge cases though..)
+                                The field's power is uniform everywhere within
+                                the radius, ie it does not decrease outwards.
 
                                 Each point in Anti-magic adds 1% to your
                                 AM chance, so the max gain is +50% from skill.
