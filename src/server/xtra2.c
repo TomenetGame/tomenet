@@ -6039,6 +6039,10 @@ bool monster_death(int Ind, int m_idx) {
 		}
 	}
 
+#ifdef ENABLE_EXCAVATION
+	/* Possibly drop ingredients: Saltpeter (guano), Ammonia salt (from both, dung and poison/gas breathers), Sulfur (fire dragons) */
+#endif
+
 	/* Forget it */
 	unique_quark = 0;
 

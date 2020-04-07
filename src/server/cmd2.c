@@ -4052,6 +4052,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		}
 	}
 
+#ifdef ENABLE_EXCAVATION
+	/* Possibly find ingredients: Sulfur (volcanic/undersea), Metal powder */
+#endif
+
 	/* Cancel repetition unless we can continue */
 	if (!more) disturb(Ind, 0, 0);
 	else if (p_ptr->always_repeat) p_ptr->command_rep = PKT_TUNNEL;

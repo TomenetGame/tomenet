@@ -4186,6 +4186,10 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #endif
 			/* Destroy the tree */
 			cave_set_feat_live(wpos, y, x, FEAT_ASH);
+
+#ifdef ENABLE_EXCAVATION
+			/* Possibly drop ingredients: Charcoal */
+#endif
 		}
 
 		/* Burn grass, spider webs (Cirith Ungol!) and more.. */
