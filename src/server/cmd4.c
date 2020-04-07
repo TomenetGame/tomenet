@@ -964,7 +964,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 
 			if (lv >= 126 || d_ptr->type == DI_MT_DOOM || (lv >= 98 && !q_ptr->total_winner && q_ptr->r_killed[RI_SAURON] == 1)) col = 'R';
 			/* extended hack: see orange colour for 'engaged' characters, ie not in town and not afk */
-			else if (!q_ptr->afk) col = 'y';
+			else if (!q_ptr->afk) col = 'o';
 		}
 		if (col) fprintf(fff, ", %s%c%s%s", "\377", col, wpos_format_compact(Ind, &q_ptr->wpos), "\377-");
 		else fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
