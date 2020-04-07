@@ -4149,6 +4149,8 @@
    (metal)hydroxides(*): salt water + rust(!) (not exactly, and unfeasible metal types, but w/e) -> 'caustic metal ash',
    metalperoxide: metaloxides (or ammonia) + hydroxides(*) (soooorta...again, so it'll just be MORE saltwater with rust, lul) -> 'potent caustic metal ash' (not feasible in medieval context),
    perchlorates: acid (let's just assume it's hydrochloric acid by chance -_-) + aluminium (we dont have magnesium..) or kalium (from saltpeter maybe?) -> 'caustic salt' (not feasible in medieval context)
+   ^ acid: sulfur+saltpeter with steam and heat, so +water+lampoil =p, or:
+   ^ vitriol (works as acid replacement): mining (volcanic)/dragons.
     */
 /* TV_CHARGE svals */
  #define SV_CHARGE_BLAST		1

@@ -8669,6 +8669,7 @@ void mix_chemicals(int Ind, int item) {
 	char o_name[ONAME_LEN];
 
 	byte cc, su, sp, as, mp, mh, me, mc;
+	byte lo, w, sw, av, r; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL, rust (? from rusty mail? / metal + water)
 
 
 	/* Sanity checks */
@@ -8692,6 +8693,7 @@ void mix_chemicals(int Ind, int item) {
 
 		/* Check for valid crafting results! */
 		q_ptr->tval = TV_CHARGE;
+		if (cc == 1 && su == 1 && sp == 2) q_ptr->sval = SV_CHARGE_BLAST;
 		if (cc == 1 && su == 1 && sp == 2) q_ptr->sval = SV_CHARGE_BLAST;
 
 		if (!q_ptr->sval) {
