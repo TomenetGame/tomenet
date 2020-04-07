@@ -3745,7 +3745,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 		/* Success */
 		if (okay && twall(Ind, y, x)) {
-			msg_print(Ind, "You have finished the tunnel.");
+			msg_format(Ind, "You have finished the tunnel in the %s.", soft ? "sandwall" : (hard ? "quartz vein" : "magma vein"));
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
@@ -3929,7 +3929,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	else if (cfeat >= FEAT_WALL_EXTRA) {
 		/* Tunnel */
 		if ((power > 40 + rand_int(1600)) && twall(Ind, y, x)) { /* 1600 */
-			msg_print(Ind, "You have finished the tunnel.");
+			msg_print(Ind, "You have finished the tunnel in the granite wall.");
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
