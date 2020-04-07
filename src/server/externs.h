@@ -1699,6 +1699,9 @@ extern bool item_tester_hook_recharge(object_type *o_ptr);
 extern bool do_vermin_control(int Ind);
 extern void tome_creation(int Ind);
 extern void tome_creation_aux(int Ind, int item);
+#ifdef ENABLE_EXCAVATION
+extern void mix_chemicals(int Ind, int item);
+#endif
 
 extern bool create_garden(int Ind, int level);
 extern bool do_banish_animals(int Ind, int chance);

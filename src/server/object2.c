@@ -3696,6 +3696,14 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			if (o_ptr->pval != j_ptr->pval) return(FALSE);
 			break;
 
+#ifdef ENABLE_EXCAVATION
+		case TV_CHEMICAL:
+			if (o_ptr->xtra1 != j_ptr->xtra1) return FALSE;
+			if (o_ptr->xtra2 != j_ptr->xtra2) return FALSE;
+			if (o_ptr->xtra3 != j_ptr->xtra3) return FALSE;
+			break;
+#endif
+
 		/* Various */
 		default:
 			/* Require knowledge */

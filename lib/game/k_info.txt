@@ -5877,7 +5877,15 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
-# HOLE: 737
+$ENABLE_EXCAVATION$N:737:*:& Mixture~ of
+#$ENABLE_EXCAVATION$G:&:j
+$ENABLE_EXCAVATION$G:&:Q
+$ENABLE_EXCAVATION$I:48:9:0
+$ENABLE_EXCAVATION$W:1:0:10:0
+$ENABLE_EXCAVATION$A:127/0
+$ENABLE_EXCAVATION$F:EASY_KNOW
+$ENABLE_EXCAVATION$D:Mixture of ingredients used by demolitionists for creating explosives.
+
 
 N:738:& Handbook~ of Beginner Cantrips
 G:?:B

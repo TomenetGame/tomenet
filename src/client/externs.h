@@ -213,6 +213,10 @@ extern bool item_tester_hook_rune(object_type *o_ptr);
 extern bool item_tester_hook_armour_no_shield(object_type *o_ptr);
 extern bool item_tester_hook_id(object_type *o_ptr);
 extern bool item_tester_hook_starid(object_type *o_ptr);
+#ifdef ENABLE_EXCAVATION
+extern bool item_tester_hook_chemical(object_type *o_ptr);
+#endif
+
 
 extern int special_line_type;
 extern int special_page_size;

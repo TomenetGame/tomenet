@@ -4174,6 +4174,7 @@
  #define SV_METAL_HYDROXIDE	6	/* additional tier I oxygen source - make shit more potent */
  #define SV_METAL_PEROXIDE	7	/* additional tier II oxygen source - make shit MORE potent */
  #define SV_METAL_PERCHLORATE	8	/* additional tier III oxygen source - make shit *MORE* potent */
+ #define SV_MIXTURE		9	/* Mixture of the above ingredients. Uses xtra1/2/3 to bitwise store the ingredients that went into it so far, the 3 variables indicating the amounts of each bit, eg 2xsalpeter+1x... */
 #endif
 
 /* svals for TV_SPECIAL */
@@ -8877,8 +8878,9 @@ extern int PlayerUID;
 #define ITH_CUSTOM_TOME	4
 #define ITH_RUNE	5
 #define ITH_ENCH_AC_NO_SHIELD 6
-#define ITH_ID 7
-#define ITH_STARID 8
+#define ITH_ID		7
+#define ITH_STARID	8
+#define ITH_CHEMICAL	9	/* for ENABLE_EXCAVATION */
 /* keen hack: 4.6.0+ clients use ITH_ codes >= 50 and in turn signed char overflow < 0
    for transmitting max_weight for picking items for telekinesis. - C. Blue */
 #define ITH_MAX_WEIGHT	50

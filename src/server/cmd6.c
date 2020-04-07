@@ -5681,6 +5681,16 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
+#ifdef ENABLE_EXCAVATION
+	if (o_ptr->tval == TV_CHEMICAL) {
+		clear_current(Ind);
+		p_ptr->current_chemical = TRUE;
+		p_ptr->using_up_item = item;
+		get_item(Ind, ITH_CHEMICAL);
+		return;
+	}
+#endif
+
 	// -------------------- artifacts -------------------- //
 
 	if (o_ptr->name1 && o_ptr->name1 != ART_RANDART) {

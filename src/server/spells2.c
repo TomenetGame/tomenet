@@ -8463,7 +8463,7 @@ void rune_combine_aux(int Ind, int item) {
 	msg_format(Ind, "There is a coupling of magic.");
 	inven_item_increase(Ind, p_ptr->current_activation, -number);
 	inven_item_increase(Ind, item, -number);
-	if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indexes
+	if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indices
 		inven_item_optimize(Ind, p_ptr->current_activation);
 		inven_item_optimize(Ind, item);
 	} else {
@@ -8658,6 +8658,106 @@ void tome_creation_aux(int Ind, int item) {
 	/* Something happened */
 	return;
 }
+
+#ifdef ENABLE_EXCAVATION
+/* Mix two chemicals to form a new chemical - C. Blue */
+void mix_chemicals(int Ind, int item) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation]; /* Ingredient #2 */
+	object_type *o2_ptr = &p_ptr->inventory[item]; /* Ingredient #1 */
+	object_type forge, *q_ptr = &forge; /* Result (Ingredient, mixture or finished blast charge) */
+	char o_name[ONAME_LEN];
+
+	byte cc, su, sp, as, mp, mh, me, mc;
+
+
+	/* Sanity checks */
+	if (o_ptr->tval != TV_CHEMICAL || o2_ptr->tval != TV_CHEMICAL) return;
+
+	/* Hack:
+	   Activating a mixture 'with itself' will try to turn it into a finished blast charge.
+	   (Activating ingredients on their own has no meaning.) */
+	if (item == p_ptr->current_activation) {
+		if (o_ptr->sval != SV_MIXTURE) return;
+
+		/* Count amounts of ingredients in our mixture */
+		cc += ((o_ptr->xtra1 & 0x01) ? 1 : 0) + ((o_ptr->xtra2 & 0x01) ? 1 : 0) + ((o_ptr->xtra3 & 0x01) ? 1 : 0);
+		su += ((o_ptr->xtra1 & 0x02) ? 1 : 0) + ((o_ptr->xtra2 & 0x02) ? 1 : 0) + ((o_ptr->xtra3 & 0x02) ? 1 : 0);
+		sp += ((o_ptr->xtra1 & 0x04) ? 1 : 0) + ((o_ptr->xtra2 & 0x04) ? 1 : 0) + ((o_ptr->xtra3 & 0x04) ? 1 : 0);
+		as += ((o_ptr->xtra1 & 0x08) ? 1 : 0) + ((o_ptr->xtra2 & 0x08) ? 1 : 0) + ((o_ptr->xtra3 & 0x08) ? 1 : 0);
+		mp += ((o_ptr->xtra1 & 0x10) ? 1 : 0) + ((o_ptr->xtra2 & 0x10) ? 1 : 0) + ((o_ptr->xtra3 & 0x10) ? 1 : 0);
+		mh += ((o_ptr->xtra1 & 0x20) ? 1 : 0) + ((o_ptr->xtra2 & 0x20) ? 1 : 0) + ((o_ptr->xtra3 & 0x20) ? 1 : 0);
+		me += ((o_ptr->xtra1 & 0x40) ? 1 : 0) + ((o_ptr->xtra2 & 0x40) ? 1 : 0) + ((o_ptr->xtra3 & 0x40) ? 1 : 0);
+		mc += ((o_ptr->xtra1 & 0x80) ? 1 : 0) + ((o_ptr->xtra2 & 0x80) ? 1 : 0) + ((o_ptr->xtra3 & 0x80) ? 1 : 0);
+
+		/* Check for valid crafting results! */
+		q_ptr->tval = TV_CHARGE;
+		if (cc == 1 && su == 1 && sp == 2) q_ptr->sval = SV_CHARGE_BLAST;
+
+		if (!q_ptr->sval) {
+			msg_print(Ind, "That is not an appropriate mixture for making a blast charge.");
+			return;
+		} else {
+			object_desc(Ind, o_name, q_ptr, FALSE, 256);
+			msg_format(Ind, "You assemble a %s.", o_name);
+		}
+	} else {
+		q_ptr->tval = TV_CHEMICAL;
+		q_ptr->sval = SV_MIXTURE;
+
+ #if 0
+		/* Sooooo.... */
+		if (o_ptr->sval != SV_MIXTURE) {
+			q_ptr->xtra1 = 1 << (o_ptr->sval - 1);
+		} else {
+		}
+		if (o2_ptr->sval != SV_MIXTURE) {
+			q_ptr->xtra1 = 1 << (o2_ptr->sval - 1);
+		} else {
+		}
+		case SV_CHARCOAL:
+			switch (o2_ptr->sval) {
+			case SV_SULFUR:
+				q_ptr->xtra1 = 
+				break;
+			}
+			break;
+		case SV_MIXTURE:
+		}
+ #endif
+		msg_print(Ind, "You combine the ingredients..");
+		/* TODO hack: Give the mixture a name based on its colour, based on its ingredients!
+		   Eg: a) a shiny mixture  <- if ingredients contain metal powder.. */
+	}
+
+	/* Result: Either a new ingredient, a mixture or a finished blast charge. */
+	invcopy(q_ptr, lookup_kind(q_ptr->tval, q_ptr->sval));
+
+	/* Recall original parameters */
+	q_ptr->owner = o_ptr->owner;
+	q_ptr->mode = o_ptr->mode;
+	q_ptr->level = k_info[q_ptr->k_idx].level;
+	q_ptr->discount = 0;
+	q_ptr->number = 1; //hmm, should it be possible to combine whole stacks instead of just 1 piece each?
+	q_ptr->note = 0;
+	q_ptr->iron_trade = o_ptr->iron_trade;
+	q_ptr->iron_turn = o_ptr->iron_turn;
+
+	/* Erase the ingredients in the pack */
+	inven_item_increase(Ind, p_ptr->current_activation, -1);
+	inven_item_increase(Ind, item, -1);
+	if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indices
+		inven_item_optimize(Ind, p_ptr->current_activation);
+		inven_item_optimize(Ind, item);
+	} else {
+		inven_item_optimize(Ind, item);
+		inven_item_optimize(Ind, p_ptr->current_activation);
+	}
+
+	/* Give us the result */
+	inven_carry(Ind, q_ptr);
+}
+#endif
 
 bool do_mstopcharm(int Ind) {
 	player_type *p_ptr = Players[Ind];

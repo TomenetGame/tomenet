@@ -11972,6 +11972,11 @@ void Handle_item(int Ind, int item) {
 	} else if (p_ptr->current_rune) {
 		rune_combine_aux(Ind, item);
 	}
+#ifdef ENABLE_EXCAVATION
+	else if (p_ptr->current_chemical) {
+		mix_chemicals(Ind, item);
+	}
+#endif
 
 	/* to be safe, clean up; just in case our item was used up */
 	for (i = 0; i < INVEN_PACK; i++) inven_item_optimize(Ind, i);

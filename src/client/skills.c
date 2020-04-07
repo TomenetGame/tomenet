@@ -675,6 +675,14 @@ bool item_tester_hook_armour_no_shield(object_type *o_ptr) {
 	return (is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD);
 }
 
+#ifdef ENABLE_EXCAVATION
+bool item_tester_hook_chemical(object_type *o_ptr) {
+	return (o_ptr->tval == TV_CHEMICAL
+	    || o_ptr->tval == TV_POTION
+	    || (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL));
+}
+#endif
+
 /*
  * set a trap .. it's out of place somewhat.	- Jir -
  */
