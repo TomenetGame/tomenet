@@ -3984,6 +3984,9 @@
 /* note: there is only 1 flask, ie flask of oil.
    this might be assumed in lots of places in the code.*/
 #define SV_FLASK_OIL			0
+#ifdef ENABLE_EXCAVATION
+ #define SV_FLASK_ACID			1
+#endif
 
 /* The "sval" codes for TV_FOOD */
 #define SV_FOOD_POISON			0
@@ -4176,7 +4179,8 @@
  #define SV_METAL_HYDROXIDE	6	/* additional tier I oxygen source - make shit more potent */
  #define SV_METAL_PEROXIDE	7	/* additional tier II oxygen source - make shit MORE potent */
  #define SV_METAL_PERCHLORATE	8	/* additional tier III oxygen source - make shit *MORE* potent */
- #define SV_MIXTURE		9	/* Mixture of the above ingredients. Uses xtra1/2/3 to bitwise store the ingredients that went into it so far, the 3 variables indicating the amounts of each bit, eg 2xsalpeter+1x... */
+ #define SV_VITRIOL		9	/* (sulphates) alternative for flask of acid */
+ #define SV_MIXTURE		99	/* Mixture of the above ingredients. Uses xtra1/2/3 to bitwise store the ingredients that went into it so far, the 3 variables indicating the amounts of each bit, eg 2xsalpeter+1x... */
 #endif
 
 /* svals for TV_SPECIAL */

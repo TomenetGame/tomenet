@@ -8353,7 +8353,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		}
 #endif
 		for (i = 0; i < INVEN_WIELD; i++)
-			if (p_ptr->inventory[i].tval == TV_FLASK) { /* oil */
+			if (p_ptr->inventory[i].tval == TV_FLASK && p_ptr->inventory[i].sval == SV_FLASK_OIL) {
 				//p_ptr->cst -= 2;
 				p_ptr->ranged_flare = TRUE;
 				inven_item_increase(Ind, i, -1);

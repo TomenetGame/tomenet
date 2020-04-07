@@ -3342,7 +3342,7 @@ static bool item_tester_refill_lantern(object_type *o_ptr)
 	if (o_ptr->name1) return (FALSE);
 
 	/* Flasks of oil are okay */
-	if (o_ptr->tval == TV_FLASK) return (TRUE);
+	if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return (TRUE);
 
 	/* Other lanterns are okay */
 	if ((o_ptr->tval == TV_LITE) &&
@@ -3395,7 +3395,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 		return;
 	}
 
-	if (o_ptr->tval != TV_FLASK && o_ptr->timeout == 0) {
+	if (!(o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) && o_ptr->timeout == 0) {
 		msg_print(Ind, "That item has no fuel left!");
 		return;
 	}
@@ -3411,7 +3411,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 
 	/* Refuel */
 	used_fuel = j_ptr->timeout;
-	if (o_ptr->tval == TV_FLASK) {
+	if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) {
 		j_ptr->timeout += o_ptr->pval;
 	} else {
 		spilled_fuel = (o_ptr->timeout * (randint(5) + (130 - adj_dex_th_mul[p_ptr->stat_ind[A_DEX]]) / 2)) / 100; /* spill some */
@@ -3429,7 +3429,7 @@ static void do_cmd_refill_lamp(int Ind, int item)
 	}
 	used_fuel = j_ptr->timeout - used_fuel;
 
-	if (o_ptr->tval == TV_FLASK || item <= 0) { /* just dispose of for now, if it was from the ground */
+	if ((o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) || item <= 0) { /* just dispose of for now, if it was from the ground */
 		/* Decrease the item (from the pack) */
 		if (item >= 0) {
 			inven_item_increase(Ind, item, -1);

@@ -4476,13 +4476,22 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 		}
 	}
 	else if (o_ptr->tval == TV_FLASK) {
-		typ = GF_FIRE;
-		dam = damroll(2, 4);
-		rad = 2;
+		switch (o_ptr->sval) {
+		case SV_FLASK_OIL:
+			typ = GF_FIRE;
+			dam = damroll(2, 4);
+			rad = 2;
+			break;
+#ifdef ENABLE_EXCAVATION
+		case SV_FLASK_ACID:
+			typ = GF_ACID;
+			dam = damroll(3, 5);
+			rad = 2;
+			break;
+#endif
+		}
 	}
-	else {
-		return (FALSE);
-	}
+	else return (FALSE);
 
 	identify_mon_trap_load(who, o_ptr);
 

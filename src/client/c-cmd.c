@@ -27,7 +27,7 @@ static bool item_tester_edible(object_type *o_ptr) {
 /* XXX not fully functional */
 static bool item_tester_oils(object_type *o_ptr) {
 	if (o_ptr->tval == TV_LITE) return TRUE;
-	if (o_ptr->tval == TV_FLASK) return TRUE;
+	if (o_ptr->tval == TV_FLASK && o_ptr->sval == SV_FLASK_OIL) return TRUE;
 
 	return FALSE;
 }
@@ -86,7 +86,7 @@ static void cmd_all_in_one(void) {
 			Send_wield(item);
 		break;
 	case TV_FLASK:
-		Send_fill(item);
+		if (inventory[item].sval == SV_FLASK_OIL) Send_fill(item);
 		break;
 	case TV_FOOD:
 	case TV_FIRESTONE:
