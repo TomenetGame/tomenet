@@ -8660,7 +8660,7 @@ void tome_creation_aux(int Ind, int item) {
 }
 
 #ifdef ENABLE_EXCAVATION
-/* Mix two chemicals to form a new chemical - C. Blue */
+/* Mix two chemicals to form a new chemical, a mixture, or create a finished product aka a blast charge - C. Blue */
 void mix_chemicals(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation]; /* Ingredient #2 */
@@ -8669,11 +8669,18 @@ void mix_chemicals(int Ind, int item) {
 	char o_name[ONAME_LEN];
 
 	byte cc, su, sp, as, mp, mh, me, mc;
-	byte lo, w, sw, av, r; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL, rust (? from rusty mail? / metal + water)
+	byte lo, wa, sw, ac, ru; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL, rust (? from rusty mail? / metal + water)
 
 
 	/* Sanity checks */
-	if (o_ptr->tval != TV_CHEMICAL || o2_ptr->tval != TV_CHEMICAL) return;
+	switch (o_ptr->tval) {
+	case TV_CHEMICAL: case TV_POTION: case TV_FLASK: break; /* Note: Actually the first item can only be TV_CHEMICAL because the others cannot be activated. */
+	default: return;
+	}
+	switch (o2_ptr->tval) {
+	case TV_CHEMICAL: case TV_POTION: case TV_FLASK: break;
+	default: return;
+	}
 
 	/* Hack:
 	   Activating a mixture 'with itself' will try to turn it into a finished blast charge.
@@ -8682,14 +8689,21 @@ void mix_chemicals(int Ind, int item) {
 		if (o_ptr->sval != SV_MIXTURE) return;
 
 		/* Count amounts of ingredients in our mixture */
-		cc += ((o_ptr->xtra1 & 0x01) ? 1 : 0) + ((o_ptr->xtra2 & 0x01) ? 1 : 0) + ((o_ptr->xtra3 & 0x01) ? 1 : 0);
-		su += ((o_ptr->xtra1 & 0x02) ? 1 : 0) + ((o_ptr->xtra2 & 0x02) ? 1 : 0) + ((o_ptr->xtra3 & 0x02) ? 1 : 0);
-		sp += ((o_ptr->xtra1 & 0x04) ? 1 : 0) + ((o_ptr->xtra2 & 0x04) ? 1 : 0) + ((o_ptr->xtra3 & 0x04) ? 1 : 0);
-		as += ((o_ptr->xtra1 & 0x08) ? 1 : 0) + ((o_ptr->xtra2 & 0x08) ? 1 : 0) + ((o_ptr->xtra3 & 0x08) ? 1 : 0);
-		mp += ((o_ptr->xtra1 & 0x10) ? 1 : 0) + ((o_ptr->xtra2 & 0x10) ? 1 : 0) + ((o_ptr->xtra3 & 0x10) ? 1 : 0);
-		mh += ((o_ptr->xtra1 & 0x20) ? 1 : 0) + ((o_ptr->xtra2 & 0x20) ? 1 : 0) + ((o_ptr->xtra3 & 0x20) ? 1 : 0);
-		me += ((o_ptr->xtra1 & 0x40) ? 1 : 0) + ((o_ptr->xtra2 & 0x40) ? 1 : 0) + ((o_ptr->xtra3 & 0x40) ? 1 : 0);
-		mc += ((o_ptr->xtra1 & 0x80) ? 1 : 0) + ((o_ptr->xtra2 & 0x80) ? 1 : 0) + ((o_ptr->xtra3 & 0x80) ? 1 : 0);
+		cc += ((o_ptr->xtra1 & 0x0001) ? 1 : 0) + ((o_ptr->xtra2 & 0x0001) ? 1 : 0) + ((o_ptr->xtra3 & 0x0001) ? 1 : 0);
+		su += ((o_ptr->xtra1 & 0x0002) ? 1 : 0) + ((o_ptr->xtra2 & 0x0002) ? 1 : 0) + ((o_ptr->xtra3 & 0x0002) ? 1 : 0);
+		sp += ((o_ptr->xtra1 & 0x0004) ? 1 : 0) + ((o_ptr->xtra2 & 0x0004) ? 1 : 0) + ((o_ptr->xtra3 & 0x0004) ? 1 : 0);
+		as += ((o_ptr->xtra1 & 0x0008) ? 1 : 0) + ((o_ptr->xtra2 & 0x0008) ? 1 : 0) + ((o_ptr->xtra3 & 0x0008) ? 1 : 0);
+		mp += ((o_ptr->xtra1 & 0x0010) ? 1 : 0) + ((o_ptr->xtra2 & 0x0010) ? 1 : 0) + ((o_ptr->xtra3 & 0x0010) ? 1 : 0);
+		mh += ((o_ptr->xtra1 & 0x0020) ? 1 : 0) + ((o_ptr->xtra2 & 0x0020) ? 1 : 0) + ((o_ptr->xtra3 & 0x0020) ? 1 : 0);
+		me += ((o_ptr->xtra1 & 0x0040) ? 1 : 0) + ((o_ptr->xtra2 & 0x0040) ? 1 : 0) + ((o_ptr->xtra3 & 0x0040) ? 1 : 0);
+		mc += ((o_ptr->xtra1 & 0x0080) ? 1 : 0) + ((o_ptr->xtra2 & 0x0080) ? 1 : 0) + ((o_ptr->xtra3 & 0x0080) ? 1 : 0);
+		vi += ((o_ptr->xtra1 & 0x0100) ? 1 : 0) + ((o_ptr->xtra2 & 0x0100) ? 1 : 0) + ((o_ptr->xtra3 & 0x0100) ? 1 : 0);
+		ru += ((o_ptr->xtra1 & 0x0200) ? 1 : 0) + ((o_ptr->xtra2 & 0x0200) ? 1 : 0) + ((o_ptr->xtra3 & 0x0200) ? 1 : 0);
+
+		lo += ((o_ptr->xtra1 & 0x0400) ? 1 : 0) + ((o_ptr->xtra2 & 0x0400) ? 1 : 0) + ((o_ptr->xtra3 & 0x0400) ? 1 : 0);
+		wa += ((o_ptr->xtra1 & 0x0800) ? 1 : 0) + ((o_ptr->xtra2 & 0x0800) ? 1 : 0) + ((o_ptr->xtra3 & 0x0800) ? 1 : 0);
+		sw += ((o_ptr->xtra1 & 0x1000) ? 1 : 0) + ((o_ptr->xtra2 & 0x1000) ? 1 : 0) + ((o_ptr->xtra3 & 0x1000) ? 1 : 0);
+		ac += ((o_ptr->xtra1 & 0x2000) ? 1 : 0) + ((o_ptr->xtra2 & 0x2000) ? 1 : 0) + ((o_ptr->xtra3 & 0x2000) ? 1 : 0);
 
 		/* Check for valid crafting results! */
 		q_ptr->tval = TV_CHARGE;
@@ -8758,6 +8772,29 @@ void mix_chemicals(int Ind, int item) {
 
 	/* Give us the result */
 	inven_carry(Ind, q_ptr);
+}
+/* Determine the sensorial properties of a chemical mixture */
+void mixture_flavour(object_type *o_ptr, char *flavour) {
+	if (o_ptr->sval != SV_MIXTURE) return;
+
+	/* Count amounts of ingredients in our mixture */
+	cc += ((o_ptr->xtra1 & 0x0001) ? 1 : 0) + ((o_ptr->xtra2 & 0x0001) ? 1 : 0) + ((o_ptr->xtra3 & 0x0001) ? 1 : 0); //black amorphous
+	su += ((o_ptr->xtra1 & 0x0002) ? 1 : 0) + ((o_ptr->xtra2 & 0x0002) ? 1 : 0) + ((o_ptr->xtra3 & 0x0002) ? 1 : 0); //yellow/stinking
+	sp += ((o_ptr->xtra1 & 0x0004) ? 1 : 0) + ((o_ptr->xtra2 & 0x0004) ? 1 : 0) + ((o_ptr->xtra3 & 0x0004) ? 1 : 0); //white crystalline
+	as += ((o_ptr->xtra1 & 0x0008) ? 1 : 0) + ((o_ptr->xtra2 & 0x0008) ? 1 : 0) + ((o_ptr->xtra3 & 0x0008) ? 1 : 0); //pungent smell
+	mp += ((o_ptr->xtra1 & 0x0010) ? 1 : 0) + ((o_ptr->xtra2 & 0x0010) ? 1 : 0) + ((o_ptr->xtra3 & 0x0010) ? 1 : 0); //glittering
+	mh += ((o_ptr->xtra1 & 0x0020) ? 1 : 0) + ((o_ptr->xtra2 & 0x0020) ? 1 : 0) + ((o_ptr->xtra3 & 0x0020) ? 1 : 0); //white (ferrum-ii) solid
+	me += ((o_ptr->xtra1 & 0x0040) ? 1 : 0) + ((o_ptr->xtra2 & 0x0040) ? 1 : 0) + ((o_ptr->xtra3 & 0x0040) ? 1 : 0); //yellow amorphous solid
+	mc += ((o_ptr->xtra1 & 0x0080) ? 1 : 0) + ((o_ptr->xtra2 & 0x0080) ? 1 : 0) + ((o_ptr->xtra3 & 0x0080) ? 1 : 0); //yellow crystalline (iron) / colourless/white solid (ammonium)
+	vi += ((o_ptr->xtra1 & 0x0100) ? 1 : 0) + ((o_ptr->xtra2 & 0x0100) ? 1 : 0) + ((o_ptr->xtra3 & 0x0100) ? 1 : 0); //green (almost turquoise) for iron
+	ru += ((o_ptr->xtra1 & 0x0200) ? 1 : 0) + ((o_ptr->xtra2 & 0x0200) ? 1 : 0) + ((o_ptr->xtra3 & 0x0200) ? 1 : 0); //redbrown (umber in k_info)
+
+	lo += ((o_ptr->xtra1 & 0x0400) ? 1 : 0) + ((o_ptr->xtra2 & 0x0400) ? 1 : 0) + ((o_ptr->xtra3 & 0x0400) ? 1 : 0); //brown (flask is yellow..)
+	wa += ((o_ptr->xtra1 & 0x0800) ? 1 : 0) + ((o_ptr->xtra2 & 0x0800) ? 1 : 0) + ((o_ptr->xtra3 & 0x0800) ? 1 : 0); //transparent
+	sw += ((o_ptr->xtra1 & 0x1000) ? 1 : 0) + ((o_ptr->xtra2 & 0x1000) ? 1 : 0) + ((o_ptr->xtra3 & 0x1000) ? 1 : 0); //light grey transparent
+	ac += ((o_ptr->xtra1 & 0x2000) ? 1 : 0) + ((o_ptr->xtra2 & 0x2000) ? 1 : 0) + ((o_ptr->xtra3 & 0x2000) ? 1 : 0); //grey (just because it's the game's element colour..)
+
+	strcpy(flavour, "shimmering");
 }
 #endif
 

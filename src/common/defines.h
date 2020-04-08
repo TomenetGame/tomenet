@@ -4180,6 +4180,7 @@
  #define SV_METAL_PEROXIDE	7	/* additional tier II oxygen source - make shit MORE potent */
  #define SV_METAL_PERCHLORATE	8	/* additional tier III oxygen source - make shit *MORE* potent */
  #define SV_VITRIOL		9	/* (sulphates) alternative for flask of acid */
+ #define SV_RUST		10	/* metaloxide.. we limit it to iron I guess.. */
  #define SV_MIXTURE		99	/* Mixture of the above ingredients. Uses xtra1/2/3 to bitwise store the ingredients that went into it so far, the 3 variables indicating the amounts of each bit, eg 2xsalpeter+1x... */
 #endif
 
