@@ -8686,7 +8686,10 @@ void mix_chemicals(int Ind, int item) {
 	   Activating a mixture 'with itself' will try to turn it into a finished blast charge.
 	   (Activating ingredients on their own has no meaning.) */
 	if (item == p_ptr->current_activation) {
-		if (o_ptr->sval != SV_MIXTURE) return;
+		if (o_ptr->sval != SV_MIXTURE) {
+			msg_print(Ind, "You can only activate mixtures with themselves. It will then get finished into a blast charge, if the mixture is working.");
+			return;
+		}
 
 		/* Count amounts of ingredients in our mixture */
 		cc += ((o_ptr->xtra1 & 0x0001) ? 1 : 0) + ((o_ptr->xtra2 & 0x0001) ? 1 : 0) + ((o_ptr->xtra3 & 0x0001) ? 1 : 0);
@@ -8697,6 +8700,7 @@ void mix_chemicals(int Ind, int item) {
 		mh += ((o_ptr->xtra1 & 0x0020) ? 1 : 0) + ((o_ptr->xtra2 & 0x0020) ? 1 : 0) + ((o_ptr->xtra3 & 0x0020) ? 1 : 0);
 		me += ((o_ptr->xtra1 & 0x0040) ? 1 : 0) + ((o_ptr->xtra2 & 0x0040) ? 1 : 0) + ((o_ptr->xtra3 & 0x0040) ? 1 : 0);
 		mc += ((o_ptr->xtra1 & 0x0080) ? 1 : 0) + ((o_ptr->xtra2 & 0x0080) ? 1 : 0) + ((o_ptr->xtra3 & 0x0080) ? 1 : 0);
+
 		vi += ((o_ptr->xtra1 & 0x0100) ? 1 : 0) + ((o_ptr->xtra2 & 0x0100) ? 1 : 0) + ((o_ptr->xtra3 & 0x0100) ? 1 : 0);
 		ru += ((o_ptr->xtra1 & 0x0200) ? 1 : 0) + ((o_ptr->xtra2 & 0x0200) ? 1 : 0) + ((o_ptr->xtra3 & 0x0200) ? 1 : 0);
 
@@ -8707,8 +8711,22 @@ void mix_chemicals(int Ind, int item) {
 
 		/* Check for valid crafting results! */
 		q_ptr->tval = TV_CHARGE;
-		if (cc == 1 && su == 1 && sp == 2) q_ptr->sval = SV_CHARGE_BLAST;
-		if (cc == 1 && su == 1 && sp == 2) q_ptr->sval = SV_CHARGE_BLAST;
+		if ((cc == 1 && su == 1 && sp == 2) ||
+		    (as == 3 && lo == 1)) q_ptr->sval = SV_CHARGE_BLAST;
+		if ((cc == 1 && su == 1 && sp == 3) ||
+		    (as == 3 && lo == 1 && mh == 1)) q_ptr->sval = SV_CHARGE_XBLAST;
+		if (cc == 1 && su == 1 && sp == 3 && mc == 1) q_ptr->sval = SV_CHARGE_QUAKE;
+		if (cc == 2 && su == 2 && sp == 3 && mc == 3) q_ptr->sval = SV_CHARGE_DESTRUCTION;
+		if (cc == 2 && su == 1 && sp == 2 && mh == 1) q_ptr->sval = SV_CHARGE_FIRE;
+		if (cc == 2 && su == 2 && sp == 3 && mh == 2) q_ptr->sval = SV_CHARGE_FIRESTORM;
+		if (cc == 3 && su == 2 && sp == 2 && mh == 1) q_ptr->sval = SV_CHARGE_FIREWALL;
+		if (as == 3 && lo == 1 && me == 1) q_ptr->sval = SV_CHARGE_WRECKING;
+		if (as == 3 && lo == 1 && me == 3) q_ptr->sval = SV_CHARGE_CASCADING;
+		if (as == 3 && lo == 1 && me == 2) q_ptr->sval = SV_CHARGE_TACTICAL;
+		if (cc == 1 && su == 1 && sp == 2 && mp == 2) q_ptr->sval = SV_CHARGE_FLASHBOMB;
+		if (cc == 1 && su == 1 && sp == 2 && mh == 1) q_ptr->sval = SV_CHARGE_CONCUSSION;
+		if (cc == 1 && su == 1 && sp == 2 && mh == 2) q_ptr->sval = SV_CHARGE_XCONCUSSION;
+		if (cc == 1 && su == 2 && sp == 2 && mc == 1) q_ptr->sval = SV_CHARGE_UNDERGROUND;
 
 		if (!q_ptr->sval) {
 			msg_print(Ind, "That is not an appropriate mixture for making a blast charge.");
@@ -8790,6 +8808,7 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 	mh += ((o_ptr->xtra1 & 0x0020) ? 1 : 0) + ((o_ptr->xtra2 & 0x0020) ? 1 : 0) + ((o_ptr->xtra3 & 0x0020) ? 1 : 0); //white (ferrum-ii) solid
 	me += ((o_ptr->xtra1 & 0x0040) ? 1 : 0) + ((o_ptr->xtra2 & 0x0040) ? 1 : 0) + ((o_ptr->xtra3 & 0x0040) ? 1 : 0); //yellow amorphous solid
 	mc += ((o_ptr->xtra1 & 0x0080) ? 1 : 0) + ((o_ptr->xtra2 & 0x0080) ? 1 : 0) + ((o_ptr->xtra3 & 0x0080) ? 1 : 0); //yellow crystalline (iron) / colourless/white solid (ammonium)
+
 	vi += ((o_ptr->xtra1 & 0x0100) ? 1 : 0) + ((o_ptr->xtra2 & 0x0100) ? 1 : 0) + ((o_ptr->xtra3 & 0x0100) ? 1 : 0); //green (almost turquoise) for iron
 	ru += ((o_ptr->xtra1 & 0x0200) ? 1 : 0) + ((o_ptr->xtra2 & 0x0200) ? 1 : 0) + ((o_ptr->xtra3 & 0x0200) ? 1 : 0); //redbrown (umber in k_info)
 

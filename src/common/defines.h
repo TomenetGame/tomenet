@@ -4146,8 +4146,8 @@
    charcoal: burn trees :D, saltpeter (bird guano, others), sulfur (volcanic and undersea, mining!, red d/D),
    ammonia (alternative to metal-saltpeter): heat animal dung (camels^^') - maybe even extract from poison/gas breath? oO far stretch yeah,
     maybe just make it already 'ammonia salt' straight away aka Gwihabaite (ammonia-saltpeter, ready for use as saltpeter alternative),
-    we can consider it to be more porous and combinable with lamp oil, just those two are fit for industrial mining operations already!:
-    less potent and not waterproof but easier to use/cheaper,
+    we can consider it to be more porous and combinable with lamp oil, just those two are fit for industrial mining operations already! (94%-6% ANFO style):
+     less potent and not waterproof but easier to use/cheaper,
    metal powder: specifically aluminium, but maybe too rare,
    (metal)hydroxides(*): salt water + rust(!) (not exactly, and unfeasible metal types, but w/e) -> 'caustic metal ash',
    metalperoxide: metaloxides (or ammonia) + hydroxides(*) (soooorta...again, so it'll just be MORE saltwater with rust, lul) -> 'potent caustic metal ash' (not feasible in medieval context),
