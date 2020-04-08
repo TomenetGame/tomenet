@@ -8775,13 +8775,15 @@ void mix_chemicals(int Ind, int item) {
 }
 /* Determine the sensorial properties of a chemical mixture */
 void mixture_flavour(object_type *o_ptr, char *flavour) {
+	int aspects = 0, primary = 0, secondary = 0;
+
 	if (o_ptr->sval != SV_MIXTURE) return;
 
 	/* Count amounts of ingredients in our mixture */
 	cc += ((o_ptr->xtra1 & 0x0001) ? 1 : 0) + ((o_ptr->xtra2 & 0x0001) ? 1 : 0) + ((o_ptr->xtra3 & 0x0001) ? 1 : 0); //black amorphous
-	su += ((o_ptr->xtra1 & 0x0002) ? 1 : 0) + ((o_ptr->xtra2 & 0x0002) ? 1 : 0) + ((o_ptr->xtra3 & 0x0002) ? 1 : 0); //yellow/stinking
+	su += ((o_ptr->xtra1 & 0x0002) ? 1 : 0) + ((o_ptr->xtra2 & 0x0002) ? 1 : 0) + ((o_ptr->xtra3 & 0x0002) ? 1 : 0); //stinking (yellow)
 	sp += ((o_ptr->xtra1 & 0x0004) ? 1 : 0) + ((o_ptr->xtra2 & 0x0004) ? 1 : 0) + ((o_ptr->xtra3 & 0x0004) ? 1 : 0); //white crystalline
-	as += ((o_ptr->xtra1 & 0x0008) ? 1 : 0) + ((o_ptr->xtra2 & 0x0008) ? 1 : 0) + ((o_ptr->xtra3 & 0x0008) ? 1 : 0); //pungent smell
+	as += ((o_ptr->xtra1 & 0x0008) ? 1 : 0) + ((o_ptr->xtra2 & 0x0008) ? 1 : 0) + ((o_ptr->xtra3 & 0x0008) ? 1 : 0); //pungent smell (white/transparent)
 	mp += ((o_ptr->xtra1 & 0x0010) ? 1 : 0) + ((o_ptr->xtra2 & 0x0010) ? 1 : 0) + ((o_ptr->xtra3 & 0x0010) ? 1 : 0); //glittering
 	mh += ((o_ptr->xtra1 & 0x0020) ? 1 : 0) + ((o_ptr->xtra2 & 0x0020) ? 1 : 0) + ((o_ptr->xtra3 & 0x0020) ? 1 : 0); //white (ferrum-ii) solid
 	me += ((o_ptr->xtra1 & 0x0040) ? 1 : 0) + ((o_ptr->xtra2 & 0x0040) ? 1 : 0) + ((o_ptr->xtra3 & 0x0040) ? 1 : 0); //yellow amorphous solid
@@ -8790,11 +8792,59 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 	ru += ((o_ptr->xtra1 & 0x0200) ? 1 : 0) + ((o_ptr->xtra2 & 0x0200) ? 1 : 0) + ((o_ptr->xtra3 & 0x0200) ? 1 : 0); //redbrown (umber in k_info)
 
 	lo += ((o_ptr->xtra1 & 0x0400) ? 1 : 0) + ((o_ptr->xtra2 & 0x0400) ? 1 : 0) + ((o_ptr->xtra3 & 0x0400) ? 1 : 0); //brown (flask is yellow..)
-	wa += ((o_ptr->xtra1 & 0x0800) ? 1 : 0) + ((o_ptr->xtra2 & 0x0800) ? 1 : 0) + ((o_ptr->xtra3 & 0x0800) ? 1 : 0); //transparent
+	wa += ((o_ptr->xtra1 & 0x0800) ? 1 : 0) + ((o_ptr->xtra2 & 0x0800) ? 1 : 0) + ((o_ptr->xtra3 & 0x0800) ? 1 : 0); //clear
 	sw += ((o_ptr->xtra1 & 0x1000) ? 1 : 0) + ((o_ptr->xtra2 & 0x1000) ? 1 : 0) + ((o_ptr->xtra3 & 0x1000) ? 1 : 0); //light grey transparent
 	ac += ((o_ptr->xtra1 & 0x2000) ? 1 : 0) + ((o_ptr->xtra2 & 0x2000) ? 1 : 0) + ((o_ptr->xtra3 & 0x2000) ? 1 : 0); //grey (just because it's the game's element colour..)
 
-	strcpy(flavour, "shimmering");
+	/* Count differing sensorial aspects */
+	cc ? aspects++; (me || mc) ? aspects++; (sp || mh) ? aspects++; (su || as) ? aspects++; mp ? aspects++; vi ? aspects++;
+	(ru || lo) ? aspects++; (wa || sw) ? aspects++; ac ? aspects++;
+
+	/* too much crap in it? becomes kinda indistinct */
+	if (aspects >= 5) {
+		strcpy(flavour, "bubbling");
+		return;
+	}
+
+	/* give characteritic sensorial properties, starting from most dominant to lesser dominant traits, first determine colouring, second smell/texture */
+
+	/* colouring */
+	if (ru || lo) primary = 1;
+	else if (cc) primary = 2;
+	else if (me || mc) primary = 3;
+	else if (vi) primary = 4;
+	else if (ac) primary = 5;
+	/* this one can also serve as secondary factor if there's no smell which is more important (allowing 3 adjectives would be tooo much clutter) */
+	else if (mp) primary = 6;
+	else if (sp || mh) primary = 7;
+	else if (wa || sw) primary = 8;
+	// secondary colouring aspects, these are mainly used to determine smell
+	else if (su) primary = 9;
+	else /* as */ primary = 10;
+
+	/* smell/texture */
+	if (su || as) secondary = 1;
+	else if (mp) secondary = 2;
+
+	/* Form complete flavour */
+	switch (secondary) {
+	case 1: strcpy(flavour, "pungent "); break;
+	case 2: if (primary != 6) strcpy(flavour, "glittering "); break;
+	default: strcpy(flavour, ""); break;
+	}
+	switch (primary) {
+	case 1: strcat(flavour, "brown"); break;
+	case 2: strcat(flavour, "dark"); break;
+	case 3: strcat(flavour, "yellow"); break;
+	case 4: strcat(flavour, "green"); break;
+	case 5: strcat(flavour, "grey"); break;
+	case 6: strcat(flavour, "glittering"); break;
+	case 7: strcat(flavour, "white"); break;
+	case 8: strcat(flavour, "transparent"); break;
+	case 9: strcat(flavour, "yellow"); break;
+	case 10: strcat(flavour, "white"); break;
+	default: strcat(flavour, "white"); //paranoia
+	}
 }
 #endif
 
