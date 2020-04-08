@@ -8668,8 +8668,8 @@ void mix_chemicals(int Ind, int item) {
 	object_type forge, *q_ptr = &forge; /* Result (Ingredient, mixture or finished blast charge) */
 	char o_name[ONAME_LEN];
 
-	byte cc, su, sp, as, mp, mh, me, mc;
-	byte lo, wa, sw, ac, ru; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL, rust (? from rusty mail? / metal + water)
+	byte cc, su, sp, as, mp, mh, me, mc, vi, ru; // ..., vitriol, rust (? from rusty mail? / metal + water)
+	byte lo, wa, sw, ac; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
 
 
 	/* Sanity checks */
@@ -8776,6 +8776,8 @@ void mix_chemicals(int Ind, int item) {
 /* Determine the sensorial properties of a chemical mixture */
 void mixture_flavour(object_type *o_ptr, char *flavour) {
 	int aspects = 0, primary = 0, secondary = 0;
+	byte cc, su, sp, as, mp, mh, me, mc, vi, ru; // ..., vitriol, rust (? from rusty mail? / metal + water)
+	byte lo, wa, sw, ac; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
 
 	if (o_ptr->sval != SV_MIXTURE) return;
 
@@ -8797,8 +8799,8 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 	ac += ((o_ptr->xtra1 & 0x2000) ? 1 : 0) + ((o_ptr->xtra2 & 0x2000) ? 1 : 0) + ((o_ptr->xtra3 & 0x2000) ? 1 : 0); //grey (just because it's the game's element colour..)
 
 	/* Count differing sensorial aspects */
-	cc ? aspects++; (me || mc) ? aspects++; (sp || mh) ? aspects++; (su || as) ? aspects++; mp ? aspects++; vi ? aspects++;
-	(ru || lo) ? aspects++; (wa || sw) ? aspects++; ac ? aspects++;
+	aspects += cc ? 1 : 0 + (me || mc) ? 1 : 0 + (sp || mh) ? 1 : 0 + (su || as) ? 1 : 0 + mp ? 1 : 0 + vi ? 1 : 0 +
+	    (ru || lo) ? 1 : 0 + (wa || sw) ? 1 : 0 + ac ? 1 : 0;
 
 	/* too much crap in it? becomes kinda indistinct */
 	if (aspects >= 5) {
