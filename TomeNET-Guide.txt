@@ -16888,8 +16888,12 @@ school.
                     -any sanity decreasing damage,
                     -any malicious effects such as poisoning, fear, blindness,
                      confusion, paralyzation, slowness, stun or cuts,
+                    -black breath infections,
                     -nexus, polymorph and teleportation effects.
                     Martyrdom doesn't protect your inventory from harm though.
+                    Also, despite the martyrium initially healing your hit
+                    points completely, any existing maladies you suffer (eg
+                    black breath) will not be cured by it.
                     The heavens won't accept another martyrium until 1000
                     seconds have passed.
                     Note: To check whether you can use the spell again,
