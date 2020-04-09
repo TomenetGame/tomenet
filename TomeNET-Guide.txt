@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. April 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 9. April 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -21524,5 +21524,16 @@ Solution:   To restore a key's default behaviour, press % to enter the macro
 PROBLEM 62: I sometimes lose the ability to run for no apparent reason.
 Solution:   Make sure you don't trigger your NumLock key. For running, numlock
             should be turned off all the time.
+
+PROBLEM 63: My audio (sound/music) should be working fine, but I don't hear
+            anything.
+Solution:   Aside from checking all other audio-related problems in this
+            section, make sure the reason isn't simply that you have disabled
+            the 'Master' or 'Sound' or 'Music' switch in the audio mixer:
+            Press CTRL+U for the mixer (CTRL+F on rogue-like keymap) and check
+            that the 'Master' button and any other relevant audio button has
+            a green 'X' symbol between the white brackets: [X] , indicating
+            that it is enabled. If not, enable all four buttons and see if it
+            works now.
 
 ===============================================================================
