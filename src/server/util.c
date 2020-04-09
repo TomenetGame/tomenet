@@ -1461,6 +1461,72 @@ void sound_near_site_vol(int y, int x, worldpos *wpos, int Ind, cptr name, cptr 
 #endif
 	}
 }
+/* Send sound to all players nearby a certain area, and have no volume falloff inside the area's radius.
+   Added for earthquakes, so people outside of the quake region still hear it somewhat. - C. Blue */
+void sound_near_area(int y, int x, int rad, worldpos *wpos, cptr name, cptr alternative, int type) {
+	int i, d;
+	player_type *p_ptr;
+	int val = -1, val2 = -1;
+
+	if (name) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], name)) {
+			val = i;
+			break;
+		}
+	}
+
+	if (alternative) for (i = 0; i < SOUND_MAX_2010; i++) {
+		if (!audio_sfx[i][0]) break;
+		if (!strcmp(audio_sfx[i], alternative)) {
+			val2 = i;
+			break;
+		}
+	}
+
+	if (val == -1) {
+		if (val2 != -1) {
+			/* Use the alternative instead */
+			val = val2;
+			val2 = -1;
+		} else {
+			return;
+		}
+	}
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* within audible range? */
+		d = distance(y, x, Players[i]->py, Players[i]->px);
+
+		/* no falloff within the area */
+		d -= rad;
+		if (d < 0) d = 0;
+
+		/* NOTE: should be consistent with msg_print_near_site() */
+		if (d > MAX_SIGHT) continue;
+
+#if 0
+		/* limit for volume calc */
+		if (d > 20) d = 20;
+		d += 3;
+		d /= 3;
+		Send_sound(i, val, val2, type, 100 / d, 0);
+#else
+		/* limit for volume calc */
+		Send_sound(i, val, val2, type, 100 - (d * 50) / 11, 0);
+#endif
+	}
+}
 /* Play sfx at full volume to everyone in a house, and at normal-distance volume to
    everyone near the door (as sound_near_site() would). */
 void sound_house_knock(int h_idx, int dx, int dy) {

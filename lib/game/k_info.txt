@@ -5648,7 +5648,7 @@ $ENABLE_EXCAVATION$I:47:3:5
 $ENABLE_EXCAVATION$W:10:0:20:0
 $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
-$ENABLE_EXCAVATION$D:Allows proficient demolitionists to cause a huge explosion.
+$ENABLE_EXCAVATION$D:Allows proficient demolitionists to cause cascaded explosions.
 
 $ENABLE_EXCAVATION$N:705:& Ground-shaking Charge~
 $ENABLE_EXCAVATION$G:%:R

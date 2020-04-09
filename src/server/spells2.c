@@ -5493,6 +5493,13 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 	/* Can't trigger within Vault? - note: this prevents exploit as well as death-_trap_ at once :) */
 	if (zcave[y1][x1].info & CAVE_ICKY) return;
 
+	/* Paranoia -- Enforce maximum range */
+	//if (r > 15) r = 15;
+
+#ifdef USE_SOUND_2010
+	sound_near_area(y1, x1, r, wpos, "destruction", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
+
 	/* Big area of affect */
 	for (y = (y1 - r); y <= (y1 + r); y++) {
 		for (x = (x1 - r); x <= (x1 + r); x++) {
@@ -5516,7 +5523,7 @@ void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte 
 				/* Message */
 				msg_print(Ind, "\377oThere is a searing blast of light and a terrible shockwave!");
 #ifdef USE_SOUND_2010
-				sound(Ind, "destruction", NULL, SFX_TYPE_MISC, FALSE);
+				//sound(Ind, "destruction", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
 				/* Blind the player */
@@ -5683,7 +5690,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 	/* among others, make sure town areas aren't affected.. */
 	if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) return;
 
-	/* Paranoia -- Dnforce maximum range */
+	/* Paranoia -- Enforce maximum range */
 	if (r > 12) r = 12;
 
 	/* Clear the "maximal blast" area */
@@ -5696,6 +5703,10 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 	/* No one has taken any damage from this earthquake yet - mikaelh */
 	for (Ind = 1; Ind <= NumPlayers; Ind++)
 		Players[Ind]->total_damage = 0;
+
+#ifdef USE_SOUND_2010
+	sound_near_area(cy, cx, r, wpos, "earthquake", NULL, SFX_TYPE_NO_OVERLAP);
+#endif
 
 	/* Check around the epicenter */
 	for (dy = -r; dy <= r; dy++) {
@@ -5746,7 +5757,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 			everyone_lite_spot(wpos, y, x);
 
 #ifdef USE_SOUND_2010
-			if (c_ptr->m_idx < 0) sound(-c_ptr->m_idx, "earthquake", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+			//if (c_ptr->m_idx < 0) sound(-c_ptr->m_idx, "earthquake", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
 #endif
 
 			/* Skip the epicenter */
@@ -9257,7 +9268,7 @@ void arm_charge(int Ind, int item, int dir) {
 /* A charge (planted into the floor) explodes */
 void detonate_charge(object_type *o_ptr) {
 	struct worldpos *wpos = &o_ptr->wpos;
-	int x = o_ptr->ix, y = 255 - o_ptr->iy; //unhack
+	int i, who = PROJECTOR_MON_TRAP, x = o_ptr->ix, y = 255 - o_ptr->iy; //unhack
 	int flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO
 	    | PROJECT_SELF | PROJECT_LODF);//check the flags for correctness
 	struct c_special *cs_ptr;
@@ -9267,8 +9278,16 @@ void detonate_charge(object_type *o_ptr) {
 	c_ptr = &zcave[y][x];
 	/* without this, when disarming it we'd generate a (nothing) */
 	if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
-		cave_set_feat_live(wpos, y, x, cs_ptr->sc.montrap.feat);
+		i = cs_ptr->sc.montrap.feat;
 		cs_erase(c_ptr, cs_ptr);
+		cave_set_feat_live(wpos, y, x, i);
+	}
+
+	/* Find owner of the charge */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->id != o_ptr->owner) continue;
+		who = -i;
+		break;
 	}
 
 	 //todo: projector type, mon damage/death messages
@@ -9278,14 +9297,14 @@ void detonate_charge(object_type *o_ptr) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void) project(PROJECTOR_RUNE, 2, wpos, y, x, damroll(20, 15), GF_DETONATION, flg, "");
+		(void) project(who, 2, wpos, y, x, damroll(20, 15), GF_DETONATION, flg, "");
 		//aggravate_monsters_floorpos(wpos, y, x);
 		break;
 	case SV_CHARGE_XBLAST: //X2Megablast
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void) project(PROJECTOR_PLAYER, 4, wpos, y, x, damroll(30, 15), GF_DETONATION, flg, "");
+		(void) project(who, 4, wpos, y, x, damroll(30, 15), GF_DETONATION, flg, "");
 		aggravate_monsters_floorpos(wpos, y, x);
 		break;
 	case SV_CHARGE_SBLAST:
@@ -9293,10 +9312,8 @@ void detonate_charge(object_type *o_ptr) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
- #ifndef RPG_SERVER /* disable on live testing because of panic save */
-		//todo: pierce all walls..
-		project_hook(PROJECTOR_TERRAIN, GF_KILL_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
- #endif
+		//todo: need a new projection type here that doesn't originate from the player, or make it an effect instead!
+		//project_hook(-who, GF_KILL_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
 		break;
 	case SV_CHARGE_QUAKE:
 		earthquake(wpos, y, x, 10);
@@ -9308,7 +9325,7 @@ void detonate_charge(object_type *o_ptr) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "cast_ball", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void) project(PROJECTOR_UNUSUAL, 2, wpos, y, x, damroll(10, 10), GF_FIRE, flg & ~PROJECT_NODF, "");
+		(void) project(who, 2, wpos, y, x, damroll(10, 10), GF_FIRE, flg & ~PROJECT_NODF, "");
 		break;
 	case SV_CHARGE_FIRESTORM: //evaporate the seas
  #ifdef USE_SOUND_2010
@@ -9318,57 +9335,52 @@ void detonate_charge(object_type *o_ptr) {
 		//project_time_effect = 0;
 		project_time = 10;
 		project_interval = 9;
-		(void) project(PROJECTOR_RUNE, 4, wpos, y, x, 25, GF_FIRE, flg, "");
+		(void) project(who, 4, wpos, y, x, 25, GF_FIRE, flg, "");
 		break;
-	case SV_CHARGE_FIREWALL: //panic
+	case SV_CHARGE_FIREWALL:
 		//'dir' is stored in xtra9
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
  #endif
- #ifndef RPG_SERVER /* disable on live testing because of panic save */
-		//todo: compare to firewall spell..
-		project_hook(PROJECTOR_TERRAIN, GF_FIRE, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
- #endif
+		//todo: need a new projection type here that doesn't originate from the player, or make it an effect instead!
+		//project_hook(-who, GF_FIRE, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
 		break;
 	case SV_CHARGE_WRECKING:
 		//create rubble
 		break;
-	case SV_CHARGE_CASCADING: //panic
+	case SV_CHARGE_CASCADING:
 		//'dir' is stored in xtra9
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MISC, FALSE);
  #endif
- #ifndef RPG_SERVER /* disable on live testing because of panic save */
-		project_hook(PROJECTOR_TERRAIN, GF_STONE_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
- #endif
+		//todo: need a new projection type here that doesn't originate from the player, or make it an effect instead!
+		//project_hook(-who, GF_STONE_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
 		break;
 	case SV_CHARGE_TACTICAL:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		project(PROJECTOR_TRAP, 1, wpos, y, x, 1, GF_STONE_WALL,
-		    PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO | PROJECT_NODF, "trap of walls");
+		project(who, 1, wpos, y, x, 1, GF_STONE_WALL, flg | PROJECT_GRID | PROJECT_NODF, "trap of walls");
 		break;
-	case SV_CHARGE_FLASHBOMB: //panic
+	case SV_CHARGE_FLASHBOMB:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
- #ifndef RPG_SERVER /* disable on live testing because of panic save */
-		//(void) project(PROJECTOR_TERRAIN, 3, &wpos, y, x, damroll(9,3), GF_BLIND, flg, "");
-		project_los(0, GF_BLIND, 10 + rand_int(4), "");
- #endif
+		//todo: need a new projection type here that doesn't originate from the player, or make it an effect instead!
+		//(void) project(who, 6, wpos, y, x, damroll(6, 3), GF_BLIND, flg, "");
+		//project_los(-who, GF_BLIND, 10 + rand_int(4), "");
 		break;
 	case SV_CHARGE_CONCUSSION:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void) project(PROJECTOR_EFFECT, 3, wpos, y, x, damroll(9,3), GF_STUN, flg, "");
+		(void) project(who, 3, wpos, y, x, damroll(9,3), GF_STUN, flg, "");
 		break;
 	case SV_CHARGE_XCONCUSSION:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void) project(PROJECTOR_POTION, 5, wpos, y, x, damroll(18,3), GF_STUN, flg, "");
+		(void) project(who, 5, wpos, y, x, damroll(18, 3), GF_STUN, flg, "");
 		break;
 	case SV_CHARGE_UNDERGROUND:
 		//create lava/water

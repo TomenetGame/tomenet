@@ -1857,6 +1857,7 @@ extern void sound_floor_vol(struct worldpos *wpos, cptr name, cptr alternative, 
 extern void sound_near(int Ind, cptr name, cptr alternative, int type);
 extern void sound_near_site(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable);
 extern void sound_near_site_vol(int y, int x, worldpos *wpos, int Ind, cptr name, cptr alternative, int type, bool viewable, int vol);
+extern void sound_near_area(int y, int x, int rad, worldpos *wpos, cptr name, cptr alternative, int type);
 extern void sound_house_knock(int h_idx, int dx, int dy);
 extern void sound_near_monster(int m_idx, cptr name, cptr alternative, int type);
 extern void sound_near_monster_atk(int m_idx, int Ind, cptr name, cptr alternative, int type);
