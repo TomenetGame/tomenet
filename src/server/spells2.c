@@ -9118,6 +9118,7 @@ void grind_chemicals(int Ind, int item) {
 	q_ptr->discount = 0;
 	q_ptr->number = 1 + 10 - 1000 / (o_ptr->weight + 90);
 	q_ptr->number = (q_ptr->number >> 1) + 1; //experimental: reduce a bit further..
+	q_ptr->weight = k_info[q_ptr->k_idx].weight;
 	q_ptr->note = 0;
 	q_ptr->iron_trade = o_ptr->iron_trade;
 	q_ptr->iron_turn = o_ptr->iron_turn;

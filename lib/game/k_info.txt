@@ -5865,7 +5865,7 @@ $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating e
 $ENABLE_EXCAVATION$N:730:& Smattering~ of Sulfur
 $ENABLE_EXCAVATION$G:*:y
 $ENABLE_EXCAVATION$I:48:2:0
-$ENABLE_EXCAVATION$W:10:0:5:0
+$ENABLE_EXCAVATION$W:5:0:5:0
 $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
@@ -5882,7 +5882,7 @@ $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating e
 $ENABLE_EXCAVATION$N:732:& Dash~ of Ammonia Salt
 $ENABLE_EXCAVATION$G:*:w
 $ENABLE_EXCAVATION$I:48:4:0
-$ENABLE_EXCAVATION$W:5:0:5:0
+$ENABLE_EXCAVATION$W:10:0:5:0
 $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
@@ -5890,7 +5890,7 @@ $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating e
 $ENABLE_EXCAVATION$N:733:& Smattering~ of Reactive Metal Powder
 $ENABLE_EXCAVATION$G:*:s
 $ENABLE_EXCAVATION$I:48:5:0
-$ENABLE_EXCAVATION$W:1:0:5:0
+$ENABLE_EXCAVATION$W:5:0:5:0
 $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
@@ -5925,7 +5925,7 @@ $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating e
 $ENABLE_EXCAVATION$N:737:& Pinch~ of Vitriol
 $ENABLE_EXCAVATION$G:*:g
 $ENABLE_EXCAVATION$I:48:9:0
-$ENABLE_EXCAVATION$W:25:0:5:0
+$ENABLE_EXCAVATION$W:15:0:5:0
 $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.

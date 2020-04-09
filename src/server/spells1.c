@@ -4235,6 +4235,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				forge.iron_turn = turn;
 				forge.level = 0;
 				forge.number = 1;
+				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(0, &forge, -1, wpos, y, x);
 				s_printf("CHEMICAL: %s found charcoal.\n", p_ptr->name);

@@ -3823,6 +3823,40 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					drop_near(0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 			}
+#ifdef ENABLE_EXCAVATION
+			/* Magma - Possibly find ingredients: Sulfur (volcanic/undersea), Vitriol */
+			else if (!hard && !soft && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7)) {
+				object_type forge;
+
+				invcopy(&forge, lookup_kind(TV_CHEMICAL, rand_int(3) ? SV_SULFUR : SV_VITRIOL));
+				s_printf("CHEMICAL: %s found %s.\n", p_ptr->name, forge.sval == SV_SULFUR ? "sulfur" : "vitriol");
+				forge.owner = p_ptr->id;
+				forge.mode = p_ptr->mode;
+				forge.iron_trade = p_ptr->iron_trade;
+				forge.iron_turn = turn;
+				forge.level = 0;
+				forge.number = 1;
+				forge.weight = k_info[forge.k_idx].weight;
+				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				drop_near(0, &forge, -1, wpos, y, x);
+			}
+			/* Quartz (whatever =p) - Possibly find ingredients: Metal powder */
+			else if (hard && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7)) {
+				object_type forge;
+
+				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
+				s_printf("CHEMICAL: %s found Reactive Metal Powder.\n", p_ptr->name);
+				forge.owner = p_ptr->id;
+				forge.mode = p_ptr->mode;
+				forge.iron_trade = p_ptr->iron_trade;
+				forge.iron_turn = turn;
+				forge.level = 0;
+				forge.number = 1;
+				forge.weight = k_info[forge.k_idx].weight;
+				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				drop_near(0, &forge, -1, wpos, y, x);
+			}
+#endif
 		}
 
 		/* Failure */
@@ -4051,10 +4085,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			more = FALSE;
 		}
 	}
-
-#ifdef ENABLE_EXCAVATION
-	/* Possibly find ingredients: Sulfur (volcanic/undersea), Metal powder */
-#endif
 
 	/* Cancel repetition unless we can continue */
 	if (!more) disturb(Ind, 0, 0);

@@ -6040,7 +6040,68 @@ bool monster_death(int Ind, int m_idx) {
 	}
 
 #ifdef ENABLE_EXCAVATION
-	/* Possibly drop ingredients: Saltpeter (guano), Ammonia salt (from both, dung and poison/gas breathers), Sulfur (fire dragons) */
+	/* Possibly drop ingredients: Saltpeter (guano), Ammonia salt (from both, dung and poison/gas breathers), Sulfur (fire dragons), Vitriol (Acid breathers) */
+    {
+	bool found_chemical = FALSE:
+	if (r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000) { // Dragon-league basically
+		if (get_skill(p_ptr, SKILL_DIG) >= 5 && rand_int(7) < r_ptr->weight / 1000) {
+			object_type forge;
+
+			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SULFUR));
+			s_printf("CHEMICAL: %s found sulfur (kill).\n", p_ptr->name);
+			forge.owner = p_ptr->id;
+			forge.mode = p_ptr->mode;
+			forge.iron_trade = p_ptr->iron_trade;
+			forge.iron_turn = turn;
+			forge.level = 0;
+			forge.number = 1 + rand_int(r_ptr->weight / 30000);
+			forge.weight = k_info[forge.k_idx].weight;
+			forge.marked2 = ITEM_REMOVAL_NORMAL;
+			drop_near(0, &forge, -1, wpos, y, x);
+			found_chemical = TRUE;
+		}
+	}
+	if (r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000) { // Dragon-league basically
+		if (get_skill(p_ptr, SKILL_DIG) >= 15 && rand_int(7) < r_ptr->weight / 1000) {
+			object_type forge;
+
+			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_VITRIOL));
+			s_printf("CHEMICAL: %s found vitriol (kill).\n", p_ptr->name);
+			forge.owner = p_ptr->id;
+			forge.mode = p_ptr->mode;
+			forge.iron_trade = p_ptr->iron_trade;
+			forge.iron_turn = turn;
+			forge.level = 0;
+			forge.number = 1 + rand_int(r_ptr->weight / 30000);
+			forge.weight = k_info[forge.k_idx].weight;
+			forge.marked2 = ITEM_REMOVAL_NORMAL;
+			drop_near(0, &forge, -1, wpos, y, x);
+			found_chemical = TRUE;
+		}
+	}
+	if (r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000) { // Dragon-league basically
+		if (get_skill(p_ptr, SKILL_DIG) >= 10 && rand_int(7) < r_ptr->weight / 1000) {
+			object_type forge;
+
+			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));
+			s_printf("CHEMICAL: %s found ammonia salt (kill).\n", p_ptr->name);
+			forge.owner = p_ptr->id;
+			forge.mode = p_ptr->mode;
+			forge.iron_trade = p_ptr->iron_trade;
+			forge.iron_turn = turn;
+			forge.level = 0;
+			forge.number = 1 + rand_int(r_ptr->weight / 30000);
+			forge.weight = k_info[forge.k_idx].weight;
+			forge.marked2 = ITEM_REMOVAL_NORMAL;
+			drop_near(0, &forge, -1, wpos, y, x);
+			found_chemical = TRUE;
+		}
+	}
+	if (!found_chemical) {
+		/* Saltpetre (guano: bats/birds) */
+		/* Ammonia Salt (dung: whatever has hooves..) */
+	}
+    }
 #endif
 
 	/* Forget it */
