@@ -8762,13 +8762,17 @@ static void inging_to_mixture(int tval, int sval, int tval2, int sval2, object_t
 	s16b ingflag = ingredient2flag(tval, sval);
 	s16b ing2flag = ingredient2flag(tval2, sval2);
 
-	q_ptr->xtra1 |= ingflag;
-	if (ingflag == ing2flag) q_ptr->xtra2 |= ing2flag;
+	q_ptr->xtra1 = ingflag;
+	if (ingflag == ing2flag) q_ptr->xtra2 = ing2flag;
 	else q_ptr->xtra1 |= ing2flag;
 }
 /* Helper function to combine a mixture and an ingredient to form a new mixture (not ingredient). */
 static bool mixingred_to_mixture(object_type *o_ptr, int tval, int sval, object_type *q_ptr) {
 	s16b ingflag = ingredient2flag(tval, sval);
+
+	q_ptr->xtra1 = o_ptr->xtra1;
+	q_ptr->xtra2 = o_ptr->xtra2;
+	q_ptr->xtra3 = o_ptr->xtra3;
 
 	/* check whether there's still room to add that ingredient or whether the mixture is already saturated of that particular ingredient */
 	if (!(o_ptr->xtra1 & ingflag))
@@ -8828,6 +8832,7 @@ void mix_chemicals(int Ind, int item) {
 	case TV_CHEMICAL: case TV_POTION: case TV_FLASK: break;
 	default: return;
 	}
+	WIPE(q_ptr, object_type);
 
 	/* Hack:
 	   Activating a mixture 'with itself' will try to turn it into a finished blast charge.
@@ -8963,6 +8968,7 @@ void mix_chemicals(int Ind, int item) {
 
 	/* Result: Either a new ingredient, a mixture or a finished blast charge. */
 	q_ptr->k_idx = lookup_kind(q_ptr->tval, q_ptr->sval); // (using invcopy() would wipe the object)
+	o_ptr->weight = k_info[q_ptr->k_idx].weight;
 	//object_desc(Ind, o_name, q_ptr, FALSE, 256);
 
 	/* Recall original parameters */
