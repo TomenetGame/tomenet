@@ -6098,7 +6098,7 @@ bool monster_death(int Ind, int m_idx) {
 			found_chemical = TRUE;
 		}
 	}
-	if (!found_chemical && (r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) && !(r_ptr->flags7 & RF7_AQUATIC)) {
+	if (!found_chemical && (r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD | RF3_NONLIVING)) && !(r_ptr->flags7 & RF7_AQUATIC)) {
 		/* Avoid item flood */
 		if (!(r_ptr->flags1 & RF1_FRIENDS) || !rand_int(4)) {
 			/* Saltpetre (guano: bats/birds) */
