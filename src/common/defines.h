@@ -4162,18 +4162,19 @@
 /* TV_CHARGE svals */
  #define SV_CHARGE_BLAST		1	/* Charges can be thrown for immediate detonation or activated to detonate after a few seconds or put into trap kits? */
  #define SV_CHARGE_XBLAST		2
- #define SV_CHARGE_QUAKE		3
- #define SV_CHARGE_DESTRUCTION		4
- #define SV_CHARGE_FIRE			5
- #define SV_CHARGE_FIRESTORM		6
- #define SV_CHARGE_FIREWALL		7	/* inscribe N/NE/E/SE/S/SW/W/NW for direction? */
- #define SV_CHARGE_WRECKING		8	/* create rubble */
- #define SV_CHARGE_CASCADING		9	/* wall creation; inscribe for dir? */
- #define SV_CHARGE_TACTICAL		10	/* stone prison */
- #define SV_CHARGE_FLASHBOMB		11	/* blind effect */
- #define SV_CHARGE_CONCUSSION		12	/* extra stun effect */
- #define SV_CHARGE_XCONCUSSION		13	/* extra STUN effect */
- #define SV_CHARGE_UNDERGROUND		14	/* create water/lava (blast open a hidden underground vein) */
+ #define SV_CHARGE_SBLAST		3	/* Surgically creates a line of floor (anti-wallcreation) */
+ #define SV_CHARGE_QUAKE		4
+ #define SV_CHARGE_DESTRUCTION		5
+ #define SV_CHARGE_FIRE			6
+ #define SV_CHARGE_FIRESTORM		7
+ #define SV_CHARGE_FIREWALL		8	/* inscribe N/NE/E/SE/S/SW/W/NW for direction? */
+ #define SV_CHARGE_WRECKING		9	/* create rubble */
+ #define SV_CHARGE_CASCADING		10	/* wall creation; inscribe for dir? */
+ #define SV_CHARGE_TACTICAL		11	/* stone prison */
+ #define SV_CHARGE_FLASHBOMB		12	/* blind effect */
+ #define SV_CHARGE_CONCUSSION		13	/* extra stun effect */
+ #define SV_CHARGE_XCONCUSSION		14	/* extra STUN effect */
+ #define SV_CHARGE_UNDERGROUND		15	/* create water/lava (blast open a hidden underground vein) */
 /* TV_CHEMICAL svals */
  #define SV_CHARCOAL		1	/* small amount, your basic fuel ingredient to burn shits (>' ')> */
  #define SV_SULFUR		2	/* small amount, easens combustion */

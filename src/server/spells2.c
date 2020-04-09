@@ -8866,6 +8866,7 @@ void mix_chemicals(int Ind, int item) {
 		    (as == 3 && lo == 1)) q_ptr->sval = SV_CHARGE_BLAST;
 		if ((cc == 1 && su == 1 && sp == 3) ||
 		    (as == 3 && lo == 1 && mh == 1)) q_ptr->sval = SV_CHARGE_XBLAST;
+		if (cc == 2 && su == 2 && sp == 3 && as == 3) q_ptr->sval = SV_CHARGE_SBLAST;
 		if (cc == 1 && su == 1 && sp == 3 && mc == 1) q_ptr->sval = SV_CHARGE_QUAKE;
 		if (cc == 2 && su == 2 && sp == 3 && mc == 3) q_ptr->sval = SV_CHARGE_DESTRUCTION;
 		if (cc == 2 && su == 1 && sp == 2 && mh == 1) q_ptr->sval = SV_CHARGE_FIRE;
@@ -9285,6 +9286,14 @@ void detonate_charge(object_type *o_ptr) {
 		(void) project(PROJECTOR_PLAYER, 4, wpos, y, x, damroll(30, 15), GF_DETONATION, flg, "");
 		aggravate_monsters_floorpos(wpos, y, x);
 		break;
+	case SV_CHARGE_SBLAST:
+		//'dir' is stored in xtra9
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		//todo: pierce all walls..
+		project_hook(PROJECTOR_TERRAIN, GF_KILL_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
+		break;
 	case SV_CHARGE_QUAKE:
 		earthquake(wpos, y, x, 10);
 		break;
@@ -9309,10 +9318,20 @@ void detonate_charge(object_type *o_ptr) {
 		break;
 	case SV_CHARGE_FIREWALL:
 		//'dir' is stored in xtra9
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		//todo: compare to firewall spell..
+		project_hook(PROJECTOR_TERRAIN, GF_FIRE, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
 		break;
 	case SV_CHARGE_WRECKING:
 		break;
 	case SV_CHARGE_CASCADING:
+		//'dir' is stored in xtra9
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		project_hook(PROJECTOR_TERRAIN, GF_STONE_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
 		break;
 	case SV_CHARGE_TACTICAL:
  #ifdef USE_SOUND_2010
