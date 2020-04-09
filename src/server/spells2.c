@@ -8757,6 +8757,15 @@ static int mixmix_to_ingredient(object_type *o_ptr, object_type *o2_ptr) {
 
 	return 0; /* Failure - we created some mixture, but not an ingredient */
 }
+/* Helper function to combine two ingredients to form a new mixture (not ingredient). */
+static void inging_to_mixture(int tval, int sval, int tval2, int sval2, object_type *q_ptr) {
+	s16b ingflag = ingredient2flag(tval, sval);
+	s16b ing2flag = ingredient2flag(tval2, sval2);
+
+	q_ptr->xtra1 |= ingflag;
+	if (ingflag == ing2flag) q_ptr->xtra2 |= ing2flag;
+	else q_ptr->xtra1 |= ing2flag;
+}
 /* Helper function to combine a mixture and an ingredient to form a new mixture (not ingredient). */
 static bool mixingred_to_mixture(object_type *o_ptr, int tval, int sval, object_type *q_ptr) {
 	s16b ingflag = ingredient2flag(tval, sval);
@@ -8804,12 +8813,11 @@ void mix_chemicals(int Ind, int item) {
 	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation]; /* Ingredient #2 */
 	object_type *o2_ptr = &p_ptr->inventory[item]; /* Ingredient #1 */
 	object_type forge, *q_ptr = &forge; /* Result (Ingredient, mixture or finished blast charge) */
-	char o_name[ONAME_LEN];
+	//char o_name[ONAME_LEN];
 	int i = 0;
 
 	byte cc = 0, su = 0, sp = 0, as = 0, mp = 0, mh = 0, me = 0, mc = 0, vi = 0, ru = 0; // ..., vitriol, rust (? from rusty mail? / metal + water)
 	byte lo = 0, wa = 0, sw = 0, ac = 0; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
-
 
 	/* Sanity checks */
 	switch (o_ptr->tval) {
@@ -8871,8 +8879,7 @@ void mix_chemicals(int Ind, int item) {
 			return;
 		} else {
 			q_ptr->tval = TV_CHARGE;
-			object_desc(Ind, o_name, q_ptr, FALSE, 256);
-			msg_format(Ind, "You assemble a %s.", o_name);
+			msg_format(Ind, "You assemble a blast charge..");
 		}
 	} else {
 		/* First let's handle the combinations that actually create a new ingredient */
@@ -8929,8 +8936,12 @@ void mix_chemicals(int Ind, int item) {
 		} else {
 			/* Create mixture from mixture+mixture or ingredient+mixture */
 
-			/* First, check for ingredient + mixture */
-			if (o_ptr->sval != SV_MIXTURE || o2_ptr->tval != TV_CHEMICAL || o2_ptr->sval != SV_MIXTURE) {
+			/* First, check if we want to create a most basic mixture from just two ingredients */
+			if (o_ptr->sval != SV_MIXTURE && !(o2_ptr->tval == TV_CHEMICAL && o2_ptr->sval == SV_MIXTURE)) {
+				inging_to_mixture(o_ptr->tval, o_ptr->sval, o2_ptr->tval, o2_ptr->sval, q_ptr);
+				i = TRUE;
+			/* next, check for ingredient + mixture */
+			} else if (o_ptr->sval != SV_MIXTURE || o2_ptr->tval != TV_CHEMICAL || o2_ptr->sval != SV_MIXTURE) {
 				if (o_ptr->sval == SV_MIXTURE) i = mixingred_to_mixture(o_ptr, o2_ptr->tval, o2_ptr->sval, q_ptr);
 				else i = mixingred_to_mixture(o2_ptr, o_ptr->tval, o_ptr->sval, q_ptr);
 			}
@@ -8951,7 +8962,8 @@ void mix_chemicals(int Ind, int item) {
 	}
 
 	/* Result: Either a new ingredient, a mixture or a finished blast charge. */
-	invcopy(q_ptr, lookup_kind(q_ptr->tval, q_ptr->sval));
+	q_ptr->k_idx = lookup_kind(q_ptr->tval, q_ptr->sval); // (using invcopy() would wipe the object)
+	//object_desc(Ind, o_name, q_ptr, FALSE, 256);
 
 	/* Recall original parameters */
 	q_ptr->owner = o_ptr->owner;

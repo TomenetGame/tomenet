@@ -2390,6 +2390,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				modstr = tmp_modstr;
 			}
 			break;
+		case TV_CHARGE:
+			break;
 #endif
 
 		/* Used in the "inventory" routine */
