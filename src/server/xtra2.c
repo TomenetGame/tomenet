@@ -6289,10 +6289,12 @@ bool monster_death(int Ind, int m_idx) {
 		player_type *p_ptr2 = NULL;
 
 #ifdef MUCHO_RUMOURS
+ #if 0 /* disabled, since the unique diz is actually displayed, sorriez :/ (the day/night one is still active tho!) */
 		/*the_sandman prints a rumour */
 		/* print the same message other players get before it - mikaelh */
 		msg_print(Ind, "Suddenly a thought comes to your mind:");
 		fortune(Ind, TRUE);
+ #endif
 #endif
 
 		/* give credit to the killer by default */
