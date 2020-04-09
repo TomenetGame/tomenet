@@ -4280,6 +4280,25 @@ void do_cmd_disarm(int Ind, int dir) {
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
 
+#ifdef ENABLE_EXCAVATION
+			/* We abuse montraps for this atm, need to interject here *cough* */
+			if (cs_ptr->sc.montrap.difficulty >= 100) { //100+ = hack marker for blast charge
+				if (!magik(cs_ptr->sc.montrap.difficulty - 80)) {
+					msg_print(Ind, "You extinguish the fuse!");
+ #ifdef USE_SOUND_2010
+					sound_near_site(p_ptr->py, p_ptr->px, wpos, 0, "item_rune", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+					delete_object_idx(cs_ptr->sc.montrap.trap_kit, TRUE);
+					j = cs_ptr->sc.montrap.feat;
+					cs_erase(c_ptr, cs_ptr);
+					cave_set_feat_live(wpos, y, x, j);
+					//todo maybe: get the charge back, if we still consider it functional
+				} else msg_print(Ind, "\377yYou fail to extinguish the fuse!");
+				disturb(Ind, 0, 0);
+				return;
+			}
+#endif
+
 			msg_print(Ind, "You disarm the monster trap.");
 #ifdef USE_SOUND_2010
 			sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);

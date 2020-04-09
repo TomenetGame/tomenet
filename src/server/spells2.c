@@ -8982,6 +8982,10 @@ void mix_chemicals(int Ind, int item) {
 	q_ptr->iron_trade = o_ptr->iron_trade;
 	q_ptr->iron_turn = o_ptr->iron_turn;
 
+ #ifdef USE_SOUND_2010
+	 sound(Ind, "snowball", NULL, SFX_TYPE_COMMAND, FALSE); //uhhh - todo: get some alchemyic sfx..
+ #endif
+
 	/* Erase the ingredients in the pack */
 	inven_item_increase(Ind, p_ptr->current_activation, -1);
 	inven_item_describe(Ind, p_ptr->current_activation);
@@ -9117,6 +9121,10 @@ void grind_chemicals(int Ind, int item) {
 	q_ptr->iron_trade = o_ptr->iron_trade;
 	q_ptr->iron_turn = o_ptr->iron_turn;
 
+ #ifdef USE_SOUND_2010
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+ #endif
+
 	/* Erase the ingredients in the pack */
 	inven_item_increase(Ind, item, -1);
 	inven_item_describe(Ind, item);
@@ -9198,6 +9206,9 @@ void arm_charge(int Ind, int item, int dir) {
 
 	object_desc(Ind, o_name, o_ptr, FALSE, 256);
 	msg_format(Ind, "You place the %s and arm it..", o_name);
+ #ifdef USE_SOUND_2010
+	sound_near_site(p_ptr->py, p_ptr->px, wpos, 0, "item_rune", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
 
 	o2_ptr = &o_list[o2_idx];
 	object_copy(o2_ptr, o_ptr);
@@ -9222,7 +9233,7 @@ void arm_charge(int Ind, int item, int dir) {
 	cs_ptr->sc.montrap.trap_kit = o2_idx;
 
 	/* Set difficulty to impossible? */
-	cs_ptr->sc.montrap.difficulty = 127;
+	cs_ptr->sc.montrap.difficulty = 100 + k_info[o2_ptr->k_idx].level;
 
 	/* Preserve former feat */
 	cs_ptr->sc.montrap.feat = c_ptr->feat;
@@ -9243,13 +9254,27 @@ void detonate_charge(object_type *o_ptr) {
 	int x = o_ptr->ix, y = 255 - o_ptr->iy; //unhack
 	int flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO
 	    | PROJECT_LODF);//check the flags for correctness
+	struct c_special *cs_ptr;
+	cave_type *c_ptr, **zcave;
+
+	if (!(zcave = getcave(wpos))) return;
+	c_ptr = &zcave[y][x];
+	/* without this, when disarming it we'd generate a (nothing) */
+	if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+		cave_set_feat_live(wpos, y, x, cs_ptr->sc.montrap.feat);
+		cs_erase(c_ptr, cs_ptr);
+	}
 
 	switch (o_ptr->tval) {
 	case TV_CHARGE:
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
 		(void) project(PROJECTOR_MON_TRAP, 2, wpos, y, x, damroll(10, 10), GF_DETONATION, flg, ""); //todo: projector
 		aggravate_monsters_floorpos(wpos, y, x);
 		break;
 	}
+
 }
 #endif
 
