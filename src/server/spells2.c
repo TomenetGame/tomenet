@@ -9225,6 +9225,9 @@ void arm_charge(int Ind, int item, int dir) {
 	/* don't remove it quickly in towns */
 	o2_ptr->marked2 = ITEM_REMOVAL_MONTRAP;
 
+	/* Set 'dir' if any (for fire-wall charge) */
+	o2_ptr->xtra9 = dir;
+
 	/* Place monster-trap-/rune-like glyph on the floor */
 	o2_ptr->timeout = o_ptr->pval; //light the fuse
 
@@ -9252,8 +9255,8 @@ void arm_charge(int Ind, int item, int dir) {
 void detonate_charge(object_type *o_ptr) {
 	struct worldpos *wpos = &o_ptr->wpos;
 	int x = o_ptr->ix, y = 255 - o_ptr->iy; //unhack
-	int flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO
-	    | PROJECT_LODF);//check the flags for correctness
+	int flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO
+	    | PROJECT_SELF | PROJECT_LODF);//check the flags for correctness
 	struct c_special *cs_ptr;
 	cave_type *c_ptr, **zcave;
 
@@ -9265,16 +9268,81 @@ void detonate_charge(object_type *o_ptr) {
 		cs_erase(c_ptr, cs_ptr);
 	}
 
-	switch (o_ptr->tval) {
-	case TV_CHARGE:
+	 //todo: projector type, mon damage/death messages
+
+	switch (o_ptr->sval) {
+	case SV_CHARGE_BLAST:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void) project(PROJECTOR_MON_TRAP, 2, wpos, y, x, damroll(10, 10), GF_DETONATION, flg, ""); //todo: projector
+		(void) project(PROJECTOR_RUNE, 2, wpos, y, x, damroll(20, 15), GF_DETONATION, flg, "");
+		//aggravate_monsters_floorpos(wpos, y, x);
+		break;
+	case SV_CHARGE_XBLAST: //X2Megablast
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		(void) project(PROJECTOR_PLAYER, 4, wpos, y, x, damroll(30, 15), GF_DETONATION, flg, "");
 		aggravate_monsters_floorpos(wpos, y, x);
 		break;
+	case SV_CHARGE_QUAKE:
+		earthquake(wpos, y, x, 10);
+		break;
+	case SV_CHARGE_DESTRUCTION:
+		destroy_area(wpos, y, x, 15, TRUE, FEAT_FLOOR, 120);
+		break;
+	case SV_CHARGE_FIRE:
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "cast_ball", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		(void) project(PROJECTOR_UNUSUAL, 2, wpos, y, x, damroll(10, 10), GF_FIRE, flg & ~PROJECT_NODF, "");
+		break;
+	case SV_CHARGE_FIRESTORM: //evaporate the seas
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
+		//project_time_effect = 0;
+		project_time = 10;
+		project_interval = 9;
+		(void) project(PROJECTOR_RUNE, 4, wpos, y, x, 25, GF_FIRE, flg, "");
+		break;
+	case SV_CHARGE_FIREWALL:
+		//'dir' is stored in xtra9
+		break;
+	case SV_CHARGE_WRECKING:
+		break;
+	case SV_CHARGE_CASCADING:
+		break;
+	case SV_CHARGE_TACTICAL:
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		project(PROJECTOR_TRAP, 1, wpos, y, x, 1, GF_STONE_WALL,
+		    PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO | PROJECT_NODF, "trap of walls");
+		break;
+	case SV_CHARGE_FLASHBOMB: //panic
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		//(void) project(PROJECTOR_TERRAIN, 3, &wpos, y, x, damroll(9,3), GF_BLIND, flg, "");
+		project_los(0, GF_BLIND, 10 + rand_int(4), "");
+		break;
+	case SV_CHARGE_CONCUSSION:
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		(void) project(PROJECTOR_EFFECT, 3, wpos, y, x, damroll(9,3), GF_STUN, flg, "");
+		break;
+	case SV_CHARGE_XCONCUSSION:
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		(void) project(PROJECTOR_POTION, 5, wpos, y, x, damroll(18,3), GF_STUN, flg, "");
+		break;
+	case SV_CHARGE_UNDERGROUND:
+		break;
 	}
-
 }
 #endif
 
