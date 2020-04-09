@@ -8817,7 +8817,7 @@ void mix_chemicals(int Ind, int item) {
 	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation]; /* Ingredient #2 */
 	object_type *o2_ptr = &p_ptr->inventory[item]; /* Ingredient #1 */
 	object_type forge, *q_ptr = &forge; /* Result (Ingredient, mixture or finished blast charge) */
-	//char o_name[ONAME_LEN];
+	char o_name[ONAME_LEN];
 	int i = 0;
 
 	byte cc = 0, su = 0, sp = 0, as = 0, mp = 0, mh = 0, me = 0, mc = 0, vi = 0, ru = 0; // ..., vitriol, rust (? from rusty mail? / metal + water)
@@ -8974,7 +8974,8 @@ void mix_chemicals(int Ind, int item) {
 	/* Recall original parameters */
 	q_ptr->owner = o_ptr->owner;
 	q_ptr->mode = o_ptr->mode;
-	q_ptr->level = k_info[q_ptr->k_idx].level;
+	q_ptr->pval = k_info[q_ptr->k_idx].pval;
+	q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
 	q_ptr->discount = 0;
 	q_ptr->number = 1; //hmm, should it be possible to combine whole stacks instead of just 1 piece each?
 	q_ptr->note = 0;
@@ -8998,7 +8999,11 @@ void mix_chemicals(int Ind, int item) {
 	} else inven_item_optimize(Ind, p_ptr->current_activation);
 
 	/* Give us the result */
-	inven_carry(Ind, q_ptr);
+	i = inven_carry(Ind, q_ptr);
+	if (i != -1) {
+		object_desc(Ind, o_name, &forge, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+	}
 }
 /* Determine the sensorial properties of a chemical mixture */
 void mixture_flavour(object_type *o_ptr, char *flavour) {
@@ -9082,24 +9087,29 @@ void grind_chemicals(int Ind, int item) {
 	object_type *o_ptr = &p_ptr->inventory[item]; /* Metallic object */
 	object_type forge, *q_ptr = &forge; /* Resulting metal powder */
 	char o_name[ONAME_LEN];
+	int i;
 
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 	if (check_guard_inscription(o_ptr->note, 'k')) {
-		msg_print(Ind, "The item's inscription prevents grinding it to powder!");
+		msg_print(Ind, "The item's inscription prevents grinding it to powder.");
 		return;
 	}
-	if (artifact_p(o_ptr) || !set_rust_destroy(o_ptr)) {
-		msg_format(Ind, "Your %s is unaffected!", o_name);
+	if (artifact_p(o_ptr)) {
+		msg_print(Ind, "Artifacts cannot be ground into metal powder.");
+		return;
+	}
+	if (!set_rust_destroy(o_ptr)) {
+		msg_format(Ind, "Your %s will not yield reactive metal powder.", o_name);
 		return;
 	}
 
-	msg_format(Ind, "You grind the metal of your %s into dust..", o_name);
+	msg_format(Ind, "You grind the metal off of your %s ..", o_name);
 
 	invcopy(q_ptr, lookup_kind(TV_CHEMICAL, my_strcasestr(o_name, "rusty") ? SV_RUST : SV_METAL_POWDER));
 	/* Recall original parameters */
 	q_ptr->owner = o_ptr->owner;
 	q_ptr->mode = o_ptr->mode;
-	q_ptr->level = k_info[q_ptr->k_idx].level;
+	q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
 	q_ptr->discount = 0;
 	q_ptr->number = 1 + 10 - 1000 / (o_ptr->weight + 90);
 	q_ptr->number = (q_ptr->number >> 1) + 1; //experimental: reduce a bit further..
@@ -9113,7 +9123,19 @@ void grind_chemicals(int Ind, int item) {
 	inven_item_optimize(Ind, item);
 
 	/* Give us the result */
-	inven_carry(Ind, q_ptr);
+	i = inven_carry(Ind, q_ptr);
+	if (i != -1) {
+		object_desc(Ind, o_name, &forge, TRUE, 3);
+		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+	}
+}
+/* Set a charge live */
+void arm_charge(int Ind, object_type *o_ptr, int dir) {
+	char o_name[ONAME_LEN];
+
+	object_desc(Ind, o_name, o_ptr, FALSE, 256);
+	msg_format(Ind, "You place the %s and arm it..", o_name);
+	return;
 }
 #endif
 

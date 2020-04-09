@@ -5252,6 +5252,12 @@ bool activation_requires_direction(object_type *o_ptr) {
 		}
 	}
 
+#ifdef ENABLE_EXCAVATION
+	else if (o_ptr->tval == TV_CHARGE &&
+	    (o_ptr->sval == SV_CHARGE_FIREWALL || o_ptr->sval == SV_CHARGE_CASCADING))
+		return TRUE;
+#endif
+
 	/* All other items aren't activatable */
 	return FALSE;
 }
@@ -5467,13 +5473,16 @@ void do_cmd_activate(int Ind, int item, int dir) {
  #endif
 #endif
 
-	if (o_ptr->tval != TV_RUNE) { //Disable rune 'you activate it' text.
-		if (o_ptr->tval != TV_BOOK) {
-			/* Wonder Twin Powers... Activate! */
-			msg_print(Ind, "You activate it...");
-		} else {
-			msg_print(Ind, "You open the book to add another new spell..");
-		}
+	switch (o_ptr->tval) {
+	case TV_RUNE: break;
+	case TV_BOOK: msg_print(Ind, "You open the book to add a new spell.."); break;
+#ifdef ENABLE_EXCAVATION
+	case TV_CHEMICAL: case TV_CHARGE: break;
+	case TV_TOOL: if (o_ptr->sval == SV_TOOL_GRINDER) break; //else: fall through
+#endif
+	default:
+		/* Wonder Twin Powers... Activate! */
+		msg_print(Ind, "You activate it...");
 	}
 
 	break_cloaking(Ind, 0);
@@ -5690,8 +5699,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		get_item(Ind, ITH_CHEMICAL);
 		return;
 	}
+	if (o_ptr->tval == TV_CHARGE) {
+		arm_charge(Ind, o_ptr, 0);
+		return;
+	}
 	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) {
 		clear_current(Ind);
+		p_ptr->current_activation = item; //remember grinding tool
 		p_ptr->current_chemical = TRUE;
 		get_item(Ind, ITH_NONE);
 		return;
@@ -7036,6 +7050,13 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	// -------------------- ego items -------------------- //
 
 	// -------------------- base items -------------------- //
+
+#ifdef ENABLE_EXCAVATION
+	if (o_ptr->tval == TV_CHARGE) {
+		arm_charge(Ind, o_ptr, dir);
+		return;
+	}
+#endif
 
 	if (!done && o_ptr->tval == TV_DRAG_ARMOR && item == INVEN_BODY) {
 		switch (o_ptr->sval) {

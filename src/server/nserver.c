@@ -11974,7 +11974,9 @@ void Handle_item(int Ind, int item) {
 	}
 #ifdef ENABLE_EXCAVATION
 	else if (p_ptr->current_chemical) {
-		if (p_ptr->inventory[p_ptr->current_activation].tval == TV_TOOL) grind_chemicals(Ind, item); /* we activated our SV_TOOL_GRINDER */
+		if (p_ptr->inventory[p_ptr->current_activation].tval == TV_TOOL
+		    && p_ptr->inventory[p_ptr->current_activation].sval == SV_TOOL_GRINDER)
+			grind_chemicals(Ind, item);
 		else mix_chemicals(Ind, item); /* we activated chemicals for mixing */
 	}
 #endif

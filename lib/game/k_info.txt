@@ -5616,7 +5616,7 @@ D:Food that also cures poison, stun, cuts and even Black Breath.
 
 # for new 'Excavation' skill that replaces 'Digging' - C. Blue
 
-$ENABLE_EXCAVATION$N:702:& Blast charge~
+$ENABLE_EXCAVATION$N:702:& Blast Charge~
 $ENABLE_EXCAVATION$G:%:o
 $ENABLE_EXCAVATION$I:47:1:3
 $ENABLE_EXCAVATION$W:5:0:10:0
@@ -5624,7 +5624,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to cause a major explosion.
 
-$ENABLE_EXCAVATION$N:703:& Large blast charge~
+$ENABLE_EXCAVATION$N:703:& Large blast Charge~
 $ENABLE_EXCAVATION$G:%:o
 $ENABLE_EXCAVATION$I:47:2:5
 $ENABLE_EXCAVATION$W:10:0:20:0
@@ -5632,7 +5632,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to cause a huge explosion.
 
-$ENABLE_EXCAVATION$N:704:& Ground-shaking charge~
+$ENABLE_EXCAVATION$N:704:& Ground-shaking Charge~
 $ENABLE_EXCAVATION$G:%:R
 $ENABLE_EXCAVATION$I:47:3:9
 $ENABLE_EXCAVATION$W:30:0:50:0
@@ -5640,7 +5640,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to cause a local earthquake.
 
-$ENABLE_EXCAVATION$N:705:& Destructor-charge~
+$ENABLE_EXCAVATION$N:705:& Destructor-Charge~
 $ENABLE_EXCAVATION$G:%:R
 $ENABLE_EXCAVATION$I:47:4:10
 $ENABLE_EXCAVATION$W:40:0:100:0
@@ -5648,7 +5648,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to *destroy* a large area.
 
-$ENABLE_EXCAVATION$N:706:& Fire charge~
+$ENABLE_EXCAVATION$N:706:& Fire Charge~
 $ENABLE_EXCAVATION$G:%:r
 $ENABLE_EXCAVATION$I:47:5:5
 $ENABLE_EXCAVATION$W:5:0:10:0
@@ -5656,7 +5656,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to cause a strong conflagration.
 
-$ENABLE_EXCAVATION$N:707:& Firestorm charge~
+$ENABLE_EXCAVATION$N:707:& Firestorm Charge~
 $ENABLE_EXCAVATION$G:%:r
 $ENABLE_EXCAVATION$I:47:6:9
 $ENABLE_EXCAVATION$W:15:0:25:0
@@ -5664,7 +5664,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to create a storm of conflagration.
 
-$ENABLE_EXCAVATION$N:708:& Firewall charge~
+$ENABLE_EXCAVATION$N:708:& Firewall Charge~
 $ENABLE_EXCAVATION$G:%:r
 $ENABLE_EXCAVATION$I:47:7:2
 $ENABLE_EXCAVATION$W:10:0:15:0
@@ -5673,7 +5673,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to create an alley of fire.
 
 $ENABLE_EXCAVATION$# create rubble
-$ENABLE_EXCAVATION$N:709:& Wrecking charge~
+$ENABLE_EXCAVATION$N:709:& Wrecking Charge~
 $ENABLE_EXCAVATION$G:%:y
 $ENABLE_EXCAVATION$I:47:8:3
 $ENABLE_EXCAVATION$W:10:0:10:0
@@ -5682,7 +5682,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to block a passage.
 
 $ENABLE_EXCAVATION$# wall creation
-$ENABLE_EXCAVATION$N:710:& Cascading charge~
+$ENABLE_EXCAVATION$N:710:& Cascading Charge~
 $ENABLE_EXCAVATION$G:%:y
 $ENABLE_EXCAVATION$I:47:9:2
 $ENABLE_EXCAVATION$W:20:0:20:0
@@ -5691,7 +5691,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to chain a series of debris-creating blasts.
 
 $ENABLE_EXCAVATION$# stone prison, leaves the 'epicentre' point unharmed!
-$ENABLE_EXCAVATION$N:711:& Tactical charge~
+$ENABLE_EXCAVATION$N:711:& Tactical Charge~
 $ENABLE_EXCAVATION$G:%:y
 $ENABLE_EXCAVATION$I:47:10:2
 $ENABLE_EXCAVATION$W:25:0:20:0
@@ -5709,7 +5709,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to cause an extremely bright explosion.
 
 $ENABLE_EXCAVATION$# stun effect
-$ENABLE_EXCAVATION$N:713:& Concussive charge~
+$ENABLE_EXCAVATION$N:713:& Concussive Charge~
 $ENABLE_EXCAVATION$G:%:U
 $ENABLE_EXCAVATION$I:47:12:2
 $ENABLE_EXCAVATION$W:15:0:20:0
@@ -5718,7 +5718,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to emphasize a concussive effect.
 
 $ENABLE_EXCAVATION$# greater stun effect
-$ENABLE_EXCAVATION$N:714:& Large Concussive charge~
+$ENABLE_EXCAVATION$N:714:& Large Concussive Charge~
 $ENABLE_EXCAVATION$G:%:U
 $ENABLE_EXCAVATION$I:47:13:3
 $ENABLE_EXCAVATION$W:25:0:30:0
@@ -5727,7 +5727,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE | HIDE_TYPE
 $ENABLE_EXCAVATION$D:Allows proficient demolitionists to greatly emphasize a concussive effect.
 
 $ENABLE_EXCAVATION$# create water/lava (depending on the dungeon)
-$ENABLE_EXCAVATION$N:715:& Underground charge~
+$ENABLE_EXCAVATION$N:715:& Underground Charge~
 $ENABLE_EXCAVATION$G:%:y
 $ENABLE_EXCAVATION$I:47:14:7
 $ENABLE_EXCAVATION$W:20:0:30:0
@@ -5761,10 +5761,10 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Mixture of ingredients used by demolitionists for creating explosives.
 
-$ENABLE_EXCAVATION$N:719:& Grinding tool~
+$ENABLE_EXCAVATION$N:719:& Grinding Tool~
 $ENABLE_EXCAVATION$G:~:D
 $ENABLE_EXCAVATION$I:12:8:0
-$ENABLE_EXCAVATION$W:0:0:4:40
+$ENABLE_EXCAVATION$W:0:0:40:40
 $ENABLE_EXCAVATION$A:5/10:10/20
 $ENABLE_EXCAVATION$P:0:1d2:0:0:0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
@@ -5845,7 +5845,7 @@ P:0:1d1:0:0:0
 
 
 # Crafting ingredients for blast charges
-$ENABLE_EXCAVATION$N:729:& Piece~ of charcoal
+$ENABLE_EXCAVATION$N:729:& Piece~ of Charcoal
 $ENABLE_EXCAVATION$G:*:D
 $ENABLE_EXCAVATION$I:48:1:0
 $ENABLE_EXCAVATION$W:1:0:5:0
@@ -5853,7 +5853,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
-$ENABLE_EXCAVATION$N:730:& Piece~ of sulfur
+$ENABLE_EXCAVATION$N:730:& Smattering~ of Sulfur
 $ENABLE_EXCAVATION$G:*:y
 $ENABLE_EXCAVATION$I:48:2:0
 $ENABLE_EXCAVATION$W:10:0:5:0
@@ -5861,7 +5861,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
-$ENABLE_EXCAVATION$N:731:& Piece~ of saltpetre
+$ENABLE_EXCAVATION$N:731:& Smattering~ of Saltpetre
 $ENABLE_EXCAVATION$G:*:W
 $ENABLE_EXCAVATION$I:48:3:0
 $ENABLE_EXCAVATION$W:5:0:5:0
@@ -5870,7 +5870,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
 #pouch? dash?
-$ENABLE_EXCAVATION$N:732:& Smattering~ of ammonia salt
+$ENABLE_EXCAVATION$N:732:& Dash~ of Ammonia Salt
 $ENABLE_EXCAVATION$G:*:w
 $ENABLE_EXCAVATION$I:48:4:0
 $ENABLE_EXCAVATION$W:5:0:5:0
@@ -5878,7 +5878,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
-$ENABLE_EXCAVATION$N:733:& Smattering~ of reactive metal powder
+$ENABLE_EXCAVATION$N:733:& Smattering~ of Reactive Metal Powder
 $ENABLE_EXCAVATION$G:*:s
 $ENABLE_EXCAVATION$I:48:5:0
 $ENABLE_EXCAVATION$W:1:0:5:0
@@ -5887,7 +5887,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
 #metal hydroxide
-$ENABLE_EXCAVATION$N:734:& Smattering~ of caustic metal ash
+$ENABLE_EXCAVATION$N:734:& Dash~ of Caustic Metal Ash
 $ENABLE_EXCAVATION$G:*:W
 $ENABLE_EXCAVATION$I:48:6:0
 $ENABLE_EXCAVATION$W:15:0:5:0
@@ -5896,7 +5896,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
 #metal peroxide
-$ENABLE_EXCAVATION$N:735:& Smattering~ of potent caustic metal ash
+$ENABLE_EXCAVATION$N:735:& Dash~ of Potent Caustic Metal Ash
 $ENABLE_EXCAVATION$G:*:y
 $ENABLE_EXCAVATION$I:48:7:0
 $ENABLE_EXCAVATION$W:20:0:5:0
@@ -5905,7 +5905,7 @@ $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
 #metal perchlorate
-$ENABLE_EXCAVATION$N:736:& Smattering~ of caustic salt
+$ENABLE_EXCAVATION$N:736:& Dash~ of Caustic Salt
 $ENABLE_EXCAVATION$G:*:W
 $ENABLE_EXCAVATION$I:48:8:0
 $ENABLE_EXCAVATION$W:25:0:5:0
@@ -5913,7 +5913,7 @@ $ENABLE_EXCAVATION$A:127/0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Ingredient used by proficient demolitionists for creating explosives.
 
-$ENABLE_EXCAVATION$N:737:& Smattering~ of Vitriol
+$ENABLE_EXCAVATION$N:737:& Pinch~ of Vitriol
 $ENABLE_EXCAVATION$G:*:g
 $ENABLE_EXCAVATION$I:48:9:0
 $ENABLE_EXCAVATION$W:25:0:5:0

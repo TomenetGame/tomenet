@@ -4166,9 +4166,9 @@
  #define SV_CHARGE_DESTRUCTION		4
  #define SV_CHARGE_FIRE			5
  #define SV_CHARGE_FIRESTORM		6
- #define SV_CHARGE_FIREWALL		7	/* hack: inscribe N/NE/E/SE/S/SW/W/NW for direction! */
+ #define SV_CHARGE_FIREWALL		7	/* inscribe N/NE/E/SE/S/SW/W/NW for direction? */
  #define SV_CHARGE_WRECKING		8	/* create rubble */
- #define SV_CHARGE_CASCADING		9	/* wall creation */
+ #define SV_CHARGE_CASCADING		9	/* wall creation; inscribe for dir? */
  #define SV_CHARGE_TACTICAL		10	/* stone prison */
  #define SV_CHARGE_FLASHBOMB		11	/* blind effect */
  #define SV_CHARGE_CONCUSSION		12	/* extra stun effect */
