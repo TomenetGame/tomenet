@@ -14,11 +14,11 @@
 #include "angband.h"
 #include "externs.h"
 
-/* chance of townie respawning like other monsters, randint(chance)==0 means respawn */
+/* chance of townie respawning like other monsters, rand_int(chance)==0 means respawn */
  /* Default */
-#define TOWNIE_RESPAWN_CHANCE	250
+#define TOWNIE_RESPAWN_CHANCE	350
 /* better for Halloween event */
-#define HALLOWEEN_TOWNIE_RESPAWN_CHANCE	125
+#define HALLOWEEN_TOWNIE_RESPAWN_CHANCE	175
 
 /* if defined, player ghost loses exp slowly. [10000]
  * see GHOST_XP_CASHBACK in xtra2.c also.
@@ -2629,8 +2629,7 @@ static void process_world_player(int Ind) {
 	if (((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
 	    (!season_halloween && istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE) == 0)) ||
 	    (season_halloween && istown(&p_ptr->wpos) &&
-	    (rand_int(in_bree(&p_ptr->wpos) ?
-	    HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) == 0)))
+	    (rand_int(in_bree(&p_ptr->wpos) ? HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) == 0)))
 	    /* avoid admins spawning stuff */
 	    && !(p_ptr->admin_dm || p_ptr->admin_wiz))
 #endif
