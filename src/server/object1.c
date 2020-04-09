@@ -2062,6 +2062,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	object_kind	*k_ptr = &k_info[o_ptr->k_idx];
 	bool skip_base_article = FALSE;
 	bool special_rop = (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL);
+#ifdef ENABLE_EXCAVATION
+	char 		tmp_modstr[ONAME_LEN];
+#endif
 
 	/* Extract some flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
@@ -2379,6 +2382,15 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 		case TV_MONSTER:
 			break;
+
+#ifdef ENABLE_EXCAVATION
+		case TV_CHEMICAL:
+			if (o_ptr->sval == SV_MIXTURE) {
+				mixture_flavour(o_ptr, tmp_modstr);
+				modstr = tmp_modstr;
+			}
+			break;
+#endif
 
 		/* Used in the "inventory" routine */
 		default:
@@ -3701,6 +3713,12 @@ cptr item_activation(object_type *o_ptr) {
 		else
 			return "splitting into two basic tier runes";
 	}
+
+#ifdef ENABLE_EXCAVATION
+	if (o_ptr->tval == TV_CHEMICAL) return "combining with other chemical ingredients or mixtures";
+	if (o_ptr->tval == TV_CHARGE) return(format("ignition after %d turns", o_ptr->pval));
+	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return "grinding solid metal to powder";
+#endif
 
 	/* Oops */
 	return NULL;

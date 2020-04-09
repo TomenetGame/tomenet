@@ -2672,7 +2672,7 @@ int set_water_destroy(object_type *o_ptr) {
 /*
  * Rust
  */
-static int set_rust_destroy(object_type *o_ptr) {
+int set_rust_destroy(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	if (!can_rust(o_ptr)) return (FALSE);

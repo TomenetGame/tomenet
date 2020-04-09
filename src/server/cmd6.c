@@ -5689,6 +5689,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		get_item(Ind, ITH_CHEMICAL);
 		return;
 	}
+	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) {
+		clear_current(Ind);
+		p_ptr->current_chemical = TRUE;
+		get_item(Ind, ITH_NONE);
+		return;
+	}
 #endif
 
 	// -------------------- artifacts -------------------- //

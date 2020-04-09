@@ -3262,6 +3262,9 @@
 #define SV_TOOL_TARPAULIN		5
 #define SV_TOOL_FLINT			6
 #define SV_TOOL_WRAPPING		7
+#ifdef ENABLE_EXCAVATION
+ #define SV_TOOL_GRINDER		8
+#endif
 
 /* The "sval" codes for TV_MSTAFF */
 #define SV_MSTAFF 			1
@@ -4153,16 +4156,17 @@
    metalperoxide: metaloxides (or ammonia) + hydroxides(*) (soooorta...again, so it'll just be MORE saltwater with rust, lul) -> 'potent caustic metal ash' (not feasible in medieval context),
    perchlorates: acid (let's just assume it's hydrochloric acid by chance -_-) + aluminium (we dont have magnesium..) or kalium (from saltpeter maybe?) -> 'caustic salt' (not feasible in medieval context)
    ^ acid: sulfur+saltpeter with steam and heat, so +water+lampoil =p, or:
-   ^ vitriol (works as acid replacement): mining (volcanic)/dragons.
+   ^ vitriol (works as acid replacement - when creating perchlorate too? as metal is not a liquid? ah w/e just allow..): mining (volcanic)/dragons.
+   ..rust: metal powder + (salt) water. Or use some kind of 'grinding tool' on rusty armour or on normal metal items to obtain (not 'reactive' though) metal powder first.
     */
 /* TV_CHARGE svals */
- #define SV_CHARGE_BLAST		1
+ #define SV_CHARGE_BLAST		1	/* Charges can be thrown for immediate detonation or activated to detonate after a few seconds or put into trap kits? */
  #define SV_CHARGE_XBLAST		2
  #define SV_CHARGE_QUAKE		3
  #define SV_CHARGE_DESTRUCTION		4
  #define SV_CHARGE_FIRE			5
  #define SV_CHARGE_FIRESTORM		6
- #define SV_CHARGE_FIREWALL		7
+ #define SV_CHARGE_FIREWALL		7	/* hack: inscribe N/NE/E/SE/S/SW/W/NW for direction! */
  #define SV_CHARGE_WRECKING		8	/* create rubble */
  #define SV_CHARGE_CASCADING		9	/* wall creation */
  #define SV_CHARGE_TACTICAL		10	/* stone prison */
@@ -4182,6 +4186,36 @@
  #define SV_VITRIOL		9	/* (sulphates) alternative for flask of acid */
  #define SV_RUST		10	/* metaloxide.. we limit it to iron I guess.. */
  #define SV_MIXTURE		99	/* Mixture of the above ingredients. Uses xtra1/2/3 to bitwise store the ingredients that went into it so far, the 3 variables indicating the amounts of each bit, eg 2xsalpeter+1x... */
+/* Helper indices for ingredients -- IMPORTANT: For ingredients in TV_CHEMICAL these must match the sval! */
+ #define CI_CC	1
+ #define CI_SU	2
+ #define CI_SP	3
+ #define CI_AS	4
+ #define CI_MP	5
+ #define CI_MH	6
+ #define CI_ME	7
+ #define CI_MC	8
+ #define CI_VI	9
+ #define CI_RU	10
+ #define CI_LO	11
+ #define CI_WA	12
+ #define CI_SW	13
+ #define CI_AC	14
+/* Helper flags for the ingredient svals -- IMPORTANT: the CI_ values must match the flag leftshift to get the CF_! Eg: ammonia = 1 << (CI_AS - 1) = CF_AS */
+ #define CF_CC		0x0001
+ #define CF_SU		0x0002
+ #define CF_SP		0x0004
+ #define CF_AS		0x0008
+ #define CF_MP		0x0010
+ #define CF_MH		0x0020
+ #define CF_ME		0x0040
+ #define CF_MC		0x0080
+ #define CF_VI		0x0100
+ #define CF_RU		0x0200
+ #define CF_LO		0x0400
+ #define CF_WA		0x0800
+ #define CF_SW		0x1000
+ #define CF_AC		0x2000
 #endif
 
 /* svals for TV_SPECIAL */

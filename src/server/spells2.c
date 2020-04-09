@@ -8660,6 +8660,144 @@ void tome_creation_aux(int Ind, int item) {
 }
 
 #ifdef ENABLE_EXCAVATION
+/* Helper function to create a flag value from an ingredient, for mixture calculations */
+static s16b ingredient2flag(int tval, int sval) {
+	int bit = 0;
+
+	//basically just the various ways of: sulfur+saltpetre+water+oil = acid
+	switch (tval) {
+	case TV_CHEMICAL: bit = sval; break;
+	case TV_POTION:
+		switch (sval) {
+		case SV_POTION_WATER: bit = CI_WA; break;
+		case SV_POTION_SALT_WATER: bit = CI_SW; break;
+		}
+		break;
+	case TV_FLASK:
+		switch (sval) {
+		case SV_FLASK_OIL: bit = CI_LO; break;
+		case SV_FLASK_ACID: bit = CI_AC; break;
+		}
+		break;
+	}
+
+	if (!bit) return 0x000; /* paranoia - not a valid ingredient */
+	return 1 << (bit - 1);
+}
+/* Helper function to combine two ingredients to form a new ingredient (not a mixture). */
+static int ingredients_to_ingredient(int sval1, int tval2, int sval2) {
+	switch (sval1) {
+	case SV_METAL_POWDER:
+		if (tval2 == TV_POTION) switch (sval2) {
+			case SV_POTION_WATER:
+			case SV_POTION_SALT_WATER:
+				return CI_RU;
+		} else if ((tval2 == TV_FLASK && sval2 == SV_FLASK_ACID) ||
+		    (tval2 == TV_CHEMICAL && sval2 == SV_VITRIOL))
+			return CI_MC;
+		return 0;
+	case SV_RUST:
+		if (tval2 == TV_POTION && sval2 == SV_POTION_SALT_WATER) return CI_MH;
+		return 0;
+	case SV_METAL_HYDROXIDE:
+		if (tval2 == TV_CHEMICAL) switch (sval2) {
+			case SV_RUST:
+			case SV_AMMONIA_SALT:
+				return CI_ME;
+		}
+		return 0;
+	}
+	return 0;
+}
+/* Helper function to combine a mixture and an ingredient to form a new ingredient (not a mixture). */
+static int mixingred_to_ingredient(object_type *o_ptr, int tval, int sval) {
+	s16b ingflag = ingredient2flag(tval, sval);
+	s16b xtra1 = 0x000, xtra2 = 0x000, xtra3 = 0x000;
+
+	/* check whether there's still room to add that ingredient or whether the mixture is already saturated of that particular ingredient */
+	if (!(o_ptr->xtra1 & ingflag))
+		xtra1 |= ingflag;
+	else if (!(o_ptr->xtra2 & ingflag))
+		xtra2 |= ingflag;
+	else if (!(o_ptr->xtra3 & ingflag))
+		xtra3 |= ingflag;
+	else return -1; /* failure - mixture is saturated */
+
+	/* check if the result would be a valid ingredient */
+	if ((xtra1 & (CF_SU | CF_SP | CF_WA | CF_LO)) == (CF_SU | CF_SP | CF_WA | CF_LO)
+	    && !xtra2 && !xtra3)
+		return CI_AC; /* Success - we created acid */
+
+	return 0; /* Failure - we created some mixture, but not an ingredient */
+}
+/* Helper function to combine two mixtures to form a new ingredient (not a mixture). */
+static int mixmix_to_ingredient(object_type *o_ptr, object_type *o2_ptr) {
+	s16b xtra1 = 0x000, xtra2 = 0x000, xtra3 = 0x000, f;
+	int i, k;
+
+	for (i = 0; i <= 15; i++) {
+		f = 1 << i;
+		k = (o_ptr->xtra1 & f) ? 1 : 0 + (o_ptr->xtra2 & f) ? 1 : 0 + (o_ptr->xtra3 & f) ? 1 : 0;
+		k += (o2_ptr->xtra1 & f) ? 1 : 0 + (o2_ptr->xtra2 & f) ? 1 : 0 + (o2_ptr->xtra3 & f) ? 1 : 0;
+		if (k > 3) return -1; /* Error: Mixture would be oversaturated of this ingredient */
+
+		/* mix.. */
+		switch (k) {
+		case 3: xtra3 |= f;
+		case 2: xtra2 |= f;
+		case 1: xtra1 |= f; break;
+		case 0: break;
+		}
+	}
+
+	/* check if the result would be a valid ingredient */
+	if ((xtra1 & (CF_SU | CF_SP | CF_WA | CF_LO)) == (CF_SU | CF_SP | CF_WA | CF_LO)
+	    && !xtra2 && !xtra3)
+		return CI_AC; /* Success - we created acid */
+
+	return 0; /* Failure - we created some mixture, but not an ingredient */
+}
+/* Helper function to combine a mixture and an ingredient to form a new mixture (not ingredient). */
+static bool mixingred_to_mixture(object_type *o_ptr, int tval, int sval, object_type *q_ptr) {
+	s16b ingflag = ingredient2flag(tval, sval);
+
+	/* check whether there's still room to add that ingredient or whether the mixture is already saturated of that particular ingredient */
+	if (!(o_ptr->xtra1 & ingflag))
+		q_ptr->xtra1 |= ingflag;
+	else if (!(o_ptr->xtra2 & ingflag))
+		q_ptr->xtra2 |= ingflag;
+	else if (!(o_ptr->xtra3 & ingflag))
+		q_ptr->xtra3 |= ingflag;
+	else return FALSE; /* failure - mixture is saturated */
+
+	return TRUE;
+}
+/* Helper function to combine two mixtures to form a new mixture (not ingredient). */
+static bool mixmix_to_mixture(object_type *o_ptr, object_type *o2_ptr, object_type *q_ptr) {
+	s16b xtra1 = 0x000, xtra2 = 0x000, xtra3 = 0x000, f;
+	int i, k;
+
+	for (i = 0; i <= 15; i++) {
+		f = 1 << i;
+		k = (o_ptr->xtra1 & f) ? 1 : 0 + (o_ptr->xtra2 & f) ? 1 : 0 + (o_ptr->xtra3 & f) ? 1 : 0;
+		k += (o2_ptr->xtra1 & f) ? 1 : 0 + (o2_ptr->xtra2 & f) ? 1 : 0 + (o2_ptr->xtra3 & f) ? 1 : 0;
+		if (k > 3) return FALSE; /* Error: Mixture would be oversaturated of this ingredient */
+
+		/* mix.. */
+		switch (k) {
+		case 3: xtra3 |= f;
+		case 2: xtra2 |= f;
+		case 1: xtra1 |= f; break;
+		case 0: break;
+		}
+	}
+
+	/* Translate to target mixture, after all flags were verified to be successfully mixable */
+	q_ptr->xtra1 = xtra1;
+	q_ptr->xtra2 = xtra2;
+	q_ptr->xtra3 = xtra3;
+	return TRUE;
+}
 /* Mix two chemicals to form a new chemical, a mixture, or create a finished product aka a blast charge - C. Blue */
 void mix_chemicals(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
@@ -8667,9 +8805,10 @@ void mix_chemicals(int Ind, int item) {
 	object_type *o2_ptr = &p_ptr->inventory[item]; /* Ingredient #1 */
 	object_type forge, *q_ptr = &forge; /* Result (Ingredient, mixture or finished blast charge) */
 	char o_name[ONAME_LEN];
+	int i = 0;
 
-	byte cc, su, sp, as, mp, mh, me, mc, vi, ru; // ..., vitriol, rust (? from rusty mail? / metal + water)
-	byte lo, wa, sw, ac; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
+	byte cc = 0, su = 0, sp = 0, as = 0, mp = 0, mh = 0, me = 0, mc = 0, vi = 0, ru = 0; // ..., vitriol, rust (? from rusty mail? / metal + water)
+	byte lo = 0, wa = 0, sw = 0, ac = 0; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
 
 
 	/* Sanity checks */
@@ -8692,25 +8831,24 @@ void mix_chemicals(int Ind, int item) {
 		}
 
 		/* Count amounts of ingredients in our mixture */
-		cc += ((o_ptr->xtra1 & 0x0001) ? 1 : 0) + ((o_ptr->xtra2 & 0x0001) ? 1 : 0) + ((o_ptr->xtra3 & 0x0001) ? 1 : 0);
-		su += ((o_ptr->xtra1 & 0x0002) ? 1 : 0) + ((o_ptr->xtra2 & 0x0002) ? 1 : 0) + ((o_ptr->xtra3 & 0x0002) ? 1 : 0);
-		sp += ((o_ptr->xtra1 & 0x0004) ? 1 : 0) + ((o_ptr->xtra2 & 0x0004) ? 1 : 0) + ((o_ptr->xtra3 & 0x0004) ? 1 : 0);
-		as += ((o_ptr->xtra1 & 0x0008) ? 1 : 0) + ((o_ptr->xtra2 & 0x0008) ? 1 : 0) + ((o_ptr->xtra3 & 0x0008) ? 1 : 0);
-		mp += ((o_ptr->xtra1 & 0x0010) ? 1 : 0) + ((o_ptr->xtra2 & 0x0010) ? 1 : 0) + ((o_ptr->xtra3 & 0x0010) ? 1 : 0);
-		mh += ((o_ptr->xtra1 & 0x0020) ? 1 : 0) + ((o_ptr->xtra2 & 0x0020) ? 1 : 0) + ((o_ptr->xtra3 & 0x0020) ? 1 : 0);
-		me += ((o_ptr->xtra1 & 0x0040) ? 1 : 0) + ((o_ptr->xtra2 & 0x0040) ? 1 : 0) + ((o_ptr->xtra3 & 0x0040) ? 1 : 0);
-		mc += ((o_ptr->xtra1 & 0x0080) ? 1 : 0) + ((o_ptr->xtra2 & 0x0080) ? 1 : 0) + ((o_ptr->xtra3 & 0x0080) ? 1 : 0);
+		cc += ((o_ptr->xtra1 & CF_CC) ? 1 : 0) + ((o_ptr->xtra2 & CF_CC) ? 1 : 0) + ((o_ptr->xtra3 & CF_CC) ? 1 : 0);
+		su += ((o_ptr->xtra1 & CF_SU) ? 1 : 0) + ((o_ptr->xtra2 & CF_SU) ? 1 : 0) + ((o_ptr->xtra3 & CF_SU) ? 1 : 0);
+		sp += ((o_ptr->xtra1 & CF_SP) ? 1 : 0) + ((o_ptr->xtra2 & CF_SP) ? 1 : 0) + ((o_ptr->xtra3 & CF_SP) ? 1 : 0);
+		as += ((o_ptr->xtra1 & CF_AS) ? 1 : 0) + ((o_ptr->xtra2 & CF_AS) ? 1 : 0) + ((o_ptr->xtra3 & CF_AS) ? 1 : 0);
+		mp += ((o_ptr->xtra1 & CF_MP) ? 1 : 0) + ((o_ptr->xtra2 & CF_MP) ? 1 : 0) + ((o_ptr->xtra3 & CF_MP) ? 1 : 0);
+		mh += ((o_ptr->xtra1 & CF_MH) ? 1 : 0) + ((o_ptr->xtra2 & CF_MH) ? 1 : 0) + ((o_ptr->xtra3 & CF_MH) ? 1 : 0);
+		me += ((o_ptr->xtra1 & CF_ME) ? 1 : 0) + ((o_ptr->xtra2 & CF_ME) ? 1 : 0) + ((o_ptr->xtra3 & CF_ME) ? 1 : 0);
+		mc += ((o_ptr->xtra1 & CF_MC) ? 1 : 0) + ((o_ptr->xtra2 & CF_MC) ? 1 : 0) + ((o_ptr->xtra3 & CF_MC) ? 1 : 0);
 
-		vi += ((o_ptr->xtra1 & 0x0100) ? 1 : 0) + ((o_ptr->xtra2 & 0x0100) ? 1 : 0) + ((o_ptr->xtra3 & 0x0100) ? 1 : 0);
-		ru += ((o_ptr->xtra1 & 0x0200) ? 1 : 0) + ((o_ptr->xtra2 & 0x0200) ? 1 : 0) + ((o_ptr->xtra3 & 0x0200) ? 1 : 0);
+		vi += ((o_ptr->xtra1 & CF_VI) ? 1 : 0) + ((o_ptr->xtra2 & CF_VI) ? 1 : 0) + ((o_ptr->xtra3 & CF_VI) ? 1 : 0);
+		ru += ((o_ptr->xtra1 & CF_RU) ? 1 : 0) + ((o_ptr->xtra2 & CF_RU) ? 1 : 0) + ((o_ptr->xtra3 & CF_RU) ? 1 : 0);
 
-		lo += ((o_ptr->xtra1 & 0x0400) ? 1 : 0) + ((o_ptr->xtra2 & 0x0400) ? 1 : 0) + ((o_ptr->xtra3 & 0x0400) ? 1 : 0);
-		wa += ((o_ptr->xtra1 & 0x0800) ? 1 : 0) + ((o_ptr->xtra2 & 0x0800) ? 1 : 0) + ((o_ptr->xtra3 & 0x0800) ? 1 : 0);
-		sw += ((o_ptr->xtra1 & 0x1000) ? 1 : 0) + ((o_ptr->xtra2 & 0x1000) ? 1 : 0) + ((o_ptr->xtra3 & 0x1000) ? 1 : 0);
-		ac += ((o_ptr->xtra1 & 0x2000) ? 1 : 0) + ((o_ptr->xtra2 & 0x2000) ? 1 : 0) + ((o_ptr->xtra3 & 0x2000) ? 1 : 0);
+		lo += ((o_ptr->xtra1 & CF_LO) ? 1 : 0) + ((o_ptr->xtra2 & CF_LO) ? 1 : 0) + ((o_ptr->xtra3 & CF_LO) ? 1 : 0);
+		wa += ((o_ptr->xtra1 & CF_WA) ? 1 : 0) + ((o_ptr->xtra2 & CF_WA) ? 1 : 0) + ((o_ptr->xtra3 & CF_WA) ? 1 : 0);
+		sw += ((o_ptr->xtra1 & CF_SW) ? 1 : 0) + ((o_ptr->xtra2 & CF_SW) ? 1 : 0) + ((o_ptr->xtra3 & CF_SW) ? 1 : 0);
+		ac += ((o_ptr->xtra1 & CF_AC) ? 1 : 0) + ((o_ptr->xtra2 & CF_AC) ? 1 : 0) + ((o_ptr->xtra3 & CF_AC) ? 1 : 0);
 
 		/* Check for valid crafting results! */
-		q_ptr->tval = TV_CHARGE;
 		if ((cc == 1 && su == 1 && sp == 2) ||
 		    (as == 3 && lo == 1)) q_ptr->sval = SV_CHARGE_BLAST;
 		if ((cc == 1 && su == 1 && sp == 3) ||
@@ -8732,36 +8870,84 @@ void mix_chemicals(int Ind, int item) {
 			msg_print(Ind, "That is not an appropriate mixture for making a blast charge.");
 			return;
 		} else {
+			q_ptr->tval = TV_CHARGE;
 			object_desc(Ind, o_name, q_ptr, FALSE, 256);
 			msg_format(Ind, "You assemble a %s.", o_name);
 		}
 	} else {
-		q_ptr->tval = TV_CHEMICAL;
-		q_ptr->sval = SV_MIXTURE;
+		/* First let's handle the combinations that actually create a new ingredient */
 
- #if 0
-		/* Sooooo.... */
-		if (o_ptr->sval != SV_MIXTURE) {
-			q_ptr->xtra1 = 1 << (o_ptr->sval - 1);
-		} else {
+		/* Check for ingredients created from just two ingredients */
+		if (o_ptr->sval != SV_MIXTURE && !(o2_ptr->tval == TV_CHEMICAL && o2_ptr->sval == SV_MIXTURE)) {
+			i = ingredients_to_ingredient(o_ptr->sval, o2_ptr->tval, o2_ptr->sval);
+			/* Try swapping the two ingredients (only if both are chemicals. (Otherwise obsolete as the non-chemical cannot be activated anyway.) */
+			if (!i && o2_ptr->tval == TV_CHEMICAL) i = ingredients_to_ingredient(o2_ptr->sval, o_ptr->tval, o_ptr->sval);
 		}
-		if (o2_ptr->sval != SV_MIXTURE) {
-			q_ptr->xtra1 = 1 << (o2_ptr->sval - 1);
-		} else {
+		/* Next, create ingredients from mixture + ingredient */
+		else if (o_ptr->sval != SV_MIXTURE || o2_ptr->tval != TV_CHEMICAL || o2_ptr->sval != SV_MIXTURE) {
+			if (o_ptr->sval == SV_MIXTURE) i = mixingred_to_ingredient(o_ptr, o2_ptr->tval, o2_ptr->sval);
+			else i = mixingred_to_ingredient(o2_ptr, o_ptr->tval, o_ptr->sval);
 		}
-		case SV_CHARCOAL:
-			switch (o2_ptr->sval) {
-			case SV_SULFUR:
-				q_ptr->xtra1 = 
+		/* Last, create ingredient from mixture + mixture */
+		else i = mixmix_to_ingredient(o_ptr, o2_ptr);
+
+		/* catch failure because of already saturated mixture - meaning that these two items just cannot be combined, no matter what */
+		if (i == -1) {
+			/* When we reach maximum amount of a specific ingredient that we can put into mixtures in general.. (atm 3) */
+			msg_print(Ind, "The mixture is already saturated of that particular ingredient.");
+			return;
+		}
+
+		/* Check for success in creating a new ingredient */
+		if (i) {
+			/* Translate ingredient-index back to tval,sval */
+			if (i >= CI_CC && i <= CI_AC) {
+				q_ptr->tval = TV_CHEMICAL;
+				q_ptr->sval = i;
+			} else switch (i) {
+			case CI_LO:
+				q_ptr->tval = TV_FLASK;
+				q_ptr->sval = SV_FLASK_OIL;
+				break;
+			case CI_AC:
+				q_ptr->tval = TV_FLASK;
+				q_ptr->sval = SV_FLASK_ACID;
+				break;
+			case CI_WA:
+				q_ptr->tval = TV_POTION;
+				q_ptr->sval = SV_POTION_WATER;
+				break;
+			case CI_SW:
+				q_ptr->tval = TV_POTION;
+				q_ptr->sval = SV_POTION_SALT_WATER;
 				break;
 			}
-			break;
-		case SV_MIXTURE:
+			msg_print(Ind, "You create a new ingredient..");
+
+		/* No success creating an ingredient -
+		   so we just create a mixture instead, if the particular ingredients are not already overflowing (aka reaching amount cap per mixture).. */
+		} else {
+			/* Create mixture from mixture+mixture or ingredient+mixture */
+
+			/* First, check for ingredient + mixture */
+			if (o_ptr->sval != SV_MIXTURE || o2_ptr->tval != TV_CHEMICAL || o2_ptr->sval != SV_MIXTURE) {
+				if (o_ptr->sval == SV_MIXTURE) i = mixingred_to_mixture(o_ptr, o2_ptr->tval, o2_ptr->sval, q_ptr);
+				else i = mixingred_to_mixture(o2_ptr, o_ptr->tval, o_ptr->sval, q_ptr);
+			}
+			/* finally do mixture + mixture */
+			else i = mixmix_to_mixture(o_ptr, o2_ptr, q_ptr);
+
+			/* catch failure because of already saturated mixture - meaning that these two items just cannot be combined, no matter what */
+			if (!i) {
+				/* When we reach maximum amount of a specific ingredient that we can put into mixtures in general.. (atm 3) */
+				msg_print(Ind, "The mixture is already saturated of that particular ingredient.");
+				return;
+			}
+
+			q_ptr->tval = TV_CHEMICAL;
+			q_ptr->sval = SV_MIXTURE;
+			msg_print(Ind, "You create a mixture from the ingredients..");
 		}
- #endif
-		msg_print(Ind, "You combine the ingredients..");
-		/* TODO hack: Give the mixture a name based on its colour, based on its ingredients!
-		   Eg: a) a shiny mixture  <- if ingredients contain metal powder.. */
 	}
 
 	/* Result: Either a new ingredient, a mixture or a finished blast charge. */
@@ -8779,14 +8965,19 @@ void mix_chemicals(int Ind, int item) {
 
 	/* Erase the ingredients in the pack */
 	inven_item_increase(Ind, p_ptr->current_activation, -1);
-	inven_item_increase(Ind, item, -1);
-	if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indices
-		inven_item_optimize(Ind, p_ptr->current_activation);
-		inven_item_optimize(Ind, item);
-	} else {
-		inven_item_optimize(Ind, item);
-		inven_item_optimize(Ind, p_ptr->current_activation);
-	}
+	inven_item_describe(Ind, p_ptr->current_activation);
+	/* Did we use only one ingredient? Ie activated a mixture to finish into a blast charge? */
+	if (q_ptr->tval != TV_CHARGE) {
+		inven_item_increase(Ind, item, -1);
+		inven_item_describe(Ind, item);
+		if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indices
+			inven_item_optimize(Ind, p_ptr->current_activation);
+			inven_item_optimize(Ind, item);
+		} else {
+			inven_item_optimize(Ind, item);
+			inven_item_optimize(Ind, p_ptr->current_activation);
+		}
+	} else inven_item_optimize(Ind, p_ptr->current_activation);
 
 	/* Give us the result */
 	inven_carry(Ind, q_ptr);
@@ -8794,28 +8985,28 @@ void mix_chemicals(int Ind, int item) {
 /* Determine the sensorial properties of a chemical mixture */
 void mixture_flavour(object_type *o_ptr, char *flavour) {
 	int aspects = 0, primary = 0, secondary = 0;
-	byte cc, su, sp, as, mp, mh, me, mc, vi, ru; // ..., vitriol, rust (? from rusty mail? / metal + water)
-	byte lo, wa, sw, ac; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
+	byte cc = 0, su = 0, sp = 0, as = 0, mp = 0, mh = 0, me = 0, mc = 0, vi = 0, ru = 0; // ..., vitriol, rust (? from rusty mail? / metal + water)
+	byte lo = 0, wa = 0, sw = 0, ac = 0; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
 
 	if (o_ptr->sval != SV_MIXTURE) return;
 
 	/* Count amounts of ingredients in our mixture */
-	cc += ((o_ptr->xtra1 & 0x0001) ? 1 : 0) + ((o_ptr->xtra2 & 0x0001) ? 1 : 0) + ((o_ptr->xtra3 & 0x0001) ? 1 : 0); //black amorphous
-	su += ((o_ptr->xtra1 & 0x0002) ? 1 : 0) + ((o_ptr->xtra2 & 0x0002) ? 1 : 0) + ((o_ptr->xtra3 & 0x0002) ? 1 : 0); //stinking (yellow)
-	sp += ((o_ptr->xtra1 & 0x0004) ? 1 : 0) + ((o_ptr->xtra2 & 0x0004) ? 1 : 0) + ((o_ptr->xtra3 & 0x0004) ? 1 : 0); //white crystalline
-	as += ((o_ptr->xtra1 & 0x0008) ? 1 : 0) + ((o_ptr->xtra2 & 0x0008) ? 1 : 0) + ((o_ptr->xtra3 & 0x0008) ? 1 : 0); //pungent smell (white/transparent)
-	mp += ((o_ptr->xtra1 & 0x0010) ? 1 : 0) + ((o_ptr->xtra2 & 0x0010) ? 1 : 0) + ((o_ptr->xtra3 & 0x0010) ? 1 : 0); //glittering
-	mh += ((o_ptr->xtra1 & 0x0020) ? 1 : 0) + ((o_ptr->xtra2 & 0x0020) ? 1 : 0) + ((o_ptr->xtra3 & 0x0020) ? 1 : 0); //white (ferrum-ii) solid
-	me += ((o_ptr->xtra1 & 0x0040) ? 1 : 0) + ((o_ptr->xtra2 & 0x0040) ? 1 : 0) + ((o_ptr->xtra3 & 0x0040) ? 1 : 0); //yellow amorphous solid
-	mc += ((o_ptr->xtra1 & 0x0080) ? 1 : 0) + ((o_ptr->xtra2 & 0x0080) ? 1 : 0) + ((o_ptr->xtra3 & 0x0080) ? 1 : 0); //yellow crystalline (iron) / colourless/white solid (ammonium)
+	cc += ((o_ptr->xtra1 & CF_CC) ? 1 : 0) + ((o_ptr->xtra2 & CF_CC) ? 1 : 0) + ((o_ptr->xtra3 & CF_CC) ? 1 : 0); //black amorphous
+	su += ((o_ptr->xtra1 & CF_SU) ? 1 : 0) + ((o_ptr->xtra2 & CF_SU) ? 1 : 0) + ((o_ptr->xtra3 & CF_SU) ? 1 : 0); //stinking (yellow)
+	sp += ((o_ptr->xtra1 & CF_SP) ? 1 : 0) + ((o_ptr->xtra2 & CF_SP) ? 1 : 0) + ((o_ptr->xtra3 & CF_SP) ? 1 : 0); //white crystalline
+	as += ((o_ptr->xtra1 & CF_AS) ? 1 : 0) + ((o_ptr->xtra2 & CF_AS) ? 1 : 0) + ((o_ptr->xtra3 & CF_AS) ? 1 : 0); //pungent smell (white/transparent)
+	mp += ((o_ptr->xtra1 & CF_MP) ? 1 : 0) + ((o_ptr->xtra2 & CF_MP) ? 1 : 0) + ((o_ptr->xtra3 & CF_MP) ? 1 : 0); //glittering
+	mh += ((o_ptr->xtra1 & CF_MH) ? 1 : 0) + ((o_ptr->xtra2 & CF_MH) ? 1 : 0) + ((o_ptr->xtra3 & CF_MH) ? 1 : 0); //white (ferrum-ii) solid
+	me += ((o_ptr->xtra1 & CF_ME) ? 1 : 0) + ((o_ptr->xtra2 & CF_ME) ? 1 : 0) + ((o_ptr->xtra3 & CF_ME) ? 1 : 0); //yellow amorphous solid
+	mc += ((o_ptr->xtra1 & CF_MC) ? 1 : 0) + ((o_ptr->xtra2 & CF_MC) ? 1 : 0) + ((o_ptr->xtra3 & CF_MC) ? 1 : 0); //yellow crystalline (iron) / colourless/white solid (ammonium)
 
-	vi += ((o_ptr->xtra1 & 0x0100) ? 1 : 0) + ((o_ptr->xtra2 & 0x0100) ? 1 : 0) + ((o_ptr->xtra3 & 0x0100) ? 1 : 0); //green (almost turquoise) for iron
-	ru += ((o_ptr->xtra1 & 0x0200) ? 1 : 0) + ((o_ptr->xtra2 & 0x0200) ? 1 : 0) + ((o_ptr->xtra3 & 0x0200) ? 1 : 0); //redbrown (umber in k_info)
+	vi += ((o_ptr->xtra1 & CF_VI) ? 1 : 0) + ((o_ptr->xtra2 & CF_VI) ? 1 : 0) + ((o_ptr->xtra3 & CF_VI) ? 1 : 0); //green (almost turquoise) for iron
+	ru += ((o_ptr->xtra1 & CF_RU) ? 1 : 0) + ((o_ptr->xtra2 & CF_RU) ? 1 : 0) + ((o_ptr->xtra3 & CF_RU) ? 1 : 0); //redbrown (umber in k_info)
 
-	lo += ((o_ptr->xtra1 & 0x0400) ? 1 : 0) + ((o_ptr->xtra2 & 0x0400) ? 1 : 0) + ((o_ptr->xtra3 & 0x0400) ? 1 : 0); //brown (flask is yellow..)
-	wa += ((o_ptr->xtra1 & 0x0800) ? 1 : 0) + ((o_ptr->xtra2 & 0x0800) ? 1 : 0) + ((o_ptr->xtra3 & 0x0800) ? 1 : 0); //clear
-	sw += ((o_ptr->xtra1 & 0x1000) ? 1 : 0) + ((o_ptr->xtra2 & 0x1000) ? 1 : 0) + ((o_ptr->xtra3 & 0x1000) ? 1 : 0); //light grey transparent
-	ac += ((o_ptr->xtra1 & 0x2000) ? 1 : 0) + ((o_ptr->xtra2 & 0x2000) ? 1 : 0) + ((o_ptr->xtra3 & 0x2000) ? 1 : 0); //grey (just because it's the game's element colour..)
+	lo += ((o_ptr->xtra1 & CF_LO) ? 1 : 0) + ((o_ptr->xtra2 & CF_LO) ? 1 : 0) + ((o_ptr->xtra3 & CF_LO) ? 1 : 0); //brown (flask is yellow..)
+	wa += ((o_ptr->xtra1 & CF_WA) ? 1 : 0) + ((o_ptr->xtra2 & CF_WA) ? 1 : 0) + ((o_ptr->xtra3 & CF_WA) ? 1 : 0); //clear
+	sw += ((o_ptr->xtra1 & CF_SW) ? 1 : 0) + ((o_ptr->xtra2 & CF_SW) ? 1 : 0) + ((o_ptr->xtra3 & CF_SW) ? 1 : 0); //light grey transparent
+	ac += ((o_ptr->xtra1 & CF_AC) ? 1 : 0) + ((o_ptr->xtra2 & CF_AC) ? 1 : 0) + ((o_ptr->xtra3 & CF_AC) ? 1 : 0); //grey (just because it's the game's element colour..)
 
 	/* Count differing sensorial aspects */
 	aspects += cc ? 1 : 0 + (me || mc) ? 1 : 0 + (sp || mh) ? 1 : 0 + (su || as) ? 1 : 0 + mp ? 1 : 0 + vi ? 1 : 0 +
@@ -8849,23 +9040,62 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 
 	/* Form complete flavour */
 	switch (secondary) {
-	case 1: strcpy(flavour, "pungent "); break;
-	case 2: if (primary != 6) strcpy(flavour, "glittering "); break;
+	case 1: strcpy(flavour, "Pungent "); break;
+	case 2: if (primary != 6) strcpy(flavour, "Glittering "); break;
 	default: strcpy(flavour, ""); break;
 	}
 	switch (primary) {
-	case 1: strcat(flavour, "brown"); break;
-	case 2: strcat(flavour, "dark"); break;
-	case 3: strcat(flavour, "yellow"); break;
-	case 4: strcat(flavour, "green"); break;
-	case 5: strcat(flavour, "grey"); break;
-	case 6: strcat(flavour, "glittering"); break;
-	case 7: strcat(flavour, "white"); break;
-	case 8: strcat(flavour, "transparent"); break;
-	case 9: strcat(flavour, "yellow"); break;
-	case 10: strcat(flavour, "white"); break;
-	default: strcat(flavour, "white"); //paranoia
+	case 1: strcat(flavour, "Brown"); break;
+	case 2: strcat(flavour, "Dark"); break;
+	case 3: strcat(flavour, "Yellow"); break;
+	case 4: strcat(flavour, "Green"); break;
+	case 5: strcat(flavour, "Grey"); break;
+	case 6: strcat(flavour, "Glittering"); break;
+	case 7: strcat(flavour, "White"); break;
+	case 8: strcat(flavour, "Transparent"); break;
+	case 9: strcat(flavour, "Yellow"); break;
+	case 10: strcat(flavour, "White"); break;
+	default: strcat(flavour, "White"); //paranoia
 	}
+}
+/* Grind metallic objects to poweder for use as ingredient */
+void grind_chemicals(int Ind, int item) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[item]; /* Metallic object */
+	object_type forge, *q_ptr = &forge; /* Resulting metal powder */
+	char o_name[ONAME_LEN];
+
+	object_desc(Ind, o_name, o_ptr, FALSE, 0);
+	if (check_guard_inscription(o_ptr->note, 'k')) {
+		msg_print(Ind, "The item's inscription prevents grinding it to powder!");
+		return;
+	}
+	if (artifact_p(o_ptr) || !set_rust_destroy(o_ptr)) {
+		msg_format(Ind, "Your %s is unaffected!", o_name);
+		return;
+	}
+
+	msg_format(Ind, "You grind the metal of your %s into dust..", o_name);
+
+	invcopy(q_ptr, lookup_kind(TV_CHEMICAL, my_strcasestr(o_name, "rusty") ? SV_RUST : SV_METAL_POWDER));
+	/* Recall original parameters */
+	q_ptr->owner = o_ptr->owner;
+	q_ptr->mode = o_ptr->mode;
+	q_ptr->level = k_info[q_ptr->k_idx].level;
+	q_ptr->discount = 0;
+	q_ptr->number = 1 + 10 - 1000 / (o_ptr->weight + 90);
+	q_ptr->number = (q_ptr->number >> 1) + 1; //experimental: reduce a bit further..
+	q_ptr->note = 0;
+	q_ptr->iron_trade = o_ptr->iron_trade;
+	q_ptr->iron_turn = o_ptr->iron_turn;
+
+	/* Erase the ingredients in the pack */
+	inven_item_increase(Ind, item, -1);
+	inven_item_describe(Ind, item);
+	inven_item_optimize(Ind, item);
+
+	/* Give us the result */
+	inven_carry(Ind, q_ptr);
 }
 #endif
 

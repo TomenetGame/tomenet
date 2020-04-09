@@ -1546,6 +1546,7 @@ extern int set_all_destroy(object_type *o_ptr);
 extern int set_cold_destroy(object_type *o_ptr);
 extern int set_impact_destroy(object_type *o_ptr);
 extern int set_water_destroy(object_type *o_ptr);
+extern int set_rust_destroy(object_type *o_ptr);
 extern int equip_damage(int Ind, int typ);
 extern int inven_damage(int Ind, inven_func typ, int perc);
 extern int weapon_takes_damage(int Ind, int typ, int slot);
@@ -1701,6 +1702,7 @@ extern void tome_creation(int Ind);
 extern void tome_creation_aux(int Ind, int item);
 #ifdef ENABLE_EXCAVATION
 extern void mix_chemicals(int Ind, int item);
+extern void grind_chemicals(int Ind, int item);
 #endif
 
 extern bool create_garden(int Ind, int level);
@@ -1730,6 +1732,9 @@ extern int py_create_gateway(int Ind);
 extern bool do_shadow_gate(int Ind, int range);
 #endif
 extern void XID_paranoia(player_type *p_ptr);
+#ifdef ENABLE_EXCAVATION
+void mixture_flavour(object_type *o_ptr, char *flavour);
+#endif
 
 /* store.c */
 extern int store_debug_mode, store_debug_quickmotion, store_debug_startturn;
