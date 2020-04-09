@@ -9130,12 +9130,21 @@ void grind_chemicals(int Ind, int item) {
 	}
 }
 /* Set a charge live */
-void arm_charge(int Ind, object_type *o_ptr, int dir) {
+void arm_charge(int Ind, int item, int dir) {
+	object_type *o_ptr = &Players[Ind]->inventory[item];
 	char o_name[ONAME_LEN];
 
 	object_desc(Ind, o_name, o_ptr, FALSE, 256);
 	msg_format(Ind, "You place the %s and arm it..", o_name);
-	return;
+
+	return; //TODO:
+
+	/* Place monster-trap-/rune-like glyph on the floor */
+
+	/* Erase the ingredients in the pack */
+	inven_item_increase(Ind, item, -1);
+	inven_item_describe(Ind, item);
+	inven_item_optimize(Ind, item);
 }
 #endif
 

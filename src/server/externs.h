@@ -1703,7 +1703,7 @@ extern void tome_creation_aux(int Ind, int item);
 #ifdef ENABLE_EXCAVATION
 extern void mix_chemicals(int Ind, int item);
 extern void grind_chemicals(int Ind, int item);
-extern void arm_charge(int Ind, object_type *o_ptr, int dir);
+extern void arm_charge(int Ind, int item, int dir);
 #endif
 
 extern bool create_garden(int Ind, int level);

@@ -5700,7 +5700,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 	if (o_ptr->tval == TV_CHARGE) {
-		arm_charge(Ind, o_ptr, 0);
+		arm_charge(Ind, item, 0);
 		return;
 	}
 	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) {
@@ -7053,7 +7053,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 
 #ifdef ENABLE_EXCAVATION
 	if (o_ptr->tval == TV_CHARGE) {
-		arm_charge(Ind, o_ptr, dir);
+		arm_charge(Ind, item, dir);
 		return;
 	}
 #endif
