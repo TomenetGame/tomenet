@@ -6098,9 +6098,48 @@ bool monster_death(int Ind, int m_idx) {
 			found_chemical = TRUE;
 		}
 	}
-	if (!found_chemical) {
-		/* Saltpetre (guano: bats/birds) */
-		/* Ammonia Salt (dung: whatever has hooves..) */
+	if (!found_chemical && (r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) && !(r_ptr->flags7 & RF7_AQUATIC)) {
+		/* Avoid item flood */
+		if (!(r_ptr->flags1 & RF1_FRIENDS) || !rand_int(4)) {
+			/* Saltpetre (guano: bats/birds) */
+			if (r_ptr->d_char == 'b' || r_ptr->d_char == 'B' || r_ptr->d_char == 'H') {
+				if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(3)) {
+					object_type forge;
+
+					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
+					s_printf("CHEMICAL: %s found saltpetre (kill).\n", p_ptr->name);
+					forge.owner = p_ptr->id;
+					forge.mode = p_ptr->mode;
+					forge.iron_trade = p_ptr->iron_trade;
+					forge.iron_turn = turn;
+					forge.level = 0;
+					forge.number = 1 + rand_int(r_ptr->weight / 2000);
+					forge.weight = k_info[forge.k_idx].weight;
+					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					drop_near(0, &forge, -1, wpos, y, x);
+					found_chemical = TRUE;
+				}
+			}
+			/* Ammonia Salt (dung: whatever has hooves..) */
+			else if (r_ptr->d_char == 'q' || r_ptr->d_char == 'C' || r_ptr->d_char == 'M' || r_ptr->d_char == 'Y') {
+				if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(3)) {
+					object_type forge;
+
+					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));
+					s_printf("CHEMICAL: %s found ammonia salt (kill).\n", p_ptr->name);
+					forge.owner = p_ptr->id;
+					forge.mode = p_ptr->mode;
+					forge.iron_trade = p_ptr->iron_trade;
+					forge.iron_turn = turn;
+					forge.level = 0;
+					forge.number = 1 + rand_int(r_ptr->weight / 2000);
+					forge.weight = k_info[forge.k_idx].weight;
+					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					drop_near(0, &forge, -1, wpos, y, x);
+					found_chemical = TRUE;
+				}
+			}
+		}
 	}
     }
 #endif
