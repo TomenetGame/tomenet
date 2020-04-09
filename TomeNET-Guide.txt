@@ -21535,5 +21535,8 @@ Solution:   Aside from checking all other audio-related problems in this
             a green 'X' symbol between the white brackets: [X] , indicating
             that it is enabled. If not, enable all four buttons and see if it
             works now.
+            This might have happened because you accidentally hit one of the
+            shortcut keys listed under the four buttons, that can toggle the
+            mixer settings from anywhere in the game, outside the mixer UI.
 
 ===============================================================================
