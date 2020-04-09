@@ -4226,7 +4226,19 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #ifdef ENABLE_EXCAVATION
 			/* Possibly drop ingredients: Charcoal */
 			if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(3)) {
-				
+				object_type forge;
+
+				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
+				forge.owner = p_ptr->id;
+				forge.mode = p_ptr->mode;
+				forge.iron_trade = p_ptr->iron_trade;
+				forge.iron_turn = turn;
+				forge.level = 0;
+				forge.number = 1;
+				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				drop_near(0, &forge, -1, wpos, y, x);
+				s_printf("CHEMICAL: %s found charcoal.\n", p_ptr->name);
+
 			}
 #endif
 		}
