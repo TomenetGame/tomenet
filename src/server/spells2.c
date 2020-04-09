@@ -9246,8 +9246,9 @@ void arm_charge(int Ind, int item, int dir) {
 	/* Actually set the trap */
 	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
 
+ #ifndef RPG_SERVER /* eat item on live testing, too cheezy */
 	return;//testing
-
+ #endif
 	/* Erase the ingredients in the pack */
 	inven_item_increase(Ind, item, -1);
 	inven_item_describe(Ind, item);
@@ -9287,13 +9288,15 @@ void detonate_charge(object_type *o_ptr) {
 		(void) project(PROJECTOR_PLAYER, 4, wpos, y, x, damroll(30, 15), GF_DETONATION, flg, "");
 		aggravate_monsters_floorpos(wpos, y, x);
 		break;
-	case SV_CHARGE_SBLAST: //panic
+	case SV_CHARGE_SBLAST:
 		//'dir' is stored in xtra9
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
+ #ifndef RPG_SERVER /* disable on live testing because of panic save */
 		//todo: pierce all walls..
 		project_hook(PROJECTOR_TERRAIN, GF_KILL_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
+ #endif
 		break;
 	case SV_CHARGE_QUAKE:
 		earthquake(wpos, y, x, 10);
@@ -9322,8 +9325,10 @@ void detonate_charge(object_type *o_ptr) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
  #endif
+ #ifndef RPG_SERVER /* disable on live testing because of panic save */
 		//todo: compare to firewall spell..
 		project_hook(PROJECTOR_TERRAIN, GF_FIRE, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
+ #endif
 		break;
 	case SV_CHARGE_WRECKING:
 		//create rubble
@@ -9333,7 +9338,9 @@ void detonate_charge(object_type *o_ptr) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MISC, FALSE);
  #endif
+ #ifndef RPG_SERVER /* disable on live testing because of panic save */
 		project_hook(PROJECTOR_TERRAIN, GF_STONE_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
+ #endif
 		break;
 	case SV_CHARGE_TACTICAL:
  #ifdef USE_SOUND_2010
@@ -9346,8 +9353,10 @@ void detonate_charge(object_type *o_ptr) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
+ #ifndef RPG_SERVER /* disable on live testing because of panic save */
 		//(void) project(PROJECTOR_TERRAIN, 3, &wpos, y, x, damroll(9,3), GF_BLIND, flg, "");
 		project_los(0, GF_BLIND, 10 + rand_int(4), "");
+ #endif
 		break;
 	case SV_CHARGE_CONCUSSION:
  #ifdef USE_SOUND_2010

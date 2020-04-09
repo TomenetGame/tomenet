@@ -345,6 +345,8 @@
  #define AUCTION_DEBUG
 
  #define OPTIMIZED_ANIMATIONS	/* testing */
+
+ #define ENABLE_EXCAVATION	/* TESTING/EXPERIMENTAL - Allow creation of demolition charges for 'Digging'-renamed-to-'Excavation' skill */
 #endif
 
 #ifdef TEST_SERVER
