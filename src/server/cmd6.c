@@ -5254,7 +5254,7 @@ bool activation_requires_direction(object_type *o_ptr) {
 
 #ifdef ENABLE_EXCAVATION
 	else if (o_ptr->tval == TV_CHARGE &&
-	    (o_ptr->sval == SV_CHARGE_FIREWALL || o_ptr->sval == SV_CHARGE_CASCADING))
+	    (o_ptr->sval == SV_CHARGE_SBLAST || o_ptr->sval == SV_CHARGE_FIREWALL || o_ptr->sval == SV_CHARGE_CASCADING))
 		return TRUE;
 #endif
 

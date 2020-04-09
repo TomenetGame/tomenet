@@ -9286,7 +9286,7 @@ void detonate_charge(object_type *o_ptr) {
 		(void) project(PROJECTOR_PLAYER, 4, wpos, y, x, damroll(30, 15), GF_DETONATION, flg, "");
 		aggravate_monsters_floorpos(wpos, y, x);
 		break;
-	case SV_CHARGE_SBLAST:
+	case SV_CHARGE_SBLAST: //panic
 		//'dir' is stored in xtra9
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
@@ -9316,7 +9316,7 @@ void detonate_charge(object_type *o_ptr) {
 		project_interval = 9;
 		(void) project(PROJECTOR_RUNE, 4, wpos, y, x, 25, GF_FIRE, flg, "");
 		break;
-	case SV_CHARGE_FIREWALL:
+	case SV_CHARGE_FIREWALL: //panic
 		//'dir' is stored in xtra9
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
@@ -9325,8 +9325,9 @@ void detonate_charge(object_type *o_ptr) {
 		project_hook(PROJECTOR_TERRAIN, GF_FIRE, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
 		break;
 	case SV_CHARGE_WRECKING:
+		//create rubble
 		break;
-	case SV_CHARGE_CASCADING:
+	case SV_CHARGE_CASCADING: //panic
 		//'dir' is stored in xtra9
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MISC, FALSE);
@@ -9360,6 +9361,7 @@ void detonate_charge(object_type *o_ptr) {
 		(void) project(PROJECTOR_POTION, 5, wpos, y, x, damroll(18,3), GF_STUN, flg, "");
 		break;
 	case SV_CHARGE_UNDERGROUND:
+		//create lava/water
 		break;
 	}
 }
