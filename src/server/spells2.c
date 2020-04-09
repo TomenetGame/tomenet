@@ -9131,16 +9131,106 @@ void grind_chemicals(int Ind, int item) {
 }
 /* Set a charge live */
 void arm_charge(int Ind, int item, int dir) {
-	object_type *o_ptr = &Players[Ind]->inventory[item];
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[item];
 	char o_name[ONAME_LEN];
+	cave_type *c_ptr;
+	cave_type **zcave;
+	struct c_special *cs_ptr;
+	int py = p_ptr->py, px = p_ptr->px;
+	s16b o2_idx;
+	object_type *o2_ptr;
+	worldpos *wpos = &p_ptr->wpos;
+
+
+	/* Check some conditions */
+
+	zcave = getcave(&p_ptr->wpos);
+	c_ptr = &zcave[py][px];
+
+	if (p_ptr->blind) {
+		msg_print(Ind, "You can't see anything.");
+		return;
+	}
+	if (no_lite(Ind)) {
+		msg_print(Ind, "You don't dare to set a charge in the darkness.");
+		return;
+	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "You are too confused!");
+		return;
+	}
+
+	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
+	    (c_ptr->info & CAVE_PROT)) {
+		msg_print(Ind, "You cannot place charges on this special floor.");
+		return;
+	}
+
+	/* Only set traps on clean floor grids */
+	if (!cave_clean_bold(zcave, py, px) ||
+	    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
+	    c_ptr->special) {
+		msg_print(Ind, "You cannot place a charge here.");
+		return;
+	}
+
+
+	/* Try to place it */
+
+	un_afk_idle(Ind);
+
+	/* Take half a turn maybe? No idea */
+	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_CALMNESS, 35))) return;
+
+	if (!(cs_ptr = AddCS(c_ptr, CS_MON_TRAP))) return;
+
+
+	/* Create a charge-item to be dropped on/into the floor */
+
+	o2_idx = o_pop();
+	if (!o2_idx) {
+		//shouldn't happen
+		msg_print(Ind, "It's not possible to arm charges right now.");
+		return;
+	}
 
 	object_desc(Ind, o_name, o_ptr, FALSE, 256);
 	msg_format(Ind, "You place the %s and arm it..", o_name);
 
-	return; //TODO:
+	o2_ptr = &o_list[o2_idx];
+	object_copy(o2_ptr, o_ptr);
+
+	o2_ptr->iy = 255 - py;	/* Megahack - never inbounds XXX */
+	o2_ptr->ix = px;
+	wpcopy(&o2_ptr->wpos, wpos);
+
+	/* Forget monster */
+	o2_ptr->held_m_idx = 0;
+	/* No stack */
+	o2_ptr->next_o_idx = 0;
+
+	/* don't remove it quickly in towns */
+	o2_ptr->marked2 = ITEM_REMOVAL_MONTRAP;
 
 	/* Place monster-trap-/rune-like glyph on the floor */
-	o_ptr->timeout = o_ptr->pval; //light the fuse
+	o2_ptr->timeout = o_ptr->pval; //light the fuse
+
+
+	/* Link charge to monster trap glyph */
+	cs_ptr->sc.montrap.trap_kit = o2_idx;
+
+	/* Set difficulty to impossible? */
+	cs_ptr->sc.montrap.difficulty = 127;
+
+	/* Preserve former feat */
+	cs_ptr->sc.montrap.feat = c_ptr->feat;
+
+	/* Actually set the trap */
+	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
+
+	return;//testing
 
 	/* Erase the ingredients in the pack */
 	inven_item_increase(Ind, item, -1);
