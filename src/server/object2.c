@@ -11161,7 +11161,18 @@ void process_objects(void) {
 			/* Reset it from 'charging' state to charged state */
 			if (!o_ptr->pval) o_ptr->bpval = 0;
 #endif
+			continue;
 		}
+#ifdef ENABLE_EXCAVATION
+		if (o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
+			o_ptr->timeout--;
+			if (!o_ptr->timeout) {
+				detonate_charge(o_ptr);
+				delete_object_idx(i, TRUE);
+				continue;
+			}
+		}
+#endif
 	}
 
 #if 1 /* experimental: also process items in list houses */

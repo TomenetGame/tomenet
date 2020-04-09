@@ -9140,11 +9140,26 @@ void arm_charge(int Ind, int item, int dir) {
 	return; //TODO:
 
 	/* Place monster-trap-/rune-like glyph on the floor */
+	o_ptr->timeout = o_ptr->pval; //light the fuse
 
 	/* Erase the ingredients in the pack */
 	inven_item_increase(Ind, item, -1);
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
+}
+/* A charge (planted into the floor) explodes */
+void detonate_charge(object_type *o_ptr) {
+	struct worldpos *wpos = &o_ptr->wpos;
+	int x = o_ptr->ix, y = 255 - o_ptr->iy; //unhack
+	int flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO
+	    | PROJECT_LODF);//check the flags for correctness
+
+	switch (o_ptr->tval) {
+	case TV_CHARGE:
+		(void) project(PROJECTOR_MON_TRAP, 2, wpos, y, x, damroll(10, 10), GF_DETONATION, flg, ""); //todo: projector
+		aggravate_monsters_floorpos(wpos, y, x);
+		break;
+	}
 }
 #endif
 
