@@ -97,6 +97,27 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 	bool	angry = FALSE;
 	int	flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO);
 
+	/* Hack: Allow flasks too */
+	if (o_sval >= 200) {
+		switch (o_sval - 200) {
+		case SV_FLASK_OIL:
+			radius = 1;
+			dam = damroll(2, 5);
+			dt = GF_FIRE;
+			ident = TRUE;
+			angry = TRUE;
+			break;
+#ifdef ENABLE_EXCAVATION
+		case SV_FLASK_ACID:
+			radius = 1;
+			dam = damroll(5, 5);
+			dt = GF_ACID_BLIND;
+			ident = TRUE;
+			angry = TRUE;
+			break;
+#endif
+		}
+	} else
 	switch (o_sval) {
 	case SV_POTION_SLIME_MOLD:
 	case SV_POTION_WATER:   /* perhaps a 'water' attack? */
@@ -131,11 +152,6 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		dam = 1; /* dummy */
 		break;
 	case SV_POTION_SALT_WATER:
-		dt = GF_OLD_CONF;
-		dam = damroll(10, 5);
-		ident = TRUE;
-		angry = TRUE;
-
 		/* terraform hack: melt ice^^ (Ding's suggestion) */
 		{
 			cave_type **zcave;
@@ -146,7 +162,15 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 				cave_set_feat_live(wpos, y, x, FEAT_SHAL_WATER);
 			}
 		}
-
+#if 0 /* in traps they deal blind, why conf? */
+		dt = GF_OLD_CONF;
+		dam = damroll(10, 5);
+#else
+		dt = GF_BLIND;
+		dam = damroll(3, 2);
+#endif
+		ident = TRUE;
+		angry = TRUE;
 		break;
 	case SV_POTION_LOSE_MEMORIES:
 		dt = GF_OLD_CONF;
@@ -1570,6 +1594,7 @@ byte spell_color(int type) {
 	switch (type) { /* colourful ToME ones :) */
 	case GF_MISSILE:	return (TERM_SLATE);
 	case GF_ACID:		return (TERM_ACID);
+	case GF_ACID_BLIND:	return (TERM_ACID);
 	case GF_ELEC:		return (TERM_ELEC);
 	case GF_FIRE:		return (TERM_FIRE);
 	case GF_COLD:		return (TERM_COLD);
@@ -1640,6 +1665,7 @@ bool spell_color_animation(int type) {
 	switch (type) { /* colourful ToME ones :) */
 	case GF_MISSILE:	return FALSE;
 	case GF_ACID:		return FALSE;
+	case GF_ACID_BLIND:	return FALSE;
 	case GF_ELEC:		return FALSE;
 	case GF_FIRE:		return FALSE;
 	case GF_COLD:		return FALSE;
@@ -1711,6 +1737,7 @@ byte spell_color(int type) {
 	switch (type) { /* colourful ToME ones :) */
 	case GF_MISSILE:	return (TERM_SLATE);
 	case GF_ACID:		return (TERM_ACID);
+	case GF_ACID_BLIND:	return (TERM_ACID);
 	case GF_ELEC:		return (TERM_ELEC);
 	case GF_FIRE:		return (TERM_FIRE);
 	case GF_COLD:		return (TERM_COLD);
@@ -2776,15 +2803,20 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 						   ((amt > 1) ? "were" : "was"));
 
 				/* Potions smash open */
-				if (k_info[o_ptr->k_idx].tval == TV_POTION &&
-				    typ != set_water_destroy)	/* MEGAHACK */
-				    //&& typ != set_cold_destroy)
-				{
-					//(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
-					bypass_invuln = TRUE;
-					(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
-					bypass_invuln = FALSE;
-				}
+				if (typ != set_water_destroy)	/* MEGAHACK */ //&& typ != set_cold_destroy)
+					switch (k_info[o_ptr->k_idx].tval) {
+					case TV_POTION:
+						//(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
+						bypass_invuln = TRUE;
+						(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
+						bypass_invuln = FALSE;
+						break;
+					case TV_FLASK:
+						bypass_invuln = TRUE;
+						(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, 200 + o_ptr->sval);
+						bypass_invuln = FALSE;
+						break;
+					}
 
 				/* Destroy "amt" items */
 				if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, amt);
@@ -2845,6 +2877,7 @@ int equip_damage(int Ind, int typ) {
 	case GF_WATER:
 		if (!set_rust_destroy(o_ptr)) return(FALSE); else break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
 	case GF_ACID:
+	case GF_ACID_BLIND:
 		if (!set_acid_destroy(o_ptr)) return(FALSE); else break; 
 	case GF_FIRE:
 		if (!set_fire_destroy(o_ptr)) return(FALSE); else break;
@@ -2907,6 +2940,7 @@ int shield_takes_damage(int Ind, int typ) {
 			return(FALSE);
 		else break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
 	case GF_ACID:
+	case GF_ACID_BLIND:
 		if (p_ptr->immune_acid || !set_acid_destroy(o_ptr))
 			return(FALSE);
 		else break;
@@ -2979,6 +3013,7 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 			return(FALSE);
 		break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
 	case GF_ACID:
+	case GF_ACID_BLIND:
 		/* hack -- decrease the variety of damaging attacks a bit, mercifully */
 		if (o_ptr->tval == TV_BLUNT || o_ptr->tval == TV_POLEARM) return(FALSE);
 
@@ -4060,6 +4095,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	switch (typ) {
 	/* Ignore most effects */
 	case GF_ACID:
+	//case GF_ACID_BLIND: --too weak
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
 		/* Destroy trees */
 		if (c_ptr->feat == FEAT_TREE || c_ptr->feat == FEAT_BUSH) {
@@ -4189,6 +4225,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifdef ENABLE_EXCAVATION
 			/* Possibly drop ingredients: Charcoal */
+			if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(3)) {
+				
+			}
 #endif
 		}
 
@@ -4817,7 +4856,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	char o_name[ONAME_LEN];
 	int o_sval = 0;
-	bool is_potion = FALSE, is_basic_potion = FALSE, is_meltable = FALSE;
+	bool is_potion = FALSE, is_basic_potion = FALSE, is_flask = FALSE, is_meltable = FALSE;
 
 	int div;
 	cave_type **zcave;
@@ -4893,6 +4932,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		   For this reason, add is_basic_potion: It determines whether smash effect is applied. */
 		is_potion = ((k_info[o_ptr->k_idx].tval == TV_POTION) || (k_info[o_ptr->k_idx].tval == TV_POTION2));
 		is_basic_potion = (k_info[o_ptr->k_idx].tval == TV_POTION);
+		is_flask = (k_info[o_ptr->k_idx].tval == TV_FLASK);
 		is_meltable = (k_info[o_ptr->k_idx].tval == TV_BOTTLE || (k_info[o_ptr->k_idx].tval == TV_GAME && k_info[o_ptr->k_idx].sval == SV_SNOWBALL));
 
 		/* Analyze the type */
@@ -4906,6 +4946,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Acid -- Lots of things */
 		case GF_ACID:
+		//case GF_ACID_BLIND: -- too weak
 			if (hates_acid(o_ptr)) {
 				do_kill = TRUE;
 				note_kill = (plural ? " melt!" : " melts!");
@@ -5283,13 +5324,22 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				delete_object_idx(this_o_idx, TRUE);
 
 				/* Potions produce effects when 'shattered' */
-				if (is_basic_potion && do_smash_effect) {
-					/* prevent mass deto exploit */
-					if (mon_hit_proj_id == mon_hit_proj_id2) {
-						mon_hit_proj_id++;
-						(void)potion_smash_effect(who, wpos, y, x, o_sval);
-						mon_hit_proj_id2++;
-					} else (void)potion_smash_effect(who, wpos, y, x, o_sval);
+				if (do_smash_effect) {
+					if (is_basic_potion) {
+						/* prevent mass deto exploit */
+						if (mon_hit_proj_id == mon_hit_proj_id2) {
+							mon_hit_proj_id++;
+							(void)potion_smash_effect(who, wpos, y, x, o_sval);
+							mon_hit_proj_id2++;
+						} else (void)potion_smash_effect(who, wpos, y, x, o_sval);
+					} else if (is_flask) {
+						/* prevent mass deto exploit (not needed for flasks..) */
+						if (mon_hit_proj_id == mon_hit_proj_id2) {
+							mon_hit_proj_id++;
+							(void)potion_smash_effect(who, wpos, y, x, o_sval + 200);
+							mon_hit_proj_id2++;
+						} else (void)potion_smash_effect(who, wpos, y, x, o_sval + 200);
+					}
 				}
 
 				/* Redraw */
@@ -5846,6 +5896,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 
 	/* Acid */
+	case GF_ACID_BLIND:
+		do_blind = dam / 4;
 	case GF_ACID:
 		if (seen) obvious = TRUE;
 		if (r_ptr->flags3 & RF3_IM_ACID) {
@@ -9398,6 +9450,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	/* Standard damage -- hurts inventory too */
 	case GF_ACID:
+	case GF_ACID_BLIND:
 		dam = acid_dam(Ind, dam, killer, -who);
 		if (who == PROJECTOR_TERRAIN && dam == 0) ;
 		else if (fuzzy) msg_format(Ind, "You are hit by acid for \377%c%d \377wdamage!", damcol, dam);
@@ -12588,6 +12641,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		break;
 
 	case GF_ACID:
+	case GF_ACID_BLIND:
 		if (r_ptr->flags3 & RF3_IM_ACID)
 			dam = 0;
 		else if (r_ptr->flags9 & RF9_RES_ACID)

@@ -4554,7 +4554,7 @@
 #define GF_BOLT			8
 #define GF_BOULDER		9
 #define GF_MISSILE		10
-
+#define GF_ACID_BLIND		11	/* fine dispersed acid (from throwing a flask): additional blind effect, but too weak to affect feat/obj. */
 #define GF_PLASMA		12
 #define GF_HOLY_ORB		13
 #define GF_WATER		14

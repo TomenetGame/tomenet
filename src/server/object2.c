@@ -9612,7 +9612,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 	/* for destruction checks */
 	bool do_kill = FALSE;
 #ifdef DROP_KILL_NOTE
-	bool is_potion = FALSE, plural = FALSE;
+	bool is_potion = FALSE, is_flask = FALSE, plural = FALSE;
 	cptr note_kill = NULL;
 #endif
 #ifdef DROP_ON_STAIRS_IN_EMERGENCY
@@ -9826,6 +9826,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 #ifdef DROP_KILL_NOTE
 	if (o_ptr->tval == TV_POTION) is_potion = TRUE;
+	if (o_ptr->tval == TV_FLASK) is_flask = TRUE;
 	if (o_ptr->number > 1) plural = TRUE;
 #endif
 	switch (c_ptr->feat) {
@@ -9849,7 +9850,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 		if (hates_fire(o_ptr)) {
 			do_kill = TRUE;
 #ifdef DROP_KILL_NOTE
-			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!") : (plural ? " burn up!" : " burns up!");
+			note_kill = (is_potion || is_flask) ? (plural ? " evaporate!" : " evaporates!") : (plural ? " burn up!" : " burns up!");
 #endif
 			if (f3 & TR3_IGNORE_FIRE) do_kill = FALSE;
 		}
@@ -9874,6 +9875,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 				msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
 			/* Potions produce effects when 'shattered' */
 			if (is_potion) (void)potion_smash_effect(who, wpos, ny, nx, o_sval);
+			else if (is_flask) (void)potion_smash_effect(who, wpos, ny, nx, o_sval + 200);
 			if (!quiet) everyone_lite_spot(wpos, ny, nx);
 		}
 #endif

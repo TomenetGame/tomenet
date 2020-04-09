@@ -4479,13 +4479,13 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 		switch (o_ptr->sval) {
 		case SV_FLASK_OIL:
 			typ = GF_FIRE;
-			dam = damroll(2, 4);
+			dam = damroll(3, 5);
 			rad = 2;
 			break;
 #ifdef ENABLE_EXCAVATION
 		case SV_FLASK_ACID:
-			typ = GF_ACID;
-			dam = damroll(3, 5);
+			typ = GF_ACID_BLIND;
+			dam = damroll(5, 5);
 			rad = 2;
 			break;
 #endif
