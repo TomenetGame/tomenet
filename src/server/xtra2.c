@@ -6042,8 +6042,9 @@ bool monster_death(int Ind, int m_idx) {
 #ifdef ENABLE_EXCAVATION
 	/* Possibly drop ingredients: Saltpeter (guano), Ammonia salt (from both, dung and poison/gas breathers), Sulfur (fire dragons), Vitriol (Acid breathers) */
     {
-	bool found_chemical = FALSE:
-	if (r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000) { // Dragon-league basically
+	bool found_chemical = FALSE;
+
+	if ((r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000) { // Dragon-league basically
 		if (get_skill(p_ptr, SKILL_DIG) >= 5 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
@@ -6061,7 +6062,7 @@ bool monster_death(int Ind, int m_idx) {
 			found_chemical = TRUE;
 		}
 	}
-	if (r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000) { // Dragon-league basically
+	if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000) { // Dragon-league basically
 		if (get_skill(p_ptr, SKILL_DIG) >= 15 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
@@ -6079,7 +6080,7 @@ bool monster_death(int Ind, int m_idx) {
 			found_chemical = TRUE;
 		}
 	}
-	if (r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000) { // Dragon-league basically
+	if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000) { // Dragon-league basically
 		if (get_skill(p_ptr, SKILL_DIG) >= 10 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
