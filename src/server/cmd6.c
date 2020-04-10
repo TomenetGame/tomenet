@@ -5430,6 +5430,15 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Roll for usage */
+#ifdef ENABLE_EXCAVATION
+	if (o_ptr->tval == TV_CHEMICAL) ;
+	else if (o_ptr->tval == TV_CHARGE) {
+		if (rand_int(k_info[o_ptr->k_idx].level) > rand_int(get_skill_scale(p_ptr, SKILL_DIG, 100))) {
+			msg_format(Ind, "\377%cYou failed to set the charge up properly.", COLOUR_MD_FAIL);
+			return;
+		}
+	} else
+#endif
 	if (!activate_magic_device(Ind, o_ptr) &&
 	    o_ptr->tval != TV_BOOK) /* hack: blank books can always be 'activated' */
 	{

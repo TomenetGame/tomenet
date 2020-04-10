@@ -9269,9 +9269,16 @@ void detonate_charge(object_type *o_ptr) {
 	struct worldpos *wpos = &o_ptr->wpos;
 	int i, who = PROJECTOR_MON_TRAP, x = o_ptr->ix, y = 255 - o_ptr->iy; //unhack
 	int flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO
-	    | PROJECT_SELF | PROJECT_LODF);//check the flags for correctness
+	    | PROJECT_GRID | PROJECT_SELF | PROJECT_LODF);//check the flags for correctness
 	struct c_special *cs_ptr;
 	cave_type *c_ptr, **zcave;
+
+	int x2, y2, dir;
+
+	bool rand_old = Rand_quick;
+	u32b old_seed = Rand_value;
+	struct dun_level *l_ptr = getfloor(wpos);
+
 
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[y][x];
@@ -9289,7 +9296,7 @@ void detonate_charge(object_type *o_ptr) {
 		break;
 	}
 
-	 //todo: projector type, mon damage/death messages
+	//aggravate_monsters_floorpos(wpos, y, x);
 
 	switch (o_ptr->sval) {
 	case SV_CHARGE_BLAST:
@@ -9297,22 +9304,24 @@ void detonate_charge(object_type *o_ptr) {
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
 		(void) project(who, 2, wpos, y, x, damroll(20, 15), GF_DETONATION, flg, "");
-		//aggravate_monsters_floorpos(wpos, y, x);
 		break;
 	case SV_CHARGE_XBLAST: //X2Megablast
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
 		(void) project(who, 4, wpos, y, x, damroll(30, 15), GF_DETONATION, flg, "");
-		aggravate_monsters_floorpos(wpos, y, x);
 		break;
 	case SV_CHARGE_SBLAST:
-		//'dir' is stored in xtra9
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		//todo: need a new projection type here that doesn't originate from the player, or make it an effect instead!
-		//project_hook(-who, GF_KILL_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
+		dir = o_ptr->xtra9;
+		for (i = 0; i < 6; i++) {
+			x2 = x + ddx[dir] * i;
+			y2 = y + ddy[dir] * i;
+			if (!cave_los_wall(zcave, y2, x2)) break; /* Stop at permanent walls */
+			(void) project(who, 0, wpos, y2, x2, damroll(20, 15), GF_DETONATION, flg, "");
+		}
 		break;
 	case SV_CHARGE_QUAKE:
 		earthquake(wpos, y, x, 10);
@@ -9330,30 +9339,54 @@ void detonate_charge(object_type *o_ptr) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO;
+		//flg = PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO | PROJECT_SELF;
+		flg |= PROJECT_STAY;
 		//project_time_effect = 0;
 		project_time = 10;
 		project_interval = 9;
 		(void) project(who, 4, wpos, y, x, 25, GF_FIRE, flg, "");
 		break;
 	case SV_CHARGE_FIREWALL:
-		//'dir' is stored in xtra9
  #ifdef USE_SOUND_2010
-		sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
+		//sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
+		sound_near_site(y, x, wpos, 0, "cast_ball", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		//todo: need a new projection type here that doesn't originate from the player, or make it an effect instead!
-		//project_hook(-who, GF_FIRE, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
+		dir = o_ptr->xtra9;
+		for (i = 0; i < MAX_RANGE / 2; i++) {
+			x2 = x + ddx[dir] * i;
+			y2 = y + ddy[dir] * i;
+			if (!cave_los_wall(zcave, y2, x2)) break; /* Stop at permanent walls */
+			(void) project(who, 0, wpos, y2, x2, damroll(20, 15), GF_FIRE, flg, "");
+		}
 		break;
 	case SV_CHARGE_WRECKING:
-		//create rubble
+		//creates rubble, doesn't remove walls
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		for (x2 = x - 1; x2 <= x + 1; x2++) {
+			for (y2 = y - 1; y2 <= y + 1; y2++) {
+				if (magik(40)) continue; /* Scattered rubble */
+				c_ptr = &zcave[y2][x2];
+				if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) continue;
+				if (!cave_clean_bold(zcave, y2, x2) || c_ptr->special
+				    || c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
+					continue;
+				cave_set_feat_live(wpos, y2, x2, FEAT_RUBBLE);
+			}
+		}
 		break;
 	case SV_CHARGE_CASCADING:
-		//'dir' is stored in xtra9
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		//todo: need a new projection type here that doesn't originate from the player, or make it an effect instead!
-		//project_hook(-who, GF_STONE_WALL, o_ptr->xtra9, 1, PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_NODO | PROJECT_NODF, "");
+		dir = o_ptr->xtra9;
+		for (i = 0; i < MAX_RANGE / 2; i++) {
+			x2 = x + ddx[dir] * i;
+			y2 = y + ddy[dir] * i;
+			if (!cave_los_wall(zcave, y2, x2)) break; /* Stop at permanent walls */
+			(void) project(who, 0, wpos, y2, x2, damroll(20, 15), GF_STONE_WALL, flg, "");
+		}
 		break;
 	case SV_CHARGE_TACTICAL:
  #ifdef USE_SOUND_2010
@@ -9365,9 +9398,7 @@ void detonate_charge(object_type *o_ptr) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		//todo: need a new projection type here that doesn't originate from the player, or make it an effect instead!
-		//(void) project(who, 6, wpos, y, x, damroll(6, 3), GF_BLIND, flg, "");
-		//project_los(-who, GF_BLIND, 10 + rand_int(4), "");
+		(void) project(who, 6, wpos, y, x, damroll(6, 3), GF_BLIND, flg, "");
 		break;
 	case SV_CHARGE_CONCUSSION:
  #ifdef USE_SOUND_2010
@@ -9382,7 +9413,32 @@ void detonate_charge(object_type *o_ptr) {
 		(void) project(who, 5, wpos, y, x, damroll(18, 3), GF_STUN, flg, "");
 		break;
 	case SV_CHARGE_UNDERGROUND:
-		//create lava/water
+		//create lava/water, deep even
+ #ifdef USE_SOUND_2010
+		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+		if (!l_ptr) { //paranoia
+			i = rand_int(2) ? FEAT_DEEP_LAVA : FEAT_DEEP_WATER;
+		} else {
+			/* Fix the RNG depending on wpos and some sort of floor sector even */
+			Rand_quick = TRUE;
+			Rand_value = l_ptr->id + (x / 30) * 31 + (y / 30) * 5003;
+			i = rand_int(2) ? FEAT_DEEP_LAVA : FEAT_DEEP_WATER;
+			/* Restore the RNG */
+			Rand_quick = rand_old;
+			Rand_value = old_seed;
+		}
+		for (x2 = x - 1; x2 <= x + 1; x2++) {
+			for (y2 = y - 1; y2 <= y + 1; y2++) {
+				if (!rand_int(2)) continue; /* Somewhat irregular course, a 'vein' */
+				c_ptr = &zcave[y2][x2];
+				if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) || (c_ptr->info & CAVE_PROT)) continue;
+				if (!cave_clean_bold(zcave, y2, x2) || c_ptr->special
+				    || c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
+					continue;
+				cave_set_feat_live(wpos, y2, x2, i);
+			}
+		}
 		break;
 	}
 }
