@@ -2987,6 +2987,8 @@
 #ifdef ENABLE_EXCAVATION
  #define TV_CHARGE	47	/* Demolition charges for 'Excavation' skill */
  #define TV_CHEMICAL	48	/* Ingredients for crafting demolition charges for 'Excavation' skill */
+#else
+ #define TV_CHEMICAL	48	/* Just for building the client anyway */
 #endif
 #define TV_TOTEM	54      /* Summoner totems */
 #define TV_STAFF	55

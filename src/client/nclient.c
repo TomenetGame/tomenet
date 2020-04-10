@@ -2740,7 +2740,7 @@ int Receive_item(void) {
 			item_tester_hook = item_tester_hook_starid;
 			get_item_hook_find_obj_what = "Which item? ";
 			break;
-		case ITH_CHEMICAL:
+		case ITH_CHEMICAL: //ENABLE_EXCAVATION
 			get_item_extra_hook = get_item_hook_find_obj;
 			item_tester_hook = item_tester_hook_chemical;
 			get_item_hook_find_obj_what = "Which ingredient? ";
