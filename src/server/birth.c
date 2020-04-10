@@ -1312,8 +1312,8 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_SWORD, SV_SHORT_SWORD, 0 },
 		{ TV_SOFT_ARMOR, SV_HARD_LEATHER_ARMOR, 0 },
 		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
+		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
 		{ TV_BOW, SV_SLING, 0 },
-		{ 255, 255, 0 },
 	},
 
 	{
@@ -1467,7 +1467,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
-		{ 255, 255, 0 },
+		{ TV_SCROLL, SV_SCROLL_MAPPING, 0 },
 		{ 255, 255, 0 },
 	},
 
