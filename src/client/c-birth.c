@@ -1451,6 +1451,13 @@ static bool choose_mode(void) {
 					else if ((dna_sex & MODE_PVP) == MODE_PVP && !s_RPG) c = 'p';
 					else c = 'i';
 					hazard = TRUE;
+					//prevent endless loop on RPG server
+					if (s_RPG && (c == 'p') {
+						bell();
+						hazard = FALSE;
+						auto_reincarnation = FALSE;
+						continue;
+					}
 				} else {
 					auto_reincarnation = FALSE;
 					hazard = FALSE;
@@ -1598,6 +1605,13 @@ static bool choose_mode(void) {
 				else if ((dna_sex & MODE_PVP) == MODE_PVP && !s_RPG) c = 'p';
 				else if (!s_RPG) c = 'n';
 				hazard = TRUE;
+				//prevent endless loop on RPG server
+				if (s_RPG && (c == 'n' || c == 'p' || c == 'e')) {
+					bell();
+					hazard = FALSE;
+					auto_reincarnation = FALSE;
+					continue;
+				}
 			} else {
 				auto_reincarnation = FALSE;
 				hazard = FALSE;
