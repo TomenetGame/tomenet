@@ -16304,6 +16304,7 @@ school.
 
 - Wizardry -
 ------------
+(Spells use mainly INT for determining the failure rate.)
 
 - Mana
 
@@ -16773,7 +16774,8 @@ school.
 
 - Prayers -
 -----------
-(In general, holy schools are somewhat less affected by anti-magic fields.)
+(All spells use WIS for determining the failure rate.
+In general, holy schools are somewhat less affected by anti-magic fields.)
 
 - Holy Offense
 
@@ -17045,6 +17047,8 @@ school.
 
 - Occultism -
 -------------
+(Some Shadow and most Spirit and Hereticism spells use WIS for determining
+spell failure rate. All Unlife spells use WIS.)
 
 - Shadow
 
@@ -17213,11 +17217,11 @@ school.
     Terror          Casts fear and confusion into the hearts of others.
                     Required skill level for first spell level: 3.
 
-                    Tier II: Level 18.
+                    Tier II: Level 13.
                     Affects all opponents surrounding you.
 
     Ignore Fear     Temporarily removes the ignorant weakness known as fear.
-                    Required skill level for first spell level: 7.
+                    Required skill level for first spell level: 6.
 
     Fire Bolt       Conjures up fire into a powerful bolt.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
@@ -17367,6 +17371,7 @@ school.
 
 - Druidism -
 ------------
+(All spells use WIS for determining the failure rate.)
 
 - Arcane Lore
 
@@ -17438,7 +17443,8 @@ school.
 
 - Mindcraft -
 -------------
-(In general, mindcraft schools are less affected by anti-magic fields.)
+(All spells except for 'Charm' use INT for determining the failure rate.
+In general, mindcraft schools are less affected by anti-magic fields.)
 
 - Psycho-power
 
@@ -17649,6 +17655,7 @@ school.
 - Astral Knowledge -
 --------------------
 The exclusive astral school for Maiar.
+Most spells use INT and some use WIS for determining the failure rate.
 Instead of normal spell level, the spells of this school use an 'astral level'
 to determine damage or effect. This astral level consists to equal parts of
 your character level and your Astral Knowledge school level. This means that
@@ -18239,15 +18246,15 @@ Prayer schools:
     All holy spells depend on the spell level and your wisdom.
 Occult schools:
     Some shadow and most spirit and hereticism spells use wisdom, the others
-    intelligence.
+    intelligence. All unlife spells use wisdom.
+Druidic schools:
+    All druidic spells depend on the spell level and your wisdom.
 Mindcraft schools:
     All mind spells depend on the spell level and your intelligence,
     except for 'Charm' which uses charisma.
-Druidic schools:
-    All druidic spells depend on the spell level and your wisdom.
 Astral school:
-    Some astral spells depend on the spell level and wisdom, some on the spell
-    level and intelligence, as designated in (6.8) in the spell descriptions.
+    Most astral spells depend on the spell level and intelligence, some on the
+    spell level and wisdom, as designated in (6.8) in the spell descriptions.
 
 Runecraft:
     Runespells use dexterity, intelligence and spell level to determine failure
