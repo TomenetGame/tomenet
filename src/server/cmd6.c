@@ -5705,7 +5705,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		   These aren't a prepared ingredient yet and need to be refined into charcoal first! */
 		if (o_ptr->sval == SV_WOOD_CHIPS) {
 			/* Require a fiery light source */
-			object_type *ox_ptr = &p_ptr->inventory[INVEN_LITE];
+			object_type forge, *ox_ptr = &p_ptr->inventory[INVEN_LITE];
 
 			if (!ox_ptr->k_idx || ox_ptr->sval == SV_LITE_FEANORIAN) {
 				msg_print(Ind, "You need to equip a fire-based light source to processthe wood chips.");
@@ -5718,6 +5718,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
  #endif
 
 			msg_print(Ind, "You heat the wood chips, turning them into charcoal.");
+			ox_ptr = &forge;
 			invcopy(ox_ptr, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
 			ox_ptr->weight = k_info[ox_ptr->k_idx].weight;
 			ox_ptr->owner = o_ptr->owner;
