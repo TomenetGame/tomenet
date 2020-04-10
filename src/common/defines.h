@@ -4264,6 +4264,8 @@
 #define CAVE_GLOW_HACK_LAMP	0x00400000 	/* bad hack for hard-coded questor lights for now // self-illuminating, in fire-flickering style (TERM_LAMP) */
 #define CAVE_ENCASED	0x00800000	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
 
+#define CAVE_NOYIELD	0x01000000	/* Will not yield any items or treasure when tunneled */
+
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */
 

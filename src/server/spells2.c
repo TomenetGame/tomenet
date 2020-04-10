@@ -9376,6 +9376,7 @@ void detonate_charge(object_type *o_ptr) {
 				    || c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER)
 					continue;
 				cave_set_feat_live(wpos, y2, x2, FEAT_RUBBLE);
+				c_ptr->info |= CAVE_NOYIELD;
 			}
 		}
 		break;

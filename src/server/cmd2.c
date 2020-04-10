@@ -3493,7 +3493,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 
 			/* Hack -- place an object - Not in town (Khazad becomes l00t source), not on stale IDDC floors */
-			if (!istown(wpos) && !p_ptr->IDDC_logscum) {
+			if (!istown(wpos) && !p_ptr->IDDC_logscum && !(cinfo & CAVE_NOYIELD)) {
 				/* discovered a special feature? */
 				if (dug_feat == FEAT_FOUNTAIN) {
 					place_fountain(wpos, y, x);
