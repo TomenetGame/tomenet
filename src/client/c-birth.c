@@ -1452,7 +1452,7 @@ static bool choose_mode(void) {
 					else c = 'i';
 					hazard = TRUE;
 					//prevent endless loop on RPG server
-					if (s_RPG && (c == 'p') {
+					if (s_RPG && (c == 'p')) {
 						bell();
 						hazard = FALSE;
 						auto_reincarnation = FALSE;
