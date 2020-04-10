@@ -1349,7 +1349,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 								/* Pfft, this is really sucky... -,- MD should have something to
 								 * do with it, at least... Will change it to 1_in_MDlev chance of
 								 * total draining. Otherwise we will decrement. the_sandman
-								 * - actual idea was to make ELEC IMM worth something btw =-p - C. Blue */
+								 * - actual idea was to make ELEC IMM worth something btw =-p - C. Blue
+								 ===> Note: MD skill and resist_discharge (from UN_POWER forms) indeed are preventing this now! */
 								if (magik(chance)) o_ptr->pval--;
 								else o_ptr->pval = 0;
 							}
