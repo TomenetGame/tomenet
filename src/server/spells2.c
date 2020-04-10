@@ -9196,7 +9196,6 @@ void arm_charge(int Ind, int item, int dir) {
 		return;
 	}
 
-
 	/* Try to place it */
 
 	un_afk_idle(Ind);
@@ -9205,8 +9204,8 @@ void arm_charge(int Ind, int item, int dir) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_CALMNESS, 35))) return;
 
+	/* Hack: We just abuse monster traps for charges too.. */
 	if (!(cs_ptr = AddCS(c_ptr, CS_MON_TRAP))) return;
-
 
 	/* Create a charge-item to be dropped on/into the floor */
 
@@ -9244,17 +9243,17 @@ void arm_charge(int Ind, int item, int dir) {
 	/* Place monster-trap-/rune-like glyph on the floor */
 	o2_ptr->timeout = o_ptr->pval; //light the fuse
 
+	/* Finally, do place the standalone charge-item into the monster trap feat */
 
 	/* Link charge to monster trap glyph */
 	cs_ptr->sc.montrap.trap_kit = o2_idx;
-
 	/* Set difficulty to impossible? */
 	cs_ptr->sc.montrap.difficulty = 100 + k_info[o2_ptr->k_idx].level;
-
 	/* Preserve former feat */
 	cs_ptr->sc.montrap.feat = c_ptr->feat;
+	/* Note: Glyph colour is taken from the charge type in k_info. */
 
-	/* Actually set the trap */
+	/* Actually set the 'trap' */
 	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
 
  #ifndef RPG_SERVER /* eat item on live testing, too cheezy */
