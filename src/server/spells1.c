@@ -4225,7 +4225,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifdef ENABLE_EXCAVATION
 			/* Possibly drop ingredients: Charcoal */
-			if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(3) && !p_ptr->IDDC_logscum) {
+			if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(4) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
