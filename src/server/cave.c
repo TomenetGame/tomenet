@@ -2781,9 +2781,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 					/* If trap isn't on door display it */
 					/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
 					//(*cp) = ';';
-					a = get_monster_trap_color(Ind,
-					    cs_ptr->sc.montrap.trap_kit,
-					    feat);
+					a = get_monster_trap_color(Ind, cs_ptr->sc.montrap.trap_kit, feat);
 
 #if 0 /* currently this doesn't make sense because montraps are their own feature (like runes) instead of using just the cs_ptr (like normal traps)! This means they cancel the water grid! ew. */
 					/* Hack -- always l.blue if underwater */
@@ -2797,7 +2795,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			/* Hack to display "runes of warding" which are coloured by GF_TYPE */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_RUNE)) && c_ptr->feat != FEAT_ILLUS_WALL) {
-				a = get_rune_color(Ind, cs_ptr->sc.rune.typ);
+				/* Hack -- random hallucination */
+				if (p_ptr->image) {
+					/*image_random(ap, cp); */
+					image_object(ap, cp);
+					a = randint(15);
+				} else {
+					a = get_rune_color(Ind, cs_ptr->sc.rune.typ);
+				}
 				keep = TRUE;
 			}
 
