@@ -5701,6 +5701,44 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 #ifdef ENABLE_EXCAVATION
 	if (o_ptr->tval == TV_CHEMICAL) {
+		/* Hack - exempt wood chips:
+		   These aren't a prepared ingredient yet and need to be refined into charcoal first! */
+		if (o_ptr->sval == SV_WOOD_CHIPS) {
+			/* Require a fiery light source */
+			object_type *ox_ptr = &p_ptr->inventory[INVEN_LITE];
+
+			if (!ox_ptr->k_idx || ox_ptr->sval == SV_LITE_FEANORIAN) {
+				msg_print(Ind, "You need to equip a fire-based light source to processthe wood chips.");
+				return;
+			}
+
+ #ifdef USE_SOUND_2010
+			//sound(Ind, "item_rune", NULL, SFX_TYPE_COMMAND, FALSE);
+			sound_item(Ind, ox_ptr->tval, ox_ptr->sval, "wearwield_");
+ #endif
+
+			msg_print(Ind, "You heat the wood chips, turning them into charcoal.");
+			invcopy(ox_ptr, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
+			ox_ptr->weight = k_info[ox_ptr->k_idx].weight;
+			ox_ptr->owner = o_ptr->owner;
+			ox_ptr->mode = o_ptr->mode;
+			ox_ptr->pval = k_info[ox_ptr->k_idx].pval;
+			ox_ptr->level = 0;//k_info[ox_ptr->k_idx].level;
+			ox_ptr->discount = 0;
+			ox_ptr->number = 1;
+			ox_ptr->note = 0;
+			ox_ptr->iron_trade = o_ptr->iron_trade;
+			ox_ptr->iron_turn = o_ptr->iron_turn;
+
+			/* Erase the ingredients in the pack */
+			inven_item_increase(Ind, item, -1);
+			//inven_item_describe(Ind, item);
+			inven_item_optimize(Ind, item);
+
+			/* Place charcoal into inventory */
+			inven_carry(Ind, ox_ptr);
+			return;
+		}
 		clear_current(Ind);
 		p_ptr->current_chemical = TRUE;
 		//p_ptr->using_up_item = item;

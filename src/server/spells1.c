@@ -4225,7 +4225,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifdef ENABLE_EXCAVATION
 			/* Possibly drop ingredients: Charcoal */
-			if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(3)) {
+			if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(3) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
@@ -4239,7 +4239,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				drop_near(0, &forge, -1, wpos, y, x);
 				s_printf("CHEMICAL: %s found charcoal.\n", p_ptr->name);
-
 			}
 #endif
 		}
@@ -5330,6 +5329,10 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Kill it */
 			else {
+#ifdef ENABLE_EXCAVATION
+				int k_idx = o_ptr->k_idx;
+#endif
+
 				/* Describe if needed */
 				//if (!quiet && p_ptr->obj_vis[c_ptr->o_idx] && note_kill)
 				if (!quiet && p_ptr->obj_vis[this_o_idx] && note_kill)
@@ -5357,6 +5360,27 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 						} else (void)potion_smash_effect(who, wpos, y, x, o_sval + 200);
 					}
 				}
+
+#ifdef ENABLE_EXCAVATION
+				/* May create charcoal from burned wood */
+				if ((my_strcasestr(o_name, "wood") ||
+				    (k_info[k_idx].tval == TV_JUNK && k_info[k_idx].sval == SV_WOODEN_STICK)) &&
+				    get_skill(p_ptr, SKILL_DIG) >= 5 && !p_ptr->IDDC_logscum) {
+					object_type forge;
+
+					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
+					forge.owner = p_ptr->id;
+					forge.mode = p_ptr->mode;
+					forge.iron_trade = p_ptr->iron_trade;
+					forge.iron_turn = turn;
+					forge.level = 0;
+					forge.number = 1 + k_info[k_idx].weight / 180;
+					forge.weight = k_info[forge.k_idx].weight;
+					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					drop_near(0, &forge, -1, wpos, y, x);
+					s_printf("CHEMICAL: %s found charcoal (item).\n", p_ptr->name);
+				}
+#endif
 
 				/* Redraw */
 				if (!quiet) everyone_lite_spot(wpos, y, x);

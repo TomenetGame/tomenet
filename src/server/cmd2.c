@@ -3588,7 +3588,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				invcopy(&forge, special_k_idx);
 				apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 				forge.number = 1;
-//						forge.level = ;
+				//forge.level = ;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				msg_print(Ind, "You have found something!");
 				drop_near(0, &forge, -1, wpos, y, x);
@@ -3598,12 +3598,29 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				invcopy(&forge, lookup_kind(TV_JUNK, SV_WOOD_PIECE));
 				apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 				forge.number = 1;
-//						forge.level = ;
+				//forge.level = ;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				msg_print(Ind, "You have found something!");
 				drop_near(0, &forge, -1, wpos, y, x);
 				s_printf("DIGGING: %s found a wood piece.\n", p_ptr->name);
 			}
+#ifdef ENABLE_EXCAVATION
+			else if ((get_skill(p_ptr, SKILL_DIG) >= 5) && !rand_int(5) && !p_ptr->IDDC_logscum) {
+				object_type forge;
+
+				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
+				s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
+				forge.owner = p_ptr->id;
+				forge.mode = p_ptr->mode;
+				forge.iron_trade = p_ptr->iron_trade;
+				forge.iron_turn = turn;
+				forge.level = 0;
+				forge.number = 1;
+				forge.weight = k_info[forge.k_idx].weight;
+				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				drop_near(0, &forge, -1, wpos, y, x);
+			}
+#endif
 
 			/* Notice */
 			note_spot_depth(wpos, y, x);
@@ -3813,7 +3830,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					cave_set_feat_live(wpos, y, x, dug_feat);
 					//s_printf("DIGGING: %s found water/lava.\n", p_ptr->name);
 				}
-			} else if (!rand_int(10) && special_k_idx && tval == TV_RUNE) {
+			} else if (!rand_int(10) && special_k_idx && tval == TV_RUNE && !p_ptr->IDDC_logscum) {
 					invcopy(&forge, special_k_idx);
 					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 					forge.number = 1;
@@ -3825,7 +3842,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 #ifdef ENABLE_EXCAVATION
 			/* Magma - Possibly find ingredients: Sulfur (volcanic/undersea), Vitriol */
-			else if (!hard && !soft && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7)) {
+			else if (!hard && !soft && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, rand_int(3) ? SV_SULFUR : SV_VITRIOL));
@@ -3841,7 +3858,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				drop_near(0, &forge, -1, wpos, y, x);
 			}
 			/* Quartz (whatever =p) - Possibly find ingredients: Metal powder */
-			else if (hard && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7)) {
+			else if (hard && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));

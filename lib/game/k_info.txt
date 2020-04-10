@@ -3869,8 +3869,17 @@ $ENABLE_EXCAVATION$P:0:1d2:0:0:0
 $ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
 $ENABLE_EXCAVATION$D:Used by demolitionists to grind solid metal to powder.
 
+$ENABLE_EXCAVATION$N:449:& Heap~ of Wood Chips
+$ENABLE_EXCAVATION$G:~:u
+$ENABLE_EXCAVATION$I:48:11:0
+$ENABLE_EXCAVATION$W:1:0:20:0
+$ENABLE_EXCAVATION$A:127/0
+$ENABLE_EXCAVATION$P:0:1d1:0:0:0
+$ENABLE_EXCAVATION$F:EASY_KNOW | ACTIVATE
+$ENABLE_EXCAVATION$D:Can be heated to turn into charcoal by proficient demolitionists.
 
-# HOLE 449-458
+
+# HOLE 450-458
 
 
 ##### Additional skeletons #####

@@ -1797,7 +1797,7 @@ static void calc_torch(int Ind) {
 			p_ptr->cur_lite += 2;
 
 		/* Feanorian lanterns provide permanent, bright, lite */
-		if (o_ptr->sval == SV_LITE_FEANOR)
+		if (o_ptr->sval == SV_LITE_FEANORIAN)
 			p_ptr->cur_lite += 3;
 
 		/* Artifact Lites provide permanent, bright, lite */

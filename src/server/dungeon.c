@@ -5427,7 +5427,7 @@ static bool process_player_end_aux(int Ind) {
 		/* Hack -- Use some fuel (sometimes) */
 #if 0
 		if (!artifact_p(o_ptr) && !(o_ptr->sval == SV_LITE_DWARVEN)
-		    && !(o_ptr->sval == SV_LITE_FEANOR) && (o_ptr->pval > 0) && (!o_ptr->name1))
+		    && !(o_ptr->sval == SV_LITE_FEANORIAN) && (o_ptr->pval > 0) && (!o_ptr->name1))
 #endif
 
 		/* Extract the item flags */

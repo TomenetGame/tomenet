@@ -6044,7 +6044,7 @@ bool monster_death(int Ind, int m_idx) {
     {
 	bool found_chemical = FALSE;
 
-	if ((r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000) { // Dragon-league basically
+	if ((r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 		if (get_skill(p_ptr, SKILL_DIG) >= 5 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
@@ -6062,7 +6062,7 @@ bool monster_death(int Ind, int m_idx) {
 			found_chemical = TRUE;
 		}
 	}
-	if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000) { // Dragon-league basically
+	if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 		if (get_skill(p_ptr, SKILL_DIG) >= 15 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
@@ -6080,7 +6080,7 @@ bool monster_death(int Ind, int m_idx) {
 			found_chemical = TRUE;
 		}
 	}
-	if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000) { // Dragon-league basically
+	if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 		if (get_skill(p_ptr, SKILL_DIG) >= 10 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
@@ -6098,7 +6098,7 @@ bool monster_death(int Ind, int m_idx) {
 			found_chemical = TRUE;
 		}
 	}
-	if (!found_chemical && (r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD | RF3_NONLIVING)) && !(r_ptr->flags7 & RF7_AQUATIC)) {
+	if (!found_chemical && (r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags3 & (RF3_DEMON | RF3_UNDEAD | RF3_NONLIVING)) && !(r_ptr->flags7 & RF7_AQUATIC) && !p_ptr->IDDC_logscum) {
 		/* Avoid item flood */
 		if (!(r_ptr->flags1 & RF1_FRIENDS) || !rand_int(4)) {
 			/* Saltpetre (guano: bats/birds) */

@@ -4188,8 +4188,9 @@
  #define SV_METAL_PERCHLORATE	8	/* additional tier III oxygen source - make shit *MORE* potent */
  #define SV_VITRIOL		9	/* (sulphates) alternative for flask of acid */
  #define SV_RUST		10	/* metaloxide.. we limit it to iron I guess.. */
+ #define SV_WOOD_CHIPS		11
  #define SV_MIXTURE		99	/* Mixture of the above ingredients. Uses xtra1/2/3 to bitwise store the ingredients that went into it so far, the 3 variables indicating the amounts of each bit, eg 2xsalpeter+1x... */
-/* Helper indices for ingredients -- IMPORTANT: For ingredients in TV_CHEMICAL these must match the sval! */
+/* Helper indices for ingredients -- IMPORTANT: For ingredients in TV_CHEMICAL these must match the sval up to 10! */
  #define CI_CC	1
  #define CI_SU	2
  #define CI_SP	3

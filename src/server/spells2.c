@@ -8980,7 +8980,7 @@ void mix_chemicals(int Ind, int item) {
 
 	/* Result: Either a new ingredient, a mixture or a finished blast charge. */
 	q_ptr->k_idx = lookup_kind(q_ptr->tval, q_ptr->sval); // (using invcopy() would wipe the object)
-	o_ptr->weight = k_info[q_ptr->k_idx].weight;
+	q_ptr->weight = k_info[q_ptr->k_idx].weight;
 	//object_desc(Ind, o_name, q_ptr, FALSE, 256);
 
 	/* Recall original parameters */
