@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. April 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 11. April 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -125,7 +125,7 @@ Contents
     (5.7)   Qualitative classification of items, identifying & selling items
     (5.7a)  Types of Identification
     (5.7b)  The EASY_KNOW flag
-    (5.7c)  Loot tables
+    (5.7c)  Loot tables, Treasure Classes
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
     (5.9a)  Activatable items
@@ -9875,14 +9875,15 @@ More examples:
  that shows a '?' for level requirements, it might turn out very valuable.
 
 
-(5.7c) Loot tables
-------------------
+(5.7c) Loot tables, Treasure Classes
+------------------------------------
 Also called drop tables, specifying which type of items a monster might drop.
 The type, level, quality and use-level of an item may depend on these factors:
 
 -The level of the entity it is dropped by (monster or chest).
  Monsters have a loot table that you can review by pressing ~7. It knows five
- treasure classes: Treasure, combat, magic, tools, junk (see further below).
+ so-called "treasure classes":
+ Treasure, combat, magic, tools, junk (see further below).
 
  Small chests have a higher chance of dropping gold instead of items, while
  larger chests drop more items than gold. Note that items found in chests have
