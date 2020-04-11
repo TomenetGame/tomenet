@@ -5708,7 +5708,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			object_type forge, *ox_ptr = &p_ptr->inventory[INVEN_LITE];
 
 			if (!ox_ptr->k_idx || ox_ptr->sval == SV_LITE_FEANORIAN) {
-				msg_print(Ind, "You need to equip a fire-based light source to processthe wood chips.");
+				msg_print(Ind, "You need to equip a fire-based light source to process the wood chips.");
 				return;
 			}
 

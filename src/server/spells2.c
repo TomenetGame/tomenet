@@ -8671,6 +8671,7 @@ void tome_creation_aux(int Ind, int item) {
 }
 
 #ifdef ENABLE_EXCAVATION
+/* === Main code for the demolitionist trait feature of the 'Digging' skill - C. Blue === */
 /* Helper function to create a flag value from an ingredient, for mixture calculations */
 static s16b ingredient2flag(int tval, int sval) {
 	int bit = 0;
@@ -8699,11 +8700,19 @@ static s16b ingredient2flag(int tval, int sval) {
 static int ingredients_to_ingredient(int sval1, int tval2, int sval2) {
 	switch (sval1) {
 	case SV_METAL_POWDER:
+ #ifndef NO_RUST_NO_HYDROXIDE
 		if (tval2 == TV_POTION) switch (sval2) {
 			case SV_POTION_WATER:
 			case SV_POTION_SALT_WATER:
 				return CI_RU;
-		} else if ((tval2 == TV_FLASK && sval2 == SV_FLASK_ACID) ||
+		} else
+ #else
+		/* Skip some steps very tolerantly.. */
+		if (tval2 == TV_POTION && sval2 == SV_POTION_SALT_WATER) return CI_ME;
+		else if (tval2 == TV_CHEMICAL && sval2 == SV_AMMONIA_SALT) return CI_ME;
+		else
+ #endif
+		if ((tval2 == TV_FLASK && sval2 == SV_FLASK_ACID) ||
 		    (tval2 == TV_CHEMICAL && sval2 == SV_VITRIOL))
 			return CI_MC;
 		return 0;
@@ -8721,7 +8730,7 @@ static int ingredients_to_ingredient(int sval1, int tval2, int sval2) {
 	return 0;
 }
 /* Helper function to combine a mixture and an ingredient to form a new ingredient (not a mixture). */
-static int mixingred_to_ingredient(object_type *o_ptr, int tval, int sval) {
+static int mixingred_to_ingredient(int Ind, object_type *o_ptr, int tval, int sval) {
 	s16b ingflag = ingredient2flag(tval, sval);
 	s16b xtra1 = 0x000, xtra2 = 0x000, xtra3 = 0x000;
 
@@ -8735,9 +8744,21 @@ static int mixingred_to_ingredient(object_type *o_ptr, int tval, int sval) {
 	else return -1; /* failure - mixture is saturated */
 
 	/* check if the result would be a valid ingredient */
+ #ifndef NO_OIL_ACID
 	if ((xtra1 & (CF_SU | CF_SP | CF_WA | CF_LO)) == (CF_SU | CF_SP | CF_WA | CF_LO)
-	    && !xtra2 && !xtra3)
+ #else
+	if ((xtra1 & (CF_SU | CF_SP | CF_WA)) == (CF_SU | CF_SP | CF_WA)
+ #endif
+	    && !xtra2 && !xtra3) {
+		/* Requires heat to make steam */
+		object_type *ox_ptr = &Players[Ind]->inventory[INVEN_LITE];
+
+		if (!ox_ptr->k_idx || ox_ptr->sval == SV_LITE_FEANORIAN) {
+			msg_print(Ind, "You need to equip a fire-based light source to process this.");
+			return -1;
+		}
 		return CI_AC; /* Success - we created acid */
+	}
 
 	return 0; /* Failure - we created some mixture, but not an ingredient */
 }
@@ -8871,8 +8892,8 @@ void mix_chemicals(int Ind, int item) {
 		wa += ((o_ptr->xtra1 & CF_WA) ? 1 : 0) + ((o_ptr->xtra2 & CF_WA) ? 1 : 0) + ((o_ptr->xtra3 & CF_WA) ? 1 : 0);
 		sw += ((o_ptr->xtra1 & CF_SW) ? 1 : 0) + ((o_ptr->xtra2 & CF_SW) ? 1 : 0) + ((o_ptr->xtra3 & CF_SW) ? 1 : 0);
 		ac += ((o_ptr->xtra1 & CF_AC) ? 1 : 0) + ((o_ptr->xtra2 & CF_AC) ? 1 : 0) + ((o_ptr->xtra3 & CF_AC) ? 1 : 0);
-
 		/* Check for valid crafting results! */
+ #ifndef NO_RUST_NO_HYDROXIDE
 		if ((cc == 1 && su == 1 && sp == 2) ||
 		    (as == 3 && lo == 1)) q_ptr->sval = SV_CHARGE_BLAST;
 		if ((cc == 1 && su == 1 && sp == 3) ||
@@ -8890,6 +8911,25 @@ void mix_chemicals(int Ind, int item) {
 		if (cc == 1 && su == 1 && sp == 2 && mh == 1) q_ptr->sval = SV_CHARGE_CONCUSSION;
 		if (cc == 1 && su == 1 && sp == 2 && mh == 2) q_ptr->sval = SV_CHARGE_XCONCUSSION;
 		if (cc == 1 && su == 2 && sp == 2 && mc == 1) q_ptr->sval = SV_CHARGE_UNDERGROUND;
+ #else
+		if ((cc == 1 && su == 1 && sp == 2) ||
+		    (as == 3 && lo == 1)) q_ptr->sval = SV_CHARGE_BLAST;
+		if ((cc == 1 && su == 1 && sp == 3) ||
+		    (as == 3 && lo == 1 && me == 1)) q_ptr->sval = SV_CHARGE_XBLAST;
+		if (cc == 2 && su == 2 && sp == 3 && as == 3) q_ptr->sval = SV_CHARGE_SBLAST;
+		if (cc == 1 && su == 1 && sp == 3 && mc == 1) q_ptr->sval = SV_CHARGE_QUAKE;
+		if (cc == 2 && su == 2 && sp == 3 && mc == 3) q_ptr->sval = SV_CHARGE_DESTRUCTION;
+		if (cc == 2 && su == 1 && sp == 2 && me == 1) q_ptr->sval = SV_CHARGE_FIRE;
+		if (cc == 2 && su == 2 && sp == 3 && me == 2) q_ptr->sval = SV_CHARGE_FIRESTORM;
+		if (cc == 3 && su == 2 && sp == 2 && me == 1) q_ptr->sval = SV_CHARGE_FIREWALL;
+		if (as == 3 && lo == 2 && me == 1) q_ptr->sval = SV_CHARGE_WRECKING;
+		if (as == 3 && lo == 2 && me == 3) q_ptr->sval = SV_CHARGE_CASCADING;
+		if (as == 3 && lo == 2 && me == 2) q_ptr->sval = SV_CHARGE_TACTICAL;
+		if (cc == 1 && su == 1 && sp == 2 && mp == 2) q_ptr->sval = SV_CHARGE_FLASHBOMB;
+		if (cc == 1 && su == 1 && sp == 2 && me == 1) q_ptr->sval = SV_CHARGE_CONCUSSION;
+		if (cc == 1 && su == 1 && sp == 2 && me == 2) q_ptr->sval = SV_CHARGE_XCONCUSSION;
+		if (cc == 1 && su == 2 && sp == 2 && mc == 1) q_ptr->sval = SV_CHARGE_UNDERGROUND;
+ #endif
 
 		if (!q_ptr->sval) {
 			msg_print(Ind, "That is not an appropriate mixture for making a blast charge.");
@@ -8909,8 +8949,10 @@ void mix_chemicals(int Ind, int item) {
 		}
 		/* Next, create ingredients from mixture + ingredient */
 		else if (o_ptr->sval != SV_MIXTURE || o2_ptr->tval != TV_CHEMICAL || o2_ptr->sval != SV_MIXTURE) {
-			if (o_ptr->sval == SV_MIXTURE) i = mixingred_to_ingredient(o_ptr, o2_ptr->tval, o2_ptr->sval);
-			else i = mixingred_to_ingredient(o2_ptr, o_ptr->tval, o_ptr->sval);
+			if (o_ptr->sval == SV_MIXTURE) i = mixingred_to_ingredient(Ind, o_ptr, o2_ptr->tval, o2_ptr->sval);
+			else i = mixingred_to_ingredient(Ind, o2_ptr, o_ptr->tval, o_ptr->sval);
+			/* Catch specialty: Ingredients were correct but we were just missing a tool/circumstances: */
+			if (i == -1) return; //keep everything for next attempt!
 		}
 		/* Last, create ingredient from mixture + mixture */
 		else i = mixmix_to_ingredient(o_ptr, o2_ptr);
