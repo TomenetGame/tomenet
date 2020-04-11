@@ -8434,8 +8434,9 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				o_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL);
 				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
 
-				p_ptr->obj_felt[o_ptr->k_idx] = FALSE;//(no effect)
-				p_ptr->obj_felt_heavy[o_ptr->k_idx] = FALSE;//(no effect)
+				//keep character's pseudo-id knowledge of the general flavour of that item type
+				//p_ptr->obj_felt[o_ptr->k_idx] = FALSE;
+				//p_ptr->obj_felt_heavy[o_ptr->k_idx] = FALSE;
 
 				p_ptr->window |= PW_INVEN;
 
