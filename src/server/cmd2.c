@@ -7597,7 +7597,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					/* Target dummy "snowiness" hack */
 					if ((m_ptr->r_idx == RI_TARGET_DUMMY1 || m_ptr->r_idx == RI_TARGET_DUMMY2) &&
 					    m_ptr->extra < 60) {
-						m_ptr->extra += 6;
+						m_ptr->extra += 6 + 7; //getting hit will subtract 7 right away again
 						if (m_ptr->r_idx == RI_TARGET_DUMMY1 && m_ptr->extra >= 30) {
 							m_ptr->r_idx = RI_TARGET_DUMMY2;
 							everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
@@ -7605,7 +7605,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					}
 					if ((m_ptr->r_idx == RI_TARGET_DUMMYA1 || m_ptr->r_idx == RI_TARGET_DUMMYA2) &&
 					    m_ptr->extra < 60) {
-						m_ptr->extra += 6;
+						m_ptr->extra += 6 + 7; //getting hit will subtract 7 right away again
 						if (m_ptr->r_idx == RI_TARGET_DUMMYA1 && m_ptr->extra >= 30) {
 							m_ptr->r_idx = RI_TARGET_DUMMYA2;
 							everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
