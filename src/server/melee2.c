@@ -9326,7 +9326,7 @@ void process_monsters(void) {
 
 	int		closest, dis_to_closest, lowhp;
 	bool		blos, new_los;
-	bool		interval = ((turn % cfg.fps) == 0); //assumes that cfg.fps is divisable by MONSTER_TURNS!
+	bool		interval = (((turn / MONSTER_TURNS) % (cfg.fps / MONSTER_TURNS)) == 0);
 
 	monster_type	*m_ptr;
 	monster_race	*r_ptr;
@@ -9409,7 +9409,6 @@ void process_monsters(void) {
 
 		/* Target dummy "snowiness" hack, checked once per second */
 		if (interval && !m_ptr->wpos.wz) {
-			if ((m_ptr->r_idx == RI_TARGET_DUMMY2 || m_ptr->r_idx == RI_TARGET_DUMMYA2)) s_printf("dummy found %d", m_ptr->r_idx);
 			if (((m_ptr->r_idx == RI_TARGET_DUMMY1) || (m_ptr->r_idx == RI_TARGET_DUMMY2)) &&
 			    (m_ptr->extra < 60) && (wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].weather_type == 2)) {
 				m_ptr->extra++;
@@ -9428,16 +9427,13 @@ void process_monsters(void) {
 			}
 			/* Un-snow when winter is over -_- */
 			else if ((m_ptr->r_idx == RI_TARGET_DUMMY2 || m_ptr->r_idx == RI_TARGET_DUMMYA2) && !cold_place(&m_ptr->wpos)) {
-				s_printf(" in !cold place has extra %d", m_ptr->extra);
 				if (m_ptr->extra) m_ptr->extra--;
 				if (!m_ptr->extra) {
-				s_printf(" TRANSFORM!\n");
 					if (m_ptr->r_idx == RI_TARGET_DUMMY2) m_ptr->r_idx = RI_TARGET_DUMMY1;
 					else m_ptr->r_idx = RI_TARGET_DUMMYA1;
 					everyone_lite_spot(&m_ptr->wpos, fy, fx);
 				}
 			}
-			if ((m_ptr->r_idx == RI_TARGET_DUMMY2 || m_ptr->r_idx == RI_TARGET_DUMMYA2)) s_printf("\n");
 		}
 
 		/* Not enough energy to move */

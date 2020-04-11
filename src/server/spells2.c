@@ -5446,6 +5446,7 @@ bool probing(int Ind) {
 			/* Learn all of the non-spell, non-treasure flags */
 			lore_do_probe(i);
 
+#if 0
 			if (admin_p(Ind)) {
 				switch(m_ptr->r_idx) {
 				case RI_TARGET_DUMMY1:
@@ -5455,6 +5456,7 @@ bool probing(int Ind) {
 					msg_format(Ind, "extra=%d", m_ptr->extra); //show snowiness
 				}
 			}
+#endif
 
 			/* Probe worked */
 			probe = TRUE;
