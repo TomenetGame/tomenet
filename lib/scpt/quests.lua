@@ -92,7 +92,7 @@ function quest_towneltalk(Ind, msg, topic)
 		end
 
 		--Give proper question about advice topics
-		msg_print(Ind, " ")
+		--msg_print(Ind, " ")
 		if hinted == 1 then
 			msg_print(Ind, "\252\255UIs there anything else you need advice on?")
 		else
@@ -199,6 +199,7 @@ function quest_towneltalk(Ind, msg, topic)
 	--*** events ***
 	if topic == 6 then
 		msg_print(Ind, "\252\255UTo check for ongoing events, type '/evinfo' into chat. Events take place regularly every 1 or 2 hours.")
+		hinted = 1
 	end
 
 	if hinted == 0 then
