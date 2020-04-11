@@ -9056,14 +9056,13 @@ void mix_chemicals(int Ind, int item) {
 		inven_item_increase(Ind, item, -1);
 		inven_item_describe(Ind, item);
 		if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indices
-			inven_item_optimize(Ind, p_ptr->current_activation);
+			//inven_item_optimize(Ind, p_ptr->current_activation);
 			inven_item_optimize(Ind, item);
 		} else {
-			inven_item_optimize(Ind, item);
+			//inven_item_optimize(Ind, item);
 			inven_item_optimize(Ind, p_ptr->current_activation);
 		}
 	} else inven_item_optimize(Ind, p_ptr->current_activation);
-
 	/* Give us the result */
 	object_desc(Ind, o_name, q_ptr, TRUE, 3);
 	if (q_ptr->tval == TV_CHARGE) s_printf("CHARGE: %s (%d, %d) created %s.\n", p_ptr->name, p_ptr->lev, get_skill(p_ptr, SKILL_DIG), o_name);
