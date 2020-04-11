@@ -1739,8 +1739,6 @@ int Receive_inven(void) {
 
 	strncpy(inventory_name[pos - 'a'], name, ONAME_LEN - 1);
 
-	apply_auto_inscriptions(pos - 'a', FALSE);
-
 	/* Window stuff */
 	p_ptr->window |= (PW_INVEN);
 

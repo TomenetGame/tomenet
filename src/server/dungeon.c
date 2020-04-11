@@ -606,14 +606,15 @@ static void sense_inventory(int Ind) {
 
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
+
 		/* in case the pseudo-id inscription triggers a forced auto-inscription! :)
 		   Added to allow inscribing 'good' ammo !k or so (ethereal ammo) */
+		o_ptr->auto_insc = TRUE;
 		handle_stuff(Ind);
-		Send_apply_auto_insc(Ind, i);
+		//Send_apply_auto_insc(Ind, i);
 	}
 }
 

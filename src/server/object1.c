@@ -6269,8 +6269,8 @@ void display_inven(int Ind) {
 
 	for (i = 0; i < z; i++) {
 		if (p_ptr->inventory[i].auto_insc) {
-			Send_apply_auto_insc(Ind, i);
 			p_ptr->inventory[i].auto_insc = FALSE;
+			Send_apply_auto_insc(Ind, i);
 		}
 	}
 
@@ -6343,8 +6343,8 @@ void display_equip(int Ind) {
 
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 		if (p_ptr->inventory[i].auto_insc) {
-			Send_apply_auto_insc(Ind, i);
 			p_ptr->inventory[i].auto_insc = FALSE;
+			Send_apply_auto_insc(Ind, i);
 		}
 	}
 }

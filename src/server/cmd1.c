@@ -2375,13 +2375,19 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 							msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
 							    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux2_magic(o_ptr));
 							/* otherwise inscribe it textually */
-							if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
+							if (!o_ptr->note) {
+								o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
+								o_ptr->auto_insc = TRUE;
+							}
 						} else {
 							/* at least give a notice */
 							msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
 							    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux1_magic(o_ptr));
 							/* otherwise inscribe it textually */
-							if (!o_ptr->note) o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
+							if (!o_ptr->note) {
+								o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
+								o_ptr->auto_insc = TRUE;
+							}
 						}
 					}
 #if 0
