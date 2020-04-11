@@ -837,7 +837,7 @@ f:Aura of Death:Magic%5
 #f:Training:Health%25
 f:Agility:Health%25
 f:Swimming:Health%25
-f:Digging:Health%25
+f:Digging:Health%35
 f:Climbing:Health%25
 #f:Levitation:Health%15
 #f:Free Action:Health%15
