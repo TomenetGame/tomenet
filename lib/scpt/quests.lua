@@ -107,6 +107,18 @@ function quest_towneltalk(Ind, msg, topic)
 	--*** preparation/inventory ***
 	if topic == 0 then
 		--encumberment too for MA (and Dodging?)
+		if player.monk_heavyarmor == 1 then
+			msg_print(Ind, "\252\255UIt seems your armour weight negatively impacts your martial arts performance, hindering your abilities!");
+			hinted = 1
+		end
+		if player.rogue_heavyarmor == 1 then
+			msg_print(Ind, "\252\255UIt seems your armour weight negatively impacts your flexibility and awareness, hindering your abilities!");
+			if player.inventory[INVEN_WIELD+2].k_idx ~= 0 and player.inventory[INVEN_WIELD+2].tval ~= 34 then -- INVEN_ARM+1, TV_SHIELD
+				msg_print(Ind, "\252\255UBe aware that your secondary weapon will count as NON-EXISTANT while you are encumbered this way! Meaning that you won't get any abilities or resistances from it either!");
+			end
+			hinted = 1
+		end
+		--suggest phase/heals etc?
 	end
 
 	--*** equipment ***
@@ -186,6 +198,7 @@ function quest_towneltalk(Ind, msg, topic)
 
 	--*** events ***
 	if topic == 6 then
+		msg_print(Ind, "\252\255UTo check for ongoing events, type '/evinfo' into chat. Events take place regularly every 1 or 2 hours.")
 	end
 
 	if hinted == 0 then
