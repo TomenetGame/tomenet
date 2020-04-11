@@ -9068,9 +9068,7 @@ void mix_chemicals(int Ind, int item) {
 	object_desc(Ind, o_name, q_ptr, TRUE, 3);
 	if (q_ptr->tval == TV_CHARGE) s_printf("CHARGE: %s (%d, %d) created %s.\n", p_ptr->name, p_ptr->lev, get_skill(p_ptr, SKILL_DIG), o_name);
 	i = inven_carry(Ind, q_ptr);
-	if (i != -1) {
-		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
-	}
+	if (i != -1) msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
 }
 /* Determine the sensorial properties of a chemical mixture */
 void mixture_flavour(object_type *o_ptr, char *flavour) {
@@ -9310,8 +9308,8 @@ void arm_charge(int Ind, int item, int dir) {
 	/* Actually set the 'trap' */
 	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
 
- #ifndef RPG_SERVER /* eat item on live testing, too cheezy */
-	return;//testing
+ #ifdef TEST_SERVER
+	return;
  #endif
 	/* Erase the ingredients in the pack */
 	inven_item_increase(Ind, item, -1);
