@@ -9227,7 +9227,7 @@ void grind_chemicals(int Ind, int item) {
 void arm_charge(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[item];
-	char o_name[ONAME_LEN];
+	char o_name[ONAME_LEN], *c;
 	cave_type *c_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
@@ -9318,6 +9318,17 @@ void arm_charge(int Ind, int item, int dir) {
 
 	/* Place monster-trap-/rune-like glyph on the floor */
 	o2_ptr->timeout = o_ptr->pval; //light the fuse
+
+	/* Hack: Allow setting custom fuse length via '!Fxx' inscription! */
+	if (o2_ptr->note && (c = strchr(quark_str(o2_ptr->note), '!')) && (c[1] == 'F')) {
+		int fuse = atoi(c + 2);
+
+		/* Limits: Fuse duration must be between 1s and 15s */
+		if (fuse > 15) fuse = 15;
+		if (fuse < 1) fuse = 1;
+
+		o2_ptr->timeout = fuse;
+	}
 
 	/* Finally, do place the standalone charge-item into the monster trap feat */
 
