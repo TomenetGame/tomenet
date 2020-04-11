@@ -1691,7 +1691,8 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		}
 #endif
 #ifdef IDDC_RESTRICTED_TRADING
-		if (in_irondeepdive(&p_ptr->wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
+		if (in_irondeepdive(&p_ptr->wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
+		    && !exceptionally_shareable_item(o_ptr)) {
 			if (p_ptr->IDDC_logscum) {
 				msg_print(Ind, "\377yYou cannot take items on stale floors.");
 				if (!is_admin(p_ptr)) return;
