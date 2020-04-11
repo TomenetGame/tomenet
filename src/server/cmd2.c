@@ -3442,7 +3442,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			tval = TV_RUNE;
 			get_obj_num_hook = NULL;
 			get_obj_num_prep_tval(tval, RESF_MID);
-			special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+			special_k_idx = get_obj_num(10 + getlevel(&p_ptr->wpos), RESF_MID);
+			if (!special_k_idx) tval = 0;
 		    }
 		}
 
@@ -3451,7 +3452,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			tval = TV_RUNE;
 			get_obj_num_hook = NULL;
 			get_obj_num_prep_tval(tval, RESF_MID);
-			special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+			special_k_idx = get_obj_num(10 + getlevel(&p_ptr->wpos), RESF_MID);
+			if (!special_k_idx) tval = 0;
 		}
 	}
 	/* if in monster KILL_WALL form or via magic */
@@ -3463,7 +3465,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	if (p_ptr->IDDC_logscum) {
 		if (dug_feat == FEAT_FOUNTAIN) dug_feat = FEAT_NONE;
-		special_k_idx = 0;
+		special_k_idx = tval = 0;
 	}
 
 	//do_cmd_tunnel_test(int y, int x, FALSE)
@@ -3729,10 +3731,16 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		    nonobvious) {
 			/* hack 2/2: rune proficiency for 'special feature' uncovering */
 			if (rand_int(1000) < rune_proficiency) {
+				int fallback = special_k_idx, fallback_tval = tval;
+
 				tval = TV_RUNE;
 				get_obj_num_hook = NULL;
 				get_obj_num_prep_tval(tval, RESF_MID);
-				special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
+				special_k_idx = get_obj_num(10 + getlevel(&p_ptr->wpos), RESF_MID);
+				if (!special_k_idx) {
+					special_k_idx = fallback;
+					tval = fallback_tval;
+				}
 			}
 		}
 
@@ -3780,15 +3788,28 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				tval = TV_RUNE;
 				get_obj_num_hook = NULL;
 				get_obj_num_prep_tval(tval, RESF_MID);
-				special_k_idx = get_obj_num(getlevel(&p_ptr->wpos), RESF_MID);
-				invcopy(&forge, special_k_idx);
-				apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-				forge.number = 1;
-				//forge.level = ;
-				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				special_k_idx = get_obj_num(10 + getlevel(&p_ptr->wpos), RESF_MID);
+				if (special_k_idx) {
+					invcopy(&forge, special_k_idx);
+					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+					forge.number = 1;
+					//forge.level = ;
+					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					msg_print(Ind, "You have found something!");
+					drop_near(0, &forge, -1, wpos, y, x);
+					s_printf("DIGGING: %s found a rune (nonobvious vein).\n", p_ptr->name);
+				} else {
+					object_level = find_level;
+					/* abuse tval: reward the special effort at lower character levels..
+					   and add a basic x3 bonus for gold from veins in general. */
+					tval = 3 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
+					if (nonobvious) s_printf("DIGGING: %s digs nonobvious (x%d) (runefallback).\n", p_ptr->name, tval);
+					place_gold(Ind, wpos, y, x, tval, 0);
+					object_level = old_object_level;
+				}
+				note_spot_depth(wpos, y, x);
+				everyone_lite_spot(wpos, y, x);
 				msg_print(Ind, "You have found something!");
-				drop_near(0, &forge, -1, wpos, y, x);
-				s_printf("DIGGING: %s found a rune (nonobvious vein).\n", p_ptr->name);
 			} else
 			/* Normal results */
 			if (gold) {
