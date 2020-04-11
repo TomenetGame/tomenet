@@ -117,8 +117,12 @@ function quest_towneltalk(Ind, msg, topic)
 				msg_print(Ind, "\252\255UYou should really make sure you have Free Action, or you might get paralzyed by a monster and become unable to defend yourself or flee!")
 				hinted = 1
 			end
+			if player.resist_nexus == 0 then
+				msg_print(Ind, "\252\255UYou probably want nexus resistance soon, because nexus can swap two of your attributes randomly, which can mean very, very serious trouble.")
+				hinted = 1
+			end
 			if player.resist_pois == 0 then
-				msg_print(Ind, "\252\255UYou probably want poison resistance. I heard that Amulets of the Serpents are relatively easy to acquire for that need.")
+				msg_print(Ind, "\252\255UYou should look for poison resistance. I heard that Amulets of the Serpents are relatively easy to acquire for that need.")
 				hinted = 1
 			end
 			if player.resist_fire == 0 or player.resist_cold == 0 or player.resist_acid == 0 or player.resist_elec == 0 then
