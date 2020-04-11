@@ -3185,7 +3185,7 @@ int Receive_store(void) {
 	byte	attr;
 	s16b	wgt, num, pval;
 
-	if (is_newer_than(&server_version, 4, 7, 2, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%hd%s", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval, &powers)) <= 0)
 			return n;
 	} else if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {

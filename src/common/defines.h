@@ -9016,3 +9016,6 @@ extern int PlayerUID;
 /* Chance for weapons / digging tools / p_ptr->impact to cause an earthquake, even if all case-specific rolls already succeeded.
    Unified value for digging and fighting here, as characters could use their weapons as digging tools just as well. */
 #define QUAKE_CHANCE	50
+
+/* More readable than !is_older_than (in common/common.c) */
+#define is_atleast(vtptr, ma, mi, pa, ex, br, bu) (!is_older_than(vtptr, ma, mi, pa, ex, br, bu))
