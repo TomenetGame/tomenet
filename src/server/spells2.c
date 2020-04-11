@@ -8866,14 +8866,17 @@ void mix_chemicals(int Ind, int item) {
 	}
 	WIPE(q_ptr, object_type);
 
-	/* Hack:
-	   Activating a mixture 'with itself' will try to turn it into a finished blast charge.
-	   (Activating ingredients on their own has no meaning.) */
+	/* Activating a mixture 'with itself' will try to turn it into a finished blast charge. */
+ #if 0
 	if (item == p_ptr->current_activation) {
 		if (o_ptr->sval != SV_MIXTURE) {
 			msg_print(Ind, "You can only activate mixtures with themselves. It will then get finished into a blast charge, if the mixture is working.");
 			return;
 		}
+ #else
+
+	if (item == p_ptr->current_activation && o_ptr->sval == SV_MIXTURE) {
+ #endif
 
 		/* Count amounts of ingredients in our mixture */
 		cc += ((o_ptr->xtra1 & CF_CC) ? 1 : 0) + ((o_ptr->xtra2 & CF_CC) ? 1 : 0) + ((o_ptr->xtra3 & CF_CC) ? 1 : 0);
@@ -8892,6 +8895,7 @@ void mix_chemicals(int Ind, int item) {
 		wa += ((o_ptr->xtra1 & CF_WA) ? 1 : 0) + ((o_ptr->xtra2 & CF_WA) ? 1 : 0) + ((o_ptr->xtra3 & CF_WA) ? 1 : 0);
 		sw += ((o_ptr->xtra1 & CF_SW) ? 1 : 0) + ((o_ptr->xtra2 & CF_SW) ? 1 : 0) + ((o_ptr->xtra3 & CF_SW) ? 1 : 0);
 		ac += ((o_ptr->xtra1 & CF_AC) ? 1 : 0) + ((o_ptr->xtra2 & CF_AC) ? 1 : 0) + ((o_ptr->xtra3 & CF_AC) ? 1 : 0);
+
 		/* Check for valid crafting results! */
  #ifndef NO_RUST_NO_HYDROXIDE
 		if ((cc == 1 && su == 1 && sp == 2) ||
@@ -8939,10 +8943,14 @@ void mix_chemicals(int Ind, int item) {
 			msg_format(Ind, "You assemble a blast charge..");
 		}
 	} else {
-		/* First let's handle the combinations that actually create a new ingredient */
+		/* First, check special case if we just want to combine an ingredient with it self to start creating a mixture.. */
+		if (item == p_ptr->current_activation)
+			i = mixingred_to_ingredient(Ind, o2_ptr, o_ptr->tval, o_ptr->sval);
+
+		/* Now let's handle the combinations that actually create a new ingredient */
 
 		/* Check for ingredients created from just two ingredients */
-		if (o_ptr->sval != SV_MIXTURE && !(o2_ptr->tval == TV_CHEMICAL && o2_ptr->sval == SV_MIXTURE)) {
+		else if (o_ptr->sval != SV_MIXTURE && !(o2_ptr->tval == TV_CHEMICAL && o2_ptr->sval == SV_MIXTURE)) {
 			i = ingredients_to_ingredient(o_ptr->sval, o2_ptr->tval, o2_ptr->sval);
 			/* Try swapping the two ingredients (only if both are chemicals. (Otherwise obsolete as the non-chemical cannot be activated anyway.) */
 			if (!i && o2_ptr->tval == TV_CHEMICAL) i = ingredients_to_ingredient(o2_ptr->sval, o_ptr->tval, o_ptr->sval);
