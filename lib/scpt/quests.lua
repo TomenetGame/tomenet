@@ -180,6 +180,8 @@ function quest_towneltalk(Ind, msg, topic)
 
 	--*** dungeon exploration ***
 	if topic == 5 then
+		msg_print(Ind, "\252\255UGo to the town hall, the largest building in Bree! The right side entrance is the mathom house. There you can see a list of all known dungeons and also find out which ones haven't been explored recently, giving you bonus XP!")
+		hinted = 1
 	end
 
 	--*** events ***
