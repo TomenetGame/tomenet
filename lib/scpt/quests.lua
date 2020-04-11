@@ -111,7 +111,48 @@ function quest_towneltalk(Ind, msg, topic)
 
 	--*** equipment ***
 	if topic == 1 then
-		--resistances, encumberments, redundant flags
+		--resistances
+		if player.lev >= 29 or admin then
+			if player.free_act == 0 then
+				msg_print(Ind, "\252\255UYou should really make sure you have Free Action, or you might get paralzyed by a monster and become unable to defend yourself or flee!")
+				hinted = 1
+			end
+			if player.resist_pois == 0 then
+				msg_print(Ind, "\252\255UYou probably want poison resistance. I heard that Amulets of the Serpents are relatively easy to acquire for that need.")
+				hinted = 1
+			end
+			if player.resist_fire == 0 or player.resist_cold == 0 or player.resist_acid == 0 or player.resist_elec == 0 then
+				msg_print(Ind, "\252\255UYou definitely want resistance to the four basic elements, fire and cold, acid and lightning!")
+				hinted = 1
+			end
+		elseif player.lev >= 23 or admin then
+			if player.free_act == 0 then
+				msg_print(Ind, "\252\255UYou might want to look out for Free Action, or you might get paralzyed by a monster and become unable to defend yourself or flee!")
+				hinted = 1
+			end
+			if player.resist_fire == 0 or player.resist_cold == 0 or player.resist_acid == 0 or player.resist_elec == 0 then
+				msg_print(Ind, "\252\255UYou probably want to complete your array of resistances to the four basic elements, fire and cold, acid and lightning.")
+				hinted = 1
+			end
+		elseif player.lev >= 15 or admin then
+			if player.resist_fire == 0 then
+				msg_print(Ind, "\252\255UYou might want to look for something that provides fire resistance. Quite useful to have early on.")
+				hinted = 1
+			end
+		end
+		--encumberments
+		if player.monk_heavyarmor then
+			msg_print(Ind, "\252\255UIt seems your armour weight negatively impacts your martial arts performance, hindering your abilities!");
+			hinted = 1
+		end
+		if player.rogue_heavyarmor then
+			msg_print(Ind, "\252\255UIt seems your armour weight negatively impacts your flexibility and awareness, hindering your abilities!");
+			if player.inventory[INVEN_WIELD+2].k_idx and player.inventory[INVEN_WIELD+2].tval ~= 34 then -- INVEN_ARM+1, TV_SHIELD
+				msg_print(Ind, "\252\255UBe aware that your secondary weapon will count as NON-EXISTANT while you are encumbered this way! Meaning that you won't get any abilities or resistances from it either!");
+			end
+			hinted = 1
+		end
+		--redundant flags
 		--if we dual-wield a wrong weapon type, tell about one-hand mode
 		--maybe add dual-wield cheap hint for warriors/rangers/HK that are naked
 	end
