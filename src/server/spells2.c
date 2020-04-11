@@ -9066,7 +9066,7 @@ void mix_chemicals(int Ind, int item) {
 
 	/* Give us the result */
 	object_desc(Ind, o_name, q_ptr, TRUE, 3);
-	if (q_ptr->tval == TV_CHARGE) s_printf("CHARGE: %s created %s.\n", p_ptr->name, o_name);
+	if (q_ptr->tval == TV_CHARGE) s_printf("CHARGE: %s (%d, %d) created %s.\n", p_ptr->name, p_ptr->lev, get_skill(p_ptr, SKILL_DIG), o_name);
 	i = inven_carry(Ind, q_ptr);
 	if (i != -1) {
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
