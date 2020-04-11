@@ -5446,6 +5446,16 @@ bool probing(int Ind) {
 			/* Learn all of the non-spell, non-treasure flags */
 			lore_do_probe(i);
 
+			if (admin_p(Ind)) {
+				switch(m_ptr->r_idx) {
+				case RI_TARGET_DUMMY1:
+				case RI_TARGET_DUMMY2:
+				case RI_TARGET_DUMMYA1:
+				case RI_TARGET_DUMMYA2:
+					msg_format(Ind, "extra=%d", m_ptr->extra); //show snowiness
+				}
+			}
+
 			/* Probe worked */
 			probe = TRUE;
 		}
