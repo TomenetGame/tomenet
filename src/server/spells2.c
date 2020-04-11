@@ -9045,16 +9045,29 @@ void mix_chemicals(int Ind, int item) {
 	q_ptr->iron_turn = o_ptr->iron_turn;
 
  #ifdef USE_SOUND_2010
-	 sound(Ind, "snowball", NULL, SFX_TYPE_COMMAND, FALSE); //uhhh - todo: get some alchemyic sfx..
+	if (q_ptr->tval == TV_CHARGE)
+		sound(Ind, "item_rune", NULL, SFX_TYPE_COMMAND, FALSE);
+	else
+		sound(Ind, "snowball", NULL, SFX_TYPE_COMMAND, FALSE); //uhhh - todo: get some alchemyic sfx..
  #endif
 
 	/* Erase the ingredients in the pack */
-	inven_item_increase(Ind, p_ptr->current_activation, -1);
-	inven_item_describe(Ind, p_ptr->current_activation);
-	/* Did we use only one ingredient? Ie activated a mixture to finish into a blast charge? */
-	if (q_ptr->tval != TV_CHARGE) {
+	if (q_ptr->tval == TV_CHARGE) {
+		/* Used up 1 mixture */
+		inven_item_increase(Ind, p_ptr->current_activation, -1);
+		//inven_item_describe(Ind, p_ptr->current_activation);
+		inven_item_optimize(Ind, p_ptr->current_activation);
+	} else if (p_ptr->current_activation == item) {
+		/* Used up 2 items from the same slot */
+		inven_item_increase(Ind, p_ptr->current_activation, -2);
+		//inven_item_describe(Ind, p_ptr->current_activation);
+		inven_item_optimize(Ind, p_ptr->current_activation);
+	} else {
+		/* Used up 2 items from different slots */
+		inven_item_increase(Ind, p_ptr->current_activation, -1);
+		//inven_item_describe(Ind, p_ptr->current_activation);
 		inven_item_increase(Ind, item, -1);
-		inven_item_describe(Ind, item);
+		//inven_item_describe(Ind, item);
 		if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indices
 			inven_item_optimize(Ind, p_ptr->current_activation);
 			inven_item_optimize(Ind, item);
@@ -9062,7 +9075,7 @@ void mix_chemicals(int Ind, int item) {
 			inven_item_optimize(Ind, item);
 			inven_item_optimize(Ind, p_ptr->current_activation);
 		}
-	} else inven_item_optimize(Ind, p_ptr->current_activation);
+	}
 	/* Give us the result */
 	object_desc(Ind, o_name, q_ptr, TRUE, 3);
 	if (q_ptr->tval == TV_CHARGE) s_printf("CHARGE: %s (%d, %d) created %s.\n", p_ptr->name, p_ptr->lev, get_skill(p_ptr, SKILL_DIG), o_name);
