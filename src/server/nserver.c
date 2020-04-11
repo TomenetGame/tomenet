@@ -12285,6 +12285,13 @@ static int Receive_ping(int ind) {
 
 			p_ptr->idle++;
 			p_ptr->idle_char++;
+
+			/* un-snow people */
+			if ((p_ptr->temp_misc_2 & 0x01) && p_ptr->idle_char >= 120 && !cold_place(&p_ptr->wpos)) {
+				p_ptr->temp_misc_2 &= ~0x01;
+				everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+			}
+
 			if (p_ptr->idle_char >= 120 && p_ptr->mute_when_idle && !p_ptr->muted_when_idle && istown(&p_ptr->wpos)) Send_idle(Ind, TRUE);
 
 #if (MAX_PING_RECVS_LOGGED > 0)
