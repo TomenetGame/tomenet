@@ -47,14 +47,14 @@ function quest_towneltalk(Ind, msg, topic)
 					msg_print(Ind, "\252\255UFor a "..msg.." you attack too slowly. Your number of blows per round (BpR) should at least be 2!")
 					msg_print(Ind, "\252\255U You should try getting the lightest weapon possible, to remedy this! For example a dagger, whip, or maybe a spear or cleaver if you specialized in those.")
 					msg_print(Ind, "\252\255U If this doesn't give you at least 2 BpR, you should really increase your strength, or maybe even your dexterity, as these might just be too low.")
-					if player.pclass == CLASS_ROGUE or admin then
+					if player.pclass == CLASS_ROGUE or admin == 1 then
 						msg_print(Ind, "\252\255U As a rogue a third, easy way is to dual-wield two one-handed weapons at once!")
 					end
 					hinted = 1
 				end
 			end
 			--Cursed non-artifact equipment on lowbies:
-			if player.lev < 20 or admin then
+			if player.lev < 20 or admin == 1 then
 				x = 0
 				for i = INVEN_WIELD, INVEN_TOTAL do
 					if band(player.inventory[i].ident, 64) ~= 0 then --ID_CURSED
@@ -71,7 +71,7 @@ function quest_towneltalk(Ind, msg, topic)
 				end
 			end
 			--Stranger-owned Rings of Power in lowbie inven:
-			if player.lev < 25 or admin then
+			if player.lev < 25 or admin == 1 then
 				x = 0
 				for i = 1, INVEN_PACK do
 					if player.inventory[i].tval == 45 and player.inventory[i].sval == 5 and player.inventory[i].owner ~= player.id then --TV_RING,SV_RING_SPECIAL
@@ -112,7 +112,7 @@ function quest_towneltalk(Ind, msg, topic)
 	--*** equipment ***
 	if topic == 1 then
 		--resistances
-		if player.lev >= 29 or admin then
+		if player.lev >= 29 or admin == 1 then
 			if player.free_act == 0 then
 				msg_print(Ind, "\252\255UYou should really make sure you have Free Action, or you might get paralzyed by a monster and become unable to defend yourself or flee!")
 				hinted = 1
@@ -129,7 +129,7 @@ function quest_towneltalk(Ind, msg, topic)
 				msg_print(Ind, "\252\255UYou definitely want resistance to the four basic elements, fire and cold, acid and lightning!")
 				hinted = 1
 			end
-		elseif player.lev >= 23 or admin then
+		elseif player.lev >= 23 or admin == 1 then
 			if player.free_act == 0 then
 				msg_print(Ind, "\252\255UYou might want to look out for Free Action, or you might get paralzyed by a monster and become unable to defend yourself or flee!")
 				hinted = 1
@@ -138,7 +138,7 @@ function quest_towneltalk(Ind, msg, topic)
 				msg_print(Ind, "\252\255UYou probably want to complete your array of resistances to the four basic elements, fire and cold, acid and lightning.")
 				hinted = 1
 			end
-		elseif player.lev >= 15 or admin then
+		elseif player.lev >= 15 or admin == 1 then
 			if player.resist_fire == 0 then
 				msg_print(Ind, "\252\255UYou might want to look for something that provides fire resistance. Quite useful to have early on.")
 				hinted = 1
