@@ -9056,10 +9056,10 @@ void mix_chemicals(int Ind, int item) {
 		inven_item_increase(Ind, item, -1);
 		inven_item_describe(Ind, item);
 		if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indices
-			//inven_item_optimize(Ind, p_ptr->current_activation);
+			inven_item_optimize(Ind, p_ptr->current_activation);
 			inven_item_optimize(Ind, item);
 		} else {
-			//inven_item_optimize(Ind, item);
+			inven_item_optimize(Ind, item);
 			inven_item_optimize(Ind, p_ptr->current_activation);
 		}
 	} else inven_item_optimize(Ind, p_ptr->current_activation);
