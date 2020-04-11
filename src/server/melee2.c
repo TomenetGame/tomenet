@@ -9427,7 +9427,7 @@ void process_monsters(void) {
 			}
 			/* Un-snow when winter is over -_- */
 			else if ((m_ptr->r_idx == RI_TARGET_DUMMY2 || m_ptr->r_idx == RI_TARGET_DUMMYA2) && !cold_place(&m_ptr->wpos)) {
-				if (m_ptr->extra) m_ptr->extra--;
+				if (m_ptr->extra && !rand_int(8)) m_ptr->extra--;
 				if (!m_ptr->extra) {
 					if (m_ptr->r_idx == RI_TARGET_DUMMY2) m_ptr->r_idx = RI_TARGET_DUMMY1;
 					else m_ptr->r_idx = RI_TARGET_DUMMYA1;
