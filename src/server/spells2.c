@@ -9065,9 +9065,10 @@ void mix_chemicals(int Ind, int item) {
 	} else inven_item_optimize(Ind, p_ptr->current_activation);
 
 	/* Give us the result */
+	object_desc(Ind, o_name, q_ptr, TRUE, 3);
+	if (q_ptr->tval == TV_CHARGE) s_printf("CHARGE: %s created %s.\n", p_ptr->name, o_name);
 	i = inven_carry(Ind, q_ptr);
 	if (i != -1) {
-		object_desc(Ind, o_name, &forge, TRUE, 3);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
 	}
 }
