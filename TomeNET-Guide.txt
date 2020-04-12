@@ -10659,8 +10659,12 @@ Remove Curse    Breaks lesser curses on items, allowing you to unwear or
                 on weapons or armours can also be broken by enchanting one of
                 their boni some points above +0 manually. (The enchant service
                 of shops won't help!)
-Rune of Protection  Creates a warding glyph on the floor that stops monsters
-                    from crossing the field or summoning on it.
+Rune of Protection
+                Creates a rune on the ground that monsters cannot cross nor
+                summon on. Monsters have a chance to break it on each turn.
+                Weak monsters will rarely succeed while powerful monsters may
+                break it quickly.
+
 Rumour          Makes a random rumour come to your character's (and everyone
                 else's characters') mind. Has no further effect and is not
                 necessarily true even.
@@ -16729,9 +16733,10 @@ school.
                     Required skill level for first spell level: 1.
 
                     Tier II: Level 41.
-                    Creates a Glyph of Warding on the ground that stops
-                    monsters from crossing the field or summoning on it.
-                    Powerful monsters may be able to break glyphs.
+                    Creates a rune on the ground that monsters cannot cross
+                    nor summon on. Monsters have a chance to break it on each
+                    turn. Weak monsters will rarely succeed while powerful
+                    monsters may break it quickly.
 
     Slow Monster    Slows down a monster.
                     Required skill level for first spell level: 10.
@@ -16920,7 +16925,9 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
     Glyph of Warding
                     Creates a rune on the ground that monsters cannot cross
-                    nor summon on. Powerful monsters may break it.
+                    nor summon on. Monsters have a chance to break it on each
+                    turn. Weak monsters will rarely succeed while powerful
+                    monsters may break it quickly.
                     Required skill level for first spell level: 35.
 
     Martyrdom       You burn in holy fire making you invincible for 15 seconds
