@@ -74,6 +74,14 @@ lighterDarkBlue
 ##   Note: Not supported at the moment
 #graphics	0
 
+## - Specify basename for loaded graphics file and possible custom graphics character redefinitions.
+##   If graphics enabled, the tiles can be loaded from lib/xtra/graf/{graphic_tiles}.bmp (Eg: lib/xtra/graf/8x8.bmp).
+##   The character redefinitions are loaded from lib/user/graf-{os}.prf (the "{os}" is replaced for "x11", "win", "mac", ...)
+##   or from a custom grapfics redefinition file lib/user/graf-custom-{graphic_tiles}.prf, if the file exists.
+##
+##   Important: The value has to be in format "{int width}x{int height}[{string}]", because tile width and height is extracted from the string.
+#graphic_tiles 8x8
+
 
 
 ## Audio settings

@@ -316,6 +316,7 @@ extern cptr ANGBAND_DIR_GAME;
 
 extern bool disable_numlock;
 extern bool use_graphics;
+extern char graphic_tiles[256];
 extern bool use_sound, use_sound_org;
 extern bool quiet_mode;
 extern bool noweather_mode;
@@ -1081,6 +1082,8 @@ extern bool equip_no_weapon;
 extern bool auto_reincarnation;
 extern char macro_trigger_exclusive[MAX_CHARS];
 extern bool macro_processing_exclusive;
+
+extern char32_t char_map_offset;
 
 extern int max_chars_per_account;
 

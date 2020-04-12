@@ -201,7 +201,9 @@ cptr ANGBAND_DIR_XTRA;
 cptr ANGBAND_DIR_GAME;
 
 bool disable_numlock;
+/* TODO hide use_graphics inside USE_GRAPHICS ifdef everywhere jEzEk */
 bool use_graphics;
+char graphic_tiles[256] = "\0";
 #ifdef USE_SOUND_2010
 bool use_sound = TRUE, use_sound_org = TRUE; //ought to be set via TOMENET_SOUND environment var in linux, probably (compare TOMENET_GRAPHICS) -C. Blue
 #else
@@ -447,6 +449,9 @@ bool equip_no_weapon = FALSE;
 bool auto_reincarnation = FALSE;
 char macro_trigger_exclusive[MAX_CHARS];
 bool macro_processing_exclusive;
+
+/* To make graphics char remappings easier and there is no need to update mapping files when MAX_FONT_CHAR changes. */
+char32_t char_map_offset = 0;
 
 /* Default color map */
 /* These can be overriden using TomeNET.ini or .tomenetrc */
