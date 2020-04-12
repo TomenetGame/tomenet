@@ -9983,7 +9983,7 @@ item that you will find on the floor:
     -Combat:
      Weapons, armour (except boots), shields, ammunition.
 
-    -Treasure:
+    -Treasure (named 'Valuables' in ~7 monster spoilers):
      Chests, rings, amulets, dragon scale mails, crowns.
 
     -Magic:
