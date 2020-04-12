@@ -16977,7 +16977,8 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     'protection from evil' spell, but has better effect on
                     monsters of higher level.
                     (This effect does not stack with the spell/scroll, but
-                    overrides them.)
+                    overrides them, so there is no need to cast the spell
+                    anymore once you acquire this bonus.)
 
 
 - Holy Curing
