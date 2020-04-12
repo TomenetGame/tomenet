@@ -6019,6 +6019,9 @@ Light brown '+' are closed doors, ' are open or broken doors.
 Void Jumpgates-
 Violet '+' are void jumpgates that teleport you elsewhere.
 Press '>' key to use them.
+Jump gates are always connected in pairs. Note that draconians are susceptible
+to the void, taking damage when they pass through jump gates.
+Also, monsters can try to intercept you when you attempt to use a void gate.
 
 Stores-
 Store entrances are represented by coloured numbers '1'..'7', '9' and '+'.
