@@ -1186,6 +1186,9 @@ struct term_data {
 #ifdef USE_GRAPHICS
 
 	XImage *tiles;
+	Pixmap bgmask;
+	Pixmap fgmask;
+	Pixmap tilePreparation;
 
 #endif
 };
@@ -1916,26 +1919,386 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
 }
 
 #ifdef USE_GRAPHICS
+/* Directory with graphics tiles files (should be lib/xtra/grapics). */
+static cptr ANGBAND_DIR_XTRA_GRAPHICS;
+/* Loaded tiles image and masks. */
+XImage *graphics_image = None;
+char *graphics_bgmask = NULL;
+char *graphics_fgmask = NULL;
+/* These variables are computed at image load (in 'init_x11'). */
+int graphics_tile_wid, graphics_tile_hgt;
+int graphics_image_tpr; /* Tiles per row. */
 
 /*
  * Draw some graphical characters.
  */
-static errr Term_pict_x11(int x, int y, byte a, char c) {
+static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
+	a = term2attr(a);
+
+	/* Draw the tile in Xor. */
+#ifndef EXTENDED_COLOURS_PALANIM
+ #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a & 0x0F]);
+ #else
+	if (a == TERM2_BLUE) a = 0xF + 1;
+	Infoclr_set(clr[a & 0x1F]);
+ #endif
+#else
+	Infoclr_set(clr[a & 0x1F]);
+#endif
+
+	/* TODO maybe it would be necessary to draw only filled rectangle (with bg color) if bg == fg. - jEzEk*/
+
 	term_data *td = (term_data*)(Term->data);
 
-	y *= Infofnt->hgt;
+	/* Prepare tile to preparation pixmap. */
 	x *= Infofnt->wid;
-
-	XPutImage(Metadpy->dpy, td->inner->win,
-	          clr[15]->gc,
-	          td->tiles,
-		  (c&0x7F) * td->fnt->wid + 1,
-		  (a&0x7F) * td->fnt->hgt + 1,
-		  x, y,
+	y *= Infofnt->hgt;
+	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
+	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
+	XCopyPlane(Metadpy->dpy, td->fgmask, td->tilePreparation, Infoclr->gc,
+			x1, y1,
+			td->fnt->wid, td->fnt->hgt,
+			0, 0,
+			1);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
+	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
+	XPutImage(Metadpy->dpy, td->tilePreparation,
+			Infoclr->gc,
+			td->tiles,
+		  x1, y1,
+		  0, 0,
 		  td->fnt->wid, td->fnt->hgt);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
+
+	/* Copy prepared tile to window. */
+	XCopyArea(Metadpy->dpy, td->tilePreparation, td->inner->win, Infoclr->gc,
+		  0, 0,
+		  td->fnt->wid, td->fnt->hgt,
+		  x, y);
 
 	/* Success */
 	return (0);
+}
+
+/* Salvaged and adapted from http://www.phial.com/angdirs/angband-291/src/maid-x11.c */
+/*
+ * Hack -- Convert an RGB value to an X11 Pixel, or die.
+ */
+static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
+{
+	Colormap cmap = DefaultColormapOfScreen(DefaultScreenOfDisplay(dpy));
+
+	char cname[8];
+
+	XColor xcolour;
+
+	/* Build the color. */
+	xcolour.red = red * 255;
+	xcolour.green = green * 255;
+	xcolour.blue = blue * 255;
+	xcolour.flags = DoRed | DoGreen | DoBlue;
+
+	/* Attempt to Allocate the Parsed color. */
+	if (!(XAllocColor(dpy, cmap, &xcolour)))
+	{
+		quit_fmt("Couldn't allocate bitmap color '%s'\n", cname);
+	}
+
+	return (xcolour.pixel);
+}
+
+/*
+ * The Win32 "BITMAPFILEHEADER" type.
+ *
+ * Note the "bfAlign" field, which is a complete hack to ensure that the
+ * "u32b" fields in the structure get aligned.  Thus, when reading this
+ * header from the file, we must be careful to skip this field.
+ */
+typedef struct BITMAPFILEHEADER {
+	u16b bfAlign;     // Align bits, to have not have 16 bits alone.
+	u16b bfType;      // File type always BM which is 0x4D42 (19778).
+	u32b bfSize;      // Size of the file (in bytes).
+	u16b bfReserved1; // Reserved, always 0.
+	u16b bfReserved2; // Reserved, always 0.
+	u32b bfOffBytes;  // Start position of pixel data (bytes from the beginning of the file).
+} BITMAPFILEHEADER;
+
+/*
+ * The Win32 "BITMAPINFOHEADER" type.
+ */
+typedef struct BITMAPINFOHEADER
+{
+	u32b biSize;           // Size of this header (in bytes).
+	u32b biWidth;          // width of bitmap in pixels.
+	u32b biHeight;         // height of bitmap in pixels (if positive, bottom-up, with origin in lower left corner, if negative, top-down, with origin in upper left corner).
+	u16b biPlanes;         // No. of planes for the target device, this is always 1.
+	u16b biBitCount;       // No. of bits per pixel.
+	u32b biCompresion;     // 0 or 3 - uncompressed. THIS PROGRAM CONSIDERS ONLY UNCOMPRESSED BMP images.
+	u32b biSizeImage;      // 0 - for uncompressed images.
+	u32b biXPelsPerMeter;
+	u32b biYPelsPerMeter;
+	u32b biClrUsed;        // No. color indexes in the color table. Use 0 for the max number of colors allowed by bit_count.
+	u32b biClrImportant;
+} BITMAPINFOHEADER;
+
+/*
+ * The Win32 "RGBQUAD" type.
+ */
+typedef struct RGBQUAD
+{
+	unsigned char r,g,b;
+	unsigned char filler;
+} RGBQUAD;
+
+/* ReadBMPData errors */
+static const errr ReadBMPNoFile = -1;
+static const errr ReadBMPInvalidFile = -2;
+static const errr ReadBMPNoImageData = -3;
+static const errr ReadBMPUnexpectedEOF = -4;
+static const errr ReadBMPReadErrorOrUnexpectedEOF = -5;
+static const errr ReadBMPIllegalBitCount = -6;
+
+/*
+ * Read a Win32 BMP file into data_return variable and
+ * sets width_return and height_return according to readed image dimensions.
+ *
+ * Currently only handles bitmaps with 24bit or 32bit per color.
+ *
+ * The data_return consists of width_return*height_return pixels.
+ * Each returned pixel consists of 4*8bit, in format BGRA, where A is always 0.
+ * Note: Xlib works with BGR colors intead of RGB.
+ *
+ * It's your responsibility to free data_return after usage.
+ * Function will not free memory if allready allocated in data_return input variable.
+ */
+static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int *height_return) {
+
+	FILE *f;
+	BITMAPFILEHEADER fileheader;
+	BITMAPINFOHEADER infoheader;
+	vptr fileheaderhack = (vptr)((char *)(&fileheader) + sizeof(fileheader.bfAlign));
+
+	/* Open the BMP file. */
+	if (NULL == (f = fopen(Name, "r"))) {
+		/* No such file. */
+		return (ReadBMPNoFile);
+	}
+
+	/* Read the "BITMAPFILEHEADER". */
+	if (1 != fread(fileheaderhack, sizeof(fileheader) - sizeof(fileheader.bfAlign), 1, f)) {fclose(f); return(ReadBMPReadErrorOrUnexpectedEOF);}
+	/* Read the "BITMAPINFOHEADER". */
+	if (1 != fread(&infoheader, sizeof(infoheader), 1, f)) {fclose(f); return(ReadBMPReadErrorOrUnexpectedEOF);}
+	/* Verify. */
+	if (feof(f) || fileheader.bfType != 19778) {fclose(f); return(ReadBMPInvalidFile);}
+	if (infoheader.biBitCount != 24 && infoheader.biBitCount != 32) {fclose(f); return(ReadBMPIllegalBitCount);}
+	if (infoheader.biWidth * infoheader.biHeight == 0) {fclose(f); return(ReadBMPNoImageData);}
+	/* Position file read head to image data. */
+	if (0 != fseek(f, fileheader.bfOffBytes, SEEK_SET)) {fclose(f); return(ReadBMPUnexpectedEOF);}
+
+	char *data;
+	C_MAKE(data, infoheader.biWidth*infoheader.biHeight*4, char);
+	memset(data, 0, infoheader.biWidth*infoheader.biHeight*4);
+	errr err = 0;
+
+	/* Every line is padded, to have multiple o 4 bytes. */
+	int linePadding = (4 - (3 * infoheader.biWidth) % 4) % 4;
+
+	for (int n = 0; err == 0 && n < abs(infoheader.biHeight); n++) {
+		int y = infoheader.biHeight - n - 1;
+		if (infoheader.biHeight < 0) y = n;
+
+		for (int x = 0; x < infoheader.biWidth; x++) {
+			int i = 4 * (y * infoheader.biWidth + x);
+			/* Usually the pixel colors are in BGR (or BGRA) order. The order can be different,
+			 * depending on header info, but for simplicity assume BGR (or BGRA) ordering. */
+			if (1 != fread(&data[i], 3, 1, f)) {err = ReadBMPUnexpectedEOF; break;}
+			if (infoheader.biBitCount == 32) {
+				/* The format can be BGRA or BGRX, anyway skip last byte (A or X component). */
+				if (0 != fseek(f, 1, SEEK_CUR)) {fclose(f); return(ReadBMPUnexpectedEOF);}
+			}
+		}
+		/* Adjust read head if padding. */
+		if (linePadding > 0)
+			if (0 != fseek(f, linePadding, SEEK_CUR)) {err = ReadBMPUnexpectedEOF; break;}
+	}
+	fclose(f);
+
+	if (err != 0) {
+		C_KILL(data, infoheader.biWidth*infoheader.biHeight*4, char);
+		return(err);
+	}
+
+	(*width_return) = infoheader.biWidth;
+	(*height_return) = abs(infoheader.biHeight);
+	(*data_return) = data;
+	return(0);
+}
+
+/* 
+ * Creates 1bit per pixel background and foreground masks.
+ * Foreground mask (fgmask_return) determines which pixels in image will be drawn with character color.
+ * Background mask (bgmask_return) determines pixels, which will be and not be drawn at all.
+ * Pixel in fgmask_return is 1, only if image color on the position is magenta (#ff00ff).
+ * Pixel in bgmask_return is 1, only if image color is not black (#000000), nor magenta (#ff00ff).
+ * Function will not free memory if allready allocated in bgmask_return/fgmask_return input variable.
+ */
+static void createMasksFromData(char* data, int width, int height, char **bgmask_return, char **fgmask_return) {
+	int masks_size = width * height / 8 + (width*height%8 == 0 ? 0 : 1);
+
+	char *bgmask;
+	C_MAKE(bgmask, masks_size, char);
+	memset(bgmask, 0, masks_size);
+
+	char *fgmask;
+	C_MAKE(fgmask, masks_size, char);
+	memset(fgmask, 0, masks_size);
+
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			u32b bit = y*width + x;
+			byte r = data[4*(x+y*width)];
+			byte g = data[4*(x+y*width)+1];
+			byte b = data[4*(x+y*width)+2];
+
+			if (r != 0 || g != 0 || b != 0) {
+				bgmask[bit/8] |= 1 << (bit%8);
+			}
+			if (r == 255 && g == 0 && b == 255) {
+				fgmask[bit/8] |= 1 << (bit%8);
+				bgmask[bit/8] &= ~((char)1 << (bit%8));
+			}
+		}
+	}
+
+	(*bgmask_return) = bgmask;
+	(*fgmask_return) = fgmask;
+}
+
+/*
+ * Resize an image. XXX XXX XXX
+ *
+ * Added bg/fg masks resizing.
+ * It's your responsibility to free returned XImage, bgmask_return and fgmask_return after usage.
+ * Function will not free memory if allready allocated in bgmask_return or fgmask_return input variable.
+ */
+static XImage *ResizeImage(Display *disp, XImage *Im,
+                           int ix, int iy, int ox, int oy,
+                           char *bgbits, char *fgbits, Pixmap *bgmask_return, Pixmap *fgmask_return)
+{
+	int width1, height1, width2, height2;
+	int x1, x2, y1, y2, Tx, Ty;
+	int *px1, *px2, *dx1, *dx2;
+	int *py1, *py2, *dy1, *dy2;
+
+	XImage *Tmp;
+
+	char *Data;
+
+
+	width1 = Im->width;
+	height1 = Im->height;
+
+	width2 = ox * width1 / ix;
+	height2 = oy * height1 / iy;
+	printf("Resize image with masks from %dx%d to %dx%d (tile %dx%d -> %dx%d)\n",width1, height1, width2, height2, ix, iy, ox, oy);
+
+	Data = (char *)malloc(width2 * height2 * Im->bits_per_pixel / 8);
+
+	Tmp = XCreateImage(
+			disp, DefaultVisual(disp, DefaultScreen(disp)), Im->depth, ZPixmap, 0,
+			Data, width2, height2, Im->bits_per_pixel, 0);
+
+
+	int linePadBits = 8;
+	int paddedWidth2 = width2 + ((linePadBits - (width2 % linePadBits)) % linePadBits);
+	int new_masks_size = paddedWidth2 * height2 / 8;
+	char *bgmask_data;
+	C_MAKE(bgmask_data, new_masks_size, char);
+	memset(bgmask_data, 0, new_masks_size);
+
+	char *fgmask_data;
+	C_MAKE(fgmask_data, new_masks_size, char);
+	memset(fgmask_data, 0, new_masks_size);
+
+	if (ix >= ox)
+	{
+		px1 = &x1;
+		px2 = &x2;
+		dx1 = &ix;
+		dx2 = &ox;
+	}
+	else
+	{
+		px1 = &x2;
+		px2 = &x1;
+		dx1 = &ox;
+		dx2 = &ix;
+	}
+
+	if (iy >= oy)
+	{
+		py1 = &y1;
+		py2 = &y2;
+		dy1 = &iy;
+		dy2 = &oy;
+	}
+	else
+	{
+		py1 = &y2;
+		py2 = &y1;
+		dy1 = &oy;
+		dy2 = &iy;
+	}
+
+	Ty = *dy1;
+
+	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); )
+	{
+		Tx = *dx1;
+
+		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); )
+		{
+			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
+			u32b maskbitno = (x1 + (y1 * width1));
+			u32b newmaskbitno = (x2 + (y2 * paddedWidth2));
+			bool bgbit = bgbits[maskbitno/8] & (1<<(maskbitno%8));
+			if (bgbit) {
+				bgmask_data[newmaskbitno/8] |= 1<<(newmaskbitno%8);
+			} else {
+				bgmask_data[newmaskbitno/8] &= ~(1<<(newmaskbitno%8));
+			}
+			bool fgbit = fgbits[maskbitno/8] & (1<<(maskbitno%8));
+			if (fgbit) {
+				fgmask_data[newmaskbitno/8] |= 1<<(newmaskbitno%8);
+			} else {
+				fgmask_data[newmaskbitno/8] &= ~(1<<(newmaskbitno%8));
+			}
+
+			(*px1)++;
+
+			Tx -= *dx2;
+			if (Tx <= 0)
+			{
+				Tx += *dx1;
+				(*px2)++;
+			}
+		}
+
+		(*py1)++;
+
+		Ty -= *dy2;
+		if (Ty <= 0)
+		{
+			Ty += *dy1;
+			(*py2)++;
+		}
+	}
+
+	Window root_win = DefaultRootWindow(disp);
+	(*bgmask_return) = XCreateBitmapFromData(disp, root_win, bgmask_data, width2, height2);
+	(*fgmask_return) = XCreateBitmapFromData(disp, root_win, fgmask_data, width2, height2);
+	return (Tmp);
 }
 
 #endif /* USE_GRAPHICS */
@@ -2054,6 +2417,9 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 #ifdef USE_GRAPHICS
 	/* No graphics yet */
 	td->tiles = NULL;
+	td->bgmask = None;
+	td->fgmask = None;
+	td->tilePreparation = None;
 #endif /* USE_GRAPHICS */
 
 	/* Initialize the term (full size) */
@@ -2076,12 +2442,28 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 
 	/* Use graphics */
 	if (use_graphics) {
-		printf("Setup hook\n");
-		/* Graphics hook */
-		t->pict_hook = Term_pict_x11;
 
-		/* Use graphics sometimes */
-		t->higher_pict = TRUE;
+		/* Use resized tiles & masks. */
+		td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
+				graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
+				graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask));
+
+		/* Initialize preparation pixmap. */
+		td->tilePreparation = XCreatePixmap(
+				Metadpy->dpy, Metadpy->root,
+				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+
+		if (td->tiles != NULL && td->tilePreparation != None) {
+			printf("Using graphics for terminal %d\n", index);
+			/* Graphics hook */
+			t->pict_hook = Term_pict_x11;
+
+			/* Use graphics sometimes */
+			t->higher_pict = TRUE;
+		}
+		else {
+			fprintf(stderr, "Couldn't prepare images for terminal %d\n", index);
+		}
 	}
 
 #endif /* USE_GRAPHICS */
@@ -2200,192 +2582,6 @@ void enable_readability_blue_x11(void) {
 }
 
 
-#ifdef USE_GRAPHICS
-
-
-typedef struct BITMAPFILEHEADER {
-	u16b bfAlign;    /* HATE this */
-	u16b bfType;
-	u32b bfSize;
-	u16b bfReserved1;
-	u16b bfReserved2;
-	u32b bfOffBits;
-} BITMAPFILEHEADER;
-
-typedef struct BITMAPINFOHEADER {
-	u32b biSize;
-	u32b biWidth;
-	u32b biHeight;
-	u16b biPlanes;
-	u16b biBitCount;
-	u32b biCompresion;
-	u32b biSizeImage;
-	u32b biXPelsPerMeter;
-	u32b biYPelsPerMeter;
-	u32b biClrUsed;
-	u32b biClrImportand;
-} BITMAPINFOHEADER;
-
-typedef struct RGB {
-	unsigned char r,g,b;
-	unsigned char filler;
-} RGB;
-
-static Pixell Infoclr_Pixell(cptr name);
-/*
- * Read a BMP file. XXX XXX XXX
- *
- * Replaced ReadRaw & RemapColors.
- */
-static XImage *ReadBMP(Display *disp, char Name[]) {
-	FILE *f;
-
-	BITMAPFILEHEADER fileheader;
-	BITMAPINFOHEADER infoheader;
-
-	XImage *Res = NULL;
-	char *Data,cname[8];
-	int ncol,depth,x,y;
-	RGB clrg;
-	Pixell clr_Pixells[256];
-
-	f = fopen(Name, "r");
-
-	if (f != NULL) {
-		fread((vptr)((char*)&fileheader + 2), sizeof(fileheader) - 2, 1, f);
-		fread(&infoheader,sizeof(infoheader), 1, f);
-		if ((fileheader.bfType != 19778) || (infoheader.biSize != 40)) {
-				plog_fmt("Incorrect file format %s",Name);
-				quit("Bad BMP format");};
-
-		/* Compute number of colors recorded */
-		ncol = (fileheader.bfOffBits - 54) / 4;
-
-		for (x = 0; x < ncol; ++x) {
-		   fread(&clrg, 4, 1, f);
-		   sprintf(cname, "#%02x%02x%02x", clrg.r, clrg.g, clrg.b);
-		   clr_Pixells[x] = Infoclr_Pixell(cname); }
-
-		depth = DefaultDepth(disp, DefaultScreen(disp));
-
-		x = 1;
-		y = (depth-1) >> 2;
-		while (y >>= 1) x <<= 1;
-
-		Data = (char *)malloc(infoheader.biSizeImage*x);
-
-		if (Data != NULL) {
-			Res = XCreateImage(disp,
-			                   DefaultVisual(disp, DefaultScreen(disp)),
-			                   depth, ZPixmap, 0, Data,
-			                   infoheader.biWidth, infoheader.biHeight, 8, 0);
-
-			if (Res != NULL) {
-			   for (y = 0; y < infoheader.biHeight; ++y) {
-			       for (x = 0; x < infoheader.biWidth; ++x) {
-				    XPutPixel(Res, x, infoheader.biHeight - y - 1, clr_Pixells[getc(f)]);
-			       }
-			   }
-			} else {
-				free(Data);
-			}
-		}
-
-		fclose(f);
-	}
-
-	return Res;
-}
-
-
-
-/*
- * Resize an image. XXX XXX XXX
- *
- * Also appears in "main-xaw.c".
- */
-static XImage *ResizeImage(Display *disp, XImage *Im, int ix, int iy, int ox, int oy) {
-	int width1, height1, width2, height2;
-	int x1, x2, y1, y2, Tx, Ty;
-	int *px1, *px2, *dx1, *dx2;
-	int *py1, *py2, *dy1, *dy2;
-
-	XImage *Tmp;
-
-	char *Data;
-
-
-	width1 = Im->width;
-	height1 = Im->height;
-
-	width2 = ox * width1 / ix;
-	height2 = oy * height1 / iy;
-	printf("w1: %d h1:%d w2:%d h2:%d\n",width1, height1, width2, height2);
-
-	Data = (char *)malloc(width2 * height2 * Im->bits_per_pixel / 8);
-
-	Tmp = XCreateImage(disp,
-	                   DefaultVisual(disp, DefaultScreen(disp)),
-	                   Im->depth, ZPixmap, 0, Data, width2, height2,
-	                   32, 0);
-
-	if (ix > ox) {
-		px1 = &x1;
-		px2 = &x2;
-		dx1 = &ix;
-		dx2 = &ox;
-	} else {
-		px1 = &x2;
-		px2 = &x1;
-		dx1 = &ox;
-		dx2 = &ix;
-	}
-
-	if (iy > oy) {
-		py1 = &y1;
-		py2 = &y2;
-		dy1 = &iy;
-		dy2 = &oy;
-	} else {
-		py1 = &y2;
-		py2 = &y1;
-		dy1 = &oy;
-		dy2 = &iy;
-	}
-
-	Ty = *dy1;
-
-	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); ) {
-		Tx = *dx1;
-
-		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); ) {
-			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
-
-			(*px1)++;
-
-			Tx -= *dx2;
-			if (Tx < 0) {
-				Tx += *dx1;
-				(*px2)++;
-			}
-		}
-
-		(*py1)++;
-
-		Ty -= *dy2;
-		if (Ty < 0) {
-			Ty += *dy1;
-			(*py2)++;
-		}
-	}
-
-	return Tmp;
-}
-
-
-#endif /* USE_GRAPHICS */
-
-
 static term_data* term_idx_to_term_data(int term_idx) {
 	term_data *td = &screen;
 
@@ -2411,40 +2607,6 @@ errr init_x11(void) {
 	int i;
 	cptr fnt_name = NULL;
 	cptr dpy_name = "";
-
-#ifdef USE_GRAPHICS
-	char filename[1024];
-	bool graphics_failed = FALSE;
-#endif
-
-#ifdef USE_GRAPHICS
-	/* Hack: We are called shortly _before_ client_init() -> init_stuff() -> init_file_paths(), so ANGBAND_DIR.. aren't set yet,
-	   so we have to init them in advance 'manually': */
-	init_stuff();
-
-	/* Try graphics */
-	use_graphics = use_graphics || getenv("TOMENET_GRAPHICS");
-	if (use_graphics) {
-		int gfd;
-
-		/* Build the name of the "graf" file */
-		plog(ANGBAND_DIR_XTRA);
-		path_build(filename, 1024, ANGBAND_DIR_XTRA, "graf/8X13.BMP");
-		//note: the 8X13.BMP and more cause "Incorrect file format" -> "Bad BMP format" error
-
-		printf("Trying for graphics file: %s\n", filename);
-		/* Use graphics if bitmap file exists */
-		if ((gfd = open(filename, 0, O_RDONLY)) != -1) {
-			printf("Got graphics file\n");
-			close(gfd);
-		} else graphics_failed = TRUE;
-	} else graphics_failed = TRUE;
-	if (use_graphics && graphics_failed) {
-		printf("Graphics initialisation failed, falling back to non-graphics, aka text fonts).\n");
-		use_graphics = FALSE;
-	}
-#endif /* USE_GRAPHICS */
-
 
 	/* Init the Metadpy if possible */
 	if (Metadpy_init_name(dpy_name)) return (-1);
@@ -2485,6 +2647,80 @@ errr init_x11(void) {
 	}
 #endif
 
+#ifdef USE_GRAPHICS
+	if (use_graphics) {
+		/* Load graphics file. Turn off "use_graphics", if file missing or load error. */
+
+		/* Check for tiles string & extract tiles width & height. */
+		if (2 != sscanf(graphic_tiles, "%dx%d", &graphics_tile_wid, &graphics_tile_hgt)) {
+			printf("Couldn't extract tile dimensions from: %s\n", graphic_tiles);
+			quit("Graphics load error");
+		}
+
+		if (graphics_tile_wid <= 0 || graphics_tile_hgt <= 0) {
+			printf("Invalid tiles dimesions: %dx%d\n", graphics_tile_wid, graphics_tile_hgt);
+			quit("Graphics load error");
+		}
+
+		/* Initialize paths, to get access to lib directories. */
+		init_stuff();
+		/* Build & allocate the graphics path. */
+		char path[1024];
+		path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");
+		ANGBAND_DIR_XTRA_GRAPHICS = string_make(path);
+
+		/* Build the name of the graphics file. */
+		char filename[1024];
+		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
+		strcat(filename, ".bmp");
+
+		/* Load .bmp image. */
+		int width = 0, height = 0;
+		char *data = NULL;
+		errr rerr = 0;
+		if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
+			printf("Graphics file \"%s\" ", filename);
+			switch (rerr) {
+				case ReadBMPNoFile:                   printf("can not be read.\n"); break;
+				case ReadBMPReadErrorOrUnexpectedEOF: printf("read error or unexpected end.\n"); break;
+				case ReadBMPInvalidFile:              printf("has incorrect BMP file format.\n"); break;
+				case ReadBMPNoImageData:              printf("contains no image data.\n"); break;
+				case ReadBMPUnexpectedEOF:            printf("unexpected end.\n"); break;
+				case ReadBMPIllegalBitCount:          printf("has illegal bit count, only 24bit and 32bit images are allowed.\n"); break;
+				default: printf("unexpected error.\n");
+			}
+			quit("Graphics load error");
+		}
+
+		/* Calculate tiles per row. */
+		graphics_image_tpr = width / graphics_tile_wid;
+		if (graphics_image_tpr <= 0) { /* Paranoia. */
+			printf("Invalid image tiles per row count: %d\n", graphics_image_tpr);
+			quit("Graphics load error");
+		}
+
+		/* Create masks from loaded data */
+		createMasksFromData(data, width, height, &graphics_bgmask, &graphics_fgmask);
+
+		/* Store loaded image data in XImage format */
+		int depth = DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
+		Visual *visual = DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
+		graphics_image = XCreateImage(
+				Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
+				data, width, height, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
+
+		/* Speedup Hack. Don't create and allocate pixel if default depth is 24bit. Is this kosher? */
+		if (depth != 24) {
+			/* Allocate color for each pixel and rewrite in image */
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					XPutPixel(graphics_image, x, y, create_pixel(Metadpy->dpy, data[4*(x+y*width)], data[4*(x+y*width)+1], data[4*(x+y*width)+2]));
+				}
+			}
+		}
+
+	}
+#endif /* USE_GRAPHICS */
 
 { /* Main window is always visible */
 	/* Check environment for "screen" font */
@@ -2503,20 +2739,6 @@ errr init_x11(void) {
 	term_screen = Term;
 	ang_term[0] = Term;
 }
-#ifdef USE_GRAPHICS
-	/* Load graphics */
-	if (use_graphics) {
-		XImage *tiles_raw;
-
-		/* Load the graphics XXX XXX XXX */
-		tiles_raw = ReadBMP(Metadpy->dpy, filename);
-
-		/* Resize tiles */
-		screen.tiles = ResizeImage(Metadpy->dpy, tiles_raw, 16, 16,
-		                        screen.fnt->wid, screen.fnt->hgt);
-	}
-#endif /* USE_GRAPHICS */
-
 
 #ifdef GRAPHIC_MIRROR
 if (term_prefs[1].visible) {
@@ -2826,6 +3048,30 @@ static void term_force_font(int term_idx, char fnt_name[256]) {
 		Infowin_resize(wid + 2, hgt + 2);
 		Infowin_set(td->inner);
 		Infowin_resize(wid, hgt);
+
+#ifdef USE_GRAPHICS
+		if (use_graphics) {
+			/* Free old tiles & masks */
+			XFreePixmap(Metadpy->dpy, td->bgmask);
+			XFreePixmap(Metadpy->dpy, td->fgmask);
+			XDestroyImage(td->tiles);
+			XFreePixmap(Metadpy->dpy, td->tilePreparation);
+
+			/* If window was resized, grapics tiles need to be resized too. */
+			td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
+					graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
+					graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask));
+
+			/* Reinitialize preparation pixmap with new size. */
+			td->tilePreparation = XCreatePixmap(
+					Metadpy->dpy, Metadpy->root,
+					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+
+			if (td->tiles == NULL || td->tilePreparation == None) {
+				quit_fmt("Couldn't prepare images after font resize in terminal %d\n", term_idx);
+			}
+		}
+#endif
 	}
 	XFlush(Metadpy->dpy);
 

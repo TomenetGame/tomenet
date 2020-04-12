@@ -468,7 +468,9 @@
 /*
  * OPTION: Allow the use of "graphics" in various places
  */
-#define USE_GRAPHICS
+#ifdef USE_X11
+ #define USE_GRAPHICS
+#endif
 
 
 /*
