@@ -8869,9 +8869,14 @@ you hit a troll ('T'). If you have an item that gives fire brand, the dice
 would also be doubled by the brand. Slaying and brands are not cumulative.
 That means you will get a total dice multiplier of 2 here.
 Brands don't stack. The best one is taken. So if you wear a ring of fire and
-your weapon does cold damage the dice will be multiplied by 2 if the target
-doesn't resist both heat and cold. If the target is susceptible to one of
+your weapon does acid damage the dice will be multiplied by 2 if the target
+doesn't resist both heat and acid. If the target is susceptible to one of
 those the dice are multiplied by 4. Same goes for SLAY flags.
+There is a specialty regarding fire/hellfire and cold brand: If your hits are
+branded by both, fire and cold, it will be a coin flip on each hit which of the
+two brands gets applied and which gets discarded. If you have hellfire and cold
+brand, the hellfire brand will override the cold brand, so your hits will all
+be hellfire branded and not deal any cold damage.
 
 Combat Type | Dice multiplier for brands (fire/cold/acid/lightning/poison)
             | Monster..
