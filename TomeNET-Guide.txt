@@ -16651,6 +16651,10 @@ school.
                     If all floors in the (up or down) direction of your attempt
                     to probtravel are occupied by players you get this message:
         "There is a magical discharge in the air as probability travel fails!"
+                    Travelling up and down will prevent you from landing inside
+                    any vault, nest or pit.
+                    Travelling around the floor however, will only prevent you
+                    from landing inside a vault.
                     Required skill level for first spell level: 35.
 
     Mass Warp       Locks monsters in stasis for a while.
