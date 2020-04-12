@@ -559,8 +559,9 @@ g       g       pick up an item from the floor. You have to stand on the item
 CTRL+G  CTRL+Z  pick up exactly one piece from a stack of same type of items.
 
 K       CTRL+C  forcibly combines a level 0 item in your inventory with other
-                items of the same type that aren't level 0. Be warned, that
-                this will change the level of all the items involved to 0.
+                items of the same type that aren't level 0 ('force-stack').
+                Be warned, that this will change the level of all the items
+                involved to 0 so they will become untradable.
 
 C       C       see a character overview.
 
@@ -17262,6 +17263,18 @@ spell failure rate. All Unlife spells use WIS.)
 
     Possess         Tries to manipulate the mind of a monster to make it ignore
                     you.
+                    Monsters may resist or be immune to the initial cast.
+                    While active, the spell drains your mana. The more monsters
+                    you try to keep under control, the faster your mana is
+                    depleted. If your distance to the monsters becomes too big
+                    or your mana is depleted then the spell will break.
+                    Sleeping monsters won't be affected or woken up by Possess.
+                    Monsters which have already been hurt cannot be possessed.
+                    Psi-immune, unique, undead, empty-minded or non-living
+                    monsters cannot be possessed either.
+                    Monsters may have a chance to resist the attack, the higher
+                    the more of the following abilities they possess:
+                    Being smart, resisting confusion, being powerful.
                     Lv9: Turns into a ball.
                     Lv17: Affects all monsters in sight.
                     Required skill level for first spell level: 23.
