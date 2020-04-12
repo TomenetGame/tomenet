@@ -11431,7 +11431,6 @@ OOD_xx          The monster cannot occur more than xx levels out of depth.
                 All unique monsters actually have an intrinsic OOD_20 flag even
                 if it's not shown in the monster lore spoilers.
 FRIENDS         This monster comes in a pack. Makes life easier for mimics.
-
 RAND_xxx        This monster has random movement. The xxx number is the chance
                 in percent. Several of these flags will stack.
 NO_SLEEP        This does not mean that the monster cannot be asleep when you
@@ -13310,6 +13309,13 @@ stated.
                                 (or back to player form), but each point above
                                 35.000 will cut this down by 5%, so at 50.000
                                 Mimicry shapechanging will only take 1/4 turn.
+
+                                Note: Some monsters exist in two versions that
+                                are identical except that one is solo and the
+                                other appears in packs (FRIENDS flag).
+                                For example novice warriors.
+                                Your kill count of these two versions will be
+                                unified, so they both count for the same form.
 
     .Magic Device               Mainly reduces fail chance when trying to use
      (1/16)                     magic devices (wands, staves, rods, activatable
