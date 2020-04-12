@@ -5394,7 +5394,7 @@ void calc_boni(int Ind) {
 		p_ptr->to_h += 2 * (hold - o_ptr->weight / 10);
 		p_ptr->dis_to_h += 2 * (hold - o_ptr->weight / 10);
 
-		if (p_ptr->weapon_parry > 0) p_ptr->weapon_parry /= 2; /* easy for now */
+		//parry penalty applied further below
 
 		/* Heavy weapon */
 		p_ptr->heavy_wield = TRUE;
@@ -5407,7 +5407,7 @@ void calc_boni(int Ind) {
 		p_ptr->to_h += 2 * (hold - o_ptr->weight / 10);
 		p_ptr->dis_to_h += 2 * (hold - o_ptr->weight / 10);
 
-		if (p_ptr->weapon_parry > 0) p_ptr->weapon_parry /= 2; /* easy for now */
+		//parry penalty applied further below
 
 		/* Heavy weapon */
 		p_ptr->heavy_wield = TRUE;
@@ -5703,7 +5703,7 @@ void calc_boni(int Ind) {
 
 #ifdef USE_PARRYING
 	if (p_ptr->heavy_wield) p_ptr->weapon_parry /= 3;
-	else if (p_ptr->awkward_wield) p_ptr->weapon_parry /= 2;
+	//else if (p_ptr->awkward_wield) p_ptr->weapon_parry /= 2;  -- the parry chance for this specific scenario is already defined further above
 #endif
 #ifdef USE_BLOCKING
 	if (p_ptr->heavy_shield) p_ptr->shield_deflect /= 3;
