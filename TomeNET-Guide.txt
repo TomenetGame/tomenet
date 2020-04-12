@@ -10044,6 +10044,10 @@ Let's look at 3 items it drops:
    which is level 115, but allowing all other items of the appropriate treasure
    classes of this monster.
 
+Note that there is a small chance that an item is sometimes allowed to vastly
+exceed the usual maximum level, an "Out of Depth" (OoD) drop!
+This phenomenon accounts for finding Dragon Scale Mail in the Orc Caves and
+other such occurances..
 
 
 (5.8) Special abilities of items

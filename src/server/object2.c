@@ -1172,7 +1172,7 @@ s16b get_obj_num(int max_level, u32b resf) {
 	if (max_level > 0) {
 		/* Occasional "boost" */
 		if (rand_int(GREAT_OBJ) == 0) {
-			/* What a bizarre calculation */
+			/* What a bizarre calculation - maybe TODO: Make this saner, but still keep DSM drop in orc cave possibility etc */
                         max_level = 1 + ((max_level * MAX_DEPTH_OBJ) / randint(MAX_DEPTH_OBJ));
 		}
 	}
