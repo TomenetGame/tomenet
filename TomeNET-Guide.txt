@@ -16514,9 +16514,9 @@ school.
                     Tier III: Level 40.
 
     Elemental Shield
-                    Temporary resistance to heat and cold.     (auto-project)
-                    Required skill level for first spell level: 15.
-                    Shared spell (see above): Fire, Water. (NOT Air!)
+                    Tier I is only shared between Fire and Water school and
+                    hence not available in the Air or Earth schools.
+                    Required skill level for first spell level: 15 (Tier I).
 
                     Tier II: Level 20.                         (auto-project)
                     Temporary resistance to heat, cold, lightning and acid.
@@ -16553,9 +16553,9 @@ school.
                     Tier III: Level 40.
 
     Elemental Shield
-                    Temporary resistance to heat and cold.     (auto-project)
-                    Required skill level for first spell level: 15.
-                    Shared spell (see above): Fire, Water. (NOT Earth!)
+                    Tier I is only shared between Fire and Water school and
+                    hence not available in the Air or Earth schools.
+                    Required skill level for first spell level: 15 (Tier I).
 
                     Tier II: Level 20.                         (auto-project)
                     Temporary resistance to heat, cold, lightning and acid.
