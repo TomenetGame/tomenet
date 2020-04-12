@@ -570,7 +570,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 
 	/* Slay Dragon  */
 	if ((f1 & TR1_SLAY_DRAGON) &&
-	    (r_ptr->flags3 & RF3_DRAGON)) {
+	    (r_ptr->flags3 & (RF3_DRAGON | RF3_DRAGONRIDER))) {
 		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
 		if (mult < FACTOR_SLAY) mult = FACTOR_SLAY;
 		if (bonus < FLAT_SLAY_BONUS) bonus = FLAT_SLAY_BONUS;
@@ -578,7 +578,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 
 	/* Execute Dragon */
 	if ((f1 & TR1_KILL_DRAGON) &&
-	    (r_ptr->flags3 & RF3_DRAGON)) {
+	    (r_ptr->flags3 & (RF3_DRAGON | RF3_DRAGONRIDER))) {
 		/*if (m_ptr->ml) r_ptr->r_flags3 |= RF3_DRAGON;*/
 		if (mult < FACTOR_KILL) mult = FACTOR_KILL;
 		if (bonus < FLAT_KILL_BONUS) bonus = FLAT_KILL_BONUS;
