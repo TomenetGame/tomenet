@@ -1640,7 +1640,7 @@ Items that 'can cause Earthquakes':
                 (Press keys  ~d  in the game to check server settings.)
                 See (5.13) for more information about earthquakes.
 
-Weapons, devices and spells:
+Weapons/ammo, devices and spells:
     @O          This and its variants control the 'auto-retaliator' which is a
                 mechanism designed to make your character automatically attack
                 targets that are standing directly adjacent to you.
