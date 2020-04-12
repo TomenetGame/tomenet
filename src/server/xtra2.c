@@ -13035,6 +13035,11 @@ void blood_bond(int Ind, object_type *o_ptr) {
 		return;
 	}
 
+	if (check_ignore(Ind2, Ind)) {
+		msg_print(Ind, "That player is currently ignoring you.");
+		return;
+	}
+
 	/* protect players in inns */
 	if ((zcave = getcave(&p2_ptr->wpos))) {
 		c_ptr = &zcave[p2_ptr->py][p2_ptr->px];
@@ -13066,6 +13071,7 @@ void blood_bond(int Ind, object_type *o_ptr) {
 	msg_format(Ind, "\374\377cYou blood bond with %s.", p2_ptr->name);
 	msg_format(Ind2, "\374%s blood bonds with you.", p_ptr->name);
 	msg_broadcast_format(Ind, "\374\377c%s blood bonds with %s.", p_ptr->name, p2_ptr->name);
+	p2_ptr->paging = 2;
 
 	/* new: auto-hostile, circumventing town peace zone functionality: */
 	add_hostility(Ind, p2_ptr->name, TRUE);
