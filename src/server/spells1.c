@@ -5919,7 +5919,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 
 			/* remember who charmed us */
-			m_ptr->charmedignore = Ind;
+			m_ptr->charmedignore = p_ptr->id;
 			/* count our victims, just for optimization atm */
 			p_ptr->mcharming++;
 

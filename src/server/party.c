@@ -5457,8 +5457,9 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 	msg_print(Ind, "Password changed.");
 }
 
-int lookup_player_ind(u32b id) {
+int lookup_player_Ind(s32b id) {
 	int n;
+
 	for (n = 1; n <= NumPlayers; n++)
 		if (Players[n]->id == id) return n;
 	return 0;

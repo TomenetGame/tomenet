@@ -9544,7 +9544,7 @@ bool do_mstopcharm(int Ind) {
 
 	for (m = m_top - 1; m >= 0; m--) {
 		m_ptr = &m_list[m_fast[m]];
-		if (m_ptr->charmedignore != Ind) continue;
+		if (m_ptr->charmedignore != p_ptr->id) continue;
 		m_ptr->charmedignore = 0;
 		notice = TRUE;
 	}
@@ -9556,9 +9556,18 @@ bool do_mstopcharm(int Ind) {
    while hopefully being back in trance the next time we check.
    Each attempt will cost the original charmer mana, and he also has the highest chance of succeeding this roll,
    so party members are slightly more prone to getting attacked.. */
-bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr) {
-	player_type *q_ptr = Players[Ind_charmer];
+bool test_charmedignore(int Ind, s32b charmer_id, monster_type *m_ptr, monster_race *r_ptr) {
+	int Ind_charmer = lookup_player_Ind(charmer_id);
+	player_type *q_ptr;
 	int chance = 1, cost = 1;
+
+	if (!Ind_charmer) {
+		/* Somehow the charmer has vanished - break the spell! */
+		m_ptr->charmedignore = 0;
+		return FALSE;
+	}
+
+	q_ptr = Players[Ind_charmer];
 
 	/* non team-mates are not affected (and would cost extra mana) */
 	if (Ind != Ind_charmer &&

@@ -1459,7 +1459,7 @@ extern int check_account(char *accname, char *c_name, int *Ind);
 extern void strip_true_arts_from_hashed_players(void);
 extern void account_change_password(int Ind, char *old_pass, char *new_pass);
 
-extern int lookup_player_ind(u32b id);
+extern int lookup_player_Ind(s32b id);
 
 extern void backup_acclists(void);
 extern void restore_acclists(void);
@@ -1726,7 +1726,7 @@ extern bool swap_position(int Ind, int lty, int ltx);
 extern bool turn_monsters(int Ind, int dam);
 extern void wizard_lock(int Ind, int dir);
 extern bool do_mstopcharm(int Ind);
-extern bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr);
+extern bool test_charmedignore(int Ind, s32b charmer_id, monster_type *m_ptr, monster_race *r_ptr);
 extern u32b mod_ball_spell_flags(int typ, u32b flags);
 
 extern int py_create_gateway(int Ind);
