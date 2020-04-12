@@ -5590,7 +5590,7 @@ void do_cmd_fire(int Ind, int dir) {
 	} else {
 		/* Actually "fire" the object */
 		bonus = (p_ptr->to_h + p_ptr->to_h_ranged + o_ptr->to_h);
-		chance = (p_ptr->skill_thb + (bonus * BTH_PLUS_ADJ));
+		chance = (p_ptr->skill_tht + (bonus * BTH_PLUS_ADJ));
 
 		/* Assume a base multiplier */
 		tmul = 1;

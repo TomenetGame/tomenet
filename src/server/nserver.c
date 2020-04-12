@@ -8052,39 +8052,51 @@ int Send_skills(int Ind) {
 	connection_t *connp = Conn[p_ptr->conn], *connp2;
 
 	s16b skills[12];
-	int i, tmp = 0;
-	object_type *o_ptr;
+	int i, tmp;
+	object_type *o_ptr, *o2_ptr;
 
 	/* Fighting skill */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
-	tmp = o_ptr->to_h;
-	/* dual-wield? */
-#if 0 /* hmm seemed a bit glitchy? replacing below.. */
-	o_ptr = &p_ptr->inventory[INVEN_ARM];
-	if (o_ptr->k_idx && o_ptr->tval != TV_SHIELD) tmp += o_ptr->to_h;
-	/* average? */
-	if (p_ptr->dual_wield) tmp /= 2;
-#else
-	if (p_ptr->dual_wield && p_ptr->dual_mode) {
-		o_ptr = &p_ptr->inventory[INVEN_ARM];
-		tmp += o_ptr->to_h;
-		/* average */
-		tmp /= 2;
-	}
-#endif
-
-#if 1 /* since Fighting and Bows/Throws have other effects, don't confuse players with this weird sum */
+	o2_ptr = &p_ptr->inventory[INVEN_ARM];
+	tmp = 0;
+	if (o_ptr->k_idx) {
+		tmp = o_ptr->to_h;
+		if (p_ptr->dual_wield && p_ptr->dual_mode) {
+			tmp += o2_ptr->to_h;
+			/* average */
+			tmp /= 2;
+		}
+	} else if (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD) tmp = o2_ptr->to_h;
 	tmp += p_ptr->to_h + p_ptr->to_h_melee;
 	skills[0] = p_ptr->skill_thn + (tmp * BTH_PLUS_ADJ);
 
-	/* Shooting skill */
+	/* Bows/Throw skill - separate into bows for TV_BOW and boomerangs for TV_BOOMERANG */
 	o_ptr = &p_ptr->inventory[INVEN_BOW];
-	tmp = p_ptr->to_h + o_ptr->to_h + p_ptr->to_h_ranged;
-	skills[1] = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
-#else /* looks silly for a warrior who has maxed skills yet is only "good" or something */
-	skills[0] = p_ptr->skill_thn;
-	skills[1] = p_ptr->skill_thb;
+	tmp = p_ptr->to_h + (o_ptr->k_idx ? o_ptr->to_h : 0) + p_ptr->to_h_ranged;
+	if (o_ptr->tval == TV_BOW) {
+		tmp = p_ptr->skill_thb + (tmp * BTH_PLUS_ADJ);
+		o2_ptr = &p_ptr->inventory[INVEN_AMMO];
+#if 1 /* Add ammo +hit to this? */
+		if (o2_ptr->k_idx) switch (o_ptr->sval) {
+		case SV_SLING:
+			if (o2_ptr->tval == TV_SHOT) tmp += o2_ptr->to_h;
+			break;
+		case SV_SHORT_BOW:
+		case SV_LONG_BOW:
+			if (o2_ptr->tval == TV_ARROW) tmp += o2_ptr->to_h;
+			break;
+		case SV_LIGHT_XBOW:
+		case SV_HEAVY_XBOW:
+			if (o2_ptr->tval == TV_BOLT) tmp += o2_ptr->to_h;
+			break;
+		}
 #endif
+	} else if (o_ptr->tval == TV_BOOMERANG) tmp = p_ptr->skill_tht + (tmp * BTH_PLUS_ADJ);
+	else {
+		/* No ranged weapon equipped? Display throw-part then, as we might want to throw items.. */
+		tmp = p_ptr->skill_tht + (tmp * BTH_PLUS_ADJ);
+	}
+	skills[1] = tmp;
 
 	/* Basic abilities */
 	skills[2] = p_ptr->skill_sav;

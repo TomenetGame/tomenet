@@ -12603,12 +12603,13 @@ stated.
                                 if items are terrible, worthless, cursed,
                                 average, good, excellent or special.
                                 At the beginning you will only feel 'cursed'
-                                or 'good'.
+                                or 'good', and only for melee weapons, armour
+                                and boomerangs.
                                 Raise combat skill to at least 11 to get
-                                more distinctive feelings about melee weapons
-                                and armour.
+                                more distinctive feelings about melee weapons,
+                                armour and boomerangs.
                                 A powerful combattant (combat 31) senses the
-                                usefulness of ranged weapons and ammunition
+                                usefulness of shooting weapons and ammunition
                                 more distinctively, even if (s)he's not
                                 knowledgeable in archery otherwise.
                                 A very powerful one (combat 41) can also notice
@@ -12621,7 +12622,7 @@ stated.
                                 Reduces duration of Fear/Stun/Confuse effects
                                 that are applied to you.
 
-                                Increases 'Fighting' and 'Bows/Throws'
+                                Increases 'Fighting' and 'Bows/Throw'
                                 abilities somewhat, thereby increasing your
                                 chance to hit with melee, ranged weapons and
                                 when throwing an item and reducing your chance
@@ -12968,7 +12969,7 @@ stated.
 
     +Archery                    Improves ranged to-damage bonus somewhat, by +1
      (1/3)                      for every 5.000 increase in skill.
-                                Also increases 'Bows/Throws' ability somewhat,
+                                Also increases 'Bows/Throw' ability somewhat,
                                 which in turn further increases hit chance.
 
                                 Allows you to learn some shooting techniques
@@ -12980,7 +12981,7 @@ stated.
                                 At 20 the quality of your handmade ammunition
                                 becomes remarkably better.
 
-                                Lets you pseudo-id ranged weapons and
+                                Lets you pseudo-id shooting weapons and
                                 ammunition more often the higher the skill.
                                 If increased to at least 11, pseudo-id will
                                 give you much more distinctive feelings about
@@ -12989,7 +12990,7 @@ stated.
 
         .Sling-mastery          Increases hit chance (while using a sling) by
                                 +1 for every 2.000 skill increase.
-                                Also increases Bows/Throws ability somewhat,
+                                Also increases Bows/Throw ability somewhat,
                                 which in turn further increases hit chance.
 
                                 At 10,20,30,40,50 you will get +1 additional
@@ -13028,6 +13029,8 @@ stated.
                                 ricochetting.
 
     .Boomerang-mastery          At 16.6, 33.3 and 50 you get +1 extra throw.
+                                Also increases 'Bows/Throw' ability somewhat,
+                                which in turn further increases hit chance.
 
                                 Increases ranged to-damage bonus when wielding
                                 a boomerang by +1 for every 2.500 increase.
@@ -13036,6 +13039,9 @@ stated.
                                 to fall to the ground instead of returning.
 
                                 Artifact boomerangs never break or fall down.
+
+                                (Note that your 'Combat' skill determines your
+                                ability to pseudo-id Boomerangs.)
 
 << For more information about learning spells, see (6.8)
    Most spells will increase in power in one way or the other when you increase
@@ -13829,9 +13835,15 @@ Fighting
     (Note that any +tohit bonus increases the displayed Fighting ability:
     The displayed value is the sum of your actual ability and your hit boni.)
 Bows/Throw
-    How well you can shoot/throw.
+    How well you can shoot with slings, bows and crossbows or throw any kind
+    of item, including 'firing' boomerangs.
     (Note that any +tohit bonus increases the displayed Bows/Throw ability:
     The displayed value is the sum of your actual ability and your hit boni.)
+    This ability is internally divided into its 'bows' and its 'throw' part:
+    If you don't wield a ranged weapon, it will display the 'throw' part.
+    If you do wield a ranged weapon it depends on its type: For slings, bows
+    and crossbows the skill will now display your 'bows' proficiency, but if
+    you equip a boomerang, it will display your 'throw' proficiency again.
 Saving Throw
     How well you can resist attacks that have influence on your status
     other than just hit points (except for monster curses, which can be
@@ -13891,7 +13903,7 @@ Infra-Vision
     that don't carry a light source themselves.
 
 These miscellaneous abilities can also change when your character progresses,
-depending on your +hit and +dam (concerning Fighting and Bows/Throws) or your
+depending on your +hit and +dam (concerning Fighting and Bows/Throw) or your
 character level or certain skills you invest points into.
 How much an ability changes when a property of your character (skill, level or
 weapon enchantments) it depends on changes, depends on your class: The relative
@@ -15951,7 +15963,7 @@ Novice priest    2  Sort of weak but can cast fear/curse and self-heal spells.
                     the 'Phantom warrior' (see further below).
 Novice ranger    4  Can pass trees easily. Gives an extra shot with slings or
                     bows. This can be pretty powerful early on if the
-                    character has a decent 'bows/throws' ability or has a bow
+                    character has a decent 'Bows/Throw' ability or has a bow
                     that is well enchanted to-hit.
                     It occurs solo at depth 4, but in packs at depth 8!
 N. mindcrafter   4  Free action, resists confusion and slightly insanity too.

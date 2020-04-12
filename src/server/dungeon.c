@@ -459,6 +459,7 @@ static void sense_inventory(int Ind) {
 		case TV_BLUNT:
 		case TV_POLEARM:
 		case TV_SWORD:
+		case TV_AXE:
 		case TV_BOOTS:
 		case TV_GLOVES:
 		case TV_HELM:
@@ -468,7 +469,7 @@ static void sense_inventory(int Ind) {
 		case TV_SOFT_ARMOR:
 		case TV_HARD_ARMOR:
 		case TV_DRAG_ARMOR:
-		case TV_AXE:
+		case TV_BOOMERANG:
 			if (fail && !heavy) continue; //finally fail
 			if (ok_combat) {
 				feel = (heavy ? value_check_aux1(o_ptr) :
@@ -504,7 +505,6 @@ static void sense_inventory(int Ind) {
 		case TV_ARROW:
 		case TV_BOLT:
 		case TV_BOW:
-		case TV_BOOMERANG:
 			if (fail && !heavy_archery) continue; //finally fail
 			if (ok_archery || (ok_combat && magik(25))) {
 				feel = (heavy_archery ? value_check_aux1(o_ptr) :

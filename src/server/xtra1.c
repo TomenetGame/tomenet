@@ -5953,35 +5953,35 @@ void calc_boni(int Ind) {
 	p_ptr->skill_dig += adj_str_dig[p_ptr->stat_ind[A_STR]];
 
 	/* Affect Skill -- disarming (Level, by Class) */
-	//p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_DISARM) / 10);
-	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_TRAPPING) / 10);
+	//p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_DISARM)) / 10;
+	p_ptr->skill_dis += (p_ptr->cp_ptr->x_dis * get_skill(p_ptr, SKILL_TRAPPING)) / 10;
 
 	/* Affect Skill -- magic devices (Level, by Class) */
-	p_ptr->skill_dev += (p_ptr->cp_ptr->x_dev * get_skill(p_ptr, SKILL_DEVICE) / 10);
+	p_ptr->skill_dev += (p_ptr->cp_ptr->x_dev * get_skill(p_ptr, SKILL_DEVICE)) / 10;
 	p_ptr->skill_dev += adj_int_dev[p_ptr->stat_ind[A_INT]];
 
 	/* Affect Skill -- saving throw (Level, by Class) */
-	p_ptr->skill_sav += (p_ptr->cp_ptr->x_sav * p_ptr->lev / 10);
+	p_ptr->skill_sav += (p_ptr->cp_ptr->x_sav * p_ptr->lev) / 10;
 
 	/* Affect Skill -- stealth (Level, by Class) */
-	p_ptr->skill_stl += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
-	csheet_boni[14].slth += (get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5)) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
+	p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
+	csheet_boni[14].slth += get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
 
 	/* Affect Skill -- search ability (Level, by Class) */
-	p_ptr->skill_srh += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh)) + get_skill_scale(p_ptr, SKILL_TRAPPING, 30);
+	p_ptr->skill_srh += get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh) + get_skill_scale(p_ptr, SKILL_TRAPPING, 30);
 
 	/* Affect Skill -- search frequency (Level, by Class) */
-	p_ptr->skill_fos += (get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos));
+	p_ptr->skill_fos += get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_fos);
 
 	/* Affect Skill -- combat (normal) (Level, by Class) */
-        p_ptr->skill_thn += (p_ptr->cp_ptr->x_thn * (((2 * get_skill(p_ptr, SKILL_MASTERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
+        p_ptr->skill_thn += p_ptr->cp_ptr->x_thn * ((2 * get_skill(p_ptr, SKILL_MASTERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 100;
 
 	/* Affect Skill -- combat (shooting) (Level, by Class) */
 	//p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (((2 * get_skill(p_ptr, SKILL_ARCHERY)) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
-	p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (((get_skill(p_ptr, SKILL_ARCHERY) + get_skill(p_ptr, get_archery_skill(p_ptr))) + (1 * get_skill(p_ptr, SKILL_COMBAT))) / 10) / 10);
+	p_ptr->skill_thb += (p_ptr->cp_ptr->x_thb * (get_skill(p_ptr, SKILL_ARCHERY) + get_skill(p_ptr, get_archery_skill(p_ptr)) + get_skill_scale(p_ptr, SKILL_COMBAT, 30))) / 100;
 
 	/* Affect Skill -- combat (throwing) (Level, by Class) */
-	p_ptr->skill_tht += (p_ptr->cp_ptr->x_thb * get_skill_scale(p_ptr, SKILL_COMBAT, 10));
+	p_ptr->skill_tht += (p_ptr->cp_ptr->x_thb * (get_skill_scale(p_ptr, SKILL_COMBAT, 10) + get_skill_scale(p_ptr, SKILL_BOOMERANG, 35))) / 30;
 
 
 
