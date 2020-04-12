@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. April 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 12. April 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -10908,7 +10908,7 @@ Spell scroll        Although called "scrolls" they actually persist and can be
 Spell crystal       They are like "spell scrolls", except they are used for
                     mindcrafter spells. A specialty of spell crystals is that
                     they ignore fire damage (and water damage, same as spell
-                    scrolls).
+                    scrolls), but are susceptible to electricity!
 Codex, Spellbook, Grimoire
                     These are magic books that may contain magic spells of any
                     type and school.
