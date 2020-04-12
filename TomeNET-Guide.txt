@@ -12702,6 +12702,12 @@ stated.
                                 items will work with all weapons.
                                 The weight limit counts per weapon, so you may
                                 dual-wield two 10.0lb weapons just fine.
+                                If you dual-wield one eligible weapon (ie sword
+                                up to 10.0lb) and a non-eligible weapon (ie a
+                                too heavy weapon or not a sword) then the
+                                eligible weapon will still get Critical-strike
+                                skill applied for its hits, and the other
+                                weapon won't.
                                 (The skill effect does not depend on how heavy
                                 exactly the weapon is, as long as it's not
                                 above 10.0 lb, so that weight threshold is
