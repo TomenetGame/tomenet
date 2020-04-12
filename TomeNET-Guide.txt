@@ -20598,7 +20598,7 @@ The differences between Ironman ruleset and normal servers are as follows:
    -non-town dungeons allow random recalling at a 20% chance per floor,
    -on dungeon levels shallower than level 20 (eg easier than -1000 ft Bree),
     recalling is impossible, overriding the above rules.
-  -Players may recall INTO dungeons to 50 ft + every 1000 ft, eg to 50 ft,
+  -Players may recall INTO town dungeons to 50 ft + every 1000 ft, eg to 50 ft,
    1050 ft, 2050 ft, ... .
   -Players start with more gold (class-dependant) to buy supplies.
   -Players additionally start with a few cure wounds potions.
