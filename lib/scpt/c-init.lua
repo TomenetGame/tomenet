@@ -55,3 +55,4 @@ pern_dofile(Ind, "classes.lua")
 pern_dofile(Ind, "traits.lua")
 --done in init_lua() already, for early access
 --pern_dofile(Ind, "guide.lua")
+pern_dofile(Ind, "bpr.lua")

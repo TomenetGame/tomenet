@@ -1000,6 +1000,7 @@ class_redraw:
 /*
  * Get the desired stat order.
  */
+#define SHOW_BPR
 static bool choose_stat_order(void) {
 	int i, j, k, avail[6], crb, maxed_stats = 0;
 	char c = '\0';
@@ -1084,6 +1085,31 @@ static bool choose_stat_order(void) {
 	else if (char_creation_flags == 1) {
 		int col1 = 3, col2 = 35, col3 = 54, tmp_stat, rowA = 12;
 
+#ifdef SHOW_BPR
+		int bpr_str[3], bpr_dex[3], bpr[3], mbpr;
+		char lua[MAX_CHARS], *cbpr;
+		bool show_bpr = FALSE;
+
+		/* Display potential BpR for super-light weapons */
+		for (i = 0; i < 3; i++) {
+			sprintf(out_val, "return get_class_bpr(%d, %d)", class, i);
+			strcpy(lua, string_exec_lua(0, out_val));
+			bpr_str[i] = atoi(lua + 1);
+			/* Paranoia: Make this robust, so people's clients arent suddenly broken */
+			cbpr = strchr(lua, 'D');
+			if (!cbpr) break;
+			bpr_dex[i] = atoi(cbpr + 1);
+			cbpr = strchr(lua, 'B');
+			if (!cbpr) break;
+			bpr[i] = atoi(cbpr + 1);
+		}
+		if (i == 3) {
+			show_bpr = TRUE; /* no errors, we're able to display projected BpR just fine */
+			/* Hack: For some classes BpR has no significant meaning, so we won't display it */
+			if (!bpr[0]) show_bpr = FALSE;
+		}
+#endif
+
 		j = 0; /* current stat to be modified */
 		k = 30; /* free points left */
 
@@ -1093,7 +1119,11 @@ static bool choose_stat_order(void) {
 		c_put_str(TERM_L_GREEN, format("%2d", k), rowA, col3);
 		c_put_str(TERM_SLATE, "If any values are shown under 'recommended minimum', try to reach those.", rowA + 1, col1);
 		if (valid_dna) c_put_str(TERM_SLATE, "Current:   (Base) (Prev) Recommended min:", 15, col2);
-		else c_put_str(TERM_SLATE, "Current:   (Base)        Recommended min::", 15, col2);
+#ifndef SHOW_BPR
+		else c_put_str(TERM_SLATE, "Current:   (Base)        Recommended min:", 15, col2);
+#else
+		else c_put_str(TERM_L_WHITE, "Current:   (Base)        Recommended min:", 15, col2);
+#endif
 
 		if (valid_dna) c_put_str(TERM_SLATE, "Press \377B#\377s/\377B%\377s to reincarnate.", 15, col1);
 #if 0
@@ -1112,7 +1142,12 @@ static bool choose_stat_order(void) {
 		c_put_str(TERM_WHITE, "Q\377s quits, \377wBACKSPACE\377s goes back.", 21, col1);
 #endif
 
+#ifndef SHOW_BPR
 		c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, col1);
+#else
+		c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 14, col1);
+		if (show_bpr) c_put_str(TERM_L_WHITE, "BpR this character gets with extremely light weapons (up to 3.0 lbs):", 23, col1);
+#endif
 
 		c_put_str(TERM_L_UMBER,"   - Strength -    ", DIZ_ROW, 30);
 		c_put_str(TERM_YELLOW, "   How quickly you can strike.", DIZ_ROW + 1, 30);
@@ -1142,7 +1177,21 @@ static bool choose_stat_order(void) {
 #endif
 
 		while (1) {
+			/* Display remaining skill points */
 			c_put_str(TERM_L_GREEN, format("%2d", k), rowA, col3);
+
+#ifdef SHOW_BPR
+			/* Display projected BpR with <= 3.0lbs weapons */
+			if (show_bpr) {
+				mbpr = 1;
+				for (i = 0; i < 3; i++)
+					if (stat_order[0] + cp_ptr->c_adj[0] + rp_ptr->r_adj[0] >= bpr_str[i]
+					    && stat_order[3] + cp_ptr->c_adj[3] + rp_ptr->r_adj[3] >= bpr_dex[i])
+						mbpr = bpr[i];
+				sprintf(out_val, "%d%s", mbpr, mbpr == 3 ? "+" : " ");
+				c_put_str(mbpr == 1 ? TERM_ORANGE : (mbpr == 2 ? TERM_YELLOW : TERM_L_GREEN), out_val, 23, 73);
+			}
+#endif
 
 			for (i = 0; i < 6; i++) {
 				crb = stat_order[i] + cp_ptr->c_adj[i] + rp_ptr->r_adj[i];

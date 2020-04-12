@@ -43,6 +43,7 @@ __update_table = {
 	"scpt/classes.lua",
 	"scpt/races.lua",
 	"scpt/traits.lua",
+	"scpt/bpr.lua",
 
 	"scpt/o_shadow.lua",
 	"scpt/o_spirit.lua",
@@ -94,6 +95,7 @@ __update_table = {
 	"scpt/classes.lua",
 	"scpt/races.lua",
 	"scpt/traits.lua",
+	"scpt/bpr.lua",
 
 	"scpt/o_shadow.lua",
 	"scpt/o_spirit.lua",
@@ -144,6 +146,7 @@ __update_table = {
 	"scpt/classes.lua",
 	"scpt/races.lua",
 	"scpt/traits.lua",
+	"scpt/bpr.lua",
 
 	"scpt/o_shadow.lua",
 	"scpt/o_spirit.lua",
@@ -192,6 +195,7 @@ __update_table = {
 	"scpt/classes.lua",
 	"scpt/races.lua",
 	"scpt/traits.lua",
+	"scpt/bpr.lua",
 }
 end
 

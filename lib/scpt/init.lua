@@ -56,6 +56,7 @@ __audio_mus_max = getn(audio_bgm)
 pern_dofile(Ind, "races.lua")
 pern_dofile(Ind, "classes.lua")
 pern_dofile(Ind, "traits.lua")
+pern_dofile(Ind, "bpr.lua")
 
 -- Put whatever is needed here
 
