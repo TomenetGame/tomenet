@@ -11918,7 +11918,7 @@ Vampirism source priority table (from best at the top to worst at the bottom)
 The best source overrides all weaker ones, which simply get ignored:
 | Melee                               | Ranged                              |
 -----------------------------------------------------------------------------
-| Weapon                     100%     | Shooter                     50%     |
+| Weapon                     100%     | Ranged weapon               50%     |
 | Vampire bat/mist form      100%     | Ammunition                  50%     |
 | Vampire character race      50% (*) |                                     |
 | Other vampiric forms        50%     |                                     |
