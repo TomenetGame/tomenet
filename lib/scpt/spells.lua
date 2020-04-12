@@ -166,10 +166,12 @@ pern_dofile(Ind, "s_nature.lua")
 pern_dofile(Ind, "s_mind.lua")
 pern_dofile(Ind, "s_udun.lua")
 
+__lua_P_FIRST = __tmp_spells_num
 pern_dofile(Ind, "p_offense.lua")
 pern_dofile(Ind, "p_defense.lua")
 pern_dofile(Ind, "p_curing.lua")
 pern_dofile(Ind, "p_support.lua")
+__lua_P_LAST = __tmp_spells_num - 1
 
 pern_dofile(Ind, "dr_arcane.lua")
 pern_dofile(Ind, "dr_physical.lua")

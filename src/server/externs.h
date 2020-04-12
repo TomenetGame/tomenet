@@ -2413,6 +2413,8 @@ extern int __lua_HBLESSING;
 extern int __lua_MSCARE;
 extern int __lua_M_FIRST;
 extern int __lua_M_LAST;
+extern int __lua_P_FIRST;
+extern int __lua_P_LAST;
 extern int __lua_OFEAR;
 
 extern int cron_1h_last_hour; /* manage cron_1h calls */

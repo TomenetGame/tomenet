@@ -2367,6 +2367,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			/* hack for mindcrafter spell scrolls -> spell crystals - C. Blue */
 			if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
 				basenm = "& Spell Crystal~ of #";
+			/* hack for priest spell scrolls -> prayer scrolls - C. Blue */
+			if (o_ptr->pval >= __lua_P_FIRST && o_ptr->pval <= __lua_P_LAST)
+				basenm = "& Prayer Scroll~ of #";
 			//basenm = k_name + k_ptr->name;
 			if (o_ptr->sval == SV_SPELLBOOK) {
 				if (school_spells[o_ptr->pval].name)
@@ -3707,7 +3710,7 @@ cptr item_activation(object_type *o_ptr) {
 
 	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval))
 		//return "transcribing a spell scroll or spell crystal into it";
-		return format("transcribing up to %d spell scrolls or spell crystals into it", o_ptr->bpval);
+		return format("transcribing up to %d spell/prayer scrolls or spell crystals into it", o_ptr->bpval);
 
 	if (o_ptr->tval == TV_RUNE) {
 		if (o_ptr->sval < RCRAFT_MAX_ELEMENTS)

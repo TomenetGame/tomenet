@@ -9274,6 +9274,16 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				return;
 				//*str2 = 0;
 			}
+		} else if (!strncasecmp(str2, "prayer scrolls", 14)) {
+			/* extract spell name, error if not speficied */
+			if (strlen(str) > 18) {
+				strcpy(str2, str + 18);
+				strcpy(str, "Prayer Scrolls");
+			} else {
+				msg_print(Ind, "I need to know which prayer you want in the prayer scrolls.");
+				return;
+				//*str2 = 0;
+			}
 		} else if (!strncasecmp(str2, "spell scrolls", 13)) {
 			/* extract spell name, error if not speficied */
 			if (strlen(str) > 17) {
@@ -9291,6 +9301,16 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				strcpy(str, "Spell Crystal");
 			} else {
 				msg_print(Ind, "I need to know which spell you want in the spell crystal.");
+				return;
+				//*str2 = 0;
+			}
+		} else if (!strncasecmp(str2, "prayer scroll", 13)) {
+			/* extract spell name, error if not speficied */
+			if (strlen(str) > 17) {
+				strcpy(str2, str + 17);
+				strcpy(str, "Prayer Scroll");
+			} else {
+				msg_print(Ind, "I need to know which prayer you want in the prayer scroll.");
 				return;
 				//*str2 = 0;
 			}
@@ -9410,7 +9430,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 				}
 				/* still failure? */
 				if (i == max_spells && extra == -1) {
-					msg_print(Ind, "Sorry, I don't know of such an item or spell.");
+					msg_print(Ind, "Sorry, I don't know of such an item, spell or prayer.");
 					return;
 				}
 				/* success */
@@ -9522,7 +9542,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			}
 #endif
 		}
-		object_desc(0, o_name, &forge, FALSE, 256); //for checking if it's a scroll of crystal, namewise
+		object_desc(0, o_name, &forge, FALSE, 256); //for checking if it's a scroll or crystal, namewise
 
 		forge.number = num;
 		price = price_item(Ind, &forge, ot_ptr->min_inflate, FALSE);

@@ -859,6 +859,8 @@ int __lua_HBLESSING;
 int __lua_MSCARE;
 int __lua_M_FIRST;
 int __lua_M_LAST;
+int __lua_P_FIRST;
+int __lua_P_LAST;
 #ifndef ENABLE_OCCULT
 int __lua_OFEAR = 0;
 #else
