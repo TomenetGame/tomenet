@@ -7354,9 +7354,10 @@ As soon as a house contains at least one item inscribed this way, if a player
 who does not have access to the house tries to open the door, he will be
 presented with a store screen where he can buy those inscribed items.
 
-The default price of an item is 2x its base value that it would cost in normal
-(non black market) town stores. This price cannot be undercut in player shops.
-However, the following items have a default price of only 1x their base value:
+The default price (the minimum price) of an item is 2x its base value that it
+would cost in normal (non black market) town stores. This price cannot be
+undercut in player shops. However, the following items are exceptions and have
+a default price of only 1x their base value:
 - Rings of Speed
 - Scrolls of Artifact Creation
 - Random artifacts
