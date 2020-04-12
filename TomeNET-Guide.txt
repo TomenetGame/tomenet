@@ -13285,6 +13285,8 @@ stated.
                                 For each point that Mimicry is trained above
                                 30.000 the character's mana pool will expand
                                 by an extra +5 MP (so up to +100 MP at 50.000).
+                                Note that this extra mana is NOT affected by
+                                +MANA items.
 
                                 The further Mimicry is trained above 35.000
                                 the faster a player can shapechange. Usually it
