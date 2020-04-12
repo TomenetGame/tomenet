@@ -2735,7 +2735,7 @@ void update_player(int Ind) {
 			    ((q_ptr->inventory[INVEN_OUTER].k_idx) &&
 			    (q_ptr->inventory[INVEN_OUTER].tval == TV_CLOAK) &&
 			    (q_ptr->inventory[INVEN_OUTER].sval == SV_SHADOW_CLOAK)))
-			    && !(q_ptr->temp_misc_2 & 0x01)) { //snowed by a snowball? =p
+			    && !(q_ptr->temp_misc_1 & 0x08)) { //snowed by a snowball? =p
 				/* in PvP, invis shouldn't help too greatly probably */
 				if ((q_ptr->lev > p_ptr->lev && !hostile) ||
 				    q_ptr->invis_phase >= (hostile ? 85 : 20))
@@ -2746,7 +2746,7 @@ void update_player(int Ind) {
 			if (q_ptr->cloaked == 1 && !q_ptr->cloak_neutralized &&
 			    !player_in_party(p_ptr->party, Ind)
 			    && !(q_ptr->mode & MODE_PVP)
-			    && !(q_ptr->temp_misc_2 & 0x01)) //snowed by a snowball? =p
+			    && !(q_ptr->temp_misc_1 & 0x08)) //snowed by a snowball? =p
 				flag = FALSE;
 
 			/* Dungeon masters can see invisible players */

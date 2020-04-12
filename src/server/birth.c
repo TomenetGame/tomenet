@@ -2384,9 +2384,9 @@ static void player_setup(int Ind, bool new) {
 
 			alloc_dungeon_level(wpos);
 			/* hack: Prevent generating a random dungeon town via relogging+unstaticing cheeze */
-			p_ptr->temp_misc_2 |= 0x02;
+			p_ptr->temp_misc_1 |= 0x10;
 			generate_cave(wpos, p_ptr);
-			p_ptr->temp_misc_2 &= ~0x02;
+			p_ptr->temp_misc_1 &= ~0x10;
 			l_ptr = getfloor(wpos);
 
 			/* Player now starts mapping this dungeon (as far as its flags allow) */

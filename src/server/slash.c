@@ -3359,8 +3359,8 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 			}
 
 			//unsnow
-			if (Players[j]->temp_misc_2 & 0x01) {
-				Players[j]->temp_misc_2 &= ~0x01;
+			if (Players[j]->temp_misc_1 & 0x08) {
+				Players[j]->temp_misc_1 &= ~0x08;
 				note_spot(j, Players[j]->py, Players[j]->px);
 				update_player(j); //may return to being invisible
 				everyone_lite_spot(&Players[j]->wpos, Players[j]->py, Players[j]->px);
@@ -6607,8 +6607,8 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				bypass_invuln = FALSE;
 
 				//unsnow
-				if (Players[j]->temp_misc_2 & 0x01) {
-					Players[j]->temp_misc_2 &= ~0x01;
+				if (Players[j]->temp_misc_1 & 0x08) {
+					Players[j]->temp_misc_1 &= ~0x08;
 					note_spot(j, Players[j]->py, Players[j]->px);
 					update_player(j); //may return to being invisible
 					everyone_lite_spot(&Players[j]->wpos, Players[j]->py, Players[j]->px);

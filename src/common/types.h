@@ -2507,8 +2507,8 @@ struct player_type {
 	bool wide_scroll_margin;
 	bool always_repeat;
 	bool fail_no_melee;
-	byte temp_misc_1; //0x01: door-mimic open state; 0x02: ppage, 0x04: gpage
-	byte temp_misc_2; //0x01: snowed, 0x02: random dungeon town handling, 0x04: loading old savegames before separate depths;
+	byte temp_misc_1; //0x01: door-mimic open state; 0x02: ppage, 0x04: gpage, 0x08: snowed, 0x10: random dungeon town handling, 0x20: loading old savegames before separate depths;
+	byte temp_misc_2; //timer for snowed
 
 	bool page_on_privmsg;
 	bool page_on_afk_privmsg;

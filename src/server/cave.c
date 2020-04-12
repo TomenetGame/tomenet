@@ -3372,7 +3372,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			}
 
 			/* snowed by a snowball hit? */
-			if (p2_ptr->temp_misc_2 & 0x01) a = TERM_WHITE;
+			if (p2_ptr->temp_misc_1 & 0x08) a = TERM_WHITE;
 
 			/* part 'A' end */
 
@@ -3858,7 +3858,7 @@ void lite_spot(int Ind, int y, int x) {
 			}
 
 			/* snowed by a snowball hit? */
-			if (p_ptr->temp_misc_2 & 0x01) a = TERM_WHITE;
+			if (p_ptr->temp_misc_1 & 0x08) a = TERM_WHITE;
 
 			/* >4.5.4: Mark that it is the player himself */
 			if (p_ptr->hilite_player) is_us = TRUE;
