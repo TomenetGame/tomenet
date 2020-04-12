@@ -12700,6 +12700,8 @@ stated.
                                 Critical-strike skill only helps light swords,
                                 not heavier than 10.0 lb., while critical-hits
                                 items will work with all weapons.
+                                The weight limit counts per weapon, so you may
+                                dual-wield two 10.0lb weapons just fine.
                                 (The skill effect does not depend on how heavy
                                 exactly the weapon is, as long as it's not
                                 above 10.0 lb, so that weight threshold is
