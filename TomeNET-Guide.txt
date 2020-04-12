@@ -4116,6 +4116,9 @@ There are extended colour codes available since 4.5.2 (some in later clients)
     K  unbreath         j  holy orb         J  holy fire        X  hellfire
     z  thunder          Z  ember            0  starlight        1  havoc
 
+To return to the previous colour, instead of specifying it you can also just
+use '{-', for example: {rRed Text{gGreen now{-Red again.
+
 
 Character names in chat lines have different colours to indicate their status:
 
