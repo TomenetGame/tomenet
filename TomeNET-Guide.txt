@@ -8894,6 +8894,8 @@ and x1.67 respectively.
 
 Giants, Undead, Trolls, Orcs, Dragons, Demons are all 'Evil'.
 
+Dragonriders count as dragons too, so slay/kill mods will work on them.
+
 If several multipliers match the highest one will be used.
 
 For ranged weapons, the damage calculated from brands/slays applied to ammo
