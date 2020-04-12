@@ -4756,7 +4756,7 @@ Here is a list of all available ability codes:
 10      Set a monster trap (for trapping skill, see (4.7))
 11      Cast a magic spell / recite a holy prayer
 12      Draw a rune (for runecraft, see '(6.8b) Runes & Runemastery')
-13      Change combat stance (for combat stances skill)
+13      Change combat stance (for combat stances skill, see (6.2))
 14      Check your chances of parrying and blocking (for melee fighters,
         see (6.11) for details about these abilities)
 15      Toggle 'Aura of Fear' if you have trained the according skill.
