@@ -963,7 +963,8 @@ s16b tot_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_pt
 		if (magik(50)) f1 &= ~TR1_BRAND_FIRE;
 		else f1 &= ~TR1_BRAND_COLD;
 	}
-
+	if ((f1 & TR1_BRAND_COLD) && (fx & TBRAND_HELLFIRE))
+		f1 &= ~TR1_BRAND_COLD; //hellfire gets priority
 
 	/* emulate slay-susceptibilities */
 	if (q_ptr->body_monster) q_flags3 |= r_info[q_ptr->body_monster].flags3;
