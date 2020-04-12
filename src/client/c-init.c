@@ -3149,13 +3149,16 @@ static void quit_hook(cptr s) {
 #endif
 
 	/* Remember chat input history across logins */
-	path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
-	f = fopen(buf, "w");
-	for (j = 0; j < MSG_HISTORY_MAX; j++) {
-		if (!message_history_chat[j][0]) continue;
-		fprintf(f, "%s\n", message_history_chat[j]);
+	/* Only write history if we have at least one line though */
+	if (message_history[0][0]) {
+		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
+		f = fopen(buf, "w");
+		for (j = 0; j < MSG_HISTORY_MAX; j++) {
+			if (!message_history_chat[j][0]) continue;
+			fprintf(f, "%s\n", message_history_chat[j]);
+		}
+		fclose(f);
 	}
-	fclose(f);
 
 #ifdef RETRY_LOGIN
 	/* don't kill the windows and all */
