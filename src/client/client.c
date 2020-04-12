@@ -254,6 +254,12 @@ static bool read_mangrc(cptr filename) {
 				p = strtok(NULL, "\t\n");
 				if (p) use_graphics = (atoi(p) != 0);
 			}
+			if (!strncmp(buf, "graphic_tiles", 5)) {
+				char *p;
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) strcpy(graphic_tiles, p);
+			}
 #endif
 #ifdef USE_SOUND
 			/* sound */
@@ -786,6 +792,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 
 //#ifdef USE_GRAPHICS
 			fputs(format("graphics\t\t%s\n", use_graphics ? "1" : "0"), config2);
+			fputs(format("graphic_tiles\t\t%s\n", graphic_tiles), config2);
 			fputs("\n", config2);
 //#endif
 //#ifdef USE_SOUND

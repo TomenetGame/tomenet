@@ -3791,6 +3791,16 @@ void client_init(char *argv1, bool skip) {
 		break;
 	}
 
+#ifdef USE_GRAPHICS
+	/* If server is older than 5.0.0, then it doesn't support 32bit characters, so turn off graphics if turned on. */
+	if (use_graphics && is_older_than(&server_version, 5, 0, 0, 0, 0, 0)) {
+		plog_fmt("Server doesn't support graphics. Graphics turned off.");
+		use_graphics = FALSE;
+		/* TODO Turn off higher_pict for every terminal and free graphics data? */
+		/* Currently not needed, cause if graphics is off, no picture redefinitions are allowed. */
+	}
+#endif
+
 	if (BIG_MAP_fallback) {
 		screen_wid = SCREEN_WID;
 		screen_hgt = SCREEN_HGT;

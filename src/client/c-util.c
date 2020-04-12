@@ -10947,8 +10947,27 @@ u32b parse_color_code(const char *str) {
 	return c;
 }
 
+#ifdef USE_GRAPHICS
+/* Load the graphics pref file "graphics-{graphic_tiles}.pref" aka
+   "Access the "graphic visual" system pref file (if any)". */
+static void handle_process_graphics_file(void) {
+	char fname[255+13+1];
+	/* Figure out graphics prefs file name to be loaded. */
+	sprintf(fname, "graphics-%s.prf", graphic_tiles);
+	/* Access the "graphic visual" system pref file (if any). */
+
+	/* During the graphics file parsing the offset needs to be MAX_FONT_CHAR + 1.
+	 * The grafics redefinition can use tile indexing from 0 and
+	 * there is no need to update graphics files after MAX_FONT_CHAR is changed. */
+	char_map_offset = MAX_FONT_CHAR + 1;
+	process_pref_file(fname);
+	char_map_offset = 0;
+}
+#endif
+
 /* Load the default font's or a custom font's pref file aka
     "Access the "visual" system pref file (if any)". */
+/* If graphics is enabled, load graphic's pref file (if any). */
 #define CUSTOM_FONT_PRF /* enable custom pref files? */
 void handle_process_font_file(void) {
 	char buf[1024 + 17];
@@ -10982,9 +11001,12 @@ void handle_process_font_file(void) {
 	}
  #endif
 
+	/* Just to be sure. During the font parsing the offset needs to be 0.*/
+	char_map_offset = 0;
+
 	/* Actually try to load a custom font-xxx.prf file, depending on the main screen font */
 	get_screen_font_name(fname);
-	if (!use_graphics && fname[0]) {
+	if (fname[0]) {
 		FILE *fff;
 		/* Linux: fname has this format: '5x8' */
 		/* Windows: fname has this format: '.\lib\xtra\font\16X24X.FON' */
@@ -11014,14 +11036,20 @@ void handle_process_font_file(void) {
 			if (c_cfg.font_map_solid_walls) custom_font_warning = TRUE;
 		}
 		process_pref_file(buf);
+ #ifdef USE_GRAPHICS
+		if (use_graphics) handle_process_graphics_file();
+ #endif
 
 		/* Resend definitions to the server */
 		if (in_game) Send_client_setup();
 	} else {
 #endif
-		/* Access the "visual" system pref file (if any) */
-		sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-		process_pref_file(buf);
+	/* Access the "visual" system pref file (if any) */
+	sprintf(buf, "font-%s.prf", ANGBAND_SYS);
+	process_pref_file(buf);
+#ifdef USE_GRAPHICS
+	if (use_graphics) handle_process_graphics_file();
+#endif
 #ifdef CUSTOM_FONT_PRF
 	}
 #endif

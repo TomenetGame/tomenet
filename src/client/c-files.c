@@ -780,6 +780,13 @@ void init_file_paths(char *path) {
  *
  * Specify a use for a subwindow
  *   W:<num>:<use>
+ *
+ *
+ * During char redefinitions (actions RKFU), the char value is increased by
+ * "char_map_offset" value. This is to make graphic redefinitions more easier.
+ * Only during graphical file parsing the "char_map_offset" has MAX_FONT_CHAR + 1
+ * value, otherwise is 0. This will be usefull, if the MAX_FONT_CHAR constant
+ * changes, there will be no need to update the graphical .prf files.
  */
 errr process_pref_file_aux(char *buf) {
 	int i, j, k;
@@ -828,8 +835,12 @@ errr process_pref_file_aux(char *buf) {
 			i = (huge)strtol(zz[0], NULL, 0);
 			i += 12;	/* gfx-fix by Tanix */
 			n1 = strtol(zz[1], NULL, 0);
-			n2 = strtol(zz[2], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
 			if (i >= MAX_R_IDX) return (1);
+#ifdef USE_GRAPHICS
+			if (!use_graphics)
+#endif
+				if (n2 > MAX_FONT_CHAR) return(1);
 			if (n1) Client_setup.r_attr[i] = n1;
 			if (n2) {
 				Client_setup.r_char[i] = n2;
@@ -845,8 +856,12 @@ errr process_pref_file_aux(char *buf) {
 		if (tokenize(buf + 2, 3, zz) == 3) {
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
-			n2 = strtol(zz[2], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
 			if (i >= MAX_K_IDX) return (1);
+#ifdef USE_GRAPHICS
+			if (!use_graphics)
+#endif
+				if (n2 > MAX_FONT_CHAR) return(1);
 			if (n1) Client_setup.k_attr[i] = n1;
 			if (n2) Client_setup.k_char[i] = n2;
 			return (0);
@@ -859,8 +874,12 @@ errr process_pref_file_aux(char *buf) {
 		if (tokenize(buf + 2, 3, zz) == 3) {
 			i = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
-			n2 = strtol(zz[2], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
 			if (i >= MAX_F_IDX) return (1);
+#ifdef USE_GRAPHICS
+			if (!use_graphics)
+#endif
+				if (n2 > MAX_FONT_CHAR) return(1);
 			if (n1) Client_setup.f_attr[i] = n1;
 			if (n2) {
 				Client_setup.f_char[i] = n2;
@@ -876,8 +895,12 @@ errr process_pref_file_aux(char *buf) {
 		if (tokenize(buf + 2, 3, zz) == 3) {
 			j = (huge)strtol(zz[0], NULL, 0);
 			n1 = strtol(zz[1], NULL, 0);
-			n2 = strtol(zz[2], NULL, 0);
+			n2 = strtol(zz[2], NULL, 0) + char_map_offset;
 			if (j > 100) return 0;
+#ifdef USE_GRAPHICS
+			if (!use_graphics)
+#endif
+				if (n2 > MAX_FONT_CHAR) return(1);
 			if (n1) Client_setup.u_attr[j] = n1;
 			if (n2) Client_setup.u_char[j] = n2;
 			return (0);
