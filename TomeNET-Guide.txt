@@ -14260,7 +14260,8 @@ create a character!):
     not necessarily by using melee attacks - spells or arrows work fine too) in
     order to satisfy your hunger, which might be quite easy for melee classes
     but sometimes a hassle for ranged/caster classes. On the plus side, a
-    vampire won't get gorged by drinking too many potions.
+    vampire won't get gorged by drinking too many potions. In fact, Vampires
+    can never get gorged, their 'feeding' will stop just below that threshold.
     At level 40 they will also start to need less and less food to sustain
     themselves. Vampire royalties will require the least amount of food,
     independant of their level, enabling them to survive a very long time

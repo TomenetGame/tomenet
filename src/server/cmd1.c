@@ -3350,10 +3350,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 					feed = (6 - (300 / feed)) * 100;//300..600
 					if (backstab_feed) feed *= 2;
 					if (q_ptr->prace == RACE_VAMPIRE) feed /= 3;
-					/* Never get gorged */
-					feed += p_ptr->food;
-					if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
-					set_food(Ind, feed);
+					set_food(Ind, feed + p_ptr->food);
 				}
 
 #ifdef USE_SOUND_2010
@@ -4547,10 +4544,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					if (r_ptr->flags3 & RF3_DEMON) feed /= 2;
 					if (r_ptr->d_char == 'A') feed /= 3;
 					if (backstab_feed) feed *= 2;
-					/* Never get gorged */
-					feed += p_ptr->food;
-					if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
-					set_food(Ind, feed);
+					set_food(Ind, feed + p_ptr->food);
 				}
 
 #ifdef USE_SOUND_2010

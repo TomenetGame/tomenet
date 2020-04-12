@@ -380,7 +380,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 				if (rand_int(100) < p_ptr->food * magik(o_ptr->name2? 40 : 60) / PY_FOOD_MAX) {
 					msg_print(Ind, "You become nauseous and vomit!");
 					msg_format_near(Ind, "%s vomits!", p_ptr->name);
-					(void)set_food(Ind, (p_ptr->food/2));
+					(void)set_food(Ind, (p_ptr->food / 2));
 					(void)set_poisoned(Ind, 0, 0);
 					(void)set_paralyzed(Ind, p_ptr->paralyzed + 4);
 				}
@@ -1229,12 +1229,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 
 	/* Potions can feed the player */
 	if (p_ptr->prace == RACE_VAMPIRE) {
-		if (o_ptr->sval == SV_POTION_BLOOD) {
-			int feed = o_ptr->pval + p_ptr->food;
-			/* never get gorged */
-			if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
-			set_food(Ind, feed);
-		}
+		if (o_ptr->sval == SV_POTION_BLOOD) set_food(Ind, o_ptr->pval + p_ptr->food);
 	} else if (p_ptr->prace == RACE_ENT) {
 		if (o_ptr->sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
 		else (void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2));
@@ -1396,17 +1391,12 @@ void do_cmd_drink_fountain(int Ind) {
 		}
 
 		if (p_ptr->prace == RACE_VAMPIRE) {
-			int feed = k_info[lookup_kind(TV_POTION, SV_POTION_BLOOD)].pval + p_ptr->food;
-
 			switch (rand_int(3)) {
 			case 0: msg_print(Ind, "Delicious.");
 			case 1: msg_print(Ind, "It's fresh.");
 			case 2: msg_print(Ind, "You're less thirsty.");
 			}
-
-			/* never get gorged */
-			if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
-			set_food(Ind, feed);
+			set_food(Ind, k_info[lookup_kind(TV_POTION, SV_POTION_BLOOD)].pval + p_ptr->food);
 		} else if (p_ptr->suscep_life) {
 			msg_print(Ind, "You feel less thirsty.");
 			(void)set_food(Ind, p_ptr->food + 100);

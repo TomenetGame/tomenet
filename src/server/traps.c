@@ -1736,7 +1736,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			msg_print(Ind, "You are treated to a marvellous elven cuisine!");
 			if (!p_ptr->suscep_life && p_ptr->prace != RACE_ENT) {
 				/* 1turn = 100 food value when satiated */
-				(void)set_food(Ind, PY_FOOD_MAX + glev*50 + 1000 + rand_int(1000));
+				(void)set_food(Ind, PY_FOOD_MAX + glev * 50 + 1000 + rand_int(1000));
 			}
 			ident = TRUE;
 			break;

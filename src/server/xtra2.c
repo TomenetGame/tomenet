@@ -3753,25 +3753,23 @@ bool set_food(int Ind, int v) {
 	int old_aux, new_aux;
 	bool notice = FALSE;
 
-	/* True Ghosts don't starve */
+	/* True Ghosts, Divinely supported and Enlightened Maiar don't starve */
 	if ((p_ptr->ghost) || (get_skill(p_ptr, SKILL_HSUPPORT) == 50) ||
 	    (p_ptr->prace == RACE_MAIA && p_ptr->ptrait)) {
 		p_ptr->food = PY_FOOD_FULL - 1;
 		return (FALSE);
 	}
+	/* Ents and true vampires will never get gorged, but can still go hungry/thirsty */
+	if ((p_ptr->prace == RACE_ENT || p_ptr->prace == RACE_VAMPIRE) && v >= PY_FOOD_MAX) v = PY_FOOD_MAX - 1;
 
-	/* Warrior does not need food badly */
 #ifdef ARCADE_SERVER
+	/* Warrior does not need food badly */
 	p_ptr->food = PY_FOOD_FULL - 1;
 	return (FALSE);
 #endif
+
 	/* Hack -- Force good values */
 	v = (v > 20000) ? 20000 : (v < 0) ? 0 : v;
-
-	/* Ents will never get gorged, but can still go hungry/thirsty */
-	if (p_ptr->prace == RACE_ENT && v >= PY_FOOD_MAX ) {
-		v = PY_FOOD_MAX - 1;
-	}
 
 	/* Fainting / Starving */
 	if (p_ptr->food < PY_FOOD_FAINT) old_aux = 0;
@@ -3803,30 +3801,30 @@ bool set_food(int Ind, int v) {
 	if (new_aux > old_aux) {
 		/* Describe the state */
 		switch (new_aux) {
-			/* Weak */
-			case 1:
-			msg_print(Ind, "You are still weak.");
-			break;
+		/* Weak */
+		case 1:
+		msg_print(Ind, "You are still weak.");
+		break;
 
-			/* Hungry */
-			case 2:
-			msg_print(Ind, "You are still hungry.");
-			break;
+		/* Hungry */
+		case 2:
+		msg_print(Ind, "You are still hungry.");
+		break;
 
-			/* Normal */
-			case 3:
-			msg_print(Ind, "You are no longer hungry.");
-			break;
+		/* Normal */
+		case 3:
+		msg_print(Ind, "You are no longer hungry.");
+		break;
 
-			/* Full */
-			case 4:
-			msg_print(Ind, "You are full!");
-			break;
+		/* Full */
+		case 4:
+		msg_print(Ind, "You are full!");
+		break;
 
-			/* Bloated */
-			case 5:
-			msg_print(Ind, "You have gorged yourself!");
-			break;
+		/* Bloated */
+		case 5:
+		msg_print(Ind, "You have gorged yourself!");
+		break;
 		}
 
 		/* Change */
@@ -3837,13 +3835,13 @@ bool set_food(int Ind, int v) {
 	else if (new_aux < old_aux) {
 		/* Describe the state */
 		switch (new_aux) {
-			/* Fainting / Starving */
-			case 0:
+		/* Fainting / Starving */
+		case 0:
 			msg_print(Ind, "\377RYou are getting faint from hunger!");
 			break;
 
-			/* Weak */
-			case 1:
+		/* Weak */
+		case 1:
 			msg_print(Ind, "You are getting weak from hunger!");
 			if (p_ptr->warning_hungry != 2) {
 				p_ptr->warning_hungry = 2;
@@ -3861,8 +3859,8 @@ bool set_food(int Ind, int v) {
 			}
 			break;
 
-			/* Hungry */
-			case 2:
+		/* Hungry */
+		case 2:
 			msg_print(Ind, "You are getting hungry.");
 			if (p_ptr->warning_hungry == 0) {
 				p_ptr->warning_hungry = 1;
@@ -3880,13 +3878,13 @@ bool set_food(int Ind, int v) {
 			}
 			break;
 
-			/* Normal */
-			case 3:
+		/* Normal */
+		case 3:
 			msg_print(Ind, "You are no longer full.");
 			break;
 
-			/* Full */
-			case 4:
+		/* Full */
+		case 4:
 			msg_print(Ind, "You are no longer gorged.");
 			break;
 		}
@@ -10683,10 +10681,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			feed = (6 - (300 / feed)) * 100;//300..600
 			if (r_ptr->flags3 & RF3_DEMON) feed /= 2;
 			if (r_ptr->d_char == 'A') feed /= 3;
-			/* Never get gorged */
-			feed += p_ptr->food;
-			if (feed >= PY_FOOD_MAX) feed = PY_FOOD_MAX - 1;
-			set_food(Ind, feed);
+			set_food(Ind, feed + p_ptr->food);
 		}
 
 		/* Kill credit for quest */

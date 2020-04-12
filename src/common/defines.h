@@ -1736,7 +1736,7 @@
 #define PY_MAX_LEVEL		100	/* Maximum level allowed technically */
 
 /*
- * Player "food" crucial values
+ * Player "food" crucial values (20000 is upper limit in set_food())
  */
 #define PY_FOOD_MAX	15000	/* Food value (Bloated) */
 #define PY_FOOD_FULL	10000	/* Food value (Normal) */
