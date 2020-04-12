@@ -4853,10 +4853,6 @@ Example 3: Assumed you have the spell Manathrust somewhere in your books and
         *tM@Manathrust\-
     and it will automatically be expanded to '\e)*tm@11\r@Manathrust\r-'.
 
-Example 4: Casting Phase Door would be..
-        M@Phase Door\
-    (expanded to '\e)m@11\r@Phase Door\r'.)
-
 
 (3.7c) The macro wizard
 -----------------------
@@ -8957,7 +8953,7 @@ Here's a table to tell you the values for str_wgt:
         15          13
 
 The armour weight limit is 5.0 lb + Martial Arts skill level * 0.44 lb.
-So for MA 50 it is 5.0 + 21.0 = 27.0 lb.
+So for MA 50 it is 5.0 + 22.0 = 27.0 lb.
 If your armour becomes too heavy, you will see this warning message:
 "Your armour weight strains your martial arts performance."
 
