@@ -11880,9 +11880,24 @@ Vampirism does not work with magic, only with physical attacks.
 Vampiric life draining heals you with a part of the damage you afflicted on
 your target, almost each hit! The more damage you deal and the more attacks per
 round you have, the more life you will leech back. There's a maximum amount of
-HP which you can leech from a victim per round, but this cap isn't really
-reached until your character deals quite a lot of damage, remember:
+HP which you can leech per round, which isn't reached until your character
+deals quite a lot of damage. In short:
 Leeching is based on a fraction of your damage dealt.
+
+Exact formula for melee:
+The amount of HP you heal is 1d2 + 2d(damage/16) on each hit, however it caps
+at a maximum amount of 50 HP divided by your BpR, per attack (rounding errors
+are handled so you don't lose anything if that's not a clean division).
+Example: If you have 8 BpR and deal 64 damage each hit and have average dice
+rolls in the formula, you'd try to leech 52 HP during that turn, saturating the
+cap pretty well.
+
+Exact formula for ranged:
+The amount of HP you heal is 1d2 + 2d(damage/16) on each hit, however it caps
+at a maximum amount of 10 HP per shot.
+Example: If you have deal 128 damage each hit and have average dice rolls in
+the formula, you'd try to leech 10 HP during that turn, saturating the
+cap exactly.
 
 Vampirism does not work on all types of monsters. From some it is not possible
 to drain life force. Those immune to vampirism are:
