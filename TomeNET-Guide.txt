@@ -2052,8 +2052,8 @@ Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
 Nazgul weapon or RW weapon
             An artifact weapon that doesn't really excel, but since it's an
             artifact it can still be put to good use as a weapon for killing
-            nazgul (the nine ringwraiths, see (1.3a)).
-            Since nazgul still have a 1 in 1000 chance to destroy an artifact
+            Nazgul (the nine ringwraiths, see (1.3a)).
+            Since Nazgul still have a 1 in 1000 chance to destroy an artifact
             weapon on hit, you don't want to put your best weapons at risk.
             So using a mediocre artifact instead that you'd otherwise just sell
             to a store seems like a good idea, since it won't be much of a loss
