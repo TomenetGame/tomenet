@@ -17303,7 +17303,7 @@ spell failure rate. All Unlife spells use WIS.)
                     Gives +2 EA to the caster.
 
     Chaos Bolt      Channels the powers of chaos into a bolt.
-                    Required skill level for first spell level: 32.
+                    Required skill level for first spell level: 29.
 
     Wicked Oath     Restores drained stats and lost experience.
                     Required skill level for first spell level: 35.
