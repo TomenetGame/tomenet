@@ -18483,6 +18483,11 @@ Guilds:
     'adders' designated by the guild master (and the 'adders' guild flag must
     be enabled).
 
+    If the guild flag 'autoreadd' is enabled, members that lose their character
+    will be automatically added to their guild again on the next character they
+    log in with. Also, if they were a designated 'adder', this status will be
+    restored too, provided there are still vacant adder slots.
+
 -Remove player from guild
     Only the guild master can do this. If all members are removed including
     the guild master, the guild ceases to exist.
