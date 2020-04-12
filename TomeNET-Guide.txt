@@ -1909,6 +1909,9 @@ Excellents  Items that pseudo-identified as 'excellent'.
 EA          Extra Attacks. Rings, gloves or weapons which increase your number
             of blows per round (BpR) with melee weapons. Quite expensive.
 
+EL          Everlasting. This refers to the character mode that the player
+            chooses during character creation. For details see (3.1).
+
 ESP         Extrasensory perception. ESP is a telepathic power that allows you
             to sense monsters even though they aren't in your line of sight but
             far away. This is tremendously useful as you know what monsters are
@@ -1980,17 +1983,6 @@ kinging     The process of beating Morgoth, the game boss, and thereby
             Such player characters are also referred to as 'winners'.
             A player must be at least level 40 to get credit for beating
             Morgoth.
-
-rekinging   Fallen winners, ie players who beat Morgoth but later on died and
-            thereby lost their royal title again, can attempt to regain it by
-            teaming up with someone who has not yet defeated Morgoth.
-            If that person lands the killing blow, everyone in her/his party
-            on the same floor will gain winner status again, even fallen kings.
-            A player must be at least level 40 to get credit for beating
-            Morgoth.
-            A new (experimental) way to obtain a lost royal title again is to
-            donate and pray in 'The Mirror' in Lothlorien, see (4.5a) for
-            details.
 
 klevel, olevel
             Somewhat more technical terms, these stand for the exact type of
@@ -2074,6 +2066,9 @@ Nest        Originally also just called 'pits', nests only differ from pits in
             schemes. For example all monsters in a 'clones nest' are exactly
             the same type. Also see 'pits'.
 
+non-EL      Not Everlasting. This refers to the character mode that the player
+            chooses during character creation. For details see (3.1).
+
 olevel      see klevel.
 
 OoD         Out-of-depth. Means a monster or an item encounter that happened at
@@ -2123,10 +2118,23 @@ Randart     Randomly generated artifact. As opposed to 'Truearts' which are
             this section for more information.
             See (5.9b) for more information about artifacts.
 
+rekinging   Fallen winners, ie players who beat Morgoth but later on died and
+            thereby lost their royal title again, can attempt to regain it by
+            teaming up with someone who has not yet defeated Morgoth.
+            If that person lands the killing blow, everyone in her/his party
+            on the same floor will gain winner status again, even fallen kings.
+            A player must be at least level 40 to get credit for beating
+            Morgoth.
+            A new (experimental) way to obtain a lost royal title again is to
+            donate and pray in 'The Mirror' in Lothlorien, see (4.5a) for
+            details. (Also see 'kinging'.)
+
 Res         Resistance.
 
 RFE         A request for enhancement, ie a suggestion, that players can send
             to the game admins using the "/rfe" command.
+
+rlevel      See mlevel.
 
 Room        The dungeon contains many rooms connected by passages. Some of the
             rooms are of special shape. Especially rooms containing a further,
@@ -2134,8 +2142,6 @@ Room        The dungeon contains many rooms connected by passages. Some of the
             mostly 'Gorths' (rooms divided into four chambers containing a
             lot of monsters), 'Checkerboard-Rooms' (rooms containing a
             checkerboard-like maze structure and a lot of monsters).
-
-rlevel      see mlevel.
 
 Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
