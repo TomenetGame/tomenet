@@ -7861,6 +7861,8 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     All losers will also receive a deed on the next character they log in with
     which can be turned in for a small temporary luck bonus (multiple deed
     buffs don't stack).
+    If you die in this event, your character will get erased, even if it was
+    an everlasting-mode character.
     For details about luck see LUCK flag in (5.8).
 
     Detailed course of the event:
@@ -7937,6 +7939,8 @@ Dungeon Keeper (everyone can win, 1+ participants)
     Characters who want to participate must not be of higher level than 14.
     A character can participate only once in this event.
     PvP-mode characters are not eligible to join.
+    If you die in this event, your character will get erased, even if it was
+    an everlasting-mode character.
     Running, phasing, teleporting, magic mappping, detection and ESP are
     disabled in the event. Also, your speed cannot exceed +0 (Normal), and
     the lava that floods the dungeon will deal irresistible damage even if
