@@ -1463,7 +1463,7 @@ void go_engine_clocks(void) {
 	if (game_over || scoring) return;
 
 	/* Player still with us? */
-	if (!(Ind = lookup_player_ind(go_engine_player_id))) {
+	if (!(Ind = lookup_player_Ind(go_engine_player_id))) {
 		go_challenge_cleanup(FALSE);
 		return;
 	}
@@ -1511,7 +1511,7 @@ static void go_engine_move_CPU() {
 	if (go_err(DOWN, DOWN, "go_engine_move_CPU")) return;
 
 	/* Player still with us? */
-	if (!(Ind = lookup_player_ind(go_engine_player_id))) {
+	if (!(Ind = lookup_player_Ind(go_engine_player_id))) {
 		go_challenge_cleanup(FALSE);
 		return;
 	}
@@ -1629,7 +1629,7 @@ static int verify_move_human(void) {
 	if (go_err(DOWN, DOWN, "verify_move_human")) return -2;
 
 	/* Player still with us? */
-	if (!(Ind = lookup_player_ind(go_engine_player_id))) {
+	if (!(Ind = lookup_player_Ind(go_engine_player_id))) {
 		go_challenge_cleanup(FALSE);
 		return -1;
 	}
@@ -1748,7 +1748,7 @@ static int verify_move_CPU(void) {
 	char cpu_move[80], clock[6], tmp[20];
 
 	/* Player still with us? */
-	if (!(Ind = lookup_player_ind(go_engine_player_id))) {
+	if (!(Ind = lookup_player_Ind(go_engine_player_id))) {
 		go_challenge_cleanup(FALSE);
 		return -1;
 	}
@@ -1918,7 +1918,7 @@ static void go_engine_move_result(int move_result) {
 	if (go_err(DOWN, DOWN, "go_engine_move_result")) return;
 
 	/* Player still with us? */
-	if (!(Ind = lookup_player_ind(go_engine_player_id))) {
+	if (!(Ind = lookup_player_Ind(go_engine_player_id))) {
 		go_challenge_cleanup(FALSE);
 		return;
 	}
@@ -2357,7 +2357,7 @@ static int test_for_response() {
 	int i;
 	char tmp[80];//, *tptr = tmp + 79;
 	char pipe_line_buf[160];
-	int Ind = lookup_player_ind(go_engine_player_id);
+	int Ind = lookup_player_Ind(go_engine_player_id);
 
 #ifdef DISCARD_RESPONSES_WHEN_TERMINATING
 	/* we might not even want any responses (and them causing slowdown) here,
@@ -2901,7 +2901,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 #endif
 
 	/* Cancel prompt for move */
-	if ((Ind = lookup_player_ind(go_engine_player_id))) {
+	if ((Ind = lookup_player_Ind(go_engine_player_id))) {
 		Send_request_abort(Ind);
 		Players[Ind]->request_id = RID_NONE;
 
@@ -3030,7 +3030,7 @@ static void go_engine_board(void) {
 	if (go_err(DOWN, DOWN, "go_engine_board")) return;
 
 	/* Player still with us? */
-	if (!(Ind = lookup_player_ind(go_engine_player_id))) {
+	if (!(Ind = lookup_player_Ind(go_engine_player_id))) {
 		go_challenge_cleanup(FALSE);
 		return;
 	}
