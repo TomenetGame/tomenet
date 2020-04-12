@@ -10088,14 +10088,13 @@ XTRA_MIGHT
         although Long Bows usually have a (x3) multiplier.
         Note that the multiplier may also affect the maximum shooting range.
 MANA ('It affects your mana capacity.')
-        Will increase your total mana points by +x0%. Example:
-        Gloves of the magi (+3) increase your mana by 30%.
+        For istari and runemasters, this Will increase your total mana points
+        by +x0%. Example: Gloves of the magi (+3) increase your mana by 30%.
+        For other classes, the increase will be a bit smaller.
         MANA items _add_ to each other, they aren't multiplied.
-        MANA-increasing items have reduced effect on priests or paladins,
-        because their spells are not so much pure magic but rather a form
-        of praying.
         MANA affects your complete mana pool, including the additional MP
-        (mana points) a character gained from 'Magic' skill.
+        (mana points) a character gained from 'Magic' skill, except for the
+        mana added by training the Mimicry skill above 35.
 LIFE ('It affects your hit points.')
         Will increase your total hit points by +x0%. Example:
         Sword of life (+2) increases your HP by 20%.
