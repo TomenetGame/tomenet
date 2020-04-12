@@ -11254,7 +11254,7 @@ Staves              x               x
 Rods
 
 Spell Scrolls       x               x                       x
-Spell Crystals      x
+Spell Crystals      x       x
 Beginner Handbooks  x               x
 Handbooks           x               x                       x
 Tomes               x               x
