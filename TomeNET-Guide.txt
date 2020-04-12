@@ -2516,9 +2516,9 @@ Note: For weapon attacks, having those slay/kill mods on gloves (or other
       items (for example gloves) WILL count!
 
       However - the 'slay undead' bonus received from Holy Offense school at a
-      skill of 30.000 will infuse your weapon (and bare-handed combat too of
-      course) and will make its dice and damage count again, as if the weapon
-      itself had the slay mod!
+      skill of 30.000 and likewise from Spirit school at 40.000 will infuse
+      your weapon (and bare-handed combat too of course) and will make its dice
+      and damage count again, as if the weapon itself had the slay mod!
 
 Martial Arts users can fight relatively efficiently against Nazgul since they
 don't have to worry about their weapon breaking, but their chance to receive
