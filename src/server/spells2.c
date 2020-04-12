@@ -9532,25 +9532,30 @@ void detonate_charge(object_type *o_ptr) {
 }
 #endif
 
+/* Returns FALSE if we notice any effect, TRUE if we don't (for UNMAGIC). */
 bool do_mstopcharm(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	monster_type *m_ptr;
 	int m;
-	bool unknown = TRUE;
+	bool notice = TRUE;
 
 	if (p_ptr->mcharming == 0) return FALSE; /* optimization */
-
 	p_ptr->mcharming = 0;
 
 	for (m = m_top - 1; m >= 0; m--) {
 		m_ptr = &m_list[m_fast[m]];
-		//r_ptr = race_inf(m_ptr);
-		if (m_ptr->charmedignore && m_ptr->charmedignore == Ind)
-			unknown = m_ptr->charmedignore = 0;
+		if (m_ptr->charmedignore != Ind) continue;
+		m_ptr->charmedignore = 0;
+		notice = TRUE;
 	}
-	return unknown;
+	return notice;
 }
 
+/* Returns TRUE if the monster is still under charm for this moment (eg attack attempt),
+   FALSE if the charm effect wavers for a moment, allowing the monster to attack in between,
+   while hopefully being back in trance the next time we check.
+   Each attempt will cost the original charmer mana, and he also has the highest chance of succeeding this roll,
+   so party members are slightly more prone to getting attacked.. */
 bool test_charmedignore(int Ind, int Ind_charmer, monster_race *r_ptr) {
 	player_type *q_ptr = Players[Ind_charmer];
 	int chance = 1, cost = 1;

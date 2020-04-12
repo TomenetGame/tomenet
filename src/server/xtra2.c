@@ -10164,7 +10164,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	p_ptr->test_count++;
 	p_ptr->test_dam += dam;
 
-	/* break charmignore */
+	/* Break Charm/Possess */
 	if (m_ptr->charmedignore) {
 		Players[m_ptr->charmedignore]->mcharming--;
 		m_ptr->charmedignore = 0;

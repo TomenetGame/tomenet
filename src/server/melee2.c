@@ -9440,6 +9440,20 @@ void process_monsters(void) {
 		if (m_ptr->energy < tmp) continue;
 
 
+		/* Break charm spell when out of range - C. Blue */
+		if (m_ptr->charmedignore) {
+			player_type *p_ptr = Players[m_ptr->charmedignore];
+			int d = distance(p_ptr->py, p_ptr->px, fy, fx);
+
+			/* Not dependant on r_ptr->aaf as this is about the player's mental reach, not the monster's! */
+			if (d >= MAX_RANGE
+			    || p_ptr->conn == NOT_CONNECTED
+			    || !inarea(&p_ptr->wpos, &m_ptr->wpos)) {
+				p_ptr->mcharming--;
+				m_ptr->charmedignore = 0;
+			}
+		}
+
 		/* Make sure we don't store up too much energy */
 		//if (m_ptr->energy > tmp) m_ptr->energy = tmp;
 		m_ptr->energy = tmp;
@@ -9667,15 +9681,7 @@ void process_monsters(void) {
 #endif
 
 			/* Skip if under mindcrafter charm spell - C. Blue */
-			if (m_ptr->charmedignore) {
-				/* out of range? */
-				if (j > 20 || j > r_ptr->aaf) {
-					_Players[m_ptr->charmedignore]->mcharming--;
-					m_ptr->charmedignore = 0;
-				/* monster gets a sort of saving throw */
-				} else if (test_charmedignore(pl, m_ptr->charmedignore, r_ptr))
-					continue;
-			}
+			if (m_ptr->charmedignore && test_charmedignore(pl, m_ptr->charmedignore, r_ptr)) continue;
 
 			if (reveal_cloaking) {
 				monster_desc(pl, m_name, i, 0);

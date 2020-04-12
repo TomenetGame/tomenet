@@ -5882,19 +5882,21 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		{
 			int res = 1;
 
-			/* No "real" damage */
 			dam = 0;
 			quiet_dam = TRUE;
-
-			/* paranoia */
-			if (quiet) break;
+			/* Since we use 'quiet' to suppress that this spell 'hits' the monster and
+			   breaks charm, we won't get a message output either. So we have to do it all here.. */
+			quiet = TRUE;
 
 			/* don't affect sleeping targets maybe */
 			if (m_ptr->csleep) break;
 
+			/* already charmed? - no effect then */
+			if (m_ptr->charmedignore) break;
+
 			/* don't affect hurt monsters! */
 			if (m_ptr->hp < m_ptr->maxhp) {
-				note = " seems too agitated to be charmed";
+				msg_format(Ind, "%^s seems too agitated to be charmed.", m_name);
 				break;
 			}
 
@@ -5904,7 +5906,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			    (r_ptr->flags3 & RF3_UNDEAD) ||
 			    (r_ptr->flags2 & RF2_EMPTY_MIND) ||
 			    (r_ptr->flags3 & RF3_NONLIVING)) {
-				note = " is unaffected";
+				msg_format(Ind, "%^s is unaffected.", m_name);
 				break;
 			}
 			if (r_ptr->flags2 & RF2_SMART) res <<= 1;
@@ -5912,16 +5914,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (r_ptr->flags1 & RF1_UNIQUE) res <<= 1;
 			if (r_ptr->flags2 & RF2_POWERFUL) res <<= 1;
 			if (magik(100 - 100 / res)) {
-				note = " resists the effect";
+				msg_format(Ind, "%^s resists the effect.", m_name);
 				break;
 			}
 
 			/* remember who charmed us */
 			m_ptr->charmedignore = Ind;
-
 			/* count our victims, just for optimization atm */
 			p_ptr->mcharming++;
-			note = " seems to forget you were an enemy";
+
+			msg_format(Ind, "%^s seems to forget you were an enemy.", m_name);
 			break;
 		}
 

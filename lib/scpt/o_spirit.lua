@@ -495,8 +495,6 @@ POSSESS = add_spell {
 	["fail"] = 	-30,
 	["direction"] = function () if get_level(Ind, POSSESS, 50) >= 17 then return FALSE else return TRUE end end,
 	["spell"] = 	function(args)
-		--reset previous charm spell first:
-		do_mstopcharm(Ind)
 		--cast charm!
 		if get_level(Ind, POSSESS, 50) >= 17 then
 			project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, POSSESS, 150), "focusses")
