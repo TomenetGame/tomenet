@@ -7831,7 +7831,7 @@ On an Ironman server or within the Ironman Deep Dive Challenge dungeon, the
 amount of monsters that need to be slain is somewhat lower (especially for low
 level orders). Also, in the IDDC and in the Halls of Mandos, the monster level
 of the extermination order will depend on the floor level rather than on the
-player's level.
+player's level. Inside the IDDC you may only request one order per floor.
 
 
 Events (use /evinfo and /evsign commands to get information and to sign up)
