@@ -10221,11 +10221,11 @@ CHAOTIC ('It produces chaotic effects.')
 CLONE ('It can clone monsters.')
         Has a 1 in 1000 chance to clone the monster it hits.
 IMPACT ('It can cause earthquakes.')
-        Causes earthquakes if the damage is > 50. See (5.13) for details about
-        earthquakes.
+        Causes earthquakes randomly, the higher the damage dealt the higher the
+        chance. See (5.13) for details about earthquakes.
         (If enabled in the server settings, it can be suppressed with
         the !Q inscription. See (0.3) for !Q settings or press ~d in game.
-        Usually, !Q only works on the artifact "Grond".)
+        Usually, !Q _only_ works on the Mighty Hammer 'Grond'.)
 FUEL_LITE ('It provides light when fueled.')
         A light source that needs to be fueled, otherwise it runs out.
         WARNING:
