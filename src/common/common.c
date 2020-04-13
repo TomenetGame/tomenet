@@ -362,7 +362,7 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, byte stri
 	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
 
 	if (strict) { /* switch to strict mode */
-		bool just_spaces = strict == 4 ? FALSE : TRUE;
+		bool just_spaces = (strict == 4 ? FALSE : TRUE);
 		do {
 			/* Skip colour codes */
 			while (big[cnt] == '\377') {
@@ -373,7 +373,7 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, byte stri
 			if (big[cnt] != ' ') just_spaces = FALSE;
 
 			/* Should not start on a lower-case letter, so we know we're not just in the middle of some random text.. */
-			if (strict > 1 && isalpha(big[cnt]) && big[cnt] == tolower(big[cnt])) return NULL;
+			if (strict >= 2 && isalpha(big[cnt]) && big[cnt] == tolower(big[cnt])) return NULL;
 
 			cnt2 = cnt_offset = 0;
 			l = 0;
@@ -385,7 +385,7 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, byte stri
 				}
 				if (!big[cnt + cnt2 + cnt_offset]) return NULL;
 
-				if (strict == 2) { /* Case-sensitive: Caps only (the needle is actually all-caps) */
+				if (strict >= 3) { /* Case-sensitive: Caps only (the needle is actually all-caps) */
 					if (big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
 					else break;
 				} else {
