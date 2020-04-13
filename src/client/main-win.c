@@ -3573,13 +3573,14 @@ static void hook_quit(cptr str) {
 	/* Remember chat input history across logins */
 	/* Only write history if we have at least one line though */
 	if (message_history[0][0]) {
+		FILE *fp;
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
-		f = fopen(buf, "w");
-		for (j = 0; j < MSG_HISTORY_MAX; j++) {
-			if (!message_history_chat[j][0]) continue;
-			fprintf(f, "%s\n", message_history_chat[j]);
+		fp = fopen(buf, "w");
+		for (i = 0; i < MSG_HISTORY_MAX; i++) {
+			if (!message_history_chat[i][0]) continue;
+			fprintf(fp, "%s\n", message_history_chat[i]);
 		}
-		fclose(f);
+		fclose(fp);
 	}
 
 	/* Hack - Save the window positions before destroying them - mikaelh */

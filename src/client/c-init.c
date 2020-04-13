@@ -3094,9 +3094,7 @@ static void display_message(cptr msg, cptr title) {
  */
 static void quit_hook(cptr s) {
 	int j, res = save_chat;
-	FILE *f;
 	char buf[1024];
-
 
 #if 0
 #ifdef USE_SOUND_2010
@@ -3154,13 +3152,14 @@ static void quit_hook(cptr s) {
 	/* Remember chat input history across logins */
 	/* Only write history if we have at least one line though */
 	if (message_history[0][0]) {
+		FILE *fp;
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
-		f = fopen(buf, "w");
+		fp = fopen(buf, "w");
 		for (j = 0; j < MSG_HISTORY_MAX; j++) {
 			if (!message_history_chat[j][0]) continue;
-			fprintf(f, "%s\n", message_history_chat[j]);
+			fprintf(fp, "%s\n", message_history_chat[j]);
 		}
-		fclose(f);
+		fclose(fp);
 	}
 
 #ifdef RETRY_LOGIN
@@ -3334,7 +3333,7 @@ void client_init(char *argv1, bool skip) {
 #ifdef RETRY_LOGIN
 	bool rl_auto_relogin = FALSE;
 #endif
-	FILE *f;
+	FILE *fp;
 	char buf[1024];
 
 #if defined(USE_X11) || defined(USE_GCU)
@@ -3711,10 +3710,10 @@ void client_init(char *argv1, bool skip) {
 
 	/* Remember chat input history across logins */
 	path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
-	f = fopen(buf, "r");
+	fp = fopen(buf, "r");
 	hist_chat_end = 0;
-	while (f && my_fgets(f, message_history_chat[hist_chat_end], MSG_LEN) == 0) hist_chat_end++;
-	if (f) fclose(f);
+	while (fp && my_fgets(fp, message_history_chat[hist_chat_end], MSG_LEN) == 0) hist_chat_end++;
+	if (fp) fclose(fp);
 
 	/* Turn the lag-o-meter on after we've logged in */
 	lagometer_enabled = TRUE;
