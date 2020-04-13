@@ -2002,7 +2002,7 @@ void cmd_the_guide(void) {
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
 				/* There is no Black Breath chapter but it is explained fully in the chapter containing Nazgul info */
-				if (strcasestr(buf, "black") == buf || !strcasecmp(buf, "bb")) strcpy(buf, "nazgul");
+				if (my_strcasestr(buf, "black") == buf || !strcasecmp(buf, "bb")) strcpy(buf, "nazgul");
 
 				/* The chapter explaining 'stats' is actually titled 'Attributes' */
 				if (!strcasecmp(buf, "stats") || !strcasecmp(buf, "stat")) strcpy(buf, "Attributes");
@@ -2039,7 +2039,7 @@ void cmd_the_guide(void) {
 				}
 
 				/* Make searches for abilities not end up in 'probability travel'.. */
-				if (strcasestr(buf, "abi") == buf) strcpy(buf, "Abilities");
+				if (my_strcasestr(buf, "abi") == buf) strcpy(buf, "Abilities");
 
 				/* Expand 'pxx' and 'Pxx' to 'PROBLEM xx' */
 				if ((buf[0] == 'p' || buf[0] == 'P') && buf[1] && buf[1] >= '0' && buf[1] <= '9') {
@@ -2050,7 +2050,7 @@ void cmd_the_guide(void) {
 				}
 
 				/* Misc chapters, hardcoded: */
-				if (strcasestr(buf, "instan")) { /* mustn't overlap with 'install' */
+				if (my_strcasestr(buf, "instan")) { /* mustn't overlap with 'install' */
 					strcpy(buf, "Temple  ");
 					fallback = TRUE;
 					continue;
