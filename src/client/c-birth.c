@@ -1164,7 +1164,11 @@ static bool choose_stat_order(void) {
 		c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 23, col1);
 #else
 		c_put_str(TERM_SLATE, "No more than 1 attribute out of the 6 is allowed to be maximised.", 14, col1);
+ #if 0 /* Just query best weapon type? */
 		if (show_bpr) c_put_str(TERM_L_WHITE, "BpR this character gets with extremely light weapons (up to 3.0 lbs):", 23, col1);
+ #else /* Actually query and display ALL four weapon types */
+		if (show_bpr) c_put_str(TERM_L_WHITE, "BpR this character gets with lightest sword/blunt/axe/polearm:", 23, col1 - 1);
+ #endif
 #endif
 
 		c_put_str(TERM_L_UMBER,"   - Strength -    ", DIZ_ROW, 30);
@@ -1202,6 +1206,7 @@ static bool choose_stat_order(void) {
 			/* Display projected BpR with <= 3.0lbs weapons */
 			if (show_bpr) {
 				if (use_formula) {
+ #if 0 /* Just query best weapon type? */
 					/* Assume fixed weight of 3.0 lbs (lowest breakpoint for BpR) -
 					   Note that spears and cleavers weigh 6.0 and 5.0 though. */
 					sprintf(out_val, "return get_class_bpr2(\"%s\", 30, %d, %d)",
@@ -1209,11 +1214,21 @@ static bool choose_stat_order(void) {
 					    stat_order[0] + cp_ptr->c_adj[0] + rp_ptr->r_adj[0],
 					    stat_order[3] + cp_ptr->c_adj[3] + rp_ptr->r_adj[3]);
 					strcpy(lua, string_exec_lua(0, out_val));
-					if (lua[0] == 'F') {
-						mbpr = atoi(lua + 1);
+					mbpr = atoi(lua);
+					if (mbpr) { //paranoia
 						sprintf(out_val, "%d", mbpr);
 						c_put_str(mbpr == 1 ? TERM_ORANGE : (mbpr == 2 ? TERM_YELLOW : TERM_L_GREEN), out_val, 23, 73);
 					} else c_put_str(TERM_ORANGE, "  ", 23, 73); //paranoia
+ #else /* Actually query and display ALL four weapon types */
+					sprintf(out_val, "return get_class_bpr3(\"%s\", %d, %d)",
+					    class_info[class].title,
+					    stat_order[0] + cp_ptr->c_adj[0] + rp_ptr->r_adj[0],
+					    stat_order[3] + cp_ptr->c_adj[3] + rp_ptr->r_adj[3]);
+					strcpy(lua, string_exec_lua(0, out_val));
+					if (lua[0] == '\377') //paranoia
+						c_put_str(mbpr == 1 ? TERM_ORANGE : (mbpr == 2 ? TERM_YELLOW : TERM_L_GREEN), lua, 23, 73 - 8);
+					else c_put_str(TERM_ORANGE, "? / ? / ? / ?", 23, 73 - 8); //paranoia
+ #endif
 				} else {
 					mbpr = 1;
 					for (i = 0; i < tablesize; i++)

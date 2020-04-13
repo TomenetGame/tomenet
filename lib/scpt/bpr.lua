@@ -104,10 +104,46 @@ function get_class_bpr2(cn, wwgt, st, dx)
 		dex_index = adj_dex_blow[dx - 3 + 1]
 		if dex_index > 11 then dex_index = 11 end
 		numblow = blows_table[str_index + 1][dex_index + 1]
-		bpr = "F" .. numblow
+		--bpr = "F" .. numblow
+		bpr = numblow
 	end
 	return bpr
 end
+
+--(C) use formula to calc bpr for all 4 weapon classes
+function get_class_bpr3(cn, st, dx)
+	local sword, blunt, axe, polearm
+	local ssword, sblunt, saxe, spolearm
+
+	sword = get_class_bpr2(cn, 30, st, dx) --dagger/main gauche
+	blunt = get_class_bpr2(cn, 30, st, dx) --whip
+	axe = get_class_bpr2(cn, 50, st, dx) --cleaver
+	polearm = get_class_bpr2(cn, 60, st, dx) --spear
+
+	if sword == 1 then ssword = "\255o1"
+	elseif sword == 2 then ssword = "\255y2"
+	else ssword = "\255G" .. sword
+	end
+
+	if blunt == 1 then sblunt = "\255o1"
+	elseif blunt == 2 then sblunt = "\255y2"
+	else sblunt = "\255G" .. blunt
+	end
+
+	if axe == 1 then saxe = "\255o1"
+	elseif axe == 2 then saxe = "\255y2"
+	else saxe = "\255G" .. axe
+	end
+
+	if polearm == 1 then spolearm = "\255o1"
+	elseif polearm == 2 then spolearm = "\255y2"
+	else spolearm = "\255G" .. polearm
+	end
+
+	return "" .. ssword .. " \255W/ " .. sblunt .. " \255W/ " .. saxe .. " \255W/ " .. spolearm
+end
+
+-- for using the real formula
 adj_str_blow = { 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240, }
 adj_dex_blow = { 0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,3,3,4,4,5,6,7,8,9,10,11,12,14,16,18,20,20,20, }
 blows_table = {
