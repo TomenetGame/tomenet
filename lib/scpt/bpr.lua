@@ -36,118 +36,174 @@ function get_class_bpr_tablesize()
 end
 
 --(B) alternatively, return the actual dps formula's result
-function get_class_bpr2(cn, wgt, str, dex)
-	return "X" --means "disabled"
-
---[[
-	local c
+function get_class_bpr2(cn, wwgt, st, dx)
+--	return "X" --means "disabled"
+	local div, wgt, mul, str_adj, str_index, dex_index, numblow
+	local c, bpr
 	c = classname2index(cn)
-
 	--some classes don't have significant weapon-BpR usage
-	if c == 1 or c == 5 or c == 9 then return "N" end
+	if wwgt == 0 or st < 3 or dx < 3 then
+		--it's just test call ("classname",0,0,0) to verify presence
+		if c == 1 or c == 5 or c == 9 then
+			--confirm ok + insignificant bpr
+			bpr = "N"
+		else
+			--confirm ok + signficant bpr
+			bpr = "F"
+		end
+	elseif c == 1 or c == 5 or c == 9 then
+		bpr = "N"
+	else
+		--calculate BpR..
+		if c == 0 then
+			wgt = 30
+			mul = 4
+		elseif c == 2 then
+			wgt = 35
+			mul = 4
+		elseif c == 3 then
+			wgt = 30
+			mul = 4
+		elseif c == 4 then
+			wgt = 35
+			mul = 5
+		elseif c == 6 then
+			wgt = 35
+			mul = 5
+		elseif c == 7 then
+			wgt = 35
+			mul = 4
+		elseif c == 8 then
+			wgt = 35
+			mul = 4
+		elseif c == 10 then
+			wgt = 35
+			mul = 4
+		elseif c == 11 then
+			wgt = 30
+			mul = 4
+		elseif c == 12 then
+			wgt = 35
+			mul = 4
+		elseif c == 13 then
+			wgt = 35
+			mul = 5
+		elseif c == 14 then
+			wgt = 35
+			mul = 5
+		elseif c == 15 then
+			wgt = 35
+			mul = 4
+		end
 
-	--todo: add formula here..
-	--return "F" .. --return a bpr value
-]]
+		div = wwgt
+		if div < wgt then div = wgt end
+		str_adj = adj_str_blow[st - 3 + 1]
+		str_index = (str_adj * mul) / div
+		if str_index > 11 then str_index = 11 end
+		dex_index = adj_dex_blow[dx - 3 + 1]
+		if dex_index > 11 then dex_index = 11 end
+		numblow = blows_table[str_index + 1][dex_index + 1]
+		bpr = "F" .. numblow
+	end
+	return bpr
 end
+adj_str_blow = { 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200,210,220,230,240, }
+adj_dex_blow = { 0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,2,2,2,2,3,3,4,4,5,6,7,8,9,10,11,12,14,16,18,20,20,20, }
+blows_table = {
+	{  1,   1,   1,   1,   1,   1,   2,   2,   2,   2,   2,   3, },
+	{  1,   1,   1,   1,   2,   2,   3,   3,   3,   4,   4,   4, },
+	{  1,   1,   2,   2,   3,   3,   4,   4,   4,   5,   5,   5, },
+	{  1,   2,   2,   3,   3,   4,   4,   4,   5,   5,   5,   5, },
+	{  1,   2,   2,   3,   3,   4,   4,   5,   5,   5,   5,   5, },
+	{  2,   2,   3,   3,   4,   4,   5,   5,   5,   5,   5,   6, },
+	{  2,   2,   3,   3,   4,   4,   5,   5,   5,   5,   5,   6, },
+	{  2,   3,   3,   4,   4,   4,   5,   5,   5,   5,   5,   6, },
+	{  3,   3,   3,   4,   4,   4,   5,   5,   5,   5,   6,   6, },
+	{  3,   3,   4,   4,   4,   4,   5,   5,   5,   5,   6,   6, },
+	{  3,   3,   4,   4,   4,   4,   5,   5,   5,   6,   6,   6, },
+	{  3,   3,   4,   4,   4,   4,   5,   5,   6,   6,   6,   7, },}
 
 -- for each class: 3x {str,dex,bpr} (stat 0 = any)
 __class_bpr = {
-{
---warrior
+{ --warrior
     { 18, 10, 2, },
     { 19,  0, 2, },
     { 21,  0, 3, },
     { 22, 19, 4, },
-}, {
---istar
+}, { --istar
     { 0,  0, 0, },
     { 0,  0, 0, },
     { 0,  0, 0, },
     { 0,  0, 0, },
-}, {
---priest
+}, { --priest
     { 19, 10, 2, },
     { 23, 10, 3, },
     {  0,  0, 0, },
     { 0,  0, 0, },
-}, {
---rogue
+}, { --rogue
     { 15, 19, 2, },
     { 19, 23, 3, },
     { 20, 19, 3, },
     { 0,  0, 0, },
-}, {
---mimic
-    { 19, 10, 2, },
-    { 23, 10, 3, },
-    { 21, 19, 3, },--+
-    { 0,  0, 0, },
-}, {
---archer
-    { 0,  0, 0, },
-    { 0,  0, 0, },
-    { 0,  0, 0, },
-    { 0,  0, 0, },
-}, {
---paladin
-    { 19, 10, 2, },
-    { 21, 10, 3, },
-    { 20, 19, 3, },
-    { 0,  0, 0, },
-}, {
---ranger
+}, { --mimic
     { 19, 10, 2, },
     { 23, 10, 3, },
     { 21, 19, 3, },
     { 0,  0, 0, },
-}, {
---adventurer
+}, { --archer
+    { 0,  0, 0, },
+    { 0,  0, 0, },
+    { 0,  0, 0, },
+    { 0,  0, 0, },
+}, { --paladin
     { 19, 10, 2, },
     { 21, 10, 3, },
     { 20, 19, 3, },
     { 0,  0, 0, },
-}, {
---druid
+}, { --ranger
+    { 19, 10, 2, },
+    { 23, 10, 3, },
+    { 21, 19, 3, },
+    { 0,  0, 0, },
+}, { --adventurer
+    { 19, 10, 2, },
+    { 21, 10, 3, },
+    { 20, 19, 3, },
+    { 0,  0, 0, },
+}, { --druid
     { 0,  0, 0, },
     { 0,  0, 0, },
     { 0,  0, 0, },
     { 0,  0, 0, },
-}, {
---shaman
+}, { --shaman
     { 19, 10, 2, },
     { 23, 10, 3, },
     { 21,  0, 3, },
     { 0,  0, 0, },
-}, {
---runemaster
+}, { --runemaster
     { 15, 19, 2, },
     { 19, 23, 3, },
     { 20, 19, 3, },
     { 0,  0, 0, },
-}, {
---mindcrafter
+}, { --mindcrafter
     { 19, 10, 2, },
     { 23, 10, 3, },
     { 21, 19, 3, },
     { 0,  0, 0, },
-}, {
---death knight
+}, { --death knight
     { 19, 10, 2, },
     { 21, 10, 3, },
     { 20, 19, 3, },
     { 0,  0, 0, },
-}, {
---hell knight
+}, { --hell knight
     { 19, 10, 2, },
     { 21, 10, 3, },
     { 20, 19, 3, },
     { 0,  0, 0, },
-}, {
---corrupted priest
+}, { --corrupted priest
     { 19, 10, 2, },
     { 23, 10, 3, },
     {  0,  0, 0, },
     { 0,  0, 0, },
-},
-}
+},}
