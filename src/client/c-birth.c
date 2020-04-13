@@ -1088,37 +1088,44 @@ static bool choose_stat_order(void) {
 #ifdef SHOW_BPR
 		int tablesize, *bpr_str, *bpr_dex, *bpr, mbpr;
 		char lua[MAX_CHARS], *cbpr;
-		bool show_bpr = FALSE;
+		bool show_bpr = FALSE, use_formula = TRUE;
 
-		/* Find out size of our str/dex/bpr table and create it */
-		sprintf(out_val, "return get_class_bpr_tablesize()");
-		tablesize = atoi(string_exec_lua(0, out_val));
-		if (tablesize) {
-			C_MAKE(bpr_str, tablesize, int);
-			C_MAKE(bpr_dex, tablesize, int);
-			C_MAKE(bpr, tablesize, int);
+		/* Check if we have an actual formula available */
+		sprintf(out_val, "return get_class_bpr2(\"%s\", 0, 0, 0)", class_info[class].title);
+		strcpy(lua, string_exec_lua(0, out_val));
+		if (lua[0] == 'X') { /* No. We have to fall back to using a static table. */
+			use_formula = FALSE;
 
-			/* Display potential BpR for super-light weapons */
-			for (i = 0; i < tablesize; i++) {
-				sprintf(out_val, "return get_class_bpr(%d, %d)", class, i);
-				strcpy(lua, string_exec_lua(0, out_val));
-				bpr_str[i] = atoi(lua + 1);
-				/* Paranoia: Make this robust, so people's clients arent suddenly broken */
-				cbpr = strchr(lua, 'D');
-				if (!cbpr) break;
-				bpr_dex[i] = atoi(cbpr + 1);
-				cbpr = strchr(lua, 'B');
-				if (!cbpr) break;
-				bpr[i] = atoi(cbpr + 1);
+			/* Find out size of our str/dex/bpr table and create it */
+			sprintf(out_val, "return get_class_bpr_tablesize()");
+			tablesize = atoi(string_exec_lua(0, out_val));
+			if (tablesize) {
+				C_MAKE(bpr_str, tablesize, int);
+				C_MAKE(bpr_dex, tablesize, int);
+				C_MAKE(bpr, tablesize, int);
+
+				/* Display potential BpR for super-light weapons */
+				for (i = 0; i < tablesize; i++) {
+					sprintf(out_val, "return get_class_bpr(\"%s\", %d)", class_info[class].title, i);
+					strcpy(lua, string_exec_lua(0, out_val));
+					bpr_str[i] = atoi(lua + 1);
+					/* Paranoia: Make this robust, so people's clients arent suddenly broken */
+					cbpr = strchr(lua, 'D');
+					if (!cbpr) break;
+					bpr_dex[i] = atoi(cbpr + 1);
+					cbpr = strchr(lua, 'B');
+					if (!cbpr) break;
+					bpr[i] = atoi(cbpr + 1);
+				}
+
+				/* Finished populating the table without errors? */
+				if (i == tablesize) {
+					show_bpr = TRUE; /* no errors, we're able to display projected BpR just fine */
+					/* Hack: For some classes BpR has no significant meaning, so we won't display it */
+					if (!bpr[0]) show_bpr = FALSE;
+				}
 			}
-
-			/* Finished populating the table without errors? */
-			if (i == tablesize) {
-				show_bpr = TRUE; /* no errors, we're able to display projected BpR just fine */
-				/* Hack: For some classes BpR has no significant meaning, so we won't display it */
-				if (!bpr[0]) show_bpr = FALSE;
-			}
-		}
+		} else if (lua[0] != 'N') show_bpr = TRUE; /* Hack: For some classes BpR has no significant meaning, so we won't display it */
 #endif
 
 		j = 0; /* current stat to be modified */
@@ -1194,14 +1201,29 @@ static bool choose_stat_order(void) {
 #ifdef SHOW_BPR
 			/* Display projected BpR with <= 3.0lbs weapons */
 			if (show_bpr) {
-				mbpr = 1;
-				for (i = 0; i < tablesize; i++)
-					if (stat_order[0] + cp_ptr->c_adj[0] + rp_ptr->r_adj[0] >= bpr_str[i]
-					    && stat_order[3] + cp_ptr->c_adj[3] + rp_ptr->r_adj[3] >= bpr_dex[i])
-						mbpr = bpr[i];
-				//sprintf(out_val, "%d%s", mbpr, mbpr == 3 ? "+" : " ");
-				sprintf(out_val, "%d", mbpr);
-				c_put_str(mbpr == 1 ? TERM_ORANGE : (mbpr == 2 ? TERM_YELLOW : TERM_L_GREEN), out_val, 23, 73);
+				if (use_formula) {
+					/* Assume fixed weight of 3.0 lbs (lowest breakpoint for BpR) -
+					   Note that spears and cleavers weigh 6.0 and 5.0 though. */
+					sprintf(out_val, "return get_class_bpr2(\"%s\", 30, %d, %d)",
+					    class_info[class].title,
+					    stat_order[0] + cp_ptr->c_adj[0] + rp_ptr->r_adj[0],
+					    stat_order[3] + cp_ptr->c_adj[3] + rp_ptr->r_adj[3]);
+					strcpy(lua, string_exec_lua(0, out_val));
+					if (lua[0] == 'F') {
+						mbpr = atoi(lua + 1);
+						sprintf(out_val, "%d", mbpr);
+						c_put_str(mbpr == 1 ? TERM_ORANGE : (mbpr == 2 ? TERM_YELLOW : TERM_L_GREEN), out_val, 23, 73);
+					} else c_put_str(TERM_ORANGE, "  ", 23, 73); //paranoia
+				} else {
+					mbpr = 1;
+					for (i = 0; i < tablesize; i++)
+						if (stat_order[0] + cp_ptr->c_adj[0] + rp_ptr->r_adj[0] >= bpr_str[i]
+						    && stat_order[3] + cp_ptr->c_adj[3] + rp_ptr->r_adj[3] >= bpr_dex[i])
+							mbpr = bpr[i];
+					//sprintf(out_val, "%d%s", mbpr, mbpr == 3 ? "+" : " ");
+					sprintf(out_val, "%d", mbpr);
+					c_put_str(mbpr == 1 ? TERM_ORANGE : (mbpr == 2 ? TERM_YELLOW : TERM_L_GREEN), out_val, 23, 73);
+				}
 			}
 #endif
 
