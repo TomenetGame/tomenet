@@ -9194,7 +9194,11 @@ void grind_chemicals(int Ind, int item) {
 
 	msg_format(Ind, "You grind the metal off of your %s ..", o_name);
 
+ #ifndef NO_RUST_NO_HYDROXIDE
 	invcopy(q_ptr, lookup_kind(TV_CHEMICAL, my_strcasestr(o_name, "rusty") ? SV_RUST : SV_METAL_POWDER));
+ #else
+	invcopy(q_ptr, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
+ #endif
 	/* Recall original parameters */
 	q_ptr->owner = o_ptr->owner;
 	q_ptr->mode = o_ptr->mode;
