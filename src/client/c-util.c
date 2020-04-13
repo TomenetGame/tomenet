@@ -9406,6 +9406,13 @@ void Send_paste_msg(char *msg) {
 #define PANEL_Y	(SCREEN_PAD_TOP)
 void check_immediate_options(int i, bool yes, bool playing) {
 #ifdef USE_GCU
+	/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
+	if (!strcmp(ANGBAND_SYS, "gcu") && option_info[i].o_var == &c_cfg.palette_animation) {
+		c_cfg.palette_animation = FALSE;
+		(*option_info[i].o_var) = FALSE;
+		Client_setup.options[i] = FALSE;
+	}
+
 	/* BIG_MAP is currently not supported in GCU client */
 	if (!strcmp(ANGBAND_SYS, "gcu") && option_info[i].o_var == &c_cfg.big_map) {
 		c_cfg.big_map = FALSE;

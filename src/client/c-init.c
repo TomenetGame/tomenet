@@ -222,7 +222,10 @@ void initialize_main_pref_files(void) {
 		Client_setup.options[CO_BIGMAP] = FALSE;
 
 		/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
+		//no effect here, as it gets reset by check_immediate_options()
 		c_cfg.palette_animation = FALSE;
+		(*option_info[CO_PALETTE_ANIMATION].o_var) = FALSE;
+		Client_setup.options[CO_PALETTE_ANIMATION] = FALSE;
 	}
 
 

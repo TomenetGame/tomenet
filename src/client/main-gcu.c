@@ -873,6 +873,11 @@ errr init_gcu(void) {
 	(*option_info[CO_BIGMAP].o_var) = FALSE;
 	screen_hgt = SCREEN_HGT;
 
+	/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
+	//no effect here, as it gets reset by check_immediate_options()
+	c_cfg.palette_animation = FALSE;
+	(*option_info[CO_PALETTE_ANIMATION].o_var) = FALSE;
+	Client_setup.options[CO_PALETTE_ANIMATION] = FALSE;
 
 	/* Extract the normal keymap */
 	keymap_norm_prepare();
