@@ -1893,9 +1893,14 @@ BpR/SpR     Blows per round, shots per round. The number of attacks you get
             stats) have no effect on BpR or SpR respectively.
 
 Cheeze      Questionable action, not quite cheating but close to it.
-            This can be transferring items to a store character (mule)
-            or exploiting weaknesses in the game design instead of
-            reporting them to the forum.
+            This can be transferring items from a high-level character to a
+            low-level character to boost him and trivialize the beginning phase
+            of the game for him. This is perfectly legal though, it's just
+            "cheezy".
+            Or it could be exploiting weaknesses in the game design instead of
+            reporting them to the forum (which could have certain repercussions
+            depending on the severity or if it's already going into "Cheating"
+            territory).
 
 DEW         Dark-elven warlock. A very deadly monster that comes in packs and
             shoots high-damage mana bolts, glass cannon style.
