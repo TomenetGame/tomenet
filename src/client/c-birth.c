@@ -1217,7 +1217,8 @@ static bool choose_stat_order(void) {
 				} else {
 					mbpr = 1;
 					for (i = 0; i < tablesize; i++)
-						if (stat_order[0] + cp_ptr->c_adj[0] + rp_ptr->r_adj[0] >= bpr_str[i]
+						if (bpr[i] /* Check that this particular entry isn't disabled */
+						    && stat_order[0] + cp_ptr->c_adj[0] + rp_ptr->r_adj[0] >= bpr_str[i]
 						    && stat_order[3] + cp_ptr->c_adj[3] + rp_ptr->r_adj[3] >= bpr_dex[i])
 							mbpr = bpr[i];
 					//sprintf(out_val, "%d%s", mbpr, mbpr == 3 ? "+" : " ");

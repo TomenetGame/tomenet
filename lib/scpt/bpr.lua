@@ -1,11 +1,11 @@
--- Tables with startup-BpR numbers, depending on STR/DEX/Class.
+-- Tables/formula with startup-BpR numbers, depending on STR/DEX/weapon weight/Class.
 -- To be displayed during character creation process to alleviate
 -- the need of looking up stats in the guide to hit breakpoints. - C. Blue
 
---(A) just return fixed values from the table?
---Using string for class just in case there's a server-client incompatibility after another class gets added.
-function get_class_bpr(cn, n)
+--Using class name string instead of numerical index just in case there's a server-client incompatibility after another class gets added.
+function classname2index(cn)
 	local c
+	c = 0
 	if cn == "Warrior" then c = 0 end
 	if cn == "Istar" then c = 1 end
 	if cn == "Priest" then c = 2 end
@@ -22,6 +22,13 @@ function get_class_bpr(cn, n)
 	if cn == "Death Knight" then c = 13 end
 	if cn == "Hell Knight" then c = 14 end
 	if cn == "Corrupted Priest" then c = 15 end
+	return c
+end
+
+--(A) just return fixed values from the table?
+function get_class_bpr(cn, n)
+	local c
+	c = classname2index(cn)
 	return "S" .. __class_bpr[c + 1][n + 1][1] .. "D" .. __class_bpr[c + 1][n + 1][2] .. "B" .. __class_bpr[c + 1][n + 1][3]
 end
 function get_class_bpr_tablesize()
@@ -33,10 +40,11 @@ function get_class_bpr2(cn, wgt, str, dex)
 	return "X" --means "disabled"
 
 --[[
+	local c
+	c = classname2index(cn)
+
 	--some classes don't have significant weapon-BpR usage
-	if cn == "Istar" then return "N" end
-	if cn == "Archer" then return "N" end
-	if cn == "Druid" then return "N" end
+	if c == 1 or c == 5 or c == 9 then return "N" end
 
 	--todo: add formula here..
 	--return "F" .. --return a bpr value
