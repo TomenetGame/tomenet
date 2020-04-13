@@ -9557,7 +9557,7 @@ bool do_mstopcharm(int Ind) {
    Each attempt will cost the original charmer mana, and he also has the highest chance of succeeding this roll,
    so party members are slightly more prone to getting attacked.. */
 bool test_charmedignore(int Ind, s32b charmer_id, monster_type *m_ptr, monster_race *r_ptr) {
-	int Ind_charmer = lookup_player_Ind(charmer_id);
+	int Ind_charmer = find_player(charmer_id);
 	player_type *q_ptr;
 	int chance = 1, cost = 1;
 

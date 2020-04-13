@@ -1459,8 +1459,6 @@ extern int check_account(char *accname, char *c_name, int *Ind);
 extern void strip_true_arts_from_hashed_players(void);
 extern void account_change_password(int Ind, char *old_pass, char *new_pass);
 
-extern int lookup_player_Ind(s32b id);
-
 extern void backup_acclists(void);
 extern void restore_acclists(void);
 extern void fix_lost_guild_mode(int g_id);

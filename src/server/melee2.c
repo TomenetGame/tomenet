@@ -9444,7 +9444,7 @@ void process_monsters(void) {
 		if (m_ptr->charmedignore) {
 			int Ind;
 
-			Ind = lookup_player_Ind(m_ptr->charmedignore);
+			Ind = find_player(m_ptr->charmedignore);
 			if (Ind) {
 				player_type *p_ptr = Players[Ind];
 

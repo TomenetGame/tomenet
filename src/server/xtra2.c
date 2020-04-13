@@ -5502,7 +5502,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	/* terminate mindcrafter charm effect */
 	if (m_ptr->charmedignore) {
-		int Ind = lookup_player_Ind(m_ptr->charmedignore);
+		int Ind = find_player(m_ptr->charmedignore);
 
 		if (Ind) Players[Ind]->mcharming--;
 		m_ptr->charmedignore = 0;
@@ -10168,7 +10168,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	/* Break Charm/Possess */
 	if (m_ptr->charmedignore) {
-		int Ind = lookup_player_Ind(m_ptr->charmedignore);
+		int Ind = find_player(m_ptr->charmedignore);
 
 		if (Ind) Players[Ind]->mcharming--;
 		m_ptr->charmedignore = 0;

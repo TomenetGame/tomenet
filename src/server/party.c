@@ -5457,14 +5457,6 @@ void account_change_password(int Ind, char *old_pass, char *new_pass) {
 	msg_print(Ind, "Password changed.");
 }
 
-int lookup_player_Ind(s32b id) {
-	int n;
-
-	for (n = 1; n <= NumPlayers; n++)
-		if (Players[n]->id == id) return n;
-	return 0;
-}
-
 void backup_acclists(void) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH];

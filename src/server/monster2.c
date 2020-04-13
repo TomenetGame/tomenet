@@ -418,7 +418,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 
 	/* terminate mindcrafter charm effect */
 	if (m_ptr->charmedignore) {
-		int Ind = lookup_player_Ind(m_ptr->charmedignore);
+		int Ind = find_player(m_ptr->charmedignore);
 
 		if (Ind) Players[Ind]->mcharming--;
 		m_ptr->charmedignore = 0;
