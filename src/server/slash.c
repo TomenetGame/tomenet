@@ -4502,10 +4502,20 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				return;
 			}
 
+			ids = player_id_list(&id_list, p_ptr->account);
+			if (!ids) { /* paranoia */
+				msg_print(Ind, "ERROR.");
+				return;
+			}
+			/* Let us specify an order between 1..n where n is our number of existing characters */
+			if (ids < max_cpa) max_cpa = ids;
+
 			if (tk != 1 || k < 1 || k > max_cpa) {
-				msg_format(Ind, "Usage: /setorder 1..%d   - or -   /setorder ?", max_cpa);
+				msg_format(Ind, "Usage 1:   /setorder 1..%d", max_cpa);
 				msg_print(Ind, "Will set your current character's position in the Character Overview list.");
 				msg_print(Ind, "A character with a higher position will be listed below one with lower position.");
+				msg_print(Ind, "Usage 2:   /setorder ?");
+				msg_print(Ind, "Will query this character's current position in the Character Overview list.");
 				return;
 			}
 
@@ -4517,7 +4527,6 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				msg_print(Ind, "This character is already at that order position.");
 				return;
 			}
-			ids = player_id_list(&id_list, p_ptr->account);
 			for (i = 0; i < ids; i++) {
 				if (id_list[i] == p_ptr->id) continue; /* Skip the character issuing this command */
 				order = lookup_player_order(id_list[i]);
