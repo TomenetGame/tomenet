@@ -1700,6 +1700,15 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 
 	return FALSE;
 }
+/* Another version, for efficiency */
+static bool inside_house_simple(cave_type *c_ptr) {
+	/* assume all houses are on the world surface (and vaults aren't) */
+	if ((c_ptr->info & CAVE_ICKY) &&
+	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
+		return TRUE;
+
+	return FALSE;
+}
 /* like inside_house() but more costly since it returns the actual house index + 1,
    or 0 for 'not inside any house'.
    Note: Does not test unowned houses, unlike inside_house().
@@ -7049,12 +7058,12 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	int mul, div;
 	int cur_dis, visible, real_dis;
 	int moved_number = 1;
+	int start_ix = 0, start_iy = 0;
 
 	object_type throw_obj;
 	object_type *o_ptr;
 
 	bool hit_body = FALSE, target_ok = target_okay(Ind);
-
 	bool hit_wall = FALSE;
 
 	int missile_attr;
@@ -7071,7 +7080,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	bool throwing_weapon;
 
-	cave_type **zcave;
+	cave_type **zcave, *c_ptr;
 	if (!(zcave = getcave(wpos))) return;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
@@ -7110,9 +7119,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	/* Access the item (if in the pack) */
 	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
 	else {
-		if (-item >= o_max)
-			return; /* item doesn't exist */
+		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
+		start_ix = o_ptr->ix;
+		start_iy = o_ptr->iy;
 	}
 
 	if (o_ptr->tval == 0) {
@@ -7395,7 +7405,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		if (zcave[y][x].m_idx < 0) {
 			/* rugby */
 			if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) {
-				cave_type *c_ptr = &zcave[y][x];
+				c_ptr = &zcave[y][x];
 
 				q_ptr = Players[0 - c_ptr->m_idx];
 				if (rand_int(150) > 105 + 256 - adj_dex_th[p_ptr->stat_ind[A_DEX]] - adj_dex_th[q_ptr->stat_ind[A_DEX]]) {
@@ -7413,7 +7423,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			}
 			/* snowball fight */
 			else if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) {
-				cave_type *c_ptr = &zcave[y][x];
+				c_ptr = &zcave[y][x];
 
 				q_ptr = Players[0 - c_ptr->m_idx];
 				msg_format_near(0 - c_ptr->m_idx, "%s hits %s with a snowball!", p_ptr->name, q_ptr->name);
@@ -7434,7 +7444,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				/* Stop looking */
 				break;
 			} else {
-				cave_type *c_ptr = &zcave[y][x];
+				c_ptr = &zcave[y][x];
 
 #ifdef TEST_SERVER
 				p_ptr->test_attacks++;
@@ -7514,7 +7524,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 		/* Monster here, Try to hit it */
 		if (zcave[y][x].m_idx > 0) {
-			cave_type *c_ptr = &zcave[y][x];
+			c_ptr = &zcave[y][x];
 
 			monster_type *m_ptr = &m_list[c_ptr->m_idx];
                         monster_race *r_ptr = race_inf(m_ptr);
@@ -7790,7 +7800,18 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	}
 
 	/* Drop (or break) near that location */
-	drop_near_severe(Ind, o_ptr, j, wpos, y, x);
+
+	/* Special exception: If item failed to get dropped, ie vanished, we will restore it at its
+	   original position IF it was bashed from inside a house to a target location inside a house.
+	   This is done to protect items inside houses from weird bashes that would erase them.
+	   (Funny hypothetical side effect: We could bash an item inside a house against another player
+	   who is inside the house too, he'd notice it, yet it lands in front of our own feet again.) */
+	if (drop_near_severe(Ind, o_ptr, j, wpos, y, x) == -1 /* bashing went wrong aka no space in house at target location? */
+	    && !wpos->wz /* world surface is condition for 'house' */
+	    && start_ix /* only if it was bashed, not if it was thrown */
+	    && inside_house_simple(&zcave[start_iy][start_ix]) /* starting location must be inside house */
+	    && inside_house_simple(&zcave[y][x])) /* target location must be inside house */
+		drop_near_severe(Ind, o_ptr, j, wpos, start_iy, start_ix);
 }
 
 static void destroy_house(int Ind, struct dna_type *dna) {
