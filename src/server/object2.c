@@ -637,8 +637,7 @@ void wipe_o_list(struct worldpos *wpos) {
 		if (!o_ptr->k_idx) continue;
 
 		/* Skip objects not on this depth */
-		if (!inarea(&o_ptr->wpos, wpos))
-			continue;
+		if (!inarea(&o_ptr->wpos, wpos)) continue;
 
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
@@ -678,8 +677,20 @@ void wipe_o_list(struct worldpos *wpos) {
 		else
 #endif	// MONSTER_INVENTORY
 //		if (flag && in_bounds2(wpos, o_ptr->iy, o_ptr->ix))
-		if (flag && in_bounds_array(o_ptr->iy, o_ptr->ix))
-			zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
+		if (flag) {
+			if (in_bounds_array(o_ptr->iy, o_ptr->ix))
+				zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
+			else if (in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
+				cave_type *c_ptr = &zcave[255 - o_ptr->iy][o_ptr->ix];
+				struct c_special *cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
+
+				if (cs_ptr) {
+					cave_set_feat_live(wpos, 255 - o_ptr->iy, o_ptr->ix, cs_ptr->sc.montrap.feat);
+					cs_erase(c_ptr, cs_ptr);
+				}
+				c_ptr->o_idx = 0;
+			}
+		}
 
 		/* Wipe the object */
 		WIPE(o_ptr, object_type);
@@ -717,15 +728,19 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 			continue;
 
 		/* Skip objects not on this depth */
-		if (!(inarea(wpos, &o_ptr->wpos)))
-			continue;
+		if (!(inarea(wpos, &o_ptr->wpos))) continue;
 
+#if 0 /* 2020-04 */
 /* DEBUG -after getting weird crashes today 2007-12-21 in bree from /clv, and multiplying townies, I added this inbound check- C. Blue */
 		//if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
 			/* Skip objects inside a house but not in a vault in dungeon/tower */
-			if (!wpos->wz && zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)
-				continue;
+			if (!wpos->wz && zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY) continue;
 		//}
+#else
+		if (!in_bounds_array(o_ptr->iy, o_ptr->ix)) continue; /* assume monster trap (255 - o_ptr->iy) */
+		/* Skip objects inside a house but not in a vault in dungeon/tower */
+		if (!wpos->wz && zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY) continue;
+#endif
 
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
@@ -761,11 +776,9 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 		}
 
 		/* Dungeon */
-		else if (in_bounds_array(o_ptr->iy, o_ptr->ix))
+		else
 #endif	// MONSTER_INVENTORY
-		{
-			zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
-		}
+		zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
 
 		/* Wipe the object */
 		WIPE(o_ptr, object_type);
@@ -837,8 +850,20 @@ void wipe_o_list_special(struct worldpos *wpos) {
 		else
 #endif	// MONSTER_INVENTORY
 //		if (flag && in_bounds2(wpos, o_ptr->iy, o_ptr->ix))
-		if (flag && in_bounds_array(o_ptr->iy, o_ptr->ix))
-			zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
+		if (flag) {
+			if (in_bounds_array(o_ptr->iy, o_ptr->ix))
+				zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
+			else if (in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
+				cave_type *c_ptr = &zcave[255 - o_ptr->iy][o_ptr->ix];
+				struct c_special *cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
+
+				if (cs_ptr) {
+					cave_set_feat_live(wpos, 255 - o_ptr->iy, o_ptr->ix, cs_ptr->sc.montrap.feat);
+					cs_erase(c_ptr, cs_ptr);
+				}
+				c_ptr->o_idx = 0;
+			}
+		}
 
 		/* Wipe the object */
 		WIPE(o_ptr, object_type);
