@@ -10534,6 +10534,10 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				init_character_ordering(Ind);
 				return;
 			}
+			else if (prefix(messagelc, "/zeroorder")) { /* Reset character ordering for the whole account database to zero (unordered) */
+				zero_character_ordering(Ind);
+				return;
+			}
 		}
 	}
 

@@ -5681,3 +5681,29 @@ void init_character_ordering(int Ind) {
 	s_printf("INIT_CHARACTER_ORDERING: Processed %d; imprinted %d; imprinted accounts %d.\n", processed, imprinted, imprinted_accounts);
 	if (Ind) msg_format(Ind, "Processed chars %d; imprinted chars %d; imprinted accounts %d.", processed, imprinted, imprinted_accounts);
 }
+/* Resets all character ordering to zero aka unordered.
+   While this is the 'natural' order, note that in the Character Overview they will still show up in
+   a different order than the one they were created in, due to the divide&conquer nature of ang_sort
+   that is run over them. */
+void zero_character_ordering(int Ind) {
+	int i, processed = 0, imprinted = 0;
+	hash_entry *ptr;
+
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		/* Acquire this chain */
+		ptr = hash_table[i];
+		/* Check this chain */
+		while (ptr) {
+			processed++;
+			if (ptr->order) {
+				/* A character was found without order -> imprint the whole account it belongs to */
+				imprinted++;
+				ptr->order = 0;
+			}
+			/* Next entry in chain */
+			ptr = ptr->next;
+		}
+	}
+	s_printf("INIT_CHARACTER_ORDERING: Processed %d; imprinted %d.\n", processed, imprinted);
+	if (Ind) msg_format(Ind, "Processed chars %d; imprinted chars %d.", processed, imprinted);
+}
