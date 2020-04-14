@@ -4015,6 +4015,16 @@ byte lookup_player_level(int id) {
 	/* Not found */
 	return -1L;
 }
+/* Return a player's custom sort order of a character in his account overview screen */
+byte lookup_player_order(s32b id) {
+	hash_entry *ptr;
+
+	if ((ptr = lookup_player(id)))
+		return ptr->order;
+
+	/* Not found */
+	return -1L;
+}
 /*
  * Get the player's highest level.
  */
@@ -5008,7 +5018,7 @@ void account_checkexpiry(int Ind) {
 /*
  * Add a name to the hash table.
  */
-void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte max_plv, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner) {
+void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte max_plv, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order) {
 	int slot;
 	hash_entry *ptr;
 
@@ -5041,6 +5051,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 	ptr->wpos.wz = wpos.wz;
 	ptr->houses = houses;
 	ptr->winner = winner;
+	ptr->order = order; /* 0 = existing chars that don't have an order set yet */
 
 	/* Add the rest of the chain to this entry */
 	ptr->next = hash_table[slot];
@@ -5052,7 +5063,7 @@ void add_player_name(cptr name, int id, u32b account, byte race, byte class, byt
 /*
  * Verify a player's data against the hash table. - C. Blue
  */
-void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner) {
+void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order) {
 	hash_entry *ptr = lookup_player(id);
 
 	/* For savegame conversion 4.2.0 -> 4.2.2: */
@@ -5096,6 +5107,10 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 	if (ptr->winner != winner) {
 		s_printf("hash_entry: fixing winner of %s.\n", ptr->name);
 		ptr->winner = winner;
+	}
+	if (order != 100 && ptr->order != order) { /* hack: order == 100 means do not change it */
+		s_printf("hash_entry: fixing order of %s.\n", ptr->name);
+		ptr->order = order;
 	}
 }
 
@@ -5574,7 +5589,7 @@ void restore_acclists(void) {
 			time_t ttime;
 			//s_printf("  adding: '%s' (id %d, acc %d)\n", ptr->name, ptr->id, ptr->account);
 			/* Add backed-up entry again */
-			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 1, 0, 0, 0, 0, time(&ttime), ptr->admin, ptr->wpos, ptr->houses, ptr->winner);
+			add_player_name(name_forge, ptr->id, ptr->account, ptr->race, ptr->class, ptr->mode, 1, 1, 0, 0, 0, 0, time(&ttime), ptr->admin, ptr->wpos, ptr->houses, ptr->winner, 0);
 		} else s_printf("  already exists: '%s' (id %d, acc %d)\n", name_forge, ptr->id, ptr->account);
 	}
 

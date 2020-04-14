@@ -6130,8 +6130,7 @@ struct vinfo_hack {
  * We use "u" to point to an array of long integers.
  */
 /* Ind is utter dummy. */
-static bool ang_sort_comp_hook_longs(int Ind, vptr u, vptr v, int a, int b)
-{
+static bool ang_sort_comp_longs(int Ind, vptr u, vptr v, int a, int b) {
 	long *x = (long*)(u);
 
 	return (x[a] <= x[b]);
@@ -6143,16 +6142,14 @@ static bool ang_sort_comp_hook_longs(int Ind, vptr u, vptr v, int a, int b)
  *
  * We use "u" to point to an array of long integers.
  */
-static void ang_sort_swap_hook_longs(int Ind, vptr u, vptr v, int a, int b)
-{
+static void ang_sort_swap_longs(int Ind, vptr u, vptr v, int a, int b) {
 	long *x = (long*)(u);
+	long temp;
 
-        long temp;
-
-        /* Swap */
-        temp = x[a];
-        x[a] = x[b];
-        x[b] = temp;
+	/* Swap */
+	temp = x[a];
+	x[a] = x[b];
+	x[b] = temp;
 }
 
 
@@ -6293,10 +6290,10 @@ errr vinfo_init(void)
 
 
 	/* Sort slopes numerically */
-	ang_sort_comp = ang_sort_comp_hook_longs;
+	ang_sort_comp = ang_sort_comp_longs;
 
 	/* Sort slopes numerically */
-	ang_sort_swap = ang_sort_swap_hook_longs;
+	ang_sort_swap = ang_sort_swap_longs;
 
 	/* Sort the (unique) slopes */
 	ang_sort(0, hack->slopes, NULL, hack->num_slopes);

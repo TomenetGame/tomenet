@@ -1997,6 +1997,7 @@ static void wr_player_names(void) {
 			wr_string(ptr->name);
 			wr_byte(ptr->houses);
 			wr_byte(ptr->winner);
+			wr_byte(ptr->order);
 		}
 	}
 

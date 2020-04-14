@@ -4058,5 +4058,7 @@ struct hash_entry {
 	char houses; // ACC_HOUSE_LIMIT
 	byte winner;
 
+	byte order;			/* custom order in account screen overview */
+
 	struct hash_entry *next;	/* Next entry in the chain */
 };

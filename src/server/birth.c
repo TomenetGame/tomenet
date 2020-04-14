@@ -2626,9 +2626,20 @@ static void player_setup(int Ind, bool new) {
 	if (!lookup_player_name(p_ptr->id)) {
 		byte w;
 		time_t ttime;
-		/* Add */
+
+		int *id_list, ids, max_order = 0, order;
+
+		/* Prepare to add the new character to the database */
 		w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
-		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 1, 0, 0, 0, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, p_ptr->houses_owned, w);
+		/* For custom character ordering in account overview screen: Add him to the bottom of the character list: */
+		ids = player_id_list(&id_list, p_ptr->account);
+		for (i = 0; i < ids; i++) {
+			order = lookup_player_order(id_list[i]);
+			if (order > max_order) max_order = order;
+		}
+		max_order++; /* Add the new character below all others in this account's character list  */
+		/* Add the new character to the daabase */
+		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 1, 0, 0, 0, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, p_ptr->houses_owned, w, max_order);
 	} else {
 	/* Verify his data - only needed for 4.2.0 -> 4.2.2 savegame conversion :) - C. Blue */
 	/* Now also needed for 4.5.2 -> 4.5.3 again ^^ To stamp guild info into hash table, for self-adding */
@@ -2637,7 +2648,7 @@ static void player_setup(int Ind, bool new) {
 		byte w;
 		/* Verify mode */
 		w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
-		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, (char)p_ptr->houses_owned, w);
+		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, (char)p_ptr->houses_owned, w, 0);
 	}
 
 	/* Set his "current activities" variables */

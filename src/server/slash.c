@@ -3890,7 +3890,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 					p_ptr->mode |= MODE_DED_PVP;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
 					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w);//assume NO ADMIN!
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 					//Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}
@@ -3900,7 +3900,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				p_ptr->mode |= MODE_DED_PVP;
 				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
 				w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
-				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w);//assume NO ADMIN!
+				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 				//Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 #endif
 				return;
@@ -3920,7 +3920,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 					p_ptr->mode |= MODE_NO_GHOST;
 					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
 					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w);//assume NO ADMIN!
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
 					return;
 				}
@@ -3942,7 +3942,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 
 				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
 				w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
-				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w);//assume NO ADMIN!
+				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 
 				/* set typical character parameters as if we were born like this */
 				if (!in_irondeepdive(&p_ptr->wpos)) {
@@ -10468,6 +10468,49 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				return;
 			}
 #endif
+			else if (prefix(messagelc, "/setorder")) { /* Set custom list position for this character in the account overview screen on login */
+				int slot = (p_ptr->id & (NUM_HASH_ENTRIES - 1));
+				hash_entry *ptr = hash_table[slot];
+
+				ptr->order = k;
+				return;
+			}
+			else if (prefix(messagelc, "/initorder")) { /* Initialize character ordering for the whole account database */
+				/* For custom character order in account overview screen after login:
+				   All so far 'unsorted' characters have order 0. Due to the divide&conquer nature of ang_sort (quicksort),
+				   this means that the result will be partitioned and mixed, so the original ('natural') order is not preserved.
+				   This is no biggie, but for extra player comfort, let's imprint the original order here in a first-time conversion: */
+
+				int processed = 0, imprinted = 0, imprinted_accounts = 0;
+				int ids, *id_list, slot;
+				hash_entry *ptr, *ptr2;
+
+				for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+					/* Acquire this chain */
+					ptr = hash_table[i];
+					/* Check this chain */
+					while (ptr) {
+						processed++;
+						/* A character was found without order -> imprint the whole account it belongs to */
+						if (!ptr->order) {
+							imprinted_accounts++;
+							/* Treat all characters of this account */
+							ids = player_id_list(&id_list, ptr->account);
+							for (j = 0; j < ids; j++) {
+								if (lookup_player_order(id_list[j])) continue; /* Paranoia: Skip any that might already have been ordered */
+								imprinted++;
+								slot = (id_list[j] & (NUM_HASH_ENTRIES - 1));
+								ptr2 = hash_table[slot];
+								ptr2->order = j + 1; /* Natural order ;) */
+							}
+						}
+						/* Next entry in chain */
+						ptr = ptr->next;
+					}
+				}
+				msg_format(Ind, "Processed chars %d; imprinted accounts %d; imprinted chars %d.", processed, imprinted_accounts, imprinted);
+				return;
+			}
 		}
 	}
 

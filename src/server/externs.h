@@ -1423,8 +1423,8 @@ extern s32b lookup_player_balance(int id);
 extern int lookup_player_id(cptr name);
 extern int lookup_player_id_messy(cptr name);
 /* another arg, and its getting a struct... pfft. */
-extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte max_plv, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner);
-extern void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner);
+extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte max_plv, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order);
+extern void verify_player(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, u16b party, byte guild, u32b guild_flags, u16b quest, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order);
 extern void delete_player_id(int id);
 extern void delete_player_name(cptr name);
 extern int player_id_list(int **list, u32b account);
@@ -1441,6 +1441,7 @@ extern byte lookup_player_mode(int id);
 extern u32b lookup_player_account(int id);
 extern byte lookup_player_admin(int id);
 extern byte lookup_player_winner(int id);
+extern byte lookup_player_order(s32b id);
 extern struct worldpos lookup_player_wpos(int id);
 extern void clockin(int Ind, int type);
 extern void clockin_id(s32b id, int type, int parm, u32b parm2);

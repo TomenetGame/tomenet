@@ -4122,6 +4122,24 @@ static int Receive_quit(int ind) {
 	return 1;
 }
 
+static bool ang_sort_comp_order(int Ind, vptr u, vptr v, int a, int b) {
+	byte *o = (byte*)(u); /* Order */
+	/* v is index, which is irrelevant as sorting criterium, but keeps track of the sort */
+
+	return (o[a] <= o[b]);
+}
+static void ang_sort_swap_order(int Ind, vptr u, vptr v, int a, int b) {
+	byte temp, *o = (byte*)(u), *i = (byte*)(v);
+
+	temp = o[a];
+	o[a] = o[b];
+	o[b] = temp;
+
+	temp = i[a];
+	i[a] = i[b];
+	i[b] = temp;
+}
+
 static int Receive_login(int ind) {
 	connection_t *connp = Conn[ind], *connp2 = NULL;
 	//unsigned char ch;
@@ -4295,6 +4313,7 @@ static int Receive_login(int ind) {
 			   flag array 2: temporary lua testing flags for experimental features
 			   flag array 3: unused
 			*/
+			byte *id_order, *id_index, j;
 
 			/* Set server type flags */
 #ifdef RPG_SERVER
@@ -4349,8 +4368,25 @@ static int Receive_login(int ind) {
 			free(connp->pass);
 			connp->pass = NULL;
 			n = player_id_list(&id_list, acc.id);
-			/* Display all account characters here */
+
+			/* Allow players to set custom sort order of their characters just for their account overview screen */
+			C_MAKE(id_order, n, byte);
+			C_MAKE(id_index, n, byte);
 			for (i = 0; i < n; i++) {
+				id_order[i] = lookup_player_order(id_list[i]);
+				id_index[i] = i;
+//s_printf("PRE: o#%d=%d, i=%d, %s\n", i, id_order[i], id_index[i], lookup_player_name(id_list[i]));
+			}
+			ang_sort_comp = ang_sort_comp_order;
+			ang_sort_swap = ang_sort_swap_order;
+			ang_sort(0, id_order, id_index, n);
+
+			/* Display all account characters here */
+			for (j = 0; j < n; j++) {
+				/* Index sorted character list */
+				i = id_index[j];
+//s_printf("POST: o#%d=%d, i=%d, %s\n", j, id_order[j], id_index[j], lookup_player_name(id_list[i]));
+
 				u16b ptype = lookup_player_type(id_list[i]);
 
 				/* do not change protocol here */

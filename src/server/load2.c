@@ -3453,6 +3453,7 @@ errr rd_server_savefile() {
 		struct worldpos wpos;
 		byte houses;
 		byte winner;
+		byte order;
 
 		rd_u32b(&tmp32u);
 
@@ -3503,13 +3504,14 @@ errr rd_server_savefile() {
 			if (!s_older_than(4, 6, 8)) rd_byte(&winner);
 			else winner = 0;
 
+			if (!s_older_than(4, 7, 8)) rd_byte(&order);
+			else order = 0;
+
 			/* Store the player name */
-			add_player_name(name, tmp32s, acct, race, class, mode, level, max_plv, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner);
+			add_player_name(name, tmp32s, acct, race, class, mode, level, max_plv, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner, order);
 		}
 		s_printf("Read %d player name records.\n", tmp32u);
 	}
-
-
 
 	rd_u32b(&seed_flavor);
 	rd_u32b(&seed_town);
@@ -3653,7 +3655,7 @@ errr rd_server_savefile() {
 					s_printf("INIT_ACC_HOUSE_LIMIT_OK: '%s' has %d houses\n", ptr->name, tmp8u);
 
 					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
-					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), p_ptr->wpos, (char)tmp8u, w);
+					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), p_ptr->wpos, (char)tmp8u, w, 100);
 				}
 
 				/* unhack */
