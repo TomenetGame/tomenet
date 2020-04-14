@@ -11274,6 +11274,11 @@ static int Receive_rest(int ind) {
 		    ))
 			return 2;
 
+		if (p_ptr->mcharming) {
+			msg_print(player, "You cannot rest while focussing intently on a charm spell!");
+			return 2;
+		}
+
 		if (!(zcave = getcave(&p_ptr->wpos))) return 2;
 
 #if 0 /* why? don't see a reason atm */
