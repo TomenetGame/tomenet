@@ -1159,7 +1159,7 @@ F:FREE_ACT | RES_COLD | RES_LITE | LITE1 | SEE_INVIS | SLOW_DIGEST | REGEN |
 F:ACTIVATE | SHOW_MODS | WHITE_LIGHT
 D:The weapon of Fingolfin, High King of the Noldor; it shines like a column
 D:of ice lit by light unquenchable. Morgoth came but unwillingly to meet it
-D:of old; his lame foot will remind him of its might should be meet it again.
+D:of old; his lame foot will remind him of its might should he meet it again.
 
 
 # The Claymore 'Anduril'
