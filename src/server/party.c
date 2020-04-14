@@ -4027,7 +4027,9 @@ byte lookup_player_order(s32b id) {
 	return -1L;
 }
 void set_player_order(s32b id, byte order) {
-	hash_table[(id & (NUM_HASH_ENTRIES - 1))]->order = order;
+	hash_entry *ptr = lookup_player(id);
+
+	ptr->order = order;
 }
 /*
  * Get the player's highest level.
@@ -5653,7 +5655,7 @@ char acc_sum_houses(struct account *acc) {
    This is no biggie, but for extra player comfort, let's imprint the original order here in a first-time conversion: */
 void init_character_ordering(int Ind) {
 	int i, j, processed = 0, imprinted = 0, imprinted_accounts = 0;
-	int ids, *id_list, slot;
+	int ids, *id_list;
 	hash_entry *ptr, *ptr2;
 
 	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
@@ -5671,8 +5673,7 @@ void init_character_ordering(int Ind) {
 					//if (lookup_player_order(id_list[j])) continue; /* Paranoia: Skip any that might already have been ordered */
 					/* Imprint all character on this account, even if some were already imprinted, to keep the sequence flawless */
 					imprinted++;
-					slot = (id_list[j] & (NUM_HASH_ENTRIES - 1));
-					ptr2 = hash_table[slot];
+					ptr2 = lookup_player(id_list[j]);
 					ptr2->order = j + 1; /* Natural order ;) */
 				}
 				if (ids) C_KILL(id_list, ids, int);
@@ -5687,7 +5688,7 @@ void init_character_ordering(int Ind) {
 /* Like init_character_ordering(), but only for one specified account */
 void init_account_order(int Ind, s32b acc_id) {
 	int i, j, processed = 0, imprinted = 0;
-	int ids, *id_list, slot;
+	int ids, *id_list;
 	hash_entry *ptr, *ptr2;
 	char acc_name[ACCOUNTNAME_LEN];
 	bool found = FALSE;
@@ -5715,8 +5716,7 @@ void init_account_order(int Ind, s32b acc_id) {
 					//if (lookup_player_order(id_list[j])) continue; /* Paranoia: Skip any that might already have been ordered */
 					/* Imprint all character on this account, even if some were already imprinted, to keep the sequence flawless */
 					imprinted++;
-					slot = (id_list[j] & (NUM_HASH_ENTRIES - 1));
-					ptr2 = hash_table[slot];
+					ptr2 = lookup_player(id_list[j]);
 					ptr2->order = j + 1; /* Natural order ;) */
 				}
 				if (ids) C_KILL(id_list, ids, int);
