@@ -9121,8 +9121,8 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 	ac += ((o_ptr->xtra1 & CF_AC) ? 1 : 0) + ((o_ptr->xtra2 & CF_AC) ? 1 : 0) + ((o_ptr->xtra3 & CF_AC) ? 1 : 0); //grey (just because it's the game's element colour..)
 
 	/* Count differing sensorial aspects */
-	aspects += cc ? 1 : 0 + (me || mc) ? 1 : 0 + (sp || mh) ? 1 : 0 + (su || as) ? 1 : 0 + mp ? 1 : 0 + vi ? 1 : 0 +
-	    (ru || lo) ? 1 : 0 + (wa || sw) ? 1 : 0 + ac ? 1 : 0;
+	aspects += (cc ? 1 : 0) + ((me || mc) ? 1 : 0) + ((sp || mh) ? 1 : 0) + ((su || as) ? 1 : 0) + (mp ? 1 : 0) + (vi ? 1 : 0) +
+	    ((ru || lo) ? 1 : 0) + ((wa || sw) ? 1 : 0) + (ac ? 1 : 0);
 
 	/* too much crap in it? becomes kinda indistinct */
 	if (aspects >= 5) {
