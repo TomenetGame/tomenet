@@ -4025,6 +4025,9 @@ byte lookup_player_order(s32b id) {
 	/* Not found */
 	return -1L;
 }
+void set_player_order(s32b id, byte order) {
+	hash_table[(id & (NUM_HASH_ENTRIES - 1))]->order = order;
+}
 /*
  * Get the player's highest level.
  */
@@ -5642,3 +5645,39 @@ char acc_sum_houses(struct account *acc) {
 	return j;
 }
 
+/* Initialize character ordering for the whole account database,
+   for custom character order in account overview screen after login:
+   All so far 'unsorted' characters have order 0. Due to the divide&conquer nature of ang_sort (quicksort),
+   this means that the result will be partitioned and mixed, so the original ('natural') order is not preserved.
+   This is no biggie, but for extra player comfort, let's imprint the original order here in a first-time conversion: */
+void init_character_ordering(int Ind) {
+	int i, j, processed = 0, imprinted = 0, imprinted_accounts = 0;
+	int ids, *id_list, slot;
+	hash_entry *ptr, *ptr2;
+
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		/* Acquire this chain */
+		ptr = hash_table[i];
+		/* Check this chain */
+		while (ptr) {
+			processed++;
+			/* A character was found without order -> imprint the whole account it belongs to */
+			if (!ptr->order) {
+				imprinted_accounts++;
+				/* Treat all characters of this account */
+				ids = player_id_list(&id_list, ptr->account);
+				for (j = 0; j < ids; j++) {
+					if (lookup_player_order(id_list[j])) continue; /* Paranoia: Skip any that might already have been ordered */
+					imprinted++;
+					slot = (id_list[j] & (NUM_HASH_ENTRIES - 1));
+					ptr2 = hash_table[slot];
+					ptr2->order = j + 1; /* Natural order ;) */
+				}
+			}
+			/* Next entry in chain */
+			ptr = ptr->next;
+		}
+	}
+	s_printf("INIT_CHARACTER_ORDERING: Processed %d; imprinted %d; imprinted accounts %d.\n", processed, imprinted, imprinted_accounts);
+	if (Ind) msg_format(Ind, "Processed chars %d; imprinted chars %d; imprinted accounts %d.", processed, imprinted, imprinted_accounts);
+}

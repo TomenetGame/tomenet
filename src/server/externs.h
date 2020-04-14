@@ -1442,6 +1442,7 @@ extern u32b lookup_player_account(int id);
 extern byte lookup_player_admin(int id);
 extern byte lookup_player_winner(int id);
 extern byte lookup_player_order(s32b id);
+extern void set_player_order(s32b id, byte order);
 extern struct worldpos lookup_player_wpos(int id);
 extern void clockin(int Ind, int type);
 extern void clockin_id(s32b id, int type, int parm, u32b parm2);
@@ -1472,6 +1473,7 @@ extern bool lookup_similar_character(cptr name, cptr accname);
 extern char acc_sum_houses(struct account *acc);
 extern char acc_get_houses(const char *name);
 extern int acc_set_houses(const char *name, char houses);
+extern void init_character_ordering(int Ind);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);

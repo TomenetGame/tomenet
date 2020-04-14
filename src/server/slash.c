@@ -4487,6 +4487,55 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 			msg_print(Ind, " (15) light brown: \377Ulumber");
 			return;
 		}
+		else if (prefix(messagelc, "/setorder")) { /* Non-admin version - Set custom list position for this character in the account overview screen on login */
+			int max_cpa = MAX_CHARS_PER_ACCOUNT;
+			int *id_list, ids, cur_order, order, max_order = 0;
+
+#ifdef ALLOW_DED_IDDC_MODE
+			max_cpa += MAX_DED_IDDC_CHARS;
+#endif
+#ifdef ALLOW_DED_PVP_MODE
+			max_cpa += MAX_DED_PVP_CHARS;
+#endif
+			if (tk == 1 && token[1][0] == '?') {
+				msg_format(Ind, "This character's order weight is currently: %d", lookup_player_order(p_ptr->id));
+				return;
+			}
+
+			if (tk != 1 || k < 1 || k > max_cpa) {
+				msg_format(Ind, "Usage: /setorder 1..%d   - or -   /setorder ?", max_cpa);
+				msg_print(Ind, "Will set your current character's position in the Character Overview list.");
+				msg_print(Ind, "A character with a higher position will be listed below one with lower position.");
+				return;
+			}
+
+			/* Create an intuitive order from the positioning info:
+			   If we increase a character's position, all characters below us up to the new position will be slid up by one.
+			   If we decrease a character's position, all characters above us starting from the new position will be slid down by one. */
+			cur_order = lookup_player_order(p_ptr->id);
+			if (k == cur_order) {
+				msg_print(Ind, "This character is already at that order position.");
+				return;
+			}
+			ids = player_id_list(&id_list, p_ptr->account);
+			for (i = 0; i < ids; i++) {
+				if (id_list[i] == p_ptr->id) continue; /* Skip the character issuing this command */
+				order = lookup_player_order(id_list[i]);
+				if (k > cur_order) {
+					if (order > cur_order && order <= k) set_player_order(id_list[i], order - 1);
+					/* Remember the order of the character currently at the bottom the list */
+					if (order - 1 > max_order) max_order = order - 1;
+				} else {
+					if (order < cur_order && order >= k) set_player_order(id_list[i], order + 1);
+				}
+			}
+			/* Prevent creating holes in the sequential ordering by choosing too big an order number */
+			if (k > cur_order && k > max_order + 1) k = max_order + 1;
+			/* Insert us at the desired position */
+			set_player_order(p_ptr->id, k);
+			msg_format(Ind, "This character's ordering weight has been set to %d.", k);
+			return;
+		}
 
 
 		/*
@@ -4509,7 +4558,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 			if (prefix(messagelc, "/val")) {
 				if(!tk) return;
 				/* added checking for account existence - mikaelh */
-				switch(validate(message3)) {
+				switch (validate(message3)) {
 				case -1: msg_format(Ind, "\377GValidating %s", message3);
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
@@ -4521,7 +4570,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 			if (prefix(messagelc, "/inval")){
 				if(!tk) return;
 				/* added checking for account existence - mikaelh */
-				switch(invalidate(message3, FALSE)) {
+				switch (invalidate(message3, FALSE)) {
 				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
 					break;
 				case 0: msg_format(Ind, "\377rAccount %s not found", message3);
@@ -10468,47 +10517,12 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				return;
 			}
 #endif
-			else if (prefix(messagelc, "/setorder")) { /* Set custom list position for this character in the account overview screen on login */
-				int slot = (p_ptr->id & (NUM_HASH_ENTRIES - 1));
-				hash_entry *ptr = hash_table[slot];
-
-				ptr->order = k;
+			else if (prefix(messagelc, "/setaorder")) { /* Set custom list position for this character in the account overview screen on login (see /setorder)*/
+				set_player_order(p_ptr->id, k);
 				return;
 			}
 			else if (prefix(messagelc, "/initorder")) { /* Initialize character ordering for the whole account database */
-				/* For custom character order in account overview screen after login:
-				   All so far 'unsorted' characters have order 0. Due to the divide&conquer nature of ang_sort (quicksort),
-				   this means that the result will be partitioned and mixed, so the original ('natural') order is not preserved.
-				   This is no biggie, but for extra player comfort, let's imprint the original order here in a first-time conversion: */
-
-				int processed = 0, imprinted = 0, imprinted_accounts = 0;
-				int ids, *id_list, slot;
-				hash_entry *ptr, *ptr2;
-
-				for (i = 0; i < NUM_HASH_ENTRIES; i++) {
-					/* Acquire this chain */
-					ptr = hash_table[i];
-					/* Check this chain */
-					while (ptr) {
-						processed++;
-						/* A character was found without order -> imprint the whole account it belongs to */
-						if (!ptr->order) {
-							imprinted_accounts++;
-							/* Treat all characters of this account */
-							ids = player_id_list(&id_list, ptr->account);
-							for (j = 0; j < ids; j++) {
-								if (lookup_player_order(id_list[j])) continue; /* Paranoia: Skip any that might already have been ordered */
-								imprinted++;
-								slot = (id_list[j] & (NUM_HASH_ENTRIES - 1));
-								ptr2 = hash_table[slot];
-								ptr2->order = j + 1; /* Natural order ;) */
-							}
-						}
-						/* Next entry in chain */
-						ptr = ptr->next;
-					}
-				}
-				msg_format(Ind, "Processed chars %d; imprinted accounts %d; imprinted chars %d.", processed, imprinted_accounts, imprinted);
+				init_character_ordering(Ind);
 				return;
 			}
 		}

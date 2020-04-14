@@ -2628,16 +2628,39 @@ static void player_setup(int Ind, bool new) {
 		time_t ttime;
 
 		int *id_list, ids, max_order = 0, order;
+#if 1
+		int j, max_cpa = MAX_CHARS_PER_ACCOUNT;
+#endif
 
 		/* Prepare to add the new character to the database */
 		w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 		/* For custom character ordering in account overview screen: Add him to the bottom of the character list: */
 		ids = player_id_list(&id_list, p_ptr->account);
+#if 0 /* Just always add him to the bottom */
 		for (i = 0; i < ids; i++) {
 			order = lookup_player_order(id_list[i]);
+			/* Append to bottom.. */
 			if (order > max_order) max_order = order;
 		}
 		max_order++; /* Add the new character below all others in this account's character list  */
+#else /* If there is a hole in the order, insert him there. Otherwise add him to the bottom. */
+ #ifdef ALLOW_DED_IDDC_MODE
+		max_cpa += MAX_DED_IDDC_CHARS;
+ #endif
+ #ifdef ALLOW_DED_PVP_MODE
+		max_cpa += MAX_DED_PVP_CHARS;
+ #endif
+		for (j = 1; j <= max_cpa; j++) {
+			for (i = 0; i < ids; i++) {
+				order = lookup_player_order(id_list[i]);
+				if (order == j) break;
+			}
+			if (i != ids) continue;
+			/* Insert at hole / append at bottom of the list if no hole.. */
+			max_order = j;
+			break;
+		}
+#endif
 		/* Add the new character to the daabase */
 		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 1, 0, 0, 0, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, p_ptr->houses_owned, w, max_order);
 	} else {
@@ -2648,7 +2671,7 @@ static void player_setup(int Ind, bool new) {
 		byte w;
 		/* Verify mode */
 		w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
-		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, (char)p_ptr->houses_owned, w, 0);
+		verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, p_ptr->party, p_ptr->guild, p_ptr->guild_flags, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, (char)p_ptr->houses_owned, w, 100);
 	}
 
 	/* Set his "current activities" variables */
