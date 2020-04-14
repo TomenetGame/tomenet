@@ -17620,6 +17620,10 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Required skill level for first spell level: 15.
                     This spell can be used even while blind.
 
+    Recognition     Identifies an item.
+                    Required skill level for first spell level: 15.
+                    Shared spell (see above): Attunement / Mental Intrusion.
+
     Accelerate Nerves
                     Speeds you up.
                     Required skill level for first spell level: 20.
@@ -17628,10 +17632,6 @@ In general, mindcraft schools are less affected by anti-magic fields.)
     Telepathy       Senses the minds of creatures.
                     Required skill level for first spell level: 20.
                     This spell can be used even while blind.
-
-    Recognition     Identifies an item.
-                    Required skill level for first spell level: 20.
-                    Shared spell (see above): Attunement / Mental Intrusion.
 
     Stabilize Thoughts
                     Cures some insanity and removes effects:   (auto-project)
