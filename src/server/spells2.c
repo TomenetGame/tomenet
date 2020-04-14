@@ -9552,6 +9552,7 @@ bool do_mstopcharm(int Ind) {
 		m_ptr->charmedignore = 0;
 		notice = TRUE;
 	}
+	if (notice) msg_print(Ind, "Your charm spell breaks!");
 	return notice;
 }
 
@@ -9563,7 +9564,7 @@ bool do_mstopcharm(int Ind) {
 bool test_charmedignore(int Ind, s32b charmer_id, monster_type *m_ptr, monster_race *r_ptr) {
 	int Ind_charmer = find_player(charmer_id);
 	player_type *q_ptr;
-	int chance = 1, cost = 1;
+	int diff = 1;
 
 	if (!Ind_charmer) {
 		/* Somehow the charmer has vanished - break the spell! */
@@ -9578,36 +9579,33 @@ bool test_charmedignore(int Ind, s32b charmer_id, monster_type *m_ptr, monster_r
 	    (!player_in_party(q_ptr->party, Ind)))
 		return FALSE;
 
-	/* some monsters show resistance spikes */
-	if ((r_ptr->flags2 & RF2_SMART) ||
-	    (r_ptr->flags3 & RF3_NO_CONF) ||
-	    (r_ptr->flags1 & RF1_UNIQUE) ||
-	    (r_ptr->flags2 & RF2_POWERFUL)) {
-		chance++;
-		cost++;
-	}
-
-	/* especially costly? */
-	if (r_ptr->level > (q_ptr->lev * 7) / 5)
-		cost++;
+	/* some monsters cost more to maintain */
+	if (r_ptr->flags2 & RF2_SMART) diff++;
+	if (r_ptr->flags3 & RF3_NO_CONF) diff++;
+	if (r_ptr->flags1 & RF1_UNIQUE) diff++;
+	if (r_ptr->flags2 & RF2_POWERFUL) diff++;
+	if (r_ptr->level > (q_ptr->lev * 7) / 5) diff += (r_ptr->level - q_ptr->lev) / 20;
 
 	/* spell continuously burns mana! */
-	if (turn % (cfg.fps / 10) == 0) {
+	//if (turn % (cfg.fps / 10) == 0) {
+	if (!rand_int(6)) {
+		q_ptr->csp -= diff;
+		if (q_ptr->csp < 0) q_ptr->csp = 0;
 		if (q_ptr->csp < 1) {
 			do_mstopcharm(Ind_charmer);
 			return FALSE;
 		}
-		q_ptr->csp -= 1;
 		q_ptr->redraw |= PR_MANA;
 	}
 
-	/* the charm-caster himself is pretty safe */
-	if (Ind == Ind_charmer && magik(100 - chance))
-		return TRUE;
-	/* in same party?= slightly reduced effect >:) */
-	if (magik(99 - 2 * chance))
-		return TRUE;
-
+	if (Ind == Ind_charmer) {
+		/* the charm-caster himself is pretty safe */
+		if (magik(100 - diff)) return TRUE;
+	} else {
+		/* in same party? slightly reduced effect >:) */
+		if (magik(100 - 2 * diff)) return TRUE;
+	}
+	/* Oops, monster's own will flares up for a moment! */
 	return FALSE;
 }
 

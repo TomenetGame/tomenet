@@ -5879,21 +5879,22 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Mindcrafter's charm spell, makes monsters ignore you and your teammates (mostly..) */
 	case GF_CHARMIGNORE:
 		{
-			int res = 1;
+			int diff = 1;
 
 			no_dam = TRUE;
 
-			/* skip sleeping targets */
+			/* Skip sleeping targets */
 			if (m_ptr->csleep) break;
-			/* already charmed? - no effect then */
+			/* Already charmed? - no effect then */
 			if (m_ptr->charmedignore) break;
 
-			/* don't affect hurt monsters! */
+			/* Don't affect hurt monsters! */
 			if (m_ptr->hp < m_ptr->maxhp) {
 				note = " seems too agitated to be charmed";
 				break;
 			}
-			/* not successfully charmed? */
+
+			/* Not successfully charmed? */
 			if ((r_ptr->flags9 & RF9_IM_PSI) ||
 			    (r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags3 & RF3_UNDEAD) ||
@@ -5902,18 +5903,22 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " is unaffected";
 				break;
 			}
-			if (r_ptr->flags2 & RF2_SMART) res <<= 1;
-			if (r_ptr->flags3 & RF3_NO_CONF) res <<= 1;
-			if (r_ptr->flags1 & RF1_UNIQUE) res <<= 1;
-			if (r_ptr->flags2 & RF2_POWERFUL) res <<= 1;
-			if (magik(100 - 100 / res)) {
+			/* More difficult to charm? */
+			if (r_ptr->flags2 & RF2_SMART) diff++;
+			if (r_ptr->flags3 & RF3_NO_CONF) diff++;
+			if (r_ptr->flags1 & RF1_UNIQUE) diff++;
+			if (r_ptr->flags2 & RF2_POWERFUL) diff++;
+			if (r_ptr->level > (p_ptr->lev * 7) / 5) diff += (r_ptr->level - p_ptr->lev) / 20;
+
+			/* Monster resists the spell? */
+			if (magik(3 + diff * 2)) {
 				note = " resists the effect";
 				break;
 			}
 
-			/* remember who charmed us */
+			/* Remember who charmed us */
 			m_ptr->charmedignore = p_ptr->id;
-			/* count our victims, just for optimization atm */
+			/* Count our victims, just for optimization atm */
 			p_ptr->mcharming++;
 
 			note = " seems to forget you were an enemy";
