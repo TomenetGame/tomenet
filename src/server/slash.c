@@ -4497,11 +4497,6 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 #ifdef ALLOW_DED_PVP_MODE
 			max_cpa += MAX_DED_PVP_CHARS;
 #endif
-			if (tk == 1 && token[1][0] == '?') {
-				msg_format(Ind, "This character's order weight is currently: %d", lookup_player_order(p_ptr->id));
-				return;
-			}
-
 			ids = player_id_list(&id_list, p_ptr->account);
 			if (!ids) { /* paranoia */
 				msg_print(Ind, "ERROR.");
@@ -4509,6 +4504,11 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 			}
 			/* Let us specify an order between 1..n where n is our number of existing characters */
 			if (ids < max_cpa) max_cpa = ids;
+
+			if (tk == 1 && token[1][0] == '?') {
+				msg_format(Ind, "This character's order weight is currently: %d (of 1..%d)", lookup_player_order(p_ptr->id), max_cpa);
+				return;
+			}
 
 			if (tk != 1 || k < 1 || k > max_cpa) {
 				msg_format(Ind, "Usage 1:   /setorder 1..%d", max_cpa);
@@ -10532,6 +10532,17 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 			}
 			else if (prefix(messagelc, "/initorder")) { /* Initialize character ordering for the whole account database */
 				init_character_ordering(Ind);
+				return;
+			}
+			else if (prefix(messagelc, "/accountorder")) { /* Initialize character ordering for the whole account database */
+				struct account acc;
+
+				if (!GetAccount(&acc, message3, NULL, FALSE)) {
+					msg_print(Ind, "\377oNo account of that name exists.");
+					return;
+				}
+
+				init_account_order(Ind, acc.id);
 				return;
 			}
 			else if (prefix(messagelc, "/zeroorder")) { /* Reset character ordering for the whole account database to zero (unordered) */

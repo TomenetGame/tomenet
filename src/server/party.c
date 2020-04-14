@@ -5667,7 +5667,8 @@ void init_character_ordering(int Ind) {
 				/* Treat all characters of this account */
 				ids = player_id_list(&id_list, ptr->account);
 				for (j = 0; j < ids; j++) {
-					if (lookup_player_order(id_list[j])) continue; /* Paranoia: Skip any that might already have been ordered */
+					//if (lookup_player_order(id_list[j])) continue; /* Paranoia: Skip any that might already have been ordered */
+					/* Imprint all character on this account, even if some were already imprinted, to keep the sequence flawless */
 					imprinted++;
 					slot = (id_list[j] & (NUM_HASH_ENTRIES - 1));
 					ptr2 = hash_table[slot];
@@ -5680,6 +5681,49 @@ void init_character_ordering(int Ind) {
 	}
 	s_printf("INIT_CHARACTER_ORDERING: Processed %d; imprinted %d; imprinted accounts %d.\n", processed, imprinted, imprinted_accounts);
 	if (Ind) msg_format(Ind, "Processed chars %d; imprinted chars %d; imprinted accounts %d.", processed, imprinted, imprinted_accounts);
+}
+/* Like init_character_ordering(), but only for one specified account */
+void init_account_order(int Ind, s32b acc_id) {
+	int i, j, processed = 0, imprinted = 0;
+	int ids, *id_list, slot;
+	hash_entry *ptr, *ptr2;
+	char acc_name[ACCOUNTNAME_LEN];
+	bool found = FALSE;
+
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		/* Acquire this chain */
+		ptr = hash_table[i];
+		/* Check this chain */
+		while (ptr) {
+			if (ptr->account != acc_id) {
+				ptr = ptr->next;
+				continue;
+			}
+			if (!found) {
+				strcpy(acc_name, ptr->accountname);
+				found = TRUE;
+			}
+			/* Check this character */
+			processed++;
+			/* A character was found without order -> imprint the whole account it belongs to */
+			if (!ptr->order) {
+				/* Treat all characters of this account */
+				ids = player_id_list(&id_list, ptr->account);
+				for (j = 0; j < ids; j++) {
+					//if (lookup_player_order(id_list[j])) continue; /* Paranoia: Skip any that might already have been ordered */
+					/* Imprint all character on this account, even if some were already imprinted, to keep the sequence flawless */
+					imprinted++;
+					slot = (id_list[j] & (NUM_HASH_ENTRIES - 1));
+					ptr2 = hash_table[slot];
+					ptr2->order = j + 1; /* Natural order ;) */
+				}
+			}
+			/* Next entry in chain */
+			ptr = ptr->next;
+		}
+	}
+	s_printf("INIT_ACCOUNT_ORDER: '%s', processed %d; imprinted %d.\n", acc_name, processed, imprinted);
+	if (Ind) msg_format(Ind, "Account '%s': Processed chars %d; imprinted chars %d.", acc_name, processed, imprinted);
 }
 /* Resets all character ordering to zero aka unordered.
    While this is the 'natural' order, note that in the Character Overview they will still show up in

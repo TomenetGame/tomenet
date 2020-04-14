@@ -1475,6 +1475,7 @@ extern char acc_get_houses(const char *name);
 extern int acc_set_houses(const char *name, char houses);
 extern void init_character_ordering(int Ind);
 extern void zero_character_ordering(int Ind);
+extern void init_account_order(int Ind, s32b acc_id);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);

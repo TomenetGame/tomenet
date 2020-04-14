@@ -3507,11 +3507,22 @@ errr rd_server_savefile() {
 			if (!s_older_than(4, 7, 8)) rd_byte(&order);
 			else order = 0;
 
+#if 0 /* moved below for efficiency, this is processing the same account multiple times. See init_character_ordering(0). */
+			/* Instead of keeping unordered characters and relying on /initorder admin command, we
+			   automatically create order, by copying the 'natural' order (order in the database, ie player_id_list) */
+			if (!order) init_account_order(0, acct);
+#endif
+
 			/* Store the player name */
 			add_player_name(name, tmp32s, acct, race, class, mode, level, max_plv, party, guild, guild_flags, xorder, laston, admin, wpos, (char)houses, winner, order);
 		}
 		s_printf("Read %d player name records.\n", tmp32u);
 	}
+
+#if 1
+	/* (Re)Set natural order for all accounts that still have at least one unordered character. */
+	init_character_ordering(0);
+#endif
 
 	rd_u32b(&seed_flavor);
 	rd_u32b(&seed_town);
