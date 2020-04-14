@@ -3372,6 +3372,10 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
 
+#ifdef ENABLE_EXCAVATION
+		if (o_ptr->tval == TV_CHARGE) s_printf("CHARGE: Type %d disarmed on %d,%d,%d at %d,%d.\n", o_ptr->sval, wpos->wx, wpos->wy, wpos->wz, o_ptr->ix, 255 - o_ptr->iy);
+#endif
+
 		/* Acquire next object */
 		next_o_idx = o_ptr->next_o_idx;
 
