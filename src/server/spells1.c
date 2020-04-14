@@ -5626,8 +5626,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Assume a default death */
 	cptr note_dies = " dies";
-	bool quiet; /* no message output */
-	bool quiet_dam = FALSE; /* no damage message output */
+	bool quiet; /* no message output at all, monster takes no damage from players either and won't drop anything on death */
+	bool quiet_dam = FALSE; /* no damage message output, no pain message */
+	bool no_dam = FALSE; /* only use when no damage is applied: don't call mon_take_hit() so the monster isn't woken up, no pain message/damage message since no damage is applied (monster can theoretically die though) */
 
 	int plev = 25; /* replacement dummy for when a monster isn't
 			  affected by a real player but by eg a trap */
@@ -5704,8 +5705,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	if (!quiet) {
 		seen = p_ptr->mon_vis[c_ptr->m_idx];
 		/* Cannot 'hear' if too far */
-		if (!seen && distance(p_ptr->py, p_ptr->px, y, x) > MAX_SIGHT)
-			quiet = TRUE;
+		if (!seen && distance(p_ptr->py, p_ptr->px, y, x) > MAX_SIGHT) quiet = TRUE;
 	}
 	else seen = FALSE;
 
@@ -5770,6 +5770,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	switch (typ) {
 	/* psionic mana drain */
 	case GF_SILENCE:
+		no_dam = TRUE;
+
 		/* hacks: extract power (probability for succeeding) */
 		i = dam % 100; /* 1..51 (school 10..50) */
 		k = dam - (i * 100);
@@ -5802,8 +5804,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			m_ptr->silenced = k;
 			note = " loses psychic energy";
 		}
-		/* no real HP damage */
-		dam = 0; quiet_dam = TRUE;
 		break;
 	/* PSIONICS */
 	case GF_PSI:
@@ -5815,8 +5815,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    (r_ptr->flags3 & RF3_NONLIVING))
 		{
 			note = " is unaffected";
-			dam = 0;
-			quiet_dam = TRUE;
+			no_dam = TRUE;
 			break;
 		} else if ((r_ptr->flags9 & RF9_RES_PSI) && rand_int(3)) {
 			resist = TRUE;
@@ -5882,31 +5881,25 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		{
 			int res = 1;
 
-			dam = 0;
-			quiet_dam = TRUE;
-			/* Since we use 'quiet' to suppress that this spell 'hits' the monster and
-			   breaks charm, we won't get a message output either. So we have to do it all here.. */
-			quiet = TRUE;
+			no_dam = TRUE;
 
-			/* don't affect sleeping targets maybe */
+			/* skip sleeping targets */
 			if (m_ptr->csleep) break;
-
 			/* already charmed? - no effect then */
 			if (m_ptr->charmedignore) break;
 
 			/* don't affect hurt monsters! */
 			if (m_ptr->hp < m_ptr->maxhp) {
-				msg_format(Ind, "%^s seems too agitated to be charmed.", m_name);
+				note = " seems too agitated to be charmed";
 				break;
 			}
-
 			/* not successfully charmed? */
 			if ((r_ptr->flags9 & RF9_IM_PSI) ||
 			    (r_ptr->flags1 & RF1_UNIQUE) ||
 			    (r_ptr->flags3 & RF3_UNDEAD) ||
 			    (r_ptr->flags2 & RF2_EMPTY_MIND) ||
 			    (r_ptr->flags3 & RF3_NONLIVING)) {
-				msg_format(Ind, "%^s is unaffected.", m_name);
+				note = " is unaffected";
 				break;
 			}
 			if (r_ptr->flags2 & RF2_SMART) res <<= 1;
@@ -5914,7 +5907,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (r_ptr->flags1 & RF1_UNIQUE) res <<= 1;
 			if (r_ptr->flags2 & RF2_POWERFUL) res <<= 1;
 			if (magik(100 - 100 / res)) {
-				msg_format(Ind, "%^s resists the effect.", m_name);
+				note = " resists the effect";
 				break;
 			}
 
@@ -5923,13 +5916,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* count our victims, just for optimization atm */
 			p_ptr->mcharming++;
 
-			msg_format(Ind, "%^s seems to forget you were an enemy.", m_name);
+			note = " seems to forget you were an enemy";
 			break;
 		}
 
 	/* Earthquake the area */
 	case GF_EARTHQUAKE:
-		dam = 0;
+		no_dam = TRUE; //lul
 		break;
 
 	/* Magic Missile -- pure damage */
@@ -6732,8 +6725,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 			note = " is unaffected";
 			obvious = FALSE;
-			dam = 0;
-			quiet_dam = TRUE;
+			no_dam = TRUE;
 			if (!quiet) p_ptr->ret_dam = 0;
 		} else if (r_ptr->flags1 & RF1_UNIQUE) {
 #ifdef OLD_MONSTER_LORE
@@ -6753,7 +6745,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		*/
 		if (priest_spell) {
 			//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
-			if (dam && !quiet) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
+			if (!no_dam && !quiet) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
 			p_ptr->ret_dam = 0;
 		}
 
@@ -6782,6 +6774,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Polymorph monster (Use "dam" as "power") */
 	case GF_OLD_POLY:
+		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
 		/* Attempt to polymorph (see below) */
@@ -6794,15 +6787,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			do_poly = FALSE;
 			obvious = FALSE;
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
-
 		break;
 
 	/* Clone monsters (Ignore "dam") */
 	case GF_OLD_CLONE:
+		no_dam = TRUE;
 		if (r_ptr->flags7 & RF7_NO_DEATH) { /* don't haste these.. */
 			note = " is unaffected";
 		} else {
@@ -6817,15 +6806,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Attempt to clone. */
 			if (multiply_monster(c_ptr->m_idx)) note = " spawns";
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
-
 		break;
 
 	/* Heal Monster (use "dam" as amount of healing) */
 	case GF_OLD_HEAL:
+		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
 		/* Wake up */
@@ -6859,10 +6844,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Heroism/Berserk Strength for monsters */
@@ -6882,28 +6863,22 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Message */
 		note = " looks healthier";
 
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
-
 		/* No 'break;' here =) */
 
 	/* Remove monster's fear */
 	case GF_REMFEAR:
+		no_dam = TRUE;
 		if (m_ptr->monfear) {
 			m_ptr->monfear = 0;
 			/* Message */
 			note = " becomes courageous again";
 			if (seen) obvious = TRUE;
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Speed Monster (Ignore "dam") */
 	case GF_OLD_SPEED:
+		no_dam = TRUE;
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->mspeed >= 150) {
 			note = " is unaffected";
 		} else {
@@ -6913,15 +6888,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			m_ptr->mspeed += 10;
 			note = " starts moving faster";
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
-
 
 	/* Slow Monster (Use "dam" as "power") */
 	case GF_OLD_SLOW: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_CURSE
+		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
 		/* Powerful monsters can resist */
@@ -6955,21 +6926,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note = " is unaffected";
 			obvious = FALSE;
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Sleep (Use "dam" as "power") */
 	case GF_OLD_SLEEP:
+		no_dam = TRUE;
+
 #ifdef ENABLE_OCCULT
 		/* hack for Occult school's "Trance" spell */
 		if (dam & 0x400) {
 			/* fails? (not a ghost, spirit, elemental or vortex) */
 			if (r_ptr->d_char != 'G' && r_ptr->d_char != 'E' && r_ptr->d_char != 'X' && r_ptr->d_char != 'v') {
-				dam = 0;
-				quiet_dam = TRUE;
 				quiet = TRUE;
 				break;
 			}
@@ -6985,9 +6952,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " falls asleep";
 				do_sleep = GF_OLD_SLEEP_DUR;
 			}
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
 			break;
 		}
 #endif
@@ -7016,14 +6980,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note = " falls asleep";
 			do_sleep = GF_OLD_SLEEP_DUR;
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Confusion (Use "dam" as "power") */
 	case GF_OLD_CONF:
+		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
 		/* Get confused later */
@@ -7051,13 +7012,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			/* Resist */
 			do_conf = 0;
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	case GF_TERROR:
+		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
 		/* Apply some fear */
@@ -7080,22 +7038,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (r_ptr->flags3 & RF3_NO_CONF) do_conf = 0;
 			if (r_ptr->flags3 & RF3_NO_FEAR) do_fear = 0;
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Confusion (Use "dam" as "power") */
 	case GF_BLIND:
+		no_dam = TRUE;
 		if (seen) obvious = TRUE;
-
 		/* Get blinded later */
 		do_blind = dam;
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* The new cursing spell - basically slow/blind/conf all in one. the_sandman */
@@ -7118,8 +7068,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			} else {
 				note = " is unaffected";
 			}
-			dam = 0;
-			quiet_dam = TRUE;
+			no_dam = TRUE;
 			break;
 		} else if (curse == 2) { //Conf
 			/* Get confused later */
@@ -7155,8 +7104,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			break;
 		} else { //Blind
 			do_blind = dam;
-			dam = 0;
-			quiet_dam = TRUE;
+			no_dam = TRUE;
 			/* No obvious effect */
 			obvious = FALSE;
 		}
@@ -7172,7 +7120,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note = " crackles in the light";
 			note_dies = " evaporates into thin air";
 		} else {
-			dam = 0;
+			no_dam = TRUE;
 			quiet = TRUE;
 		}
 		break;
@@ -7295,7 +7243,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Normally no damage */
 		else {
 			/* No damage */
-			dam = 0;
+			no_dam = TRUE;
 			quiet = TRUE;
 		}
 		break;
@@ -7345,8 +7293,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		//TODO: Light Hounds could get damaged. Currently, all GF_DARK_WEAK causes have been changed to do GF_DARK though, anyway.
-		dam = 0;
-		quiet_dam = TRUE;
+		no_dam = TRUE;
 		break;
 
 	case GF_DARK:
@@ -7387,13 +7334,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Usually, ignore the effects */
 		else {
 			/* No damage */
-			dam = 0;
+			no_dam = TRUE;
 			quiet = TRUE;
 		}
 		break;
 
 	/* Teleport undead (Use "dam" as "power") -- unused */
 	case GF_AWAY_UNDEAD:
+		no_dam = TRUE;
 		/* Only affect undead */
 		if (r_ptr->flags3 & (RF3_UNDEAD)) {
 			bool resists_tele = FALSE;
@@ -7418,14 +7366,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				do_dist = dam;
 			}
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Teleport evil (Use "dam" as "power") -- unused */
 	case GF_AWAY_EVIL:
+		no_dam = TRUE;
 		/* Only affect evil */
 		if (r_ptr->flags3 & (RF3_EVIL)) {
 			bool resists_tele = FALSE;
@@ -7450,10 +7395,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				do_dist = dam;
 			}
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Teleport monster (Use "dam" as "power") */
@@ -7461,6 +7402,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		{
 			bool resists_tele = FALSE;
 			//dun_level *l_ptr = getfloor(wpos);
+
+			no_dam = TRUE;
 
 			if ((r_ptr->flags9 & RF9_IM_TELE) ||
 			    (r_ptr->flags3 & (RF3_RES_TELE)) ||
@@ -7482,14 +7425,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				do_dist = dam;
 			}
 
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
+			no_dam = TRUE;
 			break;
 		}
 
 	/* Turn undead (Use "dam" as "power") -- overrides NO_FEAR, UNIQUE -- unused */
 	case GF_TURN_UNDEAD:
+		no_dam = TRUE;
+
 		/* Only affect undead */
 		if (r_ptr->flags3 & RF3_UNDEAD) {
 #ifdef OLD_MONSTER_LORE
@@ -7509,14 +7452,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				do_fear = 0;
 			}
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Turn evil (Use "dam" as "power") -- overrides NO_FEAR -- unused */
 	case GF_TURN_EVIL:
+		no_dam = TRUE;
+
 		/* Only affect evil */
 		if (r_ptr->flags3 & RF3_EVIL) {
 #ifdef OLD_MONSTER_LORE
@@ -7542,14 +7483,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				do_fear = 0;
 			}
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Turn monster (Use "dam" as "power") */
 	case GF_TURN_ALL:
+		no_dam = TRUE;
 		/* Obvious */
 		if (seen) obvious = TRUE;
 
@@ -7568,14 +7506,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			obvious = FALSE;
 			do_fear = 0;
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Dispel undead */
 	case GF_DISP_UNDEAD:
+		no_dam = TRUE;
 		/* Only affect undead */
 		if (r_ptr->flags3 & RF3_UNDEAD) {
 #ifdef OLD_MONSTER_LORE
@@ -7592,9 +7527,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 		/* Ignore other monsters */
 		else {
-			/* No damage */
-			dam = 0;
 			quiet = TRUE;
+			no_dam = TRUE;
 		}
 		break;
 
@@ -7616,8 +7550,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 		/* Ignore other monsters */
 		else {
-			/* No damage */
-			dam = 0;
+			no_dam = TRUE;
 			quiet = TRUE;
 		}
 		break;
@@ -7639,8 +7572,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 		/* Ignore other monsters */
 		else {
-			/* No damage */
-			dam = 0;
+			no_dam = TRUE;
 			quiet = TRUE;
 		}
 		break;
@@ -7661,7 +7593,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		if (r_ptr->d_char == 'A' || (r_ptr->flags8 & RF8_NO_CUT)) {
 			note = " is unaffected";
-			dam = 0;
+			no_dam = TRUE;
 		} else {
 			int chance = 100;
 
@@ -7670,7 +7602,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (r_ptr->flags3 & RF3_GOOD) chance >>= 1; //pseudo-savingthrow especially for 'good' monsters
 			if (rand_int(chance) < r_ptr->level) {
 				note = " resists the effect";
-				dam = 0;
+				no_dam = TRUE;
 			}
 		}
 		break;
@@ -7730,10 +7662,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note = " is paralyzed";
 			do_sleep = 3 + rand_int(3) + dam / 15;
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
+		no_dam = TRUE;
 		break;
 	case GF_DOMINATE:
 		if (!quiet) {
@@ -7743,8 +7672,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				m_ptr->owner = p_ptr->id;
 			note = " starts following you";
 		}
-		dam = 0;
-		quiet_dam = TRUE;
+		no_dam = TRUE;
 		break;
 
 	/* Teleport monster TO */
@@ -7794,10 +7722,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				/* Hack -- get new grid */
 				c_ptr = &zcave[y][x];
 			}
-
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
+			no_dam = TRUE;
 			break;
 		}
 
@@ -7822,19 +7747,18 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_STOP: /* prevent monster from moving */
 		dam = (dam - r_ptr->level - rand_int(10)) / 6;
 		if (dam <= 0) {
-			dam = 0;
 			//note: we don't differentiate between 'unaffected' and 'resists' here, a dilemma added by the random factor above.
 			note = " is unaffected";
 		} else {
 			note = " is frozen to the ground";
 			m_ptr->no_move = dam;
-			dam = 0;
 		}
-		quiet_dam = TRUE;
+		no_dam = TRUE;
 		break;
 
 	/* Sleep (Use "dam" as "power") */
 	case GF_STASIS:
+		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
 		/* Hack: Subjugation (Unlife) */
@@ -7855,10 +7779,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				note = " has been subjugated";
 				do_sleep = dam;
 			}
-
-			/* No "real" damage */
-			dam = 0;
-			quiet_dam = TRUE;
 			break;
 		}
 
@@ -7873,16 +7793,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note = " is suspended";
 			do_sleep = GF_OLD_SLEEP_DUR;
 		}
-
-		/* No "real" damage */
-		dam = 0;
-		quiet_dam = TRUE;
 		break;
 
 	/* Decrease strength */
 	case GF_DEC_STR:
 		/* hack */
-		dam = 0;
+		no_dam = TRUE;
 
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
@@ -7891,6 +7807,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
+			dam = 0;
 			for (i = 0; i < 4; i++) {
 				/* prevent div0 if monster has no damaging attack */
 				if (!m_ptr->blow[i].org_d_dice) continue;
@@ -7918,13 +7835,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears weaker!");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		}
-
-		dam = 0;
 		quiet = TRUE;
 		break;
 
 	/* Decrease dexterity */
 	case GF_DEC_DEX:
+		no_dam = TRUE;
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
@@ -7943,12 +7859,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		}
-		dam = 0;
 		quiet = TRUE;
 		break;
 
 	/* Decrease dexterity */
 	case GF_DEC_CON:
+		no_dam = TRUE;
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
@@ -7967,12 +7883,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 			}
 		}
-		dam = 0;
 		quiet = TRUE;
 		break;
 
 	/* Restore strength */
 	case GF_RES_STR:
+		no_dam = TRUE;
 		dam = 0; /* hack :) */
 		for (i = 0; i < 4; i++) {
 		/*	  if (m_ptr->blow[i].d_dice < r_ptr->blow[i].d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice;
@@ -7987,7 +7903,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 		}
 		if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak.");
-		dam = 0;
 		quiet = TRUE;
 		break;
 
@@ -7999,7 +7914,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			m_ptr->ac = m_ptr->org_ac;
 			msg_print_near_monster(c_ptr->m_idx, "appears less clumsy.");
 		}
-		dam = 0;
+		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
@@ -8012,7 +7927,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			m_ptr->maxhp = m_ptr->org_maxhp;
 			msg_print_near_monster(c_ptr->m_idx, "appears less sick.");
 		}
-		dam = 0;
+		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
@@ -8046,8 +7961,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 			}
 		}
-
-		dam = 0;
+		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
@@ -8063,7 +7977,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		}
-		dam = 0;
+		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
@@ -8084,8 +7998,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		}
-
-		dam = 0;
+		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
@@ -8139,8 +8052,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears more powerful!");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		}
-
-		dam = 0;
+		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
@@ -8212,8 +8124,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less powerful!");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		}
-
-		dam = 0;
+		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
@@ -8227,11 +8138,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			m_ptr->exp = MONSTER_EXP(m_ptr->level + dam);
 			monster_check_experience(c_ptr->m_idx, FALSE);
 		}
-		dam = 0;
+		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
 	case GF_CURING:
+		no_dam = TRUE;
 		/* hack - avoid crazy message spam under special circumstances */
 		dam = 0;
 
@@ -8274,16 +8186,19 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		if (dam) msg_print_near_monster(c_ptr->m_idx, "appears cured.");
 
-		dam = 0;
 		quiet = TRUE;
 		break;
 
 	/* Default */
 	default:
 		/* No damage */
+		no_dam = TRUE;
+		break;
+	}
+
+	if (no_dam) {
 		dam = 0;
 		quiet_dam = TRUE;
-		break;
 	}
 
 	/* Do not affect invincible questors with status effects, especially not polymorphing */
@@ -8305,14 +8220,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* No polymorphing in Bree - mikaelh */
 	if (in_bree(wpos)) do_poly = FALSE;
 
-
 	/* "Unique" monsters can only be "killed" by the player */
 	if (r_ptr->flags1 & RF1_UNIQUE) {
 		/* Uniques may only be killed by the player */
 		if ((who > 0) && (dam > m_ptr->hp)) dam = m_ptr->hp;
 	}
-
-
 	/* Check for death */
 	if ((dam > m_ptr->hp) &&
 	    /* Some mosnters are immune to death */
@@ -8320,7 +8232,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Extract method of death */
 		note = note_dies;
 	}
-
 
 	/* hack: No polymorphing in IDDC, because live-spawning isn't possible.
 	   So polymorphing would just remove the monsters completely everytime. */
@@ -8346,6 +8257,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			note = " changes";
 
 			/* Turn off the damage */
+			no_dam = TRUE;
 			dam = 0;
 			quiet_dam = TRUE;
 
@@ -8407,6 +8319,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Obvious */
 		if (seen) obvious = TRUE;
 
+		/* wake up o_O */
+		m_ptr->csleep = 0;
+		do_fear = FALSE;
+
 #if 0
 		/* Get stunned */
 		if (m_ptr->stunned) {
@@ -8447,12 +8363,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Already partially confused */
 		if (m_ptr->confused) {
-			if (!do_sleep) note = " looks more confused";
+			if (!do_sleep && !m_ptr->csleep) note = " looks more confused";
 			i = m_ptr->confused + (do_conf / 2);
 		}
 		/* Was not confused */
 		else {
-			if (!do_sleep) note = " looks confused";
+			if (!do_sleep && !m_ptr->csleep) note = " looks confused";
 			i = do_conf;
 		}
 
@@ -8489,7 +8405,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Not too confused yet? */
 		if (m_ptr->confused < do_blind) {
 			i = do_blind;
-			if (!do_sleep) {
+			if (!do_sleep && !m_ptr->csleep) {
 				/* Already confused */
 				if (m_ptr->confused) {
 					note = " looks more confused";
@@ -8521,21 +8437,18 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		m_ptr->monfear_gone = 0;
 	}
 
-
 	/* If another monster did the damage, hurt the monster by hand */
 	if (who > 0 || who <= PROJECTOR_UNUSUAL) {
 		/* Redraw (later) if needed */
 		update_health(c_ptr->m_idx);
-
-		/* Some mosnters are immune to death */
-		if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
-
-		/* Wake the monster up */
-		m_ptr->csleep = 0;
-
-		/* Hurt the monster */
-		m_ptr->hp -= dam;
-
+		if (!no_dam) {
+			/* Some mosnters are immune to death */
+			if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
+			/* Wake the monster up */
+			m_ptr->csleep = 0;
+			/* Hurt the monster */
+			m_ptr->hp -= dam;
+		}
 		/* Dead monster */
 		if (m_ptr->hp < 0) {
 			/* Since a non-player killed it, there will be no reward/loot */
@@ -8550,29 +8463,30 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			/* Give detailed messages if destroyed */
 			/* DEG Death message with damage. */
-			if ((r_ptr->flags1 & RF1_UNIQUE) && (!quiet && note))
-				msg_format(Ind, "%^s%s by \377e%d \377wdamage.", m_name, note, dam);
-			else if (!quiet && note)
-				msg_format(Ind, "%^s%s by \377g%d \377wdamage.", m_name, note, dam);
+			if (!quiet && note) {
+				if (no_dam) msg_format(Ind, "%^s%s.", m_name, note);
+				else if (!quiet_dam) {
+					if (r_ptr->flags1 & RF1_UNIQUE) msg_format(Ind, "%^s%s by \377e%d \377wdamage.", m_name, note, dam);
+					else msg_format(Ind, "%^s%s by \377g%d \377wdamage.", m_name, note, dam);
+				}
+			}
 
 #ifdef DAMAGE_BEFORE_POLY
 			do_poly = FALSE;
 #endif
 		}
-
 		/* Damaged monster */
 		else {
-			/* Give detailed messages if visible or destroyed */
-			if (!quiet && note && seen) msg_format(Ind, "%^s%s.", m_name, note);
-
-			/* Hack -- Pain message */
-			else if (!quiet && dam > 0) message_pain(Ind, c_ptr->m_idx, dam);
-
+			if (!quiet) {
+				/* Give detailed messages if visible or destroyed */
+				if (note && seen) msg_format(Ind, "%^s%s.", m_name, note);
+				/* Hack -- Pain message */
+				else if (dam) message_pain(Ind, c_ptr->m_idx, dam);
+			}
 			/* Hack -- handle sleep */
 			if (do_sleep) m_ptr->csleep = do_sleep;
 		}
 	}
-
 	/* If the player did it, give him experience, check fear */
 	else {
 		bool fear = FALSE;
@@ -8585,13 +8499,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		/* Hurt the monster, check for fear and death */
-		if (!quiet && mon_take_hit(Ind, c_ptr->m_idx, dam, &fear, note_dies)) {
+		if (!no_dam && !quiet && mon_take_hit(Ind, c_ptr->m_idx, dam, &fear, note_dies)) {
 			/* Dead monster */
 #ifdef DAMAGE_BEFORE_POLY
 			do_poly = FALSE;
 #endif
 		}
-
 		/* Damaged monster */
 		else {
 			/* Hack -- handle sleep */
@@ -8599,53 +8512,34 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 			/* Give detailed messages if visible or destroyed */
 			/* DEG Changed for added damage message. */
-			if (!quiet && seen) {
-				if (note) {
-					if (!quiet_dam) {
-						if (r_ptr->flags1 & RF1_UNIQUE) {
-							if (p_ptr->r_killed[m_ptr->r_idx] == 1) {
-								msg_format(Ind, "\377D%^s%s and takes \377e%d \377Ddamage.", m_name, note, dam);
-								if (p_ptr->warn_unique_credit) Send_beep(Ind);
-							} else
-								msg_format(Ind, "%^s%s and takes \377e%d \377wdamage.", m_name, note, dam);
-						} else
-							msg_format(Ind, "%^s%s and takes \377g%d \377wdamage.", m_name, note, dam);
-					} else {
-						msg_format(Ind, "%^s%s.", m_name, note);
+			if (!quiet) {
+				if (!quiet_dam) {
+					if (seen) {
+						if (note) {
+							if (r_ptr->flags1 & RF1_UNIQUE) {
+								if (p_ptr->r_killed[m_ptr->r_idx] == 1) {
+									msg_format(Ind, "\377D%^s%s and takes \377e%d \377Ddamage.", m_name, note, dam);
+									if (p_ptr->warn_unique_credit) Send_beep(Ind);
+								} else msg_format(Ind, "%^s%s and takes \377e%d \377wdamage.", m_name, note, dam);
+							} else msg_format(Ind, "%^s%s and takes \377g%d \377wdamage.", m_name, note, dam);
+						} else msg_format(Ind, "%^s%s.", m_name, note);
 					}
+					/* Hack -- Pain message */
+					else if (dam) message_pain(Ind, c_ptr->m_idx, dam);
 				}
-				/* Hack -- Pain message */
-				else if (dam > 0) message_pain(Ind, c_ptr->m_idx, dam);
+				/* Still any observable effect other than damage-induced pain? */
+				else if (seen && note) msg_format(Ind, "%^s%s.", m_name, note);
 
 				/* Take note */
-				if ((fear || do_fear) && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+				if ((fear || do_fear) && seen && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 #ifdef USE_SOUND_2010
 #else
 					sound(Ind, SOUND_FLEE);
 #endif
-					/* Message */
-					if (m_ptr->r_idx != RI_MORGOTH)
-						msg_format(Ind, "%^s flees in terror!", m_name);
-					else
-						msg_format(Ind, "%^s retreats!", m_name);
+					if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+					else msg_format(Ind, "%^s retreats!", m_name);
 				}
 			}
-
-#if 0 /* see above */
-			/* Take note */
-			if (!quiet && (fear || do_fear) && (p_ptr->mon_vis[c_ptr->m_idx]) && !(m_ptr->csleep || m_ptr->stunned > 100)) {
- #ifdef USE_SOUND_2010
- #else
-				sound(Ind, SOUND_FLEE);
- #endif
-
-				/* Message */
-				if (m_ptr->r_idx != RI_MORGOTH)
-					msg_format(Ind, "%^s flees in terror!", m_name);
-				else
-					msg_format(Ind, "%^s retreats!", m_name);
-			}
-#endif
 
 #ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster gets hit by a projection' */
 			/* isn't there any player in our casting-los? */
