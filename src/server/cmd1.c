@@ -1588,7 +1588,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 						amount);
  #endif
 				/* Some events don't allow transactions before they begin */
-				if (!p_ptr->max_exp) {
+				if (!p_ptr->max_exp && !in_irondeepdive(wpos)) {
 					msg_print(Ind, "You gain a tiny bit of experience from exchanging money.");
 					gain_exp(Ind, 1);
 				}
@@ -2243,12 +2243,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) s_printf("%s FOUND_WINNERS_ONLY: %s (%d) %s\n", showtime(), p_ptr->name, p_ptr->wpos.wz, o_name_real);
 
 					/* Some events don't allow transactions before they begin. Extend this to no_soloist-event-drops (Santa Claus). */
-					if (o_ptr->no_soloist && !p_ptr->max_exp) {
+					if (o_ptr->no_soloist && !p_ptr->max_exp && !in_irondeepdive(wpos)) {
 						msg_print(Ind, "Due to the item's origin you gain a tiny bit of experience from picking it up.");
 						gain_exp(Ind, 1);
 					}
 					/* Prevent IDDC cheeze */
-					else if (wpos->wz && !p_ptr->max_exp) {
+					else if (wpos->wz && !p_ptr->max_exp && !in_irondeepdive(wpos)) {
 						msg_print(Ind, "You gain a tiny bit of experience from picking up your first item in a dungeon.");
 						gain_exp(Ind, 1);
 					}
@@ -2306,7 +2306,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
 
 					/* Some events don't allow transactions before they begins */
-					if (!p_ptr->max_exp) {
+					if (!p_ptr->max_exp && !in_irondeepdive(wpos)) {
 						msg_print(Ind, "You gain a tiny bit of experience from trading an item.");
 						gain_exp(Ind, 1);
 					}

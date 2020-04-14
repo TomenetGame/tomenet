@@ -12856,7 +12856,7 @@ void telekinesis_aux(int Ind, int item) {
 		if (true_artifact_p(q_ptr)) a_info[q_ptr->name1].carrier = p_ptr->id;
 
 		/* Highlander Tournament: Don't allow transactions before it begins */
-		if (!p2_ptr->max_exp) {
+		if (!p2_ptr->max_exp && !in_irondeepdive(&p2_ptr->wpos)) {
 			msg_print(Ind2, "You gain a tiny bit of experience from receiving an item via telekinesis.");
 			gain_exp(Ind2, 1);
 		}

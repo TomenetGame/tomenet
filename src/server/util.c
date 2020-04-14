@@ -7379,7 +7379,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 	if (p_ptr->gold_picked_up <= EVENT_TOWNIE_GOLD_LIMIT) {
 		p_ptr->gold_picked_up += (amt > EVENT_TOWNIE_GOLD_LIMIT) ? EVENT_TOWNIE_GOLD_LIMIT : amt;
 		if (p_ptr->gold_picked_up > EVENT_TOWNIE_GOLD_LIMIT
-		    && !p_ptr->max_exp) {
+		    && !p_ptr->max_exp && !in_irondeepdive(&p_ptr->wpos)) {
 			msg_print(Ind, "You gain a tiny bit of experience from collecting cash.");
 			gain_exp(Ind, 1);
 		}
