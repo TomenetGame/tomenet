@@ -985,6 +985,10 @@
    of the Ironman Deep Dive Challenge? */
 #define IDDC_HISCORE_SHOWS_ICON
 
+/* IDDC special buff: Regain a random drained attribute on levelup. */
+#define IDDC_LEVELUP_RESTORES_STAT
+
+
 /* Maximum amount of gold that can be farmed from townies before you get 1 XP
    from it. This is an anti-cheeze for Highlander Tournament and Ironman Deep
    Dive Challenge. (-1 = no limit) [300] */
