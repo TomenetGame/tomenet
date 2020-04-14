@@ -4412,18 +4412,6 @@ void check_experience(int Ind) {
 
 		process_hooks(HOOK_PLAYER_LEVEL, "d", Ind);
 
-#ifdef IDDC_LEVELUP_RESTORES_STAT
-		/* IDDC special buff: Regain a random drained attribute. */
-		if (p_ptr->lev == p_ptr->max_plv && in_irondeepdive(&p_ptr->wpos)) {
-			int s, drained_attrs = 0, drained_attr[6];
-
-			for (s = 0; s < 6; s++)
-				if (p_ptr->stat_cur[s] != p_ptr->stat_max[s])
-					drained_attr[drained_attrs++] = s;
-			if (drained_attrs) res_stat(Ind, drained_attr[rand_int(drained_attrs)]);
-		}
-#endif
-
 		/* Gain a level */
 		p_ptr->lev++;
 
@@ -4432,6 +4420,18 @@ void check_experience(int Ind) {
 		/* Save the highest level */
 		if (p_ptr->lev > p_ptr->max_plv) {
 			p_ptr->max_plv = p_ptr->lev;
+
+#ifdef IDDC_LEVELUP_RESTORES_STAT
+			/* IDDC special buff: Regain a random drained attribute. */
+			if (in_irondeepdive(&p_ptr->wpos)) {
+				int s, drained_attrs = 0, drained_attr[6];
+
+				for (s = 0; s < 6; s++)
+					if (p_ptr->stat_cur[s] != p_ptr->stat_max[s])
+						drained_attr[drained_attrs++] = s;
+				if (drained_attrs) res_stat(Ind, drained_attr[rand_int(drained_attrs)]);
+			}
+#endif
 
 			/* gain skill points */
 #ifdef KINGCAP_EXP
