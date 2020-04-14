@@ -6639,8 +6639,10 @@ static void scan_objs() {
 		   at least as long as the town level is allocated. - C. Blue */
 		if ((zcave = getcave(&o_ptr->wpos))
 		    && in_bounds_array(o_ptr->iy, o_ptr->ix) //paranoia or monster trap? or tradhouse?
-		    && (f_info[zcave[o_ptr->iy][o_ptr->ix].feat].flags1 & FF1_PROTECTED))
+		    && (f_info[zcave[o_ptr->iy][o_ptr->ix].feat].flags1 & FF1_PROTECTED)) {
+			if (sj) o_ptr->iy = 255 - o_ptr->iy;
 			continue;
+		}
 
 		/* check items on the world's surface */
 		if (!o_ptr->wpos.wz && cfg.surface_item_removal) {
