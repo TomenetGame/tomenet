@@ -1832,6 +1832,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				if (!strcmp(lookup_player_name(id_list[j]), &args[2])) break;
 			if (j == ids) {
 				msg_print(Ind, "Character not online, nor found in your list of characters.");
+				if (ids) C_KILL(id_list, ids, int);
 				return(FALSE);
 			}
 
@@ -1869,6 +1870,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 						KILL(q_ptr, player_type);
 						NumPlayers--;
 						msg_print(Ind, "House transfer failed.");
+						if (ids) C_KILL(id_list, ids, int);
 						return FALSE;
 					}
 
@@ -1878,6 +1880,7 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 					break;
 				}
 			}
+			if (ids) C_KILL(id_list, ids, int);
 			if (!i) { /* Paranoia */
 				C_FREE(q_ptr->inventory, INVEN_TOTAL, object_type);
 				KILL(q_ptr, player_type);
@@ -1886,7 +1889,6 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 				s_printf("HOUSE_CHOWN_SELF: FAILED. source %s, house %d, dest %s.\n", p_ptr->name, pick_house(&p_ptr->wpos, y, x), &args[2]);
 				return FALSE;
 			}
-
 			/* Log */
 			s_printf("HOUSE_CHOWN_SELF: source %s, house %d, dest %s.\n", p_ptr->name, pick_house(&p_ptr->wpos, y, x), &args[2]);
 		}

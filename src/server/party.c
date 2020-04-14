@@ -1924,6 +1924,7 @@ int guild_add_self(int Ind, cptr guild) {
 			/* Everlasting and other chars cannot be in the same guild */
 			if (compat_mode(p_ptr->mode, lookup_player_mode(id_list[i]))) {
 				msg_format(Ind, "\377yYou cannot join %s guilds.", compat_mode(p_ptr->mode, lookup_player_mode(id_list[i])));
+				if (ids) C_KILL(id_list, ids, int);
 				return FALSE;
 			}
 
@@ -5674,6 +5675,7 @@ void init_character_ordering(int Ind) {
 					ptr2 = hash_table[slot];
 					ptr2->order = j + 1; /* Natural order ;) */
 				}
+				if (ids) C_KILL(id_list, ids, int);
 			}
 			/* Next entry in chain */
 			ptr = ptr->next;
@@ -5717,6 +5719,7 @@ void init_account_order(int Ind, s32b acc_id) {
 					ptr2 = hash_table[slot];
 					ptr2->order = j + 1; /* Natural order ;) */
 				}
+				if (ids) C_KILL(id_list, ids, int);
 			}
 			/* Next entry in chain */
 			ptr = ptr->next;

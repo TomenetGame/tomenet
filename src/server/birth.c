@@ -2661,6 +2661,7 @@ static void player_setup(int Ind, bool new) {
 			break;
 		}
 #endif
+		if (ids) C_KILL(id_list, ids, int);
 		/* Add the new character to the daabase */
 		add_player_name(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, 1, 1, 0, 0, 0, 0, time(&ttime), p_ptr->admin_dm ? 1 : (p_ptr->admin_wiz ? 2 : 0), *wpos, p_ptr->houses_owned, w, max_order);
 	} else {
