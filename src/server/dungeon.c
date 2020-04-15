@@ -8212,18 +8212,22 @@ void process_player_change_wpos(int Ind) {
 		/* make sure we aren't in an "icky" location */
 		emergency_x = 0; emergency_y = 0; tries = 0;
 		do {
-			starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT)-3)+1;
-			startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID)-3)+1;
+			starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT) - 3) + 1;
+			startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID) - 3) + 1;
 			if (cave_floor_bold(zcave, starty, startx)) {
 				emergency_x = startx;
 				emergency_y = starty;
 			}
 		}
-		while (  ((zcave[starty][startx].info & CAVE_ICKY)
+		while (((zcave[starty][startx].info & (CAVE_ICKY | CAVE_STCK | CAVE_NEST_PIT)) /* Don't recall into houses. Stck/Nest-pit shouldn't really happen on world surface though.. */
 			|| (zcave[starty][startx].feat == FEAT_DEEP_WATER)
+			|| (zcave[starty][startx].feat == FEAT_DEEP_LAVA)
 			|| (zcave[starty][startx].feat == FEAT_SICKBAY_AREA) /* don't recall him into sickbay areas */
+			|| (zcave[starty][startx].info & CAVE_PROT) /* don't recall into stables or inns */
+			|| (f_info[zcave[starty][startx].feat].flags1 & FF1_PROTECTED)
+			|| (zcave[starty][startx].feat == FEAT_SHOP) /* Prevent landing on a store entrance */
 			|| (!cave_floor_bold(zcave, starty, startx)))
-			&& (++tries < 10000) );
+			&& (++tries < 10000));
 		if (tries == 10000 && emergency_x) {
 			startx = emergency_x;
 			starty = emergency_y;
@@ -8339,7 +8343,7 @@ void process_player_change_wpos(int Ind) {
 		if (x < 1 || y < 1 || x > p_ptr->cur_wid - 2 || y > p_ptr->cur_hgt - 2)
 			continue;
 
-		/* should somewhat stay away from certain locations? */
+		/* should somewhat stay away from certain locations? (DK escape beacons) */
 		if (p_ptr->avoid_loc)
 			for (d = 0; d < p_ptr->avoid_loc; d++)
 				if (distance(y, x, p_ptr->avoid_loc_y[d], p_ptr->avoid_loc_x[d]) < 8)
