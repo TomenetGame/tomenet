@@ -2751,7 +2751,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 		case SV_SCROLL_RUMOR:
 			if (o_ptr) msg_print(Ind, "You read the scroll:");
-			fortune(Ind, magik(40) ? TRUE : FALSE);
+			fortune(Ind, TRUE);//magik(40) ? TRUE : FALSE);
 			ident = TRUE;
 			break;
 
@@ -7469,8 +7469,9 @@ void fortune(int Ind, bool broadcast) {
 	strcpy(Broadcast, "Suddenly a thought comes to your mind:");
 	msg_print(Ind, NULL);
 
-	//switch(randint(20))
-	switch(randint(80)) {
+	//switch (randint(20))
+	//switch (randint(80)) {
+	switch (6) {
 	case 1:
 		get_rnd_line("chainswd.txt",0 , Rumor, MAX_CHARS_WIDE);
 		break;
