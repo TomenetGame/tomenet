@@ -782,34 +782,19 @@ void lua_strip_true_arts_from_absent_players(void) {
 	strip_true_arts_from_hashed_players();
 }
 
-/* Remove all true artifacts lying on the (mang-house) floor
-   anywhere in the world. Not processing traditional houses atm. */
+/* Remove all true artifacts in the world, excluding traditional houses. */
 void lua_strip_true_arts_from_floors(void) {
 	int i, cnt = 0, dcnt = 0;
 	object_type *o_ptr;
-#if 0
-	cave_type **zcave;
-#endif
 
 	for (i = 0; i < o_max; i++) {
 		o_ptr = &o_list[i];
 		if (o_ptr->k_idx) {
 			cnt++;
-			/* check items on the world's floors */
-#if 0
-			if ((zcave = getcave(&o_ptr->wpos)) &&
-			    resettable_artifact_p(o_ptr))
-			{
-				delete_object_idx(zcave[o_ptr->iy][o_ptr->ix].o_idx, TRUE);
-                                dcnt++;
-			}
-#else
-			if (resettable_artifact_p(o_ptr))
-			{
+			if (resettable_artifact_p(o_ptr)) {
 				delete_object_idx(i, TRUE);
                                 dcnt++;
 			}
-#endif
 		}
 	}
 	s_printf("Scanned %d objects. Removed %d artefacts.\n", cnt, dcnt);

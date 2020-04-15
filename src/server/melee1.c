@@ -1505,8 +1505,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 						break;
 					}
 
-					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION &&
-							magik (80))
+					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(100)) //80
 					{
 						/* Saving throw message */
 						msg_print(Ind, "Your backpack was secured!");

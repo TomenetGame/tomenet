@@ -313,6 +313,8 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 	s16b  x1;
 	s16b  y1;
 
+	int tries = 1000;
+
 	/* Paranoia */
 	cave_type **zcave;
 	if (!in_bounds(y, x)) return(FALSE);
@@ -329,7 +331,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 	if (i_ptr->name1 == ART_POWER) return (FALSE);
 	if (cfg.anti_arts_hoard && true_artifact_p(i_ptr) && (rand_int(100) > 9)) return(FALSE);
 
-	while (o_idx == 0) {
+	while (o_idx == 0 && tries--) {
 		x1 = rand_int(p_ptr->cur_wid);
 		y1 = rand_int(p_ptr->cur_hgt);
 
@@ -342,6 +344,8 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 		if (!cave_clean_bold(zcave, y1, x1)) continue;
 		o_idx = drop_near_severe(Ind, i_ptr, 0, &p_ptr->wpos, y1, x1);
 	}
+
+	if (!o_idx) return FALSE;
 
 	o_ptr = &o_list[o_idx];
 
@@ -867,8 +871,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			if ((!p_ptr->paralyzed &&
 			    (rand_int(160 + UNAWARENESS(p_ptr)) <
 			    (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev))) ||
-			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION &&
-			     magik (75)) ) {
+			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(100)) ) { //80
 				/* Saving throw message */
 				msg_print(Ind, "Your backpack seems to vibrate strangely!");
 				break;
@@ -890,26 +893,27 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				/* Don't steal artifacts  -CFT */
 				if (artifact_p(j_ptr)) continue;
 
-				/* Get a description */
-				object_desc(Ind, i_name, j_ptr, FALSE, 3);
-
-				/* Message */
-				msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
-						((j_ptr->number > 1) ? "One of y" : "Y"),
-						i_name, index_to_label(i));
-
 				/* Create the item */
 				q_ptr = &forge;
 				object_copy(q_ptr, j_ptr);
 				q_ptr->number = 1;
-				if (is_magic_device(j_ptr->tval)) divide_charged_item(q_ptr, j_ptr, 1);
+				//if (is_magic_device(j_ptr->tval)) divide_charged_item(q_ptr, j_ptr, 1);
+				if (is_magic_device(j_ptr->tval)) continue; /* lel */
 
-				/* Drop it somewhere */
-				do_trap_teleport_away(Ind, q_ptr, y, x);
+				/* Drop it somewhere - only remove our items if it was dropped successfully! */
+				if (do_trap_teleport_away(Ind, q_ptr, y, x)) {
+					/* Get a description */
+					object_desc(Ind, i_name, j_ptr, FALSE, 3);
 
-				inven_item_increase(Ind, i,-1);
-				inven_item_optimize(Ind, i);
-				ident = TRUE;
+					/* Message */
+					msg_format(Ind, "\376\377o%sour %s (%c) was stolen!",
+					    ((j_ptr->number > 1) ? "One of y" : "Y"),
+					    i_name, index_to_label(i));
+
+					inven_item_increase(Ind, i, -1);
+					inven_item_optimize(Ind, i);
+					ident = TRUE;
+				}
 			}
 			break;
 
@@ -2224,6 +2228,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 				/* Skip dead objects */
 				if (!o_ptr->k_idx) continue;
 
+				/* Skip monster inventory/monster trap items */
+				if (o_ptr->held_m_idx || o_ptr->embed) continue;
+
 				/* Skip objects not on this depth */
 				if (!inarea(&o_ptr->wpos, wpos)) continue;
 
@@ -2276,6 +2283,9 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 
 				/* Skip objects not on this depth */
 				if (!inarea(&o_ptr->wpos, wpos)) continue;
+
+				/* Skip monster inventory/monster trap items */
+				if (o_ptr->held_m_idx || o_ptr->embed) continue;
 
 				if (magik(glev)) place_trap(wpos, o_ptr->iy, o_ptr->ix, 0);
 			}
@@ -3400,14 +3410,30 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 	cs_erase(c_ptr, cs_ptr);
 }
 
-void erase_mon_trap(worldpos *wpos, int y, int x) {
+void erase_mon_trap(worldpos *wpos, int y, int x, s16b o_idx) {
 	int this_o_idx, next_o_idx;
 	object_type *o_ptr;
 	cave_type *c_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
 
-	if (!(zcave = getcave(wpos))) return;
+	/* Restore the floor feature */
+	if (!(zcave = getcave(wpos))) {
+		/* Fall back to at least erasing the object in it and any other object linked to it.
+		   Note that this traverses only from trapkit to trapload item, but not vice versa, so not perfect. */
+		if (!o_idx) return;
+		for (this_o_idx = o_idx; this_o_idx; this_o_idx = next_o_idx) {
+			o_ptr = &o_list[this_o_idx];
+#ifdef ENABLE_EXCAVATION
+			if (o_ptr->tval == TV_CHARGE) s_printf("CHARGE: Type %d erased on %d,%d,%d at %d,%d.\n", o_ptr->sval, wpos->wx, wpos->wy, wpos->wz, o_ptr->ix, o_ptr->iy);
+#endif
+			next_o_idx = o_ptr->next_o_idx;
+			o_ptr->held_m_idx = 0;
+			o_ptr->embed = 0;
+			delete_object_idx(this_o_idx, TRUE);
+		}
+		return;
+	}
 
 	c_ptr = &zcave[y][x];
 	cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
@@ -3428,12 +3454,16 @@ void erase_mon_trap(worldpos *wpos, int y, int x) {
 		/* Paranoia */
 		o_ptr->held_m_idx = 0;
 
+		/* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
+		o_ptr->embed = 0;
+
 		/* Delete the object */
 		delete_object_idx(this_o_idx, TRUE);
 	}
 
 	//cave[py][px].special = cave[py][px].special2 = 0;
 	cs_erase(c_ptr, cs_ptr);
+	return;
 }
 
 /* hack: Identify the load? */

@@ -60,7 +60,7 @@ bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x,
 	int idx = zcave ? zcave[y][x].o_idx : -1;
 
 	if ((o_ptr->wpos.wx != wpos->wx) || (o_ptr->wpos.wy != wpos->wy) || (o_ptr->wpos.wz != wpos->wz) ||
-	    (o_ptr->ix && (o_ptr->ix != x)) || (o_ptr->iy && (o_ptr->iy != y))) {
+	    (!o_ptr->held_m_idx && ((o_ptr->ix && (o_ptr->ix != x)) || (o_ptr->iy && (o_ptr->iy != y))))) {
 		/* Item is not at the same (or similar) location as the player? Then he can't pick it up.. */
 		object_desc(0, o_name, o_ptr, TRUE, 3);
 		if (p_ptr != NULL) {
@@ -113,7 +113,7 @@ bool nothing_test2(cave_type *c_ptr, int x, int y, struct worldpos *wpos, int ma
 
 	o_ptr = &o_list[c_ptr->o_idx];
 	if (inarea(&o_ptr->wpos, wpos) &&
-	    o_ptr->ix == x && o_ptr->iy == y) return TRUE;
+	    (o_ptr->held_m_idx || (o_ptr->ix == x && o_ptr->iy == y))) return TRUE;
 
 	s_printf("NOTHING_TEST2: o_idx %d, iwpos %d,%d,%d, ix,iy %d,%d. wpos %d,%d,%d x,y %d,%d (%d)\n",
 	    c_ptr->o_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy,

@@ -481,10 +481,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 					object_desc(0, o_name, o_ptr, FALSE, 0);
 					s_printf("WILD_ART: %s of %s erased at (%d, %d, %d)\n",
 					    o_name, lookup_player_name(o_ptr->owner), o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz);
-					handle_art_d(o_ptr->name1);
-					if (flag && in_bounds_array(o_ptr->iy, o_ptr->ix))
-						zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
-					WIPE(o_ptr, object_type);
+					delete_object_idx(i, TRUE);
 				}
 			}
 		}

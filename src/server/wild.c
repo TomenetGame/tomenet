@@ -858,6 +858,8 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 		if (!inarea(&o_ptr->wpos, wpos)) continue;
 		/* Skip carried objects */
 		if (o_ptr->held_m_idx) continue;
+		/* Skip monster trap objects */
+		if (o_ptr->embed == 1) continue;
 		/* if it's on our field, erase it */
 		if (o_ptr->iy >= y1 && o_ptr->iy <= y2 &&
 		    o_ptr->ix >= x1 && o_ptr->ix <= x2)
@@ -2928,7 +2930,7 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 				}
 				else if (func == FILL_OBJECT) { /* object in house? */
 					object_type *o_ptr = (object_type*)data;
-					if (o_ptr->ix == h_ptr->x + x && o_ptr->iy == h_ptr->y + y) {
+					if (o_ptr->ix == h_ptr->x + x && o_ptr->iy == h_ptr->y + y && !o_ptr->embed && !o_ptr->held_m_idx) {
 						success = TRUE;
 						break;
 					}
@@ -3124,9 +3126,8 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					}
 					if (func == FILL_OBJECT) { /* object in house */
 						object_type *o_ptr = (object_type*)data;
-						if (o_ptr->ix == minx + (x - 1) && o_ptr->iy == miny + (y - 1)) {
+						if (o_ptr->ix == minx + (x - 1) && o_ptr->iy == miny + (y - 1) && !o_ptr->embed && !o_ptr->held_m_idx)
 							success = TRUE;
-						}
 						break;
 					}
 					if (func == FILL_CLEAR) {

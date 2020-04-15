@@ -71,6 +71,7 @@ static int tc_biasr_junk = 100;
 /*
  * Excise a dungeon object from any stacks
  * Borrowed from ToME.
+ * Note: Will skip any o_ptr->embed items since their c_ptr->o_idx will be 0.
  */
 void excise_object_idx(int o_idx) {
 	object_type *j_ptr, *o_ptr;
@@ -209,6 +210,8 @@ void excise_object_idx(int o_idx) {
 
 /*
  * Delete a dungeon object
+ * unfound_art: TRUE -> set artifact to 'not found' aka findable again. This is the normal use.
+ *              FALSE is used for when an item isn't really removed 'from the game world', but just relocated.
  */
 void delete_object_idx(int o_idx, bool unfound_art) {
 	object_type *o_ptr = &o_list[o_idx];
@@ -218,6 +221,9 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 	int x = o_ptr->ix;
 	//cave_type **zcave;
 	struct worldpos *wpos = &o_ptr->wpos;
+
+	/* Hack: Erase monster trap, if this item was part of one */
+	if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix, o_idx);
 
 #if 1 /* extra logging for artifact timeout debugging */
 	if (true_artifact_p(o_ptr) && o_ptr->owner) {
@@ -253,7 +259,7 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 
 #ifdef PLAYER_STORES
 	/* Log removal of player store items */
-	if (!(o_ptr->held_m_idx) && o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
+	if (!(o_ptr->held_m_idx) && !o_ptr->embed && o_ptr->note && strstr(quark_str(o_ptr->note), "@S")
 	    && inside_house(wpos, o_ptr->ix, o_ptr->iy)) {
 		char o_name[ONAME_LEN];//, p_name[NAME_LEN];
 		object_desc(0, o_name, o_ptr, TRUE, 3);
@@ -274,7 +280,7 @@ void delete_object_idx(int o_idx, bool unfound_art) {
 
 	/* Visual update */
 	/* Dungeon floor */
-	if (!(o_ptr->held_m_idx)) everyone_lite_spot(wpos, y, x);
+	if (!(o_ptr->held_m_idx) && !o_ptr->embed) everyone_lite_spot(wpos, y, x);
 
 	/* log special cases */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_ARTIFACT_CREATION)
@@ -292,7 +298,8 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
 	cave_type *c_ptr;
 	cave_type **zcave;
 
-	/* Refuse "illegal" locations */
+	/* Refuse "illegal" locations.
+	   Also takes care of hold_m_idx and embed items (monster inventory / monster traps) */
 	if (!in_bounds(y, x)) return;
 
 	if ((zcave = getcave(wpos))) {
@@ -362,7 +369,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
  * you are, by definition, not smart enough to debug it.
  * -- Brian W. Kernighan
  */
-//#define DONT_COMPACT_NEARBY
+//#define DONT_COMPACT_NEARBY  --not implemented (idea was: don't compact objects that are close to a player)
 void compact_objects(int size, bool purge) {
 	int i, y, x, num, cnt, Ind; //, j, ny, nx;
 
@@ -405,6 +412,9 @@ void compact_objects(int size, bool purge) {
 
 			/* Skip dead objects */
 			if (!o_ptr->k_idx) continue;
+
+			/* Skip items in monster traps or monster inventory */
+			if (o_ptr->held_m_idx || o_ptr->embed == 1) continue;
 
 			/* Questors are immune */
 			if (o_ptr->questor) continue;
@@ -557,9 +567,7 @@ void compact_objects(int size, bool purge) {
 		/* fix monsters' inventories */
 		for (i = 1; i < m_max; i++) {
 			m_ptr = &m_list[i];
-			if (m_ptr->hold_o_idx) {
-				m_ptr->hold_o_idx = old_idx[m_ptr->hold_o_idx];
-			}
+			if (m_ptr->hold_o_idx) m_ptr->hold_o_idx = old_idx[m_ptr->hold_o_idx];
 		}
 #endif	/* MONSTER_INVENTORY */
 
@@ -567,6 +575,10 @@ void compact_objects(int size, bool purge) {
 		   the correct objects in our newly resorted o_list */
 		for (i = 1; i < o_max; i++) {
 			o_ptr = &o_list[i];
+
+			/* Skip monster inventory (not in_bounds2() anyway: 0,0) */
+			if (o_ptr->held_m_idx) continue;
+
 			wpos = &o_ptr->wpos;
 			x = o_ptr->ix;
 			y = o_ptr->iy;
@@ -577,6 +589,7 @@ void compact_objects(int size, bool purge) {
 					if (in_bounds2(wpos, y, x)) {
 						if (c_ptr->feat == FEAT_MON_TRAP) {
 							struct c_special *cs_ptr;
+
 							if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
 								if (old_idx[cs_ptr->sc.montrap.trap_kit] == i) {
 									cs_ptr->sc.montrap.trap_kit = i;
@@ -3839,7 +3852,7 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 			/* player-dropped piles are compact */
  #ifndef SMELTING /* disable for golem piece smelting feature in project_i(): requires unchanged colour to accumulate the necessary copper/silver (it's ok for gold) */
 			o_ptr->k_idx = gold_colour(o_ptr->pval, FALSE, TRUE);
-			everyone_lite_spot(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
+			if (!o_ptr->embed && !o_ptr->held_m_idx) everyone_lite_spot(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
  #endif
 			o_ptr->sval = k_info[o_ptr->k_idx].sval;
 		} else if (!o_ptr->xtra2 && !j_ptr->xtra2) { /* coin-type monster piles don't change type to something else */
@@ -9645,6 +9658,12 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 	monster_race *r_ptr;
 
 
+	/* No longer embedded (if item came out of a monster trap) */
+	o_ptr->embed = 0;
+	/* No longer held by monster (paranoia?) */
+	o_ptr->held_m_idx = 0;
+
+
 	if (!(zcave = getcave(wpos))) return(-1);
 
 	/* Handle normal "breakage" */
@@ -11294,11 +11313,13 @@ void setup_objects(void) {
 
 		/* Skip carried objects */
 		if (o_ptr->held_m_idx) continue;
+		/* Skip objects in monster traps */
+		if (!o_ptr->embed) continue;
 
 //		if (!in_bounds2(&o_ptr->wpos, o_ptr->iy, o_ptr->ix)) continue;
 		if (in_bounds_array(o_ptr->iy, o_ptr->ix))
 
-#if 0	// excise_object_idx() should do this
+#if 0	// excise_object_idx() should do this	<- ???
 		/* Build the stack */
 		if (j = zcave[o_ptr->iy][o_ptr->ix].o_idx)
 			o_ptr->next_o_idx = j;
@@ -11889,11 +11910,19 @@ void erase_artifact(int a_idx) {
 			return;
 		}
 
+		/* Check monster traps for artifact trap kits / load */
+		if (o_ptr->embed == 1) {
+			s_printf("FLUENT_ARTIFACT_RESETS: %d - monster trap '%s'\n", a_idx, o_name);
+			delete_object_idx(i, TRUE);
+			msg_broadcast_format(0, "\374\377M* \377U%s has been lost once more. \377M*", o_name_short);
+			return;
+		}
+
 #ifdef PLAYER_STORES
 		/* Log removal of player store items - this code only applies if server rules allow dropping true artifacts in houses.
 		   In case the cave wasn't allocated, the delete_object_idx() call below won't remove it from pstore lists, so we have to do it now.
 		   Note: This can be a false alarm in case the item is inscribed '@S' but is not actually inside a player house. */
-		if (!getcave(&o_ptr->wpos) &&
+		if (!getcave(&o_ptr->wpos) && !o_ptr->held_m_idx && !o_ptr->embed && 
 		    o_ptr->note && strstr(quark_str(o_ptr->note), "@S")) {
 			//char o_name[ONAME_LEN];//, p_name[NAME_LEN];
 			//object_desc(0, o_name, o_ptr, TRUE, 3);

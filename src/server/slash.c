@@ -7943,7 +7943,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 							/* k_idx = 1 is something weird... */
 							else if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
 								msg_format(Ind, "Removed an invalid item (o_idx=%d) (k_idx=%d) found at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
-								delete_object_idx(o_idx, FALSE);
+								delete_object_idx(o_idx, TRUE);
 							}
 							prev_o_ptr = NULL;
 							/* more objects on this grid? */
@@ -7963,7 +7963,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 								}
 								else if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
 									msg_format(Ind, "Removed an invalid item (o_idx=%d) (k_idx=%d) from a pile at (x=%d,y=%d)", o_idx, o_ptr->k_idx, x, y);
-									delete_object_idx(o_idx, FALSE);
+									delete_object_idx(o_idx, TRUE);
 								}
 							}
 						}
@@ -8269,10 +8269,10 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				j = 0;
 				/* go through all items (well except for player inventories
 				   or tradehouses, but that's not needed anyway) */
-				for(i = 0; i < o_max; i++){
+				for (i = 0; i < o_max; i++) {
 					o_ptr = &o_list[i];
 					/* check unprotected items on the world's surface in CAVE_ICKY locations, ie houses */
-					if(o_ptr->k_idx && o_ptr->marked2 == ITEM_REMOVAL_NORMAL && !o_ptr->wpos.wz) {
+					if (o_ptr->k_idx && o_ptr->marked2 == ITEM_REMOVAL_NORMAL && !o_ptr->wpos.wz && !o_ptr->held_m_idx && !o_ptr->embed) {
 						/* make sure object's floor is currently allocated so we can test for CAVE_ICKY flag */
 						h = 0;
 						if (!getcave(&o_ptr->wpos)) {
@@ -8319,7 +8319,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				for(i = 0; i < o_max; i++){
 					o_ptr = &o_list[i];
 					/* check ITEM_REMOVAL_NEVER items on the world's surface that aren't inside houses */
-					if(o_ptr->k_idx && o_ptr->marked2 == ITEM_REMOVAL_NEVER && !o_ptr->wpos.wz) {
+					if (o_ptr->k_idx && o_ptr->marked2 == ITEM_REMOVAL_NEVER && !o_ptr->wpos.wz && !o_ptr->held_m_idx && !o_ptr->embed) {
 						/* make sure object's floor is currently allocated so we can test for CAVE_ICKY flag;
 						   this is neccessary for server-generated public house contents for example */
 						h = 0;
@@ -10231,7 +10231,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				}
 				return;
 			}
-			/* imprint 'housed' on all objects */
+			/* imprint 'housed' on all objects inside houses */
 			else if (prefix(messagelc, "/optrhoused")) {
 				int i, h;
 				house_type *h_ptr;
@@ -10249,6 +10249,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				/* process HF_RECT houses */
 				for (i = 0; i < o_max; i++) {
 					o_ptr = &o_list[i];
+					if (o_ptr->held_m_idx || o_ptr->embed) continue;
 					o_ptr->housed = inside_which_house(&o_ptr->wpos, o_ptr->ix, o_ptr->iy);
 				}
 				msg_format(Ind, "%d houses, %d free objects, done.", num_houses, o_max);

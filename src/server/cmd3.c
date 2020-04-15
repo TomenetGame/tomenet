@@ -3141,7 +3141,7 @@ void do_cmd_steal(int Ind, int dir) {
 			o_ptr = &q_ptr->inventory[item];
 			forge = *o_ptr;
 
-			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik (80)) {
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik(100)) { //80
 				/* Saving throw message */
 				msg_print(Ind, "Your attempt to steal was interfered with by a strange device!");
 				notice += 50;

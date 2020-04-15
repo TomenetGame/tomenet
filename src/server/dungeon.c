@@ -6523,24 +6523,23 @@ void cheeze_trad_house() {
 
 
 /* Change item mode of all items inside a house to the according house owner mode */
-void house_contents_chmod(object_type *o_ptr){
+void house_contents_chmod(object_type *o_ptr) {
 #if CHEEZELOG_LEVEL > 3
-	int j;
+	int j, owner;
 
 	/* check for inside a house */
-	for (j = 0; j < num_houses; j++){
-		if (inarea(&houses[j].wpos, &o_ptr->wpos)){
-			if (fill_house(&houses[j], FILL_OBJECT, o_ptr)){
-				if (houses[j].dna->owner_type == OT_PLAYER)
-					o_ptr->mode = lookup_player_mode(houses[j].dna->owner));
-				else if (houses[j].dna->owner_type == OT_PARTY) {
-					int owner;
-
-					if ((owner = lookup_player_id(parties[houses[j].dna->owner].owner)))
-						o_ptr->mode = lookup_player_mode(owner));
-				}
+	for (j = 0; j < num_houses; j++) {
+		if (inarea(&houses[j].wpos, &o_ptr->wpos) && fill_house(&houses[j], FILL_OBJECT, o_ptr)) {
+			switch (houses[j].dna->owner_type) {
+			case OT_PLAYER:
+				o_ptr->mode = lookup_player_mode(houses[j].dna->owner));
+				break;
+			case OT_PARTY:
+				if ((owner = lookup_player_id(parties[houses[j].dna->owner].owner)))
+					o_ptr->mode = lookup_player_mode(owner));
 				break;
 			}
+			break;
 		}
 	}
 #endif // CHEEZELOG_LEVEL > 3
@@ -6582,22 +6581,12 @@ void tradhouse_contents_chmod() {
 
 /*
  * The purpose of this function is to scan through all the
- * game objects on the surface of the world. Objects which
- * are not owned will be ignored. Owned items will be checked.
- * If they are in a house, they will be compared against the
- * house owner. If this fails, the level difference will be
- * used to calculate some chance for the object's deletion.
+ * game objects in the world.
  *
- * In the case for non house objects, essentially a TTL is
+ * In the case for non house/inn objects, essentially a TTL is
  * set. This protects them from instant loss, should a player
  * drop something just at the wrong time, but it should get
- * rid of some town junk. Artifacts should probably resist
- * this clearing.
- */
-/*
- * TODO:
- * - this function should handle items in 'traditional' houses too
- * - maybe rename this function (scan_objects and scan_objs...)
+ * rid of some town junk.
  */
 static void scan_objs() {
 	int i, cnt = 0, dcnt = 0;
@@ -6622,7 +6611,7 @@ static void scan_objs() {
 		/* Make town Inns a safe place to store (read: cheeze) items,
 		   at least as long as the town level is allocated. - C. Blue */
 		if ((zcave = getcave(&o_ptr->wpos))
-		    && in_bounds_array(o_ptr->iy, o_ptr->ix) //paranoia
+		    && in_bounds_array(o_ptr->iy, o_ptr->ix) //paranoia, as we checked for held_m_idx above already
 		    && (f_info[zcave[o_ptr->iy][o_ptr->ix].feat].flags1 & FF1_PROTECTED)) continue;
 
 		/* check items on the world's surface */
@@ -6633,18 +6622,12 @@ static void scan_objs() {
 				stay n times as long as cfg.surface_item_removal specifies */
 				if (o_ptr->marked2 == ITEM_REMOVAL_QUICK) {
 					if (++o_ptr->marked >= 10) {
-						/* handle monster trap, if this item was part of one */
-						if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
-						/* normal object */
-						else delete_object_idx(i, TRUE);
+						delete_object_idx(i, TRUE);
 						dcnt++;
 					}
 				} else if (o_ptr->marked2 == ITEM_REMOVAL_MONTRAP) {
 					if (++o_ptr->marked >= 120) {
-						/* handle monster trap, if this item was part of one */
-						if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
-						/* normal object */
-						else delete_object_idx(i, TRUE);
+						delete_object_idx(i, TRUE);
 						dcnt++;
 					}
 				} else if (++o_ptr->marked >= ((like_artifact_p(o_ptr) || /* stormy too */
@@ -6653,10 +6636,7 @@ static void scan_objs() {
 				    + (o_ptr->marked2 == ITEM_REMOVAL_DEATH_WILD ? cfg.death_wild_item_removal : 0)
 				    + (o_ptr->marked2 == ITEM_REMOVAL_LONG_WILD ? cfg.long_wild_item_removal : 0)
 				    ) {
-					/* handle monster trap, if this item was part of one */
-					if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
-					/* normal object */
-					else delete_object_idx(i, TRUE);
+					delete_object_idx(i, TRUE);
 					dcnt++;
 				}
 			}
@@ -6684,11 +6664,7 @@ static void scan_objs() {
 				if (++o_ptr->marked >= ((artifact_p(o_ptr) ||
 				    (o_ptr->note && !o_ptr->owner)) ?
 				    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal)) {
-					/* handle monster trap, if this item was part of one */
-					if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
-					/* normal object */
 					delete_object_idx(i, TRUE);
-
 					dcnt++;
 				}
 			}
