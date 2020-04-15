@@ -9305,7 +9305,8 @@ void arm_charge(int Ind, int item, int dir) {
 	o2_ptr = &o_list[o2_idx];
 	object_copy(o2_ptr, o_ptr);
 
-	o2_ptr->iy = 255 - py;	/* Megahack - never inbounds XXX */
+	o2_ptr->embed = 1;
+	o2_ptr->iy = py;
 	o2_ptr->ix = px;
 	wpcopy(&o2_ptr->wpos, wpos);
 
@@ -9358,7 +9359,7 @@ void arm_charge(int Ind, int item, int dir) {
 /* A charge (planted into the floor) explodes */
 void detonate_charge(object_type *o_ptr) {
 	struct worldpos *wpos = &o_ptr->wpos;
-	int i, who = PROJECTOR_MON_TRAP, x = o_ptr->ix, y = 255 - o_ptr->iy; //unhack
+	int i, who = PROJECTOR_MON_TRAP, x = o_ptr->ix, y = o_ptr->iy;
 	int flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO
 	    | PROJECT_GRID | PROJECT_SELF | PROJECT_LODF);//check the flags for correctness
 	struct c_special *cs_ptr;

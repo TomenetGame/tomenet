@@ -3130,8 +3130,9 @@ static s16b pop_montrap(int Ind, object_type *j_ptr, u16b next_o_idx) {
 		object_copy(o_ptr, j_ptr);
 
 		/* Location */
-		o_ptr->iy = 255 - py;	/* Megahack - never inbounds XXX */
+		o_ptr->iy = py;
 		o_ptr->ix = px;
+		o_ptr->embed = 1;
 		wpcopy(&o_ptr->wpos, wpos);
 
 		/* Forget monster */
@@ -3373,7 +3374,7 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 		o_ptr = &o_list[this_o_idx];
 
 #ifdef ENABLE_EXCAVATION
-		if (o_ptr->tval == TV_CHARGE) s_printf("CHARGE: Type %d disarmed on %d,%d,%d at %d,%d.\n", o_ptr->sval, wpos->wx, wpos->wy, wpos->wz, o_ptr->ix, 255 - o_ptr->iy);
+		if (o_ptr->tval == TV_CHARGE) s_printf("CHARGE: Type %d disarmed on %d,%d,%d at %d,%d.\n", o_ptr->sval, wpos->wx, wpos->wy, wpos->wz, o_ptr->ix, o_ptr->iy);
 #endif
 
 		/* Acquire next object */
@@ -3416,6 +3417,10 @@ void erase_mon_trap(worldpos *wpos, int y, int x) {
 	for (this_o_idx = cs_ptr->sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx) {
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
+
+#ifdef ENABLE_EXCAVATION
+		if (o_ptr->tval == TV_CHARGE) s_printf("CHARGE: Type %d erased on %d,%d,%d at %d,%d.\n", o_ptr->sval, wpos->wx, wpos->wy, wpos->wz, o_ptr->ix, o_ptr->iy);
+#endif
 
 		/* Acquire next object */
 		next_o_idx = o_ptr->next_o_idx;

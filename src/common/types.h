@@ -790,6 +790,9 @@ struct object_type {
 	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
 	/* ..and for IDDC_RESTRICTED_TRADING : */
 	s32b iron_turn;			/* Turn when it was picked up, to compare with player's party-join turn. */
+
+	/* For replacing the 255 - iy monster-trap hack, and also no more setting iy and ix to 0 for monster-inventory items */
+	byte embed;			/* 1: Object is contained within a feat (trapkit/trapload in a monster trap); note that 'Object is held in a monster's inventory' is already indicated by held_m_idx instead. */
 };
 
 /* Old object_type for estate restoration: "v2" (2017-2019 included, but might lack iron_turn, see more typedef below) */
@@ -2347,7 +2350,7 @@ struct player_type {
 	worldpos recall_pos;		/* what position to recall to */
 	u16b town_x, town_y;
 
-	int avoid_loc;			/* array size of locations to avoid when changing wpos (recalling) */
+	int avoid_loc;			/* array size of locations to avoid when changing wpos (recalling not next to a DK escape beacon) */
 	int *avoid_loc_x, *avoid_loc_y;
 
 	s16b stat_max[6];		/* Current "maximal" stat values */

@@ -1689,9 +1689,6 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 	   --- correction, kill_house_contents() WILL allocate the map and call delete_object->delete_object_idx which will trigger PLAYER_STORE_REMOVED. */
 	if (!zcave) return FALSE;
 
-	/* hack for monster trap items */
-	if (!in_bounds_array(y, x) && in_bounds_array(255 - y, x)) y = 255 - y;
-
 	c_ptr = &zcave[y][x];
 	/* assume all houses are on the world surface (and vaults aren't) */
 	if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY) &&
@@ -1716,9 +1713,6 @@ static bool inside_house_simple(cave_type *c_ptr) {
 int inside_which_house(struct worldpos *wpos, int x, int y) {
 	int i;
 	house_type *h_ptr;
-
-	/* hack for monster trap items */
-	if (!in_bounds_array(y, x) && in_bounds_array(255 - y, x)) y = 255 - y;
 
 	for (i = 0; i < num_houses; i++) {
 		h_ptr = &houses[i];

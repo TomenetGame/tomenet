@@ -570,6 +570,12 @@ static void rd_item(object_type *o_ptr) {
 		rd_s32b(&o_ptr->iron_turn);
 	}
 
+	if (!older_than(4, 7, 9)) rd_byte(&o_ptr->embed);
+	else o_ptr->embed = 0;
+
+
+	/* --- Process/verify the item --- */
+
 
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx)	/* zero is cipher :) */

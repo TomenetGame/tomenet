@@ -221,6 +221,8 @@ static void wr_item(object_type *o_ptr) {
 
 	wr_s32b(o_ptr->iron_trade);
 	wr_s32b(o_ptr->iron_turn);
+
+	wr_byte(o_ptr->embed);
 }
 
 /*

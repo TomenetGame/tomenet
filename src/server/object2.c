@@ -573,16 +573,8 @@ void compact_objects(int size, bool purge) {
 
 			if ((zcave = getcave(wpos))) {
 				c_ptr = &zcave[y][x];
-				if (in_bounds2(wpos, y, x)) {
-					if (old_idx[c_ptr->o_idx] == i) {
-						c_ptr->o_idx = i;
-						nothing_test2(c_ptr, x, y, wpos, 1);
-					}
-				}
-				else {
-					y = 255 - y;
+				if (o_ptr->embed == 1) { /* Monster trap kit/load */
 					if (in_bounds2(wpos, y, x)) {
-						c_ptr = &zcave[y][x];
 						if (c_ptr->feat == FEAT_MON_TRAP) {
 							struct c_special *cs_ptr;
 							if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
@@ -591,6 +583,11 @@ void compact_objects(int size, bool purge) {
 								}
 							}
 						}
+					}
+				} else if (in_bounds2(wpos, y, x)) {
+					if (old_idx[c_ptr->o_idx] == i) {
+						c_ptr->o_idx = i;
+						nothing_test2(c_ptr, x, y, wpos, 1);
 					}
 				}
 			}
@@ -678,17 +675,17 @@ void wipe_o_list(struct worldpos *wpos) {
 #endif	// MONSTER_INVENTORY
 //		if (flag && in_bounds2(wpos, o_ptr->iy, o_ptr->ix))
 		if (flag) {
-			if (in_bounds_array(o_ptr->iy, o_ptr->ix))
-				zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
-			else if (in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
-				cave_type *c_ptr = &zcave[255 - o_ptr->iy][o_ptr->ix];
-				struct c_special *cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
+			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
+				if (o_ptr->embed == 1) {
+					cave_type *c_ptr = &zcave[o_ptr->iy][o_ptr->ix];
+					struct c_special *cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
 
-				if (cs_ptr) {
-					cave_set_feat_live(wpos, 255 - o_ptr->iy, o_ptr->ix, cs_ptr->sc.montrap.feat);
-					cs_erase(c_ptr, cs_ptr);
-				}
-				c_ptr->o_idx = 0;
+					if (cs_ptr) {
+						cave_set_feat_live(wpos, o_ptr->iy, o_ptr->ix, cs_ptr->sc.montrap.feat);
+						cs_erase(c_ptr, cs_ptr);
+					}
+					c_ptr->o_idx = 0;
+				} else zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
 			}
 		}
 
@@ -701,8 +698,8 @@ void wipe_o_list(struct worldpos *wpos) {
 }
 /*
  * Delete all the items, but except those in houses.  - Jir -
- * Also skips questors and special quest items now. Note that this is also the
- * command to be used by all admin slash commands. - C. Blue
+ * Also skips monster traps, questors and special quest items now.
+ * Note that this is also the command to be used by all admin slash commands. - C. Blue
  *
  * Note -- we do NOT visually reflect these (irrelevant) changes
  * (cave[Depth][y][x].info & CAVE_ICKY)
@@ -730,17 +727,12 @@ void wipe_o_list_safely(struct worldpos *wpos) {
 		/* Skip objects not on this depth */
 		if (!(inarea(wpos, &o_ptr->wpos))) continue;
 
-#if 0 /* 2020-04 */
-/* DEBUG -after getting weird crashes today 2007-12-21 in bree from /clv, and multiplying townies, I added this inbound check- C. Blue */
-		//if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
-			/* Skip objects inside a house but not in a vault in dungeon/tower */
-			if (!wpos->wz && zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY) continue;
-		//}
-#else
-		if (!in_bounds_array(o_ptr->iy, o_ptr->ix)) continue; /* assume monster trap (255 - o_ptr->iy) */
+		if (!in_bounds_array(o_ptr->iy, o_ptr->ix)) continue; /* <- Probably can go now, was needed for old monster trap hack of 255 - y coordinate */
+
+		if (o_ptr->embed == 1) continue; /* Skip items inside monster traps */
+
 		/* Skip objects inside a house but not in a vault in dungeon/tower */
 		if (!wpos->wz && zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY) continue;
-#endif
 
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */
@@ -851,17 +843,18 @@ void wipe_o_list_special(struct worldpos *wpos) {
 #endif	// MONSTER_INVENTORY
 //		if (flag && in_bounds2(wpos, o_ptr->iy, o_ptr->ix))
 		if (flag) {
-			if (in_bounds_array(o_ptr->iy, o_ptr->ix))
-				zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
-			else if (in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
-				cave_type *c_ptr = &zcave[255 - o_ptr->iy][o_ptr->ix];
-				struct c_special *cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
+			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) {
+				if (o_ptr->embed == 1) {
+					cave_type *c_ptr = &zcave[o_ptr->iy][o_ptr->ix];
+					struct c_special *cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
 
-				if (cs_ptr) {
-					cave_set_feat_live(wpos, 255 - o_ptr->iy, o_ptr->ix, cs_ptr->sc.montrap.feat);
-					cs_erase(c_ptr, cs_ptr);
+					if (cs_ptr) {
+						cave_set_feat_live(wpos, o_ptr->iy, o_ptr->ix, cs_ptr->sc.montrap.feat);
+						cs_erase(c_ptr, cs_ptr);
+					}
+					c_ptr->o_idx = 0;
 				}
-				c_ptr->o_idx = 0;
+				else zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
 			}
 		}
 

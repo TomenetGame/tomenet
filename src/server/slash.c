@@ -7841,8 +7841,7 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 					if (!o_ptr->k_idx || o_ptr->k_idx == 1) {
 						if (o_ptr->held_m_idx) {
 							msg_format(Ind, "Invalid item (o_idx=%d) (k_idx=%d) held by monster %d", i, o_ptr->k_idx, o_ptr->held_m_idx);
-						}
-						else {
+						} else {
 							msg_format(Ind, "Invalid item (o_idx=%d) (k_idx=%d) found at (%d,%d,%d) (x=%d,y=%d)", i, o_ptr->k_idx, o_ptr->wpos.wx, o_ptr->wpos.wy, o_ptr->wpos.wz, o_ptr->ix, o_ptr->iy);
 						}
 					}
@@ -8268,7 +8267,6 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				cave_type **zcave;
 				object_type *o_ptr;
 				j = 0;
-				bool sj;
 				/* go through all items (well except for player inventories
 				   or tradehouses, but that's not needed anyway) */
 				for(i = 0; i < o_max; i++){
@@ -8284,13 +8282,6 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 							wilderness_gen(&o_ptr->wpos);
 						}
 						if ((zcave = getcave(&o_ptr->wpos))) { /* paranoia? */
-							/* monster traps hack */
-							sj = FALSE;
-							if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
-							    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
-								sj = TRUE;
-								o_ptr->iy = 255 - o_ptr->iy;
-							}
 							/* in a house (or vault, theoretically) */
 							if (!o_ptr->wpos.wz && (zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY) && !(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_JAIL)) {
 								/* mark item as 'inside house' */
@@ -8298,8 +8289,6 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 								/* count for fun */
 								j++;
 							}
-							/* restore monster traps hack */
-							if(sj) o_ptr->iy = 255 - o_ptr->iy;
 							/* remove our exclusively allocated level again */
 							if (h) dealloc_dungeon_level(&o_ptr->wpos);
 						} else {
@@ -8325,7 +8314,6 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 				cave_type **zcave;
 				object_type *o_ptr;
 				j = 0;
-				bool sj;
 				/* go through all items (well except for player inventories
 				   or tradehouses, but that's not needed anyway) */
 				for(i = 0; i < o_max; i++){
@@ -8342,13 +8330,6 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 							wilderness_gen(&o_ptr->wpos);
 						}
 						if ((zcave = getcave(&o_ptr->wpos))) { /* paranoia? */
-							/* monster traps hack */
-							sj = FALSE;
-							if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
-							    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)){
-								sj = TRUE;
-								o_ptr->iy = 255 - o_ptr->iy;
-							}
 							/* not in a house (or vault, theoretically) */
 							if (!(zcave[o_ptr->iy][o_ptr->ix].info & CAVE_ICKY)) {
 								/* remove permanence */
@@ -8356,8 +8337,6 @@ void do_slash_cmd(int Ind, char *message, char *message_uncensored) {
 								/* count for fun */
 								j++;
 							}
-							/* restore monster traps hack */
-							if(sj) o_ptr->iy = 255 - o_ptr->iy;
 							/* remove our exclusively allocated level again */
 							if (h) dealloc_dungeon_level(&o_ptr->wpos);
 						} else {

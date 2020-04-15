@@ -6428,40 +6428,32 @@ static void purge_old() {
 /*
  * TODO: Check for OT_GUILD (or guild will be mere den of cheeze)
  */
-void cheeze(object_type *o_ptr){
+void cheeze(object_type *o_ptr) {
 #if CHEEZELOG_LEVEL > 3
-	int j;
+	int j, owner;
+
 	/* check for inside a house */
-	for(j = 0; j < num_houses; j++){
-		if(inarea(&houses[j].wpos, &o_ptr->wpos)){
-			if(fill_house(&houses[j], FILL_OBJECT, o_ptr)){
-				if(houses[j].dna->owner_type == OT_PLAYER){
-					if(o_ptr->owner != houses[j].dna->owner){
-						if(o_ptr->level > lookup_player_level(houses[j].dna->owner))
-							s_printf("Suspicious item: (%d,%d) Owned by %s, in %s's house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), lookup_player_name(houses[j].dna->owner), o_ptr->level, lookup_player_level(houses[j].dna->owner));
-					}
-				}
-				else if(houses[j].dna->owner_type == OT_PARTY){
-					int owner;
-					if((owner = lookup_player_id(parties[houses[j].dna->owner].owner))){
-						if(o_ptr->owner != owner){
-							if(o_ptr->level > lookup_player_level(owner))
-								s_printf("Suspicious item: (%d,%d) Owned by %s, in %s party house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), parties[houses[j].dna->owner].name, o_ptr->level, lookup_player_level(owner));
-						}
-					}
-				}
-				else if(houses[j].dna->owner_type == OT_GUILD){
-					int owner;
-					if((owner = guilds[houses[j].dna->owner].master)){
-						if(o_ptr->owner != owner){
-							if(o_ptr->level > lookup_player_level(owner))
-								s_printf("Suspicious item: (%d,%d) Owned by %s, in %s party house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), guilds[houses[j].dna->owner].name, o_ptr->level, lookup_player_level(owner));
-						}
-					}
-				}
-				break;
+	for (j = 0; j < num_houses; j++) {
+		if (!inarea(&houses[j].wpos, &o_ptr->wpos) || !fill_house(&houses[j], FILL_OBJECT, o_ptr)) continue;
+
+		switch (houses[j].dna->owner_type) {
+		case OT_PLAYER:
+			if (o_ptr->owner != houses[j].dna->owner && o_ptr->level > lookup_player_level(houses[j].dna->owner))
+				s_printf("Suspicious item: (%d,%d) Owned by %s, in %s's house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), lookup_player_name(houses[j].dna->owner), o_ptr->level, lookup_player_level(houses[j].dna->owner));
+			break;
+		case OT_PARTY:
+			if ((owner = lookup_player_id(parties[houses[j].dna->owner].owner)) && o_ptr->owner != owner) {
+				if (o_ptr->level > lookup_player_level(owner))
+					s_printf("Suspicious item: (%d,%d) Owned by %s, in %s party house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), parties[houses[j].dna->owner].name, o_ptr->level, lookup_player_level(owner));
+			}
+			break;
+		case OT_GUILD:
+			if ((owner = guilds[houses[j].dna->owner].master) && o_ptr->owner != owner) {
+				if (o_ptr->level > lookup_player_level(owner))
+					s_printf("Suspicious item: (%d,%d) Owned by %s, in %s party house. (%d,%d)\n", o_ptr->wpos.wx, o_ptr->wpos.wy, lookup_player_name(o_ptr->owner), guilds[houses[j].dna->owner].name, o_ptr->level, lookup_player_level(owner));
 			}
 		}
+		break;
 	}
 #endif // CHEEZELOG_LEVEL > 3
 }
@@ -6609,7 +6601,6 @@ void tradhouse_contents_chmod() {
  */
 static void scan_objs() {
 	int i, cnt = 0, dcnt = 0;
-	bool sj;
 	object_type *o_ptr;
 	cave_type **zcave;
 
@@ -6620,60 +6611,40 @@ static void scan_objs() {
 		o_ptr = &o_list[i];
 		if (!o_ptr->k_idx) continue;
 
-		sj = FALSE;
+		/* Skip monster inventory items (hm why actually) */
+		if (o_ptr->held_m_idx) continue;
+
 		/* not dropped on player death or generated on the floor? (or special stuff) */
 		if (o_ptr->marked2 == ITEM_REMOVAL_NEVER ||
 		    o_ptr->marked2 == ITEM_REMOVAL_HOUSE)
 			continue;
 
-		/* hack for monster trap items */
-		/* XXX noisy warning, eh? */ /* This is unsatisfactory. */
-		if (!in_bounds_array(o_ptr->iy, o_ptr->ix) &&
-		    /* There was an old woman who swallowed a fly... */
-		    in_bounds_array(255 - o_ptr->iy, o_ptr->ix)) {
-			sj = TRUE;
-			o_ptr->iy = 255 - o_ptr->iy;
-		}
-
 		/* Make town Inns a safe place to store (read: cheeze) items,
 		   at least as long as the town level is allocated. - C. Blue */
 		if ((zcave = getcave(&o_ptr->wpos))
-		    && in_bounds_array(o_ptr->iy, o_ptr->ix) //paranoia or monster trap? or tradhouse?
-		    && (f_info[zcave[o_ptr->iy][o_ptr->ix].feat].flags1 & FF1_PROTECTED)) {
-			if (sj) o_ptr->iy = 255 - o_ptr->iy;
-			continue;
-		}
+		    && in_bounds_array(o_ptr->iy, o_ptr->ix) //paranoia
+		    && (f_info[zcave[o_ptr->iy][o_ptr->ix].feat].flags1 & FF1_PROTECTED)) continue;
 
 		/* check items on the world's surface */
 		if (!o_ptr->wpos.wz && cfg.surface_item_removal) {
-			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { //paranoia or monster trap? or tradhouse?
+			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { //paranoia
 				/* Artifacts and objects that were inscribed and dropped by
 				the dungeon master or by unique monsters on their death
 				stay n times as long as cfg.surface_item_removal specifies */
 				if (o_ptr->marked2 == ITEM_REMOVAL_QUICK) {
 					if (++o_ptr->marked >= 10) {
 						/* handle monster trap, if this item was part of one */
-						if (sj) {
-							erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
-							sj = FALSE;
-						} else
-
+						if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
 						/* normal object */
-						delete_object_idx(i, TRUE);
-
+						else delete_object_idx(i, TRUE);
 						dcnt++;
 					}
 				} else if (o_ptr->marked2 == ITEM_REMOVAL_MONTRAP) {
 					if (++o_ptr->marked >= 120) {
 						/* handle monster trap, if this item was part of one */
-						if (sj) {
-							erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
-							sj = FALSE;
-						} else
-
+						if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
 						/* normal object */
-						delete_object_idx(i, TRUE);
-
+						else delete_object_idx(i, TRUE);
 						dcnt++;
 					}
 				} else if (++o_ptr->marked >= ((like_artifact_p(o_ptr) || /* stormy too */
@@ -6683,14 +6654,9 @@ static void scan_objs() {
 				    + (o_ptr->marked2 == ITEM_REMOVAL_LONG_WILD ? cfg.long_wild_item_removal : 0)
 				    ) {
 					/* handle monster trap, if this item was part of one */
-					if (sj) {
-						erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
-						sj = FALSE;
-					} else
-
+					if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
 					/* normal object */
-					delete_object_idx(i, TRUE);
-
+					else delete_object_idx(i, TRUE);
 					dcnt++;
 				}
 			}
@@ -6711,7 +6677,7 @@ static void scan_objs() {
 
 		/* check items on dungeon/tower floors */
 		else if (o_ptr->wpos.wz && cfg.dungeon_item_removal) {
-			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { //paranoia or monster trap? or tradhouse?
+			if (in_bounds_array(o_ptr->iy, o_ptr->ix)) { //paranoia
 				/* Artifacts and objects that were inscribed and dropped by
 				the dungeon master or by unique monsters on their death
 				stay n times as long as cfg.surface_item_removal specifies */
@@ -6719,11 +6685,7 @@ static void scan_objs() {
 				    (o_ptr->note && !o_ptr->owner)) ?
 				    cfg.dungeon_item_removal * 3 : cfg.dungeon_item_removal)) {
 					/* handle monster trap, if this item was part of one */
-					if (sj) {
-						erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
-						sj = FALSE;
-					} else
-
+					if (o_ptr->embed == 1) erase_mon_trap(&o_ptr->wpos, o_ptr->iy, o_ptr->ix);
 					/* normal object */
 					delete_object_idx(i, TRUE);
 
@@ -6744,9 +6706,6 @@ static void scan_objs() {
 			/* count amount of items that were checked */
 			cnt++;
 		}
-
-		/* restore monster trap hack */
-		if (sj) o_ptr->iy = 255 - o_ptr->iy; /* mega-hack: never inbounds */
 	}
 
 	/* log result */
