@@ -284,8 +284,8 @@ void do_cmd_skill() {
 	int wid, hgt;
 
 	/* Initialize global variables */
-	sel = 0;
-	start = 0;
+	//sel = 0;
+	//start = 0;
 
 	/* Save the screen */
 	Term_save();
