@@ -3572,7 +3572,7 @@ static void hook_quit(cptr str) {
 
 	/* Remember chat input history across logins */
 	/* Only write history if we have at least one line though */
-	if (message_history[0][0]) {
+	if (message_history_chat[0][0]) {
 		FILE *fp;
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 		fp = fopen(buf, "w");

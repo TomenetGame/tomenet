@@ -3151,7 +3151,7 @@ static void quit_hook(cptr s) {
 
 	/* Remember chat input history across logins */
 	/* Only write history if we have at least one line though */
-	if (message_history[0][0]) {
+	if (message_history_chat[0][0]) {
 		FILE *fp;
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 		fp = fopen(buf, "w");
@@ -3708,7 +3708,8 @@ void client_init(char *argv1, bool skip) {
 	/* Hack -- flush the key buffer */
 	Term_flush();
 
-	/* Remember chat input history across logins */
+	/* Remember chat input history across logins --
+	   ironically we 'reset message log' between logins in another place, not totally efficient.. */
 	path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 	fp = fopen(buf, "r");
 	hist_chat_end = 0;
