@@ -416,10 +416,6 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
-	cave_type **zcave;
-	bool flag = FALSE;
-	if ((zcave = getcave(wpos))) flag = TRUE;
-
 	now = time(&now);
 
 	w_ptr = &wild_info[wpos->wy][wpos->wx];
