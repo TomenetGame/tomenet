@@ -11314,9 +11314,9 @@ void setup_objects(void) {
 		/* Skip carried objects */
 		if (o_ptr->held_m_idx) continue;
 		/* Skip objects in monster traps */
-		if (!o_ptr->embed) continue;
+		if (o_ptr->embed) continue;
 
-//		if (!in_bounds2(&o_ptr->wpos, o_ptr->iy, o_ptr->ix)) continue;
+		//if (!in_bounds2(&o_ptr->wpos, o_ptr->iy, o_ptr->ix)) continue;
 		if (in_bounds_array(o_ptr->iy, o_ptr->ix))
 
 #if 0	// excise_object_idx() should do this	<- ???
