@@ -6192,6 +6192,7 @@ The 1..9 are standard shops, namely..
                         However, the player will need to have enough cash to
                         pay an instant resurrection fee when he dies, which is:
                         Dungeonlevel * dungeonlevel * 10 + 10 gold pieces.
+                        Eg at -50ft Orc Cave it's 10 * 10 * 10 + 10 = 1010 Au.
                         The money is automatically deducted from the purse or
                         the bank account as required. If the player does not
                         have enough money in total then resurrection will fail
