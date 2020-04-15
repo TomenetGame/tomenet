@@ -3102,8 +3102,10 @@ bool twall(int Ind, int y, int x) {
    -Granite Wall: Fountain, Lava/Water
             Rune
     The highest proficiency in any rune-skill decides how much the chance to
-    find a rune (in whichever above case it is possible generally) will be
-    boosted further.
+    find a rune in above cases of 'nonobvious' treasure will be, independantly
+    of digging skill.
+    For obvious treasure or just hard walls, the chance to find a rune depends
+    (as finding any other special thing) only on digging skill.
 */
 #define TRAP_REVEALS_DOOR
 void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
