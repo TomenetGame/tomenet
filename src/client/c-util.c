@@ -1546,15 +1546,17 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
  * Jir -- added history.
  * TODO: cursor editing (fix past terminal width extending text)
  */
+typedef char msg_hist_var[MSG_HISTORY_MAX][MSG_LEN];
 bool askfor_aux(char *buf, int len, char mode) {
 	int y, x;
 	int i = 0;
 	int k = 0; /* Is the end of line */
 	int l = 0; /* Is the cursor location on line */
-	int j = 0; /* Loop iterator */
+	int j, j2; /* Loop iterator */
 
 	bool search = FALSE;
-	int s = 0, s2; //todo: check if s=0 is correct
+	int sp_iter, sp_size, sp_end;
+	msg_hist_var *sp_msg;
 
 	bool tail = FALSE;
 	int l_old = l;
@@ -1634,92 +1636,6 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case ESCAPE:
 		//case KTRL('Q'):
 			k = 0;
-			done = TRUE;
-			break;
-
-		case KTRL('C'): /* Allow searching for text in a previously entered chat message */
-			if (nohist) break;
-			if (!search) {
-				/* Begin searching mode */
-				search = TRUE;
-				break;
-			}
-
-			/* Continue search by looking for next match */
-			if (s == MSG_HISTORY_MAX) continue; /* No match exists at all */
-			if (mode & ASKFOR_CHATTING) {
-				/* Look for further match.. */
-				for (s2 = s + 1; s2 < MSG_HISTORY_MAX; s2++) {
-					if (!strstr(message_history_chat[s2], buf)) continue;
-					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-					c_prt(TERM_YELLOW, format("%s: %s", buf, message_history_chat[s2]), y, x);
-					s = s2;
-					break;
-				}
-				if (s2 == MSG_HISTORY_MAX) { /* No further match found */
-					/* Start from the beginning again, at this point we know there must be at least one match we can find now (again) */
-					for (s2 = 0; s2 <= s; s2++) {
-						if (!strstr(message_history_chat[s2], buf)) continue;
-						/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-						c_prt(TERM_YELLOW, format("%s: %s", buf, message_history_chat[s2]), y, x);
-						s = s2;
-						break;
-					}
-				}
-			} else {
-				/* Look for further match.. */
-				for (s2 = s + 1; s2 < MSG_HISTORY_MAX; s2++) {
-					if (!strstr(message_history[s2], buf)) continue;
-					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-					c_prt(TERM_YELLOW, format("%s: %s", buf, message_history[s2]), y, x);
-					s = s2;
-					break;
-				}
-				if (s2 == MSG_HISTORY_MAX) { /* No further match found */
-					/* Start from the beginning again, at this point we know there must be at least one match we can find now (again) */
-					for (s2 = 0; s2 <= s; s2++) {
-						if (!strstr(message_history[s2], buf)) continue;
-						/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-						c_prt(TERM_YELLOW, format("%s: %s", buf, message_history[s2]), y, x);
-						s = s2;
-						break;
-					}
-				}
-			}
-			continue;
-		case '\n':
-		case '\r':
-			/* Catch searching mode */
-			if (search) {
-				/* We didn't find any match? */
-				if (s == MSG_HISTORY_MAX) {
-#if 0
-					continue;
-#else /* Actually switch to normal text input instead of just having to discard the unmatched search string: */
-					search = FALSE;
-					buf[len] = '\0';
-					k = l = strlen(buf);
-					c_prt(TERM_WHITE, buf, y, x);
-					/* Note: For some reason the cursor becomes invisible here */
- #if 0 /* This code works randomly. Sometimes it does NOT restore cursor visibility. */
-					Term_set_cursor(1);
-					Term_xtra(TERM_XTRA_SHAPE, 1);
- #endif
-					continue;
-#endif
-				}
-
-				/* Replace our search string by the actual match and go with that */
-				if (mode & ASKFOR_CHATTING) strncpy(buf, message_history_chat[s], len);
-				else strncpy(buf, message_history[s], len);
-				search = FALSE;
-				k = l = strlen(buf);
-				c_prt(TERM_WHITE, buf, y, x);
-				continue;
-			}
-			/* Proceed normally */
-			buf[len] = '\0';
-			k = l = strlen(buf);
 			done = TRUE;
 			break;
 
@@ -1989,6 +1905,91 @@ bool askfor_aux(char *buf, int len, char mode) {
 			xhtml_screenshot("screenshot????");
 			break;
 
+		case '\n':
+		case '\r':
+			/* Catch searching mode */
+			if (search) {
+				/* We didn't find any match? */
+				if (sp_iter == sp_size) {
+#if 0
+					continue;
+#else /* Actually switch to normal text input instead of just having to discard the unmatched search string: */
+					search = FALSE;
+					buf[len] = '\0';
+					k = l = strlen(buf);
+					c_prt(TERM_WHITE, buf, y, x);
+					/* Note: For some reason the cursor becomes invisible here */
+ #if 0 /* This code works randomly. Sometimes it does NOT restore cursor visibility. */
+					Term_set_cursor(1);
+					Term_xtra(TERM_XTRA_SHAPE, 1);
+ #endif
+					continue;
+#endif
+				}
+
+				/* Replace our search string by the actual match and go with that */
+				//strncpy(buf, (*sp_msg)[(sp_end - sp_iter) % MSG_HISTORY_MAX], len);
+				strcpy(buf, (*sp_msg)[(sp_end - sp_iter) % MSG_HISTORY_MAX]);
+				search = FALSE;
+				k = l = strlen(buf);
+				c_prt(TERM_WHITE, buf, y, x);
+				continue;
+			}
+			/* Proceed normally */
+			buf[len] = '\0';
+			k = l = strlen(buf);
+			done = TRUE;
+			break;
+
+		case KTRL('C'): /* Allow searching for text in a previously entered chat message */
+			if (nohist) break;
+			if (!search) {
+				/* Reverse search, starting with newest entries */
+				if (mode & ASKFOR_CHATTING) {
+					sp_size = hist_chat_looped ? MSG_HISTORY_MAX : hist_chat_end;
+					sp_end = hist_chat_end - 1;
+					sp_msg = &message_history_chat;
+				} else {
+					sp_size = hist_looped ? MSG_HISTORY_MAX : hist_end;
+					sp_end = hist_end - 1;
+					sp_msg = &message_history;
+				}
+				/* No history recorded yet? */
+				if (sp_end < 0) break;
+				/* Begin searching mode */
+				sp_iter = -1;
+				search = TRUE;
+				break;
+			}
+			if (!buf[0]) continue; /* Nothing typed in yet */
+
+			/* Continue search by looking for next match */
+			if (sp_iter == sp_size) continue; /* No match exists at all */
+			/* Look for another match.. */
+			for (j = sp_iter + 1; j < sp_size; j++) {
+				j2 = (sp_end - j) % MSG_HISTORY_MAX; /* Reverse direction */
+				if (!strstr((*sp_msg)[j2], buf)) continue;
+				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
+				sp_iter = j;
+				break;
+			}
+			/* No further match found, but we did find at least one match? */
+			if (j == sp_size && sp_iter != -1) {
+				/* Cycle through search results: Start from the beginning again and search up to the final match again */
+				for (j = 0; j <= sp_iter; j++) {
+					j2 = (sp_end - j) % MSG_HISTORY_MAX; /* Reverse direction */
+					if (!strstr((*sp_msg)[j2], buf)) continue;
+					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+					c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
+					sp_iter = j;
+					break;
+				}
+			}
+			/* Absolutely no match found? Need different search term to continue. */
+			else if (j > sp_iter) sp_iter = sp_size;
+			continue;
+
 		default:
 			/* inkey_letter_all hack for c_get_quantity() */
 			//if (inkey_letter_all && !k && ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z'))) { i = 'a';
@@ -2029,26 +2030,21 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (!buf[0]) {
 				/* just skip.. */
 				Term_erase(x, y, vis_len);
-				s = MSG_HISTORY_MAX;
+				sp_iter = sp_size;
 				continue;
 			}
-			if (mode & ASKFOR_CHATTING) {
-				for (s = 0; s < MSG_HISTORY_MAX; s++) {
-					if (!strstr(message_history_chat[s], buf)) continue;
-					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-					c_prt(TERM_YELLOW, format("%s: %s", buf, message_history_chat[s]), y, x);
-					break;
-				}
-				if (s == MSG_HISTORY_MAX) c_prt(TERM_ORANGE, buf, y, x);
-			} else {
-				for (s = 0; s < MSG_HISTORY_MAX; s++) {
-					if (!strstr(message_history[s], buf)) continue;
-					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
-					c_prt(TERM_YELLOW, format("%s: %s", buf, message_history[s]), y, x);
-					break;
-				}
-				if (s == MSG_HISTORY_MAX) c_prt(TERM_ORANGE, buf, y, x);
+			/* Search term changed: Reset search and look for first match.. */
+			sp_iter = -1;
+			for (j = 0; j < sp_size; j++) {
+				j2 = (sp_end - j) % MSG_HISTORY_MAX; /* Reverse direction */
+				if (!strstr((*sp_msg)[j2], buf)) continue;
+				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
+				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
+				break;
 			}
+			sp_iter = j;
+			/* No match found at all */
+			if (sp_iter == sp_size) c_prt(TERM_ORANGE, buf, y, x);
 			continue;
 		}
 
