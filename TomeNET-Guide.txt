@@ -1134,6 +1134,7 @@ They all start with a slash '/' hence they're called slash commands:
             Empty a potion from your inventory, leaving an empty bottle.
             Example: /empty c   (if you have 'c) 3 potions of boldness', one
             will be emptied and 2 remain at 'c) 2 potions of boldness'.))
+            You can also empty brass lanterns with this command.
 
 /evinfo     Displays information about all ongoing events.
 
