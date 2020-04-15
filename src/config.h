@@ -819,7 +819,8 @@
 /* 
  * OPTION: max # of history for chat, slash-cmd etc.
  */
-#define MSG_HISTORY_MAX	1000
+//#define MSG_HISTORY_MAX	1000  -- when it got exceeded it crashed at that point..
+#define MSG_HISTORY_MAX		MESSAGE_MAX
 
 #define EVIL_METACLIENT
 

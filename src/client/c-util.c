@@ -2081,28 +2081,68 @@ bool askfor_aux(char *buf, int len, char mode) {
 	/* Success */
 	if (nohist) return (TRUE);
 
-	/* Add this to the history */
+	/* Add this to the (chat) history.
+	   Update (chat) history whenever we repeat an old message, removing it from its old position and adding it on top.
+	   This is especially useful for the search-function, as it won't give duplicate hits over time. */
 	if (mode & ASKFOR_CHATTING) {
-		/* Only add to history if it isn't a repetition of our previous message */
-		if (!hist_chat_end || strncmp(message_history_chat[hist_chat_end - 1], buf, sizeof(*message_history_chat) - 1)) {
-			strncpy(message_history_chat[hist_chat_end], buf, sizeof(*message_history_chat) - 1);
-			message_history_chat[hist_chat_end][sizeof(*message_history_chat) - 1] = '\0';
-			hist_chat_end++;
-			if (hist_chat_end >= MSG_HISTORY_MAX) {
-				hist_chat_end = 0;
-				hist_chat_looped = TRUE;
+		int i, j;
+
+		/* Scan history for duplicate of this new message */
+		if (!hist_chat_looped) {
+			for (i = 0; i < hist_chat_end; i++) {
+				if (!strcmp(message_history_chat[i], buf)) {
+					/* Found an old duplicate. Excise it. */
+					hist_chat_end--;
+					for (k = i; k < hist_chat_end; k++) strcpy(message_history_chat[k], message_history_chat[k + 1]);
+					break;
+				}
+			}
+		} else {
+			for (i = hist_chat_end; i < hist_chat_end + MSG_HISTORY_MAX; i++) {
+				if (!strcmp(message_history_chat[i % MSG_HISTORY_MAX], buf)) {
+					/* Found an old duplicate. Excise it. */
+					hist_chat_end--;
+					for (j = i; j < hist_chat_end + MSG_HISTORY_MAX; j++) strcpy(message_history_chat[j % MSG_HISTORY_MAX], message_history_chat[(j + 1) % MSG_HISTORY_MAX]);
+					break;
+				}
 			}
 		}
+		/* Append our message to history */
+		strcpy(message_history_chat[hist_chat_end], buf);
+		hist_chat_end++;
+		if (hist_chat_end >= MSG_HISTORY_MAX) {
+			hist_chat_end = 0;
+			hist_chat_looped = TRUE;
+		}
 	} else {
-		/* Only add to history if it isn't a repetition of our previous message */
-		if (!hist_end || strncmp(message_history_chat[hist_end - 1], buf, sizeof(*message_history) - 1)) {
-			strncpy(message_history[hist_end], buf, sizeof(*message_history) - 1);
-			message_history[hist_end][sizeof(*message_history) - 1] = '\0';
-			hist_end++;
-			if (hist_end >= MSG_HISTORY_MAX) {
-				hist_end = 0;
-				hist_looped = TRUE;
+		int i, j;
+
+		/* Scan history for duplicate of this new message */
+		if (!hist_looped) {
+			for (i = 0; i < hist_end; i++) {
+				if (!strcmp(message_history[i], buf)) {
+					/* Found an old duplicate. Excise it. */
+					hist_end--;
+					for (k = i; k < hist_end; k++) strcpy(message_history[k], message_history[k + 1]);
+					break;
+				}
 			}
+		} else {
+			for (i = hist_end; i < hist_end + MSG_HISTORY_MAX; i++) {
+				if (!strcmp(message_history[i % MSG_HISTORY_MAX], buf)) {
+					/* Found an old duplicate. Excise it. */
+					hist_end--;
+					for (j = i; j < hist_end + MSG_HISTORY_MAX; j++) strcpy(message_history[j % MSG_HISTORY_MAX], message_history[(j + 1) % MSG_HISTORY_MAX]);
+					break;
+				}
+			}
+		}
+		/* Append our message to history */
+		strcpy(message_history[hist_end], buf);
+		hist_end++;
+		if (hist_end >= MSG_HISTORY_MAX) {
+			hist_end = 0;
+			hist_looped = TRUE;
 		}
 	}
 
