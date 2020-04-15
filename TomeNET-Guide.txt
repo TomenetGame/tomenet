@@ -18925,7 +18925,9 @@ The techniques are as follows:
         (Double-shooting does not cost more energy than shooting normally.)
     Barrage             9 stamina      (25.000 Archery)
         Prepares to fire a powerful multi-shot which will cost you half a
-        turn. It stuns the target (if it doesn't resist stunning attacks).
+        turn. All the shots are fired at the same target, so it doesn't hit
+        multiple monsters. It stuns the target (if the target doesn't resist
+        stunning attacks).
         Because 6 shots are fired at once you will need at least as many
         projectiles in your quiver in order to use it.
         (Firing a barrage costs half a turn of energy.)
