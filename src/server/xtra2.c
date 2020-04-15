@@ -1184,6 +1184,7 @@ bool set_fury(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->fury) {
+			set_afraid(Ind, 0);
 			if (p_ptr->shero) {
 				msg_print(Ind, "You cannot grow additional fury while in a berserk rage!");
 				return FALSE;
@@ -1196,7 +1197,7 @@ bool set_fury(int Ind, int v) {
 	/* Shut */
 	else {
 		if (p_ptr->fury) {
-			msg_print(Ind, "The fury stops.");
+			msg_print(Ind, "You calm down again.");
 			notice = TRUE;
 		}
 	}
@@ -2183,10 +2184,12 @@ bool set_hero(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->hero) {
+			hp_player(Ind, 10);
+			set_afraid(Ind, 0);
 			msg_format_near(Ind, "%s has become a hero.", p_ptr->name);
 			msg_print(Ind, "You feel like a hero!");
 			notice = TRUE;
-		}
+		} else notice = hp_player(Ind, 10);
 	}
 
 	/* Shut */
@@ -2231,14 +2234,18 @@ bool set_shero(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->shero) {
+			hp_player(Ind, 30);
+			set_afraid(Ind, 0);
+
 			if (p_ptr->fury) {
 				msg_print(Ind, "The berserk rage replaces your fury!");
 				set_fury(Ind, 0);
 			}
+
 			msg_format_near(Ind, "%s has become a killing machine.", p_ptr->name);
 			msg_print(Ind, "You feel like a killing machine!");
 			notice = TRUE;
-		}
+		} else notice = hp_player(Ind, 30);
 	}
 
 	/* Shut */

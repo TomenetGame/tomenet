@@ -770,14 +770,10 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (set_oppose_cold(Ind, randint(10) + 10)) ident = TRUE; /* removed stacking */
 			break;
 		case SV_POTION_HEROISM:
-			if (hp_player(Ind, 10)) ident = TRUE;
-			if (set_afraid(Ind, 0)) ident = TRUE;
 			if (set_hero(Ind, randint(25) + 25)) ident = TRUE; /* removed stacking */
 			break;
 		case SV_POTION_BERSERK_STRENGTH:
-			if (hp_player(Ind, 30)) ident = TRUE;
-			if (set_afraid(Ind, 0)) ident = TRUE;
-			if (set_shero(Ind, randint(25) + 25)) ident = TRUE; /* removed stacking */
+			if (set_shero(Ind, randint(15) + 20)) ident = TRUE; /* removed stacking */
 			break;
 		case SV_POTION_CURE_LIGHT:
 			if (hp_player(Ind, damroll(3, 8))) ident = TRUE;
@@ -5979,9 +5975,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_BLADETURNER:
 			msg_print(Ind, "Your armour glows in many colours...");
-			(void)hp_player(Ind, 30);
-			(void)set_afraid(Ind, 0);
-			(void)set_res_fear(Ind, 20);
 			(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
 			//p_ptr->blessed_power = 20;
 			//(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
@@ -6071,9 +6064,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			o_ptr->recharging = rand_int(200) + 200 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
 		case ART_HARADRIM:
-			set_afraid(Ind, 0);
 			set_shero(Ind, randint(25) + 25); /* removed stacking */
-			hp_player(Ind, 30);
 			o_ptr->recharging = rand_int(40) + 50 - get_skill_scale(p_ptr, SKILL_DEVICE, 35);
 			break;
 		case ART_FUNDIN:
@@ -6408,12 +6399,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_ROHAN:
 			msg_print(Ind, "Your horn glows deep red.");
-			set_afraid(0);
-			set_shero(Ind, damroll(5,10) + 30); /* removed stacking */
-			set_afraid(0);
 			set_hero(Ind, damroll(5,10) + 30); /* removed stacking */
 			set_fast(Ind, damroll(5,10) + 30, 20); /* removed stacking */
-			hp_player(30);
+			set_shero(Ind, damroll(5,10) + 30); /* removed stacking */
 			o_ptr->recharging = 250 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
 		case ART_HELM:
@@ -6435,8 +6423,6 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif	// 0
 		case ART_HURIN:
 			(void)set_fast(Ind, randint(50) + 50, 10); /* removed stacking */
-			hp_player(Ind, 30);
-			set_afraid(Ind, 0);
 			set_shero(Ind, randint(50) + 50); /* removed stacking */
 			o_ptr->recharging = rand_int(75) + 175 - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
 			break;
@@ -6599,9 +6585,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			/* Done */
 			return;
 		} else if (is_ego_p(o_ptr, EGO_FURY)) {
-			set_afraid(Ind, 0);
 			set_fury(Ind, rand_int(5) + 15); /* removed stacking */
-			hp_player(Ind, 40);
 			o_ptr->recharging = 100 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
@@ -6685,9 +6669,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		/* Amulets of rage can be activated for berserk strength */
 		case SV_AMULET_RAGE:
 			msg_print(Ind, "Your amulet sparkles bright red...");
-			set_afraid(Ind, 0);
 			set_fury(Ind, randint(10) + 15); /* removed stacking */
-			hp_player(Ind, 40);
 			o_ptr->recharging = rand_int(150) + 250 - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
 			return;
@@ -7018,9 +7000,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			sprintf(p_ptr->attacker, " breathes the elements for");
 			fire_ball(Ind, GF_MISSILE, dir, 300 + get_skill_scale(p_ptr, SKILL_DEVICE, 300), 4, p_ptr->attacker);
 			msg_print(Ind, "Your armour glows in many colours...");
-			(void)set_afraid(Ind, 0);
 			(void)set_shero(Ind, randint(50) + 50); /* removed stacking */
-			(void)hp_player(Ind, 30);
 			//p_ptr->blessed_power = 20;
 			//(void)set_blessed(Ind, randint(50) + 50); /* removed stacking */
 			(void)set_oppose_acid(Ind, randint(50) + 50); /* removed stacking */
@@ -8331,8 +8311,6 @@ s_printf("TECHNIQUE_MELEE: %s - assassinate\n", p_ptr->name);
 
 		p_ptr->cst -= 10;
 		un_afk_idle(Ind);
-		hp_player(Ind, 20);
-		set_afraid(Ind, 0);
 		set_shero(Ind, randint(5) + 15);
 s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;

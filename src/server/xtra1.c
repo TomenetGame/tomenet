@@ -1718,8 +1718,8 @@ void calc_hitpoints(int Ind) {
 
 	/* Factor in the hero / superhero settings.
 	   Specialty: It's applied AFTER mimic form HP influence. */
-	if (p_ptr->hero) mhp += 10;
 	if (p_ptr->shero) mhp += 20;
+	if (p_ptr->hero) mhp += 10;
 
 #if 0 /* p_ptr->to_hp is unused atm! */
 	/* Fixed Hit Point Bonus */
@@ -4582,11 +4582,11 @@ void calc_boni(int Ind) {
 	if (p_ptr->fury) {
 		p_ptr->to_h -= 10;
 		p_ptr->dis_to_h -= 10;
-		p_ptr->to_d += 20;
-		p_ptr->dis_to_d += 20;
+		p_ptr->to_d += 10;
+		p_ptr->dis_to_d += 10;
 		p_ptr->pspeed += 5;
-		p_ptr->to_a -= 30;
-		p_ptr->dis_to_a -= 30;
+		p_ptr->to_a -= 20;
+		p_ptr->dis_to_a -= 20;
 	}
 
 	/* Temporary "fast" */
