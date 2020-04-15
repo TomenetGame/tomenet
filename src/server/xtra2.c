@@ -8539,7 +8539,7 @@ void player_death(int Ind) {
 
 #if CHATTERBOX_LEVEL > 2
 			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
-				msg_broadcast(0, "Suddenly a thought comes to your mind:");
+				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
 				msg_broadcast(0, "Who let the dogs out?");
 			} else if (p_ptr->last_words) {
 				char death_message[80];
@@ -9002,7 +9002,7 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 
 #if CHATTERBOX_LEVEL > 2
 			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
-				msg_broadcast(0, "Suddenly a thought comes to your mind:");
+				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
 				msg_broadcast(0, "Who let the dogs out?");
 			} else if (p_ptr->last_words) {
 				char death_message[80];
@@ -9047,7 +9047,7 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 
 #if CHATTERBOX_LEVEL > 2
 			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
-				msg_broadcast(0, "Suddenly a thought comes to your mind:");
+				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
 				msg_broadcast(0, "Who let the dogs out?");
 			} else if (p_ptr->last_words) {
 				char death_message[80];
@@ -9135,7 +9135,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 
 #if CHATTERBOX_LEVEL > 2
 			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
-				msg_broadcast(0, "Suddenly a thought comes to your mind:");
+				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
 				msg_broadcast(0, "Who let the dogs out?");
 			} else if (p_ptr->last_words) {
 				char death_message[80];
@@ -9467,7 +9467,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	//msg_print(Ind, NULL);
 #if CHATTERBOX_LEVEL > 2
 	if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
-		msg_broadcast(0, "Suddenly a thought comes to your mind:");
+		//msg_broadcast(0, "Suddenly a thought comes to your mind:");
 		msg_broadcast(0, "Who let the dogs out?");
 	} else if (p_ptr->last_words) {
 		char death_message[80];
