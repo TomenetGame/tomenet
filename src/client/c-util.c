@@ -5506,7 +5506,7 @@ Chain_Macro:
 
 					case mw_prfimm:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an immunity preference:");
-						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Lightning  \377Gb\377g) Frost  \377Gc\377g) Acid  \377Gd\377g) Fire  \377Ge\377g) Poison  \377Gf\377g) Water");
+						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Lightning  \377Gb\377g) Cold  \377Gc\377g) Acid  \377Gd\377g) Fire  \377Ge\377g) Poison  \377Gf\377g) Water");
 						Term_putstr(5, 12, -1, TERM_GREEN, "\377G*\377g) None (pick one randomly on polymorphing)");
 						Term_putstr(5, 13, -1, TERM_GREEN, "\377G?\377g) Just check (displays your current immunity preference)");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-f,*,?):");
@@ -5537,7 +5537,7 @@ Chain_Macro:
 						/* build macro part */
 						switch (choice) {
 						case 'a': strcpy(buf2, "\\e)m@3\rd@Lightning\r"); break;
-						case 'b': strcpy(buf2, "\\e)m@3\rd@Frost\r"); break;
+						case 'b': strcpy(buf2, "\\e)m@3\rd@Cold\r"); break;
 						case 'c': strcpy(buf2, "\\e)m@3\rd@Acid\r"); break;
 						case 'd': strcpy(buf2, "\\e)m@3\rd@Fire\r"); break;
 						case 'e': strcpy(buf2, "\\e)m@3\rd@Poison\r"); break;
@@ -6066,7 +6066,7 @@ Chain_Macro:
 						case 'd': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GLightn");
 							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Rod of Lightning Bolts'.");
 							break;
-						case 'e': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GFrostw");
+						case 'e': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GColdw");
 							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Frostwoven Cloak'.");
 							break;
 						case 'f': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GSerpen");

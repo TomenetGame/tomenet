@@ -569,7 +569,7 @@ static void print_immunities() {
 	put_str("c) Lightning", j++, col);
 
 	prt("", j, col);
-	put_str("d) Frost", j++, col);
+	put_str("d) Cold", j++, col);
 
 	prt("", j, col);
 	put_str("e) Acid", j++, col);
@@ -719,7 +719,7 @@ void do_mimic() {
 				if (!strcasecmp(buf, "Check")) c = 1;
 				else if (!strcasecmp(buf, "None")) c = 2;
 				else if (!strcasecmp(buf, "Lightning")) c = 3;
-				else if (!strcasecmp(buf, "Frost")) c = 4;
+				else if (!strcasecmp(buf, "Cold")) c = 4;
 				else if (!strcasecmp(buf, "Acid")) c = 5;
 				else if (!strcasecmp(buf, "Fire")) c = 6;
 				else if (!strcasecmp(buf, "Poison")) c = 7;
