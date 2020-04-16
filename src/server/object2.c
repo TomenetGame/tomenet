@@ -4430,12 +4430,6 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 	int *ok_ego, ok_num = 0;
 	bool ret = FALSE, double_ok = !(resf & RESF_NODOUBLEEGO);
 	byte tval = o_ptr->tval;
-#if 0 /* make_ego_item() is called BEFORE the book is set to a specific school spell! */
-	bool crystal =
-	    o_ptr->tval == TV_BOOK &&
-	    o_ptr->sval == SV_SPELLBOOK &&
-	    get_spellbook_name_colour(o_ptr->pval) == TERM_YELLOW;
-#endif
 
 	if (artifact_p(o_ptr) || o_ptr->name2) return (FALSE);
 
@@ -4445,23 +4439,12 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 	for (i = 0, n = e_tval_size[tval]; i < n; i++) {
 		ego_item_type *e_ptr = &e_info[e_tval[tval][i]];
 		bool ok = FALSE;
-#if 0 /* done in e_info */
-		bool cursed = FALSE;
-#endif
 
 		/* Must have the correct fields */
 		for (j = 0; j < MAX_EGO_BASETYPES; j++) {
 			if ((e_ptr->tval[j] == o_ptr->tval) && (e_ptr->min_sval[j] <= o_ptr->sval) && (e_ptr->max_sval[j] >= o_ptr->sval)) ok = TRUE;
-
-#if 0 /* done in e_info */
-			for (k = 0; k < 5-4; k++) if (e_ptr->flags3[k] & TR3_CURSED) cursed = TRUE;
-#endif
 			if (ok) break;
 		}
-#if 0 /* done in e_info */
-		/* No curse-free ego powers on broken or rusty items; no elven filthy rags */
-		if (!cursed && (o_ptr->k_idx == 30 || o_ptr->k_idx == 47 || o_ptr->k_idx == 110 || (o_ptr->k_idx == 102 && i == EGO_ELVENKIND))) ok = FALSE;
-#endif
 		if (!ok) {
 			/* Doesnt count as a try*/
 			continue;
@@ -4485,7 +4468,6 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 	}
 
 	/* Now test them a few times */
-//	for (i = 0; i < ok_num * 10; i++)	// I wonder..
 	for (j = 0; j < ok_num * 10; j++) {
 		ego_item_type *e_ptr;
 
@@ -4507,15 +4489,8 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 		}
 
 		/* We must make the "rarity roll" */
-//		if (rand_int(e_ptr->mrarity - luck(-(e_ptr->mrarity / 2), e_ptr->mrarity / 2)) > e_ptr->rarity)
-#if 0
-		k = e_ptr->mrarity - e_ptr->rarity;
-		if (k && rand_int(k)) continue;
-#endif	// 0
-
 		if (e_ptr->mrarity == 255) continue;
 		if (rand_int(e_ptr->mrarity) > e_ptr->rarity) continue;
-//		if (rand_int(e_ptr->rarity) < e_ptr->mrarity) continue;
 
 		/* Hack -- mark the item as an ego */
 		o_ptr->name2 = i;
@@ -4539,8 +4514,10 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 	 * Also make sure we dont already have a name2b, wchih would mean a special ego item
 	 */
 	/* try only when it's already ego	- Jir - */
-//	if (magik(7 + luck(-7, 7)) && (!o_ptr->name2b))
 	if (ret && double_ok && magik(7) && (!o_ptr->name2b)) {
+		object_type o_bak = *o_ptr;
+		int redundancy_tries = 10;
+
 		/* Now test them a few times */
 		for (j = 0; j < ok_num * 10; j++) {
 			ego_item_type *e_ptr;
@@ -4571,10 +4548,8 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 			}
 
 			/* We must make the "rarity roll" */
-//			if (rand_int(e_ptr->mrarity - luck(-(e_ptr->mrarity / 2), e_ptr->mrarity / 2)) > e_ptr->rarity)
 			if (e_ptr->mrarity == 255) continue;
 			if (rand_int(e_ptr->mrarity) > e_ptr->rarity) continue;
-//			if (rand_int(e_ptr->rarity) < e_ptr->mrarity) continue;
 
 			/* Don't allow silyl combinations that either don't
 			   make sense or that cause technical problems: */
@@ -4693,11 +4668,40 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 			/* Hack -- mark the item as an ego */
 			o_ptr->name2b = i;
 
-			/* Piece together a 32-bit random seed */
-			if (!(e_ptr->fego1[0] & ETR1_NO_SEED) && !o_ptr->name3) {
+			/* This ego power doesn't use a seed? No need to reroll it then. (Not going to reroll oname2 seed for this.) */
+			if (e_ptr->fego1[0] & ETR1_NO_SEED) redundancy_tries = 0;
+			/* If the two ego powers can, depending only on the seed, potentially end up redundant, we might want to try to re-seed a few times */
+			while (--redundancy_tries) {
+				/* Piece together a 32-bit random seed (possibly overwriting the one we already have, but easiest way for this loop) */
 				o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 				o_ptr->name3 += rand_int(0xFFFF);
+
+				/* Check for 100%-redundant ego power, ie we didn't gain _anything_ from it.
+				  This kind of double-ego-redudancy really only concerns armour effectively. */
+				if (is_armour(o_ptr->tval)) {
+					u32b f1, f2, f3, f4, f5, f6, esp;
+					u32b f1b, f2b, f3b, f4b, f5b, f6b, espb;
+
+					o_bak.name2b = 0; /* Undo name2b from having been set for memcmp(), further below */
+					o_bak.name3 = o_ptr->name3; /* Both objects have to have the same seed */
+					object_flags(&o_bak, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+					object_flags(o_ptr, &f1b, &f2b, &f3b, &f4b, &f5b, &f6b, &espb);
+
+					/* Equalize unimportant fields for memcmp() check. */
+					o_bak.name2b = o_ptr->name2b;
+					o_bak.level = o_ptr->level;
+					o_bak.to_a = o_ptr->to_a; /* +AC gain from ego power is not significant enough to warrant acknowledging a difference */
+					 /* The memcmp check is actually not really important, could just be removed.
+					    Although +pval might be quite nice, ie making a difference, this would effectively only happen on weapons, not on armour. */
+					if (memcmp(o_ptr, &o_bak, sizeof(object_type)) == 0
+					     /* Gain of flags is the main thing we're after, for armour: */
+					    && f1 == f1b && f2 == f2b && f3 == f3b && f4 == f4b && f5 == f5b && f6 == f6b && esp == espb)
+						continue;
+				}
+				/* Double-ego made a difference */
+				break;
 			}
+			/* Double-ego good to go */
 			break;
 		}
 	}
@@ -4812,13 +4816,11 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf) {
 	/* Very good */
 	if (power > 1) {
 		/* Make ego item */
-//		if (!rand_int(RANDART_WEAPON) && (o_ptr->tval != TV_TRAPKIT)) create_artifact(o_ptr, FALSE, TRUE);	else
 		make_ego_item(level, o_ptr, TRUE, resf);
 	} else if (power < -1) {
 		/* Make ego item */
 		make_ego_item(level, o_ptr, FALSE, resf);
 	}
-
 	/* Good */
 	if ((power > 0) && (o_ptr->tval != TV_MSTAFF)) {
 		/* Enchant */
@@ -4869,9 +4871,7 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf) {
 				break;
 			}
 
-//			if ((power == 1) && !o_ptr->name2 && o_ptr->sval != SV_AMMO_MAGIC)
 			else if ((power == 1) && !o_ptr->name2) {
-//				if (randint(100) < 7)
 				if (randint(500) < level + 5) {
 					/* Exploding missile */
 					int power[27] = { GF_ELEC, GF_POIS, GF_ACID,
@@ -4884,7 +4884,6 @@ static void a_m_aux_1(object_type *o_ptr, int level, int power, u32b resf) {
 						GF_TURN_ALL, GF_NUKE, //GF_STUN,
 						GF_DISINTEGRATE, GF_HELLFIRE };
 
-						//                                o_ptr->pval2 = power[rand_int(25)];
 					o_ptr->pval = power[rand_int(27)];
 				}
 			}
@@ -4943,7 +4942,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 	/* Very good */
 	if (power > 1) {
 		/* Make ego item */
-//		if (!rand_int(RANDART_ARMOR)) create_artifact(o_ptr, FALSE, TRUE);	else
 		make_ego_item(level, o_ptr, TRUE, resf);
 	} else if (power < -1) {
 		/* Make ego item */
@@ -5026,9 +5024,6 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 
 					if (!r_ptr->name) continue;
 					if (!r_ptr->rarity) continue;
-					// if (r_ptr->flags1 & RF1_UNIQUE) continue;
-					// if (r_ptr->level >= level + (power * 5)) continue;
-					//if (!mon_allowed(r_ptr)) continue;
 					if (!mon_allowed_chance(r_ptr)) continue;
 
 					break;
