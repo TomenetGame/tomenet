@@ -1352,7 +1352,7 @@ static cptr st_info_flags1[] = {
 	"SPECIAL",
 	"BUY67",
 	"NO_DISCOUNT1",
-	"XXX",
+	"SELL67",
 	"ZEROLEVEL"
 };
 

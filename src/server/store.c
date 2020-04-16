@@ -380,6 +380,8 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 		/* You're not a welcomed customer.. */
 		if (p_ptr->tim_blacklist) price = price * 4;
 
+		/* Added for Hidden Library in IDDC */
+		if (st_info[st_ptr->st_idx].flags1 & SF1_SELL67) price = (price * 2) / 3;
 	}
 
 	/* Compute the final price (with rounding) */

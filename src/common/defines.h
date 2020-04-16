@@ -1527,8 +1527,7 @@
 #define SF1_SPECIAL		0x08000000L	/* Store doesn't have an inventory but prints arbitrary text to screen instead */
 #define SF1_BUY67		0x10000000L	/* Shop buys for 67% of value */
 #define SF1_NO_DISCOUNT1	0x20000000L	/* no 20+% discounts */
-//flag hole:
-#define SF1_XXXXXXXXXXXX	0x40000000L	/*  */
+#define SF1_SELL67		0x40000000L	/* Store sells for 67% of value */
 #define SF1_ZEROLEVEL		0x80000000L	/* all items are level 0 and can't be traded */
 
 /* This seems to be bad, but backported once anyway;
