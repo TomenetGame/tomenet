@@ -3583,17 +3583,17 @@ static void hook_quit(cptr str) {
 #else /* for div/2 workaround (see loading): Only save the newer half of our messages to keep a safety buffer */
 			s = hist_chat_end - MSG_HISTORY_MAX / 2;
 			if (s < 0) s = 0;
-			for (j = s; j < hist_chat_end; j++) {
+			for (i = s; i < hist_chat_end; i++) {
 #endif
 				if (!message_history_chat[i][0]) continue;
 				fprintf(fp, "%s\n", message_history_chat[i]);
 			}
 		} else {
 #if 0
-			for (j = hist_chat_end; j < hist_chat_end + MSG_HISTORY_MAX; j++) {
+			for (i = hist_chat_end; i < hist_chat_end + MSG_HISTORY_MAX; i++) {
 #else /* for div/2 workaround (see loading): Only save the newer half of our messages to keep a safety buffer */
 			s = hist_chat_end + MSG_HISTORY_MAX / 2;
-			for (j = s; j < hist_chat_end + MSG_HISTORY_MAX; j++) {
+			for (i = s; i < hist_chat_end + MSG_HISTORY_MAX; i++) {
 #endif
 				if (!message_history_chat[i % MSG_HISTORY_MAX][0]) continue;
 				fprintf(fp, "%s\n", message_history_chat[i % MSG_HISTORY_MAX]);
