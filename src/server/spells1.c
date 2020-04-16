@@ -12074,7 +12074,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 					/* Cleanup monster traps */
 					cs_ptr = GetCS(c_ptr2, CS_MON_TRAP);
-					if (cs_ptr) cs_erase(c_ptr2, cs_ptr);
+					if (cs_ptr) erase_mon_trap(wpos, y, x, 0);
 
 					/* Burn floor somewhat */
 					if (randint(2) == 1)
