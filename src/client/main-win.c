@@ -3573,16 +3573,28 @@ static void hook_quit(cptr str) {
 	/* Remember chat input history across logins */
 	/* Only write history if we have at least one line though */
 	if (hist_chat_end || hist_chat_looped) {
+		int s;
 		FILE *fp;
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 		fp = fopen(buf, "w");
 		if (!hist_chat_looped) {
-			for (i = 0; i < hist_chat_end; i++) {
+#if 0
+			for (j = 0; j < hist_chat_end; j++) {
+#else /* for div/2 workaround (see loading): Only save the newer half of our messages to keep a safety buffer */
+			s = hist_chat_end - MSG_HISTORY_MAX / 2;
+			if (s < 0) s = 0;
+			for (j = s; j < hist_chat_end; j++) {
+#endif
 				if (!message_history_chat[i][0]) continue;
 				fprintf(fp, "%s\n", message_history_chat[i]);
 			}
 		} else {
-			for (i = hist_chat_end; i < hist_chat_end + MSG_HISTORY_MAX; i++) {
+#if 0
+			for (j = hist_chat_end; j < hist_chat_end + MSG_HISTORY_MAX; j++) {
+#else /* for div/2 workaround (see loading): Only save the newer half of our messages to keep a safety buffer */
+			s = hist_chat_end + MSG_HISTORY_MAX / 2;
+			for (j = s; j < hist_chat_end + MSG_HISTORY_MAX; j++) {
+#endif
 				if (!message_history_chat[i % MSG_HISTORY_MAX][0]) continue;
 				fprintf(fp, "%s\n", message_history_chat[i % MSG_HISTORY_MAX]);
 			}
