@@ -6494,6 +6494,7 @@ if (cfg.unikill_format) {
 		/* Dungeon-boss-slain music if available client-side */
 		if (!is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 90, -2);
 
+		/* Drop final artifact? */
 		if ((
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		    in_irondeepdive(wpos) ? (a_idx = d_info[iddc[ABS(wpos->wz)].type].final_artifact) :
@@ -6578,7 +6579,9 @@ if (cfg.unikill_format) {
 				drop_near(0, qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
 			} else  s_printf("..failed.\n");
-		} else if (
+		}
+		/* Drop final object? */
+		if (
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		    in_irondeepdive(wpos) ? (I_kind = d_info[iddc[ABS(wpos->wz)].type].final_object) :
 #endif
