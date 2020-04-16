@@ -4652,7 +4652,7 @@ void do_cmd_bash(int Ind, int dir) {
 			if ((item = c_ptr->o_idx)) {
 				object_type *o_ptr = &o_list[c_ptr->o_idx];
 
-				if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, x, y, 2)) return;
+				if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, x, y, 11)) return; //was 2
 
 				if (o_ptr->questor) {
 					msg_print(Ind, "\377yThe item doesn't move an inch!");

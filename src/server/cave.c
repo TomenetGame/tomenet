@@ -3236,7 +3236,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 	/* Objects */
 	if (c_ptr->o_idx
 #ifdef FIX_NOTHINGS_ON_SIGHT
-	    && !nothing_test(&o_list[c_ptr->o_idx], p_ptr, &p_ptr->wpos, x, y, 5)
+	    && !nothing_test(&o_list[c_ptr->o_idx], p_ptr, &p_ptr->wpos, x, y, 10) //was 5
 #endif
 #if 1 /* optional: prevent objects from being visible if they're entombed! Need to "dig them out" first. */
 	    && cave_floor_bold(zcave, y, x)

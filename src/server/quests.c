@@ -1198,7 +1198,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	o_ptr->next_o_idx = c_ptr->o_idx; /* on top of pile, if any */
 	o_ptr->stack_pos = 0;
 	c_ptr->o_idx = o_idx;
-	nothing_test2(c_ptr, x, y, &wpos, 3);
+	nothing_test2(c_ptr, x, y, &wpos, 1); //was 3
 	q_ptr->objects_registered++;
 	o_ptr->marked = 0;
 	o_ptr->held_m_idx = 0;
@@ -2221,7 +2221,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 		o_ptr->next_o_idx = c_ptr->o_idx; /* on top of pile, if any */
 		o_ptr->stack_pos = 0;
 		c_ptr->o_idx = o_idx;
-		nothing_test2(c_ptr, x, y, &wpos, 4);
+		nothing_test2(c_ptr, x, y, &wpos, 2); //was 4
 		q_ptr->objects_registered++;
 
 		o_ptr->marked = 0;

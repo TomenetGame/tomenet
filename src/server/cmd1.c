@@ -1406,7 +1406,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	o_ptr = &o_list[c_ptr->o_idx];
 	num_org = o_ptr->number;
 
-	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, 1)) return;
+	if (nothing_test(o_ptr, p_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py, 9)) return; //was 1
 
 	/* Cannot pick up stuff in leaderless guild halls */
 	if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_GUILD_SUS) &&

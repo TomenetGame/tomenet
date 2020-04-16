@@ -166,7 +166,7 @@ void excise_object_idx(int o_idx) {
 					/* Remove from list */
 					if (c_ptr) {
 						c_ptr->o_idx = next_o_idx;
-						nothing_test2(c_ptr, x, y, &j_ptr->wpos, 0);
+						nothing_test2(c_ptr, x, y, &j_ptr->wpos, 6); //was 0
 					}
 				}
 				/* Real previous */
@@ -600,7 +600,7 @@ void compact_objects(int size, bool purge) {
 				} else if (in_bounds2(wpos, y, x)) {
 					if (old_idx[c_ptr->o_idx] == i) {
 						c_ptr->o_idx = i;
-						nothing_test2(c_ptr, x, y, wpos, 1);
+						nothing_test2(c_ptr, x, y, wpos, 7);//was 1
 					}
 				}
 			}
@@ -10114,7 +10114,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 			/* Place */
 			//c_ptr = &zcave[ny][nx];
 			c_ptr->o_idx = o_idx;
-			nothing_test2(c_ptr, nx, ny, wpos, 2);
+			nothing_test2(c_ptr, nx, ny, wpos, 8); //was 2
 
 			/* Clear visibility flags */
 			for (k = 1; k <= NumPlayers; k++) {
