@@ -5111,30 +5111,59 @@ void py_touch_zap_player(int Ind, int Ind2) {
 	bool aura_ok = !magik((p_ptr->antimagic * 8) / 5);
 	int auras_failed = 0;
 
-	if (!p_ptr->death && q_ptr->sh_fire) {
-		if (!(p_ptr->immune_fire)) {
-			aura_damage = damroll(2, 6);
-			if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
+	/* Alternate contradicting auras, same as with brands */
+	if (!p_ptr->death && q_ptr->sh_fire && q_ptr->sh_cold) {
+		if (rand_int(2)) {
+			if (!(p_ptr->immune_fire)) {
+				aura_damage = damroll(2, 6);
+				if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
 
-			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
-			msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
-			take_hit(Ind, aura_damage, "a fire aura", Ind2);
-			handle_stuff(Ind);
+				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
+				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
+				take_hit(Ind, aura_damage, "a fire aura", Ind2);
+				handle_stuff(Ind);
+			}
+		} else {
+			if (!(p_ptr->immune_cold)) {
+				aura_damage = damroll(2, 6);
+				if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
+
+				msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
+				msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
+				take_hit(Ind, aura_damage, "a frost aura", Ind2);
+				handle_stuff(Ind);
+			}
 		}
-	}
-	if (!p_ptr->death && q_ptr->sh_cold) {
-		if (!(p_ptr->immune_cold)) {
-			aura_damage = damroll(2, 6);
-			if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
+	} else {
+		if (!p_ptr->death && q_ptr->sh_fire) {
+			if (!(p_ptr->immune_fire)) {
+				aura_damage = damroll(2, 6);
+				if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
 
-			msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
-			msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
-			take_hit(Ind, aura_damage, "a frost aura", Ind2);
-			handle_stuff(Ind);
+				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
+				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
+				take_hit(Ind, aura_damage, "a fire aura", Ind2);
+				handle_stuff(Ind);
+			}
+		}
+		if (!p_ptr->death && q_ptr->sh_cold) {
+			if (!(p_ptr->immune_cold)) {
+				aura_damage = damroll(2, 6);
+				if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
+
+				msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
+				msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
+				take_hit(Ind, aura_damage, "a frost aura", Ind2);
+				handle_stuff(Ind);
+			}
 		}
 	}
 	if (!p_ptr->death && q_ptr->sh_elec) {

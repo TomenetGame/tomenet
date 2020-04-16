@@ -461,6 +461,9 @@ static void remove_contradictory(artifact_type *a_ptr, bool aggravate_me) { //Ku
 		a_ptr->flags5 &= ~(TR5_INVIS);
 	}
 
+	/* Invisibility takes precedence over auras */
+	if (a_ptr->flags5 & TR5_INVIS) a_ptr->flags3 &= ~(TR3_SH_FIRE | TR3_SH_COLD | TR3_SH_ELEC);
+
 	/* Remove redundant resistances et al */
 	if (a_ptr->flags2 & TR2_IM_ACID) a_ptr->flags2 &= ~(TR2_RES_ACID);
 	if (a_ptr->flags2 & TR2_IM_ELEC) a_ptr->flags2 &= ~(TR2_RES_ELEC);

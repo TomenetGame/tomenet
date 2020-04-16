@@ -3077,26 +3077,88 @@ bool make_attack_melee(int Ind, int m_idx) {
 				int auras_failed = 0;
 
 				/*
-				 * Apply item auras
+				 * Apply non-skill auras
 				 */
-				/* Immolation / fire aura */
-				if (p_ptr->sh_fire && alive) {
-					if (!(r_ptr->flags3 & RF3_IM_FIRE)) {
-						player_aura_dam = damroll(2,6);
-						if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
-						if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
-						msg_format(Ind, "%^s is enveloped in flames for %d damage!", m_name, player_aura_dam);
-						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
-						    " turns into a pile of ashes")) {
-							blinked = FALSE;
-							alive = FALSE;
+
+				/* Alternate contradicting auras, same as with brands */
+				if (p_ptr->sh_fire && p_ptr->sh_cold && alive) {
+					/* Immolation / fire aura */
+					if (rand_int(2)) {
+						if (!(r_ptr->flags3 & RF3_IM_FIRE)) {
+							player_aura_dam = damroll(2,6);
+							if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
+							if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
+							msg_format(Ind, "%^s is enveloped in flames for %d damage!", m_name, player_aura_dam);
+							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
+							    " turns into a pile of ashes")) {
+								blinked = FALSE;
+								alive = FALSE;
+							}
 						}
-					}
 #ifdef OLD_MONSTER_LORE
-					else {
-						if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_FIRE;
-					}
+						else {
+							if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_FIRE;
+						}
 #endif
+					}
+					/* Frostweaving / cold aura */
+					else {
+						if (!(r_ptr->flags3 & RF3_IM_COLD)) {
+							player_aura_dam = damroll(2,6);
+							if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
+							if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
+							msg_format(Ind, "%^s freezes for %d damage!", m_name, player_aura_dam);
+							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
+							    " freezes and shatters")) {
+								blinked = FALSE;
+								alive = FALSE;
+							}
+						}
+#ifdef OLD_MONSTER_LORE
+						else {
+							if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_COLD;
+						}
+#endif
+					}
+				} else {
+					/* Immolation / fire aura */
+					if (p_ptr->sh_fire && alive) {
+						if (!(r_ptr->flags3 & RF3_IM_FIRE)) {
+							player_aura_dam = damroll(2,6);
+							if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
+							if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
+							msg_format(Ind, "%^s is enveloped in flames for %d damage!", m_name, player_aura_dam);
+							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
+							    " turns into a pile of ashes")) {
+								blinked = FALSE;
+								alive = FALSE;
+							}
+						}
+#ifdef OLD_MONSTER_LORE
+						else {
+							if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_FIRE;
+						}
+#endif
+					}
+					/* Frostweaving / cold aura */
+					if (p_ptr->sh_cold && alive) {
+						if (!(r_ptr->flags3 & RF3_IM_COLD)) {
+							player_aura_dam = damroll(2,6);
+							if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
+							if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
+							msg_format(Ind, "%^s freezes for %d damage!", m_name, player_aura_dam);
+							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
+							    " freezes and shatters")) {
+								blinked = FALSE;
+								alive = FALSE;
+							}
+						}
+#ifdef OLD_MONSTER_LORE
+						else {
+							if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_COLD;
+						}
+#endif
+					}
 				}
 				/* Electricity / lightning aura */
 				if (p_ptr->sh_elec && alive) {
@@ -3114,25 +3176,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 #ifdef OLD_MONSTER_LORE
 					else {
 						if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_ELEC;
-					}
-#endif
-                                }
-				/* Frostweaving / cold aura */
-				if (p_ptr->sh_cold && alive) {
-					if (!(r_ptr->flags3 & RF3_IM_COLD)) {
-						player_aura_dam = damroll(2,6);
-						if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
-						if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
-						msg_format(Ind, "%^s freezes for %d damage!", m_name, player_aura_dam);
-						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
-						    " freezes and shatters")) {
-							blinked = FALSE;
-							alive = FALSE;
-						}
-					}
-#ifdef OLD_MONSTER_LORE
-					else {
-						if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_COLD;
 					}
 #endif
 				}
