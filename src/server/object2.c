@@ -186,12 +186,12 @@ void excise_object_idx(int o_idx) {
 				/* Done */
 				break;
 			}
-#ifdef MAX_ITEMS_STACKING
+//#ifdef MAX_ITEMS_STACKING
 			else {
-				/* decrement it's stack position index */
+				/* decrement its stack position index */
 				if (o_ptr->stack_pos) o_ptr->stack_pos--;
 			}
-#endif
+//#endif
 
 			/* Save prev_o_idx */
 			prev_o_idx = this_o_idx;
@@ -10107,13 +10107,13 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 			/* No monster */
 			o_ptr->held_m_idx = 0;
 
-			/* Build a stack */
+			/* Build a stack if required, otherwise this is zero anyway */
 			o_ptr->next_o_idx = c_ptr->o_idx;
-#ifdef MAX_ITEMS_STACKING
-			if (c_ptr->o_idx && MAX_ITEMS_STACKING != 0)
+//#ifdef MAX_ITEMS_STACKING
+			if (c_ptr->o_idx) // && MAX_ITEMS_STACKING != 0)
 				o_ptr->stack_pos = o_list[c_ptr->o_idx].stack_pos + 1;
 			else
-#endif
+//#endif
 				o_ptr->stack_pos = 0; /* first object on this grid */
 
 			/* Place */
@@ -11298,7 +11298,7 @@ void process_objects(void) {
  * to the objects in the "o_list".
  */
 void setup_objects(void) {
-	int i;
+	int i, q_idx;
 	cave_type **zcave;
 	object_type *o_ptr;
 
@@ -11319,15 +11319,14 @@ void setup_objects(void) {
 		//if (!in_bounds2(&o_ptr->wpos, o_ptr->iy, o_ptr->ix)) continue;
 		if (in_bounds_array(o_ptr->iy, o_ptr->ix))
 
-#if 0	// excise_object_idx() should do this	<- ???
-		/* Build the stack */
-		if (j = zcave[o_ptr->iy][o_ptr->ix].o_idx)
-			o_ptr->next_o_idx = j;
-		else o_ptr->next_o_idx = 0;
-#endif	// 0
+		/* Item stacks should survive dungeonlevel-detachtment
+		   consistently and not need to get rebuilt here? */
 
-		/* Set the o_idx correctly */
-		zcave[o_ptr->iy][o_ptr->ix].o_idx = i;
+		/* Just need to connect the top-most item stack item back to
+		   the grid, using MAX_ITEMS_STACKING code for that */
+		if ((q_idx = zcave[o_ptr->iy][o_ptr->ix].o_idx)
+		    && o_list[q_idx].stack_pos < o_ptr->stack_pos)
+			zcave[o_ptr->iy][o_ptr->ix].o_idx = i;
 	}
 }
 
