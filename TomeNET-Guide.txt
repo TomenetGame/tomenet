@@ -17433,10 +17433,10 @@ spell failure rate. All Unlife spells use WIS.)
                     Required skill level for first spell level: 22.
                     --- This spell is only usable by true vampires! ---
 
-    Subjugation     Attempt to place all undead of lesser level than you under
-                    your control. If successful, the undead creatures will
-                    enter stasis for a while. The stasis is broken immediately
-                    if they take damage.
+    Subjugation     Attempt to place all undead within sight and of lesser
+                    level than you under your control. If successful, the
+                    undead creatures will enter stasis for a while.
+                    The stasis is broken immediately if they take damage.
                     Required skill level for first spell level: 26.
                     Shared spell (see above): O.Unlife, Necromancy.
 

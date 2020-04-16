@@ -7792,6 +7792,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			    p_ptr->lev <= r_ptr->level) {
 				note = " is unaffected";
 				obvious = FALSE;
+				quiet = TRUE; /* avoid message spam if many non-undeads are around */
 			} else if (!rand_int(p_ptr->lev + 3 - r_ptr->level)) {
 				note = " resists";
 				obvious = FALSE;
