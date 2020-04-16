@@ -11316,16 +11316,16 @@ void setup_objects(void) {
 		/* Skip objects in monster traps */
 		if (o_ptr->embed) continue;
 
-		//if (!in_bounds2(&o_ptr->wpos, o_ptr->iy, o_ptr->ix)) continue;
-		if (in_bounds_array(o_ptr->iy, o_ptr->ix))
+		/* Paranoia? */
+		if (!in_bounds_array(o_ptr->iy, o_ptr->ix)) continue;
 
 		/* Item stacks should survive dungeonlevel-detachtment
 		   consistently and not need to get rebuilt here? */
 
 		/* Just need to connect the top-most item stack item back to
 		   the grid, using MAX_ITEMS_STACKING code for that */
-		if ((q_idx = zcave[o_ptr->iy][o_ptr->ix].o_idx)
-		    && o_list[q_idx].stack_pos < o_ptr->stack_pos)
+		if (!(q_idx = zcave[o_ptr->iy][o_ptr->ix].o_idx)
+		    || o_list[q_idx].stack_pos < o_ptr->stack_pos)
 			zcave[o_ptr->iy][o_ptr->ix].o_idx = i;
 	}
 }
