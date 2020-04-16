@@ -4162,6 +4162,22 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Not if it's an open house door - mikaelh */
 		if (c_ptr->feat == FEAT_HOME_OPEN) break;
 
+		{
+			/* Remove traps, monster traps and runes */
+			struct c_special *cs_ptr;
+
+			/* Cleanup traps */
+			cs_ptr = GetCS(c_ptr, CS_TRAPS);
+			if (cs_ptr) cs_erase(c_ptr, cs_ptr);
+
+			/* Cleanup Runemaster Glyphs */
+			cs_ptr = GetCS(c_ptr, CS_RUNE);
+			if (cs_ptr) cs_erase(c_ptr, cs_ptr);
+
+			/* Cleanup monster traps */
+			if (c_ptr->feat == FEAT_MON_TRAP) erase_mon_trap(wpos, y, x, 0);
+		}
+
 		/* Place a wall */
 		if (c_ptr->feat != FEAT_WALL_EXTRA) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
 		cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
