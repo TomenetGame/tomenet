@@ -10547,8 +10547,9 @@ static void town_gen_hack(struct worldpos *wpos) {
 	struct dungeon_type *d_ptr = wpos->wz != 0 ? (wpos->wz > 0 ? wild->tower : wild->dungeon) : NULL;
 
 	int y, x, k, n;
+	int max_base_stores = MAX_BASE_STORES - 1; /* All stores except for the Rune Repository (#9) */
 //	int max_rooms = (max_st_idx > 72 ? 72 : max_st_idx), base_stores = MAX_BASE_STORES; <- not working, because the amount of buildings will be too small -> repeated-stores-glitch appears.
-	int max_rooms = 72, base_stores = MAX_BASE_STORES;
+	int max_rooms = 72, base_stores = max_base_stores;
 #ifdef NEW_TOWNGENHACK_METHOD
 	int posx[base_stores], posy[base_stores], pos[6 * 4];
 #endif
@@ -10756,7 +10757,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 	/* pick random locations for the base stores */
 	n = 6 * 4;
 	for (k = 0; k < n; k++) pos[k] = k;
-	for (x = 0; x < MAX_BASE_STORES; x++) {
+	for (x = 0; x < max_base_stores; x++) {
 		k = rand_int(n);
 		posx[x] = pos[k] / 4 + 3;
 		posy[x] = pos[k] % 4 + 1;
@@ -10794,7 +10795,7 @@ static void town_gen_hack(struct worldpos *wpos) {
 		}
 	}
 #else
-	for (k = 0; k < MAX_BASE_STORES; k++) {
+	for (k = 0; k < max_base_stores; k++) {
 		/* Build that store at the proper location */
  #if 0 /* I think I took this out for highlander town, but no need maybe; also required for ironman towns! - C. Blue */
 		/* No Black Market in additional towns - C. Blue */
@@ -10820,13 +10821,13 @@ static void town_gen_hack(struct worldpos *wpos) {
  #ifndef NEW_TOWNGENHACK_METHOD
 			if (y >= 2 && y <= 4 && x >= 4 && x <= 7) continue;
  #else
-			for (k = 0; k < MAX_BASE_STORES; k++) {
+			for (k = 0; k < max_base_stores; k++) {
 				if (posx[k] == x && posy[k] == y) {
-					k = MAX_BASE_STORES + 1; //loop hack
+					k = max_base_stores + 1; //loop hack
 					break;
 				}
 			}
-			if (k == MAX_BASE_STORES + 1) continue;
+			if (k == max_base_stores + 1) continue;
  #endif
 
 			/* Pick a random unplaced store */
