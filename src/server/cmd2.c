@@ -3017,12 +3017,11 @@ void do_cmd_close(int Ind, int dir) {
  * Check the terrain around the location to see if erosion takes place.
  * TODO: expand this for more generic terrain types		- Jir -
  */
-byte twall_erosion(worldpos *wpos, int y, int x) {
+byte twall_erosion(worldpos *wpos, int y, int x, byte feat) {
 	int tx, ty, d;
-	byte feat = FEAT_FLOOR; /* todo: use something like 'place_floor'*/
 	cave_type **zcave;
 	cave_type *c_ptr;
-	if(!(zcave = getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	for (d = 1; d <= 9; d++) {
 		if (d == 5) continue;
@@ -3034,11 +3033,11 @@ byte twall_erosion(worldpos *wpos, int y, int x) {
 
 		c_ptr = &zcave[ty][tx];
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
-//			feat = FEAT_DEEP_WATER; /* <- this is only if FEAT_DEEP_WATER is also terraformable in turn (see cave_set_feat_live) */
+			//feat = FEAT_DEEP_WATER; /* <- this is only if FEAT_DEEP_WATER is also terraformable in turn (see cave_set_feat_live) */
 			feat = FEAT_SHAL_WATER; /* <- this should be used otherwise */
 			break;
 		} else if (c_ptr->feat == FEAT_DEEP_LAVA) {
-//			feat = FEAT_DEEP_LAVA; /* <- this is only if FEAT_DEEP_LAVA is also terraformable in turn (see cave_set_feat_live) */
+			//feat = FEAT_DEEP_LAVA; /* <- this is only if FEAT_DEEP_LAVA is also terraformable in turn (see cave_set_feat_live) */
 			feat = FEAT_SHAL_LAVA; /* <- this should be used otherwise */
 			break;
 		}
@@ -3057,7 +3056,7 @@ byte twall_erosion(worldpos *wpos, int y, int x) {
  * This will, however, produce grids which are NOT illuminated
  * (or darkened) along with the rest of the room.
  */
-bool twall(int Ind, int y, int x) {
+bool twall(int Ind, int y, int x, byte feat) {
 	player_type *p_ptr = Players[Ind];
 	byte *w_ptr = &p_ptr->cave_flag[y][x];
 	struct worldpos *wpos = &p_ptr->wpos;
@@ -3068,7 +3067,7 @@ bool twall(int Ind, int y, int x) {
 	if (cave_floor_bold(zcave, y, x)) return (FALSE);
 
 	/* Remove the feature */
-	cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x));
+	cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, feat));
 
 	/* Forget the "field mark" */
 	*w_ptr &= ~CAVE_MARK;
@@ -3494,7 +3493,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		no_quake = TRUE;
 
 		/* Remove the rubble */
-		if (power > rand_int(200) && twall(Ind, y, x)) {
+		if (power > rand_int(200) && twall(Ind, y, x, FEAT_FLOOR)) {
 			/* Message */
 			msg_print(Ind, "You have removed the rubble.");
 #ifdef USE_SOUND_2010
@@ -3580,7 +3579,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		no_quake = TRUE;
 
 		/* mow down the vegetation */
-		if (((power > wood_power ? power : wood_power) > rand_int(400)) && twall(Ind, y, x)) { /* 400 */
+		if (((power > wood_power ? power : wood_power) > rand_int(400)) && twall(Ind, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
 			msg_print(Ind, "You hack your way through the vegetation.");
 			if (p_ptr->prace == RACE_ENT)
@@ -3647,7 +3646,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		no_quake = TRUE;
 
 		/* mow down the vegetation */
-		if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 400 */
+		if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
 			msg_print(Ind, "You hack your way through the vegetation.");
 			if (p_ptr->prace == RACE_ENT)
@@ -3673,7 +3672,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		no_quake = TRUE;
 
 		/* mow down the vegetation */
-		if (((power > fibre_power ? power : fibre_power) > rand_int(200)) && twall(Ind, y, x)) { /* 400 */
+		if (((power > fibre_power ? power : fibre_power) > rand_int(200)) && twall(Ind, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
 			msg_print(Ind, "You hack your way through the vegetation.");
 #ifdef USE_SOUND_2010
@@ -3697,7 +3696,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		no_quake = TRUE;
 
 		/* mow down the vegetation */
-		if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x)) { /* 600 */
+		if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, y, x, FEAT_GRASS)) { /* 600 */
 			/* Message */
 			msg_print(Ind, "You hack your way through the vegetation.");
 #ifdef USE_SOUND_2010
@@ -3776,7 +3775,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if (istown(wpos) || p_ptr->IDDC_logscum) gold = FALSE;
 
 		/* Success */
-		if (okay && twall(Ind, y, x)) {
+		if (okay && twall(Ind, y, x, soft ? FEAT_SAND : FEAT_FLOOR)) {
 			msg_format(Ind, "You have finished the tunnel in the %s.", soft ? "sandwall" : (hard ? "quartz vein" : "magma vein"));
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
@@ -4023,7 +4022,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Granite + misc (Ice..) */
 	else if (cfeat >= FEAT_WALL_EXTRA) {
 		/* Tunnel */
-		if ((power > 40 + rand_int(1600)) && twall(Ind, y, x)) { /* 1600 */
+		if ((power > 40 + rand_int(1600)) && twall(Ind, y, x, cfeat == FEAT_ICE_WALL ? FEAT_ICE : FEAT_FLOOR)) { /* 1600 */
 			msg_format(Ind, "You have finished the tunnel in the %s.", f_name + f_info[cfeat].name);
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
@@ -4075,7 +4074,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		no_quake = TRUE;
 
 		/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
-		if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, y, x)) {
+		if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, y, x, FEAT_DIRT)) {
 			msg_print(Ind, "You have cleared the web.");
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
@@ -4095,7 +4094,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	   Ice walls are treated as 'Granite Wall' above already! */
 	else {
 		/* Tunnel */
-		if ((power > 30 + rand_int(1200)) && twall(Ind, y, x)) {
+		if ((power > 30 + rand_int(1200)) && twall(Ind, y, x, FEAT_FLOOR)) {
 			msg_format(Ind, "You have finished the tunnel in the %s", f_name + f_info[cfeat].name);
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);

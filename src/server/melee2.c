@@ -7590,7 +7590,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				/* Forget the "field mark", if any */
 				everyone_forget_spot(wpos, ny, nx);
 
-				cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
+				cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx, FEAT_FLOOR));
 
 				/* Note changes to viewable region */
 				if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
@@ -7674,9 +7674,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			everyone_forget_spot(wpos, ny, nx);
 
 			/* Create floor */
-//			c_ptr->feat = FEAT_FLOOR;
-			//c_ptr->feat = twall_erosion(wpos, ny, nx);
-			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
+			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx, FEAT_FLOOR));
 
 			/* Note changes to viewable region */
 			if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
@@ -8633,8 +8631,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 #endif
 
 			/* Create floor */
-//			c_ptr->feat = FEAT_FLOOR;
-			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
+			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx, FEAT_FLOOR));
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);
@@ -9072,8 +9069,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 #endif
 
 			/* Create floor */
-//			c_ptr->feat = FEAT_FLOOR;
-			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx));
+			cave_set_feat_live(wpos, ny, nx, twall_erosion(wpos, ny, nx, FEAT_FLOOR));
 
 			/* Forget the "field mark", if any */
 			everyone_forget_spot(wpos, ny, nx);

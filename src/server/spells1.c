@@ -4326,7 +4326,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Destroy Doors (and traps on them) */
 	case GF_KILL_DOOR:
 		{
-			byte feat = twall_erosion(wpos, y, x);
+			byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
 			struct c_special *cs_ptr;
 			bool door = FALSE;
 
@@ -4421,7 +4421,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Destroy Traps and Doors */
 	case GF_KILL_TRAP_DOOR:
 		{
-			byte feat = twall_erosion(wpos, y, x);
+			byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
 			struct c_special *cs_ptr;
 
 			/* Destroy any traps */
@@ -4511,7 +4511,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	/* Destroy walls (and doors) */
 	case GF_KILL_WALL:
 		{
-			byte feat = twall_erosion(wpos, y, x);
+			byte feat = twall_erosion(wpos, y, x, FEAT_FLOOR);
 
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			/* Non-walls (etc) */
@@ -4762,11 +4762,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_KILL_GLYPH:
 		{
-			byte feat = twall_erosion(wpos, y, x);
+			byte feat = twall_erosion(wpos, y, x, FEAT_DIRT);
 
 			if (!allow_terraforming(wpos, FEAT_TREE)) break;
 			if (c_ptr->feat == FEAT_GLYPH || c_ptr->feat == FEAT_RUNE)
-				cave_set_feat_live(wpos, y, x, (feat == FEAT_FLOOR) ? FEAT_DIRT : feat);
+				cave_set_feat_live(wpos, y, x, feat);
 		}
 
 	// GF_ROCKET and GF_DISINTEGRATE are handled in project()
@@ -12062,9 +12062,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 					/* Burn floor somewhat */
 					if (randint(2) == 1)
-						cave_set_feat_live(wpos, y, x, FEAT_FLOOR);
+						cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_FLOOR));
 					else
-						cave_set_feat_live(wpos, y, x, FEAT_ASH);
+						cave_set_feat_live(wpos, y, x, twall_erosion(wpos, y, x, FEAT_ASH));
 
 					/* Update some things -- similar to GF_KILL_WALL */
 					//p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
