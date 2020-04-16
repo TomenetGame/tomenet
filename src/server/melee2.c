@@ -7787,7 +7787,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			/* Deal with doors in the way */
 			if (did_open_door || did_bash_door) {
 				/* Break down the door */
-				if (did_bash_door && (rand_int(100) < 50))
+				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
 					c_ptr->feat = FEAT_BROKEN;
 				/* Open the door */
 				else
@@ -8722,7 +8722,7 @@ static void process_monster_pet(int Ind, int m_idx) {
 			/* Deal with doors in the way */
 			if (did_open_door || did_bash_door) {
 				/* Break down the door */
-				if (did_bash_door && (rand_int(100) < 50))
+				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
 					c_ptr->feat = FEAT_BROKEN;
 				/* Open the door */
 				else
@@ -9158,7 +9158,7 @@ static void process_monster_golem(int Ind, int m_idx) {
 			/* Deal with doors in the way */
 			if (did_open_door || did_bash_door) {
 				/* Break down the door */
-				if (did_bash_door && (rand_int(100) < 50))
+				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
 					c_ptr->feat = FEAT_BROKEN;
 				/* Open the door */
 				else

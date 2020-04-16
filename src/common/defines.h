@@ -1216,6 +1216,10 @@
 
 #define CONDENSED_HP_SP		/* reduce HP and SP to 1 line each, instead of 1 line for max and 1 line for cur values? */
 
+/* Chance for a door that is bashed open to break. */
+#define DOOR_BASH_BREAKAGE	80
+
+
 /* ----------------------------------------------------------------------- (End of 'features')  ----------------------------------------------------------------------- */
 
 

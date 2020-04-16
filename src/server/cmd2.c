@@ -4775,7 +4775,7 @@ void do_cmd_bash(int Ind, int dir) {
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Break down the door */
-				if (rand_int(100) < 50) c_ptr->feat = FEAT_BROKEN;
+				if (magik(DOOR_BASH_BREAKAGE)) c_ptr->feat = FEAT_BROKEN;
 				/* Open the door */
 				else c_ptr->feat = FEAT_OPEN;
 
