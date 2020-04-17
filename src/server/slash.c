@@ -4737,39 +4737,39 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/shutempty")) {
-				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty *");
+				msg_admins(0, "\377y* Shutting down when dungeons are empty *");
 				cfg.runlevel = 2048;
 				return;
 			}
 			else if (prefix(messagelc, "/shutlow")) {
-				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and few (8) players are on *");
+				msg_admins(0, "\377y* Shutting down when dungeons are empty and few (8) players are on *");
 				cfg.runlevel = 2047;
 				return;
 			}
 			else if (prefix(messagelc, "/shutvlow")) {
-				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and very few (5) players are on *");
+				msg_admins(0, "\377y* Shutting down when dungeons are empty and very few (5) players are on *");
 				cfg.runlevel = 2046;
 				return;
 			}
 			else if (prefix(messagelc, "/shutnone")) {
-				msg_admins(0, "\377y* Shutting down as soon as no players are on anymore *");
+				msg_admins(0, "\377y* Shutting down when no players are on anymore *");
 				cfg.runlevel = 2045;
 				return;
 			}
 			else if (prefix(messagelc, "/shutactivevlow")) {
-				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and very few (6) players are active *");
+				msg_admins(0, "\377y* Shutting down when dungeons are empty and very few (6) players are active *");
 				cfg.runlevel = 2044;
 				return;
 			}
 #if 0	/* not implemented yet - /shutempty is currently working this way */
 			else if (prefix(messagelc, "/shutsurface")) {
-				msg_admins(0, "\377y* Shutting down as soon as noone is inside a dungeon/tower *");
+				msg_admins(0, "\377y* Shutting down when noone is inside a dungeon/tower *");
 				cfg.runlevel = 2050;
 				return;
 			}
 #endif
 			else if (prefix(messagelc, "/shutxlow")) {
-				msg_admins(0, "\377y* Shutting down as soon as dungeons are empty and extremely few (3) players are on *");
+				msg_admins(0, "\377y* Shutting down when dungeons are empty and extremely few (3) players are on *");
 				cfg.runlevel = 2051;
 				return;
 			}
