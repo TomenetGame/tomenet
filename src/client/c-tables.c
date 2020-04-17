@@ -422,7 +422,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_defense_sfx",		"Don't play attack-avoiding/neutralizing sound fx" },
 	{ &c_cfg.half_sfx_attack,	FALSE,	5,	0, 96, TRUE,
 	    "half_sfx_attack",		"Skip every second attack sound" },
-	{ &c_cfg.cut_sfx_attack,	FALSE,	5,	0, 97, TRUE,
+	{ &c_cfg.cut_sfx_attack,	TRUE,	5,	0, 97, TRUE,
 	    "cut_sfx_attack",		"Skip attack sounds based on speed and bpr" },
 	{ &c_cfg.ovl_sfx_command,	TRUE,	5,	0, 98, TRUE,
 	    "ovl_sfx_command",		"Allow overlapping command sounds of same type" },
