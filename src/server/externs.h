@@ -714,6 +714,7 @@ extern void do_cmd_time(int Ind);
 extern void do_cmd_check_other(int Ind, int line);
 extern void do_cmd_check_other_prepare(int Ind, char *path, char *title);
 extern void do_cmd_check_extra_info(int Ind, bool admin);
+extern void show_autoret(int Ind, byte typ, bool verbose);
 
 /* cmd5.c */
 extern bool check_antimagic(int Ind, int percentage);

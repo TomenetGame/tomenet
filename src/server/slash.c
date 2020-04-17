@@ -4062,8 +4062,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 #endif
 #ifdef AUTO_RET_CMD
-		} else if (prefix(messagelc, "/autoret") || prefix(messagelc, "/ar")) {
+		} else if (prefix(messagelc, "/autoretm") || prefix(messagelc, "/arm")) {
 			char *p = token[1];
+			bool town = FALSE;
 
 			if (p_ptr->prace == RACE_VAMPIRE || !get_skill(p_ptr, SKILL_MIMIC)) {
 				msg_print(Ind, "You cannot use mimic powers.");
@@ -4072,35 +4073,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			/* Set up a spell by name for auto-retaliation, so mimics can use it too */
 			if (!tk) {
-				if (p_ptr->autoret) {
-					if (p_ptr->autoret >= 128)
-						msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", p_ptr->autoret - 128 - 1 + 'a');
-					else
-						msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
-				} else {
-					msg_print(Ind, "You have not set a mimic power for auto-retaliation. ('/ar help' for details.)");
-					//msg_print(Ind, " (Enter '/ar help' to see command usage and examples.)");
-				}
+				show_autoret(Ind, 1, TRUE);
 				return;
 			}
 			if (streq(token[1], "help")) {
 				msg_print(Ind, "Set up a monster spell for auto-retaliation by specifying the spell slot letter");
 				msg_print(Ind, "starting with e), or '-' to disable. Optional prefix 't' for 'in town only'.");
-				msg_print(Ind, " Usage:    /ar [t]<mimic power slot (e..z)>");
-				msg_print(Ind, " Example:  /ar e    sets the first mimic power to auto-retaliate");
-				msg_print(Ind, " Example:  /ar th   sets the fourth mimic power, but only when in town");
-				msg_print(Ind, " Example:  /ar -    disables auto-retaliation with mimic powers");
+				msg_print(Ind, " Usage:    /arm [t]<mimic power slot (e..z)>");
+				msg_print(Ind, " Example:  /arm e    sets the first mimic power to auto-retaliate");
+				msg_print(Ind, " Example:  /arm th   sets the fourth mimic power, but only when in town");
+				msg_print(Ind, " Example:  /arm -    disables auto-retaliation with mimic powers");
 				return;
 			}
 
 			if (*p == 't') {
-				p_ptr->autoret = 128;
+				town = TRUE;
 				p++;
 			}
-			else p_ptr->autoret = 0;
-
 			if (*p == '-') {
 				msg_print(Ind, "Mimic power auto-retaliation is now disabled.");
+				p_ptr->autoret &= 0xFF00; /* Keep rune auto-ret though */
 				return;
 			}
 
@@ -4110,7 +4102,63 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 			msg_format(Ind, "Mimic power '%c)' is now set for auto-retaliation.", *p);
-			p_ptr->autoret += *p - 'a' + 1;
+			/* Mimicry starts at 1 and ends at 255 (0x00FF), so as not to overlap with runecraft, which starts at 256 (0x0100).
+			   Note that we keep any active runecraft auto-ret (0xFF00 mask). */
+			p_ptr->autoret = (p_ptr->autoret & 0xFF00) | (town ? 0x0080 : 0x0000) | (*p - 'a' + 1);
+			return;
+		} else if (prefix(messagelc, "/autoretr") || prefix(messagelc, "/arr")) {
+			char *p = token[1];
+			bool town = FALSE;
+
+#ifndef TEST_SERVER
+	    /* ----- available bitmask for rune-autoret are 0x7F00, so that's 7 bits (shifted 8 bits to the left),
+	    or expressed in decimal value range: <1..127> * 256, so 127 distinct values available.
+	    (The 8th bit is the 'town-only' flag.) */
+	    msg_print(Ind, "Sorry, this command is currently not available.");
+	    return;
+#endif
+
+			if (!p_ptr->s_info[SKILL_R_LITE].value && !p_ptr->s_info[SKILL_R_DARK].value &&
+			    !p_ptr->s_info[SKILL_R_NEXU].value && !p_ptr->s_info[SKILL_R_NETH].value &&
+			    !p_ptr->s_info[SKILL_R_CHAO].value && !p_ptr->s_info[SKILL_R_MANA].value) {
+				msg_print(Ind, "You cannot use runecraft.");
+				return;
+			}
+
+			/* Set up a spell by name for auto-retaliation, so mimics can use it too */
+			if (!tk) {
+				show_autoret(Ind, 2, TRUE);
+				return;
+			}
+			if (streq(token[1], "help")) {
+				msg_print(Ind, "Set up a rune spell for auto-retaliation by specifying ???");
+				msg_print(Ind, "starting with ..., or '-' to disable. Optional prefix 't' for 'in town only'.");
+				msg_print(Ind, " Usage:    /arr [t]<rune (a..z)>");
+				msg_print(Ind, " Example:  /arr a    sets the first rune to auto-retaliate");
+				msg_print(Ind, " Example:  /arr td   sets the fourth rune, but only when in town");
+				msg_print(Ind, " Example:  /arr -    disables auto-retaliation with runes");
+				return;
+			}
+
+			if (*p == 't') {
+				town = TRUE;
+				p++;
+			}
+			if (*p == '-') {
+				msg_print(Ind, "Rune power auto-retaliation is now disabled.");
+				p_ptr->autoret &= 0x00FF; /* Keep mimic power auto-ret though */
+				return;
+			}
+
+			if (*p < 'a' || *p > 'z') {
+				msg_print(Ind, "\377yRune power must be within range 'a' to 'z'!");
+				return;
+			}
+
+			msg_format(Ind, "Rune power '%c)' is now set for auto-retaliation.", *p);
+			/* Runecraft stars at 256 (0x0100), so as not to overlap with mimicry, which starts at 1.
+			   Note that we keep any active mimic power auto-ret (0x00FF mask). */
+			p_ptr->autoret = (p_ptr->autoret & 0x00FF) | (town ? 0x8000 : 0x0000) | ((*p - 'a' + 1) << 8);
 			return;
 #endif
 #ifdef ENABLE_SELF_FLASHING

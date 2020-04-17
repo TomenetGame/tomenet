@@ -3176,7 +3176,7 @@ struct player_type {
 	bool shadow_running;
 
 #ifdef AUTO_RET_CMD
-	int autoret;			/* set auto-retaliation via command instead of inscription */
+	u16b autoret;			/* set auto-retaliation via command instead of inscription */
 #endif
 	bool shoot_till_kill, shooty_till_kill, shooting_till_kill; /* Shoot a target until it's dead, like a ranged 'auto-retaliator' - C. Blue */
 	int shoot_till_kill_book, shoot_till_kill_spell, shoot_till_kill_mimic; //and there's shoot_till_kill_rcraft too

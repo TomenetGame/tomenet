@@ -3634,10 +3634,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 #endif
 
 #ifdef AUTO_RET_CMD
-	if (p_ptr->autoret) {
-		if (p_ptr->autoret >= 128) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", p_ptr->autoret - 128 - 1 + 'a');
-		else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
-	}
+	show_autoret(Ind, 0, FALSE);
 #endif
 
 	if (get_skill(p_ptr, SKILL_AURA_FEAR)) check_aura(Ind, 0); /* MAX_AURAS */
@@ -3878,4 +3875,30 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	}
 
 	msg_print(Ind, " ");
+}
+
+/* Display current retaliate_cmd (mimic power/rune) auto-ret settings, if set.
+   Verbose: Even give a message if no power is set.
+   typ = 0: Show all,
+   typ = 1: Show mimic power only,
+   typ = 2: Show rune only.
+*/
+void show_autoret(int Ind, byte typ, bool verbose) {
+	player_type *p_ptr = Players[Ind];
+	u16b ar = p_ptr->autoret;
+
+	/* Mimic power */
+	if (typ != 2) {
+		if (ar & 0x00FF) {
+			if (p_ptr->autoret & 0x0080) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (p_ptr->autoret & ~0x0080) - 1 + 'a');
+			else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
+		} else if (verbose) msg_print(Ind, "You have not set a mimic power for auto-retaliation. ('/arm help' for details.)");
+	}
+	/* Rune */
+	if (typ != 1) {
+		if (ar & 0xFF00) {
+			if (p_ptr->autoret & 0x8000) msg_format(Ind, "You have set rune '%c)' for auto-retaliation in towns.", ((p_ptr->autoret & ~0x8000) >> 8) - 1 + 'a');
+			else msg_format(Ind, "You have set rune '%c)' for auto-retaliation.", (p_ptr->autoret >> 8) - 1 + 'a');
+		} else if (verbose) msg_print(Ind, "You have not set a rune for auto-retaliation. ('/arr help' for details.)");
+	}
 }

@@ -2978,53 +2978,68 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 }
 
 #ifdef AUTO_RET_CMD
-/* Check auto-retaliation set via slash command /autoret or /ar.
+/* Check auto-retaliation set via slash command /autoretX or /arX.
    This was added for mimics to use their powers without having to inscribe
-   a random item as a workaround. - C. Blue */
+   a random item as a workaround. - C. Blue
+   Also extended for runecraft, since having physical runes in the inventory
+   isn't needed to actually cast runespells. */
 static bool retaliate_cmd(int Ind, bool fallback) {
 	player_type *p_ptr = Players[Ind];
-	int ar = p_ptr->autoret;
-
-	/* Is it variant @Ot for town-only auto-retaliation? - C. Blue */
-	if (ar >= 128) {
-		if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
-		ar -= 128;
-	}
+	u16b ar = p_ptr->autoret;
 
 	/* no autoret set? */
 	if (!ar) return FALSE;
 
-	/* Hack -- use innate power via inscription on any item */
-	if (get_skill(p_ptr, SKILL_MIMIC)) {
-		/* Spell to cast */
-		int choice = ar - 1;
+	/* Was a mimic power set for auto-ret? */
+	if (ar & 0x00FF) {
+		/* Is it variant @Ot for town-only auto-retaliation? */
+		if ((ar & 0x0080) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		ar &= ~0x0080;
 
-		if (choice < 4)	/* 3 polymorph powers + immunity preference */
-			return FALSE;
+		/* Hack -- use innate power via inscription on any item */
+		if (get_skill(p_ptr, SKILL_MIMIC)) {
+			/* Spell to cast */
+			int choice = ar - 1;
 
-		int power = retaliate_mimic_power(Ind, choice - 1);
-		bool dir = FALSE;
-		if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
-		switch (power / 32) {
-		case 0: dir = monster_spells4[power].uses_dir;
-			break;
-		case 1: dir = monster_spells5[power - 32].uses_dir;
-			break;
-		case 2: dir = monster_spells6[power - 64].uses_dir;
-			break;
-		case 3: dir = monster_spells0[power - 96].uses_dir;
-			break;
+			if (choice < 4)	/* 3 polymorph powers + immunity preference */
+				return FALSE;
+
+			int power = retaliate_mimic_power(Ind, choice - 1);
+			bool dir = FALSE;
+			if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
+			switch (power / 32) {
+			case 0: dir = monster_spells4[power].uses_dir;
+				break;
+			case 1: dir = monster_spells5[power - 32].uses_dir;
+				break;
+			case 2: dir = monster_spells6[power - 64].uses_dir;
+				break;
+			case 3: dir = monster_spells0[power - 96].uses_dir;
+				break;
+			}
+
+			/* Accept reasonable targets:
+			 * This prevents a player from getting stuck when facing a
+			 * monster inside a wall.
+			 * NOTE: The above statement becomes obsolete nowadays if
+			 * PY_PROJ_ and similar are defined.
+			 */
+			if (!target_able(Ind, p_ptr->target_who)) return FALSE;
+
+			do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
+			return TRUE;
 		}
+	}
+	/* Was a rune set for auto-ret? */
+	else if (ar & 0xFF00) {
+		/* Is it variant @Ot for town-only auto-retaliation? */
+		if ((ar & 0x0080) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		ar &= ~0x0080;
+		/* Restore range to normal (1..127) for easier handling */
+		ar = ar >> 8;
 
-		/* Accept reasonable targets:
-		 * This prevents a player from getting stuck when facing a
-		 * monster inside a wall.
-		 * NOTE: The above statement becomes obsolete nowadays if
-		 * PY_PROJ_ and similar are defined.
-		 */
-		if (!target_able(Ind, p_ptr->target_who)) return FALSE;
-
-		do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
+		/* Try to cast runespell */
+		
 		return TRUE;
 	}
 

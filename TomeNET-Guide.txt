@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. April 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 17. April 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1004,15 +1004,18 @@ They all start with a slash '/' hence they're called slash commands:
             players, so they know why you are currently AFK or when you will
             be back.
 
-/autoret    Sets up auto-retaliation with a mimic power.
- (/ar)      Usage:   /ar [t]<power>   or to disable:   /ar -
+/autoretm   Sets up auto-retaliation with a mimic power.
+ (/arm)     Usage:   /arm [t]<power>   or to disable:   /arm -
             If 't' is prefixed to the power, it will only be used while in a
-            town. Example:   /ar tg
-            This will auto-retaliate with mimic power 'g)' while in town.
+            town. Example:   /arm tg
+            This will auto-retaliate with mimic power 'g)', but only while in
+            town.
 
             (Note that you cannot auto-retaliate with 'polymorph into...'
             power aka 'c)', instead it will be treated like power 'b)' aka
-            'polymorph into next form with fitting extremities'.)
+            'polymorph into next form with fitting extremities'. Then again
+            using this kind of power for auto-ret doesn't make much sense
+            anyway..)
 
 /bed [*|<inscription>]
  (/naked)   Opposite of /dress.
