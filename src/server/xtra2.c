@@ -8872,7 +8872,7 @@ void player_death(int Ind) {
 	/* Sort the player's inventory according to value */
 	ang_sort(Ind, p_ptr->inventory, NULL, INVEN_TOTAL);
 
-	/* Starting with the most valuable, drop things one by one */
+	/* Starting with the most valuable, drop things one by one. */
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		bool away = FALSE;
 
@@ -8888,6 +8888,7 @@ void player_death(int Ind) {
 		/* Eat all true artifacts of Soloists */
 		if ((p_ptr->mode & MODE_SOLO) && true_artifact_p(o_ptr)) {
 			handle_art_d(o_ptr->name1);
+			questitem_d(o_ptr, o_ptr->number);
 			continue;
 		}
 
@@ -8897,20 +8898,21 @@ void player_death(int Ind) {
 		    p_ptr->inventory[i].name1 != ART_RANDART)
 			a_info[p_ptr->inventory[i].name1].winner = FALSE;
 
-		/* If we committed suicide, only drop artifacts */
-		//if (!p_ptr->alive && !artifact_p(o_ptr)) continue;
+		/* If we committed suicide.. */
 		if (!p_ptr->alive) {
-			if (!true_artifact_p(o_ptr)) continue;
+			/* only drop artifacts */
+			 if (!artifact_p(o_ptr)) {
+				questitem_d(o_ptr, o_ptr->number);
+				continue;
+			}
 
-			/* hack -- total winners do not drop artifacts when they suicide */
-			//if (!p_ptr->alive && p_ptr->total_winner && artifact_p(&p_ptr->inventory[i]))
-
-			/* Artifacts cannot be dropped after all */
-			/* Don't litter Valinor -- Ring of Phasing must be destroyed anyways */
-			if ((cfg.anti_arts_hoard) || in_valinor(&p_ptr->wpos)) {
+			/* and if we were a total winner, don't drop any true artifacts */
+			if (true_artifact_p(o_ptr) &&
+			    ((cfg.anti_arts_hoard && undepositable_artifact_p(o_ptr)) ||
+			    (p_ptr->total_winner && !winner_artifact_p(o_ptr) && cfg.kings_etiquette))) {
+				questitem_d(o_ptr, o_ptr->number);
 				/* set the artifact as unfound */
 				handle_art_d(o_ptr->name1);
-
 				/* Don't drop the artifact */
 				continue;
 			}
@@ -8930,17 +8932,22 @@ void player_death(int Ind) {
 			if (i >= INVEN_WIELD) reverse_cursed(o_ptr);
 #endif
 
+			if (true_artifact_p(o_ptr)) {
+				cave_type **zcave;
+
+				if ((zcave = getcave(&p_ptr->wpos))) { /* this should never.. */
+					if (inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) away = TRUE; /* Not inside houses */
+					if ((zcave[p_ptr->py][p_ptr->px].info & CAVE_PROT) || (f_info[zcave[p_ptr->py][p_ptr->px].feat].flags1 & FF1_PROTECTED)) away = TRUE; /* Not inside inns.. */
+				}
+			}
 #ifdef DEATH_ITEM_SCATTER
 			/* Apply penalty of death */
-			if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER))
-				away = TRUE;
-			else
+			else if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER)) away = TRUE;
 #endif	/* DEATH_ITEM_SCATTER */
-			{
+			else {
 				if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 				else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
 				else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-
 				/* Drop this one */
 				away = (drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px) <= 0);
 			}
@@ -8954,7 +8961,12 @@ void player_death(int Ind) {
 						x1 = rand_int(p_ptr->cur_wid);
 						y1 = rand_int(p_ptr->cur_hgt);
 
-						if (!cave_clean_bold(zcave, y1, x1)) continue;
+						if (!cave_clean_bold(zcave, y1, x1)) continue; /* Must be floor */
+						if (true_artifact_p(o_ptr)) {
+							if (inside_house(&p_ptr->wpos, x1, y1)) continue; /* Not inside houses */
+							if ((zcave[y1][x1].info & CAVE_PROT) || (f_info[zcave[y1][x1].feat].flags1 & FF1_PROTECTED)) continue; /* Not inside inns.. */
+						}
+
 						if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 						else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
 						else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
