@@ -817,16 +817,16 @@ int gametype;
 /* Private notes for fellow players
  * see '/note' command in util.c. -C. Blue
  */
-char priv_note[MAX_NOTES][MAX_CHARS_WIDE], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN];
-char party_note[MAX_PARTYNOTES][MAX_CHARS_WIDE], party_note_target[MAX_PARTYNOTES][NAME_LEN];
-char guild_note[MAX_GUILDNOTES][MAX_CHARS_WIDE], guild_note_target[MAX_GUILDNOTES][NAME_LEN];
+char priv_note[MAX_NOTES][MAX_CHARS_WIDE], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN], priv_note_u[MAX_NOTES][MAX_CHARS_WIDE];
+char party_note[MAX_PARTYNOTES][MAX_CHARS_WIDE], party_note_target[MAX_PARTYNOTES][NAME_LEN], party_note_u[MAX_PARTYNOTES][MAX_CHARS_WIDE];
+char guild_note[MAX_GUILDNOTES][MAX_CHARS_WIDE], guild_note_target[MAX_GUILDNOTES][NAME_LEN], guild_note_u[MAX_GUILDNOTES][MAX_CHARS_WIDE];
 char admin_note[MAX_ADMINNOTES][MAX_CHARS], server_warning[MSG_LEN];
 
 /* in-game bbs :) - C. Blue */
-char bbs_line[BBS_LINES][MAX_CHARS_WIDE];
+char bbs_line[BBS_LINES][MAX_CHARS_WIDE], bbs_line_u[BBS_LINES][MAX_CHARS_WIDE];
 /* party/guild-internal bbs'es: */
-char pbbs_line[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE];
-char gbbs_line[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE];
+char pbbs_line[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE], pbbs_line_u[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE];
+char gbbs_line[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE], gbbs_line_u[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE];
 
 int global_luck = 0;
 int regen_boost_stamina = 4;

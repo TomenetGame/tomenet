@@ -1873,7 +1873,7 @@ int guild_add(int adder, cptr name) {
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
 		if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
 			if (strcmp(guild_note[i], ""))
-				msg_format(Ind, "\374\377bGuild Note: %s", guild_note[i]);
+				msg_format(Ind, "\374\377bGuild Note: %s", p_ptr->censor_swearing ? guild_note[i] : guild_note_u[i]);
 			break;
 		}
 	}
@@ -1976,7 +1976,7 @@ int guild_add_self(int Ind, cptr guild) {
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
 		if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
 			if (strcmp(guild_note[i], ""))
-				msg_format(Ind, "\374\377bGuild Note: %s", guild_note[i]);
+				msg_format(Ind, "\374\377bGuild Note: %s", p_ptr->censor_swearing ? guild_note[i] : guild_note_u[i]);
 			break;
 		}
 	}
@@ -2035,7 +2035,7 @@ int guild_auto_add(int Ind, int guild_id, char *message) {
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
 		if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
 			if (strcmp(guild_note[i], ""))
-				msg_format(Ind, "\374\377bGuild Note: %s", guild_note[i]);
+				msg_format(Ind, "\374\377bGuild Note: %s", p_ptr->censor_swearing ? guild_note[i] : guild_note_u[i]);
 			break;
 		}
 	}
@@ -2229,7 +2229,7 @@ int party_add(int adder, cptr name) {
 	for (i = 0; i < MAX_PARTYNOTES; i++) {
 		if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
 			if (strcmp(party_note[i], ""))
-				msg_format(Ind, "\374\377bParty Note: %s", party_note[i]);
+				msg_format(Ind, "\374\377bParty Note: %s", p_ptr->censor_swearing ? party_note[i] : party_note_u[i]);
 			break;
 		}
 	}
@@ -2372,7 +2372,7 @@ int party_add_self(int Ind, cptr party) {
 	for (i = 0; i < MAX_PARTYNOTES; i++) {
 		if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
 			if (strcmp(party_note[i], ""))
-				msg_format(Ind, "\374\377bParty Note: %s", party_note[i]);
+				msg_format(Ind, "\374\377bParty Note: %s", p_ptr->censor_swearing ? party_note[i] : party_note_u[i]);
 			break;
 		}
 	}

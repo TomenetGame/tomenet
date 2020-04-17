@@ -418,20 +418,26 @@ static void wr_bbs() {
 
 	wr_s16b(BBS_LINES);
 
-	for (i = 0; i < BBS_LINES; i++)
+	for (i = 0; i < BBS_LINES; i++) {
 		wr_string(bbs_line[i]);
+		wr_string(bbs_line_u[i]);
+	}
 
 	/* also write complete party-BBS and guild-BBS (tripling the server file size oO) - C. Blue */
 
 	wr_s16b(MAX_PARTIES);
 	for (j = 0; j < MAX_PARTIES; j++)
-		for (i = 0; i < BBS_LINES; i++)
+		for (i = 0; i < BBS_LINES; i++) {
 			wr_string(pbbs_line[j][i]);
+			wr_string(pbbs_line_u[j][i]);
+		}
 
 	wr_s16b(MAX_GUILDS);
 	for (j = 0; j < MAX_GUILDS; j++)
-		for (i = 0; i < BBS_LINES; i++)
+		for (i = 0; i < BBS_LINES; i++) {
 			wr_string(gbbs_line[j][i]);
+			wr_string(gbbs_line_u[j][i]);
+		}
 }
 
 static void wr_notes() {
@@ -440,6 +446,7 @@ static void wr_notes() {
 	wr_s16b(MAX_NOTES);
 	for (i = 0; i < MAX_NOTES; i++) {
 		wr_string(priv_note[i]);
+		wr_string(priv_note_u[i]);
 		wr_string(priv_note_sender[i]);
 		wr_string(priv_note_target[i]);
 	}
@@ -447,12 +454,14 @@ static void wr_notes() {
 	wr_s16b(MAX_PARTYNOTES);
 	for (i = 0; i < MAX_PARTYNOTES; i++) {
 		wr_string(party_note[i]);
+		wr_string(party_note_u[i]);
 		wr_string(party_note_target[i]);
 	}
 
 	wr_s16b(MAX_GUILDNOTES);
 	for (i = 0; i < MAX_GUILDNOTES; i++) {
 		wr_string(guild_note[i]);
+		wr_string(guild_note_u[i]);
 		wr_string(guild_note_target[i]);
 	}
 	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]

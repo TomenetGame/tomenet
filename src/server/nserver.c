@@ -3013,16 +3013,16 @@ static int Handle_login(int ind) {
 	calc_body_spells(NumPlayers);
 
 	/* check pending notes to this player -C. Blue */
+	/* NOTE: Character-specific options have not yet been received from the client at this point
+	   so despite of the sync_options() call above the messages below will always pick the censored version.. */
 	for (i = 0; i < MAX_ADMINNOTES; i++) {
 		if (strcmp(admin_note[i], "")) {
 			msg_format(NumPlayers, "\375\377sMotD: %s", admin_note[i]);
 		}
 	}
 	for (i = 0; i < MAX_NOTES; i++) {
-		//if (!strcasecmp(priv_note_target[i], p_ptr->name)) { /* <- sent to a character name */
-		//if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name */
 		if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, case-independant */
-			msg_format(NumPlayers, "\374\377RNote from %s: %s", priv_note_sender[i], priv_note[i]);
+			msg_format(NumPlayers, "\374\377RNote from %s: %s", priv_note_sender[i], p_ptr->censor_swearing ? priv_note[i] : priv_note_u[i]);
 			strcpy(priv_note_sender[i], "");
 			strcpy(priv_note_target[i], "");
 			strcpy(priv_note[i], "");
@@ -3031,14 +3031,14 @@ static int Handle_login(int ind) {
 	if (p_ptr->party) for (i = 0; i < MAX_PARTYNOTES; i++) {
 		if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
 			if (strcmp(party_note[i], ""))
-				msg_format(NumPlayers, "\374\377bParty Note: %s", party_note[i]);
+				msg_format(NumPlayers, "\374\377bParty Note: %s", p_ptr->censor_swearing ? party_note[i] : party_note_u[i]);
 			break;
 		}
 	}
 	if (p_ptr->guild) for (i = 0; i < MAX_GUILDNOTES; i++) {
 		if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
 			if (strcmp(guild_note[i], ""))
-				msg_format(NumPlayers, "\374\377bGuild Note: %s", guild_note[i]);
+				msg_format(NumPlayers, "\374\377bGuild Note: %s", p_ptr->censor_swearing ? guild_note[i] : guild_note_u[i]);
 			break;
 		}
 	}

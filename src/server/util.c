@@ -2971,6 +2971,24 @@ void msg_broadcast(int Ind, cptr msg) {
 		msg_print(i, msg);
 	 }
 }
+/* Same as msg_broadcast() but takes both a censored and an uncensored message and chooses per recipient. */
+void msg_broadcast2(int Ind, cptr msg, cptr msg_u) {
+	int i;
+
+	/* Tell every player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip disconnected players */
+		if (Players[i]->conn == NOT_CONNECTED) 
+			continue;
+
+		/* Skip the specified player */
+		if (i == Ind)
+			continue;
+
+		/* Tell this one */
+		msg_print(i, Players[i]->censor_swearing ? msg : msg_u);
+	 }
+}
 
 void msg_admins(int Ind, cptr msg) {
 	int i;
@@ -3183,6 +3201,38 @@ void msg_print_near(int Ind, cptr msg) {
 		}
 	}
 }
+void msg_print_near2(int Ind, cptr msg, cptr msg_u) {
+	player_type *p_ptr = Players[Ind];
+	int y, x, i;
+	struct worldpos *wpos;
+
+	wpos = &p_ptr->wpos;
+	if (p_ptr->admin_dm) return;
+
+	y = p_ptr->py;
+	x = p_ptr->px;
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Don't send the message to the player who caused it */
+		if (Ind == i) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Can he see this player? */
+		if (p_ptr->cave_flag[y][x] & CAVE_VIEW) {
+			/* Send the message */
+			msg_print(i, p_ptr->censor_swearing ? msg : msg_u);
+		}
+	}
+}
 
 /* Whispering: Send message to adjacent players */
 void msg_print_verynear(int Ind, cptr msg) {
@@ -3214,6 +3264,38 @@ void msg_print_verynear(int Ind, cptr msg) {
 		if (abs(p_ptr->py - y) <= 1 && abs(p_ptr->px - x) <= 1) {
 			/* Send the message */
 			msg_print(i, msg);
+		}
+	}
+}
+void msg_print_verynear2(int Ind, cptr msg, cptr msg_u) {
+	player_type *p_ptr = Players[Ind];
+	int y, x, i;
+	struct worldpos *wpos;
+	wpos = &p_ptr->wpos;
+
+	//if(p_ptr->admin_dm) return;
+
+	y = p_ptr->py;
+	x = p_ptr->px;
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Don't send the message to the player who caused it */
+		if (Ind == i) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Is he in range? */
+		if (abs(p_ptr->py - y) <= 1 && abs(p_ptr->px - x) <= 1) {
+			/* Send the message */
+			msg_print(i, p_ptr->censor_swearing ? msg : msg_u);
 		}
 	}
 }
@@ -3429,6 +3511,30 @@ void msg_party_format(int Ind, cptr fmt, ...) {
 		msg_print(i, buf);
 	 }
 }
+/* send a message to all online party members */
+void msg_party_print(int Ind, cptr msg, cptr msg_u) {
+	int i;
+
+	/* Tell every player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip disconnected players */
+		if (Players[i]->conn == NOT_CONNECTED) 
+			continue;
+
+#if 0
+		/* Skip the specified player */
+		if (i == Ind)
+			continue;
+#endif
+
+		/* skip players not in his party */
+		if (Players[i]->party != Players[Ind]->party)
+			continue;
+
+		/* Tell this one */
+		msg_print(i, Players[i]->censor_swearing ? msg : msg_u);
+	 }
+}
 
 /* send a message to all online guild members */
 void msg_guild_format(int Ind, cptr fmt, ...) {
@@ -3461,6 +3567,30 @@ void msg_guild_format(int Ind, cptr fmt, ...) {
 
 		/* Tell this one */
 		msg_print(i, buf);
+	 }
+}
+/* send a message to all online guild members */
+void msg_guild_print(int Ind, cptr msg, cptr msg_u) {
+	int i;
+
+	/* Tell every player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Skip disconnected players */
+		if (Players[i]->conn == NOT_CONNECTED) 
+			continue;
+
+#if 0
+		/* Skip the specified player */
+		if (i == Ind)
+			continue;
+#endif
+
+		/* skip players not in his guild */
+		if (Players[i]->guild != Players[Ind]->guild)
+			continue;
+
+		/* Tell this one */
+		msg_print(i, Players[i]->censor_swearing ? msg : msg_u);
 	 }
 }
 
@@ -4879,8 +5009,9 @@ static void player_talk_aux(int Ind, char *message) {
 		Players[i]->talk = 0;
 	}
 
-	/* Check for nasty language in public chat */
-	if (is_public && (!slash_command || slash_command_msg || slash_command_censorable)) {
+	/* Check for nasty language in chat/messaging */
+	if (//is_public &&
+	    (!slash_command || slash_command_msg || slash_command_censorable)) {
 		char *c = strchr(message, ' ');
 		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
 		strcpy(message_uncensored, message);
@@ -6330,7 +6461,7 @@ void lua_intrusion(int Ind, char *problem_diz) {
 #endif
 }
 
-void bbs_add_line(cptr textline) {
+void bbs_add_line(cptr textline, cptr textline_u) {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
 	for (i = 0; i < BBS_LINES; i++)
@@ -6338,10 +6469,13 @@ void bbs_add_line(cptr textline) {
 	j = i;
 	/* or scroll up by one line, discarding the first line */
 	if (i == BBS_LINES)
-		for (j = 0; j < BBS_LINES - 1; j++)
+		for (j = 0; j < BBS_LINES - 1; j++) {
 			strcpy(bbs_line[j], bbs_line[j + 1]);
+			strcpy(bbs_line_u[j], bbs_line_u[j + 1]);
+		}
 	/* write the line to the bbs */
 	strncpy(bbs_line[j], textline, MAX_CHARS_WIDE - 3); /* lines get one leading spaces on outputting, so it's 78-1  //  was 77 */
+	strncpy(bbs_line_u[j], textline_u, MAX_CHARS_WIDE - 3); /* lines get one leading spaces on outputting, so it's 78-1  //  was 77 */
 }
 
 void bbs_del_line(int entry) {
@@ -6360,7 +6494,7 @@ void bbs_erase(void) {
 		strcpy(bbs_line[i], "");
 }
 
-void pbbs_add_line(u16b party, cptr textline) {
+void pbbs_add_line(u16b party, cptr textline, cptr textline_u) {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
 	for (i = 0; i < BBS_LINES; i++)
@@ -6368,13 +6502,16 @@ void pbbs_add_line(u16b party, cptr textline) {
 	j = i;
 	/* or scroll up by one line, discarding the first line */
 	if (i == BBS_LINES)
-		for (j = 0; j < BBS_LINES - 1; j++)
+		for (j = 0; j < BBS_LINES - 1; j++) {
 			strcpy(pbbs_line[party][j], pbbs_line[party][j + 1]);
+			strcpy(pbbs_line_u[party][j], pbbs_line_u[party][j + 1]);
+		}
 	/* write the line to the bbs */
 	strncpy(pbbs_line[party][j], textline, MAX_CHARS_WIDE - 3);
+	strncpy(pbbs_line_u[party][j], textline_u, MAX_CHARS_WIDE - 3);
 }
 
-void gbbs_add_line(byte guild, cptr textline) {
+void gbbs_add_line(byte guild, cptr textline, cptr textline_u) {
 	int i, j;
 	/* either find an empty bbs entry (store its position in j) */
 	for (i = 0; i < BBS_LINES; i++)
@@ -6382,10 +6519,13 @@ void gbbs_add_line(byte guild, cptr textline) {
 	j = i;
 	/* or scroll up by one line, discarding the first line */
 	if (i == BBS_LINES)
-		for (j = 0; j < BBS_LINES - 1; j++)
+		for (j = 0; j < BBS_LINES - 1; j++) {
 			strcpy(gbbs_line[guild][j], gbbs_line[guild][j + 1]);
+			strcpy(gbbs_line_u[guild][j], gbbs_line_u[guild][j + 1]);
+		}
 	/* write the line to the bbs */
 	strncpy(gbbs_line[guild][j], textline, MAX_CHARS_WIDE - 3);
+	strncpy(gbbs_line_u[guild][j], textline_u, MAX_CHARS_WIDE - 3);
 }
 
 

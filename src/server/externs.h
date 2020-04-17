@@ -457,14 +457,14 @@ extern u16b max_wf_idx;
 extern s16b max_set_idx;
 extern u16b max_q_idx;
 
-extern char priv_note[MAX_NOTES][MAX_CHARS_WIDE], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN];
-extern char party_note[MAX_PARTYNOTES][MAX_CHARS_WIDE], party_note_target[MAX_PARTYNOTES][NAME_LEN];
-extern char guild_note[MAX_GUILDNOTES][MAX_CHARS_WIDE], guild_note_target[MAX_GUILDNOTES][NAME_LEN];
+extern char priv_note[MAX_NOTES][MAX_CHARS_WIDE], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN], priv_note_u[MAX_NOTES][MAX_CHARS_WIDE];
+extern char party_note[MAX_PARTYNOTES][MAX_CHARS_WIDE], party_note_target[MAX_PARTYNOTES][NAME_LEN], party_note_u[MAX_PARTYNOTES][MAX_CHARS_WIDE];
+extern char guild_note[MAX_GUILDNOTES][MAX_CHARS_WIDE], guild_note_target[MAX_GUILDNOTES][NAME_LEN], guild_note_u[MAX_GUILDNOTES][MAX_CHARS_WIDE];
 extern char admin_note[MAX_ADMINNOTES][MAX_CHARS], server_warning[MSG_LEN];
 
-extern char bbs_line[BBS_LINES][MAX_CHARS_WIDE];
-extern char pbbs_line[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE];
-extern char gbbs_line[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE];
+extern char bbs_line[BBS_LINES][MAX_CHARS_WIDE], bbs_line_u[BBS_LINES][MAX_CHARS_WIDE];
+extern char pbbs_line[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE], pbbs_line_u[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE];
+extern char gbbs_line[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE], gbbs_line_u[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE];
 
 extern auction_type *auctions;
 extern u32b auction_alloc;
@@ -1886,11 +1886,14 @@ extern void note_toggle_empty(object_type *o_ptr, bool empty);
 extern bool check_guard_inscription(s16b quark, char what);
 extern void msg_print(int Ind, cptr msg);
 extern void msg_broadcast(int Ind, cptr msg);
+extern void msg_broadcast2(int Ind, cptr msg, cptr msg_u);
 extern void msg_admins(int Ind, cptr msg);
 // extern void msg_format(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3))); // too much spam
 extern void msg_format(int Ind, cptr fmt, ...);
 extern void msg_print_near(int Ind, cptr msg);
+extern void msg_print_near2(int Ind, cptr msg, cptr msg_u);
 extern void msg_print_verynear(int Ind, cptr msg);
+extern void msg_print_verynear2(int Ind, cptr msg, cptr msg_u);
 extern void msg_print_near_monvar(int Ind, int m_idx, cptr msg, cptr msg_garbled, cptr msg_unseen);
 // extern void msg_format_near(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3))); // too much spam
 extern void msg_format_near(int Ind, cptr fmt, ...);
@@ -1901,6 +1904,8 @@ extern void msg_format_near_site(int y, int x, worldpos *wpos, int Ind, bool vie
 extern void msg_print_near_monster(int m_idx, cptr msg);
 extern void msg_party_format(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3)));
 extern void msg_guild_format(int Ind, cptr fmt, ...) __attribute__ ((format (printf, 2, 3)));
+extern void msg_party_print(int Ind, cptr msg, cptr msg_u);
+extern void msg_guild_print(int Ind, cptr msg, cptr msg_u);
 extern void un_afk_idle(int Ind);
 extern void toggle_afk(int Ind, char *msg);
 extern void player_talk(int Ind, char *msg);
@@ -1919,11 +1924,11 @@ extern int gold_colour(int amt, bool fuzzy, bool compact);
 extern int test_item_name(cptr name);
 extern int in_banlist(char *acc, char *addr, int *time, char *reason);
 
-extern void bbs_add_line(cptr textline);
+extern void bbs_add_line(cptr textline, cptr textline_u);
 extern void bbs_del_line(int entry);
 extern void bbs_erase(void);
-extern void pbbs_add_line(u16b party, cptr textline);
-extern void gbbs_add_line(byte guild, cptr textline);
+extern void pbbs_add_line(u16b party, cptr textline, cptr textline_u);
+extern void gbbs_add_line(byte guild, cptr textline, cptr textline_u);
 
 extern void player_list_add(player_list_type **list, s32b player);
 extern bool player_list_find(player_list_type *list, s32b player);
@@ -2316,7 +2321,7 @@ extern void lua_fix_skill_chart(int Ind);
 extern void lua_takeoff_costumes(int Ind);
 extern bool lua_is_unique(int r_idx);
 /* only called once, in util.c, referring to new file slash.c */
-extern void do_slash_cmd(int Ind, char *message, char *message_uncensored);
+extern void do_slash_cmd(int Ind, char *message, char *message_u);
 extern int global_luck; /* Global +LUCK modifier for the whole server (change the 'weather' - C. Blue) */
 extern void lua_intrusion(int Ind, char *problem_diz);
 extern bool lua_mimic_eligible(int Ind, int r_idx);
