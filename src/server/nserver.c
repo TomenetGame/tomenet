@@ -6797,7 +6797,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 			/* 4.4.3.1 clients support new RLE */
 			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* New RLE */
-				Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, n);
+				Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, n);
 			} else {
 				/* Old RLE */
 				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
@@ -6814,7 +6814,7 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				/* 4.4.3.1 clients support new RLE */
 				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* New RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", cu, 0xFF, a, n);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", cu, TERM_RESERVED_RLE, a, n);
 				} else {
 					/* Old RLE */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", cu, a | 0x40, n);
@@ -6829,9 +6829,9 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
 				Packet_printf(&connp->c, "%c%c", c, a & ~0xC0);
 			} else {
-				if (a == 0xFF) {
+				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
-					Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, 1);
+					Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, 1);
 				} else {
 					/* Normal output */
 					Packet_printf(&connp->c, "%c%c", c, a);
@@ -6850,9 +6850,9 @@ int Send_line_info(int Ind, int y, bool scr_only) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", cu, a & ~0xC0);
 				} else {
-					if (a == 0xFF) {
+					if (a == TERM_RESERVED_RLE) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
-						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", cu, 0xFF, a, 1);
+						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", cu, TERM_RESERVED_RLE, a, 1);
 					} else {
 						/* Normal output */
 						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", cu, a);
@@ -6945,7 +6945,7 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 			/* 4.4.3.1 clients support new RLE */
 			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* New RLE */
-				Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, n);
+				Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, n);
 			} else {
 				/* Old RLE */
 				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
@@ -6959,9 +6959,9 @@ int Send_line_info_forward(int Ind, int Ind_src, int y) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
 				Packet_printf(&connp->c, "%c%c", c, a & ~0xC0);
 			} else {
-				if (a == 0xFF) {
+				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
-					Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, 1);
+					Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, 1);
 				} else {
 					/* Normal output */
 					Packet_printf(&connp->c, "%c%c", c, a);
@@ -7033,7 +7033,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
 			/* 4.4.3.1 clients support new RLE */
 			if (is_newer_than(&connp->version, 4, 4, 3, 0, 0, 5)) {
 				/* New RLE */
-				Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, n);
+				Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, n);
 			} else {
 				/* Old RLE */
 				Packet_printf(&connp->c, "%c%c%c", c, a | 0x40, n);
@@ -7043,7 +7043,7 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
 				/* 4.4.3.1 clients support new RLE */
 				if (is_newer_than(&Conn[p_ptr2->conn]->version, 4, 4, 3, 0, 0, 5)) {
 					/* New RLE */
-					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, n);
+					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, n);
 				} else {
 					/* Old RLE */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c", c, a | 0x40, n);
@@ -7058,9 +7058,9 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
 				/* Remove 0x40 (TERM_PVP) if the client is old */
 				Packet_printf(&connp->c, "%c%c", c, a & ~0xD0);
 			} else {
-				if (a == 0xFF) {
+				if (a == TERM_RESERVED_RLE) {
 					/* Use RLE format as an escape sequence for 0xFF as attr */
-					Packet_printf(&connp->c, "%c%c%c%c", c, 0xFF, a, 1);
+					Packet_printf(&connp->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, 1);
 				} else {
 					/* Normal output */
 					Packet_printf(&connp->c, "%c%c", c, a);
@@ -7072,9 +7072,9 @@ int Send_mini_map(int Ind, int y, byte *sa, char *sc) {
 					/* Remove 0x40 (TERM_PVP) if the client is old */
 					Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a & ~0xD0);
 				} else {
-					if (a == 0xFF) {
+					if (a == TERM_RESERVED_RLE) {
 						/* Use RLE format as an escape sequence for 0xFF as attr */
-						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, 0xFF, a, 1);
+						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c%c%c", c, TERM_RESERVED_RLE, a, 1);
 					} else {
 						/* Normal output */
 						Packet_printf(&Conn[p_ptr2->conn]->c, "%c%c", c, a);

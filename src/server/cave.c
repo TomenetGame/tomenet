@@ -1961,16 +1961,17 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		}
 #else /* handle client-side -> the usual fast flickering, same as dungeon wizards */
  #ifdef EXTENDED_TERM_COLOURS
-		if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0))
-			(*ap) = TERM_OLD_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
+		if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) (*ap) = TERM_OLD_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
 		else
  #endif
  #ifndef EXTENDED_COLOURS_PALANIM
-			(*ap) = TERM_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
+		//no longer allowed!
+		(*ap) = TERM_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
  #else
-			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) (*ap) = TERM_OLD2_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
-			/* Just discarding base attr for now. The Panda is the only monster using this so it's fine because it's B+W only anyway. */
-			else (*ap) = TERM_BNW;
+		if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) (*ap) = TERM_OLD2_BNW + ((r_ptr->flags7 & RF7_ATTR_BASE) ? a : 0x0);
+		else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) (*ap) = TERM_OLD3_BNW;
+		/* Just discarding base attr for now. The Panda is the only monster using this so it's fine because it's B+W only anyway. */
+		else (*ap) = TERM_BNW;
  #endif
 #endif
 	}
@@ -1990,6 +1991,7 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		(*ap) = a;
 	}
 
+#if 0 /* what the hell..? */
 	/* Hack -- Bizarre grid under monster */
 	else if ((*ap & 0x80) || (*cp & 0x80)) {
 		/* Use char */
@@ -1998,6 +2000,7 @@ static void get_monster_color(int Ind, monster_type *m_ptr, monster_race *r_ptr,
 		/* Use attr */
 		(*ap) = a;
 	}
+#endif
 
 	/* Normal */
 	else {
@@ -2054,12 +2057,14 @@ static byte player_color(int Ind) {
 		if (p_ptr->admin_wiz) {
 #ifdef EXTENDED_TERM_COLOURS
  #ifndef EXTENDED_COLOURS_PALANIM
+			//no longer allowed
 			return (TERM_L_DARK | (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW));
  #else
 			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
 				if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) return (TERM_L_DARK | TERM_OLD_BNW);
 				else return (TERM_L_DARK | TERM_OLD2_BNW);
-			} else return TERM_BNW;
+			} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) return TERM_OLD3_BNW;
+			else return TERM_BNW;
  #endif
 #else
 			return (TERM_L_DARK | TERM_BNW);
@@ -2102,6 +2107,7 @@ static byte player_color(int Ind) {
 			return TERM_NUKE;
 
  #ifndef EXTENDED_COLOURS_PALANIM
+ //no longer allowed
 		if (p_ptr->kinetic_shield) {
 			if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_BNW;
 			else return pcolor |= TERM_BNW; //no alternative
@@ -2110,6 +2116,7 @@ static byte player_color(int Ind) {
 		if (p_ptr->kinetic_shield) {
 			if (p_ptr->kinetic_shield > 10) {
 				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) return pcolor |= TERM_OLD2_BNW;
+				else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) return TERM_OLD3_BNWKS;
 				return TERM_BNWKS;
 			}
 			if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) return pcolor |= TERM_OLD2_BNW; //no alternative
@@ -2137,7 +2144,8 @@ static byte player_color(int Ind) {
 		if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
 			if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) pcolor |= TERM_OLD_BNW;
 			else pcolor |= TERM_OLD2_BNW;
-		} else pcolor = p_ptr->shadow_running ? TERM_BNWSR : TERM_BNW;
+		} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) pcolor = p_ptr->shadow_running ? TERM_OLD3_BNWSR : TERM_OLD3_BNW;
+		else pcolor = p_ptr->shadow_running ? TERM_BNWSR : TERM_BNW;
  #endif
 #else
 		pcolor |= TERM_BNW;
@@ -3378,7 +3386,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
 					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
 					else a |= TERM_OLD2_BNW;
-				} else a = TERM_PVPBB;
+				} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) a = TERM_OLD3_PVPBB;
+				else a = TERM_PVPBB;
  #endif
 #else
 				a |= TERM_BNW;
@@ -3393,7 +3402,8 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
 					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_PVP;
 					else a |= TERM_OLD2_PVP;
-				} else a = TERM_PVP;
+				} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) a = TERM_OLD3_PVP;
+				else a = TERM_PVP;
  #endif
 #else
 				a |= TERM_PVP;
@@ -3695,7 +3705,7 @@ void lite_spot(int Ind, int y, int x) {
 			}
 
 			/* All kinds of BNW states: */
-			if (p_ptr->martyr)
+			if (p_ptr->martyr) {
 #ifdef EXTENDED_TERM_COLOURS
  #ifndef EXTENDED_COLOURS_PALANIM
 				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
@@ -3703,12 +3713,13 @@ void lite_spot(int Ind, int y, int x) {
 				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
 					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
 					else a |= TERM_OLD2_BNW;
-				} else a = TERM_BNWM;
+				} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) a = TERM_OLD3_BNWM;
+				else a = TERM_BNWM;
  #endif
 #else
 				a |= TERM_BNW;
 #endif
-			else if (p_ptr->kinetic_shield)
+			} else if (p_ptr->kinetic_shield) {
 #ifdef EXTENDED_TERM_COLOURS
  #ifndef EXTENDED_COLOURS_PALANIM
 				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
@@ -3716,12 +3727,13 @@ void lite_spot(int Ind, int y, int x) {
 				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
 					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
 					else a |= TERM_OLD2_BNW;
-				} else a = (p_ptr->kinetic_shield > 10 ? TERM_BNWKS : TERM_BNWKS2);
+				} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) a = (p_ptr->kinetic_shield > 10 ? TERM_OLD3_BNWKS : TERM_OLD3_BNWKS2);
+				else a = (p_ptr->kinetic_shield > 10 ? TERM_BNWKS : TERM_BNWKS2);
  #endif
 #else
 				a |= TERM_BNW;
 #endif
-			else if (p_ptr->shadow_running)
+			} else if (p_ptr->shadow_running) {
 #ifdef EXTENDED_TERM_COLOURS
  #ifndef EXTENDED_COLOURS_PALANIM
 				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
@@ -3729,12 +3741,13 @@ void lite_spot(int Ind, int y, int x) {
 				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
 					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
 					else a |= TERM_OLD2_BNW;
-				} else a = TERM_BNWSR;
+				} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) a = TERM_OLD3_BNWSR;
+				else a = TERM_BNWSR;
  #endif
 #else
 				a |= TERM_BNW;
 #endif
-			else if (p_ptr->admin_wiz) {
+			} else if (p_ptr->admin_wiz) {
 #ifdef EXTENDED_TERM_COLOURS
  #ifndef EXTENDED_COLOURS_PALANIM
 				a |= is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0) ? TERM_OLD_BNW : TERM_BNW;
@@ -3742,7 +3755,8 @@ void lite_spot(int Ind, int y, int x) {
 				if (is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) {
 					if (is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) a |= TERM_OLD_BNW;
 					else a |= TERM_OLD2_BNW;
-				} else a = TERM_BNW;
+				} else if (is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) a = TERM_OLD3_BNW;
+				else a = TERM_BNW;
  #endif
 #else
 				a |= TERM_BNW;
@@ -3888,9 +3902,13 @@ void lite_spot(int Ind, int y, int x) {
 			if ((p_ptr->ovl_info[dispy][dispx].c != c) ||
 			    (p_ptr->ovl_info[dispy][dispx].a != a)) {
 				/* Old cfg.hilite_player implementation has been disabled after 4.6.1.1 because it interferes with custom fonts */
+#if 0
 				if (!is_newer_than(&p_ptr->version, 4, 6, 1, 1, 0, 1)) {
 					if (is_us && is_newer_than(&p_ptr->version, 4, 5, 4, 0, 0, 0)) c |= 0x80;
 				}
+#else
+				if (is_us && p_ptr->hilite_player && !is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) a |= 0x80;
+#endif
 
 				/* Tell client to redraw this grid */
 				Send_char(Ind, dispx, dispy, a, c);

@@ -7261,17 +7261,29 @@ extern int PlayerUID;
   #define TERMA_L_UMBER	79
 
   /* Problem: Not enough colours! So we need to change these masks to actual colours. */
-  #define TERM_BNW	248	/* black & white, for admin wizards and pandas */
-  #define TERM_BNWM	249	/* black & white + holyfire, for martyr */
-  #define TERM_BNWSR	250	/* black & white + blue, for shadow running */
-  #define TERM_BNWKS	251	/* black & white + psi, for kinetic shield */
-  #define TERM_BNWKS2	252	/* black & white + orange, for kinetic shield running out */
-  #define TERM_PVPBB	253	/* black/slate/yellow, for bloodbond */
-  #define TERM_PVP	254	/* black/yellow/red, for active PvP-hostility (or stormbringer) */
-  /* Note: 0xFF (255) is reserved for RLE, see Send_line_info(). */
-  /* For compatibility with old clients: */
+  #define TERM_BNW	120	/* black & white, for admin wizards and pandas */
+  #define TERM_BNWM	121	/* black & white + holyfire, for martyr */
+  #define TERM_BNWSR	122	/* black & white + blue, for shadow running */
+  #define TERM_BNWKS	123	/* black & white + psi, for kinetic shield */
+  #define TERM_BNWKS2	124	/* black & white + orange, for kinetic shield running out */
+  #define TERM_PVPBB	125	/* black/slate/yellow, for bloodbond */
+  #define TERM_PVP	126	/* black/yellow/red, for active PvP-hostility (or stormbringer) */
+  #define TERM_RESERVED	127	/* since 0xFF is reserved for RLE and 0x80 is for hilite_player, we need to reserve this colour too, so it won't get combined with 0x80 ever. */
+  /* For comeback of hilite_player in 4.7.3: */
+  #define TERM_HILITE_PLAYER	0x80	/* 128 */
+  /* ..for compatibility with old clients: */
   #define TERM_OLD2_BNW	0x40	/* 64: black & white MASK, for admin wizards */
   #define TERM_OLD2_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */
+  /* ..for more backward compatibility: */
+  #define TERM_OLD3_BNW		248	/* black & white, for admin wizards and pandas */
+  #define TERM_OLD3_BNWM	249	/* black & white + holyfire, for martyr */
+  #define TERM_OLD3_BNWSR	250	/* black & white + blue, for shadow running */
+  #define TERM_OLD3_BNWKS	251	/* black & white + psi, for kinetic shield */
+  #define TERM_OLD3_BNWKS2	252	/* black & white + orange, for kinetic shield running out */
+  #define TERM_OLD3_PVPBB	253	/* black/slate/yellow, for bloodbond */
+  #define TERM_OLD3_PVP		254	/* black/yellow/red, for active PvP-hostility (or stormbringer) */
+  /* Note: 0xFF (255) is reserved for RLE, see Send_line_info(). */
+  #define TERM_RESERVED_RLE	255
  #else
   #define TERM_BNW	0x40	/* 64: black & white MASK, for admin wizards */
   #define TERM_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */

@@ -2223,12 +2223,21 @@ int Receive_char(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &x, &y, &a, &c)) <= 0) return n;
 
 	/* Old cfg.hilite_player implementation has been disabled after 4.6.1.1 because it interferes with custom fonts */
+#if 0
 	if (!is_newer_than(&server_version, 4, 6, 1, 1, 0, 1)) {
 		if ((c & 0x80)) {
 			c &= 0x7F;
 			is_us = TRUE;
 		}
 	}
+#else
+	if (!is_older_than(&server_version, 4, 7, 3, 0, 0, 0)) {
+		if ((a & TERM_HILITE_PLAYER)) {
+			a &= ~TERM_HILITE_PLAYER;
+			is_us = TRUE;
+		}
+	}
+#endif
 
 #ifdef TEST_CLIENT
 	/* special hack for mind-link Windows->Linux w/ font_map_solid_walls */

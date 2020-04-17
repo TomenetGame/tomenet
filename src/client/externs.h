@@ -598,6 +598,8 @@ extern void do_cmd_options(void);
 extern void c_close_game(cptr reason);
 extern void my_memfrob(void *s, int n);
 extern bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
+extern bool is_older_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
+extern bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 #ifdef USE_SOUND_2010
 extern void interact_audio(void);
 extern void audio_pack_selector(void);

@@ -533,6 +533,17 @@ byte flick_colour(byte attr) {
 		if (attr & TERM_BNW) attr = TERM_BNW;
 		flags = 0x0;
 	}
+	if (is_older_than(&server_version, 4, 7, 3, 0, 0, 0)) {
+		switch (attr) {
+		case TERM_OLD3_BNW: attr = TERM_BNW; break;
+		case TERM_OLD3_BNWM: attr = TERM_BNWM; break;
+		case TERM_OLD3_BNWSR: attr = TERM_BNWSR; break;
+		case TERM_OLD3_BNWKS: attr = TERM_BNWKS; break;
+		case TERM_OLD3_BNWKS2: attr = TERM_BNWKS2; break;
+		case TERM_OLD3_PVPBB: attr = TERM_PVPBB; break;
+		case TERM_OLD3_PVP: attr = TERM_PVP; break;
+		}
+	}
  #endif
 #else
 	attr = attr & 0x1F; /* cut flags off actual colour */

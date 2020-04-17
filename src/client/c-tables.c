@@ -305,7 +305,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.flash_player,		TRUE,	6,	1, 44, TRUE,
 	    "flash_player",		"Flash own character icon after far relocation" },
     //todo: fix/implement good cursor on *nix/osx
-	{ &c_cfg.hilite_player,		FALSE,	6,	1, 45, FALSE,
+	{ &c_cfg.hilite_player,		FALSE,	6,	1, 45, TRUE,
 	    "hilite_player",		"Hilite own character icon with the cursor" },
 	{ &c_cfg.consistent_players,	FALSE,	6,	1, 46, TRUE,
 	    "consistent_players",	"Use consistent symbols and colours for players" },
