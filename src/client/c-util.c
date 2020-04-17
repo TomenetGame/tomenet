@@ -2087,8 +2087,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 			for (i = 0; i < hist_chat_end; i++) {
 				if (!strcmp(message_history_chat[i], buf)) {
 					/* Found an old duplicate. Excise it. */
+					for (k = i; k < hist_chat_end - 1; k++) strcpy(message_history_chat[k], message_history_chat[k + 1]);
+					/* Go back one step accordingly */
 					hist_chat_end--;
-					for (k = i; k < hist_chat_end; k++) strcpy(message_history_chat[k], message_history_chat[k + 1]);
 					break;
 				}
 			}
@@ -2096,8 +2097,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 			for (i = hist_chat_end; i < hist_chat_end + MSG_HISTORY_MAX; i++) {
 				if (!strcmp(message_history_chat[i % MSG_HISTORY_MAX], buf)) {
 					/* Found an old duplicate. Excise it. */
-					hist_chat_end--;
-					for (j = i; j < hist_chat_end + MSG_HISTORY_MAX; j++) strcpy(message_history_chat[j % MSG_HISTORY_MAX], message_history_chat[(j + 1) % MSG_HISTORY_MAX]);
+					for (j = i; j < hist_chat_end + MSG_HISTORY_MAX - 1; j++) strcpy(message_history_chat[j % MSG_HISTORY_MAX], message_history_chat[(j + 1) % MSG_HISTORY_MAX]);
+					/* Go back one step accordingly */
+					if (hist_chat_end) hist_chat_end--;
+					else hist_chat_end = MSG_HISTORY_MAX - 1;
 					break;
 				}
 			}
@@ -2117,8 +2120,9 @@ bool askfor_aux(char *buf, int len, char mode) {
 			for (i = 0; i < hist_end; i++) {
 				if (!strcmp(message_history[i], buf)) {
 					/* Found an old duplicate. Excise it. */
-					hist_end--;
 					for (k = i; k < hist_end; k++) strcpy(message_history[k], message_history[k + 1]);
+					/* Go back one step accordingly */
+					hist_end--;
 					break;
 				}
 			}
@@ -2126,8 +2130,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 			for (i = hist_end; i < hist_end + MSG_HISTORY_MAX; i++) {
 				if (!strcmp(message_history[i % MSG_HISTORY_MAX], buf)) {
 					/* Found an old duplicate. Excise it. */
-					hist_end--;
-					for (j = i; j < hist_end + MSG_HISTORY_MAX; j++) strcpy(message_history[j % MSG_HISTORY_MAX], message_history[(j + 1) % MSG_HISTORY_MAX]);
+					for (j = i; j < hist_end + MSG_HISTORY_MAX - 1; j++) strcpy(message_history[j % MSG_HISTORY_MAX], message_history[(j + 1) % MSG_HISTORY_MAX]);
+					/* Go back one step accordingly */
+					if (hist_end) hist_end--;
+					else hist_end = MSG_HISTORY_MAX - 1;
 					break;
 				}
 			}
