@@ -1337,7 +1337,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		/* Runemaster */
 		{ TV_SWORD, SV_DAGGER, 0 },
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
-		{ TV_STAFF, SV_STAFF_DETECT_ITEM, 20 },
+		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 18 },
 		{ TV_DIGGING, SV_PICK, 0 },
 		{ TV_BOOMERANG, SV_BOOM_S_METAL, 0 },
 	},
@@ -1492,7 +1492,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		/* Runemaster */
 		{ TV_HELM, SV_HARD_LEATHER_CAP, 0 },
 		{ TV_CLOAK, SV_CLOAK, 0 },
-		{ TV_STAFF, SV_STAFF_DETECT_ITEM, 20 },
+		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 18 },
 		{ TV_DIGGING, SV_PICK, 0 },
 		{ 255, 255, 0 },
 	},
@@ -1766,7 +1766,7 @@ static void player_outfit(int Ind) {
 	/* Hack -- Give the player some water */
 	if (p_ptr->prace == RACE_ENT) {
 		invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_WATER));
-		o_ptr->number = rand_range(3, 7);
+		o_ptr->number = rand_range(4, 6);
 		do_player_outfit();
 	}
 	/* XXX problem is that Lembas sell dear.. */
@@ -1779,14 +1779,13 @@ static void player_outfit(int Ind) {
 	/* Firestones for Dragonriders */
 	else if (p_ptr->prace == RACE_DRACONIAN) {
 		invcopy(o_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
-		o_ptr->number = rand_range(3, 5);
+		o_ptr->number = rand_range(3, 4);
 		do_player_outfit();
 	}
 	/* Dwarves like to collect treasures */
 	else if (p_ptr->prace == RACE_DWARF) {
-		invcopy(o_ptr, lookup_kind(TV_STAFF, SV_STAFF_DETECT_GOLD));
+		invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_DETECT_GOLD));
 		o_ptr->number = 1;
-		o_ptr->pval = 30;
 		do_player_outfit();
 	}
 
@@ -1794,15 +1793,15 @@ static void player_outfit(int Ind) {
 	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_ELF && p_ptr->prace != RACE_HALF_ELF && p_ptr->prace != RACE_HIGH_ELF
 	    && p_ptr->prace != RACE_ENT) {
 		invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_RATION));
-		o_ptr->number = rand_range(3, 7);
+		o_ptr->number = rand_range(4, 6);
 		do_player_outfit();
 	}
 
 	/* Hack -- Give the player some torches */
 	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RUNEMASTER) {
 		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
-		o_ptr->number = rand_range(3, 7);
-		o_ptr->timeout = rand_range(3, 7) * 500;
+		o_ptr->number = rand_range(4, 6);
+		o_ptr->timeout = FUEL_TORCH / 2;
 		do_player_outfit();
 	}
 
@@ -2037,6 +2036,9 @@ static void player_outfit(int Ind) {
 				}
 #endif
 
+				if (tv == TV_STAFF) /* Treasure Detection */
+					o_ptr->pval = 17 + rand_int(4); /* average is same as in charge_staff() */
+
 				do_player_outfit();
 			}
 		}
@@ -2049,10 +2051,11 @@ static void player_outfit(int Ind) {
 			invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
-			o_ptr->name2 = 139;
+			o_ptr->name2 = EGO_LBRIGHTNESS;
 			apply_magic(&p_ptr->wpos, o_ptr, -1, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-		} while (f2 & TR2_RES_DARK);
+		} while (f2 & TR2_RES_DARK); /* Don't give a high resistance, too much */
+		o_ptr->timeout = FUEL_LAMP / 2 - rand_int(FUEL_LAMP / 10);
 		do_player_outfit();
 
 		invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
@@ -2064,11 +2067,11 @@ static void player_outfit(int Ind) {
 	if (p_ptr->pclass == CLASS_RUNEMASTER) {
 		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
 		o_ptr->number = 1;
-		o_ptr->timeout = rand_range(3, 7) * 500;
+		o_ptr->timeout = FUEL_LAMP / 2 - rand_int(FUEL_LAMP / 10);
 		do_player_outfit();
 
 		invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
-		o_ptr->number = rand_range(3, 7);
+		o_ptr->number = rand_range(4, 6);
 		do_player_outfit();
 	}
 

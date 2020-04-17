@@ -10902,6 +10902,8 @@ void inven_carry_equip(int Ind, object_type *o_ptr) {
 		suppress_message = TRUE;
 		do_cmd_wield(Ind, item, 0x0);
 		suppress_message = FALSE;
+		/* make the torch somewhat 'used' */
+		if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) Players[Ind]->inventory[INVEN_LITE].timeout -= rand_int(FUEL_TORCH / 10);
 	}
 #else
 	inven_carry(Ind, o_ptr);
