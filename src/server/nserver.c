@@ -943,7 +943,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 						Destroy_connection(p_ptr->conn, "resume connection");
 					}
 					else if (!strcasecmp(p_ptr->addr, addr)) return E_IN_USE_PC;
-					return E_IN_USE;
+					else return E_IN_USE;
 				}
 
 				/* All restrictions on the number of allowed players from one IP have 
