@@ -5218,9 +5218,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 
 		//maybe todo: distinguish TR5_WHITE_LIGHT?
 		if (f4 & TR4_FUEL_LITE)
-			fprintf(fff, "It provides light (radius %d) when fueled.\n", radius);
+			fprintf(fff, "It provides %slight (radius %d) when fueled.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "", radius);
 		else if (radius)
-			fprintf(fff, "It provides light (radius %d) forever.\n", radius);
+			fprintf(fff, "It provides %slight (radius %d) forever.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "", radius);
 		else
 			fprintf(fff, "It never provides light.\n");
 	}
@@ -5485,7 +5485,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	if (f3 & (TR3_WRAITH))
 		fprintf(fff, "It renders you incorporeal.\n");
 	if ((o_ptr->tval != TV_LITE) && ((f3 & (TR3_LITE1)) || (f4 & (TR4_LITE2)) || (f4 & (TR4_LITE3))))
-		fprintf(fff, "It provides light.\n");
+		fprintf(fff, "It provides %slight.\n", (f5 & TR5_WHITE_LIGHT) ? "white " : "");
 	if (esp) {
 		if (esp & ESP_ALL) fprintf(fff, "It gives telepathic powers.\n");
 		else {
