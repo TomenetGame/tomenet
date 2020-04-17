@@ -1928,7 +1928,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 
 				/* Replace our search string by the actual match and go with that */
 				//strncpy(buf, (*sp_msg)[(sp_end - sp_iter) % MSG_HISTORY_MAX], len);
-				strcpy(buf, (*sp_msg)[(sp_end - sp_iter) % MSG_HISTORY_MAX]);
+				strcpy(buf, (*sp_msg)[(sp_end - sp_iter + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX]);
 				search = FALSE;
 				k = l = strlen(buf);
 				c_prt(TERM_WHITE, buf, y, x);
@@ -1966,7 +1966,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (sp_iter == sp_size) continue; /* No match exists at all */
 			/* Look for another match.. */
 			for (j = sp_iter + 1; j < sp_size; j++) {
-				j2 = (sp_end - j) % MSG_HISTORY_MAX; /* Reverse direction */
+				j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
 				if (!strstr((*sp_msg)[j2], buf)) continue;
 				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
 				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
@@ -1977,7 +1977,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (j == sp_size && sp_iter != -1) {
 				/* Cycle through search results: Start from the beginning again and search up to the final match again */
 				for (j = 0; j <= sp_iter; j++) {
-					j2 = (sp_end - j) % MSG_HISTORY_MAX; /* Reverse direction */
+					j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
 					if (!strstr((*sp_msg)[j2], buf)) continue;
 					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
 					c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
@@ -2035,13 +2035,13 @@ bool askfor_aux(char *buf, int len, char mode) {
 			/* Search term changed: Reset search and look for first match.. */
 			sp_iter = -1;
 			for (j = 0; j < sp_size; j++) {
-				j2 = (sp_end - j) % MSG_HISTORY_MAX; /* Reverse direction */
+				j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
 				if (!strstr((*sp_msg)[j2], buf)) continue;
 				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
 				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
+				sp_iter = j;
 				break;
 			}
-			sp_iter = j;
 			/* No match found at all */
 			if (sp_iter == sp_size) c_prt(TERM_ORANGE, buf, y, x);
 			continue;
