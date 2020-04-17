@@ -3117,6 +3117,7 @@ void floor_msg_format(struct worldpos *wpos, cptr fmt, ...) {
 /*
  * Send a message to everyone on a floor, considering ignorance.
  */
+#if 0 /* currently unused, just killing compiler warning.. */
 static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
 	int i;
 
@@ -3129,9 +3130,23 @@ static void floor_msg_ignoring(int sender, struct worldpos *wpos, cptr msg) {
 		if (inarea(wpos, &Players[i]->wpos)) msg_print(i, msg);
 	}
 }
+#endif
+static void floor_msg_ignoring2(int sender, struct worldpos *wpos, cptr msg, cptr msg_u) {
+	int i;
+
+	if(cfg.log_u) s_printf("(%d,%d,%d)%s\n", wpos->wx, wpos->wy, wpos->wz, msg + 2);// Players[sender]->name, msg);
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (check_ignore(i, sender)) continue;
+		/* Check this guy */
+		if (inarea(wpos, &Players[i]->wpos)) msg_print(i, Players[i]->censor_swearing ? msg : msg_u);
+	}
+}
 /*
  * Send a formatted message to everyone on a floor, considering ignorance.
  */
+#if 0 /* currently unused, just killing compiler warning.. */
 static void floor_msg_format_ignoring(int sender, struct worldpos *wpos, cptr fmt, ...) {
 	va_list vp;
 	char buf[1024];
@@ -3145,7 +3160,7 @@ static void floor_msg_format_ignoring(int sender, struct worldpos *wpos, cptr fm
 	/* Display */
 	floor_msg_ignoring(sender, wpos, buf);
 }
-
+#endif
 /*
  * Send a message to everyone on the world surface. (for season change)
  */
@@ -4673,9 +4688,9 @@ void handle_punish(int Ind, int level) return 0;
 static void player_talk_aux(int Ind, char *message) {
 	int i, len, target = 0, target_raw_len = 0;
 	char search[MSG_LEN], sender[MAX_CHARS];
-	char message2[MSG_LEN], message_uncensored[MSG_LEN];
+	char message2[MSG_LEN], message_u[MSG_LEN];
 	player_type *p_ptr = NULL, *q_ptr;
-	char *colon;
+	char *colon, *colon_u;
 	bool rp_me = FALSE, rp_me_gen = FALSE, log = TRUE, nocolon = FALSE;
 	char c_n = 'B'; /* colours of sender name and of brackets (unused atm) around this name */
 #ifdef KURZEL_PK
@@ -4691,8 +4706,10 @@ static void player_talk_aux(int Ind, char *message) {
 	char messagelc[MSG_LEN];
 #ifdef TOMENET_WORLDS
 	char tmessage[MSG_LEN];		/* TEMPORARY! We will not send the name soon */
+	char tmessage_u[MSG_LEN];
 #endif
 	int censor_punish = 0;
+	bool censor;
 
 
 	if (!Ind) {
@@ -4702,6 +4719,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 	/* Get sender's name */
 	p_ptr = Players[Ind];
+	censor = p_ptr->censor_swearing;
 	/* Get player name */
 	strcpy(sender, p_ptr->name);
 	admin = is_admin(p_ptr);
@@ -5021,7 +5039,7 @@ static void player_talk_aux(int Ind, char *message) {
 	    (!slash_command || slash_command_msg || slash_command_censorable)) {
 		char *c = strchr(message, ' ');
 		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
-		strcpy(message_uncensored, message);
+		strcpy(message_u, message);
 		/* Censor and get level of punishment. (Note: This if/else isn't really needed, we could just censor the complete message always..) */
 		if (!slash_command) censor_punish = handle_censor(message); /* For chat, censor the complete message. */
 		/* For commands, we can skip the actual command, just in caaaase part of the command somehow mixes up with the message to false-positive-trigger the censor check oO (paranoia?) */
@@ -5032,7 +5050,7 @@ static void player_talk_aux(int Ind, char *message) {
 	}
 
 	if (slash_command) {
-		do_slash_cmd(Ind, message, message_uncensored);
+		do_slash_cmd(Ind, message, message_u);
 		handle_punish(Ind, censor_punish);
 		return;
 	}
@@ -5058,11 +5076,13 @@ static void player_talk_aux(int Ind, char *message) {
 #ifdef GROUP_CHAT_NOCLUTTER
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - 10 - strlen(sender)] = 0;
-			party_msg_format_ignoring(Ind, target, "\375\377%c[(P) %s] %s", COLOUR_CHAT_PARTY, sender, message + 2);
+			message_u[MSG_LEN - 1 - 10 - strlen(sender)] = 0;
+			party_msg_ignoring2(Ind, target, format("\375\377%c[(P) %s] %s", COLOUR_CHAT_PARTY, sender, message + 2), format("\375\377%c[(P) %s] %s", COLOUR_CHAT_PARTY, sender, message_u + 2));
 #else
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - 7 - strlen(sender) - strlen(parties[target].name)] = 0;
-			party_msg_format_ignoring(Ind, target, "\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2);
+			message_u[MSG_LEN - 1 - 7 - strlen(sender) - strlen(parties[target].name)] = 0;
+			party_msg_ignoring2(Ind, target, format("\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message + 2), format("\375\377%c[%s:%s] %s", COLOUR_CHAT_PARTY, parties[target].name, sender, message_u + 2));
 #endif
 		}
 
@@ -5087,8 +5107,9 @@ static void player_talk_aux(int Ind, char *message) {
 			if (*(message + 2)) {
 				/* prevent buffer overflow */
 				message[MSG_LEN - 1 + 2 - strlen(p_ptr->name) - 9] = 0;
-				msg_format_near(Ind, "\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message + 2);
-				msg_format(Ind, "\377%cYou say: %s", COLOUR_CHAT, message + 2);
+				message_u[MSG_LEN - 1 + 2 - strlen(p_ptr->name) - 9] = 0;
+				msg_print_near2(Ind, format("\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message + 2), format("\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, message_u + 2));
+				msg_format(Ind, "\377%cYou say: %s", COLOUR_CHAT, censor ? message + 2 : message_u + 2);
 				handle_punish(Ind, censor_punish);
 			} else {
 				msg_format_near(Ind, "\377%c%s clears %s throat.", COLOUR_CHAT, p_ptr->name, p_ptr->male ? "his" : "her");
@@ -5102,7 +5123,8 @@ static void player_talk_aux(int Ind, char *message) {
 		if (p_ptr->mutedchat < 2) {
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 + 2 - strlen(sender) - 6] = 0;
-			floor_msg_format_ignoring(Ind, &p_ptr->wpos, "\375\377%c[%s] %s", COLOUR_CHAT_LEVEL, sender, message + 2);
+			message_u[MSG_LEN - 1 + 2 - strlen(sender) - 6] = 0;
+			floor_msg_ignoring2(Ind, &p_ptr->wpos, format("\375\377%c[%s] %s", COLOUR_CHAT_LEVEL, sender, message + 2), format("\375\377%c[%s] %s", COLOUR_CHAT_LEVEL, sender, message_u + 2));
 			handle_punish(Ind, censor_punish);
 		}
 
@@ -5133,6 +5155,10 @@ static void player_talk_aux(int Ind, char *message) {
 		strcpy(message, message2);
 		colon = message + strlen(p_ptr->reply_name);
 
+		strcpy(message2, p_ptr->reply_name);
+		strcat(message2, message_u + 1);
+		strcpy(message_u, message2);
+
 		/* Continue with forged private message */
 	}
 
@@ -5150,11 +5176,17 @@ static void player_talk_aux(int Ind, char *message) {
 #ifdef GROUP_CHAT_NOCLUTTER
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 + 2 - strlen(sender) - 16] = 0;
-			guild_msg_format_ignoring(Ind, p_ptr->guild, "\375\377y[\377%c(G) %s\377y]\377%c %s", COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
+			message_u[MSG_LEN - 1 + 2 - strlen(sender) - 16] = 0;
+			guild_msg_ignoring2(Ind, p_ptr->guild,
+			    format("\375\377y[\377%c(G) %s\377y]\377%c %s", COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2),
+			    format("\375\377y[\377%c(G) %s\377y]\377%c %s", COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message_u + 2));
 #else
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 + 2 - strlen(sender) - strlen(guilds[p_ptr->guild].name) - 18] = 0;
-			guild_msg_format_ignoring(Ind, p_ptr->guild, "\375\377y[\377%c%s\377y:\377%c%s\377y]\377%c %s", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name, COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2);
+			message_u[MSG_LEN - 1 + 2 - strlen(sender) - strlen(guilds[p_ptr->guild].name) - 18] = 0;
+			guild_msg_ignoring2(Ind, p_ptr->guild,
+			    format("\375\377y[\377%c%s\377y:\377%c%s\377y]\377%c %s", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name, COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2),
+			    format("\375\377y[\377%c%s\377y:\377%c%s\377y]\377%c %s", COLOUR_CHAT_GUILD, guilds[p_ptr->guild].name, COLOUR_CHAT_GUILD, sender, COLOUR_CHAT_GUILD, message + 2));
 #endif
 		}
 
@@ -5180,6 +5212,9 @@ static void player_talk_aux(int Ind, char *message) {
 		search[colon - message] = '\0';
 	} else if (p_ptr->mutedchat) return;
 
+	/* From here on we need colon_u */
+	colon_u = message_u + (colon - message);
+
 	/* Acquire length of search string */
 	len = strlen(search);
 
@@ -5201,14 +5236,13 @@ static void player_talk_aux(int Ind, char *message) {
  #if 0
 				msg_format(Ind, "\375\377s[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
  #else /* world server handles the colour codes */
-				msg_format(Ind, "\375[%s:%s] %s", p_ptr->name, w_player->name, colon + 1);
+				msg_format(Ind, "\375[%s:%s] %s", p_ptr->name, w_player->name, censor ? colon + 1 : colon_u + 1);
  #endif
 
 				/* hack: assume that the target player will become the
 				   one we want to 'reply' to, afterwards, if we don't
 				   have a reply-to target yet. */
-				if (!strlen(p_ptr->reply_name))
-					strcpy(p_ptr->reply_name, w_player->name);
+				if (!strlen(p_ptr->reply_name)) strcpy(p_ptr->reply_name, w_player->name);
 
 				handle_punish(Ind, censor_punish);
 				return;
@@ -5220,7 +5254,10 @@ static void player_talk_aux(int Ind, char *message) {
 /* no, this isn't needed and actually has annoying effects if you try to write smileys:
 		while (*colon && (isspace(*colon) || *colon == ':')) colon++; */
 /* instead, this is sufficient: */
-		if (colon) colon++;
+		if (colon) {
+			colon++;
+			colon_u++;
+		}
 
 		/* lookup failed */
 		if (!target) {
@@ -5257,9 +5294,10 @@ static void player_talk_aux(int Ind, char *message) {
 
 			/* prevent buffer overflow */
 			message[MSG_LEN - strlen(sender) - 7 - strlen(q_ptr->name) + target_raw_len] = 0;
+			message_u[MSG_LEN - strlen(sender) - 7 - strlen(q_ptr->name) + target_raw_len] = 0;
 
 			/* Send message to target */
-			msg_format(target, "\375\377g[%s:%s] %s", sender, q_ptr->name, colon);
+			msg_format(target, "\375\377g[%s:%s] %s", sender, q_ptr->name, q_ptr->censor_swearing ? colon : colon_u);
 			if ((q_ptr->page_on_privmsg ||
 			    (q_ptr->page_on_afk_privmsg && q_ptr->afk)) &&
 			    q_ptr->paging == 0)
@@ -5267,7 +5305,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 			/* Also send back to sender */
 			if (target != Ind)
-				msg_format(Ind, "\375\377g[%s:%s] %s", sender, q_ptr->name, colon);
+				msg_format(Ind, "\375\377g[%s:%s] %s", sender, q_ptr->name, censor ? colon : colon_u);
 
 			/* Only display this message once now - mikaelh */
 			if (q_ptr->afk && !player_list_find(p_ptr->afk_noticed, q_ptr->id)) {
@@ -5308,15 +5346,13 @@ static void player_talk_aux(int Ind, char *message) {
 		}
 	}
 
-	/* Send to appropriate party - only available to admins if not actually a member of party
+	/* Send to appropriate party - only available to admins
 	   Hm, maybe this stuff could just be deleted, could maybe unnecessarily interfere with private messaging, if player has similar name as a party?.. */
 	if (len && target < 0) {
-		/* Can't send msg to party from 'outside' as non-admin */
-		if (p_ptr->party != 0 - target && !admin) {
-			msg_print(Ind, "You aren't in that party.");
+		if (!admin) {
+			msg_print(Ind, "Use !: chat prefix or hit TAB key in the chat prompt to talk to your party.");
 			return;
 		}
-
 #ifdef GROUP_CHAT_NOCLUTTER
 		/* prevent buffer overflow */
 		message[MSG_LEN - strlen(sender) - 10] = 0;
@@ -5377,14 +5413,18 @@ static void player_talk_aux(int Ind, char *message) {
 		/* prevent buffer overflow */
 		message[MSG_LEN - 1 - strlen(sender) - 12 + 11] = 0;
 		snprintf(tmessage, sizeof(tmessage), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
+		message_u[MSG_LEN - 1 - strlen(sender) - 12 + 11] = 0;
+		snprintf(tmessage_u, sizeof(tmessage_u), "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message_u + 11);
 	} else if (!rp_me) {
 		/* prevent buffer overflow */
 		message[MSG_LEN - 1 - strlen(sender) - 8 + mycolor] = 0;
+		message_u[MSG_LEN - 1 - strlen(sender) - 8 + mycolor] = 0;
 
  #ifndef KURZEL_PK
 		snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
+		snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message_u + mycolor);
  #else
-		snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message + mycolor);
+		snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message_u + mycolor);
  #endif
 	} else {
 		/* Why not... */
@@ -5394,17 +5434,22 @@ static void player_talk_aux(int Ind, char *message) {
 
 		/* prevent buffer overflow */
 		message[MSG_LEN - 1 - strlen(sender) - 10 + 4 + mycolor] = 0;
+		message_u[MSG_LEN - 1 - strlen(sender) - 10 + 4 + mycolor] = 0;
 		if (rp_me_gen) {
  #ifndef KURZEL_PK
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s%s]", c_n, sender, message + 3 + mycolor);
+			snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[%s%s]", c_n, sender, message_u + 3 + mycolor);
  #else
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s%s\377%c]", c_b, c_n, sender, message + 3 + mycolor, c_b);
+			snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[\377%c%s%s\377%c]", c_b, c_n, sender, message_u + 3 + mycolor, c_b);
  #endif
 		} else {
  #ifndef KURZEL_PK
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[%s %s]", c_n, sender, message + 4 + mycolor);
+			snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[%s %s]", c_n, sender, message_u + 4 + mycolor);
  #else
 			snprintf(tmessage, sizeof(tmessage), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message + 4 + mycolor, c_b);
+			snprintf(tmessage_u, sizeof(tmessage_u), "\375\377%c[\377%c%s %s\377%c]", c_b, c_n, sender, message_u + 4 + mycolor, c_b);
  #endif
 		}
 	}
@@ -5429,7 +5474,7 @@ static void player_talk_aux(int Ind, char *message) {
 			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
 			    !inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		}
-		msg_print(i, tmessage);
+		msg_print(i, q_ptr->censor_swearing ? tmessage : tmessage_u);
 	}
 #else
 	/* Send to everyone */
@@ -5447,22 +5492,25 @@ static void player_talk_aux(int Ind, char *message) {
 		if (broadcast) {
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - strlen(sender) - 12 + 11] = 0;
-			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, message + 11);
+			message_u[MSG_LEN - 1 - strlen(sender) - 12 + 11] = 0;
+			msg_format(i, "\375\377r[\377%c%s\377r]\377%c %s", c_n, sender, COLOUR_CHAT, q_ptr->censor_swearing ? message + 11 : message_u + 11);
 		} else if (!rp_me) {
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - strlen(sender) - 12 + mycolor] = 0;
+			message_u[MSG_LEN - 1 - strlen(sender) - 12 + mycolor] = 0;
  #ifndef KURZEL_PK
-			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, message + mycolor);
+			msg_format(i, "\375\377%c[%s]\377%c %s", c_n, sender, COLOUR_CHAT, q_ptr->censor_swearing ? message + mycolor : message_u + mycolor);
  #else
-			msg_format(i, "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, message + mycolor);
+			msg_format(i, "\375\377%c[\377%c%s\377%c]\377%c %s", c_b, c_n, sender, c_b, COLOUR_CHAT, q_ptr->censor_swearing ? message + mycolor : message_u + mycolor);
  #endif
 			/* msg_format(i, "\375\377%c[%s] %s", Ind ? 'B' : 'y', sender, message); */
 		}
 		else {
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - strlen(sender) - 1 + 4] = 0;
-			if (rp_me_gen) msg_format(i, "%s%s", sender, message + 3);
-			else msg_format(i, "%s %s", sender, message + 4);
+			message_u[MSG_LEN - 1 - strlen(sender) - 1 + 4] = 0;
+			if (rp_me_gen) msg_format(i, "%s%s", sender, q_ptr->censor_swearing ? message + 3 : message_u + 3);
+			else msg_format(i, "%s %s", sender, q_ptr->censor_swearing ? message + 4 : message_u + 4);
 		}
 	}
 #endif

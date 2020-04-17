@@ -3070,6 +3070,22 @@ void guild_msg_ignoring(int sender, int guild_id, cptr msg) {
 			msg_print(i, msg);
 	}
 }
+void guild_msg_ignoring2(int sender, int guild_id, cptr msg, cptr msg_u) {
+	int i;
+
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		if (check_ignore(i, sender))
+			continue;
+
+		/* Check this guy */
+		if (guild_id == Players[i]->guild)
+			msg_print(i, Players[i]->censor_swearing ? msg : msg_u);
+	}
+}
 /*
  * Send a formatted message to a guild.
  */
@@ -3160,6 +3176,22 @@ void party_msg_ignoring(int sender, int party_id, cptr msg) {
 		/* Check this guy */
 		if (player_in_party(party_id, i))
 			msg_print(i, msg);
+	}
+}
+void party_msg_ignoring2(int sender, int party_id, cptr msg, cptr msg_u) {
+	int i;
+
+	/* Check for this guy */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED)
+			continue;
+
+		if (check_ignore(i, sender))
+			continue;
+
+		/* Check this guy */
+		if (player_in_party(party_id, i))
+			msg_print(i, Players[i]->censor_swearing ? msg : msg_u);
 	}
 }
 
