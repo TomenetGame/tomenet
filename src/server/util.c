@@ -4684,7 +4684,10 @@ static void player_talk_aux(int Ind, char *message) {
 	int mycolor = 0;
 	bool admin = FALSE;
 	bool broadcast = FALSE;
-	bool slash_command = FALSE, slash_command_msg = FALSE, slash_command_censorable = FALSE, is_public = TRUE;
+	bool slash_command = FALSE, slash_command_msg = FALSE, slash_command_censorable = FALSE;
+#ifndef ARCADE_SERVER
+	bool is_public = TRUE;
+#endif
 	char messagelc[MSG_LEN];
 #ifdef TOMENET_WORLDS
 	char tmessage[MSG_LEN];		/* TEMPORARY! We will not send the name soon */
@@ -4949,7 +4952,9 @@ static void player_talk_aux(int Ind, char *message) {
 			    || prefix(messagelc, "/pnote ") || prefix(messagelc, "/gnote ")
 			    || prefix(messagelc, "/pbbs ") || prefix(messagelc, "/gbbs ")) {
 				slash_command_msg = TRUE;
+#ifndef ARCADE_SERVER
 				is_public = FALSE;
+#endif
 			}
 			/* Is it a slash command that results in actual output readable by others? */
 			if (prefix(messagelc, "/info ")
@@ -4957,7 +4962,9 @@ static void player_talk_aux(int Ind, char *message) {
 				slash_command_censorable = TRUE;
 		}
 	}
+#ifndef ARCADE_SERVER
 	if (colon) is_public = FALSE;
+#endif
 
 #ifndef ARCADE_SERVER
 	if (is_public /* Only prevent spam if not in party/private chat */
