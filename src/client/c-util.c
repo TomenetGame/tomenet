@@ -1844,15 +1844,14 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case KTRL('N'):
 			if (nohist) break;
 			cur_hist++;
-
 			if (mode & ASKFOR_CHATTING) {
-				if ((!hist_chat_looped && hist_chat_end < cur_hist) ||
+				if ((!hist_chat_looped && cur_hist >= hist_chat_end) ||
 				    (hist_chat_looped && cur_hist >= MSG_HISTORY_MAX))
 					cur_hist = 0;
 				strncpy(buf, message_history_chat[cur_hist], len);
 				buf[len] = '\0';
 			} else {
-				if ((!hist_looped && hist_end < cur_hist) ||
+				if ((!hist_looped && cur_hist >= hist_end) ||
 				    (hist_looped && cur_hist >= MSG_HISTORY_MAX))
 					cur_hist = 0;
 				strncpy(buf, message_history[cur_hist], len);
@@ -1865,12 +1864,12 @@ bool askfor_aux(char *buf, int len, char mode) {
 			if (nohist) break;
 			if (mode & ASKFOR_CHATTING) {
 				if (cur_hist) cur_hist--;
-				else cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end;
+				else cur_hist = hist_chat_looped ? MSG_HISTORY_MAX - 1 : hist_chat_end - 1;
 				strncpy(buf, message_history_chat[cur_hist], len);
 				buf[len] = '\0';
 			} else {
 				if (cur_hist) cur_hist--;
-				else cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end;
+				else cur_hist = hist_looped ? MSG_HISTORY_MAX - 1 : hist_end - 1;
 				strncpy(buf, message_history[cur_hist], len);
 				buf[len] = '\0';
 			}
