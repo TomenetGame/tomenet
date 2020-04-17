@@ -3668,6 +3668,12 @@ void client_init(char *argv1, bool skip) {
 	/* Initialize the pref files */
 	initialize_main_pref_files();
 
+	/* Pre-initialize character-specific options, just for sending early censor_swearing to the server,
+	   so we can receive private/party/guild notes in the desired format. */
+	sprintf(buf, "%s.opt", cname);
+	process_pref_file(buf);
+	Send_options();
+
 	/* Handle asking for big_map mode on first time startup */
 #if defined(USE_X11) || defined(WINDOWS)
 	if (bigmap_hint && !c_cfg.big_map && strcmp(ANGBAND_SYS, "gcu") && ask_for_bigmap()) {

@@ -3013,8 +3013,8 @@ static int Handle_login(int ind) {
 	calc_body_spells(NumPlayers);
 
 	/* check pending notes to this player -C. Blue */
-	/* NOTE: Character-specific options have not yet been received from the client at this point
-	   so despite of the sync_options() call above the messages below will always pick the censored version.. */
+	/* NOTE: For clients < 4.7.3 the character-specific options have not yet been sent to the server at this point.
+	         So despite of the sync_options() call above the messages below will always pick the censored version. */
 	for (i = 0; i < MAX_ADMINNOTES; i++) {
 		if (strcmp(admin_note[i], "")) {
 			msg_format(NumPlayers, "\375\377sMotD: %s", admin_note[i]);
