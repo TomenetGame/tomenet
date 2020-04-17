@@ -3578,23 +3578,12 @@ static void hook_quit(cptr str) {
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 		fp = fopen(buf, "w");
 		if (!hist_chat_looped) {
-#if 0
 			for (j = 0; j < hist_chat_end; j++) {
-#else /* for div/2 workaround (see loading): Only save the newer half of our messages to keep a safety buffer */
-			s = hist_chat_end - MSG_HISTORY_MAX / 2;
-			if (s < 0) s = 0;
-			for (i = s; i < hist_chat_end; i++) {
-#endif
 				if (!message_history_chat[i][0]) continue;
 				fprintf(fp, "%s\n", message_history_chat[i]);
 			}
 		} else {
-#if 0
 			for (i = hist_chat_end; i < hist_chat_end + MSG_HISTORY_MAX; i++) {
-#else /* for div/2 workaround (see loading): Only save the newer half of our messages to keep a safety buffer */
-			s = hist_chat_end + MSG_HISTORY_MAX / 2;
-			for (i = s; i < hist_chat_end + MSG_HISTORY_MAX; i++) {
-#endif
 				if (!message_history_chat[i % MSG_HISTORY_MAX][0]) continue;
 				fprintf(fp, "%s\n", message_history_chat[i % MSG_HISTORY_MAX]);
 			}

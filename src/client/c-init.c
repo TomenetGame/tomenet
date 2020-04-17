@@ -3152,28 +3152,16 @@ static void quit_hook(cptr s) {
 	/* Remember chat input history across logins */
 	/* Only write history if we have at least one line though */
 	if (hist_chat_end || hist_chat_looped) {
-		int s;
 		FILE *fp;
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 		fp = fopen(buf, "w");
 		if (!hist_chat_looped) {
-#if 0
 			for (j = 0; j < hist_chat_end; j++) {
-#else /* for div/2 workaround (see loading): Only save the newer half of our messages to keep a safety buffer */
-			s = hist_chat_end - MSG_HISTORY_MAX / 2;
-			if (s < 0) s = 0;
-			for (j = s; j < hist_chat_end; j++) {
-#endif
 				if (!message_history_chat[j][0]) continue;
 				fprintf(fp, "%s\n", message_history_chat[j]);
 			}
 		} else {
-#if 0
 			for (j = hist_chat_end; j < hist_chat_end + MSG_HISTORY_MAX; j++) {
-#else /* for div/2 workaround (see loading): Only save the newer half of our messages to keep a safety buffer */
-			s = hist_chat_end + MSG_HISTORY_MAX / 2;
-			for (j = s; j < hist_chat_end + MSG_HISTORY_MAX; j++) {
-#endif
 				if (!message_history_chat[j % MSG_HISTORY_MAX][0]) continue;
 				fprintf(fp, "%s\n", message_history_chat[j % MSG_HISTORY_MAX]);
 			}
@@ -3742,9 +3730,12 @@ void client_init(char *argv1, bool skip) {
 	path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 	fp = fopen(buf, "r");
 	hist_chat_end = 0;
-	/* div/2 : Workaround for client crash at full message-history usage - leave half of the buffer free, to be safe */
-	while (fp && hist_chat_end < MSG_HISTORY_MAX / 2 && my_fgets(fp, message_history_chat[hist_chat_end], MSG_LEN) == 0) hist_chat_end++;
+	while (fp && hist_chat_end < MSG_HISTORY_MAX && my_fgets(fp, message_history_chat[hist_chat_end], MSG_LEN) == 0) hist_chat_end++;
 	if (fp) fclose(fp);
+	if (hist_chat_end == MSG_HISTORY_MAX) {
+		hist_chat_end = 0;
+		hist_chat_looped = TRUE;
+	}
 
 	/* Turn the lag-o-meter on after we've logged in */
 	lagometer_enabled = TRUE;
