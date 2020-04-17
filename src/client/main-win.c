@@ -3573,12 +3573,11 @@ static void hook_quit(cptr str) {
 	/* Remember chat input history across logins */
 	/* Only write history if we have at least one line though */
 	if (hist_chat_end || hist_chat_looped) {
-		int s;
 		FILE *fp;
 		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
 		fp = fopen(buf, "w");
 		if (!hist_chat_looped) {
-			for (j = 0; j < hist_chat_end; j++) {
+			for (i = 0; i < hist_chat_end; i++) {
 				if (!message_history_chat[i][0]) continue;
 				fprintf(fp, "%s\n", message_history_chat[i]);
 			}
