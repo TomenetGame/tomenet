@@ -942,7 +942,8 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 						printf("%s %s\n", p_ptr->realname, p_ptr->addr);
 						Destroy_connection(p_ptr->conn, "resume connection");
 					}
-					else return E_IN_USE;
+					else if (!strcasecmp(p_ptr->addr, addr)) return E_IN_USE_PC;
+					return E_IN_USE;
 				}
 
 				/* All restrictions on the number of allowed players from one IP have 
@@ -972,7 +973,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 				printf("%s %s\n", connp->real, connp->addr);
 				Destroy_connection(i, "resume connection");
 			}
-			else return E_IN_USE;
+			else return E_IN_USE_DUP;
 		}
 	}
 
@@ -4601,15 +4602,28 @@ static int Receive_login(int ind) {
 		if ((res = Check_names(choice, connp->real, connp->host, connp->addr, TRUE))) {
 			/* connp->real is _always_ 'PLAYER' - connp->nick is the account name, choice the c_name */
 			/* fail login here */
-			if (res == E_LETTER)
+			switch (res) {
+			case E_LETTER:
 				Destroy_connection(ind, "Your charactername must start on a letter (A-Z).");
-			else if (res == E_INVAL)
+				break;
+			case E_INVAL:
 				Destroy_connection(ind, "Your charactername contains invalid characters"); //user+host names have already been checked previously (on account login)
-			else if (res == E_LENGTH)
+				break;
+			case E_LENGTH:
 				Destroy_connection(ind, format("Account and character names must be at least 2 characters long.", ACC_CHAR_MIN_LEN));
-			else
-				//Destroy_connection(ind, "Security violation");
+				break;
+			case E_IN_USE_PC:
+				Destroy_connection(ind, "You are still logged in from another PC. Please wait 30 seconds and try again.");
+				break;
+			case E_IN_USE_DUP:
+				Destroy_connection(ind, "You are already logging in from another instance of the game.");
+				break;
+			case E_IN_USE:
 				Destroy_connection(ind, "Login not possible because you are still logged in from another IP address.");
+				break;
+			default:
+				Destroy_connection(ind, "Security violation");
+			}
 			return(-1);
 		}
 

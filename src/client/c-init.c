@@ -3580,6 +3580,10 @@ void client_init(char *argv1, bool skip) {
 				quit("Sorry, the game is full.  Try again later.");
 			case E_IN_USE:
 				quit("That nickname is already in use. If it is your nickname, wait 30 seconds and try again.");
+			case E_IN_USE_PC:
+				quit("You are still logged in from another PC. Please wait 30 seconds and try again.");
+			case E_IN_USE_DUP:
+				quit("You are already logging in from another instance of the game.");
 			case E_INVAL:
 				quit("The server didn't like your nickname, realname, or hostname.");
 				//note: not a good case for RETRY_LOGIN, since a name or even the hostname might be asian/cyrillic or so.. not easily solvable maybe

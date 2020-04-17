@@ -260,7 +260,7 @@
 #define E_NEED_INFO	0x03
 #define E_TWO_PLAYERS	0x04
 #define E_PASSWORD	0x05
-//#define E_		0x06
+#define E_IN_USE_DUP	0x06
 #define E_LETTER	0x07
 #define E_IN_USE	0x08
 #define E_SOCKET	0x09
@@ -269,6 +269,7 @@
 #define E_BANNED	0x0C
 #define E_VERSION_UNKNOWN	0x0D
 #define E_LENGTH	0x0E
+#define E_IN_USE_PC	0x0F
 #ifdef CLIENT_SIDE /* RETRY_LOGIN: */
  #define E_RETRY_CONTACT	0xFF
  #define E_RETRY_LOGIN		0xFE
