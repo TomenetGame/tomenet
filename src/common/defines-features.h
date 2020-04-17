@@ -189,8 +189,7 @@
 /* Special extended colours that make use of background colouring - C. Blue
    Note: This is highly EXPERIMENTAL and not even implemented atm.,
          the only thing that works is proof of concept code that displays
-         rain in alternating colours, TERM_ORANGE and (newly added for this) TERM2_BLUE.
-   Currently has NO EFFECT if EXTENDED_COLOURS_PALANIM is enabled at the same time! */
+         rain in alternating colours, TERM_ORANGE and (newly added for this) TERM2_BLUE. */
 //#define EXTENDED_BG_COLOURS
 
 /* better chance for non-low +hit,+dam on randart melee weapons and boomerangs */

@@ -786,11 +786,10 @@ void flicker() {
 #ifdef EXTENDED_COLOURS_PALANIM
 				if (attr < TERM_MULTI || (attr >= TERMA_DARK && attr <= TERMA_L_UMBER)) continue;
 #else
- #ifdef EXTENDED_BG_COLOURS
-				if (attr < TERM_MULTI || attr == TERM2_BLUE) continue;
- #else
 				if (attr < TERM_MULTI) continue;
- #endif
+#endif
+#ifdef EXTENDED_BG_COLOURS
+				if (attr == TERM2_BLUE) continue;
 #endif
 
 #ifdef ATMOSPHERIC_INTRO
@@ -967,17 +966,15 @@ static void Term_fresh_row_text_wipe(int y) {
 			}
 
 			/* Save the new color */
-#ifdef EXTENDED_COLOURS_PALANIM
+ #ifdef EXTENDED_COLOURS_PALANIM
 			if (na >= TERMA_DARK && na <= TERMA_L_UMBER) fa = na - TERMA_OFFSET + 16; /* Use 'real' extended terminal colours ie 16..31 */
 			else
-#endif
-#ifdef EXTENDED_BG_COLOURS
-			if (na >= TERM_MULTI && na != TERM2_BLUE)
-#else
-			if (na >= TERM_MULTI)
-#endif
-				fa = flick_colour(na);
+ #endif
+			if (na >= TERM_MULTI) fa = flick_colour(na);
 			else fa = na;
+ #ifdef EXTENDED_BG_COLOURS
+			if (na == TERM2_BLUE) fa = na;
+ #endif
 		}
 
 		/* Start a new thread, if needed */
@@ -1008,17 +1005,15 @@ static void Term_fresh_row_text_wipe(int y) {
 			}
 
 			/* Save the new color */
-#ifdef EXTENDED_COLOURS_PALANIM
+ #ifdef EXTENDED_COLOURS_PALANIM
 			if (na >= TERMA_DARK && na <= TERMA_L_UMBER) fa = na - TERMA_OFFSET + 16; /* Use 'real' extended terminal colours ie 16..31 */
 			else
-#endif
-#ifdef EXTENDED_BG_COLOURS
-			if (na >= TERM_MULTI && na != TERM2_BLUE)
-#else
-			if (na >= TERM_MULTI)
-#endif
-				fa = flick_colour(na);
+ #endif
+			if (na >= TERM_MULTI) fa = flick_colour(na);
 			else fa = na;
+ #ifdef EXTENDED_BG_COLOURS
+			if (na == TERM2_BLUE) fa = na;
+ #endif
 
 			fx = x;
 		}
@@ -1159,19 +1154,16 @@ static void Term_fresh_row_text_text(int y) {
 			}
 
 			/* Save the new color */
-#ifdef EXTENDED_COLOURS_PALANIM
-			if (na >= TERM_MULTI && (na < TERMA_DARK || na > TERMA_L_UMBER)) {
-#else
- #ifdef EXTENDED_BG_COLOURS
-			if (na >= TERM_MULTI && na != TERM2_BLUE) {
+ #ifdef EXTENDED_COLOURS_PALANIM
+			if (na >= TERM_MULTI && (na < TERMA_DARK || na > TERMA_L_UMBER))
  #else
-			if (na >= TERM_MULTI) {
+			if (na >= TERM_MULTI)
  #endif
-#endif
 				fa = flick_colour(na);
-			} else {
-				fa = na;
-			}
+			else fa = na;
+ #ifdef EXTENDED_BG_COLOURS
+			if (na == TERM2_BLUE) fa = na;
+ #endif
 
 			fx = x;
 		}

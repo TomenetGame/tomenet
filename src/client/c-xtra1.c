@@ -3182,7 +3182,7 @@ void do_weather() {
 					/* display raindrop */
 					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 					    PANEL_Y + weather_element_y[i] - weather_panel_y,
-#if defined(EXTENDED_BG_COLOURS) && !defined(EXTENDED_COLOURS_PALANIM) /* guard against overlapping colour[16] if both (PALANIM & BG_COLOURS) are defined accidentally */
+#ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
 					    rand_int(2) ? TERM2_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #else
 					    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
@@ -3442,7 +3442,7 @@ void do_weather() {
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
 
-#if defined(EXTENDED_BG_COLOURS) && !defined(EXTENDED_COLOURS_PALANIM) /* guard against overlapping colour[16] if both (PALANIM & BG_COLOURS) are defined accidentally */
+#ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
 				    rand_int(2) ? TERM2_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #else
 				    TERM_BLUE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));

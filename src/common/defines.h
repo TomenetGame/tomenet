@@ -7240,6 +7240,10 @@ extern int PlayerUID;
  #define TERM_STARLITE	57
  #define TERM_HAVOC	58
 
+ #ifdef EXTENDED_BG_COLOURS
+  #define TERM2_BLUE	63
+ #endif
+
  #ifdef EXTENDED_COLOURS_PALANIM
   #define TERMA_OFFSET	64
   /* Clones of the 16 default colours, aka 'really used' colours (non-compounds), for palette animation. */
@@ -7288,14 +7292,9 @@ extern int PlayerUID;
   #define TERM_BNW	0x40	/* 64: black & white MASK, for admin wizards */
   #define TERM_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */
  #endif
-
- #ifdef EXTENDED_BG_COLOURS
-  #define TERM2_BLUE	63
- #endif
 #else
  #define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
  #define TERM_PVP	0x40	/* 64: black & red MASK, for active PvP-hostility (or stormbringer) */
-
  /* Reserved attr values - do not exceed */
  #define TERM_RESERVED	0x80	/* 128 */
 #endif
