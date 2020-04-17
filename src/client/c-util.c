@@ -6904,11 +6904,13 @@ void auto_inscriptions(void) {
  */
 static void do_cmd_options_aux(int page, cptr info) {
 	char	ch;
-	int	i, k = 0, n = 0;
+	int	i, k, n = 0, k_no_advance;
+	static int k_lasttime[6] = { 0, 0, 0, 0, 0, 0};
 	int	opt[24];
 	char	buf[256];
 	bool	tmp;
 
+	k = k_no_advance = k_lasttime[page];
 
 	/* Lookup the options */
 	for (i = 0; i < 24; i++) opt[i] = 0;
@@ -6960,6 +6962,8 @@ static void do_cmd_options_aux(int page, cptr info) {
 		switch (ch) {
 			case ESCAPE:
 			case KTRL('Q'):
+				/* Next time on this options page, restore our position */
+				k_lasttime[page] = k_no_advance;
 				return;
 
 			case KTRL('T'):
@@ -6975,51 +6979,58 @@ static void do_cmd_options_aux(int page, cptr info) {
 			case '-':
 			case '8':
 			case 'k':
+			case '\010': //backspace
 				k = (n + k - 1) % n;
+				k_no_advance = k;
 				break;
 
-			case ' ':
-			case '\n':
-			case '\r':
+			case '+':
 			case '2':
 			case 'j':
+			case '\n':
+			case '\r':
+			case ' ':
 				k = (k + 1) % n;
+				k_no_advance = k;
 				break;
 
 			case 'y':
-			//case 'Y':
 			case '6':
 			case 'l':
+			case 's': //set
 				(*option_info[opt[k]].o_var) = TRUE;
 				Client_setup.options[opt[k]] = TRUE;
 				check_immediate_options(opt[k], TRUE, TRUE);
+				k_no_advance = k;
 				k = (k + 1) % n;
 				break;
 
 			case 'n':
-			//case 'N':
 			case '4':
 			case 'h':
+			case 'u': //unset
 				(*option_info[opt[k]].o_var) = FALSE;
 				Client_setup.options[opt[k]] = FALSE;
 				check_immediate_options(opt[k], FALSE, TRUE);
+				k_no_advance = k;
 				k = (k + 1) % n;
 				break;
 
 			case 't':
-			//case 'T':
 			case '5':
-			case 's':
+			case 'w': //switch
 				tmp = 1 - (*option_info[opt[k]].o_var);
 				(*option_info[opt[k]].o_var) = tmp;
 				Client_setup.options[opt[k]] = tmp;
 				check_immediate_options(opt[k], tmp, TRUE);
+				k_no_advance = k;
 				k = (k + 1) % n;
 				break;
 			default:
 				/* directly toggle a specific option */
 				if (ch >= 'A' && ch <= 'A' + n - 1) {
 					k = ch - 'A';
+					k_no_advance = k;
 					tmp = 1 - (*option_info[opt[k]].o_var);
 					(*option_info[opt[k]].o_var) = tmp;
 					Client_setup.options[opt[k]] = tmp;
