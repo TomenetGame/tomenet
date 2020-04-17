@@ -17,6 +17,19 @@ function get_class_diz(r_title, l)
     return ""
 end
 
+function get_class_spellnt(c)
+    return __classes_macrowiz[c + 1][1]
+end
+function get_class_spellt(c)
+    return __classes_macrowiz[c + 1][2]
+end
+function get_class_mimicnt(c)
+    return __classes_macrowiz[5][1]
+end
+function get_class_mimict(c)
+    return __classes_macrowiz[5][2]
+end
+
 __classes_diz = {
 
 --  "12345678901234567890123456789012345678901234567890",
@@ -202,4 +215,23 @@ __classes_diz = {
     "and some of their spells can actually be cast",
     "while they are blinded or even confused.",
     "",},
+}
+
+__classes_macrowiz = {
+{ "Phase Door", "Manathrust", }, --warrior
+{ "Phase Door", "Manathrust", }, --istar
+{ "Blessing", "Curse", }, --priest
+{ "Phase Door", "Cause Fear", }, --rogue
+{ "Blink", "Magic Missile", }, --mimic
+{ "Phase Door", "Manathrust", }, --archer
+{ "Blessing", "Curse", }, --paladin
+{ "Phase Door", "Manathrust", }, --ranger
+{ "Phase Door", "Manathrust", }, --adventurer
+{ "Herbal Tea", "Toxic Moisture", }, --druid
+{ "Starlight", "Cause Wounds", }, --shaman
+{ "Phase Door", "Manathrust", }, --runemaster
+{ "Autokinesis I", "Psionic Blast", }, --mindcrafter
+{ "Detect Lifeforce", "Cause Fear", }, --death knight
+{ "Ignore Fear", "Terror", }, --hell knight
+{ "Ignore Fear", "Cause Fear", }, --c.priest
 }

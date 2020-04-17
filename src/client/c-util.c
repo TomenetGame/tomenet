@@ -5407,34 +5407,42 @@ Chain_Macro:
 						break;
 
 					case mw_schoolnt:
+						sprintf(tmp, "return get_class_spellnt(%d)", p_ptr->pclass);
+						strcpy(buf, string_exec_lua(0, tmp));
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GPhase Door");
+						Term_putstr(10, 11, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						should_wait = TRUE; /* identify/recharge spells */
 						break;
 
 					case mw_mimicnt:
+						sprintf(tmp, "return get_class_mimicnt(%d)", p_ptr->pclass);
+						strcpy(buf, string_exec_lua(0, tmp));
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");//and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GBlink");
+						Term_putstr(10, 11, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
 
 					case mw_schoolt:
+						sprintf(tmp, "return get_class_spellt(%d)", p_ptr->pclass);
+						strcpy(buf, string_exec_lua(0, tmp));
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GManathrust");
+						Term_putstr(10, 11, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
 
 					case mw_mimict:
+						sprintf(tmp, "return get_class_mimict(%d)", p_ptr->pclass);
+						strcpy(buf, string_exec_lua(0, tmp));
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please enter the exact spell name.");// and pay attention");
 						//Term_putstr(10, 11, -1, TERM_GREEN, "to upper-case and lower-case letters and spaces!");
-						Term_putstr(10, 11, -1, TERM_GREEN, "For example, enter:     \377GMagic Missile");
+						Term_putstr(10, 11, -1, TERM_GREEN, format("For example, enter:     \377G%s", buf));
 						Term_putstr(10, 12, -1, TERM_GREEN, "You must have learned a spell before you can use it!");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Enter exact spell name:");
 						break;
