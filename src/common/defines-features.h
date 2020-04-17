@@ -179,11 +179,12 @@
    Same for servers. */
 #define EXTENDED_TERM_COLOURS
 
-/* (EXPERIMENTAL) Add another set of 16 colours to the normal 16 colours the game uses,
+/* Add another set of 16 colours to the normal 16 colours the game uses,
    which are clones of those, but are only used for drawing the main (map_info aka game) screen.
    Purpose: Allow for palette animation, intended for smooth day/night lighting changes. - C. Blue
    Note: This changes TERM_BNW and TERM_PVP to be normal animated colours instead of masks,
-         because otherwise there would not be enough colours available to accomodate for this addition! */
+         because otherwise there would not be enough colours available to accomodate for this addition.
+   NOTE: Due to the hilite_player comeback this must always be on for server >= 4.7.3.0.0.0 or it breaks old clients. */
 #define EXTENDED_COLOURS_PALANIM
 
 /* Special extended colours that make use of background colouring - C. Blue
