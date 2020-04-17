@@ -2740,7 +2740,7 @@ Enter these two lines:
 and the binary 'tomenet' will be created in this folder 'tomenet/src'.
 IMPORTANT NOW: You need to move the binary 'tomenet' that was just created one
                level upwards, so it's placed in the 'tomenet/' folder!
-Go up one level into your 'tomenet/' folder. There type:
+After that, go up one level into your 'tomenet/' folder. There type:
         ./tomenet
 to start the game.
 
