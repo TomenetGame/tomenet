@@ -747,7 +747,7 @@ extern void do_cmd_ghost_power_aux(int Ind, int dir);
 /* cmd6.c */
 extern bool curse_armor(int Ind);
 extern bool curse_weapon(int Ind);
-bool do_cancellation(int Ind, int flags);
+extern bool do_cancellation(int Ind);
 extern bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep); //hack: for quests
 extern void do_cmd_eat_food(int Ind, int item);
 extern void do_cmd_quaff_potion(int Ind, int item);

@@ -2050,45 +2050,98 @@ bool curse_an_item(int Ind, int slot) {
 
 /*
  * Cancel magic in inventory.		- Jir -
- * Crappy, isn't it?  But it can..
- *
- * 0x01 - Affect the equipments too
- * 0x02 - Turn scrolls/potions/wands/rods/staves into 'Nothing' kind
+ * Crappy, isn't it?  But it can.. XXX - removed 'flags' (equip only / turn all devs/scrolls/pots to nothing)
+ * Reworked it to be more consistent and work on more stuff. - C. Blue
  */
-bool do_cancellation(int Ind, int flags) {
+bool do_cancellation(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	bool ident = TRUE;
 
-	s_printf("CANCELLATION: %s (%d)\n", p_ptr->name, flags);
+	s_printf("CANCELLATION: %s\n", p_ptr->name);
 
-	for (i = 0; i < ((flags & 0x01) ? INVEN_TOTAL : INVEN_WIELD); i++) {
+	for (i = 0; i < INVEN_WIELD; i++) {
 		object_type *o_ptr = &p_ptr->inventory[i];
+
 		if (!o_ptr->k_idx) continue;
 		if (like_artifact_p(o_ptr)) continue;
-		if (o_ptr->tval == TV_KEY) continue;
-		if (o_ptr->tval == TV_FOOD) continue;
-		if (o_ptr->tval == TV_FLASK) continue;
-		if (o_ptr->tval == TV_CHEST) continue;
-		if (o_ptr->name2 && o_ptr->name2 != EGO_SHATTERED && o_ptr->name2 != EGO_BLASTED) {
-			ident = TRUE;
-			o_ptr->name2 = 0;
-		}
-		if (o_ptr->name2b && o_ptr->name2b != EGO_SHATTERED && o_ptr->name2b != EGO_BLASTED) {
-			ident = TRUE;
-			o_ptr->name2b = 0;
-		}
-		if (o_ptr->name3) o_ptr->name3 = 0; //Kurzel - Fix stacking, see object2.c
-		if (o_ptr->timeout_magic) { //Only affects magical timeouts at the moment, and not even auto-recharging state
+
+		/* All items lose magical timeouts */
+		if (o_ptr->timeout_magic) {
 			ident = TRUE;
 			if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
-				o_ptr->timeout_magic = 1;
+				o_ptr->timeout_magic = 1; /* safe handling if equipped */
 			else
 				o_ptr->timeout_magic = 0;
 		}
 
-		/* pval for potions is their nourishment value, for rods bpval and it are (dis)charge, so exempt them */
-		if (o_ptr->tval == TV_ROD || o_ptr->tval == TV_POTION) continue;
+		/* All items lose their ego powers (and pval that goes with it) */
+		if (o_ptr->name2 && o_ptr->name2 != EGO_SHATTERED && o_ptr->name2 != EGO_BLASTED) {
+			ident = TRUE;
+			o_ptr->name2 = 0;
+			o_ptr->pval = 0;
+		}
+		if (o_ptr->name2b && o_ptr->name2b != EGO_SHATTERED && o_ptr->name2b != EGO_BLASTED) {
+			ident = TRUE;
+			o_ptr->name2b = 0;
+			o_ptr->pval = 0;
+		}
+		if (o_ptr->name3) o_ptr->name3 = 0; //Kurzel - Fix stacking, see object2.c
+
+		switch (o_ptr->tval) {
+		/* Discharge magic devices */
+		case TV_WAND:
+		case TV_STAFF:
+			if (o_ptr->pval) {
+				ident = TRUE;
+				o_ptr->pval = 0;
+			}
+			continue;
+		case TV_ROD:
+		case TV_ROD_MAIN:
+			discharge_rod(o_ptr, 50 + rand_int(20));
+			ident = TRUE;
+			continue;
+		/* Specialty: Clear custom books(!) */
+		case TV_BOOK:
+			if (o_ptr->sval == SV_CUSTOM_TOME_1 || o_ptr->sval == SV_CUSTOM_TOME_2 || o_ptr->sval == SV_CUSTOM_TOME_3) {
+				if (o_ptr->xtra1 | o_ptr->xtra2 | o_ptr->xtra3 |
+				    o_ptr->xtra4 | o_ptr->xtra5 | o_ptr->xtra6 |
+				    o_ptr->xtra7 | o_ptr->xtra8 | o_ptr->xtra9)
+					ident = TRUE;
+				o_ptr->xtra1 = o_ptr->xtra2 = o_ptr->xtra3 = 0;
+				o_ptr->xtra4 = o_ptr->xtra5 = o_ptr->xtra6 = 0;
+				o_ptr->xtra7 = o_ptr->xtra8 = o_ptr->xtra9 = 0;
+			}
+			continue;
+		/* Most items lose their +hit, +dam, +ac, pval and bpval enchantments */
+		case TV_LITE:
+		case TV_SOFT_ARMOR:
+		case TV_HARD_ARMOR:
+		case TV_SHIELD:
+		case TV_GLOVES:
+		case TV_BOOTS:
+		case TV_CLOAK:
+		case TV_HELM:
+		case TV_CROWN:
+		case TV_SWORD:
+		case TV_POLEARM:
+		case TV_BLUNT:
+		case TV_DIGGING:
+		case TV_BOW:
+		case TV_BOOMERANG:
+		case TV_MSTAFF:
+		case TV_AXE:
+		case TV_TRAPKIT:
+		case TV_INSTRUMENT:
+		case TV_DRAG_ARMOR:
+		case TV_SHOT:
+		case TV_ARROW:
+		case TV_BOLT:
+			break;
+		/* All other items are not affected */
+		default: continue;
+		}
 
 		if (o_ptr->pval > 0) {
 			ident = TRUE;
@@ -2110,13 +2163,6 @@ bool do_cancellation(int Ind, int flags) {
 			ident = TRUE;
 			o_ptr->to_a = 0;
 		}
-#if 0	// Not so useful anyway
-		if (flags & 0x02) {
-			switch (o_ptr->tval)
-			{
-			}
-		}
-#endif	// 0
 	}
 
 	return (ident);
@@ -2782,7 +2828,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			break;
 
 		case SV_SCROLL_CANCELLATION:
-			ident = do_cancellation(Ind, 0);
+			ident = do_cancellation(Ind);
 			if (ident) msg_print(Ind, "You feel your backpack less worthy.");
 			break;
 
