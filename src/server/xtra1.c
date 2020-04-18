@@ -4092,7 +4092,13 @@ void calc_boni(int Ind) {
 		}
 		if (f3 & TR3_DRAIN_EXP) p_ptr->drain_exp++;
 		if (f5 & (TR5_DRAIN_MANA)) { p_ptr->drain_mana++; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_SRGMP; }
-		if (f5 & (TR5_DRAIN_HP)) { p_ptr->drain_life++; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_SRGHP; }
+		if (f5 & (TR5_DRAIN_HP)) {
+			/* Spectral weapons don't hurt true vampires -
+			   hypothetically exploitable if one of two ego powers had non-spectral drain life as well. */
+			if (p_ptr->prace != RACE_VAMPIRE ||
+			    (o_ptr->name2 != EGO_SPECTRAL && o_ptr->name2b != EGO_SPECTRAL))
+				{ p_ptr->drain_life++; csheet_boni[i-INVEN_WIELD].cb[5] |= CB6_SRGHP; }
+		}
 		if (f5 & (TR5_INVIS)) {
 			j = (p_ptr->lev > 50 ? 50 : p_ptr->lev) * 4 / 5;
 			/* better than invis from monster form we're using? */
@@ -4174,11 +4180,6 @@ void calc_boni(int Ind) {
 		/* BLESSED items are adverse to Corrupted beings in general? */
 		if (p_ptr->ptrait == TRAIT_CORRUPTED && (f3 & TR3_BLESSED)) p_ptr->no_hp_regen++;
 #endif
-
-		/* then again, spectral weapons don't hurt true vampires */
-		if (p_ptr->prace == RACE_VAMPIRE &&
-		    (o_ptr->name2 == EGO_SPECTRAL || o_ptr->name2b == EGO_SPECTRAL))
-			p_ptr->drain_life--; /* hack: cancel out the life-drain applied by spectral'ity */
 
 		/* Immunity flags */
 		if (f2 & TR2_IM_FIRE) { p_ptr->immune_fire = TRUE; csheet_boni[i-INVEN_WIELD].cb[0] |= CB1_IFIRE; }
