@@ -19916,8 +19916,9 @@ You can create a character dump by invoking the character screen by pressing
 'C' and then pressing 'f' (as it states at the bottom).
 
 Character dumps are automatically created in your /TomeNET/lib/user folder
-if your character dies. The filename is charactername-death.txt, for example
-Gandalf-death.txt. (no overwrite-check is performed.)
+(or C:\Users\<yourname>\TomeNET-user on Windows) if your character dies.
+The filename is charactername-death.txt, for example Gandalf-death.txt.
+(no overwrite-check is performed, but date and time are added to the name.)
 
 Clients of version greater than plain 4.4.2 will also generate an automatic
 dump when you win the game by defeating Morgoth. Following above's example,
@@ -19925,7 +19926,8 @@ it will be named Gandalf-victory.txt accordingly.
 
 Also, newer clients will automatically take an xhtml screenshot too when a
 char dump is made, of same name but with .xhtml ending. Those can be viewed
-in most webbrowsers.
+in most webbrowsers. To manually take an xhtml-Screenshot at any time, press
+CTRL+T.
 
 
 
