@@ -489,68 +489,68 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 
 	/* Analyze the type */
 	switch (o_ptr->tval) {
-		/* Food, Flasks, and Lites */
-		case TV_FOOD:
-		case TV_FLASK:
-		case TV_LITE:
-		case TV_PARCHMENT:
-			if (cost <= 5L) size += mass_roll(3, 5);
-			if (cost <= 20L) size += mass_roll(3, 5);
-			break;
+	/* Food, Flasks, and Lites */
+	case TV_FOOD:
+	case TV_FLASK:
+	case TV_LITE:
+	case TV_PARCHMENT:
+		if (cost <= 5L) size += mass_roll(3, 5);
+		if (cost <= 20L) size += mass_roll(3, 5);
+		break;
 
-		case TV_POTION:
-		case TV_SCROLL:
-			if (cost <= 60L) size += mass_roll(3, 5);
-			if (cost <= 240L) size += mass_roll(1, 5);
-			if (st_ptr->st_idx == STORE_BTSUPPLY &&
-			    (o_ptr->sval == SV_POTION_STAR_HEALING ||
-			    o_ptr->sval == SV_POTION_RESTORE_MANA /* for mages - mikaelh */
-			    ))
-				size += mass_roll(3, 5);
-			break;
+	case TV_POTION:
+	case TV_SCROLL:
+		if (cost <= 60L) size += mass_roll(3, 5);
+		if (cost <= 240L) size += mass_roll(1, 5);
+		if (st_ptr->st_idx == STORE_BTSUPPLY &&
+		    (o_ptr->sval == SV_POTION_STAR_HEALING ||
+		    o_ptr->sval == SV_POTION_RESTORE_MANA /* for mages - mikaelh */
+		    ))
+			size += mass_roll(3, 5);
+		break;
 
-		case TV_BOOK:
-			if (cost <= 50L) size += mass_roll(2, 3);
-			if (cost <= 500L) size += mass_roll(1, 3);
-			break;
+	case TV_BOOK:
+		if (cost <= 50L) size += mass_roll(2, 3);
+		if (cost <= 500L) size += mass_roll(1, 3);
+		break;
 
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_SHIELD:
-		case TV_GLOVES:
-		case TV_BOOTS:
-		case TV_CLOAK:
-		case TV_HELM:
-		case TV_CROWN:
-		case TV_SWORD:
-		case TV_POLEARM:
-		case TV_BLUNT:
-		case TV_DIGGING:
-		case TV_BOW:
-		case TV_BOOMERANG:
-		case TV_MSTAFF:
-		case TV_AXE:
-		case TV_TRAPKIT:
-		case TV_INSTRUMENT:
-		case TV_ROD: case TV_ROD_MAIN: case TV_STAFF: case TV_WAND:
-			/* No ego-stacks */
-			if (o_ptr->name2) break;
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_SHIELD:
+	case TV_GLOVES:
+	case TV_BOOTS:
+	case TV_CLOAK:
+	case TV_HELM:
+	case TV_CROWN:
+	case TV_SWORD:
+	case TV_POLEARM:
+	case TV_BLUNT:
+	case TV_DIGGING:
+	case TV_BOW:
+	case TV_BOOMERANG:
+	case TV_MSTAFF:
+	case TV_AXE:
+	case TV_TRAPKIT:
+	case TV_INSTRUMENT:
+	case TV_ROD: case TV_ROD_MAIN: case TV_STAFF: case TV_WAND:
+		/* No ego-stacks */
+		if (o_ptr->name2) break;
 
-			if (cost <= 10L) size += mass_roll(3, 5);
-			if (cost <= 100L) size += mass_roll(3, 5);
-			break;
-		case TV_DRAG_ARMOR:
-			/* Only single items of these */
-			break;
+		if (cost <= 10L) size += mass_roll(3, 5);
+		if (cost <= 100L) size += mass_roll(3, 5);
+		break;
+	case TV_DRAG_ARMOR:
+		/* Only single items of these */
+		break;
 
-		case TV_SPIKE:
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-			if (cost <= 10L) size += damroll(10, 2);
-			if (cost <= 100L) size += damroll(5, 3);
-			size += damroll(20, 2);
-			break;
+	case TV_SPIKE:
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+		if (cost <= 10L) size += damroll(10, 2);
+		if (cost <= 100L) size += damroll(5, 3);
+		size += damroll(20, 2);
+		break;
 	}
 
 
