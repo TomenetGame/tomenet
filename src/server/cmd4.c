@@ -3890,15 +3890,15 @@ void show_autoret(int Ind, byte typ, bool verbose) {
 	/* Mimic power */
 	if (typ != 2) {
 		if (ar & 0x00FF) {
-			if (p_ptr->autoret & 0x0080) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (p_ptr->autoret & ~0x0080) - 1 + 'a');
-			else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", p_ptr->autoret - 1 + 'a');
+			if (ar & 0x0080) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (ar & ~0x0080) - 1 + 'a');
+			else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", ar - 1 + 'a');
 		} else if (verbose) msg_print(Ind, "You have not set a mimic power for auto-retaliation. ('/arm help' for details.)");
 	}
 	/* Rune */
 	if (typ != 1) {
 		if (ar & 0xFF00) {
-			if (p_ptr->autoret & 0x8000) msg_format(Ind, "You have set rune '%c)' for auto-retaliation in towns.", ((p_ptr->autoret & ~0x8000) >> 8) - 1 + 'a');
-			else msg_format(Ind, "You have set rune '%c)' for auto-retaliation.", (p_ptr->autoret >> 8) - 1 + 'a');
+			if (ar & 0x8000) msg_format(Ind, "You have set rune '%c)' for auto-retaliation in towns.", ((ar & ~0x8000) >> 8) - 1 + 'a');
+			else msg_format(Ind, "You have set rune '%c)' for auto-retaliation.", (ar >> 8) - 1 + 'a');
 		} else if (verbose) msg_print(Ind, "You have not set a rune for auto-retaliation. ('/arr help' for details.)");
 	}
 }
