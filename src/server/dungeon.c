@@ -3033,8 +3033,8 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	/* Was a rune set for auto-ret? */
 	else if (ar & 0xFF00) {
 		/* Is it variant @Ot for town-only auto-retaliation? */
-		if ((ar & 0x0080) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
-		ar &= ~0x0080;
+		if ((ar & 0x80000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		ar &= ~0x8000;
 		/* Restore range to normal (1..127) for easier handling */
 		ar = ar >> 8;
 
