@@ -4568,7 +4568,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			ids = player_id_list(&id_list, p_ptr->account);
 			if (!ids) { /* paranoia */
 				msg_print(Ind, "ERROR.");
-				if (ids) C_KILL(id_list, ids, int);
 				return;
 			}
 			/* Let us specify an order between 1..n where n is our number of existing characters */
@@ -4576,7 +4575,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			if (tk == 1 && token[1][0] == '?') {
 				msg_format(Ind, "This character's order weight is currently: %d (of 1..%d)", lookup_player_order(p_ptr->id), max_cpa);
-				if (ids) C_KILL(id_list, ids, int);
+				C_KILL(id_list, ids, int);
 				return;
 			}
 
@@ -4586,7 +4585,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "A character with a higher position will be listed below one with lower position.");
 				msg_print(Ind, "Usage 2:   /setorder ?");
 				msg_print(Ind, "Will query this character's current position in the Character Overview list.");
-				if (ids) C_KILL(id_list, ids, int);
+				C_KILL(id_list, ids, int);
 				return;
 			}
 
@@ -4596,7 +4595,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			cur_order = lookup_player_order(p_ptr->id);
 			if (k == cur_order) {
 				msg_print(Ind, "This character is already at that order position.");
-				if (ids) C_KILL(id_list, ids, int);
+				C_KILL(id_list, ids, int);
 				return;
 			}
 			for (i = 0; i < ids; i++) {
@@ -4615,7 +4614,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Insert us at the desired position */
 			set_player_order(p_ptr->id, k);
 			msg_format(Ind, "This character's ordering weight has been set to %d.", k);
-			if (ids) C_KILL(id_list, ids, int);
+			C_KILL(id_list, ids, int);
 			return;
 		}
 
