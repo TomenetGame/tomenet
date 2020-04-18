@@ -2991,7 +2991,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	if (!ar) return FALSE;
 
 	/* Was a mimic power set for auto-ret? */
-	if (ar & 0x00FF) {
+	if (ar & 0x007F) { //paranoia: town-flag cannot be set on its own
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x0080) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
 		ar &= ~0x0080;
@@ -3031,7 +3031,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		}
 	}
 	/* Was a rune set for auto-ret? */
-	else if (ar & 0xFF00) {
+	else if (ar & 0x7F00) { //paranoia: town-flag cannot be set on its own
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x80000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
 		ar &= ~0x8000;
