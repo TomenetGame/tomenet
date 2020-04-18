@@ -7831,6 +7831,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	player_type *p_ptr = Players[Ind];
 	char buf[1024];
 	int i;
+	int *id_list, ids;
 
 	//ACC_HOUSE_LIMIT
 	i = acc_get_houses(p_ptr->accountname);
@@ -7889,6 +7890,33 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	}
 	if (i == MAX_RESERVED_NAMES)
 		s_printf("Warning: Couldn't reserve character name '%s' for account '%s'!\n", p_ptr->name, p_ptr->accountname);
+
+	/* Slide all his characters of greater order if required, to not generate order 'holes'. */
+	ids = player_id_list(&id_list, p_ptr->account);
+	if (!ids) msg_print(Ind, "ERROR (erase_player())."); /* paranoia */
+	else {
+		int o = lookup_player_order(p_ptr->id), o2;
+		bool found = FALSE;
+
+		/* First, check if this character was the only one of his particular order weight */
+		for (i = 0; i < ids; i++) {
+			if (id_list[i] == p_ptr->id) continue; /* Skip this character */
+			if (lookup_player_order(id_list[i]) == o) {
+				found = TRUE;
+				break;
+			}
+		}
+		/* If we were unique in our order weight, slide all that come below us up by one */
+		if (!found) {
+			for (i = 0; i < ids; i++) {
+				if (id_list[i] == p_ptr->id) continue; /* Skip this character */
+				o2 = lookup_player_order(id_list[i]);
+				if (o2 > o) set_player_order(id_list[i], o2 - 1);
+			}
+		}
+		C_KILL(id_list, ids, int);
+	}
+
 
 	/* Remove him from the player name database */
 	delete_player_name(p_ptr->name);
