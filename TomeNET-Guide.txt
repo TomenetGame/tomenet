@@ -6987,10 +6987,14 @@ Device Trap Kit         -       Wands/Staves/Rods.
                                 itself.
 
 A normal trap kit can be loaded with 1 item of the according ammo.
-After it went off (and is out of charges for device traps) you can pick up the
-trap kit to use it again.
+After it went off (and is out of charges for device traps or out of ammo for
+automatic traps) you can pick up the trap kit to use it again.
 If it was a catapult/arrow/bolt trap kit you can often recover the ammunition
 too, in case it didn't break. (Magic ammo and artifact ammo never break).
+Note that if you use magic ammo or artifact ammo, you only need 1 as it is
+neverending, except for 'Extra Shots' trap kits - because they fire multiple
+simultaneous shots, they will require the appropriate amount of ammo.
+If you load a trap kit with less than optimal ammo, it will still work though.
 
 Trap kits can have special (ego) powers:
 (prefixes:)

@@ -3267,14 +3267,17 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	if (o_ptr->sval != SV_TRAPKIT_DEVICE) {
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-		if ((f3 & TR3_XTRA_SHOTS) && (o_ptr->pval > 0)) num += o_ptr->pval;
+		if (f3 & TR3_XTRA_SHOTS) num += o_ptr->pval;
 		if (f2 & (TRAP2_AUTOMATIC_5 | TRAP2_AUTOMATIC_99)) num = 99;
 		if (num > j_ptr->number) num = j_ptr->number;
-#if 0
-		c = format("How many (1-%d)? ", num);
-		/* Ask for number of items to use */
-		num = get_quantity(c, num);
-#endif
+		/* Execption: For magic ammo, only 1 is needed! (And artifact ammo cannot have a stack anyway.) */
+		if (is_ammo(j_ptr->tval) && j_ptr->sval == SV_AMMO_MAGIC) {
+			/* If ammo is neverending, just 1 is enough */
+			num = 1;
+			/* Still need more magic ammo if the shots are supposed to be simultaneously fired, unlike for ranged weapons.
+			   So for now we interpret XTRA_SHOTS for traps differently than XTRA_SHOTS for ranged weapons. */
+			if (f3 & TR3_XTRA_SHOTS) num += o_ptr->pval;
+		}
 	}
 
 	/* Canceled */
@@ -3288,8 +3291,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 
 	/* Check interference */
 	/* Basically it's not so good idea to set traps next to the enemy */
-	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_TRAPPING, 30))) /* setting-trap interference chance */
-		return;
+	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_TRAPPING, 30))) return; /* setting-trap interference chance */
 
 	/* Get local object */
 	i_ptr = &object_type_body;
@@ -3334,13 +3336,10 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	inven_item_describe(Ind, item_kit);
 	inven_item_increase(Ind, item_load, -num);
 	inven_item_describe(Ind, item_load);
-
-	for (i = 0; i < INVEN_TOTAL; i++) {
+	for (i = 0; i < INVEN_TOTAL; i++)
 		if (inven_item_optimize(Ind, i)) break;
-	}
-	for (i = 0; i < INVEN_TOTAL; i++) {
+	for (i = 0; i < INVEN_TOTAL; i++)
 		inven_item_optimize(Ind, i);
-	}
 
 	/* Preserve former feat */
 	cs_ptr->sc.montrap.feat = c_ptr->feat;
@@ -5091,6 +5090,7 @@ bool mon_hit_trap(int m_idx) {
 				/* Hack -- minus * minus * minus = minus */
 				if (load_o_ptr->pval) do_arrow_explode(who > 0 ? who : 0 - who, load_o_ptr, &wpos, my, mx, 2);
 
+				/* Decrease ammo, except for magic ammo or artifact ammo of course */
 				if (!(load_o_ptr->tval == TV_ARROW &&
 				    load_o_ptr->sval == SV_AMMO_MAGIC)
 				    && !artifact_p(load_o_ptr)) {
