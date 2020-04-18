@@ -2189,7 +2189,7 @@ bool set_hero(int Ind, int v) {
 			msg_format_near(Ind, "%s has become a hero.", p_ptr->name);
 			msg_print(Ind, "You feel like a hero!");
 			notice = TRUE;
-		} else notice = hp_player(Ind, 10);
+		}
 	}
 
 	/* Shut */
@@ -2245,7 +2245,7 @@ bool set_shero(int Ind, int v) {
 			msg_format_near(Ind, "%s has become a killing machine.", p_ptr->name);
 			msg_print(Ind, "You feel like a killing machine!");
 			notice = TRUE;
-		} else notice = hp_player(Ind, 30);
+		}
 	}
 
 	/* Shut */
