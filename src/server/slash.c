@@ -4066,7 +4066,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			char *p = token[1];
 			bool town = FALSE;
 
-			if (p_ptr->prace == RACE_VAMPIRE || !get_skill(p_ptr, SKILL_MIMIC)) {
+			if (p_ptr->prace == RACE_VAMPIRE || !p_ptr->s_info[SKILL_MIMIC].value) {
 				msg_print(Ind, "You cannot use mimic powers.");
 				return;
 			}
