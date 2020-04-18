@@ -444,7 +444,7 @@ void do_cmd_eat_food(int Ind, int item) {
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
 
-	if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE) {
+	if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE && !(o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL)) {
 //(may happen on death, from macro spam)		msg_print(Ind, "SERVER ERROR: Tried to eat non-food!");
 		return;
 	}
@@ -544,7 +544,7 @@ void do_cmd_eat_food(int Ind, int item) {
 				break;
 			}
 		}
-	}
+	} else if (o_ptr->tval == TV_GAME) msg_print(Ind, "Brrrrr.."); //snowball
 
 
 	/* Combine / Reorder the pack (later) */

@@ -20,6 +20,7 @@ static void cmd_player_equip(void) {
 static bool item_tester_edible(object_type *o_ptr) {
 	if (o_ptr->tval == TV_FOOD) return TRUE;
 	if (o_ptr->tval == TV_FIRESTONE) return TRUE;
+	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) return TRUE;
 
 	return FALSE;
 }
