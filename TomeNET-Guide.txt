@@ -19677,6 +19677,9 @@ The most powerful representant of each class:
 
 -Unique 'P's are often very dangerous, some say the most dangerous next to
  Morgoth himself is Nodens, Lord of the Great Abyss.
+ He has the TPORT (teleport) spell and is therefore able to teleport WITH YOU
+ when you try to teleport away from him, provided you are within melee range
+ of him when you teleport.
 
 
 Mistakes / Carelessness:
