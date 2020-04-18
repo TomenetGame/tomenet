@@ -613,16 +613,8 @@ static void rd_item(object_type *o_ptr) {
 	o_ptr->dd = k_ptr->dd;
 	o_ptr->ds = k_ptr->ds;
 
-	/* Hard-coded fix :/ */
-	if (o_ptr->name2 == EGO_SHATTERED || o_ptr->name2b == EGO_SHATTERED ||
-	    o_ptr->name2 == EGO_BLASTED || o_ptr->name2b == EGO_BLASTED)
-		o_ptr->ac = o_ptr->dd = o_ptr->ds = 0;
-
 	/* Acquire standard weight */
 	o_ptr->weight = k_ptr->weight;
-
-	/* Hack -- extract the "broken" flag */
-	if (k_ptr->cost <= 0) o_ptr->ident |= ID_BROKEN;
 
 	/* Artifacts */
 	if (o_ptr->name1) {
@@ -674,6 +666,11 @@ static void rd_item(object_type *o_ptr) {
 		o_ptr->dd += a_ptr->dd;
 		o_ptr->ds += a_ptr->ds;
 #endif
+
+		/* Hard-coded fix :/ */
+		if (o_ptr->name2 == EGO_SHATTERED || o_ptr->name2b == EGO_SHATTERED ||
+		    o_ptr->name2 == EGO_BLASTED || o_ptr->name2b == EGO_BLASTED)
+			o_ptr->ac = o_ptr->dd = o_ptr->ds = 0;
 
 		/* Hack -- extract the "broken" flag */
 		if (o_ptr->name2) {
