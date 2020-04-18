@@ -3439,6 +3439,20 @@ int Receive_sound(void) {
 	if (use_sound) {
 		if (t == SFX_TYPE_WEATHER && (noweather_mode || c_cfg.no_weather)) return 1;
 
+#if 0
+		/* hack for thunderstorm weather sfx - delay it and cast a lightning lighting effect first */
+		if (t == SFX_TYPE_WEATHER) {
+			char tmp[MAX_CHARS];
+
+			strcpy(tmp, "return get_sound_index(\"thunder\")");
+			if (exec_lua(0, tmp) == s1) {
+				//which colours to affect? WHITE (17), SLATE (18), LWHITE (25), BLUE (22), LDARK (24)?
+				set_palette(17, 0xCC, 0xCC, 0xFF);
+				set_palette(127, 0, 0, 0); //refresh
+			}
+		}
+#endif
+
 #ifndef USE_SOUND_2010
 		Term_xtra(TERM_XTRA_SOUND, s1);
 #else

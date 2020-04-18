@@ -8600,6 +8600,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/ai")) { /* returns/resets all AI flags and states of monster currently looked at (NOT the one targetted) - C. Blue */
 				monster_type *m_ptr;
 				int m_idx;
+
 				if (p_ptr->health_who <= 0) {//target_who
 					msg_print(Ind, "No monster looked at.");
 					return; /* no monster targetted */
@@ -8626,6 +8627,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #ifdef USE_SOUND_2010
 			else if (prefix(messagelc, "/hmus")) { /* set own music according to the location of someone else */
 				u32b f;
+
 				if (tk < 1) {
 					msg_print(Ind, "Usage: /hmus <player>");
 					return;
@@ -8642,6 +8644,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/psfx")) { /* play specific sound */
 				int vol = 100;
+
 				if (!__audio_sfx_max) {
 					msg_print(Ind, "No sound effects available.");
 					return;
@@ -8658,6 +8661,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "Playing <%s>.", token[1]);
 					sound(Ind, token[1], NULL, SFX_TYPE_COMMAND, FALSE);
 				}
+				return;
+			}
+			else if (prefix(messagelc, "/wthunder")) { /* play thunder weather sound */
+				if (!__audio_sfx_max) {
+					msg_print(Ind, "No sound effects available.");
+					return;
+				}
+				msg_print(Ind, "Playing 'thunder' as SFX_TYPE_WEATHER.");
+				sound_vol(Ind, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, 100);
 				return;
 			}
 			else if (prefix(messagelc, "/pmus")) { /* play specific music */
@@ -8691,6 +8703,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 			else if (prefix(messagelc, "/towea")) { /* teleport player to a sector with weather going */
 				int x, y;
+
 				for (x = 0; x < 64; x++)
 					for (y = 0; y < 64; y++)
 						if (wild_info[y][x].weather_type > 0 &&
