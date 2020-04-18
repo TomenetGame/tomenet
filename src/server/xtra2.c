@@ -6484,6 +6484,8 @@ if (cfg.unikill_format) {
 
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
+		bool no_art = TRUE;
+
 		msg_format(Ind, "\374\377UYou have conquered %s!", d_name +
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		    d_info[in_irondeepdive(wpos) ? iddc[ABS(wpos->wz)].type : d_ptr->type].name
@@ -6578,7 +6580,25 @@ if (cfg.unikill_format) {
 #endif
 				drop_near(0, qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
-			} else  s_printf("..failed.\n");
+				no_art = FALSE;
+			} else s_printf("..failed.\n");
+		}
+		/* If a dungeon boss doesn't have or drop an artifact, drop a stat potion! (Spider) */
+		if (no_art) {
+			qq_ptr = &forge;
+			object_wipe(qq_ptr);
+			switch (rand_int(6)) {
+			case 0: i = SV_POTION_INC_STR; break;
+			case 1: i = SV_POTION_INC_INT; break;
+			case 2: i = SV_POTION_INC_WIS; break;
+			case 3: i = SV_POTION_INC_DEX; break;
+			case 4: i = SV_POTION_INC_CON; break;
+			case 5: i = SV_POTION_INC_CHR; break;
+			}
+			invcopy(qq_ptr, lookup_kind(TV_POTION, i));
+			s_printf("replacement for FINAL_ARTIFACT: %d\n", i);
+			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
+			drop_near(0, qq_ptr, -1, wpos, y, x);
 		}
 		/* Drop final object? */
 		if (
