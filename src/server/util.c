@@ -5034,12 +5034,14 @@ static void player_talk_aux(int Ind, char *message) {
 		Players[i]->talk = 0;
 	}
 
+	/* Keep uncensored message for everyone who disabled censoring */
+	strcpy(message_u, message);
+
 	/* Check for nasty language in chat/messaging */
 	if (//is_public &&
 	    (!slash_command || slash_command_msg || slash_command_censorable)) {
 		char *c = strchr(message, ' ');
 		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
-		strcpy(message_u, message);
 		/* Censor and get level of punishment. (Note: This if/else isn't really needed, we could just censor the complete message always..) */
 		if (!slash_command) censor_punish = handle_censor(message); /* For chat, censor the complete message. */
 		/* For commands, we can skip the actual command, just in caaaase part of the command somehow mixes up with the message to false-positive-trigger the censor check oO (paranoia?) */
