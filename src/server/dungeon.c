@@ -2980,7 +2980,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 #ifdef AUTO_RET_CMD
 /* Check auto-retaliation set via slash command /autoretX or /arX.
    This was added for mimics to use their powers without having to inscribe
-   a random item as a workaround. - C. Blue
+   a random item as a workaround.
+   It returns FALSE if we want to attempt to auto-ret but can't because conditions
+   aren't met, allowing us to instead try and melee-auto-ret.
+   It returns TRUE if we want to auto-ret and also attempted it (no matter the
+   result), so we cannot additionally perform melee-auto-ret. - C. Blue
    Also extended for runecraft, since having physical runes in the inventory
    isn't needed to actually cast runespells. */
 static bool retaliate_cmd(int Ind, bool fallback) {
@@ -2991,47 +2995,47 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	if (!ar) return FALSE;
 
 	/* Was a mimic power set for auto-ret? */
-	if (ar & 0x007F) { //paranoia: town-flag cannot be set on its own
+	if ((ar & 0x007F) //paranoia: town-flag cannot be set on its own
+	    && p_ptr->s_info[SKILL_MIMIC].value) {
+		/* Spell to cast */
+		int choice = ar - 1, power;
+		bool dir = FALSE;
+
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x0080) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
 		ar &= ~0x0080;
 
-		/* Hack -- use innate power via inscription on any item */
-		if (get_skill(p_ptr, SKILL_MIMIC)) {
-			/* Spell to cast */
-			int choice = ar - 1;
+		/* Check for valid attempt */
+		if (choice < 4) return FALSE; /* 3 polymorph powers + immunity preference */
+		power = retaliate_mimic_power(Ind, choice - 1);
+		if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee); /* not enough mana to even attempt */
+		/* Accept reasonable targets:
+		 * This prevents a player from getting stuck when facing a
+		 * monster inside a wall.
+		 * NOTE: The above statement becomes obsolete nowadays if
+		 * PY_PROJ_ and similar are defined.
+		 */
+		if (!target_able(Ind, p_ptr->target_who)) return FALSE;
 
-			if (choice < 4)	/* 3 polymorph powers + immunity preference */
-				return FALSE;
-
-			int power = retaliate_mimic_power(Ind, choice - 1);
-			bool dir = FALSE;
-			if (innate_powers[power].smana > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
-			switch (power / 32) {
-			case 0: dir = monster_spells4[power].uses_dir;
-				break;
-			case 1: dir = monster_spells5[power - 32].uses_dir;
-				break;
-			case 2: dir = monster_spells6[power - 64].uses_dir;
-				break;
-			case 3: dir = monster_spells0[power - 96].uses_dir;
-				break;
-			}
-
-			/* Accept reasonable targets:
-			 * This prevents a player from getting stuck when facing a
-			 * monster inside a wall.
-			 * NOTE: The above statement becomes obsolete nowadays if
-			 * PY_PROJ_ and similar are defined.
-			 */
-			if (!target_able(Ind, p_ptr->target_who)) return FALSE;
-
-			do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
-			return TRUE;
+		/* We have a valid attempt */
+		switch (power / 32) {
+		case 0: dir = monster_spells4[power].uses_dir;
+			break;
+		case 1: dir = monster_spells5[power - 32].uses_dir;
+			break;
+		case 2: dir = monster_spells6[power - 64].uses_dir;
+			break;
+		case 3: dir = monster_spells0[power - 96].uses_dir;
+			break;
 		}
+		do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
+		return TRUE;
 	}
 	/* Was a rune set for auto-ret? */
-	else if (ar & 0x7F00) { //paranoia: town-flag cannot be set on its own
+	else if ((ar & 0x7F00) && //paranoia: town-flag cannot be set on its own
+	    (p_ptr->s_info[SKILL_R_LITE].value || p_ptr->s_info[SKILL_R_DARK].value ||
+	    p_ptr->s_info[SKILL_R_NEXU].value || p_ptr->s_info[SKILL_R_NETH].value ||
+	    p_ptr->s_info[SKILL_R_CHAO].value || p_ptr->s_info[SKILL_R_MANA].value)) {
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x80000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
 		ar &= ~0x8000;
@@ -3042,6 +3046,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		
 		return TRUE;
 	}
+	else return FALSE;
 
 	/* If all fails, then melee */
 	return (p_ptr->fail_no_melee);
