@@ -1524,7 +1524,7 @@ errr file_character(cptr name, bool full) {
 	if (screen_icky) Term_switch(0);
 	/* skip top line, already in 'last messages' if any at all */
 	for (y = 1; y < Term->hgt; y++) {
-		for (x = 0; x < Term->wid; x++) {
+		for (x = 0; x < Term->wid - 1; x++) { /* -1: Hack for angband.oook.cz ladder: 80 chars would cause extra linebreaks there :/ So we just discard the final column.. */
 			(void)(Term_what(x, y, &a, &c));
 
 			switch (c) {
