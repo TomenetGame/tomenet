@@ -855,8 +855,12 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 
 :       type a chat message. To whisper privately, enter <player>:<text>
         eg:  Gandalf:hi!  - actually the first few letters of the target
-        player's name are enough, like:  Gan:hi!
-        You can also enter a slash command here.
+        player's name are enough, as long as it's distinct from anyone else
+        who is currently online, like:  Gan:hi!
+        You can also use a player's account name instead of his character name
+        to send him a private message, makes it easier if he keeps relogging
+        between characters a lot.
+        You can also enter a slash command here, for example "/afk".
         Press TAB to cycle between different chat modes, such as party-chat.
         For details about chat features see (3.3).
         For details about slash commands, see further below in this paragraph.
@@ -4064,35 +4068,54 @@ and for specific details about penalties that are applied.
 
 (3.3) Behaviour, chat messages and chat modes
 ---------------------------------------------
-You can chat with other players by pressing the colon key ':' once you have
-joined a game with your character.
+You can chat with other players by pressing the colon key ':' to enter the chat
+prompt, once you have joined a game with your character.
+
 In general, don't hesitate to ask questions. Players are usually willing to
 help you with the beginnings. Keep in mind that players often don't have time
 to look at the chat while they are fighting monsters, that means if you write
 to someone while he is in the dungeon, he often likely won't notice your
-message. Politely try again after some time.
-You can scroll back the messages using CTRL+P, or look at chat-only messages
-using CTRL+O.
+message. Politely try again after some time, and make sure to address him by
+his character (or account) name, as that will cause the name to be highlighted
+in the message he receives, so it may catch his attention better.
+
+You can scroll back through all messages you have received since logging on by
+pressing CTRL+P, or to look only at chat/important messages by pressing CTRL+O.
 
 Please do not use foul language in chat. If you do, depending on the server
 settings you might end up in jail.
 Also, foul language is filtered by default. If you want to turn that off,
-press  = 2  and toggle the client option "censor_swearing". (Requires client
+press  = 1  and toggle the client option "censor_swearing". (Requires client
 version newer than 4.4.8a.)
 
-You can also enter slash commands in the chat line. For details about slash
-commands see (0.2b).
-
-To type a private message to someone, enter <name>:<text>
-Example:    Hi!             <- goes to everyone
-            C. Blue:Hi!     <- goes privately to the character named 'C. Blue'
+All normal text you type in the chat prompt becomes a global message, visible
+to everyone currently logged on (and possibly on IRC too, see (1.1b) for info).
+However, of course you can also send a private message to someone specific.
+To send a private message to someone, type:   <name>:<text>
+Example:    Hi!             <- goes to everyone, aka public message
+            C. Blue:Hi!     <- goes privately to the character named 'C. Blue'.
+                               Note that you can also specify his account name
+                               instead of his character name.
+                               You don't actually need to type out the full
+                               name, the first few letters are enough, just so
+                               that the result is distinct from anyone else's
+                               name who is currently logged on.
 In chat messages you can type a double colon '::' to force output of a normal
 colon ':' instead of having it interpreted as separator for a private chat
 message. Most smileys are recognized automatically and don't require you to
 enter a double colon.
 
-You can use colours in messages. To change the message colour, put a {
-followed by a colour code somewhere into your message line.
+In the chat prompt, you can also press CTRL+p and CTRL+n to scroll through the
+past messages you typed, in case you want to repeat one of them. See (0.2a) for
+a list of all such text-editing keys.
+
+Another thing you can do in the chat prompt, aside from typing in an actual
+chat message, is to type in a 'slash command', that are certain commands that
+all begin on a "/", for example:  /afk   or   /ex
+You can see a list of slash commands in (0.2b).
+
+Last but no least you can use colours in messages. To change the message colour
+put a { followed by a colour code somewhere into your message line.
 Example:
         {pHi!               <- results in a 'poison-coloured' Hi!
         I see some {vh {Bto the east
@@ -4129,16 +4152,16 @@ There are extended colour codes available since 4.5.2 (some in later clients)
 To return to the previous colour, instead of specifying it you can also just
 use '{-', for example: {rRed Text{gGreen now{-Red again.
 
-
-Character names in chat lines have different colours to indicate their status:
-
-White           Normal player.
-Light blue      Everlasting player.
-Dark grey       No-ghost / hellish player.
-Violet          Player character is king / queen.
-Dark blue       Player is admin.
-Red             Player is a ghost (ie dead).
-Yellow          Player is a PvP-mode character.
+You will observe that character names in chat lines have different colours too,
+indicating character modes:
+  White           Normal mode player.
+  Light blue      Everlasting mode player.
+  Dark grey       No-ghost / hellish mode player.
+  Yellow          Player is a PvP-mode character.
+indicating special character status:
+  Violet          Player character is king / queen.
+  Dark blue       Player is admin.
+  Red             Player is a ghost (ie dead, maybe ask if he needs help).
 
 
 Chat modes:
@@ -4154,7 +4177,6 @@ Note: While TAB cycles forward, you can also press CTRL+U to cycle backwards,
 CTRL+A to switch to 'normal' mode, CTRL+T to switch to 'party' (team) mode,
 CTRL+G for 'guild' mode and CTRL+L for 'level' (floor) mode.
 
-
 Also you can use the following prefixes in the beginning of a chat line,
 to get similar behaviour as in one of the chat modes just for one line:
 !:      Sends the following text to your current party.
@@ -4164,10 +4186,6 @@ $:      Sends the following text to your current guild.
 %:      Sends the following text to yourself (has some use in macros).
 +:      Sends the following text to the last person who whispered us a private
         message, so it's sort of a 'reply' function.
-
-
-Note that you can use CTRL+p and CTRL+n while in chat mode (':' key),
-to repeat a message or command you previously typed.
 
 
 
