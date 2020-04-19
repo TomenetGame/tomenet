@@ -3136,7 +3136,7 @@ void do_weather() {
 	static int cloud_movement_ticks = 0, cloud_movement_lasttick = 0;
 	bool with_clouds, outside_clouds;
 
-	bool tenthsecond = FALSE;
+	bool ticks_ok = FALSE;
 
 
 /* Track 10ms ticks and put experimental/testing stuff here ---------------- */
@@ -3144,7 +3144,7 @@ void do_weather() {
 	/* attempt to keep track of 'deci-ticks' (10ms resolution) */
 	if (ticks10 != weather_ticks10) {
 		weather_ticks10 = ticks10;
-		tenthsecond = TRUE;
+		ticks_ok = TRUE;
 
 		/* Testing: lightning lighting via palette animation */
 		if (animate_lightning) {
@@ -3293,7 +3293,7 @@ void do_weather() {
 	/* note: the second limit is the frame rate, cfg.fps,
 	   so if it's < 100, it will limit the speed instead. */
 #else
-	if (!tenthsecond) return;
+	if (!ticks_ok) return;
 #endif
 
 /* generate new weather elements ------------------------------------------- */
