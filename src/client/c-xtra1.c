@@ -950,8 +950,16 @@ void prt_speed(int speed) {
 	char buf[32] = "";
 	int x, y;
 
+	/* hack: remember speed (for extra no-tele warning) */
+	p_speed = speed;
+
 	if (speed > 0) {
-		attr = TERM_L_GREEN;
+		/* Hack: Marker for sped-up buff */
+		if (speed & 0x100) {
+			speed &= ~0x100;
+			attr = TERM_L_BLUE;
+			//attr = TERM_VIOLET;
+		} else attr = TERM_L_GREEN;
 		sprintf(buf, "Fast +%d", speed);
 	} else if (speed < 0) {
 		attr = TERM_L_UMBER;
@@ -971,9 +979,6 @@ void prt_speed(int speed) {
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
-
-	/* hack: remember speed (for extra no-tele warning) */
-	p_speed = speed;
 }
 
 /*
