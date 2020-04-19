@@ -8673,7 +8673,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/wthunder")) { /* play thunder weather sound */
 				/* Usage: /wthunder [volume] [char/accname] */
-				int vol = 100;
 				cptr pn = NULL;
 
 				if (!__audio_sfx_max) {
@@ -8681,10 +8680,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				if (tk) {
-					if (k) {
-						vol = k;
-						pn = strchr(message3, ' ');
-					} else pn = message3 - 1;
+					if (k) pn = strchr(message3, ' ');
+					else pn = message3 - 1;
 				}
 				if (pn) {
 					i = name_lookup(Ind, pn + 1, FALSE, TRUE, FALSE);
