@@ -4450,6 +4450,12 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 			continue;
 		}
 
+		/* Exception: Instant-ego items don't heed 'power', as they usually only have 1 specific available ego-power to become complete! */
+		if (k_info[o_ptr->k_idx].flags6 & TR6_INSTA_EGO) {
+			ok_ego[ok_num++] = e_tval[tval][i];
+			continue;
+		}
+
 		/* Good should be good, bad should be bad */
 		if (good && (!e_ptr->cost)) continue;
 		if ((!good) && e_ptr->cost) continue;
@@ -4466,6 +4472,33 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 
 		return(FALSE);
 	}
+
+	/* Instant-ego items don't need to roll, they must be completed. */
+	if (k_info[o_ptr->k_idx].flags6 & TR6_INSTA_EGO) {
+		ego_item_type *e_ptr;
+
+		i = ok_ego[rand_int(ok_num)];
+		e_ptr = &e_info[i];
+
+		/* Maybe todo if there are really more than just 1 available ego-power for an instant-ego base item:
+		   Pay heed to their rarities. Currently we just do above's rand_int over all available powers, not checking their actual rarities. */
+
+		/* Hack -- mark the item as an ego */
+		o_ptr->name2 = i;
+
+		/* Piece together a 32-bit random seed */
+		if (e_ptr->fego1[0] & ETR1_NO_SEED) o_ptr->name3 = 0;
+		else {
+			o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
+			o_ptr->name3 += rand_int(0xFFFF);
+		}
+
+		/* Instant egos don't get a 2nd ego power. Maybe todo: Change. */
+		double_ok = FALSE;
+
+		/* Success */
+		ret = TRUE;
+	} else
 
 	/* Now test them a few times */
 	for (j = 0; j < ok_num * 10; j++) {
