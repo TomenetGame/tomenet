@@ -19095,7 +19095,7 @@ D:let alone fighting it!
 N:1074:Michael, the Guardian Overlord
 G:A:U
 I:140:400d70:250:200:255
-W:98:8:3200:58000
+W:98:8:3700:58000
 E:1:1:2:2:1:2
 O:0:70:30:0
 B:GAZE:TERRIFY:10d4
