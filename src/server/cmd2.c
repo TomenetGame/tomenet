@@ -5064,6 +5064,12 @@ int do_cmd_run(int Ind, int dir) {
 	if (dir) {
 		/* Make sure we have an empty space to run into */
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px)) {
+			/* Prob travel */
+			if (p_ptr->prob_travel && (!cave_floor_bold(zcave, p_ptr->py, p_ptr->px))) {
+				(void)do_prob_travel(Ind, dir);
+				return 2;
+			}
+
 			/* Handle the cfg_door_bump option */
 			if (cfg.door_bump_open && p_ptr->easy_open && !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
 				/* Get requested grid */
