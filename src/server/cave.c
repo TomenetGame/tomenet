@@ -7744,6 +7744,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	cave_type *c_ptr;
 	struct c_special *cs_ptr;
 	int i;
+	bool wall;
 	//struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
 
 	/* for Submerged Ruins: ensure all deep water; also affects Small Water Cave. */
@@ -7888,6 +7889,9 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 		cs_erase(c_ptr, cs_ptr);
 
+	/* For Wraithstep check below */
+	wall = !cave_floor_grid(c_ptr);
+
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~(CAVE_NEST_PIT | CAVE_ENCASED); /* clear teleport protection for nest grid if it gets changed; clear treasure vein remote-flag too */
 	c_ptr->feat = feat;
@@ -7902,7 +7906,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 
 #if 0 /* done in melee2.c when a monster eats a wall, so it's visible from afar, if level is mapped, that "walls turn black" */
 		/* Forget the spot */
-		Players[i]->cave_flag[y][x] &= ~CAVE_MARK;
+		p_ptr->cave_flag[y][x] &= ~CAVE_MARK;
 #endif
 
 		/* Notice */
@@ -7918,8 +7922,11 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		//p_ptr->redraw |= PR_MAP;
 		//p_ptr->window |= PW_OVERHEAD;
 
-		/* Wraithstep spell might stop */
-		if (p_ptr->tim_wraith && (p_ptr->tim_extra & 0x1)) set_tim_wraithstep(i, 0);
+		/* Wraithstep spell stops if it's not a wall anymore */
+		if (p_ptr->tim_wraith && (p_ptr->tim_extra & 0x1) &&
+		    cave_floor_grid(c_ptr) && wall && /* Floor now, but was wall? */
+		    p_ptr->px == x && p_ptr->py == y)
+			set_tim_wraithstep(i, 0);
 	}
 	return TRUE;
 }
