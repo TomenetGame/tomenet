@@ -3280,6 +3280,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
 		/* Hack: Allow causing earthquakes with appropriate weapons (!) or diggers or p_ptr->impact (unavailable atm) by hitting the empty floor */
 		if (dir == 5 && cfeat != FEAT_PERM_CLEAR && !quiet_borer) {
+			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
+				msg_print(Ind, "The floor around the town area seems very solid.");
+				return;
+			}
+
 			/* we need to deduct one turn of energy appropriately */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			un_afk_idle(Ind);
