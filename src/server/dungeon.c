@@ -279,9 +279,13 @@ cptr value_check_aux2(object_type *o_ptr) {
 	case TV_BOW:
 	case TV_BOOMERANG:
 		/* Good "armor" bonus */
-		if (o_ptr->to_a > k_ptr->to_a) return "good";
+		if (o_ptr->to_a > k_ptr->to_a
+		    && o_ptr->to_a > 0 /* for rusty armour....*/
+		    ) return "good";
 		/* Good "weapon" bonus */
-		if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0) return "good";
+		if (o_ptr->to_h - k_ptr->to_h + o_ptr->to_d - k_ptr->to_d > 0
+		    && (o_ptr->to_h > 0 || o_ptr->to_d > 0) /* for broken daggers....*/
+		    ) return "good";
 		break;
 	default:
 		/* Good "armor" bonus */
