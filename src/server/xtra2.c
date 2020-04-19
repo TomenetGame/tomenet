@@ -6433,7 +6433,8 @@ if (cfg.unikill_format) {
 		}
 
 		/* Log superunique kills to its own file */
-		if (is_ZuAon || (!is_Sauron && !is_Morgoth && !(r_ptr->flags0 & RF0_FINAL_GUARDIAN) && r_ptr->level >= 98)) //<-note: The Living Lightning is considered to be just a 'normal' dungeon boss
+		/* The Living Lightning is considered to be just a 'normal' dungeon boss. What about Bahamut? */
+		if (is_ZuAon || (!is_Sauron && !is_Morgoth && !(r_ptr->flags0 & RF0_FINAL_GUARDIAN) && r_ptr->level >= 98))
 			su_print(format("%s was slain by %s.\n", r_name_get(m_ptr), p_ptr->name));
 	}
 
