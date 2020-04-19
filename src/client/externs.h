@@ -511,7 +511,7 @@ extern void show_motd(int delay);
 extern void peruse_file(void);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
 extern errr my_fgets2(FILE *fff, char **line, int *n);
-extern errr file_character(cptr name, bool full);
+extern errr file_character(cptr name, bool quiet);
 extern bool my_freadable(cptr file);
 extern errr get_safe_file(char *buf, cptr file);
 extern void xhtml_screenshot(cptr name);
@@ -708,6 +708,7 @@ extern generic_term_info term_prefs[10];
 
 /* nclient.c (former netclient.c) */
 extern int ticks, ticks10, existing_characters, command_confirmed;
+extern int animate_lightning;
 extern void do_flicker(void);
 extern void do_mail(void);
 extern void update_ticks(void);

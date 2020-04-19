@@ -3446,9 +3446,7 @@ int Receive_sound(void) {
 
 			strcpy(tmp, "return get_sound_index(\"thunder\")");
 			if (exec_lua(0, tmp) == s1) {
-				//which colours to affect? WHITE (17), SLATE (18), LWHITE (25), BLUE (22), LDARK (24)?
-				set_palette(17, 0xCC, 0xCC, 0xFF);
-				set_palette(127, 0, 0, 0); //refresh
+				animate_lightning = 1;
 			}
 		}
 #endif
@@ -4005,7 +4003,7 @@ int Receive_chardump(void) {
 	strnfmt(tmp, 160, "%s%s_%04d-%02d-%02d_%02d.%02d.%02d.txt", cname, type,
 	    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
 	    ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
-	file_character(tmp, FALSE);
+	file_character(tmp, TRUE);
 
 	return 1;
 }

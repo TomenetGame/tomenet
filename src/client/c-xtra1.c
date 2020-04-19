@@ -17,6 +17,7 @@
 /* Don't display 'Trait' if traits aren't available */
 #define HIDE_UNAVAILABLE_TRAIT
 
+int animate_lightning = 0;
 
 /*
  * Print character info at given row, column in a 13 char field
@@ -3135,6 +3136,48 @@ void do_weather() {
 	static int cloud_movement_ticks = 0, cloud_movement_lasttick = 0;
 	bool with_clouds, outside_clouds;
 
+	bool tenthsecond = FALSE;
+
+
+/* Track 10ms ticks and put experimental/testing stuff here ---------------- */
+
+	/* attempt to keep track of 'deci-ticks' (10ms resolution) */
+	if (ticks10 != weather_ticks10) {
+		weather_ticks10 = ticks10;
+		tenthsecond = TRUE;
+
+		/* Testing: lightning lighting via palette animation */
+		if (animate_lightning) {
+			/* Animate palette */
+			switch (animate_lightning) {
+			case 1:
+				//which colours to affect? WHITE (17), SLATE (18), LWHITE (25), BLUE (22), LDARK (24)?
+				set_palette(17, 0x99, 0x99, 0x99);
+				set_palette(18, 0xCC, 0xCC, 0xFF);
+				set_palette(25, 0x25, 0x99, 0x99);
+				set_palette(22, 0x66, 0x66, 0xFF);
+				set_palette(24, 0x88, 0x88, 0x88);
+				set_palette(127, 0, 0, 0); //refresh
+				break;
+			case 15:
+				//which colours to affect? WHITE (17), SLATE (18), LWHITE (25), BLUE (22), LDARK (24)?
+				set_palette(17, 0xff, 0xff, 0xff);
+				set_palette(18, 0x9d, 0x9d, 0x9d);
+				set_palette(25, 0xd7, 0xd7, 0xd7);
+				set_palette(22, 0x00, 0x33, 0xFF);
+				set_palette(24, 0x66, 0x66, 0x66);
+				set_palette(127, 0, 0, 0); //refresh
+				break;
+			default: break;
+			}
+			/* Continue for a couple steps */
+			animate_lightning++;
+			if (animate_lightning == 100) animate_lightning = 0;
+		}
+	}
+
+
+/* begin ------------------------------------------------------------------- */
 
 	/* continue animating current weather (if any) */
 	if (!weather_type && !weather_elements) {
@@ -3243,12 +3286,15 @@ void do_weather() {
 
 /* process weather every 10ms at most -------------------------------------- */
 
+#if 0
 	/* attempt to keep track of 'deci-ticks' (10ms resolution) */
 	if (ticks10 == weather_ticks10) return;
 	weather_ticks10 = ticks10;
 	/* note: the second limit is the frame rate, cfg.fps,
 	   so if it's < 100, it will limit the speed instead. */
-
+#else
+	if (!tenthsecond) return;
+#endif
 
 /* generate new weather elements ------------------------------------------- */
 

@@ -1394,7 +1394,7 @@ void peruse_file(void) {
  * XXX XXX XXX Allow the "full" flag to dump additional info,
  * and trigger its usage from various places in the code.
  */
-errr file_character(cptr name, bool full) {
+errr file_character(cptr name, bool quiet) {
 	int		i, x, y;
 	byte		a;
 	char		c;
@@ -1402,7 +1402,6 @@ errr file_character(cptr name, bool full) {
 	int		fd = -1;
 	FILE		*fff = NULL;
 	char		buf[1024], *cp, linebuf[1024];
-	(void) full; /* suppress compiler warning */
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
@@ -1575,7 +1574,7 @@ errr file_character(cptr name, bool full) {
 	Term_load();
 
 	/* Message */
-	c_msg_print("Character dump successful.");
+	if (!quiet) c_msg_print("Character dump successful.");
 	clear_topline_forced();
 
 	/* Success */
