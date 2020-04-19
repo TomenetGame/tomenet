@@ -1768,8 +1768,10 @@ static void init_artifact_list() {
 		strcat(artifact_list_name[artifact_list_idx], art_name);
 		/* new: add [coloured?] symbol to indicate item type (sometimes impossible to recognize otherwise) */
 		if (i < MAX_K_IDX) { //paranoia?
-#if 0 /* we cannot predict the attr for flavoured items! (rings, amulets) */
-			strcpy(buf, format(" <\377%c%c\377->", kind_list_attr[i], kind_list_char[i]));
+#if 1 /* we cannot predict the attr for flavoured items! (rings, amulets) */
+			/* For insta-arts: Those that don't have a specific colour are 'd' in k_info to indicate that they
+			   are ok with receiving a random flavour. Have to substitute that for something readable here. */
+			strcpy(buf, format("\377%c%c\377-  ", kind_list_attr[i] == 'd' ? 's' : kind_list_attr[i], kind_list_char[i]));
 #else
 			strcpy(buf, format("%c  ", kind_list_char[i]));
 #endif

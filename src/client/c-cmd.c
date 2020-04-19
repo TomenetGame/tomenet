@@ -2636,7 +2636,8 @@ static void artifact_lore(void) {
     while (TRUE) {
 	Term_clear();
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) artifact name to refine the search:");
-	Term_putstr(2,  3, -1, TERM_WHITE, "Press ENTER to display lore about the selected artifact.");
+	//Term_putstr(2,  3, -1, TERM_WHITE, "Press ENTER to display lore about the selected artifact.");
+	Term_putstr(2,  3, -1, TERM_WHITE, "Note that some rings and amulets have a random colour and are just \377sgrey\377w here.");
 
 	while (TRUE) {
 		Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
@@ -2960,7 +2961,9 @@ static void monster_lore(void) {
     while (TRUE) {
 	Term_clear();
 	Term_putstr(2,  2, -1, TERM_WHITE, "Enter (partial) monster name to refine the search:");
-	Term_putstr(2,  3, -1, TERM_WHITE, "Or press '!' followed by a monster symbol and a colour symbol or 'm' or 'M'.");
+	//Term_putstr(2,  3, -1, TERM_WHITE, "Or type '#' and its index, or '!' and its symbol and colour or 'm' or 'M'.");
+	Term_putstr(2,  3, -1, TERM_WHITE, "Or type '#' and its index, or '!' and its symbol and colour (m=ANY, M=MULTI).");
+	//Term_putstr(2,  3, -1, TERM_WHITE, "Or press '!' followed by a monster symbol and a colour symbol or 'm' or 'M'.");
 	//Term_putstr(2,  4, -1, TERM_WHITE, "Press RETURN to display lore about the selected monster.");
 
 	while (TRUE) {
