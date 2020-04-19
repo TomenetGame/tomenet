@@ -3228,7 +3228,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 
 #ifdef PALANIM_OPTIMIZED
 	/* Check for refresh market at the end of a palette data transmission */
-	if (c == 127) {
+	if (c == 127 || c == 128) {
 		/* Refresh aka redraw the main window with new colour */
 		if (!term_prefs[0].visible) return;
 		if (term_prefs[0].x == -32000 || term_prefs[0].y == -32000) return;
@@ -3238,7 +3238,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		return;
 	}
 #else
-	if (c == 127) return; //just discard refresh marker
+	if (c == 127 || c == 128) return; //just discard refresh marker
 #endif
 
 	color_table[c][1] = r;
@@ -3275,8 +3275,10 @@ void set_palette(byte c, byte r, byte g, byte b) {
 #endif
 }
 void get_palette(byte c, byte *r, byte *g, byte *b) {
-	*r = color_table[c][1];
-	*g = color_table[c][2];
-	*b = color_table[c][3];
+	u32b cref = clr[c]->fg;
+
+	*r = (cref & 0xFF0000) >> 16;
+	*g = (cref & 0x00FF00) >> 8;
+	*b = (cref & 0x0000FF);
 }
 #endif

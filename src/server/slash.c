@@ -8676,8 +8676,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "No sound effects available.");
 					return;
 				}
-				msg_print(Ind, "Playing 'thunder' as SFX_TYPE_WEATHER.");
-				sound_vol(Ind, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, 100);
+				msg_format(Ind, "Playing 'thunder' as SFX_TYPE_WEATHER at vol %d.", k ? k : 100);
+				sound_vol(Ind, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, k ? k : 100);
 				return;
 			}
 			else if (prefix(messagelc, "/pmus")) { /* play specific music */

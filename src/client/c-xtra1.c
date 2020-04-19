@@ -3155,37 +3155,52 @@ void do_weather() {
 
 		/* Testing: lightning lighting via palette animation */
 		if (animate_lightning) {
+#define AL_OFFSET 16 /* palette index offset for animated colours (might need to be 0 for Windows if PALANIM_SWAP is ever used) */
+#define AL_END 12 /* duration of the lightning flash */
+#define AL_DECOUPLED /* because thunderclap happens too quickly, so decouple it from lightning animation speed */
+			static bool active = FALSE; /* Don't overwrite palette backup from overlapping lightning strikes */
 			static byte or[16], og[16], ob[16];
-
+#ifdef AL_DECOUPLED
+			int d;
+#endif
 			/* Animate palette */
 			switch (animate_lightning) {
 			case 1:
 				/* First thing: Backup all colours before temporarily manipulating them */
-				for (i = 0; i < 16; i++) get_palette(i + 16, &or[i], &og[i], &ob[i]);
+				if (!active) {
+					for (i = 1; i < 16; i++) get_palette(i + AL_OFFSET, &or[i], &og[i], &ob[i]);
+					active = TRUE;
+				}
 
 				//which colours to affect? WHITE (17), SLATE (18), LWHITE (25), BLUE (22), LDARK (24), RED (20), LGREEN (29), GREEN (21), LUMBER (31), UMBER (23)
-				set_palette(17, 0x99, 0x99, 0x99);
-				set_palette(18, 0xCC, 0xCC, 0xFF);
-				set_palette(25, 0x25, 0x99, 0x99);
-				set_palette(22, 0x66, 0x66, 0xFF);
-				set_palette(24, 0x88, 0x88, 0x88);
-				set_palette(20, 0xFF, 0x77, 0x88);
-				set_palette(21, 0x33, 0xFF, 0x33);
-				set_palette(23, 0xAD, 0x88, 0x33);
-				set_palette(29, 0xBB, 0xFF, 0xBB);
-				set_palette(31, 0xF7, 0xCD, 0x85);
-				set_palette(127, 0, 0, 0); //refresh
+				set_palette(1 + AL_OFFSET, 0x99, 0x99, 0x99);
+				set_palette(2 + AL_OFFSET, 0xCC, 0xCC, 0xFF);
+				set_palette(9 + AL_OFFSET, 0x25, 0x99, 0x99);
+				set_palette(6 + AL_OFFSET, 0x44, 0x66, 0xFF);
+				set_palette(8 + AL_OFFSET, 0x88, 0x88, 0x88);
+				set_palette(4 + AL_OFFSET, 0xFF, 0x77, 0x88);
+				set_palette(5 + AL_OFFSET, 0x33, 0xFF, 0x33);
+				set_palette(7 + AL_OFFSET, 0xAD, 0x88, 0x33);
+				set_palette(13 + AL_OFFSET, 0xBB, 0xFF, 0xBB);
+				set_palette(15 + AL_OFFSET, 0xF7, 0xCD, 0x85);
+				set_palette(128, 0, 0, 0); //refresh
 				break;
-			case 15:
+			case AL_END:
 				/* Restore all colours to what they were before */
-				for (i = 0; i < 16; i++) set_palette(i + 16, or[i], og[i], ob[i]);
-				set_palette(127, 0, 0, 0); //refresh
+				for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
+				set_palette(128, 0, 0, 0); //refresh
+				active = FALSE;
 				break;
 			default: break;
 			}
 
 			/* thunderclap follows up */
-			if (animate_lightning == 15 - animate_lightning_vol / 7) {
+#ifndef AL_DECOUPLED
+			if (animate_lightning == AL_END - animate_lightning_vol / ((100 + AL_END - 1) / AL_END)) {
+#else
+			d = (animate_lightning_vol >= 85) ? 100 : animate_lightning_vol + 15;
+			if (animate_lightning == 101 - d) {
+#endif
 #ifndef USE_SOUND_2010
 				Term_xtra(TERM_XTRA_SOUND, s1);
 #else
@@ -3195,7 +3210,12 @@ void do_weather() {
 
 			/* Continue for a couple steps */
 			animate_lightning++;
-			if (animate_lightning == 16) animate_lightning = 0;
+#ifndef AL_DECOUPLED
+			if (animate_lightning == AL_END + 1) animate_lightning = 0;
+#else
+			d = AL_END > 101 - d? AL_END : 101 - d;
+			if (animate_lightning == d + 1) animate_lightning = 0;
+#endif
 		}
 	}
 

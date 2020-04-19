@@ -4430,7 +4430,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 
 #ifdef PALANIM_OPTIMIZED
 	/* Check for refresh market at the end of a palette data transmission */
-	if (c == 127) {
+	if (c == 127 || c == 128) {
  #ifdef PALANIM_OPTIMIZED2
 		int i;
 		/* Batch-apply all colour changes */
@@ -4461,14 +4461,15 @@ void set_palette(byte c, byte r, byte g, byte b) {
  #if 0 /* no flickering here when animating colours 0..15, even though set_palette() flickers. Maybe because of colours 16-31 for some reason? */
 		Term_redraw();
  #else /* trying this instead, should be identical ie no flickering, as it's the minimal possible version simply */
-		Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
+		if (c == 128) Term_redraw(); /* Hack: We really need instant refresh (for animated_lightning effect) */
+		else Term_xtra(TERM_XTRA_FRESH, 0); /* Flickering occasionally on Windows :( */
  #endif
 		/* Restore */
 		Term_activate(term_old);
 		return;
 	}
 #else
-	if (c == 127) return; //just discard refresh marker
+	if (c == 127 || c == 128) return; //just discard refresh marker
 #endif
 
 #ifdef PALANIM_SWAP
@@ -4523,8 +4524,10 @@ void set_palette(byte c, byte r, byte g, byte b) {
 #endif
 }
 void get_palette(byte c, byte *r, byte *g, byte *b) {
-	*r = color_table[c][1];
-	*g = color_table[c][2];
-	*b = color_table[c][3];
+	COLORREF cref = win_clr[c];
+
+	*r = GetRValue(cref);
+	*g = GetGValue(cref);
+	*b = GetBValue(cref);
 }
 #endif /* _Windows */
