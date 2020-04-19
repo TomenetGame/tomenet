@@ -8672,12 +8672,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/wthunder")) { /* play thunder weather sound */
+				/* Usage: /wthunder [volume] [char/accname] */
+				int vol = 100;
+				cptr pn = NULL;
+
 				if (!__audio_sfx_max) {
 					msg_print(Ind, "No sound effects available.");
 					return;
 				}
-				msg_format(Ind, "Playing 'thunder' as SFX_TYPE_WEATHER at vol %d.", k ? k : 100);
-				sound_vol(Ind, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, k ? k : 100);
+				if (tk) {
+					if (k) {
+						vol = k;
+						pn = strchr(message3, ' ');
+					} else pn = message3 - 1;
+				}
+				if (pn) {
+					i = name_lookup(Ind, pn + 1, FALSE, TRUE, FALSE);
+					if (!i) return;
+				} else {
+					i = Ind;
+					pn = p_ptr->name - 1;
+				}
+				msg_format(Ind, "Playing 'thunder' for '%s' as SFX_TYPE_WEATHER at vol %d.", pn + 1, k ? k : 100);
+				sound_vol(i, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, k ? k : 100);
 				return;
 			}
 			else if (prefix(messagelc, "/pmus")) { /* play specific music */
