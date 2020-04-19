@@ -446,7 +446,6 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
 	{ &c_cfg.no_am_sfx,		FALSE,	5,	1, 108, FALSE,
 	    "no_am_sfx",		"Don't play anti-magic disruption sound effect" },
-	//HOLE: 1
 
     /* unmutable options, pfft -- these are never shown in any options menu (-> FALSE) */
 	{ &c_cfg.use_color,		TRUE,	1,	0, 109, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
@@ -536,6 +535,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.find_ignore_montraps,	TRUE,	3,	0, 130, TRUE,
 	    "find_ignore_montraps",	"Run through monster traps" },
+
+	{ &c_cfg.quiet_os,		FALSE,	5,	1, 131, TRUE,
+	    "quiet_os",			"Don't play beep/alert/page beeps through OS" },
 
 #if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
     /* 4.7.3 */

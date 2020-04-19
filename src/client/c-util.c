@@ -1434,7 +1434,7 @@ void bell(void) {
 		    )
 #endif
 #endif
-		Term_xtra(TERM_XTRA_NOISE, 0);
+		if (!c_cfg.quiet_os) Term_xtra(TERM_XTRA_NOISE, 0);
 	}
 
 	/* Flush the input (later!) */
@@ -1459,7 +1459,7 @@ int page(void) {
 
 	/* Fall back on system-specific default beeps */
 	//Term_fresh();
-	Term_xtra(TERM_XTRA_NOISE, 0);
+	if (!c_cfg.quiet_os) Term_xtra(TERM_XTRA_NOISE, 0);
 	//flush();
 
 	return 1;
@@ -1476,7 +1476,7 @@ int warning_page(void) {
 
 	/* Fall back on system-specific default beeps */
 	//Term_fresh();
-	Term_xtra(TERM_XTRA_NOISE, 0);
+	if (!c_cfg.quiet_os) Term_xtra(TERM_XTRA_NOISE, 0);
 	//flush();
 
 	return 1;

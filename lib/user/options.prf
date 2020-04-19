@@ -150,3 +150,5 @@ X:hp_bar
 X:mp_bar
 X:st_bar
 Y:find_ignore_montraps
+
+X:quiet_os
