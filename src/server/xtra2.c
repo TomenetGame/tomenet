@@ -8111,7 +8111,9 @@ static void display_diz_death(int Ind) {
   changed so when leader ghosts perish the team is disbanded
   -APD-
  */
-
+/* Special message for deaths by Farmer Maggot's dogs?
+   %-chance to get displayed, otherwise the usual last_words from death.txt is shown. */
+#define WHO_LET_THE_DOGS_OUT 100
 void player_death(int Ind) {
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	int Ind2;
@@ -8596,23 +8598,27 @@ void player_death(int Ind) {
 			msg_format(Ind, "\374\377RYou were defeated by %s, but the priests have saved you.", p_ptr->died_from);
 
 #if CHATTERBOX_LEVEL > 2
-			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
+ #ifdef WHO_LET_THE_DOGS_OUT
+			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(WHO_LET_THE_DOGS_OUT)) {
 				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
 				msg_broadcast(0, "Who let the dogs out?");
-			} else if (p_ptr->last_words) {
+			} else
+ #endif
+			/* Actually no last_words from death.txt for instant-resurrection-deaths? */
+			if (p_ptr->last_words) {
 				char death_message[80];
 
 				(void)get_rnd_line("death.txt", 0, death_message, 80);
 				msg_print(Ind, death_message);
 			}
-#endif	// CHATTERBOX_LEVEL
-
-#ifdef RACE_DIZ
-			display_diz_death(Ind);
 #endif
 
 			/* new - death dump for insta-res too! */
 			Send_chardump(Ind, "-death");
+
+#ifdef RACE_DIZ
+			display_diz_death(Ind);
+#endif
 
 			/* Hm, this doesn't need to be on the char dump actually */
 			msg_format(Ind, "\377oThey have requested a fee of %d gold pieces.", instant_res_cost);
@@ -9056,8 +9062,14 @@ void player_death(int Ind) {
 		if (insanity) {
 			/* Tell him */
 			msg_print(Ind, "\374\377RYou die.");
-			//msg_print(Ind, NULL);
-//todo: use 'died_from' (insanity-blinking-style):
+#if CHATTERBOX_LEVEL > 2
+			if (p_ptr->last_words) {
+				char death_message[80];
+				(void)get_rnd_line("death.txt", 0, death_message, 80);
+				msg_print(Ind, death_message);
+			}
+#endif
+			//todo: use 'died_from' (insanity-blinking-style):
 			msg_format(Ind, "\374\377%c**\377rYou have been destroyed by \377oI\377Gn\377bs\377Ba\377sn\377Ri\377vt\377yy\377r.\377%c**", msg_layout, msg_layout);
 
 s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
@@ -9070,18 +9082,6 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
-#if CHATTERBOX_LEVEL > 2
-			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
-				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
-				msg_broadcast(0, "Who let the dogs out?");
-			} else if (p_ptr->last_words) {
-				char death_message[80];
-
-				(void)get_rnd_line("death.txt", 0, death_message, 80);
-				msg_print(Ind, death_message);
-			}
-#endif	// CHATTERBOX_LEVEL
-
 			death_type = DEATH_INSANITY;
 			if (p_ptr->ghost) {
 				death_type = DEATH_GHOST;
@@ -9091,6 +9091,15 @@ s_printf("CHARACTER_TERMINATION: INSANITY race=%s ; class=%s ; trait=%s ; %d dea
 		} else if (p_ptr->ghost) {
 			/* Tell him */
 			msg_format(Ind, "\374\377a**\377rYour ghost was destroyed by %s.\377a**", p_ptr->died_from);
+#if CHATTERBOX_LEVEL > 2
+ #ifdef WHO_LET_THE_DOGS_OUT
+			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(WHO_LET_THE_DOGS_OUT)) {
+				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
+				msg_broadcast(0, "Who let the dogs out?");
+			}
+ #endif
+			/* No last_words from death.txt, because we already are a ghost ie dead.. */
+#endif
 
 s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d deaths\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 
@@ -9115,23 +9124,23 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 			if (!strcmp(p_ptr->died_from, "It") || !strcmp(p_ptr->died_from, "insanity") || p_ptr->image)
 				s_printf("(%s's ghost was really destroyed by %s.)\n", p_ptr->name, p_ptr->really_died_from);
 
-#if CHATTERBOX_LEVEL > 2
-			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
-				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
-				msg_broadcast(0, "Who let the dogs out?");
-			} else if (p_ptr->last_words) {
-				char death_message[80];
-
-				(void)get_rnd_line("death.txt", 0, death_message, 80);
-				msg_print(Ind, death_message);
-			}
-#endif	// CHATTERBOX_LEVEL
-
 			death_type = DEATH_GHOST;
 		} else {
 			/* Tell him */
 			msg_print(Ind, "\374\377RYou die.");
-			//msg_print(Ind, NULL);
+#if CHATTERBOX_LEVEL > 2
+ #ifdef WHO_LET_THE_DOGS_OUT
+			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(WHO_LET_THE_DOGS_OUT)) {
+				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
+				msg_broadcast(0, "Who let the dogs out?");
+			} else
+ #endif
+			if (p_ptr->last_words) {
+				char death_message[80];
+				(void)get_rnd_line("death.txt", 0, death_message, 80);
+				msg_print(Ind, death_message);
+			}
+#endif
 #ifdef MORGOTH_FUNKY_KILL_MSGS /* Might add some atmosphere? (lol) - C. Blue */
 			if (!strcmp(p_ptr->died_from, "Morgoth, Lord of Darkness")) {
 				char funky_msg[20];
@@ -9203,16 +9212,6 @@ s_printf("CHARACTER_TERMINATION: GHOSTKILL race=%s ; class=%s ; trait=%s ; %d de
 
 s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n", pvp ? "PVP" : "NOGHOST", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->deaths);
 
-#if CHATTERBOX_LEVEL > 2
-			if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
-				//msg_broadcast(0, "Suddenly a thought comes to your mind:");
-				msg_broadcast(0, "Who let the dogs out?");
-			} else if (p_ptr->last_words) {
-				char death_message[80];
-				(void)get_rnd_line("death.txt", 0, death_message, 80);
-				msg_print(Ind, death_message);
-			}
-#endif	// CHATTERBOX_LEVEL
 			death_type = DEATH_PERMA;
 			Send_chardump(Ind, "-death");
 			Net_output1(Ind);
@@ -9534,22 +9533,42 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 
 	/* Tell him */
 	msg_print(Ind, "\374\377RYou die.");
-	//msg_print(Ind, NULL);
+
 #if CHATTERBOX_LEVEL > 2
-	if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(50)) {
+ #ifdef WHO_LET_THE_DOGS_OUT
+	if (strstr(p_ptr->died_from, "Farmer Maggot's dog") && magik(WHO_LET_THE_DOGS_OUT)) {
 		//msg_broadcast(0, "Suddenly a thought comes to your mind:");
 		msg_broadcast(0, "Who let the dogs out?");
-	} else if (p_ptr->last_words) {
+	} else
+ #endif
+	if (p_ptr->last_words) {
 		char death_message[80];
 
 		(void)get_rnd_line("death.txt", 0, death_message, 80);
 		msg_print(Ind, death_message);
 	}
-#endif	// CHATTERBOX_LEVEL
+#endif
+
+	if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
+#ifdef ENABLE_MAIA
+	    || streq(p_ptr->died_from, "indecisiveness")
+#endif
+	    || streq(p_ptr->died_from, "indetermination")
+	    || streq(p_ptr->died_from, "starvation")
+	    || streq(p_ptr->died_from, "poisonous food")
+	    || insanity)
+		msg_format(Ind, "\374\377RYou have been killed by %s.", p_ptr->died_from);
+	else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
+		msg_format(Ind, "\374\377RYou have been annihilated by %s.", p_ptr->died_from);
+	else msg_format(Ind, "\374\377RYou have been vaporized by %s.", p_ptr->died_from);
 
 	/* Paranoia - ghosts getting destroyed are already caught above */
 	if (p_ptr->ghost) Send_chardump(Ind, "-ghost"); else
 	Send_chardump(Ind, "-death");
+
+#ifdef RACE_DIZ
+	display_diz_death(Ind);
+#endif
 
 	/* Polymorph back to player */
 	if (p_ptr->body_monster) do_mimic_change(Ind, 0, TRUE);
@@ -9572,23 +9591,6 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	p_ptr->update |= PU_SANITY;
 	update_stuff(Ind);
 	p_ptr->safe_sane = FALSE;
-
-	if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
-#ifdef ENABLE_MAIA
-	    || streq(p_ptr->died_from, "indecisiveness")
-#endif
-	    || streq(p_ptr->died_from, "indetermination")
-	    || streq(p_ptr->died_from, "starvation")
-	    || streq(p_ptr->died_from, "poisonous food")
-	    || insanity)
-		msg_format(Ind, "\374\377RYou have been killed by %s.", p_ptr->died_from);
-	else if ((p_ptr->deathblow < 30) || ((p_ptr->deathblow < p_ptr->mhp / 2) && (p_ptr->deathblow < 450)))
-		msg_format(Ind, "\374\377RYou have been annihilated by %s.", p_ptr->died_from);
-	else msg_format(Ind, "\374\377RYou have been vaporized by %s.", p_ptr->died_from);
-
-#ifdef RACE_DIZ
-	display_diz_death(Ind);
-#endif
 
 #if (MAX_PING_RECVS_LOGGED > 0)
 	/* Print last ping reception times */
