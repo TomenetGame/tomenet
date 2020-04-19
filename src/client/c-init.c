@@ -426,13 +426,6 @@ static void init_monster_list() {
 		}
 
 		if (buf[0] == 'N') {
-			if (discard) {
-				/* flashy-thingy tiem */
-				monster_list_idx--;
-
-				discard = FALSE;
-			}
-
 			if (!basehued) {
 				if (multihued) monster_list_any[monster_list_idx - 1] = TRUE;
 				else if (breathhued) monster_list_breath[monster_list_idx - 1] = TRUE;
@@ -440,6 +433,13 @@ static void init_monster_list() {
 			multihued = FALSE;
 			breathhued = FALSE;
 			basehued = FALSE;
+
+			if (discard) {
+				/* flashy-thingy tiem */
+				monster_list_idx--;
+
+				discard = FALSE;
+			}
 
 			/* hard-skip specialties */
 			if (atoi(buf + 2) == RI_BLUE || atoi(buf + 2) == RI_MIRROR) discard = TRUE;
