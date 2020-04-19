@@ -10926,21 +10926,32 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 /* Helper function for character birth: Equip starter items automatically. */
 void inven_carry_equip(int Ind, object_type *o_ptr) {
-#if 1
 	int item = inven_carry(Ind, o_ptr);
 
-	if (wearable_p(o_ptr)
-	    /* default starter ranged weapon is a bow, so equip magic arrow together with it */
-	    && (!is_ammo(o_ptr->tval) || o_ptr->tval == TV_ARROW)) {
+	if (!wearable_p(o_ptr)) return;
+
+	if (!is_ammo(o_ptr->tval)) {
 		suppress_message = TRUE;
 		do_cmd_wield(Ind, item, 0x0);
 		suppress_message = FALSE;
 		/* make the torch somewhat 'used' */
 		if (o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) Players[Ind]->inventory[INVEN_LITE].timeout -= rand_int(FUEL_TORCH / 10);
+	} else {
+		switch (o_ptr->tval) { /* No need to check INVEN_BOW for tval actually */
+		case TV_SHOT:
+			if (Players[Ind]->inventory[INVEN_BOW].sval != SV_SLING) return;
+			break;
+		case TV_ARROW:
+			if (Players[Ind]->inventory[INVEN_BOW].sval != SV_SHORT_BOW && Players[Ind]->inventory[INVEN_BOW].sval != SV_LONG_BOW) return;
+			break;
+		case TV_BOLT:
+			if (Players[Ind]->inventory[INVEN_BOW].sval != SV_LIGHT_XBOW && Players[Ind]->inventory[INVEN_BOW].sval != SV_HEAVY_XBOW) return;
+			break;
+		}
+		suppress_message = TRUE;
+		do_cmd_wield(Ind, item, 0x0);
+		suppress_message = FALSE;
 	}
-#else
-	inven_carry(Ind, o_ptr);
-#endif
 }
 
 

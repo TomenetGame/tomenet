@@ -1282,10 +1282,10 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 
 	{
 		/* Archer */
+		{ TV_BOW, SV_LONG_BOW, 0 },
 		{ TV_ARROW, SV_AMMO_MAGIC, 0 },
 		{ TV_SHOT, SV_AMMO_MAGIC, 0 },
 		{ TV_BOLT, SV_AMMO_MAGIC, 0 },
-		{ TV_BOW, SV_LONG_BOW, 0 },
 		{ TV_SOFT_ARMOR, SV_LEATHER_SCALE_MAIL, 0 },
 	},
 
@@ -1437,10 +1437,10 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 
 	{
 		/* Archer */
+		{ TV_BOW, SV_LONG_BOW, 0 },//just doesn't work as fruit bat
 		{ TV_ARROW, SV_AMMO_MAGIC, 0 },
 		{ TV_SHOT, SV_AMMO_MAGIC, 0 },
 		{ TV_BOLT, SV_AMMO_MAGIC, 0 },
-		{ TV_BOW, SV_LONG_BOW, 0 },//just doesn't work as fruit bat
 		{ TV_HELM, SV_METAL_CAP, 0 },
 	},
 
@@ -1899,6 +1899,7 @@ static void player_outfit(int Ind) {
 				} break;
 			}
 		}
+		if (tv == TV_BOW && p_ptr->prace == RACE_HOBBIT) sv = SV_SLING;
 
 		/* If someone uses too low STR/DEX values, "downgrade"
 		   his starter weapon to a lighter version to ensure at least 2 bpr. */
@@ -2119,17 +2120,17 @@ static void player_outfit(int Ind) {
 	o_ptr->discount = 100;
 	do_player_outfit();
 /* replacing phase scrolls with more $. Stacking issues annoy me. -Molt */
-#if 0
+ #if 0
 	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PHASE_DOOR));
 	o_ptr->number = (p_ptr->pclass == CLASS_ARCHER) ? 10 : 5;
 	o_ptr->discount = 100;
 	do_player_outfit();
-#else
+ #else
 	if (p_ptr->pclass == CLASS_ARCHER)
 	p_ptr->au += 100;
 	else
 	p_ptr->au += 50;
-#endif
+ #endif
 #endif
 
 	/* Hack -- Give the player newbie guide Parchment */
