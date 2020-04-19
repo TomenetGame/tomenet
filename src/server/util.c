@@ -2291,7 +2291,8 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 	    (wild_info[wpos->wy][wpos->wx].type == WILD_LAKE || wild_info[wpos->wy][wpos->wx].bled == WILD_LAKE ||
 	    wild_info[wpos->wy][wpos->wx].type == WILD_RIVER || wild_info[wpos->wy][wpos->wx].bled == WILD_RIVER ||
 	    wild_info[wpos->wy][wpos->wx].type == WILD_SWAMP || wild_info[wpos->wy][wpos->wx].bled == WILD_SWAMP)) {
-		Send_sfx_ambient(Ind, SFX_AMBIENT_LAKE, smooth);
+		if (!cold_place(wpos)) Send_sfx_ambient(Ind, SFX_AMBIENT_LAKE, smooth);
+		else Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, smooth);
 	}
 }
 
@@ -2345,7 +2346,7 @@ void process_ambient_sfx(void) {
 		case WILD_RIVER:
 		case WILD_LAKE:
 		case WILD_SWAMP:
-			if (season == SEASON_WINTER) break;
+			if (cold_place(&p_ptr->wpos)) break;
 			sound_floor_vol(&p_ptr->wpos, "animal_toad", NULL, SFX_TYPE_AMBIENT, vol);
 			w_ptr->ambient_sfx_timer = 4 + rand_int(4);
 			break;
@@ -2363,7 +2364,7 @@ void process_ambient_sfx(void) {
 		case WILD_FOREST:
 		case WILD_DENSEFOREST:
 			if (IS_DAY) {
-				if (season == SEASON_WINTER) {
+				if (cold_place(&p_ptr->wpos)) {
 					sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, vol);
 					w_ptr->ambient_sfx_timer = 30 + rand_int(60);
 				} else {
