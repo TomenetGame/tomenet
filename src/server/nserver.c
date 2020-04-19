@@ -2556,7 +2556,7 @@ static void sync_options(int Ind, bool *options) {
 		if (!p_ptr->mute_when_idle && p_ptr->muted_when_idle) Send_idle(Ind, FALSE);
 	}
 
-	if (!is_older_than(&p_ptr->version, 4, 7, 2, 0, 0, 1)) p_ptr->find_ignore_montraps = options[130];
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) p_ptr->find_ignore_montraps = options[130];
 	else p_ptr->find_ignore_montraps = TRUE;
     }
 }
@@ -7140,7 +7140,7 @@ int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cpt
 #ifdef MINDLINK_STORE
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&p_ptr2->version, 4, 7, 2, 0, 0, 0))
+		if (is_atleast(&p_ptr2->version, 4, 7, 3, 0, 0, 0))
 			Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%S%c%c%hd%s", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval, "");
 		else if (is_newer_than(&p_ptr2->version, 4, 4, 7, 0, 0, 0))
 			Packet_printf(&connp2->c, "%c%c%c%hd%hd%d%S%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
@@ -7149,7 +7149,7 @@ int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cpt
 	}
 #endif
 
-	if (is_newer_than(&Players[Ind]->version, 4, 7, 2, 0, 0, 0))
+	if (is_atleast(&Players[Ind]->version, 4, 7, 3, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd%s", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval, powers);
 	else if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
