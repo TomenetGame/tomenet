@@ -53,15 +53,15 @@ struct object_type {
 
 	byte attr;
 
-	byte xtra1;			/* Extra info type */
-	byte xtra2;			/* Extra info index */
-	byte xtra3;			/* Extra info type */
-	byte xtra4;			/* Extra info type */
-	byte xtra5;			/* Extra info index */
-	byte xtra6;			/* Extra info type */
-	byte xtra7;			/* Extra info index */
-	byte xtra8;			/* Extra info type */
-	byte xtra9;			/* Extra info index */
+	s16b xtra1;			/* Extra info type */
+	s16b xtra2;			/* Extra info index */
+	s16b xtra3;			/* Extra info type */
+	s16b xtra4;			/* Extra info type */
+	s16b xtra5;			/* Extra info index */
+	s16b xtra6;			/* Extra info type */
+	s16b xtra7;			/* Extra info index */
+	s16b xtra8;			/* Extra info type */
+	s16b xtra9;			/* Extra info index */
 
 	s16b to_h;			/* Plusses to hit */
 	s16b to_d;			/* Plusses to damage */
