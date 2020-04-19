@@ -1467,6 +1467,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			/* Print questing flag */
 			if (q_ptr->xorder_id) fprintf(fff, " X");
 		}
+		/* If both are in IDDC, display depth, for easier floor management */
+		else if (iddc && in_irondeepdive(&p_ptr->wpos)) fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 
 		//fprintf(fff, ", %s@%s", q_ptr->accountname, q_ptr->hostname);
 
@@ -1560,6 +1562,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			/* Print questing flag */
 			if (q_ptr->xorder_id) fprintf(fff, " X");
 		}
+		/* If both are in IDDC, display depth, for easier floor management */
+		else if (iddc && in_irondeepdive(&p_ptr->wpos)) fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 
 		/* Print afk/info message */
 		if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
@@ -1701,6 +1705,8 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 			    );
 #endif
 		}
+		/* If both are in IDDC, display depth, for easier floor management */
+		else if (iddc && in_irondeepdive(&p_ptr->wpos)) fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 
 		/* Quest flag */
 		fprintf(fff, " %c", (q_ptr->xorder_id ? 'X' : ' '));
