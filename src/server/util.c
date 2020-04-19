@@ -7306,7 +7306,27 @@ cptr flags_str(u32b flags) {
 #endif
 }
 
-/* get player's racial attribute */
+/* get player's racial attribute - return empty string if race is forced by class. */
+cptr get_prace2(player_type *p_ptr) {
+#ifdef ENABLE_MAIA
+	if (p_ptr->prace == RACE_MAIA && p_ptr->ptrait) {
+		if (p_ptr->ptrait == TRAIT_ENLIGHTENED)
+			return "Enlightened ";
+		else if (p_ptr->ptrait == TRAIT_CORRUPTED) {
+ #ifdef ENABLE_HELLKNIGHT
+			if (p_ptr->pclass == CLASS_HELLKNIGHT) return ""; else
+ #endif
+			return "Corrupted ";
+		} else
+			return special_prace_lookup2[p_ptr->prace];
+	} else
+#endif
+#ifdef ENABLE_DEATHKNIGHT
+	if (p_ptr->pclass == CLASS_DEATHKNIGHT) return ""; else
+#endif
+	return special_prace_lookup2[p_ptr->prace];
+}
+/* like get_prace2(), but always returns the race. Also, no trailing space. */
 cptr get_prace(player_type *p_ptr) {
 #ifdef ENABLE_MAIA
 	if (p_ptr->prace == RACE_MAIA && p_ptr->ptrait) {

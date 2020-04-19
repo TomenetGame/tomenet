@@ -676,7 +676,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 
 	fprintf(fff, "%s, %sL%d \377%c", q_ptr->name, attr_p, q_ptr->lev, attr);
 
-	fprintf(fff, "%s %s", get_prace(q_ptr),  p);
+	fprintf(fff, "%s%s", get_prace2(q_ptr),  p);
 
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
@@ -812,7 +812,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, "%s, %sL%d\377%c %s ", q_ptr->name, attr_p, q_ptr->lev, attr, q_ptr->male ? "Male" : "Female");
   #endif
 
-	fprintf(fff, "%s %s", get_prace(q_ptr),  p);
+	fprintf(fff, "%s%s", get_prace2(q_ptr),  p);
 
 	/* PK */
 	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
@@ -940,8 +940,8 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 	fprintf(fff, "%s, %sL%d\377%c ", q_ptr->name, attr_p, q_ptr->lev, attr);
   #endif
 
-	fprintf(fff, "%s", get_prace(q_ptr));
-	fprintf(fff, " %s", class_info[q_ptr->pclass].title);
+	fprintf(fff, "%s", get_prace2(q_ptr));
+	fprintf(fff, "%s", class_info[q_ptr->pclass].title);
 
 	/* location */
 	if (attr == 'G' || attr == 'B' || admin
@@ -1212,7 +1212,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
     #else
 	fprintf(fff, "  %s the ", q_ptr->name);
     #endif
-	fprintf(fff, "%s %s", get_prace(q_ptr),  p); 
+	fprintf(fff, "%s%s", get_prace2(q_ptr),  p); 
    #endif
 	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
 

@@ -4009,7 +4009,7 @@ void do_cmd_look(int Ind, int dir) {
 			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, race_info[q_ptr->prace].title, get_ptitle(q_ptr, FALSE));
 			//, class_info[q_ptr->pclass].title
 #else /* use special_prace_lookup */
-			snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, get_prace(q_ptr), get_ptitle(q_ptr, FALSE));
+			snprintf(out_val, sizeof(out_val), "%s the %s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE));
 #endif
 		}
 	} else if (c_ptr->m_idx > 0 && p_ptr->mon_vis[c_ptr->m_idx]) {	/* TODO: handle monster mimics */

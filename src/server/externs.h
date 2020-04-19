@@ -130,6 +130,7 @@ extern s16b level_speeds[256];
 extern s32b player_exp[PY_MAX_LEVEL + 1];
 extern player_race race_info[MAX_RACE];
 extern char *special_prace_lookup[MAX_RACE];
+extern char *special_prace_lookup2[MAX_RACE];
 extern player_class class_info[MAX_CLASS];
 extern player_trait trait_info[MAX_TRAIT];
 
@@ -2014,6 +2015,7 @@ extern void handle_request_return_cfr(int Ind, int id, bool cfr);
 
 extern void limit_energy(player_type *p_ptr);
 extern cptr get_prace(player_type *p_ptr);
+extern cptr get_prace2(player_type *p_ptr);
 extern cptr get_ptitle(player_type *p_ptr, bool short_form);
 
 #ifdef DUNGEON_VISIT_BONUS

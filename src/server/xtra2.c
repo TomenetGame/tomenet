@@ -8263,12 +8263,12 @@ void player_death(int Ind) {
 			deep_dive_level[i] = ABS(p_ptr->wpos.wz);
 			//strcpy(deep_dive_name[i], p_ptr->name);
 #ifdef IDDC_HISCORE_SHOWS_ICON
-			sprintf(deep_dive_name[i], "%s, %s %s (\\{%c%c\\{s/\\{%c%d\\{s),",
-			    p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title, color_attr_to_char(p_ptr->cp_ptr->color), p_ptr->fruit_bat ? 'b' : '@',
+			sprintf(deep_dive_name[i], "%s, %s%s (\\{%c%c\\{s/\\{%c%d\\{s),",
+			    p_ptr->name, get_prace2(p_ptr), class_info[p_ptr->pclass].title, color_attr_to_char(p_ptr->cp_ptr->color), p_ptr->fruit_bat ? 'b' : '@',
 			    p_ptr->ghost ? 'r' : 's', p_ptr->max_plv);
 #else
-			sprintf(deep_dive_name[i], "%s, %s %s (\\{%c%d\\{s),",
-			    p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title,
+			sprintf(deep_dive_name[i], "%s, %s%s (\\{%c%d\\{s),",
+			    p_ptr->name, get_prace2(p_ptr), class_info[p_ptr->pclass].title,
 			    p_ptr->ghost ? 'r' : 's', p_ptr->max_plv);
 #endif
 			strcpy(deep_dive_char[i], p_ptr->name);
@@ -12206,7 +12206,7 @@ bool target_set(int Ind, int dir) {
 				if (q_ptr->body_monster) {
 					snprintf(out_val, sizeof(out_val), "%s the %s (%s)", q_ptr->name, r_name + r_info[q_ptr->body_monster].name, get_ptitle(q_ptr, FALSE));
 				} else {
-					snprintf(out_val, sizeof(out_val), "%s the %s %s", q_ptr->name, get_prace(q_ptr), get_ptitle(q_ptr, FALSE));
+					snprintf(out_val, sizeof(out_val), "%s the %s%s", q_ptr->name, get_prace2(q_ptr), get_ptitle(q_ptr, FALSE));
 				}
 			}
 			//strcpy(out_val, "[<dir>, t, q] ");

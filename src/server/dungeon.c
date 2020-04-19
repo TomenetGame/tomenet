@@ -3984,12 +3984,12 @@ void recall_player(int Ind, char *message) {
 			deep_dive_level[i] = -1;
 			//strcpy(deep_dive_name[i], p_ptr->name);
 #ifdef IDDC_HISCORE_SHOWS_ICON
-			sprintf(deep_dive_name[i], "%s, %s %s (\\{%c%c\\{s/\\{%c%d\\{s),",
-			    p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title, color_attr_to_char(p_ptr->cp_ptr->color), p_ptr->fruit_bat ? 'b' : '@',
+			sprintf(deep_dive_name[i], "%s, %s%s (\\{%c%c\\{s/\\{%c%d\\{s),",
+			    p_ptr->name, get_prace2(p_ptr), class_info[p_ptr->pclass].title, color_attr_to_char(p_ptr->cp_ptr->color), p_ptr->fruit_bat ? 'b' : '@',
 			    p_ptr->ghost ? 'r' : 's', p_ptr->max_plv);
 #else
-			sprintf(deep_dive_name[i], "%s, %s %s (\\{%c%d\\{s),",
-			    p_ptr->name, get_prace(p_ptr), class_info[p_ptr->pclass].title,
+			sprintf(deep_dive_name[i], "%s, %s%s (\\{%c%d\\{s),",
+			    p_ptr->name, get_prace2(p_ptr), class_info[p_ptr->pclass].title,
 			    p_ptr->ghost ? 'r' : 's', p_ptr->max_plv);
 #endif
 			strcpy(deep_dive_char[i], p_ptr->name);

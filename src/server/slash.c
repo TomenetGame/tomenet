@@ -4416,6 +4416,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				int lev = lookup_player_level(p_id);
 				byte mode = lookup_player_mode(p_id);
 				char col;
+				player_type Dummy;
+
+				Dummy.pclass = (ptype & 0xff00) >> 8;
+				Dummy.prace = ptype & 0xff;
 
 				switch (mode & MODE_MASK) { // TODO: give better modifiers
 				case MODE_NORMAL:
@@ -4445,21 +4449,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					/* Note: This is 13 characters too long if name is really max and level 2-digits and depth is -XXX.
 					   Basically, the non-admin version perfectly fills out the whole line already if maxed except for royal title.
 					   So we shorten some text in it.. */
-					msg_format(Ind, "Character: %sLevel %d \377%c%s %s\377w, account: \377s%s%s (%d,%d,%d)",
+					msg_format(Ind, "Character: %sLevel %d \377%c%s%s\377w, account: \377s%s%s (%d,%d,%d)",
 					    (lookup_player_winner(p_id) & 0x01) ? "\377v" : "",
 					    lev, col,
 					    //race_info[ptype & 0xff].title,
-					    special_prace_lookup[ptype & 0xff],
+					    //special_prace_lookup[ptype & 0xff],
+					    get_prace2(&Dummy),
 					    class_info[ptype >> 8].title,
 					    acc,
 					    online ? "\377G" : "",
 					    wpos.wx, wpos.wy, wpos.wz);
 				} else
-				msg_format(Ind, "That %slevel %d \377%c%s %s\377w belongs to account: \377s%s%s",
+				msg_format(Ind, "That %slevel %d \377%c%s%s\377w belongs to account: \377s%s%s",
 				    (lookup_player_winner(p_id) & 0x01) ? "royal " : "",
 				    lev, col,
 				    //race_info[ptype & 0xff].title,
-				    special_prace_lookup[ptype & 0xff],
+				    //special_prace_lookup[ptype & 0xff],
+				    get_prace2(&Dummy),
 				    class_info[ptype >> 8].title,
 				    acc,
 				    online ? " \377G(online)" : "");

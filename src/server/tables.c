@@ -2322,6 +2322,42 @@ char *special_prace_lookup[MAX_RACE] = {
 #endif
 };
 
+/* Extra trailing space.. */
+char *special_prace_lookup2[MAX_RACE] = {
+/* RACE_HUMAN */ 	"Human ",
+/* RACE_HALF_ELF */ 	"Half-Elven ",
+/* RACE_ELF */ 		"Elven ",
+/* RACE_HOBBIT */ 	"Hobbitonian ",
+/* RACE_GNOME */ 	"Gnome ",
+/* RACE_DWARF */ 	"Dwarven ",
+/* RACE_HALF_ORC */ 	"Half-Orc ",
+/* RACE_HALF_TROLL */ 	"Half-Troll ",
+
+/* RACE_DUNADAN */ 	"Western ",
+/* According to Vir:
+ *  Dunedain: men of the West,
+ *  Dunadan:  man of the West.
+ * "You can't bend in English since it's not"...
+ * "dun" == west, "edain" is men of the three great houses who travelled
+ *  towards the light in the west in the first age befriending the elves.
+ * Yes, I got the whole history off him =)
+ * Sticking with "Western" for now, then. */
+
+/* RACE_HIGH_ELF */ 	"High-Elven ",
+/* RACE_YEEK */ 	"Yeek ",
+/* RACE_GOBLIN */ 	"Goblin ",
+/* RACE_ENT */ 		"Ent ",
+/* RACE_DRACONIAN */ 	"Draconian ",
+#ifdef ENABLE_KOBOLD
+ /* RACE_KOBOLD*/	"Kobold ",
+#endif
+/* RACE_DARK_ELF */ 	"Dark-Elven ",
+/* RACE_VAMPIRE */ 	"Vampire ",
+#ifdef ENABLE_MAIA
+/* RACE_MAIA */		"Maia ",
+#endif
+};
+
 /*
  * Player Race Information:
  *    Title,
