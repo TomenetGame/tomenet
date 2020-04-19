@@ -2075,9 +2075,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
-			if (!p_ptr->cards_diamonds && !p_ptr->cards_hearts && !p_ptr->cards_spades && !p_ptr->cards_clubs) {
+			if (!k) {
 				msg_format(Ind, "\377%cThat was the final card of your stack of cards.", COLOUR_GAMBLE);
 				msg_format_near(Ind, "\377%cThat was the final card of the stack of cards.", COLOUR_GAMBLE);
+			} else if (k == 1) {
+				msg_format(Ind, "\377%cThere is only one card remaining of your stack of cards.", COLOUR_GAMBLE);
+				msg_format_near(Ind, "\377%cThere is only one card remaining of the stack of cards.", COLOUR_GAMBLE);
 			}
 #endif
 #ifdef USE_SOUND_2010
