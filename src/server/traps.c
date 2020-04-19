@@ -3398,6 +3398,8 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 		/* Copy the object */
 		object_copy(q_ptr, o_ptr);
 
+		/* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
+		o_ptr->embed = 0;
 		/* Delete the object */
 		delete_object_idx(this_o_idx, FALSE);
 
@@ -3428,7 +3430,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x, s16b o_idx) {
 #endif
 			next_o_idx = o_ptr->next_o_idx;
 			o_ptr->held_m_idx = 0;
-			o_ptr->embed = 0;
+			o_ptr->embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
 			delete_object_idx(this_o_idx, TRUE);
 		}
 		return;
@@ -3455,7 +3457,6 @@ void erase_mon_trap(worldpos *wpos, int y, int x, s16b o_idx) {
 
 		/* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
 		o_ptr->embed = 0;
-
 		/* Delete the object */
 		delete_object_idx(this_o_idx, TRUE);
 	}
@@ -5106,6 +5107,7 @@ bool mon_hit_trap(int m_idx) {
 
 					if (load_o_ptr->number <= 0) {
 						remove = TRUE;
+						o_list[kit_o_ptr->next_o_idx].embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
 						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
 						kit_o_ptr->next_o_idx = 0;
 					}
@@ -5155,6 +5157,7 @@ bool mon_hit_trap(int m_idx) {
 
 				if (load_o_ptr->number <= 0) {
 					remove = TRUE;
+					o_list[kit_o_ptr->next_o_idx].embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
 					delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
 					kit_o_ptr->next_o_idx = 0;
 				}
@@ -5200,6 +5203,7 @@ bool mon_hit_trap(int m_idx) {
 					remove = TRUE;
 					/* runes stay, scrolls poof */
 					if (load_o_ptr->tval == TV_SCROLL) {
+						o_list[kit_o_ptr->next_o_idx].embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
 						delete_object_idx(kit_o_ptr->next_o_idx, TRUE);
 						kit_o_ptr->next_o_idx = 0;
 					} else {
