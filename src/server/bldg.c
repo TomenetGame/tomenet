@@ -2600,7 +2600,7 @@ if (is_admin(p_ptr))
 				msg_print(Ind, "You need an up-to-date client to order an item.");
 				break;
 			}
-			Send_request_str(Ind, RID_ITEM_ORDER, "Which item would you like to order? ", "");
+			Send_request_str(Ind, RID_ITEM_ORDER, "Which item would you like to order? (Or \"cancel\") ", "");
 			break;
 #endif
 #ifdef ENABLE_MERCHANT_MAIL

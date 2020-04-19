@@ -9204,6 +9204,13 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		bool old_rand;
 		u32b tmp_seed;
 
+		/* Cancel an ongoing order? */
+		if (!strcasecmp(str, "cancel")) {
+			p_ptr->item_order_store = 0;
+			msg_print(Ind, "Alright, your order has been cancelled.");
+			return;
+		}
+
 		if (p_ptr->item_order_store != 0) {
 			if (p_ptr->item_order_store - 1 == p_ptr->store_num && p_ptr->item_order_town == gettown(Ind))
 				msg_print(Ind, "\377yYou still have an order open at this store!");
@@ -10072,7 +10079,8 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
  #ifdef TEST_SERVER
 		p_ptr->item_order_turn = turn; //instant delivery for testing purpose
  #else
-		p_ptr->item_order_turn = turn + dur;
+		if (p_ptr->admin_dm) p_ptr->item_order_turn = turn; //instant delivery for admin dm in any case..
+		else p_ptr->item_order_turn = turn + dur;
  #endif
 		/* give in-game-time message */
 		if (dur <= HOUR / 2) msg_format(Ind, "It should arrive shortly.");
