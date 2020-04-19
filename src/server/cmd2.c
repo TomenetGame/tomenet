@@ -3107,6 +3107,8 @@ bool twall(int Ind, int y, int x, byte feat) {
     (as finding any other special thing) only on digging skill.
 */
 #define TRAP_REVEALS_DOOR
+/* Chance to find a rune when having proficiency in runes */
+#define RUNE_CHANCE 1000
 void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
@@ -3192,6 +3194,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	if (p_ptr->s_info[SKILL_R_CHAO].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_CHAO].value;
 	if (p_ptr->s_info[SKILL_R_MANA].value > rune_proficiency) rune_proficiency = p_ptr->s_info[SKILL_R_MANA].value;
 	rune_proficiency /= 1000;
+	if (rune_proficiency >= 5) rune_proficiency = rune_proficiency + 10;
+	else if (rune_proficiency) rune_proficiency = (rune_proficiency + 2) * (rune_proficiency + 2) / 3;
 
 	find_level_base = find_level;
 	if (mining > find_level * 2) mining = find_level * 2;
@@ -3453,8 +3457,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		    }
 		}
 
-		/* hack 1/2: rune proficiency adds to chance for 'special feature' uncovering giving a rune */
-		if (dug_feat == FEAT_NONE && !tval && rand_int(1000) < rune_proficiency) {
+		/* hack 1/2: rune proficiency adds to chance for 'special feature' uncovering giving a rune, if nothing else is uncovered */
+		if (dug_feat == FEAT_NONE && !tval && rand_int(RUNE_CHANCE) < rune_proficiency && !p_ptr->IDDC_logscum) {
 			tval = TV_RUNE;
 			get_obj_num_hook = NULL;
 			get_obj_num_prep_tval(tval, RESF_MID);
@@ -3717,7 +3721,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 		}
 	}
-	/* Quartz / Magma / Sandwall */
+	/* Quartz / Magma / Sandwall, with or without treasure */
 	else if (((cfeat >= FEAT_MAGMA) &&
 		(cfeat <= FEAT_QUARTZ_K)) ||
 		((cfeat >= FEAT_SANDWALL) &&
@@ -3729,26 +3733,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		bool nonobvious = (cfeat == FEAT_QUARTZ_H || cfeat == FEAT_MAGMA_H || cfeat == FEAT_SANDWALL_H); //these hidden treasure veins are currently not generated, so..
 		//actually make 'non-obvious' also mean treasure veins that aren't generated out in the open, but enclosed in streamers:
 		if (cinfo & CAVE_ENCASED) nonobvious = TRUE;
-
-		/* Non-mapped treasure (ie treasure that requires detection or digging it up for LoS, to find it) */
-		if (l_ptr && !quiet_borer &&
-		    (dug_feat == FEAT_NONE || dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) &&
-		    !(special_k_idx && tval == TV_GOLEM) &&
-		    nonobvious) {
-			/* hack 2/2: rune proficiency for 'special feature' uncovering */
-			if (rand_int(1000) < rune_proficiency) {
-				int fallback = special_k_idx, fallback_tval = tval;
-
-				tval = TV_RUNE;
-				get_obj_num_hook = NULL;
-				get_obj_num_prep_tval(tval, RESF_MID);
-				special_k_idx = get_obj_num(10 + getlevel(&p_ptr->wpos), RESF_MID);
-				if (!special_k_idx) {
-					special_k_idx = fallback;
-					tval = fallback_tval;
-				}
-			}
-		}
 
 		/* Found gold */
 		if ((cfeat >= FEAT_MAGMA_H) &&
@@ -3774,6 +3758,28 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 		if (istown(wpos) || p_ptr->IDDC_logscum) gold = FALSE;
 
+		/* hack 2/2: rune proficiency gives a cance to find a rune instead of cash, for nonobvious (enclosed) treasure veins */
+		if (gold &&
+		    l_ptr && !quiet_borer && !p_ptr->IDDC_logscum &&
+		    !(special_k_idx && tval == TV_GOLEM) && /* golem actually overrides even proficiency-based rune chance.. */
+		    nonobvious) {
+			/* Old 'rune' chance doesn't apply to 'gold', so reset it first */
+			if (tval == TV_RUNE) special_k_idx = tval = 0;
+			/* Apply new rune-proficiency based chance to find a rune from 'gold'. */
+			if (rand_int(RUNE_CHANCE / 2) < rune_proficiency) {
+				int fallback = special_k_idx, fallback_tval = tval;
+
+				tval = TV_RUNE;
+				get_obj_num_hook = NULL;
+				get_obj_num_prep_tval(tval, RESF_MID);
+				special_k_idx = get_obj_num(10 + getlevel(&p_ptr->wpos), RESF_MID);
+				if (!special_k_idx) {
+					special_k_idx = fallback;
+					tval = fallback_tval;
+				}
+			}
+		}
+
 		/* Success */
 		if (okay && twall(Ind, y, x, soft ? FEAT_SAND : FEAT_FLOOR)) {
 			msg_format(Ind, "You have finished the tunnel in the %s.", soft ? "sandwall" : (hard ? "quartz vein" : "magma vein"));
@@ -3782,51 +3788,15 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 
 			/* Found treasure */
-
-			/* Non-mapped treasure (ie treasure that requires detection or digging it up for LoS, to find it):
-			   If no other feature/item was planned, give extra chance for instant-rune instead of just cash. */
-			if (gold && l_ptr && !quiet_borer && !p_ptr->IDDC_logscum &&
-			    (dug_feat == FEAT_NONE || dug_feat == FEAT_WAY_MORE || dug_feat == FEAT_WAY_LESS) &&
-			    !(special_k_idx && tval == TV_GOLEM) &&
-			    nonobvious &&
-			    /* hack 2/2: rune proficiency for 'special feature' uncovering */
-			    rand_int(1000) < rune_proficiency) {
-				tval = TV_RUNE;
-				get_obj_num_hook = NULL;
-				get_obj_num_prep_tval(tval, RESF_MID);
-				special_k_idx = get_obj_num(10 + getlevel(&p_ptr->wpos), RESF_MID);
-				if (special_k_idx) {
-					invcopy(&forge, special_k_idx);
-					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
-					forge.number = 1;
-					//forge.level = ;
-					forge.marked2 = ITEM_REMOVAL_NORMAL;
-					msg_print(Ind, "You have found something!");
-					drop_near(0, &forge, -1, wpos, y, x);
-					s_printf("DIGGING: %s found a rune (nonobvious vein).\n", p_ptr->name);
-				} else {
-					object_level = find_level;
-					/* abuse tval: reward the special effort at lower character levels..
-					   and add a basic x3 bonus for gold from veins in general. */
-					tval = 3 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
-					if (nonobvious) s_printf("DIGGING: %s digs nonobvious (x%d) (runefallback).\n", p_ptr->name, tval);
-					place_gold(Ind, wpos, y, x, tval, 0);
-					object_level = old_object_level;
-				}
-				note_spot_depth(wpos, y, x);
-				everyone_lite_spot(wpos, y, x);
-				msg_print(Ind, "You have found something!");
-			} else
-			/* Normal results */
 			if (gold) {
-				if (special_k_idx && tval == TV_GOLEM) {
+				if (special_k_idx && (tval == TV_GOLEM || tval == TV_RUNE)) {
 					invcopy(&forge, special_k_idx);
 					apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 					forge.number = 1;
 					//forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					drop_near(0, &forge, -1, wpos, y, x);
-					s_printf("DIGGING: %s found a metal piece.\n", p_ptr->name);
+					s_printf("DIGGING: %s found a %s.\n", p_ptr->name, tval == TV_GOLEM ? "metal piece" : "rune");
 				} else {
 					object_level = find_level;
 					/* abuse tval: reward the special effort at lower character levels..
