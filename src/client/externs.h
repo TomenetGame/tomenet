@@ -32,6 +32,7 @@ extern bool ask_for_bigmap(void);
 extern void get_screen_font_name(char *buf);
 extern void animate_palette(void);
 extern void set_palette(byte c, byte r, byte g, byte b);
+extern void get_palette(byte c, byte *r, byte *g, byte *b);
 #endif
 
 #ifdef USE_XAW
@@ -610,7 +611,7 @@ extern void toggle_weather(void);
 extern bool sound_bell(void);
 extern bool sound_page(void);
 extern bool sound_warning(void);
-extern int bell_sound_idx, page_sound_idx, warning_sound_idx, rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, snow2_sound_idx, browse_sound_idx, browsebook_sound_idx;
+extern int bell_sound_idx, page_sound_idx, warning_sound_idx, rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, snow2_sound_idx, browse_sound_idx, browsebook_sound_idx, thunder_sound_idx;
 #endif
 extern errr options_dump(cptr fname);
 extern bool parse_macro;
@@ -708,7 +709,7 @@ extern generic_term_info term_prefs[10];
 
 /* nclient.c (former netclient.c) */
 extern int ticks, ticks10, existing_characters, command_confirmed;
-extern int animate_lightning;
+extern int animate_lightning, animate_lightning_vol;
 extern void do_flicker(void);
 extern void do_mail(void);
 extern void update_ticks(void);
@@ -931,6 +932,7 @@ extern void get_screen_font_name(char *buf);
 extern bool win_dontmoveuser;
 extern void animate_palette(void);
 extern void set_palette(byte c, byte r, byte g, byte b);
+extern void get_palette(byte c, byte *r, byte *g, byte *b);
 extern void store_audiopackfolders(void);
 #endif
 extern void store_crecedentials(void);

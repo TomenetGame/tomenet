@@ -3439,15 +3439,13 @@ int Receive_sound(void) {
 	if (use_sound) {
 		if (t == SFX_TYPE_WEATHER && (noweather_mode || c_cfg.no_weather)) return 1;
 
-#if 0
+#ifdef TEST_CLIENT
 		/* hack for thunderstorm weather sfx - delay it and cast a lightning lighting effect first */
-		if (t == SFX_TYPE_WEATHER) {
-			char tmp[MAX_CHARS];
-
-			strcpy(tmp, "return get_sound_index(\"thunder\")");
-			if (exec_lua(0, tmp) == s1) {
-				animate_lightning = 1;
-			}
+		if (t == SFX_TYPE_WEATHER && s1 == thunder_sound_idx) {
+			animate_lightning = 1;
+			animate_lightning_vol = v;
+			/* Delay thunderclap! */
+			return 1;
 		}
 #endif
 

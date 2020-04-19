@@ -3274,4 +3274,9 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	Term_activate(&old_td->t);
 #endif
 }
+void get_palette(byte c, byte *r, byte *g, byte *b) {
+	*r = color_table[c][1];
+	*g = color_table[c][2];
+	*b = color_table[c][3];
+}
 #endif

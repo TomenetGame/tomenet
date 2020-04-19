@@ -17,7 +17,7 @@
 /* Don't display 'Trait' if traits aren't available */
 #define HIDE_UNAVAILABLE_TRAIT
 
-int animate_lightning = 0;
+int animate_lightning = 0, animate_lightning_vol = 100;
 
 /*
  * Print character info at given row, column in a 13 char field
@@ -3144,40 +3144,58 @@ void do_weather() {
 	bool ticks_ok = FALSE;
 
 
-/* Track 10ms ticks and put experimental/testing stuff here ---------------- */
+/* Track 10ms ticks; Also, put experimental/testing stuff here ---------------- */
 
 	/* attempt to keep track of 'deci-ticks' (10ms resolution) */
 	if (ticks10 != weather_ticks10) {
 		weather_ticks10 = ticks10;
 		ticks_ok = TRUE;
 
+	/* --- experimental stuff --- */
+
 		/* Testing: lightning lighting via palette animation */
 		if (animate_lightning) {
+			static byte or[16], og[16], ob[16];
+
 			/* Animate palette */
 			switch (animate_lightning) {
 			case 1:
-				//which colours to affect? WHITE (17), SLATE (18), LWHITE (25), BLUE (22), LDARK (24)?
+				/* First thing: Backup all colours before temporarily manipulating them */
+				for (i = 0; i < 16; i++) get_palette(i + 16, &or[i], &og[i], &ob[i]);
+
+				//which colours to affect? WHITE (17), SLATE (18), LWHITE (25), BLUE (22), LDARK (24), RED (20), LGREEN (29), GREEN (21), LUMBER (31), UMBER (23)
 				set_palette(17, 0x99, 0x99, 0x99);
 				set_palette(18, 0xCC, 0xCC, 0xFF);
 				set_palette(25, 0x25, 0x99, 0x99);
 				set_palette(22, 0x66, 0x66, 0xFF);
 				set_palette(24, 0x88, 0x88, 0x88);
+				set_palette(20, 0xFF, 0x77, 0x88);
+				set_palette(21, 0x33, 0xFF, 0x33);
+				set_palette(23, 0xAD, 0x88, 0x33);
+				set_palette(29, 0xBB, 0xFF, 0xBB);
+				set_palette(31, 0xF7, 0xCD, 0x85);
 				set_palette(127, 0, 0, 0); //refresh
 				break;
 			case 15:
-				//which colours to affect? WHITE (17), SLATE (18), LWHITE (25), BLUE (22), LDARK (24)?
-				set_palette(17, 0xff, 0xff, 0xff);
-				set_palette(18, 0x9d, 0x9d, 0x9d);
-				set_palette(25, 0xd7, 0xd7, 0xd7);
-				set_palette(22, 0x00, 0x33, 0xFF);
-				set_palette(24, 0x66, 0x66, 0x66);
+				/* Restore all colours to what they were before */
+				for (i = 0; i < 16; i++) set_palette(i + 16, or[i], og[i], ob[i]);
 				set_palette(127, 0, 0, 0); //refresh
 				break;
 			default: break;
 			}
+
+			/* thunderclap follows up */
+			if (animate_lightning == 15 - animate_lightning_vol / 7) {
+#ifndef USE_SOUND_2010
+				Term_xtra(TERM_XTRA_SOUND, s1);
+#else
+				sound(thunder_sound_idx, SFX_TYPE_WEATHER, animate_lightning_vol, 0);
+#endif
+			}
+
 			/* Continue for a couple steps */
 			animate_lightning++;
-			if (animate_lightning == 100) animate_lightning = 0;
+			if (animate_lightning == 16) animate_lightning = 0;
 		}
 	}
 
