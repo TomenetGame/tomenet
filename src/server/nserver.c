@@ -1432,16 +1432,12 @@ static void Delete_player(int Ind) {
 			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 
-			for (i = 1; i <= NumPlayers; i++)
-			{
-				if (Players[i]->conn == NOT_CONNECTED)
-					continue;
-
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
 				/* Don't tell him about himself */
 				if (i == Ind) continue;
-
 				/* Send a little message */
-				msg_format(i, "\374\377%c%s%s has left the game.", COLOUR_SERVER, title, p_ptr->name);
+				if (!Players[i]->taciturn_messages) msg_format(i, "\374\377%c%s%s has left the game.", COLOUR_SERVER, title, p_ptr->name);
 			}
 #ifdef TOMENET_WORLDS
 			if (cfg.worldd_pleave) world_msg(format("\374\377%c%s%s has left the game.", COLOUR_SERVER, title, p_ptr->name));
@@ -1456,10 +1452,8 @@ static void Delete_player(int Ind) {
 #endif
 #endif
 			for (i = 1; i <= NumPlayers; i++) {
-				if (Players[i]->conn == NOT_CONNECTED)
-					continue;
-				if (!is_admin(Players[i]))
-					continue;
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (!is_admin(Players[i])) continue;
 
 				/* Don't tell him about himself */
 				if (i == Ind) continue;
@@ -3556,7 +3550,7 @@ static int Handle_login(int ind) {
 				msg_format(i, "\374\377%c%s%s flaps %s wings into the world.", COLOUR_SERVER, title, p_ptr->name, (p_ptr->male?"his":"her"));
 			else
 				msg_format(i, "\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name);
-		} else
+		} else if (!Players[i]->taciturn_messages)
 			msg_format(i, "\374\377%c%s%s has entered the game.", COLOUR_SERVER, title, p_ptr->name);
 
 		/* /ppage / /gpage command execution: */

@@ -3497,8 +3497,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		msg_print(Ind, "You may not tunnel in this area.");
 		return;
 	}
+
+	/* Ok, we may finally tunnel.. */
+	if (p_ptr->taciturn_messages) suppress_message = TRUE;
+
 	/* Rubble */
-	else if (cfeat == FEAT_RUBBLE) {
+	if (cfeat == FEAT_RUBBLE) {
 		no_quake = TRUE;
 
 		/* Remove the rubble */
