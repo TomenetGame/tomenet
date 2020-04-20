@@ -5684,7 +5684,8 @@ char acc_sum_houses(struct account *acc) {
    for custom character order in account overview screen after login:
    All so far 'unsorted' characters have order 0. Due to the divide&conquer nature of ang_sort (quicksort),
    this means that the result will be partitioned and mixed, so the original ('natural') order is not preserved.
-   This is no biggie, but for extra player comfort, let's imprint the original order here in a first-time conversion: */
+   This is no biggie, but for extra player comfort, let's imprint the original order here in a first-time conversion:
+   (Ind is just for printing a result message, can be 0.) */
 void init_character_ordering(int Ind) {
 	int i, j, processed = 0, imprinted = 0, imprinted_accounts = 0;
 	int ids, *id_list;
@@ -5717,7 +5718,8 @@ void init_character_ordering(int Ind) {
 	s_printf("INIT_CHARACTER_ORDERING: Processed %d; imprinted %d; imprinted accounts %d.\n", processed, imprinted, imprinted_accounts);
 	if (Ind) msg_format(Ind, "Processed chars %d; imprinted chars %d; imprinted accounts %d.", processed, imprinted, imprinted_accounts);
 }
-/* Like init_character_ordering(), but only for one specified account */
+/* Like init_character_ordering(), but only for one specified account.
+   (Ind is just for printing a result message, can be 0.) */
 void init_account_order(int Ind, s32b acc_id) {
 	int i, j, processed = 0, imprinted = 0;
 	int ids, *id_list;
@@ -5752,6 +5754,8 @@ void init_account_order(int Ind, s32b acc_id) {
 					ptr2->order = j + 1; /* Natural order ;) */
 				}
 				if (ids) C_KILL(id_list, ids, int);
+				i = NUM_HASH_ENTRIES;
+				break;
 			}
 			/* Next entry in chain */
 			ptr = ptr->next;
@@ -5763,7 +5767,8 @@ void init_account_order(int Ind, s32b acc_id) {
 /* Resets all character ordering to zero aka unordered.
    While this is the 'natural' order, note that in the Character Overview they will still show up in
    a different order than the one they were created in, due to the divide&conquer nature of ang_sort
-   that is run over them. */
+   that is run over them.
+   (Ind is just for printing a result message, can be 0.) */
 void zero_character_ordering(int Ind) {
 	int i, processed = 0, imprinted = 0;
 	hash_entry *ptr;
@@ -5785,4 +5790,40 @@ void zero_character_ordering(int Ind) {
 	}
 	s_printf("INIT_CHARACTER_ORDERING: Processed %d; imprinted %d.\n", processed, imprinted);
 	if (Ind) msg_format(Ind, "Processed chars %d; imprinted chars %d.", processed, imprinted);
+}
+/* Displays order weights for all characters of an account.
+   (Ind is just for printing a result message, can be 0.) */
+void show_account_order(int Ind, s32b acc_id) {
+	int i, j, processed = 0;
+	int ids, *id_list;
+	hash_entry *ptr, *ptr2;
+	char acc_name[ACCOUNTNAME_LEN];
+
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		/* Acquire this chain */
+		ptr = hash_table[i];
+		/* Check this chain */
+		while (ptr) {
+			if (ptr->account != acc_id) {
+				ptr = ptr->next;
+				continue;
+			}
+			strcpy(acc_name, ptr->accountname);
+			s_printf("SHOW_ACCOUNT_ORDER: '%s':\n", acc_name);
+			if (Ind) msg_format(Ind, "Account '%s':", acc_name);
+			/* Check all characters of this account */
+			ids = player_id_list(&id_list, ptr->account);
+			for (j = 0; j < ids; j++) {
+				processed++;
+				ptr2 = lookup_player(id_list[j]);
+				s_printf("  '%s':%d\n", lookup_player_name(id_list[j]), ptr2->order);
+				if (Ind) msg_format(Ind, "  '%s':%d\n", lookup_player_name(id_list[j]), ptr2->order);
+			}
+			if (ids) C_KILL(id_list, ids, int);
+			i = NUM_HASH_ENTRIES;
+			break;
+		}
+	}
+	s_printf("SHOW_ACCOUNT_ORDER: '%s', processed %d.\n", acc_name, processed);
+	if (Ind) msg_format(Ind, "Account '%s': Processed chars %d.", acc_name, processed);
 }

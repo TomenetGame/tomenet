@@ -387,7 +387,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		wakeup_monsters_somewhat(Ind, -1);
 		return;
 	}
-	else if (prefix(messagelc, "/shout") || prefix(messagelc, "/sho") || prefix(messagelc, "/yell")) {
+	else if (prefix(messagelc, "/shout") || (prefix(messagelc, "/sho") && !prefix(messagelc, "/show")) || prefix(messagelc, "/yell")) {
 		break_cloaking(Ind, 4);
 		if (colon++) {
 			colon_u++;
@@ -10629,12 +10629,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oNo account of that name exists.");
 					return;
 				}
-
 				init_account_order(Ind, acc.id);
 				return;
 			}
 			else if (prefix(messagelc, "/zeroorder")) { /* Reset character ordering for the whole account database to zero (unordered) */
 				zero_character_ordering(Ind);
+				return;
+			}
+			else if (prefix(messagelc, "/showaccountorder")) { /* Initialize character ordering for the whole account database */
+				struct account acc;
+
+				if (!GetAccount(&acc, message3, NULL, FALSE)) {
+					msg_print(Ind, "\377oNo account of that name exists.");
+					return;
+				}
+				show_account_order(Ind, acc.id);
 				return;
 			}
 		}
