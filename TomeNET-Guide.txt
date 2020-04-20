@@ -8090,7 +8090,8 @@ Ironman Deep Dive Challenge (IDDC)
     exceed 300 Au, your character will only collect as much gold from it to
     exactly hit 300 and leave the rest on the floor. From now on you must not
     step on any other money pile (including this remaining one) or you will
-    gain 1 xp and thereby disqualify for IDDC.
+    gain 1 xp and thereby disqualify for IDDC. Note that unlike for items, it
+    is allowed to collect gold in a dungeon or tower too.
 
     If you make a 'slot-exclusive' IDDC character, it will start out with 300
     extra gold, get at least a 50% discount in all shops in Bree, and in turn
