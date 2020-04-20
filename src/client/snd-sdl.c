@@ -2709,6 +2709,9 @@ void do_cmd_options_sfx_sdl(void) {
 					play_sound_ambient(j_sel);
 				}
 			}
+			/* actually advance down the list too */
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			y = (y + 1 + audio_sfx) % audio_sfx;
 			break;
 		case 'y':
 			samples[j_sel].disabled = FALSE;
@@ -2721,11 +2724,17 @@ void do_cmd_options_sfx_sdl(void) {
 				ambient_current = -1; //allow restarting it
 				play_sound_ambient(j_sel);
 			}
+			/* actually advance down the list too */
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			y = (y + 1 + audio_sfx) % audio_sfx;
 			break;
 		case 'n':
 			samples[j_sel].disabled = TRUE;
 			if (j_sel == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
 			if (j_sel == ambient_current && ambient_channel != -1 && Mix_Playing(ambient_channel)) Mix_HaltChannel(ambient_channel);
+			/* actually advance down the list too */
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			y = (y + 1 + audio_sfx) % audio_sfx;
 			break;
 
 		case '\r':
