@@ -316,7 +316,6 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_verify_sell",		"Skip safety question when selling items" },
 	{ &c_cfg.no_verify_destroy,	FALSE,	6,	0, 49, TRUE,
 	    "no_verify_destroy",	"Skip safety question when destroying items" },
-	//HOLE:13
 
     //page 4 - 49
 	{ &c_cfg.auto_afk,		TRUE,	2,	1, 50, TRUE,
@@ -400,7 +399,6 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "easy_disarm",		"Automatically disarm traps (except under items)" },
 	{ &c_cfg.easy_tunnel,		FALSE,	3,	9, 87, TRUE,
 	    "easy_tunnel",		"Automatically tunnel walls" },
-	//HOLE: 4
 
     //page 6 - 87
 	{ &c_cfg.audio_paging,		TRUE,	5,	0, 88, TRUE,
@@ -534,6 +532,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.find_ignore_montraps,	TRUE,	3,	0, 130, TRUE,
 	    "find_ignore_montraps",	"Run through monster traps" },
+	//HOLE: 3
 
 	{ &c_cfg.quiet_os,		FALSE,	5,	1, 131, TRUE,
 	    "quiet_os",			"Don't play beep/alert/page beeps through OS" },
