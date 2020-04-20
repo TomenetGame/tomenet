@@ -8081,6 +8081,10 @@ Ironman Deep Dive Challenge (IDDC)
     pieces) or pick up any items or money of other players. Also, if you eat a
     ration of food and you are unlucky enough that it's gone bad you will get
     1 xp for that.
+    Note that you are allowed to pick up items on the world surface (those that
+    are dropped by townies in Bree for example). If you sell these items to
+    shops, the money you get will be subtracted from the remaining amount of
+    gold your character was allowed to pick up (check with /ex command).
     Use the /ex command to see how much more gold you may pick up.
 
     If you make a 'slot-exclusive' IDDC character, it will start out with 300
