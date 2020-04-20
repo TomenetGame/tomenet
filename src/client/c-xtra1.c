@@ -3164,7 +3164,7 @@ void do_weather() {
 			int d;
 #endif
 			/* Animate palette */
-			switch (animate_lightning) {
+			if (!c_cfg.disable_lightning) switch (animate_lightning) {
 			case 1:
 				/* First thing: Backup all colours before temporarily manipulating them */
 				if (!active) {
@@ -3186,9 +3186,11 @@ void do_weather() {
 				break;
 			case AL_END:
 				/* Restore all colours to what they were before */
-				for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
-				set_palette(128, 0, 0, 0); //refresh
-				active = FALSE;
+				if (active) {
+					for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
+					set_palette(128, 0, 0, 0); //refresh
+					active = FALSE;
+				}
 				break;
 			default: break;
 			}

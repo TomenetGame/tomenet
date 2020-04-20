@@ -152,3 +152,4 @@ X:st_bar
 Y:find_ignore_montraps
 
 X:quiet_os
+X:disable_lightning

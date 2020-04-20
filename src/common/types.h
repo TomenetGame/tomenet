@@ -3748,7 +3748,6 @@ struct client_opts {
 	bool quiet_house_sfx;
 	bool no_house_sfx;
 	bool no_am_sfx;//disabled, use =n
-	bool quiet_os;
 
     //unmutable, pfft
 	bool use_color;
@@ -3810,6 +3809,9 @@ struct client_opts {
 	bool mp_bar;
 	bool st_bar;
 	bool find_ignore_montraps; //130, (page 6)
+
+	bool quiet_os;
+	bool disable_lightning;
 };
 
 /*

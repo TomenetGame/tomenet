@@ -362,7 +362,6 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "thin_down_flush",		"Thin down screen flush signals to avoid freezing" },
 	{ &c_cfg.disable_flush,		FALSE,	2,	9, 70, TRUE,
 	    "disable_flush",		"Disable delays from flush signals" },
-	//HOLE:1
 
     //page 5 - 70
     /*** Disturbance ***/
@@ -538,10 +537,12 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.quiet_os,		FALSE,	5,	1, 131, TRUE,
 	    "quiet_os",			"Don't play beep/alert/page beeps through OS" },
+	{ &c_cfg.disable_lightning,	FALSE,	2,	9, 132, TRUE,
+	    "disable_lightning",	"Disable lightning visual screen effect" },
 
 #if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
     /* 4.7.3 */
-	{ &c_cfg.extra_indicators,	FALSE,	6,	0, 131, TRUE,
+	{ &c_cfg.extra_indicators,	FALSE,	6,	0, 1XX, TRUE,
 	    "extra_indicators",		"Flicker status bar elements to indicate temp buffs" },
 #endif
 };
