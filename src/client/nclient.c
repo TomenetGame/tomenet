@@ -3435,20 +3435,20 @@ int Receive_sound(void) {
 		s1 = s;
 	}
 
+//#ifdef TEST_CLIENT
+#if 1
+	/* Hack for thunderstorm weather sfx - delay it and cast a lightning lighting effect first.
+	   We want to check this even if use_sound is FALSE, because we still can see the visual effect. */
+	if (t == SFX_TYPE_WEATHER && s1 == thunder_sound_idx) {
+		animate_lightning = 1;
+		animate_lightning_vol = v;
+		/* Delay thunderclap! */
+		return 1;
+	}
+#endif
 	/* Make a sound (if allowed) */
 	if (use_sound) {
 		if (t == SFX_TYPE_WEATHER && (noweather_mode || c_cfg.no_weather)) return 1;
-
-//#ifdef TEST_CLIENT
-#if 1
-		/* hack for thunderstorm weather sfx - delay it and cast a lightning lighting effect first */
-		if (t == SFX_TYPE_WEATHER && s1 == thunder_sound_idx) {
-			animate_lightning = 1;
-			animate_lightning_vol = v;
-			/* Delay thunderclap! */
-			return 1;
-		}
-#endif
 
 #ifndef USE_SOUND_2010
 		Term_xtra(TERM_XTRA_SOUND, s1);

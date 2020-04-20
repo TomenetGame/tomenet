@@ -3172,17 +3172,16 @@ void do_weather() {
 					active = TRUE;
 				}
 
-				//which colours to affect? WHITE (17), SLATE (18), LWHITE (25), BLUE (22), LDARK (24), RED (20), LGREEN (29), GREEN (21), LUMBER (31), UMBER (23)
-				set_palette(1 + AL_OFFSET, 0x99, 0x99, 0x99);
-				set_palette(2 + AL_OFFSET, 0xCC, 0xCC, 0xFF);
-				set_palette(9 + AL_OFFSET, 0x25, 0x99, 0x99);
-				set_palette(6 + AL_OFFSET, 0x44, 0x66, 0xFF);
-				set_palette(8 + AL_OFFSET, 0x88, 0x88, 0x88);
-				set_palette(4 + AL_OFFSET, 0xFF, 0x77, 0x88);
-				set_palette(5 + AL_OFFSET, 0x33, 0xFF, 0x33);
-				set_palette(7 + AL_OFFSET, 0xAD, 0x88, 0x33);
-				set_palette(13 + AL_OFFSET, 0xBB, 0xFF, 0xBB);
-				set_palette(15 + AL_OFFSET, 0xF7, 0xCD, 0x85);
+				//set_palette(1 + AL_OFFSET, 0x99, 0x99, 0x99); //white(17)
+				set_palette(2 + AL_OFFSET, 0xCC, 0xCC, 0xFF); //slate(18)
+				set_palette(4 + AL_OFFSET, 0xFF, 0x77, 0x88); //red(20)
+				set_palette(5 + AL_OFFSET, 0x33, 0xFF, 0x33); //green(21)
+				set_palette(6 + AL_OFFSET, 0x44, 0x66, 0xFF); //blue(22)
+				set_palette(7 + AL_OFFSET, 0xAD, 0x88, 0x33); //umber(23)
+				set_palette(8 + AL_OFFSET, 0x88, 0x88, 0x88); //ldark(24)
+				set_palette(9 + AL_OFFSET, 0xEE, 0xEE, 0xEE); //lwhite(25)
+				set_palette(13 + AL_OFFSET, 0xBB, 0xFF, 0xBB); //lgreen(29)
+				set_palette(15 + AL_OFFSET, 0xF7, 0xCD, 0x85); //lumber(31)
 				set_palette(128, 0, 0, 0); //refresh
 				break;
 			case AL_END:
@@ -3201,11 +3200,13 @@ void do_weather() {
 			d = (animate_lightning_vol >= 85) ? 100 : animate_lightning_vol + 15;
 			if (animate_lightning == 101 - d) {
 #endif
+				if (use_sound) {
 #ifndef USE_SOUND_2010
-				Term_xtra(TERM_XTRA_SOUND, s1);
+					Term_xtra(TERM_XTRA_SOUND, s1);
 #else
-				sound(thunder_sound_idx, SFX_TYPE_WEATHER, animate_lightning_vol, 0);
+					sound(thunder_sound_idx, SFX_TYPE_WEATHER, animate_lightning_vol, 0);
 #endif
+				}
 			}
 
 			/* Continue for a couple steps */

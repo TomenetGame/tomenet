@@ -3210,6 +3210,9 @@ static void init_sound() {
 	/* One-time popup dialogue, to inform and instruct user of audio capabilities */
 	if (sound_hint) plog("*******************************************\nTomeNET supports music and sound effects!\nTo enable those, you need to have audio packs installed,\nsee http://www.tomenet.eu/ forum and downloads.\n*******************************************\n");
 
+	/* Initialise this even if we don't use sound, just for its visual effect */
+	thunder_sound_idx = exec_lua(0, "return get_sound_index(\"thunder\")");
+
 	if (!use_sound) {
 		/* Don't initialize sound modules */
 		return;
@@ -3241,7 +3244,6 @@ static void init_sound() {
 	snow2_sound_idx = exec_lua(0, "return get_sound_index(\"snow_storm\")");
 	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
-	thunder_sound_idx = exec_lua(0, "return get_sound_index(\"thunder\")");
 #endif
 }
 /* Try to re-init specifically SDL-audio.
@@ -3249,6 +3251,9 @@ static void init_sound() {
 int re_init_sound() {
 #ifdef USE_SOUND_2010
 	int i, err;
+
+	/* Initialise this even if we don't use sound, just for its visual effect */
+	thunder_sound_idx = exec_lua(0, "return get_sound_index(\"thunder\")");
 
 	if (!use_sound) {
 		/* Don't initialize sound modules */
