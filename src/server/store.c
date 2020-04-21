@@ -806,6 +806,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_BOOMERANG:
 		/* mayyyyybe... */
 		case TV_FIRESTONE:
+		/* ok finally */
+		case TV_BOTTLE:
+		case TV_CHEST:
 			break;
 		default:
 			return (FALSE);
@@ -889,6 +892,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_POTION2:
 		/* mayyyyybe... */
 		case TV_FIRESTONE:
+		/* ok finally */
+		case TV_BOTTLE:
 			break;
 		default:
 			return (FALSE);
@@ -1029,6 +1034,8 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_POTION:
 		case TV_POTION2:
+		/* ok finally */
+		case TV_BOTTLE:
 			break;
 		default:
 			return (FALSE);
