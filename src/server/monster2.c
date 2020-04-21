@@ -4970,7 +4970,12 @@ void message_pain(int Ind, int m_idx, int dam) {
 
 	/* DEG Modified to give damage information */
 	/* Jelly's, Mold's, Vortex's, Quthl's */
-	if (strchr("jmvQE", r_ptr->d_char)) {
+	if (r_ptr->flags3 & RF3_NONLIVING) { /* Constructs: No message. Note that this means vortices too (handled below otherwise). */
+		if (r_ptr->flags1 & RF1_UNIQUE)
+			msg_format(Ind, "\377%c%^s takes \377e%d \377%cdamage.", uniq, m_name, dam, uniq);
+		else
+			msg_format(Ind, "%^s takes \377g%d \377wdamage.", m_name, dam);
+	} else if (strchr("jmvQE", r_ptr->d_char)) {
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 			if (percentage > 95)
 				msg_format(Ind, "\377%c%^s barely notices the \377e%d \377%cdamage.", uniq, m_name, dam, uniq);
