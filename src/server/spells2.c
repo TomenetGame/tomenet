@@ -6793,6 +6793,8 @@ bool cast_snowflake(worldpos *wpos, int x, int interval) {
  */
 bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 	char pattacker[80];
+	dungeon_type *d_ptr = getdungeon(wpos);
+
 	strcpy(pattacker, "");
 
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
@@ -6824,7 +6826,9 @@ bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 #else
 	/* Adjustments - mikaelh */
 	project_interval = 5;
-	project_time = 8 + 8; /* X units to rise into the air, X units to explode */
+	/* Fireworks flies lower inside dungeons */
+	if (wpos->wz && !(d_ptr && d_ptr->type == DI_CLOUD_PLANES)) project_time = 4 + 4;
+	else project_time = 8 + 8; /* X units to rise into the air, X units to explode */
 	//if (project_time_effect == EFF_FIREWORKS3) project_time += 2 + 2;
 #endif
 
