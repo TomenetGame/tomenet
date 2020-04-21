@@ -497,7 +497,6 @@ static void sense_inventory(int Ind) {
 		case TV_WAND:
 		case TV_STAFF:
 		case TV_ROD:
-		case TV_FOOD:
 			if (fail && !heavy_magic) continue; //finally fail
 			if (ok_magic && !object_aware_p(Ind, o_ptr)) {
 				feel = (heavy_magic ? value_check_aux1_magic(o_ptr) :
@@ -522,6 +521,14 @@ static void sense_inventory(int Ind) {
 				feel = (heavy_traps ? value_check_aux1(o_ptr) :
 						value_check_aux2(o_ptr));
 				if (heavy_traps) felt_heavy = TRUE;
+			}
+			break;
+		case TV_FOOD: /* dual! Uses auxX_magic, which contains the food-specific values */
+			if (fail && !heavy_magic && !heavy) continue; //finally fail
+			if ((ok_combat || ok_magic) && !object_aware_p(Ind, o_ptr)) {
+				feel = ((heavy || heavy_magic) ? value_check_aux1_magic(o_ptr) :
+						value_check_aux2_magic(o_ptr));
+				if (heavy || heavy_magic) felt_heavy = TRUE;
 			}
 			break;
 		}
