@@ -6236,6 +6236,9 @@ The 1..9 are standard shops, namely..
                         magic users. Book stores in higher-level towns on
                         average also tend to sell higher-level spells.
 +       These are different everywhere. Some examples are mainly..
+        The Inn         Eg The Prancing Pony in Bree. While the '8' is just the
+                        entrance into the tavern, the + is the actual bar where
+                        you can order things from the innkeeper.
         Mayor's Office (in Bree)
                         Allows you to turn in deed parchments you won in
                         tournaments or on other occasions for a reward.
@@ -6243,6 +6246,8 @@ The 1..9 are standard shops, namely..
                         (see (4.13) about those).
                         Last but not least you can check out a list of
                         noteworthy occurances that may happened lately.
+                        There are other major buildings in different cities
+                        that will provide extermination orders.
         The Merchants Guild
                         An NPC run guild that offers two services,
                         a bank account to deposit your money in so you won't
@@ -6291,19 +6296,21 @@ The 1..9 are standard shops, namely..
                         Get your Go game records emailed to you via "/kifu".)
                         For details about the gambling rules of the casino, see
                         subsequent (4.5a2) paragraph.
-        Mass Identify Service (Minstrels Haven)
+        Minstrels Haven Mass Identify Service (Identify Possessions):
                         Will identify all items you currently carry for a fee.
                         See (5.7) for more information about identification.
-        *Identify* Service (Library)
-                        Will *identify* an item for a fee.
+        Library         *Identify* Service, will *identify* an item for a fee.
                         See (5.7) for more information about ID, *ID*, shops!
-        Herbal Healing Service (Earth-Dome)
+        Earth-Dome      Herbal Healing Service.
                         Will cure black breath for a high fee. (See (1.3a) for
                         more information about Black Breath.)
-        Morph Restoration Service (Sea-Dome)
+        Sea-Dome        Morph Restoration Service.
                         Restores your form to normal in case you were
                         polymorphed (for example by a potion of Chauve-Souris).
-        Enchant Services (various stores)
+        Star-Dome       Offers service to identify all your items at once.
+                        Also offers a recharging service for magic devices.
+        Valarin Temple  Restores all drained attributes and experience.
+        Enchant Services (found in various stores, for different item types):
                         These will enchant weapons, arrows, or armour you have
                         equipped.
                         For weapons, this will attempt to enchant a main-hand
@@ -6332,7 +6339,7 @@ The 1..9 are standard shops, namely..
                         In the hazardous city of Khazad-Dum is a store that
                         offers some goods found to be useful by the miners
                         in the mountain depths.
-        Donate gold and pray to the gods (The Mirror)
+        The Mirror      Donate gold and pray to the gods.
                         (EXPERIMENTAL: allows a fallen winner to solo-reking.)
                         This is a special option which allows fallen kings and
                         queens to get their fate changed by the gods:
@@ -6386,6 +6393,7 @@ The 1..9 are standard shops, namely..
                         c) pay 2M, wait for about a week, gain 2.5M raw exp,
                            pay 3M more.
                         d) gain 4M raw exp, pay 6M gold.
+        The Soothsayer  Presage fate. Will tell you a random rumour.
 
         ..and various miscellaneous store services, of which some currently may
         not have an actual effect.
