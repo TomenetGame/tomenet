@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. April 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 22. April 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18720,10 +18720,9 @@ some items can only be activated while they are equipped.
 The chance to successfully activate a magic device is shown when you inspect it
 (SHIFT+i, and the item must be identified). The displayed chance does not take
 any anti-magic effects in account.
-Note that it is not possible to achieve 100% success rate with any device.
-It is possible to gain more than 99% chance though. If you manage to exceed 99%
-chance another digit will be shown on inspection to tell you your exact chance,
-for example: 99.3%
+It is possible to achieve 100% success rate with some devices. If you reach 99%
+the success chance shown on inspection will get another digit added, so it will
+for example look like: 99.3%.
 
 Magic Device skill and ability have no effect on the damage output of traps
 loaded with a magic device or on recharge time of rods that are loaded inside
