@@ -6610,9 +6610,15 @@ if (cfg.unikill_format) {
 			s_printf("preparing FINAL_OBJECT %d", I_kind);
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);
+			/* Using real k-indices is bad, because k_idx differs from actual numbers in k_info.txt, so it's unpredictable -> unusable */
+#if 1
+			/* For that reason, actually take this more flexible approach anyway: Specify a tval instead */
+			get_obj_num_hook = NULL;
+			get_obj_num_prep_tval(I_kind, resf_chosen); //treat the object-index as a tval instead
+			I_kind = get_obj_num(25 + getlevel(wpos), resf_chosen); //get a random, boosted-depth sval just like for normal loot
+#endif
 			/* Create the object */
-			invcopy(qq_ptr, I_kind + 1); /* weirdness, why is it actually 1 too low? */
-
+			invcopy(qq_ptr, I_kind); /* this can be totally off of k_info idx values, so it's unusable practically */
 			/* Complete generation, especially level requirements check */
 			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, resf_chosen);
 
@@ -6828,7 +6834,7 @@ if (cfg.unikill_format) {
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
-			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_drops);
+			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_chosen);
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		} else if (r_ptr->flags7 & RF7_NAZGUL) {
@@ -6960,8 +6966,8 @@ if (cfg.unikill_format) {
 					break;
 			}
 			get_obj_num_hook = NULL;
-			get_obj_num_prep_tval(tv, resf_drops | RESF_STOREFLAT); //Hack: Make all item sub-types equally probable, for more chances to get non-boring base types.
-			k_idx = get_obj_num(m_ptr->level, resf_drops | RESF_STOREFLAT); //Hack: We ignore floor depth, taking only the monster level into account, hehe.
+			get_obj_num_prep_tval(tv, resf_chosen | RESF_STOREFLAT); //Hack: Make all item sub-types equally probable, for more chances to get non-boring base types.
+			k_idx = get_obj_num(m_ptr->level, resf_chosen | RESF_STOREFLAT); //Hack: We ignore floor depth, taking only the monster level into account, hehe.
 			invcopy(qq_ptr, k_idx);
 
 			/* Megahack -- specify the ego */
@@ -7007,7 +7013,7 @@ if (cfg.unikill_format) {
 		/* For DK/HK: Let these guys drop some heavily cursed trueart for itemization fun.. */
 		} else if ((strstr((r_name + r_ptr->name),"Vlad Dracula") || strstr((r_name + r_ptr->name),"Mephistopheles"))
  #ifndef TEST_SERVER
-		    && !(resf_drops & RESF_NOTRUEART)
+		    && !(resf_chosen & RESF_NOTRUEART)
  #endif
 		    ) {
 			char o_name[ONAME_LEN];
@@ -7059,7 +7065,7 @@ if (cfg.unikill_format) {
 				handle_art_inum(qq_ptr->name1);
 				qq_ptr->note = local_quark;
 				qq_ptr->note_utag = strlen(quark_str(local_quark));
-				apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, FALSE, resf_drops);
+				apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
 
  #ifdef PRE_OWN_DROP_CHOSEN
 				qq_ptr->level = 0;
@@ -7333,7 +7339,7 @@ if (cfg.unikill_format) {
 					qq_ptr->number = 1;
 					qq_ptr->note = local_quark;
 					qq_ptr->note_utag = strlen(quark_str(local_quark));
-					apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_drops);
+					apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_chosen);
 					/* hack ego power if not art already */
 					if (!qq_ptr->name1) {
 						qq_ptr->name2 = EGO_MWIZARDRY;
