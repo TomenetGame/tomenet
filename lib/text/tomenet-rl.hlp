@@ -21,7 +21,7 @@ P  Browse book f  Bash door     #  Highscores         for private chat messages
 c  Close door  C  Character     $  Drop gold       "  Load prf file (abs path)
 d  Drop        D  Disarm        %  Macro menu      SPACE   Stop auto-repeating
 e  Equip       E  Eat           &  Auto inscribe   ^Z  Pick up one item
-t  Fire        F  Refill        (  Friendly target ^X  Toggle music
+t  Fire        F  Refill light  (  Friendly target ^X  Toggle music
 \{yg  Take item\{w   G  Skills        )  Clear buffer    ^V  Toggle all audio
 ^E Houses      ^G Auto inscribe *  Target/look     \{y^F  Audio mixer\{w or
 i  Inventory   I  Examine       .  Run                 switch chat mode
