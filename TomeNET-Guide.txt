@@ -11010,14 +11010,8 @@ Many items can be activated (press 'A' to try). These items are generally
 called 'Magic Devices'. (Apart from these items, magic devices also include
 wands, staves and rods, see (6.10) for more information.)
 
-The chance of successful activation may or may not depend on various factors,
-such as..
--your magic device ability vs the item type base level, your magic device
- ability consists mainly of your 'Magic Device' skill and also somewhat of your
- intelligence.
- See (6.10) for more information on the Magic Device skill.
--whether you have trained your Anti-magic skill
--if you have the item equipped
+The chance of successful activation depends on various factors such as the base
+item level and your magic device ability. See (6.10) for details.
 
 An activated item will usually have a cooldown (timeout) until it can be
 activated again. Items that need to be equipped to be activated usually won't
@@ -13383,11 +13377,6 @@ stated.
                                 speeds up recharging of rods you carry.
                                 See (6.10) for more information on magic
                                 devices, the skill and the ability.
-
-                                Note that it is not possible to achieve 100%
-                                success rate with any device. It is possible to
-                                gain more than 99% chance though, which will be
-                                displayed accordingly on inspecting the device.
 
 .Anti-magic                     Generated from your strong disbelief in magic
  (1.000)                        an anti-magic field surrounds you, preventing
@@ -18699,7 +18688,7 @@ In detail, the magic device ability does this...
  difficult it is to activate a magic device. This level is not the (often
  higher) level displayed on the item that you see when looking at
  it in-game (ie the level shown in curly brackets).
- Confusion reduces your chance, EASY_USE (rods of charging/of the istari)
+ Confusion reduces your chance, EASY_USE (rods of simplicity/of the istari)
  greatly increases it.
 
 The 'Magic Device' skill does the following...
@@ -18710,6 +18699,21 @@ The 'Magic Device' skill does the following...
 -helps to increase the duration on polymorph-rings when they are forged.
 -makes it easier to recharge items provided you don't use scrolls to do that,
  but a real magic device (some artifacts can be activated for recharging).
+
+For determining the chance of successfully activating a magic device, there can
+be more factors such as the item type and the item type's base level.
+If you carry an item that has anti-magic properties, you might find it harder
+or impossible to activate magic devices. If you have trained the Anti-magic
+skill you might also not be able to activate most devices. Last but not least
+some items can only be activated while they are equipped.
+
+The chance to successfully activate a magic device is shown when you inspect it
+(SHIFT+i, and the item must be identified). The displayed chance does not take
+any anti-magic effects in account.
+Note that it is not possible to achieve 100% success rate with any device.
+It is possible to gain more than 99% chance though. If you manage to exceed 99%
+chance another digit will be shown on inspection to tell you your exact chance,
+for example: 99.3%
 
 Magic Device skill and ability have no effect on the damage output of traps
 loaded with a magic device or on recharge time of rods that are loaded inside
