@@ -3255,8 +3255,9 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 
 	/* Hack -- yet another anti-cheeze(yaac) */
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop || p_ptr->inval) {
-		o_ptr->level = 0;
-		j_ptr->level = 0;
+		/* Allow unenchanted items to not get level0'ed, to avoid too much confusion/annoyance for newbies. */
+		if (o_ptr->to_h > 0 || o_ptr->to_d > 0 || o_ptr->name1 || o_ptr->name2) o_ptr->level = 0;
+		if (j_ptr->to_h > 0 || j_ptr->to_d > 0 || j_ptr->name1 || j_ptr->name2 || !is_ammo(j_ptr->tval)) j_ptr->level = 0;
 	}
 
 	/* Assume a single object */
