@@ -10249,8 +10249,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				*ca = 0;
-				strcpy(name, message3);
-				strcpy(account, ca + 1);
+				strcpy(account, message3);
+				strcpy(name, ca + 1);
 				for (i = 0; i < MAX_RESERVED_NAMES; i++) {
 					if (reserved_name_character[i][0]) continue;
 
@@ -10263,6 +10263,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				if (i == MAX_RESERVED_NAMES)
 					s_printf("Warning: Couldn't reserve character name '%s' for account '%s'!\n", name, account);
+				return;
+			}
+			else if (prefix(messagelc, "/delreservedname")) { /* admin-hack: manually add a name to the reserved-names list for 60 minutes */
+				char name[NAME_LEN], account[ACCOUNTNAME_LEN], *ca;
+
+				ca = strchr(message3, ':');
+				if (!ca) {
+					msg_print(Ind, "Usage: /delreservedname account:name");
+					return;
+				}
+				*ca = 0;
+				strcpy(account, message3);
+				strcpy(name, ca + 1);
+				for (i = 0; i < MAX_RESERVED_NAMES; i++) {
+					if (reserved_name_character[i][0]) continue;
+					if (strcmp(reserved_name_account[i], account)) continue;
+					if (strcmp(reserved_name_character[i], name)) continue;
+					s_printf("RESERVED_NAMES: removed \"%s\" (%s) for %d at #%d\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
+					msg_format(Ind, "Removed \"%s\" (%s) for %d at #%d\n", reserved_name_character[i], reserved_name_account[i], reserved_name_timeout[i], i);
+					reserved_name_character[i][0] = 0;
+					break;
+				}
+				if (i == MAX_RESERVED_NAMES) msg_print(Ind, "Entry not found.");
 				return;
 			}
 			else if (prefix(messagelc, "/purgeaccountfile")) {
