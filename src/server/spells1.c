@@ -8406,26 +8406,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Blindness (confusion): Not for uniques or powerful monsters */
 	if (do_blind &&
-	    !strchr("AEX|,.mj$?*", r_ptr->d_char) &&
+	    !strchr("AEXN|,.mj$?*vx", r_ptr->d_char) &&
 	    !(r_ptr->flags2 & RF2_POWERFUL) &&
 	    !(r_ptr->flags2 & RF2_PASS_WALL) && /* Ethereal monsters */
-	    !(r_ptr->flags4 & RF4_BR_LITE) && !(r_ptr->flags4 & RF4_BR_DARK) && /* light/dark hounds.. */
+	    !(r_ptr->flags4 & RF4_BR_LITE) && !(r_ptr->flags9 & RF9_RES_LITE) && !(r_ptr->flags2 & RF2_REFLECTING) &&
 	    !(r_ptr->flags3 & RF3_UNDEAD) &&
 	    !(r_ptr->flags3 & RF3_NONLIVING) &&
-	    !(r_ptr->flags3 & RF3_DEMON) &&
-	    !(r_ptr->flags3 & RF3_DRAGON) &&
-	    !(r_ptr->flags3 & RF3_DRAGONRIDER) &&
-	    !(r_ptr->flags1 & RF1_UNIQUE) &&
-	    (m_ptr->level < 50))
-/*	    !((r_ptr->flags3 & RF3_DEMON) && (m_ptr->level >= 40)) &&
-	    !((r_ptr->flags3 & RF3_DRAGON) && (m_ptr->level >= 40)) &&
-	    !((r_ptr->flags3 & RF3_DRAGONRIDER) && (m_ptr->level >= 40)) &&
-	    !(r_ptr->flags1 & RF1_UNIQUE))*/
-/*	    !(((r_ptr->flags3 & RF3_DEMON) ||
-	    (r_ptr->flags3 & RF3_DRAGON) ||
-	    (r_ptr->flags3 & RF3_DRAGONRIDER) ||
-	    (r_ptr->flags1 & RF1_UNIQUE)) &&
-	    RES_OLD(r_ptr->level, dam))  <- this line would require a " resists." note btw. */
+	    magik(100 - (((r_ptr->flags1 & RF1_UNIQUE) | (r_ptr->flags3 & RF3_DRAGONRIDER)) ? 30 : 0) - r_ptr->level))
+	    //RES_OLD(r_ptr->level, dam))  <- this line would require a " resists." note btw. */
 	{
 		/* Obvious */
 		if (seen) obvious = TRUE;
