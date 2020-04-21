@@ -2118,6 +2118,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			if (do_res_stat(Ind, A_DEX)) paid = TRUE;
 			if (do_res_stat(Ind, A_CON)) paid = TRUE;
 			if (do_res_stat(Ind, A_CHR)) paid = TRUE;
+			if (restore_level(Ind)) paid = TRUE;
 			break;
 		/* set timed reward flag */
 		case BACT_GOLD:
