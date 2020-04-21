@@ -716,7 +716,7 @@ static bool inn_comm(int Ind, int cmd) {
 	/* Extract race info */
 	vampire = ((PRACE_FLAG(PR1_VAMPIRE)) || (p_ptr->mimic_form == MIMIC_VAMPIRE));
 #endif	// 0
-	vampire = p_ptr->suscep_life;
+	vampire = p_ptr->prace == RACE_VAMPIRE;
 
 	switch(cmd) {
 		case BACT_FOOD: /* Buy food & drink */
