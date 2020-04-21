@@ -1012,6 +1012,7 @@ int check_account(char *accname, char *c_name, int *Ind) {
 		}
 		/* Log failure */
 		s_printf("Name already in use: (%d vs %d) <%s>\n", a_id, ptr->account, ptr->accountname);
+		//TODO maybe: Allow admin-dm to take over expired characters here if accountname is ""
 	}
 	/* "Name already in use by another player" (coming from 'else' branch above),
 	   ie character isn't new and it belongs to a different account than ours. */
