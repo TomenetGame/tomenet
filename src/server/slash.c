@@ -9484,7 +9484,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					set_runlevel(-1);
 				return;
 			}
-			/* Same as above but only for one specific house! */
+			/* Same as above but only for one specific house! You must be standing on the house door! */
 			else if (prefix(messagelc, "/backup_one_estate")) {
 				s32b pid;
 
