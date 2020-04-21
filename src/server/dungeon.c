@@ -7820,6 +7820,14 @@ void process_player_change_wpos(int Ind) {
 	p_ptr->temp_misc_1 &= ~0x08;
 	//update_player(Ind); //un-snowing restores lack of visibility by others - required?
 
+#ifdef USE_SOUND_2010
+	msg_print(Ind, "change");
+	if ((l_ptr = getfloor(&p_ptr->wpos_old)) && (l_ptr->flags1 & LF1_NO_GHOST)) {
+		msg_print(Ind, "yep");
+		sound(Ind, "monster_roar", NULL, SFX_TYPE_STOP, FALSE);
+	}
+#endif
+
 	/* IDDC specialties */
 	if (in_irondeepdive(&p_ptr->wpos_old)) {
 		/* for obtaining statistical IDDC information: */
