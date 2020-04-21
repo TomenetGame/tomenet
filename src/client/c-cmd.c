@@ -2388,12 +2388,11 @@ void cmd_the_guide(void) {
 					strcpy(chapter, "Dungeon types");
 					continue;
 				}
-				if (my_strcasestr(buf, "Dung")) { //dungeons
-					strcpy(chapter, "Dungeon                 ");
-					continue;
-				}
 				if (my_strcasestr(buf, "Boss")) { //dungeon bosses
 					strcpy(chapter, "Dungeon, sorted by depth");
+					continue;
+				} else if (my_strcasestr(buf, "Dung")) { //dungeons
+					strcpy(chapter, "Dungeon                 ");
 					continue;
 				}
 				if (my_strcasestr(buf, "Stair") || my_strcasestr(buf, "typ") ) { //staircase types, same as 'Dungeon types'
