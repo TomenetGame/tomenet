@@ -12696,7 +12696,7 @@ stated.
                                 average, good, excellent or special.
                                 At the beginning you will only feel 'cursed'
                                 or 'good', and only for melee weapons, armour
-                                and boomerangs.
+                                and boomerangs -  and food.
                                 Raise combat skill to at least 11 to get
                                 more distinctive feelings about melee weapons,
                                 armour and boomerangs.
@@ -13148,8 +13148,10 @@ stated.
 
 +Magic                          Increases your base mana by +4 per point.
  (0.250)
-                                Lets you pseudo-id magic items, potions and
-                                scrolls faster the higher your skill is.
+                                Lets you pseudo-id magic itemsfaster the higher
+                                your skill is. Magic items are:
+                                Mage staves, potions, scrolls, food (hybrid),
+                                and magic devices (wands, rods, staves).
 
                                 If 'Magic' is at least at 11 points, you will
                                 get more distinctive feelings from pseudo-id,
