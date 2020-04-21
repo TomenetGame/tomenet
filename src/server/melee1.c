@@ -1256,6 +1256,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					/* discharge player's live form he attained from a
 					   ring of polymorphing! (anti-cheeze for Morgoth) */
 					if (!p_ptr->martyr
+					    && p_ptr->tim_mimic && p_ptr->body_monster == p_ptr->tim_mimic_what /* only if you are currently using that form */
  #ifdef ENABLE_HELLKNIGHT
 					    && p_ptr->pclass != CLASS_HELLKNIGHT
   #ifdef ENABLE_CPRIEST
@@ -1267,7 +1268,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							msg_print(Ind, "\377LThe magical force stabilizing your form fades *rapidly*...");
 							set_mimic(Ind, (p_ptr->tim_mimic * 3) / 4, p_ptr->tim_mimic_what);
 						}
-						else if (p_ptr->tim_mimic) {
+						else {
 							msg_print(Ind, "\377LThe magical force stabilizing your form fades *rapidly*...");
 							set_mimic(Ind, p_ptr->tim_mimic - 200, p_ptr->tim_mimic_what);
 						}
