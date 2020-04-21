@@ -2364,44 +2364,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				/* Describe the object */
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-				/* felt an (non-changing!) object of same kind before via pseudo-id? then remember.
-				   Note: currently all objects for which that is true are 'magic', hence we only
-				   use object_value_auxX_MAGIC() below. Note that if we add an item to an already
-				   felt item in our inventory, the combined items will have ID_SENSE set of course,
-				   so we won't get another "remember" message, just as it makes sense :) - C. Blue */
-				if (!object_aware_p(Ind, o_ptr) && !object_known_p(Ind, o_ptr)
-				    && !(o_ptr->ident & ID_SENSE) && object_felt_p(Ind, o_ptr)) {
-					/* We have "felt" this kind of object already before */
-				        o_ptr->ident |= (ID_SENSE);
-					/* Also, rings and amulets aren't covered by auxX_magic, so we have to exempt them (null string!): */
-					if (o_ptr->tval != TV_RING && o_ptr->tval != TV_AMULET) {
-						if (!object_felt_heavy_p(Ind, o_ptr)) {
-							/* at least give a notice */
-							msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
-							    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux2_magic(o_ptr));
-							/* otherwise inscribe it textually */
-							if (!o_ptr->note) {
-								o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
-								o_ptr->auto_insc = TRUE;
-							}
-						} else {
-							/* at least give a notice */
-							msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
-							    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux1_magic(o_ptr));
-							/* otherwise inscribe it textually */
-							if (!o_ptr->note) {
-								o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
-								o_ptr->auto_insc = TRUE;
-							}
-						}
-					}
-#if 0
-					/* Combine / Reorder the pack (later) */
-					p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-					/* Window stuff */
-					p_ptr->window |= (PW_INVEN | PW_EQUIP);
-#endif
-				} else {
+				if (!remember_sense(Ind, slot, o_ptr)) {
 					/* Just standard message */
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 				}
@@ -7519,4 +7482,46 @@ int apply_parry_chance(player_type *p_ptr, int n) { /* n can already be modified
 	if (p_ptr->stun > 50) n = (n * 7) / 10;
 	if (!n) n = 1;
 	return (n);
+}
+
+/* Remember our previous pseudo-id feeling on flavoured items */
+bool remember_sense(int Ind, int slot, object_type *o_ptr) {
+	/* felt an (non-changing!) object of same kind before via pseudo-id? then remember.
+	   Note: currently all objects for which that is true are 'magic', hence we only
+	   use object_value_auxX_MAGIC() below. Note that if we add an item to an already
+	   felt item in our inventory, the combined items will have ID_SENSE set of course,
+	   so we won't get another "remember" message, just as it makes sense :) - C. Blue */
+	if (!object_aware_p(Ind, o_ptr) && !object_known_p(Ind, o_ptr)
+	    && !(o_ptr->ident & ID_SENSE) && object_felt_p(Ind, o_ptr)) {
+		/* Also, rings and amulets aren't covered by auxX_magic, so we have to exempt them (null string!): */
+		if (o_ptr->tval != TV_RING && o_ptr->tval != TV_AMULET) {
+			char o_name[ONAME_LEN];
+
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+			if (!object_felt_heavy_p(Ind, o_ptr)) {
+				/* at least give a notice */
+				msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
+				    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux2_magic(o_ptr));
+				/* otherwise inscribe it textually */
+				if (!o_ptr->note) {
+					o_ptr->note = quark_add(value_check_aux2_magic(o_ptr));
+					o_ptr->auto_insc = TRUE;
+				}
+			} else {
+				/* at least give a notice */
+				msg_format(Ind, "You remember %s (%c) in your pack %s %s.",
+				    o_name, index_to_label(slot), ((o_ptr->number != 1) ? "were" : "was"), value_check_aux1_magic(o_ptr));
+				/* otherwise inscribe it textually */
+				if (!o_ptr->note) {
+					o_ptr->note = quark_add(value_check_aux1_magic(o_ptr));
+					o_ptr->auto_insc = TRUE;
+				}
+			}
+			return TRUE;
+		}
+		/* We have "felt" this kind of object already before */
+	        o_ptr->ident |= (ID_SENSE);
+	}
+	return FALSE;
 }

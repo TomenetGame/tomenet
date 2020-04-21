@@ -1710,7 +1710,13 @@ void do_cmd_fill_bottle(int Ind) {
 	q_ptr->iron_trade = p_ptr->iron_trade;
 	q_ptr->iron_turn = turn;
 	item = inven_carry(Ind, q_ptr);
-	if (item >= 0) inven_item_describe(Ind, item);
+
+	if (item >= 0) {
+		q_ptr = &p_ptr->inventory[item];
+		if (!object_aware_p(Ind, q_ptr) || !object_known_p(Ind, q_ptr)) /* was just object_known_p */
+			apply_XID(Ind, q_ptr, item);
+		if (!remember_sense(Ind, item, q_ptr)) inven_item_describe(Ind, item);
+	}
 
 	cs_ptr->sc.fountain.rest--;
 
