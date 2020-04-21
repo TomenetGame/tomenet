@@ -20471,6 +20471,30 @@ D:A giant humanoid demon wielding a massive, heavy and sharp scythe. Feared
 D:by foes and friends alike when it flies into one of its berserk rages, the
 D:Horned Reaper will cut down anything in its path between it and you.
 
+N:1155:Saenathra, Daughter of Shelob
+#FINAL_GUARDIAN
+G:S:u
+I:120:20d100:50:70:40
+W:34:2:1000:10000
+E:0:1:0:2:1:8
+O:100:0:0:0
+B:CLAW:POISON:2d6
+B:CLAW:POISON:2d6
+B:BITE:PARALYZE:2d8
+B:STING:LOSE_STR:2d4
+F:UNIQUE | FEMALE |
+F:FORCE_SLEEP | FORCE_MAXHP | SPECIAL_GENE
+F:ESCORT | ESCORTS | DROP_CORPSE | RES_DARK
+F:ONLY_ITEM | DROP_2D2 | DROP_GOOD | DROP_GREAT
+F:SMART | BASH_DOOR | IM_POIS | RES_ACID |
+F:ANIMAL | SPIDER | EVIL | HURT_LITE | NO_CONF | NO_SLEEP | BLUEBAND
+S:1_IN_4 |
+S:BLINK | HOLD | HEAL | SLOW
+S:S_SPIDERS
+D:Daughter of Shelob, the legendary Spider-Queen, Saenathra has built her own
+D:empire deep within the shadows of Mirkwood. With legions of ghastly giant
+D:spiders at her command, she has accumulated an untold fortune of treasure.
+
 
 # N: serial number : monster name
 # G: symbol : color
