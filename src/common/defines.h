@@ -5277,7 +5277,7 @@
  #define RESF_COND_FORCE	0x00000800	/* force item drop of desired type according to conditions */
  #define RESF_COND_LSWORD	0x00001000	/* force a sword (swordmen, rogues) */
  #define RESF_BOOST_PVAL	0x00002000	/* for create_reward(): Boost lowish pvals for certain items to make them guaranteedly quite useful */
- //HOLE				0x00004000
+ #define RESF_CONDF_NOMSTAFF	0x00004000	/* don't allow mage staves (persistent; for Saruman, when he chosen-drops a guaranteed one, this avoids duplicates) -- */
 #endif
 #define RESF_EGOHI		0x00008000	/* e_info value of 9000.. */
 

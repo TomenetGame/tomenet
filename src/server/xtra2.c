@@ -5917,7 +5917,12 @@ bool monster_death(int Ind, int m_idx) {
 		case 539: //slinger have FRIENDS
 			resf_drops |= RESF_COND_SLING;
 			break;
-		/* -- only do flexible vs tough armour choice for the remaining monsters here -- */
+		/* specialty: Saruman - avoid duplicate mage staff drop */
+		case 771:
+			/* the dedicated +10 mstaff is not for farming! */
+			if (!(resf_chosen & RESF_NOTRUEART)) resf_drops |= RESF_CONDF_NOMSTAFF;
+			break;
+		/* -- for the remaining monsters here, only do 'flexible vs tough armour' choice -- */
 		default:
 			switch (r_idx) {
 			/* monsters that don't fall into the usual colouring scheme */
@@ -7324,29 +7329,32 @@ if (cfg.unikill_format) {
 				a_idx = ART_MARDRA;
 				chance = 55;
 			} else if (strstr((r_name + r_ptr->name), "Saruman of Many Colours")) {
-				a_idx = ART_ELENDIL;
-				chance = 30;
+				/* Idea here: The alternative +10 mstaff is not for getting farmed by winners */
+				if (!(resf_chosen & RESF_NOTRUEART)) {
+					a_idx = ART_ELENDIL;
+					chance = 30;
 
-				/* If Elendil drop fails, go for a top mage staff instead */
-				if (magik(chance) && !cfg.arts_disabled && (a_info[a_idx].cur_num == 0)) chance = 100;
-				else {
-					a_idx = 0;
+					/* If Elendil drop fails, go for a top mage staff instead */
+					if (magik(chance) && !cfg.arts_disabled && (a_info[a_idx].cur_num == 0)) chance = 100;
+					else {
+						a_idx = 0;
 
-					/* Mage staff drop - added after treasure classes were fixed. */
-					qq_ptr = &forge;
-					object_wipe(qq_ptr);
-					invcopy(qq_ptr, lookup_kind(TV_MSTAFF, SV_MSTAFF));
-					qq_ptr->number = 1;
-					qq_ptr->note = local_quark;
-					qq_ptr->note_utag = strlen(quark_str(local_quark));
-					apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_chosen);
-					/* hack ego power if not art already */
-					if (!qq_ptr->name1) {
-						qq_ptr->name2 = EGO_MWIZARDRY;
-						qq_ptr->pval = 10;
-						determine_level_req(object_level, qq_ptr);
+						/* Mage staff drop - added after treasure classes were fixed. */
+						qq_ptr = &forge;
+						object_wipe(qq_ptr);
+						invcopy(qq_ptr, lookup_kind(TV_MSTAFF, SV_MSTAFF));
+						qq_ptr->number = 1;
+						qq_ptr->note = local_quark;
+						qq_ptr->note_utag = strlen(quark_str(local_quark));
+						apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_chosen);
+						/* hack ego power if not art already */
+						if (!qq_ptr->name1) {
+							qq_ptr->name2 = EGO_MWIZARDRY;
+							qq_ptr->pval = 10;
+							determine_level_req(object_level, qq_ptr);
+						}
+						drop_near(0, qq_ptr, -1, wpos, y, x);
 					}
-					drop_near(0, qq_ptr, -1, wpos, y, x);
 				}
 			} else if (strstr((r_name + r_ptr->name), "Gorlim, Betrayer of Barahir")) {
 				a_idx = ART_GORLIM;

@@ -1001,6 +1001,8 @@ errr get_obj_num_prep(u32b resf) {
 		if ((resf & RESF_COND_BLUNT) && which_theme(tval) == 2 && tval != TV_BLUNT) p = 0;
 		//force generation of a non-sword weapon, if generating a _weapon_ at all
 		if ((resf & RESF_CONDF_NOSWORD) && is_melee_weapon(tval) && tval == TV_SWORD) p = 0;
+		//prevent generation of a mage staff -- Saruman specialty
+		if ((resf & RESF_CONDF_NOMSTAFF) && tval == TV_MSTAFF) p = 0;
 		//force generation of a mage staff:
 		if (resf & RESF_CONDF_MSTAFF && tval != TV_MSTAFF) p = 0;
 		//force generation of a sling or sling-ammo, if generating a combat item at all
