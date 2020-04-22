@@ -3530,6 +3530,8 @@ cptr item_activation(object_type *o_ptr) {
 		return "destroying doors and traps every 5..30+d10 turns";
 	case ART_SOULCURE:
 		return "holy prayer (+20 AC) every 50..150+d100 turns";
+	case ART_GOGGLES_DM:
+		return "identifying possessions";
 	case ART_AMUGROM:
 		return "temporary resistance boost every 50..150+d50 turns";
 	case ART_HELLFIRE:

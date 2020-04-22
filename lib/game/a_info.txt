@@ -3245,8 +3245,7 @@ N:261:of the Dungeon Master
 I:32:15:0
 W:127:255:5:0
 P:0:0d0:0:0:0
-F:INSTA_ART | HIDE_TYPE
-# | AUTO_ID
+F:INSTA_ART | HIDE_TYPE | ACTIVATE
 D:Sees the things that can't be seen.
 D:(Not to be acquired by players!)
 
