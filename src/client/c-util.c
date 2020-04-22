@@ -2087,7 +2087,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			for (i = 0; i < hist_chat_end; i++) {
 				if (!strcmp(message_history_chat[i], buf)) {
 					/* Found an old duplicate. Excise it. */
-					for (k = i; k < hist_chat_end - 1; k++) strcpy(message_history_chat[k], message_history_chat[k + 1]);
+					for (j = i; j < hist_chat_end - 1; j++) strcpy(message_history_chat[j], message_history_chat[j + 1]);
 					/* Go back one step accordingly */
 					hist_chat_end--;
 					break;
@@ -2120,7 +2120,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			for (i = 0; i < hist_end; i++) {
 				if (!strcmp(message_history[i], buf)) {
 					/* Found an old duplicate. Excise it. */
-					for (k = i; k < hist_end; k++) strcpy(message_history[k], message_history[k + 1]);
+					for (j = i; j < hist_end; j++) strcpy(message_history[j], message_history[j + 1]);
 					/* Go back one step accordingly */
 					hist_end--;
 					break;
