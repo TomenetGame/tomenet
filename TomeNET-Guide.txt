@@ -13946,9 +13946,11 @@ Some of those abilities have a maximum value after which they cannot be
 increased any further. Such abilities show 'legendary' in different colours
 than just light green. Instead they use:
 Legendary   (dark green)    This means it's good enough to deserve being
-                            called 'legendary'.
+                            called 'legendary', but that it can actually be
+                            further increased up to a specific maximum.
 Legendary   (golden)        This means, that you have reached the absolute
-                            highest possible value for this ability.
+                            highest possible value, ie the maximum, for this
+                            ability.
 
 
 Here is a list of detailed information about miscellaneous abilities:
@@ -21636,6 +21638,8 @@ Solution:   TomeNET uses basic linux system fonts (and allows you to switch to
             system's package manager. It should usually be 'xorg-fonts-misc' or
             'linux-fonts-misc'.
             After installation, reboot your system to ensure they work.
+            If there is still a problem, you could try installing
+            xorg-fonts-type1 or awesome-terminal-fonts too. Maybe it helps.
 
 PROBLEM 57: On older Linux systems that do not use pulseaudio, audio (sound/
             music) is not working at all. (First see PROBLEM 20 please.)
