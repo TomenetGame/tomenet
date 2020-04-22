@@ -9003,6 +9003,7 @@ void player_death(int Ind) {
 			if (i >= INVEN_WIELD) reverse_cursed(o_ptr);
 #endif
 
+			/* Check if the item should get scattered far away randomly for some reason */
 			if (true_artifact_p(o_ptr)) {
 				cave_type **zcave;
 
@@ -9015,19 +9016,31 @@ void player_death(int Ind) {
 			/* Apply penalty of death */
 			else if (!artifact_p(o_ptr) && magik(DEATH_ITEM_SCATTER)) away = TRUE;
 #endif	/* DEATH_ITEM_SCATTER */
-			else {
+
+			/* If the item isn't to be scattered, drop it here now */
+			if (!away) {
+				s16b res;
+
 				if (p_ptr->wpos.wz) o_ptr->marked2 = ITEM_REMOVAL_NEVER;
 				else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
 				else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
-				/* Drop this one */
-				away = (drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px) == -2);
+				/* Drop this one - if dropping fails for reasons that don't legitimately destroy the item, fallback to scattering it far away instead */
+				res = drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+				away = (res == -2);
+				/* Item failed to drop or get scattered and just gets eaten? Paranoia log */
+				if (res <= 0 && !away) {
+					char o_name[ONAME_LEN];
+
+					object_desc(0, o_name, o_ptr, TRUE, 3);
+					s_printf("Death-cannot-drop_near %s\n", o_name);
+				}
 			}
 
 			if (away) {
 				int o_idx = 0, x1, y1, try = 500;
 				cave_type **zcave;
 
-				if ((zcave = getcave(&p_ptr->wpos))) /* this should never.. */
+				if ((zcave = getcave(&p_ptr->wpos))) { /* this should never.. */
 					while (o_idx <= 0 && try--) {
 						x1 = rand_int(p_ptr->cur_wid);
 						y1 = rand_int(p_ptr->cur_hgt);
@@ -9043,6 +9056,14 @@ void player_death(int Ind) {
 						else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 						o_idx = drop_near(0, o_ptr, 0, &p_ptr->wpos, y1, x1);
 					}
+					/* Item failed to drop or get scattered and just gets eaten? Paranoia log */
+					if (o_idx <= 0) {
+						char o_name[ONAME_LEN];
+
+						object_desc(0, o_name, o_ptr, TRUE, 3);
+						s_printf("Death-failed-to-away %s\n", o_name);
+					}
+				} else s_printf("Death-NO-ZCAVE.\n"); //paranoia-log
 			}
 		} else {
 			/* set the artifact as unfound */
