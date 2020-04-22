@@ -1956,6 +1956,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if (r_ptr->weight >= 100000 && i < 3) i++;
 	/* <race> */
 	if (strstr(mname, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Bears get +1 STR */
+	if (r_ptr->d_char == 'Y' && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Yeti/Sasquatch get +1 STR */
 	if (r_ptr->flags3 & RF3_TROLL) i += 1;
 	if (r_ptr->flags3 & RF3_GIANT) i += 1;
 	if ((r_ptr->flags3 & RF3_DRAGON) && (strstr(mname, "mature ") ||
