@@ -16319,11 +16319,23 @@ Firebird                speedy and tough; can fly and passes most terrains;
 (6.8) Spells and prayers
 ------------------------
 Istari (mages), rangers, rogues, priests, paladins, druids, shamans,
-mindcrafters and even adventurers can cast magic spells, use telepathic powers
-(which are the same as spells, technically) or speak prayers.
+mindcrafters, runemasters, mimics and even adventurers can cast magic spells,
+use telepathic powers (which are the same as spells, technically) draw runes
+or speak prayers.
 To do so, they need the according spell scrolls (which contain exactly one
 specific spell) or books (such as Codices, Spell Books, Grimoires, Handbooks
 or Tomes, that contain several different spells) in their inventory.
+Mindcraft uses spell crystals instead of spell scrolls, there is no real
+difference in the way of spell-casting though.
+Runemasters however do not use any scrolls or books. Instead they draw runes
+from their memory. For certain advanced spells they might require physical
+runes in their inventory. Runecraft is quite different from normal spellcasting
+and is explained in chapters (6.8b) and (6.8c) instead.
+Mimics use a very different type of magic too, 'innate powers' that they gain
+from the very monster form they imitate, allowing them to cast most if not all
+spells that the monster would be able to use. As such, Mimicry has almost
+nothing to do with normal spell-casting either and is instead discussed in
+chapter (6.8a).
 
 The failure rate when attempting to successfully cast a spell is usually shown
 when browsing the according spell scroll/crystal, and is determined by your
