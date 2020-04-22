@@ -537,7 +537,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.quiet_os,		FALSE,	5,	1, 131, TRUE,
 	    "quiet_os",			"Don't play beep/alert/page beeps through OS" },
 	{ &c_cfg.disable_lightning,	FALSE,	2,	9, 132, TRUE,
-	    "disable_lightning",	"Disable lightning visual screen effect" },
+	    "disable_lightning",	"Disable visual screen flash effect for lightning" },
 
 #if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
     /* 4.7.3 */
