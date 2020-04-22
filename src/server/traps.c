@@ -345,7 +345,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 		o_idx = drop_near_severe(Ind, i_ptr, 0, &p_ptr->wpos, y1, x1);
 	}
 
-	if (!o_idx) return FALSE;
+	if (o_idx <= 0) return FALSE;
 
 	o_ptr = &o_list[o_idx];
 

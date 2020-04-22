@@ -7788,7 +7788,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	   This is done to protect items inside houses from weird bashes that would erase them.
 	   (Funny hypothetical side effect: We could bash an item inside a house against another player
 	   who is inside the house too, he'd notice it, yet it lands in front of our own feet again.) */
-	if (drop_near_severe(Ind, o_ptr, j, wpos, y, x) == -1 /* bashing went wrong aka no space in house at target location? */
+	if (drop_near_severe(Ind, o_ptr, j, wpos, y, x) == -2 /* bashing went wrong aka no space in house at target location? */
 	    && !wpos->wz /* world surface is condition for 'house' */
 	    && start_ix /* only if it was bashed, not if it was thrown */
 	    && inside_house_simple(&zcave[start_iy][start_ix]) /* starting location must be inside house */

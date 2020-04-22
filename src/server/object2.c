@@ -9655,9 +9655,11 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
  * a "drop location", and several functions to actually "drop" an object.
  *
  * XXX XXX XXX Consider allowing objects to combine on the ground.
+ *
+ * Returns -1 for 'legal item death' (burnt up or just broke)
+ * Returns -2 for 'code-limits item death' (no room, no cave paranoi)
  */
-/* XXX XXX XXX DIRTY! DIRTY! DIRTY!		- Jir - */
-//#define DROP_KILL_NOTE /* todo: needs adjustments - see below */
+#define DROP_KILL_NOTE /* todo: needs adjustments - see below */
 #define DROP_ON_STAIRS_IN_EMERGENCY
 s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
 	int k, d, ny, nx, i, s;	// , y1, x1
@@ -9694,7 +9696,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 	o_ptr->held_m_idx = 0;
 
 
-	if (!(zcave = getcave(wpos))) return(-1);
+	if (!(zcave = getcave(wpos))) return(-2);
 
 	/* Handle normal "breakage" */
 	if (!arts && magik(chance)) {
@@ -9880,7 +9882,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 			    o_name);
 		}
 
-		return (-1);
+		return (-2);
 	}
 
 	ny = by;
@@ -9925,25 +9927,26 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 	}
 
 	if (do_kill) {
-#ifdef DROP_KILL_NOTE //needs adjustments
+#ifdef DROP_KILL_NOTE
 		/* Effect "observed" */
-		if (!quiet && p_ptr->obj_vis[this_o_idx]) obvious = TRUE;
+		bool seen = Ind ? player_can_see_bold(Ind, ny, nx) : FALSE;
+		int who = Ind ? -Ind : PROJECTOR_POTION;
+		char o_name[ONAME_LEN];
+
+		object_desc(Ind, o_name, o_ptr, FALSE, 3);
+
 		/* Artifacts, and other objects, get to resist */
-		if (is_art || ignore) {
+		if (like_artifact_p(o_ptr)) {
 			/* Observe the resist */
-			if (!quiet && p_ptr->obj_vis[this_o_idx]) {
-				msg_format(Ind, "The %s %s unaffected!",
-				o_name, (plural ? "are" : "is"));
-			}
+			if (seen) msg_format(Ind, "The %s %s unaffected!", o_name, (plural ? "are" : "is"));
 		/* Kill it */
 		} else {
 			/* Describe if needed */
-			if (!quiet && p_ptr->obj_vis[this_o_idx] && note_kill)
-				msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
+			if (seen && note_kill) msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
 			/* Potions produce effects when 'shattered' */
-			if (is_potion) (void)potion_smash_effect(who, wpos, ny, nx, o_sval);
-			else if (is_flask) (void)potion_smash_effect(who, wpos, ny, nx, o_sval + 200);
-			if (!quiet) everyone_lite_spot(wpos, ny, nx);
+			if (is_potion) (void)potion_smash_effect(who, wpos, ny, nx, o_ptr->sval);
+			else if (is_flask) (void)potion_smash_effect(who, wpos, ny, nx, o_ptr->sval + 200);
+			//everyone_lite_spot(wpos, ny, nx);
 		}
 #endif
 		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
@@ -9951,25 +9954,23 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 
 		/* Extra logging for those cases of "where did my randart disappear to??1" */
 		if (o_ptr->name1 == ART_RANDART) {
-			char o_name[ONAME_LEN];
-
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-
 			s_printf("%s (BUG?) drop_near kills random artifact at (%d,%d,%d):\n  %s\n",
 			    showtime(),
 			    wpos->wx, wpos->wy, wpos->wz,
 			    o_name);
+
+			return -2;
 		}
 		/* err, this shouldn't happen? but we DO call handle_art_d() above..? */
 		else if (o_ptr->name1) {
-			char o_name[ONAME_LEN];
-
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-
 			s_printf("%s (BUG?) drop_near kills true artifact at (%d,%d,%d):\n  %s\n",
 			    showtime(),
 			    wpos->wx, wpos->wy, wpos->wz,
 			    o_name);
+
+			return -2;
 		}
 		return (-1);
 	}
@@ -10076,7 +10077,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 					    o_name);
 				}
 
-				return (-1);
+				return (-2);
 			}
 		}
 #endif
@@ -10193,6 +10194,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 				    wpos->wx, wpos->wy, wpos->wz,
 				    o_name);
 			}
+			return -2; //CRITICAL - server out of object space?
 		}
 	}
 

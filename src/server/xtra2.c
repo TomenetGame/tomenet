@@ -9018,7 +9018,7 @@ void player_death(int Ind) {
 				else if (istown(&p_ptr->wpos)) o_ptr->marked2 = ITEM_REMOVAL_DEATH_WILD;/* don't litter towns for long */
 				else o_ptr->marked2 = ITEM_REMOVAL_LONG_WILD;/* don't litter wilderness eternally ^^ */
 				/* Drop this one */
-				away = (drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px) <= 0);
+				away = (drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px) == -2);
 			}
 
 			if (away) {

@@ -2706,7 +2706,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 								    inven_drop(Ind, slot, 1);
 #endif
 #ifdef DISARM_SCATTER
-								if (o_idx == -1) {
+								if (o_idx == -1) s_printf("DISARM: ITEM DESTROYED.\n");
+								else if (o_idx == -2) {
 									int x1, y1, try = 500;
 									cave_type **zcave;
 
@@ -2720,7 +2721,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 											forge.marked2 = ITEM_REMOVAL_DEATH_WILD;
 											o_idx = drop_near(0, &forge, 0, &p_ptr->wpos, y1, x1);
 										}
-									s_printf("SCATTERING %s.\n", o_idx ? "succeeded" : "failed");
+									s_printf("DISARM: SCATTERING %s.\n", o_idx > 0 ? "succeeded" : "failed");
 								}
 #endif
 								if (slot == INVEN_ARM) dis_sec = TRUE;
@@ -2755,7 +2756,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 								    inven_drop(Ind, INVEN_WIELD, 1);
 								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
 #ifdef DISARM_SCATTER
-								if (o_idx == -1) {
+								if (o_idx == -1) s_printf("DISARM: ITEM DESTROYED.\n");
+								else if (o_idx == -2) {
 									int x1, y1, try = 500;
 									cave_type **zcave;
 
@@ -2769,7 +2771,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 											forge.marked2 = ITEM_REMOVAL_DEATH_WILD;
 											o_idx = drop_near(0, &forge, 0, &p_ptr->wpos, y1, x1);
 										}
-									s_printf("SCATTERING %s.\n", o_idx ? "succeeded" : "failed");
+									s_printf("SCATTERING %s.\n", o_idx > 0 ? "succeeded" : "failed");
 								}
 #endif
 							}
@@ -2791,7 +2793,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 								    inven_drop(Ind, INVEN_ARM, 1);
 								s_printf("%s EFFECT: Disarmed (dual, drop) %s: %s.\n", showtime(), p_ptr->name, o_name);
 #ifdef DISARM_SCATTER
-								if (o_idx == -1) {
+								if (o_idx == -2) s_printf("DISARM: ITEM DESTROYED.\n");
+								else if (o_idx == -1) {
 									int x1, y1, try = 500;
 									cave_type **zcave;
 
@@ -2805,7 +2808,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 											forge.marked2 = ITEM_REMOVAL_DEATH_WILD;
 											o_idx = drop_near(0, &forge, 0, &p_ptr->wpos, y1, x1);
 										}
-									s_printf("SCATTERING %s.\n", o_idx ? "succeeded" : "failed");
+									s_printf("SCATTERING %s.\n", o_idx > 0 ? "succeeded" : "failed");
 								}
 #endif
 							}

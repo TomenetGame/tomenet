@@ -283,6 +283,7 @@ int inven_drop(int Ind, int item, int amt) {
 	/* Make a "fake" object */
 	tmp_obj = *o_ptr;
 	tmp_obj.number = amt;
+	o_ptr = &tmp_obj;
 
 	/*
 	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
@@ -291,6 +292,16 @@ int inven_drop(int Ind, int item, int amt) {
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, amt);
+
+	/* Decrease the item, optimize. */
+	inven_item_increase(Ind, item, -amt); /* note that this calls the required boni-updating et al */
+	inven_item_describe(Ind, item);
+	inven_item_optimize(Ind, item);
+
+	break_cloaking(Ind, 5);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
 
 	/* What are we "doing" with the object */
 	if (amt < o_ptr->number)
@@ -440,43 +451,35 @@ int inven_drop(int Ind, int item, int amt) {
 	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0);
 
 	/* Drop it (carefully) near the player */
-	o_idx = drop_near_severe(Ind, &tmp_obj, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	o_idx = drop_near_severe(Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
+	if (o_idx > 0) {
+		o_ptr = &o_list[o_idx];
 #ifdef PLAYER_STORES
-	o_ptr = &o_list[o_idx];
-	if (o_idx >= 0 && o_ptr->note && strstr(quark_str(o_ptr->note), "@S") && !o_ptr->questor
-	    && inside_house(&p_ptr->wpos, o_ptr->ix, o_ptr->iy)) {
-		object_desc(0, o_name, o_ptr, TRUE, 3);
-		s_printf("PLAYER_STORE_OFFER: %s - %s (%d,%d,%d; %d,%d).\n",
-		    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
-		    o_ptr->ix, o_ptr->iy);
-		/* appraise the item! */
-		(void)price_item_player_store(Ind, o_ptr);
-		o_ptr->housed = inside_which_house(&p_ptr->wpos, o_ptr->ix, o_ptr->iy);
-	}
+		if (o_idx >= 0 && o_ptr->note && strstr(quark_str(o_ptr->note), "@S") && !o_ptr->questor
+		    && inside_house(&p_ptr->wpos, o_ptr->ix, o_ptr->iy)) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("PLAYER_STORE_OFFER: %s - %s (%d,%d,%d; %d,%d).\n",
+			    p_ptr->name, o_name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
+			    o_ptr->ix, o_ptr->iy);
+			/* appraise the item! */
+			(void)price_item_player_store(Ind, o_ptr);
+			o_ptr->housed = inside_which_house(&p_ptr->wpos, o_ptr->ix, o_ptr->iy);
+		}
 #endif
 
-	/* Reattach questors to quest */
-	if (o_ptr->questor) {
-		q_ptr = &q_info[o_ptr->quest - 1];
-		if (!q_ptr->defined || /* this quest no longer exists in q_info.txt? */
-		    !q_ptr->active || /* or it's not supposed to be enabled atm? */
-		    q_ptr->questors <= o_ptr->questor_idx) { /* ew */
-			s_printf("QUESTOR DEPRECATED (on drop) o_idx %d, q_idx %d.\n", o_idx, o_ptr->quest - 1);
-			o_ptr->questor = FALSE;
-			/* delete him too, maybe? */
-		} else q_ptr->questor[o_ptr->questor_idx].mo_idx = o_idx;
+		/* Reattach questors to quest */
+		if (o_ptr->questor) {
+			q_ptr = &q_info[o_ptr->quest - 1];
+			if (!q_ptr->defined || /* this quest no longer exists in q_info.txt? */
+			    !q_ptr->active || /* or it's not supposed to be enabled atm? */
+			    q_ptr->questors <= o_ptr->questor_idx) { /* ew */
+				s_printf("QUESTOR DEPRECATED (on drop) o_idx %d, q_idx %d.\n", o_idx, o_ptr->quest - 1);
+				o_ptr->questor = FALSE;
+				/* delete him too, maybe? */
+			} else q_ptr->questor[o_ptr->questor_idx].mo_idx = o_idx;
+		}
 	}
-
-	/* Decrease the item, optimize. */
-	inven_item_increase(Ind, item, -amt); /* note that this calls the required boni-updating et al */
-	inven_item_describe(Ind, item);
-	inven_item_optimize(Ind, item);
-
-	break_cloaking(Ind, 5);
-	break_shadow_running(Ind);
-	stop_precision(Ind);
-	stop_shooting_till_kill(Ind);
 
 	return o_idx;
 }
