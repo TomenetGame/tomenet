@@ -8786,7 +8786,7 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 	//chance = 100 - ((USE_DEVICE - 1) * 100) / chance;
 
 	/* 100% possible to reach: */
-	*permille = (1000 - ((USE_DEVICE - 1) * 100) / chance + chance / 11) % 10;
+	*permille = (1000 - ((USE_DEVICE - 1) * 1000) / chance + (chance * 10) / 11) % 10;
 	chance = 100 - ((USE_DEVICE - 1) * 100) / chance + chance / 11;
 	if (chance >= 100) {
 		chance = 100;
@@ -8801,8 +8801,9 @@ int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 
 bool activate_magic_device(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
+	byte permille;
 
-	int chance = magic_device_base_chance(Ind, o_ptr);
+	int chance = activate_magic_device_chance(Ind, o_ptr, &permille);
 
 	/* Certain items are heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
 	if (o_ptr->name1 == ART_PHASING && !p_ptr->total_winner) {
@@ -8811,7 +8812,7 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
 	}
 
 	/* Roll for usage */
-	if (magik(chance)) return TRUE;
+	if (rand_int(1000) < chance * 10 + permille) return TRUE;
 	return FALSE;
 }
 
