@@ -5103,7 +5103,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #ifdef USE_SOUND_2010
 				if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			} else if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_PARCHMENT) { /* not TV_BOOK atm.. */
+			} else if (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_PARCHMENT || (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK)) {
 				note_kill = (plural ? " are shredded!" : " is shredded!");
 				do_kill = TRUE;
 #ifdef USE_SOUND_2010
@@ -5123,7 +5123,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!quiet) sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 			} else if (typ == GF_SHARDS &&
-			    (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_PARCHMENT)) { /* not TV_BOOK atm.. */
+			    (o_ptr->tval == TV_SCROLL || o_ptr->tval == TV_PARCHMENT || (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK))) {
 				note_kill = (plural ? " are shredded!" : " is shredded!");
 				do_kill = TRUE;
 #ifdef USE_SOUND_2010
