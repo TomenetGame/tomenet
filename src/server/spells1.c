@@ -4949,11 +4949,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Get the "plural"-ness */
 		if (o_ptr->number > 1) plural = TRUE;
 
-		/* Check for artifact */
-		if (artifact_p(o_ptr)) is_art = TRUE;
-
-		/* Stormbringer is artifact-like - C. Blue */
-		if (o_ptr->name2 == EGO_STORMBRINGER) is_art = TRUE;
+		/* Check for artifact/stormbringer */
+		is_art = like_artifact_p(o_ptr);
 
 		o_sval = o_ptr->sval;
 		/* potion_smash_effect only takes sval as parameter, so it can't handle TV_POTION2 at this time.
