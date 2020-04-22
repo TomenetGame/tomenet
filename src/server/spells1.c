@@ -5948,8 +5948,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		no_dam = TRUE; //lul
 		break;
 
-	/* Magic Missile -- pure damage */
+	/* Magic Missile & co -- pure damage */
 	case GF_MISSILE:
+	case GF_SHOT:
+	case GF_ARROW:
+	case GF_BOLT:
+	case GF_BOULDER:
 		if (seen) obvious = TRUE;
 		break;
 
@@ -6269,14 +6273,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				//dam *= 5; dam /= (randint(3)+4);
 			}
 		}
-		break;
-
-	/* Arrow -- XXX no defense */
-	case GF_SHOT:
-	case GF_ARROW:
-	case GF_BOLT:
-	case GF_BOULDER:
-		if (seen) obvious = TRUE;
 		break;
 
 	/* Plasma -- Fire/Elec/Force */
