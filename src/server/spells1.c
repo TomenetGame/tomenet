@@ -5890,7 +5890,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		} else if (randint(dam > 20 ? 20 : dam) > randint(r_ptr->level)) {
 			do_stun = randint(6);
 			do_conf = randint(20);
-			if (!(r_ptr->flags3 & RF3_NO_SLEEP)) do_sleep = rand_int(2) ? 5 + randint(randint(60)) : 0;
 			if (!(r_ptr->flags3 & RF3_NO_FEAR)) do_fear = randint(15);
 		}
 		break;
