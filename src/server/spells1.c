@@ -5948,7 +5948,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		no_dam = TRUE; //lul
 		break;
 
-	/* Magic Missile & co -- pure damage */
+	/* Magic Missile & co -- pure physical (!) damage */
 	case GF_MISSILE:
 	case GF_SHOT:
 	case GF_ARROW:
@@ -9465,6 +9465,30 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
+	case GF_SHOT:
+		if (p_ptr->biofeedback) dam /= 2;
+		if (fuzzy) msg_format(Ind, "You are hit by some small projectile for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer, -who);
+		break;
+	case GF_BOLT:
+		if (p_ptr->biofeedback) dam /= 2;
+		if (fuzzy) msg_format(Ind, "You are hit by some heavy projectile for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer, -who);
+		break;
+	case GF_ARROW:
+		if (p_ptr->biofeedback) dam /= 2;
+		if (fuzzy) msg_format(Ind, "You are hit by some sharp projectile for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer, -who);
+		break;
+	case GF_BOULDER:
+		//if (p_ptr->biofeedback) dam /= 2;
+		if (fuzzy) msg_format(Ind, "You are hit by something heavy for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer, -who);
+		break;
 
 #ifdef ARCADE_SERVER
 		case GF_PUSH:
@@ -9514,32 +9538,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->pclass == CLASS_PRIEST) dam = 0;
 		if (p_ptr->pclass == CLASS_PALADIN) dam /= 2;
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
-		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer, -who);
-		break;
-
-	/* Arrow -- XXX no dodging */
-	case GF_SHOT:
-		if (p_ptr->biofeedback) dam /= 2;
-		if (fuzzy) msg_format(Ind, "You are hit by some small projectile for \377%c%d \377wdamage!", damcol, dam);
-		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer, -who);
-		break;
-	case GF_BOLT:
-		if (p_ptr->biofeedback) dam /= 2;
-		if (fuzzy) msg_format(Ind, "You are hit by some heavy projectile for \377%c%d \377wdamage!", damcol, dam);
-		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer, -who);
-		break;
-	case GF_ARROW:
-		if (p_ptr->biofeedback) dam /= 2;
-		if (fuzzy) msg_format(Ind, "You are hit by some sharp projectile for \377%c%d \377wdamage!", damcol, dam);
-		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
-		take_hit(Ind, dam, killer, -who);
-		break;
-	case GF_BOULDER:
-		//if (p_ptr->biofeedback) dam /= 2;
-		if (fuzzy) msg_format(Ind, "You are hit by something heavy for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		take_hit(Ind, dam, killer, -who);
 		break;
@@ -12584,6 +12582,10 @@ int approx_damage(int m_idx, int dam, int typ) {
 		break;
 
 	case GF_MISSILE:
+	case GF_SHOT:
+	case GF_ARROW:
+	case GF_BOLT:
+	case GF_BOULDER:
 		break;
 
 	case GF_ACID:
@@ -12700,12 +12702,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 				//dam *= 5; dam /= (randint(3)+4);
 			}
 		}
-		break;
-
-	case GF_SHOT:
-	case GF_ARROW:
-	case GF_BOLT:
-	case GF_BOULDER:
 		break;
 
 	case GF_PLASMA:
