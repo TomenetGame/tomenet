@@ -4102,6 +4102,8 @@ void shape_Maia_skills(int Ind) {
 			do_Maia_skill2(Ind, SKILL_SWORD, 0, (750 * 11) / 10); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
 			//Note: SKILL_POLEARM just falls through, kept at usual 0.750
 
+			do_Maia_skill2(Ind, SKILL_DUAL, 1000, 0);
+
 			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
 			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1500 * 7) / 10 * 3);
 			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1300 * 7) / 10 * 3);
