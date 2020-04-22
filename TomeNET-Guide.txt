@@ -68,7 +68,7 @@ Contents
     (3.3)   Behaviour, chat messages and chat modes
     (3.4)   Start-up equipment & how to use it
     (3.4a)  Item basics
-    (3.4b)  Items that are always tradable
+    (3.4b)  Item trading rules and exceptions
     (3.5)   Preparing the first time for fighting enemies
     (3.6)   Creating basic macros & inscribing items (IMPORTANT)
     (3.7)   Creating macros for ranged attacks & abilities (spells)
@@ -150,7 +150,6 @@ Contents
     (5.20c) Digging - Further information
     (5.21)  Recharging
     (5.22)  Wraithform
-    (5.23)  Item sharing rules and exceptions
 (6) Character details
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
@@ -4388,17 +4387,69 @@ a Pick of Digging {+,9} (+5,+9) (+1) (+3)
 (See (5.20) for details about digging.)
 
 
-(3.4b) Items that are always tradable
--------------------------------------
+(3.4b) Item trading rules and exceptions
+----------------------------------------
+The following item sharing rules apply to a standard server configuration.
+It is possible that a server runs certain alterations of some aspects.
+
+
+Trading items between characters of different mode
+--------------------------------------------------
+Usually items cannot be exchanged between characters of different modes, eg
+everlasting mode, pvp mode and other modes.
+Normal mode and unworldly mode characters can exchange items though, they are
+basically unified as 'non-everlasting' mode aka 'scoreboard mode'.
+They too cannot exchange items with pvp mode characters though.
+Game pieces are an exception and can always be used by anyone.
+
+(If the server is running a non-standard configuration, it might be possible
+for everlasting or pvp characters to actually pick up items from other modes
+but not vice versa.)
+
+
+Trading zero-level items
+------------------------
+Level 0 items, which are either starter items, special boss drops or event
+reward items can only be used by the first owner and are unusable by anyone
+else. Certain event parchments can actually be traded despite being level 0.
+
+
+Exceptions for emergency cases
+------------------------------
 Certain items can always be traded, no matter the item level or owner mode (ie
 everlasting vs non-everlasting vs pvp). They will in turn receive a 100% value
 discount on trading. Those items are:
 
--Any kind of food
--Scrolls of Satisfy Hunger
--Scrolls of Word of Recall
--Amulets of the Highlands
+Torches, food, scrolls of satisfy hunger, oil flasks, Word of Recall scrolls.
+These items will get a 100% discount when they are exchanged between modes.
+
+An exception for level 0 items are the following starter items:
+Torches, food, scrolls of satisfy hunger.
+They too will get a 100% discount and their level will actually change to 1.
+
+Other items that can always be picked up by anybody:
+-Amulets of the Highlands (used in the Highlander Tournament event)
 -Game pieces (eg chess, heavy ball)
+
+
+Special restrictions
+--------------------
+Items usually cannot be sent via telekinesis if the target player does not
+meet the item's level requirements.
+True artifacts usually cannot be picked up by a player who does not meet the
+item's level requirements.
+Some items can only be used by 'winners' (characters who have beaten Morgoth).
+These items cannot be sent via telekinesis to a non-winner either.
+
+
+Dungeon-specific exceptions
+---------------------------
+In the ironman deep dive challenge (IDDC) and in the Nether Realm dungeon,
+items can actually be traded between any character mode.
+Within the IDDC, item levels don't even have any effect!
+For the Nether Realm, the items must have been found within the Nether Realm.
+As soon as a character leaves the worldmap sector of the Nether Realm, the
+items lose their ability to be traded between incompatible character modes.
 
 
 
@@ -12455,66 +12506,6 @@ of attackers..
 
 Last but not least, spells cast while in wraithform will only deal half as much
 damage as usual, even if the target is in wraithform too.
-
-
-
-(5.23) Item sharing rules and exceptions
-----------------------------------------
-The following item sharing rules apply to a standard server configuration.
-It is possible that a server runs certain alterations of some aspects.
-
-
-Trading items between characters of different mode
---------------------------------------------------
-Usually items cannot be exchanged between characters of different modes, eg
-everlasting mode, pvp mode and other modes.
-Normal mode and unworldly mode characters can exchange items though, they are
-basically unified as 'non-everlasting' mode aka 'scoreboard mode'.
-They too cannot exchange items with pvp mode characters though.
-Game pieces are an exception and can always be used by anyone.
-
-(If the server is running a non-standard configuration, it might be possible
-for everlasting or pvp characters to actually pick up items from other modes
-but not vice versa.)
-
-
-Trading zero-level items
-------------------------
-Level 0 items, which are either starter items, special boss drops or event
-reward items can only be used by the first owner and are unusable by anyone
-else. Certain event parchments can actually be traded despite being level 0.
-
-
-Exceptions for emergency cases
-------------------------------
-Certain items can be exchanged freely between incompatible modes to make rescue
-missions easier:
-Torches, food, scrolls of satisfy hunger, oil flasks, Word of Recall scrolls.
-These items will get a 100% discount when they are exchanged between modes.
-
-An exception for level 0 items are the following starter items:
-Torches, food, scrolls of satisfy hunger.
-They too will get a 100% discount and their level will actually change to 1.
-
-
-Special restrictions
---------------------
-Items usually cannot be sent via telekinesis if the target player does not
-meet the item's level requirements.
-True artifacts usually cannot be picked up by a player who does not meet the
-item's level requirements.
-Some items can only be used by 'winners' (characters who have beaten Morgoth).
-These items cannot be sent via telekinesis to a non-winner either.
-
-
-Dungeon-specific exceptions
----------------------------
-In the ironman deep dive challenge (IDDC) and in the Nether Realm dungeon,
-items can actually be traded between any character mode.
-Within the IDDC, item levels don't even have any effect!
-For the Nether Realm, the items must have been found within the Nether Realm.
-As soon as a character leaves the worldmap sector of the Nether Realm, the
-items lose their ability to be traded between incompatible character modes.
 
 
 
