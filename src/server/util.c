@@ -8598,6 +8598,9 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 		chance = chance - lev;
 	}
 
+	/* Fix underflow 1/2 */
+	if (chance < 0) chance = 0;
+
 	/* Hacks: Certain items are easier/harder to use in general: */
 
 	/* Runes */
@@ -8768,8 +8771,14 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 	}
 #endif
 
+	/* Fix underflow 2/2 */
+	if (chance < 0) chance = 0;
+
 	/* Confusion makes it much harder (maybe TODO: blind/stun?) */
 	if (p_ptr->confused) chance = chance / 2;
+
+	/* prevent div0 (0) and overflow (1) */
+	if (chance < 2) chance = 2;
 
 	return chance;
 }
