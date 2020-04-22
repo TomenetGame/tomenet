@@ -1617,7 +1617,7 @@
 #define MON_MULT_ADJ	8		/* High value slows multiplication */
 #define MON_SUMMON_ADJ	2		/* Adjust level of summoned creatures */
 #define MON_DRAIN_LIFE	2		/* Percent of player exp drained per hit */
-#define USE_DEVICE	3		/* x> Harder devices x< Easier devices */
+#define USE_DEVICE	3		/* Value for calculating magic device activation chances, also modifier for EASY_USE and easier use of devices in general. */
 /* Enable to prevent cursed diggers/tools to be created. - C. Blue
    Note: For tools that do not have (+hit) or (+dam) values, this might
    slightly increase amount of tools generated in stores since they will

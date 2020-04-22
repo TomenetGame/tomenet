@@ -8776,26 +8776,27 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 
 /* just for display purpose, return an actual average percentage value */
 int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
-	int chance = (magic_device_base_chance(Ind, o_ptr) * 2) / 2;
+	int chance = magic_device_base_chance(Ind, o_ptr);
 
-	/* Give everyone a (slight) chance */
-	if (chance < USE_DEVICE)
-		return ((100 / (USE_DEVICE - chance + 1)) * ((100 * (USE_DEVICE - 1)) / USE_DEVICE)) / 100;
-
-	/* Normal chance */
-	/* Hack:
+	/* 100% not possible to reach:
 	   For chance >= 201 this produces a rounding error that would result in displayed 100%,
 	   when in reality activate_magic_device() can never reach 100% (even though it can go over 99%!).
 	   So we should not return 100 here, really, as it gives a false sense of perfect security. */
 	//*permille = (1000 - ((USE_DEVICE - 1) * 100) / chance) % 10; /* <- for calling function, to disregard '100%' fake result and display permille instead */
 	//chance = 100 - ((USE_DEVICE - 1) * 100) / chance;
+
+	/* 100% possible to reach: */
 	*permille = (1000 - ((USE_DEVICE - 1) * 100) / chance + chance / 11) % 10;
 	chance = 100 - ((USE_DEVICE - 1) * 100) / chance + chance / 11;
 	if (chance >= 100) {
 		chance = 100;
 		*permille = 0;
 	}
-	return chance; /* <- rounding error causes '100%' for chance >= 201 */
+
+	/* Give everyone a (slight) chance */
+	if (!chance) return 1;
+
+	return chance;
 }
 
 bool activate_magic_device(int Ind, object_type *o_ptr) {
@@ -8809,13 +8810,9 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
 		if (!is_admin(p_ptr)) return FALSE;
 	}
 
-	/* Give everyone a (slight) chance */
-	if ((chance < USE_DEVICE) && (rand_int(USE_DEVICE - chance + 1) == 0))
-		chance = USE_DEVICE;
-
 	/* Roll for usage */
-	if ((chance < USE_DEVICE) || (randint(chance) < USE_DEVICE)) return FALSE;
-	return TRUE;
+	if (magik(chance)) return TRUE;
+	return FALSE;
 }
 
 /* Condense an (account) name into a 'normalised' version, used to prevent
