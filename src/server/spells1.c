@@ -8520,7 +8520,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Damaged monster */
 		else {
 			/* Hack -- handle sleep */
-			if (do_sleep) m_ptr->csleep = do_sleep;
+			if (do_sleep) {
+				/* don't show a note later that the monster fell asleep, if it's already sleeping.. */
+				if (m_ptr->csleep && quiet_dam) note = NULL;
+				m_ptr->csleep = do_sleep;
+			}
 
 			/* Give detailed messages if visible or destroyed */
 			/* DEG Changed for added damage message. */
