@@ -15156,10 +15156,11 @@ Adventurer      similar to paladin, also:
 Druid           -
 
 Shaman          similar to priest
-
 Runemaster      similar to rogue
-
 Mindcrafter     similar to ranger
+Death Knight    same as paladin
+Hell Knight     same as paladin
+Corrupt.Priest  same as priest
 
 So if you're playing a melee-oriented characer, make sure you start with at
 least 2 BpR (in some cases you might have to buy very light weapon and discard
