@@ -4326,7 +4326,7 @@ void do_cmd_locate(int Ind, int dir) {
 		if (p_ptr->screen_wid == SCREEN_WID && p_ptr->screen_hgt == SCREEN_HGT)
 			trad_val[0] = 0;
 		else
-			sprintf(trad_val, ", traditionally [%d,%d]", p_ptr->tradpanel_row, p_ptr->tradpanel_col);
+			sprintf(trad_val, ", traditionally [%d,%d]", p_ptr->tradpanel_col, p_ptr->tradpanel_row);
 	} else {
 		sprintf(tmp_val, "%s%s of",
 		        ((y2 < y1) ? " North" : (y2 > y1) ? " South" : ""),
@@ -4337,7 +4337,7 @@ void do_cmd_locate(int Ind, int dir) {
 	/* Prepare to ask which way to look */
 	sprintf(out_val,
 	    "Map sector [%d,%d], which is%s your sector%s. Direction (or ESC)?",
-	    y2, x2, tmp_val, trad_val);
+	    x2, y2, tmp_val, trad_val);
 
 	msg_print(Ind, out_val);
 
