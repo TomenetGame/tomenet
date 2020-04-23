@@ -3826,6 +3826,7 @@ void client_init(char *argv1, bool skip) {
 
 bool ask_for_bigmap_generic(void) {
 	int ch;
+	bool ok;
 
 	Term_clear();
 	Term_putstr(10, 3, -1, TERM_ORANGE, "Do you want to double the height of this window?");
@@ -3836,12 +3837,26 @@ bool ask_for_bigmap_generic(void) {
 
 	while (TRUE) {
 		ch = inkey();
-		if (ch == 'y') {
+		if (ch == 'y' || ch == 'Y') {
 			Term_clear();
-			return TRUE;
-		} else if (ch == 'n') {
+			ok = TRUE;
+			break;
+		} else if (ch == 'n' || ch == 'N') {
 			Term_clear();
-			return FALSE;
+			ok = FALSE;
+			break;
 		}
 	}
+
+	/* While at it, point towards graphical fonts */
+	Term_clear();
+	Term_putstr(10, 4, -1, TERM_YELLOW, "And one last thing:");
+	Term_putstr(10, 6, -1, TERM_YELLOW, "This game uses letters, numbers and symbols for 'graphics'.");
+	Term_putstr(10, 8, -1, TERM_YELLOW, "But if you prefer a more graphical representation,");
+	Term_putstr(10, 9, -1, TERM_YELLOW, "in the game press  \377o=  f\377y  and then look through the fonts");
+	Term_putstr(10,10, -1, TERM_YELLOW, "by pressing  \377o+\377y  repeatedly. Graphical fonts will come up!");
+	ch = inkey();
+
+	Term_clear();
+	return ok;
 }
