@@ -283,7 +283,6 @@ int inven_drop(int Ind, int item, int amt) {
 	/* Make a "fake" object */
 	tmp_obj = *o_ptr;
 	tmp_obj.number = amt;
-	o_ptr = &tmp_obj;
 
 	/*
 	 * Hack -- If rods or wands are dropped, the total maximum timeout or 
@@ -292,6 +291,7 @@ int inven_drop(int Ind, int item, int amt) {
 	 * stack's pval alone. -LM-
 	 */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(&tmp_obj, o_ptr, amt);
+	o_ptr = &tmp_obj;
 
 	/* Decrease the item, optimize. */
 	inven_item_increase(Ind, item, -amt); /* note that this calls the required boni-updating et al */
