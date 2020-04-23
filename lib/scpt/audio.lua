@@ -149,6 +149,7 @@ audio_sfx = {
     "phase_door",
     "puff",
     "teleport",
+    "recall",
     "curse",
     "heal",
     "summon",

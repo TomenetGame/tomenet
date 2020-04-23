@@ -3878,7 +3878,7 @@ void recall_player(int Ind, char *message) {
 	}
 
 #ifdef USE_SOUND_2010
-	sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, FALSE);
+	sound(Ind, "recall", "teleport", SFX_TYPE_COMMAND, FALSE);
 #endif
 
 	/* Remove the player */
@@ -6327,8 +6327,9 @@ static void do_unstat(struct worldpos *wpos, bool fast_unstat) {
 	if (ge_special_sector && in_arena(wpos)) return;
 
 	// Anyone on this depth?
-	for (j = 1; j <= NumPlayers; j++)
+	for (j = 1; j <= NumPlayers; j++) {
 		if (inarea(&Players[j]->wpos, wpos)) return;
+	}
 
 	// If this level is static and no one is actually on it
 	//if (stale_level(wpos)) {

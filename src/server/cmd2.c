@@ -759,7 +759,7 @@ static bool beacon_effect(int Ind, cave_type *c_ptr) {
 	object_type forge, *o_ptr = &forge;
 
 #ifdef USE_SOUND_2010
-	//sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
+	sound(Ind, "recall", NULL, SFX_TYPE_COMMAND, TRUE); //"teleport"
 #endif
 
 	/* Beacons in sector00 lead to Bree transportation */
