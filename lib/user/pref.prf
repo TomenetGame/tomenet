@@ -56,7 +56,7 @@ C:,
 
 # Normal macro that triggers in all situations: Exit the game.
 A:\e\e)^Q
-P:^Q
+H:^Q
 
 # Taking staircases is often an emergency action and therefore should
 # cancel/override other prompts.
