@@ -3632,6 +3632,7 @@ void client_init(char *argv1, bool skip) {
 			Net_cleanup();
 			c_quit = FALSE; //un-quit, paranoia at this point though (only needed for Input_loop())
 			if (!rl_auto_relogin) my_memfrob(pass, strlen(pass)); //need to un-frob the password as it will get refrobbed right over there again
+			skip = FALSE; //prevent infinite loop if -lNAME PASS args were supplied and they are wrong
 			goto retry_contact;
 		}
 		/* bad character name? */
