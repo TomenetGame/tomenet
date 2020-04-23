@@ -170,6 +170,9 @@ static s32b channel_player_id[MAX_CHANNELS];
 /* Music Array */
 static song_list songs[MUSIC_MAX];
 
+/* Jukebox music */
+static int jukebox_org = -1, jukebox_playing = -1;
+
 
 /*
  * Shut down the sound system and free resources.
@@ -1805,6 +1808,12 @@ static bool play_music(int event) {
 	   should not stop the current music if it fails to play. */
 	if (event == -1) return TRUE;
 
+	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
+	if (jukebox_playing != -1 && jukebox_playing != event) {
+		jukebox_org = event;
+		return TRUE;
+	}
+
 	/* We previously failed to play both music and alternative music.
 	   Stop currently playing music before returning */
 	if (event == -2) {
@@ -2794,7 +2803,8 @@ void do_cmd_options_mus_sdl(void) {
  #ifdef JUKEBOX_INSTANT_PLAY
 	bool dis;
  #endif
-	int jukebox_org = music_cur;
+
+	jukebox_org = music_cur;
 #endif
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
@@ -2887,6 +2897,7 @@ void do_cmd_options_mus_sdl(void) {
 		/* Analyze */
 		switch (ch) {
 		case ESCAPE:
+			jukebox_playing = -1;
 #ifdef ENABLE_JUKEBOX
  #ifdef JUKEBOX_INSTANT_PLAY
 			/* Note that this will also insta-halt current music if it happens to be <disabled>,
@@ -2899,6 +2910,8 @@ void do_cmd_options_mus_sdl(void) {
 			}
  #endif
 #endif
+			jukebox_org = -1;
+
 			/* auto-save */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 #ifndef WINDOWS
@@ -3034,11 +3047,13 @@ void do_cmd_options_mus_sdl(void) {
  #ifdef JUKEBOX_INSTANT_PLAY
 			dis = songs[j_sel].disabled;
 			songs[j_sel].disabled = FALSE;
+			jukebox_playing = j_sel;
 			play_music_instantly(j_sel);
 			songs[j_sel].disabled = dis;
  #else
 			if (j_sel == music_cur) break;
 			if (songs[j_sel].disabled) break;
+			jukebox_playing = j_sel;
 			play_music(j_sel);
  #endif
 			break;
