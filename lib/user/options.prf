@@ -153,3 +153,4 @@ Y:find_ignore_montraps
 
 X:quiet_os
 X:disable_lightning
+X:macros_in_stores

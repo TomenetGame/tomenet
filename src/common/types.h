@@ -3812,6 +3812,7 @@ struct client_opts {
 
 	bool quiet_os;
 	bool disable_lightning;
+	bool macros_in_stores;
 };
 
 /*
