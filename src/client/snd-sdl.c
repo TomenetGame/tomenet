@@ -2900,9 +2900,11 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_playing = -1;
 #ifdef ENABLE_JUKEBOX
  #ifdef JUKEBOX_INSTANT_PLAY
-			/* Note that this will also insta-halt current music if it happens to be <disabled>,
-			   so no need for us to check here for songs[].disabled explicitely actually. */
+			/* Note that this will also insta-halt current music if it happens to be <disabled> and different from our jukebox piece,
+			   so no need for us to check here for songs[].disabled explicitely for that particular case.
+			   However, if the currently jukeboxed song is the same one as the disabled one we do need to halt it. */
 			if (jukebox_org != music_cur) play_music(jukebox_org);
+			else if (songs[jukebox_org].disabled) play_music(-2);
  #else
 			if (jukebox_org != music_cur) {
 				if (songs[jukebox_org].disabled) play_music(-2);
