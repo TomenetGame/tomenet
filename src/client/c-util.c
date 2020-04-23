@@ -1217,7 +1217,7 @@ static int hack_dir = 0;
  *
  * Note that many "Rogue" keypresses encode a direction.
  */
-static char roguelike_commands(char command) {
+char roguelike_commands(char command) {
 	/* Process the command */
 	switch (command) {
 
@@ -1269,11 +1269,11 @@ static char roguelike_commands(char command) {
 	case KTRL('D'): return ('k');
 
 	/* Locate player on map */
-	case 'W': return ('L');
+	case KTRL('W'): return ('L');
 	/* Browse a book (Peruse) */
 	case 'P': return ('b');
 	/* Steal */
-	case 'S': return ('j');
+	case KTRL('A'): return ('j');
 	/* Toggle search mode */
 	case '#': return ('S');
 	/* Use a staff (Zap) */
@@ -1294,9 +1294,9 @@ static char roguelike_commands(char command) {
 	case 'O': return ('P');
 
 	/* Secondary 'wear/wield' */
-	case KTRL('W'): return ('W');
+	//case 'W': return ('W');
 	/* Swap item */
-	case KTRL('A'): return ('x');
+	case 'S': return ('x');
 	/* House commands */
 	case KTRL('E'): return ('h');
 	/* Reapply auto-inscriptions */
@@ -1334,7 +1334,7 @@ static char roguelike_commands(char command) {
  *
  * Note that "Original" and "Angband" are very similar.
  */
-static char original_commands(char command) {
+char original_commands(char command) {
 	/* Process the command */
 	switch(command) {
 
@@ -6187,31 +6187,60 @@ Chain_Macro:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Do you want to wear/wield, take off or swap an item?");
 						Term_putstr(5, 11, -1, TERM_L_GREEN, "    w\377g) primary wear/wield");
 						Term_putstr(5, 12, -1, TERM_L_GREEN, "    W\377g) secondary wear/wield");
-						Term_putstr(5, 13, -1, TERM_L_GREEN, "    t\377g) take off an item");
-						Term_putstr(5, 14, -1, TERM_L_GREEN, "    x\377g) swap item(s)");
+						if (c_cfg.rogue_like_commands) {
+							Term_putstr(5, 13, -1, TERM_L_GREEN, "    T\377g) take off an item");
+							Term_putstr(5, 14, -1, TERM_L_GREEN, "    S\377g) swap item(s)");
+						} else {
+							Term_putstr(5, 13, -1, TERM_L_GREEN, "    t\377g) take off an item");
+							Term_putstr(5, 14, -1, TERM_L_GREEN, "    x\377g) swap item(s)");
+						}
 						Term_putstr(5, 16, -1, TERM_GREEN, "Note: This macro depends on your current 'rogue_like_commands' option");
 						Term_putstr(5, 17, -1, TERM_GREEN, "      setting and will not work anymore if you change the keymap.");
 
-						while (TRUE) {
-							switch (choice = inkey()) {
-							case ESCAPE:
-							case 'p':
-							case '\010': /* backspace */
-								i = -2; /* leave */
+						if (c_cfg.rogue_like_commands) {
+							while (TRUE) {
+								switch (choice = inkey()) {
+								case ESCAPE:
+								case 'p':
+								case '\010': /* backspace */
+									i = -2; /* leave */
+									break;
+								case KTRL('T'):
+									/* Take a screenshot */
+									xhtml_screenshot("screenshot????");
+									continue;
+								case 'w':
+								case 'W':
+								case 'T':
+								case 'S':
+									break;
+								default:
+									continue;
+								}
 								break;
-							case KTRL('T'):
-								/* Take a screenshot */
-								xhtml_screenshot("screenshot????");
-								continue;
-							case 'w':
-							case 'W':
-							case 't':
-							case 'x':
-								break;
-							default:
-								continue;
 							}
-							break;
+						} else {
+							while (TRUE) {
+								switch (choice = inkey()) {
+								case ESCAPE:
+								case 'p':
+								case '\010': /* backspace */
+									i = -2; /* leave */
+									break;
+								case KTRL('T'):
+									/* Take a screenshot */
+									xhtml_screenshot("screenshot????");
+									continue;
+								case 'w':
+								case 'W':
+								case 't':
+								case 'x':
+									break;
+								default:
+									continue;
+								}
+								break;
+							}
 						}
 						/* exit? */
 						if (i == -2) continue;
@@ -6476,13 +6505,13 @@ Chain_Macro:
 								buf2[3] = 'w';
 								break;
 							case 'W':
-								buf2[3] = KTRL('W');
+								buf2[3] = 'W';
 								break;
-							case 't':
+							case 'T':
 								buf2[3] = 'T';
 								break;
-							case 'x':
-								buf2[3] = KTRL('A');
+							case 'S':
+								buf2[3] = 'S';
 								break;
 							}
 						buf2[4] = '@';

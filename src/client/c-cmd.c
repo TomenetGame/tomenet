@@ -807,6 +807,11 @@ void cmd_equip(void) {
 			cmd_observe(USE_EQUIP);
 			continue;
 		}
+		else if /* collides! ((c_cfg.rogue_like_commands && ch == 'T') || (!c_cfg.rogue_like_commands && ch == 't')) */
+		    (ch == 't') {
+			cmd_take_off();
+			continue;
+		}
 		else if (ch == '{') {
 			cmd_inscribe(USE_EQUIP);
 			continue;
@@ -929,7 +934,9 @@ void cmd_take_off(void) {
 
 void cmd_swap(void) {
 	int item;
-	char insc[4], *c;
+	char insc[4], *c, swap_insc[3];
+
+	strcpy(swap_insc, "@x");
 
 	item_tester_hook = NULL;
 	get_item_hook_find_obj_what = "Item name? ";
@@ -942,7 +949,7 @@ void cmd_swap(void) {
 	if (item < INVEN_PACK) {
 		/* smart handling of @xN swapping with equipped items that have alternative slot options */
 		if (is_weapon(inventory[item].tval) && is_weapon(inventory[INVEN_ARM].tval) &&
-		    (c = strstr(inventory_name[item], "@x"))) {
+		    (c = strstr(inventory_name[item], swap_insc))) {
 			strncpy(insc, c, 3);
 			insc[3] = 0;
 			if (strstr(inventory_name[INVEN_ARM], insc) && !strstr(inventory_name[INVEN_WIELD], insc)) {
@@ -951,7 +958,7 @@ void cmd_swap(void) {
 			}
 		}
 		else if (inventory[item].tval == TV_RING && inventory[INVEN_RIGHT].tval == TV_RING &&
-		    (c = strstr(inventory_name[item], "@x"))) {
+		    (c = strstr(inventory_name[item], swap_insc))) {
 			strncpy(insc, c, 3);
 			insc[3] = 0;
 			if (strstr(inventory_name[INVEN_RIGHT], insc) && !strstr(inventory_name[INVEN_LEFT], insc)) {
@@ -982,7 +989,7 @@ void cmd_swap(void) {
 		/* default */
 		Send_wield(item);
 	/* special case for DUAL_WIELD: Swap two dual-wielded weapons, useful for main-hand mode: */
-	} else if (item == INVEN_WIELD && inventory[INVEN_ARM].tval && (c = strstr(inventory_name[INVEN_WIELD], "@x"))) {
+	} else if (item == INVEN_WIELD && inventory[INVEN_ARM].tval && (c = strstr(inventory_name[INVEN_WIELD], swap_insc))) {
 		strncpy(insc, c, 3);
 		insc[3] = 0;
 		if (strstr(inventory_name[INVEN_ARM], insc)) {

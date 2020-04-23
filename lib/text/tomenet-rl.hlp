@@ -25,7 +25,7 @@ t  Fire        F  Refill light  (  Friendly target ^X  Toggle music
 \{yg  Take item\{w   G  Skills        )  Clear buffer    ^V  Toggle all audio
 ^E Houses      ^G Auto inscribe *  Target/look     \{y^F  Audio mixer\{w or
 i  Inventory   I  Examine       .  Run                 switch chat mode
-S  Steal                        /  Use item        ^I  Lagometer or
+^A Steal                        /  Use item        ^I  Lagometer or
 ^D Destroy     ^C Force-stack   \{y:  Chat\{w                switch chat mode
 x  Look        ^W Locate (map)  ;  Walk            ^O  Chat history
 m  Use ability M  Show minimap  ?  Help/Guide      ^P  All message history
@@ -37,6 +37,6 @@ s  Search      #  Search mode   }  Uninscribe        \{y(auto-save window layout
 \{yT  Take off\{w       (toggle)      |  Uniques
 Z  Use staff   +  Tunnel (dig)  '  Inspect nearby/lowbie players/party members
 v  Throw       V  Cloak         _  Sip from fountain/show item on the floor
-\{yw  Wear/Wield\{w  ^W Wear/Wield 2  =  Options
-^A Swap        X  Predefined    <  Go up           (*) Use X to quickly switch
+\{yw  Wear/Wield\{w  W  Wear/Wield 2  =  Options
+S  Swap        X  Predefined    <  Go up           (*) Use X to quickly switch
 a  Aim rod        x0-macro (*)  >  Go down         equipment inscribed @x0.

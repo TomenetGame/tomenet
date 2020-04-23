@@ -497,12 +497,12 @@ I       I       inspects an item, showing its special abilities in case it
 w       w       wear/wield an item from your inventory (weapons, rings,
                 amulets, light sources, armour, ammunition, tools).
 
-W       CTRL+W  wear/wield an item, same as 'w', but tries to use the second
+W       W       wear/wield an item, same as 'w', but tries to use the second
                 available slot in case two inventory slots are both egligible.
 
-t       T       take off an item.
+t       T       take off an item. (Note: Item inscription must still be @t)
 
-x       CTRL+A  swap an item. This is basically like both "wear/wield" and
+x       S       swap an item. This is basically like both "wear/wield" and
                 "take off" in one command. This makes only sense if it is used
                 with an item that has been _inscribed_ accordingly, for example
                 "@x4":
@@ -564,7 +564,7 @@ K       CTRL+C  forcibly combines a level 0 item in your inventory with other
 
 C       C       see a character overview.
 
-L       W       look around your current sector/floor (use direction keys).
+L       CTRL+W  look around your current sector/floor (use direction keys).
 
 M       M       display either the world map if you're not in a town or in a
                 dungeon, otherwise display a minimap of the town or of your
@@ -669,7 +669,7 @@ l       x       look at a player/monster/object (use direction keys for
                 This behaviour has no real effect on gameplay though it just
                 looks odd in those rare cases it happens :-p.)
 
-j       S       attempt to steal from players (not recommended!).
+j       CTRL+A  attempt to steal from players (not recommended!).
 
 U       O       use undead powers (use this if you died and became a ghost).
                 Using these will drain your experience. If you ran out of
