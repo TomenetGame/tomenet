@@ -1162,6 +1162,22 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		}
 	}
 
+#if 0 /* added but disabled for the time being because 1) inconsistent, 2) SHIFT+w doesn't work as suggested because it tries by default to replace main hand in this situation, 3) newbies must learn. */
+	/* newbie protection (warriors trying to swap their starter weapon and instead end up dual-wielding with chain mail..) */
+	if (item_fits_dual && equip_fits_dual && slot == INVEN_ARM && !p_ptr->inventory[INVEN_ARM].k_idx
+	    && !cursed_p(&(p_ptr->inventory[INVEN_WIELD]))) { /* this condition makes this hack a bit inconsistent, oh well */
+		/* quick hack for rha check */
+		p_ptr->inventory[INVEN_ARM].k_idx = 1;
+		p_ptr->inventory[INVEN_ARM].tval = TV_SWORD;
+		/* rha check.. */
+		if (rogue_heavy_armor(p_ptr)) {
+			msg_print(Ind, "\377yYour armour weight is too hig to dual-wield, so your main hand weapon has been replaced by this one. If you still intend to dual-wield, use SHIFT+w instead.");
+			slot = INVEN_WIELD;
+		}
+		/* unhack */
+		p_ptr->inventory[INVEN_ARM].k_idx = p_ptr->inventory[INVEN_ARM].tval = 0;
+	}
+#endif
 
 	x_ptr = &(p_ptr->inventory[slot]);
 
