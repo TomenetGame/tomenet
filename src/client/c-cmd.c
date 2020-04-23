@@ -1544,7 +1544,7 @@ void cmd_the_guide(void) {
 	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c, n, line_presearch = line;
-	char search[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
+	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
 	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
 #ifndef BUFFER_GUIDE
 	char path[1024], bufdummy[MAX_CHARS + 1];
@@ -1568,7 +1568,7 @@ void cmd_the_guide(void) {
 
 	/* init searches */
 	chapter[0] = 0;
-	search[0] = 0;
+	searchstr[0] = 0;
 	//lastsearch[0] = 0;
 
 	Term_save();
@@ -1576,7 +1576,7 @@ void cmd_the_guide(void) {
 	while (TRUE) {
 		/* We just wanted to do a chapter search which resulted a hard-coded substitution that isn't a real chapter but instead falls back to normal search? */
 		if (fallback) {
-			strcpy(search, buf);
+			strcpy(searchstr, buf);
 			fallback = FALSE;
 
 			/* Hack: Perform a normal search */
@@ -1590,7 +1590,7 @@ void cmd_the_guide(void) {
 
 			search_uppercase = FALSE;
 
-			strcpy(lastsearch, search);
+			strcpy(lastsearch, searchstr);
 			searchline = line - 1; //init searchline for string-search
 		}
 
@@ -1765,7 +1765,7 @@ void cmd_the_guide(void) {
 			}
 
 			/* Search for specific string? */
-			else if (search[0]) {
+			else if (searchstr[0]) {
 				searchline++;
 				/* Search wrapped around once and still no result? Finish. */
 				if (searchwrap && searchline == line) {
@@ -1778,7 +1778,7 @@ void cmd_the_guide(void) {
 					}
 
 					/* We're done (unsuccessfully), clean up.. */
-					search[0] = 0;
+					searchstr[0] = 0;
 					searchwrap = FALSE;
 					withinsearch[0] = 0;
 
@@ -1792,7 +1792,7 @@ void cmd_the_guide(void) {
 					restore_pos = TRUE;
 					break;
 				/* We found a result */
-				} else if (my_strcasestr_skipcol(buf2, search, search_uppercase)) {
+				} else if (my_strcasestr_skipcol(buf2, searchstr, search_uppercase)) {
 					/* Reverse again to normal direction/location */
 					if (backwards) {
 						backwards = FALSE;
@@ -1807,8 +1807,8 @@ void cmd_the_guide(void) {
 #endif
 					}
 
-					strcpy(withinsearch, search);
-					search[0] = 0;
+					strcpy(withinsearch, searchstr);
+					searchstr[0] = 0;
 					searchwrap = FALSE;
 					line = searchline;
 					/* Redraw line number display */
@@ -1894,14 +1894,14 @@ void cmd_the_guide(void) {
 		}
 		/* failed to find search string? wrap around and search once more,
 		   this time from the beginning up to our actual posititon. */
-		if (search[0]) {
+		if (searchstr[0]) {
 			if (!searchwrap) {
 				searchline = -1; //start from the beginning of the file again
 				searchwrap = TRUE;
 				continue;
 			} else { //never reached now, since searchwrap = FALSE is set in search code above already
 				/* finally end search, without any results */
-				search[0] = 0;
+				searchstr[0] = 0;
 				searchwrap = FALSE;
 
 				/* correct our line number again */
@@ -2476,22 +2476,22 @@ void cmd_the_guide(void) {
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search string: ");
 #if 0
-			search[0] = 0;
+			searchstr[0] = 0;
 #else
 			/* life hack: if we searched for a non-numerical chapter string, make it auto-search target
 			   for a (possibly happening subsequently to the chapter search) normal search too */
  #if 0
-			if (lastchapter[0] != '(') strcpy(search, lastchapter);
-			else search[0] = 0;
+			if (lastchapter[0] != '(') strcpy(searchstr, lastchapter);
+			else searchstr[0] = 0;
  #else
-			strcpy(search, lastchapter);
+			strcpy(searchstr, lastchapter);
  #endif
 #endif
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
-			askfor_aux(search, MAX_CHARS - 1, 0);
+			askfor_aux(searchstr, MAX_CHARS - 1, 0);
 			inkey_msg = inkey_msg_old;
-			if (!search[0]) continue;
+			if (!searchstr[0]) continue;
 
 			line_before_search = line;
 			line_presearch = line;
@@ -2503,15 +2503,15 @@ void cmd_the_guide(void) {
 			/* Hack: If we enter all upper-case, search for exactly that, case sensitively */
 			search_uppercase = 4;
 			search_uppercase_ok = FALSE;
-			for (c = 0; search[c]; c++) {
-				if (!search_uppercase_ok && isalpha(search[c])) search_uppercase_ok = TRUE;
-				if (search[c] == toupper(search[c])) continue;
+			for (c = 0; searchstr[c]; c++) {
+				if (!search_uppercase_ok && isalpha(searchstr[c])) search_uppercase_ok = TRUE;
+				if (searchstr[c] == toupper(searchstr[c])) continue;
 				search_uppercase = FALSE;
 				break;
 			}
 			if (!search_uppercase_ok) search_uppercase = FALSE; /* must contain at least 1 (upper-case) letter */
 
-			strcpy(lastsearch, search);
+			strcpy(lastsearch, searchstr);
 			searchline = line - 1; //init searchline for string-search
 			continue;
 		/* special function now: Reset search. Means: Go to where I was before searching. */
@@ -2530,7 +2530,7 @@ void cmd_the_guide(void) {
 			if (line < 0) line = 0;
 #endif
 
-			strcpy(search, lastsearch);
+			strcpy(searchstr, lastsearch);
 			searchline = line - 1; //init searchline for string-search
 			continue;
 		/* search for previous occurance of the previously used search keyword */
@@ -2549,7 +2549,7 @@ void cmd_the_guide(void) {
 			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 #endif
-			strcpy(search, lastsearch);
+			strcpy(searchstr, lastsearch);
 			searchline = line - 1; //init searchline for string-search
 			continue;
 		/* jump to a specific line number */
