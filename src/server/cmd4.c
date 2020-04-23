@@ -2328,7 +2328,7 @@ void do_cmd_check_server_settings(int Ind) {
 
 	/* level preservation */
 	if (cfg.lifes)
-		fprintf(fff, "Normal mode players can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
+		fprintf(fff, "Normal mode characters can be resurrected up to %d times until their soul\n will escape and their bodies will be permanently destroyed.\n", cfg.lifes);
 	if (cfg.no_ghost)
 		fprintf(fff, "You disappear the moment you die, without becoming a ghost.\n");
 	switch (cfg.replace_hiscore & 0x7) {
@@ -2353,7 +2353,7 @@ void do_cmd_check_server_settings(int Ind) {
 
 	fprintf(fff,"\n");
 
-	fprintf(fff, "Players' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
+	fprintf(fff, "Characters' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
 	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
 
 	if ((k = cfg.party_xp_boost))
@@ -2361,13 +2361,13 @@ void do_cmd_check_server_settings(int Ind) {
 
 	if ((k = cfg.newbies_cannot_drop)) {
 #if STARTEQ_TREATMENT == 1
-		fprintf(fff, "Players under exp.level %d are not allowed to drop items/gold.\n", k);
+		fprintf(fff, "Characters under exp.level %d are not allowed to drop items/gold.\n", k);
 #elif STARTEQ_TREATMENT > 1
-		fprintf(fff, "Level of items dropped by players under exp.level %d will become 0,\n", k);
+		fprintf(fff, "Level of items dropped by characters under exp.level %d will become 0,\n", k);
 		fprintf(fff, " making the item unusable by any other character than this player.\n");
-		fprintf(fff, "Players under exp.level %d are not allowed to drop gold.\n", k);
+		fprintf(fff, "Characters under exp.level %d are not allowed to drop gold.\n", k);
 #else
-		fprintf(fff, "Players under exp.level %d are not allowed to drop gold.\n", k);
+		fprintf(fff, "Characters under exp.level %d are not allowed to drop gold.\n", k);
 #endif
 	}
 
@@ -2405,11 +2405,11 @@ void do_cmd_check_server_settings(int Ind) {
 	fprintf(fff,"\n");
 
 	if (cfg.houses_per_player) {
-		//fprintf(fff, "Players may own up to level/%d houses (caps at level 50) at once", cfg.houses_per_player);
-		fprintf(fff, "Players may own up to level/%d houses (caps at level %d) at once", cfg.houses_per_player, (50 / cfg.houses_per_player) * cfg.houses_per_player);
+		//fprintf(fff, "Characters may own up to level/%d houses (caps at level 50) at once", cfg.houses_per_player);
+		fprintf(fff, "Characters may own up to level/%d houses (caps at level %d) at once", cfg.houses_per_player, (50 / cfg.houses_per_player) * cfg.houses_per_player);
 		if (cfg.castles_per_player == 1) {
 			fprintf(fff, "\n of which one may be a castle (house with moat)");
-			if (cfg.castles_for_kings) fprintf(fff, "\n provided the player is a king, queen, emperor or empress.\n");
+			if (cfg.castles_for_kings) fprintf(fff, "\n provided the character is a king, queen, emperor or empress.\n");
 			else fprintf(fff, ".\n");
 		} else if (cfg.castles_per_player) {
 			fprintf(fff, "\n of which %d may be a castles (houses with moat)", cfg.castles_per_player);
@@ -2424,14 +2424,14 @@ void do_cmd_check_server_settings(int Ind) {
 		else fprintf(fff, "Players may as many houses as they like unless hitting the account-wide limit");
 		if (cfg.castles_per_player == 1) {
 			fprintf(fff, "\n of which one may be a castle (house with moat)");
-			if (cfg.castles_for_kings) fprintf(fff, "\n provided the player is a king, queen, emperor or empress.\n");
+			if (cfg.castles_for_kings) fprintf(fff, "\n provided the character is a king, queen, emperor or empress.\n");
 			else fprintf(fff, ".\n");
 		} else if (cfg.castles_per_player) {
 			fprintf(fff, "\n of which %d may be a castles (houses with moat)", cfg.castles_per_player);
-			if (cfg.castles_for_kings) fprintf(fff, "\n provided the player is a king, queen, emperor or empress.\n");
+			if (cfg.castles_for_kings) fprintf(fff, "\n provided the character is a king, queen, emperor or empress.\n");
 			else fprintf(fff, ".\n");
 		} else {
-			if (cfg.castles_for_kings) fprintf(fff, "\n or castles if the player is a king, queen, emperor or empress.\n");
+			if (cfg.castles_for_kings) fprintf(fff, "\n or castles if the character is a king, queen, emperor or empress.\n");
 			else fprintf(fff, ".\n");
 		}
 	}
