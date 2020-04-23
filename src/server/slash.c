@@ -4376,6 +4376,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (!reserved_name_character[i][0]) break;
 
 					if (!strcmp(reserved_name_character[i], message3)) {
+						for (j = 1; j <= NumPlayers; j++)
+							if (!strcmp(Players[j]->accountname, reserved_name_account[i])) {
+								msg_format(Ind, "That deceased character belonged to account: \377s%s \377w(\377Gonline\377w)", reserved_name_account[i]);
+								return;
+							}
 						msg_format(Ind, "That deceased character belonged to account: \377s%s", reserved_name_account[i]);
 						return;
 					}
@@ -4387,7 +4392,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #else /* check for account name */
 				if (!GetAccount(&acc, message3, NULL, FALSE))
 					msg_print(Ind, "That character or account name does not exist.");
-				else msg_print(Ind, "There is no such character, but there is an account of that name.");
+				else {
+					for (i = 1; i <= NumPlayers; i++) 
+						if (!strcmp(Players[i]->accountname, message3)) {
+							msg_print(Ind, "There is no such character, but there is an account of that name \377Gonline\377w.");
+							return;
+						}
+					else msg_print(Ind, "There is no such character, but there is an account of that name.");
+				}
 #endif
 				return;
 			}
