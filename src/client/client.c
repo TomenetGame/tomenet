@@ -996,6 +996,10 @@ int main(int argc, char **argv) {
 			save_chat = 2;
 			break;
 
+		case 'x':
+			save_chat = 3;
+			break;
+
 		case 'e': {
 			/* Since ALSA might spam underrun errors.. */
 			FILE *fr = freopen("tomenet.log", "w", stderr);
@@ -1020,25 +1024,28 @@ int main(int argc, char **argv) {
 		puts("Usage  : tomenet [options] [servername]");
 		puts("Example: tomenet -lMorgoth MorgyPass -p18348 europe.tomenet.eu");
 		puts("       : tomenet -f.myrc -lOlorin_archer");
+		puts("  -h                 Display this help");
 		puts("  -c                 Always use CUI(GCU) interface");
 		puts("  -C                 Compatibility mode for very old servers");
 		puts("  -e                 Create file 'tomenet.log' instead of displaying");
 		puts("                     error messages in the terminal");
-		puts("  -f                 specify rc File to read");
+		puts("  -f                 Specify rc File to read");
 		puts("  -F                 Client FPS");
 		puts("  -i                 Ignore .tomenetrc");
+		//puts("  -k                 don't disable numlock on client startup");
 		puts("  -l<nick> <passwd>  Login as");
-		puts("  -m                 skip motd (message of the day) on login");
-		puts("  -N<name>           character name");
-		puts("  -R<name>           character name, auto-reincarnate");
-		puts("  -p<num>            change game Port number");
-		puts("  -P<path>           set the lib directory Path");
-		puts("  -q                 disable audio capabilities ('quiet mode')");
-		puts("  -u                 disable client-side automatic lua updates");
+		puts("  -m                 Skip motd (message of the day) on login");
+		puts("  -N<name>           Character name");
+		puts("  -R<name>           Character name, auto-reincarnate");
+		puts("  -p<num>            Change game Port number");
+		puts("  -P<path>           Set the lib directory Path");
+		puts("  -q                 Disable audio capabilities ('quiet mode')");
+		puts("  -u                 Disable client-side automatic lua updates");
 		puts("                     (you shouldn't use this option!");
-		puts("  -v                 save chat log on exit, don't prompt");
-		puts("  -V                 save complete message log on exit, don't prompt");
-		puts("  -w                 disable client-side weather effects");
+		puts("  -v                 Save chat log on exit, don't prompt");
+		puts("  -V                 Save complete message log on exit, don't prompt");
+		puts("  -x                 Don't save chat/message log on exit (don't prompt)");
+		puts("  -w                 Disable client-side weather effects");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue
