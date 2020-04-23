@@ -561,6 +561,9 @@ char *roman_suffix(char* cname) {
 			maybe_prefix = FALSE; //irregular ;) simply as it's the highest roman number..
 			rome_prev = 1000;
 			break;
+		default:
+			/* Other letters do not belong into roman numbers */
+			return NULL;
 		}
 	}
 
