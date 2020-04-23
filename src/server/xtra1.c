@@ -269,7 +269,7 @@ static void prt_sanity(int Ind) {
 		strcpy(buf, "   Insane");
 	} else if (ratio < 50) {
 		attr = TERM_ORANGE;
-		strcpy(buf, "   Crazy");
+		strcpy(buf, "    Crazy");
 	} else if (ratio < 75) {
 		attr = TERM_YELLOW;
 		strcpy(buf, "    Weird");
