@@ -853,9 +853,9 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
                 a bit irritating.
 
 :       type a chat message. To whisper privately, enter <player>:<text>
-        eg:  Gandalf:hi!  - actually the first few letters of the target
+        eg:  Johnjohn:hi!  - actually the first few letters of the target
         player's name are enough, as long as it's distinct from anyone else
-        who is currently online, like:  Gan:hi!
+        who is currently online, like:  Joh:hi!
         You can also use a player's account name instead of his character name
         to send him a private message, makes it easier if he keeps relogging
         between characters a lot.
@@ -2681,16 +2681,27 @@ Further you can specify an account name and password to be filled in
 automatically, and various other things.
 
 Last but not least, you may use the following command-line options:
+-h                      displays this list of command-line parameters
 -p<Port>                for example -p19348
 -l<Account> <Password>  for example -lGandalf geheim
 -N<character name>      for example -NDruidor
 <ip address>            for example 37.187.75.24
 -q                      turns off loading/initializing of audio ('quiet mode')
 -w                      disables weather effects
--u                      disables automatic LUA script updating
+-u                      disables automatic LUA script updating (bad idea)
 -k                      don't disable numlock on client startup
 -m                      skip motd (message of the day) on login
--v                      automatically save chat log on exit
+-v                      automatically save chat log on exit (exclusive with -V)
+-V                      automatically save complete message log on exit
+-i                      ignores the standard config file
+-f <config file>        read specific configuration file instead of the default
+-F <fps>                set client internal engine fps (default is 100)
+-P <path to lib dir>    sets the path to TomeNET's 'lib' folder
+-R <character name>     character name to choose and auto-reincarnate it
+-c                      force CUI mode (terminal/command-line UI, no windows)
+-C                      compatibility mode for ancient servers (deprecated)
+-e                      Create file 'tomenet.log' instead of displaying
+                        error messages in the terminal
 
 (Skip down to (2.1a) to continue reading.)
 
@@ -2786,15 +2797,14 @@ Depending on your system, some possible fonts are usually:
 4x6, 5x7, 5x8, 6x9, 6x10, 6x12, 7x13, 7x14, 8x13, 9x15, 10x20, 12x24.
 
 Last but not least, you may use the following command-line options:
+-h                      displays this list of command-line parameters
 -c                      force command-line interface instead of X11 etc.
                         Use it if you want to run the client within a terminal.
--e                      Create file 'tomenet.log' instead of displaying
-                        error messages in the terminal
 -f<config file>         use a different config file than ~/.tomenetrc
 -i                      ignore the ~/.tomenetrc config file
 -l<Account> <Password>  for example -lGandalf geheim
 -m                      skip motd (message of the day) on login
--N<character name>      for example -NDruidor
+-N<character name>      for example -NMagnet
 -p<Port>                for example -p19348
 <ip address>            for example 37.187.75.24
 -q                      turns off loading/initializing of audio ('quiet mode')
@@ -2802,6 +2812,12 @@ Last but not least, you may use the following command-line options:
                         (You should NOT use this option!)
 -v                      automatically save chat log on exit
 -w                      disables weather effects
+-F <fps>                set client internal engine fps (default is 100)
+-P <path to lib dir>    sets the path to TomeNET's 'lib' folder
+-R <character name>     character name to choose and auto-reincarnate it
+-C                      compatibility mode for ancient servers (deprecated)
+-e                      Create file 'tomenet.log' instead of displaying
+                        error messages in the terminal
 
 Full command-line example:
         ./tomenet -p19348 -lGandalf geheim -NGandalf 37.187.75.24
@@ -20689,8 +20705,8 @@ alternate ruleset, which is however *very* different from normal gameplay:
 
 The Arcade Server was originally created and developed by Moltor. Later on
 Kurzel also joined the project. It has nothing to do with normal dungeon
-dwelling but instead features some hot action games that merely (ab)use the
-TomeNET 'engine'. :)
+dwelling but instead features some hot action games that (ab)use the TomeNET
+'engine' for excellent entertainment. :)
 
 Note: After logging in you may press '?' key for a help screen.
       The descriptions below are partially taken from that help file.
