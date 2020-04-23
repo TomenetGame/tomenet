@@ -16966,9 +16966,9 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
     Dispel Magic    Removes magical influences.
                     Lv1: Blindness/Confusion.
-                    Lv8: Confusion/Hallucination.
+                    Lv7: Confusion/Hallucination.
                     Lv13: Speed/Slowness/Stun.
-                    Required skill level for first spell level: 18.
+                    Required skill level for first spell level: 10.
                     This spell can be used even while confused or blind.
 
     Holy Resistance Lets you resist heat and cold.             (auto-project)
