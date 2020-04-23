@@ -1687,9 +1687,7 @@ F:INT | WIS | CHR | MANA | SEARCH | ACTIVATE | SEE_INVIS | ESP_EVIL
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SLAY_DRAGON | SLAY_UNDEAD | SLAY_DEMON
 F:HOLD_LIFE | RES_SHARDS | RES_FIRE | RES_COLD | RES_ELEC | BRAND_FIRE
 F:SHOW_MODS | HIDE_TYPE | SPECIAL_GENE
-#D:A staff tall and sturdy, with rough-hewn runes that invoke the element of
-#D:Earth, and which strikes down all creatures who live in the shadow of
-#D:mountains.
+#maybe need something else here..
 
 
 # The Mace of Disruption 'Deathwreaker'
