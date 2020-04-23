@@ -4239,11 +4239,11 @@ void interact_macros(void) {
 				macro_processing_exclusive = TRUE;
 
 				/* Access the "basic" pref file */
-				strcpy(buf, "pref.prf");
-				process_pref_file(buf);
+				strcpy(buf2, "pref.prf");
+				process_pref_file(buf2);
 				/* Access the "basic" system pref file */
-				sprintf(buf, "pref-%s.prf", ANGBAND_SYS);
-				process_pref_file(buf);
+				sprintf(buf2, "pref-%s.prf", ANGBAND_SYS);
+				process_pref_file(buf2);
 
  #ifdef FORGET_MACRO_VISUALS
 				/* Access the "visual" system pref file (if any) */
@@ -4252,8 +4252,62 @@ void interact_macros(void) {
 
 				macro_trigger_exclusive[0] = 0; //unhack
 				macro_processing_exclusive = FALSE;
-			} else
+
+
+				/* if there's a default macro on that key, ask user if he wants to keep it */
+				for (i = 0; i < macro__num; i++) {
+					if (streq(macro__pat[i], buf)) {
+						strncpy(macro__buf, macro__act[i], 159);
+						macro__buf[159] = '\0';
+						break;
+					}
+				}
+				if (i < macro__num) {
+					ascii_to_text(buf2, macro__buf);
+					Term_putstr(0, l + 3, -1, TERM_YELLOW, buf2);
+					Term_putstr(0, l + 2, -1, TERM_YELLOW, format("This key resets to the following default %s macro. Delete it too? [y/N]",
+					    macro__hyb[i] ? "hybrid" : (macro__cmd[i] ? "command" : "normal")));
+					i = inkey();
+					if (i == 'y' || i == 'Y') macro_del(buf);
+				}
+			} else {
 				c_msg_print("No macro was found.");
+
+				/* If there's a default macro available for this key, ask user if he wants to restore it! */
+				strcpy(macro_trigger_exclusive, buf); //hack
+				macro_processing_exclusive = TRUE;
+
+				/* Access the "basic" pref file */
+				strcpy(buf2, "pref.prf");
+				process_pref_file(buf2);
+				/* Access the "basic" system pref file */
+				sprintf(buf2, "pref-%s.prf", ANGBAND_SYS);
+				process_pref_file(buf2);
+
+ #ifdef FORGET_MACRO_VISUALS
+				/* Access the "visual" system pref file (if any) */
+				handle_process_font_file();
+ #endif
+
+				macro_trigger_exclusive[0] = 0; //unhack
+				macro_processing_exclusive = FALSE;
+
+				for (i = 0; i < macro__num; i++) {
+					if (streq(macro__pat[i], buf)) {
+						strncpy(macro__buf, macro__act[i], 159);
+						macro__buf[159] = '\0';
+						break;
+					}
+				}
+				if (i < macro__num) {
+					ascii_to_text(buf2, macro__buf);
+					Term_putstr(0, l + 3, -1, TERM_YELLOW, buf2);
+					Term_putstr(0, l + 2, -1, TERM_YELLOW, format("Do you wish to reset this key to the following default %s macro? [y/N]",
+					    macro__hyb[i] ? "hybrid" : (macro__cmd[i] ? "command" : "normal")));
+					i = inkey();
+					if (i != 'y' && i != 'Y') macro_del(buf);
+				}
+			}
 		}
 #endif
 
