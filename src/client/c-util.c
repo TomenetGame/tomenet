@@ -735,7 +735,6 @@ if (c_cfg.keep_topline)
 	if (((shopping || !inkey_flag || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_CMD)) || inkey_interact_macros) return (ch);
 	if (((shopping || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_HYB)) || inkey_interact_macros) return (ch);
 
-
 	/* Save the first key, advance */
 	buf[p++] = ch;
 	buf[p] = '\0';
@@ -4264,6 +4263,7 @@ void interact_macros(void) {
 				}
 				if (i < macro__num) {
 					ascii_to_text(buf2, macro__buf);
+					Term_putstr(0, l + 3, -1, TERM_YELLOW, "                                                                               ");
 					Term_putstr(0, l + 3, -1, TERM_YELLOW, buf2);
 					Term_putstr(0, l + 2, -1, TERM_YELLOW, format("This key resets to the following default %s macro. Delete it too? [y/N]",
 					    macro__hyb[i] ? "hybrid" : (macro__cmd[i] ? "command" : "normal")));
@@ -4301,6 +4301,7 @@ void interact_macros(void) {
 				}
 				if (i < macro__num) {
 					ascii_to_text(buf2, macro__buf);
+					Term_putstr(0, l + 3, -1, TERM_YELLOW, "                                                                               ");
 					Term_putstr(0, l + 3, -1, TERM_YELLOW, buf2);
 					Term_putstr(0, l + 2, -1, TERM_YELLOW, format("Do you wish to reset this key to the following default %s macro? [y/N]",
 					    macro__hyb[i] ? "hybrid" : (macro__cmd[i] ? "command" : "normal")));
