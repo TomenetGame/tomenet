@@ -12308,7 +12308,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			if (!cave_contact(zcave, y, x)) continue;
 #else
 			/* Walls only protect monsters if it's not the very epicenter of the blast. */
-			if (!cave_contact(zcave, y, x) && y != y2 && x != x2) continue;
+			if (!cave_contact(zcave, y, x) && !(y == y2 && x == x2)) continue;
 #endif
 
 			/* Affect the monster */
