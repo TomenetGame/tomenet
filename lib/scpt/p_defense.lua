@@ -139,7 +139,7 @@ HRESISTS_II = add_spell {
 		fire_ball(Ind, GF_RESACID_PLAYER, 0, dur, 1, "")
 	end,
 	["info"] = 	function()
-			return "Res heat/cold/elec/acid, dur "..(get_level(Ind, HRESISTS_I, 50) + 15)..".."..(get_level(Ind, HRESISTS_I, 50) + 25)
+			return "Base resist, dur "..(get_level(Ind, HRESISTS_I, 50) + 15)..".."..(get_level(Ind, HRESISTS_I, 50) + 25)
 	end,
 	["desc"] = 	{
 			"Lets you resist heat, cold, lightning and acid.",
