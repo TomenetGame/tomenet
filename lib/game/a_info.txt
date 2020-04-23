@@ -3100,8 +3100,8 @@ P:0:7d10:25:30:0
 F:SHOW_MODS | STR | CON | RES_FEAR | FREE_ACT | IM_ELEC | IM_FIRE
 F:RES_LITE | RES_DARK | SEE_INVIS | SLAY_EVIL | SLAY_GIANT |
 F:SLAY_DEMON | SLAY_DRAGON | SLAY_UNDEAD | SLAY_ANIMAL | AGGRAVATE
-D:An axe of amok, cracking skulls and splitting torsos, causing
-D:mad terror and showing no mercy to anything in its way.
+D:Handled calm at first, awaking only when combat draws near, almost like
+D:possessed, this axe splits skull and torso of even the mightiest foes.
 
 
 # Broad Spear 'Impaler'
