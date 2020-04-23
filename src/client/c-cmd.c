@@ -2765,6 +2765,14 @@ static void artifact_lore(void) {
 			cmd_message();
 			continue;
 		}
+		if (c == KTRL('T')) {
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			Term_fresh();
+			sleep(2);
+			Term_putstr(0,  0, -1, TERM_L_UMBER, "                                                  ");
+			continue;
+		}
 		/* allow copying the artifact details into an item inscription ;) */
 		if (c == '{') {
 			cmd_inscribe(USE_INVEN | USE_EQUIP);
@@ -2873,6 +2881,18 @@ static void artifact_lore(void) {
 			if (c == ':') {
 				cmd_message();
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
+			}
+			if (c == KTRL('T')) {
+				/* Take a screenshot */
+				xhtml_screenshot("screenshot????");
+				Term_fresh();
+				sleep(2);
+				Term_putstr(0,  0, -1, TERM_L_UMBER, "                                                  ");
+				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
+				/* hack: hide cursor */
+				Term->scr->cx = Term->wid;
+				Term->scr->cu = 1;
+				continue;
 			}
 			/* allow copying the artifact details into an item inscription ;) */
 			if (c == '{') {
@@ -3187,6 +3207,14 @@ static void monster_lore(void) {
 			cmd_message();
 			continue;
 		}
+		if (c == KTRL('T')) {
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			Term_fresh();
+			sleep(2);
+			Term_putstr(0,  0, -1, TERM_L_UMBER, "                                                  ");
+			continue;
+		}
 		/* just because you can do this in artifact lore too.. */
 		if (c == '{') {
 			cmd_inscribe(USE_INVEN | USE_EQUIP);
@@ -3295,6 +3323,18 @@ static void monster_lore(void) {
 			if (c == ':') {
 				cmd_message();
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
+			}
+			if (c == KTRL('T')) {
+				/* Take a screenshot */
+				xhtml_screenshot("screenshot????");
+				Term_fresh();
+				sleep(2);
+				Term_putstr(0,  0, -1, TERM_L_UMBER, "                                                  ");
+				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
+				/* hack: hide cursor */
+				Term->scr->cx = Term->wid;
+				Term->scr->cu = 1;
+				continue;
 			}
 			/* just because you can do this in artifact lore too.. */
 			if (c == '{') {
