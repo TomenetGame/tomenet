@@ -148,7 +148,7 @@ u32b window_flag[ANGBAND_TERM_MAX];
 
 byte color_table[256][4];
 
-cptr ANGBAND_SYS;
+cptr ANGBAND_SYS = NULL;
 
 byte keymap_cmds[128];
 byte keymap_dirs[128];
