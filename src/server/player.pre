@@ -896,6 +896,7 @@ struct player_type
 	bool palette_animation;
 	bool mute_when_idle;
 	bool censor_swearing;
+	bool keep_bottle;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */
