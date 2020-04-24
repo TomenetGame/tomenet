@@ -2285,9 +2285,9 @@ if (p_ptr->updated_savegame == 0) {
 
 		/* array of 'warnings' and hints aimed at newbies */
 		rd_u16b(&tmp16u);
-		if (tmp16u | 0x01) p_ptr->warning_technique_melee = 1;
-		if (tmp16u | 0x02) p_ptr->warning_technique_ranged = 1;
-		if (tmp16u | 0x04) p_ptr->warning_drained = 1;
+		if (tmp16u & 0x01) p_ptr->warning_technique_melee = 1;
+		if (tmp16u & 0x02) p_ptr->warning_technique_ranged = 1;
+		if (tmp16u & 0x04) p_ptr->warning_drained = 1;
 	} else {
 		/* auto-enable for now (MAX_AURAS) */
 		if (get_skill(p_ptr, SKILL_AURA_FEAR)) p_ptr->aura[0] = TRUE;

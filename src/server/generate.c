@@ -10956,7 +10956,7 @@ static void town_gen(struct worldpos *wpos) {
 	/* XXX this will be changed very soon	- Jir -
 	 * It's no good hardcoding things like this.. */
 #if 1
-	if (type > 0 || type < 6) {
+	if (type > 0 && type < 6) { /* the 5 fixed towns */
 		/* Hack -- Use the "simple" RNG */
 		Rand_quick = TRUE;
 
