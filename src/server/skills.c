@@ -72,6 +72,7 @@ void init_skill(player_type *p_ptr, u32b value, s16b mod, int i) {
  */
 s16b get_skill(player_type *p_ptr, int skill)
 {
+	if (skill < 0 || skill >= MAX_SKILLS) return 0;
 #if 0
 	/* prevent breaking the +2 limit */
 	int s;
