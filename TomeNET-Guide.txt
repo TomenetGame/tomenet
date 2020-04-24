@@ -8402,7 +8402,8 @@ Three time systems are relevant for the players' game experience:
  When NPCs inform you about anything time related, they will do so in in-game
  time, effectively speaking to your character, not to you as a player.
  In-game time passes 20x as fast as real-time (see below for more info).
- This time also controls day/night changes.
+ This time also controls day/night changes, where the sun rises at 6am and
+ night falls at 8pm.
 
 -in-game 'turns' (the /ex command tells you how fast you can move, ie how much
                  you can move each turn)
