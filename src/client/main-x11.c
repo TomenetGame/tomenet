@@ -3193,6 +3193,7 @@ void animate_palette(void) {
 	for (i = 0; i < 16; ++i) {
 		cptr cname = color_name[0];
 
+		XFreeGC(Metadpy->dpy, clr[i]->gc);
 		//MAKE(clr[i], infoclr);
 		Infoclr_set (clr[i]);
 #if 0 /* no colours on this display? */
@@ -3255,6 +3256,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		strcpy(color_name[c], cn);
 
 	/* Activate the palette */
+	XFreeGC(Metadpy->dpy, clr[c]->gc);
 	//MAKE(clr[c], infoclr);
 	Infoclr_set (clr[c]);
 #if 0 /* no colours on this display? */
