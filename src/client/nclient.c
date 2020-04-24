@@ -826,6 +826,37 @@ int Net_setup(void) {
 	char *ptr, str[MAX_CHARS];
 	sockbuf_t cbuf;
 
+#ifdef RETRY_LOGIN
+	/* Try to free up previously allocated memory */
+	if (trait_info) {
+		for (i = 0; i < Setup.max_trait; i++) {
+			if (trait_info[i].title) {
+				string_free(trait_info[i].title);
+				trait_info[i].title = NULL;
+			}
+		}
+	}
+	if (class_info) {
+		for (i = 0; i < Setup.max_class; i++) {
+			if (class_info[i].title) {
+				string_free(class_info[i].title);
+				class_info[i].title = NULL;
+			}
+		}
+	}
+	if (race_info) {
+		for (i = 0; i < Setup.max_race; i++) {
+			if (race_info[i].title) {
+				string_free(race_info[i].title);
+				race_info[i].title = NULL;
+			}
+		}
+	}
+	if (trait_info) C_FREE(trait_info, Setup.max_trait || 1, player_trait);
+	if (class_info) C_FREE(class_info, Setup.max_class, player_class);
+	if (race_info) C_FREE(race_info, Setup.max_race, player_race);
+#endif
+
 	/* Initialize a new socket buffer */
 	if (Sockbuf_init(&cbuf, -1, CLIENT_RECV_SIZE,
 	    SOCKBUF_WRITE | SOCKBUF_READ | SOCKBUF_LOCK) == -1) {
@@ -2065,6 +2096,13 @@ int Receive_skill_init(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%d%c%S%S%S", &ch, &i,
 	    &father, &order, &mkey, &flags1, &tval, name, desc, act)) <= 0) return n;
+
+#ifdef RETRY_LOGIN
+	/* Try to free up previously allocated memory */
+	if (s_info[i].name) string_free(s_info[i].name);
+	if (s_info[i].desc) string_free(s_info[i].desc);
+	if (s_info[i].action_desc) string_free(s_info[i].action_desc);
+#endif
 
 	/* XXX XXX These are x32b, not char * !!!!!
 	 * It's really needed that we separate c-types.h from types.h

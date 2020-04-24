@@ -3607,6 +3607,9 @@ void client_init(char *argv1, bool skip) {
 	/* Close our current connection */
 	/* Dont close the TCP connection DgramClose(Socket); */
 
+	/* Clean up initial sockbuf so that it doesn't leak with RETRY_LOGIN */
+	Sockbuf_cleanup(&ibuf);
+
 	/* Connect to the server on the port it sent */
 	if (Net_init(Socket) == -1)
 		quit("Network initialization failed!\n");
