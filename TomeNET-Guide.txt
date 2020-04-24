@@ -1611,6 +1611,13 @@ If you use a sling, bow or crossbow and rather worthless ammo that you don't
 intend to pick up again, you may inscribe the ammo to make it disappear:
     !g          Makes ammo always break and never drop to the floor.
 
+For magic devices:
+    !B          Will play a beep sound if you either fail the activation roll
+                to use the device or if the device is out of charges or still
+                not charged up respectively, depending on the type of device.
+                For all other cases of activation failure this inscription has
+                no effect.
+
 Other !-inscriptions:
     !T          Prevent taking off a secondary item.
     !F          Prevent using up this item to fuel your currently equipped
