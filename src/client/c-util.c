@@ -5359,7 +5359,8 @@ void interact_macros(void) {
 #define mw_any 'K'
 #define mw_abilitynt 'm'
 #define mw_abilityt 'M'
-#define mw_custom 'n'
+#define mw_slash 'n'
+#define mw_custom 'N'
 #define mw_load 'o'
 #define mw_equip 'p'
 
@@ -5410,7 +5411,7 @@ Chain_Macro:
 					Term_putstr(8, 19, -1, TERM_L_GREEN, "k/K) Use any item with / without a target)");
 					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Use a magic device or activate an item");
 					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target (Draconian breath)");
-					Term_putstr(8, 22, -1, TERM_L_GREEN, "n)   Enter a custom action (same as pressing 'a' in macro screen)");
+					Term_putstr(8, 22, -1, TERM_L_GREEN, "n/N) Enter a slash command / Enter a custom action (same as % a)");
 					Term_putstr(8, 23, -1, TERM_L_GREEN, "o/p) Load a macro file / change equipment (wield/takeoff/swap)");
 
 					while (TRUE) {
@@ -5428,7 +5429,8 @@ Chain_Macro:
 							/* invalid action -> exit wizard */
 							if ((choice < 'a' || choice > mw_LAST) &&
 							    choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' &&
-							    choice != 'G' && choice != 'I' && choice != 'K' && choice != 'H') {
+							    choice != 'G' && choice != 'I' && choice != 'K' && choice != 'H' &&
+							    choice != 'N') {
 								//i = -1;
 								continue;
 							}
@@ -6184,6 +6186,12 @@ Chain_Macro:
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter partial item name or inscription:");
 						break;
 
+					case mw_slash:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter the complete slash command.");
+						Term_putstr(5, 11, -1, TERM_GREEN, "For example, enter:     \377G/cough");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter a slash command:");
+						break;
+
 					case mw_custom:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter the custom macro action string.");
 						Term_putstr(5, 11, -1, TERM_GREEN, "(You have to specify everything manually here, and won't get");
@@ -6282,6 +6290,17 @@ Chain_Macro:
 							i = -2;
 							continue;
 						}
+					}
+					else if (choice == mw_slash) {
+						Term_gotoxy(5, 17);
+
+						/* Get an item/spell name */
+						strcpy(buf, "");
+						if (!askfor_aux(buf, 159, 0)) {
+							i = -2;
+							continue;
+						}
+						strcpy(buf, format(":%s\r", buf));
 					}
 					/* mw_mimicidx is special: it requires a number (1..n) */
 					else if (choice == mw_mimicidx) {
@@ -6482,6 +6501,10 @@ Chain_Macro:
 						buf2[l] = '*';
 						buf2[l + 1] = 't';
 						buf2[l + 2] = 0;
+						break;
+
+					case mw_slash:
+						strcat(buf2, buf);
 						break;
 
 					case mw_custom:
