@@ -293,6 +293,7 @@ audio_sfx = {
     "animal_seagull",
     "animal_toad",
     "animal_wolf",
+    "animal_birdofprey",
 }
 function get_sound_name(idx)
     if audio_sfx[idx + 1] == nil then return "" end

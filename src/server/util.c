@@ -2353,8 +2353,13 @@ void process_ambient_sfx(void) {
 		case WILD_ICE:
 		case WILD_MOUNTAIN:
 		case WILD_WASTELAND:
-			if (IS_NIGHT) sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, vol);
-			w_ptr->ambient_sfx_timer = 30 + rand_int(60);
+			if (IS_NIGHT) {
+				sound_floor_vol(&p_ptr->wpos, "animal_wolf", NULL, SFX_TYPE_AMBIENT, vol);
+				w_ptr->ambient_sfx_timer = 30 + rand_int(60);
+			} else {
+				sound_floor_vol(&p_ptr->wpos, "animal_birdofprey", NULL, SFX_TYPE_AMBIENT, vol);
+				w_ptr->ambient_sfx_timer = 30 + rand_int(60);
+			}
 			break;
 		//case WILD_SHORE:
 		case WILD_OCEAN:
