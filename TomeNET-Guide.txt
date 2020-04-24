@@ -1623,11 +1623,11 @@ Other !-inscriptions:
     !z          Prevent zapping a rod.
     !A          Prevent activating this item.
     !R          Will prevent consuming the last rune in a stack for runespells.
-    !L          Can be used on an item that is the target of a scroll of
-                Artifact Creation. The resulting randart will not gain +LIFE
-                ('it affects your hit points') mod. So this is an inscription
-                that only makes sense for winners to use, since non-winners
-                cannot generate +LIFE on randarts anyway.
+    !L          Can be used on a scroll of Artifact Creation. The resulting
+                randart will not gain +LIFE ('it affects your hit points') mod.
+                So this is an inscription that only makes sense for winners to
+                use, since non-winners cannot generate +LIFE on randarts
+                anyway.
     !U          This item will be displayed in dark grey colour in your
                 inventory. Can be useful for sorting loot.
 
