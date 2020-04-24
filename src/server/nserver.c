@@ -2556,9 +2556,15 @@ static void sync_options(int Ind, bool *options) {
 		if (!p_ptr->mute_when_idle && p_ptr->muted_when_idle) Send_idle(Ind, FALSE);
 	}
 
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) p_ptr->find_ignore_montraps = options[130];
-	else p_ptr->find_ignore_montraps = TRUE;
     }
+
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) {
+		p_ptr->find_ignore_montraps = options[130];
+		p_ptr->keep_bottle = options[135];
+	} else {
+		p_ptr->find_ignore_montraps = TRUE;
+		p_ptr->keep_bottle = FALSE;
+	}
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,

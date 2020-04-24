@@ -3385,6 +3385,7 @@ struct player_type {
 #endif
 
 	int item_newest;
+	bool keep_bottle;
 };
 
 typedef struct boni_col boni_col;
@@ -3814,6 +3815,7 @@ struct client_opts {
 	bool disable_lightning;
 	bool macros_in_stores;
 	bool item_error_beep;
+	bool keep_bottle;
 };
 
 /*

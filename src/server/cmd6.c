@@ -1151,7 +1151,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 void do_cmd_quaff_potion(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	int ident, lev;
-	object_type *o_ptr;
+	object_type *o_ptr, forge;
 	bool flipped = FALSE;
 
 
@@ -1266,6 +1266,19 @@ void do_cmd_quaff_potion(int Ind, int item) {
 #ifdef USE_SOUND_2010
 	sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
+
+	/* Keep the empty bottle? */
+	if (p_ptr->keep_bottle) {
+		o_ptr = &forge;
+		object_wipe(o_ptr);
+		o_ptr->number = 1;
+		invcopy(o_ptr, lookup_kind(TV_BOTTLE, SV_EMPTY_BOTTLE));
+		o_ptr->level = 1;
+		o_ptr->iron_trade = p_ptr->iron_trade;
+		o_ptr->iron_turn = turn;
+		item = inven_carry(Ind, o_ptr);
+		//if (item >= 0) inven_item_describe(Ind, item);
+	}
 }
 
 #ifdef FOUNTAIN_GUARDS
@@ -1785,7 +1798,7 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	object_wipe(q_ptr);
 	q_ptr->number = 1;
 	invcopy(q_ptr, lookup_kind(TV_BOTTLE, SV_EMPTY_BOTTLE));
-	q_ptr->level = o_ptr->level;
+	q_ptr->level = 1;
 
 	/* Destroy a potion in the pack */
 	inven_item_increase(Ind, slot, -1);
