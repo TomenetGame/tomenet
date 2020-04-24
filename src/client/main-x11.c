@@ -3193,7 +3193,7 @@ void animate_palette(void) {
 	for (i = 0; i < 16; ++i) {
 		cptr cname = color_name[0];
 
-		MAKE(clr[i], infoclr);
+		//MAKE(clr[i], infoclr);
 		Infoclr_set (clr[i]);
 #if 0 /* no colours on this display? */
 		if (Metadpy->color) cname = color_name[i];
@@ -3255,7 +3255,7 @@ void set_palette(byte c, byte r, byte g, byte b) {
 		strcpy(color_name[c], cn);
 
 	/* Activate the palette */
-	MAKE(clr[c], infoclr);
+	//MAKE(clr[c], infoclr);
 	Infoclr_set (clr[c]);
 #if 0 /* no colours on this display? */
 	if (Metadpy->color) cname = color_name[c];
