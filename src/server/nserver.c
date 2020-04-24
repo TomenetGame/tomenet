@@ -4420,6 +4420,8 @@ static int Receive_login(int ind) {
 			else
 				Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, "", "", 0, 0, 0);
 			if (n) C_KILL(id_list, n, int);
+			C_FREE(id_order, n, byte);
+			C_FREE(id_index, n, byte);
 		} else {
 			/* fail login here */
 			//Destroy_connection(ind, "Wrong password or name already in use.");
