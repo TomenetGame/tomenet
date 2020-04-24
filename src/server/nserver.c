@@ -7433,10 +7433,14 @@ int Send_target_info(int Ind, int x, int y, cptr str) {
    player_id is the player it actually concerns; - C. Blue */
 int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b player_id) {
 	connection_t *connp = Conn[Players[Ind]->conn];
-
 	/* Mind-linked to someone? Send him our sound too! */
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) {
+		/* actually allow some critical sfx to pass */
+		if (sound != __sfx_bell && sound != __sfx_page && sound != __sfx_warning) return 0;
+	}
 
 	if (sound == __sfx_am && !Players[Ind]->sfx_am) return 0;
 

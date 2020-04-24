@@ -369,6 +369,10 @@ void init_lua() {
 		    string_exec_lua(0, format("return get_sound_name(%d)", i)));
 
 		if (!strcmp(audio_sfx[i], "am_field")) __sfx_am = i;
+
+		if (!strcmp(audio_sfx[i], "bell")) __sfx_bell = i;
+		if (!strcmp(audio_sfx[i], "page")) __sfx_page = i;
+		if (!strcmp(audio_sfx[i], "warning")) __sfx_warning = i;
 	}
 #endif
 
