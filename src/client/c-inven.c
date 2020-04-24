@@ -846,7 +846,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		case '/':
 			/* Verify legality */
 			if (!inven || !equip) {
-				bell();
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
 				break;
 			}
 
@@ -869,19 +870,22 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		case '7': case '8': case '9':
 			/* XXX XXX Look up that tag */
 			if (!get_tag(&k, which, inven, equip, mode)) {
-				bell();
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
 				break;
 			}
 
 			/* Hack -- verify item */
 			if ((k < INVEN_WIELD) ? !inven : !equip) {
-				bell();
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
 				break;
 			}
 
 			/* Validate the item */
 			if (!get_item_okay(k)) {
-				bell();
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
 				break;
 			}
 
@@ -907,7 +911,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 			/* Validate the item */
 			if (!get_item_okay(k)) {
-				bell();
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
 				break;
 			}
 
@@ -933,13 +938,15 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				(*cp) = i;
 				item = TRUE;
 				done = TRUE;
-			} else bell();
+			} else if (c_cfg.item_error_beep) bell();
+			else bell_silent();
 			break;
 		}
 
 		case '#':
 			if (!limit) {
-				bell();
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
 				break;
 			}
 			hack_force_spell_level = c_get_quantity("Limit spell level (0 for unlimited)? ", -1);
@@ -950,7 +957,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 		case '-':
 			if (!special_req) {
-				bell();
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
 				break;
 			}
 			command_gap = 50;
@@ -961,7 +969,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 		case '+':
 			if (!newest) {
-				bell();
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
 				break;
 			}
 			which = 'a' + item_newest;
@@ -979,7 +988,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 			/* Validate the item */
 			if (!get_item_okay(k)) {
-				bell();
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
 				break;
 			}
 

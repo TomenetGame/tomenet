@@ -540,6 +540,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "disable_lightning",	"Disable visual screen flash effect for lightning" },
 	{ &c_cfg.macros_in_stores,	FALSE,	3,	0, 133, TRUE,
 	    "macros_in_stores",		"Don't disable macros while inside a store" },
+	{ &c_cfg.item_error_beep,	TRUE,	3,	0, 134, TRUE,
+	    "item_error_beep",		"Beep when an item selection fails" },
 
 #if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
     /* 4.7.3 */

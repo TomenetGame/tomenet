@@ -559,6 +559,7 @@ extern bool macro_del(cptr pat);
 extern char inkey(void);
 extern void keymap_init(void);
 extern void bell(void);
+extern void bell_silent(void);
 extern int page(void);
 extern int warning_page(void);
 extern void c_prt(byte attr, cptr str, int row, int col);
