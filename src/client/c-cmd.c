@@ -4103,12 +4103,38 @@ void cmd_mind(void) {
 #endif
 
 void cmd_load_pref(void) {
-	char buf[80];
+	char buf[1024];
+	FILE *fp;
+	char *buf2;
+	int n, err;
 
 	buf[0] = '\0';
+	if (!get_string("Load pref: ", buf, 1023)) return;
 
-	if (get_string("Load pref: ", buf, 79))
-		process_pref_file_aux(buf);
+	fp = my_fopen(buf, "r");
+	if (!fp) {
+		c_message_add(format("\377yCould not open file %s", buf));
+		return;
+	}
+
+	/* Process the file */
+	while (0 == (err = my_fgets2(fp, &buf2, &n))) {
+		/* Process the line */
+		if (process_pref_file_aux(buf2)) //printf("Error in '%s' parsing '%s'.\n", buf2, buf);
+			c_message_add(format("\377yError in '%s' parsing '%s'.\n", buf2, buf));
+		mem_free(buf2);
+	}
+	if (err == 2) {
+		printf("Grave error: Couldn't allocate memory when parsing '%s'.\n", buf);
+		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name));
+		/* Maybe this is safer than plog(), if the player is in the dungeon and in a dire situation when this happens.. */
+		c_message_add(format("\377y!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", buf));
+	}
+	my_fclose(fp);
+
+	/* Success */
+	c_message_add(format("Loaded file %s", buf));
+	return;
 }
 
 void cmd_redraw(void) {
