@@ -12862,9 +12862,12 @@ stated.
                                 its drawbacks.
 
                                 Press 'm' to enter one of the combat stances
-                                you have learned. You will learn a couple of
-                                ranks of three basic combat stances, when you
-                                reach a certain character level i.e. skill.
+                                you have learned. You will learn four ranks
+                                of three combat stances each, when you reach
+                                a certain character level i.e. skill. The last
+                                rank ('royal rank') is learned by defeating
+                                Morgoth, independant of your level. You can use
+                                the /ex command to check your current stance.
                                 Each stance has advantages and disadvantages,
                                 those are:
 
@@ -12875,7 +12878,9 @@ stated.
                                                    combat-induced stun effects
                                                    (and possibly some others),
                                                  - intercept less often,
-                                                 - deal less damage.
+                                                 - deal less damage,
+                                                 - reduces chance a monster can
+                                                   steal from you.
                                                  Note: You can use it even
                                                  without shield - in that case
                                                  your chance of parrying is
@@ -12883,8 +12888,9 @@ stated.
 
                                 Offensive stance - you can stun opponents
                                                    depending on your strength,
-                                                   your 'Weaponmastery' skill
-                                                   and your opponent
+                                                   your 'Weaponmastery' skill,
+                                                   your stance rank, and your
+                                                   opponent
                                                    (see (4.12) about stunning),
                                                  - intercept more often,
                                                  - parry and dodge only rarely,
@@ -12894,8 +12900,26 @@ stated.
                                                  gripped with both hands
                                                  (COULD2H, SHOULD2H, MUST2H).
 
-                                (Note: Switching your combat stance costs you
-                                half a turn of energy.)
+                                Switching your combat stance costs you half a
+                                turn of energy. Some details (R stands for
+                                royal rank, available only to royalties):
+
+                                  Inter Stun  With shield      Without shield
+                                   cept self  Block/Melee dam  Parry/Melee dam
+                                D1 -50%  7/8    +9%/70%         +30%/60%
+                                D2 -45%  5/6   +11%/70%         +30%/70%
+                                D3 -40%  3/4   +13%/70%         +40%/70%
+                                DR -35%  2/3   +15%/70%         +50%/70%
+                                All def. stances reduce ranged damage by 50%.
+
+                                                 O1    O2    O3    OR
+                                Intercept        +4%   +7%  +10%  +15%
+                                Parry/Dodge    -100%  -90%  -80%  -70%
+                                All offensive stances reduce AC by 30.
+                                Offensive stance rank increases chance of
+                                applying a stun.
+                                Weaponmastery and Combat skill can greatly
+                                prolongs those stun effect durations.
 
         .Dual-wield             The ability to wield two weapons at once. This
                                 ability cannot be trained, it's always at 1.000
