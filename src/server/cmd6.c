@@ -3620,7 +3620,7 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	/* Notice empty staffs */
 	if (o_ptr->pval <= 0) {
-		msg_print(Ind, "The staff has no charges left.");
+		msg_format(Ind, "\377%cThe staff has no charges left.", COLOUR_MD_NOCHARGE);
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
 		o_ptr->ident |= ID_EMPTY;
 		note_toggle_empty(o_ptr, TRUE);
@@ -3887,7 +3887,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 
 	/* The wand is already empty! */
 	if (o_ptr->pval <= 0) {
-		msg_print(Ind, "The wand has no charges left.");
+		msg_format(Ind, "\377%cThe wand has no charges left.", COLOUR_MD_NOCHARGE);
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
 		o_ptr->ident |= ID_EMPTY;
 		note_toggle_empty(o_ptr, TRUE);
@@ -4523,8 +4523,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #else
 	if (o_ptr->bpval == o_ptr->number) {
 #endif
-		if (o_ptr->number == 1) msg_print(Ind, "The rod is still charging.");
-		else msg_print(Ind, "The rods are still charging.");
+		if (o_ptr->number == 1) msg_format(Ind, "\377%cThe rod is still charging.", COLOUR_MD_NOCHARGE);
+		else msg_format(Ind, "\377%cThe rods are still charging.", COLOUR_MD_NOCHARGE);
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
 
 #ifdef ENABLE_XID_MDEV
@@ -4764,8 +4764,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 #else
 	if (o_ptr->bpval == o_ptr->number) {
 #endif
-		if (o_ptr->number == 1) msg_print(Ind, "The rod is still charging.");
-		else msg_print(Ind, "The rods are still charging.");
+		if (o_ptr->number == 1) msg_format(Ind, "\377%cThe rod is still charging.", COLOUR_MD_NOCHARGE);
+		else msg_format(Ind, "\377%cThe rods are still charging.", COLOUR_MD_NOCHARGE);
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
 		return;
 	}
@@ -5526,8 +5526,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	/* Check the recharge */
 	if (o_ptr->recharging) {
+		msg_format(Ind, "\377%cIt whines, glows and fades...", COLOUR_MD_NOCHARGE);
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
-		msg_print(Ind, "It whines, glows and fades...");
 #ifdef ENABLE_XID_SPELL
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
