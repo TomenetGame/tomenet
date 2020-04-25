@@ -4686,13 +4686,15 @@ int handle_censor(char *line) {
 /* Handle punishment after running handle_censor() to determine the severity of a swearing word =p */
 void handle_punish(int Ind, int level) {
 	switch (level) {
-	case 0:
+	case 0: //nothing to censor
 		break;
-	case 1:
+	case 1: //censored, but no punishment for this
+		break;
+	case 2: //light punishment: reminder
 		msg_print(Ind, "Please do not swear.");
 		break;
-	default:
-		imprison(Ind, level * JAIL_SWEARING, "swearing");
+	default: //normal/heavy punishment: go to jail
+		imprison(Ind, (level - 2) * JAIL_SWEARING, "swearing");
 	}
 }
 #else
