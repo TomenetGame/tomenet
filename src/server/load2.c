@@ -1430,10 +1430,10 @@ static void rd_party(int n) {
 	party_type *party_ptr = &parties[n];
 
 	/* Party name */
-	rd_string(party_ptr->name, 80);
+	rd_string(party_ptr->name, NAME_LEN);
 
 	/* Party owner's name */
-	rd_string(party_ptr->owner, 20);
+	rd_string(party_ptr->owner, NAME_LEN);
 
 	/* Number of people and creation time */
 	rd_s32b(&party_ptr->members);
