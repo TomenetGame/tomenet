@@ -2776,7 +2776,11 @@ static void artifact_lore(void) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
 			Term_fresh();
-			sleep(2);
+#ifdef WINDOWS
+			Sleep(2000);
+#else
+			usleep(2000000);
+#endif
 			Term_putstr(0,  0, -1, TERM_L_UMBER, "                                                  ");
 			continue;
 		}
@@ -2893,7 +2897,11 @@ static void artifact_lore(void) {
 				/* Take a screenshot */
 				xhtml_screenshot("screenshot????");
 				Term_fresh();
-				sleep(2);
+#ifdef WINDOWS
+				Sleep(2000);
+#else
+				usleep(2000000);
+#endif
 				Term_putstr(0,  0, -1, TERM_L_UMBER, "                                                  ");
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Artifact Lore ***");
 				/* hack: hide cursor */
@@ -3218,7 +3226,11 @@ static void monster_lore(void) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
 			Term_fresh();
-			sleep(2);
+#ifdef WINDOWS
+			Sleep(2000);
+#else
+			usleep(2000000);
+#endif
 			Term_putstr(0,  0, -1, TERM_L_UMBER, "                                                  ");
 			continue;
 		}
@@ -3335,7 +3347,11 @@ static void monster_lore(void) {
 				/* Take a screenshot */
 				xhtml_screenshot("screenshot????");
 				Term_fresh();
-				sleep(2);
+#ifdef WINDOWS
+				Sleep(2000);
+#else
+				usleep(2000000);
+#endif
 				Term_putstr(0,  0, -1, TERM_L_UMBER, "                                                  ");
 				Term_putstr(5,  0, -1, TERM_L_UMBER, "*** Monster Lore ***");
 				/* hack: hide cursor */
