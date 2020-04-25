@@ -4389,26 +4389,42 @@ s_printf("ASTAR: 2 (no good moves, %d,%d,%d)\n", aoc, acc, turn);
 
 
 /* Is the monster willing to avoid that grid?	- Jir - */
+/* Not only avoid grids that currently have an effect, but also check if the grid had an effect on it previously
+   - except if it already hit us anyway because we're currently standing on a grid with the very same effect. */
+#define HEED_PAST_EFFECT
 static bool monster_is_safe(int m_idx, monster_type *m_ptr, monster_race *r_ptr, cave_type *c_ptr) {
 	effect_type *e_ptr;
 	//cptr name;
 	int dam;
 
-#if 1	/* moved for efficiency */
-	if (!c_ptr->effect) return (TRUE);
-	if (r_ptr->flags2 & RF2_STUPID) return (TRUE);
+	/* moved for efficiency */
+	if (!c_ptr->effect) {
+		cave_type **zcave = getcave(&m_ptr->wpos), *c0_ptr = &zcave[m_ptr->fy][m_ptr->fx];
+#ifndef HEED_PAST_EFFECT
+		return (TRUE);
+#else
+		/* Don't allow monsters to 'jump' wave effects with good timing (esp EFF_THINWAVE):
+		   Only allow a monster to enter a grid, if it didn't have the wave effect on it last turn either,
+		   or if the monster was already hit on its current grid by this very effect just now. */
+		if (!c_ptr->effect_past || c0_ptr->effect == c_ptr->effect_past) return TRUE;
+		if (r_ptr->flags2 & RF2_STUPID) return (TRUE);
+
+		e_ptr = &effects[c_ptr->effect_past];
+		if (e_ptr->who == m_idx) return (TRUE); /* It's mine :) */
+
+		dam = approx_damage(m_idx, e_ptr->dam, e_ptr->type);
+		return (m_ptr->hp >= dam * 20);
 #endif
+	}
+	if (r_ptr->flags2 & RF2_STUPID) return (TRUE);
 
 	e_ptr = &effects[c_ptr->effect];
 
 	/* It's mine :) */
 	if (e_ptr->who == m_idx) return (TRUE);
 
-	dam = e_ptr->dam;
-	//name = r_name_get(m_ptr);
-
 	/* Use new function 'approx_damage()' for this - C. Blue */
-	dam = approx_damage(m_idx, dam, e_ptr->type);
+	dam = approx_damage(m_idx, e_ptr->dam, e_ptr->type);
 
 	/* Was 30, now less exploitable, ie avoid pushing monsters around without them able to retaliate */
 	return (m_ptr->hp >= dam * 20);
@@ -8292,7 +8308,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 			/* Check for monster trap */
 			if (c_ptr->feat == FEAT_MON_TRAP && mon_hit_trap(m_idx)) return;
-			
+
 			/* Explosive glyph? */
 			if (c_ptr->feat == FEAT_RUNE && warding_rune_break(m_idx)) return;
 

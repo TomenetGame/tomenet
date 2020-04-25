@@ -20495,6 +20495,30 @@ D:Daughter of Shelob, the legendary Spider-Queen, Saenathra has built her own
 D:empire deep within the shadows of Mirkwood. With legions of ghastly giant
 D:spiders at her command, she has accumulated an untold fortune of treasure.
 
+N:1156:Annoying Test Blob
+G:j:o
+I:130:1d1:200:0:0
+W:127:0:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR
+F:CAN_FLY
+F:AI_ANNOY
+D:For testing
+
+N:1157:Annoying Immune Test Blob
+G:j:U
+I:130:1d1:200:0:0
+W:127:0:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NO_DEATH | ASTAR | OPEN_DOOR | IM_FIRE | IM_COLD | IM_ELEC
+F:CAN_FLY
+F:AI_ANNOY
+D:For testing
+
 
 # N: serial number : monster name
 # G: symbol : color

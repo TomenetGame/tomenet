@@ -627,7 +627,7 @@ struct cave_type {
 	/* Adding 1byte in this struct costs 520Kb memory, in average */
 	/* This should be replaced by 'stackable c_special' code -
 	 * let's wait for evileye to to this :)		- Jir - */
-	int effect, effect_xtra;	/* The lasting effects */
+	int effect, effect_xtra, effect_past;	/* The lasting effects */
 
 #ifdef HOUSE_PAINTING
 	byte colour;	/* colour that overrides the usual colour of a feature */

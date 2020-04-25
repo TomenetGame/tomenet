@@ -877,19 +877,18 @@ static void erase_effects(int effect) {
 	if (!(zcave = getcave(wpos))) return;
 
 	/* XXX +1 is needed.. */
-	for (l = 0; l < tdi[rad + 0]; l++)
-	{
+	for (l = 0; l < tdi[rad + 0]; l++) {
 		j = cy + tdy[l];
 		i = cx + tdx[l];
 		if (!in_bounds2(wpos, j, i)) continue;
 
 		c_ptr = &zcave[j][i];
 
-		if (c_ptr->effect == effect)
-		{
+		if (c_ptr->effect == effect) {
 			c_ptr->effect = 0;
 			everyone_lite_spot(wpos, j, i);
 		}
+		if (c_ptr->effect_past == effect) c_ptr->effect_past = 0;
 	}
 }
 
@@ -915,6 +914,7 @@ static void erase_effects(int effect) {
    in spell_color(). - C. Blue */
 #define ANIMATE_EFFECTS /* animates spell_color() randomness, costs more bandwidth */
 #define FREQUENT_EFFECT_ANIMATION /* costs even more bandwidth */
+#define EFF_DAMAGE_AFTER_SETTING /* apply project() damage at the end, right after setting all new c_ptr->effect, instead of in the beginning before generating the new effect-step. */
 static void process_effects(void) {
 	int i, j, k, l;
 	worldpos *wpos;
@@ -1053,16 +1053,21 @@ static void process_effects(void) {
 
 			c_ptr = &zcave[j][i];
 
+			/* Remove memories of where the effect boundary was previously */
+			if (c_ptr->effect_past == k) c_ptr->effect_past = 0;
+
 			//if (c_ptr->effect != k) continue;
 			if (c_ptr->effect != k) /* Nothing */;
 			else {
 				if (e_ptr->time) {
+#ifndef EFF_DAMAGE_AFTER_SETTING /* TESTING: Moved projection to the end of this function */
 					int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF;
 
 					flg = mod_ball_spell_flags(e_ptr->type, flg);
 
 					/* Apply damage */
 					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+#endif
 
 					/* Oh, destroyed? RIP */
 					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
@@ -1097,7 +1102,6 @@ static void process_effects(void) {
 				}
 			}
 
-
 #if 0
 			if (((e_ptr->flags & EFF_WAVE) && !(e_ptr->flags & EFF_LAST)) || ((e_ptr->flags & EFF_STORM) && !(e_ptr->flags & EFF_LAST))) {
 				if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
@@ -1117,6 +1121,7 @@ static void process_effects(void) {
 					}
 				} else if ((e_ptr->flags & EFF_THINWAVE)) {
 					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad) { // thin wave has thickness 1: each target gets hit 1 time
+						if (c_ptr->effect == k) c_ptr->effect_past = k; /* Don't allow a monster to 'jump' the effect */
 						c_ptr->effect = 0;
 						everyone_lite_spot(wpos, j, i);
 					}
@@ -1606,9 +1611,31 @@ static void process_effects(void) {
 			everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
 		}
 
+#ifdef EFF_DAMAGE_AFTER_SETTING
+		/* TESTING: Handle spell effects directly after all new c_ptr->effect were set. */
+		for (l = 0; l < tdi[e_ptr->rad]; l++) {
+			int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF;
+
+			j = e_ptr->cy + tdy[l];
+			i = e_ptr->cx + tdx[l];
+			if (!in_bounds2(wpos, j, i)) continue;
+
+			c_ptr = &zcave[j][i];
+
+			/* Remove memories of where the effect boundary was previously */
+			//if (c_ptr->effect_past == k) c_ptr->effect_past = 0;
+
+			if (c_ptr->effect != k) continue; /* Nothing */;
+			if (!e_ptr->time) continue;
+
+			flg = mod_ball_spell_flags(e_ptr->type, flg);
+
+			/* Apply damage */
+			project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+		}
+
 	}
-
-
+#endif
 
 	/* Apply sustained effect in the player grid, if any */
 //	apply_effect(py, px);
