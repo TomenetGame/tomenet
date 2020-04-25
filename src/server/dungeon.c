@@ -1069,13 +1069,6 @@ static void process_effects(void) {
 					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 #endif
 
-					/* Oh, destroyed? RIP */
-					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-					    Players[0 - who]->conn == NOT_CONNECTED) {
-						/* Make the effect friendly after death - mikaelh */
-						who = PROJECTOR_PLAYER;
-					}
-
 #ifndef EXTENDED_TERM_COLOURS
  #ifdef ANIMATE_EFFECTS
   #ifndef FREQUENT_EFFECT_ANIMATION
@@ -1092,9 +1085,13 @@ static void process_effects(void) {
 					everyone_lite_spot(wpos, j, i);
 				}
 
-				/* Hack -- notice death */
-				//	if (!alive || death) return;
-				/* Storm ends if the cause is gone */
+				/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+				if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
+				    Players[0 - who]->conn == NOT_CONNECTED) {
+					/* Make the effect friendly after death - mikaelh */
+					who = PROJECTOR_PLAYER;
+				}
+				/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
 				if (e_ptr->flags & EFF_STORM &&
 				    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
 					erase_effects(k);
@@ -1632,6 +1629,19 @@ static void process_effects(void) {
 
 			/* Apply damage */
 			project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+
+			/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+			if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
+			    Players[0 - who]->conn == NOT_CONNECTED) {
+				/* Make the effect friendly after death - mikaelh */
+				who = PROJECTOR_PLAYER;
+			}
+			/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+			if (e_ptr->flags & EFF_STORM &&
+			    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+				erase_effects(k);
+				break;
+			}
 		}
 
 	}
