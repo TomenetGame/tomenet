@@ -9236,7 +9236,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 		/* trim */
 		while (*str == ' ') str++;
-		while (str[strlen(str - 1)] == ' ') str[strlen(str - 1)] = 0;
+		while (str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
 		if (!(*str)) return;
 		for (i = 0; i < strlen(str) - 1; i++) {
 			if (str[i] == ' ' && str[i + 1] == ' ') continue;
