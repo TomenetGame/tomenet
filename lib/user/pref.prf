@@ -54,7 +54,7 @@ C:X
 A::+:
 C:,
 
-# Normal macro that triggers in all situations: Exit the game.
+# Hybrid macro to allow the text-editing CTRL+Q key to work: Exit the game.
 A:\e\e)^Q
 H:^Q
 
