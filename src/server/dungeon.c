@@ -970,9 +970,7 @@ static void process_effects(void) {
 
 	for (k = 0; k < MAX_EFFECTS; k++) {
 		effect_type *e_ptr = &effects[k];
-#ifndef EFF_DAMAGE_AFTER_SETTING
 		int flg;
-#endif
 		/* Skip empty slots */
 		if (e_ptr->time == 0) continue;
 
@@ -983,10 +981,8 @@ static void process_effects(void) {
 			continue;
 		}
 
-#ifndef EFF_DAMAGE_AFTER_SETTING
 		//not sure whether the mod_ball_spell_flags() should be used actually:
 		flg = mod_ball_spell_flags(e_ptr->type, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF);
-#endif
 
 #ifdef ARCADE_SERVER
  #if 0
@@ -1101,7 +1097,8 @@ static void process_effects(void) {
 			if (c_ptr->effect_past == k) c_ptr->effect_past = 0;
 
 #ifndef EFF_DAMAGE_AFTER_SETTING
-			/* Apply colour animation and damage projection, erase effect if timeout results from projection somehow */
+			/* For all currently affected grids:
+			   Apply colour animation and damage projection, erase effect if timeout results from projection somehow */
 			if (c_ptr->effect == k) {
 				if (e_ptr->time) {
 					/* Apply damage */
@@ -1134,18 +1131,6 @@ static void process_effects(void) {
 					everyone_lite_spot(wpos, j, i);
 				}
 			}
-#else
-			/* Apply colour animation */
- #ifndef EXTENDED_TERM_COLOURS
-  #ifdef ANIMATE_EFFECTS
-   #ifndef FREQUENT_EFFECT_ANIMATION
-			/* C. Blue - hack: animate effects inbetween ie allow random changes in spell_color().
-			   Note: animation speed depends on effect interval. */
-			if (spell_color_animation(e_ptr->type))
-			    everyone_lite_spot(wpos, j, i);
-   #endif
-  #endif
- #endif
 #endif
 
 			/* If it's a changing effect, remove it from currently affected grid to prepare for next iteration */
@@ -1180,6 +1165,43 @@ static void process_effects(void) {
 #endif
 				}
 			}
+
+#ifdef EFF_DAMAGE_AFTER_SETTING
+			/* For persisting grids (newly affected grids are treated in apply_effect() calls instead) of this effect:
+			   Apply colour animation and damage projection, erase effect if timeout results from projection somehow */
+			if (c_ptr->effect == k) {
+				if (e_ptr->time) {
+					/* Apply damage */
+					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+
+					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
+					    Players[0 - who]->conn == NOT_CONNECTED) {
+						/* Make the effect friendly after death - mikaelh */
+						who = PROJECTOR_PLAYER;
+					}
+					/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+					if (e_ptr->flags & EFF_STORM &&
+					    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+						erase_effects(k);
+						break;
+					}
+ #ifndef EXTENDED_TERM_COLOURS
+  #ifdef ANIMATE_EFFECTS
+   #ifndef FREQUENT_EFFECT_ANIMATION
+					/* C. Blue - hack: animate effects inbetween ie allow random changes in spell_color().
+					   Note: animation speed depends on effect interval. */
+					if (spell_color_animation(e_ptr->type))
+					    everyone_lite_spot(wpos, j, i);
+   #endif
+  #endif
+ #endif
+				} else {
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
+				}
+			}
+#endif
 
 			/* --- Complex effects: Create next effect iteration and imprint it on grid --- */
 
