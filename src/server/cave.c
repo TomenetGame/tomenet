@@ -8554,24 +8554,19 @@ bool is_xorder(struct worldpos *wpos) {
 /*
  * handle spell effects
  */
-static int effect_pop(int who)
-{
+static int effect_pop(int who) {
 	int i, cnt = 0;
 
-	for (i = 1; i < MAX_EFFECTS; i++)	/* effects[0] is not used */
-	{
+	for (i = 1; i < MAX_EFFECTS; i++) { /* effects[0] is not used */
 		if (!effects[i].time) return i;
-		if (effects[i].who == who)
-		{
+		if (effects[i].who == who) {
 			if (++cnt > MAX_EFFECTS_PLAYER) return -1;
 		}
-
 	}
 	return -1;
 }
 
-int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags)
-{
+int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpos, int cy, int cx, int rad, s32b flags) {
 	int i, who2 = who;
 /*	player_type *p_ptr = NULL; */
 #if 0 /* isn't this wrong? */
@@ -8582,17 +8577,17 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 		who2 = 0 - Players[0 - who]->id;
 #endif
 
-        if ((i = effect_pop(who2)) == -1) return -1;
+	if ((i = effect_pop(who2)) == -1) return -1;
 	effects[i].interval = interval;
-        effects[i].type = type;
-        effects[i].dam = dam;
-        effects[i].time = time;
-        effects[i].flags = flags;
-        effects[i].cx = cx;
-        effects[i].cy = cy;
-        effects[i].rad = rad;
-        effects[i].who = who2;
-		wpcopy(&effects[i].wpos, wpos);
+	effects[i].type = type;
+	effects[i].dam = dam;
+	effects[i].time = time;
+	effects[i].flags = flags;
+	effects[i].cx = cx;
+	effects[i].cy = cy;
+	effects[i].rad = rad;
+	effects[i].who = who2;
+	wpcopy(&effects[i].wpos, wpos);
 #ifdef ARCADE_SERVER
 if (type == 209)
 {
@@ -8617,7 +8612,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 	bool bree = in_bree(wpos);
 	bool town = istown(wpos) || isdungeontown(wpos);
 	bool townarea = istownarea(wpos, MAX_TOWNAREA);
-//unused atm	bool dungeon_town = isdungeontown(wpos);
+	//unused atm	bool dungeon_town = isdungeontown(wpos);
 	bool sector00 = (in_sector00(wpos));
 	bool valinor = in_valinor(wpos);
 	bool nr_bottom = in_netherrealm(wpos) && getlevel(wpos) == netherrealm_end;

@@ -892,6 +892,45 @@ static void erase_effects(int effect) {
 	}
 }
 
+/* Helper function for usage of EFF_DAMAGE_AFTER_SETTING:
+   Imprint effect on a grid, redraw it for everybody, apply damage projection. */
+/* Apply project() damage at the end of processing an effect, right after setting all new c_ptr->effect, instead of in
+   the beginning before generating the new effect-step. This helps that monsters don't 'jump' an effect by lucky timing. */
+#define EFF_DAMAGE_AFTER_SETTING
+static void apply_effect(int k, int *who, struct worldpos *wpos, int x, int y, cave_type *c_ptr) {
+#ifdef EFF_DAMAGE_AFTER_SETTING
+	effect_type *e_ptr = &effects[k];
+	//not sure whether the mod_ball_spell_flags() should be used actually:
+	int flg = mod_ball_spell_flags(e_ptr->type, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF);
+
+	/* Imprint on grid */
+	c_ptr->effect = k;
+
+	/* Redraw for everyone */
+	everyone_lite_spot(wpos, y, x);
+
+	/* Apply damage -- maybe efficient to add a skip here for non-damaging visual-only effects? */
+	project(*who, 0, wpos, y, x, e_ptr->dam, e_ptr->type, flg, "");
+
+	/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+	if (*who < 0 && *who != PROJECTOR_EFFECT && *who != PROJECTOR_PLAYER &&
+	    Players[0 - *who]->conn == NOT_CONNECTED) {
+		/* Make the effect friendly after death - mikaelh */
+		*who = PROJECTOR_PLAYER;
+	}
+	/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+	if (e_ptr->flags & EFF_STORM &&
+	    (*who == PROJECTOR_PLAYER || Players[0 - *who]->death)) {
+		erase_effects(k);
+		*who = 0;
+	}
+#else
+	/* Old way - just imprint and redraw */
+	c_ptr->effect = k;
+	everyone_lite_spot(wpos, y, x);
+#endif
+}
+
 /*
  * Handle staying spell effects once every 10 game turns
  */
@@ -914,7 +953,6 @@ static void erase_effects(int effect) {
    in spell_color(). - C. Blue */
 #define ANIMATE_EFFECTS /* animates spell_color() randomness, costs more bandwidth */
 #define FREQUENT_EFFECT_ANIMATION /* costs even more bandwidth */
-#define EFF_DAMAGE_AFTER_SETTING /* apply project() damage at the end, right after setting all new c_ptr->effect, instead of in the beginning before generating the new effect-step. */
 static void process_effects(void) {
 	int i, j, k, l;
 	worldpos *wpos;
@@ -931,9 +969,10 @@ static void process_effects(void) {
 
 
 	for (k = 0; k < MAX_EFFECTS; k++) {
-		// int e = cave[j][i].effect;
 		effect_type *e_ptr = &effects[k];
-
+#ifndef EFF_DAMAGE_AFTER_SETTING
+		int flg;
+#endif
 		/* Skip empty slots */
 		if (e_ptr->time == 0) continue;
 
@@ -943,6 +982,11 @@ static void process_effects(void) {
 			/* TODO - excise it */
 			continue;
 		}
+
+#ifndef EFF_DAMAGE_AFTER_SETTING
+		//not sure whether the mod_ball_spell_flags() should be used actually:
+		flg = mod_ball_spell_flags(e_ptr->type, PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF);
+#endif
 
 #ifdef ARCADE_SERVER
  #if 0
@@ -1056,60 +1100,55 @@ static void process_effects(void) {
 			/* Remove memories of where the effect boundary was previously */
 			if (c_ptr->effect_past == k) c_ptr->effect_past = 0;
 
-			//if (c_ptr->effect != k) continue;
-			if (c_ptr->effect != k) /* Nothing */;
-			else {
+#ifndef EFF_DAMAGE_AFTER_SETTING
+			/* Apply colour animation and damage projection, erase effect if timeout results from projection somehow */
+			if (c_ptr->effect == k) {
 				if (e_ptr->time) {
-#ifndef EFF_DAMAGE_AFTER_SETTING /* TESTING: Moved projection to the end of this function */
-					int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF;
-
-					flg = mod_ball_spell_flags(e_ptr->type, flg);
-
 					/* Apply damage */
 					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
-#endif
 
-#ifndef EXTENDED_TERM_COLOURS
- #ifdef ANIMATE_EFFECTS
-  #ifndef FREQUENT_EFFECT_ANIMATION
-					/* C. Blue - hack: animate effects inbetween
-					   ie allow random changes in spell_color().
+					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
+					    Players[0 - who]->conn == NOT_CONNECTED) {
+						/* Make the effect friendly after death - mikaelh */
+						who = PROJECTOR_PLAYER;
+					}
+					/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+					if (e_ptr->flags & EFF_STORM &&
+					    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+						erase_effects(k);
+						break;
+					}
+ #ifndef EXTENDED_TERM_COLOURS
+  #ifdef ANIMATE_EFFECTS
+   #ifndef FREQUENT_EFFECT_ANIMATION
+					/* C. Blue - hack: animate effects inbetween ie allow random changes in spell_color().
 					   Note: animation speed depends on effect interval. */
 					if (spell_color_animation(e_ptr->type))
 					    everyone_lite_spot(wpos, j, i);
+   #endif
   #endif
  #endif
-#endif
 				} else {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
 				}
-
-				/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-				if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-				    Players[0 - who]->conn == NOT_CONNECTED) {
-					/* Make the effect friendly after death - mikaelh */
-					who = PROJECTOR_PLAYER;
-				}
-				/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-				if (e_ptr->flags & EFF_STORM &&
-				    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
-					erase_effects(k);
-					break;
-				}
 			}
+#else
+			/* Apply colour animation */
+ #ifndef EXTENDED_TERM_COLOURS
+  #ifdef ANIMATE_EFFECTS
+   #ifndef FREQUENT_EFFECT_ANIMATION
+			/* C. Blue - hack: animate effects inbetween ie allow random changes in spell_color().
+			   Note: animation speed depends on effect interval. */
+			if (spell_color_animation(e_ptr->type))
+			    everyone_lite_spot(wpos, j, i);
+   #endif
+  #endif
+ #endif
+#endif
 
-#if 0
-			if (((e_ptr->flags & EFF_WAVE) && !(e_ptr->flags & EFF_LAST)) || ((e_ptr->flags & EFF_STORM) && !(e_ptr->flags & EFF_LAST))) {
-				if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
-					c_ptr->effect = 0;
-			}
-			if (((e_ptr->flags & EFF_THINWAVE) && !(e_ptr->flags & EFF_LAST)) || ((e_ptr->flags & EFF_STORM) && !(e_ptr->flags & EFF_LAST))) {
-				if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2)
-					c_ptr->effect = 0;
-			}
-#else	// 0
-
+			/* If it's a changing effect, remove it from currently affected grid to prepare for next iteration */
 			if (!(e_ptr->flags & EFF_LAST)) {
 				if ((e_ptr->flags & EFF_WAVE)) {
 					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2) { //wave has thickness 3: each taget gets hit 3 times
@@ -1134,22 +1173,21 @@ static void process_effects(void) {
 				} else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
- #if 0 /* no need to erase inbetween, while effect is still expanding - at the same time this fixes ugly tile flickering from redrawing (lava!) */
+#if 0 /* no need to erase inbetween, while effect is still expanding - at the same time this fixes ugly tile flickering from redrawing (lava!) */
 				} else if (e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3)) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
- #endif
+#endif
 				}
 			}
-#endif	// 0
+
+			/* --- Complex effects: Create next effect iteration and imprint it on grid --- */
 
 			/* Creates a "wave" effect*/
 			if (e_ptr->flags & (EFF_WAVE | EFF_THINWAVE)) {
 				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
-				    (distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad)) {
-					c_ptr->effect = k;
-					everyone_lite_spot(wpos, j, i);
-				}
+				    (distance(e_ptr->cy, e_ptr->cx, j, i) == e_ptr->rad))
+					apply_effect(k, &who, wpos, i, j, c_ptr);
 			}
 
 			/* Generate fireworks effects */
@@ -1157,14 +1195,11 @@ static void process_effects(void) {
 				int semi = (e_ptr->time + e_ptr->rad) / 2;
 				/* until half-time (or half-radius) the fireworks rise into the air */
 				if (e_ptr->rad < e_ptr->time) {
-					if (i == e_ptr->cx && j == e_ptr->cy - e_ptr->rad) {
-						c_ptr->effect = k;
-						everyone_lite_spot(wpos, j, i);
-					}
+					if (i == e_ptr->cx && j == e_ptr->cy - e_ptr->rad)
+						apply_effect(k, &who, wpos, i, j, c_ptr);
 				} else { /* after that, they explode (w00t) */
 					/* explosion is faster than flying upwards */
-//doesn't work					e_ptr->interval = 2;
-
+					//doesn't work-   e_ptr->interval = 2;
 #ifdef USE_SOUND_2010
 					if (e_ptr->rad == e_ptr->time) {
 						if ((e_ptr->flags & EFF_FIREWORKS3))
@@ -1179,12 +1214,11 @@ static void process_effects(void) {
 					}
 #endif
 
-#if 0
+#if 0 /* just for testing */
 					if (e_ptr->flags & EFF_FIREWORKS1) { /* simple rocket (line) */
-						if (i == e_ptr->cx && j == e_ptr->cy - e_ptr->rad) {
-							c_ptr->effect = k;
-							everyone_lite_spot(wpos, j, i);
-						}
+						if (i == e_ptr->cx && j == e_ptr->cy - e_ptr->rad)
+							apply_effect(k, &who, wpos, i, j, c_ptr);
+					}
 #endif
 					if (e_ptr->flags & EFF_FIREWORKS1) { /* 3-star */
 						if (((i == e_ptr->cx && j >= e_ptr->cy - e_ptr->rad) && /* up */
@@ -1192,10 +1226,8 @@ static void process_effects(void) {
 						    ((i >= e_ptr->cx + semi - e_ptr->rad && j == e_ptr->cy - semi) && /* left */
 						    (i <= e_ptr->cx + semi + 1 - e_ptr->rad && j == e_ptr->cy - semi)) ||
 						    ((i <= e_ptr->cx - semi + e_ptr->rad && j == e_ptr->cy - semi) && /* right */
-						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j == e_ptr->cy - semi))) {
-							c_ptr->effect = k;
-							everyone_lite_spot(wpos, j, i);
-						}
+						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j == e_ptr->cy - semi)))
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 					} else if (e_ptr->flags & EFF_FIREWORKS2) { /* 5-star */
 						if (((i == e_ptr->cx && j >= e_ptr->cy - e_ptr->rad) && /* up */
 						    (i == e_ptr->cx && j <= e_ptr->cy + 1 - e_ptr->rad)) ||
@@ -1206,10 +1238,8 @@ static void process_effects(void) {
 						    ((i >= e_ptr->cx + semi - e_ptr->rad && j <= e_ptr->cy - 2 * semi + e_ptr->rad) && /* down-left */
 						    (i <= e_ptr->cx + semi + 1 - e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad)) ||
 						    ((i <= e_ptr->cx - semi + e_ptr->rad && j <= e_ptr->cy - 2 * semi + e_ptr->rad) && /* down-right */
-						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad))) {
-							c_ptr->effect = k;
-							everyone_lite_spot(wpos, j, i);
-						}
+						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad)))
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 					} else { /* EFF_FIREWORKS3 */ /* 7-star whoa */
 						if (((i == e_ptr->cx && j >= e_ptr->cy - e_ptr->rad) && /* up */
 						    (i == e_ptr->cx && j <= e_ptr->cy + 1 - e_ptr->rad)) ||
@@ -1224,10 +1254,8 @@ static void process_effects(void) {
 						    ((i >= e_ptr->cx + semi - e_ptr->rad && j <= e_ptr->cy - 2 * semi + e_ptr->rad) && /* down-left */
 						    (i <= e_ptr->cx + semi + 1 - e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad)) ||
 						    ((i <= e_ptr->cx - semi + e_ptr->rad && j <= e_ptr->cy - 2 * semi + e_ptr->rad) && /* down-right */
-						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad))) {
-							c_ptr->effect = k;
-							everyone_lite_spot(wpos, j, i);
-						}
+						    (i >= e_ptr->cx - semi - 1 + e_ptr->rad && j >= e_ptr->cy - 0 - 2 * semi + e_ptr->rad)))
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 					}
 				}
 			}
@@ -1244,128 +1272,106 @@ static void process_effects(void) {
 					switch (stage) {
 					case 15:
 						if (i == e_ptr->cx + mirrored * 14 && j == e_ptr->cy + 4) {///
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 14:
 						if (i == e_ptr->cx + mirrored * 13 && j == e_ptr->cy + 3) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 13:
 						if (i == e_ptr->cx + mirrored * 12 && j == e_ptr->cy + 3) {///
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 5) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 12:
 						if (i == e_ptr->cx + mirrored * 11 && j == e_ptr->cy + 2) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 5) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 11:
 						if (i == e_ptr->cx + mirrored * 10 && j == e_ptr->cy + 2) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 5) {///
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 10:
 						if (i == e_ptr->cx + mirrored * 9 && j == e_ptr->cy + 2) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy + 4) {///
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 9:
 						if (i == e_ptr->cx + mirrored * 8 && j == e_ptr->cy + 2) {///
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy + 3) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 8:
 						if (i == e_ptr->cx + mirrored * 7 && j == e_ptr->cy + 1) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 3) {//`
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 7:
 						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 1) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 2) {//`
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 6:
 						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 1) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 5:
 						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 1) {///
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 4:
 						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 3:
 						if (i == e_ptr->cx + mirrored * 2 && j == e_ptr->cy) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 2:
 						if (i == e_ptr->cx + mirrored * 1 && j == e_ptr->cy) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 1:
 						if (i == e_ptr->cx && j == e_ptr->cy) {//_
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					}
 				} else if ((e_ptr->flags & EFF_LIGHTNING2)) {
@@ -1376,76 +1382,63 @@ static void process_effects(void) {
 					switch (stage) {
 					case 8:
 						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 5) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 7:
 						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 4) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 6:
 						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 3) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx - mirrored * (4+1) && j == e_ptr->cy + 3) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 5:
 						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 3) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx - mirrored * (3+1) && j == e_ptr->cy + 3) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 4:
 						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy + 2) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx - mirrored * (2+1) && j == e_ptr->cy + 3) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 3:
 						if (i == e_ptr->cx + mirrored * 2 && j == e_ptr->cy + 2) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx - mirrored * 2 && j == e_ptr->cy + 2) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 0;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 2:
 						if (i == e_ptr->cx + mirrored * 1 && j == e_ptr->cy + 1) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx - mirrored * 1 && j == e_ptr->cy + 1) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 1:
 						if (i == e_ptr->cx && j == e_ptr->cy) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 0;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					}
 				} else if ((e_ptr->flags & EFF_LIGHTNING3)) {
@@ -1456,87 +1449,81 @@ static void process_effects(void) {
 					switch (stage) {
 					case 10:
 						if (i == e_ptr->cx - mirrored * 8 && j == e_ptr->cy + 6) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 0;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 9:
 						if (i == e_ptr->cx - mirrored * 7 && j == e_ptr->cy + 5) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 8:
 						if (i == e_ptr->cx - mirrored * 6 && j == e_ptr->cy + 4) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 7:
 						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 3) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 0;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 6:
 						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 2) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx - mirrored && j == e_ptr->cy + 4) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 0;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 5:
 						if (i == e_ptr->cx - mirrored * 4 && j == e_ptr->cy + 1) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx - mirrored * 2 && j == e_ptr->cy + 3) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = -mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 4:
 						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy + 1) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy + 2) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 0;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 3:
 						if (i == e_ptr->cx - mirrored * 2 && j == e_ptr->cy + 1) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 2:
 						if (i == e_ptr->cx - mirrored * 1 && j == e_ptr->cy) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = 2;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					case 1:
 						if (i == e_ptr->cx && j == e_ptr->cy) {
-							c_ptr->effect = k;
 							c_ptr->effect_xtra = mirrored;
-							everyone_lite_spot(wpos, j, i);
+							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
 					}
 				}
 			}
+			/* We lost our caster for some reason? (Died to projection) */
+			if (!who) break;
 		}
 
+		/* --- Simple effects: Create next effect iteration and imprint it on grid.
+		       Also process modification of all changeable effects (radius/movement). --- */
+
+		/* Expand waves */
 		if (e_ptr->flags & (EFF_WAVE | EFF_THINWAVE)) e_ptr->rad++;
+
 		/* Creates a "storm" effect*/
-		else if (e_ptr->flags & EFF_STORM && who > PROJECTOR_EFFECT) {
+		else if (e_ptr->flags & EFF_STORM && who > PROJECTOR_EFFECT) { //todo: the player-checks are paranoia? We already checked this far above
 			p_ptr = Players[0 - who];
 
 			e_ptr->cy = p_ptr->py;
@@ -1549,15 +1536,12 @@ static void process_effects(void) {
 
 				c_ptr = &zcave[j][i];
 
-				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) &&
-						(distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad))
-				{
-					c_ptr->effect = k;
-					everyone_lite_spot(wpos, j, i);
-				}
+				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad))
+					apply_effect(k, &who, wpos, i, j, c_ptr);
 			}
 		}
-		/* snowflakes */
+
+		/* Drift snowflakes */
 		else if (e_ptr->flags & EFF_SNOWING) {
 			e_ptr->cy++; /* for now just fall straight downwards */
 			/* gusts of wind */
@@ -1570,10 +1554,9 @@ static void process_effects(void) {
 				if (e_ptr->cx >= MAX_WID - 1) e_ptr->cx = 1;
 			}
 			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
-			c_ptr->effect = k;
-			everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+			apply_effect(k, &who, wpos, e_ptr->cx, e_ptr->cy, c_ptr);
 		}
-		/* raindrops */
+		/* Drift raindrops */
 		else if (e_ptr->flags & EFF_RAINING) {
 			e_ptr->cy++; /* for now just fall straight downwards */
 			/* gusts of wind */
@@ -1586,69 +1569,31 @@ static void process_effects(void) {
 				if (e_ptr->cx >= MAX_WID - 1) e_ptr->cx = 1;
 			}
 			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
-			c_ptr->effect = k;
-			everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+			apply_effect(k, &who, wpos, e_ptr->cx, e_ptr->cy, c_ptr);
 		}
 
-		/* fireworks */
+		/* Launch/explode fireworks */
 		else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
 			e_ptr->rad++; /* while radius < time/2 -> "rise into the air", otherwise "explode" */
 		}
 
-		/* lightning */
+		/* Expand lightning */
 		else if ((e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3))
 		    && e_ptr->rad < 15) {
 			e_ptr->rad++;
 		}
 
-		/* thunderstorm visual */
+		/* Thunderstorm visual */
 		else if (e_ptr->flags & EFF_THUNDER_VISUAL) {
 			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
-			c_ptr->effect = k;
-			everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+			apply_effect(k, &who, wpos, e_ptr->cx, e_ptr->cy, c_ptr);
 		}
-
-#ifdef EFF_DAMAGE_AFTER_SETTING
-		/* TESTING: Handle spell effects directly after all new c_ptr->effect were set. */
-		for (l = 0; l < tdi[e_ptr->rad]; l++) {
-			int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_KILL | PROJECT_ITEM | PROJECT_HIDE | PROJECT_JUMP | PROJECT_NODO | PROJECT_NODF;
-
-			j = e_ptr->cy + tdy[l];
-			i = e_ptr->cx + tdx[l];
-			if (!in_bounds2(wpos, j, i)) continue;
-
-			c_ptr = &zcave[j][i];
-
-			/* Remove memories of where the effect boundary was previously */
-			//if (c_ptr->effect_past == k) c_ptr->effect_past = 0;
-
-			if (c_ptr->effect != k) continue; /* Nothing */;
-			if (!e_ptr->time) continue;
-
-			flg = mod_ball_spell_flags(e_ptr->type, flg);
-
-			/* Apply damage */
-			project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
-
-			/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-			if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-			    Players[0 - who]->conn == NOT_CONNECTED) {
-				/* Make the effect friendly after death - mikaelh */
-				who = PROJECTOR_PLAYER;
-			}
-			/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-			if (e_ptr->flags & EFF_STORM &&
-			    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
-				erase_effects(k);
-				break;
-			}
-		}
-
 	}
-#endif
 
+#if 0 /* Done in process_player_end_aux() */
 	/* Apply sustained effect in the player grid, if any */
-//	apply_effect(py, px);
+	apply_terrain_effect(py, px);
+#endif
 }
 
 #endif /* pelpel */
@@ -3832,7 +3777,7 @@ static void process_player_begin(int Ind) {
 /*
  * Generate the feature effect
  */
-static void apply_effect(int Ind) {
+static void apply_terrain_effect(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int y = p_ptr->py, x = p_ptr->px;
 	cave_type *c_ptr;
@@ -4449,6 +4394,8 @@ int has_ball (player_type *p_ptr) {
  * returns FALSE if player no longer exists.
  *
  * TODO: find a better way for timed spells(set_*).
+ *
+ * Called every 5/6 of a player's dungeon turn
  */
 static bool process_player_end_aux(int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -4509,7 +4456,7 @@ static bool process_player_end_aux(int Ind) {
 	/* Misc. terrain effects */
 	if (!p_ptr->ghost) {
 		/* Generic terrain effects */
-		apply_effect(Ind);
+		apply_terrain_effect(Ind);
 
 		/* Drowning, but not ghosts */
 		if (c_ptr->feat == FEAT_DEEP_WATER) {
