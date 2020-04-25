@@ -4178,6 +4178,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 
 	/* check for swear words and censor them */
 	for (i = 0; swear[i].word[0]; i++) {
+		if (!swear[i].level) continue;
 		offset = 0;
 
 		/* check for multiple occurrances of this swear word */
@@ -4536,6 +4537,7 @@ int handle_censor(char *line) {
 	    (word = strstr(lcopy2, "ashoie")))
 		/* use severity level of 'ashole' (condensed) for 'asshole' */
 		for (i = 0; swear[i].word[0]; i++) {
+			if (!swear[i].level) continue;
 			if (!strcmp(swear[i].word, "ashole")) {
 				j_pre = swear[i].level;
 				/* if it was to get censored, do so */
