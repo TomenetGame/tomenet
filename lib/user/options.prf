@@ -154,3 +154,5 @@ Y:find_ignore_montraps
 X:quiet_os
 X:disable_lightning
 X:macros_in_stores
+Y:item_error_beep
+X:keep_bottle
