@@ -8702,7 +8702,11 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			while (*c >= '0' && *c <= '9' && l < QI_REWARD_GOALS) {
 				j = atoi(c);
 				if (ABS(j) > QI_GOALS) return 1;
-				(void)init_quest_goal(error_idx, stage, j);
+				/* If j is 0 it means there is no goal, reward is to be handed out for free.
+				   Any other j gets its ABS value decremented in init_quest_goal() to form the real goal-index. */
+				if (j) (void)init_quest_goal(error_idx, stage, j);
+				/* In the goals index array, a 0-goal (free reward) is denoted as -1 (yeah it's a bit messy about 0, -1, j-- etc).
+				   (For j == 0 this is actually redundant as all goals are already initialised to -1 in init_quest_stage() anyway.) */
 				q_stage->goals_for_reward[reward][l] = ABS(j) - 1;
 
 				if (!(c = strchr(c, ':'))) break;
