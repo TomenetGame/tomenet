@@ -985,9 +985,6 @@ CTRL+C      Search history of chat messages you typed. Press CTRL+C again for
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
 
-/help       view a list of all command keys (same as pressing '?' key).
-            Also lists a few most commonly used slash commands.
-
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing.
             Note that your character won't need to consume food while afk _IF_
@@ -1007,6 +1004,9 @@ They all start with a slash '/' hence they're called slash commands:
             players, so they know why you are currently AFK or when you will
             be back.
 
+/at         Apply auto-inscription settings to current inventory.
+ (/autotag)
+
 /autoretm   Sets up auto-retaliation with a mimic power.
  (/arm)     Usage:   /arm [t]<power>   or to disable:   /arm -
             If 't' is prefixed to the power, it will only be used while in a
@@ -1020,6 +1020,13 @@ They all start with a slash '/' hence they're called slash commands:
             using this kind of power for auto-ret doesn't make much sense
             anyway..)
 
+/bbs <text>
+            Add a line of text to the in-game bulletin board system. Players
+            can look at the board by pressing the '!' key.
+            (You can verify or compare the date with the /time command.)
+            If <text> is omitted, the current BBS contents will be shown, same
+            as using the '!' key.
+
 /bed [*|<inscription>]
  (/naked)   Opposite of /dress.
             If no parameter is given, the character takes off everything from
@@ -1028,13 +1035,6 @@ They all start with a slash '/' hence they're called slash commands:
             equipped items.
             If another parameter is given, the character will take off all
             items that have this parameter occur in their inscription.
-
-/bbs <text>
-            Add a line of text to the in-game bulletin board system. Players
-            can look at the board by pressing the '!' key.
-            (You can verify or compare the date with the /time command.)
-            If <text> is omitted, the current BBS contents will be shown, same
-            as using the '!' key.
 
 /bug        report a bug to the admin(s).
 
@@ -1054,8 +1054,11 @@ They all start with a slash '/' hence they're called slash commands:
             nearby.
 
 /colours    Display all available colours for testing purpose, for example when
- /colors    you are editing your Colormap_ entries in TomeNET.ini or colormap_
- /col       entries in .tomenetrc respectively and want to test how it looks.
+ (/colors,  you are editing your Colormap_ entries in TomeNET.ini or colormap_
+ /col)      entries in .tomenetrc respectively and want to test how it looks.
+
+/cough      You cough noisily. Will disturb the sleep of monsters or at least
+            make it less deep..
 
 /shuffle [32|52 <jokers>]
             Prepares a new deck of cards.
@@ -1072,12 +1075,7 @@ They all start with a slash '/' hence they're called slash commands:
             whom you dealt that card.
             If it's the final card of the deck, everyone around will be
             notified of that fact.
-/draw <name>
-            Draws a random card from another player's deck. Basicall same as
-            the /deal command, except for who actually picks the card (the
-            dealer himself or one of the other participants).
-            If it's the final card of the deck, everyone around will be
-            notified of that fact.
+
 /dealer <name>
             Hand over your current deck of cards to someone else. If that
             player already shuffled a deck of his own, that one will be erased
@@ -1088,7 +1086,6 @@ They all start with a slash '/' hence they're called slash commands:
             nearby.
 /d          Rolls two dice, shortcut for "/dice 2".
 /die        Rolls one dice, shortcut for "/dice 1".
-/roll and /r are same as /dice and /d respectively.
 
 /dis        DESTROYS every item in your inventory that has one of these
  (/dispose) inscriptions: terrible, cursed, uncursed, broken, worthless,
@@ -1127,8 +1124,15 @@ They all start with a slash '/' hence they're called slash commands:
 /dis F[a|b] Same as '/dis f', also accepts optional parameters a or b, but this
             command destroys the whole ITEM PILE you're standing on.
 
+/draw <name>
+            Draws a random card from another player's deck. Basicall same as
+            the /deal command, except for who actually picks the card (the
+            dealer himself or one of the other participants).
+            If it's the final card of the deck, everyone around will be
+            notified of that fact.
+
 /dr [tag]   Without tag it equips all items in your inventory that are: not
-(/dress)    cursed, not {worthless}, not {broken}, not {terrible}, and that are
+ (/dress)   cursed, not {worthless}, not {broken}, not {terrible}, and that are
             known to you.
             With tag it just equips all items that contain that tag in their
             name or inscription somewhere (even if they are cursed).
@@ -1158,9 +1162,8 @@ They all start with a slash '/' hence they're called slash commands:
 /evunsign <#>
             Signs you off from that event number #.
 
-/ex or /examine or /extra
-            Gives you detailed information about your character's status, such
-            as how many actions you may perform per turn.
+/ex         Gives you detailed information about your character's status, such
+ (/extra)   as how many actions you may perform per turn.
 
             A turn is a basic server timing unit, which for example is used to
             display the amount of fuel in your light source, or which will make
@@ -1209,8 +1212,8 @@ They all start with a slash '/' hence they're called slash commands:
 /fill       fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
 
-/ftkon or /ftkoff
-            Enables or disables fire-till-kill mode (see (5.2a)).
+/ftkon      Enables, and respectively..
+/ftkoff     disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
 
 /gbbs <text>    Same usage as /bbs, but only readable/writable for guild
@@ -1218,12 +1221,15 @@ They all start with a slash '/' hence they're called slash commands:
                 To read its contents, type /gbbs without any <text>.
 
 /gleave     Leaves your guild. Same as pressing 'SHIFT+P' and 'd'.
- or /gquit
+ (/gquit)
 
 /gnote <text>
             Leave a note to the guild you own.
             If <text> is omitted, it will display the current note.
             If <text> is just an '*' char, it will erase the current note.
+
+/gpage      Will toggle paging you when you're AFK and a guild member joins the
+            server. (Also see /ppage.)
 
 /guild_adder <name of another player>
             Allows that player permanently to add other players to the guild
@@ -1234,6 +1240,9 @@ They all start with a slash '/' hence they're called slash commands:
             it.
 
 /guildmembers   Displays a list of all members of your guild.
+
+/help       view a list of all command keys (same as pressing '?' key).
+            Also lists a few most commonly used slash commands.
 
 /hou        Displays your houses, same as ~9, but offers two optional
  (/house)   parameters to refine the search results:
@@ -1315,9 +1324,6 @@ They all start with a slash '/' hence they're called slash commands:
                         If you're on Linux and not hearing the page sounds,
                         see PROBLEM 20 in the troubleshooting section (8.8).
 
-/ppage, /gpage    These will toggle paging you when you're AFK and a party or a
-                  guild member respectively joins the server.
-
 /paint      (Also available by pressing 'h' for house menu.)
             Use a potion in your inventory to paint your house entrance in a
             similar colour. The potion is used up in the process. A potion of
@@ -1354,6 +1360,9 @@ They all start with a slash '/' hence they're called slash commands:
             If <text> is omitted, it will display the current note.
             If <text> is just an '*' char, it will erase the current note.
 
+/ppage      Will toggle paging you when you're AFK and a party member joins the
+            server. (Also see /gpage.)
+
 /pstore     (Also available by pressing 'h' for house menu.)
             Attempts to enter a player store next to you, even if it's your own
             house. So this command is good for 'testing' your own store.
@@ -1363,20 +1372,6 @@ They all start with a slash '/' hence they're called slash commands:
 
 /pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
             chars. See (6.13) for details about PvP mode.
-
-/roll and /r are same as /dice and /d respectively (roll some dice).
-
-/sac        Tells a hereticism-user if he may use the spell 'Blood Sacrifice'.
- (/sacrifice)
-
-/xo         gives you an extermination order! It needs to be carried out before
-            a certain period of time passes (continues to expire even while not
- (/xorder)  logged on). Completing it yields a random item for reward. It will
-            appear in your inventory and carry an inscription indicating
-            it's the reward. (See (4.13) for more info.)
-            This command is only available in the Ironman Deep Dive Challenge
-            dungeon and in the Halls of Mandos. Otherwise you have to visit the
-            mayor's office in Bree to receive an extermination order.
 
 /que        Lists your currently pursued quests.
  (/quest)   Specify a quest number to drop a quest -- warning! You might not
@@ -1403,20 +1398,16 @@ They all start with a slash '/' hence they're called slash commands:
 /rfe        Store a message/suggestion for the admin(s).
             (Request for enhancement)
 
+/roll and /r are same as /dice and /d respectively (roll some dice).
+
+/sac        Tells a hereticism-user if he may use the spell 'Blood Sacrifice'.
+ (/sacrifice)
+
 /say <text>
  (/s)       Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
 
-/whisper <text>
- (/wh)      Whispers <text> to players currently standing right next to you.
-            Others won't be able to hear it.
-
-/cough      You cough noisily. Will disturb the sleep of monsters or at least
-            make it less deep..
-
 /shout <text>
-/yell <text>
-            Shout <text> loudly, will wake up monsters.
 
 /scream <text>
             Same as /shout, but also aggravates monsters in your current
@@ -1511,6 +1502,15 @@ or shorter: /tym <show|rs>
             This cannot be reversed, so the player should pick carefully.
             See (6.4) for a list of traits and what they do.
 
+/undoskills
+ (/undos)   A skill reset function ("respec"), allowing you to undo the last
+            couple of skill points you assigned in 'G' menu. Use this to
+            correct points you accidentally put into a wrong skill.
+            NOTE: Logging off or gaining another level will reset undoskills,
+            making it impossible to undo points spent previously.
+            Also, it can only be used ONCE per level, so make sure you get your
+            skill point distribution right on the second attempt.
+
 /untag [<inscription>]
  or /ut     If <inscription is omitted, it removes all inscriptions from items
             in your backpack which are exactly '!k' (as done by /tag command).
@@ -1527,25 +1527,28 @@ or shorter: /tym <show|rs>
 
 /untag u    will remove all unique-loot tags from your inventory items.
 
-/at         Apply auto-inscription settings to current inventory.
- (/autotag)
-
-/undoskills
- (/undos)   A skill reset function ("respec"), allowing you to undo the last
-            couple of skill points you assigned in 'G' menu. Use this to
-            correct points you accidentally put into a wrong skill.
-            NOTE: Logging off or gaining another level will reset undoskills,
-            making it impossible to undo points spent previously.
-            Also, it can only be used ONCE per level, so make sure you get your
-            skill point distribution right on the second attempt.
-
 /version    Displays the server version.
  (/ver)
+
+/whisper <text>
+ (/wh)      Whispers <text> to players currently standing right next to you.
+            Others won't be able to hear it.
 
 /who <character name>
             Returns the account name that character belongs to, and basic info
             on race, class and level.
 
+/xo         gives you an extermination order! It needs to be carried out before
+            a certain period of time passes (continues to expire even while not
+ (/xorder)  logged on). Completing it yields a random item for reward. It will
+            appear in your inventory and carry an inscription indicating
+            it's the reward. (See (4.13) for more info.)
+            This command is only available in the Ironman Deep Dive Challenge
+            dungeon and in the Halls of Mandos. Otherwise you have to visit the
+            mayor's office in Bree to receive an extermination order.
+
+/yell <text>
+            Shout <text> loudly, will wake up monsters.
 
 (0.2c) IRC bot commands
 -----------------------
