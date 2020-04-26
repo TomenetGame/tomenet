@@ -4719,6 +4719,7 @@ void handle_punish(int Ind, int level) return 0;
  * through /mute <name> and disabled through /unmute <name>).
  *				- the_sandman
  */
+#define UNPUNISHED_WHISPER /* Swearing in whispers doesn't get punished (but still censored depending on target's censor_swearing setting) */
 static void player_talk_aux(int Ind, char *message) {
 	int i, len, target = 0, target_raw_len = 0;
 	char search[MSG_LEN], sender[MAX_CHARS];
@@ -5280,7 +5281,9 @@ static void player_talk_aux(int Ind, char *message) {
 				   have a reply-to target yet. */
 				if (!strlen(p_ptr->reply_name)) strcpy(p_ptr->reply_name, w_player->name);
 
+ #ifndef UNPUNISHED_WHISPER
 				handle_punish(Ind, censor_punish);
+ #endif
 				return;
 			}
 		}
@@ -5370,8 +5373,10 @@ static void player_talk_aux(int Ind, char *message) {
  #endif
 #endif
 
-			exec_lua(0, "chat_handler()");
+#ifndef UNPUNISHED_WHISPER
+			//exec_lua(0, "chat_handler()");
 			handle_punish(Ind, censor_punish);
+#endif
 			return;
 		} else {
 #if 1 /* keep consistent with paging */
