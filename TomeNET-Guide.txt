@@ -2737,8 +2737,8 @@ so probably it looks like SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl-config.
 You should be able to cross-compile the client now. First a paranoid clean-up,
 then build the client (or server I guess, if desired):
 make clean
-make tomenet
-(Or for the server: make tomenet.server)
+make tomenet.exe
+(Or for the server: make tomenet.server.exe)
 
 
 Linux (using pre-compiled client):
