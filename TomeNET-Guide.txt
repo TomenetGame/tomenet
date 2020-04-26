@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. April 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 26. April 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2711,6 +2711,34 @@ Last but not least, you may use the following command-line options:
 <ip address>            for example 37.187.75.24
 
 (Skip down to (2.1a) to continue reading.)
+
+
+Windows (cross-compiling from Linux):
+-------------------------------------
+Install the usual compiling environment with gcc or clang.
+
+For the crosscompiling part, install mingw32 and take note of the folder prefix
+it installs to, in most cases it will be 'i686-w64-mingw32', so it will install
+to /usr/i686-w64-mingw32/...  with notable subfolders include/, lib/ and bin/.
+Edit the makefile.mingw to have MINGW_TARGET reflect the prefix.
+
+Next, for sound support you will have to download at least SDL v1.2.15 and
+SDL-mixer v1.2.12. Optionally you can get SMPEG for MP3-support or MikMod for
+various mod-file suport, not required. Make sure you do _not_ download the
+designated 'mingw32' tar.gz from the libsdl.org page but get the generic src
+tarball at the top of that page instead.
+Detailed instructions for installing SDL are provided by Mikael here:
+http://muuttuja.org/tomenet/howto-install-sdl.txt
+
+Adjust the makefile.mingw accordingly, which means setting SDL_CONFIG to the
+sdl-config script that should now be installed inside your mingw-prefix folder,
+so probably it looks like SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl-config.
+
+You should be able to cross-compile the client now. First a paranoid clean-up,
+then build the client (or server I guess, if desired):
+make clean
+make tomenet
+(Or for the server: make tomenet.server)
 
 
 Linux (using pre-compiled client):

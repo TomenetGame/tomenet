@@ -152,7 +152,7 @@ MINGW_TARGET = i686-w64-mingw32
 # You may need to replace /usr/mingw32 by whatever prefix your
 # cross-compiling tools use.
 #
-SDL_CONFIG = sdl-config
+SDL_CONFIG = /usr/$(MINGW_TARGET)/bin/sdl-config
 #SDL_CONFIG = /usr/$(MINGW_TARGET)/usr/bin/sdl-config
 
 #
@@ -175,6 +175,10 @@ SDL_LIB_PATH = $(shell $(SDL_CONFIG) --libs)
 ##
 CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=gnu99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
+
+#We don't need SDL for lua, so keep it simple..
+LUACFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=gnu99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
+LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 ## With SDL, using 'sdl-config':
 #CFLAGS += -DSOUND_SDL `$(SDL_CONFIG) --cflags`
@@ -276,7 +280,7 @@ tomenet.console.exe: $(CONS_OBJS)
 
 
 $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c $(LIBS)
+	$(CC) $(LUACFLAGS) -o $@ $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c $(LUALIBS)
 
 
 #
