@@ -1127,7 +1127,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		/* Display extra information */
 		else if (prefix(messagelc, "/extra") ||
-		    prefix(messagelc, "/examine") ||
 		    (prefix(messagelc, "/ex") && !prefix(messagelc, "/exit"))) {
 			do_cmd_check_extra_info(Ind, (admin && !tk));
 			return;
