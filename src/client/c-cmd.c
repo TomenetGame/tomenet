@@ -2220,8 +2220,8 @@ void cmd_the_guide(void) {
 				}
 				if (!strcasecmp("XO", buf) || !strcasecmp("Extermination Orders", buf)
 				    || my_strcasestr(buf, "Extermination")
-				    || (my_strcasestr(buf, "Ex") && my_strcasestr(buf, "order"))) {
-					strcpy(chapter, "Extermination Orders");
+				    || (my_strcasestr(buf, "Ex") && my_strcasestr(buf, "ord"))) {
+					strcpy(chapter, "Extermination orders");
 					continue;
 				}
 				if (my_strcasestr("Halloween", buf)) {
