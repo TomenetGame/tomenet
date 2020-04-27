@@ -7931,12 +7931,14 @@ of these crowd-control effects.
 
 (4.13) Extermination orders, events and Ironman Challenge
 ---------------------------------------------------------
-Your character will have uncounted opportunities to receive and carry out
-extermination orders and participate in global (as in, open to everyone at the
-same time) events.
-Extermination orders can be received by a player on demand and only concern him
-personally, while events are automatically scheduled in regular time intervals
-and allow (or even require) multiple players to participate simultaneously.
+Your character will have opportunities to do certain side events for extra
+rewards, such as carrying out so-called extermination orders or participating
+in global (as in, open to everyone at the same time) events.
+An extermination order can be received by a player on demand and infinitely
+often, and only concerns him personally. Events however are automatically
+scheduled in regular time intervals, often have strict conditions for what kind
+of characters are allowed to participate and allow (or even require) multiple
+players to participate simultaneously.
 
 Some events will require you to have zero experience in order to participate.
 The maximum experience your character ever accumulated counts for this, so
