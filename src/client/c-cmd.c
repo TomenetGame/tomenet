@@ -2012,6 +2012,8 @@ void cmd_the_guide(void) {
 				/* There is no Black Breath chapter but it is explained fully in the chapter containing Nazgul info */
 				if (my_strcasestr(buf, "black") == buf || !strcasecmp(buf, "bb")) strcpy(buf, "nazgul");
 
+				if (my_strcasestr(buf, "art") && my_strcasestr(buf, "cre")) strcpy(buf, "Artifact creation");
+
 				/* The chapter explaining 'stats' is actually titled 'Attributes' */
 				if (!strcasecmp(buf, "stats") || !strcasecmp(buf, "stat")) strcpy(buf, "Attributes");
 				/* Also allow directly jumping to any attribute */
