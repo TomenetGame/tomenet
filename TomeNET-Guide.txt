@@ -29,7 +29,7 @@
 Contents
 --------
 (0) Quickstart (If you don't like to read much :)
-    (0.1)   Start & play, Character validation
+    (0.1)   Start & play, character validation
     (0.1a)  Colour blindness
     (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
@@ -106,7 +106,7 @@ Contents
     (4.11)  Malicious effects players can suffer
     (4.11a) Drain effects
     (4.12)  Malicious effects monsters can suffer
-    (4.13)  Extermination Orders, Events and Ironman Challenge
+    (4.13)  Extermination orders, events and Ironman Challenge
     (4.14)  In-game time system
     (4.14a) In-game metrics
     (4.15)  Swimming
@@ -121,11 +121,11 @@ Contents
     (5.3a)  Martial Arts, brands
     (5.4)   Application of attack-affecting item mods
     (5.5)   Weight of weapons and armour
-    (5.6)   Resistances & caps, Immunities, Susceptibilities
+    (5.6)   Resistances & caps, immunities, susceptibilities
     (5.7)   Qualitative classification of items, identifying & selling items
-    (5.7a)  Types of Identification
+    (5.7a)  Types of identification
     (5.7b)  The EASY_KNOW flag
-    (5.7c)  Loot tables, Treasure Classes
+    (5.7c)  Loot tables, treasure classes
     (5.8)   Special abilities of items
     (5.9)   What does item xxx do exactly?
     (5.9a)  Activatable items
@@ -134,9 +134,9 @@ Contents
     (5.10a) Equipment damage from elemental attacks
     (5.11)  Monsters
     (5.11a) Monster flags
-    (5.12)  Monster attack mechanism, Armour Class, damage caps
+    (5.12)  Monster attack mechanism, armour class, damage caps
     (5.12a) Monster attack types and brands
-    (5.12b) Dispelling/Banishing/Turning monsters
+    (5.12b) Dispelling/banishing/turning monsters
     (5.13)  Earthquakes
     (5.14)  Curses
     (5.15)  Vampirism
@@ -145,9 +145,9 @@ Contents
     (5.18)  Monster auras
     (5.19)  Experience-draining items
     (5.20)  Digging
-    (5.20a) Digging - Exact calculation
-    (5.20b) Digging - Common example values
-    (5.20c) Digging - Further information
+    (5.20a) Digging - exact calculation
+    (5.20b) Digging - common example values
+    (5.20c) Digging - further information
     (5.21)  Recharging
     (5.22)  Wraithform
 (6) Character details
@@ -156,8 +156,8 @@ Contents
     (6.2a)  Maiar initiation effects
     (6.3)   Abilities
     (6.4)   Races
-    (6.5)   Classes/Professions, titles, melee blows/round
-    (6.5a)  Start-up Blows/Round Table (BpR)
+    (6.5)   Classes/professions, titles, melee blows/round
+    (6.5a)  Start-up blows/round table (BpR)
     (6.5b)  Class titles
     (6.6)   Sanity (or insanity)
     (6.7)   Mimicry details
@@ -169,7 +169,7 @@ Contents
     (6.8b)  Runes & Runemastery
     (6.8c)  Runespell tables
     (6.8d)  Spell failure rate
-    (6.9)   Parties, Iron Teams, Guilds
+    (6.9)   Parties, Iron Teams, guilds
     (6.9a)  Guild halls
     (6.10)  Magic devices, skill and ability
     (6.11)  Parrying and blocking
@@ -200,7 +200,7 @@ Contents
 (0) Quickstart
 ==============
 
-(0.1) Start & play, Character validation
+(0.1) Start & play, character validation
 ----------------------------------------
 If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing/updating TomeNET'.
@@ -6515,7 +6515,7 @@ If the item is worth more than 300,000 Au maybe you can find a fellow player
 who is wealthy and in urgent need of your items.
 
 
-Item Orders
+Item orders
 -----------
 The basic town stores also allow you to order specific basic items that they
 usually offer in their store template. These items will come without any
@@ -7929,7 +7929,7 @@ of these crowd-control effects.
 
 
 
-(4.13) Extermination Orders, Events and Ironman Challenge
+(4.13) Extermination orders, events and Ironman Challenge
 ---------------------------------------------------------
 Your character will have uncounted opportunities to receive and carry out
 extermination orders and participate in global (as in, open to everyone at the
@@ -7954,7 +7954,7 @@ Stay clean!
 
 Here is a list of currently available events:
 
-Extermination Orders
+Extermination orders
 --------------------
 These are basically 'kill quests'. You need to venture out and kill a fixed
 amount of a certain type of monster.
@@ -9395,7 +9395,7 @@ Very heavy armour and/or heavy items in your inventory may also slow you down
 
 
 
-(5.6) Resistances & caps, Immunities, Susceptibilities
+(5.6) Resistances & caps, immunities, susceptibilities
 ------------------------------------------------------
 
 Resistances & caps
@@ -9984,7 +9984,7 @@ Again - if you want to look up what certain special items can/cannot do, see
 the spoiler files section (7.4) or further explanations in (5.8) and (5.9).
 
 
-(5.7a) Types of Identification
+(5.7a) Types of identification
 ------------------------------
 There are different stages and types of identification:
 a) pseudo-indentification.
@@ -10057,7 +10057,7 @@ More examples:
  that shows a '?' for level requirements, it might turn out very valuable.
 
 
-(5.7c) Loot tables, Treasure Classes
+(5.7c) Loot tables, treasure classes
 ------------------------------------
 Also called drop tables, specifying which type of items a monster might drop.
 The type, level, quality and use-level of an item may depend on these factors:
@@ -11661,7 +11661,7 @@ ONLY_GOLD       The monster drops only gold (and no items) or only items (and
 
 
 
-(5.12) Monster attack mechanism, Armour Class, damage caps
+(5.12) Monster attack mechanism, armour class, damage caps
 ----------------------------------------------------------
 Monsters may try to attack you in three different ways:
 -Hitting you.
@@ -11912,7 +11912,7 @@ HOLD            Although not so special and already mentioned in the text above
                 into Mordor though.
 
 
-(5.12b) Dispelling/Banishing/Turning monsters
+(5.12b) Dispelling/banishing/turning monsters
 ---------------------------------------------
 The terms 'dispel' and 'banish' are unfortunately used in an ambiguous manner
 throughout the game.
@@ -12345,7 +12345,7 @@ If you're not interested in the exact formula, skip down to (5.20b) which has a
 table with example values for certain scenarios.
 
 
-(5.20a) Digging - Exact calculation
+(5.20a) Digging - exact calculation
 -----------------------------------
 Your digging power is calculated as follows:
 An equipped item that provides (+X) to digging will add 20*X.
@@ -12387,7 +12387,7 @@ digging power of 21. So on each turn of tunnelling your chance to succeed would
 be 1 in 800 in that case.
 
 
-(5.20b) Digging - Common example values
+(5.20b) Digging - common example values
 ---------------------------------------
 Some example values, assuming 0.000 'Digging' skill
 and unenchanted (ie (+0,+0)) digging tools with (+1) to digging:
@@ -12422,7 +12422,7 @@ You can tunnel through all tunneable materials, no matter your strength, with..
 -any (+2) digging tool or better (except if it has negative +hit/+dam values).
 
 
-(5.20c) Digging - Further information
+(5.20c) Digging - further information
 -------------------------------------
 For digging through granite wall without having to wait for ages to succeed,
 you will definitely want a better digging tool than basic shovels or picks.
@@ -14573,7 +14573,7 @@ Maia        +2  +3  +3  +1  +1  +2      11      400%   100ft
 
 
 
-(6.5) Classes/Professions, titles, melee blows/round
+(6.5) Classes/professions, titles, melee blows/round
 ----------------------------------------------------
 Depending on your class, your start-up equipment and your skill tree will
 vary. For example a warrior cannot learn magic spells.
@@ -15181,7 +15181,7 @@ Note that a (heavier) startup weapon at 2 BpR might beat a very light weapon at
 for a little a bit until spending $ on it.
 
 
-(6.5a) Start-up Blows/Round Table (BpR)
+(6.5a) Start-up blows/round table (BpR)
 ---------------------------------------
 Here is a table, showing you some BpR numbers you can expect your newly
 created character to have, depending on certain combinations of class, STR,
@@ -18489,7 +18489,7 @@ used to be 0%:
 
 
 
-(6.9) Parties, Iron Teams, Guilds
+(6.9) Parties, Iron Teams, guilds
 ----------------------------------
 Press 'P' to display the party menu.
 Here you can..

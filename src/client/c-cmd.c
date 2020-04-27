@@ -2245,9 +2245,9 @@ void cmd_the_guide(void) {
 					strcpy(chapter, ".Martial Arts");
 					continue;
 				}
-				if (!strcasecmp("IO", buf) || my_strcasestr("Orders", buf)
-				    || (my_strcasestr(buf, "Ord") && my_strcasestr(buf, "Item"))) {
-					strcpy(buf, "Item Orders");
+				if (!strcasecmp("Io", buf) || my_strcasestr("orders", buf)
+				    || (my_strcasestr(buf, "ord") && my_strcasestr(buf, "Item"))) {
+					strcpy(buf, "Item orders");
 					fallback = TRUE;
 					continue;
 				}
