@@ -1426,7 +1426,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	}
 
 	/* Preparation for erasure of heaviest speed/mana killing flags, see further below.. */
-	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR)) {
+	if (a_ptr->flags1 & TR1_ATTR_MASK) {
 		/* Count how many stats are increased */
 		if (a_ptr->flags1 & TR1_STR) c++;
 		if (a_ptr->flags1 & TR1_INT) c++;
@@ -1440,7 +1440,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	if ((a_ptr->flags1 & TR1_SPEED) && (k_ptr->tval == TV_BOOTS)) {
 		/* Erase the heaviest speed-killing flags! */
 		if (a_ptr->pval > 5) { /* differ from post-check, to match reduction below */
-			a_ptr->flags1 &= ~(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR);
+			a_ptr->flags1 &= ~TR1_ATTR_MASK;
 		} else if (a_ptr->pval > 3 && c > 3) { /* differ from post-check, to match reduction below */
 			a_ptr->flags1 &= ~(TR1_INT | TR1_WIS | TR1_CHR); /* quite nice selectivity */
 		}
@@ -1449,7 +1449,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 	if ((a_ptr->flags1 & TR1_MANA) && (k_ptr->tval == TV_MSTAFF)) {
 		/* Erase the heaviest mana-killing flags! */
 		if (a_ptr->pval > 5) { /* differ from post-check, to match reduction below */
-			a_ptr->flags1 &= ~(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR);
+			a_ptr->flags1 &= ~TR1_ATTR_MASK;
 		} else if (a_ptr->pval > 3 && c > 3) { /* differ from post-check, to match reduction below */
 			a_ptr->flags1 &= ~(TR1_INT | TR1_WIS | TR1_CHR); /* quite nice selectivity */
 		}
@@ -1459,7 +1459,7 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 	/* Update count */
 	c = 0;
-	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR)) {
+	if (a_ptr->flags1 & TR1_ATTR_MASK) {
 		/* Count how many stats are increased */
 		if (a_ptr->flags1 & TR1_STR) c++;
 		if (a_ptr->flags1 & TR1_INT) c++;
@@ -1669,7 +1669,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	}
 
 	/* Preparation for erasure of heaviest speed/mana killing flags, see further below.. */
-	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR)) {
+	if (a_ptr->flags1 & TR1_ATTR_MASK) {
 		/* Count how many stats are increased */
 		if (a_ptr->flags1 & TR1_STR) c++;
 		if (a_ptr->flags1 & TR1_INT) c++;
@@ -1683,7 +1683,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	if ((a_ptr->flags1 & TR1_SPEED) && (k_ptr->tval == TV_BOOTS)) {
 		/* Erase the heaviest speed-killing flags! */
 		if (a_ptr->pval > 6) {
-			a_ptr->flags1 &= ~(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR);
+			a_ptr->flags1 &= ~TR1_ATTR_MASK;
 		} else if (a_ptr->pval > 4 && c > 3) {
 			a_ptr->flags1 &= ~(TR1_INT | TR1_WIS | TR1_CHR); /* quite nice selectivity */
 		}
@@ -1692,7 +1692,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 	if ((a_ptr->flags1 & TR1_MANA) && (k_ptr->tval == TV_MSTAFF)) {
 		/* Erase the heaviest mana-killing flags! */
 		if (a_ptr->pval > 6) {
-			a_ptr->flags1 &= ~(TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR);
+			a_ptr->flags1 &= ~TR1_ATTR_MASK;
 		} else if (a_ptr->pval > 4 && c > 3) {
 			a_ptr->flags1 &= ~(TR1_INT | TR1_WIS | TR1_CHR); /* quite nice selectivity */
 		}
@@ -1702,7 +1702,7 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 
 	/* Update count */
 	c = 0;
-	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR)) {
+	if (a_ptr->flags1 & TR1_ATTR_MASK) {
 		/* Count how many stats are increased */
 		if (a_ptr->flags1 & TR1_STR) c++;
 		if (a_ptr->flags1 & TR1_INT) c++;
@@ -2651,7 +2651,7 @@ try_an_other_ego:
 		if (a_ptr->pval > 3) a_ptr->pval = 3;
 	}
 	/* +Attribute caps */
-	if (a_ptr->flags1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR)) {
+	if (a_ptr->flags1 & TR1_ATTR_MASK) {
 		if (a_ptr->tval == TV_AMULET) {
 			if (a_ptr->pval > 3) a_ptr->pval = (a_ptr->pval + 1) / 2;
 			if (a_ptr->pval > 3) a_ptr->pval = 3;

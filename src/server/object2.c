@@ -12348,15 +12348,29 @@ void inverse_cursed(object_type *o_ptr) {
 	if (!is_armour(o_ptr->tval) && o_ptr->to_a > 15) o_ptr->to_a = 15;
 
 	/* reverse +pval/bpval */
-	if (o_ptr->pval < 0) {
-		o_ptr->pval_org = o_ptr->pval;
-		o_ptr->pval = -(o_ptr->pval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
-		if (o_ptr->pval > 3) o_ptr->pval = 3; //thinking EA/Life, but just paranoia really..
-	}
-	if (o_ptr->bpval < 0) {
-		o_ptr->bpval_org = o_ptr->bpval;
-		o_ptr->bpval = -(o_ptr->bpval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
-		if (o_ptr->bpval > 3) o_ptr->bpval = 3; //thinking EA/Life, but just paranoia really..
+	/* Be more lenient for items that only increase attributes */
+	if ((f1 & TR1_PVAL_MASK) == (f1 & TR1_ATTR_MASK) && !(f5 & TR5_PVAL_MASK)) {
+		if (o_ptr->pval < 0) {
+			o_ptr->pval_org = o_ptr->pval;
+			o_ptr->pval = (-o_ptr->pval) / 2 + 1;
+			if (o_ptr->pval > 5) o_ptr->pval = 5;
+		}
+		if (o_ptr->bpval < 0) {
+			o_ptr->bpval_org = o_ptr->bpval;
+			o_ptr->bpval = (-o_ptr->bpval) / 2 + 1;
+			if (o_ptr->bpval > 5) o_ptr->bpval = 5;
+		}
+	} else {
+		if (o_ptr->pval < 0) {
+			o_ptr->pval_org = o_ptr->pval;
+			o_ptr->pval = -(o_ptr->pval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
+			if (o_ptr->pval > 3) o_ptr->pval = 3; //thinking EA/Life, but just paranoia really..
+		}
+		if (o_ptr->bpval < 0) {
+			o_ptr->bpval_org = o_ptr->bpval;
+			o_ptr->bpval = -(o_ptr->bpval - 3) / 4; //the evil gods are pleased '>_>.. (thinking of +LUCK)
+			if (o_ptr->bpval > 3) o_ptr->bpval = 3; //thinking EA/Life, but just paranoia really..
+		}
 	}
 }
 /* Reverse the boni back to negative when a vampire takes off a heavily cursed item (or its curse gets broken),

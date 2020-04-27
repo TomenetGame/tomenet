@@ -2139,7 +2139,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	if (!redux) {
 		int amt = o_ptr->bpval + o_ptr->pval;
 
-		tmpf1 = f1 & (TR1_STR | TR1_INT | TR1_WIS | TR1_DEX | TR1_CON | TR1_CHR);
+		tmpf1 = f1 & TR1_ATTR_MASK;
 		tmpf2 = f2 & (TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
 		tmpf3 = tmpf1 & tmpf2;
 		if (!amt) tmpf1 = tmpf3 = 0x0; //item was disenchanted to zero? don't display stat effects then.
