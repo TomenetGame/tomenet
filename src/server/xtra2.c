@@ -10194,7 +10194,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	get_mon_num_hook = xorder_aux;
 	xorder_aux_extra = p_ptr->total_winner;
 	get_mon_num_prep(0, NULL);
-	i = 2 + randint(5);
+	i = 3 + rand_int(3);
 
 	do {
 		r = get_mon_num(lev, lev - 10); //reduce OoD chance slightly
@@ -10215,6 +10215,8 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 3 + randint(4);
 			/* very easy for very low level non-friends quests */
 			else if (lev < 20) i = (i + 1) / 2;
+			/* somewhat easier for low-mid level non-friends quests */
+			else if (lev < 30) i = (i * 3 + 3) / 4;
 		} else {
 			if (r_info[r].flags1 & RF1_FRIENDS) i = i + 9 + randint(5);
 			if (i > 6) i--;
