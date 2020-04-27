@@ -2201,34 +2201,35 @@ void cmd_the_guide(void) {
 				if (my_strcasestr(buf, "Deep")) find++;
 				if (my_strcasestr(buf, "Dive")) find++;
 				if (my_strcasestr(buf, "Chal")) find++;
-				if (!strcasecmp(buf, "IDDC") || !strcasecmp("Ironman Deep Dive Challenge", buf) || find >= 2) {
+				if (!strcasecmp(buf, "IDDC") || !strcasecmp(buf, "Ironman Deep Dive Challenge") || find >= 2) {
 					strcpy(chapter, "Ironman Deep Dive Challenge (IDDC)");
 					continue;
 				}
-				if ((!strcasecmp("HT", buf) || !strcasecmp("HL", buf) || my_strcasestr("Highland", buf) || my_strcasestr("Tournament", buf))
-				    && strcasecmp("Ent", buf)) { //oops
+				if ((!strcasecmp(buf, "HT") || !strcasecmp(buf, "HL") || my_strcasestr(buf, "Highla") || my_strcasestr(buf, "Tourn"))
+				    || (my_strcasestr(buf, "Hi") && my_strcasestr(buf, "Tou"))) {
 					strcpy(chapter, "Highlander Tournament");
 					continue;
 				}
-				if (!strcasecmp("AMC", buf) || (my_strcasestr("Arena", buf))) {// && my_strcasestr("Challenge", buf))) {
+				if (!strcasecmp(buf, "AMC") || (my_strcasestr(buf, "Arena"))) {// && my_strcasestr("Challenge", buf))) {
 					strcpy(chapter, "Arena Monster Challenge");
 					continue;
 				}
-				if (!strcasecmp("DK", buf) || !strcasecmp("Dungeon Keeper", buf) || my_strcasestr("Keeper", buf)) { //sorry, Death Knights
+				if (!strcasecmp(buf, "DK") || !strcasecmp(buf, "Dungeon Keeper") || my_strcasestr(buf, "Keeper")
+				    || (my_strcasestr(buf, "Dun") && my_strcasestr(buf, "Kee"))) { //sorry, Death Knights
 					strcpy(chapter, "Dungeon Keeper");
 					continue;
 				}
-				if (!strcasecmp("XO", buf) || !strcasecmp("Extermination Orders", buf)
+				if (!strcasecmp(buf, "XO") || !strcasecmp(buf, "Extermination Orders")
 				    || my_strcasestr(buf, "Extermination")
 				    || (my_strcasestr(buf, "Ex") && my_strcasestr(buf, "ord"))) {
 					strcpy(chapter, "Extermination orders");
 					continue;
 				}
-				if (my_strcasestr("Halloween", buf)) {
+				if (my_strcasestr(buf, "Halloween")) {
 					strcpy(chapter, "Halloween");
 					continue;
 				}
-				if (!strcasecmp("Christmas", buf) || !strcasecmp(buf, "xmas")) {
+				if (!strcasecmp(buf, "Christmas") || !strcasecmp(buf, "xmas")) {
 					strcpy(chapter, "Christmas");
 					continue;
 				}
@@ -2241,11 +2242,11 @@ void cmd_the_guide(void) {
 					continue;
 				}
 
-				if (!strcasecmp("ma", buf)) {
+				if (!strcasecmp(buf, "ma")) {
 					strcpy(chapter, ".Martial Arts");
 					continue;
 				}
-				if (!strcasecmp("Io", buf) || my_strcasestr("orders", buf)
+				if (!strcasecmp(buf, "Io") || my_strcasestr(buf, "orders")
 				    || (my_strcasestr(buf, "ord") && my_strcasestr(buf, "Item"))) {
 					strcpy(buf, "Item orders");
 					fallback = TRUE;
