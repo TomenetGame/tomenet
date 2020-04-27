@@ -4392,12 +4392,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!GetAccount(&acc, message3, NULL, FALSE))
 					msg_print(Ind, "That character or account name does not exist.");
 				else {
-					for (i = 1; i <= NumPlayers; i++) 
+					for (i = 1; i <= NumPlayers; i++)
 						if (!strcmp(Players[i]->accountname, message3)) {
 							msg_print(Ind, "There is no such character, but there is an account of that name \377Gonline\377w.");
 							return;
 						}
-					else msg_print(Ind, "There is no such character, but there is an account of that name.");
+					msg_print(Ind, "There is no such character, but there is an account of that name.");
 				}
 #endif
 				return;
