@@ -12205,17 +12205,19 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #endif
 #ifdef ARCADE_SERVER
 #if 0
-						if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
-						    project_time_effect & EFF_CROSSHAIR_C) {
-							msg_broadcast(0, "making an effect");
-							player_type *pfft_ptr = Players[project_interval];
-							pfft_ptr->e = effect;
-						}
+				if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
+				    project_time_effect & EFF_CROSSHAIR_C) {
+					msg_broadcast(0, "making an effect");
+					player_type *pfft_ptr = Players[project_interval];
+					pfft_ptr->e = effect;
+				}
 #endif
 #endif
+				return FALSE; //the effect code will take over from here right away (since after it was changed to prevent monsters from wave-jumping)
 			} else {
 				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
 						y2, x2, rad, project_time_effect);
+				return FALSE; //the effect code will take over from here right away (since after it was changed to prevent monsters from wave-jumping)
 			}
 			project_interval = 0;
 			project_time = 0;
