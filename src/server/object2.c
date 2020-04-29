@@ -12113,32 +12113,49 @@ void erase_artifact(int a_idx) {
 /* Modify a particular existing type of item in the whole game world. - C. Blue
    (added for Living Lightning drop 'Sky DSM of Imm' to become a canonical randart Sky DSM instead) */
 /* Helper function - hard-coded stuff - replacement item parameters */
-static void hack_particular_item_aux(object_type *qq_ptr, struct worldpos xwpos) {
+static void hack_particular_item_aux(object_type *o_ptr, struct worldpos xwpos) {
+#if 0
+	/* (for sky dsm drop from living lightning) */
 	int tries;
 	artifact_type *xa_ptr;
 
-	object_wipe(qq_ptr);
-	invcopy(qq_ptr, lookup_kind(TV_DRAG_ARMOR, SV_DRAGON_SKY));
-	qq_ptr->number = 1;
-	qq_ptr->name1 = ART_RANDART;
+	object_wipe(o_ptr);
+	invcopy(o_ptr, lookup_kind(TV_DRAG_ARMOR, SV_DRAGON_SKY));
+	o_ptr->number = 1;
+	o_ptr->name1 = ART_RANDART;
 	tries = 500;
 	while (tries) {
 		/* Piece together a 32-bit random seed */
-		qq_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
-		qq_ptr->name3 += rand_int(0xFFFF);
-		apply_magic(&xwpos, qq_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
+		o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
+		o_ptr->name3 += rand_int(0xFFFF);
+		apply_magic(&xwpos, o_ptr, 150, TRUE, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE);
 
-		xa_ptr = randart_make(qq_ptr);
+		xa_ptr = randart_make(o_ptr);
 		if (artifact_power(xa_ptr) >= 105 + 5 && /* at least +1 new mod gained; and +extra bonus boost */
-		    qq_ptr->to_a > 0 && /* not cursed */
+		    o_ptr->to_a > 0 && /* not cursed */
 		    !(xa_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC)))
 			break;
 		tries--;
 	}
-	qq_ptr->level = 0;
+	o_ptr->level = 0;
 	if (!tries) s_printf("hack_particular_item_aux: Re-rolling out of tries!\n");
+#endif
+
+#if 0
+	/* seal outdated junk */
+	o_ptr->tval2 = o_ptr->tval;
+	o_ptr->sval2 = o_ptr->sval;
+	o_ptr->tval = TV_SPECIAL;
+	o_ptr->sval = SV_SEAL;
+#else
+	/* shards -> pottery! */
+	o_ptr->sval = SV_POTTERY;
+#endif
+	o_ptr->k_idx = lookup_kind(o_ptr->tval, o_ptr->sval);
 }
-static void hack_particular_item_prepare_wpos(struct worldpos *xwpos) {
+static void hack_particular_item_prepare_wpos(struct worldpos *wpos) {
+#if 0
+	/* (for sky dsm drop from living lightning) */
 	int x, y;
 	dungeon_type *d_ptr;
 
@@ -12146,23 +12163,36 @@ static void hack_particular_item_prepare_wpos(struct worldpos *xwpos) {
 	for (x = 0; x < MAX_WILD_X; x++) {
 		if ((d_ptr = wild_info[y][x].tower)) {
 			if (d_ptr->type == DI_CLOUD_PLANES) {
-				xwpos->wx = x;
-				xwpos->wy = y;
-				xwpos->wz = 20;
+				wpos->wx = x;
+				wpos->wy = y;
+				wpos->wz = 20;
 			}
 		}
 		if ((d_ptr = wild_info[y][x].dungeon)) {
 			if (d_ptr->type == DI_CLOUD_PLANES) {
-				xwpos->wx = x;
-				xwpos->wy = y;
-				xwpos->wz = 20;
+				wpos->wx = x;
+				wpos->wy = y;
+				wpos->wz = 20;
 			}
 		}
 	}
+	return;
+#endif
+
+	/* whatever */
+	wpos->wx = 32;
+	wpos->wy = 32;
+	wpos->wz = 0;
 }
 static bool hack_particular_item_cmp(object_type *o_ptr) {
+#if 0
+	/* (for sky dsm drop from living lightning) */
 	//return (o_ptr->tval != TV_DRAG_ARMOR || o_ptr->sval != SV_DRAGON_SKY || o_ptr->name2 != EGO_IMMUNE);
 	return (o_ptr->tval != TV_DRAG_ARMOR || o_ptr->sval != SV_DRAGON_SKY || o_ptr->name1 != ART_RANDART || o_ptr->level != 0);
+#endif
+
+	/* for disabling accidentally generated old junk */
+	return (o_ptr->tval != TV_JUNK || o_ptr->sval != SV_GLASS_SHARD);
 }
 void hack_particular_item(void) {
 	int i, this_o_idx, next_o_idx;
@@ -12175,11 +12205,11 @@ void hack_particular_item(void) {
 
 	int found = 0;
 
-	struct worldpos xwpos;
+	struct worldpos xwpos = { -1, 0, 0 };
 
 	xwpos.wx = xwpos.wy = xwpos.wz = 0;
 	hack_particular_item_prepare_wpos(&xwpos);
-	if (!xwpos.wz) {
+	if (xwpos.wx == -1) {
 		s_printf("hack_particular_item(): failed to prepare wpos!\n");
 		return;
 	}
@@ -12239,6 +12269,8 @@ void hack_particular_item(void) {
 				s_printf(" found in live player '%s'\n", p_ptr->name);
 				hack_particular_item_aux(o_ptr, xwpos);
 				found++;
+				/* Update the item in his inventory */
+				p_ptr->window |= PW_INVEN;
 			}
 		}
 	}
@@ -12261,6 +12293,15 @@ void hack_particular_item(void) {
 	for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 		ptr = hash_table[slot];
 		while (ptr) {
+			/* skip savegames of players that are online anyway - they already got modified above */
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (strcmp(Players[i]->name, ptr->name)) continue;
+				ptr = ptr->next;
+				break;
+			}
+			if (i != NumPlayers + 1) continue;
+
 			/* clear his data (especially inventory) */
 			o_ptr = p_ptr->inventory;
 			WIPE(p_ptr, player_type);
@@ -12275,6 +12316,7 @@ void hack_particular_item(void) {
 			if (!load_player(NumPlayers)) {
 				/* bad fail */
 				s_printf(" load_player '%s' failed\n", p_ptr->name);
+				s_printf("hack_particular_item: found+replaced %d occurances\n", found);
 				/* unhack */
 				C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 				KILL(p_ptr, player_type);
