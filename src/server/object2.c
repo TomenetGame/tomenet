@@ -6636,6 +6636,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 	    (o_ptr->sval == SV_POTION_EXPERIENCE) ||
 	    (o_ptr->sval == SV_POTION_LEARNING) ||
 	    (o_ptr->sval == SV_POTION_INVULNERABILITY))) o_ptr->level = 0;
+	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) o_ptr->level = 0;
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_TRAP_CREATION) && (o_ptr->level < 20)) o_ptr->level = 20;
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_FIRE) && (o_ptr->level < 30)) o_ptr->level = 30;
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_ICE) && (o_ptr->level < 30)) o_ptr->level = 30;
