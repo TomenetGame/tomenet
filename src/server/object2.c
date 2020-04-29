@@ -12218,9 +12218,11 @@ void hack_particular_item(void) {
 				}
 			}
 		} else {
-			q_ptr = &o_list[i];
-			s_printf(" found on the floor\n");
-			hack_particular_item_aux(q_ptr, xwpos);
+			/* Check monster traps for artifact trap kits / load */
+			if (o_ptr->embed == 1) s_printf(" found in monster trap\n");
+			/* Just on the floor */
+			else s_printf(" found on the floor\n");
+			hack_particular_item_aux(o_ptr, xwpos);
 			found++;
 		}
 	}
@@ -12241,7 +12243,17 @@ void hack_particular_item(void) {
 		}
 	}
 
-	/* hack */
+	/* Check merchant mail */
+	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
+		if (mail_sender[i][0]) continue;
+		if (hack_particular_item_cmp(&mail_forge[i])) continue;
+
+		s_printf(" found in merchant mail of '%s'\n", mail_target[i]);
+		hack_particular_item_aux(&mail_forge[i], xwpos);
+		found++;
+	}
+
+	/* hack - Check all players in the hash table */
 	NumPlayers++;
 	MAKE(Players[NumPlayers], player_type);
 	p_ptr = Players[NumPlayers];

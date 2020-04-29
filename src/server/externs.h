@@ -1349,6 +1349,7 @@ extern int ring_of_polymorph_level(int r_lev);
 void determine_artifact_timeout(int a_idx, struct worldpos *wpos);
 void erase_artifact(int a_idx);
 void hack_particular_item(void);
+void administrate_objects(int action, int tval, int sval, int name1, int name2, int name2b, int bpval, int pval);
 
 #ifdef VAMPIRES_INV_CURSED
 void inverse_cursed(object_type *o_ptr);
