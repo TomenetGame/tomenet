@@ -961,13 +961,6 @@ static void process_effects(void) {
 	int who = PROJECTOR_EFFECT;
 	player_type *p_ptr;
 
-	/* Every 10 game turns */
-	//if (turn % 10) return;
-
-	/* Not in the small-scale wilderness map */
-	//if (p_ptr->wild_mode) return;
-
-
 	for (k = 0; k < MAX_EFFECTS; k++) {
 		effect_type *e_ptr = &effects[k];
 		int flg;
@@ -977,7 +970,13 @@ static void process_effects(void) {
 		wpos = &e_ptr->wpos;
 		if (!(zcave = getcave(wpos))) {
 			e_ptr->time = 0;
-			/* TODO - excise it */
+			/* TODO - excise it - see right below! */
+			continue;
+		}
+		/* See above - It ends and for some reason getcave() was fine again? Excise it.
+		   This is kinda paranoia probably? */
+		if (e_ptr->time <= 0) {
+			erase_effects(k);
 			continue;
 		}
 
@@ -1035,10 +1034,8 @@ static void process_effects(void) {
 		/* check if it's time to process this effect now (depends on level_speed) */
 		if ((turn % (e_ptr->interval * level_speed(wpos) / (level_speeds[0] * 5))) != 0) continue;
 
-		/* Reduce duration */
-		e_ptr->time--;
-
-		/* It ends? */
+		/* Paranoia - Double-check (in addition to the main check further down this function):
+		   If for whatever reason we didn't excise it yet, do it now. */
 		if (e_ptr->time <= 0) {
 			erase_effects(k);
 			continue;
@@ -1100,36 +1097,31 @@ static void process_effects(void) {
 			/* For all currently affected grids:
 			   Apply colour animation and damage projection, erase effect if timeout results from projection somehow */
 			if (c_ptr->effect == k) {
-				if (e_ptr->time) {
-					/* Apply damage */
-					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+				/* Apply damage */
+				project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
-					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-					    Players[0 - who]->conn == NOT_CONNECTED) {
-						/* Make the effect friendly after death - mikaelh */
-						who = PROJECTOR_PLAYER;
-					}
-					/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-					if (e_ptr->flags & EFF_STORM &&
-					    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
-						erase_effects(k);
-						break;
-					}
+				/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+				if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
+				    Players[0 - who]->conn == NOT_CONNECTED) {
+					/* Make the effect friendly after death - mikaelh */
+					who = PROJECTOR_PLAYER;
+				}
+				/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+				if (e_ptr->flags & EFF_STORM &&
+				    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+					erase_effects(k);
+					break;
+				}
  #ifndef EXTENDED_TERM_COLOURS
   #ifdef ANIMATE_EFFECTS
    #ifndef FREQUENT_EFFECT_ANIMATION
-					/* C. Blue - hack: animate effects inbetween ie allow random changes in spell_color().
-					   Note: animation speed depends on effect interval. */
-					if (spell_color_animation(e_ptr->type))
-					    everyone_lite_spot(wpos, j, i);
+				/* C. Blue - hack: animate effects inbetween ie allow random changes in spell_color().
+				   Note: animation speed depends on effect interval. */
+				if (spell_color_animation(e_ptr->type))
+				    everyone_lite_spot(wpos, j, i);
    #endif
   #endif
  #endif
-				} else {
-					c_ptr->effect = 0;
-					everyone_lite_spot(wpos, j, i);
-				}
 			}
 #endif
 
@@ -1170,36 +1162,31 @@ static void process_effects(void) {
 			/* For persisting grids (newly affected grids are treated in apply_effect() calls instead) of this effect:
 			   Apply colour animation and damage projection, erase effect if timeout results from projection somehow */
 			if (c_ptr->effect == k) {
-				if (e_ptr->time) {
-					/* Apply damage */
-					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+				/* Apply damage */
+				project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
-					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
-					if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
-					    Players[0 - who]->conn == NOT_CONNECTED) {
-						/* Make the effect friendly after death - mikaelh */
-						who = PROJECTOR_PLAYER;
-					}
-					/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-					if (e_ptr->flags & EFF_STORM &&
-					    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
-						erase_effects(k);
-						break;
-					}
+				/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+				if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
+				    Players[0 - who]->conn == NOT_CONNECTED) {
+					/* Make the effect friendly after death - mikaelh */
+					who = PROJECTOR_PLAYER;
+				}
+				/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+				if (e_ptr->flags & EFF_STORM &&
+				    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+					erase_effects(k);
+					break;
+				}
  #ifndef EXTENDED_TERM_COLOURS
   #ifdef ANIMATE_EFFECTS
    #ifndef FREQUENT_EFFECT_ANIMATION
-					/* C. Blue - hack: animate effects inbetween ie allow random changes in spell_color().
-					   Note: animation speed depends on effect interval. */
-					if (spell_color_animation(e_ptr->type))
-					    everyone_lite_spot(wpos, j, i);
+				/* C. Blue - hack: animate effects inbetween ie allow random changes in spell_color().
+				   Note: animation speed depends on effect interval. */
+				if (spell_color_animation(e_ptr->type))
+				    everyone_lite_spot(wpos, j, i);
    #endif
   #endif
  #endif
-				} else {
-					c_ptr->effect = 0;
-					everyone_lite_spot(wpos, j, i);
-				}
 			}
 #endif
 
@@ -1536,6 +1523,18 @@ static void process_effects(void) {
 			}
 			/* We lost our caster for some reason? (Died to projection) */
 			if (!who) break;
+		}
+
+		/* Reduce duration */
+		e_ptr->time--;
+
+		/* Excise effects that reached end of their lifetime, instead of relying only on the
+		   copy of this check at the beginning of process_effects(). Reason: The effect would
+		   visually linger for another project-interval then, without doing anything. So just
+		   clear it up yet, so players don't get confused. */
+		if (e_ptr->time <= 0) {
+			erase_effects(k);
+			continue;
 		}
 
 		/* --- Simple effects: Create next effect iteration and imprint it on grid.
