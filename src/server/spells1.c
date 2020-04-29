@@ -12224,7 +12224,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		/* Start with "dist" of zero */
 		dist = 0;
 
-		/* Now imprint the cave grids from the inside out */
+		/* Now imprint the cave grids from the inside out. */
 		for (i = 0; i < grids; i++) {
 			/* Hack -- Notice new "dist" values */
 			if (gm[dist + 1] == i) dist++;
@@ -12240,7 +12240,9 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		}
 
 		/* The effect code will take over from here regarding hurting of grids/monsters/items/players
-		   (since after it was changed to prevent monsters from wave-jumping / EFF_DAMAGE_AFTER_SETTING) */
+		   (since after it was changed to prevent monsters from wave-jumping / EFF_DAMAGE_AFTER_SETTING).
+		   This means that there is no initial damage application, but the project() happens at the end of each effect-tick,
+		   (with the effect vanishing exactly on its final tick and project(), without lingering visuals after that). */
 		return FALSE;
 	}
 
