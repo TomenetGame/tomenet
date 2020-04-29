@@ -8032,6 +8032,11 @@ static void equip_death_damage(int Ind, int verbose) {
 		o_ptr = &p_ptr->inventory[j];
 		if (!o_ptr->k_idx) continue;
 
+		/* Maybe to think about:
+		   Should ammo and tool be treated at less probability so they aren't just extra
+		   slots to be filled with junk just to reduce chances of other items getting picked?
+		   For ranged chars with art ammo the slot might be vital though. */
+
 		if (magik(DEATH_EQ_ITEM_LOST)) {
 			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 			s_printf("item_lost: %s (slot %d)\n", o_name, j);
