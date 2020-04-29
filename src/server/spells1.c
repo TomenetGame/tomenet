@@ -12179,73 +12179,90 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #endif
 
 
-	/* Check features */
-	if (flg & PROJECT_GRID) {
-		/* Start with "dist" of zero */
-		dist = 0;
-
-		/* Effect ? */
-		if (flg & PROJECT_STAY) {
-			/* I believe it's not right */
-			//effect = new_effect(typ, dam, project_time, py, px, rad, project_time_effect);
-			/* MEGAHACK -- quick hack to make fire_wall work
-			 * this should be rewritten!	- Jir -
-			 *
-			 * It registers the 'wall' as if it was a ball:
-			 *
-			 *	   |--dist_hack--|
-			 * (y,x) *------+------* (y2,x2)
-			 *			  +pseudo 'centre'
-			 */
-			if (rad == 0) {
+	/* Effect ? */
+	if (flg & PROJECT_STAY) {
+		/* I believe it's not right */
+		//effect = new_effect(typ, dam, project_time, py, px, rad, project_time_effect);
+		/* MEGAHACK -- quick hack to make fire_wall work
+		 * this should be rewritten!	- Jir -
+		 *
+		 * It registers the 'wall' as if it was a ball:
+		 *
+		 *	   |--dist_hack--|
+		 * (y,x) *------+------* (y2,x2)
+		 *			  +pseudo 'centre'
+		 */
+		if (rad == 0) {
 #if 1 /* Kurzel's patch commented this out - but this is required for fireworks! */
-				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
-				    (y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
-				    project_time_effect);
+			effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
+			    (y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
+			    project_time_effect);
 #endif
 #ifdef ARCADE_SERVER
 #if 0
-				if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
-				    project_time_effect & EFF_CROSSHAIR_C) {
-					msg_broadcast(0, "making an effect");
-					player_type *pfft_ptr = Players[project_interval];
-					pfft_ptr->e = effect;
-				}
-#endif
-#endif
-				return FALSE; //the effect code will take over from here right away (since after it was changed to prevent monsters from wave-jumping)
-			} else {
-				effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
-						y2, x2, rad, project_time_effect);
-				return FALSE; //the effect code will take over from here right away (since after it was changed to prevent monsters from wave-jumping)
+			if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
+			    project_time_effect & EFF_CROSSHAIR_C) {
+				msg_broadcast(0, "making an effect");
+				player_type *pfft_ptr = Players[project_interval];
+				pfft_ptr->e = effect;
 			}
-			project_interval = 0;
-			project_time = 0;
-			project_time_effect = 0;
+#endif
+#endif
+		} else {
+			effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
+					y2, x2, rad, project_time_effect);
 		}
+		project_interval = 0;
+		project_time = 0;
+		project_time_effect = 0;
 
-		/* Now hurt the cave grids (and objects) from the inside out */
+		/* Out of effects? Oops! */
+		if (effect == -1) return FALSE;
+
+		/* Imprint it on all grids - this is important for unchanging effects (clouds) as they are not reimprinted in process_effects(): */
+
+		/* Start with "dist" of zero */
+		dist = 0;
+
+		/* Now imprint the cave grids from the inside out */
 		for (i = 0; i < grids; i++) {
 			/* Hack -- Notice new "dist" values */
-			if (gm[dist+1] == i) dist++;
+			if (gm[dist + 1] == i) dist++;
 
 			/* Get the grid location */
 			y = gy[i];
 			x = gx[i];
 
-			if(!in_bounds(y,x)) continue;
+			if (!in_bounds(y,x)) continue;
+
+			zcave[y][x].effect = effect;
+			everyone_lite_spot(wpos, y, x);
+		}
+
+		/* The effect code will take over from here regarding hurting of grids/monsters/items/players
+		   (since after it was changed to prevent monsters from wave-jumping / EFF_DAMAGE_AFTER_SETTING) */
+		return FALSE;
+	}
+
+	/* Check features */
+	if (flg & PROJECT_GRID) {
+		/* Start with "dist" of zero */
+		dist = 0;
+
+		/* Now hurt the cave grids (and objects) from the inside out */
+		for (i = 0; i < grids; i++) {
+			/* Hack -- Notice new "dist" values */
+			if (gm[dist + 1] == i) dist++;
+
+			/* Get the grid location */
+			y = gy[i];
+			x = gx[i];
+
+			if (!in_bounds(y,x)) continue;
 			/* Affect the feature */
 			if ((flg & PROJECT_STAY) || (flg & PROJECT_FULL)) dist = 0;
-			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 
-			/* Effect ? */
-			if (flg & PROJECT_STAY) {
-				if (effect != -1) /* check that we're not out of effects - mikaelh */
-				{
-					zcave[y][x].effect = effect;
-					everyone_lite_spot(wpos, y, x);
-				}
-			}
+			if (project_f(0 - who, who, dist, wpos, y, x, dam, typ, flg)) notice = TRUE;
 		}
 	}
 
