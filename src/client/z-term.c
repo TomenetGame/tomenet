@@ -744,6 +744,21 @@ byte flick_colour(byte attr) {
 		return (!rand_int(2) ? (rand_int(2) ? TERM_YELLOW : (rand_int(2) ? TERM_L_RED : TERM_RED)) : TERM_DARK);
  #endif
 #endif
+
+	case TERM_SELECTOR:
+		switch (ticks % 14) {
+		case 0: case 1:
+		case 14: case 15:
+			return TERM_UMBER;
+		case 2: case 3:
+		case 12: case 13:
+			return TERM_ORANGE;
+		case 4: case 5: case 6:
+		case 7: case 8:
+		case 9: case 10: case 11:
+			return TERM_YELLOW;
+		}
+
 	default:
 		return(attr);
 	}

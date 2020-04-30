@@ -117,6 +117,7 @@ int color_char_to_attr(char c) {
 		case '1': return TERM_HAVOC;
 		case '2': return TERM_LAMP;
 		case '3': return TERM_LAMP_DARK;
+		case '4': return TERM_SELECTOR;
 	}
 
 	return (-1);
@@ -191,6 +192,7 @@ char color_attr_to_char(int a) {
 		case TERM_HAVOC: return '1';
 		case TERM_LAMP: return '2';
 		case TERM_LAMP_DARK: return '3';
+		case TERM_SELECTOR: return '4';
 	}
 
 	return 'w';
