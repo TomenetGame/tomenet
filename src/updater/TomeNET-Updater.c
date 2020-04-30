@@ -135,7 +135,7 @@ void install_client(GtkButton *button, gpointer label) {
 	//TomeNET-latest-client.zip
 	char _download[1024], _latest_install[1024];//, _latest_client[1024];
 
-	strcpy(_download, "http://www.tomenet.eu/downloads/");
+	strcpy(_download, "https://www.tomenet.eu/downloads/");
 	sprintf(_latest_install, "%sTomeNET-latest-install.exe", _download);
 	//sprintf(_latest_client, "%sTomeNET-latest-client.zip", _download);
 
@@ -173,7 +173,7 @@ void install_client(GtkButton *button, gpointer label) {
 	FILE *fp;
 
 	char _download[1024];
-	strcpy(_download, "http://www.tomenet.eu/downloads/");
+	strcpy(_download, "https://www.tomenet.eu/downloads/");
 
 
 	if (is_linux) {
@@ -253,7 +253,7 @@ void install_sound(GtkButton *button, gpointer label) {
 	char path[1024], out_val[1024];
 	FILE *fp;
 	char _soundpack[1024];
-	strcpy(_soundpack, "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z");
+	strcpy(_soundpack, "https://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z");
 	fp = fopen("TomeNET-Updater.cfg", "r");
 	if (fp) {
 		//fgets(out_val, 1024, fp);
@@ -266,14 +266,14 @@ void install_sound(GtkButton *button, gpointer label) {
 	/* download */
  #if 0 /* winbash is dysfunctional, no alternatives available ----------------------------------------- */
   #if 0
-	//_spawnl(_P_WAIT, "wget.exe", "wget.exe", "http://download814.mediafire.com/wzihil4gthxg/issv5sdv7kv3odq/TomeNET-soundpack.7z", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
+	//_spawnl(_P_WAIT, "wget.exe", "wget.exe", "https://download814.mediafire.com/wzihil4gthxg/issv5sdv7kv3odq/TomeNET-soundpack.7z", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
 	//_spawnl(_P_WAIT, "cmd.exe", "cmd.exe", "/c", "_dl_win32.bat", NULL);
 	_spawnl(_P_WAIT, "updater/_dl_sp_win32.bat", "updater/_dl_sp_win32.bat", NULL);
   #else /* do it without helper bat files */
 	chdir("updater/dl_win32/winbash");
-	//_spawnl(_P_WAIT, "updater/dl_win32/winbash/bash.exe", "updater/dl_win32/winbash/bash.exe", "-c", "\"./download.sh http://www.mediafire.com/?issv5sdv7kv3odq\"", NULL);
-	//_spawnl(_P_WAIT, "cmd.exe", "cmd.exe", "/c", "start", "bash.exe", "bash.exe", "-c", "\"./download.sh http://www.mediafire.com/?issv5sdv7kv3odq\"", NULL);
-	_spawnl(_P_WAIT, "bash.exe", "bash.exe", "-c", "\"./download.sh http://www.mediafire.com/?issv5sdv7kv3odq\"", NULL);
+	//_spawnl(_P_WAIT, "updater/dl_win32/winbash/bash.exe", "updater/dl_win32/winbash/bash.exe", "-c", "\"./download.sh https://www.mediafire.com/?issv5sdv7kv3odq\"", NULL);
+	//_spawnl(_P_WAIT, "cmd.exe", "cmd.exe", "/c", "start", "bash.exe", "bash.exe", "-c", "\"./download.sh https://www.mediafire.com/?issv5sdv7kv3odq\"", NULL);
+	_spawnl(_P_WAIT, "bash.exe", "bash.exe", "-c", "\"./download.sh https://www.mediafire.com/?issv5sdv7kv3odq\"", NULL);
    #if 0 /* no need to use the shell for this.. */
 	//_spawnl(_P_WAIT, "bash.exe", "bash.exe", "-c", "\"./mv *.7z ../../..\"", NULL);
    #else /* ..better use the ansi c function: */
@@ -286,7 +286,7 @@ printf("mhhhHDHHAHFH---\n");
 exit(0);
  #else /* just use wget and silly html processing for now, ew ----------------------------------------- */
   #ifndef USE_URL2FILE
-	//_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "-O", "temp.html", "--dot-style=mega", "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z", NULL);
+	//_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "-O", "temp.html", "--dot-style=mega", "https://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z", NULL);
 	_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "-O", "temp.html", "--dot-style=mega", _soundpack, NULL);
   #else
 	_spawnl(_P_WAIT, "updater\\URL2FILE.EXE", "URL2FILE.EXE", _soundpack, "temp.html", NULL);
@@ -414,7 +414,7 @@ void install_music(GtkButton *button, gpointer label) {
 	char path[1024], out_val[1024];
 	FILE *fp;
 	char _musicpack[1024];
-	strcpy(_musicpack, "http://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z");
+	strcpy(_musicpack, "https://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z");
 	fp = fopen("TomeNET-Updater.cfg", "r");
 	if (fp) {
 		//fgets(out_val, 1024, fp);
@@ -427,13 +427,13 @@ void install_music(GtkButton *button, gpointer label) {
 	/* download */
  #if 0 /* winbash is dysfunctional, no alternatives available ----------------------------------------- */
   #if 0
-	//_spawnl(_P_WAIT, "wget.exe", "wget.exe", "http://download1140.mediafire.com/352dj7foeneg/3j87kp3fgzpqrqn/TomeNET-musicpack.7z", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
+	//_spawnl(_P_WAIT, "wget.exe", "wget.exe", "https://download1140.mediafire.com/352dj7foeneg/3j87kp3fgzpqrqn/TomeNET-musicpack.7z", NULL); /* supposed to work on WINE, yet crashes if not exit(0)ing next oO */
 	//_spawnl(_P_WAIT, "cmd.exe", "cmd.exe", "/c", "_dl_win32.bat", NULL);
 	_spawnl(_P_WAIT, "updater/_dl_mp_win32.bat", "updater/_dl_mp_win32.bat", NULL);
   #else /* do it without helper bat files */
 	chdir("updater/dl_win32/winbash");
-	//_spawnl(_P_WAIT, "updater/dl_win32/winbash/bash.exe", "updater/dl_win32/winbash/bash.exe", "-c", "\"./download.sh http://www.mediafire.com/?3j87kp3fgzpqrqn\"", NULL);
-	_spawnl(_P_WAIT, "bash.exe", "bash.exe", "-c", "\"./download.sh http://www.mediafire.com/?3j87kp3fgzpqrqn\"", NULL);
+	//_spawnl(_P_WAIT, "updater/dl_win32/winbash/bash.exe", "updater/dl_win32/winbash/bash.exe", "-c", "\"./download.sh https://www.mediafire.com/?3j87kp3fgzpqrqn\"", NULL);
+	_spawnl(_P_WAIT, "bash.exe", "bash.exe", "-c", "\"./download.sh https://www.mediafire.com/?3j87kp3fgzpqrqn\"", NULL);
 	_spawnl(_P_WAIT, "bash.exe", "bash.exe", "-c", "\"./mv *.7z ../../..\"", NULL);
 	chdir("../../..");
   #endif
@@ -565,7 +565,7 @@ void install_guide(GtkButton *button, gpointer label) {
 #ifdef WINDOWS
 	char _latest_install[1024];
 
-	strcpy(_latest_install, "http://www.tomenet.eu/TomeNET-Guide.txt");
+	strcpy(_latest_install, "https://www.tomenet.eu/TomeNET-Guide.txt");
 
 	remove("TomeNET-Guide.txt");
  #if 0 /* winbash is dysfunctional, no alternatives available ----------------------------------------- */
@@ -588,7 +588,7 @@ void install_guide(GtkButton *button, gpointer label) {
 	char out_val[3];
 
 	remove("TomeNET-Guide.txt");
-	system("wget http://www.tomenet.eu/TomeNET-Guide.txt");
+	system("wget https://www.tomenet.eu/TomeNET-Guide.txt");
 
 	fp = fopen("TomeNET-Guide.txt", "r");
 	if (fp) {//~paranoia?

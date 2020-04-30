@@ -3,8 +3,8 @@
 +=========================+-
 | Latest update: 26. April 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
-| http://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
-| http://muuttuja.org/tomenet/ (Mikael's TomeNET site)
+| https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
+| https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
 |
 | You should always keep this guide up to date: Either go to www.tomenet.eu to
@@ -206,7 +206,7 @@ If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing/updating TomeNET'.
 
 -Get the latest client from the project's main official site www.tomenet.eu.
- or from  http://muuttuja.org/tomenet/ (Mikael's site, which features a
+ or from  https://muuttuja.org/tomenet/ (Mikael's site, which features a
  monster-search and other stuff).
  If you're on Microsoft Windows, it is recommended to get the installer package
  instead of the zip archives.
@@ -2340,7 +2340,7 @@ the download section.
 Apart from downloading the game client and playing, you can also get in contact
 with other players and developers via the following media:
 
--The forum at http://www.tomenet.eu/.
+-The forum at https://www.tomenet.eu/.
 -IRC: Channel #tomenet on server irc.freenode.net (port 6667)
       (For help on Internet Relay Chat visit www.irchelp.org).
       The channel #tomenet relays chat from and to the game server, allowing
@@ -2374,7 +2374,8 @@ Linux: Popular IRC clients for Linux are Pidgin (actually rather a multi-
 Mac OS X: For example Colloquy, X-Chat Aqua or Linkinus.
 
 After installing your preferred IRC chat client, enter an username of your
-choice and set it up to connect to the "Freenode" IRC network.
+choice and set it up to connect to the "Freenode" IRC network, see the freenode
+website at https://freenode.net/ for info.
 (For detailed help on Internet Relay Chat visit www.irchelp.org.)
 
 After you established a connection to Freenode, have your client join the
@@ -2395,10 +2396,7 @@ automatically on startup, so you don't have to do it manually each time you
 start the IRC client.
 
 Most clients also allow you to setup auto-reconnect, which is useful if you
-experience frequent disconnections from the IRC network. Although in that case
-you should rather check why that happens - make sure you aren't trying to
-connect to a very far away Freenode server but to one that is close to your
-location, compare:  http://freenode.net/irc_servers.shtml
+experience frequent disconnections from the IRC network.
 
 
 
@@ -2643,7 +2641,7 @@ Installation from scratch:
 --------------------------
 (Covered are Windows, Linux, OS X, FreeBSD.)
 
-Go to http://www.tomenet.eu/ (or one of our personal pages) to download the
+Go to https://www.tomenet.eu/ (or one of our personal pages) to download the
 latest client. Extract it to a new directory, preserving the pathnames.
 
 (Note: If you decide to download the 'test client' instead of the client of the
@@ -2656,7 +2654,7 @@ Windows:
 --------
 To extract the TomeNET zip package you downloaded, 7-zip is recommended.
 It's a free and open source zip-tool of outstanding performance that works on
-all platforms. Grab it from http://www.7-zip.org/ .
+all platforms. Grab it from https://www.7-zip.org/ .
 
 After extracting, you're good to go. If you're already tired of reading, just
 double-click TomeNET.exe, pick the first official server in the list, make up
@@ -2667,7 +2665,7 @@ There is also a manual in your TomeNET folder, the file is called
 in Wordpad, but either in Notepad or in any web browser of your choice, because
 Wordpad tends to warp the layout badly.
 Alternatively you can find the latest version of the manual online for browsing
-and easy searching, on the TomeNET homepage (http://www.tomenet.eu/).
+and easy searching, on the TomeNET homepage (https://www.tomenet.eu/).
 
 If you're tech savvy, you could decide to edit the game configuration manually,
 but that is not really required. Continue reading below if you want to do that.
@@ -2728,7 +2726,7 @@ various mod-file suport, not required. Make sure you do _not_ download the
 designated 'mingw32' tar.gz from the libsdl.org page but get the generic src
 tarball at the top of that page instead.
 Detailed instructions for installing SDL are provided by Mikael here:
-http://muuttuja.org/tomenet/howto-install-sdl.txt
+https://muuttuja.org/tomenet/howto-install-sdl.txt
 
 Adjust the makefile.mingw accordingly, which means setting SDL_CONFIG to the
 sdl-config script that should now be installed inside your mingw-prefix folder,
@@ -2756,7 +2754,7 @@ in chapter Troubleshooting (8.8).
 Linux (compiling from source):
 ------------------------------
 There are additional distribution-specific information on Mikael's website at:
-http://muuttuja.org/tomenet/installation-linux.php
+https://muuttuja.org/tomenet/installation-linux.php
 (It's linked on www.tomenet.eu -> "Links".)
 
 You can get the source from www.tomenet.eu, also see (1.1).
@@ -2907,7 +2905,7 @@ Basically use the same instructions as for Linux above. Additionally:
  "Libraries" menu and searching for "mixer".
 
  If you have trouble installing those source packages, you could try to simply
- use MacPorts to fetch them, at http://www.macports.org/.
+ use MacPorts to fetch them, at https://www.macports.org/.
 
 Dependencies:
 -libgcrypt depends on libgpg-error, which you will need to install too.
@@ -3000,32 +2998,38 @@ and music pack:
 
 Step 1:
  WINDOWS/OS X:
- Make sure you have 7zip installed. It's a free, powerful multi-platform
- archiving tool (fit to replace WinRAR, WinZip etc).
- Get it from www.7-zip.org.
+  Make sure you have 7zip installed. It's a free, powerful multi-platform
+  archiving tool (fit to replace WinRAR, WinZip etc).
+  Get it from www.7-zip.org.
 
  LINUX:
- Make sure you have 7zip installed. The package name is p7zip.
- Note that some Linux distributions (Ubuntu) have another package called
- p7zip-full and the package p7zip is lacking certain parts. In that case
- install p7zip-full.
- UPDATE: Ubuntu seems to no longer provide the graphical user interface of 7zip
- 7zG in either of these packages, so you'll have to download the source instead
- directly from the project page (on sourceforge) and compile it yourself:
-  http://sourceforge.net/projects/p7zip/files/p7zip/
-  pick the folder with the latest version and download the 'src_all' source
-  archive, not the 'linux_bin' binary archive (it doesn't contain 7zG!).
- Short compilation/installation instructions:
-  Extract the source archive and enter its directory.
-  For 32-bit Linux, do:
-   cp makefile.linux_x86_asm_gcc_4.X makefile.machine
-  For 64-bit Linux, instead do:
-   cp makefile.linux_amd64_asm makefile.machine
-  Then do:
-   make all4
-  And last but not least:
-   sudo make install
-  That's it. Try entering '7zG' into the terminal to verify that it worked.
+  Make sure you have 7zip installed. The package name is p7zip.
+  Note that some Linux distributions (Ubuntu) have another package called
+  p7zip-full and the package p7zip is lacking certain parts. In that case
+  install p7zip-full.
+
+  UPDATE that supersedes below update: Starting at v4.7.3 TomeNET no longer
+  requires 7zG, so you don't need to compile it. The normal 7z will be fine.
+
+  UPDATE (for TomeNET versions older than 4.7.3):
+  Ubuntu seems to no longer provide the graphical user interface of 7zip,
+  called 7zG, in either of these packages, so you'll have to download the
+  source instead directly from the project page (on sourceforge) and compile
+  it yourself:
+   https://sourceforge.net/projects/p7zip/files/p7zip/
+   pick the folder with the latest version and download the 'src_all' source
+   archive, not the 'linux_bin' binary archive (it doesn't contain 7zG!).
+  Short compilation/installation instructions:
+   Extract the source archive and enter its directory.
+   For 32-bit Linux, do:
+    cp makefile.linux_x86_asm_gcc_4.X makefile.machine
+   For 64-bit Linux, instead do:
+    cp makefile.linux_amd64_asm makefile.machine
+   Then do:
+    make all4
+   And last but not least:
+    sudo make install
+   That's it. Try entering '7zG' into the terminal to verify that it worked.
 
 Step 2:
  Download the files 'TomeNET-soundpack.7z' and/or 'TomeNET-musicpack.7z' and
@@ -3060,9 +3064,9 @@ Note: Some people have reported that the program 'WinRAR' seems to cause
       This might also happen with WinZIP, but we don't know really.
       A powerful free and open source program that is guaranteed to work is
       '7zip' (a sourceforge project at the time of writing) downloadable at:
-      http://www.7-zip.org/
+      https://www.7-zip.org/
 
-You can get the official sound pack on http://www.tomenet.eu/ in the download
+You can get the official sound pack on https://www.tomenet.eu/ in the download
 section, and also look for player-made sound or music packs in the forum!
 
 On Microsoft Windows, the easiest way to do this after you downloaded a sound
@@ -3527,7 +3531,7 @@ Mumble is available for all major platforms, ie Windows, Linux and Mac OS X.
 
 Instructions to join the TomeNET Mumble server for voice chatting:
 -Plug in a headset.
--Download the Mumble client from http://mumble.sourceforge.net/ and install it.
+-Download the Mumble client from https://mumble.sourceforge.net and install it.
  NOTE: If you are looking for the Linux version, it should be in your package
  repository. No need to visit the sourceforge project website in this case.
 -Go through the audio configuration (Audio Wizard) and possibly set up a key to
@@ -6638,8 +6642,8 @@ eg.
 3. 'Go challenge'
 
 Two different short video tutorials on YouTube:
-http://youtu.be/qhBQasS5IRI
-http://youtu.be/gECcsSeRcNo
+https://youtu.be/qhBQasS5IRI
+https://youtu.be/gECcsSeRcNo
 Nice read: http://users.eniinternet.com/bradleym/America.html
 On Android (free): Go Free or GOdroid, on iOS: Little Go or Igowin for example.
 Western online Go servers (english language): www.gokgs.com, www.online-go.com.
@@ -21164,11 +21168,11 @@ Solution:   Read the error message displayed in a message box on quitting.
             "Name already owned"
                     Account name already exists.
             "Your client is outdated. Please get the latest one from
-            http://www.tomenet.eu/"
+            https://www.tomenet.eu/"
                     Download the latest client, see (0.1).
             "Server responds 'Unknown client version'. Server might
             be outdated or client is invalid. Latest client is at
-            http://www.tomenet.eu/"
+            https://www.tomenet.eu/"
                     The server might be running an older
                     version than your client is.
             "Sorry, the game is full.  Try again later."
@@ -21284,7 +21288,7 @@ PROBLEM 13: Every time I connect to the server it will automatically download
 Solution:   Possibly write-protection on existing files or the folder.
             Workaround: Make sure you really have the latest LUA files in
             TomeNET's /lib/scpt folder (you can download them from
-            http://www.tomenet.eu/ or our personal pages). Then set all LUA
+            https://www.tomenet.eu/ or our personal pages). Then set all LUA
             files in that directory to write-protected. This will prevent
             TomeNET from overwriting them with 0 Byte files.
 
@@ -21505,7 +21509,7 @@ Solution:   See (2.1a) for details on how to install audio packs. Also note
             cause problems in some cases, giving them "file corrupted" errors.
             A powerful free and open source program that is guaranteed to work
             is '7zip' (a sourceforge project at the time of writing)
-            downloadable at:  http://www.7-zip.org/
+            downloadable at:  https://www.7-zip.org/
 
 PROBLEM 34: On OS X when entering the game (right after picking a character) in
             big_map mode with already large (46 lines) main window, the window
