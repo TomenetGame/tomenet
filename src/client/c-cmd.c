@@ -3452,9 +3452,6 @@ void cmd_check_misc(void) {
 	Term_clear();
 	//Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
 
-	/* Hack to disable macros: Macros on SHIFT+X for example might prohibit some of the keys here.. */
-	inkey_interact_macros = TRUE;
-
 	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377y1\377w) Artifacts found");
 	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377y2\377w) Monsters killed");
 	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377y3\377w) Unique monsters");
@@ -3499,7 +3496,12 @@ void cmd_check_misc(void) {
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
 
+		/* Hack to disable macros: Macros on SHIFT+X for example prohibits 'X' menu choice here.. */
+		inkey_interact_macros = TRUE;
 		i = inkey();
+		/* ..and reenable macros right away again, so navigation via arrow keys works. */
+		inkey_interact_macros = FALSE;
+
 		choice = 0;
 		switch (i) {
 			case '3':
@@ -3631,8 +3633,6 @@ void cmd_check_misc(void) {
 				bell();
 		}
 	}
-
-	inkey_interact_macros = FALSE;
 	Term_load();
 }
 
