@@ -462,7 +462,7 @@ void Receive_login(void) {
 	bool new_ok = TRUE, exclusive_ok = TRUE;
 	bool found_nick = FALSE;
 
-	bool allow_sorting = FALSE;
+	bool allow_reordering = FALSE;
 	int offset_bak;
 
 
@@ -627,13 +627,21 @@ void Receive_login(void) {
 #endif
 
 	if (total_cpa <= 12) {
-		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (O to reorder)", 3, 2);
+		if (is_older_than(&server_version, 4, 7, 3, 0, 0, 0))
+			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 2);
+		else {
+			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (O to reorder)", 3, 2);
+			allow_reordering = TRUE;
+		}
 		offset = 4;
-		allow_sorting = TRUE;
 	} else if (total_cpa <= 15) {
-		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (O to reorder)", 2, 2);
+		if (is_older_than(&server_version, 4, 7, 3, 0, 0, 0))
+			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 2, 2);
+		else {
+			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (O to reorder)", 2, 2);
+			allow_reordering = TRUE;
+		}
 		offset = 3;
-		allow_sorting = TRUE;
 	} else if (total_cpa <= 16) {
 		offset = 2;
 	} else {
@@ -778,7 +786,7 @@ void Receive_login(void) {
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
 
-	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1)) && (ch != 'O' || !allow_sorting)) {
+	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1)) && (ch != 'O' || !allow_reordering)) {
 		ch = inkey();
 		//added CTRL+Q for RETRY_LOGIN, so you can quit the whole game from within in-game via simply double-tapping CTRL+Q
 		if (ch == 'Q' || ch == KTRL('Q')) quit(NULL);
