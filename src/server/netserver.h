@@ -55,6 +55,8 @@ static int Handle_login(int ind);
 void Handle_input(int fd, int arg);
 void do_quit(int ind, bool tellclient);
 
+static int Receive_reorder(int ind);
+
 static int Receive_quit(int ind);
 static int Receive_play(int ind);
 static int Receive_login(int ind);

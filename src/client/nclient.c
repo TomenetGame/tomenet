@@ -404,6 +404,34 @@ int Send_file_end(int ind, unsigned short id) {
 	return 0;
 }
 
+static void reorder_characters(void) {
+	char ch;
+	u32b dummy;
+	unsigned char sortA = 255, sortB = 255;
+
+	/* Reorder-GUI */
+	
+
+	/* Tell server which characters we want to swap */
+
+	//Send_reorder():
+
+
+	/* Tell the server to send us the updated list of characters again */
+
+	//Packet_printf(&wbuf, "%c%d%d", PKT_REORDER, 0, 0);
+	/* Hack: We abuse PKT_LOGIN for this */
+	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, "***");
+	Packet_printf(&wbuf, "%c%c", sortA, sortB);
+	Net_flush(); //send it nao!
+	//SetTimeout(5, 0);
+	//usleep(2000000);
+	/* Eat and discard server flags, we already know those */
+	Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &dummy, &dummy, &dummy, &dummy);
+
+	return;
+}
+
 #define CHARSCREEN_COLOUR TERM_L_GREEN
 #define COL_CHARS 4
 void Receive_login(void) {
@@ -428,6 +456,9 @@ void Receive_login(void) {
 	bool new_ok = TRUE, exclusive_ok = TRUE;
 	bool found_nick = FALSE;
 
+	bool allow_sorting = FALSE;
+	int offset_bak;
+
 
 	/* Check if the server wanted to destroy the connection - mikaelh */
 	if (rbuf.ptr[0] == PKT_QUIT) {
@@ -450,9 +481,7 @@ void Receive_login(void) {
 #endif
 
 	/* Read server detail flags for informational purpose - C. Blue */
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags3, &sflags2, &sflags1, &sflags0)) <= 0) {
-		return;
-	}
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags3, &sflags2, &sflags1, &sflags0)) <= 0) return;
 
 //#ifdef WINDOWS
 	/* only on first time startup? */
@@ -592,11 +621,13 @@ void Receive_login(void) {
 #endif
 
 	if (total_cpa <= 12) {
-		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 2);
+		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (O to reorder)", 3, 2);
 		offset = 4;
+		allow_sorting = TRUE;
 	} else if (total_cpa <= 15) {
-		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 2, 2);
+		c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (O to reorder)", 2, 2);
 		offset = 3;
+		allow_sorting = TRUE;
 	} else if (total_cpa <= 16) {
 		offset = 2;
 	} else {
@@ -611,6 +642,11 @@ void Receive_login(void) {
 	max_cpa += max_cpa_plus; /* for now, don't keep them in separate list positions
 				    but just use the '*' marker attached at server side
 				    for visual distinguishing in this character list. */
+	offset_bak = offset;
+	receive_characters:
+	offset = offset_bak;
+	i = 0;
+	ded_pvp = ded_iddc = 0;
 	/* Receive list of characters ('zero'-terminated) */
 	*loc = 0;
 	while ((is_newer_than(&server_version, 4, 5, 7, 0, 0, 0) ?
@@ -736,7 +772,7 @@ void Receive_login(void) {
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
 
-	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1))) {
+	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1)) && (ch != 'O' || !allow_sorting)) {
 		ch = inkey();
 		//added CTRL+Q for RETRY_LOGIN, so you can quit the whole game from within in-game via simply double-tapping CTRL+Q
 		if (ch == 'Q' || ch == KTRL('Q')) quit(NULL);
@@ -753,6 +789,10 @@ void Receive_login(void) {
 			prt("", 0, 0); //clear line
 			c_put_str(CHARSCREEN_COLOUR, "Character Overview", 0, 30);
 		}
+	}
+	if (ch == 'O') {
+		reorder_characters();
+		goto receive_characters;
 	}
 	if (ch == 'N' || ch == 'E') {
 		/* We didn't read a desired charname from commandline? */
