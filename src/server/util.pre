@@ -82,6 +82,7 @@ struct server_opts
 	s32b spell_stack_limit;
 	s16b fps;
 	bool players_never_expire;
+	bool admins_never_expire;
 	s16b newbies_cannot_drop;
 	s16b running_speed;
 
