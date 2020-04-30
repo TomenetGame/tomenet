@@ -960,8 +960,9 @@ static void process_effects(void) {
 	cave_type *c_ptr;
 	int who = PROJECTOR_EFFECT;
 	player_type *p_ptr;
-	effect_type *e_ptr = &effects[k];
+	effect_type *e_ptr;
 	int flg;
+	bool skip;
 
 	for (k = 0; k < MAX_EFFECTS; k++) {
 		e_ptr = &effects[k];
@@ -1086,6 +1087,10 @@ static void process_effects(void) {
 			if (!in_bounds2(wpos, j, i)) continue;
 
 			c_ptr = &zcave[j][i];
+
+			/* Don't allow multiple effects to hit the same grid */
+			if (c_ptr->effect && c_ptr->effect != k) skip = TRUE;
+			else skip = FALSE;
 
 			/* Remove memories of where the effect boundary was previously */
 			if (c_ptr->effect_past == k) c_ptr->effect_past = 0;
@@ -1493,7 +1498,7 @@ static void process_effects(void) {
 			   Apply colour animation and damage projection, erase effect if timeout results from projection somehow */
 			if (c_ptr->effect == k) {
 				/* Apply damage */
-				project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+				if (!skip) project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
 				/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
 				if (who < 0 && who != PROJECTOR_EFFECT && who != PROJECTOR_PLAYER &&
@@ -1544,10 +1549,10 @@ static void process_effects(void) {
 				if (!in_bounds2(wpos, j, i)) continue;
 
 				c_ptr = &zcave[j][i];
+				if (c_ptr->effect && c_ptr->effect != k) continue; /* 'skip' */
 
 				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
 					apply_effect(k, &who, wpos, i, j, c_ptr);
-
 					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
 
 					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
