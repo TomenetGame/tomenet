@@ -3430,40 +3430,67 @@ static void monster_lore(void) {
  * NOTE: the usage of Send_special_line is quite a hack;
  * it sends a letter in place of cur_line...		- Jir -
  */
+//(Linux file managers: Dolphin, Konqueror, Thunar, Caja, Nautilus, Nemo /// generic desktop environments: xdg-open)
+#if defined(USE_X11)
+ /* '&' for async - actually not needed on X11 though, program will still continue to execute
+    because xdg-open spawns the file manager asynchronously and returns right away */
+ #define FILEMAN(p) system(format("xdg-open \"%s\" &", p));
+#elif defined(WINDOWS)
+ /* 'start' for async */
+ #define FILEMAN(p) system(format("start explorer \"%s\"", p));
+#endif
 void cmd_check_misc(void) {
 	char i = 0, choice;
-	int second = 10;
+	int row = 2;
 	/* suppress hybrid macros in some submenus */
 	bool inkey_msg_old, uniques;
+#if defined(USE_X11) || defined(WINDOWS)
+	char path[1024];
+#endif
 
 	Term_save();
 	Term_clear();
 	//Term_putstr(0,  0, -1, TERM_BLUE, "Display current knowledge");
 
-	Term_putstr( 5,  3, -1, TERM_WHITE, "(\377y1\377w) Artifacts found");
-	Term_putstr( 5,  4, -1, TERM_WHITE, "(\377y2\377w) Monsters killed");
-	Term_putstr( 5,  5, -1, TERM_WHITE, "(\377y3\377w) Unique monsters");
-	Term_putstr( 5,  6, -1, TERM_WHITE, "(\377y4\377w) Objects");
-	Term_putstr( 5,  7, -1, TERM_WHITE, "(\377y5\377w) Traps");
-	Term_putstr(40,  3, -1, TERM_WHITE, "(\377y6\377w) Artifact lore");
-	Term_putstr(40,  4, -1, TERM_WHITE, "(\377y7\377w) Monster lore");
-	Term_putstr(40,  5, -1, TERM_WHITE, "(\377y8\377w) Recall depths and towns");
-	Term_putstr(40,  6, -1, TERM_WHITE, "(\377y9\377w) Houses");
-	Term_putstr(40,  7, -1, TERM_WHITE, "(\377y0\377w) Wilderness map");
+	/* Hack to disable macros: Macros on SHIFT+X for example might prohibit some of the keys here.. */
+	inkey_interact_macros = TRUE;
 
-	Term_putstr( 5, second + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
-	Term_putstr( 5, second + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
-	Term_putstr( 5, second + 2, -1, TERM_WHITE, "(\377yc\377w) High Scores");
-	Term_putstr( 5, second + 3, -1, TERM_WHITE, "(\377yd\377w) Server settings");
-	Term_putstr( 5, second + 4, -1, TERM_WHITE, "(\377ye\377w) Opinions (if available)");
-	Term_putstr(40, second + 0, -1, TERM_WHITE, "(\377yf\377w) News (Message of the day)");
-	Term_putstr(40, second + 1, -1, TERM_WHITE, "(\377yh\377w) Intro screen");
-	Term_putstr(40, second + 2, -1, TERM_WHITE, "(\377yi\377w) Message history");
-	Term_putstr(40, second + 3, -1, TERM_WHITE, "(\377yj\377w) Chat history");
-	Term_putstr(40, second + 4, -1, TERM_WHITE, "(\377yl\377w) Lag-o-meter");
-	Term_putstr( 5, second + 6, -1, TERM_WHITE, "(\377y?\377w) Help");
-	Term_putstr(40, second + 6, -1, TERM_WHITE, "(\377yg\377w) The Guide");
-	Term_putstr(20, second + 8, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat to view extra character information)");
+	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377y1\377w) Artifacts found");
+	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377y2\377w) Monsters killed");
+	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377y3\377w) Unique monsters");
+	Term_putstr( 5, row + 3, -1, TERM_WHITE, "(\377y4\377w) Objects");
+	Term_putstr( 5, row + 4, -1, TERM_WHITE, "(\377y5\377w) Traps");
+	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377y6\377w) Artifact lore");
+	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377y7\377w) Monster lore");
+	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377y8\377w) Recall depths and towns");
+	Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377y9\377w) Houses");
+	Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377y0\377w) Wilderness map");
+	row += 6;
+
+	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377ya\377w) Players online");
+	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yb\377w) Other players' equipments");
+	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yc\377w) High Scores");
+	Term_putstr( 5, row + 3, -1, TERM_WHITE, "(\377yd\377w) Server settings");
+	Term_putstr( 5, row + 4, -1, TERM_WHITE, "(\377ye\377w) Opinions (if available)");
+	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yf\377w) News (Message of the day)");
+	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yh\377w) Intro screen");
+	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377yi\377w) Message history");
+	Term_putstr(40, row + 3, -1, TERM_WHITE, "(\377yj\377w) Chat history");
+	Term_putstr(40, row + 4, -1, TERM_WHITE, "(\377yl\377w) Lag-o-meter");
+	row += 6;
+
+	Term_putstr( 5, row, -1, TERM_WHITE, "(\377y?\377w) Help");
+	Term_putstr(40, row, -1, TERM_WHITE, "(\377yg\377w) The Guide");
+	row += 2;
+
+	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377yT\377w) Open TomeNET program folder");
+	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yU\377w) Open TomeNET user folder");
+	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yS\377w) Open TomeNET sound folder");
+	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yM\377w) Open TomeNET music folder");
+	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yX\377w) Open TomeNET xtra folder (fonts and audio)");
+	row += 4;
+
+	Term_putstr(20, row, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat to view extra character information)");
 
 	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
 
@@ -3495,11 +3522,11 @@ void cmd_check_misc(void) {
 
 				/* allow specifying minlev? */
 				if (is_newer_than(&server_version, 4, 5, 4, 0, 0, 0)) {
-					second = c_get_quantity("Specify minimum level? (ESC for none): ", 0);
+					row = c_get_quantity("Specify minimum level? (ESC for none): ", 0);
 					if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0))
-						Send_special_line(SPECIAL_FILE_MONSTER, choice + second * 100000 + (uniques ? 100000000 : 0));
+						Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000 + (uniques ? 100000000 : 0));
 					else
-						Send_special_line(SPECIAL_FILE_MONSTER, choice + second * 100000);
+						Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000);
 				} else
 					Send_special_line(SPECIAL_FILE_MONSTER, choice);
 				break;
@@ -3578,10 +3605,34 @@ void cmd_check_misc(void) {
 			case ':':
 				cmd_message();
 				break;
+
+#if defined(USE_X11) || defined(WINDOWS)
+			case 'T': FILEMAN("."); break;
+			case 'U': FILEMAN(ANGBAND_DIR_USER); break;
+			case 'S':
+				path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
+				FILEMAN(path);
+				break;
+			case 'M':
+				path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
+				FILEMAN(path);
+				break;
+			case 'X':
+				FILEMAN(ANGBAND_DIR_XTRA);
+				break;
+#else
+			/* USE_GCU (without USE_X11) and any other unknown OS.. */
+			case 'T': case 'U': case 'S': case 'M': case 'X':
+				c_message_add("Sorry, cannot open file manager in terminal-mode.");
+				break;
+#endif
+
 			default:
 				bell();
 		}
 	}
+
+	inkey_interact_macros = FALSE;
 	Term_load();
 }
 
