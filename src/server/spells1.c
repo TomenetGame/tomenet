@@ -11636,10 +11636,15 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	y = y9 = y1;
 	dist = 0;
 
+	/* If firewalls apply damage on the first imprint (like clouds do atm),
+	   reduce their time by 1 to make up for it, so the total # of damage applications is correct. */
+	if ((flg & PROJECT_BEAM) && (project_time_effect & EFF_WALL)) project_time--;
+
 	/* Project until done */
 	while (TRUE) {
 		/* Gather beam grids */
 		if (flg & PROJECT_BEAM) {
+			/* Hack: Firewalls are actually a lot of single-grid effects for each affected grid! */
 			if (project_time_effect & EFF_WALL) {
 				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
 				if (effect != -1) zcave[y][x].effect = effect;
@@ -11648,7 +11653,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			gx[grids] = x;
 			grids++;
 #if DEBUG_LEVEL > 1
-			if(grids > 500) s_printf("grids %d\n", grids);
+			if (grids > 500) s_printf("grids %d\n", grids);
 #endif	/* DEBUG_LEVEL */
 		}
 
@@ -11928,7 +11933,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		y = y9;
 		x = x9;
 	}
-	
+
+	/* Firewall application has been finished above already in the 'spell animation' loop, so discard it from further processing. */
 	if (project_time_effect & EFF_WALL) {
 		flg &= ~(PROJECT_STAY);
 		project_time = 0;
@@ -12178,28 +12184,24 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	}
 #endif
 
-
 	/* Effect ? */
 	if (flg & PROJECT_STAY) {
-		/* I believe it's not right */
-		//effect = new_effect(typ, dam, project_time, py, px, rad, project_time_effect);
-		/* MEGAHACK -- quick hack to make fire_wall work
-		 * this should be rewritten!	- Jir -
-		 *
-		 * It registers the 'wall' as if it was a ball:
-		 *
-		 *	   |--dist_hack--|
-		 * (y,x) *------+------* (y2,x2)
-		 *			  +pseudo 'centre'
-		 */
+		/* For waves and walls, the initial imprint mustn't cause any damage or it will hit
+		   enemies twice. For other effects (clouds) it's up to preference. */
+		bool no_initial_damage = project_time_effect & (EFF_WAVE | EFF_THINWAVE | EFF_WALL);
+
+		/* Since we apply damage one more time, ie on initial grid imprint,
+		   remove the final tick to keep correct amount of damage applications. */
+		if (!no_initial_damage) project_time--;
+
+		/* Hack for fireworks: Radius 0 */
 		if (rad == 0) {
-#if 1 /* Kurzel's patch commented this out - but this is required for fireworks! */
 			effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
 			    (y + y2) / 2, (x + x2) / 2, dist_hack / 2 + 1,
 			    project_time_effect);
-#endif
 #ifdef ARCADE_SERVER
 #if 0
+			/* Note: Should this be here or at the EFF_WALL (Firewall) handling code further above, actually? - C. Blue */
 			if (project_time_effect & EFF_CROSSHAIR_A || project_time_effect & EFF_CROSSHAIR_B ||
 			    project_time_effect & EFF_CROSSHAIR_C) {
 				msg_broadcast(0, "making an effect");
@@ -12210,7 +12212,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 #endif
 		} else {
 			effect = new_effect(who, typ, dam, project_time, project_interval, wpos,
-					y2, x2, rad, project_time_effect);
+			    y2, x2, rad, project_time_effect);
 		}
 		project_interval = 0;
 		project_time = 0;
@@ -12243,7 +12245,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		   (since after it was changed to prevent monsters from wave-jumping / EFF_DAMAGE_AFTER_SETTING).
 		   This means that there is no initial damage application, but the project() happens at the end of each effect-tick,
 		   (with the effect vanishing exactly on its final tick and project(), without lingering visuals after that). */
-		return FALSE;
+		if (no_initial_damage) return FALSE;
 	}
 
 	/* Check features */

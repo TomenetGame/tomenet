@@ -960,10 +960,11 @@ static void process_effects(void) {
 	cave_type *c_ptr;
 	int who = PROJECTOR_EFFECT;
 	player_type *p_ptr;
+	effect_type *e_ptr = &effects[k];
+	int flg;
 
 	for (k = 0; k < MAX_EFFECTS; k++) {
-		effect_type *e_ptr = &effects[k];
-		int flg;
+		e_ptr = &effects[k];
 		/* Skip empty slots */
 		if (e_ptr->time == 0) continue;
 
@@ -1122,7 +1123,8 @@ static void process_effects(void) {
 #endif
 
 			/* If it's a changing effect, remove it from currently affected grid to prepare for next iteration */
-			if (!(e_ptr->flags & EFF_LAST)) {
+			if (!(e_ptr->flags & EFF_LAST)
+			    && c_ptr->effect == k) {
 				if ((e_ptr->flags & EFF_WAVE)) {
 					if (distance(e_ptr->cy, e_ptr->cx, j, i) < e_ptr->rad - 2) { //wave has thickness 3: each taget gets hit 3 times
 						c_ptr->effect = 0;
@@ -1164,7 +1166,7 @@ static void process_effects(void) {
 			}
 
 			/* Generate fireworks effects */
-			if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
+			else if (e_ptr->flags & (EFF_FIREWORKS1 | EFF_FIREWORKS2 | EFF_FIREWORKS3)) {
 				int semi = (e_ptr->time + e_ptr->rad) / 2;
 				/* until half-time (or half-radius) the fireworks rise into the air */
 				if (e_ptr->rad < e_ptr->time) {
@@ -1234,7 +1236,7 @@ static void process_effects(void) {
 			}
 
 			/* Generate lightning effects -- effect_xtra: -1\ 0| 1/ 2_ */
-			if (e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3)) {
+			else if (e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3)) {
 				int mirrored = (e_ptr->dam == 0) ? -1 : 1;
 
 				if ((e_ptr->flags & EFF_LIGHTNING1)) {
@@ -1522,16 +1524,8 @@ static void process_effects(void) {
 			if (!who) break;
 		}
 
-		/* Excise effects that reached end of their lifetime, instead of relying only on the
-		   copy of this check at the beginning of process_effects(). Reason: The effect would
-		   visually linger for another project-interval then, without doing anything. So just
-		   clear it up yet, so players don't get confused. */
-		if (e_ptr->time <= 0) {
-			erase_effects(k);
-			continue;
-		}
-
-		/* --- Simple effects: Create next effect iteration and imprint it on grid.
+		/* --- Imprint simple non-damaging effects on grid (project() was already called above in the loop).
+		       Handle effects that change their origin coordinate, as these don't fit into the loop above (storms).
 		       Also process modification of all changeable effects (radius/movement). --- */
 
 		/* Expand waves */
@@ -1551,8 +1545,17 @@ static void process_effects(void) {
 
 				c_ptr = &zcave[j][i];
 
-				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad))
+				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
 					apply_effect(k, &who, wpos, i, j, c_ptr);
+
+					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+
+					/* The caster got ghost-killed by the projection (or just disconnected)? If it was a real player, handle it: */
+					if (Players[0 - who]->conn == NOT_CONNECTED || Players[0 - who]->death) {
+						erase_effects(k);
+						break;
+					}
+				}
 			}
 		}
 
@@ -1602,6 +1605,15 @@ static void process_effects(void) {
 		else if (e_ptr->flags & EFF_THUNDER_VISUAL) {
 			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
 			apply_effect(k, &who, wpos, e_ptr->cx, e_ptr->cy, c_ptr);
+		}
+
+		/* Excise effects that reached end of their lifetime, instead of relying only on the
+		   copy of this check at the beginning of process_effects(). Reason: The effect would
+		   visually linger for another project-interval then, without doing anything. So just
+		   clear it up yet, so players don't get confused. */
+		if (e_ptr->time <= 0) {
+			erase_effects(k);
+			continue;
 		}
 	}
 
