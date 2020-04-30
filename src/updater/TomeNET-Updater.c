@@ -323,10 +323,11 @@ exit(0);
 		    "downloader currently does not support, sorry!\n \nPlease just try again later.");
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
- 
+
 		gtk_button_set_label(button, "Install/update sound pack");
 		while(gtk_events_pending())
 		    gtk_main_iteration();
+		remove("temp.html");
 		return;
 	}
 	remove("temp.html");
@@ -343,6 +344,7 @@ exit(0);
 	system(out_val);
 	system("rmdir /S /Q sound");
 #else /* assume posix */
+ #if 0 /* Use plowshare's mediafire.sh module -- currently broken */
 	char cwd_path[1024], out_val[1024];
 	void *cwd;
 	FILE *fp;
@@ -393,6 +395,118 @@ exit(0);
 		res = -1;
 		show_error_broken(top_window);
 	}
+ #else /* Use same dumb approach like on WINDOWS.. */
+	char path[1024], tmp[1024];
+	char _soundpack[1024];
+
+	char cwd_path[1024], out_val[1024];
+	void *cwd;
+	FILE *fp;
+
+
+	strcpy(_soundpack, "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z");
+	fp = fopen("TomeNET-Updater.cfg", "r");
+	if (fp) {
+		//fgets(out_val, 1024, fp);
+		if (fgets(out_val, 1024, fp)) strcpy(_soundpack, out_val);
+		fclose(fp);
+	}
+
+	remove("TomeNET-soundpack.7z");
+
+	/* download */
+	sprintf(tmp, "wget -O temp.html --dot-style=mega %s", _soundpack);
+	system(tmp);
+	fp = fopen("temp.html", "r");
+	out_val[0] = out_val[1] = 0;
+	path[0] = 0;
+	while (!feof(fp)) {
+		fread(out_val + 5, sizeof(char), 1000, fp);
+		out_val[1005] = 0;
+		if (strstr(out_val, "kNO = ")) {
+			/* extract URL */
+			strncpy(path, strstr(out_val, "kNO = ") + 7, 1000);
+			*(strstr(path, "\"")) = 0;
+			break;
+		}
+		/* wrap around (n-1) chars regarding our search string */
+		out_val[0] = out_val[1000];//k
+		out_val[1] = out_val[1001];//N
+		out_val[2] = out_val[1002];//O
+		out_val[3] = out_val[1003];// 
+		out_val[4] = out_val[1004];// =
+	}
+	fclose(fp);
+	/* no valid dl link? We probably got a captcha request -_- */
+	if (!path[0]) {
+		GtkWidget *dialog;
+		dialog = gtk_message_dialog_new(GTK_WINDOW(top_window),
+		    GTK_DIALOG_DESTROY_WITH_PARENT,
+		    GTK_MESSAGE_ERROR,
+		    GTK_BUTTONS_CLOSE,
+		    "Error - the download server received too many requests\n" \
+		    "and responded with a captcha request which this\n" \
+		    "downloader currently does not support, sorry!\n \nPlease just try again later.");
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+
+		gtk_button_set_label(button, "Install/update sound pack");
+		while(gtk_events_pending())
+		    gtk_main_iteration();
+		remove("temp.html");
+		return;
+	}
+	remove("temp.html");
+	//system(format("wget --dot-style=mega %s", path));
+
+	/* download */
+	/* get own app path and prepare path'ed batch file */
+	cwd = getcwd(out_val, sizeof(out_val));
+	if (!cwd) return;//paranoia?
+	strcpy(cwd_path, out_val);
+	strcat(cwd_path, "/updater/_update_sp.sh");
+	fp = fopen(cwd_path, "w");
+	if (!fp) return;//paranoia?
+	/* download */
+	fprintf(fp, "cd %s/updater\n", out_val);
+	fprintf(fp, "rm result.tmp\n");
+	fprintf(fp, "wget --dot-style=mega %s", path);
+	/* move to correct location and extract */
+	fprintf(fp, "mv TomeNET-soundpack.7z ..\n");
+	fprintf(fp, "mkdir -p %s/lib/xtra\n", out_val); /* in case someone deleted his whole lib folder */
+	fprintf(fp, "cd %s/lib/xtra\n", out_val);
+	fprintf(fp, "7z x -y ../../TomeNET-soundpack.7z\n");
+	/* done, wait for confirmation */
+	fprintf(fp, "echo\n");
+	fprintf(fp, "read -p \"Press ENTER to finish.\"\n");
+	fclose(fp);
+	/* make the batch file executable */
+	sprintf(out_val, "chmod +x %s", cwd_path);
+	system(out_val);
+	/* execute the batch file */
+	switch (posix_terminal) {
+	case 0: sprintf(out_val, "xfce4-terminal --disable-server -x %s", cwd_path); break;
+	case 1: sprintf(out_val, "konsole -e %s", cwd_path); break;
+	case 2: sprintf(out_val, "gnome-terminal -e %s", cwd_path); break;
+	case 3: sprintf(out_val, "xterm -e %s", cwd_path); break;
+	case 4: sprintf(out_val, "bash -c %s", cwd_path); break;
+	case 5: sprintf(out_val, "sh -c %s", cwd_path); break;
+	}
+
+	/* download + extract */
+	system(out_val);
+
+	fp = fopen("updater/result.tmp", "r");
+	if (fp) {//~paranoia?
+		fgets(out_val, 20, fp);
+		res = atoi(out_val);
+		if (res != 0) show_error_broken(top_window);
+		fclose(fp);
+	} else {
+		res = -1;
+		show_error_broken(top_window);
+	}
+ #endif
 #endif
 
 	if (!res) show_done(top_window);
@@ -414,6 +528,7 @@ void install_music(GtkButton *button, gpointer label) {
 	char path[1024], out_val[1024];
 	FILE *fp;
 	char _musicpack[1024];
+
 	strcpy(_musicpack, "http://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z");
 	fp = fopen("TomeNET-Updater.cfg", "r");
 	if (fp) {
@@ -475,10 +590,11 @@ void install_music(GtkButton *button, gpointer label) {
 		    "downloader currently does not support, sorry!\n \nPlease just try again later.");
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
- 
+
 		gtk_button_set_label(button, "Install/update music pack");
 		while(gtk_events_pending())
 		    gtk_main_iteration();
+		remove("temp.html");
 		return;
 	}
 	remove("temp.html");
@@ -495,6 +611,7 @@ void install_music(GtkButton *button, gpointer label) {
 	system(out_val);
 	system("rmdir /S /Q music");
 #else /* assume posix */
+ #if 0 /* Use plowshare's mediafire.sh module -- currently broken */
 	char cwd_path[1024], out_val[1024];
 	void *cwd;
 	FILE *fp;
@@ -545,6 +662,117 @@ void install_music(GtkButton *button, gpointer label) {
 		res = -1;
 		show_error_broken(top_window);
 	}
+ #else /* Use same dumb approach like on WINDOWS.. */
+	char path[1024], tmp[1024];
+	char _musicpack[1024];
+
+	char cwd_path[1024], out_val[1024];
+	void *cwd;
+	FILE *fp;
+
+	strcpy(_musicpack, "http://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z");
+	fp = fopen("TomeNET-Updater.cfg", "r");
+	if (fp) {
+		//fgets(out_val, 1024, fp);
+		if (fgets(out_val, 1024, fp)) strcpy(_musicpack, out_val);
+		fclose(fp);
+	}
+
+	remove("TomeNET-musicpack.7z");
+
+	/* download */
+	sprintf(tmp, "wget -O temp.html --dot-style=mega %s", _musicpack);
+	system(tmp);
+	fp = fopen("temp.html", "r");
+	out_val[0] = out_val[1] = 0;
+	path[0] = 0;
+	while (!feof(fp)) {
+		fread(out_val + 5, sizeof(char), 1000, fp);
+		out_val[1005] = 0;
+		if (strstr(out_val, "kNO = ")) {
+			/* extract URL */
+			strncpy(path, strstr(out_val, "kNO = ") + 7, 1000);
+			*(strstr(path, "\"")) = 0;
+			break;
+		}
+		/* wrap around (n-1) chars regarding our search string */
+		out_val[0] = out_val[1000];//k
+		out_val[1] = out_val[1001];//N
+		out_val[2] = out_val[1002];//O
+		out_val[3] = out_val[1003];// 
+		out_val[4] = out_val[1004];// =
+	}
+	fclose(fp);
+	/* no valid dl link? We probably got a captcha request -_- */
+	if (!path[0]) {
+		GtkWidget *dialog;
+		dialog = gtk_message_dialog_new(GTK_WINDOW(top_window),
+		    GTK_DIALOG_DESTROY_WITH_PARENT,
+		    GTK_MESSAGE_ERROR,
+		    GTK_BUTTONS_CLOSE,
+		    "Error - the download server received too many requests\n" \
+		    "and responded with a captcha request which this\n" \
+		    "downloader currently does not support, sorry!\n \nPlease just try again later.");
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+
+		gtk_button_set_label(button, "Install/update music pack");
+		while(gtk_events_pending())
+		    gtk_main_iteration();
+		remove("temp.html");
+		return;
+	}
+	remove("temp.html");
+	//system(format("wget --dot-style=mega %s", path));
+
+	/* download */
+	/* get own app path and prepare path'ed batch file */
+	cwd = getcwd(out_val, sizeof(out_val));
+	if (!cwd) return;//paranoia?
+	strcpy(cwd_path, out_val);
+	strcat(cwd_path, "/updater/_update_mp.sh");
+	fp = fopen(cwd_path, "w");
+	if (!fp) return;//paranoia?
+	/* download */
+	fprintf(fp, "cd %s/updater\n", out_val);
+	fprintf(fp, "rm result.tmp\n");
+	fprintf(fp, "wget --dot-style=mega %s", path);
+	/* move to correct location and extract */
+	fprintf(fp, "mv TomeNET-musicpack.7z ..\n");
+	fprintf(fp, "mkdir -p %s/lib/xtra\n", out_val); /* in case someone deleted his whole lib folder */
+	fprintf(fp, "cd %s/lib/xtra\n", out_val);
+	fprintf(fp, "7z x -y ../../TomeNET-musicpack.7z\n");
+	/* done, wait for confirmation */
+	fprintf(fp, "echo\n");
+	fprintf(fp, "read -p \"Press ENTER to finish.\"\n");
+	fclose(fp);
+	/* make the batch file executable */
+	sprintf(out_val, "chmod +x %s", cwd_path);
+	system(out_val);
+	/* execute the batch file */
+	switch (posix_terminal) {
+	case 0: sprintf(out_val, "xfce4-terminal --disable-server -x %s", cwd_path); break;
+	case 1: sprintf(out_val, "konsole -e %s", cwd_path); break;
+	case 2: sprintf(out_val, "gnome-terminal -e %s", cwd_path); break;
+	case 3: sprintf(out_val, "xterm -e %s", cwd_path); break;
+	case 4: sprintf(out_val, "bash -c %s", cwd_path); break;
+	case 5: sprintf(out_val, "sh -c %s", cwd_path); break;
+	}
+
+	/* download + extract */
+	system(out_val);
+
+	fp = fopen("updater/result.tmp", "r");
+	if (fp) {//~paranoia?
+		fgets(out_val, 20, fp);
+		res = atoi(out_val);
+		if (res != 0) show_error_broken(top_window);
+		fclose(fp);
+	} else {
+		res = -1;
+		show_error_broken(top_window);
+	}
+ #endif
 #endif
 
 	if (!res) show_done(top_window);
