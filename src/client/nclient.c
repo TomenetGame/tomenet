@@ -412,21 +412,21 @@ static void reorder_characters(int col, int col_cmd, int chars) {
 	/* Reorder-GUI */
 	//c_put_str(TERM_SELECTOR, "[", col + sel, 3);
 	//c_put_str(TERM_SELECTOR, "]", col + sel, 76);
-	c_put_str(TERM_L_BLUE, ">> Press a letter of the first of two characters to swap..", col_cmd, 5);
+	c_put_str(TERM_L_BLUE, "Press the slot letter of the first of two characters to swap..", col_cmd, 5);
 	ch = 0;
 	while (!ch) {
 		ch = inkey();
 		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
 	}
 	sortA = ch;
-	c_put_str(TERM_L_BLUE, ">> Press a letter of the second of two characters to swap..", col_cmd, 5);
+	c_put_str(TERM_L_BLUE, "Press the slot letter of the second of two characters to swap..", col_cmd, 5);
 	ch = 0;
 	while (!ch) {
 		ch = inkey();
 		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
 	}
 	sortB = ch;
-	c_put_str(TERM_L_BLUE, "                                                           ", col_cmd, 5);
+	c_put_str(TERM_L_BLUE, "                                                               ", col_cmd, 5);
 
 	/* Tell server which characters we want to swap, server will answer with full character screen data again */
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, format("***%c%c", sortA, sortB));
