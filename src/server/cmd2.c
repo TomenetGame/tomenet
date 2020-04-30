@@ -3955,7 +3955,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if (power > 40 + rand_int(1600)) { /* just assume 1600 as for Granite Wall */
 			struct c_special *cs_ptr;
 			msg_print(Ind, "You have found a secret door!");
-			cfeat = FEAT_DOOR_HEAD + 0x00;
+			/* un-hide the true feat (a door!) */
+			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 			/* Clear mimic feature */
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 
@@ -3984,7 +3985,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* Message */
 			msg_print(Ind, "You have found a secret door.");
 			/* Pick a door XXX XXX XXX */
-			cfeat = FEAT_DOOR_HEAD + 0x00;
+			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 			/* Clear mimic feature */
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 
