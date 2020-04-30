@@ -31,9 +31,9 @@
  * specified in the arguments. Returns NULL for
  * a failure.
  */
-cave_type **getcave(struct worldpos *wpos)
-{
+cave_type **getcave(struct worldpos *wpos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wx > MAX_WILD_X || wpos->wx < 0 || wpos->wy > MAX_WILD_Y || wpos->wy < 0) return(NULL);
 	if (wpos->wz == 0) {
@@ -51,9 +51,9 @@ cave_type **getcave(struct worldpos *wpos)
 }
 
 /* an afterthought - it is often needed without up/down info */
-struct dungeon_type *getdungeon(struct worldpos *wpos)
-{
+struct dungeon_type *getdungeon(struct worldpos *wpos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) return NULL;
 	else {
@@ -64,24 +64,27 @@ struct dungeon_type *getdungeon(struct worldpos *wpos)
 }
 
 /* another afterthought - it is often needed without up/down info */
-struct dun_level *getfloor(struct worldpos *wpos)
-{
+struct dun_level *getfloor(struct worldpos *wpos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) {
 /*		return(wild); */
 		return(NULL);
 	} else {
-		if (wpos->wz > 0)
+		if (wpos->wz > 0) {
+			if (!wild->tower) return NULL; /* <- for wpos_old check in process_player_change_wpos() after highlander dungeon removal! */
 			return(&wild->tower->level[wpos->wz - 1]);
-		else
+		} else {
+			if (!wild->dungeon) return NULL; /* <- for wpos_old check in process_player_change_wpos() after highlander dungeon removal! */
 			return(&wild->dungeon->level[ABS(wpos->wz) - 1]);
+		}
 	}
 }
 
-void new_level_up_x(struct worldpos *wpos, int pos)
-{
+void new_level_up_x(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) wild->up_x = pos;
 	else if (wpos->wz > 0)
@@ -89,9 +92,9 @@ void new_level_up_x(struct worldpos *wpos, int pos)
 	else
 		wild->dungeon->level[ABS(wpos->wz) - 1].up_x = pos;
 }
-void new_level_up_y(struct worldpos *wpos, int pos)
-{
+void new_level_up_y(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) wild->up_y = pos;
 	else if (wpos->wz > 0)
@@ -99,9 +102,9 @@ void new_level_up_y(struct worldpos *wpos, int pos)
 	else
 		wild->dungeon->level[ABS(wpos->wz) - 1].up_y = pos;
 }
-void new_level_down_x(struct worldpos *wpos, int pos)
-{
+void new_level_down_x(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) wild->dn_x = pos;
 	else if (wpos->wz > 0)
@@ -109,9 +112,9 @@ void new_level_down_x(struct worldpos *wpos, int pos)
 	else
 		wild->dungeon->level[ABS(wpos->wz) - 1].dn_x = pos;
 }
-void new_level_down_y(struct worldpos *wpos, int pos)
-{
+void new_level_down_y(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) wild->dn_y = pos;
 	else if (wpos->wz > 0)
@@ -119,9 +122,9 @@ void new_level_down_y(struct worldpos *wpos, int pos)
 	else
 		wild->dungeon->level[ABS(wpos->wz) - 1].dn_y = pos;
 }
-void new_level_rand_x(struct worldpos *wpos, int pos)
-{
+void new_level_rand_x(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) wild->rn_x = pos;
 	else if (wpos->wz > 0)
@@ -129,9 +132,9 @@ void new_level_rand_x(struct worldpos *wpos, int pos)
 	else
 		wild->dungeon->level[ABS(wpos->wz) - 1].rn_x = pos;
 }
-void new_level_rand_y(struct worldpos *wpos, int pos)
-{
+void new_level_rand_y(struct worldpos *wpos, int pos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) wild->rn_y = pos;
 	else if (wpos->wz > 0)
@@ -140,44 +143,44 @@ void new_level_rand_y(struct worldpos *wpos, int pos)
 		wild->dungeon->level[ABS(wpos->wz) - 1].rn_y = pos;
 }
 
-byte level_up_x(struct worldpos *wpos)
-{
+byte level_up_x(struct worldpos *wpos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) return (wild->up_x);
 	return (wpos->wz > 0? wild->tower->level[wpos->wz - 1].up_x : wild->dungeon->level[ABS(wpos->wz) - 1].up_x);
 }
-byte level_up_y(struct worldpos *wpos)
-{
+byte level_up_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) return (wild->up_y);
 	return (wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].up_y : wild->dungeon->level[ABS(wpos->wz) - 1].up_y);
 }
-byte level_down_x(struct worldpos *wpos)
-{
+byte level_down_x(struct worldpos *wpos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) return (wild->dn_x);
 	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].dn_x : wild->dungeon->level[ABS(wpos->wz) - 1].dn_x);
 }
-byte level_down_y(struct worldpos *wpos)
-{
+byte level_down_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) return (wild->dn_y);
 	return (wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].dn_y : wild->dungeon->level[ABS(wpos->wz) - 1].dn_y);
 }
-byte level_rand_x(struct worldpos *wpos)
-{
+byte level_rand_x(struct worldpos *wpos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) return(wild->rn_x);
 	return (wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_x : wild->dungeon->level[ABS(wpos->wz) - 1].rn_x);
 }
-byte level_rand_y(struct worldpos *wpos)
-{
+byte level_rand_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;
+
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) return (wild->rn_y);
 	return (wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].rn_y : wild->dungeon->level[ABS(wpos->wz) - 1].rn_y);
@@ -243,11 +246,10 @@ static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
 
 /* For staircase-placement.
    Mode: 1 stairs, (doesn't make sense? 2 wor,) (handled in cmd2.c, can't handle here actually: 4 probtravel, 8 ghostfloating) */
-bool can_go_up(struct worldpos *wpos, byte mode)
-{
-        struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+bool can_go_up(struct worldpos *wpos, byte mode) {
+	struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+	struct dungeon_type *d_ptr = wild->tower;
 
-        struct dungeon_type *d_ptr = wild->tower;
 	if (wpos->wz < 0) d_ptr = wild->dungeon;
 
 #if 0 /* fixed (old /update-dun killed flags2) */
@@ -282,12 +284,11 @@ bool can_go_up(struct worldpos *wpos, byte mode)
 }
 /* For staircase-placement and sinking/pit traps.
    Mode: 1 stairs, (doesn't make sense? 2 wor,) (handled in cmd2.c, can't handle here actually: 4 probtravel, 8 ghostfloating) */
-bool can_go_down(struct worldpos *wpos, byte mode)
-{
-        struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+bool can_go_down(struct worldpos *wpos, byte mode) {
+	struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+	struct dungeon_type *d_ptr = wild->dungeon;
 
-        struct dungeon_type *d_ptr = wild->dungeon;
-        if (wpos->wz > 0) d_ptr = wild->tower;
+	if (wpos->wz > 0) d_ptr = wild->tower;
 
 #if 0 /* fixed (old /update-dun killed flags2) */
 	/* paranoia, but caused panic: in wilderness_gen() cmd_up({0,0,0},0x1) would return 1
@@ -319,31 +320,29 @@ bool can_go_down(struct worldpos *wpos, byte mode)
 	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
 }
 /* ignore all dungeon/floor flags */
-bool can_go_up_simple(struct worldpos *wpos)
-{
-        struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+bool can_go_up_simple(struct worldpos *wpos) {
+	struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+
 	if (wpos->wz < 0) return(TRUE);
 	if (wpos->wz > 0) return(wpos->wz < wild->tower->maxdepth);
 	return ((wild->flags & WILD_F_UP) ? TRUE : FALSE);
 }
 /* ignore all dungeon/floor flags */
-bool can_go_down_simple(struct worldpos *wpos)
-{
-        struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+bool can_go_down_simple(struct worldpos *wpos) {
+	struct wilderness_type *wild = &wild_info[wpos->wy][wpos->wx];
+
 	if (wpos->wz > 0) return(TRUE);
 	if (wpos->wz < 0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
 	return ((wild->flags & WILD_F_DOWN) ? TRUE : FALSE);
 }
 
-void wpcopy(struct worldpos *dest, struct worldpos *src)
-{
+void wpcopy(struct worldpos *dest, struct worldpos *src) {
 	dest->wx = src->wx;
 	dest->wy = src->wy;
 	dest->wz = src->wz;
 }
 
-static void update_uniques_killed(struct worldpos *wpos)
-{
+static void update_uniques_killed(struct worldpos *wpos) {
 	int i, j;
 	player_type *p_ptr;
 	dun_level *l_ptr;
@@ -857,6 +856,7 @@ struct c_special *GetCS(cave_type *c_ptr, unsigned char type) {
 /* check for duplication, and also set the type	- Jir - */
 struct c_special *AddCS(cave_type *c_ptr, byte type) {
 	struct c_special *cs_ptr;
+
 	if (GetCS(c_ptr, type)) {
 		return(NULL);	/* already exists! */
 	}
@@ -869,11 +869,10 @@ struct c_special *AddCS(cave_type *c_ptr, byte type) {
 }
 
 /* like AddCS, but override already-existing one */
-c_special *ReplaceCS(cave_type *c_ptr, byte type)
-{
+c_special *ReplaceCS(cave_type *c_ptr, byte type) {
 	struct c_special *cs_ptr;
-	if (!(cs_ptr = GetCS(c_ptr, type)))
-	{
+
+	if (!(cs_ptr = GetCS(c_ptr, type))) {
 		MAKE(cs_ptr, struct c_special);
 		if (!cs_ptr) return(NULL);
 		cs_ptr->next = c_ptr->special;
@@ -885,14 +884,12 @@ c_special *ReplaceCS(cave_type *c_ptr, byte type)
 
 /* Free all memory related to c_ptr->special - mikaelh */
 /* Note: doesn't clear the c_ptr->special pointer */
-void FreeCS(cave_type *c_ptr)
-{
+void FreeCS(cave_type *c_ptr) {
 	struct c_special *trav, *prev;
 
 	prev = trav = c_ptr->special;
 
-	while (trav)
-	{
+	while (trav) {
 		prev = trav;
 		trav = trav->next;
 		FREE(prev, struct c_special);
@@ -915,8 +912,7 @@ void FreeCS(cave_type *c_ptr)
  * which contain pre-calculated results of this function.		- Jir -
  * (Please see prepare_distance() )
  */
-int distance(int y1, int x1, int y2, int x2)
-{
+int distance(int y1, int x1, int y2, int x2) {
 	int dy, dx, d;
 
 	/* Find the absolute y/x distance components */
@@ -934,8 +930,7 @@ int distance(int y1, int x1, int y2, int x2)
  * Returns TRUE if a grid is considered to be a wall for the purpose
  * of magic mapping / clairvoyance
  */
-static bool is_wall(cave_type *c_ptr)
-{
+static bool is_wall(cave_type *c_ptr) {
 	int feat;
 
 	feat = c_ptr->feat;
@@ -1389,8 +1384,7 @@ bool los_wall(struct worldpos *wpos, int y1, int x1, int y2, int x2) {
  * "glowing" grid.  This prevents the player from being able to "see" the
  * walls of illuminated rooms from a corridor outside the room.
  */
-bool player_can_see_bold(int Ind, int y, int x)
-{
+bool player_can_see_bold(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 	int xx, yy;
 
@@ -1440,9 +1434,9 @@ bool player_can_see_bold(int Ind, int y, int x)
 /*
  * Returns true if the player's grid is dark
  */
-bool no_lite(int Ind)
-{
+bool no_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
+
 	if (p_ptr->admin_dm) return(FALSE);
 	return (!player_can_see_bold(Ind, p_ptr->py, p_ptr->px));
 }
@@ -1454,12 +1448,9 @@ bool no_lite(int Ind)
  * Used by destruction spells, and for placing stairs, etc.
  */
 /* Borrowed from ToME, with some extra checks */
-bool cave_valid_bold(cave_type **zcave, int y, int x)
-{
+bool cave_valid_bold(cave_type **zcave, int y, int x) {
 	cave_type *c_ptr = &zcave[y][x];
-
 	s16b this_o_idx, next_o_idx = 0;
-
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Forbid perma-grids */
@@ -1467,8 +1458,7 @@ bool cave_valid_bold(cave_type **zcave, int y, int x)
 	if (cave_perma_bold(zcave, y, x)) return (FALSE);
 
 	/* Check objects */
-	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx)
-	{
+	for (this_o_idx = c_ptr->o_idx; this_o_idx; this_o_idx = next_o_idx) {
 		object_type *o_ptr;
 
 		/* Acquire object */
@@ -1478,8 +1468,7 @@ bool cave_valid_bold(cave_type **zcave, int y, int x)
 		next_o_idx = o_ptr->next_o_idx;
 
 		/* Forbid artifact grids */
-		if (true_artifact_p(o_ptr))
-		{
+		if (true_artifact_p(o_ptr)) {
 			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			if (f4 & TR4_SPECIAL_GENE) return (FALSE);
 		}
@@ -1505,8 +1494,7 @@ static cptr image_monster_hack = \
 /*
  * Mega-Hack -- Hallucinatory monster
  */
-static void image_monster(byte *ap, char *cp)
-{
+static void image_monster(byte *ap, char *cp) {
 	int n = strlen(image_monster_hack);
 
 	/* Random symbol from set above */
@@ -1526,8 +1514,7 @@ static cptr image_object_hack = \
 /*
  * Mega-Hack -- Hallucinatory object
  */
-static void image_object(byte *ap, char *cp)
-{
+static void image_object(byte *ap, char *cp) {
 	int n = strlen(image_object_hack);
 
 	/* Random symbol from set above */
@@ -1541,8 +1528,7 @@ static void image_object(byte *ap, char *cp)
  * Mega-Hack -- Mimic outlook
  * (Pleaes bear with us till really implemented..)
  */
-static void mimic_object(byte *ap, char *cp, int seed)
-{
+static void mimic_object(byte *ap, char *cp, int seed) {
 	int n = strlen(image_object_hack);
 
 	/* Random symbol from set above */
@@ -1556,43 +1542,26 @@ static void mimic_object(byte *ap, char *cp, int seed)
 /*
  * Hack -- Random hallucination
  */
-static void image_random(byte *ap, char *cp)
-{
+static void image_random(byte *ap, char *cp) {
 	/* Normally, assume monsters */
-	if (rand_int(100) < 75)
-	{
-		image_monster(ap, cp);
-	}
-
+	if (rand_int(100) < 75) image_monster(ap, cp);
 	/* Otherwise, assume objects */
-	else
-	{
-		image_object(ap, cp);
-	}
+	else image_object(ap, cp);
 }
 
 #ifndef CLIENT_SHIMMER
 /*
  * Some eye-candies from PernAngband :)		- Jir -
  */
-char get_shimmer_color()
-{
-	switch (randint(7))
-	{
-		case 1:
-			return TERM_RED;
-		case 2:
-			return TERM_L_RED;
-		case 3:
-			return TERM_WHITE;
-		case 4:
-			return TERM_L_GREEN;
-		case 5:
-			return TERM_BLUE;
-		case 6:
-			return TERM_L_DARK;
-		case 7:
-			return TERM_GREEN;
+char get_shimmer_color() {
+	switch (randint(7)) {
+	case 1: return TERM_RED;
+	case 2: return TERM_L_RED;
+	case 3: return TERM_WHITE;
+	case 4: return TERM_L_GREEN;
+	case 5: return TERM_BLUE;
+	case 6: return TERM_L_DARK;
+	case 7: return TERM_GREEN;
 	}
 	return (TERM_VIOLET);
 }
@@ -1606,8 +1575,7 @@ char get_shimmer_color()
  * may be any color.
  */
 #if 0 /* old */
-static byte breath_to_attr[32][2] =
-{
+static byte breath_to_attr[32][2] = {
 	{  0,  0 },
 	{  0,  0 },
 	{  0,  0 },
@@ -1643,8 +1611,7 @@ static byte breath_to_attr[32][2] =
 };
 #else
 /* new table that uses animated TERM_ colour codes - C. Blue */
-static byte breath_to_attr[32][2] =
-{
+static byte breath_to_attr[32][2] = {
 	{  0, 0},
 	{  0, 0},
 	{  0, 0},
@@ -1688,8 +1655,7 @@ static byte breath_to_attr[32][2] =
  *
  * If a monster does not breath anything, it can be any color.
  */
-static byte multi_hued_attr(monster_race *r_ptr)
-{
+static byte multi_hued_attr(monster_race *r_ptr) {
 	byte allowed_attrs[15];
 	int stored_colors = 0;
 
@@ -1762,9 +1728,7 @@ static byte multi_hued_attr(monster_race *r_ptr)
 
 	/* Monsters with no breaths may be of any color. */
 #ifdef CLIENT_SHIMMER
-	if (breaths == 0 || breaths == 5) {
-		return (TERM_HALF);
-	}
+	if (breaths == 0 || breaths == 5) return (TERM_HALF);
 #else
 	if (breaths == 0) return (get_shimmer_color());
 #endif

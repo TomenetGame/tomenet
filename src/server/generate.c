@@ -11229,6 +11229,12 @@ static void del_dungeon(struct worldpos *wpos, bool tower, bool force) {
 
 	wpcopy(&twpos, wpos);
 	d_ptr = (tower ? wild->tower : wild->dungeon);
+
+	if (!d_ptr) { /* just in case */
+		s_printf(" error: does not exist.\n");
+		return;
+	}
+
 	if (d_ptr->flags2 & DF2_DELETED) {
 #ifdef DUNGEON_VISIT_BONUS
  #if 0 /* bs ^^' */
