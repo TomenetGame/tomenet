@@ -250,8 +250,6 @@
 #define PKT_STAND_ONE		193
 #define PKT_WIELD3		194
 
-#define PKT_REORDER		195
-
 
 /*
  * Possible error codes returned

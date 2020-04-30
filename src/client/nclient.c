@@ -404,31 +404,37 @@ int Send_file_end(int ind, unsigned short id) {
 	return 0;
 }
 
-static void reorder_characters(void) {
+static void reorder_characters(int col, int col_cmd, int chars) {
 	char ch;
 	u32b dummy;
 	unsigned char sortA = 255, sortB = 255;
 
 	/* Reorder-GUI */
-	
+	//c_put_str(TERM_SELECTOR, "[", col + sel, 3);
+	//c_put_str(TERM_SELECTOR, "]", col + sel, 76);
+	c_put_str(TERM_L_BLUE, ">> Press a letter of the first of two characters to swap..", col_cmd, 5);
+	ch = 0;
+	while (!ch) {
+		ch = inkey();
+		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
+	}
+	sortA = ch;
+	c_put_str(TERM_L_BLUE, ">> Press a letter of the second of two characters to swap..", col_cmd, 5);
+	ch = 0;
+	while (!ch) {
+		ch = inkey();
+		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
+	}
+	sortB = ch;
+	c_put_str(TERM_L_BLUE, "                                                           ", col_cmd, 5);
 
-	/* Tell server which characters we want to swap */
-
-	//Send_reorder():
-
-
-	/* Tell the server to send us the updated list of characters again */
-
-	//Packet_printf(&wbuf, "%c%d%d", PKT_REORDER, 0, 0);
-	/* Hack: We abuse PKT_LOGIN for this */
-	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, "***");
-	Packet_printf(&wbuf, "%c%c", sortA, sortB);
+	/* Tell server which characters we want to swap, server will answer with full character screen data again */
+	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, format("***%c%c", sortA, sortB));
 	Net_flush(); //send it nao!
 	//SetTimeout(5, 0);
-	//usleep(2000000);
+
 	/* Eat and discard server flags, we already know those */
 	Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &dummy, &dummy, &dummy, &dummy);
-
 	return;
 }
 
@@ -791,7 +797,7 @@ void Receive_login(void) {
 		}
 	}
 	if (ch == 'O') {
-		reorder_characters();
+		reorder_characters(offset_bak, offset, i);
 		goto receive_characters;
 	}
 	if (ch == 'N' || ch == 'E') {

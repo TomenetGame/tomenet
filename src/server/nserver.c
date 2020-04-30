@@ -389,8 +389,6 @@ static void Init_receive(void) {
 	playing_receive[PKT_CLIENT_SETUP_F]	= Receive_client_setup_F;
 	playing_receive[PKT_CLIENT_SETUP_K]	= Receive_client_setup_K;
 	playing_receive[PKT_CLIENT_SETUP_R]	= Receive_client_setup_R;
-
-	login_receive[PKT_REORDER]		= Receive_reorder;
 }
 
 static int Init_setup(void) {
@@ -4143,100 +4141,6 @@ static void ang_sort_swap_order(int Ind, vptr u, vptr v, int a, int b) {
 	i[b] = temp;
 }
 
-#if 0 /* unused as we just reuse the code in Receive_login() for now */
-static void Resend_character_list(int ind) {
-	connection_t *connp = Conn[ind];
-	int i, n;
-	char loc[MAX_CHARS];
-	struct account acc;
-	struct worldpos wpos;
-
-	int *id_list;
-	byte tmpm;
-	char colour_sequence[3];
-
-	byte *id_order, *id_index, j;
-	n = player_id_list(&id_list, acc.id);
-
-	/* Allow players to set custom sort order of their characters just for their account overview screen */
-	C_MAKE(id_order, n, byte);
-	C_MAKE(id_index, n, byte);
-	for (i = 0; i < n; i++) {
-		id_order[i] = lookup_player_order(id_list[i]);
-		id_index[i] = i;
-//s_printf("PRE: o#%d=%d, i=%d, %s\n", i, id_order[i], id_index[i], lookup_player_name(id_list[i]));
-	}
-	ang_sort_comp = ang_sort_comp_order;
-	ang_sort_swap = ang_sort_swap_order;
-	ang_sort(0, id_order, id_index, n);
-
-	/* Display all account characters here */
-	for (j = 0; j < n; j++) {
-		/* Index sorted character list */
-		i = id_index[j];
-//s_printf("POST: o#%d=%d, i=%d, %s\n", j, id_order[j], id_index[j], lookup_player_name(id_list[i]));
-
-		u16b ptype = lookup_player_type(id_list[i]);
-
-		/* do not change protocol here */
-		tmpm = lookup_player_mode(id_list[i]);
-		if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377o");
-		else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
-		else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377r");
-		else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
-		else strcpy(colour_sequence, "\377W");
-
-		/* look up character's current location */
-		wpos = lookup_player_wpos(id_list[i]);
-		/* note: we don't receive options yet, so we don't know about 'depth_in_feet' */
-		//sprintf(loc, "On lv %d in (%d,%d)", wpos.wz, wpos.wx, wpos.wy);
-		//sprintf(loc, "on %dft in (%d,%d)", wpos.wz * 50, wpos.wx, wpos.wy);//..so we just assume 'ft' notation
-		//sprintf(loc, "in (%d,%d) on %dft", wpos.wx, wpos.wy, wpos.wz * 50);//..so we just assume 'ft' notation
-		sprintf(loc, "at (%d,%d), %dft", wpos.wx, wpos.wy, wpos.wz * 50);//..so we just assume 'ft' notation
-
-		if (is_newer_than(&connp->version, 4, 5, 7, 0, 0, 0))
-			Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd%s", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8, loc);
-		else if (is_newer_than(&connp->version, 4, 4, 9, 2, 0, 0))
-			Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd", PKT_LOGIN, tmpm, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
-		else
-			Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, colour_sequence, lookup_player_name(id_list[i]), lookup_player_level(id_list[i]), ptype&0xff , ptype>>8);
-	}
-	if (is_newer_than(&connp->version, 4, 5, 7, 0, 0, 0))
-		Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd%s", PKT_LOGIN, 0, "", "", 0, 0 , 0, "");
-	else if (is_newer_than(&connp->version, 4, 4, 9, 2, 0, 0))
-		Packet_printf(&connp->c, "%c%hd%s%s%hd%hd%hd", PKT_LOGIN, 0, "", "", 0, 0, 0);
-	else
-		Packet_printf(&connp->c, "%c%s%s%hd%hd%hd", PKT_LOGIN, "", "", 0, 0, 0);
-	if (n) C_KILL(id_list, n, int);
-	C_FREE(id_order, n, byte);
-	C_FREE(id_index, n, byte);
-	Sockbuf_flush(&connp->w);
-}
-#endif
-static int Receive_reorder(int ind) {
-	int n, charA, charB;
-	connection_t *connp = Conn[ind];
-	char ch;
-
-	if ((n = Packet_scanf(&connp->r, "%c%d%d", &ch, &charA, &charB)) != 1) {
-		errno = 0;
-		Destroy_connection(ind, "receive error in reorder");
-		return -1;
-	}
-
-	/* Reorder the character list by swapping characters A and B */
-	
-
-	/* Not needed, the client will just send a fake 'character name' "***" that
-	   will make us in turn re-send the character screen from Receive_login() below: */
-#if 0	
-	/* Send reordered list */
-	Resend_character_list(ind);
-#endif
-
-	return 1;
-}
-
 static int Receive_login(int ind) {
 	connection_t *connp = Conn[ind], *connp2 = NULL;
 	//unsigned char ch;
@@ -4265,7 +4169,47 @@ static int Receive_login(int ind) {
 
 	/* Hack for reordering characters:
 	   Resend the character overview screen (now with new character order) */
-	if (!strcmp(choice, "***")) choice[0] = 0;
+	if (!strncmp(choice, "***", 3)) {
+		unsigned char swapA, swapB, o1, o2;
+		int *id_list, ids, i, id1, id2;
+		byte *id_order, *id_index;
+		struct account acc;
+
+		choice[0] = 0;
+		if (choice[3] && choice[4]) {
+			swapA = choice[3] - 'a';
+			swapB = choice[4] - 'a';
+			if (GetAccount(&acc, connp->nick, NULL, FALSE)) {
+				ids = player_id_list(&id_list, acc.id);
+				if (ids) { /* paranoia */
+					if (swapA >= 0 && swapA < ids && swapB >=0 && swapB < ids) {
+						C_MAKE(id_order, ids, byte);
+						C_MAKE(id_index, ids, byte);
+
+						for (i = 0; i < ids; i++) {
+							id_order[i] = lookup_player_order(id_list[i]);
+							id_index[i] = i;
+						}
+						ang_sort_comp = ang_sort_comp_order;
+						ang_sort_swap = ang_sort_swap_order;
+						ang_sort(0, id_order, id_index, ids);
+
+						id1 = id_list[id_index[swapA]];
+						id2 = id_list[id_index[swapB]];
+						o1 = lookup_player_order(id1);
+						o2 = lookup_player_order(id2);
+						set_player_order(id1, o2);
+						set_player_order(id2, o1);
+
+						C_FREE(id_index, n, byte);
+						C_FREE(id_order, n, byte);
+					}
+					C_KILL(id_list, ids, int);
+				}
+			}
+		}
+		/* 'fall through' with strlen==0 to display the character screen again.. */
+	}
 
 	if (strlen(choice) == 0) { /* we have entered an account name */
 		u32b p_id;
