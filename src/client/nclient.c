@@ -404,7 +404,7 @@ int Send_file_end(int ind, unsigned short id) {
 	return 0;
 }
 
-static void reorder_characters(int col, int col_cmd, int chars) {
+static bool reorder_characters(int col, int col_cmd, int chars) {
 	char ch;
 	u32b dummy;
 	unsigned char sortA = 255, sortB = 255;
@@ -416,6 +416,10 @@ static void reorder_characters(int col, int col_cmd, int chars) {
 	ch = 0;
 	while (!ch) {
 		ch = inkey();
+		if (ch == '\e') {
+			c_put_str(TERM_L_BLUE, "                                                               ", col_cmd, 5);
+			return FALSE;
+		}
 		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
 	}
 	sortA = ch;
@@ -423,6 +427,10 @@ static void reorder_characters(int col, int col_cmd, int chars) {
 	ch = 0;
 	while (!ch) {
 		ch = inkey();
+		if (ch == '\e') {
+			c_put_str(TERM_L_BLUE, "                                                               ", col_cmd, 5);
+			return FALSE;
+		}
 		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
 	}
 	sortB = ch;
@@ -435,7 +443,7 @@ static void reorder_characters(int col, int col_cmd, int chars) {
 
 	/* Eat and discard server flags, we already know those */
 	Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &dummy, &dummy, &dummy, &dummy);
-	return;
+	return TRUE;
 }
 
 #define CHARSCREEN_COLOUR TERM_L_GREEN
@@ -808,8 +816,9 @@ void Receive_login(void) {
 		}
 	}
 	if (ch == 'O') {
-		reorder_characters(offset_bak, offset, i);
-		goto receive_characters;
+		ch = 0;
+		if (reorder_characters(offset_bak, offset, i)) goto receive_characters;
+		else goto enter_menu;
 	}
 	if (ch == 'N' || ch == 'E') {
 		/* We didn't read a desired charname from commandline? */
