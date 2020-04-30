@@ -28,7 +28,7 @@ declare -r PLOWSHARE_API_VERSION=6
 declare -r PLOWSHARE_CONFDIR="${XDG_CONFIG_HOME:-$HOME/.config}/plowshare"
 
 # Dependencies
-declare -r PLOWCORE_JS=${PLOWSHARE_JS:-js}
+declare -r PLOWCORE_JS=${PLOWSHARE_JS:-js52}
 declare -r PLOWCORE_CURL=${PLOWSHARE_CURL:-curl}
 
 # Global error codes

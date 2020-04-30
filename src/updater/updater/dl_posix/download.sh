@@ -18,7 +18,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Plowshare.  If not, see <http://www.gnu.org/licenses/>.
 
-declare -r VERSION='GIT-snapshot'
+declare -r VERSION='v2.1.7 (2020-02-09)'
 
 declare -r EARLY_OPTIONS="
 HELP,h,help,,Show help info and exit
