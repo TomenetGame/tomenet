@@ -9412,7 +9412,7 @@ static int Receive_activate_skill(int ind) {
 							msg_print(player, "\377WYour current immunity preference is \377blightning.");
 							break;
 						case 2:
-							msg_print(player, "\377WYour current immunity preference is \377wfrost.");
+							msg_print(player, "\377WYour current immunity preference is \377wcold.");
 							break;
 						case 3:
 							msg_print(player, "\377WYour current immunity preference is \377sacid.");
@@ -9441,7 +9441,7 @@ static int Receive_activate_skill(int ind) {
 						break;
 					case 4:
 						p_ptr->mimic_immunity = 2;
-						msg_print(player, "\377WPreferred form immunity is now \377wfrost.");
+						msg_print(player, "\377WPreferred form immunity is now \377wcold.");
 						if (p_ptr->body_monster &&
 						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_COLD))
 							calc_boni(player);
