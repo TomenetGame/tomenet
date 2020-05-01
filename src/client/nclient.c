@@ -404,7 +404,8 @@ int Send_file_end(int ind, unsigned short id) {
 	return 0;
 }
 
-static bool reorder_characters(int col, int col_cmd, int chars) {
+#define LOTSOFCHARS 30 /* just something that is at least as high as max_cpa + all extra slots */
+static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSOFCHARS][MAX_CHARS]) {
 	char ch;
 	u32b dummy;
 	unsigned char sortA = 255, sortB = 255;
@@ -423,18 +424,21 @@ static bool reorder_characters(int col, int col_cmd, int chars) {
 		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
 	}
 	sortA = ch;
+	c_put_str(TERM_SLATE, format("Selected: %c) %s", ch, names[ch - 'a']), col_cmd + 1, 5);
 	c_put_str(TERM_L_BLUE, "Press the slot letter of the second of two characters to swap..", col_cmd, 5);
 	ch = 0;
 	while (!ch) {
 		ch = inkey();
 		if (ch == '\e') {
 			c_put_str(TERM_L_BLUE, "                                                               ", col_cmd, 5);
+			c_put_str(TERM_L_BLUE, "                                                               ", col_cmd + 1, 5);
 			return FALSE;
 		}
 		if (ch < 'a' || ch >= 'a' + chars) ch = 0;
 	}
 	sortB = ch;
 	c_put_str(TERM_L_BLUE, "                                                               ", col_cmd, 5);
+	c_put_str(TERM_L_BLUE, "                                                               ", col_cmd + 1, 5);
 
 	/* Tell server which characters we want to swap, server will answer with full character screen data again */
 	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, format("***%c%c", sortA, sortB));
@@ -451,12 +455,10 @@ static bool reorder_characters(int col, int col_cmd, int chars) {
 void Receive_login(void) {
 	int n;
 	char ch;
-	//assume that 60 is always more than we will need for max_cpa under all circumstances in the future:
-	int i = 0, max_cpa = 60, max_cpa_plus = 0;
+	int i = 0, max_cpa, max_cpa_plus = 0;
 	short mode = 0;
-	char names[max_cpa][MAX_CHARS], colour_sequence[MAX_CHARS];//sinc max_cpa is made ridiculously high anyway, we don't need to add DED_ slots really :-p
-	//char names[max_cpa + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS + 1][MAX_CHARS], colour_sequence[3];
-	char tmp[MAX_CHARS + 3];	/* like we'll need it... */
+	char names[LOTSOFCHARS][MAX_CHARS], colour_sequence[MAX_CHARS]; //just init way too many names[] so we don't need to bother counting max_cpa + max dedicated slots..
+	char tmp[MAX_CHARS + 3];
 	int ded_pvp = 0, ded_iddc = 0, ded_pvp_shown, ded_iddc_shown;
 	char loc[MAX_CHARS];
 
@@ -817,7 +819,7 @@ void Receive_login(void) {
 	}
 	if (ch == 'O') {
 		ch = 0;
-		if (reorder_characters(offset_bak, offset, i)) goto receive_characters;
+		if (reorder_characters(offset_bak, offset, i, names)) goto receive_characters;
 		else goto enter_menu;
 	}
 	if (ch == 'N' || ch == 'E') {
