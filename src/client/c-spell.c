@@ -566,7 +566,7 @@ static void print_immunities() {
 	put_str("b) None (pick randomly each time)", j++, col);
 
 	prt("", j, col);
-	put_str("c) Lightning", j++, col);
+	put_str("c) Electricity", j++, col);
 
 	prt("", j, col);
 	put_str("d) Cold", j++, col);
@@ -718,7 +718,7 @@ void do_mimic() {
 				/* Find the power it is related to */
 				if (!strcasecmp(buf, "Check")) c = 1;
 				else if (!strcasecmp(buf, "None")) c = 2;
-				else if (!strcasecmp(buf, "Lightning")) c = 3;
+				else if (!strcasecmp(buf, "Electricity")) c = 3;
 				else if (!strcasecmp(buf, "Cold")) c = 4;
 				else if (!strcasecmp(buf, "Acid")) c = 5;
 				else if (!strcasecmp(buf, "Fire")) c = 6;
