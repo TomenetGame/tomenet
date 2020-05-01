@@ -7840,6 +7840,10 @@ void process_player_change_wpos(int Ind) {
 	char o_name_short[ONAME_LEN];
 	bool smooth_ambient = FALSE, travel_ambient = FALSE;
 
+	/* Prevent exploiting /undoskills by invoking it right before each level-up:
+	   Discard the possibility to undoskills when we venture into a dungeon again. */
+	if (!p_ptr->wpos_old.wz && p_ptr->wpos.wz) p_ptr->reskill_possible = FALSE;
+
 	/* un-snow */
 	p_ptr->temp_misc_1 &= ~0x08;
 	//update_player(Ind); //un-snowing restores lack of visibility by others - required?

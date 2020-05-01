@@ -427,6 +427,7 @@ audio_bgm = {
     "store_dungeon",
     "store_casino",
     "store_service",
+    "extra",
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end

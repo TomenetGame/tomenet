@@ -1222,7 +1222,7 @@ void lua_fix_skill_chart(int Ind) {
 		//compute_skills(p_ptr, &value, &mod, i);
 		//init_skill(p_ptr, value, mod, i);
 		/* pseudo-init-skill */
-#if 0 //SMOOTH_SKILLS
+#if 0 //SMOOTHSKILLS
 		if (s_info[i].flags1 & SKF1_HIDDEN) {
 			p_ptr->s_info[i].hidden = TRUE;
 		} else {

@@ -1506,10 +1506,13 @@ or shorter: /tym <show|rs>
  (/undos)   A skill reset function ("respec"), allowing you to undo the last
             couple of skill points you assigned in 'G' menu. Use this to
             correct points you accidentally put into a wrong skill.
-            NOTE: Logging off or gaining another level will reset undoskills,
-            making it impossible to undo points spent previously.
-            Also, it can only be used ONCE per level, so make sure you get your
-            skill point distribution right on the second attempt.
+            NOTE:
+            1) You can only use undoskills once per level.
+            2) You can only undo the points that you have spent since your
+               last level-up.
+            3) If you enter a dungeon or tower you will forfeit the possibility
+               to use /undoskills at your current character level. You will be
+               able to use it again after reaching the next character level.
 
 /untag [<inscription>]
  or /ut     If <inscription is omitted, it removes all inscriptions from items
@@ -12693,7 +12696,8 @@ If you rise in character levels by gaining experience, you also get skill
 points to distribute on various abilities. To invoke the skill system overview
 press 'G' (capital G!).
 If you make a mistake while distributing skill points, look up the /undoskills
-command in (0.2b). "/undoskills" can only be used once per level.
+command in (0.2b). "/undoskills" can only be used once per level and must be
+used before you go back into a dungeon or tower.
 
 
 Skills of dark grey colour cannot be used by your character at all.
