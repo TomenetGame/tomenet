@@ -21796,6 +21796,6 @@ PROBLEM 64: Some modified keys seem to collide with other keys, for example
             When I press CTRL+m it seems to be same as pressing the ENTER key.
 Solution:   There is currently no 'native' fix for this. A workaround is to use
             an external tool such as AutoHotKey and (in above example) have it
-            map CTRL+m to something else.
+            map CTRL+m to something else (eg:  ^m::+{1}  to map CTRL+m to '!').
 
 ===============================================================================
