@@ -409,6 +409,7 @@ static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSO
 	char ch;
 	u32b dummy;
 	unsigned char sortA = 255, sortB = 255;
+	int n;
 
 	/* Reorder-GUI */
 	//c_put_str(TERM_SELECTOR, "[", col + sel, 3);
@@ -446,7 +447,14 @@ static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSO
 	//SetTimeout(5, 0);
 
 	/* Eat and discard server flags, we already know those */
-	Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &dummy, &dummy, &dummy, &dummy);
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &dummy, &dummy, &dummy, &dummy)) <= 0) {
+		plog("Packet scan error when trying to read server flags.");
+#ifdef RETRY_LOGIN
+		rl_connection_destroyed = TRUE;
+		return FALSE;
+#endif
+		quit(NULL);
+	}
 	return TRUE;
 }
 
@@ -497,7 +505,14 @@ void Receive_login(void) {
 #endif
 
 	/* Read server detail flags for informational purpose - C. Blue */
-	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags3, &sflags2, &sflags1, &sflags0)) <= 0) return;
+	if ((n = Packet_scanf(&rbuf, "%c%d%d%d%d", &ch, &sflags3, &sflags2, &sflags1, &sflags0)) <= 0) {
+		plog("Packet scan error when trying to read server flags.");
+#ifdef RETRY_LOGIN
+		rl_connection_destroyed = TRUE;
+		return;
+#endif
+		quit(NULL);
+	}
 
 //#ifdef WINDOWS
 	/* only on first time startup? */
@@ -820,7 +835,10 @@ void Receive_login(void) {
 	if (ch == 'O') {
 		ch = 0;
 		if (reorder_characters(offset_bak, offset, i, names)) goto receive_characters;
-		else goto enter_menu;
+#ifdef RETRY_LOGIN
+		if (rl_connection_destroyed) return;
+#endif
+		goto enter_menu;
 	}
 	if (ch == 'N' || ch == 'E') {
 		/* We didn't read a desired charname from commandline? */
