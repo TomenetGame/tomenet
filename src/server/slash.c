@@ -2153,7 +2153,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (i = 0; i < MAX_PARTYNOTES; i++) {
 					if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
 						if (strcmp(party_note[i], "")) {
-							msg_format(Ind, "\377bParty Note: %s", censor ? party_note[i] : party_note_u[i]);
+							msg_format(Ind, "\377bParty Note: \377%c%s", COLOUR_CHAT_PARTY, censor ? party_note[i] : party_note_u[i]);
 							found_note = TRUE;
 						}
 						break;
@@ -2190,7 +2190,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					strcpy(party_note[i], &message2[j]);
 					strcpy(party_note_u[i], &message2_u[j]);
 					//msg_print(Ind, "\377yNote has been stored.");
-					msg_party_print(Ind, format("\377b%s changed party note to: %s", p_ptr->name, party_note[i]), format("\377b%s changed party note to: %s", p_ptr->name, party_note_u[i]));
+					msg_party_print(Ind,
+					    format("\377b%s changed party note to: \377%c%s", p_ptr->name, COLOUR_CHAT_PARTY, party_note[i]),
+					    format("\377b%s changed party note to: \377%c%s", p_ptr->name, COLOUR_CHAT_PARTY, party_note_u[i]));
 					return;
 				}
 
@@ -2209,7 +2211,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				strcpy(party_note[i], &message2[j]);
 				strcpy(party_note_u[i], &message2_u[j]);
 				//msg_print(Ind, "\377yNote has been stored.");
-				msg_party_print(Ind, format("\377b%s set party note to: %s", p_ptr->name, party_note[i]), format("\377b%s set party note to: %s", p_ptr->name, party_note_u[i]));
+				msg_party_print(Ind,
+				    format("\377b%s set party note to: \377%c%s", p_ptr->name, COLOUR_CHAT_PARTY, party_note[i]),
+				    format("\377b%s set party note to: \377%c%s", p_ptr->name, COLOUR_CHAT_PARTY, party_note_u[i]));
 				return;
 			}
 		}
@@ -2248,7 +2252,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (i = 0; i < MAX_GUILDNOTES; i++) {
 					if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
 						if (strcmp(guild_note[i], "")) {
-							msg_format(Ind, "\377bGuild Note: %s", censor ? guild_note[i] : guild_note_u[i]);
+							msg_format(Ind, "\377bGuild Note: \377%c%s", COLOUR_CHAT_GUILD, censor ? guild_note[i] : guild_note_u[i]);
 							found_note = TRUE;
 						}
 						break;
@@ -2281,7 +2285,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					strcpy(guild_note[i], &message2[j]);
 					strcpy(guild_note_u[i], &message2_u[j]);
 					//msg_print(Ind, "\377yNote has been stored.");
-					msg_guild_print(Ind, format("\377b%s changed the guild note to: %s", p_ptr->name, guild_note[i]), format("\377b%s changed the guild note to: %s", p_ptr->name, guild_note_u[i]));
+					msg_guild_print(Ind,
+					    format("\377b%s changed the guild note to: \377%c%s", p_ptr->name, COLOUR_CHAT_GUILD, guild_note[i]),
+					    format("\377b%s changed the guild note to: \377%c%s", p_ptr->name, COLOUR_CHAT_GUILD, guild_note_u[i]));
 					return;
 				}
 
@@ -2300,7 +2306,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				strcpy(guild_note[i], &message2[j]);
 				strcpy(guild_note_u[i], &message2_u[j]);
 				//msg_print(Ind, "\377yNote has been stored.");
-				msg_guild_print(Ind, format("\377b%s set the guild note to: %s", p_ptr->name, guild_note[i]), format("\377b%s set the guild note to: %s", p_ptr->name, guild_note_u[i]));
+				msg_guild_print(Ind,
+				    format("\377b%s set the guild note to: \377%c%s", p_ptr->name, COLOUR_CHAT_GUILD, guild_note[i]),
+				    format("\377b%s set the guild note to: \377%c%s", p_ptr->name, COLOUR_CHAT_GUILD, guild_note_u[i]));
 				return;
 			}
 		}
@@ -3201,17 +3209,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			if (tk) {
 				/* write something */
-				msg_party_format(Ind, format("\374\377B[%s->PBBS]\377W %s", p_ptr->name, message3), format("\374\377B[%s->PBBS]\377W %s", p_ptr->name, message3_u));
+				msg_party_format(Ind, format("\374\377%c[%s->PBBS]\377W %s", COLOUR_CHAT_PARTY, p_ptr->name, message3), format("\374\377%c[%s->PBBS]\377W %s", COLOUR_CHAT_PARTY, p_ptr->name, message3_u));
 				pbbs_add_line(p_ptr->party, format("\377%c%s %s:\377W %s", COLOUR_CHAT_PARTY, showdate(), p_ptr->name, message3), format("\377%c%s %s:\377W %s", COLOUR_CHAT_PARTY, showdate(), p_ptr->name, message3_u));
 				return;
 			}
-			msg_print(Ind, "\377BParty bulletin board (type '/pbbs <text>' in chat to write something):");
+			msg_format(Ind, "\377%cParty bulletin board (type '/pbbs <text>' in chat to write something):", COLOUR_CHAT_PARTY);
 			for (n = 0; n < BBS_LINES; n++)
 				if (strcmp(pbbs_line[p_ptr->party][n], "")) {
 					msg_format(Ind, "\377%c %s", COLOUR_CHAT_PARTY, censor ? pbbs_line[p_ptr->party][n] : pbbs_line_u[p_ptr->party][n]);
 					bbs_empty = FALSE;
 				}
-			if (bbs_empty) msg_print(Ind, "\377B <nothing has been written on the party board so far>");
+			if (bbs_empty) msg_format(Ind, "\377%c <nothing has been written on the party board so far>", COLOUR_CHAT_PARTY);
 			return;
 		}
 		else if (prefix(messagelc, "/gbbs")) {

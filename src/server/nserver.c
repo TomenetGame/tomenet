@@ -3031,14 +3031,14 @@ static int Handle_login(int ind) {
 	if (p_ptr->party) for (i = 0; i < MAX_PARTYNOTES; i++) {
 		if (!strcmp(party_note_target[i], parties[p_ptr->party].name)) {
 			if (strcmp(party_note[i], ""))
-				msg_format(NumPlayers, "\374\377bParty Note: %s", p_ptr->censor_swearing ? party_note[i] : party_note_u[i]);
+				msg_format(NumPlayers, "\374\377bParty Note: \377%c%s", COLOUR_CHAT_PARTY, p_ptr->censor_swearing ? party_note[i] : party_note_u[i]);
 			break;
 		}
 	}
 	if (p_ptr->guild) for (i = 0; i < MAX_GUILDNOTES; i++) {
 		if (!strcmp(guild_note_target[i], guilds[p_ptr->guild].name)) {
 			if (strcmp(guild_note[i], ""))
-				msg_format(NumPlayers, "\374\377bGuild Note: %s", p_ptr->censor_swearing ? guild_note[i] : guild_note_u[i]);
+				msg_format(NumPlayers, "\374\377bGuild Note: \377%c%s", COLOUR_CHAT_GUILD, p_ptr->censor_swearing ? guild_note[i] : guild_note_u[i]);
 			break;
 		}
 	}
