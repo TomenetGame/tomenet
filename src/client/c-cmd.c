@@ -3434,10 +3434,18 @@ static void monster_lore(void) {
 #if defined(USE_X11)
  /* '&' for async - actually not needed on X11 though, program will still continue to execute
     because xdg-open spawns the file manager asynchronously and returns right away */
- #define FILEMAN(p) system(format("xdg-open \"%s\" &", p));
+ #ifdef OSX
+  #define FILEMAN(p) system(format("open \"%s\" &", p));
+  #define URLMAN(p) system(format("open \"%s\" &", p));
+ #else
+  #define FILEMAN(p) system(format("xdg-open \"%s\" &", p));
+  #define URLMAN(p) system(format("xdg-open \"%s\" &", p));
+ #endif
 #elif defined(WINDOWS)
  /* 'start' for async */
  #define FILEMAN(p) system(format("start explorer \"%s\"", p));
+ //#define URLMAN(p) system(format("cmd /c start \"\" \"%s\"", p));
+ #define URLMAN(p) ShellExecute(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL);
 #endif
 void cmd_check_misc(void) {
 	char i = 0, choice;
@@ -3624,12 +3632,15 @@ void cmd_check_misc(void) {
 				FILEMAN(ANGBAND_DIR_XTRA);
 				break;
 			case 'W':
-				FILEMAN("https://www.tomenet.eu/");
+				URLMAN("https://www.tomenet.eu/");
 				break;
 #else
 			/* USE_GCU (without USE_X11) and any other unknown OS.. */
 			case 'T': case 'U': case 'S': case 'M': case 'X':
 				c_message_add("Sorry, cannot open file manager in terminal-mode.");
+				break;
+			case 'W':
+				c_message_add("Sorry, cannot open browser in terminal-mode.");
 				break;
 #endif
 
