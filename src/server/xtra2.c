@@ -1686,6 +1686,7 @@ bool set_diseased(int Ind, int v, int attacker) {
 
 	if (v) {
 		if (p_ptr->martyr) return FALSE;
+		if (p_ptr->ghost) return FALSE;
 		if (p_ptr->prace == RACE_VAMPIRE || p_ptr->prace == RACE_MAIA) return FALSE;
 	}
 
