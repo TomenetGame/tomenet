@@ -35,6 +35,9 @@
 #endif
 
 
+char _soundpack[1024], _musicpack[1024];
+
+
 //#define WINDOWS
 
 
@@ -42,11 +45,11 @@
 static short int posix_terminal = -1;//5
 
 unsigned char is_linux = 1;
-#ifdef __x86_64__
+ #ifdef __x86_64__
 unsigned char is_64bit = 1;
-#else
+ #else
 unsigned char is_64bit = 0;
-#endif
+ #endif
 #endif
 
 GtkWidget *top_window;
@@ -122,6 +125,61 @@ void show_done(gpointer window) {
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 }
+
+#ifdef WINDOWS
+ /* 'start' for async */
+void web_tomenet(GtkButton *button, gpointer label) {
+	ShellExecute(NULL, "open", "https://www.tomenet.eu/", NULL, NULL, SW_SHOWNORMAL);
+}
+void web_sound(GtkButton *button, gpointer label) {
+	ShellExecute(NULL, "open", _soundpack, NULL, NULL, SW_SHOWNORMAL);
+}
+void web_music(GtkButton *button, gpointer label) {
+	ShellExecute(NULL, "open", _musicpack, NULL, NULL, SW_SHOWNORMAL);
+}
+#elif defined(OSX)
+ /* '&' for async - actually not needed on X11 though, program will still continue to execute
+    because xdg-open spawns the file manager asynchronously and returns right away */
+void web_tomenet(GtkButton *button, gpointer label) {
+	char tmp[1024];
+
+	sprintf(tmp, "open \"%s\"", "https://www.tomenet.eu/");
+	system(tmp);
+}
+void web_sound(GtkButton *button, gpointer label) {
+	char tmp[1024];
+
+	sprintf(tmp, "open \"%s\"", _soundpack);
+	system(tmp);
+}
+void web_music(GtkButton *button, gpointer label) {
+	char tmp[1024];
+
+	sprintf(tmp, "open \"%s\"", _musicpack);
+	system(tmp);
+}
+#else /* assume USE_X11 */
+ /* '&' for async - actually not needed on X11 though, program will still continue to execute
+    because xdg-open spawns the file manager asynchronously and returns right away */
+void web_tomenet(GtkButton *button, gpointer label) {
+	char tmp[1024];
+
+	sprintf(tmp, "xdg-open \"%s\"", "https://www.tomenet.eu/");
+	system(tmp);
+}
+void web_sound(GtkButton *button, gpointer label) {
+	char tmp[1024];
+
+	sprintf(tmp, "xdg-open \"%s\"", _soundpack);
+	system(tmp);
+}
+void web_music(GtkButton *button, gpointer label) {
+	char tmp[1024];
+
+	sprintf(tmp, "xdg-open \"%s\"", _musicpack);
+	system(tmp);
+}
+#endif
 
 //void install_client(GtkWidget *widget, gpointer label) {
 void install_client(GtkButton *button, gpointer label) {
@@ -252,14 +310,6 @@ void install_sound(GtkButton *button, gpointer label) {
 #ifdef WINDOWS
 	char path[1024], out_val[1024];
 	FILE *fp;
-	char _soundpack[1024];
-	strcpy(_soundpack, "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z");
-	fp = fopen("TomeNET-Updater.cfg", "r");
-	if (fp) {
-		//fgets(out_val, 1024, fp);
-		if (fgets(out_val, 1024, fp)) strcpy(_soundpack, out_val);
-		fclose(fp);
-	}
 
 	remove("TomeNET-soundpack.7z");
 
@@ -397,20 +447,10 @@ exit(0);
 	}
  #else /* Use same dumb approach like on WINDOWS.. */
 	char path[1024], tmp[1024];
-	char _soundpack[1024];
 
 	char cwd_path[1024], out_val[1024];
 	void *cwd;
 	FILE *fp;
-
-
-	strcpy(_soundpack, "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z");
-	fp = fopen("TomeNET-Updater.cfg", "r");
-	if (fp) {
-		//fgets(out_val, 1024, fp);
-		if (fgets(out_val, 1024, fp)) strcpy(_soundpack, out_val);
-		fclose(fp);
-	}
 
 	remove("TomeNET-soundpack.7z");
 
@@ -527,16 +567,6 @@ void install_music(GtkButton *button, gpointer label) {
 #ifdef WINDOWS
 	char path[1024], out_val[1024];
 	FILE *fp;
-	char _musicpack[1024];
-
-	strcpy(_musicpack, "http://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z");
-	fp = fopen("TomeNET-Updater.cfg", "r");
-	if (fp) {
-		//fgets(out_val, 1024, fp);
-		fgets(out_val, 1024, fp);
-		if (fgets(out_val, 1024, fp)) strcpy(_musicpack, out_val);
-		fclose(fp);
-	}
 
 	remove("TomeNET-musicpack.7z");
 	/* download */
@@ -664,19 +694,10 @@ void install_music(GtkButton *button, gpointer label) {
 	}
  #else /* Use same dumb approach like on WINDOWS.. */
 	char path[1024], tmp[1024];
-	char _musicpack[1024];
 
 	char cwd_path[1024], out_val[1024];
 	void *cwd;
 	FILE *fp;
-
-	strcpy(_musicpack, "http://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z");
-	fp = fopen("TomeNET-Updater.cfg", "r");
-	if (fp) {
-		//fgets(out_val, 1024, fp);
-		if (fgets(out_val, 1024, fp)) strcpy(_musicpack, out_val);
-		fclose(fp);
-	}
 
 	remove("TomeNET-musicpack.7z");
 
@@ -866,14 +887,20 @@ int main(int argc, char *argv[]) {
 	GtkWidget *insguide;
 #endif
 
+	GtkWidget *webtomenet;
+	GtkWidget *websfx;
+	GtkWidget *webmus;
+
 	gtk_init(&argc, &argv);
 	top_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	gtk_window_set_title(GTK_WINDOW(top_window), "TomeNET Updater v1.0");
+	gtk_window_set_title(GTK_WINDOW(top_window), "TomeNET Updater v1.2");
 #ifndef GUIDE
-	gtk_window_set_default_size(GTK_WINDOW(top_window), 320, 220);
+	//gtk_window_set_default_size(GTK_WINDOW(top_window), 320, 220);
+	gtk_window_set_default_size(GTK_WINDOW(top_window), 320, 220 + 125);
 #else
-	gtk_window_set_default_size(GTK_WINDOW(top_window), 320, 270);
+	//gtk_window_set_default_size(GTK_WINDOW(top_window), 320, 270);
+	gtk_window_set_default_size(GTK_WINDOW(top_window), 320, 270 + 125);
 #endif
 	gtk_window_set_position(GTK_WINDOW(top_window), GTK_WIN_POS_CENTER);
 	//gtk_window_set_icon(GTK_WINDOW(window), create_pixbuf("updater/tomenet4.png"));
@@ -884,24 +911,36 @@ int main(int argc, char *argv[]) {
 	gtk_container_add(GTK_CONTAINER(top_window), frame);
 
 	label = gtk_label_new("  Make sure to quit and close the\ngame before running this updater!");
-	gtk_fixed_put(GTK_FIXED(frame), label, 20, 15);
+	gtk_fixed_put(GTK_FIXED(frame), label, 45, 15);
 
 	insclient = gtk_button_new_with_label("Install/update game client");
 	gtk_widget_set_size_request(insclient, 255, 35);
 	gtk_fixed_put(GTK_FIXED(frame), insclient, 30, 70);
 
+	webtomenet = gtk_button_new_with_label("Go to TomeNET website");
+	gtk_widget_set_size_request(webtomenet, 255, 25);
+	gtk_fixed_put(GTK_FIXED(frame), webtomenet, 30, 110);
+
 	inssfx = gtk_button_new_with_label("Install/update sound pack");
 	gtk_widget_set_size_request(inssfx, 255, 35);
-	gtk_fixed_put(GTK_FIXED(frame), inssfx, 30, 120);
+	gtk_fixed_put(GTK_FIXED(frame), inssfx, 30, 160);
+
+	websfx = gtk_button_new_with_label("Go to sound pack download");
+	gtk_widget_set_size_request(websfx, 255, 25);
+	gtk_fixed_put(GTK_FIXED(frame), websfx, 30, 200);
 
 	insmus = gtk_button_new_with_label("Install/update music pack");
 	gtk_widget_set_size_request(insmus, 255, 35);
-	gtk_fixed_put(GTK_FIXED(frame), insmus, 30, 170);
+	gtk_fixed_put(GTK_FIXED(frame), insmus, 30, 250);
+
+	webmus = gtk_button_new_with_label("Go to music pack download");
+	gtk_widget_set_size_request(webmus, 255, 25);
+	gtk_fixed_put(GTK_FIXED(frame), webmus, 30, 290);
 
 #ifdef GUIDE
 	insguide = gtk_button_new_with_label("Install/update guide");
 	gtk_widget_set_size_request(insguide, 255, 35);
-	gtk_fixed_put(GTK_FIXED(frame), insguide, 30, 220);
+	gtk_fixed_put(GTK_FIXED(frame), insguide, 30, 340);
 #endif
 
 	gtk_widget_show_all(top_window);
@@ -912,9 +951,11 @@ int main(int argc, char *argv[]) {
 #ifdef GUIDE
 	g_signal_connect(insguide, "clicked", G_CALLBACK(install_guide), NULL);
 #endif
+	g_signal_connect(webtomenet, "clicked", G_CALLBACK(web_tomenet), NULL);
+	g_signal_connect(websfx, "clicked", G_CALLBACK(web_sound), NULL);
+	g_signal_connect(webmus, "clicked", G_CALLBACK(web_music), NULL);
 
 	g_signal_connect_swapped(G_OBJECT(top_window), "destroy", G_CALLBACK(gtk_main_quit), NULL);
-
 
 	/* check whether 7-zip is installed, otherwise
 	   give error message about it and terminate */
@@ -1056,6 +1097,15 @@ int main(int argc, char *argv[]) {
 	}
  #endif
 #endif
+
+	strcpy(_soundpack, "http://www.mediafire.com/download/issv5sdv7kv3odq/TomeNET-soundpack.7z");
+	strcpy(_musicpack, "http://www.mediafire.com/download/3j87kp3fgzpqrqn/TomeNET-musicpack.7z");
+	fp = fopen("TomeNET-Updater.cfg", "r");
+	if (fp) {
+		if (fgets(buf, 1024, fp)) strcpy(_soundpack, buf);
+		if (fgets(buf, 1024, fp)) strcpy(_musicpack, buf);
+		fclose(fp);
+	}
 
 	gtk_main();
 
