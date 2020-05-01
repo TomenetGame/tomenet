@@ -4658,6 +4658,11 @@ void calc_boni(int Ind) {
 		csheet_boni[14].srch += 10;
 	}
 
+	/* Trapping skill helps with searching */
+	p_ptr->skill_srh += get_skill_scale(p_ptr, SKILL_TRAPPING, 25);
+	csheet_boni[14].srch += get_skill_scale(p_ptr, SKILL_TRAPPING, 25);
+	p_ptr->skill_fos += get_skill_scale(p_ptr, SKILL_TRAPPING, 15);
+
 	if (p_ptr->shadow_running) { p_ptr->pspeed += 10; csheet_boni[14].spd += 10; }
 
 	if (p_ptr->sh_fire_tim) p_ptr->sh_fire = TRUE;
