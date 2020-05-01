@@ -3480,11 +3480,12 @@ void cmd_check_misc(void) {
 	Term_putstr(40, row, -1, TERM_WHITE, "(\377yg\377w) The Guide");
 	row += 2;
 
-	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377yT\377w) Open TomeNET program folder");
-	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yU\377w) Open TomeNET user folder");
-	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yS\377w) Open TomeNET sound folder");
-	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yM\377w) Open TomeNET music folder");
-	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yX\377w) Open TomeNET xtra folder (fonts and audio)");
+	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377yT\377w) Open program folder");
+	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yU\377w) Open user folder");
+	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yS\377w) Open sound folder");
+	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yM\377w) Open music folder");
+	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yX\377w) Open xtra folder (fonts/audio)");
+	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377yW\377w) Open TomeNET website");
 	row += 4;
 
 	Term_putstr(20, row, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat to view extra character information)");
@@ -3621,6 +3622,9 @@ void cmd_check_misc(void) {
 				break;
 			case 'X':
 				FILEMAN(ANGBAND_DIR_XTRA);
+				break;
+			case 'W':
+				FILEMAN("https://www.tomenet.eu/");
 				break;
 #else
 			/* USE_GCU (without USE_X11) and any other unknown OS.. */
