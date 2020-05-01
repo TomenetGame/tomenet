@@ -8321,10 +8321,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		m_ptr->do_dist = do_dist;
 		scan_do_dist = TRUE;
 
+		/* The rest here is not needed as we didn't call teleport_away() here anymore: */
+
 		/* Hack -- get new location */
 		y = m_ptr->fy;
 		x = m_ptr->fx;
-
 		/* Hack -- get new grid */
 		c_ptr = &zcave[y][x];
 	}
@@ -8661,7 +8662,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 #endif
 
 	/* Update the monster XXX XXX XXX */
-	update_mon(c_ptr->m_idx, FALSE);
+	if (c_ptr->m_idx > 0) update_mon(c_ptr->m_idx, FALSE);
 
 	if (!quiet) {
 		/* Hack -- Redraw the monster grid anyway */
