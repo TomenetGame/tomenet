@@ -4977,7 +4977,8 @@ void interact_macros(void) {
 			Term_putstr(5, 14, -1, TERM_WHITE, "menu again. You'll then be able to create a normal, command or hybrid");
 			Term_putstr(4, 15, -1, TERM_WHITE, "macro from the whole recorded action by choosing the usual menu points");
 			Term_putstr(16, 16, -1, TERM_WHITE, "for the different macro types: h), c) or n).");
-			Term_putstr(19, 20, -1, TERM_L_RED, ">>>Press any key to start recording<<<");
+			Term_putstr(19, 20, -1, TERM_SELECTOR, ">>>                                <<<");
+			Term_putstr(19 + 3, 20, -1, TERM_L_RED,   "Press any key to start recording");
 
 			/* Wait for confirming keypress to finally start recording */
 			inkey();
@@ -6876,7 +6877,7 @@ void auto_inscriptions(void) {
 		redraw = TRUE;
 
 		/* display editing 'cursor' */
-		Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, ">>>");
+		Term_putstr(1, cur_line + 1, -1, TERM_SELECTOR, ">>>");
 
 		/* make cursor invisible */
 		Term_set_cursor(0);
@@ -9374,28 +9375,28 @@ void audio_pack_selector(void) {
 			for (k = 0; k < PACKS_SCREEN; k++) {
 				if (k - cur_sy + cur_sp >= soundpacks) break;
 				if (k == cur_sy)
-					Term_putstr(0, 4 + k, -1, TERM_ORANGE, sp_dir[cur_sp + k - cur_sy]);
+					Term_putstr(0, 4 + k, -1, TERM_SELECTOR, sp_dir[cur_sp + k - cur_sy]);
 				else
-					Term_putstr(0, 4 + k, -1, TERM_L_WHITE, sp_dir[cur_sp + k - cur_sy]);
+					Term_putstr(0, 4 + k, -1, TERM_WHITE, sp_dir[cur_sp + k - cur_sy]);
 			}
 			for (k = 0; k < PACKS_SCREEN; k++) {
 				if (k - cur_my + cur_mp >= musicpacks) break;
 				if (k == cur_my)
-					Term_putstr(40, 4 + k, -1, TERM_ORANGE, mp_dir[cur_mp + k - cur_my]);
+					Term_putstr(40, 4 + k, -1, TERM_SELECTOR, mp_dir[cur_mp + k - cur_my]);
 				else
-					Term_putstr(40, 4 + k, -1, TERM_L_WHITE, mp_dir[cur_mp + k - cur_my]);
+					Term_putstr(40, 4 + k, -1, TERM_WHITE, mp_dir[cur_mp + k - cur_my]);
 			}
 
 			Term_putstr(0, 15, -1, TERM_L_UMBER, "Selected SP:");
 			Term_putstr(13, 15, -1, TERM_YELLOW, format("%s [by %s]", sp_name[cur_sp], sp_author[cur_sp]));
-			Term_putstr(0, 16, -1, TERM_WHITE, sp_diz[cur_sp]);
-			if (strlen(sp_diz[cur_sp]) >= 80) Term_putstr(0, 17, -1, TERM_WHITE, &sp_diz[cur_sp][80]);
-			if (strlen(sp_diz[cur_sp]) >= 160) Term_putstr(0, 18, -1, TERM_WHITE, &sp_diz[cur_sp][160]);
+			Term_putstr(0, 16, -1, TERM_L_WHITE, sp_diz[cur_sp]);
+			if (strlen(sp_diz[cur_sp]) >= 80) Term_putstr(0, 17, -1, TERM_L_WHITE, &sp_diz[cur_sp][80]);
+			if (strlen(sp_diz[cur_sp]) >= 160) Term_putstr(0, 18, -1, TERM_L_WHITE, &sp_diz[cur_sp][160]);
 			Term_putstr(0, 20, -1, TERM_L_UMBER, "Selected MP:");
 			Term_putstr(13, 20, -1, TERM_YELLOW, format("%s [by %s]", mp_name[cur_mp], mp_author[cur_mp]));
-			Term_putstr(0, 21, -1, TERM_WHITE, mp_diz[cur_mp]);
-			if (strlen(mp_diz[cur_mp]) >= 80) Term_putstr(0, 22, -1, TERM_WHITE, &mp_diz[cur_mp][80]);
-			if (strlen(mp_diz[cur_mp]) >= 160) Term_putstr(0, 23, -1, TERM_WHITE, &mp_diz[cur_mp][160]);
+			Term_putstr(0, 21, -1, TERM_L_WHITE, mp_diz[cur_mp]);
+			if (strlen(mp_diz[cur_mp]) >= 80) Term_putstr(0, 22, -1, TERM_L_WHITE, &mp_diz[cur_mp][80]);
+			if (strlen(mp_diz[cur_mp]) >= 160) Term_putstr(0, 23, -1, TERM_L_WHITE, &mp_diz[cur_mp][160]);
 		}
 		redraw = TRUE;
 

@@ -2578,8 +2578,8 @@ void do_cmd_options_sfx_sdl(void) {
 		}
 
 		/* display static selector */
-		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_ORANGE, ">>>");
-		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + 10, -1, TERM_ORANGE, "<<<");
+		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_SELECTOR, ">>>");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + 10, -1, TERM_SELECTOR, "<<<");
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
@@ -2882,8 +2882,8 @@ void do_cmd_options_mus_sdl(void) {
 		}
 
 		/* display static selector */
-		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_ORANGE, ">>>");
-		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + 10, -1, TERM_ORANGE, "<<<");
+		Term_putstr(horiz_offset + 1, vertikal_offset + 10, -1, TERM_SELECTOR, ">>>");
+		Term_putstr(horiz_offset + 1 + 12 + 50 + 1, vertikal_offset + 10, -1, TERM_SELECTOR, "<<<");
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
