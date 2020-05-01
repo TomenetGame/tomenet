@@ -4762,7 +4762,7 @@ D:fade in front of your very eyes.
 
 N:313:Uruk
 G:o:B
-I:110:8d10:20:50:20
+I:110:18d10:20:50:20
 W:16:1:2300:60
 E:1:1:2:2:1:2
 O:20:80:0:0
@@ -15402,7 +15402,7 @@ D:They will help you in some quests.
 
 N:866:Elite uruk
 G:o:w
-I:110:10d10:20:50:0
+I:110:20d10:20:50:0
 W:20:1:2000:70
 E:1:1:2:2:1:2
 O:10:90:0:0
