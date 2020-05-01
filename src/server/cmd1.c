@@ -3261,12 +3261,6 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			/* Reduce damage in PvP */
 			k = (k + PVP_MELEE_DAM_REDUCTION - 1) / PVP_MELEE_DAM_REDUCTION;
 
-			/* Cannot kill on this grid? */
-			if (no_pk) {
-				if (k > q_ptr->chp) k -= q_ptr->chp;
-				if (k2 > q_ptr->chp) k2 -= q_ptr->chp;
-			}
-
 			/* Messages */
 			if (backstab) {
 				backstab_feed = TRUE;
@@ -3295,14 +3289,27 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				msg_format(0 - c_ptr->m_idx, "%s hits you for \377R%d \377wdamage.", p_ptr->name, k);
 			}
 
-			if (cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp < 5){
+			/* Cannot kill on this grid? */
+			if (no_pk) {
+				if (k > q_ptr->chp) k = q_ptr->chp;
+				if (k2 > q_ptr->chp) k2 = q_ptr->chp;
+			}
+
+			/* no_pk handled */
+			if (cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp - k <= 0) {
 				msg_format(Ind, "\374You have beaten %s", q_ptr->name);
 				msg_format(0 - c_ptr->m_idx, "\374%s has beaten you up!", p_ptr->name);
 				teleport_player(0 - c_ptr->m_idx, 400, TRUE);
+
+				/* End of the fight */
+				break;
 			}
 
 			p_ptr->vamp_fed_midx = -c_ptr->m_idx;
+			p_ptr->tmp_x = 0; //blood bond marker
 			take_hit(0 - c_ptr->m_idx, k, p_ptr->name, Ind);
+			/* Blood bond won? End of the fight */
+			if (p_ptr->tmp_x) break;
 
 			/* Check for death */
 			if (q_ptr->death) {
@@ -3338,13 +3345,18 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 //				sound(Ind, SOUND_HIT);
 #endif
 
-				/* end of our fight */
+				/* End of the fight */
 				break;
 			}
 
+			/* Redundant check actually, we already caught all 'End of the fight' cases above. */
 			if (!c_ptr->m_idx) break;
 
+			/* -- Target didn't die, so the fight is still going on -- */
+
+			/* Apply aura damage to attacker */
 			py_touch_zap_player(Ind, -c_ptr->m_idx);
+			/* todo maybe: handle player death from getting zapped? */
 
 			/* VAMPIRIC: Are we draining it?  A little note: If the monster is
 			   dead, the drain does not work... */
@@ -4532,6 +4544,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 //				sound(Ind, SOUND_HIT);
 #endif
 
+				fear = FALSE; /* paranoia */
 				break; /* monster is dead */
 			}
 #ifdef ENABLE_OHERETICISM
@@ -4540,6 +4553,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 
 			touch_zap_player(Ind, c_ptr->m_idx);
+			/* todo maybe: handle player death from getting zapped? */
 
 			/* Apply effects from mimic monster forms */
 			if (p_ptr->body_monster) {

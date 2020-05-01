@@ -2082,6 +2082,8 @@ destined_defeat:
 
 				teleport_player(Ind, 4, TRUE);
 
+				/* marker for py_attack_player() to stop the fight, better than just checking c_ptr->m_idx.. */
+				p_ptr->tmp_x = 1;
 				return;
 			}
 		/* get real killer (for log file and scoreboard) in case we're hallucinating */
