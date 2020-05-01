@@ -8097,7 +8097,7 @@ D:(This is a quest item)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
 #W:(depth):(rarity[arts only]):(weight):(price)
-#A:(depth)/(chance[1/value])   [multiple definitions are possible]
+#A:(depth)/(chance[1/value])   [multiple definitions are possible; chance=0 makes the item unfindable]
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC)
 #F:(Flag) |...
 # Note that W and A lines are not in effect for INSTA_ARTs. Only a_info counts for those.
