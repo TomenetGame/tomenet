@@ -306,7 +306,7 @@ I:1000:0
 #F:HIDDEN
 
 N:46:Trapping
-D:Ability to set monster traps and to disarm various traps and pick locks.
+D:Ability to set and pseudo-ID monster traps, disarm any traps and pick locks.
 D:Increases chance to not get hindered by monsters when trying to lay a trap.
 A:10:Set trap
 I:1000:46
