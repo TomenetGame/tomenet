@@ -8286,6 +8286,9 @@ Ironman Deep Dive Challenge (IDDC)
     to take the staircase to leave the town, and read the scrolls in an actual
     dungeon level instead.
 
+    Recharging wands and staves in the IDDC has a considerably lower chance for
+    them to break (aka disappear in a bright flash of light) than usual.
+
   Layout, dungeon types and bosses:
     The IDDC is randomly using themes of all the other dungeons, the selection
     is randomly rerolled every 24 hours. The final floor of each theme might
