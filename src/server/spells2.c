@@ -4319,6 +4319,9 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 	/* Recharge wand/staff -- Note: Currently charge_wand()/charge_staff() are used only for item generation but not here. */
 	else {
+		/* Allow !D inscription to auto-discharge an item before recharging it? */
+		if (check_guard_inscription(o_ptr->note, 'D')) o_ptr->pval = 0;
+
 		/* Recharge power */
 		i = (pow + 100 - lev - (10 * o_ptr->pval)) / 15;
 

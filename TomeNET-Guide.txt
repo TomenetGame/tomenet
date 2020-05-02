@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. April 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 2. May 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.2 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1674,6 +1674,11 @@ Rods only:
 Wands and directional rods:
     !K          Will enable fire-till-kill mode for this item, provided that
                 you have turned on fire-till-kill mode the usual way ('m' key).
+
+Wands and staves:
+    !D          Will automatically discharge the device first when a recharge
+                attempt is made (to minimize the risk of blowing up at the
+                tradeoff of discarding the extra charges).
 
 Ammunition:
     !=          Will make your character auto-pickup the ammo from the floor.
