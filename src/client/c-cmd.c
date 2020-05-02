@@ -3654,7 +3654,7 @@ void cmd_check_misc(void) {
 			case 'T': case 'U': case 'S': case 'M': case 'X':
 				c_message_add("Sorry, cannot open file manager in terminal-mode.");
 				break;
-			case 'W': case 'P': case 'R': case 'L': 
+			case 'W': case 'P': case 'R': case 'L':
 				c_message_add("Sorry, cannot open browser in terminal-mode.");
 				break;
 #endif
