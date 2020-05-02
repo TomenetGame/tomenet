@@ -5250,7 +5250,8 @@ static void player_talk_aux(int Ind, char *message) {
 	} else if (p_ptr->mutedchat) return;
 
 	/* From here on we need colon_u */
-	colon_u = message_u + (colon - message);
+	if (colon) colon_u = message_u + (colon - message);
+	else colon_u = NULL;
 
 	/* Acquire length of search string */
 	len = strlen(search);
