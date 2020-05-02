@@ -3154,7 +3154,7 @@ static int Handle_login(int ind) {
 	   The minus constant is for optional songs, ie songs that have a commented out music.cfg entry by default (user's choice to enable them). */
 	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 111 - 4) /*hector/hitfloor/recall/animal_birdofprey */
 		msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
-	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 40) //(-39)
+	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 41) //extra
 		msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---");
 
 	/* Admin messages */
