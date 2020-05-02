@@ -78,7 +78,7 @@ static cptr ring_adj[MAX_ROCKS] = {
 
 	"Fluorspar", "Agate",
 };
-/* Specialty for flavour_hacks(): Don't use unfitting materials for artifacts */
+/* Specialty for flavor_hacks(): Don't use unfitting materials for artifacts */
 static bool ring_cheap[MAX_ROCKS] = {
 	0, 0, 0, 0, 0,   0, 1, 0, 0, 0,   0, 1, 0, 1, 0,   0, 0, 1, 0, 0,
 	0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0, 0,   0, 0, 1, 0, 1,
@@ -153,7 +153,7 @@ static cptr amulet_adj[MAX_AMULETS] = {
 	"Meerschaum", "Jade", "Red Opal",
 	//"Glimmer-Stone",
 };
-/* Specialty for flavour_hacks(): Don't use unfitting materials for artifacts */
+/* Specialty for flavor_hacks(): Don't use unfitting materials for artifacts */
 static bool amulet_cheap[MAX_AMULETS] = {
 	0, 1, 1, 0, 0,   0, 1, 0, 0, 1,   1, 0, 0, 0, 0,   0, 0, 0, 0, 1,
 	1, 1, 1, 0, 1,   1, 0, 0, 0, 0,   1, 0, 0, 0, 1,   0, 0, 0, 0, 1,
