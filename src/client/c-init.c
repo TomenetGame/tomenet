@@ -81,7 +81,7 @@ void init_spells(s16b new_size) {
 	max_spells = new_size;
 }
 
-static bool check_dir2(cptr s) {
+bool check_dir2(cptr s) {
 	DIR *dp = opendir(s);
 
 	if (dp) {

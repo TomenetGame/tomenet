@@ -3628,10 +3628,18 @@ void cmd_check_misc(void) {
 			case 'U': FILEMAN(ANGBAND_DIR_USER); break;
 			case 'S':
 				path_build(path, 1024, ANGBAND_DIR_XTRA, "sound");
+				if (!check_dir2(path)) {
+					c_message_add("\377yA folder 'sound' doesn't exist. Press 'X' instead to go to the 'xtra' folder.");
+					break;
+				}
 				FILEMAN(path);
 				break;
 			case 'M':
 				path_build(path, 1024, ANGBAND_DIR_XTRA, "music");
+				if (!check_dir2(path)) {
+					c_message_add("\377yA folder 'music' doesn't exist. Press 'X' instead to go to the 'xtra' folder.");
+					break;
+				}
 				FILEMAN(path);
 				break;
 			case 'X':
