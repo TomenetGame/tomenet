@@ -985,7 +985,7 @@ void flavor_hacks(void) {
 					if (ring_cheap[j]) continue;
 					/* Don't steal colour of another INSTA_ART that has already found its fitting colour */
 					k = lookup_kind(TV_RING, j);
-					if ((k_info[k].flags3 & TR3_INSTA_ART) && amulet_col[j] == k_info[k].k_attr) continue;
+					if ((k_info[k].flags3 & TR3_INSTA_ART) && ring_col[j] == k_info[k].k_attr) continue;
 					/* Ok! Switch them */
 					temp_col = ring_col[k_info[i].sval];
 					temp_adj = ring_adj[k_info[i].sval];
@@ -1015,7 +1015,7 @@ void flavor_hacks(void) {
 				if (k_info[i].sval == SV_RING_POWER && strcmp(ring_adj[j], "Plain Gold")) continue;
 				/* Don't steal colour of another INSTA_ART that has already found its fitting colour */
 				k = lookup_kind(TV_RING, j);
-				if ((k_info[k].flags3 & TR3_INSTA_ART) && amulet_col[j] == k_info[k].k_attr
+				if ((k_info[k].flags3 & TR3_INSTA_ART) && ring_col[j] == k_info[k].k_attr
 				    && k_info[i].sval != SV_RING_POWER) //special hack for The One Ring: (part 2/3)
 					continue;
 				/* Ok! Switch them */
