@@ -1368,7 +1368,7 @@ static cptr st_info_flags1[] = {
 	a final '$' tests for <condition>,
 	a final '!' tests for NOT<condition> */
 static bool invalid_server_conditions(char *buf) {
-	char cc[1024 + 1], m[20];
+	char cc[1024 + 1], m[MAX_CHARS];
 	bool invalid = FALSE;
 
 	/* while loop to allow multiple macros appended to each other in the same line! */
