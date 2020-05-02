@@ -1369,18 +1369,18 @@ static cptr st_info_flags1[] = {
 	a final '!' tests for NOT<condition> */
 static bool invalid_server_conditions(char *buf) {
 	char cc[1024 + 1], m[20];
-	int ccn = 1;
 	bool invalid = FALSE;
 
 	/* while loop to allow multiple macros appended to each other in the same line! */
 	while (buf[0] == '$' || buf[0] == '%') {
 		bool negation = FALSE, ignore = (buf[0] == '%');
+		int ccn = 1;
 
 		/* read the tag between $...$ symbols */
 		while (buf[ccn] != '$' && buf[ccn] != '!' && buf[ccn] != '\0')
 			{ cc[ccn - 1] = buf[ccn]; ccn++; }
 
-		if (buf[ccn] == '\0') return TRUE; /* end of line reached, completely invalid */
+		if (buf[ccn] == '\0') return TRUE; /* error: end of line reached instead of completing the tag -> completely invalid */
 
 		/* inverted rule? means that tag is between $...! symbols */
 		if (buf[ccn] == '!') negation = TRUE;
@@ -1532,6 +1532,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "ENABLE_EXCAVATION") && negation) invalid = TRUE;
 #endif
+#ifndef EXCAVATION_IDDC_ONLY
+		if (streq(m, "EXCAVATION_IDDC_ONLY") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "EXCAVATION_IDDC_ONLY") && negation) invalid = TRUE;
+#endif
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
 		    strcmp(m, "RPG_SERVER") &&
@@ -1555,6 +1560,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_OHERETICISM") &&
 		    strcmp(m, "ENABLE_OUNLIFE") &&
 		    strcmp(m, "ENABLE_EXCAVATION") &&
+		    strcmp(m, "EXCAVATION_IDDC_ONLY") &&
 			TRUE)
 			invalid = TRUE;
 	}
