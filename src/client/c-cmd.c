@@ -3489,17 +3489,17 @@ void cmd_check_misc(void) {
 	row += 2;
 
 	/* Folders */
-	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377yT\377w) Open program folder");
-	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yU\377w) Open user folder");
-	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yS\377w) Open sound folder");
-	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yM\377w) Open music folder");
-	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yX\377w) Open xtra folder (fonts/audio)");
+	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UT\377w) Open program folder");
+	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UU\377w) Open user folder");
+	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377US\377w) Open sound folder");
+	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UM\377w) Open music folder");
+	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377UX\377w) Open xtra folder (fonts/audio)");
 	/* URLs */
 	row += 3;
-	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377yW\377w) Open TomeNET website");
-	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yP\377w) Open Player Stores page");
-	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yR\377w) Open Mikael's monster search");
-	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yL\377w) Open oook.cz ladder site");
+	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UW\377w) Open TomeNET website");
+	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UP\377w) Open Player Stores page");
+	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377UR\377w) Open Mikael's monster search");
+	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UL\377w) Open oook.cz ladder site");
 	row += 3;
 
 	Term_putstr(40, row, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat for extra info)");
