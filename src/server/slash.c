@@ -7724,6 +7724,33 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				s_printf("done.\n");
 				return;
 			}
+			else if (prefix(messagelc, "/partymemberfix")) { //no idea atm why some parties show way higher member # in shift+p than actual members
+				int slot, members, scanned = 0, fixed = 0;
+				hash_entry *ptr;
+				s_printf("PARTYMEMBERFIX:\n");
+				for (i = 1; i < MAX_PARTIES; i++) {
+					if (!parties[i].members) continue;
+					scanned++;
+					members = 0;
+					for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
+						ptr = hash_table[slot];
+						while (ptr) {
+							if (ptr->party == i) members++;
+							ptr = ptr->next;
+						}
+					}
+					if (members != parties[i].members) {
+						s_printf(" Fixed party %d '%s': %d -> %d\n", i, parties[i].name, parties[i].members, members);
+						parties[i].members = members;
+						if (!members) del_party(i);
+						fixed++;
+					}
+					else s_printf(" (Party %d '%s': %d is correct)\n", i, parties[i].name, members);
+				}
+				s_printf("Done.\n");
+				msg_format(Ind, "Scanned %d parties, fixed %d.", scanned, fixed);
+				return;
+			}
 			else if (prefix(messagelc, "/guildmodefix")) {
 				cptr name = NULL;
 				s_printf("Fixing guild modes..\n");
@@ -7743,12 +7770,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/guildmemberfix")) {
-				int slot, members;
+				int slot, members, scanned = 0, fixed = 0;
 				hash_entry *ptr;
 				/* fix wrongly too high # of guild members, caused by (now fixed) guild_dna bug */
 				s_printf("GUILDMEMBERFIX:\n");
 				for (i = 1; i < MAX_GUILDS; i++) {
 					if (!guilds[i].members) continue;
+					scanned++;
 					members = 0;
 					for (slot = 0; slot < NUM_HASH_ENTRIES; slot++) {
 						ptr = hash_table[slot];
@@ -7757,12 +7785,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							ptr = ptr->next;
 						}
 					}
-					if (members != guilds[i].members) s_printf(" Fixed guild %d '%s': %d -> %d\n", i, guilds[i].name, guilds[i].members, members);
+					if (members != guilds[i].members) {
+						s_printf(" Fixed guild %d '%s': %d -> %d\n", i, guilds[i].name, guilds[i].members, members);
+						guilds[i].members = members;
+						if (!members) del_guild(i);
+						fixed++;
+					}
 					else s_printf(" (Guild %d '%s': %d is correct)\n", i, guilds[i].name, members);
-					guilds[i].members = members;
-					if (!members) del_guild(i);
 				}
 				s_printf("Done.\n");
+				msg_format(Ind, "Scanned %d guilds, fixed %d.", scanned, fixed);
 				return;
 			}
 			else if (prefix(messagelc, "/guildrename")) {

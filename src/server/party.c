@@ -43,7 +43,6 @@
 
 
 static char *t_crypt(char *inbuf, cptr salt);
-static void del_party(int id);
 static u32b new_accid(void);
 
 /* The hash table itself */
@@ -2635,7 +2634,7 @@ void guild_timeout(int id) {
  *
  * Design improvement
  */
-static void del_party(int id) {
+void del_party(int id) {
 	int i;
 	bool sent = FALSE;
 	/* Remove the party altogether */

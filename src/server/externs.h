@@ -1390,6 +1390,7 @@ extern int party_add(int adder, cptr name);
 extern int party_add_self(int Ind, cptr party);
 extern int party_remove(int remover, cptr name);
 extern void party_leave(int Ind, bool voluntarily);
+extern void del_party(int id);
 extern void party_close(int Ind);
 extern void party_msg(int party_id, cptr msg);
 extern void party_msg_ignoring(int sender, int party_id, cptr msg);
