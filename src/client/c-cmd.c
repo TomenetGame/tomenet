@@ -3488,15 +3488,21 @@ void cmd_check_misc(void) {
 	Term_putstr(40, row, -1, TERM_WHITE, "(\377yg\377w) The Guide");
 	row += 2;
 
+	/* Folders */
 	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377yT\377w) Open program folder");
 	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yU\377w) Open user folder");
 	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yS\377w) Open sound folder");
 	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yM\377w) Open music folder");
 	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377yX\377w) Open xtra folder (fonts/audio)");
-	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377yW\377w) Open TomeNET website");
-	row += 4;
+	/* URLs */
+	row += 3;
+	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377yW\377w) Open TomeNET website");
+	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377yP\377w) Open Player Stores page");
+	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377yR\377w) Open Mikael's monster search");
+	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377yL\377w) Open oook.cz ladder site");
+	row += 3;
 
-	Term_putstr(20, row, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat to view extra character information)");
+	Term_putstr(40, row, -1, TERM_WHITE, "\377s(Type \377y/ex\377s in chat for extra info)");
 
 	Term_putstr(0, 22, -1, TERM_BLUE, "Command: ");
 
@@ -3634,12 +3640,21 @@ void cmd_check_misc(void) {
 			case 'W':
 				URLMAN("https://www.tomenet.eu/");
 				break;
+			case 'P':
+				URLMAN("https://www.tomenet.eu/pstores.php");
+				break;
+			case 'R':
+				URLMAN("https://muuttuja.org/tomenet/monsters/index.php");
+				break;
+			case 'L': //ow http
+				URLMAN("http://angband.oook.cz/ladder-browse.php?v=TomeNET");
+				break;
 #else
 			/* USE_GCU (without USE_X11) and any other unknown OS.. */
 			case 'T': case 'U': case 'S': case 'M': case 'X':
 				c_message_add("Sorry, cannot open file manager in terminal-mode.");
 				break;
-			case 'W':
+			case 'W': case 'P': case 'R': case 'L': 
 				c_message_add("Sorry, cannot open browser in terminal-mode.");
 				break;
 #endif
