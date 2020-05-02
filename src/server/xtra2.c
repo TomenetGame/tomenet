@@ -5514,6 +5514,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	bool henc_cheezed = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
 	u32b resf_drops = make_resf(p_ptr), resf_chosen = resf_drops;
+	bool in_iddc;
 
 
 	/* experimental: Zu-Aon drops only randarts */
@@ -5569,6 +5570,7 @@ bool monster_death(int Ind, int m_idx) {
 	y = m_ptr->fy;
 	x = m_ptr->fx;
 	wpos = &m_ptr->wpos;
+	in_iddc = in_irondeepdive(wpos);
 	if (!(zcave = getcave(wpos))) return FALSE;
 
 	if (ge_special_sector && /* training tower event running? and we are there? */
@@ -5755,7 +5757,7 @@ bool monster_death(int Ind, int m_idx) {
 	/* Log-scumming in IDDC is like fighting clones */
 	if (p_ptr->IDDC_logscum) return FALSE;
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
-	if ((p_ptr->mode & MODE_DED_IDDC) && !in_irondeepdive(&p_ptr->wpos)
+	if ((p_ptr->mode & MODE_DED_IDDC) && !in_iddc
 	    && r_ptr->mexp) /* Allow kills in Bree */
 		return FALSE;
 	/* clones don't drop treasure or complete quests.. */
@@ -6068,6 +6070,9 @@ bool monster_death(int Ind, int m_idx) {
 
 #ifdef ENABLE_EXCAVATION
 	/* Possibly drop ingredients: Saltpeter (guano), Ammonia salt (from both, dung and poison/gas breathers), Sulfur (fire dragons), Vitriol (Acid breathers) */
+ #ifdef EXCAVATION_IDDC_ONLY
+    if (in_iddc)
+ #endif
     {
 	bool found_chemical = FALSE;
 
@@ -6249,7 +6254,7 @@ bool monster_death(int Ind, int m_idx) {
 			int before = p_ptr->r_mimicry[credit_idx];
 
 			/* get +1 bonus credit in Ironman Deep Dive Challenge */
-			if (in_irondeepdive(wpos))
+			if (in_iddc)
 #ifndef IDDC_MIMICRY_BOOST
 				p_ptr->r_mimicry[credit_idx]++;
 #else /* give a possibly greater boost than just +1 */
@@ -6337,7 +6342,7 @@ if (cfg.unikill_format) {
 #endif
 		else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
-			if (in_irondeepdive(wpos)) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s %s.\377D**", r_name_get(m_ptr), titlebuf, p_ptr->name);
+			if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s %s.\377D**", r_name_get(m_ptr), titlebuf, p_ptr->name);
 			else
 #endif
 			snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s %s.\377U**", r_name_get(m_ptr), titlebuf, p_ptr->name);
@@ -6356,7 +6361,7 @@ if (cfg.unikill_format) {
 #endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
-				if (in_irondeepdive(wpos)) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s.\377D**", r_name_get(m_ptr), p_ptr->name);
+				if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s.\377D**", r_name_get(m_ptr), p_ptr->name);
 				else
 #endif
 				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s.\377U**", r_name_get(m_ptr), p_ptr->name);
@@ -6371,7 +6376,7 @@ if (cfg.unikill_format) {
 #endif
 			else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
-				if (in_irondeepdive(wpos)) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by fusion %s-%s.\377D**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
+				if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by fusion %s-%s.\377D**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
 				else
 #endif
 				snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by fusion %s-%s.\377U**", r_name_get(m_ptr), p_ptr->name, p_ptr2->name);
@@ -6393,7 +6398,7 @@ if (cfg.unikill_format) {
 #endif
 					else if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 #ifdef IDDC_BOSS_COL
-						if (in_irondeepdive(wpos)) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s of %s.\377D**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
+						if (in_iddc) snprintf(buf, sizeof(buf), "\374\377D**\377c%s was slain by %s of %s.\377D**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
 						else
 #endif
 						snprintf(buf, sizeof(buf), "\374\377U**\377c%s was slain by %s of %s.\377U**", r_name_get(m_ptr), p_ptr->name, parties[p_ptr->party].name);
@@ -6482,7 +6487,7 @@ if (cfg.unikill_format) {
 		}
 
 		/* for The One Ring.. */
-		if (in_irondeepdive(wpos)) sauron_weakened_iddc = FALSE;
+		if (in_iddc) sauron_weakened_iddc = FALSE;
 		else sauron_weakened = FALSE;
 	}
 
@@ -6497,7 +6502,7 @@ if (cfg.unikill_format) {
 
 		msg_format(Ind, "\374\377UYou have conquered %s!", d_name +
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		    d_info[in_irondeepdive(wpos) ? iddc[ABS(wpos->wz)].type : d_ptr->type].name
+		    d_info[in_iddc ? iddc[ABS(wpos->wz)].type : d_ptr->type].name
 #else
 		    d_info[d_ptr->type].name
 #endif
@@ -6508,14 +6513,14 @@ if (cfg.unikill_format) {
 		/* Drop final artifact? */
 		if ((
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		    in_irondeepdive(wpos) ? (a_idx = d_info[iddc[ABS(wpos->wz)].type].final_artifact) :
+		    in_iddc ? (a_idx = d_info[iddc[ABS(wpos->wz)].type].final_artifact) :
 #endif
 		    (a_idx = d_info[d_ptr->type].final_artifact))
 		    /* hack: 0 rarity = always generate -- for Ring of Phasing! */
 
 		    && (
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		    in_irondeepdive(wpos) || //Let's reward those brave IDDC participants?
+		    in_iddc || //Let's reward those brave IDDC participants?
 #endif
 		    (!a_info[a_idx].rarity || !rand_int(3)))
 
@@ -6612,7 +6617,7 @@ if (cfg.unikill_format) {
 		/* Drop final object? */
 		if (
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		    in_irondeepdive(wpos) ? (I_kind = d_info[iddc[ABS(wpos->wz)].type].final_object) :
+		    in_iddc ? (I_kind = d_info[iddc[ABS(wpos->wz)].type].final_object) :
 #endif
 		    (I_kind = d_info[d_ptr->type].final_object)) {
 			s_printf("preparing FINAL_OBJECT %d", I_kind);

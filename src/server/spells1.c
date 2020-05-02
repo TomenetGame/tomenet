@@ -4243,7 +4243,11 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifdef ENABLE_EXCAVATION
 			/* Possibly drop ingredients: Charcoal */
-			if (!quiet && get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(4) && !p_ptr->IDDC_logscum) {
+			if (!quiet &&
+ #ifdef EXCAVATION_IDDC_ONLY
+			    in_irondeepdive(wpos) &&
+ #endif
+			    get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(4) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
@@ -4894,6 +4898,12 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	object_type *o_ptr;
 	object_kind *k_ptr;
 
+#ifdef ENABLE_EXCAVATION
+ #ifdef EXCAVATION_IDDC_ONLY
+	bool in_iddc = in_irondeepdive(wpos);
+ #endif
+#endif
+
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
 	//o_ptr = &o_list[c_ptr->o_idx];
@@ -5378,7 +5388,11 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifdef ENABLE_EXCAVATION
 				/* May create charcoal from burned wood */
-				if (!quiet && (my_strcasestr(o_name, "wood") ||
+				if (!quiet &&
+ #ifdef EXCAVATION_IDDC_ONLY
+				    in_iddc &&
+ #endif
+				    (my_strcasestr(o_name, "wood") ||
 				    (k_info[k_idx].tval == TV_JUNK && k_info[k_idx].sval == SV_WOODEN_STICK)) &&
 				    get_skill(p_ptr, SKILL_DIG) >= 5 && !p_ptr->IDDC_logscum) {
 					object_type forge;

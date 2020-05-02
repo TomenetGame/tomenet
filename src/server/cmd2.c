@@ -3113,6 +3113,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
 	struct worldpos *wpos = &p_ptr->wpos;
+#ifdef ENABLE_EXCAVATION
+ #ifdef EXCAVATION_IDDC_ONLY
+	bool in_iddc = in_irondeepdive(wpos);
+ #endif
+#endif
 
 	int cfeat, y, x, power = p_ptr->skill_dig + (quiet_borer ? 20000 : 0);
 	u32b cinfo;
@@ -3626,7 +3631,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				s_printf("DIGGING: %s found a wood piece.\n", p_ptr->name);
 			}
 #ifdef ENABLE_EXCAVATION
-			else if ((get_skill(p_ptr, SKILL_DIG) >= 5) && !rand_int(5) && !p_ptr->IDDC_logscum) {
+			else if (
+ #ifdef EXCAVATION_IDDC_ONLY
+			    in_iddc &&
+ #endif
+			    (get_skill(p_ptr, SKILL_DIG) >= 5) && !rand_int(5) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
@@ -3848,7 +3857,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 #ifdef ENABLE_EXCAVATION
 			/* Sandwall - Possibly find ingredients: Saltpetre */
-			else if (soft && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			else if (
+ #ifdef EXCAVATION_IDDC_ONLY
+			    in_iddc &&
+ #endif
+			    soft && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
@@ -3864,7 +3877,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				drop_near(0, &forge, -1, wpos, y, x);
 			}
 			/* Magma - Possibly find ingredients: Sulfur (volcanic/undersea), Vitriol */
-			else if (!hard && !soft && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			else if (
+ #ifdef EXCAVATION_IDDC_ONLY
+			    in_iddc &&
+ #endif
+			    !hard && !soft && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, rand_int(3) ? SV_SULFUR : SV_VITRIOL));
@@ -3880,7 +3897,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				drop_near(0, &forge, -1, wpos, y, x);
 			}
 			/* Quartz (whatever =p) - Possibly find ingredients: Metal powder */
-			else if (hard && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			else if (
+ #ifdef EXCAVATION_IDDC_ONLY
+			    in_iddc &&
+ #endif
+			    hard && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));

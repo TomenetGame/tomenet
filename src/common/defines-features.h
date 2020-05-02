@@ -333,6 +333,7 @@
 
 /* --------------------- Server-type dependant features -------------------- */
 
+/* Specific settings for rpg-server ("ironman server") only */
 #ifdef RPG_SERVER
  /* Do we want to use Kurzel's PvE/P when mode 1 PK is configured? */
 //#define KURZEL_PK --disabled because it breaks chat highlighting
@@ -349,6 +350,7 @@
  #define ENABLE_EXCAVATION	/* TESTING/EXPERIMENTAL - Allow creation of demolition charges for 'Digging'-renamed-to-'Excavation' skill */
 #endif
 
+/* Specific settings for test-server only */
 #ifdef TEST_SERVER
  #define NEW_REMOVE_CURSE	/* rc has fail chance; allow projecting rc spell on others */
 
@@ -370,6 +372,14 @@
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
 
  #define ENABLE_EXCAVATION	/* Allow creation of demolition charges for 'Digging'-renamed-to-'Excavation' skill */
+#endif
+
+/* Specific settings for main-server only */
+#if !defined(RPG_SERVER) && !defined(TEST_SERVER)
+ #define ENABLE_EXCAVATION	/* TESTING/EXPERIMENTAL - Allow creation of demolition charges for 'Digging'-renamed-to-'Excavation' skill */
+ #ifdef ENABLE_EXCAVATION
+  #define EXCAVATION_IDDC_ONLY	/* Restrict finding ENABLE_EXCAVATION items to within the IDDC. Usage of found items is not restricted however. */
+ #endif
 #endif
 
 #ifdef ARCADE_SERVER
