@@ -1316,6 +1316,8 @@ struct monster_type {
 	/* Prevent a monster getting hit by cumulative projections caused recursively in project()
 		(except for intended effects such as runecraft sub-explosions). */
 	s32b hit_proj_id;
+	/* Prevent a monster that dies from getting hit by potion effects caused by the potions it drops on death */
+	bool dead;
 
 	u16b do_dist;			/* execute all monster teleportation at the end of turn */
 

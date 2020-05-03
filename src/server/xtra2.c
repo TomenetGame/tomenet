@@ -5517,6 +5517,9 @@ bool monster_death(int Ind, int m_idx) {
 	bool in_iddc;
 
 
+	/* Avoid getting projected on by smash effect of our own dropped potions */
+	m_ptr->dead = TRUE;
+
 	/* experimental: Zu-Aon drops only randarts */
 	if (is_ZuAon || r_idx == RI_BAD_LUCK_BAT)
 		resf_drops |= (RESF_FORCERANDART | RESF_NOTRUEART);

@@ -5708,6 +5708,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
 
+	/* A dead monster that drops a potion that smashes cannot get hit by that very effect */
+	if (m_ptr->dead) return FALSE;
+
 	/* Prevent recursively afflicted potion_smash_effect() hits */
 	if (mon_hit_proj_id != mon_hit_proj_id2) {
 		if (m_ptr->hit_proj_id == mon_hit_proj_id) return(FALSE);
