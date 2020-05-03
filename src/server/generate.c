@@ -8556,7 +8556,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		//keep objects that may be on the floor...... but get rid of monsters
 		process_dungeon_file("t_arena_mirror.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		zcave[2][65].feat = 29; zcave[2][65].info = 7;
-		wipe_m_list(&p_ptr->wpos); //why a pack of wolves keeps getting generated o_O
+		//wipe_m_list(&p_ptr->wpos);
 
 		/* reattach objects and monsters */
 		setup_objects();
