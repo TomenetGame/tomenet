@@ -5378,6 +5378,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			else if (prefix(messagelc, "/untrap")) { /* remove all traps from floor */
+				cave_type **zcave, *c_ptr;
+				struct c_special *cs_ptr;
+				struct worldpos *wpos = &p_ptr->wpos;
+				int x, y;
+
+				if (!(zcave = getcave(wpos))) return;
+
+				i = 0;
+				for (y = 1; y < MAX_HGT - 1; y++)
+				for (x = 1; x < MAX_WID - 1; x++) {
+					c_ptr = &zcave[y][x];
+					if (!(cs_ptr = GetCS(c_ptr, CS_TRAPS))) continue;
+
+					i++;
+					cs_erase(c_ptr, cs_ptr);
+					note_spot(Ind, y, x);
+					if (c_ptr->o_idx && !c_ptr->m_idx) everyone_clear_ovl_spot(wpos, y, x);
+					else everyone_lite_spot(wpos, y, x);
+				}
+				msg_format(Ind, "%d traps removed.", i);
+				return;
+			}
 			else if (prefix(messagelc, "/game")) {
 				if (!tk) {
 					msg_print(Ind, "Usage: /game stop   or   /game rugby");
