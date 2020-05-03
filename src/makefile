@@ -283,6 +283,18 @@ ifneq (${HAVE_TINFO}, 0)
 	ACCEDIT_LIBS += -ltinfo
 endif
 
+# Optional: Compile with Link Time Optimization (LTO)
+#CFLAGS += -flto=8
+
+# Optional: Catch memory errors with AddressSanitizer
+#CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+
+# Optional: Catch bugs with UndefinedBehaviorSanitizer
+#CFLAGS += -fsanitize=undefined -fno-omit-frame-pointer
+
+# Reduce warnings
+#CFLAGS += -Wno-format-overflow
+
 
 ##
 ## Variation -- Only support "main-gcu.c" (not "main-x11.c")
