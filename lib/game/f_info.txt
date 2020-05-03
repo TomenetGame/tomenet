@@ -217,8 +217,16 @@ F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | NIGHT_DARK | NO_SHADE
 #Note: For higher town houses, this must have NO_SHADE exactly when #60 has NO_SHADE too.
 
+#fake-wall
+N:29:permanent wall
+G:#:w
+F:FLOOR
+# | REMEMBER | NOTICE | WALL
+F:NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE
 
-# HOLE 29..31 -------------------------------------------------------------
+
+# HOLE 30..31 -------------------------------------------------------------
 
 
 # 0x2x --> locked door (power 0)

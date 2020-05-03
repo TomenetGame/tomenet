@@ -6506,6 +6506,9 @@
 #define LF2_COLLAPSING		0x00400000L	/* audiovisual show when Zu-Aon is defeated ;) - C. Blue */
 #define LF2_NO_SUMMON		0x00800000L	/* disallow any summoning (to go with NO_TELE :) for new experimental dungeoneering) */
 
+#define LF2_NO_LIVE_SPAWN	0x01000000L	/* disallow any live-spawn of monsters (like in IDDC, could be used for that actually) */
+#define LF2_NO_SPAWN		0x02000000L	/* disallow any monster spawn, even at level generation time. Monsters must be placed manually, hard-codedly, if desired. */
+
 
 /* vault flags for v_info */
 #define VF1_FORCE_FLAGS		0x00000001L

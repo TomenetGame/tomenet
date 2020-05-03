@@ -3124,6 +3124,11 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6\n");
 		if (in_valinor(wpos) &&
 		    (r_idx != RI_BRIGHTLANCE ) && (r_idx != RI_OROME)) /* Brightlance, Orome */
 			return 23;
+
+		if (l_ptr) {
+			if ((l_ptr->flags2 & LF2_NO_LIVE_SPAWN) && !level_generation_time) return 54;
+			if (l_ptr->flags2 & LF2_NO_SPAWN) return 55;
+		}
 	}
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 6a\n");

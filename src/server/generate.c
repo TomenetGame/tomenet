@@ -8526,6 +8526,49 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	int dtype = 0;
 	u32b dflags1 = 0x0, dflags2 = 0x0, dflags3 = 0x0;
 
+
+#if 1
+	/* Fixed layout (maybe first non-'DF2_RANDOM' dungeon?) */
+	if (d_ptr && d_ptr->type == DI_DEATH_FATE) {
+		dun = &dun_body;
+		dun->l_ptr = getfloor(wpos);
+		dun->l_ptr->flags1 = LF1_NO_DESTROY;
+		//dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_SPAWN;
+		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN;
+		dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
+		//if (season_halloween && p_ptr && (p_ptr->prob_travel || p_ptr->ghost)) dun->l_ptr->flags1 |= LF1_FAST_DIVE;
+
+		/* Random seed for checking if a player logs back in on the same
+		   [static] floor that he logged out, or if it has changed. - C. Blue */
+		dun->l_ptr->id = (u32b)rand_int(0xFFFF) << 16;
+		dun->l_ptr->id += rand_int(0xFFFF);
+		dun->l_ptr->hgt = SCREEN_HGT;
+		dun->l_ptr->wid = SCREEN_WID;
+
+		if (!(zcave = getcave(wpos))) return;
+
+		/* Hack -- Don't tell players about it (for efficiency) */
+		level_generation_time = TRUE;
+		/* Fill the arrays of floors and walls in the good proportions */
+		//init_feat_info(wpos);
+
+		/* add the arena */
+		//keep objects that may be on the floor...... but get rid of monsters
+		process_dungeon_file("t_arena_mirror.txt", wpos, &y1, &x1, 22, 66, TRUE);
+		zcave[2][65].feat = 29; zcave[2][65].info = 7;
+		wipe_m_list(&p_ptr->wpos); //why a pack of wolves keeps getting generated o_O
+
+		/* reattach objects and monsters */
+		setup_objects();
+		/* target dummies */
+		//setup_monsters();
+		level_generation_time = FALSE;
+
+		return;
+		//d_ptr->flags2 &= ~DF2_RANDOM; //mh
+	}
+#endif
+
 #ifdef IRONDEEPDIVE_EXPAND_SMALL
 	if (in_irondeepdive(wpos)) {
 		/* Note: the only applicable 'SMALLEST' dungeon for IDDC is 'The Maze' - enjoy the huge maze.. */
