@@ -1288,7 +1288,7 @@ S:DRAIN_MANA
 D:A disembodied eye, crackling with energy.
 
 N:81:Yellow light
-G:*:y
+G:*:L
 I:120:2d6:8:12:30
 W:4:1:0:4
 E:0:0:0:0:0:0
@@ -4534,7 +4534,7 @@ D:He is green-skinned and ugly.
 
 
 N:298:Freezing sphere
-G:*:w
+G:*:c
 I:120:6d6:100:30:0
 W:17:1:0:50
 E:0:0:0:0:0:0
@@ -4546,7 +4546,7 @@ F:IM_COLD | NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | BASEANGBAND | HAS_LITE
 D:A semi-sentient snowball, hurling itself at targets at random.
 
 N:299:Jumping fireball
-G:*:r
+G:*:f
 I:120:6d6:100:30:0
 W:17:1:0:50
 E:0:0:0:0:0:0
@@ -4559,7 +4559,7 @@ F:IM_FIRE | NO_FEAR | NO_CONF | NO_SLEEP | NONLIVING | BASEANGBAND | HAS_LITE
 D:A semi-sentient fireball that moves around randomly.
 
 N:300:Ball lightning
-G:*:B
+G:*:e
 I:120:6d6:100:30:0
 W:17:1:0:50
 E:0:0:0:0:0:0
