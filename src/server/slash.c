@@ -5355,20 +5355,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "\377r%sMonsters on %s were killed.", full ? "ALL " : "", wpos_format(Ind, &p_ptr->wpos));
 				return;
 			}
-			else if (prefix(messagelc, "/ugeno")) { /* remove all unique monsters from the level */
+			else if (prefix(messagelc, "/ugeno")) { /* remove all unique monsters from the level. Parameter: Inverse: keep only uniques. */
 				/* Delete all the monsters */
 				for (i = m_max - 1; i >= 1; i--) {
 					monster_type *m_ptr = &m_list[i];
 
 					if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
 					//if (m_ptr->pet || m_ptr->special || m_ptr->questor) continue;
-					if (!(r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE)) continue;
+					if (tk) {
+						if (r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) continue;
+					} else {
+						if (!(r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE)) continue;
 
-					if (season_halloween &&
-					    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
-						great_pumpkin_duration = 0;
-						great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
-						//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+						if (season_halloween &&
+						    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+							great_pumpkin_duration = 0;
+							great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+							//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+						}
 					}
 					delete_monster_idx(i, TRUE);
 				}
