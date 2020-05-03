@@ -6720,14 +6720,14 @@ if (cfg.unikill_format) {
 
 					/* Set all his artifacts to double-speed timeout */
 					for (j = 0; j < INVEN_TOTAL; j++)
-						if (p_ptr->inventory[j].name1 &&
-						    p_ptr->inventory[j].name1 != ART_RANDART
+						if (q_ptr->inventory[j].name1 &&
+						    q_ptr->inventory[j].name1 != ART_RANDART
 #ifdef L100_ARTS_LAST
-						    && p_ptr->inventory[j].name1 != ART_POWER
-						    && p_ptr->inventory[j].name1 != ART_BLADETURNER
+						    && q_ptr->inventory[j].name1 != ART_POWER
+						    && q_ptr->inventory[j].name1 != ART_BLADETURNER
 #endif
 						    )
-							a_info[p_ptr->inventory[j].name1].winner = TRUE;
+							a_info[q_ptr->inventory[j].name1].winner = TRUE;
 
 					/* Set his retire_timer if neccecary */
 					if (cfg.retire_timer >= 0) {
