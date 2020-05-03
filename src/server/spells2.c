@@ -8735,6 +8735,8 @@ static int ingredients_to_ingredient(int sval1, int tval2, int sval2) {
 		    (tval2 == TV_CHEMICAL && sval2 == SV_VITRIOL))
 			return CI_MC;
 		return 0;
+
+	/* NO_RUST_NO_HYDROXIDE: Existing instances of these may still be used, they just cannot be generated anymore */
 	case SV_RUST:
 		if (tval2 == TV_POTION && sval2 == SV_POTION_SALT_WATER) return CI_MH;
 		return 0;
