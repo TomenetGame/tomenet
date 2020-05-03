@@ -8527,7 +8527,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	u32b dflags1 = 0x0, dflags2 = 0x0, dflags3 = 0x0;
 
 
-#if 1
+#ifdef TEST_SERVER
 	/* Fixed layout (maybe first non-'DF2_RANDOM' dungeon?) */
 	if (d_ptr && d_ptr->type == DI_DEATH_FATE) {
 		dun = &dun_body;
