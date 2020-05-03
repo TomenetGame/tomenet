@@ -1,0 +1,8 @@
+# So far unknown, game-related info to be leaked to players. - C. Blue
+# Of course everyone can just look at the git repo, but this is the 'lore' way!
+# These lines are only displayed by rumour scrolls and will not be broadcast,
+# the chance that a rumour is one of these is cfg.leak_info (tomenet.cfg).
+# (amount number below N: is last used lines - 8)
+
+N:*:Default
+0

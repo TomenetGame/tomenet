@@ -7457,8 +7457,9 @@ static void process_world(void) {
 #ifdef MUCHO_RUMOURS
 		/* the_sandman prints a rumour */
 		if (NumPlayers) {
+			/* Pick the 1st player arbitrarily, it's broadcast to the rest due to how fortune() works.. */
 			msg_print(1, "Suddenly a thought comes to your mind:");
-			fortune(1, TRUE);
+			fortune(1, 2);
 		}
 #endif
 	}

@@ -243,7 +243,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			msg_print(Ind, "You feel some paper in it - what a pity you cannot see!");
 		} else {
 			msg_print(Ind, "There is message in the cookie. It says:");
-			fortune(Ind, FALSE);
+			fortune(Ind, 1);
 		}
 		ident = TRUE;
 		break;
@@ -2812,7 +2812,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 
 		case SV_SCROLL_RUMOR:
 			if (o_ptr) msg_print(Ind, "You read the scroll:");
-			fortune(Ind, TRUE);//magik(40) ? TRUE : FALSE);
+			fortune(Ind, 0);
 			ident = TRUE;
 			break;
 
@@ -7523,32 +7523,43 @@ bool unmagic(int Ind) {
 /*
  * Displays random fortune/rumour.
  * Thanks Mihi!		- Jir -
+ * Mode (added for distributing game-related info, in this case ENABLE_EXCAVATION recipes,
+ *       basically abusing fortune() as a sort of wilderness-mapping-scroll for other info ^^ - C. Blue:
+ * 0: Scroll (usually broadcast, but we want to switch to private here if we 'leak' game info as explained above),
+ * 1: Cookie/fortune teller (non-broadcast),
+ * 2: MUCHO_RUMOURS (broadcast, extra game events, cannot be made private)
  */
-void fortune(int Ind, bool broadcast) {
+void fortune(int Ind, byte mode) {
 	char Rumor[MAX_CHARS_WIDE], Broadcast[MAX_CHARS];
+	bool broadcast = (mode != 1);
 
 	strcpy(Broadcast, "Suddenly a thought comes to your mind:");
 	msg_print(Ind, NULL);
 
-	//switch (randint(20))
-	//switch (randint(80)) {
-	switch (6) {
+	/* Leak game info sometimes secretly to a player? (non-broadcast) */
+	if (!mode && magik(cfg.leak_info)) {
+		broadcast = FALSE;
+		strcpy(Broadcast, "Suddenly an idea comes to your mind:");
+		get_rnd_line("leakinfo.txt", 0, Rumor, MAX_CHARS_WIDE);
+	} else
+	/* Normal rumours and stuff */
+	switch (6) { // <- '6': currently only use rumors.txt for rumours..
 	case 1:
-		get_rnd_line("chainswd.txt",0 , Rumor, MAX_CHARS_WIDE);
+		get_rnd_line("chainswd.txt", 0, Rumor, MAX_CHARS_WIDE);
 		break;
 	case 2:
-		get_rnd_line("error.txt",0 , Rumor, MAX_CHARS_WIDE);
+		get_rnd_line("error.txt", 0, Rumor, MAX_CHARS_WIDE);
 		break;
 	case 3:
 	case 4:
 	case 5:
-		get_rnd_line("death.txt",0 , Rumor, MAX_CHARS_WIDE);
+		get_rnd_line("death.txt", 0, Rumor, MAX_CHARS_WIDE);
 		break;
 	default:
 		if (magik(95)) get_rnd_line("rumors.txt",0 , Rumor, MAX_CHARS_WIDE);
 		else {
 			strcpy(Broadcast, "Suddenly an important thought comes to your mind:");
-			get_rnd_line("hints.txt",0 , Rumor, MAX_CHARS_WIDE);
+			get_rnd_line("hints.txt", 0, Rumor, MAX_CHARS_WIDE);
 		}
 	}
 

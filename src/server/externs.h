@@ -767,7 +767,7 @@ extern bool rod_requires_direction(int Ind, object_type *o_ptr);
 extern void do_cmd_activate(int Ind, int item, int dir);
 extern void do_cmd_activate_dir(int Ind, int dir);
 extern bool unmagic(int Ind);
-extern void fortune(int Ind, bool broadcast);
+extern void fortune(int Ind, byte mode);
 extern char random_colour(void);
 
 extern void do_cmd_drink_fountain(int Ind);

@@ -2274,9 +2274,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				break;
 			}
 
-			if(!something) msg_print(Ind, "Well, you have no fate, anyway I'll keep your money!");
+			if (!something) msg_print(Ind, "Well, you have no fate, anyway I'll keep your money!");
 #else /* fortune cookies for now, lol */
-			fortune(Ind, FALSE);
+			fortune(Ind, 1);
 #endif
 			paid = TRUE;
 			break;

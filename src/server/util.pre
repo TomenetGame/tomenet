@@ -170,6 +170,7 @@ struct server_opts
 	bool worldd_plist;
 /*	bool worldd_ircchat; */
 	bool worldd_events;
+	byte leak_info;
 };
 
 extern s32b turn;

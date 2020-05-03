@@ -6328,7 +6328,7 @@ bool monster_death(int Ind, int m_idx) {
 		/*the_sandman prints a rumour */
 		/* print the same message other players get before it - mikaelh */
 		msg_print(Ind, "Suddenly a thought comes to your mind:");
-		fortune(Ind, TRUE);
+		fortune(Ind, 2);
  #endif
 #endif
 
