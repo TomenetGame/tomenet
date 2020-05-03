@@ -5303,6 +5303,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "\377rItems on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
+			else if (prefix(messagelc, "/cp")) {
+				party_check(Ind);
+				account_check(Ind);
+				return;
+			}
 			else if (prefix(messagelc, "/mdelete")) { /* delete the monster currently looked at */
 				if (p_ptr->health_who <= 0) {//target_who
 					msg_print(Ind, "No monster looked at.");
@@ -5311,12 +5316,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				delete_monster_idx(p_ptr->health_who, TRUE);
 				return;
 			}
-			else if (prefix(messagelc, "/cp")) {
-				party_check(Ind);
-				account_check(Ind);
-				return;
-			}
-			else if (prefix(messagelc, "/geno-level") || prefix(messagelc, "/geno")) {
+			else if (prefix(messagelc, "/geno-level") || prefix(messagelc, "/geno")) { /* parameter: don't skip pets/golems/questors */
 				bool full = (tk);
 
 				/* Wipe even if town/wilderness */
@@ -5326,7 +5326,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "\377r%sMonsters on %s are cleared.", full ? "ALL " : "", wpos_format(Ind, &wp));
 				return;
 			}
-			else if (prefix(messagelc, "/vanitygeno") || prefix(messagelc, "/vgeno")) {
+			else if (prefix(messagelc, "/vanitygeno") || prefix(messagelc, "/vgeno")) { /* removes all no-death monsters */
 				for (i = m_max - 1; i >= 1; i--) {
 					monster_type *m_ptr = &m_list[i];
 
@@ -5340,10 +5340,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "\377rVanity monsters on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
-			else if (prefix(messagelc, "/mkill-level") || prefix(messagelc, "/mkill")) {
+			else if (prefix(messagelc, "/mkill-level") || prefix(messagelc, "/mkill")) { /* Kill all monsters on the level. Parameter to kill them with obvious damage inflicted, for show. */
 				bool fear, full = (tk);
 
-				/* Kill all the monsters */
 				for (i = m_max - 1; i >= 1; i--) {
 					monster_type *m_ptr = &m_list[i];
 					if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
@@ -5356,12 +5355,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "\377r%sMonsters on %s were killed.", full ? "ALL " : "", wpos_format(Ind, &p_ptr->wpos));
 				return;
 			}
-			else if (prefix(messagelc, "/mgeno")) { /* remove the monster currently looked at (NOT the one targetted) - C. Blue */
-				if (p_ptr->health_who <= 0) {//target_who
-					msg_print(Ind, "No monster looked at.");
-					return; /* no monster targetted */
+			else if (prefix(messagelc, "/ugeno")) { /* remove all unique monsters from the level */
+				/* Delete all the monsters */
+				for (i = m_max - 1; i >= 1; i--) {
+					monster_type *m_ptr = &m_list[i];
+
+					if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+					//if (m_ptr->pet || m_ptr->special || m_ptr->questor) continue;
+					if (!(r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE)) continue;
+
+					if (season_halloween &&
+					    (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3)) {
+						great_pumpkin_duration = 0;
+						great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
+						//s_printf("HALLOWEEN: Pumpkin set to fast respawn\n");
+					}
+					delete_monster_idx(i, TRUE);
 				}
-				delete_monster_idx(p_ptr->health_who, TRUE);
 				return;
 			}
 			else if (prefix(messagelc, "/game")) {
