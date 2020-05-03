@@ -8784,7 +8784,7 @@ static int mixingred_to_ingredient(int Ind, object_type *o_ptr, int tval, int sv
 	return 0; /* Failure - we created some mixture, but not an ingredient */
 }
 /* Helper function to combine two mixtures to form a new ingredient (not a mixture). */
-static int mixmix_to_ingredient(object_type *o_ptr, object_type *o2_ptr) {
+static int mixmix_to_ingredient(int Ind, object_type *o_ptr, object_type *o2_ptr) {
 	s16b xtra1 = 0x000, xtra2 = 0x000, xtra3 = 0x000, f;
 	int i, k;
 
@@ -8812,8 +8812,16 @@ static int mixmix_to_ingredient(object_type *o_ptr, object_type *o2_ptr) {
 	         Leaving this if-clause here just for visual completeness sake ;). - C. Blue */
 	if ((xtra1 & (CF_SU | CF_SP | CF_WA)) == (CF_SU | CF_SP | CF_WA)
  #endif
-	    && !xtra2 && !xtra3)
+	    && !xtra2 && !xtra3) {
+		/* Requires heat to make steam */
+		object_type *ox_ptr = &Players[Ind]->inventory[INVEN_LITE];
+
+		if (!ox_ptr->k_idx || ox_ptr->sval == SV_LITE_FEANORIAN) {
+			msg_print(Ind, "You need to equip a fire-based light source to process this.");
+			return -1;
+		}
 		return CI_AC; /* Success - we created acid */
+	}
 
 	return 0; /* Failure - we created some mixture, but not an ingredient */
 }
@@ -8991,7 +8999,7 @@ void mix_chemicals(int Ind, int item) {
 			if (i == -1) return; //keep everything for next attempt!
 		}
 		/* Last, create ingredient from mixture + mixture */
-		else i = mixmix_to_ingredient(o_ptr, o2_ptr);
+		else i = mixmix_to_ingredient(Ind, o_ptr, o2_ptr);
 
 		/* catch failure because of already saturated mixture - meaning that these two items just cannot be combined, no matter what */
 		if (i == -1) {
