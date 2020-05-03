@@ -7,7 +7,7 @@
 # +8 for ANIMAL behaviour (CAVE_ROOM)
 F: :1:11
 # Exit floor must be CAVE_ICKY to prevent phasing in
-F:.:1:7:0:0:0:0:0:0
+F:.:1:7
 F:+:224:7
 F:@:234:7
 F:<:6:7
