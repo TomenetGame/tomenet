@@ -8804,7 +8804,14 @@ static int mixmix_to_ingredient(object_type *o_ptr, object_type *o2_ptr) {
 	}
 
 	/* check if the result would be a valid ingredient */
+ #ifndef NO_OIL_ACID
 	if ((xtra1 & (CF_SU | CF_SP | CF_WA | CF_LO)) == (CF_SU | CF_SP | CF_WA | CF_LO)
+ #else
+	/* Note: This result can never be true, as 3 single-ingredients cannot come as two mixtures.
+	         Instead this is handled properly in mix-ingred function.
+	         Leaving this if-clause here just for visual completeness sake ;). - C. Blue */
+	if ((xtra1 & (CF_SU | CF_SP | CF_WA)) == (CF_SU | CF_SP | CF_WA)
+ #endif
 	    && !xtra2 && !xtra3)
 		return CI_AC; /* Success - we created acid */
 
