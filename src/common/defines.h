@@ -6512,6 +6512,7 @@
 
 #define LF2_NO_LIVE_SPAWN	0x01000000L	/* disallow any live-spawn of monsters (like in IDDC, could be used for that actually) */
 #define LF2_NO_SPAWN		0x02000000L	/* disallow any monster spawn, even at level generation time. Monsters must be placed manually, hard-codedly, if desired. */
+#define LF2_BROKEN		0x04000000L	/* Control generation of broken feats. */
 
 
 /* vault flags for v_info */

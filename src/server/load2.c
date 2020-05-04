@@ -3768,6 +3768,11 @@ void new_rd_wild() {
 					mtdoom_wpos_y = y;
 					mtdoom_wpos_z = -1;
 				}
+				else if (d_ptr->type == DI_DEATH_FATE) {
+					WPOS_DF_X = x;
+					WPOS_DF_Y = y;
+					WPOS_DF_Z = -1;
+				}
 
 #if 0
 				for (i = 0; i < 10; i++) {
@@ -3854,6 +3859,11 @@ void new_rd_wild() {
 					mtdoom_wpos_x = x;
 					mtdoom_wpos_y = y;
 					mtdoom_wpos_z = 1;
+				}
+				else if (d_ptr->type == DI_DEATH_FATE) {
+					WPOS_DF_X = x;
+					WPOS_DF_Y = y;
+					WPOS_DF_Z = 1;
 				}
 
 #if 0

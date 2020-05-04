@@ -821,12 +821,26 @@ bool place_between_targetted(struct worldpos *wpos, int y, int x, int ty, int tx
  */
 static void place_between(struct worldpos *wpos, int y, int x) {
 	int gx, gy, tries = 1000;
+
 	while (TRUE) {
 		gy = rand_int(dun->l_ptr->hgt);
 		gx = rand_int(dun->l_ptr->wid);
 		if (place_between_targetted(wpos, y, x, gy, gx)) break;
 
-		if (tries-- == 0) return;
+		if (tries-- == 0) {
+#ifdef TEST_SERVER
+			/* Failure */
+			struct dun_level *l_ptr = getfloor(wpos);
+			cave_type **zcave;
+
+			if (!(rand_int(1)) && l_ptr && !(l_ptr->flags2 & LF2_BROKEN) && ((zcave = getcave(wpos))) && (zcave[y][x].info & CAVE_STCK)) {
+				l_ptr->flags2 |= LF2_BROKEN;
+				cave_set_feat(wpos, y, x, FEAT_IRID_GATE);
+				s_printf("Broken Gate (%d,%d,%d - %d,%d).\n", wpos->wx,  wpos->wy,  wpos->wz, x, y);
+			}
+#endif
+			return;
+		}
 	}
 }
 /* external variant for use from elsewhere */
@@ -4589,7 +4603,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				if (magik(80)) place_trap(wpos, y, x, 0);
 				l_ptr->flags2 |= LF2_VAULT_HI;
  #ifdef TEST_SERVER
- s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
+ //s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
  #endif
 				break;
 
@@ -4725,7 +4739,7 @@ bool build_vault(struct worldpos *wpos, int yval, int xval, vault_type *v_ptr, p
 				if (magik(80)) place_trap(wpos, y, x, 0);
 				l_ptr->flags2 |= LF2_VAULT_HI;
 #ifdef TEST_SERVER
-s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
+//s_printf("DEBUG_FEELING: VAULT_HI by build_vault(), '8' monster\n");
 #endif
 				break;
 
@@ -4869,7 +4883,7 @@ static void build_type8(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	if (build_vault(wpos, yval, xval, v_ptr, p_ptr)) {
 		l_ptr->flags2 |= LF2_VAULT_HI;
 #ifdef TEST_SERVER
-s_printf("DEBUG_FEELING: VAULT_HI by build_type8->build_vault\n");
+//s_printf("DEBUG_FEELING: VAULT_HI by build_type8->build_vault\n");
 #endif
 	}
 
@@ -5992,7 +6006,7 @@ static void build_room_vault(worldpos *wpos, int x0, int y0, int xsize, int ysiz
 
 	l_ptr->flags2 |= LF2_VAULT_HI;
 #ifdef TEST_SERVER
-s_printf("DEBUG_FEELING: VAULT_HI by build_room_vault\n");
+//s_printf("DEBUG_FEELING: VAULT_HI by build_room_vault\n");
 #endif
 }
 
@@ -6273,7 +6287,7 @@ static void build_mini_c_vault(worldpos *wpos, int x0, int y0, int xsize, int ys
 
 	l_ptr->flags2 |= LF2_VAULT_HI;
 #ifdef TEST_SERVER
-s_printf("DEBUG_FEELING: VAULT_HI by build_mini_c(heckerboard)_vault\n");
+//s_printf("DEBUG_FEELING: VAULT_HI by build_mini_c(heckerboard)_vault\n");
 #endif
 
 	/* Free the array for visited vertices */

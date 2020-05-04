@@ -957,6 +957,23 @@ void do_cmd_go_down(int Ind) {
 		/* not jumped? strange.. */
 	}
 
+	if (c_ptr->feat == FEAT_IRID_GATE) {
+		for (i = 0; i < INVEN_PACK; i++) if (p_ptr->inventory[i].tval == TV_JUNK && p_ptr->inventory[i].sval == SV_GLASS_SHARD) {
+			msg_print(Ind, "Your glass shard disintegrates in a flurry of colours...");
+			inven_item_increase(Ind, i, -1);
+			inven_item_optimize(Ind, i);
+			inven_item_describe(Ind, i);
+			p_ptr->recall_pos.wx = WPOS_DF_X;
+			p_ptr->recall_pos.wy = WPOS_DF_Y;
+			p_ptr->recall_pos.wz = WPOS_DF_Z;
+			p_ptr->new_level_method = LEVEL_RAND;
+			recall_player(Ind, "");
+			return;
+		}
+		msg_print(Ind, "The gate seems broken.");
+		return;
+	}
+
 	if (c_ptr->feat == FEAT_BEACON) {
 		/* Hack -- take a turn */
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
