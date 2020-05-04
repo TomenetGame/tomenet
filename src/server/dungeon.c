@@ -3779,6 +3779,8 @@ static void process_player_begin(int Ind) {
 				    DF2_NO_ENTRY_MASK | DF2_RANDOM,
 				    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, FALSE, 0, DI_DEATH_FATE, 0, 0);
 		}
+		l_ptr = getfloor(&p_ptr->recall_pos);
+		l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN; //re-imprint, laziness to just overwrite any floor-feeling flags..
 		//get him there
 		p_ptr->new_level_method = LEVEL_RAND;
 		recall_player(Ind, "");
