@@ -3488,7 +3488,7 @@ static bool quest_acquire(int Ind, int q_idx, bool quiet) {
 static void quest_check_goal_deliver_questor(int Ind, int q_idx, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
 	int j, k, stage;
-	quest_info *q_ptr = &q_info[q_idx];;
+	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage;
 	qi_goal *q_goal;
 
@@ -4178,14 +4178,14 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
 		/* accept any tval? */
 		if (q_ret->otval[i] != -1 &&
 		    /* specified a tval */
-		    q_ret->otval[i] != o_ptr->tval) continue;;
+		    q_ret->otval[i] != o_ptr->tval) continue;
 
 		/* no sval specified? */
 		if (q_ret->osval[i] == 0) continue;//redundant with otval==0 check
 		/* accept any sval? */
 		if (q_ret->osval[i] != -1 &&
 		    /* specified a sval */
-		    q_ret->osval[i] != o_ptr->sval) continue;;
+		    q_ret->osval[i] != o_ptr->sval) continue;
 
 		break;
 	}
@@ -4268,7 +4268,7 @@ static bool quest_goal_matches_object(int q_idx, int stage, int goal, object_typ
          items to be marked when they get picked up at the target location, to free those marked
          ones from same target loc restrictions for re-pickup. */
 static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, monster_type *m_ptr, object_type *o_ptr) {
-	quest_info *q_ptr = &q_info[q_idx];;
+	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
 	int j, k, stage;
 	bool nisi, was_credited;
@@ -4655,7 +4655,7 @@ static void quest_handle_goal_deliver_wpos(int Ind, int py_q_idx, int q_idx, int
 static void quest_check_goal_deliver_xy(int Ind, int q_idx, int py_q_idx) {
 	player_type *p_ptr = Players[Ind];
 	int j, k, stage;
-	quest_info *q_ptr = &q_info[q_idx];;
+	quest_info *q_ptr = &q_info[q_idx];
 	qi_stage *q_stage;
 	qi_goal *q_goal;
 	qi_deliver *q_del;

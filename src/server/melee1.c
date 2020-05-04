@@ -3054,7 +3054,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					case 3: k = randint(15) + 10; break;
 					case 4: k = randint(15) + 20; break;
 					case 5: k = randint(15) + 30; break;
-					case 6: k = randint(15) + 40;; break;
+					case 6: k = randint(15) + 40; break;
 					case 7: k = randint(10) + 55; break;
 					case 8: k = randint(5) + 70; break;
 					default: k = 100; break; /* currently 8 is max, so this cannot happen */

@@ -72,7 +72,7 @@ static int pushresult (lua_State *L, int i) {
     lua_pushnil(L);
     lua_pushstring(L, strerror(errno));
     lua_pushnumber(L, errno);
-    return 3;;
+    return 3;
   }
 }
 

@@ -1990,7 +1990,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				x++;
 			}
 
-			if (ok) recreate = castle_quest(y - 1, x - 1);;
+			if (ok) recreate = castle_quest(y - 1, x - 1);
 			else msg_format(Ind, "ERROR: no quest info feature found: %d", bact - BACT_QUEST1 + FEAT_QUEST1);
 #else
 			/* get an extermination order */

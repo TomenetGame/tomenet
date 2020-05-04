@@ -8694,7 +8694,7 @@ int Send_idle(int Ind, bool idle) {
 		res = Packet_printf(&connp->c, "%c%c", PKT_IDLE, idle ? 1 : 0);
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, FALSE);
 	} else {
-		cave_type **zcave = getcave(&p_ptr->wpos);;
+		cave_type **zcave = getcave(&p_ptr->wpos);
 
 		p_ptr->muted_when_idle = FALSE;
 		res = Packet_printf(&connp->c, "%c%c", PKT_IDLE, idle ? 1 : 0);

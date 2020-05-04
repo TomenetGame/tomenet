@@ -7928,7 +7928,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */
 void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck) {
-	int prob, base, tmp_luck, i, dlev;;
+	int prob, base, tmp_luck, i, dlev;
 	int tries = 0, k_idx;
 	dungeon_type *d_ptr;
 

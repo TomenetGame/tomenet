@@ -2744,7 +2744,7 @@ static int retaliate_mimic_power(int Ind, int choice) {
  */
 static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr;;
+	object_type *o_ptr;
 	int cost, choice = 0, spell = 0;
 
 	if (item < 0) return FALSE;
@@ -3259,7 +3259,7 @@ static bool auto_retaliate_test(int Ind) {
 			/* Stop annoying auto-retaliation against certain 'monsters' */
 			if (r_ptr0->flags8 & RF8_NO_AUTORET) continue;
 
-			if (m_ptr->status == M_STATUS_FRIENDLY) continue;;
+			if (m_ptr->status == M_STATUS_FRIENDLY) continue;
 
 #ifdef EXPENSIVE_NO_TARGET_TEST
 			/* Skip monsters we cannot actually target! (Sparrows) */
