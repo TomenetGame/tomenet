@@ -2722,6 +2722,14 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		{
 			struct c_special *cs_ptr;
 
+			/* FF1_FLOOR grids now can have mimicry too */
+			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) {
+				feat = cs_ptr->sc.omni;
+			} else {
+				/* Apply "mimic" field */
+				feat = f_info[feat].mimic;
+			}
+
 			/* for FEAT_ILLUS_WALL, which aren't walls but floors! */
 			if (!p_ptr->font_map_solid_walls) {
 				/* Normal char */
