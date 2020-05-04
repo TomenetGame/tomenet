@@ -1433,8 +1433,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 						if (rand_int(3)) blinked = TRUE;
 					}
 
-					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_MONEY_BELT &&
-							magik (70))
+					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_MONEY_BELT && magik (100))//
 					{
 						/* Saving throw message */
 						msg_print(Ind, "Your money was secured!");

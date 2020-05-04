@@ -3112,7 +3112,7 @@ void do_cmd_steal(int Ind, int dir) {
 		if (rand_int(100) < 25) {
 			int amt = q_ptr->au / 10;
 
-			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik (70)) {
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik (100)) {//
 				/* Saving throw message */
 				msg_print(Ind, "You couldn't find any money!");
 				amt = 0;
