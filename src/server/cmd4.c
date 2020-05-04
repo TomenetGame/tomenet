@@ -1987,6 +1987,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 #endif
 				i = d_ptr->type;
 				if (i == DI_VALINOR && !admin) continue;
+				if (!i && d_ptr->theme == DI_DEATH_FATE && !admin) continue;
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 				if (admin && !d_ptr->known) fprintf(fff, " \377D(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 				else
@@ -2104,6 +2105,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 #endif
 				i = d_ptr->type;
 				if (i == DI_VALINOR && !admin) continue;
+				if (!i && d_ptr->theme == DI_DEATH_FATE && !admin) continue;
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 				if (admin && !d_ptr->known) fprintf(fff, " \377D(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 				else

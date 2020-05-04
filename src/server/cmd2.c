@@ -934,6 +934,13 @@ void do_cmd_go_down(int Ind) {
 			//forget_view(Ind); //the_sandman
 			msg_print(Ind, "You leave the party, passing through a gate obscured by magical fog...");
 			set_invuln_short(Ind, STAIR_GOI_LENGTH);
+			if (!players_on_depth(&old_wpos)) {
+				if (old_wpos.wz > 0) {
+					if (wild_info[old_wpos.wy][old_wpos.wx].tower) rem_dungeon(&old_wpos, TRUE);
+				} else {
+					if (wild_info[old_wpos.wy][old_wpos.wx].dungeon) rem_dungeon(&old_wpos, FALSE);
+				}
+			}
 			return;
 		}
 
