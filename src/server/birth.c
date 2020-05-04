@@ -2302,6 +2302,10 @@ static void player_setup(int Ind, bool new) {
 			   after an auto-recall, caused by a previous panic save. */
 			p_ptr->auto_transport = AT_BLINK;
 #endif
+			wpos->wz = 0;
+			/* Don't always start in top left corner */
+			p_ptr->py = rand_int(MAX_WID - 4) + 2;
+			p_ptr->px = rand_int(MAX_HGT - 4) + 2;
 		}
 #endif
 		/* Avoid critical border spots which might lead to segfaults.. (don't ask) */
@@ -2311,6 +2315,10 @@ static void player_setup(int Ind, bool new) {
 		if (p_ptr->py > MAX_HGT - 2) p_ptr->py = MAX_HGT - 2;
 		p_ptr->panic = FALSE;
 	}
+
+	p_ptr->wpos.wx = wpos->wx;
+	p_ptr->wpos.wy = wpos->wy;
+	p_ptr->wpos.wz = wpos->wz;
 
 #ifndef VAMPIRIC_MIST
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)
