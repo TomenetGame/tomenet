@@ -11091,6 +11091,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 
 	/* Some monsters are immune to death */
 	if (r_ptr->flags7 & RF7_NO_DEATH) return FALSE;
+	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
 
 	/* Hurt it */
 	m_ptr->hp -= dam;

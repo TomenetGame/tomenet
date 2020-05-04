@@ -5013,6 +5013,7 @@ bool mon_hit_trap(int m_idx) {
 
 						/* Some mosnters are immune to death */
 						if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
+						if (m_ptr->status == M_STATUS_FRIENDLY) dam = 0;
 
 						/* Wake the monster up */
 						m_ptr->csleep = 0;

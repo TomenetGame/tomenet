@@ -6830,7 +6830,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Clone monsters (Ignore "dam") */
 	case GF_OLD_CLONE:
 		no_dam = TRUE;
-		if (r_ptr->flags7 & RF7_NO_DEATH) { /* don't haste these.. */
+		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY) { /* don't clone these.. */
 			note = " is unaffected";
 		} else {
 			if (seen) obvious = TRUE;
@@ -6917,7 +6917,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Speed Monster (Ignore "dam") */
 	case GF_OLD_SPEED:
 		no_dam = TRUE;
-		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->mspeed >= 150) {
+		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || m_ptr->mspeed >= 150) {
 			note = " is unaffected";
 		} else {
 			if (seen) obvious = TRUE;
@@ -7839,7 +7839,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* hack */
 		no_dam = TRUE;
 
-		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
 		    (m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
@@ -7880,7 +7880,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Decrease dexterity */
 	case GF_DEC_DEX:
 		no_dam = TRUE;
-		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
 		    (m_ptr->r_idx == 74 || m_ptr->r_idx == 539) ||
@@ -7904,7 +7904,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Decrease dexterity */
 	case GF_DEC_CON:
 		no_dam = TRUE;
-		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
 		    (m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
@@ -7972,7 +7972,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Increase strength! */
 	case GF_INC_STR:
-		if ((r_ptr->flags7 & RF7_NO_DEATH)) {
+		if ((r_ptr->flags7 & RF7_NO_DEATH) ||  m_ptr->status == M_STATUS_FRIENDLY) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			/* hack */
@@ -8006,7 +8006,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Increase dexterity! */
 	case GF_INC_DEX:
-		if ((r_ptr->flags7 & RF7_NO_DEATH)) {
+		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac; /* include restore dex */
@@ -8022,7 +8022,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Increase constitution! */
 	case GF_INC_CON:
-		if ((r_ptr->flags7 & RF7_NO_DEATH)) {
+		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			if (m_ptr->maxhp < m_ptr->org_maxhp) { /* include a restore con here */
@@ -8043,7 +8043,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Augmentation! (who'd do such a thing, silyl..) */
 	case GF_AUGMENTATION:
-		if ((r_ptr->flags7 & RF7_NO_DEATH)) {
+		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			/* hack */
@@ -8097,7 +8097,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Ruination! (now we're talking) */
 	case GF_RUINATION:
-		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) ||
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
@@ -8169,7 +8169,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Give experience! (dam -> +levels) */
 	case GF_EXP:
-		if ((r_ptr->flags7 & RF7_NO_DEATH) && m_ptr->level < MONSTER_LEVEL_MAX) {
+		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || m_ptr->level >= MONSTER_LEVEL_MAX) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			msg_print_near_monster(c_ptr->m_idx, "appears more experienced!");
@@ -8267,7 +8267,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Check for death */
 	if ((dam > m_ptr->hp) &&
 	    /* Some mosnters are immune to death */
-	    !(r_ptr->flags7 & RF7_NO_DEATH)) {
+	    !(r_ptr->flags7 & RF7_NO_DEATH)
+	    && m_ptr->status != M_STATUS_FRIENDLY) {
 		/* Extract method of death */
 		note = note_dies;
 	}
@@ -8472,6 +8473,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		if (!no_dam) {
 			/* Some mosnters are immune to death */
 			if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
+			if (m_ptr->status == M_STATUS_FRIENDLY) dam = 0;
 			/* Wake the monster up */
 			m_ptr->csleep = 0;
 			/* Hurt the monster */
