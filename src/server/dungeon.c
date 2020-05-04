@@ -3759,6 +3759,7 @@ static void process_player_begin(int Ind) {
 		p_ptr->auto_transport = 0;
 		break;
 	case AT_PARTY:
+		disturb(Ind, 0, 0);//stop running for a moment..
 		p_ptr->auto_transport = 0;
 		p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 		p_ptr->recall_pos.wy = p_ptr->wpos.wy;
