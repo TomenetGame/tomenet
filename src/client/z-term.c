@@ -758,6 +758,15 @@ byte flick_colour(byte attr) {
 		case 9: case 10: case 11:
 			return TERM_YELLOW;
 		}
+	case TERM_SMOOTHPAL:
+		switch (((ticks * 10) / 52) % 6) { //xD
+		case 0: return TERM_L_RED;
+		case 1: return TERM_ORANGE;
+		case 2: return TERM_YELLOW;
+		case 3: return TERM_L_GREEN;
+		case 4: return TERM_L_BLUE;
+		case 5: return TERM_VIOLET;
+		}
 
 	default:
 		return(attr);

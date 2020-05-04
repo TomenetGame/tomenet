@@ -90,6 +90,7 @@
  #define TERM_HAVOC	58
 
  #define TERM_SELECTOR	59
+ #define TERM_SMOOTHPAL	60
 
  #ifdef EXTENDED_BG_COLOURS
   #define TERM2_BLUE	63
