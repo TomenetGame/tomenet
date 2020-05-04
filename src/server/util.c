@@ -6288,6 +6288,9 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	dun_level *l_ptr = getfloor(wpos);
 	bool felt = FALSE;
 
+	/* No feelings! */
+	if (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) return TRUE;
+
 	/* Hack for Valinor - C. Blue */
 	if (in_valinor(wpos)) {
 		msg_print(Ind, "\374\377gYou have a wonderful feeling of peace...");
