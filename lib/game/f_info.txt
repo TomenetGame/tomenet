@@ -225,8 +225,12 @@ F:FLOOR
 F:NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:LAMP_LITE | NO_SHADE
 
+N:30:wooden table
+G:=:u
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 
-# HOLE 30..31 -------------------------------------------------------------
+
+# HOLE 31 -------------------------------------------------------------
 
 
 # 0x2x --> locked door (power 0)
