@@ -220,10 +220,10 @@ F:DONT_NOTICE_RUNNING | NIGHT_DARK | NO_SHADE
 #fake-wall
 N:29:permanent wall
 G:#:w
+M:183
 F:FLOOR
-# | REMEMBER | NOTICE | WALL
 F:NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | LAMP_LITE | NO_SHADE
+F:LAMP_LITE | NO_SHADE
 
 
 # HOLE 30..31 -------------------------------------------------------------
