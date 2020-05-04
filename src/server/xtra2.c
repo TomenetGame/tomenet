@@ -10301,6 +10301,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	}
 #endif
 
+	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
+
 	p_ptr->test_count++;
 	p_ptr->test_dam += dam;
 
@@ -11932,6 +11934,8 @@ bool target_able(int Ind, int m_idx) {
 		if (!(ABS(p_ptr->px - m_ptr->fx) <= 1 && ABS(p_ptr->py - m_ptr->fy) <= 1))
 #endif
 		if (r_ptr->flags7 & RF7_NO_TARGET) return (FALSE);
+
+		if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
 
 		/* Assume okay */
 		return (TRUE);

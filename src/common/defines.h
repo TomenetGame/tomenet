@@ -2206,9 +2206,10 @@
 
 /* New features, filling up the gaps in f_info */
 #define FEAT_FOUNTAIN_BLOOD	0x1B	/* for Vampires */
-
 /* Like house wall, but for upper storeys, not illuminated by lamp light therefore */
 #define FEAT_WALL_HOUSEUPPER	0x1C
+
+#define FEAT_FAKE_WALL		0x1D
 
 /* Doors */
 #define FEAT_DOOR_HEAD		0x20
@@ -4275,6 +4276,7 @@
 #define CAVE_ENCASED	0x00800000	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
 
 #define CAVE_NOYIELD	0x01000000	/* Will not yield any items or treasure when tunneled */
+#define CAVE_DECAL	0x02000000	/* Impossible to interact with anything on this grid or the grid itself except for looking at it */
 
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */
@@ -8403,6 +8405,7 @@ extern int PlayerUID;
 #define AT_VALINOR4	6
 #define AT_VALINOR5	7
 #define AT_VALINOR6	8
+#define AT_PARTY	9
 
 
 /* Admin-specific item powers - C. Blue */
@@ -9024,3 +9027,7 @@ extern int PlayerUID;
 
 /* More readable than !is_older_than (in common/common.c) */
 #define is_atleast(vtptr, ma, mi, pa, ex, br, bu) (!is_older_than(vtptr, ma, mi, pa, ex, br, bu))
+
+/* Monster special 'status' */
+#define M_STATUS_NONE		0
+#define M_STATUS_FRIENDLY	1

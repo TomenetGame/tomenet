@@ -3259,6 +3259,8 @@ static bool auto_retaliate_test(int Ind) {
 			/* Stop annoying auto-retaliation against certain 'monsters' */
 			if (r_ptr0->flags8 & RF8_NO_AUTORET) continue;
 
+			if (m_ptr->status == M_STATUS_FRIENDLY) continue;;
+
 #ifdef EXPENSIVE_NO_TARGET_TEST
 			/* Skip monsters we cannot actually target! (Sparrows) */
 			if ((r_ptr0->flags7 & RF7_NO_TARGET) &&
@@ -3755,6 +3757,31 @@ static void process_player_begin(int Ind) {
 		msg_print(Ind, "\374\377y  or take the staircase back to the mundane world.)");
 		msg_print(Ind, "\374 ");
 		p_ptr->auto_transport = 0;
+		break;
+	case AT_PARTY:
+		p_ptr->auto_transport = 0;
+		p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+		p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+		d_ptr = getdungeon(&p_ptr->wpos);
+		//switch dungeon - assume that there is no other dungeon/tower on same wpos as Death Fate!
+		if (p_ptr->wpos.wz < 0) {
+			p_ptr->recall_pos.wz = 1;
+			//add the temporary 'mirror' dungeon
+			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP))
+				add_dungeon(&p_ptr->wpos, 1, 1, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
+				    DF2_NO_ENTRY_MASK | DF2_RANDOM,
+				    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, TRUE, 0, DI_DEATH_FATE, 0, 0);
+		} else {
+			p_ptr->recall_pos.wz = -1;
+			//add the temporary 'mirror' dungeon
+			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP))
+				add_dungeon(&p_ptr->wpos, 1, 1, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
+				    DF2_NO_ENTRY_MASK | DF2_RANDOM,
+				    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, FALSE, 0, DI_DEATH_FATE, 0, 0);
+		}
+		//get him there
+		p_ptr->new_level_method = LEVEL_RAND;
+		recall_player(Ind, "");
 		break;
 	}
 

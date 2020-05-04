@@ -6099,6 +6099,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	if (in_valinor(wpos)) {
 		ville = TRUE;
 		desc = "Valinor";
+		loc_pre = "in";
 	}
 	/* Hack for PvP Arena */
 	else if (in_pvparena(wpos)) {
@@ -6145,6 +6146,11 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 			desc = "Underground";
 			loc_pre = "in the";
 		}
+	}
+	else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
+		ville = TRUE;
+		desc = "Party";
+		loc_pre = "on a";
 	}
 
 	if (desc[0]) loc_name = desc;

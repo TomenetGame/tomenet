@@ -9418,6 +9418,8 @@ void process_monsters(void) {
 
 		/* Added for Valinor; also used by target dummy - C. Blue */
 		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
+		/* And for death fate */
+		if (m_ptr->status == M_STATUS_FRIENDLY) m_ptr->energy = 0;
 
 		/* Target dummy "snowiness" hack, checked once per second */
 		if (interval && !m_ptr->wpos.wz) {

@@ -846,27 +846,22 @@ void do_cmd_go_down(int Ind) {
 #ifdef DED_IDDC_AWARE
 	bool obtained = FALSE;
 #endif
+	dungeon_type *d_ptr = NULL;
 
 	if (!(zcave = getcave(wpos))) return;
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	l_ptr = getfloor(wpos);
 #endif
 
-	if (wpos->wz > 0) tower = TRUE;
-	if (wpos->wz < 0) dungeon = TRUE;
-	if (wpos->wz == 0) surface = TRUE;
-
-	if ((p_ptr->mode & MODE_DED_IDDC) && surface) {
-		if  (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z) {
-			msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
-			return;
-		}
-#ifdef DED_IDDC_AWARE
-		for (i = 0; i < MAX_K_IDX; i++)
-			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
-		obtained = TRUE;
-#endif
+	if (wpos->wz > 0) {
+		tower = TRUE;
+		d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 	}
+	if (wpos->wz < 0) {
+		dungeon = TRUE;
+		d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
+	}
+	if (wpos->wz == 0) surface = TRUE;
 
 #ifndef RPG_SERVER
 	/* Is this a one-way dungeon? */
@@ -884,11 +879,6 @@ void do_cmd_go_down(int Ind) {
 	/* Can we move ? */
 	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
 		msg_print(Ind, "You cannot move by nature.");
-		return;
-	}
-
-	if (cfg.runlevel < 5 && surface) {
-		msg_print(Ind,"The dungeon is closed");
 		return;
 	}
 
@@ -927,7 +917,26 @@ void do_cmd_go_down(int Ind) {
 		return;
 	}
 
-	if (c_ptr->feat == FEAT_BETWEEN) { 
+	if (c_ptr->feat == FEAT_BETWEEN) {
+		if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
+			un_afk_idle(Ind);
+			c_ptr->m_idx = 0;
+			everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+			forget_lite(Ind);
+			forget_view(Ind);
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			p_ptr->new_level_method = LEVEL_GHOST;
+			wpcopy(&old_wpos, wpos);
+			if (wpos->wz > 0) wpos->wz--; else wpos->wz++;
+			new_players_on_depth(&old_wpos, -1, TRUE);
+			new_players_on_depth(wpos, 1, TRUE);
+			p_ptr->new_level_flag = TRUE;
+			//forget_view(Ind); //the_sandman
+			msg_print(Ind, "You leave the party, passing through a gate obscured by magical fog...");
+			set_invuln_short(Ind, STAIR_GOI_LENGTH);
+			return;
+		}
+
 		/* Check interference */
 		if (interfere(Ind, 20)) { /* between gate interference chance */
 			/* Take a turn */
@@ -952,6 +961,22 @@ void do_cmd_go_down(int Ind) {
 		/* not transported? strange.. */
 	}
 
+	if ((p_ptr->mode & MODE_DED_IDDC) && surface) {
+		if  (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y || -1 != WPOS_IRONDEEPDIVE_Z) {
+			msg_print(Ind, "\377yYou may not enter any other dungeon besides the Ironman Deep Dive Challenge!");
+			return;
+		}
+#ifdef DED_IDDC_AWARE
+		for (i = 0; i < MAX_K_IDX; i++)
+			if (magik(DED_IDDC_AWARE)) p_ptr->obj_aware[i] = TRUE;
+		obtained = TRUE;
+#endif
+	}
+
+	if (cfg.runlevel < 5 && surface) {
+		msg_print(Ind,"The dungeon is closed");
+		return;
+	}
 
 	/* Verify stairs */
 //      if (!p_ptr->ghost && (strcmp(p_ptr->name,cfg_admin_wizard)) && c_ptr->feat != FEAT_MORE && !p_ptr->prob_travel)
@@ -6990,7 +7015,8 @@ bool interfere(int Ind, int chance) {
 //			if (r_info[m_list[i].r_idx].flags1 & RF1_NEVER_MOVE)
 			/* monster doesn't act? */
 			if (r_ptr->flags1 & RF1_NEVER_MOVE) continue;
-			if (r_ptr->flags7 & RF7_NEVER_ACT) return(FALSE);
+			if (r_ptr->flags7 & RF7_NEVER_ACT) continue;
+			if (m_ptr->status == M_STATUS_FRIENDLY) continue;
 			/* Sleeping etc.. monsters don't interfere o_O - C. Blue */
 			if (m_ptr->csleep || m_ptr->monfear || m_ptr->stunned || m_ptr->confused)
 				continue;

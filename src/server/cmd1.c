@@ -3733,6 +3733,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	r_ptr = race_inf(m_ptr);
 	helpless = (m_ptr->csleep || m_ptr->stunned > 100 || m_ptr->confused);
 
+	if (m_ptr->status == M_STATUS_FRIENDLY) return;
+
 	if ((r_ptr->flags3 & RF3_UNDEAD) ||
 	    //(r_ptr->flags3 & RF3_DEMON) ||
 	    (r_ptr->flags3 & RF3_NONLIVING) ||

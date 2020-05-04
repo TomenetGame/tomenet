@@ -1880,6 +1880,9 @@ void handle_music(int Ind) {
 		p_ptr->music_monster = -2;
 		Send_music(Ind, sector00music_dun, sector00musicalt_dun);
 		return;
+	} else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
+		Send_music(Ind, 98, 55); //party/halloween
+		return; //party/halloween
 	}
 
 	/* No-tele grid: Re-use 'terrifying' bgm for this */
@@ -8412,6 +8415,12 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	if (c_ptr->feat == FEAT_FAKE_WALL) {
+		p_ptr->auto_transport = AT_PARTY;
+		return;
+	}
+
 	inn = inside_inn(p_ptr, c_ptr);
 
 	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&

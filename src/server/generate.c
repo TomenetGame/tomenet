@@ -8533,7 +8533,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;
-		//dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_SPAWN;
 		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN;
 		dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
 		//if (season_halloween && p_ptr && (p_ptr->prob_travel || p_ptr->ghost)) dun->l_ptr->flags1 |= LF1_FAST_DIVE;
@@ -8549,8 +8548,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 		/* Hack -- Don't tell players about it (for efficiency) */
 		level_generation_time = TRUE;
-		/* Fill the arrays of floors and walls in the good proportions */
-		//init_feat_info(wpos);
 
 		/* add the arena */
 		//keep objects that may be on the floor...... but get rid of monsters
@@ -8563,9 +8560,34 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* target dummies */
 		//setup_monsters();
 		level_generation_time = FALSE;
-
 		return;
-		//d_ptr->flags2 &= ~DF2_RANDOM; //mh
+	} else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
+		dun = &dun_body;
+		dun->l_ptr = getfloor(wpos);
+		dun->l_ptr->flags1 = LF1_NO_DESTROY;
+		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN;
+		dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
+		//if (season_halloween && p_ptr && (p_ptr->prob_travel || p_ptr->ghost)) dun->l_ptr->flags1 |= LF1_FAST_DIVE;
+
+		/* Random seed for checking if a player logs back in on the same
+		   [static] floor that he logged out, or if it has changed. - C. Blue */
+		dun->l_ptr->id = (u32b)rand_int(0xFFFF) << 16;
+		dun->l_ptr->id += rand_int(0xFFFF);
+		dun->l_ptr->hgt = SCREEN_HGT;
+		dun->l_ptr->wid = SCREEN_WID;
+
+		if (!(zcave = getcave(wpos))) return;
+
+		/* Hack -- Don't tell players about it (for efficiency) */
+		level_generation_time = TRUE;
+
+		/* add the arena */
+		//keep objects that may be on the floor...... but get rid of monsters
+		process_dungeon_file("t_party.txt", wpos, &y1, &x1, 22, 66, TRUE);
+		//wipe_m_list(&p_ptr->wpos);
+
+		level_generation_time = FALSE;
+		return;
 	}
 #endif
 
@@ -11498,9 +11520,8 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 #endif
 
 	C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
-	for (i = 0; i < d_ptr->maxdepth; i++) {
+	for (i = 0; i < d_ptr->maxdepth; i++)
 		C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
-	}
 
 	s_printf("add_dungeon completed (type %d, %s).\n", type, tower ? "tower" : "dungeon");
 }
