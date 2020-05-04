@@ -5331,7 +5331,7 @@ static bool process_player_end_aux(int Ind) {
 			monster_desc(Ind, m_name, c_ptr->m_idx, 0);
 			msg_format(Ind, "Lightning strikes %s.", m_name);
 #ifdef USE_SOUND_2010
-			sound_near_site_vol(y, x, &p_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE, 50); //don't overlap, too silyl?
+			sound_near_site_vol(y, x, &p_ptr->wpos, 0, "lightning", "thunder", SFX_TYPE_NO_OVERLAP, FALSE, 50); //don't overlap, too silyl? also: no screen flashing
 #endif
 			project(0 - Ind, 0, &p_ptr->wpos, y, x, dam, GF_THUNDER, PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID | PROJECT_JUMP | PROJECT_NODF | PROJECT_NODO, "");
 			thunderstorm_visual(&p_ptr->wpos, x, y);
@@ -10751,7 +10751,7 @@ void local_weather_update(void) {
 		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == 1 && /* no blizzards for now, just rainstorms */
 		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind && 
 		    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6 == thunderstorm) {
-			sound_vol(i, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86);
+			sound_vol(i, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86); //weather: screen flashing implied
 		}
 
 		/* no change in local situation? nothing to do then */

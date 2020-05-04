@@ -8779,7 +8779,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					pn = p_ptr->name - 1;
 				}
 				msg_format(Ind, "Playing 'thunder' for '%s' as SFX_TYPE_WEATHER at vol %d.", pn + 1, k ? k : 100);
-				sound_vol(i, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, k ? k : 100);
+				sound_vol(i, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, k ? k : 100); //weather: screen flashing implied
 				return;
 			}
 			else if (prefix(messagelc, "/pmus")) { /* play specific music */

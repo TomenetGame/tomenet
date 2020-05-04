@@ -17,7 +17,7 @@
 /* Don't display 'Trait' if traits aren't available */
 #define HIDE_UNAVAILABLE_TRAIT
 
-int animate_lightning = 0, animate_lightning_vol = 100;
+int animate_lightning = 0, animate_lightning_vol = 100, animate_lightning_type = SFX_TYPE_AMBIENT;
 
 /*
  * Print character info at given row, column in a 13 char field
@@ -3232,7 +3232,7 @@ void do_weather() {
 #ifndef USE_SOUND_2010
 					Term_xtra(TERM_XTRA_SOUND, s1);
 #else
-					sound(thunder_sound_idx, SFX_TYPE_WEATHER, animate_lightning_vol, 0);
+					sound(thunder_sound_idx, animate_lightning_type, animate_lightning_vol, 0);
 #endif
 				}
 			}

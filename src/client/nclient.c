@@ -3560,13 +3560,25 @@ int Receive_sound(void) {
 	}
 
 	/* Hack for thunderstorm weather sfx - delay it and cast a lightning lighting effect first.
-	   We want to check this even if use_sound is FALSE, because we still can see the visual effect. */
-	if (t == SFX_TYPE_WEATHER && s1 == thunder_sound_idx) {
-		if (noweather_mode || c_cfg.no_weather) return 1;
-		animate_lightning = 1;
-		animate_lightning_vol = v;
-		/* Delay thunderclap! */
-		return 1;
+	   We want to check this even if use_sound is FALSE, because we still can see the visual effect.
+	   Also allow the lightning visual effect when thunder sfx is not a weather-type.
+	   However, don't show lightning visuals for misc-type, just so we keep a way to cause thunder sfx without accompanying lightning.. */
+	if (s1 == thunder_sound_idx) {
+		switch (t) {
+		case SFX_TYPE_WEATHER: /* Weather-effect, specifically */
+			if (noweather_mode || c_cfg.no_weather) return 1;
+			//fall through
+		case SFX_TYPE_AMBIENT: /* Thunder + Lightning too, but not related to weather */
+			/* Cause lightning flash to go with the sfx! */
+			animate_lightning = 1;
+			animate_lightning_vol = v;
+			animate_lightning_type = t;
+			/* Potentially delay thunderclap sfx 'physically correct' ;) */
+			return 1;
+		default: /* eg SFX_TYPE_MISC: Just thunder sfx, no lightning implied. */
+			//go on with normal sfx processing
+			break;
+		}
 	}
 
 	/* Make a sound (if allowed) */

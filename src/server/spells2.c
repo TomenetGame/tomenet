@@ -6863,7 +6863,7 @@ bool cast_lightning(worldpos *wpos, int x, int y) {
 	project_time += 10; /* afterglow */
 
 #ifdef USE_SOUND_2010
-	sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_AMBIENT, 100);
+	sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_MISC, 100); //misc: no screen flashing
 #endif
 
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, typ, GF_SHOW_LIGHTNING, flg, pattacker));

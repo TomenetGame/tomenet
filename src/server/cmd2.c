@@ -4698,7 +4698,7 @@ void do_cmd_bash(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			cave_set_feat_live(&p_ptr->wpos, y, x, FEAT_SHATTERED_MIRROR);
 #ifdef USE_SOUND_2010
-			sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_WEATHER, 100); //weather, not misc, for lightning visuals
+			sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_AMBIENT, 100); //ambient, for implied lightning visuals
 #endif
 		}
 		/* Nothing useful */
