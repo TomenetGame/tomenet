@@ -11522,8 +11522,9 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 #endif
 
 	C_MAKE(d_ptr->level, d_ptr->maxdepth, struct dun_level);
-	for (i = 0; i < d_ptr->maxdepth; i++)
+	for (i = 0; i < d_ptr->maxdepth; i++) {
 		C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
+	}
 
 	s_printf("add_dungeon completed (type %d, %s).\n", type, tower ? "tower" : "dungeon");
 }
