@@ -4695,11 +4695,17 @@ void do_cmd_bash(int Ind, int dir) {
 			py_attack(Ind, y, x, TRUE);
 		}
 		else if (c_ptr->feat == FEAT_GRAND_MIRROR) {
+			int x2, y2;
+
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			cave_set_feat_live(&p_ptr->wpos, y, x, FEAT_SHATTERED_MIRROR);
 #ifdef USE_SOUND_2010
 			sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_AMBIENT, 100); //ambient, for implied lightning visuals
 #endif
+			scatter(wpos, &y2, &x2, y, x + 1, 1, TRUE);
+			summon_override_checks = SO_ALL;
+			place_monster_one(&p_ptr->wpos, y2, x2, RI_MIRROR, 0, 0, 0, 0, 0);
+			summon_override_checks = SO_NONE;
 		}
 		/* Nothing useful */
 		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&

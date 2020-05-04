@@ -8574,6 +8574,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			process_dungeon_file("t_way.txt", wpos, &y1, &x1, 22, 66, TRUE);
 			zcave[2][65].feat = 29; zcave[2][65].info = 7;
 			zcave[11][33].feat = 235; zcave[11][33].info = 7;
+			x = 33; y = 11;
+			place_monster_one(wpos, y, x + 1, RI_BLUE, 0, 0, 0, 0, 0);
 		}
 		//wipe_m_list(&p_ptr->wpos);
 

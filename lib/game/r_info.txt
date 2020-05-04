@@ -20449,8 +20449,8 @@ E:1:1:2:2:1:2
 O:0:0:0:0
 B:TOUCH:*
 F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP |
-D:When the hero looked into the grand mirror, it shattered and his image stood
-D:before him! Showing no hesitation, empathy or doubt it attacked immediately!
+D:Opon shattering the grand mirror, the adventurer's image suddenly came to life!
+D:Showing no hesitation, empathy or doubt it attacked immediately!
 
 # a low-power version for the 'Dungeon Keeper' labyrinth event - C. Blue
 # Differences: no-death, slower, awake, bashes doors, has light, no spells

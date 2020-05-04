@@ -1305,7 +1305,7 @@ D:0:An iridescent rift opens to the void here.
 N:234:grand mirror
 G:&:c
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | NOTICE
+F:DONT_NOTICE_RUNNING | NOTICE | LOS
 D:0:A great mirror stands before you. Suddenly your image moves!
 #D:1:You bash the mirror and it shatters into a thousand pieces!
 D:2:A great mirror stands before you. Suddenly your image moves!
@@ -1313,7 +1313,7 @@ D:2:A great mirror stands before you. Suddenly your image moves!
 N:235:shattered mirror
 G:_:c
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
-F:DONT_NOTICE_RUNNING | NOTICE
+F:DONT_NOTICE_RUNNING | NOTICE | LOS
 D:0:A shattered mirror lies on the floor, its shards twinkling magically.
 D:2:A shattered mirror lies on the floor, its shards twinkling magically.
 
