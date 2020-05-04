@@ -13409,11 +13409,13 @@ bool master_level(int Ind, char * parms) {
 	{
 		cave_type **zcave;
 		u32b f1 = 0x0, f2 = 0x0, f3 = 0x0;
+
 		if (!parms[1] || !parms[2] || p_ptr->wpos.wz) return FALSE;
 		if (istown(&p_ptr->wpos)){
 			msg_print(Ind,"Even you may not create dungeons in the town!");
 			return FALSE;
 		}
+
 		/* extract flags (note that 0x01 are reservd hacks to prevent zero byte) */
 		if (parms[4] & 0x02) f1 |= DF1_FORGET;
 		if (parms[4] & 0x04) f3 |= (DF3_HIDDENLIB | DF3_DEEPSUPPLY);
@@ -13437,26 +13439,46 @@ bool master_level(int Ind, char * parms) {
 			if (parms[6] & 0x40) f2 |= DF2_IRONFIX3;
 			if (parms[6] & 0x80) f2 |= DF2_IRONFIX4;
 		}
+		/* Hack: Negative theme makes it a type instead. */
+		if (parms[7] < 0) i = -parms[7];
+		else i = 0;
+
 		/* create tower or dungeon */
-		if (parms[3] == 't' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP)){
-			printf("tower: flags %x,%x\n", f1, f2);
-			if ((zcave = getcave(&p_ptr->wpos))) {
-				zcave[p_ptr->py][p_ptr->px].feat = FEAT_LESS;
-				if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) f3 |= DF3_JAIL_DUNGEON;
+		if (i) {
+			if (d_info[i].flags1 & DF1_TOWER) {
+				s_printf("Added predefined tower %d.\n", i);
+				add_dungeon(&p_ptr->wpos, 0, 0, 0, 0, 0, TRUE, i, 0, 0, 0);
+				new_level_down_y(&p_ptr->wpos, p_ptr->py);
+				new_level_down_x(&p_ptr->wpos, p_ptr->px);
+			} else {
+				s_printf("Added predefined dungeon %d.\n", i);
+				add_dungeon(&p_ptr->wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0, 0);
+				new_level_up_y(&p_ptr->wpos, p_ptr->py);
+				new_level_up_x(&p_ptr->wpos, p_ptr->px);
 			}
-			add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, TRUE, 0, parms[7], 0, 0);
-			new_level_down_y(&p_ptr->wpos, p_ptr->py);
-			new_level_down_x(&p_ptr->wpos, p_ptr->px);
-		}
-		if (parms[3] == 'd' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_DOWN)){
-			printf("dungeon: flags %x,%x\n", f1, f2);
-			if ((zcave = getcave(&p_ptr->wpos))) {
-				zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
-				if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) f3 |= DF3_JAIL_DUNGEON;
+		} else {
+			if (parms[3] == 't' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP)) {
+				printf("tower: flags %x,%x\n", f1, f2);
+				if ((zcave = getcave(&p_ptr->wpos))) {
+					zcave[p_ptr->py][p_ptr->px].feat = FEAT_LESS;
+					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) f3 |= DF3_JAIL_DUNGEON;
+				}
+				s_printf("Added generic tower of theme %d.\n", parms[7]);
+				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, TRUE, 0, parms[7], 0, 0);
+				new_level_down_y(&p_ptr->wpos, p_ptr->py);
+				new_level_down_x(&p_ptr->wpos, p_ptr->px);
 			}
-			add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, FALSE, 0, parms[7], 0, 0);
-			new_level_up_y(&p_ptr->wpos, p_ptr->py);
-			new_level_up_x(&p_ptr->wpos, p_ptr->px);
+			if (parms[3] == 'd' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_DOWN)) {
+				printf("dungeon: flags %x,%x\n", f1, f2);
+				if ((zcave = getcave(&p_ptr->wpos))) {
+					zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
+					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) f3 |= DF3_JAIL_DUNGEON;
+				}
+				s_printf("Added generic dungeon of theme %d.\n", parms[7]);
+				add_dungeon(&p_ptr->wpos, parms[1], parms[2], f1, f2, f3, FALSE, 0, parms[7], 0, 0);
+				new_level_up_y(&p_ptr->wpos, p_ptr->py);
+				new_level_up_x(&p_ptr->wpos, p_ptr->px);
+			}
 		}
 		break;
 	}
