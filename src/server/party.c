@@ -5131,7 +5131,7 @@ void verify_player(cptr name, int id, u32b account, byte race, byte class, byte 
 	}
 	/* added in 4.5.7.1 */
 	if (ptr->wpos.wx != wpos.wx || ptr->wpos.wy != wpos.wy || ptr->wpos.wz != wpos.wz) {
-		s_printf("hash_entry: fixing wpos of %s.\n", ptr->name);
+		s_printf("hash_entry: fixing wpos (%d,%d,%d) of %s (->%d,%d,%d).\n", ptr->wpos.wx, ptr->wpos.wy, ptr->wpos.wz, ptr->name, wpos.wx, wpos.wy, wpos.wz);
 		ptr->wpos.wx = wpos.wx;
 		ptr->wpos.wy = wpos.wy;
 		ptr->wpos.wz = wpos.wz;
