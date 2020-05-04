@@ -4472,6 +4472,22 @@ static void cmd_master_aux_level(void) {
 			buf[4] = 0x01;//hack: avoid 0 byte
 			buf[5] = 0x01;//hack: avoid 0 byte
 			buf[6] = 0x01;//hack: avoid 0 byte
+			if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
+				int t; //hooray for signed char..
+
+				t = c_get_quantity("Theme (0 = default vanilla, +100 to set type): ", -1);
+				if (t >= 100) {
+					buf[7] = 100 - t;
+					/* Predefined dungeon -> nothing left to do then. */
+					buf[1] = 1;
+					buf[2] = 127;
+					buf[3] = 'd';
+					buf[8] = '\0';
+					Send_master(MASTER_LEVEL, buf);
+					clear_topline_forced();
+					return;
+				} else buf[7] = t;
+			} else buf[7] = 0;
 			buf[1] = c_get_quantity("Base level: ", 127);
 			buf[2] = c_get_quantity("Max depth (1-127): ", 127);
 			buf[3] = (get_check2("Is it a tower?", FALSE) ? 't' : 'd');
@@ -4513,13 +4529,6 @@ static void cmd_master_aux_level(void) {
 			} else if (get_check2("Generate misc iron stores (RPG rules style)?", FALSE)) {
 				buf[6] |= 0x04;//DF2_MISC_STORES
 			} else if (get_check2("Generate at least the hidden library?", FALSE)) buf[4] |= 0x04;//DF3_HIDDENLIB
-			if (is_newer_than(&server_version, 4, 5, 6, 0, 0, 1)) {
-				int t; //hooray for signed char..
-
-				t = c_get_quantity("Theme (0 = default vanilla, +100 to set type): ", -1);
-				if (t >= 100) buf[7] = 100 - t;
-				else buf[7] = t;
-			} else	buf[7] = 0;
 			buf[8] = '\0';
 			Send_master(MASTER_LEVEL, buf);
 		}

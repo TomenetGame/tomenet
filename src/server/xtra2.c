@@ -13450,11 +13450,13 @@ bool master_level(int Ind, char * parms) {
 				add_dungeon(&p_ptr->wpos, 0, 0, 0, 0, 0, TRUE, i, 0, 0, 0);
 				new_level_down_y(&p_ptr->wpos, p_ptr->py);
 				new_level_down_x(&p_ptr->wpos, p_ptr->px);
+				if ((zcave = getcave(&p_ptr->wpos))) zcave[p_ptr->py][p_ptr->px].feat = FEAT_LESS;
 			} else {
 				s_printf("Added predefined dungeon %d.\n", i);
 				add_dungeon(&p_ptr->wpos, 0, 0, 0, 0, 0, FALSE, i, 0, 0, 0);
 				new_level_up_y(&p_ptr->wpos, p_ptr->py);
 				new_level_up_x(&p_ptr->wpos, p_ptr->px);
+				if ((zcave = getcave(&p_ptr->wpos))) zcave[p_ptr->py][p_ptr->px].feat = FEAT_MORE;
 			}
 		} else {
 			if (parms[3] == 't' && !(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP)) {
