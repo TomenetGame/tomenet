@@ -9601,7 +9601,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 	msg_broadcast(0, "\374\377f** \377oSauron, the Sorceror has been greatly weakened! \377f**");
 #ifdef USE_SOUND_2010
 	/* :-o double sfx! */
-	sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_MISC, 100);
+	sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_WEATHER, 100); //weather, not misc, for lightning visuals
 	sound_floor_vol(wpos, "detonation", NULL, SFX_TYPE_MISC, 100);
 #endif
 	if (in_irondeepdive(wpos)) {

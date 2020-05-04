@@ -4676,6 +4676,13 @@ void do_cmd_bash(int Ind, int dir) {
 			/* Attack with all BpR */
 			py_attack(Ind, y, x, TRUE);
 		}
+		else if (c_ptr->feat == FEAT_GRAND_MIRROR) {
+			p_ptr->energy -= level_speed(&p_ptr->wpos);
+			cave_set_feat_live(&p_ptr->wpos, y, x, FEAT_SHATTERED_MIRROR);
+#ifdef USE_SOUND_2010
+			sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_WEATHER, 100); //weather, not misc, for lightning visuals
+#endif
+		}
 		/* Nothing useful */
 		else if (!((c_ptr->feat >= FEAT_DOOR_HEAD) &&
 		    (c_ptr->feat <= FEAT_DOOR_TAIL)) &&
