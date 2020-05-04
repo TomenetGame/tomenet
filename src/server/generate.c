@@ -8569,9 +8569,12 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* add the arena */
 		//keep objects that may be on the floor...... but get rid of monsters
 		process_dungeon_file("t_arena_mirror.txt", wpos, &y1, &x1, 22, 66, TRUE);
-		y1 = 0; x1 = 53;
-		process_dungeon_file("t_way.txt", wpos, &y1, &x1, 22, 66, TRUE);
-		zcave[2][65].feat = 29; zcave[2][65].info = 7;
+		if (p_ptr->temp_misc_1 & 0x80) {
+			y1 = 0; x1 = 53;
+			process_dungeon_file("t_way.txt", wpos, &y1, &x1, 22, 66, TRUE);
+			zcave[2][65].feat = 29; zcave[2][65].info = 7;
+			zcave[11][33].feat = 235; zcave[11][33].info = 7;
+		}
 		//wipe_m_list(&p_ptr->wpos);
 
 		/* reattach objects and monsters */

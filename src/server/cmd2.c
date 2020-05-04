@@ -967,6 +967,7 @@ void do_cmd_go_down(int Ind) {
 			p_ptr->recall_pos.wy = WPOS_DF_Y;
 			p_ptr->recall_pos.wz = WPOS_DF_Z;
 			p_ptr->new_level_method = LEVEL_RAND;
+			p_ptr->temp_misc_1 |= 0x80;
 			recall_player(Ind, "");
 			return;
 		}
