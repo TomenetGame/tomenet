@@ -3774,7 +3774,7 @@ static void process_player_begin(int Ind) {
 		} else {
 			p_ptr->recall_pos.wz = -1;
 			//add the temporary 'mirror' dungeon
-			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP))
+			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_DOWN))
 				add_dungeon(&p_ptr->wpos, 1, 1, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 				    DF2_NO_ENTRY_MASK | DF2_RANDOM,
 				    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, FALSE, 0, DI_DEATH_FATE, 0, 0);
