@@ -8527,9 +8527,12 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	u32b dflags1 = 0x0, dflags2 = 0x0, dflags3 = 0x0;
 
 
-#ifdef TEST_SERVER
 	/* Fixed layout (maybe first non-'DF2_RANDOM' dungeon?) */
+#ifdef TEST_SERVER
 	if (d_ptr && d_ptr->type == DI_DEATH_FATE) {
+#else
+	if (d_ptr && d_ptr->type == DI_DEATH_FATE && p_ptr && (p_ptr->temp_misc_1 & 0x40)) {
+#endif
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;
@@ -8589,7 +8592,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		level_generation_time = FALSE;
 		return;
 	}
-#endif
 
 #ifdef IRONDEEPDIVE_EXPAND_SMALL
 	if (in_irondeepdive(wpos)) {
