@@ -2210,6 +2210,8 @@
 #define FEAT_WALL_HOUSEUPPER	0x1C
 
 #define FEAT_FAKE_WALL		0x1D
+#define FEAT_WOODEN_TABLE	0x1E
+#define FEAT_FLOOR_SPAL		0x1F
 
 /* Doors */
 #define FEAT_DOOR_HEAD		0x20

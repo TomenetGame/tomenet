@@ -9419,7 +9419,148 @@ void process_monsters(void) {
 		/* Added for Valinor; also used by target dummy - C. Blue */
 		if (r_ptr->flags7 & RF7_NEVER_ACT) m_ptr->energy = 0;
 		/* And for death fate */
-		if (m_ptr->status == M_STATUS_FRIENDLY) m_ptr->energy = 0;
+		if (m_ptr->status == M_STATUS_FRIENDLY) {
+			cave_type *c_ptr;
+			int j, x = m_ptr->fx, y = m_ptr->fy, d;
+
+			m_ptr->energy = 0; //paranoia
+			if (!(zcave = getcave(&m_ptr->wpos))) continue;
+			if (!in_bounds(m_ptr->fy, m_ptr->fx)) continue; //paranoia, in case anything gets displaced and off-course
+			c_ptr = &zcave[m_ptr->fy][m_ptr->fx];
+
+			/* Yellow Lights swirling */
+			if (m_ptr->r_idx == 81) {
+#ifdef PROCESS_MONSTERS_DISTRIBUTE
+				if ((turn - (turn % MONSTER_TURNS)) % (cfg.fps / 10)) continue;
+#else
+				if (turn % (cfg.fps / 10)) continue;
+#endif
+				/* Change direction? */
+				if (zcave[y - 1][x - 1].feat == 120) {
+					if (zcave[y][x - 1].feat != 117) m_ptr->extra = 4;
+				} else if (zcave[y - 1][x + 1].feat == 120) {
+					if (zcave[y - 1][x].feat != 116) m_ptr->extra = 8;
+				} else if (zcave[y + 1][x + 1].feat == 120) {
+					if (zcave[y][x + 1].feat != 117) m_ptr->extra = 6;
+				} else if (zcave[y + 1][x - 1].feat == 120) {
+					if (zcave[y + 1][x].feat != 116) m_ptr->extra = 2;
+				}
+				/* Try to keep moving */
+				d = m_ptr->extra;
+				c_ptr = &zcave[y + ddy[d]][x + ddx[d]];
+				if (!c_ptr->m_idx) {
+					zcave[y][x].m_idx = 0;
+					m_ptr->fx = x + ddx[d];
+					m_ptr->fy = y + ddy[d];
+					zcave[m_ptr->fy][m_ptr->fx].m_idx = i;
+					update_mon(i, TRUE);
+					everyone_lite_spot(&m_ptr->wpos, y, x);
+					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+				}
+				continue;
+			}
+
+			/* Monsters on the dance floor */
+			else if (c_ptr->feat == FEAT_FLOOR_SPAL) {
+#ifdef PROCESS_MONSTERS_DISTRIBUTE
+				if ((turn - (turn % MONSTER_TURNS)) % (cfg.fps / 2)) continue;
+#else
+				if (turn % (cfg.fps / 2)) continue;
+#endif
+				j = 6;
+				while (--j) {
+					d = rand_int(8);
+					c_ptr = &zcave[y + ddy_ddd[d]][x + ddx_ddd[d]];
+					if (c_ptr->m_idx || c_ptr->feat != FEAT_FLOOR_SPAL) continue;
+
+					zcave[y][x].m_idx = 0;
+					m_ptr->fx = x + ddx_ddd[d];
+					m_ptr->fy = y + ddy_ddd[d];
+					zcave[m_ptr->fy][m_ptr->fx].m_idx = i;
+					update_mon(i, TRUE);
+					everyone_lite_spot(&m_ptr->wpos, y, x);
+					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+					break;
+				}
+				continue;
+			}
+
+			/* Patrons at a table */
+			else {
+				int x2, y2;
+				bool seated = FALSE;
+
+#ifdef PROCESS_MONSTERS_DISTRIBUTE
+				if ((turn - (turn % MONSTER_TURNS)) % (cfg.fps * 3)) continue;
+#else
+				if (turn % (cfg.fps * 3)) continue;
+#endif
+				/* Rarely shift seats */
+				if (rand_int(20)) continue;
+
+				switch (m_ptr->extra) {
+				case 0:
+					/* Are we actually seated at a table? (otherwise the bouncers might cause out-of-bounds checks, hah!) */
+					for (d = 0; d <= 3; d++) {
+						y2 = y + ddy_ddd[d];
+						x2 = x + ddx_ddd[d];
+						c_ptr = &zcave[y2][x2];
+						if (c_ptr->feat == FEAT_WOODEN_TABLE) seated = TRUE;
+					}
+					if (!seated) break;
+					/* Check for empty seat right next to us, not diagonally */
+					for (d = 0; d <= 3; d++) {
+						y2 = y + ddy_ddd[d];
+						x2 = x + ddx_ddd[d];
+						c_ptr = &zcave[y2][x2];
+						if (c_ptr->feat == FEAT_WOODEN_TABLE) continue;
+						if (c_ptr->m_idx) continue;
+						/* Check if we can still access the table from there */
+						for (j = 0; j <= 3; j++) {
+							c_ptr = &zcave[y2 + ddy_ddd[j]][x2 + ddx_ddd[j]];
+							if (c_ptr->feat != FEAT_WOODEN_TABLE) continue;
+							/* Shift seat.. */
+							zcave[y][x].m_idx = 0;
+							m_ptr->fx = x2;
+							m_ptr->fy = y2;
+							zcave[m_ptr->fy][m_ptr->fx].m_idx = i;
+							update_mon(i, TRUE);
+							everyone_lite_spot(&m_ptr->wpos, y, x);
+							everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+							/* Remember our previous seat */
+							m_ptr->extra = d + 1;
+							d = 4;
+							break;
+						}
+					}
+					break;
+				default:
+					/* Unhack and reverse direction */
+					switch (m_ptr->extra - 1) {
+					case 0: d = 1; break;
+					case 1: d = 0; break;
+					case 2: d = 3; break;
+					case 3: d = 2; break;
+					}
+					/* Return to our set.. */
+					x2 = m_ptr->fx + ddx_ddd[d];
+					y2 = m_ptr->fy + ddy_ddd[d];
+					if (zcave[y2][x2].m_idx) break; /* Seat was meanwhile occupied.. try again later */
+					/* Success */
+					zcave[y][x].m_idx = 0;
+					m_ptr->fx = x2;
+					m_ptr->fy = y2;
+					zcave[m_ptr->fy][m_ptr->fx].m_idx = i;
+					update_mon(i, TRUE);
+					everyone_lite_spot(&m_ptr->wpos, y, x);
+					everyone_lite_spot(&m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+					m_ptr->extra = 0;
+				}
+			}
+
+			/* All other monsters just chill.. */
+			continue;
+		}
 
 		/* Target dummy "snowiness" hack, checked once per second */
 		if (interval && !m_ptr->wpos.wz) {
