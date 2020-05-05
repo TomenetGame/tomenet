@@ -173,7 +173,7 @@ struct player_type
 	byte mutedchat;         /* account has chat restrictions */
 	bool inval;		/* dont make them logout to validate */
 
-	bool alive;		/* Are we alive */
+	bool suicided;		/* Have we suicided */
 	bool death;		/* Have we died */
 	int deathblow;		/* How much damage the final blow afflicted */
 	u16b deaths;		/* how often we died / safely died */

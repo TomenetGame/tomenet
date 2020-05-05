@@ -121,7 +121,7 @@ struct player_type {
 
 	char savefile[1024];	/* Name of the savefile */
 
-	bool alive;		/* Are we alive */
+	bool suicided;		/* Have we suicided */
 	bool death;		/* Have we died */
 	s16b ghost;		/* Are we a ghost */
 	s16b fruit_bat;		/* Are we a fruit bat */
