@@ -9006,7 +9006,7 @@ void interact_audio(void) {
 				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C");
 			Term_putstr(item_x[2], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_sound ? "\377GX\377w" : " "));
 			if (!quiet_mode && (noweather_mode || c_cfg.no_weather))
-				Term_putstr(item_x[3], y_toggle, -1, TERM_L_RED, format(" [%s\377R]", cfg_audio_weather ? "\377GX\377w" : " "));
+				Term_putstr(item_x[3], y_toggle, -1, TERM_L_RED, format(" [%s]", cfg_audio_weather ? "\377rX\377R" : " "));
 			else
 				Term_putstr(item_x[3], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_weather ? "\377GX\377w" : " "));
 
