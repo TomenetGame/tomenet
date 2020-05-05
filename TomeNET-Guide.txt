@@ -1,8 +1,8 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. May 2020 - written by C. Blue (c_blue@gmx.net)
-| for TomeNET version v4.7.2 - official websites are:
+| Latest update: 5. May 2020 - written by C. Blue (c_blue@gmx.net)
+| for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
@@ -6044,12 +6044,12 @@ staircase colours (also visible on the world map):
  They will not lose their winner (King/Queen/Emperor/Empress) state though.
  No-death dungeons/towers are marked by a green < or > symbol.
 
--Unescapable dungeons. There is usually only one such dungeon and that is the
- 'Death Fate'. Its entrance is a dark-flickering staircase. You should avoid
- this dungeon at all costs since once you enter you can never get out.
- If it's indeed the 'Death Fate' one then it's only one floor in size, so you
- will just starve to death without anything interesting happening in there.
- (The 'Death Fate' dungeon is actually not an ironman dungeon.)
+-Dungeons that allow neither recalling out, nor floating or providing stairs!
+ There is usually only one such dungeon and that is the 'Death Fate'.
+ Its entrance is a dark-flickering staircase, it has only one floor and you
+ might just starve to death there as monsters will not spawn there like in
+ 'normal' dungeons.
+ (The 'Death Fate' dungeon does actually not count as an 'ironman' dungeon.)
 
 -Experimental dungeons. There might be an experimental dungeon available, which
  has special flags that are very unusual:
