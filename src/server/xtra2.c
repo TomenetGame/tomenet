@@ -5451,6 +5451,8 @@ static bool r_killed_creditable(int Ind, int m_idx) {
  * Note that in a few, very rare, circumstances, killing Morgoth
  * may result in the Iron Crown of Morgoth crushing the Lead-Filled
  * Mace "Grond", since the Iron Crown is more important.
+ *
+ * returns TRUE if the monster gives us XP/kill credit, ie not henc'ed/logscummed/clone..
  */
 
 /* Display Zu-Aon kills in special colours:
