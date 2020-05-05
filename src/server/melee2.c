@@ -2168,7 +2168,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 #endif	// STUPID_MONSTER_SPELLS
 
 	/* Stop if player is dead or gone */
-	if (!p_ptr->alive || p_ptr->death || p_ptr->new_level_flag) return (FALSE);
+	if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) return (FALSE);
 
 
 	/* Get the monster name (or "it") */
@@ -9681,7 +9681,7 @@ void process_monsters(void) {
 			/*
 			 * Hack -- Ignore players that have died or left
 			 * as suggested by PowerWyrm - mikaelh */
-			if (!p_ptr->alive || p_ptr->death || p_ptr->new_level_flag) continue;
+			if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) continue;
 
 			/* Monsters serve a king on his land they dont attack him */
 			// if (player_is_king(pl)) continue;

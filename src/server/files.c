@@ -1003,7 +1003,7 @@ void do_cmd_suicide(int Ind) {
 	}
 
 	/* Mark as suicide */
-	p_ptr->alive = FALSE;
+	p_ptr->suicided = TRUE;
 
 	/* Hack -- set the cause of death */
 	if (!p_ptr->ghost) {

@@ -602,7 +602,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 		if (!method) break;
 
 		/* Stop if player is dead or gone */
-		if (!p_ptr->alive || p_ptr->death || p_ptr->new_level_flag) break;
+		if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) break;
 
 
 #ifdef OLD_MONSTER_LORE

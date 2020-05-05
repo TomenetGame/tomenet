@@ -2260,7 +2260,7 @@ struct player_type {
 	bool inval;			/* Non validated account */
 	bool newly_created;		/* Just newly created char by player_birth()? */
 
-	bool alive;			/* Are we alive */
+	bool suicided;			/* Have we suicided (formerly 'alive' which was misleading) */
 	bool death;			/* Have we died */
 	bool safe_float;		/* for safe_float option */
 	int safe_float_turns;

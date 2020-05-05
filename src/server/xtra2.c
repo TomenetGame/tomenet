@@ -8356,7 +8356,7 @@ void player_death(int Ind) {
 	}
 
 	/* Hack -- amulet of life saving */
-	if (p_ptr->alive && !erase && (secure ||
+	if (!p_ptr->suicided && !erase && (secure ||
 	    (p_ptr->inventory[INVEN_NECK].k_idx &&
 	    p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_LIFE_SAVING))) {
 		s_printf("%s - %s (%d) was pseudo-killed by %s for %d damage at %d, %d, %d.\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->really_died_from, p_ptr->deathblow, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
@@ -8566,7 +8566,7 @@ void player_death(int Ind) {
 	}
 
 #ifdef ENABLE_INSTANT_RES
-	if (p_ptr->insta_res && !erase && p_ptr->alive) {
+	if (p_ptr->insta_res && !erase && !p_ptr->suicided) {
 		char instant_res_possible = TRUE;
 		int dlvl = getlevel(&p_ptr->wpos);
 		int instant_res_cost = dlvl * dlvl * 10 + 10;
@@ -8588,7 +8588,7 @@ void player_death(int Ind) {
 			instant_res_possible = FALSE;
 
 		/* Not on suicides */
-		if (!p_ptr->alive)
+		if (p_ptr->suicided)
 			instant_res_possible = FALSE;
 
  #ifdef INSTANT_RES_EXCEPTION
@@ -8894,13 +8894,13 @@ void player_death(int Ind) {
 
 #ifdef USE_SOUND_2010
 	/* don't play a sfx for mere suicide */
-	if (p_ptr->alive) {
+	if (!p_ptr->suicided) {
 		if (p_ptr->male) sound(Ind, "death_male", "death", SFX_TYPE_MISC, TRUE);
 		else sound(Ind, "death_female", "death", SFX_TYPE_MISC, TRUE);
 	}
 #else
 	/* don't play a sfx for mere suicide */
-	if (p_ptr->alive) sound(Ind, SOUND_DEATH);
+	if (!p_ptr->suicided) sound(Ind, SOUND_DEATH);
 #endif
 
 	/* Drop gold if player has any -------------------------------------- */
@@ -8910,7 +8910,7 @@ void player_death(int Ind) {
 		p_ptr->au = 0;
 	}
 #endif
-	if (p_ptr->alive && p_ptr->au) {
+	if (!p_ptr->suicided && p_ptr->au) {
 		/* Put the player's gold in the overflow slot */
 		invcopy(&p_ptr->inventory[INVEN_PACK], lookup_kind(TV_GOLD, 9));
 		/* Change the mode of the gold accordingly */
@@ -8952,17 +8952,17 @@ void player_death(int Ind) {
 
 	/* Don't "lose" items on suicide (they all poof anyway, except for true arts possibly) */
 #ifdef DEATH_PACK_ITEM_LOST
-	if (p_ptr->alive) inven_death_damage(Ind, FALSE);
+	if (!p_ptr->suicided) inven_death_damage(Ind, FALSE);
 #endif
 #ifdef DEATH_EQ_ITEM_LOST
-	if (p_ptr->alive) equip_death_damage(Ind, FALSE);
+	if (!p_ptr->suicided) equip_death_damage(Ind, FALSE);
 #endif
 	/* Soloists: Kill more items! Soloists are not really meant to interact with others much. */
 #ifdef DEATH_PACK_ITEM_LOST
-	if ((p_ptr->mode & MODE_SOLO) && p_ptr->alive) inven_death_damage(Ind, FALSE);
+	if ((p_ptr->mode & MODE_SOLO) && !p_ptr->suicided) inven_death_damage(Ind, FALSE);
 #endif
 #ifdef DEATH_EQ_ITEM_LOST
-	if ((p_ptr->mode & MODE_SOLO) && p_ptr->alive) {
+	if ((p_ptr->mode & MODE_SOLO) && !p_ptr->suicided) {
 		equip_death_damage(Ind, FALSE);
 		equip_death_damage(Ind, FALSE);
 		equip_death_damage(Ind, FALSE);
@@ -9007,7 +9007,7 @@ void player_death(int Ind) {
 			a_info[p_ptr->inventory[i].name1].winner = FALSE;
 
 		/* If we committed suicide.. */
-		if (!p_ptr->alive) {
+		if (p_ptr->suicided) {
 			/* only drop artifacts */
 			 if (!artifact_p(o_ptr)) {
 				questitem_d(o_ptr, o_ptr->number);
@@ -9127,11 +9127,11 @@ void player_death(int Ind) {
 	Send_item_newest(Ind, -1);
 
 	/* Get rid of him if he's a ghost or suffers a no-ghost death */
-	if ((p_ptr->ghost || (hell && p_ptr->alive)) ||
+	if ((p_ptr->ghost || (hell && !p_ptr->suicided)) ||
 	    insanity ||
 	    streq(p_ptr->died_from, "indecisiveness") ||
 	    streq(p_ptr->died_from, "indetermination") ||
-	    ((p_ptr->lives == 1 + 1) && cfg.lifes && p_ptr->alive &&
+	    ((p_ptr->lives == 1 + 1) && cfg.lifes && !p_ptr->suicided &&
 	    !(p_ptr->mode & MODE_EVERLASTING))) {
 		/* Tell players */
 		if (insanity) {
@@ -9449,7 +9449,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 
 	/* --- non-noghost-death: everlasting or more lives left --- */
 	/* Add to legends log if he was a winner */
-	if (p_ptr->total_winner && !is_admin(p_ptr) && p_ptr->alive) {
+	if (p_ptr->total_winner && !is_admin(p_ptr) && !p_ptr->suicided) {
 		l_printf("%s \\{r%s (%d) lost %s royal title by death\n", showdate(), p_ptr->name, p_ptr->lev, p_ptr->male ? "his" : "her");
 #ifdef SOLO_REKING
 		p_ptr->solo_reking = p_ptr->solo_reking_au = SOLO_REKING;
@@ -9457,7 +9457,7 @@ s_printf("CHARACTER_TERMINATION: %s race=%s ; class=%s ; trait=%s ; %d deaths\n"
 	}
 
 	/* Tell everyone he died */
-	if (p_ptr->alive) {
+	if (!p_ptr->suicided) {
 		if (cfg.unikill_format) {
 			if ((p_ptr->deathblow < 10) || ((p_ptr->deathblow < p_ptr->mhp / 4) && (p_ptr->deathblow < 100))
 #ifdef ENABLE_MAIA
@@ -9586,7 +9586,7 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 	p_ptr->total_winner = FALSE;
 
 	/* Handle suicide */
-	if (!p_ptr->alive) {
+	if (p_ptr->suicided) {
 #ifdef TOMENET_WORLDS
 		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
 #endif
@@ -9872,8 +9872,8 @@ void resurrect_player(int Ind, int loss_factor) {
 	msg_format_near(Ind, "%s is resurrected!", p_ptr->name);
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 
-	/* (was in player_death: Take care of ghost suiciding before final resurrection (p_ptr->alive check, C. Blue)) */
-	/*if (p_ptr->alive && ((p_ptr->lives > 0+1) && cfg.lifes)) p_ptr->lives--;*/
+	/* (was in player_death: Take care of ghost suiciding before final resurrection (!p_ptr->suicided check, C. Blue)) */
+	/*if (!p_ptr->suicided && ((p_ptr->lives > 0+1) && cfg.lifes)) p_ptr->lives--;*/
 	/* Tell him his remaining lifes */
 	if (!(p_ptr->mode & MODE_EVERLASTING)
 	    && !(p_ptr->mode & MODE_PVP)) {

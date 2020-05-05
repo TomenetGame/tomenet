@@ -2805,7 +2805,7 @@ static void player_setup(int Ind, bool new) {
 	p_ptr->master_move_hook = NULL; /* just in case its not */
 
 	/* This guy is alive now */
-	p_ptr->alive = TRUE;
+	p_ptr->suicided = FALSE;
 
 	player_create_tmpfile(Ind);
 }
