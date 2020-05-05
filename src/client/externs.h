@@ -684,7 +684,7 @@ extern void prt_lagometer(int lag);
 
 extern int p_speed;
 extern bool no_tele_grid;
-extern void do_weather(void);
+extern void do_weather(bool no_weather);
 extern int weather_type, weather_wind, weather_gen_speed, weather_intensity, weather_speed_rain, weather_speed_snow;
 extern int weather_elements, weather_element_x[1024], weather_element_y[1024], weather_element_ydest[1024], weather_element_type[1024];
 extern int weather_panel_x, weather_panel_y;

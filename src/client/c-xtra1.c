@@ -3126,11 +3126,12 @@ void window_stuff(void) {
 
 /* Handle weather (rain and snow) client-side - C. Blue
  * Note: keep following defines in sync with nclient.c, beginning of file.
- * do_weather() is called by do_ping() which is called every frame. */
+ * do_weather() is called by do_ping() which is called every frame.
+ * 'no_weather': Only perform lighting-flash palette animation and play thunderclap sfx (provided those were caused by a non-weather source). */
 #define SKY_ALTITUDE	20 /* assumed 'pseudo-isometric' cloud altitude */
 #define PANEL_X		(SCREEN_PAD_LEFT) /* physical top-left screen position of view panel */
 #define PANEL_Y		(SCREEN_PAD_TOP) /* physical top-left screen position of view panel */
-void do_weather() {
+void do_weather(bool no_weather) {
 	int i, j, intensity;
 	static int weather_gen_ticks = 0, weather_ticks10 = 0;
 	static int weather_wind_ticks = 0, weather_speed_snow_ticks = 0, weather_speed_rain_ticks = 0; /* sub-ticks when weather really is processed */
@@ -3247,6 +3248,7 @@ void do_weather() {
 #endif
 		}
 	}
+	if (no_weather) return;
 
 
 /* begin ------------------------------------------------------------------- */
