@@ -8985,6 +8985,9 @@ void interact_audio(void) {
 			}
 			else Term_putstr(12, 4, -1, TERM_L_RED,                                         "Neither sound pack nor music pack seems to be installed. ");
 
+			if (!quiet_mode && noweather_mode) Term_putstr(2, 6, -1, TERM_L_RED, "Client is in no-weather-mode (-w).");
+			if (c_cfg.no_weather) Term_putstr(2, 7, -1, TERM_L_RED, "Weather disabled by 'no_weather' option.");
+
 			if (c_cfg.rogue_like_commands)
 				Term_putstr(3, y_label + 2, -1, TERM_SLATE, "Outside of this mixer you can toggle audio and music by CTRL+V and CTRL+Q.");
 			else
@@ -9002,7 +9005,10 @@ void interact_audio(void) {
 			else
 				Term_putstr(item_x[1], y_toggle + 3, -1, TERM_SLATE, "CTRL+C");
 			Term_putstr(item_x[2], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_sound ? "\377GX\377w" : " "));
-			Term_putstr(item_x[3], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_weather ? "\377GX\377w" : " "));
+			if (!quiet_mode && (noweather_mode || c_cfg.no_weather))
+				Term_putstr(item_x[3], y_toggle, -1, TERM_L_RED, format(" [%s\377R]", cfg_audio_weather ? "\377GX\377w" : " "));
+			else
+				Term_putstr(item_x[3], y_toggle, -1, TERM_WHITE, format(" [%s]", cfg_audio_weather ? "\377GX\377w" : " "));
 
 			for (i = 4; i <= 7; i++) {
 				Term_putstr(item_x[i - 4], y_toggle + 1, -1, TERM_SLATE, "on/off");
@@ -9011,11 +9017,20 @@ void interact_audio(void) {
 				for (j = y_slider - 1; j >= y_slider - 11; j--)
 					Term_putstr(item_x[i], j, -1, TERM_SLATE, "  |");
 			}
+			if (!quiet_mode && (noweather_mode || c_cfg.no_weather)) {
+				Term_putstr(item_x[7], y_slider - 12, -1, TERM_L_RED, "  ^");
+				Term_putstr(item_x[7], y_slider, -1, TERM_L_RED, "  V");
+				for (j = y_slider - 1; j >= y_slider - 11; j--)
+					Term_putstr(item_x[7], j, -1, TERM_RED, "  |");
+			}
 
 			Term_putstr(item_x[4], y_slider - cfg_audio_master_volume / 10 - 1, -1, TERM_L_GREEN, "  =");
 			Term_putstr(item_x[5], y_slider - cfg_audio_music_volume / 10 - 1, -1, TERM_L_GREEN, "  =");
 			Term_putstr(item_x[6], y_slider - cfg_audio_sound_volume / 10 - 1, -1, TERM_L_GREEN, "  =");
-			Term_putstr(item_x[7], y_slider - cfg_audio_weather_volume / 10 - 1, -1, TERM_L_GREEN, "  =");
+			if (!quiet_mode && (noweather_mode || c_cfg.no_weather))
+				Term_putstr(item_x[7], y_slider - cfg_audio_weather_volume / 10 - 1, -1, TERM_L_RED, "  =");
+			else
+				Term_putstr(item_x[7], y_slider - cfg_audio_weather_volume / 10 - 1, -1, TERM_L_GREEN, "  =");
 		}
 		redraw = TRUE;
 
