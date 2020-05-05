@@ -1649,6 +1649,16 @@ bool askfor_aux(char *buf, int len, char mode) {
 		switch (i) {
 		case ESCAPE:
 		//case KTRL('Q'):
+			/* Catch searching mode */
+			if (search && buf[0]) {
+				/* Clear current search, but stay in searching mode */
+				Term_erase(x, y, strlen(buf));
+				buf[0] = '\0';
+				k = l = 0;
+				break;
+			}
+
+			/* Leave */
 			k = 0;
 			done = TRUE;
 			break;
