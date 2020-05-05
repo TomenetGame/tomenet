@@ -6244,7 +6244,7 @@ bool monster_death(int Ind, int m_idx) {
 		}
 	/* Get kill credit for non-uniques (important for mimics) */
 	//HACK: added test for r_idx to suppress bad msgs about 0 forms learned (exploders?)
-	} else {
+	} else if (!(r_ptr->flags9 & RF9_NO_CREDIT)) {
 		/* Normal kill count */
 		if (p_ptr->r_killed[r_idx] < 10000) p_ptr->r_killed[r_idx]++;
 
