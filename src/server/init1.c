@@ -479,7 +479,7 @@ static cptr r_info_flags9[] = {
 	"SUSCEP_POIS",
 	"KILL_TREES",
 	"WYRM_PROTECT",
-	"DOPPELGANGER",
+	"NO_CREDIT",
 
 	"ONLY_DEPTH",
 	"SPECIAL_GENE",

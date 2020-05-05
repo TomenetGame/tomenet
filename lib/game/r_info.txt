@@ -17321,7 +17321,8 @@ D:themselves, and condemned Numenor to oblivion.
 #I:1:1d1:1:1:1
 #E:0:0:0:0:0:0
 #O:0:0:0:0
-#F:NEVER_MOVE | NEVER_BLOW | DOPPELGANGER | BASEANGBAND | HAS_LITE
+#F:NEVER_MOVE | NEVER_BLOW | BASEANGBAND | HAS_LITE
+#DOPPELGANGER |  <- flag no longer exists because it was unused
 #D:It looks like you...
 
 N:982:Marylene, Heartbreakeress of the Netherworld
@@ -20434,7 +20435,7 @@ W:127:255:150:0
 E:1:1:2:2:1:2
 O:0:0:0:0
 B:TOUCH:*
-F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP |
+F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP | NO_CREDIT
 D:A strange guy in blue clothes, speaking with an unknown foreign accent.
 D:He looks around with an odd mixture of annoyance, surprise and impatience
 D:and mutters unintelligibly about 'fixing' bugs of some sort..
@@ -20446,7 +20447,7 @@ W:127:255:150:0
 E:1:1:2:2:1:2
 O:0:0:0:0
 B:TOUCH:*
-F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP |
+F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP | NO_CREDIT
 D:Opon shattering the grand mirror, the adventurer's image suddenly came to life!
 D:Showing no hesitation, empathy or doubt it attacked immediately!
 

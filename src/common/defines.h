@@ -5534,20 +5534,20 @@
  */
 #define RF2_STUPID			0x00000001	/* Monster is stupid */
 #define RF2_SMART			0x00000002	/* Monster is smart */
-#define RF2_CAN_SPEAK			0x00000004  /* TY: can speak */
-#define RF2_REFLECTING			0x00000008      /* Reflects bolts */
+#define RF2_CAN_SPEAK			0x00000004	/* TY: can speak */
+#define RF2_REFLECTING			0x00000008	/* Reflects bolts */
 #define RF2_INVISIBLE		0x00000010	/* Monster avoids vision */
 #define RF2_COLD_BLOOD		0x00000020	/* Monster avoids infra */
 #define RF2_EMPTY_MIND		0x00000040	/* Monster avoids telepathy */
 #define RF2_WEIRD_MIND		0x00000080	/* Monster avoids telepathy? */
-#define RF2_DEATH_ORB			0x00000100      /* Death Orb */
+#define RF2_DEATH_ORB			0x00000100	/* Death Orb */
 #define RF2_REGENERATE			0x00000200	/* Monster regenerates */
-#define RF2_SHAPECHANGER		0x00000400  /* TY: shapechanger */
-#define RF2_ATTR_ANY			0x00000800  /* TY: Attr_any */
+#define RF2_SHAPECHANGER		0x00000400	/* TY: shapechanger */
+#define RF2_ATTR_ANY			0x00000800	/* TY: Attr_any */
 #define RF2_POWERFUL		0x00001000	/* Monster has strong breath */
-#define RF2_ELDRITCH_HORROR	0x00002000      /* Sanity-blasting horror    */
-#define RF2_AURA_FIRE		0x00004000      /* Burns in melee */
-#define RF2_AURA_ELEC		0x00008000      /* Shocks in melee */
+#define RF2_ELDRITCH_HORROR	0x00002000	/* Sanity-blasting horror    */
+#define RF2_AURA_FIRE		0x00004000	/* Burns in melee */
+#define RF2_AURA_ELEC		0x00008000	/* Shocks in melee */
 #define RF2_OPEN_DOOR			0x00010000	/* Monster can open doors */
 #define RF2_BASH_DOOR			0x00020000	/* Monster can bash doors */
 #define RF2_PASS_WALL			0x00040000	/* Monster can pass walls */
@@ -5577,20 +5577,20 @@
 #define RF3_UNDEAD			0x00000020	/* Undead */
 #define RF3_EVIL			0x00000040	/* Evil */
 #define RF3_ANIMAL			0x00000080	/* Animal */
-#define RF3_DRAGONRIDER		0x00000100  /* DG: DragonRider */
-#define RF3_GOOD		0x00000200      /* Good */
-#define RF3_AURA_COLD		0x00000400      /* Freezes in melee */
-#define RF3_NONLIVING		0x00000800  /* TY: Non-Living (?) */
+#define RF3_DRAGONRIDER		0x00000100	/* DG: DragonRider */
+#define RF3_GOOD		0x00000200	/* Good */
+#define RF3_AURA_COLD		0x00000400	/* Freezes in melee */
+#define RF3_NONLIVING		0x00000800	/* TY: Non-Living (?) */
 #define RF3_HURT_LITE			0x00001000	/* Hurt by lite */
 #define RF3_HURT_ROCK			0x00002000	/* Hurt by rock remover */
-#define RF3_SUSCEP_FIRE			0x00004000      /* Hurt badly by fire */
-#define RF3_SUSCEP_COLD			0x00008000      /* Hurt badly by cold */
+#define RF3_SUSCEP_FIRE			0x00004000	/* Hurt badly by fire */
+#define RF3_SUSCEP_COLD			0x00008000	/* Hurt badly by cold */
 #define RF3_IM_ACID		0x00010000	/* Resist acid a lot */
 #define RF3_IM_ELEC		0x00020000	/* Resist elec a lot */
 #define RF3_IM_FIRE		0x00040000	/* Resist fire a lot */
 #define RF3_IM_COLD		0x00080000	/* Resist cold a lot */
 #define RF3_IM_POIS			0x00100000	/* Resist poison a lot */
-#define RF3_RES_TELE			0x00200000      /* Resist teleportation */
+#define RF3_RES_TELE			0x00200000	/* Resist teleportation */
 #define RF3_RES_NETH			0x00400000	/* Resist nether a lot */
 #define RF3_RES_WATE			0x00800000	/* Resist water */
 #define RF3_IM_WATER		0x01000000L	/* Water immunity, should also let you breathe under water */
@@ -5607,8 +5607,8 @@
  */
 #define RF4_SHRIEK		0x00000001	/* Shriek for help */
 #define RF4_UNMAGIC		0x00000002	/* Cancel player's timed spell */
-#define RF4_S_ANIMAL		0x00000004  /* Summon animals */
-#define RF4_ROCKET		0x00000008  /* TY: Rocket */
+#define RF4_S_ANIMAL		0x00000004	/* Summon animals */
+#define RF4_ROCKET		0x00000008	/* TY: Rocket */
 #define RF4_ARROW_1			0x00000010	/* Fire an arrow (light) */
 #define RF4_ARROW_2			0x00000020	/* Fire a shot (heavy) */
 #define RF4_ARROW_3			0x00000040	/* Fire a bolt (heavy) */
@@ -5633,10 +5633,10 @@
 #define RF4_BR_PLAS		0x02000000	/* Breathe Plasma */
 #define RF4_BR_WALL		0x04000000	/* Breathe Force */
 #define RF4_BR_MANA		0x08000000	/* Breathe Mana */
-#define RF4_BR_DISI			0x10000000  /* Breathe Disintegration */
-#define RF4_BR_NUKE			0x20000000  /* TY: Toxic Breath */
+#define RF4_BR_DISI			0x10000000	/* Breathe Disintegration */
+#define RF4_BR_NUKE			0x20000000	/* TY: Toxic Breath */
 #define RF4_MOAN			0x40000000	/* For Halloween event :) -C. Blue */
-#define RF4_BOULDER			0x80000000  /* Hurl Boulder (Vanilla) */
+#define RF4_BOULDER			0x80000000	/* Hurl Boulder (Vanilla) */
 
 #define RF4_PLAYER_SPELLS (RF4_SHRIEK | RF4_ROCKET | \
 	RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | \
@@ -5672,8 +5672,8 @@
 #define RF5_BRAIN_SMASH		0x00000800	/* Smash Brain */
 #define RF5_CURSE			0x00001000	/* Cause Light Wound */
 #define RF5_BO_CODE			0x00002000
-#define RF5_BA_NUKE			0x00004000  /* TY: Nuke Ball */
-#define RF5_BA_CHAO			0x00008000  /* Chaos Ball */
+#define RF5_BA_NUKE			0x00004000	/* TY: Nuke Ball */
+#define RF5_BA_CHAO			0x00008000	/* Chaos Ball */
 #define RF5_BO_ACID		0x00010000	/* Acid Bolt */
 #define RF5_BO_ELEC		0x00020000	/* Elec Bolt */
 #define RF5_BO_FIRE		0x00040000	/* Fire Bolt */
@@ -5700,24 +5700,24 @@
  * New monster race bit flags
  */
 #define RF6_HASTE		0x00000001	/* Speed self */
-#define RF6_HAND_DOOM		0x00000002      /* Hand of Doom */
+#define RF6_HAND_DOOM		0x00000002	/* Hand of Doom */
 #define RF6_HEAL		0x00000004	/* Heal self */
-#define RF6_S_ANIMALS		0x00000008      /* Summon animals */
+#define RF6_S_ANIMALS		0x00000008	/* Summon animals */
 #define RF6_BLINK			0x00000010	/* Teleport Short */
 #define RF6_TPORT			0x00000020	/* Teleport Long */
-#define RF6_RAISE_DEAD			0x00000040      /* Raise Dead -- not implemented */
+#define RF6_RAISE_DEAD			0x00000040	/* Raise Dead -- not implemented */
 //HOLE^not implemented, but used in r_info
-#define RF6_S_BUG			0x00000080      /* Summon Software bug */
+#define RF6_S_BUG			0x00000080	/* Summon Software bug */
 #define RF6_TELE_TO		0x00000100	/* Move player to monster */
 #define RF6_TELE_AWAY		0x00000200	/* Move player far away */
 #define RF6_TELE_LEVEL		0x00000400	/* Move player vertically */
-#define RF6_S_RNG		0x00000800      /* Summon RNG */
+#define RF6_S_RNG		0x00000800	/* Summon RNG */
 #define RF6_DARKNESS			0x00001000	/* Create Darkness */
 #define RF6_TRAPS			0x00002000	/* Create Traps */
 #define RF6_FORGET			0x00004000	/* Cause amnesia */
-#define RF6_S_DRAGONRIDER		0x00008000      /* Summon DragonRiders */
-#define RF6_S_KIN		0x00010000      /* Summon "kin" */
-#define RF6_S_HI_DEMONS		0x00020000      /* Summon greater demons! */
+#define RF6_S_DRAGONRIDER		0x00008000	/* Summon DragonRiders */
+#define RF6_S_KIN		0x00010000	/* Summon "kin" */
+#define RF6_S_HI_DEMONS		0x00020000	/* Summon greater demons! */
 #define RF6_S_MONSTER		0x00040000	/* Summon Monster */
 #define RF6_S_MONSTERS		0x00080000	/* Summon Monsters */
 #define RF6_S_ANTS			0x00100000	/* Summon Ants */
@@ -5740,28 +5740,28 @@
 /*
  * New monster race bit flags from ToME.		- Jir -
  */
-#define RF7_AQUATIC		0x00000001  /* Aquatic monster */
-#define RF7_CAN_SWIM		0x00000002  /* Monster can swim */
-#define RF7_CAN_FLY		0x00000004  /* Monster can fly */
-#define RF7_FRIENDLY		0x00000008  /* Monster is friendly */
-#define RF7_PET				0x00000010  /* Monster is a pet */
-#define RF7_MORTAL			0x00000020  /* Monster is a mortal being -- UNUSED */
+#define RF7_AQUATIC		0x00000001	/* Aquatic monster */
+#define RF7_CAN_SWIM		0x00000002	/* Monster can swim */
+#define RF7_CAN_FLY		0x00000004	/* Monster can fly */
+#define RF7_FRIENDLY		0x00000008	/* Monster is friendly */
+#define RF7_PET				0x00000010	/* Monster is a pet */
+#define RF7_MORTAL			0x00000020	/* Monster is a mortal being -- UNUSED */
 //^effectless, but actually used in r_info
-#define RF7_SPIDER			0x00000040  /* Monster is a spider (can pass webs) */
-#define RF7_NAZGUL			0x00000080  /* Monster is a Nazgul */
-#define RF7_DG_CURSE		0x00000100  /* If killed the monster grant a DG Curse to the player */
-#define RF7_POSSESSOR		0x00000200  /* Is it a dreaded possessor monster ? -- UNUSED */
+#define RF7_SPIDER			0x00000040	/* Monster is a spider (can pass webs) */
+#define RF7_NAZGUL			0x00000080	/* Monster is a Nazgul */
+#define RF7_DG_CURSE		0x00000100	/* If killed the monster grant a DG Curse to the player */
+#define RF7_POSSESSOR		0x00000200	/* Is it a dreaded possessor monster ? -- UNUSED */
 //^effectless, but actually used in r_info
-#define RF7_NO_DEATH		0x00000400  /* Cannot be killed */
-#define RF7_NO_TARGET		0x00000800  /* Cannot be targeted */
-#define RF7_AI_ANNOY			0x00001000  /* Try to tease the player */
-#define RF7_AI_SPECIAL			0x00002000  /* For quests */
-#define RF7_NEUTRAL			0x00004000  /* Monster is neutral */
-#define RF7_DROPART			0x00008000  /* Monster is neutral */
-#define RF7_DROPRANDART		0x00010000  /* Monster is neutral */
-#define RF7_AI_PLAYER		0x00020000  /* Monster is neutral */
-#define RF7_NO_THEFT		0x00040000  /* Monster is neutral */
-#define RF7_NEVER_ACT		0x00080000  /* Monster is neutral */
+#define RF7_NO_DEATH		0x00000400	/* Cannot be killed */
+#define RF7_NO_TARGET		0x00000800	/* Cannot be targeted */
+#define RF7_AI_ANNOY			0x00001000	/* Try to tease the player */
+#define RF7_AI_SPECIAL			0x00002000	/* For quests */
+#define RF7_NEUTRAL			0x00004000	/* Monster is neutral */
+#define RF7_DROPART			0x00008000	/* Monster is neutral */
+#define RF7_DROPRANDART		0x00010000	/* Monster is neutral */
+#define RF7_AI_PLAYER		0x00020000	/* Monster is neutral */
+#define RF7_NO_THEFT		0x00040000	/* Monster is neutral */
+#define RF7_NEVER_ACT		0x00080000	/* Monster is neutral */
 #define RF7_NO_ESP			0x00100000	/* monster isn't ESPable */
 #define RF7_ATTR_BASE			0x00200000	/* show base attr too. Atm works if a) only 1 breath and ATTR_MULTI (DRs) or b) ATTR_BNW is set */
 #define RF7_VORTEX			0x00400000	/* experimental: flicker extremely fast - not working atm */
@@ -5769,17 +5769,17 @@
 #define RF7_OOD_15		0x01000000	/* Cannot occur more than 15 levels OoD */
 #define RF7_OOD_10		0x02000000	/* Cannot occur more than 10 levels OoD */
 #define RF7_ATTR_BNW		0x04000000	/* Monster flickers w/ TERM_BNW colour (ie black and white), also see SLOW_ATTR_BNW */
-#define RF7_S_LOWEXP		0x08000000  /* Summons/Clones give little exp */
-#define RF7_S_NOEXP			0x10000000  /* Summons/Clones don't give exp */
-#define RF7_ATTR_BREATH			0x20000000  /* Use client breath colouring (unused & not implemented) */
-#define RF7_MULTIPLY			0x40000000  /* Monster reproduces */
+#define RF7_S_LOWEXP		0x08000000	/* Summons/Clones give little exp */
+#define RF7_S_NOEXP			0x10000000	/* Summons/Clones don't give exp */
+#define RF7_ATTR_BREATH			0x20000000	/* Use client breath colouring (unused & not implemented) */
+#define RF7_MULTIPLY			0x40000000	/* Monster reproduces */
 #define RF7_DISBELIEVE			0x80000000	/* Antimagic shield */
 
 
 /*
  * Monster race flags
  */
-#define RF8_DUNGEON		0x00000001		/* inverse of non-existing 'RF8_WILD_ONLY' */
+#define RF8_DUNGEON		0x00000001	/* inverse of non-existing 'RF8_WILD_ONLY' */
 #define RF8_WILD_TOWN		0x00000002
 #define RF8_WILD_EASY		0x00000004
 #define RF8_WILD_SHORE		0x00000008
@@ -5829,20 +5829,19 @@
  */
 #define RF9_DROP_CORPSE		0x00000001
 #define RF9_DROP_SKELETON	0x00000002
-#define RF9_HAS_LITE		0x00000004      /* Carries a lite */
-#define RF9_MIMIC		0x00000008      /* *REALLY* looks like an object ... only nastier */
-#define RF9_HAS_EGG			0x00000010      /* Can be monster's eggs -- used in r_info but not in the code */
-#define RF9_IMPRESSED			0x00000020      /* The monster can follow you on each level until he dies */
-#define RF9_SUSCEP_ACID			0x00000040      /* Susceptible to acid */
-#define RF9_SUSCEP_ELEC			0x00000080      /* Susceptible to lightning */
-#define RF9_SUSCEP_POIS		0x00000100      /* Susceptible to poison */
-#define RF9_KILL_TREES		0x00000200      /* Monster can eat trees */
-#define RF9_WYRM_PROTECT	0x00000400      /* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
-#define RF9_DOPPELGANGER	0x00000800      /* The monster looks like you - UNUSED */
-//HOLE^
-#define RF9_ONLY_DEPTH			0x00001000      /* The monster can only be generated at the GIVEN depth */
-#define RF9_SPECIAL_GENE		0x00002000      /* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
-#define RF9_NEVER_GENE			0x00004000      /* The monster cannot be normaly generated - UNUSED */
+#define RF9_HAS_LITE		0x00000004	/* Carries a lite */
+#define RF9_MIMIC		0x00000008	/* REALLY looks like an object ... only nastier */
+#define RF9_HAS_EGG			0x00000010	/* Can be monster's eggs -- used in r_info but not in the code */
+#define RF9_IMPRESSED			0x00000020	/* The monster can follow you on each level until he dies */
+#define RF9_SUSCEP_ACID			0x00000040	/* Susceptible to acid */
+#define RF9_SUSCEP_ELEC			0x00000080	/* Susceptible to lightning */
+#define RF9_SUSCEP_POIS		0x00000100	/* Susceptible to poison */
+#define RF9_KILL_TREES		0x00000200	/* Monster can eat trees */
+#define RF9_WYRM_PROTECT	0x00000400	/* The monster is protected by great wyrms of power: They'll be summoned if it's killed */
+#define RF9_NO_CREDIT		0x00000800	/* Monster won't give any kill/form credit. */
+#define RF9_ONLY_DEPTH			0x00001000	/* The monster can only be generated at the GIVEN depth */
+#define RF9_SPECIAL_GENE		0x00002000	/* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
+#define RF9_NEVER_GENE			0x00004000	/* The monster cannot be normaly generated - UNUSED */
 //HOLE^
 /* no_conf, no_fear, no_sleep, res_<others> already exist (C. Blue) */
 /* These flags are added to r_info for improved logic in mimic forms (eg chaos hound gives res_chaos) */
