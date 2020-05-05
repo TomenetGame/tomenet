@@ -6943,21 +6943,24 @@ if (cfg.unikill_format) {
 			/* Drop it in the dungeon */
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
-#if 0 /* currently no such book */
-		/* Raal's Tomes of Destruction drop a Raal's Tome of Destruction */
-		//else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (rand_int(100) < 20))
-		} else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && (magik(1))) {
+		/* Raal's Tomes of Destruction drop a Raal's Tome of Destruction -- EXPERIMENTAL */
+		} else if ((strstr((r_name + r_ptr->name),"Raal's Tome of Destruction")) && !rand_int(20)) {
 			/* Get local object */
 			qq_ptr = &forge;
 
-			/* Prepare to make a Raal's Tome of Destruction */
-			//invcopy(qq_ptr, lookup_kind(TV_MAGIC_BOOK, 8));
-			/* Make a Tome of the Hellflame (Udun) */
-			invcopy(qq_ptr, lookup_kind(TV_BOOK, 11));
+			/* Well, this variant doesn't have Raal's Tome of Destruction =p
+			   So we make some other books that are destructerino somehow.. */
+			switch (rand_int(5)) {
+			case 0:
+				invcopy(qq_ptr, lookup_kind(TV_BOOK, 11)); break; //Udun, mh
+			case 1: case 2:
+				invcopy(qq_ptr, lookup_kind(TV_BOOK, 51)); break; //Elementalist, pft
+			case 3: case 4:
+				invcopy(qq_ptr, lookup_kind(TV_BOOK, 55)); break; //Destroyer, woot
+			}
 
 			/* Drop it in the dungeon */
 			drop_near(0, qq_ptr, -1, wpos, y, x);
-#endif
 
 #if 0 /* Disabled - Idea doesn't work, because AP in general for cursed randarts is very low. There is no use in the items generated, except maybe lucky ID hat.. */
 		/* For DK/HK: Let these guys drop some heavily cursed, powerful randart for itemization fun.. */
@@ -7332,6 +7335,11 @@ if (cfg.unikill_format) {
 			//qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = -1;
 //#endif
+			drop_near(0, qq_ptr, -1, wpos, y, x);
+
+		} else if (strstr((r_name + r_ptr->name), "mirror image")) {
+			qq_ptr = &forge;
+			invcopy(qq_ptr, lookup_kind(TV_JUNK, SV_GLASS_SHARD));
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
 		} else if (!pvp) {
