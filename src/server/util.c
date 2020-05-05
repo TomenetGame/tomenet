@@ -6289,7 +6289,7 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	bool felt = FALSE;
 
 	/* No feelings! */
-	if (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) return TRUE;
+	if (d_ptr && (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE))) return TRUE;
 
 	/* Hack for Valinor - C. Blue */
 	if (in_valinor(wpos)) {
