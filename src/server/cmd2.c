@@ -957,14 +957,28 @@ void do_cmd_go_down(int Ind) {
 	}
 
 	if (c_ptr->feat == FEAT_IRID_GATE) {
+		struct worldpos twpos = { WPOS_DF_X, WPOS_DF_Y, WPOS_DF_Z };
+		cave_type **zcave;
+
 		for (i = 0; i < INVEN_PACK; i++) if (p_ptr->inventory[i].tval == TV_JUNK && p_ptr->inventory[i].sval == SV_GLASS_SHARD) {
-			msg_print(Ind, "Your glass shard disintegrates in a flurry of colours...");
+			/* Only travel to the 2nd instance if the first instance isn't already spawned instead. */
+			if ((zcave = getcave(&twpos))) {
+				struct dun_level *l_ptr = getfloor(&twpos);
+
+				if (!(l_ptr->flags2 & LF2_BROKEN)) {
+					//msg_format(Ind, "The gate seems broken, but %s flashes brightly for a moment but then subsides.", p_ptr->inventory[i].number != 1 ? "one of your glass shards" : "your glass shard");
+					msg_format(Ind, "%s flashes brightly for a moment but subsides again.", p_ptr->inventory[i].number != 1 ? "One of your glass shards" : "Your glass shard");
+					return;
+				}
+			}
+
+			msg_format(Ind, "%s disintegrates in a flurry of colours...", p_ptr->inventory[i].number != 1 ? "One of your glass shards" : "Your glass shard");
 			inven_item_increase(Ind, i, -1);
-			inven_item_optimize(Ind, i);
 			inven_item_describe(Ind, i);
-			p_ptr->recall_pos.wx = WPOS_DF_X;
-			p_ptr->recall_pos.wy = WPOS_DF_Y;
-			p_ptr->recall_pos.wz = WPOS_DF_Z;
+			inven_item_optimize(Ind, i);
+			p_ptr->recall_pos.wx = twpos.wx;
+			p_ptr->recall_pos.wy = twpos.wy;
+			p_ptr->recall_pos.wz = twpos.wz;
 			p_ptr->new_level_method = LEVEL_RAND;
 			p_ptr->temp_misc_1 |= 0x80;
 			recall_player(Ind, "");
