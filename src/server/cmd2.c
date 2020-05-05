@@ -4711,6 +4711,8 @@ void do_cmd_bash(int Ind, int dir) {
 
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 			cave_set_feat_live(&p_ptr->wpos, y, x, FEAT_SHATTERED_MIRROR);
+			msg_print(Ind, "You bash the mirror and it shatters into a thousand pieces.");
+			msg_print(Ind, " But the image of yourself that you saw in it.. is still there!");
 #ifdef USE_SOUND_2010
 			//sound(Ind, "shatter_potion", NULL, SFX_TYPE_MISC, TRUE);
 			sound_floor_vol(wpos, "shatter_potion", NULL, SFX_TYPE_MISC, 100); //^^'

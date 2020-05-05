@@ -6502,6 +6502,11 @@ if (cfg.unikill_format) {
 	//else if (is_Morgoth) Send_music(Ind, 88, -2); //handled in handle_music() already
 	else if (is_ZuAon) Send_music(Ind, 92, -2);
 
+	if (r_idx == RI_BLUE) { /* just for now, testing */
+		zcave[2][55].feat = FEAT_UNSEALED_DOOR;
+		everyone_lite_spot(wpos, 2, 55);
+	}
+
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags0 & RF0_FINAL_GUARDIAN)) {
 		bool no_art = TRUE;
@@ -7341,9 +7346,6 @@ if (cfg.unikill_format) {
 			qq_ptr = &forge;
 			invcopy(qq_ptr, lookup_kind(TV_JUNK, SV_GLASS_SHARD));
 			drop_near(0, qq_ptr, -1, wpos, y, x);
-
-		} else if (r_idx == RI_BLUE) { /* just for now, testing */
-			zcave[2][55].feat = FEAT_UNSEALED_DOOR;
 
 		} else if (!pvp) {
 			a_idx = 0;

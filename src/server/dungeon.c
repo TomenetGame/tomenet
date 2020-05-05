@@ -8777,6 +8777,8 @@ void process_player_change_wpos(int Ind) {
 
 	clockin(Ind, 7); /* Remember his wpos */
 
+	if (in_deathfate2(wpos)) wiz_lite(Ind); //hack
+
 	/* Note: IDDC is already covered in cmd2.c when taking entrance staircases */
 	if (in_hallsofmandos(wpos)) p_ptr->warning_depth = p_ptr->warning_wor = p_ptr->warning_wor2 = 1;
 }
