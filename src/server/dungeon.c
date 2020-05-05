@@ -3965,9 +3965,8 @@ void recall_player(int Ind, char *message) {
 	    p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, p_ptr->recall_pos.wz);
 
 	/* One more person here */
-	new_players_on_depth(&p_ptr->wpos, 1, TRUE);
-
 	p_ptr->new_level_flag = TRUE;
+	new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 
 	/* He'll be safe for some turns */
 	set_invuln_short(Ind, RECALL_GOI_LENGTH);	// It runs out if attacking anyway
@@ -4084,8 +4083,8 @@ void recall_player(int Ind, char *message) {
 				s_printf("Recalled: %s from %d,%d,%d to %d,%d,%d.\n", p_ptr->name,
 				    old_wpos.wx, old_wpos.wy, old_wpos.wz,
 				    p_ptr->recall_pos.wx, p_ptr->recall_pos.wy, p_ptr->recall_pos.wz);
-				new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 				p_ptr->new_level_flag = TRUE;
+				new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 				set_invuln_short(Ind, RECALL_GOI_LENGTH);	// It runs out if attacking anyway
 				p_ptr->word_recall = 0;
 				process_player_change_wpos(Ind);
@@ -7878,10 +7877,6 @@ void process_player_change_wpos(int Ind) {
 	/* Prevent exploiting /undoskills by invoking it right before each level-up:
 	   Discard the possibility to undoskills when we venture into a dungeon again. */
 	if (!p_ptr->wpos_old.wz && p_ptr->wpos.wz) p_ptr->reskill_possible = FALSE;
-
-	/* Only one player allowed at a time here? */
-	if (in_deathfate(wpos) && players_on_depth(wpos) != 1)
-		p_ptr->paralyzed = 255; /* bad hack: 255 now means 'never decrease' - must be reset by a specific trigger instead */
 
 	/* un-snow */
 	p_ptr->temp_misc_1 &= ~0x08;

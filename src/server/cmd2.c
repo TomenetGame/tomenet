@@ -655,9 +655,8 @@ void do_cmd_go_up(int Ind) {
 	}
 #endif
 	new_players_on_depth(&old_wpos, -1, TRUE);
-	new_players_on_depth(wpos, 1, TRUE);
-
 	p_ptr->new_level_flag = TRUE;
+	new_players_on_depth(wpos, 1, TRUE);
 
 	forget_view(Ind); //the_sandman
 
@@ -929,8 +928,8 @@ void do_cmd_go_down(int Ind) {
 			wpcopy(&old_wpos, wpos);
 			if (wpos->wz > 0) wpos->wz--; else wpos->wz++;
 			new_players_on_depth(&old_wpos, -1, TRUE);
-			new_players_on_depth(wpos, 1, TRUE);
 			p_ptr->new_level_flag = TRUE;
+			new_players_on_depth(wpos, 1, TRUE);
 			//forget_view(Ind); //the_sandman
 			msg_print(Ind, "You leave the party, passing through a gate obscured by magical fog...");
 			set_invuln_short(Ind, STAIR_GOI_LENGTH);
@@ -1484,9 +1483,8 @@ void do_cmd_go_down(int Ind) {
 	}
 #endif
 	new_players_on_depth(&old_wpos, -1, TRUE);
-	new_players_on_depth(wpos, 1, TRUE);
-
 	p_ptr->new_level_flag = TRUE;
+	new_players_on_depth(wpos, 1, TRUE);
 
 	forget_view(Ind); //the_sandman
 

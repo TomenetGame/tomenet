@@ -482,22 +482,41 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		}
 	}
 
-	/* Hack for allowing only a single player to act at a time on this floor */
+	/* Hack for allowing only a single player to act at a time on this floor.
+	   IMPORTANT: For this to work, new_level_flag must always be set _before_ calling us for the target floor! */
 	if (in_deathfate(wpos)) {
+		struct dun_level *l_ptr = getfloor(wpos);
+
+	    if (l_ptr) {
 		/* Only 1 player? Make sure he's unfrozen */
-		if (w_ptr->ondepth == 1) {
+		if (l_ptr->ondepth == 1) {
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
 				//if (admin_p(i)) continue;
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
-				if (p_ptr->paralyzed == 255) p_ptr->paralyzed = 0;
+				if (p_ptr->paralyzed == 255) {
+					p_ptr->paralyzed = 0;
+					p_ptr->redraw |= PR_STATE;
+				}
 				break;
 			}
 		} else {
 			bool para = TRUE, free = FALSE;
 
+			/* Ensure that the player who just joined us here does get frozen in the first place */
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				//if (admin_p(i)) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+				if (!p_ptr->new_level_flag) continue;
+				p_ptr->paralyzed = 255;
+				p_ptr->redraw |= PR_STATE;
+				break;
+			}
 			/* Ensure that not more than one player is unfrozen */
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
@@ -507,7 +526,10 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 
 				if (p_ptr->paralyzed == 255) continue;
 				free = TRUE;
-				if (!para) p_ptr->paralyzed = 255;
+				if (!para) {
+					p_ptr->paralyzed = 255;
+					p_ptr->redraw |= PR_STATE;
+				}
 				else para = FALSE;
 			}
 			/* Ensure that one player is unfrozen */
@@ -518,9 +540,11 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				p_ptr->paralyzed = 0;
+				p_ptr->redraw |= PR_STATE;
 				break;
 			}
 		}
+	    } else s_printf("NOPD: No l_ptr!\n");
 	}
 
 

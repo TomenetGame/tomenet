@@ -1449,9 +1449,8 @@ void teleport_player_level(int Ind, bool force) {
 	new_players_on_depth(&old_wpos, -1, TRUE);
 
 	/* One more player here */
-	new_players_on_depth(wpos, 1, TRUE);
-
 	p_ptr->new_level_flag = TRUE;
+	new_players_on_depth(wpos, 1, TRUE);
 }
 
 /* Like teleport_player_level() but does this for ALL players on a wpos at once
@@ -1575,9 +1574,8 @@ void teleport_players_level(struct worldpos *wpos) {
 		/* Change the wpos */
 		wpcopy(&p_ptr->wpos, &new_wpos);
 
-		p_ptr->new_level_flag = TRUE;
-
 		/* One more player here */
+		p_ptr->new_level_flag = TRUE;
 		new_players_on_depth(&new_wpos, 1, TRUE);
 	}
 }

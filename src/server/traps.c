@@ -200,9 +200,6 @@ static void do_player_trap_change_depth(int Ind, int dis) {
 
 	zcave = getcave(&p_ptr->wpos);
 
-	p_ptr->new_level_flag = TRUE;
-	p_ptr->new_level_method = LEVEL_RAND;
-
 	/* The player is gone */
 	zcave[p_ptr->py][p_ptr->px].m_idx = 0;
 
@@ -219,6 +216,8 @@ static void do_player_trap_change_depth(int Ind, int dis) {
 	p_ptr->wpos.wz += dis;
 
 	new_players_on_depth(&old_wpos, -1, TRUE);
+	p_ptr->new_level_flag = TRUE;
+	p_ptr->new_level_method = LEVEL_RAND;
 	new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 }
 

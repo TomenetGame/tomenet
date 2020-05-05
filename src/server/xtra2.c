@@ -14049,9 +14049,9 @@ bool imprison(int Ind, u16b time, char *reason) {
 
 	/* that messes it up */
 	/* nzcave[p_ptr->py][p_ptr->px].m_idx = (0-Ind); */
+	p_ptr->new_level_flag = TRUE;
 	new_players_on_depth(&p_ptr->wpos, 1, TRUE);
 
-	p_ptr->new_level_flag = TRUE;
 	p_ptr->new_level_method = LEVEL_HOUSE;
 
 #ifdef JAILER_KILLS_WOR

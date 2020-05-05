@@ -5975,10 +5975,9 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] |=
 				    (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8));
 
-			new_players_on_depth(wpos, 1, TRUE);
 			p_ptr->new_level_flag = TRUE;
 			p_ptr->new_level_method = LEVEL_OUTSIDE;
-
+			new_players_on_depth(wpos, 1, TRUE);
 			return;
 		}
 	}
