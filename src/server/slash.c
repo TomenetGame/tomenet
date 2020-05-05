@@ -6030,7 +6030,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
-			/* manually reposition dungeon/tower stairs - C. Blue */
+			/* manually reposition dungeon/tower stairs within the current worldmap surface sector - C. Blue */
 			else if (prefix(messagelc, "/move-stair")){
 				int scx, scy;
 				worldpos *tpos = &p_ptr->wpos;
@@ -6039,6 +6039,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (!tk) {
 					msg_print(Ind, "Usage: /move-stair dun|tow");
+					return;
 				}
 
 				for (scx = 0; scx < MAX_WID; scx++) {
@@ -6063,7 +6064,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						}
 					}
 				}
-				msg_print(Ind, "No staircase downwards found.");
+				msg_print(Ind, "No appropriate staircase found.");
 				return;
 			}
 			/* catch problematic stair coords everywhere */
