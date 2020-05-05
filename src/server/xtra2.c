@@ -7337,10 +7337,13 @@ if (cfg.unikill_format) {
 //#endif
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
-		} else if (strstr((r_name + r_ptr->name), "mirror image")) {
+		} else if (r_idx == RI_MIRROR) {
 			qq_ptr = &forge;
 			invcopy(qq_ptr, lookup_kind(TV_JUNK, SV_GLASS_SHARD));
 			drop_near(0, qq_ptr, -1, wpos, y, x);
+
+		} else if (r_idx == RI_BLUE) { /* just for now, testing */
+			zcave[2][55].feat = FEAT_UNSEALED_DOOR;
 
 		} else if (!pvp) {
 			a_idx = 0;
