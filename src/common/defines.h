@@ -2313,8 +2313,9 @@
 #define FEAT_BARS_DB		0x77
 #define FEAT_BARS_N		0x78
 
-/* Features 0x74 - 0x9F -- unused */
+/* Features 0x74 - 0x9E -- unused */
 
+#define FEAT_PERM_MAGMA		0x9F
 #define FEAT_BETWEEN		0xA0 /* 160 */
 
 /* Altars */
@@ -6221,7 +6222,8 @@
 
 /*** Features flags -- DG ***/
 #define FF1_NO_WALK		0x00000001L
-#define FF1_NO_VISION		0x00000002L
+#define FF1_NO_VISION		0x00000002L /* unused*/
+//HOLE^
 #define FF1_CAN_FEATHER		0x00000004L
 #define FF1_CAN_PASS		0x00000008L
 #define FF1_FLOOR		0x00000010L
@@ -6234,6 +6236,7 @@
 #define FF1_CAN_RUN		0x00000800L
 #define FF1_DOOR		0x00001000L
  #define FF1_SUPPORT_LIGHT	0x00002000L	/* -- currently NO EFFECT! -- */
+//HOLE^
 #define FF1_CAN_CLIMB		0x00004000L
 #define FF1_TUNNELABLE		0x00008000L
 #define FF1_WEB			0x00010000L
@@ -8956,6 +8959,8 @@ extern int PlayerUID;
 
 #define in_deathfate(wpos) \
 	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz == WPOS_DF_Z)
+#define in_deathfate2(wpos) \
+	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz == -WPOS_DF_Z)
 
 /* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */
 #define ITH_NONE	0
