@@ -8955,6 +8955,8 @@ extern int PlayerUID;
 #define in_highlander(wpos) \
 	((wpos)->wx == WPOS_HIGHLANDER_X && (wpos)->wy == WPOS_HIGHLANDER_Y && (wpos)->wz == WPOS_HIGHLANDER_Z)
 
+#define in_deathfate(wpos) \
+	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz == WPOS_DF_Z)
 
 /* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */
 #define ITH_NONE	0

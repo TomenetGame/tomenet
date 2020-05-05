@@ -6170,7 +6170,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		/* too low to get any exp? */
 		else if (dlev < det_req_level(p_ptr->lev) - 5) {
 			colour = TERM_L_DARK;
-			if (p_ptr->warning_depth != 2 && p_ptr->wpos.wz) {
+			if (p_ptr->warning_depth != 2 && p_ptr->wpos.wz && !in_deathfate(&p_ptr->wpos)) {
 				msg_print(Ind, "\377yYour level is very high compared to the dungeon floor you're currently on!");
 				msg_print(Ind, "\377yFor that reason the depth is shown in grey colour (instead of white) in the");
 				msg_print(Ind, "\377ybottom right corner of the main window, indicating that you will not gain any");
@@ -6182,7 +6182,7 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		/* too low to get 100% exp? */
 		else if (dlev < det_req_level(p_ptr->lev)) {
 			colour = TERM_YELLOW;
-			if (!p_ptr->warning_depth && p_ptr->wpos.wz) {
+			if (!p_ptr->warning_depth && p_ptr->wpos.wz && !in_deathfate(&p_ptr->wpos)) {
 				msg_print(Ind, "\377yYour level is quite high compared to the dungeon floor you're currently on!");
 				msg_print(Ind, "\377yFor that reason the depth is shown in yellow colour (instead of white) in the");
 				msg_print(Ind, "\377ybottom right corner of the main window, indicating that you will gain reduced");

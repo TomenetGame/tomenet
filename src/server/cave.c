@@ -482,6 +482,48 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		}
 	}
 
+	/* Hack for allowing only a single player to act at a time on this floor */
+	if (in_deathfate(wpos)) {
+		/* Only 1 player? Make sure he's unfrozen */
+		if (w_ptr->ondepth == 1) {
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				//if (admin_p(i)) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+				if (p_ptr->paralyzed == 255) p_ptr->paralyzed = 0;
+				break;
+			}
+		} else {
+			bool para = TRUE, free = FALSE;
+
+			/* Ensure that not more than one player is unfrozen */
+			for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				//if (admin_p(i)) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+				if (p_ptr->paralyzed == 255) continue;
+				free = TRUE;
+				if (!para) p_ptr->paralyzed = 255;
+				else para = FALSE;
+			}
+			/* Ensure that one player is unfrozen */
+			if (!free) for (i = 1; i <= NumPlayers; i++) {
+				p_ptr = Players[i];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+				//if (admin_p(i)) continue;
+				if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+				p_ptr->paralyzed = 0;
+				break;
+			}
+		}
+	}
+
+
 	update_uniques_killed(wpos);
 
 	/* Perform henc_strictness anti-cheeze - mode 4 : monster is on the same dungeon level as a player */

@@ -5134,7 +5134,7 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_tim_infra(Ind, p_ptr->tim_infra - minus_magic);
 
 	/* Paralysis */
-	if (p_ptr->paralyzed)
+	if (p_ptr->paralyzed && p_ptr->paralyzed != 255) /* hack */
 		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1);// - minus_health
 
 	/* Confusion */
@@ -6361,7 +6361,7 @@ bool stale_level(struct worldpos *wpos, int grace) {
 	return FALSE;
 }
 
-static void do_unstat(struct worldpos *wpos, bool fast_unstat) {
+static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
 	int j;
 
 	/* Highlander Tournament sector00 is static while players are in dungeon! */
@@ -6386,11 +6386,17 @@ static void do_unstat(struct worldpos *wpos, bool fast_unstat) {
 				if (stale_level(wpos, 120)) new_players_on_depth(wpos, 0, FALSE);//2 min
 			} else if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);//5 min (was 10)
 		} else {
-#ifdef SAURON_FLOOR_FAST_UNSTAT
-			if (fast_unstat) j = 60 * 60; //1h
-			else
-#endif
-			j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
+			switch (fast_unstat) {
+			case 1: //SAURON_FLOOR_FAST_UNSTAT
+				j = 60 * 60; //1h
+				break;
+			case 2: //DI_DEATH_FATE
+				j = 0;
+				break;
+			default: //normal (fast_unstat = FALSE)
+				j = cfg.level_unstatic_chance * getlevel(wpos) * 60;
+				break;
+			}
 
 			/* makes levels between 50ft and min_unstatic_level unstatic on player saving/quiting game/leaving level DEG */
 			if (((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) ||
@@ -6475,7 +6481,7 @@ static void purge_old() {
 						twpos.wz = i;
 						if (cfg.level_unstatic_chance > 0 &&
 						    players_on_depth(&twpos))
-							do_unstat(&twpos, d_ptr->type == DI_MT_DOOM && i == d_ptr->maxdepth);
+							do_unstat(&twpos, d_ptr->type == DI_DEATH_FATE ? 2 : ((d_ptr->type == DI_MT_DOOM && i == d_ptr->maxdepth) ? 1 : 0));
 
 						if (!players_on_depth(&twpos) && getcave(&twpos) &&
 						    stale_level(&twpos, cfg.anti_scum))
@@ -6488,7 +6494,7 @@ static void purge_old() {
 						twpos.wz = -i;
 						if (cfg.level_unstatic_chance > 0 &&
 						    players_on_depth(&twpos))
-							do_unstat(&twpos, d_ptr->type == DI_MT_DOOM && i == d_ptr->maxdepth);
+							do_unstat(&twpos, d_ptr->type == DI_DEATH_FATE ? 2 : ((d_ptr->type == DI_MT_DOOM && i == d_ptr->maxdepth) ? 1 : 0));
 
 						if (!players_on_depth(&twpos) && getcave(&twpos) &&
 						    stale_level(&twpos, cfg.anti_scum))
@@ -7872,6 +7878,10 @@ void process_player_change_wpos(int Ind) {
 	/* Prevent exploiting /undoskills by invoking it right before each level-up:
 	   Discard the possibility to undoskills when we venture into a dungeon again. */
 	if (!p_ptr->wpos_old.wz && p_ptr->wpos.wz) p_ptr->reskill_possible = FALSE;
+
+	/* Only one player allowed at a time here? */
+	if (in_deathfate(wpos) && players_on_depth(wpos) != 1)
+		p_ptr->paralyzed = 255; /* bad hack: 255 now means 'never decrease' - must be reset by a specific trigger instead */
 
 	/* un-snow */
 	p_ptr->temp_misc_1 &= ~0x08;

@@ -1796,6 +1796,7 @@ bool set_paralyzed(int Ind, int v) {
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return FALSE;
+	if (p_ptr->paralyzed == 255) return FALSE; /* hack */
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
