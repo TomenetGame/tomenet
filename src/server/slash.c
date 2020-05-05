@@ -313,15 +313,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 	char message4[MAX_SLASH_LINE_LEN], messagelc[MAX_SLASH_LINE_LEN];
 
 	worldpos wp;
-#ifndef TEST_SERVER
 	bool admin = is_admin(p_ptr);
-#else
-	bool admin = TRUE;
-#endif
 
 	char *colon_u, message2_u[MAX_SLASH_LINE_LEN], message3_u[MAX_SLASH_LINE_LEN];
 	bool censor = p_ptr->censor_swearing;
 
+
+#ifdef TEST_SERVER
+	/* All slash commands have admin-status except if prefixed with '!' */
+	if (message[0] == '!') message++;
+	else admin = TRUE;
+#endif
 
 	/* prevent overflow - bad hack for now (needed as you can now enter lines MUCH longer than 140 chars) */
 	message[MAX_SLASH_LINE_LEN - 1] = 0;
