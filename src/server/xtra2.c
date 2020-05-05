@@ -8160,7 +8160,7 @@ void player_death(int Ind) {
 #endif
 	//int inven_sort_map[INVEN_TOTAL];
 	//wilderness_type *wild;
-	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0), erase = FALSE, insanity = streq(p_ptr->died_from, "insanity");
+	bool hell = TRUE, secure = FALSE, ge_secure = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0), erase = FALSE, insanity = streq(p_ptr->died_from, "insanity"), penalty = FALSE;
 	cptr titlebuf;
 	int death_type = -1; /* keep track of the way (s)he died, for buffer_account_for_event_deed() */
 	bool world_broadcast = TRUE, just_fruitbat_transformation = (p_ptr->fruit_bat == -1);
@@ -8251,7 +8251,14 @@ void player_death(int Ind) {
 		Send_store_kick(Ind);
 	}
 
-	if (d_ptr && (d_ptr->flags2 & DF2_NO_DEATH)) secure = TRUE;
+	if (d_ptr) {
+		if (d_ptr->flags2 & DF2_NO_DEATH) secure = TRUE;
+		if (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) {
+			/* ok, be lenient about mirror fight, but still.. */
+			secure = TRUE;
+			penalty = TRUE;
+		}
+	}
 
 	if (in_iddc
 	    && !is_admin(p_ptr)) {
@@ -8424,7 +8431,22 @@ void player_death(int Ind) {
 				}
 				recall_player(Ind, "\377oYou die.. at least it felt like you did..!");
 			}
-			else recall_player(Ind, "\377oYou almost died.. but your life was secured here!");
+			else {
+				if (penalty) {
+					/* Lose either inventory or equipment, less severe than normal death */
+#if 0
+ #ifdef DEATH_PACK_ITEM_LOST
+					inven_death_damage(Ind, TRUE);
+ #endif
+#else
+ #ifdef DEATH_EQ_ITEM_LOST
+					equip_death_damage(Ind, TRUE);
+ #endif
+#endif
+					recall_player(Ind, "\377oYour mind is hazy.. you feel like you woke up from a dream!");
+				}
+				else recall_player(Ind, "\377oYou almost died.. but your life was secured here!");
+			}
 
 			p_ptr->safe_sane = TRUE;
 			/* Apply small penalty for death */
@@ -8458,7 +8480,7 @@ void player_death(int Ind) {
 		if (!ge_secure) p_ptr->soft_deaths++; /* Note: no diz_death here actually */
 #ifdef TEST_SERVER /* ..only on test server for testing actually */
 #ifdef RACE_DIZ
-		if (!ge_secure) //in Training Tower
+		if (!ge_secure && !penalty) //in Training Tower
 			display_diz_death(Ind);
 #endif
 #endif
