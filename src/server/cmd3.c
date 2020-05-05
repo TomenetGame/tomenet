@@ -1628,6 +1628,12 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	}
 #endif
 
+	/* For now maybe.. (ensure consistent inventory+equipment for mirror's scan) */
+	if (in_deathfate(&p_ptr->wpos)) {
+		msg_print(Ind, "\377yYou may not drop items here. Use 'k' to destroy an item if you want to get rid of it.");
+		return;
+	}
+
 	if (o_ptr->questor) {
 		if (p_ptr->rogue_like_commands)
 			msg_print(Ind, "\377yYou can't drop this item. Use '\377oCTRL+d\377y' to destroy it. (Might abandon the quest!)");
