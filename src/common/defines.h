@@ -5842,7 +5842,7 @@
 #define RF9_NO_CREDIT		0x00000800	/* Monster won't give any kill/form credit. */
 #define RF9_ONLY_DEPTH			0x00001000	/* The monster can only be generated at the GIVEN depth */
 #define RF9_SPECIAL_GENE		0x00002000	/* The monster can only be generated in special conditions like quests, special dungeons, ... NOTE: currently no effect! */
-#define RF9_NEVER_GENE			0x00004000	/* The monster cannot be normaly generated - UNUSED */
+#define RF9_NO_REDUCE			0x00004000	/* The monster cannot be afflicted by non-temporary stat-reducing effects */
 //HOLE^
 /* no_conf, no_fear, no_sleep, res_<others> already exist (C. Blue) */
 /* These flags are added to r_info for improved logic in mimic forms (eg chaos hound gives res_chaos) */

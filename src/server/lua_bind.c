@@ -472,7 +472,6 @@ static bool lua_mon_hook_bounty(int r_idx) {
 
 	/* Accept only monsters that can be generated */
 	if ((r_ptr->flags9 & RF9_SPECIAL_GENE)) return (FALSE);
-	if ((r_ptr->flags9 & RF9_NEVER_GENE)) return (FALSE);
 
 	/* Reject pets */
 	if ((r_ptr->flags7 & RF7_PET)) return (FALSE);

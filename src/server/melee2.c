@@ -1918,6 +1918,38 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Don't attack your master */
 	if (p_ptr->id == m_ptr->owner) return (FALSE);
 
+
+	/* Ultra-hack: Doppelganger - don't cast like a monster, but pseudo-cast like a player;
+	   weaknesses: mimicry-abilities, combat techniques, trauma? :o */
+	if (m_ptr->r_idx == RI_MIRROR) {
+		//bool has_los = los(wpos, y, x, oy, ox);
+		/* Note: level (fixed) and speed,hp,ac (adjusting) are already set.
+		   Here we just take care of actual attack-spell-relevant stuff: */
+		//int mdev, md_wand[5], md_staff[5], md_rod[5]; //various magic devices, no activatable items for now
+		//int sp_att[5], sp_def[5], sp_heal[5], sp_flee[5]; //various purpose spells (includes runecraft) - no mimicry-spells actually */
+		//int trapping;
+		//magic schools..
+		//runecraft..
+		/* Don't forget to check for own AM shell/field maybe? Hmm. */
+
+		if (m_ptr->cdis > MAX_RANGE) return FALSE;
+
+		/* Analyze target */
+
+		/* Cast.... */
+
+
+		/* Finish up */
+#ifdef COMBO_AM_IC_CAP
+		/* Reset combo-cap-checking */
+		m_ptr->intercepted = 0;
+#endif
+
+		/* A spell was cast (or antimagic'ed) */
+		return (TRUE);
+	}
+
+
 	/* Cannot cast spells when confused */
 	if (m_ptr->confused) return (FALSE);
 
@@ -9662,20 +9694,19 @@ void process_monsters(void) {
 			reveal_cloaking = spot_cloaking = FALSE;
 
 			/* Only check him if he is playing */
-			if (p_ptr->conn == NOT_CONNECTED)
-				continue;
+			if (p_ptr->conn == NOT_CONNECTED) continue;
 
 			/* Make sure he's on the same dungeon level */
-			if (!inarea(&p_ptr->wpos, &m_ptr->wpos))
-				continue;
+			if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
+			/* Hack for RI_MIRROR */
+			if (p_ptr->paralyzed == 255) continue;
 
 			/* Hack -- Skip him if he's shopping -
 			   in a town, so dungeon stores aren't cheezy */
-			if ((p_ptr->store_num != -1) && (p_ptr->wpos.wz == 0))
-				continue;
+			if ((p_ptr->store_num != -1) && (p_ptr->wpos.wz == 0)) continue;
 
 			/* Hack -- make the dungeon master invisible to monsters */
-//			if (p_ptr->admin_dm) continue;
 			if (p_ptr->admin_dm && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) continue; /* for Dungeon Master GF_DOMINATE */
 
 			/*
@@ -9884,6 +9915,33 @@ void process_monsters(void) {
 //		if (m_ptr->cdis >= (r_ptr->aaf > 100 ? r_ptr->aaf : 100)) continue;
 
 		p_ptr = _Players[closest];
+
+
+		/* Hack - adjust Doppelganger stats on the fly */
+		if (m_ptr->r_idx == RI_MIRROR) {
+			int n;
+
+			/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system) */
+			if (m_ptr->speed < p_ptr->pspeed) m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
+			if (m_ptr->org_maxhp < p_ptr->mhp) {
+				n = p_ptr->mhp - m_ptr->org_maxhp;
+				m_ptr->org_maxhp += n;
+				m_ptr->maxhp += n;
+				m_ptr->hp += n;
+			}
+			if (m_ptr->org_ac < p_ptr->ac + p_ptr->to_a) {
+				n = p_ptr->ac + p_ptr->to_a - m_ptr->org_ac;
+				m_ptr->org_ac += n;
+				m_ptr->ac += n;
+			}
+			/* More stuff: */
+			//p_ptr->aura[0..2] and p_ptr->sh_elec/cold/fire -> fear/freeze/death
+			//variable or not?: nostun/noconf/nosleep/noblind/resistaces et al
+			/* These things don't have corresponding monster flags, so might have to move them all as hacks to their respective functions: */
+			//int am_shell, am_field, reflecting;
+			//int mweapon, hit, dam, parry, block, dodge, bpr, intercept; //melee; dam can just include crit/backstab/dualwield
+			//int rweapon, shots, hitr, damr, calmness; //ranged
+		}
 
 
 		/* Assume no move */

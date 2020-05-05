@@ -5706,6 +5706,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
 
+	/* There are a couple specific checks for this below, but we just handle everything with this one check here, for now */
+	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
+
 	/* A dead monster that drops a potion that smashes cannot get hit by that very effect */
 	if (m_ptr->dead) return FALSE;
 
@@ -5922,6 +5925,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (m_ptr->csleep) break;
 			/* Already charmed? - no effect then */
 			if (m_ptr->charmedignore) break;
+			/* Not a valid target */
+			if ((m_ptr->pet && m_ptr->owner == p_ptr->id)
+			    || m_ptr->status == M_STATUS_FRIENDLY
+			    || (r_ptr->flags9 & RF9_NO_REDUCE))
+				break;
 
 			/* Don't affect hurt monsters! */
 			if (m_ptr->hp < m_ptr->maxhp) {
@@ -6537,7 +6545,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		if (r_ptr->flags4 & RF4_BR_INER) {
 			note = " resists";
 			dam *= 3; dam /= (randint(6) + 6);
-		} else if (r_ptr->flags1 & RF1_UNIQUE) {
+		} else if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags9 & RF9_NO_REDUCE)) {
 			/* cannot be slowed */
 		} else if ((r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) /* cannot randint higher? (see 'resist' branch below) */
 		    || (RES_OLD(r_ptr->level, dam))) {
@@ -6933,6 +6941,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		/* Powerful monsters can resist */
 		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags4 & RF4_BR_INER)) {
 			note = " is unaffected";
 			obvious = FALSE;
@@ -7092,6 +7101,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		int curse = randint(3);
 		if (curse == 1) { //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_OLD_SLOW
 			if ((r_ptr->flags1 & RF1_UNIQUE) ||
+			    (r_ptr->flags9 & RF9_NO_REDUCE) ||
 			    (r_ptr->flags4 & RF4_BR_INER)) {
 				note = " is unaffected";
 			} else if (RES_OLD(r_ptr->level, dam / 3)) {
@@ -7837,7 +7847,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* hack */
 		no_dam = TRUE;
 
-		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY ||
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
 		    (m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
@@ -7878,7 +7888,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Decrease dexterity */
 	case GF_DEC_DEX:
 		no_dam = TRUE;
-		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY ||
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
 		    (m_ptr->r_idx == 74 || m_ptr->r_idx == 539) ||
@@ -7902,7 +7912,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Decrease dexterity */
 	case GF_DEC_CON:
 		no_dam = TRUE;
-		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY ||
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
 		    (m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
@@ -8095,7 +8105,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Ruination! (now we're talking) */
 	case GF_RUINATION:
-		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY ||
+		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");

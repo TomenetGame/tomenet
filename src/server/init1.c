@@ -483,7 +483,7 @@ static cptr r_info_flags9[] = {
 
 	"ONLY_DEPTH",
 	"SPECIAL_GENE",
-	"NEVER_GENE",
+	"NO_REDUCE",
 	"RES_ACID",
 
 	"RES_ELEC",

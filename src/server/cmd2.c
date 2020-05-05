@@ -4638,10 +4638,10 @@ void do_cmd_bash(int Ind, int dir) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 
-	int                 y, x;
-	int                     bash, temp, num;
-	cave_type               *c_ptr;
-	bool            more = FALSE, water = FALSE;
+	int y, x;
+	int bash, temp, num;
+	cave_type *c_ptr;
+	bool more = FALSE, water = FALSE;
 	char bash_type = 1;
 	cave_type **zcave;
 
@@ -4718,9 +4718,31 @@ void do_cmd_bash(int Ind, int dir) {
 			sound_floor_vol(wpos, "shatter_potion", NULL, SFX_TYPE_MISC, 100); //^^'
 			sound_floor_vol(wpos, "thunder", NULL, SFX_TYPE_AMBIENT, 100); //ambient, for implied lightning visuals
 #endif
-			scatter(wpos, &y2, &x2, y, x + 1, 1, TRUE);
 			summon_override_checks = SO_ALL;
-			place_monster_one(&p_ptr->wpos, y2, x2, RI_MIRROR, 0, 0, 0, 0, 0);
+			temp = 10;
+			do scatter(wpos, &y2, &x2, y, x + 1, 1, TRUE);
+			while (!(in_bounds(y2, x2) && cave_floor_bold(zcave, y2, x2)) && --temp);
+			if (!place_monster_one(&p_ptr->wpos, y2, x2, RI_MIRROR, 0, 0, 0, 0, 0)) {
+				/* Success */
+				monster_type *m_ptr;
+
+				/* Modify starting stats initially: */
+				if ((temp = zcave[y2][x2].m_idx) > 0) {
+					m_ptr = &m_list[temp];
+					if (m_ptr->r_idx == RI_MIRROR) { /* Extra paranoia.. */
+						/* Fixed stats */
+						m_ptr->level = p_ptr->max_lev;
+						/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system),
+						   so just set the most important ones here to give an initial definition frame: */
+						m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
+						m_ptr->org_maxhp = m_ptr->maxhp = m_ptr->hp = p_ptr->mhp;
+						/* AC could just be set/adjusted later like the rest: */
+						m_ptr->org_ac = m_ptr->ac = p_ptr->ac + p_ptr->to_a;
+						/* Fixed stats that are always available: */
+						//see-inv, pseudo-esp
+					}
+				}
+			} else s_printf("MIRROR placement failed for '%s' (%d)!\n", p_ptr->name, Ind); //paranoia?
 			summon_override_checks = SO_NONE;
 		}
 		/* Nothing useful */
