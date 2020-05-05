@@ -320,10 +320,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 
 #ifdef TEST_SERVER
-	/* All slash commands have admin-status except if prefixed with '!' */
-	if (message[0] == '!') message++;
-	else admin = TRUE;
+	/* All slash commands have admin-status by default */
+	admin = TRUE;
 #endif
+	/* Deliberately use non-admin slash commands as an admin by prefixing them with '!', eg '/!rec' */
+	if (message[1] == '!') {
+		message2[0] = '/';
+		strcpy(message2 + 1, message + 2);
+		strcpy(message, message2);
+		admin = FALSE;
+	}
 
 	/* prevent overflow - bad hack for now (needed as you can now enter lines MUCH longer than 140 chars) */
 	message[MAX_SLASH_LINE_LEN - 1] = 0;
