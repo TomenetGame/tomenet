@@ -4746,6 +4746,7 @@ void do_cmd_bash(int Ind, int dir) {
 						/* AC could just be set/adjusted later like the rest: */
 						m_ptr->org_ac = m_ptr->ac = p_ptr->ac + p_ptr->to_a;
 						/* Immutable stats: */
+					    //todo: add all racial/class fixed boni/mali (eg vampire light-susc, elves +savingthrow maybe even..etc)
 						if (p_ptr->male) r_ptr->flags1 |= RF1_MALE; else r_ptr->flags1 |= RF1_FEMALE;
 						r_ptr->flags2 |= RF2_SMART | RF2_POWERFUL | RF2_OPEN_DOOR | RF2_BASH_DOOR;
 						switch (p_ptr->prace) {
