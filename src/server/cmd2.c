@@ -4760,7 +4760,7 @@ void do_cmd_bash(int Ind, int dir) {
 						/* Stats that are always granted: */
 						r_ptr->flags3 |= RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP; //just prevent 'mental' conditions, so stun is still allowed
 						r_ptr->flags7 |= RF7_CAN_SWIM | RF7_CAN_FLY | RF7_NO_ESP; //just whatever, paranoia - however, we're not a real being, so no ESP! :o
-						r_ptr->flags0 |= RF0_CAN_CLIMB | RF0_ASTAR; //shouldn't matter in current arena layout though
+						r_ptr->flags0 |= RF0_CAN_CLIMB | RF0_ASTAR; // A* is important to see through player-invisibility, which it actually implies!
 						/* Note: We don't take body_monster into account, so mimics might perhaps use this to cheeze an advantage..
 						   However, the way the auto-adjust code works is that it never regresses, only stacks improvements in stats,
 						   so that fact alone might work as a balancing factor for mimics' extra powers. >:) */
