@@ -504,7 +504,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "diz_unique",		"Displays lore when killing a unique monster" },
 	{ &c_cfg.diz_death,		TRUE,	6,	0, 120, TRUE,
 	    "diz_death",		"Displays lore on monster that killed you" },
-	{ &c_cfg.diz_death_any,		FALSE,	6,	0, 121, TRUE,
+	{ &c_cfg.diz_death_any,		TRUE,	6,	0, 121, TRUE,
 	    "diz_death_any",		"Displays lore on monster that kills anyone" },
 	{ &c_cfg.diz_first,		TRUE,	6,	0, 122, TRUE,
 	    "diz_first",		"Displays lore on first-time monster kill" },
