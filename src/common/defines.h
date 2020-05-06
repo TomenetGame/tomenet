@@ -5508,7 +5508,8 @@
 #define RF1_FORCE_DEPTH			0x00000100	/* Start at "correct" depth */
 #define RF1_FORCE_MAXHP			0x00000200	/* Start with max hitpoints */
 #define RF1_FORCE_SLEEP			0x00000400	/* Start out with very low energy - but this is now deprecated since monsters even start out with negative energy nowadays to avoid insta-breath-kills - C. Blue */
-#define RF1_FORCE_EXTRA			0x00000800	/* Start out something */
+#define RF1_FORCE_EXTRA			0x00000800	/* Start out something -- UNUSED */
+//^hole
 #define RF1_FRIEND		0x00001000	/* Arrive with a friend */
 #define RF1_FRIENDS		0x00002000	/* Arrive with some friends */
 #define RF1_ESCORT		0x00004000	/* Arrive with an escort */
