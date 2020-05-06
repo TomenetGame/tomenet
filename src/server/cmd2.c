@@ -4730,6 +4730,13 @@ void do_cmd_bash(int Ind, int dir) {
 				if ((temp = zcave[y2][x2].m_idx) > 0) {
 					m_ptr = &m_list[temp];
 					if (m_ptr->r_idx == RI_MIRROR) { /* Extra paranoia.. */
+						/* Hack: Reset stats to what's hard-coded in r_info, in case this is not the first time spawn */
+						//F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP | NO_CREDIT | DROP_CHOSEN | NO_REDUCE :
+						r_ptr->flags1 = RF1_FORCE_MAXHP | RF1_DROP_CHOSEN; //no effect actually as we set HP manually
+						r_ptr->flags2 = r_ptr->flags3 = r_ptr->flags4 = r_ptr->flags5 = r_ptr->flags6 = r_ptr->flags7 = 0x0;
+						r_ptr->flags8 = RF8_BLUEBAND | RF8_GENO_NO_THIN;
+						r_ptr->flags9 = RF9_NO_CREDIT | RF9_NO_REDUCE;
+						r_ptr->flags0 = 0x0;
 						/* Fixed stats */
 						m_ptr->level = p_ptr->max_lev;
 						/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system),
@@ -4738,8 +4745,23 @@ void do_cmd_bash(int Ind, int dir) {
 						m_ptr->org_maxhp = m_ptr->maxhp = m_ptr->hp = p_ptr->mhp;
 						/* AC could just be set/adjusted later like the rest: */
 						m_ptr->org_ac = m_ptr->ac = p_ptr->ac + p_ptr->to_a;
-						/* Fixed stats that are always available: */
-						//see-inv, pseudo-esp
+						/* Immutable stats: */
+						if (p_ptr->male) r_ptr->flags1 |= RF1_MALE; else r_ptr->flags1 |= RF1_FEMALE;
+						r_ptr->flags2 |= RF2_SMART | RF2_POWERFUL | RF2_OPEN_DOOR | RF2_BASH_DOOR;
+						switch (p_ptr->prace) {
+						case RACE_VAMPIRE: r_ptr->flags3 |= RF3_UNDEAD; break;
+						case RACE_DRACONIAN: r_ptr->flags3 |= RF3_DRAGON; break;
+						case RACE_YEEK: r_ptr->flags3 |= RF3_ANIMAL; break;
+						case RACE_HALF_ORC: r_ptr->flags3 |= RF3_ORC; break;
+						case RACE_HALF_TROLL: r_ptr->flags3 |= RF3_TROLL; break;
+						}
+						if (p_ptr->ptrait == TRAIT_CORRUPTED) r_ptr->flags3 |= RF3_DEMON;
+						if (p_ptr->ptrait == TRAIT_ENLIGHTENED) r_ptr->flags3 |= RF3_GOOD;
+						/* Stats that are always granted: */
+						r_ptr->flags3 |= RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP; //just prevent 'mental' conditions, so stun is still allowed
+						r_ptr->flags7 |= RF7_CAN_SWIM | RF7_CAN_FLY | RF7_NO_ESP; //just whatever, paranoia - however, we're not a real being, so no ESP! :o
+						r_ptr->flags0 |= RF0_CAN_CLIMB | RF0_ASTAR; //shouldn't matter in current arena layout though
+						/* Note: We don't take body_monster into account, so mimics might perhaps use this to cheeze an advantage.. */
 					}
 				}
 			} else s_printf("MIRROR placement failed for '%s' (%d)!\n", p_ptr->name, Ind); //paranoia?
