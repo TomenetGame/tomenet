@@ -456,7 +456,7 @@ static cptr r_info_flags8[] = {
 	"PSEUDO_UNIQUE",
 	"GENO_PERSIST",
 	"GENO_NO_THIN",
-	"CLIMB",
+	"XXX",//hole
 	"WILD_SWAMP",	/* ToDo: Implement Swamp */
 	"WILD_TOO",
 };
