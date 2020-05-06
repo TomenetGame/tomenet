@@ -1927,6 +1927,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		   Here we just take care of actual attack-spell-relevant stuff: */
 		//int mdev, md_wand[5], md_staff[5], md_rod[5]; //various magic devices, no activatable items for now
 		//int sp_att[5], sp_def[5], sp_heal[5], sp_flee[5]; //various purpose spells (includes runecraft) - no mimicry-spells actually */
+		//int i_scr[5], i_pot[5]; //various consumables
 		//int trapping;
 		//magic schools..
 		//runecraft..
@@ -1934,7 +1935,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 		if (m_ptr->cdis > MAX_RANGE) return FALSE;
 
-		/* Analyze target */
+		/* Analyze target's current live-abilities that it can utilize and copy them! */
 
 		/* Cast.... */
 
@@ -9934,9 +9935,21 @@ void process_monsters(void) {
 				m_ptr->org_ac += n;
 				m_ptr->ac += n;
 			}
-			/* More stuff: */
-			//p_ptr->aura[0..2] and p_ptr->sh_elec/cold/fire -> fear/freeze/death
-			//variable or not?: nostun/noconf/nosleep/noblind/resistaces et al
+			/* Adjustable flags - cumulative again, ie don't get removed, just stacked up further, hah! */
+			if (p_ptr->no_cut) r_ptr->flags8 |= RF8_NO_CUT;
+			if (p_ptr->regenerate) r_ptr->flags2 |= RF2_REGENERATE;
+			if (p_ptr->reflect) r_ptr->flags2 |= RF2_REGENERATE;
+			if (p_ptr->invis || p_ptr->tim_invisibility) r_ptr->flags2 |= RF2_INVISIBLE;
+			/* Adjustable abilities */
+			if (p_ptr->aura[0]) ; //todo: cause fear-melee
+			if (p_ptr->aura[1]) r_ptr->flags3 |= RF3_AURA_COLD;
+			if (p_ptr->aura[2]) { /* Well, it's plasma/ice .. perfect fit actually: */
+				r_ptr->flags2 |= RF2_AURA_ELEC | RF2_AURA_FIRE;
+				r_ptr->flags3 |= RF3_AURA_COLD;
+			}
+			//..
+
+			//variable or not?: no_stun/no_conf/no_sleep/no_cut/no-blind/resistances et al
 			/* These things don't have corresponding monster flags, so might have to move them all as hacks to their respective functions: */
 			//int am_shell, am_field, reflecting;
 			//int mweapon, hit, dam, parry, block, dodge, bpr, intercept; //melee; dam can just include crit/backstab/dualwield
