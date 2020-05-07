@@ -207,6 +207,29 @@ OUNLIFERES = add_spell {
 	}
 }
 
+ODRAINLIFE2 = add_spell {
+	["name"] = 	"Siphon Life",
+	["name2"] = 	"Siphon",
+	["school"] = 	{SCHOOL_OUNLIFE},
+	["spell_power"] = 0,
+	["am"] = 	75,
+	["level"] = 	37,
+	["mana"] = 	30,
+	["mana_max"] = 	45,
+	["fail"] = 	-60,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		drain_life(Ind, args.dir, 14 + get_level(Ind, ODRAINLIFE2, 22))
+		hp_player(Ind, player.ret_dam / 4)
+	end,
+	["info"] = 	function()
+		--return "drain "..(14 + get_level(Ind, ODRAINLIFE2, 22)).."%, heal for 25%"
+		return (14 + get_level(Ind, ODRAINLIFE2, 22)).."% (max 900), 25% heal"
+	end,
+	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }
+}
+
 OIMBUE = add_spell {
 	["name"] = 	"Touch of Hunger",
 	["name2"] = 	"Hunger",

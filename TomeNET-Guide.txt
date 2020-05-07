@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 5. May 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 6. May 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17566,6 +17566,12 @@ spell failure rate. All Unlife spells use WIS.)
                     restoring drained stats and experience.
                     Required skill level for first spell level: 35.
                     --- This spell is only usable by true vampires! ---
+
+    Siphon Life     Drains life from a non-undead and non-nonliving creature
+                    and returns a part of it to your hit points.
+                    Unique monsters may resist, undead and nonliving monsters
+                    are unaffected. Damage caps at 900.
+                    Required skill level for first spell level: 37.
 
     Touch of Hunger Temporarily imbue your melee weapon with vampiric power,
                     making it drain life force from your opponents which
