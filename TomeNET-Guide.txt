@@ -20590,6 +20590,14 @@ General mods:
              also see 'NO_MAGIC' in (5.8) for more details.)
 
 
+Mods that appear only on cursed randarts:
+-----------------------------------------
+        Drain HP
+        Drain mana
+        Drain experience
+        Teleport randomly
+
+
 Item Mod Limits:
 ----------------
 Certain power limits are applied on items, depending on mod-combinations or the
