@@ -4737,6 +4737,10 @@ void do_cmd_bash(int Ind, int dir) {
 						r_ptr->flags8 = RF8_BLUEBAND | RF8_GENO_NO_THIN;
 						r_ptr->flags9 = RF9_NO_CREDIT | RF9_NO_REDUCE;
 						r_ptr->flags0 = 0x0;
+						/* Main problem: Player could init the mirror with a low profile char and then switch places with a high profile char,
+						   so even the 'immutable' stats might need adjusting, as the opponent character changes completely.
+						   Maybe 'last_target' can be utilized to detect opponents switching. */
+
 						/* Fixed stats */
 						m_ptr->level = p_ptr->max_lev;
 						/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system),
