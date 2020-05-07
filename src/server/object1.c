@@ -3724,7 +3724,8 @@ cptr item_activation(object_type *o_ptr) {
 #ifdef ENABLE_EXCAVATION
 	if (o_ptr->tval == TV_CHEMICAL) {
 		if (o_ptr->sval == SV_WOOD_CHIPS) return "heating up to get processed into charcoal";
-		return "combining with other chemical ingredients or mixtures";
+		else if (o_ptr->sval == SV_MIXTURE) return "combining with other chemicals or mixtures. Or with itself to form a product";
+		else return "combining with other chemical ingredients or mixtures";
 	}
 	if (o_ptr->tval == TV_CHARGE) return(format("ignition after %d turns", o_ptr->pval));
 	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return "grinding solid metal to powder";
