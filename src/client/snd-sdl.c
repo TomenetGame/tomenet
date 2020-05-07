@@ -143,8 +143,9 @@ typedef struct {
 					   stacking of the same sound multiple (read: too many) times - ...
 					   note that with 4.4.5.4+ this is deprecated - C. Blue */
 	int started_timer_tick;		/* global timer tick on which this sample was started (for efficiency) */
-	bool disabled;
+	bool disabled;			/* disabled by user? */
 	bool config;
+	bool volume;			/* volume reduced by user? */
 } sample_list;
 
 /* background music */
@@ -153,8 +154,9 @@ typedef struct {
 	Mix_Music *wavs[MAX_SONGS];
 	const char *paths[MAX_SONGS];
 	bool initial[MAX_SONGS];	/* Is it an 'initial' song? An initial song is played first and only once when a music event gets activated. */
-	bool disabled;
+	bool disabled;			/* disabled by user? */
 	bool config;
+	bool volume;			/* volume reduced by user? */
 } song_list;
 
 /* Just need an array of SampInfos */
@@ -329,7 +331,7 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Find and open the config file */
 #if 0
-#ifdef WINDOWS
+ #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
 	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
@@ -343,10 +345,10 @@ static bool sound_sdl_init(bool no_cache) {
 		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 		fff = my_fopen(path, "r");
 	}
-#else
+ #else
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 	fff = my_fopen(path, "r");
-#endif
+ #endif
 #else
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 	fff = my_fopen(path, "r");
@@ -572,6 +574,27 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 	}
 #endif
+#ifdef WINDOWS
+	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+		strcpy(path, getenv("HOMEDRIVE"));
+		strcat(path, getenv("HOMEPATH"));
+		strcat(path, "\\TomeNET-soundvol.cfg");
+	} else
+#endif
+	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "TomeNET-soundvol.cfg"); //paranoia
+
+	fff = my_fopen(path, "r");
+	if (fff) {
+		while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
+			/* find out event state (disabled/enabled) */
+			i = exec_lua(0, format("return get_sound_index(\"%s\")", buffer0));
+			if (my_fgets(fff, buffer0, sizeof(buffer0))) break; /* Error, incomplete entry */
+			/* unknown (different game version/sound pack?) */
+			if (i == -1 || !samples[i].config) continue;
+			/* set sample volume in this file */
+			samples[i].volume = atoi(buffer0);
+		}
+	}
 
 	/* Close the file */
 	my_fclose(fff);
@@ -591,7 +614,7 @@ static bool sound_sdl_init(bool no_cache) {
 
 	/* Find and open the config file */
 #if 0
-#ifdef WINDOWS
+ #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
 	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
@@ -605,10 +628,10 @@ static bool sound_sdl_init(bool no_cache) {
 		path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 		fff = my_fopen(path, "r");
 	}
-#else
+ #else
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 	fff = my_fopen(path, "r");
-#endif
+ #endif
 #else
 	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 	fff = my_fopen(path, "r");
@@ -924,6 +947,27 @@ static bool sound_sdl_init(bool no_cache) {
 		}
 	}
 #endif
+#ifdef WINDOWS
+	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+		strcpy(path, getenv("HOMEDRIVE"));
+		strcat(path, getenv("HOMEPATH"));
+		strcat(path, "\\TomeNET-musicvol.cfg");
+	} else
+#endif
+	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "TomeNET-musicvol.cfg"); //paranoia
+
+	fff = my_fopen(path, "r");
+	if (fff) {
+		while (my_fgets(fff, buffer0, sizeof(buffer0)) == 0) {
+			/* find out event state (disabled/enabled) */
+			i = exec_lua(0, format("return get_music_index(\"%s\")", buffer0));
+			if (my_fgets(fff, buffer0, sizeof(buffer0))) break; /* Error, incomplete entry */
+			/* unknown (different game version/music pack?) */
+			if (i == -1 || !songs[i].config) continue;
+			/* set volume of songs listed in this file */
+			songs[i].volume = atoi(buffer0);
+		}
+	}
 
 #ifdef DEBUG_SOUND
 	puts("sound_sdl_init() done.");
@@ -944,6 +988,9 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_sound) return TRUE; /* claim that it 'succeeded' */
 #endif
+
+	/* Apply user-defined custom volume modifier */
+	if (samples[event].volume) vol = (vol * samples[event].volume) / 100;
 
 	/* hack: */
 	if (type == SFX_TYPE_STOP) {
@@ -2533,6 +2580,7 @@ void do_cmd_options_sfx_sdl(void) {
 	/* Interact */
 	while (go) {
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
+		//Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play), \377yESC\377w)");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 
 		/* Display the events */
@@ -2575,6 +2623,8 @@ void do_cmd_options_sfx_sdl(void) {
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-40s  (playing)", (char*)lua_name));
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+
+			if (samples[j].volume) Term_putstr(horiz_offset + 1 + 12 + 45 + 1, vertikal_offset + i + 10 - y, -1, a, format("%d%%", samples[j].volume));
 		}
 
 		/* display static selector */
@@ -2596,6 +2646,9 @@ void do_cmd_options_sfx_sdl(void) {
 			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 
 			/* auto-save */
+
+			/* -- save disabled info -- */
+
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
 #ifndef WINDOWS
 			path_build(buf2, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.$$$");
@@ -2613,14 +2666,12 @@ void do_cmd_options_sfx_sdl(void) {
 				return;
 			}
 			if (!fff2) {
-				c_msg_print("Error: Cannot write to sound config file.");
+				c_msg_print("Error: Cannot write to disabled-sound config file.");
 				return;
 			}
 			while (TRUE) {
 				if (!fgets(out_val, 4096, fff)) {
-					if (ferror(fff)) {
-						c_msg_print("Error: Failed to read from file 'sound.cfg'.");
-					}
+					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'sound.cfg'.");
 					break;
 				}
 
@@ -2668,20 +2719,20 @@ void do_cmd_options_sfx_sdl(void) {
 			fclose(fff2);
 
 #if 0
-#if 0 /* cannot overwrite the cfg files in Programs (x86) folder on Windows 7 (+?) */
+ #if 0 /* cannot overwrite the cfg files in Programs (x86) folder on Windows 7 (+?) */
 			rename(buf, format("%s.bak", buf));
 			rename(buf2, buf);
-#endif
-#if 1 /* delete target file first instead of 'over-renaming'? Seems to work on my Win 7 box at least. */
+ #endif
+ #if 1 /* delete target file first instead of 'over-renaming'? Seems to work on my Win 7 box at least. */
 			rename(buf, format("%s.bak", buf));
 			//fd_kill(file_name);
 			remove(buf);
 			rename(buf2, buf);
-#endif
-#if 0 /* use a separate file instead? */
+ #endif
+ #if 0 /* use a separate file instead? */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "sound-override.cfg");
 			rename(buf2, buf);
-#endif
+ #endif
 #endif
 #ifndef WINDOWS
 			rename(buf, format("%s.bak", buf));
@@ -2690,8 +2741,87 @@ void do_cmd_options_sfx_sdl(void) {
 			rename(buf2, buf);
 #endif
 
+			/* -- save volume info -- */
+
+			path_build(buf, 1024, ANGBAND_DIR_XTRA_SOUND, "sound.cfg");
+#ifndef WINDOWS
+			path_build(buf2, 1024, ANGBAND_DIR_XTRA_SOUND, "TomeNET-soundvol.cfg");
+#else
+			if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+				strcpy(buf2, getenv("HOMEDRIVE"));
+				strcat(buf2, getenv("HOMEPATH"));
+				strcat(buf2, "\\TomeNET-soundvol.cfg");
+			} else path_build(buf2, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "TomeNET-soundvol.cfg"); //paranoia
+#endif
+			fff = my_fopen(buf, "r");
+			fff2 = my_fopen(buf2, "w");
+			if (!fff) {
+				c_msg_print("Error: File 'sound.cfg' not found.");
+				return;
+			}
+			if (!fff2) {
+				c_msg_print("Error: Cannot write to sound volume config file.");
+				return;
+			}
+			while (TRUE) {
+				if (!fgets(out_val, 4096, fff)) {
+					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'sound.cfg'.");
+					break;
+				}
+
+				p = out_val;
+				/* remove comment-character */
+				if (*p == ';') p++;
+
+				/* ignores lines that don't start on a letter */
+				if (tolower(*p) < 'a' || tolower(*p) > 'z') continue;
+
+				/* extract event name */
+				strcpy(evname, p);
+				*(strchr(evname, ' ')) = 0;
+
+				/* find out event state (disabled/enabled) */
+				j = exec_lua(0, format("return get_sound_index(\"%s\")", evname));
+				if (j == -1 || !samples[j].config) continue;
+
+				/* apply new state */
+				if (samples[j].volume) {
+					strcpy(out_val2, evname);
+					strcat(out_val2, "\n");
+					fputs(out_val2, fff2);
+					sprintf(out_val2, "%d", samples[j].volume);
+					fputs(out_val2, fff2);
+				}
+			}
+			fclose(fff);
+			fclose(fff2);
+
+			/* -- all done -- */
 			go = FALSE;
 			break;
+
+#if 0 /* needs work @ actual mixing algo */
+		case 'v': {
+			//i = c_get_quantity("Enter volume % (1..100): ", -1);
+			bool inkey_msg_old = inkey_msg;
+			char tmp[80];
+
+			inkey_msg = TRUE;
+			Term_putstr(0, 1, -1, TERM_L_BLUE, "                                                                      ");
+			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..99, other values will reset to 100%): ");
+			strcpy(tmp, "50");
+			if (!askfor_aux(tmp, 4, 0)) {
+				inkey_msg = inkey_msg_old;
+				samples[j_sel].volume = 0;
+				break;
+			}
+			inkey_msg = inkey_msg_old;
+			i = atoi(tmp);
+			if (i < 1 || i > 99) i = 0;
+			samples[j_sel].volume = i;
+			break;
+			}
+#endif
 
 		case KTRL('T'):
 			/* Take a screenshot */
@@ -2835,8 +2965,10 @@ void do_cmd_options_mus_sdl(void) {
 	while (go) {
 #ifdef ENABLE_JUKEBOX
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
+		//Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play), \377yESC\377w)");
 #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
+		//Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yESC\377w)");
 #endif
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
 
@@ -2879,6 +3011,8 @@ void do_cmd_options_mus_sdl(void) {
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, format("%-40s  (playing)", (char*)lua_name));
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
+
+			if (songs[j].volume) Term_putstr(horiz_offset + 1 + 12 + 45 + 1, vertikal_offset + i + 10 - y, -1, a, format("%d%%", songs[j].volume));
 		}
 
 		/* display static selector */
@@ -2915,6 +3049,9 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_org = -1;
 
 			/* auto-save */
+
+			/* -- save disabled info -- */
+
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
 #ifndef WINDOWS
 			path_build(buf2, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.$$$");
@@ -2932,14 +3069,12 @@ void do_cmd_options_mus_sdl(void) {
 				return;
 			}
 			if (!fff2) {
-				c_msg_print("Error: Cannot write to music config file.");
+				c_msg_print("Error: Cannot write to disabled-music config file.");
 				return;
 			}
 			while (TRUE) {
 				if (!fgets(out_val, 4096, fff)) {
-					if (ferror(fff)) {
-						c_msg_print("Error: Failed to read from file 'music.cfg'.");
-					}
+					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'music.cfg'.");
 					break;
 				}
 
@@ -2987,20 +3122,20 @@ void do_cmd_options_mus_sdl(void) {
 			fclose(fff2);
 
 #if 0
-#if 0 /* cannot overwrite the cfg files in Programs (x86) folder on Windows 7 (+?) */
+ #if 0 /* cannot overwrite the cfg files in Programs (x86) folder on Windows 7 (+?) */
 			rename(buf, format("%s.bak", buf));
 			rename(buf2, buf);
-#endif
-#if 1 /* delete target file first instead of 'over-renaming'? Seems to work on my Win 7 box at least. */
+ #endif
+ #if 1 /* delete target file first instead of 'over-renaming'? Seems to work on my Win 7 box at least. */
 			rename(buf, format("%s.bak", buf));
 			//fd_kill(file_name);
 			remove(buf);
 			rename(buf2, buf);
-#endif
-#if 0 /* use a separate file instead? */
+ #endif
+ #if 0 /* use a separate file instead? */
 			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music-override.cfg");
 			rename(buf2, buf);
-#endif
+ #endif
 #endif
 #ifndef WINDOWS
 			rename(buf, format("%s.bak", buf));
@@ -3009,8 +3144,87 @@ void do_cmd_options_mus_sdl(void) {
 			rename(buf2, buf);
 #endif
 
+			/* -- save volume info -- */
+
+			path_build(buf, 1024, ANGBAND_DIR_XTRA_MUSIC, "music.cfg");
+#ifndef WINDOWS
+			path_build(buf2, 1024, ANGBAND_DIR_XTRA_MUSIC, "TomeNET-musicvol.cfg");
+#else
+			if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
+				strcpy(buf2, getenv("HOMEDRIVE"));
+				strcat(buf2, getenv("HOMEPATH"));
+				strcat(buf2, "\\TomeNET-musicvol.cfg");
+			} else path_build(buf2, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "TomeNET-musicvol.cfg"); //paranoia
+#endif
+			fff = my_fopen(buf, "r");
+			fff2 = my_fopen(buf2, "w");
+			if (!fff) {
+				c_msg_print("Error: File 'music.cfg' not found.");
+				return;
+			}
+			if (!fff2) {
+				c_msg_print("Error: Cannot write to music volume config file.");
+				return;
+			}
+			while (TRUE) {
+				if (!fgets(out_val, 4096, fff)) {
+					if (ferror(fff)) c_msg_print("Error: Failed to read from file 'music.cfg'.");
+					break;
+				}
+
+				p = out_val;
+				/* remove comment-character */
+				if (*p == ';') p++;
+
+				/* ignores lines that don't start on a letter */
+				if (tolower(*p) < 'a' || tolower(*p) > 'z') continue;
+
+				/* extract event name */
+				strcpy(evname, p);
+				*(strchr(evname, ' ')) = 0;
+
+				/* find out event state (disabled/enabled) */
+				j = exec_lua(0, format("return get_music_index(\"%s\")", evname));
+				if (j == -1 || !songs[j].config) continue;
+
+				/* apply new state */
+				if (songs[j].volume) {
+					strcpy(out_val2, evname);
+					strcat(out_val2, "\n");
+					fputs(out_val2, fff2);
+					sprintf(out_val2, "%d", songs[j].volume);
+					fputs(out_val2, fff2);
+				}
+			}
+			fclose(fff);
+			fclose(fff2);
+
+			/* -- all done -- */
 			go = FALSE;
 			break;
+
+#if 0 /* needs work @ actual mixing algo */
+		case 'v': {
+			//i = c_get_quantity("Enter volume % (1..100): ", 50);
+			bool inkey_msg_old = inkey_msg;
+			char tmp[80];
+
+			inkey_msg = TRUE;
+			Term_putstr(0, 1, -1, TERM_L_BLUE, "                                                                      ");
+			Term_putstr(0, 1, -1, TERM_L_BLUE, "  Enter volume % (1..99, other values will reset to 100%): ");
+			strcpy(tmp, "50");
+			if (!askfor_aux(tmp, 4, 0)) {
+				inkey_msg = inkey_msg_old;
+				songs[j_sel].volume = 0;
+				break;
+			}
+			inkey_msg = inkey_msg_old;
+			i = atoi(tmp);
+			if (i < 1 || i > 99) i = 0;
+			songs[j_sel].volume = i;
+			break;
+			}
+#endif
 
 		case KTRL('T'):
 			/* Take a screenshot */
