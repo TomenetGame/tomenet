@@ -13334,7 +13334,8 @@ stated.
                                 If a character has Unlife and Necromancy both
                                 at 50.000 the character gains ultimate hold
                                 on his life force, rendering him immune to
-                                experience drain.
+                                experience drain, including the permanent drain
+                                effect from DRAIN_EXP items.
 
                                 A natural vampire race character who has both
                                 Necromancy and Traumaturgy at 25.000 or higher
@@ -17591,7 +17592,8 @@ spell failure rate. All Unlife spells use WIS.)
                     other races.
                     If both Unlife and Necromancy are at 50.000, it grants
                     ultimate hold on one's own life force, rendering oneself
-                    immune to experience drain.
+                    immune to experience drain, including the permanent drain
+                    effect from DRAIN_EXP items.
 
 
 - Druidism -
