@@ -5854,3 +5854,91 @@ void set_mon_num_hook(struct worldpos *wpos) {
 	if (!wpos->wz) set_mon_num_hook_wild(wpos);
 	else get_mon_num_hook = dungeon_aux;
 }
+
+void py2mon_init(monster_race *r_ptr) {
+	/* Hack: Reset stats to maintenance parameters hard-coded in r_info, in case this is not the first time spawn */
+	r_ptr->flags1 = RF1_FORCE_MAXHP | RF1_DROP_CHOSEN; //no effect actually as we set HP manually
+	r_ptr->flags2 = r_ptr->flags3 = r_ptr->flags4 = r_ptr->flags5 = r_ptr->flags6 = r_ptr->flags7 = 0x0;
+	r_ptr->flags8 = RF8_BLUEBAND | RF8_GENO_NO_THIN;
+	r_ptr->flags9 = RF9_NO_CREDIT | RF9_NO_REDUCE;
+	r_ptr->flags0 = 0x0;
+	/* Extra stats that are always granted to init tactical challenge: */
+	r_ptr->flags3 |= RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP; //just prevent 'mental' conditions, so stun is still allowed
+	r_ptr->flags7 |= RF7_CAN_SWIM | RF7_CAN_FLY | RF7_NO_ESP; //just whatever, paranoia - however, we're not a real being, so no ESP! :o
+	r_ptr->flags0 |= RF0_CAN_CLIMB | RF0_ASTAR; // A* is important to see through player-invisibility, which it actually implies!
+}
+void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+	/* Fixed stats */
+	m_ptr->level = p_ptr->max_lev;
+	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system),
+	   so just set the most important ones here to give an initial definition frame: */
+	m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
+	m_ptr->org_maxhp = m_ptr->maxhp = m_ptr->hp = p_ptr->mhp;
+	/* AC could just be set/adjusted later like the rest: */
+	m_ptr->org_ac = m_ptr->ac = p_ptr->ac + p_ptr->to_a;
+
+	/* Immutable stats: */
+	if (p_ptr->male) r_ptr->flags1 |= RF1_MALE; else r_ptr->flags1 |= RF1_FEMALE;
+	r_ptr->flags2 |= RF2_SMART | RF2_POWERFUL | RF2_OPEN_DOOR | RF2_BASH_DOOR;
+	switch (p_ptr->prace) {
+	case RACE_VAMPIRE: r_ptr->flags3 |= RF3_UNDEAD; break;
+	case RACE_DRACONIAN: r_ptr->flags3 |= RF3_DRAGON; break;
+	case RACE_YEEK: r_ptr->flags3 |= RF3_ANIMAL; break;
+	case RACE_HALF_ORC: r_ptr->flags3 |= RF3_ORC; break;
+	case RACE_HALF_TROLL: r_ptr->flags3 |= RF3_TROLL; break;
+	}
+	if (p_ptr->ptrait == TRAIT_CORRUPTED) r_ptr->flags3 |= RF3_DEMON;
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) r_ptr->flags3 |= RF3_GOOD;
+	/* Add static parts of all racial/class fixed boni/mali (eg vampire light-susc) so we save some workload later when
+	   adjusting/updating stats continuously, when it comes to changable flags induced by items/monsterforms.
+	   (Unfortunately not even flags granted by skills are safe here, as the player might skill up during the fight =P.) */
+
+	/* Dynamic parts of all racial/class fixed boni/mali that cannot be imprinted here in meaningful ways must instead
+	   be handled whereever appropriate in any part of the game code. These are notably: Skill-points, misc abilities. */
+
+	/* Note: We don't take body_monster into account, so mimics might perhaps use this to cheeze an advantage..
+	   However, the way the auto-adjust code works is that it never regresses, only stacks improvements in stats,
+	   so that fact alone might work as a balancing factor for mimics' extra powers. >:) */
+}
+void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+	int n;
+
+	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system) */
+	if (m_ptr->speed < p_ptr->pspeed) m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
+	if (m_ptr->org_maxhp < p_ptr->mhp) {
+		n = p_ptr->mhp - m_ptr->org_maxhp;
+		m_ptr->org_maxhp += n;
+		m_ptr->maxhp += n;
+		m_ptr->hp += n;
+	}
+	if (m_ptr->org_ac < p_ptr->ac + p_ptr->to_a) {
+		n = p_ptr->ac + p_ptr->to_a - m_ptr->org_ac;
+		m_ptr->org_ac += n;
+		m_ptr->ac += n;
+	}
+	/* Adjustable flags - cumulative again, ie don't get removed, just stacked up further, hah! */
+	if (p_ptr->no_cut) r_ptr->flags8 |= RF8_NO_CUT;
+	if (p_ptr->regenerate) r_ptr->flags2 |= RF2_REGENERATE;
+	if (p_ptr->reflect) r_ptr->flags2 |= RF2_REGENERATE;
+	if (p_ptr->invis || p_ptr->tim_invisibility) r_ptr->flags2 |= RF2_INVISIBLE;
+	/* Adjustable abilities */
+	//if (p_ptr->aura[0]) ; //todo: cause fear-melee
+	if (p_ptr->aura[1]) r_ptr->flags3 |= RF3_AURA_COLD;
+	if (p_ptr->aura[2]) { /* Well, it's plasma/ice .. perfect fit actually: */
+		r_ptr->flags2 |= RF2_AURA_ELEC | RF2_AURA_FIRE;
+		r_ptr->flags3 |= RF3_AURA_COLD;
+	}
+	//..
+
+	//variable or not?: no_stun/no_conf/no_sleep/no_cut/no-blind/resistances et al
+	/* These things don't have corresponding monster flags, so might have to move them all as hacks to their respective functions: */
+	//int am_shell, am_field, reflecting;
+	//int mweapon, hit, dam, parry, block, dodge, bpr, intercept; //melee; dam can just include crit/backstab/dualwield
+	//int rweapon, shots, hitr, damr, calmness; //ranged
+}
+void py2mon_update_equip(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+}
+void py2mon_update_skills(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+}
+void py2mon_update_abilities(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+}

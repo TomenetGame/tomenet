@@ -1072,6 +1072,13 @@ extern void player_desc(int Ind, char *desc, int Ind2, int mode);
 extern int monster_check_experience(int m_idx, bool silent);
 extern bool mego_ok(int r_idx, int ego);
 extern monster_race* race_info_idx(int r_idx, int ego, int randuni);
+extern void py2mon_init(monster_race *r_ptr);
+extern void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
+extern void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
+extern void py2mon_update_equip(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
+extern void py2mon_update_skills(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
+extern void py2mon_update_abilities(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
+
 
 /* netserver.c (nserver.c) */
 /* XXX those entries are duplicated with those in netserver.h

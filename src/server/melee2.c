@@ -9917,45 +9917,13 @@ void process_monsters(void) {
 
 		p_ptr = _Players[closest];
 
-
 		/* Hack - adjust Doppelganger stats on the fly */
 		if (m_ptr->r_idx == RI_MIRROR) {
-			int n;
-
-			/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system) */
-			if (m_ptr->speed < p_ptr->pspeed) m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
-			if (m_ptr->org_maxhp < p_ptr->mhp) {
-				n = p_ptr->mhp - m_ptr->org_maxhp;
-				m_ptr->org_maxhp += n;
-				m_ptr->maxhp += n;
-				m_ptr->hp += n;
-			}
-			if (m_ptr->org_ac < p_ptr->ac + p_ptr->to_a) {
-				n = p_ptr->ac + p_ptr->to_a - m_ptr->org_ac;
-				m_ptr->org_ac += n;
-				m_ptr->ac += n;
-			}
-			/* Adjustable flags - cumulative again, ie don't get removed, just stacked up further, hah! */
-			if (p_ptr->no_cut) r_ptr->flags8 |= RF8_NO_CUT;
-			if (p_ptr->regenerate) r_ptr->flags2 |= RF2_REGENERATE;
-			if (p_ptr->reflect) r_ptr->flags2 |= RF2_REGENERATE;
-			if (p_ptr->invis || p_ptr->tim_invisibility) r_ptr->flags2 |= RF2_INVISIBLE;
-			/* Adjustable abilities */
-			if (p_ptr->aura[0]) ; //todo: cause fear-melee
-			if (p_ptr->aura[1]) r_ptr->flags3 |= RF3_AURA_COLD;
-			if (p_ptr->aura[2]) { /* Well, it's plasma/ice .. perfect fit actually: */
-				r_ptr->flags2 |= RF2_AURA_ELEC | RF2_AURA_FIRE;
-				r_ptr->flags3 |= RF3_AURA_COLD;
-			}
-			//..
-
-			//variable or not?: no_stun/no_conf/no_sleep/no_cut/no-blind/resistances et al
-			/* These things don't have corresponding monster flags, so might have to move them all as hacks to their respective functions: */
-			//int am_shell, am_field, reflecting;
-			//int mweapon, hit, dam, parry, block, dodge, bpr, intercept; //melee; dam can just include crit/backstab/dualwield
-			//int rweapon, shots, hitr, damr, calmness; //ranged
+			py2mon_update_base(m_ptr, r_ptr, p_ptr);
+			py2mon_update_equip(m_ptr, r_ptr, p_ptr);
+			py2mon_update_skills(m_ptr, r_ptr, p_ptr);
+			py2mon_update_abilities(m_ptr, r_ptr, p_ptr);
 		}
-
 
 		/* Assume no move */
 		test = FALSE;
