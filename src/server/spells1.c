@@ -7556,7 +7556,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Dispel undead */
 	case GF_DISP_UNDEAD:
-		no_dam = TRUE;
 		/* Only affect undead */
 		if (r_ptr->flags3 & RF3_UNDEAD) {
 #ifdef OLD_MONSTER_LORE
