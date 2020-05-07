@@ -499,13 +499,15 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 				if (p_ptr->paralyzed == 255) {
 					p_ptr->paralyzed = 0;
 					p_ptr->redraw |= PR_STATE;
+					msg_print(i, "You can move again!");
+					msg_format_near(i, "%s can move again.", p_ptr->name);
 				}
 				break;
 			}
 		} else {
 			bool para = TRUE, free = FALSE;
 
-			/* Ensure that the player who just joined us here does get frozen in the first place */
+			/* Ensure that a player who just joined us here does get frozen in the first place */
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
@@ -515,9 +517,11 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 				if (!p_ptr->new_level_flag) continue;
 				p_ptr->paralyzed = 255;
 				p_ptr->redraw |= PR_STATE;
+				msg_print(i, "You are frozen in stasis!");
+				msg_format_near(i, "%s seems frozen in stasis!", p_ptr->name);
 				break;
 			}
-			/* Ensure that not more than one player is unfrozen */
+			/* Ensure that not more than one player is unfrozen (paranoia?) */
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
@@ -529,10 +533,12 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 				if (!para) {
 					p_ptr->paralyzed = 255;
 					p_ptr->redraw |= PR_STATE;
+					msg_print(i, "You are frozen in stasis!");
+					msg_format_near(i, "%s seems frozen in stasis!", p_ptr->name);
 				}
 				else para = FALSE;
 			}
-			/* Ensure that one player is unfrozen */
+			/* If everyone is frozen, ensure that one player is unfrozen, pick one player "randomly" */
 			if (!free) for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
@@ -541,6 +547,8 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 
 				p_ptr->paralyzed = 0;
 				p_ptr->redraw |= PR_STATE;
+				msg_print(i, "You can move again!");
+				msg_format_near(i, "%s can move again.", p_ptr->name);
 				break;
 			}
 		}
