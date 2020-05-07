@@ -4746,7 +4746,6 @@ void do_cmd_bash(int Ind, int dir) {
 						/* AC could just be set/adjusted later like the rest: */
 						m_ptr->org_ac = m_ptr->ac = p_ptr->ac + p_ptr->to_a;
 						/* Immutable stats: */
-					    //todo: add all racial/class fixed boni/mali (eg vampire light-susc, elves +savingthrow maybe even..etc)
 						if (p_ptr->male) r_ptr->flags1 |= RF1_MALE; else r_ptr->flags1 |= RF1_FEMALE;
 						r_ptr->flags2 |= RF2_SMART | RF2_POWERFUL | RF2_OPEN_DOOR | RF2_BASH_DOOR;
 						switch (p_ptr->prace) {
@@ -4758,6 +4757,12 @@ void do_cmd_bash(int Ind, int dir) {
 						}
 						if (p_ptr->ptrait == TRAIT_CORRUPTED) r_ptr->flags3 |= RF3_DEMON;
 						if (p_ptr->ptrait == TRAIT_ENLIGHTENED) r_ptr->flags3 |= RF3_GOOD;
+						/* Add static parts of all racial/class fixed boni/mali (eg vampire light-susc) so we save some workload later when
+						   adjusting/updating stats continuously, when it comes to changable flags induced by items/monsterforms.
+						   (Unfortunately not even flags granted by skills are safe here, as the player might skill up during the fight =P.) */
+
+						/* Dynamic parts of all racial/class fixed boni/mali that cannot be imprinted here in meaningful ways must instead
+						   be handled whereever appropriate in any part of the game code. These are notably: Skill-points, misc abilities. */
 						/* Stats that are always granted: */
 						r_ptr->flags3 |= RF3_NO_FEAR | RF3_NO_CONF | RF3_NO_SLEEP; //just prevent 'mental' conditions, so stun is still allowed
 						r_ptr->flags7 |= RF7_CAN_SWIM | RF7_CAN_FLY | RF7_NO_ESP; //just whatever, paranoia - however, we're not a real being, so no ESP! :o
