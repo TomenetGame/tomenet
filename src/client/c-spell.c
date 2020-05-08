@@ -41,7 +41,7 @@ static void print_spells(object_type *o_ptr) {
 }
 
 static void print_mimic_spells() {
-	int	i, col, j = 2, k, fail;
+	int i, col, j = 2, k, fail;
 	char buf[90];
 
 	/* Print column */
@@ -51,8 +51,8 @@ static void print_mimic_spells() {
 	/* Title the list */
 	prt("", 1, col);
 	c_put_str(TERM_WHITE, "Name", 1, col + 4);
-	c_put_str(TERM_WHITE, "Fail%", 1, col + 4 + 22 - 2);
-	c_put_str(TERM_WHITE, "Cost", 1, col + 4 + 22 + 6 - 2);
+	c_put_str(TERM_WHITE, " Cost", 1, col + 4 + 22 - 2);
+	c_put_str(TERM_WHITE, "Fail", 1, col + 4 + 22 + 6 - 2);
 
 	prt("", j, col);
 	c_put_str(TERM_L_WHITE, " a) Polymorph Self into next known form", j++, col);
@@ -61,16 +61,15 @@ static void print_mimic_spells() {
 	c_put_str(TERM_L_WHITE, " b) Polymorph Self into next known form with fitting extremities", j++, col);
 
 	prt("", j, col);
-	c_put_str(TERM_L_WHITE, " c) Polymorph Self into..", j++, col);
+	c_put_str(TERM_L_WHITE, " c) Polymorph Self into a specific form", j++, col);
 
 	prt("", j, col);
 	c_put_str(TERM_L_WHITE, " d) Set preferred immunity", j++, col);
 
 	/* Dump the spells */
 	for (i = 0; i < 32; i++) {
-		/* Check for end of the book */
-		if (!(p_ptr->innate_spells[0] & (1L << i)))
-		  continue;
+		/* Check if power is available to us */
+		if (!(p_ptr->innate_spells[0] & (1L << i))) continue;
 
 		fail = (innate_powers[i].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
 		if (fail < 1) fail = 1;
@@ -80,8 +79,7 @@ static void print_mimic_spells() {
 		if (!k) put_str("                                 ", j, col + 33);
 
 		/* Dump the info */
-		sprintf(buf, " %c) %-22s \377y%2d \377B%2d ", I2A(j - 2 + k * 16), monster_spells4[i].name,
-		    fail, innate_powers[i].smana);
+		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), monster_spells4[i].name, innate_powers[i].smana, fail);
 		Term_putstr(col + k * 33, j++, -1, TERM_WHITE, buf);
 
 		/* check for beginning of 2nd column */
@@ -91,9 +89,8 @@ static void print_mimic_spells() {
 		}
 	}
 	for (i = 0; i < 32; i++) {
-		/* Check for end of the book */
-		if (!(p_ptr->innate_spells[1] & (1L << i)))
-			continue;
+		/* Check if power is available to us */
+		if (!(p_ptr->innate_spells[1] & (1L << i))) continue;
 
 		fail = (innate_powers[i + 32].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
 		if (fail < 1) fail = 1;
@@ -103,8 +100,7 @@ static void print_mimic_spells() {
 		if (!k) put_str("                                 ", j, col + 33);
 
  		/* Dump the info */
-		sprintf(buf, " %c) %-22s \377y%2d \377B%2d ", I2A(j - 2 + k * 16), monster_spells5[i].name,
-		    fail, innate_powers[i + 32].smana);
+		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), monster_spells5[i].name, innate_powers[i + 32].smana, fail);
 		Term_putstr(col + k * 33, j++, -1, TERM_WHITE, buf);
 
 		/* check for beginning of 2nd column */
@@ -114,7 +110,7 @@ static void print_mimic_spells() {
 		}
 	}
 	for (i = 0; i < 32; i++) {
-		/* Check for end of the book */
+		/* Check if power is available to us */
 		if (!(p_ptr->innate_spells[2] & (1L << i)))
 			continue;
 
@@ -126,8 +122,7 @@ static void print_mimic_spells() {
 		if (!k) put_str("                                 ", j, col + 33);
 
 		/* Dump the info */
-		sprintf(buf, " %c) %-22s \377y%2d \377B%2d ", I2A(j - 2 + k * 16), monster_spells6[i].name,
-		    fail, innate_powers[i + 64].smana);
+		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), monster_spells6[i].name, innate_powers[i + 64].smana, fail);
 		Term_putstr(col + k * 33, j++, -1, TERM_WHITE, buf);
 
 		/* check for beginning of 2nd column */
@@ -137,7 +132,7 @@ static void print_mimic_spells() {
 		}
 	}
 	for (i = 0; i < 32; i++) {
-		/* Check for end of the book */
+		/* Check if power is available to us */
 		if (!(p_ptr->innate_spells[3] & (1L << i)))
 			continue;
 
@@ -149,8 +144,7 @@ static void print_mimic_spells() {
 		if (!k) put_str("                                 ", j, col + 33);
 
 		/* Dump the info */
-		sprintf(buf, " %c) %-22s \377y%2d \377B%2d ", I2A(j - 2 + k * 16), monster_spells0[i].name,
-		    fail, innate_powers[i + 96].smana);
+		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), monster_spells0[i].name, innate_powers[i + 96].smana, fail);
 		Term_putstr(col + k * 33, j++, -1, TERM_WHITE, buf);
 
 		/* check for beginning of 2nd column */
@@ -158,6 +152,13 @@ static void print_mimic_spells() {
 			j = 6;
 			k = 1;
 		}
+	}
+
+	/* Two columns? Extend the header accordingly */
+	if (k) {
+		c_put_str(TERM_WHITE, "Name", 1, col + 4 + k * 33);
+		c_put_str(TERM_WHITE, " Cost", 1, col + 4 + 22 - 2 + k * 33);
+		c_put_str(TERM_WHITE, "Fail", 1, col + 4 + 22 + 6 - 2 + k * 33);
 	}
 
 	/* Clear the bottom line(s) */

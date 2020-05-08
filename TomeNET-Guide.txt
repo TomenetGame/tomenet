@@ -1,7 +1,7 @@
  .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. May 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 8. May 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -786,7 +786,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 ~       display further information of your (character's) knowledge.
         Point (2) and (7) here are especially helpful for mimics:
         In ~2, the number shown in round brackets before each monster name is
-        the same they have to enter for their 'Polymorph self into..' ability!
+        the same they have to enter for their ability:
+          'Polymorph self into a specific form'
         In ~7 you can check out all features of a monster.
 
 @       displays a list of players currently on the server.
@@ -1014,11 +1015,12 @@ They all start with a slash '/' hence they're called slash commands:
             This will auto-retaliate with mimic power 'g)', but only while in
             town.
 
-            (Note that you cannot auto-retaliate with 'polymorph into...'
+            (Note that you cannot auto-retaliate with
+              'Polymorph Self into a specific form'
             power aka 'c)', instead it will be treated like power 'b)' aka
-            'polymorph into next form with fitting extremities'. Then again
-            using this kind of power for auto-ret doesn't make much sense
-            anyway..)
+            'Polymorph Self into next form with fitting extremities'.
+            Then again using this kind of power for auto-ret doesn't make much
+            sense anyway..)
 
 /bbs <text>
             Add a line of text to the in-game bulletin board system. Players
@@ -14808,8 +14810,9 @@ create a character!):
     in total to learn a form, press the '~' key followed by '2'.
     To polymorph into a form, press 'm' key, like casting a magic spell.
     (Forms that have DISBELIEVE ability are skipped when using the normal
-    'Polymorph Self' spell. You have to use 'Polymorph Self Into..' if you
-    want to use these forms.)
+    'Polymorph Self' spell. You have to explicitely use your (c) power:
+      'Polymorph Self into a specific form'
+    if you want to use these forms.)
 
     A list of useful low-level humanoid forms for weapon-using mimics is given
     in (6.7b) because weapon-using mimics have a somewhat harder time to find
