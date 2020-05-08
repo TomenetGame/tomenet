@@ -40,9 +40,16 @@ static void print_spells(object_type *o_ptr) {
 	prt("", 2 + i, col);
 }
 
+/* Query mimicry.lua functions to determine name, mana cost and fail rate
+   instead of using hard-coded info from common/tables.c. - C. Blue */
+#define MIMIC_LUA
 static void print_mimic_spells() {
 	int i, col, j = 2, k, fail, j_max = 0;
 	char buf[90];
+#ifdef MIMIC_LUA
+	char name[MAX_CHARS];
+	int mana;
+#endif
 
 	/* Print column */
 	col = 13;
@@ -71,15 +78,27 @@ static void print_mimic_spells() {
 		/* Check if power is available to us */
 		if (!(p_ptr->innate_spells[0] & (1L << i))) continue;
 
+#ifndef MIMIC_LUA
 		fail = (innate_powers[i].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
 		if (fail < 1) fail = 1;
 		if (fail > 99) fail = 99;
+#else
+		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 0, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
+		strcpy(buf, string_exec_lua(0, name));
+		strcpy(name, buf); *strchr(name, '_') = 0;
+		mana = atoi(strstr(buf, "_m") + 2);
+		fail = atoi(strstr(buf, "_f") + 2);
+#endif
 
 		/* fill right side of the list with blanks, in case we don't have 2 columns of spells - looks better */
 		if (!k) put_str("                                 ", j, col + 33);
 
 		/* Dump the info */
+#ifndef MIMIC_LUA
 		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), monster_spells4[i].name, innate_powers[i].smana, fail);
+#else
+		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), name, mana, fail);
+#endif
 		Term_putstr(col + k * 33, j++, -1, TERM_WHITE, buf);
 
 		/* check for beginning of 2nd column */
@@ -93,15 +112,27 @@ static void print_mimic_spells() {
 		/* Check if power is available to us */
 		if (!(p_ptr->innate_spells[1] & (1L << i))) continue;
 
+#ifndef MIMIC_LUA
 		fail = (innate_powers[i + 32].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
 		if (fail < 1) fail = 1;
 		if (fail > 99) fail = 99;
+#else
+		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 0, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
+		strcpy(buf, string_exec_lua(0, name));
+		strcpy(name, buf); *strchr(name, '_') = 0;
+		mana = atoi(strstr(buf, "_m") + 2);
+		fail = atoi(strstr(buf, "_f") + 2);
+#endif
 
 		/* fill right side of the list with blanks, in case we don't have 2 columns of spells - looks better */
 		if (!k) put_str("                                 ", j, col + 33);
 
- 		/* Dump the info */
+		/* Dump the info */
+#ifndef MIMIC_LUA
 		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), monster_spells5[i].name, innate_powers[i + 32].smana, fail);
+#else
+		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), name, mana, fail);
+#endif
 		Term_putstr(col + k * 33, j++, -1, TERM_WHITE, buf);
 
 		/* check for beginning of 2nd column */
@@ -116,15 +147,27 @@ static void print_mimic_spells() {
 		if (!(p_ptr->innate_spells[2] & (1L << i)))
 			continue;
 
+#ifndef MIMIC_LUA
 		fail = (innate_powers[i + 64].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
 		if (fail < 1) fail = 1;
 		if (fail > 99) fail = 99;
+#else
+		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 0, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
+		strcpy(buf, string_exec_lua(0, name));
+		strcpy(name, buf); *strchr(name, '_') = 0;
+		mana = atoi(strstr(buf, "_m") + 2);
+		fail = atoi(strstr(buf, "_f") + 2);
+#endif
 
 		/* fill right side of the list with blanks, in case we don't have 2 columns of spells - looks better */
 		if (!k) put_str("                                 ", j, col + 33);
 
 		/* Dump the info */
+#ifndef MIMIC_LUA
 		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), monster_spells6[i].name, innate_powers[i + 64].smana, fail);
+#else
+		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), name, mana, fail);
+#endif
 		Term_putstr(col + k * 33, j++, -1, TERM_WHITE, buf);
 
 		/* check for beginning of 2nd column */
@@ -139,15 +182,27 @@ static void print_mimic_spells() {
 		if (!(p_ptr->innate_spells[3] & (1L << i)))
 			continue;
 
+#ifndef MIMIC_LUA
 		fail = (innate_powers[i + 96].sfail * adj_int_pow[p_ptr->stat_ind[A_INT]]) / 100;
 		if (fail < 1) fail = 1;
 		if (fail > 99) fail = 99;
+#else
+		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 0, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
+		strcpy(buf, string_exec_lua(0, name));
+		strcpy(name, buf); *strchr(name, '_') = 0;
+		mana = atoi(strstr(buf, "_m") + 2);
+		fail = atoi(strstr(buf, "_f") + 2);
+#endif
 
 		/* fill right side of the list with blanks, in case we don't have 2 columns of spells - looks better */
 		if (!k) put_str("                                 ", j, col + 33);
 
 		/* Dump the info */
+#ifndef MIMIC_LUA
 		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), monster_spells0[i].name, innate_powers[i + 96].smana, fail);
+#else
+		sprintf(buf, " %c) %-22s \377B%2d \377y%2d%% ", I2A(j - 2 + k * 16), name, mana, fail);
+#endif
 		Term_putstr(col + k * 33, j++, -1, TERM_WHITE, buf);
 
 		/* check for beginning of 2nd column */

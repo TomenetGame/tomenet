@@ -44,6 +44,7 @@ __update_table = {
 	"scpt/races.lua",
 	"scpt/traits.lua",
 	"scpt/bpr.lua",
+	"scpt/mimicry.lua",
 
 	"scpt/o_shadow.lua",
 	"scpt/o_spirit.lua",
