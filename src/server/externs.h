@@ -471,9 +471,9 @@ extern auction_type *auctions;
 extern u32b auction_alloc;
 
 /* Array used by everyone_lite_later_spot */
-struct worldspot *lite_later;
-int lite_later_alloc;
-int lite_later_num;
+extern struct worldspot *lite_later;
+extern int lite_later_alloc;
+extern int lite_later_num;
 
 /*
  * The spell list of schools
