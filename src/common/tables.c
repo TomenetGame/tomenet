@@ -459,7 +459,7 @@ monster_spell_type monster_spells5[32] = {
 
   {"Cause Wounds", TRUE},
   {"XXX", TRUE},
-  {"Ball Toxic Waste", TRUE},
+  {"Toxic Waste Ball", TRUE},
   {"Raw Chaos", TRUE},
 
   {"Acid Bolt", TRUE},

@@ -18023,7 +18023,7 @@ Darkness Storm          .. (casts a darkness ball)
 Mind Blast              Psi attack, similar to Psionic Blast mindcrafter spell.
 Brain Smash             Powerful psi attack, similar to Psionic Blast.
 Cause Wounds            The curse spell, eg used by priests and archpriests.
-Ball Toxic Waste        ..
+Toxic Waste Ball        ..
 Raw Chaos               .. (casts a chaos ball)
 Acid Bolt               ..
 Lightning Bolt          ..
