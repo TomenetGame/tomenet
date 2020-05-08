@@ -1872,6 +1872,17 @@ errr Term_draw(int x, int y, byte a, char c) {
 	/* Paranoia -- illegal char */
 	if (!c) return (-2);
 
+	/* Duplicate to current screen if it's only 'partially icky' */
+	if (screen_icky && screen_line_icky != -1 && y >= screen_line_icky) {
+		int l = screen_line_icky;
+
+		screen_line_icky = -1;
+		Term_switch(0);
+		Term_draw(x, y, a, c);
+		Term_switch(0);
+		screen_line_icky = l;
+	}
+
 	/* Queue it for later */
 	QueueAttrChar(x, y, a, c);
 
@@ -2009,6 +2020,17 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
+
+	/* Duplicate to current screen if it's only 'partially icky' */
+	if (screen_icky && screen_line_icky != -1 && y >= screen_line_icky) {
+		int l = screen_line_icky;
+
+		screen_line_icky = -1;
+		Term_switch(0);
+		Term_putstr(x, y, n, a, s);
+		Term_switch(0);
+		screen_line_icky = l;
+	}
 
 	/* Look for color codes */
 	ptr = strchr(s, '\377');

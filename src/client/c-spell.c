@@ -1190,6 +1190,8 @@ void browse_school_spell(int item, int book, int pval) {
 	/* Display a list of spells */
 	sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
 	where = exec_lua(0, out_val);
+	/* Allow rest of the screen starting at this line to keep getting updated instead of staying frozen */
+	screen_line_icky = where;
 
 	/* Get a spell from the user */
 	while (get_com(out_val2, &choice)) {
@@ -1223,7 +1225,6 @@ void browse_school_spell(int item, int book, int pval) {
 		where = exec_lua(0, out_val);
 		sprintf(out_val, "return print_spell_desc(spell_x2(%d, %d, %d, %d), %d)", item, sval, pval, i, where);
 		where = exec_lua(0, out_val);
-
 		/* Allow rest of the screen starting at this line to keep getting updated instead of staying frozen */
 		screen_line_icky = where;
 	}
