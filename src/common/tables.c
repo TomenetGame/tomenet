@@ -318,39 +318,39 @@ magic_type innate_powers[128] = {
   {0, 15, 25, 0, 0},
 // RF6_FORGET                   0x00004000      /* Cause amnesia */
   {0, 25, 35, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x00008000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x00010000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x00020000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x00040000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x00080000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x00100000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x00200000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x00400000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x00800000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x01000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x02000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x04000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x08000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x10000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x20000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x40000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
-// RF6_XXX5                     0x00000800      /* (unavailable) */
+// RF6_XXX5                     0x80000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
 
 /*
@@ -397,6 +397,30 @@ magic_type innate_powers[128] = {
 // RF0_BR_WATER			0x00080000
   {0, 25, 30, 0, 2},
 
+// RF0_XXX3                     0x00100000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00200000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00400000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x00800000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x01000000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x02000000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x04000000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_BO_DISE			0x08000000
+  {0, 15, 20, 0, 1},
+// RF0_BA_DISE			0x10000000
+  {0, 30, 40, 0, 1},
+// RF0_XXX5                     0x20000000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x40000000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
+// RF0_XXX5                     0x80000000      /* (unavailable) */
+  {0, 0, 0, 0, 0},
 };
 
 monster_spell_type monster_spells4[32] = {
