@@ -1864,6 +1864,7 @@ errr Term_gotoxy(int x, int y) {
 errr Term_draw(int x, int y, byte a, char c) {
 	int w = Term->wid;
 	int h = Term->hgt;
+	static bool semaphore = FALSE;
 
 	/* Verify location */
 	if ((x < 0) || (x >= w)) return (-1);
@@ -1873,14 +1874,18 @@ errr Term_draw(int x, int y, byte a, char c) {
 	if (!c) return (-2);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
-	if (screen_icky && screen_line_icky != -1 && y >= screen_line_icky) {
-		int l = screen_line_icky;
-
-		screen_line_icky = -1;
-		Term_switch(0);
-		Term_draw(x, y, a, c);
-		Term_switch(0);
-		screen_line_icky = l;
+	if (screen_icky && !semaphore) {
+		semaphore = TRUE;
+		if (screen_line_icky != -1 && y >= screen_line_icky) {
+			Term_switch(0);
+			Term_draw(x, y, a, c);
+			Term_switch(0);
+		} else if (screen_column_icky != -1 && x <= screen_column_icky) {
+			Term_switch(0);
+			Term_draw(x, y, a, c);
+			Term_switch(0);
+		}
+		semaphore = FALSE;
 	}
 
 	/* Queue it for later */
@@ -1954,9 +1959,7 @@ errr Term_addch(byte a, char c) {
  */
 errr Term_addstr(int n, byte a, cptr s) {
 	int k = n, len;
-
 	int w = Term->wid;
-
 	errr res = 0;
 
 	/* Handle "unusable" cursor */
@@ -2004,8 +2007,8 @@ errr Term_putch(int x, int y, byte a, char c) {
 
 
 /*
- * Move to a location and, using an attr, add a string
- * n characters will be printed on the screen
+ * Move to a location and, using an attr, add a string.
+ * n characters will be printed on the screen, -1 for unlimited.
  */
 errr Term_putstr(int x, int y, int n, byte a, char *s) {
 	errr res;
@@ -2013,6 +2016,7 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 	char *next_ptr;
 	int b;
 	int count = 0;
+	static bool semaphore = FALSE;
 
 	/* remember old colour, client-side version of "{-" feature - C. Blue */
 	byte prev_a = a;//, first_a = a;
@@ -2022,14 +2026,24 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
-	if (screen_icky && screen_line_icky != -1 && y >= screen_line_icky) {
-		int l = screen_line_icky;
-
-		screen_line_icky = -1;
-		Term_switch(0);
-		Term_putstr(x, y, n, a, s);
-		Term_switch(0);
-		screen_line_icky = l;
+	if (screen_icky && !semaphore) {
+		semaphore = TRUE;
+		if (screen_line_icky != -1 && y >= screen_line_icky) {
+			Term_switch(0);
+			Term_putstr(x, y, n, a, s);
+			Term_switch(0);
+		} else if (screen_column_icky != -1 && x <= screen_column_icky) {
+			b = n; /* abuse b for our calculation */
+			if (b == -1) {
+				if (x + strlen(s) >= screen_column_icky) b = screen_column_icky - x;
+			} else {
+				if (x + b >= screen_column_icky) b = screen_column_icky - x;
+			}
+			Term_switch(0);
+			Term_putstr(x, y, b, a, s);
+			Term_switch(0);
+		}
+		semaphore = FALSE;
 	}
 
 	/* Look for color codes */

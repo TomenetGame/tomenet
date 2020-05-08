@@ -749,6 +749,9 @@ void cmd_inven(void) {
 		break;
 	}
 
+	screen_line_icky = -1;
+	screen_column_icky = -1;
+
 	showing_inven = FALSE;
 
 	/* restore the screen */
@@ -826,6 +829,9 @@ void cmd_equip(void) {
 		}
 		break;
 	}
+
+	screen_line_icky = -1;
+	screen_column_icky = -1;
 
 	showing_equip = FALSE;
 

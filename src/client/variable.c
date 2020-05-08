@@ -170,7 +170,7 @@ s16b stat_order[6], dna_stat_order[6];			/* Desired order of stats */
 s16b class_extra;
 
 bool topline_icky;
-signed short screen_icky, screen_line_icky = -1;
+signed short screen_icky, screen_line_icky = -1, screen_column_icky = -1;
 bool party_mode = FALSE, guildcfg_mode = FALSE;
 
 player_race *race_info;

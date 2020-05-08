@@ -1018,6 +1018,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		}
 	}
 
+	screen_line_icky = -1;
+	screen_column_icky = -1;
 
 	/* Fix the screen if necessary */
 	if (command_see) Term_load();
@@ -1030,7 +1032,6 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	/* Hack -- Cancel "display" */
 	command_see = FALSE;
-
 
 
 	/* Forget the item_tester_tval restriction */

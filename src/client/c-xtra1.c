@@ -1481,6 +1481,10 @@ void show_inven(void) {
 		k++;
 	}
 
+	/* For screen_line_icky: Fill the whole map-screen */
+	screen_column_icky = 79 - len - 2 - 1; /* -2: Item list has 2 leading spaces at the start of each line, -1: start _before_ this column */
+	screen_line_icky = k + 1 + 1; /* +1: Item list as 1 trailing empty 'border' line */
+
 	/* Find the column to start in */
 	col = (len > 76) ? 0 : (79 - len);
 
@@ -1599,6 +1603,10 @@ void show_equip(void) {
 		/* Advance to next "line" */
 		k++;
 	}
+
+	/* For screen_line_icky: Fill the whole map-screen */
+	screen_column_icky = 79 - len - 2 - 1; /* -2: Item list has 2 leading spaces at the start of each line, -1: start _before_ this column */
+	screen_line_icky = k + 1 + 1; /* +1: Item list as 1 trailing empty 'border' line */
 
 	/* Find the column to start in */
 	col = (len > 76) ? 0 : (79 - len);
