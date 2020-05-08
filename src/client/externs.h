@@ -299,7 +299,7 @@ extern s16b class_extra;
 extern s16b stat_order[6], dna_stat_order[6];
 
 extern bool topline_icky;
-extern short screen_icky;
+extern signed short screen_icky, screen_line_icky;
 extern bool party_mode, guildcfg_mode;
 
 extern player_race *race_info;
