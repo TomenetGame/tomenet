@@ -436,6 +436,9 @@ static void print_skill_batch(int *p, int start, int max, bool mode) {
 	//note: since the "skill screen" contains "skills", these 'meta' skills have been dubbed "abilities" for now,
 	//just to avoid (er hopefully) confusion.. (keep consistent with tomenet*.hlp files):
 	prompt_topline(format("Select an ability (a-%c), * to list, @ to select by name/No., +/- to scroll:", I2A(j - 1)));
+
+	screen_line_icky = 2 + j + 1;
+	screen_column_icky = 20 - 1;
 }
 
 static int do_cmd_activate_skill_aux() {
@@ -528,6 +531,8 @@ static int do_cmd_activate_skill_aux() {
 			strcpy(buf, "Cast a spell");
 			if (!get_string("Skill action? ", buf, 79)) {
 				if (term_saved) Term_load();
+				screen_line_icky = -1;
+				screen_column_icky = -1;
 				return FALSE;
 			}
 
@@ -576,6 +581,9 @@ static int do_cmd_activate_skill_aux() {
 			break;
 		}
 	}
+
+	screen_line_icky = -1;
+	screen_column_icky = -1;
 
 	if (term_saved) Term_load();
 	topline_icky = FALSE;

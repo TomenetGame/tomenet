@@ -470,6 +470,7 @@ static int get_mimic_spell(int *sn) {
 					Flush_queue();
 				}
 				screen_line_icky = -1;
+				screen_column_icky = -1;
 				return FALSE;
 			}
 
@@ -530,6 +531,7 @@ static int get_mimic_spell(int *sn) {
 	}
 
 	screen_line_icky = -1;
+	screen_column_icky = -1;
 
 	/* Restore the screen */
 	if (redraw) {
@@ -757,6 +759,7 @@ void do_mimic() {
 		}
 
 		screen_line_icky = -1;
+		screen_column_icky = -1;
 
 		if (c) Send_activate_skill(MKEY_MIMICRY, 0, 25000, c, 0, 0);
 		return;
@@ -1242,6 +1245,7 @@ void browse_school_spell(int item, int book, int pval) {
 		screen_line_icky = where;
 	}
 	screen_line_icky = -1;
+	screen_column_icky = -1;
 
 	/* Restore the screen */
 	Term_load();
@@ -1252,19 +1256,22 @@ static void print_combatstances() {
 
 	/* Title the list */
 	prt("", 1, col);
-	put_str("Name", 1, col + 5);
+	put_str("Name", 1, col + 4);
 
 	prt("", j, col);
-	put_str("a) Balanced stance (standard)", j++, col);
+	put_str(" a) Balanced stance (standard)", j++, col);
 
 	prt("", j, col);
-	put_str("b) Defensive stance", j++, col);
+	put_str(" b) Defensive stance", j++, col);
 
 	prt("", j, col);
-	put_str("c) Offensive stance", j++, col);
+	put_str(" c) Offensive stance", j++, col);
 
 	/* Clear the bottom line */
 	prt("", j++, col);
+
+	screen_line_icky = j;
+	screen_column_icky = 20 - 1;
 }
 
 static int get_combatstance(int *cs) {
@@ -1340,6 +1347,9 @@ static int get_combatstance(int *cs) {
 		flag = TRUE;
 	}
 
+	screen_line_icky = -1;
+	screen_column_icky = -1;
+
 	/* Restore the screen */
 	if (redraw) {
 		Term_load();
@@ -1374,18 +1384,21 @@ static void print_melee_techniques() {
 	col = 20;
 	/* Title the list */
 	prt("", 1, col);
-	put_str("Name", 1, col + 5);
+	put_str("Name", 1, col + 4);
 	/* Dump the techniques */
 	for (i = 0; i < 16; i++) {
 		/* Check for accessible technique */
 		if (!(p_ptr->melee_techniques & (1L << i)))
 		  continue;
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j), melee_techniques[i]);
+		sprintf(buf, " %c) %s", I2A(j), melee_techniques[i]);
 		prt(buf, 2 + j++, col);
 	}
 	/* Clear the bottom line */
 	prt("", 2 + j++, col);
+
+	screen_line_icky = 2 + j;
+	screen_column_icky = 20 - 1;
 }
 
 static int get_melee_technique(int *sn) {
@@ -1504,6 +1517,9 @@ static int get_melee_technique(int *sn) {
 		}
 	}
 
+	screen_line_icky = -1;
+	screen_column_icky = -1;
+
 	/* Restore the screen */
 	if (redraw) {
 		Term_load();
@@ -1540,17 +1556,20 @@ static void print_ranged_techniques() {
 	col = 20;
 	/* Title the list */
 	prt("", 1, col);
-	put_str("Name", 1, col + 5);
+	put_str("Name", 1, col + 4);
 	/* Dump the techniques */
 	for (i = 0; i < 16; i++) {
 		/* Check for accessible technique */
 		if (!(p_ptr->ranged_techniques & (1L << i))) continue;
 		/* Dump the info */
-		sprintf(buf, "%c) %s", I2A(j), ranged_techniques[i]);
+		sprintf(buf, " %c) %s", I2A(j), ranged_techniques[i]);
 		prt(buf, 2 + j++, col);
 	}
 	/* Clear the bottom line */
 	prt("", 2 + j++, col);
+
+	screen_line_icky = 2 + j;
+	screen_column_icky = 20 - 1;
 }
 
 static int get_ranged_technique(int *sn) {
@@ -1669,6 +1688,9 @@ static int get_ranged_technique(int *sn) {
 			flag = TRUE;
 		}
 	}
+
+	screen_line_icky = -1;
+	screen_column_icky = -1;
 
 	/* Restore the screen */
 	if (redraw) {
