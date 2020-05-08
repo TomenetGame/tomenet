@@ -115,8 +115,7 @@ typedef struct infofnt infofnt;
  *	- Bit Flag: We created 'dpy', and so should nuke it when done.
  */
 
-struct metadpy
-{
+struct metadpy {
 	Display	*dpy;
 	Screen	*screen;
 	Window	root;
@@ -171,8 +170,7 @@ struct metadpy
  *	- Bit Flag: 4th extra flag
  */
 
-struct infowin
-{
+struct infowin {
 	Window		win;
 	long			mask;
 
@@ -212,8 +210,7 @@ struct infowin
  *	- Bit Flag: Destroy 'gc' at Nuke time.
  */
 
-struct infoclr
-{
+struct infoclr {
 	GC			gc;
 
 	Pixell		fg;
@@ -243,8 +240,7 @@ struct infoclr
  *	- Flag: Nuke info when done
  */
 
-struct infofnt
-{
+struct infofnt {
 	XFontStruct	*info;
 
 	cptr			name;
@@ -438,22 +434,18 @@ static infofnt *Infofnt = (infofnt*)(NULL);
  *	If 'dpy' is NULL, then Create the named Display
  *	If 'name' is NULL, and so is 'dpy', use current Display
  */
-static errr Metadpy_init_2(Display *dpy, cptr name)
-{
+static errr Metadpy_init_2(Display *dpy, cptr name) {
 	metadpy *m = Metadpy;
-
 
 	/*** Open the display if needed ***/
 
 	/* If no Display given, attempt to Create one */
-	if (!dpy)
-	{
+	if (!dpy) {
 		/* Attempt to open the display */
 		dpy = XOpenDisplay(name);
 
 		/* Failure */
-		if (!dpy)
-		{
+		if (!dpy) {
 			/* No name given, extract DISPLAY */
 			if (!name) name = getenv("DISPLAY");
 
@@ -469,8 +461,7 @@ static errr Metadpy_init_2(Display *dpy, cptr name)
 	}
 
 	/* Since the Display was given, use it */
-	else
-	{
+	else {
 		/* We will NOT have to Nuke it when done */
 		m->nuke = 0;
 	}
@@ -530,8 +521,7 @@ static errr Metadpy_init_2(Display *dpy, cptr name)
 /*
  * General Flush/ Sync/ Discard routine
  */
-static errr Metadpy_update(int flush, int sync, int discard)
-{
+static errr Metadpy_update(int flush, int sync, int discard) {
 	/* Flush if desired */
 	if (flush) XFlush(Metadpy->dpy);
 
@@ -543,18 +533,15 @@ static errr Metadpy_update(int flush, int sync, int discard)
 }
 
 
-
 /*
  * Make a simple beep
  */
-static errr Metadpy_do_beep(void)
-{
+static errr Metadpy_do_beep(void) {
 	/* Make a simple beep */
 	XBell(Metadpy->dpy, 100);
 
 	return (0);
 }
-
 
 
 /* SHUT: x-metadpy.c */
@@ -566,8 +553,7 @@ static errr Metadpy_do_beep(void)
 /*
  * Set the name (in the title bar) of Infowin
  */
-static errr Infowin_set_name(cptr name)
-{
+static errr Infowin_set_name(cptr name) {
 	Status st;
 	XTextProperty tp;
 	char buf[128];
@@ -582,8 +568,7 @@ static errr Infowin_set_name(cptr name)
 /*
  * Prepare a new 'infowin'.
  */
-static errr Infowin_prepare(Window xid)
-{
+static errr Infowin_prepare(Window xid) {
 	infowin *iwin = Infowin;
 
 	Window tmp_win;
@@ -630,15 +615,12 @@ static errr Infowin_prepare(Window xid)
  * Notes:
  *	If 'dad == None' assume 'dad == root'
  */
-static errr Infowin_init_data(Window dad, int x, int y, int w, int h,
-                              int b, Pixell fg, Pixell bg)
-{
+static errr Infowin_init_data(Window dad, int x, int y, int w, int h, int b, Pixell fg, Pixell bg) {
 	Window xid;
 
 
 	/* Wipe it clean */
 	WIPE(Infowin, infowin);
-
 
 	/*** Error Check XXX ***/
 
@@ -677,8 +659,7 @@ static errr Infowin_init_data(Window dad, int x, int y, int w, int h,
  * Pairs of values, first is texttual name, second is the string
  * holding the decimal value that the operation corresponds to.
  */
-static cptr opcode_pairs[] =
-{
+static cptr opcode_pairs[] = {
 	"cpy", "3",
 	"xor", "6",
 	"and", "1",
@@ -722,16 +703,13 @@ static cptr opcode_pairs[] =
  *	0-15: if 'str' is a valid Operation
  *	-1:   if 'str' could not be parsed
  */
-static int Infoclr_Opcode(cptr str)
-{
+static int Infoclr_Opcode(cptr str) {
 	register int i;
 
 	/* Scan through all legal operation names */
-	for (i = 0; opcode_pairs[i*2]; ++i)
-	{
+	for (i = 0; opcode_pairs[i*2]; ++i) {
 		/* Is this the right oprname? */
-		if (streq(opcode_pairs[i*2], str))
-		{
+		if (streq(opcode_pairs[i*2], str)) {
 			/* Convert the second element in the pair into a Code */
 			return (atoi(opcode_pairs[i*2+1]));
 		}
@@ -756,14 +734,12 @@ static int Infoclr_Opcode(cptr str)
  * Valid forms for 'name':
  *	'fg', 'bg', 'zg', '<name>' and '#<code>'
  */
-static Pixell Infoclr_Pixell(cptr name)
-{
+static Pixell Infoclr_Pixell(cptr name) {
 	XColor scrn;
 
 
 	/* Attempt to Parse the name */
-	if (name && name[0])
-	{
+	if (name && name[0]) {
 		/* The 'bg' color is available */
 		if (streq(name, "bg")) return (Metadpy->bg);
 
@@ -811,8 +787,7 @@ static Pixell Infoclr_Pixell(cptr name)
  *	op:   The Opcode for the requested Operation (see above)
  *	stip: The stipple mode
  */
-static errr Infoclr_init_data(Pixell fg, Pixell bg, int op, int stip)
-{
+static errr Infoclr_init_data(Pixell fg, Pixell bg, int op, int stip) {
 	infoclr *iclr = Infoclr;
 
 	GC gc;
@@ -884,8 +859,7 @@ static errr Infoclr_init_data(Pixell fg, Pixell bg, int op, int stip)
 /*
  * Prepare a new 'infofnt'
  */
-static errr Infofnt_prepare(XFontStruct *info)
-{
+static errr Infofnt_prepare(XFontStruct *info) {
 	infofnt *ifnt = Infofnt;
 
 	XCharStruct *cs;
@@ -918,8 +892,7 @@ static errr Infofnt_prepare(XFontStruct *info)
  * Inputs:
  *	name: The name of the requested Font
  */
-static errr Infofnt_init_data(cptr name)
-{
+static errr Infofnt_init_data(cptr name) {
 	XFontStruct *info;
 
 
@@ -944,8 +917,7 @@ static errr Infofnt_init_data(cptr name)
 	WIPE(Infofnt, infofnt);
 
 	/* Attempt to prepare it */
-	if (Infofnt_prepare(info))
-	{
+	if (Infofnt_prepare(info)) {
 		/* Free the font */
 		XFreeFont(Metadpy->dpy, info);
 
@@ -968,10 +940,6 @@ static errr Infofnt_init_data(cptr name)
 
 
 
-
-
-
-
 /* OPEN: r-metadpy.c */
 
 /* SHUT: r-metadpy.c */
@@ -981,8 +949,7 @@ static errr Infofnt_init_data(cptr name)
 /*
  * Modify the event mask of an Infowin
  */
-static errr Infowin_set_mask (long mask)
-{
+static errr Infowin_set_mask (long mask) {
 	/* Save the new setting */
 	Infowin->mask = mask;
 
@@ -994,17 +961,10 @@ static errr Infowin_set_mask (long mask)
 }
 
 
-
-
-
-
-
-
 /*
  * Request that Infowin be mapped
  */
-static errr Infowin_map (void)
-{
+static errr Infowin_map (void) {
 	/* Execute the Mapping */
 	XMapWindow(Metadpy->dpy, Infowin->win);
 
@@ -1015,8 +975,7 @@ static errr Infowin_map (void)
 /*
  * Request that Infowin be raised
  */
-static errr Infowin_raise(void)
-{
+static errr Infowin_raise(void) {
 	/* Raise towards visibility */
 	XRaiseWindow(Metadpy->dpy, Infowin->win);
 
@@ -1027,8 +986,7 @@ static errr Infowin_raise(void)
 /*
  * Resize an infowin
  */
-static errr Infowin_resize(int w, int h)
-{
+static errr Infowin_resize(int w, int h) {
 	/* Execute the request */
 	XResizeWindow(Metadpy->dpy, Infowin->win, w, h);
 
@@ -1039,8 +997,7 @@ static errr Infowin_resize(int w, int h)
 /*
  * Visually clear Infowin
  */
-static errr Infowin_wipe(void)
-{
+static errr Infowin_wipe(void) {
 	/* Execute the request */
 	XClearWindow(Metadpy->dpy, Infowin->win);
 
@@ -1051,8 +1008,7 @@ static errr Infowin_wipe(void)
 /*
  * Standard Text
  */
-static errr Infofnt_text_std(int x, int y, cptr str, int len)
-{
+static errr Infofnt_text_std(int x, int y, cptr str, int len) {
 	int i;
 
 
@@ -1086,40 +1042,31 @@ static errr Infofnt_text_std(int x, int y, cptr str, int len)
 	/*** Handle the fake mono we can enforce on fonts ***/
 
 	/* Monotize the font */
-	if (Infofnt->mono)
-	{
+	if (Infofnt->mono) {
 		/* Do each character */
-		for (i = 0; i < len; ++i)
-		{
+		for (i = 0; i < len; ++i) {
 			/* Note that the Infoclr is set up to contain the Infofnt */
 			XDrawImageString(Metadpy->dpy, Infowin->win, Infoclr->gc,
 			                 x + i * Infofnt->wid + Infofnt->off, y, str + i, 1);
 		}
 	}
 
-	/* Assume monoospaced font */
-	else
-	{
+	/* Assume monospaced font */
+	else {
 		/* Note that the Infoclr is set up to contain the Infofnt */
 		XDrawImageString(Metadpy->dpy, Infowin->win, Infoclr->gc,
 		                 x, y, str, len);
 	}
-
 
 	/* Success */
 	return (0);
 }
 
 
-
-
-
-
 /*
  * Painting where text would be
  */
-static errr Infofnt_text_non(int x, int y, cptr str, int len)
-{
+static errr Infofnt_text_non(int x, int y, cptr str, int len) {
 	int w, h;
 
 
@@ -1298,8 +1245,7 @@ static term_data term_7;
 /*
  * Set the size hints of Infowin
  */
-static errr Infowin_set_size(int w, int h, int r_w, int r_h, bool fixed)
-{
+static errr Infowin_set_size(int w, int h, int r_w, int r_h, bool fixed) {
 	XSizeHints *sh;
 
 	/* Make Size Hints */
@@ -1309,16 +1255,14 @@ static errr Infowin_set_size(int w, int h, int r_w, int r_h, bool fixed)
 	if (!sh) return (1);
 
 	/* Fixed window size */
-	if (fixed)
-	{
+	if (fixed) {
 		sh->flags = PMinSize | PMaxSize;
 		sh->min_width = sh->max_width = w;
 		sh->min_height = sh->max_height = h;
 	}
 
 	/* Variable window size */
-	else
-	{
+	else {
 		sh->flags = PMinSize;
 		sh->min_width = r_w + 2;
 		sh->min_height = r_h + 2;
@@ -1347,8 +1291,7 @@ static errr Infowin_set_size(int w, int h, int r_w, int r_h, bool fixed)
 /*
  * Set the name (in the title bar) of Infowin
  */
-static errr Infowin_set_class_hint(cptr name)
-{
+static errr Infowin_set_class_hint(cptr name) {
 	XClassHint *ch;
 
 	char res_name[20];
@@ -1375,8 +1318,7 @@ static errr Infowin_set_class_hint(cptr name)
 /*
  * Process a keypress event
  */
-static void react_keypress(XEvent *xev)
-{
+static void react_keypress(XEvent *xev) {
 	int i, n, mc, ms, mo, mx;
 
 	uint ks1;
@@ -1413,8 +1355,7 @@ static void react_keypress(XEvent *xev)
 
 
 	/* Normal keys with no modifiers */
-	if (n && !mo && !mx && !IsSpecialKey(ks))
-	{
+	if (n && !mo && !mx && !IsSpecialKey(ks)) {
 		/* Enqueue the normal key(s) */
 		for (i = 0; buf[i]; i++) Term_keypress(buf[i]);
 
@@ -1424,8 +1365,7 @@ static void react_keypress(XEvent *xev)
 
 
 	/* Handle a few standard keys */
-	switch (ks1)
-	{
+	switch (ks1) {
 		case XK_Escape:
 		Term_keypress(ESCAPE); return;
 
@@ -1441,17 +1381,14 @@ static void react_keypress(XEvent *xev)
 	}
 
 	/* Hack -- Use the KeySym */
-	if (ks)
-	{
+	if (ks) {
 		sprintf(msg, "%c%s%s%s%s_%lX%c", 31,
 		        mc ? "N" : "", ms ? "S" : "",
 		        mo ? "O" : "", mx ? "M" : "",
 		        (unsigned long)(ks), 13);
 	}
-
 	/* Hack -- Use the Keycode */
-	else
-	{
+	else {
 		sprintf(msg, "%c%s%s%s%sK_%X%c", 31,
 		        mc ? "N" : "", ms ? "S" : "",
 		        mo ? "O" : "", mx ? "M" : "",
@@ -1463,8 +1400,7 @@ static void react_keypress(XEvent *xev)
 
 
 	/* Hack -- dump an "extra" string */
-	if (n)
-	{
+	if (n) {
 		/* Start the "extra" string */
 		Term_keypress(28);
 
@@ -1642,18 +1578,14 @@ static errr CheckEvent(bool wait) {
 
 
 	/* Switch on the Type */
-	switch (xev->type)
-	{
+	switch (xev->type) {
 		/* A Button Press Event */
 		case ButtonPress:
-		{
 			/* Set flag, then fall through */
 			//flag = 1;
-		}
 
 		/* A Button Release (or ButtonPress) Event */
 		case ButtonRelease:
-		{
 			/* Which button is involved */
 			/* if      (xev->xbutton.button == Button1) data = 1;
 			else if (xev->xbutton.button == Button2) data = 2;
@@ -1668,18 +1600,14 @@ static errr CheckEvent(bool wait) {
 			/* XXX Handle */
 
 			break;
-		}
 
 		/* An Enter Event */
 		case EnterNotify:
-		{
 			/* Note the Enter, Fall into 'Leave' */
 			//flag = 1;
-		}
 
 		/* A Leave (or Enter) Event */
 		case LeaveNotify:
-		{
 			/* Where is the mouse */
 			//x = xev->xcrossing.x;
 			//y = xev->xcrossing.y;
@@ -1687,11 +1615,9 @@ static errr CheckEvent(bool wait) {
 			/* XXX Handle */
 
 			break;
-		}
 
 		/* A Motion Event */
 		case MotionNotify:
-		{
 			/* Where is the mouse */
 			//x = xev->xmotion.x;
 			//y = xev->xmotion.y;
@@ -1699,18 +1625,14 @@ static errr CheckEvent(bool wait) {
 			/* XXX Handle */
 
 			break;
-		}
 
 		/* A KeyRelease */
 		case KeyRelease:
-		{
 			/* Nothing */
 			break;
-		}
 
 		/* A KeyPress */
 		case KeyPress:
-		{
 			/* Save the mouse location */
 			//x = xev->xkey.x;
 			//y = xev->xkey.y;
@@ -1722,11 +1644,9 @@ static errr CheckEvent(bool wait) {
 			react_keypress(xev);
 
 			break;
-		}
 
 		/* An Expose Event */
 		case Expose:
-		{
 			/* Redraw (if allowed) */
 			if (iwin == td->inner) {
 				/* Get the area that should be updated */
@@ -1739,27 +1659,20 @@ static errr CheckEvent(bool wait) {
 				Term_redraw_section(x1, y1, x2, y2);
 			}
 			/* Clear the window */
-			else {
-				Infowin_wipe();
-			}
+			else Infowin_wipe();
 
 			break;
-		}
 
 		/* A Mapping Event */
 		case MapNotify:
-		{
 			Infowin->mapped = 1;
 			break;
-		}
 
 		/* An UnMap Event */
 		case UnmapNotify:
-		{
 			/* Save the mapped-ness */
 			Infowin->mapped = 0;
 			break;
-		}
 
 		/* A Move AND/OR Resize Event */
 		case ConfigureNotify:
@@ -1876,21 +1789,14 @@ static errr CheckEvent(bool wait) {
 }
 
 
-
-
-
-
-
 /*
  * Handle "activation" of a term
  */
-static errr Term_xtra_x11_level(int v)
-{
+static errr Term_xtra_x11_level(int v) {
 	term_data *td = (term_data*)(Term->data);
 
 	/* Handle "activate" */
-	if (v)
-	{
+	if (v) {
 		/* Activate the "inner" window */
 		Infowin_set(td->inner);
 
@@ -1906,11 +1812,9 @@ static errr Term_xtra_x11_level(int v)
 /*
  * Handle a "special request"
  */
-static errr Term_xtra_x11(int n, int v)
-{
+static errr Term_xtra_x11(int n, int v) {
 	/* Handle a subset of the legal requests */
-	switch (n)
-	{
+	switch (n) {
 		/* Make a noise */
 		case TERM_XTRA_NOISE: Metadpy_do_beep(); return (0);
 
@@ -1941,12 +1845,10 @@ static errr Term_xtra_x11(int n, int v)
 }
 
 
-
 /*
  * Erase a number of characters
  */
-static errr Term_wipe_x11(int x, int y, int n)
-{
+static errr Term_wipe_x11(int x, int y, int n) {
 	/* Erase (use black) */
 	Infoclr_set(clr[0]);
 
@@ -1958,13 +1860,11 @@ static errr Term_wipe_x11(int x, int y, int n)
 }
 
 
-
 static int cursor_x = -1, cursor_y = -1;
 /*
  * Draw the cursor (XXX by hiliting)
  */
-static errr Term_curs_x11(int x, int y)
-{
+static errr Term_curs_x11(int x, int y) {
 	/*
 	 * Don't place the cursor in the same place multiple times to avoid
 	 * blinking.
@@ -1988,8 +1888,7 @@ static errr Term_curs_x11(int x, int y)
 /*
  * Draw a number of characters (XXX Consider using "cpy" mode)
  */
-static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
-{
+static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
 	/* Draw the text in Xor */
 #ifndef EXTENDED_COLOURS_PALANIM
  #ifndef EXTENDED_BG_COLOURS
@@ -2026,8 +1925,7 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s)
 /*
  * Draw some graphical characters.
  */
-static errr Term_pict_x11(int x, int y, byte a, byte c)
-{
+static errr Term_pict_x11(int x, int y, byte a, byte c) {
 	int i;
 
 	term_data *td = (term_data*)(Term->data);
@@ -2054,8 +1952,7 @@ static errr Term_pict_x11(int x, int y, byte a, byte c)
 /*
  * Initialize a term_data
  */
-static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr font)
-{
+static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr font) {
 	term *t = &td->t;
 
 	int wid, hgt, num;
@@ -2073,9 +1970,8 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Prepare the standard font */
 	MAKE(td->fnt, infofnt);
 	Infofnt_set(td->fnt);
-	if (Infofnt_init_data(font) == -1) {
+	if (Infofnt_init_data(font) == -1)
 		fprintf(stderr, "Failed to load a font!\n");
-	}
 
 	/* Hack -- extract key buffer size */
 	num = (fixed ? 1024 : 16);
@@ -2296,8 +2192,7 @@ static void enable_common_colormap_x11() {
 #ifdef USE_GRAPHICS
 
 
-typedef struct BITMAPFILEHEADER
-{
+typedef struct BITMAPFILEHEADER {
 	u16b bfAlign;    /* HATE this */
 	u16b bfType;
 	u32b bfSize;
@@ -2306,8 +2201,7 @@ typedef struct BITMAPFILEHEADER
 	u32b bfOffBits;
 } BITMAPFILEHEADER;
 
-typedef struct BITMAPINFOHEADER
-{
+typedef struct BITMAPINFOHEADER {
 	u32b biSize;
 	u32b biWidth;
 	u32b biHeight;
@@ -2321,8 +2215,7 @@ typedef struct BITMAPINFOHEADER
 	u32b biClrImportand;
 } BITMAPINFOHEADER;
 
-typedef struct RGB
-{
+typedef struct RGB {
 	unsigned char r,g,b;
 	unsigned char filler;
 } RGB;
@@ -2333,8 +2226,7 @@ static Pixell Infoclr_Pixell(cptr name);
  *
  * Replaced ReadRaw & RemapColors.
  */
-static XImage *ReadBMP(Display *disp, char Name[])
-{
+static XImage *ReadBMP(Display *disp, char Name[]) {
 	FILE *f;
 
 	BITMAPFILEHEADER fileheader;
@@ -2401,9 +2293,7 @@ static XImage *ReadBMP(Display *disp, char Name[])
  *
  * Also appears in "main-xaw.c".
  */
-static XImage *ResizeImage(Display *disp, XImage *Im,
-                           int ix, int iy, int ox, int oy)
-{
+static XImage *ResizeImage(Display *disp, XImage *Im, int ix, int iy, int ox, int oy) {
 	int width1, height1, width2, height2;
 	int x1, x2, y1, y2, Tx, Ty;
 	int *px1, *px2, *dx1, *dx2;
@@ -2428,30 +2318,24 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 	                   Im->depth, ZPixmap, 0, Data, width2, height2,
 	                   32, 0);
 
-	if (ix > ox)
-	{
+	if (ix > ox) {
 		px1 = &x1;
 		px2 = &x2;
 		dx1 = &ix;
 		dx2 = &ox;
-	}
-	else
-	{
+	} else {
 		px1 = &x2;
 		px2 = &x1;
 		dx1 = &ox;
 		dx2 = &ix;
 	}
 
-	if (iy > oy)
-	{
+	if (iy > oy) {
 		py1 = &y1;
 		py2 = &y2;
 		dy1 = &iy;
 		dy2 = &oy;
-	}
-	else
-	{
+	} else {
 		py1 = &y2;
 		py2 = &y1;
 		dy1 = &oy;
@@ -2460,19 +2344,16 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 
 	Ty = *dy1;
 
-	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); )
-	{
+	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); ) {
 		Tx = *dx1;
 
-		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); )
-		{
+		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); ) {
 			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
 
 			(*px1)++;
 
 			Tx -= *dx2;
-			if (Tx < 0)
-			{
+			if (Tx < 0) {
 				Tx += *dx1;
 				(*px2)++;
 			}
@@ -2481,8 +2362,7 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 		(*py1)++;
 
 		Ty -= *dy2;
-		if (Ty < 0)
-		{
+		if (Ty < 0) {
 			Ty += *dy1;
 			(*py2)++;
 		}
@@ -2537,8 +2417,7 @@ errr init_x11(void) {
 
 		printf("Trying for graphics file: %s\n", filename);
 		/* Use graphics if bitmap file exists */
-		if ((gfd = open(filename, 0, O_RDONLY)) != -1)
-		{
+		if ((gfd = open(filename, 0, O_RDONLY)) != -1) {
 			printf("Got graphics file\n");
 			close(gfd);
 			/* Use graphics */

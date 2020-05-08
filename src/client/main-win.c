@@ -831,19 +831,19 @@ static void save_prefs_aux(term_data *td, cptr sec_name) {
 		wsprintf(buf, "%d", td->rows);
 		WritePrivateProfileString(sec_name, "Rows", buf, ini_file);
 	} else {
-                int hgt;
-                if (c_cfg.big_map || data[0].rows > SCREEN_HGT + SCREEN_PAD_Y) {
-                        /* only change height if we're currently running the default short height */
-                        if (screen_hgt <= SCREEN_HGT)
-                                hgt = SCREEN_PAD_Y + MAX_SCREEN_HGT;
-                        /* also change it however if the main window was resized manually (ie by mouse dragging) */
-                        else if (data[0].rows != SCREEN_PAD_Y + screen_hgt)
-                                hgt = data[0].rows;
-                        /* keep current, modified screen size */
-                        else
-	                        hgt = SCREEN_PAD_Y + screen_hgt;
-    		} else hgt = SCREEN_PAD_Y + SCREEN_HGT;
-    		if (hgt > MAX_WINDOW_HGT) hgt = MAX_WINDOW_HGT;
+		int hgt;
+		if (c_cfg.big_map || data[0].rows > SCREEN_HGT + SCREEN_PAD_Y) {
+			/* only change height if we're currently running the default short height */
+			if (screen_hgt <= SCREEN_HGT)
+				hgt = SCREEN_PAD_Y + MAX_SCREEN_HGT;
+			/* also change it however if the main window was resized manually (ie by mouse dragging) */
+			else if (data[0].rows != SCREEN_PAD_Y + screen_hgt)
+				hgt = data[0].rows;
+			/* keep current, modified screen size */
+			else
+				hgt = SCREEN_PAD_Y + screen_hgt;
+		} else hgt = SCREEN_PAD_Y + SCREEN_HGT;
+		if (hgt > MAX_WINDOW_HGT) hgt = MAX_WINDOW_HGT;
 
 		/* Current size (y) - only change to double-screen if we're not already in some kind of enlarged screen */
 		wsprintf(buf, "%d", hgt);
@@ -1898,8 +1898,7 @@ static errr Term_xtra_win_fresh(int v);
 /*
  * Process at least one event
  */
-static errr Term_xtra_win_event(int v)
-{
+static errr Term_xtra_win_event(int v) {
 	MSG msg;
 
 #ifdef OPTIMIZE_DRAWING
@@ -1908,22 +1907,18 @@ static errr Term_xtra_win_event(int v)
 #endif
 
 	/* Wait for an event */
-	if (v)
-	{
+	if (v) {
 		/* Block */
-		if (GetMessage(&msg, NULL, 0, 0))
-		{
+		if (GetMessage(&msg, NULL, 0, 0)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
 	}
 
 	/* Check for an event */
-	else
-	{
+	else {
 		/* Check */
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
@@ -1937,13 +1932,11 @@ static errr Term_xtra_win_event(int v)
 /*
  * Process all pending events
  */
-static errr Term_xtra_win_flush(void)
-{
+static errr Term_xtra_win_flush(void) {
 	MSG msg;
 
 	/* Process all pending events */
-	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-	{
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
@@ -1990,8 +1983,7 @@ static errr Term_xtra_win_clear(void)
 /*
  * Hack -- make a noise
  */
-static errr Term_xtra_win_noise(void)
-{
+static errr Term_xtra_win_noise(void) {
 	MessageBeep(MB_ICONASTERISK);
 	return (0);
 }
@@ -2000,8 +1992,7 @@ static errr Term_xtra_win_noise(void)
 /*
  * Hack -- make a sound
  */
-static errr Term_xtra_win_sound(int v)
-{
+static errr Term_xtra_win_sound(int v) {
 	/* Unknown sound */
 	if ((v < 0) || (v >= SOUND_MAX)) return (1);
 
@@ -2032,8 +2023,7 @@ static errr Term_xtra_win_sound(int v)
 /*
  * Delay for "x" milliseconds
  */
-static errr Term_xtra_win_delay(int v)
-{
+static errr Term_xtra_win_delay(int v) {
 
 #ifdef WIN32
 
@@ -2049,11 +2039,9 @@ static errr Term_xtra_win_delay(int v)
 	t = GetTickCount() + v;
 
 	/* Wait for it */
-	while (GetTickCount() < t)
-	{
+	while (GetTickCount() < t) {
 		/* Handle messages */
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
@@ -2070,8 +2058,7 @@ static errr Term_xtra_win_delay(int v)
 /*
  * This is where we free the DC we've been using.
  */
-static errr Term_xtra_win_fresh(int v)
-{
+static errr Term_xtra_win_fresh(int v) {
 	term_data *td = (term_data*)(Term->data);
 
 	if (oldDC) {
@@ -2088,11 +2075,9 @@ static errr Term_xtra_win_fresh(int v)
 /*
  * Do a "special thing"
  */
-static errr Term_xtra_win(int n, int v)
-{
+static errr Term_xtra_win(int n, int v) {
 	/* Handle a subset of the legal requests */
-	switch (n)
-	{
+	switch (n) {
 		/* Make a bell sound */
 		case TERM_XTRA_NOISE:
 		return (Term_xtra_win_noise());
@@ -2142,8 +2127,7 @@ static errr Term_xtra_win(int n, int v)
  *
  * Erase a "block" of "n" characters starting at (x,y).
  */
-static errr Term_wipe_win(int x, int y, int n)
-{
+static errr Term_wipe_win(int x, int y, int n) {
 	term_data *td = (term_data*)(Term->data);
 
 	HDC  hdc;
@@ -2174,8 +2158,7 @@ static errr Term_wipe_win(int x, int y, int n)
  * Low level graphics (Assumes valid input).
  * Draw a "cursor" at (x,y), using a "yellow box".
  */
-static errr Term_curs_win(int x, int y)
-{
+static errr Term_curs_win(int x, int y) {
 	term_data *td = (term_data*)(Term->data);
 
 	RECT   rc;
@@ -2212,8 +2195,7 @@ static errr Term_curs_win(int x, int y)
  * If we are called for anything but the "screen" window, or if the global
  * "use_graphics" flag is off, we simply "wipe" the given grid.
  */
-static errr Term_pict_win(int x, int y, byte a, char c)
-{
+static errr Term_pict_win(int x, int y, byte a, char c) {
 
 #ifdef USE_GRAPHICS
 
@@ -2226,16 +2208,14 @@ static errr Term_pict_win(int x, int y, byte a, char c)
 	int x2, y2, w2, h2;
 
 	/* Paranoia -- handle weird requests */
-	if (!use_graphics)
-	{
+	if (!use_graphics) {
 		/* First, erase the grid */
 		return (Term_wipe_win(x, y, 1));
 	}
 
 #ifndef FULL_GRAPHICS
 	/* Paranoia -- handle weird requests */
-	if (td != &data[0])
-	{
+	if (td != &data[0]) {
 		/* First, erase the grid */
 		return (Term_wipe_win(x, y, 1));
 	}
@@ -2265,8 +2245,7 @@ static errr Term_pict_win(int x, int y, byte a, char c)
 	hdc = myGetDC(td->w);
 
 	/* Handle small bitmaps */
-	if ((w1 < w2) || (h1 < h2))
-	{
+	if ((w1 < w2) || (h1 < h2)) {
 		RECT rc;
 
 		/* Erasure rectangle */
@@ -2401,8 +2380,7 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 /*
  * Create and initialize a "term_data" given a title
  */
-static void term_data_link(term_data *td)
-{
+static void term_data_link(term_data *td) {
 	term *t = &td->t;
 
 	/* Initialize the term */
@@ -2447,8 +2425,7 @@ static void term_data_link(term_data *td)
  * Must use SW_SHOW not SW_SHOWNA, since on 256 color display
  * must make active to realize the palette. (?)
  */
-static void init_windows(void)
-{
+static void init_windows(void) {
 	int i;
 	static char version[20];
 	term_data *td;
@@ -2501,16 +2478,14 @@ static void init_windows(void)
 	data[0].dwExStyle = 0;
 
 	/* Windows */
-	for (i = 1; i < MAX_TERM_DATA; i++)
-	{
+	for (i = 1; i < MAX_TERM_DATA; i++) {
 		data[i].dwStyle = (WS_OVERLAPPED | WS_THICKFRAME | WS_SYSMENU | WS_CAPTION);
 		data[i].dwExStyle = (WS_EX_TOOLWINDOW);
 	}
 
 
 	/* Windows */
-	for (i = 0; i < MAX_TERM_DATA; i++)
-	{
+	for (i = 0; i < MAX_TERM_DATA; i++) {
 #ifdef USE_LOGFONT
 		td = &data[i];
 
@@ -2521,9 +2496,7 @@ static void init_windows(void)
 		term_force_font(td, NULL);
 #else
 		if (term_force_font(&data[i], data[i].font_want))
-		{
 			(void)term_force_font(&data[i], DEFAULT_FONTNAME);
-		}
 #endif
 	}
 
@@ -2541,8 +2514,7 @@ static void init_windows(void)
 	ang_term[0] = &data[0].t;
 
 	/* Windows */
-	for (i = 1; i < MAX_TERM_DATA; i++)
-	{
+	for (i = 1; i < MAX_TERM_DATA; i++) {
 		td_ptr = &data[i];
 		td_ptr->w = CreateWindowEx(td_ptr->dwExStyle, AngList,
 		                           td_ptr->s, td_ptr->dwStyle,
@@ -2550,8 +2522,7 @@ static void init_windows(void)
 		                           td_ptr->size_wid, td_ptr->size_hgt,
 		                           HWND_DESKTOP, NULL, hInstance, NULL);
 		if (!td_ptr->w) quit("Failed to create sub-window");
-		if (td_ptr->visible)
-		{
+		if (td_ptr->visible) {
 			td_ptr->size_hack = TRUE;
 			ShowWindow(td_ptr->w, SW_SHOW);
 			td_ptr->size_hack = FALSE;
@@ -2572,11 +2543,9 @@ static void init_windows(void)
 #ifdef USE_GRAPHICS
 
 	/* Handle "graphics" mode */
-	if (use_graphics)
-	{
+	if (use_graphics) {
 		/* Force the "requested" bitmap XXX XXX XXX */
-		if (term_force_graf(&data[0], data[0].graf_want))
-		{
+		if (term_force_graf(&data[0], data[0].graf_want)) {
 			/* XXX XXX XXX Force the "standard" font */
 			(void)term_force_font(&data[0], DEFAULT_FONTNAME);
 
@@ -2587,11 +2556,9 @@ static void init_windows(void)
 #ifdef FULL_GRAPHICS
 
 		/* Windows */
-		for (i = 1; i < MAX_TERM_DATA; i++)
-		{
+		for (i = 1; i < MAX_TERM_DATA; i++) {
 			/* Force the "requested" bitmap XXX XXX XXX */
-			if (term_force_graf(&data[i], data[i].graf_want))
-			{
+			if (term_force_graf(&data[i], data[i].graf_want)) {
 				/* XXX XXX XXX Force the "standard" font */
 				(void)term_force_font(&data[i], DEFAULT_FONTNAME);
 
@@ -2624,8 +2591,7 @@ static void init_windows(void)
 /*
  * Hack -- disables new and open from file menu
  */
-static void disable_start(void)
-{
+static void disable_start(void) {
 	HMENU hm = GetMenu(data[0].w);
 
 	EnableMenuItem(hm, IDM_FILE_NEW, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
@@ -2642,8 +2608,7 @@ static void disable_start(void)
  * which the user should not be allowed to use, and then you
  * do not have to do any checking when processing the menu.
  */
-static void setup_menus(void)
-{
+static void setup_menus(void) {
 	int i;
 
 	HMENU hm = GetMenu(data[0].w);
@@ -2659,16 +2624,14 @@ static void setup_menus(void)
  
 
 	/* Window font options */
-	for (i = 1; i < MAX_TERM_DATA; i++)
-	{
+	for (i = 1; i < MAX_TERM_DATA; i++) {
 		/* Window font */
 		EnableMenuItem(hm, IDM_TEXT_SCREEN + i,
 		               MF_BYCOMMAND | (data[i].visible ? MF_ENABLED : MF_DISABLED | MF_GRAYED));
 	}
 
 	/* Window options */
-	for (i = 1; i < MAX_TERM_DATA; i++)
-	{
+	for (i = 1; i < MAX_TERM_DATA; i++) {
 		/* Window */
 		CheckMenuItem(hm, IDM_WINDOWS_SCREEN + i,
 		              MF_BYCOMMAND | (data[i].visible ? MF_CHECKED : MF_UNCHECKED));
@@ -2702,8 +2665,7 @@ static void setup_menus(void)
  * piece of the "command line string".  Perhaps we should extract
  * the "basename" of that filename and append it to the "save" dir.
  */
-static void check_for_save_file(LPSTR cmd_line)
-{
+static void check_for_save_file(LPSTR cmd_line) {
 	char *s, *p;
 
 	/* First arg */
@@ -2956,8 +2918,7 @@ static void process_menus(WORD wCmd) {
 /*
  * Redraw a section of a window
  */
-static void handle_wm_paint(HWND hWnd, term_data *td)
-{
+static void handle_wm_paint(HWND hWnd, term_data *td) {
 	int x1, y1, x2, y2;
 	PAINTSTRUCT ps;
 
@@ -2985,13 +2946,10 @@ static void handle_wm_paint(HWND hWnd, term_data *td)
 
 
 #ifdef BEN_HACK
-LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
-                                          WPARAM wParam, LPARAM lParam);
+LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
 
-LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
-                                          WPARAM wParam, LPARAM lParam)
-{
+LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	HDC             hdc;
 	term_data      *td;
 	MINMAXINFO FAR *lpmmi;
@@ -3156,11 +3114,11 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 					old_cols = cols;
 					old_rows = rows;
 
-		                        /* Hack -- do not allow bad resizing of main screen */
-		                        cols = 80;
-		                        /* respect big_map option */
-		                        if (rows <= 24 || (in_game && !(sflags1 & SFLG1_BIG_MAP))) rows = 24;
-		                        else rows = 46;
+					/* Hack -- do not allow bad resizing of main screen */
+					cols = 80;
+					/* respect big_map option */
+					if (rows <= 24 || (in_game && !(sflags1 & SFLG1_BIG_MAP))) rows = 24;
+					else rows = 46;
 
 					/* Remember for WM_EXITSIZEMOVE later */
 					screen_term_cols = cols;
@@ -3184,22 +3142,22 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 			/* Remember final size values from WM_SIZE -> SIZE_RESTORED */
 			if ((screen_term_rows == 24 && Client_setup.options[CO_BIGMAP]) ||
 			    (screen_term_rows == 46 && !Client_setup.options[CO_BIGMAP])) {
-		                bool val = !Client_setup.options[CO_BIGMAP];
+				bool val = !Client_setup.options[CO_BIGMAP];
 
-		                Client_setup.options[CO_BIGMAP] = val;
-		                c_cfg.big_map = val;
+				Client_setup.options[CO_BIGMAP] = val;
+			c_cfg.big_map = val;
 
-                    		if (!val) screen_hgt = SCREEN_HGT;
-                    		else screen_hgt = MAX_SCREEN_HGT;
+				if (!val) screen_hgt = SCREEN_HGT;
+				else screen_hgt = MAX_SCREEN_HGT;
 
-	                        /* hack: need to redraw map or it may look cut off */
-                                if (in_game) {
-                                        if (screen_icky) Term_switch(0);
-	                                Term_clear(); /* get rid of map tiles where now status bars go instead */
-    		                        if (screen_icky) Term_switch(0);
-	                                Send_screen_dimensions();
-        		                cmd_redraw();
-    		    		}
+				/* hack: need to redraw map or it may look cut off */
+				if (in_game) {
+					if (screen_icky) Term_switch(0);
+					Term_clear(); /* get rid of map tiles where now status bars go instead */
+					if (screen_icky) Term_switch(0);
+					Send_screen_dimensions();
+					cmd_redraw();
+				}
 			}
 
 			/* Set main window size */
@@ -3207,8 +3165,8 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 			td->rows = screen_term_rows;
 			term_getsize(td);
 			old = Term;
-                        Term_activate(&td->t);
-                        Term_resize(screen_term_cols, screen_term_rows);
+			Term_activate(&td->t);
+			Term_resize(screen_term_cols, screen_term_rows);
 			term_window_resize(td);//not required? used in resize_main_window though
 			Term_activate(old);
 
@@ -3249,13 +3207,10 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
 
 
 #ifdef BEN_HACK
-LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
-                                           WPARAM wParam, LPARAM lParam);
+LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
 
-LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
-                                           WPARAM wParam, LPARAM lParam)
-{
+LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	term_data      *td;
 	MINMAXINFO FAR *lpmmi;
 	RECT            rc;
@@ -3340,14 +3295,14 @@ LRESULT FAR PASCAL AngbandListProc(HWND hWnd, UINT uMsg,
 				rows = (HIWORD(lParam) - td->size_oh1 - td->size_oh2) / td->font_hgt;
 
 				old = Term;
-                                Term_activate(&td->t);
-                                Term_resize(cols, rows);
+				Term_activate(&td->t);
+				Term_resize(cols, rows);
 				Term_activate(old);
 
-            	        	/* In case we resized Chat/Msg/Msg+Chat window,
-                		   refresh contents so they are displayed properly,
-                    		   without having to wait for another incoming message to do it for us. */
-	                        p_ptr->window |= PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT;
+				/* In case we resized Chat/Msg/Msg+Chat window,
+				   refresh contents so they are displayed properly,
+				   without having to wait for another incoming message to do it for us. */
+				p_ptr->window |= PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT;
 
 				td->size_hack = FALSE;
 
@@ -3502,8 +3457,7 @@ static void hack_core(cptr str)
 /*
  * Error message -- See "z-util.c"
  */
-static void hook_plog(cptr str)
-{
+static void hook_plog(cptr str) {
 	/* Warning */
 	if (str) MessageBox(data[0].w, str, "Warning", MB_OK);
 }
@@ -3691,7 +3645,7 @@ static void init_stuff(void) {
 #if 0
 			char out_val[2048];
 			sprintf(out_val, "copy %s %s", path2, path);
-            		system(out_val);
+			system(out_val);
 #else
 			FILE *fp, *fp2;
 			char buf[1024];
@@ -3919,8 +3873,7 @@ static void turn_off_numlock(void) {
 	}
 }
 
-int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
-                       LPSTR lpCmdLine, int nCmdShow) {
+int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow) {
 	WNDCLASS wc;
 	HDC      hdc;
 	MSG      msg;
