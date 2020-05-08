@@ -252,7 +252,7 @@ RESISTS_II = add_spell {
 	end,
 	["desc"] = 	{
 			"Provide resistances to the four basic elements,",
-			"heat, cold, lightning and acid.",
+			"heat, cold, electricity and acid.",
 			"***Automatically projecting***",
 		}
 }

@@ -354,9 +354,8 @@ MMAP = add_spell {
 			end,
 	["desc"] = 	{
 			"Forcefully uses the vision of sentient life forms around.",
-			"*** Will be transferred to allied open",
-			"    minds on the same floor if your",
-			"    Attunement skill is at least 20. ***",
+			"The effect will additionally be transferred to allied open minds on the same",
+			"floor if your Attunement skill is at least 20.",
 	}
 }
 

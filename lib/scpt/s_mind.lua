@@ -137,9 +137,8 @@ TELEKINESIS = add_spell {
 		return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 250, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 250, 0), 10))
 	end,
 	["desc"] = 	{
-		"Inscribe your book with @Pplayername, cast it, select an item",
-		"and the item will be teleported to that player whereever he/she might",
-		"be in the Universe.",
+		"Inscribe your book with @Pplayername, cast it, select an item and the item",
+		"will be teleported to that player whereever he/she might be in the Universe.",
 	}
 }
 else
@@ -159,9 +158,8 @@ TELEKINESIS = add_spell {
 		return "max wgt "..((4 + get_level(Ind, TELEKINESIS, 330, 0)) / 10).."."..(imod(4 + get_level(Ind, TELEKINESIS, 330, 0), 10))
 	end,
 	["desc"] = 	{
-		"Inscribe your book with @Pplayername, cast it, select an item",
-		"and the item will be teleported to that player whereever he/she might",
-		"be in the Universe.",
+		"Inscribe your book with @Pplayername, cast it, select an item and the item",
+		"will be teleported to that player whereever he/she might be in the Universe.",
 	}
 }
 end

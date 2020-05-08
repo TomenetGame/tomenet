@@ -78,8 +78,8 @@ IDENTIFY_III = add_spell {
 			return "rad "..(get_level(Ind, IDENTIFY_I, 3))
 	end,
 	["desc"] = 	{
-			"Identifies all objects in your inventory and in a radius",
-			"on the floor, as well as probing monsters in that radius."
+			"Identifies all objects in your inventory and in a radius on the floor,",
+			"as well as probing monsters in that radius."
 	}
 }
 
