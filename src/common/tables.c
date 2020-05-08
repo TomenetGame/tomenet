@@ -156,7 +156,7 @@ magic_type innate_powers[128] = {
   {0, 2, 0, 0, 0},
 // RF4_UNMAGIC                  0x00000002      /* (?) */
   {0, 0, 0, 0, 0},
-// (S_ANIMAL) RF4_XXX3                  0x00000004      /* (?) */
+// (S_ANIMAL) RF4_XXX3          0x00000004      /* (?) */
   {0, 0, 0, 0, 0},
 // RF4_ROCKET                   0x00000008      /* (?) */
   {0, 60, 70, 0, 2},
@@ -164,9 +164,9 @@ magic_type innate_powers[128] = {
   {0, 2, 5, 0, 1},
 // RF4_ARROW_2                  0x00000020      /* Fire an shot (heavy) */
   {0, 2, 6, 0, 1},
-// XXX (RF4_ARROW_3)                    0x00000040      /* Fire bolt (heavy) */
+// XXX (RF4_ARROW_3)            0x00000040      /* Fire bolt (heavy) */
   {0, 2, 7, 0, 1},
-// XXX (RF4_ARROW_4)                    0x00000080      /* Fire missiles (heavy) */
+// XXX (RF4_ARROW_4)            0x00000080      /* Fire missiles (heavy) */
   {0, 3, 9, 0, 1},
 // RF4_BR_ACID                  0x00000100      /* Breathe Acid */
   {0, 10, 20, 0, 2},
@@ -212,9 +212,9 @@ magic_type innate_powers[128] = {
   {0, 50, 70, 0, 2},
 // RF4_BR_NUKE                  0x20000000
   {0, 27, 40, 0, 2},
-// 0x40000000
+// 0x40000000                   0x40000000
   {0, 0, 0, 0, 0},
-// RF4_BOULDER
+// RF4_BOULDER                  0x80000000
   {0, 2, 15, 0, 1},
 
 /*
@@ -312,7 +312,7 @@ magic_type innate_powers[128] = {
   {0, 30, 60, 0, 0},
 // RF6_XXX5                     0x00000800      /* Move player (?) */
   {0, 0, 0, 0, 0},
-// RF6_DARKNESS         0x00001000      /* Create Darkness */
+// RF6_DARKNESS                 0x00001000      /* Create Darkness */
   {0, 6, 8, 0, 0},
 // RF6_TRAPS                    0x00002000      /* Create Traps */
   {0, 15, 25, 0, 0},
