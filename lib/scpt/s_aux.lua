@@ -498,6 +498,8 @@ function print_spell_desc(s, y)
 		c_prt(TERM_ORANGE, "It is castable even while confused.", y, x)
 		y = y + 1
 	end
+
+	return y
 end
 
 function book_spells_num2(inven_slot, sval)
