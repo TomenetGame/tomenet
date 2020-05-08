@@ -117,7 +117,7 @@ static void print_mimic_spells() {
 		if (fail < 1) fail = 1;
 		if (fail > 99) fail = 99;
 #else
-		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 0, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
+		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 1, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
 		strcpy(buf, string_exec_lua(0, name));
 		strcpy(name, buf); *strchr(name, '_') = 0;
 		mana = atoi(strstr(buf, "_m") + 2);
@@ -152,7 +152,7 @@ static void print_mimic_spells() {
 		if (fail < 1) fail = 1;
 		if (fail > 99) fail = 99;
 #else
-		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 0, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
+		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 2, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
 		strcpy(buf, string_exec_lua(0, name));
 		strcpy(name, buf); *strchr(name, '_') = 0;
 		mana = atoi(strstr(buf, "_m") + 2);
@@ -187,7 +187,7 @@ static void print_mimic_spells() {
 		if (fail < 1) fail = 1;
 		if (fail > 99) fail = 99;
 #else
-		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 0, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
+		sprintf(name, "return get_monster_spell_info(%d, %d, %d, %d, %d)", 3, i, p_ptr->stat_use[A_INT], p_ptr->stat_use[A_DEX], get_skill_scale(p_ptr, SKILL_MIMIC, 100));//abuse name
 		strcpy(buf, string_exec_lua(0, name));
 		strcpy(name, buf); *strchr(name, '_') = 0;
 		mana = atoi(strstr(buf, "_m") + 2);
@@ -822,12 +822,22 @@ void do_mimic() {
 
 	/* Spell requires direction? */
 	else if (spell > 3 && is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
+#ifdef MIMIC_LUA
+		char tmp[MAX_CHARS];
+#endif
+
 		j = spell - 4;
 		spell--; //easy backward compatibility, spell == 3 has already been taken care of by 20000 hack
+#ifndef MIMIC_LUA
 		if (j < 32) uses_dir = monster_spells4[j].uses_dir;
 		else if (j < 64) uses_dir = monster_spells5[j - 32].uses_dir;
 		else if (j < 96) uses_dir = monster_spells6[j - 64].uses_dir;
 		else uses_dir = monster_spells0[j - 96].uses_dir;
+#else
+		sprintf(tmp, "return get_monster_spell_info(-1, %d, 0, 0, 0)", j);
+		strcpy(out_val, string_exec_lua(0, tmp));
+		uses_dir = atoi(strstr(out_val, "_d") + 2);
+#endif
 
 		if (uses_dir) {
 			if (get_dir(&dir)) Send_activate_skill(MKEY_MIMICRY, 0, spell, dir, 0, 0);
