@@ -41,7 +41,7 @@ static void print_spells(object_type *o_ptr) {
 }
 
 static void print_mimic_spells() {
-	int i, col, j = 2, k, fail;
+	int i, col, j = 2, k, fail, j_max = 0;
 	char buf[90];
 
 	/* Print column */
@@ -84,6 +84,7 @@ static void print_mimic_spells() {
 
 		/* check for beginning of 2nd column */
 		if (j > 21) {
+			j_max = j;
 			j = 6;
 			k = 1;
 		}
@@ -105,6 +106,7 @@ static void print_mimic_spells() {
 
 		/* check for beginning of 2nd column */
 		if (j > 21) {
+			j_max = j;
 			j = 6;
 			k = 1;
 		}
@@ -127,6 +129,7 @@ static void print_mimic_spells() {
 
 		/* check for beginning of 2nd column */
 		if (j > 21) {
+			j_max = j;
 			j = 6;
 			k = 1;
 		}
@@ -149,6 +152,7 @@ static void print_mimic_spells() {
 
 		/* check for beginning of 2nd column */
 		if (j > 21) {
+			j_max = j;
 			j = 6;
 			k = 1;
 		}
@@ -164,6 +168,9 @@ static void print_mimic_spells() {
 	/* Clear the bottom line(s) */
 	if (k) prt("", 22, col);
 	prt("", j++, col + k * 35);
+
+	if (j_max > j) j = j_max;
+	screen_line_icky = j;
 }
 
 
@@ -462,6 +469,7 @@ static int get_mimic_spell(int *sn) {
 					Term_load();
 					Flush_queue();
 				}
+				screen_line_icky = -1;
 				return FALSE;
 			}
 
@@ -521,6 +529,8 @@ static int get_mimic_spell(int *sn) {
 		flag = TRUE;
 	}
 
+	screen_line_icky = -1;
+
 	/* Restore the screen */
 	if (redraw) {
 		Term_load();
@@ -550,39 +560,39 @@ static int get_mimic_spell(int *sn) {
 
 
 static void print_immunities() {
-	int col, j = 2;
-
-	/* Print column */
-	col = 15;
+	int col = 13, j = 2;
 
 	/* Title the list */
 	prt("", 1, col);
-	put_str("Immunity", 1, col + 5);
-
-
-	prt("", j, col);
-	put_str("a) Check (view current preference, don't set it)", j++, col);
+	//put_str("Immunity", 1, col + 4);
 
 	prt("", j, col);
-	put_str("b) None (pick randomly each time)", j++, col);
+	put_str(" a) Check (view current preference, don't set it)", j++, col);
 
 	prt("", j, col);
-	put_str("c) Electricity", j++, col);
+	put_str(" b) None (pick randomly each time)", j++, col);
 
 	prt("", j, col);
-	put_str("d) Cold", j++, col);
+	put_str(" c) Electricity", j++, col);
 
 	prt("", j, col);
-	put_str("e) Acid", j++, col);
+	put_str(" d) Cold", j++, col);
 
 	prt("", j, col);
-	put_str("f) Fire", j++, col);
+	put_str(" e) Acid", j++, col);
 
 	prt("", j, col);
-	put_str("g) Poison", j++, col);
+	put_str(" f) Fire", j++, col);
 
 	prt("", j, col);
-	put_str("h) Water", j++, col);
+	put_str(" g) Poison", j++, col);
+
+	prt("", j, col);
+	put_str(" h) Water", j++, col);
+
+	prt("", j++, col);
+
+	screen_line_icky = j;
 }
 
 
@@ -657,6 +667,7 @@ void do_mimic() {
 		}
 	}
 
+	/* Set preferred immunity */
 	else if (spell == 3) {
 		if (!is_newer_than(&server_version, 4, 4, 9, 1, 0, 0)) {
 			c_msg_print("Server version too old - this feature is not available.");
@@ -745,6 +756,8 @@ void do_mimic() {
 			Flush_queue();
 		}
 
+		screen_line_icky = -1;
+
 		if (c) Send_activate_skill(MKEY_MIMICRY, 0, 25000, c, 0, 0);
 		return;
 	}
@@ -759,8 +772,7 @@ void do_mimic() {
 		else uses_dir = monster_spells0[j - 96].uses_dir;
 
 		if (uses_dir) {
-			if (get_dir(&dir))
-				Send_activate_skill(MKEY_MIMICRY, 0, spell, dir, 0, 0);
+			if (get_dir(&dir)) Send_activate_skill(MKEY_MIMICRY, 0, spell, dir, 0, 0);
 			return;
 		}
 	}
