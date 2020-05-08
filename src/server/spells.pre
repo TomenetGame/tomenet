@@ -395,3 +395,6 @@ extern int __lua_OFEAR;
 
 extern bool sauron_weakened;
 extern bool sauron_weakened_iddc;
+
+/* cmd5.c - mimic powers */
+extern void shriek(int Ind);

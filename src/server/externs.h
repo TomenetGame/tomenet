@@ -744,7 +744,8 @@ extern void do_cmd_fight_aux(int Ind, int dir);
 extern void show_ghost_spells(int Ind);
 extern void do_cmd_ghost_power(int Ind, int ability);
 extern void do_cmd_ghost_power_aux(int Ind, int dir);
-
+    /* mimic powers: */
+extern void shriek(int Ind);
 
 /* cmd6.c */
 extern bool curse_armor(int Ind);

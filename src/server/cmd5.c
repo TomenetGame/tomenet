@@ -539,13 +539,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 
 //#define RF4_SHRIEK                      0x00000001      /* Shriek for help */ 
     case 0:
-	msg_print(Ind, "You emit a high-pitched humming noise.");
-	msg_format_near(Ind, "%s emits a high-pitched humming noise.", p_ptr->name);
-#ifdef USE_SOUND_2010 
-	/* allow us to annoy others ;) */
-	sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
-#endif
-	aggravate_monsters(Ind, -1);
+	shriek(Ind);
 	break;
 //#define RF4_UNMAGIC                     0x00000002      /* Cancel player's timed spell */ 
     case 1:
@@ -1886,4 +1880,17 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 #ifdef LIMIT_SPELLS
 	else p_ptr->limit_spells = aux; //paranoia?
 #endif
+}
+
+/* Mimic powers, moved to their own functions - C. Blue */
+void shriek(int Ind) {
+	player_type *p_ptr = Players[Ind];
+
+	msg_print(Ind, "You emit a high-pitched humming noise.");
+	msg_format_near(Ind, "%s emits a high-pitched humming noise.", p_ptr->name);
+#ifdef USE_SOUND_2010
+	/* allow us to annoy others ;) */
+	sound_near(Ind, "shriek", NULL, SFX_TYPE_MON_SPELL);
+#endif
+	aggravate_monsters(Ind, -1);
 }
