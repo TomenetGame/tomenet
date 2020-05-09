@@ -742,6 +742,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 		case SV_POTION_INVIS:
 			set_invis(Ind, 15 + randint(10), p_ptr->lev < 30 ? 24 : p_ptr->lev * 4 / 5);
 			ident = TRUE;
+			break;
 		case SV_POTION_SLOW_POISON:
 #if 0
 			if (set_poisoned(Ind, p_ptr->poisoned / 2, p_ptr->poisoned_attacker)) ident = TRUE;
@@ -1290,7 +1291,7 @@ static void fountain_guard(int Ind, bool blood) {
 
 	if (blood) {
 		if (getlevel(&p_ptr->wpos) >= 60) { switch (randint(3)) { case 1: ridx = 758; break; case 2: ridx = 994; break; case 3: ridx = 812; }
-		} else if (getlevel(&p_ptr->wpos) >= 50) { switch (randint(3)) { case 1: ridx = 662; break; case 2: ridx = 569; case 3: ridx = 659; }
+		} else if (getlevel(&p_ptr->wpos) >= 50) { switch (randint(3)) { case 1: ridx = 662; break; case 2: ridx = 569; break; case 3: ridx = 659; }
 		} else { switch (randint(3)) { case 1: ridx = 566; break; break; case 2: ridx = 357; break; case 3: ridx = 568; }
 		}
 	} else {
@@ -1401,9 +1402,9 @@ void do_cmd_drink_fountain(int Ind) {
 
 		if (p_ptr->prace == RACE_VAMPIRE) {
 			switch (rand_int(3)) {
-			case 0: msg_print(Ind, "Delicious.");
-			case 1: msg_print(Ind, "It's fresh.");
-			case 2: msg_print(Ind, "You're less thirsty.");
+			case 0: msg_print(Ind, "Delicious."); break;
+			case 1: msg_print(Ind, "It's fresh."); break;
+			case 2: msg_print(Ind, "You're less thirsty."); break;
 			}
 			set_food(Ind, k_info[lookup_kind(TV_POTION, SV_POTION_BLOOD)].pval + p_ptr->food);
 		} else if (p_ptr->suscep_life) {
@@ -5552,6 +5553,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #ifdef ENABLE_EXCAVATION
 	case TV_CHEMICAL: case TV_CHARGE: break;
 	case TV_TOOL: if (o_ptr->sval == SV_TOOL_GRINDER) break; //else: fall through
+	__attribute__ ((fallthrough));
 #endif
 	default:
 		/* Wonder Twin Powers... Activate! */
@@ -5744,14 +5746,23 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		/* k_info-pval dependant */
 		switch (o_ptr->bpval) {
 		case 9: if (!o_ptr->xtra9) i = 1;
+		/* Fall through */
 		case 8: if (!o_ptr->xtra8) i = 1;
+		/* Fall through */
 		case 7: if (!o_ptr->xtra7) i = 1;
+		/* Fall through */
 		case 6: if (!o_ptr->xtra6) i = 1;
+		/* Fall through */
 		case 5: if (!o_ptr->xtra5) i = 1;
+		/* Fall through */
 		case 4: if (!o_ptr->xtra4) i = 1;
+		/* Fall through */
 		case 3: if (!o_ptr->xtra3) i = 1;
+		/* Fall through */
 		case 2: if (!o_ptr->xtra2) i = 1;
+		/* Fall through */
 		case 1: if (!o_ptr->xtra1) i = 1;
+		/* Fall through */
 		default: break;
 		}
 		if (!i) {
