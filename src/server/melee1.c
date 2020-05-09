@@ -661,11 +661,14 @@ bool make_attack_melee(int Ind, int m_idx) {
 			case RBM_SHOW:
 			case RBM_WHISPER:
 				//bypass_protection = TRUE; /* mystic shield doesn't block light/sound waves */
+				/* Fall through */
 			case RBM_SPORE:
 				bypass_shield = TRUE; /* can't be blocked */
+				/* Fall through */
 			case RBM_EXPLODE:
 				bypass_ac = TRUE; /* means it always hits and can't be dodged or parried either.
 						     Damage can still be reduced though (if RBE_HURT eg). */
+				/* Fall through */
 			case RBM_DROOL:
 				bypass_weapon = TRUE; /* can't be parried */
 				break;
