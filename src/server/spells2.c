@@ -3404,6 +3404,7 @@ static bool item_tester_hook_weapon(object_type *o_ptr) {
 	switch (o_ptr->tval) {
 	case TV_TRAPKIT:/* <- and now new.. :) this allows cursing/enchanting shot/arrow/bolt trap kits! */
 		if (!is_firearm_trapkit(o_ptr->sval)) return FALSE;
+		/* Fall through */
 	case TV_SWORD:
 	case TV_BLUNT:
 	case TV_POLEARM:
@@ -8569,13 +8570,21 @@ void tome_creation_aux(int Ind, int item) {
 	/* k_info-pval dependant */
 	switch (o_ptr->bpval) {
 	case 9: if (!o_ptr->xtra9) okay = TRUE;
+		/* Fall through */
 	case 8: if (!o_ptr->xtra8) okay = TRUE;
+		/* Fall through */
 	case 7: if (!o_ptr->xtra7) okay = TRUE;
+		/* Fall through */
 	case 6: if (!o_ptr->xtra6) okay = TRUE;
+		/* Fall through */
 	case 5: if (!o_ptr->xtra5) okay = TRUE;
+		/* Fall through */
 	case 4: if (!o_ptr->xtra4) okay = TRUE;
+		/* Fall through */
 	case 3: if (!o_ptr->xtra3) okay = TRUE;
+		/* Fall through */
 	case 2: if (!o_ptr->xtra2) okay = TRUE;
+		/* Fall through */
 	case 1: if (!o_ptr->xtra1) okay = TRUE;
 	default: break;
 	}
@@ -8797,7 +8806,9 @@ static int mixmix_to_ingredient(int Ind, object_type *o_ptr, object_type *o2_ptr
 		/* mix.. */
 		switch (k) {
 		case 3: xtra3 |= f;
+			/* Fall through */
 		case 2: xtra2 |= f;
+			/* Fall through */
 		case 1: xtra1 |= f; break;
 		case 0: break;
 		}
@@ -8867,7 +8878,9 @@ static bool mixmix_to_mixture(object_type *o_ptr, object_type *o2_ptr, object_ty
 		/* mix.. */
 		switch (k) {
 		case 3: xtra3 |= f;
+			/* Fall through */
 		case 2: xtra2 |= f;
+			/* Fall through */
 		case 1: xtra1 |= f; break;
 		case 0: break;
 		}
