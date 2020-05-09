@@ -2801,6 +2801,7 @@ void msg_print(int Ind, cptr msg_raw) {
 					no_colour_code = TRUE;
 				} else no_colour_code = FALSE;
 				/* fall through if it's a '{' character */
+				__attribute__ ((fallthrough));
 			default: /* Text length increases by another character.. */
 				/* Depending on message type, remember to tab the following
 				   lines accordingly to make it look better ^^
@@ -4159,6 +4160,7 @@ static int censor_aux(char *buf, char *lcopy, int *c, bool leet, bool max_reduce
 				j++;
 				continue;
 			}
+			break;
 		default:
 			if (lcopy[j + 1] == lcopy[j] &&
 			    lcopy[j + 2] == lcopy[j] &&
