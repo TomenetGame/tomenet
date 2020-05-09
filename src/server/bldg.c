@@ -2458,8 +2458,8 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			}
 			Send_request_cfr(Ind, RID_GUILD_RENAME, format("Renaming your guild costs %d Au. Are you sure?", GUILD_PRICE), 2);
 			break;
-		case BACT_STATIC:
 #if 1
+		case BACT_STATIC:
 if (is_admin(p_ptr))
 			{
 				int x, y, i, j, k;
@@ -2583,8 +2583,8 @@ if (is_admin(p_ptr))
 				strcpy(p_ptr->cur_file_title, "Static floor records");
 				Send_special_other(Ind);
 
-				break;
 			}
+			break;
 #endif
 #ifdef SOLO_REKING
 		case BACT_SR_DONATE:
