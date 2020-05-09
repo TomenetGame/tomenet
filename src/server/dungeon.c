@@ -9762,6 +9762,8 @@ void shutdown_server(void) {
 		quit("Terminating");
 	else
 		quit("Server state saved");
+	/* Just to be sure and to to keep the compiler happy */
+	exit(-1);
 }
 
 void pack_overflow(int Ind) {
