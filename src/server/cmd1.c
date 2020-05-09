@@ -4584,8 +4584,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					switch (monster_effect_chosen) {
 					case RBE_BLIND:
 						if (r_ptr->flags3 & RF3_NO_SLEEP) break;
+						/* Fall through */
 					case RBE_HALLU:
 						if (r_ptr->flags3 & RF3_NO_CONF) break;
+						/* Fall through */
 					case RBE_CONFUSE:
 						if (!p_ptr->confusing) {
 							/* Confuse the monster */
