@@ -553,6 +553,7 @@ bool item_tester_hook_wear(int Ind, int slot) {
 			case 377: case RI_VAMPIRE_BAT: case 406: case 484: case 968:
 				return TRUE;
 			}
+			__attribute__ ((fallthrough));
 #endif
 		case INVEN_OUTER:
 		case INVEN_AMMO:
