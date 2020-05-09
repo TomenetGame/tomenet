@@ -2446,10 +2446,13 @@ void do_cmd_check_server_settings(int Ind) {
 	switch (cfg.henc_strictness) {
 	case 4:
 		fprintf(fff, "Monster exp value adjusts towards highest player on the same dungeon level.\n");
+		/* Fall through */
 	case 3:
 		fprintf(fff, "Non-sleeping monsters adjust to highest player within their awareness area.\n");
+		/* Fall through */
 	case 2:
 		fprintf(fff, "Level of a player casting support spells on you affects exp for %d turns.\n", (cfg.spell_stack_limit ? cfg.spell_stack_limit : 200));
+		/* Fall through */
 	case 1:
 		fprintf(fff, "Monsters' exp value is affected by highest attacking or targetted player.\n");
 		break;
