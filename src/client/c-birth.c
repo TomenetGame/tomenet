@@ -1086,7 +1086,7 @@ static bool choose_stat_order(void) {
 		int col1 = 3, col2 = 35, col3 = 54, tmp_stat, rowA = 12;
 
 #ifdef SHOW_BPR
-		int tablesize, *bpr_str, *bpr_dex, *bpr, mbpr;
+		int tablesize = 0, *bpr_str = NULL, *bpr_dex = NULL, *bpr = NULL, mbpr = 0;
 		char lua[MAX_CHARS], *cbpr;
 		bool show_bpr = FALSE, use_formula = TRUE;
 
@@ -1226,7 +1226,7 @@ static bool choose_stat_order(void) {
 					    stat_order[3] + cp_ptr->c_adj[3] + rp_ptr->r_adj[3]);
 					strcpy(lua, string_exec_lua(0, out_val));
 					if (lua[0] == '\377') //paranoia
-						c_put_str(mbpr == 1 ? TERM_ORANGE : (mbpr == 2 ? TERM_YELLOW : TERM_L_GREEN), lua, 23, 73 - 8);
+						c_put_str(TERM_L_GREEN, lua, 23, 73 - 8);
 					else c_put_str(TERM_ORANGE, "? / ? / ? / ?", 23, 73 - 8); //paranoia
  #endif
 				} else {

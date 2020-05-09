@@ -4447,6 +4447,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				Dummy.pclass = (ptype & 0xff00) >> 8;
 				Dummy.prace = ptype & 0xff;
+				Dummy.ptrait = TRAIT_NONE;
 
 				switch (mode & MODE_MASK) { // TODO: give better modifiers
 				case MODE_NORMAL:

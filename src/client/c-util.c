@@ -1569,8 +1569,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 	int j, j2; /* Loop iterator */
 
 	bool search = FALSE;
-	int sp_iter, sp_size, sp_end;
-	msg_hist_var *sp_msg;
+	int sp_iter = 0, sp_size = 0, sp_end = 0;
+	msg_hist_var *sp_msg = NULL;
 
 	bool tail = FALSE;
 	int l_old = l;

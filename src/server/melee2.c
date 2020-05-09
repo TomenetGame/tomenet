@@ -9454,7 +9454,7 @@ void process_monsters(void) {
 		/* And for death fate */
 		if (m_ptr->status == M_STATUS_FRIENDLY) {
 			cave_type *c_ptr;
-			int j, x = m_ptr->fx, y = m_ptr->fy, d;
+			int j, x = m_ptr->fx, y = m_ptr->fy, d = 0;
 
 			m_ptr->energy = 0; //paranoia
 			if (!(zcave = getcave(&m_ptr->wpos))) continue;

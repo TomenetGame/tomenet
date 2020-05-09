@@ -329,6 +329,7 @@ void world_comm(int fd, int arg) {
 
 							Dummy.prace = ptype & 0xff;
 							Dummy.pclass = (ptype & 0xff00) >> 8;
+							Dummy.ptrait = TRAIT_NONE;
 
 							msg_to_irc(format("That level %d %s%s belongs to: %s",
 							    lev,
