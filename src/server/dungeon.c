@@ -9309,6 +9309,7 @@ void set_runlevel(int val) {
 			   it must not restart us. */
 			cfg.runlevel = -1;
 			s_printf("***SERVER MAINTENANCE TERMINATION***\n");
+			/* Fall through */
 		case 0:
 			shutdown_server();
 		case 1:
