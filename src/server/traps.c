@@ -2586,6 +2586,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			}
 			msg_print(Ind, "You feel uneasy.");
 			ident = FALSE;	// always out of LOS (cept ESP..)
+			break;
 		}
 
 		/* Jack-in-the-box trap */
@@ -3902,10 +3903,12 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 	case SV_SCROLL_RUNE_OF_PROTECTION:
 		typ = GF_STOP;
 		dam = 100;
+		break;
 	case SV_SCROLL_PROTECTION_FROM_EVIL:
 		typ = GF_DISP_EVIL;
 		dam = 100;
 		rad = 3;
+		break;
 	case SV_SCROLL_DARKNESS:
 		//unlite_room(y, x);
 		typ = GF_DARK;//GF_DARK_WEAK;
@@ -3922,6 +3925,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 			msg_print_near(who, "\377RYou hear a high-pitched humming noise echoing through the dungeons.");
 		} else
 		return (FALSE);
+		break;
 	case SV_SCROLL_SUMMON_MONSTER:
 		if (no_summon) return FALSE;
 		summon_override_checks = SO_IDDC;
@@ -3934,6 +3938,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 #endif
 		}
 		return (FALSE);
+		break;
 	case SV_SCROLL_SUMMON_UNDEAD:
 		if (no_summon) return FALSE;
 		summon_override_checks = SO_IDDC;
@@ -3946,6 +3951,7 @@ static bool mon_hit_trap_aux_scroll(int who, int m_idx, object_type *o_ptr) {
 #endif
 		}
 		return (FALSE);
+		break;
 	case SV_SCROLL_PHASE_DOOR:
 		typ = GF_AWAY_ALL;
 		dam = 10;
