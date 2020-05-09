@@ -185,6 +185,7 @@ cptr value_check_aux1_magic(object_type *o_ptr) {
 	case TV_SCROLL:
 		/* hack for cheques */
 		if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
+		/* Fall through */
 	case TV_POTION:
 	case TV_POTION2:
 	case TV_WAND:
@@ -308,6 +309,7 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 	case TV_SCROLL:
 		/* hack for cheques */
 		if (k_ptr->sval == SV_SCROLL_CHEQUE) return "good";
+		/* Fall through */
 	case TV_POTION:
 	case TV_POTION2:
 	case TV_WAND:
@@ -492,6 +494,7 @@ static void sense_inventory(int Ind) {
 		case TV_SCROLL:
 			/* hack for cheques: Don't try to pseudo-id them at all. */
 			if (o_ptr->sval == SV_SCROLL_CHEQUE) continue;
+			/* Fall through */
 		case TV_POTION:
 		case TV_POTION2:
 		case TV_WAND:
@@ -1255,11 +1258,13 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = -mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 14:
 						if (i == e_ptr->cx + mirrored * 13 && j == e_ptr->cy + 3) {//_
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 13:
 						if (i == e_ptr->cx + mirrored * 12 && j == e_ptr->cy + 3) {///
 							c_ptr->effect_xtra = -mirrored;
@@ -1269,6 +1274,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 12:
 						if (i == e_ptr->cx + mirrored * 11 && j == e_ptr->cy + 2) {//_
 							c_ptr->effect_xtra = 2;
@@ -1278,6 +1284,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 11:
 						if (i == e_ptr->cx + mirrored * 10 && j == e_ptr->cy + 2) {//_
 							c_ptr->effect_xtra = 2;
@@ -1287,6 +1294,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = -mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 10:
 						if (i == e_ptr->cx + mirrored * 9 && j == e_ptr->cy + 2) {//_
 							c_ptr->effect_xtra = 2;
@@ -1296,6 +1304,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = -mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 9:
 						if (i == e_ptr->cx + mirrored * 8 && j == e_ptr->cy + 2) {///
 							c_ptr->effect_xtra = -mirrored;
@@ -1305,6 +1314,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 8:
 						if (i == e_ptr->cx + mirrored * 7 && j == e_ptr->cy + 1) {//_
 							c_ptr->effect_xtra = 2;
@@ -1314,6 +1324,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 7:
 						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 1) {//_
 							c_ptr->effect_xtra = 2;
@@ -1323,31 +1334,37 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 6:
 						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 1) {//_
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 5:
 						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 1) {///
 							c_ptr->effect_xtra = -mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 4:
 						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy) {//_
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 3:
 						if (i == e_ptr->cx + mirrored * 2 && j == e_ptr->cy) {//_
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 2:
 						if (i == e_ptr->cx + mirrored * 1 && j == e_ptr->cy) {//_
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 1:
 						if (i == e_ptr->cx && j == e_ptr->cy) {//_
 							c_ptr->effect_xtra = 2;
@@ -1365,11 +1382,13 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 7:
 						if (i == e_ptr->cx + mirrored * 6 && j == e_ptr->cy + 4) {
 							c_ptr->effect_xtra = -mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 6:
 						if (i == e_ptr->cx + mirrored * 5 && j == e_ptr->cy + 3) {
 							c_ptr->effect_xtra = 2;
@@ -1379,6 +1398,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 5:
 						if (i == e_ptr->cx + mirrored * 4 && j == e_ptr->cy + 3) {
 							c_ptr->effect_xtra = -mirrored;
@@ -1388,6 +1408,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 4:
 						if (i == e_ptr->cx + mirrored * 3 && j == e_ptr->cy + 2) {
 							c_ptr->effect_xtra = 2;
@@ -1397,6 +1418,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 3:
 						if (i == e_ptr->cx + mirrored * 2 && j == e_ptr->cy + 2) {
 							c_ptr->effect_xtra = -mirrored;
@@ -1406,6 +1428,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 0;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 2:
 						if (i == e_ptr->cx + mirrored * 1 && j == e_ptr->cy + 1) {
 							c_ptr->effect_xtra = -mirrored;
@@ -1415,6 +1438,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 1:
 						if (i == e_ptr->cx && j == e_ptr->cy) {
 							c_ptr->effect_xtra = 0;
@@ -1432,21 +1456,25 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 0;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 9:
 						if (i == e_ptr->cx - mirrored * 7 && j == e_ptr->cy + 5) {
 							c_ptr->effect_xtra = mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 8:
 						if (i == e_ptr->cx - mirrored * 6 && j == e_ptr->cy + 4) {
 							c_ptr->effect_xtra = mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 7:
 						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 3) {
 							c_ptr->effect_xtra = 0;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 6:
 						if (i == e_ptr->cx - mirrored * 5 && j == e_ptr->cy + 2) {
 							c_ptr->effect_xtra = mirrored;
@@ -1456,6 +1484,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 0;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 5:
 						if (i == e_ptr->cx - mirrored * 4 && j == e_ptr->cy + 1) {
 							c_ptr->effect_xtra = 2;
@@ -1465,6 +1494,7 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = -mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 4:
 						if (i == e_ptr->cx - mirrored * 3 && j == e_ptr->cy + 1) {
 							c_ptr->effect_xtra = 2;
@@ -1474,16 +1504,19 @@ static void process_effects(void) {
 							c_ptr->effect_xtra = 0;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 3:
 						if (i == e_ptr->cx - mirrored * 2 && j == e_ptr->cy + 1) {
 							c_ptr->effect_xtra = mirrored;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 2:
 						if (i == e_ptr->cx - mirrored * 1 && j == e_ptr->cy) {
 							c_ptr->effect_xtra = 2;
 							apply_effect(k, &who, wpos, i, j, c_ptr);
 						}
+						/* Fall through */
 					case 1:
 						if (i == e_ptr->cx && j == e_ptr->cy) {
 							c_ptr->effect_xtra = mirrored;
@@ -8223,6 +8256,7 @@ void process_player_change_wpos(int Ind) {
 	/* Over the river and through the woods */
 	case LEVEL_OUTSIDE:
 		smooth_ambient = TRUE; /* normal wilderness running */
+		/* Fall through */
 	case LEVEL_HOUSE:
 		starty = p_ptr->py;
 		startx = p_ptr->px;
