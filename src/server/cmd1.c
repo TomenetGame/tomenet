@@ -2789,6 +2789,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				}
 				break;
 			case 2: slot = INVEN_ARM; /* and switch to opposite weapon in the second attack.. */
+			/* Fall through */
 			case 3: dual_stab = 4; break; /* becomes 0 at end of attack, disabling further dual-stabs */
 			}
 		}
@@ -3940,6 +3941,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				}
 				break;
 			case 2: slot = INVEN_ARM; /* and switch to opposite weapon in the second attack.. */
+			/* Fall through */
 			case 3: dual_stab = 4; break; /* becomes 0 at end of attack, disabling further dual-stabs */
 			}
 		}
@@ -6002,7 +6004,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						       always make them 'switch places' instead of bumping. */
 
 		switch (c_ptr->feat) {
-		case FEAT_SHOP: if (GetCS(c_ptr, CS_SHOP)->sc.omni != 7) break; /* Inn entrance */
+		case FEAT_SHOP:
+			/* Only inn entrance is important */
+			if (GetCS(c_ptr, CS_SHOP)->sc.omni != 7) break;
+			/* Fall through */
 		case FEAT_WAY_MORE:
 		case FEAT_WAY_LESS:
 		case FEAT_MORE:
