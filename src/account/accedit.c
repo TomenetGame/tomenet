@@ -39,7 +39,7 @@ FILE *fp;
 WINDOW *listwin, *mainwin;
 
 char *fname = "tomenet.acc";
-char newpass[20];
+char newpass[21];
 char *crypass;
 
 int tfpos;
