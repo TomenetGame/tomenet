@@ -2215,10 +2215,10 @@ bool get_server_name(void) {
 	cptr tmp;
 
 #ifdef EXPERIMENTAL_META
-	int j, bytes, socket = -1;
+	int j, bytes = 0, socket = -1;
 	char buf[80192], c;
 #else
-	int j, k, l, bytes, socket = -1, offsets[20], lines = 0;
+	int j, k, l, bytes = 0, socket = -1, offsets[20], lines = 0;
 	char buf[80192], *ptr, c, out_val[260];
 #endif
 
