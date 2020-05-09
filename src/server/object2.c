@@ -3502,6 +3502,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			    (o_ptr->xtra1 != j_ptr->xtra1 ||
 			    o_ptr->xtra2 != j_ptr->xtra2))
 				return FALSE;
+			/* Fall through */
 		case TV_FOOD:
 		case TV_POTION:
 		case TV_POTION2:
@@ -3622,6 +3623,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		case TV_RING:
 			/* no more, due to their 'timeout' ! */
 			if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) return (FALSE);
+			/* Fall through */
 		case TV_AMULET:
 		case TV_LITE:
 		case TV_TOOL:
@@ -4598,6 +4600,7 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 					i = 0;
 					break;
 				}
+				/* Fall through */
 			case EGO_RESIST_COLD:
 			case EGO_RESIST_ELEC:
 			case EGO_RESIST_ACID:
@@ -5094,11 +5097,13 @@ static void a_m_aux_2(object_type *o_ptr, int level, int power, u32b resf) {
 			break;
 		}
  #endif
+		break;
  #if 1
 	case TV_BOOTS:
 		/* Set the Witan Boots stealth penalty */
 		if (o_ptr->sval == SV_PAIR_OF_WITAN_BOOTS)
 			o_ptr->bpval = -2;
+		break;
  #endif
 	}
 #endif
@@ -5999,6 +6004,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 #endif
 				break;
 			}
+			/* Fall through */
 		case TV_DIGGING:
 		case TV_BLUNT:
 		case TV_POLEARM:
@@ -7594,6 +7600,7 @@ static int kind_is_good_reward(int k_idx, u32b resf) {
 	case TV_ARROW:
 	case TV_SHOT:	/* are Shots bad? */
 		if (k_ptr->sval == SV_AMMO_CHARRED) return 0;
+		/* Fall through */
 	case TV_MSTAFF:
 		return 1000;
 
@@ -8056,9 +8063,9 @@ void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, bool go
 		/* Handle failure */
 		if (!k_idx) { /* always generate a reward. in case of failure, make a lamp for now.. */
 			switch (rand_int(3)){
-			case 0:	k_idx = 527; /* everburning torch */
-			case 1:	k_idx = 525; /* dwarven lantern */
-			case 2:	k_idx = 530; /* feanorian lamp */
+			case 0:	k_idx = 527; break; /* everburning torch */
+			case 1:	k_idx = 525; break; /* dwarven lantern */
+			case 2:	k_idx = 530; break; /* feanorian lamp */
 			}
 		}
 
@@ -8364,6 +8371,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			break;
 		case CLASS_DRUID:
 			melee_choice = 5;
+			/* Fall through */
 		case CLASS_ADVENTURER:
 #ifdef ENABLE_CPRIEST
 		case CLASS_CPRIEST:
@@ -9025,14 +9033,17 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			    (o_ptr->name2 == EGO_WISDOM && !o_ptr->name2b)) continue;
 			if ((p_ptr->stat_max[A_WIS] > p_ptr->stat_max[A_INT]) &&
 			    (o_ptr->name2 == EGO_INTELLIGENCE && !o_ptr->name2b)) continue;
+			__attribute__ ((fallthrough));
 		case CLASS_SHAMAN:
 			if (!melee_choice && !ranged_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue; //ranged_choice for Adventurers falling through
 			break;
 		/* INT users cascade */
 		case CLASS_MAGE:
 			if ((o_ptr->name2 == EGO_MIGHT || o_ptr->name2 == EGO_LORDLINESS) && !o_ptr->name2b) continue;
+			__attribute__ ((fallthrough));
 		case CLASS_RUNEMASTER:
 			if (!melee_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue;
+			__attribute__ ((fallthrough));
 		case CLASS_RANGER:
 		case CLASS_ROGUE:
 		case CLASS_MINDCRAFTER:
@@ -9044,6 +9055,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 #endif
 		case CLASS_PRIEST:
 			if (!melee_choice && o_ptr->name2 == EGO_MIGHT && !o_ptr->name2b) continue;
+			__attribute__ ((fallthrough));
 		case CLASS_PALADIN:
 #ifdef ENABLE_DEATHKNIGHT
 		case CLASS_DEATHKNIGHT:
