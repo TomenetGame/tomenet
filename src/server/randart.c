@@ -280,6 +280,7 @@ s32b artifact_power(artifact_type *a_ptr) { //Kurzel
 	case TV_RING:
 		/* hack -- Nazgul rings */
 		if (a_ptr->sval == SV_RING_SPECIAL) p += 20;
+		/* Fall through */
 	case TV_AMULET:
 		p += 20;
 		break;
@@ -2410,6 +2411,7 @@ void apply_enchantment_limits(object_type *o_ptr) {
 			o_ptr->to_h = o_ptr->to_d = 0;
 			return;
 		}
+		/* Fall through */
 	case TV_BOW:
 	case TV_BOOMERANG:
 	default: /* all melee weapons */
