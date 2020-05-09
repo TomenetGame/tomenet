@@ -561,33 +561,40 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 				   them around in case we have to deallocate the sector */
 				if (wild_info[y][x].ondepth && tries > 1000) continue;
 
+				bool match = FALSE;
 				switch (wild_info[y][x].type) {
-				case WILD_OCEAN: if (choice == RF8_WILD_OCEAN) break;
-				case WILD_LAKE: if (choice == RF8_WILD_LAKE) break;
-				case WILD_GRASSLAND: if (choice == RF8_WILD_GRASS) break;
-				case WILD_FOREST: if (choice == RF8_WILD_WOOD) break;
-				case WILD_SWAMP: if (choice == RF8_WILD_SWAMP) break;
-				case WILD_DENSEFOREST: if (choice == RF8_WILD_WOOD) break;
-				case WILD_WASTELAND: if (choice == RF8_WILD_WASTE) break;
-				case WILD_DESERT: if (choice == RF8_WILD_DESERT) break;
-				case WILD_ICE: if (choice == RF8_WILD_ICE) break;
+				case WILD_OCEAN: match = (choice == RF8_WILD_OCEAN); break;
+				case WILD_LAKE: match = (choice == RF8_WILD_LAKE); break;
+				case WILD_GRASSLAND: match = (choice == RF8_WILD_GRASS); break;
+				case WILD_FOREST: match = (choice == RF8_WILD_WOOD); break;
+				case WILD_SWAMP: match = (choice == RF8_WILD_SWAMP); break;
+				case WILD_DENSEFOREST: match = (choice == RF8_WILD_WOOD); break;
+				case WILD_WASTELAND: match = (choice == RF8_WILD_WASTE); break;
+				case WILD_DESERT: match = (choice == RF8_WILD_DESERT); break;
+				case WILD_ICE: match = (choice == RF8_WILD_ICE); break;
 				}
+				if (match) break;
 			}
-			if (!tries) /* engage emergency eloquence */
-				for (x = 0; x < MAX_WILD_X; x++)
+			if (!tries) { /* engage emergency eloquence */
+				bool match = FALSE;
+				for (x = 0; x < MAX_WILD_X; x++) {
 					for (y = 0; y < MAX_WILD_Y; y++) {
 						switch (wild_info[y][x].type) {
-						case WILD_OCEAN: if (choice == RF8_WILD_OCEAN) break;
-						case WILD_LAKE: if (choice == RF8_WILD_LAKE) break;
-						case WILD_GRASSLAND: if (choice == RF8_WILD_GRASS) break;
-						case WILD_FOREST: if (choice == RF8_WILD_WOOD) break;
-						case WILD_SWAMP: if (choice == RF8_WILD_SWAMP) break;
-						case WILD_DENSEFOREST: if (choice == RF8_WILD_WOOD) break;
-						case WILD_WASTELAND: if (choice == RF8_WILD_WASTE) break;
-						case WILD_DESERT: if (choice == RF8_WILD_DESERT) break;
-						case WILD_ICE: if (choice == RF8_WILD_ICE) break;
+						case WILD_OCEAN: match = (choice == RF8_WILD_OCEAN); break;
+						case WILD_LAKE: match = (choice == RF8_WILD_LAKE); break;
+						case WILD_GRASSLAND: match = (choice == RF8_WILD_GRASS); break;
+						case WILD_FOREST: match = (choice == RF8_WILD_WOOD); break;
+						case WILD_SWAMP: match = (choice == RF8_WILD_SWAMP); break;
+						case WILD_DENSEFOREST: match = (choice == RF8_WILD_WOOD); break;
+						case WILD_WASTELAND: match = (choice == RF8_WILD_WASTE); break;
+						case WILD_DESERT: match = (choice == RF8_WILD_DESERT); break;
+						case WILD_ICE: match = (choice == RF8_WILD_ICE); break;
 						}
+						if (match) break;
 					}
+					if (match) break;
+				}
+			}
 			/* paranoia.. */
 			if (x == MAX_WILD_X && y == MAX_WILD_Y) {
 				/* back to test server :-p */
