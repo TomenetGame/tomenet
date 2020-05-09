@@ -982,13 +982,14 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 				/* are we a farmer? */
 				if (rand_int(100) < 50) wild_add_garden(wpos, (x1+x2)/2,(y1+y2)/2);
 			}
+			/* Fall through */
 		case WILD_ROCK_HOME:
 			/* hack -- no farms near the town */
 			if (w_ptr->radius > 1) {
 				/* are we a farmer? */
 				if (rand_int(100) < 40) wild_add_garden(wpos, (x1+x2)/2,(y1+y2)/2);
 			}
-
+			/* Fall through */
 		case WILD_PERM_HOME:
 			if (inhabited) {
 				/* is someone to be found at this house */
