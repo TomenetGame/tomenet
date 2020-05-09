@@ -2484,6 +2484,7 @@ bool hates_fire(object_type *o_ptr) {
 	/* Wearable */
 	case TV_GLOVES:
 		if (o_ptr->sval == SV_SET_OF_GAUNTLETS) return FALSE;
+		/* Fall through */
 	case TV_ARROW:
 	case TV_BOW:
 	case TV_BLUNT:
@@ -3734,7 +3735,9 @@ bool apply_discharge(int Ind, int dam) {
 		}
 
 		if (o_ptr->pval) switch (o_ptr->tval) {
-		case TV_AMULET: if (o_ptr->pval < 2) break; /* stop at +1 */
+		case TV_AMULET:
+			if (o_ptr->pval < 2) break; /* stop at +1 */
+			/* Fall through */
 		case TV_STAFF:
 		case TV_WAND:
 			o_ptr->pval--;
@@ -3807,7 +3810,9 @@ bool apply_discharge_item(int o_idx, int dam) {
 	}
 
 	if (o_ptr->pval) switch (o_ptr->tval) {
-	case TV_AMULET: if (o_ptr->pval < 2) break; /* stop at +1 */
+	case TV_AMULET:
+		if (o_ptr->pval < 2) break; /* stop at +1 */
+		/* Fall through */
 	case TV_STAFF:
 	case TV_WAND:
 		o_ptr->pval--;
@@ -4788,6 +4793,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (c_ptr->feat == FEAT_GLYPH || c_ptr->feat == FEAT_RUNE)
 				cave_set_feat_live(wpos, y, x, feat);
 		}
+		break;
 
 	// GF_ROCKET and GF_DISINTEGRATE are handled in project()
 
@@ -5146,6 +5152,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		case GF_ANNIHILATION:
 			/* Hack: Doomed Grounds is too weak to kill items */
 			if (dam < 7) break;
+			/* Fall through */
 		case GF_MANA:
 			if (!(f5 & (TR5_IGNORE_MANA | TR5_RES_MANA))) {
 				do_smash_effect = TRUE;
@@ -5237,6 +5244,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					note_kill = (plural ? " burn up!" : " burns up!");
 				if (f3 & TR3_IGNORE_FIRE) ignore = TRUE;
 			}
+			/* Fall through */
 		case GF_HOLY_ORB:
 			do_smash_effect = TRUE;
 			if (!do_kill &&
@@ -5985,6 +5993,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Acid */
 	case GF_ACID_BLIND:
 		do_blind = dam / 4;
+		/* Fall through */
 	case GF_ACID:
 		if (seen) obvious = TRUE;
 		if (r_ptr->flags3 & RF3_IM_ACID) {
@@ -6908,6 +6917,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		note = " looks healthier";
 
 		/* No 'break;' here =) */
+		__attribute__ ((fallthrough));
 
 	/* Remove monster's fear */
 	case GF_REMFEAR:
@@ -9642,6 +9652,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 			break;
 		}
+		/* Fall through */
 	case GF_NETHER:
 		if (p_ptr->immune_neth) {
 			dam = 0;
@@ -10940,6 +10951,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Prepare to teleport */
 			teleport_player_to(Ind, q_ptr->py, q_ptr->px);
 		}
+		break;
 
 	/* Hand of Doom */
 	case GF_HAND_DOOM:
