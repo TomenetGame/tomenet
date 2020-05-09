@@ -1142,6 +1142,7 @@ void calc_mana(int Ind) {
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
 			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 85 * levels +
 			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 15 * levels) / 5500;
+		break;
 	case CLASS_MIMIC:
 		/* much Int, few Wis --160 */
 		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
@@ -2234,6 +2235,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		case 417:	case 456:	case 511:	case 605:
 		case 661:	case 1071:	case 1072:	case 1073:
 			p_ptr->see_inv = TRUE; csheet_boni->cb[4] |= CB5_RSINV;
+			__attribute__ ((fallthrough));
 		/* Fallen Angel */
 		case 652:
 			p_ptr->resist_blind = TRUE; csheet_boni->cb[1] |= CB2_RBLND;
@@ -3075,8 +3077,11 @@ void calc_boni(int Ind) {
 #endif
 		/* Druid's Extra Growth */
 		case 3: p_ptr->stat_add[A_INT] = p_ptr->xtrastat_pow; csheet_boni[14].pint += p_ptr->xtrastat_pow;
+			/* Fall through */
 		case 2: p_ptr->stat_add[A_CON] = p_ptr->xtrastat_pow; csheet_boni[14].pcon += p_ptr->xtrastat_pow;
+			/* Fall through */
 		case 1: p_ptr->stat_add[A_DEX] = p_ptr->xtrastat_pow; csheet_boni[14].pdex += p_ptr->xtrastat_pow;
+			/* Fall through */
 		case 0: p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow; csheet_boni[14].pstr += p_ptr->xtrastat_pow;
 		}
 	}
