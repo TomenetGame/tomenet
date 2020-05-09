@@ -604,6 +604,7 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		    && p_ptr->ptrait != TRAIT_CHAOS)
 			msg_print(Ind, "\374\377GYou feel resistant against chaos.");
   #endif
+		break;
  #endif
  #ifdef ENABLE_OUNLIFE
 	case SKILL_OUNLIFE:
