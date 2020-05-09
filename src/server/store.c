@@ -1015,11 +1015,14 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 
 	case STORE_HERBALIST:
 		switch (o_ptr->tval) {
-		case TV_BOOK: if (get_book_name_color(o_ptr) != TERM_L_GREEN) return FALSE;
+		case TV_BOOK:
+			if (get_book_name_color(o_ptr) != TERM_L_GREEN) return FALSE;
+			break;
 		case TV_FOOD:
 			if ((o_ptr->sval <= 19) || (o_ptr->sval == 50) || (o_ptr->sval == 40) ||
 			    (o_ptr->sval == 37) || (o_ptr->sval == 38) || (o_ptr->sval == 39))
 				 break;
+			return (FALSE);
 		case TV_POTION:
 			if ((o_ptr->sval != SV_POTION_APPLE_JUICE) &&
 			    (o_ptr->sval != SV_POTION_SLIME_MOLD)) return(FALSE);
@@ -5200,6 +5203,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 		    (o_ptr->xtra1 != j_ptr->xtra1 ||
 		    o_ptr->xtra2 != j_ptr->xtra2))
 			return FALSE;
+		/* Fall through */
 	case TV_FOOD:
 	case TV_POTION:
 	case TV_POTION2:
@@ -5317,6 +5321,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	case TV_RING:
 		/* no more, due to their 'timeout' ! */
 		if ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) return (FALSE);
+		/* Fall through */
 	case TV_AMULET:
 	case TV_LITE:
 	case TV_TOOL:
