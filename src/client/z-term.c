@@ -575,24 +575,32 @@ byte flick_colour(byte attr) {
 		case 2: return TERM_WHITE;
 		case 3: return flick_colour(TERM_HOLYFIRE);
 		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
 	case TERM_BNWSR:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
 		case 2: return TERM_WHITE;
 		case 3: return TERM_BLUE;
 		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
 	case TERM_BNWKS:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
 		case 2: return TERM_WHITE;
 		case 3: return flick_colour(TERM_PSI);
 		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
 	case TERM_BNWKS2:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
 		case 2: return TERM_WHITE;
 		case 3: return TERM_ORANGE;
 		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
 	/* flickering from 'pvp' flag? */
 	case TERM_PVPBB:
 		switch (randint(3)) {
@@ -600,6 +608,8 @@ byte flick_colour(byte attr) {
 		case 2: return TERM_SLATE;
 		case 3: return TERM_YELLOW;
 		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
 	case TERM_PVP:
 		switch (randint(3)) {
 		case 1: return TERM_L_DARK;
@@ -746,7 +756,7 @@ byte flick_colour(byte attr) {
 #endif
 
 	case TERM_SELECTOR:
-		switch (ticks % 14) {
+		switch ((unsigned)ticks % 14) {
 		case 0: case 1:
 		case 14: case 15:
 			return TERM_UMBER;
@@ -758,8 +768,10 @@ byte flick_colour(byte attr) {
 		case 9: case 10: case 11:
 			return TERM_YELLOW;
 		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
 	case TERM_SMOOTHPAL:
-		switch (((ticks * 10) / 52) % 6) { //xD
+		switch ((((unsigned)ticks * 10) / 52) % 6) { //xD
 		case 0: return TERM_L_RED;
 		case 1: return TERM_ORANGE;
 		case 2: return TERM_YELLOW;
@@ -767,6 +779,8 @@ byte flick_colour(byte attr) {
 		case 4: return TERM_L_BLUE;
 		case 5: return TERM_VIOLET;
 		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
 
 	default:
 		return(attr);
