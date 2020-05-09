@@ -2059,7 +2059,7 @@ void cmd_the_guide(void) {
 
 				/* Expand 'pxx' and 'Pxx' to 'PROBLEM xx' */
 				if ((buf[0] == 'p' || buf[0] == 'P') && buf[1] && buf[1] >= '0' && buf[1] <= '9') {
-					sprintf(tmpbuf, format("PROBLEM %d:", atoi(buf + 1)));
+					sprintf(tmpbuf, "PROBLEM %d:", atoi(buf + 1));
 					strcpy(buf, tmpbuf);
 					fallback = TRUE;
 					continue;
