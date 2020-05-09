@@ -1380,6 +1380,7 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 					case TV_CROWN:
 						if (!((*f1) & TR1_INT) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_INT; flag_count++; }
 						if (!((*f1) & TR1_WIS) && (pval < 7)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_WIS; flag_count++; }
+						__attribute__ ((fallthrough));
 					case TV_HELM:
 						if (!((*f2) & TR2_RES_FEAR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_RES_FEAR; flag_count++; }
 					break;
@@ -1520,12 +1521,14 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
 						if (!((*f5) & TR5_IMPACT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IMPACT; flag_count++; }
+						break;
 					case TV_POLEARM:
 					case TV_SWORD:
 					case TV_AXE:
 					case TV_BOOMERANG:
 						if (!((*f5) & TR5_VORPAL))
 							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_VORPAL; flag_count++; }
+						break;
 					case TV_GLOVES:
 						if (!((*f5) & TR5_CRIT) && pval
 						&& !((((*f1) & TR1_SPEED) || ((*f1) & TR1_MANA)) && (pval > 7))
@@ -1615,12 +1618,14 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				switch (o_ptr->tval) {
 					case TV_BLUNT:
 						if (!((*f5) & TR5_IMPACT)) { flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_IMPACT; flag_count++; }
+						break;
 					case TV_POLEARM:
 					case TV_SWORD:
 					case TV_AXE:
 					case TV_BOOMERANG:
 						if (!((*f5) & TR5_VORPAL))
 							{ flag_category[flag_count] = 5; flag_pool[flag_count] = TR5_VORPAL; flag_count++; }
+						break;
 					case TV_GLOVES:
 						if (!((*f1) & TR1_BRAND_COLD)) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_BRAND_COLD; flag_count++; }
 					break;
@@ -2871,6 +2876,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 			if (o_ptr->pval != 0 && known)
 				t = object_desc_str(t, " (exploding)");
 			/* No break, we want to continue the description */
+			__attribute__ ((fallthrough));
 
 		case TV_BLUNT:
 		case TV_POLEARM:
