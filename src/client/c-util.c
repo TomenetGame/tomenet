@@ -5475,6 +5475,7 @@ Chain_Macro:
 
 					case mw_any:
 						should_wait = TRUE; /* Just to be on the safe side, if the item picked is one that might require waiting (eg scroll of recharging in a chained macro). */
+						__attribute__ ((fallthrough));
 					case mw_anydir:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please enter a distinctive part of the item's name or inscription.");
 						//Term_putstr(5, 11, -1, TERM_GREEN, "and pay attention to upper-case and lower-case letters!");

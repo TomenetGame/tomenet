@@ -975,6 +975,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			}
 			which = 'a' + item_newest;
 			/* fall through to process 'which' */
+			__attribute__ ((fallthrough));
 
 		default:
 			/* Extract "query" setting */

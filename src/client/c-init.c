@@ -1166,7 +1166,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				while (*(++p1)) {
 					switch (*p1) {
 					case ' ': continue;
-					case '|': *p1 = ' ';
+					case '|': *p1 = ' '; __attribute__ ((fallthrough));
 					default: strcat(info, format("%c", *p1));
 					}
 				}
@@ -1377,7 +1377,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				while (*(++p1)) {
 					switch (*p1) {
 					case ' ': continue;
-					case '|': *p1 = ' ';
+					case '|': *p1 = ' '; __attribute__ ((fallthrough));
 					default: strcat(info, format("%c", *p1));
 					}
 				}
@@ -2421,7 +2421,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 				while (*(++p1)) {
 					switch (*p1) {
 					case ' ': continue;
-					case '|': *p1 = ' ';
+					case '|': *p1 = ' '; __attribute__ ((fallthrough));
 					default: strcat(info, format("%c", *p1));
 					}
 				}
@@ -3572,27 +3572,40 @@ void client_init(char *argv1, bool skip) {
 		switch (status) {
 			case E_VERSION_OLD:
 				quit("Your client is outdated. Please get the latest one from http://www.tomenet.eu/");
+				break;
 			case E_VERSION_UNKNOWN:
 				quit("Server responds 'Unknown client version'. Server might be outdated or client is invalid. Latest client is at http://www.tomenet.eu/");
+				break;
 			case E_GAME_FULL:
 				quit("Sorry, the game is full.  Try again later.");
+				break;
 			case E_IN_USE:
 				quit("That nickname is already in use. If it is your nickname, wait 30 seconds and try again.");
+				break;
 			case E_IN_USE_PC:
 				quit("You are still logged in from another PC. Please wait 30 seconds and try again.");
+				break;
 			case E_IN_USE_DUP:
 				quit("You are already logging in from another instance of the game.");
+				break;
 			case E_INVAL:
 				quit("The server didn't like your nickname, realname, or hostname.");
 				//note: not a good case for RETRY_LOGIN, since a name or even the hostname might be asian/cyrillic or so.. not easily solvable maybe
+				break;
 			case E_TWO_PLAYERS:
 				quit("There is already another character from this user/machine on the server.");
+				break;
 			case E_INVITE:
 				quit("Sorry, the server is for members only.  Please retry with name 'guest'.");
+				break;
 			case E_BANNED:
 				quit("You are temporarily banned from connecting to this server!");
+				break;
 			default:
 				quit(format("Connection failed with status %d.", status));
+				break;
+			// Just in case
+			exit(-1);
 		}
 	}
 

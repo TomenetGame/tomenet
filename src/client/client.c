@@ -942,6 +942,7 @@ int main(int argc, char **argv) {
 
 		case 'R':
 			auto_reincarnation = TRUE;
+			/* Fall through */
 		case 'N':
 			strcpy(cname, argv[i]+2);
 			break;

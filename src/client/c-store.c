@@ -665,15 +665,15 @@ static void store_process_command(int cmd) {
 			break;
 
 		/* go to page n */
-		case '0': i++;
-		case '9': i++;
-		case '8': i++;
-		case '7': i++;
-		case '6': i++;
-		case '5': i++;
-		case '4': i++;
-		case '3': i++;
-		case '2': i++;
+		case '0': i++; __attribute__ ((fallthrough));
+		case '9': i++; __attribute__ ((fallthrough));
+		case '8': i++; __attribute__ ((fallthrough));
+		case '7': i++; __attribute__ ((fallthrough));
+		case '6': i++; __attribute__ ((fallthrough));
+		case '5': i++; __attribute__ ((fallthrough));
+		case '4': i++; __attribute__ ((fallthrough));
+		case '3': i++; __attribute__ ((fallthrough));
+		case '2': i++; __attribute__ ((fallthrough));
 		case '1':
 			if (store.stock_num > entries * i) {
 				store_top = entries * i;
