@@ -8045,8 +8045,13 @@ static void equip_death_damage(int Ind, int verbose) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 	int shuffle[INVEN_TOTAL];
-	int equipment_loss = 0;
 	int i, j;
+
+#if 0
+	/* Former method. Specs: Stop after at most 1 item has been destroyed.
+	   Disadvantage: Gives incentive to equip useless items to dilute chance. */
+
+	int equipment_loss = 0;
 
 	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) shuffle[i] = i;
 	intshuffle(shuffle + INVEN_WIELD, INVEN_EQ);
@@ -8087,6 +8092,43 @@ static void equip_death_damage(int Ind, int verbose) {
 			}
 		}
 	}
+#else
+	/* New method: Since we only destroy at most 1 item anyway, we can calculate the total chance based
+	   on DEATH_EQ_ITEM_LOST assuming full slot usage, and just pick one existing item if needed.
+	   Advantage: Empty slots don't matter anymore so people aren't forced to fill all slots. */
+
+	/* There are 14 equip slots, there's a 10% chance per slot to kill the item. */
+	j = 100000;
+	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) j = (j * (100 - DEATH_EQ_ITEM_LOST)) / 100;
+	if (rand_int(100000) < j) return; /* Currently about 22.9% (10% for each of 14 slots) */
+
+	/* Count existing items */
+	i = 0;
+	for (j = INVEN_WIELD; j < INVEN_TOTAL; j++) if (p_ptr->inventory[j].tval) shuffle[i++] = j;
+	if (!i) return; /* No items equipped */
+
+	/* Pick one and destroy it */
+	j = INVEN_WIELD + rand_int(i);
+
+	o_ptr = &p_ptr->inventory[j];
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	s_printf("item_lost: %s (slot %d)\n", o_name, j);
+
+	if (verbose) {
+		/* Message */
+		msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name,
+		    ((o_ptr->number > 1) ? "were" : "was"));
+	}
+
+	if (true_artifact_p(o_ptr)) {
+		/* set the artifact as unfound */
+		handle_art_d(o_ptr->name1);
+	}
+	questitem_d(o_ptr, o_ptr->number);
+
+	inven_item_increase(Ind, j, -(o_ptr->number));
+	inven_item_optimize(Ind, j);
+#endif
 }
 
 #ifdef RACE_DIZ
