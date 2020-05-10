@@ -8040,14 +8040,21 @@ static void inven_death_damage(int Ind, int verbose) {
 	}
 }
 
+/* Method 1: Go for 1 item at most, skip empty slots, try all slots in random order;
+   Method 2: Go for 1 item at most, skip empty slots but use absolute chance;
+   Method 3: Like 0, but don't skip empty slots.
+ */
+#define EQUIP_LOSS_METHOD 3
 static void equip_death_damage(int Ind, int verbose) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
+#if EQUIP_LOSS_METHOD != 3
 	int shuffle[INVEN_TOTAL];
+#endif
 	int i, j;
 
-#if 0
+#if EQUIP_LOSS_METHOD == 1
 	/* Former method. Specs: Stop after at most 1 item has been destroyed.
 	   Disadvantage: Gives incentive to equip useless items to dilute chance. */
 
@@ -8094,14 +8101,17 @@ static void equip_death_damage(int Ind, int verbose) {
 	}
 #else
 	/* New method: Since we only destroy at most 1 item anyway, we can calculate the total chance based
-	   on DEATH_EQ_ITEM_LOST assuming full slot usage, and just pick one existing item if needed.
-	   Advantage: Empty slots don't matter anymore so people aren't forced to fill all slots. */
+	   on DEATH_EQ_ITEM_LOST assuming full slot usage (Method 2), and just pick one existing item if needed.
+	   Advantage: Empty slots don't matter for total loss chance anymore.
+
+	   Alternatively we can just use per-slot chance and end if empty slot is picked (Method 3).
+	   The advantage here is that people aren't forced to fill all slots. */
 
 	/* There are 14 equip slots, there's a 10% chance per slot to kill the item. */
 	j = 100000;
 	for (i = 0; i < INVEN_TOTAL - INVEN_WIELD; i++) j = (j * (100 - DEATH_EQ_ITEM_LOST)) / 100;
 	if (rand_int(100000) < j) return; /* Currently about 22.9% (10% for each of 14 slots) */
-
+ #if EQUIP_LOSS_METHOD != 3
 	/* Count existing items */
 	i = 0;
 	for (j = INVEN_WIELD; j < INVEN_TOTAL; j++) if (p_ptr->inventory[j].tval) shuffle[i++] = j;
@@ -8109,6 +8119,11 @@ static void equip_death_damage(int Ind, int verbose) {
 
 	/* Pick one and destroy it */
 	j = shuffle[rand_int(i)];
+ #else
+	/* Pick a random equipment slot, lucky if it's empty, otherwise destroy it */
+	j = INVEN_WIELD + rand_int(INVEN_TOTAL - INVEN_WIELD);
+	if (!p_ptr->inventory[j].tval) return;
+ #endif
 
 	o_ptr = &p_ptr->inventory[j];
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
