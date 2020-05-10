@@ -8108,7 +8108,7 @@ static void equip_death_damage(int Ind, int verbose) {
 	if (!i) return; /* No items equipped */
 
 	/* Pick one and destroy it */
-	j = shuffle[INVEN_WIELD + rand_int(i)];
+	j = INVEN_WIELD + shuffle[rand_int(i)];
 
 	o_ptr = &p_ptr->inventory[j];
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
