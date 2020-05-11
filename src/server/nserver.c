@@ -389,6 +389,8 @@ static void Init_receive(void) {
 	playing_receive[PKT_CLIENT_SETUP_F]	= Receive_client_setup_F;
 	playing_receive[PKT_CLIENT_SETUP_K]	= Receive_client_setup_K;
 	playing_receive[PKT_CLIENT_SETUP_R]	= Receive_client_setup_R;
+
+	playing_receive[PKT_AUDIO]		= Receive_audio;
 }
 
 static int Init_setup(void) {
@@ -13196,6 +13198,34 @@ static int Receive_client_setup_R(int ind) {
 	rollback:
 	connp->r.ptr = stored_sbuf_ptr;
 	return 0;
+}
+
+static int Receive_audio(int ind) {
+	connection_t *connp = Conn[ind];
+	player_type *p_ptr = NULL;
+	char ch;
+	int n, player = -1;
+	short int sfx = -1, mus = -1;
+
+	if (connp->id != -1) {
+		player = GetInd[connp->id];
+		p_ptr = Players[player];
+	}
+
+	if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &sfx, &mus)) <= 0) {
+		if (n == -1) Destroy_connection(ind, "read error");
+		return n;
+	}
+
+	s_printf("AUDIO_UPDATED: %s ('%s') features %hd, %hd.\n", connp->nick, p_ptr ? p_ptr->name : "---", sfx, mus);
+	connp->audio_sfx = (short int)sfx;
+	connp->audio_mus = (short int)mus;
+	if (p_ptr) { /* Should always be the case */
+		p_ptr->audio_sfx = connp->audio_sfx;
+		p_ptr->audio_mus = connp->audio_mus;
+	}
+
+	return 2;
 }
 
 /* return some connection data for improved log handling - C. Blue */

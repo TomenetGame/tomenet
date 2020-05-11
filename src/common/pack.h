@@ -249,6 +249,7 @@
 #define PKT_WARNING_BEEP	192
 #define PKT_STAND_ONE		193
 #define PKT_WIELD3		194
+#define PKT_AUDIO		195	/* Audio capabilities */
 
 
 /*

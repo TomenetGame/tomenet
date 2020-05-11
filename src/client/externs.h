@@ -829,6 +829,7 @@ extern int Send_request_str(int id, char *str);
 extern int Send_request_cfr(int id, int cfr);
 extern void apply_auto_inscriptions(int slot, bool force);
 extern int Send_client_setup(void);
+extern int Send_audio(void);
 
 /* skills.c */
 extern s16b get_skill(int skill);

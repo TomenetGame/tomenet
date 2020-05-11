@@ -5723,6 +5723,15 @@ int Send_client_setup(void) {
 	return 1;
 }
 
+int Send_audio(void) {
+	int n;
+
+	if (is_older_than(&server_version, 4, 7, 3, 0, 0, 0)) return -1;
+
+	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_AUDIO, audio_sfx, audio_music)) <= 0) return n;
+	return 1;
+}
+
 /* Returns the amount of microseconds to the next frame (according to fps) - mikaelh */
 int next_frame() {
 	struct timeval tv;

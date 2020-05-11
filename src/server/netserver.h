@@ -174,6 +174,8 @@ static int Receive_client_setup_F(int ind);
 static int Receive_client_setup_K(int ind);
 static int Receive_client_setup_R(int ind);
 
+static int Receive_audio(int ind);
+
 int Setup_net_server(void);
 bool Destroy_connection(int ind, char *reason);
 int Check_connection(char *real, char *nick, char *addr);

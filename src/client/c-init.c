@@ -3303,6 +3303,9 @@ int re_init_sound() {
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
 #endif
 
+	/* Inform server about potentially changed capabilities */
+	Send_audio();
+
 	return 0;
 }
 
