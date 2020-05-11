@@ -3332,12 +3332,43 @@ self-explaining or that are especially important are listed in detail here:
         Definitely enable this to see if you prefer it: It doubles the size of
         the game-play area displayed in the main window.
 
-    Suppress server messages as far as possible (taciturn_messages)
-        Will prevent some of the not-so-important server messages to be
-        shown, for example 'You have <item>' when picking up an item.
+    Alert on taking damage while you are AFK (alert_afk_dam) and
+    alert on taking damage while looking around the map via 'locate' command
+    (alert_offpanel_dam). (The locate command is invoked with SHIFT+L on normal
+    key map and SHIFT+W on rogue-like key map.)
+
+    A bunch of options for special visual effects and lighting.
+        These options change how lighting is applied to lamp light and walls,
+        lamp light colour and how walls are displayed depending on the font:
+
+        font_map_solid_walls (depending on font displays walls as solid blocks)
+        view_animated_lite (fire-based light sources flicker yellow-orange)
+
+        wall_lighting (generally enables lighting/shading fx for walls:)
+        view_lamp_walls (your light source lights up certain wall grids)
+        view_shade_walls (darkens wall grids out of sight)
+
+        floor_lighting (generally enables lighting/shading fx for floors:)
+        view_lamp_floor (your light source lights up certain floor grids)
+        view_shade_floor (darkens floor grids out of sight)
+
+        view_lite_extra (lights up a few additional wall/floor types)
+
+    Display overview resistance/boni page at startup (overview_startup)
+        Makes your character sheet start out showing the resistances/boni table
+        instead of the your basic stats and abilities.
+        (Press C and then tap h to cycle through it, as usual.)
+
+    Hide unusable skills (hide_unusable_skills)
+        Skills that your character cannot use will not be displayed in the
+        skill menu invoked by 'G' key.
 
     Don't display 'flavours' in item names (short_item_names)
         A 'Black Potion of Speed' will just be shown as a 'Potion of Speed'.
+
+    Suppress server messages as far as possible (taciturn_messages)
+        Will prevent some of the not-so-important server messages to be
+        shown, for example 'You have <item>' when picking up an item.
 
     Show experience bar instead of a number (exp_bar)
         In the main window at the 'XP' label your experience is displayed as a
@@ -3363,10 +3394,6 @@ self-explaining or that are especially important are listed in detail here:
         +++++++++   You have 95% (or up to 99%) XP and are therefore very close
                     to level-up! Might just as well keep diving till ding! :-p
 
-    Hide unusable skills (hide_unusable_skills)
-        Skills that your character cannot use will not be displayed in the
-        skill menu invoked by 'G' key.
-
     Flash own character icon after far relocation (flash_player)
         Whenever your character teleports, recalls, takes a void jump gate or
         phases in such a way that your current view panel changes, your
@@ -3375,27 +3402,14 @@ self-explaining or that are especially important are listed in detail here:
         Useful for example if there are many monsters around and you're a
         mimic in monster form, or just in general when you're in big_map mode.
 
-    Alert on taking damage while you are AFK (alert_afk_dam) and
-    alert on taking damage while looking around the map via 'locate' command
-    (alert_offpanel_dam). (The locate command is invoked with SHIFT+L on normal
-    key map and SHIFT+W on rogue-like key map.)
-
-    A bunch of options for special visual effects and lighting.
-        These options change how lighting is applied to lamp light and walls,
-        lamp light colour and how walls are displayed depending on the font:
-
-        font_map_solid_walls (depending on font displays walls as solid blocks)
-        view_animated_lite (fire-based light sources flicker yellow-orange)
-
-        wall_lighting (generally enables lighting/shading fx for walls:)
-        view_lamp_walls (your light source lights up certain wall grids)
-        view_shade_walls (darkens wall grids out of sight)
-
-        floor_lighting (generally enables lighting/shading fx for floors:)
-        view_lamp_floor (your light source lights up certain floor grids)
-        view_shade_floor (darkens floor grids out of sight)
-
-        view_lite_extra (lights up a few additional wall/floor types)
+    Use consistent symbols and colours for players (consistent_players)
+        Will always display party members as dark grey @ (flickering to slate
+        if they have black breath) and will always display yourself as a white
+        @, yellow while a shielding spell is active, orange when the spell is
+        about to run out.
+        So it will ignore any class-based colouring for party members and both
+        symbols and colours of monster forms for party members and the player
+        himself.
 
  (4) Audio Options
     (See (2.1a) for more information about sound and music.)
