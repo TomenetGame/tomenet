@@ -1003,6 +1003,7 @@ extern int mon_will_run(int Ind, int m_idx);
 extern bool monster_attack_normal(int m_idx, int tm_idx);
 extern bool make_attack_melee(int Ind, int m_idx);
 extern bool make_attack_spell(int Ind, int m_idx);
+extern bool make_attack_spell_mirror(int Ind, int m_idx);
 extern void process_monsters(void);
 #ifdef ASTAR_DISTRIBUTE
 extern void process_monsters_astar(void);
