@@ -9194,12 +9194,12 @@ void interact_audio(void) {
 }
 void toggle_master(bool gui) {
 	cfg_audio_master = !cfg_audio_master;
-	if (!gui) c_message_add(format("\377yAudio is now %s.", cfg_audio_master ? "ON (but client is running in quiet mode)" : "OFF"));
+	if (!gui) c_message_add(format("\377yAudio is now %s.", cfg_audio_master ? (quiet_mode ? "ON (but client is running in quiet mode)" : "ON") : "OFF"));
 	set_mixing();
 }
 void toggle_music(bool gui) {
 	cfg_audio_music = !cfg_audio_music;
-	if (!gui) c_message_add(format("\377yMusic is now %s.", cfg_audio_music ? "ON (but client is running in quiet mode)" : "OFF"));
+	if (!gui) c_message_add(format("\377yMusic is now %s.", cfg_audio_music ? (quiet_mode ? "ON (but client is running in quiet mode)" : "ON") : "OFF"));
 	set_mixing();
 }
 void toggle_sound(void) {
