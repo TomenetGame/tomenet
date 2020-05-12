@@ -3571,6 +3571,7 @@ int Receive_sound(void) {
 		case SFX_TYPE_AMBIENT: /* Thunder + Lightning too, but not related to weather */
 			/* Cause lightning flash to go with the sfx! */
 			animate_lightning = 1;
+			animate_lightning_icky = screen_icky; /* Actually don't animate palette while screen is icky maybe.. */
 			animate_lightning_vol = v;
 			animate_lightning_type = t;
 			/* Potentially delay thunderclap sfx 'physically correct' ;) */

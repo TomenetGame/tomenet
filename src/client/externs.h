@@ -713,6 +713,7 @@ extern generic_term_info term_prefs[10];
 /* nclient.c (former netclient.c) */
 extern int ticks, ticks10, existing_characters, command_confirmed;
 extern int animate_lightning, animate_lightning_vol, animate_lightning_type;
+extern short animate_lightning_icky;
 extern void do_flicker(void);
 extern void do_mail(void);
 extern void update_ticks(void);

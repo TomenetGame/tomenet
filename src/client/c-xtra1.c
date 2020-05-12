@@ -18,6 +18,7 @@
 #define HIDE_UNAVAILABLE_TRAIT
 
 int animate_lightning = 0, animate_lightning_vol = 100, animate_lightning_type = SFX_TYPE_AMBIENT;
+short int animate_lightning_icky = 0;
 
 /*
  * Print character info at given row, column in a 13 char field
@@ -3179,7 +3180,7 @@ void do_weather(bool no_weather) {
 			int d;
 #endif
 			/* Animate palette */
-			if (!c_cfg.disable_lightning) switch (animate_lightning) {
+			if (!c_cfg.disable_lightning && !animate_lightning_icky) switch (animate_lightning) {
 			case 1:
 				/* First thing: Backup all colours before temporarily manipulating them */
 				if (!active) {
