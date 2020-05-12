@@ -1064,6 +1064,11 @@
    if this option is enabled, they will be unable to use @OM inscription for that instead. */
 #define AUTO_RET_CMD
 
+/* '/arm' and '/arr' commands use shared space to accomodate BOTH settings?
+   For the new reworked runecraft, there are not enough flags to accomodate the data, so, no:
+   Default after new runecraft rework in 2020: DISABLE this! */
+//#define ARM_ARR_SHARED
+
 /* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?
    Exploding before it means that players standing in walls will only take 50%
    damage from it, while exploding on the wall grid means normal 100% damage.

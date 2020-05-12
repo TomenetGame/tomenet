@@ -4108,6 +4108,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				town = TRUE;
 				p++;
 			}
+#ifdef ARM_ARR_SHARED /* Deprecated 2020 */
 			if (*p == '-') {
 				msg_print(Ind, "Mimic power auto-retaliation is now disabled.");
 				p_ptr->autoret &= 0xFF00; /* Keep rune auto-ret though */
@@ -4123,6 +4124,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Mimicry starts at 1 and ends at 255 (0x00FF), so as not to overlap with runecraft, which starts at 256 (0x0100).
 			   Note that we keep any active runecraft auto-ret (0xFF00 mask). */
 			p_ptr->autoret = (p_ptr->autoret & 0xFF00) | (town ? 0x0080 : 0x0000) | (*p - 'a' + 1);
+#else /* New 2020 */
+			if (*p == '-') {
+				msg_print(Ind, "Mimic power auto-retaliation is now disabled.");
+				p_ptr->autoret = 0x0;
+				return;
+			}
+
+			if (*p < 'e' || *p > 'z') {
+				msg_print(Ind, "\377yMimic power must be within range 'e' to 'z'!");
+				return;
+			}
+
+			msg_format(Ind, "Mimic power '%c)' is now set for auto-retaliation.", *p);
+			p_ptr->autoret = (town ? 0x8000 : 0x0000) | (*p - 'a' + 1);
+#endif
 			return;
 		} else if (prefix(messagelc, "/autoretr") || prefix(messagelc, "/arr")) {
 			char *p = token[1];
@@ -4162,6 +4178,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				town = TRUE;
 				p++;
 			}
+#ifdef ARM_ARR_SHARED /* Deprecated 2020 */
 			if (*p == '-') {
 				msg_print(Ind, "Rune power auto-retaliation is now disabled.");
 				p_ptr->autoret &= 0x00FF; /* Keep mimic power auto-ret though */
@@ -4177,6 +4194,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Runecraft stars at 256 (0x0100), so as not to overlap with mimicry, which starts at 1.
 			   Note that we keep any active mimic power auto-ret (0x00FF mask). */
 			p_ptr->autoret = (p_ptr->autoret & 0x00FF) | (town ? 0x8000 : 0x0000) | ((*p - 'a' + 1) << 8);
+#else /* New 2020 */
+			if (*p == '-') {
+				msg_print(Ind, "Rune power auto-retaliation is now disabled.");
+				p_ptr->autoret = 0x4000;
+				return;
+			}
+
+			if (*p < 'a' || *p > 'z') {
+				msg_print(Ind, "\377yRune power must be within range 'a' to 'z'!");
+				return;
+			}
+
+			msg_format(Ind, "Rune power '%c)' is now set for auto-retaliation.", *p);
+			p_ptr->autoret = 0x4000 | (town ? 0x8000 : 0x0000) | (*p - 'a' + 1);
+#endif
 			return;
 #endif
 #ifdef ENABLE_SELF_FLASHING

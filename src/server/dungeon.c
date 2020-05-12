@@ -3050,9 +3050,14 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	u16b ar = p_ptr->autoret;
 
 	/* no autoret set? */
+ #ifdef ARM_ARR_SHARED
 	if (!ar) return FALSE;
+ #else
+	if (!(ar & 0x3FFF)) return FALSE;
+ #endif
 
 	/* Was a mimic power set for auto-ret? */
+ #ifdef ARM_ARR_SHARED
 	if ((ar & 0x007F) //paranoia: town-flag cannot be set on its own
 	    && p_ptr->s_info[SKILL_MIMIC].value) {
 		/* Spell to cast */
@@ -3062,6 +3067,16 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		/* Is it variant @Ot for town-only auto-retaliation? */
 		if ((ar & 0x0080) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
 		ar &= ~0x0080;
+ #else
+	if (!(ar & 0x4000) && p_ptr->s_info[SKILL_MIMIC].value) {
+		/* Spell to cast */
+		int choice = ar - 1, power;
+		bool dir = FALSE;
+
+		/* Is it variant @Ot for town-only auto-retaliation? */
+		if ((ar & 0x8000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		ar &= ~0x8000;
+ #endif
 
 		/* Check for valid attempt */
 		if (choice < 4) return FALSE; /* 3 polymorph powers + immunity preference */
@@ -3089,16 +3104,27 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		do_cmd_mimic(Ind, power + 3, dir ? 5 : 0);
 		return TRUE;
 	}
+
 	/* Was a rune set for auto-ret? */
+ #ifdef ARM_ARR_SHARED
 	else if ((ar & 0x7F00) && //paranoia: town-flag cannot be set on its own
 	    (p_ptr->s_info[SKILL_R_LITE].value || p_ptr->s_info[SKILL_R_DARK].value ||
 	    p_ptr->s_info[SKILL_R_NEXU].value || p_ptr->s_info[SKILL_R_NETH].value ||
 	    p_ptr->s_info[SKILL_R_CHAO].value || p_ptr->s_info[SKILL_R_MANA].value)) {
 		/* Is it variant @Ot for town-only auto-retaliation? */
-		if ((ar & 0x80000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		if ((ar & 0x8000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
 		ar &= ~0x8000;
 		/* Restore range to normal (1..127) for easier handling */
 		ar = ar >> 8;
+ #else
+	else if ((ar & 0x4000) &&
+	    (p_ptr->s_info[SKILL_R_LITE].value || p_ptr->s_info[SKILL_R_DARK].value ||
+	    p_ptr->s_info[SKILL_R_NEXU].value || p_ptr->s_info[SKILL_R_NETH].value ||
+	    p_ptr->s_info[SKILL_R_CHAO].value || p_ptr->s_info[SKILL_R_MANA].value)) {
+		/* Is it variant @Ot for town-only auto-retaliation? */
+		if ((ar & 0x8000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		ar &= ~0x8000;
+ #endif
 
 		/* Try to cast runespell */
 		

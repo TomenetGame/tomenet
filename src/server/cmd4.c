@@ -3900,6 +3900,7 @@ void show_autoret(int Ind, byte typ, bool verbose) {
 	player_type *p_ptr = Players[Ind];
 	u16b ar = p_ptr->autoret;
 
+#ifdef ARM_ARR_SHARED /* Deprecated with 2020 runecraft update */
 	/* Mimic power */
 	if (typ != 2) {
 		if (ar & 0x00FF) {
@@ -3914,4 +3915,21 @@ void show_autoret(int Ind, byte typ, bool verbose) {
 			else msg_format(Ind, "You have set rune '%c)' for auto-retaliation.", (ar >> 8) - 1 + 'a');
 		} else if (verbose) msg_print(Ind, "You have not set a rune for auto-retaliation. ('/arr help' for details.)");
 	}
+#else /* New way since 2020 runecraft update, because we need moar bits */
+	/* Mimic power */
+	if (typ != 2) {
+		if (!(ar & 0x4000) && (ar & 0x3FFF)) { /* Not set to 'runecraft' instead, and power is set to != 0? */
+			if (ar & 0x8000) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (ar & ~0x8000) - 1 + 'a');
+			else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", ar - 1 + 'a');
+		} else if (verbose) msg_print(Ind, "You have not set a mimic power for auto-retaliation. ('/arm help' for details.)");
+	}
+	/* Rune */
+	if (typ != 1) {
+		if ((ar & 0x4000) && (ar & 0x3FFF)) { /* Not set to 'mimicry' instead, and power is set to != 0? */
+			ar &= ~0x4000;
+			if (ar & 0x8000) msg_format(Ind, "You have set rune '%c)' for auto-retaliation in towns.", (ar & ~0x8000) - 1 + 'a');
+			else msg_format(Ind, "You have set rune '%c)' for auto-retaliation.", ar - 1 + 'a');
+		} else if (verbose) msg_print(Ind, "You have not set a rune for auto-retaliation. ('/arr help' for details.)");
+	}
+#endif
 }
