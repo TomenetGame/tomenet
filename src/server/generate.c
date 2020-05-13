@@ -8542,8 +8542,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 
 	/* Fixed layout (maybe first non-'DF2_RANDOM' dungeon?) */
-#ifdef TEST_SERVER
-	if (d_ptr && d_ptr->type == DI_DEATH_FATE && p_ptr && !(p_ptr->temp_misc_1 & 0x40)) {
+#ifdef DEATH_FATE_SPECIAL
+	if (d_ptr && d_ptr->type == DI_DEATH_FATE && p_ptr && !(p_ptr->temp_misc_1 & 0x40)) { /* <- Admin can still force the 'starve-only' DF via flag */
 #else
 	if (d_ptr && d_ptr->type == DI_DEATH_FATE && p_ptr && (p_ptr->temp_misc_1 & 0x40)) {
 #endif
@@ -8619,8 +8619,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		level_generation_time = FALSE;
 		return;
 	}
-#if 1 /* Always generate basic death fate from template for a bit more visuals, instead of the auto-generated, basically empty floor? */
-	/* The 'useless' death fate, starvation incoming */
+	/* Always generate basic death fate from template for a bit more visuals, instead of the auto-generated, basically empty floor? */
+	/* The 'useless' death fate, starvation incoming: */
 	else if (d_ptr->type == DI_DEATH_FATE) {
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
@@ -8642,7 +8642,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		level_generation_time = FALSE;
 		return;
 	}
-#endif
 
 #ifdef IRONDEEPDIVE_EXPAND_SMALL
 	if (in_irondeepdive(wpos)) {

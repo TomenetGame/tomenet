@@ -484,6 +484,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 
 	/* Hack for allowing only a single player to act at a time on this floor.
 	   IMPORTANT: For this to work, new_level_flag must always be set _before_ calling us for the target floor! */
+#ifdef DEATH_FATE_SPECIAL
 	if (in_deathfate(wpos)) {
 		struct dun_level *l_ptr = getfloor(wpos);
 
@@ -554,7 +555,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		}
 	    } else s_printf("NOPD: No l_ptr!\n");
 	}
-
+#endif
 
 	update_uniques_killed(wpos);
 

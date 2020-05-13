@@ -372,6 +372,8 @@
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
 
  #define ENABLE_EXCAVATION	/* Allow creation of demolition charges for 'Digging'-renamed-to-'Excavation' skill */
+
+ #define DEATH_FATE_SPECIAL	/* Death Fate special */
 #endif
 
 /* Specific settings for main-server only */
