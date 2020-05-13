@@ -3554,6 +3554,8 @@ cptr item_activation(object_type *o_ptr) {
 		return "destroying doors every 10..15+d3 turns";
 	case ART_FISTS:
 		return "hellfire brand every 150..350+d50 turns";
+	case ART_WARPSPEAR:
+		return "teleport-to every 15..40+d5 turns";
 #if 0 /* no, eg randart serpent amulet should retain basic activation! */
 	/* For the moment ignore (non-ego) randarts */
 	case ART_RANDART: return "a crash ;-)";

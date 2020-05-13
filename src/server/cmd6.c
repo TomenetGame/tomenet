@@ -5297,6 +5297,7 @@ bool activation_requires_direction(object_type *o_ptr) {
 		case ART_UMBAR:
 		case ART_HELLFIRE:
 		case ART_HAVOC:
+		case ART_WARPSPEAR:
 			return TRUE;
 		}
 	}
@@ -6645,6 +6646,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			set_melee_brand(Ind, 30 + rand_int(5) + get_skill_scale(p_ptr, SKILL_DEVICE, 10), TBRAND_HELLFIRE, 10);
 			o_ptr->recharging = 350 - get_skill_scale(p_ptr, SKILL_DEVICE, 200) + rand_int(50);
 			break;
+		case ART_WARPSPEAR:
+			p_ptr->current_activation = item;
+			get_aim_dir(Ind);
+			return;
 		default: done = FALSE;
 		}
 
@@ -7155,6 +7160,10 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			sprintf(p_ptr->attacker, " casts a force bolt for");
 			fire_bolt(Ind, GF_FORCE, dir, damroll(8 + get_skill_scale(p_ptr, SKILL_DEVICE, 16), 8), p_ptr->attacker);
 			o_ptr->recharging = rand_int(2) + 1;
+			break;
+		case ART_WARPSPEAR:
+			project_hook(Ind, GF_TELE_TO, dir, 1, PROJECT_STOP | PROJECT_KILL, "");
+			o_ptr->recharging = rand_int(5) + 40 - get_skill_scale(p_ptr, SKILL_DEVICE, 25);
 			break;
 		default: done = FALSE;
 		}
