@@ -6904,9 +6904,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				bypass_invuln = FALSE;
 				return;
 			}
-			else if (prefix(messagelc, "/cheer")) {
+			else if (prefix(messagelc, "/acheer")) {
 				if (!tk) {
-					msg_print(Ind, "Usage: /cheer <player name>");
+					msg_print(Ind, "Usage: /acheer <player name>");
 					return;
 				}
 				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
@@ -6917,7 +6917,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				set_blessed(j, randint(5) + 15);
 				return;
 			}
-			else if (prefix(messagelc, "/applaud")) {
+			else if (prefix(messagelc, "/aapplaud")) {
 				if (!tk) {
 					msg_print(Ind, "Usage: /applaud <player name>");
 					return;
@@ -6927,6 +6927,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "\377yApplauding %s.", Players[j]->name);
 				msg_print(j, "\377ySomeone invisible is applauding for you!");
 				msg_format_near(j, "\377yYou hear someone invisible applauding for %s!", Players[j]->name);
+#ifdef USE_SOUND_2010
+				sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "applaud", "", SFX_TYPE_COMMAND, TRUE);
+#endif
 				set_hero(j, randint(5) + 15);
 				return;
 			}
