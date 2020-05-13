@@ -828,8 +828,8 @@ static void place_between(struct worldpos *wpos, int y, int x) {
 		if (place_between_targetted(wpos, y, x, gy, gx)) break;
 
 		if (tries-- == 0) {
-#ifdef TEST_SERVER
 			/* Failure */
+#ifdef DEATH_FATE_SPECIAL
 			struct dun_level *l_ptr = getfloor(wpos);
 			cave_type **zcave;
 
