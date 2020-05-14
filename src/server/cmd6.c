@@ -7583,6 +7583,7 @@ void fortune(int Ind, byte mode) {
 		else {
 			strcpy(Broadcast, "Suddenly an important thought comes to your mind:");
 			get_rnd_line("hints.txt", 0, Rumor, MAX_CHARS_WIDE);
+			s_printf("fortune-hint for %s\n", Players[Ind]->name);
 		}
 	}
 
