@@ -7139,7 +7139,7 @@ static bool run_test(int Ind) {
 			case FEAT_BETWEEN:
 			case FEAT_BEACON:
 				/* Option -- ignore */
-				if (p_ptr->find_ignore_stairs) notice = FALSE;
+				if (p_ptr->find_ignore_stairs && !in_deathfate2(wpos)) notice = FALSE;
 				/* Done */
 				break;
 			/* Water */
