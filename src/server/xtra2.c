@@ -9141,7 +9141,7 @@ void player_death(int Ind) {
 					char o_name[ONAME_LEN];
 
 					object_desc(0, o_name, o_ptr, TRUE, 3);
-					s_printf("Death-cannot-drop_near %s\n", o_name);
+					s_printf("Death-cannot-drop_near (%d) %s\n", res, o_name);
 				}
 			}
 
