@@ -10145,7 +10145,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 						/* the_sandman - logs monsters pick_up? :S (to track items going poof
 						 * without any explanation(s)... To reduce the amount of spammage, lets
 						 * just log the owned items... All the housed items are owned anyway */
-						if (o_ptr->owner) s_printf("ITEM_TAKEN_DELETE: %s by %s\n", o_name, m_name_real);
+						if (o_ptr->owner) s_printf("ITEM_TAKEN_DELETE: %s by %s (%d,%d,%d)\n", o_name, m_name_real, wpos->wx, wpos->wy, wpos->wz);
 
 						/* Delete the object */
 						delete_object_idx(this_o_idx, TRUE);
@@ -10155,7 +10155,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 						/* the_sandman - logs monsters pick_up? :S (to track items going poof
 						 * without any explanation(s)... To reduce the amount of spammage, lets
 						 * just log the owned items... All the housed items are owned anyway */
-						if (o_ptr->owner) s_printf("ITEM_TAKEN: %s by %s\n", o_name, m_name_real);
+						if (o_ptr->owner) s_printf("ITEM_TAKEN: %s by %s (%d,%d,%d)\n", o_name, m_name_real, wpos->wx, wpos->wy, wpos->wz);
 
 						/* paranoia */
 						o_ptr->held_m_idx = 0;
@@ -10182,7 +10182,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					/* the_sandman - logs monsters pick_up? :S (to track items going poof
 					 * without any explanation(s)... To reduce the amount of spammage, lets
 					 * just log the owned items... All the housed items are owned anyway */
-					if (o_ptr->owner) s_printf("ITEM_TAKEN_DELETE: %s by %s\n", o_name, m_name_real);
+					if (o_ptr->owner) s_printf("ITEM_TAKEN_DELETE: %s by %s (%d,%d,%d)\n", o_name, m_name_real, wpos->wx, wpos->wy, wpos->wz);
 
 					/* Delete the object */
 					delete_object(wpos, ny, nx, TRUE);
