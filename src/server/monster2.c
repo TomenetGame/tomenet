@@ -5640,12 +5640,14 @@ monster_race* race_info_idx(int r_idx, int ego, int randuni) {
 /*
  * Drop all items carried by a monster
  */
-void monster_drop_carried_objects(monster_type *m_ptr) {
+void monster_drop_carried_objects(int m_idx, monster_type *m_ptr) {
 	s16b this_o_idx, next_o_idx = 0;
 	object_type forge;
 	object_type *o_ptr;
 	object_type *q_ptr;
 
+	char o_name[ONAME_LEN], m_name[MNAME_LEN];
+	int res;
 
 	/* Drop objects being carried */
 	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx; this_o_idx = next_o_idx) {
@@ -5668,15 +5670,14 @@ void monster_drop_carried_objects(monster_type *m_ptr) {
 		/* Delete the object */
 		delete_object_idx(this_o_idx, FALSE);
 
-		/* the_sandman - Perhaps we can filter out the nothings here?
-		 */
-//		char* tempbuf = (char*) malloc(sizeof(char)*80);
-//		object_desc(Ind, tempbuf, o_ptr, 0, 0);
-//		if (!strcmp(tempbuf, "(nothing)")) {
-			/* Drop it */
-			drop_near(0, q_ptr, -1, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
-//		}
-//		free(tempbuf);
+		/* the_sandman - Perhaps we can filter out the nothings here? */
+//		if (!strcmp(o_name, "(nothing)")) {
+
+		object_desc(0, o_name, q_ptr, 0, 0);
+		monster_desc(0, m_name, m_idx, 0);
+		/* Drop it */
+		res = drop_near(0, q_ptr, -1, &m_ptr->wpos, m_ptr->fy, m_ptr->fx);
+		s_printf("MDCO: %s (%d) %s\n", m_name, res, o_name);
 	}
 
 	/* Forget objects */

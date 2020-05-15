@@ -1065,7 +1065,7 @@ extern void setup_monsters(void);
 extern int race_index(char * name);
 extern int monster_gain_exp(int m_idx, u32b exp, bool silent);
 #ifdef MONSTER_INVENTORY
-extern void monster_drop_carried_objects(monster_type *m_ptr);
+extern void monster_drop_carried_objects(int m_idx, monster_type *m_ptr);
 #endif	/* MONSTER_INVENTORY */
 extern bool monster_can_cross_terrain(byte feat, monster_race *r_ptr, bool spawn, u32b info);
 

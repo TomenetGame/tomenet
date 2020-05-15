@@ -10940,7 +10940,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		}
 
 #ifdef MONSTER_INVENTORY
-		monster_drop_carried_objects(m_ptr);
+		monster_drop_carried_objects(m_idx, m_ptr);
 #endif	// MONSTER_INVENTORY
 
 
