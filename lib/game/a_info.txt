@@ -2971,7 +2971,7 @@ D:in every glimpse of light it catches.
 # The Pair of Soft Leather Boots 'Skywalker'
 
 N:238:'Skywalker'
-I:30:2:4
+I:30:2:5
 W:40:40:10:100000
 P:2:1d1:0:0:16
 F:FREE_ACT | SPEED | RES_LITE | RES_COLD | RES_ELEC
