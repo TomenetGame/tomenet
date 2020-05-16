@@ -405,7 +405,12 @@ int Send_file_end(int ind, unsigned short id) {
 }
 
 #define LOTSOFCHARS 30 /* just something that is at least as high as max_cpa + all extra slots */
-static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSOFCHARS][MAX_CHARS]) {
+/* Mode:
+   1: Swap two characters
+   2: Insert character before another
+   3: Insert character after another ('append')
+*/
+static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSOFCHARS][MAX_CHARS], char mode) {
 	char ch;
 	u32b dummy;
 	unsigned char sortA = 255, sortB = 255;
@@ -414,7 +419,8 @@ static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSO
 	/* Reorder-GUI */
 	//c_put_str(TERM_SELECTOR, "[", col + sel, 3);
 	//c_put_str(TERM_SELECTOR, "]", col + sel, 76);
-	c_put_str(TERM_L_BLUE, "Press the slot letter of the first of two characters to swap..", col_cmd, 5);
+	if (mode == 1) c_put_str(TERM_L_BLUE, "Press the slot letter of the first of two characters to swap..", col_cmd, 5);
+	else c_put_str(TERM_L_BLUE, "Press the slot letter of the character to move..", col_cmd, 5);
 	ch = 0;
 	while (!ch) {
 		ch = inkey();
@@ -426,7 +432,11 @@ static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSO
 	}
 	sortA = ch;
 	c_put_str(TERM_SLATE, format("Selected: %c) %s", ch, names[ch - 'a']), col_cmd + 1, 5);
-	c_put_str(TERM_L_BLUE, "Press the slot letter of the second of two characters to swap..", col_cmd, 5);
+	switch (mode) {
+	case 1: c_put_str(TERM_L_BLUE, "Press the slot letter of the second of two characters to swap..", col_cmd, 5); break;
+	case 2: c_put_str(TERM_L_BLUE, "Press the slot letter of a character before which to insert..", col_cmd, 5); break;
+	case 3: c_put_str(TERM_L_BLUE, "Press the slot letter of a character after which to insert..", col_cmd, 5); break;
+	}
 	ch = 0;
 	while (!ch) {
 		ch = inkey();
@@ -442,7 +452,7 @@ static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSO
 	c_put_str(TERM_L_BLUE, "                                                               ", col_cmd + 1, 5);
 
 	/* Tell server which characters we want to swap, server will answer with full character screen data again */
-	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, format("***%c%c", sortA, sortB));
+	Packet_printf(&wbuf, "%c%s", PKT_LOGIN, format("***%c%c%c", sortA, sortB, mode));
 	Net_flush(); //send it nao!
 	//SetTimeout(5, 0);
 
@@ -655,7 +665,7 @@ void Receive_login(void) {
 		if (is_older_than(&server_version, 4, 7, 3, 0, 0, 0))
 			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 3, 2);
 		else {
-			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (O to reorder)", 3, 2);
+			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (S/I/A to reorder)", 3, 2);
 			allow_reordering = TRUE;
 		}
 		offset = 4;
@@ -663,7 +673,7 @@ void Receive_login(void) {
 		if (is_older_than(&server_version, 4, 7, 3, 0, 0, 0))
 			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character:", 2, 2);
 		else {
-			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (O to reorder)", 2, 2);
+			c_put_str(CHARSCREEN_COLOUR, "Choose an existing character: (S/I/A to reorder)", 2, 2);
 			allow_reordering = TRUE;
 		}
 		offset = 3;
@@ -814,7 +824,8 @@ void Receive_login(void) {
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
 
-	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1)) && (ch != 'O' || !allow_reordering)) {
+	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1))
+	    && ((ch != 'S' && ch != 'I' && ch != 'A') || !allow_reordering)) {
 		ch = inkey();
 		//added CTRL+Q for RETRY_LOGIN, so you can quit the whole game from within in-game via simply double-tapping CTRL+Q
 		if (ch == 'Q' || ch == KTRL('Q')) quit(NULL);
@@ -832,9 +843,17 @@ void Receive_login(void) {
 			c_put_str(CHARSCREEN_COLOUR, "Character Overview", 0, 30);
 		}
 	}
-	if (ch == 'O') {
+	if (ch == 'S' || ch == 'I' || ch == 'A') {
+		switch (ch) {
+		case 'S': ch = 1; break;
+		case 'I': ch = 2; break;
+		case 'A': ch = 3; break;
+		}
+		if (reorder_characters(offset_bak, offset, i, names, ch)) {
+			ch = 0;
+			goto receive_characters;
+		}
 		ch = 0;
-		if (reorder_characters(offset_bak, offset, i, names)) goto receive_characters;
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return;
 #endif

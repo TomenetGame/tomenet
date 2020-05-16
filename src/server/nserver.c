@@ -4172,42 +4172,90 @@ static int Receive_login(int ind) {
 	/* Hack for reordering characters:
 	   Resend the character overview screen (now with new character order) */
 	if (!strncmp(choice, "***", 3)) {
-		unsigned char swapA, swapB, o1, o2;
+		unsigned char swapA, swapB, o1, o2, mode = 1;
 		int *id_list, ids, i, id1, id2;
 		byte *id_order, *id_index;
 		struct account acc;
 
 		choice[0] = 0;
-		if (choice[3] && choice[4]) {
+		if (choice[3] && choice[4]
+		    && GetAccount(&acc, connp->nick, NULL, FALSE)) {
 			swapA = choice[3] - 'a';
 			swapB = choice[4] - 'a';
-			if (GetAccount(&acc, connp->nick, NULL, FALSE)) {
-				ids = player_id_list(&id_list, acc.id);
-				if (ids) { /* paranoia */
-					if (swapA >= 0 && swapA < ids && swapB >=0 && swapB < ids) {
-						C_MAKE(id_order, ids, byte);
-						C_MAKE(id_index, ids, byte);
 
-						for (i = 0; i < ids; i++) {
-							id_order[i] = lookup_player_order(id_list[i]);
-							id_index[i] = i;
-						}
-						ang_sort_comp = ang_sort_comp_order;
-						ang_sort_swap = ang_sort_swap_order;
-						ang_sort(0, id_order, id_index, ids);
+			if (choice[5]) mode = choice[5];
+			if (mode < 1 || mode > 3) mode = 1;
 
-						id1 = id_list[id_index[swapA]];
-						id2 = id_list[id_index[swapB]];
-						o1 = lookup_player_order(id1);
-						o2 = lookup_player_order(id2);
-						set_player_order(id1, o2);
-						set_player_order(id2, o1);
+			ids = player_id_list(&id_list, acc.id);
+			if (ids /* paranoia */
+			    && swapA != swapB /* no effect, whatever */
+			    && swapA >= 0 && swapA < ids && swapB >=0 && swapB < ids) {
+				C_MAKE(id_order, ids, byte);
+				C_MAKE(id_index, ids, byte);
 
-						C_FREE(id_index, n, byte);
-						C_FREE(id_order, n, byte);
-					}
-					C_KILL(id_list, ids, int);
+				for (i = 0; i < ids; i++) {
+					id_order[i] = lookup_player_order(id_list[i]);
+					id_index[i] = i;
 				}
+				ang_sort_comp = ang_sort_comp_order;
+				ang_sort_swap = ang_sort_swap_order;
+				ang_sort(0, id_order, id_index, ids);
+
+				id1 = id_list[id_index[swapA]];
+				id2 = id_list[id_index[swapB]];
+				o1 = lookup_player_order(id1);
+				o2 = lookup_player_order(id2);
+
+				switch (mode) {
+				case 1: /* Swap */
+					set_player_order(id1, o2);
+					set_player_order(id2, o1);
+					break;
+				case 2: /* Insert A before B */
+					/* Moving up in the displayed list? */
+					if (swapA > swapB) {
+						for (i = 0; i < ids; i++) {
+							/* Slide everyone between us down by 1 */
+							if (id_order[i] >= o2 && id_order[i] < o1 && id_list[id_index[i]] != id1)
+								set_player_order(id_list[id_index[i]], id_order[i] + 1);
+						}
+						set_player_order(id1, o2);
+					}
+					/* Moving down in the displayed list? */
+					else {
+						for (i = 0; i < ids; i++) {
+							/* Slide everyone between us up by 1 */
+							if (id_order[i] < o2 && id_order[i] > o1 && id_list[id_index[i]] != id1)
+								set_player_order(id_list[id_index[i]], id_order[i] - 1);
+						}
+						set_player_order(id1, o2 - 1);
+					}
+					break;
+				case 3: /* Insert A after B */
+					/* Moving up in the displayed list? */
+					if (swapA > swapB) {
+						for (i = 0; i < ids; i++) {
+							/* Slide everyone between us down by 1 */
+							if (id_order[i] > o2 && id_order[i] < o1 && id_list[id_index[i]] != id1)
+								set_player_order(id_list[id_index[i]], id_order[i] + 1);
+						}
+						set_player_order(id1, o2 + 1);
+					}
+					/* Moving down in the displayed list? */
+					else {
+						for (i = 0; i < ids; i++) {
+							/* Slide everyone between us up by 1 */
+							if (id_order[i] <= o2 && id_order[i] > o1 && id_list[id_index[i]] != id1)
+								set_player_order(id_list[id_index[i]], id_order[i] - 1);
+						}
+						set_player_order(id1, o2);
+					}
+					break;
+				}
+
+				C_FREE(id_index, n, byte);
+				C_FREE(id_order, n, byte);
+				C_KILL(id_list, ids, int);
 			}
 		}
 		/* 'fall through' with strlen==0 to display the character screen again.. */
