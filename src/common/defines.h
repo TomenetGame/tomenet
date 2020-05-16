@@ -5138,6 +5138,7 @@
 //Also, more curses could be added, like, slow/para/conf curses :D - C. Blue
 #define TR6_OFTEN_EGO		0x00000100L		/* Item has higher chance to be generated with ego power */
 #define TR6_EVIL		0x00000200L		/* Item never receives flags that hurt an undead/demonic wielder, from ego or art powers */
+#define TR6_RETURNING		0x00000400L		/* Item automatically returns to owner when thrown (artifact ammo does this already, without need for this flag) */
 
 
 /* Character Sheet Boni Data Flags for Char/Byte PKT Transfer - Kurzel */

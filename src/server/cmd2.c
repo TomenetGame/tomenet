@@ -7168,6 +7168,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	bool hit_body = FALSE, target_ok = target_okay(Ind);
 	bool hit_wall = FALSE;
+	bool returning;
 
 	int missile_attr;
 	int missile_char;
@@ -7254,6 +7255,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	};
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	/* Equipped items only! */
+	returning = (f6 & TR6_RETURNING) && (item >= INVEN_WIELD);
 
 	/* Hack - Cannot throw away 'no drop' cursed items */
 	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP) && item >= 0 && !bashing) {
@@ -7316,11 +7319,12 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Reduce and describe inventory */
 	if (item >= 0) {
-		inven_item_increase(Ind, item, -moved_number);
-		inven_item_describe(Ind, item);
-		inven_item_optimize(Ind, item);
+		if (!returning) {
+			inven_item_increase(Ind, item, -moved_number);
+			inven_item_describe(Ind, item);
+			inven_item_optimize(Ind, item);
+		}
 	}
-
 	/* Reduce and describe floor item */
 	else {
 		floor_item_increase(0 - item, -moved_number);
@@ -7846,6 +7850,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Snowballs never survive a throw */
 	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) return;
+
+	/* Artifacts never break but always auto-return, same as for ammo fired */
+	if (returning) return;
+	/* If we threw an equipment item away, recalculate our boni */
+	if (item >= INVEN_WIELD) inven_takeoff(Ind, item, moved_number, FALSE);
 
 	/* Chance of breakage (during attacks) */
 	j = (hit_body ? breakage_chance(o_ptr) : 0);

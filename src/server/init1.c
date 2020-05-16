@@ -828,7 +828,7 @@ static cptr k_info_flags6[] = {
 
 	"OFTEN_EGO",
 	"EVIL",
-	"XXX00000400",
+	"RETURNING",
 	"XXX00000800",
 
 	"XXX00001000",

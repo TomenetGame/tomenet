@@ -3474,7 +3474,8 @@ N:280:'Warp Spear'
 I:22:4:0
 W:55:30:100:0
 P:0:2d20:20:-20:0
-F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | CHAOTIC | RES_CHAOS | ACTIVATE
+F:SHOW_MODS | CURSED | HEAVY_CURSE | AUTO_CURSE | CHAOTIC | RES_CHAOS
+F:ACTIVATE | RETURNING
 D:A strange, translucent weapon with flashes of blue light running through it
 D:and along its surface, emitting a constant hum. It feels surprisingly light. At
 D:first the wielder may not notice how deeply imbued by corruption this spear is.
