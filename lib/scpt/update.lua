@@ -45,6 +45,7 @@ __update_table = {
 	"scpt/traits.lua",
 	"scpt/bpr.lua",
 	"scpt/mimicry.lua",
+	"scpt/runecraft.lua",
 
 	"scpt/o_shadow.lua",
 	"scpt/o_spirit.lua",
