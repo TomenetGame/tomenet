@@ -2124,6 +2124,7 @@ bool do_cancellation(int Ind) {
 			continue;
 		/* Specialty: Clear custom books(!) */
 		case TV_BOOK:
+#if 0 /* not for now, Grimoires might become too worthless */
 			if (o_ptr->sval == SV_CUSTOM_TOME_1 || o_ptr->sval == SV_CUSTOM_TOME_2 || o_ptr->sval == SV_CUSTOM_TOME_3) {
 				if (o_ptr->xtra1 | o_ptr->xtra2 | o_ptr->xtra3 |
 				    o_ptr->xtra4 | o_ptr->xtra5 | o_ptr->xtra6 |
@@ -2134,6 +2135,7 @@ bool do_cancellation(int Ind) {
 				o_ptr->xtra7 = o_ptr->xtra8 = o_ptr->xtra9 = 0;
 			}
 			continue;
+#endif
 		/* Most items lose their +hit, +dam, +ac, pval and bpval enchantments */
 		case TV_LITE:
 		case TV_SOFT_ARMOR:
