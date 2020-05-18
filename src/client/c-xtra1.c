@@ -1522,7 +1522,8 @@ void show_inven(void) {
 	}
 
 	/* Display the weight if needed */
-	if (c_cfg.show_weights && totalwgt) {
+	if (c_cfg.show_weights && totalwgt
+	    && !topline_icky) { /* <- for when we're inside cmd_inven() and pressed 'x' to examine an item, while a live-inve-timeout-update is coming in (only happens for equip atm tho, so not needed here) */
 		if (totalwgt < 10000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
 		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
@@ -1653,7 +1654,8 @@ void show_equip(void) {
 	}
 
 	/* Display the weight if needed */
-	if (c_cfg.show_weights && totalwgt) {
+	if (c_cfg.show_weights && totalwgt
+	    && !topline_icky) { /* <- for when we're inside cmd_equip() and pressed 'x' to examine an item, while a live-equip-timeout-update is coming in */
 		if (totalwgt < 10000) /* still fitting into 3 digits? */
 			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
 		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
@@ -1704,7 +1706,7 @@ static void fix_inven(void) {
 		Term_activate(old);
 	}
 
-	if (showing_inven) show_inven();
+	if (showing_inven && showing_inven == screen_icky) show_inven();
 
 	/* Assume that this could've been in response to a wield/takeoff/swap command we issued */
 	command_confirmed = PKT_UNDEFINED; //..we don't know which one (doesn't matter)
@@ -1740,11 +1742,7 @@ static void fix_equip(void) {
 		Term_activate(old);
 	}
 
-	if (showing_equip) {
-		item_tester_full = TRUE; //hack for live_timeouts when pressing 'e' to look at equipment!
-		show_equip();
-		item_tester_full = FALSE; //unhack
-	}
+	if (showing_equip && showing_equip == screen_icky) show_equip();
 }
 
 

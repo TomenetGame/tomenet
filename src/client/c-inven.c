@@ -31,6 +31,9 @@ s16b index_to_label(int i) {
 
 
 bool item_tester_okay(object_type *o_ptr) {
+	/* Hack for live_timeouts: If showing equip via cmd_equip(), always show all slots. */
+	if (showing_equip) return TRUE;
+
 	/* Hack -- allow testing empty slots */
 	if (item_tester_full) return (TRUE);
 

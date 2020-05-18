@@ -686,12 +686,11 @@ void cmd_inven(void) {
 	int c;
 	char buf[MSG_LEN];
 
-	showing_inven = TRUE;
-
 	/* First, erase our current location */
 
 	/* Then, save the screen */
 	Term_save();
+	showing_inven = screen_icky;
 
 	command_gap = 50;
 
@@ -767,19 +766,12 @@ void cmd_equip(void) {
 	int c;
 	char buf[MSG_LEN];
 
-	showing_equip = TRUE;
-
 	Term_save();
+	showing_equip = screen_icky;
 
 	command_gap = 50;
 
-	/* Hack -- show empty slots */
-	item_tester_full = TRUE;
-
 	show_equip();
-
-	/* Undo the hack above */
-	item_tester_full = FALSE;
 
 	while (TRUE) {
 		ch = inkey();

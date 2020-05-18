@@ -1888,7 +1888,8 @@ errr Term_draw(int x, int y, byte a, char c) {
 	if (!c) return (-2);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
-	if (screen_icky && !semaphore) {
+	if (screen_icky && !semaphore
+	    && !perusing) {
 		semaphore = TRUE;
 		if (screen_line_icky != -1 && y >= screen_line_icky) {
 			Term_switch(0);
@@ -2040,7 +2041,8 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 	if ((res = Term_gotoxy(x, y)) != 0) return (res);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
-	if (screen_icky && !semaphore) {
+	if (screen_icky && !semaphore
+	    && !perusing) {
 		semaphore = TRUE;
 		if (screen_line_icky != -1 && y >= screen_line_icky) {
 			Term_switch(0);

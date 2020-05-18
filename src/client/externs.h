@@ -1051,7 +1051,7 @@ extern int guide_races, guide_classes, guide_skills, guide_schools, guide_spells
 extern char guide_chapter[256][MAX_CHARS], guide_chapter_no[256][8];
 extern int guide_chapters, guide_endofcontents;
 
-extern bool showing_inven, showing_equip;
+extern byte showing_inven, showing_equip;
 
 extern int hp_max, hp_cur;
 extern bool hp_bar;

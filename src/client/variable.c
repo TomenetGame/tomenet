@@ -494,7 +494,7 @@ int guide_chapters = 0, guide_endofcontents = -1;
 bool win_dontmoveuser = FALSE;
 #endif
 
-bool showing_inven = FALSE, showing_equip = FALSE;
+byte showing_inven = FALSE, showing_equip = FALSE;
 
 int hp_max, hp_cur;
 bool hp_bar;
