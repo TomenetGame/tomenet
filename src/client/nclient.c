@@ -3543,17 +3543,20 @@ int Receive_target_info(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%s", &ch, &x, &y, buf)) <= 0) return n;
 
-	/* Print the message */
-	if (c_cfg.target_history) c_msg_print(buf);
-	else {
-		/* Clear the topline */
-		clear_topline();
+	/* Handle target message or description */
+	if (buf[0]) {
+		/* Print the message */
+		if (c_cfg.target_history) c_msg_print(buf);
+		else {
+			/* Clear the topline */
+			clear_topline();
 
-		/* Display target info */
-		put_str(buf, 0, 0);
+			/* Display target info */
+			put_str(buf, 0, 0);
 
-		/* Also add the target info as a normal message */
-		if (c_cfg.targetinfo_msg) c_message_add(buf);
+			/* Also add the target info as a normal message */
+			if (c_cfg.targetinfo_msg) c_message_add(buf);
+		}
 	}
 
 	/* Move the cursor */

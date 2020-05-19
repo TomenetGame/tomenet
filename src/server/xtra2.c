@@ -12372,6 +12372,7 @@ bool target_set(int Ind, int dir) {
 		/* Info */
 		if (dir != 128 + 5) /* code to confirm the targetted position, finishing the manual targetting process */
 			strcpy(out_val, "[<dir>, t, q] "); /* still in the targetting process.. */
+		else out_val[0] = 0; /* <- Sometimes client randomly displays garbled topline stuff on 't' (128 + 5) target confirmation.. this line hopefully fixes that. */
 
 		/* Tell the client */
 		Send_target_info(Ind, p_ptr->target_col - p_ptr->panel_col_prt, p_ptr->target_row - p_ptr->panel_row_prt, out_val);
