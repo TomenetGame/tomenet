@@ -33,8 +33,6 @@ __update_table = {
 	"scpt/m_tcontact.lua",
 	"scpt/m_mintrusion.lua",
 
-	"scpt/runecraft.lua",
-
 	"scpt/powers.lua",
 	"scpt/meta.lua",
 	"scpt/xml.lua",
@@ -89,8 +87,6 @@ __update_table = {
 	"scpt/m_tcontact.lua",
 	"scpt/m_mintrusion.lua",
 
-	"scpt/runecraft.lua",
-
 	"scpt/powers.lua",
 	"scpt/meta.lua",
 	"scpt/xml.lua",
@@ -142,8 +138,6 @@ __update_table = {
 	"scpt/m_tcontact.lua",
 	"scpt/m_mintrusion.lua",
 
-	"scpt/runecraft.lua",
-
 	"scpt/powers.lua",
 	"scpt/meta.lua",
 	"scpt/xml.lua",
@@ -192,8 +186,6 @@ __update_table = {
 	"scpt/m_ppower.lua",
 	"scpt/m_tcontact.lua",
 	"scpt/m_mintrusion.lua",
-
-	"scpt/runecraft.lua",
 
 	"scpt/powers.lua",
 	"scpt/meta.lua",
