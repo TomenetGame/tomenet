@@ -820,7 +820,7 @@ void display_store(void) {
 	Term_save();
 
 	/* We are "shopping" */
-	if (!c_cfg.macros_in_stores) shopping = TRUE;
+	shopping = TRUE;
 
 	/* Clear screen */
 	Term_clear();
@@ -962,7 +962,7 @@ void display_store_special(void) {
 	Term_save();
 
 	/* We are "shopping" */
-	if (!c_cfg.macros_in_stores) shopping = TRUE;
+	shopping = TRUE;
 
 	/* Clear screen */
 	Term_clear();

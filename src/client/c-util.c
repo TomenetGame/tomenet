@@ -166,8 +166,8 @@ static int macro_maybe(cptr buf, int n) {
 	/* Scan the macros */
 	for (i = n; i < macro__num; i++) {
 		/* Skip inactive macros */
-		if (macro__hyb[i] && (shopping || inkey_msg)) continue;
-		if (macro__cmd[i] && (shopping || !inkey_flag || inkey_msg)) continue;
+		if (macro__hyb[i] && ((shopping && !c_cfg.macros_in_stores) || inkey_msg)) continue;
+		if (macro__cmd[i] && ((shopping && !c_cfg.macros_in_stores) || !inkey_flag || inkey_msg)) continue;
 
 		/* Check for "prefix" */
 		if (prefix(macro__pat[i], buf))
@@ -191,8 +191,8 @@ static int macro_ready(cptr buf) {
 	/* Scan the macros */
 	for (i = 0; i < macro__num; i++) {
 		/* Skip inactive macros */
-		if (macro__cmd[i] && (shopping || inkey_msg || !inkey_flag)) continue;
-		if (macro__hyb[i] && (shopping || inkey_msg)) continue;
+		if (macro__cmd[i] && ((shopping && !c_cfg.macros_in_stores) || inkey_msg || !inkey_flag)) continue;
+		if (macro__hyb[i] && ((shopping && !c_cfg.macros_in_stores) || inkey_msg)) continue;
 
 		/* Check for "prefix" */
 		if (!prefix(buf, macro__pat[i])) continue;
@@ -732,8 +732,8 @@ if (c_cfg.keep_topline)
 	if (!macro__use[(byte)(ch)]) return (ch);
 
 	/* Efficiency -- Ignore inactive macros */
-	if (((shopping || !inkey_flag || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_CMD)) || inkey_interact_macros) return (ch);
-	if (((shopping || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_HYB)) || inkey_interact_macros) return (ch);
+	if ((((shopping && !c_cfg.macros_in_stores) || !inkey_flag || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_CMD)) || inkey_interact_macros) return (ch);
+	if ((((shopping && !c_cfg.macros_in_stores) || inkey_msg) && (macro__use[(byte)(ch)] == MACRO_USE_HYB)) || inkey_interact_macros) return (ch);
 
 	/* Save the first key, advance */
 	buf[p++] = ch;
