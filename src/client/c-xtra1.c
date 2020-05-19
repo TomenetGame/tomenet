@@ -1541,6 +1541,10 @@ void show_inven(void) {
 
 	/* Save the new column */
 	command_gap = col;
+
+	/* Do not allow environmental redrawing if we're actually already inside an icky screen here.
+	   (Concerns shopping only atm I think, but checking screen_icky seems better than checking 'shopping') */
+	if (screen_icky != 1) screen_line_icky = screen_column_icky = -1;
 }
 
 
@@ -1674,6 +1678,10 @@ void show_equip(void) {
 
 	/* Save the new column */
 	command_gap = col;
+
+	/* Do not allow environmental redrawing if we're actually already inside an icky screen here.
+	   (Concerns shopping only atm I think, but checking screen_icky seems better than checking 'shopping') */
+	if (screen_icky != 1) screen_line_icky = screen_column_icky = -1;
 }
 
 
