@@ -85,7 +85,7 @@ T = { -- Type Level Cost Max Dice Max Damage Max Radius Max Duration Max
 [BOLT] = { "bolt",    5,  1, 15, 1, 73,  2,  20, 0,  0,  0,  0},
 [CLOU] = { "cloud",  10,  5, 50, 0,  0,  3,  90, 2,  2,  4, 14},
 [BALL] = { "ball",   15, 10, 35, 0,  0, 90, 519, 3,  3,  0,  0},
-[STRM] = { "storm",  20, 30, 60, 0,  0, 34, 266, 1,  1, 28, 40},
+[STRM] = { "storm",  20, 30, 50, 0,  0, 34, 266, 1,  1, 28, 40},
 [CONE] = { "cone",   25, 20, 40, 1, 73,  2,  20, 3,  3,  0,  0},
 [SURG] = { "surge",  30, 20, 50, 0,  0, 30, 240, 7, 13,  0,  0}}
 
@@ -93,7 +93,7 @@ E = { -- Enhanced Level Cost Max Dice Max Damage Max Radius Max Duration Max
 [BOLT] = { "beam",   10,  5, 25, 1, 73,  2,  20, 0,  0,  0,  0},
 [CLOU] = { "vortex", 15, 10, 40, 0,  0,  3,  90, 1,  1,  8, 20},
 [BALL] = { "burst",  20, 15, 40, 0,  0, 90, 519, 3,  3,  0,  0},
-[STRM] = { "nimbus", 25, 30, 60, 0,  0, 26,  56, 1,  1, 30, 75},
+[STRM] = { "nimbus", 25, 30, 50, 0,  0, 26,  56, 1,  1, 30, 75},
 [CONE] = { "shot",   30,  3, 30, 1, 73,  2,  10, 9,  9,  0,  0},
 [SURG] = { "glyph",  35, 10, 25, 0,  0, 30, 240, 0,  0,  0,  0}}
 
@@ -141,8 +141,8 @@ function rspell_failure(p,u,x,c)
     x = 15 - (x > 15 and 15 or x)
     x = x * 3 + 5 + M[band(u,MODE)][4]
   end
-  x = x - (((adj_mag_stat[p.stat_ind[A_INT]] * 65 + adj_mag_stat[p.stat_ind[1+A_DEX]] * 35) / 100) - 3)
-  local minfail = (adj_mag_fail[p.stat_ind[A_INT]] * 65 + adj_mag_fail[p.stat_ind[A_DEX]] * 35) / 100
+  x = x - (((adj_mag_stat[p.stat_ind[1+A_INT]] * 65 + adj_mag_stat[p.stat_ind[1+A_DEX]] * 35) / 100) - 3)
+  local minfail = (adj_mag_fail[p.stat_ind[1+A_INT]] * 65 + adj_mag_fail[p.stat_ind[1+A_DEX]] * 35) / 100
   if x < minfail then x = minfail end
   if p.blind~=0 then x = x + 10 end
   if p.stun > 50 then
@@ -212,12 +212,12 @@ end
 
 function rcraft_prt(u,w)
   local U,C,row,col
-  if w==0 then
-    C = TERM_WHITE
-    row,col = 1,13
-  else
+  if w~=0 then
     C = TERM_GREEN
     row,col = 9,16
+  else
+    C = TERM_WHITE
+    row,col = 1,13
   end
   if band(u,MODE)~=0 then
     if w~=0 then
@@ -238,7 +238,7 @@ function rcraft_prt(u,w)
       s = rspell_skill(0,U)
       a = rspell_ability(s,l)
       c = rspell_cost(U,s)
-      f = rspell_failure(p,U,a,c)
+      f = rspell_failure(p,U,a,(w~=0) and 0 or c)
       x,y,d = rspell_damage(U,s)
       r = rspell_radius(U,s)
       t = rspell_duration(U,s)

@@ -7047,7 +7047,9 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker) {
 	if ((dir == 5) && target_okay(Ind)) {
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
-	}
+    // Hack: Bolt spells are allowed to stop at targetted grids - Kurzel
+		if (!(flg & PROJECT_BEAM)) flg &= ~PROJECT_THRU;
+  }
 
 	/* Analyze the "dir" and the "target", do NOT explode */
 	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
