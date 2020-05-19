@@ -2139,7 +2139,8 @@ static byte player_color(int Ind) {
 	if (!is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
 		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
 		else if (p_ptr->tim_manashield) return TERM_NEXU;
-
+		if (p_ptr->nimbus > 15) return spell_color(p_ptr->nimbus_t);
+		else if (p_ptr->nimbus) return magik(50) ? TERM_ICE : spell_color(p_ptr->nimbus_t);
 		if (p_ptr->invuln > 5) return TERM_SHIELDI;
 		else if (p_ptr->invuln
 		    && p_ptr->invuln_dur >= 5) /* avoid animating normal stair-GoI */
@@ -2166,6 +2167,7 @@ static byte player_color(int Ind) {
 #endif
 	{
 		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
+		if (p_ptr->nimbus > 15) return spell_color(p_ptr->nimbus_t);
 		if (p_ptr->invuln > 5) return TERM_SHIELDI;
 		if (p_ptr->kinetic_shield) {
 			if (p_ptr->kinetic_shield > 10) return pcolor |= TERM_OLD_BNW;
@@ -2269,11 +2271,6 @@ byte get_monster_trap_color(int Ind, int o_idx, int feat) {
 	if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER)
 		a = TERM_L_BLUE;
 
-	return a;
-}
-
-byte get_rune_color(int Ind, int typ) {
-	byte a = spell_color(r_projections[typ].gf_type);
 	return a;
 }
 
@@ -2849,7 +2846,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 					image_object(ap, cp);
 					a = randint(15);
 				} else {
-					a = get_rune_color(Ind, cs_ptr->sc.rune.typ);
+					a = spell_color(cs_ptr->sc.rune.typ);
 				}
 				keep = TRUE;
 			}
@@ -3745,6 +3742,12 @@ void lite_spot(int Ind, int y, int x) {
 			/* see oneself burning in the sun */
 			if (p_ptr->sun_burn && magik(33)) a = TERM_FIRE;
 
+			/* Runecraft Trifecta - Kurzel */
+			if (p_ptr->nimbus && rand_int(2)) {
+				if (p_ptr->nimbus > 15) a = spell_color(p_ptr->nimbus_t);
+				else a = magik(50) ? TERM_ICE : spell_color(p_ptr->nimbus_t);
+			}
+
 			/* Mana Shield and GOI also flicker */
 			if (p_ptr->tim_manashield && rand_int(2)) {
 				if (p_ptr->tim_manashield > 15) a = TERM_SHIELDM;
@@ -3863,6 +3866,10 @@ void lite_spot(int Ind, int y, int x) {
 #endif
 					    p_ptr->tim_mimic <= 100 && !rand_int(10))
 						a = TERM_WHITE;
+					else a = TERM_ORANGE;
+				}
+				if (p_ptr->nimbus) {
+					if (p_ptr->nimbus > 15) a = TERM_YELLOW;
 					else a = TERM_ORANGE;
 				}
 				if (p_ptr->tim_manashield && p_ptr->msp > 0 && p_ptr->csp > 0) {
@@ -8630,8 +8637,16 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	effects[i].dam = dam;
 	effects[i].time = time;
 	effects[i].flags = flags;
-	effects[i].cx = cx;
-	effects[i].cy = cy;
+	effects[i].whot = 0;
+	effects[i].cy = 0;
+	effects[i].cx = 0;
+	if ((who < 0 && who > PROJECTOR_UNUSUAL) && (project_time_effect & EFF_VORTEX)) {
+		if (target_okay(0-who)) {
+			effects[i].whot = Players[0-who]->target_who;
+			effects[i].cy = Players[0-who]->target_row;
+			effects[i].cx = Players[0-who]->target_col;
+		}
+	}
 	effects[i].rad = rad;
 	effects[i].who = who2;
 	wpcopy(&effects[i].wpos, wpos);

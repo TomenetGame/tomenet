@@ -207,3 +207,43 @@
 #define HOOK_GET                50
 #define HOOK_NPCTEST            51
 #define MAX_HOOKS               52
+
+/*
+ * Bit flags for the "project()" function
+ * Allowing LUA to call project() - Kurzel
+ */
+#define PROJECT_JUMP	0x00000001	/* Jump directly to the target location (this is a hack) */
+#define PROJECT_BEAM	0x00000002	/* Work as a beam weapon (affect every grid passed through) */
+#define PROJECT_THRU	0x00000004	/* Continue "through" the target (used for "bolts"/"beams") */
+#define PROJECT_STOP	0x00000008	/* Stop as soon as we hit a monster (used for "bolts") */
+
+#define PROJECT_GRID	0x00000010	/* Affect each grid in the "blast area" in some way */
+#define PROJECT_ITEM	0x00000020	/* Affect each object in the "blast area" in some way */
+#define PROJECT_KILL	0x00000040	/* Affect each monster in the "blast area" in some way */
+#define PROJECT_HIDE	0x00000080	/* Hack -- disable "visual" feedback from projection */
+
+#define PROJECT_STAY	0x00000100	/* Create an 'effect' on the grid (cloud/wall/special fx) */
+#define PROJECT_SELF	0x00000200	/* Affect the projector too */
+#define PROJECT_DUMY	0x00000400	/* Don't affect anything or anybody (just visual fx, used for EFF_FIREWORKS etc.) */
+#define PROJECT_GRAV	0x00000800	/* Affected by gravity ie running along the ground. Example: Fire Wall. (Will hence stop at FEAT_DARK_PIT) */
+
+#define PROJECT_PLAY	0x00001000	/* Affect friendly players too, including the projector. (for GF_HEALINGCLOUD) */
+#define PROJECT_NORF	0x00002000	/* cannot be deflected by REFLECT monster flag */
+#define PROJECT_FULL	0x00004000	/* Deal full damage over radius spread (May dehack many things with this! - Kurzel) */
+#define PROJECT_EVSG	0x00008000	/* 'Entity vs Grid': It's a bolt spell that can hit EITHER mon/py OR floor/item. */
+
+#define PROJECT_NODO	0x00010000	/* cannot be dodged (basically used in the same places as NORF) */
+#define PROJECT_LODF	0x00020000	/* can not often be deflected by shield-blocking. */
+#define PROJECT_NODF	0x00040000	/* cannot be deflected by shield-blocking at all. */
+#define PROJECT_RNAF	0x00080000	/* has no adverse effects if resisted (added for time runecraft on high-elven characters) */
+
+/* Allowing LUA to call project() - Kurzel */
+/* special 'projector' types, used in project(). */
+#define PROJECTOR_UNUSUAL	-1000
+#define PROJECTOR_TRAP		-1001
+#define PROJECTOR_POTION	-1002
+#define PROJECTOR_TERRAIN	-1003
+#define PROJECTOR_MON_TRAP	-1004
+#define PROJECTOR_EFFECT	-1005
+#define PROJECTOR_PLAYER	-1006
+#define PROJECTOR_RUNE		-1007

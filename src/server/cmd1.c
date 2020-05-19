@@ -366,6 +366,7 @@ s16b tot_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, boo
 				break;
 			}
 		}
+
 	} else {
 		f1 = 0; f2 = 0; f3 = 0; f4 = 0; f5 = 0;
 	}
@@ -3297,6 +3298,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (k2 > q_ptr->chp) k2 = q_ptr->chp;
 			}
 
+			/* Exploding attack - Kurzel */
+			if (p_ptr->nimbus) do_nimbus(Ind, y, x);
+
 			/* no_pk handled */
 			if (cfg.use_pk_rules == PK_RULES_NEVER && q_ptr->chp - k <= 0) {
 				msg_format(Ind, "\374You have beaten %s", q_ptr->name);
@@ -3346,7 +3350,6 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 //#else
 //				sound(Ind, SOUND_HIT);
 #endif
-
 				/* End of the fight */
 				break;
 			}
@@ -4517,6 +4520,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			feed = m_ptr->maxhp + 100;
 			p_ptr->vamp_fed_midx = c_ptr->m_idx;
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) {
+
 				/* Vampires feed off the life force! (if any) */
 				// mimic forms for vampires/bats: 432, 520, 521, 623, 989
 				if (p_ptr->prace == RACE_VAMPIRE && drainable) {
@@ -4549,9 +4553,13 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 //				sound(Ind, SOUND_HIT);
 #endif
 
+				/* Exploding Attack - Kurzel */
+				if (p_ptr->nimbus) do_nimbus(Ind, y, x);
+
 				fear = FALSE; /* paranoia */
 				break; /* monster is dead */
 			}
+
 #ifdef ENABLE_OHERETICISM
 			/* Extend ongoing 'Boundless Hate' spell thanks to Traumaturgy feedback? */
 			if (p_ptr->hate_prolong == 1) p_ptr->hate_prolong = 2;
@@ -4813,8 +4821,11 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				hp_player_quiet(Ind, rand_int(leech), TRUE);
 			}
 #endif
-		}
 
+			/* Exploding Attack - Kurzel */
+			if (p_ptr->nimbus) do_nimbus(Ind, y, x);
+
+		}
 		/* Player misses */
 		else {
 			backstab = stab_fleeing = FALSE;
@@ -5029,9 +5040,12 @@ void touch_zap_player(int Ind, int m_idx) {
 			/* Hack -- Get the "died from" name */
 			monster_desc(Ind, aura_dam, m_idx, 0x88);
 
-			if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
+			if (p_ptr->oppose_fire || (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+				aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_fire || (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+				aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+				aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, -m_idx);
@@ -5052,9 +5066,12 @@ void touch_zap_player(int Ind, int m_idx) {
 			/* Hack -- Get the "died from" name */
 			monster_desc(Ind, aura_dam, m_idx, 0x88);
 
-			if (p_ptr->oppose_elec) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->resist_elec) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->suscep_elec) aura_damage = aura_damage * 2;
+			if (p_ptr->oppose_elec || (p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
+				aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_elec || (p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
+				aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->suscep_elec && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
+				aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, -m_idx);
@@ -5075,9 +5092,12 @@ void touch_zap_player(int Ind, int m_idx) {
 			/* Hack -- Get the "died from" name */
 			monster_desc(Ind, aura_dam, m_idx, 0x88);
 
-			if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
+			if (p_ptr->oppose_cold || (p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
+				aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_cold || (p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
+				aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->suscep_cold && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
+				aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, -m_idx);
@@ -5100,9 +5120,12 @@ void py_touch_zap_player(int Ind, int Ind2) {
 		if (rand_int(2)) {
 			if (!(p_ptr->immune_fire)) {
 				aura_damage = damroll(2, 6);
-				if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
+				if (p_ptr->oppose_fire || (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_fire || (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+					aura_damage = aura_damage * 2;
 
 				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5112,9 +5135,12 @@ void py_touch_zap_player(int Ind, int Ind2) {
 		} else {
 			if (!(p_ptr->immune_cold)) {
 				aura_damage = damroll(2, 6);
-				if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
+				if (p_ptr->oppose_cold || (p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_cold || (p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_cold && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
+					aura_damage = aura_damage * 2;
 
 				msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5125,10 +5151,12 @@ void py_touch_zap_player(int Ind, int Ind2) {
 	} else {
 		if (!p_ptr->death && q_ptr->sh_fire) {
 			if (!(p_ptr->immune_fire)) {
-				aura_damage = damroll(2, 6);
-				if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
+				if (p_ptr->oppose_fire || (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_fire || (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+					aura_damage = aura_damage * 2;
 
 				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5139,9 +5167,12 @@ void py_touch_zap_player(int Ind, int Ind2) {
 		if (!p_ptr->death && q_ptr->sh_cold) {
 			if (!(p_ptr->immune_cold)) {
 				aura_damage = damroll(2, 6);
-				if (p_ptr->oppose_cold) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->resist_cold) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->suscep_cold) aura_damage = aura_damage * 2;
+				if (p_ptr->oppose_cold || (p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_cold || (p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_cold && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
+					aura_damage = aura_damage * 2;
 
 				msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5153,15 +5184,25 @@ void py_touch_zap_player(int Ind, int Ind2) {
 	if (!p_ptr->death && q_ptr->sh_elec) {
 		if (!(p_ptr->immune_elec)) {
 			aura_damage = damroll(2, 6);
-			if (p_ptr->oppose_elec) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->resist_elec) aura_damage = (aura_damage + 2) / 3;
-			if (p_ptr->suscep_elec) aura_damage = aura_damage * 2;
+			if (p_ptr->oppose_elec || (p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
+				aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->resist_elec || (p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
+				aura_damage = (aura_damage + 2) / 3;
+			if (p_ptr->suscep_elec && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
+				aura_damage = aura_damage * 2;
 
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
 			msg_format(Ind2, "%s gets zapped for \377w%d\377w damage!", p_ptr->name, aura_damage);
 			take_hit(Ind, aura_damage, "a lightning aura", Ind2);
 			handle_stuff(Ind);
 		}
+	}
+
+	/* Nimbus - Kurzel */
+	if (q_ptr->nimbus && !p_ptr->death) {
+		msg_format(Ind, "You breach an aura of power!");
+		msg_format(Ind2, "%^s breaches your aura of power!", p_ptr->name);
+		do_nimbus(Ind2, p_ptr->py, p_ptr->px);
 	}
 
 	/*
@@ -5179,9 +5220,12 @@ void py_touch_zap_player(int Ind, int Ind2) {
 		if (!p_ptr->death && (q_ptr->shield_opt & SHIELD_FIRE)) {
 			if (!p_ptr->immune_fire) {
 				aura_damage = damroll(q_ptr->shield_power_opt, q_ptr->shield_power_opt2);
-				if (p_ptr->oppose_fire) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->resist_fire) aura_damage = (aura_damage + 2) / 3;
-				if (p_ptr->suscep_fire) aura_damage = aura_damage * 2;
+				if (p_ptr->oppose_fire || (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->resist_fire || (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+					aura_damage = (aura_damage + 2) / 3;
+				if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
+					aura_damage = aura_damage * 2;
 
 				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5219,8 +5263,11 @@ void py_touch_zap_player(int Ind, int Ind2) {
 		}
 	}
 	/* Shivering Aura is affected by the target level */
-	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_SHIVER) && (q_ptr->aura[1] || (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST))
-	    && !p_ptr->resist_sound && !p_ptr->immune_cold) {
+	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_SHIVER)
+	    && (q_ptr->aura[1] || (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST))
+	    && !(p_ptr->resist_sound
+	    || (p_ptr->nimbus && (p_ptr->nimbus_t == GF_SOUND || p_ptr->nimbus_t == GF_FORCE)))
+	    && !p_ptr->immune_cold) {
 		int chance_trigger = get_skill_scale(q_ptr, SKILL_AURA_SHIVER, 25);
 		int threshold_effect = get_skill_scale(q_ptr, SKILL_AURA_SHIVER, 100);
 

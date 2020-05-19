@@ -18099,7 +18099,8 @@ important to note that some spells are more difficult to manage than others.
 
 Tracing runes safely requires both intellectual and physical agility, so high
 intelligence and dexterity are strongly recommended. To some extent, runecraft
-practitioners must check and balance spells for their own safety.
+practitioners must check and balance spells for their own safety. The lower of
+the two associated elemental skills is applied when combining elemental runes.
 
 
 Runespells:
@@ -18109,28 +18110,24 @@ To cast a runespell, enter the m-key menu and select 'Draw a rune'.
 
 Runespells are made up of three components:
     1. A single elemental rune or combination of two elemental runes.
-    2. A spell modifier (minimized, expanded, brief, etc).
-    3. A spell type (glyph, bolt, ball, etc).
+    2. A spell mode (minimized, expanded, brief, etc).
+    3. A spell type (bolt, cloud, ball, etc).
 
 Each component has different associated parameters, summarized in the menu.
-When selecting runes, press return once you are finished, or enter the
-maximum of two runes and continue to the modifier selection. The menu will
-prompt for a direction if it is required for the spell you've created. If the
-spell targets an item, you must supply the letter corresponding to your
-choice of inventory or equipment.
+When selecting runes, enter the same rune twice or select two different runes.
+The menu will prompt for a direction if required for the spell you've created.
 
 
 Runespell Failure & Backlash:
 -----------------------------
-Runemasters can only truly fail sign and glyph spell types. Spell failure
-causes elemental backlash to damage the caster, while the effects of the
-spell, if it is not a sign or glyph type spell, will resolve normally.
-Resisting one's own spells can be an important factor for survival in
-critical situations. For this reason, aspiring runemasters are advised to
-start with basic elemental spells for which they can easily acquire the
-according resistance. Mana (as an element of choice) is also viable for
-beginners. Although backlash damage from mana may be high when unresisted,
-it has no otherwise adverse effects which might cripple the caster.
+Rather than failing a runespell outright, an incompentent caster is blasted
+with elemental forces as they struggle to resolve the spell. If the caster
+survives, the runespell is resolved normally. Thus, resisting one's own spells
+can be an important factor for survival in critical situations. Aspiring
+runemasters are advised to start with basic elemental spells for which they can
+easily acquire the according resistance. Mana (as an element of choice) is also
+viable for beginners. Although the backlash damage from mana may be high when
+unresisted, it has no otherwise adverse effects which might cripple the caster.
 
 Intelligence, dexterity, and skill level affect spell failure rates for
 runespells. Runespell type determines the base level of a spell, which is
@@ -18142,30 +18139,20 @@ even fall victim to unexpected backlash from spells previously mastered.
 
 Physical Runes:
 ---------------
-Physical runes empower the required, elemental links for sign and glyph spells,
-but do not otherwise shield the runemaster from backlash or assist runecraft in
-any way. Physical runes of the associated element are required to even attampt
-a sign or glyph spell, and failing a spell of these types results in especially
-damaging backlash as the rune is destroyed. Enhanced versions of these spells
-always consume a rune, without damaging the caster if successful.
+Physical runes may be activated (after achieving skill level 40) to emblazon
+non-artifact armour, shields and melee weapons with an elemental sigil. This
+sigil confers a generally positive effect as long as the item remains wielded.
+Sigils vanish from the equipment when sold, dropped, taken off, disarmed, etc.
+Applying an additional physical rune to an item dispels any previous sigils,
+consuming a new rune to power the new effect (even if the result is identical).
 
-Physical runes may be activated to combine or decombine in stacks with other
-runes, sharing level requirement, inscription and discount (use 'A').
+The process for determining success and which boni is applied depends on both a
+pool of available effects, listed in (6.8c) Runespell Tables, Sigil Boni, and
+on rules similar to artifact creation (see (8.4) Artifact creation). Existing
+enchantments may synergize with or couteract some sigil boni (eg. PVAL) and are
+limited in effect by the same restrictions that constrain artifact creation.
 
-
-Seals & Sigils:
----------------
-Enhanced sign and glyph spells may enhance wielded, non-artifact equipment.
-Seals always grant resistances or boni that reduce associated elemental damage.
-Sigils may grant immunities, or a variety of specific, miscellaneous boni. The
-process for determining success and which boni is applied depends entirely on
-rules similar to artifact creation (see (8.4) Artifact Creation). The strength
-and type of existing enchantments (eg. PVAL) may synergize or couteract some
-boni. At most, one seal or sigil maybe be applied to one armor and one weapon.
-
-An additional seal or sign spell targetting the same equipment dispels the
-previous one, consuming a new rune to power the new effect (even if identical).
-Enhancements vanish from the equipment when dropped, taken off, disarmed, etc.
+Runemasters are limited to one sigil per element, but can maintain 7 in total.
 
 
 Other Uses for Runes:
@@ -18180,26 +18167,24 @@ Runecraft macros look like this (key translation in parenthesis):
 (Note: m@12\r invokes the m-key menu command for 'Draw a rune'.)
 
 Targetted runespells use the following format:
-    \e)*tm@12\r[a-f]\r[a-g][a-g]-  (rune, return, modifier, type, target)
-    \e)*tm@12\r[a-f][a-f][a-g][a-g]-  (rune, rune, modifier, type, target)
+    \e)*tm@12\r[a-f][a-f][a-g][a-f]-  (rune, rune, mode, type, target)
 
 Non-targetted runespells use the format:
-    \e)m@18\r[a-f]\r[a-g][a-g]  (rune, return, modifier, type)
-    \e)m@18\r[a-f][a-f][a-g][a-g]  (rune, rune, modifier, type)
+    \e)m@18\r[a-f][a-f][a-g][a-f]  (rune, rune, mode, type)
 
-Note that you must choose at least one and up to two runes, one modifier,
-and one type. If you choose two runes for a spell, the \r is not required.
-[a-f] and [a-g] denote the choices of a letter from a to f or h,
-inclusive, which represents a rune or a modifier or type, respectively.
+Note that you must choose two runes, one mode, and one type.
+To cast a single element runespell, simply choose the same element twice.
+[a-f] and [a-g] denote the choices of a letter from a to f or a to g,
+inclusive, which represents a rune or a mode or a type, respectively.
 ie. There are six base runes, so [a-f] represents a choice from rune 1-6.
 
 
 Examples:
 ---------
 Here is a single rune example, invoking the element 'light' (rune 'a'):
-    \e)*tm@12\ra\raa-  (light--return--minimized--bolt)
+    \e)*tm@12\raeaa-  (light--light--minimized--bolt)
 
-This spell launches a minimized bolt of light, a targetted projection
+This spell launches a minimized light bolt, a targetted projection
 affecting up to a single opponent, dealing light damage if it connects.
 
 A fire ball spell might look like this (runes 'a' and 'e' for 'fire'):
@@ -18208,8 +18193,8 @@ A fire ball spell might look like this (runes 'a' and 'e' for 'fire'):
 Note the following macro produces an identical effect (runes 'e' and 'a'):
     \e)*tm@12\readd-  (chaos--light--moderate--ball)
 
-To increase the radius of the ball, adjust the modifier to something that
-sounds bigger, ie. choose a spell modifier that increases radius.
+To increase the radius of the ball, adjust the mode to something that
+sounds bigger, ie. choose a spell mode that increases radius.
 
 A maximized ball of fire:
     \e)*tm@12\raegd-  (light--chaos--maximized--ball)
@@ -18218,41 +18203,32 @@ Or an expanded ball of fire, to produce something even larger:
     \e)*tm@12\raeed-  (light--chaos--expanded--ball)
 
 Note that failure rate may become an obstacle to advanced spells at low
-level. Low failure types, modifiers, and elements are recommended.
+level. Low failure types, modes, and elements are recommended.
 
 Advanced runemasters may wish to create macro sets which construct spells
 on the fly, swap macro sets containing preset runespells, or set up
 combinations of macros to chain together spells quickly and efficiently.
 Spells with a lowered casting time might even be combined in one macro,
-creating a 'dual-cast' effect (enabled by selecting the brief modifier).
+creating a 'dual-cast' effect (enabled by selecting the brief mode).
 
-Note that every modifier has drawbacks associated with the benefits of using
-it: higher cost, level, reduced damage, increased failure rates- check the
-specifics in the m-key menu before you create a new macro. It is recommended
-to experiment with new spells in Bree or even the Training Tower for safety.
+Note that every mode has drawbacks associated with the benefits of using it:
+higher cost, level, reduced damage, increased failure rates- check the
+specifics in the m-key menu or macro wizard before using a new macro. It is
+recommended to experiment with new spells in Bree or even the Training Tower.
 
 
 Auto-retaliation:
 -----------------
-If you inscribe @O[a-g][a-g] on a rune in your inventory, you will retaliate
-with a spell of the selected modifier and type. For example, if you set the
-inscription to @Oad on a rune of light, the 'ball’ spell type will be selected,
-with a 'minimized' spell modifier. Prepend 't' like @Otad to restrict
-auto-retaliation of the specified runespell to towns only.
-
-Although you can set most runespells for retaliation, some may make poor
-choices if repeat casting is not desirable. Retaliation is also disabled
-completely if you select a non-damaging runespell (most signs and glyphs).
+Although you can set most runespells for retaliation with /arr, some make poor
+choices for repeat casting. Retaliation is disabled completely for spells with
+an indirect effect (nimbus and glyph).
 
 
 Hints:
 ------
-The casting adjective will further elaborate on the difficulty of a spell
-compared to your skill. Ideally, choose spells where the average outcome
-is 'efficiently' or better, and cast dangerous spells with full HP or the
-associated resistances. You can use the mkey * display to see a list of spell
-failure rates, or go through the macro wizard to display the specific
-attributes of any spell. Your abilities are included in the calculations.
+You can use the mkey * display to see a list of spell failure rates, or go
+through the macro wizard to display the specific attributes of any spell.
+Your abilities and status are included in the calculations.
 
 Beginners may wish to play a race with intrinsic resistance to their element
 or elements of choice, or choose combinations of skills to produce a 'base'
@@ -18264,6 +18240,13 @@ element, and Rings of Fire Resistance are readily available in magic shops.
 
 Note that different elemental damage types are reduced more or less when
 resisted, see (5.6) Resistances & caps, Immunities, Susceptibilities for info.
+The enhanced storm effect 'nimbus' will shield you from elemental damage and
+effects, as though you had any applicable resistance and temporary resistance.
+Just be wary of UNMAGIC, which may dispel the effect!
+
+Physical runes can at first seem difficult to acquire, but may be extracted
+from treasure veins with a success rate proportional to runecraft skills.
+This method of rune extraction synergizes well with the digging skill.
 
 
 (6.8c) Runespell Tables
@@ -18275,128 +18258,71 @@ Elements
 --------
 A table of every projectable element accessed through one or two rune skills.
 Weight is the relative base damage for an element, which is similar to the
-maximum damage caps per element listed in section (5.6). This value is averaged
-towards half the magic damage cap of 1600 (so 800, by level 50) to produce the
-approximate damage cap for any given runespell. ie. Fire damage >> mana damage!
+maximum damage caps listed in section (5.6). ie. Fire damage >> Mana damage!
 Artifacts and certain items may be unaffected by the various elemental effects.
 See section (5.6) for more information about elemental attacks.
 -------------------------------------------------------------------------------
-Rune     | Rune     | Element        | Weight | Status Effects | Affected Items
+Rune     | Rune     | Element        | Weight | Special Effect | Affects
 -------------------------------------------------------------------------------
 Light    | Light    | Light          |   400  | Blindness      |
 Darkness | Darkness | Darkness       |   550  | Blindness      |
-Nexus    | Nexus    | Nexus          |   250  | Tele/Stat Swap | Most Items
-Nether   | Nether   | Nether         |   550  | Level Drain    |
-Chaos    | Chaos    | Chaos          |   600  | Confusion/Poly |
+Nexus    | Nexus    | Nexus          |   250  | Tele/Stats     | Most Items
+Nether   | Nether   | Nether         |   550  | EXP Drain      |
+Chaos    | Chaos    | Chaos          |   600  | Hallucination  |
 Mana     | Mana     | Mana           |   600  |                | Most Items
 -------------------------------------------------------------------------------
 Light    | Darkness | Confusion      |   400  | Confusion      |
 Light    | Nexus    | Inertia        |   200  | Slow           |
-Light    | Nether   | Lightning      |  1200  | DEX Drain      | Jewelry/Device
+Light    | Nether   | Electricity    |  1200  | DEX Drain      | Jewelry/Device
 Light    | Chaos    | Fire           |  1200  | STR Drain      | Flammables
 Light    | Mana     | Water          |   300  | Confusion/Stun | Scrolls
 Darkness | Nexus    | Gravity        |   150  | Tele/Slow/Stun | Most Items
-Darkness | Nether   | Frost          |  1200  | STR Drain      | Potions
+Darkness | Nether   | Cold           |  1200  | STR Drain      | Potions
 Darkness | Chaos    | Acid           |  1200  | CHR Drain      | Many Items
 Darkness | Mana     | Poison         |   800  | Poison         |
-Nexus    | Nether   | Shards         |   400  | Cuts           | Potion/Scrolls
+Nexus    | Nether   | Time           |   150  | Drain          |
 Nexus    | Chaos    | Sound          |   400  | Stun           | Potions
-Nexus    | Mana     | Time           |   150  | Stat/Lvl Drain |
-Nether   | Chaos    | Disenchantment |   500  |                | Magical Items
-Nether   | Mana     | Ice            |   933  | Cuts           | Potion/Scrolls
-Chaos    | Mana     | Plasma         |   933  | Stun           | Many Items
+Nexus    | Mana     | Shards         |   400  | Cuts           | Potion/Scrolls
+Nether   | Chaos    | Hellfire       |   800  | Slay Good      | Most Items
+Nether   | Mana     | Force          |   250  | Stun           | Many Items
+Chaos    | Mana     | Disenchantment |   500  | Cancellation   | Magical Items
 
 
 Spell Modifiers
 ---------------
-A table of every runespell modifier. Modifiers alter the nature of a runespell,
-influencing level, cost, fail rate, damage, casting time, radius, and duration.
+A table of every runespell mode. Modes influence runespell parameters,
+including level, cost, fail rate, damage, casting time, size, and duration.
 -------------------------------------------------------------------------------
 Name         | Lvl | Description
 -------------------------------------------------------------------------------
-Minimized    | + 0 | Best efficiency, worst damage, poor radius and duration.
-Extended     | + 2 | Good efficiency, poor damage, best duration.
-Compressed   | + 3 | Good efficiency and duration, worst radius.
-Moderate     | + 5 | Balanced spell parameters.
-Expanded     | + 7 | Poor efficiency and duration, best radius. Projects signs.
-Brief        | + 8 | Poor efficiency, good damage, worst duration. Half energy.
-Maximized    | +10 | Worst efficiency, best damage, good radius and duration.
-Enhanced     | +10 | Specific form or other effect, see Enhanced Spell Types.
+Minimized  | + 0 | Best efficiency, worst damage, poor size and duration.
+Extended   | + 2 | Good efficiency, poor damage, best duration.
+Compressed | + 3 | Good efficiency and duration, worst size.
+Moderate   | + 5 | Balanced spell parameters.
+Enhanced   | + 5 | Modifies the runespell type, see Spell Types.
+Expanded   | + 7 | Poor efficiency and duration, best size. Projects signs.
+Brief      | + 8 | Poor efficiency, good damage, worst duration. Half energy.
+Maximized  | +10 | Worst efficiency, best damage, good size and duration.
 
 
 Spell Types
 -----------
-A table of basic runespell types. Type controls the form of the runespell, also
-influencing level, cost, fail rate, damage, casting time, radius, and duration.
-Spell types followed by (&) consume a rune and produce no spell effect upon
-failure, instead resulting in an increased backlash to the caster compared to
-other spell types. You must carry at least one physical rune of the associated
-element to even attempt a sign or glyph spell (including enhanced versions).
+A table of every runespell type. Types determine the effect of a runespell.
 -------------------------------------------------------------------------------
-Name       | Lvl | Description                                       | Enhanced
+Name       | Lvl | Description (+ Enhanced)
 -------------------------------------------------------------------------------
-Bolt       |   5 | Fires a single target bolt, may be reflected.     | Beam
-Cloud      |  10 | Damages an area about your target over time.      | Storm
-Sign   (&) |  15 | Specific buff or other effect, see Sign Effects.  | Seal
-Ball       |  20 | Targeted area damage that diminishes with radius. | Swarm
-Wave       |  25 | High damage in an expanding area about yourself.  | Surge
-Glyph  (&) |  30 | Set a glyph of warding that explodes when broken. | Sigil
-Burst      |  35 | Focussed area damage, full damage across radius.  | Flare
-
-
-Enhanced Spell Types
---------------------
-A table of runespell types enabled by choosing the enhanced spell modifier.
-These runespells use fixed attributes, since they are exclusively accessed.
-Spell types followed by (&) consume a rune of the associated element when cast.
--------------------------------------------------------------------------------
-Name       | Lvl | Description                                       | Basic
--------------------------------------------------------------------------------
-Beam       |  15 | Fires a beam, damaging all grids in a line.       | Bolt
-Storm      |  20 | A high damage, radius 1 cloud that follows you.   | Cloud
-Seal   (&) |  25 | Enhances equipment with an elemental resistance*. | Sign
-Swarm      |  30 | Fires a spread of level/10, radius 1 mini-balls.  | Ball
-Surge      |  35 | Envelops all nearby monsters in damaging clouds.  | Wave
-Sigil  (&) |  40 | Further enhances worn equipment, see Sigil Boni.  | Glyph
-Flare      |  45 | High damage non-reflectable bolt, 33% backlash.   | Burst
--------------------------------------------------------------------------------
-* Some elements grant these associated boni instead of a specific resistance:
-  Inertia  |  Free Action
-  Gravity  |  Feather Falling
-  Ice      |  Cold and Shard Resistances
-  Plasma   |  Fire, Electricity and Sound Resistances
--------------------------------------------------------------------------------
-
-
-Sign Effects
-------------
-A table of runespell effects enabled by choosing the sign spell type. Effects
-followed by a (P) are projectable when cast with the expanded modifier.
--------------------------------------------------------------------------------
-Rune     | Rune     | Element        | Sign Effect       | Description
--------------------------------------------------------------------------------
-Light    | Light    | Light          | Illumination      | Illuminates rooms.
-Darkness | Darkness | Darkness       | Invisibility      | Grants concealment.
-Nexus    | Nexus    | Nexus          | Teleportation     | Teleports yourself.
-Nether   | Nether   | Nether         | Annihilation      | Percent life drain.
-Chaos    | Chaos    | Chaos          | Polymorph Self    | As Chauve-Souris.
-Mana     | Mana     | Mana           | Recharging        | Replenishes charge.
--------------------------------------------------------------------------------
-Light    | Darkness | Confusion      | Reflection        | Redirects bolts.
-Light    | Nexus    | Inertia        | Mass Stasis       | Halts monsters.
-Light    | Nether   | Lightning      | Infusion      (P) | Brand, resist elec.
-Light    | Chaos    | Fire           | Infusion      (P) | Brand, resist fire.
-Light    | Mana     | Water          | Quench Thirst     | As potion of water.
-Darkness | Nexus    | Gravity        | Mass Teleport-To  | Pulls monsters.
-Darkness | Nether   | Frost          | Infusion      (P) | Brand, resist cold.
-Darkness | Chaos    | Acid           | Infusion      (P) | Brand, resist acid.
-Darkness | Mana     | Poison         | Infusion      (P) | Brand, resist pois.
-Nexus    | Nether   | Shards         | Dig               | Breaks walls/doors.
-Nexus    | Chaos    | Sound          | Disarm            | Breaks traps/doors.
-Nexus    | Mana     | Time           | Haste         (P) | Temporary speed.
-Nether   | Chaos    | Disenchantment | Resistance    (P) | Base (four) resists.
-Nether   | Mana     | Ice            | Ice Shield        | +AC, ice damage.
-Chaos    | Mana     | Plasma         | Plasma Shield     | +AC, plasma damage.
+Bolt       |   5 | Fires a missile which may be deflected.
++ Beam     |  10 | Fires a penetrating ray.
+Cloud      |  10 | Engulfs an area for several turns.
++ Vortex   |  15 | Engulfs a target for several turns.
+Ball       |  15 | Fires an explosion that diminishes with radius.
++ Burst    |  20 | Fires an explosion that deals full damage across radius.
+Storm      |  20 | Engulfs an area around youself for several turns.
++ Nimbus   |  25 | Grants explosive attacks and an elemental shield.
+Cone       |  25 | Fires a continuous beam across a narrow arc.
++ Shot     |  30 | Fires five bolts at one or more targets in a wide arc.
+Wave       |  30 | Engulfs an expanding area around yourself.
++ Glyph    |  35 | Inscribes a damaging glyph of warding on the floor.
 
 
 Sigil Boni
@@ -18405,22 +18331,25 @@ A table cross referencing boni to element and item TVAL (type value). Boni are
 restricted as with artifact creation regarding PVAL modifiers. Stat enhancing
 boni have a chance to include a sustain, and boni occuring both generally and
 on the item type specifically are more likely to occur. Some weapon/helm boni
-are specific to staves, boomerangs, and crowns (see (8.4) Artifact Creation).
+are specific to staves, boomerangs, and crowns (see (8.4) Artifact creation).
+All elements associated with a specific resistance may confer that resistance.
 
 Abbreviations (in alphabetical order):
 AM - Anti-magic shell (see (5.8) under NO_MAGIC)
 Au - Aura
-Ba - Base resist (acid/elec/fire/cold)
 Bl - Blind resist
 Br - Brand
-c+ - Charisma bonus (PVAL Required)
+A+ - Charisma bonus (PVAL Required)
 C+ - Constitution bonus (PVAL Required)
+Cf - Confusion resist
 Ch - Chaotic (see (5.8) for details)
 Cr - Critical bonus (PVAL Required)
 D+ - Dexterity bonus (PVAL Required)
 EA - Extra attacks (PVAL Required)
 FA - Free action
 Fe - Fear resist
+FF - Feather falling
+I+ - Intelligence bonus (PVAL Required)
 Lv - Levitation
 Pl - Permanent Light (+1 light radius)
 HL - Hold life
@@ -18429,18 +18358,16 @@ If - Infra-vision (PVAL Required)
 Im - Immunity (One element only!)
 In - Invisibility (see (5.16) for details)
 MP - Max mana increase (PVAL Required) [Helm -- Crowns ONLY]
-NT - Anti-Teleportation
-Re - Reflection
+Re - Reflection [Armor - Hard Armor and DSM ONLY]
 Rh - Regen health
 Rm - Regen mana
-RR - Random resist from the "general mods" list, see (8.4) Artifact Creation
 S+ - Strength bonus (PVAL Required)
 SD - Slow digestion
 SI - See invisible
 SK - Random slay/kill flag
 Sl - Stealth (PVAL required)
 Sp - Speed (PVAL Required)
-Su - Random sustain
+Su - Sustain all
 Va - Vampirism (see (5.15) for details)
 Vo - Vorpal (Quaking if blunt) (see (5.8) for details on 'IMPACT' and 'VORPAL')
 W+ - Wisdom bonus (PVAL Required) [Helm -- Crowns ONLY]
@@ -18448,28 +18375,28 @@ W+ - Wisdom bonus (PVAL Required) [Helm -- Crowns ONLY]
 -------------------------------------------------------------------------------
 Element        | Any    | Weap | Shield | Armor | Cloak | Crown | Glove | Boot
 -------------------------------------------------------------------------------
-Light          | PlBlSI | SI   |        |       |       | BlIf  |       |
-Darkness       | BlSI   | SI   |        |       | In    | BlIf  |       |
+Light          | BlSIPl | SI   |        |       |       | BlIf  |       |
+Darkness       | BlSISl | SI   |        | Sl    | InSl  | BlIf  |       | Sl
 Nexus          | Su     | SK   |        |       |       |       | SK    |
 Nether         | HL     | Va   |        | HL    | HL    |       | Va    |
-Chaos          | RR     | Ch   |        |       |       |       |       |
+Chaos          | Cf     | Ch   |        |       |       |       |       |
 Mana           | Rm     |      |        |       |       | MPRm  | MP    |
 -------------------------------------------------------------------------------
-Confusion      | FA     |      | Re     | Re    |       | W+I+  | FA    |
-Inertia        | NT     |      |        |       |       |       |       |
-Lightning      | Im     | Br   |        |       | Au    |       | BrD+  |
-Fire           | Im     | Br   |        |       | Au    |       | BrS+  |
-Water          | Im     |      |        |       |       |       |       |
-Gravity        | NT     |      |        |       | Lv    |       |       | Lv
-Frost          | Im     | Br   |        |       | Au    |       | BrS+  |
-Acid           | Im     | Br   |        |       |       |       | Brc+  |
-Poison         | Im     | Br   |        | C+    |       |       | BrC+  |
-Shards         | Rh     | CrVo |        |       |       |       | Cr    |
-Sound          | Sl     |      |        | Sl    | Sl    | Fe    |       | Sl
-Time           | Sp     | EA   |        |       |       |       | EA    | Sp
-Disenchantment | AM     |      | Ba     | Ba    | Ba    |       |       |
-Ice            | SD     | BrVo |        |       |       |       | Br    |
-Plasma         | Pl     | Br   |        |       |       | Fe    | Br    |
+Confusion      | W+I+   |      | Re     | Re    |       | W+I+  |       |
+Inertia        | FASD   |      |        |       |       |       | FA    | FA
+Electricity    | ImPlD+ | Br   |        |       | Au    |       | Br    |
+Fire           | ImPlS+ | Br   |        |       | Au    |       | Br    |
+Water          | ImSD   |      |        |       |       |       |       |
+Gravity        | FF     |      |        |       | FFLv  |       |       | FFLv
+Cold           | ImSDS+ | Br   |        |       | Au    |       | Br    |
+Acid           | ImSDA+ | Br   |        |       |       |       | Br    |
+Poison         | ImC+   | Br   |        | C+    |       |       | Br    |
+Time           | SpSu   | EA   |        |       |       |       | EA    | Sp
+Sound          | Sl     |      |        | Sl    | Sl    |       |       | Sl
+Shards         | Rh     | VoCr |        |       |       |       | Cr    |
+Hellfire       | Im     |      |        |       |       | Fe    |       |
+Force          | Su     |      | Re     | Re    |       |       |       |
+Disenchantment | AM     |      |        |       |       |       |       |
 
 
 (6.8d) Spell failure rate

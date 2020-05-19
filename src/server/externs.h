@@ -537,7 +537,6 @@ extern bool player_can_see_bold(int Ind, int y, int x);
 extern bool no_lite(int Ind);
 extern byte get_trap_color(int Ind, int t_idx, int feat);
 extern byte get_monster_trap_color(int Ind, int o_idx, int feat);
-extern byte get_rune_color(int Ind, int typ);
 extern void get_object_visuals(char *cp, byte *ap, object_type *o_ptr, player_type *p_ptr);
 extern void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim);
 extern void move_cursor_relative(int row, int col);
@@ -666,6 +665,7 @@ extern bool twall(int Ind, int y, int x, byte feat);
 extern int breakage_chance(object_type *o_ptr);
 extern int get_shooter_mult(object_type *o_ptr);
 extern bool get_something_tval(int Ind, int tval, int *ip);
+extern void do_nimbus(int Ind, int y, int x);
 extern void do_arrow_explode(int Ind, object_type *o_ptr, worldpos *wpos, int y, int x, int might);
 extern bool retaliating_cmd;
 extern void break_cloaking(int Ind, int discovered);
@@ -721,6 +721,7 @@ extern void show_autoret(int Ind, byte typ, bool verbose);
 /* cmd5.c */
 extern bool check_antimagic(int Ind, int percentage);
 extern void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux);
+extern void cast_rune_spell(int Ind, u16b lo, u16b hi, int dir);
 extern void do_cmd_browse(int Ind, object_type *o_ptr);
 extern void do_cmd_study(int Ind, int book, int spell);
 extern void do_cmd_psi(int Ind, int book, int spell);
@@ -1629,8 +1630,7 @@ extern void stair_creation(int Ind);
 extern bool enchant(int Ind, object_type *o_ptr, int n, int eflag);
 extern bool enchant_spell(int Ind, int num_hit, int num_dam, int num_ac, int flags);
 extern bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, int flags);
-extern void rune_combine(int Ind);
-extern void rune_combine_aux(int Ind, int item);
+extern void activate_rune(int Ind);
 extern bool ident_spell(int Ind);
 extern bool ident_spell_aux(int Ind, int item);
 extern bool identify_fully(int Ind);
@@ -1671,9 +1671,10 @@ extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, bool player, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
-extern bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
+extern bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker);
 extern bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker);
-extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
+extern bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker);extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
+extern bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char *attacker);
 extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker);
 extern bool cast_raindrop(worldpos *wpos, int x);
@@ -2163,6 +2164,7 @@ extern bool telekinesis(int Ind, object_type *o_ptr, int max_weight);
 #endif
 extern void telekinesis_aux(int Ind, int item);
 extern bool set_ammo_brand(int Ind, int v, u16b t, int p);
+extern bool set_nimbus(int Ind, int v, byte t, byte d);
 
 extern bool bless_temp_luck(int Ind, int pow, int dur);
 extern bool set_sh_fire_tim(int Ind, int v);
@@ -2508,14 +2510,9 @@ extern int firework_dungeon, firework_dungeon_chance;
 extern int shutdown_recall_timer, shutdown_recall_state;
 
 /* runecraft.c */
-extern byte cast_rune_spell(int Ind, byte dir, u16b e_flags, u16b m_flags, u16b item, bool retaliate);
-extern bool warding_rune(int Ind, byte typ, byte mod, byte lvl);
+extern bool rune_enchant(int Ind, int item);
+extern bool warding_rune(int Ind, byte typ, byte dam);
 extern bool warding_rune_break(int m_idx);
-/* common/tables.c */
-extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
-extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES];
-extern r_type r_types[RCRAFT_MAX_TYPES];
-extern r_projection r_projections[RCRAFT_MAX_PROJECTIONS];
 
 #ifdef MONSTER_ASTAR
 extern astar_list_open astar_info_open[ASTAR_MAX_INSTANCES];

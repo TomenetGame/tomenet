@@ -871,8 +871,7 @@ static void erase_effects(int effect) {
 	e_ptr->dam = 0;
 	e_ptr->time = 0;
 	e_ptr->flags = 0;
-	e_ptr->sx = 0;
-	e_ptr->sy = 0;
+	e_ptr->whot = 0; // Kurzel
 	e_ptr->cx = 0;
 	e_ptr->cy = 0;
 	e_ptr->rad = 0;
@@ -886,7 +885,6 @@ static void erase_effects(int effect) {
 		if (!in_bounds2(wpos, j, i)) continue;
 
 		c_ptr = &zcave[j][i];
-
 		if (c_ptr->effect == effect) {
 			c_ptr->effect = 0;
 			everyone_lite_spot(wpos, j, i);
@@ -921,9 +919,9 @@ static void apply_effect(int k, int *who, struct worldpos *wpos, int x, int y, c
 		/* Make the effect friendly after death - mikaelh */
 		*who = PROJECTOR_PLAYER;
 	}
-	/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-	if (e_ptr->flags & EFF_STORM &&
-	    (*who == PROJECTOR_PLAYER || Players[0 - *who]->death)) {
+	/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+	if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+	    && (*who == PROJECTOR_PLAYER || Players[0 - *who]->death)) {
 		erase_effects(k);
 		*who = 0;
 	}
@@ -963,6 +961,7 @@ static void process_effects(void) {
 	cave_type *c_ptr;
 	int who = PROJECTOR_EFFECT;
 	player_type *p_ptr;
+	monster_type *m_ptr;
 	effect_type *e_ptr;
 	int flg;
 	bool skip;
@@ -1067,7 +1066,8 @@ static void process_effects(void) {
 		}
 
 		/* Storm ends if the cause is gone */
-		if  (e_ptr->flags & EFF_STORM && (who == PROJECTOR_EFFECT || who == PROJECTOR_PLAYER)) {
+		if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+		    && (who == PROJECTOR_EFFECT || who == PROJECTOR_PLAYER)) {
 			erase_effects(k);
 			continue;
 		}
@@ -1111,9 +1111,9 @@ static void process_effects(void) {
 					/* Make the effect friendly after death - mikaelh */
 					who = PROJECTOR_PLAYER;
 				}
-				/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-				if (e_ptr->flags & EFF_STORM &&
-				    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+				/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+				if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+				    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
 					erase_effects(k);
 					break;
 				}
@@ -1144,7 +1144,7 @@ static void process_effects(void) {
 						c_ptr->effect = 0;
 						everyone_lite_spot(wpos, j, i);
 					}
-				} else if ((e_ptr->flags & EFF_STORM)) {
+				} else if (e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
 				} else if ((e_ptr->flags & EFF_SNOWING)) {
@@ -1539,9 +1539,9 @@ static void process_effects(void) {
 					/* Make the effect friendly after death - mikaelh */
 					who = PROJECTOR_PLAYER;
 				}
-				/* Storms end instanly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
-				if (e_ptr->flags & EFF_STORM &&
-				    (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
+				/* Storms end instantly though if the caster is gone or just died. (PROJECTOR_PLAYER falls through from above check.) */
+				if ((e_ptr->flags & EFF_STORM || e_ptr->flags & EFF_VORTEX)
+				    && (who == PROJECTOR_PLAYER || Players[0 - who]->death)) {
 					erase_effects(k);
 					break;
 				}
@@ -1593,6 +1593,44 @@ static void process_effects(void) {
 						erase_effects(k);
 						break;
 					}
+				}
+			}
+		}
+
+		/* Maintain a "vortex" effect - Kurzel */
+		else if (e_ptr->flags & EFF_VORTEX && who > PROJECTOR_EFFECT) {
+			if (e_ptr->whot > 0) {
+				m_ptr = &m_list[e_ptr->whot];
+				if (!m_ptr->r_idx) e_ptr->whot = 0;
+				else if (!inarea(wpos, &m_ptr->wpos)) e_ptr->whot = 0;
+				// Hack: Check for distance, since m_ptr may be a new mob after death!
+				else if (distance(e_ptr->cy, e_ptr->cx, m_ptr->fy, m_ptr->fx) > 3) e_ptr->whot = 0;
+				else {
+					e_ptr->cy = m_ptr->fy;
+					e_ptr->cx = m_ptr->fx;
+				}
+			} else if (e_ptr->whot < 0) {
+				p_ptr = Players[0 - e_ptr->whot];
+				if (p_ptr->conn == NOT_CONNECTED) e_ptr->whot = 0;
+				else if (p_ptr->death) e_ptr->whot = 0;
+				else if (!inarea(wpos, &p_ptr->wpos)) e_ptr->whot = 0;
+				else {
+					e_ptr->cy = p_ptr->py;
+					e_ptr->cx = p_ptr->px;
+				}
+			} else {
+				// Hack: Decay rapidly without a target.
+				e_ptr->time -= 1;
+			}
+			for (l = 0; l < tdi[e_ptr->rad]; l++) {
+				j = e_ptr->cy + tdy[l];
+				i = e_ptr->cx + tdx[l];
+				if (!in_bounds2(wpos, j, i)) continue;
+				c_ptr = &zcave[j][i];
+				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
+					c_ptr->effect = k;
+					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+					everyone_lite_spot(wpos, j, i);
 				}
 			}
 		}
@@ -2986,8 +3024,8 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 			}
 			break;
 
-
-		case TV_RUNE: { //Format: @O<t?><imperative><form> {!R}
+#if 0
+		case TV_RUNE: { //Format: @O<t?><mode><type>
 
 			/* Validate Rune */
 			if (o_ptr->sval < 0 || o_ptr->sval > RCRAFT_MAX_PROJECTIONS) break;
@@ -3029,6 +3067,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 			return TRUE;
 
 		break; }
+#endif
 	}
 
 	/* If all fails, then melee */
@@ -5038,6 +5077,10 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->ammo_brand)
 		(void)set_ammo_brand(Ind, p_ptr->ammo_brand - minus_magic, p_ptr->ammo_brand_t, p_ptr->ammo_brand_d);
 
+	/* Nimbus - Kurzel */
+	if (p_ptr->nimbus)
+		(void)set_nimbus(Ind, p_ptr->nimbus - minus_magic, p_ptr->nimbus_t, p_ptr->nimbus_d);
+
 	/* weapon brand time */
 	if (p_ptr->melee_brand)
 		(void)set_melee_brand(Ind, p_ptr->melee_brand - minus_magic, p_ptr->melee_brand_t, p_ptr->melee_brand_d);
@@ -6245,7 +6288,7 @@ static void process_player_end(int Ind) {
 						cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
 						if (!p_ptr->shooting_till_kill) p_ptr->shoot_till_kill_spell = 0;
 					} else if (p_ptr->shoot_till_kill_rcraft) {
-						(void)cast_rune_spell(Ind, 5, p_ptr->FTK_e_flags, p_ptr->FTK_m_flags, 0, 1);
+						cast_rune_spell(Ind, p_ptr->FTK_e_flags, p_ptr->FTK_m_flags, 5);
 					} else if (p_ptr->shoot_till_kill_mimic) {
 						do_cmd_mimic(Ind, p_ptr->shoot_till_kill_mimic - 1 + 3, 5);
 					} else if (p_ptr->shoot_till_kill_wand) {

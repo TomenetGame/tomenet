@@ -1882,6 +1882,56 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 #endif
 }
 
+void cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
+	player_type *p_ptr = Players[Ind];
+	int ftk_maybe, ftk_type;
+
+	/* FTK */
+	if (p_ptr->shooting_till_kill) {
+		p_ptr->shooting_till_kill = FALSE;
+		if (dir == 5) p_ptr->shooty_till_kill = TRUE;
+	}
+	if (dir == 11) {
+		get_aim_dir(Ind);
+		p_ptr->current_rcraft = 1;
+		p_ptr->current_rcraft_e_flags = lo;
+		p_ptr->current_rcraft_m_flags = hi;
+		return;
+	}
+
+	/* Paranoia */
+	break_cloaking(Ind, 5);
+	break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+	un_afk_idle(Ind);
+
+	/* Cast the spell, handle FTK */
+	u32b u = ((u32b)lo) | ((u32b)hi << 16);
+	if (u) {
+		ftk_maybe = exec_lua(Ind, format("return cast_rune_spell(%d, %d, %d)", Ind, dir, u));
+		ftk_type = exec_lua(Ind, format("return rcraft_ftk(%d)", u));
+		if (p_ptr->shooty_till_kill && ftk_maybe) {
+			if (ftk_type == 0) return;
+#ifndef PY_PROJ_WALL
+			if (ftk_type == 1 && !projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+#else
+			if (ftk_type == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+#endif
+			if (dir != 5 || !target_okay(Ind)) return;
+			p_ptr->shooting_till_kill = TRUE;
+			p_ptr->shoot_till_kill_rcraft = TRUE;
+			p_ptr->FTK_e_flags = lo;
+			p_ptr->FTK_m_flags = hi;
+			p_ptr->FTK_energy = exec_lua(Ind, format("return rspell_energy(%d, %d)", Ind, u));
+			p_ptr->shoot_till_kill_spell = FALSE;
+			p_ptr->shoot_till_kill_mimic = FALSE;
+			p_ptr->shoot_till_kill_wand = FALSE;
+			p_ptr->shoot_till_kill_rod = FALSE;
+		}
+	}
+}
+
 /* Mimic powers, moved to their own functions - C. Blue */
 void shriek(int Ind) {
 	player_type *p_ptr = Players[Ind];

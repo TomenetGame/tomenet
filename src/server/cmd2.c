@@ -5379,6 +5379,17 @@ int breakage_chance(object_type *o_ptr) {
 	return 10;
 }
 
+/* Magic brand, shield - Kurzel */
+void do_nimbus(int Ind, int y, int x) {
+	player_type *p_ptr = Players[Ind];
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_ball", NULL, SFX_TYPE_COMMAND, TRUE);
+#endif
+	project(0 - Ind, 1, &p_ptr->wpos, y, x, p_ptr->nimbus_d, p_ptr->nimbus_t,
+	PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO | PROJECT_LODF, "");
+	return;
+}
+
 /* Add a nice ball if needed */
 static void do_arrow_brand_effect(int Ind, int y, int x) {
 	player_type *p_ptr = Players[Ind];
@@ -6428,21 +6439,22 @@ void do_cmd_fire(int Ind, int dir) {
 								if (p_ptr->ranged_barrage)
 									set_stun(0 - c_ptr->m_idx, q_ptr->stun + 35 + get_skill_scale(p_ptr, SKILL_COMBAT, 5));
 
-
 								/* Take damage */
 								take_hit(0 - c_ptr->m_idx, tdam, p_ptr->name, Ind);
-
 								/* XXX confusion arrow is not handled right
 								 * in do_arrow_brand_effect */
 								if (!boomerang && p_ptr->ammo_brand_t
 								    && p_ptr->ammo_brand_t != TBRAND_CHAO)
 									do_arrow_brand_effect(Ind, y, x);
 
+								/* Ammo pval takes precedence - Kurzel */
 								if (!boomerang && !magic && o_ptr->pval)
 									do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+								else if (p_ptr->nimbus) do_nimbus(Ind, y, x);
 
 								/* Stop looking */
 								if (!p_ptr->ammo_brand || (p_ptr->ammo_brand_t != TBRAND_VORP) || boomerang) break;
+
 							}
 						}
 
@@ -6712,11 +6724,14 @@ void do_cmd_fire(int Ind, int dir) {
 					if (!boomerang && p_ptr->ammo_brand_t)
 						do_arrow_brand_effect(Ind, y, x);
 
+					/* Ammo pval takes precedence - Kurzel */
 					if (!boomerang && !magic && o_ptr->pval)
 						do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+					else if (p_ptr->nimbus) do_nimbus(Ind, y, x);
 
 					/* Stop looking */
 					if (!p_ptr->ammo_brand || (p_ptr->ammo_brand_t != TBRAND_VORP) || boomerang) break;
+
 				}
 			}
 

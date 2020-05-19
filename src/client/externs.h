@@ -65,12 +65,6 @@ extern errr init_gtk(int, char **);
  * Not-so-Automatically generated "variable" declarations
  */
 
-/* common/tables.c */
-extern r_element r_elements[RCRAFT_MAX_ELEMENTS];
-extern r_imperative r_imperatives[RCRAFT_MAX_IMPERATIVES];
-extern r_type r_types[RCRAFT_MAX_TYPES];
-extern r_projection r_projections[RCRAFT_MAX_PROJECTIONS];
-
 /* c-spell.c */
 /*extern void show_browse(int book); */
 extern s32b get_school_spell(cptr do_what, int *item_book);
@@ -87,19 +81,7 @@ extern void do_stance(void);
 extern void do_melee_technique(void);
 extern void do_ranged_technique(void);
 extern bool get_item_hook_find_spell(int *item, int mode);
-extern byte flags_to_elements(byte element[], u16b e_flags);
-extern byte flags_to_imperative(u16b m_flags);
-extern byte flags_to_type(u16b m_flags);
-extern byte flags_to_projection(u16b e_flags);
-extern byte rspell_skill(byte element[], byte elements);
-extern byte rspell_level(byte imperative, byte type);
-extern s16b rspell_diff(byte skill, byte level);
-extern byte rspell_cost(byte imperative, byte type, byte skill);
-extern byte rspell_fail(byte imperative, byte type, s16b diff, u16b penalty);
-extern u16b rspell_damage(u32b *dx, u32b *dy, byte imperative, byte type, byte skill, byte projection);
-extern byte rspell_radius(byte imperative, byte type, byte skill, byte projection);
-extern byte rspell_duration(byte imperative, byte type, byte skill, byte projection, u16b dice);
-extern void do_runespell();
+extern void do_runecraft();
 extern void do_breath(void);
 
 /* tables.c */
@@ -210,7 +192,7 @@ extern bool item_tester_hook_device(object_type *o_ptr);
 extern bool item_tester_hook_armour(object_type *o_ptr);
 extern bool item_tester_hook_weapon(object_type *o_ptr);
 extern bool item_tester_hook_custom_tome(object_type *o_ptr);
-extern bool item_tester_hook_rune(object_type *o_ptr);
+extern bool item_tester_hook_rune_enchant(object_type *o_ptr);
 extern bool item_tester_hook_armour_no_shield(object_type *o_ptr);
 extern bool item_tester_hook_id(object_type *o_ptr);
 extern bool item_tester_hook_starid(object_type *o_ptr);

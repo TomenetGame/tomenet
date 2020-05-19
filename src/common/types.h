@@ -643,8 +643,7 @@ struct effect_type {
 	s16b    time;           /* For how long */
 	s16b    dam;            /* How much damage */
 	u32b    type;           /* Of which type */ /* GF_XXX, for now */
-	s16b	sy;		/* Start of the cast (beam shapes) */
-	s16b	sx;		/* Start of the cast (beam shapes) */
+	s32b	  whot;           /* Effect target, p_ptr->target_who - Kurzel */
 	s16b    cy;             /* Center of the cast */
 	s16b    cx;             /* Center of the cast */
 	s16b    rad;            /* Radius */
@@ -2719,11 +2718,13 @@ struct player_type {
 	s16b tim_manashield;		/* Timed -- Mana Shield */
 	s16b tim_mimic;			/* Timed -- Mimicry */
 	s16b tim_mimic_what;		/* Timed -- Mimicry */
-//UNUSED just queried
 	s16b ammo_brand;			/* Timed -- Bow Branding */
 	u16b ammo_brand_t;		/* Timed -- Bow Branding */
 	s16b ammo_brand_d;		/* Timed -- Bow Branding */
-	s16b melee_brand;			/* Timed -- Weapon Branding (used by runecraft) */
+	s16b nimbus;      /* Timed -- Magic brand, shield, resist - Kurzel */
+	byte nimbus_t;    /* Timed -- GF_TYPE to resist and project() */
+	byte nimbus_d;    /* Timed -- Damage for project() */
+	s16b melee_brand;			/* Timed -- Weapon Branding */
 	u16b melee_brand_t;			/* Timed -- Weapon Branding */
 	s16b melee_brand_d;			/* Timed -- Weapon Branding */
 	s16b prob_travel;		/* Timed -- Probability travel */
@@ -3923,52 +3924,6 @@ struct global_event_type {
 	int limited;		/* limited amount of participants? (smaller than MAX_GE_PARTICIPANTS) */
 	int cleanup;		/* what kind of cleaning-up is required when event ends (state=255) ? */
 	bool noghost;		/* event will erase character on failure */
-};
-
-/* Runecraft */
-typedef struct r_element r_element;
-struct r_element {
-	u16b flag;
-	char * name;
-	u16b skill;
-};
-typedef struct r_imperative r_imperative;
-struct r_imperative {
-	u16b flag;
-	char * name;
-	byte level;
-	byte cost;
-	s16b fail;
-	byte damage;
-	s16b radius;
-	byte duration;
-	byte energy;
-};
-typedef struct r_type r_type;
-struct r_type {
-	u16b flag;
-	char * name;
-	byte level;
-	byte c_min;
-	byte c_max;
-	byte d1min;
-	byte d2min;
-	byte d1max;
-	byte d2max;
-	byte dbmin;
-	u16b dbmax;
-	byte r_min;
-	byte r_max;
-	byte d_min;
-	byte d_max;
-};
-typedef struct r_projection r_projection;
-struct r_projection {
-	u16b flags;
-	int gf_type;
-	int weight;
-	char * name;
-	u32b resist;
 };
 
 /* Auction system - mikaelh */

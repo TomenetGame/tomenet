@@ -3119,7 +3119,7 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 }
 
 /*
- * Hurt the player with electricity
+ * Hurt the player with Electricity
  */
 int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	player_type *p_ptr = Players[Ind];
@@ -3270,9 +3270,6 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 
 	return(dam);
 }
-
-
-
 
 
 /*
@@ -5641,7 +5638,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* do not notice things the player did to themselves by ball spell */
 	/* fix me XXX XXX XXX */
 
-	bool priest_spell = FALSE, brief_rune_spell = FALSE, dark_spell = FALSE;
+	bool priest_spell = FALSE, dark_spell = FALSE;
 
 	/* Polymorph setting (true or false) */
 	int do_poly = 0;
@@ -5686,11 +5683,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	if (typ == GF_OLD_DRAIN && (dam & 4096)) { //currently unused since doomed grounds deals annihilation instead
 		priest_spell = TRUE;
 		dam &= ~4096; // the real damage (percentage drain)
-	}
-	//marker to apply reduced damage cap, since it's a 'Brief' runecraft spell
-	if (typ == GF_ANNIHILATION && (dam & 8192)) {
-		brief_rune_spell = TRUE;
-		dam &= ~8192;
 	}
 	//marker to handle blindness power differently
 	if (typ == GF_DARK_WEAK && (dam & 8192)) {
@@ -6818,11 +6810,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Make it have an effect on low-HP monsters such as townies */
 		if (!dam) dam = 1;
 		/* Cap */
-		if (brief_rune_spell) {
-			if (dam > 600) dam = 600;
-		} else {
-			if (dam > 1200) dam = 1200;
-		}
+		if (dam > 1200) dam = 1200;
 		break;
 
 	/* Polymorph monster (Use "dam" as "power") */
@@ -8773,7 +8761,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	dun_level *l_ptr = getfloor(wpos);
 
-	int priest_spell = FALSE, brief_rune_spell = FALSE, dark_spell = FALSE;
+	int priest_spell = FALSE, dark_spell = FALSE;
 
 
 	/* Bad player number */
@@ -8803,11 +8791,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (typ == GF_OLD_DRAIN && (dam & 4096)) { //currently unused since doomed grounds deals annihilation instead
 		priest_spell = TRUE;
 		dam &= ~4096; // the real damage (percentage drain)
-	}
-	//marker to apply reduced damage cap, since it's a 'Brief' runecraft spell
-	if (typ == GF_ANNIHILATION && (dam & 8192)) {
-		brief_rune_spell = TRUE;
-		dam &= ~8192;
 	}
 	//marker to handle blindness power differently
 	if (typ == GF_DARK_WEAK && (dam & 8192)) {
@@ -11303,9 +11286,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			dam *= 3; dam /= (randint(6) + 6);
 		}
 
-		//no need to check for 1200 damage cap as it cannot be reached in pvp
-		if (brief_rune_spell && dam > 600) dam = 600;
-
 		if (!dam) dam = 1;
 		take_hit(Ind, dam, killer, -who);
 		break;
@@ -11528,6 +11508,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	//byte gx[256], gy[256];
 	//byte gx[tdi[PREPARE_RADIUS]], gy[tdi[PREPARE_RADIUS]];
 	byte gx[512], gy[512];
+	bool duplicate;
+	byte tx[512], ty[512];
 
 	/* Encoded "radius" info (see above) */
 	//byte gm[16];
@@ -11744,6 +11726,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 		/* Analyze whether the projection can overcome terrain in its way - C. Blue */
 		/* Check: Fire vs Trees */
+#if 0
+		// This causes bolts and beams to skip grids or add extra grids - Kurzel
 		if (allow_terraforming(wpos, FEAT_TREE)) {
 			switch (c_ptr->feat) {
 			case FEAT_TREE: terrain_resistance = 50; break;
@@ -11760,7 +11744,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			default: terrain_damage = -1; break;
 			}
 		}
-
+#endif
 		/* Accordingly, stop the projection or have it go on unhindered */
 		if (terrain_damage >= 0 && terrain_resistance >= 0 &&
 		    magik(terrain_damage - terrain_resistance)) {
@@ -11874,18 +11858,19 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		if (dist > MAX_RANGE) break;
 
 		/* Hack -- Balls explode BEFORE reaching walls or doors */
+		/* Kurzel - Handles Cones, Fixes Beams */
 		if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
-			if (!cave_floor_bold(zcave, y9, x9) && (rad > 0)) break;
+			if (!cave_floor_bold(zcave, y9, x9) && ((rad > 0) && !(flg & PROJECT_BEAM))) break;
 #ifndef PROJ_MON_ON_WALL
 		} else if (IS_PVP) { /* ..or rather levitating through the air? */
 			if (!cave_contact(zcave, y9, x9)
  #ifdef DOUBLE_LOS_SAFETY
 			    && !ok_DLS
  #endif
-			     && (rad > 0)) break;
+			     && ((rad > 0) && !(flg & PROJECT_BEAM))) break;
 #endif
 		} else { /* monsters can target certain non-los grid types directly */
-			if (rad > 0) {
+			if ((rad > 0) && !(flg & PROJECT_BEAM)) {
 #ifdef PROJ_ON_WALL
 				if (broke_on_terrain2) break;
 #else
@@ -11975,6 +11960,142 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		x = x9;
 	}
 
+		/* Cones */
+	if ((flg & PROJECT_BEAM) && (flg & PROJECT_FULL)) {
+
+		/* Trace without collision instead of scaling radius to target dist */
+		x = x9 = x1;
+		y = y9 = y1;
+		dist = 0;
+		while (TRUE) {
+			if (!in_bounds3(wpos, l_ptr, y, x)) break; // Paranoia - sector edge?
+			y9 = y;
+			x9 = x;
+			mmove2(&y9, &x9, y1, x1, y2, x2);
+			dist++;
+			if (dist > MAX_RANGE) break;
+			if (distance(y1, x1, y9, x9) > MAX_RANGE) break;
+			y = y9;
+			x = x9;
+		}
+
+		true_dist = distance(y1, x1, y, x);
+		// rad = rad * true_dist / MAX_RANGE; //too much error for close targets
+
+		if (rad > 0) {
+			t = 0;
+			y2 = y;
+			x2 = x;
+			dist = 1;
+			for (i = 1; i <= tdi[rad]; i++) {
+				if (i == tdi[dist])
+					if (++dist > rad) break;
+				y = y2 + tdy[i];
+				x = x2 + tdx[i];
+				if (!in_bounds3(wpos, l_ptr, y, x)) continue;
+				// if (distance(y, x, y1, x1) != true_dist) continue; // misses some .
+				if (distance(y, x, y1, x1) > true_dist) continue; // overkill
+				ty[t] = y;
+				tx[t] = x;
+				t++;
+			}
+			rad = 0;
+			for (j = 0; j < t; j++) {
+				broke_on_terrain1 = FALSE;
+
+#ifdef DOUBLE_LOS_SAFETY
+				if (IS_PVP) { /* ..but we're not a monster? */
+	#ifndef PY_PROJ_WALL
+					ok_DLS = projectable(wpos, y1, x1, y2, x2, MAX_RANGE);
+	#else
+					ok_DLS = projectable_wall(wpos, y1, x1, y2, x2, MAX_RANGE);
+	#endif
+				} else { /* Catch indirect attack spells! Those are RF4_ROCKET and RF4_BR_DISI. */
+					/* Monsters always could target players in walls (even if the projection explodes _before_ the wall)
+						 so we only need to use projectable_wall() here. */
+					ok_DLS = projectable_wall(wpos, y1, x1, y2, x2, MAX_RANGE);
+				}
+#endif
+
+				x2 = tx[j];
+				y2 = ty[j];
+				x = x9 = x1;
+				y = y9 = y1;
+				dist = 0;
+				while (TRUE) {
+					if (!in_bounds3(wpos, l_ptr, y, x)) break; // Paranoia - sector edge?
+					duplicate = FALSE;
+					for (i = 0; i < grids; i++) {
+						if ((y == gy[i]) && (x == gx[i])) {
+							duplicate = TRUE;
+							break;
+						}
+					}
+					if (!duplicate) { // This is really bad, do better? - Kurzel
+						gy[grids] = y;
+						gx[grids] = x;
+						grids++;
+					}
+					y9 = y;
+					x9 = x;
+					mmove2(&y9, &x9, y1, x1, y2, x2);
+					dist++;
+					if (distance(y1, x1, y9, x9) > MAX_RANGE) break;
+					if (dist > MAX_RANGE) break;
+
+					/* Obey noodles of DLS logic, eventually trim? - Kurzel */
+					if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
+						if (!cave_floor_bold(zcave, y9, x9) && ((rad > 0) && !(flg & PROJECT_BEAM))) break;
+#ifndef PROJ_MON_ON_WALL
+					} else if (IS_PVP) { /* ..or rather levitating through the air? */
+						if (!cave_contact(zcave, y9, x9)
+	#ifdef DOUBLE_LOS_SAFETY
+						    && !ok_DLS
+	#endif
+						    && ((rad > 0) && !(flg & PROJECT_BEAM))) break;
+	#endif
+					} else { /* monsters can target certain non-los grid types directly */
+						if ((rad > 0) && !(flg & PROJECT_BEAM)) {
+#ifdef PROJ_ON_WALL
+							if (broke_on_terrain2) break;
+#else
+	#ifdef DOUBLE_LOS_SAFETY
+							if ((!cave_proj(zcave, y9, x9) && !ok_DLS)
+	#else
+							if (!cave_proj(zcave, y9, x9)
+	#endif
+							    || broke_on_terrain2) break;
+#endif
+							else if (!cave_contact(zcave, y9, x9)
+#ifdef DOUBLE_LOS_SAFETY
+							    && !ok_DLS
+#endif
+							    ) {
+#ifndef PROJ_MON_ON_WALL
+								/* if there isn't a player on the grid, we can't target it */
+								if (zcave[y9][x9].m_idx >= 0) break;
+#else
+								/* if there isn't a player/monster on the grid, we can't target it */
+								if (zcave[y9][x9].m_idx == 0) break;
+#endif
+								/* can't travel any further for sure now */
+								broke_on_terrain2 = TRUE;
+							}
+						}
+					}
+
+					/* Combine with above noodles eventually? - Kurzel */
+					// if (!cave_los(zcave, y9, x9)) break; // no DLS or fancy terrain
+					if (broke_on_terrain1) break; // allow the wall to be hit
+					if (!cave_contact(zcave, y9, x9)) broke_on_terrain1 = TRUE; // no DLS
+
+					y = y9;
+					x = x9;
+				}
+			}
+		}
+	}
+
 	/* Firewall application has been finished above already in the 'spell animation' loop, so discard it from further processing. */
 	if (project_time_effect & EFF_WALL) {
 		flg &= ~(PROJECT_STAY);
@@ -12056,8 +12177,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 	/* If we found a "target", explode there */
 	if (true_dist <= MAX_RANGE && !suppress_explosion) {
-		/* Mega-Hack -- remove the final "beam" grid */
-		//if ((flg & PROJECT_BEAM) && (grids > 0)) grids--;
 
 		dist = 0;
 

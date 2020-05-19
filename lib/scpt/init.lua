@@ -43,6 +43,7 @@ pern_dofile(Ind, "powers.lua")
 
 -- Add the schools of magic
 pern_dofile(Ind, "spells.lua")
+pern_dofile(Ind, "runecraft.lua")
 
 -- Initialize audio
 pern_dofile(Ind, "audio.lua")

@@ -3186,6 +3186,12 @@ bool make_attack_melee(int Ind, int m_idx) {
 #endif
 				}
 
+				/* Nimbus - Kurzel */
+				if (p_ptr->nimbus && alive) {
+					msg_format(Ind, "%^s breaches your aura of power!", m_name);
+					do_nimbus(Ind, m_ptr->fy, m_ptr->fx);
+				}
+
 				/*
 				 *Apply the 'shield auras'
 				 */

@@ -2410,6 +2410,7 @@
 #define EFF_CROSSHAIR_B		0x00000020
 #define EFF_CROSSHAIR_C		0x00000040
 #define EFF_THINWAVE		0x00000080	/* Same as wave, but thickness 1 instead of 3 (hits each target only once instead of three times) */
+#define EFF_VORTEX          0x00000100	/* The area follows the target - Kurzel */
 
 #define EFF_THUNDER_VISUAL	0x00800000	/* For 'Thunderstorm' spell electrocution */
 #define EFF_LIGHTNING1		0x01000000	/* For Nether Realm finishing */
@@ -8172,13 +8173,36 @@ extern int PlayerUID;
  #define SKILL_EGO_POWER
 #endif	/* 0 */
 
-#define SKILL_SCHOOL_RUNECRAFT	95
-#define SKILL_R_LITE		96
-#define SKILL_R_DARK		97
-#define SKILL_R_NEXU		98
-#define SKILL_R_NETH		99
-#define SKILL_R_CHAO		100
-#define SKILL_R_MANA		101
+#define SKILL_SCHOOL_RUNECRAFT  95
+#define SKILL_R_LITE            96
+#define SKILL_R_DARK            97
+#define SKILL_R_NEXU            98
+#define SKILL_R_NETH            99
+#define SKILL_R_CHAO            100
+#define SKILL_R_MANA            101
+
+/* Sync with lib/game/k_info.txt and lib/scpt/runecraft.lua - Kurzel */
+#define SV_R_LITE   0x01
+#define SV_R_DARK   0x02
+#define SV_R_NEXU   0x04
+#define SV_R_NETH   0x08
+#define SV_R_CHAO   0x10
+#define SV_R_MANA   0x20
+#define SV_R_CONF   (SV_R_LITE|SV_R_DARK)
+#define SV_R_INER   (SV_R_LITE|SV_R_NEXU)
+#define SV_R_ELEC   (SV_R_LITE|SV_R_NETH)
+#define SV_R_FIRE   (SV_R_LITE|SV_R_CHAO)
+#define SV_R_WATE   (SV_R_LITE|SV_R_MANA)
+#define SV_R_GRAV   (SV_R_DARK|SV_R_NEXU)
+#define SV_R_COLD   (SV_R_DARK|SV_R_NETH)
+#define SV_R_ACID   (SV_R_DARK|SV_R_CHAO)
+#define SV_R_POIS   (SV_R_DARK|SV_R_MANA)
+#define SV_R_TIME   (SV_R_NEXU|SV_R_NETH)
+#define SV_R_SOUN   (SV_R_NEXU|SV_R_CHAO)
+#define SV_R_SHAR   (SV_R_NEXU|SV_R_MANA)
+#define SV_R_HELL   (SV_R_NETH|SV_R_CHAO)
+#define SV_R_FORC   (SV_R_NETH|SV_R_MANA)
+#define SV_R_DISE   (SV_R_CHAO|SV_R_MANA)
 
 /* for future use, so no client update will be required */
 #define SKILL_SOULFEASTING	102	/* could switch with SKILL_NECROMANCY if ever needed */
@@ -8600,95 +8624,6 @@ extern int PlayerUID;
 
 #endif
 
-/* Runecraft */
-/* Physical Runes - match k_info.txt and common/tables.c index; Sigils in object_flags() */
-#define SV_R_LITE			0
-#define SV_R_DARK			1
-#define SV_R_NEXU			2
-#define SV_R_NETH			3
-#define SV_R_CHAO			4
-#define SV_R_MANA			5
-
-#define SV_R_CONF			6
-#define SV_R_INER			7
-#define SV_R_ELEC			8
-#define SV_R_FIRE			9
-#define SV_R_WATE			10
-#define SV_R_GRAV			11
-#define SV_R_COLD			12
-#define SV_R_ACID			13
-#define SV_R_POIS			14
-#define SV_R_SHAR			15
-#define SV_R_SOUN			16
-#define SV_R_TIME			17
-#define SV_R_DISE			18
-#define SV_R_ICEE			19
-#define SV_R_PLAS			20
-
-#define RSPELL_MAX_ELEMENTS 2
-
-/* Elements */
-/* Reduced for elegance while maintaining 'original' element completion / Tolkien lore. */
-#define RCRAFT_MAX_ELEMENTS 6
-
-#define R_LITE 0x0001
-#define R_DARK 0x0002
-#define R_NEXU 0x0004
-#define R_NETH 0x0008
-
-#define R_CHAO 0x0010
-#define R_MANA 0x0020
-
-/* Projections */
-/* Combinations including the above that appear as projectable GF_TYPE elements */
-#define RCRAFT_MAX_PROJECTIONS 21 //6c2+6c1=21
-
-/* Types */
-/* Order matches the index in common/tables.c; ascending by level. */
-#define RCRAFT_MAX_TYPES 7
-
-#define T_BOLT 0x0001
-#define T_CLOU 0x0002
-#define T_SIGN 0x0004
-#define T_BALL 0x0008
-
-#define T_WAVE 0x0010
-#define T_GLPH 0x0020
-#define T_BURS 0x0040
-
-
-/* Imperatives */
-/* Order matches the index in common/tables.c; ascending by level. */
-#define RCRAFT_MAX_IMPERATIVES 8
-
-#define I_MINI 0x0100
-#define I_LENG 0x0200
-#define I_COMP 0x0400
-#define I_MODE 0x0800
-
-#define I_EXPA 0x1000
-#define I_BRIE 0x2000
-#define I_MAXI 0x4000
-#define I_ENHA 0x8000
-
-/* Constants */
-/* Runespell constants for balancing and sanity checks */
-#define S_COST_MIN 1
-#define S_COST_MAX 75
-#define S_DIFF_MAX 15 //Maximum level difference between spell and skill levels
-#define S_RADIUS_MIN 1
-#define S_RADIUS_MAX 14
-#define S_DURATION_MIN 3
-#define S_DURATION_MAX 50
-#define S_WEIGHT_LO 150 //refer common/tables.c
-#define S_WEIGHT_HI 1200 //refer common/tables.c
-#define S_WEIGHT_INFLUENCE 25 //0 to 100; directly proportional to the spread of element damage caps.
-
-/* Macros */
-#define rget_level(x) ((skill * (x)) / 50)
-//#define rget_weight(x) ((S_WEIGHT_HI * (100 * (100 - S_WEIGHT_INFLUENCE) + (100 * S_WEIGHT_INFLUENCE * (x - S_WEIGHT_LO) / (S_WEIGHT_HI - S_WEIGHT_LO))) / 100 + 100 * S_WEIGHT_LO) / 100)
-#define rget_weight(x) ((x * S_WEIGHT_INFLUENCE + S_WEIGHT_HI * (100 - S_WEIGHT_INFLUENCE)) / 100) // Simple percent weighting, for easier hand calculations. - Kurzel
-
 /* macro for debugging Doppelgaenger @s */
 #define cave_midx_debug(wpos_, cy, cx, midx) { \
     if (midx < 0) { \
@@ -8976,7 +8911,7 @@ extern int PlayerUID;
 #define ITH_ENCH_AC	2
 #define ITH_ENCH_WEAP	3
 #define ITH_CUSTOM_TOME	4
-#define ITH_RUNE	5
+#define ITH_RUNE_ENCHANT	5
 #define ITH_ENCH_AC_NO_SHIELD 6
 #define ITH_ID		7
 #define ITH_STARID	8

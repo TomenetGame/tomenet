@@ -8656,159 +8656,9 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 
 	/* Hacks: Certain items are easier/harder to use in general: */
 
-	/* Runes */
-	if (o_ptr->tval == TV_RUNE) {
-		chance = chance / 10 - 20;
-		if (o_ptr->sval >= RCRAFT_MAX_ELEMENTS) chance -= 10;
-		switch (o_ptr->sval) {
-		/* basic tier */
-		case SV_R_LITE:
-			if (get_skill(p_ptr, SKILL_R_LITE))
-				chance += get_skill(p_ptr, SKILL_R_LITE) + 15;
-			break;
-		case SV_R_DARK:
-			if (get_skill(p_ptr, SKILL_R_DARK))
-				chance += get_skill(p_ptr, SKILL_R_DARK) + 15;
-			break;
-		case SV_R_NEXU:
-			if (get_skill(p_ptr, SKILL_R_NEXU))
-				chance += get_skill(p_ptr, SKILL_R_NEXU) + 15;
-			break;
-		case SV_R_NETH:
-			if (get_skill(p_ptr, SKILL_R_NETH))
-				chance += get_skill(p_ptr, SKILL_R_NETH) + 15;
-			break;
-		case SV_R_CHAO:
-			if (get_skill(p_ptr, SKILL_R_CHAO))
-				chance += get_skill(p_ptr, SKILL_R_CHAO) + 15;
-			break;
-		case SV_R_MANA:
-			if (get_skill(p_ptr, SKILL_R_MANA))
-				chance += get_skill(p_ptr, SKILL_R_MANA) + 15;
-			break;
-		/* high tier - Ew, hardcoded (but nice job). - Kurzel */
-		case SV_R_CONF:
-			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_DARK))
-				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_DARK)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_LITE))
-				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_DARK))
-				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
-		break;
-		case SV_R_INER:
-			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_NEXU))
-				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_NEXU)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_LITE))
-				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_NEXU))
-				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
-		break;
-		case SV_R_ELEC:
-			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_NETH))
-				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_NETH)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_LITE))
-				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_NETH))
-				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
-		break;
-		case SV_R_FIRE:
-			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_CHAO))
-				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_LITE))
-				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_CHAO))
-				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
-		break;
-		case SV_R_WATE:
-			if (get_skill(p_ptr, SKILL_R_LITE) && get_skill(p_ptr, SKILL_R_MANA))
-				chance += (get_skill(p_ptr, SKILL_R_LITE) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_LITE))
-				chance += get_skill(p_ptr, SKILL_R_LITE) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_MANA))
-				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-		break;
-		case SV_R_GRAV:
-			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_NEXU))
-				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_NEXU)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_DARK))
-				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_NEXU))
-				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
-		break;
-		case SV_R_COLD:
-			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_NETH))
-				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_NETH)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_DARK))
-				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_NETH))
-				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
-		break;
-		case SV_R_ACID:
-			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_CHAO))
-				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_DARK))
-				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_CHAO))
-				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
-		break;
-		case SV_R_POIS:
-			if (get_skill(p_ptr, SKILL_R_DARK) && get_skill(p_ptr, SKILL_R_MANA))
-				chance += (get_skill(p_ptr, SKILL_R_DARK) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_DARK))
-				chance += get_skill(p_ptr, SKILL_R_DARK) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_MANA))
-				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-		break;
-		case SV_R_SHAR:
-			if (get_skill(p_ptr, SKILL_R_NEXU) && get_skill(p_ptr, SKILL_R_NETH))
-				chance += (get_skill(p_ptr, SKILL_R_NEXU) + get_skill(p_ptr, SKILL_R_NETH)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_NEXU))
-				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_NETH))
-				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
-		break;
-		case SV_R_SOUN:
-			if (get_skill(p_ptr, SKILL_R_NEXU) && get_skill(p_ptr, SKILL_R_CHAO))
-				chance += (get_skill(p_ptr, SKILL_R_NEXU) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_NEXU))
-				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_CHAO))
-				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
-		break;
-		case SV_R_TIME:
-			if (get_skill(p_ptr, SKILL_R_NEXU) && get_skill(p_ptr, SKILL_R_MANA))
-				chance += (get_skill(p_ptr, SKILL_R_NEXU) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_NEXU))
-				chance += get_skill(p_ptr, SKILL_R_NEXU) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_MANA))
-				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-		break;
-		case SV_R_DISE:
-			if (get_skill(p_ptr, SKILL_R_NETH) && get_skill(p_ptr, SKILL_R_CHAO))
-				chance += (get_skill(p_ptr, SKILL_R_NETH) + get_skill(p_ptr, SKILL_R_CHAO)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_NETH))
-				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_CHAO))
-				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
-		break;
-		case SV_R_ICEE:
-			if (get_skill(p_ptr, SKILL_R_NETH) && get_skill(p_ptr, SKILL_R_MANA))
-				chance += (get_skill(p_ptr, SKILL_R_NETH) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_NETH))
-				chance += get_skill(p_ptr, SKILL_R_NETH) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_MANA))
-				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-		break;
-		case SV_R_PLAS:
-			if (get_skill(p_ptr, SKILL_R_CHAO) && get_skill(p_ptr, SKILL_R_MANA))
-				chance += (get_skill(p_ptr, SKILL_R_CHAO) + get_skill(p_ptr, SKILL_R_MANA)) / 2 + 25;
-			else if (get_skill(p_ptr, SKILL_R_CHAO))
-				chance += get_skill(p_ptr, SKILL_R_CHAO) / 2 + 10;
-			else if (get_skill(p_ptr, SKILL_R_MANA))
-				chance += get_skill(p_ptr, SKILL_R_MANA) / 2 + 10;
-		break;
-		}
-	}
+	if (o_ptr->tval == TV_RUNE)
+		return exec_lua(0, format("return rcraft_rune(%d,%d)", Ind, o_ptr->sval));
+
 #if 1
 	/* equippable magic devices are especially easy to use? (ie no wands/staves/rods)
 	   eg tele rings, serpent amulets, true artifacts */
@@ -8839,6 +8689,7 @@ static int magic_device_base_chance(int Ind, object_type *o_ptr) {
 /* just for display purpose, return an actual average percentage value */
 int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permille) {
 	int chance = magic_device_base_chance(Ind, o_ptr);
+	if (o_ptr->tval == TV_RUNE) return chance; // Hack: Rune Boni - Kurzel
 
 	/* 100% not possible to reach:
 	   For chance >= 201 this produces a rounding error that would result in displayed 100%,
@@ -8866,6 +8717,7 @@ bool activate_magic_device(int Ind, object_type *o_ptr) {
 	byte permille;
 
 	int chance = activate_magic_device_chance(Ind, o_ptr, &permille);
+	if (o_ptr->tval == TV_RUNE) return magik(chance);
 
 	/* Certain items are heavily restricted (todo: use WINNERS_ONLY flag instead for cleanliness) */
 	if (o_ptr->name1 == ART_PHASING && !p_ptr->total_winner) {

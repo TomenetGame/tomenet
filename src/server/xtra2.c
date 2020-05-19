@@ -872,6 +872,7 @@ bool set_melee_brand(int Ind, int v, u16b t, int p) {
 	return (TRUE);
 }
 
+
 /*
  * Set "p_ptr->ammo_brand_xxx", notice observable changes
  */
@@ -962,6 +963,58 @@ bool set_ammo_brand(int Ind, int v, u16b t, int p) {
 
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
+
+/*
+ * Set "p_ptr->nimbus_xxx", notice observable changes
+ */
+bool set_nimbus(int Ind, int v, byte t, byte d) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->nimbus) {
+			notice = TRUE;
+		} else if (p_ptr->nimbus > 15 && v <= 15) {
+			msg_print(Ind, "\377BYour aura of power starts to flicker and fade...");
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->nimbus) {
+			msg_print(Ind, "\377WYour aura of power dissipates.");
+			notice = TRUE;
+			t = 0;
+			d = 0;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->nimbus = v;
+	p_ptr->nimbus_t = t;
+	p_ptr->nimbus_d = d;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	calc_boni(Ind); // Hack: Modify boni tables directly! - Kurzel
+	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2716,6 +2769,9 @@ bool set_oppose_acid(int Ind, int v) {
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
@@ -2758,6 +2814,9 @@ bool set_oppose_elec(int Ind, int v) {
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2802,6 +2861,9 @@ bool set_oppose_fire(int Ind, int v) {
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
@@ -2845,6 +2907,9 @@ bool set_oppose_cold(int Ind, int v) {
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
@@ -2887,6 +2952,9 @@ bool set_oppose_pois(int Ind, int v) {
 
 	/* Disturb */
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni */
+	p_ptr->update |= (PU_BONUS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);

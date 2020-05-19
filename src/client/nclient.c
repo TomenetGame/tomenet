@@ -2872,10 +2872,14 @@ int Receive_item(void) {
 			item_tester_hook = item_tester_hook_custom_tome;
 			get_item_hook_find_obj_what = "Book name? ";
 			break;
-		case ITH_RUNE:
+		case ITH_RUNE_ENCHANT: // Request an allowed item when activating a rune.
 			get_item_extra_hook = get_item_hook_find_obj;
-			item_tester_hook = item_tester_hook_rune;
-			get_item_hook_find_obj_what = "Rune name? ";
+			item_tester_hook = item_tester_hook_rune_enchant;
+			get_item_hook_find_obj_what = "Which item? ";
+			clear_topline(); // Hack: EQUIP ONLY - Kurzel
+			if (!c_get_item(&item, "Which item? ", USE_EQUIP)) return 1;
+			Send_item(item);
+			return 1;
 			break;
 		case ITH_ENCH_AC_NO_SHIELD:
 			get_item_extra_hook = get_item_hook_find_obj;

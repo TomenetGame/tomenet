@@ -579,6 +579,17 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (old_value < 500 && new_value >= 500 && p_ptr->prace != RACE_MAIA)
 			msg_print(Ind, "\374\377GYou don't feel hunger for worldly food anymore.");
 		break;
+
+	case SKILL_R_LITE:
+	case SKILL_R_DARK:
+	case SKILL_R_NEXU:
+	case SKILL_R_NETH:
+	case SKILL_R_CHAO:
+	case SKILL_R_MANA:
+		if (old_value < 400 && new_value >= 400)
+			msg_print(Ind, "\374\377GYou learn to activate new runes of power.");
+		break;
+
 #ifdef ENABLE_OCCULT /* Occult */
 	case SKILL_OSHADOW:
 		if (old_value < 300 && new_value >= 300)

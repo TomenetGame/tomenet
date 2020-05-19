@@ -48,6 +48,7 @@ pern_dofile(Ind, "s_aux.lua")
 
 -- Add the schools of magic
 pern_dofile(Ind, "spells.lua")
+pern_dofile(Ind, "runecraft.lua")
 
 -- Data tables
 pern_dofile(Ind, "races.lua")

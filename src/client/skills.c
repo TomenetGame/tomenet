@@ -452,7 +452,8 @@ static int do_cmd_activate_skill_aux() {
 	C_MAKE(p, MAX_SKILLS, int);
 
 	for (i = 1; i < MAX_SKILLS; i++) {
-		if (s_info[i].action_mkey && p_ptr->s_info[i].value) {
+		/* At least gain one whole skill level to use it! - Kurzel */
+		if (s_info[i].action_mkey && p_ptr->s_info[i].value > 999) {
 			int j;
 			bool next = FALSE;
 
@@ -766,7 +767,7 @@ void do_activate_skill(int x_idx, int item) {
 			do_trap(item);
 			break;
 		case MKEY_RCRAFT:
-			do_runespell();
+			do_runecraft();
 			break;
 		case MKEY_STANCE:
 			do_stance();

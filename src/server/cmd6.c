@@ -5553,7 +5553,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 
 	switch (o_ptr->tval) {
-	case TV_RUNE: break;
+	case TV_RUNE: msg_print(Ind, "The rune glows with power!"); break;
 	case TV_BOOK: msg_print(Ind, "You open the book to add a new spell.."); break;
 #ifdef ENABLE_EXCAVATION
 	case TV_CHEMICAL: case TV_CHARGE: break;
@@ -5589,77 +5589,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	// -------------------- special basic items that can't vary -------------------- //
 	//(could be moved down to 'base items' for less efficiency but better sort order)
 
-	/* Rune de/re-combination */
 	if (o_ptr->tval == TV_RUNE) {
-		if (o_ptr->sval < RCRAFT_MAX_ELEMENTS) { //basic rune, so combine; keep lowest sale value, highest level
-			/* Remember the original rune */
-			p_ptr->current_activation = item;
-
-			/* Get the rune to combine with */
-			rune_combine(Ind);
-
-			return;
-		} else { //top-tier rune, so decombine
-			if (o_ptr->level || o_ptr->owner == p_ptr->id) { //Do we own it..?
-				/* Lookup Component Rune SVALS (matched to tables.c index) */
-				u16b e_flags = r_projections[o_ptr->sval].flags;
-				byte element[RCRAFT_MAX_ELEMENTS];
-				byte elements = 0; // = flags_to_elements(element, e_flags);
-				for (i = 0; i < RCRAFT_MAX_ELEMENTS; i++)
-					if ((e_flags & r_elements[i].flag) == r_elements[i].flag) {
-						element[elements] = i;
-						elements++;
-					}
-
-				/* Remember the original info */
-				s32b owner = o_ptr->owner;
-				byte mode = o_ptr->mode;
-				s16b level = o_ptr->level;
-				byte discount = o_ptr->discount;
-				byte number = o_ptr->number;
-				s16b note = o_ptr->note;
-				s32b iron_trade = o_ptr->iron_trade;
-				s32b iron_turn = o_ptr->iron_turn;
-
-				/* Rune Preservation? */
-				if (check_guard_inscription(o_ptr->note, 'R')) {
-					if (number > 1) number--;
-					else {
-						msg_format(Ind, "\377yYou choose to preserve your rune.");
-						return;
-					}
-				}
-
-				/* Destroy the rune stack in the pack (or reduce to just one) */
-				msg_format(Ind, "There is a decoupling of magic.");
-				inven_item_increase(Ind, item, -number);
-				inven_item_optimize(Ind, item);
-
-				/* Make new stacks */
-				object_type *q_ptr, forge;
-				for (i = 0; i < RSPELL_MAX_ELEMENTS; i++) {
-
-					/* Default rune template */
-					q_ptr = &forge;
-					object_wipe(q_ptr);
-					invcopy(q_ptr, lookup_kind(TV_RUNE, element[i]));
-
-					/* Recall original parameters */
-					q_ptr->owner = owner;
-					q_ptr->mode = mode;
-					q_ptr->level = level;
-					q_ptr->discount = discount;
-					q_ptr->number = number;
-					q_ptr->note = note;
-					q_ptr->iron_trade = iron_trade;
-					q_ptr->iron_turn = iron_turn;
-
-					/* Create the rune stack */
-					inven_carry(Ind, q_ptr);
-				}
-			}
-			return;
-		}
+		p_ptr->current_activation = item;
+		activate_rune(Ind);
+		return;
 	}
 
 	if (o_ptr->tval == TV_GOLEM) {
@@ -7494,6 +7427,7 @@ bool unmagic(int Ind) {
 		set_st_anchor(Ind, 0) |
 		set_prob_travel(Ind, 0) |
 		set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0) |
+		set_nimbus(Ind, 0, 0, 0) |
 #if 0
 		set_mimic(Ind, 0, 0) |
 #endif

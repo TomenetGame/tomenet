@@ -219,11 +219,16 @@ extern bool turn_undead(int Ind);
 extern void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, byte feat, int stun);
 extern void earthquake(struct worldpos *wpos, int cy, int cx, int r);
 extern void wipe_spell(struct worldpos *wpos, int cy, int cx, int r);
+extern bool target_okay(int Ind);
 extern void lite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, bool player, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);
+extern bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker);
+extern bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker);
+extern bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker);
+extern bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char *attacker);
 extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
 extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker);
@@ -270,7 +275,8 @@ extern bool do_mstopcharm(int Ind);
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);
 
 /* runecraft.c */
-extern bool warding_rune(int Ind, byte typ, byte mod, byte lvl);
+extern bool rune_enchant(int Ind, int item);
+extern bool warding_rune(int Ind, byte typ, byte dam);
 extern bool warding_rune_break(int m_idx);
 
 /* Druidry */
@@ -298,6 +304,7 @@ extern bool do_shadow_gate(int Ind, int range);
 /* xtra2.c */
 extern bool set_melee_brand(int Ind, int v, int t, int p);
 extern bool set_ammo_brand(int Ind, int v, int t, int p);
+extern bool set_nimbus(int Ind, int v, byte t, byte d);
 
 /*
  * The spell function must provide the desc

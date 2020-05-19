@@ -4434,7 +4434,6 @@ bool recharge_aux(int Ind, int item, int pow) {
 
 /*
  * Generate a cloud effect directly under all viewable monsters.
- * 'Surge' effect for runies, replacing 'Dispel'. - Kurzel
  */
 bool project_los_wall(int Ind, int typ, int dam, int time, int interval, char *attacker) {
 	player_type *p_ptr = Players[Ind];
@@ -6534,12 +6533,12 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 }
 
 /*
- * Cast a full ball spell
  * Stop if we hit a monster, act as a "ball"
  * Allow "target" mode to pass over monsters
  * Affect grids, objects, and monsters
+ * Uniform damage over radius, maybe great for non-damaging effects - Kurzel
  */
-bool fire_full_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
+bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	char pattacker[80];
 	int tx, ty;
@@ -7046,23 +7045,8 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker) {
 
 	/* Hack -- Use an actual "target" */
 	if ((dir == 5) && target_okay(Ind)) {
-		//cave_type **zcave = getcave(&p_ptr->wpos);
-
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
-
-#if 0 /* oops, nonsense >_< this only concerns PROJECT_GRID/PROJECT_ITEM flags of course.. */
-		/* Allow targetting the item/floor of a specific grid with a bolt spell
-		   ..if no monster on it! Assume that the floor won't get hit if the monster
-		     instead gets hit, basically. Makes sense for bolt spells and prevents
-		     too much loot destruction. */
-		if (!(flg & PROJECT_BEAM) &&
-		    zcave && /* paranoia */
-		    zcave[ty][tx].m_idx == 0)
-			flg &= ~PROJECT_THRU;
-#else
-		if (!(flg & PROJECT_BEAM)) flg &= ~PROJECT_THRU;
-#endif
 	}
 
 	/* Analyze the "dir" and the "target", do NOT explode */
@@ -7073,7 +7057,6 @@ bool project_hook(int Ind, int typ, int dir, int dam, int flg, char *attacker) {
 /*
  * Cast a bolt spell
  * Stop if we hit a monster, as a "bolt"
- * Affect monsters (not grids or objects)
  */
 bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
@@ -7105,12 +7088,9 @@ bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker) {
 /*
  * Cast a beam spell
  * Pass through monsters, as a "beam"
- * Affect monsters (not grids or objects)
  */
 bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 	char pattacker[80];
-		//int flg = PROJECT_BEAM | PROJECT_KILL | PROJECT_ITEM | PROJECT_GRID;
-		//Actually, since beams affect the whole tile, don't deflect or reflect them (we don't have proper code for changing beam path anyway) - Kurzel
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO;
 		snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
 
@@ -7119,6 +7099,141 @@ bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker) {
 #endif
 
 	return (project_hook(Ind, typ, dir, dam, flg, pattacker));
+}
+
+/*
+ * Cast a shot spell
+ * Stop if we hit a monster, as a "bolt"
+ * Fire N bolts at up to N clustered monsters, approximate "cone" - Kurzel
+ */
+bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char *attacker) {
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
+	dun_level *l_ptr = getfloor(wpos);
+	cave_type **zcave = getcave(wpos);
+	cave_type *c_ptr;
+	int i,j,x,y,x1,y1,y2,x2,y9,x9,tw,d,dd,dr,td,g;
+	byte gx[512], gy[512];
+	bool obvious = FALSE;
+
+	/* Use the given direction */
+	x2 = p_ptr->px + ddx[dir];
+	y2 = p_ptr->py + ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind)) {
+		/* Shots */
+		tw = p_ptr->target_who;
+		p_ptr->target_who = 0 - MAX_PLAYERS - 2; //TARGET_STATIONARY
+
+		/* Cones */
+		x1 = p_ptr->px;
+		y1 = p_ptr->py;
+		x2 = p_ptr->target_col;
+		y2 = p_ptr->target_row;
+		x = x9 = x1;
+		y = y9 = y1;
+		d = 0;
+		g = 0;
+		td = 0;
+		while (TRUE) {
+			// wraith tracer
+			if (!in_bounds3(wpos, l_ptr, y, x)) break;
+			y9 = y;
+			x9 = x;
+			mmove2(&y9, &x9, y1, x1, y2, x2);
+			if (++d > MAX_RANGE) break;
+			if ((td = distance(y1, x1, y9, x9)) > MAX_RANGE) break;
+			y = y9;
+			x = x9;
+			// ball expansion algo
+			dd = 0;
+			// dr = rad * td / MAX_RANGE;
+			dr = rad * td / MAX_RANGE + 1; // force a wider initial spread - Kurzel
+			for (i = 0; i <= tdi[dr]; i++) {
+				if (i == tdi[dd])
+					if (++dd > dr) break;
+				y9 = y + tdy[i];
+				x9 = x + tdx[i];
+				if (!in_bounds3(wpos, l_ptr, y9, x9)) continue;
+				if (distance(y9, x9, y1, x1) != td) continue; // missing . (fine?)
+				if (!projectable_wall(wpos, y1, x1, y9, x9, MAX_RANGE)) continue;
+				c_ptr = &zcave[y9][x9];
+				if ((c_ptr->m_idx > 0) || (c_ptr->m_idx < 0
+				    && check_hostile(Ind, 0 - c_ptr->m_idx))) {
+					p_ptr->target_col = x9;
+					p_ptr->target_row = y9;
+					if (target_okay(Ind)) {
+						gy[g] = y9;
+						gx[g] = x9;
+						g++;
+					}
+				}
+			}
+		}
+
+		/* Fire the bolts, skip dead targets */
+		d = 0;
+		for (i = 0; i < num+d; i++) {
+			j = (i % g);
+			p_ptr->target_col = x = gx[j];
+			p_ptr->target_row = y = gy[j];
+			c_ptr = &zcave[y][x];
+			if (c_ptr->m_idx == 0) {
+				if (++d > g) break;
+				else continue;
+			}
+			if (fire_bolt(Ind, typ, dir, damroll(dx,dy), attacker)) obvious = TRUE;
+		}
+		p_ptr->target_who = tw;
+		p_ptr->target_col = gx[0];
+		p_ptr->target_row = gy[0];
+	} else {
+		for (i = 0; i < num; i++) {
+			if (fire_bolt(Ind, typ, dir, damroll(dx,dy), attacker)) obvious = TRUE;
+		}
+	}
+
+	return (obvious);
+}
+
+/*
+ * Cast a cone spell
+ * Pass through monsters, as a "beam"
+ * Gather grids by raytracing beams across an "arc", see project() - Kurzel
+ */
+bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
+	player_type *p_ptr = Players[Ind];
+	char pattacker[80];
+	int tx, ty;
+
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_KILL | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODF | PROJECT_NODO | PROJECT_THRU | PROJECT_FULL;
+
+	/* WRAITHFORM reduces damage/effect */
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+
+	/* Use the given direction */
+	tx = p_ptr->px + ddx[dir];
+	ty = p_ptr->py + ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if (dir == 5) {
+		if (target_okay(Ind)) {
+			tx = p_ptr->target_col;
+			ty = p_ptr->target_row;
+		} else { // Cone at self is a ball? - Kurzel
+			return fire_ball(Ind, typ, 5, dam, rad, attacker);
+		}
+	}
+
+#ifdef USE_SOUND_2010
+	if (Players[Ind]->sfx_magicattack) sound(Ind, "cast_beam", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+	/* Analyze the "dir" and the "target".  Hurt items on floor. */
+	snprintf(pattacker, 80, "%s%s", p_ptr->name, attacker);
+
+	return (project(0 - Ind, rad, &p_ptr->wpos, ty, tx, dam, typ, flg, pattacker));
 }
 
 /*
@@ -7421,7 +7536,7 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr) {
 	if (f2 & TR2_RES_NEXUS) r_ptr->flags3 |= RF3_RES_NEXU;
 	if (f2 & TR2_RES_DISEN) r_ptr->flags3 |= RF3_RES_DISE;
 
-	/* Allow use of runes - some are redundant (for completeness) */
+	/* Allow use of runes - #if 0 any redundant flags */
 	if (o_ptr->tval == TV_RUNE) switch(o_ptr->sval) {
 #if 0
 	case SV_R_LITE: r_ptr->flags9 |= RF9_RES_LITE; break;
@@ -7432,15 +7547,14 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr) {
 #if 0
 	case SV_R_CHAO: r_ptr->flags9 |= RF9_RES_CHAOS; break;
 	case SV_R_MANA: r_ptr->flags9 |= RF9_RES_MANA; break;
-
 	case SV_R_CONF: r_ptr->flags3 |= RF3_NO_CONF; break;
-//	case SV_R_INER: r_ptr->flags4 |= RF4_BR_INER; break; //Inertia has no resist; alt: RF3_NO_TELE!
+//case SV_R_INER: r_ptr->flags4 |= RF4_BR_INER; break; //Inertia, no resist
 	case SV_R_ELEC: r_ptr->flags3 |= RF3_IM_ELEC; break;
 #endif
 	case SV_R_FIRE: r_ptr->flags3 |= RF3_IM_FIRE; break;
 #if 0
 	case SV_R_WATE: r_ptr->flags3 |= RF3_RES_WATE; break;
-//	case SV_R_GRAV: r_ptr->flags4 |= RF4_BR_GRAV; break; //Gravity has no resist (for mobs)!
+//case SV_R_GRAV: r_ptr->flags4 |= RF4_BR_GRAV; break; //Gravity, no resist
 	case SV_R_COLD: r_ptr->flags3 |= RF3_IM_COLD; break;
 #endif
 	case SV_R_ACID: r_ptr->flags3 |= RF3_IM_ACID; break;
@@ -7450,23 +7564,9 @@ static void scan_golem_flags(object_type *o_ptr, monster_race *r_ptr) {
 	case SV_R_SOUN: r_ptr->flags9 |= RF9_RES_SOUND; break;
 	case SV_R_SHAR: r_ptr->flags9 |= RF9_RES_SHARDS; break;
 #endif
+	case SV_R_HELL: r_ptr->flags3 |= RF3_IM_FIRE; break;
+//case SV_R_FORC: r_ptr->flags4 |= RF4_BR_WALL; break; //Force, no resist
 	case SV_R_DISE: r_ptr->flags3 |= RF3_RES_DISE; break;
-#if 0
-	//Hack, gestalt elements add mixture.. - Kurzel
-	//case SV_R_ICEE: r_ptr->flags3 |= RF3_IM_COLD; r_ptr->flags9 |= RF9_RES_SHARDS; r_ptr->flags9 |= RF9_RES_SOUND; break; //See common/tables.c - Kurzel
-	case SV_R_ICEE: r_ptr->flags3 |= RF3_IM_COLD; r_ptr->flags9 |= RF9_RES_SHARDS; break; //See common/tables.c - Kurzel
-	//case SV_R_PLAS: r_ptr->flags9 |= RF9_RES_ELEC; r_ptr->flags9 |= RF9_RES_FIRE; r_ptr->flags9 |= RF9_RES_SOUND; break;
-#endif
-	case SV_R_PLAS:
-#if 0
-		r_ptr->flags3 |= RF3_IM_FIRE;
-		r_ptr->flags9 |= RF9_RES_ELEC;
-		r_ptr->flags9 |= RF9_RES_SOUND;
-#else
-		r_ptr->flags3 |= RF3_IM_FIRE; break;
-#endif
-		break;
-
 	default: break;
 	}
 }
@@ -8412,117 +8512,12 @@ bool do_vermin_control(int Ind) {
 	return FALSE;
 }
 
-void rune_combine(int Ind) {
+void activate_rune(int Ind) {
 	player_type *p_ptr = Players[Ind];
-
 	clear_current(Ind);
-
 	p_ptr->current_rune = TRUE;
-	get_item(Ind, ITH_RUNE);
-
+	get_item(Ind, ITH_RUNE_ENCHANT);
 	return;
-}
-
-void rune_combine_aux(int Ind, int item) {
-	player_type *p_ptr = Players[Ind];
-
-	if (item == p_ptr->current_activation) return; //don't combine the same rune
-
-	/* Recall the first rune */
-	object_type *o_ptr = &p_ptr->inventory[p_ptr->current_activation];
-
-	/* Store the combining flag */
-	s16b e_flags = r_elements[o_ptr->sval].flag;
-
-	/* Remember the original info */
-	byte sval = o_ptr->sval;
-	s32b owner = o_ptr->owner;
-	byte mode = o_ptr->mode;
-	s16b level = o_ptr->level;
-	byte discount = o_ptr->discount;
-	byte number = o_ptr->number;
-	s16b note = o_ptr->note; //keep the incription of the initial rune
-	s32b iron_trade = o_ptr->iron_trade;
-	s32b iron_turn = o_ptr->iron_turn;
-
-	/* Rune Preservation? */
-	if (check_guard_inscription(o_ptr->note, 'R')) {
-		if (number > 1) number--;
-		else {
-			msg_format(Ind, "\377yYou choose to preserve your rune.");
-			return;
-		}
-	}
-
-	/* Recall the second rune */
-	o_ptr = &p_ptr->inventory[item];
-
-	/* Sanity */
-	if ((o_ptr->sval == sval) //same rune type
-	    || (o_ptr->tval != TV_RUNE) //not a rune (obselete)
-	    || (o_ptr->sval >= RCRAFT_MAX_ELEMENTS) //not a basic rune (obselete)
-	    || (!(o_ptr->level) && !(o_ptr->owner == p_ptr->id))) { //not owned
-		msg_format(Ind, "You cannot combine these runes!");
-		return;
-	}
-
-	/* Store the combining flag */
-	e_flags |= r_elements[o_ptr->sval].flag;
-
-	/* Lookup resulting rune -- (flags_to_projection) */
-	byte i;
-	for (i = 0; i < RCRAFT_MAX_PROJECTIONS; i++) {
-		if (e_flags == r_projections[i].flags)
-			break;
-	}
-
-	/* Store combined item values -- use worst case! */
-	level = (o_ptr->level > level) ? o_ptr->level : level;
-	discount = (o_ptr->discount > discount) ? o_ptr->discount : discount;
-	number = (o_ptr->number < number) ? o_ptr->number : number;
-
-	/* Rune Preservation? (second rune) */
-	if (check_guard_inscription(o_ptr->note, 'R')) {
-		if (number > 1) number--;
-		else {
-			msg_format(Ind, "\377yYou choose to preserve your rune.");
-			return;
-		}
-	}
-
-	/* Destroy the rune stacks in the pack */
-	msg_format(Ind, "There is a coupling of magic.");
-	inven_item_increase(Ind, p_ptr->current_activation, -number);
-	inven_item_increase(Ind, item, -number);
-	if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indices
-		inven_item_optimize(Ind, p_ptr->current_activation);
-		inven_item_optimize(Ind, item);
-	} else {
-		inven_item_optimize(Ind, item);
-		inven_item_optimize(Ind, p_ptr->current_activation);
-	}
-
-	/* Make new stack */
-	object_type *q_ptr, forge;
-
-	/* Default rune template */
-	q_ptr = &forge;
-	object_wipe(q_ptr);
-	invcopy(q_ptr, lookup_kind(TV_RUNE, i));
-
-	/* Recall original parameters */
-	q_ptr->owner = owner;
-	q_ptr->mode = mode;
-	q_ptr->level = level;
-	q_ptr->discount = discount;
-	q_ptr->number = number;
-	q_ptr->note = note;
-	q_ptr->iron_trade = iron_trade;
-	q_ptr->iron_turn = iron_turn;
-
-	/* Create the rune stack */
-	inven_carry(Ind, q_ptr);
-
 }
 
 /* see create_custom_tome_aux() below */
