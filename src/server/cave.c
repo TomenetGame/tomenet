@@ -8638,8 +8638,8 @@ int new_effect(int who, int type, int dam, int time, int interval, worldpos *wpo
 	effects[i].time = time;
 	effects[i].flags = flags;
 	effects[i].whot = 0;
-	effects[i].cy = 0;
-	effects[i].cx = 0;
+	effects[i].cx = cx;
+	effects[i].cy = cy;
 	if ((who < 0 && who > PROJECTOR_UNUSUAL) && (project_time_effect & EFF_VORTEX)) {
 		if (target_okay(0-who)) {
 			effects[i].whot = Players[0-who]->target_who;
