@@ -3637,7 +3637,7 @@ bool create_artifact_aux(int Ind, int item) {
 	old_owner = o_ptr->owner;
 
 	/* Description */
-	object_desc(Ind, o_name, o_ptr, FALSE, 0);
+	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 	s_printf("ART_CREATION by player %s: %s\n", p_ptr->name, o_name);
 
 	if (((o_ptr->tval == TV_SOFT_ARMOR && o_ptr->sval == SV_SHIRT) ||
