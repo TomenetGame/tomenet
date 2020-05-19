@@ -271,16 +271,16 @@ bool can_go_up(struct worldpos *wpos, byte mode) {
 		if (wpos->wz && (d_ptr->flags2 & DF2_NO_STAIRS_UP)) return(FALSE);
 	}
 
-	if (wpos->wz<0) {
+	if (wpos->wz < 0) {
 		if ((d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) ||
 		    (d_ptr->flags2 & DF2_IRON))
 			return(FALSE);
 		return(TRUE);
 	}
 
-	if (wpos->wz>0) return(wpos->wz < wild->tower->maxdepth);
+	if (wpos->wz > 0) return(wpos->wz < wild->tower->maxdepth);
 
-	return((wild->flags&WILD_F_UP)?TRUE:FALSE);
+	return ((wild->flags & WILD_F_UP) ? TRUE : FALSE);
 }
 /* For staircase-placement and sinking/pit traps.
    Mode: 1 stairs, (doesn't make sense? 2 wor,) (handled in cmd2.c, can't handle here actually: 4 probtravel, 8 ghostfloating) */
@@ -309,15 +309,15 @@ bool can_go_down(struct worldpos *wpos, byte mode) {
 		if (wpos->wz && (d_ptr->flags2 & DF2_NO_STAIRS_DOWN)) return(FALSE);
 	}
 
-	if (wpos->wz>0) {
+	if (wpos->wz > 0) {
 		if ((d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) ||
 		    (d_ptr->flags2 & DF2_IRON)) return(FALSE);
 		return(TRUE);
 	}
 
-	if (wpos->wz<0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
+	if (wpos->wz < 0) return(ABS(wpos->wz) < wild->dungeon->maxdepth);
 
-	return((wild->flags&WILD_F_DOWN)?TRUE:FALSE);
+	return ((wild->flags & WILD_F_DOWN) ? TRUE : FALSE);
 }
 /* ignore all dungeon/floor flags */
 bool can_go_up_simple(struct worldpos *wpos) {
