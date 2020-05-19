@@ -235,13 +235,16 @@ void do_cmd_go_up(int Ind) {
 	}
 #endif
 
-/*	if (dungeon && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) {*/
+#if 0 /* 0'ed because in such a dungeon there shouldn't be any staircases generated in the first place. If there are, then it's probably for some special thingy and intended. Or it's a bug. */
+	/*if (dungeon && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON) {*/
 	if (dungeon && (wild_info[wpos->wy][wpos->wx].dungeon->flags2 & DF2_IRON ||
 	     wild_info[wpos->wy][wpos->wx].dungeon->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
 	     (c_ptr->feat == FEAT_LESS || c_ptr->feat == FEAT_WAY_LESS)) {
 		msg_print(Ind,"\377rThe stairways leading upwards are magically sealed in this dungeon.");
 		if (!is_admin(p_ptr)) return;
 	}
+#endif
+
 #if 1
 	/* probability travel/ghost floating restrictions */
 	if (dungeon) {
@@ -1075,13 +1078,16 @@ void do_cmd_go_down(int Ind) {
 		if (!is_admin(p_ptr)) return;
 	}
 
-/*	if (tower && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) {*/
+#if 0 /* 0'ed because in such a dungeon there shouldn't be any staircases generated in the first place. If there are, then it's probably for some special thingy and intended. Or it's a bug. */
+	/*if (tower && !p_ptr->ghost && wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON) {*/
 	if (tower && (wild_info[wpos->wy][wpos->wx].tower->flags2 & DF2_IRON ||
 	     wild_info[wpos->wy][wpos->wx].tower->flags1 & (DF1_FORCE_DOWN | DF1_NO_UP)) &&
 	    (c_ptr->feat == FEAT_MORE || c_ptr->feat == FEAT_WAY_MORE)) {
 		msg_print(Ind,"\377rThe stairways leading downwards are magically sealed in this tower.");
 		if (!is_admin(p_ptr)) return;
 	}
+#endif
+
 #if 1
 	/* probability travel/ghost floating restrictions */
 	if (tower) {
