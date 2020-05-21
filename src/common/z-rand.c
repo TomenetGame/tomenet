@@ -82,6 +82,24 @@ u32b Rand_state[RAND_DEG];
 void Rand_state_init(u32b seed)
 {
 #ifdef USE_SFMT
+#ifndef WIN32
+	/* SFMT initialization using /dev/urandom if possible */
+	const int seed_bytes = 2496;
+	char *seed_array[seed_bytes];
+	int fd = open("/dev/urandom", O_RDONLY);
+	if (fd >= 0) {
+		ssize_t result = read(fd, seed_array, seed_bytes);
+		if (result > 0) {
+			close(fd);
+			//fprintf(stderr, "Seeding SFMT using %d bytes from /dev/urandom\n", (int)result);
+			init_by_array((uint32_t*)seed_array, seed_bytes/ 4);
+			return;
+		} else {
+			close(fd);
+			fprintf(stderr, "Failed to read from /dev/urandom (errno = %d)", errno);
+		}
+	}
+#endif
 	/* SFMT initialization */
 	init_gen_rand(seed);
 #else
