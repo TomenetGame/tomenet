@@ -2385,7 +2385,7 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	if (f3 & (TR3_AGGRAVATE)) strcat(powins, "Aggr");
 
 	/* covers both, tmp+esp and strange books.. */
-	if (powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
+	if (strlen(powins) && powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
 
 	/* -- exploding ammo -- */
 	if (is_ammo(o_ptr->tval) && (o_ptr->pval != 0)) {
