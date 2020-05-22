@@ -8247,7 +8247,7 @@ void do_cmd_options(void) {
 		Term_putstr(3,  9, -1, TERM_WHITE, "(\377os\377w) Save Options & Flags");
 		Term_putstr(3, 10, -1, TERM_WHITE, "(\377ol\377w) Load Options & Flags");
 
-		Term_putstr(3, 12, -1, TERM_SLATE, "The following options are all saved automatically on quitting via CTRL+Q:");
+		Term_putstr(3, 12, -1, TERM_SLATE, "The following options are mostly saved automatically on quitting via CTRL+Q:");
 		if (c_cfg.rogue_like_commands)
 			Term_putstr(3, 13, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
 		else
