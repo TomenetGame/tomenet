@@ -7988,7 +7988,16 @@ static void do_cmd_options_colourblindness(void) {
 
 		Term_putstr(0, l++, -1, TERM_WHITE, "Note that you can view a named list of all colours");
 		Term_putstr(0, l++, -1, TERM_WHITE, "at any time by typing the '\377y/colours\377w' command in the");
+#if 1
 		Term_putstr(0, l++, -1, TERM_WHITE, "chat prompt.");
+#else
+		Term_putstr(0, l++, -1, TERM_WHITE, "chat prompt. The currently used config file is:");
+ #ifdef WINDOWS
+		Term_putstr(0, l++, -1, TERM_L_WHITE, format("%s", ini_file));
+ #else
+		Term_putstr(0, l++, -1, TERM_L_WHITE, format("%s", mangrc_filename));
+ #endif
+#endif
 		l++;
 
 		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yc\377w) Set a specific palette entry");
@@ -8208,8 +8217,9 @@ static void do_cmd_options_colourblindness(void) {
 			if (!tterm) continue;
 			Term_activate(tterm);
 			/* Redraw the contents */
+			//both fail on WINE randomly, and randomly work.. oO
 			Term_redraw();
-			//Term_xtra(TERM_XTRA_FRESH, 0); /* fails on Linux it seems */
+			Term_xtra(TERM_XTRA_FRESH, 0); /* fails on Linux it seems */
 		}
 		/* Restore */
 		Term_activate(old);

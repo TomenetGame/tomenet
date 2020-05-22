@@ -692,6 +692,7 @@ typedef struct {
 	char font[256]; /* Paranoia: actually, 6 should be sufficient */
 } generic_term_info;
 extern generic_term_info term_prefs[10];
+extern char mangrc_filename[100];
 
 /* nclient.c (former netclient.c) */
 extern int ticks, ticks10, existing_characters, command_confirmed;
