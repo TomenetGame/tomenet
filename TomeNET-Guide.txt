@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 8. May 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 22. May 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -30,7 +30,7 @@ Contents
 --------
 (0) Quickstart (If you don't like to read much :)
     (0.1)   Start & play, character validation
-    (0.1a)  Colour blindness
+    (0.1a)  Colours and colour blindness
     (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
     (0.2b)  Slash command reference
@@ -397,9 +397,14 @@ You could continue reading at (3.2) now, which explains the user interface,
 or glance at (7.1), (7.2) or (7.3) first which explain some basic strategy.
 
 
-(0.1a)  Colour blindness
-------------------------
-You can modify the colours freely by editing the game's config file:
+(0.1a)  Colours and colour blindness
+------------------------------------
+The easiest way to modify colours and to switch between predefined palette sets
+for certain colour blindness types (deuteranopia, protanopia, tritanopia) is to
+go to the  = C  options screen where you can set all of this.
+Don't forget to press 's' to save your changes.
+
+Alternatively you can modify the colours by editing the game's config file:
 On Windows OS that is TomeNET.ini (in your TomeNET folder) and on Linux and
 OS X that is .tomenetrc (in your user's home folder).
 
@@ -3602,7 +3607,7 @@ in folder lib/xtra/font.
 If you aren't happy with the text size in the game, try switching the fonts
 used for the main window and the other subwindows: Press '=' to enter the
 options menu. Now you can either press 'f' for the fonts menu where you can
-change all fonts in detail, or you can hit 'c' to automatically cycle through
+change all fonts in detail, or you can hit 'F' to automatically cycle through
 predefined font sizes for all windows at once. (You could also enter them
 directly in your TomeNET.ini config file, if you wanted. This is obviously the
 least flexible solution though.)

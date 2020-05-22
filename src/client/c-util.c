@@ -8262,10 +8262,10 @@ void do_cmd_options(void) {
 			Term_putstr(3, 15, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 			/* CHANGE_FONTS_X11 */
-			Term_putstr(3, 16, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (can be tapped multiple times)");
+			Term_putstr(3, 16, -1, TERM_WHITE, "(\377yF\377w) Cycle all font sizes at once (can be tapped multiple times)");
 		}
 #endif
-		Term_putstr(3, 17, -1, TERM_WHITE, "(\377oC\377w) Colour palette and colour blindness options");
+		Term_putstr(3, 17, -1, TERM_WHITE, "(\377yc\377w) Colour palette and colour blindness options");
 
 		Term_putstr(3, 19, -1, TERM_WHITE, "(\377UA\377w) Account Options");
 		Term_putstr(3, 20, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
@@ -8343,7 +8343,7 @@ void do_cmd_options(void) {
 		else if (k == 'f') do_cmd_options_fonts();
  #endif
 		/* Cycle all fonts */
-		else if (k == 'c') change_font(-1);
+		else if (k == 'F') change_font(-1);
 #endif
 
 		/* Access audio mixer */
@@ -8357,7 +8357,7 @@ void do_cmd_options(void) {
 		else if (k == 'n') do_cmd_options_sfx();
 		else if (k == 'N') do_cmd_options_mus();
 
-		else if (k == 'C') do_cmd_options_colourblindness();
+		else if (k == 'c') do_cmd_options_colourblindness();
 
 		/* Unknown option */
 		else {
