@@ -7990,11 +7990,11 @@ static void do_cmd_options_colourblindness(void) {
 		Term_putstr(0, l++, -1, TERM_WHITE, "Feedback welcome! Currently, deuteranopia and");
 		Term_putstr(0, l++, -1, TERM_WHITE, "protanopia just use the same palette values.");
 		Term_putstr(0, l++, -1, TERM_WHITE, "If you use a colourblind setting or custom colours");
-		Term_putstr(0, l++, -1, TERM_WHITE, "you probably want to disable palette_animation in \377W=3\377w.");
+		Term_putstr(0, l++, -1, TERM_WHITE, "you probably want to disable palette_animation in \377s=3\377w.");
 		l++;
 
 		Term_putstr(0, l++, -1, TERM_WHITE, "Note that you can view a named list of all colours");
-		Term_putstr(0, l++, -1, TERM_WHITE, "at any time by typing the '\377y/colours\377w' command in the");
+		Term_putstr(0, l++, -1, TERM_WHITE, "at any time by typing the '\377s/colours\377w' command in the");
 #if 1
 		Term_putstr(0, l++, -1, TERM_WHITE, "chat prompt.");
 #else
