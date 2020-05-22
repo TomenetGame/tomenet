@@ -7965,6 +7965,7 @@ static void do_cmd_options_install_audio_packs(void) {
 
 /* I don't know how well these palette values work. I tried to make them as distinguishable as possible
    while maintaining most colours at their 'original hue'.. Not sure how much sense that makes. - C. Blue */
+#define OCB_CMD_Y 21
 static void do_cmd_options_colourblindness(void) {
 	char ch;
 	bool go = TRUE;
@@ -7985,6 +7986,12 @@ static void do_cmd_options_colourblindness(void) {
 	while (go) {
 		Term_putstr(0,  0, -1, TERM_L_BLUE, "Colour palette and colour blindness options");
 		l = 2;
+
+		Term_putstr(0, l++, -1, TERM_WHITE, "Feedback welcome! Currently, deuteranopia and");
+		Term_putstr(0, l++, -1, TERM_WHITE, "protanopia just use the same palette values.");
+		Term_putstr(0, l++, -1, TERM_WHITE, "If you use a colourblind setting or custom colours");
+		Term_putstr(0, l++, -1, TERM_WHITE, "you probably want to disable palette_animation in \377W=3\377w.");
+		l++;
 
 		Term_putstr(0, l++, -1, TERM_WHITE, "Note that you can view a named list of all colours");
 		Term_putstr(0, l++, -1, TERM_WHITE, "at any time by typing the '\377y/colours\377w' command in the");
@@ -8034,7 +8041,7 @@ static void do_cmd_options_colourblindness(void) {
 		/* Get key */
 		ch = inkey();
 
-		l = 18;
+		l = OCB_CMD_Y;
 		Term_putstr(0, l, -1, TERM_WHITE, "                                       ");
 
 		/* Analyze */
@@ -8049,7 +8056,7 @@ static void do_cmd_options_colourblindness(void) {
 			continue;
 
 		case 'c':
-			l = 18;
+			l = OCB_CMD_Y;
 			Term_putstr(0, l, -1, TERM_L_WHITE, "Enter the colour index (1-15): ");
 			strcpy(buf, "1");
 			if (!askfor_aux(buf, 2, 0)) {
@@ -8169,7 +8176,7 @@ static void do_cmd_options_colourblindness(void) {
 #else
 			write_mangrc_colourmap();
 #endif
-			l = 18;
+			l = OCB_CMD_Y;
 			Term_putstr(0, l, -1, TERM_L_WHITE, "Configuration file has been updated.  ");
 			c_message_add("Configuration file has been updated.  ");
 			break;
@@ -8193,7 +8200,7 @@ static void do_cmd_options_colourblindness(void) {
 #endif
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, (client_color_map[i] & 0x0000FF));
 			}
-			l = 18;
+			l = OCB_CMD_Y;
 			Term_putstr(0, l, -1, TERM_L_WHITE, "Colours reset from Configuration file.");
 			c_message_add("Colours reset from configuration file.");
 			break;
