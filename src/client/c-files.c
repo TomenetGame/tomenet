@@ -1235,10 +1235,10 @@ void peruse_file(void) {
 		/* Prompt. (Consistent with prompt in Receive_special_line() in nclient.c.) */
 		/* indicate EOF by different status line colour */
 		if (cur_line + special_page_size >= max_line)
-			c_prt(TERM_ORANGE, format("[Press Space/p/Enter/Backspace/# to navigate, ESC to exit.] (%d-%d/%d)",
+			c_prt(TERM_ORANGE, format("[Space/p/Enter/Backspace/# to navigate, ESC to exit.] (%d-%d/%d)",
 			    cur_line + 1, max_line , max_line), 23 + HGT_PLUS, 0);
 		else
-			c_prt(TERM_L_WHITE, format("[Press Space/p/Enter/Backspace/# to navigate, ESC to exit.] (%d-%d/%d)",
+			c_prt(TERM_L_WHITE, format("[Space/p/Enter/Backspace/# to navigate, ESC to exit.] (%d-%d/%d)",
 			    cur_line + 1, cur_line + special_page_size, max_line), 23 + HGT_PLUS, 0);
 		/* Get a keypress -
 		   hack: update max_line to its real value as soon as possible */
