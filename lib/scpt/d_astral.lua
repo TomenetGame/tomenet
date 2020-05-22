@@ -30,7 +30,7 @@ end
 function get_astral_bonus_hp(Ind)
 	if (get_astral_lev(Ind) >= 53) then
 		return 2
-	elseif (get_astral_lev(Ind) >= 40) then
+	elseif (get_astral_lev(Ind) >= 40 - 1) then
 		return 1
 	end
 	return 0
