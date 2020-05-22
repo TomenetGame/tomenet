@@ -681,7 +681,7 @@ byte flick_colour(byte attr) {
 	case TERM_ANNI:
 		return (randint(2) == 1 ? (randint(5) > 4 ? TERM_SLATE : TERM_L_DARK) : TERM_L_DARK);//note (...) is TERM_DARKNESS
 	case TERM_PSI:
-		return (randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : 127) : TERM_WHITE);
+		return (randint(5) != 1 ? (rand_int(2) ? (rand_int(2) ? TERM_YELLOW : TERM_L_BLUE) : TERM_L_WHITE) : TERM_WHITE);
 	case TERM_NEXU:
 		return (randint(5) < 3 ? TERM_L_RED : TERM_VIOLET);
 	case TERM_NETH:
