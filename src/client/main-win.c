@@ -439,7 +439,7 @@ static cptr sound_file[SOUND_MAX];
 /*
  * Full path to ANGBAND.INI
  */
-static cptr ini_file = NULL;
+cptr ini_file = NULL;
 
 /*
  * Name of application

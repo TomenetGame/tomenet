@@ -7975,6 +7975,7 @@ static void do_cmd_options_colourblindness(void) {
 	char buf[MAX_CHARS];
 #ifdef WINDOWS
 	char bufc[MAX_CHARS];
+	long unsigned int c;
 #endif
 
 	/* Clear screen */
@@ -8147,7 +8148,8 @@ static void do_cmd_options_colourblindness(void) {
 #ifdef WINDOWS
 			for (i = 1; i < 16; i++) {
 				sprintf(buf, "Colormap_%d", i);
-				sprintf(bufc,  "#%06lx", client_color_map[i]);
+				c = client_color_map[i];
+				sprintf(bufc,  "#%06lx", c);
 				WritePrivateProfileString("Base", buf, bufc, ini_file);
 			}
 #else

@@ -927,6 +927,7 @@ extern void store_crecedentials(void);
 
 extern const cptr angband_sound_name[SOUND_MAX];
 extern int audio_sfx, audio_music;
+extern cptr ini_file;
 
 #ifdef USE_SOUND_2010
 //externs.h:
