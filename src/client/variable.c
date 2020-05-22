@@ -607,7 +607,16 @@ u32b client_color_map_tri[16 * 2] = {
 	0xb66dff,	/* LIGHT UMBER (8) */
 #endif
 };
+
+const char colour_name[16][9] = {
+	"Black", "White", "Slate", "Orange",
+	"Red", "Green", "Blue", "Umber",
+	"D.Grey", "L.Grey", "Violet", "Yellow",
+	"L.Red", "L.Green", "Cyan", "L.Umber",
+};
+
 bool lighterdarkblue = FALSE;
+
 
 /* Allow code in src/common/ to dynamically check that this is the client */
 bool is_client_side = TRUE;

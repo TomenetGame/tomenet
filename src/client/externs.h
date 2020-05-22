@@ -1023,6 +1023,7 @@ extern u32b client_color_map_deu[16 * 2];
 extern u32b client_color_map_pro[16 * 2];
 extern u32b client_color_map_tri[16 * 2];
 #endif
+extern const char colour_name[16][9];
 extern bool lighterdarkblue;
 #ifdef WINDOWS
 void enable_readability_blue_win(void);

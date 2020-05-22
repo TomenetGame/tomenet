@@ -7986,8 +7986,9 @@ static void do_cmd_options_colourblindness(void) {
 		Term_putstr(0,  0, -1, TERM_L_BLUE, "Colour palette and colour blindness options");
 		l = 2;
 
-		Term_putstr(0, l++, -1, TERM_WHITE, "Note that you can view a named list of all colours at any");
-		Term_putstr(0, l++, -1, TERM_WHITE, "time by typing the '\377y/colours\377w' command in the chat prompt.");
+		Term_putstr(0, l++, -1, TERM_WHITE, "Note that you can view a named list of all colours");
+		Term_putstr(0, l++, -1, TERM_WHITE, "at any time by typing the '\377y/colours\377w' command in the");
+		Term_putstr(0, l++, -1, TERM_WHITE, "chat prompt.");
 		l++;
 
 		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yc\377w) Set a specific palette entry");
@@ -7996,8 +7997,8 @@ static void do_cmd_options_colourblindness(void) {
 		Term_putstr(60, 1, -1, TERM_L_WHITE, " Current palette:");
 		/* Note: colour 0 is always fixed, unchangeable 0x000000, so we just skip it */
 		for (i = 1; i < 16; i++) {
-			Term_putstr(60, 2 + i, -1, i, format("%2d", i));
-			Term_putstr(64, 2 + i, -1, TERM_WHITE, format("%3d, %3d, %3d",
+			Term_putstr(55, 2 + i, -1, i, format("%2d %s", i, colour_name[i]));
+			Term_putstr(66, 2 + i, -1, TERM_WHITE, format("%3d, %3d, %3d",
 			    (client_color_map[i] & 0xFF0000) >> 16,
 			    (client_color_map[i] & 0x00FF00) >> 8,
 			    client_color_map[i] & 0x0000FF));
@@ -8017,11 +8018,15 @@ static void do_cmd_options_colourblindness(void) {
 		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current rc-file");
 #endif
 
+		/* Hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+
 		/* Get key */
 		ch = inkey();
 
 		l = 18;
-		Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+		Term_putstr(0, l, -1, TERM_WHITE, "                                       ");
 
 		/* Analyze */
 		switch (ch) {
@@ -8156,8 +8161,8 @@ static void do_cmd_options_colourblindness(void) {
 			write_mangrc_colourmap();
 #endif
 			l = 18;
-			Term_putstr(0, l, -1, TERM_L_WHITE, "Configuration file has been updated.");
-			c_message_add("Configuration file has been updated.");
+			Term_putstr(0, l, -1, TERM_L_WHITE, "Configuration file has been updated.  ");
+			c_message_add("Configuration file has been updated.  ");
 			break;
 
 		case 'r':
@@ -8179,6 +8184,9 @@ static void do_cmd_options_colourblindness(void) {
 #endif
 				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, (client_color_map[i] & 0x0000FF));
 			}
+			l = 18;
+			Term_putstr(0, l, -1, TERM_L_WHITE, "Colours reset from Configuration file.");
+			c_message_add("Colours reset from configuration file.");
 			break;
 
 		default:
