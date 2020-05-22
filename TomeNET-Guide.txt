@@ -404,6 +404,11 @@ for certain colour blindness types (deuteranopia, protanopia, tritanopia) is to
 go to the  = C  options screen where you can set all of this.
 Don't forget to press 's' to save your changes.
 
+You probably want to turn off the option 'palette_animation' in = 3 if you use
+any colourblind mode or your own customized colours, because palette animation
+will override colours with interpolations of the 'normal' palette scheme.
+(palette_animation only has effect on colours while you are outdoors though.)
+
 Alternatively you can modify the colours by editing the game's config file:
 On Windows OS that is TomeNET.ini (in your TomeNET folder) and on Linux and
 OS X that is .tomenetrc (in your user's home folder).
