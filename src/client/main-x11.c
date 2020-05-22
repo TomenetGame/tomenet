@@ -2189,6 +2189,15 @@ static void enable_common_colormap_x11() {
 	}
 }
 
+void enable_readability_blue_x11(void) {
+	/* New colour code */
+	client_color_map[6] = 0x0033ff;
+#ifdef EXTENDED_COLOURS_PALANIM
+	client_color_map[16 + 6] = 0x0033ff;
+#endif
+}
+
+
 #ifdef USE_GRAPHICS
 
 

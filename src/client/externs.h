@@ -684,6 +684,7 @@ extern void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color)
 
 /* client.c */
 extern bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only);
+extern bool write_mangrc_colourmap(void);
 typedef struct {
 	bool visible;
 	int x, y;
@@ -1010,8 +1011,26 @@ extern int max_chars_per_account;
 
 #ifndef EXTENDED_COLOURS_PALANIM
 extern u32b client_color_map[16];
+extern u32b client_color_map_org[16];
+extern u32b client_color_map_deu[16];
+extern u32b client_color_map_pro[16];
+extern u32b client_color_map_tri[16];
 #else
 extern u32b client_color_map[16 * 2];
+extern u32b client_color_map_org[16 * 2];
+extern u32b client_color_map_deu[16 * 2];
+extern u32b client_color_map_pro[16 * 2];
+extern u32b client_color_map_tri[16 * 2];
+#endif
+extern bool lighterdarkblue;
+#ifdef WINDOWS
+void enable_readability_blue_win(void);
+#else
+ #ifdef USE_X11
+void enable_readability_blue_x11(void);
+ #else
+void enable_readability_blue_gcu(void);
+ #endif
 #endif
 
 #ifdef RETRY_LOGIN

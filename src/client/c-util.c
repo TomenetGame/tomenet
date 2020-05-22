@@ -7963,6 +7963,249 @@ static void do_cmd_options_install_audio_packs(void) {
 	//inkey();
 }
 
+/* I don't know how well these palette values work. I tried to make them as distinguishable as possible
+   while maintaining most colours at their 'original hue'.. Not sure how much sense that makes. - C. Blue */
+static void do_cmd_options_colourblindness(void) {
+	char ch;
+	bool go = TRUE;
+	int i, l;
+	term *tterm, *old;
+	old = Term;
+	int r, g, b;
+	char buf[MAX_CHARS];
+#ifdef WINDOWS
+	char bufc[MAX_CHARS];
+#endif
+
+	/* Clear screen */
+	Term_clear();
+
+	/* Interact */
+	while (go) {
+		Term_putstr(0,  0, -1, TERM_L_BLUE, "Colour palette and colour blindness options");
+		l = 2;
+
+		Term_putstr(0, l++, -1, TERM_WHITE, "Note that you can view a named list of all colours at any");
+		Term_putstr(0, l++, -1, TERM_WHITE, "time by typing the '\377y/colours\377w' command in the chat prompt.");
+		l++;
+
+		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yc\377w) Set a specific palette entry");
+		l++;
+
+		Term_putstr(60, 1, -1, TERM_L_WHITE, " Current palette:");
+		/* Note: colour 0 is always fixed, unchangeable 0x000000, so we just skip it */
+		for (i = 1; i < 16; i++) {
+			Term_putstr(60, 2 + i, -1, i, format("%2d", i));
+			Term_putstr(64, 2 + i, -1, TERM_WHITE, format("%3d, %3d, %3d",
+			    (client_color_map[i] & 0xFF0000) >> 16,
+			    (client_color_map[i] & 0x00FF00) >> 8,
+			    client_color_map[i] & 0x0000FF));
+		}
+
+		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yn\377w) Set palette to normal colours");
+		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yd\377w) Set palette to Deuteranopia colours");
+		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yp\377w) Set palette to Protanopia colours");
+		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yt\377w) Set palette to Tritanopia colours");
+		l++;
+
+#ifdef WINDOWS
+		Term_putstr(0, l++, -1, TERM_WHITE, "(\377ys\377w) Save (modified) palette to current INI file");
+		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current INI file");
+#else
+		Term_putstr(0, l++, -1, TERM_WHITE, "(\377ys\377w) Save (modified) palette to current rc-file");
+		Term_putstr(0, l++, -1, TERM_WHITE, "(\377yr\377w) Reset palette to values from current rc-file");
+#endif
+
+		/* Get key */
+		ch = inkey();
+
+		l = 18;
+		Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+
+		/* Analyze */
+		switch (ch) {
+		case ESCAPE:
+			go = FALSE;
+			break;
+
+		/* specialty: allow chatting from within here */
+		case ':':
+			cmd_message();
+			continue;
+
+		case 'c':
+			l = 18;
+			Term_putstr(0, l, -1, TERM_L_WHITE, "Enter the colour index (1-15): ");
+			strcpy(buf, "1");
+			if (!askfor_aux(buf, 2, 0)) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+			i = atoi(buf);
+			if (i < 1 || i > 15) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+			Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+
+			Term_putstr(0, l, -1, TERM_L_RED, "Enter new RED value (0-255)  : ");
+			strcpy(buf, "255");
+			if (!askfor_aux(buf, 3, 0)) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+			r = atoi(buf);
+			if (r < 0 || r > 255) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+			Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Enter new GREEN value (0-255): ");
+			strcpy(buf, "255");
+			if (!askfor_aux(buf, 3, 0)) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+			g = atoi(buf);
+			if (g < 0 || g > 255) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+			Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+
+			Term_putstr(0, l, -1, TERM_L_BLUE, "Enter new BLUE value (0-255) : ");
+			strcpy(buf, "255");
+			if (!askfor_aux(buf, 3, 0)) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+			b = atoi(buf);
+			if (b < 0 || b > 255) {
+				Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+				continue;
+			}
+			Term_putstr(0, l, -1, TERM_WHITE, "                                     ");
+
+
+			/* Black is not allowed (to prevent the user from locking himself out visually =p not a great help but pft) */
+			if (!r && !g && !b) {
+				Term_putstr(0, l, -1, TERM_YELLOW, "Sorry, setting any colour to black (0,0,0) is not allowed.");
+				c_message_add("\377ySorry, setting any colour to black (0,0,0) is not allowed.");
+				continue;
+			}
+
+			client_color_map[i] = (r << 16) | (g << 8) | b;
+			set_palette(i, r, g, b);
+			break;
+
+		case 'n':
+#ifndef EXTENDED_COLOURS_PALANIM
+			for (i = 0; i < 16; i++) {
+#else
+			for (i = 0; i < 16 * 2; i++) {
+#endif
+				client_color_map[i] = client_color_map_org[i];
+				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, (client_color_map[i] & 0x0000FF));
+			}
+			break;
+
+		case 'd':
+#ifndef EXTENDED_COLOURS_PALANIM
+			for (i = 0; i < 16; i++) {
+#else
+			for (i = 0; i < 16 * 2; i++) {
+#endif
+				client_color_map[i] = client_color_map_deu[i];
+				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
+			}
+			break;
+
+		case 'p':
+#ifndef EXTENDED_COLOURS_PALANIM
+			for (i = 0; i < 16; i++) {
+#else
+			for (i = 0; i < 16 * 2; i++) {
+#endif
+				client_color_map[i] = client_color_map_pro[i];
+				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
+			}
+			break;
+
+		case 't':
+#ifndef EXTENDED_COLOURS_PALANIM
+			for (i = 0; i < 16; i++) {
+#else
+			for (i = 0; i < 16 * 2; i++) {
+#endif
+				client_color_map[i] = client_color_map_tri[i];
+				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, client_color_map[i] & 0x0000FF);
+			}
+			break;
+
+		case 's':
+#ifdef WINDOWS
+			for (i = 1; i < 16; i++) {
+				sprintf(buf, "Colormap_%d", i);
+				sprintf(bufc,  "#%06lx", client_color_map[i]);
+				WritePrivateProfileString("Base", buf, bufc, ini_file);
+			}
+#else
+			write_mangrc_colourmap();
+#endif
+			l = 18;
+			Term_putstr(0, l, -1, TERM_L_WHITE, "Configuration file has been updated.");
+			c_message_add("Configuration file has been updated.");
+			break;
+
+		case 'r':
+#ifndef EXTENDED_COLOURS_PALANIM
+			for (i = 0; i < 16; i++) {
+#else
+			for (i = 0; i < 16 * 2; i++) {
+#endif
+				client_color_map[i] = client_color_map_org[i];
+				if ((i == 6 || i == 16 + 6) && lighterdarkblue && client_color_map[i] == 0x0000ff)
+#ifdef WINDOWS
+					enable_readability_blue_win();
+#else
+ #ifdef USE_X11
+					enable_readability_blue_x11();
+ #else
+					enable_readability_blue_gcu();
+ #endif
+#endif
+				set_palette(i, (client_color_map[i] & 0xFF0000) >> 16, (client_color_map[i] & 0x00FF00) >> 8, (client_color_map[i] & 0x0000FF));
+			}
+			break;
+
+		default:
+			bell();
+			continue;
+		}
+
+		/* Exit */
+		if (!go) break;
+
+		/* Redraw ALL windows with new colour */
+		old = Term;
+ #ifdef MAX_TERM_DATA
+		for (i = 0; i < MAX_TERM_DATA; i++) {
+ #else
+		for (i = 0; i < 8; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
+ #endif
+			tterm = ang_term[i];
+			if (!tterm) continue;
+			Term_activate(tterm);
+			/* Redraw the contents */
+			Term_redraw();
+			//Term_xtra(TERM_XTRA_FRESH, 0); /* fails on Linux it seems */
+		}
+		/* Restore */
+		Term_activate(old);
+	}
+}
+
 /*
  * Set or unset various options.
  *
@@ -7992,40 +8235,38 @@ void do_cmd_options(void) {
 		c_prt(TERM_L_GREEN, "TomeNET options", 0, 0);
 
 		/* Give some choices */
-		Term_putstr(3, 2, -1, TERM_WHITE, "(\377y1\377w) User Interface Options 1");
-		Term_putstr(3, 3, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
-		Term_putstr(3, 4, -1, TERM_WHITE, "(\377y3\377w) User Interface Options 3");
-		Term_putstr(3, 5, -1, TERM_WHITE, "(\377y4\377w) Audio Options");
-		Term_putstr(3, 6, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 1");
-		Term_putstr(3, 7, -1, TERM_WHITE, "(\377y6\377w) Game-Play Options 2");
-		Term_putstr(3, 8, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
-		Term_putstr(3, 9, -1, TERM_WHITE, "(\377os\377w) Save Options & Flags");
-		Term_putstr(3,10, -1, TERM_WHITE, "(\377ol\377w) Load Options & Flags");
+		Term_putstr(3,  2, -1, TERM_WHITE, "(\377y1\377w) User Interface Options 1");
+		Term_putstr(3,  3, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
+		Term_putstr(3,  4, -1, TERM_WHITE, "(\377y3\377w) User Interface Options 3");
+		Term_putstr(3,  5, -1, TERM_WHITE, "(\377y4\377w) Audio Options");
+		Term_putstr(3,  6, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 1");
+		Term_putstr(3,  7, -1, TERM_WHITE, "(\377y6\377w) Game-Play Options 2");
+		Term_putstr(3,  8, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
+		Term_putstr(3,  9, -1, TERM_WHITE, "(\377os\377w) Save Options & Flags");
+		Term_putstr(3, 10, -1, TERM_WHITE, "(\377ol\377w) Load Options & Flags");
 
-		Term_putstr(3,12, -1, TERM_SLATE, "The following options are all saved automatically on quitting via CTRL+Q:");
+		Term_putstr(3, 12, -1, TERM_SLATE, "The following options are all saved automatically on quitting via CTRL+Q:");
 		if (c_cfg.rogue_like_commands)
-			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
+			Term_putstr(3, 13, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
 		else
-			Term_putstr(3,13, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
+			Term_putstr(3, 13, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
 
-		Term_putstr(3,14, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
+		Term_putstr(3, 14, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
 
 #if defined(WINDOWS) || defined(USE_X11)
 		/* Font (and window) settings aren't available in command-line mode */
 		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
-			Term_putstr(3,15, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+			Term_putstr(3, 15, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 			/* CHANGE_FONTS_X11 */
-			Term_putstr(3,16, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (can be tapped multiple times)");
+			Term_putstr(3, 16, -1, TERM_WHITE, "(\377yc\377w) Cycle all font sizes at once (can be tapped multiple times)");
 		}
 #endif
+		Term_putstr(3, 17, -1, TERM_WHITE, "(\377oC\377w) Colour palette and colour blindness options");
 
-		Term_putstr(3,18, -1, TERM_WHITE, "(\377UA\377w) Account Options");
-		Term_putstr(3,19, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
-
-		/* Prompt */
-		c_prt(TERM_L_GREEN, "Command: ", 21, 0);
+		Term_putstr(3, 19, -1, TERM_WHITE, "(\377UA\377w) Account Options");
+		Term_putstr(3, 20, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
 
 		/* Get command */
 		k = inkey();
@@ -8054,11 +8295,8 @@ void do_cmd_options(void) {
 
 		/* Save a 'option' file */
 		else if (k == 's') {
-			/* Prompt */
-			Term_putstr(0, 20, -1, TERM_L_GREEN, "Command: Save an options file");
-
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 21, -1, TERM_YELLOW, "File: ");
+			Term_putstr(0, 21, -1, TERM_YELLOW, "Save to file: ");
 
 			/* Default filename */
 			//sprintf(tmp, "global.opt");
@@ -8073,11 +8311,8 @@ void do_cmd_options(void) {
 		}
 		/* Load a pref file */
 		else if (k == 'l') {
-			/* Prompt */
-			Term_putstr(0, 20, -1, TERM_L_GREEN, "Command: Load an options file");
-
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 21, -1, TERM_YELLOW, "File: ");
+			Term_putstr(0, 21, -1, TERM_YELLOW, "Load file: ");
 
 			/* Default filename */
 			//sprintf(tmp, "global.opt");
@@ -8119,6 +8354,8 @@ void do_cmd_options(void) {
 		/* Toggle single sfx/song from a list of all */
 		else if (k == 'n') do_cmd_options_sfx();
 		else if (k == 'N') do_cmd_options_mus();
+
+		else if (k == 'C') do_cmd_options_colourblindness();
 
 		/* Unknown option */
 		else {

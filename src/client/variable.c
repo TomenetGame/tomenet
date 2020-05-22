@@ -469,6 +469,145 @@ u32b client_color_map[16 * 2] = {
 	0xc79d55,	/* LIGHT UMBER */
 #endif
 };
+#ifndef EXTENDED_COLOURS_PALANIM
+u32b client_color_map_org[16];
+#else
+u32b client_color_map_org[16 * 2];
+#endif
+
+/* For Deuteranopia */
+#ifndef EXTENDED_COLOURS_PALANIM
+u32b client_color_map_deu[16] = {
+#else
+u32b client_color_map_deu[16 * 2] = {
+#endif
+	0x000000,	/* BLACK */
+	0xffffff,	/* WHITE */
+	0x9d9d9d,	/* GRAY */
+	0xdbd100,	/* ORANGE (13) */
+	0x920000,	/* RED (11) */
+	0x490092,	/* GREEN (6) */
+	0x006ddb,	/* BLUE (7) */
+	0x924900,	/* UMBER (12) */
+	0x666666,	/* DARK GRAY */
+	0xd7d7d7,	/* LIGHT GRAY */
+	0xb6dbff,	/* VIOLET (10) */
+	0xffffa4,	/* YELLOW (16*) */
+	0x24ff24,	/* LIGHT RED (14) */
+	0xb66dff,	/* LIGHT GREEN (8) */
+	0x6db6ff,	/* LIGHT BLUE (9) */
+	0xffff6d,	/* LIGHT UMBER (15) */
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* clone them again, for palette animation */
+	0x000000,	/* BLACK */
+	0xffffff,	/* WHITE */
+	0x9d9d9d,	/* GRAY */
+	0xdbd100,	/* ORANGE (13) */
+	0x920000,	/* RED (11) */
+	0x490092,	/* GREEN (6) */
+	0x006ddb,	/* BLUE (7) */
+	0x924900,	/* UMBER (12) */
+	0x666666,	/* DARK GRAY */
+	0xd7d7d7,	/* LIGHT GRAY */
+	0xb6dbff,	/* VIOLET (10) */
+	0xffffa4,	/* YELLOW (16*) */
+	0x24ff24,	/* LIGHT RED (14) */
+	0xb66dff,	/* LIGHT GREEN (8) */
+	0x6db6ff,	/* LIGHT BLUE (9) */
+	0xffff6d,	/* LIGHT UMBER (15) */
+#endif
+};
+
+/* For Protanopia (same as Deuteranopia atm) */
+#ifndef EXTENDED_COLOURS_PALANIM
+u32b client_color_map_pro[16] = {
+#else
+u32b client_color_map_pro[16 * 2] = {
+#endif
+	0x000000,	/* BLACK */
+	0xffffff,	/* WHITE */
+	0x9d9d9d,	/* GRAY */
+	0xdbd100,	/* ORANGE (13) */
+	0x920000,	/* RED (11) */
+	0x490092,	/* GREEN (6) */
+	0x006ddb,	/* BLUE (7) */
+	0x924900,	/* UMBER (12) */
+	0x666666,	/* DARK GRAY */
+	0xd7d7d7,	/* LIGHT GRAY */
+	0xb6dbff,	/* VIOLET (10) */
+	0xffffa4,	/* YELLOW (16*) */
+	0x24ff24,	/* LIGHT RED (14) */
+	0xb66dff,	/* LIGHT GREEN (8) */
+	0x6db6ff,	/* LIGHT BLUE (9) */
+	0xffff6d,	/* LIGHT UMBER (15) */
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* clone them again, for palette animation */
+	0x000000,	/* BLACK */
+	0xffffff,	/* WHITE */
+	0x9d9d9d,	/* GRAY */
+	0xdbd100,	/* ORANGE (13) */
+	0x920000,	/* RED (11) */
+	0x490092,	/* GREEN (6) */
+	0x006ddb,	/* BLUE (7) */
+	0x924900,	/* UMBER (12) */
+	0x666666,	/* DARK GRAY */
+	0xd7d7d7,	/* LIGHT GRAY */
+	0xb6dbff,	/* VIOLET (10) */
+	0xffffa4,	/* YELLOW (16*) */
+	0x24ff24,	/* LIGHT RED (14) */
+	0xb66dff,	/* LIGHT GREEN (8) */
+	0x6db6ff,	/* LIGHT BLUE (9) */
+	0xffff6d,	/* LIGHT UMBER (15) */
+#endif
+};
+
+/* For Tritanopia */
+#ifndef EXTENDED_COLOURS_PALANIM
+u32b client_color_map_tri[16] = {
+#else
+u32b client_color_map_tri[16 * 2] = {
+#endif
+	0x000000,	/* BLACK */
+	0xffffff,	/* WHITE */
+	0x9d9d9d,	/* GRAY */
+	0x924900,	/* ORANGE (12) */
+	0x920000,	/* RED (11) */
+	0x004949,	/* GREEN (2) */
+	0x6db6ff,	/* BLUE (9) */
+	0x490092,	/* UMBER (6) */
+	0x666666,	/* DARK GRAY */
+	0xd7d7d7,	/* LIGHT GRAY */
+	0xffb677,	/* VIOLET (5) */
+	0xffff6d,	/* YELLOW (15) */
+	0xff6db6,	/* LIGHT RED (4 /13) */
+	//0x009292,	/* LIGHT GREEN (3 /7) */
+	0x24ff24,	/* LIGHT GREEN (14) */
+	0xb6dbff,	/* LIGHT BLUE (10) */
+	//0x8036c9,	/* LIGHT UMBER (16*) */
+	0xb66dff,	/* LIGHT UMBER (8) */
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* clone them again, for palette animation */
+	0x000000,	/* BLACK */
+	0xffffff,	/* WHITE */
+	0x9d9d9d,	/* GRAY */
+	0x924900,	/* ORANGE (12) */
+	0x920000,	/* RED (11) */
+	0x004949,	/* GREEN (2) */
+	0x6db6ff,	/* BLUE (9) */
+	0x490092,	/* UMBER (6) */
+	0x666666,	/* DARK GRAY */
+	0xd7d7d7,	/* LIGHT GRAY */
+	0xffb677,	/* VIOLET (5) */
+	0xffff6d,	/* YELLOW (15) */
+	0xff6db6,	/* LIGHT RED (4 /13) */
+	//0x009292,	/* LIGHT GREEN (3 /7) */
+	0x24ff24,	/* LIGHT GREEN (14) */
+	0xb6dbff,	/* LIGHT BLUE (10) */
+	//0x8036c9,	/* LIGHT UMBER (16*) */
+	0xb66dff,	/* LIGHT UMBER (8) */
+#endif
+};
+bool lighterdarkblue = FALSE;
 
 /* Allow code in src/common/ to dynamically check that this is the client */
 bool is_client_side = TRUE;

@@ -1115,6 +1115,14 @@ errr init_gcu(void) {
 	return (0);
 }
 
+void enable_readability_blue_gcu(void) {
+	/* New colour code */
+	client_color_map[6] = 0x0033ff;
+#ifdef EXTENDED_COLOURS_PALANIM
+	client_color_map[16 + 6] = 0x0033ff;
+#endif
+}
+
 void gcu_restore_colours(void) {
 	int i;
 	for (i = 0; i < 16; i++) init_color(i, cor[i], cog[i], cob[i]);

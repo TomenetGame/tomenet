@@ -544,6 +544,9 @@ static cptr ANGBAND_DIR_XTRA_SOUND;
 };
 void enable_readability_blue_win(void) {
 	client_color_map[6] = 0x0033ff;
+#ifdef EXTENDED_COLOURS_PALANIM
+	client_color_map[16 + 6] = 0x0033ff;
+#endif
 }
 static void enable_common_colormap_win(void) {
 	int i;
@@ -1009,10 +1012,6 @@ static void load_prefs(void) {
 	/* Extract the "disable_numlock" flag */
 	disable_numlock = (GetPrivateProfileInt("Base", "DisableNumlock", 1, ini_file) != 0);
 
-	/* Extract the readability_blue flag */
-	if (GetPrivateProfileInt("Base", "LighterDarkBlue", 1, ini_file) != 0)
-		enable_readability_blue_win();
-
 	/* Read the colormap */
 	for (i = 0; i < 16; i++) {
 		char key_name[12] = { '\0' };
@@ -1031,6 +1030,10 @@ static void load_prefs(void) {
 		client_color_map[i + 16] = client_color_map[i];
 #endif
 	}
+	/* Extract the readability_blue flag */
+	lighterdarkblue = (GetPrivateProfileInt("Base", "LighterDarkBlue", 1, ini_file) != 0);
+	if (lighterdarkblue && client_color_map[6] == 0x0000ff) enable_readability_blue_win();
+	/* Set the colour map */
 	enable_common_colormap_win();
 
 #ifdef USE_GRAPHICS
@@ -3887,8 +3890,17 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	bool done = FALSE;
 	u32b seed;
 
+
 	/* make version strings. */
 	version_build();
+
+	/* Make a copy to use in colour blindness menu when we want to reset palette to default values.
+	   This must happen before we read the config file, as it contains colour-(re)definitions. */
+#ifndef EXTENDED_COLOURS_PALANIM
+	for (i = 0; i < 16; i++) client_color_map_org[i] = client_color_map[i];
+#else
+	for (i = 0; i < 16 * 2; i++) client_color_map_org[i] = client_color_map[i];
+#endif
 
 	/* assume defaults */
 	strcpy(cfg_soundpackfolder, "sound");

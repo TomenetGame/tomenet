@@ -80,6 +80,8 @@ static bool read_mangrc(cptr filename) {
 	char buf[1024];
 	bool skip = FALSE;
 
+	lighterdarkblue = FALSE;
+
 	/* empty filename means use default */
 	if (!strlen(filename)) {
 #ifdef USE_EMX
@@ -228,10 +230,7 @@ static bool read_mangrc(cptr filename) {
 				skip = TRUE;
 
 			/* READABILITY_BLUE */
-			if (!strncmp(buf, "lighterDarkBlue", 15)) {
-				/* New code */
-				client_color_map[6] = 0x0033ff;
-			}
+			if (!strncmp(buf, "lighterDarkBlue", 15)) lighterdarkblue = TRUE;
 
 			/* Color map */
 			if (!strncmp(buf, "colormap_", 9)) {
@@ -396,6 +395,13 @@ static bool read_mangrc(cptr filename) {
 			/*** Everything else is ignored ***/
 		}
 		fclose(config);
+
+		if (lighterdarkblue && client_color_map[6] == 0x0000ff)
+#ifdef USE_X11
+			enable_readability_blue_x11();
+#else
+			enable_readability_blue_gcu();
+#endif
 	}
 	return (skip);
 }
@@ -818,6 +824,79 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 	return (FALSE); //failure
 }
 
+bool write_mangrc_colourmap(void) {
+	char config_name2[100];
+	FILE *config, *config2;
+	char buf[1024];
+	bool found_start = FALSE, found = FALSE;
+	int i;
+	unsigned long c;
+
+	buf[0] = 0;//valgrind warning it seems..?
+
+	strcpy(config_name2, mangrc_filename);
+	strcat(config_name2, ".$$$");
+
+	config = fopen(mangrc_filename, "r");
+	config2 = fopen(config_name2, "w");
+
+	/* Attempt to open file */
+	if (config2) {
+		if (config) {
+			/* Read until end */
+			while (!feof(config)) {
+				/* Get a line */
+				if (!fgets(buf, 1024, config)) break;
+
+				/* Remove all colourmap lines */
+				if (!strncmp(buf, "#colormap_", 10) || !strncmp(buf, ";colormap_", 10) || !strncmp(buf, "colormap_", 9)) {
+					found_start = TRUE;
+					continue;
+				}
+
+				/* Find good place to fit them in (at comment about colourmap) */
+				if (buf[0] == '#' && strstr(buf, "Full color remapping")) found_start = TRUE;
+
+				/* Insert colourmap info here */
+				if ((!buf[0] || buf[0] == '\n') && found_start && !found) {
+					found = TRUE;
+					for (i = 1; i < 16; i++) {
+						c = client_color_map[i];
+						sprintf(buf, "colormap_%d\t\t#%06lx\n", i, c);
+						fputs(buf, config2);
+					}
+					fputs("\n", config2);
+					continue;
+				}
+
+				/* copy everything else over */
+				fputs(buf, config2);
+			}
+
+			/* Just append new colourmap? */
+			if (!found) {
+				fputs("\n", config2);
+				for (i = 1; i < 16; i++) {
+					c = client_color_map[i];
+					sprintf(buf, "colormap_%d\t\t#%06lx\n", i, c);
+					fputs(buf, config2);
+				}
+			}
+
+			fclose(config);
+			fclose(config2);
+
+			/* replace old by new */
+			remove(mangrc_filename);
+			rename(config_name2, mangrc_filename);
+
+			return (TRUE); //success
+		}
+	}
+
+	return (FALSE); //failure
+}
+
 static void default_set(void) {
 	char *temp;
 
@@ -876,6 +955,14 @@ int main(int argc, char **argv) {
 
 	/* Acquire the version strings */
 	version_build();
+
+	/* Make a copy to use in colour blindness menu when we want to reset palette to default values.
+	   This must happen before we read the config file, as it contains colour-(re)definitions. */
+#ifndef EXTENDED_COLOURS_PALANIM
+	for (i = 0; i < 16; i++) client_color_map_org[i] = client_color_map[i];
+#else
+	for (i = 0; i < 16 * 2; i++) client_color_map_org[i] = client_color_map[i];
+#endif
 
 	/* assume defaults */
 	strcpy(cfg_soundpackfolder, "sound");
