@@ -8835,6 +8835,40 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		else return (FALSE);
 	}
 
+	/* Kinda bad in-between hack: Heat melts snow ^^ */
+	if (p_ptr->temp_misc_1 & 0x08) {
+		switch (typ) {
+		    /* remove snow by melting */
+		case GF_HOLY_FIRE:
+		case GF_HAVOC:
+		case GF_FIRE:
+		case GF_METEOR:
+		case GF_PLASMA:
+		case GF_HELLFIRE:
+		case GF_INFERNO:
+		case GF_MANA:
+		case GF_DISINTEGRATE:
+		    /* remove snow by washing it away */
+		case GF_WATER:
+		case GF_WAVE:
+		case GF_ACID:
+		case GF_WATERPOISON:
+		case GF_ICEPOISON:
+		    /* remove snow by blasting it away */
+		case GF_STUN:
+		case GF_SOUND:
+		case GF_NEXUS:
+		case GF_BOULDER:
+		case GF_FORCE:
+		case GF_GRAVITY:
+		//unsnow
+			p_ptr->temp_misc_1 &= ~0x08;
+			note_spot(Ind, p_ptr->py, p_ptr->px);
+			update_player(Ind); //may return to being invisible
+			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+		}
+	}
+
 	/* Mega-Hack -- Players cannot hurt other players */
 	if (cfg.use_pk_rules == PK_RULES_NEVER && who <= 0 &&
 	    who > PROJECTOR_UNUSUAL
