@@ -47,7 +47,8 @@ typedef struct {
 	client_setup_t	Client_setup;
 
 	int		audio_sfx, audio_mus;
-//	char		q_static[MAX_RELIABLE_DATA_PACKET_SIZE]; /* for paralysation */
+	//char		q_static[MAX_RELIABLE_DATA_PACKET_SIZE]; /* for paralysation */
+	unsigned long int laston_real;
 } connection_t;
 
 #endif

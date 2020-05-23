@@ -2691,7 +2691,11 @@ void msg_print(int Ind, cptr msg_raw) {
 	if (suppress_message) return;
 
 	/* no message? */
-	if (msg_raw == NULL) return;
+	if (msg_raw == NULL) {
+		/* Hack to clear the topline; now also hack to refresh message display (4.7.3) */
+		Send_message(Ind, NULL);
+		return;
+	}
 
 	strcpy(msg_dup, msg_raw); /* in case msg_raw was constant */
 
@@ -2730,7 +2734,7 @@ void msg_print(int Ind, cptr msg_raw) {
 		/* Tabbing the line? */
 		msg_minibuf[0] = ' ';
 		msg_minibuf[1] = '\0';
-#if 0 /* 0'ed to remove backward compatibility via '~' character. We want to switch to \374..6 codes exlusively */
+ #if 0 /* 0'ed to remove backward compatibility via '~' character. We want to switch to \374..6 codes exlusively */
 		if (is_chat && tab_spacer) {
 			/* Start the padding for chat messages with '~' */
 			strcat(msg_buf, "~");
@@ -2738,9 +2742,9 @@ void msg_print(int Ind, cptr msg_raw) {
 		} else {
 			tmp = tab_spacer;
 		}
-#else
+ #else
 		tmp = tab_spacer;
-#endif
+ #endif
 		while (tmp--) {
 			text_len++;
 			strcat(msg_buf, msg_minibuf);
@@ -2810,9 +2814,9 @@ void msg_print(int Ind, cptr msg_raw) {
 					switch (msg[msg_scan]) {
 					case '*': tab_spacer = 2; break; /* Kill message */
 					case '[': /* Chat message */
-#if 0
+ #if 0
 						tab_spacer = 1;
-#else
+ #else
 						{
 							const char *bracket = strchr(&msg[msg_scan], ']');
 
@@ -2842,7 +2846,7 @@ void msg_print(int Ind, cptr msg_raw) {
 								tab_spacer = 1;
 							}
 						}
-#endif
+ #endif
 						break;
 					default: tab_spacer = 1;
 					}
@@ -2855,9 +2859,9 @@ void msg_print(int Ind, cptr msg_raw) {
 				   beginning of chat text then use the one we had, or {-
 				   wouldn't work correctly in private chat anymore. - C. Blue */
 				if (msg[msg_scan] == ']') {
-#if 0  /* this is wrong, because the colour code COULD already be from \\a feature! */
+ #if 0  /* this is wrong, because the colour code COULD already be from \\a feature! */
 				    ((msg[msg_scan + 1] == ' ' && msg[msg_scan + 2] == '\377') ||
-#endif
+ #endif
 					if (msg[msg_scan + 1] == '\377') first_colour_code_set = FALSE;
 				}
 
@@ -2880,18 +2884,18 @@ void msg_print(int Ind, cptr msg_raw) {
 				    msg[msg_scan - 1] == '(' ||
 				    msg[msg_scan - 1] == '[' ||
 				    msg[msg_scan - 1] == '{' ||
-#if 1 /* don't break smileys? */
+ #if 1 /* don't break smileys? */
 				    msg[msg_scan - 1] == ':' || msg[msg_scan - 1] == ';' ||
 				    msg[msg_scan - 1] == '^' || msg[msg_scan - 1] == '-' ||
-#endif
-#if 1 /* don't break quotes right at the start */
+ #endif
+ #if 1 /* don't break quotes right at the start */
 				    msg[msg_scan - 1] == '"' || msg[msg_scan - 1] == '\'' ||
-#endif
-#if 0
+ #endif
+ #if 0
 				    msg[msg_scan - 1] == ')' ||
 				    msg[msg_scan - 1] == ']' ||
 				    msg[msg_scan - 1] == '}' ||
-#endif
+ #endif
 				    /* (maybe too much) for pasting items to chat, (+1) or (-2,0) : */
 				    msg[msg_scan - 1] == '+' || msg[msg_scan - 1] == '-' ||
 				    /* Don't break colour codes */
@@ -2902,19 +2906,19 @@ void msg_print(int Ind, cptr msg_raw) {
 				    (msg[msg_scan] >= 'A' && msg[msg_scan] <= 'Z') ||
 				    (msg[msg_scan] >= 'a' && msg[msg_scan] <= 'z') ||
 				    (msg[msg_scan] >= '0' && msg[msg_scan] <= '9') ||
-#if 1 /* specialty: don't break quotes */
+ #if 1 /* specialty: don't break quotes */
 				    //(msg[msg_scan] != ' ' && msg[msg_scan - 1] == '"') ||
 				    msg[msg_scan - 1] == '"' || msg[msg_scan - 1] == '\'' ||
-#endif
-#if 1 /* don't break moar smileys? */
+ #endif
+ #if 1 /* don't break moar smileys? */
 				    msg[msg_scan] == '(' ||
 				    msg[msg_scan] == '[' ||
 				    msg[msg_scan] == '{' ||
-#endif
-#if 1 /* don't break smileys? */
+ #endif
+ #if 1 /* don't break smileys? */
 				    msg[msg_scan] == '-' ||
 				    msg[msg_scan] == '^' ||
-#endif
+ #endif
 				    msg[msg_scan] == '_' ||/* for pasting lore-flags to chat! */
 				    msg[msg_scan] == ')' ||
 				    msg[msg_scan] == ']' ||
@@ -2935,17 +2939,17 @@ void msg_print(int Ind, cptr msg_raw) {
 					} while (((msg[space_scan - 1] >= 'A' && msg[space_scan - 1] <= 'Z') ||
 						(msg[space_scan - 1] >= 'a' && msg[space_scan - 1] <= 'z') ||
 						(msg[space_scan - 1] >= '0' && msg[space_scan - 1] <= '9') ||
-#if 1 /* don't break smileys? */
+ #if 1 /* don't break smileys? */
 						msg[space_scan - 1] == ':' || msg[space_scan - 1] == ';' ||
-#endif
-#if 0
+ #endif
+ #if 0
 						msg[space_scan - 1] == ')' ||
 						msg[space_scan - 1] == ']' ||
 						msg[space_scan - 1] == '}' ||
-#endif
-#if 0
+ #endif
+ #if 0
 						msg[space_scan - 1] == '_' ||/* for pasting lore-flags to chat! */
-#endif
+ #endif
 						msg[space_scan - 1] == '(' ||
 						msg[space_scan - 1] == '[' ||
 						msg[space_scan - 1] == '{' ||

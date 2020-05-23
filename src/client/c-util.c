@@ -3513,7 +3513,15 @@ void c_msg_print(cptr msg) {
 		if (!topline_icky) clear_topline();
 
 	/* No message */
-	if (!msg) return;
+	if (!msg) {
+		/* An empty msg was and is a hack to just clear the topline, done above.
+		   However, now it has a second purpose (4.7.3): On relog, cause the client to call fix_message() once per relog,
+		   to restore all previous messages in the message windows across logins.
+		   This is important in case the server motd (admin-notes) aren't sent and no other message (party/guild/player notes) is sent either,
+		   in which case the message windows would all stay blank until the client receives the first message. */
+		p_ptr->window |= PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT;
+		return;
+	}
 
 	/* Copy it */
 	strcpy(buf, msg);

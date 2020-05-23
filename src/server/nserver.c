@@ -1550,6 +1550,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 	int		i, player = 0;
 	char		traffic[50+1];
 	player_type	*p_ptr = NULL;
+	struct account acc;
 
 	/* reason was probably made using format() which uses a static buffer so copy it - mikaelh */
 	reason = (char*)string_make(reason_orig);
@@ -1562,6 +1563,14 @@ bool Destroy_connection(int ind, char *reason_orig) {
 		plog(format("Cannot destroy empty connection (\"%s\")", reason));
 		string_free(reason);
 		return FALSE;
+	}
+
+	/* Timestamp account for 'laston' moment */
+	if (GetAccount(&acc, connp->nick, NULL, TRUE)) {
+		time_t now = time(&now);
+		acc.acc_laston = now;
+		acc.acc_laston_real = now;
+		WriteAccount(&acc, FALSE);
 	}
 
 	if (connp->id != -1) {
@@ -3017,11 +3026,18 @@ static int Handle_login(int ind) {
 	/* check pending notes to this player -C. Blue */
 	/* NOTE: For clients < 4.7.3 the character-specific options have not yet been sent to the server at this point.
 	         So despite of the sync_options() call above the messages below will always pick the censored version. */
+
+	/* Hack: Since clients now (4.7.3) have persistent message log, don't re-spam the motd into it as it looks a bit bad.
+	   To handle this we check if the time between relogging is < 1 minute, and in that case skip the motd (aka admin-notes). */
+	if (time(NULL) - connp->laston_real >= 60)
 	for (i = 0; i < MAX_ADMINNOTES; i++) {
-		if (strcmp(admin_note[i], "")) {
+		if (strcmp(admin_note[i], ""))
 			msg_format(NumPlayers, "\375\377sMotD: %s", admin_note[i]);
-		}
 	}
+	/* Hack: In case no message at all is sent, client will not call fix_message() in that case to re-display the old messages, instead leaving the window blank.
+	   We prevent that by this hack that causes the (4.7.3+) clients to call fix_message() to ensure 'reinit' of all message windows after a relog. */
+	else msg_print(NumPlayers, NULL);
+
 	for (i = 0; i < MAX_NOTES; i++) {
 		if (!strcasecmp(priv_note_target[i], connp->nick)) { /* <- sent to an account name, case-independant */
 			msg_format(NumPlayers, "\374\377RNote from %s: %s", priv_note_sender[i], p_ptr->censor_swearing ? priv_note[i] : priv_note_u[i]);
@@ -4376,6 +4392,10 @@ static int Receive_login(int ind) {
 				return(-1);
 			}
 		}
+		/* For skip-motd hack for persistent message log across relogs -
+		   we need to do this here before calling GetAccount() for password verification further below
+		   as that will actually timestamp the account anew (if the password is successfully verified). */
+		connp->laston_real = acc.acc_laston_real;
 		WIPE(&acc, struct account);
 
 		/* Check for forbidden names (swearing): */
@@ -6590,7 +6610,11 @@ int Send_message(int Ind, cptr msg) {
 	player_type *p_ptr = Players[Ind];
 	char buf[80 +80]; // for +80 see below, at 'Clip end of msg'..
 
-	if (msg == NULL) return 1;
+	if (msg == NULL) {
+		//return 1;
+		/* Hack: Indicate a NULL string by sending a string just consisting of char \377 */
+		return Packet_printf(&connp->c, "%c%c%c", PKT_MESSAGE, 255, 0);
+	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;

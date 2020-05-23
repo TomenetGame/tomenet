@@ -2431,6 +2431,14 @@ int Receive_message(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0) return n;
 
+	/* Hack to clear topline: It's a translation of the former msg_print(Ind, NULL) hack, as we cannot transmit the NULL. */
+	if (buf[0] == '\377' && !buf[1]) {
+		if (screen_icky && (!shopping || perusing)) Term_switch(0);
+		c_msg_print(NULL);
+		if (screen_icky && (!shopping || perusing)) Term_switch(0);
+		return 1;
+	}
+
 	/* XXX Mega-hack -- because we are not using checksums, sometimes under
 	 * heavy traffic Receive_line_input receives corrupted data, which will cause
 	 * the run-length encoded algorithm to exit prematurely.  Since there is no
