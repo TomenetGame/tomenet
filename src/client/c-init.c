@@ -3818,9 +3818,12 @@ void client_init(char *argv1, bool skip) {
 		shopping = perusing = FALSE; //paraonia?
 		recording_macro = FALSE; //paranoia?
 
- #if 1		/* optional: reset message log? */
+ #if 1		/* optional: reset message input history? */
 		hist_end = hist_chat_end = 0;
 		hist_looped = hist_chat_looped = FALSE;
+ #endif
+ #if 0
+		/* optional: reset message log? */
 		message__next = message__last = message__head = message__tail = 0;
 		message__next_chat =  message__last_chat = message__head_chat = message__tail_chat = 0;
 		message__next_msgnochat = message__last_msgnochat = message__head_msgnochat = message__tail_msgnochat = 0;
