@@ -2088,7 +2088,7 @@ static bool rd_extra(int Ind) {
 	   (done via script login-hook, eg custom.lua) - C. Blue */
 	rd_byte(&p_ptr->updated_savegame);
 
-#if 1 /* temporary, until all chars are converted */
+#if 0 /* temporary, until all chars are converted */
  #ifdef SOLO_REKING
 	/* hack already existing fallen winners (due to lack of time() in custom.lua we need to do that here) */
 	if (p_ptr->updated_savegame < 10) {
