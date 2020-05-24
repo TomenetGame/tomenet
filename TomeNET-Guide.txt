@@ -19632,14 +19632,29 @@ Some monsters that people often get killed by are:
     opponents instead.
     See (7.1) and (7.2) how to equip yourself to minimize risks.
 
+-Sometimes you will encounter a 'Spectral' ego monsters very early. These are
+ very rare, so you are just a bit unlucky in that case.
+ They can paralyze you if you lack free action, which makes them deadly for low
+ level players, as those usually don't have FA yet (except for gnomes).
+ Your best bet is to dps it down as fast as possible with strong ranged attacks
+ or to teleport out on sight if you already have a means of teleportation.
+
+ If you are in a team and have ranged attacks, these should pose no problem
+ though, as long as the player with ranged attacks isn't the one getting
+ paralyzed. Just don't let them touch you, or they will drain your experience
+ big time.
+
 -If you recognize that you cannot win a fight and it will likely end deadly
  it might be a good idea to read a scroll of Word of Recall as early as
  possible and then try to survive until it kicks in and carries you to safety.
 
--Druid monsters, for example druid snotlings or druid kobolds. They can appear
- at very low level and they are able to cast firebolts that insta-kill you
- (instantly kill you).
+-Druid ego monsters, for example druid snotlings or druid kobolds. They can
+ appear at very low level and they are able to cast firebolts that insta-kill
+ you (instantly kill you).
  Again you should try to utilize fighting techniques if you can.
+
+-Runemaster ego monsters, basically same as Druid ego monsters mentioned above
+ but can use a wider variety of elemental spells of high damage potential.
 
 -Elite Uruks, they fire extremely sharp arrows, always posing a high threat.
 
