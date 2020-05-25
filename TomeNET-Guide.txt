@@ -12823,8 +12823,8 @@ stated.
                                 get disarmed.
 
                                 Slightly increases your chance to score
-                                critical hits in armed combat (Note: The skill
-                                'Critical-strike' has much more effect.)
+                                critical hits in armed combat (just 7.5% as
+                                effective as the 'Critical-strike' skill.)
 
                                 Weaponmastery will also increase your parry
                                 chance a good deal (see (6.11) for details):
