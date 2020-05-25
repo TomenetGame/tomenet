@@ -528,7 +528,7 @@ D:Two Silmarils of Feanor blaze from the thunderous crown of twisted
 D:iron. The corrupted metal feels at once as infernal as hellfire
 D:and as chilling as the Outer Darkness. One protrusion from the
 D:crown is abruptly ended where a third jewel might have shone.
-
+D:Anyone trying to wear it who isn't royalty will die in a terrible blast.
 
 # The Iron Crown of Beruthiel
 
