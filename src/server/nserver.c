@@ -534,7 +534,10 @@ static bool update_acc_file_version(void) {
 		acc.deed_event = acc_old.deed_event;
 		acc.deed_achievement = acc_old.deed_achievement;
 		acc.guild_id = acc_old.guild_id;
-		acc.guild_dna = acc.guild_id ? guilds[acc.guild_id].dna : 0;
+		acc.guild_dna = acc_old.guild_dna;
+		acc.houses = acc_old.houses;
+		acc.runtime = 0;
+		acc.unused1 = acc.unused2 = acc.unused3 = 0;
 
 		/* changes/additions */
 		acc.houses = -1; //init value, means "please count me" // ACC_HOUSE_LIMIT
@@ -3029,7 +3032,7 @@ static int Handle_login(int ind) {
 
 	/* Hack: Since clients now (4.7.3) have persistent message log, don't re-spam the motd into it as it looks a bit bad.
 	   To handle this we check if the time between relogging is < 1 minute, and in that case skip the motd (aka admin-notes). */
-	if (time(NULL) - connp->laston_real >= 60)
+	if (time(NULL) - connp->laston_real >= 60 || acc_get_runtime(p_ptr->accountname) != runtime_server)
 	for (i = 0; i < MAX_ADMINNOTES; i++) {
 		if (strcmp(admin_note[i], ""))
 			msg_format(NumPlayers, "\375\377sMotD: %s", admin_note[i]);
@@ -3540,6 +3543,10 @@ static int Handle_login(int ind) {
 		else	title = (p_ptr->male) ? "King " : "Queen ";
 	}
 	else if (p_ptr->iron_winner) title = "Iron Champion ";
+
+	/* Done everything that required checking whether we logged in once since last server restart?
+	   Then adjust our 'runtime' tracker to this server session, by imprinting it. */
+	acc_set_runtime(p_ptr->accountname, runtime_server);
 
 	/* Handle the cfg_secret_dungeon_master option: Only tell other admins. */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {

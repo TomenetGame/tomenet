@@ -25,9 +25,9 @@
 struct account{
 	u32b id;        /* account id */
 	u32b flags;     /* account flags */
-	char name[30];  /* login */
-	char name_normalised[30];  /* login name, but in a simplified form, used for preventing creation of too similar account names */
-	char pass[20];  /* some crypts are not 13 */
+	char name[30];  /* login - [ACCFILE_NAME_LEN] */
+	char name_normalised[30];  /* login name, but in a simplified form, used for preventing creation of too similar account names - [ACCFILE_PASSWD_LEN] */
+	char pass[20];  /* some crypts are not 13 - [ACCFILE_PASSWD_LEN] */
 #ifdef ACC32
 	int acc_laston, acc_laston_real;
 #else
@@ -41,4 +41,10 @@ struct account{
 	u32b guild_dna;	/* auto-rejoin its guild after a char perma-died */
 
 	char houses; /* for account-wide house limit (installed after increasing the # of generic character slots above 8) */
+	unsigned char runtime;	/* increments on each server (re)start simply, to track server instance */
+
+	/* for future use */
+	unsigned char unused1;
+	unsigned char unused2;
+	unsigned char unused3;
 };

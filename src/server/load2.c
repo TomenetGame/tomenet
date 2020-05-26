@@ -1862,8 +1862,8 @@ static bool rd_extra(int Ind) {
 		}
 	}
 
-	/* hack */
-	rd_byte(&tmp8u);
+	rd_byte(&tmp8u); //HOLE
+
 	rd_s16b(&p_ptr->blind);
 	rd_s16b(&p_ptr->paralyzed);
 	rd_s16b(&p_ptr->confused);
@@ -3277,13 +3277,11 @@ errr rd_server_savefile() {
 		artifact_reset = tmp16s;
 	}
 
-	/* Later use (always zero) */
-	rd_u32b(&tmp32u);
+	/* read server 'runtime' value, simply auto-increments on every startup, until it overflows and just continues to increment again */
+	rd_byte(&runtime_server);
 
 	/* Later use (always zero) */
-	rd_u32b(&tmp32u);
-
-
+	strip_bytes(7);
 
 	/* Monster Memory */
 	rd_u16b(&tmp16u);

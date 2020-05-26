@@ -843,6 +843,11 @@ int updated_savegame_birth = 0;
 int updated_server = 0;
 /* for automatic artifact resets via lua */
 int artifact_reset = 0;
+/* server 'live' run-counter, denoting this particular server run.
+   Used to decide whether a client logs in the first time since server has been updated (restarted) or not,
+   added for deciding whether to display the MotD to a client again or not, to avoid MotD spam on subsequent relogins,
+   to go with persistent chat history window since 4.7.3. */
+unsigned char runtime_server = 0;
 
 /* Watch if someone enters Nether Realm or challenges Morgoth - C. Blue
    Dungeon masters will be paged if they're not AFK or if they have

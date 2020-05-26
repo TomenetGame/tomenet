@@ -275,6 +275,8 @@ extern int updated_savegame_birth;
    usually modified by lua (server_startup()) instead of here. */
 extern int updated_server;
 
+extern unsigned char runtime_server;
+
 /* for lua-controlled/automatically scheduled artifact resets */
 extern int artifact_reset;
 struct artifact_type

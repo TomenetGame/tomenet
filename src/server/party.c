@@ -488,6 +488,30 @@ int acc_set_houses(const char *name, char houses) {
 	return(1);
 }
 
+unsigned char acc_get_runtime(const char *name) {
+	struct account acc;
+
+	if (!GetAccount(&acc, name, NULL, FALSE)) return(0);
+	return acc.runtime;
+}
+
+/* set account houses */
+void acc_set_runtime(const char *name, unsigned char runtime) {
+	struct account acc;
+
+	/* Read from disk */
+	if (!GetAccount(&acc, name, NULL, TRUE)) return;
+
+	acc.runtime = runtime;
+	/* Write account to disk */
+	WriteAccount(&acc, FALSE);
+
+	/* Prevent the password from leaking */
+	memset(acc.pass, 0, sizeof(acc.pass));
+
+	return;
+}
+
 /*
  return player account information (by name)
  */

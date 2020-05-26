@@ -1494,6 +1494,8 @@ extern void init_character_ordering(int Ind);
 extern void zero_character_ordering(int Ind);
 extern void init_account_order(int Ind, s32b acc_id);
 extern void show_account_order(int Ind, s32b acc_id);
+extern unsigned char acc_get_runtime(const char *name);
+extern void acc_set_runtime(const char *name, unsigned char runtime);
 
 /* printout.c */
 extern int s_print_only_to_file(int which);
@@ -2459,6 +2461,8 @@ extern int updated_savegame_birth;
 extern int updated_server;
 /* for automatic artifact resets via lua */
 extern int artifact_reset;
+/* for deciding to display or not re-display the MotD to a client */
+extern unsigned char runtime_server;
 
 /* variables for controlling global events (automated Highlander Tournament) - C. Blue */
 extern global_event_type global_event[MAX_GLOBAL_EVENTS];

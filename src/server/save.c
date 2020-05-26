@@ -830,7 +830,8 @@ static void wr_extra(int Ind) {
 	wr_byte(p_ptr->lives);		/* old "rest" */
 	wr_byte(p_ptr->houses_owned);
 
-	wr_byte(0);			/* unused */
+	wr_byte(0); //HOLE
+
 	wr_s16b(p_ptr->blind);
 	wr_s16b(p_ptr->paralyzed);
 	wr_s16b(p_ptr->confused);
@@ -2117,10 +2118,13 @@ static bool wr_server_savefile() {
 	wr_s16b(updated_server);
 	/* save artifact-reset state (lua) */
 	wr_s16b(artifact_reset);
+	/* server 'runtime' counter */
+	wr_byte(runtime_server);
 
-	/* Space */
+	/* Space (7 bytes) */
 	wr_u32b(0L);
-	wr_u32b(0L);
+	wr_u16b(0);
+	wr_byte(0);
 
 	/* Dump the monster (unique) race information */
 	tmp16u = MAX_R_IDX;

@@ -2151,7 +2151,13 @@ struct account {
 	s32b guild_id;	/* auto-rejoin its guild after a char perma-died */
 	u32b guild_dna;	/* auto-rejoin its guild after a char perma-died */
 
-	char houses; /* for account-wide house limit (installed after increasing the # of generic character slots above 8) */
+	char houses;	/* for account-wide house limit (installed after increasing the # of generic character slots above 8) */
+	unsigned char runtime;	/* increments on each server (re)start simply, to track server instance */
+
+	/* for future use */
+	unsigned char unused1;
+	unsigned char unused2;
+	unsigned char unused3;
 };
 /* Used for updating tomenet.acc structure: */
 struct account_old {
@@ -2171,6 +2177,8 @@ struct account_old {
 	char deed_achievement;	/* receive a deed for a (currently PvP) achievement? */
 	s32b guild_id;	/* auto-rejoin its guild after a char perma-died */
 	u32b guild_dna;	/* auto-rejoin its guild after a char perma-died */
+
+	char houses; /* for account-wide house limit (installed after increasing the # of generic character slots above 8) */
 };
 
 typedef struct version_type version_type;

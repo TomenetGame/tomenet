@@ -9486,6 +9486,14 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 		quit("broken server savefile(s)");
 	}
 
+	/* Initialize 'runtime' tracker: Just count up each time the server gets (re)started (until overflow, then just continue counting up again).
+	   Note: Since it initializes at 0, it will start at 1 after first-time increase here -
+	   this might be important in the light that older player savegames are initialized to value 0 instead, and hence differ by default.
+	   So to keep this behaviour consistent, we check whether we reach 0 after an overflow here and jump to 1 to skip the 0 value again. */
+	runtime_server++;
+	/* Hack: For consistent behaviour, always skip '0' value - here potentially happening in any case of an arithmetic overflow: */
+	if (!runtime_server) runtime_server++;
+
 	/* Nothing loaded */
 	if (!server_state_loaded) {
 		/* Make server state info */
