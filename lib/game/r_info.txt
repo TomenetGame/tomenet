@@ -20455,7 +20455,7 @@ D:Showing no hesitation, empathy or doubt it attacked immediately!
 # Differences: no-death, slower, awake, bashes doors, has light, no spells
 N:1154:Horned Reaper
 G:U:B
-I:111:50d100:200:140:0
+I:111:10d100:200:50:0
 W:72:0:7500:18000
 E:1:1:2:2:1:2
 O:0:100:0:0
