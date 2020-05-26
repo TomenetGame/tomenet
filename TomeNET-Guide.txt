@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. May 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 26. May 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -20499,10 +20499,17 @@ Dragon Scale Mails
         Constitution bonus (has a chance to include constitution sustenance)
         Hit point bonus (+LIFE)   (*)
         Extra +AC bonus
-Rings
-        Rings that come with one of the four basic resistances in their base
-        version (fire, cold, lightning, acid) will have an especially high
-        chance to obtain the according immunity.
+Rings/Amulets
+        Rather basic (up to 12000 Au value in k_info.txt) rings and amulets
+        that already come with one of the four base resistances (fire, cold,
+        lightning, acid) or poison resistance in their base (non-artifact)
+        version will have an especially high chance to obtain the according
+        immunity when turning into a random artifact.
+        Higher-value jewelry is not affected by this rule and does not obtain
+        an immunity easier than any other generic item would (which means, it
+        can obtain immunity only via 'General Mods', see further below, same
+        as any other item - which actually rules out poison immunity as that
+        one is not among the generic immunity mods).
 Light sources
         Increased light radius
         Everburning (no fuel needed; applies only if item usually needs fuel)
