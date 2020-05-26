@@ -4515,7 +4515,7 @@ int Receive_palette(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &c, &r, &g, &b)) <= 0) return n;
 
-	set_palette(c, r, g, b);
+	if (c_cfg.palette_animation) set_palette(c, r, g, b);
 	return 1;
 }
 

@@ -3114,8 +3114,6 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	cptr cname = color_name[0];
 	term_data *old_td = (term_data*)(Term->data);
 
-	if (!c_cfg.palette_animation) return;
-
 #ifdef PALANIM_OPTIMIZED
 	/* Check for refresh market at the end of a palette data transmission */
 	if (c == 127 || c == 128) {
@@ -3171,5 +3169,27 @@ void get_palette(byte c, byte *r, byte *g, byte *b) {
 	*r = (cref & 0xFF0000) >> 16;
 	*g = (cref & 0x00FF00) >> 8;
 	*b = (cref & 0x0000FF);
+}
+void refresh_palette(void) {
+	int i;
+	term_data *old_td = (term_data*)(Term->data);
+
+	set_palette(128, 0, 0, 0);
+
+	/* Refresh aka redraw windows with new colour (term 0 is already done in set_palette(128) line above) */
+#ifdef MAX_TERM_DATA
+	for (i = 1; i < MAX_TERM_DATA; i++) {
+#else
+	for (i = 1; i < 8; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
+#endif
+		if (!term_prefs[i].visible) continue;
+		if (term_prefs[i].x == -32000 || term_prefs[i].y == -32000) continue;
+
+		Term_activate(&term_idx_to_term_data(i)->t);
+		Term_redraw();
+		//Term_xtra(TERM_XTRA_FRESH, 0);
+	}
+
+	Term_activate(&old_td->t);
 }
 #endif

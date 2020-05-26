@@ -4398,8 +4398,6 @@ void set_palette(byte c, byte r, byte g, byte b) {
 	COLORREF code;
 	term *term_old = Term;
 
-	if (!c_cfg.palette_animation) return;
-
 #ifdef PALANIM_OPTIMIZED
 	/* Check for refresh market at the end of a palette data transmission */
 	if (c == 127 || c == 128) {
@@ -4501,5 +4499,29 @@ void get_palette(byte c, byte *r, byte *g, byte *b) {
 	*r = GetRValue(cref);
 	*g = GetGValue(cref);
 	*b = GetBValue(cref);
+}
+void refresh_palette(void) {
+	int i;
+	term *term_old = Term;
+
+	set_palette(128, 0, 0, 0);
+
+	/* Refresh aka redraw windows with new colour (term 0 is already done in set_palette(128) line above) */
+#ifdef MAX_TERM_DATA
+	for (i = 1; i < MAX_TERM_DATA; i++) {
+#else
+	for (i = 1; i < 8; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
+#endif
+		term_data *td = &data[i];
+
+		if (!td->visible) continue;
+		if (td->pos_x == -32000 || td->pos_y == -32000) continue;
+
+		Term_activate(&td->t);
+		Term_redraw();
+		//Term_xtra(TERM_XTRA_FRESH, 0);
+	}
+
+	Term_activate(term_old);
 }
 #endif /* _Windows */

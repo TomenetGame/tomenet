@@ -7978,8 +7978,6 @@ static void do_cmd_options_colourblindness(void) {
 	char ch;
 	bool go = TRUE;
 	int i, l;
-	term *tterm, *old;
-	old = Term;
 	int r, g, b;
 	char buf[MAX_CHARS];
 #ifdef WINDOWS
@@ -8221,23 +8219,8 @@ static void do_cmd_options_colourblindness(void) {
 		/* Exit */
 		if (!go) break;
 
-		/* Redraw ALL windows with new colour */
-		old = Term;
- #ifdef MAX_TERM_DATA
-		for (i = 0; i < MAX_TERM_DATA; i++) {
- #else
-		for (i = 0; i < 8; i++) { /* MAX_TERM_DATA should be defined for X11 too.. */
- #endif
-			tterm = ang_term[i];
-			if (!tterm) continue;
-			Term_activate(tterm);
-			/* Redraw the contents */
-			//both fail on WINE randomly, and randomly work.. oO
-			Term_redraw();
-			Term_xtra(TERM_XTRA_FRESH, 0); /* fails on Linux it seems */
-		}
-		/* Restore */
-		Term_activate(old);
+		/* Redraw ALL windows with new palette colours */
+		refresh_palette();
 	}
 }
 

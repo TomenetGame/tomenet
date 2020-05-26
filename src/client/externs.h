@@ -33,6 +33,7 @@ extern void get_screen_font_name(char *buf);
 extern void animate_palette(void);
 extern void set_palette(byte c, byte r, byte g, byte b);
 extern void get_palette(byte c, byte *r, byte *g, byte *b);
+extern void refresh_palette(void);
 #endif
 
 #ifdef USE_XAW
@@ -922,6 +923,7 @@ extern bool win_dontmoveuser;
 extern void animate_palette(void);
 extern void set_palette(byte c, byte r, byte g, byte b);
 extern void get_palette(byte c, byte *r, byte *g, byte *b);
+extern void refresh_palette(void);
 extern void store_audiopackfolders(void);
 #endif
 extern void store_crecedentials(void);
