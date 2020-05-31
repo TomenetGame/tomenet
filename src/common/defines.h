@@ -571,7 +571,7 @@
 /* Maximum number of concurrent quests (quest_info type) */
 #define MAX_CONCURRENT_QUESTS 5
 #define LOCAL_QUEST (MAX_CONCURRENT_QUESTS) /* hack: reserve a special slot index for a 'local' type quest */
-#define MAX_PQUESTS (MAX_CONCURRENT_QUESTS + 1) /* maximum number of quests a player can have: concurrently running quests plus the special 'local' quest */ 
+#define MAX_PQUESTS (MAX_CONCURRENT_QUESTS + 1) /* maximum number of quests a player can have: concurrently running quests plus the special 'local' quest */
 /* highlight quest keywords enclosed in [[..]] brackets in this colour */
 #if 0
  #define QUEST_KEYWORD_HIGHLIGHT	'y'
@@ -1063,11 +1063,6 @@
    This is especially to enable mimics to use their powers in auto-retaliation,
    if this option is enabled, they will be unable to use @OM inscription for that instead. */
 #define AUTO_RET_CMD
-
-/* '/arm' and '/arr' commands use shared space to accomodate BOTH settings?
-   For the new reworked runecraft, there are not enough flags to accomodate the data, so, no:
-   Default after new runecraft rework in 2020: DISABLE this! */
-//#define ARM_ARR_SHARED
 
 /* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?
    Exploding before it means that players standing in walls will only take 50%
@@ -1705,7 +1700,7 @@
 
 #if 0
  #define	IS_DAY	 ((turn % (10L * TOWN_DAWN)) <= (10L * TOWN_DAWN / 2))
- #define	IS_NIGHT ((turn % (10L * TOWN_DAWN)) > (10L * TOWN_DAWN / 2))	
+ #define	IS_NIGHT ((turn % (10L * TOWN_DAWN)) > (10L * TOWN_DAWN / 2))
 #else	/* 0 */
  #define	IS_NIGHT_RAW	((bst(HOUR, turn) < SUNRISE) || (bst(HOUR, turn) >= NIGHTFALL))
  /* Certain events keep the world dark - Halloween and fireworks during season_new_years_eve: */
@@ -2094,7 +2089,7 @@
 
  #define ROW_CURSP		18
  #define COL_CURSP		3	/* "Cur SP xxxxx" */
- 
+
  #define ROW_MAXST		19	/* current stamina */
  #define COL_MAXST		8
 
@@ -3167,19 +3162,19 @@
 /*
  * Max sizes of the following arrays
  */
-#define MAX_ROCKS	62	/* Used with rings (min 58) */ 
-#define MAX_AMULETS	43	/* Used with amulets (min 30) */ 
-#define MAX_WOODS	36	/* Used with staffs (min 32) */ 
-#define MAX_METALS	39	/* Used with wands/rods (min 32/30) */ 
+#define MAX_ROCKS	62	/* Used with rings (min 58) */
+#define MAX_AMULETS	43	/* Used with amulets (min 30) */
+#define MAX_WOODS	36	/* Used with staffs (min 32) */
+#define MAX_METALS	39	/* Used with wands/rods (min 32/30) */
 #ifndef EXPAND_TV_POTION
- #define MAX_COLORS	65	/* Used with potions (min 62) */ 
+ #define MAX_COLORS	65	/* Used with potions (min 62) */
 #else
- #define MAX_COLORS	66	/* Used with potions (min 62) */ 
+ #define MAX_COLORS	66	/* Used with potions (min 62) */
 #endif
 #define STATIC_COLORS	6	/* The first n colour flavours, which aren't randomised */
-#define MAX_SHROOM	20	/* Used with mushrooms (min 20) */ 
-#define MAX_TITLES	73	/* Used with scrolls (min 55) */ 
-#define MAX_SYLLABLES	164	/* Used with scrolls (see below) */ 
+#define MAX_SHROOM	20	/* Used with mushrooms (min 20) */
+#define MAX_TITLES	73	/* Used with scrolls (min 55) */
+#define MAX_SYLLABLES	164	/* Used with scrolls (see below) */
 
 
 /* sval for TV_BOTTLE */
@@ -4129,7 +4124,7 @@
 #define PRECIOUS_STONE_MAX_TIER4_START	31
 #define PRECIOUS_STONE_MAX_TIER4_END	32
 
-/* "cheap" tier; keep this to a minimum since we dont want lowbies to run around with too many stones */ 
+/* "cheap" tier; keep this to a minimum since we dont want lowbies to run around with too many stones */
 #define SV_PRECIOUS_STONE_JADE		1
 #define SV_PRECIOUS_STONE_CARNELIAN	2
 #define SV_PRECIOUS_STONE_OPAL		3
@@ -4159,7 +4154,7 @@
 #define SV_PRECIOUS_STONE_ZUONIUM	32
 
 /* sub-section of "unobtainium": specific mobs drop this. take out of the group */
-#define SV_PRECIOUS_STONE_DORS_EYE	41 // Dor's Eye... Guess where it's going to be dropped by? 
+#define SV_PRECIOUS_STONE_DORS_EYE	41 // Dor's Eye... Guess where it's going to be dropped by?
 
 /* Extend 'Digging' skill to become 'Excavation', adding craftable demolition charges
    that can also be applied to ranged ammunition or traps for various effects  - C. Blue */
@@ -5993,7 +5988,7 @@
 #define RF0_DIRECT_MASK \
 	(RF0_BO_DISE)
 
- 
+
 /*
  * Hack -- "bolt" spells that may hurt fellow monsters
  */
@@ -6160,7 +6155,7 @@
 /*
 	Different types of terrain, used for the wilderness.
 	-APD-
-	
+
 	HACK -- I am temporarily using these numbers to determine
 	how many monsters to generate.
 */
@@ -6335,7 +6330,7 @@
 	DF1_DOUBLE | DF1_LIFE_LEVEL | DF1_EVOLVE | DF1_NO_STREAMERS)
 
 
-/* dungeon flags for dungeon_type 
+/* dungeon flags for dungeon_type
  * they should be renamed to DFx_*
  */
 /* XXX One problem - master-command from client can only handle flags
@@ -6942,7 +6937,7 @@
      ((ZCAVE[Y][X].feat >= FEAT_SHOP_HEAD) && \
       (ZCAVE[Y][X].feat <= FEAT_SHOP_TAIL)) || \
      ((ZCAVE[Y][X].feat >= FEAT_HOME_HEAD) && \
-      (ZCAVE[Y][X].feat <= FEAT_HOME_TAIL))) 
+			(ZCAVE[Y][X].feat <= FEAT_HOME_TAIL)))
 #endif	/* 0 */
 
 /*
@@ -7489,7 +7484,7 @@ extern int PlayerUID;
 #define LINKF_OBJ		0x0008 /* Share obj things */
 #define LINKF_MISC		0x0010 /* Share misc things */
 #define LINKF_OPEN		0x0020 /* Mind Open */
-/* Ready to receive items via telekinesis - 
+/* Ready to receive items via telekinesis -
    to prevent exploiting this for PK! - C. Blue: */
 #define LINKF_TELEKIN		0x0040
 /* Additional link flags */

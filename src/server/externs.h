@@ -251,7 +251,7 @@ extern s32b m_top;
 extern s32b t_nxt;
 extern s32b t_max;
 extern s32b t_top;
-extern header *re_head; 
+extern header *re_head;
 extern monster_ego *re_info;
 extern header *d_head;
 extern dungeon_info_type *d_info;
@@ -721,7 +721,7 @@ extern void show_autoret(int Ind, byte typ, bool verbose);
 /* cmd5.c */
 extern bool check_antimagic(int Ind, int percentage);
 extern void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux);
-extern void cast_rune_spell(int Ind, u16b lo, u16b hi, int dir);
+extern bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir);
 extern void do_cmd_browse(int Ind, object_type *o_ptr);
 extern void do_cmd_study(int Ind, int book, int spell);
 extern void do_cmd_psi(int Ind, int book, int spell);
@@ -885,7 +885,7 @@ extern bool highscore_file_convert(int Ind);
 extern void show_motd2(int from);
 
 /* generate.c */
-extern void place_up_stairs(worldpos *wpos, int y, int x); 
+extern void place_up_stairs(worldpos *wpos, int y, int x);
 
 #ifdef ARCADE_SERVER
 extern void arcade_wipe(worldpos *wpos);
@@ -1840,7 +1840,7 @@ extern bool merchant_mail_carry(int Ind, int i);
 /* util.c */
 extern bool suppress_message, suppress_boni;
 /* The next buffers are for catching the chat */
-extern char last_chat_line[MSG_LEN]; /* What was said */ 
+extern char last_chat_line[MSG_LEN]; /* What was said */
 extern char last_chat_owner[NAME_LEN]; /* Who said it */
 // extern char last_chat_prev[MSG_LEN]; /* What was said before the above*/
 

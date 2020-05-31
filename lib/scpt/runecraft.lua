@@ -17,8 +17,8 @@ NEXU = bshl(1,2)
 NETH = bshl(1,3)
 CHAO = bshl(1,4)
 MANA = bshl(1,5)
-WARN = bor(WARN,bshl(1,6)) 
-WARN = bor(WARN,bshl(1,7)) 
+WARN = bor(WARN,bshl(1,6))
+WARN = bor(WARN,bshl(1,7))
 
 MINI = bshl(1,16)
 LENG = bshl(1,17)
@@ -35,8 +35,8 @@ BALL = bshl(1,26)
 STRM = bshl(1,27)
 CONE = bshl(1,28)
 SURG = bshl(1,29)
-WARN = bor(WARN,bshl(1,30)) 
-WARN = bor(WARN,bshl(1,31)) 
+WARN = bor(WARN,bshl(1,30))
+WARN = bor(WARN,bshl(1,31))
 
 -- TABLES
 
@@ -74,7 +74,7 @@ P = { -- Projection GF_TYPE Weight Colour
 M = { -- Mode Level Cost Fail Damage Radius Duration Energy
 [MINI] = { "minimized",   0,  6, -10,  6, -1,  8, 10 },
 [LENG] = { "lengthened",  2,  8,  -5,  8,  0, 14, 10 },
-[COMP] = { "compressed",  3,  9,   0,  9, -2, 12, 10 }, 
+[COMP] = { "compressed",  3,  9,   0,  9, -2, 12, 10 },
 [MDRT] = { "moderate",    5, 10,   0, 10,  0, 10, 10 },
 [ENHA] = { "enhanced",    5, 10,   5, 10,  0, 10, 10 },
 [EXPA] = { "expanded",    7, 12,  10,  9,  2,  8, 10 },
@@ -159,6 +159,8 @@ end
 
 function rspell_damage(u,s)
   local XX = band(u,ENHA)~=0 and E[band(u,TYPE)] or T[band(u,TYPE)]
+  -- local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
+  -- increase elemental damage spread
 	local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
   local m = M[band(u,MODE)][5]
   local x = rspell_scale(s, XX[5], XX[6] * w / 1200)
@@ -384,11 +386,20 @@ end
 
 -- SERVER
 
+function rspell_name(u)
+  local PP = P[rspell_sval(u)]
+  local MM = M[band(u,MODE)]
+  local X = (band(u,ENHA)==0)
+  local XX = X and T[band(u,TYPE)] or E[band(u,TYPE)]
+  -- return X and format("%s %s of %s",MM[1],XX[1],PP[1]) or format("%s of %s",XX[1],PP[1])
+  return X and format("%s %s %s",MM[1],PP[1],XX[1]) or format("%s %s",PP[1],XX[1])
+end
+
 function cast_rune_spell(I,D,u)
-  if band(u,WARN)~=0 then return end
-  if band(u,PROJ)==0 then return end
-  if band(u,MODE)==0 then return end
-  if band(u,TYPE)==0 then return end
+  if band(u,WARN)~=0 then return 0 end
+  if band(u,PROJ)==0 then return 0 end
+  if band(u,MODE)==0 then return 0 end
+  if band(u,TYPE)==0 then return 0 end
   local p = players(I)
   local e = rspell_energy(I,u)
   if p.confused~=0 then
@@ -397,13 +408,13 @@ function cast_rune_spell(I,D,u)
 		return 0
 	end
   if p.antimagic~=0 and p.admin_dm==0 then
-		p.energy = p.energy - e
 		msg_print(I,"\255wYour anti-magic field disrupts any magic attempts.")
+   p.energy = p.energy - e
 		return 0
 	end
 	if p.anti_magic~=0 then
-		p.energy = p.energy - e
 		msg_print(I,"\255wYour anti-magic shell disrupts any magic attempts.")
+   p.energy = p.energy - e
 		return 0
 	end
   if check_antimagic(I,100)~=0 then
@@ -412,17 +423,15 @@ function cast_rune_spell(I,D,u)
 	end
   local v = rspell_sval(u)
   local PP = P[v]
-  local MM = M[band(u,MODE)]
   local X = (band(u,ENHA)==0)
-  local XX = X and T[band(u,TYPE)] or E[band(u,TYPE)]
   local l = rspell_level(u)
   local s = rspell_skill(I,u)
   local a = rspell_ability(s,l)
-  local S = X and format("%s %s %s",MM[1],PP[1],XX[1]) or format("%s %s",PP[1],XX[1])
-  -- local S = X and format("%s %s of %s",MM[1],XX[1],PP[1]) or format("%s of %s",XX[1],PP[1])
+  local S = rspell_name(u)
   if a < 1 then
     msg_print(I,format("\255sYour skill is not high enough! (%s; level: %d)",S,a))
-		return 0
+   p.energy = p.energy - e
+   return 0
 	end
   local c = rspell_cost(u,s)
 	if p.csp < c then
@@ -442,7 +451,7 @@ function cast_rune_spell(I,D,u)
   else
     b = 0
   end
-  local SS = band(u,EXPA)~=0 and "an" or "a"
+  local SS = ((v==bor(LITE,NETH) and band(u,ENHA)~=0) or band(u,EXPA)~=0) and "an" or "a" -- vowels
 	msg_print(I,format("You %strace %s %s.", b > 0 and "\255Rincompetently\255w " or "",SS,S))
   p.attacker = format(" traces %s %s for", SS, S)
   p.energy = p.energy - e
@@ -478,15 +487,15 @@ function cast_rune_spell(I,D,u)
       fire_burst(I, PP[2], D, d, r, p.attacker)
     end
     if tx==p.px and ty==p.py then
-      if band(rspell_sval(u),LITE)~=0 then lite_room(I, p.wpos, p.py, p.px) end
-      if band(rspell_sval(u),DARK)~=0 then unlite_room(I, p.wpos, p.py, p.px) end
+      if v==LITE then lite_room(I, p.wpos, p.py, p.px) end
+      if v==DARK then unlite_room(I, p.wpos, p.py, p.px) end
     end
   elseif band(u,STRM)~=0 then
     if X then
       fire_wave(I, PP[2], 0, d, r, t, 10, EFF_STORM, p.attacker)
     else
       if (p.nimbus == 0) or (p.nimbus_t ~= PP[2]) then
-        msg_print(I,format("\255WYou are wreathed with an aura of powerful \255%s%s\255W!", PP[4], PP[1]));
+        msg_print(I,format("\255WYou are wreathed in \255%s%s\255W!", PP[4], PP[1]));
       end
       set_nimbus(I, t, PP[2], d)
     end

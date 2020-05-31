@@ -362,7 +362,7 @@ void do_cmd_ghost_power(int Ind, int ability) {
 void do_cmd_ghost_power_aux(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	magic_type *s_ptr;
-	
+
 	/* Verify spell number */
 	if (p_ptr->current_spell < 0)
 		return;
@@ -537,14 +537,14 @@ static void do_mimic_power(int Ind, int power, int dir) {
 
 /* RF_4 ------------------------------------------------------------------------------------------------- */
 
-//#define RF4_SHRIEK                      0x00000001      /* Shriek for help */ 
+//#define RF4_SHRIEK                      0x00000001      /* Shriek for help */
     case 0:
 	shriek(Ind);
 	break;
-//#define RF4_UNMAGIC                     0x00000002      /* Cancel player's timed spell */ 
+//#define RF4_UNMAGIC                     0x00000002      /* Cancel player's timed spell */
     case 1:
       break;
-//#define RF4_S_ANIMAL                    0x00000004  /* Summon animals */ 
+//#define RF4_S_ANIMAL                    0x00000004  /* Summon animals */
     case 2:
 	break;
 //#define RF4_ROCKET                      0x00000008  /* TY: Rocket */
@@ -597,14 +597,14 @@ static void do_mimic_power(int Ind, int power, int dir) {
     case 26:
 //#define RF4_BR_MANA			0x08000000	/* Breathe Mana */
     case 27:
-//#define RF4_BR_DISI                     0x10000000  /* Breathe Disintegration */ 
+//#define RF4_BR_DISI                     0x10000000  /* Breathe Disintegration */
     case 28:
-//#define RF4_BR_NUKE                     0x20000000  /* TY: Toxic Breath */ 
+//#define RF4_BR_NUKE                     0x20000000  /* TY: Toxic Breath */
     case 29:
 	p_ptr->current_spell = j;
 	get_aim_dir(Ind);
 	return;
-//#define RF4_MOAN                        0x40000000      /* For Halloween event :) -C. Blue */ 
+//#define RF4_MOAN                        0x40000000      /* For Halloween event :) -C. Blue */
     case 30:
 	break;
 // #define RF4_BOULDER			0x80000000
@@ -707,7 +707,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	else hp_player(Ind, ((rlev + 5) * (rlev + 30)) / 14);
 	//hp_player(Ind, rlev * 2);
 	break;
-//#define RF6_S_ANIMALS                   0x00000008      /* Summon animals */ 
+//#define RF6_S_ANIMALS                   0x00000008      /* Summon animals */
     case 67:
 	break;
 // RF6_BLINK			0x00000010	/* Teleport Short */
@@ -718,13 +718,13 @@ static void do_mimic_power(int Ind, int power, int dir) {
     case 69:
 	teleport_player(Ind, 200, FALSE);
 	break;
-//#define RF6_RAISE_DEAD                  0x00000040      /* Raise Dead */ 
+//#define RF6_RAISE_DEAD                  0x00000040      /* Raise Dead */
     case 70:
 	break;
-//#define RF6_S_BUG                       0x00000080      /* Summon Software bug */ 
+//#define RF6_S_BUG                       0x00000080      /* Summon Software bug */
     case 71:
 	break;
-//#define RF6_TELE_TO                     0x00000100      /* Move player to monster */ 
+//#define RF6_TELE_TO                     0x00000100      /* Move player to monster */
     case 72:
 // RF6_TELE_AWAY		0x00000200	/* Move player far away */
     case 73:
@@ -1882,7 +1882,7 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 #endif
 }
 
-void cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
+bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 	player_type *p_ptr = Players[Ind];
 	int ftk_maybe, ftk_type;
 
@@ -1896,7 +1896,7 @@ void cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 		p_ptr->current_rcraft = 1;
 		p_ptr->current_rcraft_e_flags = lo;
 		p_ptr->current_rcraft_m_flags = hi;
-		return;
+		return FALSE;
 	}
 
 	/* Paranoia */
@@ -1912,13 +1912,13 @@ void cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 		ftk_maybe = exec_lua(Ind, format("return cast_rune_spell(%d, %d, %d)", Ind, dir, u));
 		ftk_type = exec_lua(Ind, format("return rcraft_ftk(%d)", u));
 		if (p_ptr->shooty_till_kill && ftk_maybe) {
-			if (ftk_type == 0) return;
+			if (ftk_type == 0) return FALSE;
 #ifndef PY_PROJ_WALL
-			if (ftk_type == 1 && !projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+			if (ftk_type == 1 && !projectable_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return FALSE;
 #else
-			if (ftk_type == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return;
+			if (ftk_type == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return FALSE;
 #endif
-			if (dir != 5 || !target_okay(Ind)) return;
+			if (dir != 5 || !target_okay(Ind)) return FALSE;
 			p_ptr->shooting_till_kill = TRUE;
 			p_ptr->shoot_till_kill_rcraft = TRUE;
 			p_ptr->FTK_e_flags = lo;
@@ -1929,7 +1929,9 @@ void cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 			p_ptr->shoot_till_kill_wand = FALSE;
 			p_ptr->shoot_till_kill_rod = FALSE;
 		}
+		return ftk_maybe; // True if an attempt was made, for auto-retaliation
 	}
+	return FALSE;
 }
 
 /* Mimic powers, moved to their own functions - C. Blue */

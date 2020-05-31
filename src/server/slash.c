@@ -1,6 +1,6 @@
 /*
  * Slash commands..
- * It was getting too ugly, and 
+ * It was getting too ugly, and
  * util.c was getting big
  *
  * old (working) code is at bottom of file
@@ -39,7 +39,7 @@ char pet_creation(int Ind);
 struct scmd{
 	char *cmd;
 	unsigned short admin;		/* bool require admin or not */
-	short minargs, maxargs;		/* MIN/MAX number of args 
+	short minargs, maxargs;		/* MIN/MAX number of args
 					 * both 0 for a line content, -1 for any */
 	void (*func)(int, void*);	/* point either to char * or args (NULL terminated char**) */
 	char *errorhlp;			/* if its bad, tell them this */
@@ -1015,7 +1015,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind,"\377oThat player is out of your sight.");
 					return;
 				} else {
-//					msg_format(Ind,"Book = %d, Spell = %d, PlayerName = %s, PlayerID = %d",book,whichspell,token[3],whichplayer); 
+//					msg_format(Ind,"Book = %d, Spell = %d, PlayerName = %s, PlayerID = %d",book,whichspell,token[3],whichplayer);
 					target_set_friendly(Ind,5,whichplayer);
 					whichspell += 64;
 				}
@@ -1027,7 +1027,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			switch (p_ptr->pclass) {
 			}
 
-//			msg_format(Ind,"Book = %d, Spell = %d, PlayerName = %s, PlayerID = %d",book,whichspell,token[3],whichplayer); 
+//			msg_format(Ind,"Book = %d, Spell = %d, PlayerName = %s, PlayerID = %d",book,whichspell,token[3],whichplayer);
  #endif
 			return;
 		}
@@ -1203,7 +1203,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				/* Test for 'Recall' istar spell and for 'Relocation' astral spell */
 #if 0 /* hm, which version might be easier/better?.. */
-				spell_rec = exec_lua(Ind, "return find_spell(\"Recall\")"); 
+				spell_rec = exec_lua(Ind, "return find_spell(\"Recall\")");
  #ifdef ENABLE_MAIA
 				spell_rel = exec_lua(Ind, "return find_spell(\"Relocation\")");
  #endif
@@ -1698,7 +1698,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 #ifdef RPG_SERVER /* too dangerous on the pm server right now - mikaelh */
 /* Oops, meant to be on RPG only for now. forgot to add it. thanks - the_sandman */
- #if 0 //moved the old code here. 
+ #if 0 //moved the old code here.
 		else if (prefix(messagelc, "/pet")){
 			if (tk && prefix(token[1], "force")) {
 				summon_pet(Ind, 1);
@@ -1721,7 +1721,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			if (pet_creation(Ind))
 				msg_print(Ind, "\377USummoning a pet.");
-			else 
+			else
 				msg_print(Ind, "\377rYou already have a pet!");
 			return;
 		}
@@ -1783,7 +1783,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if ((k != 32 && k != 52) || tk > 2) {
 					msg_print(Ind, "\377oUsage: /shuffle <32|52> [# of jokers]");
 					return;
-				} 
+				}
 				if (k == 32) {
 					p_ptr->cards_diamonds = 0x1FC1;
 					p_ptr->cards_hearts = 0x1FC1;
@@ -4108,23 +4108,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				town = TRUE;
 				p++;
 			}
-#ifdef ARM_ARR_SHARED /* Deprecated 2020 */
-			if (*p == '-') {
-				msg_print(Ind, "Mimic power auto-retaliation is now disabled.");
-				p_ptr->autoret &= 0xFF00; /* Keep rune auto-ret though */
-				return;
-			}
 
-			if (*p < 'e' || *p > 'z') {
-				msg_print(Ind, "\377yMimic power must be within range 'e' to 'z'!");
-				return;
-			}
-
-			msg_format(Ind, "Mimic power '%c)' is now set for auto-retaliation.", *p);
-			/* Mimicry starts at 1 and ends at 255 (0x00FF), so as not to overlap with runecraft, which starts at 256 (0x0100).
-			   Note that we keep any active runecraft auto-ret (0xFF00 mask). */
-			p_ptr->autoret = (p_ptr->autoret & 0xFF00) | (town ? 0x0080 : 0x0000) | (*p - 'a' + 1);
-#else /* New 2020 */
 			if (*p == '-') {
 				msg_print(Ind, "Mimic power auto-retaliation is now disabled.");
 				p_ptr->autoret = 0x0;
@@ -4137,78 +4121,91 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 			msg_format(Ind, "Mimic power '%c)' is now set for auto-retaliation.", *p);
-			p_ptr->autoret = (town ? 0x8000 : 0x0000) | (*p - 'a' + 1);
-#endif
+			p_ptr->autoret = (town ? 0x4000 : 0x0000) | (*p - 'a' + 1);
+
 			return;
 		} else if (prefix(messagelc, "/autoretr") || prefix(messagelc, "/arr")) {
 			char *p = token[1];
-			bool town = FALSE;
 
-#ifndef TEST_SERVER
-	    /* ----- available bitmask for rune-autoret are 0x7F00, so that's 7 bits (shifted 8 bits to the left),
-	    or expressed in decimal value range: <1..127> * 256, so 127 distinct values available.
-	    (The 8th bit is the 'town-only' flag.) */
-	    msg_print(Ind, "Sorry, this command is currently not available.");
-	    return;
-#endif
+	    /* Runespell hardcodes are bad, but easy... - Kurzel
+			 * 12 bits required for runespells after compression
+			 * 1 bit for town flag
+			 * 1 bit for rune flag (so as not to try mimic powers)
+			 */
 
-			if (!p_ptr->s_info[SKILL_R_LITE].value && !p_ptr->s_info[SKILL_R_DARK].value &&
-			    !p_ptr->s_info[SKILL_R_NEXU].value && !p_ptr->s_info[SKILL_R_NETH].value &&
-			    !p_ptr->s_info[SKILL_R_CHAO].value && !p_ptr->s_info[SKILL_R_MANA].value) {
+			if (p_ptr->s_info[SKILL_R_LITE].value < 1000 &&
+					p_ptr->s_info[SKILL_R_DARK].value < 1000 &&
+			    p_ptr->s_info[SKILL_R_NEXU].value < 1000 &&
+					p_ptr->s_info[SKILL_R_NETH].value < 1000 &&
+			    p_ptr->s_info[SKILL_R_CHAO].value < 1000 &&
+					p_ptr->s_info[SKILL_R_MANA].value < 1000) {
 				msg_print(Ind, "You cannot use runecraft.");
 				return;
 			}
 
-			/* Set up a spell by name for auto-retaliation, so mimics can use it too */
+			/* Describe the current auto-retaliation setting */
 			if (!tk) {
 				show_autoret(Ind, 2, TRUE);
 				return;
 			}
+
 			if (streq(token[1], "help")) {
-				msg_print(Ind, "Set up a rune spell for auto-retaliation by specifying ???");
-				msg_print(Ind, "starting with ..., or '-' to disable. Optional prefix 't' for 'in town only'.");
-				msg_print(Ind, " Usage:    /arr [t]<rune (a..z)>");
-				msg_print(Ind, " Example:  /arr a    sets the first rune to auto-retaliate");
-				msg_print(Ind, " Example:  /arr td   sets the fourth rune, but only when in town");
-				msg_print(Ind, " Example:  /arr -    disables auto-retaliation with runes");
+				msg_print(Ind, "Specify both runes, then mode and type, or '-' to disable.");
+				msg_print(Ind, "Optionally prefix 't' before a runespell to retaliate 'in town only'.");
+				msg_print(Ind, "Usage:   /arr <t>[a-f][a-f][a-h][a-f] (town?, rune, rune, mode, type)");
+				msg_print(Ind, "Example: /arr aeda          Auto-retaliate with a moderate fire bolt.");
+				msg_print(Ind, "Example: /arr taeaa         Moderate fire bolt, but 'in town only'.");
+				msg_print(Ind, "Example: /arr -             Disable any auto-retaliation with runes.");
+				return;
+			}
+
+			p_ptr->autoret = 0x0;
+
+			if (*p == '-') {
+				msg_print(Ind, "Runespell auto-retaliation is now disabled.");
 				return;
 			}
 
 			if (*p == 't') {
-				town = TRUE;
+				p_ptr->autoret |= 0x4000; // 1-bit FLAG
 				p++;
 			}
-#ifdef ARM_ARR_SHARED /* Deprecated 2020 */
-			if (*p == '-') {
-				msg_print(Ind, "Rune power auto-retaliation is now disabled.");
-				p_ptr->autoret &= 0x00FF; /* Keep mimic power auto-ret though */
+
+			// Compress runespell... - Kurzel
+			if (*p < 'a' || *p > 'f') {
+				msg_print(Ind, "\377yFirst rune must be within range 'a' to 'f'!");
+				p_ptr->autoret = 0x0;
 				return;
+			} else {
+				p_ptr->autoret |= (*p - 'a'); // 3-bit integer
+				p++;
+			}
+			if (*p < 'a' || *p > 'f') {
+				msg_print(Ind, "\377ySecond rune must be within range 'a' to 'f'!");
+				p_ptr->autoret = 0x0;
+				return;
+			} else {
+				p_ptr->autoret |= ((*p - 'a') << 3); // 3-bit integer
+				p++;
+			}
+			if (*p < 'a' || *p > 'h') {
+				msg_print(Ind, "\377yMode must be within range 'a' to 'h'!");
+				p_ptr->autoret = 0x0;
+				return;
+			} else {
+				p_ptr->autoret |= ((*p - 'a') << 6); // 3-bit integer
+				p++;
+			}
+			if (*p < 'a' || *p > 'f') {
+				msg_print(Ind, "\377yType must be within range 'a' to 'f'!");
+				p_ptr->autoret = 0x0;
+				return;
+			} else {
+				p_ptr->autoret |= ((*p - 'a') << 9); // 3-bit integer
+				p_ptr->autoret |= 0x8000; // 1-bit FLAG
 			}
 
-			if (*p < 'a' || *p > 'z') {
-				msg_print(Ind, "\377yRune power must be within range 'a' to 'z'!");
-				return;
-			}
-
-			msg_format(Ind, "Rune power '%c)' is now set for auto-retaliation.", *p);
-			/* Runecraft stars at 256 (0x0100), so as not to overlap with mimicry, which starts at 1.
-			   Note that we keep any active mimic power auto-ret (0x00FF mask). */
-			p_ptr->autoret = (p_ptr->autoret & 0x00FF) | (town ? 0x8000 : 0x0000) | ((*p - 'a' + 1) << 8);
-#else /* New 2020 */
-			if (*p == '-') {
-				msg_print(Ind, "Rune power auto-retaliation is now disabled.");
-				p_ptr->autoret = 0x4000;
-				return;
-			}
-
-			if (*p < 'a' || *p > 'z') {
-				msg_print(Ind, "\377yRune power must be within range 'a' to 'z'!");
-				return;
-			}
-
-			msg_format(Ind, "Rune power '%c)' is now set for auto-retaliation.", *p);
-			p_ptr->autoret = 0x4000 | (town ? 0x8000 : 0x0000) | (*p - 'a' + 1);
-#endif
+			show_autoret(Ind, 2, TRUE);
 			return;
 #endif
 #ifdef ENABLE_SELF_FLASHING
@@ -4457,7 +4454,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "***ERROR: No account found.");
 				return;
 			}
-			for (i = 1; i <= NumPlayers; i++) 
+			for (i = 1; i <= NumPlayers; i++)
 				if (!strcmp(Players[i]->accountname, acc)) {
 					online = TRUE;
 					break;
@@ -6250,7 +6247,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						//d_ptr->nr_char = d_info[type].nr_char;
 
 #ifdef RPG_SERVER /* Make towers harder */
-//						d_ptr->flags2 &= ~(DF2_IRON | DF2_IRONFIX1 | DF2_IRONFIX2 | DF2_IRONFIX3 | DF2_IRONFIX4 | 
+//						d_ptr->flags2 &= ~(DF2_IRON | DF2_IRONFIX1 | DF2_IRONFIX2 | DF2_IRONFIX3 | DF2_IRONFIX4 |
 //							    DF2_IRONRND1 | DF2_IRONRND2 | DF2_IRONRND3 | DF2_IRONRND4) ; /* Reset flags first */
 //						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
 
@@ -6335,7 +6332,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						}
 
 #ifdef RPG_SERVER /* Make dungeons harder */
-//						d_ptr->flags2 &= ~(DF2_IRON | DF2_IRONFIX1 | DF2_IRONFIX2 | DF2_IRONFIX3 | DF2_IRONFIX4 | 
+//						d_ptr->flags2 &= ~(DF2_IRON | DF2_IRONFIX1 | DF2_IRONFIX2 | DF2_IRONFIX3 | DF2_IRONFIX4 |
 //							    DF2_IRONRND1 | DF2_IRONRND2 | DF2_IRONRND3 | DF2_IRONRND4) ; /* Reset flags first */
 //						if (!(d_info[type].flags1 & DF1_NO_UP))	d_ptr->flags1 &= ~DF1_NO_UP;
 						if (

@@ -31,7 +31,7 @@
 /* Chance of items damaged when drowning, in % [3] */
 #define WATER_ITEM_DAMAGE_CHANCE	3
 
-/* Maximum wilderness radius a player can travel with WoR [16] 
+/* Maximum wilderness radius a player can travel with WoR [16]
  * TODO: Add another method to allow wilderness travels */
 #define RECALL_MAX_RANGE	24
 
@@ -1855,7 +1855,7 @@ bool player_night(int Ind) {
 	for (x = 0; x < MAX_WID; x++) {
 		/*  Darken "boring" features */
 		if (cave_plain_floor_grid(&zcave[y][x]) && !(zcave[y][x].info & CAVE_ROOM)) { /* keep house grids */
-			/* Forget the grid */ 
+			/* Forget the grid */
 			p_ptr->cave_flag[y][x] &= ~CAVE_MARK;
 		/* Always remember interesting features in town areas */
 		} else if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)
@@ -3016,58 +3016,13 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 
 			/* Check that it's ok... more checks needed here? */
 			/* Limit amount of mana used? */
-			if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->csp && 
+			if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->csp &&
 				exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell)))
 			{
 				cast_school_spell(Ind, item, spell, 5, -1, 0);
 				return TRUE;
 			}
 			break;
-
-#if 0
-		case TV_RUNE: { //Format: @O<t?><mode><type>
-
-			/* Validate Rune */
-			if (o_ptr->sval < 0 || o_ptr->sval > RCRAFT_MAX_PROJECTIONS) break;
-			u16b e_flags = r_projections[o_ptr->sval].flags, m_flags = 0;
-			byte m_index = 0;
-
-			/* Validate Imperative */
-			if (*inscription != '\0') {
-				m_index = *inscription - 'a';
-				if (m_index < 0 || m_index > RCRAFT_MAX_IMPERATIVES) return (p_ptr->fail_no_melee); //m_flags |= I_MINI;
-				else m_flags |= r_imperatives[m_index].flag;
-			}
-			else {
-				//if (cast_rune_spell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2)
-				return (p_ptr->fail_no_melee);
-				//return TRUE;
-			}
-
-			/* Next Letter */
-			inscription++;
-
-			/* Validate Form */
-			if (*inscription != '\0') {
-				m_index = *inscription - 'a';
-				if (m_index < 0 || m_index > RCRAFT_MAX_TYPES || r_types[m_index].flag == T_GLPH //Sigil spells aren't suitable.
-				|| (r_types[m_index].flag == T_SIGN && (m_flags & I_ENHA) == I_ENHA)  //Glyphs too.
-				|| (r_types[m_index].flag == T_SIGN && !((o_ptr->sval == SV_R_LITE) || (o_ptr->sval == SV_R_NETH)))) //And all non-damaging Signs. - Kurzel
-					return (p_ptr->fail_no_melee);
-				else m_flags |= r_types[m_index].flag;
-			}
-			else {
-				//if (cast_rune_spell(Ind, 5, e_flags, I_MINI | T_BOLT, 0, 1) == 2)
-				return (p_ptr->fail_no_melee);
-				//return TRUE;
-			}
-
-			/* Retaliate or Melee */
-			if (cast_rune_spell(Ind, 5, e_flags, m_flags, 0, 1) == 2) return (p_ptr->fail_no_melee);
-			return TRUE;
-
-		break; }
-#endif
 	}
 
 	/* If all fails, then melee */
@@ -3089,33 +3044,17 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	u16b ar = p_ptr->autoret;
 
 	/* no autoret set? */
- #ifdef ARM_ARR_SHARED
 	if (!ar) return FALSE;
- #else
-	if (!(ar & 0x3FFF)) return FALSE;
- #endif
 
 	/* Was a mimic power set for auto-ret? */
- #ifdef ARM_ARR_SHARED
-	if ((ar & 0x007F) //paranoia: town-flag cannot be set on its own
-	    && p_ptr->s_info[SKILL_MIMIC].value) {
+	if (!(ar & 0x8000) && p_ptr->s_info[SKILL_MIMIC].value) {
 		/* Spell to cast */
 		int choice = ar - 1, power;
 		bool dir = FALSE;
 
 		/* Is it variant @Ot for town-only auto-retaliation? */
-		if ((ar & 0x0080) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
-		ar &= ~0x0080;
- #else
-	if (!(ar & 0x4000) && p_ptr->s_info[SKILL_MIMIC].value) {
-		/* Spell to cast */
-		int choice = ar - 1, power;
-		bool dir = FALSE;
-
-		/* Is it variant @Ot for town-only auto-retaliation? */
-		if ((ar & 0x8000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
-		ar &= ~0x8000;
- #endif
+		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		ar &= ~0x4000;
 
 		/* Check for valid attempt */
 		if (choice < 4) return FALSE; /* 3 polymorph powers + immunity preference */
@@ -3145,29 +3084,23 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 	}
 
 	/* Was a rune set for auto-ret? */
- #ifdef ARM_ARR_SHARED
-	else if ((ar & 0x7F00) && //paranoia: town-flag cannot be set on its own
-	    (p_ptr->s_info[SKILL_R_LITE].value || p_ptr->s_info[SKILL_R_DARK].value ||
-	    p_ptr->s_info[SKILL_R_NEXU].value || p_ptr->s_info[SKILL_R_NETH].value ||
-	    p_ptr->s_info[SKILL_R_CHAO].value || p_ptr->s_info[SKILL_R_MANA].value)) {
+	else if ((ar & 0x8000)) {
 		/* Is it variant @Ot for town-only auto-retaliation? */
-		if ((ar & 0x8000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
-		ar &= ~0x8000;
-		/* Restore range to normal (1..127) for easier handling */
-		ar = ar >> 8;
- #else
-	else if ((ar & 0x4000) &&
-	    (p_ptr->s_info[SKILL_R_LITE].value || p_ptr->s_info[SKILL_R_DARK].value ||
-	    p_ptr->s_info[SKILL_R_NEXU].value || p_ptr->s_info[SKILL_R_NETH].value ||
-	    p_ptr->s_info[SKILL_R_CHAO].value || p_ptr->s_info[SKILL_R_MANA].value)) {
-		/* Is it variant @Ot for town-only auto-retaliation? */
-		if ((ar & 0x8000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
-		ar &= ~0x8000;
- #endif
-
-		/* Try to cast runespell */
-		
-		return TRUE;
+		if ((ar & 0x4000) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA)) return FALSE;
+		/* Wall safety? */
+		if (!target_able(Ind, p_ptr->target_who)) return FALSE;
+		/* Decompress runespell... - Kurzel */
+		u32b u = 0x0;
+		u |= (1 << (ar & 0x0007));                // Rune 1 (3-bit) to byte
+		u |= ((1 << ((ar & 0x0038) >> 3)) <<  8); // Rune 2 (3-bit) to byte
+		u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
+		u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
+		/* Is it allowed? */
+		if (!(exec_lua(Ind, format("return rcraft_arr(%d)", u)))) return FALSE;
+		/* Try to cast it */
+		if (cast_rune_spell(Ind, (u16b)u, (u16b)(u >> 16), 5)) return TRUE;
+		// return (p_ptr->fail_no_melee);
+		return TRUE; // Energy is used already, don't fallthrough after a failure.
 	}
 	else return FALSE;
 
@@ -3193,7 +3126,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
    * algorithm is to fight first Q's, then any monster that is 20 levels higher
    * than its peers, then the most proportionatly wounded monster, then the highest
    * level monster, then the monster with the least hit points.
-   */ 
+	 */
 /* Now a player can choose the way of auto-retaliating;		- Jir -
  * Item marked with inscription {@O} will be used automatically.
  * For spellbooks this should be {@Oa} to specify which spell to use.
@@ -6141,7 +6074,7 @@ static void process_games(int Ind) {
 					s16b ox, oy;
 					int try;
 					p_ptr->energy = 0;
-					snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]); 
+					snprintf(sstr, 80, "Score: \377RReds: %d  \377BBlues: %d", teamscore[0], teamscore[1]);
 					msg_broadcast(0, sstr);
 
 					for (try = 0; try < 1000; try++) {
@@ -6913,7 +6846,7 @@ void store_turnover() {
  * This function handles "global" things such as the stores,
  * day/night in the town, etc.
  */
-/* Added the japanese unique respawn patch -APD- 
+/* Added the japanese unique respawn patch -APD-
    It appears that each moment of time is equal to 10 minutes?
 */
 /* called only every 10 turns
@@ -7457,7 +7390,7 @@ static void process_world(void) {
 			if (admin_p(i)) continue;
 
 			/* Ignore perma-afk players! */
-			//if (p_ptr->afk && 
+			//if (p_ptr->afk &&
 			if (is_inactive(i) >= 30 * 20) /* 20 minutes idle? */
 				continue;
 
@@ -8766,7 +8699,7 @@ void process_player_change_wpos(int Ind) {
 	check_Morgoth(Ind);
 	if (p_ptr->new_level_flag) return;
 
-#ifdef CLIENT_SIDE_WEATHER 
+#ifdef CLIENT_SIDE_WEATHER
 	/* update his client-side weather */
 	player_weather(Ind, TRUE, TRUE, TRUE);
 #endif
@@ -8918,7 +8851,7 @@ void dungeon(void) {
 
 	/* Check player's depth info */
 	for (i = 1; i <= NumPlayers; i++) {
-		p_ptr = Players[i]; 
+		p_ptr = Players[i];
 		if (p_ptr->conn == NOT_CONNECTED || !p_ptr->new_level_flag)
 			continue;
 		if (p_ptr->iron_winner_ded && p_ptr->wpos.wz != 0) {
@@ -9138,7 +9071,7 @@ void dungeon(void) {
 
 	/* Do some beginning of turn processing for each player */
 	for (i = 1; i <= NumPlayers; i++) {
-		p_ptr = Players[i]; 
+		p_ptr = Players[i];
 		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
 
@@ -9733,7 +9666,7 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool new_wildern
 	scan_characters();
 	scan_accounts();
 	scan_houses();
-	
+
 #if defined CLIENT_SIDE_WEATHER && !defined CLIENT_WEATHER_GLOBAL
 	/* initialize weather */
 	wild_weather_init();
@@ -10870,7 +10803,7 @@ void local_weather_update(void) {
 #endif
 		if (thunderclap == 0 &&
 		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == 1 && /* no blizzards for now, just rainstorms */
-		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind && 
+		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind &&
 		    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6 == thunderstorm) {
 			sound_vol(i, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86); //weather: screen flashing implied
 		}

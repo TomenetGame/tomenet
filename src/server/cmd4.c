@@ -433,7 +433,7 @@ void do_cmd_check_uniques(int Ind, int line) {
 				}
 				if (!kk) continue;
 			}
-			
+
 			/* Output color byte */
 			c_out = (p_ptr->r_killed[k] == 1 || kk) ? 'w' : 'D';
 			fprintf(fff, "\377%c", c_out);
@@ -456,13 +456,13 @@ void do_cmd_check_uniques(int Ind, int line) {
 				else if ((r_ptr->flags7 & RF7_NAZGUL)) fprintf(fff, "\377o%s (L%d)\377%c", r_name + r_ptr->name, r_ptr->level, c_out);
 				else fprintf(fff, "%s (L%d)", r_name + r_ptr->name, r_ptr->level);
 			}
-			
+
 			for (i = 1; i <= NumPlayers; i++) {
 				q_ptr = Players[i];
 
 				/* don't display dungeon master to players */
 				if (q_ptr->admin_dm && !p_ptr->admin_dm) continue;
-				
+
 				if (p_ptr->uniques_alive) {
 					if (p_ptr->id == q_ptr->id) continue;
 					if (!q_ptr->party) continue;
@@ -470,7 +470,7 @@ void do_cmd_check_uniques(int Ind, int line) {
 					if (p_ptr->party != q_ptr->party) continue;
 					if ((p_ptr->wpos.wx != q_ptr->wpos.wx) || (p_ptr->wpos.wy != q_ptr->wpos.wy) || (p_ptr->wpos.wz != q_ptr->wpos.wz)) continue;
 					attr = 'B';
-					
+
 					/* first player name entry for this unique? add ':' and go to next line */
 					if (!ok) {
 						fprintf(fff, ":\n");
@@ -490,7 +490,7 @@ void do_cmd_check_uniques(int Ind, int line) {
 						j = 0;
 						full = TRUE;
 					}
-					
+
 					continue;
 				}
 				else if (q_ptr->r_killed[k] == 1) {
@@ -1212,7 +1212,7 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
     #else
 	fprintf(fff, "  %s the ", q_ptr->name);
     #endif
-	fprintf(fff, "%s%s", get_prace2(q_ptr),  p); 
+	fprintf(fff, "%s%s", get_prace2(q_ptr),  p);
    #endif
 	if (q_ptr->mode & MODE_PVP) fprintf(fff, " Gladiator");
 
@@ -1385,7 +1385,7 @@ void do_cmd_check_players(int Ind, int line) {
 			continue;
 
 		/* don't display the dungeon master if the secret_dungeon_master
-		 * option is set 
+		 * option is set
 		 */
 		if (q_ptr->admin_dm &&
 		   (cfg.secret_dungeon_master) && !admin) continue;
@@ -2681,7 +2681,7 @@ void do_cmd_check_server_settings(int Ind) {
 		//fprintf(fff, "%c\n", 'o');
 
 		fprintf(fff,"\n");
-		
+
 
 		fprintf(fff, "==== Administrative or hidden settings ====\n");
 
@@ -3900,36 +3900,32 @@ void show_autoret(int Ind, byte typ, bool verbose) {
 	player_type *p_ptr = Players[Ind];
 	u16b ar = p_ptr->autoret;
 
-#ifdef ARM_ARR_SHARED /* Deprecated with 2020 runecraft update */
 	/* Mimic power */
 	if (typ != 2) {
-		if (ar & 0x00FF) {
-			if (ar & 0x0080) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (ar & ~0x0080) - 1 + 'a');
+		if (!(ar & 0x8000) && (ar & 0x3FFF)) { /* Not set to 'runecraft' instead, and power is set to != 0? */
+			if (ar & 0x4000) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (ar & ~0x4000) - 1 + 'a');
 			else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", ar - 1 + 'a');
 		} else if (verbose) msg_print(Ind, "You have not set a mimic power for auto-retaliation. ('/arm help' for details.)");
 	}
-	/* Rune */
+
+	/* Rune spell */
 	if (typ != 1) {
-		if (ar & 0xFF00) {
-			if (ar & 0x8000) msg_format(Ind, "You have set rune '%c)' for auto-retaliation in towns.", ((ar & ~0x8000) >> 8) - 1 + 'a');
-			else msg_format(Ind, "You have set rune '%c)' for auto-retaliation.", (ar >> 8) - 1 + 'a');
-		} else if (verbose) msg_print(Ind, "You have not set a rune for auto-retaliation. ('/arr help' for details.)");
+		if (ar & 0x8000) {
+			/* Decompress runespell... - Kurzel */
+			u32b u = 0x0;
+			u |= (1 << (ar & 0x0007));                // Rune 1 (3-bit) to byte
+			u |= ((1 << ((ar & 0x0038) >> 3)) <<  8); // Rune 2 (3-bit) to byte
+			u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
+			u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
+			if (!(exec_lua(Ind, format("return rcraft_arr(%d)", u))))
+				msg_format(Ind, "You have set an invalid runespell for auto-retaliation (%s).",
+					string_exec_lua(0, format("return rspell_name(%d)", u))
+				);
+			else
+				msg_format(Ind, "You have set %s for auto-retaliation%s.",
+					string_exec_lua(0, format("return rspell_name(%d)", u)),
+					(ar & 0x4000) ? " in towns" : ""
+				);
+		} else if (verbose) msg_print(Ind, "You have not set a runespell for auto-retaliation. ('/arr help' for details.)");
 	}
-#else /* New way since 2020 runecraft update, because we need moar bits */
-	/* Mimic power */
-	if (typ != 2) {
-		if (!(ar & 0x4000) && (ar & 0x3FFF)) { /* Not set to 'runecraft' instead, and power is set to != 0? */
-			if (ar & 0x8000) msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation in towns.", (ar & ~0x8000) - 1 + 'a');
-			else msg_format(Ind, "You have set mimic power '%c)' for auto-retaliation.", ar - 1 + 'a');
-		} else if (verbose) msg_print(Ind, "You have not set a mimic power for auto-retaliation. ('/arm help' for details.)");
-	}
-	/* Rune */
-	if (typ != 1) {
-		if ((ar & 0x4000) && (ar & 0x3FFF)) { /* Not set to 'mimicry' instead, and power is set to != 0? */
-			ar &= ~0x4000;
-			if (ar & 0x8000) msg_format(Ind, "You have set rune '%c)' for auto-retaliation in towns.", (ar & ~0x8000) - 1 + 'a');
-			else msg_format(Ind, "You have set rune '%c)' for auto-retaliation.", ar - 1 + 'a');
-		} else if (verbose) msg_print(Ind, "You have not set a rune for auto-retaliation. ('/arr help' for details.)");
-	}
-#endif
 }

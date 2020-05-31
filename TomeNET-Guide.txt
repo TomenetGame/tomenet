@@ -1647,7 +1647,6 @@ Other !-inscriptions:
     !a          Prevent aiming a wand.
     !z          Prevent zapping a rod.
     !A          Prevent activating this item.
-    !R          Will prevent consuming the last rune in a stack for runespells.
     !L          Can be used on a scroll of Artifact Creation. The resulting
                 randart will not gain +LIFE ('it affects your hit points') mod.
                 So this is an inscription that only makes sense for winners to
@@ -5002,7 +5001,7 @@ to their real functionality. They are:
     Example:  M@Phase Door\
     Becomes  \e)m@11\r@Phase Door\r  (cast spell 'Phase Door'.)
   R for drawing a rune
-    Examples:  Rcbaa  or Rc\raa  to draw 2 or just 1 rune.
+    Examples:  Rcbaa  or Rccaa  to draw 2 or just 1 rune.
     (The last two 'a' being spell modifier and spell form respectively.)
   T for setting up a trap
     Example:  T13
@@ -5857,12 +5856,9 @@ Spellbooks:
                 Note that you cannot use self-relocation spells such as
                 phase door, teleport or word of recall for auto-retaliation.
 
-Runes:          Auto-retaliate with the inscribed rune. The format is modifier
-    @Oaa        then type. To retaliate with a combination of runes, use the
-                combined rune. 'A' to activate runes for combining. Selecting
-                a non-damaging runespell will disable auto-retaliation.
-                Note that you cannot use self-relocation magic such as
-                phase door, teleport or word of recall for auto-retaliation.
+Runes:          Auto-retaliate with a runespell. The format is rune, rune, mode
+    /arr abcd   then type. Selecting a non-damaging runespell or '/arr -' will
+                disable auto-retaliation.
 
 Mimic powers:   Use the /autoret or for short /ar command to set these up,
     /ar tg      compare (0.2b). Usage (t is optional for 'town-only'):
@@ -12547,7 +12543,6 @@ Means of recharging:
 -Thingol artifact   (60..100 power, depending on magic device skill)
 -Shop service       (80 power)
 -Magic spell        (10..140 power)
--Rune spell         (10..100 power)
 
 The power determines both, the chance of succeeding in recharging the item and
 the degree of recharging done to the item.
@@ -15084,10 +15079,9 @@ create a character!):
     suffer backlash from the evoked element instead of outright spell failure.
 
     For more information about runecraft, see '(6.8b) Runes & Runemastery'.
-    Note that physical runes are not required to cast most runespells.
-    However, having the physical runes are required for Sign and Glyph spells.
-    The last rune of a stack may be preserved with the !R inscription, to
-    prevent unintentional loss of access to auto-retaliation inscriptions.
+    Note that physical runes are not required to cast runespells, and are
+    instead used only to apply sigils to worn equipment, granting some boni
+    depending synergistically on both the rune element and recipient item.
 
     Hint: Runespells cause backlash of the active element on spell failure.
     For that reason you might use basic elemental spells in the beginning,
@@ -18161,6 +18155,8 @@ pool of available effects, listed in (6.8c) Runespell Tables, Sigil Boni, and
 on rules similar to artifact creation (see (8.4) Artifact creation). Existing
 enchantments may synergize with or couteract some sigil boni (eg. PVAL) and are
 limited in effect by the same restrictions that constrain artifact creation.
+Duplicate effects are never applied, and boni only increase in potency (eg.
+fire resistance will be replaced with immunity, never the other way around).
 
 Runemasters are limited to one sigil per element, but can maintain 7 in total.
 
@@ -18177,14 +18173,14 @@ Runecraft macros look like this (key translation in parenthesis):
 (Note: m@12\r invokes the m-key menu command for 'Draw a rune'.)
 
 Targetted runespells use the following format:
-    \e)*tm@12\r[a-f][a-f][a-g][a-f]-  (rune, rune, mode, type, target)
+    \e)*tm@12\r[a-f][a-f][a-h][a-f]-  (rune, rune, mode, type, target)
 
 Non-targetted runespells use the format:
-    \e)m@18\r[a-f][a-f][a-g][a-f]  (rune, rune, mode, type)
+    \e)m@18\r[a-f][a-f][a-h][a-f]  (rune, rune, mode, type)
 
 Note that you must choose two runes, one mode, and one type.
 To cast a single element runespell, simply choose the same element twice.
-[a-f] and [a-g] denote the choices of a letter from a to f or a to g,
+[a-f] and [a-h] denote the choices of a letter from a to f or a to h,
 inclusive, which represents a rune or a mode or a type, respectively.
 ie. There are six base runes, so [a-f] represents a choice from rune 1-6.
 
@@ -18192,7 +18188,7 @@ ie. There are six base runes, so [a-f] represents a choice from rune 1-6.
 Examples:
 ---------
 Here is a single rune example, invoking the element 'light' (rune 'a'):
-    \e)*tm@12\raeaa-  (light--light--minimized--bolt)
+    \e)*tm@12\raaaa-  (light--light--minimized--bolt)
 
 This spell launches a minimized light bolt, a targetted projection
 affecting up to a single opponent, dealing light damage if it connects.
@@ -18231,7 +18227,13 @@ Auto-retaliation:
 -----------------
 Although you can set most runespells for retaliation with /arr, some make poor
 choices for repeat casting. Retaliation is disabled completely for spells with
-an indirect effect (nimbus and glyph).
+an indirect effect (nimbus and glyph). Specify both runes, then mode and type,
+or '-' to disable. Prefix 't' before a runespell to retaliate in town only.
+
+Usage:   /arr <t>[a-f][a-f][a-h][a-f] (town?, rune, rune, mode, type)
+Example: /arr aeda          Auto-retaliate with a moderate fire bolt.
+Example: /arr taeda         Moderate fire bolt, but 'in town only'.
+Example: /arr -             Disable any auto-retaliation with runes.
 
 
 Hints:
@@ -18251,12 +18253,18 @@ element, and Rings of Fire Resistance are readily available in magic shops.
 Note that different elemental damage types are reduced more or less when
 resisted, see (5.6) Resistances & caps, Immunities, Susceptibilities for info.
 The enhanced storm effect 'nimbus' will shield you from elemental damage and
-effects, as though you had any applicable resistance and temporary resistance.
-Just be wary of UNMAGIC, which may dispel the effect!
+effects, as though you had any applicable resistance or immunity! Just be wary
+of UNMAGIC attacks, which may suddenly dispel the effect!
 
 Physical runes can at first seem difficult to acquire, but may be extracted
 from treasure veins with a success rate proportional to runecraft skills.
 This method of rune extraction synergizes well with the digging skill.
+
+Applying sigils to equipment that already has certain boni associated with an
+element will increase your chances to grant the remaining boni from that
+elemental pool. That is, sigils will never grant a duplicate or invalid effect.
+For example, applying a sigil of fire to a dwarven helm (which already grants
+fire resistance) will have an increased chance to grant fire immunity.
 
 
 (6.8c) Runespell Tables
@@ -18298,8 +18306,8 @@ Nether   | Mana     | Force          |   250  | Stun           | Many Items
 Chaos    | Mana     | Disenchantment |   500  | Cancellation   | Magical Items
 
 
-Spell Modifiers
----------------
+Spell Modes
+-----------
 A table of every runespell mode. Modes influence runespell parameters,
 including level, cost, fail rate, damage, casting time, size, and duration.
 -------------------------------------------------------------------------------
@@ -18310,7 +18318,7 @@ Extended   | + 2 | Good efficiency, poor damage, best duration.
 Compressed | + 3 | Good efficiency and duration, worst size.
 Moderate   | + 5 | Balanced spell parameters.
 Enhanced   | + 5 | Modifies the runespell type, see Spell Types.
-Expanded   | + 7 | Poor efficiency and duration, best size. Projects signs.
+Expanded   | + 7 | Poor efficiency and duration, best size.
 Brief      | + 8 | Poor efficiency, good damage, worst duration. Half energy.
 Maximized  | +10 | Worst efficiency, best damage, good size and duration.
 
@@ -18331,7 +18339,7 @@ Storm      |  20 | Engulfs an area around youself for several turns.
 + Nimbus   |  25 | Grants explosive attacks and an elemental shield.
 Cone       |  25 | Fires a continuous beam across a narrow arc.
 + Shot     |  30 | Fires five bolts at one or more targets in a wide arc.
-Wave       |  30 | Engulfs an expanding area around yourself.
+Surge      |  30 | Engulfs a quickly expanding area around yourself.
 + Glyph    |  35 | Inscribes a damaging glyph of warding on the floor.
 
 

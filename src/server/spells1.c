@@ -398,7 +398,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		player_type *p_ptr = Players[-who];
 		object_type forge;
 		int lev;
-		
+
 		invcopy(&forge, lookup_kind(TV_POTION, o_sval));
 		lev = k_info[forge.k_idx].level;
 
@@ -2034,7 +2034,7 @@ destined_defeat:
 /*	}
 	else
 	{
-		new_num = (p_ptr->csp * 95) / (p_ptr->msp*10); 
+		new_num = (p_ptr->csp * 95) / (p_ptr->msp*10);
 		if (new_num >= 7) new_num = 10;
 	}
 */
@@ -2879,7 +2879,7 @@ int equip_damage(int Ind, int typ) {
 		if (!set_rust_destroy(o_ptr)) return(FALSE); else break; /* for some equipped items set_rust_destroy and set_water_destroy may be different */
 	case GF_ACID:
 	case GF_ACID_BLIND:
-		if (!set_acid_destroy(o_ptr)) return(FALSE); else break; 
+		if (!set_acid_destroy(o_ptr)) return(FALSE); else break;
 	case GF_FIRE:
 		if (!set_fire_destroy(o_ptr)) return(FALSE); else break;
 	default: return(FALSE);
@@ -3927,7 +3927,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 /* Ho Ho Ho... I really want this to have a chance of turning people into
    a fruit bat,  but something tells me I should put that off until the next version...
 
-   I CANT WAIT. DOING FRUIT BAT RIGHT NOW!!! 
+	 I CANT WAIT. DOING FRUIT BAT RIGHT NOW!!!
    -APD-
 */
 /* note: apply_morph() is only called by polymorph-rod/wand usage.
@@ -7209,7 +7209,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 		break;
 
-	/* Random between ice (shards+water) and poison. At the moment its 3:1:1 shards:water:poison chance 
+	/* Random between ice (shards+water) and poison. At the moment its 3:1:1 shards:water:poison chance
 			- the_sandman */
 	case GF_ICEPOISON:
 		switch (randint(10)) {
@@ -7565,7 +7565,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (seen) obvious = TRUE;
 
 			/* Message */
-			note = " shudders"; 
+			note = " shudders";
 			note_dies = " dissolves";
 		}
 		/* Ignore other monsters */
@@ -8721,7 +8721,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
  */
 /*
  * Megahack -- who < -999 means 'by something strange'.		- Jir -
- * 
+ *
  * NOTE: unlike the note above, 'rad' doesn't seem to be used for damage-
  * reducing purpose, I don't know why.
  */
@@ -9086,7 +9086,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 #else			/* changed it to YES..  - still C. Blue - but added an if..*/
 			if (check_hostile(0 - who, Ind)) {
 #ifdef EXPERIMENTAL_PVP_SPELL_DAM
-				int __dam = randint(dam); 
+				int __dam = randint(dam);
 				if (randint(1)) __dam *= -1;
 				dam += __dam;
 #else
@@ -9108,7 +9108,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				/* Players in the same party can't harm each others */
 #if FRIEND_FIRE_CHANCE
  #ifdef EXPERIMENTAL_PVP_SPELL_DAM
-				int __dam = randint(dam); 
+				int __dam = randint(dam);
 				if (randint(1)) __dam *= -1;
 				dam += __dam;
  #else
@@ -11699,21 +11699,6 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 	/* Project until done */
 	while (TRUE) {
-		/* Gather beam grids */
-		if (flg & PROJECT_BEAM) {
-			/* Hack: Firewalls are actually a lot of single-grid effects for each affected grid! */
-			if (project_time_effect & EFF_WALL) {
-				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
-				if (effect != -1) zcave[y][x].effect = effect;
-			}
-			gy[grids] = y;
-			gx[grids] = x;
-			grids++;
-#if DEBUG_LEVEL > 1
-			if (grids > 500) s_printf("grids %d\n", grids);
-#endif	/* DEBUG_LEVEL */
-		}
-
 		/* Check the grid */
 		c_ptr = &zcave[y][x];
 
@@ -11892,19 +11877,18 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		if (dist > MAX_RANGE) break;
 
 		/* Hack -- Balls explode BEFORE reaching walls or doors */
-		/* Kurzel - Handles Cones, Fixes Beams */
 		if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
-			if (!cave_floor_bold(zcave, y9, x9) && ((rad > 0) && !(flg & PROJECT_BEAM))) break;
+			if (!cave_floor_bold(zcave, y9, x9) && ((rad > 0))) break;
 #ifndef PROJ_MON_ON_WALL
 		} else if (IS_PVP) { /* ..or rather levitating through the air? */
 			if (!cave_contact(zcave, y9, x9)
  #ifdef DOUBLE_LOS_SAFETY
 			    && !ok_DLS
  #endif
-			     && ((rad > 0) && !(flg & PROJECT_BEAM))) break;
+			     && ((rad > 0))) break;
 #endif
 		} else { /* monsters can target certain non-los grid types directly */
-			if ((rad > 0) && !(flg & PROJECT_BEAM)) {
+			if ((rad > 0)) {
 #ifdef PROJ_ON_WALL
 				if (broke_on_terrain2) break;
 #else
@@ -11992,9 +11976,23 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		/* Save the new location */
 		y = y9;
 		x = x9;
+
+		/* Gather beam grids, not including the grid under the caster, unless firing down - Kurzel */
+		if (flg & PROJECT_BEAM) {
+			if (!cave_contact(zcave, y9, x9)) broke_on_terrain1 = TRUE;
+			/* Hack: Firewalls are actually a lot of single-grid effects for each affected grid! */
+			if (project_time_effect & EFF_WALL) {
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
+				if (effect != -1) zcave[y][x].effect = effect;
+			}
+			gy[grids] = y;
+			gx[grids] = x;
+			grids++;
+		}
+
 	}
 
-		/* Cones */
+	/* Cones */
 	if ((flg & PROJECT_BEAM) && (flg & PROJECT_FULL)) {
 
 		/* Trace without collision instead of scaling radius to target dist */
@@ -12079,17 +12077,17 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 
 					/* Obey noodles of DLS logic, eventually trim? - Kurzel */
 					if (flg & PROJECT_GRAV) { /* Running along the floor?.. */
-						if (!cave_floor_bold(zcave, y9, x9) && ((rad > 0) && !(flg & PROJECT_BEAM))) break;
+						if (!cave_floor_bold(zcave, y9, x9) && ((rad > 0))) break;
 #ifndef PROJ_MON_ON_WALL
 					} else if (IS_PVP) { /* ..or rather levitating through the air? */
 						if (!cave_contact(zcave, y9, x9)
 	#ifdef DOUBLE_LOS_SAFETY
 						    && !ok_DLS
 	#endif
-						    && ((rad > 0) && !(flg & PROJECT_BEAM))) break;
+						    && ((rad > 0))) break;
 	#endif
 					} else { /* monsters can target certain non-los grid types directly */
-						if ((rad > 0) && !(flg & PROJECT_BEAM)) {
+						if ((rad > 0)) {
 #ifdef PROJ_ON_WALL
 							if (broke_on_terrain2) break;
 #else
@@ -12137,7 +12135,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		project_interval = 0;
 		project_time_effect = 0;
 	}
-	
+
 	/* Hack: Usually, elemental bolt spells will not hurt floor/item if they already hurt a monster/player.
 	         Some bolt spells (poly) don't need this flag, since they don't hurt items/floor at all. */
 	if ((flg & PROJECT_EVSG) && zcave[y][x].m_idx != 0)
@@ -12525,7 +12523,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			if (!cave_contact(zcave, y, x)) continue;
 #else
 			/* Walls only protect monsters if it's not the very epicenter of the blast. */
-			if (!cave_contact(zcave, y, x) && !(y == y2 && x == x2)) continue;
+			if (!(flg & PROJECT_BEAM)) //Beams don't have this epicenter - Kurzel
+				if (!cave_contact(zcave, y, x) && !(y == y2 && x == x2)) continue;
 #endif
 
 			/* Affect the monster */
