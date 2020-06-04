@@ -102,6 +102,14 @@ E = { -- Enhanced Level Cost Max Dice Max Damage Max Radius Max Duration Max
 adj_mag_fail = {99,99,99,99,99,50,30,20,15,12,11,10,9,8,7,6,6,5,5,5,4,4,4,4,3,3,2,2,2,2,1,1,1,1,1,0,0,0}
 adj_mag_stat = {0,0,0,1,1,1,2,2,3,3,4,4,5,6,7,8,9,10,11,12,13,14,16,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60}
 
+function hamming(u)
+  local x = 0
+  for i = 0,31 do
+    x = x + bshr(band(u,bshl(1,i)),i)
+  end
+  return x
+end
+
 -- COMMON
 
 function rspell_skill(I,u)
@@ -159,7 +167,7 @@ end
 
 function rspell_damage(u,s)
   local XX = band(u,ENHA)~=0 and E[band(u,TYPE)] or T[band(u,TYPE)]
-  -- local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
+	-- local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
   -- increase elemental damage spread
 	local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
   local m = M[band(u,MODE)][5]
@@ -396,8 +404,11 @@ function rspell_name(u)
 end
 
 function cast_rune_spell(I,D,u)
+  -- 4 bits, no invalid positioning
   if band(u,WARN)~=0 then return 0 end
-  if band(u,PROJ)==0 then return 0 end
+  if hamming(u)~=4 then return 0 end
+  if band(u,R1)==0 then return 0 end
+  if band(u,R2)==0 then return 0 end
   if band(u,MODE)==0 then return 0 end
   if band(u,TYPE)==0 then return 0 end
   local p = players(I)
@@ -409,12 +420,12 @@ function cast_rune_spell(I,D,u)
 	end
   if p.antimagic~=0 and p.admin_dm==0 then
 		msg_print(I,"\255wYour anti-magic field disrupts any magic attempts.")
-   p.energy = p.energy - e
+		p.energy = p.energy - e
 		return 0
 	end
 	if p.anti_magic~=0 then
 		msg_print(I,"\255wYour anti-magic shell disrupts any magic attempts.")
-   p.energy = p.energy - e
+		p.energy = p.energy - e
 		return 0
 	end
   if check_antimagic(I,100)~=0 then
@@ -430,8 +441,8 @@ function cast_rune_spell(I,D,u)
   local S = rspell_name(u)
   if a < 1 then
     msg_print(I,format("\255sYour skill is not high enough! (%s; level: %d)",S,a))
-   p.energy = p.energy - e
-   return 0
+		p.energy = p.energy - e
+    return 0
 	end
   local c = rspell_cost(u,s)
 	if p.csp < c then
