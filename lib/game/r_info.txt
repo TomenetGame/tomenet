@@ -2791,7 +2791,8 @@ F:NEVER_MOVE | COLD_BLOOD |
 F:STUPID | EMPTY_MIND |
 F:NO_CONF | NO_SLEEP | NO_FEAR | JOKEANGBAND | NO_CUT
 F:MULTIPLY |
-S:1_IN_5 | ARROW_1
+S:1_IN_5 |
+S:ARROW_1
 D:What looks like the remains of a quiver dropped by a past adventurer
 D:has become overgrown with a strange mold intent on using the contents
 D:of the quiver to grab prey.
@@ -4441,7 +4442,8 @@ B:CLAW:HURT:1d4
 F:ANIMAL | EVIL | MORTAL | FRIENDS | BASEANGBAND | DROP_CORPSE | HAS_EGG |
 F:WILD_TOO | WILD_WASTE | WILD_MOUNTAIN | WILD_WOOD | WILD_VOLCANO |
 F:WILD_GRASS | WILD_SWAMP | WILD_SHORE | WILD_OCEAN | CAN_FLY
-S:1_IN_8 | SHRIEK
+S:1_IN_8 |
+S:SHRIEK
 D:A type of crow, specially bred by the forces of evil as spies; their
 D:rudimentary intelligence guided by an evil mind has tracked you down,
 D:and now they seek to alert other evil creatures to your presence.
@@ -4458,7 +4460,8 @@ B:HIT:HURT:7d7
 F:MALE | NO_FEAR | NO_STUN | BASH_DOOR | KILL_BODY | FORCE_MAXHP |
 F:DROP_SKELETON | DROP_CORPSE
 F:MORTAL | BASEANGBAND | HAS_LITE
-S:1_IN_4 | HASTE | SCARE
+S:1_IN_4 |
+S:HASTE | SCARE
 D:Even the strongest of normal human warriors fears the Berserker - the one who
 D:can drive himself into such a terrible battle-frenzy that he can survive blows
 D:which should kill him, and still apparently feel no pain. He tramples weaker
@@ -4756,7 +4759,8 @@ O:0:0:0:0
 B:BITE:HURT:1d8
 F:RAND_25 | FRIENDS | BASH_DOOR | DROP_SKELETON | DROP_CORPSE |
 F:ANIMAL | RES_TELE | MORTAL | BASEANGBAND
-S:1_IN_4 | BLINK | TELE_TO
+S:1_IN_4 |
+S:BLINK | TELE_TO
 D:A strange magical member of the canine race, its form seems to shimmer and
 D:fade in front of your very eyes.
 
@@ -5585,7 +5589,8 @@ B:WAIL:TERRIFY
 F:ESCORTS | FORCE_MAXHP | IM_COLD | RES_ACID |
 F:SMART | ESCORT | ANIMAL | EVIL | MORTAL | BASEANGBAND |
 F:OPEN_DOOR | BASH_DOOR | NO_FEAR | MALE
-S:1_IN_8 | DARKNESS
+S:1_IN_8 |
+S:DARKNESS
 D:A great wolf-chieftain whose pack is in the service of the Dark Lord,
 D:and whose howls strike fear into even the boldest heart.
 
@@ -7266,7 +7271,8 @@ B:BITE:POISON:1d20
 B:CRUSH:HURT:2d9
 F:TROLL | EVIL | FRIENDS | OPEN_DOOR | BASH_DOOR | DROP_CORPSE |
 F:IM_POIS | IM_ACID | REGENERATE | ZANGBAND |
-S:1_IN_9 | BR_POIS
+S:1_IN_9 |
+S:BR_POIS
 D:Pale, bald, fat, hairless troll creatures. Ugly beyond description.
 D:Not to mention how bad their breath smells...
 
@@ -8214,7 +8220,8 @@ F:UNIQUE | FORCE_SLEEP | FORCE_MAXHP | CAN_SWIM | AQUATIC | ANIMAL |
 F:RES_ACID | RES_COLD | RES_POIS | RES_WATE | RES_TELE | DROP_CORPSE |
 F:NO_CONF | NO_SLEEP | NO_FEAR | EVIL | COLD_BLOOD | BASEANGBAND |
 F:ONLY_ITEM | DROP_GOOD | DROP_4D2 | DROP_1D2 | SPECIAL_GENE
-S:1_IN_5 | BA_WATE | BO_WATE | HOLD | BR_POIS | BO_ICEE | TELE_TO
+S:1_IN_5 |
+S:BA_WATE | BO_WATE | HOLD | BR_POIS | BO_ICEE | TELE_TO
 D:A vile creature which seems to consist mostly of tentacles, it seeks to
 D:drag people to their doom in the water. Few have ever escaped its grasp.
 
@@ -9956,7 +9963,8 @@ F:FORCE_SLEEP | FORCE_MAXHP | DROP_CORPSE
 F:RAND_25 | FRIENDS | AURA_FIRE | SUSCEP_COLD |
 F:BASH_DOOR | MOVE_BODY | RES_DARK | RES_NETH
 F:ANIMAL | EVIL | IM_FIRE | BASEANGBAND | HAS_LITE | RES_LITE
-S:1_IN_5 | BR_FIRE
+S:1_IN_5 |
+S:BR_FIRE
 D:It is a giant dog that glows with heat. Flames pour from its nostrils.
 
 N:614:7-headed hydra
@@ -14514,7 +14522,8 @@ F:FORCE_SLEEP | FORCE_MAXHP | PASS_WALL | CAN_FLY |
 F:AURA_ELEC | IM_COLD | RES_FIRE | IM_ELEC | IM_POIS | RES_ACID |
 F:BASH_DOOR | MOVE_BODY | NO_SLEEP | NO_FEAR | NO_CUT | NO_STUN | NO_CONF |
 F:EVIL | UNDEAD | BLUEBAND | HAS_LITE | NO_ESCORT | NO_NEST
-S:1_IN_5 | SCARE | HOLD
+S:1_IN_5 |
+S:SCARE | HOLD
 D:It is a giant nocturnal spectre, a portent of death, with large glowing eyes.
 
 N:830:Cantoras, the Skeletal Lord
@@ -16276,7 +16285,8 @@ F:WILD_OCEAN | WILD_TOO | COLD_BLOOD |
 F:BASH_DOOR | RES_COLD | RES_ELEC | RES_POIS | ANIMAL | AQUATIC |
 F:NO_CONF | NO_SLEEP |
 F:MORTAL | JOKEANGBAND
-S:1_IN_6 | BA_WATE
+S:1_IN_6 |
+S:BA_WATE
 D:The mightiest whale of the seas, he has sunk many ships in his time. With
 D:a mere flick of his tail he can create a mighty whirlpool, to the ruin
 D:of all who would travel the ocean.
@@ -16518,7 +16528,8 @@ B:HIT:HURT:1d6
 F:DROP_60 | WILD_EASY | FRIENDS |
 F:OPEN_DOOR | DROP_SKELETON | DROP_CORPSE |
 F:MORTAL | BASEANGBAND | HAS_LITE | NO_CONF | NO_SLEEP | RES_PSI
-S:1_IN_12 | BLIND | SLOW | CONF | SCARE
+S:1_IN_12 |
+S:BLIND | SLOW | CONF | SCARE
 D:A novice in the arts of mind over matter.
 
 N:938:Great Swamp Wyrm
@@ -17234,7 +17245,8 @@ F:EVIL | DRAGON | NO_CONF |
 F:MORTAL | BASEANGBAND
 #| ATTR_MULTI
 F:MULTIPLY |
-S:1_IN_6 | BR_CONF
+S:1_IN_6 |
+S:BR_CONF
 D:You thought dragons used eggs, but this worm has the scales, and the bad
 D:breath, and the fiery eyes, of a real Dragon. Its scales glitter in
 D:a multitude of perplexing and distracting ways.
@@ -17255,7 +17267,8 @@ F:EVIL | DRAGON | NO_STUN |
 F:MORTAL | BASEANGBAND
 #| ATTR_MULTI
 F:MULTIPLY |
-S:1_IN_6 | BR_SOUN
+S:1_IN_6 |
+S:BR_SOUN
 D:You thought dragons used eggs, but this worm has the scales, and the bad
 D:breath, and the fiery eyes, of a real Dragon. You can feel the air itself
 D:vibrating as you near it.
@@ -17451,7 +17464,8 @@ F:FORCE_MAXHP |
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL | MORTAL | BASEANGBAND | HAS_LITE
-S:1_IN_10 | S_KIN
+S:1_IN_10 |
+S:S_KIN
 D:An evil and cunning man from the East. Having once sworn allegiance to the
 D:sons of Feanor, it was Uldor's treachery that turned the tide of the Battle
 D:of Unnumbered Tears in Morgoth's favour.
@@ -17519,7 +17533,8 @@ F:FORCE_MAXHP | RES_FIRE | IM_COLD | RES_ELEC | SPECIAL_GENE |
 F:ONLY_ITEM | DROP_2D2 | DROP_GOOD |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL | MORTAL | BASEANGBAND | HAS_LITE
-S:1_IN_10 | S_KIN | S_MONSTERS
+S:1_IN_10 |
+S:S_KIN | S_MONSTERS
 D:A short and swarthy Easterling dressed in black. He and his three sons
 D:once openly swore allegiance to the High Elves, but were secretly in the
 D:pay of Morgoth.
@@ -17722,7 +17737,8 @@ B:HIT:HURT:1d6
 F:DROP_60 | WILD_EASY |
 F:OPEN_DOOR | DROP_SKELETON | DROP_CORPSE |
 F:MORTAL | BASEANGBAND | HAS_LITE | NO_CONF | NO_SLEEP | RES_PSI
-S:1_IN_9 | BLIND | SLOW | CONF | SCARE
+S:1_IN_9 |
+S:BLIND | SLOW | CONF | SCARE
 D:A novice in the arts of mind over matter.
 
 N:1001:Polyphemus, the Blind Cyclops
@@ -17853,7 +17869,8 @@ F:ONLY_ITEM | DROP_1D2 | DROP_GOOD |
 F:OPEN_DOOR | BASH_DOOR | WILD_EASY |
 F:EVIL | IM_POIS |
 F:MORTAL | BASEANGBAND | HAS_LITE
-S:1_IN_6 | MISSILE | HEAL | CURSE | CONF
+S:1_IN_6 |
+S:MISSILE | HEAL | CURSE | CONF
 D:Where Mughash is the strongest of his kind, his consort Vort is the
 D:wisest: she is her tribe's chief shamaness.
 
@@ -18160,7 +18177,8 @@ F:EVIL | DRAGON | IM_ELEC |
 F:MORTAL | BASEANGBAND
 #| ATTR_MULTI
 F:MULTIPLY |
-S:1_IN_6 | BR_ELEC
+S:1_IN_6 |
+S:BR_ELEC
 D:You thought dragons used eggs, but this worm has the scales, and the bad
 D:breath, and the fiery eyes, of a real Dragon. Sparks fly from its jaws.
 
@@ -18180,7 +18198,8 @@ F:EVIL | DRAGON | IM_COLD |
 F:MORTAL | BASEANGBAND
 #| ATTR_MULTI
 F:MULTIPLY |
-S:1_IN_6 | BR_COLD
+S:1_IN_6 |
+S:BR_COLD
 D:You thought dragons used eggs, but this worm has the scales, and the bad
 D:breath, and the fiery eyes, of a real Dragon. Its breath condenses in the air.
 
@@ -18200,7 +18219,8 @@ F:EVIL | DRAGON | IM_POIS |
 F:MORTAL | BASEANGBAND
 #| ATTR_MULTI
 F:MULTIPLY |
-S:1_IN_6 | BR_POIS
+S:1_IN_6 |
+S:BR_POIS
 D:You thought dragons used eggs, but this worm has the scales, and the bad
 D:breath, and the fiery eyes, of a real Dragon. You can smell foul gases
 D:on its breath.
@@ -18221,7 +18241,8 @@ F:EVIL | DRAGON | IM_ACID |
 F:MORTAL | BASEANGBAND
 #| ATTR_MULTI
 F:MULTIPLY |
-S:1_IN_6 | BR_ACID
+S:1_IN_6 |
+S:BR_ACID
 D:You thought dragons used eggs, but this worm has the scales, and the bad
 D:breath, and the fiery eyes, of a real Dragon. Acidic drool drips from its jaws.
 
@@ -18241,7 +18262,8 @@ F:EVIL | DRAGON | IM_FIRE |
 F:MORTAL | BASEANGBAND
 #| ATTR_MULTI
 F:MULTIPLY |
-S:1_IN_6 | BR_FIRE
+S:1_IN_6 |
+S:BR_FIRE
 D:You thought dragons used eggs, but this worm has the scales, and the bad
 D:breath, and the fiery eyes, of a real Dragon. Smoke comes from its mouth.
 
@@ -18260,7 +18282,8 @@ F:OPEN_DOOR | BASH_DOOR |
 F:EVIL | DRAGON | RES_ELEC | RES_FIRE | RES_ACID | RES_COLD | RES_POIS |
 F:MORTAL | BASEANGBAND
 F:MULTIPLY |
-S:1_IN_6 | BR_ELEC | BR_COLD | BR_FIRE | BR_ACID | BR_POIS
+S:1_IN_6 |
+S:BR_ELEC | BR_COLD | BR_FIRE | BR_ACID | BR_POIS
 D:You thought dragons used eggs, but this worm has the scales, and the bad
 D:breath, and the fiery eyes, of a real Dragon. Its scales shimmer different
 D:colours as you watch.
@@ -18296,7 +18319,8 @@ F:FORCE_MAXHP | DROP_90 | DROP_1D2 | ONLY_ITEM | DROP_GREAT | DROP_GOOD
 F:OPEN_DOOR | BASH_DOOR | FEMALE | POWERFUL | SPECIAL_GENE | REFLECTING
 F:EVIL | ANIMAL | IM_ELEC | RES_FIRE | IM_ACID | IM_POIS | ESCORT | DROP_CORPSE
 F:MORTAL | BASEANGBAND | EMPTY_MIND | UNIQUE | NO_CONF | RES_MANA
-S:1_IN_2 | BR_POIS | S_KIN
+S:1_IN_2 |
+S:BR_POIS | S_KIN
 D:Queen and Mother of the sandworms, fear her and her prolific children.
 
 N:1031:Sandworm
@@ -18404,7 +18428,8 @@ F:BASH_DOOR | IM_COLD | IM_ACID | IM_ELEC | IM_POIS | UNIQUE | RES_SHARDS
 F:HURT_ROCK | NO_CONF | NO_SLEEP | CHAR_MULTI | BASEANGBAND | SPECIAL_GENE
 F:NO_CUT
 F:NONLIVING
-S:1_IN_10 | S_KIN | BO_ACID | BA_FIRE
+S:1_IN_10 |
+S:S_KIN | BO_ACID | BA_FIRE
 D:Deep in the heart of the earth, even the rock itself is sentient
 D:and has learned to despise intruders.
 
@@ -18464,7 +18489,8 @@ B:CLAW:HURT:2d10
 B:CLAW:HURT:2d10
 F:FORCE_SLEEP | BASH_DOOR | DROP_CORPSE | FRIENDS |
 F:ANIMAL | IM_COLD | MORTAL | BASEANGBAND | NO_CUT | NO_STUN | IM_WATER
-S:1_IN_5 | BR_WATER
+S:1_IN_5 |
+S:BR_WATER
 D:The sound of a hundred waterfalls rushes through your ears as
 D:a huge wave of water, vaguely hound-shaped, rushes towards you.
 
@@ -19138,7 +19164,8 @@ F:INVISIBLE | OPEN_DOOR | BASH_DOOR | REGENERATE |
 F:RES_ACID | IM_FIRE | IM_COLD | IM_ELEC | RES_POIS | REFLECTING |
 F:NO_CONF | NO_SLEEP | RES_TELE | NO_FEAR | NO_STUN |
 F:MORTAL | BLUEBAND | HAS_LITE | ATTR_ANY | CAN_FLY | WILD_TOO
-S:1_IN_4 | TELE_TO
+S:1_IN_4 |
+S:TELE_TO
 D:Founder of the Yagyu school, maybe the greatest swordsman ever.
 D:His left eye is covered by a patch, but there is no sign of any
 D:weakness on this fighter.
@@ -20251,7 +20278,8 @@ O:0:0:0:0
 B:TOUCH:*
 F:BLUEBAND | NEVER_MOVE | NONLIVING | EMPTY_MIND | COLD_BLOOD
 F:ALLOW_RUNNING | RES_TELE | RES_NEXU | IM_TELE | FORCE_MAXHP | REGENERATE
-S:1_IN_1 | MISSILE
+S:1_IN_1 |
+S:MISSILE
 D:For testing
 
 # The_sandman's
