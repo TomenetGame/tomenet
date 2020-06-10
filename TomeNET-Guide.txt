@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. May 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 10. June 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4393,6 +4393,17 @@ a Chain Mail {+,0} (-2) [14,+0]
     instead which is offered in the armoury (and also at the weaponsmith's).
     Note that enchanting items by using scrolls to anything above +0 has a
     chance to fail, depending on how high it has already been enchanted.
+
+a Small Metal Shield {+,3} [17%]
+    Shields are special in that they do not provide AC (armour class) but
+    instead a base block chance, specified in [..] brackets.
+    This chance is modified by various factors such as character class and type
+    of attack, to determine the real case-by-case block chance.
+    In general, characters that are 'superb' at blocking (see table in (6.5))
+    will use this chance as base in all blocking calculations, while anyone
+    worse than 'superb' will mean that the character gets this base block
+    chance somewhat reduced.
+    Example values of the actual chance can be checked in 'm' menu.
 
 a Long Sword {+,0} (2d6) (+0,+0)
     Again the {..} part is already know. What's new for all types of weapons is
