@@ -1778,6 +1778,13 @@ player_race race_info[MAX_RACE] = {
 			'+', 0,
 			'%', 90, },
 #endif
+    /* Runeskill for the Eldar, who practiced their crafts in Aman. - Kurzel */
+		{ SKILL_R_LITE,
+			'+', 500,
+			'%', 110, },
+		{ SKILL_R_MANA,
+			'+', 500,
+			'%', 110, },
 		{ SKILL_STEALTH,
 			'+', 0,
 			'%', 110, },
@@ -1958,6 +1965,10 @@ player_race race_info[MAX_RACE] = {
 
 		{{ SKILL_POLEARM,
 			'+', 0,
+			'%', 110, },
+		/* Runeskill for Dragonriders, who may "go between" (teleport). - Kurzel */
+		{ SKILL_R_NEXU,
+			'+', 500,
 			'%', 110, },
 		{ SKILL_DEVICE,
 			'+', 0,

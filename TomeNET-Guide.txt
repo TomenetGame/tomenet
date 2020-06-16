@@ -14313,6 +14313,7 @@ create a character!):
     High-Elves receive boni on 'Bow-mastery', 'Magic', 'Stealth', 'Dodging'
     and the magic 'Nature' school, a large bonus on 'Calmness', a slight
     bonus on 'Swimming' and on occult 'Spirit' magic and a malus on 'Shadow'.
+    High-Elves also recieve minor boni on runemastery of 'Light' and 'Mana'.
 
 - Yeek
     Being weak and losing many childhood fights, they have learned the
@@ -14393,7 +14394,8 @@ create a character!):
     Thanks to their scaly hide they receive a small bonus to armour class,
     especially the metallic lineages - bronze, silver and gold.
     Draconians receive a bonus on 'Attunement', 'Polearm-mastery' and
-    'Magic devices' and a slight bonus on 'Swimming'.
+    'Magic devices', a small bonus on 'Nexus' runemastery, and a slight bonus
+    on 'Swimming'.
 
     Table of their traits:
     Lineage     Breath          Resistances/abilities

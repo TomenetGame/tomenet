@@ -137,8 +137,8 @@ __races_diz = {
     "experience is hard for them to gain.",
     "High-elves receive boni on Bow-Mastery, Magic,",
     "Stealth, Dodging, Nature magic, a large bonus on",
-    "Calmness and a small bonus on Spirit magic.",
-    "",},
+    "Calmness and a small bonus on Spirit magic, Light",
+    "and Mana runemastery.",},
 
 "Yeek",
     {"\255uYeeks\255U, being weak and losing many childhood",
@@ -190,8 +190,8 @@ __races_diz = {
     "as they get stronger. At 30 they learn how to",
     "levitate. Experience is very hard for them to gain",
     "and they need to eat often. They receive boni on",
-    "Attunement, Polearm-Mastery and Magic Devices.",
-    "",},
+    "Attunement, Polearm-Mastery and Magic Devices, and",
+    "a small bonus on Nexus runemastery.",},
 
 "Kobold",
     {"\255uKobolds\255U are somewhat smallish dog-faced humanoids",
