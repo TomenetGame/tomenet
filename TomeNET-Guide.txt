@@ -18349,7 +18349,7 @@ Ball       |  15 | Fires an explosion that diminishes with radius.
 Storm      |  20 | Engulfs an area around youself for several turns.
 + Nimbus   |  25 | Grants explosive attacks and an elemental shield.
 Cone       |  25 | Fires a continuous beam across a narrow arc.
-+ Shot     |  30 | Fires five bolts at one or more targets in a wide arc.
++ Shot     |  30 | Fires four bolts at one or more targets in a wide arc.
 Surge      |  30 | Engulfs a quickly expanding area around yourself.
 + Glyph    |  35 | Inscribes a damaging glyph of warding on the floor.
 

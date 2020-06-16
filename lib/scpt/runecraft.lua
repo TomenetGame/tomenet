@@ -286,7 +286,7 @@ function rcraft_prt(u,w)
       elseif band(U,CONE)~=0 then
         c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %dd%d%s rad %d",
           strbyte('a')+i, XX[1], a, c, f,
-          x, y, X and "" or " (x5)", r),
+          x, y, X and "" or " (x4)", r),
         row+i+1, col)
       elseif band(U,SURG)~=0 then
         if X then
@@ -514,7 +514,7 @@ function cast_rune_spell(I,D,u)
     if X then
       fire_cone(I, PP[2], D, d, r, p.attacker)
     else
-      fire_shot(I, PP[2], D, x, y, r, 5, p.attacker)
+      fire_shot(I, PP[2], D, x, y, r, 4, p.attacker)
     end
   elseif band(u,SURG)~=0 then
     fire_wave(I, PP[2], 0, d, 1, r, 1, EFF_WAVE, p.attacker)
