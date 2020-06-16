@@ -5058,6 +5058,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		}
 #endif
 
+	if (o_ptr->discount) fprintf(fff, "The value of this item is %d%% less than usual.\n", o_ptr->discount);
+
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
 		if ((inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || p_ptr->store_num == STORE_HOME)
@@ -5731,6 +5733,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 			fprintf(fff, "\377DAs an unbeliever you cannot activate this magic device.\n");
 	}
 #endif
+
+	if (o_ptr->discount) fprintf(fff, "The value of this item is %d%% less than usual.\n", o_ptr->discount);
 
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
