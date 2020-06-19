@@ -2212,7 +2212,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					take_hit(Ind, damage, ddesc, -m_idx);
 
 					/* Radius 8 earthquake centered at the monster */
-					/* Morgoth overrides LF1_NO_DESTROY */
+					/* Morgoth overrides LF1_NO_DESTROY. Note: This also works for Hru at these values. */
 					if (damage > 23 || (damage && !rand_int(25 - damage))) {
 						if (m_ptr->r_idx == RI_MORGOTH) override_LF1_NO_DESTROY = TRUE;
 						earthquake(&p_ptr->wpos, m_ptr->fy, m_ptr->fx, 8);
