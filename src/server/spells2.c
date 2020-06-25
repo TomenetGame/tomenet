@@ -9303,9 +9303,9 @@ void arm_charge(int Ind, int item, int dir) {
 		return;
 	}
 	/* Only set traps on floor grids */
-	if (!cave_clean_bold(zcave, py, px) || c_ptr->special ||
-	    //!cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
-	    c_ptr->feat == FEAT_DEEP_LAVA || c_ptr->feat == FEAT_DEEP_WATER) {
+	if (!cave_clean_bold(zcave, py, px) ||
+	    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
+	    c_ptr->special) {
 		msg_print(Ind, "You cannot place a charge here.");
 		return;
 	}
