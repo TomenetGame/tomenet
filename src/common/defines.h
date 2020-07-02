@@ -1088,6 +1088,9 @@
    Note: Shooting arrows/bolts/shots/missiles is casting bolt spells too. */
 #define MON_BOLT_ON_WALL
 
+/* Don't cause potion_smash_effect()s from terrain damage */
+#define NO_TERRAIN_POTION_EXPLOSION
+
 /* Reduce the effect of aggravating equipment on the player
    and especially fellow players? - C. Blue */
 #define REDUCED_AGGRAVATION

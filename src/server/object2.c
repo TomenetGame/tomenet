@@ -9948,7 +9948,9 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 #ifdef DROP_KILL_NOTE
 		/* Effect "observed" */
 		bool seen = Ind ? player_can_see_bold(Ind, ny, nx) : FALSE;
+ #ifndef NO_TERRAIN_POTION_EXPLOSION
 		int who = Ind ? -Ind : PROJECTOR_POTION;
+ #endif
 		char o_name[ONAME_LEN];
 
 		object_desc(Ind, o_name, o_ptr, FALSE, 3);
@@ -9961,9 +9963,11 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 		} else {
 			/* Describe if needed */
 			if (seen && note_kill) msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
+ #ifndef NO_TERRAIN_POTION_EXPLOSION
 			/* Potions produce effects when 'shattered' */
 			if (is_potion) (void)potion_smash_effect(who, wpos, ny, nx, o_ptr->sval);
 			else if (is_flask) (void)potion_smash_effect(who, wpos, ny, nx, o_ptr->sval + 200);
+ #endif
 			//everyone_lite_spot(wpos, ny, nx);
 		}
 #endif

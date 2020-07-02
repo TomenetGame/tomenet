@@ -5372,7 +5372,11 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				/* Potions produce effects when 'shattered'.
 				   But not if the potion got killed by the floor (lava), too dangerous for the player in Mt Doom for example. */
-				if (do_smash_effect && who != PROJECTOR_TERRAIN) {
+				if (do_smash_effect
+#ifdef NO_TERRAIN_POTION_EXPLOSION
+				    && who != PROJECTOR_TERRAIN
+#endif
+				    ) {
 					if (is_basic_potion) {
 						/* prevent mass deto exploit */
 						if (mon_hit_proj_id == mon_hit_proj_id2) {
