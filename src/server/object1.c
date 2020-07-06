@@ -5058,14 +5058,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 		}
 #endif
 
-	if (o_ptr->discount) fprintf(fff, "The value of this item is %d%% less than usual.\n", o_ptr->discount);
+	if (o_ptr->discount) fprintf(fff, "\377WThe value of this item is %d%% less than usual.\n", o_ptr->discount);
 
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
 		if ((inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || p_ptr->store_num == STORE_HOME)
 		    && !(true_artifact_p(o_ptr) && (cfg.anti_arts_hoard || cfg.anti_arts_house)))
 			//if (istownarea(&p_ptr->wpos, MAX_TOWNAREA))
-			fprintf(fff, "This item would be appraised at %ld Au if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
+			fprintf(fff, "\377WThis item would be appraised at \377y%ld Au\377W if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
  #endif
 #endif
 
@@ -5734,14 +5734,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 	}
 #endif
 
-	if (o_ptr->discount) fprintf(fff, "The value of this item is %d%% less than usual.\n", o_ptr->discount);
+	if (o_ptr->discount) fprintf(fff, "\377WThe value of this item is %d%% less than usual.\n", o_ptr->discount);
 
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
 	if ((inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || p_ptr->store_num == STORE_HOME)
 	    && !(true_artifact_p(o_ptr) && (cfg.anti_arts_hoard || cfg.anti_arts_house)))
 		//if (istownarea(&p_ptr->wpos, MAX_TOWNAREA))
-		fprintf(fff, "This item would be appraised at %ld Au if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
+		fprintf(fff, "\377WThis item would be appraised at \377y%ld Au\377W if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
  #endif
 #endif
 
