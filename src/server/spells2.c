@@ -7275,6 +7275,43 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 }
 
 /*
+ * Cast a cloud spell
+ * Stop if we hit a monster, act as a "ball"
+ * Allow "target" mode to pass over monsters
+ * Affect grids, objects, and monsters
+ * PROJECT_STAR about the target, limited to max range of caster. - Kurzel
+ */
+bool fire_nova(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker) {
+	player_type *p_ptr = Players[Ind];
+	int tx, ty;
+
+	int flg = PROJECT_STAR | PROJECT_NORF | PROJECT_STOP | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO;
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) proj_dam_wraith(typ, &dam);
+
+	/* Use the given direction */
+	tx = p_ptr->px + ddx[dir];
+	ty = p_ptr->py + ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind)) {
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+	project_time_effect = EFF_WALL;
+	project_interval = interval;
+	project_time = time;
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+	/* Analyze the "dir" and the "target", do NOT explode */
+	return (project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+}
+
+/*
  * Cast a bolt spell, or rarely, a beam spell
  */
 bool fire_bolt_or_beam(int Ind, int prob, int typ, int dir, int dam, char *attacker) {

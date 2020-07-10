@@ -230,6 +230,7 @@ extern bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attack
 extern bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker);
 extern bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char *attacker);
 extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
+extern bool fire_nova(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
 extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
 extern bool fire_wave(int Ind, int typ, int dir, int dam, int rad, int time, int interval, s32b eff, char *attacker);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);

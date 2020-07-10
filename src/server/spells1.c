@@ -12133,6 +12133,37 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		}
 	}
 
+	/* Novas */
+	if ((flg & PROJECT_STAR) && (project_time_effect & EFF_WALL)) {
+
+		/* Epicenter */
+		effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
+		if (effect != -1) zcave[y][x].effect = effect;
+
+		/* Starburst */
+		y2 = y;
+		x2 = x;
+		for (i = 0; i < 8; i++) {
+			y = y2;
+			x = x2;
+			dist = 0;
+			broke_on_terrain1 = FALSE;
+			while (TRUE) {
+				y = y + ddy_ddd[i];
+				x = x + ddx_ddd[i];
+				dist++;
+				if (!in_bounds3(wpos, l_ptr, y, x)) break;
+				if (distance(y1, x1, y, x) > MAX_RANGE) break;
+				if (dist > MAX_RANGE) break;
+				if (broke_on_terrain1) break; // allow the wall to be hit
+				if (!cave_contact(zcave, y, x)) broke_on_terrain1 = TRUE; // no DLS
+				effect = new_effect(who, typ, dam, project_time, project_interval, wpos, y, x, 0, project_time_effect);
+				if (effect != -1) zcave[y][x].effect = effect;
+				everyone_lite_spot(wpos, y, x);
+			}
+		}
+	}
+
 	/* Firewall application has been finished above already in the 'spell animation' loop, so discard it from further processing. */
 	if (project_time_effect & EFF_WALL) {
 		flg &= ~(PROJECT_STAY);

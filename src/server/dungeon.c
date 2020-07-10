@@ -1599,6 +1599,7 @@ static void process_effects(void) {
 
 		/* Maintain a "vortex" effect - Kurzel */
 		else if (e_ptr->flags & EFF_VORTEX && who > PROJECTOR_EFFECT) {
+			e_ptr->rad = 0; //Hack: Fix strange EFF_VORTEX behavior...
 			if (e_ptr->whot > 0) {
 				m_ptr = &m_list[e_ptr->whot];
 				if (!m_ptr->r_idx) e_ptr->whot = 0;
@@ -1622,15 +1623,22 @@ static void process_effects(void) {
 				// Hack: Decay rapidly without a target.
 				e_ptr->time -= 1;
 			}
-			for (l = 0; l < tdi[e_ptr->rad]; l++) {
-				j = e_ptr->cy + tdy[l];
-				i = e_ptr->cx + tdx[l];
-				if (!in_bounds2(wpos, j, i)) continue;
-				c_ptr = &zcave[j][i];
-				if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
-					c_ptr->effect = k;
-					project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
-					everyone_lite_spot(wpos, j, i);
+			if (e_ptr->rad == 0) {
+				c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+				c_ptr->effect = k;
+				project(who, 0, wpos, e_ptr->cy, e_ptr->cx, e_ptr->dam, e_ptr->type, flg, "");
+				everyone_lite_spot(wpos, e_ptr->cy, e_ptr->cx);
+			} else {
+				for (l = 0; l < tdi[e_ptr->rad]; l++) {
+					j = e_ptr->cy + tdy[l];
+					i = e_ptr->cx + tdx[l];
+					if (!in_bounds2(wpos, j, i)) continue;
+					c_ptr = &zcave[j][i];
+					if (los(wpos, e_ptr->cy, e_ptr->cx, j, i) && (distance(e_ptr->cy, e_ptr->cx, j, i) <= e_ptr->rad)) {
+						c_ptr->effect = k;
+						project(who, 0, wpos, j, i, e_ptr->dam, e_ptr->type, flg, "");
+						everyone_lite_spot(wpos, j, i);
+					}
 				}
 			}
 		}
@@ -3096,10 +3104,11 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
 		u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
 		/* Is it allowed? */
-		if (!(exec_lua(Ind, format("return rcraft_arr(%d)", u)))) return FALSE;
+		if (!(exec_lua(Ind, format("return rcraft_arr_test(%d, %d)", Ind, u))))
+			return (p_ptr->fail_no_melee);
 		/* Try to cast it */
 		if (cast_rune_spell(Ind, (u16b)u, (u16b)(u >> 16), 5)) return TRUE;
-		// return (p_ptr->fail_no_melee);
+		else return (p_ptr->fail_no_melee);
 		return TRUE; // Energy is used already, don't fallthrough after a failure.
 	}
 	else return FALSE;

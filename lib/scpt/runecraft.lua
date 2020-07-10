@@ -35,7 +35,7 @@ BALL = bshl(1,26)
 STRM = bshl(1,27)
 CONE = bshl(1,28)
 SURG = bshl(1,29)
-WARN = bor(WARN,bshl(1,30))
+FLAR = bshl(1,30)
 WARN = bor(WARN,bshl(1,31))
 
 -- TABLES
@@ -72,30 +72,32 @@ P = { -- Projection GF_TYPE Weight Colour
 [bor(CHAO,MANA)] = { "disenchantment",  GF_DISENCHANT, 500, "T" }} -- ADD unpower? ^^ Players too!
 
 M = { -- Mode Level Cost Fail Damage Radius Duration Energy
-[MINI] = { "minimized",   0,  6, -10,  6, -1,  8, 10 },
-[LENG] = { "lengthened",  2,  8,  -5,  8,  0, 14, 10 },
-[COMP] = { "compressed",  3,  9,   0,  9, -2, 12, 10 },
+[MINI] = { "minimized",   0,  6, -20,  6, -1,  8, 10 },
+[LENG] = { "lengthened",  2,  8, -10,  8,  0, 14, 10 },
+[COMP] = { "compressed",  3,  8,  -5,  9, -2, 12, 10 },
 [MDRT] = { "moderate",    5, 10,   0, 10,  0, 10, 10 },
 [ENHA] = { "enhanced",    5, 10,   5, 10,  0, 10, 10 },
-[EXPA] = { "expanded",    7, 12,  10,  9,  2,  8, 10 },
-[BRIE] = { "brief",       8,  7,  15,  6,  0,  6,  5 },
-[MAXI] = { "maximized",  10, 18,  20, 14,  1, 12, 10 }}
+[EXPA] = { "expanded",    7, 14,  10,  8,  2,  8, 10 },
+[BRIE] = { "brief",       8,  7,  20,  6,  0,  6,  5 },
+[MAXI] = { "maximized",  10, 18,  40, 14,  1, 12, 10 }}
 
 T = { -- Type Level Cost Max Dice Max Damage Max Radius Max Duration Max
-[BOLT] = { "bolt",    5,  1, 15, 1, 73,  2,  20, 0,  0,  0,  0},
-[CLOU] = { "cloud",  10,  5, 50, 0,  0,  3,  90, 2,  2,  4, 14},
-[BALL] = { "ball",   15, 10, 35, 0,  0, 90, 519, 3,  3,  0,  0},
-[STRM] = { "storm",  20, 30, 50, 0,  0, 34, 266, 1,  1, 28, 40},
-[CONE] = { "cone",   25, 20, 40, 1, 73,  2,  20, 3,  3,  0,  0},
-[SURG] = { "surge",  30, 20, 50, 0,  0, 30, 240, 7, 13,  0,  0}}
+[BOLT] = { "bolt",    5,  2, 15, 4, 46,  2,  26, 0,  0,  0,  0},
+[CLOU] = { "cloud",  10,  4, 20, 0,  0,  3,  75, 2,  2,  3,  7},
+[BALL] = { "ball",   15,  8, 25, 0,  0, 90, 450, 3,  3,  0,  0},
+[STRM] = { "storm",  20, 16, 30, 0,  0, 20, 135, 1,  1,  7, 27},
+[CONE] = { "cone",   25, 16, 40, 4, 46,  2,  26, 3,  3,  0,  0},
+[SURG] = { "surge",  30, 24, 50, 0,  0, 30, 240, 7, 13,  0,  0},
+[FLAR] = { "flare",  35, 25, 25, 4, 46,  2,  26, 0,  0,  2,  2}}
 
 E = { -- Enhanced Level Cost Max Dice Max Damage Max Radius Max Duration Max
-[BOLT] = { "beam",   10,  5, 25, 1, 73,  2,  20, 0,  0,  0,  0},
-[CLOU] = { "vortex", 15, 10, 40, 0,  0,  3,  90, 1,  1,  8, 20},
-[BALL] = { "burst",  20, 15, 40, 0,  0, 90, 519, 3,  3,  0,  0},
-[STRM] = { "nimbus", 25, 30, 50, 0,  0, 26,  56, 1,  1, 30, 75},
-[CONE] = { "shot",   30,  3, 30, 1, 73,  2,  10, 9,  9,  0,  0},
-[SURG] = { "glyph",  35, 10, 25, 0,  0, 30, 240, 0,  0,  0,  0}}
+[BOLT] = { "beam",   10,  4, 20, 4, 46,  2,  26, 0,  0,  0,  0},
+[CLOU] = { "wall",   15,  6, 30, 0,  0, 20, 135, 0,  0,  8, 20},
+[BALL] = { "burst",  20, 16, 40, 0,  0, 90, 450, 2,  2,  0,  0},
+[STRM] = { "nimbus", 25, 25, 25, 0,  0, 16,  40, 1,  1, 30, 75},
+[CONE] = { "shot",   30,  6, 42, 4, 46,  2,  15, 9,  9,  0,  0},
+[SURG] = { "glyph",  35, 40, 40, 0,  0, 30, 240, 0,  0,  0,  0},
+[FLAR] = { "nova",   40, 99, 99, 4, 46,  2,  26, 0,  0,  7,  7}}
 
 -- HACKS
 
@@ -147,7 +149,7 @@ function rspell_failure(p,u,x,c)
     return 100
   else
     x = 15 - (x > 15 and 15 or x)
-    x = x * 3 + 5 + M[band(u,MODE)][4]
+    x = x * 3 - 13 + M[band(u,MODE)][4]
   end
   x = x - (((adj_mag_stat[p.stat_ind[1+A_INT]] * 65 + adj_mag_stat[p.stat_ind[1+A_DEX]] * 35) / 100) - 3)
   local minfail = (adj_mag_fail[p.stat_ind[1+A_INT]] * 65 + adj_mag_fail[p.stat_ind[1+A_DEX]] * 35) / 100
@@ -167,13 +169,13 @@ end
 
 function rspell_damage(u,s)
   local XX = band(u,ENHA)~=0 and E[band(u,TYPE)] or T[band(u,TYPE)]
-	-- local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
+  -- local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
   -- increase elemental damage spread
-	local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
+  local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
   local m = M[band(u,MODE)][5]
   local x = rspell_scale(s, XX[5], XX[6] * w / 1200)
   local y = rspell_scale(s, XX[7], XX[8] * m / 10)
-	local d = rspell_scale(s, XX[7], ((XX[8] * w) / 1200) * m / 10)
+  local d = rspell_scale(s, XX[7], ((XX[8] * w) / 1200) * m / 10)
   return x,y,d
 end
 
@@ -191,7 +193,7 @@ end
 
 function rspell_energy(I,u)
   local p = I~=0 and players(I) or player
-	return level_speed(p.wpos) * M[band(u,MODE)][8] / 10
+  return level_speed(p.wpos) * M[band(u,MODE)][8] / 10
 end
 
 -- CLIENT
@@ -202,9 +204,9 @@ end
 
 function rcraft_com(u)
   if band(u,MODE)~=0 then
-    return "(Types a-f, *=List, ESC=exit) Which type? "
+    return "(Types a-g, *=List, ESC=exit) Which type? "
   elseif band(u,R2)~=0 then
-    return "(Modes a-g, *=List, ESC=exit) Which mode? "
+    return "(Modes a-h, *=List, ESC=exit) Which mode? "
   else
     return "(Runes a-f, *=List, ESC=exit) Which rune? "
   end
@@ -212,7 +214,7 @@ end
 
 function rcraft_max(u)
   if band(u,MODE)~=0 then
-    return 5
+    return 6
   elseif band(u,R2)~=0 then
     return 7
   else
@@ -269,10 +271,17 @@ function rcraft_prt(u,w)
           x, y),
         row+i+1, col)
       elseif band(U,CLOU)~=0 then
-        c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d rad %d dur %d",
-          strbyte('a')+i, XX[1], a, c, f,
-          d, r, t),
-        row+i+1, col)
+        if X then
+          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d rad %d dur %d",
+            strbyte('a')+i, XX[1], a, c, f,
+            d, r, t),
+          row+i+1, col)
+        else
+          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d dur %d",
+            strbyte('a')+i, XX[1], a, c, f,
+            d, t),
+          row+i+1, col)
+        end
       elseif band(U,BALL)~=0 then
         c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d rad %d",
           strbyte('a')+i, XX[1], a, c, f,
@@ -298,6 +307,23 @@ function rcraft_prt(u,w)
           c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d",
             strbyte('a')+i, XX[1], a, c, f,
             d),
+          row+i+1, col)
+        end
+      elseif band(U,FLAR)~=0 then
+        if X then
+          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %dd%d (x%d)",
+            strbyte('a')+i, XX[1], a, c, f,
+            -- x, y, t),
+            x, y, 2),
+          row+i+1, col)
+        else
+          if p.csp > c then
+            c = p.csp
+            d = p.csp
+          end
+          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d dur %d",
+            strbyte('a')+i, XX[1], a, c, f,
+            d, t),
           row+i+1, col)
         end
       end
@@ -381,18 +407,32 @@ function rcraft_dir(u)
 end
 
 function rcraft_ftk(u)
+  if band(u,ENHA)~=0 and band(u,FLAR)~=0 then return 0 end
   return band(u,bor(bor(CLOU,STRM),SURG))==0
 end
 
-function rcraft_arr(u)
-  if band(u,ENHA)~=0 and band(u,bor(STRM,SURG))~=0 then
-    return 0
-  else
-    return 1
-  end
+-- SERVER
+
+function rcraft_arr_set(u)
+  if band(u,ENHA)~=0 and band(u,bor(STRM,SURG))~=0 then return 0 end
+  return 1
 end
 
--- SERVER
+function rcraft_arr_test(I,u)
+  if band(u,ENHA)~=0 and band(u,bor(STRM,SURG))~=0 then return 0 end
+  -- Also silently fall-through to melee auto-ret in these cases...
+  local p = players(I)
+  if p.confused~=0 then return 0 end
+  if p.antimagic~=0 and p.admin_dm==0 then return 0 end
+  if p.anti_magic~=0 then return 0 end
+  local l = rspell_level(u)
+  local s = rspell_skill(I,u)
+  local a = rspell_ability(s,l)
+  if a < 1 then return 0 end
+  local c = rspell_cost(u,s)
+  if p.csp < c then return 0 end
+  return 1
+end
 
 function rspell_name(u)
   local PP = P[rspell_sval(u)]
@@ -414,24 +454,17 @@ function cast_rune_spell(I,D,u)
   local p = players(I)
   local e = rspell_energy(I,u)
   if p.confused~=0 then
-		msg_print(I,"You are too confused!")
-		p.energy = p.energy - e
-		return 0
-	end
+    msg_print(I,"You are too confused!")
+    return 0
+  end
   if p.antimagic~=0 and p.admin_dm==0 then
-		msg_print(I,"\255wYour anti-magic field disrupts any magic attempts.")
-		p.energy = p.energy - e
-		return 0
-	end
-	if p.anti_magic~=0 then
-		msg_print(I,"\255wYour anti-magic shell disrupts any magic attempts.")
-		p.energy = p.energy - e
-		return 0
-	end
-  if check_antimagic(I,100)~=0 then
-		p.energy = p.energy - e
-		return 1
-	end
+    msg_print(I,"\255wYour anti-magic field disrupts any magic attempts.")
+    return 0
+  end
+  if p.anti_magic~=0 then
+    msg_print(I,"\255wYour anti-magic shell disrupts any magic attempts.")
+    return 0
+  end
   local v = rspell_sval(u)
   local PP = P[v]
   local X = (band(u,ENHA)==0)
@@ -441,38 +474,43 @@ function cast_rune_spell(I,D,u)
   local S = rspell_name(u)
   if a < 1 then
     msg_print(I,format("\255sYour skill is not high enough! (%s; level: %d)",S,a))
-		p.energy = p.energy - e
     return 0
-	end
+  end
   local c = rspell_cost(u,s)
-	if p.csp < c then
-		msg_print(I,format("\255oYou do not have enough mana. (%s; cost: %d)",S,c))
-		p.energy = p.energy - e
+  if p.csp < c then
+    msg_print(I,format("\255oYou do not have enough mana. (%s; cost: %d)",S,c))
     return 0
-	end
+  end
+  if check_antimagic(I,100)~=0 then
+    p.energy = p.energy - e
+    return 1
+  end
   local f = rspell_failure(p,u,a,c)
   local x,y,d = rspell_damage(u,s)
   local b = damroll(x,y)
   d = d > b and d or b
-  if band(u,SURG)~=0 and band(u,ENHA)~=0 and warding_rune(I, PP[2], d)==0 then
-    return 0
-  end
-	if magik(f)~=0 then
+  if magik(f)~=0 then
     b = d / 5 + 1
   else
     b = 0
   end
   local SS = ((v==bor(LITE,NETH) and band(u,ENHA)~=0) or band(u,EXPA)~=0) and "an" or "a" -- vowels
-	msg_print(I,format("You %strace %s %s.", b > 0 and "\255Rincompetently\255w " or "",SS,S))
+  msg_print(I,format("You %strace %s %s.", b > 0 and "\255Rincompetently\255w " or "",SS,S))
   p.attacker = format(" traces %s %s for", SS, S)
   p.energy = p.energy - e
-	p.csp = p.csp - c
-  if b > 0 then
-    project(PROJECTOR_RUNE, 0, p.wpos, p.py, p.px, b, PP[2], bor(bor(bor(bor(bor(PROJECT_KILL,PROJECT_NORF),PROJECT_JUMP),PROJECT_RNAF),PROJECT_NODO),PROJECT_NODF), "")
+  if band(u,FLAR)~=0 then
+    if X then
+      b = b + d / 5 + 1
+    else
+      c = p.csp
+      d = p.csp
+      b = b + d / 5 + 1
+    end
   end
+  p.csp = p.csp - c
   local r = rspell_radius(u,s)
   local t = rspell_duration(u,s)
-	if band(u,BOLT)~=0 then
+  if band(u,BOLT)~=0 then
     if X then
       fire_bolt(I, PP[2], D, d, p.attacker)
     else
@@ -482,7 +520,8 @@ function cast_rune_spell(I,D,u)
     if X then
       fire_cloud(I, PP[2], D, d, r, t, 9, p.attacker)
     else
-      fire_wave(I, PP[2], D, d, r, t, 10, EFF_VORTEX, p.attacker)
+      -- fire_wall(I, PP[2], D, d, t, 10, p.attacker)
+      fire_wall(I, PP[2], D, d, t, 8, p.attacker)
     end
   elseif band(u,BALL)~=0 then
     -- Easter Egg? Illuminate (or unlite) your position by firing a ball up!
@@ -517,7 +556,21 @@ function cast_rune_spell(I,D,u)
       fire_shot(I, PP[2], D, x, y, r, 4, p.attacker)
     end
   elseif band(u,SURG)~=0 then
-    fire_wave(I, PP[2], 0, d, 1, r, 1, EFF_WAVE, p.attacker)
+    if X then
+      fire_wave(I, PP[2], 0, d, 1, r, 1, EFF_WAVE, p.attacker)
+    else
+      warding_rune(I, PP[2], d)
+    end
+  elseif band(u,FLAR)~=0 then
+    if X then
+      -- fire_wave(I, PP[2], D, d, 0, t, 10, EFF_VORTEX, p.attacker)
+      fire_wave(I, PP[2], D, d, 0, 2, 10, EFF_VORTEX, p.attacker)
+    else
+      fire_nova(I, PP[2], D, d, t, 10, p.attacker)
+    end
+  end
+  if b > 0 then
+    project(PROJECTOR_RUNE, 0, p.wpos, p.py, p.px, b, PP[2], bor(bor(bor(bor(bor(PROJECT_KILL,PROJECT_NORF),PROJECT_JUMP),PROJECT_RNAF),PROJECT_NODO),PROJECT_NODF), "")
   end
   p.redraw = bor(p.redraw,PR_MANA)
   return 1

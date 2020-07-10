@@ -3917,7 +3917,7 @@ void show_autoret(int Ind, byte typ, bool verbose) {
 			u |= ((1 << ((ar & 0x0038) >> 3)) <<  8); // Rune 2 (3-bit) to byte
 			u |= ((1 << ((ar & 0x01C0) >> 6)) << 16); // Mode   (3-bit) to byte
 			u |= ((1 << ((ar & 0x0E00) >> 9)) << 24); // Type   (3-bit) to byte
-			if (!(exec_lua(Ind, format("return rcraft_arr(%d)", u))))
+			if (!(exec_lua(Ind, format("return rcraft_arr_set(%d)", u))))
 				msg_format(Ind, "You have set an invalid runespell for auto-retaliation (%s).",
 					string_exec_lua(0, format("return rspell_name(%d)", u))
 				);

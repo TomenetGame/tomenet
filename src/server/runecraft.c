@@ -41,13 +41,13 @@ bool rune_enchant(int Ind, int item) {
 	/* One sigil per element! */
 	object_type *r_ptr = &p_ptr->inventory[p_ptr->current_activation];
 	byte sval = r_ptr->sval;
-	if ((p_ptr->inventory[INVEN_WIELD].sigil == sval)
-	 || (p_ptr->inventory[INVEN_ARM].sigil == sval)
-	 || (p_ptr->inventory[INVEN_BODY].sigil == sval)
-	 || (p_ptr->inventory[INVEN_OUTER].sigil == sval)
-	 || (p_ptr->inventory[INVEN_HEAD].sigil == sval)
-	 || (p_ptr->inventory[INVEN_HANDS].sigil == sval)
-	 || (p_ptr->inventory[INVEN_FEET].sigil == sval)) {
+	if (((p_ptr->inventory[INVEN_WIELD].sigil == sval) && item != INVEN_WIELD)
+	 || ((p_ptr->inventory[INVEN_ARM].sigil == sval) && item != INVEN_ARM)
+	 || ((p_ptr->inventory[INVEN_BODY].sigil == sval) && item != INVEN_BODY)
+	 || ((p_ptr->inventory[INVEN_OUTER].sigil == sval) && item != INVEN_OUTER)
+	 || ((p_ptr->inventory[INVEN_HEAD].sigil == sval) && item != INVEN_HEAD)
+	 || ((p_ptr->inventory[INVEN_HANDS].sigil == sval) && item != INVEN_HANDS)
+	 || ((p_ptr->inventory[INVEN_FEET].sigil == sval) && item != INVEN_FEET)) {
 		msg_format(Ind, "You may only inscribe one sigil per element.");
 		return FALSE;
 	}
