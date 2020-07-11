@@ -311,7 +311,7 @@ function rcraft_prt(u,w)
         end
       elseif band(U,FLAR)~=0 then
         if X then
-          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %dd%d (x%d)",
+          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %dd%d (x%d) backlash 20%%",
             strbyte('a')+i, XX[1], a, c, f,
             -- x, y, t),
             x, y, 2),
@@ -321,7 +321,7 @@ function rcraft_prt(u,w)
             c = p.csp
             d = p.csp
           end
-          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d dur %d",
+          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d dur %d backlash 20%%",
             strbyte('a')+i, XX[1], a, c, f,
             d, t),
           row+i+1, col)
