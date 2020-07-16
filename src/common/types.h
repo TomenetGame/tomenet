@@ -794,6 +794,127 @@ struct object_type {
 	byte embed;			/* 1: Object is contained within a feat (trapkit/trapload in a monster trap); note that 'Object is held in a monster's inventory' is already indicated by held_m_idx instead. */
 };
 
+/* Estate restoration compatibility/conversion */
+typedef struct object_type_v3 object_type_v3;
+struct object_type_v3 {
+	s32b owner;			/* Player that found it */
+	s32b killer;			/* Player that killed the monster/opened the chest/etc causing the item to drop (for handling Soloist mode) */
+	s16b level;			/* Level req */
+
+	s16b k_idx;			/* Kind index (zero if "dead") */
+	s16b h_idx;			/* inside house? (-1 if not) */
+
+	struct worldpos wpos;		/* worldmap position (6 x s16b) */
+	byte iy;			/* Y-position on map, or zero */
+	byte ix;			/* X-position on map, or zero */
+
+	byte tval;			/* Item type (from kind) */
+	byte sval;			/* Item sub-type (from kind) */
+	byte tval2;			/* normally unused (except for item-invalid-seal) */
+	byte sval2;			/* normally unused (except for item-invalid-seal) */
+
+	s32b bpval;			/* Base item extra-parameter */
+	s32b pval;			/* Extra enchantment item extra-parameter (name1 or name2) */
+#if 1 /* existing but currently not in use */
+	s32b pval2;			/* Item extra-parameter for some special items */
+	s32b pval3;			/* Item extra-parameter for some special items */
+#endif
+
+	/* VAMPIRES_INV_CURSED */
+	s32b pval_org, bpval_org;
+	s16b to_h_org, to_d_org, to_a_org;
+
+	/* Used for temporarily augmented equipment. (Runecraft) */
+	s32b sigil;			/* Element index (+1) for r_projection (common/tables.c) boni lookup. Zero if no sigil. */
+	s32b sseed;			/* RNG Seed used to determine the boni (if random). Zero if not randomized. */
+
+	byte discount;			/* Discount (if any) */
+	byte number;			/* Number of items */
+	s16b weight;			/* Item weight */
+
+	u16b name1;			/* Artifact type, if any */
+	u16b name2;			/* Ego-Item type, if any */
+	u16b name2b;			/* 2e Ego-Item type, if any */
+	s32b name3;			/* Randart seed, if any (now it's common with ego-items -Jir-) */
+	u16b name4;			/* Index of randart name in file 'randarts.txt', solely for fun set bonus - C. Blue */
+	byte attr;			/* colour in inventory (for client) */
+
+	byte mode;			/* Mode of player who found it */
+
+	s16b xtra1;			/* Extra info type, for various purpose */
+	s16b xtra2;			/* Extra info index */
+	/* more info added for self-made spellbook feature Adam suggested - C. Blue */
+	s16b xtra3;			/* Extra info */
+	s16b xtra4;			/* Extra info */
+	s16b xtra5;			/* Extra info */
+	s16b xtra6;			/* Extra info */
+	s16b xtra7;			/* Extra info */
+	s16b xtra8;			/* Extra info */
+	s16b xtra9;			/* Extra info -- marks starter items as such. (This would collide if there ever existed a custom book with 9 spells in it.) */
+
+	char uses_dir;			/* Client-side: Uses a direction or not? (for rods) */
+
+#ifdef PLAYER_STORES
+	byte ps_idx_x;			/* Index or x-coordinate of player store item in the original house */
+	byte ps_idx_y;			/* y-coordinate of player store item in the original house */
+	s64b appraised_value;		/* HOME_APPRAISAL: object_value(Ind_seller, o_ptr); */
+#endif
+
+	s16b to_h;			/* Plusses to hit */
+	s16b to_d;			/* Plusses to damage */
+	s16b to_a;			/* Plusses to AC */
+
+	s16b ac;			/* Normal AC */
+	byte dd, ds;			/* Damage dice/sides */
+
+	u16b ident;			/* Special flags  */
+	s32b timeout;			/* Timeout Counter: amount of fuel left until it is depleted. */
+	s32b timeout_magic;		/* Timeout Counter: amount of power left until it is depleted, can be discharged. */
+	s32b recharging;		/* Auto-recharge-state of auto-recharging items (rods and activatable items). */
+
+	s32b marked;			/* Object is marked (for deletion after a certain time) */
+	byte marked2;			/* additional parameters */
+	/* for new quest_info: */
+	bool questor;			/* further quest_info flags are referred to when required, no need to copy all of them here */
+	s16b quest, quest_stage, questor_idx;	/* It's an item for a quest (either the questor item or an item that needs to be retrieved for a quest goal).
+		//IMPORTAAAAAAANT:	   Hack: 0 = no quest; n = quest + 1. So we don't have to initialise all items to -1 here :-p */
+	byte questor_invincible;	/* invincible to players/monsters? */
+	bool quest_credited;		/* ugly hack for inven_carry() usage within carry(), to avoid double-crediting */
+
+	u32b note;			/* Inscription index */
+	char note_utag;			/* Added for making pseudo-id overwrite unique loot tags */
+
+#if 0	/* from pernA.. consumes memory, but quick. shall we? */
+	u16b art_name;			/* Artifact name (random artifacts) */
+
+	u32b art_flags1;		/* Flags, set 1  Alas, these were necessary */
+	u32b art_flags2;		/* Flags, set 2  for the random artifacts of*/
+	u32b art_flags3;		/* Flags, set 3  Zangband */
+	u32b art_flags4;		/* Flags, set 4  PernAngband */
+	u32b art_flags5;		/* Flags, set 5  PernAngband */
+	u32b art_esp;			/* Flags, set esp  PernAngband */
+#endif	/* 0 */
+
+	byte inven_order;		/* Inventory position if held by a player,
+					   only use is in xtra2.c when pack is ang_sort'ed */
+
+	u16b next_o_idx;		/* Next object in stack (if any) */
+	u16b held_m_idx;		/* Monster holding us (if any) */
+	bool auto_insc;			/* Request client-side auto-inscription after item has changed? */
+	char stack_pos;			/* Position in stack: Use to limit stack size */
+
+	s16b cheeze_dlv, cheeze_plv, cheeze_plv_carry;	/* anti-cheeze */
+
+	u16b housed;			/* <house index + 1> or 0 for not currently inside a house */
+	bool changed;			/* dummy flag to refresh item if o_name changed, but memory copy didn't */
+	bool NR_tradable;		/* for ALLOW_NR_CROSS_ITEMS */
+	bool no_soloist;		/* item may not be picked up by Soloists. Used for "unpersonalized" event rewards eg Santa drops. */
+	byte temp;			/* any local hacks */
+	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
+	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
+	/* ..and for IDDC_RESTRICTED_TRADING : */
+	s32b iron_turn;			/* Turn when it was picked up, to compare with player's party-join turn. */
+};
 /* Old object_type for estate restoration: "v2" (2017-2019 included, but might lack iron_turn, see more typedef below) */
 typedef struct object_type_v2 object_type_v2;
 struct object_type_v2 {
