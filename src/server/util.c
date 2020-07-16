@@ -8458,7 +8458,23 @@ void restore_estate(int Ind) {
 
 				/* write failed item back into new buffer file */
 				fprintf(fp_tmp, "OB:");
-				(void)fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
+				switch (conversion) {
+				case 0:
+					(void)fwrite(o_ptr, sizeof(object_type), 1, fp_tmp);
+					break;
+				case 1:
+					(void)fwrite(o_ptr_v2, sizeof(object_type_v2), 1, fp_tmp);
+					break;
+				case 2:
+					(void)fwrite(o_ptr_v2a, sizeof(object_type_v2a), 1, fp_tmp);
+					break;
+				case 3:
+					(void)fwrite(o_ptr_v2b, sizeof(object_type_v2b), 1, fp_tmp);
+					break;
+				case 4:
+					(void)fwrite(o_ptr_v3, sizeof(object_type_v3), 1, fp_tmp);
+					break;
+				}
 
 				/* ..and its inscription */
 				if (o_ptr->note) {
