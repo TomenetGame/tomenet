@@ -2611,6 +2611,20 @@ static bool can_rust(object_type *o_ptr) {
 	case TV_POLEARM:
 	case TV_AXE:
 		return (TRUE);
+
+#ifdef ENABLE_EXCAVATION
+	/* Specialties just for grinding tool application */
+	case TV_SHOT:
+	case TV_BOLT:
+	    if (o_ptr->sval == SV_AMMO_NORMAL) return TRUE; //iron shots, normal bolts (assume iron)
+	    return FALSE;
+	case TV_GOLEM:
+	    if (o_ptr->sval == SV_GOLEM_IRON) return TRUE;
+	    return FALSE;
+	case TV_DIGGING:
+	case TV_SPIKE:
+		return TRUE;
+#endif
 	}
 
 	return (FALSE);
