@@ -6976,6 +6976,46 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 		break;
 
+	/* Mind version of GF_OLD_SLOW - this is a psi-based effect rather than inertia-based */
+	case GF_MIND_SLOW: //Slowing effect
+		no_dam = TRUE;
+		if (seen) obvious = TRUE;
+
+		/* Powerful monsters can resist */
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		    (r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND) || (r_ptr->flags3 & RF3_NONLIVING)) {
+			note = " is unaffected";
+			obvious = FALSE;
+			break;
+		} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
+			/* Allow un-hasting a monster! - suggested by Dj_Wolf */
+			if (m_ptr->mspeed >= m_ptr->speed + 3) {
+				m_ptr->mspeed -= 3;
+				note = " starts moving less fast again";
+			} else {
+				note = " resists easily"; /* vs damaging it's "resists a lot" and vs effects it's "resists easily" :-o */
+				obvious = FALSE;
+			}
+		} else if (RES_OLD(r_ptr->level, dam)) {
+			/* Allow un-hasting a monster! - suggested by Dj_Wolf */
+			if (m_ptr->mspeed >= m_ptr->speed + 3) {
+				m_ptr->mspeed -= 3;
+				note = " starts moving less fast again";
+			} else {
+				note = " resists";
+				obvious = FALSE;
+			}
+		} else if (m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10) { /* Normal monsters slow down */
+			m_ptr->mspeed -= 10;
+			if (m_ptr->mspeed < m_ptr->speed - 10) m_ptr->mspeed = m_ptr->speed - 10;
+			note = " starts moving slower";
+		} else {
+			note = " is unaffected";
+			obvious = FALSE;
+		}
+		break;
+
 	/* Sleep (Use "dam" as "power") */
 	case GF_OLD_SLEEP:
 		no_dam = TRUE;
