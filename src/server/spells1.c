@@ -4247,7 +4247,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
  #ifdef EXCAVATION_IDDC_ONLY
 			    in_irondeepdive(wpos) &&
  #endif
-			    get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(4) && !p_ptr->IDDC_logscum) {
+			    get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION && !rand_int(4) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
@@ -5402,7 +5402,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
  #endif
 				    (my_strcasestr(o_name, "wood") ||
 				    (k_info[k_idx].tval == TV_JUNK && k_info[k_idx].sval == SV_WOODEN_STICK)) &&
-				    get_skill(p_ptr, SKILL_DIG) >= 5 && !p_ptr->IDDC_logscum) {
+				    get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION && !p_ptr->IDDC_logscum) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));

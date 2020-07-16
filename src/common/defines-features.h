@@ -330,8 +330,10 @@
 /* 'Necromancy' skill gives an additional chance to keep hold of your life force */
 #define NECROMANCY_HOLDS_LIFE
 
-#define ENABLE_EXCAVATION	/* TESTING/EXPERIMENTAL - Allow creation of demolition charges for 'Digging'-renamed-to-'Excavation' skill */
-//#define EXCAVATION_IDDC_ONLY	/* Restrict finding ENABLE_EXCAVATION items to within the IDDC. Usage of found items is not restricted however. */
+/* TESTING/EXPERIMENTAL - Allow creation of demolition charges for 'Digging'-renamed-to-'Excavation' skill. Also designates minimum required 'Digging' skill to be active [5]. */
+#define ENABLE_EXCAVATION 5
+/* Restrict finding ENABLE_EXCAVATION items to within the IDDC. Usage of found items is not restricted however. */
+//#define EXCAVATION_IDDC_ONLY
 
 
 /* --------------------- Server-type dependant features -------------------- */

@@ -6151,7 +6151,7 @@ bool monster_death(int Ind, int m_idx) {
 	bool found_chemical = FALSE;
 
 	if ((r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
-		if (get_skill(p_ptr, SKILL_DIG) >= 5 && rand_int(7) < r_ptr->weight / 1000) {
+		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
 			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SULFUR));
@@ -6169,7 +6169,7 @@ bool monster_death(int Ind, int m_idx) {
 		}
 	}
 	if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
-		if (get_skill(p_ptr, SKILL_DIG) >= 15 && rand_int(7) < r_ptr->weight / 1000) {
+		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION + 10 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
 			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_VITRIOL));
@@ -6187,7 +6187,7 @@ bool monster_death(int Ind, int m_idx) {
 		}
 	}
 	if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
-		if (get_skill(p_ptr, SKILL_DIG) >= 10 && rand_int(7) < r_ptr->weight / 1000) {
+		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION + 5 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
 			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));
@@ -6209,7 +6209,7 @@ bool monster_death(int Ind, int m_idx) {
 		if (!(r_ptr->flags1 & RF1_FRIENDS) || !rand_int(2)) {
 			/* Saltpetre (guano: bats/birds) */
 			if (r_ptr->d_char == 'b' || r_ptr->d_char == 'B' || r_ptr->d_char == 'H') {
-				if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(3)) {
+				if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION && !rand_int(3)) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
@@ -6228,7 +6228,7 @@ bool monster_death(int Ind, int m_idx) {
 			}
 			/* Ammonia Salt (dung: whatever has hooves..) */
 			else if (r_ptr->d_char == 'q' || r_ptr->d_char == 'C' || r_ptr->d_char == 'M' || r_ptr->d_char == 'Y') {
-				if (get_skill(p_ptr, SKILL_DIG) >= 5 && !rand_int(3)) {
+				if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION && !rand_int(3)) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));

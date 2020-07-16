@@ -3703,7 +3703,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #ifdef EXCAVATION_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    (get_skill(p_ptr, SKILL_DIG) >= 5) && !rand_int(5) && !p_ptr->IDDC_logscum) {
+			    (get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION) && !rand_int(5) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
@@ -3929,7 +3929,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #ifdef EXCAVATION_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    soft && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    soft && get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
@@ -3949,7 +3949,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #ifdef EXCAVATION_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    !hard && !soft && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    !hard && !soft && get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, rand_int(3) ? SV_SULFUR : SV_VITRIOL));
@@ -3969,7 +3969,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #ifdef EXCAVATION_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    hard && get_skill(p_ptr, SKILL_DIG) >= 10 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    hard && get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
