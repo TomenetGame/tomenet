@@ -8116,6 +8116,7 @@ void restore_estate(int Ind) {
 				o_ptr->temp = o_ptr_v2->temp;
 				o_ptr->iron_trade = o_ptr_v2->iron_trade;
 				o_ptr->iron_turn = o_ptr_v2->iron_turn;
+				o_ptr->embed = 0; //convert
 				break;
 			case 2: r = fread(o_ptr_v2a, sizeof(object_type_v2a), 1, fp);
 				o_ptr->owner = o_ptr_v2a->owner;
@@ -8201,6 +8202,7 @@ void restore_estate(int Ind) {
 				o_ptr->temp = o_ptr_v2a->temp;
 				o_ptr->iron_trade = o_ptr_v2a->iron_trade;
 				o_ptr->iron_turn = 0;		//convert
+				o_ptr->embed = 0; //convert
 				break;
 			case 3: r = fread(o_ptr_v2b, sizeof(object_type_v2b), 1, fp);
 				o_ptr->owner = o_ptr_v2b->owner;
@@ -8286,6 +8288,7 @@ void restore_estate(int Ind) {
 				o_ptr->temp = o_ptr_v2b->temp;
 				o_ptr->iron_trade = o_ptr_v2b->iron_trade;
 				o_ptr->iron_turn = o_ptr_v2b->iron_turn;
+				o_ptr->embed = 0; //convert
 				break;
 			case 4: r = fread(o_ptr_v3, sizeof(object_type_v3), 1, fp);
 				o_ptr->owner = o_ptr_v3->owner;
