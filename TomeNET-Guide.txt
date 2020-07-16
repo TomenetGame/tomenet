@@ -1800,11 +1800,15 @@ dungeon you came from, to the deepest possible floor. If you use them on the
 world surface without inscription and there is no dungeon at your location that
 you have previously visited, they will instead teleport you back to the last
 town you visited.
+    Travel into a dungeon/tower:
     @R500       will teleport you to depth 500ft (tower).
     @R-350      will teleport you to depth -350ft (dungeon).
+
+    World travel:
     @RW32,32    will teleport you to sector 32,32 on the worldmap (Bree).
                 World map ranges from 0,0 to 63,63.
-    or even better..
+
+    or even better for any kind of recalling..
     @R          This inscription makes the above versions sort of obsolete.
                 If you have inscribed a Word of Recall item like this then you
                 can just type the command    /rec    into chat to invoke the
