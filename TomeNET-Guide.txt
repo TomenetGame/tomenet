@@ -13953,10 +13953,12 @@ stated.
                                 from them are level 0 and hence bound to your
                                 character (untradable).
                                 Some ingredients are acquired by digging, some
-                                by actually killing monsters, and then there is
-                                the 'grinding tool' that you can buy in town in
-                                the alchemist's store that allows you to grind
-                                items containing iron to reactive iron powder.
+                                by actually killing monsters or by other means,
+                                and then there is the 'grinding tool' that you
+                                can buy in town in the alchemist's store for
+                                little money that allows you to grind items
+                                containing a significant amount of iron to
+                                reactive iron powder.
                                 Last but not least there is lamp oil that you
                                 can just buy from the general store.
                                 You can mix all these ingredients together, but
