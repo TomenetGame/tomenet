@@ -9224,7 +9224,7 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 	/* Form complete flavour */
 	switch (secondary) {
 	case 1: strcpy(flavour, "Pungent "); break;
-	case 2: if (primary != 6) strcpy(flavour, "Glittering "); break;
+	case 2: if (primary != 6) strcpy(flavour, "Glittering "); else strcpy(flavour, ""); break;
 	default: strcpy(flavour, ""); break;
 	}
 	switch (primary) {
