@@ -13981,6 +13981,14 @@ stated.
                                 scrolls of rumor, which actually have a small
                                 chance to give hints about mixture recipes.
 
+                                Useful mixtures consist of at most 4 different
+                                types of ingredients. If you add more, they
+                                will become a useless "Bubbling Mixture" that
+                                has too many ingredients in it to work anymore
+                                and hence has been ruined.
+                                You can just destroy it as it serves no further
+                                purpose.
+
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you levitation, so you may
 just hover across water instead of swimming across. Wands of stone-to-mud will
