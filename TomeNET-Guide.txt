@@ -13954,7 +13954,7 @@ stated.
                                 character (untradable).
                                 Some ingredients are acquired by digging, some
                                 by actually killing monsters, and then there is
-                                the 'grinding tool' that you can by in town in
+                                the 'grinding tool' that you can buy in town in
                                 the alchemist's store that allows you to grind
                                 items containing iron to reactive iron powder.
                                 Last but not least there is lamp oil that you
