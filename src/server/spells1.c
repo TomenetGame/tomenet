@@ -4170,33 +4170,39 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_STONE_WALL:
+	    {
+		struct c_special *cs_ptr;
+		byte feat = c_ptr->feat;
+
 		/* Require a "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) break;
 		if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) break;
 		/* Beware of the houses in town */
-		if ((wpos->wz == 0) && (zcave[y][x].info & CAVE_ICKY)) break;
+		if ((wpos->wz == 0) && (c_ptr->info & CAVE_ICKY)) break;
 		/* Not if it's an open house door - mikaelh */
-		if (c_ptr->feat == FEAT_HOME_OPEN) break;
+		if (feat == FEAT_HOME_OPEN) break;
 
-		{
-			/* Remove traps, monster traps and runes */
-			struct c_special *cs_ptr;
+		/* Attempt to terraform */
+		if (!cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA)) break;
 
-			/* Cleanup traps */
-			cs_ptr = GetCS(c_ptr, CS_TRAPS);
-			if (cs_ptr) cs_erase(c_ptr, cs_ptr);
+		/* Success! - Remove traps, monster traps and runes: */
 
-			/* Cleanup Runemaster Glyphs */
-			cs_ptr = GetCS(c_ptr, CS_RUNE);
-			if (cs_ptr) cs_erase(c_ptr, cs_ptr);
+		/* Cleanup traps */
+		cs_ptr = GetCS(c_ptr, CS_TRAPS);
+		if (cs_ptr) cs_erase(c_ptr, cs_ptr);
 
-			/* Cleanup monster traps */
-			if (c_ptr->feat == FEAT_MON_TRAP) erase_mon_trap(wpos, y, x, 0);
+		/* Cleanup Runemaster Glyphs */
+		cs_ptr = GetCS(c_ptr, CS_RUNE);
+		if (cs_ptr) cs_erase(c_ptr, cs_ptr);
+
+		/* Cleanup monster traps */
+		if (feat == FEAT_MON_TRAP) {
+			erase_mon_trap(wpos, y, x, 0);
+			/* erasing the monster trap will reset feature to previous type, so have to overwrite it again with the new wall */
+			c_ptr->feat = FEAT_WALL_EXTRA;
 		}
 
-		/* Place a wall */
-		if (c_ptr->feat != FEAT_WALL_EXTRA) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
-		cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
+		if (feat != FEAT_WALL_EXTRA) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
 
 		/* Notice */
 		if (!quiet) note_spot(Ind, y, x);
@@ -4211,6 +4217,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			Players[i]->update |= (PU_VIEW | PU_LITE | PU_FLOW); //PU_DISTANCE, PU_TORCH, PU_MONSTERS??; PU_FLOW needed? both VIEW and LITE needed?
 		}
 		break;
+	    }
 
 	/* Burn trees, grass, etc. depending on specific fire type */
 	case GF_HOLY_FIRE:
@@ -4721,7 +4728,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	case GF_MAKE_TRAP:
 		if (!allow_terraforming(wpos, FEAT_TREE)) break;
 		/* Require a "naked" floor grid */
-		if ((zcave[y][x].feat != FEAT_MORE && zcave[y][x].feat != FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
+		if ((c_ptr->feat != FEAT_MORE && c_ptr->feat != FEAT_LESS) && cave_perma_bold(zcave, y, x)) break;
 
 		/* Place a trap */
 		place_trap(wpos, y, x, dam);
