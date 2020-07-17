@@ -13961,9 +13961,17 @@ stated.
                                 reactive iron powder.
                                 Last but not least there is lamp oil that you
                                 can just buy from the general store.
+
                                 You can mix all these ingredients together, but
                                 not more than three portions of the same
                                 ingredient per mixture.
+                                The actual mixing is done by 'A'ctivating an
+                                ingredient or resulting mixture with another.
+                                When you have finished the desired mixture, you
+                                may attempt to convert it into the finished
+                                blast charge by activating it again with itself
+                                (think of this as some kind of drying process).
+
                                 Examples to start you off:
                                 <1 Charcoal + 1 Sulfur + 2 Saltpetre> or
                                 <3 Ammonia Salt + 1 Flask of Oil> will both
