@@ -13942,6 +13942,35 @@ stated.
                                 tools and (5.20) for technical details on
                                 digging.
 
+                                EXPERIMENTAL:
+                                Shortly before 4.7.3 a new experimental trait
+                                was added to the Digging skill: Demolitionist.
+                                This just means that if you train Digging to at
+                                least 5.000 you will be able to find or acquire
+                                certain ingredients that you can use to create
+                                blast charges.
+                                All ingredients as well as the items you craft
+                                from them are level 0 and hence bound to your
+                                character (untradable).
+                                Some ingredients are acquired by digging, some
+                                by actually killing monsters, and then there is
+                                the 'grinding tool' that you can by in town in
+                                the alchemist's store that allows you to grind
+                                items containing iron to reactive iron powder.
+                                Last but not least there is lamp oil that you
+                                can just buy from the general store.
+                                You can mix all these ingredients together, but
+                                not more than three portions of the same
+                                ingredient per mixture.
+                                Examples to start you off:
+                                <1 Charcoal + 1 Sulfur + 2 Saltpetre> or
+                                <3 Ammonia Salt + 1 Flask of Oil> will both
+                                result in a basic blast charge.
+                                Further recipes can be uncovered by simply
+                                trying out various combinations, or by reading
+                                scrolls of rumor, which actually have a small
+                                chance to give hints about mixture recipes.
+
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you levitation, so you may
 just hover across water instead of swimming across. Wands of stone-to-mud will
