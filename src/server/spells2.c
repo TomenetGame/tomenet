@@ -9197,7 +9197,7 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 
 	/* too much crap in it? becomes kinda indistinct */
 	if (aspects >= 5) {
-		strcpy(flavour, "bubbling");
+		strcpy(flavour, "Bubbling");
 		return;
 	}
 
@@ -9449,6 +9449,12 @@ void detonate_charge(object_type *o_ptr) {
 	if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
 		i = cs_ptr->sc.montrap.feat;
 		cs_erase(c_ptr, cs_ptr);
+
+#if 0
+		/* Since we already erased the cs_ptr, we need to un-embed the object or it'll try to grab the (now non-existant) cs_ptr again.. */
+		o_ptr->embed = 0;
+#endif
+
 		cave_set_feat_live(wpos, y, x, i);
 	}
 
