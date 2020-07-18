@@ -3284,6 +3284,9 @@ static bool players_in_level(int Ind, int Ind2) {
 	/* Check for max allowed level difference.
 	   (p_ptr->lev would be more logical but harsh) */
 	if (p_ptr->total_winner && p2_ptr->total_winner) {
+#ifdef KING_PARTY_FREE_THRESHOLD
+		if (KING_PARTY_FREE_THRESHOLD && p_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD && p2_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD) return TRUE;
+#endif
 		if (ABS(p_ptr->max_lev - p2_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) return FALSE;
 		return TRUE;
 	}

@@ -18664,6 +18664,8 @@ Parties:
     emperors).
     Winners don't share experience with non-winner characters. They do share
     experience with fallen winners though, within 7 levels.
+    Winners of level 80 or higher will not have any xp-sharing restrictions
+    imposed on them anymore and can party freely.
 
     Monsters will usually remember the highest player they have met and not
     give experience nor kill credit to players who are more than the 8

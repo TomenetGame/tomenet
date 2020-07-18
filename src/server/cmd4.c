@@ -636,6 +636,10 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, c
 	    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) ||
 	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF));
 
+#ifdef KING_PARTY_FREE_THRESHOLD
+	if (KING_PARTY_FREE_THRESHOLD && p_ptr->total_winner && q_ptr->total_winner && p_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD && q_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD) wont_get_exp = FALSE;
+#endif
+
 	attr_p[0] = 0;
 	if (attr == 'w') {
 		/* display level in light blue for partyable players */
@@ -2357,6 +2361,11 @@ void do_cmd_check_server_settings(int Ind) {
 
 	fprintf(fff, "Characters' running speed is boosted (x%d, ie. %+d%%).\n", cfg.running_speed, (cfg.running_speed - 5) * 100 / 5);
 	fprintf(fff, "While 'resting', HP/MP recovers %d times quicker (%+d%%)\n", cfg.resting_rate, (cfg.resting_rate-3)*100/3);
+
+	fprintf(fff, "Characters share XP if their max levels (before restorable drain) differ by..\n");
+	fprintf(fff, " at most %d for non-winners.\n", MAX_PARTY_LEVEL_DIFF);
+	fprintf(fff, " at most %d for winners.\n", MAX_KING_PARTY_LEVEL_DIFF);
+	fprintf(fff, " any amount without limit, as long as they are all at least level %d.\n", KING_PARTY_FREE_THRESHOLD);
 
 	if ((k = cfg.party_xp_boost))
 		fprintf(fff, "Party members get boosted exp (+%d internal modifier).\n", k);
