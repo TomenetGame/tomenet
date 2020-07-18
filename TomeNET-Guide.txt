@@ -13295,6 +13295,12 @@ stated.
     +Wizardry
         .Sorcery                Learn to use spells of ALL magic schools at
                                 once, instead of training a particular branch!
+                                Note that if you train Sorcery your character's
+                                mana pool will become sensitive to usage of
+                                gloves. You will need gloves that give any of
+                                Free Action, Dexterity, +Mana or elven gloves
+                                in order to not get encumbered and as a
+                                consequence suffer reduction of your max MP.
         .Mana                   Learn spells of the Mana branch.
         .Fire                   Learn spells of the Fire branch.
         .Water                  Learn spells of the Water branch.
