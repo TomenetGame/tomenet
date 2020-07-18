@@ -9330,6 +9330,14 @@ void arm_charge(int Ind, int item, int dir) {
 		return;
 	}
 
+#ifdef EXCAVATION_BLAST_IDDC_ONLY
+	/* for debugging/testing purpose */
+	if (!in_irondeepdive(wpos)) {
+		msg_print(Ind, "You may plant charges only inside the IDDC.");
+		return;
+	}
+#endif
+
 	if (istownarea(wpos, MAX_TOWNAREA)) {
 		msg_print(Ind, "You may not place a charge in towns.");
 		return;

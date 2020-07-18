@@ -383,8 +383,8 @@
 
 /* Specific settings for main-server only */
 #if !defined(RPG_SERVER) && !defined(TEST_SERVER) && !defined(ARCADE_SERVER)
- /* Restrict finding ENABLE_EXCAVATION items to within the IDDC. Usage of found items is not restricted however. */
- #define EXCAVATION_IDDC_ONLY
+ /* Restrict placing blast charges to within the IDDC, for debugging/testing purpose */
+ #define EXCAVATION_BLAST_IDDC_ONLY
 #endif
 
 
