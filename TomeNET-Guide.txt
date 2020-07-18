@@ -13963,8 +13963,15 @@ stated.
                                 can just buy from the general store.
 
                                 You can mix all these ingredients together, but
-                                not more than three portions of the same
-                                ingredient per mixture.
+                                not more than 3 portions of the same ingredient
+                                per mixture and at most 4 different types of
+                                ingredients. The order in which any mixing is
+                                done is not important.
+                                If a mixture contains more than 4 different
+                                types of ingredients it will become "Bubbling"
+                                to indicate that it is ruined and you can just
+                                destroy it as it serves no further purpose.
+
                                 The actual mixing is done by 'A'ctivating an
                                 ingredient or resulting mixture with another.
                                 When you have finished the desired mixture, you
@@ -13980,14 +13987,6 @@ stated.
                                 trying out various combinations, or by reading
                                 scrolls of rumor, which actually have a small
                                 chance to give hints about mixture recipes.
-
-                                Useful mixtures consist of at most 4 different
-                                types of ingredients. If you add more, they
-                                will become a useless "Bubbling Mixture" that
-                                has too many ingredients in it to work anymore
-                                and hence has been ruined.
-                                You can just destroy it as it serves no further
-                                purpose.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you levitation, so you may
