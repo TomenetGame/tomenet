@@ -5402,7 +5402,13 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
-	if (o_ptr->tval != TV_BOTTLE) { /* hack.. */
+	/* Anti-magic checks */
+	if (o_ptr->tval != TV_BOTTLE /* hack.. */
+#ifdef ENABLE_EXCAVATION
+	    && o_ptr->tval != TV_CHEMICAL
+	    && o_ptr->tval != TV_CHARGE
+#endif
+	    ) {
 		if (p_ptr->anti_magic) {
 			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
 #ifdef ENABLE_XID_MDEV
