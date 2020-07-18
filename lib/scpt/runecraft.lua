@@ -67,7 +67,7 @@ P = { -- Projection GF_TYPE Weight Colour
 [bor(NEXU,NETH)] = { "time",            GF_TIME,       150, "t" }, -- ADD drain,ruination
 [bor(NEXU,CHAO)] = { "sound",           GF_SOUND,      400, "S" },
 [bor(NEXU,MANA)] = { "shards",          GF_SHARDS,     400, "H" }, -- ADD m_ptr->bleeding
-[bor(NETH,CHAO)] = { "hellfire",        GF_HELLFIRE,   800, "X" },
+[bor(NETH,CHAO)] = { "hellfire",        GF_HELLFIRE,   400, "X" },
 [bor(NETH,MANA)] = { "force",           GF_FORCE,      250, "F" },
 [bor(CHAO,MANA)] = { "disenchantment",  GF_DISENCHANT, 500, "T" }} -- ADD unpower? ^^ Players too!
 
@@ -169,13 +169,18 @@ end
 
 function rspell_damage(u,s)
   local XX = band(u,ENHA)~=0 and E[band(u,TYPE)] or T[band(u,TYPE)]
+  -- old elemental damage spread, scale down with weight/4 from 1200
   -- local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
-  -- increase elemental damage spread
-  local w = (P[rspell_sval(u)][3] * 25 + 1200 * (100 - 25)) / 100
+  -- local m = M[band(u,MODE)][5]
+  -- local x = rspell_scale(s, XX[5], XX[6] * w / 1200)
+  -- local y = rspell_scale(s, XX[7], XX[8] * m / 10)
+  -- local d = rspell_scale(s, XX[7], ((XX[8] * w) / 1200) * m / 10)
+  -- new elemental damage spread, scale down or up with weight/3 from 600
+  local w = (P[rspell_sval(u)][3] * 33 + 600 * (100 - 33)) / 100
   local m = M[band(u,MODE)][5]
-  local x = rspell_scale(s, XX[5], XX[6] * w / 1200)
+  local x = rspell_scale(s, XX[5], XX[6] * w / 600)
   local y = rspell_scale(s, XX[7], XX[8] * m / 10)
-  local d = rspell_scale(s, XX[7], ((XX[8] * w) / 1200) * m / 10)
+  local d = rspell_scale(s, XX[7], ((XX[8] * w) / 600) * m / 10)
   return x,y,d
 end
 
@@ -564,7 +569,9 @@ function cast_rune_spell(I,D,u)
   elseif band(u,FLAR)~=0 then
     if X then
       -- fire_wave(I, PP[2], D, d, 0, t, 10, EFF_VORTEX, p.attacker)
-      fire_wave(I, PP[2], D, d, 0, 2, 10, EFF_VORTEX, p.attacker)
+      -- fire_wave(I, PP[2], D, d, 0, 2, 10, EFF_VORTEX, p.attacker)
+      -- Simplification of the new two-hit version, essentially the same!
+      fire_cloud(I, PP[2], D, d, 0, 2, 1, p.attacker)
     else
       fire_nova(I, PP[2], D, d, t, 10, p.attacker)
     end
