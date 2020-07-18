@@ -13341,6 +13341,10 @@ stated.
         .Psycho-power           Learn mindcrafter spells of psycho-power.
         .Attunement             Learn mindcrafter spells of attunement.
         .Mental Intrusion       Learn mindcrafter spells of mental intrusion.
+            Note: As soon as you train any of the three mindcraft schools your
+            character's mana pool will become sensitive to heavy head gear.
+            If your head gear's weight exceeds 4.0 lbs your max MP will suffer
+            a reduction from encumberment.
 
     +Runecraft                  See '(6.8b) Runes & Runemastery'.
         .Light                  Learn to evoke light runes.
