@@ -221,7 +221,7 @@ static byte staff_col[MAX_WOODS] = {
  * Wands (adjectives and colors)
  */
 
-static cptr wand_adj[MAX_METALS] = {
+cptr wand_adj[MAX_METALS] = {
 	"Aluminium", "Cast Iron", "Chromium", "Copper", "Gold",
 	"Iron", "Magnesium", "Molybdenum", "Nickel", "Rusty",
 	"Silver", "Steel", "Tin", "Titanium", "Tungsten",
@@ -248,7 +248,7 @@ static byte wand_col[MAX_METALS] = {
  * Efficiency -- copied from wand arrays
  */
 
-static cptr rod_adj[MAX_METALS];
+cptr rod_adj[MAX_METALS];
 
 static byte rod_col[MAX_METALS];
 

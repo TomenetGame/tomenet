@@ -1231,6 +1231,7 @@ extern int Send_idle(int Ind, bool idle);
 
 /* object1.c */
 extern bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id);
+extern cptr wand_adj[MAX_METALS], rod_adj[MAX_METALS];
 /* object2.c */
 extern void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int amt);
 extern void discharge_rod(object_type *o_ptr, int c);
@@ -1585,6 +1586,9 @@ extern bool hates_water(object_type *o_ptr);
 
 extern int safe_area(int Ind);
 extern int approx_damage(int m_idx, int dam, int typ);
+#ifdef ENABLE_EXCAVATION
+extern bool contains_significant_reactive_metal(object_type *o_ptr);
+#endif
 
 /* spells2.c */
 extern void summon_pet(int Ind, int max);

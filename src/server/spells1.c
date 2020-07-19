@@ -2590,46 +2590,66 @@ bool hates_water(object_type *o_ptr) {
  * Does a given object rust from water? (for equip_damage()) - C. Blue
  */
 static bool can_rust(object_type *o_ptr) {
+	/* Soft armour */
+	if (is_textile_armour(o_ptr->tval, o_ptr->sval)) return FALSE;
+
+	/* Non-metallic weapons */
+	if (is_nonmetallic_weapon(o_ptr->tval, o_ptr->sval)) return FALSE;
+
 	switch (o_ptr->tval) {
-#if 0
-	case TV_GLOVES: if (o_ptr->sval == SV_LEATHER_GLOVES || o_ptr->sval == SV_SET_OF_ELVEN_GLOVES) return FALSE;
-	case TV_BOOMERANG: if (o_ptr->sval == SV_BOOM_WOOD || o_ptr->sval == SV_BOOM_S_WOOD) return(FALSE); else return(TRUE);
-	case TV_CROWN: if (o_ptr->sval == SV_IRON_CROWN) return(TRUE); else return(FALSE);
-	case TV_SHIELD: if (o_ptr->sval == SV_SMALL_LEATHER_SHIELD || o_ptr->sval == SV_LARGE_LEATHER_SHIELD) return(FALSE); else return(TRUE);
-	case TV_HARD_ARMOR: if (o_ptr->sval == SV_MITHRIL_CHAIN_MAIL || o_ptr->sval == SV_MITHRIL_PLATE_MAIL || o_ptr->sval == SV_ADAMANTITE_PLATE_MAIL) return (FALSE); else return(TRUE);
-	case TV_HELM: if (o_ptr->sval == SV_HARD_LEATHER_CAP) return(FALSE); else return(TRUE);
-#else
 	case TV_GLOVES:
 	case TV_BOOMERANG:
 	case TV_CROWN:
 	case TV_SHIELD:
 	case TV_HARD_ARMOR:
 	case TV_HELM:
-#endif
 	case TV_SWORD:
-	// :)	case TV_BLUNT:
+	case TV_BLUNT: /* nonmetallic check above specifically for these */
 	case TV_POLEARM:
 	case TV_AXE:
 		return (TRUE);
 
-#ifdef ENABLE_EXCAVATION
-	/* Specialties just for grinding tool application */
-	case TV_SHOT:
-	case TV_BOLT:
-	    if (o_ptr->sval == SV_AMMO_NORMAL) return TRUE; //iron shots, normal bolts (assume iron)
-	    return FALSE;
-	case TV_GOLEM:
-	    if (o_ptr->sval == SV_GOLEM_IRON) return TRUE;
-	    return FALSE;
-	case TV_DIGGING:
-	case TV_SPIKE:
-		return TRUE;
-#endif
 	}
 
 	return (FALSE);
 }
 
+#ifdef ENABLE_EXCAVATION
+/* Specialties just for grinding tool application */
+bool contains_significant_reactive_metal(object_type *o_ptr) {
+	switch (o_ptr->tval) {
+	case TV_ROD: /* Note: Omit "-plated" varieties */
+		if (streq(rod_adj[o_ptr->sval], "Aluminium") ||
+		    streq(rod_adj[o_ptr->sval], "Cast Iron") ||
+		    streq(rod_adj[o_ptr->sval], "Iron") ||
+		    streq(rod_adj[o_ptr->sval], "Magnesium") ||
+		    streq(rod_adj[o_ptr->sval], "Zinc"))
+			return TRUE;
+		return FALSE;
+	case TV_WAND: /* Note: Omit "-plated" varieties */
+		if (streq(wand_adj[o_ptr->sval], "Aluminium") ||
+		    streq(wand_adj[o_ptr->sval], "Cast Iron") ||
+		    streq(wand_adj[o_ptr->sval], "Iron") ||
+		    streq(wand_adj[o_ptr->sval], "Magnesium") ||
+		    streq(wand_adj[o_ptr->sval], "Zinc"))
+			return TRUE;
+		return FALSE;
+	case TV_SHOT:
+	case TV_BOLT:
+		if (o_ptr->sval == SV_AMMO_NORMAL) return TRUE; //iron shots, normal bolts (assume iron)
+		return FALSE;
+	case TV_GOLEM:
+		if (o_ptr->sval == SV_GOLEM_IRON) return TRUE;
+		if (o_ptr->sval == SV_GOLEM_ALUM) return TRUE;
+		return FALSE;
+	case TV_DIGGING:
+	case TV_SPIKE:
+		return TRUE;
+	}
+
+	return can_rust(o_ptr);
+}
+#endif
 
 
 /*

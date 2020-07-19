@@ -9258,7 +9258,7 @@ void grind_chemicals(int Ind, int item) {
 		msg_print(Ind, "Artifacts cannot be ground into metal powder.");
 		return;
 	}
-	if (!set_rust_destroy(o_ptr)) {
+	if (!contains_significant_reactive_metal(o_ptr)) {
 		msg_format(Ind, "Your %s will not yield reactive metal powder.", o_name);
 		return;
 	}

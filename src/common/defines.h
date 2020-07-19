@@ -3077,6 +3077,9 @@
 	(((tval) == TV_BLUNT) && ((sval) == SV_MACE_OF_DISRUPTION || (sval) == SV_DEMON_HAMMER || (sval) == SV_SCOURGE_OF_REPENTANCE)) || \
 	(((tval) == TV_AXE) && ((sval) == SV_THUNDER_AXE)) || \
 	(((tval) == TV_POLEARM) && (sval) == SV_SCYTHE_OF_SLICING) )
+#define is_nonmetallic_weapon(tval,sval) \
+	((tval) == TV_BLUNT && ((sval) == SV_CLUB || (sval) == SV_WHIP || (sval) == SV_QUARTERSTAFF))
+	/* || (sval) == SV_THREE_PIECE_ROD) -- metal connectors, maybe enough */
 #define is_magic_device(tval)	(((tval) == TV_WAND) || ((tval) == TV_STAFF) || ((tval) == TV_ROD))
 #define is_rare_magic_device(tval,sval) ( \
 	((tval) == TV_WAND && ((sval) == SV_WAND_ANNIHILATION || (sval) == SV_WAND_ROCKETS || (sval) == SV_WAND_WALL_CREATION || (sval) == SV_WAND_TELEPORT_TO)) || \
