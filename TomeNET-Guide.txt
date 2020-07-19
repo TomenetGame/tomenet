@@ -13540,8 +13540,10 @@ stated.
                                 spells (but does not prevent them from using
                                 magic devices).
                                 This effect is cumulative with the anti-magic
-                                field of a Dark Sword. (See (5.9) for more info
-                                about dark swords.)
+                                field of a Dark Sword and the DISBELIEVE flag
+                                of monster forms acquired by Mimicry skill.
+                                (See (5.9) for more info about dark swords and
+                                (6.7) for details about DISBELIEVE flag.)
 
                                 It's capped at 75% chance of interrupting
                                 enemy spells. The capped chance is further
@@ -15930,6 +15932,8 @@ F: flag list
     DISBELIEVE  Will provide (or increase an already existing) anti-magic field
                 by ((monsterlevel / 2) + 10) percent. The range of the field
                 is set to (or increased by) ((monsterlevel / 50) + 2) fields.
+                The usual limits of the Anti-Magic skill apply, see (6.2) for
+                details.
     ARROW_1, ARROW_2, ARROW_3
                 The player will receive an extra shot per round with slings or
                 bows since the monster seems to be good at shooting.
