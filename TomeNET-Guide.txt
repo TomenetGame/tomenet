@@ -15927,9 +15927,9 @@ F: flag list
     NO_STUN     Sound resistance.
     NO_CUT      The player can't be cut and won't bleed continously from
                 wounds.
-    DISBELIEVE  Will increase the player's anti-magic field by
-                ((monsterlevel / 2) + 10) percent. The range of the anti-magic
-                field is increased by ((monsterlevel / 50) + 2) fields.
+    DISBELIEVE  Will provide (or increase an already existing) anti-magic field
+                by ((monsterlevel / 2) + 10) percent. The range of the field
+                is set to (or increased by) ((monsterlevel / 50) + 2) fields.
     ARROW_1, ARROW_2, ARROW_3
                 The player will receive an extra shot per round with slings or
                 bows since the monster seems to be good at shooting.
