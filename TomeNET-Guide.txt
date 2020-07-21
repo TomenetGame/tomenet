@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. July 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 22. July 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -8666,6 +8666,24 @@ The heavier a character gets, the more often he will get a 'tick' of drowning
 inflicted on him, reducing his hit points. This is a continuous process that
 scales from 'no damage at all' at very low total weight to serious drowning for
 really heavily packed characters.
+Undead characters take only half as much drowning damage.
+
+During swimming, you might get other negative side effects:
+- Inventory or equipment might take some water damage. Having a tarpaulin
+  equipped or being immune to water will prevent this.
+  (Acquiring levitation is the simplest way of avoiding this, as you won't
+  touch the water at all that way.)
+- If your Strength isn't sustained you might get it reduced sometimes due to
+  exertion, depending on how well you can swim vs how heavy you and your
+  backpack are. This STR drain is temporary and will automatically get restored
+  after a while (same as from tier I stat drain traps basically).
+
+As a side note, even if your character has no special powers and is bad at
+swimming, drowning and exertion can still both be avoided if you happen to
+carry a massive piece of wood in your inventory.
+In this case you will be able to just cling to it with minimal effort.
+Carrying such a big wood block around with you is usually not a feasible way
+to go on dungeoneering though....
 
 Most races are too heavy to be able to swim perfectly out of the box, and even
 low-weight races will run into trouble when they store things in their backpack
