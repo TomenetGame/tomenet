@@ -9747,6 +9747,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 			/* Deal with doors in the way */
 			if (did_open_door || did_bash_door) {
+
+				/* Secret door */
+				if (c_ptr->feat == FEAT_SECRET) {
+					struct c_special *cs_ptr;
+					/* Clear mimic feature */
+					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
+						cs_erase(c_ptr, cs_ptr);
+				}
+
 				/* Break down the door */
 				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
 					c_ptr->feat = FEAT_BROKEN;
@@ -10681,6 +10690,14 @@ static void process_monster_pet(int Ind, int m_idx) {
 
 			/* Deal with doors in the way */
 			if (did_open_door || did_bash_door) {
+				/* Secret door */
+				if (c_ptr->feat == FEAT_SECRET) {
+					struct c_special *cs_ptr;
+					/* Clear mimic feature */
+					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
+						cs_erase(c_ptr, cs_ptr);
+				}
+
 				/* Break down the door */
 				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
 					c_ptr->feat = FEAT_BROKEN;
@@ -11116,6 +11133,14 @@ static void process_monster_golem(int Ind, int m_idx) {
 
 			/* Deal with doors in the way */
 			if (did_open_door || did_bash_door) {
+				/* Secret door */
+				if (c_ptr->feat == FEAT_SECRET) {
+					struct c_special *cs_ptr;
+					/* Clear mimic feature */
+					if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
+						cs_erase(c_ptr, cs_ptr);
+				}
+
 				/* Break down the door */
 				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
 					c_ptr->feat = FEAT_BROKEN;
