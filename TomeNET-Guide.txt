@@ -16096,6 +16096,7 @@ STR     Melee damage: -1..+4 (-1 won't apply if creature is very heavy though)
         Earthquaking melee hits: +1 each
         Body weight: +1..+3
         Bears: +1
+        Yetis and cousins: +1
         Trolls: +1
         Giants: +1
         Dragons (mature and higher): +1
