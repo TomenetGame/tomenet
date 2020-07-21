@@ -14653,6 +14653,10 @@ create a character!):
     (and they cannot become gorged either).
     Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
+    Hint: Since all Maiar start with a point in 'Astral Knowledge' skill, you
+    should buy a spell scroll of Power Bolt I right away from the book store,
+    because you will already be able to use it.
+
 
 Here is a table showing boni/mali of the different races:
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
