@@ -1798,7 +1798,8 @@ static void player_outfit(int Ind) {
 	}
 
 	/* Hack -- Give the player some torches */
-	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RUNEMASTER) {
+	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->pclass != RACE_ENT &&
+	    p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RUNEMASTER) {
 		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
 		o_ptr->number = rand_range(4, 6);
 		o_ptr->timeout = FUEL_TORCH / 2;
@@ -2064,8 +2065,8 @@ static void player_outfit(int Ind) {
 		do_player_outfit();
 	}
 
-	/* Normal Lantern for Runemasters */
-	if (p_ptr->pclass == CLASS_RUNEMASTER) {
+	/* Normal Lantern for Runemasters and for Ents */
+	if ((p_ptr->pclass == CLASS_RUNEMASTER && p_ptr->prace != RACE_VAMPIRE) || p_ptr->prace == RACE_ENT) {
 		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_LANTERN));
 		o_ptr->number = 1;
 		o_ptr->timeout = FUEL_LAMP / 2 - rand_int(FUEL_LAMP / 10);
