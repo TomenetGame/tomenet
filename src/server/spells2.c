@@ -9170,6 +9170,7 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 	int aspects = 0, primary = 0, secondary = 0;
 	byte cc = 0, su = 0, sp = 0, as = 0, mp = 0, mh = 0, me = 0, mc = 0, vi = 0, ru = 0; // ..., vitriol, rust (? from rusty mail? / metal + water)
 	byte lo = 0, wa = 0, sw = 0, ac = 0; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
+	byte mass = 0, neutralized = 0;
 
 	if (o_ptr->sval != SV_MIXTURE) return;
 
@@ -9203,23 +9204,48 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 
 	/* give characteritic sensorial properties, starting from most dominant to lesser dominant traits, first determine colouring, second smell/texture */
 
+	/* smell/texture */
+	if (su || as) secondary = 1;
+	else if (mp) secondary = 2;
+
+	/* Low doses don't affect overall visual result.
+	   However, certain superiour clarity ("Clear") is no longer attainable even with some dilution ['neutralized']. */
+	mass += cc * 3 + su * 2 + sp + as + mp * 3 + mh * 2 + me + mc * 2 + vi * 2 + ru * 2 + lo * 2 + wa + sw + ac;
+	mass >>= 2;
+	if (cc < mass) { cc = 0; neutralized = 1; }
+	if (su < mass) { su = 0; neutralized = 1; }
+	if (sp < mass) { sp = 0; neutralized = 1; }
+	if (as < mass) { as = 0; neutralized = 1; }
+	if (mp < mass) { mp = 0; neutralized = 1; }
+	if (mh < mass) { mh = 0; neutralized = 1; }
+	if (me < mass) { me = 0; neutralized = 1; }
+	if (mc < mass) { mc = 0; neutralized = 1; }
+	if (vi < mass) { vi = 0; neutralized = 1; }
+	if (ru < mass) { ru = 0; neutralized = 1; }
+	if (lo < mass) { lo = 0; neutralized = 1; }
+	if (wa < mass) { wa = 0; neutralized = 1; }
+	if (sw < mass) { sw = 0; neutralized = 1; }
+	if (ac < mass) { ac = 0; neutralized = 1; }
+
 	/* colouring */
 	if (ru || lo) primary = 1;
 	else if (cc) primary = 2;
-	else if (me || mc) primary = 3;
+	//else if (me || mc) primary = 3;
+	else if (me) primary = 3;
+	else if (mc) primary = 11;
 	else if (vi) primary = 4;
 	else if (ac) primary = 5;
 	/* this one can also serve as secondary factor if there's no smell which is more important (allowing 3 adjectives would be tooo much clutter) */
 	else if (mp) primary = 6;
-	else if (sp || mh) primary = 7;
-	else if (wa || sw) primary = 8;
+	//else if (sp || mh) primary = 7;
+	else if (mh) primary = 7;
+	else if (sp) primary = 13;
+	else if (wa) primary = 12;
+	//else if (wa || sw) primary = 8;
+	else if (sw) primary = 8;
 	// secondary colouring aspects, these are mainly used to determine smell
 	else if (su) primary = 9;
 	else /* as */ primary = 10;
-
-	/* smell/texture */
-	if (su || as) secondary = 1;
-	else if (mp) secondary = 2;
 
 	/* Form complete flavour */
 	switch (secondary) {
@@ -9228,16 +9254,30 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 	default: strcpy(flavour, ""); break;
 	}
 	switch (primary) {
-	case 1: strcat(flavour, "Brown"); break;
+	case 1:
+		if (!ru && !vi && (sp || mc)) strcat(flavour, "Amber");
+		else strcat(flavour, "Brown");
+		break;
 	case 2: strcat(flavour, "Dark"); break;
 	case 3: strcat(flavour, "Yellow"); break;
+	case 11: strcat(flavour, "Beige"); break;
 	case 4: strcat(flavour, "Green"); break;
 	case 5: strcat(flavour, "Grey"); break;
-	case 6: strcat(flavour, "Glittering"); break;
+	case 6:
+		if (neutralized) strcat(flavour, "Glittering Misty");
+		else strcat(flavour, "Glittering"); break;
 	case 7: strcat(flavour, "White"); break;
-	case 8: strcat(flavour, "Transparent"); break;
+	case 12:
+		if (neutralized) strcat(flavour, "Misty");
+		else strcat(flavour, "Clear");
+		break;
+	case 13: strcat(flavour, "Shimmering"); break;
+	case 8: strcat(flavour, "Cloudy"); break;
 	case 9: strcat(flavour, "Yellow"); break;
-	case 10: strcat(flavour, "White"); break;
+	case 10:
+		if (neutralized) strcat(flavour, "Misty");
+		else strcat(flavour, "Clear");
+		break;
 	default: strcat(flavour, "White"); //paranoia
 	}
 }
