@@ -13747,9 +13747,11 @@ stated.
                                 the damage your backstab attacks deal.
 
                                 Backstabbing requires sword-type weapons or
-                                Martial Arts skill, in which case it transforms
-                                into neck-twisting. That means your target must
-                                possess a neck, read: A head and a torso.
+                                polearms, up to 10.0 lbs in weight.
+                                Alternatively it works if you use Martial Arts,
+                                in which case it transforms into neck-twisting.
+                                That means your target must possess a neck,
+                                read: A head and a torso.
 
                                 If you dual-wield, you will also dual-backstab
                                 if the moster is either asleep, or you perform
@@ -13758,9 +13760,6 @@ stated.
                                 each stab, since they are executed both at once
                                 you will do more overall damage than with a
                                 single weapon.
-
-                                Note: Weapon weight or whether it's 1-h, 1 1/2h
-                                or 2h weapon does not matter for backstabbing.
 
                                 Backstab hits and critical hits do not stack.
                                 If you roll a critical hit on backstabbing, the
