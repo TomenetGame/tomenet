@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 22. July 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 23. July 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11273,10 +11273,11 @@ There are two classes of artifacts, 'true artifacts' (or short 'truearts',
 also called 'static artifacts') and 'random artifacts' or short 'randarts':
 
 
-True artifacts
---------------
-True artifacts are predefined in the a_info.txt file and will always sell for
-their defined value even if they have not been *identified*.
+True artifacts ('Truearts')
+---------------------------
+True artifacts, also dubbed 'static artifacts', are predefined in the
+a_info.txt file and will always sell for their defined value even if they
+have not been *identified*.
 You can search a list of all true artifacts in game, by pressing  ~ 6 .
 
 True Artifacts are unique. If an artifact is owned by a player, noone else can
@@ -11307,8 +11308,8 @@ the curse. Having a curse does not necessarily mean the item's value is zero,
 but shops in general will not buy any item that still carries a curse.
 
 
-Random Artifacts
-----------------
+Random Artifacts ('Randarts')
+-----------------------------
 Random artifacts are composed randomly and even if they happen to bear the same
 name might have totally different powers. Randarts need to be *identified* to
 sell for what they are really worth.
@@ -11324,6 +11325,11 @@ markets.
 The advantage of creating an artifact is that the player can determine the
 base item type he wants to use. For more information about artifact creation
 see (8.4).
+
+The abilities a randart gets do not depend on depth, monsters, chests, the
+player himself or any 'Luck' bonus. Instead, they are always truly random and
+only depend on the item base type.
+(The only exception is the hit point bonus restriction mentioned above.)
 
 Note that randarts that don't auto-curse themselves can be sold after you
 removed the curse (except if the base item type is already worthless).
