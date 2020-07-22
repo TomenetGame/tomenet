@@ -9265,7 +9265,8 @@ void mixture_flavour(object_type *o_ptr, char *flavour) {
 	case 5: strcat(flavour, "Grey"); break;
 	case 6:
 		if (neutralized) strcat(flavour, "Glittering Misty");
-		else strcat(flavour, "Glittering"); break;
+		else strcat(flavour, "Glittering");
+		break;
 	case 7: strcat(flavour, "White"); break;
 	case 12:
 		if (neutralized) strcat(flavour, "Misty");
