@@ -14014,6 +14014,18 @@ stated.
                                 blast charge by activating it again with itself
                                 (think of this as some kind of drying process).
 
+                                You then activate a blast charge to place and
+                                arm it. Its fuse will take 2 to 10 seconds to
+                                run depending on the charge type, so you might
+                                want to hurry up and get away.
+                                You can customize the fuse to anything from 1
+                                to 15 seconds by inscribing the charge "!Fnn"
+                                before planting it, where nn is the amount of
+                                seconds ie the fuse length. Example:  !F12
+                                ..which will result in a 12-seconds fuse.
+                                If you change your mind, you can try to disarm
+                                an armed charge before it goes boom, take care.
+
                                 Examples to start you off:
                                 <1 Charcoal + 1 Sulfur + 2 Saltpetre> or
                                 <3 Ammonia Salt + 1 Flask of Oil> will both
