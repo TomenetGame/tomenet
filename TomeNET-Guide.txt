@@ -1640,6 +1640,9 @@ Other !-inscriptions:
     !T          Prevent taking off a secondary item.
     !F          Prevent using up this item to fuel your currently equipped
                 light source. (Note that !k inscription implies this too.)
+    !Fnn        If the server has the (experimental) Demolitionist perk enabled
+                this inscription can be used on blast charges to customize the
+                fuse length to nn seconds, where nn must be within 1 to 15.
     !E          Prevent eating this item.
     !q          Prevent quaffing this potion.
     !r          Prevent reading this scroll.
