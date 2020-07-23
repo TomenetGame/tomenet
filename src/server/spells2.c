@@ -8941,10 +8941,18 @@ void mix_chemicals(int Ind, int item) {
 	/* Sanity checks */
 	switch (o_ptr->tval) {
 	case TV_CHEMICAL: case TV_POTION: case TV_FLASK: break; /* Note: Actually the first item can only be TV_CHEMICAL because the others cannot be activated. */
+	case TV_SCROLL: // must be 2nd item
+	case TV_POTION2: // unused
 	default: return;
 	}
 	switch (o2_ptr->tval) {
+	case TV_SCROLL:
+		if (o2_ptr->sval != SV_SCROLL_LIGHT && o2_ptr->sval != SV_SCROLL_FIRE) {
+			msg_print(Ind, "Only scrolls of light or of fire can be used for ignition.");
+			return;
+		}
 	case TV_CHEMICAL: case TV_POTION: case TV_FLASK: break;
+	case TV_POTION2: // unused
 	default: return;
 	}
 	WIPE(q_ptr, object_type);
@@ -9026,8 +9034,43 @@ void mix_chemicals(int Ind, int item) {
 			msg_format(Ind, "You assemble a blast charge..");
 		}
 	} else {
+#if 1
+		/* Allow creating fireworks? */
+		if (o2_ptr->tval == TV_SCROLL) {
+			cc += ((o_ptr->xtra1 & CF_CC) ? 1 : 0) + ((o_ptr->xtra2 & CF_CC) ? 1 : 0) + ((o_ptr->xtra3 & CF_CC) ? 1 : 0);
+			su += ((o_ptr->xtra1 & CF_SU) ? 1 : 0) + ((o_ptr->xtra2 & CF_SU) ? 1 : 0) + ((o_ptr->xtra3 & CF_SU) ? 1 : 0);
+			sp += ((o_ptr->xtra1 & CF_SP) ? 1 : 0) + ((o_ptr->xtra2 & CF_SP) ? 1 : 0) + ((o_ptr->xtra3 & CF_SP) ? 1 : 0);
+			mp += ((o_ptr->xtra1 & CF_MP) ? 1 : 0) + ((o_ptr->xtra2 & CF_MP) ? 1 : 0) + ((o_ptr->xtra3 & CF_MP) ? 1 : 0);
+			if (cc == 1 && su == 1 && sp == 2 && mp == 2) q_ptr->sval = SV_CHARGE_FLASHBOMB;
+			if (q_ptr->sval != SV_CHARGE_FLASHBOMB) {
+				/* Lose mixture and scroll */
+				inven_item_increase(Ind, p_ptr->current_activation, -1);
+				//inven_item_describe(Ind, p_ptr->current_activation);
+				inven_item_increase(Ind, item, -1);
+				//inven_item_describe(Ind, item);
+				if (p_ptr->current_activation > item) { //higher value (lower in inventory) first; to preserve indices
+					inven_item_optimize(Ind, p_ptr->current_activation);
+					inven_item_optimize(Ind, item);
+				} else {
+					inven_item_optimize(Ind, item);
+					inven_item_optimize(Ind, p_ptr->current_activation);
+				}
+				msg_print(Ind, "\377oThe scroll is soaked!");
+				msg_print(Ind, "Only flash bomb mixtures can be used to create fireworks.");
+				return;
+			} else {
+				q_ptr->tval = TV_SCROLL;
+				q_ptr->sval = SV_SCROLL_FIREWORK;
+				// random for now..
+				q_ptr->xtra1 = rand_int(3); //size
+				q_ptr->xtra2 = rand_int(7); //colour
+				q_ptr->level = 1;
+			}
+		}
+#endif
+
 		/* First, check special case if we just want to combine an ingredient with it self to start creating a mixture.. */
-		if (item == p_ptr->current_activation)
+		else if (item == p_ptr->current_activation)
 			i = mixingred_to_ingredient(Ind, o2_ptr, o_ptr->tval, o_ptr->sval);
 
 		/* Now let's handle the combinations that actually create a new ingredient */
@@ -9120,7 +9163,8 @@ void mix_chemicals(int Ind, int item) {
 	q_ptr->owner = o_ptr->owner;
 	q_ptr->mode = o_ptr->mode;
 	q_ptr->pval = k_info[q_ptr->k_idx].pval;
-	q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
+	/* Exception: Fireworks are tradable */
+	if (q_ptr->tval != TV_SCROLL) q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
 	q_ptr->discount = 0;
 	q_ptr->number = 1; //hmm, should it be possible to combine whole stacks instead of just 1 piece each?
 	q_ptr->note = 0;
@@ -9130,6 +9174,8 @@ void mix_chemicals(int Ind, int item) {
  #ifdef USE_SOUND_2010
 	if (q_ptr->tval == TV_CHARGE)
 		sound(Ind, "item_rune", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (q_ptr->tval == TV_SCROLL)
+		sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
 	else
 		sound(Ind, "snowball", NULL, SFX_TYPE_COMMAND, FALSE); //uhhh - todo: get some alchemyic sfx..
  #endif
@@ -9162,6 +9208,7 @@ void mix_chemicals(int Ind, int item) {
 	/* Give us the result */
 	object_desc(Ind, o_name, q_ptr, TRUE, 3);
 	if (q_ptr->tval == TV_CHARGE) s_printf("CHARGE: %s (%d, %d) created %s.\n", p_ptr->name, p_ptr->lev, get_skill(p_ptr, SKILL_DIG), o_name);
+	if (q_ptr->tval == TV_SCROLL) s_printf("FIREWORK: %s (%d, %d) created %s.\n", p_ptr->name, p_ptr->lev, get_skill(p_ptr, SKILL_DIG), o_name);
 	i = inven_carry(Ind, q_ptr);
 	if (i != -1) msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
 }
