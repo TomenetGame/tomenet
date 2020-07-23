@@ -3181,8 +3181,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
 	struct worldpos *wpos = &p_ptr->wpos;
-#ifdef ENABLE_EXCAVATION
- #ifdef EXCAVATION_IDDC_ONLY
+#ifdef ENABLE_DEMOLITIONIST
+ #ifdef DEMOLITIONIST_IDDC_ONLY
 	bool in_iddc = in_irondeepdive(wpos);
  #endif
 #endif
@@ -3698,12 +3698,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				drop_near(0, &forge, -1, wpos, y, x);
 				s_printf("DIGGING: %s found a wood piece.\n", p_ptr->name);
 			}
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 			else if (
- #ifdef EXCAVATION_IDDC_ONLY
+ #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    (get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION) && !rand_int(5) && !p_ptr->IDDC_logscum) {
+			    (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(5) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
@@ -3923,13 +3923,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					drop_near(0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a rune.\n", p_ptr->name);
 			}
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 			/* Sandwall - Possibly find ingredients: Saltpetre */
 			else if (
- #ifdef EXCAVATION_IDDC_ONLY
+ #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    soft && get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    soft && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
@@ -3946,10 +3946,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 			/* Magma - Possibly find ingredients: Sulfur (volcanic/undersea), Vitriol */
 			else if (
- #ifdef EXCAVATION_IDDC_ONLY
+ #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    !hard && !soft && get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    !hard && !soft && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, rand_int(3) ? SV_SULFUR : SV_VITRIOL));
@@ -3966,10 +3966,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 			/* Quartz (whatever =p) - Possibly find ingredients: Metal powder */
 			else if (
- #ifdef EXCAVATION_IDDC_ONLY
+ #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    hard && get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
+			    hard && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && !rand_int(7) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
@@ -4439,7 +4439,7 @@ void do_cmd_disarm(int Ind, int dir) {
 			stop_precision(Ind);
 			stop_shooting_till_kill(Ind);
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 			/* We abuse montraps for this atm, need to interject here *cough* */
 			if (cs_ptr->sc.montrap.difficulty >= 100) { //100+ = hack marker for blast charge
 				if (!magik(cs_ptr->sc.montrap.difficulty - 80)) {

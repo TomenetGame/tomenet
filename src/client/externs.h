@@ -197,7 +197,7 @@ extern bool item_tester_hook_rune_enchant(object_type *o_ptr);
 extern bool item_tester_hook_armour_no_shield(object_type *o_ptr);
 extern bool item_tester_hook_id(object_type *o_ptr);
 extern bool item_tester_hook_starid(object_type *o_ptr);
-extern bool item_tester_hook_chemical(object_type *o_ptr); //ENABLE_EXCAVATION
+extern bool item_tester_hook_chemical(object_type *o_ptr); //ENABLE_DEMOLITIONIST
 
 
 extern int special_line_type;

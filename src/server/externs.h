@@ -1586,7 +1586,7 @@ extern bool hates_water(object_type *o_ptr);
 
 extern int safe_area(int Ind);
 extern int approx_damage(int m_idx, int dam, int typ);
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 extern bool contains_significant_reactive_metal(object_type *o_ptr);
 #endif
 
@@ -1729,7 +1729,7 @@ extern bool item_tester_hook_recharge(object_type *o_ptr);
 extern bool do_vermin_control(int Ind);
 extern void tome_creation(int Ind);
 extern void tome_creation_aux(int Ind, int item);
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 extern void mix_chemicals(int Ind, int item);
 extern void grind_chemicals(int Ind, int item);
 extern void arm_charge(int Ind, int item, int dir);
@@ -1763,7 +1763,7 @@ extern int py_create_gateway(int Ind);
 extern bool do_shadow_gate(int Ind, int range);
 #endif
 extern void XID_paranoia(player_type *p_ptr);
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 void mixture_flavour(object_type *o_ptr, char *flavour);
 #endif
 

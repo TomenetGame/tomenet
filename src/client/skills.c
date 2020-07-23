@@ -684,7 +684,7 @@ bool item_tester_hook_armour_no_shield(object_type *o_ptr) {
 	return (is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD);
 }
 
-//ENABLE_EXCAVATION
+//ENABLE_DEMOLITIONIST
 bool item_tester_hook_chemical(object_type *o_ptr) {
 	return (o_ptr->tval == TV_CHEMICAL
 	    || o_ptr->tval == TV_POTION

@@ -330,10 +330,12 @@
 /* 'Necromancy' skill gives an additional chance to keep hold of your life force */
 #define NECROMANCY_HOLDS_LIFE
 
-/* TESTING/EXPERIMENTAL - Allow creation of demolition charges for 'Digging'-renamed-to-'Excavation' skill. Also designates minimum required 'Digging' skill to be active [5]. */
-#define ENABLE_EXCAVATION 5
-/* Restrict finding ENABLE_EXCAVATION items to within the IDDC. Usage of found items is not restricted however. */
-//#define EXCAVATION_IDDC_ONLY
+/* TESTING/EXPERIMENTAL - Allow creation of demolition charges for 'Digging' skill.
+   Consider renaming 'Digging' to 'Excavation'.
+   Also designates minimum required 'Digging' skill to be active [5]. */
+#define ENABLE_DEMOLITIONIST 5
+/* Restrict finding ENABLE_DEMOLITIONIST items to within the IDDC. Usage of found items is not restricted however. */
+//#define DEMOLITIONIST_IDDC_ONLY
 
 
 /* --------------------- Server-type dependant features -------------------- */
@@ -384,7 +386,7 @@
 /* Specific settings for main-server only */
 #if !defined(RPG_SERVER) && !defined(TEST_SERVER) && !defined(ARCADE_SERVER)
  /* Restrict placing blast charges to within the IDDC, for debugging/testing purpose */
- #define EXCAVATION_BLAST_IDDC_ONLY
+ #define DEMOLITIONIST_BLAST_IDDC_ONLY
 #endif
 
 

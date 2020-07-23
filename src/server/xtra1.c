@@ -9080,7 +9080,7 @@ void clear_current(int Ind) {
 	p_ptr->current_curse = 0;
 	p_ptr->current_tome_creation = 0;
 	p_ptr->current_rune = 0;
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	p_ptr->current_chemical = 0;
 #endif
 	p_ptr->current_telekinesis = NULL;

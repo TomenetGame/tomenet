@@ -12184,7 +12184,7 @@ void Handle_item(int Ind, int item) {
 	} else if (p_ptr->current_rune) {
 		rune_enchant(Ind, item);
 	}
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	else if (p_ptr->current_chemical) {
 		if (p_ptr->inventory[p_ptr->current_activation].tval == TV_TOOL
 		    && p_ptr->inventory[p_ptr->current_activation].sval == SV_TOOL_GRINDER)

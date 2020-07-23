@@ -107,7 +107,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 			ident = TRUE;
 			angry = TRUE;
 			break;
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 		case SV_FLASK_ACID:
 			radius = 1;
 			dam = damroll(5, 5);
@@ -2614,7 +2614,7 @@ static bool can_rust(object_type *o_ptr) {
 	return (FALSE);
 }
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 /* Specialties just for grinding tool application */
 bool contains_significant_reactive_metal(object_type *o_ptr) {
 	switch (o_ptr->tval) {
@@ -4282,13 +4282,13 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			/* Destroy the tree */
 			cave_set_feat_live(wpos, y, x, FEAT_ASH);
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 			/* Possibly drop ingredients: Charcoal */
 			if (!quiet &&
- #ifdef EXCAVATION_IDDC_ONLY
+ #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_irondeepdive(wpos) &&
  #endif
-			    get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION && !rand_int(4) && !p_ptr->IDDC_logscum) {
+			    get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && !rand_int(4) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));
@@ -4940,8 +4940,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	object_type *o_ptr;
 	object_kind *k_ptr;
 
-#ifdef ENABLE_EXCAVATION
- #ifdef EXCAVATION_IDDC_ONLY
+#ifdef ENABLE_DEMOLITIONIST
+ #ifdef DEMOLITIONIST_IDDC_ONLY
 	bool in_iddc = in_irondeepdive(wpos);
  #endif
 #endif
@@ -5245,7 +5245,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				    && !is_ammo(o_ptr->tval)
 				    && o_ptr->tval != TV_CHEST
 				    && o_ptr->tval != TV_BOOK
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 				    && o_ptr->tval != TV_CHARGE
 #endif
 				    && (o_ptr->tval != TV_RING || o_ptr->sval != SV_RING_POLYMORPH)) {
@@ -5398,7 +5398,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			/* Kill it */
 			else {
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 				int k_idx = o_ptr->k_idx;
 #endif
 
@@ -5435,15 +5435,15 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					}
 				}
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 				/* May create charcoal from burned wood */
 				if (!quiet &&
- #ifdef EXCAVATION_IDDC_ONLY
+ #ifdef DEMOLITIONIST_IDDC_ONLY
 				    in_iddc &&
  #endif
 				    (my_strcasestr(o_name, "wood") ||
 				    (k_info[k_idx].tval == TV_JUNK && k_info[k_idx].sval == SV_WOODEN_STICK)) &&
-				    get_skill(p_ptr, SKILL_DIG) >= ENABLE_EXCAVATION && !p_ptr->IDDC_logscum) {
+				    get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && !p_ptr->IDDC_logscum) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_CHARCOAL));

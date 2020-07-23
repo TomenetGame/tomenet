@@ -5319,7 +5319,7 @@ bool activation_requires_direction(object_type *o_ptr) {
 		}
 	}
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	else if (o_ptr->tval == TV_CHARGE &&
 	    (o_ptr->sval == SV_CHARGE_SBLAST || o_ptr->sval == SV_CHARGE_FIREWALL || o_ptr->sval == SV_CHARGE_CASCADING))
 		return TRUE;
@@ -5404,7 +5404,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 	/* Anti-magic checks */
 	if (o_ptr->tval != TV_BOTTLE /* hack.. */
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	    && o_ptr->tval != TV_CHEMICAL
 	    && o_ptr->tval != TV_CHARGE
 #endif
@@ -5503,7 +5503,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Roll for usage */
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHEMICAL) ;
 	else if (o_ptr->tval == TV_CHARGE) {
 		if (rand_int(k_info[o_ptr->k_idx].level) > rand_int(get_skill_scale(p_ptr, SKILL_DIG, 100))) {
@@ -5561,7 +5561,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	switch (o_ptr->tval) {
 	case TV_RUNE: msg_print(Ind, "The rune glows with power!"); break;
 	case TV_BOOK: msg_print(Ind, "You open the book to add a new spell.."); break;
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	case TV_CHEMICAL: case TV_CHARGE: break;
 	case TV_TOOL: if (o_ptr->sval == SV_TOOL_GRINDER) break; //else: fall through
 	__attribute__ ((fallthrough));
@@ -5719,7 +5719,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		return;
 	}
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHEMICAL) {
 		/* Hack - exempt wood chips:
 		   These aren't a prepared ingredient yet and need to be refined into charcoal first! */
@@ -7114,7 +7114,7 @@ void do_cmd_activate_dir(int Ind, int dir) {
 
 	// -------------------- base items -------------------- //
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHARGE) {
 		arm_charge(Ind, item, dir);
 		return;
@@ -7488,7 +7488,7 @@ bool unmagic(int Ind) {
 /*
  * Displays random fortune/rumour.
  * Thanks Mihi!		- Jir -
- * Mode (added for distributing game-related info, in this case ENABLE_EXCAVATION recipes,
+ * Mode (added for distributing game-related info, in this case ENABLE_DEMOLITIONIST recipes,
  *       basically abusing fortune() as a sort of wilderness-mapping-scroll for other info ^^ - C. Blue:
  * 0: Scroll (usually broadcast, but we want to switch to private here if we 'leak' game info as explained above),
  * 1: Cookie/fortune teller (non-broadcast),

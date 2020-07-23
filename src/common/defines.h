@@ -3004,9 +3004,9 @@
 #define TV_AMULET	40      /* Amulets (including Specials) */
 #define TV_RING		45      /* Rings (including Specials) */
 #define TV_TRAPKIT	46      /* Trapkits */
-#ifdef ENABLE_EXCAVATION
- #define TV_CHARGE	47	/* Demolition charges for 'Excavation' skill */
- #define TV_CHEMICAL	48	/* Ingredients for crafting demolition charges for 'Excavation' skill */
+#ifdef ENABLE_DEMOLITIONIST
+ #define TV_CHARGE	47	/* Demolition charges for 'Digging' (or 'Excavation') skill */
+ #define TV_CHEMICAL	48	/* Ingredients for crafting demolition charges for 'Digging' (or 'Excavation') skill */
 #else
  #define TV_CHEMICAL	48	/* Just for building the client anyway */
 #endif
@@ -3287,7 +3287,7 @@
 #define SV_TOOL_TARPAULIN		5
 #define SV_TOOL_FLINT			6
 #define SV_TOOL_WRAPPING		7
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
  #define SV_TOOL_GRINDER		8
 #endif
 
@@ -4012,7 +4012,7 @@
 /* note: there is only 1 flask, ie flask of oil.
    this might be assumed in lots of places in the code.*/
 #define SV_FLASK_OIL			0
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
  #define SV_FLASK_ACID			1
 #endif
 
@@ -4167,9 +4167,9 @@
 /* sub-section of "unobtainium": specific mobs drop this. take out of the group */
 #define SV_PRECIOUS_STONE_DORS_EYE	41 // Dor's Eye... Guess where it's going to be dropped by?
 
-/* Extend 'Digging' skill to become 'Excavation', adding craftable demolition charges
+/* Extend 'Digging' skill to become more like an 'Excavation' skill, adding craftable demolition charges
    that can also be applied to ranged ammunition or traps for various effects  - C. Blue */
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 /* Notes about ingredients regarding the crafting process (anyone read the Dr Stone manga?) -
    charcoal: burn trees :D, saltpeter (bird guano, dung / chile saltpetre from arid regions esp desert! sandwalls!), sulfur (volcanic and undersea, mining!, red d/D),
    ammonia (alternative to metal-saltpeter): heat animal dung (camels^^') - maybe even extract from poison/gas breath? oO far stretch yeah,
@@ -8924,7 +8924,7 @@ extern int PlayerUID;
 #define ITH_ENCH_AC_NO_SHIELD 6
 #define ITH_ID		7
 #define ITH_STARID	8
-#define ITH_CHEMICAL	9	/* for ENABLE_EXCAVATION */
+#define ITH_CHEMICAL	9	/* for ENABLE_DEMOLITIONIST */
 /* keen hack: 4.6.0+ clients use ITH_ codes >= 50 and in turn signed char overflow < 0
    for transmitting max_weight for picking items for telekinesis. - C. Blue */
 #define ITH_MAX_WEIGHT	50

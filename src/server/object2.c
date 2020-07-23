@@ -3731,7 +3731,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 			if (o_ptr->pval != j_ptr->pval) return(FALSE);
 			break;
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 		case TV_CHEMICAL:
 			if (o_ptr->xtra1 != j_ptr->xtra1) return FALSE;
 			if (o_ptr->xtra2 != j_ptr->xtra2) return FALSE;
@@ -6643,8 +6643,8 @@ void determine_level_req(int level, object_type *o_ptr) {
 	    (o_ptr->sval == SV_POTION_LEARNING) ||
 	    (o_ptr->sval == SV_POTION_INVULNERABILITY))) o_ptr->level = 0;
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) o_ptr->level = 0;
-#ifdef ENABLE_EXCAVATION
-// #ifdef EXCAVATION_IDDC_ONLY --actually always level 0, since it can be dropped by monsters too
+#ifdef ENABLE_DEMOLITIONIST
+// #ifdef DEMOLITIONIST_IDDC_ONLY --actually always level 0, since it can be dropped by monsters too
 	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) o_ptr->level = 0;
 // #endif
 #endif
@@ -6926,7 +6926,7 @@ static int which_theme(int tval) {
 
 	case TV_FIRESTONE:
 	case TV_FOOD:
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	case TV_CHEMICAL:
 #endif
 		return 0; //junk
@@ -6986,7 +6986,7 @@ static int which_theme(int tval) {
 	case TV_TOOL:
 	case TV_INSTRUMENT:
 	case TV_TRAPKIT:
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	case TV_CHARGE:
 #endif
 		return 4; //tools
@@ -11269,7 +11269,7 @@ void process_objects(void) {
 #endif
 			continue;
 		}
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 		if (o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
 			o_ptr->timeout--;
 			if (!o_ptr->timeout) {

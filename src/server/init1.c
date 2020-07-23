@@ -1527,15 +1527,15 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "ENABLE_OUNLIFE") && negation) invalid = TRUE;
 #endif
-#ifndef ENABLE_EXCAVATION
-		if (streq(m, "ENABLE_EXCAVATION") && !negation) invalid = TRUE;
+#ifndef ENABLE_DEMOLITIONIST
+		if (streq(m, "ENABLE_DEMOLITIONIST") && !negation) invalid = TRUE;
 #else
-		if (streq(m, "ENABLE_EXCAVATION") && negation) invalid = TRUE;
+		if (streq(m, "ENABLE_DEMOLITIONIST") && negation) invalid = TRUE;
 #endif
-#ifndef EXCAVATION_IDDC_ONLY
-		if (streq(m, "EXCAVATION_IDDC_ONLY") && !negation) invalid = TRUE;
+#ifndef DEMOLITIONIST_IDDC_ONLY
+		if (streq(m, "DEMOLITIONIST_IDDC_ONLY") && !negation) invalid = TRUE;
 #else
-		if (streq(m, "EXCAVATION_IDDC_ONLY") && negation) invalid = TRUE;
+		if (streq(m, "DEMOLITIONIST_IDDC_ONLY") && negation) invalid = TRUE;
 #endif
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
@@ -1559,8 +1559,8 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_OCCULT") &&
 		    strcmp(m, "ENABLE_OHERETICISM") &&
 		    strcmp(m, "ENABLE_OUNLIFE") &&
-		    strcmp(m, "ENABLE_EXCAVATION") &&
-		    strcmp(m, "EXCAVATION_IDDC_ONLY") &&
+		    strcmp(m, "ENABLE_DEMOLITIONIST") &&
+		    strcmp(m, "DEMOLITIONIST_IDDC_ONLY") &&
 			TRUE)
 			invalid = TRUE;
 	}

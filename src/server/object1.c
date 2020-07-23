@@ -1967,7 +1967,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	object_kind	*k_ptr = &k_info[o_ptr->k_idx];
 	bool skip_base_article = FALSE;
 	bool special_rop = (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL);
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	char 		tmp_modstr[ONAME_LEN];
 #endif
 
@@ -2291,7 +2291,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		case TV_MONSTER:
 			break;
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 		case TV_CHEMICAL:
 			if (o_ptr->sval == SV_MIXTURE) {
 				mixture_flavour(o_ptr, tmp_modstr);
@@ -3626,7 +3626,7 @@ cptr item_activation(object_type *o_ptr) {
 
 	if (o_ptr->tval == TV_RUNE) return "tracing a sigil onto equipment";
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	if (o_ptr->tval == TV_CHEMICAL) {
 		if (o_ptr->sval == SV_WOOD_CHIPS) return "heating up to get processed into charcoal";
 		else if (o_ptr->sval == SV_MIXTURE) return "combining with other chemicals or mixtures. Or with itself to form a product";
@@ -5041,7 +5041,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 
  #if 1 /* display trigger chance for magic devices? */
 			if ((is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE))
-  #ifdef ENABLE_EXCAVATION
+  #ifdef ENABLE_DEMOLITIONIST
 			    && o_ptr->tval != TV_CHEMICAL && o_ptr->tval != TV_CHARGE
   #endif
 			    && o_ptr->tval != TV_BOOK) {
@@ -5719,7 +5719,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 
 #if 1 /* display trigger chance for magic devices? */
 	if ((eff_full && (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE)))
- #ifdef ENABLE_EXCAVATION
+ #ifdef ENABLE_DEMOLITIONIST
 	    && o_ptr->tval != TV_CHEMICAL && o_ptr->tval != TV_CHARGE
  #endif
 	    && o_ptr->tval != TV_BOOK) {

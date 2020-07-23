@@ -8732,7 +8732,7 @@ void tome_creation_aux(int Ind, int item) {
 	return;
 }
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 /* === Main code for the demolitionist trait feature of the 'Digging' skill - C. Blue === */
 /* Helper function to create a flag value from an ingredient, for mixture calculations */
 static s16b ingredient2flag(int tval, int sval) {
@@ -9371,7 +9371,7 @@ void arm_charge(int Ind, int item, int dir) {
 		return;
 	}
 
-#ifdef EXCAVATION_BLAST_IDDC_ONLY
+#ifdef DEMOLITIONIST_BLAST_IDDC_ONLY
 	/* for debugging/testing purpose */
 	if (!in_irondeepdive(wpos)) {
 		msg_print(Ind, "You may plant charges only inside the IDDC.");

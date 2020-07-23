@@ -2748,7 +2748,7 @@ struct player_type {
 #endif
 	s16b current_curse;
 	s16b current_tome_creation;	/* adding a spell scroll to a custom tome - C. Blue */
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 	s16b current_chemical;
 #endif
 	s16b current_rune;

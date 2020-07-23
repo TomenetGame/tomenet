@@ -3383,7 +3383,7 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 		if (o_ptr->tval == TV_CHARGE) s_printf("CHARGE: Type %d disarmed on %d,%d,%d at %d,%d.\n", o_ptr->sval, wpos->wx, wpos->wy, wpos->wz, o_ptr->ix, o_ptr->iy);
 #endif
 
@@ -3426,7 +3426,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x, s16b o_idx) {
 		if (!o_idx) return;
 		for (this_o_idx = o_idx; this_o_idx; this_o_idx = next_o_idx) {
 			o_ptr = &o_list[this_o_idx];
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 			if (o_ptr->tval == TV_CHARGE) s_printf("CHARGE: Type %d erased on %d,%d,%d at %d,%d.\n", o_ptr->sval, wpos->wx, wpos->wy, wpos->wz, o_ptr->ix, o_ptr->iy);
 #endif
 			next_o_idx = o_ptr->next_o_idx;
@@ -3446,7 +3446,7 @@ void erase_mon_trap(worldpos *wpos, int y, int x, s16b o_idx) {
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
 
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 		if (o_ptr->tval == TV_CHARGE) s_printf("CHARGE: Type %d erased on %d,%d,%d at %d,%d.\n", o_ptr->sval, wpos->wx, wpos->wy, wpos->wz, o_ptr->ix, o_ptr->iy);
 #endif
 
@@ -4527,7 +4527,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			dam = damroll(3, 5);
 			rad = 2;
 			break;
-#ifdef ENABLE_EXCAVATION
+#ifdef ENABLE_DEMOLITIONIST
 		case SV_FLASK_ACID:
 			typ = GF_ACID_BLIND;
 			dam = damroll(5, 5);
