@@ -51,8 +51,10 @@
 A:x0
 C:X
 
+# Changed 'reply to whisper' macro from command to hybrid,
+# just so it will work within CTRL+O/P (chat) message histories.
 A::+:
-C:,
+H:,
 
 # Hybrid macro to allow the text-editing CTRL+Q key to work: Exit the game.
 A:\e\e)^Q
