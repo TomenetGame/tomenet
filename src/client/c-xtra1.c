@@ -318,6 +318,7 @@ void prt_ac(int ac) {
  */
 #define HP_MP_ST_BAR_HALFSTEPS
 void prt_hp(int max, int cur, bool bar) {
+	if (shopping) return;
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
@@ -443,6 +444,7 @@ void prt_hp(int max, int cur, bool bar) {
 	}
 }
 void prt_stamina(int max, int cur, bool bar) {
+	if (shopping) return;
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
@@ -585,6 +587,7 @@ void prt_party_stats(int member_num, byte color, char *member_name, int member_l
  * Prints Max/Cur spell points
  */
 void prt_sp(int max, int cur, bool bar) {
+	if (shopping) return;
 	char tmp[32];
 	byte color;
 	int x, y; /* for remembering cursor pos */
@@ -1162,6 +1165,7 @@ void prt_extra_status(cptr status) {
 /* Enable bright red colour for actual packet loss? */
 #define BRIGHTRED_PACKETLOSS
 void prt_lagometer(int lag) {
+	if (shopping) return;
 	int attr = TERM_L_GREEN;
 	int num;
 	int x, y;

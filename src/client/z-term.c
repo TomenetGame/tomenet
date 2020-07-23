@@ -1888,7 +1888,7 @@ errr Term_draw(int x, int y, byte a, char c) {
 	if (!c) return (-2);
 
 	/* Duplicate to current screen if it's only 'partially icky' */
-	if (screen_icky && !semaphore
+	if (screen_icky && !semaphore && !shopping
 	    && !perusing) {
 		semaphore = TRUE;
 		if (screen_line_icky != -1 && y >= screen_line_icky) {
