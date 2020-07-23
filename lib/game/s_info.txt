@@ -295,8 +295,8 @@ D:from malicious effects. Shows more detailed SN (sanity) status at 10/20/40.
 I:1000:0
 
 N:44:Digging
-D:Allows you to tunnel through walls and obstacles faster.
-D:Also improves uncovering items, treasure, and special features by digging.
+D:Allows to tunnel more easily and to find treasure and uncover special features.
+$ENABLE_DEMOLITIONIST$D:At 5 unlocks hidden 'Demolitionist' perk, to acquire chemicals and explosives.
 I:1000:0
 
 ## DELETEME
