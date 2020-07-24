@@ -201,7 +201,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
 				    || a_ptr->winner
 #endif
 				     ? 2 : 1;
-				int timeout = a_ptr->timeout / divisor;
+				int timeout = (a_ptr->timeout < 0) ? a_ptr->timeout : (a_ptr->timeout / divisor);
 
 				/* bad: should just use determine_artifact_timeout() for consistency, instead of hard-coding */
 				int long_timeout = winner_artifact_p(&forge) ? 60 * 2 : 60;
@@ -276,14 +276,14 @@ void do_cmd_check_artifacts(int Ind, int line) {
 				/* actually show him timeouts of those artifacts the player owns.
 				   Todo: Should only show timeout if *ID*ed (ID_MENTAL), but not practical :/ */
 				if (p_ptr->id == a_ptr->carrier) {
-					int timeout = FALSE
+					int timeout = ((FALSE
  #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
 					    || a_ptr->iddc
  #endif
  #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
 					    || a_ptr->winner
  #endif
-					     ? a_ptr->timeout / 2 : a_ptr->timeout;
+					    ) && a_ptr->timeout > 0) ? a_ptr->timeout / 2 : a_ptr->timeout;
  #ifndef COLOURED_ARTS
 					sprintf(fmt, "%%%ds\377U", (int)(45 - strlen(base_name)));
 					fprintf(fff, fmt, "");

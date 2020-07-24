@@ -4942,14 +4942,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 #endif
 			if (true_artifact_p(o_ptr)) {
 #ifdef FLUENT_ARTIFACT_RESETS
-				int timeout = FALSE
+				int timeout = ((FALSE
  #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
 				    || a_info[o_ptr->name1].iddc
  #endif
  #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
 				    || a_info[o_ptr->name1].winner
  #endif
-				     ? a_info[o_ptr->name1].timeout / 2 : a_info[o_ptr->name1].timeout;
+				     ) && a_info[o_ptr->name1].timeout > 0) ? a_info[o_ptr->name1].timeout / 2 : a_info[o_ptr->name1].timeout;
 
  #ifdef RING_OF_PHASING_NO_TIMEOUT
 				if (o_ptr->name1 == ART_PHASING) strcpy(timeleft, " (It will reset when Zu-Aon is defeated once more)");

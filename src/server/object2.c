@@ -11918,7 +11918,7 @@ s_printf("A_TIMEOUT: Called (%d)!\n", a_idx);
 	}
 
  #ifdef RPG_SERVER
-	a_info[a_idx].timeout *= 2;
+	if (a_info[a_idx].timeout > 0) a_info[a_idx].timeout *= 2;
  #endif
 #endif
 	//for IDDC_ARTIFACT_FAST_TIMEOUT

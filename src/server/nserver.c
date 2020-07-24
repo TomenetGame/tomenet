@@ -3450,14 +3450,14 @@ static int Handle_login(int ind) {
 		if (!j || j == ART_RANDART) continue;
 		if (!(p_ptr->inventory[i].ident & ID_MENTAL)) continue;
 
-		timeout = FALSE
+		timeout = ((FALSE
  #ifdef IDDC_ARTIFACT_FAST_TIMEOUT
 		    || a_info[j].iddc
  #endif
  #ifdef WINNER_ARTIFACT_FAST_TIMEOUT
 		    || a_info[j].winner
  #endif
-		     ? a_info[j].timeout / 2 : a_info[j].timeout;
+		     ) && a_info[j].timeout > 0) ? a_info[j].timeout / 2 : a_info[j].timeout;
 
 		if (timeout <= 0 || timeout > FLUENT_ARTIFACT_WARNING || cfg.persistent_artifacts) continue;
 		object_desc(NumPlayers, o_name, &p_ptr->inventory[i], TRUE, 128 + 256);

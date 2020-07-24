@@ -7683,7 +7683,7 @@ static void process_artifacts(void) {
 		if (a_info[i].timeout == 0) erase_artifact(i);
 		/* just warn? */
  #if defined(IDDC_ARTIFACT_FAST_TIMEOUT) || defined(WINNER_ARTIFACT_FAST_TIMEOUT)
-		else if ((double_speed ? a_info[i].timeout / 2 : a_info[i].timeout) == FLUENT_ARTIFACT_WARNING) {
+		else if (a_info[i].timeout == (double_speed ? FLUENT_ARTIFACT_WARNING / 2 : FLUENT_ARTIFACT_WARNING)) {
  #else
 		else if (a_info[i].timeout == FLUENT_ARTIFACT_WARNING) {
  #endif
