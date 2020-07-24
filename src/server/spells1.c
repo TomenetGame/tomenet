@@ -2607,6 +2607,7 @@ static bool can_rust(object_type *o_ptr) {
 	case TV_BLUNT: /* nonmetallic check above specifically for these */
 	case TV_POLEARM:
 	case TV_AXE:
+	case TV_BOW: /* nonmetallic check filtered out slings and bows already */
 		return (TRUE);
 
 	}
@@ -2645,9 +2646,81 @@ bool contains_significant_reactive_metal(object_type *o_ptr) {
 	case TV_DIGGING:
 	case TV_SPIKE:
 		return TRUE;
+	case TV_CHEST:
+		switch (o_ptr->sval) {
+		case SV_CHEST_RUINED:
+		case SV_CHEST_SMALL_WOODEN:
+		case SV_CHEST_LARGE_WOODEN:
+			return FALSE;
+		}
+		return TRUE;
+	case TV_TRAPKIT:
+		switch (o_ptr->sval) {
+		case SV_TRAPKIT_SLING:
+		case SV_TRAPKIT_BOW:
+		case SV_TRAPKIT_XBOW:
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	return can_rust(o_ptr);
+}
+bool contains_significant_wood(object_type *o_ptr) {
+	switch (o_ptr->tval) {
+	case TV_ARROW:
+		if (o_ptr->sval != SV_AMMO_NORMAL) return FALSE;
+		//fall through
+	case TV_STAFF:
+	case TV_INSTRUMENT:
+		return TRUE;
+	case TV_GOLEM:
+		if (o_ptr->sval == SV_GOLEM_WOOD) return TRUE;
+		return FALSE;
+	case TV_BLUNT:
+		if (o_ptr->sval == SV_WHIP) return FALSE;
+		//fall through
+	case TV_AXE:
+	case TV_POLEARM:
+	case TV_BOW:
+	case TV_DIGGING:
+	case TV_MSTAFF:
+		return TRUE;
+	case TV_JUNK:
+		switch (o_ptr->sval) {
+		case SV_WOODEN_STICK:
+		case SV_WOOD_PIECE:
+			return TRUE;
+		}
+		return FALSE;
+	case TV_CHEST:
+		switch (o_ptr->sval) {
+		case SV_CHEST_RUINED:
+		case SV_CHEST_SMALL_WOODEN:
+		case SV_CHEST_LARGE_WOODEN:
+			return FALSE;
+		}
+		return TRUE;
+	case TV_TRAPKIT:
+		switch (o_ptr->sval) {
+		case SV_TRAPKIT_SLING:
+		case SV_TRAPKIT_BOW:
+		case SV_TRAPKIT_XBOW:
+			return FALSE;
+		}
+		return TRUE;
+	case TV_LITE:
+		switch (o_ptr->sval) {
+		case SV_LITE_TORCH:
+		case SV_LITE_TORCH_EVER:
+			return TRUE;
+		}
+		return FALSE;
+	case TV_GAME:
+		return FALSE; //lul, don't even think of it!
+	}
+
+	return FALSE;
 }
 #endif
 

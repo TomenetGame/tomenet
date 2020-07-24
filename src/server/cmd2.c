@@ -3703,7 +3703,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
  #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_iddc &&
  #endif
-			    (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(5) && !p_ptr->IDDC_logscum) {
+			    /* Note: Increased rarity from 5 to 20 because pieces of wood and other items containing wood can now be ground to chips simply */
+			    (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(20) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));

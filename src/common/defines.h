@@ -3078,7 +3078,8 @@
 	(((tval) == TV_AXE) && ((sval) == SV_THUNDER_AXE)) || \
 	(((tval) == TV_POLEARM) && (sval) == SV_SCYTHE_OF_SLICING) )
 #define is_nonmetallic_weapon(tval,sval) \
-	((tval) == TV_BLUNT && ((sval) == SV_CLUB || (sval) == SV_WHIP || (sval) == SV_QUARTERSTAFF))
+	(((tval) == TV_BLUNT && ((sval) == SV_CLUB || (sval) == SV_WHIP || (sval) == SV_QUARTERSTAFF)) || \
+	((tval) == TV_BOOMERANG && ((sval) == SV_BOOM_WOOD || (sval) == SV_BOOM_S_WOOD)) || ((tval) == TV_BOW && ((sval) == SV_SLING || (sval) == SV_SHORT_BOW || (sval) == SV_LONG_BOW)))
 	/* || (sval) == SV_THREE_PIECE_ROD) -- metal connectors, maybe enough */
 #define is_magic_device(tval)	(((tval) == TV_WAND) || ((tval) == TV_STAFF) || ((tval) == TV_ROD))
 #define is_rare_magic_device(tval,sval) ( \
@@ -3430,7 +3431,7 @@
 #define SV_BLUESTEEL_BLADE		32  /* 3d9 */
 #define SV_DARK_SWORD			33  /* 3d7 */
 
-/* The "sval" codes for TV_SHIELD */
+/* The "sval" codes for TV_SHIELD -- note that we don't have 'explicite' wooden shields.. */
 #define SV_SMALL_LEATHER_SHIELD		2
 #define SV_SMALL_METAL_SHIELD		3
 #define SV_LARGE_LEATHER_SHIELD		4

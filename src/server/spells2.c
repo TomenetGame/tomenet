@@ -9335,55 +9335,98 @@ void grind_chemicals(int Ind, int item) {
 	object_type *o_ptr = &p_ptr->inventory[item]; /* Metallic object */
 	object_type forge, *q_ptr = &forge; /* Resulting metal powder */
 	char o_name[ONAME_LEN];
-	int i;
+	int i, tv = o_ptr->tval, sv = o_ptr->sval;
+	bool metal, wood;
 
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 	if (check_guard_inscription(o_ptr->note, 'k')) {
-		msg_print(Ind, "The item's inscription prevents grinding it to powder.");
+		msg_print(Ind, "The item's inscription prevents grinding it.");
 		return;
 	}
 	if (artifact_p(o_ptr)) {
-		msg_print(Ind, "Artifacts cannot be ground into metal powder.");
-		return;
-	}
-	if (!contains_significant_reactive_metal(o_ptr)) {
-		msg_format(Ind, "Your %s will not yield reactive metal powder.", o_name);
+		msg_print(Ind, "Artifacts cannot be ground.");
 		return;
 	}
 
-	msg_format(Ind, "You grind the metal off of your %s ..", o_name);
+	metal = contains_significant_reactive_metal(o_ptr);
+	wood = contains_significant_wood(o_ptr);
+	if (!metal && !wood) {
+		msg_format(Ind, "Your %s will yield neither reactive metal powder nor wood chips.", o_name);
+		return;
+	}
 
- #ifndef NO_RUST_NO_HYDROXIDE
-	invcopy(q_ptr, lookup_kind(TV_CHEMICAL, my_strcasestr(o_name, "rusty") ? SV_RUST : SV_METAL_POWDER));
- #else
-	invcopy(q_ptr, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
- #endif
-	/* Recall original parameters */
-	q_ptr->owner = o_ptr->owner;
-	q_ptr->mode = o_ptr->mode;
-	q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
-	q_ptr->discount = 0;
-	q_ptr->number = 1 + 10 - 1000 / (o_ptr->weight + 90);
-	q_ptr->number = (q_ptr->number >> 1) + 1; //experimental: reduce a bit further..
-	q_ptr->weight = k_info[q_ptr->k_idx].weight;
-	q_ptr->note = 0;
-	q_ptr->iron_trade = o_ptr->iron_trade;
-	q_ptr->iron_turn = o_ptr->iron_turn;
+	if (!wood) msg_format(Ind, "You grind the metal off of your %s ..", o_name);
+	else if (!metal) msg_format(Ind, "You grind the wood off of your %s ..", o_name);
+	else msg_format(Ind, "You carefully grind the metal and wood off of your %s ..", o_name);
 
  #ifdef USE_SOUND_2010
-	sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+	sound_item(Ind, tv, sv, "drop_");
  #endif
 
-	/* Erase the ingredients in the pack */
+	/* Erase the ingredient in the pack --
+	   we only grind 1 'piece' of an object at a time, not the whole stack */
+	i = o_ptr->weight;
 	inven_item_increase(Ind, item, -1);
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
 
-	/* Give us the result */
-	i = inven_carry(Ind, q_ptr);
-	if (i != -1) {
-		object_desc(Ind, o_name, &forge, TRUE, 3);
-		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+	if (metal) {
+ #ifndef NO_RUST_NO_HYDROXIDE
+		invcopy(q_ptr, lookup_kind(TV_CHEMICAL, my_strcasestr(o_name, "rusty") ? SV_RUST : SV_METAL_POWDER));
+ #else
+		invcopy(q_ptr, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
+ #endif
+		/* Recall original parameters */
+		q_ptr->owner = o_ptr->owner;
+		q_ptr->mode = o_ptr->mode;
+		q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
+		q_ptr->discount = 0;
+		/* Low yield? (Only consists partly of metal) */
+		if (tv == TV_BOW || tv == TV_DIGGING) i /= 2;
+		q_ptr->number = 1 + 10 - 1000 / (i + 90);
+		q_ptr->number = (q_ptr->number >> 1) + 1; //experimental: reduce a bit further..
+		q_ptr->weight = k_info[q_ptr->k_idx].weight;
+		q_ptr->note = 0;
+		q_ptr->iron_trade = o_ptr->iron_trade;
+		q_ptr->iron_turn = o_ptr->iron_turn;
+
+		/* Give us the result */
+		i = inven_carry(Ind, q_ptr);
+		if (i != -1) {
+			object_desc(Ind, o_name, &forge, TRUE, 3);
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+		}
+	}
+	if (wood) {
+		invcopy(q_ptr, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
+
+		/* Recall original parameters */
+		q_ptr->owner = o_ptr->owner;
+		q_ptr->mode = o_ptr->mode;
+		q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
+		q_ptr->discount = 0;
+		/* Low yield? (Only partly consists of wood) */
+		switch (tv) {
+		case TV_BLUNT:
+			if (is_nonmetallic_weapon(tv, sv)) break;
+		case TV_AXE:
+		case TV_POLEARM:
+		case TV_DIGGING:
+			i /= 2;
+		}
+		q_ptr->number = 1 + 10 - 1000 / (i + 90);
+		q_ptr->number = (q_ptr->number >> 1) + 1; //experimental: reduce a bit further..
+		q_ptr->weight = k_info[q_ptr->k_idx].weight;
+		q_ptr->note = 0;
+		q_ptr->iron_trade = o_ptr->iron_trade;
+		q_ptr->iron_turn = o_ptr->iron_turn;
+
+		/* Give us the result */
+		i = inven_carry(Ind, q_ptr);
+		if (i != -1) {
+			object_desc(Ind, o_name, &forge, TRUE, 3);
+			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
+		}
 	}
 }
 /* Set a charge live */

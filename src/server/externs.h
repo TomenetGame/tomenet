@@ -1588,6 +1588,7 @@ extern int safe_area(int Ind);
 extern int approx_damage(int m_idx, int dam, int typ);
 #ifdef ENABLE_DEMOLITIONIST
 extern bool contains_significant_reactive_metal(object_type *o_ptr);
+extern bool contains_significant_wood(object_type *o_ptr);
 #endif
 
 /* spells2.c */
