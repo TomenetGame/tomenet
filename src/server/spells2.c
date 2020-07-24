@@ -9445,9 +9445,13 @@ void grind_chemicals(int Ind, int item) {
 	sound_item(Ind, tv, sv, "drop_");
  #endif
 
+	/* Determine amount of ingredients we will get from this */
+	i = o_ptr->weight;
+	i = 1 + 10 - 1000 / (i + 90);
+	i = (i >> 1) + 1; //experimental: reduce a bit further..
+
 	/* Erase the ingredient in the pack --
 	   we only grind 1 'piece' of an object at a time, not the whole stack */
-	i = o_ptr->weight;
 	inven_item_increase(Ind, item, -1);
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
@@ -9463,10 +9467,14 @@ void grind_chemicals(int Ind, int item) {
 		q_ptr->mode = o_ptr->mode;
 		q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
 		q_ptr->discount = 0;
+
 		/* Low yield? (Only consists partly of metal) */
-		if (tv == TV_BOW || tv == TV_DIGGING) i /= 2;
-		q_ptr->number = 1 + 10 - 1000 / (i + 90);
-		q_ptr->number = (q_ptr->number >> 1) + 1; //experimental: reduce a bit further..
+		if (tv == TV_BOW || tv == TV_DIGGING
+		    || wood)
+			i /= 2;
+		if (!i) i = 1;
+
+		q_ptr->number = i;
 		q_ptr->weight = k_info[q_ptr->k_idx].weight;
 		q_ptr->note = 0;
 		q_ptr->iron_trade = o_ptr->iron_trade;
@@ -9487,17 +9495,24 @@ void grind_chemicals(int Ind, int item) {
 		q_ptr->mode = o_ptr->mode;
 		q_ptr->level = 0;//k_info[q_ptr->k_idx].level;
 		q_ptr->discount = 0;
+
 		/* Low yield? (Only partly consists of wood) */
 		switch (tv) {
 		case TV_BLUNT:
-			if (is_nonmetallic_weapon(tv, sv)) break;
+			if (is_nonmetallic_weapon(tv, sv)
+			    && !metal) //paranoia^^ we just established that it's NONmetallic..
+				break;
 		case TV_AXE:
 		case TV_POLEARM:
 		case TV_DIGGING:
 			i /= 2;
+			break;
+		default:
+			if (metal) i /= 2;
 		}
-		q_ptr->number = 1 + 10 - 1000 / (i + 90);
-		q_ptr->number = (q_ptr->number >> 1) + 1; //experimental: reduce a bit further..
+		if (!i) i = 1;
+
+		q_ptr->number = i;
 		q_ptr->weight = k_info[q_ptr->k_idx].weight;
 		q_ptr->note = 0;
 		q_ptr->iron_trade = o_ptr->iron_trade;
