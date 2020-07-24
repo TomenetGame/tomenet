@@ -9101,12 +9101,36 @@ void mix_chemicals(int Ind, int item) {
 #if 1
 		/* Allow creating fireworks? */
 		if (o2_ptr->tval == TV_SCROLL) {
+			/* Count amounts of ingredients in our mixture */
 			cc += ((o_ptr->xtra1 & CF_CC) ? 1 : 0) + ((o_ptr->xtra2 & CF_CC) ? 1 : 0) + ((o_ptr->xtra3 & CF_CC) ? 1 : 0);
 			su += ((o_ptr->xtra1 & CF_SU) ? 1 : 0) + ((o_ptr->xtra2 & CF_SU) ? 1 : 0) + ((o_ptr->xtra3 & CF_SU) ? 1 : 0);
 			sp += ((o_ptr->xtra1 & CF_SP) ? 1 : 0) + ((o_ptr->xtra2 & CF_SP) ? 1 : 0) + ((o_ptr->xtra3 & CF_SP) ? 1 : 0);
+			as += ((o_ptr->xtra1 & CF_AS) ? 1 : 0) + ((o_ptr->xtra2 & CF_AS) ? 1 : 0) + ((o_ptr->xtra3 & CF_AS) ? 1 : 0);
 			mp += ((o_ptr->xtra1 & CF_MP) ? 1 : 0) + ((o_ptr->xtra2 & CF_MP) ? 1 : 0) + ((o_ptr->xtra3 & CF_MP) ? 1 : 0);
-			if (cc == 1 && su == 1 && sp == 2 && mp == 2) q_ptr->sval = SV_CHARGE_FLASHBOMB;
-			if (q_ptr->sval != SV_CHARGE_FLASHBOMB) {
+			mh += ((o_ptr->xtra1 & CF_MH) ? 1 : 0) + ((o_ptr->xtra2 & CF_MH) ? 1 : 0) + ((o_ptr->xtra3 & CF_MH) ? 1 : 0);
+			me += ((o_ptr->xtra1 & CF_ME) ? 1 : 0) + ((o_ptr->xtra2 & CF_ME) ? 1 : 0) + ((o_ptr->xtra3 & CF_ME) ? 1 : 0);
+			mc += ((o_ptr->xtra1 & CF_MC) ? 1 : 0) + ((o_ptr->xtra2 & CF_MC) ? 1 : 0) + ((o_ptr->xtra3 & CF_MC) ? 1 : 0);
+
+			vi += ((o_ptr->xtra1 & CF_VI) ? 1 : 0) + ((o_ptr->xtra2 & CF_VI) ? 1 : 0) + ((o_ptr->xtra3 & CF_VI) ? 1 : 0);
+			ru += ((o_ptr->xtra1 & CF_RU) ? 1 : 0) + ((o_ptr->xtra2 & CF_RU) ? 1 : 0) + ((o_ptr->xtra3 & CF_RU) ? 1 : 0);
+
+			lo += ((o_ptr->xtra1 & CF_LO) ? 1 : 0) + ((o_ptr->xtra2 & CF_LO) ? 1 : 0) + ((o_ptr->xtra3 & CF_LO) ? 1 : 0);
+			wa += ((o_ptr->xtra1 & CF_WA) ? 1 : 0) + ((o_ptr->xtra2 & CF_WA) ? 1 : 0) + ((o_ptr->xtra3 & CF_WA) ? 1 : 0);
+			sw += ((o_ptr->xtra1 & CF_SW) ? 1 : 0) + ((o_ptr->xtra2 & CF_SW) ? 1 : 0) + ((o_ptr->xtra3 & CF_SW) ? 1 : 0);
+			ac += ((o_ptr->xtra1 & CF_AC) ? 1 : 0) + ((o_ptr->xtra2 & CF_AC) ? 1 : 0) + ((o_ptr->xtra3 & CF_AC) ? 1 : 0);
+
+			/* Fireworks = Flashbomb + launcher Scroll */
+			if (cc == 1 && su == 1 && sp == 2 && mp == 2
+			    && as + mh + me + mc + vi + ru + lo + wa + sw + ac == 0) {
+				q_ptr->tval = TV_SCROLL;
+				q_ptr->sval = SV_SCROLL_FIREWORK;
+				// random for now..
+				q_ptr->xtra1 = rand_int(3); //size
+				q_ptr->xtra2 = rand_int(7); //colour
+				q_ptr->level = 1;
+				msg_print(Ind, "You create harmless fireworks from the flash bomb mixture..");
+				i = -2;
+			} else {
 				/* Lose mixture and scroll */
 				inven_item_increase(Ind, p_ptr->current_activation, -1);
 				//inven_item_describe(Ind, p_ptr->current_activation);
@@ -9122,13 +9146,6 @@ void mix_chemicals(int Ind, int item) {
 				msg_print(Ind, "\377oThe scroll is soaked!");
 				msg_print(Ind, "Only flash bomb mixtures can be used to create fireworks.");
 				return;
-			} else {
-				q_ptr->tval = TV_SCROLL;
-				q_ptr->sval = SV_SCROLL_FIREWORK;
-				// random for now..
-				q_ptr->xtra1 = rand_int(3); //size
-				q_ptr->xtra2 = rand_int(7); //colour
-				q_ptr->level = 1;
 			}
 		}
 #endif
@@ -9163,7 +9180,7 @@ void mix_chemicals(int Ind, int item) {
 		}
 
 		/* Check for success in creating a new ingredient */
-		if (i) {
+		if (i > 0) {
 			/* Translate ingredient-index back to tval,sval */
 			if (i >= CI_CC && i <= CI_AC) {
 				q_ptr->tval = TV_CHEMICAL;
@@ -9190,7 +9207,7 @@ void mix_chemicals(int Ind, int item) {
 
 		/* No success creating an ingredient -
 		   so we just create a mixture instead, if the particular ingredients are not already overflowing (aka reaching amount cap per mixture).. */
-		} else {
+		} else if (i != -2) {
 			/* Create mixture from mixture+mixture or ingredient+mixture */
 
 			/* First, check if we want to create a most basic mixture from just two ingredients */
@@ -9216,6 +9233,7 @@ void mix_chemicals(int Ind, int item) {
 			q_ptr->sval = SV_MIXTURE;
 			msg_print(Ind, "You create a mixture from the ingredients..");
 		}
+		/* What's left: '-2' = we made fireworks! */
 	}
 
 	/* Result: Either a new ingredient, a mixture or a finished blast charge. */
