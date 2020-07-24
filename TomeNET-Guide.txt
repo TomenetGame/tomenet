@@ -13995,8 +13995,10 @@ stated.
                                 and then there is the 'grinding tool' that you
                                 can buy in town in the alchemist's store for
                                 little money that allows you to grind items
-                                containing a significant amount of iron to
-                                reactive iron powder.
+                                containing a significant amount of rather
+                                reactive metal types to reactive metal powder
+                                or to grind items made of significant amounts
+                                of wood into wood chips.
                                 Last but not least there is lamp oil that you
                                 can just buy from the general store.
 
