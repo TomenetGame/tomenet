@@ -6591,7 +6591,7 @@ I:52:8:0
 W:30:0:400:5000
 A:25/400:50/200
 P:0:1d1:0:0:0
-D:A part required to build a golem.
+D:A part made of hardened clay, required to build a golem.
 
 N:859:& Golem Leg~
 G:*:v
@@ -6599,7 +6599,7 @@ I:52:9:0
 W:30:0:400:5000
 A:25/400:50/200
 P:0:1d1:0:0:0
-D:A part required to build a golem.
+D:A part made of hardened clay, required to build a golem.
 
 N:860:& Golem Scroll~ of Attack
 G:?:D
