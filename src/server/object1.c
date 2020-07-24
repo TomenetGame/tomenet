@@ -3633,7 +3633,7 @@ cptr item_activation(object_type *o_ptr) {
 		else return "combining with other chemical ingredients or mixtures";
 	}
 	if (o_ptr->tval == TV_CHARGE) return(format("ignition after %d turns", o_ptr->pval));
-	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return "grinding solid material to powder";
+	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return "grinding solid material to bits";
 #endif
 
 	/* Oops */
