@@ -386,7 +386,7 @@
 /* Specific settings for main-server only */
 #if !defined(RPG_SERVER) && !defined(TEST_SERVER) && !defined(ARCADE_SERVER)
  /* Restrict placing blast charges to within the IDDC, for debugging/testing purpose */
- #define DEMOLITIONIST_BLAST_IDDC_ONLY
+ //#define DEMOLITIONIST_BLAST_IDDC_ONLY
 #endif
 
 

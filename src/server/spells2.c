@@ -9656,10 +9656,10 @@ void detonate_charge(object_type *o_ptr) {
 		i = cs_ptr->sc.montrap.feat;
 		cs_erase(c_ptr, cs_ptr);
 
-#if 0
-		/* Since we already erased the cs_ptr, we need to un-embed the object or it'll try to grab the (now non-existant) cs_ptr again.. */
+		/* Since we already erased the cs_ptr, we need to un-embed the object
+		   or it'll try to grab the (now non-existant) cs_ptr again,
+		   when we call delete_object_idx() right after this detonate_charge(). */
 		o_ptr->embed = 0;
-#endif
 
 		cave_set_feat_live(wpos, y, x, i);
 	}
