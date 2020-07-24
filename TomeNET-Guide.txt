@@ -632,7 +632,8 @@ A       A       activate an item. Usually an artifact, a dragon scale mail or
 T or +  +       tunnel (dig) through an obstacle or a wall.
 
 R       R       rest. Your hit points, mana and stamina will regenerate faster
-                while resting.
+                while resting. Note that you cannot rest while being afflicted
+                by any continuous damage effect (eg while poisoned).
 
 o       o       open something.
 
@@ -4051,10 +4052,14 @@ important stats:
  you are injured. If they drop below zero you die!
  If they are the same as your Max HP then you are fully rested and physically
  healed.
+ If your current MP or HP are low and you wish to regenerate them faster, you
+ can press SHIFT+R to rest. While resting, regeneration is greatly increased.
 -Next entry is your stamina (ST), if you chose a class that makes use of it.
  Stamina may allow you to employ special techniques accessed with 'm'.
  Maximum stamina is always 10. Its regeneration rate can be increased by
  having a higher Constitution attribute (CON) or by training 'Health' skill.
+ If your current ST is low and you wish to regenerate it faster, you can press
+ SHIFT+R to rest. While resting, regeneration is greatly increased.
 -Below stamina is a 'flag bar' which displays certain combat-related modi of
  your character, if available to your class:
  -Combat stance (Bl = balanced, Df = defensive, Of = offensive, see (6.2))
