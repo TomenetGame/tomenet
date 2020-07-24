@@ -8989,41 +8989,105 @@ void mix_chemicals(int Ind, int item) {
 
 		/* Check for valid crafting results! */
  #ifndef NO_RUST_NO_HYDROXIDE
-		if ((cc == 1 && su == 1 && sp == 2) ||
-		    (as == 3 && lo == 1)) q_ptr->sval = SV_CHARGE_BLAST;
-		if ((cc == 1 && su == 1 && sp == 3) ||
-		    (as == 3 && lo == 1 && mh == 1)) q_ptr->sval = SV_CHARGE_XBLAST;
-		if (cc == 2 && su == 2 && sp == 3 && as == 3) q_ptr->sval = SV_CHARGE_SBLAST;
-		if (cc == 1 && su == 1 && sp == 3 && mc == 1) q_ptr->sval = SV_CHARGE_QUAKE;
-		if (cc == 2 && su == 2 && sp == 3 && mc == 3) q_ptr->sval = SV_CHARGE_DESTRUCTION;
-		if (cc == 2 && su == 1 && sp == 2 && mh == 1) q_ptr->sval = SV_CHARGE_FIRE;
-		if (cc == 2 && su == 2 && sp == 3 && mh == 2) q_ptr->sval = SV_CHARGE_FIRESTORM;
-		if (cc == 3 && su == 2 && sp == 2 && mh == 1) q_ptr->sval = SV_CHARGE_FIREWALL;
-		if (as == 3 && lo == 1 && me == 1) q_ptr->sval = SV_CHARGE_WRECKING;
-		if (as == 3 && lo == 1 && me == 3) q_ptr->sval = SV_CHARGE_CASCADING;
-		if (as == 3 && lo == 1 && me == 2) q_ptr->sval = SV_CHARGE_TACTICAL;
-		if (cc == 1 && su == 1 && sp == 2 && mp == 2) q_ptr->sval = SV_CHARGE_FLASHBOMB;
-		if (cc == 1 && su == 1 && sp == 2 && mh == 1) q_ptr->sval = SV_CHARGE_CONCUSSION;
-		if (cc == 1 && su == 1 && sp == 2 && mh == 2) q_ptr->sval = SV_CHARGE_XCONCUSSION;
-		if (cc == 1 && su == 2 && sp == 2 && mc == 1) q_ptr->sval = SV_CHARGE_UNDERGROUND;
+		if ((cc == 1 && su == 1 && sp == 2
+		    && as + mp + mh + me + mc + vi + ru + lo + wa + sw + ac == 0) ||
+		    (as == 3 && lo == 1
+		    && cc + su + sp + mp + mh + me + mc + vi + ru + wa + sw + ac == 0))
+			q_ptr->sval = SV_CHARGE_BLAST;
+		if ((cc == 1 && su == 1 && sp == 3
+		    && as + mp + mh + me + mc + vi + ru + lo + wa + sw + ac == 0) ||
+		    (as == 3 && lo == 1 && mh == 1
+		    && cc + su + sp + mp + me + mc + vi + ru + wa + sw + ac == 0))
+			q_ptr->sval = SV_CHARGE_XBLAST;
+		if (cc == 2 && su == 2 && sp == 3 && as == 3
+		    && mp + mh + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_SBLAST;
+		if (cc == 1 && su == 1 && sp == 3 && mc == 1
+		    && as + mp + mh + me + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_QUAKE;
+		if (cc == 2 && su == 2 && sp == 3 && mc == 3
+		    && as + mp + mh + me + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_DESTRUCTION;
+		if (cc == 2 && su == 1 && sp == 2 && mh == 1
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_FIRE;
+		if (cc == 2 && su == 2 && sp == 3 && mh == 2
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_FIRESTORM;
+		if (cc == 3 && su == 2 && sp == 2 && mh == 1
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_FIREWALL;
+		if (as == 3 && lo == 1 && me == 1
+		    && cc + su + sp + mp + mh + mc + vi + ru + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_WRECKING;
+		if (as == 3 && lo == 1 && me == 3
+		    && cc + su + sp + mp + mh + mc + vi + ru + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_CASCADING;
+		if (as == 3 && lo == 1 && me == 2
+		    && cc + su + sp + mp + mh + mc + vi + ru + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_TACTICAL;
+		if (cc == 1 && su == 1 && sp == 2 && mp == 2
+		    && as + mh + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_FLASHBOMB;
+		if (cc == 1 && su == 1 && sp == 2 && mh == 1
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_CONCUSSION;
+		if (cc == 1 && su == 1 && sp == 2 && mh == 2
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_XCONCUSSION;
+		if (cc == 1 && su == 2 && sp == 2 && mc == 1
+		    && as + mp + mh + me + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_UNDERGROUND;
  #else
-		if ((cc == 1 && su == 1 && sp == 2) ||
-		    (as == 3 && lo == 1)) q_ptr->sval = SV_CHARGE_BLAST;
-		if ((cc == 1 && su == 1 && sp == 3) ||
-		    (as == 3 && lo == 1 && me == 1)) q_ptr->sval = SV_CHARGE_XBLAST;
-		if (cc == 2 && su == 2 && sp == 3 && as == 3) q_ptr->sval = SV_CHARGE_SBLAST;
-		if (cc == 1 && su == 1 && sp == 3 && mc == 1) q_ptr->sval = SV_CHARGE_QUAKE;
-		if (cc == 2 && su == 2 && sp == 3 && mc == 3) q_ptr->sval = SV_CHARGE_DESTRUCTION;
-		if (cc == 2 && su == 1 && sp == 2 && me == 1) q_ptr->sval = SV_CHARGE_FIRE;
-		if (cc == 2 && su == 2 && sp == 3 && me == 2) q_ptr->sval = SV_CHARGE_FIRESTORM;
-		if (cc == 3 && su == 2 && sp == 2 && me == 1) q_ptr->sval = SV_CHARGE_FIREWALL;
-		if (as == 3 && lo == 2 && me == 1) q_ptr->sval = SV_CHARGE_WRECKING;
-		if (as == 3 && lo == 2 && me == 3) q_ptr->sval = SV_CHARGE_CASCADING;
-		if (as == 3 && lo == 2 && me == 2) q_ptr->sval = SV_CHARGE_TACTICAL;
-		if (cc == 1 && su == 1 && sp == 2 && mp == 2) q_ptr->sval = SV_CHARGE_FLASHBOMB;
-		if (cc == 1 && su == 1 && sp == 2 && me == 1) q_ptr->sval = SV_CHARGE_CONCUSSION;
-		if (cc == 1 && su == 1 && sp == 2 && me == 2) q_ptr->sval = SV_CHARGE_XCONCUSSION;
-		if (cc == 1 && su == 2 && sp == 2 && mc == 1) q_ptr->sval = SV_CHARGE_UNDERGROUND;
+		if ((cc == 1 && su == 1 && sp == 2
+		    && as + mp + mh + me + mc + vi + ru + lo + wa + sw + ac == 0) ||
+		    (as == 3 && lo == 1
+		    && cc + su + sp + mp + mh + me + mc + vi + ru + wa + sw + ac == 0))
+			q_ptr->sval = SV_CHARGE_BLAST;
+		if ((cc == 1 && su == 1 && sp == 3
+		    && as + mp + mh + me + mc + vi + ru + lo + wa + sw + ac == 0) ||
+		    (as == 3 && lo == 1 && me == 1
+		    && cc + su + sp + mp + me + mc + vi + ru + wa + sw + ac == 0))
+			q_ptr->sval = SV_CHARGE_XBLAST;
+		if (cc == 2 && su == 2 && sp == 3 && as == 3
+		    && mp + mh + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_SBLAST;
+		if (cc == 1 && su == 1 && sp == 3 && mc == 1
+		    && as + mp + mh + me + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_QUAKE;
+		if (cc == 2 && su == 2 && sp == 3 && mc == 3
+		    && as + mp + mh + me + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_DESTRUCTION;
+		if (cc == 2 && su == 1 && sp == 2 && me == 1
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_FIRE;
+		if (cc == 2 && su == 2 && sp == 3 && me == 2
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_FIRESTORM;
+		if (cc == 3 && su == 2 && sp == 2 && me == 1
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_FIREWALL;
+		if (as == 3 && lo == 2 && me == 1
+		    && cc + su + sp + mp + mh + mc + vi + ru + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_WRECKING;
+		if (as == 3 && lo == 2 && me == 3
+		    && cc + su + sp + mp + mh + mc + vi + ru + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_CASCADING;
+		if (as == 3 && lo == 2 && me == 2
+		    && cc + su + sp + mp + mh + mc + vi + ru + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_TACTICAL;
+		if (cc == 1 && su == 1 && sp == 2 && mp == 2
+		    && as + mh + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_FLASHBOMB;
+		if (cc == 1 && su == 1 && sp == 2 && me == 1
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_CONCUSSION;
+		if (cc == 1 && su == 1 && sp == 2 && me == 2
+		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_XCONCUSSION;
+		if (cc == 1 && su == 2 && sp == 2 && mc == 1
+		    && as + mp + mh + me + vi + ru + lo + wa + sw + ac == 0)
+			q_ptr->sval = SV_CHARGE_UNDERGROUND;
  #endif
 
 		if (!q_ptr->sval) {
