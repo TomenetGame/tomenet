@@ -2267,6 +2267,16 @@ void cmd_the_guide(void) {
 				}
 				if (chapter[0]) continue;
 
+#if 1 /* (See explanation further below) */
+				for (i = 0; i < guide_skills; i++) {
+					if (strcasecmp(guide_skill[i], buf) && //super exact match? user even entered correct + or .? heh!
+					    strcasecmp(guide_skill[i] + 1, buf)) continue; //exact match? (note: leading + or . must be skipped)
+					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
+					break;
+				}
+				if (chapter[0]) continue;
+#endif
+
 				/* New, for 'Curses' vs 'Remove Curses': Do an 'exact match' search on guide chapters */
 				for (i = 0; i < guide_chapters; i++) {
 					if (strcasecmp(guide_chapter[i], buf)) continue;
@@ -2309,12 +2319,15 @@ void cmd_the_guide(void) {
 				}
 				if (chapter[0]) continue;
 
+#if 0 /* moved further above, so Digging skill is selected before Digging chapter */
 				for (i = 0; i < guide_skills; i++) {
-					if (strcasecmp(guide_skill[i], buf)) continue; //exact match?
+					if (strcasecmp(guide_skill[i], buf) && //super exact match? user even entered correct + or .? heh!
+					    strcasecmp(guide_skill[i] + 1, buf)) continue; //exact match? (note: leading + or . must be skipped)
 					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
 					break;
 				}
 				if (chapter[0]) continue;
+#endif
 				for (i = 0; i < guide_skills; i++) {
 					if (my_strcasestr(guide_skill[i], buf) != guide_skill[i]) continue; //prefix match?
 					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
