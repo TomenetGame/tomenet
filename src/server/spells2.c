@@ -9429,6 +9429,10 @@ void grind_chemicals(int Ind, int item) {
 		msg_print(Ind, "Artifacts cannot be ground.");
 		return;
 	}
+	if (o_ptr->tval == TV_CHEST && o_ptr->pval > 0) {
+		msg_print(Ind, "You have to open the chest in order to dismantle it first.");
+		return;
+	}
 
 	metal = contains_significant_reactive_metal(o_ptr);
 	wood = contains_significant_wood(o_ptr);
