@@ -9539,14 +9539,14 @@ void arm_charge(int Ind, int item, int dir) {
 	}
 	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
 	    (c_ptr->info & CAVE_PROT)) {
-		msg_print(Ind, "You cannot place charges on this special floor.");
+		msg_print(Ind, "\377yYou cannot place charges on this special floor.");
 		return;
 	}
 	/* Only set traps on floor grids */
 	if (!cave_clean_bold(zcave, py, px) ||
 	    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
 	    c_ptr->special) {
-		msg_print(Ind, "You cannot place a charge here.");
+		msg_print(Ind, "\377yYou cannot place a charge here.");
 		return;
 	}
 
@@ -9559,7 +9559,10 @@ void arm_charge(int Ind, int item, int dir) {
 	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_CALMNESS, 35))) return;
 
 	/* Hack: We just abuse monster traps for charges too.. */
-	if (!(cs_ptr = AddCS(c_ptr, CS_MON_TRAP))) return;
+	if (!(cs_ptr = AddCS(c_ptr, CS_MON_TRAP))) {
+		msg_print(Ind, "\377yYou cannot set a charge here.");
+		return;
+	}
 
 	/* Create a charge-item to be dropped on/into the floor */
 
