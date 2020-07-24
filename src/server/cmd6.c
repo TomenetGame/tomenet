@@ -5503,18 +5503,25 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	/* Roll for usage */
+	if (o_ptr->tval == TV_BOOK /* hack: blank books can always be 'activated' */
 #ifdef ENABLE_DEMOLITIONIST
-	if (o_ptr->tval == TV_CHEMICAL) ;
-	else if (o_ptr->tval == TV_CHARGE) {
-		if (rand_int(k_info[o_ptr->k_idx].level) > rand_int(get_skill_scale(p_ptr, SKILL_DIG, 100))) {
-			msg_format(Ind, "\377%cYou failed to set the charge up properly.", COLOUR_MD_FAIL);
-			return;
-		}
-	} else
+	/* Alchemy has nothing to do with magic device skills, and especially shouldn't set command_rep or we may run into weirdness!: */
+	    || o_ptr->tval == TV_CHEMICAL
+	    || o_ptr->tval == TV_CHARGE
 #endif
-	if (!activate_magic_device(Ind, o_ptr) &&
-	    o_ptr->tval != TV_BOOK) /* hack: blank books can always be 'activated' */
-	{
+	    ) {
+		/* Non magic devices don't get activation-repeats */
+		p_ptr->command_rep = 0;
+#ifdef ENABLE_DEMOLITIONIST
+		/* Specialty: Charges actually use Digging skill to determine activation chance */
+		if (o_ptr->tval == TV_CHARGE) {
+			if (rand_int(k_info[o_ptr->k_idx].level) > rand_int(get_skill_scale(p_ptr, SKILL_DIG, 100))) {
+				msg_format(Ind, "\377%cYou failed to set the charge up properly.", COLOUR_MD_FAIL);
+				return;
+			}
+		}
+#endif
+	} else if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to activate it properly.", COLOUR_MD_FAIL);
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
 
