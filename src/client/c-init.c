@@ -1143,7 +1143,8 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 				strcat(info, p1);
 				strcat(paste_lines[pl], info);
 				strcat(paste_lines[pl], " ");
-				Term_putstr(2 + (got_B_lines - 1) * 19, 7 + l, -1, ta_atk, info);
+				//Term_putstr(2 + (got_B_lines - 1) * 19, 7 + l, -1, ta_atk, info); //fixed-column view
+				Term_putstr(strlen(paste_lines[pl]) - strlen(info) - 1, 7 + l, -1, ta_atk, info); //just strcat the attacks, separated with space, same view as when chat-pasting it
 				break;
 			case 'F': /* flags */
 				if (!got_F_lines) {
