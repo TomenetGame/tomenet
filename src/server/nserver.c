@@ -6031,6 +6031,8 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		return 0;
 	}
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
 	/* for characters in forms that cannot use full equipment */
 	if (!item_tester_hook_wear(Ind, slot)) {
 		attr = TERM_L_DARK;
