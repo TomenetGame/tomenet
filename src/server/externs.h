@@ -2522,7 +2522,7 @@ extern int shutdown_recall_timer, shutdown_recall_state;
 
 /* runecraft.c */
 extern bool rune_enchant(int Ind, int item);
-extern bool warding_rune(int Ind, byte typ, byte dam);
+extern bool warding_rune(int Ind, byte typ, int dam, byte rad);
 extern bool warding_rune_break(int m_idx);
 
 #ifdef MONSTER_ASTAR

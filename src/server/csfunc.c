@@ -332,22 +332,21 @@ void montrapsave(c_special *cs_ptr)
 
 void runeload(c_special *cs_ptr)
 {
-	rd_byte(&cs_ptr->sc.rune.typ);
-	rd_byte(&cs_ptr->sc.rune.mod);
-	rd_byte(&cs_ptr->sc.rune.lev);
-	rd_byte(&cs_ptr->sc.rune.feat);
 	rd_s32b(&cs_ptr->sc.rune.id);
+	rd_s16b(&cs_ptr->sc.rune.dam);
+	rd_byte(&cs_ptr->sc.rune.rad);
+	rd_byte(&cs_ptr->sc.rune.typ);
+	rd_byte(&cs_ptr->sc.rune.feat);
 }
 
 void runesave(c_special *cs_ptr)
 {
-	wr_byte(cs_ptr->sc.rune.typ);
-	wr_byte(cs_ptr->sc.rune.mod);
-	wr_byte(cs_ptr->sc.rune.lev);
-	wr_byte(cs_ptr->sc.rune.feat);
 	wr_s32b(cs_ptr->sc.rune.id);
+	wr_s16b(cs_ptr->sc.rune.dam);
+	wr_byte(cs_ptr->sc.rune.rad);
+	wr_byte(cs_ptr->sc.rune.typ);
+	wr_byte(cs_ptr->sc.rune.feat);
 }
-
 
 void s32bload(c_special *cs_ptr)
 {

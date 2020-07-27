@@ -76,77 +76,34 @@ bool rune_enchant(int Ind, int item) {
 /*
  * Leave a "rune of warding" which projects when broken.
  * This otherwise behaves like a normal "glyph of warding".
+ * Returns TRUE if a glyph was placed, FALSE otherwise!
  */
-bool warding_rune(int Ind, byte typ, byte dam) {
+bool warding_rune(int Ind, byte typ, int dam, byte rad) {
 	player_type *p_ptr = Players[Ind];
 	int y = p_ptr->py, x = p_ptr->px;
 	struct worldpos *wpos = &p_ptr->wpos;
-
-	/* Emulate cave_set_feat_live but handle cs_ptr too! */
 	cave_type **zcave = getcave(wpos);
-	cave_type *c_ptr;
+	cave_type *c_ptr = &zcave[y][x];
 	struct c_special *cs_ptr;
-
-	/* Boundary check */
-	if (!(zcave = getcave(wpos))) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
-	if (!in_bounds(y, x)) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
-	c_ptr = &zcave[y][x];
-
-	/* Allowed? */
-	if ((!allow_terraforming(wpos, FEAT_RUNE) || istown(wpos)) && !is_admin(p_ptr)) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
-
-	/* No runes of protection / glyphs of warding on non-empty grids - C. Blue */
-	if (!(cave_clean_bold(zcave, y, x) && /* cave_clean_bold also checks for object absence */
-	    ((c_ptr->feat == FEAT_NONE) ||
-	    (c_ptr->feat == FEAT_FLOOR) ||
-	    (c_ptr->feat == FEAT_DIRT) ||
-	    (c_ptr->feat == FEAT_LOOSE_DIRT) || /* used for gardens (fields) in wild.c */
-	    (c_ptr->feat == FEAT_CROP) || /* used for gardens (fields) in wild.c */
-	    (c_ptr->feat == FEAT_GRASS) ||
-	    (c_ptr->feat == FEAT_SNOW) ||
-	    (c_ptr->feat == FEAT_ICE) ||
-	    (c_ptr->feat == FEAT_SAND) ||
-	    (c_ptr->feat == FEAT_ASH) ||
-	    (c_ptr->feat == FEAT_MUD) ||
-	    (c_ptr->feat == FEAT_FLOWER) ||
-	    (c_ptr->feat == FEAT_NETHER_MIST)))) {
-		msg_print(Ind, "You cannot place a glyph here."); return FALSE;
-	}
-
-	/* Don't mess with inns please! */
-	if (f_info[c_ptr->feat].flags1 & FF1_PROTECTED) { msg_print(Ind, "You cannot place a glyph here."); return FALSE; }
 
 	/* Allocate memory for a new rune */
 	if (!(cs_ptr = AddCS(c_ptr, CS_RUNE))) return FALSE;
 
-	/* Preserve Terrain Feature */
+	/* Preserve the old feature */
 	cs_ptr->sc.rune.feat = c_ptr->feat;
 
-	/* Store minimal runecraft info */
-	cs_ptr->sc.rune.typ = typ;
-	cs_ptr->sc.rune.lev = dam;
-	cs_ptr->sc.rune.id = p_ptr->id;
-
-	/* Change the feature */
-	if (c_ptr->feat != FEAT_RUNE) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if it gets changed */
-	c_ptr->feat = FEAT_RUNE;
-
-	int i;
-	for (i = 1; i <= NumPlayers; i++) {
-		p_ptr = Players[i];
-
-		/* Only works for players on the level */
-		if (!inarea(wpos, &p_ptr->wpos)) continue;
-
-		/* Notice */
-		note_spot(i, y, x);
-
-		/* Redraw */
-		lite_spot(i, y, x);
-
-		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_DISTANCE);
+	/* Try to place a rune */
+	if (!cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_RUNE)) {
+		msg_print(Ind, "You cannot place a glyph here.");
+		cs_erase(c_ptr, cs_ptr);
+		return FALSE;
 	}
+
+	/* Store info */
+	cs_ptr->sc.rune.id = p_ptr->id;
+	cs_ptr->sc.rune.dam = dam;
+	cs_ptr->sc.rune.rad = rad;
+	cs_ptr->sc.rune.typ = typ;
 
 	return TRUE;
 }
@@ -154,29 +111,27 @@ bool warding_rune(int Ind, byte typ, byte dam) {
 /*
  * Break a "rune of warding" which explodes when broken.
  * This otherwise behaves like a normal "glyph of warding".
+ * Returns TRUE if the monster died, FALSE otherwise!
  */
 bool warding_rune_break(int m_idx) {
 	monster_type *m_ptr = &m_list[m_idx];
-
-	/* Location info */
-	int mx = m_ptr->fx;
-	int my = m_ptr->fy;
-
-	/* Get the relevant level */
-	cave_type **zcave;
 	worldpos *wpos = &m_ptr->wpos;
-	zcave = getcave(wpos);
-	/* Paranoia */
+	cave_type **zcave = getcave(wpos);
 	if (!zcave) return(FALSE);
-
-	/* Get the stored rune info */
-	struct c_special *cs_ptr;
-	cave_type *c_ptr;
-	c_ptr = &zcave[my][mx];
-
-	cs_ptr = GetCS(c_ptr, CS_RUNE);
-	/* Paranoia */
+	int my = m_ptr->fy;
+	int mx = m_ptr->fx;
+	cave_type *c_ptr = &zcave[my][mx];
+	struct c_special *cs_ptr = GetCS(c_ptr, CS_RUNE);
 	if (!cs_ptr) return(FALSE);
+
+	/* Restore the feature */
+	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.rune.feat);
+
+	/* Clear cs_ptr before project() to save some lite_spot packets */
+	int d = cs_ptr->sc.rune.dam;
+	byte r = cs_ptr->sc.rune.rad;
+	byte t = cs_ptr->sc.rune.typ; // Flickers the feature in rune colours
+	cs_erase(c_ptr, cs_ptr);
 
 	/* XXX Hack -- Owner online? */
 	int i, who = PROJECTOR_MON_TRAP;
@@ -193,24 +148,16 @@ bool warding_rune_break(int m_idx) {
 		}
 	}
 
-	/* Fire if ready */
+	/* Explode if owner is in area, otherwise just refresh grid view */
 	if (who > 0) {
-
-		/* Create the Effect */
-		project(0 - who, 0, wpos, my, mx, cs_ptr->sc.rune.lev, cs_ptr->sc.rune.typ, (PROJECT_JUMP | PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_LODF), "");
-
+		project(0 - who, r, wpos, my, mx, d, t, (PROJECT_JUMP | PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_LODF), "");
 #ifdef USE_SOUND_2010
-		/* Sound */
 		sound_near_site(my, mx, wpos, 0, "ball", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+	} else {
+		everyone_lite_spot(wpos, my, mx);
 	}
 
-	/* Restore the original cave feature */
-	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.rune.feat);
-
-	/* Cleanup */
-	cs_erase(c_ptr, cs_ptr);
-
-	/* Return TRUE if m_idx still alive */
+	/* Return True if the monster died, false otherwise! */
 	return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
 }

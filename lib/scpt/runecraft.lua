@@ -96,7 +96,7 @@ E = { -- Enhanced Level Cost Max Dice Max Damage Max Radius Max Duration Max
 [BALL] = { "burst",  20, 16, 40, 0,  0, 90, 450, 2,  2,  0,  0},
 [STRM] = { "nimbus", 25, 25, 25, 0,  0, 16,  40, 1,  1, 30, 75},
 [CONE] = { "shot",   30,  6, 42, 4, 46,  2,  15, 9,  9,  0,  0},
-[SURG] = { "glyph",  35, 40, 40, 0,  0, 30, 240, 0,  0,  0,  0},
+[SURG] = { "glyph",  35, 40, 40, 4, 25,  2,  20, 1,  1,  0,  0},
 [FLAR] = { "nova",   40, 99, 99, 4, 46,  2,  26, 0,  0,  7,  7}}
 
 -- HACKS
@@ -309,9 +309,9 @@ function rcraft_prt(u,w)
             d, r),
           row+i+1, col)
         else
-          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %d",
+          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %dd%d rad %d",
             strbyte('a')+i, XX[1], a, c, f,
-            d),
+            x, y, r),
           row+i+1, col)
         end
       elseif band(U,FLAR)~=0 then
@@ -564,7 +564,7 @@ function cast_rune_spell(I,D,u)
     if X then
       fire_wave(I, PP[2], 0, d, 1, r, 1, EFF_WAVE, p.attacker)
     else
-      warding_rune(I, PP[2], d)
+      warding_rune(I, PP[2], d, r)
     end
   elseif band(u,FLAR)~=0 then
     if X then

@@ -277,7 +277,7 @@ extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, in
 
 /* runecraft.c */
 extern bool rune_enchant(int Ind, int item);
-extern bool warding_rune(int Ind, byte typ, byte dam);
+extern bool warding_rune(int Ind, byte typ, int dam, byte rad);
 extern bool warding_rune_break(int m_idx);
 
 /* Druidry */

@@ -9785,7 +9785,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 
 		/* Hack -- check for Glyph of Warding / Rune of Protection */
-		if (do_move && ((c_ptr->feat == FEAT_GLYPH) || (c_ptr->feat == FEAT_RUNE)) &&
+		if (do_move && (c_ptr->feat == FEAT_GLYPH) &&
 		    !((r_ptr->flags1 & RF1_NEVER_MOVE) && (r_ptr->flags1 & RF1_NEVER_BLOW))) {
 			/* Assume no move allowed */
 			do_move = FALSE;
@@ -9800,16 +9800,6 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					
 					/* Break the rune */
 					cave_set_feat_live(wpos, ny, nx, FEAT_FLOOR);
-					
-					/* Allow movement */
-					do_move = TRUE;
-				} else { //(c_ptr->feat == FEAT_RUNE)
-					/* Describe observable breakage */
-					/* Prolly FIXME */
-					msg_print_near_site(ny, nx, wpos, 0, TRUE, "The glyph of warding is broken!");
-
-					/* Do this after the monster moves */
-					//if (warding_rune_break(m_idx)) return;
 					
 					/* Allow movement */
 					do_move = TRUE;
@@ -10266,7 +10256,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			if (c_ptr->feat == FEAT_MON_TRAP && mon_hit_trap(m_idx)) return;
 
 			/* Explosive glyph? */
-			if (c_ptr->feat == FEAT_RUNE && warding_rune_break(m_idx)) return;
+			if (c_ptr->feat == FEAT_RUNE) {
+				msg_print_near_site(ny, nx, wpos, 0, TRUE, "The glyph of warding is broken!");
+				if (warding_rune_break(m_idx)) return;
+			}
 
 			/* Questor arrived at walk destination? */
 			if (m_ptr->questor && nx == m_ptr->destx && ny == m_ptr->desty)
