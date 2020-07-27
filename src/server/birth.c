@@ -3197,6 +3197,12 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	stat_order[4] = connp->stat_order[4];
 	stat_order[5] = connp->stat_order[5];
 
+	/* Rare panic save: <name> transmitted by client was NULL -- check added 27.7.2020 */
+	if (!name) {
+		s_printf("%s ERROR (c_name is null): %s (race %d ; class %d ; trait %d).\n", showtime(), accname, race, class, trait);
+		return FALSE;
+	}
+
 #ifdef ENABLE_DEATHKNIGHT
 	/* Unhack the artificial duplicate slot usage of Paladin/Death Knight class */
 	if (class == CLASS_PALADIN && race == RACE_VAMPIRE) class = CLASS_DEATHKNIGHT;
