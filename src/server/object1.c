@@ -6265,20 +6265,14 @@ void display_equip(int Ind) {
 }
 
 /* Redisplays all inventory and equipment even if not changed (for mindlinking) */
-void display_invenequip(int Ind, bool forward) {
-	player_type	*p_ptr = Players[Ind], *p_ptr2;
+void display_invenequip(int Ind) {
+	player_type	*p_ptr = Players[Ind];
 	register	int i;
 	object_type	*o_ptr;
 	byte		attr = TERM_WHITE;
 	char		tmp_val[80];
 	char		o_name[ONAME_LEN];
-	int		wgt, who = Ind;
-
-	/* Send to mindlinker instead? */
-	if (forward) {
-		if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) who = p_ptr2->Ind;
-		else return;
-	}
+	int		wgt;
 
 	/* Display the pack */
 	for (i = 0; i < INVEN_WIELD; i++) {
@@ -6321,12 +6315,12 @@ void display_invenequip(int Ind, bool forward) {
 		/* Send the info to the client */
 		if (is_newer_than(&p_ptr->version, 4, 4, 1, 7, 0, 0)) {
 			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
-				Send_inven(who, tmp_val[0], attr, wgt, o_ptr, o_name);
+				Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 			} else {
-				Send_inven_wide(who, tmp_val[0], attr, wgt, o_ptr, o_name);
+				Send_inven_wide(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 			}
 		} else {
-			Send_inven(who, tmp_val[0], attr, wgt, o_ptr, o_name);
+			Send_inven(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 		}
 	}
 
@@ -6358,8 +6352,8 @@ void display_invenequip(int Ind, bool forward) {
 		//wgt = o_ptr->weight; <- shows wrongly for ammunition!
 
 		/* Send the info off */
-		//Send_equip(who, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
-		Send_equip(who, tmp_val[0], attr, wgt, o_ptr, o_name);
+		//Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->pval, o_name);
+		Send_equip(Ind, tmp_val[0], attr, wgt, o_ptr, o_name);
 	}
 }
 

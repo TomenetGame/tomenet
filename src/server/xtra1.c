@@ -974,12 +974,7 @@ static void fix_player(int Ind) {
 
 static void fix_allitems(int Ind) {
 	/* Resend the inventory */
-	display_invenequip(Ind, FALSE);
-}
-
-static void fix_allitems_fwd(int Ind) {
-	/* Resend the inventory */
-	display_invenequip(Ind, TRUE);
+	display_invenequip(Ind);
 }
 
 
@@ -7343,14 +7338,14 @@ void window_stuff(int Ind) {
 
 	/* Display all inventory and equipment, forced */
 	if (p_ptr->window & PW_ALLITEMS) {
-		p_ptr->window &= ~(PW_ALLITEMS);
 		fix_allitems(Ind);
+		p_ptr->window &= ~(PW_ALLITEMS);
 	}
 
 	/* Display all inventory and equipment, forced, to mindlinker */
 	if (p_ptr->window & PW_ALLITEMS_FWD) {
+		fix_allitems(Ind); //Send_equip() checks p_ptr->window for PW_ALLITEMS_FWD
 		p_ptr->window &= ~(PW_ALLITEMS_FWD);
-		fix_allitems_fwd(Ind);
 	}
 }
 

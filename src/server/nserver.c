@@ -5904,6 +5904,8 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 	char uses_dir = 0; /* flag whether a rod requires a direction for zapping or not */
 
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
 	/* Mark rods that require a direction */
 	if (o_ptr->tval == TV_ROD && rod_requires_direction(Ind, o_ptr))
 		uses_dir = 1;
@@ -5953,6 +5955,8 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 	char ident = 0;
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6012,6 +6016,11 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
 	int slot = INVEN_WIELD + pos - 'a';
+	bool forward = FALSE;
+
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Send to mindlinker instead? */
+	if (p_ptr->window & PW_ALLITEMS_FWD) forward = TRUE;
 
 	/* Mark activatable items that require a direction */
 	if (activation_requires_direction(o_ptr)
@@ -6030,8 +6039,6 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 			Ind, connp->state, connp->id));
 		return 0;
 	}
-
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 
 	/* for characters in forms that cannot use full equipment */
 	if (!item_tester_hook_wear(Ind, slot)) {
@@ -6069,6 +6076,8 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		else
 			Packet_printf(&connp2->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval, o_ptr->tval == TV_BOOK ? o_ptr->pval : 0, name);
 	}
+
+	if (forward) return 0;
 
 	if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, o_ptr->sval,
