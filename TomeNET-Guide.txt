@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. July 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 30. July 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11756,6 +11756,14 @@ DROP_60         The monster has a 60%/90% chance to drop something (an item or
  DROP_90        a gold pile).
 ONLY_GOLD       The monster drops only gold (and no items) or only items (and
  ONLY_ITEM      no gold).
+POWERFUL        Harder to taunt, charm or silence. Cannot be blinded.
+                Doesn't have a "surprised" delay on player teleport arrival.
+                Ball and breath attacks gain +1 radius.
+                Doesn't deliberately pick one melee target when having a choice
+                of several melee targets (just attacks indiscriminately).
+                Hacks down terrain features in its way that it can pass anyway.
+                Cannot be slowed by martial arts slowing techniques.
+                Harder to repel by kinetic shield or to affect by aura of fear.
 
 
 
@@ -16021,6 +16029,7 @@ F: flag list
     HURT_LITE   This form will take 2x damage from light attacks.
     HAS_LITE    If this monster either doesn't have a torso or can actually
                 breathe light, it will give you +1 light radius.
+    POWERFUL    Gain +1 radius when using monster's ball or breath attacks.
 
     For all racial flags such as ANIMAL, SPIDER, EVIL, DEMON etc please see the
     list of racial abilities further below.
