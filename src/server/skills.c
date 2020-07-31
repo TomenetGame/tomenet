@@ -666,7 +666,12 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		    (old_value < 500 && new_value >= 500))
 			msg_print(Ind, "\374\377GYour boomerang throwing speed has become faster due to your training!");
 		break;
-	case SKILL_AURA_FEAR: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[0] = TRUE; break; /* MAX_AURAS */
+	case SKILL_AURA_FEAR:
+		if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC)))
+			p_ptr->aura[0] = TRUE;
+		if (old_value < 200 && new_value >= 200)
+			msg_print(Ind, "\374\377GEnemies hit by you in melee may be stricken with fear!");
+		break;
 	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[1] = TRUE; break;
 	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[2] = TRUE; break;
 #if 0 /* obsolete */

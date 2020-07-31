@@ -190,8 +190,8 @@ __races_diz = {
     "as they get stronger. At 30 they learn how to",
     "levitate. Experience is very hard for them to gain",
     "and they need to eat often. They receive boni on",
-    "Attunement, Polearm-Mastery and Magic Devices, and",
-    "a small bonus on Nexus runemastery.",},
+    "Attunement, Polearm-Mastery, Magic Devices,",
+    "Aura of Fear, Nexus runemastery, and Swimming.",},
 
 "Kobold",
     {"\255uKobolds\255U are somewhat smallish dog-faced humanoids",

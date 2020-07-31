@@ -13472,13 +13472,19 @@ stated.
                                 100% when both schools reach 50.000.
 
         .Aura of Fear           Monsters that hit you are stroke by fear.
-         (0.500)                Undead and non-living monsters and those that
-                                resist fear (NO_FEAR) are not affected.
+         (0.500)                Mindless undead, non-living monsters and those
+                                that resist fear (NO_FEAR) are not affected.
                                 The chance for the aura to trigger depends on
                                 your skill alone. Whether it has effect on your
                                 foe or not only depends on its rlevel compared
                                 to your skill - uniques and powerful monsters
                                 receive a small bonus in their favour.
+                                At a skill of 20 the aura is so strong that
+                                your melee attacks (weapon as well as martial
+                                arts) will have a chance to terrify monsters.
+                                This chance increases with skill, but will not
+                                affect monsters with an rlevel more than 10
+                                above your character level.
                                 It is automatically enabled when you train the
                                 skill; you can disable the aura in 'm' menu.
                                 Typing '/ex' command into chat will display the
@@ -14520,9 +14526,9 @@ create a character!):
     even while polymorphed.
     Thanks to their scaly hide they receive a small bonus to armour class,
     especially the metallic lineages - bronze, silver and gold.
-    Draconians receive a bonus on 'Attunement', 'Polearm-mastery' and
-    'Magic devices', a small bonus on 'Nexus' runemastery, and a slight bonus
-    on 'Swimming'.
+    Draconians receive a bonus on 'Polearm-mastery', 'Attunement', 
+    'Nexus' runemastery, 'Magic devices', a large bonus on 'Aura of Fear',
+    and a slight bonus on 'Swimming'.
 
     Table of their traits:
     Lineage     Breath          Resistances/abilities

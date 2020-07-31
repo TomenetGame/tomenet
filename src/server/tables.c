@@ -1976,6 +1976,10 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_TCONTACT,
 			'+', 0,
 			'%', 110, },
+		/* Dragons are especially fearsome, if not very stealthy. - Kurzel*/
+		{ SKILL_AURA_FEAR,
+			'+', 0,
+			'%', 120, },
 		{ SKILL_CLIMB,
 			'+', 0,
 			'+', 100, },
