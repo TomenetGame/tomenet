@@ -5821,7 +5821,7 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&connp2->version, 4, 7, 2, 0, 0, 0)) {
+		if (!is_older_than(&connp2->version, 4, 7, 3, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
 		} else if (is_newer_than(&connp2->version, 4, 5, 2, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
@@ -5839,7 +5839,7 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 		return 0;
 	}
 
-	if (is_newer_than(&connp->version, 4, 7, 2, 0, 0, 0)) {
+	if (!is_older_than(&connp->version, 4, 7, 3, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
 	} else if (is_newer_than(&connp->version, 4, 5, 2, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
