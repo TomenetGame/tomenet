@@ -4448,8 +4448,8 @@ void do_cmd_disarm(int Ind, int dir) {
  #ifdef USE_SOUND_2010
 					sound_near_site(p_ptr->py, p_ptr->px, wpos, 0, "item_rune", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-					delete_object_idx(cs_ptr->sc.montrap.trap_kit, TRUE);
 					j = cs_ptr->sc.montrap.feat;
+					delete_object_idx(cs_ptr->sc.montrap.trap_kit, TRUE);
 					cs_erase(c_ptr, cs_ptr);
 					cave_set_feat_live(wpos, y, x, j);
 					//todo maybe: get the charge back, if we still consider it functional
