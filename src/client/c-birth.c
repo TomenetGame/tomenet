@@ -1575,7 +1575,7 @@ static bool choose_mode(void) {
 
 	if (!s_RPG) {
 		put_str("n) Normal", 16, 2);
-		c_put_str(TERM_SLATE, "(3 lifes)", 16, 12);
+		c_put_str(TERM_SLATE, "(3 lives)", 16, 12);
 	}
 	put_str("g) No Ghost", 17, 2);
 	c_put_str(TERM_SLATE, "('Unworldly' - One life only. The traditional rogue-like way)", 17, 14);
