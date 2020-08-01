@@ -9047,7 +9047,7 @@ void mix_chemicals(int Ind, int item) {
 		if ((cc == 1 && su == 1 && sp == 3
 		    && as + mp + mh + me + mc + vi + ru + lo + wa + sw + ac == 0) ||
 		    (as == 3 && lo == 1 && me == 1
-		    && cc + su + sp + mp + me + mc + vi + ru + wa + sw + ac == 0))
+		    && cc + su + sp + mp + mh + mc + vi + ru + wa + sw + ac == 0))
 			q_ptr->sval = SV_CHARGE_XBLAST;
 		if (cc == 2 && su == 2 && sp == 3 && as == 3
 		    && mp + mh + me + mc + vi + ru + lo + wa + sw + ac == 0)
@@ -9083,7 +9083,7 @@ void mix_chemicals(int Ind, int item) {
 		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
 			q_ptr->sval = SV_CHARGE_CONCUSSION;
 		if (cc == 1 && su == 1 && sp == 2 && me == 2
-		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+		    && as + mp + mh + mc + vi + ru + lo + wa + sw + ac == 0)
 			q_ptr->sval = SV_CHARGE_XCONCUSSION;
 		if (cc == 1 && su == 2 && sp == 2 && mc == 1
 		    && as + mp + mh + me + vi + ru + lo + wa + sw + ac == 0)
