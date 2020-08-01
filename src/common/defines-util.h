@@ -238,6 +238,7 @@
 #define PROJECT_RNAF	0x00080000	/* has no adverse effects if resisted (added for time runecraft on high-elven characters) */
 
 #define PROJECT_STAR	0x00100000	/* Cast 8 rays and hit the central grid at target location. - Kurzel */
+#define PROJECT_TRAP	0x00200000	/* Caused by a set-up incident, added for blast charges (ENABLE_DEMOLITIONIST) to allow larger GF_DETONATION radius */
 
 /* Allowing LUA to call project() - Kurzel */
 /* special 'projector' types, used in project(). */

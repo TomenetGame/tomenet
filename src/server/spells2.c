@@ -9674,7 +9674,7 @@ void arm_charge(int Ind, int item, int dir) {
 void detonate_charge(object_type *o_ptr) {
 	struct worldpos *wpos = &o_ptr->wpos;
 	int i, who = PROJECTOR_MON_TRAP, x = o_ptr->ix, y = o_ptr->iy;
-	int flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO
+	int flg = (PROJECT_TRAP | PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO
 	    | PROJECT_GRID | PROJECT_SELF | PROJECT_LODF);//check the flags for correctness
 	struct c_special *cs_ptr;
 	cave_type *c_ptr, **zcave;

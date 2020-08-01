@@ -11689,6 +11689,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	int	who_can_see[26], num_can_see = 0;
 	int	terrain_resistance = -1, terrain_damage = -1;
 	bool	old_tacit = suppress_message, suppress_explosion = FALSE;
+	int	disi_range_limit = 0;
 
 #ifdef OPTIMIZED_ANIMATIONS
 	int path_y[MAX_RANGE];
@@ -12402,9 +12403,10 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	/* Ported hack for reflection */
 	dist_hack = dist;
 
+	if (typ == GF_ROCKET || typ == GF_DETONATION) disi_range_limit = (flg & PROJECT_TRAP) ? 2 : 1;
+
 	/* If we found a "target", explode there */
 	if (true_dist <= MAX_RANGE && !suppress_explosion) {
-
 		dist = 0;
 
 		for (i = 0; i <= tdi[rad]; i++) {
@@ -12431,10 +12433,11 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 			/* Floor destruction of Disintegration, Rocket and Detonation is handled here instead of in project_f(): */
 			if ((typ == GF_DISINTEGRATE) ||
 			    /* Reduce disintegration effect of rockets to radius 1 - C. Blue */
-			    ((typ == GF_ROCKET || typ == GF_DETONATION) && (ABS(y - y2) <= 1) && (ABS(x - x2) <= 1)) ) {
+			    //(disi_range_limit && (ABS(y - y2) <= disi_range_limit) && (ABS(x - x2) <= disi_range_limit)) ) {
+			    (disi_range_limit && distance(y, x, y2, x2) <= disi_range_limit)) {
 				c_ptr2 = &zcave[y][x];
 
-				if (cave_valid_bold(zcave,y,x) && /* <- implies !FF1_PERMANENT */
+				if (cave_valid_bold(zcave, y, x) && /* <- implies !FF1_PERMANENT */
 				    //(cave[y][x].feat < FEAT_PATTERN_START || cave[y][x].feat > FEAT_PATTERN_XTRA2) &&
 				    (c_ptr2->feat != FEAT_SHAL_WATER) &&
 				    (c_ptr2->feat != FEAT_DEEP_WATER) &&
