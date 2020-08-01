@@ -4882,7 +4882,7 @@ void rename_character(char *pnames){
 					sf_delete(pname);
 					return;
 				}
-				Send_char_info(i, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode, p_ptr->name);
+				Send_char_info(i, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode, p_ptr->lives - 1, p_ptr->name);
 				return;
 			}
 			return;

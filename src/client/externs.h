@@ -272,7 +272,7 @@ extern s16b race, dna_race;
 extern s16b class, dna_class;
 extern cptr dna_class_title; //ENABLE_DEATHKNIGHT, ENABLE_HELLKNIGHT, ENABLE_CPRIEST
 extern s16b sex, dna_sex;
-extern s16b mode;
+extern s16b mode, lives;
 extern s16b trait, dna_trait;
 
 /* DEG Stuff for new party client */

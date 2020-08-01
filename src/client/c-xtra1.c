@@ -2314,10 +2314,13 @@ void display_player(int hist) {
 			c_put_str(TERM_L_DARK, "Soloist (one life)", y_rowmode, 15);
 		else if (p_ptr->mode & MODE_NO_GHOST)
 			c_put_str(TERM_L_DARK, "Unworldly (one life)", y_rowmode, 15);
-		else if (p_ptr->mode & MODE_HARD)
-			c_put_str(TERM_SLATE, "Hard (3 lives, extra hard)", y_rowmode, 15);
-		else /*(p_ptr->mode == MODE_NORMAL)*/
-			c_put_str(TERM_WHITE, "Normal (3 lives)", y_rowmode, 15);
+		else if (p_ptr->mode & MODE_HARD) {
+			if (p_ptr->lives == -1) c_put_str(TERM_SLATE, "Hard (extra hard, 3 lives)", y_rowmode, 15);
+			else c_put_str(TERM_SLATE, format("Hard (extra hard, %d of 3 lives left)", p_ptr->lives), y_rowmode, 15);
+		} else {/*(p_ptr->mode == MODE_NORMAL)*/
+			if (p_ptr->lives == -1) c_put_str(TERM_WHITE, "Normal (3 lives)", y_rowmode, 15);
+			else c_put_str(TERM_WHITE, format("Normal (%d of 3 lives left)", p_ptr->lives), y_rowmode, 15);
+		}
 
 		/* Age, Height, Weight, Social */
 		prt_num("Age          ", (int)p_ptr->age, y_row1, 32, TERM_L_BLUE);

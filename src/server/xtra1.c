@@ -136,8 +136,6 @@ static void prt_stat(int Ind, int stat) {
 }
 
 
-
-
 /*
  * Prints "title", including "wizard" or "winner" as needed.
  */
@@ -865,7 +863,7 @@ static void prt_frame_basic(int Ind) {
 	int i;
 
 	/* Race and Class */
-	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode, p_ptr->name);
+	Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode, p_ptr->lives - 1, p_ptr->name);
 
 	/* Title */
 	prt_title(Ind);
@@ -7113,7 +7111,7 @@ void redraw_stuff(int Ind) {
 
 	if (p_ptr->redraw & PR_MISC) {
 		p_ptr->redraw &= ~(PR_MISC);
-		Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode, p_ptr->name);
+		Send_char_info(Ind, p_ptr->prace, p_ptr->pclass, p_ptr->ptrait, p_ptr->male, p_ptr->mode, p_ptr->lives - 1, p_ptr->name);
 	}
 
 	if (p_ptr->redraw & PR_TITLE) {

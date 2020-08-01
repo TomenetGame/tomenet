@@ -5807,7 +5807,7 @@ int Send_stamina(int Ind, int mst, int cst) {
 	return Packet_printf(&connp->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
 }
 
-int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, cptr name) {
+int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, int lives, cptr name) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL;
 
@@ -5821,7 +5821,9 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, c
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&connp2->version, 4, 5, 2, 0, 0, 0)) {
+		if (is_newer_than(&connp2->version, 4, 7, 2, 0, 0, 0)) {
+			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
+		} else if (is_newer_than(&connp2->version, 4, 5, 2, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
 		} else if (is_newer_than(&connp2->version, 4, 4, 5, 10, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, trait, sex, mode);
@@ -5837,7 +5839,9 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, c
 		return 0;
 	}
 
-	if (is_newer_than(&connp->version, 4, 5, 2, 0, 0, 0)) {
+	if (is_newer_than(&connp->version, 4, 7, 2, 0, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
+	} else if (is_newer_than(&connp->version, 4, 5, 2, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
 	} else if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, trait, sex, mode);

@@ -2061,8 +2061,11 @@ int Receive_char_info(void) {
 
 	/* Clear any old info */
 	race = class = trait = sex = mode = 0;
+	lives = -1;
 
-	if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
+	if (!is_older_than(&server_version, 4, 7, 3, 0, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%hd%s", &ch, &race, &class, &trait, &sex, &mode, &lives, cname)) <= 0) return n;
+	} else if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%s", &ch, &race, &class, &trait, &sex, &mode, cname)) <= 0) return n;
 	} else if (is_newer_than(&server_version, 4, 4, 5, 10, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd", &ch, &race, &class, &trait, &sex, &mode)) <= 0) return n;
@@ -2070,6 +2073,7 @@ int Receive_char_info(void) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &race, &class, &sex, &mode)) <= 0) return n;
 	}
 
+	p_ptr->lives = lives;
 	p_ptr->prace = race;
 	p_ptr->rp_ptr = &race_info[race];
 	p_ptr->pclass = class;

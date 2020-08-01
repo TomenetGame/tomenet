@@ -163,7 +163,7 @@ s16b race, dna_race;
 s16b class, dna_class;
 cptr dna_class_title; //ENABLE_DEATHKNIGHT,ENABLE_HELLKNIGHT,ENABLE_CPRIEST
 s16b sex, dna_sex;
-s16b mode;
+s16b mode, lives;
 s16b trait = 0, dna_trait;
 s16b stat_order[6], dna_stat_order[6];			/* Desired order of stats */
 
