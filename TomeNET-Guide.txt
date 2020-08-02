@@ -11526,12 +11526,12 @@ Rods
 Spell Scrolls       x               x                       x
 Spell Crystals      x       x
 Beginner Handbooks  x               x
-Handbooks           x               x                       x
-Tomes               x               x
-Greater Crystals
+Handbooks (**)      x               x                       x
+Tomes (**)          x               x
+Greater Crystals            x
 Custom Books        x               x
 
-*Impact-based attacks (includes force- and sound-based attacks):
+(*) Impact-based attacks (includes force- and sound-based attacks):
 These do not hurt items in your inventory. For example impact hounds breathing
 at you will not destroy any potions in your backpack.
 However, there are some cases where impact-type destruction can happen to your
@@ -11544,7 +11544,7 @@ inventory items:
 Items ignore certain elements if they have the according resistance due to ego
 powers, for example a leather shield of resist fire will ignore fire.
 
-Some tomes or spellbooks will resist certain elements, for example a
+(**) Some tomes or spellbooks will resist certain elements, for example a
 Tome of the Eternal Flame cannot be harmed by fire.
 
 
