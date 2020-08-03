@@ -9059,13 +9059,13 @@ void mix_chemicals(int Ind, int item) {
 		    && as + mp + mh + me + vi + ru + lo + wa + sw + ac == 0)
 			q_ptr->sval = SV_CHARGE_DESTRUCTION;
 		if (cc == 2 && su == 1 && sp == 2 && me == 1
-		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+		    && as + mp + mh + mc + vi + ru + lo + wa + sw + ac == 0)
 			q_ptr->sval = SV_CHARGE_FIRE;
 		if (cc == 2 && su == 2 && sp == 3 && me == 2
-		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+		    && as + mp + mh + mc + vi + ru + lo + wa + sw + ac == 0)
 			q_ptr->sval = SV_CHARGE_FIRESTORM;
 		if (cc == 3 && su == 2 && sp == 2 && me == 1
-		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+		    && as + mp + mh + mc + vi + ru + lo + wa + sw + ac == 0)
 			q_ptr->sval = SV_CHARGE_FIREWALL;
 		if (as == 3 && lo == 2 && me == 1
 		    && cc + su + sp + mp + mh + mc + vi + ru + wa + sw + ac == 0)
@@ -9080,7 +9080,7 @@ void mix_chemicals(int Ind, int item) {
 		    && as + mh + me + mc + vi + ru + lo + wa + sw + ac == 0)
 			q_ptr->sval = SV_CHARGE_FLASHBOMB;
 		if (cc == 1 && su == 1 && sp == 2 && me == 1
-		    && as + mp + me + mc + vi + ru + lo + wa + sw + ac == 0)
+		    && as + mp + mh + mc + vi + ru + lo + wa + sw + ac == 0)
 			q_ptr->sval = SV_CHARGE_CONCUSSION;
 		if (cc == 1 && su == 1 && sp == 2 && me == 2
 		    && as + mp + mh + mc + vi + ru + lo + wa + sw + ac == 0)
