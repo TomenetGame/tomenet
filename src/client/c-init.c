@@ -1772,6 +1772,7 @@ static void init_artifact_list() {
 #if 1 /* we cannot predict the attr for flavoured items! (rings, amulets) */
 			/* For insta-arts: Those that don't have a specific colour are 'd' in k_info to indicate that they
 			   are ok with receiving a random flavour. Have to substitute that for something readable here. */
+			/* Note: The \377- will cause charactermode-specific colour when chat-pasting, so it'll be replaced live from paste_lines on actual pasting. */
 			strcpy(buf, format("\377%c%c\377-  ", kind_list_attr[i] == 'd' ? 's' : kind_list_attr[i], kind_list_char[i]));
 #else
 			strcpy(buf, format("%c  ", kind_list_char[i]));
@@ -1826,7 +1827,7 @@ static void init_artifact_list() {
 	my_fclose(fff);
 }
 void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
-	char buf[1024], *p1, *p2;
+	char buf[1024], *p1, *p2, *tmpc;
 	FILE *fff;
 	int l = 0, pl = -1, cl = strlen(cname);
 	//int pl_len = 80 - 3 - cl - 2; /* 80 - 3 - namelen = chars available per chat line; 3 for brackets+space, 2 for colour code */
@@ -1868,8 +1869,9 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		strcpy(paste_lines[++pl], format("\377U%s",
-			artifact_list_name[alidx]));
+		strcpy(paste_lines[++pl], format("\377U%s", artifact_list_name[alidx]));
+		/* Glitch fix: Replace \377- by \377U so we don't fall back on charactermode-specific colour */
+		if ((tmpc = strstr(paste_lines[pl], "\377-"))) *(tmpc + 1) = 'U';
 		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 
 		/* fetch diz */
