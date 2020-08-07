@@ -2136,7 +2136,7 @@ static byte player_color(int Ind) {
 	/* NOTE: For the player looking at himself, this is done in lite_spot(),
 	         which is called from set_tim_manashield().  */
 #ifdef EXTENDED_TERM_COLOURS
-	if (!is_older_than(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
+	if (is_atleast(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
 		if (p_ptr->tim_manashield > 15) return TERM_SHIELDM;
 		else if (p_ptr->tim_manashield) return TERM_NEXU;
 		if (p_ptr->nimbus > 15) return spell_color(p_ptr->nimbus_t);
@@ -3961,7 +3961,7 @@ void lite_spot(int Ind, int y, int x) {
 					if (is_us && is_newer_than(&p_ptr->version, 4, 5, 4, 0, 0, 0)) c |= 0x80;
 				}
 #else
-				if (is_us && p_ptr->hilite_player && !is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0)) a |= 0x80;
+				if (is_us && p_ptr->hilite_player && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) a |= 0x80;
 #endif
 
 				/* Tell client to redraw this grid */
@@ -4770,7 +4770,7 @@ static void wild_display_map(int Ind, char mode) {
 	}
 
 	/* Indicate 'finished sending', so the client can add some extra info to the map */
-	if (!is_older_than(&p_ptr->version, 4, 7, 1, 2, 0, 0)) Send_mini_map(Ind, -1, 0, 0);
+	if (is_atleast(&p_ptr->version, 4, 7, 1, 2, 0, 0)) Send_mini_map(Ind, -1, 0, 0);
 
 	/* Restore lighting effects */
 	p_ptr->floor_lighting = old_floor_lighting;
