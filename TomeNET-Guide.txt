@@ -10489,6 +10489,7 @@ CHAOTIC ('It produces chaotic effects.')
            mimicry users.
         Note that most of these have an *extremely* low chance to occur.
         Most of the time the vampirism or confusion effect is chosen.
+        'Chaotic' effects can only happen on melee attacks.
 CLONE ('It can clone monsters.')
         Has a 1 in 1000 chance to clone the monster it hits.
 IMPACT ('It can cause earthquakes.')
@@ -12206,6 +12207,12 @@ at vampiric leeching, compared to vampiric weapons, due to half of vampires'
 attacks being normal hits and the other half being biting (which does the
 actual leeching).
 
+Last but not least some items might be 'Chaotic'. This means there are a few
+specific things that can happen on striking an enemy. One of them is vampiric
+life drain, which (together with 'confusion') is actually the most common one.
+When it happens it will have the same effect as if your weapon was actually
+vampiric. (For more details on the CHAOTIC flag, see (5.8).)
+
 In general, vampiric flags don't stack from multiple sources! Just the source
 that fits the situation best (usually weapon/ammo) overrides the weaker ones
 (usually non-weapons). Here is a table of priority - as was just explained,
@@ -12222,6 +12229,7 @@ The best source overrides all weaker ones, which simply get ignored:
 | Non-weapons (gloves)   50%/100% (**)| Non-weapons (gloves)        33%     |
 | Fruit bat (native only)     50%     |                                     |
 | Fruit bat (potion only)     33%     |                                     |
+| 'Chaotic' effect (proc)    100%     |                                     |
 
 (Mimicked fruit bats don't get vampirism.)
 
