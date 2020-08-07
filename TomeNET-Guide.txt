@@ -12224,12 +12224,12 @@ The best source overrides all weaker ones, which simply get ignored:
 -----------------------------------------------------------------------------
 | Weapon                     100%     | Ranged weapon               50%     |
 | Vampire bat/mist form      100%     | Ammunition                  50%     |
+| 'Chaotic' effect (proc)    100%     |                                     |
 | Vampire character race      50% (*) |                                     |
 | Other vampiric forms        50%     |                                     |
 | Non-weapons (gloves)   50%/100% (**)| Non-weapons (gloves)        33%     |
 | Fruit bat (native only)     50%     |                                     |
 | Fruit bat (potion only)     33%     |                                     |
-| 'Chaotic' effect (proc)    100%     |                                     |
 
 (Mimicked fruit bats don't get vampirism.)
 
