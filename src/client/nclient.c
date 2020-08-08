@@ -2063,7 +2063,7 @@ int Receive_char_info(void) {
 	race = class = trait = sex = mode = 0;
 	lives = -1;
 
-	if (!is_older_than(&server_version, 4, 7, 3, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%hd%s", &ch, &race, &class, &trait, &sex, &mode, &lives, cname)) <= 0) return n;
 	} else if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd%hd%s", &ch, &race, &class, &trait, &sex, &mode, cname)) <= 0) return n;
@@ -2378,7 +2378,7 @@ int Receive_char(void) {
 		}
 	}
 #else
-	if (!is_older_than(&server_version, 4, 7, 3, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0)) {
 		if ((a & TERM_HILITE_PLAYER)) {
 			a &= ~TERM_HILITE_PLAYER;
 			is_us = TRUE;

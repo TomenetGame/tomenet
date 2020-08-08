@@ -2532,7 +2532,7 @@ static void sync_options(int Ind, bool *options) {
 		}
 	}
 
-	if (!is_older_than(&p_ptr->version, 4, 7, 1, 0, 0, 0)) {
+	if (is_atleast(&p_ptr->version, 4, 7, 1, 0, 0, 0)) {
 		p_ptr->last_words = options[117]; //it's back!
 		p_ptr->disturb_see = options[118];
 	} else {
@@ -5816,12 +5816,12 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 #endif
 
 	/* Hack: Transmitted 'mode' is int, not char, so we can stuff this in */
-	if (!is_older_than(&Players[Ind]->version, 4, 7, 1, 1, 0, 0) && Players[Ind]->fruit_bat == 1) mode |= MODE_FRUIT_BAT;
+	if (is_atleast(&Players[Ind]->version, 4, 7, 1, 1, 0, 0) && Players[Ind]->fruit_bat == 1) mode |= MODE_FRUIT_BAT;
 
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (!is_older_than(&connp2->version, 4, 7, 3, 0, 0, 0)) {
+		if (is_atleast(&connp2->version, 4, 7, 3, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
 		} else if (is_newer_than(&connp2->version, 4, 5, 2, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
@@ -5839,7 +5839,7 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 		return 0;
 	}
 
-	if (!is_older_than(&connp->version, 4, 7, 3, 0, 0, 0)) {
+	if (is_atleast(&connp->version, 4, 7, 3, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
 	} else if (is_newer_than(&connp->version, 4, 5, 2, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
@@ -6549,7 +6549,7 @@ int Send_bpr(int Ind, byte bpr, byte attr) {
 	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
 		connp2 = Conn[p_ptr2->conn];
-		if (bpr != 255 || !is_older_than(&Players[Ind2]->version, 4, 6, 1, 2, 0, 1))
+		if (bpr != 255 || is_atleast(&Players[Ind2]->version, 4, 6, 1, 2, 0, 1))
 			Packet_printf(&connp2->c, "%c%c%c", PKT_BPR, bpr, attr);
 	}
 

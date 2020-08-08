@@ -434,7 +434,7 @@ static void prt_speed(int Ind) {
 	int i = p_ptr->pspeed;
 
 	/* Mark 'temporary' speed effects */
-	if (!is_older_than(&p_ptr->version, 4, 7, 3, 0, 0, 0) &&
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0) &&
 	    p_ptr->fast && i >= 110)
 		i |= 0x100;
 
