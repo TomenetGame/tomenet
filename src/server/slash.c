@@ -1389,12 +1389,27 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/help") || prefix(messagelc, "/he") || prefix(messagelc, "/?")) {
-			char    path[MAX_PATH_LENGTH];
+			char path[MAX_PATH_LENGTH];
 
 			/* Special case: Search for a specific topic - in this case, invoke the Guide on client-side instead with a search performed for the topic specified! */
 			if (tk) {
+				bool allcaps = TRUE;
+				char* c;
+
+				c = message3;
+				while (*c) {
+					if (toupper(*c) == *c) {
+						c++;
+						continue;
+					}
+					allcaps = FALSE;
+					break;
+				}
+
 				/* We're looking for help on a slash command? Use 'strict search' */
 				if (*message3 == '/') Send_Guide(Ind, 2, 0, message3);
+				/* If it's all caps use 'strict search' too (we're looking for a FLAG probably) */
+				else if (allcaps) Send_Guide(Ind, 2, 0, message3);
 				/* We've entered a number? Interpret it as a 'line number' directly */
 				else if (atoi(message3)) Send_Guide(Ind, 4, atoi(message3), NULL);
 				/* We're looking for help on any other topic? Attempt 'chapter search' */
