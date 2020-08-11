@@ -8800,6 +8800,23 @@ int Send_idle(int Ind, bool idle) {
 	return res;
 }
 
+/* Invoke Guide-search on client side remotely from the server.
+   search_type: 1 = search, 2 = strict search (all upper-case),  3 = chapter search, 4 = line number,
+                0 = no pre-defined search, we're browsing it normally. */
+int Send_Guide(int Ind, byte search_type, int lineno, char* search_string) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for Guide (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	/* Hack: Allow NULL for search_string if not used. */
+	if (!search_string) return Packet_printf(&connp->c, "%c%c%d%s", PKT_GUIDE, search_type, lineno, "");
+	else return Packet_printf(&connp->c, "%c%c%d%s", PKT_GUIDE, search_type, lineno, search_string);
+}
 
 
 /*

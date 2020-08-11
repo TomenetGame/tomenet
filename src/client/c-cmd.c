@@ -1534,7 +1534,10 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 	return ress;
 }
 #endif
-void cmd_the_guide(void) {
+/* Local Guide invocation -
+   search_type: 1 = search, 2 = strict search (all upper-case),  3 = chapter search, 4 = line number,
+                0 = no pre-defined search, we're browsing it normally. */
+void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_string) {
 	static int line = 0, line_before_search = 0, jumped_to_line = 0;
 	static char lastsearch[MAX_CHARS] = "";
 	static char lastchapter[MAX_CHARS] = "";
@@ -1554,6 +1557,9 @@ void cmd_the_guide(void) {
 	char *res;
 	byte search_uppercase = 0, search_uppercase_ok, fallback = FALSE;
 
+	int c_override = 0;
+	char buf_override[MAX_CHARS];
+
 	/* empty file? */
 	if (guide_lastline == -1) return;
 
@@ -1568,6 +1574,30 @@ void cmd_the_guide(void) {
 	chapter[0] = 0;
 	searchstr[0] = 0;
 	//lastsearch[0] = 0;
+
+	/* invoked for a specific topic? */
+	*buf_override = 0;
+	switch (init_search_type) {
+	case 1:
+		c_override = 's';
+		strcpy(buf_override, init_search_string);
+		break;
+	case 2:
+		c_override = 's';
+		strcpy(buf_override, init_search_string);
+		res = buf_override; //abuse res
+		while (*res) { *res = toupper(*res); res++; }
+		break;
+	case 3:
+		c_override = 'c';
+		strcpy(buf_override, init_search_string);
+		break;
+	case 4:
+		c_override = '#';
+		strcpy(buf_override, format("%d", init_lineno));
+		break;
+	default: ; //0
+	}
 
 	Term_save();
 
@@ -1923,7 +1953,10 @@ void cmd_the_guide(void) {
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
 
-		c = inkey();
+		if (c_override) {
+			c = c_override;
+			c_override = 0;
+		} else c = inkey();
 
 		switch (c) {
 		/* specialty: allow chatting from within here */
@@ -1989,8 +2022,13 @@ void cmd_the_guide(void) {
 #endif
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
-			//askfor_aux(buf, 7, 0)); //was: numerical chapters only
-			askfor_aux(buf, MAX_CHARS - 1, 0); //allow entering chapter terms too
+			if (*buf_override) {
+				strcpy(buf, buf_override);
+				*buf_override = 0;
+			} else {
+				//askfor_aux(buf, 7, 0)); //was: numerical chapters only
+				askfor_aux(buf, MAX_CHARS - 1, 0); //allow entering chapter terms too
+			}
 			inkey_msg = inkey_msg_old;
 			if (!buf[0]) continue;
 
@@ -2503,7 +2541,10 @@ void cmd_the_guide(void) {
 #endif
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
-			askfor_aux(searchstr, MAX_CHARS - 1, 0);
+			if (*buf_override) {
+				strcpy(searchstr, buf_override);
+				*buf_override = 0;
+			} else askfor_aux(searchstr, MAX_CHARS - 1, 0);
 			inkey_msg = inkey_msg_old;
 			if (!searchstr[0]) continue;
 
@@ -2573,9 +2614,14 @@ void cmd_the_guide(void) {
 			sprintf(buf, "%d", jumped_to_line);
 			inkey_msg_old = inkey_msg;
 			inkey_msg = TRUE;
-			if (!askfor_aux(buf, 7, 0)) {
-				inkey_msg = inkey_msg_old;
-				continue;
+			if (*buf_override) {
+				strcpy(buf, buf_override);
+				*buf_override = 0;
+			} else {
+				if (!askfor_aux(buf, 7, 0)) {
+					inkey_msg = inkey_msg_old;
+					continue;
+				}
 			}
 			inkey_msg = inkey_msg_old;
 			jumped_to_line = atoi(buf); //Remember, just as a small QoL thingy
@@ -3622,7 +3668,7 @@ void cmd_check_misc(void) {
 				cmd_help();
 				break;
 			case 'g':
-				cmd_the_guide();
+				cmd_the_guide(0, 0, NULL);
 				break;
 			case ESCAPE:
 			case KTRL('Q'):

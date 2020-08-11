@@ -1383,7 +1383,7 @@ void peruse_file(void) {
 
 	/* Hack: ? + ? = Guide */
 	if (guide_hack) {
-		cmd_the_guide();
+		cmd_the_guide(0, 0, NULL);
 		Flush_queue();//needed?
 	}
 }

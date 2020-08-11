@@ -1391,6 +1391,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/help") || prefix(messagelc, "/he") || prefix(messagelc, "/?")) {
 			char    path[MAX_PATH_LENGTH];
 
+			/* Special case: Search for a specific topic - in this case, invoke the Guide on client-side instead with a search performed for the topic specified! */
+			if (tk) {
+				/* We're looking for help on a slash command? Use 'strict search' */
+				if (*message3 == '/') Send_Guide(Ind, 2, 0, message3);
+				/* We've entered a number? Interpret it as a 'line number' directly */
+				else if (atoi(message3)) Send_Guide(Ind, 4, atoi(message3), NULL);
+				/* We're looking for help on any other topic? Attempt 'chapter search' */
+				else Send_Guide(Ind, 3, 0, message3);
+				return;
+			}
+
 			do_slash_brief_help(Ind);
 
 #if 0 /* this invokes the old slash command help */
@@ -4152,7 +4163,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (streq(token[1], "help")) {
 				msg_print(Ind, "Specify both runes, then mode and type, or '-' to disable.");
 				msg_print(Ind, "Optionally prefix 't' before a runespell to retaliate 'in town only'.");
-				msg_print(Ind, "Usage:   /arr <t>[a-f][a-f][a-h][a-f] (town?, rune, rune, mode, type)");
+				msg_print(Ind, "Usage:   /arr <t><a-f><a-f><a-h><a-f> (town?, rune, rune, mode, type)");
 				msg_print(Ind, "Example: /arr aeda          Auto-retaliate with a moderate fire bolt.");
 				msg_print(Ind, "Example: /arr taeaa         Moderate fire bolt, but 'in town only'.");
 				msg_print(Ind, "Example: /arr -             Disable any auto-retaliation with runes.");

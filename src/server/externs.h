@@ -1227,6 +1227,7 @@ extern int Send_item_newest(int Ind, int item);
 extern int Send_reliable(int ind);
 extern int Send_palette(int Ind, byte c, byte r, byte g, byte b);
 extern int Send_idle(int Ind, bool idle);
+extern int Send_Guide(int Ind, byte search_type, int lineno, char* search_string);
 
 
 /* object1.c */

@@ -113,3 +113,4 @@ int Receive_apply_auto_insc(void);
 int Receive_martyr(void);
 int Receive_palette(void);
 int Receive_idle(void);
+int Receive_Guide(void);

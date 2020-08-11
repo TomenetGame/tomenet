@@ -175,6 +175,8 @@ static void Receive_init(void) {
 	receive_tbl[PKT_PALETTE]	= Receive_palette;
 	receive_tbl[PKT_IDLE]		= Receive_idle;
 	receive_tbl[PKT_POWERS_INFO]	= Receive_powers_info;
+
+	receive_tbl[PKT_GUIDE]		= Receive_Guide;
 }
 
 
@@ -4803,6 +4805,20 @@ int Receive_keypress(void) {
 	if ((n = Packet_scanf(&rbuf, "%c", &ch)) <= 0) return n;
 	return 1;
 }
+
+/* Invoke Guide-search on client side remotely from the server.
+   search_type: 1 = search, 2 = strict search (all upper-case),  3 = chapter search, 4 = line number,
+                0 = no pre-defined search, we're browsing it normally. */
+int Receive_Guide(void) {
+	char ch, search_type, search_string[MAX_CHARS_WIDE];
+	int n, lineno;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%d%s", &ch, &search_type, &lineno, search_string)) <= 0) return n;
+	cmd_the_guide(search_type, lineno, search_string);
+	return 1;
+}
+
+
 
 
 int Send_search(void) {

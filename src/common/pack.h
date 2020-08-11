@@ -251,6 +251,8 @@
 #define PKT_WIELD3		194
 #define PKT_AUDIO		195	/* Audio capabilities */
 
+#define PKT_GUIDE		196	/* Server issues Guide-invocation on client-side */
+
 
 /*
  * Possible error codes returned

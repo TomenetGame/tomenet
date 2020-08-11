@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 30. July 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 11. August 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1016,11 +1016,13 @@ They all start with a slash '/' hence they're called slash commands:
             players, so they know why you are currently AFK or when you will
             be back.
 
+/autotag
 /at         Apply auto-inscription settings to current inventory.
- (/autotag)
 
-/autoretm   Sets up auto-retaliation with a mimic power.
- (/arm)     Usage:   /arm [t]<power>   or to disable:   /arm -
+/autoretm
+/arm        Sets up auto-retaliation with a mimic power.
+            Enter  /arm help  for this information in-game.
+            Usage:   /arm [t]<power>   or to disable:   /arm -
             If 't' is prefixed to the power, it will only be used while in a
             town. Example:   /arm tg
             This will auto-retaliate with mimic power 'g)', but only while in
@@ -1032,6 +1034,13 @@ They all start with a slash '/' hence they're called slash commands:
             'Polymorph Self into next form with fitting extremities'.
             Then again using this kind of power for auto-ret doesn't make much
             sense anyway..)
+/autoretr
+/arr        Sets up auto-retaliation with runecraft.
+            Enter  /arr help  for this information in-game.
+            Usage:   /arr [t]<a-f><a-f><a-h><a-f>
+            Parameters are:
+             t: town-only? (optional)
+             and then mandatory: rune, rune, mode, type
 
 /bbs <text>
             Add a line of text to the in-game bulletin board system. Players
@@ -1041,7 +1050,7 @@ They all start with a slash '/' hence they're called slash commands:
             as using the '!' key.
 
 /bed [*|<inscription>]
- (/naked)   Opposite of /dress.
+/naked      Opposite of /dress.
             If no parameter is given, the character takes off everything from
             body slot to feet slot.
             If '*' is given as parameter, the character will take off all
@@ -1049,7 +1058,7 @@ They all start with a slash '/' hence they're called slash commands:
             If another parameter is given, the character will take off all
             items that have this parameter occur in their inscription.
 
-/bug        report a bug to the admin(s).
+/bug        Report a bug to the admin(s).
 
 /convertexclusive    Attempts to convert your current character into a
                      slot-exclusive character (either PvP-mode or IDDC aka
@@ -1062,13 +1071,16 @@ They all start with a slash '/' hence they're called slash commands:
                      available then your character is moved to that slot,
                      freeing up a generic character slot again.
 
-/coin       Flip a coin to get either heads or tails.
- or /flip   The result is random and can be seen by other players who stand
+/coin
+/flip       Flip a coin to get either heads or tails.
+            The result is random and can be seen by other players who stand
             nearby.
 
-/colours    Display all available colours for testing purpose, for example when
- (/colors,  you are editing your Colormap_ entries in TomeNET.ini or colormap_
- /col)      entries in .tomenetrc respectively and want to test how it looks.
+/colours
+/colors
+/col        Display all available colours for testing purpose, for example when
+            you are editing your Colormap_ entries in TomeNET.ini or colormap_
+            entries in .tomenetrc respectively and want to test how it looks.
 
 /cough      You cough noisily. Will disturb the sleep of monsters or at least
             make it less deep..
@@ -1098,10 +1110,11 @@ They all start with a slash '/' hence they're called slash commands:
             The result is random and can be seen by other players who stand
             nearby.
 /d          Rolls two dice, shortcut for "/dice 2".
-/die        Rolls one dice, shortcut for "/dice 1".
+/die        Rolls one die, shortcut for "/dice 1".
 
+/dispose
 /dis        DESTROYS every item in your inventory that has one of these
- (/dispose) inscriptions: terrible, cursed, uncursed, broken, worthless,
+            inscriptions: terrible, cursed, uncursed, broken, worthless,
             average, good. Works only on items that actually can be destroyed.
             Skips 'flavoured' items that are not known to you yet (example:
             'a blue potion {+,?}' or 'a malachite ring {+,?}').
@@ -1144,8 +1157,9 @@ They all start with a slash '/' hence they're called slash commands:
             If it's the final card of the deck, everyone around will be
             notified of that fact.
 
-/dr [tag]   Without tag it equips all items in your inventory that are: not
- (/dress)   cursed, not {worthless}, not {broken}, not {terrible}, and that are
+/dress [tag]
+/dr         Without tag it equips all items in your inventory that are: not
+            cursed, not {worthless}, not {broken}, not {terrible}, and that are
             known to you.
             With tag it just equips all items that contain that tag in their
             name or inscription somewhere (even if they are cursed).
@@ -1175,8 +1189,9 @@ They all start with a slash '/' hence they're called slash commands:
 /evunsign <#>
             Signs you off from that event number #.
 
+/extra
 /ex         Gives you detailed information about your character's status, such
- (/extra)   as how many actions you may perform per turn.
+            as how many actions you may perform per turn.
 
             A turn is a basic server timing unit, which for example is used to
             display the amount of fuel in your light source, or which will make
@@ -1215,26 +1230,30 @@ They all start with a slash '/' hence they're called slash commands:
               of cash you can pick up before participating in certain events,
               such as Highlander Tournament or Ironman Deep Dive Challenge).
 
-/exit       Leaves the game, same as pressing CTRL+Q.
- (/leave,/quit)
+/exit
+/leave
+/quit       Leaves the game, same as pressing CTRL+Q.
 
+/feeling
 /fe         Repeat the level feeling. See (4.8) for more information.
- (/feeling) If you aren't eligible for receiving a floor feeling, you will
+            If you aren't eligible for receiving a floor feeling, you will
             instead get the message "You feel nothing special.".
 
-/fill       fill an 'Empty Bottle' in your inventory with the water from a
+/fill       Fill an 'Empty Bottle' in your inventory with the water from a
             fountain. You must stand on the fountain to do this.
 
+/flip       Same as /coin.
+
 /ftkon      Enables, and respectively..
-/ftkoff     disables fire-till-kill mode (see (5.2a)).
+/ftkoff     Disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
 
 /gbbs <text>    Same usage as /bbs, but only readable/writable for guild
                 members. So it's a guild-internal BBS.
                 To read its contents, type /gbbs without any <text>.
 
-/gleave     Leaves your guild. Same as pressing 'SHIFT+P' and 'd'.
- (/gquit)
+/gleave
+/gquit      Leaves your guild. Same as pressing 'SHIFT+P' and 'd'.
 
 /gnote <text>
             Leave a note to the guild you own.
@@ -1243,6 +1262,8 @@ They all start with a slash '/' hence they're called slash commands:
 
 /gpage      Will toggle paging you when you're AFK and a guild member joins the
             server. (Also see /ppage.)
+
+/gquit      Same as /gleave.
 
 /guild_adder <name of another player>
             Allows that player permanently to add other players to the guild
@@ -1254,31 +1275,36 @@ They all start with a slash '/' hence they're called slash commands:
 
 /guildmembers   Displays a list of all members of your guild.
 
-/help       view a list of all command keys (same as pressing '?' key).
+/help
+/he
+/?          View a list of all command keys (same as pressing '?' key).
             Also lists a few most commonly used slash commands.
 
+/house
 /hou        Displays your houses, same as ~9, but offers two optional
- (/house)   parameters to refine the search results:
+            parameters to refine the search results:
             /hou o    will only show your own houses.
             /hou l    will only show houses in your current worldmap sector.
             /hou ol   both of the above.
 
-/ig <player name>
- (/ignore)  ignores all chat messages from the specified player. (Toggle)
+/ignore <player name>
+/ig         Ignores all chat messages from the specified player. (Toggle)
             Also silences all paging attempts from that player.
             To un-mute the target again, retype the command with its name.
             The blocked player will see a message about you ignoring him when
             he tries to send you any private message or page you.
 
-/ic         ignore all normal chat messages which are neither private messages
- (/ignchat) nor party messages. ('Private mode' will be displayed after
+/ic
+/ignchat    Ignore all normal chat messages which are neither private messages
+            nor party messages. ('Private mode' will be displayed after
             the player's name in the player overview screen which can be
             invoked by pressing '@', indicating that this player currently
             cannot read normal chat messages.)
             (This is similar to 'limit_chat' option, which however still allows
             all floor-chat occurring on the same dungeon floor and guild chat.)
-/ic *       Same as above, but also disables all private messages except from
- (/dnd)     party members! (Will display '*Private* mode' after the player's
+/ic *
+/dnd        Same as above, but also disables all private messages except from
+            party members! (Will display '*Private* mode' after the player's
             name in the @ screen.)
 
 /info <msg>
@@ -1298,14 +1324,15 @@ They all start with a slash '/' hence they're called slash commands:
             so you only get those kifus emailed that the character played on
             which you used the command. (SGF is the 'Smart Game Format'.)
 
-/leave      Leaves the game, same as pressing CTRL+Q.
- (/exit, /quit)
+/leave
+/exit
+/quit      Leaves the game, same as pressing CTRL+Q.
 
 /lite a..w  Refills your light source with an item from your inventory.
             Usually it's easier to just press 'F' instead.
 
+/martyr
 /mar        Tells a holy-defense-user if he may use the prayer 'Martyrdom'.
- (/martyr)
 
 /me         Write an emote. Example: /me hides.
 
@@ -1314,10 +1341,12 @@ They all start with a slash '/' hence they're called slash commands:
             Will show your kill count of all matching monsters.
             Example: /mon D  ->  shows your greater dragons kill count.
 
-/motd       Shows the current server notes that are displayed at login.
- (/snotes)
+/motd
+/snotes     Shows the current server notes that are displayed at login.
 
 /news       Shows the login screen, same as ~f, but in monochrome.
+
+/naked      Same as /bed.
 
 /note <character/account name>:<text>
             Leave a note to another player. The message will actually go to the
@@ -1328,8 +1357,8 @@ They all start with a slash '/' hence they're called slash commands:
             Delete all pending notes that were addressed to that player.
 /notes      Display all pending notes that you wrote to other players.
 
+/object
 /obj        Displays all objects known to you, same as ~4.
- (/object)
 
 /page <player-name>     Sends beeps to that player to help you getting his
                         attention. (Using /ignore on a player will also
@@ -1355,8 +1384,9 @@ They all start with a slash '/' hence they're called slash commands:
                 members. So it's a party-internal BBS.
                 To read its contents, type /pbbs without any <text>.
 
-/pkill      Toggles the player's status regarding participation in 'PK' actions
- or /pk     aka player-killing. PK rules must be enabled on the server in order
+/pkill
+/pk         Toggles the player's status regarding participation in 'PK' actions
+            aka player-killing. PK rules must be enabled on the server in order
             to use this command. The PK status of each player will be displayed
             in the players-online-screen that you invoke by pressing @ key.
             Note: PK-rules are disabled by default on our official server.
@@ -1365,8 +1395,8 @@ They all start with a slash '/' hence they're called slash commands:
             Will at some point in the future be absorbed by /evsign and
             thereby become obsolete.
 
-/pleave     Leaves your party. Same as pressing 'SHIFT+P' and '5'.
- or /pquit
+/pleave
+/pquit      Leaves your party. Same as pressing 'SHIFT+P' and '5'.
 
 /pnote <text>
             Leave a note to the party you own.
@@ -1386,17 +1416,20 @@ They all start with a slash '/' hence they're called slash commands:
 /pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
             chars. See (6.13) for details about PvP mode.
 
+/quest
 /que        Lists your currently pursued quests.
- (/quest)   Specify a quest number to drop a quest -- warning! You might not
+            Specify a quest number to drop a quest -- warning! You might not
             be able to acquire it again, depending on the quest and your quest
             progress.
             If you specify '*' instead of a number, you will drop ALL quests.
 
-/quit       Leaves the game, same as pressing CTRL+Q.
- (/exit, /leave)
+/quit
+/exit
+/leave      Leaves the game, same as pressing CTRL+Q.
 
+/recall
 /rec        Uses an item inscribed "@R" that provides 'Word of Recall' to
- (/recall)  teleport you over a long distance, either into a dungeon, out of a
+            teleport you over a long distance, either into a dungeon, out of a
             dungeon or across the worldmap.
             See "(0.3) Important Inscriptions, Word of Recall" for more info
             about Word of Recall. Examples:
@@ -1405,19 +1438,21 @@ They all start with a slash '/' hence they're called slash commands:
  /rec 32 32 recalls you to Bree (the town at (32,32) world map coordinates),
             provided you are on the world surface and not already in Bree.
 
-/ref        redraw the screen (do this if it's messed up for some reason).
- (/refresh, or simply hit CTRL+R)
+/refresh
+/ref        Redraw the screen (do this if it's messed up for some reason).
+            or simply hit CTRL+R)
 
 /rfe        Store a message/suggestion for the admin(s).
             (Request for enhancement)
 
-/roll and /r are same as /dice and /d respectively (roll some dice).
+/roll
+/r          Same as /dice and /d respectively (roll some dice).
 
+/sacrifice
 /sac        Tells a hereticism-user if he may use the spell 'Blood Sacrifice'.
- (/sacrifice)
 
 /say <text>
- (/s)       Speaks <text> to players who are currently nearby your position,
+/s          Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
 
 /shout <text>
@@ -1435,14 +1470,15 @@ They all start with a slash '/' hence they're called slash commands:
             same name on that account.
             (Same as IRC command ?seen.)
 
-/shot  or  /shot <filename>
- (/screenshot)
-            Takes a screen shot to a html file. If <filename> is omitted, it
+/screenshot  or  /screenshot <filename>
+/shot       Takes a screen shot to a html file. If <filename> is omitted, it
             writes to 'screenshot?????.xhtml' by default, where ????? are
             increasing numbers. You may also use CTRL+T.
             You can view those xhtml files in most webbrowsers.
 
-/sip        drink from a fountain. You must stand on the fountain to do this.
+/shuffle    See further up, above /deal command.
+
+/sip        Drink from a fountain. You must stand on the fountain to do this.
             Fountains can have good/bad/no effects. There is no fountain of
             death, neither one of detonations, so you won't get instakilled.
             (It's easier to press '_' instead of using the /sip command.
@@ -1451,11 +1487,13 @@ They all start with a slash '/' hence they're called slash commands:
 /snbar      Cycles through available types of sanity bars to display.
             Which types are available depends on the 'Health' skill.
 
+/snotes     Same as /motd.
+
 /stime      Tells you the current date and time (of the server, not of your
             local timezone).
 
 /tag [a..w|* [inscription]]
- or /t      Tags one specific or all uninscribed items in your backpack by
+/t          Tags one specific or all uninscribed items in your backpack by
             adding a '!k' or a custom inscription. Helpful for looting in
             conjunction with /dis command.
             If a slot (a..w) is specified, it only tags the item in that
@@ -1471,13 +1509,12 @@ They all start with a slash '/' hence they're called slash commands:
             Will not affect equipped items.
             Inscriptions can also be undone again with the /ut command.
 
-/tar <x> <y>
- (/target)
-            Allows you to target a specific grid specified by X,Y as offset
+/target <x> <y>
+/tar        Allows you to target a specific grid specified by X,Y as offset
             to your current character position.
 
 /testyourmight <show|rs>
-or shorter: /tym <show|rs>
+/tym <show|rs>
             '/tym show' will display your damage/healing output so far and
             '/tym rs' will reset the damage/healing counters.
 
@@ -1516,7 +1553,7 @@ or shorter: /tym <show|rs>
             See (6.4) for a list of traits and what they do.
 
 /undoskills
- (/undos)   A skill reset function ("respec"), allowing you to undo the last
+/undos      A skill reset function ("respec"), allowing you to undo the last
             couple of skill points you assigned in 'G' menu. Use this to
             correct points you accidentally put into a wrong skill.
             NOTE:
@@ -1528,7 +1565,7 @@ or shorter: /tym <show|rs>
                able to use it again after reaching the next character level.
 
 /untag [<inscription>]
- or /ut     If <inscription is omitted, it removes all inscriptions from items
+/ut         If <inscription is omitted, it removes all inscriptions from items
             in your backpack which are exactly '!k' (as done by /tag command).
             Ohterwise it removes inscriptions of all items which are exactly
             inscribed as specified by <inscription>.
@@ -1536,27 +1573,28 @@ or shorter: /tym <show|rs>
             Note that some <inscription> parameters are special and therefore
             reserved, those are:
 
-/untag *    will remove all inscriptions from all items in your inventory.
+/untag *    Will remove all inscriptions from all items in your inventory.
 
-/untag p    will remove all pseudo-id tags from your inventory items.
+/untag p    Will remove all pseudo-id tags from your inventory items.
             Note: This will work on equipped items too!
 
-/untag u    will remove all unique-loot tags from your inventory items.
+/untag u    Will remove all unique-loot tags from your inventory items.
 
-/version    Displays the server version.
- (/ver)
+/version
+/ver       Displays the server version.
 
 /whisper <text>
- (/wh)      Whispers <text> to players currently standing right next to you.
+/wh         Whispers <text> to players currently standing right next to you.
             Others won't be able to hear it.
 
 /who <character name>
             Returns the account name that character belongs to, and basic info
             on race, class and level.
 
-/xo         gives you an extermination order! It needs to be carried out before
+/xorder
+/xo         Gives you an extermination order! It needs to be carried out before
             a certain period of time passes (continues to expire even while not
- (/xorder)  logged on). Completing it yields a random item for reward. It will
+            logged on). Completing it yields a random item for reward. It will
             appear in your inventory and carry an inscription indicating
             it's the reward. (See (4.13) for more info.)
             This command is only available in the Ironman Deep Dive Challenge
@@ -5885,7 +5923,8 @@ Spellbooks:
 
 Runes:          Auto-retaliate with a runespell. The format is rune, rune, mode
     /arr abcd   then type. Selecting a non-damaging runespell or '/arr -' will
-                disable auto-retaliation.
+                disable auto-retaliation. 't' is optional for town-only.
+                See (0.2b) for details.
 
 Mimic powers:   Use the /autoret or for short /ar command to set these up,
     /ar tg      compare (0.2b). Usage (t is optional for 'town-only'):
@@ -18416,16 +18455,16 @@ Runecraft macros look like this (key translation in parenthesis):
 (Note: m@12\r invokes the m-key menu command for 'Draw a rune'.)
 
 Targetted runespells use the following format:
-    \e)*tm@12\r[a-f][a-f][a-h][a-f]-  (rune, rune, mode, type, target)
+    \e)*tm@12\r<a-f><a-f><a-h><a-f>-  (rune, rune, mode, type, target)
 
 Non-targetted runespells use the format:
-    \e)m@18\r[a-f][a-f][a-h][a-f]  (rune, rune, mode, type)
+    \e)m@18\r<a-f><a-f><a-h><a-f>  (rune, rune, mode, type)
 
 Note that you must choose two runes, one mode, and one type.
 To cast a single element runespell, simply choose the same element twice.
-[a-f] and [a-h] denote the choices of a letter from a to f or a to h,
+<a-f> and <a-h> denote the choices of a letter from a to f or a to h,
 inclusive, which represents a rune or a mode or a type, respectively.
-ie. There are six base runes, so [a-f] represents a choice from rune 1-6.
+ie. There are six base runes, so <a-f> represents a choice from rune 1-6.
 
 
 Examples:
@@ -18473,7 +18512,7 @@ choices for repeat casting. Retaliation is disabled completely for spells with
 an indirect effect (nimbus and glyph). Specify both runes, then mode and type,
 or '-' to disable. Prefix 't' before a runespell to retaliate in town only.
 
-Usage:   /arr <t>[a-f][a-f][a-h][a-f] (town?, rune, rune, mode, type)
+Usage:   /arr [t]<a-f><a-f><a-h><a-f> (town?, rune, rune, mode, type)
 Example: /arr aeda          Auto-retaliate with a moderate fire bolt.
 Example: /arr taeda         Moderate fire bolt, but 'in town only'.
 Example: /arr -             Disable any auto-retaliation with runes.
