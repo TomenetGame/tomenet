@@ -1408,10 +1408,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				/* We're looking for help on a slash command? Use 'strict search' */
 				if (*message3 == '/') Send_Guide(Ind, 2, 0, message3);
-				/* If it's all caps use 'strict search' too (we're looking for a FLAG probably) */
-				else if (allcaps) Send_Guide(Ind, 2, 0, message3);
 				/* We've entered a number? Interpret it as a 'line number' directly */
 				else if (atoi(message3)) Send_Guide(Ind, 4, atoi(message3), NULL);
+				/* If it's all caps use 'strict search' too (we're looking for a FLAG probably) */
+				else if (allcaps) Send_Guide(Ind, 2, 0, message3);
 				/* We're looking for help on any other topic? Attempt 'chapter search' */
 				else Send_Guide(Ind, 3, 0, message3);
 				return;
