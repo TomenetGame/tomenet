@@ -6724,7 +6724,7 @@ if (cfg.unikill_format) {
 
 			/* Drop the object from heaven */
 #ifdef PRE_OWN_DROP_CHOSEN
-			qq_ptr->level = 0;
+			if (qq_ptr->tval != TV_CHEST) qq_ptr->level = 0; /* Exception just for chests, since those aren't really drastic items.. */
 			qq_ptr->owner = p_ptr->id;
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade;
