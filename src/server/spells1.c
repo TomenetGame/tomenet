@@ -5485,6 +5485,14 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (!quiet && p_ptr->obj_vis[this_o_idx] && note_kill)
 					msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
 
+				/* Hack: Launch firework from scrolls */
+				if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK) {
+					cast_fireworks(wpos, x, y, o_ptr->xtra1 * 7 + o_ptr->xtra2); //size, colour
+#ifdef USE_SOUND_2010
+					sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_MISC, TRUE, 50);
+#endif
+				}
+
 				/* Delete the object */
 				//delete_object(wpos, y, x);
 				delete_object_idx(this_o_idx, TRUE);

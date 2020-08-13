@@ -9970,7 +9970,25 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
  #endif
 			//everyone_lite_spot(wpos, ny, nx);
 		}
+#else
+		/* Artifacts, and other objects, get to resist */
+		if (!like_artifact_p(o_ptr)) {
+ #ifndef NO_TERRAIN_POTION_EXPLOSION
+			/* Potions produce effects when 'shattered' */
+			if (is_potion) (void)potion_smash_effect(who, wpos, ny, nx, o_ptr->sval);
+			else if (is_flask) (void)potion_smash_effect(who, wpos, ny, nx, o_ptr->sval + 200);
+ #endif
+			//everyone_lite_spot(wpos, ny, nx);
+		}
 #endif
+
+		if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK) {
+			cast_fireworks(wpos, nx, ny, o_ptr->xtra1 * 7 + o_ptr->xtra2); //size, colour
+#ifdef USE_SOUND_2010
+			sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_MISC, TRUE, 50);
+#endif
+		}
+
 		if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1); /* just paranoia here */
 		questitem_d(o_ptr, o_ptr->number);
 
