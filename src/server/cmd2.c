@@ -3808,40 +3808,46 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 		}
 	}
-	/* Quartz / Magma / Sandwall, with or without treasure */
-	else if (((cfeat >= FEAT_MAGMA) &&
-		(cfeat <= FEAT_QUARTZ_K)) ||
-		((cfeat >= FEAT_SANDWALL) &&
-		 (cfeat <= FEAT_SANDWALL_K))) {
-		bool okay = FALSE;
-		bool gold = FALSE;
-		bool hard = FALSE;
-		bool soft = FALSE;
-		bool nonobvious = (cfeat == FEAT_QUARTZ_H || cfeat == FEAT_MAGMA_H || cfeat == FEAT_SANDWALL_H); //these hidden treasure veins are currently not generated, so..
-		//actually make 'non-obvious' also mean treasure veins that aren't generated out in the open, but enclosed in streamers:
-		if (cinfo & CAVE_ENCASED) nonobvious = TRUE;
+	/* Quartz / Magma / Sandwall, with or without (hidden or obvious) treasure */
+	else if (((cfeat >= FEAT_MAGMA) && (cfeat <= FEAT_QUARTZ_K)) ||
+	    ((cfeat >= FEAT_SANDWALL) && (cfeat <= FEAT_SANDWALL_K))) {
+		bool okay = FALSE, gold = FALSE, hard = FALSE, soft = FALSE;
+		bool nonobvious = (cinfo & CAVE_ENCASED); //treasure veins that aren't generated out in the open, but enclosed in streamers
 
-		/* Found gold */
-		if ((cfeat >= FEAT_MAGMA_H) &&
-		    (cfeat <= FEAT_QUARTZ_K)) gold = TRUE;
-
-		if ((cfeat == FEAT_SANDWALL_H) ||
-		    (cfeat == FEAT_SANDWALL_K)) {
+		/* Found gold? Non-obvious vein even for increased value? */
+		switch (cfeat) {
+		case FEAT_MAGMA_H:
+		case FEAT_QUARTZ_H:
+		case FEAT_SANDWALL_H:
+			//these hidden treasure veins are currently not generated though (todo)
+			nonobvious = TRUE;
+			//fall through
+		case FEAT_MAGMA_K:
+		case FEAT_QUARTZ_K:
+		case FEAT_SANDWALL_K:
 			gold = TRUE;
+			break;
+		}
+		/* Hardness of the material? */
+		switch (cfeat) {
+		case FEAT_QUARTZ:
+		case FEAT_QUARTZ_H:
+		case FEAT_QUARTZ_K:
+			hard = TRUE;
+			break;
+		case FEAT_SANDWALL:
+		case FEAT_SANDWALL_H:
+		case FEAT_SANDWALL_K:
 			soft = TRUE;
-		} else
-		/* Extract "quartz" flag XXX XXX XXX */
-		if ((cfeat - FEAT_MAGMA) & 0x01) hard = TRUE;
+			break;
+		}
 
 		/* Quartz */
-		if (hard)
-			okay = (power > 20 + rand_int(800)); /* 800 */
+		if (hard) okay = (power > 20 + rand_int(800)); /* 800 */
 		/* Sandwall */
-		else if (soft)
-			okay = (power > 5 + rand_int(250));
+		else if (soft) okay = (power > 5 + rand_int(250));
 		/* Magma */
-		else
-			okay = (power > 10 + rand_int(400)); /* 400 */
+		else okay = (power > 10 + rand_int(400)); /* 400 */
 
 		if (istown(wpos) || p_ptr->IDDC_logscum) gold = FALSE;
 
