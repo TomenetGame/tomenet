@@ -5733,7 +5733,7 @@ static void a_m_aux_4(object_type *o_ptr, int level, int power, u32b resf) {
 	case TV_SCROLL:
 		if (o_ptr->sval == SV_SCROLL_FIREWORK) {
 			o_ptr->xtra1 = rand_int(3); //size
-			o_ptr->xtra2 = rand_int(7); //colour
+			o_ptr->xtra2 = rand_int(FIREWORK_COLOURS); //colour
 			o_ptr->level = 1;
 		}
 		break;
@@ -9983,7 +9983,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 #endif
 
 		if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK) {
-			cast_fireworks(wpos, nx, ny, o_ptr->xtra1 * 7 + o_ptr->xtra2); //size, colour
+			cast_fireworks(wpos, nx, ny, o_ptr->xtra1 * FIREWORK_COLOURS + o_ptr->xtra2); //size, colour
 #ifdef USE_SOUND_2010
 			sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_MISC, TRUE, 50);
 #endif

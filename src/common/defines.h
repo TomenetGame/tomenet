@@ -1183,6 +1183,8 @@
 
 /* A random, rarely visited dungeon has a (slim) chance for firework drops */
 #define FIREWORK_DUNGEON
+/* Different colours of fireworks */
+#define FIREWORK_COLOURS 7
 
 #ifdef HOUSE_PAINTING
  /* Don't display house paint of mode-wise unusable player stores? */
@@ -4752,7 +4754,7 @@
 #define GF_FW_ELEC		202
 #define GF_FW_POIS		203
 #define GF_FW_LITE		204
-#define GF_FW_SHDI		205
+#define GF_FW_YCLD		205
 #define GF_FW_SHDM		206
 #define GF_FW_MULT		207
 /* well, let's try to bring weather and seasons? */

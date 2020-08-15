@@ -6802,15 +6802,15 @@ bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 
 	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
 
-	if (typ == -1) typ = rand_int(7 * 3); /* colour & style */
+	if (typ == -1) typ = rand_int(FIREWORK_COLOURS * 3); /* colour & style */
 
-	if (typ < 7) project_time_effect = EFF_FIREWORKS1;
-	else if (typ < 7 * 2) {
+	if (typ < FIREWORK_COLOURS) project_time_effect = EFF_FIREWORKS1;
+	else if (typ < FIREWORK_COLOURS * 2) {
 		project_time_effect = EFF_FIREWORKS2;
-		typ -= 7;
+		typ -= FIREWORK_COLOURS;
 	} else {
 		project_time_effect = EFF_FIREWORKS3;
-		typ -= 7 * 2;
+		typ -= FIREWORK_COLOURS * 2;
 	}
 
 	switch (typ) {
@@ -6818,7 +6818,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 	case 1: typ = GF_FW_ELEC; break;
 	case 2: typ = GF_FW_POIS; break;
 	case 3: typ = GF_FW_LITE; break;
-	case 4: typ = GF_FW_SHDI; break;
+	case 4: typ = GF_FW_YCLD; break;
 	case 5: typ = GF_FW_SHDM; break;
 	case 6: typ = GF_FW_MULT; break;
 	}
@@ -9126,7 +9126,7 @@ void mix_chemicals(int Ind, int item) {
 				q_ptr->sval = SV_SCROLL_FIREWORK;
 				// random for now..
 				q_ptr->xtra1 = rand_int(3); //size
-				q_ptr->xtra2 = rand_int(7); //colour
+				q_ptr->xtra2 = rand_int(FIREWORK_COLOURS); //colour
 				q_ptr->level = 1;
 				msg_print(Ind, "You create harmless fireworks from the flash bomb mixture..");
 				i = -2;

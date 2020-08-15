@@ -219,7 +219,7 @@
 #define GF_FW_ELEC		202
 #define GF_FW_POIS		203
 #define GF_FW_LITE		204
-#define GF_FW_SHDI		205
+#define GF_FW_YCLD		205
 #define GF_FW_SHDM		206
 #define GF_FW_MULT		207
 /* well, let's try to bring weather and seasons? */

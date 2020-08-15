@@ -3508,7 +3508,12 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		case GF_FW_ELEC: (*ap) = TERM_ELEC; break;
 		case GF_FW_POIS: (*ap) = TERM_POIS; break;
 		case GF_FW_LITE: (*ap) = TERM_LITE; break;
-		case GF_FW_SHDI: (*ap) = TERM_SHIELDI; break;
+		case GF_FW_YCLD:
+			switch (rand_int(3)) {
+			case 0: (*ap) = TERM_YELLOW; break; //note: not LITE, so we don't get any orange
+			default: (*ap) = TERM_COLD; break;
+			}
+			break;
 		case GF_FW_SHDM: (*ap) = TERM_SHIELDM; break;
 		case GF_FW_MULT: (*ap) = TERM_MULTI; break;
 		}

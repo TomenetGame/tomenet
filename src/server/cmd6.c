@@ -2956,7 +2956,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				msg_print(Ind, "You release a magical firework from the scroll!");
 				msg_format_near(Ind, "%s releases a magical firework from a scroll!", p_ptr->name);
 			}
-			cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * 7 + o_ptr->xtra2); //size, colour
+			cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * FIREWORK_COLOURS + o_ptr->xtra2); //size, colour
 #ifdef USE_SOUND_2010
 			sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_MISC, TRUE, 50);
 #endif

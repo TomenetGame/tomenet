@@ -2559,14 +2559,14 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 				case 1: t = object_desc_str(t, "Medium "); break;
 				case 2: t = object_desc_str(t, "Big "); break;
 				}
-				switch (o_ptr->xtra2) {
+				switch (o_ptr->xtra2) { //0..FIREWORK_COLOURS-1
 				case 0: t = object_desc_str(t, "Red"); break;
 				case 1: t = object_desc_str(t, "Blue"); break;
 				case 2: t = object_desc_str(t, "Green"); break;
 				case 3: t = object_desc_str(t, "Golden"); break;
-				case 4: t = object_desc_str(t, "Mixed"); break;
+				case 4: t = object_desc_str(t, "Shining"); break;
 				case 5: t = object_desc_str(t, "Purple"); break;
-				case 6: t = object_desc_str(t, "Elemental"); break;
+				case 6: t = object_desc_str(t, "Mixed"); break;
 				}
 				t = object_desc_str(t, " Firework");
 			} else t = object_desc_str(t, "Firework");
