@@ -2958,7 +2958,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_bash = 1;
 		p_ptr->warning_inspect = 1;
 		p_ptr->warning_repair = 1;
-		p_ptr->warning_depth = 1;
+		p_ptr->warning_depth = 2;
 		p_ptr->warning_partyexp = 1;
 		return;
 	}

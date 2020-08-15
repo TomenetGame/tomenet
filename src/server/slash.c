@@ -4030,7 +4030,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				p_ptr->warning_ghost = 1;
 				p_ptr->warning_death = 1;
 				p_ptr->warning_instares = 1;
-				p_ptr->warning_depth = 1;
+				p_ptr->warning_depth = 2;
 #endif
 				return;
 			}
