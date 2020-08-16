@@ -26,6 +26,8 @@
 #endif
 #endif /* __MAKEDEPEND__ */
 
+#include <sys/types.h>
+#include <regex.h>
 
 /*
  * OPTION: Allow the use of a "Mirror Window", if supported
@@ -3192,4 +3194,45 @@ void refresh_palette(void) {
 
 	Term_activate(&old_td->t);
 }
-#endif
+
+/* Get list of available misc fonts, e.g. "5x8", "6x9", "6x13" or "6x13bold". */
+int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
+	regex_t re;
+	int status = 0;
+	status = regcomp(&re, "^[0-9]+x[0-9]+(bold)?$", REG_EXTENDED|REG_NOSUB);
+	if (status != 0) {
+		fprintf(stderr, "regcomp returned %d\n", status);
+		return 0;
+	}
+	int fonts_found = 0;
+	/* Get list of all fonts with 'x' in the name */
+	char **list = XListFonts(Metadpy->dpy, "*x*", 16 * 1024, &fonts_found);
+	if (!list) {
+		regfree(&re);
+		return 0;
+	}
+	int fonts_match = 0;
+	for (int i = 0; i < fonts_found && fonts_match < max_fonts; i++) {
+		status = regexec(&re, list[i], 0, NULL, 0);
+		if (status == 0) {
+			if (strlen(list[i]) < max_font_name_length) {
+				int is_duplicate = 0;
+				for (int j = i - 1; j >= 0; j--) {
+					if (strcmp(list[i], list[j]) == 0) {
+						is_duplicate = 1;
+						break;
+					}
+				}
+				if (!is_duplicate) {
+					strcpy(&output_list[fonts_match * max_font_name_length], list[i]);
+					fonts_match++;
+				}
+			}
+		}
+	}
+	regfree(&re);
+	XFreeFontNames(list);
+	return fonts_match;
+}
+
+#endif // USE_X11

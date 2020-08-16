@@ -34,6 +34,7 @@ extern void animate_palette(void);
 extern void set_palette(byte c, byte r, byte g, byte b);
 extern void get_palette(byte c, byte *r, byte *g, byte *b);
 extern void refresh_palette(void);
+extern int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length);
 #endif
 
 #ifdef USE_XAW

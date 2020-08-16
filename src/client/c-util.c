@@ -7231,18 +7231,9 @@ static void do_cmd_options_fonts(void) {
   #endif
 
   #ifdef USE_X11 /* Linux/OSX use at least the basic system fonts (/usr/share/fonts/misc) - C. Blue */
-	/* Get bitmap font folder ('misc') and scan fonts.alias in it for basic bitmap fonts:
-	   'cat `xset q | grep -o "[/a-z]*misc"`/fonts.alias | grep -o "^[0-9][0-9]*x[0-9]*\(bold\)\? " | grep -o "[^ ]*"' <- note the trailing space! */
-	j = system("cat `xset q | grep -o \"[/a-z]*misc\"`/fonts.alias | grep -o \"^[0-9][0-9]*x[0-9]*\\(bold\\)\\? \" | grep -o \"[^ ]*\" > /tmp/tomenet-fonts.tmp");
-	fff = fopen("/tmp/tomenet-fonts.tmp", "r");
-	if (fff) {
-		while (fonts < MAX_FONTS) {
-			if (!fgets(tmp_name, 256, fff)) break;
-			tmp_name[strlen(tmp_name) - 1] = 0; //remove trailing \n
-			strcpy(font_name[fonts], tmp_name);
-			fonts++;
-		}
-		remove("/tmp/tomenet-fonts.tmp"); //clean up
+	int misc_fonts = get_misc_fonts(font_name[fonts], MAX_FONTS - fonts, 256);
+	if (misc_fonts > 0) {
+		fonts += misc_fonts;
 	} else {
 		/* We boldly assume that these exist by default somehow! - They probably don't though,
 		   if the above command failed, but what else can we try at this point.. #despair */
