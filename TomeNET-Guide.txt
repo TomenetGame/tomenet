@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. August 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 16. August 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1435,6 +1435,8 @@ They all start with a slash '/' hence they're called slash commands:
             about Word of Recall. Examples:
  /rec -550  recalls you to -550ft, provided there is such a dungeon at your
             current worldmap location and you are not already inside.
+            To specify depths in feet, the option depth_in_feet must be 'yes'.
+ /rec -11   does the same, provided you have option depth_in_feet set to 'no'.
  /rec 32 32 recalls you to Bree (the town at (32,32) world map coordinates),
             provided you are on the world surface and not already in Bree.
 
@@ -1856,7 +1858,8 @@ town you visited.
                 can just type the command    /rec    into chat to invoke the
                 Word of Recall. Examples replacing above inscriptions:
                 /rec 500
-                /rec -350
+                /rec -350         <- when option depth_in_feet is 'yes'.
+                /rec -7           <- when option depth_in_feet is 'no'.
                 /rec 32 32        <- notice: No komma between the coordinates!
 
     NOTES:
@@ -1890,7 +1893,7 @@ town you visited.
     and now types the following chat commands in order:
         /rec 31 25
         (he waits until that kicked in and transported him to Orc Cave surface)
-        /rec -300
+        /rec -300    or    /rec -6    depending on option 'depth_in_feet'.
         (this will bring him to the desired depth, from the surface).
 
 
