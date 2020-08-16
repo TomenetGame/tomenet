@@ -2828,6 +2828,8 @@ static void term_force_font(int term_idx, char fnt_name[256]) {
 
 	/* font change */
 	Infofnt_set(td->fnt);
+	string_free(Infofnt->name);
+	XFreeFont(Metadpy->dpy, Infofnt->info);
 	Infofnt_init_data(fnt_name);
 
 	/* Desired size of "outer" window */
