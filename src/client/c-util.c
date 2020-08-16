@@ -7271,7 +7271,7 @@ static void do_cmd_options_fonts(void) {
 			strcpy(tmp_name, cp);
 
 			cp = tmp_name + (strlen(tmp_name) - 1);
-			while (*cp == ' ') {
+			while (cp >= tmp_name && *cp == ' ') {
 				*cp = 0;
 				cp--;
 			}
