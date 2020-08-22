@@ -918,6 +918,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_POTION:
 		case TV_POTION2:
 		case TV_MSTAFF:	/* naturally? */
+#if 1 /* Enabled because 'Rune Repository' store is no longer generated */
+		case TV_RUNE:
+#endif
 			break;
 		default:
 			return (FALSE);
