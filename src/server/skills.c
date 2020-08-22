@@ -592,7 +592,11 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 
 #ifdef ENABLE_OCCULT /* Occult */
 	case SKILL_OSHADOW:
-		if (old_value < 300 && new_value >= 300)
+		if (old_value < 300 && new_value >= 300
+		    && p_ptr->prace != RACE_HALF_ORC
+		    && p_ptr->prace != RACE_GOBLIN
+		    && p_ptr->prace != RACE_DARK_ELF
+		    && p_ptr->prace != RACE_VAMPIRE)
 			msg_print(Ind, "\374\377GYou feel strong against darkness.");
 		break;
 	case SKILL_OSPIRIT:
