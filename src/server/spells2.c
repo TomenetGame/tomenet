@@ -8833,8 +8833,8 @@ static int mixmix_to_ingredient(int Ind, object_type *o_ptr, object_type *o2_ptr
 
 	for (i = 0; i <= 15; i++) {
 		f = 1 << i;
-		k = (o_ptr->xtra1 & f) ? 1 : 0 + (o_ptr->xtra2 & f) ? 1 : 0 + (o_ptr->xtra3 & f) ? 1 : 0;
-		k += (o2_ptr->xtra1 & f) ? 1 : 0 + (o2_ptr->xtra2 & f) ? 1 : 0 + (o2_ptr->xtra3 & f) ? 1 : 0;
+		k = ((o_ptr->xtra1 & f) ? 1 : 0) + ((o_ptr->xtra2 & f) ? 1 : 0) + ((o_ptr->xtra3 & f) ? 1 : 0);
+		k += ((o2_ptr->xtra1 & f) ? 1 : 0) + ((o2_ptr->xtra2 & f) ? 1 : 0) + ((o2_ptr->xtra3 & f) ? 1 : 0);
 		if (k > 3) return -1; /* Error: Mixture would be oversaturated of this ingredient */
 
 		/* mix.. */
@@ -8905,8 +8905,8 @@ static bool mixmix_to_mixture(object_type *o_ptr, object_type *o2_ptr, object_ty
 
 	for (i = 0; i <= 15; i++) {
 		f = 1 << i;
-		k = (o_ptr->xtra1 & f) ? 1 : 0 + (o_ptr->xtra2 & f) ? 1 : 0 + (o_ptr->xtra3 & f) ? 1 : 0;
-		k += (o2_ptr->xtra1 & f) ? 1 : 0 + (o2_ptr->xtra2 & f) ? 1 : 0 + (o2_ptr->xtra3 & f) ? 1 : 0;
+		k = ((o_ptr->xtra1 & f) ? 1 : 0) + ((o_ptr->xtra2 & f) ? 1 : 0) + ((o_ptr->xtra3 & f) ? 1 : 0);
+		k += ((o2_ptr->xtra1 & f) ? 1 : 0) + ((o2_ptr->xtra2 & f) ? 1 : 0) + ((o2_ptr->xtra3 & f) ? 1 : 0);
 		if (k > 3) return FALSE; /* Error: Mixture would be oversaturated of this ingredient */
 
 		/* mix.. */
