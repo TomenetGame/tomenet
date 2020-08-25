@@ -13071,9 +13071,11 @@ stated.
                                 Defensive stance - you will block more,
                                                  - reduce the effect of most
                                                    combat-induced stun effects
-                                                   (and possibly some others),
+                                                   (and possibly some others)
+                                                   you suffer,
                                                  - intercept less often,
-                                                 - deal less damage,
+                                                 - you deal less damage with
+                                                   melee and ranged weapons,
                                                  - reduces chance a monster can
                                                    steal from you.
                                                  Note: You can use it even
@@ -13105,7 +13107,9 @@ stated.
                                 D2 -45%  5/6   +11%/70%         +30%/70%
                                 D3 -40%  3/4   +13%/70%         +40%/70%
                                 DR -35%  2/3   +15%/70%         +50%/70%
-                                All def. stances reduce ranged damage by 50%.
+                                Melee damage you inflict is reduced depending
+                                on stance level. Ranged damage you inflict is
+                                always reduced by 50% in any defensive stance.
 
                                                  O1    O2    O3    OR
                                 Intercept        +4%   +7%  +10%  +15%
@@ -17528,6 +17532,12 @@ spell failure rate. All Unlife spells use WIS.)
                     This spell cannot be found in the Conveyance tome.
 
     Shadow Shroud   Grants temporary invisibility. (See (5.16) for details.)
+                    In addition to the normal invisibility effect this spell
+                    makes it extra hard for monsters to hit you in melee (aka
+                    it will provide an AC bonus), as long as you are standing
+                    on a non-lit grid (and aren't using any sort of light
+                    source). Note that this extra 'shrouding' effect cannot
+                    coexist with a reactive shield spell (fiery shield).
                     Required skill level for first spell level: 30.
 
     Chaos Bolt      Channels the powers of chaos into a bolt attack.
@@ -17554,7 +17564,11 @@ spell failure rate. All Unlife spells use WIS.)
     Darkness Storm  Conjures up a storm of darkness.
                     Required skill level for first spell level: 42.
 
-    BONI:           At 30 grants darkness resistance.
+    BONI:           At 10 it starts increasing your walking speed while you are
+                    moving on non-lit grids (and not using any light source),
+                    very similar to how the 'Sprint' technique works. This
+                    effect increases every 10 levels.
+                    At 30 grants darkness resistance.
                     At 35 and higher it will also grant a stealth bonus that
                     increases by +1 every five skill points, up to +4 at 50.
 

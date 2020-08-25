@@ -111,6 +111,7 @@ extern bool set_mimic(int Ind, int v, int p);
 extern bool set_tim_traps(int Ind, int v);
 extern bool set_tim_manashield(int Ind, int v);
 extern bool set_invis(int Ind, int v, int p);
+extern void set_shroud(int Ind, int v, int p);
 extern bool set_fury(int Ind, int v);
 extern bool set_tim_meditation(int Ind, int v);
 extern bool set_tim_wraith(int Ind, int v);

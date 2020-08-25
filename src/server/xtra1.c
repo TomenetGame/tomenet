@@ -5105,6 +5105,14 @@ void calc_boni(int Ind) {
 		p_ptr->to_a += p_ptr->shield_power;
 		p_ptr->dis_to_a += p_ptr->shield_power;
 	}
+	/* Temporary shadow shroud - note that it cannot coexist with 'reactive shield' magic.
+	   However, the only currently available spell of that sort is Fiery Shield. */
+	else if (p_ptr->shrouded) {
+		if (p_ptr->unlit_grid) {
+			p_ptr->to_a += p_ptr->shroud_power;
+			p_ptr->dis_to_a += p_ptr->shroud_power;
+		}
+	}
 
 	if (p_ptr->combat_stance == 2) {
 		p_ptr->to_a -= 30;

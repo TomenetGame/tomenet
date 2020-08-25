@@ -2070,8 +2070,8 @@ static bool rd_extra(int Ind) {
 	}
 
 	rd_s16b(&p_ptr->diseased);
-	/* Future use */
-	strip_bytes(4);			//hole
+	rd_s16b(&p_ptr->shrouded);
+	rd_s16b(&p_ptr->shroud_power);
 
 #ifdef SOLO_REKING
 	rd_s32b(&p_ptr->solo_reking);

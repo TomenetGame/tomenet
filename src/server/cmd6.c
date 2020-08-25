@@ -7482,6 +7482,7 @@ bool unmagic(int Ind) {
 #endif
 		set_tim_deflect(Ind, 0)
 	) ident = TRUE;
+	set_shroud(Ind, 0, 0); /* (this function is type void) */
 
 	if (p_ptr->word_recall) ident |= set_recall_timer(Ind, 0);
 

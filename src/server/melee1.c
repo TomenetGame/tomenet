@@ -85,6 +85,8 @@ static int monster_critical(int dice, int sides, int dam) {
  * Determine if a monster attack against the player succeeds.
  * Always miss 5% of the time, Always hit 5% of the time.
  * Otherwise, match monster power against player armor.
+ *
+ * TODO: Add this kind of check for monsters' ranged physical attacks too (aka ARROW_x 'monster spells')!
  */
 static int check_hit(int Ind, int power, int level, bool flag) {
 	player_type *p_ptr = Players[Ind];

@@ -342,12 +342,18 @@ OINVIS = add_spell {
 	["fail"] = 	-40,
 	["spell"] = 	function()
 		--if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50)) end
-		set_invis(Ind, randint(20) + 15 + get_level(Ind, OINVIS, 50), 20 + get_level(Ind, OINVIS, 50))
+		local dur = randint(20) + 15 + get_level(Ind, OINVIS, 50)
+		set_invis(Ind, dur, 20 + get_level(Ind, OINVIS, 50))
+		set_shroud(Ind, dur, 10 + get_level(Ind, OINVIS, 50) / 2)
 	end,
 	["info"] = 	function()
-		return "dur "..(15 + get_level(Ind, OINVIS, 50)).."+d20 power "..(20 + get_level(Ind, OINVIS, 50))
+		return "dur "..(15 + get_level(Ind, OINVIS, 50)).."+d20 power "..(20 + get_level(Ind, OINVIS, 50)).."/"..(10 + get_level(Ind, OINVIS, 50) / 2)
 	end,
-	["desc"] = 	{ "Grants invisibility.", }
+	["desc"] = 	{
+		"Grants invisibility.",
+		"If you are standing on a non-lit grid (and not using any light source)",
+		"it will make it especially hard for monsters to hit you in melee.",
+	}
 }
 
 function get_chaosbolt_dam(Ind)

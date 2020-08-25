@@ -1515,6 +1515,24 @@ bool no_lite(int Ind) {
 	if (p_ptr->admin_dm) return(FALSE);
 	return (!player_can_see_bold(Ind, p_ptr->py, p_ptr->px));
 }
+/* Returns true if the player grid is dark, ignoring vampire's intrinsic pseudo-'light'. */
+bool no_real_lite(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	cave_type *c_ptr, **zcave;
+
+	zcave = getcave(&p_ptr->wpos);
+	if (!zcave) return FALSE;
+	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	/* Floor is perma-lit? */
+	if (c_ptr->info & CAVE_GLOW) return FALSE;
+	/* Floor isn't lit at all? */
+	if (!c_ptr->info & CAVE_LITE) return TRUE;
+	/* Floor is only pseudo-lit, by vampiric 'light'? */
+	if (c_ptr->info & CAVE_LITE_VAMP) return TRUE;
+	/* Floor is lit by a light source */
+	return FALSE;
+}
 
 
 /*

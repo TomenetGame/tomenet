@@ -3801,6 +3801,35 @@ bool set_sh_elec_tim(int Ind, int v) {
 	return (TRUE);
 }
 
+void set_shroud(int Ind, int v, int p) {
+	player_type *p_ptr = Players[Ind];
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* This is a side effect of invisibility granted from Shadow Shroud, so it doesn't have any notifications of its own. */
+
+	if (v) { // && !p_ptr->shrouded) {
+		if (!p_ptr->shrouded) {
+			p_ptr->shrouded = v;
+			p_ptr->shroud_power = p;
+
+			p_ptr->unlit_grid = no_real_lite(Ind);
+			if (p_ptr->unlit_grid) calc_boni(Ind);
+		} else {
+			bool old_unlit_grid = p_ptr->unlit_grid;
+
+			p_ptr->shrouded = v;
+			p_ptr->shroud_power = p;
+
+			p_ptr->unlit_grid = no_real_lite(Ind);
+			if (p_ptr->unlit_grid != old_unlit_grid) calc_boni(Ind);
+		}
+	} else {
+		p_ptr->shrouded = 0;
+		p_ptr->shroud_power = 0;
+	}
+}
 
 
 /*

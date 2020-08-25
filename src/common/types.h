@@ -2843,6 +2843,8 @@ struct player_type {
 	s16b tim_invisibility;		/* Timed -- Invisibility */
 	s16b tim_invis_power;		/* Timed -- Invisibility Power (perm) */
 	s16b tim_invis_power2;		/* Timed -- Invisibility Power (temp) */
+	s16b shrouded;			/* Timed -- extra shroud, for improved invisibility */
+	s16b shroud_power;		/* Timed -- extra shroud, for improved invisibility */
 	s16b tim_traps;			/* Timed -- Avoid traps */
 	s16b tim_manashield;		/* Timed -- Mana Shield */
 	s16b tim_mimic;			/* Timed -- Mimicry */
@@ -3486,6 +3488,7 @@ struct player_type {
 	char redraw_cooldown;		/* prevent people spamming CTRL+R (costs cpu+net) */
 	bool auto_insc[INVEN_TOTAL];	/* client-side auto-inscribing helper var */
 	bool grid_sunlit, grid_house;	/* vampire handling; ambient sfx handling */
+	bool unlit_grid;		/* Shadow school boni */
 	u16b cards_diamonds, cards_hearts, cards_spades, cards_clubs;	/* for /deal and /shuffle commands */
 
 	bool exp_bar;			//just for tracking popularity of this feature..

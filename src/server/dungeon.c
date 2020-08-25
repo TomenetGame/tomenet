@@ -5165,11 +5165,16 @@ static bool process_player_end_aux(int Ind) {
 	/* Times invisibility */
 	if (p_ptr->tim_invisibility) {
 		if (p_ptr->aggravate) {
-			msg_print(Ind, "Your invisibility shield is broken by your aggravation.");
+			msg_print(Ind, "Your invisibility is broken by your aggravation.");
 			(void)set_invis(Ind, 0, 0);
 		} else {
 			(void)set_invis(Ind, p_ptr->tim_invisibility - minus_magic, p_ptr->tim_invis_power2);
 		}
+	}
+	/* Special invisibility from Shadow spell 'Shadow Shroud' */
+	if (p_ptr->shrouded) {
+		if (p_ptr->aggravate) set_shroud(Ind, 0, 0);
+		else set_shroud(Ind, p_ptr->shrouded - minus_magic, p_ptr->shroud_power);
 	}
 
 	/* Timed infra-vision */
