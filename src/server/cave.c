@@ -1527,7 +1527,7 @@ bool no_real_lite(int Ind) {
 	/* Floor is perma-lit? */
 	if (c_ptr->info & CAVE_GLOW) return FALSE;
 	/* Floor isn't lit at all? */
-	if (!c_ptr->info & CAVE_LITE) return TRUE;
+	if (!(c_ptr->info & CAVE_LITE)) return TRUE;
 	/* Floor is only pseudo-lit, by vampiric 'light'? */
 	if (c_ptr->info & CAVE_LITE_VAMP) return TRUE;
 	/* Floor is lit by a light source */
