@@ -5578,8 +5578,7 @@ static bool wraith_access_virtual(int Ind, int y, int x)
 
 
 /* borrowed from ToME	- Jir - */
-/* NOTE: in ToME levitation gives free FF, but in TomeNET not.
- * 'comfortably': also check for things like lava if player isn't fire immune. - C. Blue */
+/* 'comfortably': also check for things like lava if player isn't fire immune. - C. Blue */
 bool player_can_enter(int Ind, byte feature, bool comfortably) {
 	player_type *p_ptr = Players[Ind];
 	bool pass_wall;
@@ -5644,9 +5643,9 @@ bool player_can_enter(int Ind, byte feature, bool comfortably) {
 			else return (FALSE);
 #if 0
 		case FEAT_WALL_HOUSE:
-			if (!pass_wall || !wraith_access_virtual(Ind)) return (FALSE);
+			if (!pass_wall || !wraith_access_virtual(Ind), xxx, yyy) return (FALSE);
 			else return (TRUE);
-#endif	// 0
+#endif
 
 		default:
 			if ((p_ptr->climb) && (f_info[feature].flags1 & FF1_CAN_CLIMB))
