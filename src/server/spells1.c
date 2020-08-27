@@ -957,6 +957,11 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 			/* Prevent landing onto a store entrance */
 			if (zcave[y][x].feat == FEAT_SHOP) continue;
+			/* Prevent landing onto closed doors just because it's a bit ugly style-wise :-s */
+			if (zcave[y][x].feat == FEAT_HOME || /* House door */
+			    (zcave[y][x].feat >= FEAT_DOOR_HEAD && zcave[y][x].feat <= FEAT_DOOR_TAIL) || /* Normal doors, closed and locked */
+			    zcave[y][x].feat == FEAT_SECRET) /* Include secret door */
+				continue;
 
 			if (left_shop && dis <= 5) {
 				/* Copy/paste from player_can_enter(), could replace it with that (with comfortably=TRUE flag) */
