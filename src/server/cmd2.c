@@ -2490,12 +2490,11 @@ cptr get_house_owner(struct c_special *cs_ptr) {
 void do_cmd_open(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
-	cave_type **zcave;
+	cave_type **zcave, *c_ptr;
 
 	int y, x, i, j;
 	int flag;
 
-	cave_type *c_ptr;
 	object_type *o_ptr;
 
 	bool more = FALSE;
@@ -2510,6 +2509,7 @@ void do_cmd_open(int Ind, int dir) {
 	    //&& !strchr("thpkng", r_info[p_ptr->body_monster].d_char))) {
 #ifdef PLAYER_STORES
 		struct c_special *cs_ptr;
+
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
 		c_ptr = &zcave[y][x];
@@ -2772,7 +2772,11 @@ void do_cmd_open(int Ind, int dir) {
 		/* Home */
 		else if (c_ptr->feat == FEAT_HOME) {
 			struct c_special *cs_ptr;
+
 			if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) { /* orig house failure */
+				cave_type *c2_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+				/* We can access this house or are an admin */
 				if (access_door(Ind, cs_ptr->sc.ptr, TRUE) || is_admin(p_ptr)) {
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
@@ -2798,9 +2802,13 @@ void do_cmd_open(int Ind, int dir) {
 					everyone_lite_spot(wpos, y, x);
 					/* Update some things */
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-				} else if (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) {
-					/* Never get stuck inside a house that we don't have access to! */
+
+				/* We cannot access this house. Special hack: Never get stuck inside a house that we don't have access to!
+				   Make sure we ignore drawbridge and moat, since these are outside of the house yet cave-icky. */
+				} else if ((c2_ptr->info & CAVE_ICKY) && c2_ptr->feat != FEAT_DRAWBRIDGE && c2_ptr->feat != FEAT_DEEP_WATER) {
 					teleport_player(Ind, 1, TRUE);
+
+				/* We cannot access this house */
 				} else {
 					struct dna_type *dna = cs_ptr->sc.ptr;
 					if (!strcmp(get_house_owner(cs_ptr), "nobody.")) {
@@ -2824,7 +2832,8 @@ void do_cmd_open(int Ind, int dir) {
 				}
 				return;
 			}
-			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) {
+
+			if ((cs_ptr = GetCS(c_ptr, CS_KEYDOOR))) { /* currently not used in the game */
 				struct key_type *key = cs_ptr->sc.ptr;
 				for ( j = 0; j < INVEN_PACK; j++) {
 					object_type *o_ptr = &p_ptr->inventory[j];
