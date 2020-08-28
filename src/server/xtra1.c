@@ -1843,7 +1843,8 @@ static int weight_limit(int Ind) /* max. 3000 atm */ {
 	return (i);
 }
 
-
+/* Allow very lowspeed forms (still >110 though) to still give a slight +1 bonus, eg Kamikaze Yeek/Gold Ant which move at +3 speed naturally. 0 to disable. */
+#define MIMIC_LOWSPEED_BONUS 1
 /* Should be called by every calc_bonus call */
 static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	player_type *p_ptr = Players[Ind];
@@ -2018,7 +2019,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		//Pfft, include the -speed into the calculation, too. Seems lame how -speed is counted for 100% but not + bonus.
 		//But really, if physical-race-intrinsic bonuses/maluses are counted in mimicry, then dwarves 
 		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
-		p_ptr->pspeed = (((r_ptr->speed - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
+		p_ptr->pspeed = (((r_ptr->speed + MIMIC_LOWSPEED_BONUS - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 	}
 	csheet_boni->spd = p_ptr->pspeed - 110;
 
