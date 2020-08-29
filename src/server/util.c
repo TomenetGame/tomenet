@@ -9041,7 +9041,7 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 		//special check: if they differ early on, it weighs slightly more :)
 		if (diff_loc <= (min + 1) / 2) { /* see above (*) */
 			//loosened up slightly
-			if (diff <= (min - 6 - (diff_bonus ? 1 : 0)) / 2 + 1) {
+			if (diff <= (min - 7 - (diff_bonus ? 1 : 0)) / 2 + 1) {
 				s_printf("similar_names (3a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
 				return 3;
 			}
