@@ -2534,7 +2534,10 @@ static void display_entry(int Ind, int pos) {
 
 		powers[0] = 0;
 		if ((o_ptr->name1 == ART_RANDART || (!o_ptr->name1 && wearable_p(o_ptr)))
-		    && maybe_hidden_powers(Ind, o_ptr, TRUE))
+#if 0
+		    && maybe_hidden_powers(Ind, o_ptr, TRUE)
+#endif
+		    )
 			power_inscribe(o_ptr, FALSE, powers);
 
 		/* Send the info */
