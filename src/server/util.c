@@ -9006,7 +9006,11 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 			diff++;
 			if (diff_loc == -1) diff_loc = ptr - name1;//remember where they started to be different
 			//consonant vs vowel = big difference
+#if 0 /* [***] see below */
 			if (diff_loc < min / 2 - 1) /* see below (*) */
+#else
+			if (diff_loc <= (min + 1) / 2) /* see below (*) */
+#endif
 				if (is_a_vowel(tolower(*ptr)) != is_a_vowel(tolower(*ptr2))) diff_bonus++;
 		}
 		ptr++;
@@ -9016,6 +9020,7 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 	if (diff_loc == -1 && (*ptr || *ptr2)) diff_loc = ptr - name1;//remember where they started to be different
 	while (*ptr++) diff++;
 	while (*ptr2++) diff++;
+#if 0 /* [***] a bit too strict maybe: Arwen and Arjen accounts cannot coexist */
 	//too little difference between names? forbidden!
 	if (diff <= (min - 5) / 2 + 1) {
 		//special check: if they differ early on, it weighs slightly more :)
@@ -9030,6 +9035,22 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 			return 3;
 		}
 	}
+#else
+	//too little difference between names? forbidden!
+	if (diff <= (min - 5) / 2 + 1) {
+		//special check: if they differ early on, it weighs slightly more :)
+		if (diff_loc <= (min + 1) / 2) { /* see above (*) */
+			//loosened up slightly
+			if (diff <= (min - 6 - (diff_bonus ? 1 : 0)) / 2 + 1) {
+				s_printf("similar_names (3a): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+				return 3;
+			}
+		} else { //normal case
+			s_printf("similar_names (3): name1 '%s', name2 '%s' (tmp '%s')\n", name1, name2, tmpname);
+			return 3;
+		}
+	}
+#endif
 
 #if 0	/* Check for anagrams */
 	diff = 0;
