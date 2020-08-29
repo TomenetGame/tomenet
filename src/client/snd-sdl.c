@@ -1920,6 +1920,7 @@ static bool play_music(int event) {
 			initials--;
 			if (initials) continue;
 			music_next_song = n;
+			break;
 		}
 	}
 
