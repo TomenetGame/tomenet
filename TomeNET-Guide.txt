@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. August 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 29. August 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -644,6 +644,7 @@ c   while in a store:
                 You can also type \\\<slot letter> shortcut in chat to paste an
                 item right into some text you are writing, eg "\\\a" for the
                 first item on the store page you are currently looking at.
+                Also see \\x, \\X and \\\x further below.
 
 d       d       drop an item.
 
@@ -1605,6 +1606,16 @@ They all start with a slash '/' hence they're called slash commands:
 
 /yell <text>
             Shout <text> loudly, will wake up monsters.
+
+Aside from slash commands there are also item-paste shortcuts, which can be
+incorporated into any text you type in chat:
+\\x         Will paste the item from your inventory slot x).
+\\X         Will paste the item from your equipment slot x).
+\\\x        Will paste the item from slot x) of the store you're currently in.
+            If the item in question has any random magic powers, those will be
+            displayed as additional item inscription. (Fixed powers won't be
+            shown, in order to keep the whole message as short as possible.)
+
 
 (0.2c) IRC bot commands
 -----------------------
