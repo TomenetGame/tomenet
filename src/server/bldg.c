@@ -2622,7 +2622,7 @@ if (is_admin(p_ptr))
 				msg_print(Ind, "\377oYou need an up-to-date client to send an item.");
 				break;
 			}
-			if (!(o_ptr->ident & ID_KNOWN)) {
+			if (!object_known_p(Ind, o_ptr)) {
 				msg_print(Ind, "\377yItems must be identified before you can send them.");
 				break;
 			}
