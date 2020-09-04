@@ -194,7 +194,7 @@ guide_spell = {
 
     "Noxious Cloud",
     "Lightning Bolt",
-    "Wings of Wind",
+    "Wings of Winds",
     "Thunderstorm",
     "Invisibility", --24
 

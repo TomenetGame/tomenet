@@ -16931,7 +16931,7 @@ school.
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Air, Nature.
 
-    Wings of Wind   Grants feather falling.
+    Wings of Winds  Grants feather falling.
                     Lv16: Lets you levitate.
                     Required skill level for first spell level: 16.
                     Shared spell (see above): Air, Conveyance.
