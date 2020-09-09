@@ -137,7 +137,7 @@ int validate(char *name) {
 		Players[i]->inval = 0;
 		msg_print(i, "\377G -- Welcome to TomeNET, your account has just been validated!");
 		msg_print(i, "\377G    You can press \377B?\377G key to see a list of all command keys.");
-		msg_print(i, "\377G    Just ask in chat if you have any questionr or need help. Enjoy! --");
+		msg_print(i, "\377G    Just ask in chat if you have any questions or need help. Enjoy! --");
 	}
 
 	/* Success */
