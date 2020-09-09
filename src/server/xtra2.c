@@ -7191,6 +7191,7 @@ if (cfg.unikill_format) {
 				qq_ptr->note_utag = strlen(quark_str(local_quark));
 				apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
 
+#if 0 /* actually some leeway here! otherwise this will be soooo rarely fitting */
  #ifdef PRE_OWN_DROP_CHOSEN
 				qq_ptr->level = 0;
 				qq_ptr->owner = p_ptr->id;
@@ -7199,6 +7200,7 @@ if (cfg.unikill_format) {
 				qq_ptr->iron_turn = -1;
 				determine_artifact_timeout(i, wpos);
  #endif
+#endif
 
 				/* Log, drop it in the dungeon, done */
 				object_desc(0, o_name, qq_ptr, TRUE, 3);
