@@ -7197,6 +7197,7 @@ if (cfg.unikill_format) {
 				qq_ptr->mode = p_ptr->mode;
 				qq_ptr->iron_trade = p_ptr->iron_trade;
 				qq_ptr->iron_turn = -1;
+				determine_artifact_timeout(i, wpos);
  #endif
 
 				/* Log, drop it in the dungeon, done */
