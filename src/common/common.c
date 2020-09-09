@@ -319,7 +319,7 @@ int find_realm(int book) {
 }
 
 /* strcasestr() is only defined in _GNU_SOURCE, so we need our own implementation to be safe */
-const char *my_strcasestr(const char *big, const char *little) {
+char *my_strcasestr(const char *big, const char *little) {
 	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0;
 	int L = strlen(little), l;
@@ -327,7 +327,7 @@ const char *my_strcasestr(const char *big, const char *little) {
 	/* para stuff that is necessary */
 	if (big == NULL) return NULL; //cannot find anything in a place that doesn't exist
 	if (little == NULL) return NULL; //something that doesn't exist, cannot be found.. (was 'return big')
-	if (*little == 0) return big;
+	if (*little == 0) return (char*)big;
 	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
 
 	do {
@@ -342,7 +342,7 @@ const char *my_strcasestr(const char *big, const char *little) {
 			cnt2++;
 		}
 
-		if (L == l) return ret;
+		if (L == l) return (char*)ret;
 		cnt++;
 	} while (big[cnt] != '\0');
 	return NULL;
@@ -354,7 +354,7 @@ const char *my_strcasestr(const char *big, const char *little) {
     2 - same as (1) and it must not start on a lower-case letter (to ensure it's not just inside some random text).
     3 - same as (2) and also search only for all-caps (for item flags)
     4 - same as (3) and it must be at the beginning of the line without tolerating spaces, to rule out that we're inside some paragraph already. */
-const char *my_strcasestr_skipcol(const char *big, const char *little, byte strict) {
+char *my_strcasestr_skipcol(const char *big, const char *little, byte strict) {
 	const char *ret = NULL;
 	int cnt = 0, cnt2 = 0, cnt_offset;
 	int L = strlen(little), l;
@@ -362,7 +362,7 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, byte stri
 	/* para stuff that is necessary */
 	if (big == NULL) return NULL; //cannot find anything in a place that doesn't exist
 	if (little == NULL) return NULL; //something that doesn't exist, cannot be found.. (was 'return big')
-	if (*little == 0) return big;
+	if (*little == 0) return (char*)big;
 	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
 
 	if (strict) { /* switch to strict mode */
@@ -401,7 +401,7 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, byte stri
 				cnt2++;
 			}
 
-			if (L == l) return ret;
+			if (L == l) return (char*)ret;
 			if (!just_spaces) return NULL; /* failure: not at the beginning of the line (tolerating colour codes) */
 			cnt++;
 		} while (big[cnt] != '\0');
@@ -430,7 +430,7 @@ const char *my_strcasestr_skipcol(const char *big, const char *little, byte stri
 				cnt2++;
 			}
 
-			if (L == l) return ret;
+			if (L == l) return (char*)ret;
 			cnt++;
 		} while (big[cnt] != '\0');
 		return NULL;

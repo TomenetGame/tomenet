@@ -4380,7 +4380,8 @@ int handle_censor(char *line) {
 
 		offset = 0;
 		/* check for multiple occurrances of this nonswear word */
-		while ((word = strstr(lcopy + offset, nonswear[i]))) {
+		//while ((word = strstr(lcopy + offset, nonswear[i]))) {
+		while ((word = my_strcasestr(lcopy + offset, nonswear[i]))) { //CASE-INSENSITIVE instead!
 			/* prevent checking the same occurance repeatedly */
 			offset = word - lcopy + strlen(nonswear[i]);
 
@@ -4618,7 +4619,8 @@ int handle_censor(char *line) {
 
 		offset = 0;
 		/* check for multiple occurrances of this nonswear word */
-		while ((word = strstr(lcopy + offset, nonswear[i]))) {
+		//while ((word = strstr(lcopy + offset, nonswear[i]))) {
+		while ((word = my_strcasestr(lcopy + offset, nonswear[i]))) { //CASE-INSENSITIVE instead!
 			/* prevent checking the same occurance repeatedly */
 			offset = word - lcopy + strlen(nonswear[i]);
 
