@@ -1367,3 +1367,10 @@ function fix_spellbooks2(name, sold, snew, swap)
 		end
 	end
 end
+
+function swear_list(lv)
+	lua_swear_list(Ind, lv)
+end
+function nonswear_list()
+	lua_nonswear_list(Ind)
+end

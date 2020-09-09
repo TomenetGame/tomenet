@@ -406,6 +406,9 @@ extern void nonswear_add(char *word, int affix);
 extern char *nonswear_get(int i);
 extern int nonswear_affix_get(int i);
 extern void init_swearing(void);
+extern void lua_swear_list(int Ind, int level);
+extern void lua_nonswear_list(int Ind);
+
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 extern int scan_iddc(void);
 #endif

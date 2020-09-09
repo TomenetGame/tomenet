@@ -2365,6 +2365,8 @@ int swear_get_level(int i);
 void nonswear_add(char *word, int affix);
 char *nonswear_get(int i);
 int nonswear_affix_get(int i);
+void lua_swear_list(int Ind, int level);
+void lua_nonswear_list(int Ind);
 extern void lua_fix_max_depth(int Ind);
 extern void lua_fix_max_depth_bug(int Ind);
 extern void lua_forget_flavours(int Ind);

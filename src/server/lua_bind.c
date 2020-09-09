@@ -1344,6 +1344,27 @@ void nonswear_add(char *word, int affix) {
 }
 char *nonswear_get(int i) { return nonswear[i]; }
 int nonswear_affix_get(int i) { return nonswear_affix[i]; }
+void lua_swear_list(int Ind, int level) {
+	int i, c = 0;
+
+	for (i = 0; i < MAX_SWEAR; i++) {
+		if (!swear[i].word[0]) continue;
+		if (swear[i].level < level) continue;
+		c++;
+		msg_format(Ind, "%3d (Lv %d): %s", i, swear[i].level, swear[i].word);
+	}
+	msg_format(Ind, "Total of %d swear words.", c);
+}
+void lua_nonswear_list(int Ind) {
+	int i, c = 0;
+
+	for (i = 0; i < MAX_NONSWEAR; i++) {
+		if (!nonswear[i][0]) continue;
+		c++;
+		msg_format(Ind, "%3d (Pre/Suf %c%c): %s", i, (nonswear_affix[i] & 0x1) ? '*' : '-', (nonswear_affix[i] & 0x2) ? '*' : '-', nonswear[i]);
+	}
+	msg_format(Ind, "Total of %d nonswear terms.", c);
+}
 
 void lua_fix_max_depth(int Ind) {
 	player_type *p_ptr = Players[Ind];
