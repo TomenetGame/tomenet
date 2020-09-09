@@ -26,7 +26,10 @@ void auction_clear(int auction_id);
 void auction_add_bid(int auction_id, s32b bid, s32b bidder);
 void auction_remove_bid(int auction_id, int bid_id);
 void auction_list_print_item(int Ind, int auction_id);
-cptr my_strcasestr(cptr haystack, cptr needle);
+#if 0 /* not needed, it's in common.c/externs.h */
+//cptr my_strcasestr(cptr haystack, cptr needle);
+char* my_strcasestr(cptr haystack, cptr needle);
+#endif
 
 /* TODO: How badly can this mess up shopping? */
 void process_auctions()
