@@ -1353,7 +1353,7 @@ void lua_swear_list(int Ind, int level) {
 		c++;
 		msg_format(Ind, "%3d (Lv %d): %s", i, swear[i].level, swear[i].word);
 	}
-	msg_format(Ind, "Total of %d swear words.", c);
+	msg_format(Ind, "Total of %d/%d swear words.", c, MAX_SWEAR);
 }
 void lua_nonswear_list(int Ind) {
 	int i, c = 0;
@@ -1363,7 +1363,7 @@ void lua_nonswear_list(int Ind) {
 		c++;
 		msg_format(Ind, "%3d (Pre/Suf %c%c): %s", i, (nonswear_affix[i] & 0x1) ? '*' : '-', (nonswear_affix[i] & 0x2) ? '*' : '-', nonswear[i]);
 	}
-	msg_format(Ind, "Total of %d nonswear terms.", c);
+	msg_format(Ind, "Total of %d/%d nonswear terms.", c, MAX_NONSWEAR);
 }
 
 void lua_fix_max_depth(int Ind) {
