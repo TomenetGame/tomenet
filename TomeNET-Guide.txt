@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. August 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 9. September 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2587,6 +2587,10 @@ pray in 'The Mirror' in Lothlorien, see (4.5a) for details.
 Morgoth always drops his crown and hammer. If he is defeated by a party, he
 will drop exactly one crown and one hammer per party member, so everyone in the
 party can get both items.
+In addition to Crowns, Hammers and a bunch of random loot, he will also drop
+specifically one additional random 'great' item per player in the party which
+defeated him (similar to items obtained by Acquirement scrolls, but with an
+even higher chance to turn out quite expensive).
 
 A very dangerous thing about the Nazgul is that weapons get quickly destroyed
 if they come in contact with these corrupted beings.
