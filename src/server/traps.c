@@ -2180,7 +2180,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b
 			o_ptr->discount = 100;
 			o_ptr->owner = p_ptr->id;
 			o_ptr->mode = p_ptr->mode;
-			o_ptr->level = 0;
+			//o_ptr->level = 0; --too often pointless if level 0, leeway needed for moar fun
+			o_ptr->level = 25; //standard level in BMs is 19..21 mostly
 			o_ptr->note = quark_add("!*");
 			o_ptr->iron_trade = p_ptr->iron_trade;
 			o_ptr->iron_turn = turn;
