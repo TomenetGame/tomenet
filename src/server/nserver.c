@@ -7825,12 +7825,41 @@ int Send_sfx_volume(int Ind, char sfx_ambient_vol, char sfx_weather_vol) {
 #endif
 
 int Send_boni_col(int Ind, boni_col c) {
-	connection_t *connp = Conn[Players[Ind]->conn];
+	connection_t *connp = Conn[Players[Ind]->conn], *connp2 = NULL;
+	player_type *p_ptr2 = NULL;
+
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for boni_col (%d.%d.%d)",
 			Ind, connp->state, connp->id));
 		return 0;
+	}
+
+	/* If we're the target, we won't hear our own sfx */
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Get target player */
+	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
+	/* Send same info to target player, if available */
+	if (connp2 && is_newer_than(&connp2->version, 4, 5, 3, 2, 0, 0)) {
+		if (is_newer_than(&connp2->version, 4, 6, 1, 2, 0, 0)) {
+			return Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
+			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
+			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+			    c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, c.symbol);
+		} else if (is_newer_than(&connp2->version, 4, 5, 9, 0, 0, 0)) {
+			return Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
+			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
+			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+			    c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+		} else {
+			return Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
+			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
+			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr,
+			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
+			    c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
+		}
 	}
 
 	if (!is_newer_than(&connp->version, 4, 5, 3, 2, 0, 0)) return(-1);
