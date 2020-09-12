@@ -495,8 +495,7 @@ extern s16b lookup_kind(int tval, int sval);
 extern void invwipe(object_type *o_ptr);
 extern void invcopy(object_type *o_ptr, int k_idx);
 extern void apply_magic(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u16b resf);
-/*extern void place_object(int Depth, int y, int x, bool good, bool great, bool true_art, int luck);*/
-extern void place_object(struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u16b resf, obj_theme theme, int luck, byte removal_marker);
+//extern void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool great, bool verygreat, u32b resf, obj_theme theme, int luck, byte removal_marker, bool preown);
 extern void acquirement(int Depth, int y1, int x1, int num, bool great, bool verygreat, u16b resf);
 extern void place_trap(int Depth, int y, int x);
 extern void place_gold(int Depth, int y, int x);
