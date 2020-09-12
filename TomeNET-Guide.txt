@@ -2685,6 +2685,11 @@ at close quarters combat. In general, do not underestimate Sauron's power!
  Everyone who is at least level 40 and on the same dungeon floor and in the
  same party as the player who lands the killing blow will get credit for
  winning the game and receive a royal title accordingly.
+-For unworldy (no-ghost) parties there are extra rewards for beating Morgoth as
+ a team since they cannot profit from the re-kinging potential that others get
+ from this. So unwordlies, if they beat Morgoth in a team, will get..
+ -An extra randart drop of 'combat' treasure class.
+ -Extra artifact creation scrolls for every player more than two (so trio+).
 -There are no obstacles that can hold Morgoth back for long.
 
 See (1.3a) for more information about Morgoth.
@@ -11443,7 +11448,8 @@ Multiple equipped sets don't stack, only the biggest set counts!
 Artifact resets
 ---------------
 The old system of resetting all true artifacts at once every 3 months has been
-replaced by a new "fluent" reset system:
+replaced by a new "fluent" reset system that utilizes 'artifact timeouts' which
+are counted down separately for each artifact, starting when it is found:
 
 Artifacts will last for 5 weeks after they have been found (ie dropped by a
 monster/chest/just being generated on the dungeon floor, and picked up by a
@@ -11467,6 +11473,9 @@ can exist multiple times, ie are not unique, so every player can acquire them.
 
 There are a few special artifacts that can only be found by winners (kings/
 /queens/emperors/empresses). These have twice the timeout delay (10 weeks).
+
+Level 100 artifacts are also treated specially: They do not get their remaining
+timeout halved when their wearer beats Morgoth.
 
 If a character who is carrying true artifacts wins the game, ie beats Morgoth,
 all the true artifacts he is already carrying will from now on time out at
