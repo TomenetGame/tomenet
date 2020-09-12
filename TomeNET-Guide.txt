@@ -2603,7 +2603,7 @@ since these resist Nazgul greatly! The Stormbringer also resists like an
 artifact. (It doesn't matter if the artifact is a random or a static one.)
 If your weapon gets destroyed you'll receive a warning message:
 "Your weapon *DISINTEGRATES*!" or "Your weapon is destroyed !"
-(The permanently cursed weapon 'Mighty Hammer of Grond' cannot be destroyed.
+(The permanently cursed weapon 'Mighty Hammer "Grond"' cannot be destroyed.
 See (5.9b) for more information about artifacts.)
 
 Your weapon itself will not damage the Nazgul if it doesn't have one of the
