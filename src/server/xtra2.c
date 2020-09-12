@@ -6770,7 +6770,6 @@ if (cfg.unikill_format) {
 		if (is_Morgoth && !pvp) {
 			/* Hack -- an "object holder" */
 			object_type prize;
-
 			int num = 0;
 
 			/* Nothing left, game over... */
@@ -6870,50 +6869,80 @@ if (cfg.unikill_format) {
 			}
 
 			/* Paranoia (if a ghost killed Morgoth) ;) - C. Blue */
-		    if (num) {
+			if (num) {
+				/* Mega-Hack -- Prepare to make "Grond" */
+				invcopy(&prize, lookup_kind(TV_BLUNT, SV_GROND));
+				/* Mega-Hack -- Mark this item as "Grond" */
+				prize.name1 = ART_GROND;
+				/* Mega-Hack -- Actually create "Grond" */
+				apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
 
-			/* Mega-Hack -- Prepare to make "Grond" */
-			invcopy(&prize, lookup_kind(TV_BLUNT, SV_GROND));
-			/* Mega-Hack -- Mark this item as "Grond" */
-			prize.name1 = ART_GROND;
-			/* Mega-Hack -- Actually create "Grond" */
-			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
+				prize.number = num;
+				prize.level = 40;
+				prize.note = local_quark;
+				prize.note_utag = strlen(quark_str(local_quark));
 
-			prize.number = num;
-			prize.level = 40;
-			prize.note = local_quark;
-			prize.note_utag = strlen(quark_str(local_quark));
+				/* Drop it in the dungeon */
+				if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
+				else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
+				drop_near(0, &prize, -1, wpos, y, x);
 
-			/* Drop it in the dungeon */
-			if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
-			else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
-			drop_near(0, &prize, -1, wpos, y, x);
+				/* Mega-Hack -- Prepare to make "Morgoth" */
+				invcopy(&prize, lookup_kind(TV_CROWN, SV_MORGOTH));
+				/* Mega-Hack -- Mark this item as "Morgoth" */
+				prize.name1 = ART_MORGOTH;
+				/* Mega-Hack -- Actually create "Morgoth" */
+				apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
 
-			/* Mega-Hack -- Prepare to make "Morgoth" */
-			invcopy(&prize, lookup_kind(TV_CROWN, SV_MORGOTH));
-			/* Mega-Hack -- Mark this item as "Morgoth" */
-			prize.name1 = ART_MORGOTH;
-			/* Mega-Hack -- Actually create "Morgoth" */
-			apply_magic(wpos, &prize, -1, TRUE, TRUE, TRUE, FALSE, resf_chosen);
+				prize.number = num;
+				prize.level = 40;
+				prize.note = local_quark;
+				prize.note_utag = strlen(quark_str(local_quark));
 
-			prize.number = num;
-			prize.level = 40;
-			prize.note = local_quark;
-			prize.note_utag = strlen(quark_str(local_quark));
-
-			/* Drop it in the dungeon */
-			if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
-			else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
-			drop_near(0, &prize, -1, wpos, y, x);
+				/* Drop it in the dungeon */
+				if (wpos->wz) prize.marked2 = ITEM_REMOVAL_NEVER;
+				else prize.marked2 = ITEM_REMOVAL_DEATH_WILD;
+				drop_near(0, &prize, -1, wpos, y, x);
 
 
-			/* Special reward: 1 *great* acquirement item per player. */
-			i = object_level;
-			object_level = 127;
-			acquirement(0, wpos, y, x, num, TRUE, TRUE, RESF_WINNER | RESF_LIFE | RESF_NOTRUEART | RESF_EGOHI);
-			object_level = i;
+				/* Further special drops as rewards.. */
+				i = object_level;
+				object_level = 127;
 
-		    } /* Paranoia tag */
+				/* Special reward: 1 *great* acquirement item per player. */
+				acquirement(0, wpos, y, x, num, TRUE, TRUE, RESF_WINNER | RESF_LIFE | RESF_NOTRUEART | RESF_EGOHI);
+
+				/* Extra reward(s) for unworldly players, as they cannot profit from the re-kinging potential of a party-kill like non-UWs can. */
+				if (p_ptr->mode & MODE_NO_GHOST) {
+					/* Duo+: +1 randart. (Hard but commonly doable) */
+					if (num >= 2) {
+						/* generate an object and place it */
+						obj_theme theme;
+
+						theme.treasure = 0;
+						theme.magic = 0;
+						theme.tools = 0;
+						theme.combat = 100;
+						place_object_restrictor = RESF_NONE;
+						place_object(0, wpos, y, x, TRUE, TRUE, TRUE, RESF_FORCERANDART | RESF_LIFE, theme, 0, ITEM_REMOVAL_NEVER, FALSE);
+					}
+					/* Trio+: +1 artifact creation scroll per player more than 2. (Very hard) */
+					if (num >= 3) {
+						qq_ptr = &forge;
+						object_wipe(qq_ptr);
+						invcopy(qq_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION));
+						qq_ptr->number = 1;
+						qq_ptr->note = local_quark;
+						qq_ptr->note_utag = strlen(quark_str(local_quark));
+						apply_magic(wpos, qq_ptr, 150, TRUE, TRUE, FALSE, FALSE, RESF_NONE);
+						/* drop one per player starting with 3rd player, use /d to figure who gets it maybe ^^ */
+						for (j = 3; j <= num; j++) drop_near(0, qq_ptr, -1, wpos, y, x);
+					}
+				}
+
+				/* Restore default object_level */
+				object_level = i;
+			}
 
 			/* Hack -- instantly retire any new winners if neccecary */
 			if (cfg.retire_timer == 0) {
