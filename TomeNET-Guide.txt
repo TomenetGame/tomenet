@@ -3846,18 +3846,48 @@ First you may choose your gender. This will not have actual influence on your
 strengths or weaknesses.
 
 
-Next you have to choose your class. Spellcasters like Istari or Shamans are
-physically weaker and especially hard to play for beginners.
+Next you have to choose your class. Spellcasters like Istari (elvish word for
+mages), Shamans or Runemasters are physically weaker and especially hard to
+play for beginners.
 If you choose a spellcaster, be aware that his casting ability depends on
-either his intelligence or his wisdom, depending on the actual class. For more
-information about classes and their pros and cons see (6.5).
+either his intelligence or his wisdom, depending on the actual class.
 Spellcasting involves using 'macros' (see (3.6)) and might be a bit difficult
 for beginners.
+
+Here is a short table that explains each class in a basic way,
+for more detailed information about classes and their pros and cons see (6.5).
+
+Class          How it basically plays
+-------------------------------------------------------------------------------
+Warrior         Straightforward melee fighter, may access ranged skills too,
+                even magic device usage, or specialize in 'anti-magic' instead.
+Istar aka Mage  Master spellcaster, weak in the beginning until shield spell.
+Priest          Mix of melee combat and various holy prayer schools (ie spells)
+                leaning strongly to training multiple holy schools or all even.
+                Can become a 'monk' by training martial arts.
+Cor.Priest      (Very specifically a Corrupted Maia Priest.) Same as Priest but
+                casts corrupt spells instead.
+Rogue           Able melee fighter with tricks, may learn magic or trapping too
+                and can actually train shoplifting (aka 'Stealing' skill).
+Mimic           Shapeshifter learning forms of slain enemies, strong in melee.
+Archer          Ranged archetype, high damage output but weak in melee.
+Paladin         Mix of melee combat and various holy prayer schools (ie spells)
+                leaning heavily to combat skills and just 1-2 prayer schools.
+Death Knight    (Vampire Paladin.) Melee fighter with various dark spells.
+Hell Knight     (Corrupted Maia Paladin.) Melee fighter with hellish abilities.
+Ranger          Very versatile fighter using melee, ranged, spells or trapping.
+Adventurer      Most versatile class, can train almost any skill. On the other
+                hand that makes it easy to mess up by diluting skills too much.
+Druid           Shapeshifter using martial arts and various spells.
+Shaman          Versatile spellcaster/shapeshifter, can access melee skills.
+Runemaster      Destructive spellcaster, can access melee skills and even
+                train shoplifting same as rogue.
+Mindcrafter     Versatile spellcaster/melee combat hybrid.
 
 
  ---- PLEASE NOTE: ----
  If you are new to the game, it is NOT recommended to choose one of these:
- Istar, Priest, Shaman, Adventurer.
+ Istar, Priest, Shaman, Adventurer, Runemaster.
  The reason is that these classes are hard to play in the beginning -
  compare introductory explanation in (6.5)!
 
