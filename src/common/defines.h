@@ -3143,8 +3143,13 @@
 	(tval) == TV_HARD_ARMOR || (tval) == TV_CLOAK || \
 	((tval) == TV_HELM && (sval) != SV_CLOTH_CAP && (sval) != SV_HARD_LEATHER_CAP && (sval) != SV_GOGGLES_DM) || \
 	(tval == TV_SHIELD))
-#define is_cheap_misc(tval) \
+#ifndef ENABLE_DEMOLITIONIST
+ #define is_cheap_misc(tval) \
 	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK)
+#else
+ #define is_cheap_misc(tval) \
+	(is_ammo(tval) || (tval) == TV_FIRESTONE || (tval) == TV_SPIKE || (tval) == TV_JUNK || (tval) == TV_CHEMICAL)
+#endif
 #define is_ranged_item(Ind, o_ptr) \
 	(is_ranged_weapon((o_ptr)->tval) || \
 	is_ammo((o_ptr)->tval) || \
