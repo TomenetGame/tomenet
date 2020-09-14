@@ -5792,6 +5792,7 @@ static bool process_player_end_aux(int Ind) {
 	//if (get_skill(p_ptr, SKIll_PPOWER) >= 24 && get_skill(p_ptr, SKIll_PPOWER) - 16 > k) k = get_skill(p_ptr, SKILL_PPOWER) - 16;
 	if (p_ptr->sh_cold && !p_ptr->sh_fire && k < 20) k = 20;
 	if (p_ptr->ptrait == TRAIT_WHITE && k < 29) k = 29;
+	if (p_ptr->aura[1] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30 && k < 29) k = 29;
 	if (k && rand_int(86) <= k - 8)
 	/* Process inventory (blood potions, snowballs) */
 	for (i = 0; i < INVEN_PACK; i++) {
