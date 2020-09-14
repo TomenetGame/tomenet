@@ -17594,7 +17594,7 @@ spell failure rate. All Unlife spells use WIS.)
     BONI:           At 10 it starts increasing your walking speed while you are
                     moving on non-lit grids (and not using any light source),
                     very similar to how the 'Sprint' technique works. This
-                    effect increases every 10 levels.
+                    'shadow walk' effect increases every 10 levels.
                     At 30 grants darkness resistance.
                     At 35 and higher it will also grant a stealth bonus that
                     increases by +1 every five skill points, up to +4 at 50.
