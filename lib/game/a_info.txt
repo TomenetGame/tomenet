@@ -2914,11 +2914,11 @@ D:Sacred gloves of an archpriest whose name is not remembered.
 # The Amulet of Grom, the Wyrm Hunter
 
 N:233:of Grom, the Wyrm Hunter
-I:40:38:0
+I:40:38:4
 W:40:80:3:60000
 F:HIDE_TYPE | INSTA_ART | ACTIVATE | SPECIAL_GENE |
 F:RES_FIRE | RES_COLD | RES_ACID | RES_ELEC | RES_POIS |
-F:ESP_DRAGON | SLAY_DRAGON
+F:ESP_DRAGON | KILL_DRAGON | RES_FEAR | STR
 D:The amulet of Grom, the Wyrm Hunter. His whereabouts are unknown.
 
 
