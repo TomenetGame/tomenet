@@ -4500,7 +4500,7 @@ static bool process_player_end_aux(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	cave_type		*c_ptr;
 	object_type		*o_ptr;
-	int		i, j;
+	int		i, j, k;
 	int		regen_amount; //, NumPlayers_old = NumPlayers;
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
@@ -5785,6 +5785,14 @@ static bool process_player_end_aux(int Ind) {
 	/* Note changes */
 	j = 0;
 
+	/* Items carried that are susceptible to warmth can be kept cool longer by a Water-proficient mage or other means of cooling.
+	   (Maybe todo: Vampire player carrying stuff while in a cold_place..) */
+	k = 0;
+	if (get_skill(p_ptr, SKILL_WATER) >= 8) k = get_skill(p_ptr, SKILL_WATER);
+	//if (get_skill(p_ptr, SKIll_PPOWER) >= 24 && get_skill(p_ptr, SKIll_PPOWER) - 16 > k) k = get_skill(p_ptr, SKILL_PPOWER) - 16;
+	if (p_ptr->sh_cold && !p_ptr->sh_fire && k < 20) k = 20;
+	if (p_ptr->ptrait == TRAIT_WHITE && k < 29) k = 29;
+	if (k && rand_int(86) <= k - 8)
 	/* Process inventory (blood potions, snowballs) */
 	for (i = 0; i < INVEN_PACK; i++) {
 		/* Get the object */
@@ -5796,6 +5804,8 @@ static bool process_player_end_aux(int Ind) {
 		/* SV_POTION_BLOOD going bad */
 		if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) {
 			o_ptr->timeout--;
+			/* Heat accelerates the process */
+			if (o_ptr->timeout && ((p_ptr->sh_fire && !p_ptr->sh_cold) || p_ptr->ptrait == TRAIT_RED) && !rand_int(2)) o_ptr->timeout--;
 #ifdef LIVE_TIMEOUTS
 			if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
 #endif
@@ -5817,6 +5827,8 @@ static bool process_player_end_aux(int Ind) {
 		/* SV_SNOWBALL melting */
 		if (o_ptr->tval == TV_GAME && o_ptr->pval && !cold_place(&p_ptr->wpos)) {
 			o_ptr->pval--;
+			/* Heat accelerates the process */
+			if (o_ptr->pval && ((p_ptr->sh_fire && !p_ptr->sh_cold) || p_ptr->ptrait == TRAIT_RED)) o_ptr->pval--;
 #ifdef LIVE_TIMEOUTS
 			if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
 #endif

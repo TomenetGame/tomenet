@@ -16910,6 +16910,9 @@ school.
     BONI:           Passing water at 30,
                     water resistance at 40,
                     water immunity at 50.
+                    Items that go bad over time due to warmth while being
+                    carried will last longer depending on how high this skill
+                    has been trained, with the effect beginning at 8.000.
 
 
 - Air
