@@ -11663,6 +11663,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 				}
 				if (retval < 0) {
 					s_printf("add_dungeon failed in generate_cave!! %s\n", wpos_format(0, wpos));
+					server_dungeon = TRUE; //restore - paranoia
 					return;	/* This should never.. */
 				}
 				type = town[retval].type;
