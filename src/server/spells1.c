@@ -5532,6 +5532,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
  #ifdef DEMOLITIONIST_IDDC_ONLY
 				    in_iddc &&
  #endif
+				    strstr(note_kill, " burn") &&
 				    (my_strcasestr(o_name, "wood") ||
 				    (k_info[k_idx].tval == TV_JUNK && k_info[k_idx].sval == SV_WOODEN_STICK)) &&
 				    get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && !p_ptr->IDDC_logscum) {
