@@ -557,7 +557,7 @@
  * 32768 is way too large; 4096 monsters/objs are enough to weigh
  * your latest comp down(even w/o AI code)!
  */
-#define MAX_O_IDX	32768	/* Max size for "o_list[]" */
+#define MAX_O_IDX	65535	/* Max size for "o_list[]" */
 #define MAX_M_IDX 	32768	/* Max size for "m_list[]" */
 
 
