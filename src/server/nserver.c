@@ -5822,7 +5822,7 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, i
 	   We skip 0x0100 and 0x0200 because of MODE_FRUIT_BAT hack.  */
 	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) {
 		mode |= (p_ptr->admin_wiz ? 0x0400 : 0x0) | (p_ptr->admin_dm ? 0x0800 : 0x0);
-		mode |= (p_ptr->privileged == 1 ? 0x1000 : 0x0) | (p_ptr->privileged == 2 ? 0x4000 : 0x0);
+		mode |= (p_ptr->privileged == 1 ? 0x1000 : 0x0) | (p_ptr->privileged == 2 ? 0x2000 : 0x0);
 		mode |= (p_ptr->restricted == 1 ? 0x4000 : 0x0) | (p_ptr->restricted == 2 ? 0x8000 : 0x0);
 	}
 
