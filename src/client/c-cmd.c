@@ -2046,6 +2046,20 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
+				/* Maia initiation (could just chapter-search "init", but somehow this seems more intuitive..) */
+				if (!strncasecmp(buf, "enl", 3)) {
+					strcpy(buf, "ENLIGHTENED:");
+					fallback = TRUE;
+					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
+					continue;
+				}
+				if (!strncasecmp(buf, "cor", 3)) {
+					strcpy(buf, "CORRUPTED:");
+					fallback = TRUE;
+					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
+					continue;
+				}
+
 				/* There is no Black Breath chapter but it is explained fully in the chapter containing Nazgul info */
 				if (my_strcasestr(buf, "black") == buf || !strcasecmp(buf, "bb")) strcpy(buf, "nazgul");
 
