@@ -6856,6 +6856,10 @@ void display_account_information(void) {
 		else if (p_ptr->restricted == 2) c_prt(TERM_ORANGE, 	"Extra-restricted player account", 7, 2);
 		else if (p_ptr->restricted == 1) c_prt(TERM_YELLOW, 	"Restricted player account      ", 7, 2);
 		else c_prt(TERM_L_GREEN, 				"Standard player account        ", 7, 2);
+
+		/* hack: hide cursor */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
 	}
 }
 
