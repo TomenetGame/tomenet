@@ -5810,15 +5810,23 @@ int Send_stamina(int Ind, int mst, int cst) {
 int Send_char_info(int Ind, int race, int class, int trait, int sex, int mode, int lives, cptr name) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL;
+	player_type *p_ptr = Players[Ind];
 
 #ifndef ENABLE_DRACONIAN_TRAITS
 	if (race == RACE_DRACONIAN) trait = 0;
 #endif
 
 	/* Hack: Transmitted 'mode' is int, not char, so we can stuff this in */
-	if (is_atleast(&Players[Ind]->version, 4, 7, 1, 1, 0, 0) && Players[Ind]->fruit_bat == 1) mode |= MODE_FRUIT_BAT;
+	if (is_atleast(&p_ptr->version, 4, 7, 1, 1, 0, 0) && p_ptr->fruit_bat == 1) mode |= MODE_FRUIT_BAT;
+	/* Abuse 'byte mode;' even more for stuffing in another byte to let the client know whether we're admin etc.
+	   We skip 0x0100 and 0x0200 because of MODE_FRUIT_BAT hack.  */
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) {
+		mode |= (p_ptr->admin_wiz ? 0x0400 : 0x0) | (p_ptr->admin_dm ? 0x0800 : 0x0);
+		mode |= (p_ptr->privileged == 1 ? 0x1000 : 0x0) | (p_ptr->privileged == 2 ? 0x4000 : 0x0);
+		mode |= (p_ptr->restricted == 1 ? 0x4000 : 0x0) | (p_ptr->restricted == 2 ? 0x8000 : 0x0);
+	}
 
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		if (is_atleast(&connp2->version, 4, 7, 3, 0, 0, 0)) {

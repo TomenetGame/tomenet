@@ -4420,10 +4420,11 @@ void cmd_purchase_house(void) {
 	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Change house owner");
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Change house permissions");
 	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Paint house");/* new in 4.4.6: */
-	/* display in dark colour since only admins can do this really */
 	Term_putstr(5, 9, -1, TERM_WHITE, "(s) Enter player store");/* new in 4.4.6: */
 	Term_putstr(5, 10, -1, TERM_WHITE, "(k) Knock on house door");
-	Term_putstr(5, 20, -1, TERM_L_DARK, "(D) Delete house (server administrators only)");
+	/* display in dark colour since only admins can do this really */
+	if (p_ptr->admin_dm || p_ptr->admin_wiz)
+		Term_putstr(5, 20, -1, TERM_L_DARK, "(D) Delete house (server administrators only)");
 
 	while (i != ESCAPE) {
 		i = inkey();
@@ -4449,8 +4450,11 @@ void cmd_purchase_house(void) {
 			i = ESCAPE;
 			break;
 		case 'D':
-			cmd_house_kill(dir);
-			i = ESCAPE;
+			if (!p_ptr->admin_dm && !p_ptr->admin_wiz) bell();
+			else {
+				cmd_house_kill(dir);
+				i = ESCAPE;
+			}
 			break;
 		case 's':
 			cmd_house_store(dir);
@@ -5401,6 +5405,8 @@ static void cmd_master(void) {
 
 	//party_mode = TRUE;
 
+	if (!p_ptr->admin_dm && !p_ptr->admin_wiz) return;
+
 	/* Save screen */
 	Term_save();
 
@@ -5419,6 +5425,11 @@ static void cmd_master(void) {
 		Term_putstr(5, 7, -1, TERM_WHITE, "(4) Generation Commands");
 		Term_putstr(5, 8, -1, TERM_WHITE, "(5) Player Commands");
 		Term_putstr(5, 9, -1, TERM_WHITE, "(6) System Commands");
+#ifdef TEST_CLIENT
+		Term_putstr(5,10, -1, TERM_SLATE, "(a) Test 1");
+		Term_putstr(5,11, -1, TERM_SLATE, "(b) Test 2");
+		Term_putstr(5,12, -1, TERM_SLATE, "(c) Test 3");
+#endif
 
 		/* Prompt */
 		Term_putstr(0, 14, -1, TERM_WHITE, "Command: ");
@@ -5448,6 +5459,22 @@ static void cmd_master(void) {
 		case '6':
 			cmd_master_aux_system();
 			break;
+
+#ifdef TEST_CLIENT
+		/* Extra: Variable random stuff that gets hard-coded into the client for hacking.. */
+		case 'a':
+			c_message_add(format("sizeof(object_type)=%d", sizeof(object_type)));
+			break;
+		case 'b':
+			c_message_add(format("admin_dm=%d", p_ptr->admin_dm));
+			c_message_add(format("admin_wiz=%d", p_ptr->admin_wiz));
+			c_message_add(format("total_winner=%d", p_ptr->total_winner));
+			c_message_add(format("ghost=%d", p_ptr->ghost));
+			break;
+		case 'c':
+			break;
+#endif
+
 		case ESCAPE:
 		case KTRL('Q'):
 			break;

@@ -6846,6 +6846,16 @@ void display_account_information(void) {
 		} else {
 			c_prt(TERM_SLATE, "Retrieving data...", 3, 2);
 		}
+
+		/* Added in 4.7.3 */
+		c_prt(TERM_WHITE, "Account-based character information:", 5, 0);
+		if (p_ptr->admin_dm) c_prt(TERM_BLUE, 			"Dungeon Master                 ", 7, 2);
+		else if (p_ptr->admin_wiz) c_prt(TERM_BLUE, 		"Dungeon Wizard                 ", 7, 2);
+		else if (p_ptr->privileged == 2) c_prt(TERM_L_BLUE, 	"Extra-privileged player account", 7, 2);
+		else if (p_ptr->privileged == 1) c_prt(TERM_L_BLUE, 	"Privileged player account      ", 7, 2);
+		else if (p_ptr->restricted == 2) c_prt(TERM_ORANGE, 	"Extra-restricted player account", 7, 2);
+		else if (p_ptr->restricted == 1) c_prt(TERM_YELLOW, 	"Restricted player account      ", 7, 2);
+		else c_prt(TERM_L_GREEN, 				"Standard player account        ", 7, 2);
 	}
 }
 

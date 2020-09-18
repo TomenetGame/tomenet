@@ -2083,7 +2083,17 @@ int Receive_char_info(void) {
 	p_ptr->ptrait = trait;
 	p_ptr->tp_ptr = &trait_info[trait];
 	p_ptr->male = sex;
-	if (p_ptr->mode & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1; else p_ptr->fruit_bat = 0; //track native fruit bat state
+	if (mode & MODE_FRUIT_BAT) p_ptr->fruit_bat = 1; else p_ptr->fruit_bat = 0; //track native fruit bat state
+	/* New for 4.7.3: Transmit admin etc status */
+	p_ptr->admin_wiz = p_ptr->admin_dm = FALSE;
+	p_ptr->privileged = p_ptr->restricted = 0;
+	if (mode & 0x0400) p_ptr->admin_wiz = TRUE;
+	if (mode & 0x0800) p_ptr->admin_dm = TRUE;
+	if (mode & 0x1000) p_ptr->privileged = 1;
+	if (mode & 0x2000) p_ptr->privileged = 2;
+	if (mode & 0x4000) p_ptr->restricted = 1;
+	if (mode & 0x8000) p_ptr->restricted = 2;
+	/* Clear any special transmission hacks */
 	p_ptr->mode = mode & 0xFF;
 
 	/* Load preferences once */
