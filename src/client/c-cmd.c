@@ -2047,13 +2047,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
 				/* Maia initiation (could just chapter-search "init", but somehow this seems more intuitive..) */
-				if (!strncasecmp(buf, "enl", 3)) {
+				if (!strncasecmp(buf, "enl", 3) && my_strcasestr("Enlightened:", buf)) {
 					strcpy(buf, "ENLIGHTENED:");
 					fallback = TRUE;
 					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
 					continue;
 				}
-				if (!strncasecmp(buf, "cor", 3)) {
+				if (!strncasecmp(buf, "cor", 3) && my_strcasestr("Corrupted:", buf)) {
 					strcpy(buf, "CORRUPTED:");
 					fallback = TRUE;
 					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
