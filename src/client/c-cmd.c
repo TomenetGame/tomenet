@@ -304,7 +304,8 @@ void process_command() {
 		   if (!strcmp(nick,DUNGEON_MASTER)) cmd_master();
 		   else prompt_topline("Hit '?' for help.");
 		   */
-		cmd_master();
+		if (p_ptr->admin_dm || p_ptr->admin_wiz) cmd_master();
+		else cmd_raw_key(command_cmd);
 		break;
 
 	/* Add separate buffer for chat only review (good for afk) -Zz */
@@ -5404,8 +5405,6 @@ static void cmd_master(void) {
 	char i = 0;
 
 	//party_mode = TRUE;
-
-	if (!p_ptr->admin_dm && !p_ptr->admin_wiz) return;
 
 	/* Save screen */
 	Term_save();
