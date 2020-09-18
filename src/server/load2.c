@@ -3215,6 +3215,7 @@ errr rd_server_savefile() {
 	u32b overflow; /* For discarding data that is too much to fit in */
 	char overflow_msg[MSG_LEN];
 	object_type o_dummy;
+	monster_type m_dummy;
 #endif
 
 
@@ -3376,12 +3377,27 @@ errr rd_server_savefile() {
 	/* get the number of monsters to be loaded */
 	rd_u32b(&tmp32u);
 	if (tmp32u > MAX_M_IDX) {
-//todo: ALLOW_EXCESS_DATA
+#ifndef ALLOW_EXCESS_DATA
 		s_printf("Too many (%u) monsters!\n", tmp16u);
 		return (29);
+#else
+		s_printf("Too many (%u) monsters! Discarding %d beyond %d.\n", tmp16u, tmp16u - MAX_M_IDX, MAX_M_IDX);
+		overflow = tmp16u - MAX_M_IDX;
+		tmp16u = MAX_M_IDX;
+	} else {
+		overflow = 0;
+#endif
 	}
 	/* load the monsters */
 	for (i = 0; i < tmp32u; i++) rd_monster(&m_list[m_pop()]);
+#ifdef ALLOW_EXCESS_DATA
+	/* Just discard excess data */
+	for (i = 0; i < overflow; i++) {
+		rd_monster(&m_dummy);
+		//object_desc(0, overflow_msg, &m_dummy, FALSE, 0);
+		//s_printf(" DISCARDED: %s\n", overflow_msg);
+	}
+#endif
 #ifdef MONSTER_ASTAR
 	/* Reassign A* instances */
 	for (i = 1; i < m_max; i++) {
