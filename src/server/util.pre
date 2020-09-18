@@ -439,3 +439,11 @@ extern int __audio_mus_max;
 extern bool allow_similar_names;
 
 extern bool pvp_disabled;
+
+/* For debugging/verifying of available object memory */
+extern s32b o_nxt;
+extern s32b m_nxt;
+extern s32b o_max;
+extern s32b m_max;
+extern s32b o_top;
+extern s32b m_top;
