@@ -1628,12 +1628,14 @@ void xhtml_screenshot(cptr name) {
 
 	x = strlen(name) - 4;
 
-	/* Replace "????" in the end with numbers */
+	/* Replace "????" in the end */
 	if (!strcmp("????", &name[x])) {
 		/* Paranoia */
 		if (x > 200) x = 200;
 
-#ifdef WINDOWS
+#if 0
+		/* Replace '????' with a continuously increasing number */
+ #ifdef WINDOWS
 		/* Windows implementation */
 		WIN32_FIND_DATA findFileData;
 		HANDLE hFind;
@@ -1664,7 +1666,7 @@ void xhtml_screenshot(cptr name) {
 
 			FindClose(hFind);
 		}
-#else
+ #else
 		/* UNIX implementation based on opendir */
 		DIR *dp;
 		struct dirent *entry;
@@ -1688,11 +1690,23 @@ void xhtml_screenshot(cptr name) {
 		}
 
 		closedir(dp);
-#endif
+ #endif
 		/* Use the next number in the name */
 		strncpy(buf, name, x);
 		buf[x] = '\0';
 		snprintf(file_name, 256, "%s%04d.xhtml", buf, max + 1);
+#else
+		/* Replace '????' with the current date and time */
+		strncpy(buf, name, x);
+		buf[x] = '\0';
+		time_t ct = time(NULL);
+		//snprintf(file_name, 256, "%s%-.24s", buf, ctime(&ct));
+		struct tm* ctl = localtime(&ct);
+		snprintf(file_name, 256, "%s_%04d-%02d-%02d_%02d.%02d.%02d.xhtml", buf,
+		    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
+		    ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
+#endif
+
 		path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 	} else {
 		strncpy(file_name, name, 249);
