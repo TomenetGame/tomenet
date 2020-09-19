@@ -435,19 +435,19 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_monsterattack_sfx",	"Don't play basic monster attack sound fx" },
 	{ &c_cfg.quiet_shriek_sfx,	FALSE,	5,	1, 104, TRUE,
 	    "quiet_shriek_sfx",		"Play quieter shriek (monster hasting) sound fx" },
-	{ &c_cfg.no_store_bell,		FALSE,	5,	1, 105, FALSE,
+	{ &c_cfg.no_store_bell,		FALSE,	5,	1, 105, FALSE, /* superseded by just =n and toggle the actual 'store_doorbell_..' sfx' instead */
 	    "no_store_bell",		"Don't play sound fx when entering/leaving a store" },
 	{ &c_cfg.quiet_house_sfx,	TRUE,	5,	1, 106, TRUE,
 	    "quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },
 	{ &c_cfg.no_house_sfx,		FALSE,	5,	1, 107, TRUE,
 	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
-	{ &c_cfg.no_am_sfx,		FALSE,	5,	1, 108, FALSE,
+	{ &c_cfg.no_am_sfx,		FALSE,	5,	1, 108, FALSE, /* superseded by just =n and toggle the actual 'am_field' sfx instead */
 	    "no_am_sfx",		"Don't play anti-magic disruption sound effect" },
 
     /* unmutable options, pfft -- these are never shown in any options menu (-> FALSE) */
 	{ &c_cfg.use_color,		TRUE,	1,	0, 109, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
 	    "use_color",		"(deprecated) Use color if possible" },
-	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 110, FALSE,
+	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 110, FALSE, /* deprecated/not enabled: Verifies on mimic form change and warns about overflow/loss on various magic device/item handling */
 	    "other_query_flag",		"Prompt for various information (mimic polymorph)" },
 
     /* deprecated/broken/todo options */
@@ -456,15 +456,15 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "quick_messages",		"Activate quick messages (skill etc)" },
 	{ &c_cfg.carry_query_flag,	FALSE,	3,	0, 3, FALSE,
 	    "carry_query_flag",		"(broken) Prompt before picking things up" },
-	{ &c_cfg.show_labels,		TRUE,	6,	0, 10, FALSE,
+	{ &c_cfg.show_labels,		TRUE,	6,	0, 10, FALSE, //not implemented at all
 	    "show_labels",		"(broken) Show labels in object listings" },
-	{ &c_cfg.show_choices,		FALSE,	6,	0, 12, FALSE,
+	{ &c_cfg.show_choices,		FALSE,	6,	0, 12, FALSE, //not implemented at all
 	    "show_choices",		"(broken) Show choices in certain sub-windows" },
-	{ &c_cfg.show_details,		TRUE,	6,	0, 13, FALSE,
+	{ &c_cfg.show_details,		TRUE,	6,	0, 13, FALSE, //not implemented at all
 	    "show_details",		"(broken) Show details in certain sub-windows" },
-	{ &c_cfg.expand_look,		FALSE,	6,	1, 4, FALSE,
+	{ &c_cfg.expand_look,		FALSE,	6,	1, 4, FALSE, //not implemented at all
 	    "expand_look",		"(broken) Expand the power of the look command" },
-	{ &c_cfg.expand_list,		FALSE,	6,	1, 5, FALSE,
+	{ &c_cfg.expand_list,		FALSE,	6,	1, 5, FALSE, //not implemented at all
 	    "expand_list",		"(broken) Expand the power of the list commands" },
 	{ &c_cfg.avoid_other,		FALSE,	6,	1, 19, FALSE,
 	    "avoid_other",		"(broken) Avoid processing special colors" },
@@ -532,7 +532,6 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.find_ignore_montraps,	TRUE,	3,	0, 130, TRUE,
 	    "find_ignore_montraps",	"Run through monster traps" },
-	//HOLE: 3
 
 	{ &c_cfg.quiet_os,		FALSE,	5,	1, 131, TRUE,
 	    "quiet_os",			"Don't play beep/alert/page beeps through OS" },
