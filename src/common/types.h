@@ -3882,7 +3882,7 @@ struct client_opts {
 	bool ovl_sfx_mon_misc;
 	bool no_monsterattack_sfx;
 	bool quiet_shriek_sfx;
-	bool no_store_bell;//disabled, use =n
+	bool screenshot_format;
 	bool quiet_house_sfx;
 	bool no_house_sfx;
 	bool no_am_sfx;//disabled, use =n

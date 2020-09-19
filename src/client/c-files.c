@@ -1633,79 +1633,79 @@ void xhtml_screenshot(cptr name) {
 		/* Paranoia */
 		if (x > 200) x = 200;
 
-#if 0
-		/* Replace '????' with a continuously increasing number */
+		if (!c_cfg.screenshot_format) {
+			/* Replace '????' with a continuously increasing number */
  #ifdef WINDOWS
-		/* Windows implementation */
-		WIN32_FIND_DATA findFileData;
-		HANDLE hFind;
-		char buf2[1024];
+			/* Windows implementation */
+			WIN32_FIND_DATA findFileData;
+			HANDLE hFind;
+			char buf2[1024];
 
-		/* Search for numbered screenshot files */
-		strncpy(buf2, name, x);
-		buf2[x] = '\0';
-		strcat(buf2, "*.xhtml");
-		path_build(buf, 1024, ANGBAND_DIR_USER, buf2);
+			/* Search for numbered screenshot files */
+			strncpy(buf2, name, x);
+			buf2[x] = '\0';
+			strcat(buf2, "*.xhtml");
+			path_build(buf, 1024, ANGBAND_DIR_USER, buf2);
 
-		max = 0;
+			max = 0;
 
-		hFind = FindFirstFile(buf, &findFileData);
+			hFind = FindFirstFile(buf, &findFileData);
 
-		if (hFind) {
-			if (isdigit(findFileData.cFileName[x])) {
-				i = atoi(&findFileData.cFileName[x]);
-				if (i > max) max = i;
-			}
-
-			while (FindNextFile(hFind, &findFileData)) {
+			if (hFind) {
 				if (isdigit(findFileData.cFileName[x])) {
 					i = atoi(&findFileData.cFileName[x]);
 					if (i > max) max = i;
 				}
-			}
 
-			FindClose(hFind);
-		}
+				while (FindNextFile(hFind, &findFileData)) {
+					if (isdigit(findFileData.cFileName[x])) {
+						i = atoi(&findFileData.cFileName[x]);
+						if (i > max) max = i;
+					}
+				}
+
+				FindClose(hFind);
+			}
  #else
-		/* UNIX implementation based on opendir */
-		DIR *dp;
-		struct dirent *entry;
+			/* UNIX implementation based on opendir */
+			DIR *dp;
+			struct dirent *entry;
 
-		dp = opendir(ANGBAND_DIR_USER);
+			dp = opendir(ANGBAND_DIR_USER);
 
-		if (!dp) {
-			c_msg_print("Couldn't open the user directory.");
-			return;
-		}
-
-		max = 0;
-
-		/* Find the file with the biggest number */
-		while ((entry = readdir(dp))) {
-			/* Check that the name matches the pattern */
-			if (strncmp(name, entry->d_name, x) == 0 && isdigit(entry->d_name[x])) {
-				i = atoi(&entry->d_name[x]);
-				if (i > max) max = i;
+			if (!dp) {
+				c_msg_print("Couldn't open the user directory.");
+				return;
 			}
-		}
 
-		closedir(dp);
+			max = 0;
+
+			/* Find the file with the biggest number */
+			while ((entry = readdir(dp))) {
+				/* Check that the name matches the pattern */
+				if (strncmp(name, entry->d_name, x) == 0 && isdigit(entry->d_name[x])) {
+					i = atoi(&entry->d_name[x]);
+					if (i > max) max = i;
+				}
+			}
+
+			closedir(dp);
  #endif
-		/* Use the next number in the name */
-		strncpy(buf, name, x);
-		buf[x] = '\0';
-		snprintf(file_name, 256, "%s%04d.xhtml", buf, max + 1);
-#else
-		/* Replace '????' with the current date and time */
-		strncpy(buf, name, x);
-		buf[x] = '\0';
-		time_t ct = time(NULL);
-		//snprintf(file_name, 256, "%s%-.24s", buf, ctime(&ct));
-		struct tm* ctl = localtime(&ct);
-		snprintf(file_name, 256, "%s_%04d-%02d-%02d_%02d.%02d.%02d.xhtml", buf,
-		    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
-		    ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
-#endif
+			/* Use the next number in the name */
+			strncpy(buf, name, x);
+			buf[x] = '\0';
+			snprintf(file_name, 256, "%s%04d.xhtml", buf, max + 1);
+		} else {
+			/* Replace '????' with the current date and time */
+			strncpy(buf, name, x);
+			buf[x] = '\0';
+			time_t ct = time(NULL);
+			//snprintf(file_name, 256, "%s%-.24s", buf, ctime(&ct));
+			struct tm* ctl = localtime(&ct);
+			snprintf(file_name, 256, "%s_%04d-%02d-%02d_%02d.%02d.%02d.xhtml", buf,
+			    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
+			    ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
+		}
 
 		path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 	} else {

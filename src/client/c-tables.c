@@ -435,19 +435,19 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_monsterattack_sfx",	"Don't play basic monster attack sound fx" },
 	{ &c_cfg.quiet_shriek_sfx,	FALSE,	5,	1, 104, TRUE,
 	    "quiet_shriek_sfx",		"Play quieter shriek (monster hasting) sound fx" },
-	{ &c_cfg.no_store_bell,		FALSE,	5,	1, 105, FALSE, /* superseded by just =n and toggle the actual 'store_doorbell_..' sfx' instead */
-	    "no_store_bell",		"Don't play sound fx when entering/leaving a store" },
+	{ &c_cfg.screenshot_format,	TRUE,	7,	1, 105, TRUE,
+	    "screenshot_format",	"Screenshots are timestamped instead of numbered" },
 	{ &c_cfg.quiet_house_sfx,	TRUE,	5,	1, 106, TRUE,
 	    "quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },
 	{ &c_cfg.no_house_sfx,		FALSE,	5,	1, 107, TRUE,
 	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
-	{ &c_cfg.no_am_sfx,		FALSE,	5,	1, 108, FALSE, /* superseded by just =n and toggle the actual 'am_field' sfx instead */
+	{ &c_cfg.no_am_sfx,		FALSE,	5,	1, 108, FALSE, /* superseded by just =n and toggle the actual 'am_field' sfx instead */		//HOLE
 	    "no_am_sfx",		"Don't play anti-magic disruption sound effect" },
 
     /* unmutable options, pfft -- these are never shown in any options menu (-> FALSE) */
-	{ &c_cfg.use_color,		TRUE,	1,	0, 109, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)
+	{ &c_cfg.use_color,		TRUE,	1,	0, 109, FALSE,//works, but pretty useless - disabled to make room (we always use colours nowadays)		//HOLE
 	    "use_color",		"(deprecated) Use color if possible" },
-	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 110, FALSE, /* deprecated/not enabled: Verifies on mimic form change and warns about overflow/loss on various magic device/item handling */
+	{ &c_cfg.other_query_flag,	FALSE,	2,	0, 110, FALSE, /* deprecated/not enabled: Verifies on mimic form change and warns about overflow/loss on various magic device/item handling */		//HOLE
 	    "other_query_flag",		"Prompt for various information (mimic polymorph)" },
 
     /* deprecated/broken/todo options */

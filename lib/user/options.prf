@@ -156,3 +156,5 @@ X:disable_lightning
 X:macros_in_stores
 Y:item_error_beep
 X:keep_bottle
+
+Y:screenshot_format

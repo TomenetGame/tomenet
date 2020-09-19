@@ -8258,38 +8258,37 @@ void do_cmd_options(void) {
 		c_prt(TERM_L_GREEN, "TomeNET options", 0, 0);
 
 		/* Give some choices */
-		Term_putstr(3,  2, -1, TERM_WHITE, "(\377y1\377w) User Interface Options 1");
-		Term_putstr(3,  3, -1, TERM_WHITE, "(\377y2\377w) User Interface Options 2");
-		Term_putstr(3,  4, -1, TERM_WHITE, "(\377y3\377w) User Interface Options 3");
-		Term_putstr(3,  5, -1, TERM_WHITE, "(\377y4\377w) Audio Options");
-		Term_putstr(3,  6, -1, TERM_WHITE, "(\377y5\377w) Game-Play Options 1");
-		Term_putstr(3,  7, -1, TERM_WHITE, "(\377y6\377w) Game-Play Options 2");
-		Term_putstr(3,  8, -1, TERM_WHITE, "(\377yw\377w) Window Flags");
-		Term_putstr(3,  9, -1, TERM_WHITE, "(\377os\377w) Save Options & Flags");
-		Term_putstr(3, 10, -1, TERM_WHITE, "(\377ol\377w) Load Options & Flags");
+		Term_putstr(3,  2, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
+		Term_putstr(3,  3, -1, TERM_WHITE, "(\377y5\377w)       Audio options");
+		Term_putstr(3,  4, -1, TERM_WHITE, "(\377y6\377w/\377y7\377w)     Game-play options 1/2");
+		Term_putstr(3,  5, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
+		Term_putstr(3,  7, -1, TERM_WHITE, "(\377os\377w)       Save all options & flags");
+		Term_putstr(3,  8, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
+
+		Term_putstr(3, 10, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
 
 		Term_putstr(3, 12, -1, TERM_SLATE, "The following options are mostly saved automatically on quitting via CTRL+Q:");
 		if (c_cfg.rogue_like_commands)
-			Term_putstr(3, 13, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
+			Term_putstr(3, 14, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
 		else
-			Term_putstr(3, 13, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
+			Term_putstr(3, 14, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
 
-		Term_putstr(3, 14, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
+		Term_putstr(3, 15, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
 
 #if defined(WINDOWS) || defined(USE_X11)
 		/* Font (and window) settings aren't available in command-line mode */
 		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
-			Term_putstr(3, 15, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
+			Term_putstr(3, 16, -1, TERM_WHITE, "(\377yf\377w) Window Fonts and Visibility");
  #endif
 			/* CHANGE_FONTS_X11 */
-			Term_putstr(3, 16, -1, TERM_WHITE, "(\377yF\377w) Cycle all font sizes at once (can be tapped multiple times)");
+			Term_putstr(3, 17, -1, TERM_WHITE, "(\377yF\377w) Cycle all font sizes at once (can be tapped multiple times)");
 		}
 #endif
-		Term_putstr(3, 17, -1, TERM_WHITE, "(\377yc\377w) Colour palette and colour blindness options");
+		Term_putstr(3, 18, -1, TERM_WHITE, "(\377yc\377w) Colour palette and colour blindness options");
 
-		Term_putstr(3, 19, -1, TERM_WHITE, "(\377UA\377w) Account Options");
-		Term_putstr(3, 20, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
+		Term_putstr(3, 20, -1, TERM_WHITE, "(\377UA\377w) Account Options");
+		Term_putstr(3, 21, -1, TERM_WHITE, "(\377UI\377w) Install sound/music pack from 7z-file you placed in your TomeNET folder");
 
 		/* Get command */
 		k = inkey();
@@ -8309,17 +8308,19 @@ void do_cmd_options(void) {
 		} else if (k == '3') {
 			do_cmd_options_aux(6, "User Interface Options 3");
 		} else if (k == '4') {
-			do_cmd_options_aux(5, "Audio Options");
+			do_cmd_options_aux(7, "User Interface Options 4");
 		} else if (k == '5') {
-			do_cmd_options_aux(2, "Game-Play Options 1");
+			do_cmd_options_aux(5, "Audio Options");
 		} else if (k == '6') {
+			do_cmd_options_aux(2, "Game-Play Options 1");
+		} else if (k == '7') {
 			do_cmd_options_aux(3, "Game-Play Options 2");
 		}
 
 		/* Save a 'option' file */
 		else if (k == 's') {
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 21, -1, TERM_YELLOW, "Save to file: ");
+			Term_putstr(0, 23, -1, TERM_YELLOW, "Save to file: ");
 
 			/* Default filename */
 			//sprintf(tmp, "global.opt");
@@ -8335,7 +8336,7 @@ void do_cmd_options(void) {
 		/* Load a pref file */
 		else if (k == 'l') {
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 21, -1, TERM_YELLOW, "Load file: ");
+			Term_putstr(0, 23, -1, TERM_YELLOW, "Load file: ");
 
 			/* Default filename */
 			//sprintf(tmp, "global.opt");
