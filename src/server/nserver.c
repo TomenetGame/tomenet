@@ -2161,10 +2161,12 @@ static void sync_options(int Ind, bool *options) {
 	if ((p_ptr->view_perma_grids = options[34]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_torch_grids;
 	if ((p_ptr->view_torch_grids = options[35]) != tmp) p_ptr->redraw |= PR_MAP;
+#if 0 /* disabled these two options, should be deprecated */
 	tmp = p_ptr->view_reduce_lite;
 	if ((p_ptr->view_reduce_lite = options[44]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_reduce_view;
 	if ((p_ptr->view_reduce_view = options[45]) != tmp) p_ptr->redraw |= PR_MAP;
+#endif
 
 	p_ptr->safe_float = options[46];
 
@@ -2463,10 +2465,12 @@ static void sync_options(int Ind, bool *options) {
 	if ((p_ptr->view_perma_grids = options[81]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_torch_grids;
 	if ((p_ptr->view_torch_grids = options[82]) != tmp) p_ptr->redraw |= PR_MAP;
+#if 0 /* disabled these two options, should be deprecated */
 	tmp = p_ptr->view_reduce_lite;
 	if ((p_ptr->view_reduce_lite = options[83]) != tmp) p_ptr->redraw |= PR_MAP;
 	tmp = p_ptr->view_reduce_view;
 	if ((p_ptr->view_reduce_view = options[84]) != tmp) p_ptr->redraw |= PR_MAP;
+#endif
 	p_ptr->easy_open = options[85];
 	p_ptr->easy_disarm = options[86];
 	p_ptr->easy_tunnel = options[87];
