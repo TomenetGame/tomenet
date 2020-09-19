@@ -3890,6 +3890,15 @@ void cmd_message(void) {
 			inkey_msg = FALSE;
 			return;
 		}
+		/* Handle local slash command - C. Blue */
+		if (!strcasecmp(buf, "/ctime")) {
+			time_t ct = time(NULL);
+			struct tm* ctl = localtime(&ct);
+
+			c_msg_format("\374\376\377yYour current local time: %04d/%02d/%02d - %02d:%02d:%02dh", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
+			inkey_msg = FALSE;
+			return;
+		}
 
 		Send_msg(buf);
 	}
