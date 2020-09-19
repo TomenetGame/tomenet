@@ -388,9 +388,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "view_perma_grids",		"Map remembers all perma-lit grids" },
 	{ &c_cfg.view_torch_grids,	FALSE,	3,	1, 82, TRUE,
 	    "view_torch_grids",		"Map remembers all torch-lit grids" },
-	{ &c_cfg.view_reduce_lite,	FALSE,	3,	1, 83, TRUE,
+	{ &c_cfg.view_reduce_lite,	FALSE,	3,	1, 83, FALSE, /* Doesn't make sense */
 	    "view_reduce_lite",		"Reduce lite-radius when running" },
-	{ &c_cfg.view_reduce_view,	FALSE,	3,	1, 84, TRUE,
+	{ &c_cfg.view_reduce_view,	FALSE,	3,	1, 84, FALSE, /* Doesn't make sense */
 	    "view_reduce_view",		"Reduce view-radius in town" },
 
 	{ &c_cfg.easy_open,		TRUE,	3,	9, 85, TRUE,
