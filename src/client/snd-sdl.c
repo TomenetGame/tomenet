@@ -2845,7 +2845,7 @@ void do_cmd_options_sfx_sdl(void) {
 			cmd_message();
 			break;
 
-		case 't': case ' ':
+		case 't': //case ' ':
 			samples[j_sel].disabled = !samples[j_sel].disabled;
 			if (samples[j_sel].disabled) {
 				if (j_sel == weather_current && weather_channel != -1 && Mix_Playing(weather_channel)) Mix_HaltChannel(weather_channel);
@@ -2905,10 +2905,12 @@ void do_cmd_options_sfx_sdl(void) {
 			if (y >= audio_sfx) y = audio_sfx - 1;
 			break;
 		case '9':
+		case 'p':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 			y = (y - 10 + audio_sfx) % audio_sfx;
 			break;
 		case '3':
+		case ' ':
 			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 			y = (y + 10 + audio_sfx) % audio_sfx;
 			break;
@@ -2925,6 +2927,10 @@ void do_cmd_options_sfx_sdl(void) {
 			sound(j_sel, SFX_TYPE_STOP, 100, 0);
 			d = keymap_dirs[ch & 0x7F];
 			y = (y + ddy[d] + audio_sfx) % audio_sfx;
+			break;
+		case '\010':
+			sound(j_sel, SFX_TYPE_STOP, 100, 0);
+			y = (y - 1 + audio_sfx) % audio_sfx;
 			break;
 		default:
 			bell();
@@ -3256,7 +3262,7 @@ void do_cmd_options_mus_sdl(void) {
 			cmd_message();
 			break;
 
-		case 't': case ' ':
+		case 't': //case ' ':
 			songs[j_sel].disabled = !songs[j_sel].disabled;
 			if (songs[j_sel].disabled) {
 				if (music_cur == j_sel && Mix_PlayingMusic()) Mix_HaltMusic();
@@ -3301,9 +3307,11 @@ void do_cmd_options_mus_sdl(void) {
 			if (y >= audio_music) y = audio_music - 1;
 			break;
 		case '9':
+		case 'p':
 			y = (y - 10 + audio_music) % audio_music;
 			break;
 		case '3':
+		case ' ':
 			y = (y + 10 + audio_music) % audio_music;
 			break;
 		case '1':
@@ -3316,6 +3324,9 @@ void do_cmd_options_mus_sdl(void) {
 		case '2':
 			d = keymap_dirs[ch & 0x7F];
 			y = (y + ddy[d] + audio_music) % audio_music;
+			break;
+		case '\010':
+			y = (y - 1 + audio_music) % audio_music;
 			break;
 		default:
 			bell();
