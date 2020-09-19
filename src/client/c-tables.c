@@ -279,7 +279,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
     /* currently problematic: best might be to move line-splitting to client side, from util.c
        For now, let's just insert hourly chat marker lines instead. - C. Blue */
 	{ &c_cfg.time_stamp_chat,	FALSE,	4,	0, 34, TRUE,
-	    "time_stamp_chat",		"Add hourly time stamps to chat window" },
+	    "time_stamp_chat",		"Add half-hourly time stamps to chat window" },
 	{ &c_cfg.hide_unusable_skills,	TRUE,	4,	0, 35, TRUE,
 	    "hide_unusable_skills",	"Hide unusable skills" },
 	{ &c_cfg.short_item_names,	FALSE,	4,	0, 36, TRUE,

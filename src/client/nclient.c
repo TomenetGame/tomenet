@@ -5480,7 +5480,7 @@ void do_mail() {
    do_ping is called every frame. */
 void do_ping() {
 	static int last_ping = 0;
-	static int time_stamp_hour = -1;
+	static int time_stamp_hour = -1, time_stamp_min = -1;
 
 	if (lagometer_enabled && (ticks - last_ping >= 10)) {
 		last_ping = ticks;
@@ -5625,9 +5625,11 @@ void do_ping() {
 	if (c_cfg.time_stamp_chat) {
 		time_t ct = time(NULL);
 		struct tm* ctl = localtime(&ct);
-		if (ctl->tm_hour != time_stamp_hour) {
-			if (time_stamp_hour != -1) c_msg_format("\374\376\377y[%02d:00h]", ctl->tm_hour);
+
+		if (ctl->tm_hour != time_stamp_hour || (ctl->tm_min == 30 && time_stamp_min != 30)) {
+			if (time_stamp_hour != -1) c_msg_format("\374\376\377y[%04d/%02d/%02d - %02d:%02dh]", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, ctl->tm_hour, ctl->tm_min);
 			time_stamp_hour = ctl->tm_hour;
+			time_stamp_min = ctl->tm_min;
 		}
 	}
 }
