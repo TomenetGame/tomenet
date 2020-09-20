@@ -6354,15 +6354,7 @@ bool monster_death(int Ind, int m_idx) {
 		    && i >= r_info[credit_idx].level
 #endif
 		    && p_ptr->r_mimicry[credit_idx] < 10000 && !m_ptr->questor) {
-			int before = p_ptr->r_mimicry[credit_idx];
-
-			/* get +1 bonus credit in Ironman Deep Dive Challenge */
-			if (in_iddc)
-#ifndef IDDC_MIMICRY_BOOST
-				p_ptr->r_mimicry[credit_idx]++;
-#else /* give a possibly greater boost than just +1 */
-				p_ptr->r_mimicry[credit_idx] += IDDC_MIMICRY_BOOST;
-#endif
+			int before = p_ptr->r_mimicry[credit_idx], bonus = 0;
 
 #ifdef RPG_SERVER
 			/* There is a 1 in (m_ptr->level - kill count)^2 chance of learning form straight away
@@ -6371,30 +6363,44 @@ bool monster_death(int Ind, int m_idx) {
 			if ( ( r_info[r_idx].level - p_ptr->r_mimicry[credit_idx] > 0 ) &&
 			     ( (randint((r_info[r_idx].level - p_ptr->r_mimicry[credit_idx]) *
 			    (r_info[r_idx].level - p_ptr->r_mimicry[credit_idx])) == 1))) {
-			    p_ptr->r_mimicry[credit_idx] = r_info[credit_idx].level;
-			} else { /* Badluck */
-				p_ptr->r_mimicry[credit_idx]++;
-
-				/* Shamans have a chance to learn E forms very quickly */
-				if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X'))
-					p_ptr->r_mimicry[credit_idx] += 2;
-			}
-#else
-			if (pvp) {
-				/* PvP mode chars learn forms very quickly! */
-				p_ptr->r_mimicry[credit_idx] += 3;
+				    /* Instant form learning! */
+				p_ptr->r_mimicry[credit_idx] = r_info[credit_idx].level;
 			} else {
+				/* Normal form-learning process: +1 credit */
 				p_ptr->r_mimicry[credit_idx]++;
-
-				/* Shamans have a chance to learn E forms very quickly */
-				if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X'))
-					p_ptr->r_mimicry[credit_idx] += 2;
 			}
+
+			/* (Note: There is no PvP mode on RPG-server) */
+#else
+			/* Normal form-learning process: +1 credit */
+			p_ptr->r_mimicry[credit_idx]++;
+
+			/* PvP mode chars learn forms very quickly! */
+			if (pvp && bonus < 3) bonus = 3;
 #endif
 
+			/* Shamans have a chance to learn E forms very quickly */
+			if (p_ptr->pclass == CLASS_SHAMAN && (mimic_shaman_E(credit_idx) || r_info[credit_idx].d_char == 'X')
+			    && bonus < 2)
+				bonus = 2;
+
+			/* get bonus credit in Ironman Deep Dive Challenge */
+			if (in_iddc) {
+#ifndef IDDC_MIMICRY_BOOST
+				if (!bonus) bonus = 1;
+#else /* give a possibly greater boost than just +1 */
+				if (bonus < IDDC_MIMICRY_BOOST) bonus = IDDC_MIMICRY_BOOST;
+#endif
+			}
+
+			/* Apply the highest bonus source, overriding other boni (ie they don't stack) */
+			p_ptr->r_mimicry[credit_idx] += bonus;
+
+			/* Maximum cap, arbitrary */
 			if (p_ptr->r_mimicry[credit_idx] > 10000)
 				p_ptr->r_mimicry[credit_idx] = 10000;
 
+			/* Notify if we learned a new form */
 			if (i && i >= r_info[credit_idx].level &&
 			    (before == 0 || /* <- for level 0 townspeople */
 			     before < r_info[credit_idx].level) &&
