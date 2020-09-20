@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. September 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 20. September 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2079,7 +2079,7 @@ Iron Team   A special type of party which can only be formed with newly
             created characters. Its members only gain experience if all
             members are online and on the same dungeon level.
             Also, members can only trade items and money with other members,
-            or you will get the message "ou cannot take items from outsiders."
+            or you will get the message "you cannot take items from outsiders."
             (same message as appears for IDDC trading restrictions actually).
             The owner can decide to 'close' an iron team in the party menu,
             which will permanently disallow addition of any further members.
@@ -18928,9 +18928,11 @@ Parties:
     Allows you to create an iron team if you aren't in one yet, or rename your
     current iron team, provided you are the party owner.
     An iron team is like a party with the following differences:
-    An 'Iron Team' can only be formed with newly created characters. Its
-    members will only get experience for killing monsters if ALL members
-    are online and on the same dungeon level!
+    - An 'Iron Team' can only be formed with newly created characters.
+    - Its members will only get experience for killing monsters if ALL members
+      are online and on the same dungeon level!
+    - Members can only trade items and money with other members, or you will
+      get the message "you cannot take items from outsiders."
 
     If you choose this while already being in an iron team, you will be
     prompted to rename it. Only the iron team owner can do this.
