@@ -991,7 +991,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 			    /* hp */
 				p2 = strchr(p1, ':') + 1;
 				snprintf(info_tmp, p2 - p1, "%s", p1);
-				info_tmp[p2 - p1] = 0; //terminate
+				info_tmp[p2 - p1 - 1] = 0; //terminate
 				strcat(info, format("HP: \377%c%s\377%c. ", a_val, info_tmp, a_key));
 				p1 = p2;
 			    /* vision range */
