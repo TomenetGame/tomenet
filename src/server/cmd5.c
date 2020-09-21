@@ -818,6 +818,10 @@ static void do_mimic_power(int Ind, int power, int dir) {
 /*
  * Finish casting a spell that required a direction --KLJ--
  */
+/* (Toned down) versions of the hitpoints/x modifiers to determine breath damage as used for monster spells. */
+#define MIMIC_DIV2 20
+#define MIMIC_DIV3 25
+#define MIMIC_DIV4 30
 void do_mimic_power_aux(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -863,7 +867,7 @@ void do_mimic_power_aux(int Ind, int dir) {
     case 3:
 	sprintf(p_ptr->attacker, " fires a rocket for");
 	msg_print(Ind, "You fire a rocket.");
-	fire_ball(Ind, GF_ROCKET, dir, ((p_ptr->mhp / 2) > 600) ? 600 : (p_ptr->mhp / 2), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_ROCKET, dir, (((p_ptr->mhp * 10) / MIMIC_DIV2) > 600) ? 600 : ((p_ptr->mhp * 10) / MIMIC_DIV2), rad, p_ptr->attacker);
 	break;
     case 4:
 	{
@@ -898,135 +902,135 @@ void do_mimic_power_aux(int Ind, int dir) {
     case 8:
 	sprintf(p_ptr->attacker, " breathes acid for");
 	msg_print(Ind, "You breathe acid.");
-	fire_ball(Ind, GF_ACID, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_ACID, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 500) ? 500 : ((p_ptr->chp * 10) / MIMIC_DIV3), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_ELEC			0x00000200	/* Breathe Elec */
     case 9:
 	sprintf(p_ptr->attacker, " breathes lightning for");
 	msg_print(Ind, "You breathe lightning.");
-	fire_ball(Ind, GF_ELEC, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_ELEC, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 500) ? 500 : ((p_ptr->chp * 10) / MIMIC_DIV3), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_FIRE			0x00000400	/* Breathe Fire */
     case 10:
 	sprintf(p_ptr->attacker, " breathes fire for");
 	msg_print(Ind, "You breathe fire.");
-	fire_ball(Ind, GF_FIRE, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_FIRE, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 500) ? 500 : ((p_ptr->chp * 10) / MIMIC_DIV3), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_COLD			0x00000800	/* Breathe Cold */
     case 11:
 	sprintf(p_ptr->attacker, " breathes frost for");
 	msg_print(Ind, "You breathe frost.");
-	fire_ball(Ind, GF_COLD, dir, ((p_ptr->chp / 3) > 500) ? 500 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_COLD, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 500) ? 500 : ((p_ptr->chp * 10) / MIMIC_DIV3), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_POIS			0x00001000	/* Breathe Poison */
     case 12:
 	sprintf(p_ptr->attacker, " breathes gas for");
 	msg_print(Ind, "You breathe gas.");
-	fire_ball(Ind, GF_POIS, dir, ((p_ptr->chp / 3) > 450) ? 450 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_POIS, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 450) ? 450 : ((p_ptr->chp * 10) / MIMIC_DIV3), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_NETH			0x00002000	/* Breathe Nether */
     case 13:
 	sprintf(p_ptr->attacker, " breathes nether for");
 	msg_print(Ind, "You breathe nether.");
-	fire_ball(Ind, GF_NETHER, dir, ((p_ptr->chp / 4) > 450) ? 450 : (p_ptr->chp / 4), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_NETHER, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 450) ? 450 : ((p_ptr->chp * 10) / MIMIC_DIV4), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_LITE			0x00004000	/* Breathe Lite */
     case 14:
 	sprintf(p_ptr->attacker, " breathes light for");
 	msg_print(Ind, "You breathe light.");
-	fire_ball(Ind, GF_LITE, dir, ((p_ptr->chp / 4) > 400) ? 400 : (p_ptr->chp / 4), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_LITE, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 400) ? 400 : ((p_ptr->chp * 10) / MIMIC_DIV4), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_DARK			0x00008000	/* Breathe Dark */
     case 15:
 	sprintf(p_ptr->attacker, " breathes darkness for");
 	msg_print(Ind, "You breathe darkness.");
-	fire_ball(Ind, GF_DARK, dir, ((p_ptr->chp / 4) > 400) ? 400 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_DARK, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 400) ? 400 : ((p_ptr->chp * 10) / MIMIC_DIV4) , rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_CONF			0x00010000	/* Breathe Confusion */
     case 16:
 	sprintf(p_ptr->attacker, " breathes confusion for");
 	msg_print(Ind, "You breathe confusion.");
-	fire_ball(Ind, GF_CONFUSION, dir, ((p_ptr->chp / 4) > 350) ? 350 : (p_ptr->chp / 4), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_CONFUSION, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 350) ? 350 : ((p_ptr->chp * 10) / MIMIC_DIV4), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_SOUN			0x00020000	/* Breathe Sound */
     case 17:
 	sprintf(p_ptr->attacker, " breathes sound for");
 	msg_print(Ind, "You breathe sound.");
-	fire_ball(Ind, GF_SOUND, dir, ((p_ptr->chp / 4) > 350) ? 350 : (p_ptr->chp / 4), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_SOUND, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 350) ? 350 : ((p_ptr->chp * 10) / MIMIC_DIV4), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_CHAO			0x00040000	/* Breathe Chaos */
     case 18:
 	sprintf(p_ptr->attacker, " breathes chaos for");
 	msg_print(Ind, "You breathe chaos.");
-	fire_ball(Ind, GF_CHAOS, dir, ((p_ptr->chp / 4) > 450) ? 450 : (p_ptr->chp / 4), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_CHAOS, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 450) ? 450 : ((p_ptr->chp * 10) / MIMIC_DIV4), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_DISE			0x00080000	/* Breathe Disenchant */
     case 19:
 	sprintf(p_ptr->attacker, " breathes disenchantment for");
 	msg_print(Ind, "You breathe disenchantment.");
-	fire_ball(Ind, GF_DISENCHANT, dir, ((p_ptr->chp / 4) > 400) ? 400 : (p_ptr->chp / 4), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_DISENCHANT, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 400) ? 400 : ((p_ptr->chp * 10) / MIMIC_DIV4), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_NEXU			0x00100000	/* Breathe Nexus */
     case 20:
 	sprintf(p_ptr->attacker, " breathes nexus for");
 	msg_print(Ind, "You breathe nexus.");
-	fire_ball(Ind, GF_NEXUS, dir, ((p_ptr->chp / 3) > 250) ? 250 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_NEXUS, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 250) ? 250 : ((p_ptr->chp * 10) / MIMIC_DIV3), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_TIME			0x00200000	/* Breathe Time */
     case 21:
 	sprintf(p_ptr->attacker, " breathes time for");
 	msg_print(Ind, "You breathe time.");
-	fire_ball(Ind, GF_TIME, dir, ((p_ptr->chp / 3) > 200) ? 200 : (p_ptr->chp / 3), rad, p_ptr->attacker);
+	fire_ball(Ind, GF_TIME, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 200) ? 200 : ((p_ptr->chp * 10) / MIMIC_DIV3), rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_INER			0x00400000	/* Breathe Inertia */
     case 22:
 	sprintf(p_ptr->attacker, " breathes inertia for");
 	msg_print(Ind, "You breathe inertia.");
-	fire_ball(Ind, GF_INERTIA, dir, ((p_ptr->chp / 4) > 200) ? 200 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_INERTIA, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 200) ? 200 : ((p_ptr->chp * 10) / MIMIC_DIV4) , rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_GRAV			0x00800000	/* Breathe Gravity */
     case 23:
 	sprintf(p_ptr->attacker, " breathes gravity for");
 	msg_print(Ind, "You breathe gravity.");
-	fire_ball(Ind, GF_GRAVITY, dir, ((p_ptr->chp / 3) > 200) ? 200 : (p_ptr->chp / 3) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_GRAVITY, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 200) ? 200 : ((p_ptr->chp * 10) / MIMIC_DIV3) , rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_SHAR			0x01000000	/* Breathe Shards */
     case 24:
 	sprintf(p_ptr->attacker, " breathes shards for");
 	msg_print(Ind, "You breathe shards.");
-	fire_ball(Ind, GF_SHARDS, dir, ((p_ptr->chp / 4) > 350) ? 350 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_SHARDS, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 350) ? 350 : ((p_ptr->chp * 10) / MIMIC_DIV4) , rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_PLAS			0x02000000	/* Breathe Plasma */
     case 25:
 	sprintf(p_ptr->attacker, " breathes plasma for");
 	msg_print(Ind, "You breathe plasma.");
-	fire_ball(Ind, GF_PLASMA, dir, ((p_ptr->chp / 4) > 150) ? 150 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_PLASMA, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 150) ? 150 : ((p_ptr->chp * 10) / MIMIC_DIV4) , rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_WALL			0x04000000	/* Breathe Force */
     case 26:
 	sprintf(p_ptr->attacker, " breathes force for");
 	msg_print(Ind, "You breathe force.");
-	fire_ball(Ind, GF_FORCE, dir, ((p_ptr->chp / 4) > 200) ? 200 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_FORCE, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 200) ? 200 : ((p_ptr->chp * 10) / MIMIC_DIV4) , rad, p_ptr->attacker);
 	break;
 //#define RF4_BR_MANA			0x08000000	/* Breathe Mana */
     case 27:
 	sprintf(p_ptr->attacker, " breathes mana for");
 	msg_print(Ind, "You breathe mana.");
-	fire_ball(Ind, GF_MANA, dir, ((p_ptr->chp / 3) > 250) ? 250 : (p_ptr->chp / 3) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_MANA, dir, (((p_ptr->chp * 10) / MIMIC_DIV3) > 250) ? 250 : ((p_ptr->chp * 10) / MIMIC_DIV3) , rad, p_ptr->attacker);
 	break;
 /* RF4_BR_DISI */
     case 28:
 	sprintf(p_ptr->attacker, " breathes disintegration for");
 	msg_print(Ind, "You breathe disintegration.");
 	fire_ball(Ind, GF_DISINTEGRATE, dir,
-	    ((p_ptr->chp / 3) > 300 ? 300 : (p_ptr->chp / 3)), rad, p_ptr->attacker);
+	    (((p_ptr->chp * 10) / MIMIC_DIV3) > 300 ? 300 : ((p_ptr->chp * 10) / MIMIC_DIV3)), rad, p_ptr->attacker);
 	break;
 /* RF4_BR_NUKE */
     case 29:
 	sprintf(p_ptr->attacker, " breathes toxic waste for");
 	msg_print(Ind, "You breathe toxic waste.");
 	fire_ball(Ind, GF_NUKE, dir,
-	    ((p_ptr->chp / 3) > 450 ? 450 : (p_ptr->chp / 3)), rad, p_ptr->attacker);
+	    (((p_ptr->chp * 10) / MIMIC_DIV3) > 450 ? 450 : ((p_ptr->chp * 10) / MIMIC_DIV3)), rad, p_ptr->attacker);
 	break;
 /* RF4_BOULDER */
     case 31:
@@ -1278,13 +1282,13 @@ void do_mimic_power_aux(int Ind, int dir) {
     case 96+18:
 	sprintf(p_ptr->attacker, " breathes ice for");
 	msg_print(Ind, "You breathe ice.");
-	fire_ball(Ind, GF_ICE, dir, ((p_ptr->chp / 4) > 350) ? 350 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_ICE, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 350) ? 350 : ((p_ptr->chp * 10) / MIMIC_DIV4) , rad, p_ptr->attacker);
 	break;
 // RF5_BR_WATER
     case 96+19:
 	sprintf(p_ptr->attacker, " breathes water for");
 	msg_print(Ind, "You breathe water.");
-	fire_ball(Ind, GF_WATER, dir, ((p_ptr->chp / 4) > 300) ? 300 : (p_ptr->chp / 4) , rad, p_ptr->attacker);
+	fire_ball(Ind, GF_WATER, dir, (((p_ptr->chp * 10) / MIMIC_DIV4) > 300) ? 300 : ((p_ptr->chp * 10) / MIMIC_DIV4) , rad, p_ptr->attacker);
 	break;
 
 	default: /* For some reason we got called for a spell that
