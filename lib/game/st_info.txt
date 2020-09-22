@@ -1089,7 +1089,8 @@ T:6:111:61
 T:100:111:255
 T:1:111:100
 #A:27:0:1:2:3:0	(removed for IDDC_IRON_COOP)
-A:2:1:3:4:0:0
+#A:2:1:3:4:0:0  (was default all the time, but guide claims '27' aka ID all was still possible. Since IRON_COOP is disabled, let's just go with it again:
+A:2:1:3:4:27:0
 O:42:43:44:45:4:58
 G:9:r
 #deeper store -> higher level books, added NO_DISCOUNT for IDDC, to be consistent with IDDC town stores, SELL67 to counterbalance it
