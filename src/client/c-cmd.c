@@ -3566,12 +3566,12 @@ void cmd_check_misc(void) {
 	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377US\377w) Open sound folder");
 	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UM\377w) Open music folder");
 	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377UX\377w) Open xtra folder (fonts/audio)");
-	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377UG\377w) Open git repository site");
+	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377UP\377w) Open Player Stores page");
 	/* URLs */
 	row += 3;
 	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UW\377w) Open TomeNET website");
-	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UP\377w) Open Player Stores page");
-	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377UR\377w) Open Mikael's monster search");
+	Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UR\377w) Open Mikael's monster search");
+	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377UG\377w) Open git repository site");
 	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UL\377w) Open oook.cz ladder site");
 	row += 3;
 
