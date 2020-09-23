@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. September 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 23. September 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1619,6 +1619,37 @@ incorporated into any text you type in chat:
             If the item in question has any random magic powers, those will be
             displayed as additional item inscription. (Fixed powers won't be
             shown, in order to keep the whole message as short as possible.)
+
+
+Elevated commands / privileged accounts
+---------------------------------------
+Some slash commands can only be used by player accounts that have been set to
+'privileged' or 'extra-privileged'. Currently there is no difference between
+these two tiers, so only the first one is used.
+In general, there is no difference between a standard account and a privileged
+account, except for being able to use these additional commands.
+In theory, certain quests that are still in testing stage could be set so they
+are only accessible by privileged accounts, but there are no such quests at the
+time of writing this.
+To check the status of your account, press = A (requires v4.7.3 or higher).
+
+/inval      Invalidates another player's TomeNET account.
+            This sets an account from normal back to 'trial'.
+            (This will not delete anything or inflict any harm on existing
+            characters, it will just reimpose 'trial' account restrictions.)
+
+            Basically the only use for this command is if you accidentally
+            used /val on a new account that wasn't meant to be validated for
+            some reason (eg another player just quickly created it to test
+            something and you were too quick and actually validated it).
+
+/val        Validates another player's TomeNET account.
+            When a new player creates a TomeNET account, that account will at
+            first be in 'trial' mode, aka 'invalid'. It means he can play but
+            certain things won't be possible, such as levelling beyond 25,
+            private chatting or dropping items.
+            This command will remove the 'trial' restrictions and turn it into
+            a normal account.
 
 
 (0.2c) IRC bot commands
