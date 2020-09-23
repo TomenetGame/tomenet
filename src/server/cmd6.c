@@ -5407,6 +5407,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #ifdef ENABLE_DEMOLITIONIST
 	    && o_ptr->tval != TV_CHEMICAL
 	    && o_ptr->tval != TV_CHARGE
+	    && !(o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER)
 #endif
 	    ) {
 		if (p_ptr->anti_magic) {
@@ -5508,6 +5509,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* Alchemy has nothing to do with magic device skills, and especially shouldn't set command_rep or we may run into weirdness!: */
 	    || o_ptr->tval == TV_CHEMICAL
 	    || o_ptr->tval == TV_CHARGE
+	    || (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER)
 #endif
 	    ) {
 		/* Non magic devices don't get activation-repeats */
