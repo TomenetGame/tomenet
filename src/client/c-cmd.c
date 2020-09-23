@@ -3566,6 +3566,7 @@ void cmd_check_misc(void) {
 	Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377US\377w) Open sound folder");
 	Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UM\377w) Open music folder");
 	Term_putstr( 5, row + 2, -1, TERM_WHITE, "(\377UX\377w) Open xtra folder (fonts/audio)");
+	Term_putstr(40, row + 2, -1, TERM_WHITE, "(\377UG\377w) Open git repository site");
 	/* URLs */
 	row += 3;
 	Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UW\377w) Open TomeNET website");
@@ -3717,6 +3718,9 @@ void cmd_check_misc(void) {
 			case 'X':
 				FILEMAN(ANGBAND_DIR_XTRA);
 				break;
+			case 'G':
+				URLMAN("http://github.com/TomenetGame/");
+				break;
 			case 'W':
 				URLMAN("https://www.tomenet.eu/");
 				break;
@@ -3739,7 +3743,7 @@ void cmd_check_misc(void) {
 			case 'T': case 'U': case 'S': case 'M': case 'X':
 				c_message_add("Sorry, cannot open file manager in terminal-mode.");
 				break;
-			case 'W': case 'P': case 'R': case 'L':
+			case 'G': case 'W': case 'P': case 'R': case 'L':
 				c_message_add("Sorry, cannot open browser in terminal-mode.");
 				break;
 #endif
