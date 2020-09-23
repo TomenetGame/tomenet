@@ -6882,9 +6882,14 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		o_ptr = &o_list[0 - item];
 	}
 
-#ifdef ENABLE_DEMOLITIONIST
-	if (o_ptr->tval != TV_CHARGE)
-#endif
+#if 0	/* if 0: All these checks are duplicate, no? They are already done in do_cmd_activate().
+	   The problem is with randomized checks, in this case the p_ptr->antimagic one,
+	   which hence changes the probability by being called duplicately! */
+ #ifdef ENABLE_DEMOLITIONIST
+	if (o_ptr->tval == TV_CHARGE) {
+		/* .. calc chance based on Digging skill .. (but we're if 0'ed anyway!) */
+	} else
+ #endif
 	{
 		if (p_ptr->anti_magic) {
 			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
@@ -6895,13 +6900,14 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			return;
 		}
 		if (magik((p_ptr->antimagic * 8) / 5)) {
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 			sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
-#endif
+ #endif
 			msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
 			return;
 		}
 	}
+#endif
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
 	if ((item < INVEN_WIELD) && wearable_p(o_ptr)) {
