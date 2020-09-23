@@ -2280,6 +2280,11 @@ Room        The dungeon contains many rooms connected by passages. Some of the
             lot of monsters), 'Checkerboard-Rooms' (rooms containing a
             checkerboard-like maze structure and a lot of monsters).
 
+RoP         Ring of Power. While these also includes the true artifact rings of
+            power, this expression is usually only used to refer to the randart
+            rings of power that are dropped by Nazgul (level 0, ie soulbound).
+            See (1.3a) for more information on Nazgul and their rings.
+
 Scumming    Repeatedly using staircases up/downwards to make a level become
             recreated. Usually in hope of finding a specific monster on that
             depth. ('I scum 450..500 ft for Wormy'.)
