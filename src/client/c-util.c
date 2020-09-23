@@ -4838,6 +4838,7 @@ void interact_macros(void) {
 			buf2[0] = '\\'; //note: should in theory be ')e\',
 			buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 			buf2[2] = ')'; //      (\e will then get ignored)
+			buf2[3] = 0; //paranoia
 			bptr = buf;
 			b2ptr = buf2 + 3;
 			while (*bptr) {
@@ -5404,10 +5405,21 @@ Chain_Macro:
 
 			/* Initialize wizard state: First state */
 			i = choice = 0;
+			/* Paranoia */
+			memset(tmp, 0, 160);
+			memset(buf, 0, 1024);
+			memset(buf2, 0, 1024);
 
 			while (i != -1) {
 				/* Restart wizard from a wrong choice? */
-				if (i == -2) i = choice = chain_macro_buf[0] = should_wait = tmp[0] = buf[0] = buf2[0] = 0;
+				if (i == -2) {
+					/* Paranoia */
+					memset(tmp, 0, 160);
+					memset(buf, 0, 1024);
+					memset(buf2, 0, 1024);
+					/* Reinitialize */
+					i = choice = chain_macro_buf[0] = should_wait = tmp[0] = buf[0] = buf2[0] = 0;
+				}
 
 				Term_putstr(12, 2, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
 				Term_putstr(12, 3, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and targetting method.");
@@ -6271,15 +6283,22 @@ Chain_Macro:
 								Term_putstr(25, 13, -1, TERM_L_GREEN, " 7  8  9");
 								Term_putstr(25, 14, -1, TERM_GREEN, "  \\ | / ");
 								Term_putstr(25, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
-								Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\         \377G?\377g = 'Prompt for direction each time'");
+								//Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\         \377G?\377g = 'Prompt for direction each time'");
+								Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\         \377G%\377g = 'Prompt for direction each time'");
 								Term_putstr(25, 17, -1, TERM_L_GREEN, " 1  2  3");
 
-								Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '?') ");
+								//Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '?') ");
+								Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9, or '%') ");
 
+//#if 0 /* No - this will break if the user has any kind of macro on the key already. Eg on his '?' key, and then presses '?' here. Need another solution. */
+#if 1 /* Actually we need this, but we will replace ? by %, so it's guaranteedly a macro-free key. */
 								/* hack: temporarily enable macro parsing for using numpad keys without numlock to specify a direction */
 								inkey_interact_macros = FALSE;
+#endif
 								while (TRUE) {
-									switch (target_dir = inkey()) {
+									target_dir = inkey();
+//c_message_add(format("target_dir = '%i' ( %c %c )", target_dir, (char)(target_dir & 0xFF), (char)((target_dir & 0xFF00) >> 8)));
+									switch (target_dir) {
 									case ESCAPE:
 									case 'p':
 									case '\010': /* backspace */
@@ -6291,15 +6310,18 @@ Chain_Macro:
 										continue;
 									default:
 										/* invalid action -> exit wizard */
-										if ((target_dir < '1' || target_dir > '9') && target_dir != '?') {
+										//if ((target_dir < '1' || target_dir > '9') && target_dir != '?') {
+										if ((target_dir < '1' || target_dir > '9') && target_dir != '%') {
 											//i = -3;
 											continue;
 										}
 									}
 									break;
 								}
+#if 1 /* (see above) */
 								/* disable macro parsing again */
 								inkey_interact_macros = TRUE;
+#endif
 								/* exit? */
 								if (i == -3) continue;
 							}
@@ -6322,7 +6344,8 @@ Chain_Macro:
 							/* add new direction feature */
 							if (choice == 'b') strcat(buf, "+");
 							else if (choice == 'd') {
-								if (target_dir != '?') strcat(buf, format("%c", target_dir));
+								//if (target_dir != '?') strcat(buf, format("%c", target_dir));
+								if (target_dir != '%') strcat(buf, format("%c", target_dir));
 							}
 							else if (choice == 'e' || choice == 'g') strcat(buf, "5");
 							else strcat(buf, "-");
@@ -6836,31 +6859,55 @@ static void do_cmd_options_aux(int page, cptr info) {
 
 
 void display_account_information(void) {
-	if (acc_opt_screen) {
-		if (acc_got_info) {
-			if (acc_flags & ACC_TRIAL) {
-				c_prt(TERM_YELLOW, "Your account hasn't been validated.", 3, 2);
-			} else {
-				c_prt(TERM_L_GREEN, "Your account is valid.", 3, 2);
-			}
-		} else {
-			c_prt(TERM_SLATE, "Retrieving data...", 3, 2);
-		}
+	int l = 3;
+	if (!acc_opt_screen) return;
 
-		/* Added in 4.7.3 */
-		c_prt(TERM_WHITE, "Account-based character information:", 5, 0);
-		if (p_ptr->admin_dm) c_prt(TERM_BLUE, 			"Dungeon Master                 ", 7, 2);
-		else if (p_ptr->admin_wiz) c_prt(TERM_BLUE, 		"Dungeon Wizard                 ", 7, 2);
-		else if (p_ptr->privileged == 2) c_prt(TERM_L_BLUE, 	"Extra-privileged player account", 7, 2);
-		else if (p_ptr->privileged == 1) c_prt(TERM_L_BLUE, 	"Privileged player account      ", 7, 2);
-		else if (p_ptr->restricted == 2) c_prt(TERM_ORANGE, 	"Extra-restricted player account", 7, 2);
-		else if (p_ptr->restricted == 1) c_prt(TERM_YELLOW, 	"Restricted player account      ", 7, 2);
-		else c_prt(TERM_L_GREEN, 				"Standard player account        ", 7, 2);
+	if (acc_got_info) {
+		/* (Note: Flags that aren't displayed here yet but could be, if wanted:
+		   ACC_MULTI (usually all admins, never players), ACC_NOSCORE (comes with TRIAL)) */
+		if (acc_flags & ACC_TRIAL) c_prt(TERM_YELLOW, "Your account hasn't been validated.", l, 2);
+		else c_prt(TERM_L_GREEN, "Your account is valid.", l, 2);
 
-		/* hack: hide cursor */
-		Term->scr->cx = Term->wid;
-		Term->scr->cu = 1;
+#if 1 /* display account flags as account info */
+		l++;
+		if (acc_flags & ACC_ADMIN) c_prt(TERM_BLUE, "Your account is an administrator.", l, 2);
+		else if (acc_flags & ACC_VRESTRICTED) c_prt(TERM_ORANGE, "Your account is extra-restricted.", l, 2);
+		else if (acc_flags & ACC_RESTRICTED) c_prt(TERM_YELLOW, "Your account is restricted.", l, 2);
+		else if (acc_flags & ACC_VPRIVILEGED) c_prt(TERM_L_BLUE, "Your account is extra-privileged.", l, 2);
+		else if (acc_flags & ACC_PRIVILEGED) c_prt(TERM_L_BLUE, "Your account is privileged.", l, 2);
+
+		l++;
+		if (acc_flags & ACC_ANOPVP) c_prt(TERM_RED, "Your account is not allowed under penalty to PvP.", l, 2);
+		else if (acc_flags & ACC_NOPVP) c_prt(TERM_WHITE, "Your account cannot participate in PvP.", l, 2);
+		else if (acc_flags & ACC_PVP) c_prt(TERM_SLATE, "Your account may participate in PvP.", l, 2);
+
+		l++;
+		if (acc_flags & ACC_VQUIET) c_prt(TERM_ORANGE, "Your account is silenced.", l, 2);
+		else if (acc_flags & ACC_QUIET) c_prt(TERM_YELLOW, "Your account is partially silenced.", l, 2);
+#endif
+	} else {
+		c_prt(TERM_SLATE, "Retrieving data...", l, 2);
 	}
+
+	/* Added in 4.7.3 */
+	l = 10;
+	c_prt(TERM_WHITE, "Account-based character information:", l, 0);
+	l += 2;
+	if (p_ptr->admin_dm) c_prt(TERM_BLUE, 			"Dungeon Master                 ", l, 2);
+	else if (p_ptr->admin_wiz) c_prt(TERM_BLUE, 		"Dungeon Wizard                 ", l, 2);
+#if 0 /* display account flags as character info */
+	else if (p_ptr->restricted == 2) c_prt(TERM_ORANGE, 	"Extra-restricted player account", l, 2);
+	else if (p_ptr->restricted == 1) c_prt(TERM_YELLOW, 	"Restricted player account      ", l, 2);
+	else if (p_ptr->privileged == 2) c_prt(TERM_L_BLUE, 	"Extra-privileged player account", l, 2);
+	else if (p_ptr->privileged == 1) c_prt(TERM_L_BLUE, 	"Privileged player account      ", l, 2);
+	else c_prt(TERM_L_GREEN, 				"Standard player account        ", l, 2);
+#else
+	else c_prt(TERM_L_GREEN, 				"Player character               ", l, 2);
+#endif
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 }
 
 
