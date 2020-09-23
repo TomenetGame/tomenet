@@ -6874,28 +6874,33 @@ void do_cmd_activate_dir(int Ind, int dir) {
  #endif
 #endif
 
-	if (p_ptr->anti_magic) {
-		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
-		msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
-		return;
-	}
-	if (magik((p_ptr->antimagic * 8) / 5)) {
-#ifdef USE_SOUND_2010
-		sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
-#endif
-		msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
-		return;
-	}
-
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &p_ptr->inventory[item];
 	/* Get the item (on the floor) */
 	else {
 		if (-item >= o_max) return; /* item doesn't exist */
 		o_ptr = &o_list[0 - item];
+	}
+
+#ifdef ENABLE_DEMOLITIONIST
+	if (o_ptr->tval != TV_CHARGE)
+#endif
+	{
+		if (p_ptr->anti_magic) {
+			msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
+			return;
+		}
+		if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
+			msg_format(Ind, "\377%cYou don't believe in magic.", COLOUR_AM_OWN);
+			return;
+		}
+		if (magik((p_ptr->antimagic * 8) / 5)) {
+#ifdef USE_SOUND_2010
+			sound(Ind, "am_field", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+			msg_format(Ind, "\377%cYour anti-magic field disrupts your attempt.", COLOUR_AM_OWN);
+			return;
+		}
 	}
 
 	/* If the item can be equipped, it MUST be equipped to be activated */
