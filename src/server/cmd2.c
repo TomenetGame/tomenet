@@ -7829,6 +7829,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					}
 				}
 
+				/* Exploding Attack - Kurzel */
+				if (p_ptr->nimbus) do_nimbus(Ind, y, x);
+
 				/* Stop looking */
 				break;
 			}
