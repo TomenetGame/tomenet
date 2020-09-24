@@ -1556,7 +1556,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 #endif
 	int i;
 	char *res;
-	byte search_uppercase = 0, search_uppercase_ok, fallback = FALSE;
+	byte search_uppercase = 0, search_uppercase_ok, fallback = FALSE, fallback_uppercase = 0;
 
 	int c_override = 0;
 	char buf_override[MAX_CHARS];
@@ -1617,7 +1617,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 
-			search_uppercase = FALSE;
+			if (!fallback_uppercase) search_uppercase = FALSE;
+			else {
+				search_uppercase = fallback_uppercase;
+				fallback_uppercase = FALSE;
+			}
 
 			strcpy(lastsearch, searchstr);
 			searchline = line - 1; //init searchline for string-search
@@ -2046,16 +2050,29 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 
+				/* Expand 'pfe' to 'Protection from evil' */
+				if (!strcasecmp(buf, "pfe")) strcpy(buf, "Protection from evil");
+				/* Expand 'rll' to 'Restore Life Levels' and fall back to caps-search */
+				if (!strcasecmp(buf, "rll")) {
+					strcpy(buf, "RESTORE LIFE LEVELS");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
+				/* Note: 'rop' is already ring of power (slang paragraph) */
+
 				/* Maia initiation (could just chapter-search "init", but somehow this seems more intuitive..) */
 				if (!strncasecmp(buf, "enl", 3) && my_strcasestr("Enlightened:", buf)) {
 					strcpy(buf, "ENLIGHTENED:");
 					fallback = TRUE;
+					fallback_uppercase = 4;
 					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
 					continue;
 				}
 				if (!strncasecmp(buf, "cor", 3) && my_strcasestr("Corrupted:", buf)) {
 					strcpy(buf, "CORRUPTED:");
 					fallback = TRUE;
+					fallback_uppercase = 4;
 					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
 					continue;
 				}
