@@ -177,6 +177,10 @@ function rspell_damage(u,s)
   -- local d = rspell_scale(s, XX[7], ((XX[8] * w) / 1200) * m / 10)
   -- new elemental damage spread, scale down or up with weight/3 from 600
   local w = (P[rspell_sval(u)][3] * 33 + 600 * (100 - 33)) / 100
+  -- rare element nerf -- if scaling down, weight linearly
+  if P[rspell_sval(u)][3] < 600 then
+    w = P[rspell_sval(u)][3]
+  end
   local m = M[band(u,MODE)][5]
   local x = rspell_scale(s, XX[5], XX[6] * w / 600)
   local y = rspell_scale(s, XX[7], XX[8] * m / 10)
@@ -316,7 +320,7 @@ function rcraft_prt(u,w)
         end
       elseif band(U,FLAR)~=0 then
         if X then
-          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %dd%d (x%d) backlash 20%%",
+          c_prt(C, format("%c) %-8s %5d %4d %3d%% dam %dd%d (x%d) backlash 10%%",
             strbyte('a')+i, XX[1], a, c, f,
             -- x, y, t),
             x, y, 2),
@@ -499,19 +503,24 @@ function cast_rune_spell(I,D,u)
   else
     b = 0
   end
+  if band(u,FLAR)~=0 then
+    if X then
+      b = b + d / 10 + 1
+    else
+      c = p.csp
+      d = p.csp
+      b = b + d / 10 + 1
+    end
+  end
+  -- Prevent suicide due to backlash, including spell 'failure', for now.
+  if b > p.chp then -- Assume no resistance/immunity for simplicity. -.-"
+    msg_print(I,format("\255RThe strain is far too great! (%s; backlash: %d)",S,b))
+    return 0
+  end
   local SS = ((v==bor(LITE,NETH) and band(u,ENHA)~=0) or band(u,EXPA)~=0) and "an" or "a" -- vowels
   msg_print(I,format("You %strace %s %s.", b > 0 and "\255Rincompetently\255w " or "",SS,S))
   p.attacker = format(" traces %s %s for", SS, S)
   p.energy = p.energy - e
-  if band(u,FLAR)~=0 then
-    if X then
-      b = b + d / 5 + 1
-    else
-      c = p.csp
-      d = p.csp
-      b = b + d / 5 + 1
-    end
-  end
   p.csp = p.csp - c
   local r = rspell_radius(u,s)
   local t = rspell_duration(u,s)
