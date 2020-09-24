@@ -128,9 +128,10 @@ bool warding_rune_break(int m_idx) {
 	cave_set_feat_live(wpos, my, mx, cs_ptr->sc.rune.feat);
 
 	/* Clear cs_ptr before project() to save some lite_spot packets */
-	int d = cs_ptr->sc.rune.dam;
+	s32b id = cs_ptr->sc.rune.id;
+	s16b d = cs_ptr->sc.rune.dam;
 	byte r = cs_ptr->sc.rune.rad;
-	byte t = cs_ptr->sc.rune.typ; // Flickers the feature in rune colours
+	byte t = cs_ptr->sc.rune.typ;
 	cs_erase(c_ptr, cs_ptr);
 
 	/* XXX Hack -- Owner online? */
@@ -140,9 +141,8 @@ bool warding_rune_break(int m_idx) {
 		p_ptr = Players[i];
 		if (p_ptr->conn == NOT_CONNECTED) continue;
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
-
 		/* Check if they are in here */
-		if (cs_ptr->sc.rune.id == p_ptr->id) {
+		if (id == p_ptr->id) {
 			who = i;
 			break;
 		}
