@@ -6084,9 +6084,9 @@ void calc_boni(int Ind) {
 
 	if (get_skill(p_ptr, SKILL_NECROMANCY) >= 50 && get_skill(p_ptr, SKILL_OUNLIFE) >= 50)
 		{ p_ptr->keep_life = TRUE; csheet_boni[14].cb[13] |= CB14_ILIFE; }
-#if 0 /* Grant SKILL_AURA_FEAR a "Fear Brand" instead! - Kurzel */
+#if 1 /* Grant SKILL_AURA_FEAR a "Fear Brand" instead! - Kurzel */
 	/* Fear Resistance from aura */
-	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 20)
+	if (get_skill(p_ptr, SKILL_AURA_FEAR) >= 20 && p_ptr->aura[0])
 		{ p_ptr->resist_fear = TRUE; csheet_boni[14].cb[4] |= CB5_RFEAR; }
 #endif
 	/* Hack -- Res Chaos -> Res Conf */
