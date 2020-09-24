@@ -9466,10 +9466,38 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Passed all checks (even the ridiculous Runemaster-resistance one)! */
 		break;
 	} while (tries < (verygreat ? 25 : 100));
+
 	/* Did a silly check make us fail? Fallback to another non-terrible solution then. */
 	if (tries == (verygreat ? 25 : 100)) {
 		s_printf(" create_reward() FALLBACK!\n");
 		*o_ptr = forge_fallback;
+
+		/* This happened to a martial artist who failed to roll a hat that passed stage 3:
+		   All tries failed, no fallback item created! */
+		if (!o_ptr->tval) {
+			s_printf(" create_reward() No fallback item! Creating generic emergency item!\n");
+			/* Create something unusual here for fun, instead of just generic body armour.
+			   (Some vars if we decide to change this: mha, rha, go_heavy, caster) */
+			switch (rand_int(p_ptr->prace == RACE_VAMPIRE ? 1 : 3)) {
+			case 0:
+				k_idx = lookup_kind(TV_CLOAK, SV_ELVEN_CLOAK);
+				break;
+			case 1:
+				k_idx = lookup_kind(TV_LITE, SV_LITE_DWARVEN);
+				break;
+			case 2:
+				k_idx = lookup_kind(TV_LITE, SV_LITE_FEANORIAN);
+				break;
+			}
+			invcopy(o_ptr, k_idx);
+			apply_magic_depth(base, o_ptr, base, TRUE, good, great, verygreat, resf | RESF_BOOST_PVAL); //base [95]
+			if (!o_ptr->tval) { /* paranoia */
+				s_printf(" REWARD_WIPED (impossible - we failed completely!\n");
+				return;
+			}
+			object_desc(0, o_name, o_ptr, TRUE, 2+8+16);
+			s_printf(" REWARD_CREATED: (%s) %s\n", p_ptr->name, o_name);
+		}
 	}
 
 	/* more loggin' */
