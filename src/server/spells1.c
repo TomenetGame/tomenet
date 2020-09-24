@@ -1823,6 +1823,9 @@ byte spell_color(int type) {
  * that tells 'what kind of damage'.
  */
 bool bypass_invuln = FALSE;
+/* Do melee hits drain 50% more mana from disruption shield? (Istari shouldn't be tanks) */
+#define MELEE_HIT_DRAINS_SHIELD
+bool melee_hit = FALSE;
 void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	char hit_from_real[MNAME_LEN];
 	player_type *p_ptr = Players[Ind];
@@ -1971,23 +1974,31 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		if (p_ptr->csp > 0) {
 			int taken;
 
-			switch(p_ptr->pclass) {
+			switch (p_ptr->pclass) {
 			case CLASS_MAGE:
-			taken = (damage * 2) / 2;//mana shield works with a ratio of SP<->damage points
-			break;
+ #ifdef MELEE_HIT_DRAINS_SHIELD
+				if (melee_hit) taken = (damage * 3) / 2;
+				else
+ #endif
+				taken = (damage * 2) / 2;//mana shield works with a ratio of SP<->damage points
+				break;
 			default:
-			taken = (damage * 2) / 1;
-			break;
+				taken = (damage * 2) / 1;
+				break;
 			}
 
 			if (p_ptr->csp < taken) {
-				switch(p_ptr->pclass) {
+				switch (p_ptr->pclass) {
 				case CLASS_MAGE:
-				damage = ((taken - p_ptr->csp) / 2) * 2;
-				break;
+ #ifdef MELEE_HIT_DRAINS_SHIELD
+					if (melee_hit) damage = ((taken - p_ptr->csp) / 3) * 2;
+					else
+ #endif
+					damage = ((taken - p_ptr->csp) / 2) * 2;
+					break;
 				default:
-				damage = ((taken - p_ptr->csp) / 2) * 1;
-				break;
+					damage = ((taken - p_ptr->csp) / 2) * 1;
+					break;
 				}
 
 				p_ptr->csp = 0;

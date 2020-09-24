@@ -1122,6 +1122,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 			/* Hack -- assume all attacks are obvious */
 			obvious = TRUE;
 
+			if (touched) melee_hit = TRUE;
+
 			/* Apply appropriate damage */
 			switch (effect) {
 				case 0:
@@ -3000,6 +3002,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 					break;
 			}
 
+			/* Reset to normal */
+			melee_hit = FALSE;
 
 			/* Hack -- only one of cut or stun */
 			if (do_cut && do_stun) {
