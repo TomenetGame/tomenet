@@ -14629,6 +14629,8 @@ void toggle_aura(int Ind, int aura) {
 	if (p_ptr->aura[aura]) strcat(buf, "unleashed"); else strcat(buf, "suppressed");
 	strcat(buf, "!");
 	msg_print(Ind, buf);
+
+	p_ptr->update |= (PU_BONUS);
 }
 
 void check_aura(int Ind, int aura) {

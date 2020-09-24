@@ -13641,9 +13641,10 @@ stated.
                                 blood. This means that the speed of your hit
                                 point regeneration will be reduced while the
                                 aura is active.
-                                If your skill is at least 20.000 you obtain
-                                fear resistance and your melee attacks will
-                                apply a 'fear' status effect.
+                                If your skill is at least 20.000 and your aura
+                                is unleashed, you obtain fear resistance and
+                                your melee attacks will apply a 'fear' status
+                                effect.
 
         .Shivering Aura         Monsters that hit you are stunned.
          (0.500)                Monsters that are immune to cold and those that
