@@ -4140,7 +4140,7 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_TURN_ALL: //fear
 	case GF_TERROR:
 
-	/* For priest spell (Doomed Grounds) -- carries hack (9999) or percentual damage (2%) */
+	/* Percent damage (eg. 20%) - Currently no ball versions of these - Kurzel */
 	case GF_OLD_DRAIN:
 	case GF_ANNIHILATION:
 
@@ -5281,10 +5281,6 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 
 		/* Mana -- destroys everything -- except IGNORE_MANA items :p */
-		case GF_ANNIHILATION:
-			/* Hack: Doomed Grounds is too weak to kill items */
-			if (dam < 7) break;
-			/* Fall through */
 		case GF_MANA:
 			if (!(f5 & (TR5_IGNORE_MANA | TR5_RES_MANA))) {
 				do_smash_effect = TRUE;
@@ -5293,12 +5289,16 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 			break;
 
+		case GF_ANNIHILATION:
+			do_smash_effect = FALSE;
+			do_kill = TRUE;
+			note_kill = (plural ? " are obliterated!" : " is obliterated!");
+			break;
+
 		case GF_DISINTEGRATE:
 			do_smash_effect = FALSE;
 			do_kill = TRUE;
-			note_kill = is_potion ? (plural ? " evaporate!" : " evaporates!")
-						: (plural ? " are pulverized!" : " is pulverized!");
-			//note_kill = (plural ? " evaporate!" : " evaporates!");
+			note_kill = (plural ? " are pulverized!" : " is pulverized!");
 			break;
 
 		case GF_DISENCHANT:
@@ -5715,6 +5715,12 @@ static bool psi_backlash(int Ind, int m_idx, int dam) {
 }
 #endif
 
+/* Percent damage calculation, preventing integer overflow! - Kurzel */
+static int percent_damage(int hp, int dam) {
+	if (hp > 9362) return (hp / 100) * dam;
+	else if (hp > 936) return ((hp / 10) * dam) / 10;
+	else return (hp * dam) / 100;
+}
 
 /*
  * Helper function for "project()" below.
@@ -5787,7 +5793,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* do not notice things the player did to themselves by ball spell */
 	/* fix me XXX XXX XXX */
 
-	bool priest_spell = FALSE, dark_spell = FALSE;
+	bool dark_spell = FALSE;
 
 	/* Polymorph setting (true or false) */
 	int do_poly = 0;
@@ -5828,11 +5834,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
 
-	/* the_sandman: the priest spell? (0 or 1) - doomed grounds hack for applying proper heal feedback */
-	if (typ == GF_OLD_DRAIN && (dam & 4096)) { //currently unused since doomed grounds deals annihilation instead
-		priest_spell = TRUE;
-		dam &= ~4096; // the real damage (percentage drain)
-	}
 	//marker to handle blindness power differently
 	if (typ == GF_DARK_WEAK && (dam & 8192)) {
 		dark_spell = TRUE;
@@ -6889,77 +6890,44 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		dam = k_elec + k_sound + k_lite;
 		break;
 
-	/* Drain Life */
 	case GF_OLD_DRAIN:
 		if (seen) obvious = TRUE;
-
-		/* Prevent internal overflow (int) - allow up to 35% leech */
-		if (m_ptr->hp > 9362) dam = (m_ptr->hp / 100) * dam;
-		else if (m_ptr->hp > 936) dam = ((m_ptr->hp / 10) * dam) / 10;
-		else dam = (m_ptr->hp * dam) / 100;
-
-		/* Make it have an effect on low-HP monsters such as townies */
-		if (!dam) dam = 1;
-		/* Cap */
+		dam = percent_damage(m_ptr->hp, dam);
 		if (dam > 900) dam = 900;
-
-		if (!quiet) {
-			if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
-			else p_ptr->ret_dam = 0; /* paranoia */
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
+#endif
+			note = " resists";
+			dam *= 6; dam /= (randint(6) + 6);
 		}
-
+		if (!dam) dam = 1;
 		if ((r_ptr->flags3 & RF3_UNDEAD) ||
-		    //(r_ptr->flags3 & RF3_DEMON) ||
-		    (r_ptr->flags3 & RF3_NONLIVING) ||
-		    strchr("Egv", r_ptr->d_char)) {
+				(r_ptr->flags3 & RF3_NONLIVING) ||
+			strchr("Egv", r_ptr->d_char)) {
 #ifdef OLD_MONSTER_LORE
 			if ((r_ptr->flags3 & RF3_UNDEAD) && seen) r_ptr->r_flags3 |= RF3_UNDEAD;
-			//if ((r_ptr->flags3 & RF3_DEMON) && seen) r_ptr->r_flags3 |= RF3_DEMON;
 			if ((r_ptr->flags3 & RF3_NONLIVING) && seen) r_ptr->r_flags3 |= RF3_NONLIVING;
 #endif
 			note = " is unaffected";
 			obvious = FALSE;
 			no_dam = TRUE;
-			if (!quiet) p_ptr->ret_dam = 0;
-		} else if (r_ptr->flags1 & RF1_UNIQUE) {
-#ifdef OLD_MONSTER_LORE
-			if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
-#endif
-			note = " resists";
-			dam *= 3; dam /= (randint(6) + 6);
-
-			/* Make it have an effect on low-HP monsters such as townies */
-			if (!dam) dam = 1;
 		}
-
-		/* the_sandman: return 15% of the damage to player. This is special
-		   since (we're not using the upto 35% rule because for the spell
-		   (drain cloud) it will be too much) we aim for balance
-		   HACK: the priest_spell variable is defined above.
-		*/
-		if (priest_spell) {
-			//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
-			if (!no_dam && !quiet) hp_player_quiet(Ind, (dam * 15) / 100, TRUE);
-			p_ptr->ret_dam = 0;
-		}
-
+		if (!quiet) p_ptr->ret_dam = dam;
 		break;
 
 	case GF_ANNIHILATION:
 		if (seen) obvious = TRUE;
-		if (m_ptr->hp > 9362) dam = (m_ptr->hp / 100) * dam;
-		else if (m_ptr->hp > 936) dam = ((m_ptr->hp / 10) * dam) / 10;
-		else dam = (m_ptr->hp * dam) / 100;
-
-		if (r_ptr->flags1 & RF1_UNIQUE) {
-			note = " resists";
-			dam *= 3; dam /= (randint(6) + 6);
-		}
-
-		/* Make it have an effect on low-HP monsters such as townies */
-		if (!dam) dam = 1;
-		/* Cap */
+		dam = percent_damage(m_ptr->hp, dam);
 		if (dam > 1200) dam = 1200;
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+#ifdef OLD_MONSTER_LORE
+			if (seen) r_ptr->r_flags1 |= RF1_UNIQUE;
+#endif
+			note = " resists";
+			dam *= 6; dam /= (randint(6) + 6);
+		}
+		if (!dam) dam = 1;
 		break;
 
 	/* Polymorph monster (Use "dam" as "power") */
@@ -8950,7 +8918,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	dun_level *l_ptr = getfloor(wpos);
 
-	int priest_spell = FALSE, dark_spell = FALSE;
+	int dark_spell = FALSE;
 
 
 	/* Bad player number */
@@ -8976,11 +8944,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = dam & 0x03FF;
 	}
 
-	/* the_sandman: the priest spell? (0 or 1) - doomed grounds hack for applying proper heal feedback */
-	if (typ == GF_OLD_DRAIN && (dam & 4096)) { //currently unused since doomed grounds deals annihilation instead
-		priest_spell = TRUE;
-		dam &= ~4096; // the real damage (percentage drain)
-	}
 	//marker to handle blindness power differently
 	if (typ == GF_DARK_WEAK && (dam & 8192)) {
 		dark_spell = TRUE;
@@ -11455,60 +11418,20 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 
-	/* Drain Life */
 	case GF_OLD_DRAIN:
-		/* lower damage in pvp */
-		dam /= 2;
-
-		/* Prevent internal overflow (int) - allow up to 35% leech */
-		if (p_ptr->chp > 9362) dam = (p_ptr->chp / 100) * dam;
-		else if (p_ptr->chp > 936) dam = ((p_ptr->chp / 10) * dam) / 10;
-		else dam = (p_ptr->chp * dam) / 100;
+		dam = percent_damage(p_ptr->chp, dam);
+		if (dam > 300) dam = 300;
+		dam *= 6; dam /= (randint(6) + 6);
 		if (!dam) dam = 1;
-
-		if (!fuzzy) {
-			if (typ == GF_OLD_DRAIN) p_ptr->ret_dam = dam;
-			else p_ptr->ret_dam = 0; /* paranoia */
-		}
-
-		if (p_ptr->prace == RACE_VAMPIRE) {
-			dam = 0;
-			p_ptr->ret_dam = 0;
-		} else if (magik(p_ptr->skill_sav / 2)) {
-			dam *= 3; dam /= (randint(6) + 6);
-			if (!dam) dam = 1;
-		}
-
+		if ((p_ptr->ghost) || (p_ptr->prace == RACE_VAMPIRE)) dam = 0;
+		p_ptr->ret_dam = dam;
 		take_hit(Ind, dam, killer, -who);
-
-		/* the_sandman: return 15% of the damage to player. This is special
-		   since (we're not using the upto 35% rule because for the spell
-		   (drain cloud) it will be too much) we aim for balance
-		   HACK: the priest_spell variable is defined above.
-		*/
-
-		if (priest_spell) {
-			if (!fuzzy && IS_PLAYER(-who)) {
-				//msg_format(Ind, "\377gYou are healed for %d hit points", (dam * 15) / 100);
-				if (dam) hp_player_quiet(-who, (dam * 15) / 100, TRUE);
-			}
-			p_ptr->ret_dam = 0;
-		}
-
 		break;
 
 	case GF_ANNIHILATION:
-		/* lower damage in pvp */
-		dam /= 2;
-
-		if (p_ptr->chp > 9362) dam = (p_ptr->chp / 100) * dam;
-		else if (p_ptr->chp > 936) dam = ((p_ptr->chp / 10) * dam) / 10;
-		else dam = (p_ptr->chp * dam) / 100;
-
-		if (magik(p_ptr->skill_sav / 2)) {
-			dam *= 3; dam /= (randint(6) + 6);
-		}
-
+		dam = percent_damage(p_ptr->chp, dam);
+		if (dam > 400) dam = 400;
+		dam *= 6; dam /= (randint(6) + 6);
 		if (!dam) dam = 1;
 		take_hit(Ind, dam, killer, -who);
 		break;
@@ -12944,16 +12867,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 	monster_race *r_ptr = race_inf(m_ptr);
 	cptr name = r_name_get(m_ptr);
 
-	/* Priest drain-life/Brief runespell annihilation spell hack */
-	switch (typ) {
-	case GF_OLD_DRAIN:
-		dam &= ~4096;
-		break;
-	case GF_ANNIHILATION:
-		dam &= ~8192;
-		break;
-	}
-
 #if 0
 	int do_poly = 0;
 	int do_dist = 0;
@@ -13415,38 +13328,20 @@ int approx_damage(int m_idx, int dam, int typ) {
 		break;
 
 	case GF_OLD_DRAIN:
-		if (m_ptr->hp > 9362)
-			dam = (m_ptr->hp / 100) * dam;
-		else if (m_ptr->hp > 936)
-			dam = ((m_ptr->hp / 10) * dam) / 10;
-		else
-			dam = (m_ptr->hp * dam) / 100;
-
+		dam = percent_damage(m_ptr->hp, dam);
 		if (dam > 900) dam = 900;
-
-		if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
+		if (r_ptr->flags1 & RF1_UNIQUE) dam /= 2;
 		if (!dam) dam = 1;
-
 		if ((r_ptr->flags3 & RF3_UNDEAD) ||
-		    //(r_ptr->flags3 & RF3_DEMON) ||
-		    (r_ptr->flags3 & RF3_NONLIVING) ||
-		    (strchr("Egv", r_ptr->d_char)))
+				(r_ptr->flags3 & RF3_NONLIVING) ||
+				(strchr("Egv", r_ptr->d_char)))
 			dam = 0;
 		break;
 
 	case GF_ANNIHILATION:
-		j = dam - 1;
-		if (m_ptr->hp > 9362)
-			dam = (m_ptr->hp / 100) * dam;
-		else if (m_ptr->hp > 936)
-			dam = ((m_ptr->hp / 10) * dam) / 10;
-		else
-			dam = (m_ptr->hp * dam) / 100;
-
+		dam = percent_damage(m_ptr->hp, dam);
 		if (dam > 1200) dam = 1200;
-		//ignoring the 600 cap for 'Brief' runespells
-
-		if (r_ptr->flags1 & RF1_UNIQUE) dam /= 3;
+		if (r_ptr->flags1 & RF1_UNIQUE) dam /= 2;
 		if (!dam) dam = 1;
 		break;
 
