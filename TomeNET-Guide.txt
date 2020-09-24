@@ -16867,7 +16867,7 @@ school.
                     Instead, the shield will consume your mana to absorb it.
                     Only Istari are able to really get the most out of it -
                     they get 1 mana point deducted for each absorbed point of
-                    non-melee damage. For melee hits they take 1.5 mana each.
+                    non-melee damage. For melee hits they take 4/3 mana each.
                     All other classes will always get 2 mana points deducted
                     for each damage point.
                     Required skill level for first spell level: 35.
