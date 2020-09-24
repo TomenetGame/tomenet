@@ -1357,11 +1357,16 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 				if (!((*f3) & TR3_REGEN_MANA)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_REGEN_MANA; flag_count++; }
 				switch (o_ptr->tval) {
 					case TV_CROWN:
-						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
+						if (!((*f1) & TR1_MANA) && pval
+  					&& !(pval > 3))
+							{ flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
 						if (!((*f3) & TR3_REGEN_MANA)) { flag_category[flag_count] = 3; flag_pool[flag_count] = TR3_REGEN_MANA; flag_count++; }
 					break;
 					case TV_GLOVES:
-						if (!((*f1) & TR1_MANA) && pval) { flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
+						if (!((*f1) & TR1_MANA) && pval
+						&& !((((*f5) & TR5_CRIT) || ((*f1) & TR1_SPEED)) && (pval > 7))
+						&& !(((*f5) & TR5_CRIT) && ((*f1) & TR1_SPEED) && (pval > 5)))
+							{ flag_category[flag_count] = 1; flag_pool[flag_count] = TR1_MANA; flag_count++; }
 					break;
 					default:
 					break;
@@ -1614,12 +1619,16 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 			}
 
 			else if (sigil == SV_R_FORC) {
-				if (!((*f2) & TR2_SUST_STR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_STR; flag_count++; }
-				if (!((*f2) & TR2_SUST_INT)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_INT; flag_count++; }
-				if (!((*f2) & TR2_SUST_WIS)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_WIS; flag_count++; }
-				if (!((*f2) & TR2_SUST_DEX)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_DEX; flag_count++; }
-				if (!((*f2) & TR2_SUST_CON)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CON; flag_count++; }
-				if (!((*f2) & TR2_SUST_CHR)) { flag_category[flag_count] = 2; flag_pool[flag_count] = TR2_SUST_CHR; flag_count++; }
+				if (!((*f2) & TR2_SUST_STR)
+				 || !((*f2) & TR2_SUST_INT)
+				 || !((*f2) & TR2_SUST_WIS)
+				 || !((*f2) & TR2_SUST_DEX)
+				 || !((*f2) & TR2_SUST_CON)
+				 || !((*f2) & TR2_SUST_CHR)) {
+					flag_category[flag_count] = 2;
+					flag_pool[flag_count] = (TR2_SUST_STR | TR2_SUST_INT | TR2_SUST_WIS | TR2_SUST_DEX | TR2_SUST_CON | TR2_SUST_CHR);
+					flag_count++;
+				}
 				switch (o_ptr->tval) {
 					case TV_SHIELD:
 					case TV_HARD_ARMOR:

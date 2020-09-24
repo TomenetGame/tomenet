@@ -28,7 +28,7 @@ bool rune_enchant(int Ind, int item) {
 
 	/* Not worn? */
 	if (INVEN_WIELD > item) {
-		msg_print(Ind, "You must be wearing that to attune the rune...");
+		msg_print(Ind, "You must be wearing that to attune the rune.");
 		return FALSE;
 	}
 
