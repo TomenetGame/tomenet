@@ -17358,6 +17358,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Required skill level for first spell level: 30.
                     Shared spell (see above): O.Shadow, H.Offense.
                     This spell cannot be found in the Holy Offense tome.
+                    (Note: There is a spell of the same name in 'Hereticism'.)
 
     Doomed Grounds  Has an annihilation effect, much weaker, but affecting
                     a whole area, draining a small percentage of an enemy's
@@ -17647,6 +17648,7 @@ spell failure rate. All Unlife spells use WIS.)
                     Required skill level for first spell level: 30.
                     Shared spell (see above): O.Shadow, H.Offense.
                     This spell cannot be found in the Holy Offense tome.
+                    (Note: There is a spell of the same name in 'Hereticism'.)
 
     Drain Life      Drains life from a non-undead and non-nonliving creature
                     and returns a part of it to your hit points.
@@ -17826,6 +17828,8 @@ spell failure rate. All Unlife spells use WIS.)
 
     Chaos Bolt      Channels the powers of chaos into a bolt.
                     Required skill level for first spell level: 29.
+                    (Note: There is a spell of the same name, which is shared
+                    in 'Shadow'/'Holy Offense' schools.)
 
     Wicked Oath     Restores drained stats and lost experience.
                     Required skill level for first spell level: 35.
