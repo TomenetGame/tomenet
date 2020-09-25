@@ -6272,29 +6272,9 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 		/* in a town? ignore town level */
 		else if (ville || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour = TERM_WHITE;
 		/* too low to get any exp? */
-		else if (dlev < det_req_level(p_ptr->lev) - 5) {
-			colour = TERM_L_DARK;
-			if (p_ptr->warning_depth != 2 && p_ptr->wpos.wz && !in_deathfate(&p_ptr->wpos)) {
-				msg_print(Ind, "\377yYour level is very high compared to the dungeon floor you're currently on!");
-				msg_print(Ind, "\377yFor that reason the depth is shown in grey colour (instead of white) in the");
-				msg_print(Ind, "\377ybottom right corner of the main window, indicating that you will not gain any");
-				msg_print(Ind, "\377yexperience from monster kills here due to the very low amount of threat.");
-				s_printf("warning_depth=2: %s\n", p_ptr->name);
-				p_ptr->warning_depth = 2;
-			}
-		}
+		else if (dlev < det_req_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
 		/* too low to get 100% exp? */
-		else if (dlev < det_req_level(p_ptr->lev)) {
-			colour = TERM_YELLOW;
-			if (!p_ptr->warning_depth && p_ptr->wpos.wz && !in_deathfate(&p_ptr->wpos)) {
-				msg_print(Ind, "\377yYour level is quite high compared to the dungeon floor you're currently on!");
-				msg_print(Ind, "\377yFor that reason the depth is shown in yellow colour (instead of white) in the");
-				msg_print(Ind, "\377ybottom right corner of the main window, indicating that you will gain reduced");
-				msg_print(Ind, "\377yamounts of experience from monster kills here due to the low amount of threat.");
-				s_printf("warning_depth=1: %s\n", p_ptr->name);
-				p_ptr->warning_depth = 1;
-			}
-		}
+		else if (dlev < det_req_level(p_ptr->lev)) colour = TERM_YELLOW;
 		/* normal exp depth or deeper (default) */
 		else colour = TERM_WHITE;
 	} else {

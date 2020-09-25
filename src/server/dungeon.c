@@ -8612,6 +8612,31 @@ void process_player_change_wpos(int Ind) {
 		}
 	}
 
+	if (p_ptr->warning_depth != 2 && p_ptr->wpos.wz && !in_deathfate(&p_ptr->wpos)) {
+		/* Too low to get any exp? */
+		if (dlv < det_req_level(p_ptr->lev) - 5) {
+			if (p_ptr->warning_depth != 2 ) {
+				msg_print(Ind, "\377yYour level is very high compared to the dungeon floor you're currently on!");
+				msg_print(Ind, "\377yFor that reason the depth is shown in grey colour (instead of white) in the");
+				msg_print(Ind, "\377ybottom right corner of the main window, indicating that you will not gain any");
+				msg_print(Ind, "\377yexperience from monster kills here due to the very low amount of threat.");
+				s_printf("warning_depth=2: %s\n", p_ptr->name);
+				p_ptr->warning_depth = 2;
+			}
+		}
+		/* Too low to get 100% exp? */
+		else if (dlv < det_req_level(p_ptr->lev)) {
+			if (!p_ptr->warning_depth && p_ptr->wpos.wz && !in_deathfate(&p_ptr->wpos)) {
+				msg_print(Ind, "\377yYour level is quite high compared to the dungeon floor you're currently on!");
+				msg_print(Ind, "\377yFor that reason the depth is shown in yellow colour (instead of white) in the");
+				msg_print(Ind, "\377ybottom right corner of the main window, indicating that you will gain reduced");
+				msg_print(Ind, "\377yamounts of experience from monster kills here due to the low amount of threat.");
+				s_printf("warning_depth=1: %s\n", p_ptr->name);
+				p_ptr->warning_depth = 1;
+			}
+		}
+	}
+
 	/* Did we enter/leave a no-run level? Temporarily disable/reenable warning_run */
 	if ((l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) || (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_RUN))) {
 		if (p_ptr->warning_run < 3) p_ptr->warning_run += 10;
