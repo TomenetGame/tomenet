@@ -18220,87 +18220,6 @@ In general, mindcraft schools are less affected by anti-magic fields.)
     Stop Charm      Cease currently active charming effects.
 
 
-- Runecraft -
--------------
-Runespells use INT and DEX for determining the failure rate, and spell failure 
-triggers damaging backlash instead of failing outright, see (6.8b) for details.
-Spell level is the lesser of one or two skills applied during the casting.
-All spell types are described here in detail, but also tabulated in (6.8c).
-Enhanced spell types have fixed parameters; other spell types may be modified.
-
-    Bolt            Fires a single-target missile which may be deflected.
-                    Some targets may also be able to block the missile.
-                    Required skill level for first spell level: 5.
-
-    Beam            Fires a penetrating ray which hits all grids in a line.
-    (Enhanced)      Required skill level for first spell level: 10.
-
-    Cloud           Engulfs an area for a few turns.
-                    Required skill level for first spell level: 10.
-
-    Wall            Engulfs a line of grids for several turns.
-    (Enhanced)      Required skill level for first spell level: 15.
-
-    Ball            Fires a large explosion that diminishes with radius.
-                    Damage is divided by the distance from the epicenter.
-                    Required skill level for first spell level: 15.
-
-    Burst           Fires an explosion that deals full damage across radius.
-    (Enhanced)      Required skill level for first spell level: 20.
-
-    Storm           Engulfs a small area around youself for many turns.
-                    The cloud epicenter is relocated to you every turn, but it
-                    will dissipate if you leave the floor it was created on.
-                    Required skill level for first spell level: 20.
-
-    Nimbus          Channels explosive energy and an elemental shield.
-    (Enhanced)      Grants resistance to an element, or immunity if the element
-                    is fire, cold, electricity, acid, poison or water.
-                    Additionally, your melee and ranged attacks that hit will
-                    explode in a small ball for the duration. Monsters that hit
-                    you in melee will similarly be struck by an explosion. Each
-                    explosion drains your mana, possibly collapsing the shield.
-                    You cannot auto-retaliate with this spell type.
-                    Required skill level for first spell level: 25.
-
-    Cone            Sweeps a beam across a narrow, contiguous arc.
-                    Increasing radius will increase the size of the arc.
-                    Required skill level for first spell level: 25.
-
-    Shot            Fires four brief bolts at one or more targets in an arc.
-    (Enhanced)      This arc can include up to three adjacent targets, and the
-                    bolts will be divided among remaining targets as they are
-                    fired, until all bolts are fired or no targets remain.
-                    Required skill level for first spell level: 30.
-
-    Surge           Engulfs a quickly expanding area around yourself.
-                    This effect will hit targets up to three times per cast.
-                    Required skill level for first spell level: 30.
-
-    Glyph           Traces an explosive glyph of warding onto the floor.
-    (Enhanced)      Monsters may not cross nor summon upon the glyph, however
-                    strong monsters may break the glyph. In this case, the 
-                    monster will be enveloped by a damaging explosion.
-                    You cannot auto-retaliate with this spell type.
-                    Required skill level for first spell level: 35.
-
-    Flare           Briefly engulfs a target for high damage, causes backlash.
-                    This effect overrides existing cloud effects, but will
-                    persist if cast repeatedly, hitting twice per cast.
-                    This spell always triggers damaging backlash, up to double
-                    if the spell is failed.
-                    Required skill level for first spell level: 35.
-
-    Nova            Exhausts your mana in a star-shaped cloud, causes backlash.
-    (Enhanced)      Your mana will be completely drained in one casting, and
-                    the spell damage will exactly equal the mana drained. The
-                    effect is limited to maximum range from your position, but
-                    may extend out of direct sight, as with ball spells.
-                    This spell always triggers damaging backlash, up to double
-                    if the spell is failed.
-                    Required skill level for first spell level: 40.
-
-
 - Astral Knowledge -
 --------------------
 The exclusive astral school for Maiar.
@@ -18386,6 +18305,87 @@ though, as all other magic schools do, not the astral level.)
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 50.
                     This spell requires a character level of at least 62.
+
+
+- Runecraft -
+-------------
+Runespells use INT and DEX for determining the failure rate, and spell failure 
+triggers damaging backlash instead of failing outright, see (6.8b) for details.
+Spell level is the lesser of one or two skills applied during the casting.
+All spell types are described here in detail, but also tabulated in (6.8c).
+Enhanced spell types have fixed parameters; other spell types may be modified.
+
+    Bolt            Fires a single-target missile which may be deflected.
+                    Some targets may also be able to block the missile.
+                    Required skill level for first spell level: 5.
+
+    Beam            Fires a penetrating ray which hits all grids in a line.
+    (Enhanced)      Required skill level for first spell level: 10.
+
+    Cloud           Engulfs an area for a few turns.
+                    Required skill level for first spell level: 10.
+
+    Wall            Engulfs a line of grids for several turns.
+    (Enhanced)      Required skill level for first spell level: 15.
+
+    Ball            Fires a large explosion that diminishes with radius.
+                    Damage is divided by the distance from the epicenter.
+                    Required skill level for first spell level: 15.
+
+    Burst           Fires an explosion that deals full damage across radius.
+    (Enhanced)      Required skill level for first spell level: 20.
+
+    Storm           Engulfs a small area around youself for many turns.
+                    The cloud epicenter is relocated to you every turn, but it
+                    will dissipate if you leave the floor it was created on.
+                    Required skill level for first spell level: 20.
+
+    Nimbus          Channels explosive energy and an elemental shield.
+    (Enhanced)      Grants resistance to an element, or immunity if the element
+                    is fire, cold, electricity, acid, poison or water.
+                    Additionally, your melee and ranged attacks that hit will
+                    explode in a small ball for the duration. Monsters that hit
+                    you in melee will similarly be struck by an explosion. Each
+                    explosion drains your mana, possibly collapsing the shield.
+                    You cannot auto-retaliate with this spell type.
+                    Required skill level for first spell level: 25.
+
+    Cone            Sweeps a beam across a narrow, contiguous arc.
+                    Increasing radius will increase the size of the arc.
+                    Required skill level for first spell level: 25.
+
+    Shot            Fires four brief bolts at one or more targets in an arc.
+    (Enhanced)      This arc can include up to three adjacent targets, and the
+                    bolts will be divided among remaining targets as they are
+                    fired, until all bolts are fired or no targets remain.
+                    Required skill level for first spell level: 30.
+
+    Surge           Engulfs a quickly expanding area around yourself.
+                    This effect will hit targets up to three times per cast.
+                    Required skill level for first spell level: 30.
+
+    Glyph           Traces an explosive glyph of warding onto the floor.
+    (Enhanced)      Monsters may not cross nor summon upon the glyph, however
+                    strong monsters may break the glyph. In this case, the 
+                    monster will be enveloped by a damaging explosion.
+                    You cannot auto-retaliate with this spell type.
+                    Required skill level for first spell level: 35.
+
+    Flare           Briefly engulfs a target for high damage, causes backlash.
+                    This effect overrides existing cloud effects, but will
+                    persist if cast repeatedly, hitting twice per cast.
+                    This spell always triggers damaging backlash, up to double
+                    if the spell is failed.
+                    Required skill level for first spell level: 35.
+
+    Nova            Exhausts your mana in a star-shaped cloud, causes backlash.
+    (Enhanced)      Your mana will be completely drained in one casting, and
+                    the spell damage will exactly equal the mana drained. The
+                    effect is limited to maximum range from your position, but
+                    may extend out of direct sight, as with ball spells.
+                    This spell always triggers damaging backlash, up to double
+                    if the spell is failed.
+                    Required skill level for first spell level: 40.
 
 
 (6.8a) Mimic powers
