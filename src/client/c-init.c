@@ -2277,7 +2277,7 @@ static void obj_highlight_flags(char *info, bool minus) {
 /* assume/handle certain features: */
 #define USE_NEW_SHIELDS
 void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
-	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
+	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN], *tmpc;
 	cptr s_rarity = NULL;
 	FILE *fff;
 	int l = 0, info_val, pl = -1;
@@ -2332,8 +2332,9 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_L_UMBER, p2 + 1);
-		strcpy(paste_lines[++pl], format("\377U%s",
-			artifact_list_name[alidx]));
+		strcpy(paste_lines[++pl], format("\377U%s", artifact_list_name[alidx]));
+		/* Glitch fix: Replace \377- by \377U so we don't fall back on charactermode-specific colour */
+		if ((tmpc = strstr(paste_lines[pl], "\377-"))) *(tmpc + 1) = 'U';
 		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 
 		/* fetch stats: I/W/E/O/B/F/S lines */
