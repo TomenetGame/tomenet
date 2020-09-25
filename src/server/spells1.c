@@ -1824,7 +1824,7 @@ byte spell_color(int type) {
  */
 bool bypass_invuln = FALSE;
 /* Do melee hits drain more mana from disruption shield? (Istari shouldn't be tanks) */
-#define MELEE_HIT_DRAINS_SHIELD
+//#define MELEE_HIT_DRAINS_SHIELD
 bool melee_hit = FALSE;
 void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	char hit_from_real[MNAME_LEN];
