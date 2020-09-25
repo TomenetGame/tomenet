@@ -168,7 +168,7 @@ guide_school = {
     "Unlife",
 }
 
-guide_spells = 186
+guide_spells = 187
 guide_spell = {
     "Manathrust",
     "Recharge",
@@ -236,7 +236,7 @@ guide_spell = {
     "Obliteration",
     "Wraithform",
     "Stop Wraithform",
-    "Disenchantment Bolt",
+    "Disenchantment Beam",
     "Hellfire", --59
 
     "Confuse",
@@ -281,7 +281,6 @@ guide_spell = {
     "Cause Fear",
     "Blindness",
     "Detect Invisible",
-    "Poisonous Fog",
     "Veil of Night",
     "Shadow Bolt",
     "Aspect of Peril",
@@ -290,7 +289,7 @@ guide_spell = {
     "Shadow Shroud",
     "Chaos Bolt",
     "Drain Life",
-    "Darkness Storm", --106
+    "Darkness Storm", --105
 
     "Cause Wounds",
     "Tame Fear",
@@ -302,6 +301,7 @@ guide_spell = {
     "Lift Curses",
     "Ethereal Eye",
     "Possess",
+    "Stop Possess",
     "Guardian Spirit", --117
     "Purification Rites",
 
@@ -379,6 +379,7 @@ guide_spell = {
     "Subjugation",
     "Nether Bolt",
     "Permeation",
+    "Siphon Life",
     "Touch of Hunger",
-    "Wraithstep", --186
+    "Wraithstep", --187
 }
