@@ -14678,7 +14678,7 @@ create a character!):
     even while polymorphed.
     Thanks to their scaly hide they receive a small bonus to armour class,
     especially the metallic lineages - bronze, silver and gold.
-    Draconians receive a bonus on 'Polearm-mastery', 'Attunement', 
+    Draconians receive a bonus on 'Polearm-mastery', 'Attunement',
     'Nexus' runemastery, 'Magic devices', a large bonus on 'Aura of Fear',
     and a slight bonus on 'Swimming'.
 
@@ -18309,7 +18309,7 @@ though, as all other magic schools do, not the astral level.)
 
 - Runecraft -
 -------------
-Runespells use INT and DEX for determining the failure rate, and spell failure 
+Runespells use INT and DEX for determining the failure rate, and spell failure
 triggers damaging backlash instead of failing outright, see (6.8b) for details.
 Spell level is the lesser of one or two skills applied during the casting.
 All spell types are described here in detail, but also tabulated in (6.8c).
@@ -18366,7 +18366,7 @@ Enhanced spell types have fixed parameters; other spell types may be modified.
 
     Glyph           Traces an explosive glyph of warding onto the floor.
     (Enhanced)      Monsters may not cross nor summon upon the glyph, however
-                    strong monsters may break the glyph. In this case, the 
+                    strong monsters may break the glyph. In this case, the
                     monster will be enveloped by a damaging explosion.
                     You cannot auto-retaliate with this spell type.
                     Required skill level for first spell level: 35.
