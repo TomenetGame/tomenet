@@ -5611,7 +5611,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					*o_ptr = forge;
 					break;
 				}
-				//consider mithril/adamantite too hard to melt
+				//consider mithril/adamantite too hard to melt (however, mithril could be 1668 aka titanium, not too far above iron)
 			}
 			//iron (heavy armour, swords, crowns)
 			else if (o_ptr->tval == TV_SWORD || (o_ptr->tval == TV_HARD_ARMOR && o_ptr->sval <= SV_RIBBED_PLATE_ARMOUR) || (o_ptr->tval == TV_CROWN && o_ptr->sval == SV_IRON_CROWN)) {
