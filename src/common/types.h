@@ -2519,6 +2519,7 @@ struct player_type {
 	s16b lite_n;			/* Array of grids lit by player lite */
 	byte lite_y[LITE_MAX];
 	byte lite_x[LITE_MAX];
+	byte lite_t[LITE_MAX];	/* Fiery, white, or vampiric. */
 
 	s16b temp_n;			/* Array of grids used for various things */
 	byte temp_y[TEMP_MAX];
@@ -3230,7 +3231,7 @@ struct player_type {
 	byte auto_transport;		/* automatic (scripted) transport sequences */
 	byte paging;			/* Player being paged by others? (Beep counter) */
 	byte ignoring_chat;		/* Ignoring normal chat? (Will only see private & party messages then) */
-	bool muted;			/* Being an ass? - the_sandman */
+	//superseded by mutedchat -- bool muted; /* Being an ass? - the_sandman */
 	byte has_pet;			/* Pet limiter */
 	/* Is the player auto-retaliating? (required for hack that fixes a lock bug) */
 	bool auto_retaliating;

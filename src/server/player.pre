@@ -274,6 +274,7 @@ struct player_type
 	s16b lite_n;		/* Array of grids lit by player lite */
 	byte lite_y[LITE_MAX];
 	byte lite_x[LITE_MAX];
+	byte lite_t[LITE_MAX];
 
 	s16b temp_n;		/* Array of grids used for various things */
 	byte temp_y[TEMP_MAX];
@@ -768,8 +769,7 @@ struct player_type
 	s16b corner_turn;
 	int joke_weather;
 
-	/* Muting variable - the_sandman */
-	bool muted;
+	/* Muting variable - the_sandman -> now covered by 'mutedchat' */
 	byte has_pet;
 
 	/* global events */
