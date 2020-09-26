@@ -1485,6 +1485,8 @@ extern void account_change_password(int Ind, char *old_pass, char *new_pass);
 extern void backup_acclists(void);
 extern void restore_acclists(void);
 extern void fix_lost_guild_mode(int g_id);
+extern void sf_rename(const char *name, bool keep_copy);
+extern void ef_rename(const char *name);
 
 extern hash_entry *hash_table[NUM_HASH_ENTRIES];
 extern bool guild_rename(int Ind, char *new_name);

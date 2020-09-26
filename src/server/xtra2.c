@@ -8004,11 +8004,37 @@ void merchant_mail_death(const char pname[NAME_LEN]) {
    This function will be called when a player actually dies.
    It will not erase his savefile or create backup data for later restoring,
    unlike erase_player_name() and erase_player_hash() both do! */
+#define SAFETY_BACKUP_PLAYER 35 /* create backup when erasing a player whose level is >= this. [40] because that's minimum kinging level. */
 static void erase_player(int Ind, int death_type, bool static_floor) {
 	player_type *p_ptr = Players[Ind];
 	char buf[1024];
 	int i;
 	int *id_list, ids;
+
+#ifdef SAFETY_BACKUP_PLAYER
+	int j = p_ptr->max_lev;
+
+	if (j < SAFETY_BACKUP_PLAYER) {
+		e_printf("(%s) %s (%d, %s)\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->accountname); /* log to erasure.log file for compact overview */
+		s_printf("(Skipping safety backup (level %d < %d))\n", j, SAFETY_BACKUP_PLAYER);
+	} else {
+		e_printf("(%s) %s (%d, %s) BACKUP\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->accountname); /* log to erasure.log file for compact overview */
+		s_printf("(Creating safety backup (level %d >= %d)\n", j, SAFETY_BACKUP_PLAYER);
+
+		/* rename savefile to backup (side note: unlink() will fail to delete it then later) */
+		//sf_rename(p_ptr->name, FALSE);
+		/* since erase_player() isn't supposed to delete a savegame, we just copy it instead.. */
+		sf_rename(p_ptr->name, TRUE);
+
+		/* save all real estate.. */
+		if (!backup_char_estate(0, p_ptr->id, p_ptr->id))
+			s_printf("(Estate backup: At least one house failed!)\n");
+		/* ..and rename estate file to indicate it's just a backup! */
+		ef_rename(p_ptr->name);
+	}
+#else
+	e_printf("(%s) %s (%d, %s)\n", showtime(), p_ptr->name, p_ptr->lev, p_ptr->accountname); /* log to erasure.log file for compact overview */
+#endif
 
 	//ACC_HOUSE_LIMIT
 	i = acc_get_houses(p_ptr->accountname);

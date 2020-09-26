@@ -4549,7 +4549,7 @@ void sf_delete(const char *name) {
 	unlink(fname);
 }
 /* Back up a player save file instead of just deleting it */
-static void sf_rename(const char *name) {
+void sf_rename(const char *name, bool keep_copy) {
 	int i, k = 0;
 	char temp[128], fname[MAX_PATH_LENGTH], fname_new[MAX_PATH_LENGTH];
 
@@ -4568,10 +4568,84 @@ static void sf_rename(const char *name) {
 	path_build(fname, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, temp);
 	path_build(fname_new, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "__bak__");
 	strcat(fname_new, temp); //note: might theoretically exceed MAX_PATH_LENGTH, but practically not really :-p
-	rename(fname, fname_new);
+	if (keep_copy) {
+		FILE *fp1 = NULL;
+		FILE *fp2 = NULL;
+		int fd1 = -1;
+		struct stat stbuf;
+		off_t file_size = 0;
+		char *buf = NULL;
+
+		/* Open the input file */
+		fd1 = open(fname, O_RDONLY);
+		if (fd1 == -1) {
+			/* paranoia - fall back to renaming */
+			rename(fname, fname_new);
+		}
+
+		fp1 = fdopen(fd1, "rb");
+		if (!fp1) {
+			close(fd1);
+			/* paranoia - fall back to renaming */
+			rename(fname, fname_new);
+			return ;
+		}
+
+		/* Use fstat to get the size of the file */
+		if (fstat(fd1, &stbuf) == -1) {
+			fclose(fp1);
+			/* paranoia - fall back to renaming */
+			rename(fname, fname_new);
+			return;
+		}
+
+		file_size = stbuf.st_size;
+
+		buf = mem_alloc(file_size);
+		if (!buf) {
+			fclose(fp1);
+			/* paranoia - fall back to renaming */
+			rename(fname, fname_new);
+			return;
+		}
+
+		/* Read the whole input file */
+		if (fread(buf, 1, file_size, fp1) < file_size) {
+			mem_free(buf);
+			fclose(fp1);
+			/* paranoia - fall back to renaming */
+			rename(fname, fname_new);
+			return ;
+		}
+
+		/* Open the output file */
+		fp2 = fopen(fname_new, "wb");
+		if (!fp2) {
+			mem_free(buf);
+			fclose(fp1);
+			/* paranoia - fall back to renaming */
+			rename(fname, fname_new);
+			return;
+		}
+
+		/* Write the remaining first line of input to output */
+		if (fwrite(buf, 1, file_size, fp2) < file_size) {
+			mem_free(buf);
+			fclose(fp1);
+			fclose(fp2);
+			/* paranoia - fall back to renaming */
+			rename(fname, fname_new);
+			return;
+		}
+
+		/* Close the files and free memory */
+		mem_free(buf);
+		fclose(fp1);
+		fclose(fp2);
+	} else rename(fname, fname_new);
 }
 /* Rename an estate savefile (without changing the owner's name, just a simple file rn) */
-static void ef_rename(const char *name) {
+void ef_rename(const char *name) {
 	int i, k = 0;
 	char temp[128], fname[MAX_PATH_LENGTH], fname_new[MAX_PATH_LENGTH];
 	char epath[MAX_PATH_LENGTH];
@@ -4931,7 +5005,7 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 		s_printf("(Creating safety backup (level %d >= %d)\n", j, SAFETY_BACKUP_PLAYER);
 
 		/* rename savefile to backup (side note: unlink() will fail to delete it then later) */
-		sf_rename(ptr->name);
+		sf_rename(ptr->name, FALSE);
 		backup = TRUE;
 
 		/* save all real estate.. */
