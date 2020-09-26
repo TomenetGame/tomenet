@@ -5065,6 +5065,7 @@ static void player_talk_aux(int Ind, char *message) {
 					p_ptr->mutedchat = 1; /* just 1, so private/party/guild chat is still possible */
 					acc_set_flags(p_ptr->accountname, ACC_QUIET, TRUE);
 					msg_print(Ind, "\374\377rYou have been muted!");
+					s_printf("SPAM_MUTE: '%s' (%s) was muted for chat spam.\n", p_ptr->name, p_ptr->accountname);
 				}
 				break;
 #endif
