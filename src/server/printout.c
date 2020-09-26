@@ -175,7 +175,10 @@ int reverse_lines(cptr input_file, cptr output_file) {
 	file_size = stbuf.st_size;
 
 	buf = mem_alloc(file_size);
-	if (!buf) return -4;
+	if (!buf) {
+		fclose(fp1);
+		return -4;
+	}
 
 	/* Read the whole input file */
 	if (fread(buf, 1, file_size, fp1) < file_size) {
