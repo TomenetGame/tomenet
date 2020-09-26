@@ -278,7 +278,7 @@ s64b price_item(int Ind, object_type *o_ptr, int greed, bool flip) {
 	ot_ptr = &ow_info[st_ptr->owner];
 
 #ifdef IDDC_DED_DISCOUNT
-	if ((p_ptr->mode & MODE_DED_IDDC) && in_bree(&p_ptr->wpos) && !p_ptr->iron_winner_ded) {
+	if ((p_ptr->mode & MODE_DED_IDDC) && in_bree(&p_ptr->wpos) && !p_ptr->iron_winner_ded && !flip) {
 		int dis = o_ptr->discount;
 
 		if (o_ptr->discount < 50) o_ptr->discount = 50;
