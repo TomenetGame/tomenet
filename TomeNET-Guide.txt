@@ -1502,18 +1502,32 @@ They all start with a slash '/' hence they're called slash commands:
 /t          Tags one specific or all uninscribed items in your backpack by
             adding a '!k' or a custom inscription. Helpful for looting in
             conjunction with /dis command.
+
             If a slot (a..w) is specified, it only tags the item in that
             particular inventory slot (if not yet inscribed already).
+
+            If you specify '*' for all slots, it will skip all items that
+            already have an inscription except for trivial pseudo- or 'on sale'
+            inscriptions.
+
             If you want to specify a custom inscription instead of using '!k'
             you have to either specify an inventory slot (a-w) or write a '*'
             for all inventory slots.
+
             Examples:
             /t        inscribes all uninscribed inventory items '!k'
             /t c      inscribes uninscribed inventory item in slot c) '!k'
             /t * !*   inscribes all uninscribed inventory items '!*'
             /t c !*   inscribes uninscribed inventory item in slot c) '!*'
-            Will not affect equipped items.
+
+            The /tag command Will not affect equipped items.
             Inscriptions can also be undone again with the /ut command.
+
+            A specialty is specifying '@@' or '@@@' in the inscription. This
+            will attempt to 'power inscribe' eligible item(s). If used on a
+            specific slot this will overwrite any existing inscription instead
+            of adding a tag to it.
+            For more information on power inscriptions see '@@' in (0.3).
 
 /target <x> <y>
 /tar        Allows you to target a specific grid specified by X,Y as offset
