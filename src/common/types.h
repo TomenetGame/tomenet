@@ -2374,8 +2374,7 @@ struct player_type {
 	s32b turns_active;		/* How many turns this char has spent online while being neither 'idle' nor 'afk' at once */
 	time_t msg;			/* anti spamming protection */
 	byte msgcnt;
-	byte spam;
-	byte talk;			/* talk too much (moltors idea) */
+	byte spam;			/* now includes: talking too much (moltors idea) */
 
 	player_list_type *hostile;	/* List of players we wish to attack */
 
@@ -2385,6 +2384,7 @@ struct player_type {
 	byte privileged;		/* account is privileged (ie for quest running) */
 	byte pvpexception;		/* account uses different pvp rules than server settings */
 	byte mutedchat;			/* account has chat restrictions */
+	s16b mutedtemp;			/* account has temporary public chat restrictions */
 	bool inval;			/* Non validated account */
 	bool newly_created;		/* Just newly created char by player_birth()? */
 

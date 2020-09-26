@@ -5061,12 +5061,21 @@ static void player_talk_aux(int Ind, char *message) {
 				player_death(Ind);
 				return;
 #else
+				imprison(Ind, JAIL_SPAM, "talking too much.");
+ #if 0 /* permanent */
 				if (!p_ptr->mutedchat) {
 					p_ptr->mutedchat = 1; /* just 1, so private/party/guild chat is still possible */
 					acc_set_flags(p_ptr->accountname, ACC_QUIET, TRUE);
 					msg_print(Ind, "\374\377rYou have been muted!");
 					s_printf("SPAM_MUTE: '%s' (%s) was muted for chat spam.\n", p_ptr->name, p_ptr->accountname);
 				}
+ #else /* temporary */
+  #define MUTEDTURN_TIME 300
+				p_ptr->mutedtemp = MUTEDTURN_TIME;
+				if (MUTEDTURN_TIME < 120) msg_format(Ind, "\377rYou have been muted for %s seconds.", MUTEDTURN_TIME);
+				else msg_format(Ind, "\377rYou have been muted for %s minutes.", MUTEDTURN_TIME / 60);
+ #endif
+				s_printf("SPAM_MUTE_TEMP: '%s' (%s) was muted for chat spam for %d seconds.\n", p_ptr->name, p_ptr->accountname, MUTEDTURN_TIME);
 				break;
 #endif
 			}
@@ -5083,15 +5092,6 @@ static void player_talk_aux(int Ind, char *message) {
 	}
 #endif
 	if (!slash_command || slash_command_msg) process_hooks(HOOK_CHAT, "d", Ind);
-
-	if (++p_ptr->talk > 10) {
-		imprison(Ind, JAIL_SPAM, "talking too much.");
-		return;
-	}
-	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED) continue;
-		Players[i]->talk = 0;
-	}
 
 	/* Keep uncensored message for everyone who disabled censoring */
 	strcpy(message_u, message);
@@ -5275,7 +5275,7 @@ static void player_talk_aux(int Ind, char *message) {
 
 		/* Add a trailing NULL */
 		search[colon - message] = '\0';
-	} else if (p_ptr->mutedchat) return;
+	} else if (p_ptr->mutedchat || p_ptr->mutedtemp) return;
 
 	/* From here on we need colon_u */
 	if (colon) colon_u = message_u + (colon - message);
@@ -5600,7 +5600,6 @@ static void player_talk_aux(int Ind, char *message) {
 }
 /* Console talk is automatically sent by 'Server Admin' which is treated as an admin */
 static void console_talk_aux(char *message) {
- 	int i;
 	cptr sender = "Server Admin";
 	bool rp_me = FALSE, log = TRUE;
 	char c_n = 'y'; /* colours of sender name and of brackets (unused atm) around this name */
@@ -5634,11 +5633,6 @@ static void console_talk_aux(char *message) {
 		if (!strncmp(message, "/me ", 4)) rp_me = TRUE;
 		else if (!strncmp(message, "/broadcast ", 11)) broadcast = TRUE;
 		else return;
-	}
-
-	for (i = 1; i <= NumPlayers; i++) {
-		if (Players[i]->conn == NOT_CONNECTED) continue;
-		Players[i]->talk = 0;
 	}
 
 #ifdef TOMENET_WORLDS

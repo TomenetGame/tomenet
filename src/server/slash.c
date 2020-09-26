@@ -5359,12 +5359,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (j) {
 						player_type *p2_ptr = Players[j];
 
-						if (!p2_ptr->mutedchat)
+						if (!p2_ptr->mutedchat && !p2_ptr->mutedtemp)
 							msg_format(Ind, "Player '%s' already unmuted.", p2_ptr->name);
 						else {
 							msg_format(Ind, "Player '%s' now unmuted.", p2_ptr->name);
-							p2_ptr->mutedchat = FALSE;
-							acc_set_flags(p2_ptr->accountname, ACC_QUIET |  ACC_VQUIET, FALSE);
+							if (p_ptr->mutedchat) {
+								p2_ptr->mutedchat = FALSE;
+								acc_set_flags(p2_ptr->accountname, ACC_QUIET |  ACC_VQUIET, FALSE);
+							}
+							p2_ptr->mutedtemp = FALSE;
 							msg_print(j, "\377fYou have been unmuted.");
 							s_printf("<%s> unmuted '%s'.\n", p_ptr->name, p2_ptr->name);
 						}

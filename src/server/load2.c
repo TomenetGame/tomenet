@@ -1768,7 +1768,8 @@ static bool rd_extra(int Ind) {
 #if 0
 	strip_bytes(20);	/* transient stats - these get ignored by both save and load atm. */
 #else
-	strip_bytes(12); //unused
+	strip_bytes(10); //unused
+	rd_s16b(&p_ptr->mutedtemp);
 	rd_s32b(&p_ptr->iron_trade);
 	rd_s32b(&p_ptr->iron_turn);
 #endif
