@@ -9067,6 +9067,12 @@ void dungeon(void) {
 			/* CTRL+R spam control */
 			if (Players[i]->redraw_cooldown) Players[i]->redraw_cooldown--;
 
+			/* Temporary public-chat-muting from spam */
+			if (Players[i]->mutedtemp) {
+				Players[i]->mutedtemp--;
+				if (!Players[i]->mutedtemp) msg_print(i, "You are no longer muted.");
+			}
+
 			/* Arbitrary max number, just to prevent integer overflow.
 			   Should just be higher than the longest interval of any ambient sfx type. */
 			if (!Players[i]->wpos.wz && /* <- redundant check sort of, caught in process_player_change_wpos() anyway */
