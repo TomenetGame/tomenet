@@ -803,6 +803,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		    prefix(messagelc, "/t ") || (prefix(messagelc, "/t") && !message[2])) {
 			object_type *o_ptr;
 
+			char powins[1024]; //even more than just MAX_CHARS_WIDE, let's play it safe..
+			char o_name[ONAME_LEN];
+			char *pi_pos = NULL, *pir_pos;
+			bool redux = FALSE;
+
+			if (tk >= 2 && (pi_pos = strstr(token[2], "@@"))) {
+				/* Check for redux version of power inscription */
+				if ((pir_pos = strstr(token[2], "@@@"))) {
+					pi_pos = pir_pos;
+					redux = TRUE;
+				}
+			}
+			//reduxx = strstr(inscription, "@@@@");
+
 			if (tk && (token[1][0] != '*')) {
 				h = (token[1][0]) - 'a';
 				j = h;
@@ -827,17 +841,50 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				    strcmp(quark_str(o_ptr->note), "broken") &&
 				    strcmp(quark_str(o_ptr->note), "average") &&
 				    strcmp(quark_str(o_ptr->note), "good") &&
-				    strcmp(quark_str(o_ptr->note), "worthless")) {
+				    strcmp(quark_str(o_ptr->note), "worthless") &&
+				    strcmp(quark_str(o_ptr->note), "on sale")
+				    ) {
 					if (j != h) continue; /* skip inscribed items when mass-tagging */
 					else o_ptr->note = 0; /* hack to overwrite its inscription */
 				}
 
-				if (!o_ptr->note)
-					o_ptr->note = quark_add(tk < 2 ? "!k" : token[2]);
-				else
-					o_ptr->note = quark_add(tk < 2 ?
-					    format("%s-!k", quark_str(o_ptr->note)) :
-					    format("%s-%s", quark_str(o_ptr->note), token[2]));
+				/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
+				   Side note: If @@@ is present, an additional @@ will simply be ignored.
+				   NOTE: In case of 'tagging' this actually won't tag but rather overwrite the existing inscription. */
+				if (pi_pos && !maybe_hidden_powers(Ind, o_ptr, FALSE)) {
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "Power-inscribing %s.", o_name);
+					//msg_print(Ind, NULL);
+
+					/* Copy part of the inscription before @@/@@@ */
+					strcpy(powins, token[2]);
+					powins[pi_pos - token[2]] = 0;
+
+					power_inscribe(o_ptr, redux, powins);
+
+					/* Append the rest of the inscription, if any */
+					strcat(powins, pi_pos + (redux ? 3 : 2));
+
+					/* Watch total object name length */
+					o_ptr->note = o_ptr->note_utag = 0;
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia -- item name not too long already, leaving no room for an inscription at all? */
+						/* inscription too long? cut it down */
+						if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
+
+						/* Save the inscription */
+						o_ptr->note = quark_add(powins);
+						o_ptr->note_utag = 0;
+					}
+				} else {
+					/* Normal tagging */
+					if (!o_ptr->note)
+						o_ptr->note = quark_add(tk < 2 ? "!k" : token[2]);
+					else
+						o_ptr->note = quark_add(tk < 2 ?
+						    format("%s-!k", quark_str(o_ptr->note)) :
+						    format("%s-%s", quark_str(o_ptr->note), token[2]));
+				}
 			}
 			/* Window stuff */
 			p_ptr->window |= (PW_INVEN | PW_EQUIP);
