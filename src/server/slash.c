@@ -1599,15 +1599,31 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/house") || prefix(messagelc, "/hou")) {
 			/* /hou [o][l] to only show the houses we actually own/that are actually here/both */
 			bool local = FALSE, own = FALSE;
+			char *c = NULL;
+
 			if (tk) {
 				if (token[1][0] == '?') {
-					msg_print(Ind, "Usage: /hou [o][l]  (to filter for 'own' and/or 'local' houses)");
+					if (admin) msg_print(Ind, "Usage: /hou [l][o|c<name>]  (to filter for local/own/character's houses)");
+					else msg_print(Ind, "Usage: /hou [l][o]  (to filter for 'local' and/or 'own' houses)");
 					return;
 				}
-				if (strchr(message3, 'l')) local = TRUE;
-				if (strchr(message3, 'o')) own = TRUE;
+
+				c = message3;
+				if (*c == 'l') {
+					c++;
+					local = TRUE;
+				}
+				if (*c == 'o') {
+					c++;
+					own = TRUE;
+				}
+				if (admin && *c == 'c') {
+					c++;
+					if (!(*c)) c = NULL;
+				} else c = NULL;
 			}
 			do_cmd_show_houses(Ind, local, own);
+			//do_cmd_show_houses(Ind, local, own, c);
 			return;
 		}
 		else if (prefix(messagelc, "/object") || prefix(messagelc, "/obj")) {
@@ -4729,7 +4745,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			 * Privileged commands, level 1
 			 */
 			if (prefix(messagelc, "/val")) {
-				if(!tk) return;
+				if (!tk) {
+					msg_print(Ind, "Usage: /val <player name>");
+					return;
+				}
 				/* added checking for account existence - mikaelh */
 				switch (validate(message3)) {
 				case -1: msg_format(Ind, "\377GValidating %s", message3);
@@ -4741,7 +4760,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			if (prefix(messagelc, "/inval")){
-				if(!tk) return;
+				if (!tk) {
+					msg_print(Ind, "Usage: /inval <player name>");
+					return;
+				}
 				/* added checking for account existence - mikaelh */
 				switch (invalidate(message3, FALSE)) {
 				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
@@ -4878,7 +4900,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/val")) {
-				if(!tk) return;
+				if (!tk) {
+					msg_print(Ind, "Usage: /val <player name>");
+					return;
+				}
 				/* added checking for account existence - mikaelh */
 				switch(validate(message3)) {
 				case -1: msg_format(Ind, "\377GValidating %s", message3);
@@ -4890,7 +4915,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/inval")) {
-				if(!tk) return;
+				if (!tk) {
+					msg_print(Ind, "Usage: /inval <player name>");
+					return;
+				}
 				/* added checking for account existence - mikaelh */
 				switch(invalidate(message3, TRUE)) {
 				case -1: msg_format(Ind, "\377GInvalidating %s", message3);
@@ -5309,9 +5337,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (tk) {
 					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 					if (j) {
-						Players[j]->muted = TRUE;
-						msg_print(j, "\377fYou have been muted.");
-						s_printf("<%s> muted '%s'.\n", p_ptr->name, Players[j]->name);
+						player_type *p2_ptr = Players[j];
+
+						if (p2_ptr->mutedchat)
+							msg_format(Ind, "Player '%s' already muted (%d).", p2_ptr->name, p2_ptr->mutedchat);
+						else {
+							msg_format(Ind, "Player '%s' now muted (1).", p2_ptr->name);
+							p2_ptr->mutedchat = 1;
+							acc_set_flags(p2_ptr->accountname, ACC_QUIET, TRUE);
+							msg_print(j, "\377fYou have been muted.");
+							s_printf("<%s> muted '%s'.\n", p_ptr->name, p2_ptr->name);
+						}
 					}
 					return;
 				}
@@ -5321,9 +5357,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (tk) {
 					j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
 					if (j) {
-						Players[j]->muted = FALSE;
-						msg_print(j, "\377fYou have been unmuted.");
-						s_printf("<%s> unmuted '%s'.\n", p_ptr->name, Players[j]->name);
+						player_type *p2_ptr = Players[j];
+
+						if (!p2_ptr->mutedchat)
+							msg_format(Ind, "Player '%s' already unmuted.", p2_ptr->name);
+						else {
+							msg_format(Ind, "Player '%s' now unmuted.", p2_ptr->name);
+							p2_ptr->mutedchat = FALSE;
+							acc_set_flags(p2_ptr->accountname, ACC_QUIET |  ACC_VQUIET, FALSE);
+							msg_print(j, "\377fYou have been unmuted.");
+							s_printf("<%s> unmuted '%s'.\n", p_ptr->name, p2_ptr->name);
+						}
 					}
 					return;
 				}
