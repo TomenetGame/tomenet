@@ -2334,7 +2334,7 @@ static void display_entry(int Ind, int pos) {
 	char		o_name[ONAME_LEN], powers[MAX_CHARS];
 	byte		attr;
 #ifdef IDDC_DED_DISCOUNT
-	int		wgt = 0;
+	int		wgt = -1;
 #else
 	int		wgt;
 #endif
@@ -2484,7 +2484,7 @@ static void display_entry(int Ind, int pos) {
 
 #ifdef IDDC_DED_DISCOUNT
 		/* Restore hacked discount */
-		if (wgt) o_ptr->discount = wgt;
+		if (wgt != -1) o_ptr->discount = wgt;
 #endif
 #ifdef PLAYER_STORES
 		if (ps_sign) attr = TERM_VIOLET;
