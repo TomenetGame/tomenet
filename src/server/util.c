@@ -4726,7 +4726,7 @@ void handle_punish(int Ind, int level) return 0;
  *
  * Yeah. totally.
  *
- * Muted players can't talk now (player_type.muted-- can be enabled
+ * Muted players can't talk now (player_type.mutedchat-- can be enabled
  * through /mute <name> and disabled through /unmute <name>).
  *				- the_sandman
  */
@@ -5039,6 +5039,7 @@ static void player_talk_aux(int Ind, char *message) {
 		p_ptr->msgcnt++;
 	if (p_ptr->msgcnt > 12) {
 		time_t last = p_ptr->msg;
+
 		time(&p_ptr->msg);
 		if (p_ptr->msg - last < 6) {
 			p_ptr->spam++;
@@ -5051,6 +5052,7 @@ static void player_talk_aux(int Ind, char *message) {
 				msg_print(Ind, "\374\377rWarning! this behaviour is unacceptable!");
 				break;
 			case 5:
+#if 0 /* this might be unnecessary */
 				p_ptr->chp = -3;
 				strcpy(p_ptr->died_from, "hypoxia");
 				p_ptr->died_from_ridx = 0;
@@ -5058,12 +5060,20 @@ static void player_talk_aux(int Ind, char *message) {
 				p_ptr->deathblow = 0;
 				player_death(Ind);
 				return;
+#else
+				if (!p_ptr->mutedchat) {
+					p_ptr->mutedchat = 1; /* just 1, so private/party/guild chat is still possible */
+					acc_set_flags(p_ptr->accountname, ACC_QUIET, TRUE);
+					msg_print(Ind, "\374\377rYou have been muted!");
+				}
+				break;
+#endif
 			}
 		}
 		if (p_ptr->msg - last > 240 && p_ptr->spam) p_ptr->spam--;
 		p_ptr->msgcnt = 0;
 	}
-	if (p_ptr->spam > 1 || p_ptr->muted) {
+	if (p_ptr->spam > 1 || p_ptr->mutedchat == 2) {
 		/* Still allow slash commands that don't output anything readble by others.
 		   (Note that this doesn't take care of LUA commands, but that's covered by
 		   exempting admins from the whole spam prevention code in the first place.) */
