@@ -12107,6 +12107,9 @@ DISARM          'Fighting' ability.
                 (for example because you're fighting on mountain terrain) they
                 will instead be scattered across the dungeon level and you will
                 have to search it to retrieve them.
+
+                When dual-wielding, the secondary weapon cannot get disarmed
+                while the wielder is in 'Main-Hand' mode.
 FAMINE          none. Makes you hungry.
 SEDUCE          none. Makes you take off equipped items.
                 Can have random side effects, if your HP are still above 40%
@@ -13271,6 +13274,10 @@ stated.
                                 weapons while in main-hand mode, as usual.
                                 While enabled ('Dual-hand mode') you will
                                 attack with both weapons, picked randomly.
+                                Note: You can even enable Main-Hand mode while
+                                not dual-wielding - and this also means that if
+                                you lose your main hand weapon you will not
+                                leave main-hand mode automatically from that.
 
     .Martial Arts               Ability to fight with bare hands.
      (0.228)                    Martial Arts users do not and cannot wield any
