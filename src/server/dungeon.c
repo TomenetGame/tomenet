@@ -4505,6 +4505,7 @@ static bool process_player_end_aux(int Ind) {
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	char o_name[ONAME_LEN];
+	bool warm_place = TRUE;
 
 	int minus = 1;
 	int minus_magic = 1;
@@ -5793,7 +5794,17 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->sh_cold && !p_ptr->sh_fire && k < 20) k = 20;
 	if (p_ptr->ptrait == TRAIT_WHITE && k < 29) k = 29;
 	if (p_ptr->aura[1] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30 && k < 29) k = 29;
-	if (k && rand_int(86) <= k - 8)
+	if (cold_place(&p_ptr->wpos)) {
+		warm_place = FALSE;
+		if (p_ptr->prace == RACE_VAMPIRE) {
+			/* Vampires don't emanate as much body heat */
+			if (k < 39) k = 39;
+		} else {
+			if (k < 20) k = 20;
+		}
+	}
+
+	if (k && rand_int(86) <= k - 8) /* cold effects prolong the duration to up to 2x */
 	/* Process inventory (blood potions, snowballs) */
 	for (i = 0; i < INVEN_PACK; i++) {
 		/* Get the object */
@@ -5826,7 +5837,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 
 		/* SV_SNOWBALL melting */
-		if (o_ptr->tval == TV_GAME && o_ptr->pval && !cold_place(&p_ptr->wpos)) {
+		if (o_ptr->tval == TV_GAME && o_ptr->pval && warm_place) {
 			o_ptr->pval--;
 			/* Heat accelerates the process */
 			if (o_ptr->pval && ((p_ptr->sh_fire && !p_ptr->sh_cold) || p_ptr->ptrait == TRAIT_RED)) o_ptr->pval--;

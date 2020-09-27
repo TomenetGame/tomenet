@@ -11279,6 +11279,9 @@ void process_objects(void) {
 				//don't decrement, they don't time out in player inventory either
 				break;
 			case TV_POTION: case TV_FOOD: //SV_POTION_BLOOD going bad
+				/* cold places prolong duration by up to 3x */
+				if (cold_place(&o_ptr->wpos) && rand_int(3)) continue;
+
 				o_ptr->timeout--;
 				/* poof */
 				if (!(o_ptr->timeout)) delete_object_idx(i, TRUE);
@@ -11350,6 +11353,7 @@ void process_objects(void) {
 					break;
 				case TV_POTION: case TV_FOOD: //basically just SV_POTION_BLOOD
 					Ind = pick_player(h_ptr);
+					/* (Note: We assume that houses are never cold_place(), hence they tick down just normally here.) */
 					o_ptr->timeout--;
 					/* poof */
 					if (!(o_ptr->timeout)) {
@@ -11372,7 +11376,8 @@ void process_objects(void) {
 			}
 			/* SV_SNOWBALL melts */
 			if (o_ptr->tval == TV_GAME && o_ptr->pval) {
-				if (cold_place(&o_ptr->wpos)) continue;
+				/* Note: We assume that houses are never cold_place(), hence they tick down just normally here: */
+				//if (cold_place(&o_ptr->wpos)) continue;
 
 				Ind = pick_player(h_ptr);
 				o_ptr->pval--;
