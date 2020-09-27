@@ -2632,10 +2632,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 						secondary = !shield;
 					}
 					if (p_ptr->dual_wield) {
-						if (magik(50)) slot = INVEN_ARM;
-					} else if (secondary) {
-						slot = INVEN_ARM;
-					}
+						if (p_ptr->dual_mode && magik(50)) slot = INVEN_ARM;
+					} else if (secondary) slot = INVEN_ARM;
 					o_ptr = &p_ptr->inventory[slot];
 
 					/* Take damage */
