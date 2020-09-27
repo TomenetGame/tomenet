@@ -7966,6 +7966,18 @@ void process_player_change_wpos(int Ind) {
 		if (!is_admin(p_ptr)) {
 			s_printf("CVRG-IDDC: '%s' leaves floor %d:\n", p_ptr->name, p_ptr->wpos_old.wz);
 			log_floor_coverage(getfloor(&p_ptr->wpos_old), &p_ptr->wpos_old);
+
+#if 1 /* experimental (IDDC_OCCUPIED_FLOOR) */
+			/* And a specialty, colour/uncolour staircases for others: */
+			for (d = 1; d <= NumPlayers; d++) {
+				if (d == Ind) continue;
+				if (in_irondeepdive(&Players[d]->wpos)) {
+					//Players[d]->update |= PU_VIEW;
+					Players[d]->redraw |= PR_MAP;
+					handle_stuff(d);
+				}
+			}
+#endif
 		}
 
 #ifdef IDDC_EASY_SPEED_RINGS

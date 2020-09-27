@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 23. September 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 28. September 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -8532,6 +8532,11 @@ Ironman Deep Dive Challenge (IDDC)
     Monsters cannot spawn 'live' in the IDDC, but only at the time of creation
     of each dungeon floor. Summon staves cannot be recharged in the IDDC and
     polymorphing magic does not work.
+    Since for this reason it is important to get the most XP out of every floor
+    the server may run an experimental feature: A staircase will look white
+    instead of dark grey to indicate that someone else is currently on that
+    next floor. So you might decide to wait until he left in order for the
+    floor to reset and thereby get monster spawn again before you enter it.
 
     Inside the challenge dungeon you can acquire an extermination order via
     /xorder command at level 1 already, instead of the usual minimum level 5.

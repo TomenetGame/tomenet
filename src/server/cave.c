@@ -3208,12 +3208,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 
 
 	/**** Apply special random effects ****/
-/*	if (!avoid_other) */
+	/*if (!avoid_other) */
 	if (((*w_ptr & CAVE_MARK) ||
 	((((c_ptr->info & CAVE_LITE) && (*w_ptr & CAVE_VIEW)) ||
 	  ((c_ptr->info & CAVE_GLOW) && (*w_ptr & CAVE_VIEW))) &&
-	 !p_ptr->blind)) || (p_ptr->admin_dm))
-	{
+	 !p_ptr->blind)) || (p_ptr->admin_dm)) {
 		f_ptr = &f_info[feat];
 
 		/* Special terrain effect */
@@ -3248,26 +3247,54 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		/* Give staircases different colours depending on dungeon flags -C. Blue :) */
 		if ((c_ptr->feat == FEAT_MORE) || (c_ptr->feat == FEAT_WAY_MORE) ||
 		    (c_ptr->feat == FEAT_WAY_LESS) || (c_ptr->feat == FEAT_LESS)) {
-		    struct dungeon_type *d_ptr;
-		    worldpos *tpos = &p_ptr->wpos;
-		    wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
+			struct dungeon_type *d_ptr;
+			worldpos tpos = p_ptr->wpos; /* copy */
+			wilderness_type *wild = &wild_info[tpos.wy][tpos.wx];
 
-		    if (!tpos->wz) {
-			if ((c_ptr->feat == FEAT_MORE) || (c_ptr->feat == FEAT_WAY_MORE)) d_ptr = wild->dungeon;
+			if (!tpos.wz) {
+				if ((c_ptr->feat == FEAT_MORE) || (c_ptr->feat == FEAT_WAY_MORE)) d_ptr = wild->dungeon;
+				else d_ptr = wild->tower;
+			} else if (tpos.wz < 0) d_ptr = wild->dungeon;
 			else d_ptr = wild->tower;
-		    } else if (tpos->wz < 0) d_ptr = wild->dungeon;
-		    else d_ptr = wild->tower;
 
-		    /* Check for empty staircase without any connected dungeon/tower! */
-		    if (!d_ptr) {
-			    (*ap) = TERM_SLATE;
-		    } else {
-			    /* override colour from easiest to worst */
-			    get_staircase_colour(d_ptr, ap);
-		    }
+			/* Check for empty staircase without any connected dungeon/tower! */
+			if (!d_ptr) {
+				(*ap) = TERM_SLATE;
+			} else {
+				/* override colour from easiest to worst */
+				get_staircase_colour(d_ptr, ap);
+			}
+
+ #if 1 /* experimental (IDDC_OCCUPIED_FLOOR) */
+			/* Specialty in IDDC: Colour staircase out of the ordinary to indicate that someone is currently on the upcoming floor.
+			   Idea: Allow people to wait until a floor has reset, so they don't waste an already emptied floor. */
+			if (in_irondeepdive(&tpos)) {
+				int i;
+
+				switch (c_ptr->feat) {
+				case FEAT_MORE:
+				case FEAT_WAY_MORE:
+					tpos.wz--;
+					break;
+				case FEAT_WAY_LESS:
+				case FEAT_LESS:
+					tpos.wz++;
+					break;
+				}
+
+				for (i = 1; i <= NumPlayers; i++) {
+					if (i == Ind) continue;
+					if (inarea(&Players[i]->wpos, &tpos) && !is_admin(Players[i])) {
+						(*ap) = TERM_L_WHITE;
+						break;
+					}
+				}
+			}
+ #endif
+
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-		    /* player has seen the entrance on the actual main screen -> add it to global exploration history knowledge */
-		    if (!is_admin(p_ptr)) d_ptr->known |= 0x1;
+			/* player has seen the entrance on the actual main screen -> add it to global exploration history knowledge */
+			if (!is_admin(p_ptr)) d_ptr->known |= 0x1;
  #endif
 		}
 #endif
