@@ -5030,7 +5030,7 @@ void check_experience(int Ind) {
 		if (old_lev < 35 && p_ptr->lev >= 35) msg_print(Ind, "\374\377GYou learn how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)");
 		if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (#740)");
 		if (old_lev < 45 && p_ptr->lev >= 45) msg_print(Ind, "\374\377GYou learn how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
-		if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (775)");//Leviathan (#782)");
+		if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn how to change into a Gorm (#1069), Jabberwock (#778) and Greater Kraken (775)");//Leviathan (#782)");
 		if (old_lev < 55 && p_ptr->lev >= 55) msg_print(Ind, "\374\377GYou learn how to change into a Horned Serpent (#1131)");
 		if (old_lev < 60 && p_ptr->lev >= 60) msg_print(Ind, "\374\377GYou learn how to change into a Firebird (#1127)");
 		break;

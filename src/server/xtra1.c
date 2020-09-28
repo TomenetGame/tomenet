@@ -5050,7 +5050,7 @@ void calc_boni(int Ind) {
 		if (p_ptr->pclass == CLASS_DRUID)
 			body = 1 + 3 + 0 + 0; /* 0 1 0 2 1 0 = typical ANIMAL pattern,
 						need to hardcode it here to balance
-						'Spectral tyrannosaur' form especially.
+						'Spectral tyrannosaur' form especially -- note: changed to Gorm.
 						(weap, tors, arms, finger, head, leg) */
 		else if ((p_ptr->pclass == CLASS_SHAMAN) && mimic_shaman_fulleq(r_ptr->d_char))
 			body = 1 + 3 + 2 + 1; /* they can wear all items even in these 000000 forms! */

@@ -3842,7 +3842,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		if (lev >= 35) msg_print(Ind, "\377GYou know how to change into a 7-h-Hydra (#614), Elder Aranea (#964) and Plasma Hound (#726)");
 		if (lev >= 40) msg_print(Ind, "\377GYou know how to change into an 11-h-Hydra (#688), Giant Roc (#640) and Lesser Kraken (740)");
 		if (lev >= 45) msg_print(Ind, "\377GYou know how to change into a Maulotaur (#723) and Winged Horror (#704)");// and Behemoth (#716)");
-		if (lev >= 50) msg_print(Ind, "\377GYou know how to change into a Spectral tyrannosaur (#705), Jabberwock (#778) and Greater Kraken (#775)");// and Leviathan (#782)");
+		if (lev >= 50) msg_print(Ind, "\377GYou know how to change into a Gorm (#1069), Jabberwock (#778) and Greater Kraken (#775)");// and Leviathan (#782)");
 		if (lev >= 55) msg_print(Ind, "\377GYou know how to change into a Horned Serpent (#1131)");
 		if (lev >= 60) msg_print(Ind, "\377GYou know how to change into a Firebird (#1127)");
 	}
