@@ -9707,8 +9707,8 @@ Fire/Heat               These attacks can burn items in your inventory.
                         Fire bolts do (level/3)+(9d8) damage.
                         Fire balls do (level*7/2)+10 damage.
                         Fire breaths do HP / 3 damage, capping at 1200.
-                        Immunity or double resistance protects items in your
-                        inventory from getting harmed (5.10), (5.17).
+                        Immunity or double resistance helps protecting items
+                        in your inventory from getting harmed (5.10), (5.17).
                         Potions of resist heat are a cheap way to attain
                         double-resistance for a short time in order to pass
                         lava streams without your inventory taking damage.
@@ -9717,8 +9717,8 @@ Frost/Cold              These attacks can shatter potions.
                         Frost bolts do (level/3)+(6d8) damage.
                         Cold balls do (level*2)+10 damage.
                         Cold breaths do HP / 3 damage, capping at 1200.
-                        Immunity or double resistance protects items in your
-                        inventory from getting harmed (5.10), (5.17).
+                        Immunity or double resistance helps protecting items
+                        in your inventory from getting harmed (5.10), (5.17).
 Lightning/Electricity   These attacks can destroy rings, damage amulets
                         (reducing their (+X) bonus pval) and discharge magic
                         devices, draining their charges (or energy in case of
@@ -9727,16 +9727,16 @@ Lightning/Electricity   These attacks can destroy rings, damage amulets
                         Lightning bolts do (level/3)+(4d8) damage.
                         Lightning balls do (level*3/2)+8 damage.
                         Lightning breaths do HP / 3 damage, capping at 1200.
-                        Immunity or double resistance protects items in your
-                        inventory from getting harmed (5.10), (5.17).
+                        Immunity or double resistance helps protecting items
+                        in your inventory from getting harmed (5.10), (5.17).
 Acid                    These attacks can destroy items in your inventory.
                         They can also damage your equipment.
                         Without resistance it can reduce your charisma.
                         Acid bolts do (level/3)+(7d8) damage.
                         Acid balls do (level*3)+15 damage.
                         Acid breaths do HP / 3 damage, capping at 1200.
-                        Immunity or double resistance protects items in your
-                        inventory from getting harmed (5.10), (5.17).
+                        Immunity or double resistance helps protecting items
+                        in your inventory from getting harmed (5.10), (5.17).
 
 Note: Equipment is mostly safe, except that some weapons can take damage from
 coming in contact with fire, acid or water, depending on the item type.
