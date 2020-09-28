@@ -18988,7 +18988,7 @@ D:stars, surveye everything.
 
 N:1069:Gorm
 G:R:D
-I:120:30d100:25:150:50
+I:120:30d100:25:130:50
 W:50:4:3000:14000
 E:0:1:0:2:1:0
 O:0:50:50:0
@@ -18996,14 +18996,14 @@ B:GAZE:PARALYZE:3d3
 B:BITE:DISEASE:9d12
 B:BITE:DISEASE:9d12
 F:ONLY_ITEM | DROP_1D2 | DROP_GOOD | POWERFUL |
-F:OPEN_DOOR | BASH_DOOR | EVIL | IM_FIRE | IM_COLD | IM_ACID |
+F:OPEN_DOOR | BASH_DOOR | EVIL | RES_FIRE | IM_COLD | IM_ACID |
 F:RES_ELEC | IM_POIS | DROP_CORPSE | RES_NETH | RES_DARK |
 F:ANIMAL | NO_CONF | NO_SLEEP | NO_STUN | CAN_SWIM |
 F:MORTAL | BLUEBAND
 S:1_IN_8
 S:BR_DARK
-D:A large reptile in black scales, burning the earth with
-D:the touch of hell where it steps.
+D:A large reptile in black scales, tainted with corruption.
+D:It seems impossible to impede it and its sight chills you to the bone.
 
 N:1070:Cave Gorm
 G:R:D
@@ -19021,8 +19021,8 @@ F:ANIMAL | NO_CONF | NO_SLEEP | NO_STUN | CAN_SWIM | HURT_LITE
 F:MORTAL | BLUEBAND
 S:1_IN_8
 S:BR_DARK
-D:A large reptile in black scales, burning the earth with
-D:the touch of hell where it steps.
+D:A terrifying, large reptile in black scales, burning the earth with
+D:the touch of hell where it steps. It seems impossible to impede it.
 
 N:1071:Sky Blade
 G:A:B

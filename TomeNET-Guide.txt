@@ -16712,14 +16712,13 @@ Winged Horror           speedy winged creature; can fly;
 
 Level 50:
 ---------
-Spectral Tyrannosaur    speedy undead animal;
-(Code 705)              has 25% scaring attacks;
-                        resists nexus, teleportation attacks, nether, time,
-                        life drain, cold, acid and poison;
-                        becomes immune to one of cold/acid/poison;
-                        susceptible to 'good' and 'life';
-                        can't be cut, scared, confused or paralyzed;
-                        can breathe nexus, poison and nether
+Gorm                    large yet speedy armoured reptile;
+(Code 1069)             has 67% poisoning and 33% stunning attacks;
+                        resists fire, cold, acid, lightning, nether, darkness,
+                        sound; becomes immune to one of cold/acid/poison;
+                        susceptible to 'good';
+                        can't be confused or paralyzed, can swim;
+                        can breathe darkness
 
 Greater kraken          speedy, smart and extremely tough aquatic(*) creature;
 (Code 775)              resists cold, poison, lightning, acid, darkness;

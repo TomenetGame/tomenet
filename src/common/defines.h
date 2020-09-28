@@ -8498,7 +8498,7 @@ extern int PlayerUID;
 	((plv) >= 35 && ((ridx) == 614 || (ridx) == 726 || (ridx) == 964)) || \
 	((plv) >= 40 && ((ridx) == 688 || (ridx) == 640 || (ridx) == 740)) || \
 	((plv) >= 45 && ((ridx) == 723 || (ridx) == 704)) || /* || (ridx) == 716 || \ */ \
-	((plv) >= 50 && ((ridx) == 705 || (ridx) == 778 || (ridx) == 775)) || /* 782 */ \
+	((plv) >= 50 && ((ridx) == 1069 || (ridx) == 778 || (ridx) == 775)) || /* 782 */ \
 	((plv) >= 55 && ((ridx) == 1131)) || \
 	((plv) >= 60 && ((ridx) == 1127)))
 	/* possible postking additions - guiding ideas:
