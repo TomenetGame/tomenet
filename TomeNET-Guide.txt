@@ -12135,6 +12135,15 @@ LITE            Light or blindness resistance.
 
 Getting hit by higher undead creatures may also infect you with the
 Black Breath! (See (1.3a) for more information about Black Breath.)
+In general, unique undead monsters of at least level 35 can infect you, and
+non-unique undead monsters of at least level 40 can infect you. The chance of
+infection increases with monster level.
+Nazgul have an especially high chance (much greater than any other monster) of
+infecting you. Aside from monsters, certain cursed items might infect you when
+you equip them (such as weapons of Morgul).
+Last but not least the Black Breath is contagious and can be transmitted by an
+infected player bumping into another player (Bree and the Training Tower are
+safe zones though).
 
 
 Further, monsters may have one or more spells they can cast. Breathing elements
