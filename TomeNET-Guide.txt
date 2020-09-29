@@ -10514,8 +10514,9 @@ LIFE ('It affects your hit points.')
         to mimics' final HP but the lower base HP.)
         LIFE affects your complete hit point pool, including the additional
         HP a character gained from 'Health' skill.
-        +LIFE on randarts will only affect player characters if they meet
-        certain conditions, see server options in-game via ~d for details.
+        +LIFE on randarts will (depending on server options, see ~d in-game)
+        usually only affect player characters who are royalty ie winners who
+        have beaten Morgoth and hence have a violet coloured name in chat.
 AGGRAVATE ('It aggravates nearby creatures.')
         Wakes up all monsters in whose radius of awareness you are.
         (Does not haste them as scrolls do, compare to (5.9)).
