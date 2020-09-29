@@ -7,7 +7,8 @@ function get_frostbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, FROSTBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 4 + ((lev * 3) / 5), 6 + (lev / 2) + 0
+	--return 4 + ((lev * 3) / 5), 6 + (lev / 2) + 0
+	return 4 + ((lev * 3) / 5), 6 + ((lev * 5) / 7) + 0
 end
 FROSTBOLT_I = add_spell {
 	["name"] = 	"Frost Bolt I",
@@ -80,7 +81,8 @@ function get_waterbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, WATERBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 4 + ((lev * 3) / 5), 6 + (lev / 2) + 0
+	--return 4 + ((lev * 3) / 5), 6 + (lev / 2) + 0
+	return 4 + ((lev * 3) / 5), 6 + ((lev * 5) / 7) + 0
 end
 WATERBOLT_I = add_spell {
 	["name"] = 	"Water Bolt I",

@@ -1,7 +1,7 @@
 -- handle the udun school
 
 function get_disebolt_dam()
-	return 20 + get_level(Ind, DISEBOLT, 47), 9 + get_level(Ind, DISEBOLT, 50)
+	return 20 + get_level(Ind, DISEBOLT, 47), 15 + get_level(Ind, DISEBOLT, 50)
 end
 
 --[[
