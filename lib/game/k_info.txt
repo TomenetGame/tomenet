@@ -1823,7 +1823,7 @@ D:Does not work on vaults or around towns.
 N:222:Slime Mold Juice
 G:!:d
 I:71:2:400
-W:0:0:4:2
+W:0:0:4:4
 A:0/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
@@ -1831,7 +1831,7 @@ F:FOUNTAIN
 N:223:Apple Juice
 G:!:d
 I:71:1:250
-W:0:0:4:1
+W:0:0:4:5
 A:0/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
