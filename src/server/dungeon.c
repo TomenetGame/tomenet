@@ -8000,7 +8000,7 @@ void process_player_change_wpos(int Ind) {
 		//p_ptr->IDDC_flags &= ~0xC;
 		//decrement the 2-bits-number..
 		if (p_ptr->IDDC_flags & 0xC) {
-			j = (p_ptr->IDDC_flags & 0xC) - 1;
+			j = (((p_ptr->IDDC_flags & 0xC) >> 2) - 1) << 2;
 			p_ptr->IDDC_flags = (p_ptr->IDDC_flags & ~0xC) | j;
 		}
 	}
