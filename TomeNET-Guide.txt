@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 28. September 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 1. October 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -8543,6 +8543,8 @@ Ironman Deep Dive Challenge (IDDC)
     On average, extermination orders in here require less monsters to be slain.
     Also, the monster level of the order will depend on the floor level instead
     of the player's level.
+    You cannot take up another extermination order if you haven't taken at
+    least three staircases since acquiring the previous one.
 
   Partying and trading:
     IDDC allows partying and trading between everlasting and non-everlasting
