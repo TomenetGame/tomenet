@@ -1798,7 +1798,7 @@ static void player_outfit(int Ind) {
 	}
 
 	/* Hack -- Give the player some torches */
-	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->pclass != RACE_ENT &&
+	if (p_ptr->prace != RACE_VAMPIRE && p_ptr->prace != RACE_ENT &&
 	    p_ptr->pclass != CLASS_ARCHER && p_ptr->pclass != CLASS_RUNEMASTER) {
 		invcopy(o_ptr, lookup_kind(TV_LITE, SV_LITE_TORCH));
 		o_ptr->number = rand_range(4, 6);
