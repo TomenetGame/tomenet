@@ -1385,6 +1385,18 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 	/* No runes at all, actually... */
 	if (o_ptr->tval == TV_RUNE) return (TRUE);
 
+#if 0 /* Relieve players from endlessly scumming BM for these? */
+	/* No super-high amulets in IDDC BMs */
+	if (st_idx == STORE_BLACK_DUN && o_ptr->tval == TV_AMULET) {
+		switch (o_ptr->sval) {
+		case SV_AMULET_THE_MAGI:
+		case SV_AMULET_TRICKERY:
+		case SV_AMULET_DEVOTION:
+			return TRUE;
+		}
+	}
+#endif
+
 #if 0
 	/* No "Handbook"s in the BM (can only be found) - C. Blue */
 	if (o_ptr->tval == TV_BOOK && o_ptr->sval >= SV_BOOK_COMBO && o_ptr->sval < SV_CUSTOM_TOME_1) return (TRUE);
