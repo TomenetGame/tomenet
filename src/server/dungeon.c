@@ -4760,6 +4760,7 @@ static bool process_player_end_aux(int Ind) {
 		take_hit(Ind, i, "a fatal wound", p_ptr->cut_attacker);
 	}
 
+
 	/*** Check the Food, and Regenerate ***/
 	/* Ent's natural food while in 'Resting Mode' - C. Blue
 	   Water helps much, natural floor helps some. */
@@ -4932,19 +4933,21 @@ static bool process_player_end_aux(int Ind) {
 	/* Regeneration ability */
 	if (p_ptr->regenerate) regen_amount = regen_amount * 2;
 
-	/* Health skill improves regen_amount */
-	if (minus_health) regen_amount = regen_amount * 3 / 2;
+	/* Health skill improves regeneration by up to 50% */
+	if (minus_health) regen_amount = (regen_amount * (4 + minus_health)) / 6;
 
-	/* Holy curing gives improved regeneration ability */
+	/* Holy curing improves regeneration by up to 100% */
 	if (get_skill(p_ptr, SKILL_HCURING) >= 30) regen_amount = (regen_amount * (get_skill(p_ptr, SKILL_HCURING) - 10)) / 20;
 
-	/* Blood Magic, aka Auras, draw from your blood and thereby slow your regen */
+	/* Blood Magic, aka Auras, draw from your blood and thereby slow your regeneration down to 1/4 if all 3 auras are enabled */
 	regen_amount = regen_amount / (1 + (p_ptr->aura[0] ? 1 : 0) + (p_ptr->aura[1] ? 1 : 0) + (p_ptr->aura[2] ? 1 : 0));
 
-	/* Increase regen by tim regen */
+	/* Increase regeneration by flat amount from timed regeneration powers */
 	if (p_ptr->tim_regen) {
+		/* Regeneration spell (Nature) */
 		if (p_ptr->prace != RACE_VAMPIRE) regen_amount += p_ptr->tim_regen_pow;
 		else if (p_ptr->csp) {
+			/* Nether Sap spell (Unlife) */
 			p_ptr->csp--;
 			hp_player_quiet(Ind, p_ptr->tim_regen_pow, TRUE);
 			p_ptr->redraw |= (PR_MANA | PR_HP);
@@ -4956,12 +4959,13 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->poisoned || p_ptr->diseased || p_ptr->cut || p_ptr->sun_burn)
 		regen_amount = 0;
 
-	/* But Biofeedback always helps */
+	/* But Biofeedback always helps -- TODO: Test the results a bit */
 	if (p_ptr->biofeedback) regen_amount += randint(1024) + regen_amount;
 
 	/* Regenerate Hit Points if needed */
 	if (p_ptr->chp < p_ptr->mhp && regen_amount && !p_ptr->martyr)
 		regenhp(Ind, regen_amount);
+
 
 	/* Undiminish healing penalty in PVP mode */
 	if (p_ptr->heal_effect) {
