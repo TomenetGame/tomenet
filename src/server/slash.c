@@ -1647,6 +1647,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* /hou [o][l] to only show the houses we actually own/that are actually here/both */
 			bool local = FALSE, own = FALSE;
 			char *c = NULL;
+			s32b id = 0;
 
 			if (tk) {
 				if (token[1][0] == '?') {
@@ -1667,10 +1668,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (admin && *c == 'c') {
 					c++;
 					if (!(*c)) c = NULL;
+					else id = lookup_player_id(c);
+					if (!id) {
+						msg_print(Ind, "That character name was not found.");
+						return;
+					}
 				} else c = NULL;
 			}
-			do_cmd_show_houses(Ind, local, own);
-			//do_cmd_show_houses(Ind, local, own, c);
+			do_cmd_show_houses(Ind, local, own, id);
 			return;
 		}
 		else if (prefix(messagelc, "/object") || prefix(messagelc, "/obj")) {

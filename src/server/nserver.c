@@ -11724,7 +11724,7 @@ static int Receive_special_line(int ind) {
 			do_cmd_show_known_item_letter(player, kludge);
  			break;
 		case SPECIAL_FILE_HOUSE:
-			do_cmd_show_houses(player, FALSE, FALSE);
+			do_cmd_show_houses(player, FALSE, FALSE, 0);
  			break;
 		case SPECIAL_FILE_TRAP:
 			do_cmd_knowledge_traps(player);

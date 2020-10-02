@@ -2906,7 +2906,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev, bool u
 
 /* Tell the player of her/his houses.	- Jir - */
 /* TODO: handle HF_DELETED */
-void do_cmd_show_houses(int Ind, bool local, bool own) {
+void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 	player_type *p_ptr = Players[Ind];
 	house_type *h_ptr;
 	struct dna_type *dna;
@@ -2938,7 +2938,11 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 	if (!is_newer_than(&p_ptr->version, 4, 4, 7, 0, 0, 0))
 		fprintf(fff, "======== House List ========\n");
 
-	for(i = 0; i < num_houses; i++) {
+	if (id) fprintf(fff, "<Showing houses for player '%s' (id %d)>\n", lookup_player_name(id), id);
+	if (own) fprintf(fff, "<Showing only houses currently owned by someone>\n");
+	if (local) fprintf(fff, "<Showing only houses that are at your local wpos>\n");
+
+	for (i = 0; i < num_houses; i++) {
 		//if(!houses[i].dna->owner) continue;
 		//if(!admin && houses[i].dna->owner != p_ptr->id) continue;
 		h_ptr = &houses[i];
@@ -2952,6 +2956,8 @@ void do_cmd_show_houses(int Ind, bool local, bool own) {
 			continue;
 
 		if (local && !inarea(&h_ptr->wpos, &p_ptr->wpos)) continue;
+
+		if (id && id != h_ptr->dna->owner) continue;
 
 		/* filter: only show houses of a specific player? */
 		if (admin && p_ptr->admin_parm[0]) {
