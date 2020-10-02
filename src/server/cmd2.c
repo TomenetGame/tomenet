@@ -1676,7 +1676,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
  * Exploding chest destroys contents (and traps).
  * Note that the chest itself is never destroyed.
  */
-static void chest_trap(int Ind, int y, int x, s16b o_idx) {
+static void chest_trap(int Ind, int y, int x, int o_idx) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &o_list[o_idx];
 

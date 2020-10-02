@@ -5015,7 +5015,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
  */
 static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int x, int dam, int typ) {
 	player_type *p_ptr = NULL;
-	u16b this_o_idx, next_o_idx = 0;
+	int this_o_idx, next_o_idx = 0;
 	bool obvious = FALSE;
 	bool quiet = ((Ind <= 0 || Ind >= 0 - PROJECTOR_UNUSUAL) ? TRUE : FALSE);
 	u32b f1, f2, f3, f4, f5, f6, esp;

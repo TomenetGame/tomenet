@@ -75,8 +75,8 @@ static int tc_biasr_junk = 100;
  */
 void excise_object_idx(int o_idx) {
 	object_type *j_ptr, *o_ptr;
-	u16b this_o_idx, next_o_idx = 0;
-	u16b prev_o_idx = 0;
+	int this_o_idx, next_o_idx = 0;
+	int prev_o_idx = 0;
 	int i;
 
 	/* Object */
@@ -303,7 +303,7 @@ void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art) { /* m
 	if (!in_bounds(y, x)) return;
 
 	if ((zcave = getcave(wpos))) {
-		u16b this_o_idx, next_o_idx = 0;
+		int this_o_idx, next_o_idx = 0;
 
 		c_ptr = &zcave[y][x];
 #if 0
@@ -889,7 +889,7 @@ void wipe_o_list_special(struct worldpos *wpos) {
  * Note that this function must maintain the special "o_fast"
  * array of pointers to "live" objects.
  */
-s16b o_pop(void) {
+int o_pop(void) {
 	int i, n, k;
 
 	/* Initial allocation */
@@ -9707,7 +9707,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
  */
 #define DROP_KILL_NOTE /* todo: needs adjustments - see below */
 #define DROP_ON_STAIRS_IN_EMERGENCY
-s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
+int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
 	int k, d, ny, nx, i, s;	// , y1, x1
 	int bs, bn;
 	int by, bx;
@@ -9730,7 +9730,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	bool arts = artifact_p(o_ptr), crash;
-	u16b this_o_idx, next_o_idx = 0;
+	int this_o_idx, next_o_idx = 0;
 
 	cave_type **zcave;
 	monster_race *r_ptr;
@@ -10288,7 +10288,7 @@ s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, i
  * and call the normal dropping function otherwise.
  */
 
-s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
+int drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Items dropped by admins never disappear by 'time out' */
@@ -11473,13 +11473,13 @@ void object_copy(object_type *o_ptr, object_type *j_ptr) {
 /*
  * Let the floor carry an object
  */
-s16b floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr)
+int floor_carry(worldpos *wpos, int y, int x, object_type *j_ptr)
 {
 	int n = 0;
 
-	s16b o_idx;
+	int o_idx;
 
-	s16b this_o_idx, next_o_idx = 0;
+	int this_o_idx, next_o_idx = 0;
 
 
 	/* Scan objects in that grid for combination */

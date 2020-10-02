@@ -121,14 +121,13 @@ bool scan_monsters;             /* Hack -- optimize multi-hued code, etc */
 bool scan_objects;              /* Hack -- optimize multi-hued code, etc */
 bool scan_do_dist;		/* Hack -- optimize teleport away code */
 
-s32b o_nxt = 1;                 /* Object free scanner */
 s32b m_nxt = 1;                 /* Monster free scanner */
-
-s32b o_max = 1;                 /* Object heap size */
 s32b m_max = 1;                 /* Monster heap size */
-
-s32b o_top = 0;                 /* Object top size */
 s32b m_top = 0;                 /* Monster top size */
+
+s32b o_nxt = 1;                 /* Object free scanner */
+s32b o_max = 1;                 /* Object heap size */
+s32b o_top = 0;                 /* Object top size */
 
 s32b dungeon_store_timer = 0;	/* Timemout. Keeps track of its generation */
 s32b dungeon_store2_timer = 0;	/* Timemout. Keeps track of its generation */
@@ -314,7 +313,7 @@ cptr *quark__str;
 /*
  * The array of indexes of "live" objects
  */
-s16b o_fast[MAX_O_IDX];
+s32b o_fast[MAX_O_IDX];
 
 /*
  * The array of indexes of "live" monsters

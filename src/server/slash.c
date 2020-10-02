@@ -8079,7 +8079,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/mcarry")) { /* give a designated item to the monster currently looked at (NOT the one targetted) - C. Blue */
 #ifdef MONSTER_INVENTORY
-				s16b o_idx, m_idx;
+				int o_idx;
+				s16b m_idx;
 				object_type *o_ptr;
 				monster_type *m_ptr;
 				if (!tk) {

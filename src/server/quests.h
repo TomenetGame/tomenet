@@ -131,7 +131,7 @@ typedef struct qi_questor {
 	struct worldpos current_wpos;
 	s16b current_x, current_y;
 
-	s16b mo_idx; /* union of m_idx and o_idx :-p */
+	u16b mo_idx; /* union of m_idx and o_idx :-p */
 
 	s16b talk_focus;				/* questor is focussed on this player and won't give others a chance to reply with keywords (non-individual quests only) */
 

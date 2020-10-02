@@ -1064,7 +1064,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
  #ifndef QUESTOR_OBJECT_CRUSHES
 /* Helper function for questor_object() to teleport away a whole pile of items */
 static void teleport_objects_away(struct worldpos *wpos, s16b x, s16b y, int dist) {
-	u16b this_o_idx, next_o_idx = 0;
+	int this_o_idx, next_o_idx = 0;
 	int j;
 	s16b cx, cy;
 
@@ -2161,7 +2161,8 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 	char name[MAX_CHARS];//ONAME_LEN?
 
 	struct worldpos wpos;
-	s16b x, y, o_idx;
+	s16b x, y;
+	int o_idx;
 	cave_type **zcave, *c_ptr;
 
 	for (i = 0; i < q_stage->qitems; i++) {

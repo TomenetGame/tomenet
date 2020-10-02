@@ -1543,7 +1543,7 @@ bool no_real_lite(int Ind) {
 /* Borrowed from ToME, with some extra checks */
 bool cave_valid_bold(cave_type **zcave, int y, int x) {
 	cave_type *c_ptr = &zcave[y][x];
-	s16b this_o_idx, next_o_idx = 0;
+	int this_o_idx, next_o_idx = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
 	/* Forbid perma-grids */
@@ -6118,7 +6118,7 @@ void update_view(int Ind) {
 
 		/* Forget it, dude */
 		if (unmap) {
-			u16b this_o_idx, next_o_idx = 0;
+			int this_o_idx, next_o_idx = 0;
 
 			*w_ptr &= ~CAVE_MARK;
 
@@ -6909,7 +6909,7 @@ void update_view(int Ind)
 		/* Forget it, dude */
 		if (unmap)
 		{
-			u16b this_o_idx, next_o_idx = 0;
+			int this_o_idx, next_o_idx = 0;
 
 			*w_ptr &= ~CAVE_MARK;
 

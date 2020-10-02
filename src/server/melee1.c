@@ -292,7 +292,7 @@ static bool do_eat_item(int Ind, int m_idx) {
 		/* Option */
 #ifdef MONSTER_INVENTORY
 		if (!o_ptr->questor) { /* questor items cannot be 'dropped', only destroyed! */
-			s16b o_idx;
+			int o_idx;
 
 			/* Make an object */
 			o_idx = o_pop();

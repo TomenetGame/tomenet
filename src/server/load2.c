@@ -4487,7 +4487,7 @@ static errr load_quests_file() {
 			rd_s16b(&q_questor->current_x);
 			rd_s16b(&q_questor->current_y);
 
-			rd_s16b(&q_questor->mo_idx);
+			rd_u16b(&q_questor->mo_idx);
 			rd_s16b(&q_questor->talk_focus);//not needed
 
 			rd_byte((byte *) &q_questor->tainted);

@@ -243,10 +243,10 @@ extern bool scan_monsters;
 extern bool scan_objects;
 extern bool scan_do_dist;
 extern s32b o_nxt;
-extern s32b m_nxt;
 extern s32b o_max;
-extern s32b m_max;
 extern s32b o_top;
+extern s32b m_nxt;
+extern s32b m_max;
 extern s32b m_top;
 extern s32b t_nxt;
 extern s32b t_max;
@@ -348,7 +348,7 @@ extern u32b house_alloc;
 extern int GetInd[];
 extern s32b quark__num;
 extern cptr *quark__str;
-extern s16b o_fast[MAX_O_IDX];
+extern s32b o_fast[MAX_O_IDX];
 extern s16b m_fast[MAX_M_IDX];
 extern cave_type ***cave;
 extern wilderness_type wild_info[MAX_WILD_Y][MAX_WILD_X];
@@ -1239,7 +1239,7 @@ extern void divide_charged_item(object_type *onew_ptr, object_type *o_ptr, int a
 extern void discharge_rod(object_type *o_ptr, int c);
 extern s32b unique_quark;
 extern void object_copy(object_type *o_ptr, object_type *j_ptr);
-extern s16b drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
+extern int drop_near_severe(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void object_wipe(object_type *o_ptr);
 extern bool can_use(int Ind, object_type *o_ptr);
 extern bool can_use_verbose(int Ind, object_type *o_ptr);
@@ -1300,10 +1300,10 @@ extern void acquirement_direct(int Ind, object_type *o_ptr, struct worldpos *wpo
 extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u32b resf, long int treshold);
 extern void give_reward(int Ind, u32b resf, cptr quark, int level, int discount);
 extern void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonus);
-extern s16b drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
+extern int drop_near(int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void pick_trap(struct worldpos *wpos, int y, int x);
 extern void compact_objects(int size, bool purge);
-extern s16b o_pop(void);
+extern int o_pop(void);
 extern errr get_obj_num_prep(u32b resf);
 extern errr get_obj_num_prep_tval(int tval, u32b resf); /* was written for create_reward(..) */
 extern s16b get_obj_num(int max_level, u32b resf);
@@ -2262,7 +2262,7 @@ extern void cat_script(int Ind, char *name);
 /* traps.c */
 extern bool do_player_drop_items(int Ind, int chance, bool trap);
 extern bool do_player_scatter_items(int Ind, int chance, int rad);
-extern bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b item);
+extern bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int item);
 extern void player_activate_door_trap(int Ind, s16b y, s16b x);
 extern void place_trap(struct worldpos *wpos, int y, int x, int mod);
 extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, int found);
@@ -2270,7 +2270,7 @@ extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, in
 extern void place_trap_object(object_type *o_ptr);
 extern void do_cmd_set_trap(int Ind, int item_kit, int item_load);
 extern void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x);
-extern void erase_mon_trap(worldpos *wpos, int y, int x, s16b o_idx);
+extern void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx);
 extern bool mon_hit_trap(int m_idx);
 
 extern void wiz_place_trap(int Ind, int trap);

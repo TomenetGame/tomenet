@@ -10123,7 +10123,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				    && !(zcave[ny][nx].info & CAVE_STCK)
 				    && !take_item_override)
 				{
-					s16b this_o_idx = 0;
+					int this_o_idx = 0;
 
 #ifdef OLD_MONSTER_LORE
 					/* Take note */

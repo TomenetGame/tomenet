@@ -305,7 +305,7 @@ static bool do_trap_teleport_away(int Ind, object_type *i_ptr, s16b y, s16b x) {
 	bool ident = FALSE;
 	char o_name[ONAME_LEN];
 
-	s16b  o_idx = 0;
+	int o_idx = 0;
 	object_type *o_ptr;
 	//cave_type *c_ptr;
 
@@ -517,7 +517,7 @@ static void trap_hit(int Ind, s16b trap) {
  * this function activates one trap type, and returns
  * a bool indicating if this trap is now identified
  */
-bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, s16b item) {
+bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int item) {
 	player_type *p_ptr = Players[Ind];
 	worldpos *wpos = &p_ptr->wpos;
 	bool ident = FALSE, never_id = FALSE;
@@ -3121,9 +3121,9 @@ static bool item_tester_hook_scroll_rune(object_type *o_ptr) {
  * c_special holds trapkit o_idx, and trapkit holds trapload o_idx
  */
 //static s16b pop_montrap(worldpos *wpos, int y, int x, object_type *j_ptr)
-static s16b pop_montrap(int Ind, object_type *j_ptr, u16b next_o_idx) {
+static int pop_montrap(int Ind, object_type *j_ptr, int next_o_idx) {
 	player_type *p_ptr = Players[Ind];
-	s16b o_idx;
+	int o_idx;
 	worldpos *wpos = &p_ptr->wpos;
 	int py = p_ptr->py, px = p_ptr->px;
 
@@ -3413,7 +3413,7 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 	cs_erase(c_ptr, cs_ptr);
 }
 
-void erase_mon_trap(worldpos *wpos, int y, int x, s16b o_idx) {
+void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx) {
 	int this_o_idx, next_o_idx;
 	object_type *o_ptr;
 	cave_type *c_ptr;

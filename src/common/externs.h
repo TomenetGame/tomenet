@@ -123,19 +123,19 @@ extern bool can_be_wizard;
 extern u16b panic_save;
 extern bool scan_monsters;
 extern bool scan_objects;
-extern s16b inven_nxt;
-extern s16b o_nxt;
-extern s16b m_nxt;
-extern s16b o_max;
-extern s16b m_max;
-extern s16b o_top;
 extern s16b m_top;
+extern s16b m_nxt;
+extern s16b m_max;
+extern s32b o_top;
+extern s32b o_nxt;
+extern s32b o_max;
+extern s16b inven_nxt;
 
 
 //deprecate: game options -- nowadays they're client options instead -- todo: clear
 extern player_type **Players;
 extern long GetInd[];
-extern s16b o_fast[MAX_O_IDX];
+extern s32b o_fast[MAX_O_IDX];
 extern s16b m_fast[MAX_M_IDX];
 extern object_type *o_list;
 extern monster_type *m_list;

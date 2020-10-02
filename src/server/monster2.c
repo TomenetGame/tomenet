@@ -340,7 +340,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 	struct worldpos *wpos;
 	cave_type **zcave;
 	monster_type *m_ptr = &m_list[i];
-	u16b this_o_idx, next_o_idx = 0;
+	int this_o_idx, next_o_idx = 0;
 
 	monster_race *r_ptr = race_inf(m_ptr);
 
@@ -481,7 +481,7 @@ void compact_monsters(int size, bool purge) {
 	struct worldpos *wpos;
 	quest_info *q_ptr;
 
-	u16b this_o_idx, next_o_idx = 0;
+	int this_o_idx, next_o_idx = 0;
 
 	/* Message (only if compacting) */
 	if (size) s_printf("Compacting monsters...\n");
@@ -5641,7 +5641,7 @@ monster_race* race_info_idx(int r_idx, int ego, int randuni) {
  * Drop all items carried by a monster
  */
 void monster_drop_carried_objects(int m_idx, monster_type *m_ptr) {
-	s16b this_o_idx, next_o_idx = 0;
+	int this_o_idx, next_o_idx = 0;
 	object_type forge;
 	object_type *o_ptr;
 	object_type *q_ptr;
