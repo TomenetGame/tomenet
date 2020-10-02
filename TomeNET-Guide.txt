@@ -8013,7 +8013,8 @@ Experience drain from monster attacks, traps or elemental damage you suffer
     It is recommended to restore your experience ASAP because any further gain
     of experience points while in drained state will only count towards your
     original maximum by 10% of its real value, resulting in large amounts of XP
-    being wasted.
+    being wasted. (Example: Your XP gets drained from 2000 to 1500, you kill a
+    monster that gives 100 XP, now you have 1600 of 2010 XP.)
 
 Experience drain from Black Breath
     This is especially nasty as being infected with Black Breath will drain
@@ -8126,9 +8127,8 @@ Sleep is especially nice if it's cast as an area effect. Gets you out of
         Monsters that have NO_SLEEP flag cannot be slept. Note that they may
         still be asleep when you meet them though.
 Slowing on monsters is currently a permanent effect. Very effective, although
-        many higher monsters are immune to it. Also, it is currently
-        cumulative (subject to change) and can be applied several times,
-        although monsters might resist.
+        many higher monsters are immune to it. Monsters may resist sometimes so
+        you might need to try again.
 Stun    (Note that "stunned" and "dazed" are the same thing.)
         Stun can be caused by special martial art attacks among other things.
         Stunned monsters have a harder time to successfully cast spells or hit
