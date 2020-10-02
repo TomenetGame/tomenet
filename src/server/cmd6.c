@@ -1332,6 +1332,11 @@ void do_cmd_drink_fountain(int Ind) {
 	bool ident;
 	int tval, sval, pval = 0, k_idx;
 
+	if (p_ptr->IDDC_logscum) {
+		msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
+		return;
+	}
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -1568,6 +1573,10 @@ void do_cmd_fill_bottle(int Ind) {
 	object_type *q_ptr, forge;
 	//cptr q, s;
 
+	if (p_ptr->IDDC_logscum) {
+		msg_print(Ind, "\377oThis floor has become stale, take a staircase to move on!");
+		return;
+	}
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
