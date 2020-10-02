@@ -607,7 +607,7 @@ struct cave_type {
 	u32b info;		/* Hack -- cave flags */
 	byte feat;		/* Hack -- feature type */
 	byte feat_org;		/* Feature type backup (todo: for wall-created grids to revert to original feat when tunneled!) */
-	s16b o_idx;		/* Item index (in o_list) or zero */
+	u16b o_idx;		/* Item index (in o_list) or zero */
 	s16b m_idx;		/* Monster index (in m_list) or zero */
 				/* or negative if a player */
 

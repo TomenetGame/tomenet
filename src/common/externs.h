@@ -482,7 +482,7 @@ extern void delete_object_idx(int i, bool unfound_art);
 extern void delete_object(int Depth, int y, int x, bool unfound_art);
 extern void compact_objects(int size);
 extern void wipe_o_list(int Depth);
-extern s16b o_pop(void);
+extern int o_pop(void);
 extern errr get_obj_num_prep(void);
 extern s16b get_obj_num(int level);
 extern void object_known(object_type *o_ptr);
