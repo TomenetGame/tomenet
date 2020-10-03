@@ -524,7 +524,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 	s16b trap = 0, vanish;
 	//dungeon_info_type *d_ptr = &d_info[dungeon_type];
 
-	s16b k, l, glev = getlevel(wpos);
+	int k, l, glev = getlevel(wpos);
 	cave_type *c_ptr;
 	trap_kind *t_ptr;
 
