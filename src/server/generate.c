@@ -8570,6 +8570,12 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		//keep objects that may be on the floor...... but get rid of monsters
 		process_dungeon_file("t_arena_mirror.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		if (p_ptr->temp_misc_1 & 0x80) {
+			int startx, starty;
+
+			/* Since t_way contains a staircase, we must prevent the map's starting position from getting overwritten by it */
+			startx = level_down_x(wpos);
+			starty = level_down_y(wpos);
+
 			y1 = 0; x1 = 53;
 			process_dungeon_file("t_way.txt", wpos, &y1, &x1, 22, 66, TRUE);
 			zcave[2][65].feat = 29; zcave[2][65].info = 7;
@@ -8577,6 +8583,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			x = 33; y = 11;
 			place_monster_one(wpos, y, x + 1, RI_BLUE, 0, 0, 0, 0, 0);
 			dun->l_ptr->flags2 |= LF2_BROKEN; //abuse this as indicator
+
+			new_level_down_x(wpos, startx);
+			new_level_down_y(wpos, starty);
 		}
 		//wipe_m_list(&p_ptr->wpos);
 
