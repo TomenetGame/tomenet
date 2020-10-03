@@ -1535,6 +1535,9 @@ static void artifact_fix_limits_inbetween(artifact_type *a_ptr, object_kind *k_p
 
 /* -------------------------------------- Misc unaffecting boni/limits -------------------------------------- */
 
+	/* Not more than 3x weight reduction, amounting to -27.1% */
+	c = (((((k_ptr->weight * 9) / 10) * 9) / 10) * 9) / 10;
+	if (a_ptr->weight < c) a_ptr->weight = c;
 }
 
 /* Fix various artifact limits and contradictions */
@@ -1896,6 +1899,10 @@ static void artifact_fix_limits_afterwards(artifact_type *a_ptr, object_kind *k_
 		else if ((k_ptr->flags2 & TR2_RES_POIS) && !(a_ptr->flags2 & TR2_IM_POISON))
 			a_ptr->flags2 = TR2_IM_POISON;
 	}
+
+	/* Not more than 3x weight reduction, amounting to -27.1% */
+	c = (((((k_ptr->weight * 9) / 10) * 9) / 10) * 9) / 10;
+	if (a_ptr->weight < c) a_ptr->weight = c;
 }
 
 /*

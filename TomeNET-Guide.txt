@@ -21074,6 +21074,9 @@ Boomerangs cannot gain +speed mod.
  melee weapons (caps at +1 if the weapon is one-handed, +2 on 1.5-/2-handed),
  hats, gloves and body armour (up to +3 is possible on any of these).
 
+Reduced weight mod can stack up to a maximum of three times (which results in
+0.9 * 0.9 * 0.9 = 72.9% weight or a 27.1% reduction).
+
 
 Technical internals
 -------------------
