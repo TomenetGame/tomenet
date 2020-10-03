@@ -5808,59 +5808,79 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
-	if (k && rand_int(86) <= k - 8) /* cold effects prolong the duration to up to 2x */
-	/* Process inventory (blood potions, snowballs) */
-	for (i = 0; i < INVEN_PACK; i++) {
-		/* Get the object */
-		o_ptr = &p_ptr->inventory[i];
+	if (k && rand_int(86) <= k - 8) { /* cold effects prolong the duration to up to 2x */
+		int iced = 0, iced_total = 0;
 
-		/* Skip non-objects */
-		if (!o_ptr->k_idx) continue;
+		/* Process inventory (blood potions, snowballs).
+		   We use inverse order so we can check for snowballs first,
+		   which will then affect Blood Potion shelf life! */
+		for (i = INVEN_PACK - 1; i >= 0; i--) {
+			/* Get the object */
+			o_ptr = &p_ptr->inventory[i];
 
-		/* SV_POTION_BLOOD going bad */
-		if ((o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) && o_ptr->timeout) {
-			o_ptr->timeout--;
-			/* Heat accelerates the process */
-			if (o_ptr->timeout && ((p_ptr->sh_fire && !p_ptr->sh_cold) || p_ptr->ptrait == TRAIT_RED) && !rand_int(2)) o_ptr->timeout--;
+			/* Skip non-objects */
+			if (!o_ptr->k_idx) continue;
+
+			/* SV_POTION_BLOOD going bad */
+			if (o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) {
+				/* Carrying enough snow will prolong potions by another 50% */
+				if (iced_total) {
+					iced_total = (iced_total - o_ptr->number * 3) + 1;
+					if (iced_total < 0) iced_total = 0;
+				}
+				if (o_ptr->timeout && (!iced_total || rand_int(3))) {
+					o_ptr->timeout--;
+					/* Heat accelerates the process */
+					if (o_ptr->timeout && ((p_ptr->sh_fire && !p_ptr->sh_cold) || p_ptr->ptrait == TRAIT_RED) && !rand_int(2)) o_ptr->timeout--;
 #ifdef LIVE_TIMEOUTS
-			if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
+					if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
 #endif
-			/* Notice changes */
-			if (!(o_ptr->timeout)) {
-				char o_name[ONAME_LEN];
+					/* Notice changes */
+					if (!(o_ptr->timeout)) {
+						char o_name[ONAME_LEN];
 
-				object_desc(Ind, o_name, o_ptr, FALSE, 3);
-				msg_format(Ind, "Your %s %s gone bad.", o_name, o_ptr->number == 1 ? "has" : "have");
+						object_desc(Ind, o_name, o_ptr, FALSE, 3);
+						msg_format(Ind, "Your %s %s gone bad.", o_name, o_ptr->number == 1 ? "has" : "have");
 
-				inven_item_increase(Ind, i, -o_ptr->number);
-				inven_item_describe(Ind, i);
-				inven_item_optimize(Ind, i);
-				j++;
+						inven_item_increase(Ind, i, -o_ptr->number);
+						inven_item_describe(Ind, i);
+						inven_item_optimize(Ind, i);
+						j++;
+					}
+					continue;
+				}
 			}
-			continue;
-		}
 
-		/* SV_SNOWBALL melting */
-		if (o_ptr->tval == TV_GAME && o_ptr->pval && warm_place) {
-			o_ptr->pval--;
-			/* Heat accelerates the process */
-			if (o_ptr->pval && ((p_ptr->sh_fire && !p_ptr->sh_cold) || p_ptr->ptrait == TRAIT_RED)) o_ptr->pval--;
+			/* SV_SNOWBALL melting */
+			if (o_ptr->tval == TV_GAME && o_ptr->pval) {
+				iced++;
+				iced_total += o_ptr->number;
+				//if (warm_place && !rand_int(7 - 133 / (20 + o_ptr->number + iced)) { /* x1..x7 */
+				//if (warm_place && !rand_int(5 - 68 / (15 + o_ptr->number + iced)) { /* x1..x5 */
+				//if (warm_place && !rand_int(4 - 55 / (15 + o_ptr->number + iced)) { /* x1..x4 */
+				//if (warm_place && !rand_int(3 - 38 / (12 + o_ptr->number + iced)) { /* x1..x3 */
+				if (warm_place && magik((380 / (12 + o_ptr->number + iced)) * 3 + 25)) { /* fine x1..x3 */
+					o_ptr->pval--;
+					/* Heat accelerates the process */
+					if (o_ptr->pval && ((p_ptr->sh_fire && !p_ptr->sh_cold) || p_ptr->ptrait == TRAIT_RED)) o_ptr->pval--;
 #ifdef LIVE_TIMEOUTS
-			if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
+					if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
 #endif
-			/* Notice changes */
-			if (!(o_ptr->pval)) {
-				char o_name[ONAME_LEN];
+					/* Notice changes */
+					if (!(o_ptr->pval)) {
+						char o_name[ONAME_LEN];
 
-				object_desc(Ind, o_name, o_ptr, FALSE, 3);
-				msg_format(Ind, "Your %s %s!", o_name, o_ptr->number == 1 ? "melts" : "melt");
+						object_desc(Ind, o_name, o_ptr, FALSE, 3);
+						msg_format(Ind, "Your %s %s!", o_name, o_ptr->number == 1 ? "melts" : "melt");
 
-				inven_item_increase(Ind, i, -o_ptr->number);
-				inven_item_describe(Ind, i);
-				inven_item_optimize(Ind, i);
-				j++;
+						inven_item_increase(Ind, i, -o_ptr->number);
+						inven_item_describe(Ind, i);
+						inven_item_optimize(Ind, i);
+						j++;
+					}
+					continue;
+				}
 			}
-			continue;
 		}
 	}
 
