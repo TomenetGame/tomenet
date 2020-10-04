@@ -2077,6 +2077,15 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 
+				/* Rogue 'Cloaking' ability has no dedicated paragraph, use key list for it */
+				if (!strcasecmp(buf, "cloak")) {
+					strcpy(buf, "'cloaking mode'");
+					fallback = TRUE;
+					fallback_uppercase = 0;
+					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
+					continue;
+				}
+
 				/* There is no Black Breath chapter but it is explained fully in the chapter containing Nazgul info */
 				if (my_strcasestr(buf, "black") == buf || !strcasecmp(buf, "bb")) strcpy(buf, "nazgul");
 
