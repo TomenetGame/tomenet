@@ -591,7 +591,7 @@ S       #       enter 'search mode'. You will search your adjacent fields once
                 its hidden door, turn this on and run along its walls until
                 you find it.
 
-V       V       enter 'cloaking mode'. This can only be used by rogues.
+V       V       enter/leave 'cloaking mode'. This can only be used by rogues.
                 It will take a couple of turns to perfectly cloak your
                 physical appearance and body warmth pattern, after which you
                 will be completely invisible to monsters who use normal sight
