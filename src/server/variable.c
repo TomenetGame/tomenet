@@ -178,10 +178,9 @@ server_opts cfg = {
 
 	25, 150,	// anti_scum, dun_unusual,
 	32,32,		// town_x, town_y
-	0, 		// town_base, 
+	0, 		// town_base,
 
-	1,		//dun_base
-	127, 200, 50,	// dun_max, store_turns, dun_store_turns
+	200, 50,	// store_turns, dun_store_turns
 	/* char */
 	3, 2,		// resting_rate, party_xp_boost
 

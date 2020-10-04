@@ -2704,7 +2704,6 @@ void do_cmd_check_server_settings(int Ind) {
 		fprintf(fff, "Dungeon Stores change their inventory every ~%d seconds.\n", (cfg.dun_store_turns * 10) / cfg.fps);
 
 		fprintf(fff, "starting town: location [%d, %d], baselevel(%d)\n", cfg.town_x, cfg.town_y, cfg.town_base);
-		fprintf(fff, "Bree dungeon: baselevel(%d) depth(%d)\n", cfg.dun_base, cfg.dun_max);
 
 		if (cfg.auto_purge)
 			fprintf(fff, "Non-used monsters/objects are purged every 24h.\n");

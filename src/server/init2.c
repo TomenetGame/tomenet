@@ -3342,10 +3342,6 @@ static void set_server_option(char * option, char * value) {
 		cfg.town_y = atoi(value);
 	else if (!strcmp(option, "TOWN_BASE"))
 		cfg.town_base = atoi(value);
-	else if (!strcmp(option, "DUNGEON_MAX"))
-		cfg.dun_max = atoi(value);
-	else if (!strcmp(option, "DUNGEON_BASE"))
-		cfg.dun_base = atoi(value);
 	else if (!strcmp(option, "STORE_TURNS"))
 		cfg.store_turns = atoi(value);
 	else if (!strcmp(option, "DUN_STORE_TURNS"))
