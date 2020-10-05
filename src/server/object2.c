@@ -10771,12 +10771,24 @@ bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	return (FALSE);
 }
 /*
- * Check if an item will not take up any further inven space because it can just be merged into a stack
+ * Check if an item will not take up any further inven space because it can just be merged into a stack.
+ * Additionally check if there will be still one more inventory slot left that doesn't have CURSE_NO_DROP!
  */
-bool inven_absorb_okay(int Ind, object_type *o_ptr, byte tolerance) {
+bool inven_carry_cursed_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	player_type *p_ptr = Players[Ind];
-	int i;
+	int i, cursed = 0;
+	bool add_cursed;
 	object_type *j_ptr;
+	u32b f1, f2, f3, f4, f5, f6, esp;
+
+	/* Safety net: Have 2 slots free anyway, so still one free after picking this item up. */
+	if (p_ptr->inven_cnt < INVEN_PACK - 1) return TRUE;
+
+	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	add_cursed = (f4 & TR4_CURSE_NO_DROP);
+
+	/* Safe item? Can pick up if a slot is empty in any case. */
+	if (!add_cursed && p_ptr->inven_cnt < INVEN_PACK) return TRUE;
 
 	/* Similar slot? */
 	for (i = 0; i < INVEN_PACK; i++) {
@@ -10785,7 +10797,18 @@ bool inven_absorb_okay(int Ind, object_type *o_ptr, byte tolerance) {
 
 		/* Check if the two items can be combined */
 		if (object_similar(Ind, j_ptr, o_ptr, tolerance)) return (TRUE);
+
+		object_flags(j_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		if (f4 & TR4_CURSE_NO_DROP) cursed++;
 	}
+
+	/* Inventory is just full? */
+	if (!add_cursed) return FALSE;
+
+	/* We're trying to add a no-drop-cursed item.. */
+
+	/* Last chance - still one non-cursed slot free after this? */
+	if (cursed < INVEN_PACK - 1) return TRUE;
 
 	/* Hack -- try quiver slot (see inven_carry) */
 	//if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr, 0x0)) return (TRUE);

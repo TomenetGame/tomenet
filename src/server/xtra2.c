@@ -13086,7 +13086,6 @@ void telekinesis_aux(int Ind, int item) {
 #ifdef TELEKINESIS_GETITEM_SERVERSIDE
 	int max_weight = p_ptr->current_telekinesis_mw;
 #endif
-	u32b dummy, f4;
 
 	p_ptr->current_telekinesis = NULL;
 
@@ -13215,8 +13214,7 @@ void telekinesis_aux(int Ind, int item) {
 	if (!inven_carry_okay(Ind2, q_ptr, 0x0)) {
 #else
 	/* Actually ensure that there is at least one slot left in case we filled the whole inventory with CURSE_NO_DROP items */
-	object_flags(q_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
-	if (!inven_absorb_okay(Ind2, q_ptr, 0x0) && p_ptr->inven_cnt >= INVEN_PACK - ((f4 & TR4_CURSE_NO_DROP) ? 1 : 0)) {
+	if (!inven_carry_cursed_okay(Ind2, q_ptr, 0x0)) {
 #endif
 		msg_print(Ind, "Item doesn't fit into the target player's inventory.");
 		return;

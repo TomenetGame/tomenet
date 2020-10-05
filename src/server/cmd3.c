@@ -3203,6 +3203,12 @@ void do_cmd_steal(int Ind, int dir) {
 				msg_print(Ind, "The object itself seems to evade your hand!");
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (3).\n", p_ptr->name, q_ptr->name, success);
 #endif
+			}
+			/* Actually ensure that there is at least one slot left in case we filled the whole inventory with CURSE_NO_DROP items */
+			else if (!inven_carry_cursed_okay(Ind, o_ptr, 0x0)) {
+				/* Give a somewhat misleading message, to not spoil him that he actually was protected */
+				msg_print(Ind, "The object itself seems to evade your hand!");
+				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): restricted item (4).\n", p_ptr->name, q_ptr->name, success);
 			} else {
 				/* Turn level 0 food into level 1 food - mikaelh */
 				if (o_ptr->level == 0 && shareable_starter_item(o_ptr)) {

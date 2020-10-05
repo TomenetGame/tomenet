@@ -1956,13 +1956,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Try to add to the empty quiver (XXX rewrite me - too long!) */
 		else if (auto_load && is_ammo(o_ptr->tval) &&
 		    !p_ptr->inventory[INVEN_AMMO].k_idx) {
+			u32b f1, f2, f3, f4, f5, f6, esp;
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			//note: 'pick_one' is not implemented here!
 			int slot = INVEN_AMMO;
-			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 
 			msg_print(Ind, "You put the ammo into your quiver.");
 
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			o_ptr->marked = 0;
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
@@ -2041,12 +2041,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* Boomerangs: */
 		else if (auto_load && o_ptr->tval == TV_BOOMERANG &&
 		    !p_ptr->inventory[INVEN_BOW].k_idx && item_tester_hook_wear(Ind, INVEN_BOW)) {
+			u32b f1, f2, f3, f4, f5, f6, esp;
+			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			int slot = INVEN_BOW;
-			u32b f1 = 0 , f2 = 0 , f3 = 0, f4 = 0, f5 = 0, f6 = 0, esp = 0;
 
 			msg_print(Ind, "You ready the boomerang.");
 
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 			o_ptr->marked = 0;
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
@@ -2157,7 +2157,22 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 			return;
 		}
+		/* Actually ensure that there is at least one slot left in case we filled the whole inventory with CURSE_NO_DROP items */
+		if (try_pickup && !inven_carry_cursed_okay(Ind, o_ptr, 0x0)) {
+			/* Give a somewhat misleading message, to not spoil him that he actually was protected */
+			msg_print(Ind, "A divine force stops you from picking up that item!");
+			s_printf("NO_PICKUP_CURSE_NO_DROP: Player '%s', item '%s'.\n", p_ptr->name, o_name);
+			Send_floor(Ind, o_ptr->tval);
 
+			/* Restore old inscription */
+			o_ptr->note = old_note;
+			o_ptr->note_utag = old_note_utag;
+
+			/* unhack 'pick_one' */
+			o_ptr->number = num_org;
+
+			return;
+		}
 		/* Pick up the item (if requested and allowed) */
 		else if (try_pickup) {
 			int okay = TRUE;
