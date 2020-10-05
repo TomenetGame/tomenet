@@ -3893,6 +3893,9 @@ Note: A dedicated IDDC character will be killed and erased if it fails to enter
 the IDDC dungeon (that is if it acquires any experience outside of it) or if it
 recalls out of it at one of the static towns. The kill message will be:
 "XXXX was killed by indetermination".
+Also, exclusive IDDC characters will automatically be no-ghost mode and will
+receive an extra +25% score bonus (stacking with the no-ghost score bonus and a
+potential hard-mode bonus should the player choose hard-mode aka 'hellish').
 
 If you have already created a character of the same name before, you will be
 given the 'reincarnate' option in every stage of character creation, which
@@ -8442,6 +8445,11 @@ Ironman Deep Dive Challenge (IDDC)
     amulets, magic devices, mushrooms.)
     All characters that enter the IDDC will also get 20 scrolls of identify
     for free, which will automatically be placed into their inventory.
+
+    Exclusive-mode characters cannot recall out of the IDDC at towns.
+    They also will automatically be no-ghost mode and will receive an extra
+    +25% score bonus (stacking with the no-ghost score bonus and a potential
+    hard-mode bonus should the player choose hard-mode aka 'hellish').
 
     An IDDC-slot-exclusive character that makes it out of the dungeon will be
     restricted to the world surface. If it attempts to enter any dungeon or
