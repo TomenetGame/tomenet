@@ -9740,11 +9740,11 @@ s_printf("CHARACTER_TERMINATION: NORMAL race=%s ; class=%s ; trait=%s ; %d death
 	}
 	else if (p_ptr->iron_winner) {
 		if (p_ptr->total_winner) {
-			snprintf(buf, sizeof(buf), "\374\377vThe iron emperor %s has retired to a warm, sunny climate.", p_ptr->name);
-			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired from the iron throne\n", showdate(), p_ptr->name, p_ptr->lev);
+			snprintf(buf, sizeof(buf), "\374\377vThe Iron Emperor %s has retired to a warm, sunny climate.", p_ptr->name);
+			if (!is_admin(p_ptr)) l_printf("%s \\{v%s (%d) retired from the Iron Throne\n", showdate(), p_ptr->name, p_ptr->lev);
 		} else {
-			snprintf(buf, sizeof(buf), "\374\377sThe iron champion %s has retired to a warm, sunny climate.", p_ptr->name);
-			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired as an iron champion\n", showdate(), p_ptr->name, p_ptr->lev);
+			snprintf(buf, sizeof(buf), "\374\377sThe Iron Champion %s has retired to a warm, sunny climate.", p_ptr->name);
+			if (!is_admin(p_ptr)) l_printf("%s \\{s%s (%d) retired as an Iron Champion\n", showdate(), p_ptr->name, p_ptr->lev);
 		}
 		s_printf("%s%s - %s (%d) retired to a warm, sunny climate.\n", FORMATDEATH, showtime(), p_ptr->name, p_ptr->lev);
 		retire = TRUE;
@@ -13086,6 +13086,7 @@ void telekinesis_aux(int Ind, int item) {
 #ifdef TELEKINESIS_GETITEM_SERVERSIDE
 	int max_weight = p_ptr->current_telekinesis_mw;
 #endif
+	u32b dummy, f4;
 
 	p_ptr->current_telekinesis = NULL;
 
@@ -13210,7 +13211,13 @@ void telekinesis_aux(int Ind, int item) {
 	}
 
 	/* Add a check for full inventory of target player - mikaelh */
+#if 0
 	if (!inven_carry_okay(Ind2, q_ptr, 0x0)) {
+#else
+	/* Actually ensure that there is at least one slot left in case we filled the whole inventory with CURSE_NO_DROP items */
+	object_flags(q_ptr, &dummy, &dummy, &dummy, &f4, &dummy, &dummy, &dummy);
+	if (!inven_absorb_okay(Ind2, q_ptr, 0x0) && p_ptr->inven_cnt >= INVEN_PACK - ((f4 & TR4_CURSE_NO_DROP) ? 1 : 0)) {
+#endif
 		msg_print(Ind, "Item doesn't fit into the target player's inventory.");
 		return;
 	}

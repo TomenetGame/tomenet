@@ -1851,24 +1851,23 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		switch (modebuf) {
                 case MODE_HARD:
 			strcpy(modestr, "purgatorial ");
-//			strcpy(modecol, "\377s");
-	    	        break;
+			//strcpy(modecol, "\377s");
+			break;
                 case MODE_NO_GHOST:
 			strcpy(modestr, "unworldly ");
 			strcpy(modecol, "\377D");
-	                break;
+			break;
 		case (MODE_HARD | MODE_NO_GHOST):
 			strcpy(modestr, "hellish ");
 			strcpy(modecol, "\377D");
 			break;
-                case MODE_NORMAL:
+		case MODE_NORMAL:
 			//strcpy(modecol, "\377w");
-                        break;
+			break;
 		}
 
 		/* Hack ;) Remember if the player was a former winner */
-		if (the_score.how[strlen(the_score.how) - 1] == '\001')
-		{
+		if (the_score.how[strlen(the_score.how) - 1] == '\001') {
 			strcpy(extra_info, ". (Defeated Morgoth)");
 			the_score.how[strlen(the_score.how) - 1] = '\0';
 		}
@@ -1886,33 +1885,33 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		fprintf(fff, "%s\n", out_val);
 
 		/* Another line of info */
-		if (strcmp(the_score.how, "winner") && strcmp(the_score.how, "*winner*") && strcmp(the_score.how, "iron champion") && strcmp(the_score.how, "iron emperor"))
+		if (strcasecmp(the_score.how, "Winner") && strcasecmp(the_score.how, "*Winner*") && strcasecmp(the_score.how, "Iron Champion") && strcasecmp(the_score.how, "Iron Emperor"))
 			snprintf(out_val, sizeof(out_val),
 				"               Killed by %s\n"
 				"               on %s %d%s%s",
 				the_score.how, wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
-		else if (!strcmp(the_score.how, "winner"))
+		else if (!strcasecmp(the_score.how, "Winner"))
 			snprintf(out_val, sizeof(out_val),
 				"               \377vRetired after a legendary career\n"
 				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
-		else if (!strcmp(the_score.how, "*winner*"))
+		else if (!strcasecmp(the_score.how, "*Winner*"))
 			snprintf(out_val, sizeof(out_val),
 				"               \377vRetired on the shores of Valinor\n"
 				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
-		else if (!strcmp(the_score.how, "iron champion"))
+		else if (!strcasecmp(the_score.how, "Iron Champion"))
 			snprintf(out_val, sizeof(out_val),
-				"               \377sRetired iron champion\n"
+				"               \377sRetired Iron Champion\n"
 				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
-		else if (!strcmp(the_score.how, "iron emperor"))
+		else if (!strcasecmp(the_score.how, "Iron Emperor"))
 			snprintf(out_val, sizeof(out_val),
-				"               \377vRetired from the iron throne\n"
+				"               \377vRetired from the Iron Throne\n"
 				"               on %s %d%s%s", wilderness ? "wilderness level" : "dungeon level", cdun, mdun > cdun ? format(" (max %d)", mdun) : "", extra_info);
 
 		/* Hack -- some people die in the town */
 		if (!cdun)
 		{
 			/* (can't be in Valinor while we're in town, can we) */
-			if (strcmp(the_score.how, "winner"))
+			if (strcasecmp(the_score.how, "Winner"))
 				snprintf(out_val, sizeof(out_val),
 					"               Killed by %s\n"
 					"               in town%s",
@@ -1924,7 +1923,7 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		}
 
 		/* Append a "maximum level" */
-//		if (mdun > cdun) strcat(out_val, format(" (max %d)", mdun));
+		//if (mdun > cdun) strcat(out_val, format(" (max %d)", mdun));
 
 		/* Dump the info */
 		fprintf(fff, "%s\n", out_val);
@@ -2173,10 +2172,10 @@ void kingly(int Ind, int type) {
 	/* Fake death */
 	//(void)strcpy(p_ptr->died_from_list, "Ripe Old Age");
 	switch (type) {
-	case 1: strcpy(p_ptr->died_from_list, "winner"); break; //retirement
-	case 2: strcpy(p_ptr->died_from_list, "*winner*"); break; //valinor retirement
-	case 3: strcpy(p_ptr->died_from_list, "iron champion"); break; //made it through IDDC
-	case 4: strcpy(p_ptr->died_from_list, "iron emperor"); break; //made it through IDDC and killed Morgoth
+	case 1: strcpy(p_ptr->died_from_list, "Winner"); break; //retirement
+	case 2: strcpy(p_ptr->died_from_list, "*Winner*"); break; //valinor retirement
+	case 3: strcpy(p_ptr->died_from_list, "Iron Champion"); break; //made it through IDDC
+	case 4: strcpy(p_ptr->died_from_list, "Iron Emperor"); break; //made it through IDDC and killed Morgoth
 	}
 	p_ptr->died_from_ridx = 0;
 

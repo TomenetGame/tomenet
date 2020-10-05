@@ -10750,22 +10750,45 @@ void auto_inscribe(int Ind, object_type *o_ptr, int flags) {
 bool inven_carry_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	player_type *p_ptr = Players[Ind];
 	int i;
+	object_type *j_ptr;
 
 	/* Empty slot? */
 	if (p_ptr->inven_cnt < INVEN_PACK) return (TRUE);
 
 	/* Similar slot? */
-	for (i = 0; i < INVEN_PACK; i++)
-	{
+	for (i = 0; i < INVEN_PACK; i++) {
 		/* Get that item */
-		object_type *j_ptr = &p_ptr->inventory[i];
+		j_ptr = &p_ptr->inventory[i];
 
 		/* Check if the two items can be combined */
 		if (object_similar(Ind, j_ptr, o_ptr, tolerance)) return (TRUE);
 	}
 
 	/* Hack -- try quiver slot (see inven_carry) */
-//	if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr, 0x0)) return (TRUE);
+	//if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr, 0x0)) return (TRUE);
+
+	/* Nope */
+	return (FALSE);
+}
+/*
+ * Check if an item will not take up any further inven space because it can just be merged into a stack
+ */
+bool inven_absorb_okay(int Ind, object_type *o_ptr, byte tolerance) {
+	player_type *p_ptr = Players[Ind];
+	int i;
+	object_type *j_ptr;
+
+	/* Similar slot? */
+	for (i = 0; i < INVEN_PACK; i++) {
+		/* Get that item */
+		j_ptr = &p_ptr->inventory[i];
+
+		/* Check if the two items can be combined */
+		if (object_similar(Ind, j_ptr, o_ptr, tolerance)) return (TRUE);
+	}
+
+	/* Hack -- try quiver slot (see inven_carry) */
+	//if (object_similar(Ind, &p_ptr->inventory[INVEN_AMMO], o_ptr, 0x0)) return (TRUE);
 
 	/* Nope */
 	return (FALSE);
