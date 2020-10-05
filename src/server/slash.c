@@ -10954,6 +10954,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				show_account_order(Ind, acc.id);
 				return;
 			}
+			else if (prefix(messagelc, "/score")) { /* Initialize character ordering for the whole account database */
+				if (!tk) {
+					msg_format(Ind, "Your score = %u", total_points(Ind));
+					return;
+				}
+				for (i = 1; i <= NumPlayers; i++)
+					if (!strcmp(message3, Players[i]->name)) break;
+				if (i > NumPlayers) {
+					msg_print(Ind, "No such character is online.");
+					return;
+				}
+				msg_format(Ind, "Player '%s' score = %u", total_points(i));
+				return;
+			}
 		}
 	}
 
