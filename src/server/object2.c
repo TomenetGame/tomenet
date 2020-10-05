@@ -10785,7 +10785,7 @@ bool inven_carry_cursed_okay(int Ind, object_type *o_ptr, byte tolerance) {
 	if (p_ptr->inven_cnt < INVEN_PACK - 1) return TRUE;
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
-	add_cursed = (f4 & TR4_CURSE_NO_DROP);
+	add_cursed = (f4 & TR4_CURSE_NO_DROP) != 0;
 
 	/* Safe item? Can pick up if a slot is empty in any case. */
 	if (!add_cursed && p_ptr->inven_cnt < INVEN_PACK) return TRUE;
