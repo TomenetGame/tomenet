@@ -3422,7 +3422,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->mode &= ~(MODE_EVERLASTING | MODE_HARD | MODE_NO_GHOST | MODE_SOLO);
 		sex &= ~MODE_FRUIT_BAT;
 	}
-	if (p_ptr->mode & MODE_SOLO) {
+	if (p_ptr->mode & (MODE_SOLO | MODE_DED_IDDC)) {
 		p_ptr->mode |= MODE_NO_GHOST;
 		p_ptr->mode &= ~MODE_EVERLASTING;
 	}
