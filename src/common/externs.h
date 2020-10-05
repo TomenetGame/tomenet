@@ -338,7 +338,7 @@ extern void process_player_name(int Ind, bool sf);
 extern void get_name(int Ind);
 extern void do_cmd_suicide(int Ind);
 extern void do_cmd_save_game(int Ind);
-extern long total_points(int Ind);
+extern unsigned int total_points(int Ind);
 extern void display_scores(int from, int to);
 extern void close_game(void);
 extern void exit_game_panic(void);

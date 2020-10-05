@@ -629,6 +629,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 #if 0 /* will overwrite legens-rev.log's title if the file doesn't exist yet */
 		/* Caption */
 		snprintf(caption, sizeof(caption), "Help file '%s'", name);
+		while(strlen(caption) < 79) strcat(caption, " ");
 #endif
 		/* Build the filename */
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, name);
@@ -644,6 +645,8 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 		strcat(buf, "\377W- [\377w");
 		strcat(buf, caption);
 		strcat(buf, "\377W] -");
+		/* Actually add trailing spaces too, to overwrite any potential screenshot-taken message */
+		for (i = 0; i < k - 1; i++) strcat(buf, " ");
 		Send_special_line(Ind, size, -1, TERM_WHITE, buf);
 		k = 0;
 	}
@@ -1075,26 +1078,32 @@ void do_cmd_save_game(int Ind) {
  */
 /* FIXME: this function returns bad value when max_exp is stupidly large
  * (usually admin chars) */
-int total_points(int Ind) {
+unsigned int total_points(int Ind) {
 	u32b points, tmp_base, tmp1, tmp2, tmp3, tmp3a, bonusm, bonusd;
 	u32b lev_factoring;
 	player_type *p_ptr = Players[Ind];
 
 	/* kill maggot for 100% bonus on total score? -> no
 	   why a little bonus for HELL mode? the honour for the player
-	   who chooses hell mode on his own is far greater without it. -> no
+	   who chooses hell mode on his own is far greater without it. -> (no) yes!
 	   add cash to exp? what if the player collected cool gear instead?
 	   make cash allow the player to skip lots of levels on the ladder?  -> no
 	   max_dlv? just enter the staircase in lothlorien and back up. -> no
 	   For now let's calc it basing on pure progress in gameplay!: */
 	//exp counts mainly, level factors in
-//	return (p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
+	//return (p_ptr->max_exp * (p_ptr->max_plv + 30) / 30);
 
 	/* Bonus */
 	bonusm = 100;
 	bonusd = 100;
 	if (p_ptr->mode & MODE_NO_GHOST) bonusm += 25;
 	if (p_ptr->mode & MODE_HARD) bonusm += 25;
+	if (p_ptr->mode & MODE_DED_IDDC) bonusm += 25;
+
+	/* Overflow notes: Currently the system has a maximum reachable score for
+	   Level 100 (admin-only, player stops at 99), 999 999 999 XP,
+	   Mode: Dedicated-IDDC, no-ghost (implied by DED_IDDC), Hard (aka hellish),
+	   Maia (400% XP) Shaman (+40% XP) -> 3 782 257 996 points score (max is 2^32-1, aka uint32). */
 
 #ifndef ALT_EXPRATIO
 	/* Bonus might cause overflow at lvl 94+ - so maybe compensate */
@@ -1115,11 +1124,32 @@ int total_points(int Ind) {
 
 	/* split the number against overflow bug; divide by 10 to avoid overflow again */
 	tmp1 = (p_ptr->expfact + lev_factoring) / 10;
+ #ifdef DEBUG_POINTS
+s_printf("tmp1=%u\n", tmp1);
+ #endif
 	tmp2 = 310 / 10; /* (230 + 80 (yeek warrior)) */
+ #ifdef DEBUG_POINTS
+s_printf("tmp2=%u\n", tmp2);
+ #endif
 	tmp3a = tmp_base % 10000000;
+ #ifdef DEBUG_POINTS
+s_printf("tmp3a=%u\n", tmp3a);
+ #endif
 	tmp3 = (tmp_base - tmp3a) / 10000000;
+ #ifdef DEBUG_POINTS
+s_printf("tmp3=%u\n", tmp3);
+ #endif
 	points = (((tmp3a * bonusm) / bonusd) * tmp1) / tmp2;
+ #ifdef DEBUG_POINTS
+s_printf("points=%u\n", points);
+s_printf("(((10000000 * bonusm) / bonusd) * tmp1) = %u\n", (((10000000 * bonusm) / bonusd) * tmp1));
+s_printf("(((10000000 * bonusm) / bonusd) * tmp1) / tmp2 = %u\n", (((10000000 * bonusm) / bonusd) * tmp1) / tmp2);
+s_printf("((((10000000 * bonusm) / bonusd) * tmp1) / tmp2) * tmp3 = %u\n", ((((10000000 * bonusm) / bonusd) * tmp1) / tmp2) * tmp3);
+ #endif
 	points += ((((10000000 * bonusm) / bonusd) * tmp1) / tmp2) * tmp3;
+ #ifdef DEBUG_POINTS
+s_printf("points=%u\n", points);
+ #endif
 #endif
 	return points;
 
@@ -1963,12 +1993,11 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 static errr top_twenty(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	//int          j;
-
 	high_score   the_score;
-
 	time_t ct = time((time_t*)0);
 
-	if (is_admin(p_ptr)) return 0;
+	//if (is_admin(p_ptr)) return 0;
+	if (p_ptr->noscore) return 0;
 
 	/* No score file */
 	if (highscore_fd < 0) {
@@ -2133,7 +2162,8 @@ static errr predict_score(int Ind, int line) {
 #ifndef NEW_HISCORE
 	j = highscore_where(&the_score, &move_up, &move_down);
 	/* Hack -- Display the top n scores */
-	if (is_admin(p_ptr))
+	//if (is_admin(p_ptr))
+	if (p_ptr->noscore)
 		display_scores_aux(Ind, line, -1, NULL);
 	else if (j < (SCORES_SHOWN - 1))
 		display_scores_aux(Ind, line, j, &the_score);
@@ -2142,7 +2172,8 @@ static errr predict_score(int Ind, int line) {
 		display_scores_aux(Ind, line, SCORES_SHOWN - 1, &the_score);  /* -1, NULL */
 #else
 	j = highscore_where(&the_score, &erased_slot);
-	if (is_admin(p_ptr))
+	//if (is_admin(p_ptr))
+	if (p_ptr->noscore)
 		display_scores_aux(Ind, line, -1, -1, NULL);
 	else
 		display_scores_aux(Ind, line, j, erased_slot, &the_score);

@@ -865,7 +865,7 @@ extern bool process_player_name(int Ind, bool sf);
 extern void get_name(int Ind);
 extern void do_cmd_suicide(int Ind);
 extern void do_cmd_save_game(int Ind);
-extern int total_points(int Ind);
+extern unsigned int total_points(int Ind);
 extern void display_scores(int from, int to);
 extern void add_high_score(int Ind);
 extern void close_game(void);
