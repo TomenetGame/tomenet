@@ -15978,6 +15978,7 @@ and finally Vegetable (0%, you are permanently dead).
 If you spend 10 points on your 'Health' skill, the sanity display will turn
 into a bar, displaying exacter values. At 20 points you'll get the percentage
 displayed. At 40 the value will be shown.
+You can type the '/snbar' slash command into chat to cycle through these.
 
 At the beginning, your sanity is always 'Sound'. That means you are completely
 sane. Monsters or traps can reduce your sanity. If your sanity drops below 0,
