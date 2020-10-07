@@ -15985,11 +15985,18 @@ storm your head, leaving you with mad visions for a while..
 When your sanity suffers from an attack, you'll see a message in the message
 window telling you so, instead of the usual white or yellow combat messages it
 will be coloured in red tones to make it easily visible:
-- When your sanity value is still relatively high the message will be red.
-- When your sanity has taken greater hits already it will be light red.
-- When your sanity is critically low it will be fiery (red/yellow flashing).
+- When your sanity value is still relatively high there will be no message yet.
+- When your sanity is down to half, warning messages will be displayed, in red:
+  'You feel insanity creep into your mind..'
+- When your sanity is down to one quarter already, messages will be light red:
+  'You feel severly disturbed and paranoid..'
+- When your sanity is at 1/8 or worse it will be fiery (red/yellow flashing):
+  'You can hardly suppress screaming out insane laughters!'
+  If you don't have any way to restore it right away this is probably when you
+  want to teleport out and back to town immediately to seek professional help.
 - The final message when you die to insanity by turning into a vegetable-brain,
-  that message will be purple - game over!
+  that message will be purple - game over:
+  'You turn into an unthinking vegetable.'
 In addition to the message, sanity attacks will play a whispering sound effect,
 named 'insanity' in the sfx jukebox (press = n to access).
 
