@@ -15982,9 +15982,16 @@ If your sanity is lowered, there's an increasing chance that flashbacks will
 storm your head, leaving you with mad visions for a while..
 ("A flashback storms your head!")
 
-When your sanity suffers from an attack, you'll see a light red message in the
-message window telling you so, instead of the usual white or yellow combat
-messages, to make it easily visible.
+When your sanity suffers from an attack, you'll see a message in the message
+window telling you so, instead of the usual white or yellow combat messages it
+will be coloured in red tones to make it easily visible:
+- When your sanity value is still relatively high the message will be red.
+- When your sanity has taken greater hits already it will be light red.
+- When your sanity is critically low it will be fiery (red/yellow flashing).
+- The final message when you die to insanity by turning into a vegetable-brain,
+  that message will be purple - game over!
+In addition to the message, sanity attacks will play a whispering sound effect,
+named 'insanity' in the sfx jukebox (press = n to access).
 
 Certain classes such as priests or mindcrafters may depending on their skills
 be able to cure insanity.
