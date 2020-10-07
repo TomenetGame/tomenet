@@ -15983,10 +15983,9 @@ into a bar, displaying exacter values. At 20 points you'll get the percentage
 displayed. At 40 the value will be shown.
 You can type the '/snbar' slash command into chat to cycle through these.
 
-At the beginning, your sanity is always 'Sound'. That means you are completely
-sane. Monsters, traps or too much booze can reduce your sanity.
-Fortunately there are potions available that cure your sanity, although they
-are not very common and cannot be bought in shops. Wisdom helps against
+Monsters, traps or too much booze can reduce your sanity.
+Fortunately there are potions available that cure insanity, although they
+are not very common and cannot be bought in NPC shops. Wisdom helps against
 insanity by inceasing your 'sanity capacity'. As you gain levels, your sanity
 capacity will also increase. Certain classes such as priests or mindcrafters
 may (depending on their skills) be able to cure insanity too.
