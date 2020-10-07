@@ -15965,6 +15965,10 @@ When your character loses sanity, temporary halluciations (flashbacks) may
 occur. If your character loses all sanity ie turns completely insane, you will
 permanently die - even if you are everlasting-mode! Your character will be gone
 and erased.
+Hallucinations are not just visually confusing when things seem to pop up that
+don't really exist and things that do exist become unrecognizable. They will
+also hinder your character's abilities in various ways, for example you become
+unable to target anything.
 
 Your sanity, displayed as 'SN:', can have the following text 'values' depending
 on how much sanity you have left:
