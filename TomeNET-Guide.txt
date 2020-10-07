@@ -15961,8 +15961,15 @@ Corrupted Priest (aka Corrupted Maia Priest)
 
 (6.6) Sanity (or insanity)
 --------------------------
-Your sanity can have the following values:
-Sound, Sane, Weird, Insane, Mad, Vegetable.
+When your character loses sanity, temporary halluciations (flashbacks) may
+occur. If your character loses all sanity ie turns completely insane, you will
+permanently die - even if you are everlasting-mode! Your character will be gone
+and erased.
+
+Your sanity, displayed as 'SN:', can have the following text 'values' depending
+on how much sanity you have left:
+Sound (90%+), Sane (75%+), Weird (50%+), Crazy (25%+), Insane (10%+), Mad (>0%)
+and finally Vegetable (0%, you are permanently dead).
 
 If you spend 10 points on your 'Health' skill, the sanity display will turn
 into a bar, displaying exacter values. At 20 points you'll get the percentage
