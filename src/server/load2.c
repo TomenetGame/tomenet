@@ -2447,6 +2447,7 @@ static errr rd_inventory(int Ind) {
 			continue;
 		}
 
+#if 0 /* should be deprecated, and too dangerous, as it erases all 'stored' artifacts that the character cannot 'own' yet */
 #ifdef FLUENT_ARTIFACT_RESETS
 		/* hack: If an artifact wasn't successfully erased when it should have been
 		   (happens if the save file was temporarily removed), fix it now. */
@@ -2455,6 +2456,7 @@ static errr rd_inventory(int Ind) {
 			s_printf("Warning! Already redistributed artifact %d detected (erased).\n", forge.name1);
 			continue;
 		}
+#endif
 #endif
 
 #if 0
