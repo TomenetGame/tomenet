@@ -2447,7 +2447,7 @@ static errr rd_inventory(int Ind) {
 			continue;
 		}
 
-#if 0 /* should be deprecated, and too dangerous, as it erases all 'stored' artifacts that the character cannot 'own' yet */
+#if 1 /* there's a bug wheren carrier is != id even though the item was transferred normally in cmd1.c, added bug-tracking code there now */
 #ifdef FLUENT_ARTIFACT_RESETS
 		/* hack: If an artifact wasn't successfully erased when it should have been
 		   (happens if the save file was temporarily removed), fix it now. */

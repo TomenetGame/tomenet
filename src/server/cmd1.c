@@ -2320,6 +2320,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 							object_value_real(0, o_ptr), o_ptr->discount, o_name);
  #endif
 
+/* Since there apparently is sometimes a bug happening that triggers the 'redistributed' hack in load.c, log this to track the bug */
+s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr->name1, o_ptr->owner, name, a_info[o_ptr->name1].carrier, p_ptr->id, p_ptr->name);
+
 					if (true_artifact_p(o_ptr)) a_info[o_ptr->name1].carrier = p_ptr->id;
 
 					/* Some events don't allow transactions before they begins */
