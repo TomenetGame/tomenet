@@ -1949,7 +1949,7 @@ town you visited.
        kick in, the effect will be cancelled! That way you can change your mind
        if you suddenly spot a monster you want to go and kill after you already
        read a scroll of WoR.
-    6) After being recalled the player will receive 'stair goi' (a temporary
+    6) After being recalled the player will receive 'stair GoI' (a temporary
        extra protection from taking damage) for a short amount of time, see
        (0.4) for details.
 
@@ -2326,12 +2326,14 @@ Static      A level that is static will not change if you leave it but stay
 
 Static Art  See 'Art' at the top of this section.
 
-Stair GoI   Stair-Goi is a very short-lasting globe of semi-invulnerability
-            (3 turns). It is a magical protection effect that any player who
-            takes a staircase up or down or uses Word of Recall will
-            automatically receive: A temporary buff of +100 armour class
-            and 40% chance to deflect any attacks that hit him. Attacks that
-            aren't deflected still get their damage halved.
+Stair GoI   Stair-GoI is a very short-lasting globe of semi-invulnerability
+            (3 turns), 'GoI' meaning 'Globe of Invulnerability'.
+            It is a magical protection effect that any player who takes a
+            staircase up or down or uses Word of Recall will automatically
+            receive:
+            A temporary buff of +100 armour class and 40% chance to deflect
+            any attacks that hit him. Attacks that aren't deflected still get
+            their damage halved.
             When an attack is deflected, you get a message saying:
             "The attack is fully deflected by a magic shield."
 

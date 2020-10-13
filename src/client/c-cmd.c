@@ -2495,8 +2495,14 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "Dungeon                 ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Stair") || my_strcasestr(buf, "typ") ) { //staircase types, same as 'Dungeon types'
+				if (my_strcasestr(buf, "Stair") && !my_strcasestr(buf, "goi")) { //staircase types, same as 'Dungeon types'
 					strcpy(chapter, "Dungeon types");
+					continue;
+				}
+				if (!strcasecmp(buf, "goi")) { //staircase types, same as 'Dungeon types'
+					strcpy(buf, "GOI ");
+					fallback = TRUE;
+					fallback_uppercase = 4;
 					continue;
 				}
 
@@ -2606,6 +2612,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				break;
 			}
 			if (!search_uppercase_ok) search_uppercase = FALSE; /* must contain at least 1 (upper-case) letter */
+
+			/* Hack: Skip 'Going..' etc */
+			if (!strcmp(searchstr, "GOI")) strcpy(searchstr, "GOI ");
 
 			strcpy(lastsearch, searchstr);
 			searchline = line - 1; //init searchline for string-search
