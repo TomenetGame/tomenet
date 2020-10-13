@@ -1560,6 +1560,7 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
  * Jir -- added history.
  * TODO: cursor editing (fix past terminal width extending text)
  */
+#define SEARCH_NOCASE /* CTRL+C chat history search: Case-insensitive? */
 typedef char msg_hist_var[MSG_HISTORY_MAX][MSG_LEN];
 bool askfor_aux(char *buf, int len, char mode) {
 	int y, x;
@@ -1991,7 +1992,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 			/* Look for another match.. */
 			for (j = sp_iter + 1; j < sp_size; j++) {
 				j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
+#ifdef SEARCH_NOCASE
+				if (!my_strcasestr((*sp_msg)[j2], buf)) continue;
+#else
 				if (!strstr((*sp_msg)[j2], buf)) continue;
+#endif
 				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
 				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
 				sp_iter = j;
@@ -2002,7 +2007,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 				/* Cycle through search results: Start from the beginning again and search up to the final match again */
 				for (j = 0; j <= sp_iter; j++) {
 					j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
+#ifdef SEARCH_NOCASE
+					if (!my_strcasestr((*sp_msg)[j2], buf)) continue;
+#else
 					if (!strstr((*sp_msg)[j2], buf)) continue;
+#endif
 					/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
 					c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
 					sp_iter = j;
@@ -2060,7 +2069,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 			sp_iter = -1;
 			for (j = 0; j < sp_size; j++) {
 				j2 = (sp_end - j + MSG_HISTORY_MAX * 2) % MSG_HISTORY_MAX; /* Reverse direction */
+#ifdef SEARCH_NOCASE
+				if (!my_strcasestr((*sp_msg)[j2], buf)) continue;
+#else
 				if (!strstr((*sp_msg)[j2], buf)) continue;
+#endif
 				/* Display the result message, overwriting the real 'buf' only visually, while keeping 'buf' unchanged */
 				c_prt(TERM_YELLOW, format("%s: %s", buf, (*sp_msg)[j2]), y, x);
 				sp_iter = j;
