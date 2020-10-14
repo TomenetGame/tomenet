@@ -1693,9 +1693,15 @@ int Receive_stat(void) {
 	char	ch;
 	char	stat;
 	s16b	max, cur, s_ind, max_base;
+	bool	boosted;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%hd%hd", &ch, &stat, &max, &cur, &s_ind, &max_base)) <= 0)
 		return n;
+
+	if (stat & 0x10) {
+		stat &= ~0x10;
+		boosted = TRUE;
+	} else boosted = FALSE;
 
 	p_ptr->stat_top[(int) stat] = max;
 	p_ptr->stat_use[(int) stat] = cur;
@@ -1703,7 +1709,7 @@ int Receive_stat(void) {
 	p_ptr->stat_max[(int) stat] = max_base;
 
 	if (screen_icky) Term_switch(0);
-	prt_stat(stat, max, cur, max_base);
+	prt_stat(stat, boosted);
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -1806,7 +1812,7 @@ int Receive_ac(void) {
 
 	if (screen_icky) Term_switch(0);
 
-	prt_ac(base + plus);
+	prt_ac((base & ~0x1000) + plus, (base & 0x1000) != 0);
 
 	if (screen_icky) Term_switch(0);
 

@@ -2951,6 +2951,7 @@ struct player_type {
 	s16b stat_top[6];		/* Maximal modified stats */
 
 	s16b stat_add[6];		/* Modifiers to stat values */
+	s16b stat_tmp[6];		/* Temporary stat buffs - added just to implement visual indicator (colourise the value in client) */
 	s16b stat_ind[6];		/* Indexes into stat tables */
 
 	s16b stat_cnt[6];		/* Counter for temporary drains */
@@ -3033,6 +3034,7 @@ struct player_type {
 	s16b to_h;			/* Bonus to hit */
 	s16b to_d;			/* Bonus to dam */
 	s16b to_a;			/* Bonus to ac */
+	s16b to_a_tmp;			/* Just to track temporary AC boosts for colourising indicator on client-side */
 
 	s16b ac;			/* Base ac */
 

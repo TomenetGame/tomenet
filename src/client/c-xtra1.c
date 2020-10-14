@@ -77,7 +77,7 @@ void cnv_stat(int val, char *out_val) {
 /*
  * Print character stat in given row, column
  */
-void prt_stat(int stat, int max, int cur, int cur_base) {
+void prt_stat(int stat, bool boosted) {
 	char tmp[32];
 	int x, y;
 
@@ -86,14 +86,16 @@ void prt_stat(int stat, int max, int cur, int cur_base) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	if (cur < max) {
+	if (p_ptr->stat_use[stat] < p_ptr->stat_top[stat]) {
 		Term_putstr(0, ROW_STAT + stat, -1, TERM_WHITE, (char*)stat_names_reduced[stat]);
-		cnv_stat(cur, tmp);
+		cnv_stat(p_ptr->stat_use[stat], tmp);
 		Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_YELLOW, tmp);
 	} else {
 		Term_putstr(0, ROW_STAT + stat, -1, TERM_WHITE, (char*)stat_names[stat]);
-		cnv_stat(cur, tmp);
-		if(cur_base < (18 + 100))
+		cnv_stat(p_ptr->stat_use[stat], tmp);
+		if (boosted)// && p_ptr->stat_use[stat] < 18 + 220)
+			Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_BLUE, tmp);
+		else if (p_ptr->stat_max[stat] < (18 + 100))
 			Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_GREEN, tmp);
 		else
 			Term_putstr(COL_STAT + 6, ROW_STAT + stat, -1, TERM_L_UMBER, tmp);
@@ -297,9 +299,9 @@ void prt_gold(int gold) {
 /*
  * Prints current AC
  */
-void prt_ac(int ac) {
+void prt_ac(int ac, bool boosted) {
 	char tmp[32];
-	int x, y;
+	int x, y, attr;
 	if (client_mode == CLIENT_PARTY) return;
 
 	/* remember cursor position */
@@ -307,7 +309,11 @@ void prt_ac(int ac) {
 
 	put_str("AC:", ROW_AC, COL_AC);
 	sprintf(tmp, "%5d", ac);
-	c_put_str(TERM_L_GREEN, tmp, ROW_AC, COL_AC + 7);
+
+	if (ac > 0 && boosted) attr = TERM_L_BLUE;
+	else attr = TERM_L_GREEN;
+
+	c_put_str(attr, tmp, ROW_AC, COL_AC + 7);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);
