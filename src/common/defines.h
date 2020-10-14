@@ -2170,6 +2170,24 @@
 #define ROW_LAG			8
 #define COL_LAG			0       /* mini lag-o-meter */
 
+#define ROW_RESIST_FIRE		23
+#define COL_RESIST_FIRE		1
+
+#define ROW_RESIST_COLD		23
+#define COL_RESIST_COLD		2
+
+#define ROW_RESIST_ELEC		23
+#define COL_RESIST_ELEC		3
+
+#define ROW_RESIST_ACID		23
+#define COL_RESIST_ACID		4
+
+#define ROW_RESIST_POIS		23
+#define COL_RESIST_POIS		5
+
+#define ROW_RESIST_MANA		23
+#define COL_RESIST_MANA		6
+
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
 
 /* Nothing */

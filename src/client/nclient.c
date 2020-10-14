@@ -2609,6 +2609,54 @@ int Receive_message(void) {
 
 	c_msg_print(buf);
 
+    if (strstr(buf, "fire")) {
+        if (strstr(buf, "feel less resistant to")) {
+            prt_fire(0);
+        } else if (strstr(buf, "feel resistant to")) {
+            prt_fire(1);
+        }
+    }
+
+    if (strstr(buf, "cold")) {
+        if (strstr(buf, "feel less resistant to")) {
+            prt_cold(0);
+        } else if (strstr(buf, "feel resistant to")) {
+            prt_cold(1);
+        }
+    }
+
+    if (strstr(buf, "electricity")) {
+        if (strstr(buf, "feel less resistant to")) {
+            prt_elec(0);
+        } else if (strstr(buf, "feel resistant to")) {
+            prt_elec(1);
+        }
+    }
+
+    if (strstr(buf, "acid")) {
+        if (strstr(buf, "feel less resistant to")) {
+            prt_acid(0);
+        } else if (strstr(buf, "feel resistant to")) {
+            prt_acid(1);
+        }
+    }
+
+    if (strstr(buf, "poison")) {
+        if (strstr(buf, "feel less resistant to")) {
+            prt_pois(0);
+        } else if (strstr(buf, "feel resistant to")) {
+            prt_pois(1);
+        }
+    }
+
+    if (strstr(buf, "mana")) {
+        if (strstr(buf, "feel less resistant to")) {
+            prt_mana(0);
+        } else if (strstr(buf, "feel resistant to")) {
+            prt_mana(1);
+        }
+    }
+
 	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
 	return 1;

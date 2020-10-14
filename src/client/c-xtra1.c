@@ -1019,6 +1019,102 @@ void prt_bpr(byte bpr, byte attr) {
 	Term_gotoxy(x, y);
 }
 
+void prt_fire(byte is_resisted) {
+    int x, y;
+
+    /* remember cursor position */
+    Term_locate(&x, &y);
+
+    if (is_resisted > 0) {
+        c_put_str(TERM_RED, "F", ROW_RESIST_FIRE, COL_RESIST_FIRE);
+    } else {
+        c_put_str(TERM_RED, " ", ROW_RESIST_FIRE, COL_RESIST_FIRE);
+    }
+
+    /* restore cursor position */
+    Term_gotoxy(x, y);
+}
+
+void prt_cold(byte is_resisted) {
+    int x, y;
+
+    /* remember cursor position */
+    Term_locate(&x, &y);
+
+    if (is_resisted > 0) {
+        c_put_str(TERM_WHITE, "C", ROW_RESIST_COLD, COL_RESIST_COLD);
+    } else {
+        c_put_str(TERM_WHITE, " ", ROW_RESIST_COLD, COL_RESIST_COLD);
+    }
+
+    /* restore cursor position */
+    Term_gotoxy(x, y);
+}
+
+void prt_elec(byte is_resisted) {
+    int x, y;
+
+    /* remember cursor position */
+    Term_locate(&x, &y);
+
+    if (is_resisted > 0) {
+        c_put_str(TERM_BLUE, "E", ROW_RESIST_ELEC, COL_RESIST_ELEC);
+    } else {
+        c_put_str(TERM_BLUE, " ", ROW_RESIST_ELEC, COL_RESIST_ELEC);
+    }
+
+    /* restore cursor position */
+    Term_gotoxy(x, y);
+}
+
+void prt_acid(byte is_resisted) {
+    int x, y;
+
+    /* remember cursor position */
+    Term_locate(&x, &y);
+
+    if (is_resisted > 0) {
+        c_put_str(TERM_L_DARK, "A", ROW_RESIST_ACID, COL_RESIST_ACID);
+    } else {
+        c_put_str(TERM_L_DARK, " ", ROW_RESIST_ACID, COL_RESIST_ACID);
+    }
+
+    /* restore cursor position */
+    Term_gotoxy(x, y);
+}
+
+void prt_pois(byte is_resisted) {
+    int x, y;
+
+    /* remember cursor position */
+    Term_locate(&x, &y);
+
+    if (is_resisted > 0) {
+        c_put_str(TERM_GREEN, "P", ROW_RESIST_POIS, COL_RESIST_POIS);
+    } else {
+        c_put_str(TERM_GREEN, " ", ROW_RESIST_POIS, COL_RESIST_POIS);
+    }
+
+    /* restore cursor position */
+    Term_gotoxy(x, y);
+}
+
+void prt_mana(byte is_resisted) {
+    int x, y;
+
+    /* remember cursor position */
+    Term_locate(&x, &y);
+
+    if (is_resisted > 0) {
+        c_put_str(TERM_L_BLUE, "M", ROW_RESIST_MANA, COL_RESIST_MANA);
+    } else {
+        c_put_str(TERM_L_BLUE, " ", ROW_RESIST_MANA, COL_RESIST_MANA);
+    }
+
+    /* restore cursor position */
+    Term_gotoxy(x, y);
+}
+
 /*
  * Prints cut status
  */
