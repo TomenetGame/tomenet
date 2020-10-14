@@ -646,6 +646,7 @@ byte showing_inven = FALSE, showing_equip = FALSE;
 
 int hp_max, hp_cur;
 bool hp_bar;
+bool hp_boosted = FALSE;
 int sp_max, sp_cur;
 bool sp_bar;
 int st_max, st_cur;

@@ -323,7 +323,7 @@ void prt_ac(int ac, bool boosted) {
  * Prints Max/Cur hit points
  */
 #define HP_MP_ST_BAR_HALFSTEPS
-void prt_hp(int max, int cur, bool bar) {
+void prt_hp(int max, int cur, bool bar, bool boosted) {
 	if (shopping) return;
 	char tmp[32];
 	byte color;
@@ -356,7 +356,7 @@ void prt_hp(int max, int cur, bool bar) {
 #ifndef CONDENSED_HP_SP
 		put_str("Max HP ", ROW_MAXHP, COL_MAXHP);
 		sprintf(tmp, "%5d", max);
-		color = TERM_L_GREEN;
+		color = boosted ? TERM_L_BLUE : TERM_L_GREEN;
 		c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP + 7);
 
 		put_str("Cur HP ", ROW_CURHP, COL_CURHP);
@@ -376,18 +376,20 @@ void prt_hp(int max, int cur, bool bar) {
 			put_str("HP:    /", ROW_MAXHP, 0);
 			if (max == -9999) sprintf(tmp, "   -"); /* wonder whether this will ever be used */
 			else sprintf(tmp, "%4d", max);
-			color = TERM_L_GREEN;
+			color = boosted ? TERM_L_BLUE : TERM_L_GREEN;
 			c_put_str(color, tmp, ROW_MAXHP, COL_MAXHP);
 			if (cur == -9999) sprintf(tmp, "   -"); /* wonder whether this will ever be used */
 			else sprintf(tmp, "%4d", cur);
-			if (cur >= max) ;
+			if (cur >= max) color = TERM_L_GREEN;
 			else if (cur > (max * 2) / 5) color = TERM_YELLOW;
 			else if (cur > max / 6) color = TERM_ORANGE;
 			else color = TERM_RED;
 			c_put_str(color, tmp, ROW_CURHP, COL_CURHP);
 		} else {
 			color = TERM_L_GREEN;
-			put_str("HP          ", ROW_MAXHP, 0);
+			/* Specialty: In 'bar' view we have to colour the 'HP' itself or we won't notice the buff */
+			if (boosted) c_put_str(TERM_L_BLUE, "HP          ", ROW_MAXHP, 0);
+			else put_str("HP          ", ROW_MAXHP, 0);
 			if (max == -9999) {
 				sprintf(tmp, "   -/   -"); /* we just assume cur would also be -9999.. */
 				c_put_str(color, tmp, ROW_CURHP, COL_CURHP);

@@ -2448,6 +2448,7 @@ struct player_type {
 	s16b max_lev;			/* Usual level after 'restoring life levels' */
 
 	s16b mhp;			/* Max hit pts */
+	s16b mhp_tmp;			/* Just for tracking temporary HP boosts and colourising them on client-side for indication */
 	s16b chp;			/* Cur hit pts */
 	u16b chp_frac;			/* Cur hit frac (times 2^16) */
 	s16b player_hp[PY_MAX_LEVEL];

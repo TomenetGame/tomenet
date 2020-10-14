@@ -1513,6 +1513,8 @@ void calc_hitpoints(int Ind) {
 	int rlev = r_info[p_ptr->body_monster].level;
 
 
+	p_ptr->mhp_tmp = 0; /* Track temporary buffs, just for client-side colourised indicator */
+
 	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 	}
 
@@ -1683,6 +1685,7 @@ void calc_hitpoints(int Ind) {
 	if (p_ptr->divine_hp > 0) {
 		/* count as if from item? */
 		to_life += p_ptr->divine_hp_mod;
+		p_ptr->mhp_tmp += p_ptr->divine_hp_mod * 100; /* Hack: Just use an arbitray, largerino value, whatever */
 	}
 #endif
 
@@ -1723,8 +1726,14 @@ void calc_hitpoints(int Ind) {
 
 	/* Factor in the hero / superhero settings.
 	   Specialty: It's applied AFTER mimic form HP influence. */
-	if (p_ptr->shero) mhp += 20;
-	if (p_ptr->hero) mhp += 10;
+	if (p_ptr->shero) {
+		mhp += 20;
+		p_ptr->mhp_tmp += 20;
+	}
+	if (p_ptr->hero) {
+		mhp += 10;
+		p_ptr->mhp_tmp += 10;
+	}
 
 #if 0 /* p_ptr->to_hp is unused atm! */
 	/* Fixed Hit Point Bonus */

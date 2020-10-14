@@ -5715,6 +5715,9 @@ int Send_hp(int Ind, int mhp, int chp) {
 	/* Display hack */
 	if (p_ptr->health_bar) mhp += 10000;
 
+	/* Display hack (temp buff indicator). */
+	if (p_ptr->mhp_tmp && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) chp += 10000;
+
 	/* Always start assuming that all further hp loss from now on was just to equipment-induced life draining */
 	p_ptr->hp_drained = TRUE;
 

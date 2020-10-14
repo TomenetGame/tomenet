@@ -8466,7 +8466,7 @@ void do_cmd_options(void) {
 		if (changed4a != c_cfg.hp_bar) hp_bar = c_cfg.hp_bar;
 		if (changed4b != c_cfg.mp_bar) sp_bar = c_cfg.mp_bar;
 		if (changed4c != c_cfg.st_bar) st_bar = c_cfg.st_bar;
-		prt_hp(hp_max, hp_cur, hp_bar);
+		prt_hp(hp_max, hp_cur, hp_bar, hp_boosted);
 		prt_sp(sp_max, sp_cur, sp_bar);
 		prt_stamina(st_max, st_cur, st_bar);
 	}

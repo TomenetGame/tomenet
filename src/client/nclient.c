@@ -1745,6 +1745,12 @@ int Receive_hp(void) {
 	/* .. and new, clean way: It's a client option now */
 	if (c_cfg.hp_bar) bar = TRUE;
 
+	/* ..Display hack for temporarily boosted HP -_- */
+	if (cur > 10000) {
+		cur -= 10000;
+		hp_boosted = TRUE;
+	} else hp_boosted = FALSE;
+
 	p_ptr->mhp = max;
 	p_ptr->chp = cur;
 
@@ -1756,7 +1762,7 @@ int Receive_hp(void) {
 
 	if (screen_icky) Term_switch(0);
 
-	prt_hp(max, cur, bar);
+	prt_hp(max, cur, bar, hp_boosted);
 	if (c_cfg.alert_hitpoint && (cur < max / 5)) {
 		warning_page();
 		c_msg_print("\377R*** LOW HITPOINT WARNING! ***");
