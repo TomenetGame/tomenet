@@ -1235,7 +1235,7 @@ void cmd_eat(void) {
 	get_item_hook_find_obj_what = "Food name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Eat what? ", (USE_INVEN | USE_EXTRA))) {
+	if (!c_get_item(&item, "Eat what? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
 		if (item == -2) c_msg_print("You do not have anything edible.");
 		return;
 	}
