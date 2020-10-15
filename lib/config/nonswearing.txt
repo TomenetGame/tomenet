@@ -34,6 +34,7 @@ as su
 as sv
 as sw
 as sy
+ as holes
 assad
 assai
 assam
