@@ -156,9 +156,10 @@ Contents
     (6.2a)  Maiar initiation effects
     (6.3)   Abilities
     (6.4)   Races
-    (6.5)   Classes/professions, titles, melee blows/round
+    (6.5)   Classes/professions
     (6.5a)  Start-up blows/round table (BpR)
-    (6.5b)  Class titles
+    (6.5b)  Titles
+    (6.5c)  Power levels
     (6.6)   Sanity (or insanity)
     (6.7)   Mimicry details
     (6.7a)  Polymorph rings
@@ -14970,8 +14971,8 @@ Maia        +2  +3  +3  +1  +1  +2      11      400%   100ft
 
 
 
-(6.5) Classes/professions, titles, melee blows/round
-----------------------------------------------------
+(6.5) Classes/professions
+-------------------------
 Depending on your class, your start-up equipment and your skill tree will
 vary. For example a warrior cannot learn magic spells.
 
@@ -15001,6 +15002,8 @@ Hardest classes for beginners to play maybe:
         time you could die fast)
  -Runemaster (needs some time to get a grip of the spell system, and has not
              that high hit points, ie glass cannonish).
+
+Approximate 'power levels' for the classes are given further down in (6.5c).
 
 
 List of all classes (make sure to read the paragraph about your class, when you
@@ -15649,8 +15652,9 @@ This, however, doesn't determine its final performance, which is actually
 given by the 'Max. base blows/round' shown further above, and other parameters.
 
 
-(6.5b) Class titles
--------------------
+(6.5b) Titles
+-------------
+Each character class has specific 'titles' that change with the player level.
 For levels up to 50 the title will change every 5 levels (except for the first
 title change at level 5 occurring after 4 levels, since character start at
 level 1, not zero).
@@ -15958,6 +15962,59 @@ Corrupted Priest (aka Corrupted Maia Priest)
                             Ascended
                             Demi
                             Chaos God
+
+
+(6.5c) Power levels
+-------------------
+Classes fare differently depending on their progress in the game. Here are some
+rough approximations of 'power levels', trying to give an idea how strong each
+class is at its different game stages.
+
+Note: For some classes the power curve can depend heavily on the way you
+      distribute skill points so this is only an hand-picked estimate of the
+      most average builds (not necessarily the most interesting ones).
+
+      Also, some classes and builds might shine in parties rather than solo,
+      and some might be more dependant on acquiring great items than others.
+
+      If you train 'Martial Arts' skill you will be elevated to '+++' in
+      'Start' and 'Early' stages, no matter the class.
+
+      Istari lose their weakness aka their fragility when they acquire the
+      Mana school spell 'Disruption Shield' which is considered essential.
+
+      Especially non-martial-arts melee-classes can reach '++++' in the
+      'Post-winning' stage if they are able to acquire a great set of equipment
+      which will take lots of effort.
+      The reason is that their damage output and damage mitigation depends on
+      gear mostly rather than on skills, unlike for spell-casting characters.
+
+      Archers and Runemasters can reach '++++' in 'Endgame' and 'Post-winning'
+      in terms of damage output if they can rely on a good party.
+
+      Shamans can reach '++++' in 'Late', 'Endgame' and 'Post-winning' in terms
+      of usability, being able to easily access all features of Istari, Priests
+      and also Mimicry features without thatmuch expense of skill points.
+
+              Start     Early     Mid       Late      Endgame   Post-winning
+              (Lv 1)    (10+)     (30+)     (40+)     (50)      (After Morgoth)
+-------------------------------------------------------------------------------
+Warrior       +++       +++       +++       +++       +++       +++
+Istar         ++        ++        +         +++       ++++      ++++
+Priest        +         +         ++        +++       +++       +++
+Corrupted P.  +         ++        ++        +++       +++       +++
+Rogue         +++       +++       +++       +++       +++       +++
+Mimic         ++        ++        +++       +++       +++       +++
+Archer        ++        ++        ++        +++       +++       +++
+Paladin       ++        ++        +++       +++       +++       +++
+Death Knight  ++        +++       +++       +++       +++       +++
+Hell Knight   +++       +++       +++       +++       +++       +++
+Ranger        +++       +++       +++       +++       +++       +++
+Adventurer    +         +         ++        +++       +++       +++
+Druid         +++       ++++      ++++      +++       +++       +++
+Shaman        ++        ++        +++       +++       +++       +++
+Runemaster    +         +++       +++       +++       +++       +++
+Mindcrafter   +++       ++        +++       +++       +++       +++
 
 
 
