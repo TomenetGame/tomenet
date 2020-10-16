@@ -10964,8 +10964,8 @@ Aggravate Monsters
                 Hastes all monsters in your line of sight (same as SHRIEK
                 spell or traps of aggravation or the "/scream" command).
 Blessing/Holy Chant/Holy Prayer
-                Increases your AC by 8/14/20, also increases your to-hit
-                bonus. (Temporarily)
+                Increases your AC by 8/14/20 and also increases your to-hit
+                bonus by half that amount. (Temporarily)
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
                 of you has to read a BB scroll, it's working bidirectional).
