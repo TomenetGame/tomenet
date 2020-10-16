@@ -25,6 +25,7 @@ HBLESSING_I = add_spell {
 	end,
 	["desc"] = 	{
 			"Protects you with a shield of righteousness.",
+			"Also increases your to-hit bonus by half that AC bonus.",
 			"***Automatically projecting***",
 	}
 }
@@ -54,6 +55,7 @@ HBLESSING_II = add_spell {
 	end,
 	["desc"] = 	{
 			"Protects you with a shield of righteousness.",
+			"Also increases your to-hit bonus by half that AC bonus.",
 			"***Automatically projecting***",
 	}
 }
@@ -82,6 +84,7 @@ HBLESSING_III = add_spell {
 	end,
 	["desc"] = 	{
 			"Protects you with a shield of righteousness.",
+			"Also increases your to-hit bonus by half that AC bonus.",
 			"***Automatically projecting***",
 	}
 }
