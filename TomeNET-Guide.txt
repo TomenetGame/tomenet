@@ -16626,8 +16626,8 @@ Tengu           10  High HP, good AC, can blink/teleport and more, resists fear
                     or poison.
 Illusionist and Druid
                 13  These two have an array of spells at their disposal, one of
-                    them being 'Haste' which speeds themselves up temporarily,
-                    which can be a very powerful asset.
+                    them being 'Haste Self' which speeds themselves up
+                    temporarily, which can be a very powerful asset.
                     These two monsters appear somewhat rarely though.
                     (Later on, 'Mage' is a mid-level form that also provides
                     haste spell and is actually more common to find.)
@@ -16670,8 +16670,8 @@ Uruk            16  Good HP, good melee damage, good AC, +1 extra shot w/
 Elite uruk      20  Good HP, very high melee damage, good AC, +1 extra shot w/
                     slings or bows, poison immunity.
 Dark-elven Lord 20  Good HP, resists darkness but is susceptible to light-based
-                    attacks. Moves fast and even has a 'Haste' spell in his
-                    array of spells that boosts his speed further.
+                    attacks. Moves fast and even has a 'Haste Self' spell in
+                    his array of spells that boosts his speed further.
                     This monster occurs somewhat rarely.
                     (Does not occur in packs.)
 
