@@ -16109,6 +16109,10 @@ To find out the special abilities of a monster form, press  ~ 7  in game or
 consult a spoiler file. (See (7.4) for more info about spoiler files.)
 It's abilities will transform to the mimic's body as follows.
 
+Very useful for searching for monster forms with specific abilities is
+Mikael's monster search website, linked on tomenet.eu and invokable in-game via
+~ R  (Shift+R in the 'Knowledge' menu, this requires at least client 4.7.3).
+
 
 Form aspects as specified in  ~ 7  monster lore:
 (Make sure to keep your r_info.txt spoiler file up to date, as the lore
