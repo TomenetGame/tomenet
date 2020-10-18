@@ -1304,6 +1304,9 @@ static bool repair_item(int Ind, int i, bool iac) {
 #endif
 		else minenchant = -o_ptr->ac;
 
+		/* Allow repairing crowns, and give more leeway for cloaks and very light armour */
+		if (minenchant > -3) minenchant = -3;
+
 		if (o_ptr->to_a >= 0) {
 			msg_print(Ind, "'That looks pretty fine already.'");
 			return FALSE;
@@ -1352,7 +1355,8 @@ static bool repair_item(int Ind, int i, bool iac) {
 			return TRUE;
 		}
 
-		minenchant = -10; //weapon max damage
+		minenchant = -(o_ptr->dd * o_ptr->ds + 1) / 2;
+		if (minenchant < -10) minenchant = -10; /* Prevent silly values for top dice weapons */
 
 		if (o_ptr->to_d >= 0) {
 			msg_print(Ind, "'That looks pretty fine already.'");
@@ -1434,6 +1438,9 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 #endif
 		else minenchant = -o_ptr->ac;
 
+		/* Allow repairing crowns, and give more leeway for cloaks and very light armour */
+		if (minenchant > -3) minenchant = -3;
+
 		if (o_ptr->to_a >= 0) {
 			msg_print(Ind, "A-'That looks pretty fine already.'");
 			return FALSE;
@@ -1483,7 +1490,8 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 			return (TRUE);
 		}
 
-		minenchant = -10; //weapon max damage
+		minenchant = -(o_ptr->dd * o_ptr->ds + 1) / 2;
+		if (minenchant < -10) minenchant = -10; /* Prevent silly values for top dice weapons */
 
 		if (o_ptr->to_d >= 0) {
 			msg_print(Ind, "'That looks pretty fine already.'");
