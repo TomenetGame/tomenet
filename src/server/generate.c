@@ -10054,7 +10054,7 @@ for(mx = 1; mx < 131; mx++) {
 							} else {
 								cs_ptr->sc.omni = STORE_BTSUPPLY;
 							}
-							s_printf("DUNGEON_STORE: %d (%d,%d,%d)\n", cs_ptr->sc.omni, wpos->wx, wpos->wy, wpos->wz);
+							s_printf("DUNGEON_STORE: %d (%d,%d,%d) '%s'\n", cs_ptr->sc.omni, wpos->wx, wpos->wy, wpos->wz, st_name + st_info[cs_ptr->sc.omni].name);
 							return;
 						}
 					}
