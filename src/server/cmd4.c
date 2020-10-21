@@ -2735,6 +2735,9 @@ void do_cmd_check_server_settings(int Ind) {
  * Tell players of the # of monsters killed, using temporary file. - Jir -
  * New hack: @ results in learned form list (Arjen's suggestion) - C. Blue
  */
+#if 0 /* todo first: Add new counter for combined kill count to base version */
+#define HIDE_DUPLICATES /* Do not display dup_idx versions of a monster */
+#endif
 void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev, bool uniques) {
 	player_type *p_ptr = Players[Ind];
 
@@ -2786,6 +2789,9 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev, bool u
 	for (i = 1; i < MAX_R_IDX - 1; i++) {
 #endif
 		r_ptr = &r_info[i];
+#ifdef HIDE_DUPLICATES
+		if (r_ptr->dup_idx) continue;
+#endif
 
 		//if (letter && *letter != r_ptr->d_char) continue;
 		if (!all && !strchr(letter, r_ptr->d_char)) continue;
@@ -2809,7 +2815,7 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev, bool u
 		/* Hack -- always show townie */
 		// if (num < 1 && r_ptr->level) continue;
 
-		if ((num < 1) && !druid_form && !vampire_form
+		if (num < 1 && numf < 1 && !druid_form && !vampire_form
 		    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == i)) /* for poly rings */
 			continue;
 		if (!r_ptr->name) continue;
@@ -2871,9 +2877,16 @@ void do_cmd_show_monster_killed_letter(int Ind, char *letter, int minlev, bool u
 					fprintf(fff, "\377w%-30s : %4d slain \377(infused %d turns)\n",
 						r_name + r_ptr->name, num, p_ptr->tim_mimic);
 				/* normal */
-				else
-					fprintf(fff, "\377w%-30s : %4d slain (%d more to go)\n",
-					    r_name + r_ptr->name, num, j);
+				else {
+					/* the 'usable' version (default) */
+					if (!r_ptr->dup_idx)
+						fprintf(fff, "\377w%-30s : %4d slain (%d more to go)\n",
+						    r_name + r_ptr->name, num, j);
+					/* just a duplicate of the usable version */
+					else
+						fprintf(fff, "\377w%-30s : %4d slain (duplicate of %d)\n",
+						    r_name + r_ptr->name, num, r_ptr->dup_idx);
+				}
 			} else {
 				forms_learnt++;
 				if (p_ptr->body_monster == i)
