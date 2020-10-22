@@ -2081,7 +2081,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 
 				/* Rogue 'Cloaking' ability has no dedicated paragraph, use key list for it */
-				if (!strcasecmp(buf, "cloak")) {
+				if (!strcasecmp(buf, "cloak") || !strcasecmp(buf, "cloaking")) {
 					strcpy(buf, "'cloaking mode'");
 					fallback = TRUE;
 					fallback_uppercase = 0;
