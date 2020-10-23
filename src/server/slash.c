@@ -5404,6 +5404,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				msg_print(Ind, "\377oUsage: /mute <character name>");
+				return;
 			}
 			else if (prefix(messagelc, "/unmute")) {   //oh no!
 				if (tk) {
@@ -5427,6 +5428,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				msg_print(Ind, "\377oUsage: /unmute <character name>");
+				return;
 			}
 			/* erase items and monsters */
 			else if (prefix(messagelc, "/clear-level") || prefix(messagelc, "/clv")) {
