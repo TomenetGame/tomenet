@@ -13422,7 +13422,7 @@ stated.
                                 Also, interception chance is recuded greatly
                                 while you are blind and you aren't able to
                                 intercept at all while you are
-                                stunned, confused, paralyed, resting, cloaked
+                                stunned, confused, paralyzed, resting, cloaked
                                 or shadow running (compare (4.11)).
                                 Player ghosts cannot intercept either.
 
