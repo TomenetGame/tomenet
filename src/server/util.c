@@ -5654,7 +5654,7 @@ static void console_talk_aux(char *message) {
 
 #else
 	/* Send to everyone */
-	for (i = 1; i <= NumPlayers; i++) {
+	for (int i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 
 		/* Send message */

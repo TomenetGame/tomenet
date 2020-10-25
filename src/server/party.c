@@ -7,6 +7,8 @@
    it IS a server file, isn't it? */
 #define SERVER
 
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "angband.h"
 
 #ifdef TOMENET_WORLDS
