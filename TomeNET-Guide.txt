@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. October 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 26. October 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11942,6 +11942,19 @@ POWERFUL        Harder to taunt, charm or silence. Cannot be blinded.
                 Hacks down terrain features in its way that it can pass anyway.
                 Cannot be slowed by martial arts slowing techniques.
                 Harder to repel by kinetic shield or to affect by aura of fear.
+
+TPORT           This is a spell flag rather than a normal flag. However, it is
+                noteworthy in that this not only allows a monster to teleport
+                at will, but also will cause it to try and teleport-follow the
+                player whenever he teleports away from it from within melee
+                range!
+
+                To teleport-follow, when the player initiates teleportation,
+                the monster must stand adjacent to player (ie in melee range)
+                and not have RES_TELE or IM_TELE flag.
+                Also the monster must not be asleep or running from the player.
+                Finally the monster will have to succeed a d100 roll against
+                its racial base level.
 
 
 
