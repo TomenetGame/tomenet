@@ -12090,7 +12090,8 @@ PARALYZE        free action.
 EXP_xx          hold life.
 LOSE_xxx        sustain stats.
 EAT_xxx         DEX and stealing skill increase your chance to resist
-                EAT_ITEM (item stealing) or EAT_GOLD (money stealing) attempts.
+                EAT_ITEM (item stealing) and
+                EAT_GOLD (money stealing) attempts.
                 A device of theft prevention makes you immune to EAT_ITEM.
                 A money belt makes you immune to EAT_GOLD.
                 Nothing helps against EAT_FOOD or EAT_LITE.

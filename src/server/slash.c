@@ -1440,11 +1440,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			/* Special case: Search for a specific topic - in this case, invoke the Guide on client-side instead with a search performed for the topic specified! */
 			if (tk) {
-				bool allcaps = TRUE;
+				bool allcapsok = FALSE, allcaps = TRUE, dot = FALSE;
+				int lineno = -1;
 				char* c;
 
 				c = message3;
 				while (*c) {
+					if (*c == '.') dot = TRUE;
+					if (!allcapsok && isalpha(*c)) allcapsok = TRUE;
 					if (toupper(*c) == *c) {
 						c++;
 						continue;
@@ -1452,11 +1455,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					allcaps = FALSE;
 					break;
 				}
+				if (!allcapsok) allcaps = FALSE;
+				/* Resolve conflict 'chapter no' vs 'line no' */
+				if (atoi(message3) > 8 && !dot) lineno = atoi(message3);
 
 				/* We're looking for help on a slash command? Use 'strict search' */
 				if (*message3 == '/') Send_Guide(Ind, 2, 0, message3);
 				/* We've entered a number? Interpret it as a 'line number' directly */
-				else if (atoi(message3)) Send_Guide(Ind, 4, atoi(message3), NULL);
+				else if (lineno != -1) Send_Guide(Ind, 4, lineno, NULL);
 				/* If it's all caps use 'strict search' too (we're looking for a FLAG probably) */
 				else if (allcaps) Send_Guide(Ind, 2, 0, message3);
 				/* We're looking for help on any other topic? Attempt 'chapter search' */
