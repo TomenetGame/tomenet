@@ -19433,7 +19433,7 @@ S:MOAN | SCARE | HOLD | TPORT
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
-N:1089:Ghoul (Mimic)
+N:1089:Forest Ghoul
 G:z:D
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19447,7 +19447,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1090:Ghost (Mimic)
+N:1090:Spook
 G:G:w
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19461,7 +19461,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1091:Zombie (Mimic)
+N:1091:Rampant Zombie
 G:z:s
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19475,7 +19475,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1092:Vampire (Mimic)
+N:1092:Vampire Apparition
 G:V:b
 I:110:30d5:8:2:99
 W:0:1:1300:25
@@ -19489,7 +19489,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1093:Goblin (Mimic)
+N:1093:Lost Goblin
 G:h:W
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19503,7 +19503,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1094:Skeleton (Mimic)
+N:1094:Moving Bones
 G:s:w
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19517,7 +19517,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1095:Frankenstein's Monster (Mimic)
+N:1095:Frankenstein's Monster
 G:U:g
 I:110:40d5:12:2:99
 W:0:1:1300:30
@@ -19531,7 +19531,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1096:Freddy Krueger (Mimic)
+N:1096:Freddy Krueger
 G:z:r
 I:110:40d5:12:2:99
 W:0:1:1300:30
