@@ -3486,6 +3486,15 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	else
 		m_ptr->maxhp = damroll(r_ptr->hdice, r_ptr->hside);
 
+	if (r_idx == RI_PUMPKIN) {
+		/* Hack for the Great Pumpkin: HP varies. */
+		if (dlev >= HALLOWEEN_DLEV_TOUGHEST) ; /* Keep its native (aka maximum) HP */
+		else if (dlev >= HALLOWEEN_DLEV_TOUGHER) /* Vary between 2/3 and full HP */
+			m_ptr->maxhp = (m_ptr->maxhp * (20 + ((dlev - HALLOWEEN_DLEV_TOUGHER) * 10) / (HALLOWEEN_DLEV_TOUGHEST - HALLOWEEN_DLEV_TOUGHER))) / 30;
+		else /* Vary between 1/3 and 2/3 HP */
+			m_ptr->maxhp = (m_ptr->maxhp * (10 + ((dlev) * 10) / (HALLOWEEN_DLEV_TOUGHER))) / 30;
+	}
+
 	/* And start out fully healthy */
 	m_ptr->hp = m_ptr->maxhp;
 
@@ -3703,7 +3712,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		if (l_ptr) l_ptr->flags1 |= (LF1_NO_GENO | LF1_NO_DESTROY);
 	}
 	if (r_idx == RI_PUMPKIN1 || r_idx == RI_PUMPKIN2 || r_idx == RI_PUMPKIN3)
-		s_printf("HALLOWEEN: The Great Pumpkin (%d) was created on %d,%d,%d\n", r_idx, wpos->wx, wpos->wy, wpos->wz);
+		s_printf("HALLOWEEN: The Great Pumpkin (%d) was created on %d,%d,%d (%d HP)\n", r_idx, wpos->wx, wpos->wy, wpos->wz, m_ptr->maxhp);
 
 	/* Handle floor feelings */
 	/* Special events don't necessarily influence floor feelings */
@@ -3895,8 +3904,10 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 		// DEBUG
 		/* s_printf("place_monster_one failed at (%d, %d, %d), y = %d, x = %d, r_idx = %d, feat = %d\n",
 			wpos->wx, wpos->wy, wpos->wz, y, x, r_idx, zcave[y][x].feat); */
+		/* Failure (!=0) */
 		return res;
 	}
+	/* Success (==0) */
 
 	/* Require the "group" flag */
 	if (!grp) return 0;
@@ -4028,17 +4039,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 
 		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
 		if (no_high_level_players) {
-			if (lev >= HALLOWEEN_DLEV_TOUGHEST) r_idx = RI_PUMPKIN3;//10k HP
-			else {
-				if (lev >= HALLOWEEN_DLEV_TOUGHER) r_idx = RI_PUMPKIN2;//6k HP
-				else r_idx = RI_PUMPKIN1;//3k HP, smallest version
-
-#if 0 /* sometimes tougher? */
-				if (magik(15)) r_idx = RI_PUMPKIN2; /* sometimes tougher */
-				else if (magik(15)) r_idx = RI_PUMPKIN3; /* sometimes tougher */
-#endif
-			}
-
+			r_idx = RI_PUMPKIN;
 			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0) == 0) {
 //spam				s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);
 				great_pumpkin_timer = -1; /* put generation on hold */

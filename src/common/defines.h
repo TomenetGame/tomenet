@@ -1236,8 +1236,8 @@
 #ifndef RPG_SERVER
  #define HALLOWEEN_MAX_PLEV 30
  #define HALLOWEEN_MAX_DLEV 35
- #define HALLOWEEN_DLEV_TOUGHEST 24
- #define HALLOWEEN_DLEV_TOUGHER 12
+ #define HALLOWEEN_DLEV_TOUGHEST 25
+ #define HALLOWEEN_DLEV_TOUGHER 13
 #else
  #define HALLOWEEN_MAX_PLEV 35
  #define HALLOWEEN_MAX_DLEV 40
@@ -1360,9 +1360,10 @@
 #define RI_HELLRAISER		1067
 #define RI_NETHER_GUARD		1068
 #define RI_DOR			1085
-#define RI_PUMPKIN1		1086
-#define RI_PUMPKIN2		1087
-#define RI_PUMPKIN3		1088
+#define RI_PUMPKIN		1088	/* new: max hp version is now _the_ (only) Pumpkin form - its HP get downscaled live on spawn according to floor level. */
+#define RI_PUMPKIN1		1086	/* deprecated (monster too) */
+#define RI_PUMPKIN2		1087	/* deprecated (monster too) */
+#define RI_PUMPKIN3		1088	/* deprecated, replace by RI_PUMPKIN */
 #define RI_ZU_AON		1097
 #define RI_OROME		1098
 #define RI_BRIGHTLANCE		1100
