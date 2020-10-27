@@ -3490,9 +3490,11 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		/* Hack for the Great Pumpkin: HP varies. */
 		if (dlev >= HALLOWEEN_DLEV_TOUGHEST) ; /* Keep its native (aka maximum) HP */
 		else if (dlev >= HALLOWEEN_DLEV_TOUGHER) /* Vary between 2/3 and full HP */
-			m_ptr->maxhp = (m_ptr->maxhp * (20 + ((dlev - HALLOWEEN_DLEV_TOUGHER) * 10) / (HALLOWEEN_DLEV_TOUGHEST - HALLOWEEN_DLEV_TOUGHER))) / 30;
-		else /* Vary between 1/3 and 2/3 HP */
-			m_ptr->maxhp = (m_ptr->maxhp * (10 + ((dlev) * 10) / (HALLOWEEN_DLEV_TOUGHER))) / 30;
+			m_ptr->maxhp = (m_ptr->maxhp * (200 + ((dlev - HALLOWEEN_DLEV_TOUGHER) * 100) / (HALLOWEEN_DLEV_TOUGHEST - HALLOWEEN_DLEV_TOUGHER))) / 300;
+		else if (dlev >= HALLOWEEN_DLEV_TOUGH) /* Vary between 1/3 and 2/3 HP */
+			m_ptr->maxhp = (m_ptr->maxhp * (100 + ((dlev - HALLOWEEN_DLEV_TOUGH) * 100) / (HALLOWEEN_DLEV_TOUGHER - HALLOWEEN_DLEV_TOUGH))) / 300;
+		else /* Stay at minimum: 1/3 HP */
+			m_ptr->maxhp = m_ptr->maxhp / 3;
 	}
 
 	/* And start out fully healthy */
