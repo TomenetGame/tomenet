@@ -19355,7 +19355,7 @@ D:slowly turning around and around forever.
 #Note: Currently, pumpkins are even auto-summoned every 15..45 minutes,
 #search code for 'check_Pumpkin' (capital P) function to see details.
 
-#low HP version
+#low HP version -- DEPRECATED
 N:1086:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:30d100:15:20:0
@@ -19381,7 +19381,7 @@ S:MOAN | SCARE | HOLD | TPORT
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
-#medium HP version
+#medium HP version -- DEPRECATED
 N:1087:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:60d100:15:20:0
@@ -19407,7 +19407,7 @@ S:MOAN | SCARE | HOLD | TPORT
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
-#high HP version
+#Halloween event:
 N:1088:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:100d100:15:20:0
