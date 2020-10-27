@@ -4974,7 +4974,6 @@ void rename_character(char *pnames){
 
 /* Erase a player by hash - C. Blue
    NOTE: This is NOT used for deaths, but ONLY for /erasechar command or for inactivity timeout. */
-#define SAFETY_BACKUP_PLAYER 35 /* create backup when erasing a player whose level is >= this. [40] because that's minimum kinging level. */
 void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 	int i, j;
 	hash_entry *dptr, *pptr = *p_pptr, *ptr = *p_ptr;

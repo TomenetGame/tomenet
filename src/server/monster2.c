@@ -4001,10 +4001,16 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 	struct dun_level *l_ptr = getfloor(wpos);
 
 
-	if (season_halloween && great_pumpkin_timer == 0 && wpos->wz != 0 &&
-	    level_generation_time && /* spawn it only on level generation time? yes, because of high-lev camping TT while lowbies frequent it, spawning it for him */
+	if (season_halloween && great_pumpkin_timer == 0 && wpos->wz != 0
+	    && level_generation_time /* spawn it only on level generation time? yes, because of high-lev camping TT while lowbies frequent it, spawning it for him */
+	    && (lev <= HALLOWEEN_MAX_DLEV)
+#if 1 /* not in Training Tower? */
+	    && !(d_ptr->flags2 & DF2_NO_DEATH)
+#endif
 	    /* Don't waste Great Pumpkins on low-level IDDC floors */
-	    (!in_irondeepdive(wpos) || wpos->wz >= 10)
+	    && (!in_irondeepdive(wpos) || wpos->wz >= 10)
+	    /* Don't generate Pumpkin on floors created by someone using probability travel or player-ghost,
+	       as this can easily lock out everyone from Pumpkin spawns, ie 'ddos' the Pumpkin.. */
 	    && !(l_ptr && (l_ptr->flags1 & LF1_FAST_DIVE))) {
 		bool no_high_level_players = TRUE;
 
@@ -4014,47 +4020,24 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 			//if (is_admin(p_ptr)) continue;
 			if (p_ptr->admin_dm) continue;
 			if (!inarea(&p_ptr->wpos, wpos)) continue;
-#ifndef RPG_SERVER
-			if (p_ptr->max_lev <= 30) continue;
-//spam				s_printf("Great Pumpkin spawn prevented by player>35 %s\n", p_ptr->name);
-#else
-			if (p_ptr->max_lev <= 35) continue;
-//spam				s_printf("Great Pumpkin spawn prevented by player>40 %s\n", p_ptr->name);
-#endif
+			if (p_ptr->max_lev <= HALLOWEEN_MAX_PLEV) continue;
+			//spam	s_printf("Great Pumpkin spawn prevented by player>%d %s\n", HALLOWEEN_MAX_PLEV, p_ptr->name);
 			no_high_level_players = FALSE;
 			break;
 		}
 
 		/* Place a Great Pumpkin sometimes -- WARNING: HARDCODED r_idx */
-#ifndef RPG_SERVER
-		if (no_high_level_players && (lev <= 35)
- #if 1 /* not in Training Tower? */
-		    && !(d_ptr->flags2 & DF2_NO_DEATH)
- #endif
-		    ) {
-			if (lev > 20) r_idx = RI_PUMPKIN3;//10k HP
+		if (no_high_level_players) {
+			if (lev >= HALLOWEEN_DLEV_TOUGHEST) r_idx = RI_PUMPKIN3;//10k HP
 			else {
-				if (lev > 10) r_idx = RI_PUMPKIN2;//6k HP
+				if (lev >= HALLOWEEN_DLEV_TOUGHER) r_idx = RI_PUMPKIN2;//6k HP
 				else r_idx = RI_PUMPKIN1;//3k HP, smallest version
 
- #if 0 /* sometimes tougher? */
+#if 0 /* sometimes tougher? */
 				if (magik(15)) r_idx = RI_PUMPKIN2; /* sometimes tougher */
 				else if (magik(15)) r_idx = RI_PUMPKIN3; /* sometimes tougher */
- #endif
-			}
-#else
-		if (no_high_level_players && (lev <= 40) && !(d_ptr->flags2 & DF2_NO_DEATH)) { /* not in Training Tower */
-			if (lev > 30) r_idx = RI_PUMPKIN3;//6.6k HP
-			else {
-				if (lev > 15) r_idx = RI_PUMPKIN2;//4k HP
-				else r_idx = RI_PUMPKIN1;//2k HP, smallest version
-
- #if 0 /* sometimes tougher? */
-				if (magik(15)) r_idx = RI_PUMPKIN2; /* sometimes tougher */
-				else if (magik(15)) r_idx = RI_PUMPKIN3; /* sometimes tougher */
- #endif
-			}
 #endif
+			}
 
 			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0) == 0) {
 //spam				s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);

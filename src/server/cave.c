@@ -634,33 +634,16 @@ void check_Pumpkin(void) {
 				p_ptr = Players[i];
 				if (is_admin(p_ptr)) continue;
 				if (inarea(&p_ptr->wpos, wpos) &&
-#if 0
- #ifndef RPG_SERVER
-				    (p_ptr->max_lev > 30))
- #else
-				    (p_ptr->max_lev > 40))
- #endif
-#else
- #ifndef RPG_SERVER
-				    (p_ptr->max_lev > 30))
- #else
-				    (p_ptr->max_lev > 35))
- #endif
-#endif
-				{
+				    (p_ptr->max_lev > HALLOWEEN_MAX_PLEV)) {
 					sprintf(msg, "\377oA ghostly force drives you out of this dungeon!");
 					/* log */
-#ifndef RPG_SERVER
-					s_printf("HALLOWEEN: Recalled>30: %s\n", p_ptr->name);
-#else
-					s_printf("HALLOWEEN: Recalled>35: %s\n", p_ptr->name);
-#endif
+					s_printf("HALLOWEEN: Recalled>%d: %s\n", HALLOWEEN_MAX_PLEV, p_ptr->name);
 					/* get him out of here */
 					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 					p_ptr->recall_pos.wz = 0;
-//					p_ptr->word_recall =- 666;/*HACK: avoid recall_player loops! */
+					//p_ptr->word_recall =- 666;/*HACK: avoid recall_player loops! */
 					recall_player(i, msg);
 				}
 			}

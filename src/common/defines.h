@@ -1229,6 +1229,22 @@
 /* Chance for a door that is bashed open to break. */
 #define DOOR_BASH_BREAKAGE	80
 
+/* Create backup when erasing a player whose level is >= this. [40] because that's minimum kinging level. */
+#define SAFETY_BACKUP_PLAYER 35
+
+/* For Halloween event: Floor and player level range allowed for spawn/interaction with Pumpkin */
+#ifndef RPG_SERVER
+ #define HALLOWEEN_MAX_PLEV 30
+ #define HALLOWEEN_MAX_DLEV 35
+ #define HALLOWEEN_DLEV_TOUGHEST 24
+ #define HALLOWEEN_DLEV_TOUGHER 12
+#else
+ #define HALLOWEEN_MAX_PLEV 35
+ #define HALLOWEEN_MAX_DLEV 40
+ #define HALLOWEEN_DLEV_TOUGHEST 30
+ #define HALLOWEEN_DLEV_TOUGHER 15
+#endif
+
 
 /* ----------------------------------------------------------------------- (End of 'features')  ----------------------------------------------------------------------- */
 
