@@ -8627,24 +8627,27 @@ Halloween
     Townspeople will actually give experience (!) but also have a fear-causing
     'touch' attack. They can't really harm you, though.
 
-    Randomly, the Great Pumpkin will appear on dungeon levels, either with low
-    or medium or high amount of hit points, depending on the location.
-    If you cannot beat the high-HP version, you could try leaving the floor to
-    reset it and hope to see the Pumpkin randomly respawn quickly afterwards in
-    easier form. The pumpkin will despawn on its own if it doesn't get defeated
-    before one hour has passed after it appeared. It will quickly respawn on
-    another dungeon level in that case. About 5 minutes before it fades away,
-    nearby players will get a warning message, saying that the Great Pumpkin
+    Randomly, the Great Pumpkin will appear on dungeon levels, its hit points
+    varying from 1/3 to full strength depending on the dungeon level.
+    If you cannot beat it on deeper floors you could try leaving the floor to
+    reset it, wait a bit, and then move to a shallower floor and hope to see
+    the Pumpkin respawn there with less HP.
+    The pumpkin will despawn on its own if it doesn't get defeated before one
+    hour has passed after it appeared. It will quickly respawn on another
+    dungeon level in that case. About 5 minutes before it fades away, nearby
+    players will get a warning message, saying that the Great Pumpkin
     "wails and seems to fade".
 
     The Pumpkin is aiming at intermediate-level characters. It can spawn on any
-    dungeon floor shallower than dungeon level 35 (or 40 on Ironman server*),
-    except it won't show up on the first 19 floors in the Ironman Deep Dive
+    dungeon floor from level 1 to 35 (or 40 on Ironman server*),
+    except it won't show up on the first 9 floors in the Ironman Deep Dive
     Challenge.
+    It will usually be quite tough and might require teamwork to beat.
     Players who are too high level (above 30 on main, above 35 on Ironman*)
     will not be able to hunt him, they will see a message:
      "A ghostly force drives you out of this dungeon!"
-    but for all others he will still be tough and might require teamwork.
+    The IDDC is the only exception: Players of any level may enter a floor that
+    already has the Great Pumpkin on it, without getting teleported away.
 
     The Great Pumpkin does not cause any damage but still has a few annoying
     spells at its disposal. It is level 127 and therefore can drop quite high-

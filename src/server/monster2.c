@@ -4019,7 +4019,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 	    && !(d_ptr->flags2 & DF2_NO_DEATH)
 #endif
 	    /* Don't waste Great Pumpkins on low-level IDDC floors */
-	    && (!in_irondeepdive(wpos) || wpos->wz >= 10)
+	    && (!in_irondeepdive(wpos) || wpos->wz >= HALLOWEEN_IDDC_DLEV)
 	    /* Don't generate Pumpkin on floors created by someone using probability travel or player-ghost,
 	       as this can easily lock out everyone from Pumpkin spawns, ie 'ddos' the Pumpkin.. */
 	    && !(l_ptr && (l_ptr->flags1 & LF1_FAST_DIVE))) {
