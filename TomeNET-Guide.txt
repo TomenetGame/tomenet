@@ -10544,6 +10544,10 @@ LIFE ('It affects your hit points.')
 AGGRAVATE ('It aggravates nearby creatures.')
         Wakes up all monsters in whose radius of awareness you are.
         (Does not haste them as scrolls do, compare to (5.9)).
+REGEN   ('It speeds your hit point regeneration.')
+        Your base HP regeneration speed will double.
+REGEN_MANA ('It speeds your mana recharging.')
+        Your base MP regeneration speed will double.
 DRAIN_MANA ('It drains your magic')
         Slowly drains your MP over time down to zero. Can be countered if your
         MP regeneration happens to be faster than the drain.
