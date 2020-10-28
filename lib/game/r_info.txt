@@ -19345,15 +19345,9 @@ D:slowly turning around and around forever.
 
 
 #Halloween time! Presented by C. Blue ;)
-#note: there are 3 versions of The Great Pumpkin, different only in HP
-#      to fit the strength of current players. Players above level 40 or very
-#      powerful players above 35 should maybe not participate.. too easy?
-
 #Instructions for enabling the Halloween event:
-#-in defines.h uncomment #define HALLOWEEN, recompile ('make clean'), restart.
-#-summmon pumpkins (1086/1087/1088) as you feel like. ;)
-#Note: Currently, pumpkins are even auto-summoned every 15..45 minutes,
-#search code for 'check_Pumpkin' (capital P) function to see details.
+#season_halloween must be = 1. Optionally call geno_towns() to get rid of
+#non-halloween townies. A server restart is not actually required.
 
 #low HP version -- DEPRECATED
 N:1086:The Great Pumpkin
