@@ -7069,8 +7069,8 @@ static void process_various(void) {
 					/* search for Great Pumpkins */
 					if (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3) {
 						msg_print_near_monster(m_idx, "\377oThe Great Pumpkin wails and suddenly vanishes into thin air!");
-						s_printf("HALLOWEEN: The Great Pumpkin despawned.\n");
-						delete_monster_idx(k, TRUE);
+						s_printf("HALLOWEEN: The Great Pumpkin despawned from %d,%d,%d.\n", m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz);
+						delete_monster_idx(m_idx, TRUE);
 						//note_spot_depth(&p_ptr->wpos, y, x);
 						great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 					}
