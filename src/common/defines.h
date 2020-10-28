@@ -303,7 +303,8 @@
 #ifndef ARCADE_SERVER
  #define MAX_SCREEN_WID		SCREEN_WID
 #else
- #define MAX_SCREEN_WID		(SCREEN_WID * 3)
+ //#define MAX_SCREEN_WID		(SCREEN_WID * 3)	/* For experimental screen-size code testing in the future */
+ #define MAX_SCREEN_WID		SCREEN_WID
 #endif
 #define MAX_SCREEN_HGT		(SCREEN_HGT * 2)
 
