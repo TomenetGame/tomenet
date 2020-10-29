@@ -1,0 +1,11 @@
+#Moltor's Arcade: Macro file for 'Other Games'
+
+# -----------------------------------------------------------------------------
+
+# Macro '0' - F1
+A::%:\n:%:{oHELP for currently loaded macro set 'Other Games':\n:%:F1 - Display this help\n:%:{sSHIFT+F12 - Switch game{-\n:%:\n
+H:^__FFBE\r
+
+# Macro '1' - SHIFT+F12
+A:%larcade-x11-tron.prf\r\e:%:TRON macros loaded.\r
+H:^_S_FFC9\r
