@@ -9,3 +9,9 @@ H:^__FFBE\r
 # Macro '1' - SHIFT+F12
 A:%larcade-x11-tron.prf\r\e:%:TRON macros loaded.\r
 H:^_S_FFC9\r
+
+# --- To do: Add/implement games: ---
+
+#A::command: play food\n
+
+#A::command: play boat\n

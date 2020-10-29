@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 
 # Macro '0' - F1
-A::%:\n:%:{oHELP for currently loaded macro set 'Smash'em':\n:%:{GArrow keys or number pad 2/4/6/8 to change direction.{-\n:%:F1 - Display this help, {GF2 - Enter arena, F3 - Start Tron, {-F4 - Quit\n:%:F5 - Toggle walls, F6 - gates, F7 - midgate, F8 - rings\n:%:F9 - Moving powerups, F10 - Mega up, F11 - Fog of war, F12 - Toggle tails\n:%:SHIFT+F1 - Show options, F2 - Toggle size-win, F3 - race, F4 - AI enemies\n:%:SHIFT+F5 - Reset Tron, {sF12 - Switch game{-\n:%:\n
+A::%:\n:%:{oHELP for currently loaded macro set 'Smash'em':\n:%:q/w/e a/s/d yz/x/c - Fire in that direction, SPACE - Cease fire\n:%:F1 - Display this help, F2 - Start Smash'em, F3 - Start harder, F4 - Quit\n:%:{sSHIFT+F12 - Switch game{-\n:%:\n
 H:^__FFBE\r
 
 # Macro '1'
@@ -21,7 +21,6 @@ H:^__FFC1\r
 # Macro '4'
 A:%larcade-x11-other.prf\r\e:%:Other games macros loaded.\r
 H:^_S_FFC9\r
-
 
 
 
