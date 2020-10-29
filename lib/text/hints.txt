@@ -14,7 +14,7 @@ Potions of resistance protect both you and your inventory from harm!
 Even a jack of all trades should still maximise at least one of his skills!
 Don't train multiple weapon types at once. Instead, specialize in one!
 If specializing in martial arts, only light armour will help, if any at all!
-Races and classes have many special abilities. Make sure to read up on them!
+Races and classes may gave special abilities. Make sure to read up on them!
 Have a question? Make sure to read the text file 'TomeNET-Guide.txt' too!
 If you die and want to keep your items, just ask other players for help!
 Keep in mind that true artifacts cannot be dropped in houses but will vanish!
