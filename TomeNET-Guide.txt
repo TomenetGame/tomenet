@@ -21248,7 +21248,13 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   This might affect three factors randomly: An actual weapon reward, whether or
   not you might gain a shield for reward, whether you might get light or heavy
   armour for reward. Keep in mind that there is still a random factor in what
-  item you will actually get.
+  item you will actually get, so for example there is no guarantee to receive a
+  weapon, it could still randomly turn out as a piece of armour instead.
+  If you wield a sword or blunt weapon, you have a decent chance to receive a
+  shield instead of a weapon for reward. Somewhat less chance when you wield an
+  axe and the least chance to receive a shield if you wield a polearm wepaon.
+  If you receive a weapon (and don't have Anti-magic skill) it will be a 2-h
+  weapon if you are currently wielding a 2-h weapon.
   Note that you will not receive a shield if you're dual-wielding or if your
   class is rogue.
   Regarding weapon weight, note that a weapon reward will usually not give you
