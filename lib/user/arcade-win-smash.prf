@@ -1,0 +1,141 @@
+#Moltor's Arcade: Macro file for 'Smash'em'
+
+# -----------------------------------------------------------------------------
+
+# Macro '0' - F1
+A::%:\n:%:{oHELP for currently loaded macro set 'Smash'em':\n:%:q/w/e a/s/d yz/x/c - Fire in that direction, SPACE - Cease fire\n:%:F1 - Display this help, F2 - Start Smash'em, F3 - Start harder, F4 - Quit\n:%:{sSHIFT+F12 - Switch game{-\n:%:\n
+H:^_x3B\r
+
+# Macro '1' - F2
+A::command:\splay\ssmash\r
+H:^_x3C\r
+
+# Macro '2' - F3
+A::command:play\s2smash\r
+H:^_x3D\r
+
+# Macro '3' - F4
+A::quit\r
+H:^_x3E\r
+
+# Macro '4' - SHIFT+F12
+A:%larcade-x11-other.prf\r\e:%:Other games macros loaded.\r
+H:^_Sx58\r
+
+
+
+# Macro '5'
+A:<
+H:,
+
+# Macro '6'
+A:<
+H:^__FFAC\r^\,^\
+
+# Macro '7'
+A::command:\scease\sfire\r
+H:s
+
+# Macro '8'
+A::command:\sfire\s1\r
+H:y
+
+# Macro '9'
+A::command:\sfire\s1\r
+H:z
+
+# Macro '10'
+A::command:\sfire\s2\r
+H:x
+
+# Macro '11'
+A::command:\sfire\s3\r
+H:c
+
+# Macro '12'
+A::command:\sfire\s4\r
+H:a
+
+# Macro '13'
+A::command:\sfire\s6\r
+H:d
+
+# Macro '14'
+A::command:\sfire\s7\r
+H:q
+
+# Macro '15'
+A::command:\sfire\s8\r
+H:w
+
+# Macro '16'
+A::command:\sfire\s9\r
+H:e
+
+# Macro '17'
+A:2
+H:^__FFB2\r^\2^\
+
+# Macro '18'
+A:4
+H:^__FFB4\r^\4^\
+
+# Macro '19'
+A:6
+H:^__FFB6\r^\6^\
+
+# Macro '20'
+A:8
+H:^__FFB8\r^\8^\
+
+# Macro '21'
+A:1
+H:^__FFB1\r^\1^\
+
+# Macro '22'
+A:3
+H:^__FFB3\r^\3^\
+
+# Macro '23'
+A:5
+H:^__FFB5\r^\5^\
+
+# Macro '24'
+A:7
+H:^__FFB7\r^\7^\
+
+# Macro '25'
+A:9
+H:^__FFB9\r^\9^\
+
+# Macro '26'
+A:\e\e\\.1
+H:^_S_FF9C\r
+
+# Macro '27'
+A:\e\e\\.2
+H:^_S_FF99\r
+
+# Macro '28'
+A:\e\e\\.3
+H:^_S_FF9B\r
+
+# Macro '29'
+A:\e\e\\.4
+H:^_S_FF96\r
+
+# Macro '30'
+A:\e\e\\.6
+H:^_S_FF98\r
+
+# Macro '31'
+A:\e\e\\.7
+H:^_S_FF95\r
+
+# Macro '32'
+A:\e\e\\.8
+H:^_S_FF97\r
+
+# Macro '33'
+A:\e\e\\.9
+H:^_S_FF9A\r
