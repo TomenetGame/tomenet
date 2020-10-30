@@ -19,7 +19,7 @@ A::quit\r
 H:^_x3E\r
 
 # Macro '4' - SHIFT+F12
-A:%larcade-x11-other.prf\r\e:%:Other games macros loaded.\r
+A:%larcade-win-other.prf\r\e:%:Other games macros loaded.\r
 H:^_Sx58\r
 
 

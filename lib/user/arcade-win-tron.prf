@@ -81,7 +81,7 @@ A::reset\stron\n
 H:^_Sx3F\r
 
 # Macro '17' - SHIFT+F12
-A:%larcade-x11-smash.prf\n\e:%:SMASH\smacros\sloaded.\n
+A:%larcade-win-smash.prf\n\e:%:SMASH\smacros\sloaded.\n
 H:^_Sx58\r
 
 # Macro '18' - Movement Number Pad

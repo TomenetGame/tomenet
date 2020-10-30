@@ -7,7 +7,7 @@ A::%:\n:%:{oHELP for currently loaded macro set 'Other Games':\n:%:F1 - Display 
 H:^_x3B\r
 
 # Macro '1' - SHIFT+F12
-A:%larcade-x11-tron.prf\r\e:%:TRON macros loaded.\r
+A:%larcade-win-tron.prf\r\e:%:TRON macros loaded.\r
 H:^_Sx58\r
 
 # --- To do: Add/implement games: ---
