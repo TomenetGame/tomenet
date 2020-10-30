@@ -3772,14 +3772,13 @@ static void init_stuff(void) {
 /*
  * Get a number from command line
  */
-static int cmd_get_number(char *str, int *number)
-{
+static int cmd_get_number(char *str, int *number) {
 	int i, tmp = 0;
 
 	/* Skip any spaces */
 	for (i = 0; str[i] == ' ' && str[i] != '\0'; i++);
 
-	for (; str[i] != '\0'; i++) {
+	for (; str[i] != ' ' && str[i] != '\0'; i++) {
 		/* Confirm number */
 		if ('0' <= str[i] && str[i] <= '9') {
 			tmp *= 10;
@@ -3787,7 +3786,6 @@ static int cmd_get_number(char *str, int *number)
 		}
 		else break;
 	}
-
 	*number = tmp;
 
 	/* Find the next space */
@@ -3800,8 +3798,7 @@ static int cmd_get_number(char *str, int *number)
  * Get a string from command line.
  * dest is the destination buffer and n is the size of that buffer.
  */
-static int cmd_get_string(char *str, char *dest, int n)
-{
+static int cmd_get_string(char *str, char *dest, int n, bool quoted) {
 	int start, end, len;
 
 	/* Skip any spaces */
@@ -3810,7 +3807,9 @@ static int cmd_get_string(char *str, char *dest, int n)
 	/* Check for a double quote */
 	if (str[start] == '"') {
 		start++;
-
+		/* Find another double quote */
+		for (end = start; str[end] != '"' && str[end] != '\0'; end++);
+	} else if (quoted) {
 		/* Find another double quote */
 		for (end = start; str[end] != '"' && str[end] != '\0'; end++);
 	} else {
@@ -3887,7 +3886,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 	hInstance = hInst;  /* save in a global var */
 
 	int i, n;
-	bool done = FALSE;
+	bool done = FALSE, quoted = FALSE;
 	u32b seed;
 
 
@@ -4048,20 +4047,20 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					quit(NULL);
 					break;
 				case 'l': /* account name & password */
-					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS);
-					i += cmd_get_string(&lpCmdLine[i + 1], pass, MAX_CHARS);
+					i += cmd_get_string(&lpCmdLine[i + 1], nick, MAX_CHARS, quoted);
+					i += cmd_get_string(&lpCmdLine[i + 1], pass, MAX_CHARS, FALSE);
 					done = TRUE;
 					break;
 				case 'R':
 					auto_reincarnation = TRUE;
 				case 'N': /* character name */
-					i += cmd_get_string(&lpCmdLine[i + 1], cname, MAX_CHARS);
+					i += cmd_get_string(&lpCmdLine[i + 1], cname, MAX_CHARS, quoted);
 					break;
 				case 'p': /* port */
 					i += cmd_get_number(&lpCmdLine[i + 1], (int*)&cfg_game_port);
 					break;
 				case 'P': /* lib directory path */
-					i += cmd_get_string(&lpCmdLine[i + 1], path, 1024);
+					i += cmd_get_string(&lpCmdLine[i + 1], path, 1024, quoted);
 					break;
 				case 'q':
 					quiet_mode = TRUE;
@@ -4088,11 +4087,16 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					save_chat = 3;
 					break;
 			}
+			quoted = FALSE;
 		} else if (lpCmdLine[i] == ' ') {
 			/* Ignore spaces */
+		} else if (lpCmdLine[i] == '"') {
+			/* For handling via Wine: It automatically adds spaces when an argument contains an escape-sequence such as '\ ' for a space for example */
+			quoted = !quoted;
 		} else {
 			/* Get a server name */
-			i += cmd_get_string(&lpCmdLine[i], svname, MAX_CHARS);
+			i += cmd_get_string(&lpCmdLine[i], svname, MAX_CHARS, quoted);
+			quoted = FALSE;
 		}
 	}
 
