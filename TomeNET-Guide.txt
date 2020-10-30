@@ -8620,7 +8620,7 @@ reason. The ending date means that somewhen after the beginning of that day,
 the event will end:
 
 Halloween
-    Running from 26th October till 2nd November.
+    Running from 26th October till 3rd November.
     The server will recall all players (20 minutes ahead warning will be
     displayed) and restart. After that, Halloween is live and costumes can be
     found and stored costumes can be worn again.
