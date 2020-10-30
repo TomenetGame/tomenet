@@ -607,8 +607,6 @@ void do_cmd_go_up(int Ind) {
 			if (surface || tower) z_max = wild_info[wpos->wy][wpos->wx].tower->maxdepth; //into a tower or further up the tower
 			else z_max = 0; //from dungeon upwards until surface (redundant, actually)
 
-			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
-
 			do {
 				wpos->wz++;
 
@@ -639,6 +637,8 @@ void do_cmd_go_up(int Ind) {
 				msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
 				return;
 			}
+
+			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 			msg_print(Ind, "You float upwards.");
 
 			/* A player has left this depth -- process partially here */
@@ -1453,8 +1453,6 @@ void do_cmd_go_down(int Ind) {
 			if (surface || dungeon) z_min = -wild_info[wpos->wy][wpos->wx].dungeon->maxdepth; //into a dungeon or further down the dungeon
 			else z_min = 0; //from tower downwards until surface (redundant, actually)
 
-			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
-
 			do {
 				wpos->wz--;
 
@@ -1484,6 +1482,8 @@ void do_cmd_go_down(int Ind) {
 				msg_print(Ind, "There is a magical discharge in the air as probability travel fails!");
 				return;
 			}
+
+			p_ptr->new_level_method = LEVEL_PROB_TRAVEL;
 			msg_print(Ind, "You float downwards.");
 
 			/* A player has left this depth -- process partially here */
