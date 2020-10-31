@@ -2559,23 +2559,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF4_OFFSET+30:
 		if (season_halloween) {
 			/* Halloween event code for ranged MOAN -C. Blue */
-
 			disturb(Ind, 1, 0);
-			switch(rand_int(4)) {
 			/* Colour change for Halloween */
-			case 0:
-				msg_format(Ind, "\377o%^s screams: Trick or treat!", m_name);
-				break;
-			case 1:
-				msg_format(Ind, "\377o%^s says: Happy halloween!", m_name);
-				break;
-			case 2:
-				msg_format(Ind, "\377o%^s moans loudly.", m_name);
-				break;
-			case 3:
-				msg_format(Ind, "\377o%^s says: Have you seen The Great Pumpkin?", m_name);
-				break;
-			}
+			msg_format(Ind, "\377o%^s %s", m_name, desc_moan_halloween[rand_int(4)]);
 		}
 		break;
 
@@ -4506,23 +4492,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	case RF4_OFFSET+30:
 		if (season_halloween) {
 			/* Halloween event code for ranged MOAN -C. Blue */
-
 			disturb(Ind, 1, 0);
-			switch(rand_int(4)) {
 			/* Colour change for Halloween */
-			case 0:
-				msg_format(Ind, "\377o%^s screams: Trick or treat!", m_name);
-				break;
-			case 1:
-				msg_format(Ind, "\377o%^s says: Happy halloween!", m_name);
-				break;
-			case 2:
-				msg_format(Ind, "\377o%^s moans loudly.", m_name);
-				break;
-			case 3:
-				msg_format(Ind, "\377o%^s says: Have you seen The Great Pumpkin?", m_name);
-				break;
-			}
+			msg_format(Ind, "\377o%^s %s", m_name, desc_moan_halloween[rand_int(4)]);
 		}
 		break;
 

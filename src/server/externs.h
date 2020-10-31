@@ -999,6 +999,7 @@ extern void load_banlist(void);
 extern void load_quests(void);
 
 /* melee1.c */
+extern cptr desc_moan_halloween[];
 /* melee2.c */
 extern bool monst_check_grab(int m_idx, int mod, cptr desc);
 extern int mon_will_run(int Ind, int m_idx);
