@@ -3019,6 +3019,9 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 				}
 			}
 
+			/* Book doesn't contain a spell in the selected slot */
+			if (spell == -1) break;
+
 			cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
 			if (cost > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
 
