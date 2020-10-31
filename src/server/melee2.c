@@ -11550,6 +11550,10 @@ void process_monsters(void) {
 			} else m_ptr->charmedignore = 0; /* Charmer is gone, break the spell */
 		}
 
+
+		/* ----- begin scanning for target players ----- */
+
+
 		/* Make sure we don't store up too much energy */
 		//if (m_ptr->energy > tmp) m_ptr->energy = tmp;
 		m_ptr->energy = tmp;
@@ -11593,6 +11597,55 @@ void process_monsters(void) {
 		}
 		if (closest == -1)
 #endif
+		/* Hack for Great Pumpkin to announce his presence nearby */
+		if (m_ptr->r_idx == RI_PUMPKIN && !m_ptr->csleep && !rand_int(300)) {
+			for (pl = 1; pl <= NumPlayers; pl++)  {
+				p_ptr = _Players[pl];
+				p_ptr->tmp_x = 0;
+
+				/* Only check him if he is playing */
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+
+				/* Make sure he's on the same dungeon level */
+				if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
+				/* Hack -- make the dungeon master invisible to monsters */
+				if (p_ptr->admin_dm && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) continue; /* for Dungeon Master GF_DOMINATE */
+
+				/*
+				 * Hack -- Ignore players that have died or left
+				 * as suggested by PowerWyrm - mikaelh */
+				if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) continue;
+
+				/* Monsters serve a king on his land they dont attack him */
+				// if (player_is_king(pl)) continue;
+
+				/* Compute distance */
+				j = distance(p_ptr->py, p_ptr->px, fy, fx);
+
+				/* Hack - indicate where the Pumpkin is approximately, if out of view */
+				if (!los(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx) || j > MAX_SIGHT) {
+					int yd = ABS(p_ptr->py - fy), xd = ABS(p_ptr->px - fx);
+					cptr c;
+
+					if (yd > xd * 2) {
+						if (p_ptr->py > fy) c = "north";
+						else c = "south";
+					} else if (xd > yd * 2) {
+						if (p_ptr->px > fx) c = "west";
+						else c = "east";
+					} else if (p_ptr->py > fy) {
+						if (p_ptr->px > fx) c = "north-west";
+						else c = "north-east";
+					} else {
+						if (p_ptr->px > fx) c = "south-west";
+						else c = "south-east";
+					}
+					msg_format(pl, "\377oYou hear a ghastly moan from the %s..", c);
+				}
+			}
+		}
+
 		/* Find the closest player */
 		for (pl = 1, n = NumPlayers; pl <= n; pl++)  {
 			p_ptr = _Players[pl];
@@ -11837,7 +11890,6 @@ void process_monsters(void) {
 			/* We can "sense" the player */
 			test = TRUE;
 		}
-
 		/* Handle "sight" and "aggravation" */
 #if 0
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&
