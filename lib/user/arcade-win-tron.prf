@@ -84,7 +84,7 @@ H:^_Sx3F\r
 A:%larcade-win-smash.prf\n\e:%:SMASH\smacros\sloaded.\n
 H:^_Sx58\r
 
-# Macro '18' - Movement Number Pad
+# Macro '18' - Movement Numbers/Number Pad
 A::command:\sfire\s2\r
 H:2
 
@@ -100,7 +100,7 @@ H:6
 A::command:\sfire\s8\r
 H:8
 
-# Macro '22' - Movement Arrow Keys
+# Macro '22' - Movement Arrow Keys/Number Pad
 A::command:\sfire\s2\r
 H:^_x50\r
 
