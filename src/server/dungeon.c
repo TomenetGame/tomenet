@@ -10087,6 +10087,7 @@ void process_timers() {
 		}
 	}
 
+#ifndef ARCADE_SERVER /* no stables in that town.. */
 	/* With addition of horse stables in Bree, cycle horses */
 	if (((turn % (cfg.fps * 600)) / cfg.fps) <= 37) { // '<=' limit check not really needed, it's not like we're wasting much cpu cycles :-s
 		wpos.wx = 32;
@@ -10137,6 +10138,7 @@ void process_timers() {
 			}
 		}
 	}
+#endif
 }
 
 /* during new years eve, cast fireworks! - C. Blue
