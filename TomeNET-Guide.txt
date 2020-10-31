@@ -2654,7 +2654,19 @@ party can get both items.
 In addition to Crowns, Hammers and a bunch of random loot, he will also drop
 specifically one additional random 'great' item per player in the party which
 defeated him (similar to items obtained by Acquirement scrolls, but with an
-even higher chance to turn out quite expensive).
+even higher chance to turn out quite expensive). If it was just a solo player
+he will receive one such item.
+For _unworldy_ parties that defeat him, there are further special drops added:
+For a party of at least 2 players, an extra randart will drop.
+For a party of at least 3 players, he will even - for each player above 2 -
+drop one scroll of Artifact Creation. So 3 players -> 1 scroll, 4 -> 2, etc.
+These party rewards require the appropriate number of players to be all present
+on the floor when he is defeated, of course.
+Note that everlasting parties are already rewarded indirectly by obtaining the
+possibility for easy "rekinging", as only the player who gets the final blow
+will get the actual kill credit, meaning that the other players can still make
+Morgoth spawn again, should the need arise to regain their royal titles,
+without having to resort to donating at "The Mirror" (compare (4.5a)).
 
 A very dangerous thing about the Nazgul is that weapons get quickly destroyed
 if they come in contact with these corrupted beings.
@@ -2750,7 +2762,7 @@ at close quarters combat. In general, do not underestimate Sauron's power!
  same party as the player who lands the killing blow will get credit for
  winning the game and receive a royal title accordingly.
 -For unworldy (no-ghost) parties there are extra rewards for beating Morgoth as
- a team since they cannot profit from the re-kinging potential that others get
+ a team since they cannot profit from the rekinging potential that others get
  from this. So unwordlies, if they beat Morgoth in a team, will get..
  -An extra randart drop of 'combat' treasure class.
  -Extra artifact creation scrolls for every player more than two (so trio+).
