@@ -10976,6 +10976,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "Player '%s' score = %u", total_points(i));
 				return;
 			}
+			else if (prefix(messagelc, "/chkpump")) { /* check for existance of the Great Pumpkin */
+				monster_type *m_ptr;
+
+				for (i = 1; i < m_max; i++) {
+					m_ptr = &m_list[i];
+					if (m_ptr->r_idx != RI_PUMPKIN) continue;
+					msg_format(Ind, "Pumpkin (%d min, %d/%d HP) on (%d,%d,%d).", great_pumpkin_duration, m_ptr->hp, m_ptr->maxhp, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz);
+				}
+				msg_format(Ind, "Timer = %d.", great_pumpkin_timer);
+				return;
+			}
 		}
 	}
 
