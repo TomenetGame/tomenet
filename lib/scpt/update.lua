@@ -33,7 +33,7 @@ __update_table = {
 	"scpt/m_tcontact.lua",
 	"scpt/m_mintrusion.lua",
 
-	"scpt/powers.lua",
+--	"scpt/powers.lua",
 	"scpt/meta.lua",
 	"scpt/xml.lua",
 
@@ -87,7 +87,7 @@ __update_table = {
 	"scpt/m_tcontact.lua",
 	"scpt/m_mintrusion.lua",
 
-	"scpt/powers.lua",
+--	"scpt/powers.lua",
 	"scpt/meta.lua",
 	"scpt/xml.lua",
 
@@ -138,7 +138,7 @@ __update_table = {
 	"scpt/m_tcontact.lua",
 	"scpt/m_mintrusion.lua",
 
-	"scpt/powers.lua",
+--	"scpt/powers.lua",
 	"scpt/meta.lua",
 	"scpt/xml.lua",
 
@@ -187,7 +187,7 @@ __update_table = {
 	"scpt/m_tcontact.lua",
 	"scpt/m_mintrusion.lua",
 
-	"scpt/powers.lua",
+--	"scpt/powers.lua",
 	"scpt/meta.lua",
 	"scpt/xml.lua",
 
