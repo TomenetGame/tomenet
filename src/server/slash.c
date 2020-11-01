@@ -1490,7 +1490,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_print(Ind, "\374 1) On the TomeNET website where you can search it online or download it.");
 			msg_print(Ind, "\374 2) In your installed TomeNET folder, it's the file 'TomeNET-Guide.txt'.");
 			msg_print(Ind, "\374    If you used the installer it has placed a Guide shortcut on your desktop!");
-			msg_print(Ind, "\374 3) In-game: Press \377y~ g\377w in the game to invoke the guide, then \377y?\377w for help.");
+			msg_print(Ind, "\374 3) In-game: Press \377y~ g\377w or \377y? ?\377w in the game to invoke the guide, then \377y?\377w for help.");
 			msg_print(Ind, "\374\377s To update the guide, either download it manually and place it into your");
 			msg_print(Ind, "\374\377s TomeNET folder, or run the TomeNET-updater to do this for you automatically.");
 			msg_print(Ind, "\374--------------------------------------------------------------------------------");
