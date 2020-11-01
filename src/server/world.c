@@ -565,6 +565,7 @@ void world_chat(uint32_t id, char *text) {
 		    streq(t, "ai on") || streq(t, "ai off") || streq(t, "midgate on") || streq(t, "midgate off") ||
 		    streq(t, "spectating on") || streq(t, "spectating off") || streq(t, "more rings") || streq(t, "less rings") ||
 		    streq(t, "race on") || streq(t, "race off") || streq(t, "less gate speed") || streq(t, "more gate speed") ||
+		    streq(t, "more length") || streq(t, "less length") ||
 		    //streq(t, "") || streq(t, "") || streq(t, "") || streq(t, "") ||
 		    FALSE)
 			return;
