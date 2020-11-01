@@ -169,8 +169,8 @@ X11BASE = /opt/X11
 ## Variant for x11+ncurses (gcu)
 ##
 ## With SDL
-CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags` -DACC32 
-LIBS = -lX11 -lncurses -lgcrypt -lm -lSDL_mixer
+CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags` -DACC32
+LIBS = -lX11 -lncurses -lm -lSDL_mixer
 LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
