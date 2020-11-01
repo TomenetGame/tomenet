@@ -12,7 +12,7 @@
 # -----------------------------------------------------------------------------
 
 # Macro '0' - F1
-A::%:\n:%:{oHELP for currently loaded macro set 'Tron':\n:%:{GArrow keys or number pad 2/4/6/8 to change direction.{-\n:%:F1 - Display this help, {GF2 - Enter arena, F3 - Start Tron, {-F4 - Quit\n:%:F5 - Toggle walls, F6 - gates, F7 - midgate, F8 - rings\n:%:F9 - Moving powerups, F10 - Mega up, F11 - Fog of war, F12 - Toggle tails\n:%:SHIFT+F1 - Show options, F2 - Toggle size-win, F3 - race, F4 - AI enemies\n:%:SHIFT+F5 - Reset Tron, {sF12 - Switch game{-\n:%:\n
+A::%:\n:%:{oHELP for currently loaded macro set 'Tron':\n:%:{GArrow keys or number pad 2/4/6/8 to change direction.{-\n:%:F1 - Display this help, {GF2 - Enter arena, F3 - Start Tron, {-F4 - Quit\n:%:F5 - Toggle walls, F6 - gates, F7 - midgate, F8 - rings\n:%:F9 - Moving powerups, F10 - Mega up, F11 - Fog of war, F12 - Toggle tails\n:%:SHIFT+F1 - Show options, F2 - Toggle size-win, F3 - race, F4 - AI enemies\n:%:SHIFT+F5/F6 - Less/more speed, F7/F8 - Less/more length\n:%:SHIFT+F9/F10 - Less/more walls, F11 - Reset Tron, {sF12 - Switch game{-\n:%:\n
 H:^__FFBE\r
 
 # Macro '1' - F2
@@ -76,9 +76,33 @@ H:^_S_FFC0\r
 A::ai\n
 H:^_S_FFC1\r
 
-# Macro '16' - SHIFT+F5
-A::reset tron\n
+# Macro '' - SHIFT+F5
+A::less speed\n
 H:^_S_FFC2\r
+
+# Macro '' - SHIFT+F6
+A::more speed\n
+H:^_S_FFC3\r
+
+# Macro '' - SHIFT+F7
+A::less length\n
+H:^_S_FFC4\r
+
+# Macro '' - SHIFT+F8
+A::more length\n
+H:^_S_FFC5\r
+
+# Macro '' - SHIFT+F9
+A::less walls\n
+H:^_S_FFC6\r
+
+# Macro '' - SHIFT+F10
+A::more walls\n
+H:^_S_FFC7\r
+
+# Macro '' - SHIFT+F11
+A::reset tron\n
+H:^_S_FFC8r
 
 # Macro '17' - SHIFT+F12
 A:%larcade-x11-smash.prf\n\e:%:SMASH macros loaded.\n

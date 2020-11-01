@@ -12,11 +12,11 @@
 # -----------------------------------------------------------------------------
 
 # Macro '0' - F1
-A::%:\n:%:{oHELP\sfor\scurrently\sloaded\smacro\sset\s'Tron':\n:%:{GArrow\skeys\sor\snumber\spad\s2/4/6/8\sto\schange\sdirection.{-\n:%:F1\s-\sDisplay\sthis\shelp,\s{GF2\s-\sEnter\sarena,\sF3\s-\sStart\sTron,\s{-F4\s-\sQuit\n:%:F5\s-\sToggle\swalls,\sF6\s-\sgates,\sF7\s-\smidgate,\sF8\s-\srings\n:%:F9\s-\sMoving\spowerups,\sF10\s-\sMega\sup,\sF11\s-\sFog\sof\swar,\sF12\s-\sToggle\stails\n:%:SHIFT+F1\s-\sShow\soptions,\sF2\s-\sToggle\ssize-win,\sF3\s-\srace,\sF4\s-\sAI\senemies\n:%:SHIFT+F5\s-\sReset\sTron,\s{sF12\s-\sSwitch\sgame{-\n:%:\n
+A::%:\n:%:{oHELP for currently loaded macro set 'Tron':\n:%:{GArrow keys or number pad 2/4/6/8 to change direction.{-\n:%:F1 - Display this help, {GF2 - Enter arena, F3 - Start Tron, {-F4 - Quit\n:%:F5 - Toggle walls, F6 - gates, F7 - midgate, F8 - rings\n:%:F9 - Moving powerups, F10 - Mega up, F11 - Fog of war, F12 - Toggle tails\n:%:SHIFT+F1 - Show options, F2 - Toggle size-win, F3 - race, F4 - AI enemies\n:%:SHIFT+F5/F6 - Less/more speed, F7/F8 - Less/more length\n:%:SHIFT+F9/F10 - Less/more walls, F11 - Reset Tron, {sF12 - Switch game{-\n:%:\n
 H:^_x3B\r
 
 # Macro '1' - F2
-A::command:\splay\stron\n
+A::command: play tron\n
 H:^_x3C\r
 
 # Macro '2' - F3
@@ -76,9 +76,33 @@ H:^_Sx3D\r
 A::ai\n
 H:^_Sx3E\r
 
-# Macro '16' - SHIFT+F5
-A::reset\stron\n
+# Macro '' - SHIFT+F5
+A::less speed\n
 H:^_Sx3F\r
+
+# Macro '' - SHIFT+F6
+A::more speed\n
+H:^_Sx40\r
+
+# Macro '' - SHIFT+F7
+A::less length\n
+H:^_Sx41\r
+
+# Macro '' - SHIFT+F8
+A::more length\n
+H:^_Sx42\r
+
+# Macro '' - SHIFT+F9
+A::less walls\n
+H:^_Sx43\r
+
+# Macro '' - SHIFT+F10
+A::more walls\n
+H:^_Sx44\r
+
+# Macro '16' - SHIFT+F11
+A::reset\stron\n
+H:^_Sx57\r
 
 # Macro '17' - SHIFT+F12
 A:%larcade-win-smash.prf\n\e:%:SMASH\smacros\sloaded.\n

@@ -21407,9 +21407,11 @@ shoot. For details press '?' in the game.
 
 The Smash'em macros provide the following controls:
 
-    F1              starts the game.
-    F2              starts the game at level 4, skipping the early
+    F1              display help
+    F2              starts the game.
+    F3              starts the game at level 4, skipping the early
                     levels if you feel that those are too easy.
+    F4              quit the game.
 
     q,w,e           makes your character auto-fire in the according
     a, ,d            direction (y key works same as z key).
@@ -21421,9 +21423,7 @@ The Smash'em macros provide the following controls:
 
     numpad          movement.
 
-    Q               quit game.
-
-    TAB             switch macro set from "Smash'em" to "Tron".
+    SHIFT+F12       switch macro set to other games (cyclic, keep tapping).
 
 
 Tron
@@ -21436,28 +21436,39 @@ Up to four players can participate at once. For details press '?' in the game.
 
 The Tron macros provide the following controls:
 
-    F3              enter arena.
-    F4              start game.
+    F1              display help
+    F2              enter arena.
+    F3              start game.
+    F4              quit the game.
 
-    F5              list options.
+    F5              walls.
+    F6              gates.
+    F7              midgate.
+    F8              rings.
+    F9              moveups(+float).
+    F10             centerups.
+    F11             dark.
+    F1              snakes.
 
-    F6              reduce game speed.
-    F7              increase game speed.
+    SHIFT+F1        options
+    SHIFT+F2        maxwins (reach tail size to win).
+    SHIFT+F3        race.
+    SHIFT+F4        ai opponents, filling in for players.
 
-    F9              reduce snake max length.
-    F10             increase snake max length.
-
-    F11             reduce amount of walls.
-    F12             increase amount of walls.
+    SHIFT+F5        reduce game speed.
+    SHIFT+F6        increase game speed.
+    SHIFT+F7        reduce snake max length.
+    SHIFT+F8        increase snake max length.
+    SHIFT+F9        less walls.
+    SHIFT+F10       more walls.
 
     Arrow keys or   movement.
     numpad 2,4,6,8
 
-    Q               quit game.
+    SHIFT+F11       reset tron.
+    SHIFT+F12       switch macro set to other games (cyclic, keep tapping).
 
-    TAB             switch macro set from "Tron" to "Smash'em".
-
-Hit F4 as soon as at least two players have joined the areana via F3 key to
+Hit F3 as soon as at least two players have joined the areana via F2 key to
 start the actual match.
 
 To toggle an option, type "option" or "option on"/"option off" in chat.
