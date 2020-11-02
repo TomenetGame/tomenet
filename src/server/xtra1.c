@@ -494,6 +494,9 @@ static void prt_bpr(int Ind) {
 		break;
 	}
 
+	/* Indicate temporary +EA buffs, but only if we can attack at all */
+	if (p_ptr->extra_blows && p_ptr->num_blow) attr = TERM_L_BLUE;
+
 	Send_bpr(Ind, p_ptr->num_blow, attr);
 }
 
@@ -2973,9 +2976,7 @@ void calc_boni(int Ind) {
 	int old_dis_to_h, old_to_h_melee;
 	int old_dis_to_d, old_to_d_melee;
 
-	//int extra_blows;
-	int extra_shots;
-	int extra_spells;
+	int extra_blows_tmp, extra_shots, extra_spells;
 	byte never_blow = 0x0;
 	bool never_blow_ranged = FALSE;
 
@@ -3039,8 +3040,7 @@ void calc_boni(int Ind) {
 	old_to_d_melee = p_ptr->to_d_melee;
 
 	/* Clear extra blows/shots */
-	//extra_blows = extra_shots = extra_spells = 0;
-	extra_shots = extra_spells = 0;
+	extra_blows_tmp = extra_shots = extra_spells = 0;
 
 	/* Clear the stat modifiers */
 	for (i = 0; i < 6; i++) p_ptr->stat_tmp[i] = p_ptr->stat_add[i] = 0;
@@ -4553,14 +4553,22 @@ void calc_boni(int Ind) {
 			p_ptr->to_d += 8;
 			p_ptr->dis_to_d += 8;
 		}
-		if (p_ptr->adrenaline & 2) p_ptr->extra_blows++;
+		if (p_ptr->adrenaline & 2) {
+			extra_blows_tmp++;
+			p_ptr->extra_blows++;
+		}
 		p_ptr->to_a -= 20;
 		p_ptr->dis_to_a -= 20;
 	}
 
 	/* At least +1, max. +3 */
-	if (p_ptr->zeal) p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
-	else if (p_ptr->mindboost && p_ptr->mindboost_power >= 65) p_ptr->extra_blows++;
+	if (p_ptr->zeal) {
+		p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
+		extra_blows_tmp += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
+	} else if (p_ptr->mindboost && p_ptr->mindboost_power >= 65) {
+		extra_blows_tmp++;
+		p_ptr->extra_blows++;
+	}
 
 	if (p_ptr->mindboost) p_ptr->skill_sav += p_ptr->mindboost_power / 5;
 
@@ -6904,6 +6912,9 @@ void calc_boni(int Ind) {
 	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
 	    never_blow_ranged)
 		p_ptr->num_fire = 0;
+
+	/* hack: remember temporary +EA to colourise 'BpR' display accordingly */
+	p_ptr->extra_blows = extra_blows_tmp;
 }
 
 
