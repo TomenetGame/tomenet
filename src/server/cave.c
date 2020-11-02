@@ -8734,7 +8734,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 		if (town || sector00 || valinor || nr_bottom) return(FALSE);
 		break;
 
-	case FEAT_WALL_EXTRA: /* tested by earthquake() and destroy_area() */
+	case FEAT_WALL_EXTRA: /* tested by earthquake(), destroy_area(), project_f() for GF_STONE_WALL (stone prison, wall creation) */
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
 		if (town || townarea || sector00 || valinor || nr_bottom) return(FALSE);
@@ -8752,14 +8752,14 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 		break;
 
 	/* don't allow any changes at all to preserve the visuals 100% */
-        case FEAT_NONE:
-    	case FEAT_FLOOR:
-        case FEAT_DIRT:
-        case FEAT_GRASS:
-        case FEAT_SAND:
-        case FEAT_ASH:
-        case FEAT_MUD:
-        case FEAT_FLOWER:
+	case FEAT_NONE:
+	case FEAT_FLOOR:
+	case FEAT_DIRT:
+	case FEAT_GRASS:
+	case FEAT_SAND:
+	case FEAT_ASH:
+	case FEAT_MUD:
+	case FEAT_FLOWER:
 /*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
 		if (town || valinor || nr_bottom) return(FALSE);
 		break;
