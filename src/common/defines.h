@@ -703,6 +703,8 @@
 
 /* ---------------------------------------------------------------- (Rather fundamental 'features')  ---------------------------------------------------------------- */
 
+/* --- Player settings --- */
+
 /* Define this to make 'exp ratio' determine exp-gain instead of exp-to-adv:
    (has no effect if KINGCAP_EXP is defined) */
 #define ALT_EXPRATIO
@@ -711,6 +713,81 @@
 #define MIN_PVP_LEVEL	10
 #define MID_PVP_LEVEL	20
 #define MAX_PVP_LEVEL	30
+
+
+/* For flash player option, cfg.fps/n, for teleport [6] */
+#define FLASH_SELF_DIV 4
+/* For flash player option, cfg.fps/n, for floor change [4] */
+#define FLASH_SELF_DIV2 3
+
+/* Time to be idle for auto-afk to kick in, in seconds [60] */
+#define AUTO_AFK_TIMER 60
+
+/* Time to be idle and starving for auto-kick to kick in, in seconds [30] */
+#define STARVE_KICK_TIMER 30
+
+/* Maximum armour class value that yields in a reduction of damage.
+   Note: The chance to get hit still goes down further above this value.
+   Also search code for CAP_ITEM_BONI to find +hit/+dam/+ac cappings. */
+#ifdef ENABLE_NEW_MELEE
+ #if 0
+  #define AC_CAP	250
+  #define AC_CAP_DIV	350
+ #else
+  #ifndef TO_AC_CAP_30
+   #define AC_CAP	200
+   #define AC_CAP_DIV	300
+  #else
+    /* for now the same - could reduce cap to 175 or even 150 */
+   #define AC_CAP	200
+   #define AC_CAP_DIV	300
+  #endif
+ #endif
+#else
+ #define AC_CAP		150
+ #define AC_CAP_DIV	250
+#endif
+
+/* Percentage reduction of anti-magic field effects on party members [75] or [100].
+   Notes: 75% is reasonable; however, for Nether Realm paries you might want 100% for QoL. */
+#define AM_PARTY_REDUCTION	100
+
+/* Limit value for Anti-magic fields (AM cap)
+   Should range from 75..80%, maybe make skill & DS percentage
+   multiply instead of sum up. - C. Blue */
+#define ANTIMAGIC_CAP		75
+
+/* Cap for AM field radius. 9 is implied by skill+darksword,
+   if monster form AM is added it could stack up to 12 though,
+   which seems out of line --
+    an unbeliever (warrior) should not be surpassed and 12 seems too much. */
+#define ANTIMAGIC_DIS_CAP	9
+
+/* Limit effectiveness of interception/martial arts [50..80] */
+#define INTERCEPT_CAP		70
+
+/* If both interception and antimagic field suppress the same casting attempt of the same monster,
+   reduce the combined chance somewhat: from 92% (1 in 12) to 83% (1 in 6) to stay sane. */
+#define COMBO_AM_IC_CAP		83
+
+/* upper limit of dodging chance. [80] */
+#define DODGE_CAP		80
+
+/* Maximum level difference for party members,
+   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
+#define MAX_PARTY_LEVEL_DIFF 7
+
+/* Maximum level difference for winner-party members,
+   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
+#define MAX_KING_PARTY_LEVEL_DIFF 11
+
+/* Party level diff cancellation threshold. Just comment out (ie don't define it) to disable.
+   For super high level characters: Minimum level at and above which there is no more limit to level difference of party members. [80]
+   So as soon as all characters are of this level, they share exp even if they exceed MAX_KING_PARTY_LEVEL_DIFF. */
+#define KING_PARTY_FREE_THRESHOLD 80
+
+
+/* --- Monster settings --- */
 
 #ifdef MONSTER_ASTAR
  /* max size of open/closed pathfinding table in an A* instance.
@@ -765,17 +842,6 @@
  #define COME_BACK_TIME_MAX 600
 #endif
 
-/* For flash player option, cfg.fps/n, for teleport [6] */
-#define FLASH_SELF_DIV 4
-/* For flash player option, cfg.fps/n, for floor change [4] */
-#define FLASH_SELF_DIV2 3
-
-/* Time to be idle for auto-afk to kick in, in seconds [60] */
-#define AUTO_AFK_TIMER 60
-
-/* Time to be idle and starving for auto-kick to kick in, in seconds [30] */
-#define STARVE_KICK_TIMER 30
-
 /* Approximate cap of a monster's average raw melee damage output per turn
    (before AC of the target is even incorporated)	[700] */
 #define AVG_MELEE_CAP		700
@@ -784,61 +850,9 @@
 /* Generic magical damage cap (BEFORE susceptibilities, for those it may still be doubled) */
 #define MAGICAL_CAP		1600
 
-/* Maximum armour class value that yields in a reduction of damage.
-   Note: The chance to get hit still goes down further above this value.
-   Also search code for CAP_ITEM_BONI to find +hit/+dam/+ac cappings. */
-#ifdef ENABLE_NEW_MELEE
- #if 0
-  #define AC_CAP	250
-  #define AC_CAP_DIV	350
- #else
-  #ifndef TO_AC_CAP_30
-   #define AC_CAP	200
-   #define AC_CAP_DIV	300
-  #else
-    /* for now the same - could reduce cap to 175 or even 150 */
-   #define AC_CAP	200
-   #define AC_CAP_DIV	300
-  #endif
- #endif
-#else
- #define AC_CAP		150
- #define AC_CAP_DIV	250
-#endif
-
-/* Limit value for Anti-magic fields (AM cap)
-   Should range from 75..80%, maybe make skill & DS percentage
-   multiply instead of sum up. - C. Blue */
-#define ANTIMAGIC_CAP		75
-
-/* Cap for AM field radius. 9 is implied by skill+darksword,
-   if monster form AM is added it could stack up to 12 though,
-   which seems out of line --
-    an unbeliever (warrior) should not be surpassed and 12 seems too much. */
-#define ANTIMAGIC_DIS_CAP	9
-
-/* Limit effectiveness of interception/martial arts [50..80] */
-#define INTERCEPT_CAP		70
-
-/* If both interception and antimagic field suppress the same casting attempt of the same monster,
-   reduce the combined chance somewhat: from 92% (1 in 12) to 83% (1 in 6) to stay sane. */
-#define COMBO_AM_IC_CAP		83
-
-/* upper limit of dodging chance. [80] */
-#define DODGE_CAP		80
-
-/* Maximum level difference for party members,
-   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
-#define MAX_PARTY_LEVEL_DIFF 7
-
-/* Maximum level difference for winner-party members,
-   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
-#define MAX_KING_PARTY_LEVEL_DIFF 11
-
-/* Party level diff cancellation threshold. Just comment out (ie don't define it) to disable.
-   For super high level characters: Minimum level at and above which there is no more limit to level difference of party members. [80]
-   So as soon as all characters are of this level, they share exp even if they exceed MAX_KING_PARTY_LEVEL_DIFF. */
-#define KING_PARTY_FREE_THRESHOLD 80
+/* Disallow monsters summoning onto themselves when out of MAX_RANGE but having LoS?
+   This is only really important for Nether Realm (maybe somewhat for Cloud Planes). */
+#define NO_SELF_SUMMON
 
 
 /* ----------------------------------------------- (Rather specific 'features', could go to defines-features.h instead)  ----------------------------------------------- */

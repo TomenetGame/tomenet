@@ -2007,11 +2007,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 		direct = FALSE;
 		local = TRUE;
 
+ #ifndef NO_SELF_SUMMON
 		/* Hack -- summon around itself */
 		y = ys = m_ptr->fy;
 		x = xs = m_ptr->fx;
 		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) ||
 			(f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
+ #endif
 	}
 #else	/* STUPID_MONSTER_SPELLS */
 	if (m_ptr->cdis > MAX_RANGE) return (FALSE);
@@ -3940,11 +3942,13 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		direct = FALSE;
 		local = TRUE;
 
+ #ifndef NO_SELF_SUMMON
 		/* Hack -- summon around itself */
 		y = ys = m_ptr->fy;
 		x = xs = m_ptr->fx;
 		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) ||
 			(f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
+ #endif
 	}
 #else	/* STUPID_MONSTER_SPELLS */
 	if (m_ptr->cdis > MAX_RANGE) return (FALSE);
