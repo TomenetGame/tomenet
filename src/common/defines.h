@@ -177,15 +177,6 @@
 /* Characters disallowed in save files */
 #define SF_BAD_CHARS ":!?\\/()\"@. _"
 
-/* max range of arrows in do_cmd_fire.
- * the aim is to prevent 'out-of-range attack' abuse.
- * [MAX_RANGE] */
-/* commented out due to monster AI improvements.
- * activate it if STUPID_MONSTER_SPELLS is defined!
- * --actually this should always be enabled and set to MAX_RANGE, that limit is also used for spellcasting.
- */
-#define ARROW_DIST_LIMIT MAX_RANGE
-
 /* Maximum number of different characters one player account may hold - C. Blue */
 #define MAX_CHARS_PER_ACCOUNT	11
 #define MAX_DED_IDDC_CHARS	2	/* additional iddc-only characters (needs ALLOW_DED_IDDC_MODE) */
@@ -1693,6 +1684,15 @@
  */
 #define MAX_SIGHT	20	/* Maximum view distance */
 #define MAX_RANGE	18	/* Maximum range (spells, etc) */
+
+/* max range of arrows in do_cmd_fire.
+ * the aim is to prevent 'out-of-range attack' abuse.
+ * [MAX_RANGE] */
+/* commented out due to monster AI improvements.
+ * activate it if STUPID_MONSTER_SPELLS is defined!
+ * --actually this should always be enabled and set to MAX_RANGE, that limit is also used for spellcasting.
+ */
+#define ARROW_DIST_LIMIT MAX_RANGE
 
 
 
