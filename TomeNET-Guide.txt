@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. October 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 3. November 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -14240,7 +14240,7 @@ stated.
                                 digging.
 
                                 EXPERIMENTAL:
-                                Shortly before 4.7.3 a new experimental trait
+                                Shortly before 4.7.3 a new experimental perk
                                 was added to the Digging skill: Demolitionist.
                                 This just means that if you train Digging to at
                                 least 5.000 you will be able to find or acquire
@@ -16523,8 +16523,8 @@ Draconian:
     form (including dragonriders) or in any reptilian form (including Hydras).
 
 Abilities acquired from traits (such as 'enlightened' or 'corrupted' trait for
-Maiar) are also considered intrinsic abilities and therefore polymorph-proof if
-they aren't on the list above.
+Maiar or draconian traits) are also considered intrinsic abilities and
+therefore polymorph-proof if they aren't on the list above.
 
 
 (6.7a) Polymorph rings ('Ring of Polymorphing of <form>'):
