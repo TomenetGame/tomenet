@@ -2081,6 +2081,14 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
 					continue;
 				}
+				/* Draconian traits */
+				if (!strncasecmp(buf, "trai", 3) && my_strcasestr("traits:", buf)) {
+					strcpy(buf, "Table of their traits:");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
+					continue;
+				}
 
 				/* Rogue 'Cloaking' ability has no dedicated paragraph, use key list for it */
 				if (!strcasecmp(buf, "cloak") || !strcasecmp(buf, "cloaking")) {
