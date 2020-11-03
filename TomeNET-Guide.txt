@@ -14034,6 +14034,14 @@ stated.
                                 damage is compared to what the pure backstab
                                 would do and the higher one is used.
 
+                                Backstabbing a non-fleeing monster has a chance
+                                to apply a stun effect based on your DEX, your
+                                Backstabbing skill, slightly depending on your
+                                Weaponmaster skill, and on the r-level and AC.
+                                Uniques and undead are harder to stun.
+                                There is no difference between dual-wield or
+                                one-handed use regarding stun effectiveness.
+
                                 Vampires will feed especially much from
                                 backstabbing a sleeping opponent to death.
 
