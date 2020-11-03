@@ -51,7 +51,7 @@
    with a 'T' marker which is visible only to admins.*/
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	7
-#define VERSION_PATCH_LATEST	2
+#define VERSION_PATCH_LATEST	3
 #define VERSION_EXTRA_LATEST	0
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
@@ -59,8 +59,8 @@
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	7
-#define VERSION_PATCH_OUTDATED	1
-#define VERSION_EXTRA_OUTDATED	2
+#define VERSION_PATCH_OUTDATED	2
+#define VERSION_EXTRA_OUTDATED	1
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	1 /* should always be 1 to invalidate previous 'test' versions */
 
