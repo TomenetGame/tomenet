@@ -2054,6 +2054,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 				/* Melee weapon classes */
 				if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "clas")) strcpy(buf, "weapon types");
+				else if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "typ")) strcpy(buf, "weapon types");
 
 				/* Expand 'pfe' to 'Protection from evil' */
 				if (!strcasecmp(buf, "pfe")) strcpy(buf, "Protection from evil");
