@@ -3137,13 +3137,13 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (p_ptr->combat_stance == 2) {
 					int stun_effect, resist_stun;
 
-					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]] / 2) + 1;
+					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_ind[A_STR]] / 2) + 1;
 					stun_effect /= 2;
 
-					resist_stun = adj_con_fix[q_ptr->stat_cur[A_CON]]; /* 0..9 */
+					resist_stun = adj_con_fix[q_ptr->stat_ind[A_CON]]; /* 0..9 */
 					if (q_ptr->free_act) resist_stun += 3;
 					resist_stun += 6 - 300 / (50 + q_ptr->ac + q_ptr->to_a); /* 0..5 */
-					resist_stun -= adj_con_fix[p_ptr->stat_cur[A_DEX]];
+					resist_stun -= adj_con_fix[p_ptr->stat_ind[A_DEX]];
 					if (resist_stun < 0) resist_stun = 0; /* 0..17 (usually 8 vs fighters) */
 
 					switch (p_ptr->combat_stance_power) {
@@ -4266,7 +4266,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #ifdef ENABLE_STANCES
 				/* apply stun from offensive combat stance */
 				if (p_ptr->combat_stance == 2) {
-					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]] / 2) + 1;
+					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_ind[A_STR]] / 2) + 1;
 					stun_effect /= 2;
 
 					resist_stun = 6 - 300 / (50 + m_ptr->ac); /* 0..5 */
