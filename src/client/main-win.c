@@ -3965,7 +3965,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 		color_table[i][3] = GetBValue(win_clr[i]);
 
 		/* Save the "simple" code */
-		color_table[i][0] = win_pal[i];
+		color_table[i][0] = win_pal[i % 16];
 	}
 #endif
 
@@ -4318,7 +4318,7 @@ void animate_palette(void) {
 			color_table[i][3] = GetBValue(win_clr[i]);
 
 			/* Save the "simple" code */
-			color_table[i][0] = win_pal[i];
+			color_table[i][0] = win_pal[i % 16];
 		}
 		init = TRUE;
 		return;
