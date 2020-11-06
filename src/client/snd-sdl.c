@@ -41,9 +41,9 @@
 #define WEATHER_VOL_CLOUDS
 
 /* Allow user-defined custom volume factor for each sample or song? ([].volume) */
-#ifdef TEST_CLIENT
+//#ifdef TEST_CLIENT
  #define USER_VOLUME
-#endif
+//#endif
 
 /*
 #include <SDL/SDL.h>
