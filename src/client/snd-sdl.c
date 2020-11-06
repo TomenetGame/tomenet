@@ -2636,7 +2636,7 @@ void do_cmd_options_sfx_sdl(void) {
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
 #ifdef USER_VOLUME
-			if (samples[j].volume) Term_putstr(horiz_offset + 1 + 12 + 45 + 1, vertikal_offset + i + 10 - y, -1, a, format("%d%%", samples[j].volume));
+			if (samples[j].volume) Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", samples[j].volume));
 #endif
 		}
 
@@ -3038,7 +3038,7 @@ void do_cmd_options_mus_sdl(void) {
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
 #ifdef USER_VOLUME
-			if (songs[j].volume) Term_putstr(horiz_offset + 1 + 12 + 45 + 1, vertikal_offset + i + 10 - y, -1, a, format("%d%%", songs[j].volume));
+			if (songs[j].volume) Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", songs[j].volume));
 #endif
 		}
 
