@@ -581,15 +581,18 @@ static bool sound_sdl_init(bool no_cache) {
 			samples[i].disabled = TRUE;
 		}
 	}
+	my_fclose(fff);
 #endif
+
 #ifdef WINDOWS
 	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
 		strcat(path, "\\TomeNET-soundvol.cfg");
-	} else
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "TomeNET-soundvol.cfg"); //paranoia
+#else
+	path_build(path, 1024, ANGBAND_DIR_XTRA_SOUND, "TomeNET-soundvol.cfg");
 #endif
-	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "TomeNET-soundvol.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (fff) {
@@ -603,8 +606,6 @@ static bool sound_sdl_init(bool no_cache) {
 			samples[i].volume = atoi(buffer0);
 		}
 	}
-
-	/* Close the file */
 	my_fclose(fff);
 
 
@@ -2805,7 +2806,7 @@ void do_cmd_options_sfx_sdl(void) {
 					strcpy(out_val2, evname);
 					strcat(out_val2, "\n");
 					fputs(out_val2, fff2);
-					sprintf(out_val2, "%d", samples[j].volume);
+					sprintf(out_val2, "%d\n", samples[j].volume);
 					fputs(out_val2, fff2);
 				}
 			}
@@ -3222,7 +3223,7 @@ void do_cmd_options_mus_sdl(void) {
 					strcpy(out_val2, evname);
 					strcat(out_val2, "\n");
 					fputs(out_val2, fff2);
-					sprintf(out_val2, "%d", songs[j].volume);
+					sprintf(out_val2, "%d\n", songs[j].volume);
 					fputs(out_val2, fff2);
 				}
 			}
