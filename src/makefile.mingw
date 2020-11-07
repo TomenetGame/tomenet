@@ -190,7 +190,8 @@ CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
 LIBS += $(SDL_LIB_PATH) -lSDL_mixer
 
 # Security hardening
-CFLAGS += -D_FORTIFY_SOURCE=2 -pie -fPIE
+CFLAGS += -pie -fPIE
+#CFLAGS += -D_FORTIFY_SOURCE=2
 
 # Added the according preprocessor for 'preproc' - C. Blue
 # If your system doesnt have a dedicated cpp command, you might
