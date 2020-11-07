@@ -73,7 +73,7 @@ monster_spells4_lua = {
 
   {"Breathe Poison", 1},
   {"Breathe Nether", 1},
-  {"Breathe Lite", 1},
+  {"Breathe Light", 1},
   {"Breathe Darkness", 1},
 
   {"Breathe Confusion", 1},

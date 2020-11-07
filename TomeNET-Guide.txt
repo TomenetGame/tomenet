@@ -18596,7 +18596,7 @@ Breathe Fire            ..
 Breathe Cold            ..
 Breathe Poison          ..
 Breathe Nether          ..
-Breathe Lite            ..
+Breathe Light           ..
 Breathe Darkness        ..
 Breathe Confusion       ..
 Breathe Sound           ..

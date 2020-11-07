@@ -441,7 +441,7 @@ monster_spell_type monster_spells4[32] = {
 
   {"Breathe Poison", TRUE},
   {"Breathe Nether", TRUE},
-  {"Breathe Lite", TRUE},
+  {"Breathe Light", TRUE},
   {"Breathe Darkness", TRUE},
 
   {"Breathe Confusion", TRUE},
