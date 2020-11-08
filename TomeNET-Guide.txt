@@ -1006,6 +1006,11 @@ CTRL+C      Search history of chat messages you typed. Press CTRL+C again for
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
 
+/acolours
+/acolors
+/acol       Display a table of all animated colours.
+            To see a table of the normal colours, use /col.
+
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing.
             Note that your character won't need to consume food while afk _IF_
@@ -1090,6 +1095,7 @@ They all start with a slash '/' hence they're called slash commands:
 /col        Display all available colours for testing purpose, for example when
             you are editing your Colormap_ entries in TomeNET.ini or colormap_
             entries in .tomenetrc respectively and want to test how it looks.
+            There is also /acol to display all animated colours.
 
 /cough      You cough noisily. Will disturb the sleep of monsters or at least
             make it less deep..
