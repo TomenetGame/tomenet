@@ -9038,3 +9038,7 @@ extern int PlayerUID;
 /* Monster special 'status' */
 #define M_STATUS_NONE		0
 #define M_STATUS_FRIENDLY	1
+
+
+/* For debugging. */
+#define __GRID_DEBUG(wpos, feat, location, info)	if ((feat) == FEAT_HIGHLY_PROTECTED && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d\n", location, info);

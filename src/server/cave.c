@@ -7693,6 +7693,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 
 	/* Change the feature */
 	c_ptr->feat = feat;
+	__GRID_DEBUG(wpos, feat, "cave_set_feat()", 0);
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 	aquatic_terrain_hack(zcave, x, y);
 
@@ -7982,6 +7983,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~(CAVE_NEST_PIT | CAVE_ENCASED); /* clear teleport protection for nest grid if it gets changed; clear treasure vein remote-flag too */
 	c_ptr->feat = feat;
+	__GRID_DEBUG(wpos, feat, "cave_set_feat_live()", 0);
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 
 	/* Area of view for a player might have changed, among other consequences.. */
