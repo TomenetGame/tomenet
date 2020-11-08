@@ -4723,14 +4723,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/acol") || prefix(messagelc, "/acolours") || prefix(messagelc, "/acolors")) {
 			msg_print(Ind, "\377wAnimated-colour table:");
-			msg_print(Ind, " (a) \377aacid\377w  (c) \377ccold\377w  (e) \377eelectricity\377w  (f) \377ffire\377w  (p) \377ppoison\377w  (L) \377Llight");
-			msg_print(Ind, " (h) \377hhalf-multi\377w  (m) \377mmulti\377w  (A) \377Adarkness\377w  (S) \377Ssound\377w  (C) \377Cconfusion\377w  (H) \377Hshards");
-			msg_print(Ind, " (I) \377Iinvulnerability\377w  (M) \377Mdisruption shield");
-			msg_print(Ind, " (P) \377Ppsi\377w  (x) \377xnexus\377w  (n) \377nnether\377w  (q) \377qinertia\377w  (T) \377Tdisenchantment\377w  (F) \377Fforce");
-			msg_print(Ind, " (V) \377Vgravity\377w  (t) \377ttime\377w  (E) \377Emeteor\377w  (N) \377Nmana\377w  (Q) \377Qdisintegration\377w  (Y) \377Ywater");
-			msg_print(Ind, " (i) \377iice\377w  (l) \377lplasma\377w  (O) \377Odetonation\377w  (k) \377knuke\377w  (K) \377Kunbreath\377w  (j) \377jholy orb");
-			msg_print(Ind, " (J) \377Jholy fire\377w  (X) \377Xhellfire\377w  (z) \377zthunder\377w  (Z) \377Zember\377w  (0) \3770starlight\377w  (1) \3771havoc");
-			msg_print(Ind, " (2) \3772lamp light\377w  (3) \3773dark lamp light\377w  (4) \3774menu selector\377w  (5) \3775palette test");
+			msg_print(Ind, " (a) \377aacid\377w   (c) \377ccold\377w   (e) \377eelectricity\377w  (f) \377ffire\377w   (p) \377ppoison\377w     (h) \377hhalf-multi");
+			msg_print(Ind, " (m) \377mmulti\377w  (L) \377Llight\377w  (A) \377Adarkness\377w     (S) \377Ssound\377w  (C) \377Cconfusion\377w  (H) \377Hshards");
+			msg_print(Ind, " (M) \377Mdisruption shield\377w (I) \377Iinvulnerability");
+			msg_print(Ind, " (P) \377Ppsi\377w   (x) \377xnexus\377w   (n) \377nnether\377w (q) \377qinertia\377w  (T) \377Tdisenchantment\377w (F) \377Fforce");
+			msg_print(Ind, " (t) \377ttime\377w  (V) \377Vgravity\377w (N) \377Nmana\377w   (K) \377Kunbreath\377w (Q) \377Qdisintegration\377w (Y) \377Ywater");
+			msg_print(Ind, " (i) \377iice\377w   (l) \377lplasma\377w  (k) \377knuke\377w   (j) \377jholy orb\377w (J) \377Jholy fire\377w      (X) \377Xhellfire");
+			msg_print(Ind, " (1) \3771havoc\377w (E) \377Emeteor\377w  (Z) \377Zember\377w  (z) \377zthunder\377w  (O) \377Odetonation\377w     (0) \3770starlight");
+			msg_print(Ind, " (2) \3772lamp light\377w  (3) \3773shaded lamp light\377w  (4) \3774menu selector\377w  (5) \3775palette test");
 			return;
 		}
 		else if (prefix(messagelc, "/setorder")) { /* Non-admin version - Set custom list position for this character in the account overview screen on login */
