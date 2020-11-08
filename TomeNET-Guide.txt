@@ -11554,8 +11554,8 @@ Note: 'The Stormbringer' is not a real artifact but it will show the same
 resilience as true artifacts and random artifacts vs Nazgul.
 
 
-Bonus from wearing similarly named artifacts
---------------------------------------------
+Set bonus from wearing similarly named artifacts
+------------------------------------------------
 If you wear/wield multiple artifacts of similar name, you will receive a luck
 bonus (see (5.8), 'LUCK', for details about luck). For example if you equip
     The Whip of Gothmog    (which happens to be a true artifact)
