@@ -5809,7 +5809,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
-	if (k && rand_int(86) <= k - 8) { /* cold effects prolong the duration to up to 2x */
+	if (rand_int(86) <= k - 8) { /* cold effects prolong the duration to up to 2x */
 		int iced = 0, iced_total = 0;
 
 		/* Process inventory (blood potions, snowballs).
