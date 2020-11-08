@@ -2136,7 +2136,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	    f6 & (RF6_SUMMON_MASK) || f0 & (RF0_SUMMON_MASK)) &&
 	*/
 	//if (rad > 3 ||
-	summon_test = summon_possible(wpos, ys, xs);
+	summon_test = (summon && summon_possible(wpos, ys, xs));
 #ifdef SAURON_ANTI_GLYPH
 	if (m_ptr->r_idx == RI_SAURON && summon && !summon_test && m_ptr->hp < m_ptr->maxhp) {
 		base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
@@ -2144,9 +2144,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 		m_ptr->extra = 5; /* stay boosted for 5 turns at least */
 	}
 #endif
-	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) ||
-	    (summon && !stupid &&
-	    !summon_test)) {
+	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) || !summon ||
+	    /* Smart monsters won't attempt to summon if they notice that there is no space: */
+	    (!stupid && !summon_test)) {
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
 		f5 &= ~(RF5_SUMMON_MASK);
@@ -4071,7 +4071,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	    f6 & (RF6_SUMMON_MASK) || f0 & (RF0_SUMMON_MASK)) &&
 	*/
 	//if (rad > 3 ||
-	summon_test = summon_possible(wpos, ys, xs);
+	summon_test = (summon && summon_possible(wpos, ys, xs));
 #ifdef SAURON_ANTI_GLYPH
 	if (m_ptr->r_idx == RI_SAURON && summon && !summon_test && m_ptr->hp < m_ptr->maxhp) {
 		base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
@@ -4079,9 +4079,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		m_ptr->extra = 5; /* stay boosted for 5 turns at least */
 	}
 #endif
-	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) ||
-	    (summon && !stupid &&
-	    !summon_test)) {
+	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) || !summon ||
+	    /* Smart monsters won't attempt to summon if they notice that there is no space: */
+	    (!stupid && !summon_test)) {
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
 		f5 &= ~(RF5_SUMMON_MASK);
