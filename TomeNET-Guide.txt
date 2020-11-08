@@ -4434,6 +4434,8 @@ There are extended colour codes available since 4.5.2 (some in later clients)
 To return to the previous colour, instead of specifying it you can also just
 use '{-', for example: {rRed Text{gGreen now{-Red again.
 
+Note: 'multi' colour is also the 'chaos' colour for any chaos-based attacks.
+
 You will observe that character names in chat lines have different colours too,
 indicating character modes:
   White           Normal mode player.
