@@ -4688,7 +4688,7 @@ static int Receive_login(int ind) {
 
 			if (err_connp && err_connp->state != CONN_FREE
 			    && err_connp->timeout && (err_connp->start + err_connp->timeout * cfg.fps >= turn))
-				Destroy_connection(ind, format("You have to wait for %d seconds until your other character has timed out.", (err_connp->start + err_connp->timeout * cfg.fps - turn +(cfg.fps - 1)) / cfg.fps));
+				Destroy_connection(ind, format("You have to wait for %d seconds until your other character has timed out.\nTo prevent this kind of cooldown, log out in town areas only.", (err_connp->start + err_connp->timeout * cfg.fps - turn +(cfg.fps - 1)) / cfg.fps));
 			else Destroy_connection(ind, "Multiple logins on the same account aren't allowed."); //fallback (shouldn't happen)
 		}
 #endif
