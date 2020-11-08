@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. November 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 8. November 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4423,6 +4423,7 @@ There are extended colour codes available since 4.5.2 (some in later clients)
     i  ice              l  plasma           O  detonation       k  nuke
     K  unbreath         j  holy orb         J  holy fire        X  hellfire
     z  thunder          Z  ember            0  starlight        1  havoc
+    2  lamp light       3  dark lamp light  4  menu selector    5  palette test
 
 To return to the previous colour, instead of specifying it you can also just
 use '{-', for example: {rRed Text{gGreen now{-Red again.

@@ -4713,12 +4713,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/col") || prefix(messagelc, "/colours") || prefix(messagelc, "/colors")) {
 			msg_print(Ind, "\377wColour table:");
-			msg_print(Ind, "  (0) black:  \377dblack\377w,  (1) white: \377wwhite\377w, (2) gray:      \377sslate");
-			msg_print(Ind, "  (3) orange: \377oorange\377w, (4) red:   \377rred\377w,   (5) green:     \377ggreen");
-			msg_print(Ind, "  (6) blue:   \377bblue\377w,   (7) brown: \377uumber\377w, (8) dark gray: \377Dldark");
-			msg_print(Ind, "  (9) light gray:  \377Wlwhite\377w, (10) violet:      \377vviolet\377w, (11) yellow: \377yyellow");
-			msg_print(Ind, " (12) light red:   \377Rlred\377w,   (13) light green: \377Glgreen\377w, (14) cyan:   \377Blblue");
-			msg_print(Ind, " (15) light brown: \377Ulumber");
+			msg_print(Ind, "  (0/d) black:       \377dblack\377w   (1/w) white:        \377wwhite\377w   (2/s) gray:      \377sslate");
+			msg_print(Ind, "  (3/o) orange:      \377oorange\377w  (4/r) red:          \377rred\377w     (5/g) green:     \377ggreen");
+			msg_print(Ind, "  (6/b) blue:        \377bblue\377w    (7/u) brown:        \377uumber\377w   (8/D) dark gray: \377Dldark");
+			msg_print(Ind, "  (9/W) light gray:  \377Wlwhite\377w  (10/v) violet:      \377vviolet\377w  (11/y) yellow:   \377yyellow");
+			msg_print(Ind, " (12/R) light red:   \377Rlred\377w    (13/G) light green: \377Glgreen\377w  (14/B) cyan:     \377Blblue");
+			msg_print(Ind, " (15/U) light brown: \377Ulumber");
+			return;
+		}
+		else if (prefix(messagelc, "/acol") || prefix(messagelc, "/acolours") || prefix(messagelc, "/acolors")) {
+			msg_print(Ind, "\377wAnimated-colour table:");
+			msg_print(Ind, " (a) \377aacid\377w  (c) \377ccold\377w  (e) \377eelectricity\377w  (f) \377ffire\377w  (p) \377ppoison\377w  (L) \377Llight");
+			msg_print(Ind, " (h) \377hhalf-multi\377w  (m) \377mmulti\377w  (A) \377Adarkness\377w  (S) \377Ssound\377w  (C) \377Cconfusion\377w  (H) \377Hshards");
+			msg_print(Ind, " (I) \377Iinvulnerability\377w  (M) \377Mdisruption shield");
+			msg_print(Ind, " (P) \377Ppsi\377w  (x) \377xnexus\377w  (n) \377nnether\377w  (q) \377qinertia\377w  (T) \377Tdisenchantment\377w  (F) \377Fforce");
+			msg_print(Ind, " (V) \377Vgravity\377w  (t) \377ttime\377w  (E) \377Emeteor\377w  (N) \377Nmana\377w  (Q) \377Qdisintegration\377w  (Y) \377Ywater");
+			msg_print(Ind, " (i) \377iice\377w  (l) \377lplasma\377w  (O) \377Odetonation\377w  (k) \377knuke\377w  (K) \377Kunbreath\377w  (j) \377jholy orb");
+			msg_print(Ind, " (J) \377Jholy fire\377w  (X) \377Xhellfire\377w  (z) \377zthunder\377w  (Z) \377Zember\377w  (0) \3770starlight\377w  (1) \3771havoc");
+			msg_print(Ind, " (2) \3772lamp light\377w  (3) \3773dark lamp light\377w  (4) \3774menu selector\377w  (5) \3775palette test");
 			return;
 		}
 		else if (prefix(messagelc, "/setorder")) { /* Non-admin version - Set custom list position for this character in the account overview screen on login */
