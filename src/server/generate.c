@@ -1493,6 +1493,8 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			if (chance && rand_int(chance) == 0)
 				/* turn into FEAT_SANDWALL_K / FEAT_MAGMA_K / FEAT_QUARTZ_K: */
 				c_ptr->feat += (c_ptr->feat == FEAT_SANDWALL ? 0x2 : 0x4);
+
+			__GRID_DEBUG(0, wpos, c_ptr->feat, "build_streamer()", 0);
 		}
 
 #if 0
