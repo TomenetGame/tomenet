@@ -8547,7 +8547,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
-	__GRID_DEBUG(&p_ptr->wpos, c_ptr->feat, "grid_affects_player()", 0);
+	__GRID_DEBUG(Ind, &p_ptr->wpos, c_ptr->feat, "grid_affects_player()", 0);
 
 	if (c_ptr->feat == FEAT_FAKE_WALL) {
 		p_ptr->auto_transport = AT_PARTY;
