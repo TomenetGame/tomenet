@@ -1204,6 +1204,10 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 					c_ptr2->feat  = tmpf;
 					c_ptr2->info  = tmps;
 					c_ptr2->mimic = tmpx;
+					__GRID_DEBUG(Ind, wpos, zcave[cy][cx].feat, "player_activate_trap_type()", 0);
+					__GRID_DEBUG(Ind, wpos, zcave[cy][cx].mimic, "player_activate_trap_type()", 1);
+					__GRID_DEBUG(Ind, wpos, c_ptr2->feat, "player_activate_trap_type()", 2);
+					__GRID_DEBUG(Ind, wpos, c_ptr2->mimic, "player_activate_trap_type()", 3);
 
 					/* if we are placing walls in rooms, make them rubble instead */
 					if ((c_ptr2->info & CAVE_ROOM) &&
