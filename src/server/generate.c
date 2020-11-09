@@ -4962,7 +4962,7 @@ static void store_height(worldpos *wpos, int x, int y, int x0, int y0, byte val,
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Only write to points that are "blank" */
-	if (zcave[y+ y0 - yhsize][x + x0 - xhsize].feat != 255) return;
+	if (zcave[y+ y0 - yhsize][x + x0 - xhsize].temp != 255) return;
 
 	 /* If on boundary set val > cutoff so walls are not as square */
 	if (((x == 0) || (y == 0) || (x == xhsize * 2) || (y == yhsize * 2)) &&
@@ -4970,9 +4970,9 @@ static void store_height(worldpos *wpos, int x, int y, int x0, int y0, byte val,
 
 	/* Store the value in height-map format */
 	/* Meant to be temporary, hence no cave_set_feat */
-	zcave[y + y0 - yhsize][x + x0 - xhsize].feat = val;
+	zcave[y + y0 - yhsize][x + x0 - xhsize].temp = val;
 
-	__GRID_DEBUG(0, wpos, val, "store_height()", 0);
+	__GRID_DEBUG(0, wpos, zcave[y + y0 - yhsize][x + x0 - xhsize].feat, "store_height()", 0);
 	return;
 }
 
@@ -5082,7 +5082,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 			c_ptr = &zcave[j + y0 - yhsize][i + x0 - xhsize];
 
 			/* 255 is a flag for "not done yet" */
-			c_ptr->feat = 255;
+			c_ptr->temp = 255;
 
 			/* Clear icky flag because may be redoing the cave */
 			c_ptr->info &= ~(CAVE_ICKY);
@@ -5133,7 +5133,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					r = &zcave[j/256+y0-yhsize][(i+xhstep)/256+x0-xhsize];
 
 					/* Average of left and right points + random bit */
-					val = (l->feat + r->feat) / 2 +
+					val = (l->temp + r->temp) / 2 +
 						  (randint(xstep/256) - xhstep/256) * roug / 16;
 
 					store_height(wpos, i/256, j/256, x0, y0, val,
@@ -5159,7 +5159,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					d = &zcave[(j+yhstep)/256+y0-yhsize][i/256+x0-xhsize];
 
 					/* Average of up and down points + random bit */
-					val = (u->feat + d->feat) / 2 +
+					val = (u->temp + d->temp) / 2 +
 						  (randint(ystep/256) - yhstep/256) * roug / 16;
 
 					store_height(wpos, i/256, j/256, x0, y0, val,
@@ -5195,7 +5195,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					 * reduce the effect of the square grid on the shape
 					 * of the fractal
 					 */
-					val = (ul->feat + dl->feat + ur->feat + dr->feat) / 4 +
+					val = (ul->temp + dl->temp + ur->temp + dr->temp) / 4 +
 					      (randint(xstep/256) - xhstep/256) *
 						  (diagsize / 16) / 256 * roug;
 
@@ -5223,7 +5223,7 @@ static bool hack_isnt_wall(worldpos *wpos, int y, int x, int cutoff) {
 	zcave[y][x].info |= (CAVE_ICKY);
 
 	/* If less than cutoff then is a floor */
-	if (zcave[y][x].feat <= cutoff) {
+	if (zcave[y][x].temp <= cutoff) {
 		place_floor(wpos, y, x);
 		return (TRUE);
 	}

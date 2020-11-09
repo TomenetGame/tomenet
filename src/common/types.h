@@ -632,6 +632,8 @@ struct cave_type {
 #ifdef HOUSE_PAINTING
 	byte colour;	/* colour that overrides the usual colour of a feature */
 #endif
+
+	byte temp;		/* Temporary value for cave building process in generate_hmap() */
 };
 
 /* ToME parts, arranged */
