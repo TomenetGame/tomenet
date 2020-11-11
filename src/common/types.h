@@ -2623,6 +2623,7 @@ struct player_type {
 	/* TomeNET additions -- consider using macro or bitfield */
 	bool easy_open;
 	bool easy_disarm;
+	bool easy_disarm_montraps;
 	bool easy_tunnel;
 	//bool auto_destroy;
 	bool clear_inscr;
@@ -3957,6 +3958,8 @@ struct client_opts {
 	bool macros_in_stores;
 	bool item_error_beep;
 	bool keep_bottle;
+
+	bool easy_disarm_montraps;
 };
 
 /*

@@ -5115,6 +5115,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 		/* Handle the cfg.door_bump_open option */
 		if (cfg.door_bump_open) {
 			struct c_special *cs_ptr;
+
 			/* Get requested grid */
 			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
@@ -5124,6 +5125,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			    (cs_ptr = GetCS(c_ptr, CS_TRAPS)) &&
 			    cs_ptr->sc.trap.found &&
 			    !c_ptr->o_idx &&
+			    !c_ptr->m_idx &&
 			    !UNAWARENESS(p_ptr) &&
 			    !no_lite(Ind) )
 			{
@@ -5154,6 +5156,18 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				}
 			}
 		}
+
+		if (p_ptr->easy_disarm_montraps && !c_ptr->o_idx && !c_ptr->m_idx) {
+			/* Get requested grid */
+			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
+
+			/* This should be cfg.trap_bump_disarm? */
+			if (GetCS(c_ptr, CS_MON_TRAP)) {
+				do_cmd_disarm(Ind, dir);
+				return;
+			}
+		}
+
 		/* Actually move the character */
 		move_player(Ind, dir, pickup, &consume_full_energy);
 		p_ptr->warning_autoret_ok = 0;

@@ -4794,6 +4794,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_format(Ind, "This character's ordering weight has been set to %d.", k);
 			C_KILL(id_list, ids, int);
 			return;
+		} else if (prefix(messagelc, "/edmt")) { /* manual c_cfg.easy_disarm_montraps */
+			p_ptr->easy_disarm_montraps = !p_ptr->easy_disarm_montraps;
+			msg_format(Ind, "Walking into monster traps will %sattempt to disarm them.", p_ptr->easy_disarm_montraps ? "" : "not ");
+			return;
 		}
 
 

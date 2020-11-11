@@ -2583,6 +2583,11 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->find_ignore_montraps = TRUE;
 		p_ptr->keep_bottle = FALSE;
 	}
+
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1))
+		p_ptr->easy_disarm_montraps = options[136];
+	else
+		p_ptr->easy_disarm_montraps = FALSE;
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,

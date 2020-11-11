@@ -340,6 +340,7 @@ struct player_type
 	/* TomeNET additions -- consider using macro or bitfield */
 	bool easy_open;
 	bool easy_disarm;
+	bool easy_disarm_montraps;
 	bool easy_tunnel;
 //	bool auto_destroy;
 	bool clear_inscr;
