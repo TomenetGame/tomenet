@@ -4796,7 +4796,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		} else if (prefix(messagelc, "/edmt")) { /* manual c_cfg.easy_disarm_montraps */
 			p_ptr->easy_disarm_montraps = !p_ptr->easy_disarm_montraps;
-			msg_format(Ind, "Walking into monster traps will %sattempt to disarm them.", p_ptr->easy_disarm_montraps ? "" : "not ");
+			msg_format(Ind, "Walking into a monster trap will %sdisarm it.", p_ptr->easy_disarm_montraps ? "" : "not ");
 			return;
 		}
 
