@@ -4646,9 +4646,6 @@ bool mon_hit_trap(int m_idx) {
 	monster_type *m_ptr = &m_list[m_idx];
 	//monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
-#if 0 /* DGDGDGDG */
-	monster_lore *lore_ptr = &l_list[m_ptr->r_idx];
-#endif
 
 	object_type *kit_o_ptr, *load_o_ptr, *j_ptr;
 	struct c_special *cs_ptr;
@@ -4745,33 +4742,33 @@ bool mon_hit_trap(int m_idx) {
 
 	/* Get monster smartness for trap detection */
 	/* Higher level monsters are smarter */
-	smartness = m_ptr->level;
+	smartness = (30 + m_ptr->level) / 2;
 
 	/* Smart monsters are better at detecting traps */
-	if (r_ptr->flags2 & RF2_SMART) smartness += 10;
-
-	/* Some monsters are great at detecting traps */
-#if 0 /* DGDGDGDG */
-	if (r_ptr->flags2 & RF2_NOTICE_TRAP) smartness += 20;
-#endif
-	/* Some monsters have already noticed one of out traps */
-	//        if (m_ptr->smart & SM_NOTE_TRAP) smartness += 20;
-
+	if (r_ptr->flags2 & RF2_SMART) smartness += 10; //note that a lot of monsters are strangely smart, eg Bullywug Warriors..
 	/* Stupid monsters are no good at detecting traps */
-	if (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND)) smartness = -150;
+	else if (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND)) smartness = -150;
+	/* Animals aren't that intelligent either.. */
+	else if (r_ptr->flags3 & RF3_ANIMAL) {
+		if (r_ptr->d_char != 'H' && r_ptr->d_char != 'y') /* Note: No exception for Dracolisks atm */
+			smartness = -100;
+	}
+	/* Special monster types: Rogues, rangers and ninjas */
+	if (r_ptr->d_char == 'p' && (r_ptr->d_attr == TERM_BLUE || r_ptr->d_attr == TERM_L_WHITE || m_ptr->r_idx == 485))
+		smartness += 20 + m_ptr->level / 2;
+	else if (m_ptr->ego) {
+		switch (re_info[m_ptr->ego].d_attr) {
+		case TERM_BLUE:
+		case TERM_L_UMBER:
+			smartness += 20 + m_ptr->level / 2;
+		}
+	}
 
 	/* Check if the monster notices the trap */
-	if (randint(300) > (difficulty - smartness + 150)) notice = TRUE;
+	if (randint(300) > (150 + difficulty - smartness)) notice = TRUE;
 
 	/* Disarm check */
 	if (notice) {
-		/* The next traps will be easier to spot! */
-		//                m_ptr->smart |= SM_NOTE_TRAP;
-
-		/* Tell the player about it */
-#if 0 /* DGDGDGDG */
-		if (m_ptr->ml) lore_ptr->r_flags2 |= (RF2_NOTICE_TRAP & r_ptr->flags2);
-#endif
 		/* Get trap disarming difficulty */
 		difficulty = (kit_o_ptr->ac + kit_o_ptr->to_a);
 
@@ -4779,48 +4776,25 @@ bool mon_hit_trap(int m_idx) {
 		/* Higher level monsters are better */
 		smartness = m_ptr->level / 5;
 
-		/* Some monsters are great at disarming */
-#if 0 /* DGDGDGDG */
-		if (r_ptr->flags2 & RF2_DISARM_TRAP) smartness += 20;
-#endif
-		/* After disarming one trap, the next is easier */
-#if 0 /* DGDGDGDG */
-		if (m_ptr->status & STATUS_DISARM_TRAP) smartness += 20;
-#endif
 		/* Smart monsters are better at disarming */
 		if (r_ptr->flags2 & RF2_SMART) smartness *= 2;
-
 		/* Stupid monsters never disarm traps */
-		if (r_ptr->flags2 & RF2_STUPID) smartness = -150;
-
+		else if (r_ptr->flags2 & RF2_STUPID) smartness = -150;
 		/* Nonsmart animals never disarm traps */
-		if ((r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags2 & RF2_SMART)) smartness = -150;
+		else if (r_ptr->flags3 & RF3_ANIMAL) {
+			if (r_ptr->d_char != 'H' && r_ptr->d_char != 'y') /* Note: No exception for Dracolisks atm */
+				smartness = -150;
+			else
+				smartness -= 50;
+		}
 
 		/* Check if the monster disarms the trap */
-		if (randint(120) > (difficulty - smartness + 80)) disarm = TRUE;
+		if (randint(120) > (80 + difficulty - smartness)) disarm = TRUE;
 	}
 
 	/* If disarmed, remove the trap and print a message */
 	if (disarm) {
 		remove = TRUE;
-
-		/* Next time disarming will be easier */
-#if 0 /* DGDGDGDG */
-		m_ptr->status |= STATUS_DISARM_TRAP;
-#endif
-#if 0
-		if (who > 0 && p_ptr->mon_vis[m_idx]) {
-			/* Get the name */
-			monster_desc(who, m_name, m_idx, 0);
-
-			/* Tell the player about it */
-#if 0 /* DGDGDGDG */
-			lore_ptr->r_flags2 |= (RF2_DISARM_TRAP & r_ptr->flags2);
-#endif
-			/* Print a message */
-			msg_format(who, "%^s disarms a trap!", m_name);
-		}
-#endif
 		msg_print_near_monster(m_idx, "disarms a trap!");
 #ifdef USE_SOUND_2010
 		sound_near_monster(m_idx, "disarm", NULL, SFX_TYPE_MISC);
@@ -4841,26 +4815,9 @@ bool mon_hit_trap(int m_idx) {
 
 	/* Otherwise, activate the trap! */
 	if (!disarm) {
-#if 0
-		/* Message for visible monster */
-		if (who > 0 && p_ptr->mon_vis[m_idx]) {
-			/* Get the name */
-			monster_desc(who, m_name, m_idx, 0);
-
-			/* Print a message */
-			msg_format(who, "%^s sets off a trap!", m_name);
-		} else {
-			/* No message if monster isn't visible ? */
-		}
-#endif
-		//msg_print_near_monster(m_idx, "sets off a trap!");
 #ifdef USE_SOUND_2010
 		sound_near_monster(m_idx, "trap_setoff", NULL, SFX_TYPE_MISC);
 #endif
-
-		/* Next time be more careful */
-		//if (randint(100) < 80) m_ptr->smart |= SM_NOTE_TRAP;
-
 		/* Actually activate the trap */
 		switch (kit_o_ptr->sval) {
 		case SV_TRAPKIT_BOW:
@@ -5020,17 +4977,7 @@ bool mon_hit_trap(int m_idx) {
 			if (shots <= 0) remove = TRUE;
 
 			while (shots-- && !dead) {
-
 				/* Message if visible */
-#if 0
-				if (who > 0 && p_ptr->mon_vis[m_idx]) {
-					/* describe the monster (again, just in case :-) */
-					monster_desc(who, m_name, m_idx, 0);
-
-					/* Print a message */
-					msg_format(who, "%^s is hit by fumes.", m_name);
-				}
-#endif
 				msg_print_near_monster(m_idx, "is hit by fumes.");
 
 				/* Get the potion effect */
@@ -5065,15 +5012,6 @@ bool mon_hit_trap(int m_idx) {
 			while (shots-- && !dead) {
 
 				/* Message if visible */
-#if 0
-				if (who > 0 && p_ptr->mon_vis[m_idx]) {
-					/* describe the monster (again, just in case :-) */
-					monster_desc(who, m_name, m_idx, 0);
-
-					/* Print a message */
-					msg_format(who, "%^s activates a spell!", m_name);
-				}
-#endif
 				msg_print_near_monster(m_idx, "activates a spell!");
 
 				/* Get the scroll or rune effect */
@@ -5117,17 +5055,6 @@ bool mon_hit_trap(int m_idx) {
 				if (shots > load_o_ptr->pval) shots = load_o_ptr->pval;
 			}
 			while (shots-- && !dead) {
-#if 0
-				/* Message if visible */
-				// if (m_ptr->ml)
-				if (who > 0 && p_ptr->mon_vis[m_idx]) {
-					/* describe the monster (again, just in case :-) */
-					monster_desc(m_name, m_idx, 0);
-
-					/* Print a message */
-					msg_format(Ind, "%^s is hit by some magic.", m_name);
-				}
-#endif
 				/* Get the effect effect */
 				switch(load_o_ptr->tval) {
 				case TV_ROD:
