@@ -5157,7 +5157,9 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			}
 		}
 
-		if (p_ptr->easy_disarm_montraps && !c_ptr->o_idx && !c_ptr->m_idx) {
+		if (p_ptr->easy_disarm_montraps
+		    //&& !c_ptr->o_idx
+		    && !c_ptr->m_idx) {
 			/* Get requested grid */
 			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
