@@ -1185,6 +1185,15 @@ They all start with a slash '/' hence they're called slash commands:
 
 /dun        Displays the name of the dungeon you're currently in.
 
+/edmt       This toggles the client option 'easy_disarm_montraps' manually.
+            (Note that this will not change the option in =7, if you enter that
+            menu, the option state will be reset to what it is in there.)
+            This will toggle the characters behaviour when walking into a
+            monster trap: Whether it will automatically attempt to disarm it or
+            not. Use it as a trapper for convenience to disarm all remaining
+            traps on the field faster after a battle has ended, instead of
+            having to press the disarm-key for every trap.
+
 /empty <inventory slot>
             Empty a potion from your inventory, leaving an empty bottle.
             Example: /empty c   (if you have 'c) 3 potions of boldness', one
