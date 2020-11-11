@@ -4642,7 +4642,6 @@ bool mon_hit_trap(int m_idx) {
 	bool remove = FALSE;
 	bool dead = FALSE;
 	bool fear = FALSE;
-	//s32b special = 0;
 
 	int dam, chance, shots, trapping;
 	int mul = 0;
@@ -4849,25 +4848,8 @@ bool mon_hit_trap(int m_idx) {
 			if (shots <= 0) remove = TRUE;
 
 			while (shots-- && !dead) {
-				/* Total base damage */
-				dam = damroll(load_o_ptr->dd, load_o_ptr->ds) + (load_o_ptr->to_d + kit_o_ptr->to_d + 10) / 2;
-
 				/* Total hit probability */
 				chance = (kit_o_ptr->to_h + load_o_ptr->to_h + 20) * BTH_PLUS_ADJ;
-
-				/* Damage multiplier */
-				if (kit_o_ptr->sval == SV_TRAPKIT_SLING) mul = 30;
-				if (kit_o_ptr->sval == SV_TRAPKIT_BOW) mul = 35;
-				if (kit_o_ptr->sval == SV_TRAPKIT_XBOW) mul = 40;
-				if (f3 & TR3_XTRA_MIGHT) mul += (kit_o_ptr->pval * 10);
-				if (mul < 0) mul = 0;
-
-				/* Multiply damage */
-				dam = (dam * mul) / 10;
-
-				/* Trapping skill influences damage - C. Blue */
-				//dam *= (50 + GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 1); dam /= 50;
-				dam += GetCS(&zcave[m_ptr->fy][m_ptr->fx], CS_MON_TRAP)->sc.montrap.difficulty * 2;
 
 				/* Check if we hit the monster */
 				if (test_hit_fire(chance, m_ptr->ac, TRUE)) {
@@ -4883,20 +4865,32 @@ bool mon_hit_trap(int m_idx) {
 						note_dies = " sets off a missile trap and is destroyed";
 					}
 
-					/* Message if visible */
-#if 0
-					if (who > 0 && p_ptr->mon_vis[m_idx]) {
-						/* describe the monster (again, just in case :-) */
-						monster_desc(who, m_name, m_idx, 0);
-
-						/* Print a message */
-						msg_format(who, "%^s is hit by a missile.", m_name);
-					}
-#endif	// 0
-
-					/* Apply slays, brand, critical hits */
-					// dam = tot_dam_aux(who, load_o_ptr, dam, m_ptr, &special);
+#define MONTRAPS_TO_DAM_BRANDS
+					/* Total base damage */
+					dam = damroll(load_o_ptr->dd, load_o_ptr->ds);
+#ifdef MONTRAPS_TO_DAM_BRANDS
+					/* Damage enchantment */
+					dam += load_o_ptr->to_d;
+#endif
+					/* Apply slays/brands */
 					dam = tot_dam_aux(0, load_o_ptr, dam, m_ptr, FALSE);
+#ifndef MONTRAPS_TO_DAM_BRANDS
+					/* Damage enchantment */
+					dam += load_o_ptr->to_d;
+#endif
+					/* 'Launcher' multiplier */
+					if (kit_o_ptr->sval == SV_TRAPKIT_SLING) mul = 30;
+					if (kit_o_ptr->sval == SV_TRAPKIT_BOW) mul = 35;
+					if (kit_o_ptr->sval == SV_TRAPKIT_XBOW) mul = 40;
+					if (f3 & TR3_XTRA_MIGHT) mul += (kit_o_ptr->pval * 10);
+					if (mul < 0) mul = 0;
+					dam = (dam * mul) / 10;
+
+					/* Trapping skill influences damage - C. Blue */
+					dam += trapping / 2 + kit_o_ptr->to_d;
+					dam = (dam * (trapping + 45)) / 35;/* / 35 (~330 dam) .. / 50 (~220 dam) */
+
+					/* Apply critical hits */
 					dam = critical_shot(0, load_o_ptr->weight + trapping * 10, load_o_ptr->to_h, dam, FALSE, FALSE);
 
 					/* No negative damage */
@@ -4927,62 +4921,22 @@ bool mon_hit_trap(int m_idx) {
 
 						/* Dead monster */
 						if (m_ptr->hp < 0) {
-							/* Generate treasure, etc */
-							//			if (!quiet) monster_death(Ind, c_ptr->m_idx);
-							/* if treasure is generated, change TRUE to FALSE in below delete_monster_idx ! */
-							/* Delete the monster */
 							delete_monster_idx(c_ptr->m_idx,TRUE);
-
 							dead = TRUE;
-
-							/* Give detailed messages if destroyed */
-							//if (!quiet && note) msg_format(Ind, "%^s%s", m_name, note);
 						}
-
 						/* Damaged monster */
-						else {
-#if 0
-							/* Give detailed messages if visible or destroyed */
-							if (!quiet && note && seen) msg_format(Ind, "%^s%s", m_name, note);
-
-							/* Hack -- Pain message */
-							else if (!quiet && dam > 0) message_pain(Ind, c_ptr->m_idx, dam);
-
-							/* Hack -- handle sleep */
-							if (do_sleep) m_ptr->csleep = do_sleep;
-#endif
-							msg_print_near_monster(m_idx, format("sets off a missile trap for %d damage.", dam));
-						}
+						else msg_print_near_monster(m_idx, format("sets off a missile trap for %d damage.", dam));
 					}
 					/* Hit the monster, check for death */
-					else if (mon_take_hit(who, m_idx, dam, &fear, note_dies)) {
-						/* Dead monster */
-						dead = TRUE;
-					}
-
+					else if (mon_take_hit(who, m_idx, dam, &fear, note_dies)) dead = TRUE;
 					/* No death */
 					else {
 						if (who > 0 && p_ptr->mon_vis[m_idx]) {
-#if 0 /* redundant with message_pain() below -> double message */
-							if (r_ptr->flags1 & RF1_UNIQUE) {
-								if (Players[who]->r_killed[m_ptr->r_idx] == 1) {
-									msg_format(who, "\377D%^s sets off a missile trap for \377e%d \377Ddamage.", m_name, dam);
-									if (Players[who]->warn_unique_credit) Send_beep(who);
-								} else
-									msg_format(who, "%^s sets off a missile trap for \377e%d \377wdamage.", m_name, dam);
-							} else
-								msg_format(who, "%^s sets off a missile trap for \377g%d \377wdamage.", m_name, dam);
-#else
 							msg_format(who, "%^s sets off a missile trap.", m_name);
-#endif
-
 							message_pain(who, m_idx, dam);
-
-							//if (special) attack_special(m_ptr, special, dam);
 
 							/* Take note */
 							if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-//								msg_format(who, "%^s flees in terror!", m_name);
 								if (m_ptr->r_idx != RI_MORGOTH)
 									msg_print_near_monster(m_idx, "flees in terror!");
 								else
