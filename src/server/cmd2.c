@@ -3457,7 +3457,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				//sound(Ind, NULL, NULL, SFX_TYPE_STOP, TRUE); /* Stop "hit_floor"/"tunnel_rock" sfx */
 				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 7);
 			}
-			__GRID_DEBUG(Ind, wpos, c_ptr->feat, "do_cmd_tunnel()", 4);
 			return;
 		}
 
@@ -3480,7 +3479,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		msg_print(Ind, "There is a monster in the way!");
 		/* Attack */
 		py_attack(Ind, y, x, TRUE);
-		__GRID_DEBUG(Ind, wpos, c_ptr->feat, "do_cmd_tunnel()", 5);
 		return;
 	}
 
@@ -4050,7 +4048,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		    (f_info[featm].flags1 & FF1_PERMANENT)) {
 			/* Message */
 			msg_print(Ind, f_text + f_info[featm].tunnel);
-			__GRID_DEBUG(Ind, wpos, c_ptr->feat, "do_cmd_tunnel()", 3);
 			return;
 		}
 
@@ -4070,7 +4067,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 			note_spot_depth(wpos, y, x);
 			everyone_lite_spot(wpos, y, x);
-			__GRID_DEBUG(Ind, wpos, c_ptr->feat, "do_cmd_tunnel()", 0);
 		} else {
 			msg_print(Ind, f_text + f_info[featm].tunnel);
 			more = TRUE;
@@ -4103,7 +4099,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* Redraw */
 			everyone_lite_spot(wpos, y, x);
 #endif
-			__GRID_DEBUG(Ind, wpos, c_ptr->feat, "do_cmd_tunnel()", 1);
 		}
 
 		/* Hack -- Search */
@@ -4235,7 +4230,6 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			more = FALSE;
 		}
 	}
-	__GRID_DEBUG(Ind, wpos, c_ptr->feat, "do_cmd_tunnel()", 2);
 
 	/* Cancel repetition unless we can continue */
 	if (!more) disturb(Ind, 0, 0);
@@ -5067,8 +5061,6 @@ void do_cmd_spike(int Ind, int dir) {
 
 			/* Add one spike to the door */
 			if (c_ptr->feat < FEAT_DOOR_TAIL) c_ptr->feat++;
-
-			__GRID_DEBUG(Ind, wpos, c_ptr->feat, "do_cmd_spike()", 0);
 
 			/* Use up, and describe, a single spike, from the bottom */
 			inven_item_increase(Ind, item, -1);

@@ -1493,8 +1493,6 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			if (chance && rand_int(chance) == 0)
 				/* turn into FEAT_SANDWALL_K / FEAT_MAGMA_K / FEAT_QUARTZ_K: */
 				c_ptr->feat += (c_ptr->feat == FEAT_SANDWALL ? 0x2 : 0x4);
-
-			__GRID_DEBUG(0, wpos, c_ptr->feat, "build_streamer()", 0);
 		}
 
 #if 0
@@ -4972,7 +4970,6 @@ static void store_height(worldpos *wpos, int x, int y, int x0, int y0, byte val,
 	/* Meant to be temporary, hence no cave_set_feat */
 	zcave[y + y0 - yhsize][x + x0 - xhsize].temp = val;
 
-	__GRID_DEBUG(0, wpos, zcave[y + y0 - yhsize][x + x0 - xhsize].feat, "store_height()", 0);
 	return;
 }
 
@@ -6538,7 +6535,6 @@ static void add_outer_wall(worldpos *wpos, int x, int y, int light, int x1, int 
 	/* Set bounding walls */
 	else if (zcave[y][x].feat == FEAT_WALL_EXTRA) {
 		zcave[y][x].feat = feat_wall_outer;
-		__GRID_DEBUG(0, wpos, feat_wall_outer, "add_outer_wall()", 0);
 		if (light == TRUE) zcave[y][x].info |= CAVE_GLOW;
 	}
 	/* Set bounding walls */
@@ -7158,7 +7154,6 @@ static void duplicate_door(worldpos *wpos, int y, int x, int y2, int x2) {
 
 	/* Place the same type of door */
 	zcave[y2][x2].feat = zcave[y][x].feat;
-	__GRID_DEBUG(0, wpos, zcave[y][x].feat, "duplicate_door()", 0);
 
 	/* let's trap this too ;) */
 	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
@@ -7545,7 +7540,6 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 #ifdef WIDE_CORRIDORS
 			/* Place the same type of door */
 			zcave[y2][x2].feat = zcave[y][x].feat;
-			__GRID_DEBUG(0, wpos, zcave[y2][x2].feat, "build_tunnel()", 0);
 
 			/* let's trap this too ;) */
 			if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
@@ -9279,7 +9273,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 	}
 
-	__GRID_DEBUG(0, wpos, feat_boundary, "cave_gen()", 0);
 #if 1
 	/* XXX the walls here should 'mimic' the surroundings,
 	 * however I omitted it to spare 522 c_special	- Jir */

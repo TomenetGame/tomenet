@@ -1944,7 +1944,6 @@ bool detect_treasure(int Ind, int rad) {
 			}
 		}
 	}
-	__GRID_DEBUG(Ind, wpos, c_ptr->feat, "detect_treasure()", 0);
 	return (detect);
 }
 
@@ -2019,7 +2018,6 @@ bool floor_detect_treasure(int Ind) {
 			}
 		}
 	}
-	__GRID_DEBUG(Ind, wpos, c_ptr->feat, "floor_detect_treasure()", 0);
 	return (detect);
 }
 
@@ -3113,8 +3111,6 @@ bool detect_treasure_object(int Ind, int rad) {
 			}
 		}
 	}
-	__GRID_DEBUG(Ind, wpos, c_ptr->feat, "detect_treasure_object()", 0);
-
 	return (detect);
 }
 

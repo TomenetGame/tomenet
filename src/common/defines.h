@@ -9040,5 +9040,5 @@ extern int PlayerUID;
 #define M_STATUS_FRIENDLY	1
 
 
-/* For debugging. */
-#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_HIGHLY_PROTECTED && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);
+/* For debugging - fixed */
+//#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_HIGHLY_PROTECTED && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);
