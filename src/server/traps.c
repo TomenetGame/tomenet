@@ -4658,11 +4658,10 @@ bool mon_hit_trap(int m_idx) {
 	int my = m_ptr->fy;
 
 	int difficulty = 0;
-	int smartness;
+	int disarming;
 
 	char m_name[MNAME_LEN];
 
-	bool notice = FALSE;
 	bool disarm = FALSE;
 	bool remove = FALSE;
 	bool dead = FALSE;
@@ -4725,72 +4724,68 @@ bool mon_hit_trap(int m_idx) {
 	}
 	if (who > 0 && p_ptr->mon_vis[m_idx]) monster_desc(who, m_name, m_idx, 0);
 
-	/* Get detection difficulty */
-	/* High level players hide traps better */
+	/* Trap power is the trapper's Trapping skill + 5:
+	   It is used further below for 1) damage calculations and 2) disarming calculations. */
 	trapping = cs_ptr->sc.montrap.difficulty + 5;
-	difficulty = (trapping * 3) / 2;	/* somewhat boosted than ToME */
+
+
+	/* Determine whether a monster disarms the trap instead of setting it off */
+
+	/* High level players hide traps better */
+	difficulty = (trapping * 3) / 2;
 
 	/* Darkness helps */
 	if (!(c_ptr->info & (CAVE_LITE | CAVE_GLOW)) &&
 	    !(r_ptr->flags9 & RF9_HAS_LITE) &&
 	    !(r_ptr->flags4 & RF4_BR_DARK) &&
 	    !(r_ptr->flags6 & RF6_DARKNESS))
-		difficulty += 20;
+		difficulty += 30;
 
 	/* Some traps are well-hidden */
 	if (f1 & TR1_STEALTH) difficulty += 10 * (kit_o_ptr->pval);
 
-	/* Get monster smartness for trap detection */
 	/* Higher level monsters are smarter */
-	smartness = (30 + m_ptr->level) / 2;
+	disarming = (50 + m_ptr->level) / 2;
 
 	/* Smart monsters are better at detecting traps */
-	if (r_ptr->flags2 & RF2_SMART) smartness += 10; //note that a lot of monsters are strangely smart, eg Bullywug Warriors..
+	if (r_ptr->flags2 & RF2_SMART) disarming += 10; //note that a lot of monsters are strangely smart, eg Bullywug Warriors..
 	/* Stupid monsters are no good at detecting traps */
-	else if (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND)) smartness = -150;
+	else if (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND)) disarming -= 150;
 	/* Animals aren't that intelligent either.. */
 	else if (r_ptr->flags3 & RF3_ANIMAL) {
 		if (r_ptr->d_char != 'H' && r_ptr->d_char != 'y') /* Note: No exception for Dracolisks atm */
-			smartness = -100;
+			disarming -= 100;
+		else
+			disarming -= 25;
 	}
 	/* Special monster types: Rogues, rangers and ninjas */
 	if (r_ptr->d_char == 'p' && (r_ptr->d_attr == TERM_BLUE || r_ptr->d_attr == TERM_L_WHITE || m_ptr->r_idx == 485))
-		smartness += 20 + m_ptr->level / 2;
+		disarming += 20 + m_ptr->level / 2;
 	else if (m_ptr->ego) {
 		switch (re_info[m_ptr->ego].d_attr) {
 		case TERM_BLUE:
 		case TERM_L_UMBER:
-			smartness += 20 + m_ptr->level / 2;
+			disarming += 20 + m_ptr->level / 2;
 		}
 	}
 
-	/* Check if the monster notices the trap */
-	if (randint(300) > (150 + difficulty - smartness)) notice = TRUE;
+	/* Get trap disarming difficulty */
+	difficulty = (kit_o_ptr->ac + kit_o_ptr->to_a);
 
-	/* Disarm check */
-	if (notice) {
-		/* Get trap disarming difficulty */
-		difficulty = (kit_o_ptr->ac + kit_o_ptr->to_a);
-
-		/* Get monster disarming ability */
-		/* Higher level monsters are better */
-		smartness = m_ptr->level / 5;
-
-		/* Smart monsters are better at disarming */
-		if (r_ptr->flags2 & RF2_SMART) smartness *= 2;
-		/* Stupid monsters never disarm traps */
-		else if (r_ptr->flags2 & RF2_STUPID) smartness = -150;
-		/* Nonsmart animals never disarm traps */
-		else if (r_ptr->flags3 & RF3_ANIMAL) {
-			if (r_ptr->d_char != 'H' && r_ptr->d_char != 'y') /* Note: No exception for Dracolisks atm */
-				smartness = -150;
-			else
-				smartness -= 50;
-		}
-
-		/* Check if the monster disarms the trap */
-		if (randint(120) > (80 + difficulty - smartness)) disarm = TRUE;
+	/* Non-projectile trap kits are slightly harder to handle -
+	   idea is that these are not as spammable, especially when they consume
+	   valuable ressources (except for runes though which are reusable, hmm) */
+	switch (kit_o_ptr->sval) {
+	case SV_TRAPKIT_SLING:
+	case SV_TRAPKIT_BOW:
+	case SV_TRAPKIT_XBOW:
+		break;
+	default:
+		difficulty += 15;
 	}
+
+	/* Check if the monster disarms the trap */
+	if (randint(300) > (250 + difficulty - disarming)) disarm = TRUE;
 
 	/* If disarmed, remove the trap and print a message */
 	if (disarm) {
@@ -4864,9 +4859,11 @@ bool mon_hit_trap(int m_idx) {
 					dam += load_o_ptr->to_d;
 #endif
 					/* 'Launcher' multiplier */
-					if (kit_o_ptr->sval == SV_TRAPKIT_SLING) mul = 30;
-					if (kit_o_ptr->sval == SV_TRAPKIT_BOW) mul = 35;
-					if (kit_o_ptr->sval == SV_TRAPKIT_XBOW) mul = 40;
+					switch (kit_o_ptr->sval) {
+					case SV_TRAPKIT_SLING: mul = 30; break;
+					case SV_TRAPKIT_BOW: mul = 35; break;
+					case SV_TRAPKIT_XBOW: mul = 40; break;
+					}
 					if (f3 & TR3_XTRA_MIGHT) mul += (kit_o_ptr->pval * 10);
 					if (mul < 0) mul = 0;
 					dam = (dam * mul) / 10;
