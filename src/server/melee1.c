@@ -149,7 +149,7 @@ static cptr desc_moan[] =
 	"mumbles something about mushrooms."
 };
 /* for the Great Pumpkin on Halloween - C. Blue >:) */
-static cptr desc_moan_halloween[] =
+cptr desc_moan_halloween[] =
 {
 	"screams: Trick or treat!",
 	"says: Happy Halloween!",

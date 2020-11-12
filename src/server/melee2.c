@@ -2007,11 +2007,13 @@ bool make_attack_spell(int Ind, int m_idx) {
 		direct = FALSE;
 		local = TRUE;
 
+ #ifndef NO_SELF_SUMMON
 		/* Hack -- summon around itself */
 		y = ys = m_ptr->fy;
 		x = xs = m_ptr->fx;
 		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) ||
 			(f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
+ #endif
 	}
 #else	/* STUPID_MONSTER_SPELLS */
 	if (m_ptr->cdis > MAX_RANGE) return (FALSE);
@@ -2134,7 +2136,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	    f6 & (RF6_SUMMON_MASK) || f0 & (RF0_SUMMON_MASK)) &&
 	*/
 	//if (rad > 3 ||
-	summon_test = summon_possible(wpos, ys, xs);
+	summon_test = (summon && summon_possible(wpos, ys, xs));
 #ifdef SAURON_ANTI_GLYPH
 	if (m_ptr->r_idx == RI_SAURON && summon && !summon_test && m_ptr->hp < m_ptr->maxhp) {
 		base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
@@ -2142,9 +2144,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 		m_ptr->extra = 5; /* stay boosted for 5 turns at least */
 	}
 #endif
-	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) ||
-	    (summon && !stupid &&
-	    !summon_test)) {
+	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) || !summon ||
+	    /* Smart monsters won't attempt to summon if they notice that there is no space: */
+	    (!stupid && !summon_test)) {
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
 		f5 &= ~(RF5_SUMMON_MASK);
@@ -2559,23 +2561,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 	case RF4_OFFSET+30:
 		if (season_halloween) {
 			/* Halloween event code for ranged MOAN -C. Blue */
-
 			disturb(Ind, 1, 0);
-			switch(rand_int(4)) {
 			/* Colour change for Halloween */
-			case 0:
-				msg_format(Ind, "\377o%^s screams: Trick or treat!", m_name);
-				break;
-			case 1:
-				msg_format(Ind, "\377o%^s says: Happy halloween!", m_name);
-				break;
-			case 2:
-				msg_format(Ind, "\377o%^s moans loudly.", m_name);
-				break;
-			case 3:
-				msg_format(Ind, "\377o%^s says: Have you seen The Great Pumpkin?", m_name);
-				break;
-			}
+			msg_format(Ind, "\377o%^s %s", m_name, desc_moan_halloween[rand_int(4)]);
 		}
 		break;
 
@@ -3954,11 +3942,13 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		direct = FALSE;
 		local = TRUE;
 
+ #ifndef NO_SELF_SUMMON
 		/* Hack -- summon around itself */
 		y = ys = m_ptr->fy;
 		x = xs = m_ptr->fx;
 		summon = (f4 & (RF4_SUMMON_MASK)) || (f5 & (RF5_SUMMON_MASK)) ||
 			(f6 & (RF6_SUMMON_MASK)) || (f0 & (RF0_SUMMON_MASK));
+ #endif
 	}
 #else	/* STUPID_MONSTER_SPELLS */
 	if (m_ptr->cdis > MAX_RANGE) return (FALSE);
@@ -4081,7 +4071,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	    f6 & (RF6_SUMMON_MASK) || f0 & (RF0_SUMMON_MASK)) &&
 	*/
 	//if (rad > 3 ||
-	summon_test = summon_possible(wpos, ys, xs);
+	summon_test = (summon && summon_possible(wpos, ys, xs));
 #ifdef SAURON_ANTI_GLYPH
 	if (m_ptr->r_idx == RI_SAURON && summon && !summon_test && m_ptr->hp < m_ptr->maxhp) {
 		base_r_ptr->freq_spell = base_r_ptr->freq_innate = SAURON_SPELL_BOOST;
@@ -4089,9 +4079,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		m_ptr->extra = 5; /* stay boosted for 5 turns at least */
 	}
 #endif
-	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) ||
-	    (summon && !stupid &&
-	    !summon_test)) {
+	if (rad > INDIRECT_SUMMONING_RADIUS || magik(SUPPRESS_SUMMON_RATE) || !summon ||
+	    /* Smart monsters won't attempt to summon if they notice that there is no space: */
+	    (!stupid && !summon_test)) {
 		/* Remove summoning spells */
 		f4 &= ~(RF4_SUMMON_MASK);
 		f5 &= ~(RF5_SUMMON_MASK);
@@ -4506,23 +4496,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	case RF4_OFFSET+30:
 		if (season_halloween) {
 			/* Halloween event code for ranged MOAN -C. Blue */
-
 			disturb(Ind, 1, 0);
-			switch(rand_int(4)) {
 			/* Colour change for Halloween */
-			case 0:
-				msg_format(Ind, "\377o%^s screams: Trick or treat!", m_name);
-				break;
-			case 1:
-				msg_format(Ind, "\377o%^s says: Happy halloween!", m_name);
-				break;
-			case 2:
-				msg_format(Ind, "\377o%^s moans loudly.", m_name);
-				break;
-			case 3:
-				msg_format(Ind, "\377o%^s says: Have you seen The Great Pumpkin?", m_name);
-				break;
-			}
+			msg_format(Ind, "\377o%^s %s", m_name, desc_moan_halloween[rand_int(4)]);
 		}
 		break;
 
@@ -11578,6 +11554,10 @@ void process_monsters(void) {
 			} else m_ptr->charmedignore = 0; /* Charmer is gone, break the spell */
 		}
 
+
+		/* ----- begin scanning for target players ----- */
+
+
 		/* Make sure we don't store up too much energy */
 		//if (m_ptr->energy > tmp) m_ptr->energy = tmp;
 		m_ptr->energy = tmp;
@@ -11621,6 +11601,55 @@ void process_monsters(void) {
 		}
 		if (closest == -1)
 #endif
+		/* Hack for Great Pumpkin to announce his presence nearby */
+		if (m_ptr->r_idx == RI_PUMPKIN && !m_ptr->csleep && !rand_int(300)) {
+			for (pl = 1; pl <= NumPlayers; pl++)  {
+				p_ptr = _Players[pl];
+				p_ptr->tmp_x = 0;
+
+				/* Only check him if he is playing */
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+
+				/* Make sure he's on the same dungeon level */
+				if (!inarea(&p_ptr->wpos, &m_ptr->wpos)) continue;
+
+				/* Hack -- make the dungeon master invisible to monsters */
+				if (p_ptr->admin_dm && (!m_ptr->owner || (m_ptr->owner != p_ptr->id))) continue; /* for Dungeon Master GF_DOMINATE */
+
+				/*
+				 * Hack -- Ignore players that have died or left
+				 * as suggested by PowerWyrm - mikaelh */
+				if (p_ptr->suicided || p_ptr->death || p_ptr->new_level_flag) continue;
+
+				/* Monsters serve a king on his land they dont attack him */
+				// if (player_is_king(pl)) continue;
+
+				/* Compute distance */
+				j = distance(p_ptr->py, p_ptr->px, fy, fx);
+
+				/* Hack - indicate where the Pumpkin is approximately, if out of view */
+				if (!los(&p_ptr->wpos, p_ptr->py, p_ptr->px, fy, fx) || j > MAX_SIGHT) {
+					int yd = ABS(p_ptr->py - fy), xd = ABS(p_ptr->px - fx);
+					cptr c;
+
+					if (yd > xd * 2) {
+						if (p_ptr->py > fy) c = "north";
+						else c = "south";
+					} else if (xd > yd * 2) {
+						if (p_ptr->px > fx) c = "west";
+						else c = "east";
+					} else if (p_ptr->py > fy) {
+						if (p_ptr->px > fx) c = "north-west";
+						else c = "north-east";
+					} else {
+						if (p_ptr->px > fx) c = "south-west";
+						else c = "south-east";
+					}
+					msg_format(pl, "\377oYou hear a ghastly moan from the %s..", c);
+				}
+			}
+		}
+
 		/* Find the closest player */
 		for (pl = 1, n = NumPlayers; pl <= n; pl++)  {
 			p_ptr = _Players[pl];
@@ -11865,7 +11894,6 @@ void process_monsters(void) {
 			/* We can "sense" the player */
 			test = TRUE;
 		}
-
 		/* Handle "sight" and "aggravation" */
 #if 0
 		else if ((m_ptr->cdis <= MAX_SIGHT) &&

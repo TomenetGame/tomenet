@@ -51,7 +51,7 @@
    with a 'T' marker which is visible only to admins.*/
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	7
-#define VERSION_PATCH_LATEST	2
+#define VERSION_PATCH_LATEST	3
 #define VERSION_EXTRA_LATEST	0
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
@@ -59,8 +59,8 @@
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	7
-#define VERSION_PATCH_OUTDATED	1
-#define VERSION_EXTRA_OUTDATED	2
+#define VERSION_PATCH_OUTDATED	2
+#define VERSION_EXTRA_OUTDATED	1
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	1 /* should always be 1 to invalidate previous 'test' versions */
 
@@ -176,15 +176,6 @@
 
 /* Characters disallowed in save files */
 #define SF_BAD_CHARS ":!?\\/()\"@. _"
-
-/* max range of arrows in do_cmd_fire.
- * the aim is to prevent 'out-of-range attack' abuse.
- * [MAX_RANGE] */
-/* commented out due to monster AI improvements.
- * activate it if STUPID_MONSTER_SPELLS is defined!
- * --actually this should always be enabled and set to MAX_RANGE, that limit is also used for spellcasting.
- */
-#define ARROW_DIST_LIMIT MAX_RANGE
 
 /* Maximum number of different characters one player account may hold - C. Blue */
 #define MAX_CHARS_PER_ACCOUNT	11
@@ -303,7 +294,8 @@
 #ifndef ARCADE_SERVER
  #define MAX_SCREEN_WID		SCREEN_WID
 #else
- #define MAX_SCREEN_WID		(SCREEN_WID * 3)
+ //#define MAX_SCREEN_WID		(SCREEN_WID * 3)	/* For experimental screen-size code testing in the future */
+ #define MAX_SCREEN_WID		SCREEN_WID
 #endif
 #define MAX_SCREEN_HGT		(SCREEN_HGT * 2)
 
@@ -711,6 +703,8 @@
 
 /* ---------------------------------------------------------------- (Rather fundamental 'features')  ---------------------------------------------------------------- */
 
+/* --- Player settings --- */
+
 /* Define this to make 'exp ratio' determine exp-gain instead of exp-to-adv:
    (has no effect if KINGCAP_EXP is defined) */
 #define ALT_EXPRATIO
@@ -719,6 +713,81 @@
 #define MIN_PVP_LEVEL	10
 #define MID_PVP_LEVEL	20
 #define MAX_PVP_LEVEL	30
+
+
+/* For flash player option, cfg.fps/n, for teleport [6] */
+#define FLASH_SELF_DIV 4
+/* For flash player option, cfg.fps/n, for floor change [4] */
+#define FLASH_SELF_DIV2 3
+
+/* Time to be idle for auto-afk to kick in, in seconds [60] */
+#define AUTO_AFK_TIMER 60
+
+/* Time to be idle and starving for auto-kick to kick in, in seconds [30] */
+#define STARVE_KICK_TIMER 30
+
+/* Maximum armour class value that yields in a reduction of damage.
+   Note: The chance to get hit still goes down further above this value.
+   Also search code for CAP_ITEM_BONI to find +hit/+dam/+ac cappings. */
+#ifdef ENABLE_NEW_MELEE
+ #if 0
+  #define AC_CAP	250
+  #define AC_CAP_DIV	350
+ #else
+  #ifndef TO_AC_CAP_30
+   #define AC_CAP	200
+   #define AC_CAP_DIV	300
+  #else
+    /* for now the same - could reduce cap to 175 or even 150 */
+   #define AC_CAP	200
+   #define AC_CAP_DIV	300
+  #endif
+ #endif
+#else
+ #define AC_CAP		150
+ #define AC_CAP_DIV	250
+#endif
+
+/* Percentage reduction of anti-magic field effects on party members [75] or [100].
+   Notes: 75% is reasonable; however, for Nether Realm paries you might want 100% for QoL. */
+#define AM_PARTY_REDUCTION	100
+
+/* Limit value for Anti-magic fields (AM cap)
+   Should range from 75..80%, maybe make skill & DS percentage
+   multiply instead of sum up. - C. Blue */
+#define ANTIMAGIC_CAP		75
+
+/* Cap for AM field radius. 9 is implied by skill+darksword,
+   if monster form AM is added it could stack up to 12 though,
+   which seems out of line --
+    an unbeliever (warrior) should not be surpassed and 12 seems too much. */
+#define ANTIMAGIC_DIS_CAP	9
+
+/* Limit effectiveness of interception/martial arts [50..80] */
+#define INTERCEPT_CAP		70
+
+/* If both interception and antimagic field suppress the same casting attempt of the same monster,
+   reduce the combined chance somewhat: from 92% (1 in 12) to 83% (1 in 6) to stay sane. */
+#define COMBO_AM_IC_CAP		83
+
+/* upper limit of dodging chance. [80] */
+#define DODGE_CAP		80
+
+/* Maximum level difference for party members,
+   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
+#define MAX_PARTY_LEVEL_DIFF 7
+
+/* Maximum level difference for winner-party members,
+   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
+#define MAX_KING_PARTY_LEVEL_DIFF 11
+
+/* Party level diff cancellation threshold. Just comment out (ie don't define it) to disable.
+   For super high level characters: Minimum level at and above which there is no more limit to level difference of party members. [80]
+   So as soon as all characters are of this level, they share exp even if they exceed MAX_KING_PARTY_LEVEL_DIFF. */
+#define KING_PARTY_FREE_THRESHOLD 80
+
+
+/* --- Monster settings --- */
 
 #ifdef MONSTER_ASTAR
  /* max size of open/closed pathfinding table in an A* instance.
@@ -773,17 +842,6 @@
  #define COME_BACK_TIME_MAX 600
 #endif
 
-/* For flash player option, cfg.fps/n, for teleport [6] */
-#define FLASH_SELF_DIV 4
-/* For flash player option, cfg.fps/n, for floor change [4] */
-#define FLASH_SELF_DIV2 3
-
-/* Time to be idle for auto-afk to kick in, in seconds [60] */
-#define AUTO_AFK_TIMER 60
-
-/* Time to be idle and starving for auto-kick to kick in, in seconds [30] */
-#define STARVE_KICK_TIMER 30
-
 /* Approximate cap of a monster's average raw melee damage output per turn
    (before AC of the target is even incorporated)	[700] */
 #define AVG_MELEE_CAP		700
@@ -792,61 +850,9 @@
 /* Generic magical damage cap (BEFORE susceptibilities, for those it may still be doubled) */
 #define MAGICAL_CAP		1600
 
-/* Maximum armour class value that yields in a reduction of damage.
-   Note: The chance to get hit still goes down further above this value.
-   Also search code for CAP_ITEM_BONI to find +hit/+dam/+ac cappings. */
-#ifdef ENABLE_NEW_MELEE
- #if 0
-  #define AC_CAP	250
-  #define AC_CAP_DIV	350
- #else
-  #ifndef TO_AC_CAP_30
-   #define AC_CAP	200
-   #define AC_CAP_DIV	300
-  #else
-    /* for now the same - could reduce cap to 175 or even 150 */
-   #define AC_CAP	200
-   #define AC_CAP_DIV	300
-  #endif
- #endif
-#else
- #define AC_CAP		150
- #define AC_CAP_DIV	250
-#endif
-
-/* Limit value for Anti-magic fields (AM cap)
-   Should range from 75..80%, maybe make skill & DS percentage
-   multiply instead of sum up. - C. Blue */
-#define ANTIMAGIC_CAP		75
-
-/* Cap for AM field radius. 9 is implied by skill+darksword,
-   if monster form AM is added it could stack up to 12 though,
-   which seems out of line --
-    an unbeliever (warrior) should not be surpassed and 12 seems too much. */
-#define ANTIMAGIC_DIS_CAP	9
-
-/* Limit effectiveness of interception/martial arts [50..80] */
-#define INTERCEPT_CAP		70
-
-/* If both interception and antimagic field suppress the same casting attempt of the same monster,
-   reduce the combined chance somewhat: from 92% (1 in 12) to 83% (1 in 6) to stay sane. */
-#define COMBO_AM_IC_CAP		83
-
-/* upper limit of dodging chance. [80] */
-#define DODGE_CAP		80
-
-/* Maximum level difference for party members,
-   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
-#define MAX_PARTY_LEVEL_DIFF 7
-
-/* Maximum level difference for winner-party members,
-   and (+1 tolerance here) for supporting fellow players (depending on HENC_STRICTNESS) */
-#define MAX_KING_PARTY_LEVEL_DIFF 11
-
-/* Party level diff cancellation threshold. Just comment out (ie don't define it) to disable.
-   For super high level characters: Minimum level at and above which there is no more limit to level difference of party members. [80]
-   So as soon as all characters are of this level, they share exp even if they exceed MAX_KING_PARTY_LEVEL_DIFF. */
-#define KING_PARTY_FREE_THRESHOLD 80
+/* Disallow monsters summoning onto themselves when out of MAX_RANGE but having LoS?
+   This is only really important for Nether Realm (maybe somewhat for Cloud Planes). */
+#define NO_SELF_SUMMON
 
 
 /* ----------------------------------------------- (Rather specific 'features', could go to defines-features.h instead)  ----------------------------------------------- */
@@ -1229,6 +1235,26 @@
 /* Chance for a door that is bashed open to break. */
 #define DOOR_BASH_BREAKAGE	80
 
+/* Create backup when erasing a player whose level is >= this. [40] because that's minimum kinging level. */
+#define SAFETY_BACKUP_PLAYER 35
+
+/* For Halloween event: Floor and player level range allowed for spawn/interaction with Pumpkin */
+#ifndef RPG_SERVER
+ #define HALLOWEEN_MAX_PLEV 30
+ #define HALLOWEEN_MAX_DLEV 35
+ #define HALLOWEEN_DLEV_TOUGHEST 25
+ #define HALLOWEEN_DLEV_TOUGHER 17
+ #define HALLOWEEN_DLEV_TOUGH 9
+ #define HALLOWEEN_IDDC_DLEV 10
+#else
+ #define HALLOWEEN_MAX_PLEV 35
+ #define HALLOWEEN_MAX_DLEV 40
+ #define HALLOWEEN_DLEV_TOUGHEST 30
+ #define HALLOWEEN_DLEV_TOUGHER 22
+ #define HALLOWEEN_DLEV_TOUGH 14
+ #define HALLOWEEN_IDDC_DLEV 10
+#endif
+
 
 /* ----------------------------------------------------------------------- (End of 'features')  ----------------------------------------------------------------------- */
 
@@ -1344,9 +1370,10 @@
 #define RI_HELLRAISER		1067
 #define RI_NETHER_GUARD		1068
 #define RI_DOR			1085
-#define RI_PUMPKIN1		1086
-#define RI_PUMPKIN2		1087
-#define RI_PUMPKIN3		1088
+#define RI_PUMPKIN		1088	/* new: max hp version is now _the_ (only) Pumpkin form - its HP get downscaled live on spawn according to floor level. */
+#define RI_PUMPKIN1		1086	/* deprecated (monster too) */
+#define RI_PUMPKIN2		1087	/* deprecated (monster too) */
+#define RI_PUMPKIN3		1088	/* deprecated, replace by RI_PUMPKIN */
 #define RI_ZU_AON		1097
 #define RI_OROME		1098
 #define RI_BRIGHTLANCE		1100
@@ -1671,6 +1698,15 @@
  */
 #define MAX_SIGHT	20	/* Maximum view distance */
 #define MAX_RANGE	18	/* Maximum range (spells, etc) */
+
+/* max range of arrows in do_cmd_fire.
+ * the aim is to prevent 'out-of-range attack' abuse.
+ * [MAX_RANGE] */
+/* commented out due to monster AI improvements.
+ * activate it if STUPID_MONSTER_SPELLS is defined!
+ * --actually this should always be enabled and set to MAX_RANGE, that limit is also used for spellcasting.
+ */
+#define ARROW_DIST_LIMIT MAX_RANGE
 
 
 
@@ -9020,3 +9056,7 @@ extern int PlayerUID;
 /* Monster special 'status' */
 #define M_STATUS_NONE		0
 #define M_STATUS_FRIENDLY	1
+
+
+/* For debugging. */
+#define __GRID_DEBUG(Ind, wpos, feat, location, info)	if ((feat) == FEAT_HIGHLY_PROTECTED && !in_trainingtower(wpos)) s_printf("__GRID_DEBUG: %s, %d - (%d) '%s' (%d,%d,%d)\n", location, info, Ind, (Ind) > 0 ? Players[Ind]->name : "-", (wpos)->wx, (wpos)->wy, (wpos)->wz);

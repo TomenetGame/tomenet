@@ -1493,6 +1493,8 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 			if (chance && rand_int(chance) == 0)
 				/* turn into FEAT_SANDWALL_K / FEAT_MAGMA_K / FEAT_QUARTZ_K: */
 				c_ptr->feat += (c_ptr->feat == FEAT_SANDWALL ? 0x2 : 0x4);
+
+			__GRID_DEBUG(0, wpos, c_ptr->feat, "build_streamer()", 0);
 		}
 
 #if 0
@@ -4960,7 +4962,7 @@ static void store_height(worldpos *wpos, int x, int y, int x0, int y0, byte val,
 	if (!(zcave = getcave(wpos))) return;
 
 	/* Only write to points that are "blank" */
-	if (zcave[y+ y0 - yhsize][x + x0 - xhsize].feat != 255) return;
+	if (zcave[y+ y0 - yhsize][x + x0 - xhsize].temp != 255) return;
 
 	 /* If on boundary set val > cutoff so walls are not as square */
 	if (((x == 0) || (y == 0) || (x == xhsize * 2) || (y == yhsize * 2)) &&
@@ -4968,8 +4970,9 @@ static void store_height(worldpos *wpos, int x, int y, int x0, int y0, byte val,
 
 	/* Store the value in height-map format */
 	/* Meant to be temporary, hence no cave_set_feat */
-	zcave[y + y0 - yhsize][x + x0 - xhsize].feat = val;
+	zcave[y + y0 - yhsize][x + x0 - xhsize].temp = val;
 
+	__GRID_DEBUG(0, wpos, zcave[y + y0 - yhsize][x + x0 - xhsize].feat, "store_height()", 0);
 	return;
 }
 
@@ -5079,7 +5082,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 			c_ptr = &zcave[j + y0 - yhsize][i + x0 - xhsize];
 
 			/* 255 is a flag for "not done yet" */
-			c_ptr->feat = 255;
+			c_ptr->temp = 255;
 
 			/* Clear icky flag because may be redoing the cave */
 			c_ptr->info &= ~(CAVE_ICKY);
@@ -5130,7 +5133,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					r = &zcave[j/256+y0-yhsize][(i+xhstep)/256+x0-xhsize];
 
 					/* Average of left and right points + random bit */
-					val = (l->feat + r->feat) / 2 +
+					val = (l->temp + r->temp) / 2 +
 						  (randint(xstep/256) - xhstep/256) * roug / 16;
 
 					store_height(wpos, i/256, j/256, x0, y0, val,
@@ -5156,7 +5159,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					d = &zcave[(j+yhstep)/256+y0-yhsize][i/256+x0-xhsize];
 
 					/* Average of up and down points + random bit */
-					val = (u->feat + d->feat) / 2 +
+					val = (u->temp + d->temp) / 2 +
 						  (randint(ystep/256) - yhstep/256) * roug / 16;
 
 					store_height(wpos, i/256, j/256, x0, y0, val,
@@ -5192,7 +5195,7 @@ static void generate_hmap(worldpos *wpos, int y0, int x0, int xsiz, int ysiz, in
 					 * reduce the effect of the square grid on the shape
 					 * of the fractal
 					 */
-					val = (ul->feat + dl->feat + ur->feat + dr->feat) / 4 +
+					val = (ul->temp + dl->temp + ur->temp + dr->temp) / 4 +
 					      (randint(xstep/256) - xhstep/256) *
 						  (diagsize / 16) / 256 * roug;
 
@@ -5220,7 +5223,7 @@ static bool hack_isnt_wall(worldpos *wpos, int y, int x, int cutoff) {
 	zcave[y][x].info |= (CAVE_ICKY);
 
 	/* If less than cutoff then is a floor */
-	if (zcave[y][x].feat <= cutoff) {
+	if (zcave[y][x].temp <= cutoff) {
 		place_floor(wpos, y, x);
 		return (TRUE);
 	}
@@ -6535,6 +6538,7 @@ static void add_outer_wall(worldpos *wpos, int x, int y, int light, int x1, int 
 	/* Set bounding walls */
 	else if (zcave[y][x].feat == FEAT_WALL_EXTRA) {
 		zcave[y][x].feat = feat_wall_outer;
+		__GRID_DEBUG(0, wpos, feat_wall_outer, "add_outer_wall()", 0);
 		if (light == TRUE) zcave[y][x].info |= CAVE_GLOW;
 	}
 	/* Set bounding walls */
@@ -7154,6 +7158,7 @@ static void duplicate_door(worldpos *wpos, int y, int x, int y2, int x2) {
 
 	/* Place the same type of door */
 	zcave[y2][x2].feat = zcave[y][x].feat;
+	__GRID_DEBUG(0, wpos, zcave[y][x].feat, "duplicate_door()", 0);
 
 	/* let's trap this too ;) */
 	if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
@@ -7540,6 +7545,7 @@ static void build_tunnel(struct worldpos *wpos, int row1, int col1, int row2, in
 #ifdef WIDE_CORRIDORS
 			/* Place the same type of door */
 			zcave[y2][x2].feat = zcave[y][x].feat;
+			__GRID_DEBUG(0, wpos, zcave[y2][x2].feat, "build_tunnel()", 0);
 
 			/* let's trap this too ;) */
 			if ((tmp = getlevel(wpos)) <= COMFORT_PASSAGE_DEPTH ||
@@ -9273,6 +9279,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		}
 	}
 
+	__GRID_DEBUG(0, wpos, feat_boundary, "cave_gen()", 0);
 #if 1
 	/* XXX the walls here should 'mimic' the surroundings,
 	 * however I omitted it to spare 522 c_special	- Jir */
@@ -10054,7 +10061,7 @@ for(mx = 1; mx < 131; mx++) {
 							} else {
 								cs_ptr->sc.omni = STORE_BTSUPPLY;
 							}
-							s_printf("DUNGEON_STORE: %d (%d,%d,%d)\n", cs_ptr->sc.omni, wpos->wx, wpos->wy, wpos->wz);
+							s_printf("DUNGEON_STORE: %d (%d,%d,%d) '%s'\n", cs_ptr->sc.omni, wpos->wx, wpos->wy, wpos->wz, st_name + st_info[cs_ptr->sc.omni].name);
 							return;
 						}
 					}

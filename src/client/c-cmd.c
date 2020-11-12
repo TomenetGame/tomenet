@@ -1235,7 +1235,7 @@ void cmd_eat(void) {
 	get_item_hook_find_obj_what = "Food name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Eat what? ", (USE_INVEN | USE_EXTRA))) {
+	if (!c_get_item(&item, "Eat what? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
 		if (item == -2) c_msg_print("You do not have anything edible.");
 		return;
 	}
@@ -2049,6 +2049,12 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
+				/* Expand 'tc' to 'Treasure Class' */
+				if (!strcasecmp(buf, "tc")) strcpy(buf, "treasure class");
+
+				/* Melee weapon classes */
+				if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "clas")) strcpy(buf, "weapon types");
+				else if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "typ")) strcpy(buf, "weapon types");
 
 				/* Expand 'pfe' to 'Protection from evil' */
 				if (!strcasecmp(buf, "pfe")) strcpy(buf, "Protection from evil");
@@ -2076,9 +2082,17 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
 					continue;
 				}
+				/* Draconian traits */
+				if (!strncasecmp(buf, "trai", 3) && my_strcasestr("traits:", buf)) {
+					strcpy(buf, "Table of their traits:");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
+					continue;
+				}
 
 				/* Rogue 'Cloaking' ability has no dedicated paragraph, use key list for it */
-				if (!strcasecmp(buf, "cloak")) {
+				if (!strcasecmp(buf, "cloak") || !strcasecmp(buf, "cloaking")) {
 					strcpy(buf, "'cloaking mode'");
 					fallback = TRUE;
 					fallback_uppercase = 0;

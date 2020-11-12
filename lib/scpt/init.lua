@@ -39,7 +39,7 @@ pern_dofile(Ind, "update.lua")
 -- Init !
 pern_dofile(Ind, "player.lua")
 pern_dofile(Ind, "s_aux.lua")
-pern_dofile(Ind, "powers.lua")
+--pern_dofile(Ind, "powers.lua")
 
 -- Add the schools of magic
 pern_dofile(Ind, "spells.lua")

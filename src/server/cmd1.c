@@ -3137,13 +3137,13 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (p_ptr->combat_stance == 2) {
 					int stun_effect, resist_stun;
 
-					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]] / 2) + 1;
+					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_ind[A_STR]] / 2) + 1;
 					stun_effect /= 2;
 
-					resist_stun = adj_con_fix[q_ptr->stat_cur[A_CON]]; /* 0..9 */
+					resist_stun = adj_con_fix[q_ptr->stat_ind[A_CON]]; /* 0..9 */
 					if (q_ptr->free_act) resist_stun += 3;
 					resist_stun += 6 - 300 / (50 + q_ptr->ac + q_ptr->to_a); /* 0..5 */
-					resist_stun -= adj_con_fix[p_ptr->stat_cur[A_DEX]];
+					resist_stun -= adj_con_fix[p_ptr->stat_ind[A_DEX]];
 					if (resist_stun < 0) resist_stun = 0; /* 0..17 (usually 8 vs fighters) */
 
 					switch (p_ptr->combat_stance_power) {
@@ -3286,23 +3286,23 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			if (backstab) {
 				backstab_feed = TRUE;
 				backstab = FALSE;
-			   if (martial) {
-				msg_format(Ind, "You twist the neck of %s for \377L%d \377wdamage.", q_name, k);
-				msg_format(0 - c_ptr->m_idx, "%s twists your neck for \377R%d \377wdamage.", p_ptr->name, k);
-			   } else {
-				msg_format(Ind, "You stab helpless %s for \377L%d \377wdamage.", q_name, k);
-				msg_format(0 - c_ptr->m_idx, "%s backstabs you for \377R%d \377wdamage.", p_ptr->name, k);
-			   }
+				if (martial) {
+					msg_format(Ind, "You twist the neck of %s for \377L%d \377wdamage.", q_name, k);
+					msg_format(0 - c_ptr->m_idx, "%s twists your neck for \377R%d \377wdamage.", p_ptr->name, k);
+				} else {
+					msg_format(Ind, "You stab helpless %s for \377L%d \377wdamage.", q_name, k);
+					msg_format(0 - c_ptr->m_idx, "%s backstabs you for \377R%d \377wdamage.", p_ptr->name, k);
+				}
 			}
 			else if (stab_fleeing) {
 				stab_fleeing = FALSE;
-			   if (martial) {
-				msg_format(Ind, "You strike the back of %s for \377L%d \377wdamage.", q_name, k);
-				msg_format(0 - c_ptr->m_idx, "%s strikes your back for \377R%d \377wdamage.", p_ptr->name, k);
-			   } else {
-				msg_format(Ind, "You backstab fleeing %s for \377L%d \377wdamage.", q_name, k);
-				msg_format(0 - c_ptr->m_idx, "%s backstabs you for \377R%d \377wdamage.", p_ptr->name, k);
-			   }
+				if (martial) {
+					msg_format(Ind, "You strike the back of %s for \377L%d \377wdamage.", q_name, k);
+					msg_format(0 - c_ptr->m_idx, "%s strikes your back for \377R%d \377wdamage.", p_ptr->name, k);
+				} else {
+					msg_format(Ind, "You backstab fleeing %s for \377L%d \377wdamage.", q_name, k);
+					msg_format(0 - c_ptr->m_idx, "%s backstabs you for \377R%d \377wdamage.", p_ptr->name, k);
+				}
 			}
 			//else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);
 			else {
@@ -4266,8 +4266,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #ifdef ENABLE_STANCES
 				/* apply stun from offensive combat stance */
 				if (p_ptr->combat_stance == 2) {
-
-					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_cur[A_STR]] / 2) + 1;
+					stun_effect = randint(get_skill_scale(p_ptr, SKILL_MASTERY, 10) + adj_con_fix[p_ptr->stat_ind[A_STR]] / 2) + 1;
 					stun_effect /= 2;
 
 					resist_stun = 6 - 300 / (50 + m_ptr->ac); /* 0..5 */
@@ -4283,16 +4282,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					case 3: resist_stun = (resist_stun * 2) / 3; break;
 					}
 
-					if (stun_effect && ((k + p_ptr->to_d + p_ptr->to_d_melee) < m_ptr->hp)) {
+					if (stun_effect && !(r_ptr->flags3 & RF3_NO_STUN)) {
 						/* Stun the monster */
-						if (r_ptr->flags3 & RF3_NO_STUN) {
-							/* nothing:
-							msg_format(Ind, "%^s is unaffected.", m_name);*/
-						}
-						//else if (!magik((r_ptr->level * 2) / 3 + resist_stun)) {
-						//else if (!magik(((r_ptr->level + 30) * 2) / 4 + resist_stun)) {
-						//else if (!magik((r_ptr->level + 100) / 3 + resist_stun)) {
-						else if (!magik(90 - (1000 / (r_ptr->level + 50)) + resist_stun)) {
+						if (!magik(90 - (1000 / (r_ptr->level + 50)) + resist_stun)) {
 							m_ptr->stunned += (stun_effect + get_skill_scale(p_ptr, SKILL_COMBAT, 3));
 							did_stun = TRUE;
 						}
@@ -4438,6 +4430,33 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				kl += m_ptr->hp / (dual_stab ? 30 : 20);
 				k2 = kl;
 #endif
+
+#if 1
+				/* Experimental: Backstabbing skill can apply stun effect (currently PvE only). */
+				if (backstab && !did_stun && !(r_ptr->flags3 & RF3_NO_STUN) && get_skill(p_ptr, SKILL_BACKSTAB)) {
+					/* For rogues: Nerve-point based stun ;) uses DEX instead of STR, and Backstabbing skill, only slightly Weaponmastery. */
+					int stun_effect, resist_stun;
+
+					resist_stun = 6 - 300 / (50 + m_ptr->ac); /* 0..5 */
+					if (r_ptr->flags1 & RF1_UNIQUE) resist_stun += 10;
+					/* NO_CONF and NO_SLEEP have no effect vs Backstabbing */
+					if (r_ptr->flags3 & RF3_UNDEAD)	resist_stun += 10;
+
+					/* Combat stances have no effect, Backstabbing is sort of its own 'stance'.. */
+
+					/* Stun the monster? */
+					stun_effect = 110 - (2270 / (r_ptr->level + 100)) + resist_stun;//88..126
+					stun_effect -= get_skill_scale(p_ptr, SKILL_BACKSTAB, 100);
+					if (rand_int(100) > stun_effect) { //-12..26
+						/* Omae wa mou shindeiru */
+						stun_effect = ((get_skill_scale(p_ptr, SKILL_MASTERY, 5) + adj_con_fix[p_ptr->stat_ind[A_DEX]] + 1) * (50 + rand_int(51) - (r_ptr->level / 3))) / 100;
+						if (stun_effect) {
+							m_ptr->stunned += stun_effect;
+							did_stun = TRUE; /* Nani? */
+						}
+					}
+				}
+#endif
 			}
 
 			/* Vorpal bonus - multi-dice!
@@ -4459,39 +4478,42 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				if (!(r_ptr->flags1 & RF1_UNIQUE)) k = m_ptr->hp + 1;
 			}
 
+			/* Don't apply effects if monster just dies from this attack anyway */
+			if (k > m_ptr->hp) did_stun = did_knee = did_slow = FALSE;
+
 			/* DEG Updated hit message to include damage */
 			if (backstab) {
 				backstab_feed = TRUE;
 				backstab = FALSE;
-			   if (martial) {
-				if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
-					if (uniq_bell) Send_beep(Ind);
+				if (martial) {
+					if (r_ptr->flags1 & RF1_UNIQUE) {
+						msg_format(Ind, "\377%cYou twist the neck of the sleeping %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
+						if (uniq_bell) Send_beep(Ind);
+					}
+					else msg_format(Ind, "You twist the neck of the sleeping %s for \377p%d \377wdamage.", m_name, k);
+				} else {
+					if (r_ptr->flags1 & RF1_UNIQUE) {
+						msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
+						if (uniq_bell) Send_beep(Ind);
+					}
+					else msg_format(Ind, "You stab the helpless, sleeping %s for \377p%d \377wdamage.", m_name, k);
 				}
-				else msg_format(Ind, "You twist the neck of the sleeping %s for \377p%d \377wdamage.", m_name, k);
-			   } else {
-				if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_format(Ind, "\377%cYou stab the helpless, sleeping %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
-					if (uniq_bell) Send_beep(Ind);
-				}
-				else msg_format(Ind, "You stab the helpless, sleeping %s for \377p%d \377wdamage.", m_name, k);
-			   }
 			}
 			else if (stab_fleeing) {
 				stab_fleeing = FALSE;
-			   if (martial) {
-				if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_format(Ind, "\377%cYou strike the back of %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
-					if (uniq_bell) Send_beep(Ind);
+				if (martial) {
+					if (r_ptr->flags1 & RF1_UNIQUE) {
+						msg_format(Ind, "\377%cYou strike the back of %s for \377e%d \377%cdamage.", uniq, m_name, k, uniq);
+						if (uniq_bell) Send_beep(Ind);
+					}
+					else msg_format(Ind, "You strike the back of %s for \377p%d \377wdamage.", m_name, k);
+				} else {
+					if (r_ptr->flags1 & RF1_UNIQUE) {
+						msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", m_name, k);
+						if (uniq_bell) Send_beep(Ind);
+					}
+					else msg_format(Ind, "\377%cYou backstab the fleeing %s for \377p%d \377%cdamage.", uniq, m_name, k, uniq);
 				}
-				else msg_format(Ind, "You strike the back of %s for \377p%d \377wdamage.", m_name, k);
-			   } else {
-				if (r_ptr->flags1 & RF1_UNIQUE) {
-					msg_format(Ind, "You backstab the fleeing %s for \377e%d \377wdamage.", m_name, k);
-					if (uniq_bell) Send_beep(Ind);
-				}
-				else msg_format(Ind, "\377%cYou backstab the fleeing %s for \377p%d \377%cdamage.", uniq, m_name, k, uniq);
-			   }
 			}
 			//else if ((r_ptr->flags1 & RF1_UNIQUE) && (!martial)) msg_format(Ind, "You hit %s for \377p%d \377wdamage.", m_name, k);
 			//else if (!martial) msg_format(Ind, "You hit %s for \377g%d \377wdamage.", m_name, k);

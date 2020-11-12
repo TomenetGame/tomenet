@@ -173,11 +173,11 @@ SDL_LIB_PATH = $(shell $(SDL_CONFIG) --libs)
 ##
 ## Common flags
 ##
-CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=gnu99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
+CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
 LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 #We don't need SDL for lua, so keep it simple..
-LUACFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=gnu99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
+LUACFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DMINGW -DMEXP=19937 -std=c99 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
 LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
 ## With SDL, using 'sdl-config':
@@ -188,6 +188,14 @@ LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
 #LIBS += -lSDL -lSDL_mixer $(SDL_LIB_PATH)
 LIBS += $(SDL_LIB_PATH) -lSDL_mixer
+
+# Security hardening
+# -pie seems to be broken
+#CFLAGS += -pie -fPIE
+#LUACFLAGS += -pie -fPIE
+# Code may not compile with -D_FORTIFY_SOURCE=2
+#CFLAGS += -D_FORTIFY_SOURCE=2
+#LUACFLAGS += -D_FORTIFY_SOURCE=2
 
 # Added the according preprocessor for 'preproc' - C. Blue
 # If your system doesnt have a dedicated cpp command, you might

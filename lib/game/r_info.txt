@@ -12619,7 +12619,7 @@ B:BITE:ACID:10d10
 F:FORCE_SLEEP | SMART | KILL_WALL | CAN_SWIM | FORCE_MAXHP |
 F:ONLY_ITEM | DROP_1D2 | DROP_2D2 | DROP_GOOD | WILD_DESERT
 F:COLD_BLOOD | OPEN_DOOR | BASH_DOOR | RES_DARK | RES_NETH |
-F:EVIL | UNDEAD | IM_FIRE | IM_COLD | IM_POIS | RES_TELE |
+F:EVIL | UNDEAD | IM_COLD | IM_POIS | RES_TELE |
 F:HURT_LITE | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT
 S:1_IN_4 |
 S:BLIND | SCARE | BRAIN_SMASH |
@@ -13151,7 +13151,7 @@ B:HIT:UN_BONUS:7d7
 F:FORCE_SLEEP | FORCE_MAXHP |
 F:ONLY_ITEM | DROP_4D2 | DROP_GOOD | CAN_SWIM | RES_DARK | RES_NETH |
 F:SMART | COLD_BLOOD | OPEN_DOOR | BASH_DOOR | RES_TELE | RES_SOUND
-F:EVIL | UNDEAD | IM_FIRE | IM_COLD | IM_ELEC | IM_POIS | NO_NEST
+F:EVIL | UNDEAD | IM_COLD | IM_POIS | NO_NEST
 F:HURT_LITE | NO_CONF | NO_SLEEP | BASEANGBAND | NO_CUT | NO_STUN
 S:1_IN_4 |
 S:BLIND | SCARE | BRAIN_SMASH |
@@ -19345,17 +19345,11 @@ D:slowly turning around and around forever.
 
 
 #Halloween time! Presented by C. Blue ;)
-#note: there are 3 versions of The Great Pumpkin, different only in HP
-#      to fit the strength of current players. Players above level 40 or very
-#      powerful players above 35 should maybe not participate.. too easy?
-
 #Instructions for enabling the Halloween event:
-#-in defines.h uncomment #define HALLOWEEN, recompile ('make clean'), restart.
-#-summmon pumpkins (1086/1087/1088) as you feel like. ;)
-#Note: Currently, pumpkins are even auto-summoned every 15..45 minutes,
-#search code for 'check_Pumpkin' (capital P) function to see details.
+#season_halloween must be = 1. Optionally call geno_towns() to get rid of
+#non-halloween townies. A server restart is not actually required.
 
-#low HP version
+#low HP version -- DEPRECATED
 N:1086:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:30d100:15:20:0
@@ -19381,7 +19375,7 @@ S:MOAN | SCARE | HOLD | TPORT
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
-#medium HP version
+#medium HP version -- DEPRECATED
 N:1087:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:60d100:15:20:0
@@ -19407,7 +19401,7 @@ S:MOAN | SCARE | HOLD | TPORT
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
-#high HP version
+#Halloween event:
 N:1088:The Great Pumpkin
 G:G:L
 $RPG_SERVER!I:120:100d100:15:20:0
@@ -19433,7 +19427,7 @@ S:MOAN | SCARE | HOLD | TPORT
 D:On Halloween night, the Great Pumpkin rises out of his pumpkin patch
 D:and flies through the air with his bag of loot for all the adventurers!
 
-N:1089:Ghoul (Mimic)
+N:1089:Forest Ghoul
 G:z:D
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19447,7 +19441,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1090:Ghost (Mimic)
+N:1090:Spook
 G:G:w
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19461,7 +19455,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1091:Zombie (Mimic)
+N:1091:Rampant Zombie
 G:z:s
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19475,7 +19469,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1092:Vampire (Mimic)
+N:1092:Vampire Apparition
 G:V:b
 I:110:30d5:8:2:99
 W:0:1:1300:25
@@ -19489,7 +19483,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1093:Goblin (Mimic)
+N:1093:Lost Goblin
 G:h:W
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19503,7 +19497,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1094:Skeleton (Mimic)
+N:1094:Moving Bones
 G:s:w
 I:110:30d5:8:2:99
 W:0:1:1300:20
@@ -19517,7 +19511,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1095:Frankenstein's Monster (Mimic)
+N:1095:Frankenstein's Monster
 G:U:g
 I:110:40d5:12:2:99
 W:0:1:1300:30
@@ -19531,7 +19525,7 @@ $HALLOWEEN!F:JOKEANGBAND
 F:ALLOW_RUNNING | WILD_TOWN | WILD_ONLY | TAKE_ITEM | OPEN_DOOR |
 D:It is someone costumed for Halloween festival!
 
-N:1096:Freddy Krueger (Mimic)
+N:1096:Freddy Krueger
 G:z:r
 I:110:40d5:12:2:99
 W:0:1:1300:30

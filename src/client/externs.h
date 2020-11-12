@@ -629,12 +629,12 @@ extern void store_paste_item(char *out_val, int item);
 extern int store_top;
 
 /* c-xtra1.c */
-extern void prt_stat(int stat, int max, int cur, int cur_base);
+extern void prt_stat(int stat, bool boosted);
 extern void prt_title(cptr title);
 extern void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv, s32b adv_prev);
 extern void prt_gold(int gold);
-extern void prt_ac(int ac);
-extern void prt_hp(int max, int cur, bool bar);
+extern void prt_ac(int ac, bool boosted);
+extern void prt_hp(int max, int cur, bool bar, bool boosted);
 extern void prt_party_stats(int member_num, byte color, char *member_name, int member_lev, int member_chp, int member_mhp, int member_csp, int member_msp);
 extern void prt_sp(int max, int cur, bool bar);
 extern void prt_depth(int x, int y, int z, bool town, int colour, int colour_sector, cptr buf);
@@ -1062,6 +1062,7 @@ extern byte showing_inven, showing_equip;
 
 extern int hp_max, hp_cur;
 extern bool hp_bar;
+extern bool hp_boosted;
 extern int sp_max, sp_cur;
 extern bool sp_bar;
 extern int st_max, st_cur;

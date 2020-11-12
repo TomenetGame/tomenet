@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 1. October 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 8. November 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -156,9 +156,10 @@ Contents
     (6.2a)  Maiar initiation effects
     (6.3)   Abilities
     (6.4)   Races
-    (6.5)   Classes/professions, titles, melee blows/round
+    (6.5)   Classes/professions
     (6.5a)  Start-up blows/round table (BpR)
-    (6.5b)  Class titles
+    (6.5b)  Titles
+    (6.5c)  Power levels
     (6.6)   Sanity (or insanity)
     (6.7)   Mimicry details
     (6.7a)  Polymorph rings
@@ -1005,6 +1006,11 @@ CTRL+C      Search history of chat messages you typed. Press CTRL+C again for
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
 
+/acolours
+/acolors
+/acol       Display a table of all animated colours.
+            To see a table of the normal colours, use /col.
+
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing.
             Note that your character won't need to consume food while afk _IF_
@@ -1089,6 +1095,7 @@ They all start with a slash '/' hence they're called slash commands:
 /col        Display all available colours for testing purpose, for example when
             you are editing your Colormap_ entries in TomeNET.ini or colormap_
             entries in .tomenetrc respectively and want to test how it looks.
+            There is also /acol to display all animated colours.
 
 /cough      You cough noisily. Will disturb the sleep of monsters or at least
             make it less deep..
@@ -2251,7 +2258,7 @@ Phase Door  A short-range teleportation.
 Pit         Pits contain monsters of a certain type, for example 'demon pits'
             or 'orc pits', with the monsters in them being placed in a somewhat
             'organized' manner of rings and circles. Also see 'Nest' or 'Room'.
-            Pits are often confused with special rooms.
+            Pits are often confused with special rooms. See (4.6) for details.
 
 Post-King   The life of a character within the level range above level 50.
 Pre-King    The life of a character within the level range 1 to 50.
@@ -2653,7 +2660,19 @@ party can get both items.
 In addition to Crowns, Hammers and a bunch of random loot, he will also drop
 specifically one additional random 'great' item per player in the party which
 defeated him (similar to items obtained by Acquirement scrolls, but with an
-even higher chance to turn out quite expensive).
+even higher chance to turn out quite expensive). If it was just a solo player
+he will receive one such item.
+For _unworldy_ parties that defeat him, there are further special drops added:
+For a party of at least 2 players, an extra randart will drop.
+For a party of at least 3 players, he will even - for each player above 2 -
+drop one scroll of Artifact Creation. So 3 players -> 1 scroll, 4 -> 2, etc.
+These party rewards require the appropriate number of players to be all present
+on the floor when he is defeated, of course.
+Note that everlasting parties are already rewarded indirectly by obtaining the
+possibility for easy "rekinging", as only the player who gets the final blow
+will get the actual kill credit, meaning that the other players can still make
+Morgoth spawn again, should the need arise to regain their royal titles,
+without having to resort to donating at "The Mirror" (compare (4.5a)).
 
 A very dangerous thing about the Nazgul is that weapons get quickly destroyed
 if they come in contact with these corrupted beings.
@@ -2749,7 +2768,7 @@ at close quarters combat. In general, do not underestimate Sauron's power!
  same party as the player who lands the killing blow will get credit for
  winning the game and receive a royal title accordingly.
 -For unworldy (no-ghost) parties there are extra rewards for beating Morgoth as
- a team since they cannot profit from the re-kinging potential that others get
+ a team since they cannot profit from the rekinging potential that others get
  from this. So unwordlies, if they beat Morgoth in a team, will get..
  -An extra randart drop of 'combat' treasure class.
  -Extra artifact creation scrolls for every player more than two (so trio+).
@@ -4410,9 +4429,12 @@ There are extended colour codes available since 4.5.2 (some in later clients)
     i  ice              l  plasma           O  detonation       k  nuke
     K  unbreath         j  holy orb         J  holy fire        X  hellfire
     z  thunder          Z  ember            0  starlight        1  havoc
+    2  lamp light       3  dark lamp light  4  menu selector    5  palette test
 
 To return to the previous colour, instead of specifying it you can also just
 use '{-', for example: {rRed Text{gGreen now{-Red again.
+
+Note: 'multi' colour is also the 'chaos' colour for any chaos-based attacks.
 
 You will observe that character names in chat lines have different colours too,
 indicating character modes:
@@ -8619,31 +8641,34 @@ reason. The ending date means that somewhen after the beginning of that day,
 the event will end:
 
 Halloween
-    Running from 26th October till 2nd November.
+    Running from 26th October till 3rd November.
     The server will recall all players (20 minutes ahead warning will be
     displayed) and restart. After that, Halloween is live and costumes can be
     found and stored costumes can be worn again.
     Townspeople will actually give experience (!) but also have a fear-causing
     'touch' attack. They can't really harm you, though.
 
-    Randomly, the Great Pumpkin will appear on dungeon levels, either with low
-    or medium or high amount of hit points, depending on the location.
-    If you cannot beat the high-HP version, you could try leaving the floor to
-    reset it and hope to see the Pumpkin randomly respawn quickly afterwards in
-    easier form. The pumpkin will despawn on its own if it doesn't get defeated
-    before one hour has passed after it appeared. It will quickly respawn on
-    another dungeon level in that case. About 5 minutes before it fades away,
-    nearby players will get a warning message, saying that the Great Pumpkin
+    Randomly, the Great Pumpkin will appear on dungeon levels, its hit points
+    varying from 1/3 to full strength depending on the dungeon level.
+    If you cannot beat it on deeper floors you could try leaving the floor to
+    reset it, wait a bit, and then move to a shallower floor and hope to see
+    the Pumpkin respawn there with less HP.
+    The pumpkin will despawn on its own if it doesn't get defeated before one
+    hour has passed after it appeared. It will quickly respawn on another
+    dungeon level in that case. About 5 minutes before it fades away, nearby
+    players will get a warning message, saying that the Great Pumpkin
     "wails and seems to fade".
 
     The Pumpkin is aiming at intermediate-level characters. It can spawn on any
-    dungeon floor shallower than dungeon level 35 (or 40 on Ironman server*),
-    except it won't show up on the first 19 floors in the Ironman Deep Dive
+    dungeon floor from level 1 to 35 (or 40 on Ironman server*),
+    except it won't show up on the first 9 floors in the Ironman Deep Dive
     Challenge.
+    It will usually be quite tough and might require teamwork to beat.
     Players who are too high level (above 30 on main, above 35 on Ironman*)
     will not be able to hunt him, they will see a message:
      "A ghostly force drives you out of this dungeon!"
-    but for all others he will still be tough and might require teamwork.
+    The IDDC is the only exception: Players of any level may enter a floor that
+    already has the Great Pumpkin on it, without getting teleported away.
 
     The Great Pumpkin does not cause any damage but still has a few annoying
     spells at its disposal. It is level 127 and therefore can drop quite high-
@@ -9148,8 +9173,9 @@ In-game you can press 'I' (or 'x' if inside a store) to inspect an item.
 Even if you haven't *identified* it, it will still tell you the weapon class
 the item belongs to, if it is a weapon.
 
-(Swords can be damaged by acid-based attacks, all other weapon types can be
-damaged by both fire- and acid-based attacks.)
+(Swords can be damaged when your character gets hit by an acid-based attack or
+if you stick them into acidic monsters, all other weapon types can be damaged
+by both fire and acid effects.)
 
 
 
@@ -10539,6 +10565,10 @@ LIFE ('It affects your hit points.')
 AGGRAVATE ('It aggravates nearby creatures.')
         Wakes up all monsters in whose radius of awareness you are.
         (Does not haste them as scrolls do, compare to (5.9)).
+REGEN   ('It speeds your hit point regeneration.')
+        Your base HP regeneration speed will double.
+REGEN_MANA ('It speeds your mana recharging.')
+        Your base MP regeneration speed will double.
 DRAIN_MANA ('It drains your magic')
         Slowly drains your MP over time down to zero. Can be countered if your
         MP regeneration happens to be faster than the drain.
@@ -10963,8 +10993,8 @@ Aggravate Monsters
                 Hastes all monsters in your line of sight (same as SHRIEK
                 spell or traps of aggravation or the "/scream" command).
 Blessing/Holy Chant/Holy Prayer
-                Increases your AC by 8/14/20, also increases your to-hit
-                bonus. (Temporarily)
+                Increases your AC by 8/14/20 and also increases your to-hit
+                bonus by half that amount. (Temporarily)
 Blood Bond      Inscribe this @P<playername>, for example @PGandalf, then read
                 it to form a blood bond between you and that player. (Only one
                 of you has to read a BB scroll, it's working bidirectional).
@@ -11526,8 +11556,8 @@ Note: 'The Stormbringer' is not a real artifact but it will show the same
 resilience as true artifacts and random artifacts vs Nazgul.
 
 
-Bonus from wearing similarly named artifacts
---------------------------------------------
+Set bonus from wearing similarly named artifacts
+------------------------------------------------
 If you wear/wield multiple artifacts of similar name, you will receive a luck
 bonus (see (5.8), 'LUCK', for details about luck). For example if you equip
     The Whip of Gothmog    (which happens to be a true artifact)
@@ -11941,6 +11971,19 @@ POWERFUL        Harder to taunt, charm or silence. Cannot be blinded.
                 Cannot be slowed by martial arts slowing techniques.
                 Harder to repel by kinetic shield or to affect by aura of fear.
 
+TPORT           This is a spell flag rather than a normal flag. However, it is
+                noteworthy in that this not only allows a monster to teleport
+                at will, but also will cause it to try and teleport-follow the
+                player whenever he teleports away from it from within melee
+                range!
+
+                To teleport-follow, when the player initiates teleportation,
+                the monster must stand adjacent to player (ie in melee range)
+                and not have RES_TELE or IM_TELE flag.
+                Also the monster must not be asleep or running from the player.
+                Finally the monster will have to succeed a d100 roll against
+                its racial base level.
+
 
 
 (5.12) Monster attack mechanism, armour class, damage caps
@@ -12088,7 +12131,8 @@ PARALYZE        free action.
 EXP_xx          hold life.
 LOSE_xxx        sustain stats.
 EAT_xxx         DEX and stealing skill increase your chance to resist
-                EAT_ITEM (item stealing) or EAT_GOLD (money stealing) attempts.
+                EAT_ITEM (item stealing) and
+                EAT_GOLD (money stealing) attempts.
                 A device of theft prevention makes you immune to EAT_ITEM.
                 A money belt makes you immune to EAT_GOLD.
                 Nothing helps against EAT_FOOD or EAT_LITE.
@@ -13420,7 +13464,7 @@ stated.
                                 Also, interception chance is recuded greatly
                                 while you are blind and you aren't able to
                                 intercept at all while you are
-                                stunned, confused, paralyed, resting, cloaked
+                                stunned, confused, paralyzed, resting, cloaked
                                 or shadow running (compare (4.11)).
                                 Player ghosts cannot intercept either.
 
@@ -13999,6 +14043,14 @@ stated.
                                 damage is compared to what the pure backstab
                                 would do and the higher one is used.
 
+                                Backstabbing a non-fleeing monster has a chance
+                                to apply a stun effect based on your DEX, your
+                                Backstabbing skill, slightly depending on your
+                                Weaponmastery skill, and on the r-level and AC.
+                                Uniques and undead are harder to stun.
+                                There is no difference between dual-wield or
+                                one-handed use regarding stun effectiveness.
+
                                 Vampires will feed especially much from
                                 backstabbing a sleeping opponent to death.
 
@@ -14205,7 +14257,7 @@ stated.
                                 digging.
 
                                 EXPERIMENTAL:
-                                Shortly before 4.7.3 a new experimental trait
+                                Shortly before 4.7.3 a new experimental perk
                                 was added to the Digging skill: Demolitionist.
                                 This just means that if you train Digging to at
                                 least 5.000 you will be able to find or acquire
@@ -14970,8 +15022,8 @@ Maia        +2  +3  +3  +1  +1  +2      11      400%   100ft
 
 
 
-(6.5) Classes/professions, titles, melee blows/round
-----------------------------------------------------
+(6.5) Classes/professions
+-------------------------
 Depending on your class, your start-up equipment and your skill tree will
 vary. For example a warrior cannot learn magic spells.
 
@@ -15001,6 +15053,8 @@ Hardest classes for beginners to play maybe:
         time you could die fast)
  -Runemaster (needs some time to get a grip of the spell system, and has not
              that high hit points, ie glass cannonish).
+
+Approximate 'power levels' for the classes are given further down in (6.5c).
 
 
 List of all classes (make sure to read the paragraph about your class, when you
@@ -15649,8 +15703,9 @@ This, however, doesn't determine its final performance, which is actually
 given by the 'Max. base blows/round' shown further above, and other parameters.
 
 
-(6.5b) Class titles
--------------------
+(6.5b) Titles
+-------------
+Each character class has specific 'titles' that change with the player level.
 For levels up to 50 the title will change every 5 levels (except for the first
 title change at level 5 occurring after 4 levels, since character start at
 level 1, not zero).
@@ -15960,6 +16015,59 @@ Corrupted Priest (aka Corrupted Maia Priest)
                             Chaos God
 
 
+(6.5c) Power levels
+-------------------
+Classes fare differently depending on their progress in the game. Here are some
+rough approximations of 'power levels', trying to give an idea how strong each
+class is at its different game stages.
+
+Note: For some classes the power curve can depend heavily on the way you
+      distribute skill points so this is only an hand-picked estimate of the
+      most average builds (not necessarily the most interesting ones).
+
+      Also, some classes and builds might shine in parties rather than solo,
+      and some might be more dependant on acquiring great items than others.
+
+      If you train 'Martial Arts' skill you will be elevated to '+++' in
+      'Start' and 'Early' stages, no matter the class.
+
+      Istari lose their weakness aka their fragility when they acquire the
+      Mana school spell 'Disruption Shield' which is considered essential.
+
+      Especially non-martial-arts melee-classes can reach '++++' in the
+      'Post-winning' stage if they are able to acquire a great set of equipment
+      which will take lots of effort.
+      The reason is that their damage output and damage mitigation depends on
+      gear mostly rather than on skills, unlike for spell-casting characters.
+
+      Archers and Runemasters can reach '++++' in 'Endgame' and 'Post-winning'
+      in terms of damage output if they can rely on a good party.
+
+      Shamans can reach '++++' in 'Late', 'Endgame' and 'Post-winning' in terms
+      of usability, being able to easily access all features of Istari, Priests
+      and also Mimicry features without that much expense of skill points.
+
+              Start     Early     Mid       Late      Endgame   Post-winning
+              (Lv 1)    (10+)     (30+)     (40+)     (50)      (After Morgoth)
+-------------------------------------------------------------------------------
+Warrior       +++       +++       +++       +++       +++       +++
+Istar         ++        ++        +         +++       ++++      ++++
+Priest        +         +         ++        +++       +++       +++
+Corrupted P.  +         ++        ++        +++       +++       +++
+Rogue         +++       +++       +++       +++       +++       +++
+Mimic         ++        ++        +++       +++       +++       +++
+Archer        ++        ++        ++        +++       +++       +++
+Paladin       ++        ++        +++       +++       +++       +++
+Death Knight  ++        +++       +++       +++       +++       +++
+Hell Knight   +++       +++       +++       +++       +++       +++
+Ranger        +++       +++       +++       +++       +++       +++
+Adventurer    +         +         ++        +++       +++       +++
+Druid         +++       ++++      ++++      +++       +++       +++
+Shaman        ++        ++        +++       +++       +++       +++
+Runemaster    +         +++       +++       +++       +++       +++
+Mindcrafter   +++       ++        +++       +++       +++       +++
+
+
 
 (6.6) Sanity (or insanity)
 --------------------------
@@ -16051,6 +16159,10 @@ that usually cannot wear any head gear.
 To find out the special abilities of a monster form, press  ~ 7  in game or
 consult a spoiler file. (See (7.4) for more info about spoiler files.)
 It's abilities will transform to the mimic's body as follows.
+
+Very useful for searching for monster forms with specific abilities is
+Mikael's monster search website, linked on tomenet.eu and invokable in-game via
+~ R  (Shift+R in the 'Knowledge' menu, this requires at least client 4.7.3).
 
 
 Form aspects as specified in  ~ 7  monster lore:
@@ -16428,8 +16540,8 @@ Draconian:
     form (including dragonriders) or in any reptilian form (including Hydras).
 
 Abilities acquired from traits (such as 'enlightened' or 'corrupted' trait for
-Maiar) are also considered intrinsic abilities and therefore polymorph-proof if
-they aren't on the list above.
+Maiar or draconian traits) are also considered intrinsic abilities and
+therefore polymorph-proof if they aren't on the list above.
 
 
 (6.7a) Polymorph rings ('Ring of Polymorphing of <form>'):
@@ -16569,8 +16681,8 @@ Tengu           10  High HP, good AC, can blink/teleport and more, resists fear
                     or poison.
 Illusionist and Druid
                 13  These two have an array of spells at their disposal, one of
-                    them being 'Haste' which speeds themselves up temporarily,
-                    which can be a very powerful asset.
+                    them being 'Haste Self' which speeds themselves up
+                    temporarily, which can be a very powerful asset.
                     These two monsters appear somewhat rarely though.
                     (Later on, 'Mage' is a mid-level form that also provides
                     haste spell and is actually more common to find.)
@@ -16613,8 +16725,8 @@ Uruk            16  Good HP, good melee damage, good AC, +1 extra shot w/
 Elite uruk      20  Good HP, very high melee damage, good AC, +1 extra shot w/
                     slings or bows, poison immunity.
 Dark-elven Lord 20  Good HP, resists darkness but is susceptible to light-based
-                    attacks. Moves fast and even has a 'Haste' spell in his
-                    array of spells that boosts his speed further.
+                    attacks. Moves fast and even has a 'Haste Self' spell in
+                    his array of spells that boosts his speed further.
                     This monster occurs somewhat rarely.
                     (Does not occur in packs.)
 
@@ -18493,7 +18605,7 @@ Breathe Fire            ..
 Breathe Cold            ..
 Breathe Poison          ..
 Breathe Nether          ..
-Breathe Lite            ..
+Breathe Light           ..
 Breathe Darkness        ..
 Breathe Confusion       ..
 Breathe Sound           ..
@@ -21165,7 +21277,13 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   This might affect three factors randomly: An actual weapon reward, whether or
   not you might gain a shield for reward, whether you might get light or heavy
   armour for reward. Keep in mind that there is still a random factor in what
-  item you will actually get.
+  item you will actually get, so for example there is no guarantee to receive a
+  weapon, it could still randomly turn out as a piece of armour instead.
+  If you wield a sword or blunt weapon, you have a decent chance to receive a
+  shield instead of a weapon for reward. Somewhat less chance when you wield an
+  axe and the least chance to receive a shield if you wield a polearm wepaon.
+  If you receive a weapon (and don't have Anti-magic skill) it will be a 2-h
+  weapon if you are currently wielding a 2-h weapon.
   Note that you will not receive a shield if you're dual-wielding or if your
   class is rogue.
   Regarding weapon weight, note that a weapon reward will usually not give you
@@ -21306,9 +21424,11 @@ shoot. For details press '?' in the game.
 
 The Smash'em macros provide the following controls:
 
-    F1              starts the game.
-    F2              starts the game at level 4, skipping the early
+    F1              display help
+    F2              starts the game.
+    F3              starts the game at level 4, skipping the early
                     levels if you feel that those are too easy.
+    F4              quit the game.
 
     q,w,e           makes your character auto-fire in the according
     a, ,d            direction (y key works same as z key).
@@ -21320,9 +21440,7 @@ The Smash'em macros provide the following controls:
 
     numpad          movement.
 
-    Q               quit game.
-
-    TAB             switch macro set from "Smash'em" to "Tron".
+    SHIFT+F12       switch macro set to other games (cyclic, keep tapping).
 
 
 Tron
@@ -21335,28 +21453,39 @@ Up to four players can participate at once. For details press '?' in the game.
 
 The Tron macros provide the following controls:
 
-    F3              enter arena.
-    F4              start game.
+    F1              display help
+    F2              enter arena.
+    F3              start game.
+    F4              quit the game.
 
-    F5              list options.
+    F5              walls.
+    F6              gates.
+    F7              midgate.
+    F8              rings.
+    F9              moveups(+float).
+    F10             centerups.
+    F11             dark.
+    F1              snakes.
 
-    F6              reduce game speed.
-    F7              increase game speed.
+    SHIFT+F1        options
+    SHIFT+F2        maxwins (reach tail size to win).
+    SHIFT+F3        race.
+    SHIFT+F4        ai opponents, filling in for players.
 
-    F9              reduce snake max length.
-    F10             increase snake max length.
-
-    F11             reduce amount of walls.
-    F12             increase amount of walls.
+    SHIFT+F5        reduce game speed.
+    SHIFT+F6        increase game speed.
+    SHIFT+F7        reduce snake max length.
+    SHIFT+F8        increase snake max length.
+    SHIFT+F9        less walls.
+    SHIFT+F10       more walls.
 
     Arrow keys or   movement.
     numpad 2,4,6,8
 
-    Q               quit game.
+    SHIFT+F11       reset tron.
+    SHIFT+F12       switch macro set to other games (cyclic, keep tapping).
 
-    TAB             switch macro set from "Tron" to "Smash'em".
-
-Hit F4 as soon as at least two players have joined the areana via F3 key to
+Hit F3 as soon as at least two players have joined the areana via F2 key to
 start the actual match.
 
 To toggle an option, type "option" or "option on"/"option off" in chat.

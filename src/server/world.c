@@ -540,7 +540,40 @@ void world_pmsg_send(uint32_t id, char *name, char *pname, char *text) {
 
 void world_chat(uint32_t id, char *text) {
 	int len;
+
+#ifdef ARCADE_SERVER
+	/* Hack: Don't broadcast game commands, that's intense spam.. */
+	char *t = strchr(text, ']');
+
+	if (t && (t = strchr(t, ' '))) {;
+		t++;
+		if (streq(t, "quit") || streq(t, "begin") || streq(t, "walls") || streq(t, "gates") ||
+		    streq(t, "midgate") || streq(t, "rings") || streq(t, "moveups") || streq(t, "float") ||
+		    streq(t, "centerups") || streq(t, "dark") || streq(t, "snakes") || streq(t, "options") ||
+		    streq(t, "maxwins") || streq(t, "race") || streq(t, "ai") || streq(t, "reset tron") ||
+
+		    streq(t, "reset") || streq(t, "city") || streq(t, "powerups") || streq(t, "prac") ||
+		    streq(t, "spectating") || streq(t, "max stuff") ||
+
+		    streq(t, "walls on") || streq(t, "walls off") || streq(t, "gates on") || streq(t, "gates off") ||
+		    streq(t, "city on") || streq(t, "city off") || streq(t, "rings on") || streq(t, "rings off") ||
+		    streq(t, "dark on") || streq(t, "dark off") || streq(t, "snakes on") || streq(t, "snakes off") ||
+		    streq(t, "maxwins on") || streq(t, "maxwins off") || streq(t, "powerups on") || streq(t, "powerups off") ||
+		    streq(t, "moveups on") || streq(t, "moveups off") || streq(t, "float on") || streq(t, "float off") ||
+		    streq(t, "prac on") || streq(t, "prac off") || streq(t, "centerups on") || streq(t, "centerups off") ||
+		    streq(t, "more walls") || streq(t, "less walls") || streq(t, "more speed") || streq(t, "less speed") ||
+		    streq(t, "ai on") || streq(t, "ai off") || streq(t, "midgate on") || streq(t, "midgate off") ||
+		    streq(t, "spectating on") || streq(t, "spectating off") || streq(t, "more rings") || streq(t, "less rings") ||
+		    streq(t, "race on") || streq(t, "race off") || streq(t, "less gate speed") || streq(t, "more gate speed") ||
+		    streq(t, "more length") || streq(t, "less length") ||
+		    //streq(t, "") || streq(t, "") || streq(t, "") || streq(t, "") ||
+		    FALSE)
+			return;
+	}
+#endif
+
 	if (WorldSocket == -1) return;
+
 	spk.type = WP_CHAT;
 	len = sizeof(struct wpacket);
 	snprintf(spk.d.chat.ctxt, MSG_LEN, "%s", text);

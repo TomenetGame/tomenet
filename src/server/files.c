@@ -626,7 +626,7 @@ static bool do_cmd_help_aux(int Ind, cptr name, cptr what, s32b line, int color,
 
 	/* Look in "help" */
 	if (!fff) {
-#if 0 /* will overwrite legens-rev.log's title if the file doesn't exist yet */
+#if 0 /* will overwrite legends-rev.log's title if the file doesn't exist yet */
 		/* Caption */
 		snprintf(caption, sizeof(caption), "Help file '%s'", name);
 		while(strlen(caption) < 79) strcat(caption, " ");

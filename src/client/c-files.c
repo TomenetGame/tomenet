@@ -1702,7 +1702,7 @@ void xhtml_screenshot(cptr name) {
 			time_t ct = time(NULL);
 			//snprintf(file_name, 256, "%s%-.24s", buf, ctime(&ct));
 			struct tm* ctl = localtime(&ct);
-			snprintf(file_name, 256, "%s_%04d-%02d-%02d_%02d.%02d.%02d.xhtml", buf,
+			snprintf(file_name, 256, "%s_%04d-%02d-%02d_%02d-%02d-%02d.xhtml", buf,
 			    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
 			    ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
 		}

@@ -139,9 +139,9 @@ CC = gcc
 # 2) the option that turns off generation of a preprocessor header
 #    (lines starting on '# '). Usually this is '-P'.
 CPP = gcc
-CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc
+CPPFLAGS = -x c -E -Wp,-C,-P
 
-X11BASE = /usr/X11R6
+X11BASE = /opt/X11
 
 ##
 ## Makefile for Mac OS X -- C. Blue
@@ -240,7 +240,7 @@ date:
 #
 
 accedit: account/accedit.o
-	$(CC) $(CFLAGS) $(LDFLAGS) -o accedit account/accedit.o -lcurses -lcrypt
+	$(CC) $(CFLAGS) $(LDFLAGS) -o accedit account/accedit.o -lcurses -lgcrypt
 
 
 #

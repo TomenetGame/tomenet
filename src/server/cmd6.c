@@ -5161,54 +5161,49 @@ static bool item_tester_hook_activate(int Ind, object_type *o_ptr) {
 /*
  * Hack -- activate the ring of power
  */
+#define ROP_DEC 20
 static void ring_of_power(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
 	/* Pick a random effect */
 	switch (randint(10)) {
 	case 1:
-	case 2:
 		/* Message */
-		msg_print(Ind, "You are surrounded by a malignant aura.");
+		msg_print(Ind, "You are surrounded by a *malignant* aura.");
 
 		/* Decrease all stats (permanently) */
-		(void)dec_stat(Ind, A_STR, 50, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_INT, 50, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_WIS, 50, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_DEX, 50, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_CON, 50, STAT_DEC_NORMAL);
-		(void)dec_stat(Ind, A_CHR, 50, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_STR, ROP_DEC, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_INT, ROP_DEC, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_WIS, ROP_DEC, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_DEX, ROP_DEC, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_CON, ROP_DEC, STAT_DEC_NORMAL);
+		(void)dec_stat(Ind, A_CHR, ROP_DEC, STAT_DEC_NORMAL);
 
 		/* Lose some experience (permanently) */
 		take_xp_hit(Ind, p_ptr->exp / 50, "Ring of Power", TRUE, FALSE, TRUE, 0);
 		break;
 
-	case 3:
+	case 2:
 		/* Message */
-		msg_print(Ind, "You are surrounded by a powerful aura.");
+		msg_print(Ind, "You are surrounded by a *powerful* aura.");
 
 		/* Dispel monsters */
-		dispel_monsters(Ind, 1000);
-
+		dispel_monsters(Ind, 5000); /* Enough to insta-kill even lesser Wyrms and non-leader greater demons */
 		break;
 
+	case 3:
 	case 4:
-	case 5:
-	case 6:
 		/* Mana Ball */
 		sprintf(p_ptr->attacker, " invokes a mana storm for");
-		fire_ball(Ind, GF_MANA, dir, 500, 3, p_ptr->attacker);
-
+		fire_ball(Ind, GF_MANA, dir, 2000, 3, p_ptr->attacker);
 		break;
 
+	case 5:
+	case 6:
 	case 7:
-	case 8:
-	case 9:
-	case 10:
 		/* Mana Bolt */
 		sprintf(p_ptr->attacker, " fires a mana bolt for");
-		fire_bolt(Ind, GF_MANA, dir, 250, p_ptr->attacker);
-
+		fire_bolt(Ind, GF_MANA, dir, 1500, p_ptr->attacker);
 		break;
 	}
 }

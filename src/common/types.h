@@ -632,6 +632,8 @@ struct cave_type {
 #ifdef HOUSE_PAINTING
 	byte colour;	/* colour that overrides the usual colour of a feature */
 #endif
+
+	byte temp;		/* Temporary value for cave building process in generate_hmap() */
 };
 
 /* ToME parts, arranged */
@@ -2448,6 +2450,7 @@ struct player_type {
 	s16b max_lev;			/* Usual level after 'restoring life levels' */
 
 	s16b mhp;			/* Max hit pts */
+	s16b mhp_tmp;			/* Just for tracking temporary HP boosts and colourising them on client-side for indication */
 	s16b chp;			/* Cur hit pts */
 	u16b chp_frac;			/* Cur hit frac (times 2^16) */
 	s16b player_hp[PY_MAX_LEVEL];
@@ -2951,6 +2954,7 @@ struct player_type {
 	s16b stat_top[6];		/* Maximal modified stats */
 
 	s16b stat_add[6];		/* Modifiers to stat values */
+	s16b stat_tmp[6];		/* Temporary stat buffs - added just to implement visual indicator (colourise the value in client) */
 	s16b stat_ind[6];		/* Indexes into stat tables */
 
 	s16b stat_cnt[6];		/* Counter for temporary drains */
@@ -3033,6 +3037,7 @@ struct player_type {
 	s16b to_h;			/* Bonus to hit */
 	s16b to_d;			/* Bonus to dam */
 	s16b to_a;			/* Bonus to ac */
+	s16b to_a_tmp;			/* Just to track temporary AC boosts for colourising indicator on client-side */
 
 	s16b ac;			/* Base ac */
 

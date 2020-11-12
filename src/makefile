@@ -283,6 +283,10 @@ ifneq (${HAVE_TINFO}, 0)
 	ACCEDIT_LIBS += -ltinfo
 endif
 
+# Security hardening
+CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -pie -fPIE
+LDFLAGS += -Wl,-z,relro -Wl,-z,now
+
 # Optional: Compile with Link Time Optimization (LTO)
 #CFLAGS += -flto=8
 

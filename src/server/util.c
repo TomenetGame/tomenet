@@ -5654,7 +5654,7 @@ static void console_talk_aux(char *message) {
 
 #else
 	/* Send to everyone */
-	for (i = 1; i <= NumPlayers; i++) {
+	for (int i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 
 		/* Send message */
@@ -8546,6 +8546,8 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
+
+	__GRID_DEBUG(Ind, &p_ptr->wpos, c_ptr->feat, "grid_affects_player()", 0);
 
 	if (c_ptr->feat == FEAT_FAKE_WALL) {
 		p_ptr->auto_transport = AT_PARTY;

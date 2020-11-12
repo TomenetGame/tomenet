@@ -34,6 +34,7 @@ as su
 as sv
 as sw
 as sy
+ as holes
 assad
 assai
 assam
@@ -119,6 +120,8 @@ shiite
 shiiti
 shiito
 shiitu
+sht?
+?sht
  cha
  che
  chi

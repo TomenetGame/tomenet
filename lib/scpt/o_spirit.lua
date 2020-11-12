@@ -320,7 +320,7 @@ function get_olightningbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, OLIGHTNINGBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 4 + ((lev * 4) / 5), 6 + ((lev * 2) / 3)
+	return 4 + ((lev * 4) / 5), 6 + ((lev * 5) / 7)
 end
 OLIGHTNINGBOLT_I = add_spell {
 	["name"] = 	"Lightning I",

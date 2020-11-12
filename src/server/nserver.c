@@ -3177,9 +3177,9 @@ static int Handle_login(int ind) {
 #endif
 	/* Since 4.5.7 we can now distinguish (client-side) between disabled and unavailable audio.
 	   The minus constant is for optional songs, ie songs that have a commented out music.cfg entry by default (user's choice to enable them). */
-	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 111 - 4) /*hector/hitfloor/recall/animal_birdofprey */
+	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 110)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
-	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 41) //extra
+	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 40) //extra
 		msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---");
 
 	/* Admin messages */
@@ -4688,7 +4688,7 @@ static int Receive_login(int ind) {
 
 			if (err_connp && err_connp->state != CONN_FREE
 			    && err_connp->timeout && (err_connp->start + err_connp->timeout * cfg.fps >= turn))
-				Destroy_connection(ind, format("You have to wait for %d seconds until your other character has timed out.", (err_connp->start + err_connp->timeout * cfg.fps - turn +(cfg.fps - 1)) / cfg.fps));
+				Destroy_connection(ind, format("You have to wait for %d seconds until your other character has timed out.\nTo prevent this kind of cooldown, log out in town areas only.", (err_connp->start + err_connp->timeout * cfg.fps - turn +(cfg.fps - 1)) / cfg.fps));
 			else Destroy_connection(ind, "Multiple logins on the same account aren't allowed."); //fallback (shouldn't happen)
 		}
 #endif
@@ -5715,6 +5715,9 @@ int Send_hp(int Ind, int mhp, int chp) {
 	/* Display hack */
 	if (p_ptr->health_bar) mhp += 10000;
 
+	/* Display hack (temp buff indicator). */
+	if (p_ptr->mhp_tmp && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0)) chp += 10000;
+
 	/* Always start assuming that all further hp loss from now on was just to equipment-induced life draining */
 	p_ptr->hp_drained = TRUE;
 
@@ -5883,7 +5886,9 @@ int Send_various(int Ind, int hgt, int wgt, int age, int sc, cptr body) {
 
 int Send_stat(int Ind, int stat, int max, int cur, int s_ind, int max_base) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
+	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
+	/* Don't display boosted indicator if we were at '***' already anyway */
+	bool boosted = (p_ptr->stat_tmp[stat] != 0 && max - p_ptr->stat_tmp[stat] < 238);
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -5894,10 +5899,16 @@ int Send_stat(int Ind, int stat, int max, int cur, int s_ind, int max_base) {
 
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base);
+		if (boosted && is_atleast(&p_ptr2->version, 4, 7, 3, 0, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat | 0x10, max, cur, s_ind, max_base);
+		else
+			Packet_printf(&connp2->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base);
 	}
 
-	return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base);
+	if (boosted && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat | 0x10, max, cur, s_ind, max_base);
+	else
+		return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base);
 }
 
 int Send_history(int Ind, int line, cptr hist) {

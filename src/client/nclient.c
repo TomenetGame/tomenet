@@ -1693,9 +1693,15 @@ int Receive_stat(void) {
 	char	ch;
 	char	stat;
 	s16b	max, cur, s_ind, max_base;
+	bool	boosted;
 
 	if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%hd%hd", &ch, &stat, &max, &cur, &s_ind, &max_base)) <= 0)
 		return n;
+
+	if (stat & 0x10) {
+		stat &= ~0x10;
+		boosted = TRUE;
+	} else boosted = FALSE;
 
 	p_ptr->stat_top[(int) stat] = max;
 	p_ptr->stat_use[(int) stat] = cur;
@@ -1703,7 +1709,7 @@ int Receive_stat(void) {
 	p_ptr->stat_max[(int) stat] = max_base;
 
 	if (screen_icky) Term_switch(0);
-	prt_stat(stat, max, cur, max_base);
+	prt_stat(stat, boosted);
 	if (screen_icky) Term_switch(0);
 
 	/* Window stuff */
@@ -1739,6 +1745,12 @@ int Receive_hp(void) {
 	/* .. and new, clean way: It's a client option now */
 	if (c_cfg.hp_bar) bar = TRUE;
 
+	/* ..Display hack for temporarily boosted HP -_- */
+	if (cur > 10000) {
+		cur -= 10000;
+		hp_boosted = TRUE;
+	} else hp_boosted = FALSE;
+
 	p_ptr->mhp = max;
 	p_ptr->chp = cur;
 
@@ -1750,7 +1762,7 @@ int Receive_hp(void) {
 
 	if (screen_icky) Term_switch(0);
 
-	prt_hp(max, cur, bar);
+	prt_hp(max, cur, bar, hp_boosted);
 	if (c_cfg.alert_hitpoint && (cur < max / 5)) {
 		warning_page();
 		c_msg_print("\377R*** LOW HITPOINT WARNING! ***");
@@ -1806,7 +1818,7 @@ int Receive_ac(void) {
 
 	if (screen_icky) Term_switch(0);
 
-	prt_ac(base + plus);
+	prt_ac((base & ~0x1000) + plus, (base & 0x1000) != 0);
 
 	if (screen_icky) Term_switch(0);
 
@@ -4227,13 +4239,13 @@ int Receive_chardump(void) {
 
 	/* additionally do a screenshot of the scene */
 	silent_dump = TRUE;
-	xhtml_screenshot(format("%s%s_%04d-%02d-%02d_%02d.%02d.%02d_screenshot", cname, type,
+	xhtml_screenshot(format("%s%s_%04d-%02d-%02d_%02d-%02d-%02d_screenshot", cname, type,
 	    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
 	    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
 
 	if (screen_icky) Term_switch(0);
 
-	strnfmt(tmp, 160, "%s%s_%04d-%02d-%02d_%02d.%02d.%02d.txt", cname, type,
+	strnfmt(tmp, 160, "%s%s_%04d-%02d-%02d_%02d-%02d-%02d.txt", cname, type,
 	    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
 	    ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
 	file_character(tmp, TRUE);

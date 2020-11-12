@@ -132,6 +132,7 @@ s16b modify_stat_value(int value, int amount) {
  */
 static void prt_stat(int Ind, int stat) {
 	player_type *p_ptr = Players[Ind];
+
 	Send_stat(Ind, stat, p_ptr->stat_top[stat], p_ptr->stat_use[stat], p_ptr->stat_ind[stat], p_ptr->stat_max[stat]);
 }
 
@@ -239,7 +240,10 @@ static void prt_gold(int Ind) {
 static void prt_ac(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	Send_ac(Ind, p_ptr->dis_ac, p_ptr->dis_to_a);
+	if (p_ptr->to_a_tmp && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0))
+		Send_ac(Ind, p_ptr->dis_ac | 0x1000, p_ptr->dis_to_a);
+	else
+		Send_ac(Ind, p_ptr->dis_ac, p_ptr->dis_to_a);
 }
 
 static void prt_sanity(int Ind) {
@@ -489,6 +493,9 @@ static void prt_bpr(int Ind) {
 	case CLASS_ARCHER:
 		break;
 	}
+
+	/* Indicate temporary +EA buffs, but only if we can attack at all */
+	if (p_ptr->extra_blows && p_ptr->num_blow) attr = TERM_L_BLUE;
 
 	Send_bpr(Ind, p_ptr->num_blow, attr);
 }
@@ -1509,6 +1516,8 @@ void calc_hitpoints(int Ind) {
 	int rlev = r_info[p_ptr->body_monster].level;
 
 
+	p_ptr->mhp_tmp = 0; /* Track temporary buffs, just for client-side colourised indicator */
+
 	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 	}
 
@@ -1679,6 +1688,7 @@ void calc_hitpoints(int Ind) {
 	if (p_ptr->divine_hp > 0) {
 		/* count as if from item? */
 		to_life += p_ptr->divine_hp_mod;
+		p_ptr->mhp_tmp += p_ptr->divine_hp_mod * 100; /* Hack: Just use an arbitray, largerino value, whatever */
 	}
 #endif
 
@@ -1719,8 +1729,14 @@ void calc_hitpoints(int Ind) {
 
 	/* Factor in the hero / superhero settings.
 	   Specialty: It's applied AFTER mimic form HP influence. */
-	if (p_ptr->shero) mhp += 20;
-	if (p_ptr->hero) mhp += 10;
+	if (p_ptr->shero) {
+		mhp += 20;
+		p_ptr->mhp_tmp += 20;
+	}
+	if (p_ptr->hero) {
+		mhp += 10;
+		p_ptr->mhp_tmp += 10;
+	}
 
 #if 0 /* p_ptr->to_hp is unused atm! */
 	/* Fixed Hit Point Bonus */
@@ -2944,7 +2960,7 @@ void calc_boni(int Ind) {
 		csheet_boni[kk].color = TERM_DARK;
 		csheet_boni[kk].symbol = ' '; //Empty item / form slot.
 	}
-	
+
 	int j, hold, minus, am_bonus = 0, am_temp;
 	long w, i;
 
@@ -2960,9 +2976,7 @@ void calc_boni(int Ind) {
 	int old_dis_to_h, old_to_h_melee;
 	int old_dis_to_d, old_to_d_melee;
 
-	//int extra_blows;
-	int extra_shots;
-	int extra_spells;
+	int extra_blows_tmp, extra_shots, extra_spells;
 	byte never_blow = 0x0;
 	bool never_blow_ranged = FALSE;
 
@@ -2992,7 +3006,6 @@ void calc_boni(int Ind) {
 	int may_to_a, may_dis_to_a;
 #endif
 	bool may_reflect = FALSE;
-
 
 #ifdef EQUIPMENT_SET_BONUS
 	/* for boni of artifact "sets" ie arts of (about) identical name - C. Blue */
@@ -3027,11 +3040,10 @@ void calc_boni(int Ind) {
 	old_to_d_melee = p_ptr->to_d_melee;
 
 	/* Clear extra blows/shots */
-	//extra_blows = extra_shots = extra_spells = 0;
-	extra_shots = extra_spells = 0;
+	extra_blows_tmp = extra_shots = extra_spells = 0;
 
 	/* Clear the stat modifiers */
-	for (i = 0; i < 6; i++) p_ptr->stat_add[i] = 0;
+	for (i = 0; i < 6; i++) p_ptr->stat_tmp[i] = p_ptr->stat_add[i] = 0;
 
 #if defined(ENABLE_OHERETICISM) && defined(ENABLE_HELLKNIGHT)
 	/* Hack: Blood Sacrifice form may give double-immunity!
@@ -3063,20 +3075,20 @@ void calc_boni(int Ind) {
 		switch (p_ptr->xtrastat_which) {
 #ifdef ENABLE_HELLKNIGHT
 		case 4: /* Hell Knight's Demonic Strength */
-			p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow; csheet_boni[14].pstr += p_ptr->xtrastat_pow;
-			p_ptr->stat_add[A_CON] = p_ptr->xtrastat_pow; csheet_boni[14].pcon += p_ptr->xtrastat_pow;
+			p_ptr->stat_tmp[A_STR] = p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow; csheet_boni[14].pstr += p_ptr->xtrastat_pow;
+			p_ptr->stat_tmp[A_CON] = p_ptr->stat_add[A_CON] = p_ptr->xtrastat_pow; csheet_boni[14].pcon += p_ptr->xtrastat_pow;
 			p_ptr->sustain_str = TRUE; csheet_boni[14].cb[11] |= CB12_RSSTR;
 			p_ptr->sustain_con = TRUE; csheet_boni[14].cb[11] |= CB12_RSCON;
 			break;
 #endif
 		/* Druid's Extra Growth */
-		case 3: p_ptr->stat_add[A_INT] = p_ptr->xtrastat_pow; csheet_boni[14].pint += p_ptr->xtrastat_pow;
+		case 3: p_ptr->stat_tmp[A_INT] = p_ptr->stat_add[A_INT] = p_ptr->xtrastat_pow; csheet_boni[14].pint += p_ptr->xtrastat_pow;
 			/* Fall through */
-		case 2: p_ptr->stat_add[A_CON] = p_ptr->xtrastat_pow; csheet_boni[14].pcon += p_ptr->xtrastat_pow;
+		case 2: p_ptr->stat_tmp[A_CON] = p_ptr->stat_add[A_CON] = p_ptr->xtrastat_pow; csheet_boni[14].pcon += p_ptr->xtrastat_pow;
 			/* Fall through */
-		case 1: p_ptr->stat_add[A_DEX] = p_ptr->xtrastat_pow; csheet_boni[14].pdex += p_ptr->xtrastat_pow;
+		case 1: p_ptr->stat_tmp[A_DEX] = p_ptr->stat_add[A_DEX] = p_ptr->xtrastat_pow; csheet_boni[14].pdex += p_ptr->xtrastat_pow;
 			/* Fall through */
-		case 0: p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow; csheet_boni[14].pstr += p_ptr->xtrastat_pow;
+		case 0: p_ptr->stat_tmp[A_STR] = p_ptr->stat_add[A_STR] = p_ptr->xtrastat_pow; csheet_boni[14].pstr += p_ptr->xtrastat_pow;
 		}
 	}
 
@@ -3086,7 +3098,7 @@ void calc_boni(int Ind) {
 	/* Clear the Displayed/Real Bonuses */
 	p_ptr->dis_to_h = p_ptr->to_h = p_ptr->to_h_melee = p_ptr->to_h_ranged = 0;
 	p_ptr->dis_to_d = p_ptr->to_d = p_ptr->to_d_melee = p_ptr->to_d_ranged = 0;
-	p_ptr->dis_to_a = p_ptr->to_a = 0;
+	p_ptr->dis_to_a = p_ptr->to_a = p_ptr->to_a_tmp = 0;
 
 
 	/* Clear all the flags */
@@ -4530,22 +4542,33 @@ void calc_boni(int Ind) {
 		i = p_ptr->lev / 7;
 		if (i > 3) i = 3;//was 5, untested hmm
 		p_ptr->stat_add[A_CON] += i;
+		p_ptr->stat_tmp[A_CON] += i;
 		p_ptr->stat_add[A_STR] += i;
+		p_ptr->stat_tmp[A_STR] += i;
 		p_ptr->stat_add[A_DEX] += (i + 1) / 2;
+		p_ptr->stat_tmp[A_DEX] += (i + 1) / 2;
 		p_ptr->to_h += 12;
 		p_ptr->dis_to_h += 12;
 		if (p_ptr->adrenaline & 1) {
 			p_ptr->to_d += 8;
 			p_ptr->dis_to_d += 8;
 		}
-		if (p_ptr->adrenaline & 2) p_ptr->extra_blows++;
+		if (p_ptr->adrenaline & 2) {
+			extra_blows_tmp++;
+			p_ptr->extra_blows++;
+		}
 		p_ptr->to_a -= 20;
 		p_ptr->dis_to_a -= 20;
 	}
 
 	/* At least +1, max. +3 */
-	if (p_ptr->zeal) p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
-	else if (p_ptr->mindboost && p_ptr->mindboost_power >= 65) p_ptr->extra_blows++;
+	if (p_ptr->zeal) {
+		p_ptr->extra_blows += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
+		extra_blows_tmp += p_ptr->zeal_power / 10 > 3 ? 3 : (p_ptr->zeal_power / 10 < 1 ? 1 : p_ptr->zeal_power / 10);
+	} else if (p_ptr->mindboost && p_ptr->mindboost_power >= 65) {
+		extra_blows_tmp++;
+		p_ptr->extra_blows++;
+	}
 
 	if (p_ptr->mindboost) p_ptr->skill_sav += p_ptr->mindboost_power / 5;
 
@@ -4584,6 +4607,7 @@ void calc_boni(int Ind) {
 		p_ptr->dis_to_a -= 10;
 		/* may greatly increase +dam and +bpr, also helps bashing doors open and tunnelling */
 		p_ptr->stat_add[A_STR] += 10;
+		p_ptr->stat_tmp[A_STR] += 10;
 	}
 
 	/* Temporary "Fury" */
@@ -5091,12 +5115,14 @@ void calc_boni(int Ind) {
 	if (p_ptr->invuln) {
 		p_ptr->to_a += 100;
 		p_ptr->dis_to_a += 100;
+		p_ptr->to_a_tmp += 100;
 	}
 
 	/* Temporary blessing */
 	if (p_ptr->blessed) {
 		p_ptr->to_a += p_ptr->blessed_power;
 		p_ptr->dis_to_a += p_ptr->blessed_power;
+		p_ptr->to_a_tmp += p_ptr->blessed_power;
 		p_ptr->to_h += p_ptr->blessed_power / 2;
 		p_ptr->dis_to_h += p_ptr->blessed_power / 2;
 	}
@@ -5105,6 +5131,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->shield) {
 		p_ptr->to_a += p_ptr->shield_power;
 		p_ptr->dis_to_a += p_ptr->shield_power;
+		p_ptr->to_a_tmp += p_ptr->shield_power;
 	}
 	/* Temporary shadow shroud - note that it cannot coexist with 'reactive shield' magic.
 	   However, the only currently available spell of that sort is Fiery Shield. */
@@ -5112,6 +5139,7 @@ void calc_boni(int Ind) {
 		if (p_ptr->unlit_grid) {
 			p_ptr->to_a += p_ptr->shroud_power;
 			p_ptr->dis_to_a += p_ptr->shroud_power;
+			p_ptr->to_a_tmp += p_ptr->shroud_power;
 		}
 	}
 
@@ -6884,6 +6912,9 @@ void calc_boni(int Ind) {
 	if ((p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) ||
 	    never_blow_ranged)
 		p_ptr->num_fire = 0;
+
+	/* hack: remember temporary +EA to colourise 'BpR' display accordingly */
+	p_ptr->extra_blows = extra_blows_tmp;
 }
 
 

@@ -2715,7 +2715,7 @@ void verify_day_and_night() {
 static void process_world_player(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int	i;
-//	int	regen_amount, NumPlayers_old = NumPlayers;
+	//int	regen_amount, NumPlayers_old = NumPlayers;
 
 
 	/*** Process the monsters ***/
@@ -2962,75 +2962,76 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	}
 
 	switch (o_ptr->tval) {
-		/* weapon -- attack normally! */
-		case TV_MSTAFF:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_AXE:
-//redundant?->		if (item == INVEN_WIELD) return FALSE;
-			return FALSE;
-			break;
+	/* weapon -- attack normally! */
+	case TV_MSTAFF:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_AXE:
+		//redundant?->	if (item == INVEN_WIELD) return FALSE;
+		return FALSE;
+		break;
 
-		/* directional ones */
-		case TV_SHOT:
-		case TV_ARROW:
-		case TV_BOLT:
-		case TV_BOW:
-//		case TV_BOOMERANG:
-//		case TV_INSTRUMENT:
-			if (item == INVEN_BOW || item == INVEN_AMMO) {
-				if (!p_ptr->inventory[INVEN_AMMO].k_idx ||
-					!p_ptr->inventory[INVEN_AMMO].number)
-					break;
+	/* directional ones */
+	case TV_SHOT:
+	case TV_ARROW:
+	case TV_BOLT:
+	case TV_BOW:
+	//case TV_BOOMERANG:
+	//case TV_INSTRUMENT:
+		if (item == INVEN_BOW || item == INVEN_AMMO) {
+			if (!p_ptr->inventory[INVEN_AMMO].k_idx ||
+			    !p_ptr->inventory[INVEN_AMMO].number)
+				break;
 
-				retaliating_cmd = TRUE;
-				do_cmd_fire(Ind, 5);
-				if (p_ptr->ranged_double) do_cmd_fire(Ind, 5);
-				return TRUE;
-			}
-			break;
+			retaliating_cmd = TRUE;
+			do_cmd_fire(Ind, 5);
+			if (p_ptr->ranged_double) do_cmd_fire(Ind, 5);
+			return TRUE;
+		}
+		break;
 
-		case TV_BOOMERANG:
-			if (item == INVEN_BOW)
-			{
-				retaliating_cmd = TRUE;
-				do_cmd_fire(Ind, 5);
-				return TRUE;
-			}
-			break;
+	case TV_BOOMERANG:
+		if (item == INVEN_BOW) {
+			retaliating_cmd = TRUE;
+			do_cmd_fire(Ind, 5);
+			return TRUE;
+		}
+		break;
 
-		/* spellbooks - mikaelh */
-		case TV_BOOK:
-			if (o_ptr->sval == SV_SPELLBOOK) {
-				/* It's a spellbook */
+	/* spellbooks - mikaelh */
+	case TV_BOOK:
+		if (o_ptr->sval == SV_SPELLBOOK) {
+			/* It's a spellbook */
 
-				/* There's only one spell in a spellbook */
-				spell = o_ptr->pval;
+			/* There's only one spell in a spellbook */
+			spell = o_ptr->pval;
+		} else {
+			/* It's a tome */
+
+			/* Get the spell */
+			if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
+				/* no longer supported! to make s_aux.lua slimmer */
+				spell = exec_lua(Ind, format("return spell_x(%d, %d, %d)", o_ptr->sval, o_ptr->pval, choice));
 			} else {
-				/* It's a tome */
-
-				/* Get the spell */
-				if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
-					/* no longer supported! to make s_aux.lua slimmer */
-					spell = exec_lua(Ind, format("return spell_x(%d, %d, %d)", o_ptr->sval, o_ptr->pval, choice));
-				} else {
-					spell = exec_lua(Ind, format("return spell_x2(%d, %d, %d, %d)", item, o_ptr->sval, o_ptr->pval, choice));
-				}
+				spell = exec_lua(Ind, format("return spell_x2(%d, %d, %d, %d)", item, o_ptr->sval, o_ptr->pval, choice));
 			}
+		}
 
-			cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
-			if (cost > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
+		/* Book doesn't contain a spell in the selected slot */
+		if (spell == -1) break;
 
-			/* Check that it's ok... more checks needed here? */
-			/* Limit amount of mana used? */
-			if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->csp &&
-				exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell)))
-			{
-				cast_school_spell(Ind, item, spell, 5, -1, 0);
-				return TRUE;
-			}
-			break;
+		cost = exec_lua(Ind, format("return get_mana(%d, %d)", Ind, spell));
+		if (cost > p_ptr->csp && fallback) return (p_ptr->fail_no_melee);
+
+		/* Check that it's ok... more checks needed here? */
+		/* Limit amount of mana used? */
+		if (!p_ptr->blind && !no_lite(Ind) && !p_ptr->confused && cost <= p_ptr->csp &&
+		    exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell))) {
+			cast_school_spell(Ind, item, spell, 5, -1, 0);
+			return TRUE;
+		}
+		break;
 	}
 
 	/* If all fails, then melee */
@@ -5808,7 +5809,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
-	if (k && rand_int(86) <= k - 8) { /* cold effects prolong the duration to up to 2x */
+	if (rand_int(86) <= k - 8) { /* cold effects prolong the duration to up to 2x */
 		int iced = 0, iced_total = 0;
 
 		/* Process inventory (blood potions, snowballs).
@@ -7069,8 +7070,8 @@ static void process_various(void) {
 					/* search for Great Pumpkins */
 					if (m_ptr->r_idx == RI_PUMPKIN1 || m_ptr->r_idx == RI_PUMPKIN2 || m_ptr->r_idx == RI_PUMPKIN3) {
 						msg_print_near_monster(m_idx, "\377oThe Great Pumpkin wails and suddenly vanishes into thin air!");
-						s_printf("HALLOWEEN: The Great Pumpkin despawned.\n");
-						delete_monster_idx(k, TRUE);
+						s_printf("HALLOWEEN: The Great Pumpkin despawned from %d,%d,%d.\n", m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz);
+						delete_monster_idx(m_idx, TRUE);
 						//note_spot_depth(&p_ptr->wpos, y, x);
 						great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
 					}
@@ -10087,6 +10088,7 @@ void process_timers() {
 		}
 	}
 
+#ifndef ARCADE_SERVER /* no stables in that town.. */
 	/* With addition of horse stables in Bree, cycle horses */
 	if (((turn % (cfg.fps * 600)) / cfg.fps) <= 37) { // '<=' limit check not really needed, it's not like we're wasting much cpu cycles :-s
 		wpos.wx = 32;
@@ -10137,6 +10139,7 @@ void process_timers() {
 			}
 		}
 	}
+#endif
 }
 
 /* during new years eve, cast fireworks! - C. Blue

@@ -3291,7 +3291,7 @@ static void quit_hook(cptr s) {
 
 			if (res == 1) strcpy(buf, "tomenet-chat_");
 			else strcpy(buf, "tomenet-messages_");
-			strcat(buf, format("%04d-%02d-%02d_%02d.%02d.%02d",
+			strcat(buf, format("%04d-%02d-%02d_%02d-%02d-%02d",
 			    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
 			    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
 			strcat(buf, ".txt");

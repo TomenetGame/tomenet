@@ -535,7 +535,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.quiet_os,		FALSE,	5,	1, 131, TRUE,
 	    "quiet_os",			"Don't play beep/alert/page beeps through OS" },
-	{ &c_cfg.disable_lightning,	FALSE,	2,	9, 132, TRUE,
+	{ &c_cfg.disable_lightning,	FALSE,	7,	9, 132, TRUE,
 	    "disable_lightning",	"Disable visual screen flash effect for lightning" },
 	{ &c_cfg.macros_in_stores,	FALSE,	3,	0, 133, TRUE,
 	    "macros_in_stores",		"Don't disable macros while inside a store" },

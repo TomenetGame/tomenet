@@ -151,7 +151,7 @@ bool check_antimagic(int Ind, int percentage) {
 
 		/* Reduction for party */
 		if ((i != Ind) && player_in_party(p_ptr->party, i))
-			antichance >>= 2;	/* was >>= 1 */
+			antichance = (antichance * (100 - AM_PARTY_REDUCTION)) / 100;
 
 		/* Got disrupted ? */
 		if (magik((antichance * percentage) / 100)) {

@@ -41,8 +41,11 @@
 #define WEATHER_VOL_CLOUDS
 
 /* Allow user-defined custom volume factor for each sample or song? ([].volume) */
+//#ifdef TEST_CLIENT
+ #define USER_VOLUME_SFX
+//#endif
 #ifdef TEST_CLIENT
- #define USER_VOLUME
+ #define USER_VOLUME_MUS
 #endif
 
 /*
@@ -578,15 +581,18 @@ static bool sound_sdl_init(bool no_cache) {
 			samples[i].disabled = TRUE;
 		}
 	}
+	my_fclose(fff);
 #endif
+
 #ifdef WINDOWS
 	if (!win_dontmoveuser && getenv("HOMEDRIVE") && getenv("HOMEPATH")) {
 		strcpy(path, getenv("HOMEDRIVE"));
 		strcat(path, getenv("HOMEPATH"));
 		strcat(path, "\\TomeNET-soundvol.cfg");
-	} else
+	} else path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "TomeNET-soundvol.cfg"); //paranoia
+#else
+	path_build(path, 1024, ANGBAND_DIR_XTRA_SOUND, "TomeNET-soundvol.cfg");
 #endif
-	path_build(path, sizeof(path), ANGBAND_DIR_XTRA_SOUND, "TomeNET-soundvol.cfg"); //paranoia
 
 	fff = my_fopen(path, "r");
 	if (fff) {
@@ -600,8 +606,6 @@ static bool sound_sdl_init(bool no_cache) {
 			samples[i].volume = atoi(buffer0);
 		}
 	}
-
-	/* Close the file */
 	my_fclose(fff);
 
 
@@ -994,7 +998,7 @@ static bool play_sound(int event, int type, int vol, s32b player_id) {
 	if (!cfg_audio_master || !cfg_audio_sound) return TRUE; /* claim that it 'succeeded' */
 #endif
 
-#ifdef USER_VOLUME
+#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (samples[event].volume) vol = (vol * samples[event].volume) / 100;
 #endif
@@ -2587,7 +2591,7 @@ void do_cmd_options_sfx_sdl(void) {
 
 	/* Interact */
 	while (go) {
-#ifdef USER_VOLUME
+#ifdef USER_VOLUME_SFX
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play), \377yESC\377w)");
 #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
@@ -2635,8 +2639,8 @@ void do_cmd_options_sfx_sdl(void) {
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
-#ifdef USER_VOLUME
-			if (samples[j].volume) Term_putstr(horiz_offset + 1 + 12 + 45 + 1, vertikal_offset + i + 10 - y, -1, a, format("%d%%", samples[j].volume));
+#ifdef USER_VOLUME_SFX
+			if (samples[j].volume) Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", samples[j].volume));
 #endif
 		}
 
@@ -2802,7 +2806,7 @@ void do_cmd_options_sfx_sdl(void) {
 					strcpy(out_val2, evname);
 					strcat(out_val2, "\n");
 					fputs(out_val2, fff2);
-					sprintf(out_val2, "%d", samples[j].volume);
+					sprintf(out_val2, "%d\n", samples[j].volume);
 					fputs(out_val2, fff2);
 				}
 			}
@@ -2813,7 +2817,7 @@ void do_cmd_options_sfx_sdl(void) {
 			go = FALSE;
 			break;
 
-#ifdef USER_VOLUME /* needs work @ actual mixing algo */
+#ifdef USER_VOLUME_SFX /* needs work @ actual mixing algo */
 		case 'v': {
 			//i = c_get_quantity("Enter volume % (1..100): ", -1);
 			bool inkey_msg_old = inkey_msg;
@@ -2983,13 +2987,13 @@ void do_cmd_options_mus_sdl(void) {
 	/* Interact */
 	while (go) {
 #ifdef ENABLE_JUKEBOX
- #ifdef USER_VOLUME
+ #ifdef USER_VOLUME_MUS
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yRETURN\377w (play), \377yESC\377w)");
  #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yRETURN\377w (play), \377yESC\377w)");
  #endif
 #else
- #ifdef USER_VOLUME
+ #ifdef USER_VOLUME_MUS
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yv\377w volume, \377yESC\377w)");
  #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (enable/disable), \377yESC\377w)");
@@ -3037,8 +3041,8 @@ void do_cmd_options_mus_sdl(void) {
 			} else
 				Term_putstr(horiz_offset + 12, vertikal_offset + i + 10 - y, -1, a, (char*)lua_name);
 
-#ifdef USER_VOLUME
-			if (songs[j].volume) Term_putstr(horiz_offset + 1 + 12 + 45 + 1, vertikal_offset + i + 10 - y, -1, a, format("%d%%", songs[j].volume));
+#ifdef USER_VOLUME_MUS
+			if (songs[j].volume) Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + 10 - y, -1, a, format("%2d%%", songs[j].volume));
 #endif
 		}
 
@@ -3219,7 +3223,7 @@ void do_cmd_options_mus_sdl(void) {
 					strcpy(out_val2, evname);
 					strcat(out_val2, "\n");
 					fputs(out_val2, fff2);
-					sprintf(out_val2, "%d", songs[j].volume);
+					sprintf(out_val2, "%d\n", songs[j].volume);
 					fputs(out_val2, fff2);
 				}
 			}
@@ -3230,7 +3234,7 @@ void do_cmd_options_mus_sdl(void) {
 			go = FALSE;
 			break;
 
-#ifdef USER_VOLUME /* needs work @ actual mixing algo */
+#ifdef USER_VOLUME_MUS /* needs work @ actual mixing algo */
 		case 'v': {
 			//i = c_get_quantity("Enter volume % (1..100): ", 50);
 			bool inkey_msg_old = inkey_msg;

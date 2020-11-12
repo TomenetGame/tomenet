@@ -634,33 +634,16 @@ void check_Pumpkin(void) {
 				p_ptr = Players[i];
 				if (is_admin(p_ptr)) continue;
 				if (inarea(&p_ptr->wpos, wpos) &&
-#if 0
- #ifndef RPG_SERVER
-				    (p_ptr->max_lev > 30))
- #else
-				    (p_ptr->max_lev > 40))
- #endif
-#else
- #ifndef RPG_SERVER
-				    (p_ptr->max_lev > 30))
- #else
-				    (p_ptr->max_lev > 35))
- #endif
-#endif
-				{
+				    (p_ptr->max_lev > HALLOWEEN_MAX_PLEV)) {
 					sprintf(msg, "\377oA ghostly force drives you out of this dungeon!");
 					/* log */
-#ifndef RPG_SERVER
-					s_printf("HALLOWEEN: Recalled>30: %s\n", p_ptr->name);
-#else
-					s_printf("HALLOWEEN: Recalled>35: %s\n", p_ptr->name);
-#endif
+					s_printf("HALLOWEEN: Recalled>%d: %s\n", HALLOWEEN_MAX_PLEV, p_ptr->name);
 					/* get him out of here */
 					p_ptr->new_level_method = (p_ptr->wpos.wz > 0 ? LEVEL_RECALL_DOWN : LEVEL_RECALL_UP);
 					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
 					p_ptr->recall_pos.wz = 0;
-//					p_ptr->word_recall =- 666;/*HACK: avoid recall_player loops! */
+					//p_ptr->word_recall =- 666;/*HACK: avoid recall_player loops! */
 					recall_player(i, msg);
 				}
 			}
@@ -7710,6 +7693,7 @@ void cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 
 	/* Change the feature */
 	c_ptr->feat = feat;
+	__GRID_DEBUG(0, wpos, feat, "cave_set_feat()", 0);
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 	aquatic_terrain_hack(zcave, x, y);
 
@@ -7999,6 +7983,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	/* Change the feature */
 	if (c_ptr->feat != feat) c_ptr->info &= ~(CAVE_NEST_PIT | CAVE_ENCASED); /* clear teleport protection for nest grid if it gets changed; clear treasure vein remote-flag too */
 	c_ptr->feat = feat;
+	__GRID_DEBUG(0, wpos, feat, "cave_set_feat_live()", 0);
 	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
 
 	/* Area of view for a player might have changed, among other consequences.. */
@@ -8751,7 +8736,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 		if (town || sector00 || valinor || nr_bottom) return(FALSE);
 		break;
 
-	case FEAT_WALL_EXTRA: /* tested by earthquake() and destroy_area() */
+	case FEAT_WALL_EXTRA: /* tested by earthquake(), destroy_area(), project_f() for GF_STONE_WALL (stone prison, wall creation) */
 	case FEAT_SHAL_LAVA:
 	case FEAT_DEEP_LAVA:
 		if (town || townarea || sector00 || valinor || nr_bottom) return(FALSE);
@@ -8769,14 +8754,14 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 		break;
 
 	/* don't allow any changes at all to preserve the visuals 100% */
-        case FEAT_NONE:
-    	case FEAT_FLOOR:
-        case FEAT_DIRT:
-        case FEAT_GRASS:
-        case FEAT_SAND:
-        case FEAT_ASH:
-        case FEAT_MUD:
-        case FEAT_FLOWER:
+	case FEAT_NONE:
+	case FEAT_FLOOR:
+	case FEAT_DIRT:
+	case FEAT_GRASS:
+	case FEAT_SAND:
+	case FEAT_ASH:
+	case FEAT_MUD:
+	case FEAT_FLOWER:
 /*	case FEAT_PUDDLE: new feature to be added: same as shallow water, but dries out after a while */
 		if (town || valinor || nr_bottom) return(FALSE);
 		break;

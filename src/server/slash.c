@@ -1440,11 +1440,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			/* Special case: Search for a specific topic - in this case, invoke the Guide on client-side instead with a search performed for the topic specified! */
 			if (tk) {
-				bool allcaps = TRUE;
+				bool allcapsok = FALSE, allcaps = TRUE, dot = FALSE;
+				int lineno = -1;
 				char* c;
 
 				c = message3;
 				while (*c) {
+					if (*c == '.') dot = TRUE;
+					if (!allcapsok && isalpha(*c)) allcapsok = TRUE;
 					if (toupper(*c) == *c) {
 						c++;
 						continue;
@@ -1452,11 +1455,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					allcaps = FALSE;
 					break;
 				}
+				if (!allcapsok) allcaps = FALSE;
+				/* Resolve conflict 'chapter no' vs 'line no' */
+				if (atoi(message3) > 8 && !dot) lineno = atoi(message3);
 
 				/* We're looking for help on a slash command? Use 'strict search' */
 				if (*message3 == '/') Send_Guide(Ind, 2, 0, message3);
 				/* We've entered a number? Interpret it as a 'line number' directly */
-				else if (atoi(message3)) Send_Guide(Ind, 4, atoi(message3), NULL);
+				else if (lineno != -1) Send_Guide(Ind, 4, lineno, NULL);
 				/* If it's all caps use 'strict search' too (we're looking for a FLAG probably) */
 				else if (allcaps) Send_Guide(Ind, 2, 0, message3);
 				/* We're looking for help on any other topic? Attempt 'chapter search' */
@@ -1484,7 +1490,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_print(Ind, "\374 1) On the TomeNET website where you can search it online or download it.");
 			msg_print(Ind, "\374 2) In your installed TomeNET folder, it's the file 'TomeNET-Guide.txt'.");
 			msg_print(Ind, "\374    If you used the installer it has placed a Guide shortcut on your desktop!");
-			msg_print(Ind, "\374 3) In-game: Press \377y~ g\377w in the game to invoke the guide, then \377y?\377w for help.");
+			msg_print(Ind, "\374 3) In-game: Press \377y~ g\377w or \377y? ?\377w in the game to invoke the guide, then \377y?\377w for help.");
 			msg_print(Ind, "\374\377s To update the guide, either download it manually and place it into your");
 			msg_print(Ind, "\374\377s TomeNET folder, or run the TomeNET-updater to do this for you automatically.");
 			msg_print(Ind, "\374--------------------------------------------------------------------------------");
@@ -4707,12 +4713,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/col") || prefix(messagelc, "/colours") || prefix(messagelc, "/colors")) {
 			msg_print(Ind, "\377wColour table:");
-			msg_print(Ind, "  (0) black:  \377dblack\377w,  (1) white: \377wwhite\377w, (2) gray:      \377sslate");
-			msg_print(Ind, "  (3) orange: \377oorange\377w, (4) red:   \377rred\377w,   (5) green:     \377ggreen");
-			msg_print(Ind, "  (6) blue:   \377bblue\377w,   (7) brown: \377uumber\377w, (8) dark gray: \377Dldark");
-			msg_print(Ind, "  (9) light gray:  \377Wlwhite\377w, (10) violet:      \377vviolet\377w, (11) yellow: \377yyellow");
-			msg_print(Ind, " (12) light red:   \377Rlred\377w,   (13) light green: \377Glgreen\377w, (14) cyan:   \377Blblue");
-			msg_print(Ind, " (15) light brown: \377Ulumber");
+			msg_print(Ind, "  (0/d) black:       \377dblack\377w   (1/w) white:        \377wwhite\377w   (2/s) gray:      \377sslate");
+			msg_print(Ind, "  (3/o) orange:      \377oorange\377w  (4/r) red:          \377rred\377w     (5/g) green:     \377ggreen");
+			msg_print(Ind, "  (6/b) blue:        \377bblue\377w    (7/u) brown:        \377uumber\377w   (8/D) dark gray: \377Dldark");
+			msg_print(Ind, "  (9/W) light gray:  \377Wlwhite\377w  (10/v) violet:      \377vviolet\377w  (11/y) yellow:   \377yyellow");
+			msg_print(Ind, " (12/R) light red:   \377Rlred\377w    (13/G) light green: \377Glgreen\377w  (14/B) cyan:     \377Blblue");
+			msg_print(Ind, " (15/U) light brown: \377Ulumber");
+			return;
+		}
+		else if (prefix(messagelc, "/acol") || prefix(messagelc, "/acolours") || prefix(messagelc, "/acolors")) {
+			msg_print(Ind, "\377wAnimated-colour table:");
+			msg_print(Ind, " (a) \377aacid\377w   (c) \377ccold\377w   (e) \377eelectricity\377w  (f) \377ffire\377w   (p) \377ppoison\377w     (h) \377hhalf-multi");
+			msg_print(Ind, " (m) \377mmulti\377w  (L) \377Llight\377w  (A) \377Adarkness\377w     (S) \377Ssound\377w  (C) \377Cconfusion\377w  (H) \377Hshards");
+			msg_print(Ind, " (M) \377Mdisruption shield\377w (I) \377Iinvulnerability");
+			msg_print(Ind, " (N) \377Nmana\377w  (x) \377xnexus\377w   (n) \377nnether\377w (q) \377qinertia\377w  (T) \377Tdisenchantment\377w (F) \377Fforce");
+			msg_print(Ind, " (t) \377ttime\377w  (V) \377Vgravity\377w (i) \377iice\377w    (K) \377Kunbreath\377w (Q) \377Qdisintegration\377w (Y) \377Ywater");
+			msg_print(Ind, " (k) \377knuke\377w  (l) \377lplasma\377w  (P) \377Ppsi\377w    (j) \377jholy orb\377w (J) \377Jholy fire\377w      (X) \377Xhellfire");
+			msg_print(Ind, " (1) \3771havoc\377w (E) \377Emeteor\377w  (Z) \377Zember\377w  (z) \377zthunder\377w  (O) \377Odetonation\377w     (0) \3770starlight");
+			msg_print(Ind, " (2) \3772lamp light\377w  (3) \3773shaded lamp light\377w  (4) \3774menu selector\377w  (5) \3775palette test");
 			return;
 		}
 		else if (prefix(messagelc, "/setorder")) { /* Non-admin version - Set custom list position for this character in the account overview screen on login */
@@ -5404,6 +5422,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				msg_print(Ind, "\377oUsage: /mute <character name>");
+				return;
 			}
 			else if (prefix(messagelc, "/unmute")) {   //oh no!
 				if (tk) {
@@ -5427,6 +5446,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				msg_print(Ind, "\377oUsage: /unmute <character name>");
+				return;
 			}
 			/* erase items and monsters */
 			else if (prefix(messagelc, "/clear-level") || prefix(messagelc, "/clv")) {
@@ -10966,6 +10986,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				msg_format(Ind, "Player '%s' score = %u", total_points(i));
+				return;
+			}
+			else if (prefix(messagelc, "/chkpump")) { /* check for existance of the Great Pumpkin */
+				monster_type *m_ptr;
+
+				for (i = 1; i < m_max; i++) {
+					m_ptr = &m_list[i];
+					if (m_ptr->r_idx != RI_PUMPKIN) continue;
+					msg_format(Ind, "Pumpkin (%d min, %d/%d HP) on (%d,%d,%d).", great_pumpkin_duration, m_ptr->hp, m_ptr->maxhp, m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz);
+				}
+				msg_format(Ind, "Timer = %d.", great_pumpkin_timer);
 				return;
 			}
 		}

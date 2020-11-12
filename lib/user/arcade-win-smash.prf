@@ -1,0 +1,105 @@
+#Moltor's Arcade: Macro file for 'Smash'em'
+
+# -----------------------------------------------------------------------------
+
+# Macro '0' - F1
+A::%:\n:%:{oHELP for currently loaded macro set 'Smash'em':\n:%:q/w/e a/s/d yz/x/c - Fire in that direction, SPACE - Cease fire\n:%:F1 - Display this help, F2 - Start Smash'em, F3 - Start harder, F4 - Quit\n:%:{sSHIFT+F12 - Switch game{-\n:%:\n
+H:^_x3B\r
+
+# Macro '1' - F2
+A::command:\splay\ssmash\r
+H:^_x3C\r
+
+# Macro '2' - F3
+A::command:play\s2smash\r
+H:^_x3D\r
+
+# Macro '3' - F4
+A::quit\r
+H:^_x3E\r
+
+# Macro '4' - SHIFT+F12
+A:%larcade-win-other.prf\r\e:%:Other games macros loaded.\r
+H:^_Sx58\r
+
+
+
+# Macro '5'
+A::command:\scease\sfire\r
+H:s
+
+# Macro '6'
+A::command:\sfire\s1\r
+H:y
+
+# Macro '7'
+A::command:\sfire\s1\r
+H:z
+
+# Macro '8'
+A::command:\sfire\s2\r
+H:x
+
+# Macro '9'
+A::command:\sfire\s3\r
+H:c
+
+# Macro '10'
+A::command:\sfire\s4\r
+H:a
+
+# Macro '11'
+A::command:\sfire\s6\r
+H:d
+
+# Macro '12'
+A::command:\sfire\s7\r
+H:q
+
+# Macro '13'
+A::command:\sfire\s8\r
+H:w
+
+# Macro '14'
+A::command:\sfire\s9\r
+H:e
+
+# Macro '24' - SHIFT + Arrow Keys/Numpad Movement
+A:\e\e\\.1
+H:^_Sx4F\r
+
+# Macro '25'
+A:\e\e\\.2
+H:^_Sx50\r
+
+# Macro '26'
+A:\e\e\\.3
+H:^_Sx51\r
+
+# Macro '27'
+A:\e\e\\.4
+H:^_Sx4B\r
+
+# Macro '28'
+A:\e\e\\.6
+H:^_Sx4D\r
+
+# Macro '29'
+A:\e\e\\.7
+H:^_Sx47\r
+
+# Macro '30'
+A:\e\e\\.8
+H:^_Sx48\r
+
+# Macro '31'
+A:\e\e\\.9
+H:^_Sx49\r
+
+# Macro '32'
+A:<
+H:,
+
+# Macro '33' - Numpad .
+A:<
+H:,

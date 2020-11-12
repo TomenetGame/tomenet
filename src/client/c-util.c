@@ -5832,7 +5832,7 @@ Chain_Macro:
 						case 'd': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GLightn");
 							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Rod of Lightning Bolts'.");
 							break;
-						case 'e': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GColdw");
+						case 'e': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GFrostw");
 							Term_putstr(5, 13, -1, TERM_GREEN, "if you want to use a 'Frostwoven Cloak'.");
 							break;
 						case 'f': Term_putstr(5, 12, -1, TERM_GREEN, "For example, enter:     \377GSerpen");
@@ -8466,7 +8466,7 @@ void do_cmd_options(void) {
 		if (changed4a != c_cfg.hp_bar) hp_bar = c_cfg.hp_bar;
 		if (changed4b != c_cfg.mp_bar) sp_bar = c_cfg.mp_bar;
 		if (changed4c != c_cfg.st_bar) st_bar = c_cfg.st_bar;
-		prt_hp(hp_max, hp_cur, hp_bar);
+		prt_hp(hp_max, hp_cur, hp_bar, hp_boosted);
 		prt_sp(sp_max, sp_cur, sp_bar);
 		prt_stamina(st_max, st_cur, st_bar);
 	}
