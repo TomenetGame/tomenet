@@ -8933,11 +8933,11 @@ void interact_audio(void) {
 			/* Describe */
 			Term_putstr(30,  0, -1, TERM_L_UMBER, "*** Audio Mixer ***");
 			//Term_putstr(3, 1, -1, TERM_L_UMBER, "Press arrow keys to navigate/modify, RETURN/SPACE to toggle, ESC to leave.");
-			Term_putstr(3, 1, -1, TERM_L_UMBER, "Press \377yarrow keys\377U to navigate/modify, \377yRETURN\377U/\377ySPACE\377U to toggle, \377yESC\377U to leave.");
+			Term_putstr(1, 1, -1, TERM_L_UMBER, "Navigate/modify: \377yArrow keys\377U. Toggle/modify: \377yRETURN\377U/\377ySPACE\377U. Reset: \377yr\377U. Exit: \377yESC\377U.");
 			//Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a': master, 'w': weather, 's': sound, 'c' or 'm': music.");
 			//Term_putstr(7, 3, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
 			//Term_putstr(6, 2, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
-			Term_putstr(2, 2, -1, TERM_L_UMBER, "Shortcuts: '\377ya\377U','\377yw\377U','\377ys\377U','\377yc\377U'/'\377ym\377U'. \377yShift+shortcut\377U to jump. \377yCTRL+R\377U reloads packs.");
+			Term_putstr(1, 2, -1, TERM_L_UMBER, "Shortcuts: '\377ya\377U','\377yw\377U','\377ys\377U','\377yc\377U'/'\377ym\377U'. Sliders: \377yShift+shortcut\377U. Reload packs: \377yCTRL+R\377U.");
 
 			if (quiet_mode) Term_putstr(12, 4, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
 			else if (audio_sfx > 3 && audio_music > 0) Term_putstr(12, 4, -1, TERM_L_GREEN, "     Sound pack and music pack have been detected.      ");
@@ -9094,17 +9094,22 @@ void interact_audio(void) {
 			toggle_weather();
 			break;
 		case 'A':
-			cur_item = 0;
+			cur_item = 0 + 4;
 			break;
 		case 'C':
 		case 'M':
-			cur_item = 1;
+			cur_item = 1 + 4;
 			break;
 		case 'S':
-			cur_item = 2;
+			cur_item = 2 + 4;
 			break;
 		case 'W':
-			cur_item = 3;
+			cur_item = 3 + 4;
+			break;
+		case 'r': /* undocumented atm :/ -- reset all settings to default */
+			cfg_audio_master_volume = cfg_audio_music_volume = cfg_audio_sound_volume = cfg_audio_weather_volume = 50;
+			cfg_audio_master = cfg_audio_music = cfg_audio_sound = cfg_audio_weather = TRUE;
+			set_mixing();
 			break;
 		case '\n':
 		case '\r':
