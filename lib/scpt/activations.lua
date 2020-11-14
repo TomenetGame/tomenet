@@ -191,7 +191,7 @@ music_info[10].desc},
 --case ART_EOL:--178
 {178, "a mana bolt (9..29d8) 2..7+d3 turns"},
 --case ART_UNDEATH:--200
-{200 "darkness and ruination every 5..10+d10 turns"},
+{200, "darkness and ruination every 5..10+d10 turns"},
 --case ART_PALANTIR:--202
 {202, "clairvoyance every 200..1000+d150 turns"},
 --case ART_PHASING:--203
