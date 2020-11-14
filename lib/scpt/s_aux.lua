@@ -245,12 +245,10 @@ function is_ok_spell(i, s)
 		return nil
 	end
 	if player.admin_wiz == 0 and player.admin_dm == 0 then
-		--assume short circuit logic.. >_>
-		if def_hack("TEMP3", nil) and s == BLOODSACRIFICE and player.pclass ~= CLASS_HELLKNIGHT and player.pclass ~= CLASS_CPRIEST then
+		if s == BLOODSACRIFICE and player.pclass ~= CLASS_HELLKNIGHT and player.pclass ~= CLASS_CPRIEST then
 			return nil
 		end
-		--assume short circuit logic.. >_>
-		if def_hack("TEMP4", nil) and (s == OREGEN or s == OUNLIFERES) and player.prace ~= RACE_VAMPIRE then
+		if (s == OREGEN or s == OUNLIFERES) and player.prace ~= RACE_VAMPIRE then
 			return nil
 		end
 	end
@@ -267,12 +265,10 @@ function is_ok_spell2(i, s)
 		return nil
 	end
 	if player.admin_wiz == 0 and player.admin_dm == 0 then
-		--assume short circuit logic.. >_>
-		if def_hack("TEMP3", nil) and s == BLOODSACRIFICE and player.pclass ~= CLASS_HELLKNIGHT and player.pclass ~= CLASS_CPRIEST then
+		if s == BLOODSACRIFICE and player.pclass ~= CLASS_HELLKNIGHT and player.pclass ~= CLASS_CPRIEST then
 			return nil
 		end
-		--assume short circuit logic.. >_>
-		if def_hack("TEMP4", nil) and (s == OREGEN or s == OUNLIFERES) and player.prace ~= RACE_VAMPIRE then
+		if (s == OREGEN or s == OUNLIFERES) and player.prace ~= RACE_VAMPIRE then
 			return nil
 		end
 	end
@@ -848,17 +844,8 @@ function get_spellbook_name_colour(i)
 	if (s == SCHOOL_ASTRAL) then return TERM_ORANGE end
 	-- yellow for mindcrafters
 	if (s >= SCHOOL_PPOWER and s <= SCHOOL_MINTRUSION) then return TERM_YELLOW end
-	-- Occult
-	if (def_hack("TEMP4", nil)) then
-		-- blue for Occult
-		if (s >= SCHOOL_OSHADOW and s <= SCHOOL_OUNLIFE) then return TERM_BLUE end
-	elseif (def_hack("TEMP3", nil)) then
-		-- blue for Occult
-		if (s >= SCHOOL_OSHADOW and s <= SCHOOL_OHERETICISM) then return TERM_BLUE end
-	elseif (def_hack("TEMP2", nil)) then
-		-- blue for Occult
-		if (s >= SCHOOL_OSHADOW and s <= SCHOOL_OSPIRIT) then return TERM_BLUE end
-	end
+	-- blue for occult
+	if (s >= SCHOOL_OSHADOW and s <= SCHOOL_OUNLIFE) then return TERM_BLUE end
 	-- light blue for the rest (istari schools)
 	return TERM_L_BLUE
 end

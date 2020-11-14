@@ -73,21 +73,10 @@ function showskills(name)
 	if get_skill_value(p, SKILL_PPOWER) > 0 then		msg_print(Ind, "     . Psycho-Power               " .. get_skill_formatted(p, SKILL_PPOWER)) end
 	if get_skill_value(p, SKILL_TCONTACT) > 0 then		msg_print(Ind, "     . Attunement                 " .. get_skill_formatted(p, SKILL_TCONTACT)) end
 	if get_skill_value(p, SKILL_MINTRUSION) > 0 then	msg_print(Ind, "     . Mental Intrusion           " .. get_skill_formatted(p, SKILL_MINTRUSION)) end
--- Occult
---if (def_hack("TEST_SERVER", nil)) then
-if (def_hack("TEMP4", nil)) then
 	if get_skill_value(p, SKILL_OSHADOW) > 0 then		msg_print(Ind, "     . Shadow                     " .. get_skill_formatted(p, SKILL_OSHADOW)) end
 	if get_skill_value(p, SKILL_OSPIRIT) > 0 then		msg_print(Ind, "     . Spirit                     " .. get_skill_formatted(p, SKILL_OSPIRIT)) end
 	if get_skill_value(p, SKILL_OHERETICISM) > 0 then	msg_print(Ind, "     . Hereticism                 " .. get_skill_formatted(p, SKILL_OHERETICISM)) end
 	if get_skill_value(p, SKILL_OUNLIFE) > 0 then		msg_print(Ind, "     . Unlife                     " .. get_skill_formatted(p, SKILL_OUNLIFE)) end
-elseif (def_hack("TEMP3", nil)) then
-	if get_skill_value(p, SKILL_OSHADOW) > 0 then		msg_print(Ind, "     . Shadow                     " .. get_skill_formatted(p, SKILL_OSHADOW)) end
-	if get_skill_value(p, SKILL_OSPIRIT) > 0 then		msg_print(Ind, "     . Spirit                     " .. get_skill_formatted(p, SKILL_OSPIRIT)) end
-	if get_skill_value(p, SKILL_OHERETICISM) > 0 then	msg_print(Ind, "     . Hereticism                 " .. get_skill_formatted(p, SKILL_OHERETICISM)) end
-elseif (def_hack("TEMP2", nil)) then
-	if get_skill_value(p, SKILL_OSHADOW) > 0 then		msg_print(Ind, "     . Shadow                     " .. get_skill_formatted(p, SKILL_OSHADOW)) end
-	if get_skill_value(p, SKILL_OSPIRIT) > 0 then		msg_print(Ind, "     . Spirit                     " .. get_skill_formatted(p, SKILL_OSPIRIT)) end
-end
 	if get_skill_value(p, SKILL_RUNEMASTERY ) > 0 then	msg_print(Ind, " . Runemastery                    " .. get_skill_formatted(p, SKILL_RUNEMASTERY)) end
 	if get_skill_value(p, SKILL_SCHOOL_RUNECRAFT) > 0 then	msg_print(Ind, " . Runecraft                      " .. get_skill_formatted(p, SKILL_SCHOOL_RUNECRAFT)) end
 	if get_skill_value(p, SKILL_R_FIRECOLD) > 0 then	msg_print(Ind, "     . Fire/Cold                  " .. get_skill_formatted(p, SKILL_R_FIRECOLD)) end

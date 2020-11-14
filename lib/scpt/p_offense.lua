@@ -288,16 +288,11 @@ HRELSOULS_III = add_spell {
 	end,
 	["desc"] = 	{ "Banishes nearby undead.", }
 }
--- Occult
-if (def_hack("TEMP2", nil)) then
-    HDCS = {SCHOOL_HOFFENSE, SCHOOL_OSHADOW}
-else
-    HDCS = {SCHOOL_HOFFENSE}
-end
+
 HDRAINCLOUD = add_spell {
 	["name"] = 	"Doomed Grounds",
 	["name2"] = 	"Doom",
-	["school"] = 	HDCS,
+	["school"] = 	{SCHOOL_HOFFENSE, SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	40,     -- pointless for crap with low lvl anyway

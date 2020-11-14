@@ -254,42 +254,27 @@ void set_server_features() {
 #endif
 	lua_settop(L, oldtop);
 
-#ifdef ENABLE_OCCULT
-	sflags_TEMP |= 0x00000004;
-	lua_dostring(L, "TEMP2 = 1");
-	lua_settop(L, oldtop);
-#else
+	//sflags_TEMP |= 0x00000004;
 	lua_dostring(L, "TEMP2 = 0");
 	lua_settop(L, oldtop);
-#endif
 
-#ifdef ENABLE_OHERETICISM
-	sflags_TEMP |= 0x00000008;
-	lua_dostring(L, "TEMP3 = 1");
-	lua_settop(L, oldtop);
-#else
+	//sflags_TEMP |= 0x00000008;
 	lua_dostring(L, "TEMP3 = 0");
 	lua_settop(L, oldtop);
-#endif
 
-#ifdef ENABLE_OUNLIFE
-	sflags_TEMP |= 0x00000010;
-	lua_dostring(L, "TEMP4 = 1");
-	lua_settop(L, oldtop);
-#else
+	//sflags_TEMP |= 0x00000010;
 	lua_dostring(L, "TEMP4 = 0");
 	lua_settop(L, oldtop);
-#endif
 
-//	sflags_TEMP |= 0x00000020;
+	//sflags_TEMP |= 0x00000020;
 	lua_dostring(L, "TEMP5 = 0");
 	lua_settop(L, oldtop);
 
-//	sflags_TEMP |= 0x00000040;
+	//sflags_TEMP |= 0x00000040;
 	lua_dostring(L, "TEMP6 = 0");
 	lua_settop(L, oldtop);
 
-//	sflags_TEMP |= 0x00000080;
+	//sflags_TEMP |= 0x00000080;
 	lua_dostring(L, "TEMP7 = 0");
 	lua_settop(L, oldtop);
 }

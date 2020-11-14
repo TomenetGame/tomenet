@@ -59,6 +59,7 @@ pern_dofile(Ind, "classes.lua")
 pern_dofile(Ind, "traits.lua")
 pern_dofile(Ind, "bpr.lua")
 pern_dofile(Ind, "mimicry.lua")
+pern_dofile(Ind, "activations.lua")
 
 -- Put whatever is needed here
 

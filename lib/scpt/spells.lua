@@ -120,35 +120,27 @@ SCHOOL_MINTRUSION = add_school {
 }
 
 -- Occult
-if (def_hack("TEMP2", nil)) then
-	SCHOOL_OSHADOW = add_school {
-		["name"] = "Shadow",
-		["skill"] = SKILL_OSHADOW,
-	}
-	SCHOOL_OSPIRIT = add_school {
-		["name"] = "Spirit",
-		["skill"] = SKILL_OSPIRIT,
-	}
-	-- If Occult and Death Knight are enabled, this is a hack for 'Nether Bolt' spell
-	SCHOOL_NECROMANCY = add_school {
-		["name"] = "Necromancy",
-		["skill"] = SKILL_NECROMANCY,
-	}
-	-- Occult: Hereticism (for Hell Knights)
-	if (def_hack("TEMP3", nil)) then
-		SCHOOL_OHERETICISM = add_school {
-			["name"] = "Hereticism",
-			["skill"] = SKILL_OHERETICISM,
-		}
-	end
-	-- Occult: Unlife (for Death Knights)
-	if (def_hack("TEMP4", nil)) then
-		SCHOOL_OUNLIFE = add_school {
-			["name"] = "Unlife",
-			["skill"] = SKILL_OUNLIFE,
-		}
-	end
-end
+SCHOOL_OSHADOW = add_school {
+	["name"] = "Shadow",
+	["skill"] = SKILL_OSHADOW,
+}
+SCHOOL_OSPIRIT = add_school {
+	["name"] = "Spirit",
+	["skill"] = SKILL_OSPIRIT,
+}
+-- This is a hack for the 'Nether Bolt' spell:
+SCHOOL_NECROMANCY = add_school {
+	["name"] = "Necromancy",
+	["skill"] = SKILL_NECROMANCY,
+}
+SCHOOL_OHERETICISM = add_school {
+	["name"] = "Hereticism",
+	["skill"] = SKILL_OHERETICISM,
+}
+SCHOOL_OUNLIFE = add_school {
+	["name"] = "Unlife",
+	["skill"] = SKILL_OUNLIFE,
+}
 
 
 -- Put some spells
@@ -184,17 +176,10 @@ __lua_M_LAST = __tmp_spells_num - 1
 
 pern_dofile(Ind, "d_astral.lua")
 
--- Occult
-if (def_hack("TEMP2", nil)) then
-	pern_dofile(Ind, "o_shadow.lua")
-	pern_dofile(Ind, "o_spirit.lua")
-	if (def_hack("TEMP3", nil)) then
-		pern_dofile(Ind, "o_hereticism.lua")
-	end
-	if (def_hack("TEMP4", nil)) then
-		pern_dofile(Ind, "o_unlife.lua")
-	end
-end
+pern_dofile(Ind, "o_shadow.lua")
+pern_dofile(Ind, "o_spirit.lua")
+pern_dofile(Ind, "o_hereticism.lua")
+pern_dofile(Ind, "o_unlife.lua")
 
 
 -- Tomes / Greater crystals
@@ -270,25 +255,17 @@ end
 -- Create the book of mindcrafting: Mental intrusion (-)
 school_book[21] = { MSCARE_II, MCONFUSE_II, MSLEEP_II, MSLOWMONSTER_II, MPSISTORM_II, MMINDBLAST_III, MSILENCE, MIDENTIFY, MMAP, MCHARM, MSTOPCHARM, }
 
--- Create the Occult books, Shadow and Spirit (-)
-if (def_hack("TEMP2", nil)) then
-	--school_book[22] = { DETECTINVIS, OFEAR_II, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, POISONFOG_III, DARKBOLT_III, ODRAINLIFE, } --shadow
-	--school_book[22] = { DETECTINVIS, OFEAR_II, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, CHAOSBOLT, DARKBOLT_III, ODRAINLIFE, } --shadow
-	--school_book[22] = { DETECTINVIS, POISONRES, OFEAR_II, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, CHAOSBOLT, POISONFOG_III, DARKBOLT_III, ODRAINLIFE, DARKBALL } --shadow/ENABLE_DEATHKNIGHT
-	school_book[22] = { DETECTINVIS, OBLIND_I, POISONRES, OFEAR_II, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, CHAOSBOLT, DARKBOLT_III, ODRAINLIFE, DARKBALL } --shadow/ENABLE_DEATHKNIGHT (note: it has both Blindness and Darkness)
-	school_book[23] = { ODELFEAR, MEDITATION, TRANCE, POSSESS, STOPPOSSESS, STARLIGHT_II, DETECTCREATURES, OCURSEDD_III, OLIGHTNINGBOLT_III, LITEBEAM_III, ODELCURSES_II, GUARDIANSPIRIT_II, RITES_II } --spirit
+-- Create the Occult books:
 
-	-- Create the Occult book Hereticism (SCHOOL_OHERETICISM)
-	if (def_hack("TEMP3", nil)) then
-		--school_book[24] = { TERROR_II, OFIREBOLT_III, FIRERES, CHAOSBOLTH, SAPLIFE, FIRESTORM, BLOODSACRIFICE } --ENABLE_HELLKNIGHT
-		school_book[24] = { TERROR_II, ODELFEAR2, OFIREBOLT_III, FIRERES, FLAMEWAVE_II, OEXTRASTATS, RAGE_II, CHAOSBOLT2, ORESTORING, LEVITATION, FIRESTORM, BLOODSACRIFICE } --ENABLE_HELLKNIGHT
-	end
-	-- Create the Occult book Unlife (SCHOOL_OUNLIFE)
-	if (def_hack("TEMP4", nil)) then
-		--school_book[25] = { OSENSELIFE, OVERMINCONTROL, OSLOWMONSTER_II, OREGEN, OSUBJUGATION, NETHERBOLT, OUNLIFERES, OIMBUE, OWRAITHSTEP } --ENABLE_DEATHKNIGHT
-		school_book[25] = { OSENSELIFE, OVERMINCONTROL, OSLOWMONSTER_II, OREGEN, OSUBJUGATION, NETHERBOLT, OUNLIFERES, ODRAINLIFE2, OIMBUE, OWRAITHSTEP } --ENABLE_DEATHKNIGHT
-	end
-end
+--school_book[22] = { DETECTINVIS, OFEAR_II, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, POISONFOG_III, DARKBOLT_III, ODRAINLIFE, } --shadow
+--school_book[22] = { DETECTINVIS, OFEAR_II, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, CHAOSBOLT, DARKBOLT_III, ODRAINLIFE, } --shadow
+--school_book[22] = { DETECTINVIS, POISONRES, OFEAR_II, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, CHAOSBOLT, POISONFOG_III, DARKBOLT_III, ODRAINLIFE, DARKBALL } --shadow/ENABLE_DEATHKNIGHT
+school_book[22] = { DETECTINVIS, OBLIND_I, POISONRES, OFEAR_II, OBLIND_II, OSLEEP_II, SHADOWGATE, OINVIS, CHAOSBOLT, DARKBOLT_III, ODRAINLIFE, DARKBALL } --shadow/ENABLE_DEATHKNIGHT (note: it has both Blindness and Darkness)
+school_book[23] = { ODELFEAR, MEDITATION, TRANCE, POSSESS, STOPPOSSESS, STARLIGHT_II, DETECTCREATURES, OCURSEDD_III, OLIGHTNINGBOLT_III, LITEBEAM_III, ODELCURSES_II, GUARDIANSPIRIT_II, RITES_II } --spirit
+--school_book[24] = { TERROR_II, OFIREBOLT_III, FIRERES, CHAOSBOLTH, SAPLIFE, FIRESTORM, BLOODSACRIFICE } --ENABLE_HELLKNIGHT
+school_book[24] = { TERROR_II, ODELFEAR2, OFIREBOLT_III, FIRERES, FLAMEWAVE_II, OEXTRASTATS, RAGE_II, CHAOSBOLT2, ORESTORING, LEVITATION, FIRESTORM, BLOODSACRIFICE } --ENABLE_HELLKNIGHT
+--school_book[25] = { OSENSELIFE, OVERMINCONTROL, OSLOWMONSTER_II, OREGEN, OSUBJUGATION, NETHERBOLT, OUNLIFERES, OIMBUE, OWRAITHSTEP } --ENABLE_DEATHKNIGHT
+school_book[25] = { OSENSELIFE, OVERMINCONTROL, OSLOWMONSTER_II, OREGEN, OSUBJUGATION, NETHERBOLT, OUNLIFERES, ODRAINLIFE2, OIMBUE, OWRAITHSTEP } --ENABLE_DEATHKNIGHT
 
 -- Handbooks:
 
@@ -309,24 +286,7 @@ school_book[54] = {
 	NATURESCALL, REPLACEWALL, HERBALTEA, GROWTREE, RECOVERY_II, REGENERATION, POISONBLOOD
 }
 -- Create the destroyer's handbook
---nether/hereticism/occult available?
-if (def_hack("TEMP4", nil)) then
-school_book[55] = {
-	TIDALWAVE_II, HELLFIRE_II, FIREBALL_II, SHAKE, THUNDERSTORM, HDRAINCLOUD, EARTHQUAKE, CHAOSBOLT, CHAOSBOLT2, FLAMEWAVE_II, NETHERBOLT --todo: possibly add OUNLIFE spells, maybe to other books too
-}
-elseif (def_hack("TEMP3", nil)) then
-school_book[55] = {
-	TIDALWAVE_II, HELLFIRE_II, FIREBALL_II, SHAKE, THUNDERSTORM, HDRAINCLOUD, EARTHQUAKE, CHAOSBOLT, CHAOSBOLT2, FLAMEWAVE_II
-}
-elseif (def_hack("TEMP2", nil)) then
-school_book[55] = {
-	TIDALWAVE_II, HELLFIRE_II, FIREBALL_II, SHAKE, THUNDERSTORM, HDRAINCLOUD, EARTHQUAKE, CHAOSBOLT
-}
-else
-school_book[55] = {
-	TIDALWAVE_II, HELLFIRE_II, FIREBALL_II, SHAKE, THUNDERSTORM, HDRAINCLOUD
-}
-end
+school_book[55] = { TIDALWAVE_II, HELLFIRE_II, FIREBALL_II, SHAKE, THUNDERSTORM, HDRAINCLOUD, EARTHQUAKE, CHAOSBOLT, CHAOSBOLT2, FLAMEWAVE_II, NETHERBOLT } --todo: possibly add OUNLIFE spells, maybe to other books too
 ---- Create the handbook to the underworld
 --school_book[55] = {
 --	HELLFIRE_II, GENOCIDE_I, GENOCIDE_II, MASSWARP, CONFUSE_II, FIERYAURA_II
@@ -334,40 +294,18 @@ end
 -- Create the handbook of novice etiquette
 school_book[56] = { HDELFEAR, HBLESSING_I, HCURING_I, HGLOBELIGHT_I, HDETECTEVIL, HHEALING_I}
 ---- Create the handbook for rogues (of deception)
-if (def_hack("TEMP2", nil)) then
-	--include Occult Shadow spells
-	--school_book[57] = { BLINK, POISONFOG_III, OFEAR_II, OBLIND_II, DETECTINVIS, SENSEHIDDEN_II, REVEALWAYS, VISION_II, OINVIS, INVISIBILITY }
-	school_book[57] = { BLINK, TELEPORT, OFEAR_II, OBLIND_II, OINVIS, SHADOWGATE }
-else
-	school_book[57] = { BLINK, NOXIOUSCLOUD_III, SENSEHIDDEN_II, REVEALWAYS, VISION_II, INVISIBILITY }
-end
+--school_book[57] = { BLINK, POISONFOG_III, OFEAR_II, OBLIND_II, DETECTINVIS, SENSEHIDDEN_II, REVEALWAYS, VISION_II, OINVIS, INVISIBILITY }
+school_book[57] = { BLINK, TELEPORT, OFEAR_II, OBLIND_II, OINVIS, SHADOWGATE }
 ---- Create the handbook for dungeon masters & wizards (of dungeon keeping)
 school_book[58] = { TELEKINESIS, DIG, STONEPRISON, GROWTREE, DISARM, VISION_II, STARIDENTIFY, MANATHRUST_III, DISEBOLT, FIREBALL_II, FIREFLASH_II, RECHARGE_III, MAGELOCK_II }
 -- Create the handbook of revelation
-if (def_hack("TEMP2", nil)) then
-	--include Occult spells
-	school_book[59] = { MEDITATION, IDENTIFY_III, STARIDENTIFY, SENSEHIDDEN_II, DETECTMONSTERS, SENSEMONSTERS, MSELFKNOW, MSANITY, HDETECTEVIL, MIDENTIFY, MSENSEMON, DETECTCREATURES }
-else
-	school_book[59] = { IDENTIFY_III, STARIDENTIFY, SENSEHIDDEN_II, DETECTMONSTERS, SENSEMONSTERS, MSELFKNOW, MSANITY, HDETECTEVIL, MIDENTIFY, MSENSEMON }
-end
+school_book[59] = { MEDITATION, IDENTIFY_III, STARIDENTIFY, SENSEHIDDEN_II, DETECTMONSTERS, SENSEMONSTERS, MSELFKNOW, MSANITY, HDETECTEVIL, MIDENTIFY, MSENSEMON, DETECTCREATURES }
 -- Create the handbook of transportation
-if (def_hack("TEMP2", nil)) then
-	--include Occult Shadow spells
-	school_book[60] = {
-	    --TELEAWAY_I, MTELEAWAY,
-	    BLINK, TELEPORT, RECALL, TELEKINESIS, MBLINK, MTELEPORT, MTELETOWARDS, MTELEKINESIS, RELOCATION, GATEWAY, SHADOWGATE }
-else
-	school_book[60] = {
-	    --TELEAWAY_I, MTELEAWAY,
-	    BLINK, TELEPORT, RECALL, TELEKINESIS, MBLINK, MTELEPORT, MTELETOWARDS, MTELEKINESIS, RELOCATION, GATEWAY }
-end
+school_book[60] = {
+    --TELEAWAY_I, MTELEAWAY,
+    BLINK, TELEPORT, RECALL, TELEKINESIS, MBLINK, MTELEPORT, MTELETOWARDS, MTELEKINESIS, RELOCATION, GATEWAY, SHADOWGATE }
 -- Create the handbook of first visions
-if (def_hack("TEMP2", nil)) then
-	--include Occult spells
-	school_book[61] = { OCURSEDD_I, ODELFEAR, STARLIGHT_I, MEDITATION, OFEAR_I, DETECTINVIS, HDETECTEVIL, SENSEHIDDEN_I }
-else
-	school_book[61] = { HDELFEAR, HCURSE_I, MANATHRUST_I, GLOBELIGHT_I, DETECTMONSTERS, HDETECTEVIL, HSANCTUARY_I, SENSEHIDDEN_I }
-end
+school_book[61] = { OCURSEDD_I, ODELFEAR, STARLIGHT_I, MEDITATION, OFEAR_I, DETECTINVIS, HDETECTEVIL, SENSEHIDDEN_I }
 
 -- Create the handbook of alleviation
 school_book[62] = { ODELFEAR, HERBALTEA, MEDITATION, DISPELMAGIC, HCUREWOUNDS_II, HCURING_III, HSANITY, MSANITY, HRELSOULS_III }
