@@ -392,7 +392,8 @@ LDFLAGS += -Wl,-z,relro -Wl,-z,now
 
 
 # Compile a client with 'test client' version/tag
-tomenet.test: CFLAGS += -DTEST_CLIENT -Og -O0
+tomenet.test: CFLAGS += -DTEST_CLIENT -Og
+# -O0
 tomenet.test: PPFLAGS = -DTEST_CLIENT
 
 
