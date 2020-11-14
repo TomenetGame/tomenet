@@ -391,6 +391,7 @@ bool monster_list_any[MAX_R_IDX], monster_list_breath[MAX_R_IDX];
 char artifact_list_name[MAX_A_IDX][80];
 int artifact_list_code[MAX_A_IDX], artifact_list_rarity[MAX_A_IDX], artifact_list_idx = 0;
 bool artifact_list_specialgene[MAX_A_IDX];
+char artifact_list_activation[MAX_A_IDX][80];
 /* For artifact lore */
 char kind_list_name[MAX_K_IDX][80];
 int kind_list_tval[MAX_K_IDX], kind_list_sval[MAX_K_IDX], kind_list_rarity[MAX_K_IDX], kind_list_idx = 0;

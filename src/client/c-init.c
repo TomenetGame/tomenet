@@ -1915,6 +1915,12 @@ static void init_artifact_list() {
 	}
 
 	my_fclose(fff);
+
+	/* Retrieve activation info from lua - note that this requires early loading of activations.lua in c-script.c */
+	for (i = 1; i < MAX_A_IDX; i++) {
+		sprintf(buf, "return get_activation_info(%d)", i);
+		strcpy(artifact_list_activation[i], string_exec_lua(0, buf));
+	}
 }
 void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 	char buf[1024], *p1, *p2, *tmpc;
@@ -2291,7 +2297,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 
 	int tval, sval = 0, v_ac, v_acx, v_hit, v_dam, rarity, pval = 0;
 	char v_ddice[10];
-	bool empty;
+	bool empty, activation = FALSE;
 
 	/* for TV_BOW multiplier */
 	bool xtra_might = FALSE; /* paranoia: if someone really specifies an F-line before the I-line, if that's even possible */
@@ -2640,6 +2646,9 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 					strcpy(info, info_tmp);
 				}
 
+				/* Remember to add activation info */
+				if (strstr(info, "ACTIVATE")) activation = TRUE;
+
 				/* Highlight certain important flags for quick readability */
 				obj_highlight_flags(info, pval < 0);
 
@@ -2761,6 +2770,28 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 		}
 
 		break;
+	}
+
+	/* Add activation info line at the bottom */
+	if (activation) {
+		object_type forge, *o_ptr = &forge;
+
+		o_ptr->tval = tval;
+
+#if 0 /* allow one-liners */
+		strcpy(paste_lines[++pl], format("\377%cActivates for %s", a_key, artifact_list_activation[aidx]));
+		Term_putstr(1, 7 + (++l), -1, ta_key, format("Activates for %s", artifact_list_activation[aidx]));
+#else /* split into two lines, same as on item inspection */
+		if (wearable_p(o_ptr)) {
+			strcpy(paste_lines[++pl], format("\377%cWhen equipped, it can be activated for..", a_key));
+			Term_putstr(1, 7 + (++l), -1, ta_key, "When equipped, it Can be activated for..");
+		} else {
+			strcpy(paste_lines[++pl], format("\377%cIt can be activated for..", a_key));
+			Term_putstr(1, 7 + (++l), -1, ta_key, "It can be activated for..");
+		}
+		strcpy(paste_lines[++pl], format("\377%c %s", a_key, artifact_list_activation[aidx]));
+		Term_putstr(1, 7 + (++l), -1, ta_key, format(" %s", artifact_list_activation[aidx]));
+#endif
 	}
 
 	my_fclose(fff);

@@ -153,44 +153,6 @@ static bool q_older_than(byte x, byte y, byte z) {
 }
 
 /*
- * Hack -- determine if an item is "wearable" (or a missile)
- */
-bool wearable_p(object_type *o_ptr) {
-	/* Valid "tval" codes */
-	switch (o_ptr->tval) {
-	case TV_SHOT:
-	case TV_ARROW:
-	case TV_BOLT:
-	case TV_BOW:
-	case TV_BOOMERANG:
-	case TV_DIGGING:
-	case TV_BLUNT:
-	case TV_POLEARM:
-	case TV_SWORD:
-	case TV_BOOTS:
-	case TV_GLOVES:
-	case TV_HELM:
-	case TV_CROWN:
-	case TV_SHIELD:
-	case TV_CLOAK:
-	case TV_SOFT_ARMOR:
-	case TV_HARD_ARMOR:
-	case TV_DRAG_ARMOR:
-	case TV_LITE:
-	case TV_AMULET:
-	case TV_RING:
-	case TV_AXE:
-	case TV_MSTAFF:
-	case TV_TOOL:
-		return (TRUE);
-	}
-
-	/* Nope */
-	return (FALSE);
-}
-
-
-/*
  * The following functions are used to load the basic building blocks
  * of savefiles.  They also maintain the "checksum" info for 2.7.0+
  */

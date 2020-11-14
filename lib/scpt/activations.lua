@@ -223,3 +223,15 @@ music_info[10].desc},
 --case ART_WARPSPEAR:--280
 {280, "teleport-to every 15..40+d5 turns"},
 }
+
+activation_info = { }
+for i = 1, 512 do
+	activation_info[i] = ""
+end
+for i, a in true_art_activation do
+	activation_info[a[1]] = a[2]
+end
+
+function get_activation_info(a_idx)
+	return activation_info[a_idx]
+end

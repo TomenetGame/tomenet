@@ -412,6 +412,9 @@ in time, nor xml.lua/meta.lua which are needed earlier too, so we need to hard-c
 	/* We want to init guide info asap, no need to wait for later */
 	pern_dofile(0, "guide.lua");
 
+	/* Same for true artifact info */
+	pern_dofile(0, "activations.lua");
+
 	init_lua_done = TRUE;
 }
 
