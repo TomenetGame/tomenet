@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. November 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 15. November 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7227,7 +7227,7 @@ Also, you cannot find The One Ring anymore if you already killed Sauron.
 (*****) Zu-Aon's teleport-to attack has special transdimensional power and
 actually defeats anti-teleportation, space-time anchors and cannot be mitigated
 by saving throw or teleportation resistance either.
-It can however be defeated regularly by holy martyr or by antimagic fields
+It can however be defeated regularly by holy martyr or by anti-magic fields
 which -as usual- can prevent the spell from coming into existance in the first
 place.
 
@@ -10641,8 +10641,7 @@ ANTIMAGIC ('Anti-magic field')
         prevents nearby monsters and other players from casting spells (but
         not from using magic devices). You can still use scrolls and potions
         though.
-        The field has less influence on _party members_ who try to cast.
-        Usage of magic devices by party members is not hindered.
+        The field has no adverse effect on party members.
         The radius is approximately the field power / 9, and is cumulative
         to the 'Anti-magic' skill. The field power is the chance of
         suppressing a spell. It caps at 75% and is cumulative to the
@@ -13850,11 +13849,9 @@ stated.
                                 (6.7) for details about DISBELIEVE flag.)
 
                                 It's capped at 75% chance of interrupting
-                                enemy spells. The capped chance is further
-                                quartered for party members, so they are hardly
-                                affected by your anti-magic field. Usage of
-                                magic devices by party members is not hindered.
-                                Note: While ball andbolt attacks are spells,
+                                enemy spells. Party members are not affected
+                                adversely.
+                                Note: While ball and bolt attacks are spells,
                                 breathing is not and is therefore not hindered.
 
                                 The radius of your anti-magic field is approx.
@@ -13895,6 +13892,9 @@ stated.
                                 invisibilty, haste, slowness, resistances,
                                 invulnerability obtained from a potion,
                                 deflection, shield.
+                                On the other hand, it will also reduce the
+                                frequency of you suffering from continuous
+                                experience-draining effects (eg Nazgul rings).
 
                                 Regarding spell suppression, Anti-magic fields
                                 combine with interception in a special way:
