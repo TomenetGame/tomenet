@@ -7964,8 +7964,10 @@ static void do_cmd_options_install_audio_packs(void) {
 		if (c == 'y' || c == 'Y') break;
 	}
 
+#ifdef SOUND_SDL
 	/* Windows OS: Need to close all related files so they can actually be overwritten, esp. the .cfg files */
 	if (!quiet_mode) close_audio_sdl();
+#endif
 
 	/* install sound pack */
 	if (sound_pack) {
