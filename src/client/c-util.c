@@ -9525,11 +9525,18 @@ void Send_paste_msg(char *msg) {
 #define PANEL_Y	(SCREEN_PAD_TOP)
 void check_immediate_options(int i, bool yes, bool playing) {
 #ifdef USE_GCU
-	/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
-	if (!strcmp(ANGBAND_SYS, "gcu") && option_info[i].o_var == &c_cfg.palette_animation) {
-		c_cfg.palette_animation = FALSE;
-		(*option_info[i].o_var) = FALSE;
-		Client_setup.options[i] = FALSE;
+	if (!strcmp(ANGBAND_SYS, "gcu")) {
+		/* Hack for now: Palette animation seems to cause segfault on login in command-line client */
+		if (option_info[i].o_var == &c_cfg.palette_animation) {
+			c_cfg.palette_animation = FALSE;
+			(*option_info[i].o_var) = FALSE;
+			Client_setup.options[i] = FALSE;
+		}
+		if (option_info[i].o_var == &c_cfg.disable_lightning) {
+			c_cfg.disable_lightning = FALSE;
+			(*option_info[i].o_var) = FALSE;
+			Client_setup.options[i] = FALSE;
+		}
 	}
 
 	/* BIG_MAP is currently not supported in GCU client */
@@ -9541,7 +9548,6 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		if (playing) Send_screen_dimensions();
 	} else
 #endif
-
 	/* Not yet. First, process all the option files before doing this */
 	if (option_info[i].o_var == &c_cfg.big_map && global_big_map_hold) return;
 

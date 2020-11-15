@@ -3251,7 +3251,7 @@ void do_weather(bool no_weather) {
 			int d;
 #endif
 			/* Animate palette */
-			if (!c_cfg.disable_lightning && !animate_lightning_icky) switch (animate_lightning) {
+			if (!c_cfg.disable_lightning && !animate_lightning_icky && c_cfg.palette_animation) switch (animate_lightning) {
 			case 1:
 				/* First thing: Backup all colours before temporarily manipulating them */
 				if (!active) {
