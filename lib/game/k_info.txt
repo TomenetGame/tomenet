@@ -2928,6 +2928,7 @@ I:66:28:90
 W:95:0:15:150000
 A:100/50
 P:0:1d1:0:0:0
+F:IGNORE_MANA
 D:Casts havoc at your target, causing an initial blast of 500..800 damage
 D:and a lingering storm dealing 50..100 damage periodically.
 
