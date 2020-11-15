@@ -182,8 +182,6 @@ HORBDRAIN_II = add_spell {
 	["spell"] = 	function(args)
 		local typ
 		typ = GF_HOLY_ORB
-		--fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 475), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
-		--fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 660), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
 		fire_ball(Ind, typ, args.dir, 20 + get_level(Ind, HORBDRAIN_I, 560), 2 + get_level(Ind, HORBDRAIN_I, 3), " casts a holy orb for")
 	end,
 	["info"] = 	function()
@@ -302,9 +300,7 @@ HDRAINCLOUD = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			--fire_cloud(Ind, GF_OLD_DRAIN, args.dir, 2 + 4096, 3, 8 + get_level(Ind, HDRAINCLOUD, 10), 10, " drains for")
 			fire_cloud(Ind, GF_ANNIHILATION, args.dir, 3, 3, 5 + get_level(Ind, HDRAINCLOUD, 39) / 4, 10, " damages for")
-			-- 4096 is a hack handled in spells1.c.
 			-- HUGE note about this spell: it can NOT kill a monster!
 			--                                                      -the_sandman
 	end,

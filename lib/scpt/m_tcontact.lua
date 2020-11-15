@@ -86,7 +86,6 @@ MBOOST = add_spell {
 			end,
 	["desc"] = 	{
 			"Boosts your willpower to unleash hidden potential,",
---			"improving both your performance and resilience",
 			"improving your performance and resilience to various effects.",
 			"At level 25 it will also allow you to attack slightly faster.",
 			"***Automatically projecting***",
@@ -213,26 +212,17 @@ MSENSEMON = add_spell {
 	["am"] = 	50,
 	["spell_power"] = 0,
 	["blind"] = 	0,
---	["level"] = 	1,
---	["mana"] = 	3,
 	["level"] = 	20,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
 	["fail"] = 	5,
 	["spell"] = 	function()
---			if get_level(Ind, MSENSEMON, 50) >= 20 then
-				set_tim_esp(Ind, 20 + randint(10) + get_level(Ind, MSENSEMON, 50))
---			end
---			set_tim_invis(Ind, 10 + get_level(Ind, HSENSEMON, 50))
---			detect_creatures(Ind) <- detecting empty-minded monsters isn't mindcrafter ability
+			set_tim_esp(Ind, 20 + randint(10) + get_level(Ind, MSENSEMON, 50))
 			end,
 	["info"] = 	function()
 			return "dur 20+d10+d"..get_level(Ind, MSENSEMON, 50)
 			end,
 	["desc"] = 	{
---			"Detects all nearby non-invisible creatures once and also lets",
---			"you see invisible creatures for a while.",
---			"At level 20 it lets you sense the presence creatures for a while.",
 			"Lets you sense the presence creatures for a while.",
 	}
 }

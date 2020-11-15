@@ -39,7 +39,6 @@ end
 GROWTREE = add_spell {
 	["name"] = 	"Grow Trees",
 	["name2"] = 	"GTrees",
-	--["school"] = 	{SCHOOL_NATURE, SCHOOL_TEMPORAL},
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	30,
 	["mana"] = 	25,
@@ -208,7 +207,6 @@ VERMINCONTROL = add_spell {
 RESISTS_I = add_spell {
 	["name"] = 	"Elemental Shield I",
 	["name2"] = 	"EleSh I",
-	--["school"] = 	SCHOOL_NATURE,
 	["school"] = 	{SCHOOL_FIRE,SCHOOL_WATER},
 	["level"] = 	15,
 	["mana"] = 	10,
@@ -231,7 +229,6 @@ RESISTS_I = add_spell {
 RESISTS_II = add_spell {
 	["name"] = 	"Elemental Shield II",
 	["name2"] = 	"EleSh II",
-	--["school"] = 	SCHOOL_NATURE,
 	["school"] = 	{SCHOOL_FIRE,SCHOOL_WATER,SCHOOL_AIR,SCHOOL_EARTH},
 	["level"] = 	20,
 	["mana"] = 	20,
@@ -256,25 +253,3 @@ RESISTS_II = add_spell {
 			"***Automatically projecting***",
 		}
 }
-
---[[
-SUMMONANIMAL = add_spell {
-	["name"] = 	"Summon Animal",
-	["name2"] = 	"SummAni",
-	["school"] = 	{SCHOOL_NATURE},
-	["level"] = 	25,
-	["mana"] = 	25,
-	["mana_max"] = 	50,
-	["fail"] = 	20,
-	["spell"] = 	function()
-			summon_specific_level = 25 + get_level(SUMMONANIMAL, 50)
-			summon_monster(py, px, dun_level, TRUE, SUMMON_ANIMAL)
-	end,
-	["info"] = 	function()
-			return "level "..(25 + get_level(SUMMONANIMAL, 50))
-	end,
-	["desc"] = 	{
-			"Summons a leveled animal to your aid",
-	}
-}
-]]

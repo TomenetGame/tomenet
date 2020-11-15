@@ -14,9 +14,6 @@ function get_healing_cap2(limit_lev)
 	local pow
 
 	pow = ((10 + get_level(Ind, HHEALING_I, 417)) * (get_level(Ind, HHEALING_I, 417) + 209)) / 1562 + 1
-	--avoid cubics, the limit_lev stuff is already bad enough :-p kicks in around 60-70 in tier I
-	--pow = pow / (1 + (5 / (2 + get_level(Ind, HHEALING_I, 50))))
-	--pow = (2 + pow) / (1 + (5 / (2 + get_level(Ind, HHEALING_I, 50))))
 
 	if limit_lev ~= 0 then
 		if pow > limit_lev * 3 then

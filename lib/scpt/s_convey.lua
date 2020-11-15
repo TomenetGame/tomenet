@@ -101,7 +101,6 @@ RECALL = add_spell {
 
 			if args.book < 0 then return end
 			set_recall(Ind, dur, player.inventory[1 + args.book])
-			--fire_ball(Ind, GF_RECALL_PLAYER, 0, dur, 1, "")
 	end,
 	["info"] = 	function()
 			return "dur "..(15 - get_level(Ind, RECALL, 10)).."+d"..(21 - get_level(Ind, RECALL, 15))

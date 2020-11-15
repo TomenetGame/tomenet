@@ -66,23 +66,18 @@ OSENSELIFE = add_spell {
 	["name2"] = 	"DetLF",
 	["school"] = 	{SCHOOL_OUNLIFE},
 	["spell_power"] = 0,
-	--["level"] = 	32,
 	["level"] = 	12,
 	["mana"] = 	3,
 	["mana_max"] = 	3,
-	--["fail"] = 	-20,
 	["fail"] = 	15,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			--set_tim_espInd, 20 + randint(10) + get_level(Ind, OSENSELIFE, 50))
 			detect_living(Ind)
 			end,
 	["info"] = 	function()
-			--return "dur 20+d10+d"..get_level(Ind, OSENSELIFE, 50)
 			return ""
 			end,
 	["desc"] = 	{
-			--"Sense the presence of creatures for a while.",
 			"Detects the presence of living creatures.",
 	}
 }
@@ -150,9 +145,6 @@ OSUBJUGATION = add_spell {
 --ENABLE_DEATHKNIGHT:
 function get_netherbolt_dam(Ind)
 	local lev
-	--same damage as shadow bolt iii at 50:
-	--lev = get_level(Ind, NETHERBOLT, 50) + 20
-	--slightly more damage:
 	lev = get_level(Ind, NETHERBOLT, 50) + 21
 	return 0 + (lev * 3) / 5, 1 + lev
 end
@@ -224,7 +216,6 @@ ODRAINLIFE2 = add_spell {
 		hp_player(Ind, player.ret_dam / 4)
 	end,
 	["info"] = 	function()
-		--return "drain "..(14 + get_level(Ind, ODRAINLIFE2, 22)).."%, heal for 25%"
 		return (14 + get_level(Ind, ODRAINLIFE2, 22)).."% (max 900), 25% heal"
 	end,
 	["desc"] = 	{ "Drains life from a target, which must not be non-living or undead.", }

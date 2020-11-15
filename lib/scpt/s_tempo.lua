@@ -1,4 +1,4 @@
--- Handles thhe temporal school
+-- Handles the temporal school
 
 MAGELOCK_I = add_spell {
 	["name"] = 	"Magelock I",
@@ -106,7 +106,6 @@ ESSENSESPEED = add_spell {
 	end,
 	["desc"] = 	{
 			"Magically increases the passing of time around you.",
---			"Istari will see twice the effect others will see.",
 			"Non-Istari cannot gain more than +10 speed from this spell.",
 			"***Automatically projecting***",
 	}

@@ -110,24 +110,6 @@ WRAITHFORM = add_spell {
 	end,
 	["desc"] = 	{ "Turns you into an immaterial being.", }
 }
---[[
-FLAMEOFUDUN = add_spell {
-	["name"] = 	"Flame of Udun",
-	["name2"] = 	"FoUdun",
-	["school"] = 	{SCHOOL_UDUN},
-	["level"] = 	35,
-	["mana"] = 	70,
-	["mana_max"] = 	100,
-	["fail"] = 	20,
-	["spell"] = 	function()
-			set_mimic(randint(15) + 5 + get_level(FLAMEOFUDUN, 30), MIMIC_BALROG)
-	end,
-	["info"] = 	function()
-			return "dur "..(5 + get_level(FLAMEOFUDUN, 30)).."+d15"
-	end,
-	["desc"] = 	{ "Turns you into a powerful balrog", }
-}
-]]
 
 DISEBOLT = add_spell {
 	["name"] = 	"Disenchantment Ray",

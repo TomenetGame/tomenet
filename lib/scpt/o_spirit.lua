@@ -235,7 +235,6 @@ DETECTCREATURES = add_spell {
 }
 
 function get_litebeam_dam(Ind, limit_lev)
-	--return 5 + get_level(Ind, LITEBEAM, 25), 7 + get_level(Ind, LITEBEAM, 25) + 1
 	local lev
 
 	lev = get_level(Ind, LITEBEAM_I, 50)
@@ -314,7 +313,6 @@ LITEBEAM_III = add_spell {
 }
 
 function get_olightningbolt_dam(Ind, limit_lev)
-	--return 3 + get_level(Ind, OLIGHTNINGBOLT, 25), 5 + get_level(Ind, OLIGHTNINGBOLT, 25) - 1
 	local lev
 
 	lev = get_level(Ind, OLIGHTNINGBOLT_I, 50)
@@ -454,34 +452,6 @@ TRANCE = add_spell {
 	}
 }
 
---pet version
---[[POSSESS = add_spell {
-	["name"] = 	"Possess",
-	["name2"] = 	"Poss",
-	["school"] = 	{SCHOOL_OSPIRIT},
-	["am"] = 	50,
-	["spell_power"] = 0,
-	["level"] = 	23,
-	["mana"] = 	10,
-	["mana_max"] = 	10,
-	["stat"] = 	A_WIS,
-	["fail"] = 	-30,
-	["direction"] = TRUE,
-	["spell"] = 	function(args)
-		--reset previous charm spell first:
-		do_ostoppossess(Ind)
-		--cast charm!
-		fire_grid_bolt(Ind, GF_POSSESS, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
-	end,
-	["info"] = 	function()
---		return "power "..(10 + get_level(Ind, POSSESS, 150))
-		return ""
-	end,
-	["desc"] =	{
-		"Tries to manipulate the mind of an animal to become your pet.",
-	}
-}]]--
---placeholder version
 POSSESS = add_spell {
 	["name"] = 	"Possess",
 	["name2"] = 	"Poss",
@@ -587,9 +557,6 @@ GUARDIANSPIRIT_II = add_spell {
 		"All physical attacks have a chance to miss you, at the cost of your mana.",
 	}
 }
---	["info"] = 	function()
---		return "power "..(10 + get_level(Ind, GUARDIANSPIRIT_II, 50))
---	end,
 
 RITES_I = add_spell {
 	["name"] = 	"Purification Rites I",

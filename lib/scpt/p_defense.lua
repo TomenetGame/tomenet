@@ -213,9 +213,7 @@ DISPELMAGIC = add_spell {
 	["mana_max"] = 	30,
 	["fail"] = 	10,
 	["stat"] = 	A_WIS,
-	-- Unaffected by blindness
 	["blind"] = 	FALSE,
-	-- Unaffected by confusion
 	["confusion"] = FALSE,
 	["spell"] = 	function()
 			set_blind(Ind, 0)

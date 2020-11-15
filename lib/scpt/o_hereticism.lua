@@ -64,7 +64,6 @@ ODELFEAR2 = add_spell {
 }
 
 function get_firebolt2_dam(Ind, limit_lev)
-	--return 5 + get_level(Ind, FIREBOLT, 25), 7 + get_level(Ind, FIREBOLT, 25) + 1
 	local lev
 
 	lev = get_level(Ind, OFIREBOLT_I, 50)
@@ -183,7 +182,6 @@ OEXTRASTATS = add_spell {
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
-			--(lv=30 -> +4 at 50)
 			do_xtra_stats(Ind, 4, 2 + get_level(Ind, OEXTRASTATS, 50) / 7, rand_int(7) + 22 + get_level(Ind, OEXTRASTATS, 17))
 			end,
 	["info"] = 	function()

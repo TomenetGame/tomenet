@@ -13,8 +13,6 @@ function get_psiblast_dam(Ind, limit_lev)
 	lev2 = get_level(Ind, MMINDBLAST_I, 250)
 	if limit_lev ~= 0 and lev2 > limit_lev * 5 then lev2 = limit_lev * 5 + (lev2 - limit_lev * 5) / 3 end
 
---	return 4 + get_level(Ind, MMINDBLAST, 4), 3 + get_level(Ind, MMINDBLAST, 45) <- just 50% of targetted value
---	return 2 + get_level(Ind, MMINDBLAST, 6), 3 + get_level(Ind, MMINDBLAST, 45), get_level(Ind, MMINDBLAST, 200)
 	return 2 + get_level(Ind, MMINDBLAST_I, 7), 3 + lev, lev2
 end
 
@@ -267,12 +265,9 @@ MPSISTORM_I = add_spell {
 	["fail"] = 	5,
 	["direction"] = TRUE,
 	["spell"] = function(args)
---	["spell"] = function()
 		local d
 		d = get_psistorm_dam(Ind, 1)
 		fire_cloud(Ind, GF_PSI, args.dir, d, 3 + get_level(Ind, MPSISTORM_I, 4), 6 + get_level(Ind, MPSISTORM_I, 4), 14, " releases a psi storm for")
---		fire_cloud(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, " releases a psi storm for")
---		fire_wave(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, EFF_STORM, " releases a psi storm for
 	end,
 	["info"] = function()
 		local d
@@ -293,12 +288,9 @@ MPSISTORM_II = add_spell {
 	["fail"] = 	-90,
 	["direction"] = TRUE,
 	["spell"] = function(args)
---	["spell"] = function()
 		local d
 		d = get_psistorm_dam(Ind, 0)
 		fire_cloud(Ind, GF_PSI, args.dir, d, 3 + get_level(Ind, MPSISTORM_I, 4), 6 + get_level(Ind, MPSISTORM_I, 4), 14, " releases a psi storm for")
---		fire_cloud(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, " releases a psi storm for")
---		fire_wave(Ind, GF_PSI, 0, (1 + get_level(Ind, MPSISTORM, 76)), 2 + get_level(Ind, MPSISTORM, 4), 5 + get_level(Ind, MPSISTORM, 5), 14, EFF_STORM, " releases a psi storm for
 	end,
 	["info"] = function()
 		local d
@@ -334,7 +326,6 @@ MMAP = add_spell {
 	["name"] = 	"Remote Vision",
 	["name2"] = 	"Vision",
 	["school"] = 	{SCHOOL_MINTRUSION},
---	["school"] = 	{SCHOOL_MINTRUSION, SCHOOL_TCONTACT}
 	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -359,40 +350,7 @@ MMAP = add_spell {
 	}
 }
 
---[[ Old version, requiring pets. Not cool though. See new variant below!
-MCHARM = add_spell {
-	["name"] = 	"Charm",
-	["name2"] = 	"Charm",
-	["school"] = 	{SCHOOL_MINTRUSION},
-	["am"] = 	50,
-	["spell_power"] = 0,
-	["level"] = 	1,
-	["mana"] = 	1,
-	["mana_max"] = 	20,
-	["fail"] = 	10,
-	["direction"] = function () if get_level(Ind, CHARM, 50) >= 35 then return FALSE else return TRUE end end,
-	["spell"] = 	function(args)
-			if get_level(Ind, CHARM, 50) >= 35 then
-				project_los(Ind, GF_CHARM, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
-			elseif get_level(Ind, CHARM, 50) >= 15 then
-				fire_ball(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), 3, "mumbles softly")
-			else
-				fire_grid_bolt(Ind, GF_CHARM, args.dir, 10 + get_level(Ind, CHARM, 150), "mumbles softly")
-			end
-
-	end,
-	["info"] = 	function()
-			return "power "..(10 + get_level(Ind, CHARM, 150))
-	end,
-	["desc"] = 	{
-			"Tries to manipulate the mind of a monster to make it friendly",
-			"At level 15 it turns into a ball",
-			"At level 35 it affects all monsters in sight",
-	}
-}
-]]
-
--- New idea: works like *invincibility*: monsters will ignore you (and often your party members too ;)
+-- Monsters will ignore you (and often your party members too ;)
 MCHARM = add_spell {
 	["name"] = 	"Charm",
 	["name2"] = 	"Charm",

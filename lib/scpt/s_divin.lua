@@ -9,7 +9,6 @@ STARIDENTIFY = add_spell {
 	["mana"] = 	30,
 	["mana_max"] = 	30,
 	["fail"] = 	10,
---	["stat"] = 	A_WIS,
 	["extra"] = 	function () return get_check2("Cast on yourself?", FALSE) end,
 	["spell"] = 	function (args)
 			if args.aux == TRUE then
@@ -35,7 +34,6 @@ IDENTIFY_I = add_spell {
 	["mana"] = 	10,
 	["mana_max"] = 	10,
 	["fail"] = 	30,
---	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			ident_spell(Ind)
 	end,
@@ -52,7 +50,6 @@ IDENTIFY_II = add_spell {
 	["mana"] = 	30,
 	["mana_max"] = 	30,
 	["fail"] = 	-15,
---	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			identify_pack(Ind)
 	end,
@@ -69,7 +66,6 @@ IDENTIFY_III = add_spell {
 	["mana"] = 	50,
 	["mana_max"] = 	50,
 	["fail"] = 	-40,
---	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			identify_pack(Ind)
 			fire_ball(Ind, GF_IDENTIFY, 0, 1, get_level(Ind, IDENTIFY_I, 3), "")
@@ -90,7 +86,6 @@ VISION_I = add_spell {
 	["level"] = 	18,
 	["mana"] = 	7,
 	["mana_max"] = 	7,
---	["stat"] = 	A_WIS,
 	["fail"] = 	0,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
@@ -111,7 +106,6 @@ VISION_II = add_spell {
 	["level"] = 	40,
 	["mana"] = 	55,
 	["mana_max"] = 	55,
---	["stat"] = 	A_WIS,
 	["fail"] = 	-30,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
@@ -134,7 +128,6 @@ SENSEHIDDEN_I = add_spell {
 	["mana"] = 	2,
 	["mana_max"] = 	2,
 	["fail"] = 	10,
---	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, 2, "")
 			detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN_I, 40, 0))
@@ -155,7 +148,6 @@ SENSEHIDDEN_II = add_spell {
 	["mana"] = 	10,
 	["mana_max"] = 	10,
 	["fail"] = 	-10,
---	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, 2, "")
 			detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN_I, 40, 0))
@@ -181,7 +173,6 @@ REVEALWAYS = add_spell {
 	["mana"] = 	3,
 	["mana_max"] = 	15,
 	["fail"] = 	10,
---	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_DETECTDOOR_PLAYER, 0, 1, 2, "")
 			detect_sdoor(Ind, 10 + get_level(Ind, REVEALWAYS, 40, 0))

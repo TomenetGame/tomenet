@@ -1,7 +1,6 @@
 -- The mana school
 
 function get_manathrust_dam(Ind, limit_lev)
-	--return 3 + get_level(Ind, MANATHRUST, 50), 1 + get_level(Ind, MANATHRUST, 20)
 	local lev, lev2
 
 	lev = get_level(Ind, MANATHRUST_I, 50)
@@ -178,34 +177,6 @@ RECHARGE_III = add_spell {
 	["desc"] = 	{ "Taps on the ambient mana to recharge a magic device.", }
 }
 
---[[PROJECT_SPELLS = add_spell {
-	["name"] = 	"Project Spells",
-	["name2"] = 	"ProjS",
-	["school"] = 	{SCHOOL_MANA},
-	["level"] = 	10,
-	["mana"] = 	0,
-	["mana_max"] = 	0,
-	["fail"] = 	101,
-	["stat"] = 	A_INT,
-	["spell"] = 	function()
-			if player.spell_project == 0 then
-				player.spell_project = 1 + get_level(Ind, PROJECT_SPELLS, 6, 0)
-				msg_print(Ind, "Your utility spells will now affect players in a radius of "..(player.spell_project)..".")
-			else
-				player.spell_project = 0
-				msg_print(Ind, "Your utility spells will now only affect yourself.")
-			end
-			player.redraw = bor(player.redraw, PR_STATE)
-	end,
-	["info"] = 	function()
-			return "base rad "..(1 + get_level(Ind, PROJECT_SPELLS, 6, 0))
-	end,
-	["desc"] = 	{
-			"Affects some of your spells(mostly utility ones) to make them",
-			"have an effect on your nearby party members.",
-	}
-}]]--
-
 DISPERSEMAGIC = add_spell {
 	["name"] = 	"Disperse Magic",
 	["name2"] = 	"Disperse",
@@ -215,9 +186,7 @@ DISPERSEMAGIC = add_spell {
 	["mana_max"] = 	30,
 	["fail"] = 	10,
 	["stat"] = 	A_INT,
-	-- Unaffected by blindness
 	["blind"] = 	FALSE,
-	-- Unaffected by confusion
 	["confusion"] = FALSE,
 	["spell"] = 	function()
 			set_blind(Ind, 0)
@@ -246,30 +215,17 @@ MANASHIELD = add_spell {
 	["name"] = 	"Disruption Shield",
 	["name2"] = 	"DShield",
 	["school"] = 	SCHOOL_MANA,
---	["level"] = 	45,
 	["level"] = 	35,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
---	["fail"] = 	-200,
 	["fail"] = 	10,
 	["spell"] = 	function()
---			if get_level(Ind, MANASHIELD, 50) >= 5 then
---				if (player.invuln == 0) then
---					set_invuln(Ind, randint(5) + 15 + get_level(Ind, MANASHIELD, 15))
---				end
---			else
---				if (player.tim_manashield == 0) then
-					set_tim_manashield(Ind, randint(10) + 20 + get_level(Ind, MANASHIELD, 75))
---				end
---			end
+			set_tim_manashield(Ind, randint(10) + 20 + get_level(Ind, MANASHIELD, 75))
 	end,
 	["info"] = 	function()
 			return "dur "..(20 + get_level(Ind, MANASHIELD, 75)).."+d10"
 	end,
 	["desc"] = 	{
 			"Redirects damage taken to your mana pool instead of reducing your hit points."
---			"At level 5 switches to globe of invulnerability",
---			"The spell breaks as soon as a melee, shooting,",
---			"throwing or magical skill action is attempted"
 		}
 }

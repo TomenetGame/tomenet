@@ -48,13 +48,11 @@ GLOBELIGHT_II = add_spell {
 }
 
 function get_firebolt_dam(Ind, limit_lev)
-	--return 5 + get_level(Ind, FIREBOLT, 25), 7 + get_level(Ind, FIREBOLT, 25) + 1
 	local lev
 
 	lev = get_level(Ind, FIREBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	--return 5 + ((lev * 3) / 5), 7 + (lev / 2) + 1
 	return 5 + ((lev * 3) / 5), 7 + ((lev * 5) / 7) + 1
 end
 FIREBOLT_I = add_spell {

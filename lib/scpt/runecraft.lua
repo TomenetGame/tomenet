@@ -1,4 +1,4 @@
--- File: lib/scpt/runecraft.lua
+-- File: lib/scpt/runecraft.lua - Kurzel
 
 -- MASKS
 

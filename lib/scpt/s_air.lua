@@ -62,13 +62,11 @@ NOXIOUSCLOUD_III = add_spell {
 }
 
 function get_lightningbolt_dam(Ind, limit_lev)
-	--return 3 + get_level(Ind, LIGHTNINGBOLT, 25), 5 + get_level(Ind, LIGHTNINGBOLT, 25) - 1
 	local lev
 
 	lev = get_level(Ind, LIGHTNINGBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	--return 3 + ((lev * 3) / 5), 5 + (lev / 2) - 1
 	return 3 + ((lev * 3) / 5), 5 + ((lev * 5) / 7) - 1
 end
 
@@ -170,7 +168,6 @@ INVISIBILITY = add_spell {
 	["mana_max"] = 	35,
 	["fail"] = 	-30,
 	["spell"] = 	function()
---			if player.tim_invisibility == 0 then set_invis(Ind, randint(20) + 15 + get_level(Ind, INVISIBILITY, 50), 20 + get_level(Ind, INVISIBILITY, 50)) end
 			set_invis(Ind, randint(20) + 15 + get_level(Ind, INVISIBILITY, 50), 20 + get_level(Ind, INVISIBILITY, 50))
 	end,
 	["info"] = 	function()
@@ -184,7 +181,6 @@ INVISIBILITY = add_spell {
 POISONBLOOD = add_spell {
 	["name"] = 	"Poison Blood",
 	["name2"] = 	"PBlood",
-	--["school"] = 	{SCHOOL_AIR},
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	30,
 	["mana"] = 	15,
@@ -194,7 +190,6 @@ POISONBLOOD = add_spell {
 			local dur
 			dur = randint(30) + 25 + get_level(Ind, POISONBLOOD, 25)
 			set_oppose_pois(Ind, dur)
-			--if get_level(Ind, POISONBLOOD, 50) >= 5 then 
 			set_melee_brand(Ind, dur, TBRAND_POIS, 10)
 	end,
 	["info"] = 	function()
