@@ -5671,10 +5671,11 @@ static bool process_player_end_aux(int Ind) {
 	//if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 	//if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (istown(&p_ptr->wpos) ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 	/* changing above line to use istownarea() so you can sort your houses without drain */
-	if (p_ptr->drain_exp && magik((
-	    p_ptr->wpos.wz != 0 ? (isdungeontown(&p_ptr->wpos) ? 0 : 50) :
-	    (istownarea(&p_ptr->wpos, MAX_TOWNAREA) ? 0 : 25)) / (p_ptr->prace == RACE_VAMPIRE ? 2 : 1)
-	    ) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
+	if (p_ptr->drain_exp
+	    && magik((p_ptr->wpos.wz != 0 ? (isdungeontown(&p_ptr->wpos) ? 0 : 50) :
+	     (istownarea(&p_ptr->wpos, MAX_TOWNAREA) ? 0 : 25)) / (p_ptr->prace == RACE_VAMPIRE ? 2 : 1))
+	    && magik(100 - p_ptr->antimagic / 2)
+	    && magik(30 - (60 / (p_ptr->drain_exp + 2))))
 		//take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE, FALSE, 0);
 		/* Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula.. */
 	{
