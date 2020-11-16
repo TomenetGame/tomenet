@@ -253,6 +253,13 @@
 
 #define PKT_GUIDE		196	/* Server issues Guide-invocation on client-side */
 
+#define PKT_RES_FIRE 198
+#define PKT_RES_COLD 199
+#define PKT_RES_ELEC 200
+#define PKT_RES_ACID 201
+#define PKT_RES_POIS 202
+#define PKT_RES_MANA 203
+#define PKT_ESP  204
 
 /*
  * Possible error codes returned

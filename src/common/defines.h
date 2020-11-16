@@ -2224,6 +2224,10 @@
 #define ROW_RESIST_MANA		23
 #define COL_RESIST_MANA		6
 
+#define ROW_TEMP_ESP		25
+#define COL_TEMP_ESP		1
+
+
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
 
 /* Nothing */
@@ -4556,6 +4560,14 @@
  */
 #define PR2_MAP_FWD	0x00000001L	/* Redraw the map just for a mind-linking player */
 #define PR2_MAP_SCR	0x00000002L	/* Redraw just the scr map, not the ovl one */
+
+#define PR2_RES_FIRE 0x00000004L /* Display timed resistance to fire */
+#define PR2_RES_COLD 0x00000008L /* Display timed resistance to cold */
+#define PR2_RES_ELEC 0x00000010L /* Display timed resistance to electricity */
+#define PR2_RES_ACID 0x00000020L /* Display timed resistance to acid */
+#define PR2_RES_POIS 0x00000040L /* Display timed resistance to poison */
+#define PR2_RES_MANA 0x00000080L /* Display timed resistance to mana */
+#define PR2_ESP      0x00000100L /* Display timed full ESP */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

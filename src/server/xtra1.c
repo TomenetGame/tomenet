@@ -684,6 +684,54 @@ static void prt_extra_status(int Ind) {
 	Send_extra_status(Ind, status);
 }
 
+static void prt_res_fire(int Ind) {
+    player_type *p_ptr = Players[Ind];
+    byte res_fire = (p_ptr->oppose_fire ? 1 : 0);
+
+    Send_res_fire(Ind, res_fire);
+}
+
+static void prt_res_cold(int Ind) {
+    player_type *p_ptr = Players[Ind];
+    byte res_cold = (p_ptr->oppose_cold ? 1 : 0);
+
+    Send_res_cold(Ind, res_cold);
+}
+
+static void prt_res_elec(int Ind) {
+    player_type *p_ptr = Players[Ind];
+    byte res_elec = (p_ptr->oppose_elec ? 1 : 0);
+
+    Send_res_elec(Ind, res_elec);
+}
+
+static void prt_res_acid(int Ind) {
+    player_type *p_ptr = Players[Ind];
+    byte res_acid = (p_ptr->oppose_acid ? 1 : 0);
+
+    Send_res_acid(Ind, res_acid);
+}
+
+static void prt_res_pois(int Ind) {
+    player_type *p_ptr = Players[Ind];
+    byte res_pois = (p_ptr->oppose_pois ? 1 : 0);
+
+    Send_res_pois(Ind, res_pois);
+}
+
+static void prt_res_mana(int Ind) {
+    player_type *p_ptr = Players[Ind];
+    byte res_mana = (p_ptr->divine_xtra_res ? 1 : 0);
+
+    Send_res_mana(Ind, res_mana);
+}
+
+static void prt_esp(int Ind) {
+    player_type *p_ptr = Players[Ind];
+    byte esp = (p_ptr->tim_esp ? 1 : 0);
+
+    Send_esp(Ind, esp);
+}
 
 /*
  * Redraw the "monster health bar"	-DRS-
@@ -907,6 +955,16 @@ static void prt_frame_basic(int Ind) {
 
 	/* Special */
 	health_redraw(Ind);
+
+	/* Temporary stuff: resistances and ESP  */
+	prt_res_fire(Ind);
+	prt_res_cold(Ind);
+	prt_res_elec(Ind);
+	prt_res_acid(Ind);
+	prt_res_pois(Ind);
+	prt_res_mana(Ind);
+	prt_esp(Ind);
+
 }
 
 
@@ -7327,6 +7385,41 @@ void redraw2_stuff(int Ind) {
 		p_ptr->redraw2 &= ~(PR2_MAP_SCR);
 		prt_map(Ind, TRUE);
 	}
+
+    if (p_ptr->redraw2 & PR2_RES_FIRE) {
+        p_ptr->redraw2 &= ~(PR2_RES_FIRE);
+        prt_res_fire(Ind);
+    }
+
+    if (p_ptr->redraw2 & PR2_RES_COLD) {
+        p_ptr->redraw2 &= ~(PR2_RES_COLD);
+        prt_res_cold(Ind);
+    }
+
+    if (p_ptr->redraw2 & PR2_RES_ELEC) {
+        p_ptr->redraw2 &= ~(PR2_RES_ELEC);
+        prt_res_elec(Ind);
+    }
+
+    if (p_ptr->redraw2 & PR2_RES_ACID) {
+        p_ptr->redraw2 &= ~(PR2_RES_ACID);
+        prt_res_acid(Ind);
+    }
+
+    if (p_ptr->redraw2 & PR2_RES_POIS) {
+        p_ptr->redraw2 &= ~(PR2_RES_POIS);
+        prt_res_pois(Ind);
+    }
+
+    if (p_ptr->redraw2 & PR2_RES_MANA) {
+        p_ptr->redraw2 &= ~(PR2_RES_MANA);
+        prt_res_mana(Ind);
+    }
+
+    if (p_ptr->redraw2 & PR2_ESP) {
+        p_ptr->redraw2 &= ~(PR2_ESP);
+        prt_esp(Ind);
+    }
 }
 
 /*

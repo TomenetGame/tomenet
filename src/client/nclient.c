@@ -177,6 +177,14 @@ static void Receive_init(void) {
 	receive_tbl[PKT_POWERS_INFO]	= Receive_powers_info;
 
 	receive_tbl[PKT_GUIDE]		= Receive_Guide;
+
+    receive_tbl[PKT_RES_FIRE] = Receive_res_fire;
+    receive_tbl[PKT_RES_COLD] = Receive_res_cold;
+    receive_tbl[PKT_RES_ELEC] = Receive_res_elec;
+    receive_tbl[PKT_RES_ACID] = Receive_res_acid;
+    receive_tbl[PKT_RES_POIS] = Receive_res_pois;
+    receive_tbl[PKT_RES_MANA] = Receive_res_mana;
+    receive_tbl[PKT_ESP] = Receive_esp;
 }
 
 
@@ -2621,54 +2629,6 @@ int Receive_message(void) {
 
 	c_msg_print(buf);
 
-    if (strstr(buf, "fire")) {
-        if (strstr(buf, "feel less resistant to")) {
-            prt_fire(0);
-        } else if (strstr(buf, "feel resistant to")) {
-            prt_fire(1);
-        }
-    }
-
-    if (strstr(buf, "cold")) {
-        if (strstr(buf, "feel less resistant to")) {
-            prt_cold(0);
-        } else if (strstr(buf, "feel resistant to")) {
-            prt_cold(1);
-        }
-    }
-
-    if (strstr(buf, "electricity")) {
-        if (strstr(buf, "feel less resistant to")) {
-            prt_elec(0);
-        } else if (strstr(buf, "feel resistant to")) {
-            prt_elec(1);
-        }
-    }
-
-    if (strstr(buf, "acid")) {
-        if (strstr(buf, "feel less resistant to")) {
-            prt_acid(0);
-        } else if (strstr(buf, "feel resistant to")) {
-            prt_acid(1);
-        }
-    }
-
-    if (strstr(buf, "poison")) {
-        if (strstr(buf, "feel less resistant to")) {
-            prt_pois(0);
-        } else if (strstr(buf, "feel resistant to")) {
-            prt_pois(1);
-        }
-    }
-
-    if (strstr(buf, "mana")) {
-        if (strstr(buf, "feel less resistant to")) {
-            prt_mana(0);
-        } else if (strstr(buf, "feel resistant to")) {
-            prt_mana(1);
-        }
-    }
-
 	if (screen_icky && (!shopping || perusing)) Term_switch(0);
 
 	return 1;
@@ -4888,6 +4848,117 @@ int Receive_Guide(void) {
 	return 1;
 }
 
+int Receive_res_fire(void) {
+    int	n;
+    char	ch;
+    byte	res_fire;
+
+    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_fire)) <= 0) return n;
+
+    if (screen_icky) Term_switch(0);
+
+    prt_res_fire(res_fire);
+
+    if (screen_icky) Term_switch(0);
+
+    return 1;
+}
+
+int Receive_res_cold(void) {
+    int	n;
+    char	ch;
+    byte	res_cold;
+
+    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_cold)) <= 0) return n;
+
+    if (screen_icky) Term_switch(0);
+
+    prt_res_cold(res_cold);
+
+    if (screen_icky) Term_switch(0);
+
+    return 1;
+}
+
+int Receive_res_elec(void) {
+    int	n;
+    char	ch;
+    byte	res_elec;
+
+    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_elec)) <= 0) return n;
+
+    if (screen_icky) Term_switch(0);
+
+    prt_res_elec(res_elec);
+
+    if (screen_icky) Term_switch(0);
+
+    return 1;
+}
+
+int Receive_res_acid(void) {
+    int	n;
+    char	ch;
+    byte	res_acid;
+
+    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_acid)) <= 0) return n;
+
+    if (screen_icky) Term_switch(0);
+
+    prt_res_acid(res_acid);
+
+    if (screen_icky) Term_switch(0);
+
+    return 1;
+}
+
+int Receive_res_pois(void) {
+    int	n;
+    char	ch;
+    byte	res_pois;
+
+    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_pois)) <= 0) return n;
+
+    if (screen_icky) Term_switch(0);
+
+    prt_res_pois(res_pois);
+
+    if (screen_icky) Term_switch(0);
+
+    return 1;
+}
+
+int Receive_res_mana(void) {
+    int	n;
+    char	ch;
+    byte	res_mana;
+
+    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_mana)) <= 0) return n;
+
+    if (screen_icky) Term_switch(0);
+
+    prt_res_mana(res_mana);
+
+    if (screen_icky) Term_switch(0);
+
+    return 1;
+}
+
+int Receive_esp(void) {
+    int	n;
+    char	ch;
+    byte	esp;
+
+    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &esp)) <= 0) return n;
+
+    if (screen_icky) Term_switch(0);
+
+    prt_esp(esp);
+
+    if (screen_icky) Term_switch(0);
+
+    return 1;
+}
 
 
 

@@ -1027,7 +1027,7 @@ void prt_bpr(byte bpr, byte attr) {
 	Term_gotoxy(x, y);
 }
 
-void prt_fire(byte is_resisted) {
+void prt_res_fire(byte is_resisted) {
     int x, y;
 
     /* remember cursor position */
@@ -1043,7 +1043,7 @@ void prt_fire(byte is_resisted) {
     Term_gotoxy(x, y);
 }
 
-void prt_cold(byte is_resisted) {
+void prt_res_cold(byte is_resisted) {
     int x, y;
 
     /* remember cursor position */
@@ -1059,7 +1059,7 @@ void prt_cold(byte is_resisted) {
     Term_gotoxy(x, y);
 }
 
-void prt_elec(byte is_resisted) {
+void prt_res_elec(byte is_resisted) {
     int x, y;
 
     /* remember cursor position */
@@ -1075,7 +1075,7 @@ void prt_elec(byte is_resisted) {
     Term_gotoxy(x, y);
 }
 
-void prt_acid(byte is_resisted) {
+void prt_res_acid(byte is_resisted) {
     int x, y;
 
     /* remember cursor position */
@@ -1091,7 +1091,7 @@ void prt_acid(byte is_resisted) {
     Term_gotoxy(x, y);
 }
 
-void prt_pois(byte is_resisted) {
+void prt_res_pois(byte is_resisted) {
     int x, y;
 
     /* remember cursor position */
@@ -1107,7 +1107,7 @@ void prt_pois(byte is_resisted) {
     Term_gotoxy(x, y);
 }
 
-void prt_mana(byte is_resisted) {
+void prt_res_mana(byte is_resisted) {
     int x, y;
 
     /* remember cursor position */
@@ -1117,6 +1117,22 @@ void prt_mana(byte is_resisted) {
         c_put_str(TERM_L_BLUE, "M", ROW_RESIST_MANA, COL_RESIST_MANA);
     } else {
         c_put_str(TERM_L_BLUE, " ", ROW_RESIST_MANA, COL_RESIST_MANA);
+    }
+
+    /* restore cursor position */
+    Term_gotoxy(x, y);
+}
+
+void prt_esp(byte is_full_esp) {
+    int x, y;
+
+    /* remember cursor position */
+    Term_locate(&x, &y);
+
+    if (is_full_esp > 0) {
+        c_put_str(TERM_WHITE, "ESP", ROW_TEMP_ESP, COL_TEMP_ESP);
+    } else {
+        c_put_str(TERM_WHITE, "   ", ROW_TEMP_ESP, COL_TEMP_ESP);
     }
 
     /* restore cursor position */

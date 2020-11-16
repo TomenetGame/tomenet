@@ -666,6 +666,15 @@ extern void display_lagometer(bool display_commands);
 extern void update_lagometer(void);
 extern void prt_lagometer(int lag);
 
+extern void prt_res_fire(byte is_resisted);
+extern void prt_res_cold(byte is_resisted);
+extern void prt_res_elec(byte is_resisted);
+extern void prt_res_acid(byte is_resisted);
+extern void prt_res_pois(byte is_resisted);
+extern void prt_res_mana(byte is_resisted);
+extern void prt_esp(byte is_full_esp);
+
+
 extern int p_speed;
 extern bool no_tele_grid;
 extern void do_weather(bool no_weather);

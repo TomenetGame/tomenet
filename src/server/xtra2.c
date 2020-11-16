@@ -616,6 +616,9 @@ bool set_tim_esp(int Ind, int v) {
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 
+    /* Redraw indicator */
+    p_ptr->redraw2 |= (PR2_ESP);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
@@ -2772,6 +2775,9 @@ bool set_oppose_acid(int Ind, int v) {
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_RES_ACID);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
@@ -2818,7 +2824,10 @@ bool set_oppose_elec(int Ind, int v) {
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
-	/* Handle stuff */
+    /* Redraw indicator */
+    p_ptr->redraw2 |= (PR2_RES_ELEC);
+
+    /* Handle stuff */
 	handle_stuff(Ind);
 
 	/* Result */
@@ -2863,6 +2872,9 @@ bool set_oppose_fire(int Ind, int v) {
 
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
+
+    /* Redraw indicator */
+    p_ptr->redraw2 |= (PR2_RES_FIRE);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2910,6 +2922,9 @@ bool set_oppose_cold(int Ind, int v) {
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
 
+    /* Redraw indicator */
+    p_ptr->redraw2 |= (PR2_RES_COLD);
+
 	/* Handle stuff */
 	handle_stuff(Ind);
 
@@ -2955,6 +2970,9 @@ bool set_oppose_pois(int Ind, int v) {
 
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
+
+    /* Redraw indicator */
+    p_ptr->redraw2 |= (PR2_RES_POIS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -3621,6 +3639,9 @@ bool do_divine_xtra_res(int Ind, int v) {
 
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
+
+    /* Redraw indicator */
+    p_ptr->redraw2 |= (PR2_RES_MANA);
 
 	/* Handle stuff */
 	handle_stuff(Ind);

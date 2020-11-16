@@ -8850,6 +8850,96 @@ int Send_Guide(int Ind, byte search_type, int lineno, char* search_string) {
 	else return Packet_printf(&connp->c, "%c%c%d%s", PKT_GUIDE, search_type, lineno, search_string);
 }
 
+int Send_res_fire(int Ind, byte res_fire) {
+    connection_t *connp = Conn[Players[Ind]->conn];
+    //player_type *p_ptr = Players[Ind];
+
+    if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+        errno = 0;
+        plog(format("Connection not ready for res_fire (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+        return 0;
+    }
+    return Packet_printf(&connp->c, "%c%c", PKT_RES_FIRE, res_fire);
+}
+
+int Send_res_cold(int Ind, byte res_cold) {
+    connection_t *connp = Conn[Players[Ind]->conn];
+    //player_type *p_ptr = Players[Ind];
+
+    if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+        errno = 0;
+        plog(format("Connection not ready for res_cold (%d.%d.%d)",
+            Ind, connp->state, connp->id));
+        return 0;
+    }
+    return Packet_printf(&connp->c, "%c%c", PKT_RES_COLD, res_cold);
+}
+
+int Send_res_elec(int Ind, byte res_elec) {
+    connection_t *connp = Conn[Players[Ind]->conn];
+    //player_type *p_ptr = Players[Ind];
+
+    if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+        errno = 0;
+        plog(format("Connection not ready for res_elec (%d.%d.%d)",
+                    Ind, connp->state, connp->id));
+        return 0;
+    }
+    return Packet_printf(&connp->c, "%c%c", PKT_RES_ELEC, res_elec);
+}
+
+int Send_res_acid(int Ind, byte res_acid) {
+    connection_t *connp = Conn[Players[Ind]->conn];
+    //player_type *p_ptr = Players[Ind];
+
+    if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+        errno = 0;
+        plog(format("Connection not ready for res_acid (%d.%d.%d)",
+                    Ind, connp->state, connp->id));
+        return 0;
+    }
+    return Packet_printf(&connp->c, "%c%c", PKT_RES_ACID, res_acid);
+}
+
+int Send_res_pois(int Ind, byte res_pois) {
+    connection_t *connp = Conn[Players[Ind]->conn];
+    //player_type *p_ptr = Players[Ind];
+
+    if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+        errno = 0;
+        plog(format("Connection not ready for res_pois (%d.%d.%d)",
+                    Ind, connp->state, connp->id));
+        return 0;
+    }
+    return Packet_printf(&connp->c, "%c%c", PKT_RES_POIS, res_pois);
+}
+
+int Send_res_mana(int Ind, byte res_mana) {
+    connection_t *connp = Conn[Players[Ind]->conn];
+    //player_type *p_ptr = Players[Ind];
+
+    if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+        errno = 0;
+        plog(format("Connection not ready for res_mana (%d.%d.%d)",
+                    Ind, connp->state, connp->id));
+        return 0;
+    }
+    return Packet_printf(&connp->c, "%c%c", PKT_RES_MANA, res_mana);
+}
+
+int Send_esp(int Ind, byte esp) {
+    connection_t *connp = Conn[Players[Ind]->conn];
+    //player_type *p_ptr = Players[Ind];
+
+    if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+        errno = 0;
+        plog(format("Connection not ready for esp (%d.%d.%d)",
+                    Ind, connp->state, connp->id));
+        return 0;
+    }
+    return Packet_printf(&connp->c, "%c%c", PKT_ESP, esp);
+}
 
 /*
  * Return codes for the "Receive_XXX" functions are as follows:
