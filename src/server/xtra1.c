@@ -688,49 +688,63 @@ static void prt_res_fire(int Ind) {
     player_type *p_ptr = Players[Ind];
     byte res_fire = (p_ptr->oppose_fire ? 1 : 0);
 
-    Send_res_fire(Ind, res_fire);
+    if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) {
+        Send_res_fire(Ind, res_fire);
+    }
 }
 
 static void prt_res_cold(int Ind) {
     player_type *p_ptr = Players[Ind];
     byte res_cold = (p_ptr->oppose_cold ? 1 : 0);
 
-    Send_res_cold(Ind, res_cold);
+    if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) {
+        Send_res_cold(Ind, res_cold);
+    }
 }
 
 static void prt_res_elec(int Ind) {
     player_type *p_ptr = Players[Ind];
     byte res_elec = (p_ptr->oppose_elec ? 1 : 0);
 
-    Send_res_elec(Ind, res_elec);
+    if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) {
+        Send_res_elec(Ind, res_elec);
+    }
 }
 
 static void prt_res_acid(int Ind) {
     player_type *p_ptr = Players[Ind];
     byte res_acid = (p_ptr->oppose_acid ? 1 : 0);
 
-    Send_res_acid(Ind, res_acid);
+    if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) {
+        Send_res_acid(Ind, res_acid);
+    }
 }
 
 static void prt_res_pois(int Ind) {
     player_type *p_ptr = Players[Ind];
     byte res_pois = (p_ptr->oppose_pois ? 1 : 0);
 
-    Send_res_pois(Ind, res_pois);
+    if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) {
+        Send_res_pois(Ind, res_pois);
+    }
 }
 
 static void prt_res_mana(int Ind) {
     player_type *p_ptr = Players[Ind];
     byte res_mana = (p_ptr->divine_xtra_res ? 1 : 0);
 
-    Send_res_mana(Ind, res_mana);
+    if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) {
+        Send_res_mana(Ind, res_mana);
+    }
 }
 
 static void prt_esp(int Ind) {
     player_type *p_ptr = Players[Ind];
     byte esp = (p_ptr->tim_esp ? 1 : 0);
 
-    Send_esp(Ind, esp);
+    if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) {
+        Send_esp(Ind, esp);
+    }
 }
 
 /*
