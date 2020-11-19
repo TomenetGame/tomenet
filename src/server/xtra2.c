@@ -617,7 +617,7 @@ bool set_tim_esp(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS | PU_MONSTERS);
 
     /* Redraw indicator */
-    p_ptr->redraw2 |= (PR2_ESP);
+    p_ptr->redraw2 |= (PR2_INDICATORS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2776,7 +2776,7 @@ bool set_oppose_acid(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
 	/* Redraw indicator */
-	p_ptr->redraw2 |= (PR2_RES_ACID);
+    p_ptr->redraw2 |= (PR2_INDICATORS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2825,7 +2825,7 @@ bool set_oppose_elec(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
     /* Redraw indicator */
-    p_ptr->redraw2 |= (PR2_RES_ELEC);
+    p_ptr->redraw2 |= (PR2_INDICATORS);
 
     /* Handle stuff */
 	handle_stuff(Ind);
@@ -2874,7 +2874,7 @@ bool set_oppose_fire(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
     /* Redraw indicator */
-    p_ptr->redraw2 |= (PR2_RES_FIRE);
+    p_ptr->redraw2 |= (PR2_INDICATORS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2923,7 +2923,7 @@ bool set_oppose_cold(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
     /* Redraw indicator */
-    p_ptr->redraw2 |= (PR2_RES_COLD);
+    p_ptr->redraw2 |= (PR2_INDICATORS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -2972,7 +2972,7 @@ bool set_oppose_pois(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
     /* Redraw indicator */
-    p_ptr->redraw2 |= (PR2_RES_POIS);
+    p_ptr->redraw2 |= (PR2_INDICATORS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -3641,7 +3641,7 @@ bool do_divine_xtra_res(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
     /* Redraw indicator */
-    p_ptr->redraw2 |= (PR2_RES_MANA);
+    p_ptr->redraw2 |= (PR2_INDICATORS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);

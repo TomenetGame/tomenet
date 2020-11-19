@@ -1231,13 +1231,7 @@ extern int Send_palette(int Ind, byte c, byte r, byte g, byte b);
 extern int Send_idle(int Ind, bool idle);
 extern int Send_Guide(int Ind, byte search_type, int lineno, char* search_string);
 
-extern int Send_res_fire(int Ind, byte res_fire);
-extern int Send_res_cold(int Ind, byte res_cold);
-extern int Send_res_elec(int Ind, byte res_elec);
-extern int Send_res_acid(int Ind, byte res_acid);
-extern int Send_res_pois(int Ind, byte res_pois);
-extern int Send_res_mana(int Ind, byte res_mana);
-extern int Send_esp(int Ind, byte esp);
+extern int Send_indicators(int Ind, u32b indicators);
 
 /* object1.c */
 extern bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id);

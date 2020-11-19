@@ -178,13 +178,7 @@ static void Receive_init(void) {
 
 	receive_tbl[PKT_GUIDE]		= Receive_Guide;
 
-    receive_tbl[PKT_RES_FIRE] = Receive_res_fire;
-    receive_tbl[PKT_RES_COLD] = Receive_res_cold;
-    receive_tbl[PKT_RES_ELEC] = Receive_res_elec;
-    receive_tbl[PKT_RES_ACID] = Receive_res_acid;
-    receive_tbl[PKT_RES_POIS] = Receive_res_pois;
-    receive_tbl[PKT_RES_MANA] = Receive_res_mana;
-    receive_tbl[PKT_ESP] = Receive_esp;
+    receive_tbl[PKT_INDICATORS] = Receive_indicators;
 }
 
 
@@ -4848,119 +4842,19 @@ int Receive_Guide(void) {
 	return 1;
 }
 
-int Receive_res_fire(void) {
+int Receive_indicators(void) {
     int	n;
     char	ch;
-    byte	res_fire;
+    u32b	indicators;
 
-    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_fire)) <= 0) return n;
+    if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &indicators)) <= 0) return n;
 
     if (screen_icky) Term_switch(0);
-
-    prt_res_fire(res_fire);
-
+    prt_indicators(indicators);
     if (screen_icky) Term_switch(0);
 
     return 1;
 }
-
-int Receive_res_cold(void) {
-    int	n;
-    char	ch;
-    byte	res_cold;
-
-    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_cold)) <= 0) return n;
-
-    if (screen_icky) Term_switch(0);
-
-    prt_res_cold(res_cold);
-
-    if (screen_icky) Term_switch(0);
-
-    return 1;
-}
-
-int Receive_res_elec(void) {
-    int	n;
-    char	ch;
-    byte	res_elec;
-
-    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_elec)) <= 0) return n;
-
-    if (screen_icky) Term_switch(0);
-
-    prt_res_elec(res_elec);
-
-    if (screen_icky) Term_switch(0);
-
-    return 1;
-}
-
-int Receive_res_acid(void) {
-    int	n;
-    char	ch;
-    byte	res_acid;
-
-    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_acid)) <= 0) return n;
-
-    if (screen_icky) Term_switch(0);
-
-    prt_res_acid(res_acid);
-
-    if (screen_icky) Term_switch(0);
-
-    return 1;
-}
-
-int Receive_res_pois(void) {
-    int	n;
-    char	ch;
-    byte	res_pois;
-
-    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_pois)) <= 0) return n;
-
-    if (screen_icky) Term_switch(0);
-
-    prt_res_pois(res_pois);
-
-    if (screen_icky) Term_switch(0);
-
-    return 1;
-}
-
-int Receive_res_mana(void) {
-    int	n;
-    char	ch;
-    byte	res_mana;
-
-    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &res_mana)) <= 0) return n;
-
-    if (screen_icky) Term_switch(0);
-
-    prt_res_mana(res_mana);
-
-    if (screen_icky) Term_switch(0);
-
-    return 1;
-}
-
-int Receive_esp(void) {
-    int	n;
-    char	ch;
-    byte	esp;
-
-    if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &esp)) <= 0) return n;
-
-    if (screen_icky) Term_switch(0);
-
-    prt_esp(esp);
-
-    if (screen_icky) Term_switch(0);
-
-    return 1;
-}
-
-
 
 int Send_search(void) {
 	int	n;

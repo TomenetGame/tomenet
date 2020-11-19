@@ -666,13 +666,14 @@ extern void display_lagometer(bool display_commands);
 extern void update_lagometer(void);
 extern void prt_lagometer(int lag);
 
-extern void prt_res_fire(byte is_resisted);
-extern void prt_res_cold(byte is_resisted);
-extern void prt_res_elec(byte is_resisted);
-extern void prt_res_acid(byte is_resisted);
-extern void prt_res_pois(byte is_resisted);
-extern void prt_res_mana(byte is_resisted);
-extern void prt_esp(byte is_full_esp);
+extern void prt_indicators(u32b indicators);
+extern void prt_res_fire(bool is_resisted);
+extern void prt_res_cold(bool is_resisted);
+extern void prt_res_elec(bool is_resisted);
+extern void prt_res_acid(bool is_resisted);
+extern void prt_res_pois(bool is_resisted);
+extern void prt_res_divine(bool is_resisted);
+extern void prt_esp(bool is_full_esp);
 
 
 extern int p_speed;

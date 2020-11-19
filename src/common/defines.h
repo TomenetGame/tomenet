@@ -4561,13 +4561,18 @@
 #define PR2_MAP_FWD	0x00000001L	/* Redraw the map just for a mind-linking player */
 #define PR2_MAP_SCR	0x00000002L	/* Redraw just the scr map, not the ovl one */
 
-#define PR2_RES_FIRE 0x00000004L /* Display timed resistance to fire */
-#define PR2_RES_COLD 0x00000008L /* Display timed resistance to cold */
-#define PR2_RES_ELEC 0x00000010L /* Display timed resistance to electricity */
-#define PR2_RES_ACID 0x00000020L /* Display timed resistance to acid */
-#define PR2_RES_POIS 0x00000040L /* Display timed resistance to poison */
-#define PR2_RES_MANA 0x00000080L /* Display timed resistance to mana */
-#define PR2_ESP      0x00000100L /* Display timed full ESP */
+#define PR2_INDICATORS 0x00000004L /* Redraw indicators for timed properties */
+
+/*
+ * Bit flags for the "prt_indicators" function
+ */
+#define IND_RES_FIRE    0x00000001L /* Active timed resistance to fire */
+#define IND_RES_COLD    0x00000002L /* Active timed resistance to cold */
+#define IND_RES_ELEC    0x00000004L /* Active timed resistance to electricity */
+#define IND_RES_ACID    0x00000008L /* Active timed resistance to acid */
+#define IND_RES_POIS    0x00000010L /* Active timed resistance to poison */
+#define IND_RES_DIVINE  0x00000020L /* Active timed divine resistances (currently it's only mana res) */
+#define IND_ESP         0x00000040L /* Active timed full ESP */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

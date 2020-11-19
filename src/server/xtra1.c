@@ -684,66 +684,40 @@ static void prt_extra_status(int Ind) {
 	Send_extra_status(Ind, status);
 }
 
-static void prt_res_fire(int Ind) {
+static void prt_indicators(int Ind) {
     player_type *p_ptr = Players[Ind];
-    byte res_fire = (p_ptr->oppose_fire ? 1 : 0);
+    u32b indicators =  0x0;
 
-    if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
-        Send_res_fire(Ind, res_fire);
+    if (p_ptr->oppose_fire) {
+       indicators |= IND_RES_FIRE;
     }
-}
 
-static void prt_res_cold(int Ind) {
-    player_type *p_ptr = Players[Ind];
-    byte res_cold = (p_ptr->oppose_cold ? 1 : 0);
-
-    if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
-        Send_res_cold(Ind, res_cold);
+    if (p_ptr->oppose_cold) {
+        indicators |= IND_RES_COLD;
     }
-}
 
-static void prt_res_elec(int Ind) {
-    player_type *p_ptr = Players[Ind];
-    byte res_elec = (p_ptr->oppose_elec ? 1 : 0);
-
-    if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
-        Send_res_elec(Ind, res_elec);
+    if (p_ptr->oppose_elec) {
+        indicators |= IND_RES_ELEC;
     }
-}
 
-static void prt_res_acid(int Ind) {
-    player_type *p_ptr = Players[Ind];
-    byte res_acid = (p_ptr->oppose_acid ? 1 : 0);
-
-    if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
-        Send_res_acid(Ind, res_acid);
+    if (p_ptr->oppose_acid) {
+        indicators |= IND_RES_ACID;
     }
-}
 
-static void prt_res_pois(int Ind) {
-    player_type *p_ptr = Players[Ind];
-    byte res_pois = (p_ptr->oppose_pois ? 1 : 0);
-
-    if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
-        Send_res_pois(Ind, res_pois);
+    if (p_ptr->oppose_pois) {
+        indicators |= IND_RES_POIS;
     }
-}
 
-static void prt_res_mana(int Ind) {
-    player_type *p_ptr = Players[Ind];
-    byte res_mana = (p_ptr->divine_xtra_res ? 1 : 0);
-
-    if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
-        Send_res_mana(Ind, res_mana);
+    if (p_ptr->divine_xtra_res) {
+        indicators |= IND_RES_DIVINE;
     }
-}
 
-static void prt_esp(int Ind) {
-    player_type *p_ptr = Players[Ind];
-    byte esp = (p_ptr->tim_esp ? 1 : 0);
+    if (p_ptr->tim_esp) {
+        indicators |= IND_ESP;
+    }
 
     if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
-        Send_esp(Ind, esp);
+        Send_indicators(Ind, indicators);
     }
 }
 
@@ -971,14 +945,7 @@ static void prt_frame_basic(int Ind) {
 	health_redraw(Ind);
 
 	/* Temporary stuff: resistances and ESP  */
-	prt_res_fire(Ind);
-	prt_res_cold(Ind);
-	prt_res_elec(Ind);
-	prt_res_acid(Ind);
-	prt_res_pois(Ind);
-	prt_res_mana(Ind);
-	prt_esp(Ind);
-
+	prt_indicators(Ind);
 }
 
 
@@ -7400,39 +7367,9 @@ void redraw2_stuff(int Ind) {
 		prt_map(Ind, TRUE);
 	}
 
-    if (p_ptr->redraw2 & PR2_RES_FIRE) {
-        p_ptr->redraw2 &= ~(PR2_RES_FIRE);
-        prt_res_fire(Ind);
-    }
-
-    if (p_ptr->redraw2 & PR2_RES_COLD) {
-        p_ptr->redraw2 &= ~(PR2_RES_COLD);
-        prt_res_cold(Ind);
-    }
-
-    if (p_ptr->redraw2 & PR2_RES_ELEC) {
-        p_ptr->redraw2 &= ~(PR2_RES_ELEC);
-        prt_res_elec(Ind);
-    }
-
-    if (p_ptr->redraw2 & PR2_RES_ACID) {
-        p_ptr->redraw2 &= ~(PR2_RES_ACID);
-        prt_res_acid(Ind);
-    }
-
-    if (p_ptr->redraw2 & PR2_RES_POIS) {
-        p_ptr->redraw2 &= ~(PR2_RES_POIS);
-        prt_res_pois(Ind);
-    }
-
-    if (p_ptr->redraw2 & PR2_RES_MANA) {
-        p_ptr->redraw2 &= ~(PR2_RES_MANA);
-        prt_res_mana(Ind);
-    }
-
-    if (p_ptr->redraw2 & PR2_ESP) {
-        p_ptr->redraw2 &= ~(PR2_ESP);
-        prt_esp(Ind);
+    if (p_ptr->redraw2 & PR2_INDICATORS) {
+        p_ptr->redraw2 &= ~(PR2_INDICATORS);
+        prt_indicators(Ind);
     }
 }
 
