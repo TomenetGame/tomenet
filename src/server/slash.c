@@ -3216,13 +3216,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int skill = get_skill(p_ptr, SKILL_HEALTH), guis = 0;
 
 			if (gain && p_ptr->reskill_possible) {
+				/* Take care of mimicry form in conjunction with anti-magic skill,
+				   as Mimicry will be zero'ed from that! 'AM-Hack' */
+				int form;
+
 				memcpy(p_ptr->s_info, p_ptr->s_info_old, MAX_SKILLS * sizeof(skill_player));
 				p_ptr->skill_points = p_ptr->skill_points_old;
-
 				msg_format(Ind, "\377GYou have regained %d skill points.", gain);
+				/* AM-Hack part 1/2: If we (always) already had AM-skill before reskilling,
+				   then it means we also already had sufficient Mimicry skill for this form,
+				   hence we are allowed to keep it! */
+				form = get_skill_scale(p_ptr, SKILL_ANTIMAGIC, 1000) != 0 ? p_ptr->body_monster : 0;
 
 				/* in case we changed mimicry skill */
 				if (p_ptr->body_monster &&
+				    !form && /* <- AM-Hack part 2/2: Keep form if allowed. */
 				    r_info[p_ptr->body_monster].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))
 					do_mimic_change(Ind, 0, TRUE);
 
