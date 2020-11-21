@@ -2827,7 +2827,7 @@ bool set_oppose_elec(int Ind, int v) {
 	/* Redraw indicator */
 	p_ptr->redraw2 |= (PR2_INDICATORS);
 
-    /* Handle stuff */
+	/* Handle stuff */
 	handle_stuff(Ind);
 
 	/* Result */
