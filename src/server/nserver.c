@@ -8851,17 +8851,17 @@ int Send_Guide(int Ind, byte search_type, int lineno, char* search_string) {
 }
 
 int Send_indicators(int Ind, u32b indicators) {
-    connection_t *connp = Conn[Players[Ind]->conn];
-    //player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[Players[Ind]->conn];
+	//player_type *p_ptr = Players[Ind];
 
-    if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
-        errno = 0;
-        plog(format("Connection not ready for indicators (%d.%d.%d)",
-                    Ind, connp->state, connp->id));
-        return 0;
-    }
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for indicators (%d.%d.%d)",
+					Ind, connp->state, connp->id));
+		return 0;
+	}
 
-    return Packet_printf(&connp->c, "%c%d", PKT_INDICATORS, indicators);
+	return Packet_printf(&connp->c, "%c%d", PKT_INDICATORS, indicators);
 }
 
 /*
