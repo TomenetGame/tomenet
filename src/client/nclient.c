@@ -177,6 +177,8 @@ static void Receive_init(void) {
 	receive_tbl[PKT_POWERS_INFO]	= Receive_powers_info;
 
 	receive_tbl[PKT_GUIDE]		= Receive_Guide;
+
+	receive_tbl[PKT_INDICATORS]	= Receive_indicators;
 }
 
 
@@ -4840,8 +4842,19 @@ int Receive_Guide(void) {
 	return 1;
 }
 
+int Receive_indicators(void) {
+	int n;
+	char ch;
+	u32b indicators;
 
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &indicators)) <= 0) return n;
 
+	if (screen_icky) Term_switch(0);
+	prt_indicators(indicators);
+	if (screen_icky) Term_switch(0);
+
+	return 1;
+}
 
 int Send_search(void) {
 	int	n;

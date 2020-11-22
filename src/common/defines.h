@@ -41,7 +41,7 @@
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		7
 #define VERSION_PATCH		3
-#define VERSION_EXTRA		0
+#define VERSION_EXTRA		1
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -52,7 +52,7 @@
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	7
 #define VERSION_PATCH_LATEST	3
-#define VERSION_EXTRA_LATEST	0
+#define VERSION_EXTRA_LATEST	1
 #define VERSION_BRANCH_LATEST	0
 #define VERSION_BUILD_LATEST	0
 
@@ -2205,6 +2205,28 @@
 
 #define ROW_LAG			8
 #define COL_LAG			0       /* mini lag-o-meter */
+
+#define ROW_RESIST_FIRE		23
+#define COL_RESIST_FIRE		1
+
+#define ROW_RESIST_COLD		23
+#define COL_RESIST_COLD		2
+
+#define ROW_RESIST_ELEC		23
+#define COL_RESIST_ELEC		3
+
+#define ROW_RESIST_ACID		23
+#define COL_RESIST_ACID		4
+
+#define ROW_RESIST_POIS		23
+#define COL_RESIST_POIS		5
+
+#define ROW_RESIST_MANA		23
+#define COL_RESIST_MANA		6
+
+#define ROW_TEMP_ESP		25
+#define COL_TEMP_ESP		1
+
 
 /*** Terrain Feature Indexes (see "lib/edit/f_info.txt") ***/
 
@@ -4538,6 +4560,19 @@
  */
 #define PR2_MAP_FWD	0x00000001L	/* Redraw the map just for a mind-linking player */
 #define PR2_MAP_SCR	0x00000002L	/* Redraw just the scr map, not the ovl one */
+
+#define PR2_INDICATORS 0x00000004L /* Redraw indicators for timed properties */
+
+/*
+ * Bit flags for the "prt_indicators" function
+ */
+#define IND_RES_FIRE    0x00000001L /* Active timed resistance to fire */
+#define IND_RES_COLD    0x00000002L /* Active timed resistance to cold */
+#define IND_RES_ELEC    0x00000004L /* Active timed resistance to electricity */
+#define IND_RES_ACID    0x00000008L /* Active timed resistance to acid */
+#define IND_RES_POIS    0x00000010L /* Active timed resistance to poison */
+#define IND_RES_DIVINE  0x00000020L /* Active timed divine resistances (currently it's only mana res) */
+#define IND_ESP         0x00000040L /* Active timed full ESP */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

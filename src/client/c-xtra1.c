@@ -1027,6 +1027,128 @@ void prt_bpr(byte bpr, byte attr) {
 	Term_gotoxy(x, y);
 }
 
+void prt_indicators(u32b indicators) {
+	prt_res_fire((indicators & IND_RES_FIRE) != 0);
+	prt_res_cold((indicators & IND_RES_COLD) != 0);
+	prt_res_elec((indicators & IND_RES_ELEC) != 0);
+	prt_res_acid((indicators & IND_RES_ACID) != 0);
+	prt_res_pois((indicators & IND_RES_POIS) != 0);
+	prt_res_divine((indicators & IND_RES_DIVINE) != 0);
+	prt_esp((indicators & IND_ESP) != 0);
+}
+
+void prt_res_fire(bool is_resisted) {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_resisted) {
+		c_put_str(TERM_RED, "F", ROW_RESIST_FIRE, COL_RESIST_FIRE);
+	} else {
+		c_put_str(TERM_RED, " ", ROW_RESIST_FIRE, COL_RESIST_FIRE);
+	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+void prt_res_cold(bool is_resisted) {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_resisted) {
+		c_put_str(TERM_WHITE, "C", ROW_RESIST_COLD, COL_RESIST_COLD);
+	} else {
+		c_put_str(TERM_WHITE, " ", ROW_RESIST_COLD, COL_RESIST_COLD);
+	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+void prt_res_elec(bool is_resisted) {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_resisted) {
+		c_put_str(TERM_BLUE, "E", ROW_RESIST_ELEC, COL_RESIST_ELEC);
+	} else {
+		c_put_str(TERM_BLUE, " ", ROW_RESIST_ELEC, COL_RESIST_ELEC);
+	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+void prt_res_acid(bool is_resisted) {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_resisted) {
+		c_put_str(TERM_L_DARK, "A", ROW_RESIST_ACID, COL_RESIST_ACID);
+	} else {
+		c_put_str(TERM_L_DARK, " ", ROW_RESIST_ACID, COL_RESIST_ACID);
+	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+void prt_res_pois(bool is_resisted) {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_resisted) {
+		c_put_str(TERM_GREEN, "P", ROW_RESIST_POIS, COL_RESIST_POIS);
+	} else {
+		c_put_str(TERM_GREEN, " ", ROW_RESIST_POIS, COL_RESIST_POIS);
+	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+void prt_res_divine(bool is_resisted) {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_resisted) {
+		c_put_str(TERM_L_BLUE, "M", ROW_RESIST_MANA, COL_RESIST_MANA);
+	} else {
+		c_put_str(TERM_L_BLUE, " ", ROW_RESIST_MANA, COL_RESIST_MANA);
+	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
+void prt_esp(bool is_full_esp) {
+	int x, y;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_full_esp) {
+		c_put_str(TERM_WHITE, "ESP", ROW_TEMP_ESP, COL_TEMP_ESP);
+	} else {
+		c_put_str(TERM_WHITE, "   ", ROW_TEMP_ESP, COL_TEMP_ESP);
+	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+
 /*
  * Prints cut status
  */
