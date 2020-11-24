@@ -15569,16 +15569,12 @@ From level 60 and upwards there are special titles available every 10 levels.
 You can find a list of all titles in (6.5b) further down.
 
 
-Here is a table showing boni/mali of the different races:
-'Blows/Round' is the maximum number of melee attacks per round a character can
-have basing on strength and dexterity and on the weapon's weight.
-To that maximum of blows per round further boni are added, like extra blows
-from a specific weapon-type mastery or from rings of extra attacks or magical
-influence from priest prayer 'Zeal'.
-Note that these blows/round limits don't count for Martial Arts users (as long
-as they fight barehanded). See (5.3a) for a table of MA attacks.
-"Parrying" is done with weapons, while "blocking" is done with a shield;
-See (6.11) for details about parry and block.
+Here is a table showing boni/mali of the different classes:
+'Blows/Round' is the maximum base number of melee attacks per round a class can
+get, based solely on strength and dexterity and on the weapon's weight.
+You can further increase your BpR later via mastery skills, items or magic.
+BpR limits count only for weapons, not for martial arts usage, see (5.3a).
+"Parrying" is done with weapons, "blocking" is done with a shield, see (6.11).
 
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
