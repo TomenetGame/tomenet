@@ -2056,6 +2056,18 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "clas")) strcpy(buf, "weapon types");
 				else if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "typ")) strcpy(buf, "weapon types");
 
+				/* Race/class boni/mali table */
+				if ((my_strcasestr(buf, "race") || my_strcasestr(buf, "racial")) && (my_strcasestr(buf, "bonus") || my_strcasestr(buf, "boni") || my_strcasestr(buf, "malus") || my_strcasestr(buf, "mali"))) {
+					strcpy(buf, "boni/mali of the different races");
+					fallback = TRUE;
+					continue;
+				}
+				if (my_strcasestr(buf, "class") && (my_strcasestr(buf, "bonus") || my_strcasestr(buf, "boni") || my_strcasestr(buf, "malus") || my_strcasestr(buf, "mali"))) {
+					strcpy(buf, "boni/mali of the different classes");
+					fallback = TRUE;
+					continue;
+				}
+
 				/* Expand 'pfe' to 'Protection from evil' */
 				if (!strcasecmp(buf, "pfe")) strcpy(buf, "Protection from evil");
 				/* Expand 'rll' to 'Restore Life Levels' and fall back to caps-search */
