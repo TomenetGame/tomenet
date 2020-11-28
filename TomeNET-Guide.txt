@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 15. November 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 29. November 2020 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1302,10 +1302,13 @@ They all start with a slash '/' hence they're called slash commands:
 
 /guildmembers   Displays a list of all members of your guild.
 
-/help
+/help [topic]
 /he
-/?          View a list of all command keys (same as pressing '?' key).
-            Also lists a few most commonly used slash commands.
+/?          Without 'topic' parameter, this shows a list of all command keys
+            (same as pressing '?' key) and additionally lists a few most
+            commonly used slash commands.
+            Optionally, a topic can be specified - in this case a guide search
+            will be conducted on that topic. For example enter:   /? ac
 
 /house
 /hou        Displays your houses, same as ~9, but offers two optional
