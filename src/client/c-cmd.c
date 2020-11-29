@@ -1576,6 +1576,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	searchstr[0] = 0;
 	//lastsearch[0] = 0;
 
+	/* In case we're invoked by /? command, always start searching from the beginning */
+	if (!init_lineno && init_search_string) line = 0;
+
 	/* invoked for a specific topic? */
 	*buf_override = 0;
 	switch (init_search_type) {
