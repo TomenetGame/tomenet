@@ -388,7 +388,7 @@ O:0:0:0:0:0:0
 G:8:y
 W:24
 
-N:8:Book Store
+N:8:Bookstore
 #I:100:[Minstrel's Music]
 #I:100:[Life in symbiosis]
 # & Book~ of Beginner Cantrips
@@ -1507,7 +1507,7 @@ O:0:0:0:0:0:0
 G:8:y
 W:24
 
-N:78:Book Store
+N:78:Bookstore
 #I:100:[Minstrel's Music]
 #I:100:[Life in symbiosis]
 # & Book~ of Beginner Cantrips

@@ -1055,6 +1055,7 @@ They all start with a slash '/' hence they're called slash commands:
             Parameters are:
              t: town-only? (optional)
              and then mandatory: rune, rune, mode, type
+            For more info and examples see (6.8b), paragraph Auto-Retaliation.
 
 /bbs <text>
             Add a line of text to the in-game bulletin board system. Players
@@ -6589,9 +6590,14 @@ The 1..9 are standard shops, namely..
                         Some items cannot be sold elsewhere though.
 8       The Inn         In Bree it's The Prancing Pony. Inside the inn,
                         players are relatively safe from monsters.
-9       Book Store      Sells books for istari, priests and all other (hybrid)
-                        magic users. Book stores in higher-level towns on
-                        average also tend to sell higher-level spells.
+9       Bookstore       Sells books for istari, priests and all other (hybrid)
+                        magic users. Bookstores in higher-level towns on
+                        average also tend to sell higher-level spells (this is
+                        a bookstore-specific specialty, other town shops do not
+                        differ in this way).
+                        The 'o'rder command you can use in town stores is
+                        especially useful in bookstores as it allows you to
+                        order specific spells and prayers you are looking for.
 +       These are different everywhere. Some examples are mainly..
         The Inn         Eg The Prancing Pony in Bree. While the '8' is just the
                         entrance into the tavern, the + is the actual bar where
@@ -8524,7 +8530,7 @@ Ironman Deep Dive Challenge (IDDC)
     special shops that are not found elsehwere.
 
     Starting at dungeon level 8, a hidden library may appear randomly (that's
-    a book store with a red '9' as an entrance), allowing you to purchase
+    a bookstore with a red '9' as an entrance), allowing you to purchase
     magic spells you might be missing. It also offers a special service to
     identify all items you are carrying.
     On very deep floors after Nargothrond, a seasoned alchemist store may
@@ -11399,7 +11405,7 @@ Codex, Spellbook, Grimoire
                     and it's up to the player to add spells of his choice to
                     them.
                     To do so, he needs to find or buy spell scrolls in the
-                    book store (orange '9' in town), then press 'A' to activate
+                    bookstore (orange '9' in town), then press 'A' to activate
                     the Codex, Spellbook or Grimoire, then choose the spell
                     scroll he wants to transcribe into the book. The scroll
                     will vanish and the spell will be permanently and
@@ -14984,7 +14990,7 @@ create a character!):
     Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
     Hint: Since all Maiar start with a point in 'Astral Knowledge' skill, you
-    should buy a spell scroll of Power Bolt I right away from the book store,
+    should buy a spell scroll of Power Bolt I right away from the bookstore,
     because you will already be able to use it.
 
 
@@ -15445,7 +15451,7 @@ create a character!):
     To see an overview of the forms and their abilities, see (6.7c).
 
     Hint: Druids have a powerful ranged area attack spell they can use very
-    early on, Toxic Moisture. Look for it in the book store right away.
+    early on, Toxic Moisture. Look for it in the bookstore right away.
     Also make sure to create a macro for your fighting technique 'Sprint' when
     you learn it, which you do pretty early on. It is great for catching
     annoying monsters that try to keep their distance to you. (See (6.12).)
@@ -15558,7 +15564,7 @@ create a character!):
     10, 20 or 40).
 
     Hint: Mindcrafters have a powerful ranged attack spell they can use very
-    early on, Psionic Blast. Look for it in the book store right away.
+    early on, Psionic Blast. Look for it in the bookstore right away.
     Also get the spell 'Autokinesis I' early on, which is a form of phase door.
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), or Martial
     Arts if you don't want to use weapons, and always keep it maximized.
@@ -16957,12 +16963,12 @@ stack! For example, casting Noxious Cloud and immediately afterwards Vapor will
 cause the Noxious Cloud getting replaced by Vapor on all map grids where they
 would overlap.
 
-Spell scrolls and some books can be purchased in store '9' (the 'book store',
+Spell scrolls and some books can be purchased in store '9' (the 'bookstore',
 usually also sells 'Beginner Cantrips' and sometimes also Codices) or in
 '7' (the 'black market' - very expensive but you often find tomes here!).
-Book stores in higher-level towns on average also tend to sell higher-level
-spells. You can also use the 'o' key in the book store to order specific
-spells! Note that in the book store it is sufficient to just enter the spell
+Bookstores in higher-level towns on average also tend to sell higher-level
+spells. You can also use the 'o' key in the bookstore to order specific
+spells! Note that in the bookstore it is sufficient to just enter the spell
 name when ordering, you don't need to type out the full item name of the
 spell scroll/crystal.
 
@@ -16979,7 +16985,7 @@ Example:
 Noxious Cloud is a level 3 spell of the Air school. That means if you spend at
 least 3 points into Air school, the spell will become usable and be displayed
 as "level 1" in your 'Spell Scroll of Noxious Cloud' you just bought from the
-Book Store in Bree (symbol '9').
+bookstore in Bree (symbol '9').
 If you raise your Air school to 6 by spending 3 more points into it, the level
 of your Noxious Cloud spell will increase by 3 and now be displayed as
 "level 4" in your spell scroll. The spell now deals more damage and lasts
