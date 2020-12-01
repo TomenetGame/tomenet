@@ -7266,7 +7266,7 @@ static void do_cmd_options_fonts(void) {
 	int fonts = 0;
 	char tmp_name[256];
 	char graphic_font_name[MAX_FONTS][256];
-	int graphic_fonts=0;
+	int graphic_fonts = 0;
 
   #ifndef WINDOWS
 	int x11_refresh = 50;
@@ -7392,7 +7392,7 @@ static void do_cmd_options_fonts(void) {
 	while (go) {
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w>, \377yv\377w (visibility), \377y-\377w/\377y+\377w (smaller/bigger), \377yENTER\377w (enter font name), \377yESC\377w)");
-		Term_putstr(0, 1, -1, TERM_WHITE, format("  (%d fonts available)", fonts));
+		Term_putstr(0, 1, -1, TERM_WHITE, format("  (%d font%s and %d graphic font%s available, \377yl\377w to list in message window)", fonts, fonts == 1 ? "" : "s", graphic_fonts, graphic_fonts == 1 ? "" : "s"));
 
 		/* Display the windows */
 		for (j = 0; j < ANGBAND_TERM_MAX; j++) {
@@ -7516,6 +7516,20 @@ static void do_cmd_options_fonts(void) {
   #ifndef WINDOWS
 			sync_sleep(x11_refresh);
   #endif
+			break;
+
+		case 'l':
+			if (fonts) {
+				c_message_add(format("-- Fonts (%d): --", fonts));
+				for (j = 0; j < fonts; j++)
+					c_message_add(format("  %s", font_name[j]));
+			}
+			if (graphic_fonts) {
+				c_message_add(format("-- Graphic fonts (%d): --", graphic_fonts));
+				for (j = 0; j < graphic_fonts; j++)
+					c_message_add(format("  %s", graphic_font_name[j]));
+			}
+
 			break;
 
 		default:
