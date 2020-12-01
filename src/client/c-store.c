@@ -132,7 +132,7 @@ void display_inventory(void) {
 	/* Visual reminder of "more items" */
 	if (store.stock_num > entries) {
 		/* Show "more" reminder (after the last item) */
-		prt("-more-", k + 6, 3);
+		prt("-more (SPACE to flip page)-", k + 6, 3);
 
 		/* Indicate the "current page" */
 		put_str(format("(Page %d of %d)%s%s",
@@ -902,11 +902,18 @@ void display_store(void) {
 		/* Browse if necessary */
 		if (store.stock_num > 12 + spacer) prt(" SPACE) Next page", 23 + spacer, 0);
 #else /* new: also show 1..n for jumping directly to a page */
-		prt("ESC)   Exit store", 21 + spacer, 0);
+ #if 0
+		prt("ESC) Exit store", 21 + spacer, 0);
 		if (store.stock_num > 12 + spacer) {
 			prt("SPACE) Next page", 22 + spacer, 0);
 			prt(format("1-%d)%s  Go to page", (store.stock_num - 1) / (12 + spacer) + 1, (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " "), 23 + spacer, 0);
 		}
+ #else /* display 'c' key */
+		prt(" ESC) Exit store", 21 + spacer, 0);
+		if (store.stock_num) prt("   c) Paste to chat", 22 + spacer, 0);
+		if (store.stock_num > 12 + spacer)
+			prt(format("%s1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " ", (store.stock_num - 1) / (12 + spacer) + 1), 23 + spacer, 0);
+ #endif
 #endif
 
 #if 0
