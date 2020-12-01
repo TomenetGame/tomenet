@@ -6622,9 +6622,9 @@ if (cfg.unikill_format) {
 	}
 
 	/* Dungeon-boss-slain music if available client-side */
-	if (is_Sauron) Send_music(Ind, 91, -2);
-	//else if (is_Morgoth) Send_music(Ind, 88, -2); //handled in handle_music() already
-	else if (is_ZuAon) Send_music(Ind, 92, -2);
+	if (is_Sauron) Send_music(Ind, 91, -1);
+	//else if (is_Morgoth) Send_music(Ind, 88, -1); //handled in handle_music() already
+	else if (is_ZuAon) Send_music(Ind, 92, -1);
 
 	if (r_idx == RI_BLUE) { /* just for now, testing */
 		zcave[2][55].feat = FEAT_UNSEALED_DOOR;
@@ -6643,7 +6643,7 @@ if (cfg.unikill_format) {
 #endif
 		    );
 		/* Dungeon-boss-slain music if available client-side */
-		if (!is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 90, -2);
+		if (!is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 90, -1);
 
 		/* Drop final artifact? */
 		if ((
