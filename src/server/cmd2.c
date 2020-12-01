@@ -3232,6 +3232,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	if (CANNOT_OPERATE_SPECTRAL && !is_admin(p_ptr)) {
 		/* Message */
 		msg_print(Ind, "You cannot tunnel without a material body.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 		return;
 	}
 
@@ -3364,6 +3365,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if (dir == 5 && cfeat != FEAT_PERM_CLEAR && !quiet_borer) {
 			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
 				msg_print(Ind, "The floor around the town area seems very solid.");
+				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 				return;
 			}
 
@@ -3462,6 +3464,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 		msg_print(Ind, "You see nothing there to tunnel through.");
 		disturb(Ind, 0, 0);
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 		return;
 	}
 
@@ -3572,11 +3575,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		/* Message */
 		msg_print(Ind, f_text + f_ptr->tunnel);
 		/* Nope */
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 		return;
 	}
 	/* No destroying of town layouts */
 	else if (!allow_terraforming(wpos, FEAT_TREE)) {
 		msg_print(Ind, "You may not tunnel in this area.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 		return;
 	}
 
@@ -4048,6 +4053,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		    (f_info[featm].flags1 & FF1_PERMANENT)) {
 			/* Message */
 			msg_print(Ind, f_text + f_info[featm].tunnel);
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 			return;
 		}
 

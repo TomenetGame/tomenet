@@ -6356,6 +6356,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 				if (!wraith_access_virtual(Ind, y, x)) {
 					msg_print(Ind, "The wall blocks your movement.");
 					disturb(Ind, 0, 0);
+
+					/* Hack -- refund some energy */
+					p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
+
 					return;
 				}
 				msg_print(Ind, "\377GYou pass through the house wall.");
@@ -6451,7 +6455,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					msg_print(Ind, "You feel a wall blocking your way.");
 					//msg_format(Ind, "You feel %s.", f_text + f_info[c_ptr->feat].block);
 
-				*w_ptr |= CAVE_MARK;
+					*w_ptr |= CAVE_MARK;
 					everyone_lite_spot(wpos, y, x);
 				}
 			}
@@ -6523,6 +6527,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					}
 				}
 			}
+
+			/* Hack -- refund some energy */
+			p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
+
 			return;
 		}
 	}
@@ -6532,6 +6540,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		msg_print(Ind, "You can't cross the chasm.");
 
 		disturb(Ind, 0, 0);
+
+		/* Hack -- refund some energy */
+		p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
+
 		return;
 	}
 

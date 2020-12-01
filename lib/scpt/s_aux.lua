@@ -763,10 +763,11 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 		-- Enough mana
 		if (get_mana(i, s) > get_power(i, s)) then
 			local energy = level_speed(player.wpos);
-			player.energy = player.energy - energy
---			if (get_check2("You do not have enough "..get_power_name(s)..", do you want to try anyway?", FALSE) == FALSE) then return end
+			--withdraw a little bit of energy just to prevent command-spam
+			player.energy = player.energy - energy / 3
+			--if (get_check2("You do not have enough "..get_power_name(s)..", do you want to try anyway?", FALSE) == FALSE) then return end
 			msg_print(i, "You do not have enough mana to cast "..spell(s).name..".")
-				return 0
+			return 0
 		end
 
 --[[		-- Sanity check for direction
@@ -785,7 +786,7 @@ function cast_school_spell(i, s, s_ptr, no_cost, other)
 			-- Reduce mana BEFORE casting the spell, for Necromancy to work effectively:
 			-- If the monster dies, MP should not get refunded before the spell cost was actually deducted.
 			adjust_power(i, s, -mp_cost)
-			use  = TRUE
+			use = TRUE
 
 			if (__spell_spell[s](other) ~= nil) then
 				--correct the situation - we have to do it this way round,

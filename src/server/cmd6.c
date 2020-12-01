@@ -4350,7 +4350,7 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
  */
 void do_cmd_zap_rod(int Ind, int item, int dir) {
 	player_type *p_ptr = Players[Ind];
-	int lev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr);
+	int lev, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
 	object_type *o_ptr;
 	u32b f4, dummy;
 #ifdef NEW_MDEV_STACKING
@@ -4490,7 +4490,8 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 	un_afk_idle(Ind);
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos) / ((f4 & TR4_FAST_CAST) ? 2 : 1);
+	energy = level_speed(&p_ptr->wpos) / ((f4 & TR4_FAST_CAST) ? 2 : 1);
+	p_ptr->energy -= energy;
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -4547,6 +4548,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 		XID_paranoia(p_ptr);
  #endif
 #endif
+
+		/* Noticing that the rod is charging takes only half a rod-using turn - refund the rest */
+		p_ptr->energy += energy / 2;
 		return;
 	}
 
@@ -4638,7 +4642,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
  */
 void do_cmd_zap_rod_dir(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
-	int lev, item, ident, rad = DEFAULT_RADIUS_DEV(p_ptr);
+	int lev, item, ident, rad = DEFAULT_RADIUS_DEV(p_ptr), energy;
 	object_type *o_ptr;
 	u32b f4, dummy;
 	/* Hack -- let perception get aborted */
@@ -4730,7 +4734,8 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	un_afk_idle(Ind);
 
 	/* Take a turn */
-	p_ptr->energy -= level_speed(&p_ptr->wpos) / ((f4 & TR4_FAST_CAST) ? 2 : 1);
+	energy = level_speed(&p_ptr->wpos) / ((f4 & TR4_FAST_CAST) ? 2 : 1);
+	p_ptr->energy -= energy;
 
 	/* Not identified yet */
 	ident = FALSE;
@@ -4781,6 +4786,10 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 		if (o_ptr->number == 1) msg_format(Ind, "\377%cThe rod is still charging.", COLOUR_MD_NOCHARGE);
 		else msg_format(Ind, "\377%cThe rods are still charging.", COLOUR_MD_NOCHARGE);
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+
+		/* Noticing that the rod is charging takes only half a rod-using turn - refund the rest */
+		p_ptr->energy += energy / 2;
+
 		return;
 	}
 
@@ -5559,6 +5568,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		XID_paranoia(p_ptr);
  #endif
 #endif
+
+		/* Noticing that the object is charging takes only half a turn - refund the rest */
+		p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
+
 		return;
 	}
 
