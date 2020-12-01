@@ -7350,14 +7350,13 @@ if (cfg.unikill_format) {
 			qq_ptr->name2b = 0;
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
-			object_wipe(qq_ptr);
-			invcopy(qq_ptr, lookup_kind(TV_DRAG_ARMOR, SV_DRAGON_SKY));
-			qq_ptr->number = 1;
-			qq_ptr->note = local_quark;
-			qq_ptr->note_utag = strlen(quark_str(local_quark));
-			qq_ptr->name1 = ART_RANDART;
 			tries = 500;
 			while (tries) {
+				object_wipe(qq_ptr);
+				invcopy(qq_ptr, lookup_kind(TV_DRAG_ARMOR, SV_DRAGON_SKY));
+				qq_ptr->number = 1;
+				qq_ptr->name1 = ART_RANDART;
+
 				/* Piece together a 32-bit random seed */
 				qq_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
 				qq_ptr->name3 += rand_int(0xFFFF);
@@ -7365,13 +7364,15 @@ if (cfg.unikill_format) {
 
 				a_ptr = randart_make(qq_ptr);
 				if (artifact_power(a_ptr) >= 105 + 5 && /* at least +1 new mod gained; and +extra bonus boost */
-				    qq_ptr->to_a > 0 && /* not cursed */
+				    qq_ptr->to_a > 0 && qq_ptr->to_h >= k_info[qq_ptr->k_idx].to_h && /* no lingering cursed effects */
 				    !(a_ptr->flags3 & (TR3_AGGRAVATE | TR3_NO_MAGIC)))
 					break;
 				tries--;
 			}
 			if (!tries) msg_format(Ind, "RI_LIVING_LIGHTNING: Re-rolling out of tries!");
 
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
 			qq_ptr->timeout_magic = 0;
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 
