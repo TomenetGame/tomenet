@@ -3925,19 +3925,31 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/testyourmight")  ||
 		    prefix(messagelc, "/tym")) {
 			long tmp;
-			if (tk != 1 || (tk == 1 && strcmp(token[1], "rs") && strcmp(token[1], "show"))) {
-				msg_print(Ind, "Usage: /testyourmight <show|rs>");
+			if (tk != 1 || (tk == 1 && strcmp(token[1], "rs") && tk == 1 && strcmp(token[1], "rsw") && strcmp(token[1], "show"))) {
+				msg_print(Ind, "Usage: /testyourmight <show|rs[w]>");
 				msg_print(Ind, "       '/testyourmight show' will display your current damage/heal stats,");
-				msg_print(Ind, "        based on your number of *successful* attacks and over the time");
-				msg_print(Ind, "        passed, in seconds.");
-				msg_print(Ind, "        \377yNOTE: Having high +Speed and +EA is a problem, see /tym in the guide!");
+				msg_print(Ind, "         based on your number of *successful* attacks and over the time");
+				msg_print(Ind, "         passed, in seconds.");
+				msg_print(Ind, "         \377yNOTE: Having high +Speed and +EA is a problem, see /tym in the guide!");
 				msg_print(Ind, "       '/testyourmight rs' will reset the recorded stats to zero.");
+				msg_print(Ind, "       '/testyourmight rsw' will reset the recorded stats to zero and wait with");
+				msg_print(Ind, "        counting until you perform your next attack.");
 				return;
 			}
 			if (!strcmp(token[1], "rs")) {
 				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
 				p_ptr->test_turn = turn;
 				msg_print(Ind, "Attack count, damage and healing done have been reset to zero.");
+#ifdef TEST_SERVER
+				p_ptr->test_attacks = 0;
+#endif
+				return;
+			}
+			if (!strcmp(token[1], "rsw")) {
+				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
+				p_ptr->test_turn = 0;
+				msg_print(Ind, "Attack count, damage and healing done have been reset to zero");
+				msg_print(Ind, " and put on hold until your next attack, which will start the counter.");
 #ifdef TEST_SERVER
 				p_ptr->test_attacks = 0;
 #endif
@@ -3968,12 +3980,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
 #endif
 
-			if (p_ptr->test_turn == 0)
-				msg_print(Ind, "    \377sNo time-based result available: Initialize via '/testyourmight rs'.");
+			if (p_ptr->test_turn == 0) {
+				msg_print(Ind, "    \377sNo time-based result available,");
+				msg_print(Ind, "     either attack something or start live-checking via \377y/testyourmight rs");
 			/* this shouldn't happen.. - except on 'turn' overflow/reset */
-			else if ((turn - p_ptr->test_turn) < cfg.fps)
-				msg_print(Ind,  "    \377sNo time-based result available: No second has passed yet.");
-			else {
+			} else if ((turn - p_ptr->test_turn) < cfg.fps) {
+				msg_print(Ind,  "    \377sNo time-based result available: No second has passed yet,");
+				msg_print(Ind,  "    \377s please reinitialize via \377y/testyourmight rs[w]");
+			} else {
 				msg_format(Ind, "    \377w# of seconds passed:      %8d.%1d", (turn - p_ptr->test_turn) / cfg.fps, (((turn - p_ptr->test_turn) * 10) / cfg.fps) % 10);
 				tmp = (p_ptr->test_dam * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
 				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8ld.%1d",

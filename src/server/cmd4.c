@@ -1776,6 +1776,338 @@ if ((compaction == 1 || compaction == 2) /*#ifdef COMPACT_PLAYERLIST*/
 	fd_kill(file_name);
 }
 
+void write_player_info(int Ind, char *pinfo) {
+#if 0 /* wip */
+
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	int k;
+
+	bool admin = is_admin(p_ptr);
+	char flag_str[12];
+	bool iddc;
+	bool big_map = (p_ptr->screen_hgt != SCREEN_HGT); //BIG_MAP is currently turned on for this player?
+
+	/* Scan the player races */
+	for (k = 1; k <= NumPlayers; k++) {
+		q_ptr = Players[k];
+		flag_str[0] = '\0';
+		byte attr = 'w';
+
+		/* Only print connected players */
+		if (q_ptr->conn == NOT_CONNECTED)
+			continue;
+
+		/* don't display the dungeon master if the secret_dungeon_master
+		 * option is set
+		 */
+		if (q_ptr->admin_dm &&
+		   (cfg.secret_dungeon_master) && !admin) continue;
+
+		iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
+
+
+
+
+		/*** Determine color ***/
+		/* Print self in green */
+		if (Ind == k) attr = 'G';
+		/* Print other PvP-mode chars in orange */
+		else if ((p_ptr->mode & MODE_PVP) && (q_ptr->mode & MODE_PVP)) attr = COLOUR_MODE_PVP;
+		/* Print party members in blue */
+		else if (p_ptr->party && p_ptr->party == q_ptr->party) attr = 'B';
+		/* Print hostile players in red */
+		else if (check_hostile(Ind, k)) attr = 'r';
+#ifdef IDDC_CHAR_COLOUR_INDICATOR
+		if (attr == 'w' && iddc) attr = 's';
+#endif
+
+
+
+
+//	     do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));   ---> :
+
+	player_type *p_ptr = Players[Ind];
+	int modify_number = 0, compaction = (p_ptr->player_list ? 2 : 0) + (p_ptr->player_list2 ? 1 : 0);
+	cptr p = "";
+	char info_chars[4];
+	bool text_pk = FALSE, text_silent = FALSE, text_afk = FALSE, text_ignoring_chat = FALSE, text_allow_dm_chat = FALSE;
+	bool iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
+	bool iddc0 = in_irondeepdive(&p_ptr->wpos) || (p_ptr->mode & MODE_DED_IDDC);
+	bool cant_iddc = !iddc && q_ptr->max_exp;
+	bool cant_iddc0 = !iddc0 && p_ptr->max_exp;
+	char attr_p[3];
+
+	bool wont_get_exp;
+#ifdef ANTI_MAXPLV_EXPLOIT
+ #ifdef ANTI_MAXPLV_EXPLOIT_SOFTLEV
+	int diff = (q_ptr->max_lev + q_ptr->max_plv - p_ptr->max_lev - p_ptr->max_plv) / 2 - ((MAX_PARTY_LEVEL_DIFF + 1) * 3) / 2;
+ #else
+  #ifndef ANTI_MAXPLV_EXPLOIT_SOFTEXP
+	int diff = (q_ptr->max_lev + q_ptr->max_plv - p_ptr->max_lev - p_ptr->max_plv) / 2 - (MAX_PARTY_LEVEL_DIFF + 1);
+  #endif
+ #endif
+#endif
+
+	/* NOTE: This won't work well with ANTI_MAXPLV_EXPLOIT_SOFTEXP code.
+	   NOTE2: Some of these rules might produce asymmetrical colouring,
+		  because they ask 'will _I_ get exp from _his_ kills'. */
+	wont_get_exp =
+	    ((p_ptr->total_winner && !(q_ptr->total_winner || q_ptr->once_winner)) ||
+	    (q_ptr->total_winner && !(p_ptr->total_winner || p_ptr->once_winner)) ||
+#ifdef ANTI_MAXPLV_EXPLOIT
+ #if defined(ANTI_MAXPLV_EXPLOIT_SOFTLEV) || !defined(ANTI_MAXPLV_EXPLOIT_SOFTEXP)
+	    (!p_ptr->total_winner && diff > 0) ||
+ #endif
+#endif
+	    (p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_KING_PARTY_LEVEL_DIFF) ||
+	    (!p_ptr->total_winner && ABS(p_ptr->max_lev - q_ptr->max_lev) > MAX_PARTY_LEVEL_DIFF));
+
+#ifdef KING_PARTY_FREE_THRESHOLD
+	if (KING_PARTY_FREE_THRESHOLD && p_ptr->total_winner && q_ptr->total_winner && p_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD && q_ptr->max_lev >= KING_PARTY_FREE_THRESHOLD) wont_get_exp = FALSE;
+#endif
+
+	attr_p[0] = 0;
+	if (attr == 'w') {
+		/* display level in light blue for partyable players */
+		if (!wont_get_exp &&
+		    !compat_pmode(Ind, q_ptr->Ind, FALSE) &&
+		    !((iddc && cant_iddc0) || (iddc0 && cant_iddc))) /* if one of them is in iddc and the other cant go there, we cant party */
+			strcpy(attr_p, "\377B");
+#ifdef IDDC_CHAR_COLOUR_INDICATOR
+		if (iddc) attr = 's';
+#endif
+	} else if (attr == 'B') {
+		/* display level in grey for party members out of our exp-sharing range. */
+		if (wont_get_exp) strcpy(attr_p, "\377s");
+	}
+
+	/* Prepare title at this point already */
+	p = get_ptitle(q_ptr, FALSE);
+
+	char flag_str[12];
+
+	/* Print a message */
+	fprintf(fff," ");
+	if (is_admin(q_ptr)) fprintf(fff,"\377b");
+	else if (q_ptr->mode & MODE_PVP) fprintf(fff, "\377%c", COLOUR_MODE_PVP);
+	else if (q_ptr->ghost) fprintf(fff, "\377r");
+	else if (q_ptr->total_winner) fprintf(fff, "\377v");
+	else fprintf(fff, "\377%c", attr);
+
+  #ifdef COMPACT_GENDER
+	fprintf(fff, "%s,\377%c %c.%sL%d\377%c ", q_ptr->name, attr, q_ptr->male ? 'm' : 'f', attr_p, q_ptr->lev, attr);
+  #else
+	fprintf(fff, "%s, %sL%d\377%c ", q_ptr->name, attr_p, q_ptr->lev, attr);
+  #endif
+
+	fprintf(fff, "%s", get_prace2(q_ptr));
+	fprintf(fff, "%s", class_info[q_ptr->pclass].title);
+
+	/* location */
+	if (attr == 'G' || attr == 'B' || admin
+#ifdef IDDC_CHAR_POSITION_INDICATOR
+	    || iddc
+#endif
+	    ) {
+		// BAD HACK: just replacing 'Ind' by number constants..
+  #if 0 /* 'The Sacred Land of Mountains' <- too long for this ultra compact scheme! */
+		if (admin) fprintf(fff, ", %s", wpos_format(1, &q_ptr->wpos));
+		else fprintf(fff, ", %s", wpos_format(-1, &q_ptr->wpos));
+  #else /* ..so give everyone exact wpos, like otherwise only admins get */
+#if 0 /* normal */
+		fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
+#else /* hack: admins see coloured depth, colour indicating how close to game bosses [Sauron/Morgoth/Tik and beyond] they are */
+		char col = '\0';
+
+		if (admin && attr != 'G' && q_ptr->wpos.wz && !isdungeontown(&q_ptr->wpos)) {
+			int lv = getlevel(&q_ptr->wpos);
+			struct dungeon_type *d_ptr = getdungeon(&q_ptr->wpos);
+
+			if (lv >= 126 || d_ptr->type == DI_MT_DOOM || (lv >= 98 && !q_ptr->total_winner && q_ptr->r_killed[RI_SAURON] == 1)) col = 'R';
+			/* extended hack: see orange colour for 'engaged' characters, ie not in town and not afk */
+			else if (!q_ptr->afk) col = 'o';
+		}
+		if (col) fprintf(fff, ", %s%c%s%s", "\377", col, wpos_format_compact(Ind, &q_ptr->wpos), "\377-");
+		else fprintf(fff, ", %s", wpos_format_compact(Ind, &q_ptr->wpos));
+#endif
+  #endif
+
+		fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
+
+		/* Quest flag */
+		//fprintf(fff, " %c", (q_ptr->xorder_id ? 'X' : ' '));
+	}
+
+	/* PK */
+	if (cfg.use_pk_rules == PK_RULES_DECLARE) {
+		text_pk = TRUE;
+#ifdef KURZEL_PK
+		if (q_ptr->pkill & PKILL_SET) fprintf(fff, "\377R (PK");
+		else text_pk = FALSE;
+#else
+		if(q_ptr->pkill & (PKILL_SET | PKILL_KILLER))
+			fprintf(fff, " (PK");
+		else if(!(q_ptr->pkill & PKILL_KILLABLE))
+			fprintf(fff, " (SAFE");
+		else if(!(q_ptr->tim_pkill))
+			fprintf(fff, q_ptr->lev < 5 ? " (New" : " (Kill");
+		else
+			text_pk = FALSE;
+#endif
+	}
+	if (q_ptr->limit_chat) {
+		text_silent = TRUE;
+		if (text_pk)
+			fprintf(fff, ", Silent");
+		else
+			fprintf(fff, " (Silent");
+	}
+
+	/* AFK */
+	if (q_ptr->afk) {
+		text_afk = TRUE;
+		if (text_pk || text_silent) {
+				fprintf(fff, ", AFK");
+		} else {
+				fprintf(fff, " (AFK");
+		}
+	}
+	/* Ignoring normal chat (sees only private & party messages) */
+	if (q_ptr->ignoring_chat) {
+		text_ignoring_chat = TRUE;
+		if (text_pk || text_silent || text_afk) {
+			fprintf(fff, ", %s", q_ptr->ignoring_chat == 1 ? "Private" : "*Private*");
+		} else {
+			fprintf(fff, " (%s", q_ptr->ignoring_chat == 1 ? "Private" : "*Private*");
+		}
+	}
+	if (q_ptr->admin_dm_chat) {
+		text_allow_dm_chat = TRUE;
+		if (text_pk || text_silent || text_afk || text_ignoring_chat) {
+			fprintf(fff, ", Chat");
+		} else {
+			fprintf(fff, " (Chat");
+		}
+	}
+	if (text_pk || text_silent || text_afk || text_ignoring_chat || text_allow_dm_chat) fprintf(fff, ")");
+
+
+	/* 2nd line */
+	if (q_ptr->inval) {
+		if (q_ptr->v_unknown && admin) strcpy(flag_str, "\377yI\377rU");
+		else if (q_ptr->v_test_latest && admin) strcpy(flag_str, "\377yI\377oT");
+		else if (q_ptr->v_test && admin) strcpy(flag_str, "\377yI\377ot");
+		else if (q_ptr->v_outdated) strcpy(flag_str, "\377yI\377DO");
+		else if (!q_ptr->v_latest && admin) strcpy(flag_str, "\377yI\377sL");
+		else strcpy(flag_str, "\377yI ");
+	} else {
+		if (q_ptr->v_unknown && admin) strcpy(flag_str, "\377rU ");
+		else if (q_ptr->v_test_latest && admin) strcpy(flag_str, "\377oT ");
+		else if (q_ptr->v_test && admin) strcpy(flag_str, "\377ot ");
+		else if (q_ptr->v_outdated) strcpy(flag_str, "\377DO ");
+		else if (!q_ptr->v_latest && admin) strcpy(flag_str, "\377sL ");
+		else strcpy(flag_str, "  ");
+	}
+	fprintf(fff, "\n %s\377", flag_str);
+
+
+	if (q_ptr->fruit_bat == 1)
+		strcpy(info_chars, format("\377%cb", color_attr_to_char(q_ptr->cp_ptr->color)));
+	else
+		strcpy(info_chars, format("\377%c@", color_attr_to_char(q_ptr->cp_ptr->color)));
+
+	switch (q_ptr->mode & MODE_MASK) { // TODO: give better modifiers
+		default:
+		case MODE_NORMAL:
+			fprintf(fff, "W");
+			break;
+		case MODE_EVERLASTING:
+			fprintf(fff, "B");
+			break;
+		case MODE_PVP:
+			fprintf(fff, "%c", COLOUR_MODE_PVP);
+			break;
+		case (MODE_HARD | MODE_NO_GHOST):
+			fprintf(fff, "r");
+			break;
+		case MODE_HARD:
+			fprintf(fff, "s");
+			break;
+		case MODE_NO_GHOST:
+			fprintf(fff, "D");
+			break;
+	}
+
+	fprintf(fff, "*%s\377U", info_chars);
+	//fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
+	fprintf(fff, " (%s@%s)", q_ptr->accountname, q_ptr->hostname);
+
+  #ifndef COMPACT_GENDER
+	fprintf(fff, ", %s", q_ptr->male ? "Male" : "Female");
+  #endif
+
+	/* overlapping AFK msg with guild/party names */
+	if ((!q_ptr->afk) || !strlen(q_ptr->afk_msg)) {
+		if (!q_ptr->info_msg[0]) {
+			if (q_ptr->guild)
+				fprintf(fff, ", \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
+			if (q_ptr->party) {
+				if (!q_ptr->guild) fprintf(fff, ", Party:");
+				if (admin) { /* colourize (non-iron) party names for admins, for easy visual overview */
+					char pcol[3];
+					pcol[0] = '\377'; pcol[2] = 0;
+					pcol[1] = color_attr_to_char(parties[q_ptr->party].attr);
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, " '%s%s\377U'",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+				} else {
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, " '%s%s\377U'",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+				}
+			}
+		} else fprintf(fff, "  \377U(%s\377U)", q_ptr->info_msg);
+		if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
+	} else fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
+
+
+
+
+
+
+
+#ifdef ADMIN_EXTRA_STATISTICS
+		if (admin) fprintf(fff, "%s%s%s",
+		    !q_ptr->exp_bar ?
+ #if 0
+		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
+		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
+ #else
+		    (q_ptr->audio_mus > 0 ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
+		    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
+ #endif
+ #if 0
+		    , q_ptr->custom_font ? "\377wf\377-" : "", ""
+ #else /* combine custom font and OS type O_o */
+				    , q_ptr->custom_font ? "\377w" : "\377D"
+				    , q_ptr->version.os == OS_WIN32 ? "W\377-" : (q_ptr->version.os == OS_GCU ? "G\377-" : (q_ptr->version.os == OS_X11 ? "X\377-" : (q_ptr->version.os == OS_GCU_X11 ? "L\377-" : (q_ptr->version.os == OS_OS
+ #endif
+		    );
+#endif
+
+#endif /* wip */
+}
+
  /*
  * Check the equipments of other player.
  */
@@ -1828,7 +2160,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 		/* else continue; */
 
 		/* Only party member or those on the same dungeon level */
-		//                              if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
+		//if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
 		if ((attr != 'B') && (attr != 'w') && !admin) {
 			/* Make sure this player is at this depth */
 			if(!inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;

@@ -4587,6 +4587,7 @@
 #define PW_CHAT		0x00000020L	/* Display chat messages */
 #define PW_MINIMAP	0x00000040L	/* Display minimap */
 #define PW_LAGOMETER	0x00000080L	/* Display the lag-o-meter */
+#define PW_PLAYERLIST	0x00000100L	/* Display player list */
 /* flags currently not used by the client */
 #define PW_OVERHEAD	0x00001000L	/* Display overhead view */
 #define PW_MONSTER	0x00002000L	/* Display monster recall */

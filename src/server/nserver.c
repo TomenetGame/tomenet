@@ -8866,6 +8866,26 @@ int Send_indicators(int Ind, u32b indicators) {
 	return Packet_printf(&connp->c, "%c%d", PKT_INDICATORS, indicators);
 }
 
+int Send_playerlist(int Ind) {
+	int i;
+	char playerinfo[MAX_CHARS_WIDE * 2];
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for playerlist (%d.%d.%d)",
+					Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	Packet_printf(&connp->c, "%c%d", PKT_PLAYERLIST, NumPlayers);
+	for (i = 1; i < NumPlayers; i++) {
+		write_player_info(i, playerinfo);
+		Packet_printf(&connp->c, "%s", playerinfo);
+	}
+	return 1;
+}
+
 /*
  * Return codes for the "Receive_XXX" functions are as follows:
  *

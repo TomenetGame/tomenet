@@ -1963,6 +1963,7 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	}
 
 	if (IS_PLAYER(Ind_attacker)) {
+		if (!Players[Ind_attacker]->test_turn) Players[Ind_attacker]->test_turn = turn - 1; /* Start counting damage now */
 		Players[Ind_attacker]->test_count++;
 		Players[Ind_attacker]->test_dam += damage;
 	}

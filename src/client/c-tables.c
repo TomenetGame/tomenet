@@ -155,8 +155,7 @@ cptr window_flag_desc[32] =
 	NULL
 };
 #else
-cptr window_flag_desc[8] =
-{
+cptr window_flag_desc[9] = {
 	"Display inven/equip",
 	"Display equip/inven",
 	"Display character",
@@ -165,6 +164,7 @@ cptr window_flag_desc[8] =
 	"Display chat messages",
 	"Display mini-map",
 	"Display lag-o-meter",
+	"Display player list",
 };
 #endif
 

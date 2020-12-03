@@ -2040,6 +2040,36 @@ static void fix_lagometer(void) {
 	}
 }
 
+void fix_playerlist(void) {
+	int i, j;
+
+	/* Scan windows */
+	for (j = 0; j < ANGBAND_TERM_MAX; j++) {
+		term *old = Term;
+
+		/* No window */
+		if (!ang_term[j]) continue;
+
+		/* No relevant flags */
+		if (!(window_flag[j] & PW_PLAYERLIST)) continue;
+
+		/* Activate */
+		Term_activate(ang_term[j]);
+
+		/* List players */
+		Term_clear();
+		prt("- [Players Online] -", 1, 30);
+		for (i = 0; i < NumPlayers; i++)
+			prt(playerlist[i], 3 + i, 30);
+
+		/* Fresh */
+		Term_fresh();
+
+		/* Restore */
+		Term_activate(old);
+	}
+}
+
 /*
  * Hack -- pass color info around this file
  */

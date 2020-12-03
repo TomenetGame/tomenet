@@ -177,8 +177,8 @@ static void Receive_init(void) {
 	receive_tbl[PKT_POWERS_INFO]	= Receive_powers_info;
 
 	receive_tbl[PKT_GUIDE]		= Receive_Guide;
-
 	receive_tbl[PKT_INDICATORS]	= Receive_indicators;
+	receive_tbl[PKT_PLAYERLIST]	= Receive_playerlist;
 }
 
 
@@ -4852,6 +4852,18 @@ int Receive_indicators(void) {
 	if (screen_icky) Term_switch(0);
 	prt_indicators(indicators);
 	if (screen_icky) Term_switch(0);
+
+	return 1;
+}
+
+int Receive_playerlist(void) {
+	int i, n;
+	char ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &NumPlayers)) <= 0) return n;
+	for (i = 0; i < NumPlayers; i++) Packet_scanf(&rbuf, "%s", playerlist[i]);
+
+	fix_playerlist();
 
 	return 1;
 }

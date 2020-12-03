@@ -658,3 +658,6 @@ char cfg_musicpackfolder[1024];
 
 bool within_cmd_player = FALSE;
 int within_cmd_player_ticks;
+
+int NumPlayers = 0;
+char playerlist[1000][MAX_CHARS_WIDE * 2];

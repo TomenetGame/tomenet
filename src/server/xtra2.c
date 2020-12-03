@@ -10578,6 +10578,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
 
+	if (!p_ptr->test_turn) p_ptr->test_turn = turn - 1; /* Start counting damage now */
 	p_ptr->test_count++;
 	p_ptr->test_dam += dam;
 

@@ -97,7 +97,7 @@ extern option_type option_info[];
 extern cptr stat_names[6];
 extern cptr stat_names_reduced[6];
 extern char ang_term_name[ANGBAND_TERM_MAX][40];
-extern cptr window_flag_desc[8];
+extern cptr window_flag_desc[9];
 extern monster_spell_type monster_spells4[32];
 extern monster_spell_type monster_spells5[32];
 extern monster_spell_type monster_spells6[32];
@@ -675,7 +675,6 @@ extern void prt_res_pois(bool is_resisted);
 extern void prt_res_divine(bool is_resisted);
 extern void prt_esp(bool is_full_esp);
 
-
 extern int p_speed;
 extern bool no_tele_grid;
 extern void do_weather(bool no_weather);
@@ -687,6 +686,8 @@ extern byte panel_map_a[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 extern char panel_map_c[MAX_SCREEN_WID][MAX_SCREEN_HGT];
 extern int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10];
 extern int cloud_xm100[10], cloud_ym100[10], cloud_xfrac[10], cloud_yfrac[10];
+
+extern void fix_playerlist(void);
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);
@@ -1082,3 +1083,6 @@ extern bool st_bar;
 
 extern char cfg_soundpackfolder[1024];
 extern char cfg_musicpackfolder[1024];
+
+extern int NumPlayers;
+extern char playerlist[1000][MAX_CHARS_WIDE * 2];

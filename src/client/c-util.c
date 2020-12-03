@@ -15,7 +15,7 @@
 #define MACRO_USE_STD	0x02
 #define MACRO_USE_HYB	0x04
 
-#define NR_OPTIONS_SHOWN	8 /* apparently # of term windows (old comment: was 32 when there were 32 window_flag_desc[]) */
+#define NR_OPTIONS_SHOWN	9 /* # of possible sub-window types, see window_flag_desc[]) */
 
 /* Have the Macro Wizard generate target code in
    the form *tXXX- instead of XXX*t? - C. Blue */
