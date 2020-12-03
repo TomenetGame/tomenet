@@ -9474,11 +9474,11 @@ See (5.3) to get an easy overview.
 You cannot use special moves while stunned or confused.
 
 Here is a list of Martial Arts special moves:
-A move is picked randomly, then used if random(1..MA_Skill)>chance.
-If the chance fails, another move is picked.
-There are MA_Skill / 7 tries to find a move, otherwise you will hit
-without a special move. There is always at least 1 try to pick a
-move.
+A move is picked randomly, then kept in mind if random(1..MA_Skill)>chance.
+There are MA_Skill / 7 such tries to find moves, for each attack you perform.
+The highest level move of those passing this random check will then be used.
+If no eligible move was found in all tries, you will just hit without using a
+special move. There is always at least 1 try to pick a move.
 
 Move             |   Min.level   |   Chance  |   Damage dice |   Effects
 ---------------------------------------------------------------------------
