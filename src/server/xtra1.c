@@ -6824,8 +6824,8 @@ void calc_boni(int Ind) {
 								if (k_ptr->flags1 & TR1_BLOWS) csheet_boni[i].blow += o_ptr->bpval;
 							}
 							if (k_ptr->flags5 & TR5_PVAL_MASK) {
-								if (f5 & TR5_LUCK) csheet_boni[i].luck += o_ptr->bpval;
-								if (f5 & TR5_CRIT) csheet_boni[i].crit += o_ptr->bpval;
+								if (k_ptr->flags5 & TR5_LUCK) csheet_boni[i].luck += o_ptr->bpval;
+								if (k_ptr->flags5 & TR5_CRIT) csheet_boni[i].crit += o_ptr->bpval;
 							}
 						}
 						
