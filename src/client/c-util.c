@@ -5387,9 +5387,10 @@ void interact_macros(void) {
 #define mw_stance 'I'
 #define mw_shoot 'j'
 #define mw_trap 'H'
-#define mw_device 'l'
+#define mw_device 'J'
 #define mw_anydir 'k'
 #define mw_any 'K'
+#define mw_common 'l'
 #define mw_abilitynt 'm'
 #define mw_abilityt 'M'
 #define mw_slash 'n'
@@ -5443,17 +5444,17 @@ Chain_Macro:
 				switch (i) {
 				case 0:
 					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(8, 10, -1, TERM_L_GREEN, "a/b) Drink a potion/read a scroll");
-					Term_putstr(8, 11, -1, TERM_L_GREEN, "c/C) Fire ranged weapon/throw an item");
+					Term_putstr(8, 10, -1, TERM_L_GREEN, "a/b) Drink a potion / Read a scroll");
+					Term_putstr(8, 11, -1, TERM_L_GREEN, "c/C) Fire ranged weapon / Throw an item");
 					Term_putstr(8, 12, -1, TERM_L_GREEN, "d/D) Cast school/mimic spell without a target (or target manually)");
 					Term_putstr(8, 13, -1, TERM_L_GREEN, "e/E) Cast school/mimic spell with target");
 					Term_putstr(8, 14, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target)");
-					Term_putstr(8, 15, -1, TERM_L_GREEN, "g/G) Polymorph into monster/set preferred immunity (mimicry users)");
+					Term_putstr(8, 15, -1, TERM_L_GREEN, "g/G) Polymorph into monster / Set preferred immunity (mimicry users)");
 					Term_putstr(8, 16, -1, TERM_L_GREEN, "h/H) Draw runes to cast a runespell / set up a monster trap");
-					Term_putstr(8, 17, -1, TERM_L_GREEN, "i/I) Use a fighting technique/switch combat stance (most melee classes)");
-					Term_putstr(8, 18, -1, TERM_L_GREEN, "j)   Use a shooting technique (archers and rangers)");
-					Term_putstr(8, 19, -1, TERM_L_GREEN, "k/K) Use any item with / without a target)");
-					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Use a magic device or activate an item");
+					Term_putstr(8, 17, -1, TERM_L_GREEN, "i/I) Fighting technique / Switch combat stance (most melee classes)");
+					Term_putstr(8, 18, -1, TERM_L_GREEN, "j/J) Shooting technique (archers, rangers) / Activate magic device");
+					Term_putstr(8, 19, -1, TERM_L_GREEN, "k/K) Use any item with/without a target)");
+					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Choose from a set of some common commands and functions");
 					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target (Draconian breath)");
 					Term_putstr(8, 22, -1, TERM_L_GREEN, "n/N) Enter a slash command / Enter a custom action (same as % a)");
 					Term_putstr(8, 23, -1, TERM_L_GREEN, "o/p) Load a macro file / change equipment (wield/takeoff/swap)");
@@ -5474,7 +5475,7 @@ Chain_Macro:
 							if ((choice < 'a' || choice > mw_LAST) &&
 							    choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' &&
 							    choice != 'G' && choice != 'I' && choice != 'K' && choice != 'H' &&
-							    choice != 'N') {
+							    choice != 'J' && choice != 'N') {
 								//i = -1;
 								continue;
 							}
@@ -5957,6 +5958,79 @@ Chain_Macro:
 						choice = mw_equip;
 						should_wait = TRUE;
 						break;
+
+					case mw_common:
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose one of these common commands and functions:");
+						Term_putstr(15, 12, -1, TERM_L_GREEN, "a) reply to last incoming whisper                 :+:");
+						Term_putstr(15, 13, -1, TERM_L_GREEN, "b) repeat previous chat command or message        :^P\\r");
+						Term_putstr(15, 14, -1, TERM_L_GREEN, "c) toggle AFK state                               :/afk\\r");
+						Term_putstr(15, 15, -1, TERM_L_GREEN, "d) word-of-recall (item must be inscribed '@R')   :/rec\\r");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "e) cough (reduces sleep of monsters nearby)       :/cough\\r");
+						Term_putstr(15, 17, -1, TERM_L_GREEN, "f) shout (breaks sleep of monsters nearby)        :/sleep\\r");
+						Term_putstr(15, 18, -1, TERM_L_GREEN, "g) display some extra information                 :/ex\\r");
+						Term_putstr(15, 19, -1, TERM_L_GREEN, "h) display in-game time (daylight is 6am-10pm)    :/time\\r");
+						Term_putstr(15, 20, -1, TERM_L_GREEN, "i) prompt for a guide quick search                :/? ");
+						if (c_cfg.rogue_like_commands) {
+							Term_putstr(15, 21, -1, TERM_L_GREEN, "j) swap-item #1 (inscribe two items '@x0')        S0");
+							Term_putstr(15, 22, -1, TERM_L_GREEN, "k) swap-item #2 (inscribe two items '@x1')        S1");
+							Term_putstr(15, 23, -1, TERM_L_GREEN, "l) swap-item #3 (inscribe two items '@x2')        S2");
+						} else {
+							Term_putstr(15, 21, -1, TERM_L_GREEN, "j) swap-item #1 (inscribe two items '@x0')        x0");
+							Term_putstr(15, 22, -1, TERM_L_GREEN, "k) swap-item #2 (inscribe two items '@x1')        x1");
+							Term_putstr(15, 23, -1, TERM_L_GREEN, "l) swap-item #3 (inscribe two items '@x2')        x2");
+						}
+
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -2; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (choice < 'a' || choice > 'l') {
+									//i = -1;
+									continue;
+								}
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -2) continue;
+
+						/* build macro part */
+						switch (choice) {
+						case 'a': strcpy(buf2, ":+:"); break;
+						case 'b': strcpy(buf2, ":^P\\r"); break;
+						case 'c': strcpy(buf2, ":/afk\\r"); break;
+						case 'd': strcpy(buf2, ":/rec\\r"); break;
+						case 'e': strcpy(buf2, ":/cough\\r"); break;
+						case 'f': strcpy(buf2, ":/shout\\r"); break;
+						case 'g': strcpy(buf2, ":/ex\\r"); break;
+						case 'h': strcpy(buf2, ":/time\\r"); break;
+						case 'i': strcpy(buf2, ":/? "); break;
+						case 'j':
+							if (c_cfg.rogue_like_commands) strcpy(buf2, "\e)S0");
+							else strcpy(buf2, "\e)x0");
+							break;
+						case 'k':
+							if (c_cfg.rogue_like_commands) strcpy(buf2, "\e)S1");
+							else strcpy(buf2, "\e)x1");
+							break;
+						case 'l':
+							if (c_cfg.rogue_like_commands) strcpy(buf2, "\e)S2");
+							else strcpy(buf2, "\e)x2");
+							break;
+						}
+
+						/* hack before we exit: remember menu choice 'common' */
+						choice = mw_common;
+						break;
 					}
 
 					/* --------------- specify item/parm if required --------------- */
@@ -6003,7 +6077,7 @@ Chain_Macro:
 						if (i == -2) continue;
 					}
 					/* no need for inputting an item/spell to use with the macro? */
-					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance) {
+					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance && choice != mw_common) {
 						if (choice == mw_load) Term_gotoxy(23, 16);
 						else if (choice == mw_poly) Term_gotoxy(47, 17);
 						else Term_gotoxy(47, 16);
@@ -6022,7 +6096,7 @@ Chain_Macro:
 					/* --------------- complete the macro by glueing premade part and default part together --------------- */
 
 					/* generate the full macro action; magic device/preferred immunity macros are already pre-made */
-					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom) {
+					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)
