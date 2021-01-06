@@ -30,6 +30,10 @@ S:0601
 E:0800
 D:Are you having fun yet?
 
+S:0600
+E:0630
+D:The morning sun vanquishes the horrible night.
+
 S:0800
 E:0905
 D:Cereals or buns?
@@ -77,6 +81,10 @@ D:Night is coming. Danger! Danger!
 S:2000
 E:2059
 D:Take a Vampire out for dinner!
+
+S:2000
+E:2030
+D:What a horrible night to have a curse.
 
 S:2100
 E:2159
