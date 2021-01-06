@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 3. December 2020 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 6. Januar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -520,6 +520,9 @@ x       S       swap an item. This is basically like both "wear/wield" and
                 When the item is currently in the inventory, it will be
                 equipped. If it already is equipped though, then it will be
                 taken off.
+                Note for rogue-like keymap:
+                Although the key is 'S', the actual item inscriptions must
+                still use 'x', eg '@x0' when the macro is 'S0'!
 
 q       q       quaff a potion.
 
