@@ -2967,7 +2967,11 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			}
 			cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * FIREWORK_COLOURS + o_ptr->xtra2); //size, colour
 #ifdef USE_SOUND_2010
-			sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_MISC, TRUE, 50);
+ #if 0
+			if (o_ptr) sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_MISC, TRUE, 50);
+ #else
+			sound_near_site_vol(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "fireworks_launch", "", SFX_TYPE_MISC, FALSE, 50);
+ #endif
 #endif
 			ident = TRUE;
 			break;

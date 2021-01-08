@@ -5506,7 +5506,11 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK) {
 					cast_fireworks(wpos, x, y, o_ptr->xtra1 * FIREWORK_COLOURS + o_ptr->xtra2); //size, colour
 #ifdef USE_SOUND_2010
-					sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_MISC, TRUE, 50);
+ #if 0
+					if (IS_PLAYER(Ind)) sound_vol(Ind, "fireworks_launch", "", SFX_TYPE_MISC, TRUE, 50);
+ #else
+					sound_near_site_vol(y, x, wpos, 0, "fireworks_launch", "", SFX_TYPE_MISC, FALSE, 50);
+ #endif
 #endif
 				}
 
