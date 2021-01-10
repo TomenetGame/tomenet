@@ -3254,6 +3254,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* Clear old information */
 	player_wipe(Ind);
 
+	/* Init only the most basic info */
+	p_ptr->Ind = Ind;
+	p_ptr->version = connp->version;
+
 	/* Receive info found in PKT_SCREEN_DIM otherwise */
 	p_ptr->screen_wid = connp->Client_setup.screen_wid;
 	p_ptr->screen_hgt = connp->Client_setup.screen_hgt;
