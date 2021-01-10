@@ -1784,16 +1784,19 @@ static void regen_monsters(void) {
 /* update a particular player's view to daylight, assuming he's on world surface */
 bool player_day(int Ind) {
 	player_type *p_ptr = Players[Ind];
+	cave_type **zcave = getcave(&p_ptr->wpos);
 	int x, y;
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	bool ret = FALSE;
 
 
 	/* Weather effect colouring may differ depending on daytime */
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE);
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 1)) Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE);
 
 
 	/* Shade map and darken/forget features */
+
+	if (!zcave) return FALSE; /* paranoia */
 
 	if (outdoor_affects(&p_ptr->wpos)) {
 		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
@@ -1833,14 +1836,7 @@ bool player_day(int Ind) {
 	if (p_ptr->is_day) return FALSE;
 	p_ptr->is_day = TRUE;
 	handle_music(Ind);
-	{
-		cave_type **zcave;
-		if (!(zcave = getcave(&p_ptr->wpos))) {
-			s_printf("DEBUG_DAY: Ind %d, wpos %d,%d,%d\n", Ind, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-			return FALSE; /* paranoia */
-		}
-		handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
-	}
+	handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
 #endif
 
 	return TRUE;
@@ -1853,14 +1849,14 @@ bool player_night(int Ind) {
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	bool ret = FALSE;
 
-	if (!zcave) return FALSE; /* paranoia */
-
 
 	/* Weather effect colouring may differ depending on daytime */
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE);
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 1)) Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE);
 
 
 	/* Shade map and darken/forget features */
+
+	if (!zcave) return FALSE; /* paranoia */
 
 	if (outdoor_affects(&p_ptr->wpos)) {
 		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
@@ -1905,18 +1901,7 @@ bool player_night(int Ind) {
 	if (!p_ptr->is_day) return FALSE;
 	p_ptr->is_day = FALSE;
 	handle_music(Ind);
- #if 0 /*done above already*/
-	{
-		cave_type **zcave;
-		if (!(zcave = getcave(&p_ptr->wpos))) {
-			s_printf("DEBUG_NIGHT: Ind %d, wpos %d,%d,%d\n", Ind, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
-			return FALSE; /* paranoia */
-		}
-		handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
-	}
- #else
 	handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, TRUE);
- #endif
 #endif
 
 	return TRUE;
