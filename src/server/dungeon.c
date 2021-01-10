@@ -1791,7 +1791,7 @@ bool player_day(int Ind) {
 
 
 	/* Weather effect colouring may differ depending on daytime */
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 1)) Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE);
+	Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE);
 
 
 	/* Shade map and darken/forget features */
@@ -1851,7 +1851,7 @@ bool player_night(int Ind) {
 
 
 	/* Weather effect colouring may differ depending on daytime */
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 1)) Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE);
+	Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE);
 
 
 	/* Shade map and darken/forget features */

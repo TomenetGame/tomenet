@@ -3025,6 +3025,10 @@ static int Handle_login(int ind) {
 		if (!(i % 5)) strcat(traffic, "* "); else strcat(traffic, "*");
 	p_printf("%s +  %03d  %s\n", showtime(), NumPlayers, traffic);
 
+	/* Need to repeat this here, because in player_setup()->IS_DAY check the conn-state was not CONN_PLAYING yet, so connection wasn't ready to transmit weather colours */
+	if (IS_DAY) Send_weather_colouring(NumPlayers, TERM_WATE, TERM_WHITE);
+	else Send_weather_colouring(NumPlayers, TERM_BLUE, TERM_WHITE);
+
 #ifdef EXTENDED_COLOURS_PALANIM
 	world_surface_palette_player(NumPlayers);
 #endif
@@ -8886,8 +8890,10 @@ int Send_playerlist(int Ind) {
 	return 1;
 }
 
-int Send_weather_colouring(int Ind, byte col_rain, byte col_snow) {
+int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake) {
 	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (is_older_than(&Players[Ind]->version, 4, 7, 3, 1, 0, 1)) return 1;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -8895,7 +8901,7 @@ int Send_weather_colouring(int Ind, byte col_rain, byte col_snow) {
 		return 0;
 	}
 
-	return Packet_printf(&connp->c, "%c%c%c", PKT_WEATHERCOL, col_rain, col_snow);
+	return Packet_printf(&connp->c, "%c%c%c", PKT_WEATHERCOL, col_raindrop, col_snowflake);
 }
 
 
