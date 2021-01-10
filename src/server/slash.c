@@ -9869,7 +9869,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				//around our current worldmap sector
-				cloud_create(i, p_ptr->wpos.wx * MAX_WID, p_ptr->wpos.wy * MAX_HGT);
+				cloud_create(i, p_ptr->wpos.wx * MAX_WID, p_ptr->wpos.wy * MAX_HGT, TRUE);
 
 				/* update players' local client-side weather if required */
 				local_weather_update();

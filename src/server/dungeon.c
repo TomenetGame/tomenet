@@ -10416,13 +10416,14 @@ static void process_wild_weather() {
 		else if (clouds < max_clouds_seasonal) {
 #ifdef TEST_SERVER /* hack: fixed location for easier live testing? */
 			//around Bree
-			cloud_create(i, 32 * MAX_HGT, 32 * MAX_WID);
+			cloud_create(i, 32 * MAX_HGT, 32 * MAX_WID, FALSE);
 			cloud_state[i] = 1;
 #else
 			/* create cloud at random starting x, y world _grid_ coords (!) */
 			cloud_create(i,
 			    rand_int(MAX_WILD_X * MAX_WID),
-			    rand_int(MAX_WILD_Y * MAX_HGT));
+			    rand_int(MAX_WILD_Y * MAX_HGT),
+			    FALSE);
 #endif
 		}
 	}
@@ -10837,8 +10838,9 @@ static void cloud_erase(int i) {
 }
 
 /* Create a new cloud with given index and worldmap _grid_ coords of its center
-   This does not check whether there will be too many clouds! */
-void cloud_create(int i, int cx, int cy) {
+   This does not check whether there will be too many clouds!
+   (forced is for administrative cloud-testing.) */
+void cloud_create(int i, int cx, int cy, bool forced) {
 	/* cloud dimensions: */
 	int sx, sy, dx, dy, dsum;
 	/* worldmap coords: */
@@ -10857,6 +10859,7 @@ void cloud_create(int i, int cx, int cy) {
 	yd = CLOUD_YD(sx, sy, dx, dy, dsum);
 
 	/* hack: not many clouds over deserts */
+	if (!forced)
 	for (x = xs - 1; x <= xd + 1; x++) {
 		for (y = ys - 1; y <= yd + 1; y++) {
 			if (in_bounds_wild(y, x) &&
