@@ -8886,6 +8886,19 @@ int Send_playerlist(int Ind) {
 	return 1;
 }
 
+int Send_weather_colouring(int Ind, byte col_rain, byte col_snow) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for weather_colouring (%d.%d.%d)", Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c%c%c", PKT_WEATHERCOL, col_rain, col_snow);
+}
+
+
 /*
  * Return codes for the "Receive_XXX" functions are as follows:
  *

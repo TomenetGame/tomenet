@@ -1788,6 +1788,13 @@ bool player_day(int Ind) {
 	struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
 	bool ret = FALSE;
 
+
+	/* Weather effect colouring may differ depending on daytime */
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) Send_weather_colouring(Ind, TERM_WATE, TERM_WHITE);
+
+
+	/* Shade map and darken/forget features */
+
 	if (outdoor_affects(&p_ptr->wpos)) {
 		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
 		ret = TRUE;
@@ -1819,6 +1826,9 @@ bool player_day(int Ind) {
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
 
+
+	/* Lastly, handle music */
+
 #ifdef USE_SOUND_2010
 	if (p_ptr->is_day) return FALSE;
 	p_ptr->is_day = TRUE;
@@ -1844,6 +1854,13 @@ bool player_night(int Ind) {
 	bool ret = FALSE;
 
 	if (!zcave) return FALSE; /* paranoia */
+
+
+	/* Weather effect colouring may differ depending on daytime */
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) Send_weather_colouring(Ind, TERM_BLUE, TERM_WHITE);
+
+
+	/* Shade map and darken/forget features */
 
 	if (outdoor_affects(&p_ptr->wpos)) {
 		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
@@ -1880,6 +1897,9 @@ bool player_night(int Ind) {
 	p_ptr->redraw |= (PR_MAP);
 	/* Window stuff */
 	p_ptr->window |= (PW_OVERHEAD);
+
+
+	/* Lastly, handle music */
 
 #ifdef USE_SOUND_2010
 	if (!p_ptr->is_day) return FALSE;

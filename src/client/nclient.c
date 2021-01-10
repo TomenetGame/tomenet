@@ -179,6 +179,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_GUIDE]		= Receive_Guide;
 	receive_tbl[PKT_INDICATORS]	= Receive_indicators;
 	receive_tbl[PKT_PLAYERLIST]	= Receive_playerlist;
+	receive_tbl[PKT_WEATHERCOL]	= Receive_weather_colouring;
 }
 
 
@@ -4867,6 +4868,16 @@ int Receive_playerlist(void) {
 
 	return 1;
 }
+
+int Receive_weather_colouring(void) {
+	int n;
+	char ch;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &col_raindrop, &col_snowflake)) <= 0) return n;
+	return 1;
+}
+
+
 
 int Send_search(void) {
 	int	n;

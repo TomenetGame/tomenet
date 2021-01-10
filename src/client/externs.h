@@ -1086,3 +1086,5 @@ extern char cfg_musicpackfolder[1024];
 
 extern int NumPlayers;
 extern char playerlist[1000][MAX_CHARS_WIDE * 2];
+
+extern byte col_raindrop, col_snowflake;

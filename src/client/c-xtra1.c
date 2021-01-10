@@ -3363,10 +3363,6 @@ void window_stuff(void) {
 #define SKY_ALTITUDE	20 /* assumed 'pseudo-isometric' cloud altitude */
 #define PANEL_X		(SCREEN_PAD_LEFT) /* physical top-left screen position of view panel */
 #define PANEL_Y		(SCREEN_PAD_TOP) /* physical top-left screen position of view panel */
-/* Weather colours */
-#define COL_SNOWFLAKE	TERM_WHITE
-//#define COL_RAINDROP	TERM_BLUE
-#define COL_RAINDROP	TERM_WATE
 void do_weather(bool no_weather) {
 	int i, j, intensity;
 	static int weather_gen_ticks = 0, weather_ticks10 = 0;
@@ -3540,13 +3536,13 @@ void do_weather(bool no_weather) {
 #ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
 					    rand_int(2) ? TERM2_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #else
-					    COL_RAINDROP, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+					    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #endif
 				} else if (weather_element_type[i] == 2) {
 					/* display snowflake */
 					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 					    PANEL_Y + weather_element_y[i] - weather_panel_y,
-					    COL_SNOWFLAKE, '*');
+					    col_snowflake, '*');
 				}
 			}
 		}
@@ -3803,7 +3799,7 @@ void do_weather(bool no_weather) {
 #ifdef EXTENDED_BG_COLOURS /* use rain to test the extended background colour */
 				    rand_int(2) ? TERM2_BLUE : TERM_ORANGE, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #else
-				    COL_RAINDROP, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+				    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
 #endif
 			}
 		}
@@ -3846,7 +3842,7 @@ void do_weather(bool no_weather) {
 				/* display snowflake */
 				Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
 				    PANEL_Y + weather_element_y[i] - weather_panel_y,
-				    COL_SNOWFLAKE, '*');
+				    col_snowflake, '*');
 			}
 		}
 	}

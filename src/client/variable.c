@@ -661,3 +661,5 @@ int within_cmd_player_ticks;
 
 int NumPlayers = 0;
 char playerlist[1000][MAX_CHARS_WIDE * 2];
+
+byte col_raindrop = TERM_BLUE, col_snowflake = TERM_WHITE;

@@ -1233,6 +1233,7 @@ extern int Send_idle(int Ind, bool idle);
 extern int Send_Guide(int Ind, byte search_type, int lineno, char* search_string);
 
 extern int Send_indicators(int Ind, u32b indicators);
+extern int Send_weather_colouring(int Ind, byte col_rain, byte col_snow);
 
 /* object1.c */
 extern bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id);
