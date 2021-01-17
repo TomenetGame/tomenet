@@ -2098,11 +2098,19 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 				/* Draconian traits */
-				if (!strncasecmp(buf, "trai", 3) && my_strcasestr("traits:", buf)) {
+				if (!strncasecmp(buf, "trai", 4) && my_strcasestr("traits:", buf)) {
 					strcpy(buf, "Table of their traits:");
 					fallback = TRUE;
 					fallback_uppercase = 4;
 					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
+					continue;
+				}
+				/* Demolitionist perk */
+				if (!strncasecmp(buf, "demol", 5)) {
+					strcpy(buf, "DEMOLITIONIST");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					line = 0; /* paranoia? */
 					continue;
 				}
 

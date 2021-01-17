@@ -14280,7 +14280,7 @@ stated.
                                 tools and (5.20) for technical details on
                                 digging.
 
-                                EXPERIMENTAL:
+                                Demolitionist perk (EXPERIMENTAL):
                                 Shortly before 4.7.3 a new experimental perk
                                 was added to the Digging skill: Demolitionist.
                                 This just means that if you train Digging to at
