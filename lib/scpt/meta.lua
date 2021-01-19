@@ -114,7 +114,7 @@ function meta_display(xml_feed)
 
 	line = 0
 	nb = 0
-	color_print(line, 0, "\255y" .. meta_name .. " \255Wwith " .. nb_servers .. " connected servers"); line = line + 1; line = line + 1
+	color_print(line, 0, "\255B" .. meta_name .. "\255B, " .. nb_servers .. " live servers available."); line = line + 3;
 	for k, e in categories do
 		color_print(line, 0, "\255o" .. e.name .. " :"); line = line + 1
 
@@ -122,15 +122,28 @@ function meta_display(xml_feed)
 		for i = 1, getn(e) do
 			color_print(line, 2, "\255G" .. strchar(nb + strbyte('a')) .. ") \255w" .. e[i].name)
 			color_print(line, 50, e[i].extra); line = line + 1
-			color_print(line, 4, e[i].players); line = line + 1
+			color_print(line, 4, "\255b" .. e[i].players); line = line + 1
 
 			-- Store the info for retrieval
 			meta_list[nb] = { e[i].name, e[i].port, e[i].protocol }
 			nb = nb + 1
 		end
 	end
-	--line = line + 1
-	color_print(line, 0, "\255BSelect a server or press \255RQ\255B to enter an IP or hostname manually or to quit."); line = line + 1
+
+	line = 1
+	if nb_servers == 0 then
+		color_print(line, 0, "\255BPress \255RQ\255B to enter a server (IP or hostname) manually or to quit."); line = line + 1
+	elseif nb_servers == 1 then
+		--color_print(line, 0, "\255BSelect the server with \255Ra"); line = line + 1
+		--color_print(line, 0, "\255Bor press \255RQ\255B to enter an IP or hostname manually or to quit."); line = line + 1
+		color_print(line, 0, "\255BSelect the server with \255Ra\255B or press \255RQ\255B to enter a server manually or to quit."); line = line + 1
+	else
+		--local c = string.char(96 + nb_servers)
+		local c = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+		--color_print(line, 0, "\255BSelect a server with \255Ra\255B-\255R" .. c[nb_servers]); line = line + 1
+		--color_print(line, 0, "\255Bor press \255RQ\255B to enter an IP or hostname manually or to quit."); line = line + 1
+		color_print(line, 0, "\255BSelect a server with \255Ra\255B-\255R" .. c[nb_servers]  .. "\255B or press \255RQ\255B to enter a server manually or to quit."); line = line + 1
+	end
 
 	return nb
 end
