@@ -2567,6 +2567,20 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				/* Continue with failure (empty chapter[] string) */
 				continue;
 			}
+
+			/* Search terms that don' start on alphanum char, but are not chapter numbers either: */
+
+			/* 'Item power inscription' */
+			if (!strcmp(buf, "@@") || !strcmp(buf, "@@@")) {
+				strcpy(buf, "ITEM POWER INSCRIPTION");
+				fallback = TRUE;
+				fallback_uppercase = 4;
+				line = 0; /* (just clean, not required) */
+				continue;
+			}
+
+			/* -- From here on we assume a chapter number was specified -- */
+
 			/* the original use of 'chapter' meant numerical chapters, which can have up to 8 characters, processed below */
 			buf[8] = 0;
 
