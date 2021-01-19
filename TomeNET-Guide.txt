@@ -11932,7 +11932,7 @@ NO_DEATH        This entity can never die.
 NO_AUTORET      You won't use auto-retaliation against this entity.
 
 REFLECTING      The monster can deflect shots, arrows and bolts, physical and
-                magical projectiles, prolonging the fight.
+                magical projectiles, prolonging the fight (flat 50% chance).
                 Boomerangs cannot be deflected. For thrown items it depends on
                 their weight, only very light items can be deflected reasonably
                 well, and already middle-light items become undeflectable,
@@ -12043,7 +12043,7 @@ If a monster tries to shoot you, the following happens:
 2) any shielding magic around you is evaluated and may prevent the attack.
    (Note: Disruption shield is currently evaluated later on.)
    If this doesn't succeed..
-3) if you have REFLECTION you will try to reflect the shot.
+3) if you have REFLECT (see (5.8)) you will try to reflect the shot.
    If this doesn't succeed..
 4) your character may try to block the shot with a shield.
    If this doesn't succeed..
@@ -12056,8 +12056,8 @@ If a monster casts a spell at you, the following happens:
 2) any shielding magic around you is evaluated and may prevent the attack.
    (Note: Disruption shield is currently evaluated later on.)
    If this doesn't succeed..
-3) if you have REFLECTION and if the spell is a bolt spell, you will try to
-   reflect it. If this doesn't succeed..
+3) if you have REFLECT (see (5.8)) and if the spell is a bolt spell, you will
+   try to reflect it. If this doesn't succeed..
 4) if it's a bolt spell, your character may try to block it with a shield.
    If it isn't then your character may still try to cover behind a shield.
    If this doesn't succeed..
@@ -16334,7 +16334,7 @@ F: flag list
     KILL_WALL   The mimic will dig *easily* through walls.
     REGENERATE  Faster hit point regeneration (same as item ability, doesn't
                 stack with regeneration obtained from item flag).
-    REFLECTING  Gives 'reflect' ability to the player, see (5.8) for details.
+    REFLECTING  Gives 'REFLECT' passive ability to the player, see (5.8).
                 Also gives resistance to light.
                 (Side note about monster reflection in general:
                 The 'REFLECTING' flag on monsters gives them a flat 50% chance
