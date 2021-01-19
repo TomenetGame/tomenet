@@ -2162,6 +2162,27 @@ Iron Team   A special type of party which can only be formed with newly
             The owner can decide to 'close' an iron team in the party menu,
             which will permanently disallow addition of any further members.
 
+Ironman     This typically describes a gameplay scenario where you cannot
+            resurrect so death is permanent and often also where you cannot
+            turn back and return to town either.
+            There are basically 3 types of 'Ironman' in TomeNET:
+            1) The Ironman server in the server list. You can return to towns
+               here though. For details about its special ruleset see (8.6).
+            2) The normal TomeNET server has a few Ironman dungeons too, which
+               are just dubbed 'Wilderness' in the dungeon list when found.
+               These dungeons can only be traversed one-way. To leave them you
+               must reach the final floor and then use word-of-recall there.
+               There is one 'named' Ironman dungeon: 'The Halls of Mandos',
+               which goes from level 1 to 100 and as a specialy (no other
+               dungeon has this restriction) has no unique monsters in it.
+            3) The IDDC dungeon (both, normal server and Ironman server
+               actually have one of these each): 'Ironman Deep Dive Challenge'.
+               In this dungeon, death is permanent and you cannot leave except
+               under a few specific exceptions. Special trade rules apply too.
+               This dungeon is recommended if you want to have an epic Ironman
+               diving experience, be it solo or in a party.
+               For details about its ruleset see (4.13).
+
 kinging     The process of beating Morgoth, the game boss, and thereby
             acquiring a royal title (king/queen/emperor/empress).
             Such player characters are also referred to as 'winners'.
