@@ -4961,8 +4961,9 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 		{"Nightmare", "Nightmare", "Nightmare", "Nightmare", },
 		{"Terror", "Terror", "Terror", "Terror" },
 		//{"Mythical Assassin", "Mythical Assassin", "Myt.Assassin", "Myt.Assassin", },
-		{"Death Fate", "Death Fate", "Death Fate", "Death Fate", },
-		/* yeah it's fitting, but let's not make the game JOKEBAND anyway */
+		//{"Death Fate", "Death Fate", "Death Fate", "Death Fate", },
+		{"Death's Hand", "Death's Hand", "Death's Hand", "Death's Hand", },
+		/* it's fitting, but let's not make the game too JOKEBANDish anyway^^ */
 		//{"RNG", "RNG", }, //LOL! Perfect, do you not think so? :) -adam
 	},
 
@@ -5062,7 +5063,7 @@ cptr player_title_special[MAX_CLASS][5][4] = {
 		{"Herald of Ruin", "Herald of Ruin", "Herald o.R.", "Herald o.R.", },
 		{"Dark Legate", "Dark Legate", "Dark Legate", "Dark Legate", },
 		{"Unholy King", "Unholy Queen", "Unholy King", "Unholy Queen", },
-		{"Death's Hand", "Death's Hand", "Death's Hand", "Death's Hand", },
+		{"Nemesis", "Nemesis", "Nemesis", "Nemesis", },
 	},
 #endif
 #ifdef ENABLE_HELLKNIGHT

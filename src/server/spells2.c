@@ -6959,19 +6959,20 @@ bool swap_position(int Ind, int lty, int ltx){
 		/* Other player */
 		int Ind2 = 0 - c_ptr->m_idx;
 		player_type *q_ptr = NULL;
+
 		if (Ind2) q_ptr = Players[Ind2];
 
 		/* Shift them if they are real */
-		if (q_ptr) {
+		if (Ind2) {
 			store_exit(Ind2);
 
 			q_ptr->py = ty;
 			q_ptr->px = tx;
-			#ifdef ARCADE_SERVER
+#ifdef ARCADE_SERVER
 			if (p_ptr->game == 3) {
 			p_ptr->arc_c = q_ptr->arc_c = 1;
 			p_ptr->arc_d = Ind2; }
-			#endif
+#endif
 		}
 
 		p_ptr->px = ltx;
@@ -6990,10 +6991,10 @@ bool swap_position(int Ind, int lty, int ltx){
 		/* Redraw new grid */
 		everyone_lite_spot(wpos, lty, ltx);
 
-		grid_affects_player(Ind, tx, ty);
+		if (Ind2) {
+			verify_panel(Ind2);
+			grid_affects_player(Ind2, ltx, lty);
 
-		if (Ind2) verify_panel(Ind2);
-		if (q_ptr) {
 			/* Update stuff */
 			q_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE);
 
@@ -7010,6 +7011,7 @@ bool swap_position(int Ind, int lty, int ltx){
 	panel = !local_panel(Ind);
 #endif
 	verify_panel(Ind);
+	grid_affects_player(Ind, tx, ty);
 
 	/* Update stuff */
 	p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_DISTANCE);

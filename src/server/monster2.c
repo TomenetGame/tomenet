@@ -5906,7 +5906,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	/* Adjustable flags - cumulative again, ie don't get removed, just stacked up further, hah! */
 	if (p_ptr->no_cut) r_ptr->flags8 |= RF8_NO_CUT;
 	if (p_ptr->regenerate) r_ptr->flags2 |= RF2_REGENERATE;
-	if (p_ptr->reflect) r_ptr->flags2 |= RF2_REGENERATE;
+	if (p_ptr->reflect) r_ptr->flags2 |= RF2_REFLECTING;
 	if (p_ptr->invis || p_ptr->tim_invisibility) r_ptr->flags2 |= RF2_INVISIBLE;
 	/* Adjustable abilities */
 	//if (p_ptr->aura[0]) ; //todo: cause fear-melee
