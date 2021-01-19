@@ -8781,7 +8781,7 @@ extern int PlayerUID;
 
 
 /* Client-side auto inscriptions */
-#define MAX_AUTO_INSCRIPTIONS	20
+#define MAX_AUTO_INSCRIPTIONS	100
 
 /* Maximum amount of ping reception times logged for each player */
 #define MAX_PING_RECVS_LOGGED	10
