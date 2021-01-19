@@ -3593,21 +3593,21 @@ static void monster_lore(void) {
  /* '&' for async - actually not needed on X11 though, program will still continue to execute
     because xdg-open spawns the file manager asynchronously and returns right away */
  #ifdef OSX
-  #define FILEMAN(p) system(format("open \"%s\" &", p));
-  #define URLMAN(p) system(format("open \"%s\" &", p));
+  #define FILEMAN(p) (res = system(format("open \"%s\" &", p)));
+  #define URLMAN(p) (res = system(format("open \"%s\" &", p)));
  #else
-  #define FILEMAN(p) system(format("xdg-open \"%s\" &", p));
-  #define URLMAN(p) system(format("xdg-open \"%s\" &", p));
+  #define FILEMAN(p) (res = system(format("xdg-open \"%s\" &", p)));
+  #define URLMAN(p) (res = system(format("xdg-open \"%s\" &", p)));
  #endif
 #elif defined(WINDOWS)
  /* 'start' for async */
- #define FILEMAN(p) system(format("start explorer \"%s\"", p));
- //#define URLMAN(p) system(format("cmd /c start \"\" \"%s\"", p));
+ #define FILEMAN(p) (res = system(format("start explorer \"%s\"", p)));
+ //#define URLMAN(p) (res = system(format("cmd /c start \"\" \"%s\"", p)));
  #define URLMAN(p) ShellExecute(NULL, "open", p, NULL, NULL, SW_SHOWNORMAL);
 #endif
 void cmd_check_misc(void) {
 	char i = 0, choice;
-	int row = 2;
+	int row = 2, res;
 	/* suppress hybrid macros in some submenus */
 	bool inkey_msg_old, uniques;
 #if defined(USE_X11) || defined(WINDOWS)
@@ -3839,6 +3839,7 @@ void cmd_check_misc(void) {
 		}
 	}
 	Term_load();
+	(void)res;
 }
 
 void cmd_message(void) {
