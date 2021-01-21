@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 6. Januar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 21. Januar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3816,20 +3816,29 @@ client. Again press = f and then use + and - keys to switch the main window
 font. These two keys allow you to switch through all fonts available in the
 lib/xtra/font folder.
 
-
 For the Linux/OS X client, the game doesn't use the lib/xtra/font folder but
 instead assumes that some standard fonts are provided by your system and tries
 to select those when cycling with 'c' key in the fonts menu.
 You can also set fonts manually with = f if you want to choose specific fonts
 available in your Linux/OS X installation.
+To manually install your own fonts, see the instructions for Linux two
+paragraphs below in (2.5a), it should be in pcf format.
 
 
 (2.5a) Custom fonts
 -------------------
-For the Windows client it is possible to create your own custom fonts for the
-game. You can use "Fony" for example: http://hukka.ncn.fi/?fony
+It is possible to create your own custom fonts for the game.
+For the Windows client which uses .FON files you can use "Fony" for example:
+http://hukka.ncn.fi/?fony
 (Up to client 4.6.1a it was not possible to use characters of numbers 128-255
 but this has been addressed, so the full range of characters is available now.)
+
+For the Linux client you'll need to convert the font to pcf format,
+place it into a registered fonts folder (check 'xset -q'), usually that can be
+/usr/share/fonts/misc, let X11 rescan it with 'fc-cache' (optionally with -f to
+force rescan) and run 'sudo mkfontdir' in /usr/share/fonts/misc to add them to
+fonts.dir file (which TomeNET scans) and you can verify the installation with
+'fc-list'. (Note that 'xlsfonts' cannot see pcf formatted fonts.)
 
 Since you might need/want to use mapping files to remap terrain features to the
 characters in your font, you can create font-preference files that contain
@@ -21926,11 +21935,11 @@ Solution:   The meta-server might be down or a DNS problem might be occuring
             Make sure your TomeNET.ini file contains the correct server port,
             usually 18348! This port isn't needed if you use the meta-list to
             choose a server to connect to, but it's important if you connect
-            directly! (For linux the file is ".tomenetrc".)
+            directly! (For Linux the file is ".tomenetrc".)
             You can connect directly to a TomeNET server and skip the meta
             server list by running your Tomenet directly from the command-line
             (DOS window) within its folder, adding the server IP as a
-            parameter. (In windows2k choose START/Run... and type 'cmd'
+            parameter. (In Windows 2000 choose START/Run... and type 'cmd'
             without quotation marks to open a command-line window.
             Alternatively you can create a shortcut from your TomeNET.exe by
             right-clicking, dragging, releasing it. Edit this shortcut's
@@ -22388,7 +22397,7 @@ Solution:   If you're on Windows and using a game version greater than 4.6.1a,
 PROBLEM 56: On a fresh TomeNET installation on Linux, the game will fail to
             start, giving a font-not-found error (usually about font '9x15'),
             like this: "Font not found: 9x15".
-Solution:   TomeNET uses basic linux system fonts (and allows you to switch to
+Solution:   TomeNET uses basic Linux system fonts (and allows you to switch to
             fonts of your own choice instead, if you want to). Some Linux
             distributions do not have these installed by default though, for
             example Antergos.
