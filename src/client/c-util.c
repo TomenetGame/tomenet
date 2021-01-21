@@ -7344,12 +7344,12 @@ static void do_cmd_options_win(void) {
 #ifdef ENABLE_SUBWINDOW_MENU
  #if defined(WINDOWS) || defined(USE_X11)
 #define MAX_FONTS 50
-  #ifdef WINDOWS
 
+//  #ifdef WINDOWS
 static int font_name_cmp(const void *a, const void *b) {
    #if 0 /* simple way */
 	return strcmp((const char*)a, (const char*)b);
-   #else /* sort in single-digit numbers before double-digit ones */
+   #elseif 0 /* sort in single-digit numbers before double-digit ones */
 	char at[256], bt[256];
 	at[0] = '0';
 	bt[0] = '0';
@@ -7358,9 +7358,26 @@ static int font_name_cmp(const void *a, const void *b) {
 	if (atoi((char*)b) < 10) strcpy(bt + 1, (char *)b);
 	else strcpy(bt, (char *)b);
 	return strcmp(at, bt);
+   #else /* Sort by width, then height */
+	/* Let's sort the array by font size actually */
+	int fwid1, fhgt1, fwid2, fhgt2;
+	char *fmatch;
+
+	fwid1 = atoi(a);
+	fmatch = my_strcasestr(a, "x");
+	if (!fmatch) return -1;  //paranoia - anyway, push 'broken' fonts towards the end of the list, just in case..
+	fhgt1 = atoi(fmatch + 1);
+
+	fwid2 = atoi(b);
+	fmatch = my_strcasestr(b, "x");
+	if (!fmatch) return -1;  //paranoia - anyway, push 'broken' fonts towards the end of the list, just in case..
+	fhgt2 = atoi(fmatch + 1);
+
+	if (fwid1 != fwid2) return (fwid1 > fwid2);
+	return (fhgt1 > fhgt2);
    #endif
 }
-  #endif
+//  #endif
 
 static void do_cmd_options_fonts(void) {
 	int j, d, vertikal_offset = 3;
@@ -7462,12 +7479,12 @@ static void do_cmd_options_fonts(void) {
 		return;
 	}
 
-  #ifdef WINDOWS /* actually never sort fonts on X11, because they come in a sorted manner from fonts.alias and fonts.txt files already. */
+//  #ifdef WINDOWS /* actually never sort fonts on X11, because they come in a sorted manner from fonts.alias and fonts.txt files already. */
 	qsort(font_name, fonts, sizeof(char[256]), font_name_cmp);
    #ifdef WINDOWS /* Windows supports graphic fonts for the mini map */
 	qsort(graphic_font_name, graphic_fonts, sizeof(char[256]), font_name_cmp);
    #endif
-  #endif
+//  #endif
 
   #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
 	for (j = 0; j < fonts; j++) {
