@@ -3200,40 +3200,75 @@ void refresh_palette(void) {
 /* Get list of available misc fonts, e.g. "5x8", "6x9", "6x13" or "6x13bold". */
 int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 	regex_t re;
-	int status = 0;
-	status = regcomp(&re, "^[0-9]+x[0-9]+(bold)?$", REG_EXTENDED|REG_NOSUB);
+	char **list;
+	int fonts_found = 0, fonts_match = 0, i, j;
+	bool is_duplicate;
+	int status = regcomp(&re, "^[0-9]+x[0-9]+(bold)?$", REG_EXTENDED|REG_NOSUB);
+
 	if (status != 0) {
 		fprintf(stderr, "regcomp returned %d\n", status);
 		return 0;
 	}
-	int fonts_found = 0;
+
 	/* Get list of all fonts with 'x' in the name */
-	char **list = XListFonts(Metadpy->dpy, "*x*", 16 * 1024, &fonts_found);
+	list = XListFonts(Metadpy->dpy, "*x*", 16 * 1024, &fonts_found);
 	if (!list) {
 		regfree(&re);
 		return 0;
 	}
-	int fonts_match = 0;
-	for (int i = 0; i < fonts_found && fonts_match < max_fonts; i++) {
+	for (i = 0; i < fonts_found && fonts_match < max_fonts; i++) {
 		status = regexec(&re, list[i], 0, NULL, 0);
-		if (status == 0) {
-			if (strlen(list[i]) < max_font_name_length) {
-				int is_duplicate = 0;
-				for (int j = i - 1; j >= 0; j--) {
-					if (strcmp(list[i], list[j]) == 0) {
-						is_duplicate = 1;
-						break;
-					}
-				}
-				if (!is_duplicate) {
-					strcpy(&output_list[fonts_match * max_font_name_length], list[i]);
-					fonts_match++;
-				}
+		if (status) continue;
+		if (strlen(list[i]) >= max_font_name_length) continue;
+
+		is_duplicate = FALSE;
+		for (j = i - 1; j >= 0; j--) {
+			if (strcmp(list[i], list[j]) == 0) {
+				is_duplicate = TRUE;
+				break;
 			}
+		}
+		if (!is_duplicate) {
+			strcpy(&output_list[fonts_match * max_font_name_length], list[i]);
+			fonts_match++;
 		}
 	}
 	regfree(&re);
 	XFreeFontNames(list);
+
+#if 1 /* Unfortunately, the above method doesn't detect pcf fonts. So here is the worst hack in all of our code - this NEEDS REWRITING! */
+	char tmp_name[256];
+	FILE *fff;
+	/* Get bitmap font folder ('misc') and scan fonts.dir in it for basic bitmap fonts.
+	   Some fonts crash (eg japanese font), filter only for wxh, bold, l (lightman) and tg (tangar) here for now. All wxhB fonts crash, and 4x6 and 9x18 crash too for some reason, at least on my system... */
+	j = system("cat `xset q | grep -o \"[/a-z]*misc\"`/fonts.dir | grep -o \"^[0-9][0-9]*x[0-9]*[a-zA-Z]*\" | grep -i \"bold$\\|l$\\|tg$\\|[0-9]$\" | grep -v \"4x6\\|9x18\" > /tmp/tomenet-fonts.tmp");
+	fff = fopen("/tmp/tomenet-fonts.tmp", "r");
+	if (fff) {
+		while (fonts_match < max_fonts) {
+			if (!fgets(tmp_name, 256, fff)) break;
+			tmp_name[strlen(tmp_name) - 1] = 0; //remove trailing \n
+
+			if (fonts_match >= max_fonts) break;
+			if (strlen(tmp_name) >= max_font_name_length) continue;
+
+			is_duplicate = FALSE;
+			for (j = fonts_match - 1; j >= 0; j--) {
+				if (strcmp(&output_list[j * max_font_name_length], tmp_name) == 0) {
+					is_duplicate = TRUE;
+					break;
+				}
+			}
+			if (!is_duplicate) {
+				strcpy(&output_list[fonts_match * max_font_name_length], tmp_name);
+				fonts_match++;
+			}
+		}
+		fclose(fff);
+		remove("/tmp/tomenet-fonts.tmp"); //clean up#endif
+	}
+#endif
+
+	/* done */
 	return fonts_match;
 }
 
