@@ -4497,14 +4497,14 @@ int Receive_weather(void) {
 				/* only for elements within visible panel screen area */
 				if (weather_element_x[i] >= weather_panel_x &&
 				    weather_element_x[i] < weather_panel_x + screen_wid &&
-			    	    weather_element_y[i] >= weather_panel_y &&
-			            weather_element_y[i] < weather_panel_y + screen_hgt) {
+				    weather_element_y[i] >= weather_panel_y &&
+				    weather_element_y[i] < weather_panel_y + screen_hgt) {
 					/* restore original grid content */
-	                                Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
-        	                            PANEL_Y + weather_element_y[i] - weather_panel_y,
-                                            panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
-                                            panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
-                                }
+					Term_draw(PANEL_X + weather_element_x[i] - weather_panel_x,
+					    PANEL_Y + weather_element_y[i] - weather_panel_y,
+					    panel_map_a[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y],
+					    panel_map_c[weather_element_x[i] - weather_panel_x][weather_element_y[i] - weather_panel_y]);
+				}
 			}
 			if (screen_icky) Term_switch(0);
 		}
