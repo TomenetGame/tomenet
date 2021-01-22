@@ -6340,13 +6340,11 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 /* (added for Valinor, but now just unused except for debugging purpose: /testdisplay in slash.c)
    This allows determining whether we're in a (fake) 'town' or not, and also
    the exact (fake) town's name that will be displayed to the player. */
-int Send_depth_hack(int Ind, struct worldpos *wpos, bool town, cptr desc) {
-	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr = Players[Ind], *p_ptr2 = NULL;
-	int colour, colour2, colour_sector = TERM_L_GREEN, colour2_sector = TERM_L_GREEN, Ind2;
-	cave_type **zcave;
-	bool no_tele = FALSE;
-	if ((zcave = getcave(&p_ptr->wpos))) no_tele = (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) != 0;
+int Send_depth_hack(int Ind, struct worldpos *wpos, bool ville, cptr desc) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+	player_type *p_ptr = Players[Ind];
+	int colour, colour_sector = TERM_L_GREEN;
+	cptr loc_name = "";
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -6354,63 +6352,23 @@ int Send_depth_hack(int Ind, struct worldpos *wpos, bool town, cptr desc) {
 			Ind, connp->state, connp->id));
 		return 0;
 	}
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
-	if ((Ind2 = get_esp_link(Ind, LINKF_VIEW, &p_ptr2))) {
-		connp2 = Conn[p_ptr2->conn];
-
-		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 5, 0, 0)) {
-			/* pending recall? */
-			if (p_ptr2->word_recall) colour2 = TERM_ORANGE;
-			/* able to get extra level feeling on next floor? */
-			else if (TURNS_FOR_EXTRA_FEELING != 0 && (p_ptr2->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour2 = TERM_L_BLUE;
-			/* in a town? ignore town level */
-			else if (town || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour2 = TERM_WHITE;
-			/* way too low to get good exp? */
-			else if (getlevel(wpos) < det_req_level(p_ptr2->lev) - 5) colour2 = TERM_L_DARK;
-			/* too low to get 100% exp? */
-			else if (getlevel(wpos) < det_req_level(p_ptr2->lev)) colour2 = TERM_YELLOW;
-			/* normal exp depth or deeper (default) */
-			else colour2 = TERM_WHITE;
-		} else {
-			colour2 = p_ptr2->word_recall;
-		}
-
-		if (is_newer_than(&p_ptr2->version, 4, 4, 1, 6, 0, 0)) {
-			if (no_tele) {
-				Send_cut(Ind2, 0); /* hack: clear the field shared between cut and depth */
-				colour2_sector = TERM_L_DARK;
-			}
-			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour2, colour2_sector, desc);
-		} else {
-			Packet_printf(&connp2->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour2, desc);
-		}
-	}
 
 	if (is_newer_than(&p_ptr->version, 4, 4, 1, 5, 0, 0)) {
-		/* pending recall? */
-		if (p_ptr->word_recall) colour = TERM_ORANGE;
-		/* able to get extra level feeling on next floor? */
-		else if (TURNS_FOR_EXTRA_FEELING != 0 && (p_ptr->turns_on_floor >= TURNS_FOR_EXTRA_FEELING)) colour = TERM_L_BLUE;
-		/* in a town? ignore town level */
-		else if (town || in_irondeepdive(wpos) || in_hallsofmandos(wpos)) colour = TERM_WHITE;
-		/* way too low to get good exp? */
-		else if (getlevel(wpos) < det_req_level(p_ptr->lev) - 5) colour = TERM_L_DARK;
-		/* too low to get 100% exp? */
-		else if (getlevel(wpos) < det_req_level(p_ptr->lev)) colour = TERM_YELLOW;
-		/* normal exp depth or deeper (default) */
-		else colour = TERM_WHITE;
+		colour = TERM_L_GREEN; /* just something to distinguish from normal display */
 	} else {
 		colour = p_ptr->word_recall;
 	}
 
-	if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
-		if (no_tele) {
-			Send_cut(Ind, 0); /* hack: clear the field shared between cut and depth */
-			colour_sector = TERM_L_DARK;
-		}
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, colour, colour_sector, desc);
+	if (desc[0]) loc_name = desc;
+
+	if (is_newer_than(&p_ptr->version, 4, 6, 1, 2, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name, "testing");
+	} else if (is_newer_than(&p_ptr->version, 4, 5, 9, 0, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name);
+	} else if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
 	} else {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, town, p_ptr->word_recall, desc);
+		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
 	}
 }
 
