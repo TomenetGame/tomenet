@@ -4558,7 +4558,7 @@
 /*
  * Bit flags for the "p_ptr->redraw2" variable
  */
-#define PR2_MAP_FWD	0x00000001L	/* Redraw the map just for a mind-linking player */
+#define PR2_MAP_FWD	0x00000001L	/* Redraw the map just for a mind-linking player. (Also triggers visual title-bigmap-hack.) */
 #define PR2_MAP_SCR	0x00000002L	/* Redraw just the scr map, not the ovl one */
 
 #define PR2_INDICATORS 0x00000004L /* Redraw indicators for timed properties */

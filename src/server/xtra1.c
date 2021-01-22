@@ -7371,6 +7371,9 @@ void redraw2_stuff(int Ind) {
 	if (p_ptr->redraw2 & PR2_MAP_FWD) {
 		p_ptr->redraw2 &= ~(PR2_MAP_FWD);
 		prt_map_forward(Ind);
+		/* Hack: Receiving the title will cause a big_map client to erase the unused
+		   part of the map for visual clarity if linked target isn't using big_map */
+		prt_title(Ind);
 	}
 
 	if (p_ptr->redraw2 & PR2_MAP_SCR) {

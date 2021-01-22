@@ -2656,6 +2656,8 @@ int Receive_title(void) {
 		/* black out the unused part for better visual quality */
 		for (n = 1 + SCREEN_HGT; n < 1 + SCREEN_HGT * 2; n++)
 			Term_erase(SCREEN_PAD_LEFT, n, 255);
+		/* Minor visual hack in case hilite_player was enabled */
+		Term_set_cursor(0);
 	}
 #endif
 
