@@ -2206,6 +2206,11 @@
 #define ROW_LAG			8
 #define COL_LAG			0       /* mini lag-o-meter */
 
+/* Note: The following extra diplay info may begin at line 23 instead of 24, but will
+   still only be visible in big_map mode because otherwise it'd overwrite other
+   indicators that use that line (these are pushed to the bottom of the screen while
+   in big_map mode, thereby freeing up line 23 for these new extra display info): */
+
 #define ROW_RESIST_FIRE		23
 #define COL_RESIST_FIRE		1
 

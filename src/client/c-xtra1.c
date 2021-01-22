@@ -1040,6 +1040,9 @@ void prt_indicators(u32b indicators) {
 void prt_res_fire(bool is_resisted) {
 	int x, y;
 
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
@@ -1055,6 +1058,9 @@ void prt_res_fire(bool is_resisted) {
 
 void prt_res_cold(bool is_resisted) {
 	int x, y;
+
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -1072,6 +1078,9 @@ void prt_res_cold(bool is_resisted) {
 void prt_res_elec(bool is_resisted) {
 	int x, y;
 
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
@@ -1087,6 +1096,9 @@ void prt_res_elec(bool is_resisted) {
 
 void prt_res_acid(bool is_resisted) {
 	int x, y;
+
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
@@ -1104,6 +1116,9 @@ void prt_res_acid(bool is_resisted) {
 void prt_res_pois(bool is_resisted) {
 	int x, y;
 
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
@@ -1120,6 +1135,9 @@ void prt_res_pois(bool is_resisted) {
 void prt_res_divine(bool is_resisted) {
 	int x, y;
 
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
@@ -1135,6 +1153,9 @@ void prt_res_divine(bool is_resisted) {
 
 void prt_esp(bool is_full_esp) {
 	int x, y;
+
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
