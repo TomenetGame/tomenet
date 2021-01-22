@@ -3203,7 +3203,22 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 	char **list;
 	int fonts_found = 0, fonts_match = 0, i, j;
 	bool is_duplicate;
-	int status = regcomp(&re, "^[0-9]+x[0-9]+(bold|tg|l)?$", REG_EXTENDED|REG_NOSUB);
+	int status;
+
+	char tmp[1024];
+	FILE *fff;
+
+
+	path_build(tmp, 1024, ANGBAND_DIR_XTRA, "fonts-x11-menuscan.txt");
+	fff = fopen(tmp, "r");
+	if (fff) {
+		while (fgets(tmp, 256, fff)) {
+			if (strncmp(tmp, "REGEXP=", 7)) continue;
+			tmp[strlen(tmp) - 1] = 0; //remove trailing \n
+			status = regcomp(&re, tmp + 7, REG_EXTENDED|REG_NOSUB);
+			break;
+		}
+	} else status = regcomp(&re, "^[0-9]+x[0-9]+(bold|l|tg)?$", REG_EXTENDED|REG_NOSUB);
 
 	if (status != 0) {
 		fprintf(stderr, "regcomp returned %d\n", status);
