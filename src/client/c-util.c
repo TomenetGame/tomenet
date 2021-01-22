@@ -7642,17 +7642,30 @@ static void do_cmd_options_fonts(void) {
 			break;
 
 		case 'l':
+			if (!fonts && !graphic_fonts) {
+				c_message_add("No fonts and no graphical fonts found.");
+				break;
+			}
 			if (fonts) {
+				char tmp_name2[256];
+
 				c_message_add(format("-- Fonts (%d): --", fonts));
-				for (j = 0; j < fonts; j++)
-					c_message_add(format("  %s", font_name[j]));
+				for (j = 0; j < fonts; j++) {
+					tmp_name2[0] = 0;
+					for (; j < fonts; j++) {
+						sprintf(tmp_name, "%18s", font_name[j]);
+						strcat(tmp_name2, tmp_name);
+						if (j % 4 == 3) break;
+					}
+					c_message_add(format("  %s", tmp_name2));
+				}
 			}
 			if (graphic_fonts) {
 				c_message_add(format("-- Graphic fonts (%d): --", graphic_fonts));
 				for (j = 0; j < graphic_fonts; j++)
 					c_message_add(format("  %s", graphic_font_name[j]));
 			}
-
+			c_message_add(""); //linefeed
 			break;
 
 		default:
