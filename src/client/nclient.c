@@ -2652,7 +2652,7 @@ int Receive_title(void) {
 	   hack explanation: mindlinking sends both PR_MAP and PR_TITLE, and title is sent
 	   _after_ map, so we can track the amount of map lines we received in Receive_line_info()
 	   first and then do the final check and visuals here. */
-	if (last_line_y <= SCREEN_HGT && !screen_icky) {
+	if (last_line_y <= SCREEN_HGT && screen_hgt == MAX_SCREEN_HGT && !screen_icky) {
 		/* black out the unused part for better visual quality */
 		for (n = 1 + SCREEN_HGT; n < 1 + SCREEN_HGT * 2; n++)
 			Term_erase(SCREEN_PAD_LEFT, n, 255);
