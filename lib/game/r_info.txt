@@ -20298,7 +20298,7 @@ D:assisting you without complaining in assessing your combat prowess.
 #a snowed up version for new SEASON_WINTER (1101 is normal version)
 N:1145:Snow-covered armoured target dummy
 G:p:W
-I:110:10d2:0:170:0
+I:110:10d2:0:200:0
 W:50:0:500:0
 E:1:1:2:0:1:0
 O:0:0:0:0
