@@ -243,7 +243,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "alert_mana",		"Beep/message about critically low mana pool" },
 	{ &c_cfg.alert_afk_dam,		FALSE,	1,	0, 19, TRUE,
 	    "alert_afk_dam",		"Beep when taking damage while AFK" },
-	{ &c_cfg.alert_offpanel_dam,	FALSE,	1,	0, 20, TRUE,
+	{ &c_cfg.alert_offpanel_dam,	TRUE,	1,	0, 20, TRUE,
 	    "alert_offpanel_dam",	"Beep when taking damage while looking elsewhere" },
 
 	{ &c_cfg.exp_bar,		TRUE,	6,	9, 21, TRUE, //moved to page 3 in 4.7.2 to make room for alert_starvation

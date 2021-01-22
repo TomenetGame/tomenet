@@ -124,7 +124,7 @@ X:alert_mana
 Y:exp_bar
 X:consistent_players
 Y:flash_player
-X:alert_offpanel_dam
+Y:alert_offpanel_dam
 Y:idle_starve_kick
 
 X:no_am_sfx
