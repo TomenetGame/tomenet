@@ -3854,7 +3854,7 @@ void cmd_message(void) {
 	bool store_item = FALSE;
 
 	/* BIG_MAP leads to big shops */
-	bool big_shop = (screen_hgt > SCREEN_HGT);//14 more lines, so alphabet is fully used a)..z)
+	bool big_shop = (screen_hgt == MAX_SCREEN_HGT);//14 more lines, so alphabet is fully used a)..z)
 
 	/* Wipe the whole buffer to stop valgrind from complaining about the color code conversion - mikaelh */
 	C_WIPE(buf, sizeof(buf), char);
