@@ -3218,6 +3218,7 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 			status = regcomp(&re, tmp + 7, REG_EXTENDED|REG_NOSUB);
 			break;
 		}
+		fclose(fff);
 	} else status = regcomp(&re, "^[0-9]+x[0-9]+(bold|l|tg)?$", REG_EXTENDED|REG_NOSUB);
 
 	if (status != 0) {
