@@ -8735,9 +8735,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			   which space is actually occupied and which is free */
 			else if (prefix(messagelc, "/testdisplay")) {
 				struct worldpos wpos;
-				wpos.wx = 0; wpos.wy = 0; wpos.wz = 200;
 				Send_extra_status(Ind, "ABCDEFGHIJKL");
-//				Send_depth(Ind, &wpos);
+				//wpos.wx = 0; wpos.wy = 0; wpos.wz = 200;
+				//Send_depth(Ind, &wpos);
+				wpos.wx = p_ptr->wpos.wx; wpos.wy = p_ptr->wpos.wy; wpos.wz = p_ptr->wpos.wz;
 				Send_depth_hack(Ind, &wpos, TRUE, "TOONTOWNoO");
 				Send_food(Ind, PY_FOOD_MAX);
 				Send_blind(Ind, TRUE);
@@ -8746,8 +8747,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				Send_poison(Ind, 2);
 				Send_state(Ind, TRUE, TRUE, TRUE);
 				Send_speed(Ind, 210);
-				if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0))
-					Send_study(Ind, TRUE);
+				if (is_older_than(&p_ptr->version, 4, 4, 8, 5, 0, 0)) Send_study(Ind, TRUE);
 				else Send_bpr(Ind, 99, TERM_L_RED);
 				Send_cut(Ind, 1001);
 				Send_stun(Ind, 101);
