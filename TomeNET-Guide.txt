@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 21. Januar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 24. Januar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -14541,6 +14541,8 @@ Saving Throw
     How well you can resist attacks that have influence on your status
     other than just hit points (except for monster curses, which can be
     prevented too). Saving throw is rolled (possibly modified) against:
+    -Cause Wounds spells ("Monster points at you and curses/incanting terribly/
+     screaming the word 'DIE'")
     -Fear and paralysation melee attacks
     -Confusion, fear, blindness, slowness, paralysation spell effects
     -Non-friendly teleportation effects
@@ -16366,6 +16368,9 @@ F: flag list
     NO_STUN     Sound resistance.
     NO_CUT      The player can't be cut and won't bleed continously from
                 wounds.
+                This will also render the player immune against cause wounds
+                ("Monster points at you and curses/incanting terribly/screaming
+                the word 'DIE'").
     DISBELIEVE  Will provide (or increase an already existing) anti-magic field
                 by ((monsterlevel / 2) + 10) percent. The range of the field
                 is set to (or increased by) ((monsterlevel / 50) + 2) fields.
