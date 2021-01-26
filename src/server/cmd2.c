@@ -3826,7 +3826,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	else if (((cfeat >= FEAT_MAGMA) && (cfeat <= FEAT_QUARTZ_K)) ||
 	    ((cfeat >= FEAT_SANDWALL) && (cfeat <= FEAT_SANDWALL_K))) {
 		bool okay = FALSE, gold = FALSE, hard = FALSE, soft = FALSE;
-		bool nonobvious = (cinfo & CAVE_ENCASED); //treasure veins that aren't generated out in the open, but enclosed in streamers
+		bool nonobvious = (cinfo & CAVE_ENCASED) != 0; //treasure veins that aren't generated out in the open, but enclosed in streamers
 
 		/* Found gold? Non-obvious vein even for increased value? */
 		switch (cfeat) {
@@ -3910,6 +3910,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					   and add a basic x3 bonus for gold from veins in general. */
 					tval = 3 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
 					if (nonobvious) s_printf("DIGGING: %s digs nonobvious (x%d).\n", p_ptr->name, tval);
+					else s_printf("DIGGING: %s digs obvious (x%d).\n", p_ptr->name, tval);
 					place_gold(Ind, wpos, y, x, tval, 0);
 					object_level = old_object_level;
 				}
