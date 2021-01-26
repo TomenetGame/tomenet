@@ -9383,64 +9383,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			}
 		}
 
-		for (x = 0; x < dun->l_ptr->wid; x++)
-			for (y = 0; y < dun->l_ptr->hgt; y++) {
-				/* check treasure veins for being remotely encased, making them more valuable to dig up, hah! - C. Blue */
-				switch (zcave[y][x].feat) {
-				case FEAT_MAGMA_K:
-				case FEAT_MAGMA_H:
-				case FEAT_QUARTZ_K:
-				case FEAT_QUARTZ_H:
-				case FEAT_SANDWALL_K:
-				case FEAT_SANDWALL_H:
-					k = 0;
-					for (i = 7; i >= 0; i--)
-						if (cave_floor_bold(zcave, y + ddy_ddd[i], x + ddx_ddd[i])) k++;
-					if (!k) zcave[y][x].info |= CAVE_ENCASED;
-					break;
-#ifdef VOLCANIC_FLOOR /* experimental - add volcanic floor around lava rivers - C. Blue */
-				case FEAT_SHAL_LAVA:
-				case FEAT_DEEP_LAVA:
-					for (i = 0; i < 4; i++) {
-						k = zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat;
-						switch (k) {
-						case FEAT_WEB:
-						case FEAT_CROP:
-						case FEAT_FLOWER:
-						case FEAT_IVY:
-						case FEAT_GRASS:
-							/* never persist */
-							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_ASH;
-							continue;
-						case FEAT_SNOW:
-						case FEAT_SHAL_WATER:
-						case FEAT_DARK_PIT:
-						case FEAT_ICE:
-						case FEAT_MUD:
-						case FEAT_ICE_WALL:
-							/* never persist */
-							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
-							continue;
-						case FEAT_TREE:
-						case FEAT_BUSH://mh
-							/* never persist */
-							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_DEAD_TREE;
-							continue;
-						case FEAT_SAND:
-						case FEAT_FLOOR:
-						case FEAT_LOOSE_DIRT:
-						case FEAT_DIRT:
-							/* rarely persist */
-							if (!rand_int(7)) continue;
-							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
-						default:
-							continue;
-						}
-					}
-#endif
-				}
-			}
-
 		/* Destroy the level if necessary */
 		if (destroyed) destroy_level(wpos);
 	}
@@ -9606,6 +9548,67 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 				}
 			}
 		}
+	}
+
+	/* Do this now, after all streamers have been completed. */
+	if (!maze) {
+		for (x = 0; x < dun->l_ptr->wid; x++)
+			for (y = 0; y < dun->l_ptr->hgt; y++) {
+				/* check treasure veins for being remotely encased, making them more valuable to dig up, hah! - C. Blue */
+				switch (zcave[y][x].feat) {
+				case FEAT_MAGMA_K:
+				case FEAT_MAGMA_H:
+				case FEAT_QUARTZ_K:
+				case FEAT_QUARTZ_H:
+				case FEAT_SANDWALL_K:
+				case FEAT_SANDWALL_H:
+					k = 0;
+					for (i = 7; i >= 0; i--)
+						if (cave_floor_bold(zcave, y + ddy_ddd[i], x + ddx_ddd[i])) k++;
+					if (!k) zcave[y][x].info |= CAVE_ENCASED;
+					break;
+#ifdef VOLCANIC_FLOOR /* experimental - add volcanic floor around lava rivers - C. Blue */
+				case FEAT_SHAL_LAVA:
+				case FEAT_DEEP_LAVA:
+					for (i = 0; i < 4; i++) {
+						k = zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat;
+						switch (k) {
+						case FEAT_WEB:
+						case FEAT_CROP:
+						case FEAT_FLOWER:
+						case FEAT_IVY:
+						case FEAT_GRASS:
+							/* never persist */
+							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_ASH;
+							continue;
+						case FEAT_SNOW:
+						case FEAT_SHAL_WATER:
+						case FEAT_DARK_PIT:
+						case FEAT_ICE:
+						case FEAT_MUD:
+						case FEAT_ICE_WALL:
+							/* never persist */
+							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
+							continue;
+						case FEAT_TREE:
+						case FEAT_BUSH://mh
+							/* never persist */
+							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_DEAD_TREE;
+							continue;
+						case FEAT_SAND:
+						case FEAT_FLOOR:
+						case FEAT_LOOSE_DIRT:
+						case FEAT_DIRT:
+							/* rarely persist */
+							if (!rand_int(7)) continue;
+							zcave[y + ddy_ddd[i]][x + ddx_ddd[i]].feat = FEAT_VOLCANIC;
+						default:
+							continue;
+						}
+					}
+#endif
+				}
+			}
 	}
 
 	/* ugly hack to fix the buggy extra bottom line that gets added to non-maxed levels sometimes:
