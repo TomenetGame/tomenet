@@ -8851,7 +8851,7 @@ int Send_playerlist(int Ind) {
 int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
-	if (is_older_than(&Players[Ind]->version, 4, 7, 3, 1, 0, 1)) return 1;
+	if (is_older_than(&Players[Ind]->version, 4, 7, 3, 1, 0, 0)) return 1;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
