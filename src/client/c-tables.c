@@ -545,7 +545,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "keep_bottle",		"Keep the empty bottle when you quaff a potion" },
 
 	{ &c_cfg.easy_disarm_montraps,	FALSE,	3,	9, 136, TRUE,
-	    "easy_disarm_montraps",	"Automatically disarm monster traps" },
+	    "easy_disarm_montraps",	"Automatically disarm monster traps ('/edtm')" },
 
 #if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
     /* 4.7.3 */
