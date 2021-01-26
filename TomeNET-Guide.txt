@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 24. Januar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 26. Januar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -212,14 +212,44 @@ compile the game under '(2.1) Installing/updating TomeNET'.
  If you're on Microsoft Windows, it is recommended to get the installer package
  instead of the zip archives.
 
--Either double-click 'TomeNET-direct.bat' to directly connect to official main
- server (recommended), or run TomeNET.exe and choose a server manually, for
- example enter 37.187.75.24 to connect to the official main server.
- NOTE: The official main server's hostname is "europe.tomenet.eu".
- (The Bat-file will always work properly, even if there are DNS problems which
- cause the server list not to show up properly.)
+ Note that the Nullsoft Installer framework (NSIS) TomeNET uses is an open
+ source project (https://sourceforge.net/projects/nsis/), yet annoyingly there
+ are a few badly maintained virus scanners that may give a wrong positive
+ warnings for NSIS. In the past Avira was notorious for it but it seems they
+ fixed it, nowadays it seems to be Acronis instead, at least at the time of
+ writing these lines. Anyway, you can safely ignore those *ahem*.
+ A fun fact: The TomeNET Winwdows version has never seen an actual Windows
+ system but was created purely on Linux.
 
--Create a character, Half-Troll warrior is good for beginners.
+-If you used the installer you will have a TomeNET icon on your desktop to
+ start the game (and another icon for the TomeNET Updater).
+
+ If you used the ZIP archive instead of the installer, you can run TomeNET
+ from the unzipped folder by either double-clicking 'TomeNET.exe' or (this is a
+ safe-fail in case your internet provider ever has DNS problems and you cannot
+ connect to the server) by double-clicking 'TomeNET-direct.bat' to directly
+ connect to official main server's IP address (37.187.75.24).
+
+ NOTE: The official main server's hostname is "europe.tomenet.eu".
+
+-You should now see a list of available TomeNET servers (except if you used
+ TomeNET-direct.bat, which will always connect you directly to the first main
+ server).
+ Pick the first official server by pressing 'a' key.
+ Now you are prompted to enter your account information: Name and password.
+ Since you are a new player, you don't have these yet. There is no separate
+ 'registration' process, just type in a name and a password of your choice!
+ Make sure you remember your password and enter it carefully so you don't
+ make a typo. The TomeNET client will, however, automatically store these
+ crecedentials so next time you log in you can just hit ENTER key to confirm
+ the saved name and password which will be automatically filled in for you.
+
+-Now you are presented with the account overview screen. It's just the list of
+ all your existing characters. Since you don't have any yet, it's empty.
+ Press 'N' (shift+n) to create a new character.
+
+-In this example we create a Half-Troll warrior, as it is easy for beginners:
+ It can take a lot of punishment and at the same time dish out a lot of it too!
  The server should now allow you to manually choose your stats.
  In case you chose a (Half-Troll) warrior, try this:
   STR _at least_ 18/30 (to get a high number of attacks per round - the game
@@ -261,11 +291,11 @@ compile the game under '(2.1) Installing/updating TomeNET'.
 
  ---- PLEASE NOTE: ----
  If you are new to the game, it is NOT recommended to choose one of these:
- Istar, Priest, Shaman, Adventurer, Runemaster.
+  Istar, Priest, Shaman, Adventurer, Runemaster.
  The reason is that these classes are hard to play in the beginning -
- compare introductory explanation in (6.5)!
+  compare introductory explanation in (6.5)!
  Recommended for new players are:
- Warrior, Rogue, Paladin, Druid and maybe Archer.
+  Warrior, Rogue, Paladin, Druid and maybe Archer.
 
 
 -Make sure you DO NOT chose 'PvP' mode. It's a restricted special thing that
@@ -2866,13 +2896,24 @@ redownload it.)
 
 Windows:
 --------
-To extract the TomeNET zip package you downloaded, 7-zip is recommended.
-It's a free and open source zip-tool of outstanding performance that works on
-all platforms. Grab it from https://www.7-zip.org/ .
+It is recommended to get the installer package instead of the zip archives.
+You can safely install TomeNET over an already existing installation (just
+make sure to quit the game first!), the installer will not reset/delete your
+existing macros, settings or custom audio packs (it will only overwrite things
+in 'lib/xtra/music' and 'lib/xtra/sound' ie the official audio packs).
 
-After extracting, you're good to go. If you're already tired of reading, just
-double-click TomeNET.exe, pick the first official server in the list, make up
-an account and character and start to play.
+The Nullsoft Installer framework (NSIS) the Windows installer uses is an open
+source project (https://sourceforge.net/projects/nsis/), yet annoyingly there
+are a few badly maintained virus scanners that may give a wrong positive
+warnings for NSIS. In the past Avira was notorious for it but it seems they
+fixed it, nowadays it seems to be Acronis instead, at least at the time of
+writing these lines. Anyway, you can safely ignore those *ahem*.
+A fun fact: The TomeNET Winwdows version has never seen an actual Windows
+system but was created purely on Linux.
+
+If you used the ZIP archive instead of the installer, 7-zip is recommended for
+extracting it. It's a free and open source zip-tool of outstanding performance
+that works on all platforms. Grab it from https://www.7-zip.org/ .
 
 There is also a manual in your TomeNET folder, the file is called
 "TomeNET-Guide.txt". Double-click to read it. It is recommended to not open it
@@ -2880,17 +2921,16 @@ in Wordpad, but either in Notepad or in any web browser of your choice, because
 Wordpad tends to warp the layout badly.
 Alternatively you can find the latest version of the manual online for browsing
 and easy searching, on the TomeNET homepage (https://www.tomenet.eu/).
+The guide can even be accessed inside the game by pressing ? twice or ~g.
 
 If you're tech savvy, you could decide to edit the game configuration manually,
 but that is not really required. Continue reading below if you want to do that.
 
-Otherwise, you could skip forward to (2.1a) now, where you find an explanation
-on how to install the music pack.
+If you are using Valve's Steam and are interested on how to integrate TomeNET
+into it, check out (2.1d) :D.
 
-When you're done with everything, you can continue reading at (2.1d) if you are
-using Valve's Steam, and then at (2.2) to find how how to actually connect to
-the TomeNET game server, create an account, create a character, and play the
-game!
+On how to run the game, connect to the game server and start playing, continue
+reading at (2.2)!
 
 
 Windows - Manually editing the configuration file (if you're tech savvy):
@@ -2922,7 +2962,7 @@ Last but not least, you may use the following command-line options:
 -x                      Don't save chat/message log on exit (don't prompt)
 <ip address>            for example 37.187.75.24
 
-(Skip down to (2.1a) to continue reading.)
+(Skip down to (2.2) to continue reading.)
 
 
 Windows (cross-compiling from Linux):
@@ -3076,7 +3116,7 @@ Example:
         ./tomenet -p18348 -lIron\ Man geheimer 37.187.75.24
 ..if your account name is 'Iron Man'.
 
-(Skip down to (2.1a) to continue reading.)
+(Skip down to (2.2) to continue reading.)
 
 
 Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
@@ -3092,7 +3132,7 @@ should now launch correctly with a GUI, ie various game windows.
 If you're tech savvy and want to manually edit the TomeNET configuration file,
 see "Configure TomeNET on Linux" further above.
 
-Otherwise skip down to (2.1a) to continue reading.
+Otherwise skip down to (2.2) to continue reading.
 
 
 Mac OS X (compiling from source; tested with Snow Leopard 10.6.6):
@@ -3462,39 +3502,50 @@ and if you do so then your Steam status will show that you are playing TomeNET!
 
 (2.2) Starting TomeNET and getting to play on an internet server
 ----------------------------------------------------------------
-To start the TomeNET client, run 'TomeNET.exe' or 'TomeNET-direct.bat'.
-(If you run the '.bat' file, the meta-server steps will be skipped and you
-will be directly connected to the official main server instead.)
-Now TomeNET tries to connect to a meta-server which contains a list of all
-available TomeNET internet servers.
-After the meta-server has been queried, the list of available servers will
-appear in the main window. Choose a server that is near to your location to
-avoid high latency.
-(This step is reported to sometimes cause problems on Windows OS. If you don't
-see that list, or if other problems occur, see (8.8) for possible solutions.)
+If you used the installer you will have a TomeNET icon on your desktop to
+start the game (and another icon for the TomeNET Updater).
 
-Now you will be prompted to enter your account name and password. You can
-choose these freely, the server will save that information and use it to
-remember which characters belonged to you the next time you log on.
-IMPORTANT: If you get kicked out with an error message after entering account
-and password, it's likely because that account name is already in use by
-someone else so your password was recognized as 'incorrect' since it was most
-likely different from that user's password. Just try a different account name.
-A player usually has exactly one account that can hold up to 8 characters.
+If you used the ZIP file, you can run TomeNET from the unzipped folder by
+either double-clicking 'TomeNET.exe' or (this is a safe-fail in case your
+internet provider ever has DNS problems and you cannot connect to the server)
+by double-clicking 'TomeNET-direct.bat' to directly connect to official main
+server's IP address.
+
+On OSX you run the 'TomeNET.command' file, on Linux the 'tomenet' binary.
+
+(Side note: The official main server's hostname is "europe.tomenet.eu" and its
+IP address is 37.187.75.24.)
+
+You should now see a list of available TomeNET servers (except if you used
+TomeNET-direct.bat, which will always connect you directly to the first main
+server) starting with the official main server under 'a)'.
+(This list of servers is called the 'meta-server'.)
+Pick the first server by pressing the 'a' key.
+On some Windows configurations in the past the window would stay empty. If
+this happens or if other problems occur, see (8.8) for possible solutions.
+
+Now you are prompted to enter your account information: Name and password.
+Since you are a new player, you don't have these yet. There is no separate
+'registration' process, just type in a name and a password of your choice!
+Make sure you remember your password and enter it carefully so you don't
+make a typo. The TomeNET client will, however, automatically store these
+crecedentials so next time you log in you can just hit ENTER key to confirm
+the saved name and password which will be automatically filled in for you.
+
 In most cases newly created accounts have to be "validated" by a server
 administrator to enable you to use the whole functionality of TomeNET. For
 example it is common not to allow unvalidated players to drop items or money
 to the ground. This is done to prevent certain cases of abuse.
 If you accidentally chose an account name or character name which was already
-taken by another player, you will be disconnected with an error message. In
-that case, try again with different names.
+taken by another player, you will see a message telling you to try a different
+name.
 
-Now that you have logged in you can create a new player character which will
-represent you in the virtual world of Middle Earth!
-To do so, press 'N' key in your character overview screen (showing you empty
-character slots, since you haven't created any characters yet) and then enter
-a name for your character. You may use the same name as your account name, if
-you like.
+Now that you have logged in you are presented with the account overview screen.
+It's just the list of all your existing characters. Since you don't have any
+yet, it's empty. Press 'N' (shift+n) to create a new character which will
+represent you in the virtual world of Middle Earth and then enter a name for
+your character. You may use the same name as your account name, if you like.
+
 Players logged on to the game are identified by 3 names:
 -Nickname (character's name)
 -Realname (account name)
@@ -3512,10 +3563,11 @@ certain level.
 You will need an admin to 'validate' your account.
 Usually, all you have to do is to keep playing/stay online for a bit until an
 admin logs in, notices that you are new, and validates your account.
-If that doesn't seem to happen, ask an admin directly, when you see one
-chatting (Admin's names are displayed in dark blue in the chat).
-If the server's intro screen mentions to send an email to an admin, try that
-and specify your account name in it.
+If that doesn't seem to happen, just ask in chat (press : key to chat) or ask
+an admin directly, when you see one chatting (Admin's names are displayed in
+dark blue in the chat).
+If the server's intro screen mentions an email address you could also send an
+email there if you still haven't been validated.
 
 You may continue reading at (3.1), which explains details of the character
 creation progress.
