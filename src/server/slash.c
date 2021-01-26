@@ -4613,6 +4613,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				case (MODE_HARD | MODE_NO_GHOST):
 					col = 'r';
 					break;
+				case (MODE_SOLO | MODE_NO_GHOST):
+					col = 's';
+					break;
 				case MODE_HARD: //deprecated
 					col = 's';
 					break;
@@ -7589,8 +7592,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 						if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377B");
 						else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
+						else if (tmpm & MODE_SOLO) strcpy(colour_sequence, "\377s");
 						else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
-						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
+						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");//deprecated
 						else strcpy(colour_sequence, "\377W");
 						if (tmpm & MODE_DED_IDDC) strcat(colour_sequence, "*");
 						if (tmpm & MODE_DED_PVP) strcat(colour_sequence, "*");
@@ -7643,8 +7647,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						tmpm = lookup_player_mode(id_list[i]);
 						if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377B");
 						else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
+						else if (tmpm & MODE_SOLO) strcpy(colour_sequence, "\377s");
 						else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
-						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
+						else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");//deprecated
 						else strcpy(colour_sequence, "\377W");
 						if (tmpm & MODE_DED_IDDC) strcat(colour_sequence, "*");
 						if (tmpm & MODE_DED_PVP) strcat(colour_sequence, "*");

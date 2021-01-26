@@ -1259,10 +1259,13 @@ int highscore_send(char *buffer, int max) {
 				mode = "Normal";
 				break;
 			case MODE_HARD:
-				mode = "Hard";
+				mode = "Hard";//deprecated
 				break;
 			case MODE_NO_GHOST:
 				mode = "Unworldly";
+				break;
+			case (MODE_SOLO | MODE_NO_GHOST):
+				mode = "Soloist";
 				break;
 			case (MODE_HARD | MODE_NO_GHOST):
 				mode = "Hellish";
@@ -1879,13 +1882,17 @@ static void display_scores_aux(int Ind, int line, int note, int erased_slot, hig
 		strcpy(modestr, "");
 		strcpy(modecol, "");
 		switch (modebuf) {
-                case MODE_HARD:
-			strcpy(modestr, "purgatorial ");
+		case MODE_HARD:
+			strcpy(modestr, "purgatorial ");//deprecated
 			//strcpy(modecol, "\377s");
 			break;
-                case MODE_NO_GHOST:
+		case MODE_NO_GHOST:
 			strcpy(modestr, "unworldly ");
 			strcpy(modecol, "\377D");
+			break;
+		case (MODE_NO_GHOST | MODE_SOLO):
+			strcpy(modestr, "soloist ");
+			strcpy(modecol, "\377s");
 			break;
 		case (MODE_HARD | MODE_NO_GHOST):
 			strcpy(modestr, "hellish ");

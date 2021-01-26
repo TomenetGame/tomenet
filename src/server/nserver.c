@@ -4535,8 +4535,9 @@ static int Receive_login(int ind) {
 				tmpm = lookup_player_mode(id_list[i]);
 				if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377B");
 				else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
+				else if (tmpm & MODE_SOLO) strcpy(colour_sequence, "\377s");
 				else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
-				else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");
+				else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");//deprecated
 				else strcpy(colour_sequence, "\377W");
 
 				/* look up character's current location */
@@ -4898,7 +4899,7 @@ static int Receive_play(int ind) {
 		if ((connp->sex & MODE_DED_PVP) &&
 		    (connp->sex & MODE_DED_IDDC)) { //allow both, depending on what the user wants:
 			if (sex & MODE_PVP) {
-				sex &= ~(MODE_EVERLASTING | MODE_NO_GHOST | MODE_HARD | MODE_DED_IDDC);
+				sex &= ~(MODE_EVERLASTING | MODE_NO_GHOST | MODE_SOLO | MODE_HARD | MODE_DED_IDDC);
 				sex |= MODE_DED_PVP;
 			} else {
 				sex &= ~MODE_DED_PVP;
@@ -4906,7 +4907,7 @@ static int Receive_play(int ind) {
 			}
 		}
 		else if (connp->sex & MODE_DED_PVP) {
-			sex &= ~(MODE_EVERLASTING | MODE_NO_GHOST | MODE_HARD | MODE_DED_IDDC);
+			sex &= ~(MODE_EVERLASTING | MODE_NO_GHOST | MODE_SOLO | MODE_HARD | MODE_DED_IDDC);
 			sex |= MODE_DED_PVP | MODE_PVP;
 		}
 		else if (connp->sex & MODE_DED_IDDC) {

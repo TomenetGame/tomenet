@@ -19,6 +19,11 @@
 /* use character class titles more often when describing a character? */
 #define ABUNDANT_TITLES
 
+/* show "(Soloist)" in @ list for soloists.
+   This is now disabled since soloists are marked by slate colour
+   distinguishing them from unworldly characters, making this redundant. */
+//#SHOW_SOLOIST_TAG
+
 #if 0 /* replaced by client-side options: \
     -- + -- = nothing \
     o1 + -- = COMPACT_PLAYERLIST+COMPACT_ALT \
@@ -254,8 +259,9 @@ void do_cmd_check_artifacts(int Ind, int line) {
 					if (tmpm & MODE_EVERLASTING) strcpy(cs, "\377B");
 					else if (tmpm & MODE_PVP) strcpy(cs, format("\377%c", COLOUR_MODE_PVP));
 					else if ((tmpm & MODE_NO_GHOST) && (tmpm & MODE_HARD)) strcpy(cs, "\377r");
+					else if (tmpm & MODE_SOLO) strcpy(cs, "\377s");//visually differ a bit from NO_GHOST
 					else if (tmpm & MODE_NO_GHOST) strcpy(cs, "\377D");
-					else if (tmpm & MODE_HARD) strcpy(cs, "\377s");
+					else if (tmpm & MODE_HARD) strcpy(cs, "\377s");//deprecated
 					else strcpy(cs, "\377W");
 
 					lev = lookup_player_level(a_ptr->carrier);
@@ -763,6 +769,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			fprintf(fff, "r");
 			break;
 		case MODE_HARD:
+			fprintf(fff, "s");//deprecated
+			break;
+		case (MODE_SOLO | MODE_NO_GHOST):
 			fprintf(fff, "s");
 			break;
 		case MODE_NO_GHOST:
@@ -790,7 +799,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
 			    parties[q_ptr->party].name);
 	}
+  #ifdef SHOW_SOLOIST_TAG
 	if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
+  #endif
  } else { /* COMPACT_ALT */
 	/* Print a message */
 	fprintf(fff," ");
@@ -899,6 +910,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			fprintf(fff, "r");
 			break;
 		case MODE_HARD:
+			fprintf(fff, "s");//deprecated
+			break;
+		case (MODE_SOLO | MODE_NO_GHOST):
 			fprintf(fff, "s");
 			break;
 		case MODE_NO_GHOST:
@@ -923,7 +937,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
 			    parties[q_ptr->party].name);
 	}
+  #ifdef SHOW_SOLOIST_TAG
 	if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
+  #endif
  }
 
 } else { /* COMPACT_PLAYERLIST */
@@ -1073,6 +1089,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			fprintf(fff, "r");
 			break;
 		case MODE_HARD:
+			fprintf(fff, "s");//deprecated
+			break;
+		case (MODE_SOLO | MODE_NO_GHOST):
 			fprintf(fff, "s");
 			break;
 		case MODE_NO_GHOST:
@@ -1119,7 +1138,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 				}
 			}
 		} else fprintf(fff, "  \377U(%s\377U)", q_ptr->info_msg);
+   #ifdef SHOW_SOLOIST_TAG
 		if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
+   #endif
 	} else fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
 
  } else { //#else
@@ -1146,7 +1167,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			    ((q_ptr->male)?"Male, ":"Female, "),
 			q_ptr->fruit_bat ? "Fruit bat, " : "",
 			q_ptr->lev, parties[q_ptr->party].name);
+   #ifdef SHOW_SOLOIST_TAG
 	//---todo---if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
+   #endif
   #else	// 0
    #ifndef ABUNDANT_TITLES
 	fprintf(fff, "  %s the ", q_ptr->name);
@@ -1159,7 +1182,10 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			case MODE_NORMAL:
 				break;
 			case MODE_HARD:
-				fprintf(fff, "purgatorial ");
+				fprintf(fff, "purgatorial ");//deprecated
+				break;
+			case (MODE_SOLO | MODE_NO_GHOST):
+				fprintf(fff, "soloist ");
 				break;
 			case MODE_NO_GHOST:
 				fprintf(fff, "unworldly ");
@@ -1197,10 +1223,13 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		case MODE_NORMAL:
 			break;
 		case MODE_HARD:
-			fprintf(fff, "\377s");
+			fprintf(fff, "\377s");//deprecated
 			break;
 		case MODE_NO_GHOST:
 			fprintf(fff, "\377D");
+			break;
+		case (MODE_SOLO | MODE_NO_GHOST):
+			fprintf(fff, "\377s");
 			break;
 		case MODE_EVERLASTING:
 			fprintf(fff, "\377B");
@@ -1302,8 +1331,11 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 		case (MODE_HARD | MODE_NO_GHOST):
 			fprintf(fff, "\n\377r  *%s\377U ", info_chars);
 			break;
-		case MODE_HARD:
+		case (MODE_SOLO | MODE_NO_GHOST):
 			fprintf(fff, "\n\377s  *%s\377U ", info_chars);
+			break;
+		case MODE_HARD:
+			fprintf(fff, "\n\377s  *%s\377U ", info_chars);//deprecated
 			break;
 		case MODE_NO_GHOST:
 			fprintf(fff, "\n\377D  *%s\377U ", info_chars);
@@ -1348,7 +1380,9 @@ if (compaction == 1 || compaction == 2) { /* #ifdef COMPACT_PLAYERLIST */
 			    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
 			    parties[q_ptr->party].name);
 	}
+   #ifdef SHOW_SOLOIST_TAG
 	if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
+   #endif
   #endif // 0
  } //#endif	/* ULTRA_COMPACT_PLAYERLIST */
 }//#endif /* COMPACT_PLAYERLIST */
@@ -2030,8 +2064,11 @@ void write_player_info(int Ind, char *pinfo) {
 		case (MODE_HARD | MODE_NO_GHOST):
 			fprintf(fff, "r");
 			break;
-		case MODE_HARD:
+		case (MODE_SOLO | MODE_NO_GHOST):
 			fprintf(fff, "s");
+			break;
+		case MODE_HARD:
+			fprintf(fff, "s");//deprecated
 			break;
 		case MODE_NO_GHOST:
 			fprintf(fff, "D");
@@ -2077,7 +2114,9 @@ void write_player_info(int Ind, char *pinfo) {
 				}
 			}
 		} else fprintf(fff, "  \377U(%s\377U)", q_ptr->info_msg);
+  #ifdef SHOW_SOLOIST_TAG
 		if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
+  #endif
 	} else fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
 
 

@@ -74,7 +74,7 @@
 #ifndef TEST_CLIENT
  #define CLIENT_VERSION_TAG	CLIENT_TAG
 #else
- #define CLIENT_VERSION_TAG	CLIENT_TAG"Test"
+ #define CLIENT_VERSION_TAG	CLIENT_TAG"-Test"
 #endif
 
 /* Minimum client version required to be allowed to log in */
@@ -7561,7 +7561,7 @@ extern int PlayerUID;
 #define MODE_DED_IDDC_OK	0x0400
 #define MODE_DED_PVP_OK		0x0800
 
-#define MODE_MASK		(MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* "real" character modes, rather than 'softer modifiers' */
+#define MODE_MASK		(MODE_SOLO | MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* "real" character modes, rather than 'softer modifiers' */
 
 
 

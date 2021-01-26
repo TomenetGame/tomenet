@@ -5461,8 +5461,9 @@ static void player_talk_aux(int Ind, char *message) {
 		else if (p_ptr->ghost) c_n = 'r';
 		else if (p_ptr->mode & MODE_EVERLASTING) c_n = 'B';
 		else if (p_ptr->mode & MODE_PVP) c_n = COLOUR_MODE_PVP;
+		else if (p_ptr->mode & MODE_SOLO) c_n = 's';
 		else if (p_ptr->mode & MODE_NO_GHOST) c_n = 'D';
-		else if (p_ptr->mode & MODE_HARD) c_n = 's';
+		else if (p_ptr->mode & MODE_HARD) c_n = 's';//deprecated
 		else c_n = 'W'; /* normal mode */
 		
 		/* Color the brackets of some players... (Enabled for PK) */
