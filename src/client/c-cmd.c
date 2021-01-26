@@ -1581,7 +1581,36 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 	/* invoked for a specific topic? */
 	*buf_override = 0;
-	//c_message_add(format("init_search_type = %d", init_search_type));//debugging+testing
+
+	/* Hack: Translate specific searches from all-uppercase to chapter: */
+	if (init_search_type == 2 || init_search_type == 3) {
+		strcpy(buf, init_search_string);
+
+		/* 'Troubleshooting' section, directly access it */
+		if (!strncasecmp(buf, "prob", 4) || !strncasecmp(buf, "prb", 3)) {
+			char *c = buf;
+			int p;
+
+			while (*c && !((*c < 'a' || *c > 'z') && (*c < 'A' || *c > 'Z'))) c++;
+			p = atoi(c);
+			*c = 0;
+
+			if (my_strcasestr("problem", buf) || my_strcasestr("prblem", buf)) {
+				if (!p) {
+					init_search_type = 3;
+					strcpy(init_search_string, "Troubleshooting");
+				} else {
+					init_search_type = 2;
+					strcpy(init_search_string, "PROBLEM ");
+					strcat(init_search_string, format("%d", p));
+				}
+			}
+		}
+
+		/* clean up */
+		buf[0] = 0;
+	}
+
 	switch (init_search_type) {
 	case 1:
 		c_override = 's';
@@ -2050,23 +2079,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				char tmpbuf[MAX_CHARS];
 
 				chapter[0] = 0;
-
-				/* Troubleshooting */
-				if (!strncasecmp(buf, "prob", 4) || !strncasecmp(buf, "prb", 3)) {
-					char *c = buf;
-					int p;
-
-					while (*c && (*c < '0' || *c > '9')) c++;
-					if (*c == '\0') strcpy(buf, "Troubleshooting");
-					else {
-						p = atoi(c);
-						strcpy(buf, "PROBLEM ");
-						strcat(buf, format("%d", p));
-						fallback = TRUE;
-						fallback_uppercase = 4;
-						continue;
-					}
-				}
 
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
