@@ -2080,6 +2080,31 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 				chapter[0] = 0;
 
+				/* 'Troubleshooting' section, directly access it */
+				if (!strncasecmp(buf, "prob", 4) || !strncasecmp(buf, "prb", 3)) {
+					char *c = tmpbuf;
+					int p;
+
+					strcpy(tmpbuf, buf);
+					while (*c && !((*c < 'a' || *c > 'z') && (*c < 'A' || *c > 'Z'))) c++;
+					p = atoi(c);
+					*c = 0;
+
+					if (my_strcasestr("problem", tmpbuf) || my_strcasestr("prblem", tmpbuf)) {
+						if (!p) strcpy(buf, "Troubleshooting");
+						else {
+							strcpy(buf, "PROBLEM ");
+							strcat(buf, format("%d", p));
+							fallback = TRUE;
+							fallback_uppercase = 4;
+							continue;
+						}
+					}
+
+					/* clean up */
+					tmpbuf[0] = 0;
+				}
+
 				/* Expand 'AC' to 'Armour Class' */
 				if (!strcasecmp(buf, "ac")) strcpy(buf, "armour class");
 				/* Expand 'tc' to 'Treasure Class' */
