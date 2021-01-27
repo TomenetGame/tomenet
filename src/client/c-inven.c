@@ -140,11 +140,11 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	int i, j;
 	int start, stop, step;
 	cptr s;
-	bool inven_first = mode & INVEN_FIRST;
+	bool inven_first = (mode & INVEN_FIRST) != 0;
 #ifdef SMART_SWAP
 	int i_found = -1;
 	char buf1[ONAME_LEN], buf3[ONAME_LEN];
-	bool multi = mode & CHECK_MULTI;
+	bool multi = (mode & CHECK_MULTI) != 0;
 	bool postpone;
 #endif
 	bool charged = (mode & CHECK_CHARGED) != 0;
@@ -419,10 +419,10 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	int i, j;
 	char buf[ONAME_LEN];
 	char buf1[ONAME_LEN], buf2[ONAME_LEN], *ptr; /* for manual strcasestr() */
-	bool inven_first = mode & INVEN_FIRST;
+	bool inven_first = (mode & INVEN_FIRST) != 0;
 #ifdef SMART_SWAP
 	char buf3[ONAME_LEN];
-	bool multi = mode & CHECK_MULTI;
+	bool multi = (mode & CHECK_MULTI) != 0;
 	int i_found = -1;
 #endif
 	bool charged = (mode & CHECK_CHARGED) != 0;
