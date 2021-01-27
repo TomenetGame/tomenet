@@ -5740,7 +5740,7 @@ static errr grab_one_spell_monster_flag(dungeon_info_type *d_ptr, cptr what, byt
  */
 errr init_d_info_txt(FILE *fp, char *buf) {
 	int i, j;
-	byte rule_num = 0;
+	char rule_num = 0;
 	byte r_char_number = 0;
 	char *s, *t;
 
@@ -7342,7 +7342,9 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 				q_questor->reidx = reidx;
 				q_questor->rchar = ch;
 				q_questor->rattr = color_char_to_attr(attr);
+				if (minlv == -1) minlv = 0; /* (hack) Fix wrong q_info.txt data instead of throwing sanitizer-warnings. Todo: Instead, correct the wrong -1 values in q_info.txt. */
 				q_questor->rlevmin = minlv;
+				if (maxlv == -1) maxlv = 0; /* (hack) Fix wrong q_info.txt data instead of throwing sanitizer-warnings. Todo: Instead, correct the wrong -1 values in q_info.txt. */
 				q_questor->rlevmax = maxlv;
 				strcpy(q_questor->name, tmpbuf);
 				break;
