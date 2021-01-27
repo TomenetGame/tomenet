@@ -1913,7 +1913,7 @@ void get_char_name(void) {
 void get_char_info(void) {
 	int i, j;
 	char out_val[160];
-	dedicated = (sex & (MODE_DED_PVP | MODE_DED_IDDC)) =! 0;
+	dedicated = (sex & (MODE_DED_PVP | MODE_DED_IDDC)) != 0;
 	sex &= ~(MODE_DED_PVP | MODE_DED_IDDC);
 
 	/* Hack -- display the nick */
