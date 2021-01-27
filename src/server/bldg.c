@@ -1457,7 +1457,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 		}
 
 		if (o_ptr->name1 == ART_NARSIL) {
-			bool id = o_ptr->ident & ID_KNOWN;
+			bool id = (o_ptr->ident & ID_KNOWN) != 0;
 
 			cost = a_info[ART_ANDURIL].cost - a_info[ART_NARSIL].cost;
 

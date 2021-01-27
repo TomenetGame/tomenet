@@ -1622,7 +1622,7 @@ static void store_create(store_type *st_ptr) {
 	bool good, great;
 	u32b resf = RESF_STORE;
 	obj_theme theme;
-	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM);
+	bool black_market = (st_info[st_ptr->st_idx].flags1 & SF1_ALL_ITEM) != 0;
 	//bool town_bm = (st_ptr->st_idx == 6);
 
 	/* Paranoia -- no room left */

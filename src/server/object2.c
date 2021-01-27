@@ -8294,7 +8294,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	bool mha, rha; /* monk heavy armor, rogue heavy armor */
 	bool go_heavy = TRUE; /* new special thingy: don't pick super light cloth armour if we're not specifically light-armour oriented */
 	bool caster = FALSE;
-	bool antimagic = p_ptr->s_info[SKILL_ANTIMAGIC].value;
+	bool antimagic = (p_ptr->s_info[SKILL_ANTIMAGIC].value != 0);
 	object_type forge_fallback;
 
 	/* for analysis functions and afterwards for determining concrete reward */

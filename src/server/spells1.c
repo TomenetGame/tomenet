@@ -12531,7 +12531,7 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	if (flg & PROJECT_STAY) {
 		/* For waves and walls, the initial imprint mustn't cause any damage or it will hit
 		   enemies twice. For other effects (clouds) it's up to preference. */
-		bool no_initial_damage = project_time_effect & (EFF_WAVE | EFF_THINWAVE | EFF_WALL);
+		bool no_initial_damage = (project_time_effect & (EFF_WAVE | EFF_THINWAVE | EFF_WALL)) != 0;
 
 		/* Since we apply damage one more time, ie on initial grid imprint,
 		   remove the final tick to keep correct amount of damage applications. */

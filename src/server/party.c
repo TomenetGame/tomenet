@@ -3323,7 +3323,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	int dlev = getlevel(wpos);
 	bool not_in_iddc = !in_irondeepdive(wpos);
 #ifdef PERFORM_IRON_TEAM_CHECKS
-	bool iron = (parties[party_id].mode & PA_IRONTEAM);
+	bool iron = ((parties[party_id].mode & PA_IRONTEAM) != 0);
 	int iron_team_members_here = 0;//temporarily here
 #endif
 
