@@ -156,7 +156,7 @@ D:The treasure of Tulkas, most fleet and wrathful of the Valar.
 
 N:10:of Power 'Narya'
 I:45:34:1
-W:70:600:2:150000
+W:70:60:2:150000
 P:0:1d1:6:6:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED | HIDE_TYPE | LUCK |
 F:ACTIVATE | FREE_ACT | SEE_INVIS | ESP_EVIL
@@ -174,7 +174,7 @@ D:Morgoth.
 
 N:11:of Power 'Nenya'
 I:45:35:2
-W:80:700:2:200000
+W:80:70:2:200000
 P:0:1d1:9:9:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED | HIDE_TYPE | LUCK |
 F:ACTIVATE | HOLD_LIFE | FREE_ACT | SEE_INVIS |
@@ -190,7 +190,7 @@ D:Morgoth.
 
 N:12:of Power 'Vilya'
 I:45:36:3
-W:90:800:2:300000
+W:90:80:2:300000
 P:0:1d1:12:12:0
 F:STR | INT | WIS | DEX | CON | CHR | SPEED | HIDE_TYPE | LUCK |
 F:ACTIVATE | HOLD_LIFE | FREE_ACT | SEE_INVIS |

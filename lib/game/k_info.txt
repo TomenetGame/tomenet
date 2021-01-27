@@ -6132,7 +6132,7 @@ F:INSTA_ART
 N:777:& Shadow Blade~
 G:|:D
 I:23:32:2
-W:50:900:45:2000
+W:50:0:45:2000
 A:48/4:60/4:80/4
 P:0:3d4:-2:2:0
 F:RES_DARK | STEALTH
@@ -6141,7 +6141,7 @@ F:IGNORE_ACID | IGNORE_WATER
 N:778:& Bluesteel Blade~
 G:|:b
 I:23:31:0
-W:60:1800:60:6000
+W:60:0:60:6000
 A:60/20
 P:0:3d4:5:2:0
 F:SHOW_MODS | VORPAL | IGNORE_WATER
@@ -8106,7 +8106,7 @@ D:(This is a quest item)
 #N:(No.):(name)
 #G:(appearence):(colour)
 #I:tval:sval:pval  [ie. TV_SHIELD, SV_SMALL_LEATHER_SHIELD, +0] (defines.h)
-#W:(depth):(rarity[arts only]):(weight):(price)
+#W:(depth):(rarity[arts only] 0..255):(weight):(price)
 #A:(depth)/(chance[1/value])   [multiple definitions are possible; chance=0 makes the item unfindable]
 #P:(AC):(base dam.):(to-hit):(to-dam):(+AC)
 #F:(Flag) |...
