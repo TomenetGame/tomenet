@@ -1104,9 +1104,9 @@ void prt_res_acid(bool is_resisted) {
 	Term_locate(&x, &y);
 
 	if (is_resisted) {
-		c_put_str(TERM_L_DARK, "A", ROW_RESIST_ACID, COL_RESIST_ACID);
+		c_put_str(TERM_SLATE, "A", ROW_RESIST_ACID, COL_RESIST_ACID);
 	} else {
-		c_put_str(TERM_L_DARK, " ", ROW_RESIST_ACID, COL_RESIST_ACID);
+		c_put_str(TERM_SLATE, " ", ROW_RESIST_ACID, COL_RESIST_ACID);
 	}
 
 	/* restore cursor position */
@@ -1142,9 +1142,9 @@ void prt_res_divine(bool is_resisted) {
 	Term_locate(&x, &y);
 
 	if (is_resisted) {
-		c_put_str(TERM_L_BLUE, "M", ROW_RESIST_MANA, COL_RESIST_MANA);
+		c_put_str(TERM_VIOLET, "M", ROW_RESIST_MANA, COL_RESIST_MANA);
 	} else {
-		c_put_str(TERM_L_BLUE, " ", ROW_RESIST_MANA, COL_RESIST_MANA);
+		c_put_str(TERM_VIOLET, " ", ROW_RESIST_MANA, COL_RESIST_MANA);
 	}
 
 	/* restore cursor position */
@@ -2449,8 +2449,8 @@ void update_lagometer() {
 }
 
 void display_player(int hist) {
-	int i;
-	char buf[80];
+	int i, tmp;
+	char buf[80], tmpc;
 	cptr desc;
 
 	if (hist != 2) {
@@ -2604,30 +2604,32 @@ void display_player(int hist) {
 
 
 			put_str("Blows/Round:", y_row3, 55);
-			c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_blow), y_row3, 69);
+			c_put_str(p_ptr->extra_blows ? TERM_L_BLUE : TERM_L_GREEN, format("%d", p_ptr->num_blow), y_row3, 69);
 
 			put_str("Shots/Round:", y_row3 + 1, 55);
-			c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_fire), y_row3 + 1, 69);
+			c_put_str(TERM_L_GREEN, format("%d", p_ptr->num_fire), y_row3 + 1, 69);
 #if 0
 			put_str("Spells/Round:", y_row3 + 2, 55);
-			c_put_str(TERM_L_BLUE, format("%d", p_ptr->num_spell), y_row3 + 2, 69);
+			c_put_str(TERM_L_GREEN, format("%d", p_ptr->num_spell), y_row3 + 2, 69);
 #endif
 			put_str("Infra-Vision:", y_row3 + 3, 55);
-			c_put_str(TERM_L_BLUE, format("%d feet", p_ptr->see_infra * 10), y_row3 + 3, 69);
+			c_put_str(TERM_L_GREEN, format("%d feet", p_ptr->see_infra * 10), y_row3 + 3, 69);
 		}
 
 		/* Dump the bonuses to hit/dam */
-		prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, y_row2, 1, TERM_L_BLUE);
-		prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, y_row2 + 1, 1, TERM_L_BLUE);
-		prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, y_row2 + 2, 1, TERM_L_BLUE);
-		prt_num("+To RDamage ", p_ptr->to_d_ranged, y_row2 + 3, 1, TERM_L_BLUE);
+		prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, y_row2, 1, TERM_L_GREEN);
+		prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, y_row2 + 1, 1, TERM_L_GREEN);
+		prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, y_row2 + 2, 1, TERM_L_GREEN);
+		prt_num("+To RDamage ", p_ptr->to_d_ranged, y_row2 + 3, 1, TERM_L_GREEN);
 #ifndef NEW_COMPRESSED_DUMP_AC
 		/* Dump the armor class bonus */
-		prt_num("+ To AC     ", p_ptr->dis_to_a, y_row2 + 4, 1, TERM_L_BLUE);
+		tmp = (p_ptr->dis_ac & ~0x1000); tmpc = (p_ptr->dis_ac & 0x1000) ? TERM_L_BLUE : TERM_L_GREEN;
+		prt_num("+ To AC     ", tmp, y_row2 + 4, 1, tmpc);
 		/* Dump the total armor class */
 		prt_num("  Base AC   ", p_ptr->dis_ac, y_row2 + 5, 1, TERM_L_BLUE);
 #else
-		prt_num("Total AC    ", p_ptr->dis_to_a + p_ptr->dis_ac, y_row2 + 4, 1, TERM_L_BLUE);
+		tmp = (p_ptr->dis_ac & ~0x1000) + p_ptr->dis_to_a; tmpc = (p_ptr->dis_ac & 0x1000) ? TERM_L_BLUE : TERM_L_GREEN;
+		prt_num("Total AC    ", tmp, y_row2 + 4, 1, tmpc);
 #endif
 
 		prt_num("Level      ", (int)p_ptr->lev, y_row2, 28, TERM_L_GREEN);

@@ -8314,7 +8314,8 @@ int Send_skills(int Ind) {
 	skills[7] = p_ptr->skill_dev;
 
 	/* Number of blows */
-	skills[8] = p_ptr->num_blow;
+	if (is_older_than(&p_ptr->version, 4, 7, 3, 1, 0, 0)) skills[8] = p_ptr->num_blow;
+	else skills[8] = p_ptr->num_blow | (p_ptr->extra_blows << 5); //hack: allowing for up to 31 total BpR and up to 7 temp-EA
 	skills[9] = p_ptr->num_fire;
 	skills[10] = p_ptr->num_spell;
 
