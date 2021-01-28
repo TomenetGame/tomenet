@@ -1178,6 +1178,19 @@ They all start with a slash '/' hence they're called slash commands:
             As another specialty, /dis (without parameters) will skip dragon
             scale mails, leaving them intact.
 
+            Tip: If you want to keep {good} items too, press '&' to open the
+            auto-inscriptions menu and add a new auto-inscription there:
+            For search string, enter:   !good
+            and for inscription, enter: -good-
+            What this does is to look for any item that is inscribed {good} and
+            immediately inscribe it {-good-} instead. Thanks to the slight
+            modification (adding the two dashes around the 'good') the /dis
+            command will no longer recognize it as {good} pseudo-inscription
+            and therefore not attempt to destroy this item.
+            The exclamation mark in '!good' was needed to force re-inscribing
+            an already inscribed item, without it the inscription would only
+            be applied to items that do not carry an inscription yet.
+
 /dis a      DESTROYS items like '/dis', and additionally destroys all items
             that have no inscription at all or just a price discount tag
             (discount tags don't count as real inscriptions).
