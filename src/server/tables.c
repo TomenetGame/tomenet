@@ -1410,6 +1410,14 @@ s32b player_exp[PY_MAX_LEVEL + 1] = {
  *    class-choices
  *    mana %  (<- obsolete)
  */
+
+/* Note about skill boni/mali wording in the guide:
+   'slight':  +/- 0.05       (5%)
+   -:         +/- 0.1        (10%)
+   'large':   +/- 0.15..0.2  (15-20%)
+   'huge':     anything differing even more
+*/
+
 player_race race_info[MAX_RACE] = {
 	{ "Human",
 		{  0,  0,  0,  0,  0,  0 },
