@@ -2093,7 +2093,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 				else
 					c_prt_n(TERM_WHITE, buf + l, y, x, vis_len);
 			} else
+#if 0 /* This erases the entire line, instead of just vis_len (done above at Term_erase()) */
 				c_prt(TERM_WHITE, buf, y, x);
+#else /* This just prints without extra erasing */
+				Term_putstr(x, y, -1, TERM_WHITE, buf);
+#endif
 		} else {
 			if (len > k) Term_erase(x + k, y, len - k);
 			if (k) Term_putch(x + k - 1, y, TERM_WHITE, 'x');
@@ -6747,9 +6751,9 @@ void auto_inscriptions(void) {
 		case '\n':
 		case '\r':
 			/* Clear previous matching string */
-			Term_putstr(9, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
+			Term_putstr(10, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
 			/* Go to the correct location */
-			Term_gotoxy(10, cur_line + 1);
+			Term_gotoxy(11, cur_line + 1);
 			strcpy(buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line]);
 			/* Get a new matching string */
 			if (!askfor_aux(buf, 40, 0)) continue;
@@ -6758,15 +6762,15 @@ void auto_inscriptions(void) {
 			buf_ptr = buf;
 			while (*buf_ptr == '#') buf_ptr++;
 			while (*(buf_ptr + strlen(buf_ptr) - 1) == '#') *(buf_ptr + strlen(buf_ptr) - 1) = '\0';
-			Term_putstr(9, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
-			Term_putstr(9, cur_line + 1, -1, TERM_WHITE, buf_ptr);
+			Term_putstr(10, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
+			Term_putstr(11, cur_line + 1, -1, TERM_WHITE, buf_ptr);
 			/* ok */
 			strcpy(auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line], buf_ptr);
 
 			/* Clear previous tag string */
-			Term_putstr(55, cur_line + 1, -1, TERM_L_GREEN, "                    ");
+			Term_putstr(56, cur_line + 1, -1, TERM_L_GREEN, "                    ");
 			/* Go to the correct location */
-			Term_gotoxy(55, cur_line + 1);
+			Term_gotoxy(57, cur_line + 1);
 			strcpy(buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line]);
 			/* Get a new tag string */
 			if (!askfor_aux(buf, 20, 0)) {
