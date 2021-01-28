@@ -2213,6 +2213,7 @@ static bool enter_server_name(void) {
 bool get_server_name(void) {
 	s32b i;
 	cptr tmp;
+	int retries;
 
 #ifdef EXPERIMENTAL_META
 	int j, bytes = 0, socket = -1;
@@ -2265,7 +2266,7 @@ bool get_server_name(void) {
 	C_WIPE(buf, 80192, char);
 
 	/* Listen for reply (try ten times in ten seconds) */
-	for (int retries = 0; retries < 10; retries++) {
+	for (retries = 0; retries < 10; retries++) {
 		/* Set timeout */
 		SetTimeout(1, 0);
 
