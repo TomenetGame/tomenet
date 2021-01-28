@@ -3203,7 +3203,7 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 	char **list;
 	int fonts_found = 0, fonts_match = 0, i, j;
 	bool is_duplicate;
-	int status;
+	int status = -999;
 
 	char tmp[1024];
 	FILE *fff;
@@ -3219,7 +3219,8 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 			break;
 		}
 		fclose(fff);
-	} else status = regcomp(&re, "^[0-9]+x[0-9]+(bold|l|tg)?$", REG_EXTENDED|REG_NOSUB);
+	}
+	if (status == -999) status = regcomp(&re, "^[0-9]+x[0-9]+(bold|l|tg)?$", REG_EXTENDED|REG_NOSUB);
 
 	if (status != 0) {
 		fprintf(stderr, "regcomp returned %d\n", status);
