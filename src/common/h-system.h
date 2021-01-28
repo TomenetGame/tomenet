@@ -22,6 +22,8 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#include <stdbool.h> /* C99 _Bool */
+
 
 #ifdef SET_UID
 

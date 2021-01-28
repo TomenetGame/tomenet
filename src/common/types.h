@@ -3020,7 +3020,7 @@ struct player_type {
 	byte xtra_might;		/* Extra might bow */
 	bool impact;			/* Earthquake blows */
         bool auto_id;			/* Pickup = Id */
-	bool reduce_insanity;		/* For mimic forms with weird/empty mind */
+	char reduce_insanity;		/* For mimic forms with weird/empty mind */
 
 	s16b invis;			/* Invisibility */
 

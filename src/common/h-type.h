@@ -80,8 +80,10 @@ typedef int errr;
 /*
  * Hack -- prevent problems with C++
  */
-#undef bool
-#define bool bool_hack
+#if 0 /* C99 _Bool */
+ #undef bool
+ #define bool bool_hack
+#endif
 
 
 /* Note that "signed char" is not always "defined" */
@@ -95,7 +97,7 @@ typedef unsigned char byte;
 
 /* Note that a bool is smaller than a full "int" */
 /* Simple True/False type */
-typedef char bool;
+//typedef char bool; /* C99 _Bool */
 
 
 /* A signed, standard integer (at least 2 bytes) */
@@ -138,7 +140,7 @@ typedef real *real_ptr;
 typedef errr *errr_ptr;
 typedef char *char_ptr;
 typedef byte *byte_ptr;
-typedef bool *bool_ptr;
+typedef bool *bool_ptr; /* C99 _Bool */
 typedef sint *sint_ptr;
 typedef uint *uint_ptr;
 typedef long *long_ptr;

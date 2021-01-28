@@ -8833,7 +8833,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "You can no longer receive direct private chat from players.");
 				else
 					msg_print(Ind, "You can now receive direct private chat from players.");
-				p_ptr->admin_dm_chat = ~p_ptr->admin_dm_chat;
+				p_ptr->admin_dm_chat = !p_ptr->admin_dm_chat;
 				return;
 			}
 			/* unidentifies an item */
