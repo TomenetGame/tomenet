@@ -2399,7 +2399,7 @@ struct player_type {
 	u16b deaths, soft_deaths;	/* Times this character died so far / safely-died (no real death) so far */
 	s16b ghost;			/* Are we a ghost */
 	s16b fruit_bat;			/* Are we a fruit bat */
-	byte lives;			/* number of times we have ressurected */
+	char lives;			/* number of times we have ressurected */
 	byte houses_owned;		/* number of simultaneously owned houses */
 	byte castles_owned;		/* number of owned castles */
 
