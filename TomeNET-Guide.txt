@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 26. Januar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 28. Januar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -14708,8 +14708,7 @@ create a character!):
     Humans have no experience penalties and tend to go up levels faster than
     most other races. No racial adjustments or intrinsics occur to characters
     choosing human.
-    Humans get a bonus on 'Climbing', a slight bonus on 'Climbing' and a large
-    bonus on 'Interception'.
+    Humans get a large bonus on 'Climbing' and 'Interception'.
 
 - Half-Elf
     Half-elves tend to be smarter and faster than humans, but not as strong.
@@ -14768,8 +14767,8 @@ create a character!):
     drawback, though. Dwarves are loudmouthed and proud, singing in loud
     voices, arguing with themselves for no good reason, and screaming out
     challenges at nearby foes. In other words, dwarves have a miserable
-    stealth. They receive a bonus on 'Axe-mastery' and 'Climbing' and a huge
-    bonus on 'Digging'.
+    stealth. They receive a bonus on 'Axe-mastery', a huge bonus on 'Digging'
+    and 'Climbing' and a large malus on 'Swimming'.
 
 - Half-Orc
     Because of their preference to living underground to on the surface,
@@ -14781,7 +14780,7 @@ create a character!):
     have great constitutions and lots of hit points.
     They get a slight bonus on 'Backstabbing', a large bonus on 'Weaponmastery'
     and a bonus on 'Necromancy' and occult 'Shadow' magic and receive penalties
-    on 'Magic', 'Sorcery' and 'Spirit' and a slight penalty on 'Swimming'.
+    on 'Spirit' and large penalties on 'Magic', 'Sorcery' and 'Swimming'.
 
 - Half-Troll
     Half-trolls have their strength sustained. They are very strong, but also
@@ -14792,8 +14791,8 @@ create a character!):
     item providing regeneration, doesn't stack with item ability). Thanks to
     their thick skin, they also get an (albeit very small) bonus to armour
     class. Half-Trolls get bonus on 'Blunt-mastery', 'Health'. They receive a
-    penalty on 'Critical-strike' and 'Swimming' and large penalties on
-    'Climbing', 'Swimming', 'Archery', 'Magic' and 'Sorcery'.
+    large penalty 'Climbing' and huge penalties on 'Critical-strike', 'Magic',
+    'Sorcery', 'Archery' and 'Swimming'.
 
 - Dunadan
     Dunadain have their constitution sustained. Dunadain are a race of hardy
@@ -14801,7 +14800,7 @@ create a character!):
     field, especially constitution. However, being men of the world, very
     little is new to them, and levels are very hard for them to gain.
     A Dunadan gets bonus on 'Combat', 'Archery' and 'Interception' and a small
-    bonus to 'Magic' and 'Swimming'.
+    bonus to 'Magic' and a large bonus to 'Swimming'.
 
 - High-Elf
     High-Elves can see the invisible and resist light and the flow of time
@@ -14811,9 +14810,9 @@ create a character!):
     There are few things that they have not seen already, and experience is
     hard for them to gain.
     High-Elves receive boni on 'Bow-mastery', 'Magic', 'Stealth', 'Dodging'
-    and the magic 'Nature' school, a large bonus on 'Calmness', a slight
-    bonus on 'Swimming' and on occult 'Spirit' magic and a malus on 'Shadow'.
-    High-Elves also recieve minor boni on runemastery of 'Light' and 'Mana'.
+    and the magic 'Nature' school, a large bonus on 'Calmness' and 'Swimming',
+    a slight bonus on 'Spirit' occultism and a malus on 'Shadow' occultism.
+    High-Elves also recieve boni on 'Light' and 'Mana' runecraft.
 
 - Yeek
     Being weak and losing many childhood fights, they have learned the
@@ -14824,8 +14823,8 @@ create a character!):
     Yeeks are the least powerful of all the races. They suffer disadvantages
     in all stats and have attributes similar to humans. However, to
     compensate Yeeks learn, and thus gain levels, extremely quickly.
-    Yeeks don't receive boni or mali on any skills except that they are good at
-    'Swimming'.
+    Yeeks don't receive boni or mali on any skills except that they are very
+    good at 'Swimming'.
 
     Note:
     Since yeeks have low hit points you might consider training the skill
@@ -14862,8 +14861,9 @@ create a character!):
     provides a small bonus to armour class.
     They get bonus to 'Health', a slight bonus to 'Spirit' and a large bonus on
     'Calmness' and on the magic schools 'Earth', 'Water' and 'Nature'. They
-    receive a large penalty on 'Fire' school, a penalty on 'Axe-mastery' and a
-    small penalty on 'Sword-mastery'. They cannot train 'Climbing' at all.
+    receive a huge penalty on 'Fire' school, a large penalty on 'Axe-mastery'
+    and a penalty on 'Sword-mastery'. They cannot train 'Climbing' or any
+    blood magic at all.
 
 - Draconian
     These humanoid half-breeds of dragon and man surpass common humans in all
@@ -14894,8 +14894,8 @@ create a character!):
     Thanks to their scaly hide they receive a small bonus to armour class,
     especially the metallic lineages - bronze, silver and gold.
     Draconians receive a bonus on 'Polearm-mastery', 'Attunement',
-    'Nexus' runemastery, 'Magic devices', a large bonus on 'Aura of Fear',
-    and a slight bonus on 'Swimming'.
+    'Nexus' runemastery, 'Magic devices', a large bonus on 'Aura of Fear' and
+    'Swimming'.
 
     Table of their traits:
     Lineage     Breath          Resistances/abilities
@@ -14930,7 +14930,7 @@ create a character!):
     They can see in the dark thanks to infra-vision, have extraordinarily sharp
     senses, and can move very silently, making them hard to spot. They are also
     good at disarming traps.
-    Kobolds receive a bonus on 'Trapping', a large bonus on 'Swimming' and a
+    Kobolds receive a bonus on 'Trapping', a huge bonus on 'Swimming' and a
     slight bonus on 'Sneakiness'.
 
 - Dark-Elf
@@ -14944,7 +14944,7 @@ create a character!):
     Dark-Elves intrinsically resist darkness, but are susceptible to light.
     At level 20 they learn to see the invisible.
     They get bonus on 'Stealth', 'Dodging', 'Sneakiness', 'Backstabbing', a
-    large bonnus on occult 'Shadow' magic and a malus on all four holy schools
+    large bonus on occult 'Shadow' magic and a malus on all four holy schools
     and the occult 'Spirit' school.
 
 - Vampire
@@ -15016,12 +15016,13 @@ create a character!):
     independant of their level, enabling them to survive a very long time
     without feeding - even an item granting 'Slow Digestion' will not improve
     this any further.
-    Vampires hate 'Blunt' weapons, are bad at 'Swimming', get a penalty on
-    'Divination' magic school, but receive a bonus on 'Mental Intrusion' and
-    a large bonus on 'Shadow', 'Necromancy' and all aura skills and a small
-    bonus on 'Traumaturgy'. They cannot use certain magic schools at all as
-    described above. As undead, Vampires gain a moderate skill bonus for
-    'Nether' runes but in turn find it hard to improve in 'Light' runes.
+    Vampires hate 'Blunt' weapons, are very bad at 'Swimming', cannot use
+    certain magic schools at all as described above, get a large penalty on
+    'Divination' magic but receive a bonus on 'Mental Intrusion' and a large
+    bonus on 'Shadow', 'Unlife', 'Necromancy', all aura skills and a small
+    bonus on 'Traumaturgy'.
+    As undead, Vampires gain a moderate skill bonus for 'Nether' runes but in
+    turn find it extremely hard to improve in 'Light' runes.
 
     Hint: In case you lose your mummy wrapping and the general store doesn't
     have one in stock, you can order one there (press 'o' key in the store).
@@ -15077,6 +15078,7 @@ create a character!):
     They gain experience extremely slowly, and rarely need to feed before
     initiation. Afterwards they have no more need for any worldly food at all
     (and they cannot become gorged either).
+
     Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
     Hint: Since all Maiar start with a point in 'Astral Knowledge' skill, you
