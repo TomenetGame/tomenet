@@ -49,10 +49,12 @@
 #ifdef USE_GCU
 
 
+#if 0 /* C99 _Bool */
 /*
  * Hack -- play games with "bool"
  */
-#undef bool
+ #undef bool
+#endif
 
 /*
  * Include the proper "header" file
