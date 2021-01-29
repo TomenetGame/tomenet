@@ -1835,8 +1835,15 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	int old_num, new_num;
 
 
-	//todo: add tym code here for pvp-measurements
-	//if (Ind_attacker) Players[Ind_attacker]->idle_attack = 0;
+	/* Note: We ignore admin_invuln and also invuln here */
+	if (IS_PLAYER(Ind_attacker)) {
+		player_type *q_ptr = Players[Ind_attacker];
+
+		if (!q_ptr->test_turn) q_ptr->test_turn = turn - 1; /* Start counting damage now */
+		q_ptr->test_count++;
+		q_ptr->test_dam += damage;
+		q_ptr->idle_attack = 0;
+	}
 
 	/* Amulet of Immortality */
 	if (p_ptr->admin_invuln) return;
@@ -1963,12 +1970,6 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 
 		/* Otherwise damage is reduced by the shield */
 		damage = (damage + 1) / 2;
-	}
-
-	if (IS_PLAYER(Ind_attacker)) {
-		if (!Players[Ind_attacker]->test_turn) Players[Ind_attacker]->test_turn = turn - 1; /* Start counting damage now */
-		Players[Ind_attacker]->test_count++;
-		Players[Ind_attacker]->test_dam += damage;
 	}
 
 	/* Re allowed by evileye for power */

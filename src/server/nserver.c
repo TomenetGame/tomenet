@@ -8904,7 +8904,6 @@ static int Receive_keepalive(int ind) {
 
 		p_ptr->idle += 2;
 		p_ptr->idle_char += 2;
-		p_ptr->idle_attack += 2;
 		if (p_ptr->idle_char >= 120 && p_ptr->mute_when_idle && !p_ptr->muted_when_idle && istown(&p_ptr->wpos)) Send_idle(Ind, TRUE);
 
 		/* Kick a starving player */
@@ -12579,12 +12578,6 @@ static int Receive_ping(int ind) {
 
 			p_ptr->idle++;
 			p_ptr->idle_char++;
-			p_ptr->idle_attack++;
-			if (p_ptr->test_turn_idle && p_ptr->idle_attack >= p_ptr->test_turn_idle && p_ptr->test_turn) {
-				p_ptr->test_turn = p_ptr->test_turn + cfg.fps * 5;
-				tym_evaluate(Ind);
-				p_ptr->test_turn_idle = p_ptr->test_turn = 0;
-			}
 
 			/* un-snow people */
 			if (p_ptr->temp_misc_1 & 0x08) {

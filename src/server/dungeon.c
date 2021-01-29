@@ -9190,6 +9190,15 @@ void dungeon(void) {
 		if (p_ptr->conn == NOT_CONNECTED)
 			continue;
 
+		if (p_ptr->test_turn_idle && p_ptr->test_turn) {
+			p_ptr->idle_attack++;
+			if (p_ptr->idle_attack >= p_ptr->test_turn_idle) {
+				p_ptr->test_turn = p_ptr->test_turn + p_ptr->test_turn_idle;
+				tym_evaluate(i);
+				p_ptr->test_turn = p_ptr->test_turn_idle = 0;
+			}
+		}
+
 		/* Print queued log messages (anti-spam feature) - C. Blue */
 		if (p_ptr->last_gold_drop && turn - p_ptr->last_gold_drop_timer >= cfg.fps * 2) {
 			s_printf("Gold dropped (%d by %s at %d,%d,%d) [anti-spam].\n", p_ptr->last_gold_drop, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);

@@ -3962,7 +3962,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (!strcmp(token[1], "rsx")) {
 				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
 				p_ptr->test_turn = 0;
-				p_ptr->test_turn_idle = 5; //player turns, not engine turns
+				p_ptr->test_turn_idle = cfg.fps * 5;
 				msg_print(Ind, "Attack count, damage and healing done have been reset to zero");
 				msg_print(Ind, " and put on hold until your next attack, which will start the counter.");
 				msg_print(Ind, " Ceasing attacks for 5 seconds will stop and auto-evaluate the result.");
@@ -11155,7 +11155,7 @@ void tym_evaluate(int Ind) {
 		msg_print(Ind, "     either attack something or start live-checking via \377y/testyourmight rs");
 	/* this shouldn't happen.. - except on 'turn' overflow/reset */
 	} else if ((turn - p_ptr->test_turn) < cfg.fps) {
-		msg_print(Ind,  "    \377sNo time-based result available: No full second has passed yet,");
+		msg_print(Ind,  "    \377sNo time-based result available: No full second of attacks has passed,");
 		msg_print(Ind,  "    \377s please reinitialize via \377y/testyourmight rs[w]");
 	} else {
 		msg_format(Ind, "    \377w# of seconds passed:      %8d.%1d", (turn - p_ptr->test_turn) / cfg.fps, (((turn - p_ptr->test_turn) * 10) / cfg.fps) % 10);
