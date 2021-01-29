@@ -8320,7 +8320,8 @@ int Send_skills(int Ind) {
 	skills[10] = p_ptr->num_spell;
 
 	/* Infravision */
-	skills[11] = p_ptr->see_infra;
+	if (is_older_than(&p_ptr->version, 4, 7, 3, 1, 0, 0)) skills[11] = p_ptr->see_infra;
+	else skills[11] = p_ptr->see_infra | (p_ptr->tim_infra ? 0x80 : 0x0); //hack
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;

@@ -4114,11 +4114,10 @@ int Receive_skills(void) {
 	p_ptr->skill_srh = tmp[5];
 	p_ptr->skill_dis = tmp[6];
 	p_ptr->skill_dev = tmp[7];
-	p_ptr->num_blow = tmp[8] & 0x1F;
-	p_ptr->extra_blows = (tmp[8] & 0xE0) >> 5;
+	p_ptr->num_blow = tmp[8] & 0x1F; p_ptr->extra_blows = (tmp[8] & 0xE0) >> 5;
 	p_ptr->num_fire = tmp[9];
 	p_ptr->num_spell = tmp[10];
-	p_ptr->see_infra = tmp[11];
+	p_ptr->see_infra = tmp[11] & 0x7F; p_ptr->tim_infra = (tmp[11] & 0x80) ? 1 : 0;
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
