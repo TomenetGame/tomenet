@@ -3031,14 +3031,21 @@ struct player_type {
 	s16b dis_to_a;			/* Known bonus to ac */
 	s16b dis_ac;			/* Known base ac */
 
-	s16b to_h_ranged;		/* Bonus to hit */
-	s16b to_d_ranged;		/* Bonus to dam */
-	s16b to_h_melee;		/* Bonus to hit */
-	s16b to_d_melee;		/* Bonus to dam */
 	s16b to_h;			/* Bonus to hit */
 	s16b to_d;			/* Bonus to dam */
+	s16b to_h_melee;		/* Bonus to hit */
+	s16b to_d_melee;		/* Bonus to dam */
+	s16b to_h_ranged;		/* Bonus to hit */
+	s16b to_d_ranged;		/* Bonus to dam */
 	s16b to_a;			/* Bonus to ac */
-	s16b to_a_tmp;			/* Just to track temporary AC boosts for colourising indicator on client-side */
+
+	s16b to_h_tmp;			/* Just to track temporary boosts for colourising indicator on client-side */
+	s16b to_d_tmp;			/* Just to track temporary boosts for colourising indicator on client-side */
+	s16b to_h_melee_tmp;		/* Just to track temporary boosts for colourising indicator on client-side */
+	s16b to_d_melee_tmp;		/* Just to track temporary boosts for colourising indicator on client-side */
+	s16b to_h_ranged_tmp;		/* Just to track temporary boosts for colourising indicator on client-side */
+	s16b to_d_ranged_tmp;		/* Just to track temporary boosts for colourising indicator on client-side */
+	s16b to_a_tmp;			/* Just to track temporary boosts for colourising indicator on client-side */
 
 	s16b ac;			/* Base ac */
 

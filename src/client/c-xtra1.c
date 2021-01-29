@@ -310,7 +310,8 @@ void prt_ac(int ac, bool boosted) {
 	put_str("AC:", ROW_AC, COL_AC);
 	sprintf(tmp, "%5d", ac);
 
-	if (ac > 0 && boosted) attr = TERM_L_BLUE;
+	//if (ac > 0 && boosted) attr = TERM_L_BLUE;
+	if (boosted) attr = TERM_L_BLUE;
 	else attr = TERM_L_GREEN;
 
 	c_put_str(attr, tmp, ROW_AC, COL_AC + 7);
@@ -2617,19 +2618,30 @@ void display_player(int hist) {
 		}
 
 		/* Dump the bonuses to hit/dam */
-		prt_num("+To MHit    ", p_ptr->dis_to_h + p_ptr->to_h_melee, y_row2, 1, TERM_L_GREEN);
-		prt_num("+To MDamage ", p_ptr->dis_to_d + p_ptr->to_d_melee, y_row2 + 1, 1, TERM_L_GREEN);
-		prt_num("+To RHit    ", p_ptr->dis_to_h + p_ptr->to_h_ranged, y_row2 + 2, 1, TERM_L_GREEN);
-		prt_num("+To RDamage ", p_ptr->to_d_ranged, y_row2 + 3, 1, TERM_L_GREEN);
+		tmp = (p_ptr->to_h_melee > 5000 ? p_ptr->to_h_melee - 10000 : p_ptr->to_h_melee); tmpc = (p_ptr->to_h_melee > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
+		prt_num("+To MHit    ", p_ptr->dis_to_h + tmp, y_row2, 1, tmpc);
+		tmp = (p_ptr->to_d_melee > 5000 ? p_ptr->to_d_melee - 10000 : p_ptr->to_d_melee); tmpc = (p_ptr->to_d_melee > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
+		prt_num("+To MDamage ", p_ptr->dis_to_d + tmp, y_row2 + 1, 1, tmpc);
+		tmp = (p_ptr->to_h_ranged > 5000 ? p_ptr->to_h_ranged - 10000 : p_ptr->to_h_ranged); tmpc = (p_ptr->to_h_ranged > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
+		prt_num("+To RHit    ", p_ptr->dis_to_h + tmp, y_row2 + 2, 1, tmpc);
+		tmp = (p_ptr->to_d_ranged > 5000 ? p_ptr->to_d_ranged - 10000 : p_ptr->to_d_ranged); tmpc = (p_ptr->to_d_ranged > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
+		prt_num("+To RDamage ", tmp, y_row2 + 3, 1, tmpc); //generic +dam never affects ranged
+
+		/* Armour Class */
+		if (is_atleast(&server_version, 4, 7, 3, 1, 0, 0)) {
+			tmp = (p_ptr->dis_ac > 5000 ? p_ptr->dis_ac - 10000 : p_ptr->dis_ac); tmpc = (p_ptr->dis_ac > 5000) ? TERM_L_BLUE : TERM_L_GREEN;
+		} else if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0)) {
+			tmp = (p_ptr->dis_ac & ~0x1000); tmpc = (p_ptr->dis_ac & 0x1000) ? TERM_L_BLUE : TERM_L_GREEN;
+		} else {
+			tmp = p_ptr->dis_ac; tmpc = TERM_L_GREEN;
+		}
 #ifndef NEW_COMPRESSED_DUMP_AC
 		/* Dump the armor class bonus */
-		tmp = (p_ptr->dis_ac & ~0x1000); tmpc = (p_ptr->dis_ac & 0x1000) ? TERM_L_BLUE : TERM_L_GREEN;
-		prt_num("+ To AC     ", tmp, y_row2 + 4, 1, tmpc);
+		prt_num("+ To AC     ", p_ptr->dis_to_a, y_row2 + 4, 1, tmpc);
 		/* Dump the total armor class */
-		prt_num("  Base AC   ", p_ptr->dis_ac, y_row2 + 5, 1, TERM_L_BLUE);
+		prt_num("  Base AC   ", tmp, y_row2 + 5, 1, TERM_L_BLUE);
 #else
-		tmp = (p_ptr->dis_ac & ~0x1000) + p_ptr->dis_to_a; tmpc = (p_ptr->dis_ac & 0x1000) ? TERM_L_BLUE : TERM_L_GREEN;
-		prt_num("Total AC    ", tmp, y_row2 + 4, 1, tmpc);
+		prt_num("Total AC    ", tmp + p_ptr->dis_to_a, y_row2 + 4, 1, tmpc);
 #endif
 
 		prt_num("Level      ", (int)p_ptr->lev, y_row2, 28, TERM_L_GREEN);

@@ -240,7 +240,9 @@ static void prt_gold(int Ind) {
 static void prt_ac(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
-	if (p_ptr->to_a_tmp && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0))
+	if (p_ptr->to_a_tmp && is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0))
+		Send_ac(Ind, p_ptr->dis_ac + 10000, p_ptr->dis_to_a);
+	else if (p_ptr->to_a_tmp && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0))
 		Send_ac(Ind, p_ptr->dis_ac | 0x1000, p_ptr->dis_to_a);
 	else
 		Send_ac(Ind, p_ptr->dis_ac, p_ptr->dis_to_a);
@@ -547,7 +549,7 @@ static void prt_plusses(int Ind) {
 	int show_todam_m = p_ptr->to_d_melee;
 */
 	int show_tohit_r = p_ptr->dis_to_h + p_ptr->to_h_ranged;
-	int show_todam_r = p_ptr->to_d_ranged;
+	int show_todam_r = p_ptr->to_d_ranged; //generic +dam never affects ranged
 
 	/* well, about dual-wield.. we can only display the boni of one weapon or their average until we add another line
 	   to squeeze info about the secondary weapon there too. so for now let's just stick with this. - C. Blue */
@@ -583,6 +585,15 @@ static void prt_plusses(int Ind) {
 	}
 	show_tohit_m += bmh;
 	show_todam_m += bmd;
+
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0)) {
+		if (p_ptr->to_h_tmp) { show_tohit_m += 10000; show_tohit_r += 10000; }
+		if (p_ptr->to_h_melee_tmp) show_tohit_m += 10000;
+		if (p_ptr->to_h_ranged_tmp) show_tohit_r += 10000;
+		if (p_ptr->to_d_tmp) { show_todam_m += 10000; } //generic +dam never affects ranged +dam (note: remove redundant to_d_ranged_tmp)
+		if (p_ptr->to_d_melee_tmp) show_todam_m += 10000;
+		if (p_ptr->to_d_ranged_tmp) show_todam_r += 10000;
+	}
 
 //	Send_plusses(Ind, show_tohit_m, show_todam_m, show_tohit_r, show_todam_r, p_ptr->to_h_melee, p_ptr->to_d_melee);
 	Send_plusses(Ind, 0, 0, show_tohit_r, show_todam_r, show_tohit_m, show_todam_m);
@@ -3133,10 +3144,9 @@ void calc_boni(int Ind) {
 
 	/* Clear the Displayed/Real armor class */
 	p_ptr->dis_ac = p_ptr->ac = 0;
-
 	/* Clear the Displayed/Real Bonuses */
-	p_ptr->dis_to_h = p_ptr->to_h = p_ptr->to_h_melee = p_ptr->to_h_ranged = 0;
-	p_ptr->dis_to_d = p_ptr->to_d = p_ptr->to_d_melee = p_ptr->to_d_ranged = 0;
+	p_ptr->dis_to_h = p_ptr->to_h = p_ptr->to_h_melee = p_ptr->to_h_ranged = p_ptr->to_h_tmp = p_ptr->to_h_melee_tmp = p_ptr->to_h_ranged_tmp = 0;
+	p_ptr->dis_to_d = p_ptr->to_d = p_ptr->to_d_melee = p_ptr->to_d_ranged = p_ptr->to_d_tmp = p_ptr->to_d_melee_tmp = p_ptr->to_d_ranged_tmp = 0;
 	p_ptr->dis_to_a = p_ptr->to_a = p_ptr->to_a_tmp = 0;
 
 
@@ -3808,9 +3818,11 @@ void calc_boni(int Ind) {
 #if 0 /* focus _shot_ = ranged only (old way) */
 	p_ptr->to_h_ranged += p_ptr->focus_val;
 	p_ptr->dis_to_h_ranged += p_ptr->focus_val;
+	p_ptr->to_h_ranged_tmp += p_ptr->focus_val;
 #else /* focus: apply to both, melee and ranged */
 	p_ptr->to_h += p_ptr->focus_val;
 	p_ptr->dis_to_h += p_ptr->focus_val;
+	p_ptr->to_h_tmp += p_ptr->focus_val;
 #endif
 
 	/* Scan the usable inventory */
@@ -4481,7 +4493,6 @@ void calc_boni(int Ind) {
 		/* Apply the mental bonuses tp hit/damage, if known */
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_h += o_ptr->to_h;
 		if (object_known_p(Ind, o_ptr)) p_ptr->dis_to_d += o_ptr->to_d;
-
 	}
 
 	p_ptr->antimagic += am_bonus;
@@ -4588,9 +4599,11 @@ void calc_boni(int Ind) {
 		p_ptr->stat_tmp[A_DEX] += (i + 1) / 2;
 		p_ptr->to_h += 12;
 		p_ptr->dis_to_h += 12;
+		p_ptr->to_h_tmp += 12;
 		if (p_ptr->adrenaline & 1) {
 			p_ptr->to_d += 8;
 			p_ptr->dis_to_d += 8;
+			p_ptr->to_d_tmp += 8;
 		}
 		if (p_ptr->adrenaline & 2) {
 			extra_blows_tmp++;
@@ -4638,6 +4651,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->hero || (p_ptr->mindboost && p_ptr->mindboost_power >= 5)) {
 		p_ptr->to_h += 12;
 		p_ptr->dis_to_h += 12;
+		p_ptr->to_h_tmp += 12;
 	}
 
 	/* Temporary "Berserk"/"Berserk Strength" */
@@ -4655,6 +4669,7 @@ void calc_boni(int Ind) {
 		p_ptr->dis_to_h -= 10;
 		p_ptr->to_d += 10;
 		p_ptr->dis_to_d += 10;
+		p_ptr->to_d_tmp += 10;
 		p_ptr->pspeed += 5;
 		p_ptr->to_a -= 20;
 		p_ptr->dis_to_a -= 20;
@@ -5164,6 +5179,7 @@ void calc_boni(int Ind) {
 		p_ptr->to_a_tmp += p_ptr->blessed_power;
 		p_ptr->to_h += p_ptr->blessed_power / 2;
 		p_ptr->dis_to_h += p_ptr->blessed_power / 2;
+		p_ptr->to_h_tmp += p_ptr->blessed_power / 2;
 	}
 
 	/* Temporary shield */
@@ -5924,77 +5940,80 @@ void calc_boni(int Ind) {
 	   shield_deflect nor to_h/to_d are affected. Might need fixing/adjusting later. - C. Blue */
 #ifdef ENABLE_STANCES
  #ifdef USE_BLOCKING /* need blocking to make use of defensive stance */
-		if ((p_ptr->combat_stance == 1) &&
-		    (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) switch (p_ptr->combat_stance_power) {
-			/* note that defensive stance also increases chance to actually prefer shield over parrying in melee.c */
-			case 0: p_ptr->shield_deflect += 9;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-			case 1: p_ptr->shield_deflect += 11;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-			case 2: p_ptr->shield_deflect += 13;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-			case 3: p_ptr->shield_deflect += 15;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 8) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 8) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
+	if ((p_ptr->combat_stance == 1) &&
+	    (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD))
+		switch (p_ptr->combat_stance_power) {
+		/* note that defensive stance also increases chance to actually prefer shield over parrying in melee.c */
+		case 0: p_ptr->shield_deflect += 9;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+			break;
+		case 1: p_ptr->shield_deflect += 11;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+			break;
+		case 2: p_ptr->shield_deflect += 13;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+			break;
+		case 3: p_ptr->shield_deflect += 15;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 8) / 10;
+			p_ptr->to_d = (p_ptr->to_d * 8) / 10;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 8) / 10;
+			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+			break;
 		}
  #endif
  #ifdef USE_PARRYING /* need parrying to make use of offensive stance */
-		if (p_ptr->combat_stance == 2) switch (p_ptr->combat_stance_power) {
-			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 0) / 10;
-				p_ptr->dodge_level = (p_ptr->dodge_level * 0) / 10;
-				break;
-			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 1) / 10;
-				p_ptr->dodge_level = (p_ptr->dodge_level * 1) / 10;
-				break;
-			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2) / 10;
-				p_ptr->dodge_level = (p_ptr->dodge_level * 2) / 10;
-				break;
-			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3) / 10;
-				p_ptr->dodge_level = (p_ptr->dodge_level * 3) / 10;
-				break;
+	if (p_ptr->combat_stance == 2)
+		switch (p_ptr->combat_stance_power) {
+		case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 0) / 10;
+			p_ptr->dodge_level = (p_ptr->dodge_level * 0) / 10;
+			break;
+		case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 1) / 10;
+			p_ptr->dodge_level = (p_ptr->dodge_level * 1) / 10;
+			break;
+		case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 2) / 10;
+			p_ptr->dodge_level = (p_ptr->dodge_level * 2) / 10;
+			break;
+		case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 3) / 10;
+			p_ptr->dodge_level = (p_ptr->dodge_level * 3) / 10;
+			break;
 		}
   #ifdef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
-		else if ((p_ptr->combat_stance == 1) &&
-		    (p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) switch (p_ptr->combat_stance_power) {
-			case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 6) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 6) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 6) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-			case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-			case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 14) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
-			case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 15) / 10;
-				p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
-				p_ptr->to_d = (p_ptr->to_d * 7) / 10;
-				p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
-				p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
-				break;
+	else if ((p_ptr->combat_stance == 1) &&
+	    (p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))
+		switch (p_ptr->combat_stance_power) {
+		case 0: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 6) / 10;
+			p_ptr->to_d = (p_ptr->to_d * 6) / 10;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 6) / 10;
+			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+			break;
+		case 1: p_ptr->weapon_parry = (p_ptr->weapon_parry * 13) / 10;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+			break;
+		case 2: p_ptr->weapon_parry = (p_ptr->weapon_parry * 14) / 10;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+			break;
+		case 3: p_ptr->weapon_parry = (p_ptr->weapon_parry * 15) / 10;
+			p_ptr->dis_to_d = (p_ptr->dis_to_d * 7) / 10;
+			p_ptr->to_d = (p_ptr->to_d * 7) / 10;
+			p_ptr->to_d_melee = (p_ptr->to_d_melee * 7) / 10;
+			p_ptr->to_d_ranged = (p_ptr->to_d_ranged * 5) / 10;
+			break;
 		}
   #endif
  #endif

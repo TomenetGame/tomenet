@@ -1821,7 +1821,12 @@ int Receive_ac(void) {
 
 	if (screen_icky) Term_switch(0);
 
-	prt_ac((base & ~0x1000) + plus, (base & 0x1000) != 0);
+	if (is_atleast(&server_version, 4, 7, 3, 1, 0, 0))
+		prt_ac((base > 5000 ? base - 10000 : base) + plus, (base > 5000));
+	else if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0))
+		prt_ac((base & ~0x1000) + plus, (base & 0x1000) != 0);
+	else
+		prt_ac(base + plus, FALSE);
 
 	if (screen_icky) Term_switch(0);
 
