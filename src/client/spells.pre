@@ -19,7 +19,7 @@ $#include "lua.h"
 
 typedef char* cptr;
 typedef int errr;
-//typedef unsigned char bool; /* C99 _Bool */
+typedef unsigned char bool; /* TODO: Comment this out, to enable C99 _Bool */
 typedef unsigned char byte;
 typedef signed short s16b;
 typedef unsigned short u16b;
