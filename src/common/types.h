@@ -2122,6 +2122,7 @@ struct house_type {
 
 	byte colour;		/* house colour for custom house painting (HOUSE_PAINTING) */
 	byte xtra;		/* unused; maybe for player stores if required */
+	char tag[20];		/* allow tagging houses, will be displayed in ~ 9 for easy overview */
 };
 
 struct dna_type{

@@ -658,6 +658,7 @@ static void wr_house(house_type *house) {
 
 	wr_byte(house->colour);
 	wr_byte(house->xtra);
+	wr_string(house->tag);
 
 #ifndef USE_MANG_HOUSE_ONLY
 	wr_s16b(house->stock_num);

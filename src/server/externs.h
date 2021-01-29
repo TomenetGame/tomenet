@@ -938,6 +938,7 @@ extern void init_wild_info_aux(int x, int y);
 extern void wild_flags(int Ind, u32b flags);
 extern void lively_wild(u32b flags);
 extern void paint_house(int Ind, int x, int y, int k);
+extern void tag_house(int Ind, int x, int y, char *args);
 extern void knock_house(int Ind, int x, int y);
 extern void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave);
 extern s32b house_price_area(int area, bool has_moat, bool random);

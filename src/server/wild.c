@@ -4557,6 +4557,44 @@ void paint_house(int Ind, int x, int y, int k) {
 }
 #endif
 
+void tag_house(int Ind, int x, int y, char *args) {
+	player_type *p_ptr = Players[Ind];
+	cave_type **zcave = getcave(&p_ptr->wpos);
+	struct c_special *cs_ptr;
+	house_type *h_ptr = NULL;
+	int h_idx;
+
+	/* Check for a house door next to us */
+	h_idx = pick_house(&p_ptr->wpos, y, x);
+	if (h_idx == -1) {
+		msg_print(Ind, "There is no house next to you.");
+		return;
+	}
+	h_ptr = &houses[h_idx];
+
+	if (h_ptr->dna->owner_type == OT_GUILD) {
+		msg_print(Ind, "Guild halls cannot be tagged.");
+		return;
+	}
+
+	/* make sure we own the house */
+	if (!(cs_ptr = GetCS(&zcave[y][x], CS_DNADOOR))) {
+		msg_print(Ind, "You must have access to the house.");
+		return;
+	}
+	if (!(access_door(Ind, cs_ptr->sc.ptr, FALSE) || is_admin(p_ptr))) {
+		msg_print(Ind, "You must have access to the house.");
+		return;
+	}
+	s_printf("HOUSE_TAGGING: %s set '%s'.\n", p_ptr->name, args);
+
+	/* tag house, colour adjacent walls accordingly */
+	strcpy(h_ptr->tag, args);
+
+	if (args[0]) msg_format(Ind, "You tagged this house '%s' in the houses-list.", args);
+	else msg_print(Ind, "You cleared the houses-list tag of this house.");
+}
+
 void knock_house(int Ind, int x, int y) {
 	player_type *p_ptr = Players[Ind];
 	int h_idx;

@@ -1519,6 +1519,9 @@ static void rd_house(int n) {
 		rd_byte(&house_ptr->xtra);
 	}
 
+	if (!s_older_than(4, 7, 11)) rd_string(house_ptr->tag, 20);
+	else house_ptr->tag[0] = 0;
+
 #ifndef USE_MANG_HOUSE_ONLY
 	rd_s16b(&house_ptr->stock_num);
 	rd_s16b(&house_ptr->stock_size);

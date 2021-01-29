@@ -8063,18 +8063,22 @@ void house_admin(int Ind, int dir, char *args) {
 				dna = cs_ptr->sc.ptr;
 				if (access_door(Ind, dna, FALSE) || admin_p(Ind)) {
 					switch (args[0]) {
-						case 'O':
-							success = chown_door(Ind, dna, args, x, y);
-							break;
-						case 'M':
-							success = chmod_door(Ind, dna, args);
-							break;
-						case 'K':
-							destroy_house(Ind, dna);
-							return;
-						case 'P':
-							paint_house(Ind, x, y, atoi(&args[1]));
-							return;
+					case 'O':
+						success = chown_door(Ind, dna, args, x, y);
+						break;
+					case 'M':
+						success = chmod_door(Ind, dna, args);
+						break;
+					case 'K':
+						destroy_house(Ind, dna);
+						return;
+					case 'P':
+						paint_house(Ind, x, y, atoi(&args[1]));
+						return;
+					case 'T':
+						args[20] = 0;//ensure max of 20 - 1 characters, starting at #1
+						tag_house(Ind, x, y, &args[1]);
+						return;
 					}
 
 					if (success) {

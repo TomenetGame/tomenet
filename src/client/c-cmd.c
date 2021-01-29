@@ -4569,6 +4569,14 @@ static void cmd_house_paint(int dir) {
 	Send_admin_house(dir, buf);
 }
 
+static void cmd_house_tag(int dir) {
+	char buf[80];
+
+	get_string("Enter a tag for the houses list (max 19 characters): ", &buf[1], 20 - 1);
+	buf[0] = 'T';
+	Send_admin_house(dir, buf);
+}
+
 static void cmd_house_knock(int dir) {
 	char buf[80];
 
@@ -4589,9 +4597,10 @@ void cmd_purchase_house(void) {
 	Term_putstr(5, 4, -1, TERM_WHITE, "(1) Buy/Sell house");
 	Term_putstr(5, 5, -1, TERM_WHITE, "(2) Change house owner");
 	Term_putstr(5, 6, -1, TERM_WHITE, "(3) Change house permissions");
-	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Paint house");/* new in 4.4.6: */
-	Term_putstr(5, 9, -1, TERM_WHITE, "(s) Enter player store");/* new in 4.4.6: */
-	Term_putstr(5, 10, -1, TERM_WHITE, "(k) Knock on house door");
+	Term_putstr(5, 7, -1, TERM_WHITE, "(4) Paint house");/* new in 4.4.6 */
+	Term_putstr(5, 8, -1, TERM_WHITE, "(5) Add houses-list tag");/* new in 4.7.3.1 */
+	Term_putstr(5, 10, -1, TERM_WHITE, "(s) Enter player store");/* new in 4.4.6 */
+	Term_putstr(5, 11, -1, TERM_WHITE, "(k) Knock on house door");
 	/* display in dark colour since only admins can do this really */
 	if (p_ptr->admin_dm || p_ptr->admin_wiz)
 		Term_putstr(5, 20, -1, TERM_L_DARK, "(D) Delete house (server administrators only)");
@@ -4617,6 +4626,10 @@ void cmd_purchase_house(void) {
 			break;
 		case '4':
 			cmd_house_paint(dir);
+			i = ESCAPE;
+			break;
+		case '5':
+			cmd_house_tag(dir);
 			i = ESCAPE;
 			break;
 		case 'D':
