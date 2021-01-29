@@ -6148,6 +6148,11 @@ void calc_boni(int Ind) {
 #ifdef ENABLE_OCCULT /* Occult */
 	/* Should Occult schools really give boni? */
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= 40) { p_ptr->slay |= TR1_SLAY_UNDEAD; csheet_boni[14].cb[9] |= CB10_SUNDD; }
+	/* Infra-vision bonus: */
+	if (get_skill(p_ptr, SKILL_OSHADOW) >= 10) {
+		p_ptr->see_infra += get_skill(p_ptr, SKILL_OSHADOW) / 10;
+		csheet_boni[14].infr += get_skill(p_ptr, SKILL_OSHADOW) / 10;
+	}
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= 30) {
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		/* Stealth bonus: */

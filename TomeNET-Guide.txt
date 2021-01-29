@@ -17961,7 +17961,8 @@ spell failure rate. All Unlife spells use WIS.)
     Darkness Storm  Conjures up a storm of darkness.
                     Required skill level for first spell level: 42.
 
-    BONI:           At 10 it starts increasing your walking speed while you are
+    BONI:           Increases infra-vision by +1 every 10 points, up to +5.
+                    At 10 it starts increasing your walking speed while you are
                     moving on non-lit grids (and not using any light source),
                     very similar to how the 'Sprint' technique works. This
                     'shadow walk' effect increases every 10 levels.
