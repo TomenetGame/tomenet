@@ -10046,6 +10046,11 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 		}
 	}
 
+	if (p_ptr->limit_chat) {
+		msg_print(Ind, "\374\3774Warning: \377oYou have the option '\377Rlimit_chat\377o' enabled so nobody will be able to read");
+		msg_print(Ind, "\374\377o         your chat unless he is on your floor or you disable the option via \377R=2\377o !");
+	}
+
 #if 0 /* currently disabled, because replaced by warning_death */
 	/* Possibly tell him what to do now */
 	if (p_ptr->warning_ghost == 0) {
