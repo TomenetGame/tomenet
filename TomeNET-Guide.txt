@@ -7854,6 +7854,9 @@ setting restrictions. The door will always be displayed light green to him.
 Special gimmick: You can press 'h' or use the /paint command to paint your
 house, see the "/paint" command in (0.2b) for more information.
 
+Starting in 4.7.3a, you can add a custom tag to houses which will be displayed
+in the houses list, to help you keep your houses organized. Press h 5 to tag.
+
 WARNING:
 Items on the floor within a house don't form piles! If you drop too many
 items and space in the house runs out the dropped item may just disappear!
