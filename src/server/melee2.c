@@ -9885,15 +9885,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			    !magik(MONSTER_CROSS_IMPOSSIBLE_CHANCE)) {
 				/* Assume no move allowed */
 				do_move = FALSE;
+
+				/* finally: 'stuck' monsters no longer retain full energy to retry casting in each frame. */
+				do_turn = TRUE;
 			}
 		}
 
 		/* A monster is in the way */
 		if (do_move && c_ptr->m_idx > 0) {
 			monster_race *z_ptr = race_inf(y_ptr);
-
-			/* Assume no movement */
-			do_move = FALSE;
 
 			/* Kill weaker monsters */
 			if ((r_ptr->flags2 & RF2_KILL_BODY) &&
@@ -9906,8 +9906,6 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				/* Monster ate another monster */
 				did_kill_body = TRUE;
 #endif
-
-				/* XXX XXX XXX Message */
 
 				/* Kill the monster */
 				delete_monster(wpos, ny, nx, TRUE);
@@ -9950,6 +9948,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				did_move_body = TRUE;
 #endif
 				/* XXX XXX XXX Message */
+			/* Monster wants to move but is blocked by another monster */
+			} else {
+				do_move = FALSE;
+
+				/* finally: 'stuck' monsters no longer retain full energy to retry casting in each frame. */
+				do_turn = TRUE;
 			}
 		}
 
