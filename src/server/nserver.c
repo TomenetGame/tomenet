@@ -2587,6 +2587,8 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->easy_disarm_montraps = options[136];
 	else
 		p_ptr->easy_disarm_montraps = FALSE;
+
+	if (p_ptr->limit_chat) msg_print(Ind, "\377yYou just enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is no longer visible globally!");
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,
