@@ -3120,6 +3120,7 @@ struct player_type {
 	struct remote_ignore *w_ignore;	/* List of players whose chat we wish to ignore */
 	long int idle;			/* player is idling for <idle> seconds.. */
 	long int idle_char;		/* character is idling for <idle_char> seconds (player still might be chatting etc) */
+	long int idle_attack;		/* character is idling and not even attacking passively (auto-retaliator) */
 	bool afk;			/* player is afk */
 	char afk_msg[MAX_CHARS];	/* afk reason */
 	char info_msg[MAX_CHARS];	/* public info message (display gets overridden by an afk reason, if specified) */
@@ -3396,7 +3397,7 @@ struct player_type {
 	bool admin_invuln, admin_invinc; /* Amulets of Invulnerability/Invincibility */
 	char admin_parm[MAX_CHARS];	/* optional special admin command parameter (hacky o_O) */
 
-	u32b test_count, test_dam, test_heal, test_turn;
+	u32b test_count, test_dam, test_heal, test_turn, test_turn_idle;
 #ifdef TEST_SERVER
 	u32b test_attacks;
 #endif

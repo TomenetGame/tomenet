@@ -1835,6 +1835,9 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 	int old_num, new_num;
 
 
+	//todo: add tym code here for pvp-measurements
+	//if (Ind_attacker) Players[Ind_attacker]->idle_attack = 0;
+
 	/* Amulet of Immortality */
 	if (p_ptr->admin_invuln) return;
 

@@ -605,6 +605,7 @@ struct player_type
 
 	long int idle;		/* player's been idle for <idle> seconds */
 	long int idle_char;	/* character's been idle for <idle> seconds */
+	long int idle_attack;	/* character's not been auto-retaliating/attacking */
 	bool afk;		/* Player is afk */
 	byte drain_exp;		/* Experience draining */
 	byte drain_life;	/* HP draining */

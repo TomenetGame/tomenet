@@ -2360,8 +2360,6 @@ extern s16b get_inven_xtra(int Ind, int inven_slot, int n);
 extern void lua_fix_skill_chart(int Ind);
 extern void lua_takeoff_costumes(int Ind);
 extern bool lua_is_unique(int r_idx);
-/* only called once, in util.c, referring to new file slash.c */
-extern void do_slash_cmd(int Ind, char *message, char *message_u);
 extern int global_luck; /* Global +LUCK modifier for the whole server (change the 'weather' - C. Blue) */
 extern void lua_intrusion(int Ind, char *problem_diz);
 extern bool lua_mimic_eligible(int Ind, int r_idx);
@@ -2537,6 +2535,12 @@ extern int shutdown_recall_timer, shutdown_recall_state;
 extern bool rune_enchant(int Ind, int item);
 extern bool warding_rune(int Ind, byte typ, int dam, byte rad);
 extern bool warding_rune_break(int m_idx);
+
+/* slash.c */
+extern void do_slash_cmd(int Ind, char *message, char *message_u);
+extern void tym_evaluate(int Ind);
+
+
 
 #ifdef MONSTER_ASTAR
 extern astar_list_open astar_info_open[ASTAR_MAX_INSTANCES];

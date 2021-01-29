@@ -3924,8 +3924,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/testyourmight")  ||
 		    prefix(messagelc, "/tym")) {
-			long tmp;
-			if (tk != 1 || (tk == 1 && strcmp(token[1], "rs") && tk == 1 && strcmp(token[1], "rsw") && strcmp(token[1], "show"))) {
+			if (tk != 1 || (tk == 1 && strcmp(token[1], "rs") && tk == 1 && strcmp(token[1], "rsw") && strcmp(token[1], "rsx") && strcmp(token[1], "show"))) {
 				msg_print(Ind, "Usage: /testyourmight <show|rs[w]>");
 				msg_print(Ind, "       '/testyourmight show' will display your current damage/heal stats,");
 				msg_print(Ind, "         based on your number of *successful* attacks and over the time");
@@ -3934,11 +3933,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "       '/testyourmight rs' will reset the recorded stats to zero.");
 				msg_print(Ind, "       '/testyourmight rsw' will reset the recorded stats to zero and wait with");
 				msg_print(Ind, "        counting until you perform your next attack.");
+				msg_print(Ind, "       '/testyourmight rsx' will reset the recorded stats to zero and wait with");
+				msg_print(Ind, "        counting until you perform your next attack, and will automatically");
+				msg_print(Ind, "        evaluate the (idle-corrected) result if you don't attack for 5 seconds.");
 				return;
 			}
 			if (!strcmp(token[1], "rs")) {
 				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
 				p_ptr->test_turn = turn;
+				p_ptr->test_turn_idle = 0;
 				msg_print(Ind, "Attack count, damage and healing done have been reset to zero.");
 #ifdef TEST_SERVER
 				p_ptr->test_attacks = 0;
@@ -3948,6 +3951,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (!strcmp(token[1], "rsw")) {
 				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
 				p_ptr->test_turn = 0;
+				p_ptr->test_turn_idle = 0;
 				msg_print(Ind, "Attack count, damage and healing done have been reset to zero");
 				msg_print(Ind, " and put on hold until your next attack, which will start the counter.");
 #ifdef TEST_SERVER
@@ -3955,49 +3959,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 				return;
 			}
-			msg_print(Ind, "Your total damage and healing done since login or last reset:");
-			msg_format(Ind, "    \377oTotal damage done   : %8d", p_ptr->test_dam);
-			msg_format(Ind, "    \377gTotal healing done  : %8d", p_ptr->test_heal);
-			msg_print(Ind, "  Damage and healing done over # of attacks and amount of time passed:");
-
-			if (p_ptr->test_count == 0)
-				msg_print(Ind,  "    \377sNo count-based result available: # of successful attacks is still zero.");
-			else {
-				msg_format(Ind, "    \377w# of successful attacks:  %8d", p_ptr->test_count);
-				tmp = p_ptr->test_dam / p_ptr->test_count;
-				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8ld.%1d",
-				    tmp, ((p_ptr->test_dam * 10) / p_ptr->test_count) % 10);
-				else msg_format(Ind, "    \377o    Average damage done : %8ld", tmp);
-				tmp = p_ptr->test_heal / p_ptr->test_count;
-				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8ld.%1d",
-				    tmp, ((p_ptr->test_heal * 10) / p_ptr->test_count) % 10);
-				else msg_format(Ind, "    \377g    Average healing done: %8ld", tmp);
-			}
+			if (!strcmp(token[1], "rsx")) {
+				p_ptr->test_count = p_ptr->test_dam = p_ptr->test_heal = 0;
+				p_ptr->test_turn = 0;
+				p_ptr->test_turn_idle = 5; //player turns, not engine turns
+				msg_print(Ind, "Attack count, damage and healing done have been reset to zero");
+				msg_print(Ind, " and put on hold until your next attack, which will start the counter.");
+				msg_print(Ind, " Ceasing attacks for 5 seconds will stop and auto-evaluate the result.");
 #ifdef TEST_SERVER
-			if (p_ptr->test_attacks == 0)
-				msg_print(Ind, "    \377wNo attempts to attack were made yet.");
-			else
-				msg_format(Ind, "    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
+				p_ptr->test_attacks = 0;
 #endif
-
-			if (p_ptr->test_turn == 0) {
-				msg_print(Ind, "    \377sNo time-based result available,");
-				msg_print(Ind, "     either attack something or start live-checking via \377y/testyourmight rs");
-			/* this shouldn't happen.. - except on 'turn' overflow/reset */
-			} else if ((turn - p_ptr->test_turn) < cfg.fps) {
-				msg_print(Ind,  "    \377sNo time-based result available: No second has passed yet,");
-				msg_print(Ind,  "    \377s please reinitialize via \377y/testyourmight rs[w]");
-			} else {
-				msg_format(Ind, "    \377w# of seconds passed:      %8d.%1d", (turn - p_ptr->test_turn) / cfg.fps, (((turn - p_ptr->test_turn) * 10) / cfg.fps) % 10);
-				tmp = (p_ptr->test_dam * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
-				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8ld.%1d",
-				    tmp, ((p_ptr->test_dam * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
-				else msg_format(Ind, "    \377o    Average damage done : %8ld", tmp);
-				tmp = (p_ptr->test_heal * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
-				if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8ld.%1d",
-				    tmp, ((p_ptr->test_heal * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
-				else msg_format(Ind, "    \377g    Average healing done: %8ld", tmp);
+				return;
 			}
+
+			tym_evaluate(Ind);
 			return;
 		}
 		/* request back real estate that was previously backed up via /backup_estate */
@@ -11143,5 +11118,54 @@ void get_laston(char *name, char *response, bool admin, bool colour) {
 		else if (s >= 60 * 60 * 3) sprintf(response, "%s %s was last seen %ld hours ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60));
 		else if (s >= 60 * 3) sprintf(response, "%s %s was last seen %ld minutes ago.", acc_found ? "The player using account" : "The character", nameproc, s / 60);
 		else sprintf(response, "%s %s was last seen %ld seconds ago.", acc_found ? "The player using Account" : "The character", nameproc, s);
+	}
+}
+
+void tym_evaluate(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	long tmp;
+
+	msg_print(Ind, "Your total damage and healing done since login or last reset:");
+	msg_format(Ind, "    \377oTotal damage done   : %8d", p_ptr->test_dam);
+	msg_format(Ind, "    \377gTotal healing done  : %8d", p_ptr->test_heal);
+	msg_print(Ind, "  Damage and healing done over # of attacks and amount of time passed:");
+
+	if (p_ptr->test_count == 0)
+		msg_print(Ind,  "    \377sNo count-based result available: # of successful attacks is still zero.");
+	else {
+		msg_format(Ind, "    \377w# of successful attacks:  %8d", p_ptr->test_count);
+		tmp = p_ptr->test_dam / p_ptr->test_count;
+		if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8ld.%1d",
+		    tmp, ((p_ptr->test_dam * 10) / p_ptr->test_count) % 10);
+		else msg_format(Ind, "    \377o    Average damage done : %8ld", tmp);
+		tmp = p_ptr->test_heal / p_ptr->test_count;
+		if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8ld.%1d",
+		    tmp, ((p_ptr->test_heal * 10) / p_ptr->test_count) % 10);
+		else msg_format(Ind, "    \377g    Average healing done: %8ld", tmp);
+	}
+#ifdef TEST_SERVER
+	if (p_ptr->test_attacks == 0)
+		msg_print(Ind, "    \377wNo attempts to attack were made yet.");
+	else
+		msg_format(Ind, "    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
+#endif
+
+	if (p_ptr->test_turn == 0) {
+		msg_print(Ind, "    \377sNo time-based result available,");
+		msg_print(Ind, "     either attack something or start live-checking via \377y/testyourmight rs");
+	/* this shouldn't happen.. - except on 'turn' overflow/reset */
+	} else if ((turn - p_ptr->test_turn) < cfg.fps) {
+		msg_print(Ind,  "    \377sNo time-based result available: No full second has passed yet,");
+		msg_print(Ind,  "    \377s please reinitialize via \377y/testyourmight rs[w]");
+	} else {
+		msg_format(Ind, "    \377w# of seconds passed:      %8d.%1d", (turn - p_ptr->test_turn) / cfg.fps, (((turn - p_ptr->test_turn) * 10) / cfg.fps) % 10);
+		tmp = (p_ptr->test_dam * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
+		if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8ld.%1d",
+		    tmp, ((p_ptr->test_dam * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
+		else msg_format(Ind, "    \377o    Average damage done : %8ld", tmp);
+		tmp = (p_ptr->test_heal * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
+		if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8ld.%1d",
+		    tmp, ((p_ptr->test_heal * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
+		else msg_format(Ind, "    \377g    Average healing done: %8ld", tmp);
 	}
 }
