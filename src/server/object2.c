@@ -7904,6 +7904,13 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	   Distinguishing criterion: Sauron can never spawn on the world surface unless admin-summoned. */
 	if ((resf & RESF_SAURON) && !wpos->wz) forge.no_soloist = TRUE;
 
+#if 0
+	/* debugging/testing: log certain items when they drop */
+	if (forge.tval == TV_BOLT && forge.sval == SV_AMMO_HEAVY) s_printf("DROP: %d Seeker Bolts\n", forge.number);
+	if (forge.tval == TV_ARROW && forge.sval == SV_AMMO_HEAVY) s_printf("DROP: %d Seeker Arrows\n", forge.number);
+	if (forge.tval == TV_SHOT && forge.sval == SV_AMMO_HEAVY) s_printf("DROP: %d Mithril Shots\n", forge.number);
+#endif
+
 	forge.marked2 = removal_marker;
 	forge.discount = object_discount; /* usually 0, except for creation from stolen acquirement scrolls */
 	drop_near(0, &forge, -1, wpos, y, x);
