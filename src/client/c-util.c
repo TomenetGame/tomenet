@@ -5975,13 +5975,13 @@ Chain_Macro:
 						Term_putstr(15, 19, -1, TERM_L_GREEN, "h) display in-game time (daylight is 6am-10pm)    :/time\\r");
 						Term_putstr(15, 20, -1, TERM_L_GREEN, "i) prompt for a guide quick search                :/? ");
 						if (c_cfg.rogue_like_commands) {
-							Term_putstr(15, 21, -1, TERM_L_GREEN, "j) swap-item #1 (inscribe two items '@x0')        \e)S0");
-							Term_putstr(15, 22, -1, TERM_L_GREEN, "k) swap-item #2 (inscribe two items '@x1')        \e)S1");
-							Term_putstr(15, 23, -1, TERM_L_GREEN, "l) swap-item #3 (inscribe two items '@x2')        \e)S2");
+							Term_putstr(15, 21, -1, TERM_L_GREEN, "j) swap-item #1 (inscribe two items '@x0')        \\e)S0");
+							Term_putstr(15, 22, -1, TERM_L_GREEN, "k) swap-item #2 (inscribe two items '@x1')        \\e)S1");
+							Term_putstr(15, 23, -1, TERM_L_GREEN, "l) swap-item #3 (inscribe two items '@x2')        \\e)S2");
 						} else {
-							Term_putstr(15, 21, -1, TERM_L_GREEN, "j) swap-item #1 (inscribe two items '@x0')        \e)x0");
-							Term_putstr(15, 22, -1, TERM_L_GREEN, "k) swap-item #2 (inscribe two items '@x1')        \e)x1");
-							Term_putstr(15, 23, -1, TERM_L_GREEN, "l) swap-item #3 (inscribe two items '@x2')        \e)x2");
+							Term_putstr(15, 21, -1, TERM_L_GREEN, "j) swap-item #1 (inscribe two items '@x0')        \\e)x0");
+							Term_putstr(15, 22, -1, TERM_L_GREEN, "k) swap-item #2 (inscribe two items '@x1')        \\e)x1");
+							Term_putstr(15, 23, -1, TERM_L_GREEN, "l) swap-item #3 (inscribe two items '@x2')        \\e)x2");
 						}
 
 						while (TRUE) {
@@ -6019,16 +6019,16 @@ Chain_Macro:
 						case 'h': strcpy(buf2, ":/time\\r"); break;
 						case 'i': strcpy(buf2, ":/? "); break;
 						case 'j':
-							if (c_cfg.rogue_like_commands) strcpy(buf2, "\e)S0");
-							else strcpy(buf2, "\e)x0");
+							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S0");
+							else strcpy(buf2, "\\e)x0");
 							break;
 						case 'k':
-							if (c_cfg.rogue_like_commands) strcpy(buf2, "\e)S1");
-							else strcpy(buf2, "\e)x1");
+							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S1");
+							else strcpy(buf2, "\\e)x1");
 							break;
 						case 'l':
-							if (c_cfg.rogue_like_commands) strcpy(buf2, "\e)S2");
-							else strcpy(buf2, "\e)x2");
+							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S2");
+							else strcpy(buf2, "\\e)x2");
 							break;
 						}
 
