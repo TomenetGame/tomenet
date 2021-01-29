@@ -2529,7 +2529,7 @@ static void sync_options(int Ind, bool *options) {
 					cave_type **zcave = getcave(&p_ptr->wpos);
 					if (zcave) {
 						handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, FALSE);
-						s_printf("%d,%d,%d - %d,%d\n", p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py);
+						s_printf("Ambient sfx hack: (%s) %d,%d,%d - %d,%d\n", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py);
 					}
 #endif
 				}
