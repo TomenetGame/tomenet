@@ -31,6 +31,11 @@
 /* For character parameter list [15] */
 #define CHAR_COL 9
 
+/* Stat order limits (new way) for setting reduced/boosted stats (10 = unmodified base stat) */
+#define STAT_MOD_BASE	10
+#define STAT_MOD_MIN	8
+#define STAT_MOD_MAX	17
+
 /* Login screen text placement */
 #ifdef ATMOSPHERIC_INTRO
  #define LOGIN_ROW 9 /*1*/
@@ -1179,11 +1184,11 @@ static bool choose_stat_order(void) {
 		c_put_str(TERM_YELLOW, "   Slightly improves your swimming.", DIZ_ROW + 5, 30);
 
 		for (i = 0; i < 6; i++) {
-			stat_order[i] = 10;
+			stat_order[i] = STAT_MOD_BASE;
 			strncpy(stats[i], stat_names[i], 3);
 			stats[i][3] = '\0';
 			if (valid_dna) {
-				if (dna_stat_order[i] > 7 || dna_stat_order[i] < 18) {
+				if (dna_stat_order[i] >= STAT_MOD_MIN && dna_stat_order[i] <= STAT_MOD_MAX) {
 					sprintf(buf3, "(%2d)", dna_stat_order[i]);
 					c_put_str(TERM_SLATE, buf3, 16 + i, col2 + 19);
 				}
@@ -1266,16 +1271,16 @@ static bool choose_stat_order(void) {
 				}
 
 				if (j == i) {
-					if (stat_order[i] == 10-2)
+					if (stat_order[i] == STAT_MOD_MIN)
 						c_put_str(TERM_L_RED, out_val, 16 + i, col2);
-					else if (stat_order[i] == 17)
+					else if (stat_order[i] == STAT_MOD_MAX)
 						c_put_str(TERM_L_BLUE, out_val, 16 + i, col2);
 					else
 						c_put_str(TERM_ORANGE, out_val, 16 + i, col2);
 				} else {
-					if (stat_order[i] == 10-2)
+					if (stat_order[i] == STAT_MOD_MIN)
 						c_put_str(TERM_RED, out_val, 16 + i, col2);
-					else if (stat_order[i] == 17)
+					else if (stat_order[i] == STAT_MOD_MAX)
 						c_put_str(TERM_VIOLET, out_val, 16 + i, col2);
 					else
 						c_put_str(TERM_L_UMBER, out_val, 16 + i, col2);
@@ -1288,23 +1293,23 @@ static bool choose_stat_order(void) {
 			if (!auto_reincarnation) c = inkey();
 			crb = cp_ptr->c_adj[j] + rp_ptr->r_adj[j];
 			if (c == '-' || c == '4' || c == 'h') {
-				if (stat_order[j] > 10-2 &&
+				if (stat_order[j] > STAT_MOD_MIN &&
 				    /* exception: allow going below 3 if we initially were below 3 too */
-				    (stat_order[j] > 10 || stat_order[j]+crb > 3)) {
-					if (stat_order[j] <= 12) {
+				    (stat_order[j] > STAT_MOD_BASE || stat_order[j]+crb > 3)) {
+					if (stat_order[j] <= STAT_MOD_BASE + 2) {
 						/* intermediate */
 						stat_order[j]--;
 						k++;
-					} else if (stat_order[j] <= 14) {
+					} else if (stat_order[j] <= STAT_MOD_BASE + 4) {
 						/* high */
 						stat_order[j]--;
 						k += 2;
-					} else if (stat_order[j] <= 16) {
+					} else if (stat_order[j] <= STAT_MOD_MAX - 1) {
 						/* nearly max */
 						stat_order[j]--;
 						k += 3;
 					} else {
-						/* max! */
+						/* max! (STAT_MOD_MAX) */
 						stat_order[j]--;
 						k += 4;
 						maxed_stats--;
@@ -1312,21 +1317,21 @@ static bool choose_stat_order(void) {
 				}
 			}
 			if (c == '+' || c == '6' || c == 'l') {
-				if (stat_order[j] < 17) {
-					if (stat_order[j] < 12 && k >= 1) {
+				if (stat_order[j] < STAT_MOD_MAX) {
+					if (stat_order[j] < STAT_MOD_BASE + 2 && k >= 1) {
 						/* intermediate */
 						stat_order[j]++;
 						k--;
-					} else if (stat_order[j] < 14 && k >= 2) {
+					} else if (stat_order[j] < STAT_MOD_BASE + 4 && k >= 2) {
 						/* high */
 						stat_order[j]++;
 						k -= 2;
-					} else if (stat_order[j] < 16 && k >= 3) {
+					} else if (stat_order[j] < STAT_MOD_MAX - 1 && k >= 3) {
 						/* nearly max */
 						stat_order[j]++;
 						k -= 3;
 					} else if (k >= 4 && !maxed_stats) { /* only 1 maxed stat is allowed */
-						/* max! */
+						/* max! (STAT_MOD_MAX) */
 						stat_order[j]++;
 						k -= 4;
 						maxed_stats++;
@@ -1421,8 +1426,8 @@ static bool choose_stat_order(void) {
 			if (c == '#') {
 				if (valid_dna) {
 					for (i = 0; i < 6; i++) {
-						if (dna_stat_order[i] > 7 || dna_stat_order[i] < 18) stat_order[i] = dna_stat_order[i];
-						else stat_order[i] = 8;
+						if (dna_stat_order[i] >= STAT_MOD_MIN && dna_stat_order[i] <= STAT_MOD_MAX) stat_order[i] = dna_stat_order[i];
+						else stat_order[i] = STAT_MOD_MIN;
 					}
 					for (i = DIZ_ROW; i <= DIZ_ROW + 8; i++) Term_erase(30, i, 255);
 					clear_from(rowA);
