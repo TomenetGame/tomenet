@@ -1456,6 +1456,7 @@ struct monster_type {
 	byte questor_target;		/* can get targetted by monsters and stuff..? */
 
 	bool no_esp_phase;		/* for WEIRD_MIND esp flickering */
+	s16b stuck;			/* energy to track spellcasting possibility after monster was just stuck in terrain or between other monsters */
 };
 
 typedef struct monster_ego monster_ego;

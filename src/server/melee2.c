@@ -37,6 +37,18 @@
 					/* ..stops algorithm if we don't get closer; makes heavy use of distance() */
 #define ANTI_SEVEN_EXPLOIT_VAR2		/* stops algorithm if we get LOS to from where the projecting player actually cast his projection */
 
+/* Anti-stuck-spam method.
+   If this is defined, the method will be simple:
+       A monster which gets stuck by terrain or other monsters will expend its energy and hence be on cooldown for a turn.
+       Disadvantage: The monster probably won't be able to move right away when a hole opens up again.
+       Advantage: None - except the code is simpler.
+   If this is not defined, the method will be sophisticated:
+       A monster which gets stuck by terrain or other monsters will keep its energy so it can move again as soon as there's an opportunity.
+       However, it cannot cast a spell for a turn's worth of energy, same as if it had actually made a move and expended its energy on it.
+       *** This is the recommended method. ***
+*/
+//#define SIMPLE_ANTISTUCK
+
 /*
  * STUPID_MONSTERS flag is left for compatibility, but not recommended.
  * if you think the AI codes are slow (or hard), try the following:
@@ -9016,6 +9028,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		/* Still sleeping */
 		if (m_ptr->csleep) {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
+#ifndef SIMPLE_ANTISTUCK
+			m_ptr->stuck = 0; //clear, since we deduced normal energy
+#endif
 			return;
 		}
 	}
@@ -9066,6 +9081,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		/* Still stunned */
 		if (m_ptr->stunned > 100) {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
+#ifndef SIMPLE_ANTISTUCK
+			m_ptr->stuck = 0; //clear, since we deduced normal energy
+#endif
 			return;
 		}
 	}
@@ -9208,7 +9226,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 						/* Multiplying takes energy */
 						m_ptr->energy -= level_speed(&m_ptr->wpos);
-
+#ifndef SIMPLE_ANTISTUCK
+						m_ptr->stuck = 0; //clear, since we deduced normal energy
+#endif
 						return;
 					}
 				}
@@ -9242,9 +9262,18 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 
 	/* Attempt to cast a spell */
-	if (!inv && !force_random_movement && (m_ptr->r_idx == RI_MIRROR ? make_attack_spell_mirror(Ind, m_idx) : make_attack_spell(Ind, m_idx))) {
-		m_ptr->energy -= level_speed(&m_ptr->wpos);
-		return;
+	if (!inv && !force_random_movement) {
+#ifndef SIMPLE_ANTISTUCK
+		/* Fix stuck monsters getting cast attempts every frame (1/cfg.fps) */
+		if (!m_ptr->stuck) {
+#endif
+			if (m_ptr->r_idx == RI_MIRROR ? make_attack_spell_mirror(Ind, m_idx) : make_attack_spell(Ind, m_idx)) {
+				m_ptr->energy -= level_speed(&m_ptr->wpos);
+				return;
+			}
+#ifndef SIMPLE_ANTISTUCK
+		}
+#endif
 	}
 
 
@@ -9333,6 +9362,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			/* TRUE result can only come from get_moves_astar() and means we decided to use a movement spell.
 			   In that case we're done now. */
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
+#ifndef SIMPLE_ANTISTUCK
+			m_ptr->stuck = 0; //clear, since we deduced normal energy
+#endif
 			return;
 		}
 	}
@@ -9887,7 +9919,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				do_move = FALSE;
 
 				/* finally: 'stuck' monsters no longer retain full energy to retry casting in each frame. */
+#ifndef SIMPLE_ANTISTUCK
+				m_ptr->stuck = level_speed(&m_ptr->wpos);
+#else
 				do_turn = TRUE;
+#endif
 			}
 		}
 
@@ -9953,7 +9989,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				do_move = FALSE;
 
 				/* finally: 'stuck' monsters no longer retain full energy to retry casting in each frame. */
+#ifndef SIMPLE_ANTISTUCK
+				m_ptr->stuck = level_speed(&m_ptr->wpos);
+#else
 				do_turn = TRUE;
+#endif
 			}
 		}
 
@@ -11358,7 +11398,13 @@ void process_monsters(void) {
 
 		/* Give this monster some energy */
 		m_ptr->energy += e * MONSTER_TURNS;
-
+#ifndef SIMPLE_ANTISTUCK
+		/* Handle hack for spell-casting energy while monster is stuck physically (blocked by terrain or other monsters) */
+		if (m_ptr->stuck) {
+			m_ptr->stuck -= e * MONSTER_TURNS;
+			if (m_ptr->stuck < 0) m_ptr->stuck = 0;
+		}
+#endif
 		tmp = level_speed(&m_ptr->wpos);
 
 		/* Added for Valinor; also used by target dummy - C. Blue */
