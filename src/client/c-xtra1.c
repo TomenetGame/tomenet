@@ -2614,7 +2614,8 @@ void display_player(int hist) {
 			c_put_str(TERM_L_GREEN, format("%d", p_ptr->num_spell), y_row3 + 2, 69);
 #endif
 			put_str("Infra-Vision:", y_row3 + 3, 55);
-			c_put_str(p_ptr->tim_infra ? TERM_L_BLUE : TERM_L_GREEN, format("%d feet", p_ptr->see_infra * 10), y_row3 + 3, 69);
+			c_put_str((p_ptr->tim_infra & 0x2) ? TERM_L_UMBER : ((p_ptr->tim_infra & 0x1) ? TERM_L_BLUE : TERM_L_GREEN),
+			    format("%d feet", p_ptr->see_infra * 10), y_row3 + 3, 69);
 		}
 
 		/* Dump the bonuses to hit/dam */

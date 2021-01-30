@@ -8323,7 +8323,11 @@ int Send_skills(int Ind) {
 
 	/* Infravision */
 	if (is_older_than(&p_ptr->version, 4, 7, 3, 1, 0, 0)) skills[11] = p_ptr->see_infra;
-	else skills[11] = p_ptr->see_infra | (p_ptr->tim_infra ? 0x80 : 0x0); //hack
+	else {
+		skills[11] = p_ptr->see_infra | (p_ptr->tim_infra ? 0x80 : 0x0); //hack (light blue IV)
+		/* marker-hack: maxed out sight? */
+		if (p_ptr->see_infra >= MAX_SIGHT && !p_ptr->tim_infra) skills[11] |= 0x40; //haaack (golden IV, but don't override 'boosted' aka light-blue)
+	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;

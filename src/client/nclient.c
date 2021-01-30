@@ -4122,7 +4122,11 @@ int Receive_skills(void) {
 	p_ptr->num_blow = tmp[8] & 0x1F; p_ptr->extra_blows = (tmp[8] & 0xE0) >> 5;
 	p_ptr->num_fire = tmp[9];
 	p_ptr->num_spell = tmp[10];
-	p_ptr->see_infra = tmp[11] & 0x7F; p_ptr->tim_infra = (tmp[11] & 0x80) ? 1 : 0;
+	if (is_atleast(&server_version, 4, 7, 3, 1, 0, 0)) {
+		p_ptr->see_infra = tmp[11] & 0x3F;
+		p_ptr->tim_infra = (tmp[11] & 0x80) ? 0x1 : 0; //'boosted' marker
+		p_ptr->tim_infra |= ((tmp[11] & 0x40) ? 0x2 : 0); //hack: abuse for 'maxed out' marker :) (MAX_SIGHT)
+	} else p_ptr->see_infra = tmp[11]; //..and leave tim_infra at 0
 
 	/* Window stuff */
 	p_ptr->window |= (PW_PLAYER);
