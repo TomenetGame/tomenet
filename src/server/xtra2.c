@@ -7542,7 +7542,7 @@ if (cfg.unikill_format) {
 				}
 			} else if (strstr((r_name + r_ptr->name), "Gorlim, Betrayer of Barahir")) {
 				a_idx = ART_GORLIM;
-				chance = 30;
+				chance = 50;
 			} else if (strstr((r_name + r_ptr->name), "Hagen, son of Alberich")) { /* not in the game */
 				a_idx = ART_NIMLOTH;
 				chance = 66;
@@ -7556,6 +7556,9 @@ if (cfg.unikill_format) {
 			} else if (strstr((r_name + r_ptr->name), "Kronos, Lord of the Titans")) {
 				a_idx = ART_KRONOS;
 				chance = 80;
+			} else if (strstr((r_name + r_ptr->name), "Artsi, the Champion of Chaos")) {
+				a_idx = ART_FISTS;
+				chance = 33;
 			/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
 			} else if ((r_ptr->flags3 & RF3_DRAGON)) {
 				a_idx = ART_AMUGROM;
