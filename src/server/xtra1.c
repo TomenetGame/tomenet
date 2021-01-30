@@ -6557,6 +6557,13 @@ void calc_boni(int Ind) {
 	}
 #endif
 
+	/* Infra-vision can go > 127 thanks to +125 on Morgoth crown,
+	   which would mess up 'boosted' display in 4.7.3a+ (tim_infra indicator).
+	   Since MAX_SIGHT is just 20 anyway, having more IV than that is effectless,
+	   so we can just cap it. */
+	if (p_ptr->see_infra > MAX_SIGHT) p_ptr->see_infra = MAX_SIGHT;
+
+
 
 
 	/* Determine colour of our light radius */

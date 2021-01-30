@@ -14676,6 +14676,11 @@ Infra-Vision
     10 ft equal a distance of 1 field.
     IV can be very helpful for spotting monsters outside of your light radius
     that don't carry a light source themselves.
+    Note that (at the time of writing, v4.7.3) the general maximum range of
+    sight in TomeNET is 20 grids aka 200 ft, beyond which you cannot notice
+    anything. This means that infra-vision too is capped at a maximum of 200 ft
+    aka 20 grids.
+
 
 These miscellaneous abilities can also change when your character progresses,
 depending on your +hit and +dam (concerning Fighting and Bows/Throw) or your
@@ -15119,7 +15124,7 @@ Here is a table showing boni/mali of the different races:
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
 
             STR INT WIS DEX CON CHR     HP die  Exp%  Infra-Vision
-            Di  MD  ST  St  Pe  Sr  Fi  BT
+            Di  MD  ST  St  Pe  Sr  Fi  BT            (caps at 200 ft)
 ------------------------------------------------------------------------------
 Human        0   0   0   0   0   0      10      100%     0ft
              0   0   0   0  10   0   0   0
@@ -17977,6 +17982,8 @@ spell failure rate. All Unlife spells use WIS.)
                     Required skill level for first spell level: 42.
 
     BONI:           Increases infra-vision by +1 every 10 points, up to +5.
+                    (Note that infra-vision caps at TomeNET's generic maximum
+                    sight range, which is 200 ft aka 20 grids.)
                     At 10 it starts increasing your walking speed while you are
                     moving on non-lit grids (and not using any light source),
                     very similar to how the 'Sprint' technique works. This
