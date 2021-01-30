@@ -1303,6 +1303,8 @@ They all start with a slash '/' hence they're called slash commands:
               automatically receive 1 experience point (to limit the amount
               of cash you can pick up before participating in certain events,
               such as Highlander Tournament or Ironman Deep Dive Challenge).
+            - whether you still have an active item oder and in which store in
+              which town.
 
 /exit
 /leave
@@ -6915,6 +6917,12 @@ It is possible that the item arrives earlier than expected, as part of the
 store's regular stock. In that case the shop owner will inform you and hand you
 out as many of those items as possible (if you have ordered a pile of them),
 that amount will then automatically be deduced from your outstanding order.
+
+To cancel an order, visit the store where you ordered it, press 'o' againand
+type "cancel". You will lose your deposited money though!
+
+The '/ex' slash command shows if you still have an active order and at which
+store in which town exactly.
 
 
 Shop scumming:

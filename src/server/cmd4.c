@@ -4305,6 +4305,12 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		else msg_format(Ind, "Next 24h maintenance cycle in %d hours %d minutes.", alim / 60, alim % 60);
 	}
 
+	/* Active store order? */
+	if (p_ptr->item_order_store) {
+		msg_format(Ind, "\377yYou still have an order open at the %s in %s.",
+		    st_name + st_info[p_ptr->item_order_store - 1].name, town_profile[town[p_ptr->item_order_town].type].name);
+	}
+
 	msg_print(Ind, " ");
 }
 

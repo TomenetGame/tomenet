@@ -9355,8 +9355,14 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 		/* Cancel an ongoing order? */
 		if (!strcasecmp(str, "cancel")) {
-			p_ptr->item_order_store = 0;
-			msg_print(Ind, "Alright, your order has been cancelled.");
+			if (p_ptr->item_order_store) {
+				if (p_ptr->item_order_store - 1 != p_ptr->store_num || p_ptr->item_order_town != gettown(Ind)) {
+					msg_print(Ind, "Sorry, your active order is not from my store, look elsewhere.");
+					return;
+				}
+				p_ptr->item_order_store = 0;
+				msg_print(Ind, "Alright, your order has been cancelled.");
+			} else msg_print(Ind, "You do not have a pending order.");
 			return;
 		}
 
