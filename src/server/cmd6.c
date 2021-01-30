@@ -6613,7 +6613,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			}
 			o_ptr->recharging = 15 + randint(3) - get_skill_scale(p_ptr, SKILL_DEVICE, 5);
 			break;
-		case ART_FISTS:
+		case ART_FIST:
 			set_melee_brand(Ind, 30 + rand_int(5) + get_skill_scale(p_ptr, SKILL_DEVICE, 10), TBRAND_HELLFIRE, 10);
 			o_ptr->recharging = 350 - get_skill_scale(p_ptr, SKILL_DEVICE, 200) + rand_int(50);
 			break;

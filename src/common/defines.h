@@ -2774,7 +2774,7 @@
 #define ART_EOWYN		275
 #define ART_SMASHER		276
 #define ART_LAMFADA		277
-#define ART_FISTS		278
+#define ART_FIST		278
 #define ART_ENDOFDAYS		279
 #define ART_WARPSPEAR		280
 #define ART_UTUMNO		281

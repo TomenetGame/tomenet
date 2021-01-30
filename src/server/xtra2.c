@@ -7557,7 +7557,7 @@ if (cfg.unikill_format) {
 				a_idx = ART_KRONOS;
 				chance = 80;
 			} else if (strstr((r_name + r_ptr->name), "Artsi, the Champion of Chaos")) {
-				a_idx = ART_FISTS;
+				a_idx = ART_FIST;
 				chance = 33;
 			/* Wyrms have a chance of dropping The Amulet of Grom, the Wyrm Hunter: -C. Blue */
 			} else if ((r_ptr->flags3 & RF3_DRAGON)) {
