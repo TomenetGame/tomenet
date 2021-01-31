@@ -5533,7 +5533,8 @@ static void player_talk_aux(int Ind, char *message) {
 	if (!(!cfg.worldd_privchat && len && target != 0)) {
 		if (broadcast && cfg.worldd_broadcast) {
 			world_chat(0, tmessage); /* can't ignore */
-		} else if (!broadcast && cfg.worldd_pubchat) {
+		} else if (!broadcast && cfg.worldd_pubchat
+		    && !p_ptr->limit_chat) { /* Actually never forward chat from players that have limit_chat on, because people on IRC or other servers might try to reply but the player cannot see it. */
 			world_chat(p_ptr->id, tmessage);
 		}
 	}
