@@ -7406,12 +7406,13 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Handle rugby ball */
 	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL && !bashing) {
-		msg_print(Ind, "\377yYou pass the ball");
-		msg_format_near(Ind, "\377y%s passes the ball", p_ptr->name);
+		msg_print(Ind, "\377yYou pass the ball.");
+		msg_format_near(Ind, "\377y%s passes the ball.", p_ptr->name);
 	}
 
 	/* Handle snowball */
 	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) {
+		msg_print(Ind, "The snowball is pulverized.");
 		/* Bashing will destroy it */
 		if (bashing) return;
 	}
