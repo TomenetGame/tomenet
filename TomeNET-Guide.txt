@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 29. Januar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 1. Februar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3 - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -182,6 +182,7 @@ Contents
     (7.1)   Preparing the inventory for diving into the dungeon
     (7.2)   Preparing the equipment for diving into the dungeon
     (7.3)   Surviving critical situations
+    (7.3a)  When you are stuck
     (7.4)   Spoiler files
     (7.5)   Monster tactics
     (7.6)   Town/dungeon related hints
@@ -200,6 +201,9 @@ Contents
 
 (0) Quickstart
 ==============
+This chapter is basically the heavily compressed version of chapters (2) which
+are about installing and chapters (3) which are about logging on and creating a
+character. If you like to read in more detail, maybe switch to (2) now instead.
 
 (0.1) Start & play, character validation
 ----------------------------------------
@@ -426,6 +430,10 @@ a name will indicate an 'invalid' account.
 
 You could continue reading at (3.2) now, which explains the user interface,
 or glance at (7.1), (7.2) or (7.3) first which explain some basic strategy.
+
+If you ever get stuck in a problematic situation where you feel you either
+cannot defeat a certain monster or you cannot advance your character the way
+you'd like to, check out (7.3a)!
 
 
 (0.1a)  Colours and colour blindness
@@ -2512,6 +2520,8 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
  a while. So don't use the town or the wilderniss to 'store' loot.
  If you don't own any houses, you can use public houses that are accessible to
  everyone. Risk is of course that someone takes your items.
+ True artifacts dropped outside of towns will usually vanish instantly the
+ moment you leave the sector!
 
 -If you press CTRL+Q to save&exit the game, you should do that in a safe town.
  Dungeons might change while you are logged off, and the next time you log on
@@ -4260,6 +4270,10 @@ Creation of your character is now finished and you are asked to press a key to
 start the actual game. Do so and take a minute to read the text that will
 appear. It is called news or motd (message of the day) and often contains
 important server-specific information or announcements to the players.
+
+If you ever get stuck in a problematic situation where you feel you either
+cannot defeat a certain monster or you cannot advance your character the way
+you'd like to, check out (7.3a)!
 
 
 (3.1a) Character names, collisions and reservations
@@ -20623,6 +20637,49 @@ Some examples:
  surround you, to temporarily blind them (which has the same result as applying
  confusion state to them), allowing you to either escape or kill them while
  they're groping around blindly, even though it only lasts for a moment.
+
+
+(7.3a) When you are stuck
+-------------------------
+If you ever get stuck in a problematic situation such as..
+
+- you just died, oops! And you aren't sure how to go on or you'd like some help
+- you can't kill a certain monster you just met that you'd really love to slay
+- you've been trying to kill a boss monster for some time, already wasted a
+  fortunate on consumables (potions or scrolls) and still can't scratch it
+- you're having trouble advancing your character the way you'd like, experience
+  points seem to come in at a crawl while everything out there seems lethal!
+
+then it's time to.. talk to your fellow players in chat, looking for advice!
+More often than not there are a lot of possibilities to overcome your hardship,
+of which many might be simple but totally not obvious until pointed out!
+
+So just press that : key and write in public chat what's on your mind. Be aware
+though that often people are either AFK or busy in the dungeon. It is often
+lethal to chat while being in the dungeon, so if nobody seems to reply just be
+patient and wait. People are usually not impolite but just don't notice it
+because they're caught up in some fighting or just AFK for a prolonged period
+of time, such as a few hours even, but more often than not are very willing to
+help when they return and see your request!
+
+In very urgent situations such as when you died and have suspicions that nasty
+wall-passing monsters are still around and could get your ghost too any moment,
+aside from screaming for help in chat you could also use the /page command to
+try and page another player who isn't paying attention to the screen.
+The /page command will (if he has turned on sound) cause his client to beep, to
+catch his attention. Since this can be a bit annoying you should reserve it for
+emergencies :).
+
+There have been many, many cases where people thought they hit a wall
+unsurmountable just to realize a little hint was all they needed to spot what
+was going wrong! So don't hesitate to communicate.
+
+A word of warning - if you brought a newbie friend of yours to the game, do not
+try to 'give him an easier time' by stuffing him with powerful items in the
+beginning (also dubbed 'cheezing').
+This will only cause him to not get any grip of the very fundamentals of the
+game and get helplessly lost and frustrated when he hits a wall at later levels
+such as 30..40. You will do more damage than good, promised.
 
 
 
