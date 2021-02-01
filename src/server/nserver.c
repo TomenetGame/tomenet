@@ -3133,10 +3133,12 @@ static int Handle_login(int ind) {
 		msg_print(NumPlayers, "\374\377y ");
 		msg_print(NumPlayers, "\374\377y   ***  Welcome to Tomenet! You can chat with \377o:\377y key. Say hello :)  ***");
 		msg_print(NumPlayers, "\374\377y      To run fast, use \377oSHIFT+direction\377y keys (\377oNUMLOCK\377y must be OFF).");
+ #if 0 /* nowadays characters already have their starter items equipped */
 		if (p_ptr->warning_wield == 0)
 			msg_print(NumPlayers, "\374\377y      Before you move out, press \377ow\377y to equip your weapon and armour!");
 		else
 			msg_print(NumPlayers, "\374\377y      Before you move out, press \377ow\377y to equip your starting items!");
+ #endif
 		msg_print(NumPlayers, "\374\377y      For a list of commands press \377o?\377y key and \377ospacebar\377y to scroll down!");
 		msg_print(NumPlayers, "\374\377y ");
 //		msg_print(NumPlayers, "\377RTurn off \377oNUMLOCK\377R and hit \377oSHIFT+numkeys\377R to run (move quickly).");
