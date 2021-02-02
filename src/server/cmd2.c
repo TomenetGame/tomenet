@@ -7503,7 +7503,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				hit_wall = TRUE;
 #if 1
 				/* Hacky exception: If it's a snowball, allow him to actually hit a player on this wall grid! */
-				if (o_ptr->tval != TV_GAME || o_ptr->sval != SV_SNOWBALL || zcave[y][x].m_idx >= 0)
+				if (o_ptr->tval != TV_GAME || o_ptr->sval != SV_SNOWBALL || zcave[ny][nx].m_idx >= 0)
 
 #endif
 				break;
@@ -7543,7 +7543,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			if (p_ptr->conn == NOT_CONNECTED) continue;
 
 			/* If he's not here, skip him */
-			if(!inarea(wpos, &p_ptr->wpos)) continue;
+			if (!inarea(wpos, &p_ptr->wpos)) continue;
 
 			/* The player can see the (on screen) missile */
 			if (panel_contains(y, x) && player_can_see_bold(i, y, x)) {
@@ -7894,8 +7894,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				continue;
 
 			/* The player can see the (on screen) missile */
-			if (panel_contains(ny, nx) && player_can_see_bold(i, ny, nx))
-			{
+			if (panel_contains(ny, nx) && player_can_see_bold(i, ny, nx)) {
 				int dispx, dispy;
 
 				/* Draw */
