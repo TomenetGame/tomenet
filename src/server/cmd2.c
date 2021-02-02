@@ -7412,9 +7412,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Handle snowball */
 	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) {
-		msg_print(Ind, "The snowball is pulverized.");
 		/* Bashing will destroy it */
-		if (bashing) return;
+		if (bashing) {
+			msg_print(Ind, "The snowball is pulverized.");
+			return;
+		}
 	}
 
 
@@ -7538,12 +7540,10 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			p_ptr = Players[i];
 
 			/* If he's not playing, skip him */
-			if (p_ptr->conn == NOT_CONNECTED)
-				continue;
+			if (p_ptr->conn == NOT_CONNECTED) continue;
 
 			/* If he's not here, skip him */
-			if(!inarea(wpos, &p_ptr->wpos))
-				continue;
+			if(!inarea(wpos, &p_ptr->wpos)) continue;
 
 			/* The player can see the (on screen) missile */
 			if (panel_contains(y, x) && player_can_see_bold(i, y, x)) {
