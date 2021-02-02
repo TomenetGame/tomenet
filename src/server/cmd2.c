@@ -7488,28 +7488,33 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 
 #ifdef DOUBLE_LOS_SAFETY
-	    /* skip checks if we already used projectable..() routines to
-	       determine that it's fine, so it'd be redundant and also require
-	       additional code to comply with DOUBLE_LOS_SAFETY. */
-	    if (dir != 5) {
+		/* skip checks if we already used projectable..() routines to
+		   determine that it's fine, so it'd be redundant and also require
+		   additional code to comply with DOUBLE_LOS_SAFETY. */
+		if (dir != 5) {
 #endif
-		/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
-		if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
+			/* Stopped by protected grids (Inn doors, also stopping monsters' ranged attacks!) */
+			if (f_info[zcave[ny][nx].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)) break;
 
-		/* Stopped by walls/doors */
-		if (!cave_los(zcave, ny, nx)) {
-			hit_wall = TRUE;
-			break;
-		}
+			/* Stopped by walls/doors */
+			if (!cave_los(zcave, ny, nx)) {
+				hit_wall = TRUE;
+#if 1
+				/* Hacky exception: If it's a snowball, allow him to actually hit a player on this wall grid! */
+				if (o_ptr->tval != TV_GAME || o_ptr->sval != SV_SNOWBALL || zcave[y][x].m_idx >= 0)
 
-		/* stopped by open house doors! -
-		   added this to prevent items landing ON an open door of a list house,
-		   making it impossible to pick up the item again because the character
-		   would enter the house when trying to step onto the grid with the item. - C. Blue */
-		if (zcave[ny][nx].feat == FEAT_HOME_OPEN) break;
+#endif
+				break;
+			}
+
+			/* stopped by open house doors! -
+			   added this to prevent items landing ON an open door of a list house,
+			   making it impossible to pick up the item again because the character
+			   would enter the house when trying to step onto the grid with the item. - C. Blue */
+			if (zcave[ny][nx].feat == FEAT_HOME_OPEN) break;
 
 #ifdef DOUBLE_LOS_SAFETY
-	    }
+		}
 #endif
 
 		/* Advance the distance */
