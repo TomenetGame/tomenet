@@ -4140,6 +4140,7 @@ void do_quit(int ind, bool tellclient) {
 	/* If we are close to the center of town, exit quickly. */
 	if (connp->id == -1 ||
 	    isdungeontown(&p_ptr->wpos) ||
+	    on_irondeepdive(&p_ptr->wpos) || /* exception: since monsters don't spawn in IDDC entrance sector, allow fast-quit here too */
 	    (istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !(sector00separation && in_sector00(&p_ptr->wpos)))) {
 		Destroy_connection(ind, "client quit");
 	}
