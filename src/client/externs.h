@@ -877,6 +877,7 @@ extern int color_char_to_attr(char c);
 extern byte mh_attr(int max);
 extern char *my_strcasestr(const char *big, const char *little);
 extern char *my_strcasestr_skipcol(const char *big, const char *little, byte strict);
+extern char *my_strstr_skipcol(const char *big, const char *little, byte strict);
 extern char *roman_suffix(char* cname);
 extern bool wearable_p(object_type *o_ptr);
 

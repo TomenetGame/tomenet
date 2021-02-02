@@ -436,6 +436,89 @@ char *my_strcasestr_skipcol(const char *big, const char *little, byte strict) {
 		return NULL;
 	}
 }
+/* Clone of my_strcasestr_skipcol() but case-sensitive */
+char *my_strstr_skipcol(const char *big, const char *little, byte strict) {
+	const char *ret = NULL;
+	int cnt = 0, cnt2 = 0, cnt_offset;
+	int L = strlen(little), l;
+
+	/* para stuff that is necessary */
+	if (big == NULL) return NULL; //cannot find anything in a place that doesn't exist
+	if (little == NULL) return NULL; //something that doesn't exist, cannot be found.. (was 'return big')
+	if (*little == 0) return (char*)big;
+	if (*big == 0) return NULL; //at least this one is required, was glitching in-game guide search! oops..
+
+	if (strict) { /* switch to strict mode */
+		bool just_spaces = (strict == 4 ? FALSE : TRUE);
+		do {
+			/* Skip colour codes */
+			while (big[cnt] == '\377') {
+				cnt++;
+				if (big[cnt] != 0) cnt++; //paranoia: broken colour code
+			}
+			if (!big[cnt]) return NULL;
+			if (big[cnt] != ' ') just_spaces = FALSE;
+
+			/* Should not start on a lower-case letter, so we know we're not just in the middle of some random text.. */
+			if (strict >= 2 && isalpha(big[cnt]) && big[cnt] == tolower(big[cnt])) return NULL;
+
+			cnt2 = cnt_offset = 0;
+			l = 0;
+			while (little[cnt2] != 0) {
+				/* Skip colour codes */
+				while (big[cnt + cnt2 + cnt_offset] == '\377') {
+					cnt_offset++;
+					if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
+				}
+				if (!big[cnt + cnt2 + cnt_offset]) return NULL;
+
+				if (strict >= 3) { /* Case-sensitive: Caps only (the needle is actually all-caps) */
+					if (big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
+					else break;
+				} else {
+					if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
+					else break;
+				}
+
+				if (l == 1) ret = big + cnt;
+				cnt2++;
+			}
+
+			if (L == l) return (char*)ret;
+			if (!just_spaces) return NULL; /* failure: not at the beginning of the line (tolerating colour codes) */
+			cnt++;
+		} while (big[cnt] != '\0');
+		return NULL;
+	} else {
+		do {
+			/* Skip colour codes */
+			while (big[cnt] == '\377') {
+				cnt++;
+				if (big[cnt] != 0) cnt++; //paranoia: broken colour code
+			}
+
+			cnt2 = cnt_offset = 0;
+			l = 0;
+			while (little[cnt2] != 0) {
+				/* Skip colour codes */
+				while (big[cnt + cnt2 + cnt_offset] == '\377') {
+					cnt_offset++;
+					if (big[cnt + cnt2 + cnt_offset] != 0) cnt_offset++; //paranoia: broken colour code
+				}
+
+				if (big[cnt + cnt2 + cnt_offset] == little[cnt2] || big[cnt + cnt2 + cnt_offset] == little[cnt2]) l++;
+				else break;
+
+				if (l == 1) ret = big + cnt;
+				cnt2++;
+			}
+
+			if (L == l) return (char*)ret;
+			cnt++;
+		} while (big[cnt] != '\0');
+		return NULL;
+	}
+}
 
 /* Provide extra convenience for character names that end on roman numbers to count their reincarnations,
    for highlighting/beeping on personal chat messages, specifically allowing the sender to omit the roman number

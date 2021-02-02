@@ -734,6 +734,7 @@ extern int find_realm(int book);
 extern void version_build(void);
 extern char *my_strcasestr(const char *big, const char *little);
 extern char *my_strcasestr_skipcol(const char *big, const char *little, byte strict);
+extern char *my_strstr_skipcol(const char *big, const char *little, byte strict);
 extern bool is_newer_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 extern bool is_older_than(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
 extern bool is_same_as(version_type *version, int major, int minor, int patch, int extra, int branch, int build);
