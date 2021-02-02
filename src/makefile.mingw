@@ -187,7 +187,8 @@ LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 ## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually above:
 CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
 #LIBS += -lSDL -lSDL_mixer $(SDL_LIB_PATH)
-LIBS += $(SDL_LIB_PATH) -lSDL_mixer
+#added regexp capability for guide searching via mingw-libgnurx -> link against regex
+LIBS += $(SDL_LIB_PATH) -lSDL_mixer -lregex
 
 # Security hardening
 # -pie seems to be broken
