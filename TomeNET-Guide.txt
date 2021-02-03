@@ -3003,6 +3003,9 @@ it installs to, in most cases it will be 'i686-w64-mingw32', so it will install
 to /usr/i686-w64-mingw32/...  with notable subfolders include/, lib/ and bin/.
 Edit the makefile.mingw to have MINGW_TARGET reflect the prefix.
 
+For regexp search (only used for the guide-search in c-cmd.c) you will probably
+need a regexp lib, mingw-libgnurx should work fine.
+
 Next, for sound support you will have to download at least SDL v1.2.15 and
 SDL-mixer v1.2.12. Optionally you can get SMPEG for MP3-support or MikMod for
 various mod-file suport, not required. Make sure you do _not_ download the
