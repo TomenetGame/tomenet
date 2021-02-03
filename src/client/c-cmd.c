@@ -1,6 +1,13 @@
 /* $Id$ */
 #include "angband.h"
-#include <regex.h>
+
+/* Enable guide regexp search features/ */
+#define REGEX_SEARCH
+
+#ifdef REGEX_SEARCH
+ #include <regex.h>
+ #define REGEXP_ARRAY_SIZE 1
+#endif
 
 /* reordering will allow these to be removed */
 static void cmd_clear_buffer(void);
@@ -1539,32 +1546,38 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 /* Local Guide invocation -
    search_type: 1 = search, 2 = strict search (all upper-case),  3 = chapter search, 4 = line number,
                 0 = no pre-defined search, we're browsing it normally. */
-#define REGEXP_ARRAY_SIZE 1
 void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_string) {
 	static int line = 0, line_before_search = 0, jumped_to_line = 0;
 	static char lastsearch[MAX_CHARS] = "";
 	static char lastchapter[MAX_CHARS] = "";
 
-	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE, search_regexp = FALSE, regexp_case = TRUE;
+	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c, n, line_presearch = line;
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
-	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], buf2_skipcol[MAX_CHARS * 2 + 1], *cp, *cp2, *c_skipcol;
+	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
 #ifndef BUFFER_GUIDE
 	char path[1024], bufdummy[MAX_CHARS + 1];
 	FILE *fff;
 #else
 	static int fseek_pseudo = 0; //fake a file position, within our buffered guide string array
 #endif
-	int i, ires = -999, iresf = 0;
+	int i;
 	char *res;
 	byte search_uppercase = 0, search_uppercase_ok, fallback = FALSE, fallback_uppercase = 0;
 
 	int c_override = 0;
 	char buf_override[MAX_CHARS];
+
+#ifdef REGEX_SEARCH
+	bool search_regexp = FALSE, regexp_case = TRUE;
+	int ires = -999, iresf = 0;
+	char buf2_skipcol[MAX_CHARS * 2 + 1], *c_skipcol;
 	regex_t re_src;
 	regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
-
+#ifdef REGEX_SEARCH
+#endif
+#endif
 
 	/* empty file? */
 	if (guide_lastline == -1) return;
@@ -1668,7 +1681,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		if (!skip_redraw) Term_clear();
 		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
 		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
+#ifdef REGEX_SEARCH
 		Term_putstr(29, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+#else
+		Term_putstr(29, bottomline, -1, TERM_L_BLUE, " s,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+#endif
 		Term_putstr( 6, bottomline, -1, TERM_SLATE,  "  SPC/n,p,ENTER,BCK,ESC");
 		Term_putstr( 0, bottomline, -1, TERM_YELLOW, " ?:Help");
 		if (skip_redraw) goto skipped_redraw;
@@ -1837,6 +1854,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			else if (searchstr[0]) {
 				searchline++;
 
+#ifdef REGEX_SEARCH
 				/* Don't confuse the regexp-matcher with colour codes */
 				buf2_skipcol[0] = 0;
 				i = 0;
@@ -1851,6 +1869,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					c_skipcol++;
 				}
 				buf2_skipcol[i] = 0;
+#endif
 
 				/* Search wrapped around once and still no result? Finish. */
 				if (searchwrap && searchline == line) {
@@ -1876,20 +1895,21 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					/* return to that position again */
 					restore_pos = TRUE;
 					break;
+#ifdef REGEX_SEARCH
 				/* We found a regexp result */
 				} else if (search_regexp && !(iresf = regexec(&re_src, buf2_skipcol, REGEXP_ARRAY_SIZE, pmatch, 0))) {
 					/* Reverse again to normal direction/location */
 					if (backwards) {
 						backwards = FALSE;
 						searchline = guide_lastline - searchline;
-#ifndef BUFFER_GUIDE
+ #ifndef BUFFER_GUIDE
 						/* Skip end of line, advancing to next line */
 						fseek(fff, 1, SEEK_CUR);
 						/* This line has already been read too, by fgets_inverse(), so skip too */
 						res = fgets(bufdummy, 81, fff); //res just slays compiler warning
-#else
+ #else
 						fseek_pseudo += 2;
-#endif
+ #endif
 					}
 
 					/* Testing & Paranoia :) */
@@ -1905,8 +1925,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					line = searchline;
 					/* Redraw line number display */
 					Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
+#endif
 				/* We found a result */
-				} else if (!search_regexp && my_strcasestr_skipcol(buf2, searchstr, search_uppercase)) {
+				} else if (
+#ifdef REGEX_SEARCH
+				    !search_regexp &&
+#endif
+				    my_strcasestr_skipcol(buf2, searchstr, search_uppercase)) {
 					/* Reverse again to normal direction/location */
 					if (backwards) {
 						backwards = FALSE;
@@ -1936,7 +1961,11 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			}
 
 			/* Colour all search finds */
-			if ((!search_regexp || !regexp_case) && withinsearch[0] && my_strcasestr_skipcol(buf2, withinsearch, search_uppercase)) {
+			if (
+#ifdef REGEX_SEARCH
+			    (!search_regexp || !regexp_case) &&
+#endif
+			    withinsearch[0] && my_strcasestr_skipcol(buf2, withinsearch, search_uppercase)) {
 				strcpy(buf, buf2);
 
 				cp = buf;
@@ -1996,6 +2025,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				*cp2 = 0;
 			}
+#ifdef REGEX_SEARCH
 			else if (search_regexp && regexp_case && withinsearch[0] && my_strstr_skipcol(buf2, withinsearch, search_uppercase)) {
 				strcpy(buf, buf2);
 
@@ -2056,6 +2086,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				*cp2 = 0;
 			}
+#endif
 
 			/* Display processed line, colourized by chapters and search results */
 			Term_putstr(0, 2 + n, -1, TERM_WHITE, buf2);
@@ -2159,7 +2190,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 		/* seach for 'chapter': can be either a numerical one or a main term, such as race/class/skill names. */
 		case 'c':
+#ifdef REGEX_SEARCH
 			search_regexp = FALSE;
+#endif
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter chapter to jump to: ");
 #if 0
@@ -2789,7 +2822,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			continue;
 		/* search for keyword */
 		case 's':
+#ifdef REGEX_SEARCH
 			search_regexp = FALSE;
+#endif
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search string: ");
 #if 0
@@ -2837,6 +2872,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			strcpy(lastsearch, searchstr);
 			searchline = line - 1; //init searchline for string-search
 			continue;
+#ifdef REGEX_SEARCH
 		/* search for regexp ^^ why not! */
 		case 'r': /* <- case-insensitive */
 			__attribute__ ((fallthrough));
@@ -2882,6 +2918,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			search_uppercase = FALSE;
 			search_regexp = TRUE;
 			continue;
+#endif
 
 		/* special function now: Reset search. Means: Go to where I was before searching. */
 		case 'S':
@@ -2949,16 +2986,25 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			Term_putstr(23,  0, -1, TERM_L_BLUE, "[The Guide - navigation keys]");
 			i = 2;
 			Term_putstr( 0, i++, -1, TERM_WHITE, "At the bottom of the guide screen you will see the following line:");
+#ifdef REGEX_SEARCH
 			Term_putstr(29,   i, -1, TERM_L_BLUE, " s/r/R,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+#else
+			Term_putstr(29,   i, -1, TERM_L_BLUE, " s,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+#endif
 			Term_putstr( 6,   i, -1, TERM_SLATE,  "  SPC/n,p,ENTER,BCK,ESC");
 			Term_putstr( 0, i++, -1, TERM_YELLOW, " ?:Help");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  Space or 'n':    Move down by one page");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'p'         :    Move up by one page");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  's'         :    Search for a text string (use all upper-case for strict mode)");
+#ifdef REGEX_SEARCH
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'r'/'R'     :    Like 's', but searches regexp ('R' = case-sensitive)");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'd'         :    ..after 's/r/R', this jumps to the next match");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'D' or 'f'  :    ..after 's/r/R', this jumps to the previous match");
+#else
+			Term_putstr( 0, i++, -1, TERM_WHITE, "  'd'         :    ..after 's', this jumps to the next match");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "  'D' or 'f'  :    ..after 's', this jumps to the previous match");
+#endif
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'S'         :    ..resets screen to where you were before you did a search.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'c'         :    Chapter Search. This is a special search that will skip most");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "                   basic text and only match specific topics and keywords.");
@@ -2981,7 +3027,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			my_fclose(fff);
 #endif
 			Term_load();
+#ifdef REGEX_SEARCH
 			if (!ires) regfree(&re_src);
+#endif
 			return;
 		}
 	}
