@@ -1521,6 +1521,64 @@ void cmd_high_scores(void) {
 	peruse_file();
 }
 
+#ifdef REGEX_SEARCH
+/* custom str-search function for regexps, to use instead of my_strcasestr..().
+   buf2 = the normal string to search in
+   re_src = the compiled regexp to search for
+   searchstr_re = the uncompiled string the user entered (clone of searchstr, but that one gets nulled on first hit, so need this clone backup)
+   withinsearch = returns the actual matched string in 'buf2'
+   next_start = returns next position in 'buf2' to start subsequent search or -1 for once-per-line matches (^/$) */
+static bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *withinsearch, int *next_start) {
+	int i, i2;
+	char buf2_skipcol[MAX_CHARS * 2 + 1], *c_skipcol, offset[MAX_CHARS * 2 + 1];
+	regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
+
+	/* Don't confuse the regexp-matcher with colour codes */
+	buf2_skipcol[0] = 0;
+	i = i2 = 0;
+	c_skipcol = buf2;
+	while (c_skipcol[i2]) {
+		while (c_skipcol[i2] == '\377') {
+			i2++;
+			if (c_skipcol[i2] != 0) i2++; //paranoia: broken colour code
+		}
+		buf2_skipcol[i] = c_skipcol[i2];
+		offset[i] = i2;
+		i++;
+		i2++;
+	}
+	buf2_skipcol[i] = 0;
+
+	if (regexec(&re_src, buf2_skipcol, REGEXP_ARRAY_SIZE, pmatch, 0)) return FALSE;
+
+	/* Testing & Paranoia :) */
+	//c_message_add(format("re_nsub=%d", i, re_src.re_nsub));
+	if (pmatch[0].rm_so == -1) return FALSE;
+	/* Actually disallow searches that match empty strings */
+	if (pmatch[0].rm_eo - pmatch[0].rm_so == 0) return FALSE;
+
+	/* Just take the first match of the line.. */
+	strcpy(withinsearch, buf2_skipcol + pmatch[0].rm_so);
+	withinsearch[pmatch[0].rm_eo - pmatch[0].rm_so] = 0;
+
+ #if 0 /* not needed, as now all sub-matches are also found by this function */
+	/* Hack: Searching for ^ or $ will only colour one result per line */
+	if (searchstr_re[0] == '^' || searchstr_re[strlen(searchstr_re) - 1] == '$') *next_start = -1;
+	else
+ #endif
+	*next_start = offset[pmatch[0].rm_eo];
+
+ #if 0
+	c_message_add(format("buf2:%s",buf2));
+	c_message_add(format("buf2_skipcol:%s",buf2_skipcol));
+	c_message_add(format("searchstr_re:%s",searchstr_re));
+	c_message_add(format("withinsearch:%s",withinsearch));
+	c_message_add(format("next_start:%d,so=%d,eo=%d,os=%d", *next_start, pmatch[0].rm_so, pmatch[0].rm_eo, offset[pmatch[0].rm_so]));
+ #endif
+	return TRUE;
+}
+#endif
+
 #ifndef BUFFER_GUIDE
 static char *fgets_inverse(char *buf, int max, FILE *f) {
 	int c, res, pos;
@@ -1570,13 +1628,10 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	char buf_override[MAX_CHARS];
 
 #ifdef REGEX_SEARCH
-	bool search_regexp = FALSE, regexp_case = TRUE;
-	int ires = -999, iresf = 0;
-	char buf2_skipcol[MAX_CHARS * 2 + 1], *c_skipcol;
+	bool search_regexp = FALSE;
+	int ires = -999;
 	regex_t re_src;
-	regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1];
-#ifdef REGEX_SEARCH
-#endif
+	char searchstr_re[MAX_CHARS];
 #endif
 
 	/* empty file? */
@@ -1832,6 +1887,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 			}
+
 			/* Search for specific chapter? */
 			else if (chapter[0]) {
 				searchline++;
@@ -1853,23 +1909,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			/* Search for specific string? */
 			else if (searchstr[0]) {
 				searchline++;
-
-#ifdef REGEX_SEARCH
-				/* Don't confuse the regexp-matcher with colour codes */
-				buf2_skipcol[0] = 0;
-				i = 0;
-				c_skipcol = buf2;
-				while (*c_skipcol) {
-					while (*c_skipcol == '\377') {
-						c_skipcol++;
-						if (*c_skipcol != 0) c_skipcol++; //paranoia: broken colour code
-					}
-					buf2_skipcol[i] = *c_skipcol;
-					i++;
-					c_skipcol++;
-				}
-				buf2_skipcol[i] = 0;
-#endif
 
 				/* Search wrapped around once and still no result? Finish. */
 				if (searchwrap && searchline == line) {
@@ -1895,43 +1934,43 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					/* return to that position again */
 					restore_pos = TRUE;
 					break;
+				}
+
 #ifdef REGEX_SEARCH
 				/* We found a regexp result */
-				} else if (search_regexp && !(iresf = regexec(&re_src, buf2_skipcol, REGEXP_ARRAY_SIZE, pmatch, 0))) {
-					/* Reverse again to normal direction/location */
-					if (backwards) {
-						backwards = FALSE;
-						searchline = guide_lastline - searchline;
+				else if (search_regexp) {
+					if (my_strregexp_skipcol(buf2, re_src, searchstr_re, withinsearch, &i)) {
+						/* Reverse again to normal direction/location */
+						if (backwards) {
+							backwards = FALSE;
+							searchline = guide_lastline - searchline;
  #ifndef BUFFER_GUIDE
-						/* Skip end of line, advancing to next line */
-						fseek(fff, 1, SEEK_CUR);
-						/* This line has already been read too, by fgets_inverse(), so skip too */
-						res = fgets(bufdummy, 81, fff); //res just slays compiler warning
+							/* Skip end of line, advancing to next line */
+							fseek(fff, 1, SEEK_CUR);
+							/* This line has already been read too, by fgets_inverse(), so skip too */
+							res = fgets(bufdummy, 81, fff); //res just slays compiler warning
  #else
-						fseek_pseudo += 2;
+							fseek_pseudo += 2;
  #endif
+						}
+
+						searchstr[0] = 0;
+						searchwrap = FALSE;
+						line = searchline;
+						/* Redraw line number display */
+						Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
 					}
-
-					/* Testing & Paranoia :) */
-					//c_message_add(format("re_nsub=%d", i, re_src.re_nsub));
-					if (pmatch[0].rm_so == -1) continue;
-
-					/* Just take the first match of the line.. */
-					strcpy(withinsearch, buf2_skipcol + pmatch[0].rm_so);
-					withinsearch[pmatch[0].rm_eo - pmatch[0].rm_so] = 0;
-
-					searchstr[0] = 0;
-					searchwrap = FALSE;
-					line = searchline;
-					/* Redraw line number display */
-					Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
+					/* Still searching */
+					else {
+						/* Skip all lines until we find the desired string */
+						n--;
+						continue;
+					}
+				}
 #endif
-				/* We found a result */
-				} else if (
-#ifdef REGEX_SEARCH
-				    !search_regexp &&
-#endif
-				    my_strcasestr_skipcol(buf2, searchstr, search_uppercase)) {
+
+				/* We found a result (non-regexp) */
+				else if (my_strcasestr_skipcol(buf2, searchstr, search_uppercase)) {
 					/* Reverse again to normal direction/location */
 					if (backwards) {
 						backwards = FALSE;
@@ -1952,6 +1991,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					line = searchline;
 					/* Redraw line number display */
 					Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
+
 				/* Still searching */
 				} else {
 					/* Skip all lines until we find the desired string */
@@ -1961,11 +2001,78 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			}
 
 			/* Colour all search finds */
-			if (
 #ifdef REGEX_SEARCH
-			    (!search_regexp || !regexp_case) &&
+			if (search_regexp) {
+				if (withinsearch[0] && my_strregexp_skipcol(buf2, re_src, searchstr_re, withinsearch, &i)) {
+					/* Hack for '^' regexp. Problem is that we call my_.. below 'at the beginning' every time, as we just advance cp!
+					   So a regexp starting on '^' will match any results regardless of their real position: */
+					bool hax = searchstr_re[0] == '^', hax_done = FALSE;
+
+					strcpy(buf, buf2);
+
+					cp = buf;
+					cp2 = buf2;
+					within = within_col = FALSE;
+					while (*cp) {
+						/* We're entering/exiting a (light green) coloured chapter marker? */
+						if (*cp == '\377') {
+							if (*(cp + 1) == 'G') within_col = TRUE;
+							else within_col = FALSE;
+
+							/* The colour-letter inside a colour code does of course not count towards the search result.
+							   However, if already inside a result, don't recolour it from red to green.. */
+							if (!within) {
+								*cp2++ = *cp++;
+								/* paranoia: broken colour code? */
+								if (!(*cp)) break;
+								*cp2++ = *cp++;
+							} else {
+								cp++;
+								/* paranoia: broken colour code? */
+								if (!(*cp)) break;
+								cp++;
+							}
+
+							continue;
+						}
+
+						/* A bit hacky: Only accept matches at the beginning of our cp string,
+						   to do this we check whether match length (strlen) is same as the end-of-match pointer (i) */
+						if (!hax_done && my_strregexp_skipcol(cp, re_src, searchstr_re, withinsearch, &i) && i == strlen(withinsearch)) {
+							if (hax) hax_done = TRUE;
+
+							/* begin of colourizing */
+							*cp2++ = '\377';
+							*cp2++ = 'R';
+							within = TRUE;
+							within_cnt = 0;
+						}
+
+						/* just copy each single character over */
+						*cp2++ = *cp++;
+
+						/* end of colourizing? */
+						if (within) {
+							within_cnt++;
+							if (within_cnt == strlen(withinsearch)) {
+								within = FALSE;
+								*cp2++ = '\377';
+								/* restore a disrupted chapter marker? */
+								if (within_col) {
+									within_col = FALSE;
+									*cp2++ = 'G';
+								}
+								/* normal text */
+								else *cp2++ = 'w';
+							}
+						}
+
+					}
+					*cp2 = 0;
+				}
+			} else
 #endif
-			    withinsearch[0] && my_strcasestr_skipcol(buf2, withinsearch, search_uppercase)) {
+			if (withinsearch[0] && my_strcasestr_skipcol(buf2, withinsearch, search_uppercase)) {
 				strcpy(buf, buf2);
 
 				cp = buf;
@@ -1994,7 +2101,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 						continue;
 					}
 
-					//if (!strncasecmp_skipcol(cp, withinsearch, strlen(withinsearch, search_uppercase))) { --no need to define an extra function, just reuse my_strcasestr_skipcol() simply:
 					if (my_strcasestr_skipcol(cp, withinsearch, search_uppercase) == cp) {
 						/* begin of colourizing */
 						*cp2++ = '\377';
@@ -2025,68 +2131,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				*cp2 = 0;
 			}
-#ifdef REGEX_SEARCH
-			else if (search_regexp && regexp_case && withinsearch[0] && my_strstr_skipcol(buf2, withinsearch, search_uppercase)) {
-				strcpy(buf, buf2);
-
-				cp = buf;
-				cp2 = buf2;
-				within = within_col = FALSE;
-				while (*cp) {
-					/* We're entering/exiting a (light green) coloured chapter marker? */
-					if (*cp == '\377') {
-						if (*(cp + 1) == 'G') within_col = TRUE;
-						else within_col = FALSE;
-
-						/* The colour-letter inside a colour code does of course not count towards the search result.
-						   However, if already inside a result, don't recolour it from red to green.. */
-						if (!within) {
-							*cp2++ = *cp++;
-							/* paranoia: broken colour code? */
-							if (!(*cp)) break;
-							*cp2++ = *cp++;
-						} else {
-							cp++;
-							/* paranoia: broken colour code? */
-							if (!(*cp)) break;
-							cp++;
-						}
-
-						continue;
-					}
-
-					//if (!strncmp_skipcol(cp, withinsearch, strlen(withinsearch, search_uppercase))) { --no need to define an extra function, just reuse my_strcasestr_skipcol() simply:
-					if (my_strstr_skipcol(cp, withinsearch, search_uppercase) == cp) {
-						/* begin of colourizing */
-						*cp2++ = '\377';
-						*cp2++ = 'R';
-						within = TRUE;
-						within_cnt = 0;
-					}
-
-					/* just copy each single character over */
-					*cp2++ = *cp++;
-
-					/* end of colourizing? */
-					if (within) {
-						within_cnt++;
-						if (within_cnt == strlen(withinsearch)) {
-							within = FALSE;
-							*cp2++ = '\377';
-							/* restore a disrupted chapter marker? */
-							if (within_col) {
-								within_col = FALSE;
-								*cp2++ = 'G';
-							}
-							/* normal text */
-							else *cp2++ = 'w';
-						}
-					}
-
-				}
-				*cp2 = 0;
-			}
-#endif
 
 			/* Display processed line, colourized by chapters and search results */
 			Term_putstr(0, 2 + n, -1, TERM_WHITE, buf2);
@@ -2877,14 +2921,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		case 'r': /* <- case-insensitive */
 			__attribute__ ((fallthrough));
 		case 'R':
-			memset(&pmatch, 0, REGEXP_ARRAY_SIZE * sizeof(regmatch_t));
-			if (c == 'r') {
-				regexp_case = FALSE;
-				i = REG_EXTENDED | REG_ICASE;
-			} else {
-				regexp_case = TRUE;
-				i = REG_EXTENDED;
-			}
+			if (c == 'r') i = REG_EXTENDED | REG_ICASE;// | REG_NEWLINE;
+			else i = REG_EXTENDED;// | REG_NEWLINE;
 
 			Term_erase(0, bottomline, 80);
 			Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter search regexp: ");
@@ -2917,6 +2955,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 			search_uppercase = FALSE;
 			search_regexp = TRUE;
+			strcpy(searchstr_re, searchstr); //clone just for ^/& evaluation later..
 			continue;
 #endif
 
