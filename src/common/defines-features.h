@@ -422,6 +422,9 @@
  #ifdef BUFFER_GUIDE
   #define GUIDE_LINES_MAX 25000 //note: the guide is currently 20038 lines long
  #endif
+
+ /* Use regex.h to offer regexp in-game guide searching */
+ #define REGEX_SEARCH
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/

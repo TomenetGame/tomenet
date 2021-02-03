@@ -1,9 +1,6 @@
 /* $Id$ */
 #include "angband.h"
 
-/* Enable guide regexp search features/ */
-#define REGEX_SEARCH
-
 #ifdef REGEX_SEARCH
  #include <regex.h>
  #define REGEXP_ARRAY_SIZE 1
