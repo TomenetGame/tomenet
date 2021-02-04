@@ -563,6 +563,9 @@ x       S       swap an item. This is basically like both "wear/wield" and
                 still use 'x', eg '@x0' when the macro is 'S0'!
 
 q       q       quaff a potion.
+                If you enable the 'keep_bottle' option (it's in =7 at the time
+                of writing this) your character will retain an empty bottle
+                which you can fill at a fountain.
 
 r       r       read a scroll.
 
