@@ -6645,7 +6645,9 @@ void determine_level_req(int level, object_type *o_ptr) {
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) o_ptr->level = 0;
 #ifdef ENABLE_DEMOLITIONIST
 // #ifdef DEMOLITIONIST_IDDC_ONLY --actually always level 0, since it can be dropped by monsters too
+ #if 0
 	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) o_ptr->level = 0;
+ #endif
 // #endif
 #endif
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_TRAP_CREATION) && (o_ptr->level < 20)) o_ptr->level = 20;
