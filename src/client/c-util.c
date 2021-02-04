@@ -8636,6 +8636,11 @@ void do_cmd_options(void) {
 
 	/* Resend options to server */
 	Send_options();
+
+	if (custom_font_warning) {
+		custom_font_warning = FALSE;
+		if (c_cfg.font_map_solid_walls) c_msg_print("\377wCustom font loaded. If visuals seem wrong, disable '\377yfont_map_solid_walls\377w' in =1.");
+	}
 }
 
 
@@ -9906,17 +9911,21 @@ void handle_process_font_file(void) {
 		path_build(fname, 1024, ANGBAND_DIR_USER, buf);
 		fff = my_fopen(fname, "r");
 		/* If custom file doesn't exist, fallback to normal font pref file: */
+		custom_font_warning = FALSE;
 		if (!fff) sprintf(buf, "font-%s.prf", ANGBAND_SYS);
-		else fclose(fff);
+		else {
+			fclose(fff);
+			if (c_cfg.font_map_solid_walls) custom_font_warning = TRUE;
+		}
 		process_pref_file(buf);
 
 		/* Resend definitions to the server */
 		if (in_game) Send_client_setup();
 	} else {
 #endif
-	/* Access the "visual" system pref file (if any) */
-	sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
-	process_pref_file(buf);
+		/* Access the "visual" system pref file (if any) */
+		sprintf(buf, "%s-%s.prf", (use_graphics ? "graf" : "font"), ANGBAND_SYS);
+		process_pref_file(buf);
 #ifdef CUSTOM_FONT_PRF
 	}
 #endif

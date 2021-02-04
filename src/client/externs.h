@@ -1089,3 +1089,4 @@ extern int NumPlayers;
 extern char playerlist[1000][MAX_CHARS_WIDE * 2];
 
 extern byte col_raindrop, col_snowflake;
+extern bool custom_font_warning;
