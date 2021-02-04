@@ -2736,9 +2736,23 @@ void display_player(int hist) {
 				prt_num("", p_ptr->csp, y_row2 + 1, 62, TERM_RED);
 		}
 
+		if (p_ptr->mst == -9999) {
+			put_str("Stamina", y_row2 + 2, 52);
+			c_put_str(TERM_L_GREEN, "-", y_row2 + 2, 71);
+		} else {
+			prt_num("Stamina        ", p_ptr->mst, y_row2 + 2, 52, TERM_L_GREEN);
+			c_put_str(TERM_L_GREEN, "/", y_row2 + 2, 71);
+			if (p_ptr->cst >= p_ptr->mst)
+				prt_num("", p_ptr->cst, y_row2 + 2, 62, TERM_L_GREEN);
+			else if (p_ptr->cst > (p_ptr->mst) / 10)
+				prt_num("", p_ptr->cst, y_row2 + 2, 62, TERM_YELLOW);
+			else
+				prt_num("", p_ptr->cst, y_row2 + 2, 62, TERM_RED);
+		}
+
  #ifdef SHOW_SANITY
-		put_str("Sanity", y_row2 + 2, 52);
-		c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, y_row2 + 2, 67);
+		put_str("Sanity", y_row2 + 3, 52);
+		c_put_str(c_p_ptr->sanity_attr, c_p_ptr->sanity, y_row2 + 3, 67);
  #endif	/* SHOW_SANITY */
 
 		/* Display 'WINNER' status */
