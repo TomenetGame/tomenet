@@ -4,7 +4,7 @@
 # (amount number below N: is last used lines - 7)
 
 N:*:Default
-23
+24
 Press Shift+p to form a party and share experience within 7 levels!
 Special techniques and abilities are available with 'm' key!
 Press 'b' to browse a spellbook, then press a spell's key (eg 'a') for details!
@@ -28,3 +28,4 @@ Stores in higher-level towns usually offer higher-level spells more often!
 Press Shift+i to inspect an item (or Shift+x to inspect a store item)!
 The temples offer 'Instant Resurrection' for everlasting characters, at a cost!
 Never use your best artifacts for fighting Nazgul!
+Keep the empty bottle when drinking a potion to refill it at a fountain.
