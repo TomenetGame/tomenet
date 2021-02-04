@@ -3034,7 +3034,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'p'         :    Move up by one page");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  's'         :    Search for a text string (use all upper-case for strict mode)");
 #ifdef REGEX_SEARCH
-			Term_putstr( 0, i++, -1, TERM_WHITE, "  'r'/'R'     :    Like 's', but searches regexp ('R' = case-sensitive)");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "  'r'/'R'     :    Search for a regular expression ('R' = case-sensitive)");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'd'         :    ..after 's/r/R', this jumps to the next match");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'D' or 'f'  :    ..after 's/r/R', this jumps to the previous match");
 #else
