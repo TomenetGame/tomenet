@@ -11521,6 +11521,12 @@ void process_monsters(void) {
 							/* Remember our previous seat */
 							m_ptr->extra = d + 1;
 							d = 4;
+							/* While at it, randomly get drunk or sober up :-s */
+							if (m_ptr->ego != RE_DRUNK) {
+								if (!rand_int(3)) m_ptr->ego = RE_DRUNK;
+							} else {
+								if (!rand_int(3)) m_ptr->ego = RE_NONE;
+							}
 							break;
 						}
 					}

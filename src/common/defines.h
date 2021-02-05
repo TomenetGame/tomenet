@@ -1396,6 +1396,8 @@
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
 
 /* Monster ego power indices */
+#define RE_NONE			0
+#define RE_DRUNK		15
 #define RE_MASTER_THIEF		33	/* CHAR_CLEAR+ATTR_CLEAR */
 #define RE_SHADOWED		45	/* CHAR_CLEAR+ATTR_CLEAR */
 
