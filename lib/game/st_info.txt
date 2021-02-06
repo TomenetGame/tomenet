@@ -298,7 +298,7 @@ I:100:Magic Missile
 I:100:Stinking Cloud
 I:100:Wonder
 I:100:Disarming
-#I:100:Light
+I:100:55:8
 T:100:65:7
 #I:100:Enlightenment
 T:100:55:9
