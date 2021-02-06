@@ -1023,12 +1023,12 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	else if (org_dis > 20) {
 		sound(Ind, "teleport", NULL, SFX_TYPE_COMMAND, TRUE);
  #ifdef TELEPORT_SURPRISES
-		p_ptr->teleported = 3;
+		p_ptr->teleported = TELEPORT_SURPRISES;
  #endif
 	}
 #else
  #ifdef TELEPORT_SURPRISES
-	if (org_dis > 20) p_ptr->teleported = 3;
+	if (org_dis > 20) p_ptr->teleported = TELEPORT_SURPRISES;
  #endif
 #endif
 

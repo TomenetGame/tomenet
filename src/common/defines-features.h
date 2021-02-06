@@ -372,7 +372,7 @@
 
  #define OPTIMIZED_ANIMATIONS	/* testing */
 
- #define TELEPORT_SURPRISES	/* monsters are surprised for a short moment if a player long-range teleported next to them */
+ #define TELEPORT_SURPRISES 5	/* monsters are surprised for a short moment (0.1s * n) if a player long-range teleported next to them */
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
 
