@@ -910,6 +910,7 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 					}
 					/* Hack -- only drop food the first time */
 					food.marked2 = ITEM_REMOVAL_NEVER;
+					food.level = 1;
 					if (!(w_ptr->flags & WILD_F_GARDENS)) drop_near(0, &food, -1, wpos, y, x);
 				}
 			}
