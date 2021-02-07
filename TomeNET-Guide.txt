@@ -154,6 +154,7 @@ Contents
     (6.1)   Attributes
     (6.2)   Skills, opposed skills
     (6.2a)  Maiar initiation effects
+    (6.2b)  Demolition charges
     (6.3)   Abilities
     (6.4)   Races
     (6.5)   Classes/professions
@@ -14469,6 +14470,7 @@ stated.
                                 trying out various combinations, or by reading
                                 scrolls of rumor, which actually have a small
                                 chance to give hints about mixture recipes.
+                                For the full list see (6.2b).
 
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you levitation, so you may
@@ -14588,6 +14590,45 @@ Corrupted:
 
 Note: After a skill's gain ratio has been boosted as stated above, it will be
       capped against a maximum value of 2.000, which can never be exceeded.
+
+
+(6.2b) Demolition charges
+-------------------------
+Use a grinding tool (available at the alchemist store) to grind items that you
+don't need anymore into wood chips or reactive metal powder.
+
+Crafting ingredients from raw materials:
+
+Wood chips can be processed into charcoal (needs a fire-based light source).
+Sulfur + saltpetre + potion of Water = flask of acid
+Reactive metal powder + salt water or ammonia salt = caustic metal ash
+Reactive metal powder + acid or vitriol = caustic salt
+
+                  Char-  Sul-  Salt-  Ammonia  Reactive  Caustic  Caustic  Lamp
+                  coal   fur   petre  salt     m.powder  m.ash    salt     Oil
+-------------------------------------------------------------------------------
+Blast               1     1      2
+ (alternative)                          3                                   1
+L-Blast             1     1      3
+ (alternative)                          3                   1               1
+Surgical            2     2      3      3
+Ground-shaking      1     1      3                                  1
+Destructor          2     2      3                                  3
+Fire                2     1      2                          1
+Firestorm           2     2      3                          2
+Firewall            3     2      2                          1
+Wrecking                                3                   1               2
+Cascading                               3                   3               2
+Tactical                                3                   2               2
+Flash b.            1     1      2                2
+Concussive          1     1      2                          1
+L-Concussive        1     1      2                          2
+Underground         1     2      2                                  1
+
+Aside from blast charges it's possible to craft fireworks:
+
+Charcoal + sulfur + 2x saltpetre + 2x reactive metal powder
+ + scroll of light or scroll of fire = scroll of fireworks
 
 
 
