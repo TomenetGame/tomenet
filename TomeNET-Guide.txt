@@ -14604,26 +14604,26 @@ Sulfur + saltpetre + potion of water = flask of acid.
 Reactive metal powder + salt water or ammonia salt = caustic metal ash.
 Reactive metal powder + acid or vitriol = caustic salt.
 
-                  Char-  Sul-  Salt-  Ammonia  Reactive  Caustic  Caustic  Lamp
-                  coal   fur   petre  salt     m.powder  m.ash    salt     Oil
--------------------------------------------------------------------------------
-Blast               1     1      2
- (alternative)                          3                                   1
-L-Blast             1     1      3
- (alternative)                          3                   1               1
-Surgical            2     2      3      3
-Ground-shaking      1     1      3                                  1
-Destructor          2     2      3                                  3
-Fire                2     1      2                          1
-Firestorm           2     2      3                          2
-Firewall            3     2      2                          1
-Wrecking                                3                   1               2
-Cascading                               3                   3               2
-Tactical                                3                   2               2
-Flash b.            1     1      2                2
-Concussive          1     1      2                          1
-L-Concussive        1     1      2                          2
-Underground         1     2      2                                  1
+Charge type     | Char-  Sul-  Salt-  Ammonia  Reactive  Caustic  Caustic  Lamp
+                | coal   fur   petre  salt     m.powder  m.ash    salt     oil
+----------------+--------------------------------------------------------------
+Blast           |   1     1      2
+ (alternative)  |                       3                                   1
+L-Blast         |   1     1      3
+ (alternative)  |                       3                   1               1
+Surgical        |   2     2      3      3
+Ground-shaking  |   1     1      3                                  1
+Destructor      |   2     2      3                                  3
+Fire            |   2     1      2                          1
+Firestorm       |   2     2      3                          2
+Firewall        |   3     2      2                          1
+Wrecking        |                       3                   1               2
+Cascading       |                       3                   3               2
+Tactical        |                       3                   2               2
+Flash b.        |   1     1      2                2
+Concussive      |   1     1      2                          1
+L-Concussive    |   1     1      2                          2
+Underground     |   1     2      2                                  1
 
 Aside from blast charges it's possible to craft fireworks:
 
