@@ -680,12 +680,20 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		break;
 	case SKILL_AURA_SHIVER: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[1] = TRUE; break;
 	case SKILL_AURA_DEATH: if (old_value == 0 && new_value > 0 && !(p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC))) p_ptr->aura[2] = TRUE; break;
-#if 0 /* obsolete */
 	case SKILL_DIG:
+#if 0 /* obsolete */
 		if (old_value < 300 && new_value >= 300)
 			msg_print(Ind, "\374\377GYou've become much better at prospecting.");
-		break;
 #endif
+#ifdef ENABLE_DEMOLITIONIST
+		if (old_value < ENABLE_DEMOLITIONIST * 10 && new_value >= ENABLE_DEMOLITIONIST * 10)
+ #ifndef DEMOLITIONIST_IDDC_ONLY
+			msg_print(Ind, "\374\377GYou've acquired the Demolitionist perk.");
+ #else
+			msg_print(Ind, "\374\377GYou've acquired the Demolitionist perk (only active within the IDDC).");
+ #endif
+#endif
+		break;
 	case SKILL_HEALTH:
 		if (old_value < 100 && new_value >= 100) {
 			if (p_ptr->pclass != CLASS_MINDCRAFTER || p_ptr->lev < 10) {
