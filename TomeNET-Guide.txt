@@ -14600,9 +14600,9 @@ don't need anymore into wood chips or reactive metal powder.
 Crafting ingredients from raw materials:
 
 Wood chips can be processed into charcoal (needs a fire-based light source).
-Sulfur + saltpetre + potion of Water = flask of acid
-Reactive metal powder + salt water or ammonia salt = caustic metal ash
-Reactive metal powder + acid or vitriol = caustic salt
+Sulfur + saltpetre + potion of water = flask of acid.
+Reactive metal powder + salt water or ammonia salt = caustic metal ash.
+Reactive metal powder + acid or vitriol = caustic salt.
 
                   Char-  Sul-  Salt-  Ammonia  Reactive  Caustic  Caustic  Lamp
                   coal   fur   petre  salt     m.powder  m.ash    salt     Oil
