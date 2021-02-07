@@ -1044,7 +1044,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			y = rand_range(y1,y2);
 
 			if (cave_clean_bold(zcave,y,x)) {
-				object_level = w_ptr->radius/2 +1;
+				object_level = w_ptr->radius / 2 +1;
 				place_object(0, wpos, y, x, FALSE, FALSE, FALSE, RESF_LOW, default_obj_theme, 0, ITEM_REMOVAL_NEVER, FALSE);
 				num_objects--;
 			}
@@ -1061,7 +1061,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			y = rand_range(y1,y2);
 
 			if (cave_clean_bold(zcave,y,x)) {
-				food_sval = SV_FOOD_MIN_FOOD+rand_int(12);
+				food_sval = SV_FOOD_MIN_FOOD + rand_int(12);
 				/* hack -- currently no food svals between 25 and 32 */
 				if (food_sval > 25) food_sval += 6;
 				/* hack -- currently no sval 34 */
@@ -1070,6 +1070,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 				k_idx = lookup_kind(TV_FOOD,food_sval);
 				invcopy(&forge, k_idx);
 				forge.marked2 = ITEM_REMOVAL_NEVER;
+				forge.level = 1;
 				drop_near(0, &forge, -1, wpos, y, x);
 
 				num_food--;
@@ -1093,6 +1094,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 				k_idx = get_obj_num(10, RESF_NONE);
 				invcopy(&forge, k_idx);
 				forge.marked2 = ITEM_REMOVAL_NEVER;
+				forge.level = 1;
 				drop_near(0, &forge, -1, wpos, y, x);
 
 				num_bones--;
