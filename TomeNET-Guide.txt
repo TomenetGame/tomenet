@@ -16962,8 +16962,8 @@ Level 15:
 Griffon                 can fly; can pass mountain terrain
 (Code 279)
 
-Sasquatch               speedy; similar to Yeti, but not susceptible to fire;
-(Code 343)              can pass woods too
+Sasquatch               speedy; can pass mountain terrain and woods;
+(Code 343)              immune to cold like Yeti, but not susceptible to fire;
 
 Level 20:
 ---------
