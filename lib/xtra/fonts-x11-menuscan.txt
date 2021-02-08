@@ -1,6 +1,7 @@
 #This file must contain exactly one regular expression that is used to scan
 #all fonts registered in X11 for TomeNET inside the font menu (=f).
 #The line must start with the string "REGEXP=" followed by the actual regexp.
+#The regexp is not case-sensitive, so it will find all lower/upper-case combinations.
 
 #This regexp should catch all variants of NxN, NxNN, NNxNN and additional
 #fonts with appended tags such as 'bold' (system) as well as name tags of specific
@@ -9,4 +10,4 @@
 #You can disable any regular expressions by putting a '#' at the beginning of the line.
 
 
-REGEXP=^[0-9]+x[0-9]+(bold|l|tg)?$
+REGEXP=^[0-9]+x[0-9]+[a-z]?[a-z]?(bold)?$

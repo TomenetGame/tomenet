@@ -3215,12 +3215,12 @@ int get_misc_fonts(char *output_list, int max_fonts, int max_font_name_length) {
 		while (fgets(tmp, 256, fff)) {
 			if (strncmp(tmp, "REGEXP=", 7)) continue;
 			tmp[strlen(tmp) - 1] = 0; //remove trailing \n
-			status = regcomp(&re, tmp + 7, REG_EXTENDED|REG_NOSUB);
+			status = regcomp(&re, tmp + 7, REG_EXTENDED|REG_NOSUB|REG_ICASE);
 			break;
 		}
 		fclose(fff);
 	}
-	if (status == -999) status = regcomp(&re, "^[0-9]+x[0-9]+(bold|l|tg)?$", REG_EXTENDED|REG_NOSUB);
+	if (status == -999) status = regcomp(&re, "^[0-9]+x[0-9]+[a-z]?[a-z]?(bold)?$", REG_EXTENDED|REG_NOSUB|REG_ICASE);
 
 	if (status != 0) {
 		fprintf(stderr, "regcomp returned %d\n", status);
