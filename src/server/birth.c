@@ -3327,8 +3327,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		clockin(Ind, 0);	/* Timestamp the player */
 		clockin(Ind, 1);	/* Set player level */
 		clockin(Ind, 2);	/* Set player party */
-		if (p_ptr->xorder_id){
-			for (i = 0; i < MAX_XORDERS; i++){
+		if (p_ptr->xorder_id) {
+			for (i = 0; i < MAX_XORDERS; i++) {
 				if (xorders[i].active && xorders[i].id == p_ptr->xorder_id) break;
 			}
 			if (i == MAX_XORDERS) p_ptr->xorder_id = 0;
@@ -3347,6 +3347,14 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 		p_ptr->newbie_hints = TRUE;
 		disable_specific_warnings(p_ptr);
+
+		/* Fix old draconians that have a lineage with a multi-breath element and don't have the switch-skill yet */
+		if (p_ptr->prace == RACE_DRACONIAN && p_ptr->s_info[SKILL_PICK_BREATH].value == 0 &&
+		    (p_ptr->ptrait == TRAIT_MULTI || p_ptr->ptrait == TRAIT_POWER)) {
+			/* fix old chars: add the skill */
+			p_ptr->s_info[SKILL_PICK_BREATH].value = 1000;
+			Send_skill_info(Ind, SKILL_PICK_BREATH, TRUE);
+		}
 
 		return TRUE;
 	}
@@ -3652,12 +3660,16 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	}
 #endif
 
-	/* Bards receive really random skills */
 #if 0
-	if (p_ptr->pclass == CLASS_BARD) {
-		do_bard_skill(Ind);
-	}
+	/* Bards receive really random skills */
+	if (p_ptr->pclass == CLASS_BARD) do_bard_skill(Ind);
 #endif
+
+	/* Draconians that have a lineage with a single breath element cannot switch */
+	if (p_ptr->prace == RACE_DRACONIAN && p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_POWER) {
+		p_ptr->s_info[SKILL_PICK_BREATH].value = 0;
+		Send_skill_info(Ind, SKILL_PICK_BREATH, TRUE);
+	}
 
 	/* Fruit bats get some skills nulled that they cannot put to use anyway,
 	   just to clean up and avoid newbies accidentally putting points into them. */

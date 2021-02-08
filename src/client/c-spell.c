@@ -1893,32 +1893,32 @@ static void print_breaths() {
 	put_str(" c) Frost", j++, col);
 
 	prt("", j, col);
-	put_str(" d) Acid", j++, col);
+	put_str(" d) Fire", j++, col);
 
 	prt("", j, col);
-	put_str(" e) Fire", j++, col);
+	put_str(" e) Acid", j++, col);
 
 	prt("", j, col);
 	put_str(" f) Poison", j++, col);
 
 	if (p_ptr->ptrait == TRAIT_POWER) {
 		prt("", j, col);
-		put_str(" g) confusion", j++, col);
+		put_str(" g) Confusion", j++, col);
 
 		prt("", j, col);
-		put_str(" h) inertia", j++, col);
+		put_str(" h) Inertia", j++, col);
 
 		prt("", j, col);
-		put_str(" i) sound", j++, col);
+		put_str(" i) Sound", j++, col);
 
 		prt("", j, col);
-		put_str(" j) shards", j++, col);
+		put_str(" j) Shards", j++, col);
 
 		prt("", j, col);
-		put_str(" k) chaos", j++, col);
+		put_str(" k) Chaos", j++, col);
 
 		prt("", j, col);
-		put_str(" l) disenchantment", j++, col);
+		put_str(" l) Disenchantment", j++, col);
 	}
 
 	/* Clear the bottom line */
@@ -2022,6 +2022,12 @@ static int get_breath(int *br) {
 
 void do_pick_breath() {
 	int br;
+
+	if (p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_POWER) {
+		c_message_add("In your lineage you cannot switch breath elements.");
+		return;
+	}
+
 	/* Ask for the breath element */
 	if (!get_breath(&br)) return;
 	Send_activate_skill(MKEY_PICK_BREATH, br, 0, 0, 0, 0);

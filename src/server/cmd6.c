@@ -8621,10 +8621,10 @@ void do_pick_breath(int Ind, int element) {
 		msg_print(Ind, "\377sYour breath element is now frost.");
 		return;
 	case 3:
-		msg_print(Ind, "\377sYour breath element is now acid.");
+		msg_print(Ind, "\377sYour breath element is now fire.");
 		return;
 	case 4:
-		msg_print(Ind, "\377sYour breath element is now fire.");
+		msg_print(Ind, "\377sYour breath element is now acid.");
 		return;
 	case 5:
 		msg_print(Ind, "\377sYour breath element is now poison.");
