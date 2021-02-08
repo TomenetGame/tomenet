@@ -5962,6 +5962,51 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				return;
 			}
+			/* actually wish a (basic) item by item name */
+			else if (prefix(messagelc, "/nwish")) {
+				object_kind *k_ptr;
+				object_type	forge;
+				object_type	*o_ptr = &forge;
+
+				WIPE(o_ptr, object_type);
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /nwish <item name>");
+					return;
+				}
+
+				/* todo: actually allow ego power prefix/postfix */
+
+				/* Hack -- Guess at "correct" values for tval_to_char[] */
+				for (i = 1; i < max_k_idx; i++) {
+					k_ptr = &k_info[i];
+					//if (!k_ptr->k_idx) continue;
+					if (!my_strcasestr(k_name + k_ptr->name, message3)) continue;
+					break;
+				}
+				if (i == max_k_idx) {
+					msg_print(Ind, "\377yItem not found.");
+					return;
+				}
+
+				invcopy(o_ptr, lookup_kind(k_ptr->tval, k_ptr->sval));
+
+				//o_ptr->number = o_ptr->weight >= 30 ? 1 : 99;
+
+				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
+				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+				o_ptr->discount = 0;
+				object_known(o_ptr);
+				o_ptr->owner = 0;
+				o_ptr->level = 1;
+
+ #ifdef NEW_MDEV_STACKING
+				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
+ #endif
+				(void)inven_carry(Ind, o_ptr);
+
+				return;
+			}
 #endif
 			else if (prefix(messagelc, "/trap")) { // ||	prefix(messagelc, "/tr")) conflicts with /trait maybe
 				if (k) wiz_place_trap(Ind, k);
