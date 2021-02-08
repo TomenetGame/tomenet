@@ -7398,6 +7398,8 @@ static void do_cmd_options_fonts(void) {
   #ifndef WINDOWS
 	int x11_refresh = 50;
 	FILE *fff;
+  #else
+	char *cp, *cpp;
   #endif
 
   #ifdef WINDOWS /* Windows uses the .FON files */
@@ -7657,7 +7659,14 @@ static void do_cmd_options_fonts(void) {
 				for (j = 0; j < fonts; j++) {
 					tmp_name2[0] = 0;
 					for (; j < fonts; j++) {
+  #ifdef WINDOWS
+						/* Windows font names contain the whole .\lib\xtra\fonts\xxx, crop that */
+						cpp = font_name[j];
+						while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
+						sprintf(tmp_name, "%18s", cpp);
+  #else
 						sprintf(tmp_name, "%18s", font_name[j]);
+  #endif
 						strcat(tmp_name2, tmp_name);
 						if (j % 4 == 3) break;
 					}
