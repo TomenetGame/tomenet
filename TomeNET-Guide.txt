@@ -15820,6 +15820,11 @@ for a little a bit until spending $ on it.
 
 (6.5a) Start-up blows/round table (BpR)
 ---------------------------------------
+Since 4.7.3 the client allows you to see your BpR with lightest existing
+weapons of each of the four classes already during the character creation
+process, when you distribute your stat points, so you no longer need to study
+this table in detail anymore to find out what STR and DEX you'd like to pick.
+
 Here is a table, showing you some BpR numbers you can expect your newly
 created character to have, depending on certain combinations of class, STR,
 DEX, given for both, lightest possible weapon and startup weapon:
@@ -15835,10 +15840,13 @@ Warrior         18      10      2               1
                 18/30   all     3               1-2 (depends on weapon)
                 18/40   18/10   4               2
                 18/50   all     3               2
-                18/70..110  *   3-4             3 (depends on weapon)
+                18/70..110 all  3-4             2-3 (depends on weapon)
+                18/80   18/10   3-4             3   (depends on weapon)
                 and for spears (no special treatment, just weight related):
                 18/40   18/10   3
                 18/70   10      3
+                note: there are more breakpoints, too many to include all,
+                mainly at STR 18/10, 18/20, 18/50, 18/60 and at DEX 18/10.
 
 Istar           -
 
