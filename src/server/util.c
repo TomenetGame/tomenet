@@ -4757,7 +4757,7 @@ static void player_talk_aux(int Ind, char *message) {
 	char tmessage_u[MSG_LEN];
 #endif
 	int censor_punish = 0;
-	bool censor;
+	bool censor, reached;
 
 
 	if (!Ind) {
@@ -5539,7 +5539,9 @@ static void player_talk_aux(int Ind, char *message) {
 		}
 	}
 
-	for(i = 1; i <= NumPlayers; i++) {
+	/* Send to everyone */
+	reached = FALSE;
+	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 
 		if (!admin) {
@@ -5548,10 +5550,15 @@ static void player_talk_aux(int Ind, char *message) {
 			if (!broadcast && (p_ptr->limit_chat || q_ptr->limit_chat) &&
 			    !inarea(&p_ptr->wpos, &q_ptr->wpos)) continue;
 		}
+		reached = TRUE;
 		msg_print(i, q_ptr->censor_swearing ? tmessage : tmessage_u);
 	}
-#else
+	if (!reached && p_ptr->limit_chat) msg_print(Ind, "(Nobody could hear you. Note that you have limit_chat enabled in =2 .)");
+
+#else /* in case TOMENET_WORLDS is not defined: */
+
 	/* Send to everyone */
+	reached = FALSE;
 	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
 
@@ -5563,6 +5570,7 @@ static void player_talk_aux(int Ind, char *message) {
 		}
 
 		/* Send message */
+		reached = TRUE;
 		if (broadcast) {
 			/* prevent buffer overflow */
 			message[MSG_LEN - 1 - strlen(sender) - 12 + 11] = 0;
@@ -5587,6 +5595,7 @@ static void player_talk_aux(int Ind, char *message) {
 			else msg_format(i, "%s %s", sender, q_ptr->censor_swearing ? message + 4 : message_u + 4);
 		}
 	}
+	if (!reached && p_ptr->limit_chat) msg_print(Ind, "(Nobody could hear you. Note that you have limit_chat enabled in =2 .)");
 #endif
 
 	p_ptr->warning_chat = 1;
