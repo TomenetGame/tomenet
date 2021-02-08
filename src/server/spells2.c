@@ -8934,6 +8934,9 @@ void mix_chemicals(int Ind, int item) {
 	object_type forge, *q_ptr = &forge; /* Result (Ingredient, mixture or finished blast charge) */
 	char o_name[ONAME_LEN];
 	int i = 0;
+	bool keep_tag = FALSE;
+	u16b old_note;
+	char old_note_utag;
 
 	byte cc = 0, su = 0, sp = 0, as = 0, mp = 0, mh = 0, me = 0, mc = 0, vi = 0, ru = 0; // ..., vitriol, rust (? from rusty mail? / metal + water)
 	byte lo = 0, wa = 0, sw = 0, ac = 0; //lamp oil (flask), water (potion), salt water (potion), acid(?)/vitriol TV_CHEMICAL
@@ -9220,11 +9223,25 @@ void mix_chemicals(int Ind, int item) {
 				i = TRUE;
 			/* next, check for ingredient + mixture */
 			} else if (o_ptr->sval != SV_MIXTURE || o2_ptr->tval != TV_CHEMICAL || o2_ptr->sval != SV_MIXTURE) {
-				if (o_ptr->sval == SV_MIXTURE) i = mixingred_to_mixture(o_ptr, o2_ptr->tval, o2_ptr->sval, q_ptr);
-				else i = mixingred_to_mixture(o2_ptr, o_ptr->tval, o_ptr->sval, q_ptr);
+				keep_tag = TRUE;
+				if (o_ptr->sval == SV_MIXTURE) {
+					old_note = o_ptr->note;
+					old_note_utag = o_ptr->note_utag;
+					i = mixingred_to_mixture(o_ptr, o2_ptr->tval, o2_ptr->sval, q_ptr);
+				} else {
+					old_note = o2_ptr->note;
+					old_note_utag = o2_ptr->note_utag;
+					i = mixingred_to_mixture(o2_ptr, o_ptr->tval, o_ptr->sval, q_ptr);
+				}
 			}
 			/* finally do mixture + mixture */
-			else i = mixmix_to_mixture(o_ptr, o2_ptr, q_ptr);
+			else {
+				keep_tag = TRUE;
+				/* since we cannot keep both inscriptions, just prioritize the second object */
+				old_note = o2_ptr->note ? o2_ptr->note : o_ptr->note;
+				old_note_utag = o2_ptr->note_utag ? o2_ptr->note_utag : o_ptr->note_utag;
+				i = mixmix_to_mixture(o_ptr, o2_ptr, q_ptr);
+			}
 
 			/* catch failure because of already saturated mixture - meaning that these two items just cannot be combined, no matter what */
 			if (!i) {
@@ -9256,6 +9273,10 @@ void mix_chemicals(int Ind, int item) {
 	q_ptr->note = 0;
 	q_ptr->iron_trade = o_ptr->iron_trade;
 	q_ptr->iron_turn = o_ptr->iron_turn;
+	if (keep_tag) { /* only for mixture -> mixture reactions */
+		q_ptr->note = old_note;
+		q_ptr->note_utag = old_note_utag;
+	}
 
  #ifdef USE_SOUND_2010
 	if (q_ptr->tval == TV_CHARGE)
