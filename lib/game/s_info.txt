@@ -594,6 +594,13 @@ I:1000:0
 F:MKEY_HARDCODE
 F:HIDDEN
 
+N:111:Pick breath element
+D:Multi-coloured draconians can choose to breathe a specific element.
+A:19:Pick breath element
+I:1000:0
+F:MKEY_HARDCODE
+F:HIDDEN
+
 #
 # Skill interactions
 #

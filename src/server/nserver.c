@@ -5659,6 +5659,7 @@ int Send_skill_info(int Ind, int i, bool keep) {
 
 #ifndef ENABLE_DRACONIAN_TRAITS
 	if (mkey == MKEY_BREATH) mkey = 0;
+	if (mkey == MKEY_PICK_BREATH) mkey = 0;
 #endif
 
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0))
@@ -9760,6 +9761,9 @@ static int Receive_activate_skill(int ind) {
 
 			//do_cmd_breathe(player);
 			do_cmd_breathe_aux(player, dir);
+			break;
+		case MKEY_PICK_BREATH:
+			do_pick_breath(player, book);
 			break;
 		}
 		return 2;

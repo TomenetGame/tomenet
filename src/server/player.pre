@@ -542,6 +542,7 @@ struct player_type
 	s16b stat_ind[6];	/* Indexes into stat tables */
 
 	char mimic_immunity;	/* Debug it resetting to zero (does it?) */
+	char breath_element;
 
 	bool immune_acid;	/* Immunity to acid */
 	bool immune_elec;	/* Immunity to lightning */

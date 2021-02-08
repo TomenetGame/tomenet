@@ -8136,6 +8136,7 @@ extern int PlayerUID;
 #define MKEY_AURA_DEATH		17
 
 #define MKEY_BREATH		18
+#define MKEY_PICK_BREATH	19
 
 #define MAX_AURAS 		3
 
@@ -8312,6 +8313,7 @@ extern int PlayerUID;
 
 /* For Draconians */
 #define SKILL_BREATH		110
+#define SKILL_PICK_BREATH	111
 
 #define MAX_SKILLS              128
 

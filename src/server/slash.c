@@ -4174,6 +4174,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			p_ptr->s_info[SKILL_BREATH].value = 1000;
 			Send_skill_info(Ind, SKILL_BREATH, TRUE);
+			p_ptr->s_info[SKILL_PICK_BREATH].value = 1000;
+			Send_skill_info(Ind, SKILL_PICK_BREATH, TRUE);
 			return;
 #endif
 #ifdef AUTO_RET_CMD

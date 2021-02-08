@@ -784,6 +784,9 @@ void do_activate_skill(int x_idx, int item) {
 		case MKEY_BREATH:
 			do_breath();
 			break;
+		case MKEY_PICK_BREATH:
+			do_pick_breath();
+			break;
 		default:
 			c_msg_print("Very sorry, you need more recent client.");
 			break;

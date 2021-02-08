@@ -832,8 +832,7 @@ static void wr_extra(int Ind) {
 	wr_byte(p_ptr->lives);		/* old "rest" */
 	wr_byte(p_ptr->houses_owned);
 
-	wr_byte(0); //HOLE
-
+	wr_byte(p_ptr->breath_element);
 	wr_s16b(p_ptr->blind);
 	wr_s16b(p_ptr->paralyzed);
 	wr_s16b(p_ptr->confused);

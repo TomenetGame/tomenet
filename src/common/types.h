@@ -2690,7 +2690,8 @@ struct player_type {
 	cave_view_type ovl_info_guard_after[MAX_WINDOW_WID+1]; /* overflow protection */
 
 	s32b mimic_seed;		/* seed for random mimic immunities etc. */
-	char mimic_immunity;		/* preferred immunity when mimicking (overrides mimic_seed) */
+	char mimic_immunity;		/* preferred immunity when mimicking (overrides mimic_seed); hack in 4.7.3a: use remaining bits for chosen breath element */
+	char breath_element;		/* Draconian chosen breath when having multiple available elements (multi-hued lineage) */
 
 	char died_from[MAX_CHARS];	/* What off-ed him */
 	char really_died_from[MAX_CHARS]; /* What off-ed him */

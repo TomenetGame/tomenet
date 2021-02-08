@@ -251,5 +251,6 @@
 
 /* For Draconians */
 #define SKILL_BREATH		110
+#define SKILL_PICK_BREATH	111
 
 #define MAX_SKILLS		128

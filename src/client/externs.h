@@ -85,6 +85,7 @@ extern void do_ranged_technique(void);
 extern bool get_item_hook_find_spell(int *item, int mode);
 extern void do_runecraft();
 extern void do_breath(void);
+extern void do_pick_breath(void);
 
 /* tables.c */
 extern byte adj_mag_stat[];

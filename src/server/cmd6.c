@@ -8581,6 +8581,76 @@ s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
 	}
 }
 
+void do_pick_breath(int Ind, int element) {
+	player_type *p_ptr = Players[Ind];
+
+#ifndef ENABLE_DRACONIAN_TRAITS
+	return;
+#endif
+
+	if (!get_skill(p_ptr, SKILL_PICK_BREATH)) return;
+	if (element < 0) {
+		msg_print(Ind, "\377sInvalid element.");
+		return;
+	}
+
+	switch (p_ptr->ptrait) {
+	case TRAIT_MULTI:
+		if (element > 5) {
+			msg_print(Ind, "\377sInvalid element.");
+			return;
+		}
+		break;
+	case TRAIT_POWER:
+		if (element > 11) {
+			msg_print(Ind, "\377sInvalid element.");
+			return;
+		}
+		break;
+	}
+
+	p_ptr->breath_element = element;
+	switch (element) {
+	case 0:
+		msg_print(Ind, "\377sYour breath element is now random.");
+		return;
+	case 1:
+		msg_print(Ind, "\377sYour breath element is now lightning.");
+		return;
+	case 2:
+		msg_print(Ind, "\377sYour breath element is now frost.");
+		return;
+	case 3:
+		msg_print(Ind, "\377sYour breath element is now acid.");
+		return;
+	case 4:
+		msg_print(Ind, "\377sYour breath element is now fire.");
+		return;
+	case 5:
+		msg_print(Ind, "\377sYour breath element is now poison.");
+		return;
+	/* extended elements for power trait */
+	case 6:
+		msg_print(Ind, "\377sYour breath element is now confusion.");
+		return;
+	case 7:
+		msg_print(Ind, "\377sYour breath element is now inertia.");
+		return;
+	case 8:
+		msg_print(Ind, "\377sYour breath element is now sound.");
+		return;
+	case 9:
+		msg_print(Ind, "\377sYour breath element is now shards.");
+		return;
+	case 10:
+		msg_print(Ind, "\377sYour breath element is now chaos.");
+		return;
+	case 11:
+		msg_print(Ind, "\377sYour breath element is now disenchantment.");
+		return;
+	}
+}
+
 void do_cmd_breathe(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
@@ -8652,10 +8722,14 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 	trait = p_ptr->ptrait;
-	if (trait == TRAIT_MULTI) /* Draconic Multi-hued */
-		trait = rand_int(5) + TRAIT_BLUE;
-	if (trait == TRAIT_POWER) {
-		trait = rand_int(10) + TRAIT_BLUE;
+	if (trait == TRAIT_MULTI) {
+		/* Draconic Multi-hued */
+		if (p_ptr->breath_element == 0) trait = rand_int(5) + TRAIT_BLUE;
+		else trait = p_ptr->breath_element;
+	} else if (trait == TRAIT_POWER) {
+		/* Power dragon */
+		if (p_ptr->breath_element == 0) trait = rand_int(10) + TRAIT_BLUE;
+		else trait = p_ptr->breath_element;
 		if (trait >= TRAIT_MULTI) trait++;
 	}
 

@@ -2001,6 +2001,9 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_BREATH,
 			'+', 1000,
 			'+', 0, },
+		{ SKILL_PICK_BREATH,
+			'+', 1000,
+			'+', 0, },
 #endif
 		},},
 

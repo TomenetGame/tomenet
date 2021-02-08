@@ -1876,6 +1876,157 @@ void do_runecraft() {
 	return;
 }
 
+static void print_breaths() {
+	int col = 20, j = 2;
+
+	/* Title the list */
+	prt("", 1, col);
+	put_str("Breath's Element", 1, col + 4);
+
+	prt("", j, col);
+	put_str(" a) Random (default)", j++, col);
+
+	prt("", j, col);
+	put_str(" b) Lightning", j++, col);
+
+	prt("", j, col);
+	put_str(" c) Frost", j++, col);
+
+	prt("", j, col);
+	put_str(" d) Acid", j++, col);
+
+	prt("", j, col);
+	put_str(" e) Fire", j++, col);
+
+	prt("", j, col);
+	put_str(" f) Poison", j++, col);
+
+	if (p_ptr->ptrait == TRAIT_POWER) {
+		prt("", j, col);
+		put_str(" g) confusion", j++, col);
+
+		prt("", j, col);
+		put_str(" h) inertia", j++, col);
+
+		prt("", j, col);
+		put_str(" i) sound", j++, col);
+
+		prt("", j, col);
+		put_str(" j) shards", j++, col);
+
+		prt("", j, col);
+		put_str(" k) chaos", j++, col);
+
+		prt("", j, col);
+		put_str(" l) disenchantment", j++, col);
+	}
+
+	/* Clear the bottom line */
+	prt("", j++, col);
+
+	screen_line_icky = j;
+	screen_column_icky = 20 - 1;
+}
+
+static int get_breath(int *br) {
+	int		i = 0, num = 6; /* number of pre-defined breath elements here in this function */
+	bool		flag, redraw;
+	char		choice;
+	char		out_val[160];
+	int             corresp[5];
+
+	if (p_ptr->ptrait == TRAIT_POWER) num = 12;
+
+	for (i = 0; i < num; i++) corresp[i] = i;
+
+	/* Assume cancelled */
+	(*br) = -1;
+	/* Nothing chosen yet */
+	flag = FALSE;
+	/* No redraw yet */
+	redraw = FALSE;
+
+	/* Build a prompt (accept all stances) */
+	strnfmt(out_val, 78, "(Breath types %c-%c, *=List, ESC=exit) switch to wich element? ",
+		I2A(0), I2A(num - 1));
+
+	if (c_cfg.always_show_lists) {
+		/* Show list */
+		redraw = TRUE;
+		/* Save the screen */
+		Term_save();
+		/* Display a list of stances */
+		print_breaths();
+	}
+
+	/* Get a stance from the user */
+	while (!flag && get_com(out_val, &choice)) {
+		/* Request redraw */
+		if ((choice == ' ') || (choice == '*') || (choice == '?')) {
+			/* Show the list */
+			if (!redraw) {
+				/* Show list */
+				redraw = TRUE;
+				/* Save the screen */
+				Term_save();
+				/* Display a list of stances */
+				print_breaths();
+			}
+
+			/* Hide the list */
+			else {
+				/* Hide list */
+				redraw = FALSE;
+				/* Restore the screen */
+				Term_load();
+				/* Flush any events */
+				Flush_queue();
+			}
+
+			/* Ask again */
+			continue;
+		}
+
+		/* extract request */
+		i = (islower(choice) ? A2I(choice) : -1);
+		if (i >= num) i = -1;
+
+		/* Totally Illegal */
+		if (i < 0) {
+			bell();
+			continue;
+		}
+
+		/* Stop the loop */
+		flag = TRUE;
+	}
+
+	screen_line_icky = -1;
+	screen_column_icky = -1;
+
+	/* Restore the screen */
+	if (redraw) {
+		Term_load();
+		/* Flush any events */
+		Flush_queue();
+	}
+
+	/* Abort if needed */
+	if (!flag) return (FALSE);
+
+	/* Save the choice */
+	(*br) = corresp[i];
+	/* Success */
+	return (TRUE);
+}
+
+void do_pick_breath() {
+	int br;
+	/* Ask for the breath element */
+	if (!get_breath(&br)) return;
+	Send_activate_skill(MKEY_PICK_BREATH, br, 0, 0, 0, 0);
+}
+
 void do_breath() {
 	int dir = 0;
 	if (!get_dir(&dir)) return;

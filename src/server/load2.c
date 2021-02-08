@@ -1828,7 +1828,13 @@ static bool rd_extra(int Ind) {
 		}
 	}
 
-	rd_byte(&tmp8u); //HOLE
+	if (!older_than(4, 7, 12)) {
+		rd_byte(&tmp8u);
+		p_ptr->breath_element = tmp8u;
+	} else {
+		rd_byte(&tmp8u);
+		p_ptr->breath_element = 0; //random
+	}
 
 	rd_s16b(&p_ptr->blind);
 	rd_s16b(&p_ptr->paralyzed);

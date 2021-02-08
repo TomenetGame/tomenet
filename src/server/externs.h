@@ -783,6 +783,7 @@ extern void do_cmd_melee_technique(int Ind, int technique);
 extern void do_cmd_ranged_technique(int Ind, int technique);
 extern void do_cmd_breathe(int Ind);
 extern void do_cmd_breathe_aux(int Ind, int dir);
+extern void do_pick_breath(int Ind, int element);
 extern void create_sling_ammo_aux(int Ind);
 extern bool create_snowball(int Ind, cave_type *c_ptr);
 
