@@ -1043,6 +1043,7 @@ static void wr_extra(int Ind) {
 	if (p_ptr->warning_technique_melee == 1) tmp16u |= 0x01;
 	if (p_ptr->warning_technique_ranged == 1) tmp16u |= 0x02;
 	if (p_ptr->warning_drained == 1) tmp16u |= 0x04;
+	if (p_ptr->warning_blastcharge == 1) tmp16u |= 0x08;
 	wr_u16b(tmp16u);
 
 	wr_string(p_ptr->info_msg);

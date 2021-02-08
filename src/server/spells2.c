@@ -9096,6 +9096,10 @@ void mix_chemicals(int Ind, int item) {
 		} else {
 			q_ptr->tval = TV_CHARGE;
 			msg_format(Ind, "You assemble a blast charge..");
+			if (!p_ptr->warning_blastcharge) {
+				msg_print(Ind, "Hint: Inscribe charges \377y!Fn\377w with n from 1 to 15 to set the fuse time in seconds!");
+				p_ptr->warning_blastcharge = 1;
+			}
 		}
 	} else {
 #if 1
