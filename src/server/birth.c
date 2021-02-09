@@ -2946,9 +2946,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_staircase_oneway = 1;
 		p_ptr->warning_worldmap = 1;
 		p_ptr->warning_dungeon = 1;
-		p_ptr->warning_tunnel = 1;
-		p_ptr->warning_tunnel2 = 1;
-		p_ptr->warning_tunnel3 = 1;
+		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = 1;
 		p_ptr->warning_trap = 1;
 		p_ptr->warning_tele = 1;
 		p_ptr->warning_fracexp = 1;
@@ -3123,9 +3121,6 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_run_lite = 10;
 		p_ptr->warning_ranged_autoret = 1;
 		p_ptr->warning_mimic = 1;
-		p_ptr->warning_tunnel = 1;
-		p_ptr->warning_tunnel2 = 1;
-		p_ptr->warning_tunnel3 = 1;
 		p_ptr->warning_bash = 1;
 	}
 	if (p_ptr->max_plv > 15) {
@@ -3135,6 +3130,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_macros = 1;
 		p_ptr->warning_boomerang = 1;
 		p_ptr->warning_inspect = 1;
+		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = 1;
 	}
 	if (p_ptr->max_plv > 20) {
 		p_ptr->warning_ghost = 1;

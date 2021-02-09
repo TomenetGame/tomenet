@@ -3889,6 +3889,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 		/* Success */
 		if (okay && twall(Ind, y, x, soft ? FEAT_SAND : FEAT_FLOOR)) {
+			if (!p_ptr->warning_tunnel4 && o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
+				/* Don't display hint if digging tool is already so highly enchanted that it was probably done manually -> player seems to know */
+				if (o_ptr->to_h < 8 || o_ptr->to_d < 8) msg_print(Ind, "\374\377yHINT: Further strengthen your digging tool by enchanting it to-hit and to-damage!");
+				p_ptr->warning_tunnel4 = 1;
+			}
+
 			msg_format(Ind, "You have finished the tunnel in the %s.", soft ? "sandwall" : (hard ? "quartz vein" : "magma vein"));
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
