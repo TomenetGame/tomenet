@@ -582,9 +582,9 @@ Run (.) or Run (,)
 Tunnel (+)
         Tunneling or mining is a very useful art.  There are many kinds of
         rock, with varying hardness, including permanent rock (permanent),
-        granite (very hard), quartz veins (hard), magma veins (soft), and
-        rubble (very soft).  Quartz and Magma veins may be displayed in a
-        special way, and may sometimes contain treasure, in which case they
+        granite (very hard), quartz veins (hard), magma intrusions (soft),
+        and rubble (very soft).  Quartz and Magma veins may be displayed in
+        a special way, and may sometimes contain treasure, in which case they
         will be displayed in a different way.  Rubble sometimes covers an
         object.  It is hard to tunnel unless you are wielding a heavy weapon
         or a shovel or a pick.  Tunneling ability increases with strength

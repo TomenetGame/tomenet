@@ -3895,7 +3895,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				p_ptr->warning_tunnel4 = 1;
 			}
 
-			msg_format(Ind, "You have finished the tunnel in the %s.", soft ? "sandwall" : (hard ? "quartz vein" : "magma vein"));
+			msg_format(Ind, "You have finished the tunnel in the %s.", soft ? "sandwall" : (hard ? "quartz vein" : "magma intrusion"));
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
@@ -4038,7 +4038,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		/* Failure (magma) */
 		else {
 			/* Message, continue digging */
-			msg_print(Ind, "You tunnel into the magma vein.");
+			msg_print(Ind, "You tunnel into the magma intrusion.");
 			more = TRUE;
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);

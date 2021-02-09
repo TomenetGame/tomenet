@@ -357,7 +357,7 @@ Skopkeepers will refuse to buy any known cursed item.
 Much of the treasure within the dungeon can be found only by mining it out
 of the walls.  Many rich strikes exist within each level, but must be found
 and mined.  Quartz veins are the richest, yielding the most metals and gems,
-but magma veins will have some hordes hidden within.
+but magma intrusions will have some hoards hidden within.
 
 Mining is rather difficult without a pick or shovel.  Picks and shovels have
 an additional magical ability expressed as `(+#)'.  The higher the number,
