@@ -7347,7 +7347,7 @@ static void do_cmd_options_win(void) {
 
 #ifdef ENABLE_SUBWINDOW_MENU
  #if defined(WINDOWS) || defined(USE_X11)
-#define MAX_FONTS 50
+  #define MAX_FONTS 50
 
 //  #ifdef WINDOWS
 static int font_name_cmp(const void *a, const void *b) {
@@ -7377,8 +7377,9 @@ static int font_name_cmp(const void *a, const void *b) {
 	if (!fmatch) return -1;  //paranoia - anyway, push 'broken' fonts towards the end of the list, just in case..
 	fhgt2 = atoi(fmatch + 1);
 
-	if (fwid1 != fwid2) return (fwid1 > fwid2);
-	return (fhgt1 > fhgt2);
+	if (fwid1 != fwid2) return (fwid1 > fwid2) ? 1 : -1;
+	else if (fhgt1 != fhgt2) return (fhgt1 > fhgt2) ? 1 : -1;
+	else return 0;
    #endif
 }
 //  #endif
