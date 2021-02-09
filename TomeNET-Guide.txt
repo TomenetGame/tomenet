@@ -3923,10 +3923,12 @@ but this has been addressed, so the full range of characters is available now.)
 
 For the Linux client you'll need to convert the font to pcf format,
 place it into a registered fonts folder (check 'xset -q'), usually that can be
-/usr/share/fonts/misc, let X11 rescan it with 'fc-cache' (optionally with -f to
-force rescan) and run 'sudo mkfontdir' in /usr/share/fonts/misc to add them to
-fonts.dir file (which TomeNET scans) and you can verify the installation with
-'fc-list'. (Note that 'xlsfonts' cannot see pcf formatted fonts.)
+/usr/share/fonts/misc, let fontconfig rescan it with 'fc-cache' (optionally
+with -f to force rescan) and also have X rescan it with 'xset fp rehash' and
+then run 'sudo mkfontdir' in /usr/share/fonts/misc (if that's the folder where
+you placed the fonts) to add them to fonts.dir file. You can verify that all is
+fine by doing 'fc-list' and 'xlsfonts'. TomeNET doesn't use fontconfig but it's
+probably a good idea to register the fonts in both, fontconfig and X11.
 
 Since you might need/want to use mapping files to remap terrain features to the
 characters in your font, you can create font-preference files that contain
