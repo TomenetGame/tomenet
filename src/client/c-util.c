@@ -7654,24 +7654,31 @@ static void do_cmd_options_fonts(void) {
 			}
 			if (fonts) {
 				char tmp_name2[256];
+				int c = -1;
 
 				c_message_add(format("-- Fonts (%d): --", fonts));
+				tmp_name2[0] = 0;
 				for (j = 0; j < fonts; j++) {
-					tmp_name2[0] = 0;
-					for (; j < fonts; j++) {
   #ifdef WINDOWS
-						/* Windows font names contain the whole .\lib\xtra\fonts\xxx, crop that */
-						cpp = font_name[j];
-						while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
-						sprintf(tmp_name, "%18s", cpp);
+					/* Windows font names contain the whole .\lib\xtra\fonts\xxx, crop that */
+					cpp = font_name[j];
+					while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
+					sprintf(tmp_name, "%18s", cpp);
   #else
-						sprintf(tmp_name, "%18s", font_name[j]);
+					sprintf(tmp_name, "%18s", font_name[j]);
   #endif
-						strcat(tmp_name2, tmp_name);
-						if (j % 4 == 3) break;
+
+					/* print up to 4 font names per line */
+					c++;
+					if (c % 4 == 0 || strlen(tmp_name2) + strlen(tmp_name) > 79 - 2) {
+						c_message_add(format("  %s", tmp_name2));
+						tmp_name2[0] = 0;
+						c = 0;
 					}
-					c_message_add(format("  %s", tmp_name2));
+
+					strcat(tmp_name2, tmp_name);
 				}
+				c_message_add(format("  %s", tmp_name2));
 			}
 			if (graphic_fonts) {
 				c_message_add(format("-- Graphic fonts (%d): --", graphic_fonts));
