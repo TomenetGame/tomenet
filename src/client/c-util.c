@@ -7663,9 +7663,9 @@ static void do_cmd_options_fonts(void) {
 					/* Windows font names contain the whole .\lib\xtra\fonts\xxx, crop that */
 					cpp = font_name[j];
 					while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
-					sprintf(tmp_name, "%18s", cpp);
+					sprintf(tmp_name, "%-18s", cpp);
   #else
-					sprintf(tmp_name, "%18s", font_name[j]);
+					sprintf(tmp_name, "%-18s", font_name[j]);
   #endif
 
 					/* print up to 4 font names per line */
