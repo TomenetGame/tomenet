@@ -4173,7 +4173,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 		/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
 		if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, y, x, FEAT_DIRT)) {
-			msg_print(Ind, "You have cleared the web.");
+			msg_print(Ind, "You have cleared the spider web.");
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif

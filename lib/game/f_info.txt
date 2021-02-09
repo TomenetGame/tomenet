@@ -117,10 +117,10 @@ G:_:W
 F:FLOOR | NOTICE | REMEMBER | CAN_RUN
 D:0:The fountain seems dried out.
 
-N:16:webs
+N:16:spider webs
 G:+:y
 F:CAN_PASS | NOTICE | WEB | NOTICE | TUNNELABLE | NO_ARTICLE
-D:1:You tunnel through the webs.
+D:1:You tunnel through the spider webs.
 
 # Trap -- the flags are not used by the program
 N:17:trap

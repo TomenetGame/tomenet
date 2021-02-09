@@ -12867,6 +12867,7 @@ that have a +0 difficulty (see table below).
 To successfully dig through certain features, your digging power must be
 greater than the result of a random number roll "random(0..x-1) + y":
 ---------------------------------------------------------------------
+Spider web           100 +  0
 Rubble               200 +  0
 Ivy                  200 +  0
 Bush                 300 +  0
@@ -12876,6 +12877,10 @@ Sandwall             250 +  5
 Magma intrusion      400 + 10
 Quartz vein          800 + 20
 Granite wall        1600 + 40
+Tunneling any other wall types, such as ice walls, and also unknown secret
+doors (as long as they're not embedded in permanent wall types) has the same
+difficulty as granite walls.
+
 The +y is a fixed value that gets added to the random roll of (0..x-1), the
 sum of this is what you have to overcome with your digging power value.
 For example you cannot successfully tunnel through quartz if you don't
@@ -12932,8 +12937,13 @@ Or higher level diggers such as gnomish, orcish or dwarven diggers or mattocks,
 which have a higher base digging bonus than just (+1).
 
 Tunnelling into walls that are actually secret doors will be treated as if
-you were 'searching' instead of tunnelling. You cannot find secret doors in
-permanent (aka non-tunneable) walls this way though, such as mountains.
+you were tunneling into granite wall, but on success you won't "remove" the
+door but actually "find" it. You cannot find secret doors in permanent (aka
+non-tunneable) walls this way though, such as mountains. Additionally, each
+time you try to tunnel the game will roll an additional 'searching' attempt,
+so your chance to discover it increases further. Last but not least if the door
+is actually trapped and you trigger the trap you will instantly uncover it.
+
 Tunnelling into known doors will just try to open them instead.
 If a door is stuck, you will want to 'B'ash it instead of tunnelling, since
 you cannot just open stuck doors the normal way.
