@@ -15079,6 +15079,7 @@ create a character!):
     cold, time, nether, they're immune to poison and it's hard to drain their
     life force - this is also true for life force drained by items a vampire
     has equipped: Those will drain exp at only half the normal rate.
+    As they aren't living, they cannot be infected by continuous diseases.
     Vampires have a high chance to resist the adverse effects of encountering
     an eldritch horror (see (6.3) under 'Saving Throw' for details on those).
     They also intrinsically have partially life leeching (vampiric) attacks
@@ -15174,6 +15175,8 @@ create a character!):
     They gain experience extremely slowly, and rarely need to feed before
     initiation. Afterwards they have no more need for any worldly food at all
     (and they cannot become gorged either).
+    Likewise, when initiatied they become immune to the lingering damage effect
+    of any continuous disease.
 
     Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
