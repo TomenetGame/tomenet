@@ -7654,7 +7654,7 @@ static void do_cmd_options_fonts(void) {
 			}
 			if (fonts) {
 				char tmp_name2[256];
-				int c = -1;
+				int c = 0;
 
 				c_message_add(format("-- Fonts (%d): --", fonts));
 				tmp_name2[0] = 0;
