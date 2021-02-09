@@ -397,7 +397,7 @@ F:CAN_LEVITATE | SUPPORT_LIGHT
 F:TUNNELABLE
 D:1:You dig in the rubble.
 
-# 0x32 --> magma vein
+# 0x32 --> magma vein -- renamed to intrusion, like in umoria
 
 N:50:magma intrusion
 G:%:D
