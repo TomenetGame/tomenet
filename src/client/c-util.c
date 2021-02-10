@@ -2069,7 +2069,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 				if (hClipboardData) {
 					CHAR *pchData = (CHAR*) GlobalLock(hClipboardData);
 					if (pchData) {
-						strcpy(buf, pchData);
+						strncpy(buf, pchData, MSG_LEN - NAME_LEN - 13); //just accomodate for some colour codes and spacing, not really calculated it
+						buf[MSG_LEN - NAME_LEN - 13] = 0;
 						k = l = strlen(buf);
 						GlobalUnlock(hClipboardData);
 					}
@@ -2093,7 +2094,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 				c_message_add("Paste failed, make sure xclip is installed.");
 				break;
 			}
-			if (!fgets(buf, MSG_LEN - 1, fp)) buf[0] = 0;
+			if (!fgets(buf, MSG_LEN - NAME_LEN - 13, fp)) buf[0] = 0; //just accomodate for some colour codes and spacing, not really calculated it
 			k = l = strlen(buf);
 			fclose(fp);
 			break;
@@ -5514,7 +5515,8 @@ Chain_Macro:
 					memset(buf, 0, 1024);
 					memset(buf2, 0, 1024);
 					/* Reinitialize */
-					i = choice = chain_macro_buf[0] = should_wait = tmp[0] = buf[0] = buf2[0] = 0;
+					i = choice = chain_macro_buf[0] = tmp[0] = buf[0] = buf2[0] = 0;
+					should_wait = FALSE;
 				}
 
 				Term_putstr(12, 2, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
