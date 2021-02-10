@@ -2095,6 +2095,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 				break;
 			}
 			if (!fgets(buf, MSG_LEN - NAME_LEN - 13, fp)) buf[0] = 0; //just accomodate for some colour codes and spacing, not really calculated it
+			buf[strlen(buf) - 1] = 0; //remove trailing newline
 			k = l = strlen(buf);
 			fclose(fp);
 			break;
