@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 9. Februar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 10. Februar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1044,6 +1044,10 @@ CTRL+D      Delete character under the cursor.
 
 CTRL+C      Search history of chat messages you typed. Press CTRL+C again for
             next match. Press ENTER to choose or ESC to cancel.
+
+CTRL+K      Copies currently typed chat line to clipboard.
+CTRL+L      Pastes current clipboard as chat line, erasing any existing text
+            you were just typing.
 
 
 (0.2b) Slash commands
