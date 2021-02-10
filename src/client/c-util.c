@@ -2039,8 +2039,26 @@ bool askfor_aux(char *buf, int len, char mode) {
 		}
 #endif
 #ifdef USE_X11
+		/* rely on xclip being installed */
 		{
-			
+			int r;
+			char *c, *c2, buf_esc[MSG_LEN + 10];
+
+			/* escape all ' (up to 10 before overflow) */
+			c = buf;
+			c2 = buf_esc;
+			while (*c) {
+				if (*c == '\'') {
+					*c2 = '\\';
+					c2++;
+				}
+				*c2 = *c;
+				c++;
+				c2++;
+			}
+			*c2 = 0;
+			r = system(format("echo '%s' | xclip -sel clip", buf_esc));
+			if (r) c_message_add("Copy failed, make sure xclip is installed.");
 			break;
 		}
 #endif
@@ -2061,8 +2079,23 @@ bool askfor_aux(char *buf, int len, char mode) {
 			break;
 #endif
 #ifdef USE_X11
+		/* rely on xclip being installed */
 		{
-			
+			int r;
+			FILE *fp;
+
+			r = system("xclip -sel clip -o > __clipboard__");
+			if (r) {
+				c_message_add("Paste failed, make sure xclip is installed.");
+				break;
+			}
+			if (!(fp = fopen("__clipboard__", "r"))) {
+				c_message_add("Paste failed, make sure xclip is installed.");
+				break;
+			}
+			if (!fgets(buf, MSG_LEN - 1, fp)) buf[0] = 0;
+			k = l = strlen(buf);
+			fclose(fp);
 			break;
 		}
 #endif
