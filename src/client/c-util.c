@@ -2022,6 +2022,51 @@ bool askfor_aux(char *buf, int len, char mode) {
 			else if (j > sp_iter) sp_iter = sp_size;
 			continue;
 
+		case KTRL('K'): /* copy current chat line to clipboard */
+#ifdef WINDOWS
+		{
+			char* output = buf;
+			size_t len = strlen(output) + 1;
+
+			HGLOBAL hMem =  GlobalAlloc(GMEM_MOVEABLE, len);
+			memcpy(GlobalLock(hMem), output, len);
+			GlobalUnlock(hMem);
+			OpenClipboard(0);
+			EmptyClipboard();
+			SetClipboardData(CF_TEXT, hMem);
+			CloseClipboard();
+			break;
+		}
+#endif
+#ifdef USE_X11
+		{
+			
+			break;
+		}
+#endif
+		case KTRL('L'): /* paste current clipboard to chat */
+#ifdef WINDOWS
+			if (OpenClipboard(NULL)) {
+				HANDLE hClipboardData = GetClipboardData(CF_TEXT);
+				if (hClipboardData) {
+					CHAR *pchData = (CHAR*) GlobalLock(hClipboardData);
+					if (pchData) {
+						strcpy(buf, pchData);
+						k = l = strlen(buf);
+						GlobalUnlock(hClipboardData);
+					}
+				}
+				CloseClipboard();
+			}
+			break;
+#endif
+#ifdef USE_X11
+		{
+			
+			break;
+		}
+#endif
+
 		default:
 			/* inkey_letter_all hack for c_get_quantity() */
 			//if (inkey_letter_all && !k && ((i >= 'a' && i <= 'z') || (i >= 'A' && i <= 'Z'))) { i = 'a';
