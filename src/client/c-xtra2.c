@@ -28,7 +28,7 @@ void do_cmd_messages(void) {
 	char finder[80] = "";
 
 	cptr message_recall[MESSAGE_MAX] = {0};
-	cptr msg = "", msg2;
+	cptr msg = "", msg2, msg_raw = NULL;
 
 	/* Display messages in different colors -Zz */
 
@@ -85,7 +85,7 @@ void do_cmd_messages(void) {
 			a = ab = ap = TERM_WHITE;
 
 			msg2 = msg;
-			msg = message_recall[i + j + s];
+			msg = msg_raw = message_recall[i + j + s];
 
 			/* Handle repeated messages */
 			if (msg == msg2) {
@@ -130,7 +130,7 @@ void do_cmd_messages(void) {
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23 + HGT_PLUS, 0);
+		prt("['p' older, 'n' newer, 'f' for filedump, CTRL+K to copy last line, ESC to exit]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -290,6 +290,12 @@ void do_cmd_messages(void) {
 			}
 		}
 
+		/* Copy to clipboard o_o */
+		if (k == KTRL('K') && msg != NULL) {
+			(void)copy_to_clipboard((char*)msg_raw);
+			continue;
+		}
+
 		if (k == KTRL('T')) {
 			/* Take a screenshot */
 			xhtml_screenshot("screenshot????");
@@ -326,7 +332,7 @@ void do_cmd_messages_chatonly(void) {
 	char shower[80] = "";
 	char finder[80] = "";
 
-	cptr msg, msg2;
+	cptr msg, msg2, msg_raw = NULL;
 
 	/* Create array to store message buffer for important messags  */
 	/* (This is an expensive hit, move to c-init.c?  But this only */
@@ -386,7 +392,7 @@ void do_cmd_messages_chatonly(void) {
 
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
-			msg = message_chat[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
+			msg = msg_raw = message_chat[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
 			//cptr msg = message_chat[i + j];
 			a = ab = ap = TERM_WHITE;
 
@@ -418,7 +424,7 @@ void do_cmd_messages_chatonly(void) {
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
-		prt("[Press 'p' for older, 'n' for newer, 'f' for filedump, ..., or ESCAPE]", 23 + HGT_PLUS, 0);
+		prt("['p' older, 'n' newer, 'f' for filedump, CTRL+K to copy last line, ESC to exit]", 23 + HGT_PLUS, 0);
 
 		/* Get a command */
 		k = inkey();
@@ -582,6 +588,12 @@ void do_cmd_messages_chatonly(void) {
 					continue;
 				}
 			}
+		}
+
+		/* Copy to clipboard o_o */
+		if (k == KTRL('K') && msg_raw != NULL) {
+			(void)copy_to_clipboard((char*)msg_raw);
+			continue;
 		}
 
 		if (k == KTRL('T')) {

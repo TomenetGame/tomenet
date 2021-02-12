@@ -1542,6 +1542,167 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
 	Term_putstr(x, y, -1, attr, tmp);
 }
 
+/* copy a line of text to clipboard */
+void copy_to_clipboard(char *buf) {
+#ifdef WINDOWS
+	size_t len;
+	int pos = 0;
+	char *c, *c2, buf_esc[MSG_LEN + 10];
+
+	/* escape all ' (up to 10 before overflow) */
+	c = buf;
+	c2 = buf_esc;
+	while (*c) {
+		switch (*c) {
+		case ':':
+			if (pos != 0 && pos <= NAME_LEN) {
+				if (*(c + 1) == ':') c++;
+			}
+			break;
+		case '{':
+			if (*(c + 1) == '{') c++;
+			break;
+		}
+		*c2 = *c;
+		c++;
+		c2++;
+		pos++;
+	}
+	*c2 = 0;
+
+	len = strlen(buf_esc) + 1;
+	HGLOBAL hMem =  GlobalAlloc(GMEM_MOVEABLE, len);
+	memcpy(GlobalLock(hMem), buf_esc, len);
+	GlobalUnlock(hMem);
+	OpenClipboard(0);
+	EmptyClipboard();
+	SetClipboardData(CF_TEXT, hMem);
+	CloseClipboard();
+#endif
+
+#ifdef USE_X11 /* relies on xclip being installed! */
+	int r, pos = 0;
+	char *c, *c2, buf_esc[MSG_LEN + 10];
+
+	/* escape all ' (up to 10 before overflow) */
+	c = buf;
+	c2 = buf_esc;
+	while (*c) {
+		switch (*c) {
+		case '\'':
+			*c2 = '\\';
+			c2++;
+			break;
+		case ':':
+			if (pos != 0 && pos <= NAME_LEN) {
+				if (*(c + 1) == ':') c++;
+			}
+			break;
+		case '{':
+			if (*(c + 1) == '{') c++;
+			break;
+		}
+		*c2 = *c;
+		c++;
+		c2++;
+		pos++;
+	}
+	*c2 = 0;
+
+	r = system(format("echo -n '%s' | xclip -sel clip", buf_esc));
+	if (r) c_message_add("Copy failed, make sure xclip is installed.");
+#endif
+}
+/* paste current clipboard into active chat input */
+bool paste_from_clipboard(char *buf) {
+#ifdef WINDOWS
+	char *c, *c2, buf_esc[MSG_LEN + 15];
+	int pos = 0;
+
+	if (OpenClipboard(NULL)) {
+		HANDLE hClipboardData = GetClipboardData(CF_TEXT);
+		if (hClipboardData) {
+			CHAR *pchData = (CHAR*) GlobalLock(hClipboardData);
+			if (pchData) {
+				strncpy(buf_esc, pchData, MSG_LEN - NAME_LEN - 13); //just accomodate for some colour codes and spacing, not really calculated it
+				buf_esc[MSG_LEN - NAME_LEN - 13] = 0;
+
+				/* treat { and : */
+				c = buf_esc;
+				c2 = buf;
+				while (*c) {
+					switch (*c) {
+					case ':':
+						if (pos != 0 && pos <= NAME_LEN) {
+							*c2 = ':';
+							c2++;
+						}
+						break;
+					case '{':
+						*c2 = '{';
+						c2++;
+						break;
+					}
+					*c2 = *c;
+					c++;
+					c2++;
+					pos++;
+				}
+				*c2 = 0;
+
+				GlobalUnlock(hClipboardData);
+			} else return FALSE;
+		} else return FALSE;
+		CloseClipboard();
+	} else return FALSE;
+	return TRUE;
+#endif
+
+#ifdef USE_X11 /* relies on xclip being installed! */
+	FILE *fp;
+	int r, pos = 0;
+	char *c, *c2, buf_esc[MSG_LEN + 15];
+
+	r = system("xclip -sel clip -o > __clipboard__");
+	if (r) {
+		c_message_add("Paste failed, make sure xclip is installed.");
+		return FALSE;
+	}
+	if (!(fp = fopen("__clipboard__", "r"))) {
+		c_message_add("Paste failed, make sure xclip is installed.");
+		return FALSE;
+	}
+	if (!fgets(buf_esc, MSG_LEN - NAME_LEN - 13, fp)) buf_esc[0] = 0; //just accomodate for some colour codes and spacing, not really calculated it
+	//else buf_esc[strlen(buf_esc) - 1] = 0; //remove trailing newline -- there is no trailing newline!
+
+	/* treat { and : */
+	c = buf_esc;
+	c2 = buf;
+	while (*c) {
+		switch (*c) {
+		case ':':
+			if (pos != 0 && pos <= NAME_LEN) {
+				*c2 = ':';
+				c2++;
+			}
+			break;
+		case '{':
+			*c2 = '{';
+			c2++;
+			break;
+		}
+		*c2 = *c;
+		c++;
+		c2++;
+		pos++;
+	}
+	*c2 = 0;
+
+	fclose(fp);
+	return TRUE;
+#endif
+}
+
 
 /*
  * Get some input at the cursor location.
@@ -2023,172 +2184,12 @@ bool askfor_aux(char *buf, int len, char mode) {
 			continue;
 
 		case KTRL('K'): /* copy current chat line to clipboard */
-#ifdef WINDOWS
-		{
-			size_t len;
-			int pos = 0;
-			char *c, *c2, buf_esc[MSG_LEN + 10];
-
-			/* escape all ' (up to 10 before overflow) */
-			c = buf;
-			c2 = buf_esc;
-			while (*c) {
-				switch (*c) {
-				case ':':
-					if (pos != 0 && pos <= NAME_LEN) {
-						if (*(c + 1) == ':') c++;
-					}
-					break;
-				case '{':
-					if (*(c + 1) == '{') c++;
-					break;
-				}
-				*c2 = *c;
-				c++;
-				c2++;
-				pos++;
-			}
-			*c2 = 0;
-
-			len = strlen(buf_esc) + 1;
-			HGLOBAL hMem =  GlobalAlloc(GMEM_MOVEABLE, len);
-			memcpy(GlobalLock(hMem), buf_esc, len);
-			GlobalUnlock(hMem);
-			OpenClipboard(0);
-			EmptyClipboard();
-			SetClipboardData(CF_TEXT, hMem);
-			CloseClipboard();
+			copy_to_clipboard(buf);
 			break;
-		}
-#endif
-#ifdef USE_X11
-		/* rely on xclip being installed */
-		{
-			int r, pos = 0;
-			char *c, *c2, buf_esc[MSG_LEN + 10];
-
-			/* escape all ' (up to 10 before overflow) */
-			c = buf;
-			c2 = buf_esc;
-			while (*c) {
-				switch (*c) {
-				case '\'':
-					*c2 = '\\';
-					c2++;
-					break;
-				case ':':
-					if (pos != 0 && pos <= NAME_LEN) {
-						if (*(c + 1) == ':') c++;
-					}
-					break;
-				case '{':
-					if (*(c + 1) == '{') c++;
-					break;
-				}
-				*c2 = *c;
-				c++;
-				c2++;
-				pos++;
-			}
-			*c2 = 0;
-
-			r = system(format("echo -n '%s' | xclip -sel clip", buf_esc));
-			if (r) c_message_add("Copy failed, make sure xclip is installed.");
-			break;
-		}
-#endif
 		case KTRL('L'): /* paste current clipboard to chat */
-#ifdef WINDOWS
-		{
-			char *c, *c2, buf_esc[MSG_LEN + 15];
-			int pos = 0;
-
-			if (OpenClipboard(NULL)) {
-				HANDLE hClipboardData = GetClipboardData(CF_TEXT);
-				if (hClipboardData) {
-					CHAR *pchData = (CHAR*) GlobalLock(hClipboardData);
-					if (pchData) {
-						strncpy(buf_esc, pchData, MSG_LEN - NAME_LEN - 13); //just accomodate for some colour codes and spacing, not really calculated it
-						buf_esc[MSG_LEN - NAME_LEN - 13] = 0;
-
-						/* treat { and : */
-						c = buf_esc;
-						c2 = buf;
-						while (*c) {
-							switch (*c) {
-							case ':':
-								if (pos != 0 && pos <= NAME_LEN) {
-									*c2 = ':';
-									c2++;
-								}
-								break;
-							case '{':
-								*c2 = '{';
-								c2++;
-								break;
-							}
-							*c2 = *c;
-							c++;
-							c2++;
-							pos++;
-						}
-						*c2 = 0;
-
-						k = l = strlen(buf);
-						GlobalUnlock(hClipboardData);
-					}
-				}
-				CloseClipboard();
-			}
-			break;
-		}
-#endif
-#ifdef USE_X11
-		/* rely on xclip being installed */
-		{
-			FILE *fp;
-			int r, pos = 0;
-			char *c, *c2, buf_esc[MSG_LEN + 15];
-
-			r = system("xclip -sel clip -o > __clipboard__");
-			if (r) {
-				c_message_add("Paste failed, make sure xclip is installed.");
-				break;
-			}
-			if (!(fp = fopen("__clipboard__", "r"))) {
-				c_message_add("Paste failed, make sure xclip is installed.");
-				break;
-			}
-			if (!fgets(buf_esc, MSG_LEN - NAME_LEN - 13, fp)) buf_esc[0] = 0; //just accomodate for some colour codes and spacing, not really calculated it
-			//else buf_esc[strlen(buf_esc) - 1] = 0; //remove trailing newline -- there is no trailing newline!
-
-			/* treat { and : */
-			c = buf_esc;
-			c2 = buf;
-			while (*c) {
-				switch (*c) {
-				case ':':
-					if (pos != 0 && pos <= NAME_LEN) {
-						*c2 = ':';
-						c2++;
-					}
-					break;
-				case '{':
-					*c2 = '{';
-					c2++;
-					break;
-				}
-				*c2 = *c;
-				c++;
-				c2++;
-				pos++;
-			}
-			*c2 = 0;
+			if (!paste_from_clipboard(buf)) break;
 			k = l = strlen(buf);
-			fclose(fp);
 			break;
-		}
-#endif
 
 		default:
 			/* inkey_letter_all hack for c_get_quantity() */

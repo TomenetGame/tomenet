@@ -616,6 +616,8 @@ extern void handle_process_font_file(void);
 extern void sync_sleep(int milliseconds);
 extern char original_commands(char command);
 extern char roguelike_commands(char command);
+extern void copy_to_clipboard(char *buf);
+extern bool paste_from_clipboard(char *buf);
 
 /* c-store.c */
 extern bool leave_store;
