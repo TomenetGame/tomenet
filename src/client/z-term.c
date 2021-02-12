@@ -1640,7 +1640,8 @@ errr Term_fresh(void) {
 		Term_xtra(TERM_XTRA_CLEAR, 0);
 
 		/* Hack -- clear all "cursor" data XXX XXX XXX */
-		old->cv = old->cu = old->cx = old->cy = 0;
+		old->cv = old->cu = FALSE;
+		old->cx = old->cy = 0;
 
 		/* Wipe the content arrays */
 		memset(old->va, a, w * h);
