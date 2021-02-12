@@ -10413,6 +10413,9 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 	}
 
 	if (in_irondeepdive(&p_ptr->wpos)) p_ptr->IDDC_flags |= 0xC;
+#ifdef USE_SOUND_2010
+	sound(Ind, "receive_xo", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 	return(TRUE);
 }
 

@@ -4427,7 +4427,12 @@ void do_cmd_store(int Ind) {
 		if (p_ptr->chp < p_ptr->mhp / 2) hp_player_quiet(Ind, p_ptr->mhp / 3, TRUE);
 		if (p_ptr->cut) set_cut(Ind, 0, 0);
 
-		if (p_ptr->blind || p_ptr->confused || p_ptr->poisoned) msg_print(Ind, "A temple priest speaks a prayer of curing.");
+		if (p_ptr->blind || p_ptr->confused || p_ptr->poisoned) {
+			msg_print(Ind, "A temple priest speaks a prayer of curing.");
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_prayer", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		}
 		if (p_ptr->blind) set_blind(Ind, 0);
 		if (p_ptr->confused) set_confused(Ind, 0);
 		if (p_ptr->poisoned) set_poisoned(Ind, 0, 0);
@@ -4436,9 +4441,15 @@ void do_cmd_store(int Ind) {
 			if (p_ptr->prace == RACE_ENT) {
 				msg_print(Ind, "A temple priest hands you a bowl of water.");
 				set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
+#ifdef USE_SOUND_2010
+				sound(Ind, "quaff_potion", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			} else {
 				msg_print(Ind, "A temple priest hands you a slice of bread.");
 				set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
+#ifdef USE_SOUND_2010
+				sound(Ind, "eat", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			}
 		}
 	}
@@ -6217,6 +6228,9 @@ void home_extend(int Ind) {
 	h_ptr->dna->price += cost;
 
 	msg_format(Ind, "You extend your house for %dau.", cost);
+#ifdef USE_SOUND_2010
+	sound(Ind, "home_extend", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	display_trad_house(Ind, h_ptr);
 
@@ -6416,6 +6430,9 @@ void view_cheeze_list(int Ind) {
 
 	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "cheeze-pub.log");
 	do_cmd_check_other_prepare(Ind, path, "Top Guilty Cheezers");
+#ifdef USE_SOUND_2010
+	sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 }
 
 void view_exploration_records(int Ind) {
@@ -6468,6 +6485,9 @@ void view_exploration_records(int Ind) {
 	}
 
 	if (none) fprintf(fff, "\n\377u    There haven't been reports of any dungeon explorations for a long time!\n");
+#ifdef USE_SOUND_2010
+	else sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	my_fclose(fff);
 	/* Display the file contents */
@@ -6561,6 +6581,9 @@ void view_exploration_history(int Ind) {
 	}
 
 	if (none) fprintf(fff, "\n\377u    Nobody has ever discovered a dungeon in this town's history!\n");
+#ifdef USE_SOUND_2010
+	else sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	my_fclose(fff);
 	/* Display the file contents */
@@ -6641,6 +6664,10 @@ void reward_deed_item(int Ind, int item) {
 		return;
 	}
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "store_redeem", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+
 	/* Take the item from the player, describe the result */
 	inven_item_increase(Ind, item, -1);
 	inven_item_describe(Ind, item);
@@ -6710,6 +6737,10 @@ void reward_deed_blessing(int Ind, int item) {
 		msg_print(Ind, "\377oappropriate rewards. With a sorry gesture, he returns the deed to you.");
 		return;
 	}
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "store_redeem", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	/* Take the item from the player, describe the result */
 	inven_item_increase(Ind, item, -1);

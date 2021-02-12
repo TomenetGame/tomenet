@@ -107,6 +107,7 @@ audio_sfx = {
     "insanity",
     "levelup",
     "jailed",
+    "receive_xo",
 
     "death", --everyone's favourite DOOM scream....
     "death_male",
@@ -233,11 +234,9 @@ audio_sfx = {
     "home_extend",
     "store_doorbell_enter",
     "store_doorbell_leave",
-    "store_gold",
     "store_paperwork",
     "store_cancel",
     "store_repair",
-    "store_xo",
     "store_food_and_drink",
     "store_redeem",
     "store_rest",

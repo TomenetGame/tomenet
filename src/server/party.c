@@ -3051,6 +3051,10 @@ bool guild_rename(int Ind, char *new_name) {
 
 	p_ptr->au -= GUILD_PRICE;
 	p_ptr->redraw |= PR_GOLD;
+#ifdef USE_SOUND_2010
+	sound(Ind, "drop_gold", NULL, SFX_TYPE_MISC, FALSE);
+	sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	for (i = 0; i < MAX_GUILDNOTES; i++)
 		if (!strcmp(guild_note_target[i], guilds[gid].name))

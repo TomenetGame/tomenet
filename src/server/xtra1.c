@@ -9368,6 +9368,9 @@ void handle_request_return_str(int Ind, int id, char *str) {
 					return;
 				}
 				p_ptr->item_order_store = 0;
+#ifdef USE_SOUND_2010
+				sound(Ind, "store_cancel", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 				msg_print(Ind, "Alright, your order has been cancelled.");
 			} else msg_print(Ind, "You do not have a pending order.");
 			return;

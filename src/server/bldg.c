@@ -437,8 +437,7 @@ static void display_fruit(int row, int col, int fruit) {
  * Well it does work, but I want gambles playable 'between players'..
  * - Jir -
  */
-static bool gamble_comm(int Ind, int cmd, int gold)
-{
+static bool gamble_comm(int Ind, int cmd, int gold) {
 	player_type *p_ptr = Players[Ind];
 	int roll1, roll2, roll3;
 	int choice, odds, win;
@@ -467,6 +466,9 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 
 		path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "gambling.txt");
 		do_cmd_check_other_prepare(Ind, path, "Gambling Rules");
+#ifdef USE_SOUND_2010
+		sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 	} else {
 		//clear_bldg(5, 23);
 
@@ -525,7 +527,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 				roll2 = randint(10);
 				choice = randint(10);
 #ifdef USE_SOUND_2010
-				sound(Ind, "dice_roll", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+				sound(Ind, "store_inbetween", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
 				msg_format(Ind, "Black die: \377s%d\377w     Black Die: \377s%d",
 				    roll1, roll2);
@@ -547,7 +549,7 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 				roll3 = roll1 +  roll2;
 				choice = roll3;
 #ifdef USE_SOUND_2010
-				sound(Ind, "dice_roll", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+				sound(Ind, "store_craps", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
 #endif
 				msg_format(Ind, "First roll:   \377s%d %d\377w   Total: \377y%d", roll1,
 				    roll2, roll3);
@@ -600,6 +602,9 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 					choice = 9;
 				}
 				msg_print(Ind, NULL);
+#ifdef USE_SOUND_2010
+				sound(Ind, "store_wheel", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+#endif
 				roll1 = randint(10) - 1;
 				strnfmt(tmp_str, 80, "The wheel spins to a stop and the winner is %d",
 				    roll1);
@@ -615,6 +620,9 @@ static bool gamble_comm(int Ind, int cmd, int gold)
 
 			case BACT_DICE_SLOTS: /* The Dice Slots */
 				c_put_str(TERM_GREEN,"Dice Slots",5,2);
+#ifdef USE_SOUND_2010
+				sound(Ind, "store_slots", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
+#endif
 				win = FALSE;
 				roll1 = randint(6);
 				roll2 = randint(6);
@@ -726,6 +734,9 @@ static bool inn_comm(int Ind, int cmd) {
 				else msg_print(Ind, "The barkeep gives you some gruel and a beer.");
 				// msg_print(Ind, NULL);
 				(void) set_food(Ind, PY_FOOD_MAX - 1);
+#ifdef USE_SOUND_2010
+				sound(Ind, "store_food_and_drink", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			} else {
 				msg_print(Ind, "You're a vampire and I don't have any food for you!");
 				return(FALSE);
@@ -796,6 +807,9 @@ static bool inn_comm(int Ind, int cmd) {
 			//p_ptr->stun = 0;
 
 			/* Message */
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_rest", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			if (vampire) msg_print(Ind, "You awake refreshed for the new night.");
 			else msg_print(Ind, "You awake refreshed for the new day.");
 
@@ -823,6 +837,9 @@ static bool inn_comm(int Ind, int cmd) {
 			Rand_value = time(NULL) / 600;
 			Rand_quick = TRUE;
 
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_listen", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			get_rnd_line("rumors.txt", 0, rumor, MAX_CHARS_WIDE);
 			bracer_ff(rumor);	/* colour it */
 			msg_format(Ind, "%s", rumor);
@@ -953,6 +970,9 @@ static void town_history(void) {
 
 	/* Peruse the building help file */
 	(void)show_file("bldg.txt", NULL, 0, 0, 0);
+#ifdef USE_SOUND_2010
+	sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	/* Load screen */
 	screen_load();
@@ -1253,6 +1273,10 @@ s_printf("BACT_ENCHANT: %s enchanted %s\n", p_ptr->name, tmp_str);
 	if (set_reward) p_ptr->rewards[ireward] = TRUE;
 #endif
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "store_enchant", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+
 	/* We might be wearing/wielding the item */
 	p_ptr->update |= PU_BONUS;
 
@@ -1469,6 +1493,9 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 			p_ptr->au -= cost;
 			p_ptr->redraw |= PR_GOLD;
 
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_repair", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			msg_format(Ind, "Your sword looks as good as new again!");
 
 			s_printf("BACT_REPAIR: %s reforged Narsil into Anduril\n", p_ptr->name);
@@ -1544,6 +1571,9 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 	msg_format(Ind, "Your %s looks as good as new again!", tmp_str);
 
 s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
+#ifdef USE_SOUND_2010
+	sound(Ind, "store_repair", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	/* We might be wearing/wielding the item */
 	p_ptr->update |= PU_BONUS;
@@ -1562,6 +1592,9 @@ s_printf("BACT_REPAIR: %s enchanted %s\n", p_ptr->name, tmp_str);
 static bool research_item(void) {
 	clear_bldg(5,18);
 	identify_fully();
+#ifdef USE_SOUND_2010
+	sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 	return (TRUE);
 }
 
@@ -1572,6 +1605,9 @@ static bool research_item(void) {
 static void show_quest_monster(void) {
 	monster_race* r_ptr = &r_info[bounties[0][0]];
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 	msg_format("Quest monster: %s. "
 	           "Need to turn in %d corpse%s to receive reward.",
 	           r_name + r_ptr->name, bounties[0][1],
@@ -1590,6 +1626,9 @@ static void show_bounties(void) {
 
 	clear_bldg(7,18);
 	c_prt(TERM_YELLOW, "Currently active bounties:", 4, 2);
+#ifdef USE_SOUND_2010
+	sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 	for (i = 1; i < MAX_BOUNTIES; i++, j++) {
 		r_ptr = &r_info[bounties[i][0]];
@@ -1672,6 +1711,9 @@ static void sell_corpses(void) {
 			value = bounties[i][1] + boost*(r_info[o_ptr->pval2].level);
 
 			if (!gain_au(Ind, value, FALSE, FALSE)) return;
+#ifdef USE_SOUND_2010
+			sound(Ind, "pickup_gold", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 			msg_format("Sold for %d gold pieces.", value);
 			msg_print(NULL);
@@ -1772,6 +1814,9 @@ static void sell_quest_monster(void) {
 		msg_format("Well done! As a reward I'll teach you everything "
 		                 "about the %s, (check your recall)",
 		                 r_name + r_ptr->name);
+#ifdef USE_SOUND_2010
+		sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 #ifdef OLD_MONSTER_LORE
 		r_ptr->r_wake = r_ptr->r_ignore = MAX_UCHAR;
@@ -1959,6 +2004,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			//store_prt_gold(Ind);
 			Send_gold(Ind, p_ptr->au, p_ptr->balance);
 
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 //			paid = research_item(Ind, item);
 			paid = identify_fully_item(Ind, item);
 
@@ -1966,14 +2014,23 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			//break;
 #if 0
 		case BACT_TOWN_HISTORY:
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			town_history();
 			break;
 #endif
 		case BACT_RACE_LEGENDS:
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			race_legends(Ind);
 			break;
 #if 1
 		case BACT_GREET_KING:
+#ifdef USE_SOUND_2010
+//			sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 //			castle_greet();
 			break;
 		case BACT_QUEST1:
@@ -2074,6 +2131,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				//get_item(Ind);
 			} else {
 				//if (recharge(80)) paid = TRUE;
+#ifdef USE_SOUND_2010
+				sound(Ind, "store_recharge", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 				recharge_aux(Ind, item, 80);
 				paid = TRUE;
 			}
@@ -2081,6 +2141,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		}
 		/* needs work */
 		case BACT_IDENTS:
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			identify_pack(Ind);
 			msg_print(Ind, "Your posessions have been identified.");
 			//msg_print(Ind, NULL);
@@ -2094,6 +2157,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 
 		/* needs work */
 		case BACT_STAR_HEAL:
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			hp_player(Ind, 200);
 			set_poisoned(Ind, 0, 0);
 			set_diseased(Ind, 0, 0);
@@ -2109,6 +2175,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			break;
 		/* needs work */
 		case BACT_HEALING:
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_prayer", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			hp_player(Ind, 200);
 			set_poisoned(Ind, 0, 0);
 			//set_diseased(Ind, 0, 0);
@@ -2120,6 +2189,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			break;
 		/* needs work */
 		case BACT_RESTORE:
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			if (do_res_stat(Ind, A_STR)) paid = TRUE;
 			if (do_res_stat(Ind, A_INT)) paid = TRUE;
 			if (do_res_stat(Ind, A_WIS)) paid = TRUE;
@@ -2163,6 +2235,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 				break;
 			}
  #endif
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_recall", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			p_ptr->word_recall = 1;
 			msg_print(Ind, "\377oThe air about you becomes charged...");
 			paid = TRUE;
@@ -2225,6 +2300,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 #endif	// 0
 
 		case BACT_MIMIC_NORMAL:
+#ifdef USE_SOUND_2010
+			sound(Ind, "store_curing", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 			if (set_mimic(Ind, 0, 0)) paid = TRUE;	/* Undo temporary mimicry (It's Shadow mimicry)*/
 			if (p_ptr->fruit_bat == 2) { /* Undo fruit bat form from chauve-souris potion */
 				p_ptr->fruit_bat = 0;
@@ -2344,6 +2422,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			p_ptr->loan_time += req;
 
 			msg_format(Ind, "You receive %i gold pieces", req);
+#ifdef USE_SOUND_2010
+			sound(Ind, "pickup_gold", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 			paid = TRUE;
 			break;
@@ -2366,6 +2447,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			if (!p_ptr->loan) p_ptr->loan_time = 0;
 
 			msg_format(Ind, "You pay back %i gold pieces", req);
+#ifdef USE_SOUND_2010
+			sound(Ind, "drop_gold", NULL, SFX_TYPE_MISC, FALSE);
+#endif
 
 			paid = TRUE;
 			break;
