@@ -60,7 +60,6 @@ void do_cmd_messages(void) {
 		nn++;
 	}
 
-
 	/* Start on first message */
 	i = 0;
 
@@ -79,6 +78,7 @@ void do_cmd_messages(void) {
 		r = 0;	/* how many times the message is Repeated */
 		s = 0;	/* how many lines Saved */
 		k = 0;	/* end of buffer flag */
+		msg = NULL;
 
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j + s < n); j++) {
@@ -86,7 +86,7 @@ void do_cmd_messages(void) {
 
 			msg2 = msg;
 			msg = message_recall[i + j + s];
-			if (!j) msg_raw = message_recall[i + j + s];
+			if (!j) msg_raw = msg;
 
 			/* Handle repeated messages */
 			if (msg == msg2) {
@@ -394,7 +394,7 @@ void do_cmd_messages_chatonly(void) {
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
 			msg = message_chat[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
-			if (!j) msg_raw = message_chat[nn - 1 - (i + j)];
+			if (!j) msg_raw = msg;
 			//cptr msg = message_chat[i + j];
 			a = ab = ap = TERM_WHITE;
 
