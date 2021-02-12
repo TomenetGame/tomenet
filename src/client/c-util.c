@@ -1560,7 +1560,34 @@ void copy_to_clipboard(char *buf) {
 			}
 			break;
 		case '{':
-			if (*(c + 1) == '{') c++;
+			switch (*(c + 1)) {
+			case '{':
+				c++;
+				break;
+			case 0: /* broken colour code (paranoia) */
+				c++;
+				continue;
+			default: /* assume colour code and discard */
+				c += 2;
+				continue;
+			}
+			break;
+		/* skip special markers */
+		case '\376':
+		case '\375':
+		case '\374':
+			c++;
+			continue;
+		/* strip colour codes */
+		case '\377':
+			switch (*(c + 1)) {
+			case 0: /* broken colour code (paranoia) */
+				c++;
+				continue;
+			default: /* assume colour code and discard */
+				c += 2;
+				continue;
+			}
 			break;
 		}
 		*c2 = *c;
@@ -1599,7 +1626,34 @@ void copy_to_clipboard(char *buf) {
 			}
 			break;
 		case '{':
-			if (*(c + 1) == '{') c++;
+			switch (*(c + 1)) {
+			case '{':
+				c++;
+				break;
+			case 0: /* broken colour code (paranoia) */
+				c++;
+				continue;
+			default: /* assume colour code and discard */
+				c += 2;
+				continue;
+			}
+			break;
+		/* skip special markers */
+		case '\376':
+		case '\375':
+		case '\374':
+			c++;
+			continue;
+		/* strip colour codes */
+		case '\377':
+			switch (*(c + 1)) {
+			case 0: /* broken colour code (paranoia) */
+				c++;
+				continue;
+			default: /* assume colour code and discard */
+				c += 2;
+				continue;
+			}
 			break;
 		}
 		*c2 = *c;
