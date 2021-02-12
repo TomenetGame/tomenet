@@ -1609,7 +1609,7 @@ void copy_to_clipboard(char *buf) {
 	}
 	*c2 = 0;
 
-	r = system(format("echo -n '%s' | xclip -sel clip", buf_esc));
+	r = system(format("echo -n $'%s' | xclip -sel clip", buf_esc));
 	if (r) c_message_add("Copy failed, make sure xclip is installed.");
 #endif
 }
