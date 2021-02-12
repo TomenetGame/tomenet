@@ -8790,6 +8790,15 @@ static int ingredients_to_ingredient(int sval1, int tval2, int sval2) {
 				return CI_ME;
 		}
 		return 0;
+
+	/* Allow dissolving vitriol to obtain acid (in a flask) */
+	case SV_VITRIOL:
+		if (tval2 == TV_POTION) switch (sval2) {
+		case SV_POTION_WATER:
+		case SV_POTION_SALT_WATER:
+			return CI_AC;
+		}
+		return 0;
 	}
 	return 0;
 }
@@ -9189,7 +9198,7 @@ void mix_chemicals(int Ind, int item) {
 		/* Check for success in creating a new ingredient */
 		if (i > 0) {
 			/* Translate ingredient-index back to tval,sval */
-			if (i >= CI_CC && i <= CI_AC) {
+			if (i >= CI_CC && i <= CI_RU) {
 				q_ptr->tval = TV_CHEMICAL;
 				q_ptr->sval = i;
 			} else switch (i) {
