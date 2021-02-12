@@ -9292,6 +9292,8 @@ void mix_chemicals(int Ind, int item) {
 		sound(Ind, "item_rune", NULL, SFX_TYPE_COMMAND, FALSE);
 	else if (q_ptr->tval == TV_SCROLL)
 		sound(Ind, "item_scroll", NULL, SFX_TYPE_COMMAND, FALSE);
+	else if (q_ptr->tval == TV_FLASK)
+		sound(Ind, "item_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 	else
 		sound(Ind, "snowball", NULL, SFX_TYPE_COMMAND, FALSE); //uhhh - todo: get some alchemyic sfx..
  #endif
