@@ -978,8 +978,10 @@ CTRL+P  view previous messages.
         Note: You can also press this when in chat prompt, to cycle backward
         through lines that you previously typed (also see CTRL+N, which cycles
         forwards).
+        Press CTRL+K in here to copy the bottom-most line to the OS clipboard.
 
 CTRL+O  view previous chat messages.
+        Press CTRL+K in here to copy the bottom-most line to the OS clipboard.
 
 CTRL+Q  save your character & quit the game. (You should do this in town!)
         This also automatically saves some settings, like window layout (the
@@ -1046,6 +1048,9 @@ CTRL+C      Search history of chat messages you typed. Press CTRL+C again for
             next match. Press ENTER to choose or ESC to cancel.
 
 CTRL+K      Copies currently typed chat line to clipboard.
+            Note that CTRL+K can also be used inside message recall screen,
+            which is invoked by CTRL+O/P (important/all messages). There it
+            will copy the bottom-most displayed line to the clipboard.
 CTRL+L      Pastes current clipboard as chat line, erasing any existing text
             you were just typing.
 
