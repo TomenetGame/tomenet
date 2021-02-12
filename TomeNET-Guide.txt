@@ -15018,19 +15018,19 @@ create a character!):
     --------------------------------------------------------------------------
     Blue        Lightning       lightning, brand (5), aura (15), immune (25)
     White       Frost           frost, aura (15), immune (25),
-                                susceptible to fire
+                                 susceptible to fire
     Red         Fire            fire, immune (25),
-                                susceptible to cold
+                                 susceptible to cold
     Black       Acid            acid, immune (25)
     Green       Poison          poison, immune (25)
-    Multi-hued  Random of       lightning (5), frost (10), fire (15),
-                those above     acid (20), poison (25)
+    Multi-hued  Any of the      lightning (5), frost (10), fire (15),
+                 five above      acid (20), poison (25)
     Bronze      Confusion       confusion (5), paralysis and electricity (10),
-                                reflection (20); a small extra AC bonus
+                                 reflection (20); a small extra AC bonus
     Silver      Inertia         cold (5), acid (10), poison (15),
-                                reflection (20); a small extra AC bonus
+                                 reflection (20); a small extra AC bonus
     Golden      Sound           fire (5), acid (10), sound (15),
-                                reflection (20); a small extra AC bonus
+                                 reflection (20); a small extra AC bonus
     Law         Shards          shards (5), paralysis (10), sound (15)
     Chaos       Chaos           confusion (5), chaos (15), disenchantment (20)
     Balance     Disenchantment  disenchantment (10), sound (20)
