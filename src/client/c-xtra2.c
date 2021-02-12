@@ -88,7 +88,8 @@ void do_cmd_messages(void) {
 			msg = message_recall[i + j + s];
 			if (!j) msg_raw = msg;
 
-			/* Handle repeated messages */
+			/* Handle repeated messages
+			   (Minor glitch note: if the first msgs after joining the server are repeated 'searching' msgs, the first one will not combine) */
 			if (msg == msg2) {
 				r++;
 				j--;
