@@ -419,7 +419,7 @@ void do_cmd_messages_important(void) {
 		}
 
 		/* Display header XXX XXX XXX */
-		prt(format("Message Recall (%d-%d of %d), Offset %d",
+		prt(format("Important-Message Recall (%d-%d of %d), Offset %d",
 		    i, i + j - 1, n, q), 0, 0);
 
 		/* Display prompt (not very informative) */
