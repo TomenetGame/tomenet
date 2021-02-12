@@ -85,7 +85,8 @@ void do_cmd_messages(void) {
 			a = ab = ap = TERM_WHITE;
 
 			msg2 = msg;
-			msg = msg_raw = message_recall[i + j + s];
+			msg = message_recall[i + j + s];
+			if (!j) msg_raw = message_recall[i + j + s];
 
 			/* Handle repeated messages */
 			if (msg == msg2) {
@@ -392,7 +393,8 @@ void do_cmd_messages_chatonly(void) {
 
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
-			msg = msg_raw = message_chat[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
+			msg = message_chat[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
+			if (!j) msg_raw = message_chat[nn - 1 - (i + j)];
 			//cptr msg = message_chat[i + j];
 			a = ab = ap = TERM_WHITE;
 
