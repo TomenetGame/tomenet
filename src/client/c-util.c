@@ -9224,7 +9224,7 @@ void c_close_game(cptr reason) {
 
 		/* Chat history */
 		else if (k == '5' || k == KTRL('O'))
-			do_cmd_messages_chatonly();
+			do_cmd_messages_important();
 
 #if 0
 		/* Skill browsing ... is not available for now */

@@ -314,7 +314,7 @@ void process_command() {
 		break;
 
 	/* Add separate buffer for chat only review (good for afk) -Zz */
-	case KTRL('O'): do_cmd_messages_chatonly(); break;
+	case KTRL('O'): do_cmd_messages_important(); break;
 	case KTRL('P'): do_cmd_messages(); break;
 
 	case KTRL('Q'):
@@ -4062,7 +4062,7 @@ void cmd_check_misc(void) {
 				do_cmd_messages();
 				break;
 			case 'j':
-				do_cmd_messages_chatonly();
+				do_cmd_messages_important();
 				break;
 			case 'l':
 				cmd_lagometer();

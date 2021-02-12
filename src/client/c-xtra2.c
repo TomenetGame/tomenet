@@ -322,11 +322,8 @@ void do_cmd_messages(void) {
 }
 
 
-/* Show buffer of "important events" only via the CTRL-O command -Zz
-   Note that nowadays the name 'chatonly' is slightly misleading:
-   It simply is a buffer of 'very important' messages, as already
-   stated above by Zz ;) - C. Blue */
-void do_cmd_messages_chatonly(void) {
+/* Show buffer of "important events" only via the CTRL-O command -Zz */
+void do_cmd_messages_important(void) {
 	int i, j, k, n, nn, q, p;
 	byte a, ab, ap;
 
@@ -339,7 +336,7 @@ void do_cmd_messages_chatonly(void) {
 	/* (This is an expensive hit, move to c-init.c?  But this only */
 	/* occurs when user hits CTRL-O which is usally in safe place  */
 	/* or after AFK) 					       */
-	cptr message_chat[MESSAGE_MAX] = {0};
+	cptr message_important[MESSAGE_MAX] = {0};
 
 	/* Display messages in different colors */
 
@@ -348,7 +345,7 @@ void do_cmd_messages_chatonly(void) {
 	n = message_num();
 	nn = 0;  /* number of new messages */
 
-	/* Filter message buffer for "important messages" add to message_chat*/
+	/* Filter message buffer for "important messages" add to message_important*/
 //	for (i = 0; i < n; i++)
 	for (i = n - 1; i >= 0; i--) { /* traverse from oldest to newest message */
 		msg = message_str(i);
@@ -356,7 +353,7 @@ void do_cmd_messages_chatonly(void) {
 		if (msg[0] == '\376') {
 			/* strip control code */
 			if (msg[0] == '\376') msg++;
-			message_chat[nn] = msg;
+			message_important[nn] = msg;
 			nn++;
 		}
 	}
@@ -365,10 +362,10 @@ void do_cmd_messages_chatonly(void) {
 	n = message_num_impscroll();
 	nn = 0;  /* number of new messages */
 
-	/* Filter message buffer for "important messages" add to message_chat*/
+	/* Filter message buffer for "important messages" add to message_important*/
 //	for (i = 0; i < n; i++)
 	for (i = n - 1; i >= 0; i--) { /* traverse from oldest to newest message */
-		message_chat[nn] = message_str_impscroll(i);
+		message_important[nn] = message_str_impscroll(i);
 		nn++;
 	}
 #endif
@@ -388,14 +385,14 @@ void do_cmd_messages_chatonly(void) {
 		/* Clear screen */
 		Term_clear();
 
-		/* Use last element in message_chat as  message_num() */
+		/* Use last element in message_important as  message_num() */
 		n = nn;
 
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
-			msg = message_chat[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
+			msg = message_important[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
 			if (!j) msg_raw = msg;
-			//cptr msg = message_chat[i + j];
+			//cptr msg = message_important[i + j];
 			a = ab = ap = TERM_WHITE;
 
 			/* Apply horizontal scroll */
@@ -583,7 +580,7 @@ void do_cmd_messages_chatonly(void) {
 		/* Dump */
 		if ((k == 'f') || (k == 'F')) {
 			char tmp[80];
-			strnfmt(tmp, 79, "%s-chat.txt", cname);
+			strnfmt(tmp, 79, "%s-important.txt", cname);
 			if (get_string("Filename: ", tmp, 79)) {
 				if (tmp[0] && (tmp[0] != ' ')) {
 					dump_messages(tmp, MESSAGE_MAX, 1);
@@ -628,7 +625,7 @@ void do_cmd_messages_chatonly(void) {
  * XXX The beginning of dump can be corrupted. FIXME
  */
 /* FIXME: result can be garbled if contains '%' */
-/* chatonly if mode != 0 */
+/* important if mode != 0 */
 void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color) {
 	int i, j, k, n, nn, q, r, s, t = 0;
 
@@ -657,7 +654,7 @@ void dump_messages_aux(FILE *fff, int lines, int mode, bool ignore_color) {
 		if (strstr(msg, nomsg_target) || strstr(msg, nomsg_map))
 			continue;
 
-		if (mode) { /* chatonly, ie 'important messages' only? */
+		if (mode) { /* important, ie 'important messages' only? */
 			if (msg[0] == '\376') {
 				/* strip control code */
 				msg++;
