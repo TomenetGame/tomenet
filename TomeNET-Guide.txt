@@ -15024,7 +15024,7 @@ create a character!):
     Black       Acid            acid, immune (25)
     Green       Poison          poison, immune (25)
     Multi-hued  Any of the      lightning (5), frost (10), fire (15),
-                 five above      acid (20), poison (25)
+                 five above *    acid (20), poison (25)
     Bronze      Confusion       confusion (5), paralysis and electricity (10),
                                  reflection (20); a small extra AC bonus
     Silver      Inertia         cold (5), acid (10), poison (15),
@@ -15034,6 +15034,8 @@ create a character!):
     Law         Shards          shards (5), paralysis (10), sound (15)
     Chaos       Chaos           confusion (5), chaos (15), disenchantment (20)
     Balance     Disenchantment  disenchantment (10), sound (20)
+
+    (*) Multi-hued lineage can use specific breaths in the 'm' menu.
 
     Hint: Make sure to set your breath attack to a hotkey when you learn it.
 
