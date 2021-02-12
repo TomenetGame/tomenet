@@ -28,7 +28,7 @@ void do_cmd_messages(void) {
 	char finder[80] = "";
 
 	cptr message_recall[MESSAGE_MAX] = {0};
-	cptr msg = "", msg2, msg_raw = NULL;
+	cptr msg = "", msg2, msg_raw = NULL, msg3;
 
 	/* Display messages in different colors -Zz */
 
@@ -103,27 +103,26 @@ void do_cmd_messages(void) {
 			}
 
 			/* Apply horizontal scroll */
-			msg2 = msg;
-			msg = ((int) strlen(msg) >= q) ? (msg + q) : "";
+			msg3 = ((int) strlen(msg) >= q) ? (msg + q) : "";
 
 			/* For horizontal scrolling: Parse correct colour code that we might have skipped */
 			if (q) {
 				for (p = 0; p < q; p++) {
-					if (msg2[p] != '\377') continue;
-					if (msg2[p + 1] == '.') a = ap;
-					else if (isalpha(msg2[p + 1]) || isdigit(msg2[p + 1])) {
+					if (msg[p] != '\377') continue;
+					if (msg[p + 1] == '.') a = ap;
+					else if (isalpha(msg[p + 1]) || isdigit(msg[p + 1])) {
 						ap = ab;
-						a = ab = color_char_to_attr(msg2[p + 1]);
+						a = ab = color_char_to_attr(msg[p + 1]);
 					}
 				}
-			}
+			} else msg3 = msg;
 
 			/* Handle "shower" */
-			if (shower[0] && strstr(msg, shower)) a = TERM_YELLOW;
+			if (shower[0] && strstr(msg3, shower)) a = TERM_YELLOW;
 
 			/* Dump the messages, bottom to top */
-			Term_putstr(0, 21 + HGT_PLUS-j, -1, a, (char*)msg);
-			t = strlen(msg);
+			Term_putstr(0, 21 + HGT_PLUS-j, -1, a, (char*)msg3);
+			t = strlen(msg3);
 		}
 
 		/* Display header XXX XXX XXX */
