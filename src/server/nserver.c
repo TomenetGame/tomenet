@@ -3189,7 +3189,7 @@ static int Handle_login(int ind) {
 #endif
 	/* Since 4.5.7 we can now distinguish (client-side) between disabled and unavailable audio.
 	   The minus constant is for optional songs, ie songs that have a commented out music.cfg entry by default (user's choice to enable them). */
-	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 110)
+	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 130)
 		msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
 	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 40) //extra
 		msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---");
