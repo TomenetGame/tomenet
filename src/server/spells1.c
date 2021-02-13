@@ -110,7 +110,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 #ifdef ENABLE_DEMOLITIONIST
 		case SV_FLASK_ACID:
 			radius = 1;
-			dam = damroll(5, 5);
+			dam = damroll(4, 5);
 			dt = GF_ACID_BLIND;
 			ident = TRUE;
 			angry = TRUE;
