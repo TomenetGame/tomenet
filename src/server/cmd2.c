@@ -3917,8 +3917,10 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					tval = 3 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
 					place_gold(Ind, wpos, y, x, tval, 0);
 					object_level = old_object_level;
-					if (nonobvious) s_printf("DIGGING: %s digs nonobvious (x%d=%dAu).\n", p_ptr->name, tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
-					else s_printf("DIGGING: %s digs obvious (x%d=%dAu).\n", p_ptr->name, tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
+					if (nonobvious) s_printf("DIGGING: %s (F%d,S%d) digs nonobvious (x%d=%dAu).\n", p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG),
+					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
+					else s_printf("DIGGING: %s (F%d,S%d) digs obvious (x%d=%dAu).\n", p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG),
+					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
 				}
 				note_spot_depth(wpos, y, x);
 				everyone_lite_spot(wpos, y, x);
