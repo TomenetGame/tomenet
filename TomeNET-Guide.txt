@@ -1861,9 +1861,10 @@ Other !-inscriptions:
                 anyway.
     !U          This item will be displayed in dark grey colour in your
                 inventory. Can be useful for sorting loot.
-Consumable items only:
+Mainly for consumable items:
     !Q          will not print a message how many you have left after consuming
-                one. For example use on ID scrolls in combination:  !XQ
+                one (like if 'taciturn_messages' were enabled). For example use
+                on ID scrolls in combination:  !XQ
 
 The # inscription:
     This one makes all following inscription be appended directly behind the
