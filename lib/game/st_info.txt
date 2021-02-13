@@ -335,7 +335,7 @@ $ENABLE_ITEM_ORDER!A:2:1:3:4:0:0
 #O:34:35:36:37:36:37
 O:34:35:36:37:46:49
 G:6:r
-W:36
+W:48
 
 N:6:Black Market
 #potion of Speed
