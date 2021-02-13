@@ -14620,7 +14620,6 @@ don't need anymore into wood chips or reactive metal powder.
 
 Crafting ingredients from raw materials:
 ----------------------------------------
-
 - Wood chips can be processed into charcoal (needs a fire-based light source).
 - Sulfur + saltpetre + water = flask of acid.
 - Vitriol + water or salt water = flask of acid.
@@ -14629,7 +14628,6 @@ Crafting ingredients from raw materials:
 
 Crafting actual explosive charges:
 ----------------------------------
-
 Note that you can inscribe those !Fn where n ranges from 1 to 15 and sets the
 fuse timer in seconds until it blows up. If the inscription is omitted the
 charges use type-specific standard fuse lengths listed in this table.
@@ -14656,7 +14654,7 @@ L-Concussive    |   1    1     2                       2                 |  3s
 Underground     |   1    2     2                              1          |  7s
 
 Aside from blast charges it's possible to craft fireworks:
-
+----------------------------------------
 Charcoal + sulfur + 2x saltpetre + 2x reactive metal powder
  + scroll of light or scroll of fire = scroll of firework (random outcome)
 
