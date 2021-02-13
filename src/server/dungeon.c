@@ -5735,7 +5735,7 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 	/* and DG_CURSE randomly summons a monster (non-unique) */
-	if (p_ptr->dg_curse && (rand_int(300) == 0) && !istown(&p_ptr->wpos) && !isdungeontown(&p_ptr->wpos) &&
+	if (p_ptr->dg_curse && (rand_int(300) == 0) && !istownarea(&p_ptr->wpos, MAX_TOWNAREA) && !isdungeontown(&p_ptr->wpos) &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 40)) {
 		int anti_Ind = world_check_antimagic(Ind);
 

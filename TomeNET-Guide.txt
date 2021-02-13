@@ -12520,7 +12520,7 @@ TY_CURSE        Randomly drains stats sometimes, even if the item is uncursed.
 DG_CURSE        Rarely summons a random monster on you, even if uncursed.
                 (DG_CURSE will stay, even if the 'normal' curse is broken!)
                 Greatly lowers the items value by 25000 Au.
-                This curse will be on hold while you're in a town.
+                This curse will be on hold while you're in a town area.
                 Note that an anti-magic field has a chance to suppress it.
                 Having 'Holy Support' skill at 40.000 or better will completely
                 negate TY_CURSE effects.
