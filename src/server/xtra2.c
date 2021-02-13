@@ -1562,6 +1562,11 @@ bool set_blind(int Ind, int v) {
 			msg_format_near(Ind, "%s gropes around blindly!", p_ptr->name);
 			msg_print(Ind, "You are blind!");
 			notice = TRUE;
+
+			if (!p_ptr->warning_status_blindness) {
+				msg_print(Ind, "\374\377yHINT:\377w One way to cure \377yblindness\377w are potions of cure serious wounds (or better).");
+				p_ptr->warning_status_blindness = 1;
+			}
 		}
 
 		break_shadow_running(Ind);
@@ -1632,6 +1637,11 @@ bool set_confused(int Ind, int v) {
 			msg_format_near(Ind, "%s appears confused!", p_ptr->name);
 			msg_print(Ind, "You are confused!");
 			notice = TRUE;
+
+			if (!p_ptr->warning_status_confusion) {
+				msg_print(Ind, "\374\377yHINT:\377w One way to cure \377yconfusion\377w are potions of cure serious wounds (or better).");
+				p_ptr->warning_status_confusion = 1;
+			}
 		}
 
 		break_cloaking(Ind, 0);
@@ -3015,20 +3025,20 @@ bool set_stun_raw(int Ind, int v) {
 	if (new_aux > old_aux) {
 		/* Describe the state */
 		switch (new_aux) {
-			/* Stun */
-			case 1:
+		/* Stun */
+		case 1:
 			msg_format_near(Ind, "\377o%s appears stunned.", p_ptr->name);
 			msg_print(Ind, "\377oYou have been stunned.");
 			break;
 
-			/* Heavy stun */
-			case 2:
+		/* Heavy stun */
+		case 2:
 			msg_format_near(Ind, "\377o%s is heavily stunned.", p_ptr->name);
 			msg_print(Ind, "\377oYou have been heavily stunned.");
 			break;
 
-			/* Knocked out */
-			case 3:
+		/* Knocked out */
+		case 3:
 			msg_format_near(Ind, "%s has been knocked out.", p_ptr->name);
 			msg_print(Ind, "\377rYou have been knocked out.");
 			s_printf("%s EFFECT: Knockedout %s.\n", showtime(), p_ptr->name);
@@ -3040,6 +3050,11 @@ bool set_stun_raw(int Ind, int v) {
 
 		/* Notice */
 		notice = TRUE;
+
+		if (!p_ptr->warning_status_stun && !old_aux) {
+			msg_print(Ind, "\374\377yHINT:\377w One way to cure \377ystun\377w are potions of cure critical wounds (or better).");
+			p_ptr->warning_status_stun = 1;
+		}
 	}
 
 	/* Decrease cut */
@@ -3126,20 +3141,20 @@ bool set_stun(int Ind, int v) {
 	if (new_aux > old_aux) {
 		/* Describe the state */
 		switch (new_aux) {
-			/* Stun */
-			case 1:
+		/* Stun */
+		case 1:
 			msg_format_near(Ind, "\377o%s appears stunned.", p_ptr->name);
 			msg_print(Ind, "\377oYou have been stunned.");
 			break;
 
-			/* Heavy stun */
-			case 2:
+		/* Heavy stun */
+		case 2:
 			msg_format_near(Ind, "\377o%s is heavily stunned.", p_ptr->name);
 			msg_print(Ind, "\377oYou have been heavily stunned.");
 			break;
 
-			/* Knocked out */
-			case 3:
+		/* Knocked out */
+		case 3:
 			msg_format_near(Ind, "%s has been knocked out.", p_ptr->name);
 			msg_print(Ind, "\377rYou have been knocked out.");
 			s_printf("%s EFFECT: Knockedout %s.\n", showtime(), p_ptr->name);
@@ -3151,6 +3166,11 @@ bool set_stun(int Ind, int v) {
 
 		/* Notice */
 		notice = TRUE;
+
+		if (!p_ptr->warning_status_stun && !old_aux) {
+			msg_print(Ind, "\374\377yHINT:\377w One way to cure \377ystun\377w are potions of cure critical wounds (or better).");
+			p_ptr->warning_status_stun = 1;
+		}
 	}
 
 	/* Decrease cut */

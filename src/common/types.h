@@ -3429,7 +3429,7 @@ struct player_type {
 	char warning_drained, warning_boomerang, warning_bash, warning_inspect;
 	/* 4.7.1b+ additions */
 	char warning_repair, warning_partyexp, warning_wor2, warning_depth; //repair weapon/armour, no xp sharing, wor INTO dun (display at -50 BD when char is hilev), low/no exp on grey/yellow
-	char warning_blastcharge;
+	char warning_blastcharge, warning_status_blindness, warning_status_confusion, warning_status_stun;
 	//not for now, unnecessary spam: , warning_xpdrained, 10% gain while drained
 
 #ifdef USE_SOUND_2010
