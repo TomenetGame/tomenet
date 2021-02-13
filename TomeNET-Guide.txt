@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 12. Februar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 13. Februar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1861,6 +1861,9 @@ Other !-inscriptions:
                 anyway.
     !U          This item will be displayed in dark grey colour in your
                 inventory. Can be useful for sorting loot.
+Consumable items only:
+    !Q          will not print a message how many you have left after consuming
+                one. For example use on ID scrolls in combination:  !XQ
 
 The # inscription:
     This one makes all following inscription be appended directly behind the

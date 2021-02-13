@@ -10465,11 +10465,12 @@ void inven_item_charges(int Ind, int item) {
  */
 void inven_item_describe(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
-	object_type	*o_ptr = &p_ptr->inventory[item];
-	char	o_name[ONAME_LEN];
+	object_type *o_ptr = &p_ptr->inventory[item];
+	char o_name[ONAME_LEN];
 
 	/* Hack -- suppress msg */
 	if (p_ptr->taciturn_messages) return;
+	if (check_guard_inscription(o_ptr->note, 'Q')) return;
 
 	/* Get a description */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
@@ -10624,6 +10625,10 @@ void floor_item_charges(int item) {
  * Describe an item in the inventory.
  */
 void floor_item_describe(int item) {
+	/* Hack -- suppress msg */
+	/* if (p_ptr->taciturn_messages) return;
+	if (check_guard_inscription(o_ptr->note, 'Q')) return; */
+
 	/* Get a description */
 	/*object_desc(o_name, o_ptr, TRUE, 3);*/
 
