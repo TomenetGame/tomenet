@@ -11056,6 +11056,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "Timer = %d.", great_pumpkin_timer);
 				return;
 			}
+			else if (prefix(messagelc, "/uptime")) { /* same as LUA uptime (It/Moltor) */
+				long elapsed = (turn - session_turn) / cfg.fps;
+				int days = elapsed / 86400, hours = (elapsed % 86400) / 3600, minutes = (elapsed % 3600) / 60, seconds = (elapsed % 60);
+
+				msg_format(Ind, "\377sUptime: %d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
+				return;
+			}
 		}
 	}
 
