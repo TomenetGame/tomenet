@@ -14637,7 +14637,7 @@ Charge type     | Char- Sul- Salt- Ammonia Reactive Caustic Caustic Lamp | Std.
 ----------------+--------------------------------------------------------+-----
 Blast           |   1    1     2                                         |  3s
  (alternative)  |                    3                                1  |
-L-Blast         |   1    1     3                                         |  5s
+Large Blast     |   1    1     3                                         |  5s
  (alternative)  |                    3                 1              1  |
 Surgical        |   2    2     3     3                                   |  5s
 Ground-shaking  |   1    1     3                              1          |  9s
