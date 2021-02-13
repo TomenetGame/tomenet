@@ -14619,33 +14619,41 @@ Use a grinding tool (available at the alchemist store) to grind items that you
 don't need anymore into wood chips or reactive metal powder.
 
 Crafting ingredients from raw materials:
+----------------------------------------
 
-Wood chips can be processed into charcoal (needs a fire-based light source).
-Sulfur + saltpetre + potion of water = flask of acid.
-Vitriol + water or salt water = flask of acid.
-Reactive metal powder + salt water or ammonia salt = caustic metal ash.
-Reactive metal powder + acid or vitriol = caustic salt.
+- Wood chips can be processed into charcoal (needs a fire-based light source).
+- Sulfur + saltpetre + water = flask of acid.
+- Vitriol + water or salt water = flask of acid.
+- Reactive metal powder + salt water or ammonia salt = caustic metal ash.
+- Reactive metal powder + acid or vitriol = caustic salt.
 
-Charge type     | Char-  Sul-  Salt-  Ammonia  Reactive  Caustic  Caustic  Lamp
-                | coal   fur   petre  salt     m.powder  m.ash    salt     oil
-----------------+--------------------------------------------------------------
-Blast           |   1     1      2
- (alternative)  |                       3                                   1
-L-Blast         |   1     1      3
- (alternative)  |                       3                   1               1
-Surgical        |   2     2      3      3
-Ground-shaking  |   1     1      3                                  1
-Destructor      |   2     2      3                                  3
-Fire            |   2     1      2                          1
-Firestorm       |   2     2      3                          2
-Firewall        |   3     2      2                          1
-Wrecking        |                       3                   1               2
-Cascading       |                       3                   3               2
-Tactical        |                       3                   2               2
-Flash bomb      |   1     1      2                2
-Concussive      |   1     1      2                          1
-L-Concussive    |   1     1      2                          2
-Underground     |   1     2      2                                  1
+Crafting actual explosive charges:
+----------------------------------
+
+Note that you can inscribe those !Fn where n ranges from 1 to 15 and sets the
+fuse timer in seconds until it blows up. If the inscription is omitted the
+charges use type-specific standard fuse lengths listed in this table.
+
+Charge type     | Char- Sul- Salt- Ammonia Reactive Caustic Caustic Lamp | Std.
+                | coal  fur  petre salt    m.powder m.ash   salt    oil  | fuse
+----------------+--------------------------------------------------------+-----
+Blast           |   1    1     2                                         |  3s
+ (alternative)  |                    3                                1  |
+L-Blast         |   1    1     3                                         |  5s
+ (alternative)  |                    3                 1              1  |
+Surgical        |   2    2     3     3                                   |  5s
+Ground-shaking  |   1    1     3                              1          |  9s
+Destructor      |   2    2     3                              3          | 10s
+Fire            |   2    1     2                       1                 |  5s
+Firestorm       |   2    2     3                       2                 |  9s
+Firewall        |   3    2     2                       1                 |  2s
+Wrecking        |                    3                 1              2  |  2s
+Cascading       |                    3                 3              2  |  2s
+Tactical        |                    3                 2              2  |  2s
+Flash bomb      |   1    1     2               2                         |  2s
+Concussive      |   1    1     2                       1                 |  2s
+L-Concussive    |   1    1     2                       2                 |  3s
+Underground     |   1    2     2                              1          |  7s
 
 Aside from blast charges it's possible to craft fireworks:
 
