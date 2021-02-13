@@ -4935,6 +4935,9 @@ And if you still have spare money (this one costs a lot) a
 -Scroll of Word of Recall. (See "(0.3) Important inscriptions, Word of Recall"
  for more info.)
 
+If you are interested in more tips about preparing inventory and equipment, you
+could check out chapter (7) Tactics & Strategy.
+
 
 
 (3.6) Creating basic macros & inscribing items
