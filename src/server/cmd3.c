@@ -3368,8 +3368,7 @@ void do_cmd_steal(int Ind, int dir) {
 /*
  * An "item_tester_hook" for refilling lanterns
  */
-static bool item_tester_refill_lantern(object_type *o_ptr)
-{
+static bool item_tester_refill_lantern(object_type *o_ptr) {
 	/* (Rand)arts are not usable for refilling */
 	if (o_ptr->name1) return (FALSE);
 

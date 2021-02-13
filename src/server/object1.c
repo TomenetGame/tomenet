@@ -465,32 +465,26 @@ static byte scroll_col[MAX_TITLES];
  * Certain items have a flavor
  * This function is used only by "flavor_init()"
  */
-static bool object_has_flavor(int i)
-{
+static bool object_has_flavor(int i) {
 	object_kind *k_ptr = &k_info[i];
 
 	/* Check for flavor */
-	switch (k_ptr->tval)
-	{
-		/* The standard "flavored" items */
-		case TV_AMULET:
-		case TV_RING:
-		case TV_STAFF:
-		case TV_WAND:
-		case TV_SCROLL:
-		case TV_POTION:
-		case TV_POTION2:	// Hack inside!
-		case TV_ROD:
-		{
-			return (TRUE);
-		}
+	switch (k_ptr->tval) {
+	/* The standard "flavored" items */
+	case TV_AMULET:
+	case TV_RING:
+	case TV_STAFF:
+	case TV_WAND:
+	case TV_SCROLL:
+	case TV_POTION:
+	case TV_POTION2:	// Hack inside!
+	case TV_ROD:
+		return (TRUE);
 
-		/* Hack -- food SOMETIMES has a flavor */
-		case TV_FOOD:
-		{
-			if ((k_ptr->sval < SV_FOOD_MIN_FOOD) || (k_ptr->sval > SV_FOOD_MAX_FOOD)) return (TRUE);
-			return (FALSE);
-		}
+	/* Hack -- food SOMETIMES has a flavor */
+	case TV_FOOD:
+		if ((k_ptr->sval < SV_FOOD_MIN_FOOD) || (k_ptr->sval > SV_FOOD_MAX_FOOD)) return (TRUE);
+		return (FALSE);
 	}
 
 	/* Assume no flavor */
@@ -504,53 +498,45 @@ static bool object_has_flavor(int i)
  *
  * XXX XXX XXX Add "EASY_KNOW" flag to "k_info.txt" file
  */
-static bool object_easy_know(int i)
-{
+static bool object_easy_know(int i) {
 	object_kind *k_ptr = &k_info[i];
 
 	/* Analyze the "tval" */
-	switch (k_ptr->tval)
-	{
-		/* Simple items */
-		case TV_FLASK:
-		case TV_JUNK:
-		case TV_GAME:
-		case TV_BOTTLE:
-		case TV_SKELETON:
-		case TV_SPIKE:
-		case TV_EGG:
-		case TV_FIRESTONE:
-		case TV_CORPSE:
-		case TV_HYPNOS:
-		case TV_RUNE:
-		{
-			return (TRUE);
-		}
+	switch (k_ptr->tval) {
+	/* Simple items */
+	case TV_FLASK:
+	case TV_JUNK:
+	case TV_GAME:
+	case TV_BOTTLE:
+	case TV_SKELETON:
+	case TV_SPIKE:
+	case TV_EGG:
+	case TV_FIRESTONE:
+	case TV_CORPSE:
+	case TV_HYPNOS:
+	case TV_RUNE:
+		return (TRUE);
 
-		/* All Food, Potions, Scrolls, Rods */
-		case TV_FOOD:
-		case TV_POTION:
-		case TV_POTION2:
-		case TV_SCROLL:
-		case TV_PARCHMENT:
-		case TV_ROD:
-		case TV_ROD_MAIN:
-		case TV_BATERIE:
-		{
-			return (TRUE);
-		}
+	/* All Food, Potions, Scrolls, Rods */
+	case TV_FOOD:
+	case TV_POTION:
+	case TV_POTION2:
+	case TV_SCROLL:
+	case TV_PARCHMENT:
+	case TV_ROD:
+	case TV_ROD_MAIN:
+	case TV_BATERIE:
+		return (TRUE);
 
-		/* Some Rings, Amulets, Lites */
-		case TV_RING:
-		case TV_AMULET:
-		case TV_LITE:
-		/* added default (for tools which got EASY_KNOW added,
-		   such as flint/climbing set) */
-		default:
-		{
-			if (k_ptr->flags3 & TR3_EASY_KNOW) return (TRUE);
-			return (FALSE);
-		}
+	/* Some Rings, Amulets, Lites */
+	case TV_RING:
+	case TV_AMULET:
+	case TV_LITE:
+	/* added default (for tools which got EASY_KNOW added,
+	   such as flint/climbing set) */
+	default:
+		if (k_ptr->flags3 & TR3_EASY_KNOW) return (TRUE);
+		return (FALSE);
 	}
 
 	/* Nope */
@@ -565,89 +551,89 @@ static bool object_easy_know(int i)
  */
 static byte default_tval_to_attr(int tval) {
 	switch (tval) {
-		case TV_SKELETON:
-		case TV_BOTTLE:
-		case TV_JUNK:
-		case TV_GAME:
-			return (TERM_WHITE);
+	case TV_SKELETON:
+	case TV_BOTTLE:
+	case TV_JUNK:
+	case TV_GAME:
+		return (TERM_WHITE);
 
-		case TV_CHEST:
-			return (TERM_SLATE);
+	case TV_CHEST:
+		return (TERM_SLATE);
 
-		case TV_SHOT:
-		case TV_BOLT:
-		case TV_ARROW:
-			return (TERM_L_UMBER);
+	case TV_SHOT:
+	case TV_BOLT:
+	case TV_ARROW:
+		return (TERM_L_UMBER);
 
-		case TV_LITE:
-			return (TERM_YELLOW);
+	case TV_LITE:
+		return (TERM_YELLOW);
 
-		case TV_SPIKE:
-			return (TERM_SLATE);
+	case TV_SPIKE:
+		return (TERM_SLATE);
 
-		case TV_BOOMERANG: /* maybe L_UMBER? */
-		case TV_BOW:
-			return (TERM_UMBER);
+	case TV_BOOMERANG: /* maybe L_UMBER? */
+	case TV_BOW:
+		return (TERM_UMBER);
 
-		case TV_DIGGING:
-			return (TERM_SLATE);
+	case TV_DIGGING:
+		return (TERM_SLATE);
 
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_AXE:
-			return (TERM_L_WHITE);
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_AXE:
+		return (TERM_L_WHITE);
 
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CROWN:
-		case TV_HELM:
-		case TV_SHIELD:
-		case TV_CLOAK:
-			return (TERM_L_UMBER);
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_CROWN:
+	case TV_HELM:
+	case TV_SHIELD:
+	case TV_CLOAK:
+		return (TERM_L_UMBER);
 
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-			return (TERM_SLATE);
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+		return (TERM_SLATE);
 
-		case TV_GOLEM:
-			return (TERM_VIOLET);
+	case TV_GOLEM:
+		return (TERM_VIOLET);
 
-		case TV_AMULET:
-			return (TERM_ORANGE);
+	case TV_AMULET:
+		return (TERM_ORANGE);
 
-		case TV_RING:
-			return (TERM_RED);
+	case TV_RING:
+		return (TERM_RED);
 
-		case TV_STAFF:
-			return (TERM_L_UMBER);
+	case TV_STAFF:
+		return (TERM_L_UMBER);
 
-		case TV_WAND:
-			return (TERM_L_GREEN);
+	case TV_WAND:
+		return (TERM_L_GREEN);
 
-		case TV_ROD:
-			return (TERM_L_WHITE);
+	case TV_ROD:
+		return (TERM_L_WHITE);
 
-		case TV_SCROLL:
-		case TV_PARCHMENT:
-			return (TERM_WHITE);
+	case TV_SCROLL:
+	case TV_PARCHMENT:
+		return (TERM_WHITE);
 
-		case TV_POTION:
-		case TV_POTION2:
-		case TV_BOOK:	/* Right? */
-			return (TERM_L_BLUE);
+	case TV_POTION:
+	case TV_POTION2:
+	case TV_BOOK:	/* Right? */
+		return (TERM_L_BLUE);
 
-		case TV_FLASK:
-			return (TERM_YELLOW);
+	case TV_FLASK:
+		return (TERM_YELLOW);
 
-		case TV_FOOD:
-			return (TERM_L_UMBER);
+	case TV_FOOD:
+		return (TERM_L_UMBER);
 
-		case TV_TRAPKIT:
-			return TERM_SLATE;
-		case TV_RUNE:
-			return TERM_L_RED;
+	case TV_TRAPKIT:
+		return TERM_SLATE;
+	case TV_RUNE:
+		return TERM_L_RED;
 	}
 
 	return (TERM_WHITE);
@@ -659,13 +645,11 @@ static byte default_tval_to_attr(int tval) {
  *
  * XXX XXX XXX Off-load to "pref.prf" file (?)
  */
-static byte default_tval_to_char(int tval)
-{
+static byte default_tval_to_char(int tval) {
 	int i;
 
 	/* Hack -- Guess at "correct" values for tval_to_char[] */
-	for (i = 1; i < max_k_idx; i++)
-	{
+	for (i = 1; i < max_k_idx; i++) {
 		object_kind *k_ptr = &k_info[i];
 
 		/* Use the first value we find */
@@ -710,7 +694,7 @@ static byte default_tval_to_char(int tval)
  * Note that the "hacked seed" may provide an RNG with alternating parity!
  */
 void flavor_init(void) {
-	int		i, j;
+	int	i, j;
 	byte	temp_col;
 	cptr	temp_adj;
 	bool	temp_cheap;
@@ -2027,296 +2011,294 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* Analyze the object */
 	switch (o_ptr->tval) {
-		/* Some objects are easy to describe */
-		case TV_SPECIAL:
-			if (o_ptr->sval == SV_CUSTOM_OBJECT)
-				basenm = o_ptr->note ? quark_str(o_ptr->note) : "";
-		case TV_SKELETON:
-		case TV_BOTTLE:
-		case TV_JUNK:
-		case TV_GAME:
-		case TV_SPIKE:
-		case TV_KEY:
-		case TV_FLASK:
-		case TV_CHEST:
-		case TV_FIRESTONE:
-		case TV_INSTRUMENT:
-		case TV_TOOL:
-			break;
+	/* Some objects are easy to describe */
+	case TV_SPECIAL:
+		if (o_ptr->sval == SV_CUSTOM_OBJECT)
+			basenm = o_ptr->note ? quark_str(o_ptr->note) : "";
+	case TV_SKELETON:
+	case TV_BOTTLE:
+	case TV_JUNK:
+	case TV_GAME:
+	case TV_SPIKE:
+	case TV_KEY:
+	case TV_FLASK:
+	case TV_CHEST:
+	case TV_FIRESTONE:
+	case TV_INSTRUMENT:
+	case TV_TOOL:
+		break;
 
+	/* Missiles/ Bows/ Weapons */
+	case TV_SHOT:
+	case TV_BOLT:
+	case TV_ARROW:
+	case TV_BOW:
+	case TV_BLUNT:
+	case TV_POLEARM:
+	case TV_SWORD:
+	case TV_DIGGING:
+	case TV_BOOMERANG:
+	case TV_AXE:
+	case TV_MSTAFF:
+		show_weapon = TRUE;
+		break;
 
-			/* Missiles/ Bows/ Weapons */
-		case TV_SHOT:
-		case TV_BOLT:
-		case TV_ARROW:
-		case TV_BOW:
-		case TV_BLUNT:
-		case TV_POLEARM:
-		case TV_SWORD:
-		case TV_DIGGING:
-		case TV_BOOMERANG:
-		case TV_AXE:
-		case TV_MSTAFF:
-			show_weapon = TRUE;
-			break;
+	/* Trapping Kits */
+	case TV_TRAPKIT:
+		modstr = basenm;
+		switched_ego_prefix_and_modstr = TRUE;
+		basenm = "& # Trap Kit~";
+		break;
 
-		/* Trapping Kits */
-		case TV_TRAPKIT:
-			modstr = basenm;
-			switched_ego_prefix_and_modstr = TRUE;
-			basenm = "& # Trap Kit~";
-			break;
-
-			/* Armour */
-		case TV_SHIELD:
+		/* Armour */
+	case TV_SHIELD:
 #ifdef USE_NEW_SHIELDS
-			show_shield = TRUE;
-			break;
+		show_shield = TRUE;
+		break;
 #endif
-		case TV_BOOTS:
-		case TV_GLOVES:
-		case TV_CLOAK:
-		case TV_CROWN:
-		case TV_HELM:
-		case TV_SOFT_ARMOR:
-		case TV_HARD_ARMOR:
-		case TV_DRAG_ARMOR:
-			show_armour = TRUE;
-			break;
+	case TV_BOOTS:
+	case TV_GLOVES:
+	case TV_CLOAK:
+	case TV_CROWN:
+	case TV_HELM:
+	case TV_SOFT_ARMOR:
+	case TV_HARD_ARMOR:
+	case TV_DRAG_ARMOR:
+		show_armour = TRUE;
+		break;
 
+	case TV_GOLEM:
+		break;
 
-		case TV_GOLEM:
-			break;
+	/* Lites (including a few "Specials") */
+	case TV_LITE:
+		break;
 
-			/* Lites (including a few "Specials") */
-		case TV_LITE:
-			break;
-
-
-			/* Amulets (including a few "Specials") */
-		case TV_AMULET:
-			/* keep our special randart naming ;) 'the slow digestion of..' */
-			if (o_ptr->name1 == ART_RANDART && known) break;
+	/* Amulets (including a few "Specials") */
+	case TV_AMULET:
+		/* keep our special randart naming ;) 'the slow digestion of..' */
+		if (o_ptr->name1 == ART_RANDART && known) break;
 
 #if 0
-			/* Suppress flavour */
-			if (artifact_p(o_ptr) && known && !(mode & 512)) {
-				//obsolete	basenm = "& Amulet~";
-				break;
-			}
+		/* Suppress flavour */
+		if (artifact_p(o_ptr) && known && !(mode & 512)) {
+			//obsolete	basenm = "& Amulet~";
+			break;
+		}
 #endif
 
-			/* "Amulets of Luck" are just called "Talismans" -C. Blue */
-			if ((o_ptr->sval == SV_AMULET_LUCK) && aware) {
-				if (!(mode & 512)) basenm = "& Talisman~";
-				else {
-					modstr = amulet_adj[indexx];
-					basenm = "& # Talisman~";
-				}
-				break;
+		/* "Amulets of Luck" are just called "Talismans" -C. Blue */
+		if ((o_ptr->sval == SV_AMULET_LUCK) && aware) {
+			if (!(mode & 512)) basenm = "& Talisman~";
+			else {
+				modstr = amulet_adj[indexx];
+				basenm = "& # Talisman~";
 			}
-
-			/* Color the object */
-			modstr = amulet_adj[indexx];
-
-			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)))) append_name = TRUE;
-
-			/* Hack for insta-arts: Use alternative name from k_info?
-			   If the k-name starts on '&' it's actually an alternative base item name,
-			   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
-			if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
-				if (short_item_names || !aware) basenm = k_name + k_ptr->name;
-				else {
-					strcpy(basenm2, "& #");
-					strcat(basenm2, k_name + k_ptr->name + 1);
-					basenm = basenm2;
-				}
-			} else {
-				if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
-				else basenm = "& # Amulet~";
-			}
-
-			break;
-
-			/* Rings (including a few "Specials") */
-		case TV_RING:
-			/* keep our special randart naming ;) 'the slow digestion of..' */
-			if (o_ptr->name1 == ART_RANDART && known && !special_rop) break;
-
-#if 0
-			/* Suppress flavour */
-			if (artifact_p(o_ptr) && known && !(mode & 512)) {
-				//obsolete	basenm = "& Amulet~";
-				break;
-			}
-#endif
-
-			/* Color the object */
-			modstr = ring_adj[indexx];
-
-			if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)) || special_rop)) append_name = TRUE;
-
-			/* Hack for insta-arts: Use alternative name from k_info?
-			   If the k-name starts on '&' it's actually an alternative base item name,
-			   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
-			if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
-				if (short_item_names || !aware) basenm = k_name + k_ptr->name;
-				else {
-					strcpy(basenm2, "& #");
-					strcat(basenm2, k_name + k_ptr->name + 1);
-					basenm = basenm2;
-				}
-			} else {
-				if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
-				else basenm = "& # Ring~";
-			}
-
-			break;
-
-		case TV_STAFF:
-			/* Color the object */
-			modstr = staff_adj[indexx];
-			if (aware) append_name = TRUE;
-			if (short_item_names) basenm = aware ? "& Staff~" : "& # Staff~";
-			else basenm = "& # Staff~";
-			break;
-
-		case TV_WAND:
-			/* Color the object */
-			modstr = wand_adj[indexx];
-			if (aware) append_name = TRUE;
-			if (short_item_names) basenm = aware ? "& Wand~" : "& # Wand~";
-			else basenm = "& # Wand~";
-			break;
-
-		case TV_ROD:
-			/* Color the object */
-			modstr = rod_adj[indexx];
-			if (aware) append_name = TRUE;
-			if (short_item_names) basenm = aware ? "& Rod~" : "& # Rod~";
-			else basenm = "& # Rod~";
-			break;
-
-		case TV_ROD_MAIN:
-		{
-			object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
-			modstr = k_name + tip_ptr->name;
 			break;
 		}
 
-		case TV_SCROLL:
-			/* Suppress flavour */
-			if (artifact_p(o_ptr) && known && !(mode & 512)) {
-				basenm = "& Scroll~";
-				break;
-			}
+		/* Color the object */
+		modstr = amulet_adj[indexx];
 
-			if (o_ptr->sval == SV_SCROLL_CHEQUE) {
-				if (mode & 256)
-					basenm = "& Cheque~";
-				else
-					basenm = "& Cheque~ worth $ Au";
-				break;
+		if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)))) append_name = TRUE;
+
+		/* Hack for insta-arts: Use alternative name from k_info?
+		   If the k-name starts on '&' it's actually an alternative base item name,
+		   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
+		if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
+			if (short_item_names || !aware) basenm = k_name + k_ptr->name;
+			else {
+				strcpy(basenm2, "& #");
+				strcat(basenm2, k_name + k_ptr->name + 1);
+				basenm = basenm2;
 			}
+		} else {
+			if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
+			else basenm = "& # Amulet~";
+		}
+
+		break;
+
+	/* Rings (including a few "Specials") */
+	case TV_RING:
+		/* keep our special randart naming ;) 'the slow digestion of..' */
+		if (o_ptr->name1 == ART_RANDART && known && !special_rop) break;
+
+#if 0
+		/* Suppress flavour */
+		if (artifact_p(o_ptr) && known && !(mode & 512)) {
+			//obsolete	basenm = "& Amulet~";
+			break;
+		}
+#endif
+
+		/* Color the object */
+		modstr = ring_adj[indexx];
+
+		if (aware && (!artifact_p(o_ptr) || (!known && !(f3 & TR3_INSTA_ART)) || special_rop)) append_name = TRUE;
+
+		/* Hack for insta-arts: Use alternative name from k_info?
+		   If the k-name starts on '&' it's actually an alternative base item name,
+		   otherwise it's the usual subtype name (eg 'Slow Digestion'). */
+		if ((f3 & TR3_INSTA_ART) && *(k_ptr->name + k_name) == '&') {
+			if (short_item_names || !aware) basenm = k_name + k_ptr->name;
+			else {
+				strcpy(basenm2, "& #");
+				strcat(basenm2, k_name + k_ptr->name + 1);
+				basenm = basenm2;
+			}
+		} else {
+			if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
+			else basenm = "& # Ring~";
+		}
+
+		break;
+
+	case TV_STAFF:
+		/* Color the object */
+		modstr = staff_adj[indexx];
+		if (aware) append_name = TRUE;
+		if (short_item_names) basenm = aware ? "& Staff~" : "& # Staff~";
+		else basenm = "& # Staff~";
+		break;
+
+	case TV_WAND:
+		/* Color the object */
+		modstr = wand_adj[indexx];
+		if (aware) append_name = TRUE;
+		if (short_item_names) basenm = aware ? "& Wand~" : "& # Wand~";
+		else basenm = "& # Wand~";
+		break;
+
+	case TV_ROD:
+		/* Color the object */
+		modstr = rod_adj[indexx];
+		if (aware) append_name = TRUE;
+		if (short_item_names) basenm = aware ? "& Rod~" : "& # Rod~";
+		else basenm = "& # Rod~";
+		break;
+
+	case TV_ROD_MAIN:
+	{
+		object_kind *tip_ptr = &k_info[lookup_kind(TV_ROD, o_ptr->pval)];
+
+		modstr = k_name + tip_ptr->name;
+		break;
+	}
+
+	case TV_SCROLL:
+		/* Suppress flavour */
+		if (artifact_p(o_ptr) && known && !(mode & 512)) {
+			basenm = "& Scroll~";
+			break;
+		}
+
+		if (o_ptr->sval == SV_SCROLL_CHEQUE) {
+			if (mode & 256)
+				basenm = "& Cheque~";
+			else
+				basenm = "& Cheque~ worth $ Au";
+			break;
+		}
 
 #ifdef NEW_WILDERNESS_MAP_SCROLLS
-			/* For new wilderness mapping code, where it's actually a puzzle piece of the map */
-			if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) {
-				basenm = "& Wilderness Map Piece~";
-				break;
-			}
+		/* For new wilderness mapping code, where it's actually a puzzle piece of the map */
+		if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) {
+			basenm = "& Wilderness Map Piece~";
+			break;
+		}
 #endif
 
+		/* Color the object */
+		modstr = scroll_adj[indexx];
+		if (aware) append_name = TRUE;
+		if (short_item_names) basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
+		else basenm = aware ? "& Scroll~ \"#\"" : "& Scroll~ titled \"#\"";
+		//basenm = "& Scroll~ titled \"#\"";
+		break;
+
+	case TV_POTION:
+	case TV_POTION2:
+		/* Suppress flavour */
+		if (artifact_p(o_ptr) && known && !(mode & 512)) {
+			basenm = "& Potion~";
+			break;
+		}
+
+		/* Color the object */
+		modstr = potion_adj[indexx + (o_ptr->tval == TV_POTION2 ? STATIC_COLORS : 0)]; /* the first n potions have static flavours */
+		if (aware) append_name = TRUE;
+		if (short_item_names) basenm = aware ? "& Potion~" : "& # Potion~";
+		else basenm = "& # Potion~";
+		break;
+
+	case TV_FOOD:
+		/* Ordinary food is "boring" */
+		if ((o_ptr->sval >= SV_FOOD_MIN_FOOD) && (o_ptr->sval <= SV_FOOD_MAX_FOOD)) break;
+
+		if (indexx == SV_FOOD_UNMAGIC) {
+			/* Hack for Mushroom of Unmagic */
+			modstr = "Shimmering";
+		} else {
 			/* Color the object */
-			modstr = scroll_adj[indexx];
-			if (aware) append_name = TRUE;
-			if (short_item_names) basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
-			else basenm = aware ? "& Scroll~ \"#\"" : "& Scroll~ titled \"#\"";
-			//basenm = "& Scroll~ titled \"#\"";
-			break;
+			modstr = food_adj[indexx];
+		}
+		if (aware) append_name = TRUE;
+		if (short_item_names) basenm = aware ? "& Mushroom~" : "& # Mushroom~";
+		else basenm = "& # Mushroom~";
+		break;
 
-		case TV_POTION:
-		case TV_POTION2:
-			/* Suppress flavour */
-			if (artifact_p(o_ptr) && known && !(mode & 512)) {
-				basenm = "& Potion~";
-				break;
-			}
+	case TV_PARCHMENT:
+		modstr = basenm;
+		switched_ego_prefix_and_modstr = TRUE;
+		basenm = "& Parchment~ - #";
+		break;
 
-			/* Color the object */
-			modstr = potion_adj[indexx + (o_ptr->tval == TV_POTION2 ? STATIC_COLORS : 0)]; /* the first n potions have static flavours */
-			if (aware) append_name = TRUE;
-			if (short_item_names) basenm = aware ? "& Potion~" : "& # Potion~";
-			else basenm = "& # Potion~";
-			break;
+		/* Hack -- Gold/Gems */
+	case TV_GOLD:
+		strcpy(buf, basenm);
+		return;
 
-		case TV_FOOD:
-			/* Ordinary food is "boring" */
-			if ((o_ptr->sval >= SV_FOOD_MIN_FOOD) && (o_ptr->sval <= SV_FOOD_MAX_FOOD)) break;
+	case TV_BOOK:
+		/* hack for mindcrafter spell scrolls -> spell crystals - C. Blue */
+		if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
+			basenm = "& Spell Crystal~ of #";
+		/* hack for priest spell scrolls -> prayer scrolls - C. Blue */
+		if (o_ptr->pval >= __lua_P_FIRST && o_ptr->pval <= __lua_P_LAST)
+			basenm = "& Prayer Scroll~ of #";
+		//basenm = k_name + k_ptr->name;
+		if (o_ptr->sval == SV_SPELLBOOK) {
+			if (school_spells[o_ptr->pval].name)
+				modstr = school_spells[o_ptr->pval].name;
+			else modstr = "Unknown spell";
+		}
+		break;
 
-			if (indexx == SV_FOOD_UNMAGIC) {
-				/* Hack for Mushroom of Unmagic */
-				modstr = "Shimmering";
-			} else {
-				/* Color the object */
-				modstr = food_adj[indexx];
-			}
-			if (aware) append_name = TRUE;
-			if (short_item_names) basenm = aware ? "& Mushroom~" : "& # Mushroom~";
-			else basenm = "& # Mushroom~";
-			break;
+	case TV_RUNE:
+		append_name = TRUE;
+		basenm = "& Rune~";
+		break;
 
-		case TV_PARCHMENT:
-			modstr = basenm;
-			switched_ego_prefix_and_modstr = TRUE;
-			basenm = "& Parchment~ - #";
-			break;
-
-			/* Hack -- Gold/Gems */
-		case TV_GOLD:
-			strcpy(buf, basenm);
-			return;
-
-		case TV_BOOK:
-			/* hack for mindcrafter spell scrolls -> spell crystals - C. Blue */
-			if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
-				basenm = "& Spell Crystal~ of #";
-			/* hack for priest spell scrolls -> prayer scrolls - C. Blue */
-			if (o_ptr->pval >= __lua_P_FIRST && o_ptr->pval <= __lua_P_LAST)
-				basenm = "& Prayer Scroll~ of #";
-			//basenm = k_name + k_ptr->name;
-			if (o_ptr->sval == SV_SPELLBOOK) {
-				if (school_spells[o_ptr->pval].name)
-					modstr = school_spells[o_ptr->pval].name;
-				else modstr = "Unknown spell";
-			}
-			break;
-
-		case TV_RUNE:
-			append_name = TRUE;
-			basenm = "& Rune~";
-			break;
-
-		case TV_MONSTER:
-			break;
+	case TV_MONSTER:
+		break;
 
 #ifdef ENABLE_DEMOLITIONIST
-		case TV_CHEMICAL:
-			if (o_ptr->sval == SV_MIXTURE) {
-				mixture_flavour(o_ptr, tmp_modstr);
-				modstr = tmp_modstr;
-			}
-			break;
-		case TV_CHARGE:
-			break;
+	case TV_CHEMICAL:
+		if (o_ptr->sval == SV_MIXTURE) {
+			mixture_flavour(o_ptr, tmp_modstr);
+			modstr = tmp_modstr;
+		}
+		break;
+	case TV_CHARGE:
+		break;
 #endif
 
-		/* Used in the "inventory" routine */
-		default:
-			/* the_sandman: debug line */
-			if (o_ptr->tval != 0) s_printf("NOTHING_NOTICED: tval %d, sval %d\n", o_ptr->tval, o_ptr->sval);
-			strcpy(buf, "(nothing)");
-			return;
+	/* Used in the "inventory" routine */
+	default:
+		/* the_sandman: debug line */
+		if (o_ptr->tval != 0) s_printf("NOTHING_NOTICED: tval %d, sval %d\n", o_ptr->tval, o_ptr->sval);
+		strcpy(buf, "(nothing)");
+		return;
 	}
 
 
