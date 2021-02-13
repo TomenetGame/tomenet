@@ -1398,8 +1398,10 @@ extern int acc_set_deed_achievement(char *name, char deed_sval);
 extern char acc_get_deed_achievement(char *name);
 extern void sf_delete(const char *name);
 extern bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass);
+extern bool GetcaseAccount(struct account *c_acc, cptr name, char *correct_name, bool leavepass);
 extern bool GetAccountID(struct account *c_acc, u32b id, bool leavepass);
 extern bool Admin_GetAccount(struct account *c_acc, cptr name);
+extern bool Admin_GetcaseAccount(struct account *c_acc, cptr name, char *correct_name);
 extern void set_pkill(int Ind, int delay);
 extern int guild_lookup(cptr name);
 extern int party_lookup(cptr name);
@@ -1448,6 +1450,7 @@ extern s32b lookup_player_au(int id);
 extern s32b lookup_player_balance(int id);
 #endif
 extern int lookup_player_id(cptr name);
+extern int lookup_case_player_id(cptr name);
 extern int lookup_player_id_messy(cptr name);
 /* another arg, and its getting a struct... pfft. */
 extern void add_player_name(cptr name, int id, u32b account, byte race, byte class, byte mode, byte level, byte max_plv, u16b party, byte guild, u32b guild_flags, u16b xorder, time_t laston, byte admin, struct worldpos wpos, char houses, byte winner, byte order);

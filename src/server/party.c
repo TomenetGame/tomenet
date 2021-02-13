@@ -116,7 +116,7 @@ int validate(char *name) {
 	bool effect = FALSE;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
+	if (!GetcaseAccount(&acc, name, name, TRUE)) return(0);
 
 	/* Modify account flags */
 	if (acc.flags & ACC_TRIAL) {
@@ -155,7 +155,7 @@ int invalidate(char *name, bool admin) {
 	bool effect = FALSE;
 
 	/* Read from disk */
-	if (!GetAccount(&acc, name, NULL, TRUE)) return(0);
+	if (!GetcaseAccount(&acc, name, name, TRUE)) return(0);
 
 	/* Security check: Only admins can invalidate admin accounts */
 	if (!admin && (acc.flags & ACC_ADMIN)) {
@@ -554,6 +554,108 @@ bool GetAccount(struct account *c_acc, cptr name, char *pass, bool leavepass) {
 		if (c_acc->flags & ACC_DELD) continue;
 		if (!strcmp(c_acc->name, name)) {
 			int val;
+
+			if (pass == NULL) {	/* direct name lookup */
+				val = 0;
+			} else {
+				val = strcmp(c_acc->pass, t_crypt(pass, name));
+
+				/* Update the timestamp if the password is successfully verified - mikaelh */
+				if (val == 0) {
+					c_acc->acc_laston_real = c_acc->acc_laston = time(NULL);
+					fseek(fp, -sizeof(struct account), SEEK_CUR);
+					if (fwrite(c_acc, sizeof(struct account), 1, fp) < 1) {
+						s_printf("Writing to account file failed: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
+					}
+				}
+			}
+			if (!leavepass || pass != NULL) {
+				memset(c_acc->pass, 0, sizeof(c_acc->pass));
+			}
+			if (val != 0) {
+				fclose(fp);
+				WIPE(c_acc, struct account);
+				return(FALSE);
+			} else {
+				fclose(fp);
+				return(TRUE);
+			}
+		}
+	}
+	/* New accounts always have pass */
+	if (!pass) {
+		WIPE(c_acc, struct account);
+		fclose(fp);
+		return(FALSE);
+	}
+
+	/* No account found. Create trial account */
+	WIPE(c_acc, struct account);
+	c_acc->id = new_accid();
+	if (c_acc->id != 0L) {
+		if (c_acc->id == 1)
+			c_acc->flags = (ACC_ADMIN | ACC_NOSCORE);
+		else
+			c_acc->flags = (ACC_TRIAL | ACC_NOSCORE);
+
+		strncpy(c_acc->name, name, 29);
+		c_acc->name[29] = '\0';
+
+		condense_name(buf, c_acc->name);
+		strncpy(c_acc->name_normalised, buf, 29);
+		c_acc->name_normalised[29] = '\0';
+
+		strncpy(c_acc->pass, t_crypt(pass, name), sizeof(c_acc->pass));
+		c_acc->pass[sizeof(c_acc->pass) - 1] = '\0';
+		if (!(WriteAccount(c_acc, TRUE))) {
+			WIPE(c_acc, struct account);
+			fclose(fp);
+			return(FALSE);
+		}
+	}
+	memset(c_acc->pass, 0, sizeof(c_acc->pass));
+	fclose(fp);
+	if (c_acc->id) {
+		return(TRUE);
+	} else {
+		WIPE(c_acc, struct account);
+		return(FALSE);
+	}
+}
+/* Case-insensitive GetAccount() - but does NOT allow 'pass' and hence doesn't allow account-creation.
+   Instead it takes correct_name parameter and sets it to the case-correct account name found. */
+bool GetcaseAccount(struct account *c_acc, cptr name, char *correct_name, bool leavepass) {
+	FILE *fp;
+	char buf[1024];
+	WIPE(c_acc, struct account);
+
+	/* Hack: Assume empty pass, because case-insensitive accountname lookup does not allow new accounts to be created for now */
+	char *pass = NULL;
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb+");
+	if (!fp) {
+		if (errno == ENOENT) {	/* ONLY if non-existent */
+			fp = fopen(buf, "wb+");
+			if (!fp) {
+				KILL(c_acc, struct account);
+				return(FALSE);
+			}
+			s_printf("Generated new account file\n");
+		}
+		else {
+			KILL(c_acc, struct account);
+			return(FALSE);	/* failed */
+		}
+	}
+	while (fread(c_acc, sizeof(struct account), 1, fp)) {
+		if (c_acc->flags & ACC_DELD) continue;
+		if (!strcasecmp(c_acc->name, name)) {
+			int val;
+
+			/* Write back the case-correct name? */
+			if (correct_name != NULL) strcpy(correct_name, c_acc->name);
+
 			if (pass == NULL) {	/* direct name lookup */
 				val = 0;
 			} else {
@@ -630,12 +732,31 @@ bool Admin_GetAccount(struct account *c_acc, cptr name) {
 
 	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
 	fp = fopen(buf, "rb");
-	if (!fp) {
-		return(FALSE); /* cannot access account file */
-	}
+	if (!fp) return(FALSE); /* cannot access account file */
 	while (fread(c_acc, sizeof(struct account), 1, fp)) {
 		if (c_acc->flags & ACC_DELD) continue;
 		if (!strcmp(c_acc->name, name)) {
+			fclose(fp);
+			return(TRUE);
+		}
+	}
+	fclose(fp);
+	WIPE(c_acc, struct account);
+	return(FALSE);
+}
+/* Like Admin_GetAccount but case-insensitive and returns case-correct account name if found */
+bool Admin_GetcaseAccount(struct account *c_acc, cptr name, char *correct_name) {
+	FILE *fp;
+	char buf[1024];
+	WIPE(c_acc, struct account);
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp = fopen(buf, "rb");
+	if (!fp) return(FALSE); /* cannot access account file */
+	while (fread(c_acc, sizeof(struct account), 1, fp)) {
+		if (c_acc->flags & ACC_DELD) continue;
+		if (!strcasecmp(c_acc->name, name)) {
+			if (correct_name != NULL) strcpy(correct_name, c_acc->name);
 			fclose(fp);
 			return(TRUE);
 		}
@@ -4248,24 +4369,41 @@ s32b lookup_player_balance(int id) {
 /*
  * Lookup a player's ID by name.  Return 0 if not found.
  */
-int lookup_player_id(cptr name)
-{
+int lookup_player_id(cptr name) {
 	hash_entry *ptr;
 	int i;
 
 	/* Search in each array slot */
-	for (i = 0; i < NUM_HASH_ENTRIES; i++)
-	{
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
 		/* Acquire pointer to this chain */
 		ptr = hash_table[i];
 
 		/* Check all entries in this chain */
-		while (ptr)
-		{
+		while (ptr) {
 			/* Check this name */
-			if (!strcmp(ptr->name, name))
-				return ptr->id;
+			if (!strcmp(ptr->name, name)) return ptr->id;
+			/* Next entry in chain */
+			ptr = ptr->next;
+		}
+	}
 
+	/* Not found */
+	return 0;
+}
+/* Case-insensitive lookup_player_id() */
+int lookup_case_player_id(cptr name) {
+	hash_entry *ptr;
+	int i;
+
+	/* Search in each array slot */
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		/* Acquire pointer to this chain */
+		ptr = hash_table[i];
+
+		/* Check all entries in this chain */
+		while (ptr) {
+			/* Check this name */
+			if (!strcasecmp(ptr->name, name)) return ptr->id;
 			/* Next entry in chain */
 			ptr = ptr->next;
 		}

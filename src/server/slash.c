@@ -4424,6 +4424,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/seen")) {
 			char response[MAX_CHARS_WIDE];
+
 			get_laston(message3, response, admin_p(Ind), TRUE);
 			msg_print(Ind, response);
 			return;
@@ -4511,16 +4512,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* char names always start on upper-case */
 			message3[0] = toupper(message3[0]);
 
-			if (!(p_id = lookup_player_id(message3))) {
+			if (!(p_id = lookup_case_player_id(message3))) {
 				struct account acc;
 
 #if 1 /* hack: also do a 'whowas' here by checking the reserved names list */
 				for (i = 0; i < MAX_RESERVED_NAMES; i++) {
 					if (!reserved_name_character[i][0]) break;
 
-					if (!strcmp(reserved_name_character[i], message3)) {
+					if (!strcasecmp(reserved_name_character[i], message3)) {
 						for (j = 1; j <= NumPlayers; j++)
-							if (!strcmp(Players[j]->accountname, reserved_name_account[i])) {
+							if (!strcasecmp(Players[j]->accountname, reserved_name_account[i])) {
 								msg_format(Ind, "That deceased character belonged to account: \377s%s \377w(\377Gonline\377w)", reserved_name_account[i]);
 								return;
 							}
@@ -4533,15 +4534,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #if 0 /* don't check for account name */
 				msg_print(Ind, "That character name does not exist.");
 #else /* check for account name */
-				if (!GetAccount(&acc, message3, NULL, FALSE))
+				if (!GetcaseAccount(&acc, message3, message3, FALSE))
 					msg_print(Ind, "That character or account name does not exist.");
 				else {
 					for (i = 1; i <= NumPlayers; i++)
-						if (!strcmp(Players[i]->accountname, message3)) {
-							msg_print(Ind, "There is no such character, but there is an account of that name \377Gonline\377w.");
+						if (!strcasecmp(Players[i]->accountname, message3)) {
+							msg_format(Ind, "No such character, but an account '%s' is \377Gonline\377w.", Players[i]->accountname);
 							return;
 						}
-					msg_print(Ind, "There is no such character, but there is an account of that name.");
+					msg_format(Ind, "No such character, but there is an account named '%s'.", message3);
 				}
 #endif
 				return;
@@ -4550,6 +4551,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* character exists, look up its account */
 			acc = lookup_accountname(p_id);
 			if (!acc) {
+				/* NOTE: This _can_ happen for outdated/inconsistent player databases where a character
+				         of the name still exists but does not belong to the account of the same name! */
 				msg_print(Ind, "***ERROR: No account found.");
 				return;
 			}
@@ -4562,6 +4565,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (lookup_player_admin(p_id)) {
 				if (admin) {
 					struct worldpos wpos = lookup_player_wpos(p_id);
+
 					msg_format(Ind, "That administrative character belongs to account: \377s%s %s(%d,%d,%d)",
 					    acc, online ? "\377G" : "", wpos.wx, wpos.wy, wpos.wz);
 				}
@@ -11081,13 +11085,13 @@ static void do_slash_brief_help(int Ind){
 
 /* determine when character or account name was online the last time */
 void get_laston(char *name, char *response, bool admin, bool colour) {
-	unsigned long int s, sl = 0;
+	unsigned long int s, sla = 0, slp = 0;
 	time_t now;
 	u32b p_id;
 	bool acc_found = FALSE;
 	int i;
 	struct account acc;
-	char name_tmp[MAX_CHARS_WIDE], *nameproc = name_tmp;
+	char name_tmp[MAX_CHARS_WIDE], *nameproc = name_tmp, correct_name[MAX_CHARS_WIDE];
 
 	/* trim name */
 	strncpy(nameproc, name, MAX_CHARS_WIDE - 1);
@@ -11104,41 +11108,32 @@ void get_laston(char *name, char *response, bool admin, bool colour) {
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (admin_p(i) && !admin) continue;
-		if (streq(Players[i]->name, nameproc)) {
+		if (!strcasecmp(Players[i]->name, nameproc)) {
 			strcpy(response, "A character of that name is online right now!");
 			return;
-		} else if (streq(Players[i]->accountname, nameproc)) {
+		} else if (!strcasecmp(Players[i]->accountname, nameproc)) {
 			strcpy(response, "The player using that account name is online right now!");
 			return;
 		}
 	}
 
 	/* check if it's an acount name */
-	if (Admin_GetAccount(&acc, nameproc)) {
+	if (Admin_GetcaseAccount(&acc, nameproc, correct_name)) {
 		acc_found = TRUE;
-		if (admin || !(acc.flags & ACC_ADMIN)) sl = acc.acc_laston_real;
+		if (admin || !(acc.flags & ACC_ADMIN)) sla = acc.acc_laston_real;
 		WIPE(&acc, struct account);
 	}
 
 	/* check if it's a character name (not really necessary if we found an account already) */
-	if ((p_id = lookup_player_id(nameproc))) {
-		if (!lookup_player_admin(p_id) || admin) {
-			if (!acc_found) sl = lookup_player_laston(p_id);
-			else {
-				s = lookup_player_laston(p_id);
-				if (s >= sl) {
-					sl = s;
-					acc_found = FALSE; /* as I said, not necessary :-p */
-				}
-			}
-		}
+	if ((p_id = lookup_case_player_id(nameproc))) {
+		if (!lookup_player_admin(p_id) || admin) slp = lookup_player_laston(p_id);
 	/* neither char nor acc_found? */
 	} else if (!acc_found) {
 		/* last resort: Check reserved names list, ie deceased characters */
 		for (i = 0; i < MAX_RESERVED_NAMES; i++) {
 			if (!reserved_name_character[i][0]) break;
-			if (strcmp(reserved_name_character[i], nameproc)) continue;
-			sprintf(response, "The character \377s%s\377w unfortunately is deceased.", nameproc);
+			if (strcasecmp(reserved_name_character[i], nameproc)) continue;
+			sprintf(response, "The character \377s%s\377w unfortunately is deceased.", reserved_name_character[i]);
 			return;
 		}
 
@@ -11148,13 +11143,25 @@ void get_laston(char *name, char *response, bool admin, bool colour) {
 	}
 
 	/* error or admin account? */
-	if (!sl) {
+	if (!sla && !slp) {
 		sprintf(response, "Sorry, unable to determine the last time %s was seen.", nameproc);
 		return;
 	}
 
+	/* Don't display account AND player info, just take what is more recent, for now */
+	if (sla && slp) {
+		if (slp < sla) {
+			acc_found = FALSE;
+			s = slp;
+		} else s = sla;
+	} else s = sla ? sla : slp;
+
+	/* Display the case-correct name instead of our entered name, if found */
+	if (acc_found) strcpy(nameproc, correct_name);
+	else strcpy(nameproc, lookup_player_name(p_id));
+
 	now = time(&now);
-	s = now - sl;
+	s = now - s;
 	if (colour) {
 		if (s >= 60 * 60 * 24 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld days ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60 * 24));
 		else if (s >= 60 * 60 * 3) sprintf(response, "%s \377s%s\377w was last seen %ld hours ago.", acc_found ? "The player using account" : "The character", nameproc, s / (60 * 60));
