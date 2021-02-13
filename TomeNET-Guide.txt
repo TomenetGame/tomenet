@@ -14658,7 +14658,7 @@ Underground     |   1    2     2                              1          |  7s
 Aside from blast charges it's possible to craft fireworks:
 
 Charcoal + sulfur + 2x saltpetre + 2x reactive metal powder
- + scroll of light or scroll of fire = scroll of fireworks
+ + scroll of light or scroll of fire = scroll of fireworks (random outcome)
 
 
 
