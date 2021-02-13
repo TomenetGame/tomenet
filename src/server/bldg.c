@@ -1293,6 +1293,8 @@ static int repair_cost(int k_idx, int to_x) {
 }
 
 /* Repair an item (no enchantment!) */
+/* Don't allow repairing if item is damaged more than this, to prevent money-cheezing by uncursing heavily negative items: */
+#define REPAIR_ITEM_EXPLOIT_LIMIT -5
 static bool repair_item(int Ind, int i, bool iac) {
 	player_type *p_ptr = Players[Ind];
 
@@ -1327,6 +1329,9 @@ static bool repair_item(int Ind, int i, bool iac) {
  #endif
 #endif
 		else minenchant = -o_ptr->ac;
+
+		/* Don't allow too excessive repairing of (uncursed) items */
+		if (minenchant < REPAIR_ITEM_EXPLOIT_LIMIT) minenchant = REPAIR_ITEM_EXPLOIT_LIMIT;
 
 		/* Allow repairing crowns, and give more leeway for cloaks and very light armour */
 		if (minenchant > -3) minenchant = -3;
@@ -1381,6 +1386,8 @@ static bool repair_item(int Ind, int i, bool iac) {
 
 		minenchant = -(o_ptr->dd * o_ptr->ds + 1) / 2;
 		if (minenchant < -10) minenchant = -10; /* Prevent silly values for top dice weapons */
+		/* Don't allow too excessive repairing of (uncursed) items */
+		if (minenchant < REPAIR_ITEM_EXPLOIT_LIMIT) minenchant = REPAIR_ITEM_EXPLOIT_LIMIT;
 
 		if (o_ptr->to_d >= 0) {
 			msg_print(Ind, "'That looks pretty fine already.'");
@@ -1464,6 +1471,8 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 
 		/* Allow repairing crowns, and give more leeway for cloaks and very light armour */
 		if (minenchant > -3) minenchant = -3;
+		/* Don't allow too excessive repairing of (uncursed) items */
+		if (minenchant < REPAIR_ITEM_EXPLOIT_LIMIT) minenchant = REPAIR_ITEM_EXPLOIT_LIMIT;
 
 		if (o_ptr->to_a >= 0) {
 			msg_print(Ind, "A-'That looks pretty fine already.'");
@@ -1519,6 +1528,8 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 
 		minenchant = -(o_ptr->dd * o_ptr->ds + 1) / 2;
 		if (minenchant < -10) minenchant = -10; /* Prevent silly values for top dice weapons */
+		/* Don't allow too excessive repairing of (uncursed) items */
+		if (minenchant < REPAIR_ITEM_EXPLOIT_LIMIT) minenchant = REPAIR_ITEM_EXPLOIT_LIMIT;
 
 		if (o_ptr->to_d >= 0) {
 			msg_print(Ind, "'That looks pretty fine already.'");
