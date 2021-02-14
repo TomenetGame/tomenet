@@ -1601,6 +1601,10 @@ static char *fgets_inverse(char *buf, int max, FILE *f) {
 /* Local Guide invocation -
    search_type: 1 = search, 2 = strict search (all upper-case),  3 = chapter search, 4 = line number,
                 0 = no pre-defined search, we're browsing it normally. */
+/* '/?' command switches between search types on failure and retries? */
+#define TOPICSEARCH_ALT
+/* '/?' command after failing to switch even attempts just a basic text search as last resort? */
+#define TOPICSEARCH_ALT_BASIC
 void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_string) {
 	static int line = 0, line_before_search = 0, jumped_to_line = 0;
 	static char lastsearch[MAX_CHARS] = "";
@@ -1608,7 +1612,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE;
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
-	int searchline = -1, within_cnt = 0, c, n, line_presearch = line;
+	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line;
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
 	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
 #ifndef BUFFER_GUIDE
@@ -1658,12 +1662,12 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 		/* 'Troubleshooting' section, directly access it */
 		if (!strncasecmp(buf, "prob", 4) || !strncasecmp(buf, "prb", 3)) {
-			char *c = buf;
+			char *x = buf;
 			int p;
 
-			while (*c && !((*c < 'a' || *c > 'z') && (*c < 'A' || *c > 'Z'))) c++;
-			p = atoi(c);
-			*c = 0;
+			while (*x && !((*x < 'a' || *x > 'z') && (*x < 'A' || *x > 'Z'))) x++;
+			p = atoi(x);
+			*x = 0;
 
 			if (my_strcasestr("problem", buf) || my_strcasestr("prblem", buf)) {
 				if (!p) {
@@ -2176,15 +2180,54 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			if (c_override == 255) {
 				/* we didn't find the topic we wanted to access via /? command? then just quit */
 				if (init_search_string && !line) {
-#if 1 /* last chance: promote an all-caps search (2) to a chapter search (3) and retry */
+#ifdef TOPICSEARCH_ALT /* last chance: switch between search types and retry */
+					char *x;
+
+					/* change an all-caps search (2) to a chapter search (3) */
 					if (init_search_type == 2) {
-						c = 'c';
 						strcpy(buf_override, init_search_string);
+						x = buf_override;
+						while (*x) { *x = tolower(*x); x++; }
+ #ifdef TOPICSEARCH_ALT_BASIC /* even fall back to a standard text search, instead of clinging to any sort of 'topic'? */
+						/* if we did that already, demote to standard text search instead */
+						if (c == 'c') {
+							c = 's';
+							init_search_type = 0; /* no further attemps */
+						}
+						/* otherwise perform chapter search now */
+						else
+ #else
+						init_search_type = 0; /* no further attemps */
+ #endif
+						c = 'c';
+					}
+					/* change a chapter search (3) to an all-caps search (2) */
+					else if (init_search_type == 3) {
+						strcpy(buf_override, init_search_string);
+						x = buf_override;
+ #ifdef TOPICSEARCH_ALT_BASIC /* even fall back to a standard text search, instead of clinging to any sort of 'topic'? */
+						/* if we did that already, demote to standard text search instead */
+						if (c == 's') {
+							while (*x) { *x = tolower(*x); x++; }
+							init_search_type = 0; /* no further attemps */
+						} else
+ #else
+						init_search_type = 0; /* no further attemps */
+ #endif
+						{
+							c = 's';
+							while (*x) { *x = toupper(*x); x++; }
+						}
+					/* finally failed to find relevant text */
 					} else
 #endif
 					{
 						c = ESCAPE;
+#ifndef TOPICSEARCH_ALT_BASIC
 						c_message_add(format("Topic '%s' not found.", init_search_string));
+#else
+						c_message_add(format("Search term '%s' not found.", init_search_string));
+#endif
 					}
 				} else c_override = 0;
 			} else {
@@ -2284,13 +2327,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 				/* 'Troubleshooting' section, directly access it */
 				if (!strncasecmp(buf, "prob", 4) || !strncasecmp(buf, "prb", 3)) {
-					char *c = tmpbuf;
+					char *x = tmpbuf;
 					int p;
 
 					strcpy(tmpbuf, buf);
-					while (*c && !((*c < 'a' || *c > 'z') && (*c < 'A' || *c > 'Z'))) c++;
-					p = atoi(c);
-					*c = 0;
+					while (*x && !((*x < 'a' || *x > 'z') && (*x < 'A' || *x > 'Z'))) x++;
+					p = atoi(x);
+					*x = 0;
 
 					if (my_strcasestr("problem", tmpbuf) || my_strcasestr("prblem", tmpbuf)) {
 						if (!p) strcpy(buf, "Troubleshooting");
@@ -2924,9 +2967,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			/* Hack: If we enter all upper-case, search for exactly that, case sensitively */
 			search_uppercase = 4;
 			search_uppercase_ok = FALSE;
-			for (c = 0; searchstr[c]; c++) {
-				if (!search_uppercase_ok && isalpha(searchstr[c])) search_uppercase_ok = TRUE;
-				if (searchstr[c] == toupper(searchstr[c])) continue;
+			for (n = 0; searchstr[n]; n++) {
+				if (!search_uppercase_ok && isalpha(searchstr[n])) search_uppercase_ok = TRUE;
+				if (searchstr[n] == toupper(searchstr[n])) continue;
 				search_uppercase = FALSE;
 				break;
 			}
