@@ -1164,16 +1164,15 @@ D:of old; his lame foot will remind him of its might should he meet it again.
 
 # The Claymore 'Anduril'
 #should be nicer at W:30, but base item is W:40!
+#(side note: supposedly WHITE_LITE in the moonlight, but red light under the sun)
 
 N:83:'Anduril'
 I:23:23:4
 W:40:40:140:120000
-P:0:2d8:20:20:5
-F:STR | DEX | HIDE_TYPE | RES_FEAR | FREE_ACT | BLESSED | LUCK |
-F:SLAY_EVIL | BRAND_FIRE | SLAY_TROLL | SLAY_ORC |
-F:RES_FIRE | SUST_DEX | SEE_INVIS | ACTIVATE | SHOW_MODS | LITE1 |
-F:RES_DISEN | ESP_GOOD | RES_CHAOS
-#F:SPECIAL_GENE |
+P:0:2d10:20:20:0
+F:STR | DEX | SUST_STR | SUST_DEX | RES_FEAR | FREE_ACT | BLESSED | LUCK
+F:LITE1 | BRAND_FIRE | IM_FIRE | SLAY_EVIL | SLAY_TROLL | SLAY_ORC
+F:SEE_INVIS | ACTIVATE | IGNORE_DISEN | HIDE_TYPE | SHOW_MODS
 D:The famed "Flame of the West", the sword that was broken and is forged
 D:again. It glows with the essence of fire, its wearer is mighty in combat,
 D:and no creature of Sauron can withstand it. It will never be stained or
