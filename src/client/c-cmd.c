@@ -2171,10 +2171,21 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
 
+		/* we're here via /? command? */
 		if (c_override) {
-			c = c_override;
-			c_override = 0;
-		} else c = inkey();
+			if (c_override == 255) {
+				/* we didn't find the topic we wanted to access via /? command? then just quit */
+				if (init_search_string && !line) {
+					c = ESCAPE;
+					c_message_add("Topic not found. (To open the guide manually, double-tap '?'.)");
+				} else c_override = 0;
+			} else {
+				c = c_override;
+				c_override = 255;
+			}
+		}
+		/* normal manual operation (resumed) */
+		if (!c_override) c = inkey();
 
 		switch (c) {
 		/* specialty: allow chatting from within here */
