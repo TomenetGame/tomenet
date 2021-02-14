@@ -2177,7 +2177,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				/* we didn't find the topic we wanted to access via /? command? then just quit */
 				if (init_search_string && !line) {
 					c = ESCAPE;
-					c_message_add("Topic not found. (To open the guide manually, double-tap '?'.)");
+					c_message_add(format("Topic '%s' not found.", init_search_string));
 				} else c_override = 0;
 			} else {
 				c = c_override;
