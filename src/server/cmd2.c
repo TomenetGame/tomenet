@@ -3165,7 +3165,6 @@ bool twall(int Ind, int y, int x, byte feat) {
  * accomplished by strong players using heavy weapons.
  */
 /* XXX possibly wrong */
-/* Reveal a secret door if tunnelling triggered a trap on it? */
 /* New Digging features: Uncover features or find objects - (C. Blue)
    -Only possible when digging by hand/tool, not via any magic.
    -Rubble: Staircase, Fountain, Lava/Water,
@@ -3183,9 +3182,12 @@ bool twall(int Ind, int y, int x, byte feat) {
     For obvious treasure or just hard walls, the chance to find a rune depends
     (as finding any other special thing) only on digging skill.
 */
+/* Reveal a secret door if tunnelling triggered a trap on it? */
 #define TRAP_REVEALS_DOOR
 /* Chance to find a rune when having proficiency in runes */
 #define RUNE_CHANCE 1000
+/* Actually give special message to indicate when we have zero chance to tunnel through a specific material */
+#define INDICATE_IMPOSSIBLE "You cannot seem to make a dent in the"
 void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
@@ -3359,7 +3361,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Check the floor-hood */
 	old_floor = cave_floor_bold(zcave, y, x);
 
-	/* No tunnelling through emptiness */
+
+	/* No tunnelling through empty air, but allow 'tunneling' the floor we're standing on to cause quakes */
 	if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
 		/* Hack: Allow causing earthquakes with appropriate weapons (!) or diggers or p_ptr->impact (unavailable atm) by hitting the empty floor */
 		if (dir == 5 && cfeat != FEAT_PERM_CLEAR && !quiet_borer) {
@@ -3475,6 +3478,24 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		return;
 	}
 
+	/* Check that the material is actually tunnelable at all */
+	//do_cmd_tunnel_test(int y, int x, FALSE)
+	if (!(f_ptr->flags1 & FF1_TUNNELABLE) ||
+	    (f_ptr->flags1 & FF1_PERMANENT)) {
+		/* Message */
+		msg_print(Ind, f_text + f_ptr->tunnel);
+		/* Nope */
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		return;
+	}
+
+	/* No destroying of town layouts */
+	else if (!allow_terraforming(wpos, FEAT_TREE)) {
+		msg_print(Ind, "You may not tunnel in this area.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
+		return;
+	}
+
 	/* A monster is in the way */
 	if (c_ptr->m_idx > 0) {
 		/* Take a turn */
@@ -3485,7 +3506,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		return;
 	}
 
-	/* Okay, try digging */
+	/* Okay, prepare to try digging */
 	un_afk_idle(Ind);
 	break_cloaking(Ind, 0);
 	break_shadow_running(Ind);
@@ -3497,7 +3518,9 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Take a turn */
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-	/* not in monster KILL_WALL form or via magic; not on world surface: wpos->wz == 0 ! */
+
+	/* Discover special features or objects when mining.
+	   Note: Not in monster KILL_WALL form or via magic; not on world surface: wpos->wz == 0 ! */
 	if (l_ptr && !quiet_borer) {
 		/* prepare to discover a special feature */
 		if ((rand_int(5000) <= mining + 5) && can_go_up(wpos, 0x1)) dug_feat = FEAT_WAY_LESS;
@@ -3562,28 +3585,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_LAVA) ? 0 : ((l_ptr->flags1 & LF1_LAVA) ? 50 : 3))) dug_feat = FEAT_SHAL_LAVA;
 		else if (rand_int(500) < ((l_ptr->flags1 & LF1_NO_WATER) ? 0 : ((l_ptr->flags1 & LF1_WATER) ? 50 : 8))) dug_feat = FEAT_SHAL_WATER;
 	}
-
+	/* Never discover special features or objects on stale floors */
 	if (p_ptr->IDDC_logscum) {
 		if (dug_feat == FEAT_FOUNTAIN) dug_feat = FEAT_NONE;
 		special_k_idx = tval = 0;
 	}
 
-	//do_cmd_tunnel_test(int y, int x, FALSE)
-	/* Must be tunnelable */
-	if (!(f_ptr->flags1 & FF1_TUNNELABLE) ||
-	    (f_ptr->flags1 & FF1_PERMANENT)) {
-		/* Message */
-		msg_print(Ind, f_text + f_ptr->tunnel);
-		/* Nope */
-		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-		return;
-	}
-	/* No destroying of town layouts */
-	else if (!allow_terraforming(wpos, FEAT_TREE)) {
-		msg_print(Ind, "You may not tunnel in this area.");
-		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
-		return;
-	}
 
 	/* Ok, we may finally tunnel.. */
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
@@ -3856,10 +3863,27 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			break;
 		}
 
+#ifdef INDICATE_IMPOSSIBLE
+		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
+		if (hard) {
+			/* quartz */
+			if (power <= 20) {
+				msg_format(Ind, "%s quartz vein.", INDICATE_IMPOSSIBLE);
+				return;
+			}
+		} else if (!soft) {
+			/* magma */
+			if (power <= 10) {
+				msg_format(Ind, "%s magma intrusion.", INDICATE_IMPOSSIBLE);
+				return;
+			}
+		}
+#endif
+
 		/* Quartz */
 		if (hard) okay = (power > 20 + rand_int(800)); /* 800 */
 		/* Sandwall */
-		else if (soft) okay = (power > 5 + rand_int(250));
+		else if (soft) okay = (power > rand_int(300));
 		/* Magma */
 		else okay = (power > 10 + rand_int(400)); /* 400 */
 
@@ -4051,7 +4075,8 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Default to secret doors */
 	else if (cfeat == FEAT_SECRET) {
 		struct c_special *cs_ptr;
-		int featm = cfeat; /* just to kill compiler warning */
+		int featm = cfeat, diff, diff_plus; /* cfeat: just to kill compiler warning */
+
 		if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 			featm = cs_ptr->sc.omni;
 		else /* Apply "mimic" field */
@@ -4071,9 +4096,49 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		no_quake = TRUE;
 #endif
 
-		/* hack: 'successful' tunnelling reveals the secret door */
-		if (power > 40 + rand_int(1600)) { /* just assume 1600 as for Granite Wall */
+		/* To allow for INDICATE_IMPOSSIBLE, we need to distinguish between mimicked features that would affect it.
+		   Note that we skip a bunch of materials that are not supposed to be able to have secret doors, eg trees, webs etc. */
+		switch (featm) {
+		case FEAT_QUARTZ:
+		case FEAT_QUARTZ_H:
+		case FEAT_QUARTZ_K:
+			diff = 800;
+			diff_plus = 20;
+			break;
+		case FEAT_MAGMA:
+		case FEAT_MAGMA_H:
+		case FEAT_MAGMA_K:
+			diff = 400;
+			diff_plus = 10;
+			break;
+		default:
+			if (featm >= FEAT_WALL_EXTRA) {
+				diff = 1600;
+				diff_plus = 40;
+			} else {
+				/* nothing left actually! - arbitrary paranoia values (see below, keep consistent anyway) */
+				diff = 1200;
+				diff_plus = 80;
+			}
+			break;
+		}
+
+#ifdef INDICATE_IMPOSSIBLE
+		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
+		if (power <= diff_plus) {
+			msg_format(Ind, "%s %s.", INDICATE_IMPOSSIBLE, f_name + f_info[featm].name);
+			return;
+		}
+#endif
+
+#ifdef INDICATE_IMPOSSIBLE
+		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
+#endif
+
+		/* hack: 'successful' tunnelling reveals the secret door. */
+		if (power > rand_int(diff) + diff_plus) {
 			struct c_special *cs_ptr;
+
 			msg_print(Ind, "You have found a secret door!");
 			/* un-hide the true feat (a door!) */
 			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
@@ -4121,6 +4186,14 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	}
 	/* Granite + misc (Ice..) */
 	else if (cfeat >= FEAT_WALL_EXTRA) {
+#ifdef INDICATE_IMPOSSIBLE
+		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
+		if (power <= 40) {
+			msg_format(Ind, "%s %s.", INDICATE_IMPOSSIBLE, f_name + f_info[cfeat].name);
+			return;
+		}
+#endif
+
 		/* Tunnel */
 		if ((power > 40 + rand_int(1600)) && twall(Ind, y, x, cfeat == FEAT_ICE_WALL ? FEAT_ICE : FEAT_FLOOR)) { /* 1600 */
 			msg_format(Ind, "You have finished the tunnel in the %s.", f_name + f_info[cfeat].name);
@@ -4193,9 +4266,17 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Other stuff - Note: There is none left, actually.
 	   Ice walls are treated as 'Granite Wall' above already! */
 	else {
+#ifdef INDICATE_IMPOSSIBLE
+		/* Let us observe (and halt tunneling) if it's impossible for us to make a dent into this material */
+		if (power <= 30) {
+			msg_format(Ind, "%s %s.", INDICATE_IMPOSSIBLE, f_name + f_info[cfeat].name);
+			return;
+		}
+#endif
+
 		/* Tunnel */
-		if ((power > 30 + rand_int(1200)) && twall(Ind, y, x, FEAT_FLOOR)) {
-			msg_format(Ind, "You have finished the tunnel in the %s", f_name + f_info[cfeat].name);
+		if ((power > 30 + rand_int(1200)) && twall(Ind, y, x, FEAT_FLOOR)) { /* some random, arbitrary hardness between granite and next-softer materials.. unused anyway */
+			msg_format(Ind, "You have finished the tunnel in the %s.", f_name + f_info[cfeat].name);
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
