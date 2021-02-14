@@ -2176,8 +2176,16 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			if (c_override == 255) {
 				/* we didn't find the topic we wanted to access via /? command? then just quit */
 				if (init_search_string && !line) {
-					c = ESCAPE;
-					c_message_add(format("Topic '%s' not found.", init_search_string));
+#if 1 /* last chance: promote an all-caps search (2) to a chapter search (3) and retry */
+					if (init_search_type == 2) {
+						c = 'c';
+						strcpy(buf_override, init_search_string);
+					} else
+#endif
+					{
+						c = ESCAPE;
+						c_message_add(format("Topic '%s' not found.", init_search_string));
+					}
 				} else c_override = 0;
 			} else {
 				c = c_override;
