@@ -3181,6 +3181,8 @@ bool twall(int Ind, int y, int x, byte feat) {
     of digging skill.
     For obvious treasure or just hard walls, the chance to find a rune depends
     (as finding any other special thing) only on digging skill.
+
+    NOTE: Ivy is listed but currently counts as FLOOR, so it has no effect/isn't tunneable.
 */
 /* Reveal a secret door if tunnelling triggered a trap on it? */
 #define TRAP_REVEALS_DOOR
@@ -4099,21 +4101,26 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		/* To allow for INDICATE_IMPOSSIBLE, we need to distinguish between mimicked features that would affect it. */
 		switch (featm) {
 		case FEAT_WEB:
+			if (power < fibre_power) power = fibre_power;
 			diff = 100;
 			break;
 		case FEAT_RUBBLE:
 			diff = 200;
 			break;
 		case FEAT_IVY:
+			if (power < fibre_power) power = fibre_power;
 			diff = 200;
 			break;
 		case FEAT_BUSH:
+			if (power < wood_power) power = wood_power;
 			diff = 300;
 			break;
 		case FEAT_DEAD_TREE:
+			if (power < wood_power) power = wood_power;
 			diff = 300;
 			break;
 		case FEAT_TREE:
+			if (power < wood_power) power = wood_power;
 			diff = 400;
 			break;
 		case FEAT_MAGMA:
