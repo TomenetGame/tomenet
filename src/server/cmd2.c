@@ -4075,7 +4075,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* Default to secret doors */
 	else if (cfeat == FEAT_SECRET) {
 		struct c_special *cs_ptr;
-		int featm = cfeat, diff, diff_plus; /* cfeat: just to kill compiler warning */
+		int featm = cfeat, diff, diff_plus = 0; /* cfeat: just to kill compiler warning */
 
 		if ((cs_ptr = GetCS(c_ptr, CS_MIMIC)))
 			featm = cs_ptr->sc.omni;
@@ -4096,14 +4096,25 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		no_quake = TRUE;
 #endif
 
-		/* To allow for INDICATE_IMPOSSIBLE, we need to distinguish between mimicked features that would affect it.
-		   Note that we skip a bunch of materials that are not supposed to be able to have secret doors, eg trees, webs etc. */
+		/* To allow for INDICATE_IMPOSSIBLE, we need to distinguish between mimicked features that would affect it. */
 		switch (featm) {
-		case FEAT_QUARTZ:
-		case FEAT_QUARTZ_H:
-		case FEAT_QUARTZ_K:
-			diff = 800;
-			diff_plus = 20;
+		case FEAT_WEB:
+			diff = 100;
+			break;
+		case FEAT_RUBBLE:
+			diff = 200;
+			break;
+		case FEAT_IVY:
+			diff = 200;
+			break;
+		case FEAT_BUSH:
+			diff = 300;
+			break;
+		case FEAT_DEAD_TREE:
+			diff = 300;
+			break;
+		case FEAT_TREE:
+			diff = 400;
 			break;
 		case FEAT_MAGMA:
 		case FEAT_MAGMA_H:
@@ -4111,14 +4122,22 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			diff = 400;
 			diff_plus = 10;
 			break;
+		case FEAT_QUARTZ:
+		case FEAT_QUARTZ_H:
+		case FEAT_QUARTZ_K:
+			diff = 800;
+			diff_plus = 20;
+			break;
 		default:
+			/* granite wall, ice wall, misc walls.. */
 			if (featm >= FEAT_WALL_EXTRA) {
 				diff = 1600;
 				diff_plus = 40;
-			} else {
-				/* nothing left actually! - arbitrary paranoia values (see below, keep consistent anyway) */
+			}
+			/* nothing left actually! - arbitrary paranoia values (see below, keep consistent anyway) */
+			else {
 				diff = 1200;
-				diff_plus = 80;
+				diff_plus = 30;
 			}
 			break;
 		}
