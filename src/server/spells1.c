@@ -2472,6 +2472,14 @@ static bool hates_acid(object_type *o_ptr) {
 	case TV_GAME:
 		if (o_ptr->sval == SV_SNOWBALL) return TRUE;
 		break;
+
+#ifdef ENABLE_DEMOLITIONIST
+	case TV_CHARGE:
+		return TRUE;
+	case TV_CHEMICAL:
+		if (o_ptr->sval == SV_RUST || o_ptr->sval == SV_MIXTURE) break; /* Mixture is safely contained in a bottle */
+		return TRUE;
+#endif
 	}
 
 	return (FALSE);
@@ -2552,6 +2560,14 @@ bool hates_fire(object_type *o_ptr) {
 	case TV_GAME:
 		if (o_ptr->sval == SV_SNOWBALL) return TRUE;
 		break;
+
+#ifdef ENABLE_DEMOLITIONIST
+	case TV_CHARGE:
+		return TRUE;
+	case TV_CHEMICAL:
+		if (o_ptr->sval == SV_CHARCOAL || o_ptr->sval == SV_RUST) return TRUE; /* note: metal powder burns up too */
+		break;
+#endif
 	}
 
 	return (FALSE);
@@ -2602,6 +2618,11 @@ bool hates_water(object_type *o_ptr) {
 	case TV_GAME:
 		if (o_ptr->sval == SV_SNOWBALL) return TRUE;
 		break;
+#ifdef ENABLE_DEMOLITIONIST
+	case TV_CHEMICAL:
+		if (o_ptr->sval == SV_CHARCOAL || o_ptr->sval == SV_RUST || o_ptr->sval == SV_WOOD_CHIPS || o_ptr->sval == SV_MIXTURE) break;
+		return TRUE;
+#endif
 	}
 
 	return (FALSE);
@@ -2933,7 +2954,7 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 
 				/* Potions smash open */
 				if (typ != set_water_destroy)	/* MEGAHACK */ //&& typ != set_cold_destroy)
-					switch (k_info[o_ptr->k_idx].tval) {
+					switch (o_ptr->tval) {
 					case TV_POTION:
 						//(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
 						bypass_invuln = TRUE;
@@ -2945,6 +2966,22 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 						(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, 200 + o_ptr->sval);
 						bypass_invuln = FALSE;
 						break;
+					}
+
+				/* Fireworks and blast charges blow up -- todo: implement */
+				if (typ == set_fire_destroy)
+					switch (o_ptr->tval) {
+					case TV_SCROLL:
+						if (o_ptr->sval != SV_SCROLL_FIREWORK) break;
+						//todo: launch
+						break;
+#ifdef ENABLE_DEMOLITIONIST
+					case TV_CHARGE:
+						bypass_invuln = TRUE;
+						//todo: blow up. Note that detonate_charge() won't work cause it requires a cs_ptr, ie armed charge in the ground.
+						bypass_invuln = FALSE;
+						break;
+#endif
 					}
 
 				/* Destroy "amt" items */
@@ -5507,7 +5544,8 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					msg_format(Ind, "\377oThe %s%s", o_name, note_kill);
 
 				/* Hack: Launch firework from scrolls */
-				if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK) {
+				if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_FIREWORK
+				    && strstr(note_kill, " burn")) {
 					cast_fireworks(wpos, x, y, o_ptr->xtra1 * FIREWORK_COLOURS + o_ptr->xtra2); //size, colour
 #ifdef USE_SOUND_2010
  #if 0
@@ -5517,6 +5555,12 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
  #endif
 #endif
 				}
+
+#ifdef ENABLE_DEMOLITIONIST
+				/* Detonate blast charges */
+				/* --todo first: add a type of detonate_charge() that works on non-armed charges! This function assumes a cs_ptr instead!
+				if (o_ptr->tval == TV_CHARGE && strstr(note_kill, " burn")) detonate_charge(o_ptr); */
+#endif
 
 				/* Delete the object */
 				//delete_object(wpos, y, x);
