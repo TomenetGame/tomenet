@@ -4327,6 +4327,9 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 
 			/* Cannot make an artifact twice */
 			if (a_ptr->cur_num) continue;
+			/* Special hack: Narsil and Anduril cannot coexist */
+			if (i == ART_NARSIL && a_info[ART_ANDURIL].cur_num) continue;
+			if (i == ART_ANDURIL && a_info[ART_NARSIL].cur_num) continue;
 
 			/* Cannot generate special ones */
 			if (a_ptr->flags3 & TR3_INSTA_ART) continue;
@@ -4342,10 +4345,6 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 			/* Must have the correct fields */
 			if (a_ptr->tval != o_ptr->tval) continue;
 			if (a_ptr->sval != o_ptr->sval) continue;
-
-			/* Special hack: Narsil and Anduril cannot coexist */
-			if (i == ART_NARSIL && a_info[ART_ANDURIL].cur_num) continue;
-			if (i == ART_ANDURIL && a_info[ART_NARSIL].cur_num) continue;
 
 			/* We must make the "rarity roll" */
 #ifdef IDDC_EASY_TRUE_ARTIFACTS
