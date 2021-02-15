@@ -3623,7 +3623,22 @@ cptr item_activation(object_type *o_ptr) {
 		else if (o_ptr->sval == SV_MIXTURE) return "combining with other chemicals or mixtures. Or with itself to form a product";
 		else return "combining with other chemical ingredients or mixtures";
 	}
-	if (o_ptr->tval == TV_CHARGE) return(format("ignition after %d turns", o_ptr->pval));
+	if (o_ptr->tval == TV_CHARGE) {
+		char *c;
+		int fuse;
+
+		if (o_ptr->note && (c = strchr(quark_str(o_ptr->note), '!')) && (c[1] == 'F')) {
+			fuse = atoi(c + 2);
+
+			/* Limits: Fuse duration must be between 1s and 15s */
+			if (fuse > 15) fuse = 15;
+			if (fuse < 1) fuse = 1;
+		}
+		/* Otherwise use default fuse length */
+		else fuse = o_ptr->pval;
+
+		return(format("ignition after %d seconds", fuse));
+	}
 	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return "grinding solid material to bits";
 #endif
 
@@ -4554,6 +4569,10 @@ void observe_aux(int Ind, object_type *o_ptr) {
 	/* Sigil */
 	if (o_ptr->sigil) msg_format(Ind, "\377B  It is emblazoned with a sigil of %s.", string_exec_lua(0, format("return rcraft_name(%d)", o_ptr->sigil)));
 
+#ifdef ENABLE_DEMOLITIONIST
+	if (o_ptr->tval == TV_CHARGE) msg_format(Ind, "\377s  Its default fuse length will burn down in %d seconds.", o_ptr->pval);
+#endif
+
 	switch (o_ptr->tval) {
 	case TV_BLUNT:
 		msg_print(Ind, "\377s  It's a blunt weapon."); break;
@@ -4882,6 +4901,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 
 	/* Sigil */
 	if (o_ptr->sigil) fprintf(fff, "\377BIt is emblazoned with a sigil of %s.\n", string_exec_lua(0, format("return rcraft_name(%d)", o_ptr->sigil)));
+
+#ifdef ENABLE_DEMOLITIONIST
+	if (o_ptr->tval == TV_CHARGE) fprintf(fff, "\377s  Its default fuse length will burn down in %d seconds.\n", o_ptr->pval);
+#endif
 
 #ifdef NEW_ID_SCREEN
 	/* Temporary brands -- kinda hacky that they use p_ptr instead of o_ptr.. */
