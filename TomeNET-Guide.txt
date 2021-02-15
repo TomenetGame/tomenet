@@ -14457,45 +14457,13 @@ stated.
                                 of wood into wood chips.
                                 Some recipes might even use basic lamp oil
                                 which you could just by from the general store.
-
-                                You can mix all these ingredients together, but
-                                not more than 3 portions of the same ingredient
-                                per mixture and at most 4 different types of
-                                ingredients. The order in which any mixing is
-                                done is not important.
-                                If a mixture contains more than 4 different
-                                types of ingredients it will become "Bubbling"
-                                to indicate that it is ruined and you can just
-                                destroy it as it serves no further purpose.
-
-                                The actual mixing is done by 'A'ctivating an
-                                ingredient or resulting mixture with another.
-                                When you have finished the desired mixture, you
-                                may attempt to convert it into the finished
-                                blast charge by activating it again with itself
-                                (think of this as some kind of drying process).
-
-                                You then activate a blast charge to place and
-                                arm it. Its fuse will take 2 to 10 seconds to
-                                run depending on the charge type, so you might
-                                want to hurry up and get away.
-                                You can customize the fuse to anything from 1
-                                to 15 seconds by inscribing the charge "!Fnn"
-                                before planting it, where nn is the amount of
-                                seconds ie the fuse length. Example:  !F12
-                                ..which will result in a 12-seconds fuse.
-                                If you change your mind, you can try to disarm
-                                an armed charge before it goes boom, take care.
-
-                                Examples to start you off:
-                                <1 Charcoal + 1 Sulfur + 2 Saltpetre> or
-                                <3 Ammonia Salt + 1 Flask of Oil> will both
-                                result in a basic blast charge.
-                                Further recipes can be uncovered by simply
-                                trying out various combinations, or by reading
-                                scrolls of rumor, which actually have a small
-                                chance to give hints about mixture recipes.
-                                For the full list see (6.2b).
+                                Note that some ingredients might need higher
+                                skill to find:
+                                Vitriol at 15.000, ammonia salt, saltpetre and
+                                sulfur at 10.000, reactive metal powder at
+                                10.000 (when found, not when created by using a
+                                grinding tool, so it can be acquired at 5.000).
+                                For information on crafting charges see (6.2b).
 
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you levitation, so you may
@@ -14619,8 +14587,30 @@ Note: After a skill's gain ratio has been boosted as stated above, it will be
 
 (6.2b) Demolition charges
 -------------------------
+At 5.000 Digging skill your character acquires the passive 'Demolitionist' perk
+that allows finding certain chemicals and crafting explosive charges from them.
+See 'Digging' skill in (6.2) for details about acquiring chemicals.
 Use a grinding tool (available at the alchemist store) to grind items that you
-don't need anymore into wood chips or reactive metal powder.
+don't need anymore to easily obtain wood chips or reactive metal powder.
+
+By pressing 'A' to activate ingredients or mixtures you can combine them to
+create new ingredients or to create new mixtures. The order in which mixing is
+done is not important.
+Mixtures are works in progress containing at least two different ingredients,
+that can be combined with further ingredients until you are satisfied with the
+combination. In that case you can activate the mixture and 'combine' it with
+itself (think of it as some kind of drying process maybe :-p) and if you used a
+valid combination of chemicals you will craft a type of blast charge from it!
+
+A mixture that contains no valid combination of ingredients in the correct
+amounts is ruined and you can just discard it with 'k'.
+
+You then activate the blast charge to place and arm it. Its fuse will burn down
+in a matter of seconds and it will go off, so depending on the fuse length you
+might want to hurry up and get away.
+If you change your mind in time, you can try to disarm an armed charge before
+it goes boom, take care.
+See the table below about fuse lengths and note the hint about !F inscription.
 
 Crafting ingredients from raw materials:
 ----------------------------------------
@@ -14632,9 +14622,11 @@ Crafting ingredients from raw materials:
 
 Crafting actual explosive charges:
 ----------------------------------
-Note that you can inscribe those !Fn where n ranges from 1 to 15 and sets the
-fuse timer in seconds until it blows up. If the inscription is omitted the
-charges use type-specific standard fuse lengths listed in this table.
+Activate a mixture with itself after you added all required ingredients, to
+craft an explosive charge from it. The type will depend on the ingredients.
+Note that you can inscribe charges !Fn where n ranges from 1 to 15 and sets
+the fuse timer in seconds until it blows up. If the inscription is omitted
+the charges use type-specific standard fuse lengths listed in this table.
 
 Charge type     | Char- Sul- Salt- Ammonia Reactive Caustic Caustic Lamp | Std.
                 | coal  fur  petre salt    m.powder m.ash   salt    oil  | fuse
