@@ -11332,6 +11332,18 @@ void process_objects(void) {
 			continue;
 		}
 
+#ifdef ENABLE_DEMOLITIONIST
+		/* specialty: process these 1/s instead of 1/dungeonturn */
+		if (!(turn % cfg.fps) && o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
+			o_ptr->timeout--;
+			if (!o_ptr->timeout) {
+				detonate_charge(o_ptr);
+				delete_object_idx(i, TRUE);
+				continue;
+			}
+		}
+#endif
+
 		/* timing fix - see description in dungeon() */
 		if (turn % (level_speed(&o_ptr->wpos) / 120)) continue;
 
@@ -11381,16 +11393,6 @@ void process_objects(void) {
 #endif
 			continue;
 		}
-#ifdef ENABLE_DEMOLITIONIST
-		if (o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
-			o_ptr->timeout--;
-			if (!o_ptr->timeout) {
-				detonate_charge(o_ptr);
-				delete_object_idx(i, TRUE);
-				continue;
-			}
-		}
-#endif
 	}
 
 #if 1 /* experimental: also process items in list houses */
