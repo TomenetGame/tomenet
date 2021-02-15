@@ -5115,6 +5115,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int item) {
 
 	/* Mega-Hack -- describe activation */
 	if (f3 & TR3_ACTIVATE) {
+		/* TODO maybe: Some of the strings in item_activation() are rendered via format() and hence not constant! Might need free'ing! */
 		cptr activation = item_activation(o_ptr);
 		if (!activation) {
 			/* Mysterious message for items missing description (eg. golem command scrolls) - mikaelh */
