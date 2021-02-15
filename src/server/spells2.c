@@ -9576,18 +9576,24 @@ bool arm_charge_conditions(int Ind) {
 	zcave = getcave(&p_ptr->wpos);
 	c_ptr = &zcave[py][px];
 
-	if (p_ptr->blind) {
-		msg_print(Ind, "You can't see anything.");
-		return FALSE;
-	}
-	if (no_lite(Ind)) {
-		msg_print(Ind, "You don't dare to set a charge in the darkness.");
-		return FALSE;
-	}
 	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");
 		return FALSE;
 	}
+#if 1 /* need something fiery to light the fuse with? */
+	{
+		object_type *ox_ptr = &Players[Ind]->inventory[INVEN_LITE];
+
+		if (!ox_ptr->k_idx || ox_ptr->sval == SV_LITE_FEANORIAN) {
+			object_type *ox2_ptr = &Players[Ind]->inventory[INVEN_TOOL];
+
+			if (!ox2_ptr->k_idx || ox2_ptr->sval != SV_TOOL_FLINT) {
+				msg_print(Ind, "You need to equip a fire-based light source or a flint to light the fuse.");
+				return FALSE;
+			}
+		}
+	}
+#endif
 
 #ifdef DEMOLITIONIST_BLAST_IDDC_ONLY
 	/* for debugging/testing purpose */
@@ -9648,7 +9654,14 @@ void arm_charge(int Ind, int item, int dir) {
 
 
 	/* Check some conditions */
-
+	if (p_ptr->blind) {
+		msg_print(Ind, "You can't see anything.");
+		return;
+	}
+	if (no_lite(Ind)) {
+		msg_print(Ind, "You don't dare to set a charge in the darkness.");
+		return;
+	}
 	if (!arm_charge_conditions(Ind)) return;
 
 	/* Only set traps on floor grids */
