@@ -2973,12 +2973,19 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 					switch (o_ptr->tval) {
 					case TV_SCROLL:
 						if (o_ptr->sval != SV_SCROLL_FIREWORK) break;
-						//todo: launch
+						cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * FIREWORK_COLOURS + o_ptr->xtra2); //size, colour
+#ifdef USE_SOUND_2010
+						sound_near_site_vol(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "fireworks_launch", "", SFX_TYPE_MISC, FALSE, 50);
+#endif
 						break;
 #ifdef ENABLE_DEMOLITIONIST
 					case TV_CHARGE:
 						bypass_invuln = TRUE;
-						//todo: blow up. Note that detonate_charge() won't work cause it requires a cs_ptr, ie armed charge in the ground.
+						/* TODO? Blow up. Note that detonate_charge() won't work cause it requires a cs_ptr, ie armed charge in the ground.
+						   However, this seems like overkill. We can just assume that blast charges have a protective outer shell and don't
+						   just blow up randomly, except when explicitely lit by a fuse.
+						   So for now: -- Blast charges are safe! --
+						*/
 						bypass_invuln = FALSE;
 						break;
 #endif
