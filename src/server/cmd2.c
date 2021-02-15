@@ -8067,25 +8067,24 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			sound_near_site(y, x, wpos, 0, "shatter_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 
-//			if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
+			//if (potion_smash_effect(0, wpos, y, x, o_ptr->sval))
 			if (k_info[o_ptr->k_idx].tval == TV_POTION) {
 				if (potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval))
-//				if (potion_smash_effect(PROJECTOR_POTION, wpos, y, x, o_ptr->sval))
+				//if (potion_smash_effect(PROJECTOR_POTION, wpos, y, x, o_ptr->sval))
 				{
 #if 0
 					if (cave[y][x].m_idx) {
 						char m_name[MNAME_LEN];
 						monster_desc(m_name, &m_list[cave[y][x].m_idx], 0);
-						switch (is_friend(&m_list[cave[y][x].m_idx]))
-						{
-							case 1:
-								msg_format("%^s gets angry!", m_name);
-								change_side(&m_list[cave[y][x].m_idx]);
-								break;
-							case 0:
-								msg_format("%^s gets angry!", m_name);
-								m_list[cave[y][x].m_idx].status = MSTATUS_NEUTRAL_M;
-								break;
+						switch (is_friend(&m_list[cave[y][x].m_idx])) {
+						case 1:
+							msg_format("%^s gets angry!", m_name);
+							change_side(&m_list[cave[y][x].m_idx]);
+							break;
+						case 0:
+							msg_format("%^s gets angry!", m_name);
+							m_list[cave[y][x].m_idx].status = MSTATUS_NEUTRAL_M;
+							break;
 						}
 					}
 #endif	// 0
@@ -8094,10 +8093,16 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			else if (k_info[o_ptr->k_idx].tval == TV_FLASK) (void) potion_smash_effect(0 - Ind, wpos, y, x, o_ptr->sval + 200);
 
 			return;
-		} else {
-			j = 0;
-		}
+		} else j = 0;
 	}
+
+#ifdef ENABLE_DEMOLITIONIST
+	/* Hack: If we're throwing a demolition charge, auto-arm it if allowed! */
+	if (arm_charge_conditions(Ind)) {
+		/* We use throwing direction as trap-effect direction, makes sense sort of */
+		arm_charge_dir_and_fuse(o_ptr, dir);
+	}
+#endif
 
 	/* Drop (or break) near that location */
 

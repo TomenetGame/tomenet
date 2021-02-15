@@ -1749,6 +1749,8 @@ extern void tome_creation_aux(int Ind, int item);
 extern void mix_chemicals(int Ind, int item);
 extern void grind_chemicals(int Ind, int item);
 extern void arm_charge(int Ind, int item, int dir);
+extern bool arm_charge_conditions(int Ind);
+extern void arm_charge_dir_and_fuse(object_type *o2_ptr, int dir);
 extern void detonate_charge(object_type *o_ptr);
 #endif
 

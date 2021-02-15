@@ -9566,55 +9566,91 @@ void grind_chemicals(int Ind, int item) {
 		}
 	}
 }
-/* Set a charge live */
-void arm_charge(int Ind, int item, int dir) {
+/* Check whether we may arm a charge on this grid / arm it and throw it from this grid to somewhere. */
+bool arm_charge_conditions(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	object_type *o_ptr = &p_ptr->inventory[item];
-	char o_name[ONAME_LEN], *c;
-	cave_type *c_ptr;
-	cave_type **zcave;
-	struct c_special *cs_ptr;
+	cave_type *c_ptr, **zcave;
 	int py = p_ptr->py, px = p_ptr->px;
-	s16b o2_idx;
-	object_type *o2_ptr;
 	worldpos *wpos = &p_ptr->wpos;
-
-
-	/* Check some conditions */
 
 	zcave = getcave(&p_ptr->wpos);
 	c_ptr = &zcave[py][px];
 
 	if (p_ptr->blind) {
 		msg_print(Ind, "You can't see anything.");
-		return;
+		return FALSE;
 	}
 	if (no_lite(Ind)) {
 		msg_print(Ind, "You don't dare to set a charge in the darkness.");
-		return;
+		return FALSE;
 	}
 	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");
-		return;
+		return FALSE;
 	}
 
 #ifdef DEMOLITIONIST_BLAST_IDDC_ONLY
 	/* for debugging/testing purpose */
 	if (!in_irondeepdive(wpos)) {
-		msg_print(Ind, "You may plant charges only inside the IDDC.");
-		return;
+		msg_print(Ind, "You may arm charges only inside the IDDC.");
+		return FALSE;
 	}
 #endif
 
 	if (istownarea(wpos, MAX_TOWNAREA)) {
-		msg_print(Ind, "You may not place a charge in towns.");
-		return;
+		msg_print(Ind, "You may not arm a charge in towns.");
+		return FALSE;
 	}
 	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
 	    (c_ptr->info & CAVE_PROT)) {
-		msg_print(Ind, "\377yYou cannot place charges on this special floor.");
-		return;
+		msg_print(Ind, "\377yYou cannot arm charges while on this special floor.");
+		return FALSE;
 	}
+
+	return TRUE;
+}
+/* Set direction (if applicable) and light the fuse at given length on a trap, arming it */
+void arm_charge_dir_and_fuse(object_type *o2_ptr, int dir) {
+	char *c;
+	int fuse;
+
+	/* Set 'dir' if any (for fire-wall charge) */
+	o2_ptr->xtra9 = dir;
+
+	/* Hack: Allow setting custom fuse length via '!Fxx' inscription! */
+	if (o2_ptr->note && (c = strchr(quark_str(o2_ptr->note), '!')) && (c[1] == 'F')) {
+		fuse = atoi(c + 2);
+
+		/* Limits: Fuse duration must be between 1s and 15s */
+		if (fuse > 15) fuse = 15;
+		if (fuse < 1) fuse = 1;
+	}
+	/* Otherwise use default fuse length */
+	else fuse = o2_ptr->pval;
+
+	o2_ptr->timeout = fuse;
+}
+/* Set a charge live --
+   Note: We are generous and don't demand a fire-based light source in inven/equip to set the fuse alight =p. */
+void arm_charge(int Ind, int item, int dir) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr = &p_ptr->inventory[item];
+	char o_name[ONAME_LEN];
+	cave_type *c_ptr, **zcave;
+	struct c_special *cs_ptr;
+	int py = p_ptr->py, px = p_ptr->px;
+	s16b o2_idx;
+	object_type *o2_ptr;
+	worldpos *wpos = &p_ptr->wpos;
+
+	zcave = getcave(&p_ptr->wpos);
+	c_ptr = &zcave[py][px];
+
+
+	/* Check some conditions */
+
+	if (!arm_charge_conditions(Ind)) return;
+
 	/* Only set traps on floor grids */
 	if (!cave_clean_bold(zcave, py, px) ||
 	    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
@@ -9622,6 +9658,7 @@ void arm_charge(int Ind, int item, int dir) {
 		msg_print(Ind, "\377yYou cannot place a charge here.");
 		return;
 	}
+
 
 	/* Try to place it */
 
@@ -9631,11 +9668,12 @@ void arm_charge(int Ind, int item, int dir) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_CALMNESS, 35))) return;
 
-	/* Hack: We just abuse monster traps for charges too.. */
+	/* Hack: We just abuse monster traps for charges too and place a montrap/rune-like glyph on the floor.. */
 	if (!(cs_ptr = AddCS(c_ptr, CS_MON_TRAP))) {
 		msg_print(Ind, "\377yYou cannot set a charge here.");
 		return;
 	}
+
 
 	/* Create a charge-item to be dropped on/into the floor */
 
@@ -9668,22 +9706,7 @@ void arm_charge(int Ind, int item, int dir) {
 	/* don't remove it quickly in towns */
 	o2_ptr->marked2 = ITEM_REMOVAL_MONTRAP;
 
-	/* Set 'dir' if any (for fire-wall charge) */
-	o2_ptr->xtra9 = dir;
-
-	/* Place monster-trap-/rune-like glyph on the floor */
-	o2_ptr->timeout = o_ptr->pval; //light the fuse
-
-	/* Hack: Allow setting custom fuse length via '!Fxx' inscription! */
-	if (o2_ptr->note && (c = strchr(quark_str(o2_ptr->note), '!')) && (c[1] == 'F')) {
-		int fuse = atoi(c + 2);
-
-		/* Limits: Fuse duration must be between 1s and 15s */
-		if (fuse > 15) fuse = 15;
-		if (fuse < 1) fuse = 1;
-
-		o2_ptr->timeout = fuse;
-	}
+	arm_charge_dir_and_fuse(o2_ptr, dir);
 
 	/* Finally, do place the standalone charge-item into the monster trap feat */
 

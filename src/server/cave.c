@@ -3334,6 +3334,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 				/* Hack -- always l.blue if underwater */
 				if (feat == FEAT_DEEP_WATER || feat == FEAT_SHAL_WATER) (*ap) = TERM_L_BLUE;
 
+#ifdef ENABLE_DEMOLITIONIST
+				/* Hack -- thrown aka non-planted, armed demolition charges flicker as the fuse is lit */
+				if (o_list[c_ptr->o_idx].tval == TV_CHARGE && o_list[c_ptr->o_idx].timeout) *ap = TERM_FIRE;
+#endif
+
 				/* Hack -- hallucination */
 				if (p_ptr->image) image_object(ap, cp);
 			}
