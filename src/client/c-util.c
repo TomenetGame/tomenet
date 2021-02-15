@@ -2186,11 +2186,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 				/* Reverse search, starting with newest entries */
 				if (mode & ASKFOR_CHATTING) {
 					sp_size = hist_chat_looped ? MSG_HISTORY_MAX : hist_chat_end;
-					sp_end = hist_chat_end - 1;
+					sp_end = hist_chat_looped ? (hist_chat_end - 1 + MSG_HISTORY_MAX) % MSG_HISTORY_MAX : hist_chat_end - 1;
 					sp_msg = &message_history_chat;
 				} else {
 					sp_size = hist_looped ? MSG_HISTORY_MAX : hist_end;
-					sp_end = hist_end - 1;
+					sp_end = hist_looped ? (hist_end - 1 + MSG_HISTORY_MAX) % MSG_HISTORY_MAX : hist_end - 1;
 					sp_msg = &message_history;
 				}
 				/* No history recorded yet? */
