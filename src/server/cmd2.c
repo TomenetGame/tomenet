@@ -5524,6 +5524,11 @@ int breakage_chance(object_type *o_ptr) {
 		if (o_ptr->sval >= SV_GOLEM_ATTACK) return 25; /* scroll */
 		return 10; /* arm/leg */
 
+#ifdef ENABLE_DEMOLITIONIST
+	case TV_CHARGE:
+		return 5;
+#endif
+
 	/* for throwing weapons: Weapons in general are meant to be used for hitting, so should be ok */
 	case TV_SWORD:
 	case TV_AXE:
@@ -8103,9 +8108,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 #ifdef ENABLE_DEMOLITIONIST
 	/* Hack: If we're throwing a demolition charge, auto-arm it if allowed! */
-	if (arm_charge_conditions(Ind)) {
-		/* We use throwing direction as trap-effect direction, makes sense sort of */
-		arm_charge_dir_and_fuse(o_ptr, dir);
+	if (o_ptr->tval == TV_CHARGE) {
+		if (arm_charge_conditions(Ind)) {
+			/* We use throwing direction as trap-effect direction, makes sense sort of */
+			arm_charge_dir_and_fuse(o_ptr, dir);
+		}
 	}
 #endif
 
