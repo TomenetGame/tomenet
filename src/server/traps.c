@@ -399,6 +399,9 @@ static bool player_handle_missile_trap(int Ind, s16b num, s16b tval,
 		o_ptr->ds = k_info[o_ptr->k_idx].ds;
 		o_ptr->name1 = o_ptr->name2 = o_ptr->name2b = o_ptr->name3 = 0;
 	}
+	/* Batch of Morgul daggers might also be over the top */
+	if (o_ptr->name2 == EGO_MORGUL || o_ptr->name2b == EGO_MORGUL)
+		o_ptr->name1 = o_ptr->name2 = o_ptr->name2b = o_ptr->name3 = 0;
         /* Reverse good bonuses */
 	if (o_ptr->bpval > 0) o_ptr->bpval = 0;
 	if (o_ptr->pval > 0) o_ptr->pval = 0;
