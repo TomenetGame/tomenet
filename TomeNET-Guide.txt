@@ -14612,6 +14612,9 @@ If you change your mind in time, you can try to disarm an armed charge before
 it goes boom, take care.
 See the table below about fuse lengths and note the hint about !F inscription.
 
+An alternative method is to just throw the charge, which will auto-arm it.
+(Basically the same conditions as for activating a charge will apply.)
+
 Crafting ingredients from raw materials:
 ----------------------------------------
 - Wood chips can be processed into charcoal (needs a fire-based light source).
