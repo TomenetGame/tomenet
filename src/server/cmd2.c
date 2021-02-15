@@ -7555,6 +7555,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		if (tdis < 5) tdis = 5;
 	}
 
+#ifdef ENABLE_DEMOLITIONIST
+	/* Hack - Blast charges cannot be thrown thaaaat far (let's assume high airflow resistance =p) */
+	if (o_ptr->tval == TV_CHARGE) tdis = (tdis * 7) / 10;
+#endif
+
 	/* Max distance of 10 for not effectively throwable weapons */
 	if (is_throwing_weapon(o_ptr)) {
 		if (tdis > 15) tdis = 15;
