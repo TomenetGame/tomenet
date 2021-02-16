@@ -517,8 +517,9 @@ function cast_rune_spell(I,D,u)
     msg_print(I,format("\255RThe strain is far too great! (%s; backlash: %d)",S,b))
     return 0
   end
-  local SS = ((v==bor(LITE,NETH) and band(u,ENHA)~=0) or band(u,EXPA)~=0) and "an" or "a" -- vowels
-  msg_print(I,format("You %strace %s %s.", b > 0 and "\255Rincompetently\255w " or "",SS,S))
+  local SS = (((v==bor(LITE,NETH) or v==bor(DARK,CHAO)) and band(u,ENHA)~=0) or band(u,EXPA)~=0) and "an" or "a" -- electricity, acid, enhanced "vowels"
+  msg_print(I,format("You %strace %s %s with \255B%d\255w mana.", b > 0 and "\255Rincompetently\255w " or "",SS,S,c)) -- display mana cost in LIGHT_BLUE
+  -- msg_print(I,format("You %strace %s %s.", b > 0 and "\255Rincompetently\255w " or "",SS,S))
   p.attacker = format(" traces %s %s for", SS, S)
   p.energy = p.energy - e
   p.csp = p.csp - c

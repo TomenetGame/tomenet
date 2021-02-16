@@ -1382,8 +1382,13 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 	/* No magic ammos either =) the_sandman */
 	if (is_ammo(o_ptr->tval) && o_ptr->sval == SV_AMMO_MAGIC) return (TRUE);
 
+#if 0
 	/* No runes at all, actually... */
 	if (o_ptr->tval == TV_RUNE) return (TRUE);
+#else
+	/* No runes except in XBM */
+	if (o_ptr->tval == TV_RUNE && st_idx != STORE_BLACKX) return (TRUE);
+#endif
 
 #if 0 /* Relieve players from endlessly scumming BM for these? */
 	/* No super-high amulets in IDDC BMs */

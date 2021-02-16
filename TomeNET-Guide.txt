@@ -14578,7 +14578,7 @@ Corrupted:
     Axe-mastery and Martial Arts skill ratios x 1.3.
     Fire, Air, Conveyance school ratios x 1.7, Udun x 2.0,
     Shadow and Unlife x 1.7, Hereticism x 2.1,
-    Darkness and Nether rune ratios x 1.7,
+    Darkness and Chaos rune ratios x 1.7,
     all Blood Magic ratios x 3.0.
 
 Note: After a skill's gain ratio has been boosted as stated above, it will be
@@ -18920,8 +18920,8 @@ As runecraft does not rely on books or spell scrolls to guide its magic,
 runespells may be cast while blinded, although at increased rate of failure.
 Spell failure likewise increases while stunned, or simply when attempting a
 powerful spell. While an istar is always prevented from casting outside of his
-or her ability, a runemaster may continue to attempt spells until the backlash
-proves fatal. Runemasters are able to cast many kinds of spells, but it is
+or her ability, a runemaster may continue to attempt spells until a failure 
+would prove fatal. Runemasters are able to cast many kinds of spells, but it is
 important to note that some spells are more difficult to manage than others.
 
 Tracing runes safely requires both intellectual and physical agility, so high
@@ -18955,6 +18955,7 @@ runemasters are advised to start with basic elemental spells for which they can
 easily acquire the according resistance. Mana (as an element of choice) is also
 viable for beginners. Although the backlash damage from mana may be high when
 unresisted, it has no otherwise adverse effects which might cripple the caster.
+The adverb 'incompetently' is applied (in RED) to failed runespells in the log.
 
 Intelligence, dexterity, and skill level affect spell failure rates for
 runespells. Runespell type determines the base level of a spell, which is
@@ -18966,6 +18967,10 @@ even fall victim to unexpected backlash from spells previously mastered.
 
 Physical Runes:
 ---------------
+Physical runes are items found occasionally from tunneling deep in the earth,
+or in the collection of monsters fascinated by their magic. Certain secretive
+markets are also known to trade these rare embodiments of elemental power...
+
 Physical runes may be activated (after achieving skill level 40) to emblazon
 non-artifact armour, shields and melee weapons with an elemental sigil. This
 sigil confers a generally positive effect as long as the item remains wielded.

@@ -4350,7 +4350,7 @@ void shape_Maia_skills(int Ind) {
 #endif
 		do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 13);
 		do_Maia_skill(Ind, SKILL_R_DARK, 17);
-		do_Maia_skill(Ind, SKILL_R_NETH, 17);
+		do_Maia_skill(Ind, SKILL_R_CHAO, 17);
 
 #ifdef ENABLE_HELLKNIGHT
 		if (p_ptr->pclass == CLASS_PALADIN) {
