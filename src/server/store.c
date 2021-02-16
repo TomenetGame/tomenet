@@ -1387,7 +1387,7 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 	if (o_ptr->tval == TV_RUNE) return (TRUE);
 #else
 	/* No runes except for lots of Au */
-	if (o_ptr->tval == TV_RUNE && st_idx != STORE_BLACKS) return (TRUE);
+	if (o_ptr->tval == TV_RUNE && st_idx != STORE_BLACKX) return (TRUE);
 #endif
 
 #if 0 /* Relieve players from endlessly scumming BM for these? */
