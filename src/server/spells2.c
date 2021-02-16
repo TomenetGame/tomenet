@@ -9567,7 +9567,7 @@ void grind_chemicals(int Ind, int item) {
 	}
 }
 /* Check whether we may arm a charge on this grid / arm it and throw it from this grid to somewhere. */
-bool arm_charge_conditions(int Ind) {
+bool arm_charge_conditions(int Ind, bool thrown) {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr, **zcave;
 	int py = p_ptr->py, px = p_ptr->px;
@@ -9575,6 +9575,17 @@ bool arm_charge_conditions(int Ind) {
 
 	zcave = getcave(&p_ptr->wpos);
 	c_ptr = &zcave[py][px];
+
+	if (!thrown) {
+		if (p_ptr->blind) {
+			msg_print(Ind, "You can't see anything.");
+			return FALSE;
+	}
+		if (no_lite(Ind)) {
+			msg_print(Ind, "You don't dare to set a charge in the darkness.");
+			return FALSE;
+		}
+	}
 
 	if (p_ptr->confused) {
 		msg_print(Ind, "You are too confused!");
@@ -9603,14 +9614,27 @@ bool arm_charge_conditions(int Ind) {
 	}
 #endif
 
-	if (istownarea(wpos, MAX_TOWNAREA)) {
-		msg_print(Ind, "You may not arm a charge in towns.");
-		return FALSE;
+	if (!thrown) {
+		if (istownarea(wpos, MAX_TOWNAREA)) {
+			msg_print(Ind, "You may not arm charges in town.");
+			return FALSE;
+		}
 	}
+
 	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
 	    (c_ptr->info & CAVE_PROT)) {
 		msg_print(Ind, "\377yYou cannot arm charges while on this special floor.");
 		return FALSE;
+	}
+
+	if (!thrown) {
+		/* Only set traps on floor grids */
+		if (!cave_clean_bold(zcave, py, px) ||
+		    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
+		    c_ptr->special) {
+			msg_print(Ind, "\377yYou cannot place a charge here.");
+			return FALSE;
+		}
 	}
 
 	return TRUE;
@@ -9654,23 +9678,7 @@ void arm_charge(int Ind, int item, int dir) {
 
 
 	/* Check some conditions */
-	if (p_ptr->blind) {
-		msg_print(Ind, "You can't see anything.");
-		return;
-	}
-	if (no_lite(Ind)) {
-		msg_print(Ind, "You don't dare to set a charge in the darkness.");
-		return;
-	}
-	if (!arm_charge_conditions(Ind)) return;
-
-	/* Only set traps on floor grids */
-	if (!cave_clean_bold(zcave, py, px) ||
-	    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
-	    c_ptr->special) {
-		msg_print(Ind, "\377yYou cannot place a charge here.");
-		return;
-	}
+	if (!arm_charge_conditions(Ind, FALSE)) return;
 
 
 	/* Try to place it */

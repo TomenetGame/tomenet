@@ -8109,7 +8109,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #ifdef ENABLE_DEMOLITIONIST
 	/* Hack: If we're throwing a demolition charge, auto-arm it if allowed! */
 	if (o_ptr->tval == TV_CHARGE) {
-		if (arm_charge_conditions(Ind)) {
+		if (arm_charge_conditions(Ind, TRUE)) {
 			/* We use throwing direction as trap-effect direction, makes sense sort of */
 			arm_charge_dir_and_fuse(o_ptr, dir);
 		}
