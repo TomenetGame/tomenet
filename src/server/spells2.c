@@ -9751,7 +9751,9 @@ void arm_charge(int Ind, int item, int dir) {
 	inven_item_optimize(Ind, item);
 }
 /* A charge (planted into the floor) explodes */
-void detonate_charge(object_type *o_ptr) {
+void detonate_charge(int o_idx) {
+	object_type *oo_ptr = &o_list[o_idx];
+	object_type forge = (*oo_ptr), *o_ptr = &forge; /* create local working copy */
 	struct worldpos *wpos = &o_ptr->wpos;
 	int i, who = PROJECTOR_MON_TRAP, x = o_ptr->ix, y = o_ptr->iy;
 	int flg = (PROJECT_TRAP | PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO
@@ -9780,6 +9782,10 @@ void detonate_charge(object_type *o_ptr) {
 
 		cave_set_feat_live(wpos, y, x, i);
 	}
+	/* Get rid of it so we don't get 'the charge was destroyed'
+	   message from our own fire/blast effets on the o_ptr, looks silyl.
+	   This is the reason we needed to create a working copy in 'forge'.  */
+	else delete_object_idx(o_idx, TRUE);
 
 	/* Find owner of the charge */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -9840,14 +9846,17 @@ void detonate_charge(object_type *o_ptr) {
 		break;
 	case SV_CHARGE_FIREWALL:
  #ifdef USE_SOUND_2010
-		//sound_near_site(y, x, wpos, 0, "cast_cloud", NULL, SFX_TYPE_MISC, FALSE);
-		sound_near_site(y, x, wpos, 0, "cast_ball", NULL, SFX_TYPE_MISC, FALSE);
+		sound_near_site(y, x, wpos, 0, "cast_wall", NULL, SFX_TYPE_MISC, FALSE);
  #endif
+		flg |= PROJECT_STAY;
 		dir = o_ptr->xtra9;
 		for (i = 0; i < MAX_RANGE / 2; i++) {
 			x2 = x + ddx[dir] * i;
 			y2 = y + ddy[dir] * i;
-			if (!cave_los_wall(zcave, y2, x2)) break; /* Stop at permanent walls */
+			if (!cave_floor_bold(zcave, y2, x2)) break; /* Stop at walls */
+			//project_time_effect = 0;
+			project_time = 8;
+			project_interval = 6 + rand_int(3);
 			(void) project(who, 0, wpos, y2, x2, damroll(20, 15), GF_FIRE, flg, "");
 		}
 		break;
@@ -9877,7 +9886,7 @@ void detonate_charge(object_type *o_ptr) {
 		for (i = 0; i < MAX_RANGE / 2; i++) {
 			x2 = x + ddx[dir] * i;
 			y2 = y + ddy[dir] * i;
-			if (!cave_los_wall(zcave, y2, x2)) break; /* Stop at permanent walls */
+			if (!cave_floor_bold(zcave, y2, x2)) break; /* Stop at walls */
 			(void) project(who, 0, wpos, y2, x2, damroll(20, 15), GF_STONE_WALL, flg, "");
 		}
 		break;

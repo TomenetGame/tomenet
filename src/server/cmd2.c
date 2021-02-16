@@ -4457,7 +4457,11 @@ void do_cmd_disarm(int Ind, int dir) {
 
 		if ((!t_idx || !cs_ptr->sc.trap.found) &&
 		    (o_ptr->tval != TV_CHEST) &&
-		    !(cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+		    !(cs_ptr = GetCS(c_ptr, CS_MON_TRAP))
+#ifdef ENABLE_DEMOLITIONIST
+		    && !(o_ptr->tval == TV_CHARGE && o_ptr->timeout)
+#endif
+		    ) {
 			/* Message */
 			msg_print(Ind, "You see nothing there to disarm.");
 			done = TRUE;
@@ -4476,6 +4480,21 @@ void do_cmd_disarm(int Ind, int dir) {
 
 			done = TRUE;
 		}
+
+#ifdef ENABLE_DEMOLITIONIST
+		else if (o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
+			if (!magik(100 + k_info[o_ptr->k_idx].level - 80)) {
+				msg_print(Ind, "You extinguish the fuse!");
+				o_ptr->timeout = 0;
+				everyone_lite_spot(wpos, y, x);
+ #ifdef USE_SOUND_2010
+				sound_near_site(p_ptr->py, p_ptr->px, wpos, 0, "item_rune", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+			} else msg_print(Ind, "\377yYou fail to extinguish the fuse!");
+			disturb(Ind, 0, 0);
+			return;
+		}
+#endif
 
 		/* Normal disarm */
 		else if (o_ptr->tval == TV_CHEST) {
