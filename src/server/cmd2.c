@@ -8110,8 +8110,30 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	/* Hack: If we're throwing a demolition charge, auto-arm it if allowed! */
 	if (o_ptr->tval == TV_CHARGE) {
 		if (arm_charge_conditions(Ind, TRUE)) {
-			/* We use throwing direction as trap-effect direction, makes sense sort of */
-			arm_charge_dir_and_fuse(o_ptr, dir);
+			/* We use throwing direction as trap-effect direction, makes sense sort of.
+			   However, if our dir is targetted, aka '5', we have to approxmiate.. */
+			if (dir == 5) {
+				int cdir;
+
+				if (p_ptr->px < p_ptr->target_col) {
+					if (p_ptr->py < p_ptr->target_row) cdir = 3;
+					else if (p_ptr->py > p_ptr->target_row) cdir = 9;
+					else cdir = 6;
+				} else if (p_ptr->px > p_ptr->target_col) {
+					if (p_ptr->py < p_ptr->target_row) cdir = 1;
+					else if (p_ptr->py > p_ptr->target_row) cdir = 7;
+					else cdir = 4;
+				} else {
+					if (p_ptr->py < p_ptr->target_row) cdir = 2;
+					else if (p_ptr->py > p_ptr->target_row) cdir = 8;
+					else {
+						//doesn't make much sense to throw at self, but just use random direction in that case
+						cdir = randint(8);
+						if (cdir >= 5) cdir++;
+					}
+				}
+				arm_charge_dir_and_fuse(o_ptr, cdir);
+			} else arm_charge_dir_and_fuse(o_ptr, dir);
 		}
 	}
 #endif
