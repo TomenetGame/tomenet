@@ -3727,7 +3727,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			    in_iddc &&
  #endif
 			    /* Note: Increased rarity from 5 to 20 because pieces of wood and other items containing wood can now be ground to chips simply */
-			    (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(20) && !p_ptr->IDDC_logscum) {
+			    (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(3) && !p_ptr->IDDC_logscum) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
@@ -3767,6 +3767,29 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				msg_print(Ind, "You have a bad feeling about it.");
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+
+#ifdef ENABLE_DEMOLITIONIST
+			if (
+ #ifdef DEMOLITIONIST_IDDC_ONLY
+			    in_iddc &&
+ #endif
+			    /* Note: Increased rarity from 5 to 20 because pieces of wood and other items containing wood can now be ground to chips simply */
+			    (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(7) && !p_ptr->IDDC_logscum) {
+				object_type forge;
+
+				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
+				s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
+				forge.owner = p_ptr->id;
+				forge.mode = p_ptr->mode;
+				forge.iron_trade = p_ptr->iron_trade;
+				forge.iron_turn = turn;
+				forge.level = 0;
+				forge.number = 1;
+				forge.weight = k_info[forge.k_idx].weight;
+				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				drop_near(0, &forge, -1, wpos, y, x);
+			}
 #endif
 
 			/* Notice */
@@ -3815,6 +3838,29 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			msg_print(Ind, "You hack your way through the vegetation.");
 #ifdef USE_SOUND_2010
 			if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
+
+#ifdef ENABLE_DEMOLITIONIST
+			if (
+ #ifdef DEMOLITIONIST_IDDC_ONLY
+			    in_iddc &&
+ #endif
+			    /* Note: Increased rarity from 5 to 20 because pieces of wood and other items containing wood can now be ground to chips simply */
+			    (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST) && !rand_int(7) && !p_ptr->IDDC_logscum) {
+				object_type forge;
+
+				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
+				s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
+				forge.owner = p_ptr->id;
+				forge.mode = p_ptr->mode;
+				forge.iron_trade = p_ptr->iron_trade;
+				forge.iron_turn = turn;
+				forge.level = 0;
+				forge.number = 1;
+				forge.weight = k_info[forge.k_idx].weight;
+				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				drop_near(0, &forge, -1, wpos, y, x);
+			}
 #endif
 
 			/* Notice */

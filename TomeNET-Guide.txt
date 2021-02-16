@@ -14623,7 +14623,8 @@ Water                 |         | Potion               | Freshwater sources
 Salt water            |         | Potion               | Seawater sources
 Lamp oil              |         | Flask                | General store
 Acid                  |         |                      | Crafting
-Wood chips            | Trees   |                      | Grinding
+Wood chips            | Trees,  |                      | Grinding
+                      | bushes  |                      |
 Charcoal              |         |                      | Burning wood, crafting
 Sulfur                | Magma   | Large firebreathers  |
 Saltpetre             | Sandwall| Bats, Birds, Hybrids |
