@@ -11182,51 +11182,52 @@ void get_laston(char *name, char *response, bool admin, bool colour) {
 	}
 }
 
+#define EVALPF "\374"
 void tym_evaluate(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	long tmp;
 
-	msg_print(Ind, "Your total damage and healing done since login or last reset:");
-	msg_format(Ind, "    \377oTotal damage done   : %8d", p_ptr->test_dam);
-	msg_format(Ind, "    \377gTotal healing done  : %8d", p_ptr->test_heal);
-	msg_print(Ind, "  Damage and healing done over # of attacks and amount of time passed:");
+	msg_print(Ind, EVALPF"Your total damage and healing done since login or last reset:");
+	msg_format(Ind, EVALPF"    \377oTotal damage done   : %8d", p_ptr->test_dam);
+	msg_format(Ind, EVALPF"    \377gTotal healing done  : %8d", p_ptr->test_heal);
+	msg_print(Ind, EVALPF"  Damage and healing done over # of attacks and amount of time passed:");
 
 	if (p_ptr->test_count == 0)
-		msg_print(Ind,  "    \377sNo count-based result available: # of successful attacks is still zero.");
+		msg_print(Ind,  EVALPF"    \377sNo count-based result available: # of successful attacks is still zero.");
 	else {
-		msg_format(Ind, "    \377w# of successful attacks:  %8d", p_ptr->test_count);
+		msg_format(Ind, EVALPF"    \377w# of successful attacks:  %8d", p_ptr->test_count);
 		tmp = p_ptr->test_dam / p_ptr->test_count;
-		if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8ld.%1d",
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377o    Average damage done : %8ld.%1d",
 		    tmp, ((p_ptr->test_dam * 10) / p_ptr->test_count) % 10);
-		else msg_format(Ind, "    \377o    Average damage done : %8ld", tmp);
+		else msg_format(Ind, EVALPF"    \377o    Average damage done : %8ld", tmp);
 		tmp = p_ptr->test_heal / p_ptr->test_count;
-		if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8ld.%1d",
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld.%1d",
 		    tmp, ((p_ptr->test_heal * 10) / p_ptr->test_count) % 10);
-		else msg_format(Ind, "    \377g    Average healing done: %8ld", tmp);
+		else msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld", tmp);
 	}
 #ifdef TEST_SERVER
 	if (p_ptr->test_attacks == 0)
-		msg_print(Ind, "    \377wNo attempts to attack were made yet.");
+		msg_print(Ind, EVALPF"    \377wNo attempts to attack were made yet.");
 	else
-		msg_format(Ind, "    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
+		msg_format(Ind, EVALPF"    \377wHit with %d out of %d attacks (%d%%)", p_ptr->test_count, p_ptr->test_attacks, (100 * p_ptr->test_count) / p_ptr->test_attacks);
 #endif
 
 	if (p_ptr->test_turn == 0) {
-		msg_print(Ind, "    \377sNo time-based result available,");
-		msg_print(Ind, "     either attack something or start live-checking via \377y/testyourmight rs");
+		msg_print(Ind, EVALPF"    \377sNo time-based result available,");
+		msg_print(Ind, EVALPF"     either attack something or start live-checking via \377y/testyourmight rs");
 	/* this shouldn't happen.. - except on 'turn' overflow/reset */
 	} else if ((turn - p_ptr->test_turn) < cfg.fps) {
-		msg_print(Ind,  "    \377sNo time-based result available: No full second of attacks has passed,");
-		msg_print(Ind,  "    \377s please reinitialize via \377y/testyourmight rs[w]");
+		msg_print(Ind,  EVALPF"    \377sNo time-based result available: No full second of attacks has passed,");
+		msg_print(Ind,  EVALPF"    \377s please reinitialize via \377y/testyourmight rs[w]");
 	} else {
-		msg_format(Ind, "    \377w# of seconds passed:      %8d.%1d", (turn - p_ptr->test_turn) / cfg.fps, (((turn - p_ptr->test_turn) * 10) / cfg.fps) % 10);
+		msg_format(Ind, EVALPF"    \377w# of seconds passed:      %8d.%1d", (turn - p_ptr->test_turn) / cfg.fps, (((turn - p_ptr->test_turn) * 10) / cfg.fps) % 10);
 		tmp = (p_ptr->test_dam * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
-		if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377o    Average damage done : %8ld.%1d",
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377o    Average damage done : %8ld.%1d",
 		    tmp, ((p_ptr->test_dam * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
-		else msg_format(Ind, "    \377o    Average damage done : %8ld", tmp);
+		else msg_format(Ind, EVALPF"    \377o    Average damage done : %8ld", tmp);
 		tmp = (p_ptr->test_heal * 10) / (((turn - p_ptr->test_turn) * 10) / cfg.fps);
-		if (tmp != 0 && tmp < 100) msg_format(Ind, "    \377g    Average healing done: %8ld.%1d",
+		if (tmp != 0 && tmp < 100) msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld.%1d",
 		    tmp, ((p_ptr->test_heal * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
-		else msg_format(Ind, "    \377g    Average healing done: %8ld", tmp);
+		else msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld", tmp);
 	}
 }
