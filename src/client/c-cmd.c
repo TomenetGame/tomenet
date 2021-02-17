@@ -2359,6 +2359,21 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "clas")) strcpy(buf, "weapon types");
 				else if (my_strcasestr(buf, "weap") && my_strcasestr(buf, "typ")) strcpy(buf, "weapon types");
 
+				/* ENABLE_DEMOLITIONIST */
+				if ((my_strcasestr("obtaining ", buf) && strlen(buf) >= 3) ||
+				    my_strcasestr(buf, "chemic")) {
+					strcpy(buf, "OBTAINING CHEMICALS/INGREDIENTS");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
+				if (my_strcasestr("charges", buf) && strlen(buf) >= 5 && !my_strcasestr(buf, "re")) {
+					strcpy(buf, "CHARGE TYPE");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
+
 				/* Race/class boni/mali table */
 				if ((my_strcasestr(buf, "race") || my_strcasestr(buf, "racial"))
 				    && (my_strcasestr(buf, "bonus") || my_strcasestr(buf, "boni") || my_strcasestr(buf, "malus") || my_strcasestr(buf, "mali") || my_strcasestr(buf, "tab"))) {//(table)
