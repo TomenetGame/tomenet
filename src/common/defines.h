@@ -5369,7 +5369,7 @@
 #define RESF_NOTRUEART		0x00000002	/* prevent true artifacts */
 #define RESF_NORANDART		0x00000004	/* prevent random artifacts */
 #define RESF_NODOUBLEEGO	0x00000008	/* prevent double ego items */
-#define RESF_NOHIDSM		0x00000010	/* prevent generation of high dragon scale mails */
+#define RESF_NOHIDSM		0x00000010	/* prevent generation of high dragon scale mails: Only base elements + poison, metallics and pseudo. */
 #define RESF_LOWSPEED		0x00000020	/* not more than +4 speed */
 #define RESF_NOHISPEED		0x00000040	/* not more than +6 speed */
 #define RESF_LOWVALUE		0x00000080	/* no items worth more than 35000 Au */
