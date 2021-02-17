@@ -45,6 +45,37 @@
 
 
 
+/* 4.7.3a: Boomerangs may get VORPAL flag, need all the melee formulas here too now
+   ---- TODO: Maybe implement some of this stuff, but maybe we just don't need it! ... */
+
+/* Inverse chance to get a vorpal cut (1 in n) [4] */
+#define R_VORPAL_CHANCE 4
+
+/* Better hits of one override worse hits of the other,
+   instead of completely stacking for silly amounts. Recommended: V [off].
+   Note: Crit already makes Vorpal not so useful, so probably just keep R_CRIT_VS_VORPAL off anyway. */
+//#define R_CRIT_VS_VORPAL
+
+/* Crit multiplier should affect unbranded dice+todam instead of branded dice+todam? [off]
+   Advantage: Reduce huge gap between not so top 2h dice and top 2h dice weapons.
+   Big disadvantage: A +10 crit weapon wouldn't get more than ~4% damage increase even from a KILL mod.
+   NOTE: Currently only applies to melee. */
+//#define CRIT_UNBRANDED
+
+/* VORPAL being affected by brands? (+15 to-d & 2xbranded:
+   +5% for crit weapons, +9% for non-crit weapons,
+   crit +21% MoD over ZH, non-crit +13% MoD over ZH;)
+   Recommended state is inverse of R_CRIT_VS_VORPAL (reduces vorpal efficiency in brand/kill flag scenario)
+    or off (keeps vorpal efficiency in brand/kill scenario)
+    or use R_VORPAL_LOWBRANDED to compromise (recommended). */
+#ifndef R_CRIT_VS_VORPAL
+ //#define R_VORPAL_UNBRANDED
+ #define R_VORPAL_LOWBRANDED
+#endif
+
+
+
+
 #ifdef USE_SOUND_2010
 static void staircase_sfx(int Ind) {
 	int b = Players[Ind]->body_monster;
@@ -5762,7 +5793,7 @@ void do_cmd_fire(int Ind, int dir) {
 #ifdef PY_FIRE_ON_WALL
 	int prev_x, prev_y; /* for flare missile being able to light up a room under projectable_wall() conditions */
 #endif
-	int tdam, tdis, thits, tmul;
+	int tdam, tdis, thits, tmul, vorpal_cut = 0;
 	int bonus, chance, tries = 100;
 	int cur_dis, visible, real_dis;
 	int breakage = 0, num_ricochet = 0, ricochet_chance = 0;
@@ -5971,12 +6002,12 @@ void do_cmd_fire(int Ind, int dir) {
 	}
 
 	/* Get extra "power" from "extra might" */
-	//if (p_ptr->xtra_might) tmul++;
 	if (!boomerang) tmul += p_ptr->xtra_might;
-
 	/* Base range */
 	tdis = 9 + 3 * tmul;
 	if (boomerang) tdis = 15;
+	/* Boomerangs use hacked xmight to apply a global damage scaling by skill - but not affecting throwing range */
+	if (boomerang) tmul = 10 + p_ptr->xtra_might;
 
 	/* Play fairly */
 #ifdef ARROW_DIST_LIMIT
@@ -6196,21 +6227,26 @@ void do_cmd_fire(int Ind, int dir) {
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 	/* Ricochets ? */
-#if 0 // DG - no
-	if (get_skill(p_ptr, SKILL_RICOCHET) && !magic && !boomerang && !p_ptr->ranged_barrage)
-	{
-		num_ricochet = get_skill_scale(p_ptr, SKILL_RICOCHET, 6);
-		num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
-		ricochet_chance = 45 + get_skill_scale(p_ptr, SKILL_RICOCHET, 50);
+	/* Some players do not want ricocheting shots as to not wake up other
+	 * monsters. How about we remove ricocheting shots for slingers, but
+	 * instead, adds a chance to do a double damage (than normal and/or crit)
+	 * shots (i.e., seperate than crit and stackable bonus)?  - the_sandman */
+	if (!check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'R') &&
+	    !check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'R')) {
+		/* Sling mastery yields bullet ricochets */
+		if (archery == SKILL_SLING && !boomerang && !magic && !ethereal && !p_ptr->ranged_barrage) {
+			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));
+			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
+			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_SLING, 42);
+		}
+		/* Boomerangs can leave a trail of decimation among weaker critters */
+		else if (archery == SKILL_BOOMERANG) {
+			num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_BOOMERANG, 5));
+			num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
+			ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_BOOMERANG, 42);
+		}
 	}
-#else	// 0
-	/* Sling mastery yields bullet ricochets */
-	if (archery == SKILL_SLING && !boomerang && !magic && !ethereal && !p_ptr->ranged_barrage) {
-		num_ricochet = randint(get_skill_scale_fine(p_ptr, SKILL_SLING, 3));//6
-		num_ricochet = (num_ricochet < 0) ? 0 : num_ricochet;
-		ricochet_chance = 33 + get_skill_scale(p_ptr, SKILL_SLING, 42);//45+(50)
-	}
-#endif
+
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
 	throw_obj.number = p_ptr->ranged_barrage ? 6 : 1; /* doesn't work anyway for boomerangs since it tested for 6 items */
@@ -6437,7 +6473,7 @@ void do_cmd_fire(int Ind, int dir) {
 					Send_char(i, dispx, dispy, missile_attr, missile_char);
 
 					/* Flush and wait */
-					if (cur_dis % (boomerang?2:tmul)) Send_flush(i);
+					if (cur_dis % (boomerang ? 2 : tmul)) Send_flush(i);
 
 					/* Restore */
 					lite_spot(i, y, x);
@@ -6596,20 +6632,62 @@ void do_cmd_fire(int Ind, int dir) {
 									if (p_ptr->ammo_brand) tdam += p_ptr->ammo_brand_d;
 									tdam += o_ptr->to_d;
 									tdam += j_ptr->to_d + p_ptr->to_d_ranged;
+
+									/* Boost the damage */
+									tdam *= tmul;
 								} else {
 									 /* Base damage from thrown object */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
+#if 0 /* todo: implement (for vorpal boomerangs) */
+#if defined(R_VORPAL_UNBRANDED) || defined(R_VORPAL_LOWBRANDED)
+<------><------><------><------>if ((f5 & TR5_VORPAL) && !(p_ptr->no_cut) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
+<------><------><------><------>else vorpal_cut = FALSE;
+#endif
+#ifdef R_CRIT_UNBRANDED
+<------><------><------><------>k2 = k;
+<------><------><------><------>k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
+<------><------><------><------>k2 = k - k2; /* remember difference between branded and unbranded dice */
+#else
+<------><------><------><------>k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
+#endif
+#ifdef R_VORPAL_LOWBRANDED
+<------><------><------><------>if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
+#else
+ #ifndef R_VORPAL_UNBRANDED
+<------><------><------><------>if ((f5 & TR5_VORPAL) && !q_ptr->no_cut && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
+<------><------><------><------>else vorpal_cut = FALSE;
+ #endif
+#endif
+#endif
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
 									tdam += o_ptr->to_d;
 									tdam += p_ptr->to_d_ranged;
+
+									/* Boost the damage */
+									tdam = (tdam * tmul) / 10;
 								}
 								ranged_flare_body = TRUE;
 
-								/* Boost the damage */
-								tdam *= tmul;
 
 								/* Apply special damage XXX XXX XXX */
 								if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE, !boomerang);
+
+								if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", q_ptr->name);
+
+#if 0
+<------><------><------>/* Vorpal bonus - multi-dice!
+<------><------><------>   (currently +31.25% more branded dice damage on total average, just for the records) */
+                        if (vorpal_cut) {
+#ifdef R_CRIT_VS_VORPAL
+<------><------><------><------>k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+<------><------><------><------>/* either critical hit or vorpal, not both */
+<------><------><------><------>if (k2 > k) k = k2;
+#else
+<------><------><------><------>k += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+#endif
+<------><------><------>}
+#endif
+
 
 								/* factor in AC */
 								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
@@ -6763,6 +6841,7 @@ void do_cmd_fire(int Ind, int dir) {
 					    && !rand_int(24 - r_ptr->level / 10)) { /* small chance to block arrows */
 						if (visible) {
 							char hit_desc[MAX_CHARS + 12];
+
 							sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
 							hit_desc[2] = toupper(hit_desc[2]);
 							msg_print(Ind, hit_desc);
@@ -6799,21 +6878,60 @@ void do_cmd_fire(int Ind, int dir) {
 						if (p_ptr->ammo_brand) tdam += p_ptr->ammo_brand_d;
 						tdam += o_ptr->to_d;
 						tdam += j_ptr->to_d + p_ptr->to_d_ranged;
+
+						/* Boost the damage */
+						tdam *= tmul;
 					} else {
 						 /* Base damage from thrown object */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
+#if 0 /* todo: implement, for vorpal boomerangs! */
+#if defined(R_VORPAL_UNBRANDED) || defined(R_VORPAL_LOWBRANDED)
+<------><------><------><------>if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
+<------><------><------><------>else vorpal_cut = FALSE;
+#endif
+#ifdef R_CRIT_UNBRANDED
+<------><------><------><------>k2 = k;
+<------><------><------><------>k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+<------><------><------><------>k2 = k - k2; /* remember difference between branded and unbranded dice */
+#else
+<------><------><------><------>k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+#endif
+#ifdef R_VORPAL_LOWBRANDED
+<------><------><------><------>if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
+#else
+ #ifndef R_VORPAL_UNBRANDED
+<------><------><------><------>if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
+<------><------><------><------>else vorpal_cut = FALSE;
+ #endif
+#endif
+#endif
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
 						tdam += o_ptr->to_d;
 						tdam += p_ptr->to_d_ranged;
+
+						/* Boost the damage */
+						tdam = (tdam * tmul) / 10;
 					}
 					ranged_flare_body = TRUE;
 
-					/* Boost the damage */
-					tdam *= tmul;
+					if (vorpal_cut) msg_format(Ind, "Your boomerang cuts deep into %s!", m_name);
 
 					/* Apply special damage XXX XXX XXX */
 					if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE, !boomerang);
 
+#if 0
+<------><------><------>/* Vorpal bonus - multi-dice!
+<------><------><------>   (currently +31.25% more branded dice damage on total average, just for the records) */
+                        if (vorpal_cut) {
+#ifdef R_CRIT_VS_VORPAL
+<------><------><------><------>k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+<------><------><------><------>/* either critical hit or vorpal, not both */
+<------><------><------><------>if (k2 > k) k = k2;
+#else
+<------><------><------><------>k += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+#endif
+<------><------><------>}
+#endif
 					/* Maybe in the future: apply monster AC for damage reduction here */
 
 					if (ranged_double_real) tdam = (tdam * 35) / 100;
@@ -7074,19 +7192,7 @@ void do_cmd_fire(int Ind, int dir) {
 		}
 
 		/* If no break and if Archer, the ammo can ricochet */
-		//if ((num_ricochet) && (hit_body) && (magik(45 + p_ptr->lev)))
-		//if ((num_ricochet) && (hit_body) && (magik(50 + p_ptr->lev)) && magik(95))
 		if ((num_ricochet) && (hit_body) && (magik(ricochet_chance)) && !p_ptr->ranged_barrage) {
-			/* Some players do not want ricocheting shots as to not wake up other
-			 * monsters. How about we remove ricocheting shots for slingers, but
-			 * instead, adds a chance to do a double damage (than normal and/or crit)
-			 * shots (i.e., seperate than crit and stackable bonus)?  - the_sandman */
-			if (check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'R') ||
-			    check_guard_inscription(p_ptr->inventory[INVEN_BOW].note, 'R')) {
-				num_ricochet = 0;
-				break;
-			}
-
 			byte d = 5;
 
 			/* New target location */
@@ -7174,7 +7280,7 @@ void do_cmd_fire(int Ind, int dir) {
 					Send_char(i, dispx, dispy, missile_attr, missile_char);
 
 					/* Flush and wait */
-					if (cur_dis % (boomerang?2:tmul)) Send_flush(i);
+					if (cur_dis % (boomerang ? 2 : tmul)) Send_flush(i);
 
 					/* Restore */
 					lite_spot(i, y, x);

@@ -2528,6 +2528,7 @@ bool hates_fire(object_type *o_ptr) {
 		return FALSE;
 	case TV_BOOMERANG:
 		if (o_ptr->sval == SV_BOOM_S_METAL || o_ptr->sval == SV_BOOM_METAL) return(FALSE);
+		if (o_ptr->sval == SV_BOOM_S_RAZOR || o_ptr->sval == SV_BOOM_RAZOR) return(FALSE);
 		return (TRUE);
 
 	/* Chests */

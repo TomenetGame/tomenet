@@ -2744,18 +2744,18 @@ int get_archery_skill(player_type *p_ptr) {
 	if (o_ptr->tval == TV_BOOMERANG) return SKILL_BOOMERANG;
 
 	switch (o_ptr->sval / 10) {
-		case 0:
-			if ((!skill) || (skill == SKILL_SLING)) skill = SKILL_SLING;
-			else skill = -1;
-			break;
-		case 1:
-			if ((!skill) || (skill == SKILL_BOW)) skill = SKILL_BOW;
-			else skill = -1;
-			break;
-		case 2:
-			if ((!skill) || (skill == SKILL_XBOW)) skill = SKILL_XBOW;
-			else skill = -1;
-			break;
+	case 0:
+		if ((!skill) || (skill == SKILL_SLING)) skill = SKILL_SLING;
+		else skill = -1;
+		break;
+	case 1:
+		if ((!skill) || (skill == SKILL_BOW)) skill = SKILL_BOW;
+		else skill = -1;
+		break;
+	case 2:
+		if ((!skill) || (skill == SKILL_XBOW)) skill = SKILL_XBOW;
+		else skill = -1;
+		break;
 	}
 
 	/* Everything is ok */
@@ -5302,6 +5302,14 @@ void calc_boni(int Ind) {
 
 				/* Boomerang-mastery directly increases damage! - C. Blue */
 				p_ptr->to_d_ranged += get_skill_scale(p_ptr, archery, 20);
+
+				/* Give continuous damage scale-up of total damage, depending on mastery!
+				   We abuse xmight: It denominates xmight/10 x (total damage output).
+				   (Side note that we do = instead of += and thereby override any previously set XTRA_MIGHT -
+				   which currently doesn't exist in the game anyway because it'd be for example gloves-induced.) */
+				p_ptr->xtra_might = get_skill_scale(p_ptr, archery, 20); // x10/10.. x20/10 - so x1 at 0.000 skill -> x2 total damage at 50.000 skill
+				csheet_boni[14].migh = get_skill_scale(p_ptr, archery, 10); // basically display the +10% steps we attain, so it fits into the Chh column
+
 				break;
 			}
 			if (archery != SKILL_BOOMERANG) {

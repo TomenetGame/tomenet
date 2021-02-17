@@ -3113,7 +3113,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				//    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 
 #if defined(VORPAL_UNBRANDED) || defined(VORPAL_LOWBRANDED)
-				if ((f5 & TR5_VORPAL) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
+				if ((f5 & TR5_VORPAL) && !q_ptr->no_cut && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
 				else vorpal_cut = FALSE;
 #endif
 #ifdef CRIT_UNBRANDED
@@ -3127,7 +3127,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
 #else
  #ifndef VORPAL_UNBRANDED
-				if ((f5 & TR5_VORPAL) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
+				if ((f5 & TR5_VORPAL) && !q_ptr->no_cut && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
 				else vorpal_cut = FALSE;
  #endif
 #endif
@@ -4244,7 +4244,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				//    (150 / (1 + k - o_ptr->dd) < 23 - (2 / o_ptr->dd))) do_quake = TRUE;
 
 #if defined(VORPAL_UNBRANDED) || defined(VORPAL_LOWBRANDED)
-				if ((f5 & TR5_VORPAL) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
+				if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
 				else vorpal_cut = FALSE;
 #endif
 #ifdef CRIT_UNBRANDED
@@ -4258,7 +4258,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
 #else
  #ifndef VORPAL_UNBRANDED
-				if ((f5 & TR5_VORPAL) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
+				if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
 				else vorpal_cut = FALSE;
  #endif
 #endif

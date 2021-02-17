@@ -3398,10 +3398,12 @@
 #define SV_TRAPKIT_DEVICE		6	/* 'Device Trap Kit' */
 
 /* The "sval" codes for TV_BOOMERANG */
-#define SV_BOOM_S_WOOD			1	/* 1d4  */
-#define SV_BOOM_WOOD			2	/* 1d9  */
-#define SV_BOOM_S_METAL			3	/* 1d8  */
-#define SV_BOOM_METAL			4	/* 2d4  */
+#define SV_BOOM_S_WOOD			1	/* 2d3  */
+#define SV_BOOM_WOOD			2	/* 2d5  */
+#define SV_BOOM_S_METAL			3	/* 3d4  */
+#define SV_BOOM_METAL			4	/* 3d6  */
+#define SV_BOOM_S_RAZOR			5	/* 4d5  */
+#define SV_BOOM_RAZOR			6	/* 4d7  */
 
 /* The "sval" codes for TV_BOW (note information in "sval") */
 #define SV_SLING			2	/* (x2) */

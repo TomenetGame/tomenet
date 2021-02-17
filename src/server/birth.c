@@ -1339,7 +1339,7 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 		{ TV_SOFT_ARMOR, SV_SOFT_LEATHER_ARMOR, 0 },
 		{ TV_STAFF, SV_STAFF_DETECT_GOLD, 18 },
 		{ TV_DIGGING, SV_PICK, 0 },
-		{ TV_BOOMERANG, SV_BOOM_S_METAL, 0 },
+		{ TV_BOOMERANG, SV_BOOM_S_WOOD, 0 },
 	},
 	{
 		/* Mindcrafter */

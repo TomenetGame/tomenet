@@ -646,7 +646,10 @@ static void add_ability(artifact_type *a_ptr) {
 			} else if (r < 66) {
 #if 1
 				/* Swords only: VORPAL flag */
-				if (a_ptr->tval == TV_SWORD) a_ptr->flags5 |= TR5_VORPAL;
+				if (a_ptr->tval == TV_SWORD
+				    /* Experimental: And now Boomerangs too. Maybe Razor Boomerangs only? Hm. - C. Blue */
+				    || a_ptr->tval == TV_BOOMERANG)
+					a_ptr->flags5 |= TR5_VORPAL;
 #else
 				a_ptr->flags3 |= TR3_SEE_INVIS; //maybe in the future: replace [partially] with TR5_VORPAL
 #endif
