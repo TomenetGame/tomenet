@@ -1381,7 +1381,8 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 #if QDEBUG > 1
 		s_printf("Erased one at %d.\n", j);
 #endif
-		o_list[j].questor = o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+		o_list[j].questor = FALSE;
+		o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 		q_info[q_idx].objects_registered--; //..and count down manually
 		delete_object_idx(j, TRUE);
 	}
@@ -1411,7 +1412,8 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 #if QDEBUG > 1
 			s_printf("QUEST_OBJECT: player '%s'\n", p_ptr->name);
 #endif
-			o_ptr->questor = o_ptr->quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+			o_ptr->questor = FALSE;
+			o_ptr->quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 			q_info[q_idx].objects_registered--; //..and count down manually
 			//questitem_d(o_ptr, o_ptr->number);
 			inven_item_increase(j, i, -99);
@@ -1470,7 +1472,8 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 
 				s_printf("QUEST_OBJECT_ERASE: savegame '%s'\n", p_ptr->name);
 				o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
-				o_ptr->questor = o_ptr->quest = 0; //paranoia, just to make sure to prevent questitem_d() check from triggering when deleting it!
+				o_ptr->questor = FALSE;
+				o_ptr->quest = 0; //paranoia, just to make sure to prevent questitem_d() check from triggering when deleting it!
 				q_info[q_idx].objects_registered--; //..and count down manually
 				/* write savegame back */
 				save_player(NumPlayers);
@@ -1645,7 +1648,8 @@ static void quest_despawn_questor(int q_idx, int questor_idx) {
 #if QDEBUG > 1
 				s_printf(" ..ok.\n");
 #endif
-				o_list[o_idx].questor = o_list[o_idx].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+				o_list[o_idx].questor = FALSE;
+				o_list[o_idx].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 				q_info[q_idx].objects_registered--; //..and count down manually
 				delete_object_idx(c_ptr->o_idx, TRUE);
 			} else
@@ -1674,7 +1678,8 @@ static void quest_despawn_questor(int q_idx, int questor_idx) {
 				if (o_list[j].quest != q_idx + 1) continue;
 				if (o_list[j].questor_idx != questor_idx) continue;
 				s_printf(" found it at %d!\n", j);
-				o_list[j].questor = o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+				o_list[j].questor = FALSE;
+				o_list[j].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 				q_info[q_idx].objects_registered--; //..and count down manually
 				delete_object_idx(j, TRUE);
 				//:-p break;
@@ -5969,7 +5974,8 @@ void quest_handle_disabled_on_startup() {
 				s_printf(" o_idx %d of q_idx %d (questor=%d)\n", q_ptr->questor[j].mo_idx, k, questor);
 				if (k == i && questor) {
 					s_printf("..ok.\n");
-					o_list[q_ptr->questor[j].mo_idx].questor = o_list[q_ptr->questor[j].mo_idx].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
+					o_list[q_ptr->questor[j].mo_idx].questor = FALSE;
+					o_list[q_ptr->questor[j].mo_idx].quest = 0; //prevent questitem_d() check from triggering when deleting it!..
 					q_ptr->objects_registered--; //..and count down manually
 					delete_object_idx(q_ptr->questor[j].mo_idx, TRUE);
 				} else s_printf("..failed: Questor does not exist.\n");
