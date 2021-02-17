@@ -8489,8 +8489,9 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     Sword-mastery then _if_ you receive a weapon it will actually be a sword.
     See (8.5) for details!
     Highlander Tournament rewards can theoretically end up with a higher item
-    value in gold than rewards from other events. Reward items cannot be sold
-    to stores though.
+    value in gold than rewards from other events. A crown of telepathy for
+    example is not obtainable from Dungeon Keeper, but can be obtained here.
+    Reward items cannot be sold to stores though.
 
 Arena Monster Challenge (no losses or gains, for testing your abilities)
     The wizards of Arena Monster Challenge (tm) have prepared a spectacular
