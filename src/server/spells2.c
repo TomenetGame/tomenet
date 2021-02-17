@@ -9778,14 +9778,14 @@ void detonate_charge(int o_idx) {
 		/* Since we already erased the cs_ptr, we need to un-embed the object
 		   or it'll try to grab the (now non-existant) cs_ptr again,
 		   when we call delete_object_idx() right after this detonate_charge(). */
-		o_ptr->embed = 0;
+		oo_ptr->embed = 0;
 
 		cave_set_feat_live(wpos, y, x, i);
 	}
 	/* Get rid of it so we don't get 'the charge was destroyed'
 	   message from our own fire/blast effets on the o_ptr, looks silyl.
 	   This is the reason we needed to create a working copy in 'forge'.  */
-	else delete_object_idx(o_idx, TRUE);
+	delete_object_idx(o_idx, TRUE);
 
 	/* Find owner of the charge */
 	for (i = 1; i <= NumPlayers; i++) {
