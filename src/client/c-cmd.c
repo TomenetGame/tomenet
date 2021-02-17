@@ -2373,6 +2373,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					fallback_uppercase = 4;
 					continue;
 				}
+				if (my_strcasestr(buf, "demo") && my_strcasestr(buf, "char")) strcpy(buf, "Demolition Charges");
 
 				/* Race/class boni/mali table */
 				if ((my_strcasestr(buf, "race") || my_strcasestr(buf, "racial"))
@@ -2429,7 +2430,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 				/* Demolitionist perk */
-				if (!strncasecmp(buf, "demol", 5)) {
+				if (!strncasecmp(buf, "demol", 5) && !my_strcasestr(buf, "char")) { /* don't overlook chapter 'Demolition Charges'! */
 					strcpy(buf, "DEMOLITIONIST");
 					fallback = TRUE;
 					fallback_uppercase = 4;
