@@ -70,7 +70,7 @@
     or use R_VORPAL_LOWBRANDED to compromise (recommended). */
 #ifndef R_CRIT_VS_VORPAL
  //#define R_VORPAL_UNBRANDED
- #define R_VORPAL_LOWBRANDED
+ //#define R_VORPAL_LOWBRANDED  -- actually too weak for boomerangs, let's try full branding!
 #endif
 
 
@@ -5823,7 +5823,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 	int		break_chance;
 	int		sfx = 0;
-	u32b f1, f1a, fx, esp;
+	u32b f1, f1a, f5, fx, esp;
 
 	char o_name[ONAME_LEN];
 	bool returning = FALSE, magic = FALSE, boomerang = FALSE, ethereal = FALSE;
@@ -5909,7 +5909,7 @@ void do_cmd_fire(int Ind, int dir) {
 	}
 
 	/* Extract the item flags */
-	object_flags(j_ptr, &f1, &fx, &fx, &fx, &fx, &fx, &esp);
+	object_flags(j_ptr, &f1, &fx, &fx, &fx, &f5, &fx, &esp);
 
 	if (j_ptr->tval == TV_BOOMERANG) {
 		boomerang = TRUE;
@@ -6638,29 +6638,20 @@ void do_cmd_fire(int Ind, int dir) {
 								} else {
 									 /* Base damage from thrown object */
 									tdam = damroll(o_ptr->dd, o_ptr->ds);
-#if 0 /* todo: implement (for vorpal boomerangs) */
 #if defined(R_VORPAL_UNBRANDED) || defined(R_VORPAL_LOWBRANDED)
-<------><------><------><------>if ((f5 & TR5_VORPAL) && !(p_ptr->no_cut) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
-<------><------><------><------>else vorpal_cut = FALSE;
-#endif
-#ifdef R_CRIT_UNBRANDED
-<------><------><------><------>k2 = k;
-<------><------><------><------>k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
-<------><------><------><------>k2 = k - k2; /* remember difference between branded and unbranded dice */
-#else
-<------><------><------><------>k = tot_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
-#endif
-#ifdef R_VORPAL_LOWBRANDED
-<------><------><------><------>if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
-#else
- #ifndef R_VORPAL_UNBRANDED
-<------><------><------><------>if ((f5 & TR5_VORPAL) && !q_ptr->no_cut && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
-<------><------><------><------>else vorpal_cut = FALSE;
- #endif
-#endif
+									if ((f5 & TR5_VORPAL) && !(q_ptr->no_cut) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = tdam; /* save unbranded dice */
+									else vorpal_cut = FALSE;
 #endif
 									tdam = tot_dam_aux_player(Ind, o_ptr, tdam, q_ptr, FALSE);
-									tdam += o_ptr->to_d;
+									tdam += o_ptr->to_d; //moved this here, or vorpal dam-addon will be too low
+#ifdef R_VORPAL_LOWBRANDED
+									if (vorpal_cut) vorpal_cut = (vorpal_cut + tdam) / 2;
+#else
+ #ifndef R_VORPAL_UNBRANDED
+									if ((f5 & TR5_VORPAL) && !q_ptr->no_cut && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = tdam; /* save branded dice */
+									else vorpal_cut = FALSE;
+ #endif
+#endif
 									tdam += p_ptr->to_d_ranged;
 
 									/* Boost the damage */
@@ -6668,26 +6659,22 @@ void do_cmd_fire(int Ind, int dir) {
 								}
 								ranged_flare_body = TRUE;
 
-
 								/* Apply special damage XXX XXX XXX */
 								if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE, !boomerang);
 
-								if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", q_ptr->name);
-
-#if 0
-<------><------><------>/* Vorpal bonus - multi-dice!
-<------><------><------>   (currently +31.25% more branded dice damage on total average, just for the records) */
-                        if (vorpal_cut) {
+								/* Vorpal bonus - multi-dice!
+								   (currently +31.25% more branded dice damage on total average, just for the records) */
+								if (vorpal_cut) {
+									msg_format(Ind, "Your weapon cuts deep into %s!", q_ptr->name);
 #ifdef R_CRIT_VS_VORPAL
-<------><------><------><------>k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
-<------><------><------><------>/* either critical hit or vorpal, not both */
-<------><------><------><------>if (k2 > k) k = k2;
+    xxx disabled xxx
+									k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+									/* either critical hit or vorpal, not both */
+									if (k2 > k) k = k2;
 #else
-<------><------><------><------>k += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+									tdam += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 #endif
-<------><------><------>}
-#endif
-
+								}
 
 								/* factor in AC */
 								tdam -= (tdam * (((q_ptr->ac + q_ptr->to_a) < AC_CAP) ? (q_ptr->ac + q_ptr->to_a) : AC_CAP) / AC_CAP_DIV);
@@ -6884,29 +6871,20 @@ void do_cmd_fire(int Ind, int dir) {
 					} else {
 						 /* Base damage from thrown object */
 						tdam = damroll(o_ptr->dd, o_ptr->ds);
-#if 0 /* todo: implement, for vorpal boomerangs! */
 #if defined(R_VORPAL_UNBRANDED) || defined(R_VORPAL_LOWBRANDED)
-<------><------><------><------>if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = k; /* save unbranded dice */
-<------><------><------><------>else vorpal_cut = FALSE;
-#endif
-#ifdef R_CRIT_UNBRANDED
-<------><------><------><------>k2 = k;
-<------><------><------><------>k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
-<------><------><------><------>k2 = k - k2; /* remember difference between branded and unbranded dice */
-#else
-<------><------><------><------>k = tot_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
-#endif
-#ifdef R_VORPAL_LOWBRANDED
-<------><------><------><------>if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
-#else
- #ifndef R_VORPAL_UNBRANDED
-<------><------><------><------>if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = k; /* save branded dice */
-<------><------><------><------>else vorpal_cut = FALSE;
- #endif
-#endif
+						if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = tdam; /* save unbranded dice */
+						else vorpal_cut = FALSE;
 #endif
 						tdam = tot_dam_aux(Ind, o_ptr, tdam, m_ptr, FALSE);
-						tdam += o_ptr->to_d;
+						tdam += o_ptr->to_d; //moved this here, or vorpal dam-addon will be too low
+#ifdef R_VORPAL_LOWBRANDED
+						if (vorpal_cut) vorpal_cut = (vorpal_cut + tdam) / 2;
+#else
+ #ifndef R_VORPAL_UNBRANDED
+						if ((f5 & TR5_VORPAL) && !(r_ptr->flags8 & RF8_NO_CUT) && !rand_int(R_VORPAL_CHANCE)) vorpal_cut = tdam; /* save branded dice */
+						else vorpal_cut = FALSE;
+ #endif
+#endif
 						tdam += p_ptr->to_d_ranged;
 
 						/* Boost the damage */
@@ -6914,25 +6892,26 @@ void do_cmd_fire(int Ind, int dir) {
 					}
 					ranged_flare_body = TRUE;
 
-					if (vorpal_cut) msg_format(Ind, "Your boomerang cuts deep into %s!", m_name);
-
 					/* Apply special damage XXX XXX XXX */
 					if (!p_ptr->ranged_precision) tdam = critical_shot(Ind, o_ptr->weight, o_ptr->to_h + p_ptr->to_h_ranged, tdam, FALSE, !boomerang);
 
-#if 0
-<------><------><------>/* Vorpal bonus - multi-dice!
-<------><------><------>   (currently +31.25% more branded dice damage on total average, just for the records) */
-                        if (vorpal_cut) {
+					/* Vorpal bonus - multi-dice!
+					   (currently +31.25% more branded dice damage on total average, just for the records) */
+					if (vorpal_cut) {
+						msg_format(Ind, "Your boomerang cuts deep into %s!", m_name);
 #ifdef R_CRIT_VS_VORPAL
-<------><------><------><------>k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
-<------><------><------><------>/* either critical hit or vorpal, not both */
-<------><------><------><------>if (k2 > k) k = k2;
+    xxx disabled xxx
+						k2 += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+						/* either critical hit or vorpal, not both */
+						if (k2 > k) k = k2;
 #else
-<------><------><------><------>k += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
+						tdam += (magik(25) ? 2 : 1) * (vorpal_cut + 5); /* exempts critical strike */
 #endif
-<------><------><------>}
-#endif
-					/* Maybe in the future: apply monster AC for damage reduction here */
+					}
+
+
+					/* < --- TODO? Maybe in the future: apply monster AC for damage reduction here --- > */
+
 
 					if (ranged_double_real) tdam = (tdam * 35) / 100;
 

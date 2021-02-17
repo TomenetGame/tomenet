@@ -49,11 +49,11 @@
 #ifndef RANDART_TOP_WEAP_SLAY
  /* 42 cut executioner's sword some slack: allow 6d6/5d7. 45 allows 5d8 too. */
  #define slay_limit_randart(a_ptr, k_ptr)\
-     (((k_ptr)->flags4 & TR4_MUST2H) ? ((a_ptr)->tval == TV_SWORD ? 42 : 54) : (((k_ptr)->flags4 & TR4_SHOULD2H) ? 42 : 30))
+     (((k_ptr)->flags4 & TR4_MUST2H) ? ((a_ptr)->tval == TV_SWORD ? 42 : 54) : (((k_ptr)->flags4 & TR4_SHOULD2H) || (a_ptr)->tval == TV_BOOMERANG ? 42 : 30))
 #else
  /* 55 allows 11d4 scythe of slicing, 60 allows 6d9 TA/MoD, 63 allows 7d8 TA/MoD */
  #define slay_limit_randart(a_ptr, k_ptr) \
-     (((k_ptr)->flags4 & TR4_MUST2H) ? ((a_ptr)->tval == TV_SWORD ? 45 : 63) : (((k_ptr)->flags4 & TR4_SHOULD2H) ? 42 : 30))
+     (((k_ptr)->flags4 & TR4_MUST2H) ? ((a_ptr)->tval == TV_SWORD ? 45 : 63) : (((k_ptr)->flags4 & TR4_SHOULD2H) || (a_ptr)->tval == TV_BOOMERANG ? 42 : 30))
 #endif
 
 
@@ -648,7 +648,7 @@ static void add_ability(artifact_type *a_ptr) {
 				/* Swords only: VORPAL flag */
 				if (a_ptr->tval == TV_SWORD
 				    /* Experimental: And now Boomerangs too. Maybe Razor Boomerangs only? Hm. - C. Blue */
-				    || a_ptr->tval == TV_BOOMERANG)
+				    || (a_ptr->tval == TV_BOOMERANG && a_ptr->sval >= SV_BOOM_S_RAZOR))
 					a_ptr->flags5 |= TR5_VORPAL;
 #else
 				a_ptr->flags3 |= TR3_SEE_INVIS; //maybe in the future: replace [partially] with TR5_VORPAL

@@ -5307,7 +5307,7 @@ void calc_boni(int Ind) {
 				   We abuse xmight: It denominates xmight/10 x (total damage output).
 				   (Side note that we do = instead of += and thereby override any previously set XTRA_MIGHT -
 				   which currently doesn't exist in the game anyway because it'd be for example gloves-induced.) */
-				p_ptr->xtra_might = get_skill_scale(p_ptr, archery, 20); // x10/10.. x20/10 - so x1 at 0.000 skill -> x2 total damage at 50.000 skill
+				p_ptr->xtra_might = get_skill_scale(p_ptr, archery, 10); // x10/10.. x20/10 - so x1 at 0.000 skill -> x2 total damage at 50.000 skill
 				csheet_boni[14].migh = get_skill_scale(p_ptr, archery, 10); // basically display the +10% steps we attain, so it fits into the Chh column
 
 				break;
