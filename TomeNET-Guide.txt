@@ -21294,7 +21294,7 @@ Weapons, boomerangs
         All SLAY mods (also have a chance to add the corresponding ESP)
         All KILL (*SLAY*) mods (will also add the corresponding ESP)
         Critical hit bonus
-        Vorpal mod (swords only, see (5.8) for details, and boomerangs)
+        Vorpal mod (swords only, see (5.8) for details, and razor boomerangs)
         Extra attacks
         Extra +hit and +dam bonus
         Extra +AC bonus
