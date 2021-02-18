@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. Februar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 18. Februar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6691,16 +6691,17 @@ Dungeon towns behave like normal towns in these regards.
 
 (4.5a) Shops and their services
 -------------------------------
-Each town has several shops, displayed as numbers 1..9 and some '+'.
-The 1..9 are standard shops, namely..
-1       General Store   Sells food, lanterns, ammunition, cloaks and shrooms.
-2       Armoury         Offers various basic armour. Rarely excellent pieces.
+Each town has several shops, displayed as numbers '1'..'9' and some '+'.
+(There are some special variations of these shops too, located in dungeons.)
+The 1-9 standard shops that recur in every town are..
+General Store   1       Sells food, lanterns, ammunition, cloaks and shrooms.
+Armoury         2       Offers various basic armour. Rarely excellent pieces.
                         Also offers to repair damaged armour (which is cheaper
                         than enchanting it).
-3       Weapon Shop     Offers various basic weapons. Rarely excellent pieces.
+Weapon Shop     3       Offers various basic weapons. Rarely excellent pieces.
                         Also offers to repair damaged weapons (which is cheaper
                         than enchanting it).
-4       Temple          Player ghosts will be revived here, and receive some
+Temple          4       Player ghosts will be revived here, and receive some
                         money. The temple also sells a selection of blunt
                         weaponry, scrolls and potions.
                         The temple priest will also attempt to cure, heal or
@@ -6727,16 +6728,16 @@ The 1..9 are standard shops, namely..
                         Instant resurrection does not work in no-ghost dungeons
                         (ie ironman or hellish) and dungeon levels (ie floors
                         where Morgoth is) or in the Nether Realm.
-5       Alchemist       Sells various scrolls and potions.
-6       Magic Shop      Sells wands, staves, rings and amulets.
-7       Black Market    Sells many different items, mostly very good ones.
+Alchemist       5       Sells various scrolls and potions.
+Magic Shop      6       Sells wands, staves, rings and amulets.
+Black Market    7       Sells many different items, mostly very good ones.
                         This shop is very expensive and buys for very little
                         in return. Better not sell your items to this shop,
                         as long as a regular store will pay you better.
                         Some items cannot be sold elsewhere though.
-8       The Inn         In Bree it's The Prancing Pony. Inside the inn,
+The Inn         8       In Bree it's The Prancing Pony. Inside the inn,
                         players are relatively safe from monsters.
-9       Bookstore       Sells books for istari, priests and all other (hybrid)
+Bookstore       9       Sells books for istari, priests and all other (hybrid)
                         magic users. Bookstores in higher-level towns on
                         average also tend to sell higher-level spells (this is
                         a bookstore-specific specialty, other town shops do not
@@ -6744,12 +6745,13 @@ The 1..9 are standard shops, namely..
                         The 'o'rder command you can use in town stores is
                         especially useful in bookstores as it allows you to
                         order specific spells and prayers you are looking for.
-+       These are different everywhere. Some examples are mainly..
-        The Inn         Eg The Prancing Pony in Bree. While the '8' is just the
+
+Then there are various shops that just use a normal door '+' symbol, these are
+different everywhere. Some examples are mainly..
+The Inn                 Eg The Prancing Pony in Bree. While the '8' is just the
                         entrance into the tavern, the + is the actual bar where
                         you can order things from the innkeeper.
-        Mayor's Office (in Bree)
-                        Allows you to turn in deed parchments you won in
+Mayor's Office (Bree)   Allows you to turn in deed parchments you won in
                         tournaments or on other occasions for a reward.
                         Also, you can receive an extermination order here
                         (see (4.13) about those).
@@ -6757,8 +6759,7 @@ The 1..9 are standard shops, namely..
                         noteworthy occurances that may happened lately.
                         There are other major buildings in different cities
                         that will provide extermination orders.
-        The Merchants Guild
-                        An NPC run guild that offers two services,
+The Merchants Guild     An NPC run guild that offers two services,
                         a bank account to deposit your money in so you won't
                         lose it accidentally on a dungeon trip,
                         and a mail service that allows you to send money or an
@@ -6796,30 +6797,31 @@ The 1..9 are standard shops, namely..
                         If the mail gets returned to the sender for any reason
                         but the sender character no longer exists, the mail
                         will also get erased irrevocably.
-        Rune Repository (This shop might not exist in newer game verions!)
+Rune Repository         (This shop might not exist or only exist in very
+                        specific locations in certain game verions.)
                         Sells and buys runes used by Runemasters.
-        Casino          Minas Anor has a casino. Go and try your luck!
+Casino                  Minas Anor has a casino. Go and try your luck!
                         (There are various gambling opportunities, and also
                         the ancient board game 'Go' which can be played on a
                         9x9 board for a one-time fee on each difficulty level.
                         Get your Go game records emailed to you via "/kifu".)
                         For details about the gambling rules of the casino, see
                         subsequent (4.5a2) paragraph.
-        Minstrels Haven Mass Identify Service (Identify Possessions):
+Minstrels Haven         Mass Identify Service (Identify Possessions):
                         Will identify all items you currently carry for a fee.
                         See (5.7) for more information about identification.
-        Library         *Identify* Service, will *identify* an item for a fee.
+Library                 *Identify* Service, will *identify* an item for a fee.
                         See (5.7) for more information about ID, *ID*, shops!
-        Earth-Dome      Herbal Healing Service.
+Earth-Dome              Herbal Healing Service.
                         Will cure black breath for a high fee. (See (1.3a) for
                         more information about Black Breath.)
-        Sea-Dome        Morph Restoration Service.
+Sea-Dome                Morph Restoration Service.
                         Restores your form to normal in case you were
                         polymorphed (for example by a potion of Chauve-Souris).
-        Star-Dome       Offers service to identify all your items at once.
+Star-Dome               Offers service to identify all your items at once.
                         Also offers a recharging service for magic devices.
-        Valarin Temple  Restores all drained attributes and experience.
-        Enchant Services (found in various stores, for different item types):
+Valarin Temple          Restores all drained attributes and experience.
+Enchant Services (found in various stores, for different item types):
                         These will enchant weapons, arrows, or armour you have
                         equipped.
                         For weapons, this will attempt to enchant a main-hand
@@ -6844,11 +6846,10 @@ The 1..9 are standard shops, namely..
                         Ammunition can never be enchanted above (+15,+15).
 
                         Note that enchant services will not break curses.
-        Mining Supply Store
-                        In the hazardous city of Khazad-Dum is a store that
+Mining Supply Store     In the hazardous city of Khazad-Dum is a store that
                         offers some goods found to be useful by the miners
                         in the mountain depths.
-        The Mirror      Donate gold and pray to the gods.
+The Mirror              Donate gold and pray to the gods.
                         (EXPERIMENTAL: allows a fallen winner to solo-reking.)
                         This is a special option which allows fallen kings and
                         queens to get their fate changed by the gods:
@@ -6902,10 +6903,10 @@ The 1..9 are standard shops, namely..
                         c) pay 2M, wait for about a week, gain 2.5M raw exp,
                            pay 3M more.
                         d) gain 4M raw exp, pay 6M gold.
-        The Soothsayer  Presage fate. Will tell you a random rumour.
+The Soothsayer          Presage fate. Will tell you a random rumour.
 
-        ..and various miscellaneous store services, of which some currently may
-        not have an actual effect.
+..and various miscellaneous store services, of which some currently may
+not have an actual effect.
 
 
 Price limits:
