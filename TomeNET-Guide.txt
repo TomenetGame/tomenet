@@ -6904,6 +6904,8 @@ The Mirror              Donate gold and pray to the gods.
                            pay 3M more.
                         d) gain 4M raw exp, pay 6M gold.
 The Soothsayer          Presage fate. Will tell you a random rumour.
+                        Also tends to sell potions of restore mana, albeit not
+                        cheaply at all.
 
 ..and various miscellaneous store services, of which some currently may
 not have an actual effect.
