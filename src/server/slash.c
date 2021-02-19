@@ -1560,7 +1560,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 			if (prepare_xorder(Ind, j, flags, &lev, &r, &num))
-			add_xorder(Ind, j, r, num, flags);
+				add_xorder(Ind, j, r, num, flags);
 			return;
 		}
 		else if (prefix(messagelc, "/feeling") || prefix(messagelc, "/fe")) {

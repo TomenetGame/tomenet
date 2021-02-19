@@ -10516,6 +10516,7 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	get_mon_num_prep(0, NULL);
 	i = 3 + rand_int(3);
 
+	r = 0;
 	do {
 		r = get_mon_num(lev, lev - 10); //reduce OoD chance slightly
 
@@ -10524,8 +10525,15 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	} while (((lev - 5) > r_info[r].level && lev >= 5) ||
 	    (r_info[r].flags1 & RF1_UNIQUE) ||
 	    (r_info[r].flags7 & RF7_MULTIPLY) ||
+	    ((!strcmp(p_ptr->name, "Goblin Slayer") && r_info[r].d_char != 'o')) || /* Kurzel - Goblins Only! */
 	    !r_info[r].level); /* "no town quests" ;) */
 	    //r_info[r].level <= 2); /* no Training Tower quests */
+
+	/* Paranoia? No monster found */
+	if (!r) {
+		msg_print(Ind, "\377yNo feasible extermination order available. Please contact your administration!");
+		return FALSE;
+	}
 
 	/* easier in Ironman environments */
 #ifndef RPG_SERVER
