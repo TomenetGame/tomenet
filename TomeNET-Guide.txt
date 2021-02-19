@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 18. Februar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 19. Februar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -22731,5 +22731,13 @@ PROBLEM 64: Some modified keys seem to collide with other keys, for example
 Solution:   There is currently no 'native' fix for this. A workaround is to use
             an external tool such as AutoHotKey and (in above example) have it
             map CTRL+m to something else (eg:  ^m::+{1}  to map CTRL+m to '!').
+
+PROBLEM 65: A recent Windows 10 update from end of 2020 or beginning 2021 seems
+            to have broken running TomeNET (as well as some other programs) as
+            normal user for some users.
+            The client will just terminate on startup and throw this error:
+            "Font file corrupted"
+Solution:   A workaround is to run TomeNET as privileged user or as super user
+            (administrator).
 
 ===============================================================================
