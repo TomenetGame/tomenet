@@ -1472,7 +1472,7 @@ static errr term_force_font(term_data *td, cptr name) {
 	if (!used) {
 		/* Load the new font or quit */
 		if (!AddFontResource(buf))
-			quit_fmt("Font file corrupted:\n%s", buf);
+			quit_fmt("Font file corrupted:\n%s\nTry running TomeNET in privileged/admin mode!", buf);
 	}
 
 	/* Notify other applications that a new font is available  XXX */
