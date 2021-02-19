@@ -2982,8 +2982,6 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	case TV_ARROW:
 	case TV_BOLT:
 	case TV_BOW:
-	//case TV_BOOMERANG:
-	//case TV_INSTRUMENT:
 		if (item == INVEN_BOW || item == INVEN_AMMO) {
 			if (!p_ptr->inventory[INVEN_AMMO].k_idx ||
 			    !p_ptr->inventory[INVEN_AMMO].number)
@@ -2996,6 +2994,7 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		}
 		break;
 
+	//case TV_INSTRUMENT:
 	case TV_BOOMERANG:
 		if (item == INVEN_BOW) {
 			retaliating_cmd = TRUE;
