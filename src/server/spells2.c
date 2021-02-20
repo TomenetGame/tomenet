@@ -9567,7 +9567,7 @@ void grind_chemicals(int Ind, int item) {
 	}
 }
 /* Check whether we may arm a charge on this grid / arm it and throw it from this grid to somewhere. */
-bool arm_charge_conditions(int Ind, bool thrown) {
+bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr, **zcave;
 	int py = p_ptr->py, px = p_ptr->px;
@@ -9575,6 +9575,12 @@ bool arm_charge_conditions(int Ind, bool thrown) {
 
 	zcave = getcave(&p_ptr->wpos);
 	c_ptr = &zcave[py][px];
+
+
+	if (o_ptr->owner != p_ptr->id) {
+		msg_print(Ind, "You must own the charge in order to arm it.");
+		return FALSE;
+	}
 
 	if (!thrown) {
 		if (p_ptr->blind) {
@@ -9678,7 +9684,7 @@ void arm_charge(int Ind, int item, int dir) {
 
 
 	/* Check some conditions */
-	if (!arm_charge_conditions(Ind, FALSE)) return;
+	if (!arm_charge_conditions(Ind, o_ptr, FALSE)) return;
 
 
 	/* Try to place it */

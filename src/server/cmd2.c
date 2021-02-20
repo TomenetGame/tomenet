@@ -8259,7 +8259,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 #ifdef ENABLE_DEMOLITIONIST
 	/* Hack: If we're throwing a demolition charge, auto-arm it if allowed! */
 	if (o_ptr->tval == TV_CHARGE) {
-		if (arm_charge_conditions(Ind, TRUE)) {
+		if (arm_charge_conditions(Ind, o_ptr, TRUE)) {
 			/* We use throwing direction as trap-effect direction, makes sense sort of.
 			   However, if our dir is targetted, aka '5', we have to approxmiate.. */
 			if (dir == 5) {
