@@ -634,6 +634,14 @@ static byte default_tval_to_attr(int tval) {
 		return TERM_SLATE;
 	case TV_RUNE:
 		return TERM_L_RED;
+
+#ifdef ENABLE_DEMOLITIONIST
+	case TV_CHARGE:
+		return TERM_ORANGE;
+	case TV_CHEMICAL:
+		//return TERM_UMBER; //too close to ranged weapons maybe
+		return TERM_YELLOW;
+#endif
 	}
 
 	return (TERM_WHITE);
