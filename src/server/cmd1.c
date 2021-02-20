@@ -1832,6 +1832,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			if (!is_admin(p_ptr)) return;
 		}
 
+#ifdef ENABLE_DEMOLITIONIST
+		if (o_ptr->tval == TV_CHARGE && o_ptr->timeout) {
+			msg_print(Ind, "\377yYou must disarm the charge before picking it up!");
+			if (!is_admin(p_ptr)) return;
+		}
+#endif
+
 /* the_sandman: item lvl restrictions are disabled in rpg */
 #ifndef RPG_SERVER
 		if ((o_ptr->owner) && (o_ptr->owner != p_ptr->id) &&
