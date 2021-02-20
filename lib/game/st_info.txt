@@ -1561,7 +1561,8 @@ T:25:107:48
 A:2:1:3:4:0:0
 O:46:47:48:46:47:48
 G:6:R
-F:MEDIUM_LEVEL | NO_DISCOUNT | BUY67
+#---note---: As of removal of normal rune repositories outside the IDDC, ZEROLEVEL is required as the SBM price is 20x the price here
+F:MEDIUM_LEVEL | NO_DISCOUNT | BUY67 | ZEROLEVEL
 #F:HARD_STEAL	(removed for IDDC_IRON_COOP)
 W:24
 
