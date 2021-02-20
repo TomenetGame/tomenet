@@ -1184,6 +1184,13 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	int		i, slot;
 	s64b	value, j_value;
 	object_type	*j_ptr;
+	s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
+
+#ifdef ENABLE_DEMOLITIONIST
+	/* Hack so they don't end up too close to orange amulets sometimes */
+	if (o_tv == TV_CHARGE) o_tv = 9;
+	if (o_tv == TV_CHEMICAL) o_tv = 10;
+#endif
 
 	/* Evaluate the object */
 	value = object_value(0, o_ptr);
@@ -1255,18 +1262,27 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 			/* Get that item */
 			j_ptr = &st_ptr->stock[slot];
 
+			j_tv = j_ptr->tval;
+			j_sv = j_ptr->sval;
+
+#ifdef ENABLE_DEMOLITIONIST
+			/* Hack so they don't end up too close to orange amulets sometimes */
+			if (j_tv == TV_CHARGE) j_tv = 9;
+			if (j_tv == TV_CHEMICAL) j_tv = 10;
+#endif
+
 #ifdef PLAYER_STORES
 			/* Always skip store signs, since they are usually 'titles', aka above objects they describe */
 			if (st_ptr->player_owner && j_ptr->tval == TV_JUNK && j_ptr->sval == SV_WOOD_PIECE && j_ptr->note && strstr(quark_str(j_ptr->note), "@S:")) continue;
 #endif
 
 			/* Objects sort by decreasing type */
-			if (o_ptr->tval > j_ptr->tval) break;
-			if (o_ptr->tval < j_ptr->tval) continue;
+			if (o_tv > j_tv) break;
+			if (o_tv < j_tv) continue;
 
 			/* Objects sort by increasing sval */
-			if (o_ptr->sval < j_ptr->sval) break;
-			if (o_ptr->sval > j_ptr->sval) continue;
+			if (o_sv < j_sv) break;
+			if (o_sv > j_sv) continue;
 
 			/* (experimental) for libaries/book stores: sort [spell scrolls] by school? */
 			if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
@@ -5510,6 +5526,13 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 	s64b value, j_value;
 	int i;
 	object_type *j_ptr;
+	s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
+
+#ifdef ENABLE_DEMOLITIONIST
+	/* Hack so they don't end up too close to orange amulets sometimes */
+	if (o_tv == TV_CHARGE) o_tv = 9;
+	if (o_tv == TV_CHEMICAL) o_tv = 10;
+#endif
 
 
 	/* Check each existing item (try to combine) */
@@ -5544,6 +5567,15 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 			/* Get that item */
 			j_ptr = &h_ptr->stock[slot];
 
+			j_tv = j_ptr->tval;
+			j_sv = j_ptr->sval;
+
+#ifdef ENABLE_DEMOLITIONIST
+			/* Hack so they don't end up too close to orange amulets sometimes */
+			if (j_tv == TV_CHARGE) j_tv = 9;
+			if (j_tv == TV_CHEMICAL) j_tv = 10;
+#endif
+
 #ifdef PLAYER_STORES
 			/* Always skip store signs, since they are usually 'titles', aka above objects they describe */
 			if (j_ptr->tval == TV_JUNK && j_ptr->sval == SV_WOOD_PIECE && j_ptr->note && strstr(quark_str(j_ptr->note), "@S:")) continue;
@@ -5558,16 +5590,16 @@ static int home_carry(int Ind, house_type *h_ptr, object_type *o_ptr) {
 #endif	// 0
 
 			/* Objects sort by decreasing type */
-			if (o_ptr->tval > j_ptr->tval) break;
-			if (o_ptr->tval < j_ptr->tval) continue;
+			if (o_tv > j_tv) break;
+			if (o_tv < j_tv) continue;
 
 			/* Can happen in the home */
 			if (!object_aware_p(Ind, o_ptr)) continue;
 			if (!object_aware_p(Ind, j_ptr)) break;
 
 			/* Objects sort by increasing sval */
-			if (o_ptr->sval < j_ptr->sval) break;
-			if (o_ptr->sval > j_ptr->sval) continue;
+			if (o_sv < j_sv) break;
+			if (o_sv > j_sv) continue;
 
 			/* (experimental) for libaries/book stores: sort [spell scrolls] by school? */
 			if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {

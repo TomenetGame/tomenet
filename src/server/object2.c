@@ -10923,7 +10923,14 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 	/* Hack -- pre-reorder the pack */
 	if (i < INVEN_PACK) {
-		s64b		o_value, j_value;
+		s64b o_value, j_value;
+		u16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
+
+#ifdef ENABLE_DEMOLITIONIST
+		/* Hack so they don't end up too close to orange amulets sometimes */
+		if (o_tv == TV_CHARGE) o_tv = 9;
+		if (o_tv == TV_CHEMICAL) o_tv = 10;
+#endif
 
 		/* Get the "value" of the item */
 		o_value = object_value(Ind, o_ptr);
@@ -10935,9 +10942,18 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			/* Use empty slots */
 			if (!j_ptr->k_idx) break;
 
+			j_tv = j_ptr->tval;
+			j_sv = j_ptr->sval;
+
+#ifdef ENABLE_DEMOLITIONIST
+			/* Hack so they don't end up too close to orange amulets sometimes */
+			if (j_tv == TV_CHARGE) j_tv = 9;
+			if (j_tv == TV_CHEMICAL) j_tv = 10;
+#endif
+
 			/* Objects sort by decreasing type */
-			if (o_ptr->tval > j_ptr->tval) break;
-			if (o_ptr->tval < j_ptr->tval) continue;
+			if (o_tv > j_tv) break;
+			if (o_tv < j_tv) continue;
 
 			/* Hack: Don't sort ammo any further, to allow players
 			   a custom order of usage for !L inscription - C. Blue */
@@ -10948,8 +10964,8 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 			if (!object_aware_p(Ind, j_ptr)) break;
 
 			/* Objects sort by increasing sval */
-			if (o_ptr->sval < j_ptr->sval) break;
-			if (o_ptr->sval > j_ptr->sval) continue;
+			if (o_sv < j_sv) break;
+			if (o_sv > j_sv) continue;
 
 			/* Level 0 items owned by the player come first */
 			if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && j_ptr->level != 0) break;
@@ -11207,6 +11223,8 @@ void reorder_pack(int Ind) {
 
 	bool	flag = FALSE;
 
+	s16b o_tv, o_sv, j_tv, j_sv;
+
 
 	/* Re-order the pack (forwards) */
 	for (i = 0; i < INVEN_PACK; i++) {
@@ -11219,6 +11237,15 @@ void reorder_pack(int Ind) {
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
 
+		o_tv = o_ptr->tval;
+		o_sv = o_ptr->sval;
+
+#ifdef ENABLE_DEMOLITIONIST
+		/* Hack so they don't end up too close to orange amulets sometimes */
+		if (o_tv == TV_CHARGE) o_tv = 9;
+		if (o_tv == TV_CHEMICAL) o_tv = 10;
+#endif
+
 		/* Get the "value" of the item */
 		o_value = object_value(Ind, o_ptr);
 
@@ -11230,9 +11257,18 @@ void reorder_pack(int Ind) {
 			/* Use empty slots */
 			if (!j_ptr->k_idx) break;
 
+			j_tv = j_ptr->tval;
+			j_sv = j_ptr->sval;
+
+#ifdef ENABLE_DEMOLITIONIST
+			/* Hack so they don't end up too close to orange amulets sometimes */
+			if (j_tv == TV_CHARGE) j_tv = 9;
+			if (j_tv == TV_CHEMICAL) j_tv = 10;
+#endif
+
 			/* Objects sort by decreasing type */
-			if (o_ptr->tval > j_ptr->tval) break;
-			if (o_ptr->tval < j_ptr->tval) continue;
+			if (o_tv > j_tv) break;
+			if (o_tv < j_tv) continue;
 
 			/* Hack: Don't sort ammo any further, to allow players
 			   a custom order of usage for !L inscription - C. Blue */
@@ -11243,8 +11279,8 @@ void reorder_pack(int Ind) {
 			if (!object_aware_p(Ind, j_ptr)) break;
 
 			/* Objects sort by increasing sval */
-			if (o_ptr->sval < j_ptr->sval) break;
-			if (o_ptr->sval > j_ptr->sval) continue;
+			if (o_sv < j_sv) break;
+			if (o_sv > j_sv) continue;
 
 			/* Level 0 items owned by the player come first */
 			if (o_ptr->level == 0 && o_ptr->owner == p_ptr->id && j_ptr->level != 0) break;
