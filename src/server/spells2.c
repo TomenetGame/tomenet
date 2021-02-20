@@ -9614,12 +9614,12 @@ bool arm_charge_conditions(int Ind, bool thrown) {
 	}
 #endif
 
-	if (!thrown) {
+	//if (!thrown) {   -- don't allow terraforming in town!
 		if (istownarea(wpos, MAX_TOWNAREA)) {
 			msg_print(Ind, "You may not arm charges in town.");
 			return FALSE;
 		}
-	}
+	//}
 
 	if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) ||
 	    (c_ptr->info & CAVE_PROT)) {
