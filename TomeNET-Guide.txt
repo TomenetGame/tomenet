@@ -2129,6 +2129,9 @@ Auto-ID     A special ability of some items. If you equip an item that grants
             highly sought after. Randart helmets or gloves sometimes have it.
             See (5.7) for more information about identification.
 
+BD          Barrow-Downs. The main starter dungeon in the town of Bree, located
+            to the far left of the town.
+
 BM          Black Market (Store '7').
 
 BpR/SpR     Blows per round, shots per round. The number of attacks you get
@@ -2348,6 +2351,10 @@ Nest        Originally also just called 'pits', nests only differ from pits in
 non-EL      Not Everlasting. This refers to the character mode that the player
             chooses during character creation. For details see (3.1).
 
+OC          The Orc Caves. A very commonly sought dungeon which is usually
+            entered soon after having roamed Barrow-Downs a bit, or by some
+            more daring adventurers even right away as their first dungeon.
+
 olevel      see klevel.
 
 OoD         Out-of-depth. Means a monster or an item encounter that happened at
@@ -2458,7 +2465,10 @@ Stair GoI   Stair-GoI is a very short-lasting globe of semi-invulnerability
             When an attack is deflected, you get a message saying:
             "The attack is fully deflected by a magic shield."
 
-True Art    See 'Art' at the top of this section.
+True Art    See 'Art' at the top of this section. Synonymous with 'Static Art'.
+
+TT          The Training Tower. The easiest dungeon in the game, located right
+            in Bree, along the south-eastern path away from the Inn.
 
 Unique      A monster that is named and exists only once. Although it can
             respawn for another player who hasn't defeated it yet, each player
