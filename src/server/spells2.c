@@ -9456,6 +9456,13 @@ void grind_chemicals(int Ind, int item) {
 	int i, tv = o_ptr->tval, sv = o_ptr->sval;
 	bool metal, wood;
 
+
+	/* Safety mechanism in case we're crafing via inscriptions and make a..mistake */
+	if (item >= INVEN_WIELD) {
+		msg_print(Ind, "The item must be in your inventory in order to dismantle it.");
+		return;
+	}
+
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 	if (check_guard_inscription(o_ptr->note, 'k')) {
 		msg_print(Ind, "The item's inscription prevents grinding it.");
