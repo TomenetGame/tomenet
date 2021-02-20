@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 19. Februar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 20. Februar 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -303,7 +303,7 @@ compile the game under '(2.1) Installing/updating TomeNET'.
   Warrior, Rogue, Paladin, Druid and maybe Archer.
 
 
--Make sure you DO NOT chose 'PvP' mode. It's a restricted special thing that
+-Make sure you DO NOT chose PvP mode. It's a restricted special thing that
  has nothing to do with the normal gameplay at all! (See (6.13) for info).
 
 -It's strongly recommended to not choose 'fruit bat' body either :).
@@ -1130,7 +1130,7 @@ They all start with a slash '/' hence they're called slash commands:
 /bug        Report a bug to the admin(s).
 
 /convertexclusive    Attempts to convert your current character into a
-                     slot-exclusive character (either PvP-mode or IDDC aka
+                     slot-exclusive character (either PvP mode or IDDC aka
                      Ironman Deep Dive Challenge). Warning: This process is NOT
                      REVERSIBLE! To attempt to convert your character, type:
                      /convertexclusive <your-character-name>
@@ -1513,7 +1513,7 @@ They all start with a slash '/' hence they're called slash commands:
             his house, which will preset you with the store screen.
             (See (4.10a) for more information about player stores.)
 
-/pvp        Carries you into/out of the PvP arena. Only usable by pvp-mode
+/pvp        Carries you into/out of the PvP arena. Only usable by PvP mode
             chars. See (6.13) for details about PvP mode.
 
 /quest
@@ -2392,11 +2392,18 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             It does not matter whether the player is acting, afk or idle.
             See (5.7) for more information about identification.
 
+PvE         Player vs environment. This is the main game style of TomeNET:
+            You fight against the computer-controlled environment, usually not
+            against any fellow players. Instead, cooperative gameplay is very
+            rewarding.
+
 PvP         Player vs player. Describes the act of player characters fighting
             each other. If you want to fight other players to death, create a
-            new 'pvp-mode' character. It's an option during the character
+            new 'PvP mode' character. It's an option during the character
             creation process, much like 'everlasting mode' or 'normal mode'.
             For more information about pvp mode, see (6.13).
+            Any player characters can have a friendly pvp-duel without any
+            consequences by utilizing scrolls of blood bond (see (5.9)).
 
 Randart     Randomly generated artifact. As opposed to 'Truearts' which are
  Randy      also called 'Static arts' from the file a_info.txt (you can search
@@ -2467,8 +2474,9 @@ Stair GoI   Stair-GoI is a very short-lasting globe of semi-invulnerability
 
 True Art    See 'Art' at the top of this section. Synonymous with 'Static Art'.
 
-TT          The Training Tower. The easiest dungeon in the game, located right
-            in Bree, along the south-eastern path away from the Inn.
+TT          The Training Tower. The easiest (but also smallest and least
+            rewarding) dungeon in the game, located right in Bree, along the
+            south-eastern path away from the Inn.
 
 Unique      A monster that is named and exists only once. Although it can
             respawn for another player who hasn't defeated it yet, each player
@@ -4274,6 +4282,8 @@ More information about 'PvP' mode is given in (6.13).
 
 Unworldly characters will receive 25% bonus on their high score.
 Hellish characters receive 50% bonus on their high score.
+The highscore numbers are just for bragging and have no actual influence on
+game-play or anything.
 
 
 Last you can choose a body modification. It's strongly recommended for
@@ -4607,7 +4617,7 @@ indicating character modes:
   White           Normal mode player.
   Light blue      Everlasting mode player.
   Dark grey       No-ghost / hellish mode player.
-  Yellow          Player is a PvP-mode character.
+  Yellow          Player is a PvP mode character.
 indicating special character status:
   Violet          Player character is king / queen.
   Dark blue       Player is admin.
@@ -6441,6 +6451,7 @@ staircase colours (also visible on the world map):
  back to town! They still lose about 20% experience (and gold) though.
  They will not lose their winner (King/Queen/Emperor/Empress) state though.
  No-death dungeons/towers are marked by a green < or > symbol.
+ NOTE: The NO_DEATH flag has no effect on PvP mode characters, they will die.
 
 -Dungeons that allow neither recalling out, nor floating or providing stairs!
  There is usually only one such dungeon and that is the 'Death Fate'.
@@ -7169,12 +7180,14 @@ Town        |Depth/Level|   Local dungeons    | Depth/Level      |Required
             |of the town|                     | of the local     |player level
             |itself     |                     | dungeon          |for entering
 ------------+-----------+---------------------+------------------+------------
-Bree        |   0 ft/  0|The Training Tower   | +50..+100/ 1..2  |    1
+Bree        |   0 ft/  0|The Training Tower(*)| +50..+100/ 1..2  |    1
             |           |Barrow-Downs         |  50..1750/ 1..35 |    1
 Gondolin    |1000 ft/ 20|Mordor               |1700..3300/34..66 |   15
 Minas Anor  |2000 ft/ 40|The Paths of the Dead|2000..3500/40..70 |   20
 Lothlorien  |3000 ft/ 60|Angband              |3350..6350/67..127|   30
 Khazad-dum  |4000 ft/ 80|Angband              |3350..6350/67..127|   30
+
+(*) In the Training Tower, you cannot die for real (except for PvP mode chars).
 
 To enter a dungeon your character must have the displayed minimum level.
 Otherwise you'll get a message like this "Suddenly you're grasped by an
@@ -7346,20 +7359,20 @@ Here is a list of all dungeon bosses and the artifacts they are guarding:
 
 Dungeon, sorted by depth     |          Boss         |       Artifact
 -----------------------------+-----------------------+-------------------------
-The Training Tower           |  -                    | -
+The Training Tower    (1)    |  -                    | -
 Barrow-Downs                 |  Wight-King           | Stone of Lore
 Mordor                       |  -                    | -
 The Paths of the Dead        |  Feagwath             | Doomcaller
-Angband                      |  - (*)                | -
+Angband                      |  -  (2)               | -
 ------Non-town dungeons------+-----------------------+-------------------------
 Death Fate                   |  -                    | -
-The Halls of Mandos (****)   |  -                    | -
+The Halls of Mandos   (3)    |  -                    | -
 The Orc Cave                 |  Azog                 | -
 Mirkwood                     |  Saenathra            | -
 The Old Forest               |  Old Man Willow       | Boomerang of Beor
 The Helcaraxe                |  White Balrog         | Pike 'Til-i-arc'
 The Sandworm lair            |  Sandworm Queen       | Armour of the Sandworm
-The Heart of the Earth       |  Golgarach            | Space-time Anchor (**)
+The Heart of the Earth       |  Golgarach            | Space-time Anchor  (4)
 The Maze                     |  Minotaur             | Helm of Hammerhand
 Cirith Ungol                 |  Shelob               | Smallsword 'Sting'
 The Land Of Rhun             |  Ulfang the Black     | Sabre 'Careth Asdriag'
@@ -7369,12 +7382,14 @@ Submerged Ruins              |  Ar-Pharazon          | Amulet 'Toris Mejistos'
 The Illusory Castle          |  King in Yellow       | Helm of Knowledge
 The Sacred Land Of Mountains |  T'ron  (level 72!)   | Coat of T'ron
 Erebor                       |  Smaug                | Arkenstone of Thrain
-Dol Guldur            (***)  |  Shadow of Dol Guldur | Ring of Durin
-Mount Doom            (***)  |  Sauron, the Sorceror | -
+Dol Guldur            (5)    |  Shadow of Dol Guldur | Ring of Durin
+Mount Doom            (5)    |  Sauron, the Sorceror | -
 The Cloud Planes             |  The Living Lightning | -
-Nether Realm                 |  Zu-Aon (*****)       | Ring of Phasing
+Nether Realm                 |  Zu-Aon  (6)          | Ring of Phasing
 
-(*) Angband does not have a designated final boss, but the unique monster
+(1) In the Training Tower, you cannot die for real (except for PvP mode chars).
+
+(2) Angband does not have a designated final boss, but the unique monster
 Tik'srvzllat does not appear before depth 127. Since Angband ends at depth 127,
 you can find him on the final floor (if he actually spawns).
 In this light, Tik'srvzllat could be seen as Angband's final boss.
@@ -7382,11 +7397,13 @@ In this light, Tik'srvzllat could be seen as Angband's final boss.
 Also, Morgoth, the Lord of Darkness is encountered in Angband at -1700 ft or
 deeper. See (1.3), (1.3a) and (1.3b) for more information.
 
-(**) The space-time anchor is a special light source that can be activated to
+(3) The Halls of Mandos are barred to ANY unique monsters!
+
+(4) The space-time anchor is a special light source that can be activated to
 create a temporary anti-teleportation field of radius 12 that will prevent all
 teleportation from and to, and stall all Word of Recall attempts within.
 
-(***) While Sauron, the Sorceror, boss of Mount Doom, does not drop any
+(5) While Sauron, the Sorceror, boss of Mount Doom, does not drop any
 specific artifact, he is still a required kill before you are able to encounter
 Morgoth, the Lord of Darkness (compare (1.3), (1.3a) and (1.3b)).
 When you kill Sauron, you will be able to recall out from that dungeon level!
@@ -7396,9 +7413,7 @@ Shadow of Dol Guldur, meaning that the Shadow won't spawn for you anymore if
 you didn't kill it before killing Sauron.
 Also, you cannot find The One Ring anymore if you already killed Sauron.
 
-(****) The Halls of Mandos are barred to ANY unique monsters!
-
-(*****) Zu-Aon's teleport-to attack has special transdimensional power and
+(6) Zu-Aon's teleport-to attack has special transdimensional power and
 actually defeats anti-teleportation, space-time anchors and cannot be mitigated
 by saving throw or teleportation resistance either.
 It can however be defeated regularly by holy martyr or by anti-magic fields
@@ -8521,7 +8536,7 @@ Arena Monster Challenge (no losses or gains, for testing your abilities)
     the /scream command while it's in your line of sight.
     Inventory and equipment cannot be damaged/destroyed or disenchanted in this
     event, and you cannot get disarmed either.
-    NOTE: PvP-mode characters are exempt from safety and can die for real!
+    NOTE: PvP mode characters are exempt from safety and can die for real!
 
 Dungeon Keeper (everyone can win, 1+ participants)
     (You should enable 'easy_open' option in  = 6  for this event, which is
@@ -8529,7 +8544,7 @@ Dungeon Keeper (everyone can win, 1+ participants)
 
     Characters who want to participate must not be of higher level than 14.
     A character can participate only once in this event.
-    PvP-mode characters are not eligible to join.
+    PvP mode characters are not eligible to join.
     If you die in this event, your character will get erased, even if it was
     an everlasting-mode character.
     Running, phasing, teleporting, magic mappping, detection and ESP are
@@ -9172,7 +9187,7 @@ In general for all teleportation attempts, these are:
 -Teleport spells cast onto others (teleport other, teleport-to) may get
  resisted by the target depending on its saving throw, level or status.
 -Trying to teleport while engaged in pvp with a pvp-character. There will be
- a cooldown of maybe half a minute after a pvp-mode fight till you can use
+ a cooldown of maybe half a minute after a PvP mode fight till you can use
  teleportation again. If you try to flee by teleportation, you will receive a
  yellow message: "There's no easy way out of this fight!" >:)
 -Certain special floors ('Dungeon Keeper' event or an experimental no-teleport
@@ -11208,7 +11223,7 @@ Cheques         These are automatically generated in player stores when someone
                 For more information see (4.10a).
 Deeds           Some of the parchments are deeds, which are used as rewards
                 for various purpose, such as events (see (4.13)) and
-                PvP fights of PvP-mode-characters (see(6.13)).
+                pvp fights of PvP mode-characters (see(6.13)).
                 Press 'r' to read a deed, which will usually tell you what to
                 do with it. In most cases, you have to turn it in at the
                 mayor's office in Bree (one of the '+' doors in town).
@@ -12740,7 +12755,7 @@ If another player is invisible and not of higher level than you..
 Invisibility (on players) overrides ESP. So it does help in a (blood bond)
 duel even if the opponent has ESP.
 
-The effect of invisibility is greatly reduced in PvP (you cannot become
+The effect of invisibility is greatly reduced in pvp (you cannot become
 completely invisible even if your level is higher than the other player) but
 still gives a slight edge.
 
@@ -19723,7 +19738,7 @@ Classes do differently well at parrying and blocking. To find out more, see
 the class overview table at the end of section (6.5).
 
 Parrying/blocking might get boosted/modified under certain circumstances,
-such as PvP or defending from a trap you accidentally set off.
+such as pvp or defending from a trap you accidentally set off.
 
 
 More on Parrying
@@ -19749,7 +19764,7 @@ armour.
 This base chance in many cases applies as is to standard melee combat IF your
 character tries to block instead of parrying (compare (5.12)), but is sometimes
 modified depending on the type of an incoming attack: When deflecting bolts
-from bolt traps or when in PvP combat blocking receives an additional bonus.
+from bolt traps or when in pvp combat blocking receives an additional bonus.
 
 Parrying and blocking can both be affected by combat stances - see (6.2) for
 "Combat Stances" skill.
@@ -19945,10 +19960,10 @@ In that regard, it is quite different to the 'blood bond' duel, which always
 ends without anyone getting hurt for real.
 
 If you want to fight other players to death in a real pvp match, create a
-'pvp-mode' character. It's an option during the character creation process,
+'PvP mode' character. It's an option during the character creation process,
 much like 'everlasting mode' or 'normal mode'.
 
-PvP-mode characters can use the /pvp command to enter/leave the pvp arena.
+PvP mode characters can use the /pvp command to enter/leave the pvp arena.
 This arena also releases monsters from time to time. The entry point of a
 player is random, because he gets teleported on arrival.
 
@@ -19966,16 +19981,18 @@ make sure you hit SHIFT+G and distribute your skill points to your liking.
 For details about how this item is generated, see (8.5) Reward item creation,
 it actually uses the same mechanics.
 
-PvP-mode characters are called 'Gladiators' and use special rulesets that make
+PvP mode characters are called 'Gladiators' and use special rulesets that make
 it easier to rise in levels and less of a hassle when you get actually killed
 by an opponent! The special rules that apply are as follows:
 
--PVP chars have only one life and no ghost, ie are erased on death same as
+-PvP chars have only one life and no ghost, ie are erased on death same as
  no-ghost chars. However, they play more fast-paced and are quickly brought up
  again. The purpose of PvP chars is to fight other players to the death
  without remorse, which would otherwise be an unacceptable loss if done with
  regular characters (who can at least use Blood Bond scrolls for friendly duels
  though).
+-PvP mode characters do not gain certain safety effects like in Training Tower
+ or in the Arena Monster Challenge: They will just die for real there.
 -yellow name in chat, yellow * marker in @-list, completely yellow entry
  in @-list if viewed by another PvP mode char.
 -start at level 10 and with about 10000 Au.
@@ -21562,7 +21579,7 @@ power is, the more likely the randart will be 'aggravating nearby creatures'.
 
 (8.5) Reward item creation
 --------------------------
-PvP-mode characters may obtain item rewards by killing a lot of opponents (see
+PvP mode characters may obtain item rewards by killing a lot of opponents (see
 (6.13) for details on PvP mode), and events such as Highlander Tournament and
 Dungeon Keeper will give parchments to the winners that can be turned in at the
 mayor's office for reward items.
