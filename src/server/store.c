@@ -894,6 +894,9 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_FIRESTONE:
 		/* ok finally */
 		case TV_BOTTLE:
+#ifdef ENABLE_DEMOLITIONIST
+		case TV_CHEMICAL:
+#endif
 			break;
 		default:
 			return (FALSE);
@@ -922,6 +925,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		case TV_RUNE:
 #endif
 			break;
+#ifdef ENABLE_DEMOLITIONIST
+		case TV_CHEMICAL:
+			/* Just because of novice mages dropping this... */
+			if (o_ptr->sval != SV_SALTPETRE) return FALSE; else break;
+#endif
 		default:
 			return (FALSE);
 		}
@@ -986,7 +994,11 @@ static bool store_will_buy(int Ind, object_type *o_ptr) {
 		switch (o_ptr->tval) {
 		case TV_DIGGING:
 		case TV_LITE:
-		case TV_FLASK: break;
+		case TV_FLASK:
+#ifdef ENABLE_DEMOLITIONIST
+		case TV_CHARGE:
+#endif
+			break;
 		case TV_WAND: if (o_ptr->sval != SV_WAND_STONE_TO_MUD) return(FALSE); else break;
 		case TV_POTION: if (o_ptr->sval != SV_POTION_DETONATIONS) return(FALSE); else break;
 		default:
