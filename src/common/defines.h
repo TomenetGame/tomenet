@@ -1351,6 +1351,8 @@
    taunt_monsters(), calc_body_bonus(), fountain_guard(), and mimic form handling:
    (mimic_shaman_E, mimic_druid, mimic_vampire, check_experience(), do_cmd_check_extra_info()).) */
 #define RI_LEPER		13
+#define RI_NOVICE_MAGE		46
+#define RI_NOVICE_MAGE_F	93
 #define RI_UFTHAK		260
 #define RI_DOOR_MIMIC		311
 #define RI_VAMPIRIC_MIST	365
