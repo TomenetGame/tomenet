@@ -1415,7 +1415,7 @@ static bool black_market_crap(object_type *o_ptr, int st_idx) {
 	if (o_ptr->tval == TV_RUNE) return (TRUE);
 #else
 	/* No runes except for lots of Au */
-	if (o_ptr->tval == TV_RUNE && st_idx != STORE_BLACKX) return (TRUE);
+	if (o_ptr->tval == TV_RUNE && st_idx != STORE_BLACKS) return (TRUE);
 #endif
 
 #if 0 /* Relieve players from endlessly scumming BM for these? */
@@ -2054,7 +2054,7 @@ static void store_create(store_type *st_ptr) {
 			continue;
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS3) && (object_value(0, o_ptr) < 15000))//PRICY_ITEMS2
 			continue;
-		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS4) && (object_value(0, o_ptr) < 25000))//20000
+		if ((st_info[st_ptr->st_idx].flags1 & SF1_PRICY_ITEMS4) && object_value(0, o_ptr) < 25000 && (o_ptr->tval != TV_RUNE || rand_int(3)))//20000; TV_RUNE hack for when rune repositories were removed!
 			continue;
 
 		if ((st_info[st_ptr->st_idx].flags1 & SF1_FLAT_BASE)) {
