@@ -14660,9 +14660,9 @@ Wood chips            | Trees,  |                      | Grinding
                       | bushes  |                      |
 Charcoal              |         |                      | Burning wood, crafting
 Sulfur                | Magma   | Large firebreathers  |
-Saltpetre             | Sandwall| Bats, Birds, Hybrids |
-Ammonia salt          |         | Large poisonbreathers|
-                      |         | Quadrupeds, Canines, Hydras, Yetis
+Saltpetre             | Sandwall| Bats, Birds, Hybrids, Novice Mages (rarely)
+Ammonia salt          |         | Quadrupeds, Canines, Hydras, Yetis,
+                      |         | Large poisonbreathers|
 Reactive metal powder | Quartz  |                      | Grinding
 Caustic metal ash     |         |                      | Crafting
 Caustic salt          |         |                      | Crafting
