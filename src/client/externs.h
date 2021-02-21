@@ -73,6 +73,9 @@ extern s32b get_school_spell(cptr do_what, int *item_book);
 extern int get_spell(s32b *sn, cptr prompt, int book);
 extern void show_browse(object_type *o_ptr);
 extern void browse_school_spell(int item, int book, int pval);
+#ifdef ENABLE_SUBINVEN
+extern void browse_subinven(int item);
+#endif
 extern void do_study(int book);
 extern void do_cast(int book);
 extern void do_pray(int book);

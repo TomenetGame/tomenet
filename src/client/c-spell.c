@@ -2038,3 +2038,80 @@ void do_breath() {
 	if (!get_dir(&dir)) return;
 	Send_activate_skill(MKEY_BREATH, 0, 0, dir, 0, 0);
 }
+
+#ifdef ENABLE_SUBINVEN
+void browse_subinven(int item) {
+ #if 0
+	int i;
+	int num = 0, where = 1;
+	int ask;
+	char choice;
+	char out_val[160], out_val2[160];
+	int sval = book;
+
+#ifdef USE_SOUND_2010
+	if (sval == SV_SPELLBOOK) sound(browse_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+	else sound(browsebook_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+#endif
+
+	sprintf(out_val, "return book_spells_num2(%d, %d)", item, sval);
+	num = exec_lua(0, out_val);
+
+	/* Build a prompt (accept all spells) */
+	if (num)
+		strnfmt(out_val2, 78, "(Spells %c-%c, ESC=exit) which spell? ", I2A(0), I2A(num - 1));
+	else
+		strnfmt(out_val2, 78, "No spells available - ESC=exit");
+
+	/* Save the screen */
+	Term_save();
+
+	/* Display a list of spells */
+	sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
+	where = exec_lua(0, out_val);
+	/* Allow rest of the screen starting at this line to keep getting updated instead of staying frozen */
+	screen_line_icky = where;
+
+	/* Get a spell from the user */
+	while (get_com(out_val2, &choice)) {
+		/* Restore the screen (ie Term_load() without 'popping' it) */
+		Term_restore();
+
+		/* Display a list of spells */
+		sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
+		where = exec_lua(0, out_val);
+
+		/* Note verify */
+		ask = (isupper(choice));
+
+		/* Lowercase */
+		if (ask) choice = tolower(choice);
+
+		/* Extract request */
+		i = (islower(choice) ? A2I(choice) : -1);
+
+		/* Totally Illegal */
+		if ((i < 0) || (i >= num)) {
+			bell();
+			continue;
+		}
+
+		/* Restore the screen */
+		/* Term_load(); */
+
+		/* Display a list of spells */
+		sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
+		where = exec_lua(0, out_val);
+		sprintf(out_val, "return print_spell_desc(spell_x2(%d, %d, %d, %d), %d)", item, sval, pval, i, where);
+		where = exec_lua(0, out_val);
+		/* Allow rest of the screen starting at this line to keep getting updated instead of staying frozen */
+		screen_line_icky = where;
+	}
+	screen_line_icky = -1;
+	screen_column_icky = -1;
+
+	/* Restore the screen */
+	Term_load();
+ #endif
+}
+#endif

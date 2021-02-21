@@ -4723,7 +4723,11 @@ void cmd_throw(void) {
 }
 
 static bool item_tester_browsable(object_type *o_ptr) {
-	return (is_realm_book(o_ptr) || o_ptr->tval == TV_BOOK);
+	return (is_realm_book(o_ptr) || o_ptr->tval == TV_BOOK
+#ifdef ENABLE_SUBINVEN
+	    || o_ptr->tval == TV_SUBINVEN
+#endif
+	    );
 }
 
 void cmd_browse(void) {
@@ -4740,6 +4744,17 @@ void cmd_browse(void) {
 	}
 #endif
 
+#ifdef ENABLE_SUBINVEN
+	get_item_hook_find_obj_what = "Book/satchel name? ";
+	get_item_extra_hook = get_item_hook_find_obj;
+
+	item_tester_hook = item_tester_browsable;
+
+	if (!c_get_item(&item, "Browse which book/satchel? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+		if (item == -2) c_msg_print("You have no books that you can read, nor satchels to check.");
+		return;
+	}
+#else
 	get_item_hook_find_obj_what = "Book name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
@@ -4749,9 +4764,15 @@ void cmd_browse(void) {
 		if (item == -2) c_msg_print("You have no books that you can read.");
 		return;
 	}
-
+#endif
 	o_ptr = &inventory[item];
 
+#ifdef ENABLE_SUBINVEN
+	if (o_ptr->tval == TV_SUBINVEN) {
+		browse_subinven(item);
+		return;
+	}
+#endif
 	if (o_ptr->tval == TV_BOOK) {
 		browse_school_spell(item, o_ptr->sval, o_ptr->pval);
 		return;

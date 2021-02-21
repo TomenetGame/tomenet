@@ -3079,6 +3079,11 @@
 #else
  #define TV_CHEMICAL	48	/* Just for building the client anyway */
 #endif
+
+/* pernM ones (resurrected) */
+#define TV_KEY		51      /* Keys (';') */
+#define TV_GOLEM        52       /* Golem parts */
+
 #define TV_TOTEM	54      /* Summoner totems */
 #define TV_STAFF	55
 #define TV_WAND		65
@@ -3089,29 +3094,8 @@
 #define TV_POTION2	72      /* Second set of potion */
 #define TV_FLASK	77
 #define TV_FOOD		80
-#define TV_HYPNOS	99      /* To wield monsters !:) */
-#define TV_GOLD		100     /* Gold can only be picked up by players(?) */
-#define TV_RANDART	102     /* Random Artifacts -- unused */
 
-/* Runecraft */
-#define TV_RUNE		107
-
-//gemstones
-#define TV_GEM		106
-
-
-#define TV_BOOK		111
-#if 0   /* (reserved) we'll use TomeNET books :) */
-#define TV_SYMBIOTIC_BOOK	112
-#define TV_MUSIC_BOOK	113
-#define TV_DRUID_BOOK	114
-#define TV_DAEMON_BOOK	115
-#endif  /* 0 */
-
-/* pernM ones (resurrected) */
-#define TV_KEY		51      /* Keys (';') */
-#define TV_GOLEM        52       /* Golem parts */
-
+/* unused */
 #define TV_PSI_BOOK	89
 #define TV_MAGIC_BOOK	90
 #define TV_PRAYER_BOOK	91
@@ -3125,6 +3109,24 @@
 /* unused */
 #define is_realm_book(o_ptr) \
 	(89 <= (o_ptr)->tval && (o_ptr)->tval <= 95)
+
+#define TV_HYPNOS	99      /* unused -- To wield monsters !:) */
+#define TV_GOLD		100     /* Gold can only be picked up by players(?) */
+#define TV_RANDART	102     /* Random Artifacts -- unused */
+
+#define TV_GEM		106	//gemstones
+#define TV_RUNE		107	/* Runecraft */
+
+#define TV_BOOK		111
+
+#if 0   /* (reserved) we'll use TomeNET books :) */
+#define TV_SYMBIOTIC_BOOK	112
+#define TV_MUSIC_BOOK	113
+#define TV_DRUID_BOOK	114
+#define TV_DAEMON_BOOK	115
+#endif  /* 0 */
+
+#define TV_SUBINVEN	126
 
 /* special items */
 #define TV_SPECIAL	127
@@ -4262,8 +4264,8 @@
    ..rust: metal powder + (salt) water. Or use some kind of 'grinding tool' on rusty armour or on normal metal items to obtain (not 'reactive' though) metal powder first.
     */
 /* Optionally enable simplifications of ingredients and formulas: */
-#define NO_RUST_NO_HYDROXIDE		/* Note: Rusty items can still be ground and will just turn into normal metal powder instead, assuming the item was only partially rusted ^^. */
-#define NO_OIL_ACID			/* We don't need lamp oil to create acid, as heating is implied by our fire-type light souce (which is needed though!) */
+ #define NO_RUST_NO_HYDROXIDE		/* Note: Rusty items can still be ground and will just turn into normal metal powder instead, assuming the item was only partially rusted ^^. */
+ #define NO_OIL_ACID			/* We don't need lamp oil to create acid, as heating is implied by our fire-type light souce (which is needed though!) */
 /* TV_CHARGE svals */
  #define SV_CHARGE_BLAST		1	/* Charges can be thrown for immediate detonation or activated to detonate after a few seconds or put into trap kits? */
  #define SV_CHARGE_XBLAST		2
@@ -4324,6 +4326,9 @@
  #define CF_SW		0x1000
  #define CF_AC		0x2000
 #endif
+
+/* svals for TV_SUBINVEN */
+#define SV_SI_SATCHEL			1
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */

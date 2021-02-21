@@ -377,6 +377,8 @@
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
 
  #define DEATH_FATE_SPECIAL	/* Death Fate special */
+
+ #define ENABLE_SUBINVEN	/* Alchemy Satchels as inventory extension */
 #endif
 
 /* Specific settings for Arcade server only */
@@ -425,6 +427,11 @@
 
  /* Use regex.h to offer regexp in-game guide searching */
  #define REGEX_SEARCH
+
+ /* Alchemy Satchels as inventory extension */
+ #ifdef TEST_CLIENT
+  #define ENABLE_SUBINVEN
+ #endif
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/

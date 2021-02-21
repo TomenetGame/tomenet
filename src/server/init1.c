@@ -1537,6 +1537,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "DEMOLITIONIST_IDDC_ONLY") && negation) invalid = TRUE;
 #endif
+#ifndef ENABLE_SUBINVEN
+		if (streq(m, "ENABLE_SUBINVEN") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_SUBINVEN") && negation) invalid = TRUE;
+#endif
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
 		    strcmp(m, "RPG_SERVER") &&
@@ -1561,6 +1566,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_OUNLIFE") &&
 		    strcmp(m, "ENABLE_DEMOLITIONIST") &&
 		    strcmp(m, "DEMOLITIONIST_IDDC_ONLY") &&
+		    strcmp(m, "ENABLE_SUBINVEN") &&
 			TRUE)
 			invalid = TRUE;
 	}
