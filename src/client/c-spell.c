@@ -2052,7 +2052,6 @@ void browse_subinven(int subinven_sval) {
 	int ask;
 	char choice;
 	char out_val[160], out_val2[160];
-	int sval = SV_SI_SATCHEL;
 
 	/* paranoia */
 	if (subinven_sval > MAX_SUBINVEN) return;

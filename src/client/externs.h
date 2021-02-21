@@ -666,6 +666,9 @@ extern void prt_stun(int stun);
 extern void prt_basic(void);
 extern void health_redraw(int num, byte attr);
 extern void show_inven(void);
+#ifdef ENABLE_SUBINVEN
+extern void show_subinven(int subinven_sval);
+#endif
 extern void show_equip(void);
 extern void display_player(int hist);
 extern void window_stuff(void);

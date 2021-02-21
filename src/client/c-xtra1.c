@@ -1724,6 +1724,18 @@ void show_subinven(int subinven_sval) {
 	byte	out_color[23];
 	char	out_desc[23][ONAME_LEN];
 
+	int max_subinven = INVEN_TOTAL;
+
+
+	/* paranoia */
+	if (subinven_sval > MAX_SUBINVEN) return;
+
+	switch (subinven_sval) {
+	case SV_SI_SATCHEL:
+		max_subinven = 9;
+		//max_subinven = return 11;
+	}
+
 
 #ifdef USE_SOUND_2010
  #if 0 /* actually too spammy because the inventory is opened for a lot of fast-paced actions all the time. */
@@ -1745,8 +1757,8 @@ void show_subinven(int subinven_sval) {
 
 
 	/* Find the "final" slot */
-	for (i = 0; i < INVEN_PACK; i++) {
-		o_ptr = &inventory[i];
+	for (i = 0; i < max_subinven; i++) {
+		o_ptr = &subinventory[subinven_sval][i];
 
 		/* Track non-empty slots */
 		if (o_ptr->tval) z = i + 1;
@@ -1754,13 +1766,13 @@ void show_subinven(int subinven_sval) {
 
 	/* Display the inventory */
 	for (k = 0, i = 0; i < z; i++) {
-		o_ptr = &inventory[i];
+		o_ptr = &subinventory[subinven_sval][i];
 
 		/* Is this item acceptable? */
 		if (!item_tester_okay(o_ptr)) continue;
 
 		/* Describe the object */
-		strcpy(o_name, inventory_name[i]);
+		strcpy(o_name, subinventory_name[subinven_sval][i]);
 
 		/* Hack -- enforce max length */
 		o_name[lim] = '\0';
@@ -1796,7 +1808,7 @@ void show_subinven(int subinven_sval) {
 		i = out_index[j];
 
 		/* Get the item */
-		o_ptr = &inventory[i];
+		o_ptr = &subinventory[subinven_sval][i];
 
 		/* Clear the line */
 		prt("", j + 1, col ? col - 2 : col);

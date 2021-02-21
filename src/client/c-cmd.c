@@ -772,6 +772,100 @@ void cmd_inven(void) {
 	Flush_queue();
 }
 
+#ifdef ENABLE_SUBINVEN
+void cmd_subinven(int subinven_sval) {
+	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
+	int c;
+	char buf[MSG_LEN];
+	int max_subinven = INVEN_PACK;
+
+	/* First, erase our current location */
+
+	/* Then, save the screen */
+	Term_save();
+	showing_inven = screen_icky;
+
+	command_gap = 50;
+
+#ifdef USE_SOUND_2010
+	/* Note: We don't play the sound in show_inven() itself because that will be too spammy. */
+	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+#endif
+
+	switch (subinven_sval) {
+	case SV_SI_SATCHEL:
+		max_subinven = 9;
+		//max_subinven = return 11;
+	}
+
+	show_subinven(subinven_sval);
+
+	while (TRUE) {
+		ch = inkey();
+		if (ch == KTRL('T')) {
+			xhtml_screenshot("screenshot????");
+			break;
+		}
+		/* allow pasting item into chat */
+		else if (ch >= 'A' && ch < 'A' + max_subinven) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+			c = ch - 'A';
+
+			if (subinventory[subinven_sval][c].tval) {
+				snprintf(buf, MSG_LEN - 1, "\377s%s", subinventory_name[subinven_sval][c]);
+				buf[MSG_LEN - 1] = 0;
+				/* if item inscriptions contains a colon we might need
+				   another colon to prevent confusing it with a private message */
+				if (strchr(subinventory_name[subinven_sval][c], ':')) {
+					buf[strchr(subinventory_name[subinven_sval][c], ':') - subinventory_name[subinven_sval][c] + strlen(buf) - strlen(subinventory_name[subinven_sval][c]) + 1] = '\0';
+					if (strchr(buf, ':') == &buf[strlen(buf) - 1])
+						strcat(buf, ":");
+					strcat(buf, strchr(subinventory_name[subinven_sval][c], ':') + 1);
+				}
+				Send_paste_msg(buf);
+			}
+			break;
+		}
+		else if (ch == 'x') {
+			cmd_observe(USE_INVEN);
+			continue;
+		}
+		else if (ch == 'd') {
+			cmd_drop(USE_INVEN);
+			continue;
+		}
+		else if (ch == 'k' || ch == KTRL('D')) {
+			cmd_destroy(USE_INVEN);
+			continue;
+		}
+		else if (ch == '{') {
+			cmd_inscribe(USE_INVEN);
+			continue;
+		}
+		else if (ch == '}') {
+			cmd_uninscribe(USE_INVEN);
+			continue;
+		}
+		else if (ch == ':') {
+			cmd_message();
+			continue;
+		}
+		break;
+	}
+
+	screen_line_icky = -1;
+	screen_column_icky = -1;
+
+	showing_inven = FALSE;
+
+	/* restore the screen */
+	Term_load();
+	/* print our new location */
+
+	/* Flush any events */
+	Flush_queue();
+}
+#endif
+
 void cmd_equip(void) {
 	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
 	int c;
@@ -4774,7 +4868,8 @@ void cmd_browse(void) {
 
 #ifdef ENABLE_SUBINVEN
 	if (o_ptr->tval == TV_SUBINVEN) {
-		browse_subinven(o_ptr->sval);
+		//browse_subinven(o_ptr->sval);
+		cmd_subinven(o_ptr->sval);
 		return;
 	}
 #endif
