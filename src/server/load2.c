@@ -1812,7 +1812,9 @@ static bool rd_extra(int Ind) {
 	rd_s16b(&p_ptr->fruit_bat);
 
 	/* Read the flags */
-	rd_byte(&p_ptr->lives);
+	rd_byte(&tmp8u);
+	p_ptr->lives = tmp8u;
+
 	/* hack, if save file was from an older version we need to convert it: */
  	if (cfg.lifes && !p_ptr->lives) p_ptr->lives = cfg.lifes+1;
 	/* If the server's life amount was reduced, apply it to players */
