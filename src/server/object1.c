@@ -6547,6 +6547,11 @@ byte get_book_name_color(object_type *o_ptr) {
 byte get_attr_from_tval(object_type *o_ptr) {
 	int attr = tval_to_attr[o_ptr->tval];
 
+#ifdef ENABLE_DEMOLITIONIST
+	if (o_ptr->tval == TV_CHEMICAL && o_ptr->sval == SV_MIXTURE)
+		return TERM_L_UMBER;
+#endif
+
 #ifdef PLAYER_STORES
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE)
 		return TERM_L_UMBER;
