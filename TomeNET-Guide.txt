@@ -14659,14 +14659,14 @@ Acid                  |         |                      | Crafting
 Wood chips            | Trees,  |                      | Grinding
                       | bushes  |                      |
 Charcoal              |         |                      | Burning wood, crafting
-Sulfur                | Magma   | Large firebreathers  |
+Sulfur                | Magma   | Medium firebreathers |
 Saltpetre             | Sandwall| Bats, Birds, Hybrids, Novice Mages (rarely)
 Ammonia salt          |         | Quadrupeds, Canines, Hydras, Yetis,
-                      |         | Large poisonbreathers|
+                      |         | Medium poisonbreathers
 Reactive metal powder | Quartz  |                      | Grinding
 Caustic metal ash     |         |                      | Crafting
 Caustic salt          |         |                      | Crafting
-Vitriol               | Magma   | Large acidbreathers  |
+Vitriol               | Magma   | Medium acidbreathers |
 
 Crafting ingredients from raw materials:
 ----------------------------------------

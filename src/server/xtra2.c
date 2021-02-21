@@ -6220,7 +6220,7 @@ bool monster_death(int Ind, int m_idx) {
     {
 	bool found_chemical = FALSE;
 
-	if ((r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
+	if ((r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 2000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
@@ -6238,7 +6238,7 @@ bool monster_death(int Ind, int m_idx) {
 			found_chemical = TRUE;
 		}
 	}
-	if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
+	if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 2000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 10 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
@@ -6256,7 +6256,7 @@ bool monster_death(int Ind, int m_idx) {
 			found_chemical = TRUE;
 		}
 	}
-	if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
+	if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 2000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
 		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
