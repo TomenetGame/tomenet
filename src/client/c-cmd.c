@@ -4774,7 +4774,7 @@ void cmd_browse(void) {
 
 #ifdef ENABLE_SUBINVEN
 	if (o_ptr->tval == TV_SUBINVEN) {
-		browse_subinven(item);
+		browse_subinven(o_ptr->sval);
 		return;
 	}
 #endif

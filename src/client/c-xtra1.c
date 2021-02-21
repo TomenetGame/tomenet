@@ -1709,6 +1709,146 @@ void show_inven(void) {
 	if (screen_icky != 1) screen_line_icky = screen_column_icky = -1;
 }
 
+#ifdef ENABLE_SUBINVEN
+void show_subinven(int subinven_sval) {
+	int	i, j, k, l, z = 0;
+	int	col, len, lim;
+	long int wgt, totalwgt = 0;
+
+	object_type *o_ptr;
+
+	char	o_name[ONAME_LEN];
+	char	tmp_val[80];
+
+	int	out_index[23];
+	byte	out_color[23];
+	char	out_desc[23][ONAME_LEN];
+
+
+#ifdef USE_SOUND_2010
+ #if 0 /* actually too spammy because the inventory is opened for a lot of fast-paced actions all the time. */
+	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+ #endif
+#endif
+
+	/* Starting column */
+	col = command_gap;
+
+	/* Default "max-length" */
+	len = 79 - col;
+
+	/* Maximum space allowed for descriptions */
+	lim = 79 - 3;
+
+	/* Require space for weight (if needed) */
+	lim -= 9;
+
+
+	/* Find the "final" slot */
+	for (i = 0; i < INVEN_PACK; i++) {
+		o_ptr = &inventory[i];
+
+		/* Track non-empty slots */
+		if (o_ptr->tval) z = i + 1;
+	}
+
+	/* Display the inventory */
+	for (k = 0, i = 0; i < z; i++) {
+		o_ptr = &inventory[i];
+
+		/* Is this item acceptable? */
+		if (!item_tester_okay(o_ptr)) continue;
+
+		/* Describe the object */
+		strcpy(o_name, inventory_name[i]);
+
+		/* Hack -- enforce max length */
+		o_name[lim] = '\0';
+
+		/* Save the object index, color, and descrtiption */
+		out_index[k] = i;
+		out_color[k] = o_ptr->attr;
+		(void)strcpy(out_desc[k], o_name);
+
+		/* Find the predicted "line length" */
+		l = strlen(out_desc[k]) + 5;
+
+		/* Be sure to account for the weight */
+		l += 9;
+
+		/* Maintain the maximum length */
+		if (l > len) len = l;
+
+		/* Advance to next "line" */
+		k++;
+	}
+
+	/* For screen_line_icky: Fill the whole map-screen */
+	screen_column_icky = 79 - len - 2 - 1; /* -2: Item list has 2 leading spaces at the start of each line, -1: start _before_ this column */
+	screen_line_icky = k + 1 + 1; /* +1: Item list as 1 trailing empty 'border' line */
+
+	/* Find the column to start in */
+	col = (len > 76) ? 0 : (79 - len);
+
+	/* Output each entry */
+	for (j = 0; j < k; j++) {
+		/* Get the index */
+		i = out_index[j];
+
+		/* Get the item */
+		o_ptr = &inventory[i];
+
+		/* Clear the line */
+		prt("", j + 1, col ? col - 2 : col);
+
+		/* Prepare and index --(-- */
+		sprintf(tmp_val, "%c)", index_to_label(i));
+
+		/* Clear the line with the (possibly indented) index */
+		put_str(tmp_val, j + 1, col);
+
+		/* Display the entry itself */
+		c_put_str(out_color[j], out_desc[j], j + 1, col + 3);
+
+		/* Display the weight if needed */
+		if (c_cfg.show_weights && o_ptr->weight) {
+			wgt = o_ptr->weight * o_ptr->number;
+			if (wgt < 10000) /* still fitting into 3 digits? */
+				(void)sprintf(tmp_val, "%3li.%1li lb", wgt / 10, wgt % 10);
+			else
+				(void)sprintf(tmp_val, "%3lik%1li lb", wgt / 10000, (wgt % 10000) / 1000);
+			put_str(tmp_val, j + 1, 71);
+			totalwgt += wgt;
+		}
+	}
+
+	/* Display the weight if needed */
+	if (c_cfg.show_weights && totalwgt
+	    && !topline_icky) { /* <- for when we're inside cmd_inven() and pressed 'x' to examine an item, while a live-inve-timeout-update is coming in (only happens for equip atm tho, so not needed here) */
+		if (totalwgt < 10000) /* still fitting into 3 digits? */
+			(void)sprintf(tmp_val, "Total: %3li.%1li lb", totalwgt / 10, totalwgt % 10);
+		else if (totalwgt < 10000000) /* still fitting into 3 digits? */
+			(void)sprintf(tmp_val, "Total: %3lik%1li lb", totalwgt / 10000, (totalwgt % 10000) / 1000);
+		else
+			(void)sprintf(tmp_val, "Total: %3liM%1li lb", totalwgt / 10000000, (totalwgt % 10000000) / 1000000);
+		c_put_str(TERM_L_BLUE, tmp_val, 0, 64);
+	}
+
+	/* Make a "shadow" below the list (only if needed) */
+	if (j && (j < 23)) prt("", j + 1, col ? col - 2 : col);
+
+	/* Notify if inventory is actually empty */
+	if (!k) prt("(Your inventory is empty)", 1, 13);
+
+	/* Save the new column */
+	command_gap = col;
+
+	/* Do not allow environmental redrawing if we're actually already inside an icky screen here.
+	   (Concerns shopping only atm I think, but checking screen_icky seems better than checking 'shopping') */
+	if (screen_icky != 1) screen_line_icky = screen_column_icky = -1;
+}
+#endif
+
 
 /*
  * Display the equipment.

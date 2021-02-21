@@ -2040,8 +2040,13 @@ void do_breath() {
 }
 
 #ifdef ENABLE_SUBINVEN
+ #ifdef NO_RUST_NO_HYDROXIDE
+  #define SI_SATCHEL_SIZE 9
+ #else
+  #define SI_SATCHEL_SIZE 11
+ #endif
 /* This doesn't belong into c-spell.c, it's just here cause it's created based on browse_school_spell() sorta */
-void browse_subinven(int item) {
+void browse_subinven(int subinven_sval) {
 	int i;
 	int num = 0, where = 1;
 	int ask;
@@ -2049,26 +2054,29 @@ void browse_subinven(int item) {
 	char out_val[160], out_val2[160];
 	int sval = SV_SI_SATCHEL;
 
+	/* paranoia */
+	if (subinven_sval > MAX_SUBINVEN) return;
+
 #ifdef USE_SOUND_2010
 	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
 #endif
 
- #if 0
-	sprintf(out_val, "return book_spells_num2(%d, %d)", item, sval);
-	num = exec_lua(0, out_val);
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		if (!subinventory[subinven_sval][i].tval) break;
+		num++;
+	}
 
 	/* Build a prompt (accept all spells) */
 	if (num)
-		strnfmt(out_val2, 78, "(Spells %c-%c, ESC=exit) which spell? ", I2A(0), I2A(num - 1));
+		strnfmt(out_val2, 78, "(Contents %c-%c, ESC=exit) which spell? ", I2A(0), I2A(num - 1));
 	else
-		strnfmt(out_val2, 78, "No spells available - ESC=exit");
+		strnfmt(out_val2, 78, "Your satchel is empty - ESC=exit");
 
 	/* Save the screen */
 	Term_save();
 
 	/* Display a list of spells */
-	sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
-	where = exec_lua(0, out_val);
+
 	/* Allow rest of the screen starting at this line to keep getting updated instead of staying frozen */
 	screen_line_icky = where;
 
@@ -2077,9 +2085,7 @@ void browse_subinven(int item) {
 		/* Restore the screen (ie Term_load() without 'popping' it) */
 		Term_restore();
 
-		/* Display a list of spells */
-		sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
-		where = exec_lua(0, out_val);
+		show_subinven(subinven_sval);
 
 		/* Note verify */
 		ask = (isupper(choice));
@@ -2099,11 +2105,8 @@ void browse_subinven(int item) {
 		/* Restore the screen */
 		/* Term_load(); */
 
-		/* Display a list of spells */
-		sprintf(out_val, "return print_book2(0, %d, %d, %d)", item, sval, pval);
-		where = exec_lua(0, out_val);
-		sprintf(out_val, "return print_spell_desc(spell_x2(%d, %d, %d, %d), %d)", item, sval, pval, i, where);
-		where = exec_lua(0, out_val);
+		show_subinven(subinven_sval);
+
 		/* Allow rest of the screen starting at this line to keep getting updated instead of staying frozen */
 		screen_line_icky = where;
 	}
@@ -2112,6 +2115,5 @@ void browse_subinven(int item) {
 
 	/* Restore the screen */
 	Term_load();
- #endif
 }
 #endif

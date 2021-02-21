@@ -1886,6 +1886,9 @@
 #define INVEN_TOTAL	38	/* since they start at 0, max slot index is INVEN_TOTAL - 1 (!) */
 /* Number of equipment slots, INVEN_TOTAL ... INVEN_TOTAL + INVEN_EQ - 1 */
 #define INVEN_EQ	(INVEN_TOTAL - INVEN_WIELD)
+#ifdef ENABLE_SUBINVEN
+ #define MAX_SUBINVEN 0
+#endif
 
 
 /*
@@ -4328,7 +4331,7 @@
 #endif
 
 /* svals for TV_SUBINVEN */
-#define SV_SI_SATCHEL			1
+#define SV_SI_SATCHEL			0
 
 /* svals for TV_SPECIAL */
 #define SV_SEAL				0	/* for invalid items */
