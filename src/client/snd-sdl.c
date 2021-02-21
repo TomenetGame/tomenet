@@ -2331,8 +2331,7 @@ errr re_init_sound_sdl(void) {
 	//cfg_audio_master_volume = 75, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
 
 	//grid_weather_volume = 100, grid_ambient_volume = 100, grid_weather_volume_goal = 100, grid_ambient_volume_goal = 100, grid_weather_volume_step, grid_ambient_volume_step;
-	bell_sound_idx = -1, page_sound_idx = -1, warning_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1, thunder_sound_idx = -1;
-
+	bell_sound_idx = -1, page_sound_idx = -1, warning_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1, thunder_sound_idx = -1, browseinven_sound_idx = -1;
 
 	/* --- init --- */
 

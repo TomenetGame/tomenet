@@ -2040,20 +2040,20 @@ void do_breath() {
 }
 
 #ifdef ENABLE_SUBINVEN
+/* This doesn't belong into c-spell.c, it's just here cause it's created based on browse_school_spell() sorta */
 void browse_subinven(int item) {
- #if 0
 	int i;
 	int num = 0, where = 1;
 	int ask;
 	char choice;
 	char out_val[160], out_val2[160];
-	int sval = book;
+	int sval = SV_SI_SATCHEL;
 
 #ifdef USE_SOUND_2010
-	if (sval == SV_SPELLBOOK) sound(browse_sound_idx, SFX_TYPE_COMMAND, 100, 0);
-	else sound(browsebook_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
 #endif
 
+ #if 0
 	sprintf(out_val, "return book_spells_num2(%d, %d)", item, sval);
 	num = exec_lua(0, out_val);
 

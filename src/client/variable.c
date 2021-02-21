@@ -338,7 +338,7 @@ int weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];
 int grid_weather_volume = 100, grid_ambient_volume = 100, grid_weather_volume_goal = 100, grid_ambient_volume_goal = 100, grid_weather_volume_step, grid_ambient_volume_step;
 
 /* sounds that are hard-coded on client-side, because they won't be transmitted from the server: */
-int bell_sound_idx = -1, page_sound_idx = -1, warning_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1, thunder_sound_idx = -1;
+int bell_sound_idx = -1, page_sound_idx = -1, warning_sound_idx = -1, rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, browse_sound_idx = -1, browsebook_sound_idx = -1, thunder_sound_idx = -1, browseinven_sound_idx = -1;
 
 /* optimization options */
 bool sound_hint = TRUE;

@@ -378,7 +378,7 @@
 
  #define DEATH_FATE_SPECIAL	/* Death Fate special */
 
- //#define ENABLE_SUBINVEN	/* Alchemy Satchels as inventory extension */
+ #define ENABLE_SUBINVEN	/* Alchemy Satchels as inventory extension */
 #endif
 
 /* Specific settings for Arcade server only */
@@ -430,7 +430,7 @@
 
  /* Alchemy Satchels as inventory extension */
  #ifdef TEST_CLIENT
-  //#define ENABLE_SUBINVEN
+  #define ENABLE_SUBINVEN
  #endif
 #endif
 

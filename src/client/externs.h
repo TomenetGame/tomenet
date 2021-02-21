@@ -601,7 +601,7 @@ extern void toggle_weather(void);
 extern bool sound_bell(void);
 extern bool sound_page(void);
 extern bool sound_warning(void);
-extern int bell_sound_idx, page_sound_idx, warning_sound_idx, rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, snow2_sound_idx, browse_sound_idx, browsebook_sound_idx, thunder_sound_idx;
+extern int bell_sound_idx, page_sound_idx, warning_sound_idx, rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, snow2_sound_idx, browse_sound_idx, browsebook_sound_idx, thunder_sound_idx, browseinven_sound_idx;
 #endif
 extern errr options_dump(cptr fname);
 extern bool parse_macro;

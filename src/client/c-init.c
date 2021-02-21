@@ -3443,6 +3443,7 @@ static void init_sound() {
 	snow2_sound_idx = exec_lua(0, "return get_sound_index(\"snow_storm\")");
 	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
+	browseinven_sound_idx = exec_lua(0, "return get_sound_index(\"inventory\")");
 #endif
 }
 /* Try to re-init specifically SDL-audio.
@@ -3498,6 +3499,7 @@ int re_init_sound() {
 	snow2_sound_idx = exec_lua(0, "return get_sound_index(\"snow_storm\")");
 	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
+	browseinven_sound_idx = exec_lua(0, "return get_sound_index(\"inventory\")");
 #endif
 
 	/* Inform server about potentially changed capabilities */
