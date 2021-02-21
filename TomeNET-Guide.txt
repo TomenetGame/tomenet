@@ -19845,7 +19845,7 @@ The techniques are as follows:
         branding will fade away.
         The poison will only last for a short while, so it's best to apply it
         before engaging in a fight.
-    Perceive Noise      3 stamina
+    Perceive Noise      2 stamina
         Listen carefully to every sound in your surroundings, thereby locating
         creatures. Some entities are so quiet that they cannot be detected this
         way though.

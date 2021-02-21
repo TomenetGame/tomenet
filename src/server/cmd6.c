@@ -8337,8 +8337,8 @@ s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 	case 7:	if (!(p_ptr->melee_techniques & MT_DETNOISE)) return; /* Perceive Noise */
-		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
-		p_ptr->cst -= 3;
+		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
+		p_ptr->cst -= 2;
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		detect_noise(Ind);
 s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
