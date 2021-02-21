@@ -2662,6 +2662,13 @@ static bool can_rust(object_type *o_ptr) {
 /* Specialties just for grinding tool application */
 bool contains_significant_reactive_metal(object_type *o_ptr) {
 	switch (o_ptr->tval) {
+	case TV_BOOMERANG:
+		switch (o_ptr->sval) {
+		case SV_BOOM_WOOD:
+		case SV_BOOM_S_WOOD:
+			return FALSE;
+		}
+		return TRUE;
 	case TV_ROD: /* Note: Omit "-plated" varieties */
 		if (streq(rod_adj[o_ptr->sval], "Aluminium") ||
 		    streq(rod_adj[o_ptr->sval], "Cast Iron") ||
@@ -2711,6 +2718,13 @@ bool contains_significant_reactive_metal(object_type *o_ptr) {
 }
 bool contains_significant_wood(object_type *o_ptr) {
 	switch (o_ptr->tval) {
+	case TV_BOOMERANG:
+		switch (o_ptr->sval) {
+		case SV_BOOM_WOOD:
+		case SV_BOOM_S_WOOD:
+			return TRUE;
+		}
+		return FALSE;
 	case TV_ARROW:
 		if (o_ptr->sval != SV_AMMO_NORMAL) return FALSE;
 		//fall through
