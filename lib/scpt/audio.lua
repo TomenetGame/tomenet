@@ -105,6 +105,7 @@ audio_sfx = {
     --misc
     "grow_trees",
     "insanity",
+    "inventory",
     "levelup",
     "jailed",
     "receive_xo",
