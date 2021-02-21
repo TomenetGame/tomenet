@@ -17221,7 +17221,7 @@ D:A small, apparently unassuming orb which spawns death and destruction.
 N:976:Bronze dragon worm
 G:w:U
 I:100:10d15:20:40:80
-W:20:3:4500:12
+W:20:3:3500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:CLAW:HURT:3d3
@@ -17242,7 +17242,7 @@ D:a multitude of perplexing and distracting ways.
 N:977:Gold dragon worm
 G:w:y
 I:100:10d15:20:40:80
-W:20:3:4500:12
+W:20:3:3500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:CLAW:HURT:3d3
@@ -18147,7 +18147,7 @@ D:waving and poppy-crowned."
 N:1023:Blue dragon worm
 G:w:B
 I:100:10d15:20:40:80
-W:20:3:4500:12
+W:20:3:3500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:CLAW:HURT:3d3
@@ -18167,7 +18167,7 @@ D:breath, and the fiery eyes, of a real Dragon. Sparks fly from its jaws.
 N:1024:White dragon worm
 G:w:W
 I:100:10d15:20:40:80
-W:20:3:4500:12
+W:20:3:3500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:CLAW:HURT:3d3
@@ -18187,7 +18187,7 @@ D:breath, and the fiery eyes, of a real Dragon. Its breath condenses in the air.
 N:1025:Green dragon worm
 G:w:G
 I:100:10d15:20:40:80
-W:20:3:4500:12
+W:20:3:3500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:CLAW:HURT:3d3
@@ -18208,7 +18208,7 @@ D:on its breath.
 N:1026:Black dragon worm
 G:w:D
 I:100:10d15:20:40:80
-W:20:3:4500:12
+W:20:3:3500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:CLAW:HURT:3d3
@@ -18228,7 +18228,7 @@ D:breath, and the fiery eyes, of a real Dragon. Acidic drool drips from its jaws
 N:1027:Red dragon worm
 G:w:R
 I:100:10d15:20:40:80
-W:20:3:4500:12
+W:20:3:3500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:CLAW:HURT:3d3
@@ -18248,7 +18248,7 @@ D:breath, and the fiery eyes, of a real Dragon. Smoke comes from its mouth.
 N:1028:Multi-hued dragon worm
 G:w:v
 I:100:10d20:20:40:80
-W:23:3:4500:12
+W:23:3:3500:12
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:CLAW:HURT:3d3
