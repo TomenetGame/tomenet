@@ -700,6 +700,11 @@ void cmd_inven(void) {
 
 	command_gap = 50;
 
+#ifdef USE_SOUND_2010
+	/* Note: We don't play the sound in show_inven() itself because that will be too spammy. */
+	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+#endif
+
 	show_inven();
 
 	while (TRUE) {

@@ -2034,6 +2034,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	case TV_FIRESTONE:
 	case TV_INSTRUMENT:
 	case TV_TOOL:
+#ifdef ENABLE_SUBINVEN
+	case TV_SUBINVEN:
+#endif
 		break;
 
 	/* Missiles/ Bows/ Weapons */

@@ -1586,6 +1586,12 @@ void show_inven(void) {
 	char	out_desc[23][ONAME_LEN];
 
 
+#ifdef USE_SOUND_2010
+ #if 0 /* actually too spammy because the inventory is opened for a lot of fast-paced actions all the time. */
+	sound(browseinven_sound_idx, SFX_TYPE_COMMAND, 100, 0);
+ #endif
+#endif
+
 	/* Starting column */
 	col = command_gap;
 
