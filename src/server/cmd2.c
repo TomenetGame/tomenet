@@ -8284,6 +8284,13 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				}
 				arm_charge_dir_and_fuse(o_ptr, cdir);
 			} else arm_charge_dir_and_fuse(o_ptr, dir);
+ #if 0
+			/* throwing can affect the fuse burning sometimes */
+			if (o_ptr->timeout) {
+				o_ptr->timeout = o_ptr->timeout - rand_int(4);
+				if (!o_ptr->timeout) o_ptr->timeout = 1;
+			}
+ #endif
 		}
 	}
 #endif
