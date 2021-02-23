@@ -1404,6 +1404,16 @@ static void build_streamer(struct worldpos *wpos, int feat, int chance, bool pie
 	cave_type **zcave;
 	int dun_type;
 
+#ifdef ENABLE_DEMOLITIONIST
+	/* Kurzel - Replace some quartz with sandwall at mostly shallow depths? */
+	if (feat == FEAT_QUARTZ) {
+		int dun_level = getlevel(wpos);
+
+		if (magik((dun_level >= 25) ? 0 : (25 - dun_level))) // (0..25)% chance!
+			feat = FEAT_SANDWALL;
+	}
+#endif
+
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 	if (in_irondeepdive(wpos)) dun_type = iddc[ABS(wpos->wz)].type;
 	else
