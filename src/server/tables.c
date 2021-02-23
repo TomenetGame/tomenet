@@ -3900,7 +3900,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 900, },
 		{ SKILL_CRITS,
 			'+', 0,
-			'+', 400, },
+			'+', 600, },
 		{ SKILL_AXE,
 			'+', 0,
 			'+', 800, },
