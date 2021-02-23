@@ -10525,6 +10525,9 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 
 		k++;
 		if (k > 100) lev--;
+
+		/* To keep Goblin Slayer check in check: */
+		if (lev < 0) break;
 	} while (((lev - 5) > r_info[r].level && lev >= 5) ||
 	    (r_info[r].flags1 & RF1_UNIQUE) ||
 	    (r_info[r].flags7 & RF7_MULTIPLY) ||
