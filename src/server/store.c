@@ -7598,6 +7598,7 @@ void handle_store_leave(int Ind) {
 	/* We're no longer busy with anything */
 	p_ptr->store_action = 0;
 
+#ifdef USE_SOUND_2010
 	/* For possible store-specific music */
 	handle_music(Ind);
 	/* For possible store-specific ambient sfx */
@@ -7605,6 +7606,7 @@ void handle_store_leave(int Ind) {
 	/* Restore correct weather volume */
 	p_ptr->grid_house = FALSE; //just assume we did not get kicked out 'into' an inn.. (shouldn't happen)
 	if (p_ptr->sfx_house_quiet || !p_ptr->sfx_house) Send_sfx_volume(Ind, 100, 100);
+#endif
 
 	/* Do nothing if pointer is not valid - mikaelh */
 	if (!st_ptr) return;

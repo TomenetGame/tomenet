@@ -64,8 +64,10 @@ bool rune_enchant(int Ind, int item) {
 	/* Erase the rune */
 	inven_item_increase(Ind, p_ptr->current_activation, -1);
 
+#ifdef USE_SOUND_2010
 	/* Play a sound! */
 	sound(Ind, "item_rune", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 	/* Clean up... */
 	inven_item_optimize(Ind, item);
