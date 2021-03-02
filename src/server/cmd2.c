@@ -6299,7 +6299,7 @@ void do_cmd_fire(int Ind, int dir) {
 			if (cursed_p(o_ptr) ? TRUE : magik(break_chance * (p_ptr->ranged_barrage ? 3 : 1))) {
 				if (item >= 0) {
 					inven_item_increase(Ind, item, -1);
-//					inven_item_describe(Ind, item);
+					//inven_item_describe(Ind, item);
 					msg_format(Ind, "\377wThe %s fades away.", o_name);
 					inven_item_optimize(Ind, item);
 				} else {
@@ -7067,47 +7067,44 @@ void do_cmd_fire(int Ind, int dir) {
 				}
 			}
 
-		    /* server crashed further below when ny was 66, dir was 10 but then became 3, odd stuff.. */
-		    if (in_bounds_array(ny, nx))
+			/* server crashed further below when ny was 66, dir was 10 but then became 3, odd stuff.. */
+			if (in_bounds_array(ny, nx))
 #ifdef DOUBLE_LOS_SAFETY
-		    /* skip checks if we already used projectable..() routines to test. */
-		    if (dir != 5) {
+			/* skip checks if we already used projectable..() routines to test. */
+			if (dir != 5) {
 #endif
 #ifdef PY_FIRE_ON_WALL
-			/* Stopped by walls/doors */
-			if (!cave_contact(zcave, ny, nx)) break;
+				/* Stopped by walls/doors */
+				if (!cave_contact(zcave, ny, nx)) break;
 #endif
 #ifdef DOUBLE_LOS_SAFETY
-		    }
+			}
 #endif
 		}
 
-	    /* Extra (exploding) hack: */
+		/* Extra (exploding) hack: */
 #ifdef DOUBLE_LOS_SAFETY
-	    /* skip checks if we already used projectable..() routines to test. */
-	    if (dir != 5) {
+		/* skip checks if we already used projectable..() routines to test. */
+		if (dir != 5) {
 #endif
-		/* server crashed here when ny was 66, dir was 10 but then became 3, odd stuff.. */
-		if (in_bounds_array(ny, nx) &&
-		    !boomerang && !magic && o_ptr->pval) {
-			if (!cave_contact(zcave, ny, nx)) /* Stopped by walls/doors ?*/
+			/* server crashed here when ny was 66, dir was 10 but then became 3, odd stuff.. */
+			if (in_bounds_array(ny, nx) &&
+			    !boomerang && !magic && o_ptr->pval) {
+				if (!cave_contact(zcave, ny, nx)) /* Stopped by walls/doors ?*/
 #ifndef PY_FIRE_ON_WALL
-				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+					do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 #else
-				/* important: explode BEFORE wall, or we could target a wall grid and hit stuff beyond it */
-				do_arrow_explode(Ind, o_ptr, wpos, prev_y, prev_x, tmul);
+					/* important: explode BEFORE wall, or we could target a wall grid and hit stuff beyond it */
+					do_arrow_explode(Ind, o_ptr, wpos, prev_y, prev_x, tmul);
 #endif
-			else if (dir == 5 && !target_ok) /* fired 'at oneself'? */
-				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
-		}
-#ifdef DOUBLE_LOS_SAFETY
-	    } else {
-		if (!target_ok) { /* fired 'at oneself'? */
-			if (!boomerang && !magic && o_ptr->pval) {
-				do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+				else if (dir == 5 && !target_ok) /* fired 'at oneself'? */
+					do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 			}
+#ifdef DOUBLE_LOS_SAFETY
+		} else if (!target_ok /* fired 'at oneself'? */
+		    && !boomerang && !magic && o_ptr->pval) {
+			do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
 		}
-	    }
 #endif
 
 		/*todo: even if not hit_body, boomerangs should have chance to drop to the ground.. */
