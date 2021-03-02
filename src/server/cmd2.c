@@ -7218,6 +7218,10 @@ void do_cmd_fire(int Ind, int dir) {
 		/* Save the old "player pointer" */
 		q_ptr = p_ptr;
 
+		/* For boomerang-ricocheting: tx/ty are far-distance targets (99 * ddx/ddy), reset them to the actual position! */
+		tx = x;
+		ty = y;
+
 		for (cur_dis = 0; cur_dis <= tdis; ) {
 			/* Hack -- Stop at the target */
 			if ((y == q_ptr->py) && (x == q_ptr->px)) break;
