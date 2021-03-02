@@ -5365,8 +5365,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				do_cmd_open(Ind, dir);
 				return;
 			}
-			else
-			if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
+			else if (cfg.door_bump_open & BUMP_OPEN_DOOR &&
 			    p_ptr->easy_open &&
 			    (c_ptr->feat == FEAT_HOME_HEAD) &&
 			    !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) { /* players in WRAITHFORM can't open doors - mikaelh */
@@ -5381,16 +5380,17 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			}
 		}
 
-		if (p_ptr->easy_disarm_montraps
-		    //&& !c_ptr->o_idx
-		    && !c_ptr->m_idx) {
+		if (p_ptr->easy_disarm_montraps) {
 			/* Get requested grid */
 			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
 
-			/* This should be cfg.trap_bump_disarm? */
-			if (GetCS(c_ptr, CS_MON_TRAP)) {
-				do_cmd_disarm(Ind, dir);
-				return;
+			if (!c_ptr->m_idx) {
+			    //&& !c_ptr->o_idx
+				/* This should be cfg.trap_bump_disarm? */
+				if (GetCS(c_ptr, CS_MON_TRAP)) {
+					do_cmd_disarm(Ind, dir);
+					return;
+				}
 			}
 		}
 
