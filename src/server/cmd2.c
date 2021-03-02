@@ -7216,13 +7216,13 @@ void do_cmd_fire(int Ind, int dir) {
 			mmove2(&ny, &nx, ty, tx, q_ptr->py, q_ptr->px);
 
  #ifdef DOUBLE_LOS_SAFETY
-		    /* skip checks if we already used projectable..() routines to test. */
-		    if (dir != 5) {
+			/* skip checks if we already used projectable..() routines to test. */
+			if (dir != 5) {
  #endif
-			/* Stopped by walls/doors */
-			if (!cave_contact(zcave, ny, nx)) break;
+				/* Stopped by walls/doors */
+				if (!cave_contact(zcave, ny, nx)) break;
  #ifdef DOUBLE_LOS_SAFETY
-		    }
+			}
  #endif
 
 			/* Advance the distance */
