@@ -3007,7 +3007,9 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 				}
 				else if (func == FILL_SFX_KNOCK) {
 					if (c_ptr->m_idx < 0) {
+#ifdef USE_SOUND_2010
 						sound(-(c_ptr->m_idx), (h_ptr->flags & HF_MOAT) ? "knock_castle" : "knock", "block_shield_projectile", SFX_TYPE_COMMAND, FALSE);
+#endif
 						msg_print(-(c_ptr->m_idx), "\377sYou hear someone knocking on the house door.");
 					}
 				}
@@ -3174,7 +3176,9 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					else if (func == FILL_SFX_KNOCK) {
 						c_ptr = &zcave[miny + (y - 1)][minx + (x - 1)];
 						if (c_ptr->m_idx < 0) {
+#ifdef USE_SOUND_2010
 							sound(-(c_ptr->m_idx), (h_ptr->flags & HF_MOAT) ? "knock_castle" : "knock", "block_shield_projectile", SFX_TYPE_COMMAND, FALSE);
+#endif
 							msg_print(-(c_ptr->m_idx), "\377sYou hear someone knocking on the house door.");
 						}
 					}
@@ -3215,7 +3219,9 @@ bool fill_house(house_type *h_ptr, int func, void *data) {
 					else if (func == FILL_SFX_KNOCK) {
 						c_ptr = &zcave[miny + (y - 1)][minx + (x - 1)];
 						if (c_ptr->m_idx < 0) {
+#ifdef USE_SOUND_2010
 							sound(-(c_ptr->m_idx), (h_ptr->flags & HF_MOAT) ? "knock_castle" : "knock", "block_shield_projectile", SFX_TYPE_COMMAND, FALSE);
+#endif
 							msg_print(-(c_ptr->m_idx), "\377sYou hear someone knocking on the house door.");
 						}
 					}
