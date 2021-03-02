@@ -9286,6 +9286,8 @@ void mix_chemicals(int Ind, int item) {
 		q_ptr->note = old_note;
 		q_ptr->note_utag = old_note_utag;
 	}
+	/* Fix sense_inventory-caused stacking glitch (existing characters were not yet 'obj_aware' of these items): */
+	object_aware(Ind, q_ptr);
 
  #ifdef USE_SOUND_2010
 	if (q_ptr->tval == TV_CHARGE)
