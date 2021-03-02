@@ -10920,7 +10920,11 @@ void local_weather_update(void) {
 	/* HACK part 1: play random thunderclaps if player is receiving harsh weather.
 	   Note: this is synched to all players in the same worldmap sector,
 	   for consistency. :) */
-	int thunderstorm, thunderclap = 999, vol = rand_int(86);
+	int thunderstorm, thunderclap = 999;
+#ifdef USE_SOUND_2010
+	int vol = rand_int(86);
+#endif
+
 	thunderstorm = (turn / (cfg.fps * 3600)) % 6; /* n out of every 6 world map sector clusters have thunderstorms going */
 	if (!(turn % (cfg.fps * 10))) thunderclap = rand_int(5); /* every 10s there is a 1 in 5 chance of thunderclap (in a thunderstorm area) */
 

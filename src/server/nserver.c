@@ -2281,6 +2281,7 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->sfx_store = TRUE; //!options[96];
 			p_ptr->sfx_house_quiet = options[97];
 			p_ptr->sfx_house = !options[98];
+#ifdef USE_SOUND_2010
 			if (p_ptr->sfx_house != sfx_house || p_ptr->sfx_house_quiet != sfx_house_quiet) {
 				if (p_ptr->grid_house) {
 					if (!p_ptr->sfx_house) Send_sfx_volume(Ind, 0, 0);
@@ -2309,6 +2310,7 @@ static void sync_options(int Ind, bool *options) {
 					else Send_sfx_volume(Ind, 100, 100);
 				}
 			}
+#endif
 			p_ptr->sfx_am = TRUE;
 #ifdef CLIENT_SIDE_WEATHER
 			if (options[99] && !p_ptr->no_weather) {
@@ -2490,6 +2492,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->sfx_house = !options[107];
 		p_ptr->sfx_am = TRUE;//!options[108];
 
+#ifdef USE_SOUND_2010
 		/* Glitch: Even if the character has set sfx_house 0, it will still be received as 1 here for some reason on 1st option-sync after char login. */
 		if (p_ptr->sfx_house != sfx_house ||
 		    p_ptr->sfx_house_quiet != sfx_house_quiet) {
@@ -2523,18 +2526,20 @@ static void sync_options(int Ind, bool *options) {
 						}
 					} else Send_sfx_volume(Ind, 100, 100);
 
-#if 1
+ #if 1
 					/* Hack: Set AMBIENT_NONE to correct ambient sfx again.
 					   This became necessary with the hack used in Send_sfx_ambient(). */
 					cave_type **zcave = getcave(&p_ptr->wpos);
+
 					if (zcave) {
 						handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, FALSE);
 						s_printf("Ambient sfx hack: (%s) %d,%d,%d - %d,%d\n", p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz, p_ptr->px, p_ptr->py);
 					}
-#endif
+ #endif
 				}
 			}
 		}
+#endif
 
 		if (is_atleast(&p_ptr->version, 4, 7, 1, 0, 0, 0)) {
 			p_ptr->last_words = options[117]; //it's back!
@@ -2960,8 +2965,10 @@ static int Handle_login(int ind) {
 	p_ptr->v_test = !p_ptr->v_unknown && is_newer_than(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
 	p_ptr->v_outdated = !is_newer_than(&p_ptr->version, VERSION_MAJOR_OUTDATED, VERSION_MINOR_OUTDATED, VERSION_PATCH_OUTDATED, VERSION_EXTRA_OUTDATED, VERSION_BRANCH_OUTDATED, VERSION_BUILD_OUTDATED);
 	p_ptr->v_latest = is_same_as(&p_ptr->version, VERSION_MAJOR_LATEST, VERSION_MINOR_LATEST, VERSION_PATCH_LATEST, VERSION_EXTRA_LATEST, VERSION_BRANCH_LATEST, VERSION_BUILD_LATEST);
+#ifdef USE_SOUND_2010
 	p_ptr->audio_sfx = connp->audio_sfx;
 	p_ptr->audio_mus = connp->audio_mus;
+#endif
 
 	/* Copy the client preferences to the player struct */
 	for (i = 0; i < OPT_MAX; i++)
@@ -3187,12 +3194,14 @@ static int Handle_login(int ind) {
 		msg_print(NumPlayers, "\374\377D --- Your client is NOT the latest version, it's not 'outdated' though. ---");
 	}
 #endif
+#ifdef USE_SOUND_2010
 	/* Since 4.5.7 we can now distinguish (client-side) between disabled and unavailable audio.
 	   The minus constant is for optional songs, ie songs that have a commented out music.cfg entry by default (user's choice to enable them). */
 	if (p_ptr->audio_sfx && p_ptr->audio_sfx != 4 && p_ptr->audio_sfx < __audio_sfx_max - 110 - 21) /* 21 for 4.7.3a: remapped new events, but no new samples */
 		msg_print(NumPlayers, "\374\377D --- Warning: Your sound pack is outdated! ---");
 	if (p_ptr->audio_mus && p_ptr->audio_mus < __audio_mus_max - 40) //extra
 		msg_print(NumPlayers, "\374\377D --- Warning: Your music pack is outdated! ---");
+#endif
 
 	/* Admin messages */
 	if (p_ptr->admin_dm)
@@ -8797,13 +8806,17 @@ int Send_idle(int Ind, bool idle) {
 	if (idle) {
 		p_ptr->muted_when_idle = TRUE;
 		res = Packet_printf(&connp->c, "%c%c", PKT_IDLE, idle ? 1 : 0);
+#ifdef USE_SOUND_2010
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, FALSE);
+#endif
 	} else {
 		cave_type **zcave = getcave(&p_ptr->wpos);
 
 		p_ptr->muted_when_idle = FALSE;
 		res = Packet_printf(&connp->c, "%c%c", PKT_IDLE, idle ? 1 : 0);
+#ifdef USE_SOUND_2010
 		if (zcave) handle_ambient_sfx(Ind, &zcave[p_ptr->py][p_ptr->px], &p_ptr->wpos, FALSE);
+#endif
 	}
 
 	return res;
@@ -11430,26 +11443,32 @@ static int Receive_redraw(int ind) {
 
 		if (!player) return 0; //paranoia?
 
+#ifdef USE_SOUND_2010
 		/* Allow re-sending the same music we're already listening to, otherwise Send_music() would just 'optimize it out'.. */
 		p_ptr->music_current = -1;
 		p_ptr->musicalt_current = -1;
+#endif
 
 		if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) {
 			for (i = 1; i <= NumPlayers; i++) {
 				if (Players[i]->esp_link == p_ptr->id) {
 					f = p_ptr->esp_link_flags;
 					p_ptr->esp_link_flags &= ~LINKF_VIEW_DEDICATED;
+#ifdef USE_SOUND_2010
 					Send_music(player, Players[i]->music_current, Players[i]->musicalt_current);
 					Send_sfx_ambient(player, Players[i]->sound_ambient, FALSE);
+#endif
 					p_ptr->esp_link_flags = f;
 					break;
 				}
 			}
-		} else {
+		}
+#ifdef USE_SOUND_2010
+		else {
 			handle_music(player);
 			handle_ambient_sfx(player, &(getcave(&p_ptr->wpos)[p_ptr->py][p_ptr->px]), &p_ptr->wpos, FALSE);
 		}
-
+#endif
 		return 1;
 	}
 
@@ -13391,11 +13410,12 @@ static int Receive_audio(int ind) {
 	s_printf("AUDIO_UPDATED: %s ('%s') features %hd, %hd.\n", connp->nick, p_ptr ? p_ptr->name : "---", sfx, mus);
 	connp->audio_sfx = (short int)sfx;
 	connp->audio_mus = (short int)mus;
+#ifdef USE_SOUND_2010
 	if (p_ptr) { /* Should always be the case */
 		p_ptr->audio_sfx = connp->audio_sfx;
 		p_ptr->audio_mus = connp->audio_mus;
 	}
-
+#endif
 	return 2;
 }
 
