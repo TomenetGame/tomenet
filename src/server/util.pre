@@ -362,7 +362,9 @@ extern int max_clouds_seasonal;
 extern int season_halloween;
 extern int season_xmas;
 extern int season_newyearseve;
+#ifdef USE_SOUND_2010
 extern void handle_seasonal_music(void);
+#endif
 
 /* for controlling fireworks on NEW_YEARS_EVE */
 extern int fireworks;

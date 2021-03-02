@@ -6669,8 +6669,10 @@ if (cfg.unikill_format) {
 		    d_info[d_ptr->type].name
 #endif
 		    );
+#ifdef USE_SOUND_2010
 		/* Dungeon-boss-slain music if available client-side */
 		if (!is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 90, -1);
+#endif
 
 		/* Drop final artifact? */
 		if ((
