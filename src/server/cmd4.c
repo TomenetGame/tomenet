@@ -1479,14 +1479,18 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
   #if 1
 			if (admin)
 #ifdef ADMIN_EXTRA_STATISTICS
+ #ifdef USE_SOUND_2010
 				fprintf(fff, "%s [%d,%d] (%s)%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname,
 				    !q_ptr->exp_bar ?
- #if 0
+  #if 0
 				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
 				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
- #else
+  #else
 				    (q_ptr->audio_mus ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 				    (q_ptr->audio_mus ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
+  #endif
+ #else
+				fprintf(fff, "%s [%d,%d] (%s)%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col, q_ptr->hostname
  #endif
  #if 0
 				    , q_ptr->custom_font ? "\377wf\377-" : "", ""
@@ -1575,14 +1579,18 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 		    ) {
 			if (admin)
 #ifdef ADMIN_EXTRA_STATISTICS
+ #ifdef USE_SOUND_2010
 				fprintf(fff, "%s [%d,%d]%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col,
 				    !q_ptr->exp_bar ?
- #if 0
+  #if 0
 				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
 				    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
- #else
+  #else
 				    (q_ptr->audio_mus > 0 ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 				    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
+  #endif
+ #else
+				fprintf(fff, "%s [%d,%d]%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
  #endif
  #if 0
 				    , q_ptr->custom_font ? "\377wf\377-" : "", ""
@@ -1633,14 +1641,18 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 
 		do_write_others_attributes(Ind, fff, q_ptr, attr, is_admin(p_ptr));
 #ifdef ADMIN_EXTRA_STATISTICS
+ #ifdef USE_SOUND_2010
 		if (admin) fprintf(fff, "%s%s%s",
 		    !q_ptr->exp_bar ?
- #if 0
+  #if 0
 		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
 		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
- #else
+  #else
 		    (q_ptr->audio_mus > 0 ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 		    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
+  #endif
+ #else
+		if (admin) fprintf(fff, "%s%s"
  #endif
  #if 0
 		    , q_ptr->custom_font ? "\377wf\377-" : "", ""
@@ -1725,14 +1737,18 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 
 			fprintf(fff, " [%d,%d]", q_ptr->panel_row, q_ptr->panel_col);
 #ifdef ADMIN_EXTRA_STATISTICS
+ #ifdef USE_SOUND_2010
 			if (admin) fprintf(fff, "%s%s%s",
 			    !q_ptr->exp_bar ?
- #if 0
+  #if 0
 			    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
 			    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
- #else
+  #else
 			    (q_ptr->audio_mus > 0 ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 			    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
+  #endif
+ #else
+			if (admin) fprintf(fff, "%s%s"
  #endif
  #if 0
 			    , q_ptr->custom_font ? "\377wf\377-" : "", ""
