@@ -9857,8 +9857,10 @@ void shutdown_server(void) {
 		else if (p_ptr->turns_idle >= cfg.fps * AUTO_AFK_TIMER) Send_beep(1);
 #endif
 #if 1 /* send a warning sound (usually same as page beep) */
+#ifdef USE_SOUND_2010
 		//sound(1, "warning", "page", SFX_TYPE_NO_OVERLAP, FALSE);
 		sound(1, "page", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 #endif
 		Net_output1(1);
 
@@ -10942,7 +10944,9 @@ void local_weather_update(void) {
 		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == 1 && /* no blizzards for now, just rainstorms */
 		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind &&
 		    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6 == thunderstorm) {
+#ifdef USE_SOUND_2010
 			sound_vol(i, "thunder", NULL, SFX_TYPE_WEATHER, FALSE, 15 + (vol + Players[i]->wpos.wy + Players[i]->wpos.wx) % 86); //weather: screen flashing implied
+#endif
 		}
 
 		/* no change in local situation? nothing to do then */
