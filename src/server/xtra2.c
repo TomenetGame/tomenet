@@ -9966,7 +9966,9 @@ s_printf("CHARACTER_TERMINATION: RETIREMENT race=%s ; class=%s ; trait=%s ; %d d
 
 	/* Turn him into a ghost */
 	p_ptr->ghost = 1;
+#ifdef USE_SOUND_2010
 	handle_music(Ind); //possibly ghostly music!
+#endif
 	/* Prevent accidental floating up/downwards depending on client option. - C. Blue */
 	if (p_ptr->safe_float) p_ptr->safe_float_turns = 5;
 

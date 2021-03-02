@@ -3433,16 +3433,21 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			/* Take our best pick and calculate if we succeed.. */
 			if (impact_power) {
 				msg_print(Ind, "You strike the ground.");
+#ifdef USE_SOUND_2010
 				sound(Ind, "hit", "", SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
 				if (magik(impact_power)) impact = TRUE;
 			} else if (impact_power_tool) {
 				object_desc(0, o_name, o_ptr, TRUE, 256);
 				msg_format(Ind, "You strike the ground with your %s.", o_name);
+#ifdef USE_SOUND_2010
 				sound(Ind, "hit_floor", "hit_blunt", SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
 				if (magik(impact_power_tool)) impact = TRUE;
 			} else if (impact_power_weapon) {
 				object_desc(0, o_name, o23_ptr, TRUE, 256);
 				msg_format(Ind, "You strike the ground with your %s.", o_name);
+#ifdef USE_SOUND_2010
 				switch(o23_ptr->tval) {
 				case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 				case TV_BLUNT:	if (o_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
@@ -3452,6 +3457,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 				case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 				}
+#endif
 				if (magik(impact_power_weapon)) impact = TRUE;
 			} else {
 				/* Futile attempt as we don't have any earthquake powers at all -
@@ -3459,10 +3465,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
 					object_desc(0, o_name, o_ptr, TRUE, 256);
 					msg_format(Ind, "You strike the ground with your %s.", o_name);
+#ifdef USE_SOUND_2010
 					sound(Ind, "hit_floor", "hit_blunt", SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
 				} else if (o2_ptr->k_idx) {
 					object_desc(0, o_name, o2_ptr, TRUE, 256);
 					msg_format(Ind, "You strike the ground with your %s.", o_name);
+#ifdef USE_SOUND_2010
 					switch(o2_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 					case TV_BLUNT:	if (o2_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
@@ -3472,9 +3481,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 					}
+#endif
 				} else if (o3_ptr->k_idx && is_weapon(o3_ptr->tval)) {
 					object_desc(0, o_name, o3_ptr, TRUE, 256);
 					msg_format(Ind, "You strike the ground with your %s.", o_name);
+#ifdef USE_SOUND_2010
 					switch(o3_ptr->tval) {
 					case TV_SWORD: sound(Ind, "hit_sword", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 					case TV_BLUNT:	if (o3_ptr->sval == SV_WHIP) sound(Ind, "hit_whip", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE);
@@ -3484,9 +3495,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					case TV_POLEARM: sound(Ind, "hit_polearm", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 					case TV_MSTAFF: sound(Ind, "hit_blunt", "hit_weapon", SFX_TYPE_NO_OVERLAP, TRUE); break;
 					}
+#endif
 				} else {
 					msg_print(Ind, "You strike the ground.");
+#ifdef USE_SOUND_2010
 					sound(Ind, "hit", "", SFX_TYPE_NO_OVERLAP, TRUE);
+#endif
 				}
 			}
 

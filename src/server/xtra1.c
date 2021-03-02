@@ -8498,7 +8498,9 @@ static void process_global_event(int ge_id) {
 
 				p_ptr->global_event_progress[ge_id][0] = 4; /* now before deathmatch */
 				msg_print(i, "\377fThe bloodshed begins!");
+#ifdef USE_SOUND_2010
 				handle_music(i);
+#endif
 			}
 
 			ge->state[0] = 4;

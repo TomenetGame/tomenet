@@ -219,7 +219,7 @@
  */
 //#define		STUPID_Q
 
-#ifdef USE_SOUND_2010
+//#ifdef USE_SOUND_2010 -- actually always define these because they are now a parameter of the bolt() function
  /* For bolt() sfx */
  #define SFX_BOLT_MAGIC 0
  #define SFX_BOLT_SHOT 1
@@ -232,7 +232,7 @@
     0: Play it for the targetted player only, at max volume
     1: Play it for everyone nearby, decreasing volume with distance to monster */
  #define MONSTER_SFX_WAY 1
-#endif
+//#endif
 
 /* Hack to make monsters that can summon high uniques do so more often instead of using other summoning spells they may have (Chance: 1 in n, [4]) */
 #define PRIORITY_S_HI_UNIQUE 4
@@ -1857,7 +1857,7 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad)
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name); \
 		if (count) { \
 			m_ptr->clone_summoning = clone_summoning; \
-			if (blind) msg_print(Ind, "%s", HEAR); \
+			if (blind) msg_format(Ind, "%s", HEAR); \
 			else msg_format(Ind, "%^s magically summons %s!", m_name, SEE); \
 		} else msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
 #endif
