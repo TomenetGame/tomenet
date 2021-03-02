@@ -10119,7 +10119,9 @@ void resurrect_player(int Ind, int loss_factor) {
 
 	/* Reset ghost flag */
 	p_ptr->ghost = 0;
+#ifdef USE_SOUND_2010
 	handle_music(Ind); //possibly no longer ghostly music
+#endif
 
 	disturb(Ind, 1, 0);
 

@@ -9042,7 +9042,9 @@ static void process_global_event(int ge_id) {
 
 					/* make sure they stop running (not really needed though..) */
 					disturb(i, 0, 0);
+#ifdef USE_SOUND_2010
 					handle_music(i);
+#endif
 				}
 			}
 

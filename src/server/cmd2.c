@@ -5836,7 +5836,9 @@ void do_cmd_fire(int Ind, int dir) {
 	bool ranged_double_real = FALSE, ranged_flare_body = FALSE;
 
 	int		break_chance;
+#ifdef USE_SOUND_2010
 	int		sfx = 0;
+#endif
 	u32b f1, f1a, f5, fx, esp;
 
 	char o_name[ONAME_LEN];
