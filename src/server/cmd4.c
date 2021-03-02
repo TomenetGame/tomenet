@@ -1590,7 +1590,7 @@ if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
 				    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
   #endif
  #else
-				fprintf(fff, "%s [%d,%d]%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col);
+				fprintf(fff, "%s [%d,%d]%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_row, q_ptr->panel_col
  #endif
  #if 0
 				    , q_ptr->custom_font ? "\377wf\377-" : "", ""
@@ -2142,14 +2142,18 @@ void write_player_info(int Ind, char *pinfo) {
 
 
 #ifdef ADMIN_EXTRA_STATISTICS
+ #ifdef USE_SOUND_2010
 		if (admin) fprintf(fff, "%s%s%s",
 		    !q_ptr->exp_bar ?
- #if 0
+  #if 0
 		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
 		    (q_ptr->audio_mus >= __audio_mus_max ? "\377G*\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y*\377-" : "\377B-\377-"))
- #else
+  #else
 		    (q_ptr->audio_mus > 0 ? "\377G+\377-" : (q_ptr->audio_sfx > 4 ? "\377y+\377-" : "")) :
 		    (q_ptr->audio_mus > 0 ? "\377G*\377-" : (q_ptr->audio_sfx > 4 ? "\377y*\377-" : "\377B-\377-"))
+  #endif
+ #else
+		if (admin) fprintf(fff, "%s%s"
  #endif
  #if 0
 		    , q_ptr->custom_font ? "\377wf\377-" : "", ""
