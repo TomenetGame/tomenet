@@ -1610,6 +1610,9 @@ void do_cmd_fill_bottle(int Ind) {
 				return;
 			}
 
+			/* first assume normal water */
+			k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
+
 #ifndef USE_SOUND_2010
 			/* problem: WILD_COAST is used for both oceans and lakes */
 			switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
@@ -1626,9 +1629,6 @@ void do_cmd_fill_bottle(int Ind) {
 #endif
 					/* salt water */
 					k_idx = lookup_kind(TV_POTION, SV_POTION_SALT_WATER);
-				else
-					/* normal water */
-					k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
 #ifndef USE_SOUND_2010
 			}
 #endif
