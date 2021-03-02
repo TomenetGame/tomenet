@@ -1365,24 +1365,31 @@ void do_cmd_drink_fountain(int Ind) {
 		sound(Ind, "quaff_potion", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 		/* if it's the sea, it's salt water */
-		if (!p_ptr->wpos.wz)
-#if 0 /* problem: WILD_COAST is used for both oceans and lakes */
-		    switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
+		if (!p_ptr->wpos.wz) {
+#ifndef USE_SOUND_2010
+			/* problem: WILD_COAST is used for both oceans and lakes */
+			switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
 			case WILD_SHORE1:
 			case WILD_SHORE2:
 			case WILD_OCEANBED1:
 			case WILD_OCEANBED2:
 			case WILD_OCEAN:
 			case WILD_COAST:
+				/* actually instead, to do this non-hackily, we just check for .type AND .bled to not be WILD_OCEAN (same result as this hack): */
+				if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type == WILD_OCEAN || wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].bled == WILD_OCEAN) {
 #else /* abuse ambient-sfx logic - it works pretty well ^^ */
-			if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE) {
-#endif /* actually instead, to do this non-hackily, it should just check for .type AND .bled to not be WILD_OCEAN (same result as this hack) */
-				if (p_ptr->prace == RACE_ENT) msg_print(Ind, "The water is too salty to feed off.");
-				else msg_print(Ind, "The water tastes very salty.");
+				if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE) {
+#endif
+					if (p_ptr->prace == RACE_ENT) msg_print(Ind, "The water is too salty to feed off.");
+					else msg_print(Ind, "The water tastes very salty.");
 
-				/* Take a turn */
-				p_ptr->energy -= level_speed(&p_ptr->wpos);
-				return;
+					/* Take a turn */
+					p_ptr->energy -= level_speed(&p_ptr->wpos);
+					return;
+				}
+#ifndef USE_SOUND_2010
+			}
+#endif
 		}
 		/* lake/river: fresh water */
 		if (!p_ptr->suscep_life) msg_print(Ind, "You feel less thirsty.");
