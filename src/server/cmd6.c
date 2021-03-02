@@ -1610,7 +1610,8 @@ void do_cmd_fill_bottle(int Ind) {
 				return;
 			}
 
-#if 0 /* problem: WILD_COAST is used for both oceans and lakes */
+#ifndef USE_SOUND_2010
+			/* problem: WILD_COAST is used for both oceans and lakes */
 			switch (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type) {
 			case WILD_SHORE1:
 			case WILD_SHORE2:
@@ -1618,14 +1619,19 @@ void do_cmd_fill_bottle(int Ind) {
 			case WILD_OCEANBED2:
 			case WILD_OCEAN:
 			case WILD_COAST:
+				/* actually instead, to do this non-hackily, we just check for .type AND .bled to not be WILD_OCEAN (same result as this hack): */
+				if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].type == WILD_OCEAN || wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].bled == WILD_OCEAN)
 #else /* abuse ambient-sfx logic - it works pretty well ^^ */
-			if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE)
-#endif /* actually instead, to do this non-hackily, it should just check for .type AND .bled to not be WILD_OCEAN (same result as this hack) */
-				/* salt water */
-				k_idx = lookup_kind(TV_POTION, SV_POTION_SALT_WATER);
-			else
-				/* normal water */
-				k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
+				if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE)
+#endif
+					/* salt water */
+					k_idx = lookup_kind(TV_POTION, SV_POTION_SALT_WATER);
+				else
+					/* normal water */
+					k_idx = lookup_kind(TV_POTION, SV_POTION_WATER);
+#ifndef USE_SOUND_2010
+			}
+#endif
 
 			if (!get_something_tval(Ind, TV_BOTTLE, &item)) {
 				msg_print(Ind, "You have no bottles to fill.");
