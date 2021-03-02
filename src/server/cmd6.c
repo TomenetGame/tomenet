@@ -3630,7 +3630,9 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the staff properly." , COLOUR_MD_FAIL);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
 		/* hack: repeat ID-spell attempt until item is successfully identified */
@@ -3652,7 +3654,9 @@ void do_cmd_use_staff(int Ind, int item) {
 	/* Notice empty staffs */
 	if (o_ptr->pval <= 0) {
 		msg_format(Ind, "\377%cThe staff has no charges left.", COLOUR_MD_NOCHARGE);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 		o_ptr->ident |= ID_EMPTY;
 		note_toggle_empty(o_ptr, TRUE);
 
@@ -3901,7 +3905,9 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 
 	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the wand properly." , COLOUR_MD_FAIL);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 
 		//don't cancel FTK since this failure was just a chance thing
 		if (p_ptr->shooty_till_kill) {
@@ -3919,7 +3925,9 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	/* The wand is already empty! */
 	if (o_ptr->pval <= 0) {
 		msg_format(Ind, "\377%cThe wand has no charges left.", COLOUR_MD_NOCHARGE);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 		o_ptr->ident |= ID_EMPTY;
 		note_toggle_empty(o_ptr, TRUE);
 
@@ -4529,7 +4537,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 
 	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
@@ -4557,7 +4567,9 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #endif
 		if (o_ptr->number == 1) msg_format(Ind, "\377%cThe rod is still charging.", COLOUR_MD_NOCHARGE);
 		else msg_format(Ind, "\377%cThe rods are still charging.", COLOUR_MD_NOCHARGE);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
@@ -4779,7 +4791,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	/* Roll for usage */
 	if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to use the rod properly." , COLOUR_MD_FAIL);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 
 		//don't cancel FTK since this failure was just a chance thing
 		if (p_ptr->shooty_till_kill) {
@@ -4802,7 +4816,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 #endif
 		if (o_ptr->number == 1) msg_format(Ind, "\377%cThe rod is still charging.", COLOUR_MD_NOCHARGE);
 		else msg_format(Ind, "\377%cThe rods are still charging.", COLOUR_MD_NOCHARGE);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 
 		/* Noticing that the rod is charging takes only half a rod-using turn - refund the rest */
 		p_ptr->energy += energy / 2;
@@ -5555,7 +5571,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 #endif
 	} else if (!activate_magic_device(Ind, o_ptr)) {
 		msg_format(Ind, "\377%cYou failed to activate it properly.", COLOUR_MD_FAIL);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 
 #ifdef ENABLE_XID_MDEV
  #ifdef XID_REPEAT
@@ -5578,7 +5596,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* Check the recharge */
 	if (o_ptr->recharging) {
 		msg_format(Ind, "\377%cIt whines, glows and fades...", COLOUR_MD_NOCHARGE);
+#ifdef USE_SOUND_2010
 		if (check_guard_inscription(o_ptr->note, 'B')) sound(Ind, "bell", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
+
 #ifdef ENABLE_XID_SPELL
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
