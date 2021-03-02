@@ -618,6 +618,7 @@ f:Sword-mastery:Weaponmastery%15
 f:Axe-mastery:Weaponmastery%15
 f:Polearm-mastery:Weaponmastery%15
 f:Blunt-mastery:Weaponmastery%15
+f:Backstabbing:Critical-strike%15
 
 
 # Ranged: Specific masteries improve generic mastery
