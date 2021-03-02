@@ -9065,11 +9065,13 @@ static void process_global_event(int ge_id) {
 			/* timeout not yet reached? proceed normally */
 			if (elapsed - ge->announcement_time < 300) break;//start after 300s
 
+#ifdef USE_SOUND_2010
 			sector00music = 65;
 			sector00musicalt = 47; /* death match music */
 			for (i = 1; i <= NumPlayers; i++)
 				if (!Players[i]->admin_dm && in_sector00(&Players[i]->wpos))
 					handle_music(i);
+#endif
 
 			ge->state[0] = 2;
 			break;
