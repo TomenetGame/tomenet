@@ -7975,8 +7975,9 @@ void process_player_change_wpos(int Ind) {
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 	char o_name_short[ONAME_LEN];
+	bool smooth_ambient = FALSE; //also used for flickering!
 #ifdef USE_SOUND_2010
-	bool smooth_ambient = FALSE, travel_ambient = FALSE;
+	bool travel_ambient = FALSE;
 #endif
 
 	/* Prevent exploiting /undoskills by invoking it right before each level-up:
@@ -8343,9 +8344,7 @@ void process_player_change_wpos(int Ind) {
 
 	/* Over the river and through the woods */
 	case LEVEL_OUTSIDE:
-#ifdef USE_SOUND_2010
 		smooth_ambient = TRUE; /* normal wilderness running */
-#endif
 		/* Fall through */
 	case LEVEL_HOUSE:
 		starty = p_ptr->py;
