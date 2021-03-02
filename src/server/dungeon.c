@@ -7975,7 +7975,9 @@ void process_player_change_wpos(int Ind) {
 	dun_level *l_ptr;
 	int d, j, x, y, startx = 0, starty = 0, m_idx, my, mx, tries, emergency_x, emergency_y, dlv = getlevel(wpos);
 	char o_name_short[ONAME_LEN];
+#ifdef USE_SOUND_2010
 	bool smooth_ambient = FALSE, travel_ambient = FALSE;
+#endif
 
 	/* Prevent exploiting /undoskills by invoking it right before each level-up:
 	   Discard the possibility to undoskills when we venture into a dungeon again. */
@@ -8138,9 +8140,13 @@ void process_player_change_wpos(int Ind) {
 		/* Generate a dungeon level there */
 		generate_cave(wpos, p_ptr);
 
+#ifdef USE_SOUND_2010
 		/* allow non-normal (interval-timed) ambient sfx, but depend on our own fast-travel-induced rythm */
 		travel_ambient = TRUE;
 	} else if (players_on_depth(wpos) == 1) travel_ambient = TRUE; /* exception - if we're the only one here we won't mess up someone else's ambient sfx rythm, so it's ok */
+#else
+	}
+#endif
 
 #ifdef USE_SOUND_2010
 	if (travel_ambient) {
@@ -8337,7 +8343,9 @@ void process_player_change_wpos(int Ind) {
 
 	/* Over the river and through the woods */
 	case LEVEL_OUTSIDE:
+#ifdef USE_SOUND_2010
 		smooth_ambient = TRUE; /* normal wilderness running */
+#endif
 		/* Fall through */
 	case LEVEL_HOUSE:
 		starty = p_ptr->py;
@@ -9126,11 +9134,13 @@ void dungeon(void) {
 				if (!Players[i]->mutedtemp) msg_print(i, "You are no longer muted.");
 			}
 
+#ifdef USE_SOUND_2010
 			/* Arbitrary max number, just to prevent integer overflow.
 			   Should just be higher than the longest interval of any ambient sfx type. */
 			if (!Players[i]->wpos.wz && /* <- redundant check sort of, caught in process_player_change_wpos() anyway */
 			    Players[i]->ambient_sfx_timer < 200)
 				Players[i]->ambient_sfx_timer++;
+#endif
 
 #ifdef ENABLE_GO_GAME
 			/* Kifu email spam control */
