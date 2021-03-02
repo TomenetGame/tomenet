@@ -6594,15 +6594,15 @@ void do_cmd_fire(int Ind, int dir) {
 									default:
 										msg_format(0 - c_ptr->m_idx, "\377%cYou block %s's attack!", COLOUR_BLOCK_GOOD, p_ptr->name);
 									}
-#ifdef USE_SOUND_2010
+ #ifdef USE_SOUND_2010
 									if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "block_shield_projectile", NULL, SFX_TYPE_ATTACK, FALSE);
-#endif
+ #endif
 									continue;
 								}
 							}
 #endif
 #if 0 /* disable for now? */
-#ifdef USE_PARRYING
+ #ifdef USE_PARRYING
 							if (q_ptr->weapon_parry) {
 								// && !p_ptr->ranged_barrage etc, any prepared bow stance?
 								if (magik(apply_parry_chance(q_ptr, q_ptr->weapon_parry + 5))) { /* boost for PvP! */
@@ -6614,13 +6614,13 @@ void do_cmd_fire(int Ind, int dir) {
 									default:
 										msg_format(0 - c_ptr->m_idx, "\377%cYou parry %s's attack!", COLOUR_PARRY_GOOD, p_ptr->name);
 									}
-#ifdef USE_SOUND_2010
+  #ifdef USE_SOUND_2010
 									if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "parry_weapon", "parry", SFX_TYPE_ATTACK, FALSE);
-#endif
+  #endif
 									continue;
 								}
 							}
-#endif
+ #endif
 #endif
 
 							if (!dodged) {	// 'goto' would be cleaner
@@ -7215,15 +7215,15 @@ void do_cmd_fire(int Ind, int dir) {
 			//mmove2(&ny, &nx, p_ptr->py, p_ptr->px, ty, tx);
 			mmove2(&ny, &nx, ty, tx, q_ptr->py, q_ptr->px);
 
-#ifdef DOUBLE_LOS_SAFETY
+ #ifdef DOUBLE_LOS_SAFETY
 		    /* skip checks if we already used projectable..() routines to test. */
 		    if (dir != 5) {
-#endif
+ #endif
 			/* Stopped by walls/doors */
 			if (!cave_contact(zcave, ny, nx)) break;
-#ifdef DOUBLE_LOS_SAFETY
+ #ifdef DOUBLE_LOS_SAFETY
 		    }
-#endif
+ #endif
 
 			/* Advance the distance */
 			cur_dis++;
