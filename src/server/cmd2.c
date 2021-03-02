@@ -7121,7 +7121,7 @@ void do_cmd_fire(int Ind, int dir) {
 			j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 		}
 
-		/* Break ? */
+		/* Break or drop? */
 		if ((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j))
 		    && !magic && !ethereal && !artifact_p(o_ptr)) {
 			breakage = 100;
