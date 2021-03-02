@@ -8426,7 +8426,9 @@ static void process_global_event(int ge_id) {
 					n++;
 					j = i;
 					if (!Players[i]->wpos.wz) k++;
+#ifdef USE_SOUND_2010
 					handle_music(i);
+#endif
 				}
 
 			if (!n) ge->state[0] = 255; /* double kill or something? ew. */

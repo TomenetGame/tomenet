@@ -8553,7 +8553,9 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	int x = p_ptr->px, y = p_ptr->py;
 	cave_type **zcave;
 	cave_type *c_ptr;
+#ifdef USE_SOUND_2010
 	bool inn = FALSE, music = FALSE;
+#endif
 
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
@@ -8563,7 +8565,9 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		return;
 	}
 
+#ifdef USE_SOUND_2010
 	inn = inside_inn(p_ptr, c_ptr);
+#endif
 
 	if (!p_ptr->wpos.wz && !night_surface && !(c_ptr->info & CAVE_PROT) &&
 	    !(f_info[c_ptr->feat].flags1 & FF1_PROTECTED) &&
@@ -8681,8 +8685,10 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	}
 #endif
 
+#ifdef USE_SOUND_2010
 	/* Renew music too? */
 	if (!music && ox == -1) handle_music(Ind);
+#endif
 
 	/* quests - check if he has arrived at a designated exact x,y target location */
 	if (p_ptr->quest_any_deliver_xy_within_target) quest_check_goal_deliver(Ind);

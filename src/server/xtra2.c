@@ -5748,6 +5748,7 @@ bool monster_death(int Ind, int m_idx) {
 			santa_claus_timer = 60 + rand_int(120);
 			resf_drops |= RESF_SAURON; //We abuse Sauron's "no one ring" flag for setting no_soloist flag!
 		}
+#ifdef USE_SOUND_2010
 		/* Actually restore town music (or whichever) if Santa had his own music event */
 		for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->music_monster == 67) {
@@ -5755,6 +5756,7 @@ bool monster_death(int Ind, int m_idx) {
 				handle_music(i);
 			}
 		}
+#endif
 	}
 
 
@@ -6644,10 +6646,12 @@ if (cfg.unikill_format) {
 		else sauron_weakened = FALSE;
 	}
 
+#ifdef USE_SOUND_2010
 	/* Dungeon-boss-slain music if available client-side */
 	if (is_Sauron) Send_music(Ind, 91, -1);
 	//else if (is_Morgoth) Send_music(Ind, 88, -1); //handled in handle_music() already
 	else if (is_ZuAon) Send_music(Ind, 92, -1);
+#endif
 
 	if (r_idx == RI_BLUE) { /* just for now, testing */
 		zcave[2][55].feat = FEAT_UNSEALED_DOOR;

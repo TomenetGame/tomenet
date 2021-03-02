@@ -746,7 +746,9 @@ void check_Morgoth(int Ind) {
 							/* Player on Morgy depth? */
 							if (inarea(&Players[i]->wpos, &p_ptr->wpos)) {
 								msg_print(i, msg);
+#ifdef USE_SOUND_2010
 								handle_music(i); /* :-o */
+#endif
 							}
 						}
 						s_printf("Morgoth left level (inserting Sauron) due to %s\n", p_ptr->name);
