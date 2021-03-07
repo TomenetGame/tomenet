@@ -81,7 +81,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
 	char base_name[ONAME_LEN];
-	bool okay[MAX_A_IDX];
+	bool okay[MAX_A_IDX], carrier_online[MAX_A_IDX];
 
 	player_type *p_ptr = Players[Ind], *q_ptr;
 	bool admin = is_admin(p_ptr);
@@ -111,7 +111,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
 		forge.name1 = k;
 
 		/* Default */
-		okay[k] = FALSE;
+		okay[k] = carrier_online[k] = FALSE;
 
 		/* Skip "empty" artifacts */
 		if (!a_ptr->name) continue;
@@ -137,7 +137,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
 		q_ptr = Players[i];
 
 		/* Check this guy's */
-		for (j = 0; j < INVEN_PACK; j++) {
+		for (j = 0; j < INVEN_TOTAL; j++) {
 			o_ptr = &q_ptr->inventory[j];
 
 			/* Ignore non-objects */
@@ -145,6 +145,8 @@ void do_cmd_check_artifacts(int Ind, int line) {
 
 			/* Ignore non-artifacts */
 			if (!true_artifact_p(o_ptr)) continue;
+
+			carrier_online[o_ptr->name1] = TRUE;
 
 			/* Ignore known items */
 			if (object_known_p(Ind, o_ptr) || admin) continue;
@@ -237,7 +239,7 @@ void do_cmd_check_artifacts(int Ind, int line) {
 					c = 'D';
 #endif
 				fprintf(fff, "\377%c", c);
-				fprintf(fff, "%3d/%d %s\377%c", i, a_ptr->cur_num, timeleft, c);
+				fprintf(fff, "%3d/%d%s%s\377%c", i, a_ptr->cur_num, carrier_online[i] ? "\377G*" : " ", timeleft, c);
 			}
 #ifndef COLOURED_ARTS
 			else fprintf(fff, "\377%c", (!multiple_artifact_p(&forge) && a_ptr->carrier == p_ptr->id) ? 'U' : 'w');
