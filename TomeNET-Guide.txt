@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 20. Februar 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 7. March 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9856,10 +9856,11 @@ IMPORTANT: If you get the above flexibility warning message, that means your
 Armour weight (concerning ranged weapons)
 -----------------------------------------
 If you wear a shield on your arm, no matter its weight and your strength, your
-hit chance with ranged weapons will be reduced by this encumberment. You will
+hit chance with shooting weapons will be reduced by this encumberment. You will
 get an orange message saying
 "You find it hard to aim while carrying your shield."
 and a yellow '}' icon will appear in the encumberment bar.
+Note that boomerangs are one-handed ranged weapons and not affected by shields.
 
 Also, the greater your total equipped armour weight is, the more your ranged
 to-hit bonus is reduced. This is a fluent, continuous process, and therefore
