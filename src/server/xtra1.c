@@ -5840,10 +5840,10 @@ void calc_boni(int Ind) {
 	if (i > 50) i = 50; /* reached at 470.0 lb */
 	p_ptr->to_h_ranged -= i;
 
-	/* also: shield and ranged weapon = less accuracy for ranged weapon! */
+	/* also: shield and shooting weapon (not boomerang) = less accuracy for ranged weapon! */
 	/* dual-wield currently does not affect shooting (!) */
-	if (p_ptr->inventory[INVEN_BOW].k_idx && p_ptr->inventory[INVEN_ARM].k_idx
-	    && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
+	if (p_ptr->inventory[INVEN_BOW].k_idx && p_ptr->inventory[INVEN_BOW].tval != TV_BOOMERANG
+	    && p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
 		/* can't aim well while carrying a shield on the arm! */
 
 		/* the following part punishes all +hit/+dam for ranged weapons;
