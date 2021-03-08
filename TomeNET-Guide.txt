@@ -13770,10 +13770,9 @@ stated.
                                 Increases ranged to-damage bonus when wielding
                                 a boomerang by +1 for every 2.500 increase.
 
-                                Reduces the chance of a boomerang to break or
-                                to fall to the ground instead of returning.
-
-                                Artifact boomerangs never break or fall down.
+                                Reduces the chance of a boomerang to land on
+                                the ground instead of returning.
+                                Artifact boomerangs always return reliably.
 
                                 (Note that your 'Combat' skill determines your
                                 ability to pseudo-id Boomerangs.)
