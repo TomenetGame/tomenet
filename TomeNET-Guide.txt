@@ -1558,6 +1558,7 @@ They all start with a slash '/' hence they're called slash commands:
             instead of sending your message to everyone on the server.
 
 /shout <text>
+            Shout <text> loudly, will wake up monsters. (Same as "/yell".)
 
 /scream <text>
             Same as /shout, but also aggravates monsters in your current
@@ -1726,7 +1727,7 @@ They all start with a slash '/' hence they're called slash commands:
             mayor's office in Bree to receive an extermination order.
 
 /yell <text>
-            Shout <text> loudly, will wake up monsters.
+            Shout <text> loudly, will wake up monsters. (Same as "/shout".)
 
 Aside from slash commands there are also item-paste shortcuts, which can be
 incorporated into any text you type in chat:
