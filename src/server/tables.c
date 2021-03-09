@@ -4822,14 +4822,14 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Rock Collector", "Rock Collector", "R.Collector", "R.Collector", },
 		//{"Rock Painter", "Rock Painter", "Rock Painter", "Rock Painter", },
 		{"Fire Starter", "Fire Starter", "Fire Starter", "Fire Starter", },
-		{"Treasure Hunter", "Treasure Hunter", "T.Hunter", "T.Hunter", },
+		{"Treasure Hunter", "Treasure Hunter", "Tr.Hunter", "Tr.Hunter", },
 		//{"Archaeologist", "Archaeologist", "Professor", "Professor," }, //too cool for 12 letters? ^^
 		{"Archaeologist", "Archaeologist", "Archaelgst.", "Archaelgst.", },
 		{"Earth Guard", "Earth Guard", "Earth Guard", "Earth Guard", },
 		{"Rune Knight", "Rune Knight", "Rune Knight", "Rune Knight", },
 		{"Rune Keeper", "Rune Keeper", "Rune Keeper", "Rune Keeper", },
 		{"Runemaster", "Runemistress", "Runemaster", "Runemistress", },
-		{"Grand Runemaster", "Grand Runemistress", "G-Runemaster", "G-Runemstrss", },
+		{"Grand Runemaster", "Grand Runemistress", "GrRunemaster", "GrRunemstrss", },
 	},
 
 	/* Mindcrafter */
@@ -4848,7 +4848,7 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Telepath", "Telepath", "Telepath", "Telepath", },
 		{"Manipulator", "Manipulator", "Manipulator", "Manipulator", },
 		{"Controller", "Controller", "Controller", "Controller", },
-		{"Master Mindcrafter", "Master Mindcrafter", "M-Mindcrftr.", "M-Mindcrftr.", },
+		{"Master Mindcrafter", "Master Mindcrafter", "Master Mdcr.", "Master Mdcr.", },
 	},
 
 #ifdef ENABLE_DEATHKNIGHT
@@ -4862,8 +4862,8 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Unhallowed", "Unhallowed", "Unhallowed", "Unhallowed", },
 		{"Dark Adept", "Dark Adept", "Dark Adept", "Dark Adept", },
 		{"Crypt Keeper", "Crypt Keeper", "Crypt Keeper", "Crypt Keeper", },
-		{"Fallen Champion", "Fallen Champion", "F.Champion", "F.Champion", },
-		{"Antipaladin", "Antipaladin", "A.Paladin", "A.Paladin", },
+		{"Fallen Champion", "Fallen Champion", "Fal.Champion", "Fal.Champion", },
+		{"Antipaladin", "Antipaladin", "Antipaladin", "Antipaladin", },
 		{"Death Knight", "Death Knight", "Death Knight", "Death Knight", },
 	},
 #endif
@@ -4882,8 +4882,8 @@ cptr player_title[MAX_CLASS][11][4] = {
 		//{"Sacrificer", "Sacrificer", "Sacricifer", "Sacrificer", },
 		{"Chosen", "Chosen", "Chosen", "Chosen", },
 		//{"Corruptor", "Corruptor", "Corruptor", "Corruptor", },
-		{"Unholy Zealot", "Unholy Zealot", "U.Zealot", "U.Zealot", },
-		{"Antipaladin", "Antipaladin", "A.Paladin", "A.Paladin", },
+		{"Unholy Zealot", "Unholy Zealot", "Unh.Zealot", "Unh.Zealot", },
+		{"Antipaladin", "Antipaladin", "Antipaladin", "Antipaladin", },
 		{"Hell Knight", "Hell Knight", "Hell Knight", "Hell Knight", },
  #else /* re-use up to the first four titles */
 		{"Traitor", "Traitor", "Traitor", "Traitor", },
@@ -4891,7 +4891,7 @@ cptr player_title[MAX_CLASS][11][4] = {
 		{"Cultist", "Cultist", "Cultist", "Cultist", },
 		{"Heretic", "Heretic", "Heretic", "Heretic", },
 		{"Chosen", "Chosen", "Chosen", "Chosen", },
-		{"Unholy Zealot", "Unholy Zealot", "U.Zealot", "U.Zealot", },
+		{"Unholy Zealot", "Unholy Zealot", "Unh.Zealot", "Unh.Zealot", },
 		{"Hell Knight", "Hell Knight", "Hell Knight", "Hell Knight", },
  #endif
 	},
