@@ -14962,8 +14962,8 @@ create a character!):
     very stupid and slow. They make great warriors and iffy priests. They are
     bad at searching, disarming, perception, and stealth. They are so ugly
     that a Half-Orc grimaces in their presence. They need to eat often but
-    they also regenerate hit point especially quickly (same as if wearing an
-    item providing regeneration, doesn't stack with item ability). Thanks to
+    they also regenerate hit point especially quickly (1.5x as fast as from
+    'regeneration' flag, doesn't stack with any regen items). Thanks to
     their thick skin, they also get an (albeit very small) bonus to armour
     class. Half-Trolls get bonus on 'Blunt-mastery', 'Health'. They receive a
     large penalty 'Climbing' and huge penalties on 'Critical-strike', 'Magic',
@@ -16716,8 +16716,10 @@ All ghosts      See invisible, Infra-vision +4 (stacks with undeads' +1 bonus).
                 Ghosts are susceptible to light.
                 Almost all ghosts can pass solid walls.
 All orcs        Resist darkness.
-All trolls and giants
-                Sustain strength.
+All trolls      Sustain strength. Extraordinary HP regeneration (2x as fast
+                as from 'regeneration' flag, doesn't stack with items. 1.5x as
+                fast for Half-Troll form).
+All giants      Sustain strength.
 All monsters with stone skin (HURT_ROCK flag)
                 Shard resistance.
 All dragonriders

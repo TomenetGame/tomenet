@@ -28,6 +28,9 @@
 /* How fast HP/MP regenerate when 'resting'. [3] */
 #define RESTING_RATE	(cfg.resting_rate)
 
+/* Half-Trolls and especially Trolls regenerate extraordinarily quickly (both players and monsters) */
+#define TROLL_REGENERATION
+
 /* Chance of items damaged when drowning, in % [3] */
 #define WATER_ITEM_DAMAGE_CHANCE	3
 
@@ -1762,9 +1765,10 @@ static void regen_monsters(void) {
 			/* Hack -- Some monsters regenerate quickly */
 			if (r_ptr->flags2 & RF2_REGENERATE) frac *= 2;
 
-#if 1
+#ifdef TROLL_REGENERATION
 			/* Experimental - Trolls are super-regenerators (hard-coded) */
-			if (r_ptr->d_char == 'T') frac *= 2;
+			if (m_ptr->r_idx == RI_HALF_TROLL) frac = (frac * 3) / 2;
+			else if (r_ptr->d_char == 'T') frac *= 2;
 #endif
 
 			/* Hack -- Regenerate */
@@ -4936,7 +4940,13 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Regeneration ability */
-	if (p_ptr->regenerate) regen_amount = regen_amount * 2;
+#ifdef TROLL_REGENERATION
+	/* Experimental - Trolls are super-regenerators (hard-coded) */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) regen_amount *= 4;
+	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) regen_amount *= 3;
+	else
+#endif
+	if (p_ptr->regenerate) regen_amount *= 2;
 
 	/* Health skill improves regeneration by up to 50% */
 	if (minus_health) regen_amount = (regen_amount * (4 + minus_health)) / 6;

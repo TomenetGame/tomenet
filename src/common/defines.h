@@ -1357,6 +1357,7 @@
 #define RI_DOOR_MIMIC		311
 #define RI_VAMPIRIC_MIST	365
 #define RI_VAMPIRE_BAT		391
+#define RI_HALF_TROLL		491	/* TROLL_REGENERATION */
 #define RI_BLOODLETTER		523
 #define RI_SANTA1		733	/* terror santa from hell */
 #ifdef ENABLE_OHERETICISM
