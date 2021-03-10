@@ -165,7 +165,7 @@ Contents
     (6.7)   Mimicry details
     (6.7a)  Polymorph rings
     (6.7b)  Useful low-level humanoid forms for weapon-using mimics
-    (6.7c)  Druid form details
+    (6.7c)  Druid forms
     (6.8)   Spells and prayers
     (6.8a)  Mimic powers
     (6.8b)  Runes & Runemastery
@@ -17026,8 +17026,8 @@ general though, without losing their excellent bare-handed melee skills.)
 Commonly seen advanced forms: Bloodletter of Khorne, Storm Giant, Dragonriders.
 
 
-(6.7c) Druid form details
--------------------------
+(6.7c) Druid forms
+------------------
 The according polymorph code is given in parentheses below the creature name.
 Note: Some druid forms can open doors, others may try to bash doors.
       Also, all animal forms are able to travel through woods.
