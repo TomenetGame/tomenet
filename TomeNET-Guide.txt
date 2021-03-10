@@ -6027,8 +6027,8 @@ Everlasting characters may also use the 'Instant Resurrection' feature offered
 by town temples, see (4.5a), which will avoid turning into a ghost.
 
 Ghosts are very fragile, but can pass solid walls, float up and down freely
-using the < and > keys, their melee attacks can cause fear and they gain +3
-infra-vision.
+using the < and > keys, their melee attacks can cause fear and they gain a few
+special abilities listed further below under 'Ghosts' (such as infra-vision).
 
 If a player ultimatively dies on a dungeon or tower floor, ie he didn't turn
 into a resurrectable ghost but got completely erased, then that particular
@@ -6121,8 +6121,9 @@ Ghosts have some special abilities, these are
 -they can see invisible creatures
 -life force can hardly be drained from them
 -they cannot be paralyzed
--they spot warm-blooded creatures easily
--they resist darkness effects, poison, cold, blindness, fear and confusion
+-they spot warm-blooded creatures easily (aka +5 to infra-vision)
+-they resist darkness effects, cold, blindness, fear and confusion
+-they are immune to poison and don't suffer from continuous disease
 -they cannot be cut since they don't bleed
 -they resist insanity attacks
 -they can pass solid walls and mountains
@@ -16712,14 +16713,13 @@ Yeeks           Feather falling.
                 level 4, can swim easily, pass trees.)
 All animals     Able to pass trees.
 All spiders     Able to pass mountains, able to pass spider webs.
-All ghosts      See invisible, Infra-vision +4 (stacks with undeads' +1 bonus).
-                Ghosts are susceptible to light.
-                Almost all ghosts can pass solid walls.
 All orcs        Resist darkness.
-All trolls      Sustain strength. Extraordinary HP regeneration (2x as fast
-                as from 'regeneration' flag, doesn't stack with items. 1.5x as
-                fast for Half-Troll form).
+All trolls      Sustain strength. Extraordinary HP regeneration (2x as fast as
+                from 'REGEN' flag, doesn't stack with items. 1.5x as fast for
+                Half-Troll form).
 All giants      Sustain strength.
+All hydras      Extraordinary HP regeneration (2x as fast as from 'REGEN' flag,
+                doesn't stack with items), as they regrow their heads!
 All monsters with stone skin (HURT_ROCK flag)
                 Shard resistance.
 All dragonriders
@@ -16730,7 +16730,7 @@ All evil creatures
 All undead creatures
                 Resist darkness, blindness, poison (usually immunity, depends
                 on ~7 flags), time and nether;
-                can't bleed (no_cut), infra-vision +1, insanity attacks are
+                can't bleed (no_cut), infra-vision +2, insanity attacks are
                 reduced by a little bit (see (6.6)).
                 Drowning damage taken is halved.
                 Becomes susceptible to 'life', which concerns some healing or
@@ -16740,9 +16740,16 @@ All undead creatures
                 Take 2x damage from holy orbs or holy fire and suffer
                 from many 'good' effects/spells (even more so than demons).
                 Suffer less often from black breath infection and consequences.
+All ghosts      See 'All undead creatures' above, but ghosts gain +5
+                Infra-vision instead of just +2.
+                See invisible.
+                Ghosts are susceptible to light.
+                Almost all ghosts can pass solid walls.
+                NOTE: Player ghosts (aka when your character died) get somewhat
+                different boni instead, see (3.11).
 All greater undead creatures
-                See 'All undead creatures' above, and in addtion they get
-                another +4 bonus to infra-vision (ie +5 in total).
+                See 'All undead creatures' above, but greater undead gain +5
+                Infra-vision instead of just +2.
 All demons      Take 2x damage from holy orbs or holy fire and suffer
                 from a couple of 'good' effects/spells (similar to undead).
 All greater demons (capital 'U')
@@ -16802,8 +16809,8 @@ CHR     Dragonriders: +1
         GOOD creatures: +2
 
 Stealth         Body weight: -4..+3
-Infra-Vision    Undead in general: +1
-                Ghosts, Wraiths/Wights, Liches, Vampires : +3
+Infra-Vision    Undead in general: +2
+                Ghosts, Wraiths/Wights, Liches, Vampires : +5
 
 
 Intrinsic abilities that aren't kept when changing forms:
@@ -17034,6 +17041,9 @@ Note: Some druid forms can open doors, others may try to bash doors.
 You can use the /ex command in game to see which forms you can use, and what
 polymorph code they have.
 
+Lore-wise all hydras have extraordinary hit point renegeration (that doesn't
+further stack with REGEN flag) as their heads regrow quickly when cut.
+
 Note: If a monster can fly that means it will grant the player the 'levitation'
       ability.
 
@@ -17092,7 +17102,7 @@ Multi-hued Hound        resists fire/cold/lightning/acid/poison and is immune
 
 Level 30:
 ---------
-5-headed hydra          tough and speedy; can swim;
+5-headed hydra          tough and speedy; can swim; extraordinary regeneration;
 (Code 440)              all melee attacks are poisonous; immune to poison;
                         can cast fear and poison ball
 
@@ -17105,7 +17115,7 @@ Giant squid             tough and speedy aquatic(*) creature;
 
 Level 35:
 ---------
-7-headed hydra          tough and speedy; can swim;
+7-headed hydra          tough and speedy; can swim; extraordinary regeneration;
 (Code 614)              poisonous (75%) and blinding (25%) melee attacks;
                         immune to poison;
                         can cast fear, poison ball, and breathe poison
@@ -17129,8 +17139,8 @@ Plasma hound            speedy;
 Level 40:
 ---------
 11-headed hydra         speedy and toughest hydra; can swim;
-(Code 688)              fiery attacks;
-                        immune to fire;
+(Code 688)              extraordinary regeneration;
+                        fiery attacks; immune to fire;
                         has a small array of fire/fear spells
 
 Giant Roc               speedy giant bird; deals high damage;

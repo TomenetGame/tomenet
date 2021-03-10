@@ -2358,10 +2358,10 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		p_ptr->resist_blind = TRUE; csheet_boni->cb[1] |= CB2_RBLND;
 		p_ptr->no_cut = TRUE; csheet_boni->cb[12] |= CB13_XNCUT;
 		if (!p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
-		p_ptr->see_infra += 1; csheet_boni->infr += 1;
+		p_ptr->see_infra += 2; csheet_boni->infr += 2;
 
 		if (strchr("GWLV", r_ptr->d_char)) {
-			p_ptr->see_infra += 4; csheet_boni->infr += 4;
+			p_ptr->see_infra += 5; csheet_boni->infr += 3;
 		}
 	}
 
@@ -3753,7 +3753,7 @@ void calc_boni(int Ind) {
 		/* p_ptr->resist_neth = TRUE;
 		p_ptr->hold_life = TRUE; */
 		p_ptr->free_act = TRUE; csheet_boni[14].cb[4] |= CB5_RPARA;
-		p_ptr->see_infra += 3; csheet_boni[14].infr += 3;
+		p_ptr->see_infra += 5; csheet_boni[14].infr += 5;
 		p_ptr->resist_dark = TRUE; csheet_boni[14].cb[2] |= CB3_RDARK;
 		p_ptr->resist_blind = TRUE; csheet_boni[14].cb[1] |= CB2_RBLND;
 		p_ptr->immune_poison = TRUE; csheet_boni[14].cb[1] |= CB2_IPOIS;
@@ -3945,7 +3945,7 @@ void calc_boni(int Ind) {
 		/* another bad hack, for when Morgoth's crown gets its pval
 		   reduced experimentally, to keep massive +IV (for Q-quests^^): */
 		if (o_ptr->name1 == ART_MORGOTH)
-			p_ptr->see_infra += 50;
+			p_ptr->see_infra = MAX_SIGHT;
 #endif
 
 		/* Hack -- first add any "base bonuses" of the item.  A new

@@ -30,6 +30,8 @@
 
 /* Half-Trolls and especially Trolls regenerate extraordinarily quickly (both players and monsters) */
 #define TROLL_REGENERATION
+/* Hydras regenerate extraordinarily quickly aka regrowing their heads (both players and monsters) */
+#define HYDRA_REGENERATION
 
 /* Chance of items damaged when drowning, in % [3] */
 #define WATER_ITEM_DAMAGE_CHANCE	3
@@ -1762,14 +1764,18 @@ static void regen_monsters(void) {
 			/* Hack -- Minimal regeneration rate */
 			if (!frac) frac = 1;
 
-			/* Hack -- Some monsters regenerate quickly */
-			if (r_ptr->flags2 & RF2_REGENERATE) frac *= 2;
-
 #ifdef TROLL_REGENERATION
 			/* Experimental - Trolls are super-regenerators (hard-coded) */
-			if (m_ptr->r_idx == RI_HALF_TROLL) frac = (frac * 3) / 2;
-			else if (r_ptr->d_char == 'T') frac *= 2;
+			if (m_ptr->r_idx == RI_HALF_TROLL) frac *= 3;
+			else if (r_ptr->d_char == 'T') frac *= 4;
+			else
 #endif
+#ifdef HYDRA_REGENERATION
+			if (r_ptr->d_char == 'M') frac *= 4;
+			else
+#endif
+			/* Hack -- Some monsters regenerate quickly */
+			if (r_ptr->flags2 & RF2_REGENERATE) frac *= 2;
 
 			/* Hack -- Regenerate */
 			m_ptr->hp += frac;
@@ -4944,6 +4950,11 @@ static bool process_player_end_aux(int Ind) {
 	/* Experimental - Trolls are super-regenerators (hard-coded) */
 	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) regen_amount *= 4;
 	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) regen_amount *= 3;
+	else
+#endif
+#ifdef HYDRA_REGENERATION
+	/* Experimental - Hydras are super-regenerators aka regrowing heads */
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') regen_amount *= 4;
 	else
 #endif
 	if (p_ptr->regenerate) regen_amount *= 2;
