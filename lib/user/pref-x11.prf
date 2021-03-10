@@ -281,3 +281,7 @@ P:^_N_FF97\r
 A:\e\e\\+9
 P:^_N_FF9A\r
 
+
+# Standard shooting macro to help out newbie archers/rangers
+A:\e)*tf-
+H:^__FFBE\r

@@ -11848,7 +11848,7 @@ static int Receive_options(int ind) {
 		/* Messages that require options to be synched */
 		if ((connp->state & CONN_PLAYING) && !p_ptr->initial_options_sync) {
 			p_ptr->initial_options_sync = TRUE;
-			if (p_ptr->newbie_hints) {
+			if (p_ptr->newbie_hints && !is_admin(p_ptr)) {
 				if (p_ptr->max_plv <= 10 && p_ptr->ghost) {
 					msg_format(NumPlayers, "\377yYou died some time ago, so you are a ghost right now!");
 					msg_format(NumPlayers, "\377yYou may go to the temple (4) to revive, or press 'Q' to erase your character.");

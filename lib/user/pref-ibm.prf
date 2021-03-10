@@ -164,3 +164,7 @@ P:^_Cx92\r
 A:\e\e\\D
 P:^_Cx93\r
 
+
+# Standard shooting macro to help out newbie archers/rangers
+A:\e)*tf-
+H:^_x3B\r
