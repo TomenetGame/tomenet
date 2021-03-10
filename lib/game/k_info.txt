@@ -6768,6 +6768,7 @@ I:40:9:0
 W:40:0:3:10000
 A:40/4
 F:REFLECT | RES_LITE
+D:Affects your armour class.
 
 # The potions of cure insanity, in light, medium, regular, and full
 # versions.
