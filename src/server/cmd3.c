@@ -1611,6 +1611,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 	byte override = 0;
 	object_type *o_ptr;
 	u32b f1, f2, f3, f4, f5, f6, esp;
+	cave_type **zcave = getcave(&p_ptr->wpos);
 
 	/* Get the item (in the pack) */
 	if (item >= 0) o_ptr = &(p_ptr->inventory[item]);
@@ -1726,6 +1727,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 					return;
 				}
 			} else //if (!istown(&p_ptr->wpos))
+			    //cfg.anti_arts_wild only?
 				msg_print(Ind, "\377RWarning! If you leave this map sector, the artifact will likely disappear!");
 		}
 	}
@@ -1739,6 +1741,12 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 			msg_print(Ind, "\377y by other players. Use '\377oCTRL+d\377y' to destroy an item instead.");
 		else
 			msg_print(Ind, "\377y by other players. Use '\377ok\377y' to destroy an item instead.");
+		if (!is_admin(p_ptr)) return;
+	}
+	/* no curse-no-drop + heavy-curse stuff */
+	if ((f4 & TR4_CURSE_NO_DROP) && (f3 & (TR3_HEAVY_CURSE | TR3_PERMA_CURSE | TR3_AUTO_CURSE))
+	    && zcave && inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+		msg_print(Ind, "\377yYou may not drop this dangerously cursed item here.");
 		if (!is_admin(p_ptr)) return;
 	}
 
