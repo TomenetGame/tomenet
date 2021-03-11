@@ -3811,6 +3811,7 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 #ifndef NEW_MDEV_STACKING
 	int onum = o_ptr->number, jnum = j_ptr->number;
 #endif
+	const char *c;
 
 	/* Prepare ammo for possible combining */
 	//int o_to_h, o_to_d;
@@ -3833,6 +3834,16 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 
 	/* Add together the item counts */
 	o_ptr->number = ((total < MAX_STACK_SIZE) ? total : (MAX_STACK_SIZE - 1));
+
+	/* QoL hack for amassing empty bottles, mainly via keep_bottle option.. */
+	if (o_ptr->tval == TV_BOTTLE && o_ptr->sval == SV_EMPTY_BOTTLE
+	    && (c = strstr(quark_str(o_ptr->note), "!M"))) {
+		int i = atoi(c + 2);
+
+		/* Sanity checks, and apply! */
+		if (i > 99) i = 99;
+		if (i > 0 && o_ptr->number > i) o_ptr->number = i;
+	}
 
 	/* NEVER clone gold!!! - mikaelh
 	 * o_ptr->number > 1 gold could be seperated by eg. bashing
