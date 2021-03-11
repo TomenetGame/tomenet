@@ -14670,6 +14670,14 @@ Caustic metal ash     |         |                      | Crafting
 Caustic salt          |         |                      | Crafting
 Vitriol               | Magma   | Medium acidbreathers |
 
+Note that in order to find some of these you need a minimum digging skill,
+just for reactive metal powder you can circumvent it via grinding tool usage:
+Sulfur                  at least 10.000 in 'Digging'
+Saltpetre               at least 10.000 in 'Digging'
+Ammonia salt            at least 10.000 in 'Digging'
+Reactive metal powder   at least 10.000 in 'Digging'
+Vitriol                 at least 15.000 in 'Digging'
+
 Crafting ingredients from raw materials:
 ----------------------------------------
 - Wood chips can be processed into charcoal (needs a fire-based light source).
