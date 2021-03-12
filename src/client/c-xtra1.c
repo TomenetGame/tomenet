@@ -17,7 +17,12 @@
 /* Don't display 'Trait' if traits aren't available */
 #define HIDE_UNAVAILABLE_TRAIT
 
-int animate_lightning = 0, animate_lightning_vol = 100, animate_lightning_type = SFX_TYPE_AMBIENT;
+#ifdef USE_SOUND_2010
+int animate_lightning_type = SFX_TYPE_AMBIENT;
+#else /* sigh - todo: decouple lightning animation from actually using sound */
+int animate_lightning_type = 0;
+#endif
+int animate_lightning = 0, animate_lightning_vol = 100;
 short int animate_lightning_icky = 0;
 
 /*
@@ -3673,7 +3678,7 @@ void do_weather(bool no_weather) {
 #endif
 				if (use_sound) {
 #ifndef USE_SOUND_2010
-					Term_xtra(TERM_XTRA_SOUND, s1);
+					//Term_xtra(TERM_XTRA_SOUND, ..some-sound..);
 #else
 					sound(thunder_sound_idx, animate_lightning_type, animate_lightning_vol, 0);
 #endif

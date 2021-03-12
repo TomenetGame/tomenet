@@ -3661,11 +3661,10 @@ int Receive_sound(void) {
 
 	/* Make a sound (if allowed) */
 	if (use_sound) {
-		if (t == SFX_TYPE_WEATHER && (noweather_mode || c_cfg.no_weather)) return 1;
-
 #ifndef USE_SOUND_2010
 		Term_xtra(TERM_XTRA_SOUND, s1);
 #else
+		if (t == SFX_TYPE_WEATHER && (noweather_mode || c_cfg.no_weather)) return 1;
 		if (!sound(s1, t, v, id)) sound(s2, t, v, id);
 #endif
 	}
@@ -4569,7 +4568,9 @@ int Receive_palette(void) {
 int Receive_idle(void) {
 	int	n;
 	char 	ch, idle;
+#ifdef USE_SOUND_2010
 	static bool idle_muted_music = TRUE, idle_muted_weather = TRUE;
+#endif
 
 	if ((n = Packet_scanf(&rbuf, "%c%c", &ch, &idle)) <= 0) return n;
 
