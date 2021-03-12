@@ -10458,6 +10458,11 @@ bool prepare_xorder(int Ind, int j, u16b flags, int *level, u16b *type, u16b *nu
 	player_type *p_ptr = Players[j];
 	bool iddc = in_irondeepdive(&p_ptr->wpos), mandos = in_hallsofmandos(&p_ptr->wpos);
 
+	if (p_ptr->mode & MODE_PVP) {
+		msg_print(Ind, "\377yPvP mode characters cannot receive extermination orders.");
+		return FALSE;
+	}
+
 	if (p_ptr->xorder_id) {
 		for (i = 0; i < MAX_XORDERS; i++) {
 			if (xorders[i].id == p_ptr->xorder_id) {
