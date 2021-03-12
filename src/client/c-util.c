@@ -6188,24 +6188,27 @@ Chain_Macro:
 						break;
 
 					case mw_common:
-						Term_putstr(10, 10, -1, TERM_GREEN, "Please choose one of these common commands and functions:");
-						Term_putstr(15, 12, -1, TERM_L_GREEN, "a) reply to last incoming whisper                 :+:");
-						Term_putstr(15, 13, -1, TERM_L_GREEN, "b) repeat previous chat command or message        :^P\\r");
-						Term_putstr(15, 14, -1, TERM_L_GREEN, "c) toggle AFK state                               :/afk\\r");
-						Term_putstr(15, 15, -1, TERM_L_GREEN, "d) word-of-recall (item must be inscribed '@R')   :/rec\\r");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "e) cough (reduces sleep of monsters nearby)       :/cough\\r");
-						Term_putstr(15, 17, -1, TERM_L_GREEN, "f) shout (breaks sleep of monsters nearby)        :/sleep\\r");
-						Term_putstr(15, 18, -1, TERM_L_GREEN, "g) display some extra information                 :/ex\\r");
-						Term_putstr(15, 19, -1, TERM_L_GREEN, "h) display in-game time (daylight is 6am-10pm)    :/time\\r");
-						Term_putstr(15, 20, -1, TERM_L_GREEN, "i) prompt for a guide quick search                :/? ");
+						l = 9;
+						Term_putstr(10,  l, -1, TERM_GREEN, "Please choose one of these common commands and functions:");
+						l += 2;
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "a) reply to last incoming whisper                 :+:");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "b) repeat previous chat command or message        :^P\\r");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "c) toggle AFK state                               :/afk\\r");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "d) word-of-recall (item must be inscribed '@R')   :/rec\\r");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "e) cough (reduces sleep of monsters nearby)       :/cough\\r");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "f) shout (breaks sleep of monsters nearby)        :/shout\\r");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "g) quick-toggle option 'easy_disarm_montraps'     :/edmt\\r");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "h) display some extra information                 :/ex\\r");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "i) display in-game time (daylight is 6am-10pm)    :/time\\r");
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "j) prompt for a guide quick search                :/? ");
 						if (c_cfg.rogue_like_commands) {
-							Term_putstr(15, 21, -1, TERM_L_GREEN, "j) swap-item #1 (inscribe two items '@x0')        \\e)S0");
-							Term_putstr(15, 22, -1, TERM_L_GREEN, "k) swap-item #2 (inscribe two items '@x1')        \\e)S1");
-							Term_putstr(15, 23, -1, TERM_L_GREEN, "l) swap-item #3 (inscribe two items '@x2')        \\e)S2");
+							Term_putstr(15, l++, -1, TERM_L_GREEN, "k) swap-item #1 (inscribe two items '@x0')        \\e)S0");
+							Term_putstr(15, l++, -1, TERM_L_GREEN, "l) swap-item #2 (inscribe two items '@x1')        \\e)S1");
+							Term_putstr(15, l++, -1, TERM_L_GREEN, "m) swap-item #3 (inscribe two items '@x2')        \\e)S2");
 						} else {
-							Term_putstr(15, 21, -1, TERM_L_GREEN, "j) swap-item #1 (inscribe two items '@x0')        \\e)x0");
-							Term_putstr(15, 22, -1, TERM_L_GREEN, "k) swap-item #2 (inscribe two items '@x1')        \\e)x1");
-							Term_putstr(15, 23, -1, TERM_L_GREEN, "l) swap-item #3 (inscribe two items '@x2')        \\e)x2");
+							Term_putstr(15, l++, -1, TERM_L_GREEN, "k) swap-item #1 (inscribe two items '@x0')        \\e)x0");
+							Term_putstr(15, l++, -1, TERM_L_GREEN, "l) swap-item #2 (inscribe two items '@x1')        \\e)x1");
+							Term_putstr(15, l++, -1, TERM_L_GREEN, "m) swap-item #3 (inscribe two items '@x2')        \\e)x2");
 						}
 
 						while (TRUE) {
@@ -6239,18 +6242,19 @@ Chain_Macro:
 						case 'd': strcpy(buf2, ":/rec\\r"); break;
 						case 'e': strcpy(buf2, ":/cough\\r"); break;
 						case 'f': strcpy(buf2, ":/shout\\r"); break;
-						case 'g': strcpy(buf2, ":/ex\\r"); break;
-						case 'h': strcpy(buf2, ":/time\\r"); break;
-						case 'i': strcpy(buf2, ":/? "); break;
-						case 'j':
+						case 'g': strcpy(buf2, ":/edmt\\r"); break;
+						case 'h': strcpy(buf2, ":/ex\\r"); break;
+						case 'i': strcpy(buf2, ":/time\\r"); break;
+						case 'j': strcpy(buf2, ":/? "); break;
+						case 'k':
 							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S0");
 							else strcpy(buf2, "\\e)x0");
 							break;
-						case 'k':
+						case 'l':
 							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S1");
 							else strcpy(buf2, "\\e)x1");
 							break;
-						case 'l':
+						case 'm':
 							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S2");
 							else strcpy(buf2, "\\e)x2");
 							break;
