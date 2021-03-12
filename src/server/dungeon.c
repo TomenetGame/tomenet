@@ -6826,7 +6826,7 @@ static void scan_objs() {
 				the dungeon master or by unique monsters on their death
 				stay n times as long as cfg.surface_item_removal specifies */
 				if (o_ptr->marked2 == ITEM_REMOVAL_QUICK) {
-					if (++o_ptr->marked >= 10) {
+					if (++o_ptr->marked >= 2) {
 						delete_object_idx(i, TRUE);
 						dcnt++;
 					}
