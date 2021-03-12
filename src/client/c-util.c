@@ -8725,10 +8725,12 @@ void do_cmd_options(void) {
 		Term_putstr(3, 10, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
 
 		Term_putstr(3, 12, -1, TERM_SLATE, "The following options are mostly saved automatically on quitting via CTRL+Q:");
+#ifdef USE_SOUND_2010
 		if (c_cfg.rogue_like_commands)
 			Term_putstr(3, 14, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
 		else
 			Term_putstr(3, 14, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
+#endif
 
 		Term_putstr(3, 15, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
 
@@ -8825,11 +8827,11 @@ void do_cmd_options(void) {
 		else if (k == 'F') change_font(-1);
 #endif
 
+#ifdef USE_SOUND_2010
 		/* Access audio mixer */
 		else if (k == 'x') interact_audio();
-
 		else if (k == 'X') audio_pack_selector();
-
+#endif
 		else if (k == 'I') do_cmd_options_install_audio_packs();
 
 		/* Toggle single sfx/song from a list of all */
@@ -9583,6 +9585,7 @@ void toggle_weather(void) {
 }
 #endif
 
+#ifdef USE_SOUND_2010
 /* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
 #define MAX_PACKS 100
 #define PACKS_SCREEN 10
@@ -9892,6 +9895,7 @@ void audio_pack_selector(void) {
 	//No longer true (for SDL, our only sound sytem at this point basically):
 	//c_message_add("\377RAfter changing audio packs, a game client restart is required!");
 }
+#endif
 
 /* For pasting monster lore into chat, also usable for item-pasting. - C. Blue
    Important feature: Replaces first ':' by '::' if sending to normal chat. */
@@ -10016,12 +10020,14 @@ void check_immediate_options(int i, bool yes, bool playing) {
 		if (screen_icky) Term_switch(0);
 	}
 
+#ifdef USE_SOUND_2010
 	/* Refresh music when shuffle_music is toggled */
 	if (option_info[i].o_var == &c_cfg.shuffle_music) {
 		/* ..but only if we're not already in the process of changing music! */
 		if (music_next == -1)
 			music(-3); //refresh!
 	}
+#endif
 }
 
 /* Helper functions for DONT_CLEAR_TOPLINE_IF_AVOIDABLE - C. Blue */

@@ -3448,8 +3448,8 @@ static void init_sound() {
 }
 /* Try to re-init specifically SDL-audio.
    Purpose: Avoid need for client restart on switching audio packs live. */
-int re_init_sound() {
 #ifdef USE_SOUND_2010
+int re_init_sound() {
 	int i, err;
 
 	/* Initialise this even if we don't use sound, just for its visual effect */
@@ -3500,13 +3500,13 @@ int re_init_sound() {
 	browse_sound_idx = exec_lua(0, "return get_sound_index(\"browse\")");
 	browsebook_sound_idx = exec_lua(0, "return get_sound_index(\"browse_book\")");
 	browseinven_sound_idx = exec_lua(0, "return get_sound_index(\"inventory\")");
-#endif
 
 	/* Inform server about potentially changed capabilities */
 	Send_audio();
 
 	return 0;
 }
+#endif
 
 
 /*

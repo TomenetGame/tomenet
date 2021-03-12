@@ -336,8 +336,7 @@ void (*sound_weather_hook_vol)(int sound, int vol);
 bool (*music_hook)(int music);
 int cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 1024;
 int music_cur = -1, music_cur_song = -1, music_next = -1, music_next_song = -1, weather_channel = -1, weather_current = -1, weather_current_vol = -1, weather_channel_volume = 0, ambient_channel = -1, ambient_current = -1, ambient_channel_volume = 0;
-int weather_particles_seen, weather_sound_change, weather_fading, ambient_fading;
-bool wind_noticable = FALSE;
+int weather_sound_change, weather_fading, ambient_fading;
 bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE, weather_resume = FALSE, ambient_resume = FALSE;
 int cfg_audio_master_volume = 75, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
 #if 1 /* WEATHER_VOL_PARTICLES */
@@ -354,6 +353,8 @@ bool sound_hint = TRUE;
 /* Don't cache audio */
 bool no_cache_audio = FALSE;
 #endif
+bool wind_noticable = FALSE; /* This is now also used for lamp-flickering, not just for sound */
+int weather_particles_seen; /* ..and this is used for wind_noticable! */
 
 /* Redraw skills if the menu is open */
 bool redraw_skills = FALSE;
