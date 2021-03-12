@@ -7929,16 +7929,18 @@ static void do_cmd_options_fonts(void) {
  #endif /* WINDOWS || USE_X11 */
 #endif /* ENABLE_SUBWINDOW_MENU */
 
+#ifdef USE_SOUND_2010
 static void do_cmd_options_sfx(void) {
-#if SOUND_SDL
+ #if SOUND_SDL
 	do_cmd_options_sfx_sdl();
-#endif
+ #endif
 }
 static void do_cmd_options_mus(void) {
-#if SOUND_SDL
+ #if SOUND_SDL
 	do_cmd_options_mus_sdl();
-#endif
+ #endif
 }
+#endif
 
 errr options_dump(cptr fname) {
 	int i, j;
@@ -8733,9 +8735,9 @@ void do_cmd_options(void) {
 			Term_putstr(3, 14, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+F hotkey) / Audio pack selector");
 		else
 			Term_putstr(3, 14, -1, TERM_WHITE, "(\377yx\377w/\377yX\377w) Audio mixer (also accessible via CTRL+U hotkey) / Audio pack selector");
-#endif
 
 		Term_putstr(3, 15, -1, TERM_WHITE, "(\377yn\377w/\377yN\377w) Disable/reenable specific sound effects/music");
+#endif
 
 #if defined(WINDOWS) || defined(USE_X11)
 		/* Font (and window) settings aren't available in command-line mode */
@@ -8834,12 +8836,11 @@ void do_cmd_options(void) {
 		/* Access audio mixer */
 		else if (k == 'x') interact_audio();
 		else if (k == 'X') audio_pack_selector();
-#endif
-		else if (k == 'I') do_cmd_options_install_audio_packs();
-
 		/* Toggle single sfx/song from a list of all */
 		else if (k == 'n') do_cmd_options_sfx();
 		else if (k == 'N') do_cmd_options_mus();
+#endif
+		else if (k == 'I') do_cmd_options_install_audio_packs();
 
 		else if (k == 'c') do_cmd_options_colourblindness();
 

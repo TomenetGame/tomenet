@@ -985,9 +985,9 @@ extern int weather_sound_change, weather_fading, ambient_fading;
 extern int cfg_audio_rate, cfg_max_channels, cfg_audio_buffer;
 extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather, no_cache_audio, weather_resume, ambient_resume;
 extern int cfg_audio_master_volume, cfg_audio_music_volume, cfg_audio_sound_volume, cfg_audio_weather_volume;
-#if 1 /* WEATHER_VOL_PARTICLES */
-extern int weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];
-#endif
+ #if 1 /* WEATHER_VOL_PARTICLES */
+ extern int weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];
+ #endif
 extern int grid_weather_volume, grid_ambient_volume, grid_weather_volume_goal, grid_ambient_volume_goal, grid_weather_volume_step, grid_ambient_volume_step;
 extern bool sound_hint;
 
