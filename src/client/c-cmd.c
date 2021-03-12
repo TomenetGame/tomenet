@@ -347,6 +347,13 @@ void process_command() {
 	//case KTRL('M'): //this is same as '\r' and hence doesn't work..
 	case KTRL('C'): toggle_music(FALSE); break;
 	case KTRL('N'): toggle_master(FALSE); break;
+#else
+	case KTRL('U'):
+	//case KTRL('M'): //this is same as '\r' and hence doesn't work..
+	case KTRL('C'):
+	case KTRL('N'):
+		c_msg_print("This key is unused because client was compiled without SDL-sound support.  Hit '?' for help.");
+		break;
 #endif
 
 	case '!': cmd_BBS(); break;
