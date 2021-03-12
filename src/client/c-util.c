@@ -6224,7 +6224,7 @@ Chain_Macro:
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'l') {
+								if (choice < 'a' || choice > 'n') {
 									//i = -1;
 									continue;
 								}
