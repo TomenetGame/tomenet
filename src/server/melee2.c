@@ -7260,15 +7260,15 @@ s_printf("ASTAR_INCOMPLETE\n");
 			if (p_ptr->warning_ai_annoy == 0 && p_ptr->mon_vis[m_idx]) {
 				if ((p_ptr->melee_techniques & 0x0003)) {
 					p_ptr->warning_ai_annoy = 1;
-					msg_print(Ind, "\377yHINT: Use fighting techniques '\377osprint\377y' or '\377otaunt\377y' to catch monsters that try to");
-					msg_print(Ind, "\377y      keep their distance to you. (Press keys \377o% z i\377y to set up a macro.)");
-					msg_print(Ind, "\377y      Some monsters might need multiple taunts, some never fall for it.");
+					msg_print(Ind, "\374\377yHINT: Use fighting techniques '\377osprint\377y' or '\377otaunt\377y' to catch monsters that try to");
+					msg_print(Ind, "\374\377y      keep their distance to you. (Press keys \377o% z i\377y to set up a macro.)");
+					msg_print(Ind, "\374\377y      Some monsters might need multiple taunts, some never fall for it.");
 					s_printf("warning_ai_annoy (technique): %s\n", p_ptr->name);
 #if 0 /* keep warning active for when the player learned techniques (if ever) */
 				} else {
 					p_ptr->warning_ai_annoy = 1;
-					msg_print(Ind, "\377yHINT: Use ranged attacks to kill monsters that try to keep their distance.");
-					msg_print(Ind, "\377y      If it's weak, throwing an item ('\377ov\377y') might work too, eg flasks of oil.");
+					msg_print(Ind, "\374\377yHINT: Use ranged attacks to kill monsters that try to keep their distance.");
+					msg_print(Ind, "\374\377y      If it's weak, throwing an item ('\377ov\377y') might work too, eg flasks of oil.");
 					s_printf("warning_ai_annoy (ranged): %s\n", p_ptr->name);
 #endif
 				}
