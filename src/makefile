@@ -275,6 +275,10 @@ ACCEDIT_LIBS = -lcurses -lcrypt
 ## Without SDL
 #CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99
 #LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
+##
+## Without USE_SOUND_2010 (aka compile without sound support) - make sure to remove #define USE_SOUND_2010 (and possibly #define USE_SOUND) in src/config.h too.
+#CFLAGS = -O2 -g -pipe -Wall -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -Wno-format-truncation
+#LIBS = -L${X11BASE}/lib -L/usr/pkg/lib -lX11 -lncurses -lcrypt -lm
 
 # Some Linux distributions have a separate libtinfo, attempt to detect it
 HAVE_TINFO = $(shell ldconfig -p | grep -c libtinfo)
