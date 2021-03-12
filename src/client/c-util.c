@@ -6209,6 +6209,7 @@ Chain_Macro:
 							Term_putstr(15, l++, -1, TERM_L_GREEN, "l) swap-item #2 (inscribe two items '@x1')        \\e)x1");
 							Term_putstr(15, l++, -1, TERM_L_GREEN, "m) swap-item #3 (inscribe two items '@x2')        \\e)x2");
 						}
+						Term_putstr(15, l++, -1, TERM_L_GREEN, "n) Enter/leave the PvP arena (PvP mode only)      :/pvp\\r");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
@@ -6257,6 +6258,7 @@ Chain_Macro:
 							if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)S2");
 							else strcpy(buf2, "\\e)x2");
 							break;
+						case 'n': strcpy(buf2, ":/pvp\\r"); break;
 						}
 
 						/* hack before we exit: remember menu choice 'common' */
