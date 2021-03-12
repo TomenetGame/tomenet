@@ -4107,7 +4107,7 @@ void store_confirm(int Ind) {
 			s_printf("SOLD_UNID_EGO: '%s' (%d) sold '%s'\n", p_ptr->name, p_ptr->max_lev, o_name);
 		}
 		if (!p_ptr->warning_sellunid && (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF)) {
-			msg_print(Ind, "\377yHint: Identify wands and staves before selling because their known number of charges increases their value!");
+			msg_print(Ind, "\374\377yHint: Identify wands and staves before selling because their known number of charges increases their value!");
 			p_ptr->warning_sellunid = 1;
 		}
 	}
