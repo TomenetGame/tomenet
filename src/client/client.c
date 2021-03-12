@@ -526,8 +526,10 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 	char config_name2[100];
 	FILE *config, *config2;
 	char buf[1024];
+#ifdef USE_SOUND_2010
 	/* backward compatibility */
 	bool compat_apf = FALSE;
+#endif
 
 	buf[0] = 0;//valgrind warning it seems..?
 
@@ -551,7 +553,9 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 						strcpy(buf, "soundpackFolder\t\t");
 						strcat(buf, cfg_soundpackfolder);
 						strcat(buf, "\n");
+#ifdef USE_SOUND_2010
 						compat_apf = TRUE;
+#endif
 					} else if (!strncmp(buf, "musicpackFolder", 15)) {
 						strcpy(buf, "musicpackFolder\t\t");
 						strcat(buf, cfg_musicpackfolder);
@@ -559,18 +563,20 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 					}
 				} else {
 					if (!creds_only) {
-#ifdef USE_SOUND_2010
 						/* modify the line */
 						if (!strncmp(buf, "soundpackFolder", 15)) {
 							strcpy(buf, "soundpackFolder\t\t");
 							strcat(buf, cfg_soundpackfolder);
 							strcat(buf, "\n");
+#ifdef USE_SOUND_2010
 							compat_apf = TRUE;
+#endif
 						} else if (!strncmp(buf, "musicpackFolder", 15)) {
 							strcpy(buf, "musicpackFolder\t\t");
 							strcat(buf, cfg_musicpackfolder);
 							strcat(buf, "\n");
 						}
+#ifdef USE_SOUND_2010
 						/* audio mixer settings */
 						if (!strncmp(buf, "audioMaster", 11)) {
 							strcpy(buf, "audioMaster\t\t");
@@ -769,7 +775,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 //#ifdef USE_SOUND
 			fputs(format("sound\t\t\t%s\n", use_sound_org ? "1" : "0"), config2);
 //#endif
-//#ifdef USE_SOUND_2010
+#ifdef USE_SOUND_2010
 			fputs("hintSound\n", config2);
 			fputs(format("cacheAudio\t\t%s\n", no_cache_audio ? "0" : "1"), config2);
 			fputs(format("audioSampleRate\t\t%d\n", cfg_audio_rate), config2);
@@ -785,8 +791,8 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			fputs(format("audioVolumeMusic\t%d\n", cfg_audio_music_volume), config2);
 			fputs(format("audioVolumeSound\t%d\n", cfg_audio_sound_volume), config2);
 			fputs(format("audioVolumeWeather\t%d\n", cfg_audio_weather_volume), config2);
+#endif
 			fputs("\n", config2);
-//#endif
 
 #ifdef USE_X11
 ///LINUX_TERM_CFG
