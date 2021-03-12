@@ -2961,6 +2961,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		//p_ptr->warning_blastcharge = 1; //actually let's not disable this for now. We save/load it though!
 		p_ptr->warning_status_blindness = p_ptr->warning_status_confusion = p_ptr->warning_status_stun = 1;
 		p_ptr->warning_sellunid = 1;
+		p_ptr->warning_edmt = 1;
 		return;
 	}
 
@@ -3133,6 +3134,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_boomerang = 1;
 		p_ptr->warning_inspect = 1;
 		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = 1;
+		p_ptr->warning_edmt = 1;
 	}
 	if (p_ptr->max_plv > 20) {
 		p_ptr->warning_ghost = 1;

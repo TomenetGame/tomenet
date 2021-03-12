@@ -4714,6 +4714,13 @@ void do_cmd_disarm(int Ind, int dir) {
 			more = FALSE;
 			done = TRUE;
 
+			if (!p_ptr->warning_edmt) {
+				if (!is_newer_than(&p_ptr->version, 4, 7, 3, 0, 0, 0))
+					msg_print(Ind, "\374\377yHINT: Look into command \377o/edmt\377y for easier mass-disarming of monster traps.");
+				else
+					msg_print(Ind, "\374\377yHINT: Look into command \377o/edmt\377y and option \377oeasy_disarm_montraps\377y for easier mass-disarming of monster traps.");
+				p_ptr->warning_edmt = 1;
+			}
 		}
 
 		/* Disarm a trap */
