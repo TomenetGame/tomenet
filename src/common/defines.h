@@ -7455,11 +7455,6 @@ extern int PlayerUID;
  #define SOUND_MAX_2010	400 /*for experimenting purpose - C. Blue*/
  #define MUSIC_MAX	100 /*for experimenting purpose - C. Blue*/
 
- //defines.h: (for client-side, from angband)
- /* Given an array, determine how many elements are in it: */
- //note: appearently doesnt work for the main purpose ie sound_modules -_- -C. Blue
- #define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
-
  /* for ovl_sfx_.. client options */
  #define SFX_TYPE_ATTACK	0
  #define SFX_TYPE_COMMAND	1
@@ -7501,6 +7496,11 @@ extern int PlayerUID;
  /* Play slightly quieter shriek sfx to not blast people's ear drums =P [0..100] */
  #define SFX_SHRIEK_VOLUME	50
 #endif
+
+//defines.h: (for client-side, from angband)
+/* Given an array, determine how many elements are in it: */
+//note: appearently doesnt work for the main purpose ie sound_modules -_- -C. Blue
+#define N_ELEMENTS(a) (sizeof(a) / sizeof((a)[0]))
 
 
 /*
