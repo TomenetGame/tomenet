@@ -710,8 +710,8 @@
 #define ALT_EXPRATIO
 
 /* for PvP mode: */
-#define MIN_PVP_LEVEL	10
-#define MID_PVP_LEVEL	20
+#define MIN_PVP_LEVEL	20
+#define MID_PVP_LEVEL	25
 #define MAX_PVP_LEVEL	30
 
 
