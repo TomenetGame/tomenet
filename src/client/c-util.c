@@ -6189,8 +6189,7 @@ Chain_Macro:
 
 					case mw_common:
 						l = 9;
-						Term_putstr(10,  l, -1, TERM_GREEN, "Please choose one of these common commands and functions:");
-						l += 2;
+						Term_putstr(10, l++, -1, TERM_GREEN, "Please choose one of these common commands and functions:");
 						Term_putstr(15, l++, -1, TERM_L_GREEN, "a) reply to last incoming whisper                 :+:");
 						Term_putstr(15, l++, -1, TERM_L_GREEN, "b) repeat previous chat command or message        :^P\\r");
 						Term_putstr(15, l++, -1, TERM_L_GREEN, "c) toggle AFK state                               :/afk\\r");
