@@ -3836,7 +3836,7 @@ void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr) {
 	o_ptr->number = ((total < MAX_STACK_SIZE) ? total : (MAX_STACK_SIZE - 1));
 
 	/* QoL hack for amassing empty bottles, mainly via keep_bottle option.. */
-	if (o_ptr->tval == TV_BOTTLE && o_ptr->sval == SV_EMPTY_BOTTLE
+	if (o_ptr->tval == TV_BOTTLE && o_ptr->sval == SV_EMPTY_BOTTLE && o_ptr->note
 	    && (c = strstr(quark_str(o_ptr->note), "!M"))) {
 		int i = atoi(c + 2);
 
