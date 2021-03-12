@@ -831,6 +831,7 @@ extern void verify_day_and_night(void);
 
 extern void process_timers(void);
 extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;
+extern bool init_pvparena;
 
 extern void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr);
 extern void timed_shutdown(int k, bool terminate);

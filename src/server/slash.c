@@ -2996,12 +2996,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			if (fresh_arena) generate_cave(&apos, p_ptr); /* <- required or panic save: py,px will be far negative (haven't checked why) */
 
-			p_ptr->recall_pos = apos;
-			//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
-			p_ptr->new_level_method = LEVEL_RAND;
-			recall_player(Ind, "");
-
-			if (fresh_arena) {
+#if 0
+			if (!players_on_depth(&apos) || fresharena) { /* Reinit arena every time a player joins it after it was empty? */
+#else
+			if (!init_pvparena || fresh_arena) { /* Reinit arena once on first entrance after server startup? */
+				init_pvparena = TRUE;
+#endif
 				wipe_m_list(&apos);
 				wipe_o_list_safely(&apos);
 				process_dungeon_file("t_arena_pvp.txt", &apos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
@@ -3010,6 +3010,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				timer_pvparena2 = 1; /* start with releasing 1st monster */
 				timer_pvparena3 = 0; /* 'basic monsters' cycle active */
 			}
+
+			p_ptr->recall_pos = apos;
+			//p_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
+			p_ptr->new_level_method = LEVEL_RAND;
+			recall_player(Ind, "");
 			return;
 		}
 		else if (prefix(messagelc, "/remdun")) { /* forcefully removes a dungeon or tower, even if someone is inside (gets recalled), even if there is no staircase. */

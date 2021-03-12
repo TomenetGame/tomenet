@@ -969,6 +969,7 @@ int lite_later_num;
 
 /* Timers for specific events - C. Blue */
 int timer_pvparena1 = 1, timer_pvparena2 = 1, timer_pvparena3 = 0; /* defaults */
+bool init_pvparena = FALSE;
 
 /* Recall-shutdown timer for /shutrec */
 int shutdown_recall_timer = 0, shutdown_recall_state = 0;
