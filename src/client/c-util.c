@@ -6245,70 +6245,62 @@ Chain_Macro:
 #if 0
 							strcpy(buf2, ":/rec\\r"); break;
 #else
-							clear_from(9);
-							l = 11;
-							Term_putstr(10, l++, -1, TERM_GREEN, "Please choose a type of word-of-recall:");
-							Term_putstr(15, l++, -1, TERM_L_GREEN, "a) just basic word-of-recall (in to max depth / back out again)");
-							Term_putstr(15, l++, -1, TERM_L_GREEN, "b) recall to a specific, fixed depth");
-							Term_putstr(15, l++, -1, TERM_L_GREEN, "c) world-travel recall, ie recall across the world surface");
-							Term_putstr(15, l++, -1, TERM_L_GREEN, "d) world-travel recall, specifically to Bree, aka (32,32)");
 							while (TRUE) {
-								switch (choice = inkey()) {
-								case ESCAPE:
-								case 'p':
-								case '\010': /* backspace */
-									i = -2; /* leave */
-									break;
-								case KTRL('T'):
-									/* Take a screenshot */
-									xhtml_screenshot("screenshot????");
-									continue;
-								default:
-									/* invalid action -> exit wizard */
-									if (choice < 'a' || choice > 'd') {
-										//i = -1;
+								clear_from(9);
+								l = 11;
+								Term_putstr(10, l++, -1, TERM_GREEN, "Please choose a type of word-of-recall:");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "a) just basic word-of-recall (in to max depth / back out again)");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "b) recall to a specific, fixed depth");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "c) world-travel recall, ie recall across the world surface");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "d) world-travel recall, specifically to Bree, aka (32,32)");
+								while (TRUE) {
+									switch (choice = inkey()) {
+									case ESCAPE:
+									case 'p':
+									case '\010': /* backspace */
+										i = -2; /* leave */
+										break;
+									case KTRL('T'):
+										/* Take a screenshot */
+										xhtml_screenshot("screenshot????");
 										continue;
+									default:
+										/* invalid action -> exit wizard */
+										if (choice < 'a' || choice > 'd') {
+											//i = -1;
+											continue;
+										}
 									}
+									break;
 								}
-								break;
-							}
-							/* exit? */
-							if (i == -2) {
-								/* hack before we exit: remember menu choice 'common' */
-								choice = mw_common;
-								continue;
-							}
+								/* exit? */
+								if (i == -2) {
+									/* hack before we exit: remember menu choice 'common' */
+									choice = mw_common;
+									continue;
+								}
 
-							switch (choice) {
-							case 'a': strcpy(buf2, ":/rec\\r"); break;
-							case 'd': strcpy(buf2, ":/rec 32 32\\r"); break;
-							case 'b':
-								Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter a specific depth (eg '-500'): ");
-								//Term_gotoxy(5, 17);
-								strcpy(buf, "");
-								if (!askfor_aux(buf, 6, 0)) {
-									/* hack before we exit: remember menu choice 'common' */
-									choice = mw_common;
-									i = -2;
-									continue;
+								l++;
+								switch (choice) {
+								case 'a': strcpy(buf2, ":/rec\\r"); break;
+								case 'd': strcpy(buf2, ":/rec 32 32\\r"); break;
+								case 'b':
+									Term_putstr(5, l, -1, TERM_L_GREEN, "Enter a specific depth (eg '-500'): ");
+									strcpy(buf, "");
+									if (!askfor_aux(buf, 6, 0)) continue;
+									strcpy(buf2, ":/rec ");
+									strcat(buf2, buf);
+									strcat(buf2, "\\r");
+									break;
+								case 'c':
+									Term_putstr(5, l, -1, TERM_L_GREEN, "Enter world coordinates separated by space (eg '32 32'): ");
+									strcpy(buf, "");
+									if (!askfor_aux(buf, 6, 0)) continue;
+									strcpy(buf2, ":/rec ");
+									strcat(buf2, buf);
+									strcat(buf2, "\\r");
+									break;
 								}
-								strcpy(buf2, ":/rec ");
-								strcat(buf2, buf);
-								strcat(buf2, "\\r");
-								break;
-							case 'c':
-								Term_putstr(5, 16, -1, TERM_L_GREEN, "Enter world coordinates separated by space (eg '32 32'): ");
-								//Term_gotoxy(5, 17);
-								strcpy(buf, "");
-								if (!askfor_aux(buf, 6, 0)) {
-									/* hack before we exit: remember menu choice 'common' */
-									choice = mw_common;
-									i = -2;
-									continue;
-								}
-								strcpy(buf2, ":/rec ");
-								strcat(buf2, buf);
-								strcat(buf2, "\\r");
 								break;
 							}
 							break;
