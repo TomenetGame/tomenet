@@ -6277,7 +6277,7 @@ Chain_Macro:
 								if (i == -2) {
 									/* hack before we exit: remember menu choice 'common' */
 									choice = mw_common;
-									continue;
+									break;
 								}
 
 								l++;
@@ -6328,6 +6328,8 @@ Chain_Macro:
 
 						/* hack before we exit: remember menu choice 'common' */
 						choice = mw_common;
+						/* exit? */
+						if (i == -2) continue;
 						break;
 					}
 
