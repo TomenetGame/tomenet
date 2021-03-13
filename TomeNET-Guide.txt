@@ -17054,8 +17054,9 @@ Uruk            16  Good HP, good melee damage, good AC, +1 extra shot w/
                     a confusion effect (which makes fighting it in close combat
                     a bit dangerous).
                     (Does not occur in packs.)
-*Forest troll   17  High HP, good AC, can pass trees, gives 'HP regeneration'
-                    (same as item flag).
+*Forest troll   17  High HP, good AC, can pass trees, and like all trolls (and
+                    hydras by the way) has extraordinarily fast HP regeneration
+                    (2x as much as and not stacking with REGEN flag).
 *Earth spirit   17  Useful only for shamans because it has no limbs!
                     Since this is an 'E' form, shamans learn it very quickly.
                     Similar to Air spirit (see further above) this form comes
