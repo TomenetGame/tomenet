@@ -2490,7 +2490,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 
 				if (my_strcasestr(buf, "load") && (my_strcasestr(buf, "trap") || my_strcasestr(buf, "kit"))) strcpy(buf, "Trap kit load");
-				if (my_strcasestr(buf, "trap") && (my_strcasestr(buf, "kit") || my_strcasestr(buf, "mon"))) {
+				else if (my_strcasestr(buf, "trap") && (my_strcasestr(buf, "kit") || my_strcasestr(buf, "mon"))) {
 					strcpy(buf, "ABOUT TRAP KITS:");
 					fallback = TRUE;
 					fallback_uppercase = 4;
