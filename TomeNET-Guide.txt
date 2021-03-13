@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 11. March 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 13. March 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -99,6 +99,7 @@ Contents
     (4.5d)  Dungeon bosses
     (4.6)   Pits and vaults
     (4.7)   Traps & trap kits
+    (4.7a)  Trap kit load effects
     (4.8)   Level & vault feelings
     (4.9)   Navigating on maps
     (4.10)  Houses
@@ -7651,6 +7652,42 @@ them. That inscribing-macro could look like this:
 {-@m1\r
 where the '-' will cause the { inscribe command to prompt for inscription first
 and the item afterwards, effectively simply asking you to specify the item.
+
+
+(4.7a) Trap kit load effects
+----------------------------
+For most items loaded in monster traps the effects are sort of self-explanatory
+and some items have no effect at all (eg detection magic) but here is a list of
+those effects that might not be so obvious:
+
+Flasks:
+Oil                     Fire damage
+Acid                    Acid damage and blinding effect
+
+Potions:
+Salt Water              Blind
+Weakness                Reduces damage
+Clumsiness              Reduces AC
+Sickliness              Reduces HP
+Ruination               Weakness + Clumsiness + Sickliness
+Lose Memories           Confuse
+Life                    Holy fire vs Undead; heals non-undead
+
+Scrolls:
+Remove Curse            Dispel undead
+*Remove Curse*          *Dispel undead*
+Blessing                Holy fire
+Holy Chant              Holy fire
+Holy Prayer             Holy fire
+Protection from Evil    Dispel evil
+Rune of Protection      Holds a monster in place temporarily
+Scroll of Life          Erases ghosts ('G')
+
+Wands:
+Wall Creation           Stone prison
+
+Staves:
+Remove Curse            Dispel undead
 
 
 

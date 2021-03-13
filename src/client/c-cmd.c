@@ -2480,6 +2480,27 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 				if (my_strcasestr(buf, "demo") && my_strcasestr(buf, "char")) strcpy(buf, "Demolition Charges");
+				/* Demolitionist perk */
+				if (!strncasecmp(buf, "demol", 5) && !my_strcasestr(buf, "char")) { /* don't overlook chapter 'Demolition Charges'! */
+					strcpy(buf, "DEMOLITIONIST");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					line = 0; /* paranoia? */
+					continue;
+				}
+
+				if (my_strcasestr(buf, "mon") && my_strcasestr(buf, "trap")) {
+					strcpy(buf, "ABOUT TRAP KITS:");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
+				if (my_strcasestr(buf, "load") && (my_strcasestr(buf, "trap") || my_strcasestr(buf, "kit"))) {
+					strcpy(buf, "TRAP KIT LOAD");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
 
 				/* Race/class boni/mali table */
 				if ((my_strcasestr(buf, "race") || my_strcasestr(buf, "racial"))
@@ -2533,14 +2554,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					fallback = TRUE;
 					fallback_uppercase = 4;
 					line = 0; /* The correct chapter currently has the first hit from the beginning, while there are more 'wrong' hits coming up afterwards.. */
-					continue;
-				}
-				/* Demolitionist perk */
-				if (!strncasecmp(buf, "demol", 5) && !my_strcasestr(buf, "char")) { /* don't overlook chapter 'Demolition Charges'! */
-					strcpy(buf, "DEMOLITIONIST");
-					fallback = TRUE;
-					fallback_uppercase = 4;
-					line = 0; /* paranoia? */
 					continue;
 				}
 
@@ -2972,6 +2985,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					fallback_uppercase = 4;
 					continue;
 				}
+
 
 				/* If not matched, lastly try to (partially) match chapter titles */
 				/* First try to match beginning of title */
