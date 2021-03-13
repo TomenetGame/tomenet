@@ -6250,7 +6250,7 @@ Chain_Macro:
 								l = 11;
 								Term_putstr(10, l++, -1, TERM_GREEN, "Please choose a type of word-of-recall:");
 								Term_putstr(15, l++, -1, TERM_L_GREEN, "a) just basic word-of-recall (in to max depth / back out again)");
-								Term_putstr(15, l++, -1, TERM_L_GREEN, "b) recall to a specific, fixed depth");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "b) recall to a specific, fixed depth (or back out again)");
 								Term_putstr(15, l++, -1, TERM_L_GREEN, "c) world-travel recall, ie recall across the world surface");
 								Term_putstr(15, l++, -1, TERM_L_GREEN, "d) world-travel recall, specifically to Bree, aka (32,32)");
 								while (TRUE) {
