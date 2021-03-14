@@ -7574,7 +7574,9 @@ void handle_store_leave(int Ind) {
 	int i = gettown(Ind);
 	store_type *st_ptr = NULL;
 	player_type *p_ptr = Players[Ind];
+#ifdef USE_SOUND_2010
 	cave_type **zcave = getcave(&p_ptr->wpos);
+#endif
 
 	/* hack: non-town stores (ie dungeon, but could also be wild) */
 	if (i == -1) i = gettown_dun(Ind);

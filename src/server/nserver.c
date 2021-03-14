@@ -2272,7 +2272,9 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->idle_starve_kick = TRUE;
 			p_ptr->view_lamp_walls = p_ptr->view_lamp_floor;//was the same option so far, now split up
 		} else {
+#ifdef USE_SOUND_2010
 			bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
+#endif
 			p_ptr->sfx_combat = !options[47];
 			p_ptr->sfx_magicattack = !options[48];
 			p_ptr->sfx_defense = !options[49];
@@ -2339,7 +2341,9 @@ static void sync_options(int Ind, bool *options) {
 		}
 	} else { /* 4.5.8.2+ (after 4.5.8a release) */
 		bool vlf = p_ptr->view_lite_extra;
+#ifdef USE_SOUND_2010
 		bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
+#endif
 
 		//page 1
 
@@ -8810,7 +8814,9 @@ int Send_idle(int Ind, bool idle) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, FALSE);
 #endif
 	} else {
+#ifdef USE_SOUND_2010
 		cave_type **zcave = getcave(&p_ptr->wpos);
+#endif
 
 		p_ptr->muted_when_idle = FALSE;
 		res = Packet_printf(&connp->c, "%c%c", PKT_IDLE, idle ? 1 : 0);
