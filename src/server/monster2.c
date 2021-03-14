@@ -5866,7 +5866,7 @@ void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_p
 
 	/* Immutable stats: */
 	if (p_ptr->male) r_ptr->flags1 |= RF1_MALE; else r_ptr->flags1 |= RF1_FEMALE;
-	r_ptr->flags2 |= RF2_SMART | RF2_POWERFUL | RF2_OPEN_DOOR | RF2_BASH_DOOR;
+	r_ptr->flags2 |= RF2_SMART | RF2_POWERFUL | RF2_OPEN_DOOR | RF2_BASH_DOOR; //note that RF2_POWERFUL covers resist_blind(!)
 	switch (p_ptr->prace) {
 	case RACE_ENT: r_ptr->flags3 |= RF3_SUSCEP_FIRE; break; //yep
 	case RACE_VAMPIRE: r_ptr->flags3 |= RF3_UNDEAD; break;
@@ -5889,7 +5889,7 @@ void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_p
 	   so that fact alone might work as a balancing factor for mimics' extra powers. >:) */
 }
 void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
-	int n;
+	int n, magicness = 0;
 
 	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system) */
 	if (m_ptr->speed < p_ptr->pspeed) m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
@@ -5928,7 +5928,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	/* Flags 2 */
 	//RF2_STUPID,RF2_COLD_BLOOD,RF2_EMPTY_MIND(already RF7_NO_ESP),
 	//RF2_PASS_WALL,
-	r_ptr->flags2 |= RF2_KILL_WALL;
+	r_ptr->flags2 |= RF2_KILL_WALL; //disallow stoneprison/wallcreation refuges
 	if (p_ptr->prace == RACE_VAMPIRE) r_ptr->flags2 |= RF2_COLD_BLOOD;
 
 	/* Flags 3 */
@@ -5948,102 +5948,193 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	//if (p_ptr->resist_sound) r_ptr->flags3 |= RF3_NO_STUN; //hmm
 	r_ptr->flags3 |= RF3_NO_STUN; //just give it, because the monster won't heal in time to recover from k.o.
 
-	/* Flags 4 */
-	//RF4_UNMAGIC,RF4_BOULDER
-#if 0
-#define RF4_ROCKET<----><------>0x00000008<---->/* TY: Rocket */
-#define RF4_ARROW_1<---><------><------>0x00000010<---->/* Fire an arrow (light) */
-#define RF4_ARROW_2<---><------><------>0x00000020<---->/* Fire a shot (heavy) */
-#define RF4_ARROW_3<---><------><------>0x00000040<---->/* Fire a bolt (heavy) */
-#define RF4_ARROW_4<---><------><------>0x00000080<---->/* Fire a missile (heavy) */
-#define RF4_BR_ACID<---><------>0x00000100<---->/* Breathe Acid */
-#define RF4_BR_ELEC<---><------>0x00000200<---->/* Breathe Elec */
-#define RF4_BR_FIRE<---><------>0x00000400<---->/* Breathe Fire */
-#define RF4_BR_COLD<---><------>0x00000800<---->/* Breathe Cold */
-#define RF4_BR_POIS<---><------><------>0x00001000<---->/* Breathe Poison */
-#define RF4_BR_NETH<---><------><------>0x00002000<---->/* Breathe Nether */
-#define RF4_BR_LITE<---><------><------>0x00004000<---->/* Breathe Lite */
-#define RF4_BR_DARK<---><------><------>0x00008000<---->/* Breathe Dark */
-#define RF4_BR_CONF<---><------>0x00010000<---->/* Breathe Confusion */
-#define RF4_BR_SOUN<---><------>0x00020000<---->/* Breathe Sound */
-#define RF4_BR_CHAO<---><------>0x00040000<---->/* Breathe Chaos */
-#define RF4_BR_DISE<---><------>0x00080000<---->/* Breathe Disenchant */
-#define RF4_BR_NEXU<---><------><------>0x00100000<---->/* Breathe Nexus */
-#define RF4_BR_TIME<---><------><------>0x00200000<---->/* Breathe Time */
-#define RF4_BR_INER<---><------><------>0x00400000<---->/* Breathe Inertia */
-#define RF4_BR_GRAV<---><------><------>0x00800000<---->/* Breathe Gravity */
-#define RF4_BR_SHAR<---><------>0x01000000<---->/* Breathe Shards */
-#define RF4_BR_PLAS<---><------>0x02000000<---->/* Breathe Plasma */
-#define RF4_BR_WALL<---><------>0x04000000<---->/* Breathe Force */
-#define RF4_BR_MANA<---><------>0x08000000<---->/* Breathe Mana */
-#define RF4_BR_DISI<---><------><------>0x10000000<---->/* Breathe Disintegration */
-#define RF4_BR_NUKE<---><------><------>0x20000000<---->/* TY: Toxic Breath */
+	/* Flags 4/5/6/0 (spells) */
+
+	//RF4_UNMAGIC,RF4_BOULDER,
+	//RF5_SCARE,RF5_BLIND,RF5_CONF,RF5_HOLD,
+	//Discard the lower-power versions: RF5_BO_MANA,RF5_BO_FIRE,
+	//RF6_FORGET,RF6_DARKNESS,
+
+	/* Note: We actually ignore mimic powers at this time.. */
+
+	/* Scan for magic devices, potions, scrolls */
+	for (n = 0; n < INVEN_PACK; n++) {
+		if (!p_ptr->inventory[n].k_idx) break;
+		switch (p_ptr->inventory[n].tval) {
+		case TV_WAND:
+			switch (p_ptr->inventory[n].sval) {
+			case SV_WAND_ROCKETS: r_ptr->flags4 |= RF4_ROCKET; magicness++; break;
+			}
+			break;
+		case TV_STAFF:
+			switch (p_ptr->inventory[n].sval) {
+			}
+			break;
+		case TV_ROD:
+			switch (p_ptr->inventory[n].sval) {
+			}
+			break;
+		case TV_POTION:
+			switch (p_ptr->inventory[n].sval) {
+			}
+			break;
+		case TV_SCROLL:
+			switch (p_ptr->inventory[n].sval) {
+			}
+			break;
+		}
+	}
+
+	/* Scan for school spells */
+	if (get_skill(p_ptr, SKILL_TRAPPING) >= p_ptr->max_plv / 2) { r_ptr->flags6 |= RF6_TRAPS; magicness++; }
+	if (get_skill(p_ptr, SKILL_MANA)) { r_ptr->flags5 |= RF5_BA_MANA; magicness++; }
+	if (get_skill(p_ptr, SKILL_FIRE)) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
+
+ #if 0
+RF4_ARROW_1
+RF4_ARROW_2
+RF4_ARROW_3
+RF4_ARROW_4
+RF4_BR_ACID
+RF4_BR_ELEC
+RF4_BR_FIRE
+RF4_BR_COLD
+RF4_BR_POIS
+RF4_BR_NETH
+RF4_BR_LITE
+RF4_BR_DARK
+RF4_BR_CONF
+RF4_BR_SOUN
+RF4_BR_CHAO
+RF4_BR_DISE
+RF4_BR_NEXU
+RF4_BR_TIME
+RF4_BR_INER
+RF4_BR_GRAV
+RF4_BR_SHAR
+RF4_BR_PLAS
+RF4_BR_WALL
+RF4_BR_MANA
+RF4_BR_DISI
+RF4_BR_NUKE
 	/* Flags 5 */
-//RF5_SCARE,RF5_BLIND,RF5_CONF,RF5_HOLD,
-#define RF5_BA_ACID<---><------>0x00000001<---->/* Acid Ball */
-#define RF5_BA_ELEC<---><------>0x00000002<---->/* Elec Ball */
-#define RF5_BA_FIRE<---><------>0x00000004<---->/* Fire Ball */
-#define RF5_BA_COLD<---><------>0x00000008<---->/* Cold Ball */
-#define RF5_BA_POIS<---><------><------>0x00000010<---->/* Poison Ball */
-#define RF5_BA_NETH<---><------><------>0x00000020<---->/* Nether Ball */
-#define RF5_BA_WATE<---><------><------>0x00000040<---->/* Water Ball */
-#define RF5_BA_MANA<---><------><------>0x00000080<---->/* Mana Storm */
-#define RF5_BA_DARK<---><------>0x00000100<---->/* Darkness Storm */
-#define RF5_DRAIN_MANA<><------>0x00000200<---->/* Drain Mana */
-#define RF5_MIND_BLAST<><------>0x00000400<---->/* Blast Mind */
-#define RF5_BRAIN_SMASH><------>0x00000800<---->/* Smash Brain */
-#define RF5_CURSE<-----><------><------>0x00001000<---->/* Cause Light Wound */
-#define RF5_BA_NUKE<---><------><------>0x00004000<---->/* TY: Nuke Ball */
-#define RF5_BA_CHAO<---><------><------>0x00008000<---->/* Chaos Ball */
-#define RF5_BO_ACID<---><------>0x00010000<---->/* Acid Bolt */
-#define RF5_BO_ELEC<---><------>0x00020000<---->/* Elec Bolt */
-#define RF5_BO_FIRE<---><------>0x00040000<---->/* Fire Bolt */
-#define RF5_BO_COLD<---><------>0x00080000<---->/* Cold Bolt */
-#define RF5_BO_POIS<---><------><------>0x00100000<---->/* Poison Bolt (implemented but unused: Only used by Judge Mortis) */
-#define RF5_BO_NETH<---><------><------>0x00200000<---->/* Nether Bolt */
-#define RF5_BO_WATE<---><------><------>0x00400000<---->/* Water Bolt */
-#define RF5_BO_MANA<---><------><------>0x00800000<---->/* Mana Bolt */
-#define RF5_BO_PLAS<---><------>0x01000000<---->/* Plasma Bolt */
-#define RF5_BO_ICEE<---><------>0x02000000<---->/* Ice Bolt */
-#define RF5_MISSILE<---><------>0x04000000<---->/* Magic Missile */
-#define RF5_SLOW<------><------><------>0x40000000<---->/* Slow Player */
+RF5_BA_ACID
+RF5_BA_ELEC
+RF5_BA_COLD
+RF5_BA_POIS
+RF5_BA_NETH
+RF5_BA_WATE
+RF5_BA_DARK
+RF5_DRAIN_MANA
+RF5_MIND_BLAST
+RF5_BRAIN_SMASH
+RF5_CURSE
+RF5_BA_NUKE
+RF5_BA_CHAO
+RF5_BO_ACID
+RF5_BO_ELEC
+RF5_BO_FIRE
+RF5_BO_COLD
+RF5_BO_POIS
+RF5_BO_NETH
+RF5_BO_WATE
+RF5_BO_PLAS
+RF5_BO_ICEE
+RF5_SLOW
+RF5_MISSILE
 	/* Flags 6 */
-#define RF6_HASTE<-----><------>0x00000001<---->/* Speed self */
-#define RF6_HEAL<------><------>0x00000004<---->/* Heal self */
-#define RF6_BLINK<-----><------><------>0x00000010<---->/* Teleport Short */
-#define RF6_TPORT<-----><------><------>0x00000020<---->/* Teleport Long */
-#define RF6_TELE_TO<---><------>0x00000100<---->/* Move player to monster */
-#define RF6_TELE_AWAY<-><------>0x00000200<---->/* Move player far away */
-#define RF6_DARKNESS<--><------><------>0x00001000<---->/* Create Darkness */
-#define RF6_TRAPS<-----><------><------>0x00002000<---->/* Create Traps */
-#define RF6_FORGET<----><------><------>0x00004000<---->/* Cause amnesia */
-	/* Flags 7 */
-//RF7_AI_PLAYER,RF7_NO_THEFT,
-#define RF7_AI_ANNOY<--><------><------>0x00001000<---->/* Try to tease the player */
-#define RF7_DISBELIEVE<><------><------>0x80000000<---->/* Antimagic shield */
-	/* Flags 9 */
-#define RF9_HAS_LITE<--><------>0x00000004<---->/* Carries a lite */
-#define RF9_RES_ACID<--><------><------>0x00008000L
-#define RF9_RES_ELEC<--><------>0x00010000L
-#define RF9_RES_FIRE<--><------>0x00020000L
-#define RF9_RES_COLD<--><------>0x00040000L
-#define RF9_RES_POIS<--><------>0x00080000L
-#define RF9_RES_LITE<--><------><------>0x00100000L
-#define RF9_RES_DARK<--><------><------>0x00200000L
-#define RF9_RES_BLIND<-><------><------>0x00400000L
-#define RF9_RES_SOUND<-><------><------>0x00800000L
-#define RF9_RES_SHARDS<><------>0x01000000L
-#define RF9_RES_CHAOS<-><------>0x02000000L
-#define RF9_RES_TIME<--><------>0x04000000L
-#define RF9_RES_MANA<--><------>0x08000000L
-#define RF9_IM_PSI<----><------><------>0x40000000<---->/* Immune to psi */
-#define RF9_RES_PSI<---><------><------>0x80000000<---->/* Resist psi */
+RF6_HASTE
+RF6_HEAL
+RF6_BLINK
+RF6_TPORT
+RF6_TELE_TO
+RF6_TELE_AWAY
 	/* Flags 0 */
-#define RF0_BO_DISE<---><------><------>0x00000080
-#define RF0_BA_DISE<---><------>0x00000100
-#define RF0_BR_ICE<----><------>0x00040000<---->/* For Bahamuth */
-#define RF0_BR_WATER<--><------>0x00080000<---->/* Finally no more antimagic field vs water hounds :p */
+RF0_BO_DISE
+RF0_BA_DISE
+RF0_BR_ICE
+RF0_BR_WATER
+ #endif
+
+	/* Determine chance to use available spells/items */
+	switch (p_ptr->pclass) {
+	case CLASS_WARRIOR:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (25 + magicness > 80 ? 80 : 25 + magicness) : 0;
+		break;
+	case CLASS_MIMIC:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (25 + magicness > 80 ? 80 : 25 + magicness) : 0;
+		break;
+#ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (50 + magicness > 85 ? 85 : 50 + magicness) : 0;
+		break;
 #endif
+#ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (50 + magicness > 85 ? 85 : 50 + magicness) : 0;
+		break;
+#endif
+	case CLASS_PALADIN:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (50 + magicness > 85 ? 85 : 50 + magicness) : 0;
+		break;
+	case CLASS_RANGER:
+		r_ptr->freq_innate = 90;
+		break;
+	case CLASS_ROGUE:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (25 + magicness > 80 ? 80 : 25 + magicness) : 0;
+		break;
+	case CLASS_MINDCRAFTER:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (50 + magicness > 85 ? 85 : 50 + magicness) : 0;
+		break;
+	case CLASS_SHAMAN:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (75 + magicness > 90 ? 90 : 75 + magicness) : 0;
+		break;
+	case CLASS_ADVENTURER:
+		//pfft, we just have no clue.. :/ just pick shaman-like values for now
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (75 + magicness > 90 ? 90 : 75 + magicness) : 0;
+		break;
+	case CLASS_RUNEMASTER:
+		r_ptr->freq_innate = r_ptr->freq_spell = 90;
+		break;
+#ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:
+#endif
+	case CLASS_PRIEST:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (75 + magicness > 90 ? 90 : 75 + magicness) : 0;
+		break;
+	case CLASS_DRUID:
+		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (35 + magicness > 80 ? 80 : 35 + magicness) : 0;
+		break;
+	case CLASS_MAGE:
+	case CLASS_ARCHER:
+		r_ptr->freq_innate = r_ptr->freq_spell = 90;
+		break;
+	}
+
+	/* Flags 7 */
+	//if (p_ptr->pclass == CLASS_MAGE) r_ptr->flags7 |= RF7_AI_ANNOY; -- no, because the monster should chase the player in any case
+	//if (p_ptr->antimagic >= p_ptr->max_plv / 2) r_ptr->flags7 |= RF7_DISBELIEVE -- no, because the player could wield a dark sword, then take it off and utilize magic
+
+	/* Flags 8 -- nothing further, just terrain stuff (and RF8_NO_BLOCK) */
+	//RF8_NO_CUT has already been handled above.
+
+	/* Flags 9 */
+	//RF9_RES_BLIND (not implemented, covered by RF2_POWERFUL),
+	r_ptr->flags9 |= RF9_HAS_LITE; //assume always
+	if (p_ptr->resist_acid) r_ptr->flags9 |= RF9_RES_ACID;
+	if (p_ptr->resist_elec) r_ptr->flags9 |= RF9_RES_ELEC;
+	if (p_ptr->resist_fire) r_ptr->flags9 |= RF9_RES_FIRE;
+	if (p_ptr->resist_cold) r_ptr->flags9 |= RF9_RES_COLD;
+	if (p_ptr->resist_pois) r_ptr->flags9 |= RF9_RES_POIS;
+	if (p_ptr->resist_lite) r_ptr->flags9 |= RF9_RES_LITE;
+	if (p_ptr->resist_dark) r_ptr->flags9 |= RF9_RES_DARK;
+	if (p_ptr->resist_sound) r_ptr->flags9 |= RF9_RES_SOUND;
+	if (p_ptr->resist_shard) r_ptr->flags9 |= RF9_RES_SHARDS;
+	if (p_ptr->resist_chaos) r_ptr->flags9 |= RF9_RES_CHAOS;
+	if (p_ptr->resist_time) r_ptr->flags9 |= RF9_RES_TIME;
+	if (p_ptr->resist_mana || p_ptr->divine_xtra_res > 0) r_ptr->flags9 |= RF9_RES_MANA;
+	if (p_ptr->reduce_insanity) r_ptr->flags9 |= RF9_RES_PSI;
+	if (p_ptr->reduce_insanity == 3) r_ptr->flags9 |= RF9_IM_PSI; //bonus >:o
 #endif
 }
 void py2mon_update_equip(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
