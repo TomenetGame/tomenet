@@ -5920,8 +5920,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			 */
 #ifndef FUN_SERVER /* disabled while server is being exploited */
 			else if (prefix(messagelc, "/wish")) {
-				object_type	forge;
-				object_type	*o_ptr = &forge;
+				object_type forge;
+				object_type *o_ptr = &forge;
 
 				WIPE(o_ptr, object_type);
 
@@ -5973,11 +5973,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				return;
 			}
+#endif
 			/* actually wish a (basic) item by item name */
 			else if (prefix(messagelc, "/nwish")) {
 				object_kind *k_ptr;
-				object_type	forge;
-				object_type	*o_ptr = &forge;
+				object_type forge;
+				object_type *o_ptr = &forge;
 
 				WIPE(o_ptr, object_type);
 
@@ -6011,14 +6012,79 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				o_ptr->owner = 0;
 				o_ptr->level = 1;
 
- #ifdef NEW_MDEV_STACKING
+#ifdef NEW_MDEV_STACKING
 				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
- #endif
+#endif
 				(void)inven_carry(Ind, o_ptr);
 
 				return;
 			}
+			/* wish a true artifact by name */
+			else if (prefix(messagelc, "/awish")) {
+				artifact_type *a_ptr;
+				object_type forge, *o_ptr = &forge;
+				int kidx;
+				char o_name[ONAME_LEN];
+
+				WIPE(o_ptr, object_type);
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /awish <artifact name>");
+					return;
+				}
+
+				/* Hack -- Guess at "correct" values for tval_to_char[] */
+				for (i = 1; i < max_a_idx; i++) {
+					a_ptr = &a_info[i];
+					kidx = lookup_kind(a_ptr->tval, a_ptr->sval);
+					if (!kidx) continue;
+
+					invcopy(o_ptr, kidx);
+					o_ptr->name1 = i;
+					//object_desc(0, o_name, o_ptr, TRUE, 0);
+					object_desc(0, o_name, o_ptr, TRUE, 256);//short name is enough
+
+					if (!my_strcasestr(o_name, message3)) continue;
+					break;
+				}
+				if (i == max_a_idx) {
+					msg_print(Ind, "\377yArtifact not found.");
+					return;
+				}
+
+				/* Extract the fields */
+				o_ptr->pval = a_ptr->pval;
+				o_ptr->ac = a_ptr->ac;
+				o_ptr->dd = a_ptr->dd;
+				o_ptr->ds = a_ptr->ds;
+				o_ptr->to_a = a_ptr->to_a;
+				o_ptr->to_h = a_ptr->to_h;
+				o_ptr->to_d = a_ptr->to_d;
+				o_ptr->weight = a_ptr->weight;
+
+				handle_art_inum(i);
+
+				/* Hack -- acquire "cursed" flag */
+				if (a_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (ID_CURSED);
+
+				/* Complete generation, especially level requirements check */
+				apply_magic(&p_ptr->wpos, o_ptr, -2, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
+
+				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
+				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+
+				o_ptr->discount = 0;
+				object_known(o_ptr);
+				o_ptr->owner = 0;
+				//o_ptr->level = 1;
+
+#ifdef NEW_MDEV_STACKING
+				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
 #endif
+				(void)inven_carry(Ind, o_ptr);
+
+				return;
+			}
 			else if (prefix(messagelc, "/trap")) { // ||	prefix(messagelc, "/tr")) conflicts with /trait maybe
 				if (k) wiz_place_trap(Ind, k);
 				else wiz_place_trap(Ind, TRAP_OF_FILLING);
