@@ -7519,7 +7519,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	int chance, tdam, tdis;
 	int mul, div;
 	int cur_dis, visible, real_dis;
-	int moved_number = 1;
+	int moved_number = 1, original_number;
 	int start_ix = 0, start_iy = 0;
 
 	object_type throw_obj;
@@ -7539,15 +7539,23 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	int path_num = 0;
 #endif
 
-	char            o_name[ONAME_LEN];
+	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	bool throwing_weapon;
 
 	cave_type **zcave, *c_ptr;
 	if (!(zcave = getcave(wpos))) return;
 
+
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
 		msg_print(Ind, "You cannot throw things in mist form.");
+		return;
+	}
+
+	/* New in 4.7.3a+: Throw equipment.
+	   Limit it though, cannot throw all kind of pieces - armour/jewelry needs to be taken off first. */
+	if (item > INVEN_BOW && item != INVEN_LITE && item < INVEN_AMMO) {
+		msg_print(Ind, "You must take off this item first to throw it.");
 		return;
 	}
 
@@ -7656,6 +7664,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
+	original_number = o_ptr->number;
 	/* hack: if we kick (bash) certain types of items around, move the
 	   whole stack instead of just one.
 	   note: currently number has no effect on throwing range (weight!) */
@@ -8225,8 +8234,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Artifacts never break but always auto-return, same as for ammo fired */
 	if (returning) return;
-	/* If we threw an equipment item away, recalculate our boni */
-	if (item >= INVEN_WIELD) inven_takeoff(Ind, item, moved_number, FALSE);
+
+	/* Non-returning only: If we threw an equipment item away, recalculate our boni */
+	if (item >= INVEN_WIELD) equip_thrown(Ind, item, o_ptr, original_number);
 
 	/* Chance of breakage (during attacks) */
 	j = (hit_body ? breakage_chance(o_ptr) : 0);

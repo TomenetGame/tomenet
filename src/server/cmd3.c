@@ -102,55 +102,6 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 	sound_item(Ind, o_ptr->tval, o_ptr->sval, "takeoff_");
 #endif
 
-#if 0 //DSMs don't poly anymore due to cheeziness. They breathe instead.
-	/* Polymorph back */
-	/* XXX this can cause strange things for players with mimicry skill.. */
-	if ((item == INVEN_BODY) && (o_ptr->tval == TV_DRAG_ARMOR)) {
-		/* Well, so we gotta check if the player, in case he is a
-		mimic, is using a form that can _only_ come from the armor */
-		//if (p_ptr->pclass == CLASS_MIMIC) //Adventurers can also have mimic skill
-		//{
-			switch (o_ptr->sval) {
-			case SV_DRAGON_BLACK:
-			j = race_index("Ancient black dragon"); break;
-			case SV_DRAGON_BLUE:
-			j = race_index("Ancient blue dragon"); break;
-			case SV_DRAGON_WHITE:
-			j = race_index("Ancient white dragon"); break;
-			case SV_DRAGON_RED:
-			j = race_index("Ancient red dragon"); break;
-			case SV_DRAGON_GREEN:
-			j = race_index("Ancient green dragon"); break;
-			case SV_DRAGON_MULTIHUED:
-			j = race_index("Ancient multi-hued dragon"); break;
-			case SV_DRAGON_PSEUDO:
-			j = race_index("Ethereal drake"); break;
-			//j = race_index("Pseudo dragon"); break;
-			case SV_DRAGON_SHINING:
-			j = race_index("Ethereal dragon"); break;
-			case SV_DRAGON_LAW:
-			j = race_index("Great Wyrm of Law"); break;
-			case SV_DRAGON_BRONZE:
-			j = race_index("Ancient bronze dragon"); break;
-			case SV_DRAGON_GOLD:
-			j = race_index("Ancient gold dragon"); break;
-			case SV_DRAGON_CHAOS:
-			j = race_index("Great Wyrm of Chaos"); break;
-			case SV_DRAGON_BALANCE:
-			j = race_index("Great Wyrm of Balance"); break;
-			case SV_DRAGON_POWER:
-			j = race_index("Great Wyrm of Power"); break;
-			}
-			if ((p_ptr->body_monster == j) &&
-			    ((p_ptr->r_mimicry[j] < r_info[j].level) || 
-			    (r_info[j].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100))))
-				do_mimic_change(Ind, 0, TRUE);
-		/*}
-		else do_mimic_change(Ind, 0, TRUE);
-		*/
-	}
-#endif
-
 #if POLY_RING_METHOD == 0
 	/* Polymorph back */
 	/* XXX this can cause strange things for players with mimicry skill.. */
@@ -211,6 +162,136 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
 	if (p_ptr->combat_stance &&
 	    ((item == INVEN_ARM && !p_ptr->inventory[INVEN_WIELD].k_idx) ||
 	    (item == INVEN_WIELD && (
+	    !p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->combat_stance == 2)))) {
+ #endif
+		msg_print(Ind, "\377sYou return to balanced combat stance.");
+		p_ptr->combat_stance = 0;
+		p_ptr->update |= (PU_BONUS);
+		p_ptr->redraw |= (PR_PLUSSES | PR_STATE);
+	}
+#endif
+
+	/* Recalculate bonuses */
+	p_ptr->update |= (PU_BONUS);
+	/* Recalculate torch */
+	p_ptr->update |= (PU_TORCH);
+	/* Recalculate mana */
+	p_ptr->update |= (PU_MANA | PU_HP | PU_SANITY);
+	/* Redraw */
+	p_ptr->redraw |= (PR_PLUSSES);
+	/* Window stuff */
+	p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+}
+
+/* Handle an equipped item _after_ it was thrown away! - C. Blue
+   New in 4.7.3a+, as you couldn't throw equipment before.
+   The item must not be RETURNING (like the new Warp Spear).
+   o_ptr is the missile object,
+   original_amt is the o_ptr->number when it was still in the equipment slot
+    (should probably always be 1 except for quiver) */
+void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
+	player_type	*p_ptr = Players[Ind];
+	cptr		act;
+	char		o_name[ONAME_LEN];
+
+#ifdef VAMPIRES_INV_CURSED
+	if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+	else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+	else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
+ #endif
+#endif
+
+	/* Sigil (reset it) */
+	if (o_ptr->sigil) {
+		//msg_print(Ind, "The sigil fades away."); --actually no message when thrown
+		o_ptr->sigil = 0;
+		o_ptr->sseed = 0;
+	}
+
+#ifdef USE_SOUND_2010
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "takeoff_"); //hm
+#endif
+
+	/* What are we "doing" with the object */
+	if (original_number > o_ptr->number) {
+		//we still have some of these objects left in our equipment slot! So no need for a 'loss' message.
+		/* Recalculate bonuses cause of weight change */
+		p_ptr->update |= (PU_BONUS);
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		return;
+	} else if (slot == INVEN_WIELD)
+		act = "You were wielding";
+	else if (slot == INVEN_ARM)
+		act = "You were wielding";
+	else if (slot == INVEN_BOW)
+		act = "You were shooting with";
+	else if (slot == INVEN_LITE)
+		act = "Light source was";
+	/* Took off ammo */
+	else if (slot == INVEN_AMMO)
+		act = "You were carrying in your quiver";
+	/* Took off tool */
+	else if (slot == INVEN_TOOL)
+		act = "You were using";
+	else
+		act = "You were wearing";
+
+	if (p_ptr->ammo_brand && slot == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
+	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
+	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
+	else if (p_ptr->melee_brand && (slot == INVEN_WIELD || /* dual-wield */
+	    (slot == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0);
+
+#if POLY_RING_METHOD == 0
+	/* Polymorph back */
+	/* XXX this can cause strange things for players with mimicry skill.. */
+	if ((slot == INVEN_LEFT || slot == INVEN_RIGHT) && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
+		if ((p_ptr->body_monster == o_ptr->pval) && 
+		    ((p_ptr->r_mimicry[p_ptr->body_monster] < r_info[p_ptr->body_monster].level) ||
+		    (get_skill_scale(p_ptr, SKILL_MIMIC, 100) < r_info[p_ptr->body_monster].level))) {
+			/* If player hasn't got high enough kill count anymore now, poly back to player form! */
+			msg_print(Ind, "You polymorph back to your normal form.");
+			do_mimic_change(Ind, 0, TRUE);
+		}
+	}
+#endif
+
+	/* Check if item gave WRAITH form */
+	if ((k_info[o_ptr->k_idx].flags3 & TR3_WRAITH) && p_ptr->tim_wraith)
+		p_ptr->tim_wraith = 1;
+
+	/* Artifacts */
+	if (o_ptr->name1) {
+		artifact_type *a_ptr;
+		/* Obtain the artifact info */
+		if (o_ptr->name1 == ART_RANDART)
+			a_ptr = randart_make(o_ptr);
+		else
+			a_ptr = &a_info[o_ptr->name1];
+
+		if ((a_ptr->flags3 & TR3_WRAITH) && p_ptr->tim_wraith) p_ptr->tim_wraith = 1;
+	}
+
+	/* Describe the result */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(slot));
+
+	if (p_ptr->prace == RACE_HOBBIT && o_ptr->tval == TV_BOOTS)
+		msg_print(Ind, "\377gYou feel more dextrous now, being barefeet.");
+
+#ifdef ENABLE_STANCES
+	/* take care of combat stances */
+ #ifndef ALLOW_SHIELDLESS_DEFENSIVE_STANCE
+	if ((slot == INVEN_ARM && p_ptr->combat_stance == 1) ||
+	    (slot == INVEN_WIELD && p_ptr->combat_stance == 2)) {
+ #else
+	if (p_ptr->combat_stance &&
+	    ((slot == INVEN_ARM && !p_ptr->inventory[INVEN_WIELD].k_idx) ||
+	    (slot == INVEN_WIELD && (
 	    !p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->combat_stance == 2)))) {
  #endif
 		msg_print(Ind, "\377sYou return to balanced combat stance.");

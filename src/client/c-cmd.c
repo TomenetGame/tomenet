@@ -4827,7 +4827,7 @@ void cmd_throw(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 	get_item_hook_find_obj_what = "Item name? ";
 
-	if (!c_get_item(&item, "Throw what? ", (USE_INVEN | USE_EXTRA)))
+	if (!c_get_item(&item, "Throw what? ", (USE_INVEN | USE_EQUIP | USE_EXTRA)))
 		return;
 
 	if (!get_dir(&dir))
