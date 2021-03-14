@@ -5880,11 +5880,11 @@
 #define RF7_AI_ANNOY			0x00001000	/* Try to tease the player */
 #define RF7_AI_SPECIAL			0x00002000	/* For quests */
 #define RF7_NEUTRAL			0x00004000	/* Monster is neutral */
-#define RF7_DROPART			0x00008000	/* Monster is neutral */
-#define RF7_DROPRANDART		0x00010000	/* Monster is neutral */
-#define RF7_AI_PLAYER		0x00020000	/* Monster is neutral */
-#define RF7_NO_THEFT		0x00040000	/* Monster is neutral */
-#define RF7_NEVER_ACT		0x00080000	/* Monster is neutral */
+#define RF7_DROPART			0x00008000	/* not implemented - Drops an artifact */
+#define RF7_DROPRANDART		0x00010000	/* not implemented - Drops a random artifact */
+#define RF7_AI_PLAYER		0x00020000	/* not implemented */
+#define RF7_NO_THEFT		0x00040000	/* unused (stealing from monsters is disabled) */
+#define RF7_NEVER_ACT		0x00080000	/* Monster doesn't perform any kind of movement, attacks, spells or whatever. */
 #define RF7_NO_ESP			0x00100000	/* monster isn't ESPable */
 #define RF7_ATTR_BASE			0x00200000	/* show base attr too. Atm works if a) only 1 breath and ATTR_MULTI (DRs) or b) ATTR_BNW is set */
 #define RF7_VORTEX			0x00400000	/* experimental: flicker extremely fast - not working atm */

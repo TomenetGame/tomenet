@@ -422,6 +422,8 @@ struct monster_race {
 	s32b weight;		/* Weight of the monster */
 	s16b extra;				/* Unused (for now) */
 
+	/* NOTE: There is currently no difference between these two.
+	   They are even averaged just for the heck of it in all places where they are used, for no apparent reason.. */
 	byte freq_innate;		/* Innate spell frequency */
 	byte freq_spell;		/* Other spell frequency */
 
