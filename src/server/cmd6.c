@@ -1867,7 +1867,10 @@ bool curse_armor(int Ind) {
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
+	if (indestructible_artifact_p(o_ptr)) {
+		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
+		    "terrible black aura", "surround your armour", o_name);
+	} else if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
 		    "terrible black aura", "surround your armour", o_name);
@@ -1949,7 +1952,10 @@ bool curse_weapon(int Ind) {
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw */
-	if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
+	if (indestructible_artifact_p(o_ptr)) {
+		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
+		    "terrible black aura", "surround your weapon", o_name);
+	} else if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
 		    "terrible black aura", "surround your weapon", o_name);
@@ -2034,7 +2040,10 @@ bool curse_an_item(int Ind, int slot) {
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if (artifact_p(o_ptr) && (rand_int(100) < 50)) {
+	if (indestructible_artifact_p(o_ptr)) {
+		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
+		    "terrible black aura", "surround your weapon", o_name);
+	} else if (artifact_p(o_ptr) && (rand_int(100) < 50)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
 		    "terrible black aura", "surround you", o_name);

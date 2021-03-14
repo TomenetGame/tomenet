@@ -6764,10 +6764,10 @@
  * Artifacts use the "name1" field
  */
 #define artifact_p(T) \
-        ((T)->name1 ? TRUE : FALSE)
+	((T)->name1 ? TRUE : FALSE)
 
 #define true_artifact_p(T) \
-        (artifact_p(T) && ((T)->name1 != ART_RANDART))
+	(artifact_p(T) && ((T)->name1 != ART_RANDART))
 
 /* artifacts that aren't supposed to show up in non-admins' art lists */
 #define admin_artifact_p(T) \
@@ -6775,17 +6775,16 @@
 
 /* artifacts that can occur multiple times legally */
 #define multiple_artifact_p(T) \
-        ((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || admin_artifact_p(T))
+	((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || admin_artifact_p(T))
 
-/* artifacts that as an exception can by used by winners */
+/* artifacts that as an exception can by used by winners -
+   note that checking for both TR5_WINNERS_ONLY and the actual artifact idx' is redundant actually */
 #define winner_artifact_p(T) \
 	(true_artifact_p(T) && \
 	((k_info[(T)->k_idx].flags5 & TR5_WINNERS_ONLY) || \
 	(T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || \
-	(T)->name1 == ART_PHASING || (T)->name1 == ART_MIRROROFGLORY))
-
-/* allow Ring of Phasing to be permanent until someone else beats Zu-Aon */
-#define RING_OF_PHASING_NO_TIMEOUT
+	(T)->name1 == ART_PHASING || \
+	(T)->name1 == ART_MIRROROFGLORY || (T)->name1 == ART_DREADNOUGHT))
 
 /* artifacts that cannot be deposited on an empty/deallocated dun/wild floor,
    nor being dropped inside houses (if cfg.anti_arts_hoard is on.) */
@@ -6806,6 +6805,13 @@
 	(artifact_p(T) || \
 	((T)->name2 == EGO_STORMBRINGER) || ((T)->name2b == EGO_STORMBRINGER) \
 	)
+
+/* artifacts that cannot be destroyed by any means (especially RF2_KILL_ITEM/RF2_TAKE_ITEM except maybe by admin 'k'. */
+#define indestructible_artifact_p(T) \
+	((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || (T)->name1 == ART_PHASING || admin_artifact_p(T))
+
+/* allow Ring of Phasing to be permanent until someone else beats Zu-Aon */
+#define RING_OF_PHASING_NO_TIMEOUT
 
 
 /*

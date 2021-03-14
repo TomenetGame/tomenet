@@ -5424,7 +5424,7 @@ void do_nazgul(int Ind, int *k, monster_race *r_ptr, int slot) {
 
 		/* 1/1000 chance of getting destroyed.
 		   Exploit-fix here for permacursed items. (Grond only) */
-		if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE)) {
+		if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE) && !indestructible_artifact_p(o_ptr)) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_printf("NAZGUL_DISI_ARTLIKE: %s : %s.\n", p_ptr->name, o_name);
 

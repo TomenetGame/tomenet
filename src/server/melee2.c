@@ -6865,11 +6865,13 @@ static bool find_hiding(int Ind, int m_idx, int *yp, int *xp)
 }
 #endif	// MONSTERS_HIDE_HEADS
 
-
-static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr)
-{
+/* For both, RF2_TAKE_ITEM and RF2_KILL_ITEM! */
+static bool monster_can_pickup(monster_race *r_ptr, object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	u32b flg3 = 0L;
+
+	/* Disallow destruction of Morgoth's crown and hammer and the Ring of Phasing */
+	if (indestructible_artifact_p(o_ptr)) return FALSE;
 
 	if (artifact_p(o_ptr) && (rand_int(150) > r_ptr->level)) return (FALSE);
 
