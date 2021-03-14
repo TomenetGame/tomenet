@@ -5939,7 +5939,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	if (p_ptr->immune_elec) r_ptr->flags3 |= RF3_IM_ELEC;
 	if (p_ptr->immune_poison) r_ptr->flags3 |= RF3_IM_POIS;
 	if (p_ptr->immune_water) r_ptr->flags3 |= RF3_IM_WATER;
-	if (p_ptr->immune_nether) r_ptr->flags3 |= RF3_RES_NETH; //^^'
+	if (p_ptr->immune_neth) r_ptr->flags3 |= RF3_RES_NETH; //^^'
 	if (p_ptr->res_tele) r_ptr->flags3 |= RF3_RES_TELE; //RF9_IM_TELE
 	if (p_ptr->resist_neth) r_ptr->flags3 |= RF3_RES_NETH;
 	if (p_ptr->resist_nexus) r_ptr->flags3 |= RF3_RES_NEXU;
