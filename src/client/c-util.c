@@ -5617,8 +5617,8 @@ void interact_macros(void) {
 #define mw_shoot 'j'
 #define mw_trap 'H'
 #define mw_device 'J'
-#define mw_anydir 'k'
-#define mw_any 'K'
+#define mw_any 'k'
+#define mw_anydir 'K'
 #define mw_common 'l'
 #define mw_abilitynt 'm'
 #define mw_abilityt 'M'
@@ -5674,20 +5674,20 @@ Chain_Macro:
 				switch (i) {
 				case 0:
 					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(8, 10, -1, TERM_L_GREEN, "a/b) Drink a potion / Read a scroll");
-					Term_putstr(8, 11, -1, TERM_L_GREEN, "c/C) Fire ranged weapon (including boomerangs) / Throw an item");
-					Term_putstr(8, 12, -1, TERM_L_GREEN, "d/D) Cast school/mimic spell without a target (or target manually)");
-					Term_putstr(8, 13, -1, TERM_L_GREEN, "e/E) Cast school/mimic spell with target");
-					Term_putstr(8, 14, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target)");
-					Term_putstr(8, 15, -1, TERM_L_GREEN, "g/G) Polymorph into monster / Set preferred immunity (mimicry users)");
-					Term_putstr(8, 16, -1, TERM_L_GREEN, "h/H) Draw runes to cast a runespell / set up a monster trap");
-					Term_putstr(8, 17, -1, TERM_L_GREEN, "i/I) Fighting technique / Switch combat stance (most melee classes)");
-					Term_putstr(8, 18, -1, TERM_L_GREEN, "j/J) Shooting technique (archers, rangers) / Activate magic device");
-					Term_putstr(8, 19, -1, TERM_L_GREEN, "k/K) Use any item with/without a target)");
-					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Choose from a set of some common commands and functions");
-					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target (Draconian breath)");
-					Term_putstr(8, 22, -1, TERM_L_GREEN, "n/N) Enter a slash command / Enter a custom action (same as % a)");
-					Term_putstr(8, 23, -1, TERM_L_GREEN, "o/p) Load a macro file / change equipment (wield/takeoff/swap)");
+					Term_putstr(8, 10, -1, TERM_L_GREEN, "a\377w/\377Gb) Drink a potion. \377w/\377G Read a scroll.");
+					Term_putstr(8, 11, -1, TERM_L_GREEN, "c\377w/\377GC) Fire ranged weapon (including boomerangs). \377w/\377G Throw an item.");
+					Term_putstr(8, 12, -1, TERM_L_GREEN, "d\377w/\377GD) Cast school \377w/\377G mimic spell without a target (or target manually).");
+					Term_putstr(8, 13, -1, TERM_L_GREEN, "e\377w/\377GE) Cast school \377w/\377G mimic spell with target.");
+					Term_putstr(8, 14, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target).");
+					Term_putstr(8, 15, -1, TERM_L_GREEN, "g\377w/\377GG) Polymorph into monster. \377w/\377G Set preferred immunity (mimicry users).");
+					Term_putstr(8, 16, -1, TERM_L_GREEN, "h\377w/\377GH) Draw runes to cast a runespell. \377w/\377G Set up a monster trap.");
+					Term_putstr(8, 17, -1, TERM_L_GREEN, "i\377w/\377GI) Fighting technique. \377w/\377G Switch combat stance (most melee classes).");
+					Term_putstr(8, 18, -1, TERM_L_GREEN, "j\377w/\377GJ) Shooting technique (archers, rangers). \377w/\377G Activate magic device.");
+					Term_putstr(8, 19, -1, TERM_L_GREEN, "k\377w/\377GK) Use any item without \377w/\377G with a target).");
+					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Choose from a set of some common commands and functions.");
+					Term_putstr(8, 21, -1, TERM_L_GREEN, "m\377w/\377GM) Use a basic ability ('m') without \377w/\377G with target (Draconian breath).");
+					Term_putstr(8, 22, -1, TERM_L_GREEN, "n\377w/\377GN) Enter a slash command. \377w/\377G Enter a custom action (same as % a).");
+					Term_putstr(8, 23, -1, TERM_L_GREEN, "o\377w/\377Gp) Load a macro file. \377w/\377G Change equipment (wield/takeoff/swap).");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
