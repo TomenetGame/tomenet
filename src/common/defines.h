@@ -1398,6 +1398,10 @@
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
 
+/* Use normal monster abilities instead of truly mirrored abilities?
+   (This is basically a placeholder until a true mirror image is eventually implemented..) */
+#define SIMPLE_RI_MIRROR
+
 /* Monster ego power indices */
 #define RE_NONE			0
 #define RE_DRUNK		15

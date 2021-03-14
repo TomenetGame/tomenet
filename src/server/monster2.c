@@ -5922,10 +5922,19 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	//int am_shell, am_field, reflecting;
 	//int mweapon, hit, dam, parry, block, dodge, bpr, intercept; //melee; dam can just include crit/backstab/dualwield
 	//int rweapon, shots, hitr, damr, calmness; //ranged
+
+#ifdef SIMPLE_RI_MIRROR
+#endif
 }
 void py2mon_update_equip(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+#ifdef SIMPLE_RI_MIRROR
+#endif
 }
 void py2mon_update_skills(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+#ifdef SIMPLE_RI_MIRROR
+#endif
 }
 void py2mon_update_abilities(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+#ifdef SIMPLE_RI_MIRROR
+#endif
 }

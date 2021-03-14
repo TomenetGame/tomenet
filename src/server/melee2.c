@@ -9269,10 +9269,17 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		/* Fix stuck monsters getting cast attempts every frame (1/cfg.fps) */
 		if (!m_ptr->stuck) {
 #endif
+#ifdef SIMPLE_RI_MIRROR
+			if (make_attack_spell(Ind, m_idx)) {
+				m_ptr->energy -= level_speed(&m_ptr->wpos);
+				return;
+			}
+#else
 			if (m_ptr->r_idx == RI_MIRROR ? make_attack_spell_mirror(Ind, m_idx) : make_attack_spell(Ind, m_idx)) {
 				m_ptr->energy -= level_speed(&m_ptr->wpos);
 				return;
 			}
+#endif
 #ifndef SIMPLE_ANTISTUCK
 		}
 #endif
