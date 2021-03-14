@@ -5675,7 +5675,7 @@ Chain_Macro:
 				case 0:
 					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
 					Term_putstr(8, 10, -1, TERM_L_GREEN, "a/b) Drink a potion / Read a scroll");
-					Term_putstr(8, 11, -1, TERM_L_GREEN, "c/C) Fire ranged weapon / Throw an item");
+					Term_putstr(8, 11, -1, TERM_L_GREEN, "c/C) Fire ranged weapon (including boomerangs) / Throw an item");
 					Term_putstr(8, 12, -1, TERM_L_GREEN, "d/D) Cast school/mimic spell without a target (or target manually)");
 					Term_putstr(8, 13, -1, TERM_L_GREEN, "e/E) Cast school/mimic spell with target");
 					Term_putstr(8, 14, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target)");
