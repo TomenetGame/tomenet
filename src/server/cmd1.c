@@ -1370,7 +1370,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	cave_type **zcave;
 
 	bool forbidden = FALSE; /* for leaderless guild halls */
+
+#ifdef USE_SOUND_2010
 	bool inven_carried = FALSE; /* avoid duplicate sfx */
+#endif
 
 	/* stuff for 'pick_one' hack: */
 	int num_org;
@@ -2367,7 +2370,9 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 				/* Carry the item */
 				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
 				slot = inven_carry(Ind, o_ptr);
+#ifdef USE_SOUND_2010
 				inven_carried = TRUE;
+#endif
 				o_ptr->quest_credited = FALSE; //unhack.
 
 				/* Get the item again */
@@ -2619,7 +2624,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster], *qr_ptr;
 	bool apply_monster_effects = TRUE;
-	int i, monster_effects, sfx = 0;
+	int i, monster_effects;
+#ifdef USE_SOUND_2010
+	int sfx = 0;
+#endif
 	u32b monster_effect[6], monster_effect_chosen;
 	monster_effect[1] = 0;
 	monster_effect[2] = 0;
@@ -3704,7 +3712,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 //note: we assume that p_ptr->num_blow isn't 0 (div/0)
 static void py_attack_mon(int Ind, int y, int x, byte old) {
 	player_type	*p_ptr = Players[Ind];
-	int		num = 0, bonus, chance, slot, owner_Ind = 0, sfx = 0;
+	int		num = 0, bonus, chance, slot, owner_Ind = 0;
+#ifdef USE_SOUND_2010
+	int		sfx = 0;
+#endif
 	int		k, k3, bs_multiplier;
 #if defined(CRIT_VS_VORPAL) || defined(CRIT_UNBRANDED)
 	int		k2;
