@@ -5924,20 +5924,14 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	//int rweapon, shots, hitr, damr, calmness; //ranged
 
 #ifdef SIMPLE_RI_MIRROR
-#if 0
-#define RF2_STUPID<----><------><------>0x00000001<---->/* Monster is stupid */
-#define RF2_SMART<-----><------><------>0x00000002<---->/* Monster is smart */
-#define RF2_REFLECTING<><------><------>0x00000008<---->/* Reflects bolts */
-#define RF2_INVISIBLE<-><------>0x00000010<---->/* Monster avoids vision */
-#define RF2_COLD_BLOOD<><------>0x00000020<---->/* Monster avoids infra */
-#define RF2_EMPTY_MIND<><------>0x00000040<---->/* Monster avoids telepathy */
-#define RF2_REGENERATE<><------><------>0x00000200<---->/* Monster regenerates */
-#define RF2_POWERFUL<--><------>0x00001000<---->/* Monster has strong breath */
-#define RF2_OPEN_DOOR<-><------><------>0x00010000<---->/* Monster can open doors */
-#define RF2_BASH_DOOR<-><------><------>0x00020000<---->/* Monster can bash doors */
-#define RF2_PASS_WALL<-><------><------>0x00040000<---->/* Monster can pass walls */
-#define RF2_KILL_WALL<-><------><------>0x00080000<---->/* Monster can destroy walls */
+	/* Flags 2 */
+	//RF2_STUPID,RF2_COLD_BLOOD,RF2_EMPTY_MIND(already RF7_NO_ESP),
+	//RF2_PASS_WALL,
+	r_ptr->flags2 |= RF2_KILL_WALL;
+	if (p_ptr->prace == RACE_VAMPIRE) r_ptr->flags2 |= RF2_COLD_BLOOD;
 
+	/* Flags 3 */
+#if 0
 #define RF3_HURT_LITE<-><------><------>0x00001000<---->/* Hurt by lite */
 #define RF3_HURT_ROCK<-><------><------>0x00002000<---->/* Hurt by rock remover */
 #define RF3_SUSCEP_FIRE><------><------>0x00004000<---->/* Hurt badly by fire */
@@ -5952,11 +5946,8 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 #define RF3_IM_WATER<--><------>0x01000000L<--->/* Water immunity, should also let you breathe under water */
 #define RF3_RES_NEXU<--><------>0x02000000<---->/* Resist nexus */
 #define RF3_RES_DISE<--><------>0x04000000<---->/* Resist disenchantment */
-#define RF3_NO_FEAR<---><------><------>0x10000000<---->/* Cannot be scared */
 #define RF3_NO_STUN<---><------><------>0x20000000<---->/* Cannot be stunned */
-#define RF3_NO_CONF<---><------><------>0x40000000<---->/* Cannot be confused */
-#define RF3_NO_SLEEP<--><------><------>0x80000000<---->/* Cannot be slept */
-
+	/* Flags 4 */
 #define RF4_UNMAGIC<---><------>0x00000002<---->/* Cancel player's timed spell */
 #define RF4_ROCKET<----><------>0x00000008<---->/* TY: Rocket */
 #define RF4_ARROW_1<---><------><------>0x00000010<---->/* Fire an arrow (light) */
@@ -5986,7 +5977,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 #define RF4_BR_DISI<---><------><------>0x10000000<---->/* Breathe Disintegration */
 #define RF4_BR_NUKE<---><------><------>0x20000000<---->/* TY: Toxic Breath */
 #define RF4_BOULDER<---><------><------>0x80000000<---->/* Hurl Boulder (Vanilla) */
-
+	/* Flags 5 */
 #define RF5_BA_ACID<---><------>0x00000001<---->/* Acid Ball */
 #define RF5_BA_ELEC<---><------>0x00000002<---->/* Elec Ball */
 #define RF5_BA_FIRE<---><------>0x00000004<---->/* Fire Ball */
@@ -6018,7 +6009,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 #define RF5_CONF<------><------><------>0x20000000<---->/* Confuse Player */
 #define RF5_SLOW<------><------><------>0x40000000<---->/* Slow Player */
 #define RF5_HOLD<------><------><------>0x80000000<---->/* Paralyze Player */
-
+	/* Flags 6 */
 #define RF6_HASTE<-----><------>0x00000001<---->/* Speed self */
 #define RF6_HEAL<------><------>0x00000004<---->/* Heal self */
 #define RF6_BLINK<-----><------><------>0x00000010<---->/* Teleport Short */
@@ -6028,13 +6019,13 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 #define RF6_DARKNESS<--><------><------>0x00001000<---->/* Create Darkness */
 #define RF6_TRAPS<-----><------><------>0x00002000<---->/* Create Traps */
 #define RF6_FORGET<----><------><------>0x00004000<---->/* Cause amnesia */
-
+	/* Flags 7 */
 #define RF3_AI_HYBRID<-><------>0x08000000<---->/* Monster is AI_ANNOY while target player isn't in melee (aka on adjacent grid) */
 #define RF7_AI_ANNOY<--><------><------>0x00001000<---->/* Try to tease the player */
 #define RF7_AI_PLAYER<-><------>0x00020000<---->/* Monster is neutral */
 #define RF7_NO_THEFT<--><------>0x00040000<---->/* Monster is neutral */
 #define RF7_DISBELIEVE<><------><------>0x80000000<---->/* Antimagic shield */
-
+	/* Flags 9 */
 #define RF9_HAS_LITE<--><------>0x00000004<---->/* Carries a lite */
 #define RF9_RES_ACID<--><------><------>0x00008000L
 #define RF9_RES_ELEC<--><------>0x00010000L
@@ -6052,7 +6043,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 #define RF9_IM_TELE<---><------><------>0x20000000      /* Resist teleportation */
 #define RF9_IM_PSI<----><------><------>0x40000000<---->/* Immune to psi */
 #define RF9_RES_PSI<---><------><------>0x80000000<---->/* Resist psi */
-
+	/* Flags 0 */
 #define RF0_BO_DISE<---><------><------>0x00000080
 #define RF0_BA_DISE<---><------>0x00000100
 #define RF0_BR_ICE<----><------>0x00040000<---->/* For Bahamuth */
