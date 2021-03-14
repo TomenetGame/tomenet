@@ -189,10 +189,13 @@ void inven_takeoff(int Ind, int item, int amt, bool called_from_wield) {
    o_ptr is the missile object,
    original_amt is the o_ptr->number when it was still in the equipment slot
     (should probably always be 1 except for quiver) */
+#define NO_ACT_MSG /* The 'act' msg is a bit spammy as we are already informed that we "have no more.." item. */
 void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 	player_type	*p_ptr = Players[Ind];
+#ifndef NO_ACT_MSG
 	cptr		act;
 	char		o_name[ONAME_LEN];
+#endif
 
 #ifdef VAMPIRES_INV_CURSED
 	if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
@@ -223,7 +226,9 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 		/* Window stuff */
 		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		return;
-	} else if (slot == INVEN_WIELD)
+	}
+#ifndef NO_ACT_MSG
+	else if (slot == INVEN_WIELD)
 		act = "You were wielding";
 	else if (slot == INVEN_ARM)
 		act = "You were wielding";
@@ -239,6 +244,7 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 		act = "You were using";
 	else
 		act = "You were wearing";
+#endif
 
 	if (p_ptr->ammo_brand && slot == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
 	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
@@ -276,9 +282,11 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 		if ((a_ptr->flags3 & TR3_WRAITH) && p_ptr->tim_wraith) p_ptr->tim_wraith = 1;
 	}
 
+#ifndef NO_ACT_MSG
 	/* Describe the result */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 	msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(slot));
+#endif
 
 	if (p_ptr->prace == RACE_HOBBIT && o_ptr->tval == TV_BOOTS)
 		msg_print(Ind, "\377gYou feel more dextrous now, being barefeet.");
