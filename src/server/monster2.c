@@ -5924,6 +5924,140 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	//int rweapon, shots, hitr, damr, calmness; //ranged
 
 #ifdef SIMPLE_RI_MIRROR
+#if 0
+#define RF2_STUPID<----><------><------>0x00000001<---->/* Monster is stupid */
+#define RF2_SMART<-----><------><------>0x00000002<---->/* Monster is smart */
+#define RF2_REFLECTING<><------><------>0x00000008<---->/* Reflects bolts */
+#define RF2_INVISIBLE<-><------>0x00000010<---->/* Monster avoids vision */
+#define RF2_COLD_BLOOD<><------>0x00000020<---->/* Monster avoids infra */
+#define RF2_EMPTY_MIND<><------>0x00000040<---->/* Monster avoids telepathy */
+#define RF2_REGENERATE<><------><------>0x00000200<---->/* Monster regenerates */
+#define RF2_POWERFUL<--><------>0x00001000<---->/* Monster has strong breath */
+#define RF2_OPEN_DOOR<-><------><------>0x00010000<---->/* Monster can open doors */
+#define RF2_BASH_DOOR<-><------><------>0x00020000<---->/* Monster can bash doors */
+#define RF2_PASS_WALL<-><------><------>0x00040000<---->/* Monster can pass walls */
+#define RF2_KILL_WALL<-><------><------>0x00080000<---->/* Monster can destroy walls */
+
+#define RF3_HURT_LITE<-><------><------>0x00001000<---->/* Hurt by lite */
+#define RF3_HURT_ROCK<-><------><------>0x00002000<---->/* Hurt by rock remover */
+#define RF3_SUSCEP_FIRE><------><------>0x00004000<---->/* Hurt badly by fire */
+#define RF3_IM_ACID<---><------>0x00010000<---->/* Resist acid a lot */
+#define RF3_IM_ELEC<---><------>0x00020000<---->/* Resist elec a lot */
+#define RF3_IM_FIRE<---><------>0x00040000<---->/* Resist fire a lot */
+#define RF3_IM_COLD<---><------>0x00080000<---->/* Resist cold a lot */
+#define RF3_IM_POIS<---><------><------>0x00100000<---->/* Resist poison a lot */
+#define RF3_RES_TELE<--><------><------>0x00200000<---->/* Resist teleportation */
+#define RF3_RES_NETH<--><------><------>0x00400000<---->/* Resist nether a lot */
+#define RF3_RES_WATE<--><------><------>0x00800000<---->/* Resist water */
+#define RF3_IM_WATER<--><------>0x01000000L<--->/* Water immunity, should also let you breathe under water */
+#define RF3_RES_NEXU<--><------>0x02000000<---->/* Resist nexus */
+#define RF3_RES_DISE<--><------>0x04000000<---->/* Resist disenchantment */
+#define RF3_NO_FEAR<---><------><------>0x10000000<---->/* Cannot be scared */
+#define RF3_NO_STUN<---><------><------>0x20000000<---->/* Cannot be stunned */
+#define RF3_NO_CONF<---><------><------>0x40000000<---->/* Cannot be confused */
+#define RF3_NO_SLEEP<--><------><------>0x80000000<---->/* Cannot be slept */
+
+#define RF4_UNMAGIC<---><------>0x00000002<---->/* Cancel player's timed spell */
+#define RF4_ROCKET<----><------>0x00000008<---->/* TY: Rocket */
+#define RF4_ARROW_1<---><------><------>0x00000010<---->/* Fire an arrow (light) */
+#define RF4_ARROW_2<---><------><------>0x00000020<---->/* Fire a shot (heavy) */
+#define RF4_ARROW_3<---><------><------>0x00000040<---->/* Fire a bolt (heavy) */
+#define RF4_ARROW_4<---><------><------>0x00000080<---->/* Fire a missile (heavy) */
+#define RF4_BR_ACID<---><------>0x00000100<---->/* Breathe Acid */
+#define RF4_BR_ELEC<---><------>0x00000200<---->/* Breathe Elec */
+#define RF4_BR_FIRE<---><------>0x00000400<---->/* Breathe Fire */
+#define RF4_BR_COLD<---><------>0x00000800<---->/* Breathe Cold */
+#define RF4_BR_POIS<---><------><------>0x00001000<---->/* Breathe Poison */
+#define RF4_BR_NETH<---><------><------>0x00002000<---->/* Breathe Nether */
+#define RF4_BR_LITE<---><------><------>0x00004000<---->/* Breathe Lite */
+#define RF4_BR_DARK<---><------><------>0x00008000<---->/* Breathe Dark */
+#define RF4_BR_CONF<---><------>0x00010000<---->/* Breathe Confusion */
+#define RF4_BR_SOUN<---><------>0x00020000<---->/* Breathe Sound */
+#define RF4_BR_CHAO<---><------>0x00040000<---->/* Breathe Chaos */
+#define RF4_BR_DISE<---><------>0x00080000<---->/* Breathe Disenchant */
+#define RF4_BR_NEXU<---><------><------>0x00100000<---->/* Breathe Nexus */
+#define RF4_BR_TIME<---><------><------>0x00200000<---->/* Breathe Time */
+#define RF4_BR_INER<---><------><------>0x00400000<---->/* Breathe Inertia */
+#define RF4_BR_GRAV<---><------><------>0x00800000<---->/* Breathe Gravity */
+#define RF4_BR_SHAR<---><------>0x01000000<---->/* Breathe Shards */
+#define RF4_BR_PLAS<---><------>0x02000000<---->/* Breathe Plasma */
+#define RF4_BR_WALL<---><------>0x04000000<---->/* Breathe Force */
+#define RF4_BR_MANA<---><------>0x08000000<---->/* Breathe Mana */
+#define RF4_BR_DISI<---><------><------>0x10000000<---->/* Breathe Disintegration */
+#define RF4_BR_NUKE<---><------><------>0x20000000<---->/* TY: Toxic Breath */
+#define RF4_BOULDER<---><------><------>0x80000000<---->/* Hurl Boulder (Vanilla) */
+
+#define RF5_BA_ACID<---><------>0x00000001<---->/* Acid Ball */
+#define RF5_BA_ELEC<---><------>0x00000002<---->/* Elec Ball */
+#define RF5_BA_FIRE<---><------>0x00000004<---->/* Fire Ball */
+#define RF5_BA_COLD<---><------>0x00000008<---->/* Cold Ball */
+#define RF5_BA_POIS<---><------><------>0x00000010<---->/* Poison Ball */
+#define RF5_BA_NETH<---><------><------>0x00000020<---->/* Nether Ball */
+#define RF5_BA_WATE<---><------><------>0x00000040<---->/* Water Ball */
+#define RF5_BA_MANA<---><------><------>0x00000080<---->/* Mana Storm */
+#define RF5_BA_DARK<---><------>0x00000100<---->/* Darkness Storm */
+#define RF5_DRAIN_MANA<><------>0x00000200<---->/* Drain Mana */
+#define RF5_MIND_BLAST<><------>0x00000400<---->/* Blast Mind */
+#define RF5_BRAIN_SMASH><------>0x00000800<---->/* Smash Brain */
+#define RF5_CURSE<-----><------><------>0x00001000<---->/* Cause Light Wound */
+#define RF5_BA_NUKE<---><------><------>0x00004000<---->/* TY: Nuke Ball */
+#define RF5_BA_CHAO<---><------><------>0x00008000<---->/* Chaos Ball */
+#define RF5_BO_ACID<---><------>0x00010000<---->/* Acid Bolt */
+#define RF5_BO_ELEC<---><------>0x00020000<---->/* Elec Bolt */
+#define RF5_BO_FIRE<---><------>0x00040000<---->/* Fire Bolt */
+#define RF5_BO_COLD<---><------>0x00080000<---->/* Cold Bolt */
+#define RF5_BO_POIS<---><------><------>0x00100000<---->/* Poison Bolt (implemented but unused: Only used by Judge Mortis) */
+#define RF5_BO_NETH<---><------><------>0x00200000<---->/* Nether Bolt */
+#define RF5_BO_WATE<---><------><------>0x00400000<---->/* Water Bolt */
+#define RF5_BO_MANA<---><------><------>0x00800000<---->/* Mana Bolt */
+#define RF5_BO_PLAS<---><------>0x01000000<---->/* Plasma Bolt */
+#define RF5_BO_ICEE<---><------>0x02000000<---->/* Ice Bolt */
+#define RF5_MISSILE<---><------>0x04000000<---->/* Magic Missile */
+#define RF5_SCARE<-----><------>0x08000000<---->/* Frighten Player */
+#define RF5_BLIND<-----><------><------>0x10000000<---->/* Blind Player */
+#define RF5_CONF<------><------><------>0x20000000<---->/* Confuse Player */
+#define RF5_SLOW<------><------><------>0x40000000<---->/* Slow Player */
+#define RF5_HOLD<------><------><------>0x80000000<---->/* Paralyze Player */
+
+#define RF6_HASTE<-----><------>0x00000001<---->/* Speed self */
+#define RF6_HEAL<------><------>0x00000004<---->/* Heal self */
+#define RF6_BLINK<-----><------><------>0x00000010<---->/* Teleport Short */
+#define RF6_TPORT<-----><------><------>0x00000020<---->/* Teleport Long */
+#define RF6_TELE_TO<---><------>0x00000100<---->/* Move player to monster */
+#define RF6_TELE_AWAY<-><------>0x00000200<---->/* Move player far away */
+#define RF6_DARKNESS<--><------><------>0x00001000<---->/* Create Darkness */
+#define RF6_TRAPS<-----><------><------>0x00002000<---->/* Create Traps */
+#define RF6_FORGET<----><------><------>0x00004000<---->/* Cause amnesia */
+
+#define RF3_AI_HYBRID<-><------>0x08000000<---->/* Monster is AI_ANNOY while target player isn't in melee (aka on adjacent grid) */
+#define RF7_AI_ANNOY<--><------><------>0x00001000<---->/* Try to tease the player */
+#define RF7_AI_PLAYER<-><------>0x00020000<---->/* Monster is neutral */
+#define RF7_NO_THEFT<--><------>0x00040000<---->/* Monster is neutral */
+#define RF7_DISBELIEVE<><------><------>0x80000000<---->/* Antimagic shield */
+
+#define RF9_HAS_LITE<--><------>0x00000004<---->/* Carries a lite */
+#define RF9_RES_ACID<--><------><------>0x00008000L
+#define RF9_RES_ELEC<--><------>0x00010000L
+#define RF9_RES_FIRE<--><------>0x00020000L
+#define RF9_RES_COLD<--><------>0x00040000L
+#define RF9_RES_POIS<--><------>0x00080000L
+#define RF9_RES_LITE<--><------><------>0x00100000L
+#define RF9_RES_DARK<--><------><------>0x00200000L
+#define RF9_RES_BLIND<-><------><------>0x00400000L
+#define RF9_RES_SOUND<-><------><------>0x00800000L
+#define RF9_RES_SHARDS<><------>0x01000000L
+#define RF9_RES_CHAOS<-><------>0x02000000L
+#define RF9_RES_TIME<--><------>0x04000000L
+#define RF9_RES_MANA<--><------>0x08000000L
+#define RF9_IM_TELE<---><------><------>0x20000000      /* Resist teleportation */
+#define RF9_IM_PSI<----><------><------>0x40000000<---->/* Immune to psi */
+#define RF9_RES_PSI<---><------><------>0x80000000<---->/* Resist psi */
+
+#define RF0_BO_DISE<---><------><------>0x00000080
+#define RF0_BA_DISE<---><------>0x00000100
+#define RF0_BR_ICE<----><------>0x00040000<---->/* For Bahamuth */
+#define RF0_BR_WATER<--><------>0x00080000<---->/* Finally no more antimagic field vs water hounds :p */
+#endif
 #endif
 }
 void py2mon_update_equip(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
