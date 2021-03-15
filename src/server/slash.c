@@ -4133,54 +4133,92 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 #ifdef ENABLE_DRACONIAN_TRAITS
 		} else if (prefix(messagelc, "/trait")) {
-			if (p_ptr->prace != RACE_DRACONIAN) {
-				msg_print(Ind, "This command is only available to draconians.");
+			if (!(p_ptr->prace == RACE_MAIA && (p_ptr->mode & MODE_PVP) && MIN_PVP_LEVEL >= 20)
+			    && p_ptr->prace != RACE_DRACONIAN) {
+				msg_print(Ind, "This command is not available for your character.");
 				return;
 			}
 			if (p_ptr->ptrait) {
 				msg_print(Ind, "You already have a trait.");
 				return;
 			}
-			if (!tk) {
-				msg_print(Ind, "\377U------------------------------------------------");
-				msg_print(Ind, "\377yUse this command like this:");
-				msg_print(Ind, "\377o  /trait colour");
-				msg_print(Ind, "\377yWhere colour is one of these:");
-				msg_print(Ind, "\377o  blue, white, red, black, green, multi,");
-				msg_print(Ind, "\377o  bronze, silver, gold, law, chaos, balance.");
-				msg_print(Ind, "\377yWARNING: Once you set a trait, it will be FINAL.");
-				msg_print(Ind, "\377yPlease check the guide (6.4) for trait details.");
-				msg_print(Ind, "\377U------------------------------------------------");
-				return;
+
+			switch (p_ptr->prace) {
+			case RACE_DRACONIAN:
+				if (!tk) {
+					msg_print(Ind, "\377U------------------------------------------------");
+					msg_print(Ind, "\377yUse this command like this:");
+					msg_print(Ind, "\377o  /trait <colour>");
+					msg_print(Ind, "\377yWhere <colour> is one of these:");
+					msg_print(Ind, "\377o  blue, white, red, black, green, multi,");
+					msg_print(Ind, "\377o  bronze, silver, gold, law, chaos, balance.");
+					msg_print(Ind, "\377yWARNING: Once you set a trait, it will be FINAL.");
+					msg_print(Ind, "\377yPlease check the guide (6.4) for trait details.");
+					msg_print(Ind, "\377U------------------------------------------------");
+					return;
+				}
+
+				if (!strcmp(message3, "blue")) p_ptr->ptrait = 1;
+				else if (!strcmp(message3, "white")) p_ptr->ptrait = 2;
+				else if (!strcmp(message3, "red")) p_ptr->ptrait = 3;
+				else if (!strcmp(message3, "black")) p_ptr->ptrait = 4;
+				else if (!strcmp(message3, "green")) p_ptr->ptrait = 5;
+				else if (!strcmp(message3, "multi")) p_ptr->ptrait = 6;
+				else if (!strcmp(message3, "bronze")) p_ptr->ptrait = 7;
+				else if (!strcmp(message3, "silver")) p_ptr->ptrait = 8;
+				else if (!strcmp(message3, "gold")) p_ptr->ptrait = 9;
+				else if (!strcmp(message3, "law")) p_ptr->ptrait = 10;
+				else if (!strcmp(message3, "chaos")) p_ptr->ptrait = 11;
+				else if (!strcmp(message3, "balance")) p_ptr->ptrait = 12;
+				else {
+					msg_print(Ind, "You entered an invalid colour, please try again.");
+					return;
+				}
+
+				p_ptr->s_info[SKILL_BREATH].value = 1000;
+				Send_skill_info(Ind, SKILL_BREATH, TRUE);
+				p_ptr->s_info[SKILL_PICK_BREATH].value = 1000;
+				Send_skill_info(Ind, SKILL_PICK_BREATH, TRUE);
+
+				break;
+			case RACE_MAIA:
+				if (!tk) {
+					msg_print(Ind, "\377U------------------------------------------------");
+					msg_format(Ind, "\377RThis commmand can only be used at level %d!", MIN_PVP_LEVEL);
+					msg_print(Ind, "\377yUse this command like this:");
+					msg_print(Ind, "\377o  /trait <initiation>");
+					msg_print(Ind, "\377yWhere <initiation> is one of these two:");
+					msg_print(Ind, "\377o  enlightened   - to become an angelic maia or");
+					msg_print(Ind, "\377o  corrupted     - to become a demonic maia.");
+					msg_print(Ind, "\377yWARNING: Once you set a trait, it will be FINAL.");
+					msg_print(Ind, "\377yPlease check the guide (6.2a) for trait details.");
+					msg_print(Ind, "\377U------------------------------------------------");
+					return;
+				}
+
+				if (p_ptr->max_plv > MIN_PVP_LEVEL) {
+					msg_format(Ind, "\377RThis commmand can only be used at original character level %d!", MIN_PVP_LEVEL);
+					return;
+				}
+
+				if (strstr("enlightened", message3)) p_ptr->ptrait = TRAIT_ENLIGHTENED;
+				else if (strstr("corrupted", message3)) p_ptr->ptrait = TRAIT_CORRUPTED;
+				else {
+					msg_print(Ind, "You entered an invalid trait, please try again.");
+					return;
+				}
+
+				shape_Maia_skills(Ind, TRUE);
+
+				break;
 			}
 
-			if (!strcmp(message3, "blue")) p_ptr->ptrait = 1;
-			else if (!strcmp(message3, "white")) p_ptr->ptrait = 2;
-			else if (!strcmp(message3, "red")) p_ptr->ptrait = 3;
-			else if (!strcmp(message3, "black")) p_ptr->ptrait = 4;
-			else if (!strcmp(message3, "green")) p_ptr->ptrait = 5;
-			else if (!strcmp(message3, "multi")) p_ptr->ptrait = 6;
-			else if (!strcmp(message3, "bronze")) p_ptr->ptrait = 7;
-			else if (!strcmp(message3, "silver")) p_ptr->ptrait = 8;
-			else if (!strcmp(message3, "gold")) p_ptr->ptrait = 9;
-			else if (!strcmp(message3, "law")) p_ptr->ptrait = 10;
-			else if (!strcmp(message3, "chaos")) p_ptr->ptrait = 11;
-			else if (!strcmp(message3, "balance")) p_ptr->ptrait = 12;
-			else {
-				msg_print(Ind, "You entered an invalid colour, please try again.");
-				return;
-			}
 			msg_format(Ind, "\377U*** Your trait has been set to '%s' ***.", trait_info[p_ptr->ptrait].title);
 			s_printf("TRAIT_SET: %s (%s) -> %d\n", p_ptr->name, p_ptr->accountname, p_ptr->ptrait);
 			p_ptr->redraw |= PR_MISC;
 
 			get_history(Ind);
 			p_ptr->redraw |= PR_HISTORY;
-
-			p_ptr->s_info[SKILL_BREATH].value = 1000;
-			Send_skill_info(Ind, SKILL_BREATH, TRUE);
-			p_ptr->s_info[SKILL_PICK_BREATH].value = 1000;
-			Send_skill_info(Ind, SKILL_PICK_BREATH, TRUE);
 			return;
 #endif
 #ifdef AUTO_RET_CMD
