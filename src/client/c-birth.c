@@ -567,6 +567,12 @@ static bool choose_trait(void) {
 	/* Prepare to list, skip trait #0 'N/A' */
 	for (j = 1; j < Setup.max_trait; j++) {
 		tp_ptr = &trait_info[j];
+
+		/* Hack: s_PVP_MAIA */
+		if ((sex & MODE_PVP | MODE_DED_PVP) && race == RACE_MAIA && s_PVP_MAIA && (j == TRAIT_ENLIGHTENED || j == TRAIT_CORRUPTED)) {
+			tp_ptr->choice |= BITS(race);
+		}
+
 		if (!(tp_ptr->choice & BITS(race))) continue;
 		shown_traits++;
 	}

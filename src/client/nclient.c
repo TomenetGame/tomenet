@@ -545,6 +545,7 @@ void Receive_login(void) {
 	if (sflags0 & SFLG0_DED_IDDC) s_DED_IDDC = TRUE;	/* probably unused */
 	if (sflags0 & SFLG0_DED_PVP) s_DED_PVP = TRUE;		/* probably unused */
 	if (sflags0 & SFLG0_NO_PK) s_NO_PK = TRUE;
+	if (sflags0 & SFLG0_PVP_MAIA) s_PVP_MAIA = TRUE;
 
 	/* Set client mode */
 	if (sflags1 & SFLG1_PARTY) client_mode = CLIENT_PARTY;

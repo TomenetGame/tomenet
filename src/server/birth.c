@@ -3189,7 +3189,7 @@ static void do_trait_skill(int Ind, int s, int m) {
  */
 bool player_birth(int Ind, int conn, connection_t *connp) {
 	player_type *p_ptr;
-	int i;
+	int i, trait_hack = 0;
 	struct account acc;
 	bool acc_banned = FALSE;
 	char acc_houses = 0;
@@ -3235,6 +3235,14 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		s_printf("%s EXPLOIT_CLASS_CHOICE: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
 		return FALSE;
 	}
+#ifndef RPG_SERVER /* Cannot be PvP-mode because characters always NO_GHOST */
+	/* Hack for s_PVP_MAIA */
+	if ((sex & MODE_PVP) && MIN_PVP_LEVEL >= 20 && race == RACE_MAIA &&
+	    (trait == TRAIT_ENLIGHTENED || trait == TRAIT_CORRUPTED)) {
+		trait_hack = trait;
+		trait = 0; /* ensure we pass the subsequent checks, afterwards hack-restore the trait */
+	}
+#endif
 	/* If we have no traits available at all for this race then any trait choice is illegal*/
 	if (trait && (trait_info[0].choice & BITS(race))) {
 		s_printf("%s EXPLOIT_TRAIT_N/A: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
@@ -3450,23 +3458,23 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
 	p_ptr->dna |= (randint(65535) << 16);
 	p_ptr->male = (sex & MODE_MALE) ? 1 : 0;
+	p_ptr->prace = race;
 	p_ptr->pclass = class;
+	p_ptr->ptrait = trait;
 	p_ptr->align_good = 0x7fff;	/* start neutral */
 	p_ptr->align_law = 0x7fff;
-	p_ptr->prace = race;
-	p_ptr->ptrait = trait;
 #ifndef KURZEL_PK
 	p_ptr->pkill = (PKILL_KILLABLE);
 #else
 	p_ptr->pkill = 0; //Flag default OFF
 #endif
 
-	s_printf("CHARACTER_CREATION: race=%s ; class=%s ; trait=%s ; mode=%u\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->mode);
+	s_printf("CHARACTER_CREATION: race=%s ; class=%s ; trait=%s(%s) ; mode=%u\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, trait_info[trait_hack].title, p_ptr->mode);
 
 	/* Set pointers */
-	p_ptr->rp_ptr = &race_info[race];
-	p_ptr->cp_ptr = &class_info[class];
-	p_ptr->tp_ptr = &trait_info[trait];
+	p_ptr->rp_ptr = &race_info[p_ptr->prace];
+	p_ptr->cp_ptr = &class_info[p_ptr->pclass];
+	p_ptr->tp_ptr = &trait_info[p_ptr->ptrait];
 
 #ifdef RPG_SERVER /* Make characters always NO_GHOST */
 	p_ptr->mode |= MODE_NO_GHOST;
@@ -3503,12 +3511,24 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		object_type forge, *o_ptr = &forge;
 
 		p_ptr->lev = MIN_PVP_LEVEL;
+		p_ptr->skill_points = (p_ptr->lev - 1) * SKILL_NB_BASE;
+
+		/* Hack for s_PVP_MAIA */
+		if (trait_hack) {
+			p_ptr->ptrait = trait_hack;
+			p_ptr->tp_ptr = &trait_info[p_ptr->ptrait];
+			/* Initiate! */
+			shape_Maia_skills(Ind);
+			//calc_techniques(Ind);
+			//p_ptr->redraw |= PR_SKILLS | PR_MISC;
+			//p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
+		}
+
 #ifndef ALT_EXPRATIO
 		p_ptr->exp = ((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact) / 100L;
 #else
 		p_ptr->exp = (s64b)player_exp[p_ptr->lev - 2];
 #endif
-		p_ptr->skill_points = (p_ptr->lev - 1) * SKILL_NB_BASE;
 		p_ptr->au = 9950 + rand_int(101);
 
 		/* give her/him a free mimic transformation for starting out */

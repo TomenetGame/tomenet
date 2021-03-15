@@ -155,6 +155,7 @@
 #define SFLG0_DED_IDDC		0x00000040
 #define SFLG0_DED_PVP		0x00000080
 #define SFLG0_NO_PK		0x00000100
+#define SFLG0_PVP_MAIA		0x00000200	/* Maiar in PvP-mode start at level 20 or above and hence need to set their trait in the client already */
 
 /* Feature flags */
 #define SFLG1_NORMAL		0x00000000
