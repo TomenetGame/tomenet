@@ -4209,7 +4209,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				shape_Maia_skills(Ind, TRUE);
+				calc_techniques(Ind);
 
+				p_ptr->redraw |= PR_SKILLS | PR_MISC;
+				p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
 				break;
 			}
 
