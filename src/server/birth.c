@@ -3631,6 +3631,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		}
 	}
 
+	/* Hack for s_PVP_MAIA */
 	if (trait_hack) {
 		/* Initiate! */
 		shape_Maia_skills(Ind, FALSE);

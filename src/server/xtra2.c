@@ -4362,7 +4362,7 @@ void shape_Maia_skills(int Ind, bool live) {
 			p_ptr->cp_ptr = &class_info[p_ptr->pclass];
 			p_ptr->redraw |= PR_BASIC; //PR_TITLE;
 			clockin(Ind, 10); //stamp class
-			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+			if (live) everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 #endif
 #ifdef ENABLE_CPRIEST
@@ -4371,7 +4371,7 @@ void shape_Maia_skills(int Ind, bool live) {
 			p_ptr->cp_ptr = &class_info[p_ptr->pclass];
 			p_ptr->redraw |= PR_BASIC; //PR_TITLE;
 			clockin(Ind, 10); //stamp class
-			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
+			if (live) everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 #endif
 
