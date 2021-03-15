@@ -5963,23 +5963,202 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		switch (p_ptr->inventory[n].tval) {
 		case TV_WAND:
 			switch (p_ptr->inventory[n].sval) {
+			//case SV_WAND_STONE_TO_MUD:
+			//case SV_WAND_WONDER:
+			//case SV_WAND_LITE:
+			//case SV_WAND_SLEEP_MONSTER:
+			//case SV_WAND_CONFUSE_MONSTER:
+			//case SV_WAND_FEAR_MONSTER:
+			//case SV_WAND_POLYMORPH:
+			//case SV_WAND_WALL_CREATION:
 			case SV_WAND_ROCKETS: r_ptr->flags4 |= RF4_ROCKET; magicness++; break;
+ #if 0
+			case SV_WAND_TELEPORT_AWAY:
+			case SV_WAND_TELEPORT_TO:
+			case SV_WAND_SLOW_MONSTER:
+			case SV_WAND_DRAIN_LIFE:
+			case SV_WAND_STINKING_CLOUD:
+			case SV_WAND_MAGIC_MISSILE:
+			case SV_WAND_ACID_BOLT:
+			case SV_WAND_FIRE_BOLT:
+			case SV_WAND_ELEC_BOLT:
+			case SV_WAND_COLD_BOLT:
+			case SV_WAND_ACID_BALL:
+			case SV_WAND_ELEC_BALL:
+			case SV_WAND_FIRE_BALL:
+			case SV_WAND_COLD_BALL:
+			case SV_WAND_ANNIHILATION:
+			case SV_WAND_DRAGON_FIRE:
+			case SV_WAND_DRAGON_COLD:
+			case SV_WAND_DRAGON_BREATH:
+ #endif
 			}
 			break;
 		case TV_STAFF:
 			switch (p_ptr->inventory[n].sval) {
+			//case SV_STAFF_DARKNESS:
+			//case SV_STAFF_SLOWNESS:
+			//case SV_STAFF_HASTE_MONSTERS:
+			//case SV_STAFF_SUMMONING:
+			//case SV_STAFF_REMOVE_CURSE:
+			//case SV_STAFF_STARLITE:
+			//case SV_STAFF_LITE:
+			//case SV_STAFF_PROBING:
+ #if 0
+			case SV_STAFF_TELEPORTATION:
+			case SV_STAFF_CURE_SERIOUS:
+			case SV_STAFF_CURING:
+			case SV_STAFF_HEALING:
+			case SV_STAFF_THE_MAGI:
+			case SV_STAFF_SLEEP_MONSTERS:
+			case SV_STAFF_SLOW_MONSTERS:
+			case SV_STAFF_SPEED:
+			case SV_STAFF_DISPEL_EVIL:
+			case SV_STAFF_POWER:
+			case SV_STAFF_HOLINESS:
+			case SV_STAFF_GENOCIDE:
+			case SV_STAFF_EARTHQUAKES:
+			case SV_STAFF_DESTRUCTION:
+ #endif
 			}
 			break;
 		case TV_ROD:
 			switch (p_ptr->inventory[n].sval) {
+			//case SV_ROD_DISARMING:
+			//case SV_ROD_LITE:
+			//case SV_ROD_SLEEP_MONSTER:
+			//case SV_ROD_POLYMORPH:
+ #if 0
+			case SV_ROD_CURING:
+			case SV_ROD_HEALING:
+			case SV_ROD_RESTORATION:
+			case SV_ROD_SPEED:
+			case SV_ROD_TELEPORT_AWAY:
+			case SV_ROD_SLOW_MONSTER:
+			case SV_ROD_DRAIN_LIFE:
+			case SV_ROD_ACID_BOLT:
+			case SV_ROD_ELEC_BOLT:
+			case SV_ROD_FIRE_BOLT:
+			case SV_ROD_COLD_BOLT:
+			case SV_ROD_ACID_BALL:
+			case SV_ROD_ELEC_BALL:
+			case SV_ROD_FIRE_BALL:
+			case SV_ROD_COLD_BALL:
+			case SV_ROD_HAVOC:
+ #endif
 			}
 			break;
 		case TV_POTION:
 			switch (p_ptr->inventory[n].sval) {
+			//case SV_POTION_INFRAVISION:
+			//case SV_POTION_DETECT_INVIS:
+			//case SV_POTION_SLOW_POISON:
+			//case SV_POTION_CURE_POISON:
+			//case SV_POTION_BOLDNESS:
+			//case SV_POTION_RESTORE_EXP:
+			//case SV_POTION_INVULNERABILITY:
+			//case SV_POTION_ENLIGHTENMENT:
+			//case SV_POTION_SELF_KNOWLEDGE:
+			//case SV_POTION_EXPERIENCE:
+			//case SV_POTION_CONFUSION:
+			//case SV_POTION_SLEEP:
+			//case SV_POTION_LOSE_MEMORIES:
+ #if 0
+			case SV_POTION_BLINDNESS:
+			case SV_POTION_INVIS:
+			case SV_POTION_SLOWNESS:
+			case SV_POTION_RUINATION:
+			case SV_POTION_DEC_STR:
+			case SV_POTION_DEC_INT:
+			case SV_POTION_DEC_WIS:
+			case SV_POTION_DEC_DEX:
+			case SV_POTION_DEC_CON:
+			case SV_POTION_DEC_CHR:
+			case SV_POTION_DETONATIONS:
+			case SV_POTION_DEATH:
+			case SV_POTION_STAR_RESTORE_MANA:
+			case SV_POTION_RESTORE_MANA:
+			case SV_POTION_SPEED:
+			case SV_POTION_RESIST_HEAT:
+			case SV_POTION_RESIST_COLD:
+			case SV_POTION_HEROISM:
+			case SV_POTION_BERSERK_STRENGTH:
+			case SV_POTION_CURE_LIGHT:
+			case SV_POTION_CURE_SERIOUS:
+			case SV_POTION_CURE_CRITICAL:
+			case SV_POTION_STAR_HEALING:
+			case SV_POTION_HEALING:
+			case SV_POTION_LIFE:
+			case SV_POTION_RES_STR:
+			case SV_POTION_RES_INT:
+			case SV_POTION_RES_WIS:
+			case SV_POTION_RES_DEX:
+			case SV_POTION_RES_CON:
+			case SV_POTION_RES_CHR:
+			case SV_POTION_INC_STR:
+			case SV_POTION_INC_INT:
+			case SV_POTION_INC_WIS:
+			case SV_POTION_INC_DEX:
+			case SV_POTION_INC_CON:
+			case SV_POTION_INC_CHR:
+			case SV_POTION_AUGMENTATION:
+			case SV_POTION_STAR_ENLIGHTENMENT:
+			case SV_POTION_RESISTANCE:
+			case SV_POTION_CURING:
+			case SV_POTION_CURE_LIGHT_SANITY:
+			case SV_POTION_CURE_SERIOUS_SANITY:
+			case SV_POTION_CURE_CRITICAL_SANITY:
+			case SV_POTION_CURE_SANITY:
+ #endif
 			}
 			break;
 		case TV_SCROLL:
 			switch (p_ptr->inventory[n].sval) {
+			//case SV_SCROLL_TELEPORT_LEVEL:
+			//case SV_SCROLL_WORD_OF_RECALL:
+			//case SV_SCROLL_IDENTIFY:
+			//case SV_SCROLL_STAR_IDENTIFY:
+			//case SV_SCROLL_REMOVE_CURSE:
+			//case SV_SCROLL_STAR_REMOVE_CURSE:
+			//case SV_SCROLL_ENCHANT_ARMOR:
+			//case SV_SCROLL_ENCHANT_WEAPON_TO_HIT
+			//case SV_SCROLL_ENCHANT_WEAPON_TO_DAM
+			//case SV_SCROLL_ENCHANT_WEAPON_PVAL:
+			//case SV_SCROLL_STAR_ENCHANT_ARMOR:
+			//case SV_SCROLL_STAR_ENCHANT_WEAPON:
+			//case SV_SCROLL_RECHARGING:
+			//case SV_SCROLL_RESET_RECALL:
+			//case SV_SCROLL_LIGHT:
+			//case SV_SCROLL_MAPPING:
+			//case SV_SCROLL_DETECT_GOLD:
+			//case SV_SCROLL_DETECT_ITEM:
+			//case SV_SCROLL_DETECT_DOOR:
+			//case SV_SCROLL_DIVINATION:
+			//case SV_SCROLL_SATISFY_HUNGER:
+			//case SV_SCROLL_MONSTER_CONFUSION:
+			//case SV_SCROLL_DEINCARNATION:
+			//case SV_SCROLL_MASS_RESURECTION:
+			//case SV_SCROLL_ACQUIREMENT:
+			//case SV_SCROLL_STAR_ACQUIREMENT:
+ #if 0
+			case SV_SCROLL_PHASE_DOOR:
+			case SV_SCROLL_TELEPORT:
+			case SV_SCROLL_DETECT_TRAP:
+			case SV_SCROLL_DETECT_INVIS:
+			case SV_SCROLL_BLESSING:
+			case SV_SCROLL_HOLY_CHANT:
+			case SV_SCROLL_HOLY_PRAYER:
+			case SV_SCROLL_PROTECTION_FROM_EVIL:
+			case SV_SCROLL_RUNE_OF_PROTECTION:
+			case SV_SCROLL_TRAP_DOOR_DESTRUCTION
+			case SV_SCROLL_STAR_DESTRUCTION:
+			case SV_SCROLL_DISPEL_UNDEAD:
+			case SV_SCROLL_GENOCIDE:
+			case SV_SCROLL_OBLITERATION:
+			case SV_SCROLL_FIRE:
+			case SV_SCROLL_ICE:
+			case SV_SCROLL_CHAOS:
+ #endif
 			}
 			break;
 		}
@@ -5989,6 +6168,8 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	if (get_skill(p_ptr, SKILL_TRAPPING) >= p_ptr->max_plv / 2) { r_ptr->flags6 |= RF6_TRAPS; magicness++; }
 	if (get_skill(p_ptr, SKILL_MANA)) { r_ptr->flags5 |= RF5_BA_MANA; magicness++; }
 	if (get_skill(p_ptr, SKILL_FIRE)) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
+ #if 0
+ #endif
 
  #if 0
 RF4_ARROW_1
