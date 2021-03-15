@@ -4501,7 +4501,7 @@ static int Receive_login(int ind) {
 #ifdef NO_PK
 			sflags0 |= SFLG0_NO_PK;
 #endif
-			if (MIN_PVP_LEVEL >= 20) sflags1 |= SFLG0_PVP_MAIA;
+			if (MIN_PVP_LEVEL >= 20) sflags0 |= SFLG0_PVP_MAIA;
 
 			/* Set available-feature / client mode flags */
 #ifdef BIG_MAP
