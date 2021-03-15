@@ -8772,8 +8772,10 @@ int Send_item_newest(int Ind, int item) {
 	if (!is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
+#if 1 /* Not really important, and spams on every character creation when the default items are given to it. */
 		plog(format("Connection not ready for item_newest (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
+#endif
 		return 0;
 	}
 
