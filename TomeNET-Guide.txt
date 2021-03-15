@@ -14615,7 +14615,7 @@ Besides changes in their skill tree, Maiar als gain particular abilities on
 initiation, depending on their alignment. All the changes are listed here:
 
 Enlightened:
-    Gain time resistance (all initiated Maiar, enlightened and corrupted).
+    Gain time resistance and they no longer have any need for worldly food.
     Able to see invisible and resisting light, while being susceptible to
     evil-based attacks.
     Intrinsic light aura that adds to any light source's radius.
@@ -14633,7 +14633,7 @@ Enlightened:
     Light and Mana rune ratios x 1.7, Fear and Shivering Aura ratio x 3.0.
 
 Corrupted:
-    Gain time resistance (all initiated Maiar, enlightened and corrupted).
+    Gain time resistance and they no longer have any need for worldly food.
     Resist fire and darkness while being susceptible to good-based attacks.
     +2 bonus HP for each level above 20.
     At level 50 they will become resistant to poison, immune to fire, and
