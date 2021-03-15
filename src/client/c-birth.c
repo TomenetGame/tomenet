@@ -568,7 +568,8 @@ static bool choose_trait(void) {
 	for (j = 1; j < Setup.max_trait; j++) {
 		tp_ptr = &trait_info[j];
 
-		/* Hack: s_PVP_MAIA */
+		/* Super-hacky: s_PVP_MAIA. Since choose_trait() is usually called before choose_mode()
+		   we'll have to get called twice for this occassion as shown_traits will be 0 on first run. */
 		if ((sex & MODE_PVP | MODE_DED_PVP) && race == RACE_MAIA && s_PVP_MAIA && (j == TRAIT_ENLIGHTENED || j == TRAIT_CORRUPTED)) {
 			tp_ptr->choice |= BITS(race);
 		}
@@ -2153,6 +2154,9 @@ cstats:
 #else
 	if (!choose_mode()) goto cstats;
 #endif
+	/* Super-hacky: PvP-Mode Maiar of starter level 20+ need to pick a trait! So we have to do it after choosing the mode: */
+	if ((sex & MODE_PVP | MODE_DED_PVP) && race == RACE_MAIA && s_PVP_MAIA && !choose_trait()) goto cstats;
+
 #ifdef RETRY_LOGIN
 	if (rl_connection_destroyed) return;
 #endif
