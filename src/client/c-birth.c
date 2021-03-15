@@ -570,13 +570,14 @@ static bool choose_trait(void) {
 
 		/* Super-hacky: s_PVP_MAIA. Since choose_trait() is usually called before choose_mode()
 		   we'll have to get called twice for this occassion as shown_traits will be 0 on first run. */
-		if ((sex & (MODE_PVP | MODE_DED_PVP)) && race == RACE_MAIA && s_PVP_MAIA && (j == TRAIT_ENLIGHTENED || j == TRAIT_CORRUPTED)) {
-			tp_ptr->choice |= BITS(race);
-		}
+		if ((sex & (MODE_PVP | MODE_DED_PVP)) && race == RACE_MAIA && s_PVP_MAIA && (j == TRAIT_ENLIGHTENED || j == TRAIT_CORRUPTED)) tp_ptr->choice |= BITS(race);
 
 		if (!(tp_ptr->choice & BITS(race))) continue;
 		shown_traits++;
 	}
+	/* Super-hacky: s_PVP_MAIA. We also have to disable trait #0 (N/A) because it is an indicator that there are no available traits, overriding that there are actually available ones. */
+	if ((sex & (MODE_PVP | MODE_DED_PVP)) && race == RACE_MAIA && s_PVP_MAIA) trait_info[0].choice = 0x0;
+
 	/* No traits available? */
 	if (shown_traits == 0) {
 		/* Paranoia - server bug (not even 'N/A' "available") */
@@ -726,8 +727,10 @@ trait_redraw:
 				if (!(trait_info[i].choice & BITS(race))) j++;
 		}
 
+#if 0 /* Wrong - we might have eg traits 14 and 15 available, which amounts to 2 shown_traits, but 14 > 2 and 15 > 2 so they won't pass.. */
 		/* Paranoia */
 		if (j > shown_traits) continue;
+#endif
 
 		/* Verify if legal */
 		if ((j < Setup.max_trait) && (j >= 0)) {
