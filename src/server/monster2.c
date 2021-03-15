@@ -6237,6 +6237,43 @@ RF0_BR_ICE
 RF0_BR_WATER
  #endif
 
+	/* Flags 7 */
+	//if (p_ptr->pclass == CLASS_MAGE) r_ptr->flags7 |= RF7_AI_ANNOY; -- no, because the monster should chase the player in any case
+	//if (p_ptr->antimagic >= p_ptr->max_plv / 2) r_ptr->flags7 |= RF7_DISBELIEVE -- no, because the player could wield a dark sword, then take it off and utilize magic
+
+	/* Flags 8 -- nothing further, just terrain stuff (and RF8_NO_BLOCK) */
+	//RF8_NO_CUT has already been handled above.
+
+	/* Flags 9 */
+	//RF9_RES_BLIND (not implemented, covered by RF2_POWERFUL),
+	r_ptr->flags9 |= RF9_HAS_LITE; //assume always
+	if (p_ptr->resist_acid) r_ptr->flags9 |= RF9_RES_ACID;
+	if (p_ptr->resist_elec) r_ptr->flags9 |= RF9_RES_ELEC;
+	if (p_ptr->resist_fire) r_ptr->flags9 |= RF9_RES_FIRE;
+	if (p_ptr->resist_cold) r_ptr->flags9 |= RF9_RES_COLD;
+	if (p_ptr->resist_pois) r_ptr->flags9 |= RF9_RES_POIS;
+	if (p_ptr->resist_lite) r_ptr->flags9 |= RF9_RES_LITE;
+	if (p_ptr->resist_dark) r_ptr->flags9 |= RF9_RES_DARK;
+	if (p_ptr->resist_sound) r_ptr->flags9 |= RF9_RES_SOUND;
+	if (p_ptr->resist_shard) r_ptr->flags9 |= RF9_RES_SHARDS;
+	if (p_ptr->resist_chaos) r_ptr->flags9 |= RF9_RES_CHAOS;
+	if (p_ptr->resist_time) r_ptr->flags9 |= RF9_RES_TIME;
+	if (p_ptr->resist_mana || p_ptr->divine_xtra_res > 0) r_ptr->flags9 |= RF9_RES_MANA;
+	if (p_ptr->reduce_insanity) r_ptr->flags9 |= RF9_RES_PSI;
+	if (p_ptr->reduce_insanity == 3) r_ptr->flags9 |= RF9_IM_PSI; //bonus >:o
+
+	/* Remove spells that we know we're immune to */
+ #if 0
+	if (p_ptr->immune_acid)
+	if (p_ptr->immune_fire)
+	if (p_ptr->immune_cold)
+	if (p_ptr->immune_elec)
+	if (p_ptr->immune_poison)
+	if (p_ptr->immune_water)
+	if (p_ptr->immune_neth)
+	if (p_ptr->reduce_insanity >= 2)
+ #endif
+
 	/* Determine chance to use available spells/items */
 	switch (p_ptr->pclass) {
 	case CLASS_WARRIOR:
@@ -6291,31 +6328,6 @@ RF0_BR_WATER
 		r_ptr->freq_innate = r_ptr->freq_spell = 90;
 		break;
 	}
-
-	/* Flags 7 */
-	//if (p_ptr->pclass == CLASS_MAGE) r_ptr->flags7 |= RF7_AI_ANNOY; -- no, because the monster should chase the player in any case
-	//if (p_ptr->antimagic >= p_ptr->max_plv / 2) r_ptr->flags7 |= RF7_DISBELIEVE -- no, because the player could wield a dark sword, then take it off and utilize magic
-
-	/* Flags 8 -- nothing further, just terrain stuff (and RF8_NO_BLOCK) */
-	//RF8_NO_CUT has already been handled above.
-
-	/* Flags 9 */
-	//RF9_RES_BLIND (not implemented, covered by RF2_POWERFUL),
-	r_ptr->flags9 |= RF9_HAS_LITE; //assume always
-	if (p_ptr->resist_acid) r_ptr->flags9 |= RF9_RES_ACID;
-	if (p_ptr->resist_elec) r_ptr->flags9 |= RF9_RES_ELEC;
-	if (p_ptr->resist_fire) r_ptr->flags9 |= RF9_RES_FIRE;
-	if (p_ptr->resist_cold) r_ptr->flags9 |= RF9_RES_COLD;
-	if (p_ptr->resist_pois) r_ptr->flags9 |= RF9_RES_POIS;
-	if (p_ptr->resist_lite) r_ptr->flags9 |= RF9_RES_LITE;
-	if (p_ptr->resist_dark) r_ptr->flags9 |= RF9_RES_DARK;
-	if (p_ptr->resist_sound) r_ptr->flags9 |= RF9_RES_SOUND;
-	if (p_ptr->resist_shard) r_ptr->flags9 |= RF9_RES_SHARDS;
-	if (p_ptr->resist_chaos) r_ptr->flags9 |= RF9_RES_CHAOS;
-	if (p_ptr->resist_time) r_ptr->flags9 |= RF9_RES_TIME;
-	if (p_ptr->resist_mana || p_ptr->divine_xtra_res > 0) r_ptr->flags9 |= RF9_RES_MANA;
-	if (p_ptr->reduce_insanity) r_ptr->flags9 |= RF9_RES_PSI;
-	if (p_ptr->reduce_insanity == 3) r_ptr->flags9 |= RF9_IM_PSI; //bonus >:o
 #endif
 }
 void py2mon_update_equip(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
