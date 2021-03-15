@@ -4147,13 +4147,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			case RACE_DRACONIAN:
 				if (!tk) {
 					msg_print(Ind, "\377U------------------------------------------------");
-					msg_print(Ind, "\377yUse this command like this:");
+					msg_print(Ind, "\377UUse this command like this:");
 					msg_print(Ind, "\377o  /trait <colour>");
-					msg_print(Ind, "\377yWhere <colour> is one of these:");
+					msg_print(Ind, "\377UWhere <colour> is one of these:");
 					msg_print(Ind, "\377o  blue, white, red, black, green, multi,");
 					msg_print(Ind, "\377o  bronze, silver, gold, law, chaos, balance.");
-					msg_print(Ind, "\377yWARNING: Once you set a trait, it will be FINAL.");
-					msg_print(Ind, "\377yPlease check the guide (6.4) for trait details.");
+					msg_print(Ind, "\377UWARNING: Once you set a trait, it will be FINAL.");
+					msg_print(Ind, "\377UPlease check the guide (6.4) for trait details.");
 					msg_print(Ind, "\377U------------------------------------------------");
 					return;
 				}
@@ -4184,14 +4184,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			case RACE_MAIA:
 				if (!tk) {
 					msg_print(Ind, "\377U------------------------------------------------");
-					msg_format(Ind, "\377RThis commmand can only be used at level %d!", MIN_PVP_LEVEL);
-					msg_print(Ind, "\377yUse this command like this:");
+					msg_format(Ind, "\377RThis commmand can only be used at original character level %d!", MIN_PVP_LEVEL);
+					msg_print(Ind, "\377UUse this command like this:");
 					msg_print(Ind, "\377o  /trait <initiation>");
-					msg_print(Ind, "\377yWhere <initiation> is one of these two:");
+					msg_print(Ind, "\377UWhere <initiation> is one of these two:");
 					msg_print(Ind, "\377o  enlightened   - to become an angelic maia or");
 					msg_print(Ind, "\377o  corrupted     - to become a demonic maia.");
-					msg_print(Ind, "\377yWARNING: Once you set a trait, it will be FINAL.");
-					msg_print(Ind, "\377yPlease check the guide (6.2a) for trait details.");
+					msg_print(Ind, "\377UWARNING: Once you set a trait, it will be FINAL.");
+					msg_print(Ind, "\377UPlease check the guide (6.2a) for trait details.");
 					msg_print(Ind, "\377U------------------------------------------------");
 					return;
 				}
