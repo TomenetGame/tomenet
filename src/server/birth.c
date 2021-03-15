@@ -3531,11 +3531,6 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		if (trait_hack) {
 			p_ptr->ptrait = trait_hack;
 			p_ptr->tp_ptr = &trait_info[p_ptr->ptrait];
-			/* Initiate! */
-			shape_Maia_skills(Ind);
-			//calc_techniques(Ind);
-			//p_ptr->redraw |= PR_SKILLS | PR_MISC;
-			//p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
 		}
 
 #ifndef ALT_EXPRATIO
@@ -3634,6 +3629,14 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 				if (z == 0) break;
 			}
 		}
+	}
+
+	if (trait_hack) {
+		/* Initiate! */
+		shape_Maia_skills(Ind, FALSE);
+		//calc_techniques(Ind);
+		//p_ptr->redraw |= PR_SKILLS | PR_MISC;
+		//p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
 	}
 
 #if 0

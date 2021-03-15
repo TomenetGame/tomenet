@@ -4114,12 +4114,12 @@ void hack_skill(int Ind, int s, int v, int m) {
 /* helper function to modify Maia skills when they get a trait - C. Blue
    NOTE: IF THIS IS CALLED TOO MANY TIMES IN A ROW IT
          _MIGHT_ DISCONNET THE CLIENT WITH A 'write error'. */
-static void do_Maia_skill(int Ind, int s, int m) {
+static void do_Maia_skill(int Ind, int s, int m, bool live) {
 	/* Save old skill value */
 	s32b val = Players[Ind]->s_info[s].value, tmp_val = Players[Ind]->s_info[s].mod;
 
 	/* Release invested points */
-	respec_skill(Ind, s, FALSE, FALSE);
+	if (live) respec_skill(Ind, s, FALSE, FALSE);
 
 	/* Modify skill, avoiding overflow (mod is u16b) */
 	tmp_val = (tmp_val * m) / 10;
@@ -4149,16 +4149,16 @@ static void do_Maia_skill(int Ind, int s, int m) {
 	}
 
 	/* Update it after the re-increasing has been finished */
-	Send_skill_info(Ind, s, FALSE);
+	if (live) Send_skill_info(Ind, s, FALSE);
 }
 #ifdef ENABLE_HELLKNIGHT /* and also for ENABLE_CPRIEST */
 /* Don't multiply but set a skill's base value and modifier to a fixed value */
-static void do_Maia_skill2(int Ind, int s, int v, int m) {
+static void do_Maia_skill2(int Ind, int s, int v, int m, bool live) {
 	/* Save old skill value */
 	s32b val = Players[Ind]->s_info[s].value, tmp_val = Players[Ind]->s_info[s].mod;
 
 	/* Release invested points */
-	respec_skill(Ind, s, FALSE, FALSE);
+	if (live) respec_skill(Ind, s, FALSE, FALSE);
 
 	/* Modify skill, avoiding overflow (mod is u16b) */
 	Players[Ind]->s_info[s].value = v;
@@ -4188,11 +4188,11 @@ static void do_Maia_skill2(int Ind, int s, int v, int m) {
 	}
 
 	/* Update it after the re-increasing has been finished */
-	Send_skill_info(Ind, s, FALSE);
+	if (live) Send_skill_info(Ind, s, FALSE);
 }
 #endif
 /* Change Maia skill chart after initiation */
-void shape_Maia_skills(int Ind) {
+void shape_Maia_skills(int Ind, bool live) {
 	player_type *p_ptr = Players[Ind];
 
 	switch (p_ptr->ptrait) {
@@ -4208,15 +4208,17 @@ void shape_Maia_skills(int Ind) {
 
 #ifdef ENABLE_HELLKNIGHT
 		if (p_ptr->pclass == CLASS_PALADIN) {
-			respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
-			Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
-			respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
-			Send_skill_info(Ind, SKILL_HCURING, FALSE);
-			respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
-			p_ptr->s_info[SKILL_HDEFENSE].value = 0; //Paladin starts with +1000 in this skill
-			Send_skill_info(Ind, SKILL_HDEFENSE, FALSE);
-			respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
-			Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
+			if (live) {
+				respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
+				Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
+				respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
+				Send_skill_info(Ind, SKILL_HCURING, FALSE);
+				respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
+				p_ptr->s_info[SKILL_HDEFENSE].value = 0; //Paladin starts with +1000 in this skill
+				Send_skill_info(Ind, SKILL_HDEFENSE, FALSE);
+				respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
+				Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
+			}
 
 			//hardcoded skill modifiers below...ugh (keep consistent with class template in tables.c)
 
@@ -4224,50 +4226,52 @@ void shape_Maia_skills(int Ind) {
 			   hereticism; axe, polearm, blunt; all bloodmagic */
  #ifdef ENABLE_OHERETICISM
 			p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE; //expand Occultism, to ensure the player notices it on the skill chart
-			do_Maia_skill2(Ind, SKILL_OHERETICISM, 1000, ((700 * 7) / 10 * 21) / 10);
+			do_Maia_skill2(Ind, SKILL_OHERETICISM, 1000, ((700 * 7) / 10 * 21) / 10, live);
  #endif
  #if 0 /* 0ed to re-allow */
-			respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
+			if (live) respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
 			p_ptr->s_info[SKILL_BLUNT].mod = 0;
-			Send_skill_info(Ind, SKILL_BLUNT, FALSE);
+			if (live) Send_skill_info(Ind, SKILL_BLUNT, FALSE);
  #else
   #if 0 /* actually, if a skill ends up LOWER than before, we really have to reset it completely instead! */
-			do_Maia_skill2(Ind, SKILL_BLUNT, 0, 600); //swap with Axe
+			do_Maia_skill2(Ind, SKILL_BLUNT, 0, 600, live); //swap with Axe
   #else
-			respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
-			do_Maia_skill2(Ind, SKILL_BLUNT, 0, (600 * 11) / 10); //swap with Axe and gain x1.1, to not lag behind original Paladin skill too much
+			if (live) respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
+			do_Maia_skill2(Ind, SKILL_BLUNT, 0, (600 * 11) / 10, live); //swap with Axe and gain x1.1, to not lag behind original Paladin skill too much
   #endif
  #endif
-			do_Maia_skill2(Ind, SKILL_AXE, 0, (750 * 13) / 10); //swap with Blunt (and get buffed then canonically further down)
-			do_Maia_skill2(Ind, SKILL_SWORD, 0, (750 * 11) / 10); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
+			do_Maia_skill2(Ind, SKILL_AXE, 0, (750 * 13) / 10, live); //swap with Blunt (and get buffed then canonically further down)
+			do_Maia_skill2(Ind, SKILL_SWORD, 0, (750 * 11) / 10, live); //x1.1 arbitrary buff, sort of as a MA x1.3 buff replacement
 			//Note: SKILL_POLEARM just falls through, kept at usual 0.750
 
-			do_Maia_skill2(Ind, SKILL_DUAL, 1000, 0);
+			do_Maia_skill2(Ind, SKILL_DUAL, 1000, 0, live);
 
 			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
-			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1500 * 7) / 10 * 3);
-			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1300 * 7) / 10 * 3);
-			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1400 * 7) / 10 * 3);
-			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1400 * 7) / 10 * 3);
-			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1500 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1300 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1400 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1400 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3, live);
 
 			p_ptr->s_info[SKILL_SCHOOL_MAGIC].dev = TRUE; //expand Wizardry, to notice newly acquired Udun school (EXP, compare tables.c)
-			do_Maia_skill2(Ind, SKILL_UDUN, 0, 368); //will get x2 below
+			do_Maia_skill2(Ind, SKILL_UDUN, 0, 368, live); //will get x2 below
 
-			Send_reliable(p_ptr->conn);
+			if (live) Send_reliable(p_ptr->conn);
 		}
 #endif
 #ifdef ENABLE_CPRIEST
 		if (p_ptr->pclass == CLASS_PRIEST) {
-			respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
-			Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
-			respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
-			p_ptr->s_info[SKILL_HCURING].value = 0; //Priest starts with +1000 in this skill
-			Send_skill_info(Ind, SKILL_HCURING, FALSE);
-			respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
-			Send_skill_info(Ind, SKILL_HDEFENSE, FALSE);
-			respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
-			Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
+			if (live) {
+				respec_skill(Ind, SKILL_HOFFENSE, FALSE, FALSE);
+				Send_skill_info(Ind, SKILL_HOFFENSE, FALSE);
+				respec_skill(Ind, SKILL_HCURING, FALSE, FALSE);
+				p_ptr->s_info[SKILL_HCURING].value = 0; //Priest starts with +1000 in this skill
+				Send_skill_info(Ind, SKILL_HCURING, FALSE);
+				respec_skill(Ind, SKILL_HDEFENSE, FALSE, FALSE);
+				Send_skill_info(Ind, SKILL_HDEFENSE, FALSE);
+				respec_skill(Ind, SKILL_HSUPPORT, FALSE, FALSE);
+				Send_skill_info(Ind, SKILL_HSUPPORT, FALSE);
+			}
 
 			//hardcoded skill modifiers below...ugh (keep consistent with class template in tables.c)
 
@@ -4275,31 +4279,31 @@ void shape_Maia_skills(int Ind) {
 			   hereticism; axe, polearm, blunt; all bloodmagic */
  #ifdef ENABLE_OHERETICISM /* (should actually always be defined if Corrupted Priests are enabled) */
 			p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE; //expand Occultism, to ensure the player notices it on the skill chart
-			do_Maia_skill2(Ind, SKILL_OHERETICISM, 1000, ((1050 * 7) / 10 * 21) / 10);
+			do_Maia_skill2(Ind, SKILL_OHERETICISM, 1000, ((1050 * 7) / 10 * 21) / 10, live);
  #endif
  #if 0 /* 0ed to re-allow */
-			respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
+			if (live) respec_skill(Ind, SKILL_BLUNT, FALSE, FALSE);
 			p_ptr->s_info[SKILL_BLUNT].mod = 0;
-			Send_skill_info(Ind, SKILL_BLUNT, FALSE);
+			if (live) Send_skill_info(Ind, SKILL_BLUNT, FALSE);
  #endif
 			/* Note: Corrupted trait doesn't give sword bonus but axe,
 			   but since Enlightened trait gives priests melee bonus (blunt), we need Corrupted Priests to be on par,
 			   as if their Blunt skill was just transferred to become Sword.. a bit inconsistent :/ */
-			//do_Maia_skill2(Ind, SKILL_SWORD, 0, (600 * 13) / 10);
-			do_Maia_skill2(Ind, SKILL_SWORD, 0, (500 * 13) / 10); //Base x1.3, as replacement for missing Axe-Mastery.
+			//do_Maia_skill2(Ind, SKILL_SWORD, 0, (600 * 13) / 10, live);
+			do_Maia_skill2(Ind, SKILL_SWORD, 0, (500 * 13) / 10, live); //Base x1.3, as replacement for missing Axe-Mastery.
 			//Note: Martial Arts falls through at 0.500 and becomes 0.650 (x1.3), Blunt-Mastery falls through at 0.600, as canonical.
 
 			p_ptr->s_info[SKILL_BLOOD_MAGIC].dev = TRUE; //expand Blood Magic, to ensure the player notices it on the skill chart
-			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1400 * 7) / 10 * 3);
-			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1400 * 7) / 10 * 3);
-			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1500 * 7) / 10 * 3);
-			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1300 * 7) / 10 * 3);
-			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3);
+			do_Maia_skill2(Ind, SKILL_TRAUMATURGY, 0, (1400 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_NECROMANCY, 0, (1400 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_AURA_FEAR, 0, (1500 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_AURA_SHIVER, 0, (1300 * 7) / 10 * 3, live);
+			do_Maia_skill2(Ind, SKILL_AURA_DEATH, 0, (1300 * 7) / 10 * 3, live);
 
 			p_ptr->s_info[SKILL_SCHOOL_MAGIC].dev = TRUE; //expand Wizardry, to notice newly acquired Udun school (EXP, compare tables.c)
-			do_Maia_skill2(Ind, SKILL_UDUN, 0, 515); //will get x2 below
+			do_Maia_skill2(Ind, SKILL_UDUN, 0, 515, live); //will get x2 below
 
-			Send_reliable(p_ptr->conn);
+			if (live) Send_reliable(p_ptr->conn);
 		}
 #endif
 
@@ -4309,11 +4313,11 @@ void shape_Maia_skills(int Ind) {
 		p_ptr->s_info[SKILL_HSUPPORT].mod = 0;
 
 #ifdef ENABLE_OCCULT
-		do_Maia_skill(Ind, SKILL_OSHADOW, 17);
+		do_Maia_skill(Ind, SKILL_OSHADOW, 17, live);
  #ifdef ENABLE_OUNLIFE
-		do_Maia_skill(Ind, SKILL_OUNLIFE, 17);
+		do_Maia_skill(Ind, SKILL_OUNLIFE, 17, live);
  #endif
-		//respec_skill(Ind, SKILL_OSPIRIT, FALSE, FALSE);
+		//if (live) respec_skill(Ind, SKILL_OSPIRIT, FALSE, FALSE);
 		p_ptr->s_info[SKILL_OSPIRIT].mod = 0;
  #ifdef ENABLE_OHERETICISM
   #ifdef ENABLE_HELLKNIGHT
@@ -4322,16 +4326,16 @@ void shape_Maia_skills(int Ind) {
 		    && p_ptr->pclass != CLASS_PRIEST
    #endif
 		    )
-			do_Maia_skill(Ind, SKILL_OHERETICISM, 21); //for Paladins/Priests it's been handled above already
+			do_Maia_skill(Ind, SKILL_OHERETICISM, 21, live); //for Paladins/Priests it's been handled above already
   #endif
  #endif
 #endif
 
 		/* Yay */
-		do_Maia_skill(Ind, SKILL_FIRE, 17);
-		do_Maia_skill(Ind, SKILL_AIR, 17);
-		do_Maia_skill(Ind, SKILL_CONVEYANCE, 17);
-		do_Maia_skill(Ind, SKILL_UDUN, 20);
+		do_Maia_skill(Ind, SKILL_FIRE, 17, live);
+		do_Maia_skill(Ind, SKILL_AIR, 17, live);
+		do_Maia_skill(Ind, SKILL_CONVEYANCE, 17, live);
+		do_Maia_skill(Ind, SKILL_UDUN, 20, live);
 #ifdef ENABLE_HELLKNIGHT /* blood magic skills were already converted above; this code here is just for 'normal' classes */
 	    if (p_ptr->pclass != CLASS_PALADIN
  #ifdef ENABLE_CPRIEST
@@ -4339,18 +4343,18 @@ void shape_Maia_skills(int Ind) {
  #endif
 	     ) {
 #endif
-		do_Maia_skill(Ind, SKILL_TRAUMATURGY, 30);
-		do_Maia_skill(Ind, SKILL_NECROMANCY, 30);
-		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
-		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
-		do_Maia_skill(Ind, SKILL_AURA_DEATH, 30);
-		do_Maia_skill(Ind, SKILL_AXE, 13);
+		do_Maia_skill(Ind, SKILL_TRAUMATURGY, 30, live);
+		do_Maia_skill(Ind, SKILL_NECROMANCY, 30, live);
+		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30, live);
+		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30, live);
+		do_Maia_skill(Ind, SKILL_AURA_DEATH, 30, live);
+		do_Maia_skill(Ind, SKILL_AXE, 13, live);
 #ifdef ENABLE_HELLKNIGHT
 	    }
 #endif
-		do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 13);
-		do_Maia_skill(Ind, SKILL_R_DARK, 17);
-		do_Maia_skill(Ind, SKILL_R_CHAO, 17);
+		do_Maia_skill(Ind, SKILL_MARTIAL_ARTS, 13, live);
+		do_Maia_skill(Ind, SKILL_R_DARK, 17, live);
+		do_Maia_skill(Ind, SKILL_R_CHAO, 17, live);
 
 #ifdef ENABLE_HELLKNIGHT
 		if (p_ptr->pclass == CLASS_PALADIN) {
@@ -4376,9 +4380,11 @@ void shape_Maia_skills(int Ind) {
 	case TRAIT_ENLIGHTENED:
 		/* Doh! */
 #if 0
-		respec_skill(Ind, SKILL_TRAUMATURGY, FALSE, FALSE);
-		respec_skill(Ind, SKILL_NECROMANCY, FALSE, FALSE);
-		respec_skill(Ind, SKILL_AURA_DEATH, FALSE, FALSE);
+		if (live) {
+			respec_skill(Ind, SKILL_TRAUMATURGY, FALSE, FALSE);
+			respec_skill(Ind, SKILL_NECROMANCY, FALSE, FALSE);
+			respec_skill(Ind, SKILL_AURA_DEATH, FALSE, FALSE);
+		}
 #endif
 		p_ptr->s_info[SKILL_TRAUMATURGY].mod = 0;
 		p_ptr->s_info[SKILL_NECROMANCY].mod = 0;
@@ -4389,31 +4395,31 @@ void shape_Maia_skills(int Ind) {
  #ifdef ENABLE_OUNLIFE
 		p_ptr->s_info[SKILL_OUNLIFE].mod = 0;
  #endif
-		do_Maia_skill(Ind, SKILL_OSPIRIT, 21);
+		do_Maia_skill(Ind, SKILL_OSPIRIT, 21, live);
  #ifdef ENABLE_OHERETICISM
 		p_ptr->s_info[SKILL_OHERETICISM].mod = 0;
  #endif
 #endif
 
 		/* Yay */
-		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30);
-		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30);
-		do_Maia_skill(Ind, SKILL_HOFFENSE, 21);
-		do_Maia_skill(Ind, SKILL_HCURING, 21);
-		do_Maia_skill(Ind, SKILL_HDEFENSE, 21);
-		do_Maia_skill(Ind, SKILL_HSUPPORT, 21);
-		do_Maia_skill(Ind, SKILL_DIVINATION, 17);
-		do_Maia_skill(Ind, SKILL_SWORD, 13);
-		do_Maia_skill(Ind, SKILL_BLUNT, 13);
-		do_Maia_skill(Ind, SKILL_POLEARM, 13);
-		do_Maia_skill(Ind, SKILL_R_LITE, 17);
-		do_Maia_skill(Ind, SKILL_R_MANA, 17);
+		do_Maia_skill(Ind, SKILL_AURA_FEAR, 30, live);
+		do_Maia_skill(Ind, SKILL_AURA_SHIVER, 30, live);
+		do_Maia_skill(Ind, SKILL_HOFFENSE, 21, live);
+		do_Maia_skill(Ind, SKILL_HCURING, 21, live);
+		do_Maia_skill(Ind, SKILL_HDEFENSE, 21, live);
+		do_Maia_skill(Ind, SKILL_HSUPPORT, 21, live);
+		do_Maia_skill(Ind, SKILL_DIVINATION, 17, live);
+		do_Maia_skill(Ind, SKILL_SWORD, 13, live);
+		do_Maia_skill(Ind, SKILL_BLUNT, 13, live);
+		do_Maia_skill(Ind, SKILL_POLEARM, 13, live);
+		do_Maia_skill(Ind, SKILL_R_LITE, 17, live);
+		do_Maia_skill(Ind, SKILL_R_MANA, 17, live);
 		break;
 	default: ;
 	}
 }
 #else /* shared player.pkg file */
-void shape_Maia_skills(int Ind) { }
+void shape_Maia_skills(int Ind, bool live) { }
 #endif
 
 /*
@@ -5017,7 +5023,7 @@ void check_experience(int Ind) {
 
 				msg_print(Ind, "\374\377GYou don't require worldly food anymore to sustain your body.");
 
-				shape_Maia_skills(Ind);
+				shape_Maia_skills(Ind, TRUE);
 				calc_techniques(Ind);
 
 				p_ptr->redraw |= PR_SKILLS | PR_MISC;
