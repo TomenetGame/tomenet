@@ -3193,6 +3193,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	struct account acc;
 	bool acc_banned = FALSE;
 	char acc_houses = 0;
+	player_race race_info_hack;
 
 	cptr accname = connp->nick, name = connp->c_name;
 	int race = connp->race, class = connp->class, trait = connp->trait, sex = connp->sex;
@@ -3230,8 +3231,21 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if (race < 0 || race >= MAX_RACE) race = 0;
 	if (class < 0 || class >= MAX_CLASS) class = 0;
 	if (trait < 0 || trait >= MAX_TRAIT) trait = 0;
+
 	/* Check for legal class */
-	if ((race_info[race].choice & BITS(class)) == 0) {
+	race_info_hack = race_info[race];
+	/* Hack for pvp-mode: Maiar are already initiated if they start at level 20+, so they might already be usually unavailable "sub"-classes! (SLFG0_PVP_MAIA): */
+	if (MIN_PVP_LEVEL >= 20 && race == RACE_MAIA && (sex & (MODE_PVP | MODE_DED_PVP)) && (FALSE
+#ifdef ENABLE_HELLKNIGHT
+	    || class == CLASS_HELLKNIGHT
+#endif
+#ifdef ENABLE_CPRIEST
+	    || class == CLASS_CPRIEST
+#endif
+	    ))
+		race_info_hack.choice |= BITS(class);
+	/* ..check.. */
+	if ((race_info_hack.choice & BITS(class)) == 0) {
 		s_printf("%s EXPLOIT_CLASS_CHOICE: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
 		return FALSE;
 	}
