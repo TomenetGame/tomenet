@@ -3463,11 +3463,11 @@ static int Handle_login(int ind) {
 #ifdef NEW_WILDERNESS_MAP_SCROLLS
 		p_ptr->obj_aware[lookup_kind(TV_SCROLL, SV_SCROLL_WILDERNESS_MAP)] = TRUE;
 #endif
-
-		/* For clients before 4.7.3a that don't support s_PVP_MAIA yet: */
-		if ((p_ptr->mode & MODE_PVP) && p_ptr->max_plv == MIN_PVP_LEVEL && p_ptr->prace == RACE_MAIA && !p_ptr->ptrait)
-			msg_print(NumPlayers, "\377RUse the \377o/trait\377R command BEFORE you level up to initiate your character!");
 	}
+
+	/* For clients before 4.7.3a that don't support s_PVP_MAIA yet: */
+	if ((p_ptr->mode & MODE_PVP) && p_ptr->max_plv == MIN_PVP_LEVEL && p_ptr->prace == RACE_MAIA && !p_ptr->ptrait)
+		msg_print(NumPlayers, "\377RUse the \377o/trait\377R command BEFORE you level up to initiate your character!");
 
 #ifdef ENABLE_DRACONIAN_TRAITS
 	if (p_ptr->prace == RACE_DRACONIAN && !p_ptr->ptrait) {
