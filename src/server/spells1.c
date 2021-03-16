@@ -9551,7 +9551,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!friendly_player && (typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE)
 		    && p_ptr->csp >= dam / 7 &&
 		    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO))) {
+		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO))) { //why all of NORF+NODF+NODO checks though?
 			/* drain mana */
 			p_ptr->csp -= dam / 7;
 			p_ptr->redraw |= PR_MANA;
@@ -9566,13 +9566,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    /* reflect? */
 	    || (p_ptr->reflect &&
 	     !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO)) &&
+	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY)) && // | PROJECT_NODF | PROJECT_NODO
 	     rand_int(20) < ((typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE) ? 15 : 9))
 #ifdef USE_BLOCKING
 	    /* using a shield? requires USE_BLOCKING */
 	    || (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect / 5)) &&
 	     !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO)) &&
+	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) && // | PROJECT_NODO
 	     rand_int(20) < ((typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE) ? 15 : 9))
 #endif
 	    ))
@@ -9632,7 +9632,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (!friendly_player &&  /* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
 	     /* jump for LOS projecting, stay for clouds; !norf was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
 	    !rad && (flg & PROJECT_KILL) &&
-	    !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF))
+	    !(flg & (PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) // PROJECT_NORF | 
 	    ) /* requires stances to * 2 etc.. post-king -> best stance */
 	{
 		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect) / ((flg & PROJECT_LODF) ? 2 : 1))) {
