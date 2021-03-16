@@ -1402,6 +1402,10 @@
 /* Use normal monster abilities instead of truly mirrored abilities?
    (This is basically a placeholder until a true mirror image is eventually implemented..) */
 #define SIMPLE_RI_MIRROR
+/* Reduced % of damage taken by the mirror */
+#define MIRROR_REDUCE_DAM_TAKEN 20
+/* Reduced % of damage dealt by the mirror */
+#define MIRROR_REDUCE_DAM_DEALT 20
 
 /* Monster ego power indices */
 #define RE_NONE			0

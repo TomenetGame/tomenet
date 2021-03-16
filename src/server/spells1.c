@@ -1845,6 +1845,8 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		q_ptr->idle_attack = 0;
 	}
 
+	if (Ind_attacker < 0 && Ind_attacker > PROJECTOR_UNUSUAL && m_list[-Ind_attacker].r_idx == RI_MIRROR) damage = (damage * MIRROR_REDUCE_DAM_DEALT + 99) / 100;
+
 	/* Amulet of Immortality */
 	if (p_ptr->admin_invuln) return;
 

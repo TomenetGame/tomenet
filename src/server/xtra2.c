@@ -10644,6 +10644,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
 
+	if (m_ptr->r_idx == RI_MIRROR) dam = (dam * MIRROR_REDUCE_DAM_TAKEN + 99) / 100;
+
 	if (!p_ptr->test_turn) p_ptr->test_turn = turn - 1; /* Start counting damage now */
 	p_ptr->test_count++;
 	p_ptr->test_dam += dam;
@@ -11425,6 +11427,8 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 	monster_type	*m_ptr = &m_list[m_idx];
 	monster_race    *r_ptr = race_inf(m_ptr);
 	s64b		new_exp;
+
+	if (m_ptr->r_idx == RI_MIRROR) return FALSE; /* Golem may not help here (maybe except as meat shield?) */
 
 	/* Redraw (later) if needed */
 	update_health(m_idx);
