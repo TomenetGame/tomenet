@@ -8550,6 +8550,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	int dtype = 0;
 	u32b dflags1 = 0x0, dflags2 = 0x0, dflags3 = 0x0;
 
+	/* Death Fate: Notify DMs just in case..*/
+	if (d_ptr && d_ptr->type == DI_DEATH_FATE && p_ptr) {
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (Players[i]->admin_dm) Players[i]->paging = 3;
+		}
+	}
 
 	/* Fixed layout (maybe first non-'DF2_RANDOM' dungeon?) */
 #ifdef DEATH_FATE_SPECIAL
@@ -8594,15 +8601,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			zcave[2][65].feat = 29; zcave[2][65].info = 7;
 			zcave[11][33].feat = 235; zcave[11][33].info = 7;
 			x = 33; y = 11;
-#ifdef TEST_SERVER /* Not implemented yet, so don't generate on live servers (admin only) */
 			place_monster_one(wpos, y, x + 1, RI_BLUE, 0, 0, 0, 0, 0);
-#else
-			/* Just notify DMs */
-			for (i = 1; i <= NumPlayers; i++) {
-				if (Players[i]->conn == NOT_CONNECTED) continue;
-				if (Players[i]->admin_dm) Players[i]->paging = 3;
-			}
-#endif
 			dun->l_ptr->flags2 |= LF2_BROKEN; //abuse this as indicator
 
 			new_level_down_x(wpos, startx);
