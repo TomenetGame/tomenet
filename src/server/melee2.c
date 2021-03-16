@@ -569,6 +569,8 @@ static void bolt(int Ind, int m_idx, int typ, int dam_hp, int sfx_typ) {
 	player_type *p_ptr = Players[Ind];
 	int flg = PROJECT_STOP | PROJECT_KILL;
 
+	if (typ == GF_CODE) flg |= PROJECT_NODO | PROJECT_NODF;
+
 #ifdef USE_SOUND_2010
  #if !defined(MONSTER_SFX_WAY) || (MONSTER_SFX_WAY < 1)
 	if (p_ptr->sfx_monsterattack)
@@ -2879,7 +2881,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a bolt of rune code of", m_name);
-		bolt(Ind, m_idx, GF_CODE, damroll(8, 8) + (rlev / 2), SFX_BOLT_MAGIC);
+		bolt(Ind, m_idx, GF_CODE, damroll(8, 8) + rlev, SFX_BOLT_MAGIC);
 		break;
 
 	/* RF5_BA_NUKE */

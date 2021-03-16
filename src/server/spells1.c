@@ -5934,6 +5934,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
 
+	if (m_ptr->r_idx == RI_BLUE && (flg & PROJECT_BOUN) && typ != GF_CODE) return FALSE;
+
 	/* There are a couple specific checks for this below, but we just handle everything with this one check here, for now */
 	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
 
@@ -9617,7 +9619,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			//project(0, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
-			project(0 - Ind, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL), "");
+			project(0 - Ind, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL|PROJECT_BOUN), "");
 		}
 
 		disturb(Ind, 1, 0);

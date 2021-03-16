@@ -4665,6 +4665,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		r_info[i].flags0 &= ~RF0_DISABLE_MASK;
 	}
 
+	r_info[RI_BLUE].flags6 &= ~RF6_HEAL;
 
 	/* No version yet */
 	if (!okay) return (2);

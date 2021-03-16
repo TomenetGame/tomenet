@@ -4434,6 +4434,7 @@
 
 #define PROJECT_STAR	0x00100000	/* Cast 8 rays and hit the central grid at target location. - Kurzel */
 #define PROJECT_TRAP	0x00200000	/* Caused by a set-up incident, added for blast charges (ENABLE_DEMOLITIONIST) to allow larger GF_DETONATION radius */
+#define PROJECT_BOUN	0x00400000	/* Attack has bounced at least once */
 
 /* ToME expansions */
 #if 0	/* soon */
