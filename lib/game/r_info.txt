@@ -20436,7 +20436,7 @@ D:and mutters unintelligibly about 'fixing' bugs of some sort..
 
 N:1153:mirror image
 G:p:c
-I:110:3d6:0:3:0
+I:110:3d6:255:3:0
 W:127:0:150:0
 E:1:1:2:2:1:2
 O:0:0:0:0
