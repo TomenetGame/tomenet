@@ -5945,13 +5945,14 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		r_ptr->blow[n].method = m_ptr->blow[n].method = RBM_NONE; //init to no attacks
 	}
 	/* ..transform pure damage-per-hit number into some averaged dice.. */
-	if (m < 5) i = 1;
-	else if (m < 10) i = 2;
-	else if (m < 15) i = 3;
-	else if (m < 25) i = 4;
+	if (m < 10) i = 1;
+	else if (m < 20) i = 2;
+	else if (m < 30) i = 3;
+	else if (m < 50) i = 4;
 	else i = 6;
+	m -= i;
 	for (n = 0; n < k; n++) {
-		r_ptr->blow[n].d_dice = m_ptr->blow[n].d_dice = i;
+		r_ptr->blow[n].d_dice = m_ptr->blow[n].d_dice = i * 2;
 		r_ptr->blow[n].d_side = m_ptr->blow[n].d_side = (m + i - 1) / i;
 		r_ptr->blow[n].method = m_ptr->blow[n].method = RBM_HIT;
 		r_ptr->blow[n].effect = m_ptr->blow[n].effect = RBE_HURT; //no brands as explained above
