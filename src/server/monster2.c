@@ -6469,81 +6469,14 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		r_ptr->flags5 |= RF5_BRAIN_SMASH; magicness++; //RF5_MIND_BLAST
 	}
 
- #if 0
-RF4_BR_ACID
-RF4_BR_ELEC
-RF4_BR_FIRE
-RF4_BR_COLD
-RF4_BR_POIS
-RF4_BR_NETH
-RF4_BR_LITE
-RF4_BR_DARK
-RF4_BR_CONF
-RF4_BR_SOUN
-RF4_BR_CHAO
-RF4_BR_DISE
-RF4_BR_NEXU
-RF4_BR_TIME
-RF4_BR_INER
-RF4_BR_GRAV
-RF4_BR_SHAR
-RF4_BR_PLAS
-RF4_BR_WALL
-RF4_BR_MANA
-RF4_BR_DISI
-RF4_BR_NUKE
-	/* Flags 5 */
-RF5_BA_FIRE
-RF5_BA_ACID
-RF5_BA_ELEC
-RF5_BA_COLD
-RF5_BA_POIS
-RF5_BA_NETH
-RF5_BA_WATE
-RF5_BA_DARK
-RF5_DRAIN_MANA
-RF5_MIND_BLAST
-RF5_BRAIN_SMASH
-RF5_CURSE
-RF5_BA_MANA
-RF5_BA_NUKE
-RF5_BA_CHAO
-RF5_BO_FIRE
-RF5_BO_MANA
-RF5_BO_ACID
-RF5_BO_ELEC
-RF5_BO_FIRE
-RF5_BO_COLD
-RF5_BO_POIS
-RF5_BO_NETH
-RF5_BO_WATE
-RF5_BO_PLAS
-RF5_BO_ICEE
-RF5_SLOW
-RF5_MISSILE
-	/* Flags 6 */
-RF6_TRAPS
-RF6_HASTE
-RF6_HEAL
-RF6_BLINK
-RF6_TPORT
-RF6_TELE_TO
-RF6_TELE_AWAY
-	/* Flags 0 */
-RF0_BO_DISE
-RF0_BA_DISE
-RF0_BR_ICE
-RF0_BR_WATER
- #endif
-
- #if 0
-	//urgh.. the holy schools.. how 2 do?
-	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-
- #endif
+	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) {
+		//r_ptr->flags5 |= RF5_CURSE; magicness++; //low damage?
+		r_ptr->flags0 |= RF0_BA_DISE; magicness++; //"OoD" -_-
+		if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_CHAO; magicness++; } //bolt
+	}
+	//if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here! all accounted for
+	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags6 |= RF6_HEAL; magicness++; }
+	//if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; } -- nothing here!
 
 	/* Flags 7 */
 	//if (p_ptr->pclass == CLASS_MAGE) r_ptr->flags7 |= RF7_AI_ANNOY; -- no, because the monster should chase the player in any case
