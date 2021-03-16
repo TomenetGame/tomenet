@@ -5916,6 +5916,8 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	i = p_ptr->ac + p_ptr->to_a;
 #else
 	i = p_ptr->ac + p_ptr->to_a + p_ptr->overall_tohit_m;
+	/* Kinetic Shield gives extra AC */
+	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) i += 50;
 #endif
 	if (m_ptr->org_ac < i) {
 		n = i - m_ptr->org_ac;
@@ -5926,11 +5928,8 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 #ifdef SIMPLE_RI_MIRROR
 	/* Determine melee hit chance - HACK:
 	   Since monsters don't really have a specific "hit chance", instead of increasing the
-	   monster's hit chance we decrease the player's hit chance, by increasing the monster's AC. */
- #if 0 /* done above instead */
-	m_ptr->org_ac += p_ptr->overall_tohit_m;
-	m_ptr->ac += p_ptr->overall_tohit_m;
- #endif
+	   monster's hit chance we decrease the player's hit chance, by increasing the monster's AC.
+	   (done further down) */
 
 	/* Determine melee damage */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
@@ -6390,7 +6389,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 
 	if (get_skill(p_ptr, SKILL_DRUID_ARCANE) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BA_POIS; magicness++;
-		r_ptr->flags0 |= RF0_BR_ICE; magicness++; //pft
+		r_ptr->flags0 |= RF0_BR_ICE; magicness++; //ball
 	}
 	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL) >= thresh_spell) {
 		r_ptr->flags6 |= RF6_HASTE; magicness++;
@@ -6401,7 +6400,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_CURSE; magicness++; //curse.. to low dmg -_-
 		r_ptr->flags5 |= RF5_BA_ELEC; magicness++; //bolt
-		r_ptr->flags4 |= RF4_BR_LITE; magicness++; //pft/bolt
+		r_ptr->flags4 |= RF4_BR_LITE; magicness++; //bolt
 	}
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;//bolt
@@ -6416,6 +6415,40 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
  #endif
 		r_ptr->flags2 |= RF2_REGENERATE; //Nether Sap weak version
 		r_ptr->flags5 |= RF5_BA_NETH; //bolt
+	}
+
+	if (get_skill(p_ptr, SKILL_R_LITE) >= thresh_spell) {
+		r_ptr->flags4 |= RF4_BR_LITE; magicness++; //ball
+		//SKILL_R_DARK -> conf
+		if (get_skill(p_ptr, SKILL_R_NEXU) >= thresh_spell) { r_ptr->flags4 |= RF4_BR_INER; magicness++; }
+		if (get_skill(p_ptr, SKILL_R_NETH) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_ELEC; magicness++; }
+		if (get_skill(p_ptr, SKILL_R_CHAO) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; }
+		if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_WATE; magicness++; }
+	}
+	if (get_skill(p_ptr, SKILL_R_DARK) >= thresh_spell) {
+		r_ptr->flags5 |= RF5_BA_DARK; magicness++;
+		if (get_skill(p_ptr, SKILL_R_NEXU) >= thresh_spell) { r_ptr->flags4 |= RF4_BR_GRAV; magicness++; }
+		if (get_skill(p_ptr, SKILL_R_NETH) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_COLD; magicness++; }
+		if (get_skill(p_ptr, SKILL_R_CHAO) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_ACID; magicness++; }
+		if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_POIS; magicness++; }
+	}
+	if (get_skill(p_ptr, SKILL_R_NEXU) >= thresh_spell) {
+		r_ptr->flags4 |= RF4_BR_NEXU; magicness++; //ball
+		if (get_skill(p_ptr, SKILL_R_NETH) >= thresh_spell) { r_ptr->flags4 |= RF4_BR_TIME; magicness++; }
+		if (get_skill(p_ptr, SKILL_R_CHAO) >= thresh_spell) { r_ptr->flags4 |= RF4_BR_SOUN; magicness++; }
+		if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) { r_ptr->flags4 |= RF4_BR_SHAR; magicness++; }
+	}
+	if (get_skill(p_ptr, SKILL_R_NETH) >= thresh_spell) {
+		r_ptr->flags5 |= RF5_BA_NETH; magicness++;
+		if (get_skill(p_ptr, SKILL_R_CHAO) >= thresh_spell) { r_ptr->flags0 |= RF0_BA_DISE; magicness++; }//hellfire...
+		if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) { r_ptr->flags4 |= RF4_BR_WALL; magicness++; }//too low damage?
+	}
+	if (get_skill(p_ptr, SKILL_R_CHAO) >= thresh_spell) {
+		r_ptr->flags5 |= RF5_BA_CHAO; magicness++;
+		if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) { r_ptr->flags0 |= RF0_BA_DISE; magicness++; }
+	}
+	if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) {
+		r_ptr->flags5 |= RF5_BA_MANA; magicness++;
 	}
 
  #if 0
@@ -6485,22 +6518,30 @@ RF0_BR_ICE
 RF0_BR_WATER
  #endif
 
+	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) {
+		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY; magicness++;
+		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;
+		r_ptr->flags5 |= RF5_BA_COLD; magicness++;
+		//kinetic shield: extra ac given further up
+	}
+	if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; }
+	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) {
+		//we got psi-immunity vs 40+ MCs! So no need to replicate the Psionic Blast/Storm spells maybe
  #if 0
-	if (get_skill(p_ptr, SKILL_R_LITE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_DARK) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_NEXU) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_NETH) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_CHAO) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+		r_ptr->flags5 |= RF5_SLOW; magicness++;
+ #else
+		r_ptr->flags4 |= RF4_BR_INER; magicness++; //too harsh?
+ #endif
+		r_ptr->flags5 |= RF5_BRAIN_SMASH; magicness++; //RF5_MIND_BLAST
+	}
 
+ #if 0
+	//urgh.. the holy schools.. how 2 do?
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 
-	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
  #endif
 
 	/* Flags 7 */
