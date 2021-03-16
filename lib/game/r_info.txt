@@ -20424,12 +20424,14 @@ D:tune.."
 
 N:1152:guy in blue robes
 G:p:b
-I:130:100d100:0:50:0
+I:140:100d100:255:50:0
 W:127:0:150:0
 E:1:1:2:2:1:2
 O:0:0:0:0
 B:TOUCH:*
-F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP | NO_CREDIT | NO_REDUCE
+F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP | NO_CREDIT | NO_REDUCE | NEVER_MOVE
+S:1_IN_3
+S:BO_WATE | BO_PLASMA | BO_MANA | BO_CODE | HEAL
 D:A strange guy in blue clothes, speaking with an unknown foreign accent.
 D:He looks around with an odd mixture of annoyance, surprise and impatience
 D:and mutters unintelligibly about 'fixing' bugs of some sort..
