@@ -10646,12 +10646,22 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	if (m_ptr->r_idx == RI_MIRROR) dam = (dam * MIRROR_REDUCE_DAM_TAKEN + 99) / 100;
 	if (m_ptr->r_idx == RI_BLUE) {
-		if (m_ptr->extra) {
-			m_ptr->extra = 0;
+		if (m_ptr->extra > 1) return FALSE; //paranoia?
+		if (m_ptr->extra == 1) {
 			if (m_ptr->hp <= dam) {
+				int i;
+
+				for (i = 1; i <= NumPlayers; i++) {
+					if (!in_deathfate(&p_ptr->wpos)) continue;
+					p_ptr->paralyzed = 20;
+					p_ptr->redraw |= PR_STATE;
+				}
+
 				msg_print_near_monster(m_idx, "calls it a day..");
+				m_ptr->extra = 2;
 				return FALSE;
 			}
+			m_ptr->extra = 0;
 		} else {
 			if (m_ptr->hp <= r_ptr->hdice * r_ptr->hside / 5) {
 				msg_print_near_monster(m_idx, "waves a hand, casting a veil of blue mist around himself..");
