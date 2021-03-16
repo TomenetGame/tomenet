@@ -5941,7 +5941,9 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		m = (m * p_ptr->num_blow + 3) / 4;
 	} else k = p_ptr->num_blow;
 	/* Set monster blows */
-	for (n = 0; n < 4; n++) r_ptr->blow[n].method = RBM_NONE; //init to no attacks
+	for (n = 0; n < 4; n++) {
+		r_ptr->blow[n].method = m_ptr->blow[n].method = RBM_NONE; //init to no attacks
+	}
 	/* ..transform pure damage-per-hit number into some averaged dice.. */
 	if (m < 5) i = 1;
 	else if (m < 10) i = 2;
@@ -5949,15 +5951,15 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	else if (m < 25) i = 4;
 	else i = 6;
 	for (n = 0; n < k; n++) {
-		r_ptr->blow[n].d_dice = i;
-		r_ptr->blow[n].d_side = (m + i - 1) / i;
-		r_ptr->blow[n].method = RBM_HIT;
-		r_ptr->blow[n].effect = RBE_HURT; //no brands as explained above
+		r_ptr->blow[n].d_dice = m_ptr->blow[n].d_dice = i;
+		r_ptr->blow[n].d_side = m_ptr->blow[n].d_side = (m + i - 1) / i;
+		r_ptr->blow[n].method = m_ptr->blow[n].method = RBM_HIT;
+		r_ptr->blow[n].effect = m_ptr->blow[n].effect = RBE_HURT; //no brands as explained above
 	}
 	/* Just some flavour variety for MA */
 	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) >= p_ptr->max_plv / 2) {
-		r_ptr->blow[1].method = RBM_PUNCH;
-		r_ptr->blow[2].method = RBM_KICK;
+		r_ptr->blow[1].method = m_ptr->blow[1].method = RBM_PUNCH;
+		r_ptr->blow[2].method = m_ptr->blow[2].method = RBM_KICK;
 	}
 #endif
 
@@ -6304,7 +6306,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		/* boost damage */
 		for (n = 0; n < 4; n++) {
 			if (r_ptr->blow[n].method == RBM_NONE) continue;
-			r_ptr->blow[n].d_side = (r_ptr->blow[n].d_side * 100) / (100 - m);
+			r_ptr->blow[n].d_side = m_ptr->blow[n].d_side = (r_ptr->blow[n].d_side * 100) / (100 - m);
 		}
 	}
 
