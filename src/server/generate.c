@@ -8594,12 +8594,21 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			zcave[2][65].feat = 29; zcave[2][65].info = 7;
 			zcave[11][33].feat = 235; zcave[11][33].info = 7;
 			x = 33; y = 11;
+#ifdef TEST_SERVER /* Not implemented yet, so don't generate on live servers (admin only) */
 			place_monster_one(wpos, y, x + 1, RI_BLUE, 0, 0, 0, 0, 0);
+#else
+			/* Just notify DMs */
+			for (i = 1; i <= NumPlayers; i++) {
+				if (Players[i]->conn == NOT_CONNECTED) continue;
+				if (Players[i]->admin_dm) Players[i]->paging = 3;
+			}
+#endif
 			dun->l_ptr->flags2 |= LF2_BROKEN; //abuse this as indicator
 
 			new_level_down_x(wpos, startx);
 			new_level_down_y(wpos, starty);
-		}
+			s_printf("DF-way (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
+		} else s_printf("DF-mirror (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
 		//wipe_m_list(&p_ptr->wpos);
 
 		/* reattach objects and monsters */
@@ -8639,6 +8648,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		//wipe_m_list(&p_ptr->wpos);
 
 		level_generation_time = FALSE;
+		s_printf("DF-party (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
 		return;
 	}
 	/* Always generate basic death fate from template for a bit more visuals, instead of the auto-generated, basically empty floor? */
@@ -8662,6 +8672,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		level_generation_time = TRUE;
 		process_dungeon_file("t_ruins.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		level_generation_time = FALSE;
+		s_printf("DF-ruins (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
 		return;
 	}
 

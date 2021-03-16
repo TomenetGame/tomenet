@@ -306,6 +306,8 @@
    using cmd_locate(). */
 #define LOCATE_KEEPS_OVL
 
+#define DEATH_FATE_SPECIAL	/* Death Fate special */
+
 /* Enable o_*.lua 'Occult' magic schools (shamans, rogues, adventurers) */
 #define ENABLE_OCCULT
 
@@ -375,8 +377,6 @@
  #define TELEPORT_SURPRISES 5	/* monsters are surprised for a short moment (0.1s * n) if a player long-range teleported next to them */
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
-
- #define DEATH_FATE_SPECIAL	/* Death Fate special */
 
  //#define ENABLE_SUBINVEN	/* Alchemy Satchels as inventory extension */
 #endif

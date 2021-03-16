@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 13. March 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 16. March 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -7279,8 +7279,7 @@ See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
 enter any dungeon you like at any character level.
 
 (***) Death Fate:
-You cannot escape this dungeon, ever. Any character that enters it is fated to
-die to monsters (unlikely) or starvation (very likely).
+Will this be the end of you as you cannot seem to spot a way to escape?
 
 (****) Cloud Planes details:
 -To enter the Cloud Planes a player must carry the 'King'/'Queen' title,
