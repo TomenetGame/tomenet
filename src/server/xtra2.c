@@ -10653,7 +10653,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 				for (i = 1; i <= NumPlayers; i++) {
 					if (!in_deathfate(&p_ptr->wpos)) continue;
-					p_ptr->paralyzed = 20;
+					p_ptr->paralyzed = 15;
 					p_ptr->redraw |= PR_STATE;
 				}
 
