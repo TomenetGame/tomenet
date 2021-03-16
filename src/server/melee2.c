@@ -8938,7 +8938,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		m_ptr->extra++; //we begin here at 3 basically
 		if (m_ptr->extra == 10) floor_msg_format(wpos, "The guy in blue robes mumbles something about having a cool cave beer..");
 		if (m_ptr->extra < 6) ;
-		else if (m_ptr->extra < 23) { //move right
+		else if (m_ptr->extra < 26) { //move right
 			zcave[oy][ox].m_idx = 0;
 			m_ptr->fx++;
 			who = zcave[oy][m_ptr->fx].m_idx;
@@ -8950,7 +8950,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			everyone_lite_spot(wpos, oy, ox);
 			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
 			update_mon(m_idx, FALSE);//TRUE?
-		} else if (m_ptr->extra < 32) { //move up
+		} else if (m_ptr->extra < 35) { //move up
 			zcave[oy][ox].m_idx = 0;
 			m_ptr->fy--;
 			who = zcave[m_ptr->fy][ox].m_idx;
@@ -8962,12 +8962,12 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			everyone_lite_spot(wpos, oy, ox);
 			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
 			update_mon(m_idx, FALSE);//TRUE?
-		} else if (m_ptr->extra < 36) { //open door ^^
-			if (m_ptr->extra == 34) {
+		} else if (m_ptr->extra < 39) { //open door ^^
+			if (m_ptr->extra == 37) {
 				zcave[2][55].feat = FEAT_UNSEALED_DOOR;
 				everyone_lite_spot(wpos, 2, 55);
 			}
-		} else if (m_ptr->extra < 46) { //move right
+		} else if (m_ptr->extra < 49) { //move right
 			zcave[oy][ox].m_idx = 0;
 			m_ptr->fx++;
 			who = zcave[oy][m_ptr->fx].m_idx;
