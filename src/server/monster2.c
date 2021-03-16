@@ -5899,27 +5899,27 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	/* Who knows the silylness.. */
 	m_ptr->level = r_ptr->level = p_ptr->max_plv;
 
-	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system) */
+	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system): */
+	/* Determine speed */
 	if (m_ptr->speed < p_ptr->pspeed) m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
+	/* Determine HP */
 	if (m_ptr->org_maxhp < p_ptr->mhp) {
 		n = p_ptr->mhp - m_ptr->org_maxhp;
 		m_ptr->org_maxhp += n;
 		m_ptr->maxhp += n;
 		m_ptr->hp += n;
 	}
+	/* Determine AC */
 #ifndef SIMPLE_RI_MIRROR
-	if (m_ptr->org_ac < p_ptr->ac + p_ptr->to_a) {
-		n = p_ptr->ac + p_ptr->to_a - m_ptr->org_ac;
-		m_ptr->org_ac += n;
-		m_ptr->ac += n;
-	}
+	i = p_ptr->ac + p_ptr->to_a;
 #else
-	if (m_ptr->org_ac - p_ptr->overall_tohit_m < p_ptr->ac + p_ptr->to_a) {
-		n = p_ptr->ac + p_ptr->to_a - m_ptr->org_ac + p_ptr->overall_tohit_m;
+	i = p_ptr->ac + p_ptr->to_a + p_ptr->overall_tohit_m;
+#endif
+	if (m_ptr->org_ac < i) {
+		n = i - m_ptr->org_ac;
 		m_ptr->org_ac += n;
 		m_ptr->ac += n;
 	}
-#endif
 
 #ifdef SIMPLE_RI_MIRROR
 	/* Determine melee hit chance - HACK:
