@@ -2879,7 +2879,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a bolt of rune code of", m_name);
-		bolt(Ind, m_idx, GF_CODE, damroll(8, 8) + (rlev / 3), SFX_BOLT_MAGIC);
+		bolt(Ind, m_idx, GF_CODE, damroll(8, 8) + (rlev / 2), SFX_BOLT_MAGIC);
 		break;
 
 	/* RF5_BA_NUKE */
