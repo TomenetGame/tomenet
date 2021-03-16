@@ -10666,7 +10666,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			if (m_ptr->hp <= r_ptr->hdice * r_ptr->hside / 5) {
 				msg_print_near_monster(m_idx, "waves a hand, casting a veil of blue mist around himself..");
 				m_ptr->hp = (r_ptr->hdice * r_ptr->hside * (6 + rand_int(4))) / 10;
-				return FALSE;
 			}
 		}
 	}

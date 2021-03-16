@@ -8840,6 +8840,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				m_ptr->csleep = do_sleep;
 			}
 
+			/* Suppress wrong 'dies' message */
+			if (m_ptr->r_idx == RI_BLUE && m_ptr->extra == 2) quiet = TRUE;
+
 			/* Give detailed messages if visible or destroyed */
 			/* DEG Changed for added damage message. */
 			if (!quiet) {

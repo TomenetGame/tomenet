@@ -1777,7 +1777,7 @@ static void regen_monsters(void) {
 			/* Hack -- Some monsters regenerate quickly */
 			if (r_ptr->flags2 & RF2_REGENERATE) frac *= 2;
 
-			if (m_ptr->r_idx == RI_BLUE) frac /= 25;
+			if (m_ptr->r_idx == RI_BLUE) frac /= 40;
 
 			/* Hack -- Regenerate */
 			m_ptr->hp += frac;
