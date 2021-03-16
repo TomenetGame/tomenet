@@ -6538,6 +6538,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						msg_print(Ind, "You are not allowed to enter the sickbay.");
 					} else if (c_ptr->feat == FEAT_WEB) {
 						msg_print(Ind, "There are thick spiderwebs blocking your way.");
+					} else if (c_ptr->feat == FEAT_GRAND_MIRROR) {
+						msg_print(Ind, "There is a grand mirror in your way.");
 					/* Wall (or secret door) */
 					} else if (c_ptr->feat != FEAT_SIGN) {
 						msg_print(Ind, "There is a wall blocking your way.");
