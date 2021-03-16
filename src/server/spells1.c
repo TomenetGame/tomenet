@@ -1750,6 +1750,7 @@ byte spell_color(int type) {
 	case GF_HOLY_ORB:	return (TERM_HOLYORB);
 	case GF_HOLY_FIRE:	return (TERM_HOLYFIRE);
 	case GF_HELLFIRE:	return (TERM_HELLFIRE);
+	case GF_CODE:		return (TERM_SHIELDI);
 	case GF_MANA:		return (TERM_MANA);
 	case GF_SHOT:		return (TERM_SLATE);
 	case GF_ARROW:		return (TERM_L_UMBER);
@@ -6855,6 +6856,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 	/* Pure damage */
+	case GF_CODE:
+		if (seen) obvious = TRUE;
+		break;
 	case GF_MANA:
 		if (r_ptr->flags9 & RF9_RES_MANA) {
 			dam /= 3;
@@ -10295,6 +10299,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* Pure damage */
+	case GF_CODE:
+		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer, -who);
+		break;
 	case GF_MANA:
 		if (p_ptr->resist_mana) { dam *= 6; dam /= (randint(6) + 6); }
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
@@ -13391,6 +13400,9 @@ int approx_damage(int m_idx, int dam, int typ) {
 			}
 			break;
 		}
+
+	case GF_CODE:
+		break;
 
 	case GF_MANA:
 		if (r_ptr->flags9 & RF9_RES_MANA)
