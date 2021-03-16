@@ -5867,6 +5867,7 @@ void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_p
 	/* Immutable stats: */
 	if (p_ptr->male) r_ptr->flags1 |= RF1_MALE; else r_ptr->flags1 |= RF1_FEMALE;
 	r_ptr->flags2 |= RF2_SMART | RF2_POWERFUL | RF2_OPEN_DOOR | RF2_BASH_DOOR; //note that RF2_POWERFUL covers resist_blind(!)
+#ifndef SIMPLE_RI_MIRROR /* evil-slaying effects etc aren't mirrorable in simple terms, so just view a 'mirror image' as neutral instead. */
 	switch (p_ptr->prace) {
 	case RACE_ENT: r_ptr->flags3 |= RF3_SUSCEP_FIRE; break; //yep
 	case RACE_VAMPIRE: r_ptr->flags3 |= RF3_UNDEAD; break;
@@ -5877,6 +5878,7 @@ void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_p
 	}
 	if (p_ptr->ptrait == TRAIT_CORRUPTED) r_ptr->flags3 |= RF3_DEMON;
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) r_ptr->flags3 |= RF3_GOOD;
+#endif
 	/* Add static parts of all racial/class fixed boni/mali (eg vampire light-susc) so we save some workload later when
 	   adjusting/updating stats continuously, when it comes to changable flags induced by items/monsterforms.
 	   (Unfortunately not even flags granted by skills are safe here, as the player might skill up during the fight =P.) */
@@ -5889,7 +5891,8 @@ void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_p
 	   so that fact alone might work as a balancing factor for mimics' extra powers. >:) */
 }
 void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
-	int n, magicness = 0;
+	int i, k, m, n, magicness = 0;
+	object_type *o_ptr, *o2_ptr;
 
 	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system) */
 	if (m_ptr->speed < p_ptr->pspeed) m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
@@ -5904,6 +5907,55 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		m_ptr->org_ac += n;
 		m_ptr->ac += n;
 	}
+
+#ifdef SIMPLE_RI_MIRROR
+	/* Determine melee hit chance - HACK:
+	   Since monsters don't really have a specific "hit chance", instead of increasing the
+	   monster's hit chance we decrease the player's hit chance, by increasing the monster's AC. */
+	m_ptr->org_ac += p_ptr->overall_tohit_m;
+	m_ptr->ac += p_ptr->overall_tohit_m;
+
+	/* Determine melee damage */
+	o_ptr = &p_ptr->inventory[INVEN_WIELD];
+	o2_ptr = &p_ptr->inventory[INVEN_ARM];
+	m = n = 0;
+	if (o_ptr->k_idx) {
+		m = ((o_ptr->dd + 1) * o_ptr->ds + 1) / 2;
+		if (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD) n = ((o2_ptr->dd + 1) * o2_ptr->ds + 1) / 2;
+	} else if (o2_ptr->k_idx && o2_ptr->tval != TV_SHIELD) m = ((o2_ptr->dd + 1) * o2_ptr->ds + 1) / 2;
+	/* Anti-exploit: Player might switch between main-hand and dual-hand,
+	   so we just keep the highest possible damage variation */
+	m = (m >= n ? m : n);
+	m += p_ptr->overall_todam_m;
+	/* Note: We don't apply p_ptr->melee_brand or item-brands etc,
+	   because it's too tricky to sort out combinations of them for monsters against player resistances,
+	   as monsters can only apply one type of brand per attack unlike the player who can stack brands (and slays). */
+	/* Define monster blows */
+	if (p_ptr->num_blow > 4) { /* Monsters cannot have more than 4 bpr so need to adjust damage for proper splitting.. */
+		k = 4;
+		m = (m * p_ptr->num_blow + 3) / 4;
+	} else k = p_ptr->num_blow;
+	/* Set monster blows */
+	for (n = 0; n < 4; n++) r_ptr->blow[n].method = RBM_NONE; //init to no attacks
+	/* ..transform pure damage-per-hit number into some averaged dice.. */
+	if (m < 5) i = 1;
+	else if (m < 10) i = 2;
+	else if (m < 15) i = 3;
+	else if (m < 25) i = 4;
+	else i = 6;
+	for (n = 0; n < k; n++) {
+		r_ptr->blow[n].d_dice = i;
+		r_ptr->blow[n].d_side = (m + i - 1) / i;
+		r_ptr->blow[n].method = RBM_HIT;
+		r_ptr->blow[n].effect = RBE_HURT; //no brands as explained above
+	}
+	/* Just some flavour variety for MA */
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS) >= p_ptr->max_plv / 2) {
+		r_ptr->blow[1].method = RBM_PUNCH;
+		r_ptr->blow[2].method = RBM_KICK;
+	}
+#endif
+
 	/* Adjustable flags - cumulative again, ie don't get removed, just stacked up further, hah! */
 	if (p_ptr->no_cut) r_ptr->flags8 |= RF8_NO_CUT;
 	if (p_ptr->regenerate) r_ptr->flags2 |= RF2_REGENERATE;
@@ -5929,7 +5981,8 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	//RF2_STUPID,RF2_COLD_BLOOD,RF2_EMPTY_MIND(already RF7_NO_ESP),
 	//RF2_PASS_WALL,
 	r_ptr->flags2 |= RF2_KILL_WALL; //disallow stoneprison/wallcreation refuges
-	if (p_ptr->prace == RACE_VAMPIRE) r_ptr->flags2 |= RF2_COLD_BLOOD;
+	//if (p_ptr->prace == RACE_VAMPIRE) r_ptr->flags2 |= RF2_COLD_BLOOD;
+	r_ptr->flags2 |= RF2_COLD_BLOOD; //it's a mirror image anyway!
 
 	/* Flags 3 */
 	//RF3_AI_HYBRID,RF3_HURT_LITE,RF3_HURT_ROCK
@@ -5952,7 +6005,6 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 
 	//RF4_UNMAGIC,RF4_BOULDER,
 	//RF5_SCARE,RF5_BLIND,RF5_CONF,RF5_HOLD,
-	//Discard the lower-power versions: RF5_BO_MANA,RF5_BO_FIRE,
 	//RF6_FORGET,RF6_DARKNESS,
 
 	/* Note: We actually ignore mimic powers at this time.. */
@@ -5969,28 +6021,32 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 			//case SV_WAND_SLEEP_MONSTER:
 			//case SV_WAND_CONFUSE_MONSTER:
 			//case SV_WAND_FEAR_MONSTER:
-			//case SV_WAND_POLYMORPH:
+			//case SV_WAND_POLYMORPH:  //note: hard-coded immune to poly (and to cloning too)
 			//case SV_WAND_WALL_CREATION:
+			case SV_WAND_ACID_BOLT: r_ptr->flags5 |= RF5_BO_ACID; magicness++; break;
+			case SV_WAND_FIRE_BOLT: r_ptr->flags5 |= RF5_BO_FIRE; magicness++; break;
+			case SV_WAND_ELEC_BOLT: r_ptr->flags5 |= RF5_BO_ELEC; magicness++; break;
+			case SV_WAND_COLD_BOLT: r_ptr->flags5 |= RF5_BO_COLD; magicness++; break;
+			case SV_WAND_ACID_BALL: r_ptr->flags5 |= RF5_BA_ACID; magicness++; break;
+			case SV_WAND_ELEC_BALL: r_ptr->flags5 |= RF5_BA_ELEC; magicness++; break;
+			case SV_WAND_FIRE_BALL: r_ptr->flags5 |= RF5_BA_FIRE; magicness++; break;
+			case SV_WAND_COLD_BALL: r_ptr->flags5 |= RF5_BA_COLD; magicness++; break;
+			case SV_WAND_DRAGON_FIRE: r_ptr->flags5 |= RF5_BA_FIRE; magicness++; break;
+			case SV_WAND_DRAGON_COLD: r_ptr->flags5 |= RF5_BA_COLD; magicness++; break;
+			case SV_WAND_DRAGON_BREATH: r_ptr->flags5 |= RF5_BA_ELEC | RF5_BA_ACID | RF5_BA_COLD | RF5_BA_FIRE | RF5_BA_POIS; magicness++; break;
 			case SV_WAND_ROCKETS: r_ptr->flags4 |= RF4_ROCKET; magicness++; break;
+			case SV_WAND_STINKING_CLOUD: r_ptr->flags5 |= RF5_BA_POIS; magicness++; break;
+			case SV_WAND_MAGIC_MISSILE: r_ptr->flags5 |= RF5_BO_MANA; magicness++; break;
+			case SV_WAND_TELEPORT_AWAY: r_ptr->flags6 |= RF6_TELE_AWAY; magicness++; break;
+			case SV_WAND_TELEPORT_TO: r_ptr->flags6 |= RF6_TELE_TO; magicness++; break;
  #if 0
-			case SV_WAND_TELEPORT_AWAY: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_TELEPORT_TO: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_SLOW_MONSTER: r_ptr->flags |= RF_; magicness++; break;
+			case SV_WAND_SLOW_MONSTER: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
+ #else
+			case SV_WAND_SLOW_MONSTER: r_ptr->flags4 |= RF4_BR_INER; magicness++; break; //too harsh?
+ #endif
+ #if 0 /* hrrm - I guess we have no choice but just to make the mirror image actually hard-coded immune to these then (BR_NUKE etc is no alternative) */
 			case SV_WAND_DRAIN_LIFE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_STINKING_CLOUD: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_MAGIC_MISSILE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_ACID_BOLT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_FIRE_BOLT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_ELEC_BOLT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_COLD_BOLT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_ACID_BALL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_ELEC_BALL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_FIRE_BALL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_COLD_BALL: r_ptr->flags |= RF_; magicness++; break;
 			case SV_WAND_ANNIHILATION: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_DRAGON_FIRE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_DRAGON_COLD: r_ptr->flags |= RF_; magicness++; break;
-			case SV_WAND_DRAGON_BREATH: r_ptr->flags |= RF_; magicness++; break;
  #endif
 			}
 			break;
@@ -6004,22 +6060,27 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 			//case SV_STAFF_STARLITE:
 			//case SV_STAFF_LITE:
 			//case SV_STAFF_PROBING:
- #if 0
-			case SV_STAFF_TELEPORTATION: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_CURE_SERIOUS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_CURING: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_HEALING: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_THE_MAGI: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_SLEEP_MONSTERS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_SLOW_MONSTERS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_SPEED: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_DISPEL_EVIL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_POWER: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_HOLINESS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_STAFF_GENOCIDE: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_STAFF_THE_MAGI: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_STAFF_CURING: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_STAFF_SLEEP_MONSTERS: r_ptr->flags |= RF_; magicness++; break;
+
+			//case SV_STAFF_DISPEL_EVIL: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_STAFF_HOLINESS: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_STAFF_GENOCIDE: r_ptr->flags |= RF_; magicness++; break;
+ #if 0 /* forbid these two on the floor simply */
 			case SV_STAFF_EARTHQUAKES: r_ptr->flags |= RF_; magicness++; break;
 			case SV_STAFF_DESTRUCTION: r_ptr->flags |= RF_; magicness++; break;
  #endif
+			case SV_STAFF_TELEPORTATION: r_ptr->flags6 |= RF6_TPORT; magicness++; break;
+			case SV_STAFF_CURE_SERIOUS: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
+			case SV_STAFF_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
+			case SV_STAFF_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break;
+ #if 0
+			case SV_STAFF_SLOW_MONSTERS: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
+ #else
+			case SV_STAFF_SLOW_MONSTERS: r_ptr->flags4 |= RF4_BR_INER; magicness++; break; //too harsh?
+ #endif
+			case SV_STAFF_POWER: r_ptr->flags4 |= RF4_BR_DISI; magicness++; break; //just use something unresistable..
 			}
 			break;
 		case TV_ROD:
@@ -6028,24 +6089,28 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 			//case SV_ROD_LITE:
 			//case SV_ROD_SLEEP_MONSTER:
 			//case SV_ROD_POLYMORPH:
+			//case SV_ROD_CURING: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_ROD_RESTORATION: r_ptr->flags |= RF_; magicness++; break; //just hard-code immunity against stat drain
+			case SV_ROD_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
+			case SV_ROD_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break;
+			case SV_ROD_TELEPORT_AWAY: r_ptr->flags6 |= RF6_TELE_AWAY; magicness++; break;
  #if 0
-			case SV_ROD_CURING: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_HEALING: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_RESTORATION: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_SPEED: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_TELEPORT_AWAY: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_SLOW_MONSTER: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_DRAIN_LIFE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_ACID_BOLT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_ELEC_BOLT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_FIRE_BOLT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_COLD_BOLT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_ACID_BALL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_ELEC_BALL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_FIRE_BALL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_COLD_BALL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_ROD_HAVOC: r_ptr->flags |= RF_; magicness++; break;
+			case SV_ROD_SLOW_MONSTER: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
+ #else
+			case SV_ROD_SLOW_MONSTER: r_ptr->flags4 |= RF4_BR_INER; magicness++; break; //too harsh?
  #endif
+ #if 0 /* hrrm - I guess we have no choice but just to make the mirror image actually hard-coded immune to these then (BR_NUKE etc is no alternative) */
+			case SV_ROD_DRAIN_LIFE: r_ptr->flags |= RF_; magicness++; break;
+ #endif
+			case SV_ROD_ACID_BOLT: r_ptr->flags5 |= RF5_BO_ACID; magicness++; break;
+			case SV_ROD_FIRE_BOLT: r_ptr->flags5 |= RF5_BO_FIRE; magicness++; break;
+			case SV_ROD_ELEC_BOLT: r_ptr->flags5 |= RF5_BO_ELEC; magicness++; break;
+			case SV_ROD_COLD_BOLT: r_ptr->flags5 |= RF5_BO_COLD; magicness++; break;
+			case SV_ROD_ACID_BALL: r_ptr->flags5 |= RF5_BA_ACID; magicness++; break;
+			case SV_ROD_ELEC_BALL: r_ptr->flags5 |= RF5_BA_ELEC; magicness++; break;
+			case SV_ROD_FIRE_BALL: r_ptr->flags5 |= RF5_BA_FIRE; magicness++; break;
+			case SV_ROD_COLD_BALL: r_ptr->flags5 |= RF5_BA_COLD; magicness++; break;
+			case SV_ROD_HAVOC: r_ptr->flags5 |= RF5_BA_MANA; magicness++; break; // >_> .... could also consider RF5_BA_CHAO
 			}
 			break;
 		case TV_POTION:
@@ -6063,52 +6128,62 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 			//case SV_POTION_CONFUSION:
 			//case SV_POTION_SLEEP:
 			//case SV_POTION_LOSE_MEMORIES:
- #if 0
-			case SV_POTION_BLINDNESS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_INVIS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_SLOWNESS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RUINATION: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_DEC_STR: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_DEC_INT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_DEC_WIS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_DEC_DEX: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_DEC_CON: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_DEC_CHR: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_DETONATIONS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_DEATH: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_STAR_RESTORE_MANA: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RESTORE_MANA: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_SPEED: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RESIST_HEAT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RESIST_COLD: r_ptr->flags |= RF_; magicness++; break;
+
+			//case SV_POTION_BLINDNESS: r_ptr->flags |= RF_; magicness++; break;
+			//Note: Hard-coded immunity to stat-draining effects to keep it simple..
+			//case SV_POTION_RUINATION: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_DEC_STR: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_DEC_INT: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_DEC_WIS: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_DEC_DEX: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_DEC_CON: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_DEC_CHR: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_RES_STR: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_RES_INT: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_RES_WIS: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_RES_DEX: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_RES_CON: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_RES_CHR: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_INC_STR: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_INC_INT: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_INC_WIS: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_INC_DEX: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_INC_CON: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_INC_CHR: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_AUGMENTATION: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_STAR_ENLIGHTENMENT: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_CURING: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_CURE_LIGHT_SANITY: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_CURE_SERIOUS_SANITY: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_CURE_CRITICAL_SANITY: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_CURE_SANITY: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_INVIS: r_ptr->flags |= RF_; magicness++; break; //covered already (tim_invis)
+			//case SV_POTION_STAR_RESTORE_MANA: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_POTION_RESTORE_MANA: r_ptr->flags |= RF_; magicness++; break;
+ #if 0 /* could increase AC (for heroism as anti-hitchance). As for berserk, the damage already gets adjusted anyway */
 			case SV_POTION_HEROISM: r_ptr->flags |= RF_; magicness++; break;
 			case SV_POTION_BERSERK_STRENGTH: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_CURE_LIGHT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_CURE_SERIOUS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_CURE_CRITICAL: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_STAR_HEALING: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_HEALING: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_LIFE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RES_STR: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RES_INT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RES_WIS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RES_DEX: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RES_CON: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RES_CHR: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_INC_STR: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_INC_INT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_INC_WIS: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_INC_DEX: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_INC_CON: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_INC_CHR: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_AUGMENTATION: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_STAR_ENLIGHTENMENT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_RESISTANCE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_CURING: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_CURE_LIGHT_SANITY: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_CURE_SERIOUS_SANITY: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_CURE_CRITICAL_SANITY: r_ptr->flags |= RF_; magicness++; break;
-			case SV_POTION_CURE_SANITY: r_ptr->flags |= RF_; magicness++; break;
+ #endif
+			case SV_POTION_CURE_LIGHT: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
+			case SV_POTION_CURE_SERIOUS: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
+			case SV_POTION_CURE_CRITICAL: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
+			case SV_POTION_STAR_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
+			case SV_POTION_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
+			case SV_POTION_LIFE: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
+			case SV_POTION_DETONATIONS: r_ptr->flags4 |= RF4_ROCKET; magicness++; break; //ugh.. but deto avg dmg is 563 actually!
+			case SV_POTION_DEATH: r_ptr->flags5 |= RF5_BA_NETH; magicness++; break;
+			case SV_POTION_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break;
+ #if 0
+			case SV_POTION_SLOWNESS: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
+ #else
+			case SV_POTION_SLOWNESS: r_ptr->flags4 |= RF4_BR_INER; magicness++; break; //too harsh?
+ #endif
+ #if 1 //harsh?
+			case SV_POTION_RESIST_HEAT: r_ptr->flags3 |= RF3_IM_FIRE; break;
+			case SV_POTION_RESIST_COLD: r_ptr->flags3 |= RF3_IM_COLD; break;
+			case SV_POTION_RESISTANCE:
+				r_ptr->flags3 |= RF3_IM_FIRE | RF3_IM_COLD | RF3_IM_ELEC | RF3_IM_ACID | RF3_IM_POIS;
+				break;
  #endif
 			}
 			break;
@@ -6140,125 +6215,38 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 			//case SV_SCROLL_MASS_RESURECTION:
 			//case SV_SCROLL_ACQUIREMENT:
 			//case SV_SCROLL_STAR_ACQUIREMENT:
- #if 0
-			case SV_SCROLL_PHASE_DOOR: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_TELEPORT: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_DETECT_TRAP: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_DETECT_INVIS: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_SCROLL_TRAP_DOOR_DESTRUCTION: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_SCROLL_DETECT_TRAP: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_SCROLL_DETECT_INVIS: r_ptr->flags |= RF_; magicness++; break;
+			//case SV_SCROLL_STAR_DESTRUCTION: r_ptr->flags |= RF_; magicness++; break; //level is indestructible
+ #if 0 /* no effect under simple rules as mirror image is neutral */
+			case SV_SCROLL_PROTECTION_FROM_EVIL: r_ptr->flags |= RF_; magicness++; break;
+			case SV_SCROLL_DISPEL_UNDEAD: r_ptr->flags |= RF_; magicness++; break;
+ #endif
+ #if 0 /* the AC gets adjusted automatically already */
 			case SV_SCROLL_BLESSING: r_ptr->flags |= RF_; magicness++; break;
 			case SV_SCROLL_HOLY_CHANT: r_ptr->flags |= RF_; magicness++; break;
 			case SV_SCROLL_HOLY_PRAYER: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_PROTECTION_FROM_EVIL: r_ptr->flags |= RF_; magicness++; break;
+ #endif
+ #if 0 /* Sigh, will have to disable runes on this floor -_- */
 			case SV_SCROLL_RUNE_OF_PROTECTION: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_TRAP_DOOR_DESTRUCTION: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_STAR_DESTRUCTION: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_DISPEL_UNDEAD: r_ptr->flags |= RF_; magicness++; break;
+ #endif
+			case SV_SCROLL_PHASE_DOOR: r_ptr->flags6 |= RF6_BLINK; magicness++; break;
+			case SV_SCROLL_TELEPORT: r_ptr->flags6 |= RF6_TPORT; magicness++; break;
+ #if 0 /* these either have no effect or aren't feasible to use (as we won't gain anything from deleting the mirror image) */
 			case SV_SCROLL_GENOCIDE: r_ptr->flags |= RF_; magicness++; break;
 			case SV_SCROLL_OBLITERATION: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_FIRE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_ICE: r_ptr->flags |= RF_; magicness++; break;
-			case SV_SCROLL_CHAOS: r_ptr->flags |= RF_; magicness++; break;
  #endif
+			/* These are kind of harsh, maybe tone down to bolts? */
+			case SV_SCROLL_FIRE: r_ptr->flags4 |= RF4_BR_FIRE; magicness++; break;
+			case SV_SCROLL_ICE: r_ptr->flags0 |= RF0_BR_ICE; magicness++; break;
+			case SV_SCROLL_CHAOS: r_ptr->flags4 |= RF4_BR_CHAO; magicness++; break;
 			}
 			break;
 		}
 	}
 
-	/* Scan for school spells */
-	if (get_skill(p_ptr, SKILL_TRAPPING) >= p_ptr->max_plv / 2) { r_ptr->flags6 |= RF6_TRAPS; magicness++; }
-	if (get_skill(p_ptr, SKILL_MANA)) { r_ptr->flags5 |= RF5_BA_MANA; magicness++; }
-	if (get_skill(p_ptr, SKILL_FIRE)) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
  #if 0
-	if (get_skill(p_ptr, SKILL_COMBAT)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MASTERY)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_SWORD)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_CRITS)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_POLEARM)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_BLUNT)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_ARCHERY)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_SLING)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_BOW)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_XBOW)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_BACKSTAB)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MAGIC)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_SORCERY)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MAGERY)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MIMIC)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DEVICE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_SHADOW)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_SNEAKINESS)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DISARM)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_STEALTH)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_STEALING)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_NECROMANCY)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_TRAUMATURGY)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_AURA_FEAR)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_AURA_SHIVER)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_AURA_DEATH)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HUNTING)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_TECHNIQUE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MISC)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_AGILITY)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_CALMNESS)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_SWIM)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_RICOCHET)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_BOOMERANG)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_TRAINING)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_INTERCEPT)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DODGE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HEALTH)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DIG)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_SPELLRAD)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_TRAPPING)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_AXE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_CONVEYANCE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_SPELL)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MANA)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_FIRE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_AIR)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_WATER)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_NATURE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_EARTH)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DIVINATION)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_TEMPORAL)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_META)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MIND)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_UDUN)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HOFFENSE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HDEFENSE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HCURING)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HSUPPORT)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DRUID_ARCANE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_ASTRAL)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DUAL)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_STANCE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_PPOWER)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_TCONTACT)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MINTRUSION)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OSHADOW)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OSPIRIT)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OHERETICISM)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OUNLIFE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_CLIMB)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_LEVITATE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_FREEACT)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_RESCONF)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_LITE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_DARK)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_NEXU)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_NETH)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_CHAO)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_MANA)) { r_ptr->flags |= RF__; magicness++; }
- #endif
-
- #if 0
-RF4_ARROW_1
-RF4_ARROW_2
-RF4_ARROW_3
-RF4_ARROW_4
 RF4_BR_ACID
 RF4_BR_ELEC
 RF4_BR_FIRE
@@ -6297,6 +6285,8 @@ RF5_CURSE
 RF5_BA_MANA
 RF5_BA_NUKE
 RF5_BA_CHAO
+RF5_BO_FIRE
+RF5_BO_MANA
 RF5_BO_ACID
 RF5_BO_ELEC
 RF5_BO_FIRE
@@ -6321,6 +6311,95 @@ RF0_BO_DISE
 RF0_BA_DISE
 RF0_BR_ICE
 RF0_BR_WATER
+ #endif
+	/* Scan for skill-"spells" and school-spells */
+	if (get_skill(p_ptr, SKILL_SLING)) { r_ptr->flags4 |= RF4_ARROW_2; magicness++; }
+	if (get_skill(p_ptr, SKILL_BOW)) { r_ptr->flags4 |= RF4_ARROW_1; magicness++; } //arrows have lower damage so needs to get boosted later
+	if (get_skill(p_ptr, SKILL_XBOW)) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; }
+	if (get_skill(p_ptr, SKILL_BOOMERANG)) { r_ptr->flags4 |= RF4_ARROW_4; magicness++; } //it's "missile", but we don't have a monster-boomerang-skill
+
+	if (get_skill(p_ptr, SKILL_TRAPPING) >= p_ptr->max_plv / 2) { r_ptr->flags6 |= RF6_TRAPS; magicness++; }
+
+	if (get_skill(p_ptr, SKILL_MANA)) { r_ptr->flags5 |= RF5_BA_MANA; magicness++; }
+	if (get_skill(p_ptr, SKILL_FIRE)) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
+ #if 0
+	if (get_skill(p_ptr, SKILL_COMBAT)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MASTERY)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_SWORD)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_CRITS)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_POLEARM)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_BLUNT)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_ARCHERY)) { r_ptr->flags |= RF__; magicness++; }
+
+	if (get_skill(p_ptr, SKILL_BACKSTAB)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MAGIC)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_SORCERY)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MAGERY)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MIMIC)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DEVICE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_SHADOW)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_SNEAKINESS)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DISARM)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_STEALTH)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_STEALING)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_NECROMANCY)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_TRAUMATURGY)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_AURA_FEAR)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_AURA_SHIVER)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_AURA_DEATH)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HUNTING)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_TECHNIQUE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MISC)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_AGILITY)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_CALMNESS)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_SWIM)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_RICOCHET)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_TRAINING)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_INTERCEPT)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DODGE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HEALTH)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DIG)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_SPELLRAD)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_AXE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_CONVEYANCE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_SPELL)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_AIR)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_WATER)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_NATURE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_EARTH)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DIVINATION)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_TEMPORAL)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_META)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MIND)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_UDUN)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HOFFENSE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HDEFENSE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HCURING)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HSUPPORT)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DRUID_ARCANE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_ASTRAL)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DUAL)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_STANCE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_PPOWER)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_TCONTACT)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MINTRUSION)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_OSHADOW)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_OSPIRIT)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_OHERETICISM)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_OUNLIFE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_CLIMB)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_LEVITATE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_FREEACT)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_RESCONF)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_LITE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_DARK)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_NEXU)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_NETH)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_CHAO)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_MANA)) { r_ptr->flags |= RF__; magicness++; }
  #endif
 
 	/* Flags 7 */
@@ -6393,16 +6472,16 @@ RF0_BR_WATER
 	case CLASS_MIMIC:
 		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (25 + magicness > 80 ? 80 : 25 + magicness) : 0;
 		break;
-#ifdef ENABLE_DEATHKNIGHT
+ #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
 		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (50 + magicness > 85 ? 85 : 50 + magicness) : 0;
 		break;
-#endif
-#ifdef ENABLE_HELLKNIGHT
+ #endif
+ #ifdef ENABLE_HELLKNIGHT
 	case CLASS_HELLKNIGHT:
 		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (50 + magicness > 85 ? 85 : 50 + magicness) : 0;
 		break;
-#endif
+ #endif
 	case CLASS_PALADIN:
 		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (50 + magicness > 85 ? 85 : 50 + magicness) : 0;
 		break;
@@ -6425,9 +6504,9 @@ RF0_BR_WATER
 	case CLASS_RUNEMASTER:
 		r_ptr->freq_innate = r_ptr->freq_spell = 90;
 		break;
-#ifdef ENABLE_CPRIEST
+ #ifdef ENABLE_CPRIEST
 	case CLASS_CPRIEST:
-#endif
+ #endif
 	case CLASS_PRIEST:
 		r_ptr->freq_innate = r_ptr->freq_spell = magicness ? (75 + magicness > 90 ? 90 : 75 + magicness) : 0;
 		break;

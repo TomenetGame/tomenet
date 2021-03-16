@@ -5536,6 +5536,7 @@
 /*
  * New monster blow methods
  */
+#define RBM_NONE	0
 #define RBM_HIT		1
 #define RBM_TOUCH	2
 #define RBM_PUNCH	3
@@ -5571,6 +5572,7 @@
 /*
  * New monster blow effects
  */
+#define RBE_NONE	0
 #define RBE_HURT	1
 #define RBE_POISON	2
 #define RBE_UN_BONUS	3
@@ -6572,7 +6574,7 @@
 #define LF1_NO_MAP		0x00000080L /* player never gains level knowledge */
 
 #define LF1_NO_MAGIC_MAP	0x00000100L /* player never does magic mapping */
-#define LF1_NO_DESTROY	0x00000200L /* Cannot use Destruction spells/Earthquakes */
+#define LF1_NO_DESTROY		0x00000200L /* Cannot use Destruction spells/Earthquakes */
 #define LF1_NO_MAGIC		0x00000400L /* very nasty */
 #define LF1_NO_GHOST		0x00000800L /* Players who die on this level are erased completely! */
 
@@ -6639,6 +6641,7 @@
 #define LF2_NO_LIVE_SPAWN	0x01000000L	/* disallow any live-spawn of monsters (like in IDDC, could be used for that actually) */
 #define LF2_NO_SPAWN		0x02000000L	/* disallow any monster spawn, even at level generation time. Monsters must be placed manually, hard-codedly, if desired. */
 #define LF2_BROKEN		0x04000000L	/* Control generation of broken feats. */
+#define LF2_NO_RUNES		0x08000000L	/* Disallow runes of protection on this floor */
 
 
 /* vault flags for v_info */

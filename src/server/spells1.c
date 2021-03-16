@@ -6966,6 +6966,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 
 	case GF_OLD_DRAIN:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		if (seen) obvious = TRUE;
 		dam = percent_damage(m_ptr->hp, dam);
 		if (dam > 900) dam = 900;
@@ -6993,6 +6999,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	case GF_ANNIHILATION:
 		if (seen) obvious = TRUE;
+
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			obvious = FALSE;
+			break;
+		}
+
 		dam = percent_damage(m_ptr->hp, dam);
 		if (dam > 1200) dam = 1200;
 		if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -7010,6 +7024,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			obvious = FALSE;
+			break;
+		}
+
 		/* Attempt to polymorph (see below) */
 		do_poly = TRUE;
 
@@ -7025,6 +7045,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Clone monsters (Ignore "dam") */
 	case GF_OLD_CLONE:
 		no_dam = TRUE;
+
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			break;
+		}
+
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY) { /* don't clone these.. */
 			note = " is unaffected";
 		} else {
@@ -8073,6 +8099,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Decrease strength */
 	case GF_DEC_STR:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		/* hack */
 		no_dam = TRUE;
 
@@ -8116,6 +8148,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Decrease dexterity */
 	case GF_DEC_DEX:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		no_dam = TRUE;
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
@@ -8140,6 +8178,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Decrease dexterity */
 	case GF_DEC_CON:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		no_dam = TRUE;
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
@@ -8334,6 +8378,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Ruination! (now we're talking) */
 	case GF_RUINATION:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
