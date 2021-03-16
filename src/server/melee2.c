@@ -8933,21 +8933,33 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	if (!(zcave = getcave(wpos))) return;
 
 	if (m_ptr->r_idx == RI_BLUE && m_ptr->extra > 1) {
+		int who, ox = m_ptr->fx, oy = m_ptr->fy;
+
 		m_ptr->extra++; //we begin here at 3 basically
 		if (m_ptr->extra == 10) floor_msg_format(wpos, "The guy in blue robes mumbles something about having a cool cave beer..");
 		if (m_ptr->extra < 6) ;
 		else if (m_ptr->extra < 23) { //move right
-			zcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
-			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
+			zcave[oy][ox].m_idx = 0;
 			m_ptr->fx++;
+			who = zcave[oy][m_ptr->fx].m_idx;
+			if (who < 0) {
+				Players[-who]->px--;
+				zcave[oy][ox].m_idx = who;
+			}
 			zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
+			everyone_lite_spot(wpos, oy, ox);
 			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
 			update_mon(m_idx, FALSE);//TRUE?
 		} else if (m_ptr->extra < 32) { //move up
-			zcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
-			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
+			zcave[oy][ox].m_idx = 0;
 			m_ptr->fy--;
+			who = zcave[m_ptr->fy][ox].m_idx;
+			if (who < 0) {
+				Players[-who]->py++;
+				zcave[oy][ox].m_idx = who;
+			}
 			zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
+			everyone_lite_spot(wpos, oy, ox);
 			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
 			update_mon(m_idx, FALSE);//TRUE?
 		} else if (m_ptr->extra < 36) { //open door ^^
@@ -8956,10 +8968,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				everyone_lite_spot(wpos, 2, 55);
 			}
 		} else if (m_ptr->extra < 46) { //move right
-			zcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
-			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
+			zcave[oy][ox].m_idx = 0;
 			m_ptr->fx++;
+			who = zcave[oy][m_ptr->fx].m_idx;
+			if (who < 0) {
+				Players[-who]->px--;
+				zcave[oy][ox].m_idx = who;
+			}
 			zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
+			everyone_lite_spot(wpos, oy, ox);
 			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
 			update_mon(m_idx, FALSE);//TRUE?
 		} else { //*pouf!*
