@@ -5878,6 +5878,8 @@ void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_p
 	}
 	if (p_ptr->ptrait == TRAIT_CORRUPTED) r_ptr->flags3 |= RF3_DEMON;
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) r_ptr->flags3 |= RF3_GOOD;
+#else
+	r_ptr->flags3 |= RF3_NONLIVING;
 #endif
 	/* Add static parts of all racial/class fixed boni/mali (eg vampire light-susc) so we save some workload later when
 	   adjusting/updating stats continuously, when it comes to changable flags induced by items/monsterforms.
@@ -6322,7 +6324,11 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	}
 
 	if (get_skill(p_ptr, SKILL_SLING) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_2; magicness++; }
+ #if 0
 	if (get_skill(p_ptr, SKILL_BOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_1; magicness++; } //arrows have lower damage so needs to get boosted later
+ #else
+	if (get_skill(p_ptr, SKILL_BOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; } //hack..go with bolts for now for higher dps until coding arrow-dam-boost..
+ #endif
 	if (get_skill(p_ptr, SKILL_XBOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; }
 	if (get_skill(p_ptr, SKILL_BOOMERANG) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_4; magicness++; } //it's "missile", but we don't have a monster-boomerang-skill
 
@@ -6349,7 +6355,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	if (get_skill(p_ptr, SKILL_AIR) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_POIS | RF5_BA_ELEC; magicness++; }
 	if (get_skill(p_ptr, SKILL_WATER) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_COLD | RF5_BA_WATE; magicness++; }
 	if (get_skill(p_ptr, SKILL_EARTH) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_ACID; magicness++; }
-	if (get_skill(p_ptr, SKILL_UDUN) >= thresh_spell) { r_ptr->flags0 |= RF0_BA_DISE; magicness++; }
+	if (get_skill(p_ptr, SKILL_UDUN) >= thresh_spell) { r_ptr->flags0 |= RF0_BA_DISE; magicness++; } //bolt+hellfire
 	//if (get_skill(p_ptr, SKILL_MIND)) { r_ptr->flags |= RF__; magicness++; } -- nothing except confuse
 	//if (get_skill(p_ptr, SKILL_DIVINATION)) { r_ptr->flags |= RF__; magicness++; } -- nothing here
 	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= thresh_spell) { r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++; }
@@ -6367,6 +6373,49 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		r_ptr->flags0 |= RF0_BA_DISE; magicness++;
 		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++;
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
+	}
+
+	if (get_skill(p_ptr, SKILL_ASTRAL) >= thresh_spell) {
+		switch (p_ptr->ptrait) {
+		case TRAIT_ENLIGHTENED:
+			r_ptr->flags5 |= RF5_BA_MANA; magicness++;
+			break;
+		case TRAIT_CORRUPTED:
+			r_ptr->flags0 |= RF0_BA_DISE; magicness++; //no dispel.. not disi again
+			//raging inferno -- maybe just stick with BA_DISE to not overkill..
+			//r_ptr->flags4 |= RF4_ROCKET; magicness++; }
+			break;
+		}
+	}
+
+	if (get_skill(p_ptr, SKILL_DRUID_ARCANE) >= thresh_spell) {
+		r_ptr->flags5 |= RF5_BA_POIS; magicness++;
+		r_ptr->flags0 |= RF0_BR_ICE; magicness++; //pft
+	}
+	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL) >= thresh_spell) {
+		r_ptr->flags6 |= RF6_HASTE; magicness++;
+		r_ptr->flags6 |= RF6_HEAL; magicness++;
+	}
+
+	if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_DARK; magicness++; }
+	if (get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell) {
+		r_ptr->flags5 |= RF5_CURSE; magicness++; //curse.. to low dmg -_-
+		r_ptr->flags5 |= RF5_BA_ELEC; magicness++; //bolt
+		r_ptr->flags4 |= RF4_BR_LITE; magicness++; //pft/bolt
+	}
+	if (get_skill(p_ptr, SKILL_OHERETICISM) >= thresh_spell) {
+		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;//bolt
+		r_ptr->flags5 |= RF5_BA_CHAO; magicness++;//bolt
+		r_ptr->flags2 |= RF2_AURA_FIRE;
+	}
+	if (get_skill(p_ptr, SKILL_OUNLIFE) >= thresh_spell) {
+ #if 0
+		r_ptr->flags5 |= RF5_SLOW; magicness++;
+ #else
+		r_ptr->flags4 |= RF4_BR_INER; magicness++; //too harsh?
+ #endif
+		r_ptr->flags2 |= RF2_REGENERATE; //Nether Sap weak version
+		r_ptr->flags5 |= RF5_BA_NETH; //bolt
 	}
 
  #if 0
@@ -6437,31 +6486,21 @@ RF0_BR_WATER
  #endif
 
  #if 0
-	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-
-	if (get_skill(p_ptr, SKILL_DRUID_ARCANE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-
-	if (get_skill(p_ptr, SKILL_ASTRAL) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-
-	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-
-	if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OHERETICISM) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OUNLIFE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
-
 	if (get_skill(p_ptr, SKILL_R_LITE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_R_DARK) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_R_NEXU) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_R_NETH) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_R_CHAO) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+
+	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+
+	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
  #endif
 
 	/* Flags 7 */
@@ -6500,7 +6539,8 @@ RF0_BR_WATER
 	}
 	if (p_ptr->immune_cold) {
 		r_ptr->flags4 &= ~(RF4_BR_COLD);
-		r_ptr->flags5 &= ~(RF5_BA_COLD | RF5_BO_COLD);
+		r_ptr->flags5 &= ~(RF5_BA_COLD | RF5_BO_COLD | RF5_BO_ICEE);
+		r_ptr->flags0 &= ~(RF0_BR_ICE);
 	}
 	if (p_ptr->immune_elec) {
 		r_ptr->flags4 &= ~(RF4_BR_ELEC);
