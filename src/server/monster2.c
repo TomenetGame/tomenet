@@ -5856,7 +5856,7 @@ void py2mon_init(monster_race *r_ptr) {
 }
 void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
 	/* Fixed stats */
-	m_ptr->level = p_ptr->max_lev;
+	m_ptr->level = r_ptr->level = p_ptr->max_plv;
 	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system),
 	   so just set the most important ones here to give an initial definition frame: */
 	m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
@@ -5892,7 +5892,12 @@ void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_p
 }
 void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
 	int i, k, m, n, magicness = 0;
+	int thresh_skill = (p_ptr->max_plv + 4) / 5; /* usual skill minimum threshold to become active */
+	int thresh_spell = (p_ptr->max_plv + 9) / 10; /* usual spell school skill minimum threshold to become active */
 	object_type *o_ptr, *o2_ptr;
+
+	/* Who knows the silylness.. */
+	m_ptr->level = r_ptr->level = p_ptr->max_plv;
 
 	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system) */
 	if (m_ptr->speed < p_ptr->pspeed) m_ptr->speed = m_ptr->mspeed = p_ptr->pspeed;
@@ -6253,6 +6258,104 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		}
 	}
 
+	/* Scan for skill-"spells" and school-spells */
+	//if (get_skill(p_ptr, SKILL_DISARM)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_STEALTH)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_STEALING)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_DUAL)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_HEALTH)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_STANCE)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_SWIM)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_CLIMB)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_DIG)) { r_ptr->flags |= RF__; magicness++; }
+
+	//if (get_skill(p_ptr, SKILL_LEVITATE)) { r_ptr->flags |= RF__; magicness++; } -- just minor resistances, ignore
+	//if (get_skill(p_ptr, SKILL_FREEACT)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_RESCONF)) { r_ptr->flags |= RF__; magicness++; }
+
+	//if (get_skill(p_ptr, SKILL_BACKSTAB)) { r_ptr->flags |= RF__; magicness++; } -- whatever.. we don't flee anyway
+
+	//if (get_skill(p_ptr, SKILL_COMBAT)) { r_ptr->flags |= RF__; magicness++; } -- these are basically incorporated in damage calculation
+	//if (get_skill(p_ptr, SKILL_MASTERY)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_SWORD)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_BLUNT)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_AXE)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_POLEARM)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_TECHNIQUE)) { r_ptr->flags |= RF__; magicness++; }
+
+	//if (get_skill(p_ptr, SKILL_MAGIC)) { r_ptr->flags |= RF__; magicness++; } -- could affect spell frequency, but probably no good
+	//if (get_skill(p_ptr, SKILL_TRAUMATURGY)) { r_ptr->flags |= RF__; magicness++; }
+
+	//if (get_skill(p_ptr, SKILL_NECROMANCY)) { r_ptr->flags |= RF__; magicness++; } -- no point. level is no_summon so cannot summon things to leech from.
+
+	//if (get_skill(p_ptr, SKILL_MIMIC)) { r_ptr->flags |= RF__; magicness++; } -- we already clone the player in all relevant aspects 
+	//if (get_skill(p_ptr, SKILL_SNEAKINESS)) { r_ptr->flags |= RF__; magicness++; }
+
+	//if (get_skill(p_ptr, SKILL_DEVICE)) { r_ptr->flags |= RF__; magicness++; } -- we already assume high damage for all spells
+	//if (get_skill(p_ptr, SKILL_ARCHERY)) { r_ptr->flags |= RF__; magicness++; }
+
+	//if (get_skill(p_ptr, SKILL_AURA_FEAR)) { r_ptr->flags |= RF__; magicness++; } -- already incorporated
+	//if (get_skill(p_ptr, SKILL_AURA_SHIVER)) { r_ptr->flags |= RF__; magicness++; }
+	//if (get_skill(p_ptr, SKILL_AURA_DEATH)) { r_ptr->flags |= RF__; magicness++; }
+
+
+	if ((m = get_skill(p_ptr, SKILL_CRITS))) {
+		/* boost damage */
+		for (n = 0; n < 4; n++) {
+			if (r_ptr->blow[n].method == RBM_NONE) continue;
+			r_ptr->blow[n].d_side = (r_ptr->blow[n].d_side * 100) / (100 - m);
+		}
+	}
+
+	if (get_skill(p_ptr, SKILL_SLING) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_2; magicness++; }
+	if (get_skill(p_ptr, SKILL_BOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_1; magicness++; } //arrows have lower damage so needs to get boosted later
+	if (get_skill(p_ptr, SKILL_XBOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; }
+	if (get_skill(p_ptr, SKILL_BOOMERANG) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_4; magicness++; } //it's "missile", but we don't have a monster-boomerang-skill
+
+	if (get_skill(p_ptr, SKILL_TRAPPING) >= thresh_skill) { r_ptr->flags6 |= RF6_TRAPS; magicness++; }
+	//if (get_skill(p_ptr, SKILL_ANTIMAGIC)) r_ptr->flags7 |= RF7_DISBELIEVE -- not for now maybe
+ #if 0 /* maybe simply make mirror non-intercepting and non-interceptable? fair trade */
+	if (get_skill(p_ptr, SKILL_CALMNESS)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_INTERCEPT)) { r_ptr->flags |= RF__; magicness++; }
+ #endif
+	if ((m = get_skill(p_ptr, SKILL_DODGE))) {
+		/* Simply add to AC, although this won't help against magic bolt spells, exploiterino */
+		m_ptr->org_ac += m * 2;
+		m_ptr->ac += m * 2;
+	}
+
+	/* Notes:
+	   Resistances spells are already handled by checking for resist+oppose above.
+	   magicness might be redundantly incremented too much, but whatever. */
+
+	if (get_skill(p_ptr, SKILL_TEMPORAL) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; }
+
+	if (get_skill(p_ptr, SKILL_MANA) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_MANA; magicness++; }
+	if (get_skill(p_ptr, SKILL_FIRE) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
+	if (get_skill(p_ptr, SKILL_AIR) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_POIS | RF5_BA_ELEC; magicness++; }
+	if (get_skill(p_ptr, SKILL_WATER) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_COLD | RF5_BA_WATE; magicness++; }
+	if (get_skill(p_ptr, SKILL_EARTH) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_ACID; magicness++; }
+	if (get_skill(p_ptr, SKILL_UDUN) >= thresh_spell) { r_ptr->flags0 |= RF0_BA_DISE; magicness++; }
+	//if (get_skill(p_ptr, SKILL_MIND)) { r_ptr->flags |= RF__; magicness++; } -- nothing except confuse
+	//if (get_skill(p_ptr, SKILL_DIVINATION)) { r_ptr->flags |= RF__; magicness++; } -- nothing here
+	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= thresh_spell) { r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++; }
+	if (get_skill(p_ptr, SKILL_NATURE) >= thresh_spell) {
+		r_ptr->flags6 |= RF6_HEAL; magicness++;
+		r_ptr->flags5 |= RF5_BA_ELEC; magicness++; //pft
+	}
+	if (get_skill(p_ptr, SKILL_SORCERY) >= thresh_spell) { /* o_o */
+		r_ptr->flags6 |= RF6_HASTE; magicness++;
+		r_ptr->flags5 |= RF5_BA_MANA; magicness++;
+		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;
+		r_ptr->flags5 |= RF5_BA_POIS | RF5_BA_ELEC; magicness++;
+		r_ptr->flags5 |= RF5_BA_COLD | RF5_BA_WATE; magicness++;
+		r_ptr->flags5 |= RF5_BA_ACID; magicness++;
+		r_ptr->flags0 |= RF0_BA_DISE; magicness++;
+		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++;
+		r_ptr->flags6 |= RF6_HEAL; magicness++;
+	}
+
  #if 0
 RF4_BR_ACID
 RF4_BR_ELEC
@@ -6319,130 +6422,33 @@ RF0_BA_DISE
 RF0_BR_ICE
 RF0_BR_WATER
  #endif
-	/* Scan for skill-"spells" and school-spells */
-	//if (get_skill(p_ptr, SKILL_DISARM)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_STEALTH)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_STEALING)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_DUAL)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_HEALTH)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_STANCE)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_SWIM)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_CLIMB)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_DIG)) { r_ptr->flags |= RF__; magicness++; }
-
-	//if (get_skill(p_ptr, SKILL_LEVITATE)) { r_ptr->flags |= RF__; magicness++; } -- just minor resistances, ignore
-	//if (get_skill(p_ptr, SKILL_FREEACT)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_RESCONF)) { r_ptr->flags |= RF__; magicness++; }
-
-	//if (get_skill(p_ptr, SKILL_BACKSTAB)) { r_ptr->flags |= RF__; magicness++; } -- whatever.. we don't flee anyway
-
-	//if (get_skill(p_ptr, SKILL_COMBAT)) { r_ptr->flags |= RF__; magicness++; } -- these are basically incorporated in damage calculation
-	//if (get_skill(p_ptr, SKILL_MASTERY)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_SWORD)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_BLUNT)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_AXE)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_POLEARM)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_MARTIAL_ARTS)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_TECHNIQUE)) { r_ptr->flags |= RF__; magicness++; }
-
-	//if (get_skill(p_ptr, SKILL_MAGIC)) { r_ptr->flags |= RF__; magicness++; } -- could affect spell frequency, but probably no good
-	//if (get_skill(p_ptr, SKILL_TRAUMATURGY)) { r_ptr->flags |= RF__; magicness++; }
-
-	//if (get_skill(p_ptr, SKILL_NECROMANCY)) { r_ptr->flags |= RF__; magicness++; } -- no point. level is no_summon so cannot summon things to leech from.
-
-	//if (get_skill(p_ptr, SKILL_MIMIC)) { r_ptr->flags |= RF__; magicness++; } -- we already clone the player in all relevant aspects 
-	//if (get_skill(p_ptr, SKILL_SNEAKINESS)) { r_ptr->flags |= RF__; magicness++; }
-
-	//if (get_skill(p_ptr, SKILL_DEVICE)) { r_ptr->flags |= RF__; magicness++; } -- we already assume high damage for all spells
-	//if (get_skill(p_ptr, SKILL_ARCHERY)) { r_ptr->flags |= RF__; magicness++; }
-
-	//if (get_skill(p_ptr, SKILL_AURA_FEAR)) { r_ptr->flags |= RF__; magicness++; } -- already incorporated
-	//if (get_skill(p_ptr, SKILL_AURA_SHIVER)) { r_ptr->flags |= RF__; magicness++; }
-	//if (get_skill(p_ptr, SKILL_AURA_DEATH)) { r_ptr->flags |= RF__; magicness++; }
-
-
-	if ((m = get_skill(p_ptr, SKILL_CRITS))) {
-		/* boost damage */
-		for (n = 0; n < 4; n++) {
-			if (r_ptr->blow[n].method == RBM_NONE) continue;
-			r_ptr->blow[n].d_side = (r_ptr->blow[n].d_side * 100) / (100 - m);
-		}
-	}
-
-	if (get_skill(p_ptr, SKILL_SLING)) { r_ptr->flags4 |= RF4_ARROW_2; magicness++; }
-	if (get_skill(p_ptr, SKILL_BOW)) { r_ptr->flags4 |= RF4_ARROW_1; magicness++; } //arrows have lower damage so needs to get boosted later
-	if (get_skill(p_ptr, SKILL_XBOW)) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; }
-	if (get_skill(p_ptr, SKILL_BOOMERANG)) { r_ptr->flags4 |= RF4_ARROW_4; magicness++; } //it's "missile", but we don't have a monster-boomerang-skill
-
-	if (get_skill(p_ptr, SKILL_TRAPPING) >= p_ptr->max_plv / 2) { r_ptr->flags6 |= RF6_TRAPS; magicness++; }
-	//if (get_skill(p_ptr, SKILL_ANTIMAGIC)) r_ptr->flags7 |= RF7_DISBELIEVE -- not for now maybe
- #if 0 /* maybe simply make mirror non-intercepting and non-interceptable? fair trade */
-	if (get_skill(p_ptr, SKILL_CALMNESS)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_INTERCEPT)) { r_ptr->flags |= RF__; magicness++; }
- #endif
-	if ((m = get_skill(p_ptr, SKILL_DODGE))) {
-		/* Simply add to AC, although this won't help against magic bolt spells, exploiterino */
-		m_ptr->org_ac += m * 2;
-		m_ptr->ac += m * 2;
-	}
-
-	/* Notes:
-	   Resistances spells are already handled by checking for resist+oppose above.
-	   magicness might be redundantly incremented too much, but whatever. */
-
-	if (get_skill(p_ptr, SKILL_TEMPORAL)) { r_ptr->flags6 |= RF6_HASTE; magicness++; }
-
-	if (get_skill(p_ptr, SKILL_MANA)) { r_ptr->flags5 |= RF5_BA_MANA; magicness++; }
-	if (get_skill(p_ptr, SKILL_FIRE)) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
-	if (get_skill(p_ptr, SKILL_AIR)) { r_ptr->flags5 |= RF5_BA_POIS | RF5_BA_ELEC; magicness++; }
-	if (get_skill(p_ptr, SKILL_WATER)) { r_ptr->flags5 |= RF5_BA_COLD | RF5_BA_WATE; magicness++; }
-	if (get_skill(p_ptr, SKILL_EARTH)) { r_ptr->flags5 |= RF5_BA_ACID; magicness++; }
-	if (get_skill(p_ptr, SKILL_UDUN)) { r_ptr->flags0 |= RF0_BA_DISE; magicness++; }
-	//if (get_skill(p_ptr, SKILL_MIND)) { r_ptr->flags |= RF__; magicness++; } -- nothing except confuse
-	//if (get_skill(p_ptr, SKILL_DIVINATION)) { r_ptr->flags |= RF__; magicness++; } -- nothing here
-	if (get_skill(p_ptr, SKILL_CONVEYANCE)) { r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++; }
-	if (get_skill(p_ptr, SKILL_NATURE)) {
-		r_ptr->flags6 |= RF6_HEAL; magicness++;
-		r_ptr->flags5 |= RF5_BA_ELEC; magicness++; //pft
-	}
-	if (get_skill(p_ptr, SKILL_SORCERY)) { /* o_o */
-		r_ptr->flags6 |= RF6_HASTE; magicness++;
-		r_ptr->flags5 |= RF5_BA_MANA; magicness++;
-		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;
-		r_ptr->flags5 |= RF5_BA_POIS | RF5_BA_ELEC; magicness++;
-		r_ptr->flags5 |= RF5_BA_COLD | RF5_BA_WATE; magicness++;
-		r_ptr->flags5 |= RF5_BA_ACID; magicness++;
-		r_ptr->flags0 |= RF0_BA_DISE; magicness++;
-		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++;
-		r_ptr->flags6 |= RF6_HEAL; magicness++;
-	}
 
  #if 0
-	if (get_skill(p_ptr, SKILL_HOFFENSE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HDEFENSE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HCURING)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_HSUPPORT)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HDEFENSE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HCURING) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_HSUPPORT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 
-	if (get_skill(p_ptr, SKILL_DRUID_ARCANE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DRUID_ARCANE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 
-	if (get_skill(p_ptr, SKILL_ASTRAL)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_ASTRAL) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 
-	if (get_skill(p_ptr, SKILL_PPOWER)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_TCONTACT)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_MINTRUSION)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 
-	if (get_skill(p_ptr, SKILL_OSHADOW)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OSPIRIT)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OHERETICISM)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_OUNLIFE)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_OHERETICISM) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_OUNLIFE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
 
-	if (get_skill(p_ptr, SKILL_R_LITE)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_DARK)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_NEXU)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_NETH)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_CHAO)) { r_ptr->flags |= RF__; magicness++; }
-	if (get_skill(p_ptr, SKILL_R_MANA)) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_LITE) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_DARK) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_NEXU) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_NETH) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_CHAO) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
+	if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) { r_ptr->flags |= RF__; magicness++; }
  #endif
 
 	/* Flags 7 */
