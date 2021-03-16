@@ -10645,6 +10645,21 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
 
 	if (m_ptr->r_idx == RI_MIRROR) dam = (dam * MIRROR_REDUCE_DAM_TAKEN + 99) / 100;
+	if (m_ptr->r_idx == RI_BLUE) {
+		if (m_ptr->extra) {
+			m_ptr->extra = 0;
+			if (m_ptr->hp <= dam) {
+				msg_print_near_monster(m_idx, "calls it a day..");
+				return FALSE;
+			}
+		} else {
+			if (m_ptr->hp <= r_ptr->hdice * r_ptr->hside / 5) {
+				msg_print_near_monster(m_idx, "waves a hand, casting a veil of blue mist around himself..");
+				m_ptr->hp = (r_ptr->hdice * r_ptr->hside * (6 + rand_int(4))) / 10;
+				return FALSE;
+			}
+		}
+	}
 
 	if (!p_ptr->test_turn) p_ptr->test_turn = turn - 1; /* Start counting damage now */
 	p_ptr->test_count++;

@@ -6858,6 +6858,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Pure damage */
 	case GF_CODE:
 		if (seen) obvious = TRUE;
+		m_ptr->extra = 1;
 		break;
 	case GF_MANA:
 		if (r_ptr->flags9 & RF9_RES_MANA) {
