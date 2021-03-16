@@ -1777,7 +1777,7 @@ static void regen_monsters(void) {
 			/* Hack -- Some monsters regenerate quickly */
 			if (r_ptr->flags2 & RF2_REGENERATE) frac *= 2;
 
-			if (m_ptr->r_idx == RI_BLUE) frac /= 8;
+			if (m_ptr->r_idx == RI_BLUE) frac /= 25;
 
 			/* Hack -- Regenerate */
 			m_ptr->hp += frac;
@@ -8955,6 +8955,8 @@ void process_player_change_wpos(int Ind) {
 		p_ptr->warning_depth = 2;
 		p_ptr->warning_wor = p_ptr->warning_wor2 = 1;
 	}
+
+	if (in_deathfate(wpos)) wiz_lite(Ind);
 }
 
 

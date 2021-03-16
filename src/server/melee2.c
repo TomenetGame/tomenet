@@ -8936,9 +8936,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		m_ptr->extra++; //we begin here at 3 basically
 		if (m_ptr->extra == 12) floor_msg_format(wpos, "The guy in blue robes mumbles something about having a cool cave beer..");
 		if (m_ptr->extra < 23) { //move right
-			zcave[m_ptr->fy][m_ptr->fy].m_idx = 0;
+			zcave[m_ptr->fy][m_ptr->fx].m_idx = 0;
 			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
 			m_ptr->fx++;
+			zcave[m_ptr->fy][m_ptr->fx].m_idx = m_idx;
 			everyone_lite_spot(wpos, m_ptr->fy, m_ptr->fx);
 			update_mon(m_idx, FALSE);//TRUE?
 		} else if (m_ptr->extra < 32) { //move up
@@ -8950,8 +8951,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		} else if (m_ptr->extra < 46) { //move right
 		} else { //*pouf!*
 			delete_monster_idx(m_idx, FALSE);
-			return;
 		}
+		return;
 	}
 
 	/* If the monster can't see the player */
