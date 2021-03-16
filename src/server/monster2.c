@@ -5907,18 +5907,28 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		m_ptr->maxhp += n;
 		m_ptr->hp += n;
 	}
+#ifndef SIMPLE_RI_MIRROR
 	if (m_ptr->org_ac < p_ptr->ac + p_ptr->to_a) {
 		n = p_ptr->ac + p_ptr->to_a - m_ptr->org_ac;
 		m_ptr->org_ac += n;
 		m_ptr->ac += n;
 	}
+#else
+	if (m_ptr->org_ac - p_ptr->overall_tohit_m < p_ptr->ac + p_ptr->to_a) {
+		n = p_ptr->ac + p_ptr->to_a - m_ptr->org_ac + p_ptr->overall_tohit_m;
+		m_ptr->org_ac += n;
+		m_ptr->ac += n;
+	}
+#endif
 
 #ifdef SIMPLE_RI_MIRROR
 	/* Determine melee hit chance - HACK:
 	   Since monsters don't really have a specific "hit chance", instead of increasing the
 	   monster's hit chance we decrease the player's hit chance, by increasing the monster's AC. */
+ #if 0 /* done above instead */
 	m_ptr->org_ac += p_ptr->overall_tohit_m;
 	m_ptr->ac += p_ptr->overall_tohit_m;
+ #endif
 
 	/* Determine melee damage */
 	o_ptr = &p_ptr->inventory[INVEN_WIELD];
