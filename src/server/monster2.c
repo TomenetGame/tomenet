@@ -6450,6 +6450,24 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	if (get_skill(p_ptr, SKILL_R_MANA) >= thresh_spell) {
 		r_ptr->flags5 |= RF5_BA_MANA; magicness++;
 	}
+	/* Note: Some more (status effect) combos omitted, these should be sufficient for now. */
+
+	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) {
+		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY; magicness++;
+		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;
+		r_ptr->flags5 |= RF5_BA_COLD; magicness++;
+		//kinetic shield: extra ac given further up
+	}
+	if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; }
+	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) {
+		//we got psi-immunity vs 40+ MCs! So no need to replicate the Psionic Blast/Storm spells maybe
+ #if 0
+		r_ptr->flags5 |= RF5_SLOW; magicness++;
+ #else
+		r_ptr->flags4 |= RF4_BR_INER; magicness++; //too harsh?
+ #endif
+		r_ptr->flags5 |= RF5_BRAIN_SMASH; magicness++; //RF5_MIND_BLAST
+	}
 
  #if 0
 RF4_BR_ACID
@@ -6517,23 +6535,6 @@ RF0_BA_DISE
 RF0_BR_ICE
 RF0_BR_WATER
  #endif
-
-	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) {
-		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT | RF6_TELE_AWAY; magicness++;
-		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;
-		r_ptr->flags5 |= RF5_BA_COLD; magicness++;
-		//kinetic shield: extra ac given further up
-	}
-	if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; }
-	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) {
-		//we got psi-immunity vs 40+ MCs! So no need to replicate the Psionic Blast/Storm spells maybe
- #if 0
-		r_ptr->flags5 |= RF5_SLOW; magicness++;
- #else
-		r_ptr->flags4 |= RF4_BR_INER; magicness++; //too harsh?
- #endif
-		r_ptr->flags5 |= RF5_BRAIN_SMASH; magicness++; //RF5_MIND_BLAST
-	}
 
  #if 0
 	//urgh.. the holy schools.. how 2 do?
