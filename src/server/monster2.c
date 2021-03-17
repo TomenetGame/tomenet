@@ -6100,7 +6100,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 			case SV_STAFF_TELEPORTATION: r_ptr->flags6 |= RF6_TPORT; magicness++; break;
 			case SV_STAFF_CURE_SERIOUS: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
 			case SV_STAFF_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			case SV_STAFF_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break;
+			//case SV_STAFF_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break; -- we already copy the max speed flatly
  #if 0
 			case SV_STAFF_SLOW_MONSTERS: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
  #else
@@ -6118,7 +6118,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 			//case SV_ROD_CURING: r_ptr->flags |= RF_; magicness++; break;
 			//case SV_ROD_RESTORATION: r_ptr->flags |= RF_; magicness++; break; //just hard-code immunity against stat drain
 			case SV_ROD_HEALING: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
-			case SV_ROD_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break;
+			//case SV_ROD_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break; -- we already copy the max speed flatly
 			case SV_ROD_TELEPORT_AWAY: r_ptr->flags6 |= RF6_TELE_AWAY; magicness++; break;
  #if 0
 			case SV_ROD_SLOW_MONSTER: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
@@ -6198,7 +6198,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 			case SV_POTION_LIFE: r_ptr->flags6 |= RF6_HEAL; magicness++; break;
 			case SV_POTION_DETONATIONS: r_ptr->flags4 |= RF4_ROCKET; magicness++; break; //ugh.. but deto avg dmg is 563 actually!
 			case SV_POTION_DEATH: r_ptr->flags5 |= RF5_BA_NETH; magicness++; break;
-			case SV_POTION_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break;
+			//case SV_POTION_SPEED: r_ptr->flags6 |= RF6_HASTE; magicness++; break; -- we already copy the max speed flatly
  #if 0
 			case SV_POTION_SLOWNESS: r_ptr->flags5 |= RF5_SLOW; magicness++; break;
  #else
@@ -6347,7 +6347,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	   Resistances spells are already handled by checking for resist+oppose above.
 	   magicness might be redundantly incremented too much, but whatever. */
 
-	if (get_skill(p_ptr, SKILL_TEMPORAL) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; }
+	//if (get_skill(p_ptr, SKILL_TEMPORAL) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; } -- we already copy the max speed flatly
 
 	if (get_skill(p_ptr, SKILL_MANA) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_MANA; magicness++; }
 	if (get_skill(p_ptr, SKILL_FIRE) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
@@ -6363,7 +6363,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		r_ptr->flags5 |= RF5_BA_ELEC; magicness++; //pft
 	}
 	if (get_skill(p_ptr, SKILL_SORCERY) >= thresh_spell) { /* o_o */
-		r_ptr->flags6 |= RF6_HASTE; magicness++;
+		//r_ptr->flags6 |= RF6_HASTE; magicness++; -- we already copy the max speed flatly
 		r_ptr->flags5 |= RF5_BA_MANA; magicness++;
 		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;
 		r_ptr->flags5 |= RF5_BA_POIS | RF5_BA_ELEC; magicness++;
@@ -6392,7 +6392,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		r_ptr->flags0 |= RF0_BR_ICE; magicness++; //ball
 	}
 	if (get_skill(p_ptr, SKILL_DRUID_PHYSICAL) >= thresh_spell) {
-		r_ptr->flags6 |= RF6_HASTE; magicness++;
+		//r_ptr->flags6 |= RF6_HASTE; magicness++; -- we already copy the max speed flatly
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
 	}
 
@@ -6458,7 +6458,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		r_ptr->flags5 |= RF5_BA_COLD; magicness++;
 		//kinetic shield: extra ac given further up
 	}
-	if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; }
+	//if (get_skill(p_ptr, SKILL_TCONTACT) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; } -- we already copy the max speed flatly
 	if (get_skill(p_ptr, SKILL_MINTRUSION) >= thresh_spell) {
 		//we got psi-immunity vs 40+ MCs! So no need to replicate the Psionic Blast/Storm spells maybe
  #if 0
