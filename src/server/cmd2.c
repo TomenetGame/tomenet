@@ -4710,7 +4710,7 @@ void do_cmd_disarm(int Ind, int dir) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-			do_cmd_disarm_mon_trap_aux(wpos, y, x);
+			do_cmd_disarm_mon_trap_aux(Ind, wpos, y, x);
 			more = FALSE;
 			done = TRUE;
 

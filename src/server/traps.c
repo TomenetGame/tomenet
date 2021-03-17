@@ -3367,13 +3367,14 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
  */
 /* Hrm it's complicated.. 
  * We'd better not touch FEAT and use only CS	- Jir -
+ * If Ind isn't 0, the items go directly to the player's inventory.
  */
-void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
+void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 	int this_o_idx, next_o_idx;
 	object_type forge;
 	object_type *o_ptr;
 	object_type *q_ptr;
-	cave_type               *c_ptr;
+	cave_type *c_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
 	if (!(zcave = getcave(wpos))) return;
@@ -3408,8 +3409,16 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 		/* Delete the object */
 		delete_object_idx(this_o_idx, FALSE);
 
-		/* Drop it */
-		drop_near(0, q_ptr, -1, wpos, y, x);
+		/* If a player disarms the monster trap and is already the owner, put the items into his inventory directly. */
+		if (Ind && q_ptr->owner == Players[Ind]->id && inven_carry_okay(Ind, q_ptr, 0x0)) {
+			int slot = inven_carry(Ind, q_ptr);
+
+			if (slot >= 0) inven_item_describe(Ind, slot);
+			else drop_near(0, q_ptr, -1, wpos, y, x); //paranoia
+		} else {
+			/* Drop it */
+			drop_near(0, q_ptr, -1, wpos, y, x);
+		}
 	}
 
 	//cave[py][px].special = cave[py][px].special2 = 0;
@@ -5088,7 +5097,7 @@ bool mon_hit_trap(int m_idx) {
 
 	/* Remove the trap if inactive now */
 	//if (remove) cave_set_feat_live(wpos, my, mx, FEAT_FLOOR);
-	if (remove) do_cmd_disarm_mon_trap_aux(&wpos, my, mx);
+	if (remove) do_cmd_disarm_mon_trap_aux(0, &wpos, my, mx);
 
 	/* did it die? */
 	return (dead);
