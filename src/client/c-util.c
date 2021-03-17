@@ -5619,15 +5619,17 @@ void interact_macros(void) {
 #define mw_device 'J'
 #define mw_any 'k'
 #define mw_anydir 'K'
-#define mw_common 'l'
-#define mw_abilitynt 'm'
-#define mw_abilityt 'M'
+#define mw_abilitynt 'l'
+#define mw_abilityt 'L'
+#define mw_common 'm'
 #define mw_slash 'n'
 #define mw_custom 'N'
 #define mw_load 'o'
 #define mw_equip 'p'
-
-#define mw_LAST 'p'
+#define mw_dir_run 'q'
+#define mw_dir_tunnel 'r'
+#define mw_dir_disarm 's'
+#define mw_LAST 's'
 
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
@@ -5673,21 +5675,23 @@ Chain_Macro:
 
 				switch (i) {
 				case 0:
-					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(8, 10, -1, TERM_L_GREEN, "a\377w/\377Gb) Drink a potion. \377w/\377G Read a scroll.");
-					Term_putstr(8, 11, -1, TERM_L_GREEN, "c\377w/\377GC) Fire ranged weapon (including boomerangs). \377w/\377G Throw an item.");
-					Term_putstr(8, 12, -1, TERM_L_GREEN, "d\377w/\377GD) Cast school \377w/\377G mimic spell without a target (or target manually).");
-					Term_putstr(8, 13, -1, TERM_L_GREEN, "e\377w/\377GE) Cast school \377w/\377G mimic spell with target.");
-					Term_putstr(8, 14, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target).");
-					Term_putstr(8, 15, -1, TERM_L_GREEN, "g\377w/\377GG) Polymorph into monster. \377w/\377G Set preferred immunity (mimicry users).");
-					Term_putstr(8, 16, -1, TERM_L_GREEN, "h\377w/\377GH) Draw runes to cast a runespell. \377w/\377G Set up a monster trap.");
-					Term_putstr(8, 17, -1, TERM_L_GREEN, "i\377w/\377GI) Fighting technique. \377w/\377G Switch combat stance (most melee classes).");
-					Term_putstr(8, 18, -1, TERM_L_GREEN, "j\377w/\377GJ) Shooting technique (archers, rangers). \377w/\377G Activate magic device.");
-					Term_putstr(8, 19, -1, TERM_L_GREEN, "k\377w/\377GK) Use any item without \377w/\377G with a target).");
-					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Choose from a set of some common commands and functions.");
-					Term_putstr(8, 21, -1, TERM_L_GREEN, "m\377w/\377GM) Use a basic ability ('m') without \377w/\377G with target (Draconian breath).");
-					Term_putstr(8, 22, -1, TERM_L_GREEN, "n\377w/\377GN) Enter a slash command. \377w/\377G Enter a custom action (same as % a).");
-					Term_putstr(8, 23, -1, TERM_L_GREEN, "o\377w/\377Gp) Load a macro file. \377w/\377G Change equipment (wield/takeoff/swap).");
+					l = 8
+					Term_putstr(5, l++, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "a\377w/\377Gb) Drink a potion. \377w/\377G Read a scroll.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "c\377w/\377GC) Fire ranged weapon (including boomerangs). \377w/\377G Throw an item.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "d\377w/\377GD) Cast school \377w/\377G mimic spell without a target (or target manually).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "e\377w/\377GE) Cast school \377w/\377G mimic spell with target.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "g\377w/\377GG) Polymorph into monster. \377w/\377G Set preferred immunity (mimicry users).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "h\377w/\377GH) Draw runes to cast a runespell. \377w/\377G Set up a monster trap.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "i\377w/\377GI) Fighting technique. \377w/\377G Switch combat stance (most melee classes).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "j\377w/\377GJ) Shooting technique (archers, rangers). \377w/\377G Activate magic device.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "k\377w/\377GK) Use any item without \377w/\377G with a target).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "l\377w/\377GL) Use a basic ability ('m') without \377w/\377G with target (Draconian breath).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "m)   Choose from a set of some common commands and functions.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "n\377w/\377GN) Enter a slash command. \377w/\377G Enter a custom action (same as % a).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "o\377w/\377Gp) Load a macro file. \377w/\377G Change equipment (wield/takeoff/swap).");
+					Term_putstr(6, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs) Directional running \377w/\377G tunneling \377w/\377G disarming.");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
@@ -5703,7 +5707,7 @@ Chain_Macro:
 						default:
 							/* invalid action -> exit wizard */
 							if ((choice < 'a' || choice > mw_LAST) &&
-							    choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' &&
+							    choice != 'C' && choice != 'D' && choice != 'E' && choice != 'L' &&
 							    choice != 'G' && choice != 'I' && choice != 'K' && choice != 'H' &&
 							    choice != 'J' && choice != 'N') {
 								//i = -1;
@@ -6331,9 +6335,67 @@ Chain_Macro:
 						/* exit? */
 						if (i == -2) continue;
 						break;
+
+					case mw_dir_run:
+					case mw_dir_tunnel:
+					case mw_dir_disarm:
+						clear_from(8);
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction:");
+
+						Term_putstr(25, 13, -1, TERM_L_GREEN, " 7  8  9");
+						Term_putstr(25, 14, -1, TERM_GREEN, "  \\ | /");
+						Term_putstr(25, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
+						Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\");
+						Term_putstr(25, 17, -1, TERM_L_GREEN, " 1  2  3");
+
+						Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9) ");
+
+						while (TRUE) {
+							target_dir = inkey();
+							switch (target_dir) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -3; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (target_dir < '1' || target_dir > '9') {
+									//i = -3;
+									continue;
+								}
+							}
+							break;
+						}
+
+						/* exit? */
+						if (i == -3) continue;
+
+						strcpy(buf2, "\\e\\e\\\\");
+						switch (choice) {
+						case mw_dir_run:
+							strcat(buf2, ".");
+							break;
+						case mw_dir_tunnel:
+							strcat(buf2, "+"); //actually same for rogue_like or normal, just normal also offers 'T'
+							break;
+						case mw_dir_disarm:
+							strcat(buf2, "D"); //actually same for rogue_like or normal
+							break;
+						}
+						strcat(buf2, format("%c", target_dir));
+						break;
 					}
 
+
+
 					/* --------------- specify item/parm if required --------------- */
+
+
 
 					/* might input a really long line? */
 					if (choice == mw_custom) {
@@ -6377,7 +6439,8 @@ Chain_Macro:
 						if (i == -2) continue;
 					}
 					/* no need for inputting an item/spell to use with the macro? */
-					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance && choice != mw_common) {
+					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance && choice != mw_common
+					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm) {
 						if (choice == mw_load) Term_gotoxy(23, 16);
 						else if (choice == mw_poly) Term_gotoxy(47, 17);
 						else Term_gotoxy(47, 16);
@@ -6393,10 +6456,15 @@ Chain_Macro:
 						if (choice != mw_poly || buf[0]) strcat(buf, "\\r");
 					}
 
+
+
 					/* --------------- complete the macro by glueing premade part and default part together --------------- */
 
+
+
 					/* generate the full macro action; magic device/preferred immunity macros are already pre-made */
-					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common) {
+					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common
+					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)
