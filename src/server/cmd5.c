@@ -1665,7 +1665,11 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			}
 
 			/* using up PvP-mode free mimic transformation? */
-			if (j && using_free_mimic) p_ptr->free_mimic--;
+			if (j && using_free_mimic) {
+				p_ptr->free_mimic--;
+				/* ..and actually learn the form, in case we get polymorphed so it isn't lost: */
+				p_ptr->r_mimicry[j] = r_info[j].level;
+			}
 
 			/* Activation tax */
 			else if (j && p_ptr->r_mimicry[j] < r_info[j].level
