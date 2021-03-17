@@ -3436,16 +3436,18 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 				object_desc(Ind, o_name, q_ptr, TRUE, 3);
 				q_ptr->marked = 0;
 				q_ptr->marked2 = ITEM_REMOVAL_NORMAL;
-
-				/* Message */
 				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
-
-				/* Refresh */
 				p_ptr->window |= PW_EQUIP;
 			} else {
 				/* Try to just place it into the inventory, or drop it to the floor if full */
 				slot = inven_carry(Ind, q_ptr);
-				if (slot >= 0) inven_item_describe(Ind, slot);
+				if (slot >= 0) {
+					//inven_item_describe(Ind, slot);
+					object_desc(Ind, o_name, q_ptr, TRUE, 3);
+					q_ptr->marked = 0;
+					q_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+				}
 				else drop_near(0, q_ptr, -1, wpos, y, x); //paranoia
 			}
 		} else {
