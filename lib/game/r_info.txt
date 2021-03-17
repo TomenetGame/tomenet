@@ -20442,7 +20442,7 @@ W:127:0:150:0
 E:1:1:2:2:1:2
 O:0:0:0:0
 F:BLUEBAND | GENO_NO_THIN | FORCE_MAXHP | NO_CREDIT | DROP_CHOSEN | NO_REDUCE | NO_FEAR
-D:Opon shattering the grand mirror, the adventurer's image suddenly came to life!
+D:Upon shattering the grand mirror, the adventurer's image suddenly came to life!
 D:Showing no hesitation, empathy or doubt it attacked immediately!
 
 # a low-power version for the 'Dungeon Keeper' labyrinth event - C. Blue
