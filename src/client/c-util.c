@@ -5692,7 +5692,7 @@ Chain_Macro:
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "m)   Choose from a set of some common commands and functions.");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "n\377w/\377GN) Enter a slash command. \377w/\377G Enter a custom action (same as % a).");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "o\377w/\377Gp) Load a macro file. \377w/\377G Change equipment (wield/takeoff/swap).");
-					Term_putstr(4, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs377w/\377Gt) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing.");
+					Term_putstr(4, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing.");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
