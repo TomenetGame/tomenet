@@ -5842,7 +5842,9 @@ void set_mon_num_hook(struct worldpos *wpos) {
 	else get_mon_num_hook = dungeon_aux;
 }
 
-void py2mon_init(monster_race *r_ptr) {
+void py2mon_init(void) {
+	monster_race *r_ptr = &r_info[RI_MIRROR];
+
 	/* Hack: Reset stats to maintenance parameters hard-coded in r_info, in case this is not the first time spawn */
 	r_ptr->flags1 = RF1_FORCE_MAXHP | RF1_DROP_CHOSEN; //no effect actually as we set HP manually
 	r_ptr->flags2 = r_ptr->flags3 = r_ptr->flags4 = r_ptr->flags5 = r_ptr->flags6 = r_ptr->flags7 = 0x0;
@@ -5854,7 +5856,9 @@ void py2mon_init(monster_race *r_ptr) {
 	r_ptr->flags7 |= RF7_CAN_SWIM | RF7_CAN_FLY | RF7_NO_ESP; //just whatever, paranoia - however, we're not a real being, so no ESP! :o
 	r_ptr->flags0 |= RF0_CAN_CLIMB | RF0_ASTAR; // A* is important to see through player-invisibility, which it actually implies!
 }
-void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+void py2mon_init_base(monster_type *m_ptr, player_type *p_ptr) {
+	monster_race *r_ptr = &r_info[RI_MIRROR];
+
 	/* Fixed stats */
 	m_ptr->level = r_ptr->level = p_ptr->max_plv;
 	/* On-the-fly adjustable stats, in case they 'improve' (aka player tries to game the system),
@@ -5892,7 +5896,8 @@ void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_p
 	   However, the way the auto-adjust code works is that it never regresses, only stacks improvements in stats,
 	   so that fact alone might work as a balancing factor for mimics' extra powers. >:) */
 }
-void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
+	monster_race *r_ptr = &r_info[RI_MIRROR];
 	int i, k, m, n, magicness = 0;
 	int thresh_skill = (p_ptr->max_plv + 4) / 5; /* usual skill minimum threshold to become active */
 	int thresh_spell = (p_ptr->max_plv + 9) / 10; /* usual spell school skill minimum threshold to become active */
@@ -6593,15 +6598,18 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	}
 #endif
 }
-void py2mon_update_equip(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+void py2mon_update_equip(monster_type *m_ptr, player_type *p_ptr) {
+	//monster_race *r_ptr = &r_info[RI_MIRROR];
 #ifdef SIMPLE_RI_MIRROR
 #endif
 }
-void py2mon_update_skills(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+void py2mon_update_skills(monster_type *m_ptr, player_type *p_ptr) {
+	//monster_race *r_ptr = &r_info[RI_MIRROR];
 #ifdef SIMPLE_RI_MIRROR
 #endif
 }
-void py2mon_update_abilities(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr) {
+void py2mon_update_abilities(monster_type *m_ptr, player_type *p_ptr) {
+	//monster_race *r_ptr = &r_info[RI_MIRROR];
 #ifdef SIMPLE_RI_MIRROR
 #endif
 }

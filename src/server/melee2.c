@@ -12034,10 +12034,10 @@ void process_monsters(void) {
 
 		/* Hack - adjust Doppelganger stats on the fly */
 		if (m_ptr->r_idx == RI_MIRROR) {
-			py2mon_update_base(m_ptr, r_ptr, p_ptr);
-			py2mon_update_equip(m_ptr, r_ptr, p_ptr);
-			py2mon_update_skills(m_ptr, r_ptr, p_ptr);
-			py2mon_update_abilities(m_ptr, r_ptr, p_ptr);
+			py2mon_update_base(m_ptr, p_ptr);
+			py2mon_update_equip(m_ptr, p_ptr);
+			py2mon_update_skills(m_ptr, p_ptr);
+			py2mon_update_abilities(m_ptr, p_ptr);
 		}
 
 		/* Assume no move */
