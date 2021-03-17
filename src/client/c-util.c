@@ -5630,7 +5630,7 @@ void interact_macros(void) {
 #define mw_dir_tunnel 'r'
 #define mw_dir_disarm 's'
 #define mw_dir_bash 't'
-#define mw_dir_bash 'u'
+#define mw_dir_close 'u'
 #define mw_LAST 'u'
 
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
