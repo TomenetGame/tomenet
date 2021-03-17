@@ -6446,7 +6446,7 @@ Chain_Macro:
 					}
 					/* no need for inputting an item/spell to use with the macro? */
 					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance && choice != mw_common
-					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm) {
+					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash) {
 						if (choice == mw_load) Term_gotoxy(23, 16);
 						else if (choice == mw_poly) Term_gotoxy(47, 17);
 						else Term_gotoxy(47, 16);
@@ -6470,7 +6470,7 @@ Chain_Macro:
 
 					/* generate the full macro action; magic device/preferred immunity macros are already pre-made */
 					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common
-					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm) {
+					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)
