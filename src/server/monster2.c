@@ -6323,11 +6323,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	}
 
 	if (get_skill(p_ptr, SKILL_SLING) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_2; magicness++; }
- #if 0
-	if (get_skill(p_ptr, SKILL_BOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_1; magicness++; } //arrows have lower damage so needs to get boosted later
- #else
-	if (get_skill(p_ptr, SKILL_BOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; } //hack..go with bolts for now for higher dps until coding arrow-dam-boost..
- #endif
+	if (get_skill(p_ptr, SKILL_BOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_1; magicness++; }
 	if (get_skill(p_ptr, SKILL_XBOW) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_3; magicness++; }
 	if (get_skill(p_ptr, SKILL_BOOMERANG) >= thresh_skill) { r_ptr->flags4 |= RF4_ARROW_4; magicness++; } //it's "missile", but we don't have a monster-boomerang-skill
 

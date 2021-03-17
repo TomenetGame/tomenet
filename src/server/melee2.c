@@ -1910,7 +1910,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 	int rad = 0, srad;
 	//u32b f7 = race_inf(&m_list[m_idx])->flags7;
 	int s_clone = 0, clone_summoning = m_ptr->clone_summoning;
-	//int eff_m_hp;
+	int eff_m_hp = m_ptr->hp;
 	/* To avoid TELE_TO from CAVE_ICKY pos on player outside */
 	cave_type **zcave;
 	/* Save the old location */
@@ -2230,7 +2230,6 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Hack: Prevent overkill from monsters who gained lots of HP from levelling up
 	   compared to their r_info version (hounds in Nether Realm) - C. Blue */
 	if (r_ptr->d_char == 'Z' && m_ptr->hp > r_ptr->hdice * r_ptr->hside) eff_m_hp = r_ptr->hdice * r_ptr->hside;
-	else eff_m_hp = m_ptr->hp;
 #endif
 
 	/* Get the monster possessive ("his"/"her"/"its") */
@@ -2238,6 +2237,32 @@ bool make_attack_spell(int Ind, int m_idx) {
 
 	/* Hack -- Get the "died from" name */
 	monster_desc(Ind, ddesc, m_idx, 0x0188);
+
+	/* Hacks for modifying the damage in special circumstances */
+	if (m_ptr->r_idx == RI_MIRROR) {
+		eff_m_hp = r_ptr->hdice * r_ptr->hside; //assume full HP for breath attacks, because we just use them to emulate missing ball spells
+		/* boost damage output of weaker monster spells, basically bolt spells, which for players are high-damage spells */
+		switch (thrown_spell) {
+		case RF5_OFFSET + 12: rlev *= 2; break; //curse
+		case RF5_OFFSET + 16: rlev *= 8; break; //basic elements
+		case RF5_OFFSET + 17: rlev *= 8; break;
+		case RF5_OFFSET + 18: rlev *= 8; break;
+		case RF5_OFFSET + 19: rlev *= 8; break; 
+		case RF5_OFFSET + 20: rlev *= 3; break; //poison
+		case RF5_OFFSET + 21: rlev *= 2; break; //nether
+		case RF5_OFFSET + 22: rlev *= 3; break; //water
+		case RF5_OFFSET + 23: rlev *= 2; break; //mana
+		case RF5_OFFSET + 24: rlev *= 3; break; //plasma
+		case RF5_OFFSET + 25: rlev *= 3; break; //ice
+		case RF5_OFFSET + 26: rlev *= 4; break; //magic missile
+		case RF0_OFFSET + 7: rlev *= 2; break; //disen
+		}
+		/* tone down damage again somewhat if a lower-level player challenges us, maybe */
+		if (m_ptr->level < 50) {
+			eff_m_hp = (eff_m_hp * (m_ptr->level + 20)) / 70;
+			rlev = (rlev * (m_ptr->level + 20)) / 70;
+		}
+	}
 
 	/* Cast the spell. */
 	switch (thrown_spell) {
@@ -2379,7 +2404,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes acid for", m_name);
-		breath(Ind, m_idx, GF_ACID, ((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_ACID, ((eff_m_hp / 3) > 1200 ? 1200 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_ACID);
 		break;
 
@@ -2388,7 +2413,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes lightning for", m_name);
-		breath(Ind, m_idx, GF_ELEC, ((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_ELEC, ((eff_m_hp / 3) > 1200 ? 1200 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_ELEC);
 		break;
 
@@ -2397,7 +2422,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes fire for", m_name);
-		breath(Ind, m_idx, GF_FIRE, ((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_FIRE, ((eff_m_hp / 3) > 1200 ? 1200 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_FIRE);
 		break;
 
@@ -2406,7 +2431,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes frost for", m_name);
-		breath(Ind, m_idx, GF_COLD, ((m_ptr->hp / 3) > 1200 ? 1200 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_COLD, ((eff_m_hp / 3) > 1200 ? 1200 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_COLD);
 		break;
 
@@ -2415,7 +2440,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gas for", m_name);
-		breath(Ind, m_idx, GF_POIS, ((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_POIS, ((eff_m_hp / 3) > 800 ? 800 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_POIS);
 		break;
 
@@ -2424,7 +2449,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nether for", m_name);
-		breath(Ind, m_idx, GF_NETHER, ((m_ptr->hp / 6) > 550 ? 550 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_NETHER, ((eff_m_hp / 6) > 550 ? 550 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_NETH);
 		break;
 
@@ -2433,7 +2458,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes light for", m_name);
-		breath(Ind, m_idx, GF_LITE, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_LITE, ((eff_m_hp / 6) > 400 ? 400 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_LITE);
 		break;
 
@@ -2442,7 +2467,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes darkness for", m_name);
-		breath(Ind, m_idx, GF_DARK, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_DARK, ((eff_m_hp / 6) > 400 ? 400 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_DARK);
 		break;
 
@@ -2451,7 +2476,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes confusion for", m_name);
-		breath(Ind, m_idx, GF_CONFUSION, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_CONFUSION, ((eff_m_hp / 6) > 400 ? 400 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_CONF);
 		break;
 
@@ -2460,7 +2485,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes sound for", m_name);
-		breath(Ind, m_idx, GF_SOUND, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_SOUND, ((eff_m_hp / 6) > 400 ? 400 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_SOUND);
 		break;
 
@@ -2469,7 +2494,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes chaos for", m_name);
-		breath(Ind, m_idx, GF_CHAOS, ((m_ptr->hp / 6) > 600 ? 600 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_CHAOS, ((eff_m_hp / 6) > 600 ? 600 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_CHAOS);
 		break;
 
@@ -2478,7 +2503,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disenchantment for", m_name);
-		breath(Ind, m_idx, GF_DISENCHANT, ((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_DISENCHANT, ((eff_m_hp / 6) > 500 ? 500 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_DISEN);
 		break;
 
@@ -2487,7 +2512,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes nexus for", m_name);
-		breath(Ind, m_idx, GF_NEXUS, ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_NEXUS, ((eff_m_hp / 3) > 250 ? 250 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_NEXUS);
 		break;
 
@@ -2496,7 +2521,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes time for", m_name);
-		breath(Ind, m_idx, GF_TIME, ((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_TIME, ((eff_m_hp / 3) > 150 ? 150 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_TIME);
 		break;
 
@@ -2505,7 +2530,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes inertia for", m_name);
-		breath(Ind, m_idx, GF_INERTIA, ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_INERTIA, ((eff_m_hp / 6) > 200 ? 200 : (eff_m_hp / 6)), y, x, srad);
 		break;
 
 	/* RF4_BR_GRAV */
@@ -2513,7 +2538,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes gravity for", m_name);
-		breath(Ind, m_idx, GF_GRAVITY, ((m_ptr->hp / 3) > 150 ? 150 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_GRAVITY, ((eff_m_hp / 3) > 150 ? 150 : (eff_m_hp / 3)), y, x, srad);
 		break;
 
 	/* RF4_BR_SHAR */
@@ -2521,7 +2546,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes shards for", m_name);
-		breath(Ind, m_idx, GF_SHARDS, ((m_ptr->hp / 6) > 400 ? 400 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_SHARDS, ((eff_m_hp / 6) > 400 ? 400 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_SHARD);
 		break;
 
@@ -2530,7 +2555,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes plasma for", m_name);
-		breath(Ind, m_idx, GF_PLASMA, ((m_ptr->hp / 6) > 150 ? 150 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_PLASMA, ((eff_m_hp / 6) > 150 ? 150 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_FIRE);
 		update_smart_learn(Ind, m_idx, DRS_ELEC);
 		break;
@@ -2540,7 +2565,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes force for", m_name);
-		breath(Ind, m_idx, GF_FORCE, ((m_ptr->hp / 6) > 200 ? 200 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_FORCE, ((eff_m_hp / 6) > 200 ? 200 : (eff_m_hp / 6)), y, x, srad);
 		break;
 
 	/* RF4_BR_MANA */
@@ -2548,7 +2573,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes magical energy for", m_name);
-		breath(Ind, m_idx, GF_MANA, ((m_ptr->hp / 3) > 250 ? 250 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_MANA, ((eff_m_hp / 3) > 250 ? 250 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_MANA);
 		break;
 
@@ -2558,7 +2583,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (!local) disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes disintegration for", m_name);
-		breath(Ind, m_idx, GF_DISINTEGRATE, ((m_ptr->hp / 3) > 300 ? 300 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_DISINTEGRATE, ((eff_m_hp / 3) > 300 ? 300 : (eff_m_hp / 3)), y, x, srad);
 		break;
 
 	/* RF4_XXX6X4 */
@@ -2567,7 +2592,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes toxic waste for", m_name);
-		breath(Ind, m_idx, GF_NUKE, ((m_ptr->hp / 3) > 800 ? 800 : (m_ptr->hp / 3)), y, x, srad);
+		breath(Ind, m_idx, GF_NUKE, ((eff_m_hp / 3) > 800 ? 800 : (eff_m_hp / 3)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_POIS);
 		break;
 
@@ -3718,7 +3743,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes ice for", m_name);
-		breath(Ind, m_idx, GF_ICE, ((m_ptr->hp / 6) > 500 ? 500 : (m_ptr->hp / 6)), y, x, srad);
+		breath(Ind, m_idx, GF_ICE, ((eff_m_hp / 6) > 500 ? 500 : (eff_m_hp / 6)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_SHARD);
 		update_smart_learn(Ind, m_idx, DRS_COLD);
 		break;
@@ -3728,7 +3753,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		disturb(Ind, 1, 0);
 		if (blind) msg_format(Ind, "%^s breathes.", m_name);
 		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s breathes water for", m_name);
-		breath(Ind, m_idx, GF_WATER, ((m_ptr->hp / 5) > 300 ? 300 : (m_ptr->hp / 5)), y, x, srad);
+		breath(Ind, m_idx, GF_WATER, ((eff_m_hp / 5) > 300 ? 300 : (eff_m_hp / 5)), y, x, srad);
 		update_smart_learn(Ind, m_idx, DRS_WATER);
 		break;
 
