@@ -6360,7 +6360,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -3; /* leave */
+								i = -2; /* leave */
 								break;
 							case KTRL('T'):
 								/* Take a screenshot */
@@ -6377,7 +6377,7 @@ Chain_Macro:
 						}
 
 						/* exit? */
-						if (i == -3) continue;
+						if (i == -2) continue;
 
 						strcpy(buf2, "\\e\\e\\\\");
 						switch (choice) {
