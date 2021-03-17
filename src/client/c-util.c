@@ -5630,7 +5630,8 @@ void interact_macros(void) {
 #define mw_dir_tunnel 'r'
 #define mw_dir_disarm 's'
 #define mw_dir_bash 't'
-#define mw_LAST 't'
+#define mw_dir_bash 'u'
+#define mw_LAST 'u'
 
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
@@ -5692,7 +5693,7 @@ Chain_Macro:
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "m)   Choose from a set of some common commands and functions.");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "n\377w/\377GN) Enter a slash command. \377w/\377G Enter a custom action (same as % a).");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "o\377w/\377Gp) Load a macro file. \377w/\377G Change equipment (wield/takeoff/swap).");
-					Term_putstr(4, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing.");
+					Term_putstr(2, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt\377w/\377Gu) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing \377w/\377G closing.");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
@@ -6341,6 +6342,7 @@ Chain_Macro:
 					case mw_dir_tunnel:
 					case mw_dir_disarm:
 					case mw_dir_bash:
+					case mw_dir_close:
 						clear_from(8);
 						Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction:");
 
@@ -6391,6 +6393,9 @@ Chain_Macro:
 						case mw_dir_bash:
 							if (c_cfg.rogue_like_commands) strcat(buf2, "f");
 							else strcat(buf2, "B");
+							break;
+						case mw_dir_close:
+							strcat(buf2, "c"); //actually same for rogue_like or normal
 							break;
 						}
 						strcat(buf2, format("%c", target_dir));
@@ -6446,7 +6451,7 @@ Chain_Macro:
 					}
 					/* no need for inputting an item/spell to use with the macro? */
 					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance && choice != mw_common
-					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash) {
+					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close) {
 						if (choice == mw_load) Term_gotoxy(23, 16);
 						else if (choice == mw_poly) Term_gotoxy(47, 17);
 						else Term_gotoxy(47, 16);
@@ -6470,7 +6475,7 @@ Chain_Macro:
 
 					/* generate the full macro action; magic device/preferred immunity macros are already pre-made */
 					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common
-					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash) {
+					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)
