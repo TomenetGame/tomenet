@@ -5675,7 +5675,7 @@ Chain_Macro:
 
 				switch (i) {
 				case 0:
-					l = 8
+					l = 8;
 					Term_putstr(5, l++, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "a\377w/\377Gb) Drink a potion. \377w/\377G Read a scroll.");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "c\377w/\377GC) Fire ranged weapon (including boomerangs). \377w/\377G Throw an item.");
