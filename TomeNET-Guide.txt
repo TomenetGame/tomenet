@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 16. March 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 17. March 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -8506,10 +8506,12 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     stack). Usually you will want the item. However, you can trade the deed to
     someone else, who can then go and redeem it for luck for that character of
     his (although the luck bonus he gets will be somewhat lower than what the
-    original owner would receive).
+    original owner would receive). 
     All losers will also receive a deed on the next character they log in with
     which can be turned in for a small temporary luck bonus (multiple deed
     buffs don't stack).
+    The luck buffs are on hold while on the world surface, so you won't lose
+    buff time from running around.
     If you die in this event, your character will get erased, even if it was
     an everlasting-mode character.
     For details about luck see LUCK flag in (5.8).
@@ -8544,7 +8546,7 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     teleported back to Bree. He automatically receives a victory deed in his
     inventory which he can exchange at the Mayor's office in the town hall.
     It can be exchanged for eiter an item or a temporary luck bonus (multiple
-    deed buffs don't stack).
+    deed buffs don't stack, on hold on world surface).
     He can also give this deed to another character if he wishes, although in
     that case it can only be exchanged for a luck bonus, not an item, and the
     bonus will be somewhat lower than for the Highlander champion himself.
@@ -8552,7 +8554,7 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     All losers will also receive a 'contenders deed' on the next character they
     log on with, which can be exchanged at the Mayor's office for small
     temporary luck bonus (note that it vanishes when you log off, and multiple
-    deed buffs don't stack).
+    deed buffs don't stack, buff is on hold while on world surface).
 
     A note regarding turning in a deed for an item:
     The item you get will be random but still depend on your character's skill
@@ -8632,6 +8634,9 @@ Dungeon Keeper (everyone can win, 1+ participants)
     Loser parchments are not tradable and can only be turned in for a small
     temporary luck buff (about 30 minutes duration).
     For details about luck see LUCK flag in (5.8).
+
+    The luck buffs are on hold while on the world surface, so you won't lose
+    buff time from running around.
 
     Hints:
     -The Horned Reaper in this maze bashes doors instead of opening them.
@@ -11277,6 +11282,8 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 than the original owner could have gotten.
                 Note that temporary luck buffs from deeds do not stack and also
                 will end prematurely when you log out before the buff ran out.
+                The luck buffs are on hold while on the world surface, so you
+                won't lose buff time from running around.
 *Destruction*   Causes a local earthquake, nearly completely wiping the area
                 of monsters and objects (see (5.13) about earthquakes).
                 Extremely powerful magic which causes a searing blast of light
