@@ -20512,6 +20512,54 @@ F:CAN_FLY
 F:AI_ANNOY
 D:For testing
 
+N:1158:Arrowing Test Blob
+G:j:o
+I:130:1d1:200:0:0
+W:127:0:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NEVER_MOVE
+S:1_IN_1
+S:ARROW_1
+D:For testing
+
+N:1159:Shooting Test Blob
+G:j:o
+I:130:1d1:200:0:0
+W:127:0:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NEVER_MOVE
+S:1_IN_1
+S:ARROW_2
+D:For testing
+
+N:1160:Bolting Test Blob
+G:j:o
+I:130:1d1:200:0:0
+W:127:0:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NEVER_MOVE
+S:1_IN_1
+S:ARROW_3
+D:For testing
+
+N:1161:Missiling Test Blob
+G:j:o
+I:130:1d1:200:0:0
+W:127:0:0:0
+E:0:0:0:0:0:0
+O:0:0:0:0
+B:TOUCH:*
+F:ALLOW_RUNNING | BLUEBAND | NEVER_MOVE
+S:1_IN_1
+S:ARROW_4
+D:For testing
+
 
 # N: serial number : monster name
 # G: symbol : color
