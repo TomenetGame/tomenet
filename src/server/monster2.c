@@ -6345,27 +6345,27 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 
 	//if (get_skill(p_ptr, SKILL_TEMPORAL) >= thresh_spell) { r_ptr->flags6 |= RF6_HASTE; magicness++; } -- we already copy the max speed flatly
 
-	if (get_skill(p_ptr, SKILL_MANA) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_MANA; magicness++; }
+	if (get_skill(p_ptr, SKILL_MANA) >= thresh_spell) { r_ptr->flags5 |= RF5_BO_MANA; magicness++; }
 	if (get_skill(p_ptr, SKILL_FIRE) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_FIRE; magicness++; } //weakness: not holy fire unlike Fireflash!
-	if (get_skill(p_ptr, SKILL_AIR) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_POIS | RF5_BA_ELEC; magicness++; }
-	if (get_skill(p_ptr, SKILL_WATER) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_COLD | RF5_BA_WATE; magicness++; }
-	if (get_skill(p_ptr, SKILL_EARTH) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_ACID; magicness++; }
-	if (get_skill(p_ptr, SKILL_UDUN) >= thresh_spell) { r_ptr->flags0 |= RF0_BA_DISE; magicness++; } //bolt+hellfire
+	if (get_skill(p_ptr, SKILL_AIR) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_POIS | RF5_BO_ELEC; magicness++; }
+	if (get_skill(p_ptr, SKILL_WATER) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_COLD | RF5_BO_WATE; magicness++; }
+	if (get_skill(p_ptr, SKILL_EARTH) >= thresh_spell) { r_ptr->flags5 |= RF5_BO_ACID; magicness++; }
+	if (get_skill(p_ptr, SKILL_UDUN) >= thresh_spell) { r_ptr->flags0 |= RF0_BO_DISE | RF0_BA_DISE; magicness++; } //beam+hellfire
 	//if (get_skill(p_ptr, SKILL_MIND)) { r_ptr->flags |= RF__; magicness++; } -- nothing except confuse
 	//if (get_skill(p_ptr, SKILL_DIVINATION)) { r_ptr->flags |= RF__; magicness++; } -- nothing here
 	if (get_skill(p_ptr, SKILL_CONVEYANCE) >= thresh_spell) { r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++; }
 	if (get_skill(p_ptr, SKILL_NATURE) >= thresh_spell) {
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
-		r_ptr->flags5 |= RF5_BA_ELEC; magicness++; //pft
+		r_ptr->flags5 |= RF5_BO_ELEC; magicness++;
 	}
 	if (get_skill(p_ptr, SKILL_SORCERY) >= thresh_spell) { /* o_o */
 		//r_ptr->flags6 |= RF6_HASTE; magicness++; -- we already copy the max speed flatly
-		r_ptr->flags5 |= RF5_BA_MANA; magicness++;
+		r_ptr->flags5 |= RF5_BO_MANA; magicness++;
 		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;
-		r_ptr->flags5 |= RF5_BA_POIS | RF5_BA_ELEC; magicness++;
-		r_ptr->flags5 |= RF5_BA_COLD | RF5_BA_WATE; magicness++;
-		r_ptr->flags5 |= RF5_BA_ACID; magicness++;
-		r_ptr->flags0 |= RF0_BA_DISE; magicness++;
+		r_ptr->flags5 |= RF5_BA_POIS | RF5_BO_ELEC; magicness++;
+		r_ptr->flags5 |= RF5_BA_COLD | RF5_BO_WATE; magicness++;
+		r_ptr->flags5 |= RF5_BO_ACID; magicness++;
+		r_ptr->flags0 |= RF0_BO_DISE | RF0_BA_DISE; magicness++;
 		r_ptr->flags6 |= RF6_BLINK | RF6_TPORT; magicness++;
 		r_ptr->flags6 |= RF6_HEAL; magicness++;
 	}
@@ -6394,13 +6394,13 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 
 	if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_DARK; magicness++; }
 	if (get_skill(p_ptr, SKILL_OSPIRIT) >= thresh_spell) {
-		r_ptr->flags5 |= RF5_CURSE; magicness++; //curse.. to low dmg -_-
-		r_ptr->flags5 |= RF5_BA_ELEC; magicness++; //bolt
+		r_ptr->flags5 |= RF5_CURSE; magicness++;
+		r_ptr->flags5 |= RF5_BO_ELEC; magicness++;
 		r_ptr->flags4 |= RF4_BR_LITE; magicness++; //bolt
 	}
 	if (get_skill(p_ptr, SKILL_OHERETICISM) >= thresh_spell) {
-		r_ptr->flags5 |= RF5_BA_FIRE; magicness++;//bolt
-		r_ptr->flags5 |= RF5_BA_CHAO; magicness++;//bolt
+		r_ptr->flags5 |= RF5_BO_FIRE; magicness++;
+		r_ptr->flags5 |= RF5_BA_CHAO; magicness++; //bolt
 		r_ptr->flags2 |= RF2_AURA_FIRE;
 	}
 	if (get_skill(p_ptr, SKILL_OUNLIFE) >= thresh_spell) {
@@ -6410,7 +6410,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 		r_ptr->flags4 |= RF4_BR_INER; magicness++; //too harsh?
  #endif
 		r_ptr->flags2 |= RF2_REGENERATE; //Nether Sap weak version
-		r_ptr->flags5 |= RF5_BA_NETH; //bolt
+		r_ptr->flags5 |= RF5_BO_NETH;
 	}
 
 	if (get_skill(p_ptr, SKILL_R_LITE) >= thresh_spell) {
@@ -6466,7 +6466,7 @@ void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p
 	}
 
 	if (get_skill(p_ptr, SKILL_HOFFENSE) >= thresh_spell) {
-		//r_ptr->flags5 |= RF5_CURSE; magicness++; //low damage?
+		r_ptr->flags5 |= RF5_CURSE; magicness++;
 		r_ptr->flags0 |= RF0_BA_DISE; magicness++; //"OoD" -_-
 		if (get_skill(p_ptr, SKILL_OSHADOW) >= thresh_spell) { r_ptr->flags5 |= RF5_BA_CHAO; magicness++; } //bolt
 	}

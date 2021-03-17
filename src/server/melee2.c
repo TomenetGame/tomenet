@@ -2243,6 +2243,10 @@ bool make_attack_spell(int Ind, int m_idx) {
 		eff_m_hp = r_ptr->hdice * r_ptr->hside; //assume full HP for breath attacks, because we just use them to emulate missing ball spells
 		/* boost damage output of weaker monster spells, basically bolt spells, which for players are high-damage spells */
 		switch (thrown_spell) {
+		case RF4_OFFSET + 4: rlev *= 1; break; //arrow
+		case RF4_OFFSET + 5: rlev *= 3; break; //shot
+		case RF4_OFFSET + 6: rlev *= 3; break; //bolt
+		case RF4_OFFSET + 7: rlev *= 2; break; //generic missile (using this for boomerang)
 		case RF5_OFFSET + 12: rlev *= 2; break; //curse
 		case RF5_OFFSET + 16: rlev *= 8; break; //basic elements
 		case RF5_OFFSET + 17: rlev *= 8; break;
