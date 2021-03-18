@@ -11330,8 +11330,8 @@ void tym_evaluate(int Ind) {
    Puts it into player's inventory if Ind != 0 and there is room,
    otherwise copies it into ox_ptr provided it's not NULL.
    If wpos is specified, it will be used for apply_magic().
-   If wpos is 0 and Ind isn't 0, the player's wpos will be used for apply_magic().
-   If wpos is 0 and Ind is 0, the generic wpos of Bree will be used. - C. Blue */
+   If wpos is NULL and Ind isn't 0, the player's wpos will be used for apply_magic().
+   If wpos is NULL and Ind is 0, the generic wpos of Bree will be used. - C. Blue */
 extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, object_type *ox_ptr) {
 	player_type *p_ptr = NULL;
 	object_type forge, *o_ptr = &forge;
