@@ -11298,6 +11298,43 @@ extern void wish(int Ind, int tval, int sval, int number, int bpval, int pval, i
 	player_type *p_ptr = Players[Ind];
 	object_type forge, *o_ptr = &forge;
 
+	if (!number) {
+		msg_print(Ind, "Amount may not be zero.");
+		return;
+	}
+	if (number < 0 || number > 99) {
+		msg_print(Ind, "Amount out of bounds.");
+		return;
+	}
+	if (tval < 0 || tval > TV_MAX) {
+		msg_print(Ind, "tval out of bounds.");
+		return;
+	}
+	if (sval < 0 || sval > 255) {
+		msg_print(Ind, "sval out of bounds.");
+		return;
+	}
+	if (pval < 0 || pval > 125) { //arbitrary (morgoth crown)
+		msg_print(Ind, "pval out of bounds.");
+		return;
+	}
+	if (bpval < 0 || bpval > 125) {
+		msg_print(Ind, "bpval out of bounds.");
+		return;
+	}
+	if (name1 < 0 || name1 > ART_RANDART) {
+		msg_print(Ind, "name1 out of bounds.");
+		return;
+	}
+	if (name2 < 0 || name2 > 999) { //arbitrary
+		msg_print(Ind, "name2 out of bounds.");
+		return;
+	}
+	if (name2b < 0 || name2b > 999) { //arbitrary
+		msg_print(Ind, "name2b out of bounds.");
+		return;
+	}
+
 	WIPE(o_ptr, object_type);
 	invcopy(o_ptr, lookup_kind(tval, sval));
 	o_ptr->number = number;
