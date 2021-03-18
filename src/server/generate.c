@@ -8581,7 +8581,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun->l_ptr->hgt = SCREEN_HGT;
 		dun->l_ptr->wid = SCREEN_WID;
 
-		if (!(zcave = getcave(wpos))) return;
+		if (!(zcave = getcave(wpos))) {
+			p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
+			return;
+		}
 
 		/* Hack -- Don't tell players about it (for efficiency) */
 		level_generation_time = TRUE;
@@ -8616,8 +8619,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* target dummies */
 		//setup_monsters();
 		level_generation_time = FALSE;
+		p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
 		return;
 	} else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
+		p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;
@@ -8654,6 +8659,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* Always generate basic death fate from template for a bit more visuals, instead of the auto-generated, basically empty floor? */
 	/* The 'useless' death fate, starvation incoming: */
 	else if (d_ptr->type == DI_DEATH_FATE) {
+		p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;

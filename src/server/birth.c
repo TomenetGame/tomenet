@@ -2396,6 +2396,10 @@ static void player_setup(int Ind, bool new) {
 			}
 
 			alloc_dungeon_level(wpos);
+			/* Let's make it a bit more co-op ^^ */
+#ifdef DEATH_FATE_SPECIAL
+			if (in_deathfate(&p_ptr->wpos)) p_ptr->temp_misc_1 |= 0x40;
+#endif
 			/* hack: Prevent generating a random dungeon town via relogging+unstaticing cheeze */
 			p_ptr->temp_misc_1 |= 0x10;
 			generate_cave(wpos, p_ptr);
