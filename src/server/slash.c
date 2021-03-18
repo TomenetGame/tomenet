@@ -2755,7 +2755,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			pseudo_forge.name1 = name1;
 			if (name1 == ART_PHASING || admin_artifact_p(&pseudo_forge)) return;
 
-			wish(Ind, tval, sval, number, bpval, pval, name1, name2, name2b, NULL);
+			wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, NULL);
 			return;
 		}
 #endif
@@ -5992,7 +5992,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				}
 
-				wish(Ind, tval, sval, number, bpval, pval, name1, name2, name2b, NULL);
+				wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, NULL);
 				return;
 			}
 #endif
@@ -11328,8 +11328,10 @@ void tym_evaluate(int Ind) {
 
 /* New and improved /wish functionality. Creates a specific item.
    Puts it into player's inventory if Ind != 0 and there is room,
-   otherwise copies it into ox_ptr provided it's not NULL. - C. Blue */
-extern void wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, object_type *ox_ptr) {
+   otherwise copies it into ox_ptr provided it's not NULL.
+   If Ind is specified, wpos is ignored. Otherwise, wpos is used for apply_magic() if wpos isn't 0.
+   If Ind is 0 and wpos is 0, a generic wpos of Bree will be used. - C. Blue */
+extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, object_type *ox_ptr) {
 	player_type *p_ptr;
 	object_type forge, *o_ptr = &forge;
 
@@ -11396,8 +11398,18 @@ extern void wish(int Ind, int tval, int sval, int number, int bpval, int pval, i
 		o_ptr->name3 += rand_int(0xFFFF);
 	}
 
-	//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
-	apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+	//apply_magic(wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
+	if (wpos) apply_magic(wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+	else if (Ind) apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+	else {
+		struct worldpos xpos;
+
+		xpos.wx = 32;
+		xpos.wy = 32;
+		xpos.wz = 0;
+
+		apply_magic(&xpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+	}
 
 	object_known(o_ptr);
 
