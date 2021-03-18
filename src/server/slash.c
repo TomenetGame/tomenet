@@ -1435,6 +1435,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else msg_print(Ind, longVersion);
 			return;
 		}
+		else if (prefix(messagelc, "/?r")) { /* guide chapter search for our race */
+			Send_Guide(Ind, 3, 0, race_info[p_ptr->prace].title);
+			return;
+		}
+		else if (prefix(messagelc, "/?c")) { /* guide chapter search for our class */
+			Send_Guide(Ind, 3, 0, class_info[p_ptr->pclass].title);
+			return;
+		}
 		else if (prefix(messagelc, "/help") || prefix(messagelc, "/he") || prefix(messagelc, "/?")) {
 			char path[MAX_PATH_LENGTH];
 
