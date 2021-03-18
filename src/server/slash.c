@@ -2677,77 +2677,53 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 #ifdef FUN_SERVER /* make wishing available to players for fun, until rollback happens - C. Blue */
 		else if (prefix(messagelc, "/wish")) {
-			object_type	forge;
-			object_type	*o_ptr = &forge;
-			WIPE(o_ptr, object_type);
-			int tval, sval, kidx;
+			int tval, sval, bpval = 0, pval = 0, name1 = 0, name2 = 0, name2b = 0, number = 1;
 
-			if (tk < 1 || !k) {
-				msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] or /wish (o_idx)");
+			if (tk < 2 || tk > 8) {
+				msg_print(Ind, "\377oUsage: /wish <tval> <sval> [<xNum>] [<bpval> <pval> <name1> <name2> <name2b>]");
 				return;
 			}
 
-			if (tk > 1) {
-				tval = k; sval = atoi(token[2]);
-				kidx = lookup_kind(tval, sval);
-			}
-			else kidx = k;
-//			if (kidx == 238 || kidx == 909 || kidx == 888 || kidx == 920) return; /* Invuln pots, Learning pots, Invinc + Highland ammys */
-			if (kidx == 239 || kidx == 616 || kidx == 626 || kidx == 595 || kidx == 179) return; /* ..and rumour scrolls (spam) */
-			msg_format(Ind, "%d", kidx);
-			invcopy(o_ptr, kidx);
+			tval = k;
+			sval = atoi(token[2]);
 
-			if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
-			/* the next check is not needed (bpval is used, not pval) */
-			if (kidx == 428 && o_ptr->pval > 3) o_ptr->pval = 3; //436  (limit EA ring +BLOWS)
-
-			/* Wish arts out! */
-			if (tk > 4) {
-				object_type forge;
-				int nom = atoi(token[5]);
-
-				forge.name1 = nom;
-				if (nom == ART_PHASING || admin_artifact_p(&forge)) return; /* Phasing ring, admin-only items */
-				o_ptr->number = 1;
-
-				if (nom > 0) o_ptr->name1 = nom;
-				else {
-					/* It's ego or randarts */
-					if (nom) {
-						o_ptr->name2 = 0 - nom;
-						if (tk > 4) o_ptr->name2b = 0 - atoi(token[5]);
-						/* the next check might not be needed (bpval is used, not pval?) */
-						if ((o_ptr->name2 == 65 || o_ptr->name2b == 65 ||
-						    o_ptr->name2 == 70 || o_ptr->name2b == 70 ||
-						    o_ptr->name2 == 173 || o_ptr->name2b == 173 ||
-						    o_ptr->name2 == 176 || o_ptr->name2b == 176 ||
-						    o_ptr->name2 == 187 || o_ptr->name2b == 187)
-						    && (o_ptr->pval > 3)) /* all +BLOWS items */
-							o_ptr->pval = 3;
-					}
-					else o_ptr->name1 = ART_RANDART;
-
-					/* Piece together a 32-bit random seed */
-					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
-					o_ptr->name3 += rand_int(0xFFFF);
+			if (tk >= 3) {
+				if (token[3][0] == 'x') {
+					number = atoi(token[3]);
+					if (tk >= 4) bpval = atoi(token[4]);
+					if (tk >= 5) pval = atoi(token[5]);
+					if (tk >= 6) name1 = atoi(token[6]);
+					if (tk >= 7) name2 = atoi(token[7]);
+					if (tk >= 8) name2b = atoi(token[8]);
+				} else {
+					if (tk >= 3) bpval = atoi(token[3]);
+					if (tk >= 4) pval = atoi(token[4]);
+					if (tk >= 5) name1 = atoi(token[5]);
+					if (tk >= 6) name2 = atoi(token[6]);
+					if (tk >= 7) name2b = atoi(token[7]);
 				}
 			}
-			else o_ptr->number = o_ptr->weight >= 30 ? 1 : 99;
 
-			apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
-			if (tk > 3) o_ptr->discount = atoi(token[4]);
-			else o_ptr->discount = 100;
-			object_known(o_ptr);
-			o_ptr->owner = 0;
-			//if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
-			//o_ptr->owner = p_ptr->id;
-			o_ptr->level = 1;
+ #if 0
+			//if (kidx == 238 || kidx == 909 || kidx == 888 || kidx == 920) return; /* Invuln pots, Learning pots, Invinc + Highland ammys */
+			if (kidx == 239 || kidx == 616 || kidx == 626 || kidx == 595 || kidx == 179) return; /* ..and rumour scrolls (spam) */
 
- #ifdef NEW_MDEV_STACKING
-			if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
+			if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
+			if (kidx == 428 && o_ptr->bpval > 3) o_ptr->bpval = 3; //436  (limit EA ring +BLOWS)
+
+			if ((o_ptr->name2 == 65 || o_ptr->name2b == 65 ||
+			    o_ptr->name2 == 70 || o_ptr->name2b == 70 ||
+			    o_ptr->name2 == 173 || o_ptr->name2b == 173 ||
+			    o_ptr->name2 == 176 || o_ptr->name2b == 176 ||
+			    o_ptr->name2 == 187 || o_ptr->name2b == 187)
+			    && (o_ptr->bpval > 3)) /* all +BLOWS items */
+				o_ptr->bpval = 3;
+
  #endif
-			(void)inven_carry(Ind, o_ptr);
+			if (name1 == ART_PHASING) return;
+			// || admin_artifact_p(&forge)) return; /* Phasing ring, admin-only items */
 
+			wish(Ind, tval, sval, number, bpval, pval, name1, name2, name2b);
 			return;
 		}
 #endif
@@ -5954,64 +5930,37 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				load_server_cfg();
 				return;
 			}
-			/* Admin wishing :)
-			 * TODO: better parser like
-			 * /wish 21 8 a117 d40
-			 * for Aule {40% off}
-			 */
+			/* Admin wishing :) */
 #ifndef FUN_SERVER /* disabled while server is being exploited */
 			else if (prefix(messagelc, "/wish")) {
-				object_type forge;
-				object_type *o_ptr = &forge;
+				int tval, sval, bpval = 0, pval = 0, name1 = 0, name2 = 0, name2b = 0, number = 1;
 
-				WIPE(o_ptr, object_type);
-
-				if (tk < 1 || !k) {
-					msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] [name2b]  --or /wish (o_idx)");
+				if (tk < 2 || tk > 8) {
+					msg_print(Ind, "\377oUsage: /wish <tval> <sval> [<xNum>] [<bpval> <pval> <name1> <name2> <name2b>]");
 					return;
 				}
 
-				invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[2])) : k);
+				tval = k;
+				sval = atoi(token[2]);
 
-				/* Wish arts out! */
-				if (tk > 4) {
-					int nom = atoi(token[5]);
-					o_ptr->number = 1;
-
-					if (nom == ART_RANDART) { /* see defines.h */
-						/* Piece together a 32-bit random seed */
-						o_ptr->name1 = ART_RANDART;
-						o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
-						o_ptr->name3 += rand_int(0xFFFF);
-					} else if (nom > 0) {
-						o_ptr->name1 = nom;
-						handle_art_inum(o_ptr->name1);
-					} else if (nom < 0) {
-						/* It's ego or randarts */
-						o_ptr->name2 = 0 - nom;
-						if (tk > 5) o_ptr->name2b = 0 - atoi(token[6]);
-
-						/* Piece together a 32-bit random seed */
-						o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
-						o_ptr->name3 += rand_int(0xFFFF);
+				if (tk >= 3) {
+					if (token[3][0] == 'x') {
+						number = atoi(token[3]);
+						if (tk >= 4) bpval = atoi(token[4]);
+						if (tk >= 5) pval = atoi(token[5]);
+						if (tk >= 6) name1 = atoi(token[6]);
+						if (tk >= 7) name2 = atoi(token[7]);
+						if (tk >= 8) name2b = atoi(token[8]);
+					} else {
+						if (tk >= 3) bpval = atoi(token[3]);
+						if (tk >= 4) pval = atoi(token[4]);
+						if (tk >= 5) name1 = atoi(token[5]);
+						if (tk >= 6) name2 = atoi(token[6]);
+						if (tk >= 7) name2b = atoi(token[7]);
 					}
-				} else o_ptr->number = o_ptr->weight >= 30 ? 1 : 99;
+				}
 
-//				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
-				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
-				if (tk > 3) o_ptr->discount = atoi(token[4]);
-				else o_ptr->discount = 100;
-				object_known(o_ptr);
-				o_ptr->owner = 0;
-				if (tk > 2) o_ptr->pval = atoi(token[3]);
-				//o_ptr->owner = p_ptr->id;
-				o_ptr->level = 1;
-
- #ifdef NEW_MDEV_STACKING
-				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
- #endif
-				(void)inven_carry(Ind, o_ptr);
-
+				wish(Ind, tval, sval, number, bpval, pval, name1, name2, name2b);
 				return;
 			}
 #endif
@@ -11343,4 +11292,57 @@ void tym_evaluate(int Ind) {
 		    tmp, ((p_ptr->test_heal * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
 		else msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld", tmp);
 	}
+}
+
+extern void wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b) {
+	player_type *p_ptr = Players[Ind];
+	object_type forge, *o_ptr = &forge;
+
+	WIPE(o_ptr, object_type);
+	invcopy(o_ptr, lookup_kind(tval, sval));
+	o_ptr->number = number;
+
+	/* Wish arts out! */
+	if (name1) {
+		if (name1 == ART_RANDART) { /* see defines.h */
+			/* Piece together a 32-bit random seed */
+			o_ptr->name1 = ART_RANDART;
+			o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
+			o_ptr->name3 += rand_int(0xFFFF);
+		} else {
+			o_ptr->name1 = name1;
+			handle_art_inum(o_ptr->name1);
+		}
+	} else if (name2) {
+		/* It's ego or randarts */
+		o_ptr->name2 = name2;
+		o_ptr->name2b = name2b;
+
+		/* Piece together a 32-bit random seed */
+		o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
+		o_ptr->name3 += rand_int(0xFFFF);
+	}
+
+	//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
+	apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+
+	object_known(o_ptr);
+
+	/* Reset 'good' enchantments to defaults */
+	o_ptr->to_h = k_info[o_ptr->k_idx].to_h;
+	o_ptr->to_d = k_info[o_ptr->k_idx].to_d;
+	o_ptr->to_a = k_info[o_ptr->k_idx].to_a;
+
+	o_ptr->bpval = bpval;
+	o_ptr->pval = pval;
+
+	determine_level_req(0, o_ptr);
+	//verify_level_req(o_ptr);
+	//o_ptr->level = 1;
+
+ #ifdef NEW_MDEV_STACKING
+	if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
+ #endif
+	if (inven_carry(Ind, o_ptr) == -1) msg_print(Ind, "Couldn't carry additional object.");
+	return;
 }
