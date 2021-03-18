@@ -1380,6 +1380,8 @@ They all start with a slash '/' hence they're called slash commands:
             commonly used slash commands.
             Optionally, a topic can be specified - in this case a guide search
             will be conducted on that topic. For example enter:   /? ac
+/?r         Shortcut to your character's race description in the guide.
+/?c         Shortcut to your character's class description in the guide.
 
 /house
 /hou        Displays your houses, same as ~9, but offers two optional
