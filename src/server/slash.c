@@ -2678,6 +2678,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #ifdef FUN_SERVER /* make wishing available to players for fun, until rollback happens - C. Blue */
 		else if (prefix(messagelc, "/wish")) {
 			int tval, sval, bpval = 0, pval = 0, name1 = 0, name2 = 0, name2b = 0, number = 1;
+			object_type pseudo_forge;
 
 			if (tk < 2 || tk > 8) {
 				msg_print(Ind, "\377oUsage: /wish <tval> <sval> [<xNum>] [<bpval> <pval> <name1> <name2> <name2b>]");
@@ -2704,26 +2705,57 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
- #if 0
-			//if (kidx == 238 || kidx == 909 || kidx == 888 || kidx == 920) return; /* Invuln pots, Learning pots, Invinc + Highland ammys */
-			if (kidx == 239 || kidx == 616 || kidx == 626 || kidx == 595 || kidx == 179) return; /* ..and rumour scrolls (spam) */
+			switch (tval)
+			case TV_POTION:
+				switch (sval) {
+				case SV_POTION_INVULNERABILITY:
+				case SV_POTION_LEARNING:
+					return;
+				}
+				break;
+			case TV_SCROLL:
+				switch (sval) {
+				case SV_SCROLL_RUMOR:
+					return;
+				}
+				break;
+			case TV_AMULET:
+				switch (sval) {
+				case SV_AMULET_INVULNERABILITY:
+				case SV_AMULET_INVINCIBILITY:
+				case SV_AMULET_HIGHLANDS:
+				case SV_AMULET_HIGHLANDS2:
+					return;
+				}
+				break;
+			case TV_RING:
+				switch (sval) {
+				case SV_RING_ATTACKS:
+					if (bpval > 3) bpval = 3;
+				case SV_RING_SPEED:
+					if (bpval > 15) bpval = 15;
+				}
+				break;
+			}
 
-			if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
-			if (kidx == 428 && o_ptr->bpval > 3) o_ptr->bpval = 3; //436  (limit EA ring +BLOWS)
+			/* Generic limits */
+			if (pval > 15) pval = 15;
+			if (bpval > 15) bpval = 15;
 
-			if ((o_ptr->name2 == 65 || o_ptr->name2b == 65 ||
-			    o_ptr->name2 == 70 || o_ptr->name2b == 70 ||
-			    o_ptr->name2 == 173 || o_ptr->name2b == 173 ||
-			    o_ptr->name2 == 176 || o_ptr->name2b == 176 ||
-			    o_ptr->name2 == 187 || o_ptr->name2b == 187)
-			    && (o_ptr->bpval > 3)) /* all +BLOWS items */
-				o_ptr->bpval = 3;
+			/* all potential +BLOWS items */
+			if ((o_ptr->name2 == EGO_HA || o_ptr->name2b == EGO_HA ||
+			    o_ptr->name2 == EGO_ATTACKS || o_ptr->name2b == EGO_ATTACKS ||
+			    o_ptr->name2 == EGO_COMBAT || o_ptr->name2b == EGO_COMBAT ||
+			    o_ptr->name2 == EGO_FURY || o_ptr->name2b == EGO_FURY ||
+			    o_ptr->name2 == EGO_STORMBRINGER || o_ptr->name2b == EGO_STORMBRINGER) {
+				if (o_ptr->pval > 3) o_ptr->pval = 3;
+			}
 
- #endif
-			if (name1 == ART_PHASING) return;
-			// || admin_artifact_p(&forge)) return; /* Phasing ring, admin-only items */
+			/* Phasing ring, admin-only items */
+			pseudo_forge.name1 = name1;
+			if (name1 == ART_PHASING || admin_artifact_p(&pseudo_forge)) return;
 
-			wish(Ind, tval, sval, number, bpval, pval, name1, name2, name2b);
+			wish(Ind, tval, sval, number, bpval, pval, name1, name2, name2b, NULL);
 			return;
 		}
 #endif
@@ -5960,7 +5992,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				}
 
-				wish(Ind, tval, sval, number, bpval, pval, name1, name2, name2b);
+				wish(Ind, tval, sval, number, bpval, pval, name1, name2, name2b, NULL);
 				return;
 			}
 #endif
@@ -11294,44 +11326,48 @@ void tym_evaluate(int Ind) {
 	}
 }
 
-extern void wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b) {
-	player_type *p_ptr = Players[Ind];
+/* New and improved /wish functionality. Creates a specific item.
+   Puts it into player's inventory if Ind != 0 and there is room,
+   otherwise copies it into ox_ptr provided it's not NULL. - C. Blue */
+extern void wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, object_type *ox_ptr) {
+	player_type *p_ptr;
 	object_type forge, *o_ptr = &forge;
 
+	if (Ind) p_ptr = Players[Ind];
 	if (!number) {
-		msg_print(Ind, "Amount may not be zero.");
+		if (Ind) msg_print(Ind, "Amount may not be zero.");
 		return;
 	}
 	if (number < 0 || number > 99) {
-		msg_print(Ind, "Amount out of bounds.");
+		if (Ind) msg_print(Ind, "Amount out of bounds.");
 		return;
 	}
 	if (tval < 0 || tval > TV_MAX) {
-		msg_print(Ind, "tval out of bounds.");
+		if (Ind) msg_print(Ind, "tval out of bounds.");
 		return;
 	}
 	if (sval < 0 || sval > 255) {
-		msg_print(Ind, "sval out of bounds.");
+		if (Ind) msg_print(Ind, "sval out of bounds.");
 		return;
 	}
 	if (pval < 0 || pval > 125) { //arbitrary (morgoth crown)
-		msg_print(Ind, "pval out of bounds.");
+		if (Ind) msg_print(Ind, "pval out of bounds.");
 		return;
 	}
 	if (bpval < 0 || bpval > 125) {
-		msg_print(Ind, "bpval out of bounds.");
+		if (Ind) msg_print(Ind, "bpval out of bounds.");
 		return;
 	}
 	if (name1 < 0 || name1 > ART_RANDART) {
-		msg_print(Ind, "name1 out of bounds.");
+		if (Ind) msg_print(Ind, "name1 out of bounds.");
 		return;
 	}
 	if (name2 < 0 || name2 > 999) { //arbitrary
-		msg_print(Ind, "name2 out of bounds.");
+		if (Ind) msg_print(Ind, "name2 out of bounds.");
 		return;
 	}
 	if (name2b < 0 || name2b > 999) { //arbitrary
-		msg_print(Ind, "name2b out of bounds.");
+		if (Ind) msg_print(Ind, "name2b out of bounds.");
 		return;
 	}
 
@@ -11380,6 +11416,14 @@ extern void wish(int Ind, int tval, int sval, int number, int bpval, int pval, i
  #ifdef NEW_MDEV_STACKING
 	if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
  #endif
-	if (inven_carry(Ind, o_ptr) == -1) msg_print(Ind, "Couldn't carry additional object.");
+
+	if (Ind && inven_carry(Ind, o_ptr) == -1) msg_print(Ind, "Couldn't carry additional object.");
+	else if (ox_ptr) *ox_ptr = *o_ptr;
+	else {
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_printf("wish-ERROR: Item couldn't be distributed (%d, %s).", Ind, o_name);
+	}
 	return;
 }
