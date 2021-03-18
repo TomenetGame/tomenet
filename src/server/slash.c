@@ -2689,7 +2689,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			if (tk >= 3) {
 				if (token[3][0] == 'x') {
-					number = atoi(token[3]);
+					number = atoi(token[3] + 1);
 					if (tk >= 4) bpval = atoi(token[4]);
 					if (tk >= 5) pval = atoi(token[5]);
 					if (tk >= 6) name1 = atoi(token[6]);
@@ -5945,7 +5945,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (tk >= 3) {
 					if (token[3][0] == 'x') {
-						number = atoi(token[3]);
+						number = atoi(token[3] + 1);
 						if (tk >= 4) bpval = atoi(token[4]);
 						if (tk >= 5) pval = atoi(token[5]);
 						if (tk >= 6) name1 = atoi(token[6]);
