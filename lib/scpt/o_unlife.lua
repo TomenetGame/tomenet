@@ -112,7 +112,11 @@ OREGEN = add_spell {
 	["fail"] = 	0,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			set_tim_mp2hp(Ind, randint(5) + 10 + get_level(Ind, OREGEN, 30), 20 + get_level(Ind, OREGEN, 50))
+			if player.prace == RACE_VAMPIRE then
+				set_tim_mp2hp(Ind, randint(5) + 10 + get_level(Ind, OREGEN, 30), 20 + get_level(Ind, OREGEN, 50))
+			else
+				msg_print(Ind, "You shudder, as nether streams envelope you and quickly dissipate again..");
+			end
 	end,
 	["info"] = 	function()
 			return "dur "..(10 + get_level(Ind, OREGEN, 30)).."+d5 power "..((20 + get_level(Ind, OREGEN, 50)))
@@ -182,14 +186,18 @@ OUNLIFERES = add_spell {
 	["fail"] = 	-35,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			do_res_stat(Ind, A_STR)
-			do_res_stat(Ind, A_CON)
-			do_res_stat(Ind, A_DEX)
-			do_res_stat(Ind, A_WIS)
-			do_res_stat(Ind, A_INT)
-			do_res_stat(Ind, A_CHR)
-			restore_level(Ind)
-			end,
+			if player.prace == RACE_VAMPIRE then
+				do_res_stat(Ind, A_STR)
+				do_res_stat(Ind, A_CON)
+				do_res_stat(Ind, A_DEX)
+				do_res_stat(Ind, A_WIS)
+				do_res_stat(Ind, A_INT)
+				do_res_stat(Ind, A_CHR)
+				restore_level(Ind)
+			else
+				msg_print(Ind, "You shudder, as ghastly powers pass by your body..")
+			end
+		end,
 	["info"] = 	function()
 			return ""
 			end,
