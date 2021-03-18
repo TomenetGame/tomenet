@@ -4834,7 +4834,7 @@ static bool process_player_end_aux(int Ind) {
 				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
 
 				/* Regeneration takes more food */
-				if (p_ptr->tim_regen && p_ptr->prace != RACE_VAMPIRE) i += p_ptr->tim_regen_pow / 10;
+				if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += p_ptr->tim_regen_pow / 10;
 
 				j = 0;
 
@@ -4972,15 +4972,12 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Increase regeneration by flat amount from timed regeneration powers */
 	if (p_ptr->tim_regen) {
-		/* Regeneration spell (Nature) */
-		if (p_ptr->prace != RACE_VAMPIRE) regen_amount += p_ptr->tim_regen_pow;
-		else if (p_ptr->csp) {
-			/* Nether Sap spell (Unlife) */
-			p_ptr->csp--;
-			hp_player_quiet(Ind, p_ptr->tim_regen_pow, TRUE);
-			p_ptr->redraw |= (PR_MANA | PR_HP);
-			p_ptr->window |= (PW_PLAYER);
-		}
+		if (p_ptr->tim_regen_pow > 0) regen_amount += p_ptr->tim_regen_pow; /* Regeneration spell (Nature) */
+		if (p_ptr->tim_regen_pow < 0 && p_ptr->csp >= 10) { /* Nether Sap spell (Unlife) */
+			p_ptr->csp -= 10;
+			hp_player_quiet(Ind, -p_ptr->tim_regen_pow, TRUE);
+			p_ptr->redraw |= PR_MANA;
+                }
 	}
 
 	/* Poisoned or cut yields no healing */
@@ -5356,10 +5353,8 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Timed regen */
 	if (p_ptr->tim_regen) {
-		if (p_ptr->prace == RACE_VAMPIRE)
-			(void)set_tim_mp2hp(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
-		else
-			(void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
+		if (p_ptr->tim_regen_pow > 0) (void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow); /* Regeneration */
+		else if (p_ptr->tim_regen_pow < 0) (void)set_tim_mp2hp(Ind, p_ptr->tim_regen - 1, -p_ptr->tim_regen_pow); /* Nether Sap */
 	}
 
 	/* Thunderstorm */

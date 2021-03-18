@@ -112,10 +112,10 @@ OREGEN = add_spell {
 	["fail"] = 	0,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			set_tim_mp2hp(Ind, randint(10) + 5 + get_level(Ind, OREGEN, 50), 8 + get_level(Ind, OREGEN, 50) / 4)
+			set_tim_mp2hp(Ind, randint(5) + 10 + get_level(Ind, OREGEN, 30), 20 + get_level(Ind, OREGEN, 50))
 	end,
 	["info"] = 	function()
-			return "dur "..(5 + get_level(Ind, OREGEN, 50)).."+d10 power "..((8 + get_level(Ind, OREGEN, 50) / 4))
+			return "dur "..(10 + get_level(Ind, OREGEN, 30)).."+d5 power "..((20 + get_level(Ind, OREGEN, 50)))
 	end,
 	["desc"] = 	{
 			"Draws from nether undercurrents to replenish your health.",

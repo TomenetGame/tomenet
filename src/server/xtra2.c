@@ -317,6 +317,11 @@ bool set_tim_mp2hp(int Ind, int v, int p) {
 	player_type *p_ptr = Players[Ind];
 	bool notice = FALSE;
 
+	if (p_ptr->prace != RACE_VAMPIRE) {
+		msg_print(Ind, "You shudder, as nether streams envelope you and quickly dissipate again.");
+		return FALSE;
+	}
+
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
@@ -339,7 +344,7 @@ bool set_tim_mp2hp(int Ind, int v, int p) {
 
 	/* Use the value */
 	p_ptr->tim_regen = v;
-	p_ptr->tim_regen_pow = p;
+	p_ptr->tim_regen_pow = -p;
 
 	/* Nothing to notice */
 	if (!notice) return (FALSE);
