@@ -1478,6 +1478,6 @@ void lua_fix_acc_house_limit(int Ind) {
 }
 
 /* Simplified wish() version for lua scripts */
-void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b) {
-	wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, NULL);
+void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level) {
+	wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, level, NULL);
 }

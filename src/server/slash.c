@@ -2763,7 +2763,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			pseudo_forge.name1 = name1;
 			if (name1 == ART_PHASING || admin_artifact_p(&pseudo_forge)) return;
 
-			wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, NULL);
+			wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, -1, NULL);
 			return;
 		}
 #endif
@@ -6000,7 +6000,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				}
 
-				wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, NULL);
+				wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, -1, NULL);
 				return;
 			}
 #endif
@@ -11339,8 +11339,9 @@ void tym_evaluate(int Ind) {
    otherwise copies it into ox_ptr provided it's not NULL.
    If wpos is specified, it will be used for apply_magic().
    If wpos is NULL and Ind isn't 0, the player's wpos will be used for apply_magic().
-   If wpos is NULL and Ind is 0, the generic wpos of Bree will be used. - C. Blue */
-extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, object_type *ox_ptr) {
+   If wpos is NULL and Ind is 0, the generic wpos of Bree will be used.
+   If level is -1, determine_level_req() will be called. - C. Blue */
+extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level, object_type *ox_ptr) {
 	player_type *p_ptr = NULL;
 	object_type forge, *o_ptr = &forge;
 
@@ -11430,9 +11431,8 @@ extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number,
 	o_ptr->bpval = bpval;
 	o_ptr->pval = pval;
 
-	determine_level_req(0, o_ptr);
-	//verify_level_req(o_ptr);
-	//o_ptr->level = 1;
+	if (level == -1) determine_level_req(0, o_ptr); //verify_level_req(o_ptr);
+	else o_ptr->level = level;
 
  #ifdef NEW_MDEV_STACKING
 	if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
