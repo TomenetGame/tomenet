@@ -2213,6 +2213,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		/* Extract the 'stun' factor */
 		if (m_ptr->stunned > 50) factor += 25;
 		if (m_ptr->stunned) factor += 15;
+		if (m_ptr->r_idx == RI_MIRROR) factor /= 5;
 
 		if (magik(25 - (rlev + 3) / 4) || magik(factor)) {
 			if (direct) msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
