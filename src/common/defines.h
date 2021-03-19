@@ -1133,6 +1133,8 @@
 #define PVP_THROW_DAM_REDUCTION 3
 /* divide magical damage by this in PvP */
 #define PVP_SPELL_DAM_REDUCTION 5
+/* divide aura damage by this in PvP */
+#define PVP_AURA_DAM_REDUCTION 3
 
 /* Adam's experimental spell damage reduction for PvP (disables PVP_SPELL_DAM_REDUCTION if enabled) */
 //#define EXPERIMENTAL_PVP_SPELL_DAM
@@ -1403,8 +1405,18 @@
    (This is basically a placeholder until a true mirror image is eventually implemented..) */
 #define SIMPLE_RI_MIRROR
 /* Reduced % of damage taken by the mirror */
-#define MIRROR_REDUCE_DAM_TAKEN 20
+#define MIRROR_REDUCE_DAM_TAKEN_MELEE 20
+#define MIRROR_REDUCE_DAM_TAKEN_THROW 20
+#define MIRROR_REDUCE_DAM_TAKEN_RANGED 20
+#define MIRROR_REDUCE_DAM_TAKEN_SPELL 20
+#define MIRROR_REDUCE_DAM_TAKEN_AURA 20
 /* Reduced % of damage dealt by the mirror */
+#define MIRROR_REDUCE_DAM_DEALT_MELEE 20
+#define MIRROR_REDUCE_DAM_DEALT_THROW 20
+#define MIRROR_REDUCE_DAM_DEALT_RANGED 20
+#define MIRROR_REDUCE_DAM_DEALT_SPELL 20
+#define MIRROR_REDUCE_DAM_DEALT_AURAL 20
+//..till transition is finished:
 #define MIRROR_REDUCE_DAM_DEALT 20
 
 /* Monster ego power indices */

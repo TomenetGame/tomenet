@@ -4489,6 +4489,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 			}
 
+			if (m_ptr->r_idx == RI_MIRROR) k = (k * MIRROR_REDUCE_DAM_TAKEN_MELEE + 99) / 100;
+
 			/* for admins: kill a target in one hit */
 			if (instakills(Ind)) k = m_ptr->hp + 1;
 			else if (p_ptr->admin_godly_strike) {
@@ -5187,6 +5189,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 				if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
 					aura_damage = aura_damage * 2;
 
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
+
 				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
 				take_hit(Ind, aura_damage, "a fire aura", Ind2);
@@ -5201,6 +5205,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 					aura_damage = (aura_damage + 2) / 3;
 				if (p_ptr->suscep_cold && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
 					aura_damage = aura_damage * 2;
+
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 
 				msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5218,6 +5224,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 				if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
 					aura_damage = aura_damage * 2;
 
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
+
 				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
 				take_hit(Ind, aura_damage, "a fire aura", Ind2);
@@ -5233,6 +5241,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 					aura_damage = (aura_damage + 2) / 3;
 				if (p_ptr->suscep_cold && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
 					aura_damage = aura_damage * 2;
+
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 
 				msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5250,6 +5260,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 				aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->suscep_elec && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
 				aura_damage = aura_damage * 2;
+
+			aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
 			msg_format(Ind2, "%s gets zapped for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5273,6 +5285,7 @@ void py_touch_zap_player(int Ind, int Ind2) {
 		if (!p_ptr->death && (q_ptr->shield_opt & SHIELD_COUNTER)) {
 			aura_damage = damroll(q_ptr->shield_power_opt, q_ptr->shield_power_opt2);
 			msg_format(Ind, "You get bashed by a mystic shield for \377w%d\377w!", aura_damage);
+			aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 			take_hit(Ind, aura_damage, "a mystic shield", Ind2);
 			handle_stuff(Ind);
 		}
@@ -5286,6 +5299,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 					aura_damage = (aura_damage + 2) / 3;
 				if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
 					aura_damage = aura_damage * 2;
+
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 
 				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);

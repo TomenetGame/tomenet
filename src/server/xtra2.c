@@ -10644,7 +10644,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
 
-	if (m_ptr->r_idx == RI_MIRROR) dam = (dam * MIRROR_REDUCE_DAM_TAKEN + 99) / 100;
 	if (m_ptr->r_idx == RI_BLUE) {
 		if (m_ptr->extra > 1) return FALSE; //paranoia?
 		if (m_ptr->extra == 1) {

@@ -6946,6 +6946,8 @@ void do_cmd_fire(int Ind, int dir) {
 
 					if (p_ptr->ranged_barrage) tdam *= 2; // maybe 3 even
 
+					if (m_ptr->r_idx == RI_MIRROR) tdam = (tdam * MIRROR_REDUCE_DAM_TAKEN_RANGED + 99) / 100;
+
 					/* can't attack while in WRAITHFORM (explosion still works) */
 					/* wraithed players can attack wraithed monsters - mikaelh */
 					if (p_ptr->tim_wraith && 
@@ -8130,6 +8132,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						}
 					}
 				}
+
+				if (m_ptr->r_idx == RI_MIRROR) tdam = (tdam * MIRROR_REDUCE_DAM_TAKEN_THROW + 99) / 100;
 
 				if (p_ptr->admin_godly_strike) {
 					p_ptr->admin_godly_strike--;
