@@ -8537,7 +8537,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 
 	/* Do not affect invincible questors with status effects, especially not polymorphing */
-	if (m_ptr->questor_invincible) {
+	if (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH)) {
 		do_fear = FALSE;
 		do_conf = FALSE;
 		do_blind = FALSE;
@@ -8548,9 +8548,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 
 	/* "Unique" monsters cannot be polymorphed */
-	if (r_ptr->flags1 & RF1_UNIQUE) do_poly = FALSE;
+	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)) do_poly = FALSE;
 	/* nor IM_TELE monsters.. */
 	if (r_ptr->flags9 & RF9_IM_TELE) do_poly = FALSE;
+	/* nor monsters that are supposed to last for special purpose */
+	if (r_ptr->flags8 & RF8_GENO_NO_THIN) do_poly = FALSE;
 
 	/* No polymorphing in Bree - mikaelh */
 	if (in_bree(wpos)) do_poly = FALSE;
