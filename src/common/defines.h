@@ -1412,12 +1412,8 @@
 #define MIRROR_REDUCE_DAM_TAKEN_AURA 20
 /* Reduced % of damage dealt by the mirror */
 #define MIRROR_REDUCE_DAM_DEALT_MELEE 20
-#define MIRROR_REDUCE_DAM_DEALT_THROW 20
-#define MIRROR_REDUCE_DAM_DEALT_RANGED 20
 #define MIRROR_REDUCE_DAM_DEALT_SPELL 20
-#define MIRROR_REDUCE_DAM_DEALT_AURAL 20
-//..till transition is finished:
-#define MIRROR_REDUCE_DAM_DEALT 20
+#define MIRROR_REDUCE_DAM_DEALT_AURA 20
 
 /* Monster ego power indices */
 #define RE_NONE			0

@@ -854,6 +854,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 
 			/* Roll out the damage in advance, since it might be required in the avoidance-calcs below (Kinetic Shield) */
 			damage = damroll(d_dice, d_side);
+			if (m_ptr->r_idx == RI_MIRROR) damage = (damage * MIRROR_REDUCE_DAM_DEALT_MELEE + 99) / 100;
 			if (invuln_applied) damage = (damage + 1) / 2;
 #ifdef EXPERIMENTAL_MITIGATION
 			damage_org = damage; /* as a special service, we allow the invuln reduction above to factor in first, to prevent getting ko'ed on stairs :-p */
@@ -3098,6 +3099,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							player_aura_dam = damroll(2,6);
 							if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
 							if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
+							if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 							msg_format(Ind, "%^s is enveloped in flames for %d damage!", m_name, player_aura_dam);
 							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 							    " turns into a pile of ashes")) {
@@ -3117,6 +3119,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							player_aura_dam = damroll(2,6);
 							if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
 							if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
+							if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 							msg_format(Ind, "%^s freezes for %d damage!", m_name, player_aura_dam);
 							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 							    " freezes and shatters")) {
@@ -3137,6 +3140,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							player_aura_dam = damroll(2,6);
 							if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
 							if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
+							if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 							msg_format(Ind, "%^s is enveloped in flames for %d damage!", m_name, player_aura_dam);
 							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 							    " turns into a pile of ashes")) {
@@ -3156,6 +3160,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 							player_aura_dam = damroll(2,6);
 							if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
 							if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
+							if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 							msg_format(Ind, "%^s freezes for %d damage!", m_name, player_aura_dam);
 							if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 							    " freezes and shatters")) {
@@ -3176,6 +3181,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 						player_aura_dam = damroll(2,6);
 						if (r_ptr->flags9 & RF9_RES_ELEC) player_aura_dam /= 3;
 						if (r_ptr->flags9 & RF9_SUSCEP_ELEC) player_aura_dam *= 2;
+						if (m_ptr->r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 						msg_format(Ind, "%^s gets zapped for %d damage!", m_name, player_aura_dam);
 						if (mon_take_hit(Ind, m_idx, player_aura_dam, &fear,
 						    " turns into a pile of cinder")) {
@@ -3202,6 +3208,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 				/* force shield */
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_COUNTER) && alive) {
 					int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
+
+					if (m_ptr->r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 					msg_format(Ind, "%^s gets bashed by your mystic shield!", m_name);
 					if (mon_take_hit(Ind, m_idx, d, &fear, " is bashed by your mystic shield")) {
 						blinked = FALSE;
@@ -3212,8 +3220,10 @@ bool make_attack_melee(int Ind, int m_idx) {
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FIRE) && alive) {
 					if (!(r_ptr->flags3 & RF3_IM_FIRE)) {
 						int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
+
 						if (r_ptr->flags9 & RF9_RES_FIRE) d /= 3;
 						if (r_ptr->flags3 & RF3_SUSCEP_FIRE) d *= 2;
+						if (m_ptr->r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 						msg_format(Ind, "%^s gets burned by your fiery shield!", m_name);
 						if (mon_take_hit(Ind, m_idx, d, &fear, " turns into a pile of ashes")) {
 							blinked = FALSE;
@@ -3242,6 +3252,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 						int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 						if (r_ptr->flags9 & RF9_RES_ELEC) d /= 3;
 						if (r_ptr->flags9 & RF9_SUSCEP_ELEC) d *= 2;
+						if (m_ptr->r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
 						msg_format(Ind, "%^s gets zapped by your lightning shield!", m_name);
 						if (mon_take_hit(Ind, m_idx, d, &fear, " turns into a pile of cinder")) {
 							blinked = FALSE;

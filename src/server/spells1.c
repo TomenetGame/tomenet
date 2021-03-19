@@ -1846,9 +1846,6 @@ void take_hit(int Ind, int damage, cptr hit_from, int Ind_attacker) {
 		q_ptr->idle_attack = 0;
 	}
 
-	//todo: replace too
-	if (Ind_attacker < 0 && m_list[-Ind_attacker].r_idx == RI_MIRROR) damage = (damage * MIRROR_REDUCE_DAM_DEALT + 99) / 100;
-
 	/* Amulet of Immortality */
 	if (p_ptr->admin_invuln) return;
 
@@ -9498,6 +9495,23 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	}
 
 
+	if (m_ptr && m_ptr->r_idx == RI_MIRROR) {
+		switch (typ) {
+		case GF_STUN:
+		case GF_TERROR:
+		case GF_OLD_CONF:
+		case GF_OLD_SLOW:
+		case GF_OLD_POLY:
+		case GF_BLIND:
+		case GF_TELEPORT_PLAYER:
+		case GF_TURN_ALL:
+		case GF_AWAY_ALL:
+			break;
+		default:
+			dam = (dam * MIRROR_REDUCE_DAM_DEALT_SPELL + 99) / 100;
+		}
+	}
+
 
 #ifndef NEW_DODGING
 	/* Bolt attack from a monster, a player or a trap */
@@ -9841,7 +9855,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 #ifdef ARCADE_SERVER
-		case GF_PUSH:
+	case GF_PUSH:
 		//msg_print(Ind, "You are pushed by something!");
 		msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		(void)set_pushed(Ind, dam);

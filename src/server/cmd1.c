@@ -5109,6 +5109,8 @@ void touch_zap_player(int Ind, int m_idx) {
 			if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
 				aura_damage = aura_damage * 2;
 
+			if (m_ptr->r_idx == RI_MIRROR) aura_damage = (aura_damage * MIRROR_REDUCE_DAM_DEALT_AURA + 99) / 100;
+
 			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, -m_idx);
 #ifdef OLD_MONSTER_LORE
@@ -5135,6 +5137,8 @@ void touch_zap_player(int Ind, int m_idx) {
 			if (p_ptr->suscep_elec && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
 				aura_damage = aura_damage * 2;
 
+			if (m_ptr->r_idx == RI_MIRROR) aura_damage = (aura_damage * MIRROR_REDUCE_DAM_DEALT_AURA + 99) / 100;
+
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, -m_idx);
 #ifdef OLD_MONSTER_LORE
@@ -5160,6 +5164,8 @@ void touch_zap_player(int Ind, int m_idx) {
 				aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->suscep_cold && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
 				aura_damage = aura_damage * 2;
+
+			if (m_ptr->r_idx == RI_MIRROR) aura_damage = (aura_damage * MIRROR_REDUCE_DAM_DEALT_AURA + 99) / 100;
 
 			msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, -m_idx);
