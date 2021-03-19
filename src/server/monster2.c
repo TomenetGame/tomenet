@@ -4863,7 +4863,7 @@ bool multiply_monster(int m_idx) {
 	/* No uniques or special event monsters */
 	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)
 	    /* No special 'flavour' monsters */
-	    || (r_ptr->flags7 & RF7_NO_DEATH)
+	    || (r_ptr->flags7 & RF7_NO_DEATH) || (r_ptr->flags8 & RF8_GENO_NO_THIN)
 	    /* No questors */
 	    || m_ptr->questor
 	    /* No non-spawning monsters */
