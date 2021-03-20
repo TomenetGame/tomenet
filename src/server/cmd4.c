@@ -2374,9 +2374,8 @@ void do_cmd_knowledge_dungeons(int Ind) {
 
 	for (y = 0; y < MAX_WILD_Y; y++) {
 		for (x = 0; x < MAX_WILD_X; x++) {
-			if (!((p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] &
-			    (1U << ((x + y * MAX_WILD_X) % 8))) || admin))
-				continue;
+			if (!admin && !(p_ptr->wild_map[(x + y * MAX_WILD_X) / 8] & (1U << ((x + y * MAX_WILD_X) % 8)))) continue;
+			if (!x && !y && !admin) continue; /* Skip sector00 event stuff */
 
 			d_ptr = wild_info[y][x].tower;
 			if (d_ptr &&

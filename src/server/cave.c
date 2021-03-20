@@ -4650,8 +4650,7 @@ static void wild_display_map(int Ind, char mode) {
 
 			/* if the player hasnt been here, dont show him the terrain */
 			/* Hack -- serverchez has knowledge of the full world */
-			if (!p_ptr->admin_dm)
-			if (!(p_ptr->wild_map[wild_idx(&twpos) / 8] & (1U << (wild_idx(&twpos) % 8)))) type = -1;
+			if (!p_ptr->admin_dm && !(p_ptr->wild_map[wild_idx(&twpos) / 8] & (1U << (wild_idx(&twpos) % 8)))) type = -1;
 			/* hack --  the town is always known */
 
 			switch (type) {
@@ -4676,14 +4675,25 @@ static void wild_display_map(int Ind, char mode) {
 #ifdef WILDMAP_SHOWS_STAIRS
 			if (type != -1 && type != WILD_TOWN) {
 				dungeon_type *dun = wild_info[twpos.wy][twpos.wx].dungeon, *tow = wild_info[twpos.wy][twpos.wx].tower;
-				if (dun && !strcmp(d_info[dun->type].name + d_name, "The Shores of Valinor") && !admin) dun = NULL;
-				if (tow && !strcmp(d_info[tow->type].name + d_name, "The Shores of Valinor") && !admin) tow = NULL;
- #ifdef GLOBAL_DUNGEON_KNOWLEDGE
+
 				if (!admin) {
+					/* Skip all the sector00 event stuff */
+					if (!x && !y) dun = tow = NULL;
+					/* Skip special stuff */
+					if (dun) {
+						if (dun->type == DI_VALINOR) dun = NULL;
+						if (!dun->type && dun->theme == DI_DEATH_FATE) dun = NULL;
+					}
+					if (tow) {
+						if (tow->type == DI_VALINOR) tow = NULL;
+						if (!tow->type && tow->theme == DI_DEATH_FATE) tow = NULL;
+					}
+ #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 					if (dun && !dun->known) dun = NULL;
 					if (tow && !tow->known) tow = NULL;
-				}
  #endif
+				}
+
 				if (dun) {
 					if (tow) {
 						tc = 'X';
