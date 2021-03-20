@@ -3663,8 +3663,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if (is_admin(p_ptr)) {
 		admin_outfit(Ind, 0);
 		p_ptr->au = 1000000000;
-		p_ptr->lev = PY_MAX_PLAYER_LEVEL; //let's just use this (99) instead of the PY_MAX_LEVEL (100) which doesn't make sense
-		p_ptr->exp = PY_MAX_EXP;
+		p_ptr->lev = p_ptr->max_lev = p_ptr->max_plv = PY_MAX_PLAYER_LEVEL; //let's just use this (99) instead of the PY_MAX_LEVEL (100) which doesn't make sense
+		p_ptr->exp = p_ptr->max_exp = PY_MAX_EXP;
 		p_ptr->skill_points = 9999;
 		//p_ptr->noscore = 1;
 		/* permanent invulnerability */
