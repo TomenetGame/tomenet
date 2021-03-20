@@ -763,7 +763,8 @@ static void wr_extra(int Ind) {
 	/* Ignore the transient stats */
 	for (i = 0; i < 10; ++i) wr_s16b(0);
 #else
-	for (i = 0; i < 5; ++i) wr_s16b(0); //unused
+	for (i = 0; i < 8; ++i) wr_byte(0); //unused
+	wr_u16b(p_ptr->house_num);
 	wr_s16b(p_ptr->mutedtemp);
 	wr_s32b(p_ptr->iron_trade);
 	wr_s32b(p_ptr->iron_turn);
