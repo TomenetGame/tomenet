@@ -25,7 +25,7 @@ h  Houses      H  Auto inscribe *  Target/look     \{BCTRL+U  Audio mixer\{w or
 i  Inventory   I  Examine       .  Run                     switch chat mode
 j  Steal                        /  Use item        CTRL+I  Lagometer or
 k  Destroy     K  Force-stack   \{B:  Chat\{w                    switch chat mode
-l  Look        L  Locate (map)  ;  Walk            CTRL+O  Chat history
+l  Look        L  Locate (map)  ;  Guide search    CTRL+O  Chat history
 m  Use ability M  Show minimap  ?  Help/Guide      CTRL+P  All message history
 o  Open door                    \{B@  Player list\{w     CTRL+R  Redraw screen
 p  Open mind   \{BP  Party menu\{w    ~  Knowledge menu  CTRL+S  Spike a door
