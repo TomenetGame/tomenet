@@ -2839,7 +2839,7 @@ void do_cmd_open(int Ind, int dir) {
 				   Exception: The jail. */
 				} else if ((c2_ptr->info & CAVE_ICKY) && c2_ptr->feat != FEAT_DRAWBRIDGE && c2_ptr->feat != FEAT_DEEP_WATER) {
 					if ((c_ptr->info & CAVE_JAIL) && p_ptr->tim_jail) msg_format(Ind, "Abide your jail sentence, lasting %d more seconds..", p_ptr->tim_jail);
-					else teleport_player(Ind, 1, TRUE);
+					else teleport_player_force(Ind, 1);
 
 				/* We cannot access this house */
 				} else {
