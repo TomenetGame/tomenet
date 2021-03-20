@@ -166,7 +166,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		if (!c_cfg.exp_need)
 			sprintf(tmp, "%9d", (int)cur);
 		else {
-			if (level >= PY_MAX_LEVEL || !adv)
+			if (level >= PY_MAX_PLAYER_LEVEL || !adv)
 				(void)sprintf(tmp, "*********");
 			else {
 				/* Hack -- display in minus (to avoid confusion chez player) */
@@ -193,7 +193,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #endif
 		else exp_bar_char = '#';
 
-		if (level >= PY_MAX_LEVEL || !adv || !scale) {
+		if (level >= PY_MAX_PLAYER_LEVEL || !adv || !scale) {
 			(void)sprintf(tmp, "*********");
 
 			if (cur >= max) {
@@ -2814,7 +2814,7 @@ void display_player(int hist) {
 		else
 			prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, 28, TERM_YELLOW);
 		prt_lnum("Max Exp    ", p_ptr->max_exp, y_row2 + 2, 28, TERM_L_GREEN);
-		if (p_ptr->lev >= PY_MAX_LEVEL || !exp_adv) {
+		if (p_ptr->lev >= PY_MAX_PLAYER_LEVEL || !exp_adv) {
 			put_str("Exp to Adv.", y_row2 + 3, 28);
 			c_put_str(TERM_L_GREEN, "    *****", y_row2 + 3, 28 + 11);
 		} else {

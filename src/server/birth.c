@@ -3662,11 +3662,11 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* special outfits for admin (pack overflows!) */
 	if (is_admin(p_ptr)) {
 		admin_outfit(Ind, 0);
-		p_ptr->au = 50000000;
-		p_ptr->lev = 99;
-		p_ptr->exp = 999999999;
+		p_ptr->au = 1000000000;
+		p_ptr->lev = PY_MAX_PLAYER_LEVEL; //let's just use this (99) instead of the PY_MAX_LEVEL (100) which doesn't make sense
+		p_ptr->exp = PY_MAX_EXP;
 		p_ptr->skill_points = 9999;
-//		p_ptr->noscore = 1;
+		//p_ptr->noscore = 1;
 		/* permanent invulnerability */
 		p_ptr->total_winner = TRUE;
 		p_ptr->once_winner = TRUE; //just for consistency, eg when picking up WINNERS_ONLY items

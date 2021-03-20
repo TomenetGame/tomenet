@@ -149,14 +149,14 @@ static void prt_title(int Ind) {
 
 	/* Winner */
 #if 0
-	else if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL)) {
+	else if (p_ptr->total_winner) {
 		if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
 			p = (p_ptr->male ? "**EMPEROR**" : "**EMPRESS**");
 		else
 			p = (p_ptr->male ? "**KING**" : "**QUEEN**");
 	}
 #else
-	else if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL)) {
+	else if (p_ptr->total_winner) {
 		char t[MAX_CHARS];
 		strcpy(t, "\377v");
 		strcat(t, get_ptitle(p_ptr, TRUE));

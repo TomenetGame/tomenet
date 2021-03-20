@@ -9150,15 +9150,6 @@ static void print_tomb(cptr reason) {
 			my_fclose(fp);
 		}
 
-#if 0	/* make the server send those info! */
-		/* King or Queen */
-		if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
-			p = "Magnificent";
-		/* Normal */
-		else
-			p =  cp_ptr->titles[(p_ptr->lev-1)/5] + c_text;
-#endif	/* 0 */
-
 		center_string(buf, cname);
 		c_put_str(TERM_L_UMBER, buf, 6, STONE_COL);
 
