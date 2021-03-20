@@ -800,7 +800,7 @@ void Receive_login(void) {
 		if (exclusive_ok) {
 			/* hack: no weird modi on first client startup!
 			   To find out whether it's 1st or not we check firstrun and # of existing characters.
-			   However, we just don't display the choice, but it's still choosable by pressing the key anyway! */
+			   However, we just don't display the choice, but it's still choosable by pressing the key anyway except for firstrun! */
 			if (!firstrun || existing_characters)
 				c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character (IDDC or PvP only)", offset + 1, 2);
 		}
@@ -830,7 +830,7 @@ void Receive_login(void) {
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
 
-	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1))
+	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok || firstrun)) || i > (max_cpa - 1))
 	    && ((ch != 'S' && ch != 'I' && ch != 'A') || !allow_reordering)) {
 		ch = inkey();
 		//added CTRL+Q for RETRY_LOGIN, so you can quit the whole game from within in-game via simply double-tapping CTRL+Q
@@ -865,7 +865,7 @@ void Receive_login(void) {
 #endif
 		goto enter_menu;
 	}
-	if (ch == 'N' || ch == 'E') {
+	if (ch == 'N' || (ch == 'E' && !firstrun)) {
 		/* We didn't read a desired charname from commandline? */
 		if (!cname[0]) {
 			/* Reuse last name if we just died? */

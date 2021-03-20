@@ -1602,7 +1602,7 @@ static bool choose_mode(void) {
 	}
 	/* hack: no weird modi on first client startup!
 	   To find out whether it's 1st or not we check firstrun and # of existing characters.
-	   However, we just don't display the choices, they're still choosable! */
+	   However, we just don't display the choices, they're still choosable except for firstrun! */
 	if (!firstrun || existing_characters) {
 		put_str("H) Hellish", 20, 2);
 		c_put_str(TERM_SLATE, "(Like 'Unworldly' mode but extra hard - sort of ridiculous)", 20, 13);
@@ -1656,7 +1656,7 @@ static bool choose_mode(void) {
 			clear_from(15);
 			return FALSE;
 		}
-		else if (c == 'p') {
+		else if (c == 'p' && !firstrun) {
 			sex |= MODE_PVP;
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
@@ -1676,7 +1676,7 @@ static bool choose_mode(void) {
 			c_put_str(TERM_L_BLUE, "Soloist", 9, CHAR_COL);
 			break;
 		}
-		else if (c == 'H') {
+		else if (c == 'H' && !firstrun) {
 			sex |= (MODE_NO_GHOST | MODE_HARD);
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Hellish", 9, CHAR_COL);
@@ -1754,7 +1754,7 @@ static bool choose_body_modification(void) {
 	put_str("n) Normal body", 20, 2);
 	/* hack: no weird modi on first client startup!
 	   To find out whether it's 1st or not we check firstrun and # of existing characters.
-	   However, we just don't display the choices, they're still choosable! */
+	   However, we just don't display the choices, they're still choosable except on firstrun! */
 	if (!firstrun || existing_characters) {
 		put_str("f) Fruit bat", 21, 2);
 		if (class == CLASS_ARCHER) {
@@ -1798,7 +1798,7 @@ static bool choose_body_modification(void) {
 			clear_from(19);
 			return FALSE;
 		}
-		else if (c == 'f') {
+		else if (c == 'f' && !firstrun) {
 			sex |= MODE_FRUIT_BAT;
 			c_put_str(TERM_L_BLUE, "                    ", 8, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Fruit bat", 8, CHAR_COL);
