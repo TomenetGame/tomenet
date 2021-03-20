@@ -5921,14 +5921,16 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 	i = p_ptr->ac + p_ptr->to_a;
 #else
 	i = p_ptr->ac + p_ptr->to_a;
-	/* Basic flat boost to adjust for lower level fights */
+#if 0
+	/* Basic flat boost to adjust for lower level fights? */
 	i += 50;
+#endif
 	/* Simply translate our hit chance into monster ac bonus to counter it */
 	i += p_ptr->overall_tohit_m;
 	/* Kinetic Shield gives extra AC */
 	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) i += 50;
 	/* Simply add to AC, although this won't help against magic bolt spells, exploiterino */
-	if ((m = get_skill(p_ptr, SKILL_DODGE))) i += m * 2;
+	if ((m = get_skill(p_ptr, SKILL_DODGE))) i += (100 * m) / (p_ptr->max_plv >= 50 ? 50 : p_ptr->max_plv);
 #endif
 	if (m_ptr->org_ac < i) {
 		n = i - m_ptr->org_ac;
