@@ -5920,9 +5920,13 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 #ifndef SIMPLE_RI_MIRROR
 	i = p_ptr->ac + p_ptr->to_a;
 #else
-	i = p_ptr->ac + p_ptr->to_a + p_ptr->overall_tohit_m;
+	i = p_ptr->ac + p_ptr->to_a;
+	/* Simply translate our hit chance into monster ac bonus to counter it */
+	i += p_ptr->overall_tohit_m;
 	/* Kinetic Shield gives extra AC */
 	if (get_skill(p_ptr, SKILL_PPOWER) >= thresh_spell) i += 50;
+	/* Simply add to AC, although this won't help against magic bolt spells, exploiterino */
+	if ((m = get_skill(p_ptr, SKILL_DODGE))) i += m * 2;
 #endif
 	if (m_ptr->org_ac < i) {
 		n = i - m_ptr->org_ac;
@@ -6338,11 +6342,6 @@ void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr) {
 	if (get_skill(p_ptr, SKILL_CALMNESS)) { r_ptr->flags |= RF__; magicness++; }
 	if (get_skill(p_ptr, SKILL_INTERCEPT)) { r_ptr->flags |= RF__; magicness++; }
  #endif
-	if ((m = get_skill(p_ptr, SKILL_DODGE))) {
-		/* Simply add to AC, although this won't help against magic bolt spells, exploiterino */
-		m_ptr->org_ac += m * 2;
-		m_ptr->ac += m * 2;
-	}
 
 	/* Notes:
 	   Resistances spells are already handled by checking for resist+oppose above.
