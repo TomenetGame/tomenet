@@ -2378,13 +2378,15 @@ void do_cmd_knowledge_dungeons(int Ind) {
 			    (1U << ((x + y * MAX_WILD_X) % 8))) || admin))
 				continue;
 
-			if ((d_ptr = wild_info[y][x].tower)) {
+			d_ptr = wild_info[y][x].tower;
+			if (d_ptr &&
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-				if (!d_ptr->known && !admin) continue;
+			    (d_ptr->known || admin) &&
 #endif
+			    (d_ptr->type != DI_VALINOR || admin) &&
+			    (d_ptr->type || d_ptr->theme != DI_DEATH_FATE || admin)) {
 				i = d_ptr->type;
-				if (i == DI_VALINOR && !admin) continue;
-				if (!i && d_ptr->theme == DI_DEATH_FATE && !admin) continue;
+
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 				if (admin && !d_ptr->known) fprintf(fff, " \377D(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 				else
@@ -2496,13 +2498,16 @@ void do_cmd_knowledge_dungeons(int Ind) {
 #endif
 				fprintf(fff,"\n");
 			}
-			if ((d_ptr = wild_info[y][x].dungeon)) {
+
+			d_ptr = wild_info[y][x].dungeon;
+			if (d_ptr &&
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-				if (!d_ptr->known && !admin) continue;
+			    (d_ptr->known || admin) &&
 #endif
+			    (d_ptr->type != DI_VALINOR || admin) &&
+			    (d_ptr->type || d_ptr->theme != DI_DEATH_FATE || admin)) {
 				i = d_ptr->type;
-				if (i == DI_VALINOR && !admin) continue;
-				if (!i && d_ptr->theme == DI_DEATH_FATE && !admin) continue;
+
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 				if (admin && !d_ptr->known) fprintf(fff, " \377D(%2d,%2d)  \377w%-30s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 				else
