@@ -5116,31 +5116,31 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->tim_jail && !p_ptr->wpos.wz) {
 		p_ptr->tim_jail--;
 		if (!p_ptr->tim_jail) {
+			/* only release him from jail if he didn't already take the ironman jail dungeon escape route. */
+			if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
 #ifdef JAILER_KILLS_WOR
-			/* eat his WoR scrolls as suggested? */
-			bool found = FALSE, one = TRUE;
-			for (j = 0; j < INVEN_WIELD; j++) {
-				if (!p_ptr->inventory[j].k_idx) continue;
-				o_ptr = &p_ptr->inventory[j];
-				if ((o_ptr->tval == TV_ROD) && (o_ptr->sval == SV_ROD_RECALL)) {
-					if (found) one = FALSE;
-					if (o_ptr->number > 1) one = FALSE;
-					o_ptr->pval = 300;
-					found = TRUE;
+				/* eat his WoR scrolls as suggested? */
+				bool found = FALSE, one = TRUE;
+				for (j = 0; j < INVEN_WIELD; j++) {
+					if (!p_ptr->inventory[j].k_idx) continue;
+					o_ptr = &p_ptr->inventory[j];
+					if ((o_ptr->tval == TV_ROD) && (o_ptr->sval == SV_ROD_RECALL)) {
+						if (found) one = FALSE;
+						if (o_ptr->number > 1) one = FALSE;
+						o_ptr->pval = 300;
+						found = TRUE;
+					}
 				}
-			}
-			if (found) {
-				msg_format(Ind, "The jailer discharges your rod%s of recall.", one ? "" : "s");
-				p_ptr->window |= PW_INVEN;
-			}
+				if (found) {
+					msg_format(Ind, "The jailer discharges your rod%s of recall.", one ? "" : "s");
+					p_ptr->window |= PW_INVEN;
+				}
 #endif
 
-			/* only teleport him if he didn't take the ironman exit. */
-			if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
 				msg_print(Ind, "\377GYou are free to go!");
 
 				/* Get the jail door location */
-				if (!p_ptr->house_num) teleport_player_force(Ind, 1);
+				if (!p_ptr->house_num) teleport_player_force(Ind, 1); //should no longer happen as house_num is saved now between logins
 				else {
 					zcave[p_ptr->py][p_ptr->px].m_idx = 0;
 					everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);

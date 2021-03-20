@@ -14342,9 +14342,11 @@ bool imprison(int Ind, u16b time, char *reason) {
 #endif
 
 	if (p_ptr->tim_jail) {
-		p_ptr->tim_jail += time;
-		s_printf("TIM_JAIL.\n");
-		return (TRUE);
+		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
+			p_ptr->tim_jail += time;
+			s_printf("TIM_JAIL (inside, prolong).\n");
+			return (TRUE);
+		} else s_printf("TIM_JAIL (re-imprison fugitive).\n"); /* He escaped before through the jail dungeon! */
 	}
 
 	/* get appropriate prison house */
@@ -14454,7 +14456,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 
 	everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 	msg_format(Ind, "\374\377oYou have been jailed for %s.", reason);
-	p_ptr->tim_jail = time + p_ptr->tim_susp;
+	p_ptr->tim_jail += time + p_ptr->tim_susp;
 	p_ptr->tim_susp = 0;
 	if (!(p_ptr->admin_dm && cfg.secret_dungeon_master)) {
 		char string[MAX_CHARS];
