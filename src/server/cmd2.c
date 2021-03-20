@@ -2835,9 +2835,11 @@ void do_cmd_open(int Ind, int dir) {
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 
 				/* We cannot access this house. Special hack: Never get stuck inside a house that we don't have access to!
-				   Make sure we ignore drawbridge and moat, since these are outside of the house yet cave-icky. */
+				   Make sure we ignore drawbridge and moat, since these are outside of the house yet cave-icky.
+				   Exception: The jail. */
 				} else if ((c2_ptr->info & CAVE_ICKY) && c2_ptr->feat != FEAT_DRAWBRIDGE && c2_ptr->feat != FEAT_DEEP_WATER) {
-					teleport_player(Ind, 1, TRUE);
+					if (c_ptr->info & CAVE_JAIL) msg_format(Ind, "Abide your jail sentence, lasting %d more seconds..", p_ptr->tim_jail);
+					else teleport_player(Ind, 1, TRUE);
 
 				/* We cannot access this house */
 				} else {
