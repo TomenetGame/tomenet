@@ -1922,7 +1922,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 						if (*(cp + 2) == '.') {
 							switch (*(cp + 3)) {
 							case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-								if (*(cp + 4) == ')' || *(cp + 5) == ')' || (*(cp + 6) == ')' && *(cp + 5) > '9')) { /* > 9: ignore "(0.500)" skill stuff */
+								if (*(cp + 4) == ')' || *(cp + 5) == ')' ||
+								    (*(cp + 6) == ')' && *(cp + 5) > '9') || /* > 9 checks: ignore "(0.500)" skill stuff */
+								    (*(cp + 6) == ')' && *(cp + 4) > '9')) {
 									/* begin of colourizing */
 									*cp2++ = '\377';
 									*cp2++ = 'G';
