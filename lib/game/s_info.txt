@@ -290,7 +290,7 @@ A:8:Check dodge chance
 I:1000:0
 
 N:43:Health
-D:Increases base hit points by +2 per point, speeds regeneration and recovery
+D:Increases base hit points by +2/point, speeds HP+ST regeneration and recovery
 D:from malicious effects. Shows more detailed SN (sanity) status at 10/20/40.
 I:1000:0
 
