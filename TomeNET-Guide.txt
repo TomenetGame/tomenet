@@ -100,7 +100,7 @@ Contents
     (4.6)   Pits and vaults
     (4.7)   Traps & trap kits
     (4.7a)  Trap kit load effects
-    (4.8)   Level & vault feelings
+    (4.8)   Dungeon, floor & vault feelings
     (4.9)   Navigating on maps
     (4.10)  Houses
     (4.10a) Player stores
@@ -2778,6 +2778,8 @@ If you get killed on a level where Morgoth, Lord of Darkness walks, your
 ghost will be destroyed too, even if you are everlasting! Beware!
 Note that on a floor where Morgoth currently resides, all vaults will turn into
 no-tele vaults, even if they normally aren't!
+You will get a floor feeling warning you whenever you enter a floor where
+Morgoth resides, see (4.8).
 
 If you team up against him, he will grow stronger for every additional player
 who enters his dungeon level. Growing stronger in fact means that he gains a
@@ -2917,15 +2919,23 @@ at close quarters combat. In general, do not underestimate Sauron's power!
  -An extra randart drop of 'combat' treasure class.
  -Extra artifact creation scrolls for every player more than two (so trio+).
 -There are no obstacles that can hold Morgoth back for long.
+-All vaults on Morgoth's floor will be no-teleport vaults.
+-If you die on Morgoth's floor your character is deleted even if everlasting!
+ You will get a floor feeling to warn you of this whenever you enter a floor
+ where Morgoth resides on, see (4.8).
 
 See (1.3a) for more information about Morgoth.
 
 There are rumours of even more powerful beings than the Lord Of Darkness.
-Kings and Queens who seek new challenges shall try to enter the Nether Realm,
-a dungeon with dangers beyond imagination. Only those who destroyed Morgoth
-may enter. The Nether Realm can be very rewarding in terms of experience but
-also very deadly. Terrible foes are said to dwell there which aren't seen in
-the mundane world. See (4.5c) for more information about the Nether Realm.
+Kings and Queens who seek new challenges shall try to enter the Cloud Planes
+in the skies far above the world surface, where icy winds freeze you to death,
+and the Nether Realm, the deepest abyss that serves as barrier of the mundane
+world, a dungeon with dangers beyond imagination.
+Only those who destroyed Morgoth may enter these two dungeons. The Nether Realm
+can be highly rewarding in terms of experience but also very deadly. Terrible
+foes are said to dwell there which aren't seen in the mundane world.
+See (4.5c) for more information about the Cloud Planes and about the extra XP
+bonus characters gain in the Nether Realm.
 
 
 
@@ -7301,6 +7311,9 @@ Will this be the end of you as you cannot seem to spot a way to escape?
 -Note that the amount of experience is already very high even without this
  depth-bonus, since creatures in the Nether Realm are of a very high level.
 -Instant resurrection does not work in the Nether Realm.
+-It is possible for everlasting and non-everlasting characters who usually
+ cannot form a party to actually team up in the Nether Realm! This is called a
+ cross-mode party, for more information see (3.4b).
 
 (******) Halls of Mandos details:
 -Getting out of the Halls of Mandos will be complemented with an entry
@@ -19514,7 +19527,7 @@ Parties:
     you will be prompted to rename the party. Only the party owner can do this.
 
     Specialty: Everlasting and non-everlasting players can team up while
-               inside the Nether Realm.
+               inside the Nether Realm and trade loot, see (3.4b) and (4.5c).
 
 -Create or rename an 'Iron Team' party
     Allows you to create an iron team if you aren't in one yet, or rename your
@@ -19537,7 +19550,8 @@ Parties:
     If you aren't in a party, you will see "Add yourself to party" instead!
     This will allow you to add this character to a party, provided that at
     least one of your other characters is already a member of it.
-    This does not work for cross-adding to nether realm parties.
+    This does not work for cross-adding to nether realm parties (see (3.4b)
+    and (4.5c)).
     It only works for cross-adding to IDDC parties if your already partied
     character is currently in the IDDC.
 
