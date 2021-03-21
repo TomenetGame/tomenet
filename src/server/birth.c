@@ -3191,6 +3191,8 @@ static void do_trait_skill(int Ind, int s, int m) {
  *
  * Note that we may be called with "junk" leftover in the various
  * fields, so we must be sure to clear them first.
+ *
+ * (Note: msg_print() is not possible yet at this point, only Destroy_connection() for message.)
  */
 bool player_birth(int Ind, int conn, connection_t *connp) {
 	player_type *p_ptr;
@@ -3325,8 +3327,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* handle banned player 1/2 */
 	if (acc_banned) {
-		msg_print(Ind, "\377R*** Your account is temporarily suspended ***");
 		s_printf("\377RRefused ACC_BANNED account %s (character %s)\n.", accname, name); /* Coloured for /cheeze */
+		Destroy_connection(conn, "*** Your account is temporarily suspended ***");
 		return FALSE;
 	}
 
@@ -3417,14 +3419,14 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->pvpexception = (acc.flags & ACC_PVP) ? 1 : (acc.flags & ACC_NOPVP) ? 2 : (acc.flags & ACC_ANOPVP) ? 3 : 0;
 		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
-//		s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, acc.flags);
+		//s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, acc.flags);
 		s_printf("(%s) ACC2:Player %s has flags %d (%s)\n", showtime(), accname, acc.flags, get_conn_userhost(conn));
-//		s_printf("(%s) ACC2:Player %s has flags %d (%s@%s)\n", showtime(), accname, acc.flags, Conn[conn]->real, Conn[conn]->host);
+		//s_printf("(%s) ACC2:Player %s has flags %d (%s@%s)\n", showtime(), accname, acc.flags, Conn[conn]->real, Conn[conn]->host);
 	}
 	/* handle banned player 2/2 */
 	if (acc_banned) {
-		msg_print(Ind, "\377R*** Your account is temporarily suspended ***");
 		s_printf("Refused ACC_BANNED account %s (character %s)\n.", accname, name);
+		Destroy_connection(conn, "*** Your account is temporarily suspended ***");
 		return FALSE;
 	}
 
@@ -3445,21 +3447,22 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	   First byte of 'sex' carries the 'mode', the second byte carries extra mode info that needs to be translated. */
 	p_ptr->mode = (sex & 0xFF);
 
-#if 0
-	/* hack? disallow 'pvp mode' for new players? */
+	/* Disallow 'pvp mode' for new players because it can be used to cheeze up own PvP characters */
 	if (p_ptr->inval && (p_ptr->mode & MODE_PVP)) {
+#if 0 /* perhaps in the future: Check for free non-DED-slot to auto-convert char to normal mode instead */
 		p_ptr->mode &= ~MODE_PVP;
-		msg_print(Ind, "Because you're a new, your mode has been changed from 'pvp' to 'normal'.");
-	}
+#else
+		Destroy_connection(conn, "Sorry, your account must be validated before you can choose 'PvP' mode.");
 #endif
+	}
 
 	/* no more stand-alone 'hard mode' */
 	if ((p_ptr->mode & MODE_HARD) &&
 		!(p_ptr->mode & MODE_NO_GHOST)) {
 			p_ptr->mode &= ~MODE_HARD;
 			/* note- cannot msg_print() to player at this point yet, actually */
-			msg_print(Ind, "Hard mode is no longer supported - choose hellish mode instead.");
-			msg_print(Ind, "Your character has automatically been converted to normal mode.");
+			//msg_print(Ind, "Hard mode is no longer supported - choose hellish mode instead.");
+			//msg_print(Ind, "Your character has automatically been converted to normal mode.");
 	}
 
 	/* fix potential exploits */
