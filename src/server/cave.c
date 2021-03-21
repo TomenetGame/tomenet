@@ -8769,7 +8769,7 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 		/* generally allow in town, restrictions are applied in cave_set_feat_live().) */
 		if (sector00 || valinor || nr_bottom) return(FALSE);
 
-		if (l_ptr->flags2 & LF2_NO_RUNES) return FALSE;
+		if (l_ptr && (l_ptr->flags2 & LF2_NO_RUNES)) return FALSE;
 		break;
 		}
 
