@@ -2775,11 +2775,12 @@ foes as you can before facing him.
 Morgoth, the god of destruction, has reinforced his surroundings to be
 especially devastating to all living beings:
 If you get killed on a level where Morgoth, Lord of Darkness walks, your
-ghost will be destroyed too, even if you are everlasting! Beware!
-Note that on a floor where Morgoth currently resides, all vaults will turn into
-no-tele vaults, even if they normally aren't!
+ghost will be destroyed too, even if you are everlasting! Beware! Even after
+Morgoth is no longer there the floor will still keep this deadly property.
 You will get a floor feeling warning you whenever you enter a floor where
 Morgoth resides, see (4.8).
+Note that on a floor where Morgoth currently resides, all vaults will turn into
+no-teleport vaults.
 
 If you team up against him, he will grow stronger for every additional player
 who enters his dungeon level. Growing stronger in fact means that he gains a
