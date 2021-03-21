@@ -3341,6 +3341,7 @@ static bool auto_retaliate_test(int Ind) {
 
 			/* Figure out if this is the best target so far */
 			if (!m_target_ptr) {
+				/* It's the first monster we're checking */
 				prev_m_target_ptr = m_target_ptr;
 				m_target_ptr = m_ptr;
 				r_ptr = race_inf(m_ptr);
@@ -3355,12 +3356,19 @@ static bool auto_retaliate_test(int Ind) {
 				r_ptr2 = r_ptr;
 				r_ptr = race_inf(m_ptr);
 
+				/* Don't attack sleeping monsters before awake monsters */
+				if (m_target_ptr->csleep && !m_ptr->csleep) {
+					prev_m_target_ptr = m_target_ptr;
+					m_target_ptr = m_ptr;
+					prev_target = target;
+					target = i;
+				}
 				/* If it is a Q, then make it our new target. */
 				/* We don't handle the case of choosing between two
 				 * Q's because if the player is standing next to two Q's
 				 * he deserves whatever punishment he gets.
 				 */
-				if (r_ptr->d_char == 'Q') {
+				else if (r_ptr->d_char == 'Q') {
 					prev_m_target_ptr = m_target_ptr;
 					m_target_ptr = m_ptr;
 					prev_target = target;
