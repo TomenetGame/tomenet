@@ -18220,7 +18220,7 @@ spell failure rate. All Unlife spells use WIS.)
                     Shared spell (see above): H.Offense, O.Shadow.
                     This spell cannot be found in the Shadow tome.
 
-    Darkness Storm  Conjures up a storm of darkness.
+    Darkness Storm  Conjures up a ball of darkness.
                     Required skill level for first spell level: 42.
 
     BONI:           Increases infra-vision by +1 every 10 points, up to +5.
