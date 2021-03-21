@@ -2767,6 +2767,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 #endif
+		else if (prefix(messagelc, "/invn")) { /* Set o_ptr->number for an inventory slot */
+			char slot = message3[0];
+
+			if (slot < 'a' || slot > 'w') {
+				msg_print(Ind, "Usage: /invn <a..w> <number>");
+				return;
+			}
+			if (p_ptr->inventory[slot - 'a'].k_idx) p_ptr->inventory[slot - 'a'].number = atoi(message3 + 1);
+			else msg_format(Ind, "Empty slot: %c).", slot);
+			p_ptr->window |= PW_INVEN;
+			return;
+		}
 		else if (prefix(messagelc, "/evinfo")) { /* get info on a global event */
 			int n = 0;
 			char ppl[75];
