@@ -5935,6 +5935,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	/* Can we move ? */
 	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
 		msg_print(Ind, "You cannot move by nature.");
+		disturb(Ind, 0, 0); /* Stop us in case we were running */
 		return;
 	}
 	
