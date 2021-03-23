@@ -656,6 +656,7 @@ void do_cmd_go_up(int Ind) {
 						skip = FALSE;
 						break;
 					}
+					if (q_ptr->ghost) continue; /* Allow rescuing someone via probtravel */
 					skip = TRUE;
 				}
 				if (!skip) {
@@ -1501,6 +1502,7 @@ void do_cmd_go_down(int Ind) {
 						skip = FALSE;
 						break;
 					}
+					if (q_ptr->ghost) continue; /* Allow rescuing someone via probtravel */
 					skip = TRUE;
 				}
 				if (!skip) {
