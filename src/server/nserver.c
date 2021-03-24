@@ -7650,7 +7650,7 @@ int Send_music(int Ind, int music, int musicalt) {
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 	/* Send same info to target player, if available */
 	if (connp2) {
-		if (p_ptr2->music_current != music) {
+		if (p_ptr2->music_current != music || p_ptr2->music_vol != 100) {
 			p_ptr2->music_current = music;
 			p_ptr2->musicalt_current = musicalt;
 			p_ptr2->music_vol = 100;
@@ -7661,7 +7661,7 @@ int Send_music(int Ind, int music, int musicalt) {
 		}
 	}
 
-	if (p_ptr->music_current == music) return(-1);
+	if (p_ptr->music_current == music && p_ptr->music_vol == 100) return(-1);
 	/* -1 means 'keep playing your current music', we don't need to modify music_current for that */
 	if (music != -1) p_ptr->music_current = music;
 	if (musicalt != -1) p_ptr->musicalt_current = musicalt;
@@ -7694,24 +7694,26 @@ int Send_music_vol(int Ind, int music, int musicalt, char vol) {
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 	/* Send same info to target player, if available */
 	if (connp2) {
-		if (p_ptr2->music_current != music || p_ptr2->music_vol != vol) {
+		if (p_ptr2->music_current != music || (p_ptr2->music_vol != vol && is_atleast(&connp2->version, 4, 7, 3, 2, 0, 0))) {
 			p_ptr2->music_current = music;
 			p_ptr2->musicalt_current = musicalt;
-			p_ptr2->music_vol = vol;
-			if (is_atleast(&connp2->version, 4, 7, 3, 2, 0, 0))
+			if (is_atleast(&connp2->version, 4, 7, 3, 2, 0, 0)) {
+				p_ptr2->music_vol = vol;
 				Packet_printf(&connp2->c, "%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, vol);
-			else if (is_newer_than(&connp2->version, 4, 5, 6, 0, 0, 1))
+			} else if (is_newer_than(&connp2->version, 4, 5, 6, 0, 0, 1)) {
+				p_ptr2->music_vol = 100;
 				Packet_printf(&connp2->c, "%c%c%c", PKT_MUSIC, music, musicalt);
-			else if (is_newer_than(&connp2->version, 4, 4, 4, 5, 0, 0))
+			} else if (is_newer_than(&connp2->version, 4, 4, 4, 5, 0, 0)) {
+				p_ptr2->music_vol = 100;
 				Packet_printf(&connp2->c, "%c%c", PKT_MUSIC, music);
+			} else p_ptr2->music_vol = 100;
 		}
 	}
 
-	if (p_ptr->music_current == music && p_ptr->music_vol == vol) return(-1);
+	if (p_ptr->music_current == music && (p_ptr->music_vol == vol || !is_atleast(&connp->version, 4, 7, 3, 2, 0, 0))) return(-1);
 	/* -1 means 'keep playing your current music', we don't need to modify music_current for that */
 	if (music != -1) p_ptr->music_current = music;
 	if (musicalt != -1) p_ptr->musicalt_current = musicalt;
-	p_ptr->music_vol = vol;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -7720,13 +7722,18 @@ int Send_music_vol(int Ind, int music, int musicalt, char vol) {
 		return 0;
 	}
 
-	if (is_atleast(&connp->version, 4, 7, 3, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, vol);
-	else if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1))
-		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
-	else if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0))
-		return(-1);
 	//s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, p_ptr->name, Ind);//debug
+	if (is_atleast(&connp->version, 4, 7, 3, 2, 0, 0)) {
+		p_ptr->music_vol = vol;
+		return Packet_printf(&connp->c, "%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, vol);
+	} else if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1)) {
+		p_ptr->music_vol = 100;
+		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
+	} else if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) {
+		p_ptr->music_vol = 100;
+		return(-1);
+	}
+	p_ptr->music_vol = 100;
 	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
 }
 int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
