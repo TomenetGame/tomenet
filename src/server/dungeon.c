@@ -3834,20 +3834,30 @@ static void process_player_begin(int Ind) {
 			p_ptr->recall_pos.wz = 1;
 			//add the temporary 'mirror' dungeon
 			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP))
-				add_dungeon(&p_ptr->wpos, 1, 1, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
+				add_dungeon(&p_ptr->wpos, 1, 2, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 				    DF2_NO_ENTRY_MASK | DF2_RANDOM,
 				    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, TRUE, 0, DI_DEATH_FATE, 0, 0);
 		} else {
 			p_ptr->recall_pos.wz = -1;
 			//add the temporary 'mirror' dungeon
 			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_DOWN))
-				add_dungeon(&p_ptr->wpos, 1, 1, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
+				add_dungeon(&p_ptr->wpos, 1, 2, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 				    DF2_NO_ENTRY_MASK | DF2_RANDOM,
 				    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, FALSE, 0, DI_DEATH_FATE, 0, 0);
 		}
 		//get him there
 		p_ptr->new_level_method = LEVEL_RAND;
 		recall_player(Ind, "");
+		//don't rely on 'P:' because we use an extra staircase now for the balcony
+		oy = p_ptr->py;
+		ox = p_ptr->px;
+		p_ptr->py = 2;
+		p_ptr->px = 1;
+		zcave = getcave(&p_ptr->wpos);
+		zcave[oy][ox].m_idx = 0;
+		zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
+		everyone_lite_spot(&p_ptr->wpos, oy, ox);
+		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		break;
 	}
 
@@ -8951,15 +8961,13 @@ void process_player_change_wpos(int Ind) {
 
 	clockin(Ind, 7); /* Remember his wpos */
 
-	if (in_deathfate2(wpos)) wiz_lite(Ind); //hack
-
 	/* Note: IDDC is already covered in cmd2.c when taking entrance staircases */
 	if (in_hallsofmandos(wpos)) {
 		p_ptr->warning_depth = 2;
 		p_ptr->warning_wor = p_ptr->warning_wor2 = 1;
 	}
 
-	if (in_deathfate(wpos)) wiz_lite(Ind);
+	if (in_deathfate_x(wpos)) wiz_lite(Ind);
 }
 
 

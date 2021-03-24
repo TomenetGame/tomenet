@@ -6297,8 +6297,13 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	}
 	else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
 		ville = TRUE;
-		desc = "Party";
-		loc_pre = "on a";
+		if (wpos->wz == 1 || wpos->wz == -1) {
+			desc = "Party";
+			loc_pre = "at the";
+		} else {
+			desc = "Balcony";
+			loc_pre = "on the";
+		}
 	}
 
 	if (desc[0]) loc_name = desc;

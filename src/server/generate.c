@@ -8642,18 +8642,19 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* Hack -- Don't tell players about it (for efficiency) */
 		level_generation_time = TRUE;
 
-		/* add the arena */
-		//keep objects that may be on the floor...... but get rid of monsters
-		process_dungeon_file("t_party.txt", wpos, &y1, &x1, 22, 66, TRUE);
-		zcave[0][32].feat = 79; zcave[0][32].info = 7;
-		zcave[0][33].feat = 79; zcave[0][33].info = 7;
-		zcave[0][34].feat = 79; zcave[0][34].info = 7;
-		zcave[15][65].feat = 79; zcave[15][65].info = 7;
-		zcave[16][65].feat = 79; zcave[16][65].info = 7;
-		//wipe_m_list(&p_ptr->wpos);
-
+		/* add the party */
+		if (wpos->wz == 1 || wpos->wz == -1) {
+			//keep objects that may be on the floor...... but get rid of monsters
+			process_dungeon_file("t_party.txt", wpos, &y1, &x1, 22, 66, TRUE);
+			//wipe_m_list(&p_ptr->wpos);
+			zcave[0][32].feat = 79; zcave[0][32].info = 7;
+			zcave[0][33].feat = 79; zcave[0][33].info = 7;
+			zcave[0][34].feat = 79; zcave[0][34].info = 7;
+			zcave[15][65].feat = 79; zcave[15][65].info = 7;
+			zcave[16][65].feat = 79; zcave[16][65].info = 7;
+			s_printf("DF-party (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
+		} else process_dungeon_file("t_balcony.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		level_generation_time = FALSE;
-		s_printf("DF-party (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
 		return;
 	}
 	/* Always generate basic death fate from template for a bit more visuals, instead of the auto-generated, basically empty floor? */

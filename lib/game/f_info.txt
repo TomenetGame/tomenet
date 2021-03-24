@@ -600,7 +600,8 @@ F:DONT_NOTICE_RUNNING | LAMP_LITE
 F:NO_SHADE
 
 #added to visually "blank" unused space on floors that are smaller than possible
-N:79:permanent clear wall
+#N:79:permanent clear wall
+N:79:nothing
 G: :w
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | BOUNDARY
@@ -867,27 +868,27 @@ G:o:u
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 D:1:You cannot cut this cordon.
 
-N:116:Bars
+N:116:bars
 G:-:s
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 D:1:You cannot break down these bars.
 
-N:117:Bars
+N:117:bars
 G:|:s
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
-D:1:You cannot break down there bars.
+D:1:You cannot break down these bars.
 
-N:118:Bars
+N:118:bars
 G:/:s
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 D:1:You cannot break down these bars.
 
-N:119:Bars
+N:119:bars
 G:\:s
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 D:1:You cannot break down these bars.
 
-N:120:Bars
+N:120:bars
 G:o:s
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 D:1:You cannot break down these bars.
@@ -912,8 +913,40 @@ G:*:0
 F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
 F:DONT_NOTICE_RUNNING | BOUNDARY
 
+N:125:marble wall
+G:#:w
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING
+F:NO_SHADE
+#F:LAMP_LITE
 
-# HOLE 125..158 -------------------------------------------------------------
+N:126:marble balustrade
+G:-:w
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down this marble balustrade.
+
+N:127:marble balustrade
+G:|:w
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down this marble balustrade.
+
+N:128:marble balustrade
+G:/:w
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down this marble balustrade.
+
+N:129:marble balustrade
+G:\:w
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down this marble balustrade.
+
+N:130:marble balustrade
+G:o:w
+F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
+D:1:You cannot break down this marble balustrade.
+
+
+# HOLE 131..158 -------------------------------------------------------------
 
 
 #permanent magma vein

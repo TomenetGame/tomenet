@@ -8888,7 +8888,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	if (buf[0] == 'F') {
 		int num;
 
-		if ((num = tokenize(buf + 2, 10, zz, ':', '/')) > 1) {
+		//if ((num = tokenize(buf + 2, 10, zz, ':', '/')) > 1) { -- allow using '/' as feature symbol:
+		if ((num = tokenize(buf + 2, 10, zz, ':', ':')) > 1) {
 			int index = zz[0][0];
 
 			/* Reset the feature */

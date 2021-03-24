@@ -1881,8 +1881,9 @@ void handle_music(int Ind) {
 		Send_music(Ind, sector00music_dun, sector00musicalt_dun);
 		return;
 	} else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
-		Send_music(Ind, 98, 55); //party/halloween
-		return; //party/halloween
+		if (p_ptr->wpos.wz == 1 || p_ptr->wpos.wz == -1) Send_music(Ind, 98, 55); //party/halloween
+		else Send_music_vol(Ind, 98, 55, 50);
+		return;
 	}
 
 	/* No-tele grid: Re-use 'terrifying' bgm for this */
