@@ -3848,6 +3848,13 @@ static void process_player_begin(int Ind) {
 		//get him there
 		p_ptr->new_level_method = LEVEL_RAND;
 		recall_player(Ind, "");
+		if (!getcave(&p_ptr->wpos)) {
+			p_ptr->auto_transport = AT_PARTY2;
+			break;
+		}
+		//fall through
+	case AT_PARTY2:
+		p_ptr->auto_transport = 0;
 		//don't rely on 'P:' because we use an extra staircase now for the balcony
 		oy = p_ptr->py;
 		ox = p_ptr->px;
