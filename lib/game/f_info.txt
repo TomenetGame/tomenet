@@ -892,8 +892,29 @@ G:o:s
 F:LOS | NO_WALK | WALL | PERMANENT | DONT_NOTICE_RUNNING | BLOCK_CONTACT
 D:1:You cannot break down these bars.
 
+N:121:empty sky
+G: :w
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | BOUNDARY
 
-# HOLE 121..158 -------------------------------------------------------------
+N:122:star
+G:.:0
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | BOUNDARY
+
+N:123:star
+G:+:0
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | BOUNDARY
+
+N:124:star
+G:*:0
+F:WALL | NO_WALK | NO_VISION | PERMANENT | SUPPORT_LIGHT
+F:DONT_NOTICE_RUNNING | BOUNDARY
+
+
+# HOLE 125..158 -------------------------------------------------------------
+
 
 #permanent magma vein
 N:159:magma intrusion
