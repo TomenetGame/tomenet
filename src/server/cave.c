@@ -187,6 +187,11 @@ byte level_rand_y(struct worldpos *wpos) {
 }
 
 static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
+	if (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
+		*c = TERM_L_DARK;
+		return -2;
+	}
+
 	/* (experimental testing stuff) */
 	if (d_ptr->flags3 & (DF3_NO_TELE | DF3_NO_ESP | DF3_LIMIT_ESP | DF3_NO_SUMMON)) {
 		*c = TERM_L_UMBER;
