@@ -180,6 +180,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_INDICATORS]	= Receive_indicators;
 	receive_tbl[PKT_PLAYERLIST]	= Receive_playerlist;
 	receive_tbl[PKT_WEATHERCOL]	= Receive_weather_colouring;
+	receive_tbl[PKT_MUSIC_VOL]	= Receive_music_vol;
 }
 
 
@@ -3693,7 +3694,22 @@ int Receive_music(void) {
 
 	return 1;
 }
+int Receive_music_vol(void) {
+	int	n;
+	char	ch, m, m2 = -1, v;
 
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &m, &m2, &v)) <= 0) return n;
+
+#ifdef USE_SOUND_2010
+	/* Play background music (if enabled) */
+	if (!use_sound) return 1;
+	/* Try to play music, if fails try alternative music, if fails too stop playing any music.
+	   Special codes -1, -2 and -4 can be used here to induce alternate behaviour (see handle_music()). */
+	if (!music_vol(m, v)) music_vol(m2, v);
+#endif
+
+	return 1;
+}
 int Receive_sfx_ambient(void) {
 	int	n, a;
 	char	ch;

@@ -1908,10 +1908,113 @@ static bool play_music(int event) {
 	if (!songs[event].num) return FALSE;
 
 	/* if music event is the same as is already running, don't do anything */
-	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
+	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT
+	    && music_vol == 100)
 		return TRUE; //pretend we played it
 
 	music_next = event;
+	if (music_vol != 100) {
+		music_vol = 100;
+		Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
+	}
+	/* handle 'initial' songs with priority */
+	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
+	/* no initial songs - just pick a song normally */
+	if (!initials) music_next_song = rand_int(songs[music_next].num);
+	/* pick an initial song first */
+	else {
+		initials = randint(initials);
+		for (n = 0; n < songs[music_next].num; n++) {
+			if (!songs[music_next].initial[n]) continue;
+			initials--;
+			if (initials) continue;
+			music_next_song = n;
+			break;
+		}
+	}
+
+	/* new: if upcoming music file is same as currently playing one, don't do anything */
+	if (music_cur != -1 && music_cur_song != -1 &&
+	    songs[music_next].num /* Check there are samples for this event */
+	    && !strcmp(
+	     songs[music_next].paths[music_next_song], /* Choose a random event and pretend it's the one that would've gotten picked */
+	     songs[music_cur].paths[music_cur_song]
+	     )) {
+		music_next = event;
+		music_next_song = music_cur_song;
+		return TRUE;
+	}
+
+	/* check if music is already running, if so, fade it out first! */
+	if (Mix_PlayingMusic()) {
+		if (Mix_FadingMusic() != MIX_FADING_OUT)
+			Mix_FadeOutMusic(500);
+	} else {
+		//play immediately
+		fadein_next_music();
+	}
+	return TRUE;
+}
+static bool play_music_vol(int event, char vol) {
+	int n, initials = 0;
+
+	/* Paranoia */
+	if (event < -4 || event >= MUSIC_MAX) return FALSE;
+
+	/* Don't play anything, just return "success", aka just keep playing what is currently playing.
+	   This is used for when the server sends music that doesn't have an alternative option, but
+	   should not stop the current music if it fails to play. */
+	if (event == -1) return TRUE;
+
+	/* Jukebox hack: Don't interrupt current jukebox song, but remember event for later */
+	if (jukebox_playing != -1 && jukebox_playing != event) {
+		jukebox_org = event;
+		return TRUE;
+	}
+
+	/* We previously failed to play both music and alternative music.
+	   Stop currently playing music before returning */
+	if (event == -2) {
+		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
+			Mix_FadeOutMusic(500);
+		music_cur = -1;
+		return TRUE; //whatever..
+	}
+
+	/* 'shuffle_music' option changed? */
+	if (event == -3) {
+		if (c_cfg.shuffle_music) {
+			music_next = -1;
+			Mix_FadeOutMusic(500);
+		} else {
+			music_next = music_cur; //hack
+			music_next_song = music_cur_song;
+		}
+		return TRUE; //whatever..
+	}
+
+#ifdef ATMOSPHERIC_INTRO
+	/* New, for title screen -> character screen switch: Halt current music */
+	if (event == -4) {
+		/* Stop currently playing music though, before returning */
+		if (Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT)
+			Mix_FadeOutMusic(2000);
+		music_cur = -1;
+		return TRUE; /* claim that it 'succeeded' */
+	}
+#endif
+
+	/* Check there are samples for this event */
+	if (!songs[event].num) return FALSE;
+
+	/* if music event is the same as is already running, don't do anything */
+	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT
+	    && music_vol == vol)
+		return TRUE; //pretend we played it
+
+	music_next = event;
+	music_vol = vol;
+	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[music_vol]) / MIX_MAX_VOLUME));
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
 	/* no initial songs - just pick a song normally */
@@ -2219,6 +2322,7 @@ errr init_sound_sdl(int argc, char **argv) {
 
 	/* Enable music */
 	music_hook = play_music;
+	music_hook_vol = play_music_vol;
 
 	/* Enable weather noise overlay */
 	sound_weather_hook = play_sound_weather;
@@ -2361,6 +2465,7 @@ errr re_init_sound_sdl(void) {
 
 	/* Enable music */
 	music_hook = play_music;
+	music_hook_vol = play_music_vol;
 
 	/* Enable weather noise overlay */
 	sound_weather_hook = play_sound_weather;

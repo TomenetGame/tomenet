@@ -3437,6 +3437,7 @@ struct player_type {
 
 #ifdef USE_SOUND_2010
 	int music_current, musicalt_current, music_monster; //background music currently playing for him/her; an overriding monster music
+	char music_vol;
 	int audio_sfx, audio_mus, music_start;
 	int sound_ambient;
 	/* added for ambient-sfx-handling, so it does not do smooth transition

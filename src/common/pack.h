@@ -255,6 +255,7 @@
 #define PKT_INDICATORS		197
 #define PKT_PLAYERLIST		198
 #define PKT_WEATHERCOL		199
+#define PKT_MUSIC_VOL		200	/* background music at specific volume */
 
 /*
  * Possible error codes returned
