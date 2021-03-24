@@ -9154,6 +9154,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				Send_music(Ind, k, -4);
 				return;
 			}
+			else if (prefix(messagelc, "/pvmus")) { /* play specific music at specific volume */
+				if (!__audio_mus_max) {
+					msg_print(Ind, "No music available.");
+					return;
+				}
+				if (tk < 2 || k < 0 || k >= __audio_mus_max) {
+					msg_format(Ind, "Usage: /pvmus <music number 0..%d> <volume%% 0..100>", __audio_mus_max - 1);
+					return;
+				}
+				msg_format(Ind, "Playing <%d> at volume <%d%%>.", k, atoi(token[2]));
+				if (is_older_than(&p_ptr->version, 4, 7, 3, 2, 0, 0)) msg_print(Ind, "\377ySince your client version is < 4.7.3.2.0.0 the volume will always be 100%%.");
+				Send_music_vol(Ind, k, -4, atoi(token[2]));
+				return;
+			}
 			else if (prefix(messagelc, "/ppmus")) { /* play specific music for specific player */
 				if (!__audio_mus_max) {
 					msg_print(Ind, "No music available.");
