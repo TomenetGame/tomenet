@@ -11575,7 +11575,7 @@ void process_monsters(void) {
 				continue;
 			}
 
-			/* Patrons at a table */
+			/* Patrons at a table, Bartenders too */
 			else {
 				int x2, y2;
 				bool seated = FALSE;
@@ -11621,10 +11621,12 @@ void process_monsters(void) {
 							m_ptr->extra = d + 1;
 							d = 4;
 							/* While at it, randomly get drunk or sober up :-s */
-							if (m_ptr->ego != RE_DRUNK) {
-								if (!rand_int(3)) m_ptr->ego = RE_DRUNK;
-							} else {
-								if (!rand_int(3)) m_ptr->ego = RE_NONE;
+							if (m_ptr->r_idx != 122 && m_ptr->r_idx != 795) { /* not the personnel */
+								if (m_ptr->ego != RE_DRUNK) {
+									if (!rand_int(3)) m_ptr->ego = RE_DRUNK;
+								} else {
+									if (!rand_int(3)) m_ptr->ego = RE_NONE;
+								}
 							}
 							break;
 						}
