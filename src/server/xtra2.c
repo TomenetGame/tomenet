@@ -6780,7 +6780,8 @@ if (cfg.unikill_format) {
 			case 5: i = SV_POTION_INC_CHR; break;
 			}
 			invcopy(qq_ptr, lookup_kind(TV_POTION, i));
-			s_printf("replacement for FINAL_ARTIFACT: %d\n", i);
+			object_desc(0, o_name, qq_ptr, TRUE, 3);
+			s_printf("replacement for FINAL_ARTIFACT: %s\n", o_name);
 			apply_magic(wpos, qq_ptr, -2, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
 			drop_near(0, qq_ptr, -1, wpos, y, x);
 		}
