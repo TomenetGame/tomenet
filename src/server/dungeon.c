@@ -1087,6 +1087,11 @@ static void process_effects(void) {
 			erase_effects(k);
 			continue;
 		}
+		/* Falling stars disappear if they reach end of traversed screen */
+		if ((e_ptr->flags & EFF_FALLING_STAR) && (e_ptr->cx == MAX_WID - 2 || e_ptr->cx == 1)) {
+			erase_effects(k);
+			continue;
+		}
 
 		/* Handle spell effects */
 		for (l = 0; l < tdi[e_ptr->rad]; l++) {
