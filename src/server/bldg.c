@@ -2793,6 +2793,9 @@ if (is_admin(p_ptr))
 		case BACT_REPAIR_ARMOR:
 			paid = repair_item(Ind, item, TRUE);
 			break;
+		case BACT_HIGHEST_LEVELS:
+			view_highest_levels(Ind);
+			break;
 		default:
 #if 0
 			if (process_hooks_ret(HOOK_BUILDING_ACTION, "d", "(d)", bact)) {

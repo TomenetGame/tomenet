@@ -1820,6 +1820,7 @@ extern void view_exploration_history(int Ind);
 extern void reward_deed_item(int Ind, int item);
 extern void reward_deed_blessing(int Ind, int item);
 extern s64b price_item_player_store(int Ind, object_type *o_ptr);
+extern void view_highest_levels(int Ind);
 
 #ifdef AUCTION_SYSTEM
 extern void process_auctions();

@@ -8125,3 +8125,42 @@ timing_before_return:
   #endif
  #endif
 #endif
+
+void view_highest_levels(int Ind) {
+	int i;
+	FILE *fff;
+	char file_name[MAX_PATH_LENGTH];
+	bool none = TRUE;
+	hash_entry *ptr;
+
+	/* Temporary file */
+	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
+	fff = my_fopen(file_name, "wb");
+
+	fprintf(fff,"\377UThe following *exceptionally* powerful individuals alive have been witnessed:\n\n");
+
+	/* Search in each array slot */
+	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
+		/* Acquire pointer to this chain */
+		ptr = hash_table[i];
+
+		/* Check all entries in this chain */
+		while (ptr) {
+			if (ptr->level >= 70 && !ptr->admin) {
+				none = FALSE;
+				fprintf(fff, "             \377U%-30s, level %d\n", ptr->name, ptr->level);
+			}
+			/* Next entry in chain */
+			ptr = ptr->next;
+		}
+	}
+
+	if (none) fprintf(fff, "\n\377U    Currently none, unfortunately.\n");
+#ifdef USE_SOUND_2010
+	else sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+
+	my_fclose(fff);
+	/* Display the file contents */
+	do_cmd_check_other_prepare(Ind, file_name, "The Strongest Known");
+}

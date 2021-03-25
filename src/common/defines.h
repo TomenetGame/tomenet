@@ -8469,6 +8469,7 @@ extern int PlayerUID;
 #define BACT_SEND_ITEM_PAY		70
 #define BACT_REPAIR_WEAPON		71
 #define BACT_REPAIR_ARMOR		72
+#define BACT_HIGHEST_LEVELS		73
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 
