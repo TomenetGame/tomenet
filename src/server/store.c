@@ -8154,12 +8154,12 @@ void view_highest_levels(int Ind) {
 				Dummy.prace = ptr->race;
 				Dummy.ptrait = TRAIT_NONE;
 
-				sprintf(tmp, "%s, the %s %s", ptr->name,
+				sprintf(tmp, "%s, the %s%s", ptr->name,
 				    //special_prace_lookup[ptype & 0xff],
 				    get_prace2(&Dummy),
 				    class_info[Dummy.pclass].title);
 				    //get_ptitle(q_ptr, FALSE));
-				fprintf(fff, "\377U    %-30s level %d\n", tmp, ptr->level);
+				fprintf(fff, "\377U    %-44s level %d\n", tmp, ptr->level);
 			}
 			/* Next entry in chain */
 			ptr = ptr->next;
