@@ -8129,15 +8129,16 @@ timing_before_return:
 void view_highest_levels(int Ind) {
 	int i;
 	FILE *fff;
-	char file_name[MAX_PATH_LENGTH];
+	char file_name[MAX_PATH_LENGTH], tmp[MAX_CHARS];
 	bool none = TRUE;
 	hash_entry *ptr;
+	player_type Dummy;
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	fff = my_fopen(file_name, "wb");
 
-	fprintf(fff,"\377UThe following *exceptionally* powerful individuals alive have been witnessed:\n\n");
+	fprintf(fff,"\377U The following *exceptionally* powerful individuals alive have been witnessed:\n");
 
 	/* Search in each array slot */
 	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
@@ -8148,14 +8149,24 @@ void view_highest_levels(int Ind) {
 		while (ptr) {
 			if (ptr->level >= 70 && !ptr->admin) {
 				none = FALSE;
-				fprintf(fff, "             \377U%-30s, level %d\n", ptr->name, ptr->level);
+
+				Dummy.pclass = ptr->class;
+				Dummy.prace = ptr->race;
+				Dummy.ptrait = TRAIT_NONE;
+
+				sprintf(tmp, "%s, the %s %s", ptr->name,
+				    //special_prace_lookup[ptype & 0xff],
+				    get_prace2(&Dummy),
+				    class_info[Dummy.pclass].title);
+				    //get_ptitle(q_ptr, FALSE));
+				fprintf(fff, "\377U    %-30s level %d\n", tmp, ptr->level);
 			}
 			/* Next entry in chain */
 			ptr = ptr->next;
 		}
 	}
 
-	if (none) fprintf(fff, "\n\377U    Currently none, unfortunately.\n");
+	if (none) fprintf(fff, "\377U    Currently none, unfortunately.\n");
 #ifdef USE_SOUND_2010
 	else sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
 #endif
