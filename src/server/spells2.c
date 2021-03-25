@@ -6867,6 +6867,18 @@ bool cast_lightning(worldpos *wpos, int x, int y) {
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, typ, GF_SHOW_LIGHTNING, flg, pattacker));
 }
 
+bool cast_falling_star(worldpos *wpos, int x, int y, int dur) {
+	char pattacker[80];
+	strcpy(pattacker, "");
+
+	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
+
+	project_time_effect = EFF_FALLING_STAR;
+	project_interval = 1;
+	project_time = dur;
+	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, GF_RAINDROP, flg, pattacker)); //GF_RAINDROP is a dummy anyway, can just reuse it here
+}
+
 /* For reworked Thunderstorm spell */
 bool thunderstorm_visual(worldpos *wpos, int x, int y) {
 	char pattacker[80];
@@ -7849,11 +7861,11 @@ void house_creation(int Ind, bool floor, bool jail) {
 
 /* (Note: Apparently currently only used by Moltor's second_handler().) */
 extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
-	int                     i, Ind, j;
-	cave_type               *c_ptr;
+	int i, Ind, j;
+	cave_type *c_ptr;
 
-	monster_type    *m_ptr;
-	monster_race    *r_ptr = &r_info[r_idx];
+	monster_type *m_ptr;
+	monster_race *r_ptr = &r_info[r_idx];
 
 	char buf[80];
 

@@ -3570,6 +3570,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		default: (*cp) = '*';
 		}
 	}
+	/* display falling star */
+	if ((effects[c_ptr->effect].flags & EFF_FALLING_STAR)) {
+		(*ap) = TERM_STARLITE;
+		(*cp) = rand_int(3) ? '.' : '+';
+	}
 
 	/* for 'Thunderstorm' spell */
 	if ((effects[c_ptr->effect].flags & EFF_THUNDER_VISUAL)) {

@@ -1166,7 +1166,10 @@ static void process_effects(void) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
 #endif
-				}
+				} else if ((e_ptr->flags & EFF_FALLING_STAR)) {
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
+ 				}
 			}
 
 			/* --- Complex effects: Create next effect iteration and imprint it on grid --- */
@@ -1688,6 +1691,17 @@ static void process_effects(void) {
 		else if ((e_ptr->flags & (EFF_LIGHTNING1 | EFF_LIGHTNING2 | EFF_LIGHTNING3))
 		    && e_ptr->rad < 15) {
 			e_ptr->rad++;
+		}
+
+		/* Slide falling stars */
+		else if (e_ptr->flags & EFF_FALLING_STAR) {
+			if (TRUE) {
+				e_ptr->cx--;
+			} else {
+				e_ptr->cx++;
+			}
+			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+			apply_effect(k, &who, wpos, e_ptr->cx, e_ptr->cy, c_ptr);
 		}
 
 		/* Thunderstorm visual */
@@ -10208,6 +10222,19 @@ void process_timers() {
 		}
 	}
 #endif
+
+	if (!timer_falling_star) {
+		timer_falling_star = 2 + rand_int(60);
+		wpos.wx = WPOS_DF_X;
+		wpos.wy = WPOS_DF_Y;
+		wpos.wz = -WPOS_DF_Z * 2;
+		if ((zcave = getcave(&wpos))) {
+			x = rand_int(65 - 20) + 1 + 15;
+			y = rand_int(7 - 1) + 1;
+			i = 7 + rand_int(22);
+			cast_falling_star(&wpos, x, y, i);
+		}
+	} else timer_falling_star--;
 }
 
 /* during new years eve, cast fireworks! - C. Blue

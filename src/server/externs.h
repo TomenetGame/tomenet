@@ -833,6 +833,7 @@ extern void verify_day_and_night(void);
 extern void process_timers(void);
 extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;
 extern bool init_pvparena;
+extern int timer_falling_star;
 
 extern void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr);
 extern void timed_shutdown(int k, bool terminate);
@@ -1708,6 +1709,7 @@ extern bool cast_raindrop(worldpos *wpos, int x);
 extern bool cast_snowflake(worldpos *wpos, int x, int interval);
 extern bool cast_fireworks(worldpos *wpos, int x, int y, int typ);
 extern bool cast_lightning(worldpos *wpos, int x, int y);
+extern bool cast_falling_star(worldpos *wpos, int x, int y, int dur);
 extern bool thunderstorm_visual(worldpos *wpos, int x, int y);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
