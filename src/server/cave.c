@@ -499,7 +499,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
-				//if (admin_p(i)) continue;
+				if (p_ptr->admin_dm) continue;
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				if (p_ptr->paralyzed == 255) {
@@ -517,7 +517,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
-				//if (admin_p(i)) continue;
+				if (p_ptr->admin_dm) continue;
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				if (!p_ptr->new_level_flag) continue;
@@ -531,7 +531,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
-				//if (admin_p(i)) continue;
+				if (p_ptr->admin_dm) continue;
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				if (p_ptr->paralyzed == 255) continue;
@@ -548,7 +548,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 			if (!free) for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
-				//if (admin_p(i)) continue;
+				if (p_ptr->admin_dm) continue;
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				p_ptr->paralyzed = 0;
