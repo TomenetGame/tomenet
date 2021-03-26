@@ -15793,6 +15793,8 @@ create a character!):
     Druids learn how to quickly pass through thick forest at level 10 --
     note though that they can already do this at level 5 by simply polymorphing
     into an animal ('m' key), since all animals can pass forest easily.
+    Also starting at 5 they learn the first form (cave bear) that can pass
+    mountain terrain, and later they also learn flying forms (griffon).
     To review which forms you can transform into, use the /ex command.
     To see an overview of the forms and their abilities, see (6.7c).
 
