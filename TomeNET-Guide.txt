@@ -17133,7 +17133,7 @@ Panther                 speedy
 
 Level 10:
 ---------
-Grizzly bear            same as Cave Bear, but tougher
+Grizzly bear            same as Cave bear, but tougher
 (Code 191)
 
 Yeti                    can pass mountain terrain;
@@ -17149,7 +17149,7 @@ Sasquatch               speedy; can pass mountain terrain and woods;
 
 Level 20:
 ---------
-Werebear                same as Grizzly Bear, but tougher
+Werebear                same as Grizzly bear, but tougher
 (Code 414)
 
 Great eagle             speedy; can fly; passes most terrain types
