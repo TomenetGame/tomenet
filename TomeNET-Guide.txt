@@ -18181,7 +18181,7 @@ spell failure rate. All Unlife spells use WIS.)
                     Temporarily brands your or adjacent friendly players'
                     melee weapons with poison.
                     Lv10: Additionally grants temporary poison resistance.
-                    Required skill level for first spell level: 14.
+                    Required skill level for first spell level: 10.
 
     Darkness        Causes a burst of darkness around you, possibly blinding
                     nearby creatures.
