@@ -2247,7 +2247,8 @@ static void set_mixing_sdl(void) {
  #endif
 	}
 #endif
-	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
+	//Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
+	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[music_vol]) / MIX_MAX_VOLUME));
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_music) {
 		if (Mix_PlayingMusic()) Mix_HaltMusic();
