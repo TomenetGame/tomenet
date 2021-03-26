@@ -5871,8 +5871,9 @@ Chain_Macro:
 						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter  \377GFruit bat\377g  or just  \377G37  \377gto transform into one.");
 						Term_putstr(10, 15, -1, TERM_GREEN, "To return to the form you used before your current form, enter:  \377G-1\377g .");
 						Term_putstr(10, 16, -1, TERM_GREEN, "To return to your normal form, use  \377GPlayer\377g  or its code  \377G0\377g  .");
-						//Term_putstr(10, 17, -1, TERM_GREEN, "You must have learned a form before you can use it!");
-						Term_putstr(1, 18, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
+						Term_putstr(10, 17, -1, TERM_GREEN, "If you want to get prompted for the form every time, just leave this blank.");
+						//Term_putstr(10, 18, -1, TERM_GREEN, "You must have learned a form before you can use it!");
+						Term_putstr(1, 19, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
 						should_wait = TRUE;
 						break;
 
@@ -6458,7 +6459,7 @@ Chain_Macro:
 					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance && choice != mw_common
 					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close) {
 						if (choice == mw_load) Term_gotoxy(23, 16);
-						else if (choice == mw_poly) Term_gotoxy(47, 18);
+						else if (choice == mw_poly) Term_gotoxy(47, 19);
 						else Term_gotoxy(47, 16);
 
 						/* Get an item/spell name */
