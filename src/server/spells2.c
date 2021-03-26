@@ -6514,7 +6514,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
-		    (typ != GF_EXTRA_STATS) &&
+		    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
@@ -6584,7 +6584,7 @@ bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
-		    (typ != GF_EXTRA_STATS) &&
+		    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
@@ -6671,7 +6671,7 @@ bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker) {
 			    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 			    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 			    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
-			    (typ != GF_EXTRA_STATS) &&
+			    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 			    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 			    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 			    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */

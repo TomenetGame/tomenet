@@ -4795,7 +4795,7 @@
 #define GF_RUINATION		105
 #define GF_EXP			106
 #define GF_MIND_SLOW		107
-
+#define GF_TBRAND_POIS		108
 #define GF_CODE			109
 #define GF_NUKE			110
 #define GF_BLIND		111

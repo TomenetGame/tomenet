@@ -97,6 +97,9 @@ static int check_hit(int Ind, int power, int level, bool flag) {
 	/* Hack -- Always miss or hit */
 	if (k < 10) return (k < 5);
 
+	/* Blurred */
+	if ((i = get_skill_scale(p_ptr, SKILL_OSHADOW, 20)) && no_real_lite(Ind) && rand_int(level + 10) < i) return FALSE;
+
 	/* Calculate the "attack quality" */
 	i = (power + (level * 3));
 	/* Total armor */

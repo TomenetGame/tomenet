@@ -18177,9 +18177,10 @@ spell failure rate. All Unlife spells use WIS.)
 
                     Tier III: Level 40.
 
-    Aspect of Peril
-                    Temporarily brands your melee weapons with poison.
-                    Lv10: Grants temporary poison resistance.
+    Aspect of Peril                                            (auto-project)
+                    Temporarily brands your or adjacent friendly players'
+                    melee weapons with poison.
+                    Lv10: Additionally grants temporary poison resistance.
                     Required skill level for first spell level: 14.
 
     Darkness        Causes a burst of darkness around you, possibly blinding
@@ -18225,7 +18226,10 @@ spell failure rate. All Unlife spells use WIS.)
     Darkness Storm  Conjures up a ball of darkness.
                     Required skill level for first spell level: 42.
 
-    BONI:           Increases infra-vision by +1 every 10 points, up to +5.
+    BONI:           Increases the chance for monsters' melee attacks to miss
+                    you provided you are standing on a non-lit grid (and not
+                    using any light source).
+                    Increases infra-vision by +1 every 10 points, up to +5.
                     (Note that infra-vision caps at TomeNET's generic maximum
                     sight range, which is 200 ft aka 20 grids.)
                     At 10 it starts increasing your walking speed while you are

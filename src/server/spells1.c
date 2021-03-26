@@ -4217,6 +4217,7 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_RESURRECT_PLAYER:
 	case GF_EXTRA_STATS:
 	//case GF_ZEAL_PLAYER:
+	case GF_TBRAND_POIS:
 
 		return (dam);
 
@@ -9118,7 +9119,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			    typ == GF_SANITY_PLAYER || typ == GF_SOULCURE_PLAYER ||
 			    typ == GF_BLESS_PLAYER || typ == GF_RESPOIS_PLAYER ||
 			    typ == GF_MINDBOOST_PLAYER || typ == GF_REMIMAGE_PLAYER ||
-			    typ == GF_REMCONF_PLAYER)
+			    typ == GF_REMCONF_PLAYER || typ == GF_TBRAND_POIS)
 				return FALSE;
 			/* ok */
 			self = TRUE;
@@ -9292,7 +9293,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 		    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) || (typ == GF_PUSH) ||
 		    (typ == GF_HEALINGCLOUD) || /* Also not a hostile spell */
-		    (typ == GF_EXTRA_STATS) ||
+		    (typ == GF_EXTRA_STATS) || (typ == GF_TBRAND_POIS) ||
 		    (typ == GF_MINDBOOST_PLAYER) || (typ == GF_IDENTIFY) ||
 		    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
 		    (typ == GF_OLD_POLY)) /* may (un)polymorph himself */
@@ -9339,7 +9340,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
-		    (typ != GF_EXTRA_STATS) &&
+		    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may (un)polymorph each other */
 		{ /* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind)) {
@@ -9454,7 +9455,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	    (typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
-	    (typ == GF_EXTRA_STATS) ||
+	    (typ == GF_EXTRA_STATS) || (typ == GF_TBRAND_POIS) ||
 	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
 	    (typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))
 	    ||
@@ -9480,7 +9481,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	    (typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
 	    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
-	    (typ == GF_EXTRA_STATS) ||
+	    (typ == GF_EXTRA_STATS) || (typ == GF_TBRAND_POIS) ||
 	    (typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))
 	{ /* No effect on ghosts / admins */
 #if 0 //redundant?
@@ -11002,6 +11003,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
+	case GF_TBRAND_POIS:
+		set_melee_brand(Ind, dam, TBRAND_POIS, 10);
+		dam = 0;
+		break;
+
 	case GF_TERROR:
 		if (fuzzy || self) msg_print(Ind, "You hear terrifying noises!");
 		else msg_format(Ind, "%^s creates a disturbing illusion!", killer);
@@ -11884,7 +11890,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	    (typ == GF_RESTORE_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 	    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
-	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER))
+	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
+	    (typ == GF_TBRAND_POIS))
 		players_only = TRUE;
 
 
