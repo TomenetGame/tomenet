@@ -1175,6 +1175,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						gauche = TRUE;
 					}
 
+					switch (o_ptr->tval) {
+					case TV_SHOT:
+						if (p_ptr->inventory[INVEN_BOW].tval == TV_BOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_SLING) continue;
+						break;
+					case TV_ARROW:
+						if (p_ptr->inventory[INVEN_BOW].tval == TV_BOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_SHORT_BOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_LONG_BOW) continue;
+						break;
+					case TV_BOLT:
+						if (p_ptr->inventory[INVEN_BOW].tval == TV_BOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_LIGHT_XBOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_HEAVY_XBOW) continue;
+						break;
+					}
+
 					break;
 				}
 			}
