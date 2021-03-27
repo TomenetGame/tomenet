@@ -333,7 +333,7 @@ bool (*sound_hook)(int sound, int type, int vol, s32b player_id);
 void (*sound_ambient_hook)(int sound_ambient);
 void (*sound_weather_hook)(int sound);
 void (*sound_weather_hook_vol)(int sound, int vol);
-bool (*music_hook)(int music), (*music_hook_vol)(int music_vol);
+bool (*music_hook)(int music), (*music_hook_vol)(int music, int music_vol);
 int cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 1024;
 int music_cur = -1, music_cur_song = -1, music_next = -1, music_next_song = -1, weather_channel = -1, weather_current = -1, weather_current_vol = -1, weather_channel_volume = 0, ambient_channel = -1, ambient_current = -1, ambient_channel_volume = 0;
 char music_vol = 100;
