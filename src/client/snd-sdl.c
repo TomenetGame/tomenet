@@ -2016,6 +2016,7 @@ static bool play_music_vol(int event, char vol) {
 		if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[vol]) / MIX_MAX_VOLUME));
 		music_vol = vol;
 		return TRUE; //pretend we played it
+	}
 
 	music_next = event;
 	music_vol = vol;
