@@ -3705,7 +3705,7 @@ int Receive_music_vol(void) {
 	if (!use_sound) return 1;
 	/* Try to play music, if fails try alternative music, if fails too stop playing any music.
 	   Special codes -1, -2 and -4 can be used here to induce alternate behaviour (see handle_music()). */
-	if (!music_vol(m, v)) music_vol(m2, v);
+	if (!music_volume(m, v)) music_volume(m2, v);
 #endif
 
 	return 1;

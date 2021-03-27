@@ -9449,7 +9449,7 @@ bool music(int val) {
 	if (music_hook) return music_hook(val);
 	else return FALSE;
 }
-bool music_vol(int val, char vol) {
+bool music_volume(int val, char vol) {
 	if (!use_sound) return TRUE;
 
 	/* play a sound */

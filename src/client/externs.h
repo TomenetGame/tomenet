@@ -973,7 +973,7 @@ extern void (*sound_weather_hook_vol)(int, int);
 extern bool (*music_hook)(int), (*music_hook_vol)(int, char);
 extern bool sound(int val, int type, int vol, s32b player_id);
 extern bool music(int val);
-extern bool music_vol(int val, char vol);
+extern bool music_volume(int val, char vol);
 extern void sound_ambient(int val);
 extern void sound_weather(int val);
 extern void sound_weather_vol(int val, int vol);
