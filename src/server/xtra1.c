@@ -8232,6 +8232,8 @@ static void process_global_event(int ge_id) {
 #ifdef USE_SOUND_2010
 							sound(i, "gong", "bell", SFX_TYPE_MISC, FALSE);
 #endif
+							/* 'alerted'? */
+							disturb(i, 1, 0);
 						}
 					}
 				}
