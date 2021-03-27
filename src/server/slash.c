@@ -11302,7 +11302,7 @@ void get_laston(char *name, char *response, bool admin, bool colour) {
 
 	/* Don't display account AND player info, just take what is more recent, for now */
 	if (sla && slp) {
-		if (slp < sla) {
+		if (slp >= sla) {
 			acc_found = FALSE;
 			s = slp;
 		} else s = sla;
