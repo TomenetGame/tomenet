@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 17. March 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 27. March 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3114,7 +3114,8 @@ Since version 4.4.5 which supports music and sound via SDL, you also need
 libsdl-mixer-devel, libsdl, libsmpeg. Usual package names (SDL version 1.2):
 libsdl-mixer1.2, libsdl-mixer1.2-dev, libsdl1.2debian, libsdl1.2-dev,
 (preferably libsdl1.2debian-pulseaudio, eg under Ubuntu), libsmpeg0,
-libsmpeg-dev.
+libsmpeg-dev. Sometimes instead of the libsdl* packages your system might
+provide the packages simply named 'sdl' and 'sdl_mixer' instead.
 If you don't want to use audio, edit the makefile and compare the two
 paragraphs titled 'Without SDL' and 'With SDL' and edit the makefile
 accordingly, to compile it without SDL audio support.
