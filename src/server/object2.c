@@ -9017,10 +9017,6 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 		/* melee/ranged ego handling, not suited for spells-only: */
 		switch (o_ptr->name2) {
-		case EGO_AGILITY:
-			/* exception: martial artists can't benefit from +BPR */
-			if (melee_choice == 5) continue;
-			break;
 		case EGO_COMBAT:
 			if ((spell_choice || ranged_choice) && !melee_choice) continue;
 			break;
@@ -9029,6 +9025,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			/* exception: martial artists can't benefit from +BPR */
 			if (melee_choice == 5 || !melee_choice) continue;
 			break;
+		case EGO_AGILITY:
 		case EGO_SLAYING:
 			if (spell_choice && !melee_choice && !ranged_choice
 			    && !o_ptr->name2b) //no double-egos exist for this combo though, iirc, w/e
