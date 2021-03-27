@@ -1882,7 +1882,7 @@ void handle_music(int Ind) {
 		return;
 	} else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
 		if (p_ptr->wpos.wz == 1 || p_ptr->wpos.wz == -1) Send_music(Ind, 98, 55); //party/halloween
-		else Send_music_vol(Ind, 98, 55, 50);
+		else Send_music_vol(Ind, 98, 55, 20);
 		return;
 	}
 
