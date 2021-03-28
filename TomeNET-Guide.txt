@@ -10876,7 +10876,7 @@ DRAIN_EXP ('It drains your life force')
         Vampire race characters suffer half as much from this effect as others.
 LUCK ('It affects your luck.')
         If you are lucky, your chance to find better items increases.
-        Luck caps at 40, having higher bonus won't help any more.
+        Luck caps at 40 (and -10), having higher bonus won't help any more.
         The higher your luck is, the more diminishing is the effect of
         increasing it even more.
         What does 'better items' mean exactly?
