@@ -1726,6 +1726,8 @@ void self_knowledge(int Ind) {
 		fprintf(fff, "You are lucky here and there.\n");
 	else if (p_ptr->luck > 0)
 		fprintf(fff, "You are lucky sometimes.\n");
+	else if (p_ptr->luck < 0)
+		fprintf(fff, "You are unlucky from time to time.\n");
 
 	/* Analyze the weapon */
 	if (p_ptr->inventory[INVEN_WIELD].k_idx ||
