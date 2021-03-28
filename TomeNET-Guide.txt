@@ -2137,6 +2137,7 @@ Auto-ID     A special ability of some items. If you equip an item that grants
             you 'Auto-ID' all items you touch will automatically be
             identified! Items who grant their wielder Auto-Identification are
             highly sought after. Randart helmets or gloves sometimes have it.
+            Training 'Divination' school to 50.000 also grants auto-ID.
             See (5.7) for more information about identification.
 
 BD          Barrow-Downs. The main starter dungeon in the town of Bree, located
@@ -17773,7 +17774,7 @@ school.
                     *Identifies* an item.
                     Required skill level for first spell level: 35.
 
-    BONI:           Automatic identification at 50.
+    BONI:           Automatic identification (auto-ID) at 50.
 
 
 - Temporal
