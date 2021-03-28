@@ -2855,7 +2855,7 @@ player_class class_info[MAX_CLASS] = {
 		// TERM_ORANGE, <- more confusing since they're supposed to use a monster form
 		{ 1, 0, 0, 1, 1, -4},
 		{19+100, 0, 0, 10+100, 0, 0},//21,19
-		25, 34, 28, 1, 18, 18, 60, 46,
+		25, 30, 28, 1, 18, 18, 60, 46,
 		 9, 9, 10, 0,  0,  0, 40, 25,
 		6, 30,//3, 40,//4, 25
 		//8, 40,
@@ -4143,7 +4143,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 21, 54, 1,  13, 16, 60, 40,
+		10, 28, 54, 1,  13, 16, 60, 40,
 		2, 8,  10, 0,  0,  2,  35, 10,
 		8, 30,
 
@@ -4257,7 +4257,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 21, 54, 1,  13, 16, 60, 40,
+		10, 25, 54, 1,  13, 16, 60, 40,
 		2, 8,  10, 0,  0,  2,  35, 10,
 		8, 30,
 
