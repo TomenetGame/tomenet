@@ -18200,12 +18200,6 @@ spell failure rate. All Unlife spells use WIS.)
                     This spell cannot be found in the Conveyance tome.
 
     Shadow Shroud   Grants temporary invisibility. (See (5.16) for details.)
-                    In addition to the normal invisibility effect this spell
-                    makes it extra hard for monsters to hit you in melee (aka
-                    it will provide an AC bonus), as long as you are standing
-                    on a non-lit grid (and aren't using any sort of light
-                    source). Note that this extra 'shrouding' effect cannot
-                    coexist with a reactive shield spell (fiery shield).
                     Required skill level for first spell level: 30.
 
     Chaos Bolt      Channels the powers of chaos into a bolt attack.
@@ -18233,16 +18227,15 @@ spell failure rate. All Unlife spells use WIS.)
     Darkness Storm  Conjures up a ball of darkness.
                     Required skill level for first spell level: 42.
 
-    BONI:           Increases the chance for monsters' melee attacks to miss
-                    you provided you are standing on a non-lit grid (and not
-                    using any light source).
-                    Increases infra-vision by +1 every 10 points, up to +5.
+    BONI:           Increases infra-vision by +1 every 10 points, up to +5.
                     (Note that infra-vision caps at TomeNET's generic maximum
                     sight range, which is 200 ft aka 20 grids.)
-                    At 10 it starts increasing your walking speed while you are
-                    moving on non-lit grids (and not using any light source),
-                    very similar to how the 'Sprint' technique works. This
-                    'shadow walk' effect increases every 10 levels.
+                    If you aren't using _any_ light source, it increases the
+                    chance for monsters to miss you in melee combat (sort of
+                    a 'blur' effect) more often and at 10.000 also gives you
+                    a walking speed increase, similar to how the 'Sprint'
+                    technique works. This 'shadow walk' effect increases with
+                    every 10 points.
                     At 30 grants darkness resistance.
                     At 35 and higher it will also grant a stealth bonus that
                     increases by +1 every five skill points, up to +4 at 50.

@@ -338,15 +338,15 @@ OINVIS = add_spell {
 	["spell"] = 	function()
 		local dur = randint(20) + 15 + get_level(Ind, OINVIS, 50)
 		set_invis(Ind, dur, 20 + get_level(Ind, OINVIS, 50))
-		set_shroud(Ind, dur, 10 + get_level(Ind, OINVIS, 50) / 2)
+		--set_shroud(Ind, dur, 10 + get_level(Ind, OINVIS, 50) / 2)
 	end,
 	["info"] = 	function()
 		return "dur "..(15 + get_level(Ind, OINVIS, 50)).."+d20 power "..(20 + get_level(Ind, OINVIS, 50)).."/"..(10 + get_level(Ind, OINVIS, 50) / 2)
 	end,
 	["desc"] = 	{
 		"Grants invisibility.",
-		"If you are standing on a non-lit grid (and not using any light source)",
-		"it will make it especially hard for monsters to hit you in melee.",
+		--"If you are standing on a non-lit grid (and not using any light source)",
+		--"it will make it especially hard for monsters to hit you in melee.",
 	}
 }
 

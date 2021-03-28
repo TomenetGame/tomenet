@@ -1508,6 +1508,7 @@ bool no_lite(int Ind) {
 /* Returns true if the player grid is dark, ignoring vampire's intrinsic pseudo-'light'. */
 bool no_real_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
+#if 0 /* original, stricter way */
 	cave_type *c_ptr, **zcave;
 
 	zcave = getcave(&p_ptr->wpos);
@@ -1522,6 +1523,10 @@ bool no_real_lite(int Ind) {
 	if (c_ptr->info & CAVE_LITE_VAMP) return TRUE;
 	/* Floor is lit by a light source */
 	return FALSE;
+#else /* new, lenient way */
+	if (!p_ptr->cur_lite) return TRUE;
+	return FALSE;
+#endif
 }
 
 

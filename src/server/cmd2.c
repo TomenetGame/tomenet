@@ -5416,7 +5416,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 
 			if (p_ptr->melee_sprint || p_ptr->shadow_running) fast_move /= 2;
 			if (p_ptr->mode & MODE_PVP) fast_move /= 2;
-			if (get_skill(p_ptr, SKILL_OSHADOW) >= 10 && no_real_lite(Ind)) fast_move = (fast_move * (15 - get_skill_scale(p_ptr, SKILL_OSHADOW, 5))) / 15;
+			if (get_skill(p_ptr, SKILL_OSHADOW) >= 10 && no_real_lite(Ind)) fast_move = (fast_move * (15 - get_skill_scale(p_ptr, SKILL_OSHADOW, 5))) / 15; /* 'Shadow walk' effect - move faster in the shadows */
 
 			p_ptr->energy -= (level_speed(&p_ptr->wpos) * fast_move) / 100;
 		}
