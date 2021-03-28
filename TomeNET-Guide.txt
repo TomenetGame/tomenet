@@ -22008,10 +22008,10 @@ If you want to compare dps of different weapons or the effect of extra-attack
 equipment vs critical-hit equipment in Bree, first remove all items that give
 +speed (and apply to both scenarios) to make sure you get accurate numbers.
 The limits in Bree (and hence on the world surface) are:
- +90 speed -> max 5 attacks
- +72 speed -> max 6 attacks
- +53 speed -> max 7 attacks
- +43 speed -> max 8 attacks
+ +90 speed -> max 5 attacks or shots
+ +72 speed -> max 6 attacks or shots
+ +53 speed -> max 7 attacks or shots
+ +43 speed -> max 8 attacks or shots (maximum attainable shots per round)
  +37 speed -> max 9 attacks
  +32 speed -> max 10 attacks
  +28 speed -> max 11 attacks
