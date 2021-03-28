@@ -1524,7 +1524,7 @@ bool no_real_lite(int Ind) {
 	/* Floor is lit by a light source */
 	return FALSE;
 #else /* new, lenient way */
-	if (!p_ptr->cur_lite) return TRUE;
+	if (!p_ptr->cur_lite || p_ptr->cloaked) return TRUE;
 	return FALSE;
 #endif
 }
