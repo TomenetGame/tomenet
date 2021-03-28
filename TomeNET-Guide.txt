@@ -18233,13 +18233,15 @@ spell failure rate. All Unlife spells use WIS.)
     BONI:           Increases infra-vision by +1 every 10 points, up to +5.
                     (Note that infra-vision caps at TomeNET's generic maximum
                     sight range, which is 200 ft aka 20 grids.)
-                    If you aren't using _any_ light source, it increases the
-                    chance for monsters to miss you in melee combat (sort of
-                    a 'blur' effect) more often and at 10.000 also gives you
-                    a walking speed increase, similar to how the 'Sprint'
-                    technique works. This 'shadow walk' effect increases with
-                    every 10 points. Exception: While cloaked (rogues), blur
-                    and shadow walk will actually work with a light source.
+                    If you aren't using _any_ light source (note that intrinsic
+                    "light" of Vampire characters doesn't count as light), it
+                    increases the chance for monsters to miss you in melee
+                    combat (sort of a 'blur' effect) more often and at 10.000
+                    also gives you a walking speed increase, similar to how the
+                    'Sprint' technique works. This 'shadow walk' effect
+                    increases with every 10 points. Exception: While cloaked
+                    (rogues), blur and shadow walk will actually work with a
+                    light source too.
                     At 30 grants darkness resistance.
                     At 35 and higher it will also grant a stealth bonus that
                     increases by +1 every five skill points, up to +4 at 50.
