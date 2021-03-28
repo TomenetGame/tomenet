@@ -15541,6 +15541,8 @@ create a character!):
     A Rogue is a character that prefers to live by cunning, but is capable of
     fighting their way out of a tight spot. The master of traps and locks, no
     device is impossible for him to overcome.
+    Their main way of combat is by either dual-wielding two sword-class weapons
+    such as daggers, or - rather rarely seen - utilizing martial arts.
     Their primary stats are intelligence and dexterity, intelligence being very
     important if they aim to become proficient at magic, while dexterity makes
     up in combat prowess for what their strength might be lacking.
