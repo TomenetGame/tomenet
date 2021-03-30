@@ -2807,7 +2807,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 
-				/* Lua-defined chapters */
+				/* -- Lua-defined chapters -- */
+
+				/* Exact matches */
 
 				/* actually first do an 'exact match' search on all schools/school groups, while we check for partial match further down again -
 				   reason: '- Mind' school and '- Mindcraft -' school group vs 'Mindcrafter' class name similarity.. */
@@ -2823,7 +2825,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				if (chapter[0]) continue;
 
-#if 1 /* (See explanation further below) */
+				/* moved up here, so Digging skill is selected before Digging chapter */
 				for (i = 0; i < guide_skills; i++) {
 					if (strcasecmp(guide_skill[i], buf) && //super exact match? user even entered correct + or .? heh!
 					    strcasecmp(guide_skill[i] + 1, buf)) continue; //exact match? (note: leading + or . must be skipped)
@@ -2831,7 +2833,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					break;
 				}
 				if (chapter[0]) continue;
-#endif
 
 				/* New, for 'Curses' vs 'Remove Curses': Do an 'exact match' search on guide chapters */
 				for (i = 0; i < guide_chapters; i++) {
@@ -2842,6 +2843,22 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					break;
 				}
 				if (chapter[0]) continue;
+
+				for (i = 0; i < guide_spells; i++) { //exact match?
+					if (strcasecmp(guide_spell[i], buf)) continue;
+					strcpy(chapter, "    ");
+					strcat(chapter, guide_spell[i]);
+					/* Enforce 'direct match over partial match' eg 'Lightning' vs 'Lightning Bolt' via silyl hack:
+					   If spell name contains no space then after the spell's name at least 2 spaces must follow.. ehe
+					   This keenly assumes that 1) spaceless spell names are short enough to not force a line break before
+					   the spell detail text starts, 2) spaceless spell names are short enough that not just one space follows
+					   before the spell detail text starts. */
+					if (!strchr(guide_spell[i], ' ')) strcat(chapter, "  ");
+					break;
+				}
+				if (chapter[0]) continue;
+
+				/* Partial matches */
 
 				//race/class prefix match
 				for (i = 0; i < guide_races; i++) {
@@ -2875,15 +2892,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				if (chapter[0]) continue;
 
-#if 0 /* moved further above, so Digging skill is selected before Digging chapter */
-				for (i = 0; i < guide_skills; i++) {
-					if (strcasecmp(guide_skill[i], buf) && //super exact match? user even entered correct + or .? heh!
-					    strcasecmp(guide_skill[i] + 1, buf)) continue; //exact match? (note: leading + or . must be skipped)
-					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
-					break;
-				}
-				if (chapter[0]) continue;
-#endif
 				for (i = 0; i < guide_skills; i++) {
 					if (my_strcasestr(guide_skill[i], buf) != guide_skill[i]) continue; //prefix match?
 					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
@@ -2905,19 +2913,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				if (chapter[0]) continue;
 
-				for (i = 0; i < guide_spells; i++) { //exact match?
-					if (strcasecmp(guide_spell[i], buf)) continue;
-					strcpy(chapter, "    ");
-					strcat(chapter, guide_spell[i]);
-					/* Enforce 'direct match over partial match' eg 'Lightning' vs 'Lightning Bolt' via silyl hack:
-					   If spell name contains no space then after the spell's name at least 2 spaces must follow.. ehe
-					   This keenly assumes that 1) spaceless spell names are short enough to not force a line break before
-					   the spell detail text starts, 2) spaceless spell names are short enough that not just one space follows
-					   before the spell detail text starts. */
-					if (!strchr(guide_spell[i], ' ')) strcat(chapter, "  ");
-					break;
-				}
-				if (chapter[0]) continue;
+				/* (Note: Partial chapter check comes last, further below.) */
+
 				for (i = 0; i < guide_spells; i++) { //prefix match?
 					if (my_strcasestr(guide_spell[i], buf) != guide_spell[i]) continue;
 					strcpy(chapter, "    ");
@@ -2983,8 +2980,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 
-
 				/* If not matched, lastly try to (partially) match chapter titles */
+
 				/* First try to match beginning of title */
 				for (i = 0; i < guide_chapters; i++) {
 					if (my_strcasestr(guide_chapter[i], buf) == guide_chapter[i]) {
