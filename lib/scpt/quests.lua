@@ -57,7 +57,7 @@ function quest_towneltalk(Ind, msg, topic)
 			--Cursed non-artifact equipment on lowbies:
 			if player.lev < 20 or admin == 1 then
 				x = 0
-				for i = INVEN_WIELD, INVEN_TOTAL do
+				for i = INVEN_WIELD, INVEN_TOTAL - 1 do
 					if band(player.inventory[i + 1].ident, 64) ~= 0 then --ID_CURSED
 						x = 1
 					end
