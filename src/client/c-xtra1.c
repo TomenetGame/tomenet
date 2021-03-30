@@ -1339,8 +1339,10 @@ void prt_lagometer(int lag) {
 
 #ifdef BRIGHTRED_PACKETLOSS
 	y = 0;
-	for (x = 0; x < 60; x++)
+	for (x = 0; x < 60; x++) {
 		if (ping_times[x] == -1) y++;
+		else break; /* if since a packet loss we meanwhile received a packet again normally, forget about the old packet loss and assume we're fine again */
+	}
 
 	/* Latest ping might not be lost yet */
 	if (ping_times[0] == -1) y--;
