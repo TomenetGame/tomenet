@@ -4,9 +4,10 @@
 
 -- Purpose: The Town Elder gives you advice based on your actual current character's details!
 function quest_towneltalk(Ind, msg, topic)
-	local hinted, i, x
+	local hinted, hintsub, i, w, x, y, z
 
 	hinted = 0
+	hintsub = 0
 	if player.admin_dm ~= 0 then admin = 1 else admin = 0 end
 
 	--tips regarding equipping [prepare|preparing|preparationS],skilling [skillS],
@@ -57,7 +58,7 @@ function quest_towneltalk(Ind, msg, topic)
 			if player.lev < 20 or admin == 1 then
 				x = 0
 				for i = INVEN_WIELD, INVEN_TOTAL do
-					if band(player.inventory[i].ident, 64) ~= 0 then --ID_CURSED
+					if band(player.inventory[i + 1].ident, 64) ~= 0 then --ID_CURSED
 						x = 1
 					end
 				end
@@ -74,7 +75,7 @@ function quest_towneltalk(Ind, msg, topic)
 			if player.lev < 25 or admin == 1 then
 				x = 0
 				for i = 1, INVEN_PACK do
-					if player.inventory[i].tval == 45 and player.inventory[i].sval == 5 and player.inventory[i].owner ~= player.id then --TV_RING,SV_RING_SPECIAL
+					if player.inventory[i + 1].tval == 45 and player.inventory[i + 1].sval == 5 and player.inventory[i + 1].owner ~= player.id then --TV_RING,SV_RING_SPECIAL
 						x = 1
 					end
 				end
@@ -88,7 +89,6 @@ function quest_towneltalk(Ind, msg, topic)
 				end
 			end
 			--Critical encumberments:
-			
 		end
 
 		--Give proper question about advice topics
@@ -113,12 +113,214 @@ function quest_towneltalk(Ind, msg, topic)
 		end
 		if player.rogue_heavyarmor == 1 then
 			msg_print(Ind, "\252\255UIt seems your armour weight negatively impacts your flexibility and awareness, hindering your abilities!");
-			if player.inventory[INVEN_WIELD+2].k_idx ~= 0 and player.inventory[INVEN_WIELD+2].tval ~= 34 then -- INVEN_ARM+1, TV_SHIELD
+			if player.inventory[INVEN_WIELD + 2].k_idx ~= 0 and player.inventory[INVEN_WIELD + 2].tval ~= 34 then -- INVEN_ARM+1, TV_SHIELD
 				msg_print(Ind, "\252\255UBe aware that your secondary weapon will count as NON-EXISTANT while you are encumbered this way! Meaning that you won't get any abilities or resistances from it either!");
 			end
 			hinted = 1
 		end
+
 		--suggest phase/heals etc?
+		w = 0
+		x = 0
+		y = 0
+		z = 0
+		if player.lev < 10 then
+			--nothing yet
+		elseif player.lev < 20 then
+			for i = 0, INVEN_PACK do
+				--check for escapes
+				if player.inventory[i + 1].tval == 55 then --TV_STAFF
+					--SV_STAFF_TELEPORTATION
+					if player.inventory[i + 1].sval == 4 then
+						x = 1
+					end
+				end
+				if player.inventory[i + 1].tval == 70 then --TV_SCROLL
+					--SV_SCROLL_PHASE_DOOR, SV_SCROLL_TELEPORT
+					if player.inventory[i + 1].sval == 8 or player.inventory[i + 1].sval == 9 then
+						x = 1
+					end
+				end
+
+				--check for heals
+				if player.inventory[i + 1].tval == 80 then --TV_FOOD
+					--SV_FOOD_CURE_SERIOUS
+					if player.inventory[i + 1].sval == 16 then
+						y = 1
+					end
+				end
+				if player.inventory[i + 1].tval == 55 then --TV_STAFF
+					--SV_STAFF_CURE_SERIOUS
+					if player.inventory[i + 1].sval == 16 then
+						y = 1
+					end
+				end
+				if player.inventory[i + 1].tval == 71 then --TV_POTION
+					 --SV_POTION_CURE_SERIOUS, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING
+					if player.inventory[i + 1].sval == 35 or player.inventory[i + 1].sval == 36 or player.inventory[i + 1].sval == 38 then
+						y = 1
+					end
+				end
+			end
+			if x == 0 then
+				if hinted == 1 then
+					msg_print(Ind, "\252\255UIf you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", if you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
+				end
+				hinted = 1
+				hintsub = 1
+			end
+			if y == 0 then
+				if hinted == 1 then
+					if hintsub == 1 then
+						msg_print(Ind, "\252\255ULikewise if you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.")
+					else
+						msg_print(Ind, "\252\255UIf you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.")
+					end
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.")
+				end
+				hinted = 1
+			end
+		elseif player.lev < 30 then
+			for i = 0, INVEN_PACK do
+				--check for escapes
+				if player.inventory[i + 1].tval == 55 then --TV_STAFF
+					--SV_STAFF_TELEPORTATION
+					if player.inventory[i + 1].sval == 4 then
+						x = 1
+						z = 1
+					end
+				end
+				if player.inventory[i + 1].tval == 70 then --TV_SCROLL
+					--SV_SCROLL_PHASE_DOOR, SV_SCROLL_TELEPORT
+					if player.inventory[i + 1].sval == 8 then
+						x = 1
+					end
+					if player.inventory[i + 1].sval == 9 then
+						x = 1
+						z = 1
+					end
+				end
+
+				--check for heals
+				if player.inventory[i + 1].tval == 71 then --TV_POTION
+					 --SV_POTION_CURE_CRITICAL, SV_POTION_HEALING
+					if player.inventory[i + 1].sval == 36 or player.inventory[i + 1].sval == 38 then
+						y = 1
+					end
+				end
+			end
+			if x == 0 then
+				if hinted == 1 then
+					msg_print(Ind, "\252\255UIf you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", if you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
+				end
+				hinted = 1
+				hintsub = 1
+			end
+			if z == 0 then
+				if hinted == 1 then
+					msg_print(Ind, "\252\255UIf you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.")
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", if you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.")
+				end
+				hinted = 1
+				hintsub = 1
+			end
+			if y == 0 then
+				if hinted == 1 then
+					if hintsub == 1 then
+						msg_print(Ind, "\252\255ULikewise if you don't have healing spells available, you should buy potions of cure critical wounds from the temple (the green '4') in town.")
+					else
+						msg_print(Ind, "\252\255UIf you don't have healing spells available, you should buy potions of cure critical wounds from the temple (the green '4') in town.")
+					end
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions of cure critical wounds from the temple (the green '4') in town.")
+				end
+				hinted = 1
+			end
+		else -- lev 30+
+			for i = 0, INVEN_PACK do
+				--check for escapes
+				if player.inventory[i + 1].tval == 70 then --TV_SCROLL
+					--SV_SCROLL_TELEPORT
+					if player.inventory[i + 1].sval == 9 then
+						x = 1
+					end
+				end
+				--check for heals
+				if player.inventory[i + 1].tval == 71 then --TV_POTION
+					 --SV_POTION_HEALING
+					if player.inventory[i + 1].sval == 38 then
+						y = 1
+					end
+				end
+				--check for speed
+				if player.inventory[i + 1].tval == 71 then --TV_POTION
+					 --SV_POTION_SPEED
+					if player.inventory[i + 1].sval == 29 then
+						z = 1
+					end
+				end
+				--check for resist
+				if player.inventory[i + 1].tval == 71 then --TV_POTION
+					 --SV_POTION_RESISTANCE
+					if player.inventory[i + 1].sval == 60 then
+						w = 1
+					end
+				end
+			end
+			if x == 0 then
+				if hinted == 1 then
+					msg_print(Ind, "\252\255UYou should buy scrolls of teleportation from the black market to be able to get out of bigger trouble fast.")
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", you should buy scrolls of teleportation from the black market to be able to get out of bigger trouble fast.")
+				end
+				hinted = 1
+				hintsub = 1
+			end
+			if y == 0 then
+				if hinted == 1 then
+					if hintsub == 1 then
+						msg_print(Ind, "\252\255ULikewise if you don't have healing spells available, you should buy potions of healing there too.")
+					else
+						msg_print(Ind, "\252\255UIf you don't have healing spells available, you should buy potions of healing from the black market.")
+					end
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions of healing from the black market.")
+				end
+				hinted = 1
+				hintsub = 1
+			end
+			if z == 0 then
+				if hinted == 1 then
+					if hintsub == 1 then
+						msg_print(Ind, "\252\255UAlso if you don't have speed spells available, you should buy potions of speed there too.")
+					else
+						msg_print(Ind, "\252\255UIf you don't have speed spells available, you should buy potions of speed from the black market.")
+					end
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", if you don't have speed spells available, you should buy potions of speed from the black market.")
+				end
+				hinted = 1
+				hintsub = 1
+			end
+			if w == 0 then
+				if hinted == 1 then
+					if hintsub == 1 then
+						msg_print(Ind, "\252\255UAnd if you don't have resistance spells available, you should buy potions of resistance there too.")
+					else
+						msg_print(Ind, "\252\255UIf you don't have resistance spells available, you should buy potions of resistance from the black market.")
+					end
+				else
+					msg_print(Ind, "\252\255UOh "..msg..", if you don't have resistance spells available, you should buy potions of resistance from the black market.")
+				end
+				hinted = 1
+			end
+		end
 	end
 
 	--*** equipment ***
@@ -163,7 +365,7 @@ function quest_towneltalk(Ind, msg, topic)
 		end
 		if player.rogue_heavyarmor == 1 then
 			msg_print(Ind, "\252\255UIt seems your armour weight negatively impacts your flexibility and awareness, hindering your abilities!");
-			if player.inventory[INVEN_WIELD+2].k_idx ~= 0 and player.inventory[INVEN_WIELD+2].tval ~= 34 then -- INVEN_ARM+1, TV_SHIELD
+			if player.inventory[INVEN_WIELD + 2].k_idx ~= 0 and player.inventory[INVEN_WIELD + 2].tval ~= 34 then -- INVEN_ARM+1, TV_SHIELD
 				msg_print(Ind, "\252\255UBe aware that your secondary weapon will count as NON-EXISTANT while you are encumbered this way! Meaning that you won't get any abilities or resistances from it either!");
 			end
 			hinted = 1
