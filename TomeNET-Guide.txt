@@ -15229,9 +15229,10 @@ create a character!):
     using a Morgul weapon will not pose a problem to them.
     Vampires are good fighters and decent mages. However, they are unable to
     conjure holy fire or utilize magic of water or nature school. Neither can
-    they make use of mimicry techniques (with the exception of vampire bat,
-    see below) or holy or spirit spells. They are unable to try and suppress
-    magic, but can make use of items that provide anti-magic effects.
+    they make use of mimicry techniques (with the exception of vampire bat and
+    vampiric mist, see below) or holy or spirit spells.
+    They are unable to train in anti-magic in order to suppress magic, but they
+    can make use of items that provide anti-magic effects.
     Aside from darkness they also resist sanity-draining effects somewhat,
     cold, time, nether, they're immune to poison and it's hard to drain their
     life force - this is also true for life force drained by items a vampire
