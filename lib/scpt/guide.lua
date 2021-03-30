@@ -260,7 +260,7 @@ guide_spell = {
     "Martyrdom",
 
     "Cure Wounds",
-    "Healing",
+    "Heal",
     "Break Curses",
     "Cleansing Light",
     "Curing",
