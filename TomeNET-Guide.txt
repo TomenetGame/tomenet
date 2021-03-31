@@ -1092,10 +1092,11 @@ They all start with a slash '/' hence they're called slash commands:
 /arm        Sets up auto-retaliation with a mimic power.
             Enter  /arm help  for this information in-game.
             Usage:   /arm [t]<power>   or to disable:   /arm -
-            If 't' is prefixed to the power, it will only be used while in a
-            town. Example:   /arm tg
+            The 't' is optional. If it's prefixed to the power, auto-ret will
+            only be used while in a town. Example:   /arm tg
             This will auto-retaliate with mimic power 'g)', but only while in
             town.
+            For more info see (6.8b), paragraph Auto-Retaliation.
 
             (Note that you cannot auto-retaliate with
               'Polymorph Self into a specific form'
@@ -1106,11 +1107,11 @@ They all start with a slash '/' hence they're called slash commands:
 /autoretr
 /arr        Sets up auto-retaliation with runecraft.
             Enter  /arr help  for this information in-game.
-            Usage:   /arr [t]<a-f><a-f><a-h><a-f>
+            Usage:   /arr [t]<a-f><a-f><a-h><a-f>   or to disable:   /arr -
             Parameters are:
              t: town-only? (optional)
              and then mandatory: rune, rune, mode, type
-            For more info and examples see (6.8b), paragraph Auto-Retaliation.
+            For more info see (6.8b), paragraph Auto-Retaliation.
 
 /bbs <text>
             Add a line of text to the in-game bulletin board system. Players
