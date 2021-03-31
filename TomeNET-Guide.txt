@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 27. March 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 31. March 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6254,14 +6254,19 @@ Magic devices:
     @O          Auto-retaliate with it. (Wands, staves, rods.)
                 Note that you cannot use self-relocation magic such as teleport
                 or word of recall for auto-retaliation.
+                You can restrict auto-retaliation to town-only by adding a 't'
+                after the '@O' like this: '@Ot'.
 
 Spellbooks:
     @Oc         You will auto-retaliate by casting the spell 'c)' from this
                 book (or any other spell, change the inscription accordingly).
+                You can restrict auto-retaliation to town-only by adding a 't'
+                after the '@O' like this: '@Otc'.
                 IMPORTANT: If you cannot cast spells from the book or you
                 inscribe an unsuitable item, auto-retaliation will be disabled
                 completely!
-                (If 'c' is omittted, the first spell will be chosen.)
+                If the spell letter, in this example 'c', is omittted, the
+                first spell in the book will be chosen.
                 Note that you cannot use self-relocation spells such as
                 phase door, teleport or word of recall for auto-retaliation.
 
@@ -6270,16 +6275,17 @@ Runes:          Auto-retaliate with a runespell. The format is rune, rune, mode
                 disable auto-retaliation. 't' is optional for town-only.
                 See (0.2b) for details.
 
-Mimic powers:   Use the /autoret or for short /ar command to set these up,
-    /ar tg      compare (0.2b). Usage (t is optional for 'town-only'):
-                /ar [t]<power>
+Mimic powers:   Auto-retaliate with a mimic power, format is (t is optional for
+    /arm tg     'town-only'): /arm [t]<power>
+                To disable mimic-power-autoretaliation again, use '/arm -'.
                 Note that you cannot use self-relocation spells such as blink
                 or teleport for auto-retaliation.
+                See (0.2b) for details.
 
 If you want an auto-retaliation-enabling inscription to only work while you are
 around a town, add a 't' after the 'O', examples: '@Ot', '@Otb'.
 
-If you want to fall back on melee-autoretaliation in case you are out of mana,
+If you want to fall back to melee-autoretaliation in case you are out of mana,
 use 'Q' symbol instead of 'O'. Examples: '@Qt', '@Qtb'.
 This is useful for classes that may use attack spells yet can perform decently
 in close combat, such as paladin or mindcrafter.
