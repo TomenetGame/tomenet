@@ -3031,7 +3031,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
 			if (!wild_info[apos.wy][apos.wx].tower) {
 				add_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
-				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, 0x0, TRUE, 0, 0, 0, 0);
+				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
 				fresh_arena = TRUE;
 			}
 			apos.wz = 1;
