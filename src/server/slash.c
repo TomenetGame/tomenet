@@ -8715,6 +8715,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "store_debug_mode: freq %d, time x%d.", store_debug_mode, store_debug_quickmotion);
 				return;
 			}
+			else if (prefix(messagelc, "/kstore")) { /* kick a player out of the store he is in (if any) */
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /kstore <character name>]");
+					return;
+				}
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+				if (!j) {
+					msg_print(Ind, "Player not online.");
+					return;
+				}
+				if (Players[j]->store_num == -1) {
+					msg_print(Ind, "Player not in a store.");
+					return;
+				}
+				msg_format(Ind, "Kicking '%s' out of the store (%d).\n", Players[j], Players[j]->store_num);
+				store_kick(j, FALSE);
+				return;
+			}
 			else if (prefix(messagelc, "/costs")) { /* shows monetary details about an object */
 				object_type *o_ptr;
 				char o_name[ONAME_LEN];
