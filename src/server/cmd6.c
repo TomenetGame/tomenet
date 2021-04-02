@@ -1277,7 +1277,9 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		o_ptr->level = 1;
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
-		item = inven_carry(Ind, o_ptr);
+		/* If we have no space, drop it to the ground instead of overflowing inventory */
+		if (inven_carry_okay(Ind, o_ptr, 0x0)) item = inven_carry(Ind, o_ptr);
+		else drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		//if (item >= 0) inven_item_describe(Ind, item);
 	}
 }
