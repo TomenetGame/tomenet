@@ -9805,15 +9805,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #endif
 
 #ifdef ARCADE_SERVER
-if(wpos->wz > 0) {
-for(mx = 1; mx < 131; mx++) {
-                for(my = 1; my < 43; my++) {
-                cave_set_feat(wpos, my, mx, 1);
-                }
-        }
-}
-        if(wpos->wz > 0 && wpos->wz < 7) {
-
+	if(wpos->wz > 0) {
+		for(mx = 1; mx < 131; mx++) {
+			for(my = 1; my < 43; my++) {
+				cave_set_feat(wpos, my, mx, 1);
+			}
+		}
+	}
+	if(wpos->wz > 0 && wpos->wz < 7) {
 		for(my = 1; my < 8; my++) {
 			for(mx = 63; mx < 70; mx++) {
 				 cave_set_feat(wpos, my, mx, 209);
@@ -9825,33 +9824,29 @@ for(mx = 1; mx < 131; mx++) {
 			}
 		}
  		for(my = 19; my < 26; my++) {
-                        for(mx = 1; mx < 8; mx++) {
-                                 cave_set_feat(wpos, my, mx, 209);
-                        }
-                }
-                for(my = 19; my < 26; my++) {
-                        for(mx = 124; mx < 131; mx++) {
-                                 cave_set_feat(wpos, my, mx, 209);
-                        }
-                }
-	}	
-
-
-        if (wpos->wz == 7) {
-                for(mx = 1; mx<21; mx++) 
-                cave_set_feat(wpos, 11, mx, 61);
-                for(mx = 1; mx < 12; mx++)
-                cave_set_feat(wpos, mx, 21, 61);
-                }
-
-if (wpos->wz == 9) {
-for(mx = 1; mx < 131; mx++) {
-        for(my = 1; my < 43; my++) {
-                cave_set_feat(wpos, my, mx, 187);
-                }
-        }
-}
-
+			for(mx = 1; mx < 8; mx++) {
+				cave_set_feat(wpos, my, mx, 209);
+			}
+		}
+		for(my = 19; my < 26; my++) {
+			for(mx = 124; mx < 131; mx++) {
+				cave_set_feat(wpos, my, mx, 209);
+			}
+		}
+	}
+	if (wpos->wz == 7) {
+		for(mx = 1; mx<21; mx++) 
+			cave_set_feat(wpos, 11, mx, 61);
+		for(mx = 1; mx < 12; mx++)
+			cave_set_feat(wpos, mx, 21, 61);
+	}
+	if (wpos->wz == 9) {
+		for(mx = 1; mx < 131; mx++) {
+			for(my = 1; my < 43; my++) {
+				cave_set_feat(wpos, my, mx, 187);
+			}
+		}
+	}
 #endif
 
 #ifdef ENABLE_DOOR_CHECK
