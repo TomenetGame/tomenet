@@ -432,6 +432,9 @@
  #ifdef TEST_CLIENT
   //#define ENABLE_SUBINVEN
  #endif
+
+ /* Enable bookmarking feature? */
+ #define GUIDE_BOOKMARKS 20
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/

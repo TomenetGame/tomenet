@@ -1720,18 +1720,18 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	int bottomline = (screen_hgt > SCREEN_HGT ? 46 - 1 : 24 - 1), maxlines = (screen_hgt > SCREEN_HGT ? 46 - 4 : 24 - 4);
 	int searchline = -1, within_cnt = 0, c = 0, n, line_presearch = line;
 	char searchstr[MAX_CHARS], withinsearch[MAX_CHARS], chapter[MAX_CHARS]; //chapter[8]; -- now also used for terms
-	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2;
+	char buf[MAX_CHARS * 2 + 1], buf2[MAX_CHARS * 2 + 1], *cp, *cp2, tempstr[MAX_CHARS + 1];
 #ifndef BUFFER_GUIDE
 	char path[1024], bufdummy[MAX_CHARS + 1];
 	FILE *fff;
 #else
 	static int fseek_pseudo = 0; //fake a file position, within our buffered guide string array
 #endif
-	int i;
+	int i, j;
 	char *res;
 	byte search_uppercase = 0, search_uppercase_ok, fallback = FALSE, fallback_uppercase = 0;
 
-	int c_override = 0;
+	int c_override = 0, c_temp;
 	char buf_override[MAX_CHARS];
 
 #ifdef REGEX_SEARCH
@@ -1844,12 +1844,18 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		if (backwards) Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", (guide_lastline - line) + 1, guide_lastline + 1));
 		else Term_putstr(23,  0, -1, TERM_L_BLUE, format("[The Guide - line %5d of %5d]", line + 1, guide_lastline + 1));
 #ifdef REGEX_SEARCH
-		Term_putstr(29, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s/r/R,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+ #ifdef GUIDE_BOOKMARKS
+		Term_putstr(77, bottomline, -1, TERM_L_UMBER, "b/B");
+ #endif
 #else
-		Term_putstr(29, bottomline, -1, TERM_L_BLUE, " s,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+		Term_putstr(26, bottomline, -1, TERM_L_BLUE, " s,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+ #ifdef GUIDE_BOOKMARKS
+		Term_putstr(74, bottomline, -1, TERM_L_UMBER, "b/B");
+ #endif
 #endif
-		Term_putstr( 6, bottomline, -1, TERM_SLATE,  "  SPC/n,p,ENTER,BCK,ESC");
-		Term_putstr( 0, bottomline, -1, TERM_YELLOW, " ?:Help");
+		Term_putstr( 7, bottomline, -1, TERM_SLATE,  "SPC/n,p,ENT,BCK,ESC");
+		Term_putstr( 0, bottomline, -1, TERM_YELLOW, "?:Help");
 		if (skip_redraw) goto skipped_redraw;
 		restore_pos = FALSE;
 
@@ -3210,23 +3216,105 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			}
 			inkey_msg = inkey_msg_old;
 			jumped_to_line = atoi(buf); //Remember, just as a small QoL thingy
-
-			line = atoi(buf) - 1;
+			line = jumped_to_line - 1;
 			if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
 			if (line < 0) line = 0;
 			continue;
+
+#ifdef GUIDE_BOOKMARKS
+		case 'B': /* Add bookmark at current line */
+			if (!line) {
+				c_message_add(format("\377ySorry, cannot add a bookmark at the very first line."));
+				continue;
+			}
+			j = 0;
+			for (i = 0; i < GUIDE_BOOKMARKS; i++) {
+				if (bookmark_line[i] == line && !j) {
+					j = 1;
+					c_message_add(format("\377y(Note: You have already bookmarked line %d in bookmark %c)", line + 1, 'a' + i));
+				}
+				if (bookmark_line[i]) continue;
+				Term_erase(0, bottomline, 80);
+				Term_putstr(0, bottomline, -1, TERM_YELLOW, "Enter description: ");
+				inkey_msg_old = inkey_msg;
+				inkey_msg = TRUE;
+				tempstr[0] = 0;
+				askfor_aux(tempstr, 60 - 1, 0);
+				inkey_msg = inkey_msg_old;
+				if (!tempstr[0]) break;
+				strcpy(bookmark_name[i], tempstr);
+				bookmark_line[i] = line;
+				c_message_add(format("\377wAdded guide bookmark #%d at line %d", i + 1, line + 1));
+				break;
+			}
+			if (i == GUIDE_BOOKMARKS) c_message_add(format("\377yMaximum amount of %d bookmarks reached, delete one first to add a new one.", GUIDE_BOOKMARKS));
+			continue;
+		case 'b': /* Bookmarks menu */
+			while (TRUE) {
+				Term_clear();
+				Term_putstr(23,  0, -1, TERM_L_BLUE, "[The Guide - Bookmarks Menu]");
+				Term_putstr(14,  2, -1, TERM_WHITE, format("(You can set a maximum amount of %d bookmarks)", GUIDE_BOOKMARKS));
+				for (i = 0; i < GUIDE_BOOKMARKS; i++) {
+					if (!bookmark_line[i]) {
+						//break;
+						Term_putstr(4,  3 + i, -1, TERM_YELLOW, format("\377y%c\377w)", 'a' + i));
+						continue;
+					}
+					Term_putstr(4,  3 + i, -1, TERM_YELLOW, format("\377y%c\377w) line %5d: %s", 'a' + i, bookmark_line[i] + 1, bookmark_name[i]));
+				}
+				Term_putstr( 0, 23, -1, TERM_L_BLUE, "   Press letter to jump to bookmark, SHIFT+letter to delete it, ESC to leave.");
+
+				c_temp = inkey();
+				if (c_temp == ESCAPE) break;
+				if (c_temp >= 'a' && c_temp <= 'a' + GUIDE_BOOKMARKS - 1) {
+					/* Jump to bookmark */
+					if (!bookmark_line[c_temp - 'a']) {
+						c_message_add(format("\377yBookmark %c) does not exist.", c_temp));
+						continue;
+					}
+					jumped_to_line = bookmark_line[c_temp - 'a'] + 1; //Remember, just as a small QoL thingy
+					line = jumped_to_line - 1;
+					if (line > guide_lastline - maxlines) line = guide_lastline - maxlines;
+					if (line < 0) line = 0;
+					/* Hack exit */
+					c_temp = ESCAPE;
+				}
+				if (c_temp >= 'A' && c_temp <= 'A' + GUIDE_BOOKMARKS - 1) {
+					/* Delete bookmark */
+					if (!bookmark_line[c_temp - 'A']) {
+						c_message_add(format("\377yBookmark %c) does not exist.", c_temp - 'A' + 'a'));
+						continue;
+					}
+					c_message_add(format("\377wDeleted guide bookmark #%d at line %d", c_temp - 'A', line + 1));
+					for (i = c_temp - 'A'; i < GUIDE_BOOKMARKS - 1; i++) {
+						bookmark_line[i] = bookmark_line[i + 1];
+						strcpy(bookmark_name[i], bookmark_name[i + 1]);
+					}
+					bookmark_line[GUIDE_BOOKMARKS - 1] = 0;
+				}
+				if (c_temp == ESCAPE) break;
+			}
+			continue;
+#endif
+
 		case '?': //help
 			Term_clear();
-			Term_putstr(23,  0, -1, TERM_L_BLUE, "[The Guide - navigation keys]");
-			i = 2;
+			Term_putstr(23,  0, -1, TERM_L_BLUE, "[The Guide - Navigation Keys]");
+			i = 1;
 			Term_putstr( 0, i++, -1, TERM_WHITE, "At the bottom of the guide screen you will see the following line:");
 #ifdef REGEX_SEARCH
-			Term_putstr(29,   i, -1, TERM_L_BLUE, " s/r/R,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+			Term_putstr(26,   i, -1, TERM_L_BLUE, "s/r/R,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+ #ifdef GUIDE_BOOKMARKS
+			Term_putstr(77,   i, -1, TERM_L_UMBER, "b/B");
+ #endif
 #else
-			Term_putstr(29,   i, -1, TERM_L_BLUE, " s,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+			Term_putstr(26,   i, -1, TERM_L_BLUE, "s,d,D/f,S,c,#:srch,nxt,prv,reset,chapter,line");
+ #ifdef GUIDE_BOOKMARKS
+			Term_putstr(74,   i, -1, TERM_L_UMBER, "b/B");
+ #endif
 #endif
-			Term_putstr( 6,   i, -1, TERM_SLATE,  "  SPC/n,p,ENTER,BCK,ESC");
-			Term_putstr( 0, i++, -1, TERM_YELLOW, " ?:Help");
+			Term_putstr( 7,   i, -1, TERM_SLATE,  "SPC/n,p,ENTER,BCK,ESC");
+			Term_putstr( 0, i++, -1, TERM_YELLOW, "?:Help");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  Space or 'n':    Move down by one page");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  'p'         :    Move up by one page");
@@ -3246,6 +3334,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			Term_putstr( 0, i++, -1, TERM_WHITE, "                   schools, techniques, dungeons, bosses, events, lineages,");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "                   depths, stair types, or actual chapter titles or indices.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  '#'         :    Jump to a specific line number.");
+#ifdef GUIDE_BOOKMARKS
+			Term_putstr( 0, i++, -1, TERM_WHITE, "  'b'/'B'     :    Open bookmark menu / add bookmark at current position.");
+#endif
 			Term_putstr( 0, i++, -1, TERM_WHITE, "  ESC         :    The Escape key will exit the guide screen.");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "In addition, the arrow keys and the number pad keys can be used, and the keys");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "PgUp/PgDn/Home/End should work both on the main keyboard and the number pad.");
