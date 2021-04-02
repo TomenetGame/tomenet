@@ -750,11 +750,10 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
 
 //	if (PRACE_FLAG(PR1_TP))
 	if (p_ptr->prace == RACE_DRACONIAN) {
-		int reduc = ((p_ptr->ac + p_ptr->to_a) / 50) + 1;
+		int dam = (p_ptr->mhp * 50) / (100 + p_ptr->ac + p_ptr->to_a + p_ptr->lev * 2);
 
-		if (reduc < 1) reduc = 1; /* Really, really low AC, like some TL eating firestones - mikaelh */
-
-		take_hit(Ind, distance(by, bx, p_ptr->py, p_ptr->px) / (10 * reduc), "going Between", 0);
+		dam = (dam * (100 + distance(by, bx, p_ptr->py, p_ptr->px))) / 200 + 5;
+		take_hit(Ind, dam, "going between", 0);
 	}
 
 #ifdef USE_SOUND_2010

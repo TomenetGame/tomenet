@@ -15137,6 +15137,7 @@ create a character!):
     Unlike other races, draconians are susceptible to the void connecting
     void jump gates and may get hurt by it when they travel through it,
     perceiving it as "cold" even if they resist or are immune to normal frost.
+    The greater the gate distance, the higher the damage from 'going between'.
     Armour can help to mitigate this effect somewhat.
     Draconians possess a certain lineage trait from birth, providing them with
     intrinsic resistances and an elemental breath (learned at level 8) which
