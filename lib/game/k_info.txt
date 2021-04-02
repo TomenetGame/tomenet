@@ -7099,7 +7099,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 $NEW_TOMES!N:925:& Tome~ of Holy Support
 $NEW_TOMES$N:925:& Tome~ of Holy Support
-G:?:U
+G:?:C
 I:111:15:0
 W:50:0:30:25000
 A:50/50:100/50
