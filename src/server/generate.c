@@ -9901,6 +9901,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 /*..	*/
 
 
+	/* Log generation of terrifying floors just for the heck of it */
+	if (dun->l_ptr && (dun->l_ptr->flags2 & LF2_OOD_HI)) s_printf("(Generated 'terrifying' floor at %d,%d,%d)\n", wpos->wx, wpos->wy, wpos->wz);
+
+
 	/* Create secret dungeon shop entrances (never on Morgoth's depth) -C. Blue */
 
 	/* No stores in Valinor */
