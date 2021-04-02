@@ -17445,9 +17445,11 @@ school.
                     Instead, the shield will consume your mana to absorb it.
                     Only Istari are able to really get the most out of it -
                     they get 1 mana point deducted for each absorbed point of
-                    non-melee damage. For melee hits they take 4/3 mana each.
-                    All other classes will always get 2 mana points deducted
+                    damage. All other classes will get 2 mana points deducted
                     for each damage point.
+                    Note that Disruption Shield actually prevents being
+                    intercepted by enemies, making a skill like 'Calmness'
+                    obsolete for higher-level istari!
                     Required skill level for first spell level: 35.
 
     BONI:           Mana resistance at 40.
