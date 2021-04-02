@@ -1719,6 +1719,11 @@ void calc_hitpoints(int Ind) {
 		finalHP = (mHPLim < mhp) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
 		finalHP += (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
 
+		/* Reduce for pvp, or mimicry is too good */
+		if (p_ptr->mode & MODE_PVP) {
+			if (finalHP > mhp) finalHP = mhp + (finalHP - mhp + 1) / 2;
+		}
+
 		/* done */
 		mhp = finalHP;
 	}
@@ -2086,6 +2091,10 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		//But really, if physical-race-intrinsic bonuses/maluses are counted in mimicry, then dwarves 
 		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
 		p_ptr->pspeed = (((r_ptr->speed + MIMIC_LOWSPEED_BONUS - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
+	}
+	/* Reduce for pvp, or mimicry is too good */
+	if (p_ptr->mode & MODE_PVP) {
+		p_ptr->pspeed = 110 + (p_ptr->pspeed - 110 + 1) / 2;
 	}
 	csheet_boni->spd = p_ptr->pspeed - 110;
 
@@ -5924,6 +5933,11 @@ void calc_boni(int Ind) {
 		d = (2200 / ((250 / (d + 4)) + 22)) - 20 - 950 / ((d - 25) * (d - 25) + 100);
 		//d = (2000 / ((130 / (d + 4)) + 22)) - 20 - 650 / ((d - 25) * (d - 25) + 90);//too little
 #endif
+
+		/* Reduce for pvp, or mimicry is too good */
+		if (p_ptr->mode & MODE_PVP) {
+			if (d > p_ptr->to_d_melee) d = p_ptr->to_d_melee + (d - p_ptr->to_d_melee + 1) / 2;
+		}
 
 		/* Calculate new averaged to-dam bonus */
 		if (d < p_ptr->to_d_melee)
