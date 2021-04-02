@@ -5450,7 +5450,11 @@ static void player_talk_aux(int Ind, char *message) {
 		return;
 	}
 
+#if 0 /* Allow "}c" name colouring in chat? */
 	if (strlen(message) > 1) mycolor = (prefix(message, "}") && (color_char_to_attr(*(message + 1)) != -1)) ? 2 : 0;
+#else
+	mycolor = 0;
+#endif
 
 	if (!Ind) c_n = 'y';
 	/* Disabled this for now to avoid confusion. */
