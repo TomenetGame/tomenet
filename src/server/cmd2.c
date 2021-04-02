@@ -753,7 +753,9 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
 		int dam = (p_ptr->mhp * 50) / (100 + p_ptr->ac + p_ptr->to_a + p_ptr->lev * 2);
 
 		dam = (dam * (100 + distance(by, bx, p_ptr->py, p_ptr->px))) / 200 + 5;
+		bypass_invuln = TRUE;
 		take_hit(Ind, dam, "going between", 0);
+		bypass_invuln = FALSE;
 	}
 
 #ifdef USE_SOUND_2010
