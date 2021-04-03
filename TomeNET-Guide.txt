@@ -12628,7 +12628,8 @@ TY_CURSE        "It carries an ancient foul curse."
                 Having 'Holy Support' skill at 40.000 or better will completely
                 negate TY_CURSE effects.
 DG_CURSE        "It carries an ancient morgothian curse."
-                Rarely summons a random monster on you, even if uncursed.
+                Rarely summons a random non-unique monster on you, even if
+                uncursed. The monster will yield no credit, xp or loot.
                 The maximum (randomized) monster level will be..
                 (player level * 7 / 5 + dungeon_level) / 2 + 5.
                 (DG_CURSE will stay, even if the 'normal' curse is broken!)
