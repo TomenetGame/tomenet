@@ -10715,7 +10715,7 @@ item that you will find on the floor:
      Weapons, armour (except boots), shields, ammunition.
 
     -Treasure (named 'Valuables' in ~7 monster spoilers):
-     Chests, rings, amulets, dragon scale mails, crowns.
+     Rings, amulets, dragon scale mails, crowns and chests.
 
     -Magic:
      Mage staves, wands, staves, rods, runes, potions, scrolls (except for
@@ -11549,9 +11549,9 @@ Ale and wine        Will satisfy your hunger somewhat, and may have random side
                     drinker positively, not ever causing negative side effects
                     besides possible confusion.
 Chests              Chests may contain treasures or items. Usually, chests
-                    you find will have hidden traps on them. So what you do is
-                    to hit 's' to search for traps while standing next to the
-                    chest, or use any trap detection magic.
+                    you find will have hidden traps on them. So what you do
+                    is to hit 's' to search for traps while standing next to
+                    the chest, or use any trap detection magic.
                     When you have discovered the trap, hit 'D' to disarm it,
                     or again use any sort of disarming magic.
                     The disarmed chest is finally safe to open with 'o' key.
@@ -14528,9 +14528,9 @@ stated.
                                 Depending on the skill, you might also uncover
                                 unusual features such as fountains or
                                 staircases or somewhat more often (compared to
-                                finding just random items from digging) find
-                                chests, runes or heavy material pieces suitable
-                                for golem creation.
+                                finding just random items from digging)
+                                find chests, runes or heavy material pieces
+                                suitable for golem creation.
                                 The quality of objects found also depends on
                                 your digging skill.
 
