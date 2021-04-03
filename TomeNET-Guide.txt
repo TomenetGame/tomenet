@@ -31,6 +31,7 @@ Contents
 (0) Quickstart (If you don't like to read much :)
     (0.1)   Start & play, character validation
     (0.1a)  Colours and colour blindness
+    (0.1b)  Photosensitivity / Epilepsy issues
     (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
     (0.2b)  Slash command reference
@@ -475,6 +476,20 @@ a table of all colours for you to check how they look like.
 
 Note that the colourmap entry #0 is fixed and cannot be changed, it is always
 #000000 aka black (no red + no green + no blue).
+
+
+(0.1b) Photosensitivity / Epilepsy issues
+-----------------------------------------
+If you are especially photosensitive, the screen-lighting effect used for
+thunderstorm weather might impact you. There are also a few minor especially
+fast-flickering effects. You can disable all of these in the game options by
+pressing the following keys in game to access the various options pages (1-7):
+= 1 view_animated_lite (fire-based lamps will flicker in yellow/orange)
+= 2 no_weather (disables all weather particles: raindrops and snowflakes)
+= 3 flash_player (your '@' flickers brightly whenever you change location
+    rapidly to make it easier spotting yourself on the screen)
+= 3 recall_flicker (show animated colours in the various game windows)
+= 4 disable_lightning (the aforementioned thunderstorm flash)
 
 
 
