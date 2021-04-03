@@ -20019,7 +20019,7 @@ The techniques are as follows:
         (*: 20% chance per turn of actively using it to drain 1 stamina.)
         Toggle, making you enter or leave double shot mode. While active, you
         will fire 2 projectiles at once on each shot, dealing way less damage
-        than a single shot though. Useful to eradicate weak critters.
+        than a single shot though. Useful to eradicate masses of weak critters.
         Note: If your stamina drops below 1 you will continue to fire
               normally, but not leave double shot mode. That means as soon as
               you get stamina back you'll start firing double shots again.
