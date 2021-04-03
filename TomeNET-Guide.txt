@@ -12629,6 +12629,8 @@ TY_CURSE        "It carries an ancient foul curse."
                 negate TY_CURSE effects.
 DG_CURSE        "It carries an ancient morgothian curse."
                 Rarely summons a random monster on you, even if uncursed.
+                The maximum (randomized) monster level will be..
+                (player level * 7 / 5 + dungeon_level) / 2 + 5.
                 (DG_CURSE will stay, even if the 'normal' curse is broken!)
                 Greatly lowers the items value by 25000 Au.
                 This curse will be on hold while you're in a town area.
