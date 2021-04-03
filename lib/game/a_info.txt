@@ -3496,13 +3496,24 @@ D:to those who have become as corrupted as the dwellers of Utumno.
 
 N:282:of Anchoring
 I:30:8:7
-W:60:0:100:140000
+W:60:40:100:140000
 P:8:1d1:0:0:21
 F:IGNORE_ACID | IGNORE_FIRE | SPEED | CLIMB | RES_NEXUS | RES_TELE | FREE_ACT
 F:HIDE_TYPE
 #F:STEALTH
 D:These massive boots seem like they would make each attempt to move a chore,
 D:but as you try and take a step it feels surprisingly swift and sure!
+
+# The Pair of Soft Leather Boots 'Seven-league Boots'
+
+N:283:'Seven-league Boots'
+I:30:2:7
+W:50:80:20:200000
+P:2:1d1:0:0:11
+F:SPEED | ACTIVATE
+D:Taking seven leagues per stride seems outrageous. Whether doing so be possible
+D:or not, it cannot be denied that the wearer of this magical footwear gains
+D:great speed. The seven miles however might just be a teleportation trick!
 
 
 

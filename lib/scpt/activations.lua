@@ -222,6 +222,8 @@ music_info[10].desc},
 {278, "hellfire brand every 150..350+d50 turns"},
 --case ART_WARPSPEAR:--280
 {280, "teleport-to every 15..40+d5 turns"},
+--case ART_SEVENLEAGUE:--283
+{283, "teleportation every 5..15 turns"},
 }
 
 activation_info = { }

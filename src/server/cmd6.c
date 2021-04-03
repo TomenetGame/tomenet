@@ -6666,6 +6666,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			p_ptr->current_activation = item;
 			get_aim_dir(Ind);
 			return;
+		case ART_SEVENLEAGUE:
+			teleport_player(Ind, 200, FALSE); //quite far
+			o_ptr->recharging = 15 - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
+			break;
 		default: done = FALSE;
 		}
 
