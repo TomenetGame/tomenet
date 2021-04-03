@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 2. April 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 3. April 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12617,7 +12617,8 @@ AUTO_CURSE      occurs together with CURSED or HEAVY_CURSE.
                 To drop directly from your equipment, press '/' key at the
                 "drop what?" prompt, which will switch to equipment (and back
                 to inventory if pressed again).
-TY_CURSE        Randomly drains stats sometimes, even if the item is uncursed.
+TY_CURSE        "It carries an ancient foul curse."
+                Randomly drains stats sometimes, even if the item is uncursed.
                 (TY_CURSE will stay, even if the 'normal' curse is broken!)
                 Lowers the items value by 15000 Au.
                 This curse will be on hold while you're in a town, and will
@@ -12626,15 +12627,14 @@ TY_CURSE        Randomly drains stats sometimes, even if the item is uncursed.
                 Note that your saving throw has a chance to suppress it.
                 Having 'Holy Support' skill at 40.000 or better will completely
                 negate TY_CURSE effects.
-                ("It carries an ancient foul curse.")
-DG_CURSE        Rarely summons a random monster on you, even if uncursed.
+DG_CURSE        "It carries an ancient morgothian curse."
+                Rarely summons a random monster on you, even if uncursed.
                 (DG_CURSE will stay, even if the 'normal' curse is broken!)
                 Greatly lowers the items value by 25000 Au.
                 This curse will be on hold while you're in a town area.
                 Note that an anti-magic field has a chance to suppress it.
                 Having 'Holy Support' skill at 40.000 or better will completely
                 negate TY_CURSE effects.
-                ("It carries an ancient morgothian curse.")
 
 If 'CURSED' or 'HEAVY_CURSE' occurs on an enchantable item such as a weapon or
 armour piece, the curses can alternatively be broken by enchanting the item's
