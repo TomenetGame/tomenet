@@ -1545,14 +1545,16 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 		/* Message */
 		msg_format(Ind, "You have found %d gold pieces worth of %s.", amount, o_name);
-
 #ifdef USE_SOUND_2010
 		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-
+		if ((c_ptr->info & CAVE_MINED) && !p_ptr->warning_tunnel_hidden) {
+			msg_print(Ind, "\374\377yHINT: Mining hidden veins yields more than the right away spottable ones!");
+			c_ptr->info &= ~CAVE_MINED;
+			p_ptr->warning_tunnel_hidden = 1;
+		}
 /* #if DEBUG_LEVEL > 3 */
-		if (amount >= 10000)
-			s_printf("Gold found (%d by %s at %d,%d,%d).\n", amount, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		if (amount >= 10000) s_printf("Gold found threshold (%d by %s at %d,%d,%d).\n", amount, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);

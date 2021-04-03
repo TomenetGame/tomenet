@@ -3426,7 +3426,7 @@ struct player_type {
 	char warning_fountain, warning_voidjumpgate, warning_staircase, warning_worldmap, warning_dungeon, warning_staircase_oneway;
 	/* For the 4.4.8.1.0.0 lua update crash bug */
 	char warning_lua_update, warning_lua_count;
-	char warning_tunnel, warning_tunnel2, warning_tunnel3, warning_tunnel4, warning_trap, warning_tele, warning_fracexp;
+	char warning_tunnel, warning_tunnel2, warning_tunnel3, warning_tunnel4, warning_tunnel_hidden, warning_trap, warning_tele, warning_fracexp;
 	char warning_death;
 	char warning_drained, warning_boomerang, warning_bash, warning_inspect;
 	/* 4.7.1b+ additions */

@@ -4043,6 +4043,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
 					else s_printf("DIGGING: %s (F%d,S%d) digs obvious (x%d=%dAu).\n", p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG),
 					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
+					c_ptr->info |= CAVE_MINED; //mark for warning_tunnel_hidden
 				}
 				note_spot_depth(wpos, y, x);
 				everyone_lite_spot(wpos, y, x);
