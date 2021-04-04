@@ -4971,9 +4971,9 @@ void scan_accounts() {
 			modified = TRUE;
 		}
 
-#if 1
 		/* test for expiry -> delete */
 		else if (now - acc.acc_laston >= 3600 * 24 * ACCOUNT_EXPIRY_DAYS) {
+#if 1 /* temporarily disable for testing purpose */
 			acc.flags |= ACC_DELD;
 
 			/* Count expired accounts */
@@ -4981,8 +4981,10 @@ void scan_accounts() {
 
 			s_printf("  Account '%s' expired.\n", acc.name);
 			modified = TRUE;
-		}
+#else
+			s_printf("  (TESTING) Account '%s' expired.\n", acc.name);
 #endif
+		}
 
 //		if (modified) WriteAccount(&acc, FALSE);
 		if (modified) {
