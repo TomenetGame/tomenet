@@ -4814,7 +4814,7 @@ void ef_rename(const char *name) {
 }
 
 /* For marking accounts active */
-static bool *account_active = NULL;
+static unsigned char *account_active = NULL;
 
 /*
  *  Called once every 24 hours. Deletes unused IDs.
@@ -4839,7 +4839,7 @@ void scan_characters() {
 #endif
 
 	/* Allocate an array for marking accounts as active */
-	C_MAKE(account_active, MAX_ACCOUNTS / 8, bool);
+	C_MAKE(account_active, MAX_ACCOUNTS / 8, unsigned char);
 
 	now = time(&now);
 
@@ -5005,7 +5005,7 @@ void scan_accounts() {
 	fclose(fp);
 	s_printf("Finished account inactivity check.\n");
 
-	C_KILL(account_active, MAX_ACCOUNTS / 8, bool);
+	C_KILL(account_active, MAX_ACCOUNTS / 8, unsigned char);
 }
 
 /* Rename a player's char savegame as well as the name inside.
