@@ -955,6 +955,33 @@ void FreeCS(cave_type *c_ptr) {
 	prev = trav = c_ptr->special;
 
 	while (trav) {
+		/* Delete embedded items - C. Blue */
+		//if (trav->type == CS_MON_TRAP) erase_mon_trap(wpos, y, x, 0);
+		if (trav->type == CS_MON_TRAP) {
+			/* Erase objects being carried */
+			object_type *o_ptr;
+
+			for (this_o_idx = trav->sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx) {
+				/* Acquire object */
+				o_ptr = &o_list[this_o_idx];
+
+#ifdef ENABLE_DEMOLITIONIST
+				if (o_ptr->tval == TV_CHARGE) s_printf("CHARGE: Type %d erased on %d,%d,%d at %d,%d.\n", o_ptr->sval, wpos->wx, wpos->wy, wpos->wz, o_ptr->ix, o_ptr->iy);
+#endif
+
+				/* Acquire next object */
+				next_o_idx = o_ptr->next_o_idx;
+
+				/* Paranoia */
+				o_ptr->held_m_idx = 0;
+
+				/* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
+				o_ptr->embed = 0;
+				/* Delete the object */
+				delete_object_idx(this_o_idx, TRUE);
+			}
+		}
+
 		prev = trav;
 		trav = trav->next;
 		FREE(prev, struct c_special);

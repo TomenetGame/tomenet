@@ -7860,8 +7860,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						zcave[y][x].info = 0;
 						zcave[y][x].feat = 0;
 						/* Remove special structs */
-						//wipe_o_list_grid(wpos, y, x); -- take care of embedded monster-trap items?
 						FreeCS(&zcave[y][x]);
+						zcave[y][x].special = 0;
 					}
 				}
 

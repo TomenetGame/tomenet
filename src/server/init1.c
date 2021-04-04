@@ -9068,8 +9068,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			/* Clear some info */
 			c_ptr->info = 0;
 			/* Remove special structs */
-			//wipe_o_list_grid(wpos, y, x); -- take care of embedded monster-trap items?
 			FreeCS(c_ptr);
+			c_ptr->special = 0;
 
 			/* Lay down a floor */
 			//c_ptr->mimic = letter[idx].mimic;
