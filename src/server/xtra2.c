@@ -13695,7 +13695,8 @@ bool do_scroll_life(int Ind) {
 							else p_ptr->align_good = 0;
 						}
 						return TRUE;
-					} else msg_format(Ind, "The scroll fails for %s because there is no solid ground!", q_ptr->name);
+					} else if (c_ptr->info & CAVE_ICKY) msg_format(Ind, "The scroll fails for %s because there is a vault!", q_ptr->name);
+					else msg_format(Ind, "The scroll fails for %s because there is no solid ground!", q_ptr->name);
 				}
 			}
 		}
