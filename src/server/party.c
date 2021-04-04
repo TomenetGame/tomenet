@@ -4973,7 +4973,7 @@ void scan_accounts() {
 
 		/* test for expiry -> delete */
 		else if (now - acc.acc_laston >= 3600 * 24 * ACCOUNT_EXPIRY_DAYS) {
-#if 1 /* temporarily disable for testing purpose */
+#if 0 /* temporarily disable for testing purpose */
 			acc.flags |= ACC_DELD;
 
 			/* Count expired accounts */
