@@ -4294,7 +4294,7 @@ void do_cmd_look(int Ind, int dir) {
 void do_cmd_locate(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 
-	int	y1, x1, y2, x2;
+	int	y1, x1, y2, x2, tradx, trady;
 	int	prow = p_ptr->panel_row;
 	int	pcol = p_ptr->panel_col;
 	char	tmp_val[MAX_CHARS];
@@ -4426,6 +4426,12 @@ void do_cmd_locate(int Ind, int dir) {
 	if (x2 > p_ptr->max_panel_cols) x2 = p_ptr->max_panel_cols;
 	else if (x2 < 0) x2 = 0;
 
+	tradpanel_calculate(Ind);
+
+	/* For BIG_MAP users */
+	tradx = p_ptr->tradpanel_col;
+	trady = p_ptr->tradpanel_row;
+
 	/* Describe the location */
 	if ((y2 == y1) && (x2 == x1)) {
 		tmp_val[0] = '\0';
@@ -4435,17 +4441,29 @@ void do_cmd_locate(int Ind, int dir) {
 		if (p_ptr->screen_wid == SCREEN_WID && p_ptr->screen_hgt == SCREEN_HGT)
 			trad_val[0] = 0;
 		else
-			sprintf(trad_val, ", traditionally [%d,%d]", p_ptr->tradpanel_col, p_ptr->tradpanel_row);
+			sprintf(trad_val, ", traditionally [%d,%d]", tradx, trady);
 	} else {
-		sprintf(tmp_val, "%s%s of",
-		        ((y2 < y1) ? " North" : (y2 > y1) ? " South" : ""),
-		        ((x2 < x1) ? " West" : (x2 > x1) ? " East" : ""));
-		trad_val[0] = 0;
+		/* For BIG_MAP users */
+		if (p_ptr->screen_hgt != SCREEN_HGT) {
+			tradx = x2;
+			if (y2 != y1) trady = y2 * 2 + 1; //approximate, giving player's original tradpanel_row priority over approximation
+		}
+
+		sprintf(tmp_val, "%s%sof ",
+		    ((y2 < y1) ? "North " : (y2 > y1) ? "South " : ""),
+		    ((x2 < x1) ? "West " : (x2 > x1) ? "East " : ""));
+
+		/* For BIG_MAP users, also display the traditional sector they are located in,
+		   to make communication about dungeon entrances etc easier. */
+		if (p_ptr->screen_wid == SCREEN_WID && p_ptr->screen_hgt == SCREEN_HGT)
+			trad_val[0] = 0;
+		else
+			sprintf(trad_val, ", trad.[%d,%d]", tradx, trady);
 	}
 
 	/* Prepare to ask which way to look */
 	sprintf(out_val,
-	    "Map sector [%d,%d], which is%s your sector%s. Direction (or ESC)?",
+	    "Map sector [%d,%d] (%syour sector%s). Direction (or ESC)?",
 	    x2, y2, tmp_val, trad_val);
 
 	msg_print(Ind, out_val);
