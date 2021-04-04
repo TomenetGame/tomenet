@@ -3433,7 +3433,7 @@ struct player_type {
 	char warning_repair, warning_partyexp, warning_wor2, warning_depth; //repair weapon/armour, no xp sharing, wor INTO dun (display at -50 BD when char is hilev), low/no exp on grey/yellow
 	char warning_blastcharge, warning_status_blindness, warning_status_confusion, warning_status_stun;
 	//not for now, unnecessary spam: , warning_xpdrained, 10% gain while drained
-	char warning_sellunid, warning_edmt;
+	char warning_sellunid, warning_edmt, warning_stealing;
 
 #ifdef USE_SOUND_2010
 	int music_current, musicalt_current, music_monster; //background music currently playing for him/her; an overriding monster music

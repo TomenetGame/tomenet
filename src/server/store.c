@@ -3152,6 +3152,13 @@ void store_stole(int Ind, int item) {
 	if (get_skill_scale(p_ptr, SKILL_STEALING, 50) >= 1) {
 		if (tbase <= get_skill_scale(p_ptr, SKILL_STEALING, 500))
 			chance = ((chance * (long)(tbase)) / get_skill_scale(p_ptr, SKILL_STEALING, 500));
+	} else if (!p_ptr->warning_stealing) {
+		if (p_ptr->s_info[SKILL_STEALING].mod) {
+			msg_print(Ind, "\374\377yHINT: For better chances to steal you should increase your 'Stealing' skill.");
+		} else {
+			msg_print(Ind, "\374\377yHINT: To steal effectively use a character that can train the 'Stealing' skill.");
+		}
+		p_ptr->warning_stealing = 1;
 	}
 
 	/* Invisibility and stealth are not unimportant */
