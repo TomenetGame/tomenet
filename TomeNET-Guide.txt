@@ -1,7 +1,7 @@
 .=========================+==--.
 |      TomeNET Guide      |
 +=========================+-
-| Latest update: 4. April 2021 - written by C. Blue (c_blue@gmx.net)
+| Latest update: 5. April 2021 - written by C. Blue (c_blue@gmx.net)
 | for TomeNET version v4.7.3a - official websites are:
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -21113,18 +21113,22 @@ Although golems can kill monsters, you don't get credit for it and they are
 more of a fun feature than a serious enhancement to your character, so don't
 be too hell-bent on creating a golem or you will be disappointed.
 
-To create a golem, you will need these parts:
--A 'scroll of Golem Creation'
--A massive piece of a specific material
--Arms, up to 4. (Arms are optional, but without arms it cannot attack!)
--Legs, must be exactly 2.
--Command scrolls (see below). If a command scroll is not in your inventory when
- you create the golem, it will not understand that command later on even if you
- acquire that type of scroll afterwards! So make sure you carry all 3 command
- scrolls before creating it.
- (Command scrolls are not consumed upon golem creation.)
--Optionally, further items can be provided to add extra properties to the
- golem, see a bit further down in this paragraph about '@G' inscription.
+To create a golem, you will need these parts - note that except for the scroll
+of Golem Creation, which belongs into the 'magic' treasure class, all other
+golem items, including the command scrolls, belong the 'junk' treasure class:
+(For more information about treasure classes see (5.7c).)
+
+  -A 'scroll of Golem Creation'
+  -A massive piece of a specific material
+  -Arms, up to 4. (Arms are optional, but without arms it cannot attack!)
+  -Legs, must be exactly 2.
+  -Command scrolls (see below). If a command scroll is not in your inventory
+   when you create the golem, it will not understand that command later on even
+   if you acquire that type of scroll afterwards! So make sure you carry all 3
+   command scrolls before creating it.
+   (Command scrolls are not consumed upon golem creation.)
+  -Optionally, further items can be provided to add extra properties to the
+   golem, see a bit further down in this paragraph about '@G' inscription.
 
 After the golem has been created it will start out passively, not following any
 particular command. It will just sit there doing nothing. To actually control
