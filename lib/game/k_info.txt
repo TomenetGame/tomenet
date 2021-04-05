@@ -6224,7 +6224,7 @@ F:SPECIAL_GENE | FULL_NAME
 N:786:Climbing Set~
 G:`:B
 I:12:0:0
-W:40:0:80:50000
+W:40:0:80:20000
 A:40/3
 F:CLIMB | EASY_KNOW
 D:Arms and fingers are required to use this tool.
