@@ -1916,6 +1916,10 @@ static int weight_limit(int Ind) /* max. 3000 atm */ {
 
 /* Allow very lowspeed forms (still >110 though) to still give a slight +1 bonus, eg Kamikaze Yeek/Gold Ant which move at +3 speed naturally. 0 to disable. */
 #define MIMIC_LOWSPEED_BONUS 1
+/* intrinsic +attribute boni from forms */
+#define FORM_STAT_BONUS_SMALL 1
+#define FORM_STAT_BONUS_MEDIUM 2
+#define FORM_STAT_BONUS_BIG 3
 /* Should be called by every calc_bonus call */
 static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	player_type *p_ptr = Players[Ind];
@@ -1959,8 +1963,8 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			csheet_boni->cb[5] |= CB6_RLIFE;
 			break;
 		case RBE_SHATTER:
-			p_ptr->stat_add[A_STR]++;
-			csheet_boni->pstr++;
+			p_ptr->stat_add[A_STR]++; //+1 per hit
+			csheet_boni->pstr++; //+1 per hit
 			break;
 		case RBE_LOSE_STR:
 			p_ptr->sustain_str = TRUE;
@@ -2023,13 +2027,13 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if (r_ptr->weight >= 20000 && i < 2) i++;
 	if (r_ptr->weight >= 100000 && i < 3) i++;
 	/* <race> */
-	if (strstr(mname, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Bears get +1 STR */
-	if (r_ptr->d_char == 'Y' && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Yeti/Sasquatch get +1 STR */
-	if (r_ptr->flags3 & RF3_TROLL) i += 1;
-	if (r_ptr->flags3 & RF3_GIANT) i += 1;
+	if (strstr(mname, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i += FORM_STAT_BONUS_MEDIUM; /* Bears get +STR */
+	if (r_ptr->d_char == 'Y' && (r_ptr->flags3 & RF3_ANIMAL)) i += FORM_STAT_BONUS_SMALL; /* Yeti/Sasquatch get +STR */
+	if (r_ptr->flags3 & RF3_TROLL) i += FORM_STAT_BONUS_MEDIUM;
+	if (r_ptr->flags3 & RF3_GIANT) i += FORM_STAT_BONUS_MEDIUM;
 	if ((r_ptr->flags3 & RF3_DRAGON) && (strstr(mname, "mature ") ||
 	    (r_ptr->d_char == 'D')))
-		i += 1; /* only +1 since more bonus is coming from its damage already */
+		i += FORM_STAT_BONUS_SMALL; /* only +1 since more bonus is coming from its damage already */
 	p_ptr->stat_add[A_STR] += i;
 	csheet_boni->pstr += i;
 
@@ -2043,41 +2047,41 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 
 	/* Cats, rogues, martial artists (mystics/ninjas) and some warriors are very agile and most of them are stealthy */
 	if (r_ptr->d_char == 'f') { /* Cats! */
-		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pdex += FORM_STAT_BONUS_MEDIUM;
 		/* don't stack with low weight stealth bonus too much (see further below) */
 		if (r_ptr->weight <= 500) { p_ptr->skill_stl++; csheet_boni->slth++; }
-		else { p_ptr->skill_stl = p_ptr->skill_stl + 2; csheet_boni->slth += 2; }
+		else { p_ptr->skill_stl = p_ptr->skill_stl + FORM_STAT_BONUS_MEDIUM; csheet_boni->slth += FORM_STAT_BONUS_MEDIUM; }
 	}
 	/* Rogues and master rogues */
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE) {
 		if (r_ptr->level >= 23) {
-			p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
-			p_ptr->skill_stl = p_ptr->skill_stl + 2; csheet_boni->slth += 2;
+			p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pdex += FORM_STAT_BONUS_MEDIUM;
+			p_ptr->skill_stl = p_ptr->skill_stl + FORM_STAT_BONUS_MEDIUM; csheet_boni->slth += FORM_STAT_BONUS_MEDIUM;
 		} else {
 			p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++;
 			p_ptr->skill_stl++; csheet_boni->slth++;
 		}
 	}
 	/* Warriors */
-	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && r_ptr->level >= 20) { p_ptr->stat_add[A_STR]++; csheet_boni->pstr++; } /* Skilled warriors */
-	if (p_ptr->body_monster == 239) { p_ptr->stat_add[A_STR]++; csheet_boni->pstr++; } /* Berserker */
-	if (p_ptr->body_monster == 1058 || p_ptr->body_monster == 1059) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; } /* (Grand) Swordsmaster */
+	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && r_ptr->level >= 20) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_SMALL; csheet_boni->pstr += FORM_STAT_BONUS_SMALL; } /* Skilled warriors */
+	if (p_ptr->body_monster == 239) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_SMALL; csheet_boni->pstr += FORM_STAT_BONUS_SMALL; } /* Berserker */
+	if (p_ptr->body_monster == 1058 || p_ptr->body_monster == 1059) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; } /* (Grand) Swordsmaster */
 	if (p_ptr->body_monster == 532) { /* Dagashi */
-		p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++;
+		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL;
 		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
 	if (p_ptr->body_monster == 485 || p_ptr->body_monster == 564) {/* Ninja, Nightblade */
-		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pdex += FORM_STAT_BONUS_MEDIUM;
 		p_ptr->skill_stl = p_ptr->skill_stl + 3; csheet_boni->slth += 3;
 	}
 	/* Mystics */
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) {
-		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pdex += FORM_STAT_BONUS_MEDIUM;
 		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
 	/* Monks */
-	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Jade Monk */
-	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Ivory Monk */
+	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }/* Jade Monk */
+	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }/* Ivory Monk */
 
 
 
