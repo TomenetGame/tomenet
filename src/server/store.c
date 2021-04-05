@@ -6879,7 +6879,7 @@ void store_debug_stock() {
 
 static bool notify_owner(char cname[NAME_LEN], char msg[MSG_LEN]) {
 	char tname[NAME_LEN];
-	int i, found_note;
+	int i, found_note = 0;
 	struct account acc;
 	player_type *p_ptr;
 
