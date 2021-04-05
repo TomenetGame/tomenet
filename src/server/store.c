@@ -6899,7 +6899,7 @@ static bool notify_owner(char cname[NAME_LEN], char msg[MSG_LEN]) {
 			break;
 		}
 		/* Don't send multiple identical notes */
-		if (!strcmp(priv_note, msg)) return TRUE;
+		if (!strcmp(priv_note[i], msg)) return TRUE;
 	}
 	if (found_note == MAX_NOTES) {
 		s_printf("The server reached the maximum of %d pending notes.\n", MAX_NOTES);
