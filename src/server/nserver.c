@@ -814,6 +814,7 @@ static bool forbidden_name(char *cname) {
 	/* Note: Character names always start upper-case, so some of these
 	   aren't really needed on most file systems (semi-paranoia). */
 	/* Hardcode some critically important ones */
+	if (!strcmp(name, "system")) return TRUE; /* used as sender name for automatically generated notes */
 	if (!strcmp(name, "server")) return TRUE; /* server save file is stored in same folder as player save files */
 	if (!strcmp(name, "server.new")) return TRUE; /* server save file is stored in same folder as player save files */
 	if (!strcmp(name, "server.old")) return TRUE; /* server save file is stored in same folder as player save files */

@@ -6876,6 +6876,61 @@ void store_debug_stock() {
 #ifdef PLAYER_STORES
 /* Inscription on mass cheques, ie cheques handling items sold partially from item stacks. */
  #define MASS_CHEQUE_NOTE "various piled items"
+
+static bool notify_owner(char cname[NAME_LEN], char msg[MSG_LEN]) {
+	char tname[NAME_LEN];
+	int i, found_note;
+	struct account acc;
+	player_type *p_ptr;
+
+	strcpy(tname, lookup_accountname(lookup_player_id(cname)));
+
+	/* does target account exist? -- paranoia at this point! */
+	if (!GetAccount(&acc, tname, NULL, FALSE)) {
+		s_printf("Error: Player's account not found (%s).\n", tname);
+		return FALSE;
+	}
+
+	/* Look for free space to store the new note */
+	for (i = 0; i < MAX_NOTES; i++) {
+		if (!strcmp(priv_note[i], "")) {
+			/* found a free memory spot */
+			found_note = i;
+			break;
+		}
+		/* Don't send multiple identical notes */
+		if (!strcmp(priv_note, msg)) return TRUE;
+	}
+	if (found_note == MAX_NOTES) {
+		s_printf("The server reached the maximum of %d pending notes.\n", MAX_NOTES);
+		return FALSE;
+	}
+
+	/* Check whether target is actually online by now :) */
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+		/* Skip disconnected players */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+		if (strcmp(p_ptr->name, cname)) continue;
+
+		if ((p_ptr->page_on_privmsg ||
+		    (p_ptr->page_on_afk_privmsg && p_ptr->afk)) &&
+		    p_ptr->paging == 0)
+			p_ptr->paging = 1;
+
+		msg_format(i, "\374\377RSystem Note: %s", msg);
+		//return; //so double-msg him just to be safe he sees it
+		break;
+	}
+
+	strcpy(priv_note_sender[found_note], "system");
+	strcpy(priv_note_target[found_note], tname);
+	strcpy(priv_note[found_note], msg);
+	strcpy(priv_note_u[found_note], msg);
+	//s_printf("System Note for account '%s' has been stored.", priv_note_target[found_note]);
+	return TRUE;
+}
+
 /* Is an item inscribed correctly to be sold in a player-run store? - C. Blue
    Returns price or -2 if not for sale. Return -1 if not for display/not available.
    Pricing tag format:  @Snnnnnnnnn.  <- with dot for termination.
@@ -7335,6 +7390,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 				    owner_name, h_ptr->dna->owner, value, p_ptr->name);
 				msg_print(Ind, "\377ySorry, the store is currently not open for sale.");
 				msg_format(Ind, "\377y Please contact %s, the owner!", owner_name);
+				notify_owner(owner_name, "One of your stores lacks an empty space for cheque generation!");
 				return FALSE;
 			}
 		}
@@ -7349,6 +7405,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 				    h_idx, p_ptr->wpos.wx, p_ptr->wpos.wy, o_ptr->ps_idx_x, o_ptr->ps_idx_y);
 				msg_print(Ind, "\377ySorry, the store is currently not open for sale.");
 				msg_format(Ind, "\377y Please contact %s, the owner!", owner_name);
+				notify_owner(owner_name, "One of your stores lacks an empty space for cheque generation!");
 				return FALSE;
 			}
 		}
