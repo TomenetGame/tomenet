@@ -738,6 +738,11 @@ static void rd_item(object_type *o_ptr) {
 	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
 		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
 
+	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_SPEED
+	    && o_ptr->level && o_ptr->bpval > 0
+	    && o_ptr->level < o_ptr->bpval * 5)
+		o_ptr->level = o_ptr->bpval * 5;
+
 	/* modified arms/legs for more transparency and less tediousness */
 	if (o_ptr->tval == TV_GOLEM &&
 	    (o_ptr->sval == SV_GOLEM_ARM || o_ptr->sval == SV_GOLEM_LEG)) {

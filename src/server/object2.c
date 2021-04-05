@@ -6668,6 +6668,10 @@ void determine_level_req(int level, object_type *o_ptr) {
 	    && o_ptr->level && o_ptr->bpval > 0
 	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
 		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
+	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_SPEED
+	    && o_ptr->level && o_ptr->bpval > 0
+	    && o_ptr->level < o_ptr->bpval * 5)
+		o_ptr->level = o_ptr->bpval * 5;
 	if ((o_ptr->tval == TV_DRAG_ARMOR) && (o_ptr->sval == SV_DRAGON_POWER) && (o_ptr->level < 45)) o_ptr->level = 44 + randint(5);
 
 	if (o_ptr->tval == TV_LITE) {
