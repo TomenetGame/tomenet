@@ -9525,7 +9525,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		 * Shallow water (preserve walls)
 		 * Deep water (penetrate walls)
 		 */
-		if ((dun_lev <= 33) && (randint(20) > 15)) {
+		if ((dun_lev <= 33) && (randint(20) > 15) && !(dun->l_ptr->flags1 & (LF1_LAVA | LF1_DEEP_LAVA))) {
 			num = randint(DUN_STR_QUA - 1);
 
 			for (i = 0; i < num; i++)
@@ -9547,7 +9547,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			 * Shallow lava (preserve walls)
 			 * Deep lava (penetrate walls)
 			 */
-			if (randint(20) > 15) {
+			if (randint(20) > 15 && !(dun->l_ptr->flags1 & (LF1_WATER | LF1_DEEP_WATER))) {
 				num = randint(DUN_STR_QUA);
 
 				for (i = 0; i < num; i++)
@@ -9565,7 +9565,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			 * Shallow water (preserve walls)
 			 * Deep water (penetrate walls)
 			 */
-			else if (randint(20) > 15) {
+			else if (randint(20) > 15 && !(dun->l_ptr->flags1 & (LF1_LAVA | LF1_DEEP_LAVA))) {
 				num = randint(DUN_STR_QUA - 1);
 
 				for (i = 0; i < num; i++)
