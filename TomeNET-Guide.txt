@@ -1,18 +1,19 @@
-.=========================+==--.
-|      TomeNET Guide      |
-+=========================+-
-| Latest update: 6. April 2021 - written by C. Blue (c_blue@gmx.net)
-| for TomeNET version v4.7.3a - official websites are:
+.==========================================================================+--.
+|                              TomeNET Guide                               |
++==========================================================================+-
+| Latest update: 6. April 2021 - written by C. Blue (c_blue@gmx.net)       |
+| for TomeNET version v4.7.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
 |
-| You should always keep this guide up to date: Either go to www.tomenet.eu to
-| obtain the latest copy or simply run the TomeNET-Updater.exe in your TomeNET
-| installation folder (desktop shortcut should also be available) to update it.
+| You should always keep this guide up to date: Either go to www.tomenet.eu
+| to obtain the latest copy or simply run the TomeNET-Updater.exe in your
+| TomeNET installation folder (desktop shortcut should also be available)
+| to update it.
 |
-| If your text editor cannot display the guide properly (needs fixed-width font
-| like for example Courier), simply open it in any web browser instead.
+| If your text editor cannot display the guide properly (needs fixed-width
+| font like for example Courier), simply open it in any web browser instead.
 +---
 | Welcome to this guide!
 | Although I'm trying, I give no guarantee that this guide
@@ -20,10 +21,10 @@
 | b) is all the time 100% accurate on every occasion.
 | Don't blame me if something differs or is missing; it shouldn't though.
 |
-| If you have any suggestions about the guide or the game, please use the /rfe
-| command in the game or write to the official forum on www.tomenet.eu.
+| If you have any suggestions about the guide or the game, please use the
+| /rfe command in the game or write to the official forum on www.tomenet.eu.
+:
 \
-
 
 
 Contents
