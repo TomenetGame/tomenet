@@ -3266,7 +3266,7 @@ void do_cmd_steal(int Ind, int dir) {
 
 			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik(100)) { //80
 				/* Saving throw message */
-				msg_print(Ind, "Your attempt to steal was interfered with by a strange device!");
+				msg_print(Ind, "Your attempt to steal failed due to a safety lock!");
 				notice += 50;
 				s_printf("StealingPvP: %s fails to steal from %s (chance %d%%): theft prevention.\n", p_ptr->name, q_ptr->name, success);
 			}
