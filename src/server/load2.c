@@ -114,7 +114,7 @@ static bool older_than(byte x, byte y, byte z) {
  * This function determines if the version of the server savefile
  * currently being read is older than version "x.y.z".
  */
-static bool s_older_than(byte x, byte y, byte z) {
+bool s_older_than(byte x, byte y, byte z) {
 	/* Much older, or much more recent */
 	if (ssf_major < x) return (TRUE);
 	if (ssf_major > x) return (FALSE);

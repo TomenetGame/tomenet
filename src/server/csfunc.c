@@ -188,9 +188,9 @@ void keysee(c_special *cs_ptr, char *c, byte *a, int Ind){
  * Traps
  */
 /* *ptr is not used, but is still needed. */
-void tload(c_special *cs_ptr)
-{
+void tload(c_special *cs_ptr) {
 	byte tmp8u;
+
 	rd_byte(&cs_ptr->sc.trap.t_idx);
 	rd_byte(&tmp8u);
 	cs_ptr->sc.trap.found = tmp8u;
@@ -276,13 +276,11 @@ int insc_hit(c_special *cs_ptr, int y, int x, int Ind){
 /*
  * Between gates (inner-floor version)
  */
-void betweenload(c_special *cs_ptr)
-{
+void betweenload(c_special *cs_ptr) {
 	rd_byte(&cs_ptr->sc.between.fy);
 	rd_byte(&cs_ptr->sc.between.fx);
 }
-void betweensave(c_special *cs_ptr)
-{
+void betweensave(c_special *cs_ptr) {
 	wr_byte(cs_ptr->sc.between.fy);
 	wr_byte(cs_ptr->sc.between.fx);
 }
@@ -294,16 +292,15 @@ int betweenhit(c_special *cs_ptr, int y, int x, int Ind){
 	return(TRUE);
 }
 
-void fountload(c_special *cs_ptr)
-{
+void fountload(c_special *cs_ptr) {
 	byte tmp8u;
+
 	rd_byte(&cs_ptr->sc.fountain.type);
 	rd_byte(&cs_ptr->sc.fountain.rest);
 	rd_byte(&tmp8u);
 	cs_ptr->sc.fountain.known = tmp8u;
 }
-void fountsave(c_special *cs_ptr)
-{
+void fountsave(c_special *cs_ptr) {
 	wr_byte(cs_ptr->sc.fountain.type);
 	wr_byte(cs_ptr->sc.fountain.rest);
 	wr_byte(cs_ptr->sc.fountain.known);
@@ -316,44 +313,50 @@ void fountsee(c_special *cs_ptr, char *c, byte *a, int Ind){
 /*
  * Monster_traps (inner-floor version)
  */
-void montrapload(c_special *cs_ptr)
-{
+void montrapload(c_special *cs_ptr) {
+	byte tmp8u;
+
 	rd_u16b(&cs_ptr->sc.montrap.trap_kit);
 	rd_byte(&cs_ptr->sc.montrap.difficulty);
 	rd_byte(&cs_ptr->sc.montrap.feat);
+	if (s_older_than(4, 7, 12)) return;
+	rd_byte(&tmp8u);
+	cs_ptr->sc.montrap.found = (tmp8u != 0);
 }
 
-void montrapsave(c_special *cs_ptr)
-{
+void montrapsave(c_special *cs_ptr) {
 	wr_u16b(cs_ptr->sc.montrap.trap_kit);
 	wr_byte(cs_ptr->sc.montrap.difficulty);
 	wr_byte(cs_ptr->sc.montrap.feat);
+	wr_byte(cs_ptr->sc.montrap.found);
 }
 
-void runeload(c_special *cs_ptr)
-{
+void runeload(c_special *cs_ptr) {
+	byte tmp8u;
+
 	rd_s32b(&cs_ptr->sc.rune.id);
 	rd_s16b(&cs_ptr->sc.rune.dam);
 	rd_byte(&cs_ptr->sc.rune.rad);
 	rd_byte(&cs_ptr->sc.rune.typ);
 	rd_byte(&cs_ptr->sc.rune.feat);
+	if (s_older_than(4, 7, 12)) return;
+	rd_byte(&tmp8u);
+	cs_ptr->sc.rune.found = (tmp8u != 0);
 }
 
-void runesave(c_special *cs_ptr)
-{
+void runesave(c_special *cs_ptr) { 
 	wr_s32b(cs_ptr->sc.rune.id);
 	wr_s16b(cs_ptr->sc.rune.dam);
 	wr_byte(cs_ptr->sc.rune.rad);
 	wr_byte(cs_ptr->sc.rune.typ);
 	wr_byte(cs_ptr->sc.rune.feat);
+	wr_byte(cs_ptr->sc.rune.found);
 }
 
-void s32bload(c_special *cs_ptr)
-{
+void s32bload(c_special *cs_ptr) {
 	rd_s32b(&cs_ptr->sc.omni);
 }
-void s32bsave(c_special *cs_ptr)
-{
+void s32bsave(c_special *cs_ptr) {
 	wr_s32b(cs_ptr->sc.omni);
 }
 

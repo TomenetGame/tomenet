@@ -1003,6 +1003,7 @@ extern void excise_obsolete_max_depth(player_type *p_ptr);
 extern void load_banlist(void);
 /* for actually loading/saving dynamic quest information */
 extern void load_quests(void);
+extern bool s_older_than(byte x, byte y, byte z); /* for csfunc structure changes */
 
 /* melee1.c */
 extern cptr desc_moan_halloween[];
