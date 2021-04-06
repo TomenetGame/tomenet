@@ -6893,7 +6893,7 @@ I:12:3:0
 W:10:0:10:1000
 A:10/3
 F:IGNORE_WATER | EASY_KNOW
-D:Protects your purse from thieves.
+D:When equipped it protects your purse from thieves.
 
 N:905:& Backpack Safety Lock~ 
 G:`:B
@@ -6901,7 +6901,7 @@ I:12:4:0
 W:35:0:12:30000
 A:35/20
 F:EASY_KNOW
-D:Protects your inventory items from thieves.
+D:When equipped it protects your inventory items from thieves.
 
 N:906:& Tarpaulin~
 G:`:D
