@@ -1909,6 +1909,56 @@ bool set_paralyzed(int Ind, int v) {
 	return (TRUE);
 }
 
+/* Added for Rune-of-Protection traps in PvP - C. Blue */
+bool set_stopped(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	if (p_ptr->martyr && v) return FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->stopped) {
+			msg_format_near(Ind, "%s is confined in place by a rune!", p_ptr->name);
+			msg_print(Ind, "You are confined in place by a rune!");
+			notice = TRUE;
+			s_printf("%s EFFECT: Stopped %s.\n", showtime(), p_ptr->name);
+		}
+	}
+
+	/* Shut */
+	else {
+		if (p_ptr->stopped) {
+			msg_format_near(Ind, "%s is no longer confined.", p_ptr->name);
+			msg_print(Ind, "You are no longer confined.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->stopped = v;
+
+	/* Nothing to notice */
+	if (!notice) return (FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Redraw the state */
+	p_ptr->redraw |= (PR_STATE);
+
+	p_ptr->update |= (PU_BONUS);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return (TRUE);
+}
+
 
 /*
  * Set "p_ptr->image", notice observable changes

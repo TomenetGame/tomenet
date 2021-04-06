@@ -5259,6 +5259,9 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->paralyzed && p_ptr->paralyzed != 255) /* hack */
 		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1);// - minus_health
 
+	/* Confinement */
+	if (p_ptr->stopped) (void)set_stopped(Ind, p_ptr->stopped - 1);
+
 	/* Confusion */
 	if (p_ptr->confused)
 		(void)set_confused(Ind, p_ptr->confused - minus - minus_combat - minus_health);

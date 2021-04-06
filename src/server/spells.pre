@@ -122,6 +122,7 @@ extern bool set_poisoned(int Ind, int v, int attacker);
 extern bool set_diseased(int Ind, int v, int attacker);
 extern bool set_afraid(int Ind, int v);
 extern bool set_paralyzed(int Ind, int v);
+extern bool set_stopped(int Ind, int v);
 extern bool set_image(int Ind, int v);
 extern bool set_fast(int Ind, int v, int p);
 extern bool set_slow(int Ind, int v);

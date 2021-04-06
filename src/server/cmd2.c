@@ -5349,6 +5349,19 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				dir = rand_int(9) + 1;
 		}
 
+		/* Handle confinement */
+		if (p_ptr->stopped && dir != 5) {
+			/* Try to break the rune */
+			if (rand_int(200) < p_ptr->lev) {
+				msg_print(Ind, "You break the rune!");
+				set_stopped(Ind, 0);
+			} else {
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				msg_print(Ind, "You fail to break the confinement rune!");
+				return;
+			}
+		}
+
 		/* Handle the cfg.door_bump_open option */
 		if (cfg.door_bump_open) {
 			struct c_special *cs_ptr;
@@ -5463,6 +5476,20 @@ int do_cmd_run(int Ind, int dir) {
 
 	/* Get a "repeated" direction */
 	if (dir) {
+		/* Handle confinement */
+		if (p_ptr->stopped && dir != 5) {
+			/* Try to break the rune */
+			if (rand_int(200) < p_ptr->lev) {
+				msg_print(Ind, "You break the rune!");
+				set_stopped(Ind, 0);
+			} else {
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				msg_print(Ind, "You fail to break the confinement rune!");
+				disturb(Ind, 0, 0);
+				return 2;
+			}
+		}
+
 		/* Make sure we have an empty space to run into */
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px)) {
 			/* Prob travel */

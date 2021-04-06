@@ -2792,6 +2792,7 @@ struct player_type {
 	s16b slow;			/* Timed -- Slow */
 	s16b blind;			/* Timed -- Blindness */
 	s16b paralyzed;			/* Timed -- Paralysis */
+	s16b stopped;			/* Timed -- Confined on a hostile rune of protection */
 	s16b confused;			/* Timed -- Confusion */
 	s16b afraid;			/* Timed -- Fear */
 	s16b image;			/* Timed -- Hallucination */

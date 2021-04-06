@@ -11059,6 +11059,35 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
+	case GF_OLD_SLEEP: //pvp only
+	case GF_STASIS: //pvp only
+		if (fuzzy || self) msg_print(Ind, "Something tries to veil your mind!");
+		else msg_format(Ind, "%^s creates a dreamlike illusion!", killer);
+
+		if (p_ptr->free_act) msg_print(Ind, "You are unaffected!");
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
+		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+			msg_print(Ind, "You resist the effects!");
+		else set_paralyzed(Ind, p_ptr->paralyzed + 2 + rand_int(2));
+
+		dam = 0;
+		break;
+
+	case GF_STOP: //pvp only
+		if (fuzzy || self) msg_print(Ind, "Something binds you to the spot!");
+		else msg_format(Ind, "%^s binds you to the spot!", killer);
+#if 0 
+		if (p_ptr->free_act) msg_print(Ind, "You are unaffected!");
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
+		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+			msg_print(Ind, "You resist the effects!");
+		else
+#endif
+		set_stopped(Ind, p_ptr->stopped + 2 + rand_int(2));
+
+		dam = 0;
+		break;
+
 	case GF_TURN_ALL:
 		if (fuzzy || self) msg_print(Ind, "Something mumbles, and you hear scary noises!");
 		else msg_format(Ind, "%^s casts a fearful illusion!", killer);
