@@ -10138,7 +10138,7 @@ There are also five minor resistances:
 Fear            While you're afraid you won't be able to attack a target in
                 close combat.
 Blindness       You cannot read scrolls or books while you're blind.
-                Blindness can be caused directly by a blindness attack or by
+                Blindness can be caused directly by a blindness attack or
                 indirectly by light or darkness attacks if you don't resist
                 those. You still can use magic staves, rods or wands and
                 quaff potions. Quaffing a potion of Healing, Curing or
