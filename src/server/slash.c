@@ -7512,7 +7512,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* Reset a player's racial/class exp%, updating it in case it got changed ('verify') - C. Blue */
 			else if (prefix(messagelc, "/vxp")) {
 				int p;
-				player_type *p_ptr;
 
 				if (tk < 1) {
 					msg_print(Ind, "\377oUsage: /vxp <player name>");
