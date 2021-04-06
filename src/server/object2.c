@@ -7071,8 +7071,6 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_HARD_ARMOR:
 	case TV_SOFT_ARMOR:
 	case TV_SHIELD:
-	case TV_CLOAK:
-	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
 		if (k_ptr->to_a < 0) return 0;
@@ -7081,6 +7079,10 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return 0;
 		return (tc_p * tc_biasg_treasure) / 500;
+	case TV_CLOAK:
+	case TV_BOOTS:
+		if (k_ptr->to_a < 0) return 0;
+		return (tc_p * tc_biasg_tools) / 500;
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -7323,8 +7325,6 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TV_HARD_ARMOR:
 	case TV_SOFT_ARMOR:
 	case TV_SHIELD:
-	case TV_CLOAK:
-	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
 		if (k_ptr->to_a < 0) return 0;
@@ -7333,6 +7333,10 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return 0;
 		return (tc_p * tc_biasr_magic) / 500;
+	case TV_CLOAK:
+	case TV_BOOTS:
+		if (k_ptr->to_a < 0) return 0;
+		return (tc_p * tc_biasr_tools) / 500;
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
