@@ -9172,3 +9172,23 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 
 	return 0; //ok!
 }
+
+/* Update a character's expfact in case it has changed. Lua-accessible. - C. Blue */
+void verify_expfact(int Ind, int p) {
+	player_type *p_ptr;
+
+	/* catch potential user errors if called via manual lua */
+	if (Ind < 0 || Ind > NumPlayers) return;
+	if (p <= 0 || p > NumPlayers) return;
+
+	p_ptr = Players[p];
+	p = p_ptr->expfact; //re-use
+	p_ptr->expfact = p_ptr->rp_ptr->r_exp + p_ptr->cp_ptr->c_exp;
+	if (Ind) {
+		if (p == p_ptr->expfact) msg_format(Ind, "Verified XP%% for %s: Unchanged at %d.", p_ptr->name, p);
+		else msg_format(Ind, "Verified XP%% for %s: Updated %d to %d.", p_ptr->name, p, p_ptr->expfact);
+	} else {
+		if (p != p_ptr->expfact) s_printf("Verified XP%% for %s: Updated %d to %d.", p_ptr->name, p, p_ptr->expfact);
+	}
+	return;
+}

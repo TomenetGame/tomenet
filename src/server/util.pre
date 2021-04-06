@@ -448,3 +448,5 @@ extern s32b o_top;
 extern s32b m_nxt;
 extern s32b m_max;
 extern s32b m_top;
+
+extern void verify_expfact(int Ind, int p);

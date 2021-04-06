@@ -7509,6 +7509,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (i = 0; i < 4; i++) msg_format(Ind, "[%d]: %s", i, Players[p]->history[i]);
 				return;
 			}
+			/* Reset a player's racial/class exp%, updating it in case it got changed ('verify') - C. Blue */
+			else if (prefix(messagelc, "/vxp")) {
+				int p;
+				player_type *p_ptr;
+
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /vxp <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
+				if (!p) return;
+				verify_expfact(Ind, p);
+				return;
+			}
 			/* Turn all non-everlasting items inside a house to everlasting items if the owner is everlasting */
 			else if (prefix(messagelc, "/everhouse")) {
 				/* house_contents_chmod .. (scan_obj style) */
