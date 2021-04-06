@@ -2562,6 +2562,16 @@ void hit_trap(int Ind) {
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
+	/* PvP: Monster traps and runes of hostile players can affect us too */
+	if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+		py_hit_trap(Ind);
+		return;
+	}
+	if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
+		py_warding_rune_break(Ind);
+		return;
+	}
+
 	if (!(cs_ptr = GetCS(c_ptr, CS_TRAPS))) return;
 	t_idx = cs_ptr->sc.trap.t_idx;
 
@@ -5859,33 +5869,42 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 
 
 	/* Trigger traps */
-	if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+	if (!p_ptr->ghost && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 #ifndef ARCADE_SERVER
-		bool hit = TRUE;
+			bool hit = TRUE;
 #endif
 
-		/* Disturb */
-		disturb(Ind, 0, 0);
+			/* Disturb */
+			disturb(Ind, 0, 0);
 
-		if (!cs_ptr->sc.trap.found) {
-			/* Message */
-			msg_print(Ind, "You triggered a trap!");
+			if (!cs_ptr->sc.trap.found) {
+				/* Message */
+				msg_print(Ind, "You triggered a trap!");
 
-			/* Pick a trap */
-			pick_trap(&p_ptr->wpos, y, x);
+				/* Pick a trap */
+				pick_trap(&p_ptr->wpos, y, x);
+			}
+#ifndef ARCADE_SERVER
+			else if (magik(get_skill_scale(p_ptr, SKILL_TRAPPING, 90) - UNAWARENESS(p_ptr))) {
+				msg_print(Ind, "You carefully avoid touching the trap.");
+				hit = FALSE;
+			}
+#endif
+
+			/* Hit the trap */
+#ifndef ARCADE_SERVER
+			if (hit)
+#endif
+				hit_trap(Ind);
 		}
-#ifndef ARCADE_SERVER
-		else if (magik(get_skill_scale(p_ptr, SKILL_TRAPPING, 90) - UNAWARENESS(p_ptr))) {
-			msg_print(Ind, "You carefully avoid touching the trap.");
-			hit = FALSE;
+		/* For PvP: */
+		if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+			py_hit_trap(Ind);
 		}
-#endif
-
-		/* Hit the trap */
-#ifndef ARCADE_SERVER
-		if (hit)
-#endif
-			hit_trap(Ind);
+		if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
+			py_warding_rune_break(Ind);
+		}
 	}
 }
 

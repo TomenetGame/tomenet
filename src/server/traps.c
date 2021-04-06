@@ -5137,6 +5137,10 @@ bool mon_hit_trap(int m_idx) {
 	/* did it die? */
 	return (dead);
 }
+/* For PvP: */
+bool py_hit_trap(int Ind) {
+	return FALSE;
+}
 
 static void destroy_chest(object_type *o_ptr) {
 	/* Hack to destroy chests */

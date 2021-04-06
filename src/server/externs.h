@@ -2293,6 +2293,7 @@ extern void do_cmd_set_trap(int Ind, int item_kit, int item_load);
 extern void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x);
 extern void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx);
 extern bool mon_hit_trap(int m_idx);
+extern bool py_hit_trap(int Ind);
 
 extern void wiz_place_trap(int Ind, int trap);
 
@@ -2551,6 +2552,7 @@ extern int shutdown_recall_timer, shutdown_recall_state;
 extern bool rune_enchant(int Ind, int item);
 extern bool warding_rune(int Ind, byte typ, int dam, byte rad);
 extern bool warding_rune_break(int m_idx);
+extern bool py_warding_rune_break(int Ind);
 
 /* slash.c */
 extern void do_slash_cmd(int Ind, char *message, char *message_u);

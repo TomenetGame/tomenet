@@ -2901,6 +2901,58 @@ bool detect_bounty(int Ind, int rad) {
 				detect_trap = TRUE;
 			}
 
+			/* PvP: Detect hostile monster-traps */
+			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+				object_type *kit_o_ptr = &o_list[cs_ptr->sc.montrap.trap_kit];
+				int p;
+
+				/* is the trapper online? Otherwise not hostile as we cannot know */
+				for (p = 1; p <= NumPlayers; p++) {
+					if (p == Ind) continue;
+					if (kit_o_ptr->owner == Players[p]->id) break;
+				}
+
+				if (p != NumPlayers && !cs_ptr->sc.montrap.found && check_hostile(Ind, p)) {
+					if (magik(chance)) {
+						cs_ptr->sc.montrap.found = TRUE;
+						note_spot_depth(wpos, i, j);
+						everyone_lite_spot(wpos, i, j);
+					}
+				}
+
+				/* Hack -- memorize it */
+				*w_ptr |= CAVE_MARK;
+
+				/* Obvious */
+				detect = TRUE;
+				detect_trap = TRUE;
+			}
+			/* PvP: Detect hostile runes */
+			if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
+				int p;
+
+				/* is the runemaster online? Otherwise not hostile as we cannot know */
+				for (p = 1; p <= NumPlayers; p++) {
+					if (p == Ind) continue;
+					if (cs_ptr->sc.rune.id == Players[p]->id) break;
+				}
+
+				if (p != NumPlayers && !cs_ptr->sc.rune.found && check_hostile(Ind, p)) {
+					if (magik(chance)) {
+						cs_ptr->sc.rune.found = TRUE;
+						note_spot_depth(wpos, i, j);
+						everyone_lite_spot(wpos, i, j);
+					}
+				}
+
+				/* Hack -- memorize it */
+				*w_ptr |= CAVE_MARK;
+
+				/* Obvious */
+				detect = TRUE;
+				detect_trap = TRUE;
+			}
+
 			/* Detect secret doors */
 			if (c_ptr->feat == FEAT_SECRET && magik(chance)) {
 				struct c_special *cs_ptr;

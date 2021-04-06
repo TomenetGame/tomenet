@@ -2851,44 +2851,68 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			/* Hack to display monster traps */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP)) && c_ptr->feat != FEAT_ILLUS_WALL) {
-				/* Hack -- random hallucination */
-				if (p_ptr->image) {
-					/*image_random(ap, cp); */
-					image_object(ap, cp);
-					a = randint(15);
-				} else {
-					/* If trap isn't on door display it */
-					/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
-					//(*cp) = ';';
-					a = get_monster_trap_color(Ind, cs_ptr->sc.montrap.trap_kit, feat);
+				/* PvP: Hide hostile traps unless detected */
+				object_type *kit_o_ptr = &o_list[cs_ptr->sc.montrap.trap_kit];
+				int i;
+
+				/* is the trapper online? Otherwise not hostile as we cannot know */
+				for (i = 1; i <= NumPlayers; i++) {
+					if (i == Ind) continue;
+					if (kit_o_ptr->owner == Players[i]->id) break;
+				}
+
+				if (i == NumPlayers || cs_ptr->sc.montrap.found || !check_hostile(Ind, i)) {
+					/* Hack -- random hallucination */
+					if (p_ptr->image) {
+						/*image_random(ap, cp); */
+						image_object(ap, cp);
+						a = randint(15);
+					} else {
+						/* If trap isn't on door display it */
+						/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
+						//(*cp) = ';';
+						a = get_monster_trap_color(Ind, cs_ptr->sc.montrap.trap_kit, feat);
 
 #if 0 /* currently this doesn't make sense because montraps are their own feature (like runes) instead of using just the cs_ptr (like normal traps)! This means they cancel the water grid! ew. */
-					/* Hack -- always l.blue if underwater */
-					if (cs_ptr->sc.montrap.feat == FEAT_DEEP_WATER || cs_ptr->sc.montrap.feat == FEAT_SHAL_WATER)
-						a = TERM_L_BLUE;
+						/* Hack -- always l.blue if underwater */
+						if (cs_ptr->sc.montrap.feat == FEAT_DEEP_WATER || cs_ptr->sc.montrap.feat == FEAT_SHAL_WATER)
+							a = TERM_L_BLUE;
 #endif
+					}
+					keep = TRUE;
 				}
-				keep = TRUE;
 			}
 
 			/* Hack to display "runes of warding" which are coloured by GF_TYPE */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_RUNE)) && c_ptr->feat != FEAT_ILLUS_WALL) {
-				/* Hack -- random hallucination */
-				if (p_ptr->image) {
-					/*image_random(ap, cp); */
-					image_object(ap, cp);
-					a = randint(15);
-				} else {
-					a = spell_color(cs_ptr->sc.rune.typ);
+				/* PvP: Hide hostile rune unless detected */
+				int i;
+
+				/* is the runemaster online? Otherwise not hostile as we cannot know */
+				for (i = 1; i <= NumPlayers; i++) {
+					if (i == Ind) continue;
+					if (cs_ptr->sc.rune.id == Players[i]->id) break;
 				}
-				keep = TRUE;
+
+				if (i == NumPlayers || cs_ptr->sc.rune.found || !check_hostile(Ind, i)) {
+					/* Hack -- random hallucination */
+					if (p_ptr->image) {
+						/*image_random(ap, cp); */
+						image_object(ap, cp);
+						a = randint(15);
+					} else {
+						a = spell_color(cs_ptr->sc.rune.typ);
+					}
+					keep = TRUE;
+				}
 			}
 
 			/* Hack to display detected traps */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && c_ptr->feat != FEAT_ILLUS_WALL) {
 				int t_idx = cs_ptr->sc.trap.t_idx;
+
 				if (cs_ptr->sc.trap.found) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
