@@ -9188,7 +9188,7 @@ void verify_expfact(int Ind, int p) {
 		if (p == p_ptr->expfact) msg_format(Ind, "Verified XP%% for %s: Unchanged at %d.", p_ptr->name, p);
 		else msg_format(Ind, "Verified XP%% for %s: Updated %d to %d.", p_ptr->name, p, p_ptr->expfact);
 	} else {
-		if (p != p_ptr->expfact) s_printf("Verified XP%% for %s: Updated %d to %d.", p_ptr->name, p, p_ptr->expfact);
+		if (p != p_ptr->expfact) s_printf("Verified XP%% for %s: Updated %d to %d.\n", p_ptr->name, p, p_ptr->expfact);
 	}
 	return;
 }
