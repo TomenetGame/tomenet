@@ -6909,7 +6909,7 @@ I:12:5:0
 W:15:0:60:1000
 A:15/5
 F:EASY_KNOW
-D:Protects your items from taking damage from water.
+D:When equipped it protects your items from taking damage from water.
 
 # Parchment to help dead beginners
 N:907:The Book of the Dead [Press 'r' to read]
