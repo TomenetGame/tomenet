@@ -5962,6 +5962,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	
 	stop_precision(Ind); /* aimed precision shot gets interrupted by moving around */
 	stop_shooting_till_kill(Ind);
+	if (p_ptr->steamblast_timer == -1) {
+		msg_print(Ind, "You cancel your preparations for a steam blast charge.");
+		p_ptr->steamblast_timer = 0;
+	}
 
 	/* Find the result of moving */
 

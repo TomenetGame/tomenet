@@ -5333,7 +5333,7 @@ int p_tough_ac[51] = {
 
 /* For fighting techniques */
 byte mtech_lev[MAX_CLASS][16] = {
-    //	sprint,	taunt,	jump,	distr,	poison,	knockb,	trackan,detnoi, flashb,	cloak,	spin,	assass,	berser,	s-jump,	s-run,	instant cloak
+    //	sprint,	taunt,	jump,	distr,	poison,	knockb,	trackan,detnoi, flashb,	steamb,	spin,	assass,	berser,	s-jump,	s-run,	instant cloak
 	{2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	6,	0,	20,	0,	0,	0},	//warrior
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//istar
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//priest

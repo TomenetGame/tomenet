@@ -5613,6 +5613,22 @@ static bool process_player_end_aux(int Ind) {
 	}
 #endif
 
+	/* Steam blast charge - Fighting technique */
+	if (p_ptr->steamblast_timer > 0) {
+		p_ptr->steamblast_timer--;
+		if (!p_ptr->steamblast_timer) {
+			cave_type **zcave = getcave(&p_ptr->wpos);
+
+			if (zcave) {
+				cave_type *c_ptr = &zcave[p_ptr->steamblast_y][p_ptr->steamblast_x];
+				/* Closed door, locked doors, jammed doors -- works 100% for now */
+				if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
+					cave_set_feat_live(&p_ptr->wpos, p_ptr->steamblast_y, p_ptr->steamblast_x, FEAT_BROKEN);
+				}
+			}
+		}
+	}
+
 
 	/*** Process Light ***/
 
@@ -8048,6 +8064,12 @@ void process_player_change_wpos(int Ind) {
 	/* Prevent exploiting /undoskills by invoking it right before each level-up:
 	   Discard the possibility to undoskills when we venture into a dungeon again. */
 	if (!p_ptr->wpos_old.wz && p_ptr->wpos.wz) p_ptr->reskill_possible = FALSE;
+
+	if (p_ptr->steamblast_timer != 0) {
+		if (p_ptr->steamblast_timer == -1) msg_print(Ind, "You cancel your preparations for a steam blast charge.");
+		/* ..else fail silently */
+		p_ptr->steamblast_timer = 0;
+	}
 
 	/* un-snow */
 	p_ptr->temp_misc_1 &= ~0x08;

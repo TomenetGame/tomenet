@@ -901,6 +901,9 @@ struct player_type
 	bool censor_swearing;
 	bool keep_bottle;
 	bool no_house_magic;
+	s16b steamblast_timer;
+	s16b steamblast_x;
+	s16b steamblast_y;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */

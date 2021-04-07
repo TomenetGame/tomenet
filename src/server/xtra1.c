@@ -9280,7 +9280,7 @@ void calc_techniques(int Ind) {
 		p_ptr->melee_techniques |= MT_FLASH;
 	if (mtech_lev[p_ptr->pclass][9] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][9])
-		p_ptr->melee_techniques |= MT_CLOAK;
+		p_ptr->melee_techniques |= MT_STEAMBLAST;
 	if (mtech_lev[p_ptr->pclass][10] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][10])
 		p_ptr->melee_techniques |= MT_SPIN;
@@ -9305,6 +9305,11 @@ void calc_techniques(int Ind) {
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 10) p_ptr->ranged_techniques |= RT_CRAFT; /* Craft some ammunition */
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 16) p_ptr->ranged_techniques |= RT_DOUBLE; /* Double-shot */
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 25) p_ptr->ranged_techniques |= RT_BARRAGE; /* Barrage */
+
+	if (get_skill(p_ptr, SKILL_TRAPPING) >= 10) p_ptr->melee_techniques |= MT_STEAMBLAST;
+#ifdef ENABLE_DEMOLITIONIST
+	if (get_skill(p_ptr, SKILL_DIG) >= 10) p_ptr->melee_techniques |= MT_STEAMBLAST;
+#endif
 
 	Send_technique_info(Ind);
 }

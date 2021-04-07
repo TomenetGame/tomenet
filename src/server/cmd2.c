@@ -5359,6 +5359,15 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				dir = rand_int(9) + 1;
 		}
 
+		if (p_ptr->steamblast_timer == -1 && dir != 5 &&
+		    !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) {
+			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
+			if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
+				do_steamblast(Ind, p_ptr->px + ddx[dir], p_ptr->py + ddy[dir]);
+				return;
+			}
+		}
+
 		/* Handle confinement */
 		if (p_ptr->stopped && dir != 5) {
 			/* Try to break the rune */
@@ -5377,7 +5386,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			struct c_special *cs_ptr;
 
 			/* Get requested grid */
-			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
+			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 
 			/* This should be cfg.trap_bump_disarm? */
 			if (cfg.door_bump_open & BUMP_OPEN_TRAP &&

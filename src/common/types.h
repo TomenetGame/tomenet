@@ -3546,6 +3546,7 @@ struct player_type {
 	int item_newest;
 	bool keep_bottle;
 	bool no_house_magic;
+	s16b steamblast_x, steamblast_y, steamblast_timer;
 };
 
 typedef struct boni_col boni_col;

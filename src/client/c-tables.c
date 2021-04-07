@@ -576,7 +576,7 @@ cptr melee_techniques[16] = {
   "Perceive Noise",
 
   "Flash Bomb",
-  "TechD", /*"Cloak",*/
+  "Steam Blast",
   "Spin",
   "Assassinate",
 

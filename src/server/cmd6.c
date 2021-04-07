@@ -8427,6 +8427,43 @@ s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+	case 9:	{
+		int t = -1, p = -1;
+		object_type *o_ptr;
+
+		if (!(p_ptr->melee_techniques & MT_STEAMBLAST)) return; /* Steam Blast */
+		if (p_ptr->steamblast_timer > 0) {
+			msg_print(Ind, "You can only set up one steam blast charge at a time.");
+			return;
+		}
+		//if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
+		for (i = 0; i < INVEN_WIELD; i++) {
+			o_ptr = &p_ptr->inventory[i];
+			if (!o_ptr->k_idx) break;
+			if (!o_ptr->note) continue; /* items must be inscribed to be used! */
+			switch (o_ptr->tval) {
+			case TV_TRAPKIT:
+				if (t != -1) continue; /* we already found a suitable trap kit */
+				if (o_ptr->sval != SV_TRAPKIT_POTION) continue; /* need 1 fumes trap */
+				if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+				t = i;
+				break;
+			case TV_POTION: /* need 1 potion */
+				if (p != -1) continue; /* we already found a suitable potion */
+				if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+				p = i;
+				break;
+			}
+			if (p != -1 && i != -1) break;
+		}
+		if (i == INVEN_WIELD) {
+			msg_print(Ind, "You need to inscribe a fumes trap kit and a potion both '!S' to be used up.");
+			return;
+		}
+		msg_print(Ind, "Bump a door next to you to set up the steam blast charge..");
+		p_ptr->steamblast_timer = -1;
+		break;
+		}
 	case 10: if (!(p_ptr->melee_techniques & MT_SPIN)) return; /* Spin */
 		if (p_ptr->cst < 5) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (p_ptr->afraid) {
@@ -8646,6 +8683,92 @@ s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
 //in cmd2.c!	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* You _prepare_ it.. */
 		break;
 	}
+}
+
+void do_steamblast(int Ind, int x, int y) {
+	player_type *p_ptr = Players[Ind];
+	int i, t = -1, p = -1;
+	object_type *o_ptr;
+
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) {
+		msg_print(Ind, "You cannot use techniques while transformed.");
+		return;
+	}
+	if (p_ptr->ghost) {
+		msg_print(Ind, "You cannot use techniques as a ghost.");
+		return;
+	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "You cannot use techniques while confused.");
+		return;
+	}
+	if (p_ptr->blind) {
+		msg_print(Ind, "You cannot use this technique while blind.");
+		return;
+	}
+
+	if ((p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_RUNEMASTER) &&
+	    p_ptr->rogue_heavyarmor) {
+		msg_print(Ind, "You cannot utilize techniques well while wearing too heavy armour.");
+		return;
+	}
+
+	disturb(Ind, 1, 0); /* stop resting, searching and running */
+
+	if (!(p_ptr->melee_techniques & MT_STEAMBLAST)) return; /* Steam Blast */
+	if (p_ptr->steamblast_timer > 0) {
+		msg_print(Ind, "You can only set up one steam blast charge at a time.");
+		return;
+	}
+	//if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
+	for (i = 0; i < INVEN_WIELD; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->k_idx) {
+			i = INVEN_WIELD; //finish, we failed
+			break;
+		}
+		if (!o_ptr->note) continue; /* items must be inscribed to be used! */
+		switch (o_ptr->tval) {
+		case TV_TRAPKIT:
+			if (t != -1) continue; /* we already found a suitable trap kit */
+			if (o_ptr->sval != SV_TRAPKIT_POTION) continue; /* need 1 fumes trap */
+			if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+			t = i;
+			break;
+		case TV_POTION: /* need 1 potion */
+			if (p != -1) continue; /* we already found a suitable potion */
+			if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+			p = i;
+			break;
+		}
+		if (t != -1 && p != -1) break;
+	}
+	if (i == INVEN_WIELD) {
+		msg_print(Ind, "You need to inscribe a fumes trap kit and a potion both '!S' to be used up.");
+		return;
+	}
+
+	//p_ptr->cst -= 3;
+	inven_item_increase(Ind, t, -1);
+	inven_item_increase(Ind, p, -1);
+	if (t > p) { //higher value (lower in inventory) first; to preserve indices
+		inven_item_optimize(Ind, t);
+		inven_item_optimize(Ind, p);
+	} else {
+		inven_item_optimize(Ind, p);
+		inven_item_optimize(Ind, t);
+	}
+	p_ptr->steamblast_x = x;
+	p_ptr->steamblast_y = y;
+	p_ptr->steamblast_timer = 8;
+	//break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+	msg_print(Ind, "You set up a steam blast charge on the door..");
+	p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
+s_printf("TECHNIQUE_MELEE: %s - steam blast\n", p_ptr->name);
+	p_ptr->warning_technique_melee = 1;
+	lite_spot(Ind, y, x);
 }
 
 void do_pick_breath(int Ind, int element) {

@@ -3229,6 +3229,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 				/* testing only - need c/a PRIORITIES!!! */
 				csfunc[cs_ptr->type].see(cs_ptr, cp, ap, Ind);
 			}
+
+			/* Highlight active steam blast charge on a door */
+			if (p_ptr->steamblast_timer > 0 && p_ptr->steamblast_x == x && p_ptr->steamblast_y == y) *ap = TERM_ORANGE;
 		}
 
 		/* Unknown */

@@ -9089,7 +9089,7 @@ extern int PlayerUID;
 #define MT_DETNOISE	0x0080
 
 #define MT_FLASH	0x0100
-#define MT_CLOAK	0x0200
+#define MT_STEAMBLAST	0x0200
 #define MT_SPIN		0x0400
 #define MT_ASSA		0x0800
 

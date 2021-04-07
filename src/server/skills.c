@@ -692,6 +692,8 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
  #else
 			msg_print(Ind, "\374\377GYou've acquired the Demolitionist perk (only active within the IDDC).");
  #endif
+		if (old_value < 100 && new_value >= 100 && get_skill(p_ptr, SKILL_TRAPPING) < 10)
+			msg_print(Ind, "\374\377GYou learn how to use the fighting technique 'Steam Blast'!");
 #endif
 		break;
 	case SKILL_HEALTH:
@@ -722,6 +724,12 @@ void msg_gained_abilities(int Ind, int old_value, int i) {
 		if (p_ptr->aura[1]) toggle_aura(Ind, 1);
 		if (p_ptr->aura[2]) toggle_aura(Ind, 2);
 		break;
+	case SKILL_TRAPPING:
+#ifdef ENABLE_DEMOLITIONIST
+		if (get_skill(p_ptr, SKILL_DIG) < 10)
+#endif
+		if (old_value < 100 && new_value >= 100)
+			msg_print(Ind, "\374\377GYou learn how to use the fighting technique 'Steam Blast'!");
 	}
 
 	/* New odd combo traits, mostly for Necro/Trauma related things, for DK/HK */
