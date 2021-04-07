@@ -2861,7 +2861,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 					if (kit_o_ptr->owner == Players[i]->id) break;
 				}
 
-				if (i == NumPlayers || cs_ptr->sc.montrap.found || !check_hostile(Ind, i)) {
+				if (i == NumPlayers + 1 || cs_ptr->sc.montrap.found || !check_hostile(Ind, i)) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
 						/*image_random(ap, cp); */
