@@ -546,6 +546,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.easy_disarm_montraps,	FALSE,	3,	9, 136, TRUE,
 	    "easy_disarm_montraps",	"Automatically disarm monster traps ('/edtm')" },
+	{ &c_cfg.no_house_magic,	FALSE,	3,	0, 137, TRUE,
+	    "no_house_magic",		"Prevent using magic inside houses" },
 
 #if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
     /* 4.7.3 */

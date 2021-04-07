@@ -1782,7 +1782,10 @@ int pick_player(house_type *h_ptr) {
 /* Test if a coordinate (player pos usually) is inside a building
    (or on its edge), in a simple (risky?) way - C. Blue */
 bool inside_house(struct worldpos *wpos, int x, int y) {
-	cave_type *c_ptr, **zcave = getcave(wpos);
+	static cave_type *c_ptr, **zcave; //for efficiency
+
+	if (wpos->wz == 0) return FALSE;
+	zcave = getcave(wpos);
 
 	/* This check was added so inside_house() can be used for player stores in delete_object_idx(),
 	   otherwise segfault when objects are erased from non-allocated areas (cleanup routines).
@@ -1793,7 +1796,7 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 
 	c_ptr = &zcave[y][x];
 	/* assume all houses are on the world surface (and vaults aren't) */
-	if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY) &&
+	if ((c_ptr->info & CAVE_ICKY) &&
 	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
 		return TRUE;
 

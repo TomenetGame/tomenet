@@ -900,6 +900,7 @@ struct player_type
 	bool mute_when_idle;
 	bool censor_swearing;
 	bool keep_bottle;
+	bool no_house_magic;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */

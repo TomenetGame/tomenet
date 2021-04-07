@@ -1719,6 +1719,12 @@ void cast_school_spell(int Ind, int book, int spell, int dir, int item, int aux)
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
+	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+		msg_print(Ind, "You decide to better not cast a spell inside a house.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		return;
+	}
+
 	if (o_ptr->tval != TV_BOOK) {
 		/* log for debugging */
 		s_printf("CAST_SCHOOL_SPELL_ERROR: TV_BOOK != %d ('%s')\n", o_ptr->tval, p_ptr->name);
@@ -1904,6 +1910,12 @@ bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 		p_ptr->current_rcraft = 1;
 		p_ptr->current_rcraft_e_flags = lo;
 		p_ptr->current_rcraft_m_flags = hi;
+		return FALSE;
+	}
+
+	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+		msg_print(Ind, "You decide to better not cast a spell inside a house.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 		return FALSE;
 	}
 

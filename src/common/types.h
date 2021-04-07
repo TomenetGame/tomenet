@@ -3545,6 +3545,7 @@ struct player_type {
 
 	int item_newest;
 	bool keep_bottle;
+	bool no_house_magic;
 };
 
 typedef struct boni_col boni_col;
@@ -3977,6 +3978,7 @@ struct client_opts {
 	bool keep_bottle;
 
 	bool easy_disarm_montraps;
+	bool no_house_magic;
 };
 
 /*

@@ -2593,10 +2593,13 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->keep_bottle = FALSE;
 	}
 
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1))
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) {
 		p_ptr->easy_disarm_montraps = options[136];
-	else
+		p_ptr->no_house_magic = options[137];
+	} else {
 		p_ptr->easy_disarm_montraps = FALSE;
+		p_ptr->no_house_magic = FALSE;
+	}
 
 	if (p_ptr->limit_chat) msg_print(Ind, "\377yYou have enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is not globally visible!");
 }

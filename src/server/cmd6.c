@@ -3522,6 +3522,12 @@ void do_cmd_use_staff(int Ind, int item) {
 #endif	// 0
 
 
+	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+		msg_print(Ind, "You decide to better not use staves inside a house.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		return;
+	}
+
 #if 1
 	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
@@ -3835,6 +3841,12 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	if (p_ptr->tim_manashield) set_tim_manashield(Ind, 0);
 	if (p_ptr->tim_wraith) set_tim_wraith(Ind, 0);
 #endif	// 0
+
+	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+		msg_print(Ind, "You decide to better not aim wands inside a house.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		return;
+	}
 
 #if 1	// anti_magic is not antimagic :)
 	if (p_ptr->anti_magic) {
@@ -4730,6 +4742,12 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
  #endif
 			} else p_ptr->shooty_till_kill = FALSE;
 		} else p_ptr->shooty_till_kill = FALSE;
+	}
+
+	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+		msg_print(Ind, "You decide to better not zap rods inside a house.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		return;
 	}
 
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
