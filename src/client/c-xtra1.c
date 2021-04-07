@@ -986,7 +986,7 @@ void prt_speed(int speed) {
 
 	if (no_tele_grid) {
 		attr = TERM_L_DARK;
-		if (!speed) sprintf(buf, "No-Teleport");
+		if (!speed) sprintf(buf, "No-Tele");
 	}
 
 	/* remember cursor position */
