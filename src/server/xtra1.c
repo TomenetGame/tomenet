@@ -1177,9 +1177,19 @@ void calc_mana(int Ind) {
 		break;
 #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
+		/* few Int, much Wis --140 */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 5000; //slight bump over paladin
+		break;
 #endif
 #ifdef ENABLE_HELLKNIGHT
 	case CLASS_HELLKNIGHT:
+		/* few Int, much Wis --140 */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 5000; //slight bump over paladin
+		break;
 #endif
 	case CLASS_PALADIN:
 		/* few Int, much Wis --140 */
