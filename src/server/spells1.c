@@ -10011,6 +10011,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				lose_exp(Ind, 200 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
 			}
 		}
+		/* 'Nether Feedback' perk */
+		if (dam && get_skill(p_ptr, SKILL_OUNLIFE) == 50) {
+			p_ptr->csp += (dam + 5) / 10; //gain mana from ~10% of the damage
+			dam = (dam * 9 + 4) / 10; //reduce by ~10% flat
+			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+			p_ptr->redraw |= (PR_MANA);
+		}
 		break;
 
 	/* Water -- stun/confuse */

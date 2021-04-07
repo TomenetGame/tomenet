@@ -18543,6 +18543,9 @@ spell failure rate. All Unlife spells use WIS.)
     BONI:           At 30 it grants HP regeneration to true vampires (same as
                     from item flag) and strong hold of your life force for
                     other races.
+                    At 50 it grants 'nether feedback': If you take damage from
+                    nether-based attacks the damage is reduced by a flat 10%
+                    and you regain that part as mana points.
                     If both Unlife and Necromancy are at 50.000, it grants
                     ultimate hold on one's own life force, rendering oneself
                     immune to experience drain, including the permanent drain
