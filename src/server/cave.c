@@ -2895,7 +2895,7 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 					if (cs_ptr->sc.rune.id == Players[i]->id) break;
 				}
 
-				if (i == NumPlayers || cs_ptr->sc.rune.found || !check_hostile(Ind, i)) {
+				if (i == NumPlayers + 1 || cs_ptr->sc.rune.found || !check_hostile(Ind, i)) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
 						/*image_random(ap, cp); */
