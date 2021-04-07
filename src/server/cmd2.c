@@ -1784,7 +1784,7 @@ int pick_player(house_type *h_ptr) {
 bool inside_house(struct worldpos *wpos, int x, int y) {
 	static cave_type *c_ptr, **zcave; //for efficiency
 
-	if (wpos->wz == 0) return FALSE;
+	if (wpos->wz) return FALSE;
 	zcave = getcave(wpos);
 
 	/* This check was added so inside_house() can be used for player stores in delete_object_idx(),
