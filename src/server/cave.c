@@ -3016,7 +3016,16 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 					}
 				}
 			}
-			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+			else {
+				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+
+				/* Handle "blind" */
+				if (p_ptr->blind) {
+					/* Use "dark gray" */
+					a = TERM_L_DARK;
+					palanim = FALSE;
+				}
+			}
 
 #if 1
 			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
@@ -3131,7 +3140,32 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 				/* Handle "blind" */
 				if (p_ptr->blind) {
 					/* Use "dark gray" */
-					a = TERM_L_DARK;
+					switch (a) {
+					case TERM_L_RED:
+						a = TERM_RED;
+						break;
+					case TERM_ORANGE:
+						a = TERM_UMBER;
+						break;
+					case TERM_L_UMBER:
+						a = TERM_UMBER;
+						break;
+					case TERM_YELLOW:
+						a = TERM_L_UMBER;
+						break;
+					case TERM_L_BLUE:
+						a = TERM_BLUE;
+						break;
+					case TERM_L_GREEN:
+						a = TERM_GREEN;
+						break;
+					case TERM_VIOLET:
+						a = TERM_SLATE;
+						break;
+					default:
+						a = TERM_L_DARK;
+						break;
+					}
 				}
 
 				/* Handle "torch-lit" grids */
@@ -3212,7 +3246,42 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 #endif
 				}
 			}
-			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+			else {
+				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+
+				/* Handle "blind" */
+				if (p_ptr->blind) {
+					switch (a) {
+					case TERM_L_RED:
+						//a = TERM_RED;
+						a = TERM_L_UMBER;
+						break;
+					case TERM_ORANGE:
+						a = TERM_UMBER;
+						break;
+					case TERM_L_UMBER:
+						a = TERM_UMBER;
+						break;
+					case TERM_YELLOW:
+						a = TERM_L_UMBER;
+						break;
+					case TERM_L_BLUE:
+						//a = TERM_BLUE;
+						a = TERM_SLATE;
+						break;
+					case TERM_L_GREEN:
+						//a = TERM_GREEN;
+						a = TERM_SLATE;
+						break;
+					case TERM_VIOLET:
+						a = TERM_L_DARK;
+						break;
+					default:
+						a = TERM_L_DARK;
+						break;
+					}
+				}
+			}
 
 			/* Display vault walls in a more distinguishable colour, if desired */
 			if (p_ptr->permawalls_shade && (feat == FEAT_PERM_INNER || feat == FEAT_PERM_OUTER)) a = TERM_L_UMBER;
