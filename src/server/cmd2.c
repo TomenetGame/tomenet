@@ -1785,6 +1785,13 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 	static cave_type *c_ptr, **zcave; //for efficiency
 
 	if (wpos->wz) return FALSE;
+
+#if 0
+	/* In case CAVE_ICKY overworld-structures will exist in the future.
+	   Note that this will probably exclude all jails too. */
+	if (!istownarea(wpos, MAX_TOWNAREA)) return FALSE;
+#endif
+
 	zcave = getcave(wpos);
 
 	/* This check was added so inside_house() can be used for player stores in delete_object_idx(),
