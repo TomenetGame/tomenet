@@ -9848,7 +9848,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		str[0] = toupper(str[0]);
 		pid = lookup_player_id(str);
 		if (!pid) {
-			msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
+			if (str[0] != '\e') msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
 			return;
 		}
 		acc = lookup_accountname(pid);
@@ -10026,7 +10026,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		str[0] = toupper(str[0]);
 		pid = lookup_player_id(str);
 		if (!pid) {
-			msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
+			if (str[0] != '\e') msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
 			return;
 		}
 		acc = lookup_accountname(pid);
