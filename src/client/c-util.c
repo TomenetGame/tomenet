@@ -1681,10 +1681,15 @@ bool paste_from_clipboard(char *buf) {
 				strncpy(buf_esc, pchData, MSG_LEN - NAME_LEN - 13); //just accomodate for some colour codes and spacing, not really calculated it
 				buf_esc[MSG_LEN - NAME_LEN - 13] = 0;
 
-				/* treat { and : */
+				/* treat { and : and also strip away all control chars (like 0x0A aka RETURN) */
 				c = buf_esc;
 				c2 = buf;
 				while (*c) {
+					if (*c < 32) {
+						c++;
+						continue;
+					}
+
 					switch (*c) {
 					case ':':
 						if (pos != 0 && pos <= NAME_LEN) {
@@ -1729,10 +1734,15 @@ bool paste_from_clipboard(char *buf) {
 	if (!fgets(buf_esc, MSG_LEN - NAME_LEN - 13, fp)) buf_esc[0] = 0; //just accomodate for some colour codes and spacing, not really calculated it
 	//else buf_esc[strlen(buf_esc) - 1] = 0; //remove trailing newline -- there is no trailing newline!
 
-	/* treat { and : */
+	/* treat { and : and also strip away all control chars (like 0x0A aka RETURN) */
 	c = buf_esc;
 	c2 = buf;
 	while (*c) {
+		if (*c < 32) {
+			c++;
+			continue;
+		}
+
 		switch (*c) {
 		case ':':
 			if (pos != 0 && pos <= NAME_LEN) {
