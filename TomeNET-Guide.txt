@@ -10756,7 +10756,7 @@ item that you will find on the floor:
     -Tools:
      Boots, cloaks, diggers, light sources, flints, food, flasks, trap kits,
      spikes, climbing sets, picklocks, money belts,
-     devices of theft prevention, tarpaulins, mummy wrappings.
+     backpack safety locks, tarpaulins, mummy wrappings.
 
     -Junk (rest chance, not covered by the above four categories):
      Skeletons/skulls/bones, bottles, shards of pottery, broken sticks,
@@ -11599,7 +11599,7 @@ Chests              Chests may contain treasures or items. Usually, chests
 Climbing set        Allows you to travel over mountain fields.
                     Info for mimics & co: In order to be able to use it, your
                     appearance form must have arms and fingers. (Equip it!)
-Device of theft prevention
+Backpack safety lock
                     When equipped, prevents thieves from stealing items from
                     your backpack. It does not secure your purse though, you
                     will need a money belt for that.
@@ -12442,7 +12442,7 @@ LOSE_xxx        sustain stats.
 EAT_xxx         DEX and stealing skill increase your chance to resist
                 EAT_ITEM (item stealing) and
                 EAT_GOLD (money stealing) attempts.
-                A device of theft prevention makes you immune to EAT_ITEM.
+                A backpack safety lock makes you immune to EAT_ITEM.
                 A money belt makes you immune to EAT_GOLD.
                 Nothing helps against EAT_FOOD or EAT_LITE.
 UN_BONUS        disenchantment.
@@ -21314,14 +21314,15 @@ Here is some advice how to use these most valuable scrolls wisely:
 DOESN'T ENCHANT WHOLE STACKS:
 
 -Don't use scrolls of artifact creation on item stacks, it would
-reduce the stack to 1.
+ reduce the stack to 1.
 
 ONLY WORKS ON STANDARD EQUIPMENT:
 
--Artifact creation only works on items that can be equipped - with the
-exception of tool items like diggers, picklock, money belt, device of theft
-prevention, tarpaulin, flint, mummy wrapping, climbing set. These won't work!
-Also, it does not work on rings of polymorphing or amulets of telepathy!
+-Artifact creation only works on items that can be equipped - with
+ the exception of tool items like diggers, picklocks, money belts,
+ backpack safety locks, tarpaulins, flints, mummy wrappings, climbing sets.
+ These won't work!
+ Also, it does not work on rings of polymorphing or amulets of telepathy!
 
 DOESN'T WORK ON EGOS / ARTS:
 
