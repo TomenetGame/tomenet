@@ -8802,17 +8802,17 @@ void do_pick_breath(int Ind, int element) {
 	if (!element) {
 		switch (p_ptr->breath_element) {
 		case 1: msg_print(Ind, "\377sYour current breath element is random."); return;
-		case 2: msg_print(Ind, "\377sYour current breath element is lightning."); return;
-		case 3: msg_print(Ind, "\377sYour current breath element is frost."); return;
-		case 4: msg_print(Ind, "\377sYour current breath element is fire."); return;
-		case 5: msg_print(Ind, "\377sYour current breath element is acid."); return;
-		case 6: msg_print(Ind, "\377sYour current breath element is poison."); return;
-		case 7: msg_print(Ind, "\377sYour current breath element is confusion."); return;
-		case 8: msg_print(Ind, "\377sYour current breath element is inertia."); return;
-		case 9: msg_print(Ind, "\377sYour current breath element is sound."); return;
-		case 10: msg_print(Ind, "\377sYour current breath element is shards."); return;
-		case 11: msg_print(Ind, "\377sYour current breath element is chaos."); return;
-		case 12: msg_print(Ind, "\377sYour current breath element is disenchantment."); return;
+		case 2: msg_print(Ind, "\377sYour current breath element is \377blightning."); return;
+		case 3: msg_print(Ind, "\377sYour current breath element is \377wfrost."); return;
+		case 4: msg_print(Ind, "\377sYour current breath element is \377rfire."); return;
+		case 5: msg_print(Ind, "\377sYour current breath element is \377sacid."); return;
+		case 6: msg_print(Ind, "\377sYour current breath element is \377gpoison."); return;
+		case 7: msg_print(Ind, "\377sYour current breath element is \377Uconfusion."); return;
+		case 8: msg_print(Ind, "\377sYour current breath element is \377Winertia."); return;
+		case 9: msg_print(Ind, "\377sYour current breath element is \377ysound."); return;
+		case 10: msg_print(Ind, "\377sYour current breath element is \377ushards."); return;
+		case 11: msg_print(Ind, "\377sYour current breath element is \377vchaos."); return;
+		case 12: msg_print(Ind, "\377sYour current breath element is \377odisenchantment."); return;
 		}
 		return;
 	}
@@ -8820,18 +8820,18 @@ void do_pick_breath(int Ind, int element) {
 	p_ptr->breath_element = element;
 	switch (element) {
 	case 1: msg_print(Ind, "\377sYour breath element is now random."); return;
-	case 2: msg_print(Ind, "\377sYour breath element is now lightning."); return;
-	case 3: msg_print(Ind, "\377sYour breath element is now frost."); return;
-	case 4: msg_print(Ind, "\377sYour breath element is now fire."); return;
-	case 5: msg_print(Ind, "\377sYour breath element is now acid."); return;
-	case 6: msg_print(Ind, "\377sYour breath element is now poison."); return;
+	case 2: msg_print(Ind, "\377sYour breath element is now \377blightning."); return;
+	case 3: msg_print(Ind, "\377sYour breath element is now \377wfrost."); return;
+	case 4: msg_print(Ind, "\377sYour breath element is now \377rfire."); return;
+	case 5: msg_print(Ind, "\377sYour breath element is now \377sacid."); return;
+	case 6: msg_print(Ind, "\377sYour breath element is now \377gpoison."); return;
 	/* extended elements for power trait */
-	case 7: msg_print(Ind, "\377sYour breath element is now confusion."); return;
-	case 8: msg_print(Ind, "\377sYour breath element is now inertia."); return;
-	case 9: msg_print(Ind, "\377sYour breath element is now sound."); return;
-	case 10: msg_print(Ind, "\377sYour breath element is now shards."); return;
-	case 11: msg_print(Ind, "\377sYour breath element is now chaos."); return;
-	case 12: msg_print(Ind, "\377sYour breath element is now disenchantment."); return;
+	case 7: msg_print(Ind, "\377sYour breath element is now \377Uconfusion."); return;
+	case 8: msg_print(Ind, "\377sYour breath element is now \377Winertia."); return;
+	case 9: msg_print(Ind, "\377sYour breath element is now \377ysound."); return;
+	case 10: msg_print(Ind, "\377sYour breath element is now \377ushards."); return;
+	case 11: msg_print(Ind, "\377sYour breath element is now \377vchaos."); return;
+	case 12: msg_print(Ind, "\377sYour breath element is now \377odisenchantment."); return;
 	}
 }
 
