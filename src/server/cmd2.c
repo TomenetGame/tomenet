@@ -4052,11 +4052,11 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					    ) : 0);
 					place_gold(Ind, wpos, y, x, tval, 0);
 					object_level = old_object_level;
-					if (nonobvious) s_printf("DIGGING: %s (F%d,S%d,m%d) digs nonobvious (x%d=%dAu).\n",
-					    p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG), mining,
+					if (nonobvious) s_printf("DIGGING: %s (F%d,S%d,O%d) digs nonobvious (x%d=%dAu).\n",
+					    p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG), object_level,
 					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
-					else s_printf("DIGGING: %s (F%d,S%d,m%d) digs obvious (x%d=%dAu).\n",
-					    p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG), mining,
+					else s_printf("DIGGING: %s (F%d,S%d,O%d) digs obvious (x%d=%dAu).\n",
+					    p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG), object_level,
 					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
 					c_ptr->info |= CAVE_MINED; //mark for warning_tunnel_hidden
 				}
