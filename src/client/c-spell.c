@@ -2005,17 +2005,15 @@ static int get_breath(int *br) {
 			/* Find the power it is related to */
 			if (my_strcasestr(buf, "Ch")) i = 0;
 			else if (my_strcasestr(buf, "No")) i = 1;
-			else if (my_strcasestr(buf, "El")) i = 2;
-			else if (my_strcasestr(buf, "Co")) i = 3;
+			else if (my_strcasestr(buf, "Li")) i = 2;
+			else if (my_strcasestr(buf, "Fr")) i = 3;
 			else if (my_strcasestr(buf, "Fi")) i = 4;
 			else if (my_strcasestr(buf, "Ac")) i = 5;
 			else if (my_strcasestr(buf, "Po")) i = 6;
 
-			if (i != -1) break;
-			else {
-				bell();
-				continue;
-			}
+			if (i != -1) flag = TRUE;
+			else bell();
+			continue;
 		}
 
 		/* extract request */
