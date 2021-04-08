@@ -2171,6 +2171,9 @@ static void player_setup(int Ind, bool new) {
 	  for some teleport_player() calls that may follow soon */
 	p_ptr->store_num = -1;
 
+	/* initialise "random breath" for draconians. (0 is just unused) */
+	p_ptr->breath_element = 1;
+
 	/* Catch bad player coordinates,
 	   either corrupted ones (insane values)
 	   or invalid ones if dungeon locations were changed meanwhile - C. Blue */
