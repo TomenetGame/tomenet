@@ -3980,6 +3980,7 @@ struct client_opts {
 
 	bool easy_disarm_montraps;
 	bool no_house_magic;
+	bool no_lite_fainting;
 };
 
 /*

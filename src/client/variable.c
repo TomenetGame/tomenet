@@ -678,3 +678,4 @@ bool custom_font_warning = FALSE;
 int bookmark_line[GUIDE_BOOKMARKS];
 char bookmark_name[GUIDE_BOOKMARKS][60];
 #endif
+unsigned char lamp_fainting = 0;

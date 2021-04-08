@@ -725,8 +725,11 @@ byte flick_colour(byte attr) {
 		    : (randint(2) == 1 ? TERM_YELLOW : (randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW)));//note 1st (...) is TERM_ELEC, last (...) is TERM_LITE
 
 	case TERM_LAMP:
+		if (lamp_fainting) return (rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
 		return (rand_term_lamp ? TERM_YELLOW : TERM_ORANGE);
 	case TERM_LAMP_DARK:
+		//if (lamp_fainting) return TERM_UMBER; //hm :/
+		if (lamp_fainting) return (rand_term_lamp ? TERM_UMBER : TERM_L_DARK); //hmmm
 		return (rand_term_lamp ? TERM_L_UMBER : TERM_UMBER);
 
 	case TERM_EMBER:
@@ -797,7 +800,7 @@ void flicker() {
 
 	old = Term;
 
-	/* handle TERM_LAMP preparations */
+	/* Handle TERM_LAMP preparations */
 	rand_term_lamp_ticks++;
 	if (rand_term_lamp_ticks == 1) {
 		int wind = weather_wind + (weather_wind % 2);
@@ -808,6 +811,8 @@ void flicker() {
 		rand_term_lamp = (rand_int(wind) != 0);
 		rand_term_lamp_ticks = 0;
 	}
+	/* Handle lamp fainting */
+	if (lamp_fainting) lamp_fainting--;
 
 	for(i = 0; i < ANGBAND_TERM_MAX; i++) {
 		tterm = ang_term[i];

@@ -76,7 +76,7 @@ Y:view_shade_walls
 Y:floor_lighting
 Y:view_lamp_floor
 Y:view_shade_floor
-X:view_lite_extra
+Y:view_lite_extra
 
 Y:easy_open
 X:easy_disarm
@@ -158,3 +158,7 @@ Y:item_error_beep
 X:keep_bottle
 
 Y:screenshot_format
+
+X:easy_disarm_montraps
+X:no_house_magic
+X:no_lite_fainting

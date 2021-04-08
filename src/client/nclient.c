@@ -2469,6 +2469,9 @@ int Receive_message(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0) return n;
 
+	/* Ultra-hack for light-source fainting. (First two bytes are "\377w".) */
+	if (!c_cfg.no_lite_fainting && !strcmp(buf + 2, "Your light is growing faint.")) lamp_fainting = 30; //deciseconds
+
 	/* Hack to clear topline: It's a translation of the former msg_print(Ind, NULL) hack, as we cannot transmit the NULL. */
 	if (buf[0] == '\377' && !buf[1]) {
 		if (screen_icky && (!shopping || perusing)) Term_switch(0);
