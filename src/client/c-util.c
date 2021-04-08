@@ -5636,6 +5636,7 @@ void interact_macros(void) {
 #define mw_abilitynt 'l'
 #define mw_abilityt 'L'
 #define mw_common 'm'
+#define mw_prfele 'M'
 #define mw_slash 'n'
 #define mw_custom 'N'
 #define mw_load 'o'
@@ -5704,7 +5705,7 @@ Chain_Macro:
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "j\377w/\377GJ) Shooting technique (archers, rangers). \377w/\377G Activate magic device.");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "k\377w/\377GK) Use any item without \377w/\377G with a target).");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "l\377w/\377GL) Use a basic ability ('m') without \377w/\377G with target (Draconian breath).");
-					Term_putstr(8, l++, -1, TERM_L_GREEN, "m)   Choose from a set of some common commands and functions.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "m\377w/\377GM) Common commands and functions. \377w/\377G Pick breath element (Draconians).");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "n\377w/\377GN) Enter a slash command. \377w/\377G Enter a custom action (same as % a).");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "o\377w/\377Gp) Load a macro file. \377w/\377G Change equipment (wield/takeoff/swap).");
 					Term_putstr(2, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt\377w/\377Gu) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing \377w/\377G closing.");
@@ -5723,9 +5724,9 @@ Chain_Macro:
 						default:
 							/* invalid action -> exit wizard */
 							if ((choice < 'a' || choice > mw_LAST) &&
-							    choice != 'C' && choice != 'D' && choice != 'E' && choice != 'L' &&
-							    choice != 'G' && choice != 'I' && choice != 'K' && choice != 'H' &&
-							    choice != 'J' && choice != 'N') {
+							    choice != 'C' && choice != 'D' && choice != 'E' &&
+							    choice != 'G' && choice != 'H' && choice != 'I' && choice != 'J' &&
+							    choice != 'K' && choice != 'L' && choice != 'M' && choice != 'N') {
 								//i = -1;
 								continue;
 							}
@@ -6354,6 +6355,50 @@ Chain_Macro:
 						if (i == -2) continue;
 						break;
 
+					case mw_prfele:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an elemental preference:");
+						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Random (default)");
+						Term_putstr(5, 12, -1, TERM_GREEN, "\377Gb\377g) Electricity  \377Gc\377g) Cold  \377Gd\377g) Fire  \377Ge\377g) Acid  \377Gf\377g) Poison");
+						Term_putstr(5, 13, -1, TERM_GREEN, "\377G?\377g) Just check (displays your current elemental preference)");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-f,*,?):");
+
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -2; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if ((choice < 'a' || choice > 'f') && choice != '?') {
+									//i = -2;
+									continue;
+								}
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -2) continue;
+
+						/* build macro part */
+						switch (choice) {
+						case 'b': strcpy(buf2, "\\e)m@19\rd@Electricity\r"); break;
+						case 'c': strcpy(buf2, "\\e)m@19\rd@Cold\r"); break;
+						case 'd': strcpy(buf2, "\\e)m@19\rd@Acid\r"); break;
+						case 'e': strcpy(buf2, "\\e)m@19\rd@Fire\r"); break;
+						case 'f': strcpy(buf2, "\\e)m@19\rd@Poison\r"); break;
+						case 'a': strcpy(buf2, "\\e)m@19\rd@Random (default)\r"); break;
+						case '?': strcpy(buf2, "\\e)m@19\rd@Check\r"); break;
+						}
+
+						choice = mw_prfele; /* hack - remember */
+						break;
+
 					case mw_dir_run:
 					case mw_dir_tunnel:
 					case mw_dir_disarm:
@@ -6466,8 +6511,9 @@ Chain_Macro:
 						if (i == -2) continue;
 					}
 					/* no need for inputting an item/spell to use with the macro? */
-					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance && choice != mw_common
-					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close) {
+					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm &&
+					    choice != mw_stance && choice != mw_common && choice != mw_dir_run && choice != mw_dir_tunnel &&
+					    choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close && choice != mw_prfele) {
 						if (choice == mw_load) Term_gotoxy(23, 16);
 						else if (choice == mw_poly) Term_gotoxy(47, 19);
 						else Term_gotoxy(47, 16);
@@ -6490,8 +6536,9 @@ Chain_Macro:
 
 
 					/* generate the full macro action; magic device/preferred immunity macros are already pre-made */
-					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common
-					    && choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close) {
+					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common &&
+					    choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash &&
+					    choice != mw_dir_close && choice != mw_prfele) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)

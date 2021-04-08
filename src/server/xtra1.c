@@ -2528,10 +2528,10 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 			if (r_ptr->flags3 & RF3_IM_COLD) immunity[immrand] = 4;
 			break;
 		case 3:
-			if (r_ptr->flags3 & RF3_IM_ACID) immunity[immrand] = 1;
+			if (r_ptr->flags3 & RF3_IM_FIRE) immunity[immrand] = 3;
 			break;
 		case 4:
-			if (r_ptr->flags3 & RF3_IM_FIRE) immunity[immrand] = 3;
+			if (r_ptr->flags3 & RF3_IM_ACID) immunity[immrand] = 1;
 			break;
 		case 5:
 			if (r_ptr->flags3 & RF3_IM_POIS) immunity[immrand] = 5;

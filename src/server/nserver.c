@@ -9685,10 +9685,10 @@ static int Receive_activate_skill(int ind) {
 							msg_print(player, "\377WYour current immunity preference is \377wcold.");
 							break;
 						case 3:
-							msg_print(player, "\377WYour current immunity preference is \377sacid.");
+							msg_print(player, "\377WYour current immunity preference is \377rfire.");
 							break;
 						case 4:
-							msg_print(player, "\377WYour current immunity preference is \377rfire.");
+							msg_print(player, "\377WYour current immunity preference is \377sacid.");
 							break;
 						case 5:
 							msg_print(player, "\377WYour current immunity preference is \377gpoison.");

@@ -1839,9 +1839,11 @@ static bool rd_extra(int Ind) {
 	if (!older_than(4, 7, 12)) {
 		rd_byte(&tmp8u);
 		p_ptr->breath_element = tmp8u;
+		/* Fix old values */
+		if (!p_ptr->breath_element) p_ptr->breath_element = 1;
 	} else {
 		rd_byte(&tmp8u);
-		p_ptr->breath_element = 0; //random
+		p_ptr->breath_element = 1; //random
 	}
 
 	rd_s16b(&p_ptr->blind);

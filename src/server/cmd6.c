@@ -8786,56 +8786,74 @@ void do_pick_breath(int Ind, int element) {
 
 	switch (p_ptr->ptrait) {
 	case TRAIT_MULTI:
-		if (element > 5) {
+		if (element > 6) { //client num-1
 			msg_print(Ind, "\377sInvalid element.");
 			return;
 		}
 		break;
 	case TRAIT_POWER:
-		if (element > 11) {
+		if (element > 12) { //client num-1
 			msg_print(Ind, "\377sInvalid element.");
 			return;
 		}
 		break;
 	}
 
+	if (!element) {
+		switch (p_ptr->breath_element) {
+		case 1: msg_print(Ind, "\377sYour current breath element is random.");
+		case 2: msg_print(Ind, "\377sYour current breath element is lightning.");
+		case 3: msg_print(Ind, "\377sYour current breath element is frost.");
+		case 4: msg_print(Ind, "\377sYour current breath element is fire.");
+		case 5: msg_print(Ind, "\377sYour current breath element is acid.");
+		case 6: msg_print(Ind, "\377sYour current breath element is poison.");
+		case 7: msg_print(Ind, "\377sYour current breath element is confusion.");
+		case 8: msg_print(Ind, "\377sYour current breath element is inertia.");
+		case 9: msg_print(Ind, "\377sYour current breath element is sound.");
+		case 10: msg_print(Ind, "\377sYour current breath element is shards.");
+		case 11: msg_print(Ind, "\377sYour current breath element is chaos.");
+		case 12: msg_print(Ind, "\377sYour current breath element is disenchantment.");
+		}
+		return;
+	}
+
 	p_ptr->breath_element = element;
 	switch (element) {
-	case 0:
+	case 1:
 		msg_print(Ind, "\377sYour breath element is now random.");
 		return;
-	case 1:
+	case 2:
 		msg_print(Ind, "\377sYour breath element is now lightning.");
 		return;
-	case 2:
+	case 3:
 		msg_print(Ind, "\377sYour breath element is now frost.");
 		return;
-	case 3:
+	case 4:
 		msg_print(Ind, "\377sYour breath element is now fire.");
 		return;
-	case 4:
+	case 5:
 		msg_print(Ind, "\377sYour breath element is now acid.");
 		return;
-	case 5:
+	case 6:
 		msg_print(Ind, "\377sYour breath element is now poison.");
 		return;
 	/* extended elements for power trait */
-	case 6:
+	case 7:
 		msg_print(Ind, "\377sYour breath element is now confusion.");
 		return;
-	case 7:
+	case 8:
 		msg_print(Ind, "\377sYour breath element is now inertia.");
 		return;
-	case 8:
+	case 9:
 		msg_print(Ind, "\377sYour breath element is now sound.");
 		return;
-	case 9:
+	case 10:
 		msg_print(Ind, "\377sYour breath element is now shards.");
 		return;
-	case 10:
+	case 11:
 		msg_print(Ind, "\377sYour breath element is now chaos.");
 		return;
-	case 11:
+	case 12:
 		msg_print(Ind, "\377sYour breath element is now disenchantment.");
 		return;
 	}
@@ -8914,12 +8932,12 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	trait = p_ptr->ptrait;
 	if (trait == TRAIT_MULTI) {
 		/* Draconic Multi-hued */
-		if (p_ptr->breath_element == 0) trait = rand_int(5) + TRAIT_BLUE;
-		else trait = p_ptr->breath_element;
+		if (p_ptr->breath_element == 1) trait = rand_int(5) + TRAIT_BLUE;
+		else trait = p_ptr->breath_element - 1;
 	} else if (trait == TRAIT_POWER) {
 		/* Power dragon */
-		if (p_ptr->breath_element == 0) trait = rand_int(10) + TRAIT_BLUE;
-		else trait = p_ptr->breath_element;
+		if (p_ptr->breath_element == 1) trait = rand_int(10) + TRAIT_BLUE;
+		else trait = p_ptr->breath_element - 1;
 		if (trait >= TRAIT_MULTI) trait++;
 	}
 
