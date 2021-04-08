@@ -5893,7 +5893,7 @@ Chain_Macro:
 						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Just check (displays your current immunity preference)");
 						Term_putstr(5, 12, -1, TERM_GREEN, "\377Gb\377g) None (pick one randomly on polymorphing)");
 						Term_putstr(5, 13, -1, TERM_GREEN, "\377Gc\377g) Electricity  \377Gd\377g) Cold  \377Ge\377g) Acid  \377Gf\377g) Fire  \377Gg\377g) Poison  \377Gh\377g) Water");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-f,*,?):");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-h):");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
