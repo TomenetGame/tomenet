@@ -6359,7 +6359,7 @@ Chain_Macro:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an elemental preference:");
 						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Just check (displays your current elemental preference)");
 						Term_putstr(5, 12, -1, TERM_GREEN, "\377Gb\377g) None (random)");
-						Term_putstr(5, 13, -1, TERM_GREEN, "\377Gc\377g) Lightning  \377Gd\377g) Frost  \377Ge\377g) Fire  \377Gf\377g) Acid  \377Gg\377g) Poison");
+						Term_putstr(5, 13, -1, TERM_GREEN, "\377Gc\377g) Lightning  \377Gd\377g) Frost  \377Ge\377g) Acid  \377Gf\377g) Fire  \377Gg\377g) Poison");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-g):");
 
 						while (TRUE) {
@@ -6391,8 +6391,8 @@ Chain_Macro:
 						case 'b': strcpy(buf2, "\\e)m@19\r@None\r"); break;
 						case 'c': strcpy(buf2, "\\e)m@19\r@Lightning\r"); break;
 						case 'd': strcpy(buf2, "\\e)m@19\r@Frost\r"); break;
-						case 'e': strcpy(buf2, "\\e)m@19\r@Fire\r"); break;
-						case 'f': strcpy(buf2, "\\e)m@19\r@Acid\r"); break;
+						case 'e': strcpy(buf2, "\\e)m@19\r@Acid\r"); break;
+						case 'f': strcpy(buf2, "\\e)m@19\r@Fire\r"); break;
 						case 'g': strcpy(buf2, "\\e)m@19\r@Poison\r"); break;
 						}
 
