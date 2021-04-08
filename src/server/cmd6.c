@@ -8801,61 +8801,37 @@ void do_pick_breath(int Ind, int element) {
 
 	if (!element) {
 		switch (p_ptr->breath_element) {
-		case 1: msg_print(Ind, "\377sYour current breath element is random.");
-		case 2: msg_print(Ind, "\377sYour current breath element is lightning.");
-		case 3: msg_print(Ind, "\377sYour current breath element is frost.");
-		case 4: msg_print(Ind, "\377sYour current breath element is fire.");
-		case 5: msg_print(Ind, "\377sYour current breath element is acid.");
-		case 6: msg_print(Ind, "\377sYour current breath element is poison.");
-		case 7: msg_print(Ind, "\377sYour current breath element is confusion.");
-		case 8: msg_print(Ind, "\377sYour current breath element is inertia.");
-		case 9: msg_print(Ind, "\377sYour current breath element is sound.");
-		case 10: msg_print(Ind, "\377sYour current breath element is shards.");
-		case 11: msg_print(Ind, "\377sYour current breath element is chaos.");
-		case 12: msg_print(Ind, "\377sYour current breath element is disenchantment.");
+		case 1: msg_print(Ind, "\377sYour current breath element is random."); return;
+		case 2: msg_print(Ind, "\377sYour current breath element is lightning."); return;
+		case 3: msg_print(Ind, "\377sYour current breath element is frost."); return;
+		case 4: msg_print(Ind, "\377sYour current breath element is fire."); return;
+		case 5: msg_print(Ind, "\377sYour current breath element is acid."); return;
+		case 6: msg_print(Ind, "\377sYour current breath element is poison."); return;
+		case 7: msg_print(Ind, "\377sYour current breath element is confusion."); return;
+		case 8: msg_print(Ind, "\377sYour current breath element is inertia."); return;
+		case 9: msg_print(Ind, "\377sYour current breath element is sound."); return;
+		case 10: msg_print(Ind, "\377sYour current breath element is shards."); return;
+		case 11: msg_print(Ind, "\377sYour current breath element is chaos."); return;
+		case 12: msg_print(Ind, "\377sYour current breath element is disenchantment."); return;
 		}
 		return;
 	}
 
 	p_ptr->breath_element = element;
 	switch (element) {
-	case 1:
-		msg_print(Ind, "\377sYour breath element is now random.");
-		return;
-	case 2:
-		msg_print(Ind, "\377sYour breath element is now lightning.");
-		return;
-	case 3:
-		msg_print(Ind, "\377sYour breath element is now frost.");
-		return;
-	case 4:
-		msg_print(Ind, "\377sYour breath element is now fire.");
-		return;
-	case 5:
-		msg_print(Ind, "\377sYour breath element is now acid.");
-		return;
-	case 6:
-		msg_print(Ind, "\377sYour breath element is now poison.");
-		return;
+	case 1: msg_print(Ind, "\377sYour breath element is now random."); return;
+	case 2: msg_print(Ind, "\377sYour breath element is now lightning."); return;
+	case 3: msg_print(Ind, "\377sYour breath element is now frost."); return;
+	case 4: msg_print(Ind, "\377sYour breath element is now fire."); return;
+	case 5: msg_print(Ind, "\377sYour breath element is now acid."); return;
+	case 6: msg_print(Ind, "\377sYour breath element is now poison."); return;
 	/* extended elements for power trait */
-	case 7:
-		msg_print(Ind, "\377sYour breath element is now confusion.");
-		return;
-	case 8:
-		msg_print(Ind, "\377sYour breath element is now inertia.");
-		return;
-	case 9:
-		msg_print(Ind, "\377sYour breath element is now sound.");
-		return;
-	case 10:
-		msg_print(Ind, "\377sYour breath element is now shards.");
-		return;
-	case 11:
-		msg_print(Ind, "\377sYour breath element is now chaos.");
-		return;
-	case 12:
-		msg_print(Ind, "\377sYour breath element is now disenchantment.");
-		return;
+	case 7: msg_print(Ind, "\377sYour breath element is now confusion."); return;
+	case 8: msg_print(Ind, "\377sYour breath element is now inertia."); return;
+	case 9: msg_print(Ind, "\377sYour breath element is now sound."); return;
+	case 10: msg_print(Ind, "\377sYour breath element is now shards."); return;
+	case 11: msg_print(Ind, "\377sYour breath element is now chaos."); return;
+	case 12: msg_print(Ind, "\377sYour breath element is now disenchantment."); return;
 	}
 }
 
