@@ -9718,16 +9718,16 @@ static int Receive_activate_skill(int ind) {
 						break;
 					case 5:
 						p_ptr->mimic_immunity = 3;
-						msg_print(player, "\377WPreferred form immunity is now \377sacid.");
+						msg_print(player, "\377WPreferred form immunity is now \377rfire.");
 						if (p_ptr->body_monster &&
-						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_ACID))
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_FIRE))
 							calc_boni(player);
 						break;
 					case 6:
 						p_ptr->mimic_immunity = 4;
-						msg_print(player, "\377WPreferred form immunity is now \377rfire.");
+						msg_print(player, "\377WPreferred form immunity is now \377sacid.");
 						if (p_ptr->body_monster &&
-						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_FIRE))
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_ACID))
 							calc_boni(player);
 						break;
 					case 7:
