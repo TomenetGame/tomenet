@@ -5890,9 +5890,9 @@ Chain_Macro:
 
 					case mw_prfimm:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an immunity preference:");
-						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Electricity  \377Gb\377g) Cold  \377Gc\377g) Acid  \377Gd\377g) Fire  \377Ge\377g) Poison  \377Gf\377g) Water");
-						Term_putstr(5, 12, -1, TERM_GREEN, "\377G*\377g) None (pick one randomly on polymorphing)");
-						Term_putstr(5, 13, -1, TERM_GREEN, "\377G?\377g) Just check (displays your current immunity preference)");
+						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) None (pick one randomly on polymorphing)");
+						Term_putstr(5, 12, -1, TERM_GREEN, "\377Gb\377g) Just check (displays your current immunity preference)");
+						Term_putstr(5, 13, -1, TERM_GREEN, "\377Gc\377g) Electricity  \377Gd\377g) Cold  \377Ge\377g) Acid  \377Gf\377g) Fire  \377Gg\377g) Poison  \377Gh\377g) Water");
 						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-f,*,?):");
 
 						while (TRUE) {
@@ -5908,7 +5908,7 @@ Chain_Macro:
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if ((choice < 'a' || choice > 'f') && choice != '?' && choice != '*') {
+								if (choice < 'a' || choice > 'h') {
 									//i = -2;
 									continue;
 								}
@@ -5920,14 +5920,14 @@ Chain_Macro:
 
 						/* build macro part */
 						switch (choice) {
-						case 'a': strcpy(buf2, "\\e)m@3\rd@Electricity\r"); break;
-						case 'b': strcpy(buf2, "\\e)m@3\rd@Cold\r"); break;
-						case 'c': strcpy(buf2, "\\e)m@3\rd@Acid\r"); break;
-						case 'd': strcpy(buf2, "\\e)m@3\rd@Fire\r"); break;
-						case 'e': strcpy(buf2, "\\e)m@3\rd@Poison\r"); break;
-						case 'f': strcpy(buf2, "\\e)m@3\rd@Water\r"); break;
-						case '*': strcpy(buf2, "\\e)m@3\rd@None\r"); break;
-						case '?': strcpy(buf2, "\\e)m@3\rd@Check\r"); break;
+						case 'a': strcpy(buf2, "\\e)m@3\rd@Check\r"); break;
+						case 'b': strcpy(buf2, "\\e)m@3\rd@None\r"); break;
+						case 'c': strcpy(buf2, "\\e)m@3\rd@Electricity\r"); break;
+						case 'd': strcpy(buf2, "\\e)m@3\rd@Cold\r"); break;
+						case 'e': strcpy(buf2, "\\e)m@3\rd@Acid\r"); break;
+						case 'f': strcpy(buf2, "\\e)m@3\rd@Fire\r"); break;
+						case 'g': strcpy(buf2, "\\e)m@3\rd@Poison\r"); break;
+						case 'h': strcpy(buf2, "\\e)m@3\rd@Water\r"); break;
 						}
 
 						choice = mw_prfimm; /* hack - remember */
