@@ -4895,6 +4895,30 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			p_ptr->easy_disarm_montraps = !p_ptr->easy_disarm_montraps;
 			msg_format(Ind, "Walking into a monster trap will %sdisarm it.", p_ptr->easy_disarm_montraps ? "" : "not ");
 			return;
+		} else if (prefix(messagelc, "/setimm")) { //quick and dirty for outdated clients, pfft
+			k = message3[0] - 'a';
+			if (!tk || k < 1 || k > 7) {
+				msg_print(Ind, "\377yUsage:  /setimm <b..h>");
+				msg_print(Ind, "\377y  b: random, c: electricity, d: cold, e: acid, f: fire, g: poison, h: water");
+				return;
+			}
+			msg_print(Ind, "Preferred immunity set.");
+			p_ptr->mimic_immunity = k;
+			return;
+		} else if (prefix(messagelc, "/setele")) { //quick and dirty for outdated clients, pfft
+			if (p_ptr->prace != RACE_DRACONIAN || p_ptr->ptrait != TRAIT_MULTI) {
+				msg_print(Ind, "This command is not available for your character.");
+				return;
+			}
+			k = message3[0] - 'a';
+			if (!tk || k < 1 || k > 6) {
+				msg_print(Ind, "\377yUsage:  /setele <b..g>");
+				msg_print(Ind, "\377y  b: random, c: lightning, d: frost, e: acid, f: fire, g: poison");
+				return;
+			}
+			msg_print(Ind, "Breath element set.");
+			p_ptr->breath_element = k;
+			return;
 		}
 
 
