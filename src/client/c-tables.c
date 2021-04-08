@@ -237,13 +237,13 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.view_lite_extra,	TRUE,	1,	9, 16, TRUE,
 	    "view_lite_extra",		"Lamp light affects more floor/wall types" },
 
-	{ &c_cfg.alert_hitpoint,	FALSE,	1,	0, 17, TRUE,
+	{ &c_cfg.alert_hitpoint,	FALSE,	7,	0, 17, TRUE,
 	    "alert_hitpoint",		"Beep/message about critical hitpoints/sanity" },
-	{ &c_cfg.alert_mana,		FALSE,	1,	0, 18, TRUE,
+	{ &c_cfg.alert_mana,		FALSE,	7,	0, 18, TRUE,
 	    "alert_mana",		"Beep/message about critically low mana pool" },
-	{ &c_cfg.alert_afk_dam,		FALSE,	1,	0, 19, TRUE,
+	{ &c_cfg.alert_afk_dam,		FALSE,	7,	0, 19, TRUE,
 	    "alert_afk_dam",		"Beep when taking damage while AFK" },
-	{ &c_cfg.alert_offpanel_dam,	TRUE,	1,	0, 20, TRUE,
+	{ &c_cfg.alert_offpanel_dam,	TRUE,	7,	0, 20, TRUE,
 	    "alert_offpanel_dam",	"Beep when taking damage while looking elsewhere" },
 
 	{ &c_cfg.exp_bar,		TRUE,	6,	0, 21, TRUE, //moved to page 3 in 4.7.2 to make room for alert_starvation
@@ -435,7 +435,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_monsterattack_sfx",	"Don't play basic monster attack sound fx" },
 	{ &c_cfg.quiet_shriek_sfx,	FALSE,	5,	0, 104, TRUE,
 	    "quiet_shriek_sfx",		"Play quieter shriek (monster hasting) sound fx" },
-	{ &c_cfg.screenshot_format,	TRUE,	7,	0, 105, TRUE,
+	{ &c_cfg.screenshot_format,	TRUE,	6,	0, 105, TRUE,
 	    "screenshot_format",	"Screenshots are timestamped instead of numbered" },
 	{ &c_cfg.quiet_house_sfx,	TRUE,	5,	0, 106, TRUE,
 	    "quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },
@@ -484,7 +484,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
     /* new additions for 4.6.2 */
 	{ &c_cfg.shuffle_music,		FALSE,	5,	0, 111, TRUE,
 	    "shuffle_music",		"Don't loop song files but shuffle through them" },
-	{ &c_cfg.permawalls_shade,	FALSE,	6,	0, 112, TRUE, //page 3 (UI 3)
+	{ &c_cfg.permawalls_shade,	FALSE,	1,	0, 112, TRUE,
 	    "permawalls_shade",		"Display permanent vault walls in a special colour" },
 	{ &c_cfg.topline_no_msg,	FALSE,	6,	0, 113, TRUE, //page 3 (UI 3)
 	    "topline_no_msg",		"Don't display messages in main window top line" },
@@ -508,17 +508,10 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "diz_death_any",		"Displays lore on monster that kills anyone" },
 	{ &c_cfg.diz_first,		TRUE,	6,	0, 122, TRUE,
 	    "diz_first",		"Displays lore on first-time monster kill" },
-	{ &c_cfg.alert_starvation,	TRUE,	1,	0, 123, TRUE, //moved exp_bar to page 2 to make room for this
+	{ &c_cfg.alert_starvation,	TRUE,	7,	0, 123, TRUE, //moved exp_bar to page 2 to make room for this
 	    "alert_starvation",		"Beep when taking damage from starvation" },
-#ifdef WINDOWS
-	/*{ &c_cfg.palette_animation,	FALSE,	6,	0, 124, TRUE,
-	    "palette_animation",	"Shade world surface colours depending on daytime" },*/
-	{ &c_cfg.palette_animation,	TRUE,	6,	0, 124, TRUE,
+	{ &c_cfg.palette_animation,	TRUE,	1,	0, 124, TRUE,
 	    "palette_animation",	"Shade world surface colours depending on daytime" },
-#else
-	{ &c_cfg.palette_animation,	TRUE,	6,	0, 124, TRUE,
-	    "palette_animation",	"Shade world surface colours depending on daytime" },
-#endif
 	{ &c_cfg.mute_when_idle,	FALSE,	5,	0, 125, TRUE,
 	    "mute_when_idle",		"Mute music+ambient sfx while AFK/idle in town" },
 	{ &c_cfg.id_selection,		TRUE,	6,	0, 126, TRUE,
@@ -535,7 +528,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 
 	{ &c_cfg.quiet_os,		FALSE,	5,	0, 131, TRUE,
 	    "quiet_os",			"Don't play beep/alert/page beeps through OS" },
-	{ &c_cfg.disable_lightning,	FALSE,	7,	0, 132, TRUE,
+	{ &c_cfg.disable_lightning,	FALSE,	1,	0, 132, TRUE,
 	    "disable_lightning",	"Disable visual screen flash effect for lightning" },
 	{ &c_cfg.macros_in_stores,	FALSE,	2,	0, 133, TRUE,
 	    "macros_in_stores",		"Don't disable macros while inside a store" },
@@ -548,7 +541,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "easy_disarm_montraps",	"Automatically disarm monster traps ('/edtm')" },
 	{ &c_cfg.no_house_magic,	FALSE,	3,	0, 137, TRUE,
 	    "no_house_magic",		"Prevent using magic inside houses" },
-	{ &c_cfg.no_lite_fainting,	FALSE,	7,	0, 138, TRUE,
+	{ &c_cfg.no_lite_fainting,	FALSE,	1,	0, 138, TRUE,
 	    "no_lite_fainting",		"Disable shading effect for fainting light source" },
 
 #if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
