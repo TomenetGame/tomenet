@@ -7580,20 +7580,35 @@ type appended to it in { } brackets. It looks like this:
 ^ A potion of Constitution {Chaos Ball Trap}
 
 Trap symbols ('^') come in different colours. Here's an overview:
-    blue            stat traps (STR/INT/WIS/DEX/CON/CHR) in three difficulties:
-                    1) only reduces an attribute temporarily, heals on its own.
-                    2) reduces an attribute, requiring you to use restoration.
-                    3) permanently reduces an attribute. Counter with stat
-                       potion.
-    bright white    teleport traps
-    orange          dungeon/trap rearrangment traps
-    violet          summoning traps
-    yellow          item-affecting traps
-    red             character status-affecting traps
-    green           elemental bolt traps
-    light blue      elemental ball traps
-    light red       arrow/bolt/dagger traps
-    white           miscellaneous traps
+  blue            stat traps (STR/INT/WIS/DEX/CON/CHR) in three difficulties:
+                  1) only reduces an attribute temporarily, heals on its own.
+                  2) reduces an attribute, requiring you to use restoration.
+                  3) permanently reduces an attribute. Counter with stat
+                     potion.
+  bright white    teleport traps
+  orange          dungeon/trap rearrangment traps
+  violet          summoning traps
+  yellow          item-affecting traps
+  red             character status-affecting traps
+  green           elemental bolt traps
+  light blue      elemental ball traps
+  light red       arrow/bolt/dagger traps
+  white           miscellaneous traps
+
+While many traps have obvious effects, here are some less obvious ones:
+  Bowel Cramps              If you don't have FA you get paralyzed instantly.
+  Calling Out               Calls the highest level monster on the floor.
+  Ale Vendor                It doesn't hand out free ale, you're paying for it.
+  Seasoned Traveler         Does not touch items of value 150 Au or more.
+  Lost Labor                All non-uniques on the floor turn into 100% clones.
+  Despair                   Your stats are reduced and you gain two potions,
+                            Augmentation and Death. Quaff the correct one!
+  Cleaning                  Deletes all nearby unowned loot.
+  Animate Coins             The animated coins are from your own purse..
+  Remittance                You share some of your money in your purse with
+                            everyone online of compatible mode (not in IDDC).
+
+Note that there are even some beneficial traps that grant an item or boon.
 
 
 About trap kits:
