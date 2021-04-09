@@ -246,6 +246,7 @@ guide_spell = {
 
     "Curse",
     "Call Light",
+    "Ray of Light",
     "Exorcism",
     "Redemption",
     "Orb of Draining",

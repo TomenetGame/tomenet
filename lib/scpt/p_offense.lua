@@ -143,6 +143,38 @@ HCURSEDD = add_spell {
 }
 end
 
+function get_literay_dam(Ind, limit_lev)
+	local lev
+
+	lev = get_level(Ind, HLITERAY, 50)
+	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
+
+	return 5 + ((lev * 2) / 5), 7 + ((lev * 3) / 3) + 1
+end
+HLITERAY = add_spell {
+	["name"] = 	"Ray of Light",
+	["name2"] = 	"Ray",
+	["school"] = 	SCHOOL_HOFFENSE,
+	["spell_power"] = 0,
+	["level"] = 	18,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
+	["fail"] = 	-30,
+	["stat"] = 	A_WIS,
+	["direction"] = TRUE,
+	["ftk"] = 1,
+	["spell"] = 	function(args)
+			fire_beam(Ind, GF_LITE, args.dir, damroll(get_literay_dam(Ind, 15)), " casts a ray of light for")
+	end,
+	["info"] = 	function()
+			local x, y
+
+			x, y = get_literay_dam(Ind, 15)
+			return "dam "..x.."d"..y
+	end,
+	["desc"] = 	{ "Conjures up holy light into a powerful ray.", }
+}
+
 HORBDRAIN_I = add_spell {
 	["name"] = 	"Orb of Draining I",
 	["name2"] = 	"OoD I",

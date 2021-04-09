@@ -2834,7 +2834,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				/* moved up here, so Digging skill is selected before Digging chapter */
 				for (i = 0; i < guide_skills; i++) {
 					if (strcasecmp(guide_skill[i], buf) && //super exact match? user even entered correct + or .? heh!
-					    strcasecmp(guide_skill[i] + 1, buf)) continue; //exact match? (note: leading + or . must be skipped)
+					    (guide_skill[i][0] == '+' || guide_skill[i][0] == '.') && strcasecmp(guide_skill[i] + 1, buf)) continue; //exact match? (note: leading + or . must be skipped)
 					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
 					break;
 				}
@@ -2864,7 +2864,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				}
 				if (chapter[0]) continue;
 
-				/* Partial matches */
+				/* Partial matches - Prefix */
 
 				//race/class prefix match
 				for (i = 0; i < guide_races; i++) {
@@ -2881,6 +2881,21 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					break;
 				}
 				if (chapter[0]) continue;
+
+				for (i = 0; i < guide_skills; i++) {
+					if (my_strcasestr(guide_skill[i], buf) != guide_skill[i]) continue; //prefix match?
+					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
+					break;
+				}
+				if (chapter[0]) continue;
+				for (i = 0; i < guide_spells; i++) { //prefix match?
+					if (my_strcasestr(guide_spell[i], buf) != guide_spell[i]) continue;
+					strcpy(chapter, "    ");
+					strcat(chapter, guide_spell[i]);
+					break;
+				}
+
+				/* Partial matches - Any */
 
 				//race/class any match
 				for (i = 0; i < guide_races; i++) {
@@ -2899,12 +2914,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 				if (chapter[0]) continue;
 
 				for (i = 0; i < guide_skills; i++) {
-					if (my_strcasestr(guide_skill[i], buf) != guide_skill[i]) continue; //prefix match?
-					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
-					break;
-				}
-				if (chapter[0]) continue;
-				for (i = 0; i < guide_skills; i++) {
 					if (!my_strcasestr(guide_skill[i], buf)) continue; //any match (default)
 					strcpy(chapter, guide_skill[i]); //can be prefixed by either + or . (see guide.lua)
 					break;
@@ -2921,12 +2930,6 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 				/* (Note: Partial chapter check comes last, further below.) */
 
-				for (i = 0; i < guide_spells; i++) { //prefix match?
-					if (my_strcasestr(guide_spell[i], buf) != guide_spell[i]) continue;
-					strcpy(chapter, "    ");
-					strcat(chapter, guide_spell[i]);
-					break;
-				}
 				if (chapter[0]) continue;
 				for (i = 0; i < guide_spells; i++) { //any match (default)
 					if (!my_strcasestr(guide_spell[i], buf)) continue;
