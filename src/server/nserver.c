@@ -96,6 +96,9 @@
 
 /* hack to prevent the floor tile bug on windows xp and windows 2003 machines */
 //#define FLOORTILEBUG_WORKAROUND
+/* if the above is not defined, this can optionally be allowed if we really want to risk re-introducing the
+   '(small) centered floor dot' aka ascii 31 that caused weird screen smearing back in the days (see above): */
+//#define FLOORTILE_ALLOW31
 
 /* Message to send to client when kicking him out due to starvation while being idle */
 //#define STARVING_AUTOKICK_MSG "starving auto-kick"
@@ -2656,7 +2659,10 @@ static void set_player_font_definitions(int ind, int player) {
 #ifndef FLOORTILEBUG_WORKAROUND
 		if (!p_ptr->f_attr[i]) p_ptr->f_attr[i] = f_info[i].z_attr;
 		if (!p_ptr->f_char[i]
-		    || p_ptr->f_char[i] == 31) /* workaround for people who are still using old font-win.prf files with floor tile /31 mapping glitch */
+ #ifndef FLOORTILE_ALLOW31
+		    || p_ptr->f_char[i] == 31 /* workaround for people who are still using old font-win.prf files with floor tile /31 mapping glitch */
+ #endif
+		    )
 			p_ptr->f_char[i] = f_info[i].z_char;
 #else		/*now all tiles are bright white and never dimmed.*/
 		p_ptr->f_attr[i] = f_info[i].z_attr;
