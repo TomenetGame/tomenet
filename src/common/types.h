@@ -2349,11 +2349,6 @@ struct inventory_change_type {
  * whenever anything important changes.
  */
 
-/*
- * high time to economize memory by bandling bool arrays into
- * char one or something, like in wild_map[MAX_WILD_8] ?	- Jir -
- */
-
 typedef struct player_type player_type;
 struct player_type {
 	int conn;			/* Connection number */
