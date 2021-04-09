@@ -9671,6 +9671,10 @@ static int Receive_activate_skill(int ind) {
 					/* Character is unable to change preferred immunity? */
 					if (dir >= 2 && dir <= 8 && mimic_power_hindered(player)) return 2;
 
+					if (is_older_than(&p_ptr->version, 4, 7, 3, 2, 0, 0)) {
+						if (dir == 5) dir = 6;
+						else if (dir == 6) dir = 5;
+					}
 //s_printf("MIMIC_IMMUNITY (%s): %s(%d) having %d calls %d(%d),%d\n", showtime(), p_ptr->name, p_ptr->body_monster, p_ptr->mimic_immunity, spell, dir - 2, dir);
 					switch (dir) {
 					case 1:
