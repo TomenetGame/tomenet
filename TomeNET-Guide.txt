@@ -1817,16 +1817,22 @@ To inscribe an item, press the { key. To uninscribe, press }.
 You can also mass-inscribe/uninscribe items by using the commands /tag or /t
 and /untag or /ut respectively (see (0.2b) for command details).
 
-All items:
-    Inscribing an item with an '!' followed by a key will cause that key to
-    cease working on the item anymore. You may also specify several keys.
-    A space or other non-related character will end the '!-sequence'.
-    Example: You inscribe a 'Scroll of Artifact Creation' this way:  !kd
+The ! inscription:
+    Inscribing an item with an '!' followed by a key will - for most keys -
+    cause that key to cease working on the item anymore. There are also some
+    special !-combinations that do different things (eg !B on magic devices)
+    which are all listed below. You may also specify several keys after a '!'.
+
+    A space ' ', '@' symbol, '#' hashtag or '-' minus sign will end parsing the
+    !-sequence.
+    Example: You inscribe a 'Scroll of Artifact Creation' this way: "!kd rawr".
     Now you cannot destroy or drop the scroll anymore (keys to destroy and
     to drop an item are 'k' respectively 'd').
+    However, you can still 'r'ead the scroll, because the 'r' in the "rawr"
+    part is not parsed as it is separated by a space from the "!.." sequence.
     You can inscribe an item by pressing '{' and uninscribe it with '}'.
 
-The !* inscription:
+The !* inscription, a "combo" shortcut inscription:
     '*' is a 'wild card' which stands for multiple inscriptions at once,
         inscribing an item '!*' will do ALL of these checks:
     !d          Prevent dropping an item.
@@ -1867,18 +1873,19 @@ For magic devices:
 
 Other !-inscriptions:
     !T          Prevent taking off a secondary item.
-    !F          Prevent using up this item to fuel your currently equipped
-                light source. (Note that !k inscription implies this too.)
+    !F          Prevent using up this light source or fuel item to fuel your
+                currently equipped light source. (Note that !k inscription
+                implies this too.)
     !Fnn        If the server has the (experimental) Demolitionist perk enabled
                 this inscription can be used on blast charges to customize the
                 fuse length to nn seconds, where nn must be within 1 to 15.
-    !E          Prevent eating this item.
+    !E          Prevent eating this food item.
     !q          Prevent quaffing this potion.
     !r          Prevent reading this scroll.
     !u          Prevent using a staff.
     !a          Prevent aiming a wand.
     !z          Prevent zapping a rod.
-    !A          Prevent activating this item.
+    !A          Prevent activating an activatable item.
     !L          Can be used on a scroll of Artifact Creation. The resulting
                 randart will not gain +LIFE ('it affects your hit points') mod.
                 So this is an inscription that only makes sense for winners to
@@ -1964,13 +1971,14 @@ Empty bottles:
                 This is mainly useful for when 'keep_bottle' option is enabled,
                 to prevent uncontrolled amassment of empty bottles.
 
-An item that can be activated:
+Some examples for inscriptions to use with macros:
+  An item that can be activated:
     @A1         Pressing the keys 'A' and then '1' will activate that item.
 
-A potion:
+  A potion:
     @q3         Pressing 'q' then '3' will quaff that potion.
 
-A magic scroll:
+  A magic scroll:
     @r0         Pressing the keys 'r' and '0' will read that scroll.
 
 etc.. you get the idea. :)
