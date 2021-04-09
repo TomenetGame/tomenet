@@ -8304,7 +8304,7 @@ Hit point drain ('Drains your hit points')
      -Items that just drain your HP
      -Items that have strong good powers and you use them as a Vampire
      -The sun, when it's day and you're a Vampire and out in the open without
-      a protective mummy wrapping
+      a protective mummy wrapping or something granting resistance to light.
      -Monster forms that provide wall-passing (wraith form)
 
     HP drain can be countered by HP regeneration, which can be gained from:
