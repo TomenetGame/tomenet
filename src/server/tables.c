@@ -2021,7 +2021,10 @@ player_race race_info[MAX_RACE] = {
 
 		{{ SKILL_TRAPPING,
 			'+', 0,
-			'%', 110, },
+			'%', 115, },
+		{ SKILL_DIG,
+			'+', 3000,
+			'%', 120, },
 		{ SKILL_SNEAKINESS,
 			'+', 0,
 			'%', 105, },

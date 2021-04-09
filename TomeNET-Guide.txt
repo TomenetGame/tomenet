@@ -15241,7 +15241,9 @@ create a character!):
     Hint: Make sure to set your breath attack to a hotkey when you learn it.
 
 - Kobold
-    These somewhat smallish dog-faced humanoids resist poison intrinsically.
+    These somewhat smallish dog-faced humanoids who tend to live in lairs
+    and often make up for their size by laying out clever traps resist poison
+    intrinsically.
     They are able to take most roles, being somewhat better at archery than
     close combat. Their intelligence is somewhat suspect, and although they do
     not pick up careers as mages or other very elaborate professions, they can
@@ -15249,8 +15251,8 @@ create a character!):
     They can see in the dark thanks to infra-vision, have extraordinarily sharp
     senses, and can move very silently, making them hard to spot. They are also
     good at disarming traps.
-    Kobolds receive a bonus on 'Trapping', a huge bonus on 'Swimming' and a
-    slight bonus on 'Sneakiness'.
+    Kobolds receive a large bonus on 'Trapping' and 'Digging', a huge bonus on
+    'Swimming' and a slight bonus on 'Sneakiness'.
 
 - Dark-Elf
     Dark-Elves dwell below the surface in huge caverns of their underground
@@ -15444,8 +15446,8 @@ Ent         +8  -4  +2  -4  +8  -4      14      280%     0ft
             -4   0  20  -6   4   5   0 -20
 Draconian   +4  +2  +2  +1  +3  +2      12      300%    50ft
              0   7  10  -5  10  10  15   5
-Kobold      -1  -1   0  +2  +2  -2       8      115%    50ft
-            10   5   0   4  15  15   0  10
+Kobold      -1  -1   0  +2  +2  -2       8      110%    50ft
+            10   5   4   4  15  15   0  10
 Dark-Elf     0  +2  +1  +3  +1  -6      10      140%    80ft
              7   3   6   4   6  10  15  15
 Vampire     +2  +2  -1  +2   0  +3      11      240%   150ft

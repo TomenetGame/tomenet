@@ -204,7 +204,7 @@ __races_diz = {
     "intrinsically, have infra-vision, extraordinarily",
     "sharp senses and can move very silently. They are",
     "also good at disarming traps. Kobolds receive a",
-    "large bonus on Swimming, a bonus on Trapping",
+    "large bonus on Swimming, Trapping and Digging",
     "and a slight bonus on Sneakiness.",},
 
 "Dark-Elf",
