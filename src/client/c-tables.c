@@ -293,7 +293,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.always_show_lists,	TRUE,	4,	0, 40, TRUE,
 	    "always_show_lists",	"Always show lists in item/skill selection" },
 
-	{ &c_cfg.no_weather,		FALSE,	4,	0, 41, TRUE,
+	{ &c_cfg.no_weather,		FALSE,	1,	0, 41, TRUE,
 	    "no_weather",		"Disable weather visuals and sounds completely" },
 
 	{ &c_cfg.player_list,		FALSE,	4,	0, 42, TRUE,
