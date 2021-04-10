@@ -10779,7 +10779,7 @@ item that you will find on the floor:
 
     -Tools:
      Boots, cloaks, diggers, light sources, flints, food, flasks, trap kits,
-     spikes, climbing sets, picklocks, money belts,
+     spikes, climbing sets, picklocks,
      backpack safety locks, tarpaulins, mummy wrappings.
 
     -Junk (rest chance, not covered by the above four categories):
@@ -11625,8 +11625,7 @@ Climbing set        Allows you to travel over mountain fields.
                     appearance form must have arms and fingers. (Equip it!)
 Backpack safety lock
                     When equipped, prevents thieves from stealing items from
-                    your backpack. It does not secure your purse though, you
-                    will need a money belt for that.
+                    your backpack and money from your purse.
 Empty bottles       You can /fill these at fountains to turn them into
                     potions. (See (0.2b) for more details.)
 Firestones          These can be eaten by Draconians and players in dragon
@@ -11678,7 +11677,6 @@ Mattock/Pick/Shovel Diggers, improving your digging capabilities.
                     (scythes and sickles) may help too, at least as well as
                     swords or axes. (see 'Digging' skill in (6.2) and (5.20)
                     for more information about digging).
-Money Belt          When equipped, prevents thieves from stealing your money.
 Mushrooms of paranoia/cure paranoia
                     Cause/remove fear, cause/remove hallucinations.
 Mushroom of Unmagic
@@ -12466,8 +12464,8 @@ LOSE_xxx        sustain stats.
 EAT_xxx         DEX and stealing skill increase your chance to resist
                 EAT_ITEM (item stealing) and
                 EAT_GOLD (money stealing) attempts.
-                A backpack safety lock makes you immune to EAT_ITEM.
-                A money belt makes you immune to EAT_GOLD.
+                A backpack safety lock makes you highly resistant to both,
+                item theft via EAT_ITEM and money theft via EAT_GOLD.
                 Nothing helps against EAT_FOOD or EAT_LITE.
 UN_BONUS        disenchantment.
                 The damage can partially be mitigated by having the resistance.
@@ -21348,8 +21346,8 @@ DOESN'T ENCHANT WHOLE STACKS:
 ONLY WORKS ON STANDARD EQUIPMENT:
 
 -Artifact creation only works on items that can be equipped - with
- the exception of tool items like diggers, picklocks, money belts,
- backpack safety locks, tarpaulins, flints, mummy wrappings, climbing sets.
+ the exception of tool items like diggers, picklocks, flints, climbing sets,
+ backpack safety locks, tarpaulins, mummy wrappings.
  These won't work!
  Also, it does not work on rings of polymorphing or amulets of telepathy!
 
