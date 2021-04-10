@@ -1727,7 +1727,7 @@ player_race race_info[MAX_RACE] = {
 	{ "Dunadan",
 		{  1,  2,  2,  2,  3,  2 },
 		4,  3,  5,  0, 3, 13, 15, 10,
-		10,  170,
+		10,  160,//170
 		50, 20,
 		82, 5, 190, 20,
 		78,  6, 180, 15,
@@ -1761,7 +1761,7 @@ player_race race_info[MAX_RACE] = {
 	{ "High-Elf",
 		{  1,  3, -1,  3,  1,  3 },
 		4,  20, 20,  3,  3, 14, 10, 25,
-		10,  250,
+		10,  200,//230
 		100, 30,
 		90, 10, 190, 20,
 		82, 10, 180, 15,
@@ -1891,7 +1891,7 @@ player_race race_info[MAX_RACE] = {
 	{ "Ent",
 		{ 8, -4, +2, -4,  8, -4 },
 		-4, 0, 20, -6, 5, 4, 5, -20,
-		14, 320,
+		14, 280,//320
 		255, 70,
 		72, 6, 100, 25,
 		66, 4, 100, 20,
@@ -1963,7 +1963,7 @@ player_race race_info[MAX_RACE] = {
 		//{  6,  2,  1,  1,  3,  5 },
 		{  4,  2,  2,  1,  3,  2 },
 		0,  7,  10,  -5,  10,  10,  15,  5,
-		12,  350,
+		12,  300,//350
 		14,  6,
 		180,  6, 255, 25,
 		150,  4, 230, 20,
@@ -2021,7 +2021,10 @@ player_race race_info[MAX_RACE] = {
 
 		{{ SKILL_TRAPPING,
 			'+', 0,
-			'%', 110, },
+			'%', 115, },
+		{ SKILL_DIG,
+			'+', 3000,
+			'%', 120, },
 		{ SKILL_SNEAKINESS,
 			'+', 0,
 			'%', 105, },
@@ -2040,7 +2043,7 @@ player_race race_info[MAX_RACE] = {
 	{ "Dark-Elf",
 		{  0,  2, 1,  3,  1,  -6 },
 		7,  3, 6,  4, 10, 6, 15, 15,
-		10,  150,
+		10,  140,//150
 		100, 30,
 		90, 10, 180, 20,
 		82, 10, 180, 15,
@@ -2104,7 +2107,7 @@ player_race race_info[MAX_RACE] = {
 	{ "Vampire",
 		{  2,  2,  -1,  2,  0,  3 },
 		-2,  3, 20,  2,  -4, 13, 10, -10,
-		11,  270,
+		11,  240,//270
 		100, 30,
 		90, 10, 180, 20,
 		82, 10, 170, 15,
@@ -2519,7 +2522,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'%', 120, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 1200, },
 		{ SKILL_INTERCEPT,
 			'+', 1000,
@@ -2855,7 +2858,7 @@ player_class class_info[MAX_CLASS] = {
 		// TERM_ORANGE, <- more confusing since they're supposed to use a monster form
 		{ 1, 0, 0, 1, 1, -4},
 		{19+100, 0, 0, 10+100, 0, 0},//21,19
-		25, 34, 28, 1, 18, 18, 60, 46,
+		25, 30, 28, 1, 18, 18, 60, 46,
 		 9, 9, 10, 0,  0,  0, 40, 25,
 		6, 30,//3, 40,//4, 25
 		//8, 40,
@@ -3142,7 +3145,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 2000,
 			'+', 1000, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 700, },
 		{ SKILL_CALMNESS,
 			'+', 0,
@@ -3286,7 +3289,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'%', 110, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 1200, },
 		{ SKILL_CALMNESS,
 			'+', 0,
@@ -3511,7 +3514,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'%', 140, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 1400, },
 		{ SKILL_CALMNESS,
 			'+', 0,
@@ -3610,7 +3613,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'%', 120, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 1200, },
 		}, },
 
@@ -3732,7 +3735,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000,
 			'+', 1000, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 1000, },
 		{ SKILL_CALMNESS,
 			'+', 0,
@@ -3861,7 +3864,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000,
 			'+', 1000, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 1000, },
 			/* Misc tree - let's keep it actually! */
 		{ SKILL_CALMNESS,
@@ -4005,7 +4008,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'%', 120, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 1600, },
 		}, },
 
@@ -4130,7 +4133,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000,
 			'+', 1000, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 900, },
 		}, },
 #endif
@@ -4143,7 +4146,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 21, 54, 1,  13, 16, 60, 40,
+		10, 28, 54, 1,  13, 16, 60, 40,
 		2, 8,  10, 0,  0,  2,  35, 10,
 		8, 30,
 
@@ -4239,7 +4242,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 2000,
 			'+', 1000, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 700, },
 		{ SKILL_CALMNESS,
 			'+', 0,
@@ -4257,7 +4260,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 21, 54, 1,  13, 16, 60, 40,
+		10, 25, 54, 1,  13, 16, 60, 40,
 		2, 8,  10, 0,  0,  2,  35, 10,
 		8, 30,
 
@@ -4370,7 +4373,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 2000,
 			'+', 1000, },
 		{ SKILL_DIG,
-			'+', 1000,
+			'+', 0,
 			'+', 700, },
 		{ SKILL_CALMNESS,
 			'+', 0,
@@ -5333,7 +5336,7 @@ int p_tough_ac[51] = {
 
 /* For fighting techniques */
 byte mtech_lev[MAX_CLASS][16] = {
-    //	sprint,	taunt,	jump,	distr,	poison,	knockb,	trackan,detnoi, flashb,	cloak,	spin,	assass,	berser,	s-jump,	s-run,	instant cloak
+    //	sprint,	taunt,	jump,	distr,	poison,	knockb,	trackan,detnoi, flashb,	steamb,	spin,	assass,	berser,	s-jump,	s-run,	instant cloak
 	{2,	4,	0,	0,	0,	0,	0,	0,	0,	0,	6,	0,	20,	0,	0,	0},	//warrior
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//istar
 	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},	//priest

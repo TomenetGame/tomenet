@@ -3367,17 +3367,20 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
  */
 /* Hrm it's complicated.. 
  * We'd better not touch FEAT and use only CS	- Jir -
+ * If Ind isn't 0, the items go directly to the player's inventory.
  */
-void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
+void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
+	player_type *p_ptr = NULL;
 	int this_o_idx, next_o_idx;
 	object_type forge;
 	object_type *o_ptr;
 	object_type *q_ptr;
-	cave_type               *c_ptr;
+	cave_type *c_ptr;
 	cave_type **zcave;
 	struct c_special *cs_ptr;
 	if (!(zcave = getcave(wpos))) return;
 
+	if (Ind) p_ptr = Players[Ind];
 	c_ptr = &zcave[y][x];
 	cs_ptr = GetCS(c_ptr, CS_MON_TRAP);
 	cave_set_feat_live(wpos, y, x, cs_ptr->sc.montrap.feat);
@@ -3408,8 +3411,49 @@ void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x) {
 		/* Delete the object */
 		delete_object_idx(this_o_idx, FALSE);
 
-		/* Drop it */
-		drop_near(0, q_ptr, -1, wpos, y, x);
+		/* If a player disarms the monster trap and is already the owner, put the items into his inventory directly. */
+		if (Ind && q_ptr->owner == p_ptr->id && inven_carry_okay(Ind, q_ptr, 0x0)) {
+			int slot, num;
+			char o_name[ONAME_LEN];
+			
+			/* Try to add to the quiver first */
+			if (object_similar(Ind, q_ptr, &p_ptr->inventory[INVEN_AMMO], 0x0)) {
+				//note: 'pick_one' is not implemented here!
+				slot = INVEN_AMMO, num = q_ptr->number;
+
+				msg_print(Ind, "You add the ammo to your quiver.");
+
+				/* Check whether this item was requested by an item-retrieval quest */
+				if (p_ptr->quest_any_r_within_target) quest_check_goal_r(Ind, q_ptr);
+
+				/* Get the item again */
+				q_ptr = &(p_ptr->inventory[slot]);
+
+				q_ptr->number += num;
+				p_ptr->total_weight += num * q_ptr->weight;
+
+				/* Describe the object */
+				object_desc(Ind, o_name, q_ptr, TRUE, 3);
+				q_ptr->marked = 0;
+				q_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+				p_ptr->window |= PW_EQUIP;
+			} else {
+				/* Try to just place it into the inventory, or drop it to the floor if full */
+				slot = inven_carry(Ind, q_ptr);
+				if (slot >= 0) {
+					//inven_item_describe(Ind, slot);
+					object_desc(Ind, o_name, q_ptr, TRUE, 3);
+					q_ptr->marked = 0;
+					q_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+				}
+				else drop_near(0, q_ptr, -1, wpos, y, x); //paranoia
+			}
+		} else {
+			/* Drop it */
+			drop_near(0, q_ptr, -1, wpos, y, x);
+		}
 	}
 
 	//cave[py][px].special = cave[py][px].special2 = 0;
@@ -5088,10 +5132,14 @@ bool mon_hit_trap(int m_idx) {
 
 	/* Remove the trap if inactive now */
 	//if (remove) cave_set_feat_live(wpos, my, mx, FEAT_FLOOR);
-	if (remove) do_cmd_disarm_mon_trap_aux(&wpos, my, mx);
+	if (remove) do_cmd_disarm_mon_trap_aux(0, &wpos, my, mx);
 
 	/* did it die? */
 	return (dead);
+}
+/* For PvP: */
+bool py_hit_trap(int Ind) {
+	return FALSE;
 }
 
 static void destroy_chest(object_type *o_ptr) {

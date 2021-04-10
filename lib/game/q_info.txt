@@ -377,9 +377,10 @@ yR:-://quest_towneltalk("$$c", -1)
 #yR:-:adventurers, as it tends to increase chances of survival!
 #yR:-:I could also have a look at your [[equipment]] and [[status]] of your
 #yR:-:well-being in general.
-yR:-:Venturing into a dungeon to [[explore]]? Or are you wondering about the public
-yR:-:[[events]] that are taking place from time to time? I could also have a look
-yR:-:at your [[equipment]] if you like.
+yR:-:How to properly [[prepare]] yourself for venturing into the unknown?
+yR:-:Choosing a fitting dungeon to [[explore]]? Or are you wondering about
+yR:-:the public [[events]] that are taking place from time to time? I could
+yR:-:also have a look at your [[equipment]] if you like.
 
 Y:0:0:-:*prepar*:-:255
 Y:0:0:-:*inven*:-:255

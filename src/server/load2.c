@@ -114,7 +114,7 @@ static bool older_than(byte x, byte y, byte z) {
  * This function determines if the version of the server savefile
  * currently being read is older than version "x.y.z".
  */
-static bool s_older_than(byte x, byte y, byte z) {
+bool s_older_than(byte x, byte y, byte z) {
 	/* Much older, or much more recent */
 	if (ssf_major < x) return (TRUE);
 	if (ssf_major > x) return (FALSE);
@@ -737,6 +737,11 @@ static void rd_item(object_type *o_ptr) {
 	    && o_ptr->level && o_ptr->bpval > 0
 	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
 		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
+
+	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_SPEED
+	    && o_ptr->level && o_ptr->bpval > 0
+	    && o_ptr->level < o_ptr->bpval * 5)
+		o_ptr->level = o_ptr->bpval * 5;
 
 	/* modified arms/legs for more transparency and less tediousness */
 	if (o_ptr->tval == TV_GOLEM &&
@@ -1733,7 +1738,8 @@ static bool rd_extra(int Ind) {
 #if 0
 	strip_bytes(20);	/* transient stats - these get ignored by both save and load atm. */
 #else
-	strip_bytes(10); //unused
+	strip_bytes(8); //unused
+	rd_u16b(&p_ptr->house_num);
 	rd_s16b(&p_ptr->mutedtemp);
 	rd_s32b(&p_ptr->iron_trade);
 	rd_s32b(&p_ptr->iron_turn);
@@ -1833,9 +1839,11 @@ static bool rd_extra(int Ind) {
 	if (!older_than(4, 7, 12)) {
 		rd_byte(&tmp8u);
 		p_ptr->breath_element = tmp8u;
+		/* Fix old values */
+		if (!p_ptr->breath_element) p_ptr->breath_element = 1;
 	} else {
 		rd_byte(&tmp8u);
-		p_ptr->breath_element = 0; //random
+		p_ptr->breath_element = 1; //random
 	}
 
 	rd_s16b(&p_ptr->blind);

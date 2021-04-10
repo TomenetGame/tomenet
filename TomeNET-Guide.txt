@@ -1,18 +1,19 @@
-.=========================+==--.
-|      TomeNET Guide      |
-+=========================+-
-| Latest update: 11. March 2021 - written by C. Blue (c_blue@gmx.net)
-| for TomeNET version v4.7.3a - official websites are:
+.==========================================================================+--.
+|                              TomeNET Guide                               |
++==========================================================================+-
+| Latest update: 9. April 2021 - written by C. Blue (c_blue@gmx.net)       |
+| for TomeNET version v4.7.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
 |
-| You should always keep this guide up to date: Either go to www.tomenet.eu to
-| obtain the latest copy or simply run the TomeNET-Updater.exe in your TomeNET
-| installation folder (desktop shortcut should also be available) to update it.
+| You should always keep this guide up to date: Either go to www.tomenet.eu
+| to obtain the latest copy or simply run the TomeNET-Updater.exe in your
+| TomeNET installation folder (desktop shortcut should also be available)
+| to update it.
 |
-| If your text editor cannot display the guide properly (needs fixed-width font
-| like for example Courier), simply open it in any web browser instead.
+| If your text editor cannot display the guide properly (needs fixed-width
+| font like for example Courier), simply open it in any web browser instead.
 +---
 | Welcome to this guide!
 | Although I'm trying, I give no guarantee that this guide
@@ -20,10 +21,10 @@
 | b) is all the time 100% accurate on every occasion.
 | Don't blame me if something differs or is missing; it shouldn't though.
 |
-| If you have any suggestions about the guide or the game, please use the /rfe
-| command in the game or write to the official forum on www.tomenet.eu.
+| If you have any suggestions about the guide or the game, please use the
+| /rfe command in the game or write to the official forum on www.tomenet.eu.
+:
 \
-
 
 
 Contents
@@ -31,6 +32,7 @@ Contents
 (0) Quickstart (If you don't like to read much :)
     (0.1)   Start & play, character validation
     (0.1a)  Colours and colour blindness
+    (0.1b)  Photosensitivity / Epilepsy issues
     (0.2)   Command reference & key sets
     (0.2a)  Text editing keys
     (0.2b)  Slash command reference
@@ -61,8 +63,10 @@ Contents
     (2.5)   Fonts
     (2.5a)  Custom fonts
 (3) Creating a character & starting to play
-    (3.1)   Creating a new character; character modes
-    (3.1a)  Character names, collisions and reservations
+    (3.1)   Creating a new character
+    (3.1a)  Character modes
+    (3.1b)  Body Modifications
+    (3.1c)  Character names, collisions and reservations
     (3.2)   The display (user-interface)
     (3.2a)  The encumberment bar
     (3.3)   Behaviour, chat messages and chat modes
@@ -99,7 +103,8 @@ Contents
     (4.5d)  Dungeon bosses
     (4.6)   Pits and vaults
     (4.7)   Traps & trap kits
-    (4.8)   Level & vault feelings
+    (4.7a)  Trap kit load effects
+    (4.8)   Dungeon, floor & vault feelings
     (4.9)   Navigating on maps
     (4.10)  Houses
     (4.10a) Player stores
@@ -190,6 +195,7 @@ Contents
 (8) Miscellanous
     (8.1)   'The Art Not To Die'
     (8.2)   Character dumps
+    (8.2a)  High Score
     (8.3)   Golem creation
     (8.4)   Artifact creation
     (8.5)   Reward item creation
@@ -474,6 +480,21 @@ a table of all colours for you to check how they look like.
 
 Note that the colourmap entry #0 is fixed and cannot be changed, it is always
 #000000 aka black (no red + no green + no blue).
+
+
+(0.1b) Photosensitivity / Epilepsy issues
+-----------------------------------------
+If you are especially photosensitive, the screen-lighting effect used for
+thunderstorm weather might impact you. There are also a few minor especially
+fast-flickering effects. You can disable all of these in the game options by
+pressing the following keys in game to access the various options pages (1-7):
+
+= 1 view_animated_lite (fire-based lamps will flicker in yellow/orange)
+= 1 no_weather (disables all weather particles: raindrops and snowflakes)
+= 1 disable_lightning (the aforementioned thunderstorm flash)
+= 3 flash_player (your '@' flickers brightly whenever you change location
+    rapidly to make it easier spotting yourself on the screen)
+= 3 recall_flicker (show animated colours in the various game windows)
 
 
 
@@ -935,7 +956,7 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 '       lets you peek at the equipment of party members or players within
         sight.
 
-#       displays the high scores (same as ~c).
+#       displays the high scores (same as ~c). See (8.2c) for details.
         (Note: If you press this while browsing any text you can jump to a
         line number of your choice.)
 
@@ -1091,10 +1112,11 @@ They all start with a slash '/' hence they're called slash commands:
 /arm        Sets up auto-retaliation with a mimic power.
             Enter  /arm help  for this information in-game.
             Usage:   /arm [t]<power>   or to disable:   /arm -
-            If 't' is prefixed to the power, it will only be used while in a
-            town. Example:   /arm tg
+            The 't' is optional. If it's prefixed to the power, auto-ret will
+            only be used while in a town. Example:   /arm tg
             This will auto-retaliate with mimic power 'g)', but only while in
             town.
+            For more info see (6.8b), paragraph Auto-Retaliation.
 
             (Note that you cannot auto-retaliate with
               'Polymorph Self into a specific form'
@@ -1105,11 +1127,11 @@ They all start with a slash '/' hence they're called slash commands:
 /autoretr
 /arr        Sets up auto-retaliation with runecraft.
             Enter  /arr help  for this information in-game.
-            Usage:   /arr [t]<a-f><a-f><a-h><a-f>
+            Usage:   /arr [t]<a-f><a-f><a-h><a-f>   or to disable:   /arr -
             Parameters are:
              t: town-only? (optional)
              and then mandatory: rune, rune, mode, type
-            For more info and examples see (6.8b), paragraph Auto-Retaliation.
+            For more info see (6.8b), paragraph Auto-Retaliation.
 
 /bbs <text>
             Add a line of text to the in-game bulletin board system. Players
@@ -1384,6 +1406,8 @@ They all start with a slash '/' hence they're called slash commands:
             commonly used slash commands.
             Optionally, a topic can be specified - in this case a guide search
             will be conducted on that topic. For example enter:   /? ac
+/?r         Shortcut to your character's race description in the guide.
+/?c         Shortcut to your character's class description in the guide.
 
 /house
 /hou        Displays your houses, same as ~9, but offers two optional
@@ -1798,16 +1822,22 @@ To inscribe an item, press the { key. To uninscribe, press }.
 You can also mass-inscribe/uninscribe items by using the commands /tag or /t
 and /untag or /ut respectively (see (0.2b) for command details).
 
-All items:
-    Inscribing an item with an '!' followed by a key will cause that key to
-    cease working on the item anymore. You may also specify several keys.
-    A space or other non-related character will end the '!-sequence'.
-    Example: You inscribe a 'Scroll of Artifact Creation' this way:  !kd
+The ! inscription:
+    Inscribing an item with an '!' followed by a key will - for most keys -
+    cause that key to cease working on the item anymore. There are also some
+    special !-combinations that do different things (eg !B on magic devices)
+    which are all listed below. You may also specify several keys after a '!'.
+
+    A space ' ', '@' symbol, '#' hashtag or '-' minus sign will end parsing the
+    !-sequence.
+    Example: You inscribe a 'Scroll of Artifact Creation' this way: "!kd rawr".
     Now you cannot destroy or drop the scroll anymore (keys to destroy and
     to drop an item are 'k' respectively 'd').
+    However, you can still 'r'ead the scroll, because the 'r' in the "rawr"
+    part is not parsed as it is separated by a space from the "!.." sequence.
     You can inscribe an item by pressing '{' and uninscribe it with '}'.
 
-The !* inscription:
+The !* inscription, a "combo" shortcut inscription:
     '*' is a 'wild card' which stands for multiple inscriptions at once,
         inscribing an item '!*' will do ALL of these checks:
     !d          Prevent dropping an item.
@@ -1848,18 +1878,19 @@ For magic devices:
 
 Other !-inscriptions:
     !T          Prevent taking off a secondary item.
-    !F          Prevent using up this item to fuel your currently equipped
-                light source. (Note that !k inscription implies this too.)
+    !F          Prevent using up this light source or fuel item to fuel your
+                currently equipped light source. (Note that !k inscription
+                implies this too.)
     !Fnn        If the server has the (experimental) Demolitionist perk enabled
                 this inscription can be used on blast charges to customize the
                 fuse length to nn seconds, where nn must be within 1 to 15.
-    !E          Prevent eating this item.
+    !E          Prevent eating this food item.
     !q          Prevent quaffing this potion.
     !r          Prevent reading this scroll.
     !u          Prevent using a staff.
     !a          Prevent aiming a wand.
     !z          Prevent zapping a rod.
-    !A          Prevent activating this item.
+    !A          Prevent activating an activatable item.
     !L          Can be used on a scroll of Artifact Creation. The resulting
                 randart will not gain +LIFE ('it affects your hit points') mod.
                 So this is an inscription that only makes sense for winners to
@@ -1945,13 +1976,14 @@ Empty bottles:
                 This is mainly useful for when 'keep_bottle' option is enabled,
                 to prevent uncontrolled amassment of empty bottles.
 
-An item that can be activated:
+Some examples for inscriptions to use with macros:
+  An item that can be activated:
     @A1         Pressing the keys 'A' and then '1' will activate that item.
 
-A potion:
+  A potion:
     @q3         Pressing 'q' then '3' will quaff that potion.
 
-A magic scroll:
+  A magic scroll:
     @r0         Pressing the keys 'r' and '0' will read that scroll.
 
 etc.. you get the idea. :)
@@ -2139,6 +2171,7 @@ Auto-ID     A special ability of some items. If you equip an item that grants
             you 'Auto-ID' all items you touch will automatically be
             identified! Items who grant their wielder Auto-Identification are
             highly sought after. Randart helmets or gloves sometimes have it.
+            Training 'Divination' school to 50.000 also grants auto-ID.
             See (5.7) for more information about identification.
 
 BD          Barrow-Downs. The main starter dungeon in the town of Bree, located
@@ -2777,9 +2810,12 @@ foes as you can before facing him.
 Morgoth, the god of destruction, has reinforced his surroundings to be
 especially devastating to all living beings:
 If you get killed on a level where Morgoth, Lord of Darkness walks, your
-ghost will be destroyed too, even if you are everlasting! Beware!
+ghost will be destroyed too, even if you are everlasting! Beware! Even after
+Morgoth is no longer there the floor will still keep this deadly property.
+You will get a floor feeling warning you whenever you enter a floor where
+Morgoth resides, see (4.8).
 Note that on a floor where Morgoth currently resides, all vaults will turn into
-no-tele vaults, even if they normally aren't!
+no-teleport vaults.
 
 If you team up against him, he will grow stronger for every additional player
 who enters his dungeon level. Growing stronger in fact means that he gains a
@@ -2919,15 +2955,23 @@ at close quarters combat. In general, do not underestimate Sauron's power!
  -An extra randart drop of 'combat' treasure class.
  -Extra artifact creation scrolls for every player more than two (so trio+).
 -There are no obstacles that can hold Morgoth back for long.
+-All vaults on Morgoth's floor will be no-teleport vaults.
+-If you die on Morgoth's floor your character is deleted even if everlasting!
+ You will get a floor feeling to warn you of this whenever you enter a floor
+ where Morgoth resides on, see (4.8).
 
 See (1.3a) for more information about Morgoth.
 
 There are rumours of even more powerful beings than the Lord Of Darkness.
-Kings and Queens who seek new challenges shall try to enter the Nether Realm,
-a dungeon with dangers beyond imagination. Only those who destroyed Morgoth
-may enter. The Nether Realm can be very rewarding in terms of experience but
-also very deadly. Terrible foes are said to dwell there which aren't seen in
-the mundane world. See (4.5c) for more information about the Nether Realm.
+Kings and Queens who seek new challenges shall try to enter the Cloud Planes
+in the skies far above the world surface, where icy winds freeze you to death,
+and the Nether Realm, the deepest abyss that serves as barrier of the mundane
+world, a dungeon with dangers beyond imagination.
+Only those who destroyed Morgoth may enter these two dungeons. The Nether Realm
+can be highly rewarding in terms of experience but also very deadly. Terrible
+foes are said to dwell there which aren't seen in the mundane world.
+See (4.5c) for more information about the Cloud Planes and about the extra XP
+bonus characters gain in the Nether Realm.
 
 
 
@@ -3105,7 +3149,8 @@ Since version 4.4.5 which supports music and sound via SDL, you also need
 libsdl-mixer-devel, libsdl, libsmpeg. Usual package names (SDL version 1.2):
 libsdl-mixer1.2, libsdl-mixer1.2-dev, libsdl1.2debian, libsdl1.2-dev,
 (preferably libsdl1.2debian-pulseaudio, eg under Ubuntu), libsmpeg0,
-libsmpeg-dev.
+libsmpeg-dev. Sometimes instead of the libsdl* packages your system might
+provide the packages simply named 'sdl' and 'sdl_mixer' instead.
 If you don't want to use audio, edit the makefile and compare the two
 paragraphs titled 'Without SDL' and 'With SDL' and edit the makefile
 accordingly, to compile it without SDL audio support.
@@ -4238,7 +4283,6 @@ Note: The stat points you distribute have no effect on the maximum value your
 character can get by quaffing stat potions. These points to distribute are
 basically just "free stat potions".
 
-
 Now you can choose a difficulty level you wish to play on. Options are
 n) Normal  g) no Ghost  H) Hellish  e) Everlasting
 It is recommended that you choose either n) to play a normal character or g)
@@ -4246,6 +4290,12 @@ to play a normal character without a ghost.
 You can also choose e), that will give your character an infinite amount of
 resurrections, while 'normal' characters often have a limited amount of lives
 (depending on the server configuration).
+
+These difficulty settings are called 'character modes':
+
+
+(3.1a) Character Modes
+----------------------
 
 Mode: 'Normal'
 --------------
@@ -4282,6 +4332,7 @@ Unworldly characters are like normal characters, but they have only one life.
 So if they die they cannot revive but are completely erased (no ghost will be
 created.)
 Note: This is the traditional rogue-like gaming mode.
+Unworldly characters will receive 25% bonus on their high score.
 
 Mode: 'Soloist' (no-ghost and no PC-trading)
 --------------------------------------------
@@ -4304,21 +4355,28 @@ These are unworldly characters with extra penalties:
 -ESP only works within radius of 20 squares
 -any speed changes above or below +0 are reduced by 50%
 -max number of melee attacks per round is reduced by 1.
+Hellish characters receive 50% bonus on their high score.
 
 Mode: 'PvP'
 -----------
 This is a special restricted mode that has nothing to do with normal gameplay.
 If you're new to the game, it's absolutely not recommended to choose this.
 More information about 'PvP' mode is given in (6.13).
+PvP mode character cannot enter the high-score and cannot become kings/queens.
 
-Unworldly characters will receive 25% bonus on their high score.
-Hellish characters receive 50% bonus on their high score.
 The highscore numbers are just for bragging and have no actual influence on
 game-play or anything.
 
-
 Last you can choose a body modification. It's strongly recommended for
 beginners to choose 'normal body' and NOT 'fruit bat'. ;)
+
+
+(3.1b) Body Modifications
+-------------------------
+
+Body: 'Normal body'
+-------------------
+This is what you should pick in most cases and especially as a new player.
 
 Body: 'Fruit bat' (Batty)
 -------------------------
@@ -4332,7 +4390,6 @@ However, fruit bats are twice as fast as normal characters at the beginning
 vampiric, making them leech life on each hit, replenishing their hit points.
 Fruit bats are said to make good explorers. If you're new to the game, it's
 absolutely not recommended to try and play fruit bat.
-
 
 Note that race and class will have influence on how much experience you will
 need to gain a new character level. For example, High-Elves already know a
@@ -4349,7 +4406,7 @@ cannot defeat a certain monster or you cannot advance your character the way
 you'd like to, check out (7.3a)!
 
 
-(3.1a) Character names, collisions and reservations
+(3.1c) Character names, collisions and reservations
 ---------------------------------------------------
 You cannot pick names of characters that are already in use by other players or
 that are very similar to another player's account name.
@@ -6262,14 +6319,19 @@ Magic devices:
     @O          Auto-retaliate with it. (Wands, staves, rods.)
                 Note that you cannot use self-relocation magic such as teleport
                 or word of recall for auto-retaliation.
+                You can restrict auto-retaliation to town-only by adding a 't'
+                after the '@O' like this: '@Ot'.
 
 Spellbooks:
     @Oc         You will auto-retaliate by casting the spell 'c)' from this
                 book (or any other spell, change the inscription accordingly).
+                You can restrict auto-retaliation to town-only by adding a 't'
+                after the '@O' like this: '@Otc'.
                 IMPORTANT: If you cannot cast spells from the book or you
                 inscribe an unsuitable item, auto-retaliation will be disabled
                 completely!
-                (If 'c' is omittted, the first spell will be chosen.)
+                If the spell letter, in this example 'c', is omittted, the
+                first spell in the book will be chosen.
                 Note that you cannot use self-relocation spells such as
                 phase door, teleport or word of recall for auto-retaliation.
 
@@ -6278,16 +6340,17 @@ Runes:          Auto-retaliate with a runespell. The format is rune, rune, mode
                 disable auto-retaliation. 't' is optional for town-only.
                 See (0.2b) for details.
 
-Mimic powers:   Use the /autoret or for short /ar command to set these up,
-    /ar tg      compare (0.2b). Usage (t is optional for 'town-only'):
-                /ar [t]<power>
+Mimic powers:   Auto-retaliate with a mimic power, format is (t is optional for
+    /arm tg     'town-only'): /arm [t]<power>
+                To disable mimic-power-autoretaliation again, use '/arm -'.
                 Note that you cannot use self-relocation spells such as blink
                 or teleport for auto-retaliation.
+                See (0.2b) for details.
 
 If you want an auto-retaliation-enabling inscription to only work while you are
 around a town, add a 't' after the 'O', examples: '@Ot', '@Otb'.
 
-If you want to fall back on melee-autoretaliation in case you are out of mana,
+If you want to fall back to melee-autoretaliation in case you are out of mana,
 use 'Q' symbol instead of 'O'. Examples: '@Qt', '@Qtb'.
 This is useful for classes that may use attack spells yet can perform decently
 in close combat, such as paladin or mindcrafter.
@@ -7302,8 +7365,7 @@ See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
 enter any dungeon you like at any character level.
 
 (***) Death Fate:
-You cannot escape this dungeon, ever. Any character that enters it is fated to
-die to monsters (unlikely) or starvation (very likely).
+Will this be the end of you as you cannot seem to spot a way to escape?
 
 (****) Cloud Planes details:
 -To enter the Cloud Planes a player must carry the 'King'/'Queen' title,
@@ -7323,6 +7385,9 @@ die to monsters (unlikely) or starvation (very likely).
 -Note that the amount of experience is already very high even without this
  depth-bonus, since creatures in the Nether Realm are of a very high level.
 -Instant resurrection does not work in the Nether Realm.
+-It is possible for everlasting and non-everlasting characters who usually
+ cannot form a party to actually team up in the Nether Realm! This is called a
+ cross-mode party, for more information see (3.4b).
 
 (******) Halls of Mandos details:
 -Getting out of the Halls of Mandos will be complemented with an entry
@@ -7547,20 +7612,35 @@ type appended to it in { } brackets. It looks like this:
 ^ A potion of Constitution {Chaos Ball Trap}
 
 Trap symbols ('^') come in different colours. Here's an overview:
-    blue            stat traps (STR/INT/WIS/DEX/CON/CHR) in three difficulties:
-                    1) only reduces an attribute temporarily, heals on its own.
-                    2) reduces an attribute, requiring you to use restoration.
-                    3) permanently reduces an attribute. Counter with stat
-                       potion.
-    bright white    teleport traps
-    orange          dungeon/trap rearrangment traps
-    violet          summoning traps
-    yellow          item-affecting traps
-    red             character status-affecting traps
-    green           elemental bolt traps
-    light blue      elemental ball traps
-    light red       arrow/bolt/dagger traps
-    white           miscellaneous traps
+  blue            stat traps (STR/INT/WIS/DEX/CON/CHR) in three difficulties:
+                  1) only reduces an attribute temporarily, heals on its own.
+                  2) reduces an attribute, requiring you to use restoration.
+                  3) permanently reduces an attribute. Counter with stat
+                     potion.
+  bright white    teleport traps
+  orange          dungeon/trap rearrangment traps
+  violet          summoning traps
+  yellow          item-affecting traps
+  red             character status-affecting traps
+  green           elemental bolt traps
+  light blue      elemental ball traps
+  light red       arrow/bolt/dagger traps
+  white           miscellaneous traps
+
+While many traps have obvious effects, here are some less obvious ones:
+  Bowel Cramps              If you don't have FA you get paralyzed instantly.
+  Calling Out               Calls the highest level monster on the floor.
+  Ale Vendor                It doesn't hand out free ale, you're paying for it.
+  Seasoned Traveler         Does not touch items of value 150 Au or more.
+  Lost Labor                All non-uniques on the floor turn into 100% clones.
+  Despair                   Your stats are reduced and you gain two potions,
+                            Augmentation and Death. Quaff the correct one!
+  Cleaning                  Deletes all nearby unowned loot.
+  Animate Coins             The animated coins are from your own purse..
+  Remittance                You share some of your money in your purse with
+                            everyone online of compatible mode (not in IDDC).
+
+Note that there are even some beneficial traps that grant an item or boon.
 
 
 About trap kits:
@@ -7675,6 +7755,42 @@ them. That inscribing-macro could look like this:
 {-@m1\r
 where the '-' will cause the { inscribe command to prompt for inscription first
 and the item afterwards, effectively simply asking you to specify the item.
+
+
+(4.7a) Trap kit load effects
+----------------------------
+For most items loaded in monster traps the effects are sort of self-explanatory
+and some items have no effect at all (eg detection magic) but here is a list of
+those effects that might not be so obvious:
+
+Flasks:
+Oil                     Fire damage
+Acid                    Acid damage and blinding effect
+
+Potions:
+Salt Water              Blind
+Weakness                Reduces damage
+Clumsiness              Reduces AC
+Sickliness              Reduces HP
+Ruination               Weakness + Clumsiness + Sickliness
+Lose Memories           Confuse
+Life                    Holy fire vs Undead; heals non-undead
+
+Scrolls:
+Remove Curse            Dispel undead
+*Remove Curse*          *Dispel undead*
+Blessing                Holy fire
+Holy Chant              Holy fire
+Holy Prayer             Holy fire
+Protection from Evil    Dispel evil
+Rune of Protection      Holds a monster in place temporarily
+Scroll of Life          Erases ghosts ('G')
+
+Wands:
+Wall Creation           Stone prison
+
+Staves:
+Remove Curse            Dispel undead
 
 
 
@@ -8236,7 +8352,7 @@ Hit point drain ('Drains your hit points')
      -Items that just drain your HP
      -Items that have strong good powers and you use them as a Vampire
      -The sun, when it's day and you're a Vampire and out in the open without
-      a protective mummy wrapping
+      a protective mummy wrapping or something granting resistance to light.
      -Monster forms that provide wall-passing (wraith form)
 
     HP drain can be countered by HP regeneration, which can be gained from:
@@ -8494,10 +8610,12 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     stack). Usually you will want the item. However, you can trade the deed to
     someone else, who can then go and redeem it for luck for that character of
     his (although the luck bonus he gets will be somewhat lower than what the
-    original owner would receive).
+    original owner would receive). 
     All losers will also receive a deed on the next character they log in with
     which can be turned in for a small temporary luck bonus (multiple deed
     buffs don't stack).
+    The luck buffs are on hold while on the world surface, so you won't lose
+    buff time from running around.
     If you die in this event, your character will get erased, even if it was
     an everlasting-mode character.
     For details about luck see LUCK flag in (5.8).
@@ -8532,7 +8650,7 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     teleported back to Bree. He automatically receives a victory deed in his
     inventory which he can exchange at the Mayor's office in the town hall.
     It can be exchanged for eiter an item or a temporary luck bonus (multiple
-    deed buffs don't stack).
+    deed buffs don't stack, on hold on world surface).
     He can also give this deed to another character if he wishes, although in
     that case it can only be exchanged for a luck bonus, not an item, and the
     bonus will be somewhat lower than for the Highlander champion himself.
@@ -8540,7 +8658,7 @@ Highlander Tournament (pvp, only one can win, 2+ participants)
     All losers will also receive a 'contenders deed' on the next character they
     log on with, which can be exchanged at the Mayor's office for small
     temporary luck bonus (note that it vanishes when you log off, and multiple
-    deed buffs don't stack).
+    deed buffs don't stack, buff is on hold while on world surface).
 
     A note regarding turning in a deed for an item:
     The item you get will be random but still depend on your character's skill
@@ -8620,6 +8738,9 @@ Dungeon Keeper (everyone can win, 1+ participants)
     Loser parchments are not tradable and can only be turned in for a small
     temporary luck buff (about 30 minutes duration).
     For details about luck see LUCK flag in (5.8).
+
+    The luck buffs are on hold while on the world surface, so you won't lose
+    buff time from running around.
 
     Hints:
     -The Horned Reaper in this maze bashes doors instead of opening them.
@@ -10080,7 +10201,7 @@ There are also five minor resistances:
 Fear            While you're afraid you won't be able to attack a target in
                 close combat.
 Blindness       You cannot read scrolls or books while you're blind.
-                Blindness can be caused directly by a blindness attack or by
+                Blindness can be caused directly by a blindness attack or
                 indirectly by light or darkness attacks if you don't resist
                 those. You still can use magic staves, rods or wands and
                 quaff potions. Quaffing a potion of Healing, Curing or
@@ -10670,10 +10791,10 @@ item that you will find on the floor:
    5th is 'hidden' and is the rest chance not covered by the first four:
 
     -Combat:
-     Weapons, armour (except boots), shields, ammunition.
+     Weapons, armour (except for boots and cloaks), shields, ammunition.
 
     -Treasure (named 'Valuables' in ~7 monster spoilers):
-     Chests, rings, amulets, dragon scale mails, crowns.
+     Rings, amulets, dragon scale mails, crowns and chests.
 
     -Magic:
      Mage staves, wands, staves, rods, runes, potions, scrolls (except for
@@ -10683,7 +10804,7 @@ item that you will find on the floor:
     -Tools:
      Boots, cloaks, diggers, light sources, flints, food, flasks, trap kits,
      spikes, climbing sets, picklocks, money belts,
-     devices of theft prevention, tarpaulins, mummy wrappings.
+     backpack safety locks, tarpaulins, mummy wrappings.
 
     -Junk (rest chance, not covered by the above four categories):
      Skeletons/skulls/bones, bottles, shards of pottery, broken sticks,
@@ -10841,7 +10962,7 @@ DRAIN_EXP ('It drains your life force')
         Vampire race characters suffer half as much from this effect as others.
 LUCK ('It affects your luck.')
         If you are lucky, your chance to find better items increases.
-        Luck caps at 40, having higher bonus won't help any more.
+        Luck caps at 40 (and -10), having higher bonus won't help any more.
         The higher your luck is, the more diminishing is the effect of
         increasing it even more.
         What does 'better items' mean exactly?
@@ -11265,6 +11386,8 @@ Deeds           Some of the parchments are deeds, which are used as rewards
                 than the original owner could have gotten.
                 Note that temporary luck buffs from deeds do not stack and also
                 will end prematurely when you log out before the buff ran out.
+                The luck buffs are on hold while on the world surface, so you
+                won't lose buff time from running around.
 *Destruction*   Causes a local earthquake, nearly completely wiping the area
                 of monsters and objects (see (5.13) about earthquakes).
                 Extremely powerful magic which causes a searing blast of light
@@ -11505,9 +11628,9 @@ Ale and wine        Will satisfy your hunger somewhat, and may have random side
                     drinker positively, not ever causing negative side effects
                     besides possible confusion.
 Chests              Chests may contain treasures or items. Usually, chests
-                    you find will have hidden traps on them. So what you do is
-                    to hit 's' to search for traps while standing next to the
-                    chest, or use any trap detection magic.
+                    you find will have hidden traps on them. So what you do
+                    is to hit 's' to search for traps while standing next to
+                    the chest, or use any trap detection magic.
                     When you have discovered the trap, hit 'D' to disarm it,
                     or again use any sort of disarming magic.
                     The disarmed chest is finally safe to open with 'o' key.
@@ -11524,7 +11647,7 @@ Chests              Chests may contain treasures or items. Usually, chests
 Climbing set        Allows you to travel over mountain fields.
                     Info for mimics & co: In order to be able to use it, your
                     appearance form must have arms and fingers. (Equip it!)
-Device of theft prevention
+Backpack safety lock
                     When equipped, prevents thieves from stealing items from
                     your backpack. It does not secure your purse though, you
                     will need a money belt for that.
@@ -12367,7 +12490,7 @@ LOSE_xxx        sustain stats.
 EAT_xxx         DEX and stealing skill increase your chance to resist
                 EAT_ITEM (item stealing) and
                 EAT_GOLD (money stealing) attempts.
-                A device of theft prevention makes you immune to EAT_ITEM.
+                A backpack safety lock makes you immune to EAT_ITEM.
                 A money belt makes you immune to EAT_GOLD.
                 Nothing helps against EAT_FOOD or EAT_LITE.
 UN_BONUS        disenchantment.
@@ -12573,7 +12696,8 @@ AUTO_CURSE      occurs together with CURSED or HEAVY_CURSE.
                 To drop directly from your equipment, press '/' key at the
                 "drop what?" prompt, which will switch to equipment (and back
                 to inventory if pressed again).
-TY_CURSE        Randomly drains stats sometimes, even if the item is uncursed.
+TY_CURSE        "It carries an ancient foul curse."
+                Randomly drains stats sometimes, even if the item is uncursed.
                 (TY_CURSE will stay, even if the 'normal' curse is broken!)
                 Lowers the items value by 15000 Au.
                 This curse will be on hold while you're in a town, and will
@@ -12582,15 +12706,17 @@ TY_CURSE        Randomly drains stats sometimes, even if the item is uncursed.
                 Note that your saving throw has a chance to suppress it.
                 Having 'Holy Support' skill at 40.000 or better will completely
                 negate TY_CURSE effects.
-                ("It carries an ancient foul curse.")
-DG_CURSE        Rarely summons a random monster on you, even if uncursed.
+DG_CURSE        "It carries an ancient morgothian curse."
+                Rarely summons a random non-unique monster on you, even if
+                uncursed. The monster will yield no credit, xp or loot.
+                The maximum (randomized) monster level will be..
+                (player level * 7 / 5 + dungeon_level) / 2 + 5.
                 (DG_CURSE will stay, even if the 'normal' curse is broken!)
                 Greatly lowers the items value by 25000 Au.
                 This curse will be on hold while you're in a town area.
                 Note that an anti-magic field has a chance to suppress it.
                 Having 'Holy Support' skill at 40.000 or better will completely
                 negate TY_CURSE effects.
-                ("It carries an ancient morgothian curse.")
 
 If 'CURSED' or 'HEAVY_CURSE' occurs on an enchantable item such as a weapon or
 armour piece, the curses can alternatively be broken by enchanting the item's
@@ -14413,6 +14539,10 @@ stated.
                                 increase your chances of spotting traps, ie
                                 improving your 'Searching' ability.
 
+                                At 10.000 Trapping you will learn the fighting
+                                technique 'Steam Blast' which can blast open
+                                doors.
+
                                 Last but not least Trapping gives you a chance
                                 (depending on your skill) to salvage a trap kit
                                 from any trap you disarm!
@@ -14481,9 +14611,9 @@ stated.
                                 Depending on the skill, you might also uncover
                                 unusual features such as fountains or
                                 staircases or somewhat more often (compared to
-                                finding just random items from digging) find
-                                chests, runes or heavy material pieces suitable
-                                for golem creation.
+                                finding just random items from digging)
+                                find chests, runes or heavy material pieces
+                                suitable for golem creation.
                                 The quality of objects found also depends on
                                 your digging skill.
 
@@ -14529,6 +14659,10 @@ stated.
                                 10.000 (when found, not when created by using a
                                 grinding tool, so it can be acquired at 5.000).
                                 For information on crafting charges see (6.2b).
+
+                                At 10.000 Digging, if Demolitionist is enabled,
+                                you will learn the fighting technique
+                                'Steam Blast' which can blast open doors.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you levitation, so you may
@@ -14602,7 +14736,7 @@ Besides changes in their skill tree, Maiar als gain particular abilities on
 initiation, depending on their alignment. All the changes are listed here:
 
 Enlightened:
-    Gain time resistance (all initiated Maiar, enlightened and corrupted).
+    Gain time resistance and they no longer have any need for worldly food.
     Able to see invisible and resisting light, while being susceptible to
     evil-based attacks.
     Intrinsic light aura that adds to any light source's radius.
@@ -14620,7 +14754,7 @@ Enlightened:
     Light and Mana rune ratios x 1.7, Fear and Shivering Aura ratio x 3.0.
 
 Corrupted:
-    Gain time resistance (all initiated Maiar, enlightened and corrupted).
+    Gain time resistance and they no longer have any need for worldly food.
     Resist fire and darkness while being susceptible to good-based attacks.
     +2 bonus HP for each level above 20.
     At level 50 they will become resistant to poison, immune to fire, and
@@ -15093,6 +15227,7 @@ create a character!):
     Unlike other races, draconians are susceptible to the void connecting
     void jump gates and may get hurt by it when they travel through it,
     perceiving it as "cold" even if they resist or are immune to normal frost.
+    The greater the gate distance, the higher the damage from 'going between'.
     Armour can help to mitigate this effect somewhat.
     Draconians possess a certain lineage trait from birth, providing them with
     intrinsic resistances and an elemental breath (learned at level 8) which
@@ -15138,7 +15273,9 @@ create a character!):
     Hint: Make sure to set your breath attack to a hotkey when you learn it.
 
 - Kobold
-    These somewhat smallish dog-faced humanoids resist poison intrinsically.
+    These somewhat smallish dog-faced humanoids who tend to live in lairs
+    and often make up for their size by laying out clever traps resist poison
+    intrinsically.
     They are able to take most roles, being somewhat better at archery than
     close combat. Their intelligence is somewhat suspect, and although they do
     not pick up careers as mages or other very elaborate professions, they can
@@ -15146,8 +15283,8 @@ create a character!):
     They can see in the dark thanks to infra-vision, have extraordinarily sharp
     senses, and can move very silently, making them hard to spot. They are also
     good at disarming traps.
-    Kobolds receive a bonus on 'Trapping', a huge bonus on 'Swimming' and a
-    slight bonus on 'Sneakiness'.
+    Kobolds receive a large bonus on 'Trapping' and 'Digging', a huge bonus on
+    'Swimming' and a slight bonus on 'Sneakiness'.
 
 - Dark-Elf
     Dark-Elves dwell below the surface in huge caverns of their underground
@@ -15192,9 +15329,10 @@ create a character!):
     using a Morgul weapon will not pose a problem to them.
     Vampires are good fighters and decent mages. However, they are unable to
     conjure holy fire or utilize magic of water or nature school. Neither can
-    they make use of mimicry techniques (with the exception of vampire bat,
-    see below) or holy or spirit spells. They are unable to try and suppress
-    magic, but can make use of items that provide anti-magic effects.
+    they make use of mimicry techniques (with the exception of vampire bat and
+    vampiric mist, see below) or holy or spirit spells.
+    They are unable to train in anti-magic in order to suppress magic, but they
+    can make use of items that provide anti-magic effects.
     Aside from darkness they also resist sanity-draining effects somewhat,
     cold, time, nether, they're immune to poison and it's hard to drain their
     life force - this is also true for life force drained by items a vampire
@@ -15328,23 +15466,23 @@ Half-Orc    +2  -1   0   0  +1  -4      11      115%    30ft
             -3  -3  -3  -1   7   0  12  -5
 Half-Troll  +4  -4  -2  -4  +3  -6      12      135%    30ft
             -5  -8  -8  -2   5  -1  20 -10
-Dunadan     +1  +2  +2  +2  +3  +2      10      170%     0ft
+Dunadan     +1  +2  +2  +2  +3  +2      10      160%     0ft
              4   3   5   0  13   3  15  10
-High-Elf    +1  +3  -1  +3  +1  +3      10      230%    40ft
+High-Elf    +1  +3  -1  +3  +1  +3      10      200%    40ft
              4  20  20   3  14   3  10  25
 Yeek        -5  -5  -5  -5  -5  -3       8       80%     0ft
              0   0   0   0  10   0  -7   0
 Goblin       0  -1  -4  +4  +2  -5      10      120%    30ft
              2  -3  -3   0   8   2  12  -5
-Ent         +8  -4  +2  -4  +8  -4      14      320%     0ft
+Ent         +8  -4  +2  -4  +8  -4      14      280%     0ft
             -4   0  20  -6   4   5   0 -20
-Draconian   +4  +2  +2  +1  +3  +2      12      350%    50ft
+Draconian   +4  +2  +2  +1  +3  +2      12      300%    50ft
              0   7  10  -5  10  10  15   5
-Kobold      -1  -1   0  +2  +2  -2       8      115%    50ft
-            10   5   0   4  15  15   0  10
-Dark-Elf     0  +2  +1  +3  +1  -6      10      150%    80ft
+Kobold      -1  -1   0  +2  +2  -2       8      110%    50ft
+            10   5   4   4  15  15   0  10
+Dark-Elf     0  +2  +1  +3  +1  -6      10      140%    80ft
              7   3   6   4   6  10  15  15
-Vampire     +2  +2  -1  +2   0  +3      11      270%   150ft
+Vampire     +2  +2  -1  +2   0  +3      11      240%   150ft
             -2   3  20   2  13  -4  10 -10
 Maia        +2  +3  +3  +1  +1  +2      11      400%   100ft
              3  20   3   0   5   1   5   5
@@ -15504,6 +15642,8 @@ create a character!):
     A Rogue is a character that prefers to live by cunning, but is capable of
     fighting their way out of a tight spot. The master of traps and locks, no
     device is impossible for him to overcome.
+    Their main way of combat is by either dual-wielding two sword-class weapons
+    such as daggers, or - rather rarely seen - utilizing martial arts.
     Their primary stats are intelligence and dexterity, intelligence being very
     important if they aim to become proficient at magic, while dexterity makes
     up in combat prowess for what their strength might be lacking.
@@ -15657,6 +15797,7 @@ create a character!):
     They have the same abilities as paladins in all regards but they are not
     able to utilize any kind of prayers and are susceptible to holy effects,
     instead they command unholy blood, unlife and shadow magic.
+    Also, they are significantly better than paladins at using magic devices.
     Death knights resist fear intrinsically.
 
 - Hell Knight
@@ -15671,6 +15812,7 @@ create a character!):
     Unlike paladins they can actually also dual-wield two one-handed weapons at
     once, although they will need to use light armour for this strategy to be
     effective (see (6.2)).
+    Also, they are somewhat better than paladins at using magic devices.
     Similar to Vampires, Hell Knights can wield some heavily cursed items to
     great effect, flipping their negative boni to positive ones. (With the same
     exception as for vampires: Weapons "of nothingness" will do them no good
@@ -15758,6 +15900,8 @@ create a character!):
     Druids learn how to quickly pass through thick forest at level 10 --
     note though that they can already do this at level 5 by simply polymorphing
     into an animal ('m' key), since all animals can pass forest easily.
+    Also starting at 5 they learn the first form (cave bear) that can pass
+    mountain terrain, and later they also learn flying forms (griffon).
     To review which forms you can transform into, use the /ex command.
     To see an overview of the forms and their abilities, see (6.7c).
 
@@ -15899,35 +16043,39 @@ BpR limits count only for weapons, not for martial arts usage, see (5.3a).
 (Di:Disarming,      MD:Magic Device,        ST:Saving Throw,    St:Stealth,
 Pe:Perception (sight range), Sr:Searching,  Fi:Fighting,        BT:Bows/Throw)
 
-Class       STR INT WIS DEX CON CHR     HP die   Exp%   Max. base blows/round
- @-colour   Di  MD  ST  St  Pe  Sr  Fi  BT              Parrying/Blocking
-------------------------------------------------------------------------------
-Warrior     +5  -2  -2  +2  +2  -1      +10       +0%       6
- brown      25  18  18   1   2  14  70  55              superb   superb
-Istar       -5  +3   0  +1  -2  +1       +0      +35%       1
- red        30  36  30   2  20  16  34  20              bad      bad
-Priest      -1  -3  +3  -1   0  +2       +5      +20%       4
- green      25  25  32   2   8  16  48  35              fair     fair
-Rogue       +2  +1  -2  +3  +1  -1       +5      +15%       5
- blue       45  28  28   5  32  24  60  66              superb   fair
-Mimic       +1   0   0  +1  +1  -4       +6      +30%       5
- l.grey     25  34  28   1  18  18  60  46              good     good
-Archer      +1   0  +2  +3  +1  -1       +5      +10%       3
- orange     30  22  28   2  20  24  56  72              fair     fair
-Paladin     +3  -3  +1   0  +2  +2       +8      +30%       5
- yellow     10  21  54   1  16  13  60  40              good     superb
-Ranger      +2  +2  -1  +1  +2   0       +7      +35%       5
- l.brown    34  32  30   5  30  30  50  60              superb   fair
-Adventurer   0   0   0   0   0   0       +6      +25%       4
- violet     20  22  20   3  15  15  50  50              fair     fair
-Druid       +1   0  +2  -2  -2  +1       +5      +35%       4
- l.green    30  35  30   4  25  25  50  44              poor     poor
-Shaman       0  +1  +2  -2   0   0       +3      +40%       4
- l.red      10  30  30   4  30  20  45  23              poor     poor
-Runemaster   0  +2  -2  +2  -2   0       +4      +40%       4
- l.blue     30  32  20   3  30  26  45  40              fair     poor
-Mindcrafter +2  +2   0   0   0  +1       +6      +25%       5
- grey       30  28  36   3  35  14  55  45              good     fair
+Class         STR INT WIS DEX CON CHR     HP die   Exp%   Max. base blows/round
+ @-colour     Di  MD  ST  St  Pe  Sr  Fi  BT              Parrying/Blocking
+-------------------------------------------------------------------------------
+Warrior       +5  -2  -2  +2  +2  -1      +10       +0%       6
+ brown        25  18  18   1   2  14  70  55              superb   superb
+Istar         -5  +3   0  +1  -2  +1       +0      +35%       1
+ red          30  36  30   2  20  16  34  20              bad      bad
+Priest        -1  -3  +3  -1   0  +2       +5      +20%       4
+ green        25  25  32   2   8  16  48  35              fair     fair
+Rogue         +2  +1  -2  +3  +1  -1       +5      +15%       5
+ blue         45  28  28   5  32  24  60  66              superb   fair
+Mimic         +1   0   0  +1  +1  -4       +6      +30%       5
+ light grey   25  30  28   1  18  18  60  46              good     good
+Archer        +1   0  +2  +3  +1  -1       +5      +10%       3
+ orange       30  22  28   2  20  24  56  72              fair     fair
+Paladin       +3  -3  +1   0  +2  +2       +8      +30%       5
+ yellow       10  21  54   1  16  13  60  40              good     superb
+Ranger        +2  +2  -1  +1  +2   0       +7      +35%       5
+ light brown  34  32  30   5  30  30  50  60              superb   fair
+Adventurer     0   0   0   0   0   0       +6      +25%       4
+ violet       20  22  20   3  15  15  50  50              fair     fair
+Druid         +1   0  +2  -2  -2  +1       +5      +35%       4
+ light green  30  35  30   4  25  25  50  44              poor     poor
+Shaman         0  +1  +2  -2   0   0       +3      +40%       4
+ light red    10  30  30   4  30  20  45  23              poor     poor
+Runemaster     0  +2  -2  +2  -2   0       +4      +40%       4
+ light blue   30  32  20   3  30  26  45  40              fair     poor
+Mindcrafter   +2  +2   0   0   0  +1       +6      +25%       5
+ grey         30  28  36   3  35  14  55  45              good     fair
+Death Knight  +3  -3  +1   0  +2  +2       +8      +30%       5
+ dark grey    10  28  54   1  16  13  60  40              good     superb
+Hell Knight   +3  -3  +1   0  +2  +2       +8      +30%       5
+ dark grey    10  25  54   1  16  13  60  40              good     superb
 
 
 For melee characters, it's especially vital to know how many blows per round
@@ -16824,10 +16972,10 @@ to strength, because he's also quite heavy and therefore gets another bonus.)
 STR     Melee damage: -1..+4 (-1 won't apply if creature is very heavy though)
         Earthquaking melee hits: +1 each
         Body weight: +1..+3
-        Bears: +1
+        Bears: +2
         Yetis and cousins: +1
-        Trolls: +1
-        Giants: +1
+        Trolls: +2
+        Giants: +2
         Dragons (mature and higher): +1
 INT     Cast speed (1_IN_1 to 1_IN_3): +1..+5
         (will also give up to +50% base mana)
@@ -17041,8 +17189,9 @@ Uruk            16  Good HP, good melee damage, good AC, +1 extra shot w/
                     a confusion effect (which makes fighting it in close combat
                     a bit dangerous).
                     (Does not occur in packs.)
-*Forest troll   17  High HP, good AC, can pass trees, gives 'HP regeneration'
-                    (same as item flag).
+*Forest troll   17  High HP, good AC, can pass trees, and like all trolls (and
+                    hydras by the way) has extraordinarily fast HP regeneration
+                    (2x as much as and not stacking with REGEN flag).
 *Earth spirit   17  Useful only for shamans because it has no limbs!
                     Since this is an 'E' form, shamans learn it very quickly.
                     Similar to Air spirit (see further above) this form comes
@@ -17095,7 +17244,7 @@ Panther                 speedy
 
 Level 10:
 ---------
-Grizzly bear            same as Cave Bear, but tougher
+Grizzly bear            same as Cave bear, but tougher
 (Code 191)
 
 Yeti                    can pass mountain terrain;
@@ -17111,7 +17260,7 @@ Sasquatch               speedy; can pass mountain terrain and woods;
 
 Level 20:
 ---------
-Werebear                same as Grizzly Bear, but tougher
+Werebear                same as Grizzly bear, but tougher
 (Code 414)
 
 Great eagle             speedy; can fly; passes most terrain types
@@ -17388,9 +17537,11 @@ school.
                     Instead, the shield will consume your mana to absorb it.
                     Only Istari are able to really get the most out of it -
                     they get 1 mana point deducted for each absorbed point of
-                    non-melee damage. For melee hits they take 4/3 mana each.
-                    All other classes will always get 2 mana points deducted
+                    damage. All other classes will get 2 mana points deducted
                     for each damage point.
+                    Note that Disruption Shield actually prevents being
+                    intercepted by enemies, making a skill like 'Calmness'
+                    obsolete for higher-level istari!
                     Required skill level for first spell level: 35.
 
     BONI:           Mana resistance at 40.
@@ -17728,7 +17879,7 @@ school.
                     *Identifies* an item.
                     Required skill level for first spell level: 35.
 
-    BONI:           Automatic identification at 50.
+    BONI:           Automatic identification (auto-ID) at 50.
 
 
 - Temporal
@@ -17854,6 +18005,9 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     types of monsters.
                     Radius and damage will further increase.
                     Shared spell (see above): H.Offense, H.Support.
+
+    Ray of Light    Casts a ray of powerful light.
+                    Required skill level for first spell level: 18.
 
     Redemption      *Dispels undead* in your field of view.
                     Required skill level for first spell level: 10.
@@ -18139,10 +18293,11 @@ spell failure rate. All Unlife spells use WIS.)
 
                     Tier III: Level 40.
 
-    Aspect of Peril
-                    Temporarily brands your melee weapons with poison.
-                    Lv10: Grants temporary poison resistance.
-                    Required skill level for first spell level: 14.
+    Aspect of Peril                                            (auto-project)
+                    Temporarily brands your or adjacent friendly players'
+                    melee weapons with poison.
+                    Lv10: Additionally grants temporary poison resistance.
+                    Required skill level for first spell level: 10.
 
     Darkness        Causes a burst of darkness around you, possibly blinding
                     nearby creatures.
@@ -18154,12 +18309,6 @@ spell failure rate. All Unlife spells use WIS.)
                     This spell cannot be found in the Conveyance tome.
 
     Shadow Shroud   Grants temporary invisibility. (See (5.16) for details.)
-                    In addition to the normal invisibility effect this spell
-                    makes it extra hard for monsters to hit you in melee (aka
-                    it will provide an AC bonus), as long as you are standing
-                    on a non-lit grid (and aren't using any sort of light
-                    source). Note that this extra 'shrouding' effect cannot
-                    coexist with a reactive shield spell (fiery shield).
                     Required skill level for first spell level: 30.
 
     Chaos Bolt      Channels the powers of chaos into a bolt attack.
@@ -18184,16 +18333,21 @@ spell failure rate. All Unlife spells use WIS.)
                     Shared spell (see above): H.Offense, O.Shadow.
                     This spell cannot be found in the Shadow tome.
 
-    Darkness Storm  Conjures up a storm of darkness.
+    Darkness Storm  Conjures up a ball of darkness.
                     Required skill level for first spell level: 42.
 
     BONI:           Increases infra-vision by +1 every 10 points, up to +5.
                     (Note that infra-vision caps at TomeNET's generic maximum
                     sight range, which is 200 ft aka 20 grids.)
-                    At 10 it starts increasing your walking speed while you are
-                    moving on non-lit grids (and not using any light source),
-                    very similar to how the 'Sprint' technique works. This
-                    'shadow walk' effect increases every 10 levels.
+                    If you aren't using _any_ light source (note that intrinsic
+                    "light" of Vampire characters doesn't count as light), it
+                    increases the chance for monsters to miss you in melee
+                    combat (sort of a 'blur' effect) more often and at 10.000
+                    also gives you a walking speed increase, similar to how the
+                    'Sprint' technique works. This 'shadow walk' effect
+                    increases with every 10 points. Exception: While cloaked
+                    (rogues), blur and shadow walk will actually work with a
+                    light source too.
                     At 30 grants darkness resistance.
                     At 35 and higher it will also grant a stealth bonus that
                     increases by +1 every five skill points, up to +4 at 50.
@@ -18457,6 +18611,9 @@ spell failure rate. All Unlife spells use WIS.)
     BONI:           At 30 it grants HP regeneration to true vampires (same as
                     from item flag) and strong hold of your life force for
                     other races.
+                    At 50 it grants 'nether feedback': If you take damage from
+                    nether-based attacks the damage is reduced by a flat 10%
+                    and you regain that part as mana points.
                     If both Unlife and Necromancy are at 50.000, it grants
                     ultimate hold on one's own life force, rendering oneself
                     immune to experience drain, including the permanent drain
@@ -19492,7 +19649,7 @@ Parties:
     you will be prompted to rename the party. Only the party owner can do this.
 
     Specialty: Everlasting and non-everlasting players can team up while
-               inside the Nether Realm.
+               inside the Nether Realm and trade loot, see (3.4b) and (4.5c).
 
 -Create or rename an 'Iron Team' party
     Allows you to create an iron team if you aren't in one yet, or rename your
@@ -19515,7 +19672,8 @@ Parties:
     If you aren't in a party, you will see "Add yourself to party" instead!
     This will allow you to add this character to a party, provided that at
     least one of your other characters is already a member of it.
-    This does not work for cross-adding to nether realm parties.
+    This does not work for cross-adding to nether realm parties (see (3.4b)
+    and (4.5c)).
     It only works for cross-adding to IDDC parties if your already partied
     character is currently in the IDDC.
 
@@ -19922,6 +20080,18 @@ The techniques are as follows:
         Shadow running includes sprinting, ie moving at half energy cost.
         (Starting to shadow-run does not cost energy.)
 
+    Other fighting techniques:
+    --------------------------
+    Steam Blast         -
+        Learnt by skilling 'Trapping' or - if the Demolitionist perk is enabled
+        - 'Digging' to at least 10.000.
+        Requires a fumes trap kit and a potion both inscribed '!S'. They will
+        be consumed and a steam blast charge is planted on the lock of the next
+        door the player bumps into. The player must not move or the skill will
+        be cancelled.
+        The steam blast charge detonates after several seconds and will break
+        the door open.
+
     Shooting techniques:
     --------------------
     Flare Missile       2 stamina      (4.000 Archery)
@@ -19959,7 +20129,7 @@ The techniques are as follows:
         (*: 20% chance per turn of actively using it to drain 1 stamina.)
         Toggle, making you enter or leave double shot mode. While active, you
         will fire 2 projectiles at once on each shot, dealing way less damage
-        than a single shot though. Useful to eradicate weak critters.
+        than a single shot though. Useful to eradicate masses of weak critters.
         Note: If your stamina drops below 1 you will continue to fire
               normally, but not leave double shot mode. That means as soon as
               you get stamina back you'll start firing double shots again.
@@ -21024,6 +21194,28 @@ in most webbrowsers. To manually take an xhtml-Screenshot at any time, press
 CTRL+T.
 
 
+(8.2a) High Score
+-----------------
+The high score is just for bragging and has no further purpose in-game.
+Everlasting and PvP mode characters cannot enter the high score.
+
+During gameplay you can invoke the high score table with '#' key or ~ c.
+If your currently calculated score would he high enough to enter the high score
+in case you died now, you will be able to see your own entry in the high score
+table, so you can always check where you stand. Note that you can see yourself
+in the high score even if you aren't eligible to really enter it because of
+your character mode, so even everlasting players could check where they "would"
+stand, in theory.
+
+The high score is based on the character's experience (XP), its level and its
+expfact (that is the internal name for race/class-dependant experience penalty,
+eg lowest for yeek, highest for maia, and similarly for the classes).
+
+Further boni are applied for being unworldly, hellish or playing a dedicated
+IDDC-slot character. These stack, so the highest score bonus is achieved by
+playing a hellish IDDC-exlusive mode character.
+
+
 
 (8.3) Golem creation
 ---------------------
@@ -21035,18 +21227,22 @@ Although golems can kill monsters, you don't get credit for it and they are
 more of a fun feature than a serious enhancement to your character, so don't
 be too hell-bent on creating a golem or you will be disappointed.
 
-To create a golem, you will need these parts:
--A 'scroll of Golem Creation'
--A massive piece of a specific material
--Arms, up to 4. (Arms are optional, but without arms it cannot attack!)
--Legs, must be exactly 2.
--Command scrolls (see below). If a command scroll is not in your inventory when
- you create the golem, it will not understand that command later on even if you
- acquire that type of scroll afterwards! So make sure you carry all 3 command
- scrolls before creating it.
- (Command scrolls are not consumed upon golem creation.)
--Optionally, further items can be provided to add extra properties to the
- golem, see a bit further down in this paragraph about '@G' inscription.
+To create a golem, you will need these parts - note that except for the scroll
+of Golem Creation, which belongs into the 'magic' treasure class, all other
+golem items, including the command scrolls, belong the 'junk' treasure class:
+(For more information about treasure classes see (5.7c).)
+
+  -A 'scroll of Golem Creation'
+  -A massive piece of a specific material
+  -Arms, up to 4. (Arms are optional, but without arms it cannot attack!)
+  -Legs, must be exactly 2.
+  -Command scrolls (see below). If a command scroll is not in your inventory
+   when you create the golem, it will not understand that command later on even
+   if you acquire that type of scroll afterwards! So make sure you carry all 3
+   command scrolls before creating it.
+   (Command scrolls are not consumed upon golem creation.)
+  -Optionally, further items can be provided to add extra properties to the
+   golem, see a bit further down in this paragraph about '@G' inscription.
 
 After the golem has been created it will start out passively, not following any
 particular command. It will just sit there doing nothing. To actually control
@@ -21171,14 +21367,15 @@ Here is some advice how to use these most valuable scrolls wisely:
 DOESN'T ENCHANT WHOLE STACKS:
 
 -Don't use scrolls of artifact creation on item stacks, it would
-reduce the stack to 1.
+ reduce the stack to 1.
 
 ONLY WORKS ON STANDARD EQUIPMENT:
 
--Artifact creation only works on items that can be equipped - with the
-exception of tool items like diggers, picklock, money belt, device of theft
-prevention, tarpaulin, flint, mummy wrapping, climbing set. These won't work!
-Also, it does not work on rings of polymorphing or amulets of telepathy!
+-Artifact creation only works on items that can be equipped - with
+ the exception of tool items like diggers, picklocks, money belts,
+ backpack safety locks, tarpaulins, flints, mummy wrappings, climbing sets.
+ These won't work!
+ Also, it does not work on rings of polymorphing or amulets of telepathy!
 
 DOESN'T WORK ON EGOS / ARTS:
 
@@ -21964,10 +22161,10 @@ If you want to compare dps of different weapons or the effect of extra-attack
 equipment vs critical-hit equipment in Bree, first remove all items that give
 +speed (and apply to both scenarios) to make sure you get accurate numbers.
 The limits in Bree (and hence on the world surface) are:
- +90 speed -> max 5 attacks
- +72 speed -> max 6 attacks
- +53 speed -> max 7 attacks
- +43 speed -> max 8 attacks
+ +90 speed -> max 5 attacks or shots
+ +72 speed -> max 6 attacks or shots
+ +53 speed -> max 7 attacks or shots
+ +43 speed -> max 8 attacks or shots (maximum attainable shots per round)
  +37 speed -> max 9 attacks
  +32 speed -> max 10 attacks
  +28 speed -> max 11 attacks

@@ -180,6 +180,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_INDICATORS]	= Receive_indicators;
 	receive_tbl[PKT_PLAYERLIST]	= Receive_playerlist;
 	receive_tbl[PKT_WEATHERCOL]	= Receive_weather_colouring;
+	receive_tbl[PKT_MUSIC_VOL]	= Receive_music_vol;
 	receive_tbl[PKT_WHATS_UNDER_YOUR_FEET]	= Receive_whats_under_you_feet;
 }
 
@@ -546,6 +547,7 @@ void Receive_login(void) {
 	if (sflags0 & SFLG0_DED_IDDC) s_DED_IDDC = TRUE;	/* probably unused */
 	if (sflags0 & SFLG0_DED_PVP) s_DED_PVP = TRUE;		/* probably unused */
 	if (sflags0 & SFLG0_NO_PK) s_NO_PK = TRUE;
+	if (sflags0 & SFLG0_PVP_MAIA) s_PVP_MAIA = TRUE;
 
 	/* Set client mode */
 	if (sflags1 & SFLG1_PARTY) client_mode = CLIENT_PARTY;
@@ -800,7 +802,7 @@ void Receive_login(void) {
 		if (exclusive_ok) {
 			/* hack: no weird modi on first client startup!
 			   To find out whether it's 1st or not we check firstrun and # of existing characters.
-			   However, we just don't display the choice, but it's still choosable by pressing the key anyway! */
+			   However, we just don't display the choice, but it's still choosable by pressing the key anyway except for firstrun! */
 			if (!firstrun || existing_characters)
 				c_put_str(CHARSCREEN_COLOUR, "E) Create a new slot-exclusive character (IDDC or PvP only)", offset + 1, 2);
 		}
@@ -830,7 +832,7 @@ void Receive_login(void) {
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
 
-	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok)) || i > (max_cpa - 1))
+	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok || firstrun)) || i > (max_cpa - 1))
 	    && ((ch != 'S' && ch != 'I' && ch != 'A') || !allow_reordering)) {
 		ch = inkey();
 		//added CTRL+Q for RETRY_LOGIN, so you can quit the whole game from within in-game via simply double-tapping CTRL+Q
@@ -865,7 +867,7 @@ void Receive_login(void) {
 #endif
 		goto enter_menu;
 	}
-	if (ch == 'N' || ch == 'E') {
+	if (ch == 'N' || (ch == 'E' && !firstrun)) {
 		/* We didn't read a desired charname from commandline? */
 		if (!cname[0]) {
 			/* Reuse last name if we just died? */
@@ -2468,6 +2470,9 @@ int Receive_message(void) {
 
 	if ((n = Packet_scanf(&rbuf, "%c%S", &ch, buf)) <= 0) return n;
 
+	/* Ultra-hack for light-source fainting. (First two bytes are "\377w".) */
+	if (!c_cfg.no_lite_fainting && !strcmp(buf + 2, "Your light is growing faint.")) lamp_fainting = 30; //deciseconds
+
 	/* Hack to clear topline: It's a translation of the former msg_print(Ind, NULL) hack, as we cannot transmit the NULL. */
 	if (buf[0] == '\377' && !buf[1]) {
 		if (screen_icky && (!shopping || perusing)) Term_switch(0);
@@ -3693,7 +3698,22 @@ int Receive_music(void) {
 
 	return 1;
 }
+int Receive_music_vol(void) {
+	int	n;
+	char	ch, m, m2 = -1, v;
 
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &m, &m2, &v)) <= 0) return n;
+
+#ifdef USE_SOUND_2010
+	/* Play background music (if enabled) */
+	if (!use_sound) return 1;
+	/* Try to play music, if fails try alternative music, if fails too stop playing any music.
+	   Special codes -1, -2 and -4 can be used here to induce alternate behaviour (see handle_music()). */
+	if (!music_volume(m, v)) music_volume(m2, v);
+#endif
+
+	return 1;
+}
 int Receive_sfx_ambient(void) {
 	int	n, a;
 	char	ch;

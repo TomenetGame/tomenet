@@ -1726,6 +1726,8 @@ void self_knowledge(int Ind) {
 		fprintf(fff, "You are lucky here and there.\n");
 	else if (p_ptr->luck > 0)
 		fprintf(fff, "You are lucky sometimes.\n");
+	else if (p_ptr->luck < 0)
+		fprintf(fff, "You are unlucky from time to time.\n");
 
 	/* Analyze the weapon */
 	if (p_ptr->inventory[INVEN_WIELD].k_idx ||
@@ -2889,6 +2891,58 @@ bool detect_bounty(int Ind, int rad) {
 				if (!cs_ptr->sc.trap.found) {
 					/* Pick a trap */
 					pick_trap(wpos, i, j);
+				}
+
+				/* Hack -- memorize it */
+				*w_ptr |= CAVE_MARK;
+
+				/* Obvious */
+				detect = TRUE;
+				detect_trap = TRUE;
+			}
+
+			/* PvP: Detect hostile monster-traps */
+			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+				object_type *kit_o_ptr = &o_list[cs_ptr->sc.montrap.trap_kit];
+				int p;
+
+				/* is the trapper online? Otherwise not hostile as we cannot know */
+				for (p = 1; p <= NumPlayers; p++) {
+					if (p == Ind) continue;
+					if (kit_o_ptr->owner == Players[p]->id) break;
+				}
+
+				if (p != NumPlayers && !cs_ptr->sc.montrap.found && check_hostile(Ind, p)) {
+					if (magik(chance)) {
+						cs_ptr->sc.montrap.found = TRUE;
+						note_spot_depth(wpos, i, j);
+						everyone_lite_spot(wpos, i, j);
+					}
+				}
+
+				/* Hack -- memorize it */
+				*w_ptr |= CAVE_MARK;
+
+				/* Obvious */
+				detect = TRUE;
+				detect_trap = TRUE;
+			}
+			/* PvP: Detect hostile runes */
+			if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
+				int p;
+
+				/* is the runemaster online? Otherwise not hostile as we cannot know */
+				for (p = 1; p <= NumPlayers; p++) {
+					if (p == Ind) continue;
+					if (cs_ptr->sc.rune.id == Players[p]->id) break;
+				}
+
+				if (p != NumPlayers && !cs_ptr->sc.rune.found && check_hostile(Ind, p)) {
+					if (magik(chance)) {
+						cs_ptr->sc.rune.found = TRUE;
+						note_spot_depth(wpos, i, j);
+						everyone_lite_spot(wpos, i, j);
+					}
 				}
 
 				/* Hack -- memorize it */
@@ -6514,7 +6568,7 @@ bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
-		    (typ != GF_EXTRA_STATS) &&
+		    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
@@ -6584,7 +6638,7 @@ bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
 		    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 		    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
-		    (typ != GF_EXTRA_STATS) &&
+		    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
@@ -6671,7 +6725,7 @@ bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker) {
 			    (typ != GF_SANITY_PLAYER) && (typ != GF_SOULCURE_PLAYER) &&
 			    (typ != GF_OLD_HEAL) && (typ != GF_OLD_SPEED) && (typ != GF_PUSH) &&
 			    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
-			    (typ != GF_EXTRA_STATS) &&
+			    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 			    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 			    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
 			    (typ != GF_OLD_POLY)) /* Non-hostile players may polymorph each other */
@@ -6865,6 +6919,18 @@ bool cast_lightning(worldpos *wpos, int x, int y) {
 #endif
 
 	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, typ, GF_SHOW_LIGHTNING, flg, pattacker));
+}
+
+bool cast_falling_star(worldpos *wpos, int x, int y, int dur) {
+	char pattacker[80];
+	strcpy(pattacker, "");
+
+	int flg = PROJECT_DUMY | PROJECT_GRID | PROJECT_STAY;
+
+	project_time_effect = EFF_FALLING_STAR;
+	project_interval = 1;
+	project_time = dur;
+	return (project(PROJECTOR_EFFECT, 0, wpos, y, x, 0, GF_RAINDROP, flg, pattacker)); //GF_RAINDROP is a dummy anyway, can just reuse it here
 }
 
 /* For reworked Thunderstorm spell */
@@ -7849,11 +7915,11 @@ void house_creation(int Ind, bool floor, bool jail) {
 
 /* (Note: Apparently currently only used by Moltor's second_handler().) */
 extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
-	int                     i, Ind, j;
-	cave_type               *c_ptr;
+	int i, Ind, j;
+	cave_type *c_ptr;
 
-	monster_type    *m_ptr;
-	monster_race    *r_ptr = &r_info[r_idx];
+	monster_type *m_ptr;
+	monster_race *r_ptr = &r_info[r_idx];
 
 	char buf[80];
 

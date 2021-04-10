@@ -96,6 +96,9 @@
 
 /* hack to prevent the floor tile bug on windows xp and windows 2003 machines */
 //#define FLOORTILEBUG_WORKAROUND
+/* if the above is not defined, this can optionally be allowed if we really want to risk re-introducing the
+   '(small) centered floor dot' aka ascii 31 that caused weird screen smearing back in the days (see above): */
+//#define FLOORTILE_ALLOW31
 
 /* Message to send to client when kicking him out due to starvation while being idle */
 //#define STARVING_AUTOKICK_MSG "starving auto-kick"
@@ -814,6 +817,7 @@ static bool forbidden_name(char *cname) {
 	/* Note: Character names always start upper-case, so some of these
 	   aren't really needed on most file systems (semi-paranoia). */
 	/* Hardcode some critically important ones */
+	if (!strcmp(name, "system")) return TRUE; /* used as sender name for automatically generated notes */
 	if (!strcmp(name, "server")) return TRUE; /* server save file is stored in same folder as player save files */
 	if (!strcmp(name, "server.new")) return TRUE; /* server save file is stored in same folder as player save files */
 	if (!strcmp(name, "server.old")) return TRUE; /* server save file is stored in same folder as player save files */
@@ -2272,7 +2276,9 @@ static void sync_options(int Ind, bool *options) {
 			p_ptr->idle_starve_kick = TRUE;
 			p_ptr->view_lamp_walls = p_ptr->view_lamp_floor;//was the same option so far, now split up
 		} else {
+#ifdef USE_SOUND_2010
 			bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
+#endif
 			p_ptr->sfx_combat = !options[47];
 			p_ptr->sfx_magicattack = !options[48];
 			p_ptr->sfx_defense = !options[49];
@@ -2339,7 +2345,9 @@ static void sync_options(int Ind, bool *options) {
 		}
 	} else { /* 4.5.8.2+ (after 4.5.8a release) */
 		bool vlf = p_ptr->view_lite_extra;
+#ifdef USE_SOUND_2010
 		bool sfx_house_quiet = p_ptr->sfx_house_quiet, sfx_house = p_ptr->sfx_house;
+#endif
 
 		//page 1
 
@@ -2588,10 +2596,13 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->keep_bottle = FALSE;
 	}
 
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1))
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 1)) {
 		p_ptr->easy_disarm_montraps = options[136];
-	else
+		p_ptr->no_house_magic = options[137];
+	} else {
 		p_ptr->easy_disarm_montraps = FALSE;
+		p_ptr->no_house_magic = FALSE;
+	}
 
 	if (p_ptr->limit_chat) msg_print(Ind, "\377yYou have enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is not globally visible!");
 }
@@ -2648,7 +2659,10 @@ static void set_player_font_definitions(int ind, int player) {
 #ifndef FLOORTILEBUG_WORKAROUND
 		if (!p_ptr->f_attr[i]) p_ptr->f_attr[i] = f_info[i].z_attr;
 		if (!p_ptr->f_char[i]
-		    || p_ptr->f_char[i] == 31) /* workaround for people who are still using old font-win.prf files with floor tile /31 mapping glitch */
+ #ifndef FLOORTILE_ALLOW31
+		    || p_ptr->f_char[i] == 31 /* workaround for people who are still using old font-win.prf files with floor tile /31 mapping glitch */
+ #endif
+		    )
 			p_ptr->f_char[i] = f_info[i].z_char;
 #else		/*now all tiles are bright white and never dimmed.*/
 		p_ptr->f_attr[i] = f_info[i].z_attr;
@@ -3460,6 +3474,10 @@ static int Handle_login(int ind) {
 		p_ptr->obj_aware[lookup_kind(TV_SCROLL, SV_SCROLL_WILDERNESS_MAP)] = TRUE;
 #endif
 	}
+
+	/* For clients before 4.7.3a that don't support s_PVP_MAIA yet: */
+	if ((p_ptr->mode & MODE_PVP) && p_ptr->max_plv == MIN_PVP_LEVEL && p_ptr->prace == RACE_MAIA && !p_ptr->ptrait)
+		msg_print(NumPlayers, "\377RUse the \377o/trait\377R command BEFORE you level up to initiate your character!");
 
 #ifdef ENABLE_DRACONIAN_TRAITS
 	if (p_ptr->prace == RACE_DRACONIAN && !p_ptr->ptrait) {
@@ -4497,6 +4515,7 @@ static int Receive_login(int ind) {
 #ifdef NO_PK
 			sflags0 |= SFLG0_NO_PK;
 #endif
+			if (MIN_PVP_LEVEL >= 20) sflags0 |= SFLG0_PVP_MAIA;
 
 			/* Set available-feature / client mode flags */
 #ifdef BIG_MAP
@@ -6288,8 +6307,13 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	}
 	else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
 		ville = TRUE;
-		desc = "Party";
-		loc_pre = "on a";
+		if (wpos->wz == 1 || wpos->wz == -1) {
+			desc = "Party";
+			loc_pre = "at the";
+		} else {
+			desc = "Balcony";
+			loc_pre = "on the";
+		}
 	}
 
 	if (desc[0]) loc_name = desc;
@@ -6604,7 +6628,7 @@ int Send_direction(int Ind) {
 #if 0 /* hmm? */
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		return Packet_printf(&connp2->c, "%c", PKT_DIRECTION);
+		return Packet_printf(&connp2->c, "%c", PKT_DIRECTION); //return?
 	}
 #endif
 	return Packet_printf(&connp->c, "%c", PKT_DIRECTION);
@@ -7573,20 +7597,21 @@ int Send_target_info(int Ind, int x, int y, cptr str) {
    vol is the relative volume, if it stems from a source nearby instead of concerning the player directly;
    player_id is the player it actually concerns; - C. Blue */
 int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b player_id) {
-	connection_t *connp = Conn[Players[Ind]->conn];
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn];
 	/* Mind-linked to someone? Send him our sound too! */
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
 
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) {
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) {
 		/* actually allow some critical sfx to pass */
 		if (sound != __sfx_bell && sound != __sfx_page && sound != __sfx_warning) return 0;
 	}
 
-	if (sound == __sfx_am && !Players[Ind]->sfx_am) return 0;
+	if (sound == __sfx_am && !p_ptr->sfx_am) return 0;
 
 	/* If we're the target, we still hear our own sounds! */
-//	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) ;//nothing
+//	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) ;//nothing
 	/* Get target player */
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 	/* Send same info to target player, if available */
@@ -7608,7 +7633,7 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 		return 0;
 	}
 
-//	if (is_admin(Players[Ind])) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, Players[Ind]->name, Ind);//debug
+//	if (is_admin(p_ptr)) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, p_ptr->name, Ind);//debug
 
 	if (is_newer_than(&connp->version, 4, 4, 5, 3, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id);
@@ -7623,20 +7648,22 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 
 #ifdef USE_SOUND_2010
 int Send_music(int Ind, int music, int musicalt) {
-	connection_t *connp = Conn[Players[Ind]->conn];
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn];
 
 	/* Mind-linked to someone? Send him our music too! */
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
 	/* If we're the target, we won't hear our own music */
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	/* Get target player */
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
 	/* Send same info to target player, if available */
 	if (connp2) {
-		if (p_ptr2->music_current != music) {
+		if (p_ptr2->music_current != music || p_ptr2->music_vol != 100) {
 			p_ptr2->music_current = music;
 			p_ptr2->musicalt_current = musicalt;
+			p_ptr2->music_vol = 100;
 			if (is_newer_than(&connp2->version, 4, 5, 6, 0, 0, 1))
 				Packet_printf(&connp2->c, "%c%c%c", PKT_MUSIC, music, musicalt);
 			else if (is_newer_than(&connp2->version, 4, 4, 4, 5, 0, 0))
@@ -7644,10 +7671,11 @@ int Send_music(int Ind, int music, int musicalt) {
 		}
 	}
 
-	if (Players[Ind]->music_current == music) return(-1);
+	if (p_ptr->music_current == music && p_ptr->music_vol == 100) return(-1);
 	/* -1 means 'keep playing your current music', we don't need to modify music_current for that */
-	if (music != -1) Players[Ind]->music_current = music;
-	if (musicalt != -1) Players[Ind]->musicalt_current = musicalt;
+	if (music != -1) p_ptr->music_current = music;
+	if (musicalt != -1) p_ptr->musicalt_current = musicalt;
+	p_ptr->music_vol = 100;
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
@@ -7660,7 +7688,62 @@ int Send_music(int Ind, int music, int musicalt) {
 		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
 	else if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0))
 		return(-1);
-	//s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, Players[Ind]->name, Ind);//debug
+	//s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, p_ptr->name, Ind);//debug
+	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
+}
+int Send_music_vol(int Ind, int music, int musicalt, char vol) {
+	player_type *p_ptr = Players[Ind];
+	connection_t *connp = Conn[p_ptr->conn];
+
+	/* Mind-linked to someone? Send him our music too! */
+	player_type *p_ptr2 = NULL;
+	connection_t *connp2 = NULL;
+	/* If we're the target, we won't hear our own music */
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* Get target player */
+	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) connp2 = Conn[p_ptr2->conn];
+	/* Send same info to target player, if available */
+	if (connp2) {
+		if (p_ptr2->music_current != music || (p_ptr2->music_vol != vol && is_atleast(&connp2->version, 4, 7, 3, 2, 0, 0))) {
+			p_ptr2->music_current = music;
+			p_ptr2->musicalt_current = musicalt;
+			if (is_atleast(&connp2->version, 4, 7, 3, 2, 0, 0)) {
+				p_ptr2->music_vol = vol;
+				Packet_printf(&connp2->c, "%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, vol);
+			} else if (is_newer_than(&connp2->version, 4, 5, 6, 0, 0, 1)) {
+				p_ptr2->music_vol = 100;
+				Packet_printf(&connp2->c, "%c%c%c", PKT_MUSIC, music, musicalt);
+			} else if (is_newer_than(&connp2->version, 4, 4, 4, 5, 0, 0)) {
+				p_ptr2->music_vol = 100;
+				Packet_printf(&connp2->c, "%c%c", PKT_MUSIC, music);
+			} else p_ptr2->music_vol = 100;
+		}
+	}
+
+	if (p_ptr->music_current == music && (p_ptr->music_vol == vol || !is_atleast(&connp->version, 4, 7, 3, 2, 0, 0))) return(-1);
+	/* -1 means 'keep playing your current music', we don't need to modify music_current for that */
+	if (music != -1) p_ptr->music_current = music;
+	if (musicalt != -1) p_ptr->musicalt_current = musicalt;
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for music (%d.%d.%d)",
+			Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	//s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, p_ptr->name, Ind);//debug
+	if (is_atleast(&connp->version, 4, 7, 3, 2, 0, 0)) {
+		p_ptr->music_vol = vol;
+		return Packet_printf(&connp->c, "%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, vol);
+	} else if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1)) {
+		p_ptr->music_vol = 100;
+		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
+	} else if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) {
+		p_ptr->music_vol = 100;
+		return(-1);
+	}
+	p_ptr->music_vol = 100;
 	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
 }
 int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
@@ -7825,19 +7908,19 @@ int Send_boni_col(int Ind, boni_col c) {
 	/* Send same info to target player, if available */
 	if (connp2 && is_newer_than(&connp2->version, 4, 5, 3, 2, 0, 0)) {
 		if (is_newer_than(&connp2->version, 4, 6, 1, 2, 0, 0)) {
-			return Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
+			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
 			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
 			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
 			    c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, c.symbol);
 		} else if (is_newer_than(&connp2->version, 4, 5, 9, 0, 0, 0)) {
-			return Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
+			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
 			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
 			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
 			    c.cb[10], c.cb[11], c.cb[12], c.color, c.symbol);
 		} else {
-			return Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
+			Packet_printf(&connp2->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
 			    c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 			    c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr,
 			    c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
@@ -8767,8 +8850,10 @@ int Send_item_newest(int Ind, int item) {
 	if (!is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) return(0);
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
+#if 1 /* Not really important, and spams on every character creation when the default items are given to it. */
 		plog(format("Connection not ready for item_newest (%d.%d.%d)",
 		    Ind, connp->state, connp->id));
+#endif
 		return 0;
 	}
 
@@ -8810,7 +8895,9 @@ int Send_idle(int Ind, bool idle) {
 		Send_sfx_ambient(Ind, SFX_AMBIENT_NONE, FALSE);
 #endif
 	} else {
+#ifdef USE_SOUND_2010
 		cave_type **zcave = getcave(&p_ptr->wpos);
+#endif
 
 		p_ptr->muted_when_idle = FALSE;
 		res = Packet_printf(&connp->c, "%c%c", PKT_IDLE, idle ? 1 : 0);
@@ -9602,6 +9689,10 @@ static int Receive_activate_skill(int ind) {
 					/* Character is unable to change preferred immunity? */
 					if (dir >= 2 && dir <= 8 && mimic_power_hindered(player)) return 2;
 
+					if (is_older_than(&p_ptr->version, 4, 7, 3, 2, 0, 0)) {
+						if (dir == 5) dir = 6;
+						else if (dir == 6) dir = 5;
+					}
 //s_printf("MIMIC_IMMUNITY (%s): %s(%d) having %d calls %d(%d),%d\n", showtime(), p_ptr->name, p_ptr->body_monster, p_ptr->mimic_immunity, spell, dir - 2, dir);
 					switch (dir) {
 					case 1:
@@ -9616,10 +9707,10 @@ static int Receive_activate_skill(int ind) {
 							msg_print(player, "\377WYour current immunity preference is \377wcold.");
 							break;
 						case 3:
-							msg_print(player, "\377WYour current immunity preference is \377sacid.");
+							msg_print(player, "\377WYour current immunity preference is \377rfire.");
 							break;
 						case 4:
-							msg_print(player, "\377WYour current immunity preference is \377rfire.");
+							msg_print(player, "\377WYour current immunity preference is \377sacid.");
 							break;
 						case 5:
 							msg_print(player, "\377WYour current immunity preference is \377gpoison.");
@@ -9649,16 +9740,16 @@ static int Receive_activate_skill(int ind) {
 						break;
 					case 5:
 						p_ptr->mimic_immunity = 3;
-						msg_print(player, "\377WPreferred form immunity is now \377sacid.");
+						msg_print(player, "\377WPreferred form immunity is now \377rfire.");
 						if (p_ptr->body_monster &&
-						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_ACID))
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_FIRE))
 							calc_boni(player);
 						break;
 					case 6:
 						p_ptr->mimic_immunity = 4;
-						msg_print(player, "\377WPreferred form immunity is now \377rfire.");
+						msg_print(player, "\377WPreferred form immunity is now \377sacid.");
 						if (p_ptr->body_monster &&
-						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_FIRE))
+						    (r_info[p_ptr->body_monster].flags3 & RF3_IM_ACID))
 							calc_boni(player);
 						break;
 					case 7:

@@ -30,7 +30,7 @@ OSLOWMONSTER_I = add_spell {
 	["level"] = 	5,
 	["mana"] = 	5,
 	["mana_max"] = 	5,
-	["fail"] = 	10,
+	["fail"] = 	0,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
@@ -47,9 +47,9 @@ OSLOWMONSTER_II = add_spell {
 	["school"] = 	{SCHOOL_OUNLIFE},
 	["spell_power"] = 0,
 	["level"] = 	20,
-	["mana"] = 	20,
-	["mana_max"] = 	20,
-	["fail"] = 	-20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	-30,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
@@ -69,7 +69,7 @@ OSENSELIFE = add_spell {
 	["level"] = 	12,
 	["mana"] = 	3,
 	["mana_max"] = 	3,
-	["fail"] = 	15,
+	["fail"] = 	5,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			detect_living(Ind)
@@ -88,9 +88,9 @@ OVERMINCONTROL = add_spell {
 	["school"] = 	{SCHOOL_OUNLIFE},
 	["spell_power"] = 0,
 	["level"] = 	17,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
-	["fail"] = 	20,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
+	["fail"] = 	10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			do_vermin_control(Ind)
@@ -107,15 +107,19 @@ OREGEN = add_spell {
 	["school"] = 	{SCHOOL_OUNLIFE},
 	["spell_power"] = 0,
 	["level"] = 	22,
-	["mana"] = 	40,
-	["mana_max"] = 	40,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
 	["fail"] = 	0,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			set_tim_mp2hp(Ind, randint(10) + 5 + get_level(Ind, OREGEN, 50), 8 + get_level(Ind, OREGEN, 50) / 4)
+			if player.prace == RACE_VAMPIRE then
+				set_tim_mp2hp(Ind, randint(5) + 10 + get_level(Ind, OREGEN, 30), 20 + get_level(Ind, OREGEN, 50))
+			else
+				msg_print(Ind, "You shudder, as nether streams envelope you and quickly dissipate again..");
+			end
 	end,
 	["info"] = 	function()
-			return "dur "..(5 + get_level(Ind, OREGEN, 50)).."+d10 power "..((8 + get_level(Ind, OREGEN, 50) / 4))
+			return "dur "..(10 + get_level(Ind, OREGEN, 30)).."+d5 heal "..((20 + get_level(Ind, OREGEN, 50)))
 	end,
 	["desc"] = 	{
 			"Draws from nether undercurrents to replenish your health.",
@@ -129,8 +133,8 @@ OSUBJUGATION = add_spell {
 	["school"] = 	{SCHOOL_OUNLIFE, SCHOOL_NECROMANCY},
 	["spell_power"] = 0,
 	["level"] = 	26,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
 	["fail"] = 	-10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
@@ -182,14 +186,18 @@ OUNLIFERES = add_spell {
 	["fail"] = 	-35,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			do_res_stat(Ind, A_STR)
-			do_res_stat(Ind, A_CON)
-			do_res_stat(Ind, A_DEX)
-			do_res_stat(Ind, A_WIS)
-			do_res_stat(Ind, A_INT)
-			do_res_stat(Ind, A_CHR)
-			restore_level(Ind)
-			end,
+			if player.prace == RACE_VAMPIRE then
+				do_res_stat(Ind, A_STR)
+				do_res_stat(Ind, A_CON)
+				do_res_stat(Ind, A_DEX)
+				do_res_stat(Ind, A_WIS)
+				do_res_stat(Ind, A_INT)
+				do_res_stat(Ind, A_CHR)
+				restore_level(Ind)
+			else
+				msg_print(Ind, "You shudder, as ghastly powers pass by your body..")
+			end
+		end,
 	["info"] = 	function()
 			return ""
 			end,
@@ -227,8 +235,8 @@ OIMBUE = add_spell {
 	["school"] = 	{SCHOOL_OUNLIFE},
 	["spell_power"] = 0,
 	["level"] = 	42,
-	["mana"] = 	45,
-	["mana_max"] = 	45,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
 	["fail"] = 	-70,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
@@ -245,8 +253,8 @@ OWRAITHSTEP = add_spell {
 	["name2"] = 	"Wraith",
 	["school"] = 	{SCHOOL_OUNLIFE, SCHOOL_OSHADOW},
 	["level"] = 	46,
-	["mana"] = 	60,
-	["mana_max"] = 	60,
+	["mana"] = 	45,
+	["mana_max"] = 	45,
 	["fail"] = 	-80,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()

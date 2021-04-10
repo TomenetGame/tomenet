@@ -369,3 +369,7 @@ I:71:0:r:2
 N:78:Repair armour
 C:0:0:0
 I:72:0:r:2
+
+N:79:The strongest known
+C:0:0:0
+I:73:0:s:0

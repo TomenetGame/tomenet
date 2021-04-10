@@ -1285,7 +1285,7 @@ static struct {
 	{"DARK", GF_DARK},
 	{"LITE_WEAK", GF_LITE_WEAK},
 	{"STARLITE", GF_STARLITE},
-	{"LITE_DARK", GF_DARK_WEAK},
+	{"DARK_WEAK", GF_DARK_WEAK},
 	{"SHARDS", GF_SHARDS},
 	{"SOUND", GF_SOUND},
 	{"CONFUSION", GF_CONFUSION},
@@ -4665,6 +4665,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		r_info[i].flags0 &= ~RF0_DISABLE_MASK;
 	}
 
+	r_info[RI_BLUE].flags6 &= ~RF6_HEAL;
 
 	/* No version yet */
 	if (!okay) return (2);
@@ -8887,7 +8888,8 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 	if (buf[0] == 'F') {
 		int num;
 
-		if ((num = tokenize(buf + 2, 10, zz, ':', '/')) > 1) {
+		//if ((num = tokenize(buf + 2, 10, zz, ':', '/')) > 1) { -- allow using '/' as feature symbol:
+		if ((num = tokenize(buf + 2, 10, zz, ':', ':')) > 1) {
 			int index = zz[0][0];
 
 			/* Reset the feature */
@@ -9065,6 +9067,9 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 
 			/* Clear some info */
 			c_ptr->info = 0;
+			/* Remove special structs */
+			FreeCS(c_ptr);
+			c_ptr->special = 0;
 
 			/* Lay down a floor */
 			//c_ptr->mimic = letter[idx].mimic;

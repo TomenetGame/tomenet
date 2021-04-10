@@ -567,9 +567,17 @@ static bool choose_trait(void) {
 	/* Prepare to list, skip trait #0 'N/A' */
 	for (j = 1; j < Setup.max_trait; j++) {
 		tp_ptr = &trait_info[j];
+
+		/* Super-hacky: s_PVP_MAIA. Since choose_trait() is usually called before choose_mode()
+		   we'll have to get called twice for this occassion as shown_traits will be 0 on first run. */
+		if ((sex & (MODE_PVP | MODE_DED_PVP)) && race == RACE_MAIA && s_PVP_MAIA && (j == TRAIT_ENLIGHTENED || j == TRAIT_CORRUPTED)) tp_ptr->choice |= BITS(race);
+
 		if (!(tp_ptr->choice & BITS(race))) continue;
 		shown_traits++;
 	}
+	/* Super-hacky: s_PVP_MAIA. We also have to disable trait #0 (N/A) because it is an indicator that there are no available traits, overriding that there are actually available ones. */
+	if ((sex & (MODE_PVP | MODE_DED_PVP)) && race == RACE_MAIA && s_PVP_MAIA) trait_info[0].choice = 0x0;
+
 	/* No traits available? */
 	if (shown_traits == 0) {
 		/* Paranoia - server bug (not even 'N/A' "available") */
@@ -719,8 +727,10 @@ trait_redraw:
 				if (!(trait_info[i].choice & BITS(race))) j++;
 		}
 
+#if 0 /* Wrong - we might have eg traits 14 and 15 available, which amounts to 2 shown_traits, but 14 > 2 and 15 > 2 so they won't pass.. */
 		/* Paranoia */
 		if (j > shown_traits) continue;
+#endif
 
 		/* Verify if legal */
 		if ((j < Setup.max_trait) && (j >= 0)) {
@@ -1592,7 +1602,7 @@ static bool choose_mode(void) {
 	}
 	/* hack: no weird modi on first client startup!
 	   To find out whether it's 1st or not we check firstrun and # of existing characters.
-	   However, we just don't display the choices, they're still choosable! */
+	   However, we just don't display the choices, they're still choosable except for firstrun! */
 	if (!firstrun || existing_characters) {
 		put_str("H) Hellish", 20, 2);
 		c_put_str(TERM_SLATE, "(Like 'Unworldly' mode but extra hard - sort of ridiculous)", 20, 13);
@@ -1646,7 +1656,7 @@ static bool choose_mode(void) {
 			clear_from(15);
 			return FALSE;
 		}
-		else if (c == 'p') {
+		else if (c == 'p' && !firstrun) {
 			sex |= MODE_PVP;
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "PvP", 9, CHAR_COL);
@@ -1666,7 +1676,7 @@ static bool choose_mode(void) {
 			c_put_str(TERM_L_BLUE, "Soloist", 9, CHAR_COL);
 			break;
 		}
-		else if (c == 'H') {
+		else if (c == 'H' && !firstrun) {
 			sex |= (MODE_NO_GHOST | MODE_HARD);
 			c_put_str(TERM_L_BLUE, "                    ", 9, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Hellish", 9, CHAR_COL);
@@ -1744,7 +1754,7 @@ static bool choose_body_modification(void) {
 	put_str("n) Normal body", 20, 2);
 	/* hack: no weird modi on first client startup!
 	   To find out whether it's 1st or not we check firstrun and # of existing characters.
-	   However, we just don't display the choices, they're still choosable! */
+	   However, we just don't display the choices, they're still choosable except on firstrun! */
 	if (!firstrun || existing_characters) {
 		put_str("f) Fruit bat", 21, 2);
 		if (class == CLASS_ARCHER) {
@@ -1788,7 +1798,7 @@ static bool choose_body_modification(void) {
 			clear_from(19);
 			return FALSE;
 		}
-		else if (c == 'f') {
+		else if (c == 'f' && !firstrun) {
 			sex |= MODE_FRUIT_BAT;
 			c_put_str(TERM_L_BLUE, "                    ", 8, CHAR_COL);
 			c_put_str(TERM_L_BLUE, "Fruit bat", 8, CHAR_COL);
@@ -2147,6 +2157,9 @@ cstats:
 #else
 	if (!choose_mode()) goto cstats;
 #endif
+	/* Super-hacky: PvP-Mode Maiar of starter level 20+ need to pick a trait! So we have to do it after choosing the mode: */
+	if ((sex & (MODE_PVP | MODE_DED_PVP)) && race == RACE_MAIA && s_PVP_MAIA && !choose_trait()) goto cstats;
+
 #ifdef RETRY_LOGIN
 	if (rl_connection_destroyed) return;
 #endif

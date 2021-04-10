@@ -1277,7 +1277,9 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		o_ptr->level = 1;
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
-		item = inven_carry(Ind, o_ptr);
+		/* If we have no space, drop it to the ground instead of overflowing inventory */
+		if (inven_carry_okay(Ind, o_ptr, 0x0)) item = inven_carry(Ind, o_ptr);
+		else drop_near(0, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 		//if (item >= 0) inven_item_describe(Ind, item);
 	}
 }
@@ -1867,7 +1869,10 @@ bool curse_armor(int Ind) {
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
+	if (indestructible_artifact_p(o_ptr)) {
+		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
+		    "terrible black aura", "surround your armour", o_name);
+	} else if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
 		    "terrible black aura", "surround your armour", o_name);
@@ -1949,7 +1954,10 @@ bool curse_weapon(int Ind) {
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw */
-	if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
+	if (indestructible_artifact_p(o_ptr)) {
+		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
+		    "terrible black aura", "surround your weapon", o_name);
+	} else if (artifact_p(o_ptr) && (rand_int(100) < 30)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
 		    "terrible black aura", "surround your weapon", o_name);
@@ -2034,7 +2042,10 @@ bool curse_an_item(int Ind, int slot) {
 	object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 	/* Attempt a saving throw for artifacts */
-	if (artifact_p(o_ptr) && (rand_int(100) < 50)) {
+	if (indestructible_artifact_p(o_ptr)) {
+		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
+		    "terrible black aura", "surround your weapon", o_name);
+	} else if (artifact_p(o_ptr) && (rand_int(100) < 50)) {
 		/* Cool */
 		msg_format(Ind, "A %s tries to %s, but your %s resists the effects!",
 		    "terrible black aura", "surround you", o_name);
@@ -3511,6 +3522,12 @@ void do_cmd_use_staff(int Ind, int item) {
 #endif	// 0
 
 
+	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+		msg_print(Ind, "You decide to better not use staves inside a house.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		return;
+	}
+
 #if 1
 	if (p_ptr->anti_magic) {
 		msg_format(Ind, "\377%cYour anti-magic shell disrupts your attempt.", COLOUR_AM_OWN);
@@ -3824,6 +3841,12 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	if (p_ptr->tim_manashield) set_tim_manashield(Ind, 0);
 	if (p_ptr->tim_wraith) set_tim_wraith(Ind, 0);
 #endif	// 0
+
+	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+		msg_print(Ind, "You decide to better not aim wands inside a house.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		return;
+	}
 
 #if 1	// anti_magic is not antimagic :)
 	if (p_ptr->anti_magic) {
@@ -4719,6 +4742,12 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
  #endif
 			} else p_ptr->shooty_till_kill = FALSE;
 		} else p_ptr->shooty_till_kill = FALSE;
+	}
+
+	if (p_ptr->no_house_magic && inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py)) {
+		msg_print(Ind, "You decide to better not zap rods inside a house.");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
+		return;
 	}
 
 	if (get_skill(p_ptr, SKILL_ANTIMAGIC)) {
@@ -6655,6 +6684,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			p_ptr->current_activation = item;
 			get_aim_dir(Ind);
 			return;
+		case ART_SEVENLEAGUE:
+			teleport_player(Ind, 200, FALSE); //quite far
+			o_ptr->recharging = 15 - get_skill_scale(p_ptr, SKILL_DEVICE, 10);
+			break;
 		default: done = FALSE;
 		}
 
@@ -8394,6 +8427,43 @@ s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
 s_printf("TECHNIQUE_MELEE: %s - flash bomb\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
+	case 9:	{
+		int t = -1, p = -1;
+		object_type *o_ptr;
+
+		if (!(p_ptr->melee_techniques & MT_STEAMBLAST)) return; /* Steam Blast */
+		if (p_ptr->steamblast_timer > 0) {
+			msg_print(Ind, "You can only set up one steam blast charge at a time.");
+			return;
+		}
+		//if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
+		for (i = 0; i < INVEN_WIELD; i++) {
+			o_ptr = &p_ptr->inventory[i];
+			if (!o_ptr->k_idx) break;
+			if (!o_ptr->note) continue; /* items must be inscribed to be used! */
+			switch (o_ptr->tval) {
+			case TV_TRAPKIT:
+				if (t != -1) continue; /* we already found a suitable trap kit */
+				if (o_ptr->sval != SV_TRAPKIT_POTION) continue; /* need 1 fumes trap */
+				if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+				t = i;
+				break;
+			case TV_POTION: /* need 1 potion */
+				if (p != -1) continue; /* we already found a suitable potion */
+				if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+				p = i;
+				break;
+			}
+			if (p != -1 && i != -1) break;
+		}
+		if (i == INVEN_WIELD) {
+			msg_print(Ind, "You need to inscribe a fumes trap kit and a potion both '!S' to be used up.");
+			return;
+		}
+		msg_print(Ind, "Bump a door next to you to set up the steam blast charge..");
+		p_ptr->steamblast_timer = -1;
+		break;
+		}
 	case 10: if (!(p_ptr->melee_techniques & MT_SPIN)) return; /* Spin */
 		if (p_ptr->cst < 5) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (p_ptr->afraid) {
@@ -8615,6 +8685,92 @@ s_printf("TECHNIQUE_RANGED: %s - barrage\n", p_ptr->name);
 	}
 }
 
+void do_steamblast(int Ind, int x, int y) {
+	player_type *p_ptr = Players[Ind];
+	int i, t = -1, p = -1;
+	object_type *o_ptr;
+
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) {
+		msg_print(Ind, "You cannot use techniques while transformed.");
+		return;
+	}
+	if (p_ptr->ghost) {
+		msg_print(Ind, "You cannot use techniques as a ghost.");
+		return;
+	}
+	if (p_ptr->confused) {
+		msg_print(Ind, "You cannot use techniques while confused.");
+		return;
+	}
+	if (p_ptr->blind) {
+		msg_print(Ind, "You cannot use this technique while blind.");
+		return;
+	}
+
+	if ((p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_RUNEMASTER) &&
+	    p_ptr->rogue_heavyarmor) {
+		msg_print(Ind, "You cannot utilize techniques well while wearing too heavy armour.");
+		return;
+	}
+
+	disturb(Ind, 1, 0); /* stop resting, searching and running */
+
+	if (!(p_ptr->melee_techniques & MT_STEAMBLAST)) return; /* Steam Blast */
+	if (p_ptr->steamblast_timer > 0) {
+		msg_print(Ind, "You can only set up one steam blast charge at a time.");
+		return;
+	}
+	//if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
+	for (i = 0; i < INVEN_WIELD; i++) {
+		o_ptr = &p_ptr->inventory[i];
+		if (!o_ptr->k_idx) {
+			i = INVEN_WIELD; //finish, we failed
+			break;
+		}
+		if (!o_ptr->note) continue; /* items must be inscribed to be used! */
+		switch (o_ptr->tval) {
+		case TV_TRAPKIT:
+			if (t != -1) continue; /* we already found a suitable trap kit */
+			if (o_ptr->sval != SV_TRAPKIT_POTION) continue; /* need 1 fumes trap */
+			if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+			t = i;
+			break;
+		case TV_POTION: /* need 1 potion */
+			if (p != -1) continue; /* we already found a suitable potion */
+			if (!check_guard_inscription(o_ptr->note, 'S')) continue;
+			p = i;
+			break;
+		}
+		if (t != -1 && p != -1) break;
+	}
+	if (i == INVEN_WIELD) {
+		msg_print(Ind, "You need to inscribe a fumes trap kit and a potion both '!S' to be used up.");
+		return;
+	}
+
+	//p_ptr->cst -= 3;
+	inven_item_increase(Ind, t, -1);
+	inven_item_increase(Ind, p, -1);
+	if (t > p) { //higher value (lower in inventory) first; to preserve indices
+		inven_item_optimize(Ind, t);
+		inven_item_optimize(Ind, p);
+	} else {
+		inven_item_optimize(Ind, p);
+		inven_item_optimize(Ind, t);
+	}
+	p_ptr->steamblast_x = x;
+	p_ptr->steamblast_y = y;
+	p_ptr->steamblast_timer = 8;
+	//break_shadow_running(Ind);
+	stop_precision(Ind);
+	stop_shooting_till_kill(Ind);
+	msg_print(Ind, "You set up a steam blast charge on the door..");
+	p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
+s_printf("TECHNIQUE_MELEE: %s - steam blast\n", p_ptr->name);
+	p_ptr->warning_technique_melee = 1;
+	lite_spot(Ind, y, x);
+}
+
 void do_pick_breath(int Ind, int element) {
 	player_type *p_ptr = Players[Ind];
 
@@ -8630,58 +8786,52 @@ void do_pick_breath(int Ind, int element) {
 
 	switch (p_ptr->ptrait) {
 	case TRAIT_MULTI:
-		if (element > 5) {
+		if (element > 6) { //client num-1
 			msg_print(Ind, "\377sInvalid element.");
 			return;
 		}
 		break;
 	case TRAIT_POWER:
-		if (element > 11) {
+		if (element > 12) { //client num-1
 			msg_print(Ind, "\377sInvalid element.");
 			return;
 		}
 		break;
 	}
 
+	if (!element) {
+		switch (p_ptr->breath_element) {
+		case 1: msg_print(Ind, "\377sYour current breath element is random."); return;
+		case 2: msg_print(Ind, "\377sYour current breath element is \377blightning."); return;
+		case 3: msg_print(Ind, "\377sYour current breath element is \377wfrost."); return;
+		case 4: msg_print(Ind, "\377sYour current breath element is \377rfire."); return;
+		case 5: msg_print(Ind, "\377sYour current breath element is \377sacid."); return;
+		case 6: msg_print(Ind, "\377sYour current breath element is \377gpoison."); return;
+		case 7: msg_print(Ind, "\377sYour current breath element is \377Uconfusion."); return;
+		case 8: msg_print(Ind, "\377sYour current breath element is \377Winertia."); return;
+		case 9: msg_print(Ind, "\377sYour current breath element is \377ysound."); return;
+		case 10: msg_print(Ind, "\377sYour current breath element is \377ushards."); return;
+		case 11: msg_print(Ind, "\377sYour current breath element is \377vchaos."); return;
+		case 12: msg_print(Ind, "\377sYour current breath element is \377odisenchantment."); return;
+		}
+		return;
+	}
+
 	p_ptr->breath_element = element;
 	switch (element) {
-	case 0:
-		msg_print(Ind, "\377sYour breath element is now random.");
-		return;
-	case 1:
-		msg_print(Ind, "\377sYour breath element is now lightning.");
-		return;
-	case 2:
-		msg_print(Ind, "\377sYour breath element is now frost.");
-		return;
-	case 3:
-		msg_print(Ind, "\377sYour breath element is now fire.");
-		return;
-	case 4:
-		msg_print(Ind, "\377sYour breath element is now acid.");
-		return;
-	case 5:
-		msg_print(Ind, "\377sYour breath element is now poison.");
-		return;
+	case 1: msg_print(Ind, "\377sYour breath element is now random."); return;
+	case 2: msg_print(Ind, "\377sYour breath element is now \377blightning."); return;
+	case 3: msg_print(Ind, "\377sYour breath element is now \377wfrost."); return;
+	case 4: msg_print(Ind, "\377sYour breath element is now \377rfire."); return;
+	case 5: msg_print(Ind, "\377sYour breath element is now \377sacid."); return;
+	case 6: msg_print(Ind, "\377sYour breath element is now \377gpoison."); return;
 	/* extended elements for power trait */
-	case 6:
-		msg_print(Ind, "\377sYour breath element is now confusion.");
-		return;
-	case 7:
-		msg_print(Ind, "\377sYour breath element is now inertia.");
-		return;
-	case 8:
-		msg_print(Ind, "\377sYour breath element is now sound.");
-		return;
-	case 9:
-		msg_print(Ind, "\377sYour breath element is now shards.");
-		return;
-	case 10:
-		msg_print(Ind, "\377sYour breath element is now chaos.");
-		return;
-	case 11:
-		msg_print(Ind, "\377sYour breath element is now disenchantment.");
-		return;
+	case 7: msg_print(Ind, "\377sYour breath element is now \377Uconfusion."); return;
+	case 8: msg_print(Ind, "\377sYour breath element is now \377Winertia."); return;
+	case 9: msg_print(Ind, "\377sYour breath element is now \377ysound."); return;
+	case 10: msg_print(Ind, "\377sYour breath element is now \377ushards."); return;
+	case 11: msg_print(Ind, "\377sYour breath element is now \377vchaos."); return;
+	case 12: msg_print(Ind, "\377sYour breath element is now \377odisenchantment."); return;
 	}
 }
 
@@ -8758,12 +8908,12 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	trait = p_ptr->ptrait;
 	if (trait == TRAIT_MULTI) {
 		/* Draconic Multi-hued */
-		if (p_ptr->breath_element == 0) trait = rand_int(5) + TRAIT_BLUE;
-		else trait = p_ptr->breath_element;
+		if (p_ptr->breath_element == 1) trait = rand_int(5) + TRAIT_BLUE;
+		else trait = p_ptr->breath_element - 1;
 	} else if (trait == TRAIT_POWER) {
 		/* Power dragon */
-		if (p_ptr->breath_element == 0) trait = rand_int(10) + TRAIT_BLUE;
-		else trait = p_ptr->breath_element;
+		if (p_ptr->breath_element == 1) trait = rand_int(10) + TRAIT_BLUE;
+		else trait = p_ptr->breath_element - 1;
 		if (trait >= TRAIT_MULTI) trait++;
 	}
 

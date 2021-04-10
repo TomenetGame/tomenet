@@ -8550,6 +8550,13 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	int dtype = 0;
 	u32b dflags1 = 0x0, dflags2 = 0x0, dflags3 = 0x0;
 
+	/* Death Fate: Notify DMs just in case..*/
+	if (d_ptr && d_ptr->type == DI_DEATH_FATE && p_ptr) {
+		for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (Players[i]->admin_dm) Players[i]->paging = 3;
+		}
+	}
 
 	/* Fixed layout (maybe first non-'DF2_RANDOM' dungeon?) */
 #ifdef DEATH_FATE_SPECIAL
@@ -8560,7 +8567,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;
-		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN;
+		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES;
+#ifdef SIMPLE_RI_MIRROR
+		dun->l_ptr->flags2 |= LF2_NO_RUN; /* Don't allow too easy kiting */
+#endif
 		dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
 		//if (season_halloween && p_ptr && (p_ptr->prob_travel || p_ptr->ghost)) dun->l_ptr->flags1 |= LF1_FAST_DIVE;
 
@@ -8571,7 +8581,10 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		dun->l_ptr->hgt = SCREEN_HGT;
 		dun->l_ptr->wid = SCREEN_WID;
 
-		if (!(zcave = getcave(wpos))) return;
+		if (!(zcave = getcave(wpos))) {
+			p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
+			return;
+		}
 
 		/* Hack -- Don't tell players about it (for efficiency) */
 		level_generation_time = TRUE;
@@ -8591,12 +8604,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			zcave[2][65].feat = 29; zcave[2][65].info = 7;
 			zcave[11][33].feat = 235; zcave[11][33].info = 7;
 			x = 33; y = 11;
+			r_info[RI_BLUE].flags6 &= ~RF6_HEAL;
 			place_monster_one(wpos, y, x + 1, RI_BLUE, 0, 0, 0, 0, 0);
 			dun->l_ptr->flags2 |= LF2_BROKEN; //abuse this as indicator
 
 			new_level_down_x(wpos, startx);
 			new_level_down_y(wpos, starty);
-		}
+			s_printf("DF-way (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
+		} else s_printf("DF-mirror (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
 		//wipe_m_list(&p_ptr->wpos);
 
 		/* reattach objects and monsters */
@@ -8604,12 +8619,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* target dummies */
 		//setup_monsters();
 		level_generation_time = FALSE;
+		p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
 		return;
 	} else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
+		p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;
-		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN;
+		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES;
 		dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
 		//if (season_halloween && p_ptr && (p_ptr->prob_travel || p_ptr->ghost)) dun->l_ptr->flags1 |= LF1_FAST_DIVE;
 
@@ -8625,26 +8642,29 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* Hack -- Don't tell players about it (for efficiency) */
 		level_generation_time = TRUE;
 
-		/* add the arena */
-		//keep objects that may be on the floor...... but get rid of monsters
-		process_dungeon_file("t_party.txt", wpos, &y1, &x1, 22, 66, TRUE);
-		zcave[0][32].feat = 79; zcave[0][32].info = 7;
-		zcave[0][33].feat = 79; zcave[0][33].info = 7;
-		zcave[0][34].feat = 79; zcave[0][34].info = 7;
-		zcave[15][65].feat = 79; zcave[15][65].info = 7;
-		zcave[16][65].feat = 79; zcave[16][65].info = 7;
-		//wipe_m_list(&p_ptr->wpos);
-
+		/* add the party */
+		if (wpos->wz == 1 || wpos->wz == -1) {
+			//keep objects that may be on the floor...... but get rid of monsters
+			process_dungeon_file("t_party.txt", wpos, &y1, &x1, 22, 66, TRUE);
+			//wipe_m_list(&p_ptr->wpos);
+			zcave[0][32].feat = 79; zcave[0][32].info = 7;
+			zcave[0][33].feat = 79; zcave[0][33].info = 7;
+			zcave[0][34].feat = 79; zcave[0][34].info = 7;
+			zcave[15][65].feat = 79; zcave[15][65].info = 7;
+			zcave[16][65].feat = 79; zcave[16][65].info = 7;
+			s_printf("DF-party (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
+		} else process_dungeon_file("t_balcony.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		level_generation_time = FALSE;
 		return;
 	}
 	/* Always generate basic death fate from template for a bit more visuals, instead of the auto-generated, basically empty floor? */
 	/* The 'useless' death fate, starvation incoming: */
-	else if (d_ptr->type == DI_DEATH_FATE) {
+	else if (d_ptr && d_ptr->type == DI_DEATH_FATE) {
+		p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
 		dun = &dun_body;
 		dun->l_ptr = getfloor(wpos);
 		dun->l_ptr->flags1 = LF1_NO_DESTROY;
-		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN;
+		dun->l_ptr->flags2 = LF2_NO_SUMMON | LF2_NO_LIVE_SPAWN | LF2_NO_RUNES;
 		dun->l_ptr->monsters_generated = dun->l_ptr->monsters_spawned = dun->l_ptr->monsters_killed = 0;
 		//if (season_halloween && p_ptr && (p_ptr->prob_travel || p_ptr->ghost)) dun->l_ptr->flags1 |= LF1_FAST_DIVE;
 
@@ -8659,6 +8679,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		level_generation_time = TRUE;
 		process_dungeon_file("t_ruins.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		level_generation_time = FALSE;
+		s_printf("DF-ruins (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
 		return;
 	}
 
@@ -9504,7 +9525,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		 * Shallow water (preserve walls)
 		 * Deep water (penetrate walls)
 		 */
-		if ((dun_lev <= 33) && (randint(20) > 15)) {
+		if ((dun_lev <= 33) && (randint(20) > 15) && !(dun->l_ptr->flags1 & (LF1_LAVA | LF1_DEEP_LAVA))) {
 			num = randint(DUN_STR_QUA - 1);
 
 			for (i = 0; i < num; i++)
@@ -9526,7 +9547,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			 * Shallow lava (preserve walls)
 			 * Deep lava (penetrate walls)
 			 */
-			if (randint(20) > 15) {
+			if (randint(20) > 15 && !(dun->l_ptr->flags1 & (LF1_WATER | LF1_DEEP_WATER))) {
 				num = randint(DUN_STR_QUA);
 
 				for (i = 0; i < num; i++)
@@ -9544,7 +9565,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			 * Shallow water (preserve walls)
 			 * Deep water (penetrate walls)
 			 */
-			else if (randint(20) > 15) {
+			else if (randint(20) > 15 && !(dun->l_ptr->flags1 & (LF1_LAVA | LF1_DEEP_LAVA))) {
 				num = randint(DUN_STR_QUA - 1);
 
 				for (i = 0; i < num; i++)
@@ -9784,15 +9805,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #endif
 
 #ifdef ARCADE_SERVER
-if(wpos->wz > 0) {
-for(mx = 1; mx < 131; mx++) {
-                for(my = 1; my < 43; my++) {
-                cave_set_feat(wpos, my, mx, 1);
-                }
-        }
-}
-        if(wpos->wz > 0 && wpos->wz < 7) {
-
+	if(wpos->wz > 0) {
+		for(mx = 1; mx < 131; mx++) {
+			for(my = 1; my < 43; my++) {
+				cave_set_feat(wpos, my, mx, 1);
+			}
+		}
+	}
+	if(wpos->wz > 0 && wpos->wz < 7) {
 		for(my = 1; my < 8; my++) {
 			for(mx = 63; mx < 70; mx++) {
 				 cave_set_feat(wpos, my, mx, 209);
@@ -9804,33 +9824,29 @@ for(mx = 1; mx < 131; mx++) {
 			}
 		}
  		for(my = 19; my < 26; my++) {
-                        for(mx = 1; mx < 8; mx++) {
-                                 cave_set_feat(wpos, my, mx, 209);
-                        }
-                }
-                for(my = 19; my < 26; my++) {
-                        for(mx = 124; mx < 131; mx++) {
-                                 cave_set_feat(wpos, my, mx, 209);
-                        }
-                }
-	}	
-
-
-        if (wpos->wz == 7) {
-                for(mx = 1; mx<21; mx++) 
-                cave_set_feat(wpos, 11, mx, 61);
-                for(mx = 1; mx < 12; mx++)
-                cave_set_feat(wpos, mx, 21, 61);
-                }
-
-if (wpos->wz == 9) {
-for(mx = 1; mx < 131; mx++) {
-        for(my = 1; my < 43; my++) {
-                cave_set_feat(wpos, my, mx, 187);
-                }
-        }
-}
-
+			for(mx = 1; mx < 8; mx++) {
+				cave_set_feat(wpos, my, mx, 209);
+			}
+		}
+		for(my = 19; my < 26; my++) {
+			for(mx = 124; mx < 131; mx++) {
+				cave_set_feat(wpos, my, mx, 209);
+			}
+		}
+	}
+	if (wpos->wz == 7) {
+		for(mx = 1; mx<21; mx++) 
+			cave_set_feat(wpos, 11, mx, 61);
+		for(mx = 1; mx < 12; mx++)
+			cave_set_feat(wpos, mx, 21, 61);
+	}
+	if (wpos->wz == 9) {
+		for(mx = 1; mx < 131; mx++) {
+			for(my = 1; my < 43; my++) {
+				cave_set_feat(wpos, my, mx, 187);
+			}
+		}
+	}
 #endif
 
 #ifdef ENABLE_DOOR_CHECK
@@ -9883,6 +9899,10 @@ for(mx = 1; mx < 131; mx++) {
 	/* Check for half void jump gates, resulting from partial vaults
 	   which contain void gates and were cut at the level border - C. Blue */
 /*..	*/
+
+
+	/* Log generation of low/mid-level terrifying floors just for the heck of it */
+	if (dun->l_ptr && (dun->l_ptr->flags2 & LF2_OOD_HI) && dun_lev < 40) s_printf("(Generated 'terrifying' floor at %d,%d,%d)\n", wpos->wx, wpos->wy, wpos->wz);
 
 
 	/* Create secret dungeon shop entrances (never on Morgoth's depth) -C. Blue */

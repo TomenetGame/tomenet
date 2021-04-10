@@ -93,7 +93,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	7
-#define SF_VERSION_PATCH	11
+#define SF_VERSION_PATCH	12
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -155,6 +155,7 @@
 #define SFLG0_DED_IDDC		0x00000040
 #define SFLG0_DED_PVP		0x00000080
 #define SFLG0_NO_PK		0x00000100
+#define SFLG0_PVP_MAIA		0x00000200	/* Maiar in PvP-mode start at level 20 or above and hence need to set their trait in the client already */
 
 /* Feature flags */
 #define SFLG1_NORMAL		0x00000000
@@ -1132,6 +1133,8 @@
 #define PVP_THROW_DAM_REDUCTION 3
 /* divide magical damage by this in PvP */
 #define PVP_SPELL_DAM_REDUCTION 5
+/* divide aura damage by this in PvP */
+#define PVP_AURA_DAM_REDUCTION 3
 
 /* Adam's experimental spell damage reduction for PvP (disables PVP_SPELL_DAM_REDUCTION if enabled) */
 //#define EXPERIMENTAL_PVP_SPELL_DAM
@@ -1397,6 +1400,20 @@
 
 #define RI_ARCADE_START		1115	/* first arcade-specific monster; TODO: add ARCADE flag instead */
 #define RI_ARCADE_END		1124	/* last arcade-specific monster; TODO: add ARCADE flag instead */
+
+/* Use normal monster abilities instead of truly mirrored abilities?
+   (This is basically a placeholder until a true mirror image is eventually implemented..) */
+#define SIMPLE_RI_MIRROR
+/* Reduced % of damage taken by the mirror */
+#define MIRROR_REDUCE_DAM_TAKEN_MELEE 20
+#define MIRROR_REDUCE_DAM_TAKEN_THROW 20
+#define MIRROR_REDUCE_DAM_TAKEN_RANGED 20
+#define MIRROR_REDUCE_DAM_TAKEN_SPELL 20
+#define MIRROR_REDUCE_DAM_TAKEN_AURA 20
+/* Reduced % of damage dealt by the mirror */
+#define MIRROR_REDUCE_DAM_DEALT_MELEE 20
+#define MIRROR_REDUCE_DAM_DEALT_SPELL 20
+#define MIRROR_REDUCE_DAM_DEALT_AURA 20
 
 /* Monster ego power indices */
 #define RE_NONE			0
@@ -2486,8 +2503,9 @@
 #define EFF_CROSSHAIR_B		0x00000020
 #define EFF_CROSSHAIR_C		0x00000040
 #define EFF_THINWAVE		0x00000080	/* Same as wave, but thickness 1 instead of 3 (hits each target only once instead of three times) */
-#define EFF_VORTEX          0x00000100	/* The area follows the target - Kurzel */
+#define EFF_VORTEX		0x00000100	/* The area follows the target - Kurzel */
 
+#define EFF_FALLING_STAR	0x00400000
 #define EFF_THUNDER_VISUAL	0x00800000	/* For 'Thunderstorm' spell electrocution */
 #define EFF_LIGHTNING1		0x01000000	/* For Nether Realm finishing */
 #define EFF_LIGHTNING2		0x02000000	/* For Nether Realm finishing */
@@ -2787,6 +2805,7 @@
 #define ART_WARPSPEAR		280
 #define ART_UTUMNO		281
 #define ART_ANCHORING		282
+#define ART_SEVENLEAGUE		283
 /* #define ART_ANGTIRCALAD	*/
 
 
@@ -4378,6 +4397,7 @@
 
 #define CAVE_NOYIELD	0x01000000	/* Will not yield any items or treasure when tunneled */
 #define CAVE_DECAL	0x02000000	/* Impossible to interact with anything on this grid or the grid itself except for looking at it (only implemented for monsters atm) */
+#define CAVE_MINED	0x04000000	/* Just for warning_tunnel_hidden, set when a treasure vein was mined on this grid */
 
 /* Hack for p_ptr->cave_flag, which is only 1 byte in size: */
 #define CAVE_AOVL	CAVE_TEMP	/* Mark grid if it displays an overlay visual that could get auto-updated, ie monsters: A monster can move away automatically, rendering the overlay out of date. */
@@ -4425,6 +4445,7 @@
 
 #define PROJECT_STAR	0x00100000	/* Cast 8 rays and hit the central grid at target location. - Kurzel */
 #define PROJECT_TRAP	0x00200000	/* Caused by a set-up incident, added for blast charges (ENABLE_DEMOLITIONIST) to allow larger GF_DETONATION radius */
+#define PROJECT_BOUN	0x00400000	/* Attack has bounced at least once */
 
 /* ToME expansions */
 #if 0	/* soon */
@@ -4776,7 +4797,8 @@
 #define GF_RUINATION		105
 #define GF_EXP			106
 #define GF_MIND_SLOW		107
-
+#define GF_TBRAND_POIS		108
+#define GF_CODE			109
 #define GF_NUKE			110
 #define GF_BLIND		111
 #define GF_HOLD			112	/* hold */
@@ -5531,6 +5553,7 @@
 /*
  * New monster blow methods
  */
+#define RBM_NONE	0
 #define RBM_HIT		1
 #define RBM_TOUCH	2
 #define RBM_PUNCH	3
@@ -5566,6 +5589,7 @@
 /*
  * New monster blow effects
  */
+#define RBE_NONE	0
 #define RBE_HURT	1
 #define RBE_POISON	2
 #define RBE_UN_BONUS	3
@@ -5876,11 +5900,11 @@
 #define RF7_AI_ANNOY			0x00001000	/* Try to tease the player */
 #define RF7_AI_SPECIAL			0x00002000	/* For quests */
 #define RF7_NEUTRAL			0x00004000	/* Monster is neutral */
-#define RF7_DROPART			0x00008000	/* Monster is neutral */
-#define RF7_DROPRANDART		0x00010000	/* Monster is neutral */
-#define RF7_AI_PLAYER		0x00020000	/* Monster is neutral */
-#define RF7_NO_THEFT		0x00040000	/* Monster is neutral */
-#define RF7_NEVER_ACT		0x00080000	/* Monster is neutral */
+#define RF7_DROPART			0x00008000	/* not implemented - Drops an artifact */
+#define RF7_DROPRANDART		0x00010000	/* not implemented - Drops a random artifact */
+#define RF7_AI_PLAYER		0x00020000	/* not implemented */
+#define RF7_NO_THEFT		0x00040000	/* unused (stealing from monsters is disabled) */
+#define RF7_NEVER_ACT		0x00080000	/* Monster doesn't perform any kind of movement, attacks, spells or whatever. */
 #define RF7_NO_ESP			0x00100000	/* monster isn't ESPable */
 #define RF7_ATTR_BASE			0x00200000	/* show base attr too. Atm works if a) only 1 breath and ATTR_MULTI (DRs) or b) ATTR_BNW is set */
 #define RF7_VORTEX			0x00400000	/* experimental: flicker extremely fast - not working atm */
@@ -6092,7 +6116,7 @@
 
 #define RF5_DIRECT_MASK \
 	(RF5_DRAIN_MANA | RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_CURSE | \
-	 RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE | \
+	 RF5_BO_CODE | RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE | \
 	 RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
 
 
@@ -6111,7 +6135,7 @@
 	(RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3 | RF4_ARROW_4 | RF4_BOULDER)
 
 #define RF5_BOLT_MASK \
-	(RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | \
+	(RF5_BO_CODE | RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | \
 	RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | \
 	RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
 
@@ -6171,7 +6195,7 @@
 	 RF5_BA_NETH | RF5_BA_WATE | RF5_BA_MANA | RF5_BA_DARK | \
 	 RF5_BA_NUKE | RF5_BA_CHAO | \
 	 RF5_MIND_BLAST | RF5_BRAIN_SMASH | RF5_CURSE | \
-	 RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | \
+	 RF5_BO_CODE | RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | \
 	 RF5_BO_COLD | RF5_BO_POIS | RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | \
 	 RF5_BO_PLAS | RF5_BO_ICEE | RF5_MISSILE)
 
@@ -6253,7 +6277,7 @@
 	(RF5_BA_ACID | RF5_BA_ELEC | RF5_BA_FIRE | RF5_BA_COLD | RF5_BA_POIS | \
 	RF5_BA_NETH | RF5_BA_WATE | RF5_BA_MANA | RF5_BA_DARK | \
 	RF5_DRAIN_MANA | RF5_CURSE | RF5_BA_NUKE | RF5_BA_CHAO | \
-	RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | RF5_BO_POIS |\
+	RF5_BO_CODE | RF5_BO_ACID | RF5_BO_ELEC | RF5_BO_FIRE | RF5_BO_COLD | RF5_BO_POIS |\
 	RF5_BO_NETH | RF5_BO_WATE | RF5_BO_MANA | RF5_BO_PLAS | \
 	RF5_BO_ICEE | RF5_SCARE | RF5_BLIND | RF5_CONF | RF5_SLOW | RF5_HOLD)
 	/* RF6_TRAPS and RF6_FORGET don't count as spells (trapping / telepathy) */
@@ -6567,7 +6591,7 @@
 #define LF1_NO_MAP		0x00000080L /* player never gains level knowledge */
 
 #define LF1_NO_MAGIC_MAP	0x00000100L /* player never does magic mapping */
-#define LF1_NO_DESTROY	0x00000200L /* Cannot use Destruction spells/Earthquakes */
+#define LF1_NO_DESTROY		0x00000200L /* Cannot use Destruction spells/Earthquakes */
 #define LF1_NO_MAGIC		0x00000400L /* very nasty */
 #define LF1_NO_GHOST		0x00000800L /* Players who die on this level are erased completely! */
 
@@ -6634,6 +6658,7 @@
 #define LF2_NO_LIVE_SPAWN	0x01000000L	/* disallow any live-spawn of monsters (like in IDDC, could be used for that actually) */
 #define LF2_NO_SPAWN		0x02000000L	/* disallow any monster spawn, even at level generation time. Monsters must be placed manually, hard-codedly, if desired. */
 #define LF2_BROKEN		0x04000000L	/* Control generation of broken feats. */
+#define LF2_NO_RUNES		0x08000000L	/* Disallow runes of protection on this floor */
 
 
 /* vault flags for v_info */
@@ -6764,10 +6789,10 @@
  * Artifacts use the "name1" field
  */
 #define artifact_p(T) \
-        ((T)->name1 ? TRUE : FALSE)
+	((T)->name1 ? TRUE : FALSE)
 
 #define true_artifact_p(T) \
-        (artifact_p(T) && ((T)->name1 != ART_RANDART))
+	(artifact_p(T) && ((T)->name1 != ART_RANDART))
 
 /* artifacts that aren't supposed to show up in non-admins' art lists */
 #define admin_artifact_p(T) \
@@ -6775,17 +6800,16 @@
 
 /* artifacts that can occur multiple times legally */
 #define multiple_artifact_p(T) \
-        ((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || admin_artifact_p(T))
+	((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || admin_artifact_p(T))
 
-/* artifacts that as an exception can by used by winners */
+/* artifacts that as an exception can by used by winners -
+   note that checking for both TR5_WINNERS_ONLY and the actual artifact idx' is redundant actually */
 #define winner_artifact_p(T) \
 	(true_artifact_p(T) && \
 	((k_info[(T)->k_idx].flags5 & TR5_WINNERS_ONLY) || \
 	(T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || \
-	(T)->name1 == ART_PHASING || (T)->name1 == ART_MIRROROFGLORY))
-
-/* allow Ring of Phasing to be permanent until someone else beats Zu-Aon */
-#define RING_OF_PHASING_NO_TIMEOUT
+	(T)->name1 == ART_PHASING || \
+	(T)->name1 == ART_MIRROROFGLORY || (T)->name1 == ART_DREADNOUGHT))
 
 /* artifacts that cannot be deposited on an empty/deallocated dun/wild floor,
    nor being dropped inside houses (if cfg.anti_arts_hoard is on.) */
@@ -6806,6 +6830,13 @@
 	(artifact_p(T) || \
 	((T)->name2 == EGO_STORMBRINGER) || ((T)->name2b == EGO_STORMBRINGER) \
 	)
+
+/* artifacts that cannot be destroyed by any means (especially RF2_KILL_ITEM/RF2_TAKE_ITEM except maybe by admin 'k'. */
+#define indestructible_artifact_p(T) \
+	((T)->name1 == ART_MORGOTH || (T)->name1 == ART_GROND || (T)->name1 == ART_PHASING || admin_artifact_p(T))
+
+/* allow Ring of Phasing to be permanent until someone else beats Zu-Aon */
+#define RING_OF_PHASING_NO_TIMEOUT
 
 
 /*
@@ -8441,6 +8472,7 @@ extern int PlayerUID;
 #define BACT_SEND_ITEM_PAY		70
 #define BACT_REPAIR_WEAPON		71
 #define BACT_REPAIR_ARMOR		72
+#define BACT_HIGHEST_LEVELS		73
 /* If one adds new BACT_ do NOT forget to increase max_bact in variables.c */
 /* MAX_BA_IDX for TomeNET	- Jir - */
 
@@ -8556,6 +8588,7 @@ extern int PlayerUID;
 #define AT_VALINOR5	7
 #define AT_VALINOR6	8
 #define AT_PARTY	9
+#define AT_PARTY2	10
 
 
 /* Admin-specific item powers - C. Blue */
@@ -9016,6 +9049,8 @@ extern int PlayerUID;
 	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz == WPOS_DF_Z)
 #define in_deathfate2(wpos) \
 	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz == -WPOS_DF_Z)
+#define in_deathfate_x(wpos) \
+	((wpos)->wx == WPOS_DF_X && (wpos)->wy == WPOS_DF_Y && (wpos)->wz)
 
 /* constants for get_item() to be transmitted to the client for choosing an item_tester_hook */
 #define ITH_NONE	0
@@ -9054,7 +9089,7 @@ extern int PlayerUID;
 #define MT_DETNOISE	0x0080
 
 #define MT_FLASH	0x0100
-#define MT_CLOAK	0x0200
+#define MT_STEAMBLAST	0x0200
 #define MT_SPIN		0x0400
 #define MT_ASSA		0x0800
 

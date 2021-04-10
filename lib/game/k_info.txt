@@ -6224,7 +6224,7 @@ F:SPECIAL_GENE | FULL_NAME
 N:786:Climbing Set~
 G:`:B
 I:12:0:0
-W:40:0:80:50000
+W:40:0:80:20000
 A:40/3
 F:CLIMB | EASY_KNOW
 D:Arms and fingers are required to use this tool.
@@ -6893,15 +6893,15 @@ I:12:3:0
 W:10:0:10:1000
 A:10/3
 F:IGNORE_WATER | EASY_KNOW
-D:Protects your purse from thieves.
+D:When equipped it protects your purse from thieves.
 
-N:905:& Device~ of Theft Prevention
+N:905:& Backpack Safety Lock~ 
 G:`:B
 I:12:4:0
 W:35:0:12:30000
 A:35/20
 F:EASY_KNOW
-D:Protects your backpack from thieves.
+D:When equipped it protects your inventory items from thieves.
 
 N:906:& Tarpaulin~
 G:`:D
@@ -6909,7 +6909,7 @@ I:12:5:0
 W:15:0:60:1000
 A:15/5
 F:EASY_KNOW
-D:Protects your items from taking damage from water.
+D:When equipped it protects your items from taking damage from water.
 
 # Parchment to help dead beginners
 N:907:The Book of the Dead [Press 'r' to read]
@@ -7099,7 +7099,7 @@ F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 $NEW_TOMES!N:925:& Tome~ of Holy Support
 $NEW_TOMES$N:925:& Tome~ of Holy Support
-G:?:U
+G:?:C
 I:111:15:0
 W:50:0:30:25000
 A:50/50:100/50

@@ -246,6 +246,7 @@ guide_spell = {
 
     "Curse",
     "Call Light",
+    "Ray of Light",
     "Exorcism",
     "Redemption",
     "Orb of Draining",
@@ -260,7 +261,7 @@ guide_spell = {
     "Martyrdom",
 
     "Cure Wounds",
-    "Healing",
+    "Heal",
     "Break Curses",
     "Cleansing Light",
     "Curing",

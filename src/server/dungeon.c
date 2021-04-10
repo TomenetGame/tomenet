@@ -1087,6 +1087,11 @@ static void process_effects(void) {
 			erase_effects(k);
 			continue;
 		}
+		/* Falling stars disappear if they reach end of traversed screen */
+		if ((e_ptr->flags & EFF_FALLING_STAR) && (e_ptr->cx == MAX_WID - 2 || e_ptr->cx == 1)) {
+			erase_effects(k);
+			continue;
+		}
 
 		/* Handle spell effects */
 		for (l = 0; l < tdi[e_ptr->rad]; l++) {
@@ -1166,7 +1171,10 @@ static void process_effects(void) {
 					c_ptr->effect = 0;
 					everyone_lite_spot(wpos, j, i);
 #endif
-				}
+				} else if ((e_ptr->flags & EFF_FALLING_STAR)) {
+					c_ptr->effect = 0;
+					everyone_lite_spot(wpos, j, i);
+ 				}
 			}
 
 			/* --- Complex effects: Create next effect iteration and imprint it on grid --- */
@@ -1690,6 +1698,17 @@ static void process_effects(void) {
 			e_ptr->rad++;
 		}
 
+		/* Slide falling stars */
+		else if (e_ptr->flags & EFF_FALLING_STAR) {
+			if (TRUE) {
+				e_ptr->cx--;
+			} else {
+				e_ptr->cx++;
+			}
+			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
+			apply_effect(k, &who, wpos, e_ptr->cx, e_ptr->cy, c_ptr);
+		}
+
 		/* Thunderstorm visual */
 		else if (e_ptr->flags & EFF_THUNDER_VISUAL) {
 			c_ptr = &zcave[e_ptr->cy][e_ptr->cx];
@@ -1776,6 +1795,8 @@ static void regen_monsters(void) {
 #endif
 			/* Hack -- Some monsters regenerate quickly */
 			if (r_ptr->flags2 & RF2_REGENERATE) frac *= 2;
+
+			if (m_ptr->r_idx == RI_BLUE) frac /= 40;
 
 			/* Hack -- Regenerate */
 			m_ptr->hp += frac;
@@ -3339,6 +3360,7 @@ static bool auto_retaliate_test(int Ind) {
 
 			/* Figure out if this is the best target so far */
 			if (!m_target_ptr) {
+				/* It's the first monster we're checking */
 				prev_m_target_ptr = m_target_ptr;
 				m_target_ptr = m_ptr;
 				r_ptr = race_inf(m_ptr);
@@ -3353,12 +3375,19 @@ static bool auto_retaliate_test(int Ind) {
 				r_ptr2 = r_ptr;
 				r_ptr = race_inf(m_ptr);
 
+				/* Don't attack sleeping monsters before awake monsters */
+				if (m_target_ptr->csleep && !m_ptr->csleep) {
+					prev_m_target_ptr = m_target_ptr;
+					m_target_ptr = m_ptr;
+					prev_target = target;
+					target = i;
+				}
 				/* If it is a Q, then make it our new target. */
 				/* We don't handle the case of choosing between two
 				 * Q's because if the player is standing next to two Q's
 				 * he deserves whatever punishment he gets.
 				 */
-				if (r_ptr->d_char == 'Q') {
+				else if (r_ptr->d_char == 'Q') {
 					prev_m_target_ptr = m_target_ptr;
 					m_target_ptr = m_ptr;
 					prev_target = target;
@@ -3824,20 +3853,37 @@ static void process_player_begin(int Ind) {
 			p_ptr->recall_pos.wz = 1;
 			//add the temporary 'mirror' dungeon
 			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP))
-				add_dungeon(&p_ptr->wpos, 1, 1, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
+				add_dungeon(&p_ptr->wpos, 1, 2, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 				    DF2_NO_ENTRY_MASK | DF2_RANDOM,
 				    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, TRUE, 0, DI_DEATH_FATE, 0, 0);
 		} else {
 			p_ptr->recall_pos.wz = -1;
 			//add the temporary 'mirror' dungeon
 			if (!(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_DOWN))
-				add_dungeon(&p_ptr->wpos, 1, 1, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
+				add_dungeon(&p_ptr->wpos, 1, 2, DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 				    DF2_NO_ENTRY_MASK | DF2_RANDOM,
 				    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20, FALSE, 0, DI_DEATH_FATE, 0, 0);
 		}
 		//get him there
 		p_ptr->new_level_method = LEVEL_RAND;
 		recall_player(Ind, "");
+		if (!getcave(&p_ptr->wpos)) {
+			p_ptr->auto_transport = AT_PARTY2;
+			break;
+		}
+		//fall through
+	case AT_PARTY2:
+		p_ptr->auto_transport = 0;
+		//don't rely on 'P:' because we use an extra staircase now for the balcony
+		oy = p_ptr->py;
+		ox = p_ptr->px;
+		p_ptr->py = 2;
+		p_ptr->px = 1;
+		zcave = getcave(&p_ptr->wpos);
+		zcave[oy][ox].m_idx = 0;
+		zcave[p_ptr->py][p_ptr->px].m_idx = 0 - Ind;
+		everyone_lite_spot(&p_ptr->wpos, oy, ox);
+		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		break;
 	}
 
@@ -4832,7 +4878,7 @@ static bool process_player_end_aux(int Ind) {
 				if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 30;
 
 				/* Regeneration takes more food */
-				if (p_ptr->tim_regen && p_ptr->prace != RACE_VAMPIRE) i += p_ptr->tim_regen_pow / 10;
+				if (p_ptr->tim_regen && p_ptr->tim_regen_pow > 0) i += p_ptr->tim_regen_pow / 10;
 
 				j = 0;
 
@@ -4970,15 +5016,12 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Increase regeneration by flat amount from timed regeneration powers */
 	if (p_ptr->tim_regen) {
-		/* Regeneration spell (Nature) */
-		if (p_ptr->prace != RACE_VAMPIRE) regen_amount += p_ptr->tim_regen_pow;
-		else if (p_ptr->csp) {
-			/* Nether Sap spell (Unlife) */
-			p_ptr->csp--;
-			hp_player_quiet(Ind, p_ptr->tim_regen_pow, TRUE);
-			p_ptr->redraw |= (PR_MANA | PR_HP);
-			p_ptr->window |= (PW_PLAYER);
-		}
+		if (p_ptr->tim_regen_pow > 0) regen_amount += p_ptr->tim_regen_pow; /* Regeneration spell (Nature) */
+		if (p_ptr->tim_regen_pow < 0 && p_ptr->csp >= 10) { /* Nether Sap spell (Unlife) */
+			p_ptr->csp -= 10;
+			hp_player_quiet(Ind, -p_ptr->tim_regen_pow, TRUE);
+			p_ptr->redraw |= PR_MANA;
+                }
 	}
 
 	/* Poisoned or cut yields no healing */
@@ -5117,31 +5160,31 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->tim_jail && !p_ptr->wpos.wz) {
 		p_ptr->tim_jail--;
 		if (!p_ptr->tim_jail) {
+			/* only release him from jail if he didn't already take the ironman jail dungeon escape route. */
+			if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
 #ifdef JAILER_KILLS_WOR
-			/* eat his WoR scrolls as suggested? */
-			bool found = FALSE, one = TRUE;
-			for (j = 0; j < INVEN_WIELD; j++) {
-				if (!p_ptr->inventory[j].k_idx) continue;
-				o_ptr = &p_ptr->inventory[j];
-				if ((o_ptr->tval == TV_ROD) && (o_ptr->sval == SV_ROD_RECALL)) {
-					if (found) one = FALSE;
-					if (o_ptr->number > 1) one = FALSE;
-					o_ptr->pval = 300;
-					found = TRUE;
+				/* eat his WoR scrolls as suggested? */
+				bool found = FALSE, one = TRUE;
+				for (j = 0; j < INVEN_WIELD; j++) {
+					if (!p_ptr->inventory[j].k_idx) continue;
+					o_ptr = &p_ptr->inventory[j];
+					if ((o_ptr->tval == TV_ROD) && (o_ptr->sval == SV_ROD_RECALL)) {
+						if (found) one = FALSE;
+						if (o_ptr->number > 1) one = FALSE;
+						o_ptr->pval = 300;
+						found = TRUE;
+					}
 				}
-			}
-			if (found) {
-				msg_format(Ind, "The jailer discharges your rod%s of recall.", one ? "" : "s");
-				p_ptr->window |= PW_INVEN;
-			}
+				if (found) {
+					msg_format(Ind, "The jailer discharges your rod%s of recall.", one ? "" : "s");
+					p_ptr->window |= PW_INVEN;
+				}
 #endif
 
-			/* only teleport him if he didn't take the ironman exit. */
-			if (zcave[p_ptr->py][p_ptr->px].info & CAVE_JAIL) {
 				msg_print(Ind, "\377GYou are free to go!");
 
 				/* Get the jail door location */
-				if (!p_ptr->house_num) teleport_player_force(Ind, 1);
+				if (!p_ptr->house_num) teleport_player_force(Ind, 1); //should no longer happen as house_num is saved now between logins
 				else {
 					zcave[p_ptr->py][p_ptr->px].m_idx = 0;
 					everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -5215,6 +5258,9 @@ static bool process_player_end_aux(int Ind) {
 	/* Paralysis */
 	if (p_ptr->paralyzed && p_ptr->paralyzed != 255) /* hack */
 		(void)set_paralyzed(Ind, p_ptr->paralyzed - 1);// - minus_health
+
+	/* Confinement */
+	if (p_ptr->stopped) (void)set_stopped(Ind, p_ptr->stopped - 1);
 
 	/* Confusion */
 	if (p_ptr->confused)
@@ -5354,10 +5400,8 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Timed regen */
 	if (p_ptr->tim_regen) {
-		if (p_ptr->prace == RACE_VAMPIRE)
-			(void)set_tim_mp2hp(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
-		else
-			(void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow);
+		if (p_ptr->tim_regen_pow > 0) (void)set_tim_regen(Ind, p_ptr->tim_regen - 1, p_ptr->tim_regen_pow); /* Regeneration */
+		else if (p_ptr->tim_regen_pow < 0) (void)set_tim_mp2hp(Ind, p_ptr->tim_regen - 1, -p_ptr->tim_regen_pow); /* Nether Sap */
 	}
 
 	/* Thunderstorm */
@@ -5569,6 +5613,22 @@ static bool process_player_end_aux(int Ind) {
 	}
 #endif
 
+	/* Steam blast charge - Fighting technique */
+	if (p_ptr->steamblast_timer > 0) {
+		p_ptr->steamblast_timer--;
+		if (!p_ptr->steamblast_timer) {
+			cave_type **zcave = getcave(&p_ptr->wpos);
+
+			if (zcave) {
+				cave_type *c_ptr = &zcave[p_ptr->steamblast_y][p_ptr->steamblast_x];
+				/* Closed door, locked doors, jammed doors -- works 100% for now */
+				if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
+					cave_set_feat_live(&p_ptr->wpos, p_ptr->steamblast_y, p_ptr->steamblast_x, FEAT_BROKEN);
+				}
+			}
+		}
+	}
+
 
 	/*** Process Light ***/
 
@@ -5772,10 +5832,10 @@ static bool process_player_end_aux(int Ind) {
 		} else {
 			msg_print(Ind, "An ancient morgothian curse calls out!");
 #ifdef USE_SOUND_2010
-			if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, SUMMON_MONSTER, 0, 0))
+			if (summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, (p_ptr->lev * 7) / 5, 100, SUMMON_MONSTER, 0, 0))
 				sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "summon", NULL, SFX_TYPE_MISC, FALSE);
 #else
-			(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->lev + 20, 100, SUMMON_MONSTER, 0, 0);
+			(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, (p_ptr->lev * 7) / 5, 100, SUMMON_MONSTER, 0, 0);
 #endif
 		}
 	}
@@ -8005,6 +8065,12 @@ void process_player_change_wpos(int Ind) {
 	   Discard the possibility to undoskills when we venture into a dungeon again. */
 	if (!p_ptr->wpos_old.wz && p_ptr->wpos.wz) p_ptr->reskill_possible = FALSE;
 
+	if (p_ptr->steamblast_timer != 0) {
+		if (p_ptr->steamblast_timer == -1) msg_print(Ind, "You cancel your preparations for a steam blast charge.");
+		/* ..else fail silently */
+		p_ptr->steamblast_timer = 0;
+	}
+
 	/* un-snow */
 	p_ptr->temp_misc_1 &= ~0x08;
 	//update_player(Ind); //un-snowing restores lack of visibility by others - required?
@@ -8946,13 +9012,13 @@ void process_player_change_wpos(int Ind) {
 
 	clockin(Ind, 7); /* Remember his wpos */
 
-	if (in_deathfate2(wpos)) wiz_lite(Ind); //hack
-
 	/* Note: IDDC is already covered in cmd2.c when taking entrance staircases */
 	if (in_hallsofmandos(wpos)) {
 		p_ptr->warning_depth = 2;
 		p_ptr->warning_wor = p_ptr->warning_wor2 = 1;
 	}
+
+	if (in_deathfate_x(wpos)) wiz_lite(Ind);
 }
 
 
@@ -10186,6 +10252,19 @@ void process_timers() {
 		}
 	}
 #endif
+
+	if (!timer_falling_star) {
+		timer_falling_star = 2 + rand_int(60);
+		wpos.wx = WPOS_DF_X;
+		wpos.wy = WPOS_DF_Y;
+		wpos.wz = -WPOS_DF_Z * 2;
+		if ((zcave = getcave(&wpos))) {
+			x = rand_int(65 - 20) + 1 + 15;
+			y = rand_int(7 - 1) + 1;
+			i = 7 + rand_int(22);
+			cast_falling_star(&wpos, x, y, i);
+		}
+	} else timer_falling_star--;
 }
 
 /* during new years eve, cast fireworks! - C. Blue

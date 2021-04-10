@@ -1175,6 +1175,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						gauche = TRUE;
 					}
 
+					switch (o_ptr->tval) {
+					case TV_SHOT:
+						if (p_ptr->inventory[INVEN_BOW].tval == TV_BOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_SLING) continue;
+						break;
+					case TV_ARROW:
+						if (p_ptr->inventory[INVEN_BOW].tval == TV_BOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_SHORT_BOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_LONG_BOW) continue;
+						break;
+					case TV_BOLT:
+						if (p_ptr->inventory[INVEN_BOW].tval == TV_BOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_LIGHT_XBOW
+						    && p_ptr->inventory[INVEN_BOW].sval != SV_HEAVY_XBOW) continue;
+						break;
+					}
+
 					break;
 				}
 			}
@@ -1433,6 +1450,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		else if (prefix(messagelc, "/version") || prefix(messagelc, "/ver")) {
 			if (tk) do_cmd_check_server_settings(Ind);
 			else msg_print(Ind, longVersion);
+			return;
+		}
+		else if (prefix(messagelc, "/?r")) { /* guide chapter search for our race */
+			Send_Guide(Ind, 3, 0, race_info[p_ptr->prace].title);
+			return;
+		}
+		else if (prefix(messagelc, "/?c")) { /* guide chapter search for our class */
+			Send_Guide(Ind, 3, 0, class_info[p_ptr->pclass].title);
 			return;
 		}
 		else if (prefix(messagelc, "/help") || prefix(messagelc, "/he") || prefix(messagelc, "/?")) {
@@ -2677,80 +2702,100 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 #ifdef FUN_SERVER /* make wishing available to players for fun, until rollback happens - C. Blue */
 		else if (prefix(messagelc, "/wish")) {
-			object_type	forge;
-			object_type	*o_ptr = &forge;
-			WIPE(o_ptr, object_type);
-			int tval, sval, kidx;
+			int tval, sval, bpval = 0, pval = 0, name1 = 0, name2 = 0, name2b = 0, number = 1;
+			object_type pseudo_forge;
 
-			if (tk < 1 || !k) {
-				msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] or /wish (o_idx)");
+			if (tk < 2 || tk > 8) {
+				msg_print(Ind, "\377oUsage: /wish <tval> <sval> [<xNum>] [<bpval> <pval> <name1> <name2> <name2b>]");
 				return;
 			}
 
-			if (tk > 1) {
-				tval = k; sval = atoi(token[2]);
-				kidx = lookup_kind(tval, sval);
-			}
-			else kidx = k;
-//			if (kidx == 238 || kidx == 909 || kidx == 888 || kidx == 920) return; /* Invuln pots, Learning pots, Invinc + Highland ammys */
-			if (kidx == 239 || kidx == 616 || kidx == 626 || kidx == 595 || kidx == 179) return; /* ..and rumour scrolls (spam) */
-			msg_format(Ind, "%d", kidx);
-			invcopy(o_ptr, kidx);
+			tval = k;
+			sval = atoi(token[2]);
 
-			if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
-			/* the next check is not needed (bpval is used, not pval) */
-			if (kidx == 428 && o_ptr->pval > 3) o_ptr->pval = 3; //436  (limit EA ring +BLOWS)
-
-			/* Wish arts out! */
-			if (tk > 4) {
-				object_type forge;
-				int nom = atoi(token[5]);
-
-				forge.name1 = nom;
-				if (nom == ART_PHASING || admin_artifact_p(&forge)) return; /* Phasing ring, admin-only items */
-				o_ptr->number = 1;
-
-				if (nom > 0) o_ptr->name1 = nom;
-				else {
-					/* It's ego or randarts */
-					if (nom) {
-						o_ptr->name2 = 0 - nom;
-						if (tk > 4) o_ptr->name2b = 0 - atoi(token[5]);
-						/* the next check might not be needed (bpval is used, not pval?) */
-						if ((o_ptr->name2 == 65 || o_ptr->name2b == 65 ||
-						    o_ptr->name2 == 70 || o_ptr->name2b == 70 ||
-						    o_ptr->name2 == 173 || o_ptr->name2b == 173 ||
-						    o_ptr->name2 == 176 || o_ptr->name2b == 176 ||
-						    o_ptr->name2 == 187 || o_ptr->name2b == 187)
-						    && (o_ptr->pval > 3)) /* all +BLOWS items */
-							o_ptr->pval = 3;
-					}
-					else o_ptr->name1 = ART_RANDART;
-
-					/* Piece together a 32-bit random seed */
-					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
-					o_ptr->name3 += rand_int(0xFFFF);
+			if (tk >= 3) {
+				if (token[3][0] == 'x') {
+					number = atoi(token[3] + 1);
+					if (tk >= 4) bpval = atoi(token[4]);
+					if (tk >= 5) pval = atoi(token[5]);
+					if (tk >= 6) name1 = atoi(token[6]);
+					if (tk >= 7) name2 = atoi(token[7]);
+					if (tk >= 8) name2b = atoi(token[8]);
+				} else {
+					if (tk >= 3) bpval = atoi(token[3]);
+					if (tk >= 4) pval = atoi(token[4]);
+					if (tk >= 5) name1 = atoi(token[5]);
+					if (tk >= 6) name2 = atoi(token[6]);
+					if (tk >= 7) name2b = atoi(token[7]);
 				}
 			}
-			else o_ptr->number = o_ptr->weight >= 30 ? 1 : 99;
 
-			apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
-			if (tk > 3) o_ptr->discount = atoi(token[4]);
-			else o_ptr->discount = 100;
-			object_known(o_ptr);
-			o_ptr->owner = 0;
-			//if(tk > 2) o_ptr->pval = (atoi(token[3]) < 15) ? atoi(token[3]) : 15;
-			//o_ptr->owner = p_ptr->id;
-			o_ptr->level = 1;
+			switch (tval)
+			case TV_POTION:
+				switch (sval) {
+				case SV_POTION_INVULNERABILITY:
+				case SV_POTION_LEARNING:
+					return;
+				}
+				break;
+			case TV_SCROLL:
+				switch (sval) {
+				case SV_SCROLL_RUMOR:
+					return;
+				}
+				break;
+			case TV_AMULET:
+				switch (sval) {
+				case SV_AMULET_INVULNERABILITY:
+				case SV_AMULET_INVINCIBILITY:
+				case SV_AMULET_HIGHLANDS:
+				case SV_AMULET_HIGHLANDS2:
+					return;
+				}
+				break;
+			case TV_RING:
+				switch (sval) {
+				case SV_RING_ATTACKS:
+					if (bpval > 3) bpval = 3;
+				case SV_RING_SPEED:
+					if (bpval > 15) bpval = 15;
+				}
+				break;
+			}
 
- #ifdef NEW_MDEV_STACKING
-			if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
- #endif
-			(void)inven_carry(Ind, o_ptr);
+			/* Generic limits */
+			if (pval > 15) pval = 15;
+			if (bpval > 15) bpval = 15;
 
+			/* all potential +BLOWS items */
+			if ((o_ptr->name2 == EGO_HA || o_ptr->name2b == EGO_HA ||
+			    o_ptr->name2 == EGO_ATTACKS || o_ptr->name2b == EGO_ATTACKS ||
+			    o_ptr->name2 == EGO_COMBAT || o_ptr->name2b == EGO_COMBAT ||
+			    o_ptr->name2 == EGO_FURY || o_ptr->name2b == EGO_FURY ||
+			    o_ptr->name2 == EGO_STORMBRINGER || o_ptr->name2b == EGO_STORMBRINGER) {
+				if (o_ptr->pval > 3) o_ptr->pval = 3;
+			}
+
+			/* Phasing ring, admin-only items */
+			pseudo_forge.name1 = name1;
+			if (name1 == ART_PHASING || admin_artifact_p(&pseudo_forge)) return;
+
+			wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, -1, NULL);
 			return;
 		}
 #endif
+		else if (prefix(messagelc, "/invn")) { /* Set o_ptr->number for an inventory slot */
+			char slot = message3[0];
+
+			if (slot < 'a' || slot > 'w') {
+				msg_print(Ind, "Usage: /invn <a..w> <number>");
+				return;
+			}
+			if (p_ptr->inventory[slot - 'a'].k_idx) p_ptr->inventory[slot - 'a'].number = atoi(message3 + 1);
+			else msg_format(Ind, "Empty slot: %c).", slot);
+			p_ptr->window |= PW_INVEN;
+			return;
+		}
 		else if (prefix(messagelc, "/evinfo")) { /* get info on a global event */
 			int n = 0;
 			char ppl[75];
@@ -2986,7 +3031,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			apos.wx = 0; apos.wy = 0; apos.wz = 0;
 			if (!wild_info[apos.wy][apos.wx].tower) {
 				add_dungeon(&apos, 1, 1, DF1_NO_RECALL | DF1_SMALLEST,
-				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, 0x0, TRUE, 0, 0, 0, 0);
+				    DF2_NO_ENTRY_MASK | DF2_NO_EXIT_MASK | DF2_RANDOM, DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS, TRUE, 0, 0, 0, 0);
 				fresh_arena = TRUE;
 			}
 			apos.wz = 1;
@@ -4133,54 +4178,95 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 #ifdef ENABLE_DRACONIAN_TRAITS
 		} else if (prefix(messagelc, "/trait")) {
-			if (p_ptr->prace != RACE_DRACONIAN) {
-				msg_print(Ind, "This command is only available to draconians.");
+			if (!(p_ptr->prace == RACE_MAIA && (p_ptr->mode & MODE_PVP) && MIN_PVP_LEVEL >= 20)
+			    && p_ptr->prace != RACE_DRACONIAN) {
+				msg_print(Ind, "This command is not available for your character.");
 				return;
 			}
 			if (p_ptr->ptrait) {
 				msg_print(Ind, "You already have a trait.");
 				return;
 			}
-			if (!tk) {
-				msg_print(Ind, "\377U------------------------------------------------");
-				msg_print(Ind, "\377yUse this command like this:");
-				msg_print(Ind, "\377o  /trait colour");
-				msg_print(Ind, "\377yWhere colour is one of these:");
-				msg_print(Ind, "\377o  blue, white, red, black, green, multi,");
-				msg_print(Ind, "\377o  bronze, silver, gold, law, chaos, balance.");
-				msg_print(Ind, "\377yWARNING: Once you set a trait, it will be FINAL.");
-				msg_print(Ind, "\377yPlease check the guide (6.4) for trait details.");
-				msg_print(Ind, "\377U------------------------------------------------");
-				return;
+
+			switch (p_ptr->prace) {
+			case RACE_DRACONIAN:
+				if (!tk) {
+					msg_print(Ind, "\377U------------------------------------------------");
+					msg_print(Ind, "\377UUse this command like this:");
+					msg_print(Ind, "\377o  /trait <colour>");
+					msg_print(Ind, "\377UWhere <colour> is one of these:");
+					msg_print(Ind, "\377o  blue, white, red, black, green, multi,");
+					msg_print(Ind, "\377o  bronze, silver, gold, law, chaos, balance.");
+					msg_print(Ind, "\377UWARNING: Once you set a trait, it will be FINAL.");
+					msg_print(Ind, "\377UPlease check the guide (6.4) for trait details.");
+					msg_print(Ind, "\377U------------------------------------------------");
+					return;
+				}
+
+				if (!strcmp(message3, "blue")) p_ptr->ptrait = 1;
+				else if (!strcmp(message3, "white")) p_ptr->ptrait = 2;
+				else if (!strcmp(message3, "red")) p_ptr->ptrait = 3;
+				else if (!strcmp(message3, "black")) p_ptr->ptrait = 4;
+				else if (!strcmp(message3, "green")) p_ptr->ptrait = 5;
+				else if (!strcmp(message3, "multi")) p_ptr->ptrait = 6;
+				else if (!strcmp(message3, "bronze")) p_ptr->ptrait = 7;
+				else if (!strcmp(message3, "silver")) p_ptr->ptrait = 8;
+				else if (!strcmp(message3, "gold")) p_ptr->ptrait = 9;
+				else if (!strcmp(message3, "law")) p_ptr->ptrait = 10;
+				else if (!strcmp(message3, "chaos")) p_ptr->ptrait = 11;
+				else if (!strcmp(message3, "balance")) p_ptr->ptrait = 12;
+				else {
+					msg_print(Ind, "You entered an invalid colour, please try again.");
+					return;
+				}
+
+				p_ptr->s_info[SKILL_BREATH].value = 1000;
+				Send_skill_info(Ind, SKILL_BREATH, TRUE);
+				p_ptr->s_info[SKILL_PICK_BREATH].value = 1000;
+				Send_skill_info(Ind, SKILL_PICK_BREATH, TRUE);
+
+				break;
+			case RACE_MAIA:
+				if (!tk) {
+					msg_print(Ind, "\377U------------------------------------------------");
+					msg_format(Ind, "\377RThis commmand can only be used at original character level %d!", MIN_PVP_LEVEL);
+					msg_print(Ind, "\377UUse this command like this:");
+					msg_print(Ind, "\377o  /trait <initiation>");
+					msg_print(Ind, "\377UWhere <initiation> is one of these two:");
+					msg_print(Ind, "\377o  enlightened   - to become an angelic maia or");
+					msg_print(Ind, "\377o  corrupted     - to become a demonic maia.");
+					msg_print(Ind, "\377UWARNING: Once you set a trait, it will be FINAL.");
+					msg_print(Ind, "\377UPlease check the guide (6.2a) for trait details.");
+					msg_print(Ind, "\377U------------------------------------------------");
+					return;
+				}
+
+				if (p_ptr->max_plv > MIN_PVP_LEVEL) {
+					msg_format(Ind, "\377RThis commmand can only be used at original character level %d!", MIN_PVP_LEVEL);
+					return;
+				}
+
+				if (strstr("enlightened", message3)) p_ptr->ptrait = TRAIT_ENLIGHTENED;
+				else if (strstr("corrupted", message3)) p_ptr->ptrait = TRAIT_CORRUPTED;
+				else {
+					msg_print(Ind, "You entered an invalid trait, please try again.");
+					return;
+				}
+
+				shape_Maia_skills(Ind, TRUE);
+				calc_techniques(Ind);
+
+				p_ptr->redraw |= PR_SKILLS | PR_MISC;
+				p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
+				break;
 			}
 
-			if (!strcmp(message3, "blue")) p_ptr->ptrait = 1;
-			else if (!strcmp(message3, "white")) p_ptr->ptrait = 2;
-			else if (!strcmp(message3, "red")) p_ptr->ptrait = 3;
-			else if (!strcmp(message3, "black")) p_ptr->ptrait = 4;
-			else if (!strcmp(message3, "green")) p_ptr->ptrait = 5;
-			else if (!strcmp(message3, "multi")) p_ptr->ptrait = 6;
-			else if (!strcmp(message3, "bronze")) p_ptr->ptrait = 7;
-			else if (!strcmp(message3, "silver")) p_ptr->ptrait = 8;
-			else if (!strcmp(message3, "gold")) p_ptr->ptrait = 9;
-			else if (!strcmp(message3, "law")) p_ptr->ptrait = 10;
-			else if (!strcmp(message3, "chaos")) p_ptr->ptrait = 11;
-			else if (!strcmp(message3, "balance")) p_ptr->ptrait = 12;
-			else {
-				msg_print(Ind, "You entered an invalid colour, please try again.");
-				return;
-			}
 			msg_format(Ind, "\377U*** Your trait has been set to '%s' ***.", trait_info[p_ptr->ptrait].title);
 			s_printf("TRAIT_SET: %s (%s) -> %d\n", p_ptr->name, p_ptr->accountname, p_ptr->ptrait);
 			p_ptr->redraw |= PR_MISC;
 
 			get_history(Ind);
 			p_ptr->redraw |= PR_HISTORY;
-
-			p_ptr->s_info[SKILL_BREATH].value = 1000;
-			Send_skill_info(Ind, SKILL_BREATH, TRUE);
-			p_ptr->s_info[SKILL_PICK_BREATH].value = 1000;
-			Send_skill_info(Ind, SKILL_PICK_BREATH, TRUE);
 			return;
 #endif
 #ifdef AUTO_RET_CMD
@@ -4808,6 +4894,30 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		} else if (prefix(messagelc, "/edmt")) { /* manual c_cfg.easy_disarm_montraps */
 			p_ptr->easy_disarm_montraps = !p_ptr->easy_disarm_montraps;
 			msg_format(Ind, "Walking into a monster trap will %sdisarm it.", p_ptr->easy_disarm_montraps ? "" : "not ");
+			return;
+		} else if (prefix(messagelc, "/setimm")) { //quick and dirty for outdated clients, pfft
+			k = message3[0] - 'a';
+			if (!tk || k < 1 || k > 7) {
+				msg_print(Ind, "\377yUsage:  /setimm <b..h>");
+				msg_print(Ind, "\377y  b: random, c: electricity, d: cold, e: acid, f: fire, g: poison, h: water");
+				return;
+			}
+			msg_print(Ind, "Preferred immunity set.");
+			p_ptr->mimic_immunity = k;
+			return;
+		} else if (prefix(messagelc, "/setele")) { //quick and dirty for outdated clients, pfft
+			if (p_ptr->prace != RACE_DRACONIAN || p_ptr->ptrait != TRAIT_MULTI) {
+				msg_print(Ind, "This command is not available for your character.");
+				return;
+			}
+			k = message3[0] - 'a';
+			if (!tk || k < 1 || k > 6) {
+				msg_print(Ind, "\377yUsage:  /setele <b..g>");
+				msg_print(Ind, "\377y  b: random, c: lightning, d: frost, e: acid, f: fire, g: poison");
+				return;
+			}
+			msg_print(Ind, "Breath element set.");
+			p_ptr->breath_element = k;
 			return;
 		}
 
@@ -5913,71 +6023,45 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				load_server_cfg();
 				return;
 			}
-			/* Admin wishing :)
-			 * TODO: better parser like
-			 * /wish 21 8 a117 d40
-			 * for Aule {40% off}
-			 */
+			/* Admin wishing :) */
 #ifndef FUN_SERVER /* disabled while server is being exploited */
 			else if (prefix(messagelc, "/wish")) {
-				object_type	forge;
-				object_type	*o_ptr = &forge;
+				int tval, sval, bpval = 0, pval = 0, name1 = 0, name2 = 0, name2b = 0, number = 1;
 
-				WIPE(o_ptr, object_type);
-
-				if (tk < 1 || !k) {
-					msg_print(Ind, "\377oUsage: /wish (tval) (sval) (pval) [discount] [name] [name2b]  --or /wish (o_idx)");
+				if (tk < 2 || tk > 8) {
+					msg_print(Ind, "\377oUsage: /wish <tval> <sval> [<xNum>] [<bpval> <pval> <name1> <name2> <name2b>]");
 					return;
 				}
 
-				invcopy(o_ptr, tk > 1 ? lookup_kind(k, atoi(token[2])) : k);
+				tval = k;
+				sval = atoi(token[2]);
 
-				/* Wish arts out! */
-				if (tk > 4) {
-					int nom = atoi(token[5]);
-					o_ptr->number = 1;
-
-					if (nom == ART_RANDART) { /* see defines.h */
-						/* Piece together a 32-bit random seed */
-						o_ptr->name1 = ART_RANDART;
-						o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
-						o_ptr->name3 += rand_int(0xFFFF);
-					} else if (nom > 0) {
-						o_ptr->name1 = nom;
-						handle_art_inum(o_ptr->name1);
-					} else if (nom < 0) {
-						/* It's ego or randarts */
-						o_ptr->name2 = 0 - nom;
-						if (tk > 5) o_ptr->name2b = 0 - atoi(token[6]);
-
-						/* Piece together a 32-bit random seed */
-						o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
-						o_ptr->name3 += rand_int(0xFFFF);
+				if (tk >= 3) {
+					if (token[3][0] == 'x') {
+						number = atoi(token[3] + 1);
+						if (tk >= 4) bpval = atoi(token[4]);
+						if (tk >= 5) pval = atoi(token[5]);
+						if (tk >= 6) name1 = atoi(token[6]);
+						if (tk >= 7) name2 = atoi(token[7]);
+						if (tk >= 8) name2b = atoi(token[8]);
+					} else {
+						if (tk >= 3) bpval = atoi(token[3]);
+						if (tk >= 4) pval = atoi(token[4]);
+						if (tk >= 5) name1 = atoi(token[5]);
+						if (tk >= 6) name2 = atoi(token[6]);
+						if (tk >= 7) name2b = atoi(token[7]);
 					}
-				} else o_ptr->number = o_ptr->weight >= 30 ? 1 : 99;
+				}
 
-//				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
-				apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
-				if (tk > 3) o_ptr->discount = atoi(token[4]);
-				else o_ptr->discount = 100;
-				object_known(o_ptr);
-				o_ptr->owner = 0;
-				if (tk > 2) o_ptr->pval = atoi(token[3]);
-				//o_ptr->owner = p_ptr->id;
-				o_ptr->level = 1;
-
- #ifdef NEW_MDEV_STACKING
-				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
- #endif
-				(void)inven_carry(Ind, o_ptr);
-
+				wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, -1, NULL);
 				return;
 			}
+#endif
 			/* actually wish a (basic) item by item name */
 			else if (prefix(messagelc, "/nwish")) {
 				object_kind *k_ptr;
-				object_type	forge;
-				object_type	*o_ptr = &forge;
+				object_type forge;
+				object_type *o_ptr = &forge;
 
 				WIPE(o_ptr, object_type);
 
@@ -6011,14 +6095,80 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				o_ptr->owner = 0;
 				o_ptr->level = 1;
 
- #ifdef NEW_MDEV_STACKING
+#ifdef NEW_MDEV_STACKING
 				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
- #endif
+#endif
 				(void)inven_carry(Ind, o_ptr);
 
 				return;
 			}
+			/* wish a true artifact by name */
+			else if (prefix(messagelc, "/awish")) {
+				artifact_type *a_ptr;
+				object_type forge, *o_ptr = &forge;
+				int kidx;
+				char o_name[ONAME_LEN];
+
+				WIPE(o_ptr, object_type);
+
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /awish <artifact name>");
+					return;
+				}
+
+				/* Hack -- Guess at "correct" values for tval_to_char[] */
+				for (i = 1; i < max_a_idx; i++) {
+					a_ptr = &a_info[i];
+					kidx = lookup_kind(a_ptr->tval, a_ptr->sval);
+					if (!kidx) continue;
+
+					invcopy(o_ptr, kidx);
+					o_ptr->name1 = i;
+					//object_desc(0, o_name, o_ptr, TRUE, 0);
+					object_desc(0, o_name, o_ptr, TRUE, 256);//short name is enough
+
+					if (!my_strcasestr(o_name, message3)) continue;
+					break;
+				}
+				if (i == max_a_idx) {
+					msg_print(Ind, "\377yArtifact not found.");
+					return;
+				}
+
+				/* Extract the fields */
+				o_ptr->pval = a_ptr->pval;
+				o_ptr->ac = a_ptr->ac;
+				o_ptr->dd = a_ptr->dd;
+				o_ptr->ds = a_ptr->ds;
+				o_ptr->to_a = a_ptr->to_a;
+				o_ptr->to_h = a_ptr->to_h;
+				o_ptr->to_d = a_ptr->to_d;
+				o_ptr->weight = a_ptr->weight;
+
+				handle_art_inum(i);
+
+				/* Hack -- acquire "cursed" flag */
+				if (a_ptr->flags3 & (TR3_CURSED)) o_ptr->ident |= (ID_CURSED);
+
+				/* Complete generation, especially level requirements check */
+				apply_magic(&p_ptr->wpos, o_ptr, -2, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
+				if (i == ART_GROND || i == ART_MORGOTH) o_ptr->level = 40; //consistent with xtra2.c
+
+				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
+				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+
+				o_ptr->discount = 0;
+				object_known(o_ptr);
+				o_ptr->owner = 0;
+				//o_ptr->level = 1;
+
+#ifdef NEW_MDEV_STACKING
+				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
 #endif
+				(void)inven_carry(Ind, o_ptr);
+
+				return;
+			}
 			else if (prefix(messagelc, "/trap")) { // ||	prefix(messagelc, "/tr")) conflicts with /trait maybe
 				if (k) wiz_place_trap(Ind, k);
 				else wiz_place_trap(Ind, TRAP_OF_FILLING);
@@ -7383,6 +7533,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				for (i = 0; i < 4; i++) msg_format(Ind, "[%d]: %s", i, Players[p]->history[i]);
 				return;
 			}
+			/* Reset a player's racial/class exp%, updating it in case it got changed ('verify') - C. Blue */
+			else if (prefix(messagelc, "/vxp")) {
+				int p;
+
+				if (tk < 1) {
+					msg_print(Ind, "\377oUsage: /vxp <player name>");
+					return;
+				}
+				p = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
+				if (!p) return;
+				verify_expfact(Ind, p);
+				return;
+			}
 			/* Turn all non-everlasting items inside a house to everlasting items if the owner is everlasting */
 			else if (prefix(messagelc, "/everhouse")) {
 				/* house_contents_chmod .. (scan_obj style) */
@@ -7733,6 +7896,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					for (x = 1; x < MAX_WID - 1; x++) {
 						zcave[y][x].info = 0;
 						zcave[y][x].feat = 0;
+						/* Remove special structs */
+						FreeCS(&zcave[y][x]);
+						zcave[y][x].special = 0;
 					}
 				}
 
@@ -8586,6 +8752,24 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "store_debug_mode: freq %d, time x%d.", store_debug_mode, store_debug_quickmotion);
 				return;
 			}
+			else if (prefix(messagelc, "/kstore")) { /* kick a player out of the store he is in (if any) */
+				if (!tk) {
+					msg_print(Ind, "\377oUsage: /kstore <character name>]");
+					return;
+				}
+				j = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+				if (!j) {
+					msg_print(Ind, "Player not online.");
+					return;
+				}
+				if (Players[j]->store_num == -1) {
+					msg_print(Ind, "Player not in a store.");
+					return;
+				}
+				msg_format(Ind, "Kicking '%s' out of the store (%d).\n", Players[j], Players[j]->store_num);
+				store_kick(j, FALSE);
+				return;
+			}
 			else if (prefix(messagelc, "/costs")) { /* shows monetary details about an object */
 				object_type *o_ptr;
 				char o_name[ONAME_LEN];
@@ -9043,6 +9227,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				msg_format(Ind, "Playing <%d>.", k);
 				Send_music(Ind, k, -4);
+				return;
+			}
+			else if (prefix(messagelc, "/pvmus")) { /* play specific music at specific volume */
+				if (!__audio_mus_max) {
+					msg_print(Ind, "No music available.");
+					return;
+				}
+				if (tk < 2 || k < 0 || k >= __audio_mus_max) {
+					msg_format(Ind, "Usage: /pvmus <music number 0..%d> <volume%% 0..100>", __audio_mus_max - 1);
+					return;
+				}
+				msg_format(Ind, "Playing <%d> at volume <%d%%>.", k, atoi(token[2]));
+				if (is_older_than(&p_ptr->version, 4, 7, 3, 2, 0, 0)) msg_print(Ind, "\377ySince your client version is < 4.7.3.2.0.0 the volume will always be 100%%.");
+				Send_music_vol(Ind, k, -4, atoi(token[2]));
 				return;
 			}
 			else if (prefix(messagelc, "/ppmus")) { /* play specific music for specific player */
@@ -11162,7 +11360,7 @@ void get_laston(char *name, char *response, bool admin, bool colour) {
 
 	/* Don't display account AND player info, just take what is more recent, for now */
 	if (sla && slp) {
-		if (slp < sla) {
+		if (slp >= sla) {
 			acc_found = FALSE;
 			s = slp;
 		} else s = sla;
@@ -11235,4 +11433,119 @@ void tym_evaluate(int Ind) {
 		    tmp, ((p_ptr->test_heal * 10) / ((turn - p_ptr->test_turn) / cfg.fps)) % 10);
 		else msg_format(Ind, EVALPF"    \377g    Average healing done: %8ld", tmp);
 	}
+}
+
+/* New and improved /wish functionality. Creates a specific item.
+   Puts it into player's inventory if Ind != 0 and there is room,
+   otherwise copies it into ox_ptr provided it's not NULL.
+   If wpos is specified, it will be used for apply_magic().
+   If wpos is NULL and Ind isn't 0, the player's wpos will be used for apply_magic().
+   If wpos is NULL and Ind is 0, the generic wpos of Bree will be used.
+   If level is -1, determine_level_req() will be called. - C. Blue */
+extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level, object_type *ox_ptr) {
+	player_type *p_ptr = NULL;
+	object_type forge, *o_ptr = &forge;
+
+	if (Ind) p_ptr = Players[Ind];
+	if (!number) {
+		if (Ind) msg_print(Ind, "Amount may not be zero.");
+		return;
+	}
+	if (number < 0 || number > 99) {
+		if (Ind) msg_print(Ind, "Amount out of bounds.");
+		return;
+	}
+	if (tval < 0 || tval > TV_MAX) {
+		if (Ind) msg_print(Ind, "tval out of bounds.");
+		return;
+	}
+	if (sval < 0 || sval > 255) {
+		if (Ind) msg_print(Ind, "sval out of bounds.");
+		return;
+	}
+	if (pval < 0 || pval > 125) { //arbitrary (morgoth crown)
+		if (Ind) msg_print(Ind, "pval out of bounds.");
+		return;
+	}
+	if (bpval < 0 || bpval > 125) {
+		if (Ind) msg_print(Ind, "bpval out of bounds.");
+		return;
+	}
+	if (name1 < 0 || name1 > ART_RANDART) {
+		if (Ind) msg_print(Ind, "name1 out of bounds.");
+		return;
+	}
+	if (name2 < 0 || name2 > 999) { //arbitrary
+		if (Ind) msg_print(Ind, "name2 out of bounds.");
+		return;
+	}
+	if (name2b < 0 || name2b > 999) { //arbitrary
+		if (Ind) msg_print(Ind, "name2b out of bounds.");
+		return;
+	}
+
+	WIPE(o_ptr, object_type);
+	invcopy(o_ptr, lookup_kind(tval, sval));
+	o_ptr->number = number;
+
+	/* Wish arts out! */
+	if (name1) {
+		if (name1 == ART_RANDART) { /* see defines.h */
+			/* Piece together a 32-bit random seed */
+			o_ptr->name1 = ART_RANDART;
+			o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
+			o_ptr->name3 += rand_int(0xFFFF);
+		} else {
+			o_ptr->name1 = name1;
+			handle_art_inum(o_ptr->name1);
+		}
+	} else if (name2) {
+		/* It's ego or randarts */
+		o_ptr->name2 = name2;
+		o_ptr->name2b = name2b;
+
+		/* Piece together a 32-bit random seed */
+		o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
+		o_ptr->name3 += rand_int(0xFFFF);
+	}
+
+	//apply_magic(wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
+	if (wpos) apply_magic(wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+	else if (Ind) apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+	else {
+		struct worldpos xpos;
+
+		xpos.wx = 32;
+		xpos.wy = 32;
+		xpos.wz = 0;
+
+		apply_magic(&xpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
+	}
+
+	object_known(o_ptr);
+
+	/* Reset 'good' enchantments to defaults */
+	o_ptr->to_h = k_info[o_ptr->k_idx].to_h;
+	o_ptr->to_d = k_info[o_ptr->k_idx].to_d;
+	o_ptr->to_a = k_info[o_ptr->k_idx].to_a;
+
+	o_ptr->bpval = bpval;
+	o_ptr->pval = pval;
+
+	if (level == -1) determine_level_req(0, o_ptr); //verify_level_req(o_ptr);
+	else o_ptr->level = level;
+
+ #ifdef NEW_MDEV_STACKING
+	if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
+ #endif
+
+	if (Ind && inven_carry(Ind, o_ptr) == -1) msg_print(Ind, "Couldn't carry additional object.");
+	else if (ox_ptr) *ox_ptr = *o_ptr;
+	else {
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_printf("wish-ERROR: Item couldn't be distributed (%d, %s).", Ind, o_name);
+	}
+	return;
 }

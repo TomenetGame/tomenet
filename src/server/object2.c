@@ -6668,6 +6668,10 @@ void determine_level_req(int level, object_type *o_ptr) {
 	    && o_ptr->level && o_ptr->bpval > 0
 	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
 		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
+	if (o_ptr->tval == TV_AMULET && o_ptr->sval == SV_AMULET_SPEED
+	    && o_ptr->level && o_ptr->bpval > 0
+	    && o_ptr->level < o_ptr->bpval * 5)
+		o_ptr->level = o_ptr->bpval * 5;
 	if ((o_ptr->tval == TV_DRAG_ARMOR) && (o_ptr->sval == SV_DRAGON_POWER) && (o_ptr->level < 45)) o_ptr->level = 44 + randint(5);
 
 	if (o_ptr->tval == TV_LITE) {
@@ -7067,8 +7071,6 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_HARD_ARMOR:
 	case TV_SOFT_ARMOR:
 	case TV_SHIELD:
-	case TV_CLOAK:
-	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
 		if (k_ptr->to_a < 0) return 0;
@@ -7077,6 +7079,10 @@ static int kind_is_good(int k_idx, u32b resf) {
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return 0;
 		return (tc_p * tc_biasg_treasure) / 500;
+	case TV_CLOAK:
+	case TV_BOOTS:
+		if (k_ptr->to_a < 0) return 0;
+		return (tc_p * tc_biasg_tools) / 500;
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -7319,8 +7325,6 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TV_HARD_ARMOR:
 	case TV_SOFT_ARMOR:
 	case TV_SHIELD:
-	case TV_CLOAK:
-	case TV_BOOTS:
 	case TV_GLOVES:
 	case TV_HELM:
 		if (k_ptr->to_a < 0) return 0;
@@ -7329,6 +7333,10 @@ static int kind_is_great(int k_idx, u32b resf) {
 	case TV_CROWN:
 		if (k_ptr->to_a < 0) return 0;
 		return (tc_p * tc_biasr_magic) / 500;
+	case TV_CLOAK:
+	case TV_BOOTS:
+		if (k_ptr->to_a < 0) return 0;
+		return (tc_p * tc_biasr_tools) / 500;
 
 	/* Weapons -- Good unless damaged */
 	case TV_BOW:
@@ -9017,10 +9025,6 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 		/* melee/ranged ego handling, not suited for spells-only: */
 		switch (o_ptr->name2) {
-		case EGO_AGILITY:
-			/* exception: martial artists can't benefit from +BPR */
-			if (melee_choice == 5) continue;
-			break;
 		case EGO_COMBAT:
 			if ((spell_choice || ranged_choice) && !melee_choice) continue;
 			break;
@@ -9029,6 +9033,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			/* exception: martial artists can't benefit from +BPR */
 			if (melee_choice == 5 || !melee_choice) continue;
 			break;
+		case EGO_AGILITY:
 		case EGO_SLAYING:
 			if (spell_choice && !melee_choice && !ranged_choice
 			    && !o_ptr->name2b) //no double-egos exist for this combo though, iirc, w/e

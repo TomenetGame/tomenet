@@ -190,7 +190,7 @@ cptr window_flag_desc[9] = {
 
    byte	o_page;
 
-   byte	o_set;
+   byte	o_set;		//unused/deprecated
    byte	o_bit;		//deprecated
    byte o_enabled;	//deprecated
 
@@ -203,62 +203,62 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "rogue_like_commands",	"Rogue-like keymap (for covering lack of a numpad)" },
 	{ &c_cfg.newbie_hints,		TRUE,	1,	0, 1, TRUE,
 	    "newbie_hints",		"Display hints/warnings for new players" },
-	{ &c_cfg.censor_swearing,	TRUE,	1,	1, 2, TRUE,
+	{ &c_cfg.censor_swearing,	TRUE,	1,	0, 2, TRUE,
 	    "censor_swearing",		"Censor certain swear words in public messages" },
 
 	{ &c_cfg.hilite_chat,		TRUE,	1,	0, 3, TRUE,
 	    "hilite_chat",		"Highlight chat messages containing your name" },
 	{ &c_cfg.hibeep_chat,		TRUE,	1,	0, 4, TRUE,
 	    "hibeep_chat",		"Beep on chat messages containing your name" },
-	{ &c_cfg.page_on_privmsg,	FALSE,	1,	1, 5, TRUE,
+	{ &c_cfg.page_on_privmsg,	FALSE,	1,	0, 5, TRUE,
 	    "page_on_privmsg",		"Beep when receiving a private message" },
-	{ &c_cfg.page_on_afk_privmsg,	TRUE,	1,	1, 6, TRUE,
+	{ &c_cfg.page_on_afk_privmsg,	TRUE,	1,	0, 6, TRUE,
 	    "page_on_afk_privmsg",	"Beep when receiving a private message while AFK" },
 
-	{ &c_cfg.big_map,		FALSE,	1,	1, 7, TRUE,
+	{ &c_cfg.big_map,		FALSE,	1,	0, 7, TRUE,
 	    "big_map",			"Double height of the map shown in the main window" },
 
 	{ &c_cfg.font_map_solid_walls,	FALSE,	1,	0, 8, TRUE,
 	    "font_map_solid_walls",	"Certain fonts only: Walls look like solid blocks" },
-	{ &c_cfg.view_animated_lite,	TRUE,	1,	1, 9, TRUE,
+	{ &c_cfg.view_animated_lite,	TRUE,	1,	0, 9, TRUE,
 	    "view_animated_lite",	"Animate lantern light, flickering in colour" },
-	{ &c_cfg.wall_lighting,		TRUE,	1,	1, 10, TRUE,
+	{ &c_cfg.wall_lighting,		TRUE,	1,	0, 10, TRUE,
 	    "wall_lighting",		"Generally enable lighting/shading for wall grids" },
-	{ &c_cfg.view_lamp_walls,	TRUE,	1,	1, 11, TRUE,
+	{ &c_cfg.view_lamp_walls,	TRUE,	1,	0, 11, TRUE,
 	    "view_lamp_walls",		"Use special colors for lamp-lit wall grids" },
-	{ &c_cfg.view_shade_walls,	TRUE,	1,	1, 12, TRUE,
+	{ &c_cfg.view_shade_walls,	TRUE,	1,	0, 12, TRUE,
 	    "view_shade_walls",		"Use special colors to shade wall grids" },
-	{ &c_cfg.floor_lighting,	TRUE,	1,	1, 13, TRUE,
+	{ &c_cfg.floor_lighting,	TRUE,	1,	0, 13, TRUE,
 	    "floor_lighting",		"Generally enable lighting/shading for floor grids" },
-	{ &c_cfg.view_lamp_floor,	TRUE,	1,	1, 14, TRUE,
+	{ &c_cfg.view_lamp_floor,	TRUE,	1,	0, 14, TRUE,
 	    "view_lamp_floor",		"Use special colors for lamp-lit floor grids" },
-	{ &c_cfg.view_shade_floor,	TRUE,	1,	1, 15, TRUE,
+	{ &c_cfg.view_shade_floor,	TRUE,	1,	0, 15, TRUE,
 	    "view_shade_floor",		"Use special colors to shade floor grids" },
-	{ &c_cfg.view_lite_extra,	FALSE,	1,	9, 16, TRUE,
+	{ &c_cfg.view_lite_extra,	TRUE,	1,	9, 16, TRUE,
 	    "view_lite_extra",		"Lamp light affects more floor/wall types" },
 
-	{ &c_cfg.alert_hitpoint,	FALSE,	1,	0, 17, TRUE,
+	{ &c_cfg.alert_hitpoint,	FALSE,	7,	0, 17, TRUE,
 	    "alert_hitpoint",		"Beep/message about critical hitpoints/sanity" },
-	{ &c_cfg.alert_mana,		FALSE,	1,	0, 18, TRUE,
+	{ &c_cfg.alert_mana,		FALSE,	7,	0, 18, TRUE,
 	    "alert_mana",		"Beep/message about critically low mana pool" },
-	{ &c_cfg.alert_afk_dam,		FALSE,	1,	0, 19, TRUE,
+	{ &c_cfg.alert_afk_dam,		FALSE,	7,	0, 19, TRUE,
 	    "alert_afk_dam",		"Beep when taking damage while AFK" },
-	{ &c_cfg.alert_offpanel_dam,	TRUE,	1,	0, 20, TRUE,
+	{ &c_cfg.alert_offpanel_dam,	TRUE,	7,	0, 20, TRUE,
 	    "alert_offpanel_dam",	"Beep when taking damage while looking elsewhere" },
 
-	{ &c_cfg.exp_bar,		TRUE,	6,	9, 21, TRUE, //moved to page 3 in 4.7.2 to make room for alert_starvation
+	{ &c_cfg.exp_bar,		TRUE,	6,	0, 21, TRUE, //moved to page 3 in 4.7.2 to make room for alert_starvation
 	    "exp_bar",			"Show experience bar instead of a number" },
 
     //page 2 - 22
-	{ &c_cfg.uniques_alive,		FALSE,	4,	1, 22, TRUE,
+	{ &c_cfg.uniques_alive,		FALSE,	4,	0, 22, TRUE,
 	    "uniques_alive",		"List only unslain uniques for your local party" },
 	{ &c_cfg.warn_unique_credit,	FALSE,	4,	0, 23, TRUE,
 	    "warn_unique_credit",	"Beep on attacking a unique you already killed" },
-	{ &c_cfg.limit_chat,		FALSE,	4,	9, 24, TRUE,
+	{ &c_cfg.limit_chat,		FALSE,	4,	0, 24, TRUE,
 	    "limit_chat",		"Chat only with players on the same floor" },
-	{ &c_cfg.no_afk_msg,		FALSE,	4,	9, 25, TRUE,
+	{ &c_cfg.no_afk_msg,		FALSE,	4,	0, 25, TRUE,
 	    "no_afk_msg",		"Don't show AFK toggle messages of other players" },
-	{ &c_cfg.overview_startup,	FALSE,	4,	1, 26, TRUE,
+	{ &c_cfg.overview_startup,	FALSE,	4,	0, 26, TRUE,
 	    "overview_startup",		"Display overview resistance/boni page at startup" },
 
 	{ &c_cfg.allow_paging,		TRUE,	4,	0, 27, TRUE,
@@ -266,13 +266,13 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.ring_bell,		TRUE,	4,	0, 28, TRUE,
 	    "ring_bell",		"Beep on misc warnings and errors" },
 
-	{ &c_cfg.linear_stats,		FALSE,	4,	9, 29, TRUE,
+	{ &c_cfg.linear_stats,		FALSE,	4,	0, 29, TRUE,
 	    "linear_stats",			"Stats are represented in a linear way" },
-	{ &c_cfg.exp_need,		FALSE,	4,	9, 30, TRUE,
+	{ &c_cfg.exp_need,		FALSE,	4,	0, 30, TRUE,
 	    "exp_need",			"Show the experience needed for next level" },
 	{ &c_cfg.depth_in_feet,		TRUE,	4,	0, 31, TRUE,
 	    "depth_in_feet",		"Show dungeon level in feet" },
-	{ &c_cfg.newb_suicide,		TRUE,	4,	1, 32, TRUE,
+	{ &c_cfg.newb_suicide,		TRUE,	4,	0, 32, TRUE,
 	    "newb_suicide",		"Display newbie suicides" },
 	{ &c_cfg.show_weights,		TRUE,	4,	0, 33, TRUE,
 	    "show_weights",		"Show weights in object listings" },
@@ -286,31 +286,31 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "short_item_names", 	"Don't display known 'flavours' in item names" },
 	{ &c_cfg.keep_topline,		FALSE,	4,	0, 37, TRUE,
 	    "keep_topline",		"Don't clear messages in the top line if avoidable" },
-	{ &c_cfg.target_history,	FALSE,	4,	9, 38, TRUE,
+	{ &c_cfg.target_history,	FALSE,	4,	0, 38, TRUE,
 	    "target_history",		"Add target informations to the message history" },
-	{ &c_cfg.taciturn_messages,	FALSE,	4,	9, 39, TRUE,
+	{ &c_cfg.taciturn_messages,	FALSE,	4,	0, 39, TRUE,
 	    "taciturn_messages",	"Suppress server messages as far as possible" },
-	{ &c_cfg.always_show_lists,	TRUE,	4,	9, 40, TRUE,
+	{ &c_cfg.always_show_lists,	TRUE,	4,	0, 40, TRUE,
 	    "always_show_lists",	"Always show lists in item/skill selection" },
 
-	{ &c_cfg.no_weather,		FALSE,	4,	1, 41, TRUE,
+	{ &c_cfg.no_weather,		FALSE,	1,	0, 41, TRUE,
 	    "no_weather",		"Disable weather visuals and sounds completely" },
 
-	{ &c_cfg.player_list,		FALSE,	4,	1, 42, TRUE,
+	{ &c_cfg.player_list,		FALSE,	4,	0, 42, TRUE,
 	    "player_list",		"Show a more compact player list in @ screen" },
-	{ &c_cfg.player_list2,		FALSE,	4,	1, 43, TRUE,
+	{ &c_cfg.player_list2,		FALSE,	4,	0, 43, TRUE,
 	    "player_list2",		"Compacts the player list in @ screen even more" },
 
     //page 3 - 44
-	{ &c_cfg.flash_player,		TRUE,	6,	1, 44, TRUE,
+	{ &c_cfg.flash_player,		TRUE,	6,	0, 44, TRUE,
 	    "flash_player",		"Flash own character icon after far relocation" },
     //todo: fix/implement good cursor on *nix/osx
-	{ &c_cfg.hilite_player,		FALSE,	6,	1, 45, TRUE,
+	{ &c_cfg.hilite_player,		FALSE,	6,	0, 45, TRUE,
 	    "hilite_player",		"Hilite own character icon with the cursor" },
-	{ &c_cfg.consistent_players,	FALSE,	6,	1, 46, TRUE,
+	{ &c_cfg.consistent_players,	FALSE,	6,	0, 46, TRUE,
 	    "consistent_players",	"Use consistent symbols and colours for players" },
 
-	{ &c_cfg.recall_flicker,	TRUE,	6,	1, 47, TRUE,
+	{ &c_cfg.recall_flicker,	TRUE,	6,	0, 47, TRUE,
 	    "recall_flicker",		"Show animated text colours in sub-windows" },
 	{ &c_cfg.no_verify_sell,	FALSE,	6,	0, 48, TRUE,
 	    "no_verify_sell",		"Skip safety question when selling items" },
@@ -318,16 +318,16 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_verify_destroy",	"Skip safety question when destroying items" },
 
     //page 4 - 49
-	{ &c_cfg.auto_afk,		TRUE,	2,	1, 50, TRUE,
+	{ &c_cfg.auto_afk,		TRUE,	2,	0, 50, TRUE,
 	    "auto_afk",			"Set 'AFK mode' automatically" },
-	{ &c_cfg.idle_starve_kick,	TRUE,	2,	1, 51, TRUE,
+	{ &c_cfg.idle_starve_kick,	TRUE,	2,	0, 51, TRUE,
 	    "idle_starve_kick",		"Disconnect when idle for 30s while starving" },
-	{ &c_cfg.safe_float,		FALSE,	2,	1, 52, TRUE,
+	{ &c_cfg.safe_float,		FALSE,	2,	0, 52, TRUE,
 	    "safe_float",		"Prevent floating for a short while after death" },
-	{ &c_cfg.safe_macros,		TRUE,	2,	1, 53, TRUE,
+	{ &c_cfg.safe_macros,		TRUE,	2,	0, 53, TRUE,
 	    "safe_macros",		"Abort macro if item is missing or an action fails" },
 
-	{ &c_cfg.auto_untag,		FALSE,	2,	1, 54, TRUE,
+	{ &c_cfg.auto_untag,		FALSE,	2,	0, 54, TRUE,
 	    "auto_untag",		"Remove unique monster inscription on pick-up" },
 	{ &c_cfg.clear_inscr,		FALSE,	2,	9, 55, TRUE,
 	    "clear_inscr",		"Clear @-inscriptions on taking item ownership" },
@@ -337,9 +337,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "stack_force_notes",	"Merge inscriptions when stacking" },
 	{ &c_cfg.stack_force_costs,	TRUE,	2,	0, 58, TRUE,
 	    "stack_force_costs",	"Merge discounts when stacking" },
-	{ &c_cfg.stack_allow_items,	TRUE,	2,	1, 59, TRUE,
+	{ &c_cfg.stack_allow_items,	TRUE,	2,	0, 59, TRUE,
 	    "stack_allow_items",	"Allow weapons and armor to stack" },
-	{ &c_cfg.stack_allow_wands,	TRUE,	2,	1, 60, TRUE,
+	{ &c_cfg.stack_allow_wands,	TRUE,	2,	0, 60, TRUE,
 	    "stack_allow_wands",	"Allow wands/staffs/rods to stack" },
 	{ &c_cfg.whole_ammo_stack,	FALSE,	2,	0, 61, TRUE,
 	    "whole_ammo_stack",		"For ammo/misc items always operate on whole stack" },
@@ -349,17 +349,17 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "always_pickup",		"Pick things up by default" },
 	{ &c_cfg.use_old_target,	TRUE,	2,	0, 64, TRUE,
 	    "use_old_target",		"Use old target by default" },
-	{ &c_cfg.autooff_retaliator,	FALSE,	2,	9, 65, TRUE,
+	{ &c_cfg.autooff_retaliator,	FALSE,	2,	0, 65, TRUE,
 	    "autooff_retaliator",	"Stop the retaliator when protected by GoI etc" },
-	{ &c_cfg.fail_no_melee,		FALSE,	2,	9, 66, TRUE,
+	{ &c_cfg.fail_no_melee,		FALSE,	2,	0, 66, TRUE,
 	    "fail_no_melee",		"Don't melee if other auto-retaliation ways fail" },
-	{ &c_cfg.wide_scroll_margin,	TRUE,	2,	9, 67, TRUE,
+	{ &c_cfg.wide_scroll_margin,	TRUE,	2,	0, 67, TRUE,
 	    "wide_scroll_margin",	"Scroll the screen more frequently" },
-	{ &c_cfg.auto_target,		FALSE,	2,	9, 68, TRUE,
+	{ &c_cfg.auto_target,		FALSE,	2,	0, 68, TRUE,
 	    "auto_target",		"Automatically set target to the nearest enemy" },
-	{ &c_cfg.thin_down_flush,	TRUE,	2,	9, 69, TRUE,
+	{ &c_cfg.thin_down_flush,	TRUE,	2,	0, 69, TRUE,
 	    "thin_down_flush",		"Thin down screen flush signals to avoid freezing" },
-	{ &c_cfg.disable_flush,		FALSE,	2,	9, 70, TRUE,
+	{ &c_cfg.disable_flush,		FALSE,	2,	0, 70, TRUE,
 	    "disable_flush",		"Disable delays from flush signals" },
 
     //page 5 - 70
@@ -384,20 +384,20 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "disturb_minor",		"Disturb whenever boring things happen" },
 	{ &c_cfg.disturb_other,		FALSE,	3,	0, 80, TRUE,
 	    "disturb_other",		"Disturb whenever various things happen" },//18
-	{ &c_cfg.view_perma_grids,	TRUE,	3,	1, 81, TRUE,
+	{ &c_cfg.view_perma_grids,	TRUE,	3,	0, 81, TRUE,
 	    "view_perma_grids",		"Map remembers all perma-lit grids" },
-	{ &c_cfg.view_torch_grids,	FALSE,	3,	1, 82, TRUE,
+	{ &c_cfg.view_torch_grids,	FALSE,	3,	0, 82, TRUE,
 	    "view_torch_grids",		"Map remembers all torch-lit grids" },
-	{ &c_cfg.view_reduce_lite,	FALSE,	3,	1, 83, FALSE, /* Doesn't make sense */
+	{ &c_cfg.view_reduce_lite,	FALSE,	3,	0, 83, FALSE, /* Doesn't make sense */
 	    "view_reduce_lite",		"Reduce lite-radius when running" },
-	{ &c_cfg.view_reduce_view,	FALSE,	3,	1, 84, FALSE, /* Doesn't make sense */
+	{ &c_cfg.view_reduce_view,	FALSE,	3,	0, 84, FALSE, /* Doesn't make sense */
 	    "view_reduce_view",		"Reduce view-radius in town" },
 
-	{ &c_cfg.easy_open,		TRUE,	3,	9, 85, TRUE,
+	{ &c_cfg.easy_open,		TRUE,	3,	0, 85, TRUE,
 	    "easy_open",		"Automatically open doors" },
-	{ &c_cfg.easy_disarm,		FALSE,	3,	9, 86, TRUE,
+	{ &c_cfg.easy_disarm,		FALSE,	3,	0, 86, TRUE,
 	    "easy_disarm",		"Automatically disarm traps (except under items)" },
-	{ &c_cfg.easy_tunnel,		FALSE,	3,	9, 87, TRUE,
+	{ &c_cfg.easy_tunnel,		FALSE,	3,	0, 87, TRUE,
 	    "easy_tunnel",		"Automatically tunnel walls" },
 
     //page 6 - 87
@@ -411,11 +411,11 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_ovl_close_sfx",		"Prevent re-playing sfx received after <100ms gap" },
 	{ &c_cfg.ovl_sfx_attack,	TRUE,	5,	0, 92, TRUE,
 	    "ovl_sfx_attack",		"Allow overlapping combat sounds of same type" },
-	{ &c_cfg.no_combat_sfx,		FALSE,	5,	1, 93, TRUE,
+	{ &c_cfg.no_combat_sfx,		FALSE,	5,	0, 93, TRUE,
 	    "no_combat_sfx",		"Don't play melee/launcher attack/miss sound fx" },
-	{ &c_cfg.no_magicattack_sfx,	FALSE,	5,	1, 94, TRUE,
+	{ &c_cfg.no_magicattack_sfx,	FALSE,	5,	0, 94, TRUE,
 	    "no_magicattack_sfx",	"Don't play basic spell/device attack sound fx" },
-	{ &c_cfg.no_defense_sfx,	FALSE,	5,	1, 95, TRUE,
+	{ &c_cfg.no_defense_sfx,	FALSE,	5,	0, 95, TRUE,
 	    "no_defense_sfx",		"Don't play attack-avoiding/neutralizing sound fx" },
 	{ &c_cfg.half_sfx_attack,	FALSE,	5,	0, 96, TRUE,
 	    "half_sfx_attack",		"Skip every second attack sound" },
@@ -431,17 +431,17 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "ovl_sfx_mon_spell",	"Allow ovl. monster spell/breath sfx of same type" },
 	{ &c_cfg.ovl_sfx_mon_misc,	TRUE,	5,	0, 102, TRUE,
 	    "ovl_sfx_mon_misc",		"Allow overlapping misc monster sfx of same type" },
-	{ &c_cfg.no_monsterattack_sfx,	FALSE,	5,	1, 103, TRUE,
+	{ &c_cfg.no_monsterattack_sfx,	FALSE,	5,	0, 103, TRUE,
 	    "no_monsterattack_sfx",	"Don't play basic monster attack sound fx" },
-	{ &c_cfg.quiet_shriek_sfx,	FALSE,	5,	1, 104, TRUE,
+	{ &c_cfg.quiet_shriek_sfx,	FALSE,	5,	0, 104, TRUE,
 	    "quiet_shriek_sfx",		"Play quieter shriek (monster hasting) sound fx" },
-	{ &c_cfg.screenshot_format,	TRUE,	7,	1, 105, TRUE,
+	{ &c_cfg.screenshot_format,	TRUE,	6,	0, 105, TRUE,
 	    "screenshot_format",	"Screenshots are timestamped instead of numbered" },
-	{ &c_cfg.quiet_house_sfx,	TRUE,	5,	1, 106, TRUE,
+	{ &c_cfg.quiet_house_sfx,	TRUE,	5,	0, 106, TRUE,
 	    "quiet_house_sfx",		"Play quieter ambient/weather sound in buildings" },
-	{ &c_cfg.no_house_sfx,		FALSE,	5,	1, 107, TRUE,
+	{ &c_cfg.no_house_sfx,		FALSE,	5,	0, 107, TRUE,
 	    "no_house_sfx",		"Don't play ambient/weather sound in buildings" },
-	{ &c_cfg.no_am_sfx,		FALSE,	5,	1, 108, FALSE, /* superseded by just =n and toggle the actual 'am_field' sfx instead */		//HOLE
+	{ &c_cfg.no_am_sfx,		FALSE,	5,	0, 108, FALSE, /* superseded by just =n and toggle the actual 'am_field' sfx instead */		//HOLE
 	    "no_am_sfx",		"Don't play anti-magic disruption sound effect" },
 
     /* unmutable options, pfft -- these are never shown in any options menu (-> FALSE) */
@@ -462,29 +462,29 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "show_choices",		"(broken) Show choices in certain sub-windows" },
 	{ &c_cfg.show_details,		TRUE,	6,	0, 13, FALSE, //not implemented at all
 	    "show_details",		"(broken) Show details in certain sub-windows" },
-	{ &c_cfg.expand_look,		FALSE,	6,	1, 4, FALSE, //not implemented at all
+	{ &c_cfg.expand_look,		FALSE,	6,	0, 4, FALSE, //not implemented at all
 	    "expand_look",		"(broken) Expand the power of the look command" },
-	{ &c_cfg.expand_list,		FALSE,	6,	1, 5, FALSE, //not implemented at all
+	{ &c_cfg.expand_list,		FALSE,	6,	0, 5, FALSE, //not implemented at all
 	    "expand_list",		"(broken) Expand the power of the list commands" },
-	{ &c_cfg.avoid_other,		FALSE,	6,	1, 19, FALSE,
+	{ &c_cfg.avoid_other,		FALSE,	6,	0, 19, FALSE,
 	    "avoid_other",		"(broken) Avoid processing special colors" },
-	{ &c_cfg.flush_failure,		TRUE,	6,	1, 20, FALSE, /* (resurrect me?) */
+	{ &c_cfg.flush_failure,		TRUE,	6,	0, 20, FALSE, /* (resurrect me?) */
 	    "flush_failure",		"(broken) Flush input on various failures" },
-	{ &c_cfg.flush_disturb,		FALSE,	6,	1, 21, FALSE,
+	{ &c_cfg.flush_disturb,		FALSE,	6,	0, 21, FALSE,
 	    "flush_disturb",		"(broken) Flush input whenever disturbed" },
-	{ &c_cfg.fresh_after,           FALSE,  6,      1, 24, FALSE,
+	{ &c_cfg.fresh_after,           FALSE,  6,      0, 24, FALSE,
 	    "fresh_after",		"(obsolete) Flush output after every command" },
-	{ &c_cfg.auto_destroy,		FALSE,	3,	9, 63, FALSE,
+	{ &c_cfg.auto_destroy,		FALSE,	3,	0, 63, FALSE,
 	    "auto_destroy",		"(broken) No query to destroy known junks" },
     //todo: check shopkeeper speakage
-	{ &c_cfg.speak_unique,		TRUE,	6,	13, xx, TRUE,
+	{ &c_cfg.speak_unique,		TRUE,	6,	0, xx, TRUE,
 	    "speak_unique",		"Allow shopkeepers and uniques to speak" },
 #endif
 
     /* new additions for 4.6.2 */
 	{ &c_cfg.shuffle_music,		FALSE,	5,	0, 111, TRUE,
 	    "shuffle_music",		"Don't loop song files but shuffle through them" },
-	{ &c_cfg.permawalls_shade,	FALSE,	6,	0, 112, TRUE, //page 3 (UI 3)
+	{ &c_cfg.permawalls_shade,	FALSE,	1,	0, 112, TRUE,
 	    "permawalls_shade",		"Display permanent vault walls in a special colour" },
 	{ &c_cfg.topline_no_msg,	FALSE,	6,	0, 113, TRUE, //page 3 (UI 3)
 	    "topline_no_msg",		"Don't display messages in main window top line" },
@@ -495,7 +495,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.flash_insane,		FALSE,	6,	0, 116, TRUE, //page 3 (UI 3)
 	    "flash_insane",		"Flash own character icon when going badly insane" },
     /* 4.7.1: */
-	{ &c_cfg.last_words,		TRUE,	6,	9, 117, TRUE,
+	{ &c_cfg.last_words,		TRUE,	6,	0, 117, TRUE,
 	    "last_words",		"Get last words when the character dies" },
 	{ &c_cfg.disturb_see,		FALSE,	3,	0, 118, TRUE,
 	    "disturb_see",		"Disturb whenever seeing any monster" },
@@ -508,17 +508,10 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "diz_death_any",		"Displays lore on monster that kills anyone" },
 	{ &c_cfg.diz_first,		TRUE,	6,	0, 122, TRUE,
 	    "diz_first",		"Displays lore on first-time monster kill" },
-	{ &c_cfg.alert_starvation,	TRUE,	1,	0, 123, TRUE, //moved exp_bar to page 2 to make room for this
+	{ &c_cfg.alert_starvation,	TRUE,	7,	0, 123, TRUE, //moved exp_bar to page 2 to make room for this
 	    "alert_starvation",		"Beep when taking damage from starvation" },
-#ifdef WINDOWS
-	/*{ &c_cfg.palette_animation,	FALSE,	6,	0, 124, TRUE,
-	    "palette_animation",	"Shade world surface colours depending on daytime" },*/
-	{ &c_cfg.palette_animation,	TRUE,	6,	0, 124, TRUE,
+	{ &c_cfg.palette_animation,	TRUE,	1,	0, 124, TRUE,
 	    "palette_animation",	"Shade world surface colours depending on daytime" },
-#else
-	{ &c_cfg.palette_animation,	TRUE,	6,	0, 124, TRUE,
-	    "palette_animation",	"Shade world surface colours depending on daytime" },
-#endif
 	{ &c_cfg.mute_when_idle,	FALSE,	5,	0, 125, TRUE,
 	    "mute_when_idle",		"Mute music+ambient sfx while AFK/idle in town" },
 	{ &c_cfg.id_selection,		TRUE,	6,	0, 126, TRUE,
@@ -533,9 +526,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.find_ignore_montraps,	TRUE,	3,	0, 130, TRUE,
 	    "find_ignore_montraps",	"Run through monster traps" },
 
-	{ &c_cfg.quiet_os,		FALSE,	5,	1, 131, TRUE,
+	{ &c_cfg.quiet_os,		FALSE,	5,	0, 131, TRUE,
 	    "quiet_os",			"Don't play beep/alert/page beeps through OS" },
-	{ &c_cfg.disable_lightning,	FALSE,	7,	9, 132, TRUE,
+	{ &c_cfg.disable_lightning,	FALSE,	1,	0, 132, TRUE,
 	    "disable_lightning",	"Disable visual screen flash effect for lightning" },
 	{ &c_cfg.macros_in_stores,	FALSE,	2,	0, 133, TRUE,
 	    "macros_in_stores",		"Don't disable macros while inside a store" },
@@ -544,8 +537,12 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.keep_bottle,		FALSE,	3,	0, 135, TRUE,
 	    "keep_bottle",		"Keep the empty bottle when you quaff a potion" },
 
-	{ &c_cfg.easy_disarm_montraps,	FALSE,	3,	9, 136, TRUE,
+	{ &c_cfg.easy_disarm_montraps,	FALSE,	3,	0, 136, TRUE,
 	    "easy_disarm_montraps",	"Automatically disarm monster traps ('/edtm')" },
+	{ &c_cfg.no_house_magic,	FALSE,	3,	0, 137, TRUE,
+	    "no_house_magic",		"Prevent using magic inside houses" },
+	{ &c_cfg.no_lite_fainting,	FALSE,	1,	0, 138, TRUE,
+	    "no_lite_fainting",		"Disable shading effect for fainting light source" },
 
 	{ &c_cfg.auto_pickup,	FALSE,	3,	9, 137, TRUE,
 	  "auto_pickup",	"Automatically pickup items ('/apickup')" },
@@ -580,7 +577,7 @@ cptr melee_techniques[16] = {
   "Perceive Noise",
 
   "Flash Bomb",
-  "TechD", /*"Cloak",*/
+  "Steam Blast",
   "Spin",
   "Assassinate",
 

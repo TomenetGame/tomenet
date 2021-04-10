@@ -422,6 +422,8 @@ struct monster_race {
 	s32b weight;		/* Weight of the monster */
 	s16b extra;				/* Unused (for now) */
 
+	/* NOTE: There is currently no difference between these two.
+	   They are even averaged just for the heck of it in all places where they are used, for no apparent reason.. */
 	byte freq_innate;		/* Innate spell frequency */
 	byte freq_spell;		/* Other spell frequency */
 
@@ -587,8 +589,8 @@ struct c_special{
 		struct { byte fy, fx; } between; /* or simply 'dpos'? */
 		struct { byte wx, wy; s16b wz; } wpos;	/* XXX */
 		struct { byte type, rest; bool known; } fountain;
-		struct { u16b trap_kit; byte difficulty, feat; } montrap;
-		struct { s32b id; s16b dam; byte rad, typ, feat; } rune; /* CS_RUNE */
+		struct { u16b trap_kit; byte difficulty, feat; bool found; } montrap;
+		struct { s32b id; s16b dam; byte rad, typ, feat; bool found; } rune; /* CS_RUNE */
 	} sc;
 	struct c_special *next;
 };
@@ -2347,11 +2349,6 @@ struct inventory_change_type {
  * whenever anything important changes.
  */
 
-/*
- * high time to economize memory by bandling bool arrays into
- * char one or something, like in wild_map[MAX_WILD_8] ?	- Jir -
- */
-
 typedef struct player_type player_type;
 struct player_type {
 	int conn;			/* Connection number */
@@ -2790,6 +2787,7 @@ struct player_type {
 	s16b slow;			/* Timed -- Slow */
 	s16b blind;			/* Timed -- Blindness */
 	s16b paralyzed;			/* Timed -- Paralysis */
+	s16b stopped;			/* Timed -- Confined on a hostile rune of protection */
 	s16b confused;			/* Timed -- Confusion */
 	s16b afraid;			/* Timed -- Fear */
 	s16b image;			/* Timed -- Hallucination */
@@ -3424,17 +3422,18 @@ struct player_type {
 	char warning_fountain, warning_voidjumpgate, warning_staircase, warning_worldmap, warning_dungeon, warning_staircase_oneway;
 	/* For the 4.4.8.1.0.0 lua update crash bug */
 	char warning_lua_update, warning_lua_count;
-	char warning_tunnel, warning_tunnel2, warning_tunnel3, warning_tunnel4, warning_trap, warning_tele, warning_fracexp;
+	char warning_tunnel, warning_tunnel2, warning_tunnel3, warning_tunnel4, warning_tunnel_hidden, warning_trap, warning_tele, warning_fracexp;
 	char warning_death;
 	char warning_drained, warning_boomerang, warning_bash, warning_inspect;
 	/* 4.7.1b+ additions */
 	char warning_repair, warning_partyexp, warning_wor2, warning_depth; //repair weapon/armour, no xp sharing, wor INTO dun (display at -50 BD when char is hilev), low/no exp on grey/yellow
 	char warning_blastcharge, warning_status_blindness, warning_status_confusion, warning_status_stun;
 	//not for now, unnecessary spam: , warning_xpdrained, 10% gain while drained
-	char warning_sellunid, warning_edmt;
+	char warning_sellunid, warning_edmt, warning_stealing;
 
 #ifdef USE_SOUND_2010
 	int music_current, musicalt_current, music_monster; //background music currently playing for him/her; an overriding monster music
+	char music_vol;
 	int audio_sfx, audio_mus, music_start;
 	int sound_ambient;
 	/* added for ambient-sfx-handling, so it does not do smooth transition
@@ -3541,6 +3540,8 @@ struct player_type {
 
 	int item_newest;
 	bool keep_bottle;
+	bool no_house_magic;
+	s16b steamblast_x, steamblast_y, steamblast_timer;
 };
 
 typedef struct boni_col boni_col;
@@ -3973,6 +3974,8 @@ struct client_opts {
 	bool keep_bottle;
 
 	bool easy_disarm_montraps;
+	bool no_house_magic;
+	bool no_lite_fainting;
 	bool auto_pickup;
 	bool destroy_on_auto_pickup;
 };

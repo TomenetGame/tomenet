@@ -376,7 +376,7 @@ extern s16b acc_flags;
 extern bool s_RPG, s_FUN, s_ARCADE, s_TEST;
 extern bool s_RPG_ADMIN, s_PARTY;
 extern bool s_DED_IDDC, s_DED_PVP;
-extern bool s_NO_PK;
+extern bool s_NO_PK, s_PVP_MAIA;
 
 /* Server's temporary features flags */
 extern u32b sflags_TEMP;
@@ -974,9 +974,10 @@ extern bool (*sound_hook)(int, int, int, s32b);
 extern void (*sound_ambient_hook)(int);
 extern void (*sound_weather_hook)(int);
 extern void (*sound_weather_hook_vol)(int, int);
-extern bool (*music_hook)(int);
+extern bool (*music_hook)(int), (*music_hook_vol)(int, char);
 extern bool sound(int val, int type, int vol, s32b player_id);
 extern bool music(int val);
+extern bool music_volume(int val, char vol);
 extern void sound_ambient(int val);
 extern void sound_weather(int val);
 extern void sound_weather_vol(int val, int vol);
@@ -985,6 +986,7 @@ extern void weather_handle_fading(void);
 extern void ambient_handle_fading(void);
 extern void mixer_fadeall(void);
 extern int music_cur, music_cur_song, music_next, music_next_song, weather_channel, weather_current, weather_current_vol, weather_channel_volume, ambient_channel, ambient_current, ambient_channel_volume;
+extern char music_vol;
 extern int weather_sound_change, weather_fading, ambient_fading;
 extern int cfg_audio_rate, cfg_max_channels, cfg_audio_buffer;
 extern bool cfg_audio_master, cfg_audio_music, cfg_audio_sound, cfg_audio_weather, no_cache_audio, weather_resume, ambient_resume;
@@ -1112,3 +1114,8 @@ extern char playerlist[1000][MAX_CHARS_WIDE * 2];
 
 extern byte col_raindrop, col_snowflake;
 extern bool custom_font_warning;
+#ifdef GUIDE_BOOKMARKS
+extern int bookmark_line[GUIDE_BOOKMARKS];
+extern char bookmark_name[GUIDE_BOOKMARKS][60];
+#endif
+extern unsigned char lamp_fainting;

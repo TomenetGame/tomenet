@@ -1476,3 +1476,8 @@ void lua_fix_acc_house_limit(int Ind) {
 		s_printf("lua_fix_acc_house_limit: FIXED '%s'('%s'): %d houses are really -> %d.\n", p_ptr->name, p_ptr->accountname, i, j);
 	}
 }
+
+/* Simplified wish() version for lua scripts */
+void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level) {
+	wish(Ind, NULL, tval, sval, number, bpval, pval, name1, name2, name2b, level, NULL);
+}

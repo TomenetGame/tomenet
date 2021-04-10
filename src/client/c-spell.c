@@ -636,10 +636,10 @@ static void print_immunities() {
 	put_str(" d) Cold", j++, col);
 
 	prt("", j, col);
-	put_str(" e) Acid", j++, col);
+	put_str(" e) Fire", j++, col);
 
 	prt("", j, col);
-	put_str(" f) Fire", j++, col);
+	put_str(" f) Acid", j++, col);
 
 	prt("", j, col);
 	put_str(" g) Poison", j++, col);
@@ -785,14 +785,14 @@ void do_mimic() {
 				buf[49] = 0;
 
 				/* Find the power it is related to */
-				if (!strcasecmp(buf, "Check")) c = 1;
-				else if (!strcasecmp(buf, "None")) c = 2;
-				else if (!strcasecmp(buf, "Electricity")) c = 3;
-				else if (!strcasecmp(buf, "Cold")) c = 4;
-				else if (!strcasecmp(buf, "Acid")) c = 5;
-				else if (!strcasecmp(buf, "Fire")) c = 6;
-				else if (!strcasecmp(buf, "Poison")) c = 7;
-				else if (!strcasecmp(buf, "Water")) c = 8;
+				if (my_strcasestr(buf, "Ch")) c = 1;
+				else if (my_strcasestr(buf, "No")) c = 2;
+				else if (my_strcasestr(buf, "El")) c = 3;
+				else if (my_strcasestr(buf, "Co")) c = 4;
+				else if (my_strcasestr(buf, "Fi")) c = 5;
+				else if (my_strcasestr(buf, "Ac")) c = 6;
+				else if (my_strcasestr(buf, "Po")) c = 7;
+				else if (my_strcasestr(buf, "Wa")) c = 8;
 				if (c) break;
 			} else if (choice >= 'a' && choice <= 'h') {
 				/* extract request */
@@ -1884,41 +1884,44 @@ static void print_breaths() {
 	put_str("Breath's Element", 1, col + 4);
 
 	prt("", j, col);
-	put_str(" a) Random (default)", j++, col);
+	put_str(" a) Check (view current preference, don't set it)", j++, col);
 
 	prt("", j, col);
-	put_str(" b) Lightning", j++, col);
+	put_str(" b) None (pick randomly each time)", j++, col);
 
 	prt("", j, col);
-	put_str(" c) Frost", j++, col);
+	put_str(" c) Lightning", j++, col);
 
 	prt("", j, col);
-	put_str(" d) Fire", j++, col);
+	put_str(" d) Frost", j++, col);
 
 	prt("", j, col);
-	put_str(" e) Acid", j++, col);
+	put_str(" e) Fire", j++, col);
 
 	prt("", j, col);
-	put_str(" f) Poison", j++, col);
+	put_str(" f) Acid", j++, col);
+
+	prt("", j, col);
+	put_str(" g) Poison", j++, col);
 
 	if (p_ptr->ptrait == TRAIT_POWER) {
 		prt("", j, col);
-		put_str(" g) Confusion", j++, col);
+		put_str(" h) Confusion", j++, col);
 
 		prt("", j, col);
-		put_str(" h) Inertia", j++, col);
+		put_str(" i) Inertia", j++, col);
 
 		prt("", j, col);
-		put_str(" i) Sound", j++, col);
+		put_str(" j) Sound", j++, col);
 
 		prt("", j, col);
-		put_str(" j) Shards", j++, col);
+		put_str(" k) Shards", j++, col);
 
 		prt("", j, col);
-		put_str(" k) Chaos", j++, col);
+		put_str(" l) Chaos", j++, col);
 
 		prt("", j, col);
-		put_str(" l) Disenchantment", j++, col);
+		put_str(" m) Disenchantment", j++, col);
 	}
 
 	/* Clear the bottom line */
@@ -1929,13 +1932,13 @@ static void print_breaths() {
 }
 
 static int get_breath(int *br) {
-	int		i = 0, num = 6; /* number of pre-defined breath elements here in this function */
+	int		i = 0, num = 7; /* number of pre-defined breath elements here in this function */
 	bool		flag, redraw;
 	char		choice;
 	char		out_val[160];
 	int             corresp[5];
 
-	if (p_ptr->ptrait == TRAIT_POWER) num = 12;
+	if (p_ptr->ptrait == TRAIT_POWER) num = 13;
 
 	for (i = 0; i < num; i++) corresp[i] = i;
 
@@ -1947,7 +1950,7 @@ static int get_breath(int *br) {
 	redraw = FALSE;
 
 	/* Build a prompt (accept all stances) */
-	strnfmt(out_val, 78, "(Breath types %c-%c, *=List, ESC=exit) switch to wich element? ",
+	strnfmt(out_val, 78, "(Breath types %c-%c, *=List, @=Name, ESC=exit) switch to wich element? ",
 		I2A(0), I2A(num - 1));
 
 	if (c_cfg.always_show_lists) {
@@ -1984,6 +1987,32 @@ static int get_breath(int *br) {
 			}
 
 			/* Ask again */
+			continue;
+		} else if (choice == '@') {
+			char buf[80];
+
+			i = -1;
+			strcpy(buf, "");
+			if (!get_string("Element? ", buf, 49)) {
+				if (redraw) {
+					Term_load();
+					Flush_queue();
+				}
+				return;
+			}
+			buf[49] = 0;
+
+			/* Find the power it is related to */
+			if (my_strcasestr(buf, "Ch")) i = 0;
+			else if (my_strcasestr(buf, "No")) i = 1;
+			else if (my_strcasestr(buf, "Li")) i = 2;
+			else if (my_strcasestr(buf, "Fr")) i = 3;
+			else if (my_strcasestr(buf, "Fi")) i = 4;
+			else if (my_strcasestr(buf, "Ac")) i = 5;
+			else if (my_strcasestr(buf, "Po")) i = 6;
+
+			if (i != -1) flag = TRUE;
+			else bell();
 			continue;
 		}
 

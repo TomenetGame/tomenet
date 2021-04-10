@@ -163,3 +163,7 @@ bool warding_rune_break(int m_idx) {
 	/* Return True if the monster died, false otherwise! */
 	return (zcave[my][mx].m_idx == 0 ? TRUE : FALSE);
 }
+/* For PvP */
+bool py_warding_rune_break(int m_idx) {
+	return FALSE;
+}

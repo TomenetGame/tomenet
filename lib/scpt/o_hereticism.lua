@@ -176,8 +176,8 @@ OEXTRASTATS = add_spell {
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	23,
-	["mana"] = 	30,
-	["mana_max"] = 	30,
+	["mana"] = 	20,
+	["mana_max"] = 	20,
 	["fail"] = 	-30,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
@@ -346,15 +346,19 @@ BLOODSACRIFICE = add_spell {
 	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
-			--abuse martyr vars for this =p (no race/class can learn both spells)
-			if player.martyr_timeout > 0 then
-				msg_print(Ind, "\255yThe maelstrom of chaos doesn't favour your blood sacrifice yet.")
+			if player.pclass == CLASS_HELLKNIGHT or player.pclass == CLASS_CPRIEST then
+				--abuse martyr vars for this =p (no race/class can learn both spells)
+				if player.martyr_timeout > 0 then
+					msg_print(Ind, "\255yThe maelstrom of chaos doesn't favour your blood sacrifice yet.")
+				else
+					player.martyr_timeout = 1000
+					msg_print(Ind, "You feel the warped powers of chaos possess your body and mind..")
+					do_mimic_change(Ind, 758, TRUE); --RI_BLOODTHIRSTER
+					player.tim_mimic_what = 758; --RI_BLOODTHIRSTER
+					player.tim_mimic = randint(15) + 50 + get_level(Ind, BLOODSACRIFICE, 30);
+				end
 			else
-				player.martyr_timeout = 1000
-				msg_print(Ind, "You feel the warped powers of chaos possess your body and mind..")
-				do_mimic_change(Ind, 758, TRUE); --RI_BLOODTHIRSTER
-				player.tim_mimic_what = 758; --RI_BLOODTHIRSTER
-				player.tim_mimic = randint(15) + 50 + get_level(Ind, BLOODSACRIFICE, 30);
+				msg_print(Ind, "The maelstrom of chaos will not provide to the likes of you.")
 			end
 	end,
 	["info"] = 	function()
@@ -407,8 +411,8 @@ RAGE_I = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	50,
 	["level"] = 	29,
-	["mana"] = 	40,
-	["mana_max"] = 	40,
+	["mana"] = 	35,
+	["mana_max"] = 	35,
 	["fail"] = 	-40,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
@@ -430,8 +434,8 @@ RAGE_II = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	50,
 	["level"] = 	41,
-	["mana"] = 	75,
-	["mana_max"] = 	75,
+	["mana"] = 	70,
+	["mana_max"] = 	70,
 	["fail"] = 	-85,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()

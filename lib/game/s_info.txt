@@ -91,7 +91,7 @@ D:Allows more skillful use of crossbows and reduces break chance of bolts.
 I:1000:0
 
 N:11:Backstabbing
-D:Ability to backstab sleeping and fleeing monsters.
+D:Backstab sleeping and fleeing monsters. Also increases Critical-strike skill.
 D:*** REQUIRES SWORD/POLEARM-TYPE WEAPONS OR MARTIAL ARTS***
 #D:Much more effective in the dark
 I:1000:0
@@ -247,7 +247,7 @@ F:HIDDEN
 
 N:35:Calmness
 D:Reduces chances of opponents to interfere with some of your actions
-D:most notably such as firing ranged weapons or entering void gates.
+D:such as firing ranged weapons, using void gates or setting up traps.
 I:1000:0
 
 N:36:Swimming
@@ -257,7 +257,7 @@ I:1000:0
 F:MAX_1
 
 N:37:Martial Arts
-D:Ability to fight bare-handed. Also provides some special abilities.
+D:Ability to fight bare-handed effectively. Also increases Dodging skill.
 D:You mustn't use weapons or heavy armour, or various penalties may apply.
 #D:This is a primary skill for melee fighters.
 I:1000:0
@@ -290,12 +290,12 @@ A:8:Check dodge chance
 I:1000:0
 
 N:43:Health
-D:Increases base hit points by +2 per point, speeds regeneration and recovery
+D:Increases base hit points by +2/point, speeds HP+ST regeneration and recovery
 D:from malicious effects. Shows more detailed SN (sanity) status at 10/20/40.
 I:1000:0
 
 N:44:Digging
-D:Allows to tunnel more easily and to find treasure and uncover special features.
+D:Dig more easily, find more treasure, uncover special features. Increases Health.
 $ENABLE_DEMOLITIONIST$D:At 5 unlocks hidden 'Demolitionist' perk, to acquire chemicals and explosives.
 I:1000:0
 

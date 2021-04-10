@@ -166,7 +166,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 		if (!c_cfg.exp_need)
 			sprintf(tmp, "%9d", (int)cur);
 		else {
-			if (level >= PY_MAX_LEVEL || !adv)
+			if (level >= PY_MAX_PLAYER_LEVEL || !adv)
 				(void)sprintf(tmp, "*********");
 			else {
 				/* Hack -- display in minus (to avoid confusion chez player) */
@@ -193,7 +193,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #endif
 		else exp_bar_char = '#';
 
-		if (level >= PY_MAX_LEVEL || !adv || !scale) {
+		if (level >= PY_MAX_PLAYER_LEVEL || !adv || !scale) {
 			(void)sprintf(tmp, "*********");
 
 			if (cur >= max) {
@@ -986,7 +986,7 @@ void prt_speed(int speed) {
 
 	if (no_tele_grid) {
 		attr = TERM_L_DARK;
-		if (!speed) sprintf(buf, "No-Teleport");
+		if (!speed) sprintf(buf, "No-Tele");
 	}
 
 	/* remember cursor position */
@@ -1355,8 +1355,10 @@ void prt_lagometer(int lag) {
 
 #ifdef BRIGHTRED_PACKETLOSS
 	y = 0;
-	for (x = 0; x < 60; x++)
+	for (x = 0; x < 60; x++) {
 		if (ping_times[x] == -1) y++;
+		else break; /* if since a packet loss we meanwhile received a packet again normally, forget about the old packet loss and assume we're fine again */
+	}
 
 	/* Latest ping might not be lost yet */
 	if (ping_times[0] == -1) y--;
@@ -2830,7 +2832,7 @@ void display_player(int hist) {
 		else
 			prt_lnum("Experience ", p_ptr->exp, y_row2 + 1, 28, TERM_YELLOW);
 		prt_lnum("Max Exp    ", p_ptr->max_exp, y_row2 + 2, 28, TERM_L_GREEN);
-		if (p_ptr->lev >= PY_MAX_LEVEL || !exp_adv) {
+		if (p_ptr->lev >= PY_MAX_PLAYER_LEVEL || !exp_adv) {
 			put_str("Exp to Adv.", y_row2 + 3, 28);
 			c_put_str(TERM_L_GREEN, "    *****", y_row2 + 3, 28 + 11);
 		} else {

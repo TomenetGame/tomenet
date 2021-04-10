@@ -76,7 +76,7 @@ Y:view_shade_walls
 Y:floor_lighting
 Y:view_lamp_floor
 Y:view_shade_floor
-X:view_lite_extra
+Y:view_lite_extra
 
 Y:easy_open
 X:easy_disarm
@@ -113,7 +113,6 @@ Y:ovl_sfx_mon_attack
 Y:ovl_sfx_mon_spell
 Y:ovl_sfx_mon_misc
 X:no_monsterattack_sfx
-X:no_store_bell
 Y:quiet_house_sfx
 X:no_house_sfx
 X:no_weather
@@ -158,6 +157,10 @@ Y:item_error_beep
 X:keep_bottle
 
 Y:screenshot_format
+
+X:easy_disarm_montraps
+X:no_house_magic
+X:no_lite_fainting
 
 X:auto_pickup
 X:destroy_on_auto_pickup

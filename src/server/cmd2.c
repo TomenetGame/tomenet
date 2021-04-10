@@ -656,6 +656,7 @@ void do_cmd_go_up(int Ind) {
 						skip = FALSE;
 						break;
 					}
+					if (q_ptr->ghost) continue; /* Allow rescuing someone via probtravel */
 					skip = TRUE;
 				}
 				if (!skip) {
@@ -749,11 +750,12 @@ static bool between_effect(int Ind, cave_type *c_ptr) {
 
 //	if (PRACE_FLAG(PR1_TP))
 	if (p_ptr->prace == RACE_DRACONIAN) {
-		int reduc = ((p_ptr->ac + p_ptr->to_a) / 50) + 1;
+		int dam = (p_ptr->mhp * 50) / (100 + p_ptr->ac + p_ptr->to_a + p_ptr->lev * 2);
 
-		if (reduc < 1) reduc = 1; /* Really, really low AC, like some TL eating firestones - mikaelh */
-
-		take_hit(Ind, distance(by, bx, p_ptr->py, p_ptr->px) / (10 * reduc), "going Between", 0);
+		dam = (dam * (100 + distance(by, bx, p_ptr->py, p_ptr->px))) / 200 + 5;
+		bypass_invuln = TRUE;
+		take_hit(Ind, dam, "going between", 0);
+		bypass_invuln = FALSE;
 	}
 
 #ifdef USE_SOUND_2010
@@ -1018,7 +1020,7 @@ void do_cmd_go_down(int Ind) {
 			recall_player(Ind, "");
 			return;
 		}
-		msg_print(Ind, "The gate seems broken.");
+		msg_print(Ind, "The gate flashes silvery for a moment but it seems broken.");
 		return;
 	}
 
@@ -1501,6 +1503,7 @@ void do_cmd_go_down(int Ind) {
 						skip = FALSE;
 						break;
 					}
+					if (q_ptr->ghost) continue; /* Allow rescuing someone via probtravel */
 					skip = TRUE;
 				}
 				if (!skip) {
@@ -1779,7 +1782,17 @@ int pick_player(house_type *h_ptr) {
 /* Test if a coordinate (player pos usually) is inside a building
    (or on its edge), in a simple (risky?) way - C. Blue */
 bool inside_house(struct worldpos *wpos, int x, int y) {
-	cave_type *c_ptr, **zcave = getcave(wpos);
+	static cave_type *c_ptr, **zcave; //for efficiency
+
+	if (wpos->wz) return FALSE;
+
+#if 0
+	/* In case CAVE_ICKY overworld-structures will exist in the future.
+	   Note that this will probably exclude all jails too. */
+	if (!istownarea(wpos, MAX_TOWNAREA)) return FALSE;
+#endif
+
+	zcave = getcave(wpos);
 
 	/* This check was added so inside_house() can be used for player stores in delete_object_idx(),
 	   otherwise segfault when objects are erased from non-allocated areas (cleanup routines).
@@ -1790,7 +1803,7 @@ bool inside_house(struct worldpos *wpos, int x, int y) {
 
 	c_ptr = &zcave[y][x];
 	/* assume all houses are on the world surface (and vaults aren't) */
-	if (wpos->wz == 0 && (c_ptr->info & CAVE_ICKY) &&
+	if ((c_ptr->info & CAVE_ICKY) &&
 	    c_ptr->feat != FEAT_DEEP_WATER && c_ptr->feat != FEAT_DRAWBRIDGE) /* moat and drawbridge aren't "inside" the house! */
 		return TRUE;
 
@@ -2835,9 +2848,11 @@ void do_cmd_open(int Ind, int dir) {
 					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 
 				/* We cannot access this house. Special hack: Never get stuck inside a house that we don't have access to!
-				   Make sure we ignore drawbridge and moat, since these are outside of the house yet cave-icky. */
+				   Make sure we ignore drawbridge and moat, since these are outside of the house yet cave-icky.
+				   Exception: The jail. */
 				} else if ((c2_ptr->info & CAVE_ICKY) && c2_ptr->feat != FEAT_DRAWBRIDGE && c2_ptr->feat != FEAT_DEEP_WATER) {
-					teleport_player(Ind, 1, TRUE);
+					if ((c_ptr->info & CAVE_JAIL) && p_ptr->tim_jail) msg_format(Ind, "Abide your jail sentence, lasting %d more seconds..", p_ptr->tim_jail);
+					else teleport_player_force(Ind, 1);
 
 				/* We cannot access this house */
 				} else {
@@ -4031,13 +4046,19 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 					object_level = find_level;
 					/* abuse tval: reward the special effort at lower character levels..
 					   and add a basic x3 bonus for gold from veins in general. */
-					tval = 3 + rand_int(mining / 5) + (nonobvious ? (((rand_int(40) > object_level) ? randint(3) : 0) + rand_int(1 + mining / 25)) : 0);
+					tval = 3 + rand_int(mining / 5) + (nonobvious ? (
+					    ((rand_int(40) > object_level) ? randint(3) : 0)
+					    + rand_int(1 + mining / 25 + (rand_int(25) < (mining % 25) ? 1 : 0))
+					    ) : 0);
 					place_gold(Ind, wpos, y, x, tval, 0);
 					object_level = old_object_level;
-					if (nonobvious) s_printf("DIGGING: %s (F%d,S%d) digs nonobvious (x%d=%dAu).\n", p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG),
+					if (nonobvious) s_printf("DIGGING: %s (F%d,S%d,O%d) digs nonobvious (x%d=%dAu).\n",
+					    p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG), object_level,
 					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
-					else s_printf("DIGGING: %s (F%d,S%d) digs obvious (x%d=%dAu).\n", p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG),
+					else s_printf("DIGGING: %s (F%d,S%d,O%d) digs obvious (x%d=%dAu).\n",
+					    p_ptr->name, find_level_base, get_skill(p_ptr, SKILL_DIG), object_level,
 					    tval, !c_ptr->o_idx ? 0 : (o_list[c_ptr->o_idx].tval != TV_GOLD ? 0 : o_list[c_ptr->o_idx].pval));
+					c_ptr->info |= CAVE_MINED; //mark for warning_tunnel_hidden
 				}
 				note_spot_depth(wpos, y, x);
 				everyone_lite_spot(wpos, y, x);
@@ -4710,7 +4731,7 @@ void do_cmd_disarm(int Ind, int dir) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "disarm", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-			do_cmd_disarm_mon_trap_aux(wpos, y, x);
+			do_cmd_disarm_mon_trap_aux(Ind, wpos, y, x);
 			more = FALSE;
 			done = TRUE;
 
@@ -4992,12 +5013,12 @@ void do_cmd_bash(int Ind, int dir) {
 					m_ptr = &m_list[temp];
 					if (m_ptr->r_idx == RI_MIRROR) { /* Extra paranoia.. */
 						/* Init monster template with fixed properties: */
-						py2mon_init(r_ptr);
+						py2mon_init();
 						/* Main problem: Player could init the mirror with a low profile char and then switch places with a high profile char,
 						   so even the 'immutable' stats might need adjusting, as the opponent character changes completely.
 						   Maybe 'last_target' can be utilized to detect opponents switching.
 						   So we do init base stats here, but we will need to keep updating them on the fly all the time: */
-						py2mon_init_base(m_ptr, r_ptr, p_ptr);
+						py2mon_init_base(m_ptr, p_ptr);
 					}
 				}
 			} else s_printf("MIRROR placement failed for '%s' (%d)!\n", p_ptr->name, Ind); //paranoia?
@@ -5343,12 +5364,34 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 				dir = rand_int(9) + 1;
 		}
 
+		if (p_ptr->steamblast_timer == -1 && dir != 5 &&
+		    !CANNOT_OPERATE_SPECTRAL && !CANNOT_OPERATE_FORM) {
+			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
+			if (c_ptr->feat >= FEAT_DOOR_HEAD && c_ptr->feat <= FEAT_DOOR_TAIL) {
+				do_steamblast(Ind, p_ptr->px + ddx[dir], p_ptr->py + ddy[dir]);
+				return;
+			}
+		}
+
+		/* Handle confinement */
+		if (p_ptr->stopped && dir != 5) {
+			/* Try to break the rune */
+			if (rand_int(200) < p_ptr->lev) {
+				msg_print(Ind, "You break the rune!");
+				set_stopped(Ind, 0);
+			} else {
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				msg_print(Ind, "You fail to break the confinement rune!");
+				return;
+			}
+		}
+
 		/* Handle the cfg.door_bump_open option */
 		if (cfg.door_bump_open) {
 			struct c_special *cs_ptr;
 
 			/* Get requested grid */
-			c_ptr = &zcave[p_ptr->py+ddy[dir]][p_ptr->px+ddx[dir]];
+			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 
 			/* This should be cfg.trap_bump_disarm? */
 			if (cfg.door_bump_open & BUMP_OPEN_TRAP &&
@@ -5412,7 +5455,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 
 			if (p_ptr->melee_sprint || p_ptr->shadow_running) fast_move /= 2;
 			if (p_ptr->mode & MODE_PVP) fast_move /= 2;
-			if (get_skill(p_ptr, SKILL_OSHADOW) >= 10 && no_real_lite(Ind)) fast_move = (fast_move * (15 - get_skill_scale(p_ptr, SKILL_OSHADOW, 5))) / 15;
+			if (get_skill(p_ptr, SKILL_OSHADOW) >= 10 && no_real_lite(Ind)) fast_move = (fast_move * (15 - get_skill_scale(p_ptr, SKILL_OSHADOW, 5))) / 15; /* 'Shadow walk' effect - move faster in the shadows */
 
 			p_ptr->energy -= (level_speed(&p_ptr->wpos) * fast_move) / 100;
 		}
@@ -5457,6 +5500,20 @@ int do_cmd_run(int Ind, int dir) {
 
 	/* Get a "repeated" direction */
 	if (dir) {
+		/* Handle confinement */
+		if (p_ptr->stopped && dir != 5) {
+			/* Try to break the rune */
+			if (rand_int(200) < p_ptr->lev) {
+				msg_print(Ind, "You break the rune!");
+				set_stopped(Ind, 0);
+			} else {
+				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				msg_print(Ind, "You fail to break the confinement rune!");
+				disturb(Ind, 0, 0);
+				return 2;
+			}
+		}
+
 		/* Make sure we have an empty space to run into */
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px)) {
 			/* Prob travel */
@@ -6946,6 +7003,8 @@ void do_cmd_fire(int Ind, int dir) {
 
 					if (p_ptr->ranged_barrage) tdam *= 2; // maybe 3 even
 
+					if (m_ptr->r_idx == RI_MIRROR) tdam = (tdam * MIRROR_REDUCE_DAM_TAKEN_RANGED + 99) / 100;
+
 					/* can't attack while in WRAITHFORM (explosion still works) */
 					/* wraithed players can attack wraithed monsters - mikaelh */
 					if (p_ptr->tim_wraith && 
@@ -7519,7 +7578,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	int chance, tdam, tdis;
 	int mul, div;
 	int cur_dis, visible, real_dis;
-	int moved_number = 1;
+	int moved_number = 1, original_number;
 	int start_ix = 0, start_iy = 0;
 
 	object_type throw_obj;
@@ -7539,15 +7598,23 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	int path_num = 0;
 #endif
 
-	char            o_name[ONAME_LEN];
+	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	bool throwing_weapon;
 
 	cave_type **zcave, *c_ptr;
 	if (!(zcave = getcave(wpos))) return;
 
+
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
 		msg_print(Ind, "You cannot throw things in mist form.");
+		return;
+	}
+
+	/* New in 4.7.3a+: Throw equipment.
+	   Limit it though, cannot throw all kind of pieces - armour/jewelry needs to be taken off first. */
+	if (item > INVEN_BOW && item != INVEN_LITE && item < INVEN_AMMO) {
+		msg_print(Ind, "You must take off this item first to throw it.");
 		return;
 	}
 
@@ -7656,6 +7723,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Create a "local missile object" */
 	throw_obj = *o_ptr;
+	original_number = o_ptr->number;
 	/* hack: if we kick (bash) certain types of items around, move the
 	   whole stack instead of just one.
 	   note: currently number has no effect on throwing range (weight!) */
@@ -8122,6 +8190,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					}
 				}
 
+				if (m_ptr->r_idx == RI_MIRROR) tdam = (tdam * MIRROR_REDUCE_DAM_TAKEN_THROW + 99) / 100;
+
 				if (p_ptr->admin_godly_strike) {
 					p_ptr->admin_godly_strike--;
 					tdam = m_ptr->hp + 1;
@@ -8225,8 +8295,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Artifacts never break but always auto-return, same as for ammo fired */
 	if (returning) return;
-	/* If we threw an equipment item away, recalculate our boni */
-	if (item >= INVEN_WIELD) inven_takeoff(Ind, item, moved_number, FALSE);
+
+	/* Non-returning only: If we threw an equipment item away, recalculate our boni */
+	if (item >= INVEN_WIELD) equip_thrown(Ind, item, o_ptr, original_number);
 
 	/* Chance of breakage (during attacks) */
 	j = (hit_body ? breakage_chance(o_ptr) : 0);

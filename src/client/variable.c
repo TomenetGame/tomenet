@@ -290,7 +290,7 @@ s16b acc_flags = 0;
 bool s_RPG = FALSE, s_FUN = FALSE, s_ARCADE = FALSE, s_TEST = FALSE;
 bool s_RPG_ADMIN = FALSE, s_PARTY = FALSE;
 bool s_DED_IDDC = FALSE, s_DED_PVP = FALSE;
-bool s_NO_PK = FALSE;
+bool s_NO_PK = FALSE, s_PVP_MAIA = FALSE;
 
 /* Server temporary feature flags */
 u32b sflags_TEMP = 0x0;
@@ -333,9 +333,10 @@ bool (*sound_hook)(int sound, int type, int vol, s32b player_id);
 void (*sound_ambient_hook)(int sound_ambient);
 void (*sound_weather_hook)(int sound);
 void (*sound_weather_hook_vol)(int sound, int vol);
-bool (*music_hook)(int music);
+bool (*music_hook)(int music), (*music_hook_vol)(int music, char music_vol);
 int cfg_audio_rate = 44100, cfg_max_channels = 32, cfg_audio_buffer = 1024;
 int music_cur = -1, music_cur_song = -1, music_next = -1, music_next_song = -1, weather_channel = -1, weather_current = -1, weather_current_vol = -1, weather_channel_volume = 0, ambient_channel = -1, ambient_current = -1, ambient_channel_volume = 0;
+char music_vol = 100;
 int weather_sound_change, weather_fading, ambient_fading;
 bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE, weather_resume = FALSE, ambient_resume = FALSE;
 int cfg_audio_master_volume = 75, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
@@ -673,3 +674,8 @@ char playerlist[1000][MAX_CHARS_WIDE * 2];
 
 byte col_raindrop = TERM_BLUE, col_snowflake = TERM_WHITE;
 bool custom_font_warning = FALSE;
+#ifdef GUIDE_BOOKMARKS
+int bookmark_line[GUIDE_BOOKMARKS];
+char bookmark_name[GUIDE_BOOKMARKS][60];
+#endif
+unsigned char lamp_fainting = 0;

@@ -1750,6 +1750,7 @@ byte spell_color(int type) {
 	case GF_HOLY_ORB:	return (TERM_HOLYORB);
 	case GF_HOLY_FIRE:	return (TERM_HOLYFIRE);
 	case GF_HELLFIRE:	return (TERM_HELLFIRE);
+	case GF_CODE:		return (TERM_SHIELDI);
 	case GF_MANA:		return (TERM_MANA);
 	case GF_SHOT:		return (TERM_SLATE);
 	case GF_ARROW:		return (TERM_L_UMBER);
@@ -4216,6 +4217,7 @@ static int radius_damage(int dam, int div, int typ) {
 	case GF_RESURRECT_PLAYER:
 	case GF_EXTRA_STATS:
 	//case GF_ZEAL_PLAYER:
+	case GF_TBRAND_POIS:
 
 		return (dam);
 
@@ -5931,6 +5933,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Acquire monster pointer */
 	m_ptr = &m_list[c_ptr->m_idx];
 
+	if (m_ptr->r_idx == RI_BLUE && (flg & PROJECT_BOUN) && typ != GF_CODE) return FALSE;
+
 	/* There are a couple specific checks for this below, but we just handle everything with this one check here, for now */
 	if (m_ptr->status == M_STATUS_FRIENDLY) return FALSE;
 
@@ -6853,6 +6857,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 	/* Pure damage */
+	case GF_CODE:
+		if (seen) obvious = TRUE;
+		m_ptr->extra = 1;
+		break;
 	case GF_MANA:
 		if (r_ptr->flags9 & RF9_RES_MANA) {
 			dam /= 3;
@@ -6966,6 +6974,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 
 	case GF_OLD_DRAIN:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		if (seen) obvious = TRUE;
 		dam = percent_damage(m_ptr->hp, dam);
 		if (dam > 900) dam = 900;
@@ -6993,6 +7007,14 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	case GF_ANNIHILATION:
 		if (seen) obvious = TRUE;
+
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			obvious = FALSE;
+			break;
+		}
+
 		dam = percent_damage(m_ptr->hp, dam);
 		if (dam > 1200) dam = 1200;
 		if (r_ptr->flags1 & RF1_UNIQUE) {
@@ -7010,6 +7032,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		no_dam = TRUE;
 		if (seen) obvious = TRUE;
 
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			obvious = FALSE;
+			break;
+		}
+
 		/* Attempt to polymorph (see below) */
 		do_poly = TRUE;
 
@@ -7025,6 +7053,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Clone monsters (Ignore "dam") */
 	case GF_OLD_CLONE:
 		no_dam = TRUE;
+
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			break;
+		}
+
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY) { /* don't clone these.. */
 			note = " is unaffected";
 		} else {
@@ -8073,6 +8107,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Decrease strength */
 	case GF_DEC_STR:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		/* hack */
 		no_dam = TRUE;
 
@@ -8116,6 +8156,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Decrease dexterity */
 	case GF_DEC_DEX:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		no_dam = TRUE;
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
@@ -8140,6 +8186,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Decrease dexterity */
 	case GF_DEC_CON:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		no_dam = TRUE;
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
@@ -8334,6 +8386,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Ruination! (now we're talking) */
 	case GF_RUINATION:
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			no_dam = TRUE;
+			break;
+		}
+
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || m_ptr->status == M_STATUS_FRIENDLY || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
@@ -8472,13 +8530,15 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		break;
 	}
 
+	if (m_ptr->r_idx == RI_MIRROR) dam = (dam * MIRROR_REDUCE_DAM_TAKEN_SPELL + 99) / 100;
+
 	if (no_dam) {
 		dam = 0;
 		quiet_dam = TRUE;
 	}
 
 	/* Do not affect invincible questors with status effects, especially not polymorphing */
-	if (m_ptr->questor_invincible) {
+	if (m_ptr->questor_invincible || (r_ptr->flags7 & RF7_NO_DEATH)) {
 		do_fear = FALSE;
 		do_conf = FALSE;
 		do_blind = FALSE;
@@ -8489,9 +8549,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 
 	/* "Unique" monsters cannot be polymorphed */
-	if (r_ptr->flags1 & RF1_UNIQUE) do_poly = FALSE;
+	if ((r_ptr->flags1 & RF1_UNIQUE) || (r_ptr->flags8 & RF8_PSEUDO_UNIQUE)) do_poly = FALSE;
 	/* nor IM_TELE monsters.. */
 	if (r_ptr->flags9 & RF9_IM_TELE) do_poly = FALSE;
+	/* nor monsters that are supposed to last for special purpose */
+	if (r_ptr->flags8 & RF8_GENO_NO_THIN) do_poly = FALSE;
 
 	/* No polymorphing in Bree - mikaelh */
 	if (in_bree(wpos)) do_poly = FALSE;
@@ -8781,6 +8843,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				m_ptr->csleep = do_sleep;
 			}
 
+			/* Suppress wrong 'dies' message */
+			if (m_ptr->r_idx == RI_BLUE && m_ptr->extra == 2) quiet = TRUE;
+
 			/* Give detailed messages if visible or destroyed */
 			/* DEG Changed for added damage message. */
 			if (!quiet) {
@@ -9054,7 +9119,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			    typ == GF_SANITY_PLAYER || typ == GF_SOULCURE_PLAYER ||
 			    typ == GF_BLESS_PLAYER || typ == GF_RESPOIS_PLAYER ||
 			    typ == GF_MINDBOOST_PLAYER || typ == GF_REMIMAGE_PLAYER ||
-			    typ == GF_REMCONF_PLAYER)
+			    typ == GF_REMCONF_PLAYER || typ == GF_TBRAND_POIS)
 				return FALSE;
 			/* ok */
 			self = TRUE;
@@ -9228,7 +9293,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
 		    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) || (typ == GF_PUSH) ||
 		    (typ == GF_HEALINGCLOUD) || /* Also not a hostile spell */
-		    (typ == GF_EXTRA_STATS) ||
+		    (typ == GF_EXTRA_STATS) || (typ == GF_TBRAND_POIS) ||
 		    (typ == GF_MINDBOOST_PLAYER) || (typ == GF_IDENTIFY) ||
 		    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
 		    (typ == GF_OLD_POLY)) /* may (un)polymorph himself */
@@ -9275,7 +9340,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		    (typ != GF_HEALINGCLOUD) && /* Also not a hostile spell */
 		    (typ != GF_MINDBOOST_PLAYER) && (typ != GF_IDENTIFY) &&
 		    (typ != GF_SLOWPOISON_PLAYER) && (typ != GF_CURING) &&
-		    (typ != GF_EXTRA_STATS) &&
+		    (typ != GF_EXTRA_STATS) && (typ != GF_TBRAND_POIS) &&
 		    (typ != GF_OLD_POLY)) /* Non-hostile players may (un)polymorph each other */
 		{ /* If this was intentional, make target hostile */
 			if (check_hostile(0 - who, Ind)) {
@@ -9390,7 +9455,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||*/
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	    (typ == GF_HEALINGCLOUD) || /* shoo ghost, shoo */
-	    (typ == GF_EXTRA_STATS) ||
+	    (typ == GF_EXTRA_STATS) || (typ == GF_TBRAND_POIS) ||
 	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
 	    (typ == GF_OLD_POLY) || (typ == GF_MINDBOOST_PLAYER)))
 	    ||
@@ -9416,7 +9481,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    (typ == GF_OLD_HEAL) || (typ == GF_OLD_SPEED) ||
 	    (typ == GF_HEALINGCLOUD) || (typ == GF_MINDBOOST_PLAYER) ||
 	    (typ == GF_SLOWPOISON_PLAYER) || (typ == GF_CURING) ||
-	    (typ == GF_EXTRA_STATS) ||
+	    (typ == GF_EXTRA_STATS) || (typ == GF_TBRAND_POIS) ||
 	    (typ == GF_OLD_POLY) || (typ == GF_IDENTIFY))))
 	{ /* No effect on ghosts / admins */
 #if 0 //redundant?
@@ -9430,6 +9495,23 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		return (obvious);
 	}
 
+
+	if (m_ptr && m_ptr->r_idx == RI_MIRROR) {
+		switch (typ) {
+		case GF_STUN:
+		case GF_TERROR:
+		case GF_OLD_CONF:
+		case GF_OLD_SLOW:
+		case GF_OLD_POLY:
+		case GF_BLIND:
+		case GF_TELEPORT_PLAYER:
+		case GF_TURN_ALL:
+		case GF_AWAY_ALL:
+			break;
+		default:
+			dam = (dam * MIRROR_REDUCE_DAM_DEALT_SPELL + 99) / 100;
+		}
+	}
 
 
 #ifndef NEW_DODGING
@@ -9492,7 +9574,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (!friendly_player && (typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE)
 		    && p_ptr->csp >= dam / 7 &&
 		    !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO))) {
+		    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO))) { //why all of NORF+NODF+NODO checks though?
 			/* drain mana */
 			p_ptr->csp -= dam / 7;
 			p_ptr->redraw |= PR_MANA;
@@ -9507,13 +9589,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	    /* reflect? */
 	    || (p_ptr->reflect &&
 	     !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO)) &&
-	     rand_int(20) < ((typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE) ? 15 : 9))
+	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY)) && // | PROJECT_NODF | PROJECT_NODO
+	     rand_int(20) < ((typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE || typ == GF_CODE) ? 15 : 9))
 #ifdef USE_BLOCKING
 	    /* using a shield? requires USE_BLOCKING */
 	    || (magik(apply_block_chance(p_ptr, p_ptr->shield_deflect / 5)) &&
 	     !rad && who != PROJECTOR_POTION && who != PROJECTOR_TERRAIN &&
-	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF | PROJECT_NODO)) &&
+	     (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) && // | PROJECT_NODO
 	     rand_int(20) < ((typ == GF_SHOT || typ == GF_ARROW || typ == GF_BOLT || typ == GF_BOULDER || typ == GF_MISSILE) ? 15 : 9))
 #endif
 	    ))
@@ -9560,7 +9642,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			//project(0, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL));
-			project(0 - Ind, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL), "");
+			project(0 - Ind, 0, wpos, t_y, t_x, dam, typ, (PROJECT_STOP|PROJECT_KILL|PROJECT_BOUN), "");
 		}
 
 		disturb(Ind, 1, 0);
@@ -9573,7 +9655,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	if (!friendly_player &&  /* cannot take cover from clouds or LOS projections (latter might be subject to change?) - C. Blue */
 	     /* jump for LOS projecting, stay for clouds; !norf was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
 	    !rad && (flg & PROJECT_KILL) &&
-	    !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF))
+	    !(flg & (PROJECT_JUMP | PROJECT_STAY | PROJECT_NODF)) // PROJECT_NORF | 
 	    ) /* requires stances to * 2 etc.. post-king -> best stance */
 	{
 		if (p_ptr->shield_deflect && magik(apply_block_chance(p_ptr, p_ptr->shield_deflect) / ((flg & PROJECT_LODF) ? 2 : 1))) {
@@ -9774,7 +9856,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 #ifdef ARCADE_SERVER
-		case GF_PUSH:
+	case GF_PUSH:
 		//msg_print(Ind, "You are pushed by something!");
 		msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
 		(void)set_pushed(Ind, dam);
@@ -9928,6 +10010,13 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				msg_print(Ind, "You feel your life draining away!");
 				lose_exp(Ind, 200 + (p_ptr->exp/100) * MON_DRAIN_LIFE);
 			}
+		}
+		/* 'Nether Feedback' perk */
+		if (dam && get_skill(p_ptr, SKILL_OUNLIFE) == 50) {
+			p_ptr->csp += (dam + 5) / 10; //gain mana from ~10% of the damage
+			dam = (dam * 9 + 4) / 10; //reduce by ~10% flat
+			if (p_ptr->csp > p_ptr->msp) p_ptr->csp = p_ptr->msp;
+			p_ptr->redraw |= (PR_MANA);
 		}
 		break;
 
@@ -10243,6 +10332,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	/* Pure damage */
+	case GF_CODE:
+		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
+		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		take_hit(Ind, dam, killer, -who);
+		break;
 	case GF_MANA:
 		if (p_ptr->resist_mana) { dam *= 6; dam /= (randint(6) + 6); }
 		if (fuzzy) msg_format(Ind, "You are hit by something for \377%c%d \377wdamage!", damcol, dam);
@@ -10916,6 +11010,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
+	case GF_TBRAND_POIS:
+		set_melee_brand(Ind, dam, TBRAND_POIS, 9); //9 marks as: not self-applied. This is to suppress msg-spam if not wielding any weapon.
+		dam = 0;
+		break;
+
 	case GF_TERROR:
 		if (fuzzy || self) msg_print(Ind, "You hear terrifying noises!");
 		else msg_format(Ind, "%^s creates a disturbing illusion!", killer);
@@ -10963,6 +11062,35 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			msg_print(Ind, "You resist the effects!");
 		//else set_slow(Ind, p_ptr->slow + dam); too much for pvp..
 		else set_slow(Ind, p_ptr->slow + 2 + rand_int(3));
+
+		dam = 0;
+		break;
+
+	case GF_OLD_SLEEP: //pvp only
+	case GF_STASIS: //pvp only
+		if (fuzzy || self) msg_print(Ind, "Something tries to veil your mind!");
+		else msg_format(Ind, "%^s creates a dreamlike illusion!", killer);
+
+		if (p_ptr->free_act) msg_print(Ind, "You are unaffected!");
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
+		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+			msg_print(Ind, "You resist the effects!");
+		else set_paralyzed(Ind, p_ptr->paralyzed + 2 + rand_int(2));
+
+		dam = 0;
+		break;
+
+	case GF_STOP: //pvp only
+		if (fuzzy || self) msg_print(Ind, "Something binds you to the spot!");
+		else msg_format(Ind, "%^s binds you to the spot!", killer);
+#if 0 
+		if (p_ptr->free_act) msg_print(Ind, "You are unaffected!");
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
+		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+			msg_print(Ind, "You resist the effects!");
+		else
+#endif
+		set_stopped(Ind, p_ptr->stopped + 2 + rand_int(2));
 
 		dam = 0;
 		break;
@@ -11798,7 +11926,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 	    (typ == GF_RESTORE_PLAYER) || (typ == GF_REMCURSE_PLAYER) ||
 	    (typ == GF_CURE_PLAYER) || (typ == GF_RESURRECT_PLAYER) ||
 	    (typ == GF_SANITY_PLAYER) || (typ == GF_SOULCURE_PLAYER) ||
-	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER))
+	    (typ == GF_IDENTIFY) || (typ == GF_SLOWPOISON_PLAYER) ||
+	    (typ == GF_TBRAND_POIS))
 		players_only = TRUE;
 
 
@@ -13339,6 +13468,9 @@ int approx_damage(int m_idx, int dam, int typ) {
 			}
 			break;
 		}
+
+	case GF_CODE:
+		break;
 
 	case GF_MANA:
 		if (r_ptr->flags9 & RF9_RES_MANA)

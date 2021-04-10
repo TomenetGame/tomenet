@@ -1374,7 +1374,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	cave_type **zcave;
 
 	bool forbidden = FALSE; /* for leaderless guild halls */
+
+#ifdef USE_SOUND_2010
 	bool inven_carried = FALSE; /* avoid duplicate sfx */
+#endif
 
 	/* stuff for 'pick_one' hack: */
 	int num_org;
@@ -1550,14 +1553,16 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 		/* Message */
 		msg_format(Ind, "You have found %d gold pieces worth of %s.", amount, o_name);
-
 #ifdef USE_SOUND_2010
 		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-
+		if ((c_ptr->info & CAVE_MINED) && !p_ptr->warning_tunnel_hidden) {
+			msg_print(Ind, "\374\377yHINT: Mining hidden veins yields more than the right away spottable ones!");
+			c_ptr->info &= ~CAVE_MINED;
+			p_ptr->warning_tunnel_hidden = 1;
+		}
 /* #if DEBUG_LEVEL > 3 */
-		if (amount >= 10000)
-			s_printf("Gold found (%d by %s at %d,%d,%d).\n", amount, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
+		if (amount >= 10000) s_printf("Gold found threshold (%d by %s at %d,%d,%d).\n", amount, p_ptr->name, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz);
 
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
@@ -2380,7 +2385,9 @@ s_printf("bugtracking: name1=%d, owner=%d(%s), carrier=%d, p-id=%d(%s)\n", o_ptr
 				/* Carry the item */
 				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
 				slot = inven_carry(Ind, o_ptr);
+#ifdef USE_SOUND_2010
 				inven_carried = TRUE;
+#endif
 				o_ptr->quest_credited = FALSE; //unhack.
 
 				/* Get the item again */
@@ -2568,6 +2575,16 @@ void hit_trap(int Ind) {
 	if (!(zcave = getcave(wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
+	/* PvP: Monster traps and runes of hostile players can affect us too */
+	if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+		py_hit_trap(Ind);
+		return;
+	}
+	if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
+		py_warding_rune_break(Ind);
+		return;
+	}
+
 	if (!(cs_ptr = GetCS(c_ptr, CS_TRAPS))) return;
 	t_idx = cs_ptr->sc.trap.t_idx;
 
@@ -2632,7 +2649,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 	monster_race *pr_ptr = &r_info[p_ptr->body_monster], *qr_ptr;
 	bool apply_monster_effects = TRUE;
-	int i, monster_effects, sfx = 0;
+	int i, monster_effects;
+#ifdef USE_SOUND_2010
+	int sfx = 0;
+#endif
 	u32b monster_effect[6], monster_effect_chosen;
 	monster_effect[1] = 0;
 	monster_effect[2] = 0;
@@ -3717,7 +3737,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 //note: we assume that p_ptr->num_blow isn't 0 (div/0)
 static void py_attack_mon(int Ind, int y, int x, byte old) {
 	player_type	*p_ptr = Players[Ind];
-	int		num = 0, bonus, chance, slot, owner_Ind = 0, sfx = 0;
+	int		num = 0, bonus, chance, slot, owner_Ind = 0;
+#ifdef USE_SOUND_2010
+	int		sfx = 0;
+#endif
 	int		k, k3, bs_multiplier;
 #if defined(CRIT_VS_VORPAL) || defined(CRIT_UNBRANDED)
 	int		k2;
@@ -4491,6 +4514,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 			}
 
+			if (m_ptr->r_idx == RI_MIRROR) k = (k * MIRROR_REDUCE_DAM_TAKEN_MELEE + 99) / 100;
+
 			/* for admins: kill a target in one hit */
 			if (instakills(Ind)) k = m_ptr->hp + 1;
 			else if (p_ptr->admin_godly_strike) {
@@ -5109,6 +5134,8 @@ void touch_zap_player(int Ind, int m_idx) {
 			if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
 				aura_damage = aura_damage * 2;
 
+			if (m_ptr->r_idx == RI_MIRROR) aura_damage = (aura_damage * MIRROR_REDUCE_DAM_DEALT_AURA + 99) / 100;
+
 			msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, -m_idx);
 #ifdef OLD_MONSTER_LORE
@@ -5135,6 +5162,8 @@ void touch_zap_player(int Ind, int m_idx) {
 			if (p_ptr->suscep_elec && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
 				aura_damage = aura_damage * 2;
 
+			if (m_ptr->r_idx == RI_MIRROR) aura_damage = (aura_damage * MIRROR_REDUCE_DAM_DEALT_AURA + 99) / 100;
+
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, -m_idx);
 #ifdef OLD_MONSTER_LORE
@@ -5160,6 +5189,8 @@ void touch_zap_player(int Ind, int m_idx) {
 				aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->suscep_cold && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
 				aura_damage = aura_damage * 2;
+
+			if (m_ptr->r_idx == RI_MIRROR) aura_damage = (aura_damage * MIRROR_REDUCE_DAM_DEALT_AURA + 99) / 100;
 
 			msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 			take_hit(Ind, aura_damage, aura_dam, -m_idx);
@@ -5189,6 +5220,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 				if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
 					aura_damage = aura_damage * 2;
 
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
+
 				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
 				take_hit(Ind, aura_damage, "a fire aura", Ind2);
@@ -5203,6 +5236,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 					aura_damage = (aura_damage + 2) / 3;
 				if (p_ptr->suscep_cold && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
 					aura_damage = aura_damage * 2;
+
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 
 				msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5220,6 +5255,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 				if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
 					aura_damage = aura_damage * 2;
 
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
+
 				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
 				take_hit(Ind, aura_damage, "a fire aura", Ind2);
@@ -5235,6 +5272,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 					aura_damage = (aura_damage + 2) / 3;
 				if (p_ptr->suscep_cold && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD))
 					aura_damage = aura_damage * 2;
+
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 
 				msg_format(Ind, "You are freezing for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is freezing for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5252,6 +5291,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 				aura_damage = (aura_damage + 2) / 3;
 			if (p_ptr->suscep_elec && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC))
 				aura_damage = aura_damage * 2;
+
+			aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 
 			msg_format(Ind, "You get zapped for \377w%d\377w damage!", aura_damage);
 			msg_format(Ind2, "%s gets zapped for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5275,6 +5316,7 @@ void py_touch_zap_player(int Ind, int Ind2) {
 		if (!p_ptr->death && (q_ptr->shield_opt & SHIELD_COUNTER)) {
 			aura_damage = damroll(q_ptr->shield_power_opt, q_ptr->shield_power_opt2);
 			msg_format(Ind, "You get bashed by a mystic shield for \377w%d\377w!", aura_damage);
+			aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 			take_hit(Ind, aura_damage, "a mystic shield", Ind2);
 			handle_stuff(Ind);
 		}
@@ -5288,6 +5330,8 @@ void py_touch_zap_player(int Ind, int Ind2) {
 					aura_damage = (aura_damage + 2) / 3;
 				if (p_ptr->suscep_fire && !(p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE))
 					aura_damage = aura_damage * 2;
+
+				aura_damage = (aura_damage + PVP_AURA_DAM_REDUCTION - 1) / PVP_AURA_DAM_REDUCTION;
 
 				msg_format(Ind, "You are enveloped in flames for \377w%d\377w damage!", aura_damage);
 				msg_format(Ind2, "%s is enveloped in flames for \377w%d\377w damage!", p_ptr->name, aura_damage);
@@ -5437,7 +5481,7 @@ void do_nazgul(int Ind, int *k, monster_race *r_ptr, int slot) {
 
 		/* 1/1000 chance of getting destroyed.
 		   Exploit-fix here for permacursed items. (Grond only) */
-		if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE)) {
+		if (!rand_int(1000) && !(f3 & TR3_PERMA_CURSE) && !indestructible_artifact_p(o_ptr)) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_printf("NAZGUL_DISI_ARTLIKE: %s : %s.\n", p_ptr->name, o_name);
 
@@ -5838,33 +5882,42 @@ static void moved_player(int Ind, player_type *p_ptr, cave_type **zcave, int ox,
 
 
 	/* Trigger traps */
-	if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && !p_ptr->ghost && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+	if (!p_ptr->ghost && !(p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST)) {
+		if ((cs_ptr = GetCS(c_ptr, CS_TRAPS))) {
 #ifndef ARCADE_SERVER
-		bool hit = TRUE;
+			bool hit = TRUE;
 #endif
 
-		/* Disturb */
-		disturb(Ind, 0, 0);
+			/* Disturb */
+			disturb(Ind, 0, 0);
 
-		if (!cs_ptr->sc.trap.found) {
-			/* Message */
-			msg_print(Ind, "You triggered a trap!");
+			if (!cs_ptr->sc.trap.found) {
+				/* Message */
+				msg_print(Ind, "You triggered a trap!");
 
-			/* Pick a trap */
-			pick_trap(&p_ptr->wpos, y, x);
+				/* Pick a trap */
+				pick_trap(&p_ptr->wpos, y, x);
+			}
+#ifndef ARCADE_SERVER
+			else if (magik(get_skill_scale(p_ptr, SKILL_TRAPPING, 90) - UNAWARENESS(p_ptr))) {
+				msg_print(Ind, "You carefully avoid touching the trap.");
+				hit = FALSE;
+			}
+#endif
+
+			/* Hit the trap */
+#ifndef ARCADE_SERVER
+			if (hit)
+#endif
+				hit_trap(Ind);
 		}
-#ifndef ARCADE_SERVER
-		else if (magik(get_skill_scale(p_ptr, SKILL_TRAPPING, 90) - UNAWARENESS(p_ptr))) {
-			msg_print(Ind, "You carefully avoid touching the trap.");
-			hit = FALSE;
+		/* For PvP: */
+		if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP))) {
+			py_hit_trap(Ind);
 		}
-#endif
-
-		/* Hit the trap */
-#ifndef ARCADE_SERVER
-		if (hit)
-#endif
-			hit_trap(Ind);
+		if ((cs_ptr = GetCS(c_ptr, CS_RUNE))) {
+			py_warding_rune_break(Ind);
+		}
 	}
 }
 
@@ -5916,11 +5969,16 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	/* Can we move ? */
 	if (r_ptr->flags1 & RF1_NEVER_MOVE) {
 		msg_print(Ind, "You cannot move by nature.");
+		disturb(Ind, 0, 0); /* Stop us in case we were running */
 		return;
 	}
 	
 	stop_precision(Ind); /* aimed precision shot gets interrupted by moving around */
 	stop_shooting_till_kill(Ind);
+	if (p_ptr->steamblast_timer == -1) {
+		msg_print(Ind, "You cancel your preparations for a steam blast charge.");
+		p_ptr->steamblast_timer = 0;
+	}
 
 	/* Find the result of moving */
 
@@ -6540,6 +6598,8 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						msg_print(Ind, "You are not allowed to enter the sickbay.");
 					} else if (c_ptr->feat == FEAT_WEB) {
 						msg_print(Ind, "There are thick spiderwebs blocking your way.");
+					} else if (c_ptr->feat == FEAT_GRAND_MIRROR) {
+						msg_print(Ind, "There is a grand mirror in your way.");
 					/* Wall (or secret door) */
 					} else if (c_ptr->feat != FEAT_SIGN) {
 						msg_print(Ind, "There is a wall blocking your way.");

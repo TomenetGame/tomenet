@@ -680,6 +680,7 @@ extern void do_cmd_fusion(int Ind);
 /* cmd3.c */
 extern int inven_drop(int Ind, int item, int amt);
 extern void inven_takeoff(int Ind, int item, int amt, bool called_from_wield);
+extern void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number);
 extern void do_takeoff_impossible(int Ind);
 extern void do_cmd_wield(int Ind, int item, u16b alt_slots);
 extern void do_cmd_takeoff(int Ind, int item, int amt);
@@ -786,6 +787,7 @@ extern void do_cmd_breathe_aux(int Ind, int dir);
 extern void do_pick_breath(int Ind, int element);
 extern void create_sling_ammo_aux(int Ind);
 extern bool create_snowball(int Ind, cave_type *c_ptr);
+extern void do_steamblast(int Ind, int x, int y);
 
 /* control.c */
 extern void SGWHit(int fd, int arg);
@@ -832,6 +834,7 @@ extern void verify_day_and_night(void);
 extern void process_timers(void);
 extern int timer_pvparena1, timer_pvparena2, timer_pvparena3;
 extern bool init_pvparena;
+extern int timer_falling_star;
 
 extern void eff_running_speed(int *real_speed, player_type *p_ptr, cave_type *c_ptr);
 extern void timed_shutdown(int k, bool terminate);
@@ -1001,6 +1004,7 @@ extern void excise_obsolete_max_depth(player_type *p_ptr);
 extern void load_banlist(void);
 /* for actually loading/saving dynamic quest information */
 extern void load_quests(void);
+extern bool s_older_than(byte x, byte y, byte z); /* for csfunc structure changes */
 
 /* melee1.c */
 extern cptr desc_moan_halloween[];
@@ -1081,12 +1085,12 @@ extern void player_desc(int Ind, char *desc, int Ind2, int mode);
 extern int monster_check_experience(int m_idx, bool silent);
 extern bool mego_ok(int r_idx, int ego);
 extern monster_race* race_info_idx(int r_idx, int ego, int randuni);
-extern void py2mon_init(monster_race *r_ptr);
-extern void py2mon_init_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
-extern void py2mon_update_base(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
-extern void py2mon_update_equip(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
-extern void py2mon_update_skills(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
-extern void py2mon_update_abilities(monster_type *m_ptr, monster_race *r_ptr, player_type *p_ptr);
+extern void py2mon_init(void);
+extern void py2mon_init_base(monster_type *m_ptr, player_type *p_ptr);
+extern void py2mon_update_base(monster_type *m_ptr, player_type *p_ptr);
+extern void py2mon_update_equip(monster_type *m_ptr, player_type *p_ptr);
+extern void py2mon_update_skills(monster_type *m_ptr, player_type *p_ptr);
+extern void py2mon_update_abilities(monster_type *m_ptr, player_type *p_ptr);
 
 
 /* netserver.c (nserver.c) */
@@ -1175,6 +1179,7 @@ extern int Send_target_info(int ind, int x, int y, cptr buf);
 extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s32b player_id);
 #ifdef USE_SOUND_2010
 extern int Send_music(int ind, int music, int musicalt);
+extern int Send_music_vol(int ind, int music, int musicalt, char vol);
 extern int Send_sfx_ambient(int ind, int sfx_ambient, bool smooth);
 extern int Send_sfx_volume(int ind, char sfx_ambient_volume, char sfx_weather_volume);
 #endif
@@ -1707,6 +1712,7 @@ extern bool cast_raindrop(worldpos *wpos, int x);
 extern bool cast_snowflake(worldpos *wpos, int x, int interval);
 extern bool cast_fireworks(worldpos *wpos, int x, int y, int typ);
 extern bool cast_lightning(worldpos *wpos, int x, int y);
+extern bool cast_falling_star(worldpos *wpos, int x, int y, int dur);
 extern bool thunderstorm_visual(worldpos *wpos, int x, int y);
 extern bool fire_bolt(int Ind, int typ, int dir, int dam, char *attacker);
 extern bool fire_beam(int Ind, int typ, int dir, int dam, char *attacker);
@@ -1819,6 +1825,7 @@ extern void view_exploration_history(int Ind);
 extern void reward_deed_item(int Ind, int item);
 extern void reward_deed_blessing(int Ind, int item);
 extern s64b price_item_player_store(int Ind, object_type *o_ptr);
+extern void view_highest_levels(int Ind);
 
 #ifdef AUCTION_SYSTEM
 extern void process_auctions();
@@ -2015,6 +2022,7 @@ extern int activate_magic_device_chance(int Ind, object_type *o_ptr, byte *permi
 extern bool activate_magic_device(int Ind, object_type *o_ptr);
 extern void condense_name(char *condensed, cptr name);
 extern int similar_names(const char *name1, const char *name2);
+extern void verify_expfact(int Ind, int p);
 
 /* xtra1.c */
 extern void cnv_stat(int val, char *out_val);
@@ -2097,6 +2105,7 @@ extern bool set_poisoned(int Ind, int v, int attacker);
 extern bool set_diseased(int Ind, int v, int attacker);
 extern bool set_afraid(int Ind, int v);
 extern bool set_paralyzed(int Ind, int v);
+extern bool set_stopped(int Ind, int v);
 extern bool set_image(int Ind, int v);
 extern bool set_fast(int Ind, int v, int p);
 extern bool set_slow(int Ind, int v);
@@ -2222,7 +2231,7 @@ extern void unstatic_level(struct worldpos *wpos);
 
 extern int det_req_level(int plev);
 extern s64b det_exp_level(s64b exp, int plev, int dlev);
-extern void shape_Maia_skills(int Ind);
+extern void shape_Maia_skills(int Ind, bool live);
 
 #ifdef ENABLE_MERCHANT_MAIL
 void merchant_mail_death(const char pname[NAME_LEN]);
@@ -2283,9 +2292,10 @@ extern void place_trap_specific(struct worldpos *wpos, int y, int x, int mod, in
 
 extern void place_trap_object(object_type *o_ptr);
 extern void do_cmd_set_trap(int Ind, int item_kit, int item_load);
-extern void do_cmd_disarm_mon_trap_aux(worldpos *wpos, int y, int x);
+extern void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x);
 extern void erase_mon_trap(worldpos *wpos, int y, int x, int o_idx);
 extern bool mon_hit_trap(int m_idx);
+extern bool py_hit_trap(int Ind);
 
 extern void wiz_place_trap(int Ind, int trap);
 
@@ -2544,10 +2554,13 @@ extern int shutdown_recall_timer, shutdown_recall_state;
 extern bool rune_enchant(int Ind, int item);
 extern bool warding_rune(int Ind, byte typ, int dam, byte rad);
 extern bool warding_rune_break(int m_idx);
+extern bool py_warding_rune_break(int Ind);
 
 /* slash.c */
 extern void do_slash_cmd(int Ind, char *message, char *message_u);
 extern void tym_evaluate(int Ind);
+extern void wish(int Ind, struct worldpos *wpos, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level, object_type *ox_ptr);
+extern void lua_wish(int Ind, int tval, int sval, int number, int bpval, int pval, int name1, int name2, int name2b, int level);
 
 
 

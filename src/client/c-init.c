@@ -3370,6 +3370,20 @@ static void quit_hook(cptr s) {
 		fclose(fp);
 	}
 
+#ifdef GUIDE_BOOKMARKS
+	/* Save guide bookmarks */
+	{
+		FILE *fp;
+		path_build(buf, 1024, ANGBAND_DIR_USER, "bookmarks.tmp");
+		fp = fopen(buf, "w");
+		for (j = 0; j < GUIDE_BOOKMARKS; j++) {
+			if (!bookmark_line[j]) continue;
+			fprintf(fp, "%d,%s\n", bookmark_line[j], bookmark_name[j]);
+		}
+		fclose(fp);
+	}
+#endif
+
 #ifdef RETRY_LOGIN
 	/* don't kill the windows and all */
 	if (rl_connection_state >= 2) return;
@@ -3965,6 +3979,15 @@ void client_init(char *argv1, bool skip) {
 		hist_chat_end = 0;
 		hist_chat_looped = TRUE;
 	}
+
+#ifdef GUIDE_BOOKMARKS
+	/* Load guide bookmarks */
+	path_build(buf, 1024, ANGBAND_DIR_USER, "bookmarks.tmp");
+	fp = fopen(buf, "r");
+	temp = 0;
+	while (fp && temp < GUIDE_BOOKMARKS && fscanf(fp, "%d,%s\n", &bookmark_line[temp], bookmark_name[temp]) != EOF) temp++;
+	if (fp) fclose(fp);
+#endif
 
 	/* Turn the lag-o-meter on after we've logged in */
 	lagometer_enabled = TRUE;

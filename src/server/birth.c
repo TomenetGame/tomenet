@@ -1397,7 +1397,8 @@ static byte player_init[2][MAX_CLASS][5][3] = {
 
 	{
 		/* Mage */
-		{ TV_HELM, SV_CLOTH_CAP, 0 },
+		//{ TV_HELM, SV_CLOTH_CAP, 0 },
+		{ TV_AMULET, SV_AMULET_MANA_CHARGING, 0 }, //pft.. how nice
 		{ TV_CLOAK, SV_CLOAK, 0 },
 		{ TV_BOOK, 50, 0 },
 		{ TV_WAND, SV_WAND_MAGIC_MISSILE , 10 },
@@ -2170,6 +2171,9 @@ static void player_setup(int Ind, bool new) {
 	  for some teleport_player() calls that may follow soon */
 	p_ptr->store_num = -1;
 
+	/* initialise "random breath" for draconians. (0 is just unused) */
+	p_ptr->breath_element = 1;
+
 	/* Catch bad player coordinates,
 	   either corrupted ones (insane values)
 	   or invalid ones if dungeon locations were changed meanwhile - C. Blue */
@@ -2396,6 +2400,10 @@ static void player_setup(int Ind, bool new) {
 			}
 
 			alloc_dungeon_level(wpos);
+			/* Let's make it a bit more co-op ^^ */
+#ifdef DEATH_FATE_SPECIAL
+			if (in_deathfate(&p_ptr->wpos)) p_ptr->temp_misc_1 |= 0x40;
+#endif
 			/* hack: Prevent generating a random dungeon town via relogging+unstaticing cheeze */
 			p_ptr->temp_misc_1 |= 0x10;
 			generate_cave(wpos, p_ptr);
@@ -2946,7 +2954,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_staircase_oneway = 1;
 		p_ptr->warning_worldmap = 1;
 		p_ptr->warning_dungeon = 1;
-		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = 1;
+		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = p_ptr->warning_tunnel_hidden = 1;
 		p_ptr->warning_trap = 1;
 		p_ptr->warning_tele = 1;
 		p_ptr->warning_fracexp = 1;
@@ -2962,6 +2970,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_status_blindness = p_ptr->warning_status_confusion = p_ptr->warning_status_stun = 1;
 		p_ptr->warning_sellunid = 1;
 		p_ptr->warning_edmt = 1;
+		p_ptr->warning_stealing = 1;
 		return;
 	}
 
@@ -3072,8 +3081,10 @@ void disable_specific_warnings(player_type *p_ptr) {
 	if (!(p_ptr->mode & MODE_EVERLASTING))
 		p_ptr->warning_instares = 1;
 
-	if ((p_ptr->mode & (MODE_DED_IDDC | MODE_PVP)))
+	if ((p_ptr->mode & (MODE_DED_IDDC | MODE_PVP))) {
 		p_ptr->warning_dungeon = 1;
+		p_ptr->warning_depth = 2;
+	}
 
 	if ((p_ptr->mode & MODE_DED_IDDC)) {
 		p_ptr->warning_wor = 1;
@@ -3133,7 +3144,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_macros = 1;
 		p_ptr->warning_boomerang = 1;
 		p_ptr->warning_inspect = 1;
-		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = 1;
+		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = p_ptr->warning_tunnel_hidden = 1;
 		p_ptr->warning_edmt = 1;
 	}
 	if (p_ptr->max_plv > 20) {
@@ -3159,6 +3170,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	if (p_ptr->max_plv > 40) {
 		p_ptr->warning_status_stun = 1;
 		//p_ptr->warning_sellunid = 1;
+		p_ptr->warning_stealing = 1;
 	}
 }
 
@@ -3186,13 +3198,16 @@ static void do_trait_skill(int Ind, int s, int m) {
  *
  * Note that we may be called with "junk" leftover in the various
  * fields, so we must be sure to clear them first.
+ *
+ * (Note: msg_print() is not possible yet at this point, only Destroy_connection() for message.)
  */
 bool player_birth(int Ind, int conn, connection_t *connp) {
 	player_type *p_ptr;
-	int i;
+	int i, trait_hack = 0;
 	struct account acc;
 	bool acc_banned = FALSE;
 	char acc_houses = 0;
+	player_race race_info_hack;
 
 	cptr accname = connp->nick, name = connp->c_name;
 	int race = connp->race, class = connp->class, trait = connp->trait, sex = connp->sex;
@@ -3230,11 +3245,32 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	if (race < 0 || race >= MAX_RACE) race = 0;
 	if (class < 0 || class >= MAX_CLASS) class = 0;
 	if (trait < 0 || trait >= MAX_TRAIT) trait = 0;
+
 	/* Check for legal class */
-	if ((race_info[race].choice & BITS(class)) == 0) {
+	race_info_hack = race_info[race];
+	/* Hack for pvp-mode: Maiar are already initiated if they start at level 20+, so they might already be usually unavailable "sub"-classes! (SLFG0_PVP_MAIA): */
+	if (MIN_PVP_LEVEL >= 20 && race == RACE_MAIA && (sex & (MODE_PVP | MODE_DED_PVP)) && (FALSE
+#ifdef ENABLE_HELLKNIGHT
+	    || class == CLASS_HELLKNIGHT
+#endif
+#ifdef ENABLE_CPRIEST
+	    || class == CLASS_CPRIEST
+#endif
+	    ))
+		race_info_hack.choice |= BITS(class);
+	/* ..check.. */
+	if ((race_info_hack.choice & BITS(class)) == 0) {
 		s_printf("%s EXPLOIT_CLASS_CHOICE: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
 		return FALSE;
 	}
+#ifndef RPG_SERVER /* Cannot be PvP-mode because characters always NO_GHOST */
+	/* Hack for s_PVP_MAIA */
+	if ((sex & MODE_PVP) && MIN_PVP_LEVEL >= 20 && race == RACE_MAIA &&
+	    (trait == TRAIT_ENLIGHTENED || trait == TRAIT_CORRUPTED)) {
+		trait_hack = trait;
+		trait = 0; /* ensure we pass the subsequent checks, afterwards hack-restore the trait */
+	}
+#endif
 	/* If we have no traits available at all for this race then any trait choice is illegal*/
 	if (trait && (trait_info[0].choice & BITS(race))) {
 		s_printf("%s EXPLOIT_TRAIT_N/A: %s(%s) chose race %d ; class %d ; trait %d.\n", showtime(), accname, name, race, class, trait);
@@ -3298,8 +3334,8 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 	/* handle banned player 1/2 */
 	if (acc_banned) {
-		msg_print(Ind, "\377R*** Your account is temporarily suspended ***");
 		s_printf("\377RRefused ACC_BANNED account %s (character %s)\n.", accname, name); /* Coloured for /cheeze */
+		Destroy_connection(conn, "*** Your account is temporarily suspended ***");
 		return FALSE;
 	}
 
@@ -3390,14 +3426,14 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		p_ptr->pvpexception = (acc.flags & ACC_PVP) ? 1 : (acc.flags & ACC_NOPVP) ? 2 : (acc.flags & ACC_ANOPVP) ? 3 : 0;
 		p_ptr->mutedchat = (acc.flags & ACC_VQUIET) ? 2 : (acc.flags & ACC_QUIET) ? 1 : 0;
 		acc_banned = (acc.flags & ACC_BANNED) ? TRUE : FALSE;
-//		s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, acc.flags);
+		//s_printf("(%s) ACC2:Player %s has flags %d\n", showtime(), accname, acc.flags);
 		s_printf("(%s) ACC2:Player %s has flags %d (%s)\n", showtime(), accname, acc.flags, get_conn_userhost(conn));
-//		s_printf("(%s) ACC2:Player %s has flags %d (%s@%s)\n", showtime(), accname, acc.flags, Conn[conn]->real, Conn[conn]->host);
+		//s_printf("(%s) ACC2:Player %s has flags %d (%s@%s)\n", showtime(), accname, acc.flags, Conn[conn]->real, Conn[conn]->host);
 	}
 	/* handle banned player 2/2 */
 	if (acc_banned) {
-		msg_print(Ind, "\377R*** Your account is temporarily suspended ***");
 		s_printf("Refused ACC_BANNED account %s (character %s)\n.", accname, name);
+		Destroy_connection(conn, "*** Your account is temporarily suspended ***");
 		return FALSE;
 	}
 
@@ -3418,21 +3454,22 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	   First byte of 'sex' carries the 'mode', the second byte carries extra mode info that needs to be translated. */
 	p_ptr->mode = (sex & 0xFF);
 
-#if 0
-	/* hack? disallow 'pvp mode' for new players? */
+	/* Disallow 'pvp mode' for new players because it can be used to cheeze up own PvP characters */
 	if (p_ptr->inval && (p_ptr->mode & MODE_PVP)) {
+#if 0 /* perhaps in the future: Check for free non-DED-slot to auto-convert char to normal mode instead */
 		p_ptr->mode &= ~MODE_PVP;
-		msg_print(Ind, "Because you're a new, your mode has been changed from 'pvp' to 'normal'.");
-	}
+#else
+		Destroy_connection(conn, "Sorry, your account must be validated before you can choose 'PvP' mode.");
 #endif
+	}
 
 	/* no more stand-alone 'hard mode' */
 	if ((p_ptr->mode & MODE_HARD) &&
 		!(p_ptr->mode & MODE_NO_GHOST)) {
 			p_ptr->mode &= ~MODE_HARD;
 			/* note- cannot msg_print() to player at this point yet, actually */
-			msg_print(Ind, "Hard mode is no longer supported - choose hellish mode instead.");
-			msg_print(Ind, "Your character has automatically been converted to normal mode.");
+			//msg_print(Ind, "Hard mode is no longer supported - choose hellish mode instead.");
+			//msg_print(Ind, "Your character has automatically been converted to normal mode.");
 	}
 
 	/* fix potential exploits */
@@ -3450,23 +3487,23 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->dna = ((class & 0xff) | ((race & 0xff) << 8) );
 	p_ptr->dna |= (randint(65535) << 16);
 	p_ptr->male = (sex & MODE_MALE) ? 1 : 0;
+	p_ptr->prace = race;
 	p_ptr->pclass = class;
+	p_ptr->ptrait = trait;
 	p_ptr->align_good = 0x7fff;	/* start neutral */
 	p_ptr->align_law = 0x7fff;
-	p_ptr->prace = race;
-	p_ptr->ptrait = trait;
 #ifndef KURZEL_PK
 	p_ptr->pkill = (PKILL_KILLABLE);
 #else
 	p_ptr->pkill = 0; //Flag default OFF
 #endif
 
-	s_printf("CHARACTER_CREATION: race=%s ; class=%s ; trait=%s ; mode=%u\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, p_ptr->mode);
+	s_printf("CHARACTER_CREATION: race=%s ; class=%s ; trait=%s(%s) ; mode=%u\n", race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, trait_info[p_ptr->ptrait].title, trait_info[trait_hack].title, p_ptr->mode);
 
 	/* Set pointers */
-	p_ptr->rp_ptr = &race_info[race];
-	p_ptr->cp_ptr = &class_info[class];
-	p_ptr->tp_ptr = &trait_info[trait];
+	p_ptr->rp_ptr = &race_info[p_ptr->prace];
+	p_ptr->cp_ptr = &class_info[p_ptr->pclass];
+	p_ptr->tp_ptr = &trait_info[p_ptr->ptrait];
 
 #ifdef RPG_SERVER /* Make characters always NO_GHOST */
 	p_ptr->mode |= MODE_NO_GHOST;
@@ -3503,12 +3540,19 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		object_type forge, *o_ptr = &forge;
 
 		p_ptr->lev = MIN_PVP_LEVEL;
+		p_ptr->skill_points = (p_ptr->lev - 1) * SKILL_NB_BASE;
+
+		/* Hack for s_PVP_MAIA */
+		if (trait_hack) {
+			p_ptr->ptrait = trait_hack;
+			p_ptr->tp_ptr = &trait_info[p_ptr->ptrait];
+		}
+
 #ifndef ALT_EXPRATIO
 		p_ptr->exp = ((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact) / 100L;
 #else
 		p_ptr->exp = (s64b)player_exp[p_ptr->lev - 2];
 #endif
-		p_ptr->skill_points = (p_ptr->lev - 1) * SKILL_NB_BASE;
 		p_ptr->au = 9950 + rand_int(101);
 
 		/* give her/him a free mimic transformation for starting out */
@@ -3602,6 +3646,15 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		}
 	}
 
+	/* Hack for s_PVP_MAIA */
+	if (trait_hack) {
+		/* Initiate! */
+		shape_Maia_skills(Ind, FALSE);
+		//calc_techniques(Ind);
+		//p_ptr->redraw |= PR_SKILLS | PR_MISC;
+		//p_ptr->update |= PU_SKILL_INFO | PU_SKILL_MOD;
+	}
+
 #if 0
 	/* Bards receive really random skills */
 	if (p_ptr->pclass == CLASS_BARD) do_bard_skill(Ind);
@@ -3620,11 +3673,11 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	/* special outfits for admin (pack overflows!) */
 	if (is_admin(p_ptr)) {
 		admin_outfit(Ind, 0);
-		p_ptr->au = 50000000;
-		p_ptr->lev = 99;
-		p_ptr->exp = 999999999;
+		p_ptr->au = 1000000000;
+		p_ptr->lev = p_ptr->max_lev = p_ptr->max_plv = PY_MAX_PLAYER_LEVEL; //let's just use this (99) instead of the PY_MAX_LEVEL (100) which doesn't make sense
+		p_ptr->exp = p_ptr->max_exp = PY_MAX_EXP;
 		p_ptr->skill_points = 9999;
-//		p_ptr->noscore = 1;
+		//p_ptr->noscore = 1;
 		/* permanent invulnerability */
 		p_ptr->total_winner = TRUE;
 		p_ptr->once_winner = TRUE; //just for consistency, eg when picking up WINNERS_ONLY items

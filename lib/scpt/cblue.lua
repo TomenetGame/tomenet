@@ -1042,6 +1042,7 @@ function fskc(name)
     p = ind(name)
     if (p == -1) then return -1 end
     respec_skills(p, 1)
+    shape_Maia_skills(p, 1)
 end
 
 --mhh

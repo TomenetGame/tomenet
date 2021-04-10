@@ -450,7 +450,7 @@ N:10:Mayor's Office
 #replaced cheeze records by guild rename for now
 #A:16:64:35:65:63:68
 #A:16:64:35:65:69:68
-A:16:64:35:65:69:0
+A:16:64:35:65:69:79
 O:1:1:1:1:1:1
 G:+:o
 W:0

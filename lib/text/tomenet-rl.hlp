@@ -25,11 +25,11 @@ t  Fire        F  Refill light  (  Friendly target ^X  Toggle music
 i  Inventory   I  Examine       .  Run                 switch chat mode
 ^A Steal                        /  Use item        ^I  Lagometer or
 ^D Destroy     ^C Force-stack   \{B:  Chat\{w                switch chat mode
-x  Look        ^W Locate (map)  ;  Walk            ^O  Chat history
+x  Look        ^W Locate (map)  ;  Guide search    ^O  Chat history
 m  Use ability M  Show minimap  ?  Help/Guide      ^P  All message history
-o  Open door                    \{B@  Player list\{w     ^R  Redraw screen
+o  Open door      (also try ~0) \{B@  Player list\{w     ^R  Redraw screen
 p  Open mind   \{BO  Party menu\{w    ~  Knowledge menu  ^S  Spike a door
-q  Quaff       \{BQ  Suicide\{w       +  Dig             ^T  Screenshot
+q  Quaff       \{BQ  Suicide\{w       +  Tunnel (dig)    ^T  Screenshot
 r  Read scroll R  Rest          {  Inscribe        \{B^Q  Quit the game (and
 s  Search      #  Search mode   }  Uninscribe        \{B(auto-save window layout)
 \{BT  Take off\{w       (toggle)      |  Uniques

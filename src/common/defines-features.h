@@ -306,6 +306,8 @@
    using cmd_locate(). */
 #define LOCATE_KEEPS_OVL
 
+#define DEATH_FATE_SPECIAL	/* Death Fate special */
+
 /* Enable o_*.lua 'Occult' magic schools (shamans, rogues, adventurers) */
 #define ENABLE_OCCULT
 
@@ -376,8 +378,6 @@
 
  #define LIMIT_SPELLS		/* Allow player to limit the level of spells he casts */
 
- #define DEATH_FATE_SPECIAL	/* Death Fate special */
-
  //#define ENABLE_SUBINVEN	/* Alchemy Satchels as inventory extension */
 #endif
 
@@ -432,6 +432,9 @@
  #ifdef TEST_CLIENT
   //#define ENABLE_SUBINVEN
  #endif
+
+ /* Enable bookmarking feature? */
+ #define GUIDE_BOOKMARKS 20
 #endif
 
 /* ----------------- Misc flags induced by above definitions ----------------*/

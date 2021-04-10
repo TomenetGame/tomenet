@@ -187,6 +187,11 @@ byte level_rand_y(struct worldpos *wpos) {
 }
 
 static int get_staircase_colour(dungeon_type *d_ptr, byte *c) {
+	if (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
+		*c = TERM_L_DARK;
+		return -2;
+	}
+
 	/* (experimental testing stuff) */
 	if (d_ptr->flags3 & (DF3_NO_TELE | DF3_NO_ESP | DF3_LIMIT_ESP | DF3_NO_SUMMON)) {
 		*c = TERM_L_UMBER;
@@ -494,7 +499,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
-				//if (admin_p(i)) continue;
+				if (p_ptr->admin_dm) continue;
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				if (p_ptr->paralyzed == 255) {
@@ -512,7 +517,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
-				//if (admin_p(i)) continue;
+				if (p_ptr->admin_dm) continue;
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				if (!p_ptr->new_level_flag) continue;
@@ -526,7 +531,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 			for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
-				//if (admin_p(i)) continue;
+				if (p_ptr->admin_dm) continue;
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				if (p_ptr->paralyzed == 255) continue;
@@ -543,7 +548,7 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 			if (!free) for (i = 1; i <= NumPlayers; i++) {
 				p_ptr = Players[i];
 				if (p_ptr->conn == NOT_CONNECTED) continue;
-				//if (admin_p(i)) continue;
+				if (p_ptr->admin_dm) continue;
 				if (!inarea(&p_ptr->wpos, wpos)) continue;
 
 				p_ptr->paralyzed = 0;
@@ -950,6 +955,27 @@ void FreeCS(cave_type *c_ptr) {
 	prev = trav = c_ptr->special;
 
 	while (trav) {
+		/* Delete embedded items - C. Blue */
+		//if (trav->type == CS_MON_TRAP) erase_mon_trap(wpos, y, x, 0);
+		if (trav->type == CS_MON_TRAP) {
+			/* Erase objects being carried */
+			object_type *o_ptr;
+			int this_o_idx, next_o_idx = 0;
+
+			for (this_o_idx = trav->sc.montrap.trap_kit; this_o_idx; this_o_idx = next_o_idx) {
+				/* Acquire object */
+				o_ptr = &o_list[this_o_idx];
+				/* Acquire next object */
+				next_o_idx = o_ptr->next_o_idx;
+				/* Paranoia */
+				o_ptr->held_m_idx = 0;
+				/* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
+				o_ptr->embed = 0;
+				/* Delete the object */
+				delete_object_idx(this_o_idx, TRUE);
+			}
+		}
+
 		prev = trav;
 		trav = trav->next;
 		FREE(prev, struct c_special);
@@ -1503,6 +1529,7 @@ bool no_lite(int Ind) {
 /* Returns true if the player grid is dark, ignoring vampire's intrinsic pseudo-'light'. */
 bool no_real_lite(int Ind) {
 	player_type *p_ptr = Players[Ind];
+#if 0 /* original, stricter way */
 	cave_type *c_ptr, **zcave;
 
 	zcave = getcave(&p_ptr->wpos);
@@ -1517,6 +1544,10 @@ bool no_real_lite(int Ind) {
 	if (c_ptr->info & CAVE_LITE_VAMP) return TRUE;
 	/* Floor is lit by a light source */
 	return FALSE;
+#else /* new, lenient way */
+	if (!p_ptr->cur_lite || p_ptr->cloaked) return TRUE;
+	return FALSE;
+#endif
 }
 
 
@@ -2820,44 +2851,68 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 			/* Hack to display monster traps */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_MON_TRAP)) && c_ptr->feat != FEAT_ILLUS_WALL) {
-				/* Hack -- random hallucination */
-				if (p_ptr->image) {
-					/*image_random(ap, cp); */
-					image_object(ap, cp);
-					a = randint(15);
-				} else {
-					/* If trap isn't on door display it */
-					/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
-					//(*cp) = ';';
-					a = get_monster_trap_color(Ind, cs_ptr->sc.montrap.trap_kit, feat);
+				/* PvP: Hide hostile traps unless detected */
+				object_type *kit_o_ptr = &o_list[cs_ptr->sc.montrap.trap_kit];
+				int i;
+
+				/* is the trapper online? Otherwise not hostile as we cannot know */
+				for (i = 1; i <= NumPlayers; i++) {
+					if (i == Ind) continue;
+					if (kit_o_ptr->owner == Players[i]->id) break;
+				}
+
+				if (i == NumPlayers + 1 || cs_ptr->sc.montrap.found || !check_hostile(Ind, i)) {
+					/* Hack -- random hallucination */
+					if (p_ptr->image) {
+						/*image_random(ap, cp); */
+						image_object(ap, cp);
+						a = randint(15);
+					} else {
+						/* If trap isn't on door display it */
+						/* if (!(f_ptr->flags1 & FF1_DOOR)) c = '^'; */
+						//(*cp) = ';';
+						a = get_monster_trap_color(Ind, cs_ptr->sc.montrap.trap_kit, feat);
 
 #if 0 /* currently this doesn't make sense because montraps are their own feature (like runes) instead of using just the cs_ptr (like normal traps)! This means they cancel the water grid! ew. */
-					/* Hack -- always l.blue if underwater */
-					if (cs_ptr->sc.montrap.feat == FEAT_DEEP_WATER || cs_ptr->sc.montrap.feat == FEAT_SHAL_WATER)
-						a = TERM_L_BLUE;
+						/* Hack -- always l.blue if underwater */
+						if (cs_ptr->sc.montrap.feat == FEAT_DEEP_WATER || cs_ptr->sc.montrap.feat == FEAT_SHAL_WATER)
+							a = TERM_L_BLUE;
 #endif
+					}
+					keep = TRUE;
 				}
-				keep = TRUE;
 			}
 
 			/* Hack to display "runes of warding" which are coloured by GF_TYPE */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_RUNE)) && c_ptr->feat != FEAT_ILLUS_WALL) {
-				/* Hack -- random hallucination */
-				if (p_ptr->image) {
-					/*image_random(ap, cp); */
-					image_object(ap, cp);
-					a = randint(15);
-				} else {
-					a = spell_color(cs_ptr->sc.rune.typ);
+				/* PvP: Hide hostile rune unless detected */
+				int i;
+
+				/* is the runemaster online? Otherwise not hostile as we cannot know */
+				for (i = 1; i <= NumPlayers; i++) {
+					if (i == Ind) continue;
+					if (cs_ptr->sc.rune.id == Players[i]->id) break;
 				}
-				keep = TRUE;
+
+				if (i == NumPlayers + 1 || cs_ptr->sc.rune.found || !check_hostile(Ind, i)) {
+					/* Hack -- random hallucination */
+					if (p_ptr->image) {
+						/*image_random(ap, cp); */
+						image_object(ap, cp);
+						a = randint(15);
+					} else {
+						a = spell_color(cs_ptr->sc.rune.typ);
+					}
+					keep = TRUE;
+				}
 			}
 
 			/* Hack to display detected traps */
 			/* Illusory wall masks everythink */
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)) && c_ptr->feat != FEAT_ILLUS_WALL) {
 				int t_idx = cs_ptr->sc.trap.t_idx;
+
 				if (cs_ptr->sc.trap.found) {
 					/* Hack -- random hallucination */
 					if (p_ptr->image) {
@@ -2961,7 +3016,16 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 					}
 				}
 			}
-			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+			else {
+				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+
+				/* Handle "blind" */
+				if (p_ptr->blind) {
+					/* Use "dark gray" */
+					a = TERM_L_DARK;
+					palanim = FALSE;
+				}
+			}
 
 #if 1
 			/* Use palette-animated colours if available (even if we don't apply manipulation here) */
@@ -3076,7 +3140,32 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 				/* Handle "blind" */
 				if (p_ptr->blind) {
 					/* Use "dark gray" */
-					a = TERM_L_DARK;
+					switch (a) {
+					case TERM_L_RED:
+						a = TERM_RED;
+						break;
+					case TERM_ORANGE:
+						a = TERM_UMBER;
+						break;
+					case TERM_L_UMBER:
+						a = TERM_UMBER;
+						break;
+					case TERM_YELLOW:
+						a = TERM_L_UMBER;
+						break;
+					case TERM_L_BLUE:
+						a = TERM_BLUE;
+						break;
+					case TERM_L_GREEN:
+						a = TERM_GREEN;
+						break;
+					case TERM_VIOLET:
+						a = TERM_SLATE;
+						break;
+					default:
+						a = TERM_L_DARK;
+						break;
+					}
 				}
 
 				/* Handle "torch-lit" grids */
@@ -3157,7 +3246,42 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 #endif
 				}
 			}
-			else a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+			else {
+				a = manipulate_cave_colour(c_ptr, &p_ptr->wpos, x, y, a, palanim);
+
+				/* Handle "blind" */
+				if (p_ptr->blind) {
+					switch (a) {
+					case TERM_L_RED:
+						//a = TERM_RED;
+						a = TERM_L_UMBER;
+						break;
+					case TERM_ORANGE:
+						a = TERM_UMBER;
+						break;
+					case TERM_L_UMBER:
+						a = TERM_UMBER;
+						break;
+					case TERM_YELLOW:
+						a = TERM_L_UMBER;
+						break;
+					case TERM_L_BLUE:
+						//a = TERM_BLUE;
+						a = TERM_SLATE;
+						break;
+					case TERM_L_GREEN:
+						//a = TERM_GREEN;
+						a = TERM_SLATE;
+						break;
+					case TERM_VIOLET:
+						a = TERM_L_DARK;
+						break;
+					default:
+						a = TERM_L_DARK;
+						break;
+					}
+				}
+			}
 
 			/* Display vault walls in a more distinguishable colour, if desired */
 			if (p_ptr->permawalls_shade && (feat == FEAT_PERM_INNER || feat == FEAT_PERM_OUTER)) a = TERM_L_UMBER;
@@ -3174,6 +3298,9 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 				/* testing only - need c/a PRIORITIES!!! */
 				csfunc[cs_ptr->type].see(cs_ptr, cp, ap, Ind);
 			}
+
+			/* Highlight active steam blast charge on a door */
+			if (p_ptr->steamblast_timer > 0 && p_ptr->steamblast_x == x && p_ptr->steamblast_y == y) *ap = TERM_ORANGE;
 		}
 
 		/* Unknown */
@@ -3564,6 +3691,11 @@ void map_info(int Ind, int y, int x, byte *ap, char *cp, bool palanim) {
 		case 2: (*cp) = '_'; break;
 		default: (*cp) = '*';
 		}
+	}
+	/* display falling star */
+	if ((effects[c_ptr->effect].flags & EFF_FALLING_STAR)) {
+		(*ap) = TERM_STARLITE;
+		(*cp) = rand_int(3) ? '.' : '+';
 	}
 
 	/* for 'Thunderstorm' spell */
@@ -4650,8 +4782,7 @@ static void wild_display_map(int Ind, char mode) {
 
 			/* if the player hasnt been here, dont show him the terrain */
 			/* Hack -- serverchez has knowledge of the full world */
-			if (!p_ptr->admin_dm)
-			if (!(p_ptr->wild_map[wild_idx(&twpos) / 8] & (1U << (wild_idx(&twpos) % 8)))) type = -1;
+			if (!p_ptr->admin_dm && !(p_ptr->wild_map[wild_idx(&twpos) / 8] & (1U << (wild_idx(&twpos) % 8)))) type = -1;
 			/* hack --  the town is always known */
 
 			switch (type) {
@@ -4676,14 +4807,25 @@ static void wild_display_map(int Ind, char mode) {
 #ifdef WILDMAP_SHOWS_STAIRS
 			if (type != -1 && type != WILD_TOWN) {
 				dungeon_type *dun = wild_info[twpos.wy][twpos.wx].dungeon, *tow = wild_info[twpos.wy][twpos.wx].tower;
-				if (dun && !strcmp(d_info[dun->type].name + d_name, "The Shores of Valinor") && !admin) dun = NULL;
-				if (tow && !strcmp(d_info[tow->type].name + d_name, "The Shores of Valinor") && !admin) tow = NULL;
- #ifdef GLOBAL_DUNGEON_KNOWLEDGE
+
 				if (!admin) {
+					/* Skip all the sector00 event stuff */
+					if (!x && !y) dun = tow = NULL;
+					/* Skip special stuff */
+					if (dun) {
+						if (dun->type == DI_VALINOR) dun = NULL;
+						if (!dun->type && dun->theme == DI_DEATH_FATE) dun = NULL;
+					}
+					if (tow) {
+						if (tow->type == DI_VALINOR) tow = NULL;
+						if (!tow->type && tow->theme == DI_DEATH_FATE) tow = NULL;
+					}
+ #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 					if (dun && !dun->known) dun = NULL;
 					if (tow && !tow->known) tow = NULL;
-				}
  #endif
+				}
+
 				if (dun) {
 					if (tow) {
 						tc = 'X';
@@ -8753,10 +8895,15 @@ bool allow_terraforming(struct worldpos *wpos, byte feat) {
 		break;
 
 	case FEAT_GLYPH:
-	case FEAT_RUNE:
+	case FEAT_RUNE: {
+		dun_level *l_ptr = getfloor(wpos);
+
 		/* generally allow in town, restrictions are applied in cave_set_feat_live().) */
 		if (sector00 || valinor || nr_bottom) return(FALSE);
+
+		if (l_ptr && (l_ptr->flags2 & LF2_NO_RUNES)) return FALSE;
 		break;
+		}
 
 	/* don't allow any changes at all to preserve the visuals 100% */
 	case FEAT_NONE:

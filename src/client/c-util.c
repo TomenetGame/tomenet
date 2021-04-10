@@ -1681,10 +1681,15 @@ bool paste_from_clipboard(char *buf) {
 				strncpy(buf_esc, pchData, MSG_LEN - NAME_LEN - 13); //just accomodate for some colour codes and spacing, not really calculated it
 				buf_esc[MSG_LEN - NAME_LEN - 13] = 0;
 
-				/* treat { and : */
+				/* treat { and : and also strip away all control chars (like 0x0A aka RETURN) */
 				c = buf_esc;
 				c2 = buf;
 				while (*c) {
+					if (*c < 32) {
+						c++;
+						continue;
+					}
+
 					switch (*c) {
 					case ':':
 						if (pos != 0 && pos <= NAME_LEN) {
@@ -1729,10 +1734,15 @@ bool paste_from_clipboard(char *buf) {
 	if (!fgets(buf_esc, MSG_LEN - NAME_LEN - 13, fp)) buf_esc[0] = 0; //just accomodate for some colour codes and spacing, not really calculated it
 	//else buf_esc[strlen(buf_esc) - 1] = 0; //remove trailing newline -- there is no trailing newline!
 
-	/* treat { and : */
+	/* treat { and : and also strip away all control chars (like 0x0A aka RETURN) */
 	c = buf_esc;
 	c2 = buf;
 	while (*c) {
+		if (*c < 32) {
+			c++;
+			continue;
+		}
+
 		switch (*c) {
 		case ':':
 			if (pos != 0 && pos <= NAME_LEN) {
@@ -1755,6 +1765,8 @@ bool paste_from_clipboard(char *buf) {
 	fclose(fp);
 	return TRUE;
 #endif
+
+	return FALSE;
 }
 
 
@@ -1866,8 +1878,12 @@ bool askfor_aux(char *buf, int len, char mode) {
 		case ESCAPE:
 		//case KTRL('Q'):
 			/* Catch searching mode */
+#if 0 /* Clear current search, but stay in searching mode */
 			if (search && buf[0]) {
-				/* Clear current search, but stay in searching mode */
+#else /* Clear current search and leave searching mode */
+			if (search) {
+				search = FALSE;
+#endif
 				Term_erase(x, y, strlen(buf));
 				buf[0] = '\0';
 				k = l = 0;
@@ -5615,17 +5631,22 @@ void interact_macros(void) {
 #define mw_shoot 'j'
 #define mw_trap 'H'
 #define mw_device 'J'
-#define mw_anydir 'k'
-#define mw_any 'K'
-#define mw_common 'l'
-#define mw_abilitynt 'm'
-#define mw_abilityt 'M'
+#define mw_any 'k'
+#define mw_anydir 'K'
+#define mw_abilitynt 'l'
+#define mw_abilityt 'L'
+#define mw_common 'm'
+#define mw_prfele 'M'
 #define mw_slash 'n'
 #define mw_custom 'N'
 #define mw_load 'o'
 #define mw_equip 'p'
-
-#define mw_LAST 'p'
+#define mw_dir_run 'q'
+#define mw_dir_tunnel 'r'
+#define mw_dir_disarm 's'
+#define mw_dir_bash 't'
+#define mw_dir_close 'u'
+#define mw_LAST 'u'
 
 			/* Invoke wizard to create a macro step-by-step as easy as possible  */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Invoke macro wizard");
@@ -5671,21 +5692,23 @@ Chain_Macro:
 
 				switch (i) {
 				case 0:
-					Term_putstr( 5, 9, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
-					Term_putstr(8, 10, -1, TERM_L_GREEN, "a/b) Drink a potion / Read a scroll");
-					Term_putstr(8, 11, -1, TERM_L_GREEN, "c/C) Fire ranged weapon / Throw an item");
-					Term_putstr(8, 12, -1, TERM_L_GREEN, "d/D) Cast school/mimic spell without a target (or target manually)");
-					Term_putstr(8, 13, -1, TERM_L_GREEN, "e/E) Cast school/mimic spell with target");
-					Term_putstr(8, 14, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target)");
-					Term_putstr(8, 15, -1, TERM_L_GREEN, "g/G) Polymorph into monster / Set preferred immunity (mimicry users)");
-					Term_putstr(8, 16, -1, TERM_L_GREEN, "h/H) Draw runes to cast a runespell / set up a monster trap");
-					Term_putstr(8, 17, -1, TERM_L_GREEN, "i/I) Fighting technique / Switch combat stance (most melee classes)");
-					Term_putstr(8, 18, -1, TERM_L_GREEN, "j/J) Shooting technique (archers, rangers) / Activate magic device");
-					Term_putstr(8, 19, -1, TERM_L_GREEN, "k/K) Use any item with/without a target)");
-					Term_putstr(8, 20, -1, TERM_L_GREEN, "l)   Choose from a set of some common commands and functions");
-					Term_putstr(8, 21, -1, TERM_L_GREEN, "m/M) Use a basic ability ('m') without/with target (Draconian breath)");
-					Term_putstr(8, 22, -1, TERM_L_GREEN, "n/N) Enter a slash command / Enter a custom action (same as % a)");
-					Term_putstr(8, 23, -1, TERM_L_GREEN, "o/p) Load a macro file / change equipment (wield/takeoff/swap)");
+					l = 8;
+					Term_putstr(5, l++, -1, TERM_GREEN, "Which of the following actions should the macro perform?");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "a\377w/\377Gb) Drink a potion. \377w/\377G Read a scroll.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "c\377w/\377GC) Fire ranged weapon (including boomerangs). \377w/\377G Throw an item.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "d\377w/\377GD) Cast school \377w/\377G mimic spell without a target (or target manually).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "e\377w/\377GE) Cast school \377w/\377G mimic spell with target.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "f)   Cast a mimic spell by number (with and without target).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "g\377w/\377GG) Polymorph into monster. \377w/\377G Set preferred immunity (mimicry users).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "h\377w/\377GH) Draw runes to cast a runespell. \377w/\377G Set up a monster trap.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "i\377w/\377GI) Fighting technique. \377w/\377G Switch combat stance (most melee classes).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "j\377w/\377GJ) Shooting technique (archers, rangers). \377w/\377G Activate magic device.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "k\377w/\377GK) Use any item without \377w/\377G with a target).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "l\377w/\377GL) Use a basic ability ('m') without \377w/\377G with target (Draconian breath).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "m\377w/\377GM) Common commands and functions. \377w/\377G Pick breath element (Draconians).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "n\377w/\377GN) Enter a slash command. \377w/\377G Enter a custom action (same as % a).");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "o\377w/\377Gp) Load a macro file. \377w/\377G Change equipment (wield/takeoff/swap).");
+					Term_putstr(2, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt\377w/\377Gu) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing \377w/\377G closing.");
 
 					while (TRUE) {
 						switch (choice = inkey()) {
@@ -5701,9 +5724,9 @@ Chain_Macro:
 						default:
 							/* invalid action -> exit wizard */
 							if ((choice < 'a' || choice > mw_LAST) &&
-							    choice != 'C' && choice != 'D' && choice != 'E' && choice != 'M' &&
-							    choice != 'G' && choice != 'I' && choice != 'K' && choice != 'H' &&
-							    choice != 'J' && choice != 'N') {
+							    choice != 'C' && choice != 'D' && choice != 'E' &&
+							    choice != 'G' && choice != 'H' && choice != 'I' && choice != 'J' &&
+							    choice != 'K' && choice != 'L' && choice != 'M' && choice != 'N') {
 								//i = -1;
 								continue;
 							}
@@ -5857,18 +5880,20 @@ Chain_Macro:
 						Term_putstr(10, 12, -1, TERM_GREEN, "or by pressing  \377s:  \377gto chat and then typing the command:  \377s/mon");
 						Term_putstr(10, 13, -1, TERM_GREEN, "The first number on the left, in parentheses, is what you need.)");
 						Term_putstr(10, 14, -1, TERM_GREEN, "For example, enter  \377GFruit bat\377g  or just  \377G37  \377gto transform into one.");
-						Term_putstr(10, 15, -1, TERM_GREEN, "To return to your normal form, use  \377GPlayer\377g  or its code  \377G0\377g  .");
-						//Term_putstr(10, 15, -1, TERM_GREEN, "You must have learned a form before you can use it!");
-						Term_putstr(1, 17, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
+						Term_putstr(10, 15, -1, TERM_GREEN, "To return to the form you used before your current form, enter:  \377G-1\377g .");
+						Term_putstr(10, 16, -1, TERM_GREEN, "To return to your normal form, use  \377GPlayer\377g  or its code  \377G0\377g  .");
+						Term_putstr(10, 17, -1, TERM_GREEN, "To get asked about the form every time, just leave this blank.");
+						//Term_putstr(10, 18, -1, TERM_GREEN, "You must have learned a form before you can use it!");
+						Term_putstr(1, 19, -1, TERM_L_GREEN, "Enter exact monster name/code or leave blank:");
 						should_wait = TRUE;
 						break;
 
 					case mw_prfimm:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an immunity preference:");
-						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Electricity  \377Gb\377g) Cold  \377Gc\377g) Acid  \377Gd\377g) Fire  \377Ge\377g) Poison  \377Gf\377g) Water");
-						Term_putstr(5, 12, -1, TERM_GREEN, "\377G*\377g) None (pick one randomly on polymorphing)");
-						Term_putstr(5, 13, -1, TERM_GREEN, "\377G?\377g) Just check (displays your current immunity preference)");
-						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-f,*,?):");
+						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Just check (displays your current immunity preference)");
+						Term_putstr(5, 12, -1, TERM_GREEN, "\377Gb\377g) None (pick one randomly on polymorphing)");
+						Term_putstr(5, 13, -1, TERM_GREEN, "\377Gc\377g) Electricity  \377Gd\377g) Cold  \377Ge\377g) Fire  \377Gf\377g) Acid  \377Gg\377g) Poison  \377Gh\377g) Water");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-h):");
 
 						while (TRUE) {
 							switch (choice = inkey()) {
@@ -5883,7 +5908,7 @@ Chain_Macro:
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if ((choice < 'a' || choice > 'f') && choice != '?' && choice != '*') {
+								if (choice < 'a' || choice > 'h') {
 									//i = -2;
 									continue;
 								}
@@ -5895,14 +5920,14 @@ Chain_Macro:
 
 						/* build macro part */
 						switch (choice) {
-						case 'a': strcpy(buf2, "\\e)m@3\rd@Electricity\r"); break;
-						case 'b': strcpy(buf2, "\\e)m@3\rd@Cold\r"); break;
-						case 'c': strcpy(buf2, "\\e)m@3\rd@Acid\r"); break;
-						case 'd': strcpy(buf2, "\\e)m@3\rd@Fire\r"); break;
-						case 'e': strcpy(buf2, "\\e)m@3\rd@Poison\r"); break;
-						case 'f': strcpy(buf2, "\\e)m@3\rd@Water\r"); break;
-						case '*': strcpy(buf2, "\\e)m@3\rd@None\r"); break;
-						case '?': strcpy(buf2, "\\e)m@3\rd@Check\r"); break;
+						case 'a': strcpy(buf2, "\\e)m@3\rd@Check\r"); break;
+						case 'b': strcpy(buf2, "\\e)m@3\rd@None\r"); break;
+						case 'c': strcpy(buf2, "\\e)m@3\rd@Electricity\r"); break;
+						case 'd': strcpy(buf2, "\\e)m@3\rd@Cold\r"); break;
+						case 'e': strcpy(buf2, "\\e)m@3\rd@Fire\r"); break;
+						case 'f': strcpy(buf2, "\\e)m@3\rd@Acid\r"); break;
+						case 'g': strcpy(buf2, "\\e)m@3\rd@Poison\r"); break;
+						case 'h': strcpy(buf2, "\\e)m@3\rd@Water\r"); break;
 						}
 
 						choice = mw_prfimm; /* hack - remember */
@@ -6239,7 +6264,70 @@ Chain_Macro:
 						case 'a': strcpy(buf2, ":+:"); break;
 						case 'b': strcpy(buf2, ":^P\\r"); break;
 						case 'c': strcpy(buf2, ":/afk\\r"); break;
-						case 'd': strcpy(buf2, ":/rec\\r"); break;
+						case 'd':
+#if 0
+							strcpy(buf2, ":/rec\\r"); break;
+#else
+							while (TRUE) {
+								clear_from(9);
+								l = 11;
+								Term_putstr(10, l++, -1, TERM_GREEN, "Please choose a type of word-of-recall:");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "a) just basic word-of-recall (in to max depth / back out again)");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "b) recall to a specific, fixed depth (or back out again)");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "c) world-travel recall, ie recall across the world surface");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "d) world-travel recall, specifically to Bree, aka (32,32)");
+								while (TRUE) {
+									switch (choice = inkey()) {
+									case ESCAPE:
+									case 'p':
+									case '\010': /* backspace */
+										i = -2; /* leave */
+										break;
+									case KTRL('T'):
+										/* Take a screenshot */
+										xhtml_screenshot("screenshot????");
+										continue;
+									default:
+										/* invalid action -> exit wizard */
+										if (choice < 'a' || choice > 'd') {
+											//i = -1;
+											continue;
+										}
+									}
+									break;
+								}
+								/* exit? */
+								if (i == -2) {
+									/* hack before we exit: remember menu choice 'common' */
+									choice = mw_common;
+									break;
+								}
+
+								l++;
+								switch (choice) {
+								case 'a': strcpy(buf2, ":/rec\\r"); break;
+								case 'd': strcpy(buf2, ":/rec 32 32\\r"); break;
+								case 'b':
+									Term_putstr(5, l, -1, TERM_L_GREEN, "Enter a specific depth (eg '-500'): ");
+									strcpy(buf, "");
+									if (!askfor_aux(buf, 6, 0)) continue;
+									strcpy(buf2, ":/rec ");
+									strcat(buf2, buf);
+									strcat(buf2, "\\r");
+									break;
+								case 'c':
+									Term_putstr(5, l, -1, TERM_L_GREEN, "Enter world coordinates separated by space (eg '32 32'): ");
+									strcpy(buf, "");
+									if (!askfor_aux(buf, 6, 0)) continue;
+									strcpy(buf2, ":/rec ");
+									strcat(buf2, buf);
+									strcat(buf2, "\\r");
+									break;
+								}
+								break;
+							}
+							break;
+#endif
 						case 'e': strcpy(buf2, ":/cough\\r"); break;
 						case 'f': strcpy(buf2, ":/shout\\r"); break;
 						case 'g': strcpy(buf2, ":/edmt\\r"); break;
@@ -6263,10 +6351,123 @@ Chain_Macro:
 
 						/* hack before we exit: remember menu choice 'common' */
 						choice = mw_common;
+						/* exit? */
+						if (i == -2) continue;
+						break;
+
+					case mw_prfele:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Please choose an elemental preference:");
+						Term_putstr(5, 11, -1, TERM_GREEN, "\377Ga\377g) Just check (displays your current elemental preference)");
+						Term_putstr(5, 12, -1, TERM_GREEN, "\377Gb\377g) None (random)");
+						Term_putstr(5, 13, -1, TERM_GREEN, "\377Gc\377g) Lightning  \377Gd\377g) Frost  \377Ge\377g) Fire  \377Gf\377g) Acid  \377Gg\377g) Poison");
+						Term_putstr(15, 16, -1, TERM_L_GREEN, "Pick one (a-g):");
+
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -2; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (choice < 'a' || choice > 'g') {
+									//i = -2;
+									continue;
+								}
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -2) continue;
+
+						/* build macro part */
+						switch (choice) {
+						case 'a': strcpy(buf2, "\\e)m@19\r@Check\r"); break;
+						case 'b': strcpy(buf2, "\\e)m@19\r@None\r"); break;
+						case 'c': strcpy(buf2, "\\e)m@19\r@Lightning\r"); break;
+						case 'd': strcpy(buf2, "\\e)m@19\r@Frost\r"); break;
+						case 'e': strcpy(buf2, "\\e)m@19\r@Fire\r"); break;
+						case 'f': strcpy(buf2, "\\e)m@19\r@Acid\r"); break;
+						case 'g': strcpy(buf2, "\\e)m@19\r@Poison\r"); break;
+						}
+
+						choice = mw_prfele; /* hack - remember */
+						break;
+
+					case mw_dir_run:
+					case mw_dir_tunnel:
+					case mw_dir_disarm:
+					case mw_dir_bash:
+					case mw_dir_close:
+						clear_from(8);
+						Term_putstr(10, 10, -1, TERM_GREEN, "Please pick the specific, fixed direction:");
+
+						Term_putstr(25, 13, -1, TERM_L_GREEN, " 7  8  9");
+						Term_putstr(25, 14, -1, TERM_GREEN, "  \\ | /");
+						Term_putstr(25, 15, -1, TERM_L_GREEN, "4 \377g-\377G 5 \377g-\377G 6");
+						Term_putstr(25, 16, -1, TERM_GREEN, "  / | \\");
+						Term_putstr(25, 17, -1, TERM_L_GREEN, " 1  2  3");
+
+						Term_putstr(15, 20, -1, TERM_L_GREEN, "Your choice? (1 to 9) ");
+
+						while (TRUE) {
+							target_dir = inkey();
+							switch (target_dir) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -2; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							default:
+								/* invalid action -> exit wizard */
+								if (target_dir < '1' || target_dir > '9') {
+									//i = -3;
+									continue;
+								}
+							}
+							break;
+						}
+
+						/* exit? */
+						if (i == -2) continue;
+
+						strcpy(buf2, "\\e\\e\\\\");
+						switch (choice) {
+						case mw_dir_run:
+							strcat(buf2, ".");
+							break;
+						case mw_dir_tunnel:
+							strcat(buf2, "+"); //actually same for rogue_like or normal, just normal also offers 'T'
+							break;
+						case mw_dir_disarm:
+							strcat(buf2, "D"); //actually same for rogue_like or normal
+							break;
+						case mw_dir_bash:
+							if (c_cfg.rogue_like_commands) strcat(buf2, "f");
+							else strcat(buf2, "B");
+							break;
+						case mw_dir_close:
+							strcat(buf2, "c"); //actually same for rogue_like or normal
+							break;
+						}
+						strcat(buf2, format("%c", target_dir));
 						break;
 					}
 
+
+
 					/* --------------- specify item/parm if required --------------- */
+
+
 
 					/* might input a really long line? */
 					if (choice == mw_custom) {
@@ -6310,9 +6511,11 @@ Chain_Macro:
 						if (i == -2) continue;
 					}
 					/* no need for inputting an item/spell to use with the macro? */
-					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm && choice != mw_stance && choice != mw_common) {
+					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm &&
+					    choice != mw_stance && choice != mw_common && choice != mw_dir_run && choice != mw_dir_tunnel &&
+					    choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close && choice != mw_prfele) {
 						if (choice == mw_load) Term_gotoxy(23, 16);
-						else if (choice == mw_poly) Term_gotoxy(47, 17);
+						else if (choice == mw_poly) Term_gotoxy(47, 19);
 						else Term_gotoxy(47, 16);
 
 						/* Get an item/spell name */
@@ -6326,10 +6529,16 @@ Chain_Macro:
 						if (choice != mw_poly || buf[0]) strcat(buf, "\\r");
 					}
 
+
+
 					/* --------------- complete the macro by glueing premade part and default part together --------------- */
 
+
+
 					/* generate the full macro action; magic device/preferred immunity macros are already pre-made */
-					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common) {
+					if (choice != mw_device && choice != mw_prfimm && choice != mw_custom && choice != mw_common &&
+					    choice != mw_dir_run && choice != mw_dir_tunnel && choice != mw_dir_disarm && choice != mw_dir_bash &&
+					    choice != mw_dir_close && choice != mw_prfele) {
 						buf2[0] = '\\'; //note: should in theory be ')e\',
 						buf2[1] = 'e'; //      but doesn't work due to prompt behaviour
 						buf2[2] = ')'; //      (\e will then get ignored)
@@ -9004,15 +9213,6 @@ static void print_tomb(cptr reason) {
 			my_fclose(fp);
 		}
 
-#if 0	/* make the server send those info! */
-		/* King or Queen */
-		if (total_winner || (p_ptr->lev > PY_MAX_LEVEL))
-			p = "Magnificent";
-		/* Normal */
-		else
-			p =  cp_ptr->titles[(p_ptr->lev-1)/5] + c_text;
-#endif	/* 0 */
-
 		center_string(buf, cname);
 		c_put_str(TERM_L_UMBER, buf, 6, STONE_COL);
 
@@ -9304,6 +9504,13 @@ bool music(int val) {
 
 	/* play a sound */
 	if (music_hook) return music_hook(val);
+	else return FALSE;
+}
+bool music_volume(int val, char vol) {
+	if (!use_sound) return TRUE;
+
+	/* play a sound */
+	if (music_hook_vol) return music_hook_vol(val, vol);
 	else return FALSE;
 }
 

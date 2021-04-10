@@ -28,7 +28,7 @@ OFEAR_II = add_spell {
 	["level"] = 	18,
 	["mana"] = 	12,
 	["mana_max"] = 	12,
-	["fail"] = 	-25,
+	["fail"] = 	-30,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
 	["spell"] = 	function()
@@ -66,7 +66,7 @@ OBLIND_II = add_spell {
 	["level"] = 	18,
 	["mana"] = 	13,
 	["mana_max"] = 	13,
-	["fail"] = 	-25,
+	["fail"] = 	-30,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 		--1..gl(7) starting at rad 2, or just gl(9) starting at rad 1
@@ -191,7 +191,7 @@ OSLEEP_II = add_spell {
 	["level"] = 	20,--22
 	["mana"] = 	19,
 	["mana_max"] = 	19,
-	["fail"] = 	-25,
+	["fail"] = 	-30,
 	["direction"] = FALSE,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
@@ -219,7 +219,7 @@ DARKBOLT_I = add_spell {
 	["level"] = 	10,
 	["mana"] = 	3,
 	["mana_max"] = 	3,
-	["fail"] = 	0,
+	["fail"] = 	-10,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -241,7 +241,7 @@ DARKBOLT_II = add_spell {
 	["level"] = 	25,
 	["mana"] = 	6,
 	["mana_max"] = 	6,
-	["fail"] = 	-30,
+	["fail"] = 	-40,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -283,16 +283,18 @@ POISONRES = add_spell {
 	["name2"] = 	"AoP",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
-	["level"] = 	14,
+	["level"] = 	10,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	0,
+	["fail"] = 	-10,
 	["spell"] = 	function()
 		local dur
 		dur = randint(15) + 20 + get_level(Ind, POISONRES, 25)
 		set_melee_brand(Ind, dur, TBRAND_POIS, 10)
+		fire_ball(Ind, GF_TBRAND_POIS, 0, dur, 2, " calls perilous shadows imbuing you.")
 		if get_level(Ind, POISONRES, 50) >= 10 then
 			set_oppose_pois(Ind, dur)
+			fire_ball(Ind, GF_RESPOIS_PLAYER, 0, dur, 2, "")
 		end
 	end,
 	["info"] = 	function()
@@ -336,15 +338,15 @@ OINVIS = add_spell {
 	["spell"] = 	function()
 		local dur = randint(20) + 15 + get_level(Ind, OINVIS, 50)
 		set_invis(Ind, dur, 20 + get_level(Ind, OINVIS, 50))
-		set_shroud(Ind, dur, 10 + get_level(Ind, OINVIS, 50) / 2)
+		--set_shroud(Ind, dur, 10 + get_level(Ind, OINVIS, 50) / 2)
 	end,
 	["info"] = 	function()
 		return "dur "..(15 + get_level(Ind, OINVIS, 50)).."+d20 power "..(20 + get_level(Ind, OINVIS, 50)).."/"..(10 + get_level(Ind, OINVIS, 50) / 2)
 	end,
 	["desc"] = 	{
 		"Grants invisibility.",
-		"If you are standing on a non-lit grid (and not using any light source)",
-		"it will make it especially hard for monsters to hit you in melee.",
+		--"If you are standing on a non-lit grid (and not using any light source)",
+		--"it will make it especially hard for monsters to hit you in melee.",
 	}
 }
 
@@ -383,8 +385,8 @@ ODRAINLIFE = add_spell {
 	["spell_power"] = 0,
 	["am"] = 	75,
 	["level"] = 	37,
-	["mana"] = 	45,
-	["mana_max"] = 	45,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
 	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["direction"] = TRUE,

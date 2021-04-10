@@ -149,14 +149,14 @@ static void prt_title(int Ind) {
 
 	/* Winner */
 #if 0
-	else if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL)) {
+	else if (p_ptr->total_winner) {
 		if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
 			p = (p_ptr->male ? "**EMPEROR**" : "**EMPRESS**");
 		else
 			p = (p_ptr->male ? "**KING**" : "**QUEEN**");
 	}
 #else
-	else if (p_ptr->total_winner || (p_ptr->lev > PY_MAX_LEVEL)) {
+	else if (p_ptr->total_winner) {
 		char t[MAX_CHARS];
 		strcpy(t, "\377v");
 		strcat(t, get_ptitle(p_ptr, TRUE));
@@ -1177,9 +1177,19 @@ void calc_mana(int Ind) {
 		break;
 #ifdef ENABLE_DEATHKNIGHT
 	case CLASS_DEATHKNIGHT:
+		/* few Int, much Wis --140 */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 5000; //slight bump over paladin
+		break;
 #endif
 #ifdef ENABLE_HELLKNIGHT
 	case CLASS_HELLKNIGHT:
+		/* few Int, much Wis --140 */
+		new_mana = get_skill_scale(p_ptr, SKILL_MAGIC, 200) +
+			    (adj_mag_mana[p_ptr->stat_ind[A_INT]] * 15 * levels +
+			    adj_mag_mana[p_ptr->stat_ind[A_WIS]] * 85 * levels) / 5000; //slight bump over paladin
+		break;
 #endif
 	case CLASS_PALADIN:
 		/* few Int, much Wis --140 */
@@ -1719,6 +1729,11 @@ void calc_hitpoints(int Ind) {
 		finalHP = (mHPLim < mhp) ? (((mhp * 4) + (mHPLim * 1)) / 5) : (((mHPLim * 2) + (mhp * 3)) / 5);
 		finalHP += (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
 
+		/* Reduce for pvp, or mimicry is too good */
+		if (p_ptr->mode & MODE_PVP) {
+			if (finalHP > mhp) finalHP = mhp + (finalHP - mhp + 1) / 2;
+		}
+
 		/* done */
 		mhp = finalHP;
 	}
@@ -1911,6 +1926,10 @@ static int weight_limit(int Ind) /* max. 3000 atm */ {
 
 /* Allow very lowspeed forms (still >110 though) to still give a slight +1 bonus, eg Kamikaze Yeek/Gold Ant which move at +3 speed naturally. 0 to disable. */
 #define MIMIC_LOWSPEED_BONUS 1
+/* intrinsic +attribute boni from forms */
+#define FORM_STAT_BONUS_SMALL 1
+#define FORM_STAT_BONUS_MEDIUM 2
+#define FORM_STAT_BONUS_BIG 3
 /* Should be called by every calc_bonus call */
 static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	player_type *p_ptr = Players[Ind];
@@ -1954,8 +1973,8 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			csheet_boni->cb[5] |= CB6_RLIFE;
 			break;
 		case RBE_SHATTER:
-			p_ptr->stat_add[A_STR]++;
-			csheet_boni->pstr++;
+			p_ptr->stat_add[A_STR]++; //+1 per hit
+			csheet_boni->pstr++; //+1 per hit
 			break;
 		case RBE_LOSE_STR:
 			p_ptr->sustain_str = TRUE;
@@ -2018,13 +2037,13 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if (r_ptr->weight >= 20000 && i < 2) i++;
 	if (r_ptr->weight >= 100000 && i < 3) i++;
 	/* <race> */
-	if (strstr(mname, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Bears get +1 STR */
-	if (r_ptr->d_char == 'Y' && (r_ptr->flags3 & RF3_ANIMAL)) i++; /* Yeti/Sasquatch get +1 STR */
-	if (r_ptr->flags3 & RF3_TROLL) i += 1;
-	if (r_ptr->flags3 & RF3_GIANT) i += 1;
+	if (strstr(mname, "bear") && (r_ptr->flags3 & RF3_ANIMAL)) i += FORM_STAT_BONUS_MEDIUM; /* Bears get +STR */
+	if (r_ptr->d_char == 'Y' && (r_ptr->flags3 & RF3_ANIMAL)) i += FORM_STAT_BONUS_SMALL; /* Yeti/Sasquatch get +STR */
+	if (r_ptr->flags3 & RF3_TROLL) i += FORM_STAT_BONUS_MEDIUM;
+	if (r_ptr->flags3 & RF3_GIANT) i += FORM_STAT_BONUS_MEDIUM;
 	if ((r_ptr->flags3 & RF3_DRAGON) && (strstr(mname, "mature ") ||
 	    (r_ptr->d_char == 'D')))
-		i += 1; /* only +1 since more bonus is coming from its damage already */
+		i += FORM_STAT_BONUS_SMALL; /* only +1 since more bonus is coming from its damage already */
 	p_ptr->stat_add[A_STR] += i;
 	csheet_boni->pstr += i;
 
@@ -2038,41 +2057,41 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 
 	/* Cats, rogues, martial artists (mystics/ninjas) and some warriors are very agile and most of them are stealthy */
 	if (r_ptr->d_char == 'f') { /* Cats! */
-		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pdex += FORM_STAT_BONUS_MEDIUM;
 		/* don't stack with low weight stealth bonus too much (see further below) */
 		if (r_ptr->weight <= 500) { p_ptr->skill_stl++; csheet_boni->slth++; }
-		else { p_ptr->skill_stl = p_ptr->skill_stl + 2; csheet_boni->slth += 2; }
+		else { p_ptr->skill_stl = p_ptr->skill_stl + FORM_STAT_BONUS_MEDIUM; csheet_boni->slth += FORM_STAT_BONUS_MEDIUM; }
 	}
 	/* Rogues and master rogues */
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_BLUE) {
 		if (r_ptr->level >= 23) {
-			p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
-			p_ptr->skill_stl = p_ptr->skill_stl + 2; csheet_boni->slth += 2;
+			p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pdex += FORM_STAT_BONUS_MEDIUM;
+			p_ptr->skill_stl = p_ptr->skill_stl + FORM_STAT_BONUS_MEDIUM; csheet_boni->slth += FORM_STAT_BONUS_MEDIUM;
 		} else {
 			p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++;
 			p_ptr->skill_stl++; csheet_boni->slth++;
 		}
 	}
 	/* Warriors */
-	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && r_ptr->level >= 20) { p_ptr->stat_add[A_STR]++; csheet_boni->pstr++; } /* Skilled warriors */
-	if (p_ptr->body_monster == 239) { p_ptr->stat_add[A_STR]++; csheet_boni->pstr++; } /* Berserker */
-	if (p_ptr->body_monster == 1058 || p_ptr->body_monster == 1059) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; } /* (Grand) Swordsmaster */
+	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_UMBER && r_ptr->level >= 20) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_SMALL; csheet_boni->pstr += FORM_STAT_BONUS_SMALL; } /* Skilled warriors */
+	if (p_ptr->body_monster == 239) { p_ptr->stat_add[A_STR] += FORM_STAT_BONUS_SMALL; csheet_boni->pstr += FORM_STAT_BONUS_SMALL; } /* Berserker */
+	if (p_ptr->body_monster == 1058 || p_ptr->body_monster == 1059) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; } /* (Grand) Swordsmaster */
 	if (p_ptr->body_monster == 532) { /* Dagashi */
-		p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++;
+		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL;
 		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
 	if (p_ptr->body_monster == 485 || p_ptr->body_monster == 564) {/* Ninja, Nightblade */
-		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pdex += FORM_STAT_BONUS_MEDIUM;
 		p_ptr->skill_stl = p_ptr->skill_stl + 3; csheet_boni->slth += 3;
 	}
 	/* Mystics */
 	if (r_ptr->d_char == 'p' && r_ptr->d_attr == TERM_ORANGE) {
-		p_ptr->stat_add[A_DEX] += 2; csheet_boni->pdex += 2;
+		p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_MEDIUM; csheet_boni->pdex += FORM_STAT_BONUS_MEDIUM;
 		p_ptr->skill_stl++; csheet_boni->slth++;
 	}
 	/* Monks */
-	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Jade Monk */
-	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX]++; csheet_boni->pdex++; }/* Ivory Monk */
+	if (p_ptr->body_monster == 370) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }/* Jade Monk */
+	if (p_ptr->body_monster == 492) { p_ptr->stat_add[A_DEX] += FORM_STAT_BONUS_SMALL; csheet_boni->pdex += FORM_STAT_BONUS_SMALL; }/* Ivory Monk */
 
 
 
@@ -2086,6 +2105,10 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		//But really, if physical-race-intrinsic bonuses/maluses are counted in mimicry, then dwarves 
 		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
 		p_ptr->pspeed = (((r_ptr->speed + MIMIC_LOWSPEED_BONUS - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
+	}
+	/* Reduce for pvp, or mimicry is too good */
+	if (p_ptr->mode & MODE_PVP) {
+		p_ptr->pspeed = 110 + (p_ptr->pspeed - 110 + 1) / 2;
 	}
 	csheet_boni->spd = p_ptr->pspeed - 110;
 
@@ -2505,10 +2528,10 @@ Exceptions are rare, like Ent, who as a being of wood is suspectible to fire. (C
 			if (r_ptr->flags3 & RF3_IM_COLD) immunity[immrand] = 4;
 			break;
 		case 3:
-			if (r_ptr->flags3 & RF3_IM_ACID) immunity[immrand] = 1;
+			if (r_ptr->flags3 & RF3_IM_FIRE) immunity[immrand] = 3;
 			break;
 		case 4:
-			if (r_ptr->flags3 & RF3_IM_FIRE) immunity[immrand] = 3;
+			if (r_ptr->flags3 & RF3_IM_ACID) immunity[immrand] = 1;
 			break;
 		case 5:
 			if (r_ptr->flags3 & RF3_IM_POIS) immunity[immrand] = 5;
@@ -5925,6 +5948,11 @@ void calc_boni(int Ind) {
 		//d = (2000 / ((130 / (d + 4)) + 22)) - 20 - 650 / ((d - 25) * (d - 25) + 90);//too little
 #endif
 
+		/* Reduce for pvp, or mimicry is too good */
+		if (p_ptr->mode & MODE_PVP) {
+			if (d > p_ptr->to_d_melee) d = p_ptr->to_d_melee + (d - p_ptr->to_d_melee + 1) / 2;
+		}
+
 		/* Calculate new averaged to-dam bonus */
 		if (d < p_ptr->to_d_melee)
 #ifndef MIMICRY_BOOST_WEAK_FORM
@@ -8232,6 +8260,8 @@ static void process_global_event(int ge_id) {
 #ifdef USE_SOUND_2010
 							sound(i, "gong", "bell", SFX_TYPE_MISC, FALSE);
 #endif
+							/* 'alerted'? */
+							disturb(i, 1, 0);
 						}
 					}
 				}
@@ -9260,7 +9290,7 @@ void calc_techniques(int Ind) {
 		p_ptr->melee_techniques |= MT_FLASH;
 	if (mtech_lev[p_ptr->pclass][9] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][9])
-		p_ptr->melee_techniques |= MT_CLOAK;
+		p_ptr->melee_techniques |= MT_STEAMBLAST;
 	if (mtech_lev[p_ptr->pclass][10] &&
 	    p_ptr->lev >= mtech_lev[p_ptr->pclass][10])
 		p_ptr->melee_techniques |= MT_SPIN;
@@ -9285,6 +9315,11 @@ void calc_techniques(int Ind) {
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 10) p_ptr->ranged_techniques |= RT_CRAFT; /* Craft some ammunition */
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 16) p_ptr->ranged_techniques |= RT_DOUBLE; /* Double-shot */
 	if (get_skill(p_ptr, SKILL_ARCHERY) >= 25) p_ptr->ranged_techniques |= RT_BARRAGE; /* Barrage */
+
+	if (get_skill(p_ptr, SKILL_TRAPPING) >= 10) p_ptr->melee_techniques |= MT_STEAMBLAST;
+#ifdef ENABLE_DEMOLITIONIST
+	if (get_skill(p_ptr, SKILL_DIG) >= 10) p_ptr->melee_techniques |= MT_STEAMBLAST;
+#endif
 
 	Send_technique_info(Ind);
 }
@@ -9823,7 +9858,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		str[0] = toupper(str[0]);
 		pid = lookup_player_id(str);
 		if (!pid) {
-			msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
+			if (str[0] != '\e') msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
 			return;
 		}
 		acc = lookup_accountname(pid);
@@ -10001,7 +10036,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		str[0] = toupper(str[0]);
 		pid = lookup_player_id(str);
 		if (!pid) {
-			msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
+			if (str[0] != '\e') msg_format(Ind, "\377ySorry, there is no person known to us named %s.", str);
 			return;
 		}
 		acc = lookup_accountname(pid);
