@@ -9146,6 +9146,7 @@ static void process_global_event(int ge_id) {
 					y = rand_int(MAX_HGT - 1) + 1;
 					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
 					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR) &&
+					    zcave[y][x].feat != FEAT_BETWEEN &&
 					    zcave[y][x].feat != FEAT_BEACON &&
 					    zcave[y][x].feat != FEAT_DEEP_LAVA)
 						break;
