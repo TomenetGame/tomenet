@@ -119,7 +119,7 @@ OREGEN = add_spell {
 			end
 	end,
 	["info"] = 	function()
-			return "dur "..(10 + get_level(Ind, OREGEN, 30)).."+d5 power "..((20 + get_level(Ind, OREGEN, 50)))
+			return "dur "..(10 + get_level(Ind, OREGEN, 30)).."+d5 heal "..((20 + get_level(Ind, OREGEN, 50)))
 	end,
 	["desc"] = 	{
 			"Draws from nether undercurrents to replenish your health.",
