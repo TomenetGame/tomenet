@@ -1167,6 +1167,9 @@
 /* Not allowed to steal on protected floor grids (Inns)? */
 #define PROTECTED_NO_STEALING
 
+/* Combine 'Money Belt' and 'Device of Theft Prevention' aka Backpack Safety Lock in one item? */
+#define TOOL_NOTHEFT_COMBO
+
 /*
  * Allow wraith-formed player to pass through permawalls on the surface.
  */

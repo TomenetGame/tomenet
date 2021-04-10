@@ -873,7 +873,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			if ((!p_ptr->paralyzed &&
 			    (rand_int(160 + UNAWARENESS(p_ptr)) <
 			    (adj_dex_safe[p_ptr->stat_ind[A_DEX]] + p_ptr->lev))) ||
-			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(100)) ) { //80
+#ifndef TOOL_NOTHEFT_COMBO
+			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(100))) { //80
+#else
+			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(90))) {
+#endif
 				/* Saving throw message */
 				msg_print(Ind, "Your backpack seems to vibrate strangely!");
 				break;
@@ -994,7 +998,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			if (gold > (u32b) p_ptr->au) gold = p_ptr->au;
 			p_ptr->au -= gold;
 			if ((gold <= 0) ||
-			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_MONEY_BELT && magik(100)) ) {
+#ifndef TOOL_NOTHEFT_COMBO
+			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_MONEY_BELT && magik(100))) {
+#else
+			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(90))) {
+#endif
 				msg_print(Ind, "You feel something touching you.");
 			} else if (p_ptr->au) {
 				msg_print(Ind, "Your purse feels lighter.");
