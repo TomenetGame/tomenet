@@ -1686,7 +1686,8 @@ F:INT | WIS | CHR | MANA | SEARCH | ACTIVATE | SEE_INVIS | ESP_EVIL
 F:SLAY_EVIL | SLAY_TROLL | SLAY_ORC | SLAY_DRAGON | SLAY_UNDEAD | SLAY_DEMON
 F:HOLD_LIFE | RES_SHARDS | RES_FIRE | RES_COLD | RES_ELEC | BRAND_FIRE
 F:SHOW_MODS | HIDE_TYPE | SPECIAL_GENE
-#maybe need something else here..
+D:A mythical staff said to have belonged to a monkey spirit. You carefully look
+D:around as you pick up the staff but there is still no sign of any such spirit.
 
 
 # The Mace of Disruption 'Deathwreaker'
