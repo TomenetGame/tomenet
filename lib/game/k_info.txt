@@ -6895,7 +6895,7 @@ A:10/3
 F:IGNORE_WATER | EASY_KNOW
 D:When equipped it protects your purse from thieves.
 
-N:905:& Backpack Safety Lock~ 
+N:905:& Backpack Safety Lock~
 G:`:B
 I:12:4:0
 W:35:0:12:30000
