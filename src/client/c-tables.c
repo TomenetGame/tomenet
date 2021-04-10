@@ -547,6 +547,12 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.easy_disarm_montraps,	FALSE,	3,	9, 136, TRUE,
 	    "easy_disarm_montraps",	"Automatically disarm monster traps ('/edtm')" },
 
+	{ &c_cfg.auto_pickup,	FALSE,	3,	9, 137, TRUE,
+	  "auto_pickup",	"Automatically pickup items ('/apickup')" },
+
+	{ &c_cfg.destroy_on_auto_pickup,	FALSE,	3,	9, 137, TRUE,
+	  "destroy_on_auto_pickup",	"Destroy item if it don't match auto-pickup rules" },
+
 #if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
     /* 4.7.3 */
 	{ &c_cfg.extra_indicators,	FALSE,	6,	0, 1XX, TRUE,

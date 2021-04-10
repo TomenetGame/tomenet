@@ -4480,6 +4480,10 @@ void cmd_message(void) {
 			c_msg_format("\374\376\377yYour current local time: %04d/%02d/%02d - %02d:%02d:%02dh", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
 			inkey_msg = FALSE;
 			return;
+		} else if (!strcasecmp(buf, "/apickup")) {
+			c_cfg.auto_pickup = !c_cfg.auto_pickup;
+			c_msg_format("Auto-pickup mode is %s.", c_cfg.auto_pickup ? "on" : "off");
+			return;
 		}
 
 		Send_msg(buf);

@@ -255,6 +255,7 @@
 #define PKT_INDICATORS		197
 #define PKT_PLAYERLIST		198
 #define PKT_WEATHERCOL		199
+#define PKT_WHATS_UNDER_YOUR_FEET		200
 
 /*
  * Possible error codes returned

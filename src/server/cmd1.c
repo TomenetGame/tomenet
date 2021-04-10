@@ -1330,16 +1330,20 @@ void whats_under_your_feet(int Ind, bool force) {
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-	if (!exceptionally_shareable_item(o_ptr) && compat_pomode(Ind, o_ptr)) {
-		if (p_ptr->blind || no_lite(Ind))
-			msg_format(Ind, "\377DYou feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
-		else
-			msg_format(Ind, "\377DYou see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 2, 0, 0)) {
+		Send_whats_under_you_feet(Ind, o_name, !exceptionally_shareable_item(o_ptr) && compat_pomode(Ind, o_ptr), p_ptr->blind || no_lite(Ind), o_ptr->next_o_idx > 0);
 	} else {
-		if (p_ptr->blind || no_lite(Ind))
-			msg_format(Ind, "You feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
-		else
-			msg_format(Ind, "You see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+		if (!exceptionally_shareable_item(o_ptr) && compat_pomode(Ind, o_ptr)) {
+			if (p_ptr->blind || no_lite(Ind))
+				msg_format(Ind, "\377DYou feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+			else
+				msg_format(Ind, "\377DYou see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+		} else {
+			if (p_ptr->blind || no_lite(Ind))
+				msg_format(Ind, "You feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+			else
+				msg_format(Ind, "You see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+		}
 	}
 }
 
@@ -1447,16 +1451,20 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* hack for cloaking: since picking up anything breaks it,
 		   we don't pickup gold except if the player really wants to */
 		if (((p_ptr->cloaked == 1 || p_ptr->shadow_running) && !pickup) || forbidden || (p_ptr->ghost && !p_ptr->admin_dm)) {
-			if (compat_pomode(Ind, o_ptr)) {
-				if (p_ptr->blind || no_lite(Ind))
-					msg_format(Ind, "\377DYou feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
-				else
-					msg_format(Ind, "\377DYou see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+			if (is_atleast(&p_ptr->version, 4, 7, 3, 2, 0, 0)) {
+				Send_whats_under_you_feet(Ind, o_name, compat_pomode(Ind, o_ptr), p_ptr->blind || no_lite(Ind), o_ptr->next_o_idx);
 			} else {
-				if (p_ptr->blind || no_lite(Ind))
-					msg_format(Ind, "You feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
-				else
-					msg_format(Ind, "You see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+				if (compat_pomode(Ind, o_ptr)) {
+					if (p_ptr->blind || no_lite(Ind))
+						msg_format(Ind, "\377DYou feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+					else
+						msg_format(Ind, "\377DYou see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+				} else {
+					if (p_ptr->blind || no_lite(Ind))
+						msg_format(Ind, "You feel %s%s here.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+					else
+						msg_format(Ind, "You see %s%s.", o_name, o_ptr->next_o_idx ? " on a pile" : "");
+				}
 			}
 			Send_floor(Ind, o_ptr->tval);
 			return;
@@ -1643,16 +1651,21 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				}
 			}
 
-			if (compat_pomode(Ind, o_ptr)) {
-				if (p_ptr->blind || no_lite(Ind))
-					msg_format(Ind, "\377DYou feel %s%s%s here.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
-				else
-					msg_format(Ind, "\377DYou see %s%s%s.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+			if (is_atleast(&p_ptr->version, 4, 7, 3, 2, 0, 0)) {
+				strcat(o_name, pseudoid);
+				Send_whats_under_you_feet(Ind, o_name, compat_pomode(Ind, o_ptr), p_ptr->blind || no_lite(Ind), o_ptr->next_o_idx);
 			} else {
-				if (p_ptr->blind || no_lite(Ind))
-					msg_format(Ind, "You feel %s%s%s here.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
-				else
-					msg_format(Ind, "You see %s%s%s.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+				if (compat_pomode(Ind, o_ptr)) {
+					if (p_ptr->blind || no_lite(Ind))
+						msg_format(Ind, "\377DYou feel %s%s%s here.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+					else
+						msg_format(Ind, "\377DYou see %s%s%s.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+				} else {
+					if (p_ptr->blind || no_lite(Ind))
+						msg_format(Ind, "You feel %s%s%s here.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+					else
+						msg_format(Ind, "You see %s%s%s.", o_name, pseudoid, o_ptr->next_o_idx ? " on a pile" : "");
+				}
 			}
 			Send_floor(Ind, o_ptr->tval);
 			return;

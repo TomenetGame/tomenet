@@ -3973,6 +3973,8 @@ struct client_opts {
 	bool keep_bottle;
 
 	bool easy_disarm_montraps;
+	bool auto_pickup;
+	bool destroy_on_auto_pickup;
 };
 
 /*

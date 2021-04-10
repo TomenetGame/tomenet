@@ -158,3 +158,6 @@ Y:item_error_beep
 X:keep_bottle
 
 Y:screenshot_format
+
+X:auto_pickup
+X:destroy_on_auto_pickup

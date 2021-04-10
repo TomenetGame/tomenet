@@ -1176,6 +1176,22 @@ void prt_esp(bool is_full_esp) {
 	Term_gotoxy(x, y);
 }
 
+void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, bool on_pile) {
+
+	if (crossmod_item) {
+		if (cant_see)
+			c_msg_format("\377DYou feel %s%s here.", o_name, on_pile ? " on a pile" : "");
+		else
+			c_msg_format("\377DYou see %s%s.", o_name, on_pile ? " on a pile" : "");
+	} else {
+		if (cant_see)
+			c_msg_format("You feel %s%s here.", o_name, on_pile ? " on a pile" : "");
+		else
+			c_msg_format("You see %s%s.", o_name, on_pile ? " on a pile" : "");
+	}
+
+}
+
 /*
  * Prints cut status
  */
