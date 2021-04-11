@@ -1333,7 +1333,7 @@ void whats_under_your_feet(int Ind, bool force) {
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-	if (is_atleast(&p_ptr->version, 4, 7, 3, 2, 0, 0)) {
+	if (is_atleast(&p_ptr->version, 4, 7, 3, 3, 0, 0)) {
 		Send_whats_under_you_feet(Ind, o_name, !exceptionally_shareable_item(o_ptr) && compat_pomode(Ind, o_ptr), p_ptr->blind || no_lite(Ind), o_ptr->next_o_idx > 0);
 	} else {
 		if (!exceptionally_shareable_item(o_ptr) && compat_pomode(Ind, o_ptr)) {
@@ -1457,7 +1457,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* hack for cloaking: since picking up anything breaks it,
 		   we don't pickup gold except if the player really wants to */
 		if (((p_ptr->cloaked == 1 || p_ptr->shadow_running) && !pickup) || forbidden || (p_ptr->ghost && !p_ptr->admin_dm)) {
-			if (is_atleast(&p_ptr->version, 4, 7, 3, 2, 0, 0)) {
+			if (is_atleast(&p_ptr->version, 4, 7, 3, 3, 0, 0)) {
 				Send_whats_under_you_feet(Ind, o_name, compat_pomode(Ind, o_ptr), p_ptr->blind || no_lite(Ind), o_ptr->next_o_idx);
 			} else {
 				if (compat_pomode(Ind, o_ptr)) {
@@ -1659,7 +1659,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				}
 			}
 
-			if (is_atleast(&p_ptr->version, 4, 7, 3, 2, 0, 0)) {
+			if (is_atleast(&p_ptr->version, 4, 7, 3, 3, 0, 0)) {
 				strcat(o_name, pseudoid);
 				Send_whats_under_you_feet(Ind, o_name, compat_pomode(Ind, o_ptr), p_ptr->blind || no_lite(Ind), o_ptr->next_o_idx);
 			} else {
