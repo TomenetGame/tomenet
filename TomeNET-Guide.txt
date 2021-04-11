@@ -17071,9 +17071,9 @@ wear/wield full equipment:
 
 Forms you can already get in Bree town:
 ---------------------------------------
-Village idiot    1  Its pretty weak and has slightly erratic movement which can
-                    be a bit annoying but it gives a speed bonus which can be
-                    somewhat useful when fighting.
+Village idiot    1  It's pretty weak and has slightly erratic movement which
+                    can be a bit annoying but it gives a speed bonus which can
+                    be somewhat useful when fighting.
 Mean-looking mercenary
 Battle-scarred veteran
                  1  They can improve your initial HP (hit points) and AC
