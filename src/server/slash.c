@@ -6120,7 +6120,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			/* wish a true artifact by name */
 			else if (prefix(messagelc, "/awish")) {
-				artifact_type *a_ptr;
+				artifact_type *a_ptr = NULL;
 				object_type forge, *o_ptr = &forge;
 				int kidx;
 				char o_name[ONAME_LEN];
