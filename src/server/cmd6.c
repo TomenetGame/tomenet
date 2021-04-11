@@ -6313,7 +6313,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				p_ptr->energy -= 100;
 				teleport_player(Ind, 10, TRUE);
 			}
-			else teleport_player_to(ij,ii);
+			else teleport_player_to(ij, ii, FALSE);
 			o_ptr->recharging = 100 - get_skill_scale(p_ptr, SKILL_DEVICE, 50);
 #else
 			/* Initiate or complete gateway creation. - C. Blue

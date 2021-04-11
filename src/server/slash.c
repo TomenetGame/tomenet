@@ -7691,7 +7691,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						process_player_change_wpos(p);
 					}
 
-					teleport_player_to_force(p, p_ptr->py, p_ptr->px);
+					teleport_player_to(p, p_ptr->py, p_ptr->px, TRUE);
 
 					msg_print(Ind, "Teleported that player.");
 				} else {
@@ -7705,7 +7705,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						process_player_change_wpos(Ind);
 					}
 
-					teleport_player_to_force(Ind, q_ptr->py, q_ptr->px);
+					teleport_player_to(Ind, q_ptr->py, q_ptr->px, TRUE);
 
 					msg_print(Ind, "Teleported to that player.");
 				}

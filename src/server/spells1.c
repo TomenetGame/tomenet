@@ -1139,7 +1139,7 @@ void teleport_player_force(int Ind, int dis) {
  * This function is slightly obsessive about correctness.
  * (Not anymore: This function allows teleporting into vaults (!))
  */
-void teleport_player_to(int Ind, int ny, int nx) {
+void teleport_player_to(int Ind, int ny, int nx, bool forced) {
 	player_type *p_ptr = Players[Ind];
 
 	int y, x, oy, ox, dis = 1, ctr = 0;
@@ -1150,22 +1150,26 @@ void teleport_player_to(int Ind, int ny, int nx) {
 	bool town = istown(wpos);//prevent teleporting people who can't swim into the lake in Bree
 
 	if (!(zcave = getcave(wpos))) return;
-	if (p_ptr->anti_tele) return;
-	if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
-	l_ptr = getfloor(wpos);
-
-	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
-	if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return;
-	//if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
 	if (ny < 1) ny = 1;
 	if (nx < 1) nx = 1;
 	if (ny > MAX_HGT - 2) ny = MAX_HGT - 2;
 	if (nx > MAX_WID - 2) nx = MAX_WID - 2;
 
-	/* Space/Time Anchor -- note that atm we don't check for p_ptr->death flag here.. */
-	if (check_st_anchor2(wpos, p_ptr->py, p_ptr->px, ny, nx)) return;
+	if (!forced) {
+		if (p_ptr->anti_tele) return;
+		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+
+		if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
+
+		l_ptr = getfloor(wpos);
+		if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
+		if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return;
+		//if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
+
+		/* Space/Time Anchor */
+		if (check_st_anchor2(wpos, p_ptr->py, p_ptr->px, ny, nx)) return;
+	}
 
 	/* Find a usable location */
 	while (tries) {
@@ -1183,43 +1187,67 @@ void teleport_player_to(int Ind, int ny, int nx) {
 		}
 		if (!tries) return;
 
-		if (town) {
-			if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
-			    zcave[y][x].feat == FEAT_DEEP_LAVA ||
-			    zcave[y][x].feat == FEAT_FIRE ||
-			    zcave[y][x].feat == FEAT_GREAT_FIRE)
-				if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire))) {
-					/* Occasionally advance the distance */
-					if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
-						ctr = 0;
-						dis++;
+		if (!forced) { /* normal tele-to */
+			if (town) {
+				if (zcave[y][x].feat == FEAT_SHAL_LAVA ||
+				    zcave[y][x].feat == FEAT_DEEP_LAVA ||
+				    zcave[y][x].feat == FEAT_FIRE ||
+				    zcave[y][x].feat == FEAT_GREAT_FIRE)
+					if (!(p_ptr->immune_fire || (p_ptr->resist_fire && p_ptr->oppose_fire))) {
+						/* Occasionally advance the distance */
+						if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
+							ctr = 0;
+							dis++;
+						}
+						continue;
 					}
-					continue;
-				}
-			if (zcave[y][x].feat == FEAT_DEEP_WATER)
-				//if (!(p_ptr->immune_water || p_ptr->res_water ||
-				if (!(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith)) {
-					/* Occasionally advance the distance */
-					if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
-						ctr = 0;
-						dis++;
+				if (zcave[y][x].feat == FEAT_DEEP_WATER)
+					//if (!(p_ptr->immune_water || p_ptr->res_water ||
+					if (!(p_ptr->can_swim || p_ptr->levitate || p_ptr->ghost || p_ptr->tim_wraith)) {
+						/* Occasionally advance the distance */
+						if (++ctr > (4 * dis * dis + 4 * dis + 1)) {
+							ctr = 0;
+							dis++;
+						}
+						continue;
 					}
-					continue;
-				}
-		}
+			}
 
-		/* Cant telep into houses on world surface..*/
-		/* ..and for instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
-		if (wpos->wz || (!(zcave[y][x].info & (CAVE_ICKY | CAVE_PROT)) && !(f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED))) {
-			/* No tele-to into no-tele vaults */
-			if (cave_free_bold(zcave, y, x) &&
-			    !(zcave[y][x].info & CAVE_STCK)) {
-				/* Never break into st-anchor */
-				if (!check_st_anchor(wpos, y, x)) {
-					/* tele-to success */
-					break;
+			/* Cant telep into houses on world surface..*/
+			/* ..and for instant-resurrection into sickbay: avoid ppl blinking into there on purpose, disturbing the patients -_- */
+			if (wpos->wz || (!(zcave[y][x].info & (CAVE_ICKY | CAVE_PROT)) && !(f_info[zcave[y][x].feat].flags1 & FF1_PROTECTED))) {
+				/* No tele-to into no-tele vaults */
+				if (cave_free_bold(zcave, y, x) &&
+				    !(zcave[y][x].info & CAVE_STCK)) {
+					/* Never break into st-anchor */
+					if (!check_st_anchor(wpos, y, x)) {
+						/* tele-to success */
+						break;
+					}
 				}
 			}
+		} else { /* forced tele-to */
+			/* Require floor space if not ghost */
+			if (!p_ptr->ghost && !cave_free_bold(zcave, y, x)) continue;
+
+			/* never teleport onto perma-walls (happens to ghosts in khazad) */
+			if (cave_perma_bold(zcave, y, x)
+			    && !player_can_enter(Ind, zcave[y][x].feat, TRUE))
+				continue;
+
+			/* Require empty space if a ghost too */
+			if (p_ptr->ghost && zcave[y][x].m_idx) continue;
+
+			/* Prevent landing onto a store entrance */
+			if (zcave[y][x].feat == FEAT_SHOP) continue;
+			/* Prevent landing onto closed doors just because it's a bit ugly style-wise :-s */
+			if (zcave[y][x].feat == FEAT_HOME || /* House door */
+			    (zcave[y][x].feat >= FEAT_DOOR_HEAD && zcave[y][x].feat <= FEAT_DOOR_TAIL) || /* Normal doors, closed and locked */
+			    zcave[y][x].feat == FEAT_SECRET) /* Include secret door */
+				continue;
+
+			/* tele-to success */
+			break;
 		}
 
 		/* Occasionally advance the distance */
@@ -1242,7 +1270,8 @@ void teleport_player_to(int Ind, int ny, int nx) {
 	}
 
 	/* Log, to distinguish MOVE_BODY vs TELE_TO related kills just in case */
-	s_printf("TELE_TO: '%s' was teleported to %d,%d", p_ptr->name, x, y);
+	if (p_ptr->tmp_x != 255) s_printf("TELE_TO: '%s' was teleported to %d,%d", p_ptr->name, x, y);
+	else s_printf("TELE_TO_FORCE: '%s' was teleported to %d,%d", p_ptr->name, x, y);
 	if ((zcave[y][x].info & CAVE_ICKY)) s_printf(" (ICKY)");
 	if ((zcave[y][x].info & CAVE_STCK)) s_printf(" (STCK)");
 	s_printf(".\n");
@@ -1298,27 +1327,6 @@ void teleport_player_to(int Ind, int ny, int nx) {
 	sound(Ind, "blink", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 }
-void teleport_player_to_force(int Ind, int ny, int nx) {
-	bool anti_tele, death;
-	player_type *p_ptr = Players[Ind];
-
-	/* Turn off anti-tele */
-	anti_tele = p_ptr->anti_tele;
-	/* set death flag as hack to escape no-tele vault grids */
-	death = p_ptr->death;
-
-	/* hacks */
-	p_ptr->anti_tele = FALSE; /* actually already covered by p_ptr->death below */
-	p_ptr->death = TRUE;
-
-	teleport_player_to(Ind, ny, nx);
-
-	/* Restore anti-tele */
-	p_ptr->anti_tele = anti_tele;
-	/* restore death flag */
-	p_ptr->death = death;
-}
-
 
 
 /*
@@ -4042,7 +4050,7 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 			msg_print(Ind, "You resist the effects!");
 			break;
 		}
-		if (m_ptr) teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
+		if (m_ptr) teleport_player_to(Ind, m_ptr->fy, m_ptr->fx, FALSE);
 		else teleport_player(Ind, 200, TRUE);
 		break;
 	case 1: case 2: case 3:
@@ -11321,7 +11329,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			msg_format(0 - who, "You command %s to return.", Players[0 - who]->play_vis[Ind] ? p_ptr->name : "It");
 
 			/* Prepare to teleport */
-			teleport_player_to(Ind, q_ptr->py, q_ptr->px);
+			teleport_player_to(Ind, q_ptr->py, q_ptr->px, FALSE);
 		}
 		break;
 
