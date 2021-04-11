@@ -1156,13 +1156,13 @@ void teleport_player_to(int Ind, int ny, int nx, bool forced) {
 	if (ny > MAX_HGT - 2) ny = MAX_HGT - 2;
 	if (nx > MAX_WID - 2) nx = MAX_WID - 2;
 
+	l_ptr = getfloor(wpos);
 	if (!forced) {
 		if (p_ptr->anti_tele) return;
 		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
 
 		if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
 
-		l_ptr = getfloor(wpos);
 		if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
 		if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return;
 		//if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
