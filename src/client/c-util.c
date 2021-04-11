@@ -8933,7 +8933,7 @@ void do_cmd_options(void) {
 		/* Give some choices */
 		Term_putstr(3,  2, -1, TERM_WHITE, "(\377y1\377w/\377y2\377w/\377y3\377w/\377y4\377w) User interface options 1/2/3/4");
 		Term_putstr(3,  3, -1, TERM_WHITE, "(\377y5\377w)       Audio options");
-		Term_putstr(3,  4, -1, TERM_WHITE, "(\377y6\377w/\377y7\377w)     Game-play options 1/2");
+		Term_putstr(3,  4, -1, TERM_WHITE, "(\377y6\377w/\377y7\377w/\377y8\377w)   Game-play options 1/2/3");
 		Term_putstr(3,  5, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
 		Term_putstr(3,  7, -1, TERM_WHITE, "(\377os\377w)       Save all options & flags");
 		Term_putstr(3,  8, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
@@ -8990,6 +8990,8 @@ void do_cmd_options(void) {
 			do_cmd_options_aux(2, "Game-Play Options 1");
 		} else if (k == '7') {
 			do_cmd_options_aux(3, "Game-Play Options 2");
+		} else if (k == '8') {
+			do_cmd_options_aux(8, "Game-Play Options 3");
 		}
 
 		/* Save a 'option' file */

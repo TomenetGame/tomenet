@@ -3800,7 +3800,7 @@ self-explaining or that are especially important are listed in detail here:
 
     no_shriek_sfx and no_house_sfx might be especially interesting too.
 
- (6, 7) Game-Play Options
+ (6, 7, 8) Game-Play Options
     Use old target by default (use_old_target)
         If this is on, a ranged attack via *t5 or *t- will not pick a new
         (ie closer) target if the previously acquired target is still okay.

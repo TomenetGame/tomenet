@@ -544,10 +544,9 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.no_lite_fainting,	FALSE,	1,	0, 138, TRUE,
 	    "no_lite_fainting",		"Disable shading effect for fainting light source" },
 
-	{ &c_cfg.auto_pickup,	FALSE,	3,	9, 137, TRUE,
+	{ &c_cfg.auto_pickup,	FALSE,	8,	0, 139, TRUE,
 	  "auto_pickup",	"Automatically pickup items ('/apickup')" },
-
-	{ &c_cfg.destroy_on_auto_pickup,	FALSE,	3,	9, 137, TRUE,
+	{ &c_cfg.destroy_on_auto_pickup,	FALSE,	8,	0, 140, TRUE,
 	  "destroy_on_auto_pickup",	"Destroy item if it don't match auto-pickup rules" },
 
 #if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
