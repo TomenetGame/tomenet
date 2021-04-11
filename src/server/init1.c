@@ -1542,6 +1542,11 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "ENABLE_SUBINVEN") && negation) invalid = TRUE;
 #endif
+#ifndef TOOL_NOTHEFT_COMBO
+		if (streq(m, "TOOL_NOTHEFT_COMBO") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "TOOL_NOTHEFT_COMBO") && negation) invalid = TRUE;
+#endif
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
 		    strcmp(m, "RPG_SERVER") &&
@@ -1567,6 +1572,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_DEMOLITIONIST") &&
 		    strcmp(m, "DEMOLITIONIST_IDDC_ONLY") &&
 		    strcmp(m, "ENABLE_SUBINVEN") &&
+		    strcmp(m, "TOOL_NOTHEFT_COMBO") &&
 			TRUE)
 			invalid = TRUE;
 	}

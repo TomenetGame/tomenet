@@ -6887,21 +6887,25 @@ W:10:0:2:500
 A:10/3
 F:HIDE_TYPE | DISARM | EASY_KNOW
 
-N:904:& Money Belt~
-G:`:B
-I:12:3:0
-W:10:0:10:1000
-A:10/3
-F:IGNORE_WATER | EASY_KNOW
-D:When equipped it protects your purse from thieves.
+#--the former device of theft prevention, now backpack safety lock,
+#  may fulfil both functions: protect inven + purse.
+$TOOL_NOTHEFT_COMBO!N:904:& Money Belt~
+$TOOL_NOTHEFT_COMBO!G:`:B
+$TOOL_NOTHEFT_COMBO!I:12:3:0
+$TOOL_NOTHEFT_COMBO!W:10:0:10:1000
+$TOOL_NOTHEFT_COMBO!A:10/3
+$TOOL_NOTHEFT_COMBO!F:IGNORE_WATER | EASY_KNOW
+$TOOL_NOTHEFT_COMBO!D:When equipped it protects your purse from thieves.
 
-N:905:& Backpack Safety Lock~ 
+N:905:& Backpack Safety Lock~
 G:`:B
 I:12:4:0
-W:35:0:12:30000
+W:35:0:12:15000
 A:35/20
 F:EASY_KNOW
-D:When equipped it protects your inventory items from thieves.
+$TOOL_NOTHEFT_COMBO!D:When equipped it protects your inventory items from thieves.
+$TOOL_NOTHEFT_COMBO$D:When equipped it very efficiently protects the items in your
+$TOOL_NOTHEFT_COMBO$D:inventory as well as the money in your purse from thieves.
 
 N:906:& Tarpaulin~
 G:`:D

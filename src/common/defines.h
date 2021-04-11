@@ -855,6 +855,49 @@
    This is only really important for Nether Realm (maybe somewhat for Cloud Planes). */
 #define NO_SELF_SUMMON
 
+/* Levels that Morgoth spawns on will not allow *destruction* nor any use of
+   genocide spells. This can also prevent too trivial loot retrieval in
+   case of unexpected deathhh - C. Blue */
+#define MORGOTH_DANGEROUS_LEVEL
+
+/* If Morgoth is generated within a vault at the time the
+   dungeon level is generated, set it to NO_TELE.
+   (overridden by MORGOTH_NO_TELE_VAULTS, see below) - C. Blue */
+//#define MORGOTH_NO_TELE_VAULT
+
+/* If Morgoth is generated on a dungeon level at the time the
+   dungeon level is generated, set all vaults on it to NO_TELE.
+   Also prevent Morgoth from spawning 'live' (meaning later on,
+   after the level had already been generated) which would
+   undermine the NO_TELE vault concept (or require more code :) - C. Blue */
+#define MORGOTH_NO_TELE_VAULTS
+
+/* All player deaths that occur on a level Morgoth is currently on
+   are no-ghost deaths, resulting in total termination of the character!
+   This was added after some complaints arrived that the atmosphere was taken out of
+   the game by mostly everlasting players who made killing him kind of a routine. - C. Blue */
+#define MORGOTH_GHOST_DEATH_LEVEL
+
+/* Both of the above lead to preventing live spawns of Morgoth, other than during
+   generation of the dungeon level. (for technical reasons) */
+#ifdef MORGOTH_NO_TELE_VAULTS
+ #define MORGOTH_NO_LIVE_SPAWN
+#endif
+#ifdef MORGOTH_GHOST_DEATH_LEVEL
+ #define MORGOTH_NO_LIVE_SPAWN
+#endif
+
+/* Make Sauron more dangerous for AM or Intercepters,
+   by giving him AI_ANNOY vs melee targets. */
+#define SAURON_ANTI_MELEE
+
+/* Make Sauron more dangerous for Glyphers
+   by giving him faster cast rate while blocked by glyphs. */
+#define SAURON_ANTI_GLYPH
+
+/* Set Sauron's boost factor (1/n chance to cast spells) [67,75] */
+#define SAURON_SPELL_BOOST	67
+
 
 /* ----------------------------------------------- (Rather specific 'features', could go to defines-features.h instead)  ----------------------------------------------- */
 
@@ -971,7 +1014,6 @@
    Last but not least, items cannot be traded on stale floors (could exploit via logging+farming the same floor over and over with new chars)! */
 #define IDDC_RESTRICTED_PARTYING
 
-
 /* Special anti-cheeze hack: Disallow carrying items from town to IDDC and
    giving them to another character inside IDDC, for the first n floors. */
 #ifndef IDDC_IRON_COOP
@@ -1021,49 +1063,6 @@
    the according world map sector - they will additionally have to SEE the staircase once!
    This can sometimes make discovering newly added dungeons much harder. */
 #define GLOBAL_DUNGEON_KNOWLEDGE
-
-/* Levels that Morgoth spawns on will not allow *destruction* nor any use of
-   genocide spells. This can also prevent too trivial loot retrieval in
-   case of unexpected deathhh - C. Blue */
-#define MORGOTH_DANGEROUS_LEVEL
-
-/* If Morgoth is generated within a vault at the time the
-   dungeon level is generated, set it to NO_TELE.
-   (overridden by MORGOTH_NO_TELE_VAULTS, see below) - C. Blue */
-//#define MORGOTH_NO_TELE_VAULT
-
-/* If Morgoth is generated on a dungeon level at the time the
-   dungeon level is generated, set all vaults on it to NO_TELE.
-   Also prevent Morgoth from spawning 'live' (meaning later on,
-   after the level had already been generated) which would
-   undermine the NO_TELE vault concept (or require more code :) - C. Blue */
-#define MORGOTH_NO_TELE_VAULTS
-
-/* All player deaths that occur on a level Morgoth is currently on
-   are no-ghost deaths, resulting in total termination of the character!
-   This was added after some complaints arrived that the atmosphere was taken out of
-   the game by mostly everlasting players who made killing him kind of a routine. - C. Blue */
-#define MORGOTH_GHOST_DEATH_LEVEL
-
-/* Both of the above lead to preventing live spawns of Morgoth, other than during
-   generation of the dungeon level. (for technical reasons) */
-#ifdef MORGOTH_NO_TELE_VAULTS
- #define MORGOTH_NO_LIVE_SPAWN
-#endif
-#ifdef MORGOTH_GHOST_DEATH_LEVEL
- #define MORGOTH_NO_LIVE_SPAWN
-#endif
-
-/* Make Sauron more dangerous for AM or Intercepters,
-   by giving him AI_ANNOY vs melee targets. */
-#define SAURON_ANTI_MELEE
-
-/* Make Sauron more dangerous for Glyphers
-   by giving him faster cast rate while blocked by glyphs. */
-#define SAURON_ANTI_GLYPH
-
-/* Set Sauron's boost factor (1/n chance to cast spells) [67,75] */
-#define SAURON_SPELL_BOOST	67
 
 /* Disallow instant resurrection in the Nether Realm */
 #define INSTANT_RES_EXCEPTION
@@ -1166,6 +1165,11 @@
 
 /* Not allowed to steal on protected floor grids (Inns)? */
 #define PROTECTED_NO_STEALING
+
+/* Combine 'Money Belt' and 'Device of Theft Prevention' aka Backpack Safety Lock in one item? */
+#define TOOL_NOTHEFT_COMBO
+/* Tool's chance to prevent theft */
+#define TOOL_SAFETY_CHANCE 85
 
 /*
  * Allow wraith-formed player to pass through permawalls on the surface.

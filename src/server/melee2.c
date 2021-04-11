@@ -3363,7 +3363,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (m_ptr->r_idx == RI_ZU_AON) { /* Hack: Can always TELE_TO */
 			stop_shooting_till_kill(Ind);
 			msg_format(Ind, "%^s commands you to return.", m_name);
-			teleport_player_to_force(Ind, m_ptr->fy, m_ptr->fx);
+			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx, TRUE);
 		} else {
 			if (p_ptr->res_tele) chance >>= 1;
 			/* Hack -- duplicated check to avoid silly message. A bit annoying that check_st_anchor..() is called twice in the process..pft */
@@ -3373,7 +3373,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 			}
 			stop_shooting_till_kill(Ind);
 			msg_format(Ind, "%^s commands you to return.", m_name);
-			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
+			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx, FALSE);
 		}
 		break;
 		}
@@ -5298,7 +5298,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (m_ptr->r_idx == RI_ZU_AON) { /* Hack: Can always TELE_TO */
 			stop_shooting_till_kill(Ind);
 			msg_format(Ind, "%^s commands you to return.", m_name);
-			teleport_player_to_force(Ind, m_ptr->fy, m_ptr->fx);
+			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx, TRUE);
 		} else {
 			if (p_ptr->res_tele) chance >>= 1;
 			/* Hack -- duplicated check to avoid silly message. A bit annoying that check_st_anchor..() is called twice in the process..pft */
@@ -5308,7 +5308,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			}
 			stop_shooting_till_kill(Ind);
 			msg_format(Ind, "%^s commands you to return.", m_name);
-			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx);
+			teleport_player_to(Ind, m_ptr->fy, m_ptr->fx, FALSE);
 		}
 		break;
 		}

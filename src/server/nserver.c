@@ -8912,7 +8912,7 @@ int Send_idle(int Ind, bool idle) {
 /* Invoke Guide-search on client side remotely from the server.
    search_type: 1 = search, 2 = strict search (all upper-case),  3 = chapter search, 4 = line number,
                 0 = no pre-defined search, we're browsing it normally. */
-int Send_Guide(int Ind, byte search_type, int lineno, char* search_string) {
+int Send_Guide(int Ind, byte search_type, int lineno, const char* search_string) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {

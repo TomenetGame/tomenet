@@ -132,7 +132,7 @@ void divine_vengeance(int Ind, int power) {
 					(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 100, SUMMON_MONSTER, 0, 100);
 #endif
 
-				teleport_player_to(i, p_ptr->py, p_ptr->px);
+				teleport_player_to(i, p_ptr->py, p_ptr->px, FALSE);
 			}
 		}
 
@@ -266,7 +266,7 @@ void do_autokinesis_to(int Ind, int dis) {
 
 		/* success */
 		msg_print(Ind, "You reach an allied mind!");
-		teleport_player_to(Ind, q_ptr->py, q_ptr->px);
+		teleport_player_to(Ind, q_ptr->py, q_ptr->px, FALSE);
 		return;
 	}
 
@@ -687,7 +687,7 @@ bool do_shadow_gate(int Ind, int range) {
 		return FALSE;
 	}
 
-	teleport_player_to(Ind, ty, tx);
+	teleport_player_to(Ind, ty, tx, FALSE);
 	return TRUE;
 }
 #endif

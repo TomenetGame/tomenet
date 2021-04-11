@@ -1238,7 +1238,7 @@ extern int Send_item_newest(int Ind, int item);
 extern int Send_reliable(int ind);
 extern int Send_palette(int Ind, byte c, byte r, byte g, byte b);
 extern int Send_idle(int Ind, bool idle);
-extern int Send_Guide(int Ind, byte search_type, int lineno, char* search_string);
+extern int Send_Guide(int Ind, byte search_type, int lineno, const char* search_string);
 
 extern int Send_indicators(int Ind, u32b indicators);
 extern int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake);
@@ -1569,8 +1569,7 @@ extern bool check_st_anchor2(struct worldpos *wpos, int y, int x, int y2, int x2
 extern bool teleport_away(int m_idx, int dis);
 extern bool teleport_player(int Ind, int dis, bool ignore_pvp);
 extern void teleport_player_force(int Ind, int dis);
-extern void teleport_player_to(int Ind, int ny, int nx);
-extern void teleport_player_to_force(int Ind, int ny, int nx);
+extern void teleport_player_to(int Ind, int ny, int nx, bool forced);
 extern void teleport_player_level(int Ind, bool force);
 extern void teleport_players_level(struct worldpos *wpos);
 extern bool bypass_invuln;

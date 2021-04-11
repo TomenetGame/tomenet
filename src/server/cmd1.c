@@ -16,6 +16,9 @@
 #include "angband.h"
 
 
+/* Disallow ghost-travelling to other towns? */
+#define PROHIBIT_GHOST_TRAVEL
+
 /* Nice: minimum level of a player to be able to become infected by Black Breath by another player */
 #define BB_INFECT_MINLEV 25
 
@@ -6686,7 +6689,12 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		/* Handle resurrection */
 		else if (p_ptr->ghost && c_ptr->feat == FEAT_SHOP &&
 		    (cs_ptr = GetCS(c_ptr, CS_SHOP)) && cs_ptr->sc.omni == 3) {
-			if (p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] & (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8))) {
+#ifdef PROHIBIT_GHOST_TRAVEL /* disallow ghost-travelling to other towns? */
+			if (!(p_ptr->wild_map[(p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) / 8] & (1U << ((p_ptr->wpos.wx + p_ptr->wpos.wy * MAX_WILD_X) % 8))))
+				msg_print(Ind, "\377rThe temple priest turns you away!");
+			else
+#endif
+			{
 				/* Resurrect him */
 				resurrect_player(Ind, 0);
 
@@ -6705,7 +6713,6 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 					gain_au(Ind, i, FALSE, FALSE);
 				}
 			}
-			else msg_print(Ind, "\377rThe temple priest turns you away!");
 		}
 #ifndef USE_MANG_HOUSE_ONLY
 		else if ((c_ptr->feat == FEAT_HOME || c_ptr->feat == FEAT_HOME_OPEN)

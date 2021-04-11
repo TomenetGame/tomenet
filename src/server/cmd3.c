@@ -3216,7 +3216,11 @@ void do_cmd_steal(int Ind, int dir) {
 		if (rand_int(100) < 25) {
 			int amt = q_ptr->au / 10;
 
-			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik (100)) {//
+#ifndef TOOL_NOTHEFT_COMBO
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_MONEY_BELT && magik(100)) {
+#else
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE)) {
+#endif
 				/* Saving throw message */
 				msg_print(Ind, "You couldn't find any money!");
 				amt = 0;
@@ -3264,7 +3268,11 @@ void do_cmd_steal(int Ind, int dir) {
 			o_ptr = &q_ptr->inventory[item];
 			forge = *o_ptr;
 
+#ifndef TOOL_NOTHEFT_COMBO
 			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik(100)) { //80
+#else
+			if (TOOL_EQUIPPED(q_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE)) {
+#endif
 				/* Saving throw message */
 				msg_print(Ind, "Your attempt to steal failed due to a safety lock!");
 				notice += 50;
