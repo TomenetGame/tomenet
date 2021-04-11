@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 9. April 2021 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 11. April 2021 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -653,10 +653,16 @@ M       M       display either the world map if you're not in a town or in a
 s       s       search adjacent fields, objects or walls for hidden traps or
                 doors.
 
-S       #       enter 'search mode'. You will search your adjacent fields once
-                each turn. If you stand next to a room and you want to find
-                its hidden door, turn this on and run along its walls until
-                you find it.
+S       #       enter 'searching mode'. You will search your adjacent fields
+                once each turn. If you stand next to a room and you want to
+                find its hidden door, turn this on and run along its walls
+                until you find it.
+                Being in searching mode will slow you down so you will want to
+                turn it off as soon as you found what you searched for.
+                Another useful thing it does however is prioritizing traps over
+                items visually. Turn it on if there are already detected traps
+                nearby that are currently covered by items, to clearly spot the
+                traps underneath.
 
 V       V       enter/leave 'cloaking mode'. This can only be used by rogues.
                 It will take a couple of turns to perfectly cloak your
@@ -7561,6 +7567,11 @@ see 'Pit', 'Vault' or 'Room' in (0.4).
 
 About traps:
 ------------
+Traps are hidden until either set off, found by searching or detected by magic.
+They can be on the floor, on doors or on chests. Note that practically all
+chests you find (except for ruined ones) are trapped. So first find the trap on
+it, then disarm it, and finally open it.
+
 At the beginning you will encounter traps that can do little damage, some will
 decrease your stats temporarily, they are annoying but not a big danger.
 However, later on traps will become extremely nasty and you should either get
@@ -7574,6 +7585,17 @@ If you manually disarm a trap (ie via the disarm command instead of relying on
 magic spells or magic devices that do the disarming for you) you will get a
 certain amount of experience points depending on the trap type; it can pay off
 to disarm a large patch of traps.
+
+Note that detected traps might be obscured visually if there are items lying on
+top of it. In this case you can either look at the grid and you will see the
+item name prefixed with a "^" smybol and postfixed with either "(trapped)" if
+you don't know the trap type yet or the actual trap's name if you do, to
+indicate that the grid below the item(s) is trapped. You can disarm traps even
+if there is something on top of them, the grid does not have to be clean.
+Another way to spot all traps currently covered by items is to toggle Searching
+Mode via 'S'. This will slow you down but make you search for traps on every
+step you take and at the same time prioritize displaying all known traps over
+items.
 
 Disarming traps will become an essential part of the gameplay later on. Vaults
 will have *lots* of traps and if you haven't got superior disarming skills (or
