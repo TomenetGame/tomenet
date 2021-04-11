@@ -1446,7 +1446,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 #ifndef TOOL_NOTHEFT_COMBO
 					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_MONEY_BELT && magik(100)) {
 #else
-					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(90)) {
+					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE)) {
 #endif
 						/* Saving throw message */
 						msg_print(Ind, "Your money was secured!");
@@ -1521,7 +1521,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 #ifndef TOOL_NOTHEFT_COMBO
 					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(100)) { //80
 #else
-					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(90)) {
+					else if (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE)) {
 #endif
 						/* Saving throw message */
 						msg_print(Ind, "Your backpack was secured!");

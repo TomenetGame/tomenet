@@ -876,7 +876,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 #ifndef TOOL_NOTHEFT_COMBO
 			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(100))) { //80
 #else
-			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(90))) {
+			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE))) {
 #endif
 				/* Saving throw message */
 				msg_print(Ind, "Your backpack seems to vibrate strangely!");
@@ -1001,7 +1001,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 #ifndef TOOL_NOTHEFT_COMBO
 			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_MONEY_BELT && magik(100))) {
 #else
-			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(90))) {
+			    (TOOL_EQUIPPED(p_ptr) == SV_TOOL_THEFT_PREVENTION && magik(TOOL_SAFETY_CHANCE))) {
 #endif
 				msg_print(Ind, "You feel something touching you.");
 			} else if (p_ptr->au) {
