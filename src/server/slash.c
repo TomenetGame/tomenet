@@ -6057,11 +6057,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
-			/* actually wish a (basic) item by item name */
+			/* actually wish a (basic) item by item name - C. Blue */
 			else if (prefix(messagelc, "/nwish")) {
 				object_kind *k_ptr;
 				object_type forge;
 				object_type *o_ptr = &forge;
+				int exact = -1, prefix = -1, closest = -1, closest_dis = 9999;
+				char *s;
 
 				WIPE(o_ptr, object_type);
 
@@ -6072,17 +6074,31 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				/* todo: actually allow ego power prefix/postfix */
 
-				/* Hack -- Guess at "correct" values for tval_to_char[] */
+				/* Prefer perfectly matching name over prefix-matching name
+				   over as-close-as-possible-to-prefix-matching name */
 				for (i = 1; i < max_k_idx; i++) {
 					k_ptr = &k_info[i];
 					//if (!k_ptr->k_idx) continue;
-					if (!my_strcasestr(k_name + k_ptr->name, message3)) continue;
-					break;
+
+					s = my_strcasestr(k_name + k_ptr->name, message3);
+					if (!s) continue;
+					if (!strcasecmp(k_name + k_ptr->name, message3)) {
+						exact = i;
+						break;
+					}
+					else if (prefix == -1 && s == k_name + k_ptr->name) prefix = i;
+					else if (s - (k_name + k_ptr->name) < closest_dis) {
+						closest = i;
+						closest_dis = s - (k_name + k_ptr->name);
+					}
 				}
-				if (i == max_k_idx) {
+				if (exact == -1 && prefix == -1 && closest == -1) {
 					msg_print(Ind, "\377yItem not found.");
 					return;
 				}
+				if (exact != -1) k_ptr = &k_info[exact];
+				else if (prefix != -1) k_ptr = &k_info[prefix];
+				else k_ptr = &k_info[closest];
 
 				invcopy(o_ptr, lookup_kind(k_ptr->tval, k_ptr->sval));
 
