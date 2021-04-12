@@ -4627,8 +4627,8 @@ void apply_auto_pickup(char *item_name) {
 		/* skip empty auto-inscriptions */
 		if (!strlen(match)) continue;
 
-		/* do nothing if match starts with "!!" (for items we dont want to pickup nor destroy, mainly for chests) */
-		if (match[0] == '!' && match[1] == '!')  {
+		/* do nothing if match starts with "!P" (for items we dont want to pickup nor destroy, mainly for chests) */
+		if (match[0] == '!' && match[1] == 'P')  {
 			skip_if_match = TRUE;
 			match += 2;
 		}
@@ -4672,7 +4672,7 @@ void apply_auto_pickup(char *item_name) {
 	/* no match found? */
 	if (i == MAX_AUTO_INSCRIPTIONS) {
 		if (c_cfg.destroy_on_auto_pickup) {
-			Send_msg("/dis fa"); /* didn't find a better way */
+			Send_msg("/xdis fa"); /* didn't find a better way */
 		}
 		return;
 	}

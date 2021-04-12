@@ -586,7 +586,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 
 		/* Semi-auto item destroyer */
-		else if ((prefix(messagelc, "/dispose")) || prefix(messagelc, "/dis")) {
+		else if ((prefix(messagelc, "/dispose")) || prefix(messagelc, "/dis") || prefix(messagelc, "/xdis")) {
+			/* Note: '/xdis' is just for future backward compatibility of auto_pickup. */
 			object_type *o_ptr;
 			u32b f1, f2, f3, f4, f5, f6, esp;
 			bool nontag = FALSE, baseonly = FALSE, pile = FALSE;

@@ -1093,9 +1093,8 @@ They all start with a slash '/' hence they're called slash commands:
             To see a table of the normal colours, use /col.
 
 /adestroy   This toggles the client option 'destroy_on_auto_pickup' manually.
-            This will toggle the characters behaviour when seeing
-            an item under character: Whether it will automatically attempt
-            to pick it up or not.
+            Destroy item if it don't match auto-pickup rules. Only works if
+            auto_pickup option is on.
             Also see slash command '/apickup' which goes with this one.
 
 /afk        toggle AFK (away from keyboard) mode if you have to take a
@@ -3903,9 +3902,9 @@ self-explaining or that are especially important are listed in detail here:
         always pick up items(if you are in a fight or walking in you house).
 
     Destroy item if it don't match auto-pickup rules (destroy_on_auto_pickup)
-        Only works if auto_pickup option is on.
+        Only works if 'auto_pickup' option is on.
         If you don't want to destroy some items(like chests) you can create
-        a "no-pickup rule": if the rule starts with '!!' this item will not be
+        a "no-pickup rule": if the rule starts with '!P' this item will not be
         pick-upped nor destroyed.
         This option causes a loop on item piles that ends if item matches
         no-pickup rule or cannot be destroyed, or there are no more items under
