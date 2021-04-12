@@ -4586,6 +4586,10 @@ void cmd_message(void) {
 			c_cfg.auto_pickup = !c_cfg.auto_pickup;
 			c_msg_format("Auto-pickup mode is %s.", c_cfg.auto_pickup ? "on" : "off");
 			return;
+		} else if (!strcasecmp(buf, "/adestroy")) {
+			c_cfg.destroy_on_auto_pickup = !c_cfg.destroy_on_auto_pickup;
+			c_msg_format("Destroy-on-auto-pickup mode is %s.", c_cfg.auto_pickup ? "on" : "off");
+			return;
 		}
 
 		Send_msg(buf);

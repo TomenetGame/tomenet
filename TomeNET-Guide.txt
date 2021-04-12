@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 11. April 2021 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 12. April 2021 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1092,6 +1092,12 @@ They all start with a slash '/' hence they're called slash commands:
 /acol       Display a table of all animated colours.
             To see a table of the normal colours, use /col.
 
+/adestroy   This toggles the client option 'destroy_on_auto_pickup' manually.
+            This will toggle the characters behaviour when seeing
+            an item under character: Whether it will automatically attempt
+            to pick it up or not.
+            Also see slash command '/apickup' which goes with this one.
+
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing.
             Note that your character won't need to consume food while afk _IF_
@@ -1110,6 +1116,12 @@ They all start with a slash '/' hence they're called slash commands:
 /afk <msg>  You can specify a reason that will be displayed to the other
             players, so they know why you are currently AFK or when you will
             be back.
+
+/apickup    This toggles the client option 'auto_pickup' manually.
+            This will toggle the characters behaviour when seeing
+            an item under character: Whether it will automatically attempt
+            to pick it up or not.
+            Also see slash command '/adestroy' which goes with this one.
 
 /autotag
 /at         Apply auto-inscription settings to current inventory.
@@ -1289,11 +1301,6 @@ They all start with a slash '/' hence they're called slash commands:
             not. Use it as a trapper for convenience to disarm all remaining
             traps on the field faster after a battle has ended, instead of
             having to press the disarm-key for every trap.
-
-/apickup    This toggles the client option 'auto_pickup' manually.
-            This will toggle the characters behaviour when seeing
-            an item under character: Whether it will automatically attempt
-            to pick it up or not.
 
 /empty <inventory slot>
             Empty a potion from your inventory, leaving an empty bottle.
@@ -3797,7 +3804,7 @@ self-explaining or that are especially important are listed in detail here:
         symbols and colours of monster forms for party members and the player
         himself.
 
- (4, 5) Audio Options
+ (5) Audio Options
     (See (2.1a) for more information about sound and music.)
 
     A bunch of stuff here, mostly you might want to look at attack-sound effect
@@ -3903,6 +3910,7 @@ self-explaining or that are especially important are listed in detail here:
         This option causes a loop on item piles that ends if item matches
         no-pickup rule or cannot be destroyed, or there are no more items under
         the character.
+        Option could be toggled through slash command '/adestroy'.
 
  (8) Check Server Options
     Displays a list of the server rules and configuration.
