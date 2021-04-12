@@ -3609,11 +3609,11 @@ cptr item_activation(object_type *o_ptr) {
 	if (o_ptr->tval == TV_GOLEM) {
 		switch (o_ptr->sval) {
 		case SV_GOLEM_ATTACK:
-			return ("commanding your golem to attack your target or stop doing so.");
+			return ("commanding your golem to attack your target or stop doing so");
 		case SV_GOLEM_GUARD:
-			return ("commanding your golem to stay and guard its position or stop doing so.");
+			return ("commanding your golem to stay and guard its position or stop doing so");
 		case SV_GOLEM_FOLLOW:
-			return ("commanding your golem to follow you or stop doing so.");
+			return ("commanding your golem to follow you or stop doing so");
 		}
 	}
 
@@ -3653,7 +3653,7 @@ cptr item_activation(object_type *o_ptr) {
 
 		return(format("ignition after %d seconds", fuse));
 	}
-	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return "grinding solid material to bits";
+	if (o_ptr->tval == TV_TOOL && o_ptr->sval == SV_TOOL_GRINDER) return "grinding things consisting of wood or metal to bits";
 #endif
 
 	/* Oops */
