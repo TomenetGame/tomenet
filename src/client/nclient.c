@@ -181,6 +181,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_PLAYERLIST]	= Receive_playerlist;
 	receive_tbl[PKT_WEATHERCOL]	= Receive_weather_colouring;
 	receive_tbl[PKT_MUSIC_VOL]	= Receive_music_vol;
+	receive_tbl[PKT_WHATS_UNDER_YOUR_FEET]	= Receive_whats_under_you_feet;
 }
 
 
@@ -4612,6 +4613,76 @@ int Receive_idle(void) {
 	return 1;
 }
 
+void apply_auto_pickup(char *item_name) {
+	int i;
+	char *ex, ex_buf[ONAME_LEN];
+	char *ex2, ex_buf2[ONAME_LEN];
+	char *match, tag_buf[ONAME_LEN];
+	bool found, skip_if_match;
+
+	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
+		skip_if_match = FALSE;
+		match = auto_inscription_match[i];
+
+		/* skip empty auto-inscriptions */
+		if (!strlen(match)) continue;
+
+		/* do nothing if match starts with "!!" (for items we dont want to pickup nor destroy, mainly for chests) */
+		if (match[0] == '!' && match[1] == '!')  {
+			skip_if_match = TRUE;
+			match += 2;
+		}
+
+		/* '#' wildcard allowed: a random number (including 0) of random chars */
+		/* prepare */
+		strcpy(ex_buf, match);
+		ex2 = item_name;
+		found = FALSE;
+
+		do {
+			ex = strstr(ex_buf, "#");
+			if (ex == NULL) {
+				if (strstr(ex2, ex_buf)) found = TRUE;
+				break;
+			} else {
+				/* get partial string up to before the '#' */
+				strncpy(ex_buf2, ex_buf, ex - ex_buf);
+				ex_buf2[ex - ex_buf] = '\0';
+				/* test partial string for match */
+				ex2 = strstr(ex2, ex_buf2);
+				if (ex2 == NULL) break; /* no match! */
+				/* this partial string matched, discard and continue with next part */
+				/* advance searching position in the item name */
+				ex2 += strlen(ex_buf2);
+				/* get next part of search string */
+				strcpy(ex_buf, ex + 1);
+				/* no more search string left? exit */
+				if (!strlen(ex_buf)) break;
+				/* no more item name left although search string is finished? exit with negative result */
+				if (!strlen(ex2)) {
+					found = FALSE;
+					break;
+				}
+			}
+		} while (TRUE);
+
+		if (found) break;
+	}
+
+	/* no match found? */
+	if (i == MAX_AUTO_INSCRIPTIONS) {
+		if (c_cfg.destroy_on_auto_pickup) {
+			Send_msg("/dis fa"); /* didn't find a better way */
+		}
+		return;
+	}
+
+	if (skip_if_match == TRUE) {
+		return;
+	} else {
+		Send_stay();
+	}
+}
 
 /* Apply client-side auto-inscriptions - C. Blue
    'force': overwrite existing non-trivial inscription. */
@@ -4916,6 +4987,22 @@ int Receive_weather_colouring(void) {
 	return 1;
 }
 
+int Receive_whats_under_you_feet(void) {
+	int n;
+	char ch;
+	char o_name[ONAME_LEN];
+	bool crossmod_item, cant_see, on_pile;
+
+	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%s", &ch, &crossmod_item, &cant_see, &on_pile, o_name)) <= 0) return n;
+
+	prt_whats_under_your_feet(o_name, crossmod_item, cant_see, on_pile);
+
+	if (c_cfg.auto_pickup) {
+		apply_auto_pickup(o_name);
+	}
+
+	return 1;
+}
 
 
 int Send_search(void) {

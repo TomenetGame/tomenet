@@ -699,8 +699,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						    && !cursed_p(o_ptr))
 							return;
 
-						if (do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number))
+						if (do_cmd_destroy(Ind, -c_ptr->o_idx, o_ptr->number)) {
+							/* Take a turn only once per entering a grid */
+							if (p_ptr->destroyed_floor_item == TRUE) {
+								p_ptr->energy += level_speed(&p_ptr->wpos);
+							}
+							p_ptr->destroyed_floor_item = TRUE;
 							whats_under_your_feet(Ind, FALSE);
+						}
 						return;
 					}
 				}

@@ -8697,6 +8697,9 @@ void grid_affects_player(int Ind, int ox, int oy) {
 
 	/* quests - check if he has arrived at a designated exact x,y target location */
 	if (p_ptr->quest_any_deliver_xy_within_target) quest_check_goal_deliver(Ind);
+
+	/* When the player enters a grid with items, he can destroy anything on it for 1x energy cost, until he enters another grid */
+	p_ptr->destroyed_floor_item = FALSE;
 }
 
 /* Items that can be shared even between incompatible character modes or if level 0! */

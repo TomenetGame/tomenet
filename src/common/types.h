@@ -3542,6 +3542,8 @@ struct player_type {
 	bool keep_bottle;
 	bool no_house_magic;
 	s16b steamblast_x, steamblast_y, steamblast_timer;
+
+	bool destroyed_floor_item;
 };
 
 typedef struct boni_col boni_col;
@@ -3976,6 +3978,8 @@ struct client_opts {
 	bool easy_disarm_montraps;
 	bool no_house_magic;
 	bool no_lite_fainting;
+	bool auto_pickup;
+	bool destroy_on_auto_pickup;
 };
 
 /*

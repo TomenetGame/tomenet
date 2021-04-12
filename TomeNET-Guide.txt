@@ -1290,6 +1290,11 @@ They all start with a slash '/' hence they're called slash commands:
             traps on the field faster after a battle has ended, instead of
             having to press the disarm-key for every trap.
 
+/apickup    This toggles the client option 'auto_pickup' manually.
+            This will toggle the characters behaviour when seeing
+            an item under character: Whether it will automatically attempt
+            to pick it up or not.
+
 /empty <inventory slot>
             Empty a potion from your inventory, leaving an empty bottle.
             Example: /empty c   (if you have 'c) 3 potions of boldness', one
@@ -3705,7 +3710,7 @@ By pressing the '=' key in game, you can access the options menu where you can
 tweak your client in some ways. Some of these options that aren't
 self-explaining or that are especially important are listed in detail here:
 
- (1, 2, 3) User Interface Options
+ (1, 2, 3, 4) User Interface Options
     Rogue-like commands (rogue_like_commands)
         Toggles between normal key set and traditional rogue-like key set.
 
@@ -3792,7 +3797,7 @@ self-explaining or that are especially important are listed in detail here:
         symbols and colours of monster forms for party members and the player
         himself.
 
- (4) Audio Options
+ (4, 5) Audio Options
     (See (2.1a) for more information about sound and music.)
 
     A bunch of stuff here, mostly you might want to look at attack-sound effect
@@ -3801,7 +3806,7 @@ self-explaining or that are especially important are listed in detail here:
 
     no_shriek_sfx and no_house_sfx might be especially interesting too.
 
- (5, 6) Game-Play Options
+ (6, 7, 8) Game-Play Options
     Use old target by default (use_old_target)
         If this is on, a ranged attack via *t5 or *t- will not pick a new
         (ie closer) target if the previously acquired target is still okay.
@@ -3879,6 +3884,25 @@ self-explaining or that are especially important are listed in detail here:
 
     Get kicked out automatically by the game when starving and idle for 30
         seconds. (idle_starve_kick)
+
+    Automatically pickup items (auto_pickup)
+        Enables auto-pickup. Auto-pickup uses an auto-inscriptions rules list
+        and the same matching algorithm.
+        Items that match one of the auto-inscriptions rules will be picked up.
+        This will cause a loop on item piles that ends if the item doesn't match
+        the rules.
+        Option could be toggled through slash command '/apickup', this allows
+        creating macros for fast toggling as you usually don't want to
+        always pick up items(if you are in a fight or walking in you house).
+
+    Destroy item if it don't match auto-pickup rules (destroy_on_auto_pickup)
+        Only works if auto_pickup option is on.
+        If you don't want to destroy some items(like chests) you can create
+        a "no-pickup rule": if the rule starts with '!!' this item will not be
+        pick-upped nor destroyed.
+        This option causes a loop on item piles that ends if item matches
+        no-pickup rule or cannot be destroyed, or there are no more items under
+        the character.
 
  (8) Check Server Options
     Displays a list of the server rules and configuration.

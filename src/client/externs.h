@@ -692,6 +692,10 @@ extern void prt_res_pois(bool is_resisted);
 extern void prt_res_divine(bool is_resisted);
 extern void prt_esp(bool is_full_esp);
 
+extern void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, bool on_pile);
+
+extern void apply_auto_pickup(char *item_name);
+
 extern int p_speed;
 extern bool no_tele_grid;
 extern void do_weather(bool no_weather);

@@ -8975,6 +8975,18 @@ int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake) {
 	return Packet_printf(&connp->c, "%c%c%c", PKT_WEATHERCOL, col_raindrop, col_snowflake);
 }
 
+int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool cant_see, bool on_pile) {
+	connection_t *connp = Conn[Players[Ind]->conn];
+
+	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
+		errno = 0;
+		plog(format("Connection not ready for whats_under_you_feet (%d.%d.%d)",
+					Ind, connp->state, connp->id));
+		return 0;
+	}
+
+	return Packet_printf(&connp->c, "%c%c%c%c%s", PKT_WHATS_UNDER_YOUR_FEET, crossmod_item, cant_see, on_pile, o_name);
+}
 
 /*
  * Return codes for the "Receive_XXX" functions are as follows:

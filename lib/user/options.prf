@@ -161,3 +161,6 @@ Y:screenshot_format
 X:easy_disarm_montraps
 X:no_house_magic
 X:no_lite_fainting
+
+X:auto_pickup
+X:destroy_on_auto_pickup

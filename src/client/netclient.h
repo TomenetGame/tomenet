@@ -118,3 +118,4 @@ int Receive_Guide(void);
 int Receive_indicators(void);
 int Receive_playerlist(void);
 int Receive_weather_colouring(void);
+int Receive_whats_under_you_feet(void);
