@@ -296,8 +296,10 @@ bool s_NO_PK = FALSE, s_PVP_MAIA = FALSE;
 u32b sflags_TEMP = 0x0;
 
 /* Auto-inscriptions */
-char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][40];
-char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][20];
+char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][41];
+char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][21];
+bool auto_inscription_autopickup[MAX_AUTO_INSCRIPTIONS];
+bool auto_inscription_autodestroy[MAX_AUTO_INSCRIPTIONS];
 
 /* Monster health memory (health_redraw) */
 int mon_health_num;

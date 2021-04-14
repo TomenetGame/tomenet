@@ -4618,20 +4618,16 @@ void apply_auto_pickup(char *item_name) {
 	char *ex, ex_buf[ONAME_LEN];
 	char *ex2, ex_buf2[ONAME_LEN];
 	char *match;
-	bool found, skip_if_match;
+	bool found;
 
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
-		skip_if_match = FALSE;
 		match = auto_inscription_match[i];
 
 		/* skip empty auto-inscriptions */
 		if (!strlen(match)) continue;
 
-		/* do nothing if match starts with "!P" (for items we dont want to pickup nor destroy, mainly for chests) */
-		if (match[0] == '!' && match[1] == 'P')  {
-			skip_if_match = TRUE;
-			match += 2;
-		}
+		/* do nothing if match is not set to auto-pickup (for items we dont want to pickup nor destroy, mainly for chests) */
+		if (!auto_inscription_autopickup[i] && !auto_inscription_autodestroy[i]) continue;
 
 		/* '#' wildcard allowed: a random number (including 0) of random chars */
 		/* prepare */
@@ -4670,18 +4666,13 @@ void apply_auto_pickup(char *item_name) {
 	}
 
 	/* no match found? */
-	if (i == MAX_AUTO_INSCRIPTIONS) {
-		if (c_cfg.destroy_on_auto_pickup) {
-			Send_msg("/xdis fa"); /* didn't find a better way */
-		}
-		return;
-	}
+	if (!found) return;
 
-	if (skip_if_match == TRUE) {
-		return;
-	} else {
+	/* destroy or pick up */
+	if (c_cfg.auto_destroy && auto_inscription_autodestroy[i])
+		Send_msg("/xdis fa"); /* didn't find a better way */
+	else if (c_cfg.auto_pickup && auto_inscription_autopickup[i])
 		Send_stay();
-	}
 }
 
 /* Apply client-side auto-inscriptions - C. Blue
@@ -4997,9 +4988,7 @@ int Receive_whats_under_you_feet(void) {
 
 	prt_whats_under_your_feet(o_name, crossmod_item, cant_see, on_pile);
 
-	if (c_cfg.auto_pickup) {
-		apply_auto_pickup(o_name);
-	}
+	if (c_cfg.auto_pickup || c_cfg.auto_destroy) apply_auto_pickup(o_name);
 
 	return 1;
 }

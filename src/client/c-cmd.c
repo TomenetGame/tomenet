@@ -4592,8 +4592,8 @@ void cmd_message(void) {
 			inkey_msg = FALSE;
 			return;
 		} else if (!strcasecmp(buf, "/adestroy")) {
-			c_cfg.destroy_on_auto_pickup = !c_cfg.destroy_on_auto_pickup;
-			c_msg_format("Destroy-on-auto-pickup mode is %s.", c_cfg.auto_pickup ? "on" : "off");
+			c_cfg.auto_destroy = !c_cfg.auto_destroy;
+			c_msg_format("Auto-destroy mode is %s.", c_cfg.auto_destroy ? "on" : "off");
 			inkey_msg = FALSE;
 			return;
 		}

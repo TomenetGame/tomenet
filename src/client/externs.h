@@ -382,8 +382,10 @@ extern bool s_NO_PK, s_PVP_MAIA;
 extern u32b sflags_TEMP;
 
 /* Auto-inscriptions */
-extern char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][40];
-extern char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][20];
+extern char auto_inscription_match[MAX_AUTO_INSCRIPTIONS][41];
+extern char auto_inscription_tag[MAX_AUTO_INSCRIPTIONS][21];
+extern bool auto_inscription_autopickup[MAX_AUTO_INSCRIPTIONS];
+extern bool auto_inscription_autodestroy[MAX_AUTO_INSCRIPTIONS];
 
 /* Monster health memory (health_redraw) */
 extern int mon_health_num;

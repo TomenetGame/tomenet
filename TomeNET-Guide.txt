@@ -1092,9 +1092,8 @@ They all start with a slash '/' hence they're called slash commands:
 /acol       Display a table of all animated colours.
             To see a table of the normal colours, use /col.
 
-/adestroy   This toggles the client option 'destroy_on_auto_pickup' manually.
-            Destroy item if it don't match auto-pickup rules. Only works if
-            auto_pickup option is on.
+/adestroy   This toggles the client option 'auto_destroy' manually.
+            Destroy item (on the floor) if matches auto-destroy rules.
             Also see slash command '/apickup' which goes with this one.
 
 /afk        toggle AFK (away from keyboard) mode if you have to take a
@@ -3895,24 +3894,29 @@ self-explaining or that are especially important are listed in detail here:
         seconds. (idle_starve_kick)
 
     Automatically pickup items (auto_pickup)
-        Enables auto-pickup. Auto-pickup uses an auto-inscriptions rules list
+        Enables auto-pickup. Auto-pickup uses the auto-inscriptions rules list
         and the same matching algorithm.
-        Items that match one of the auto-inscriptions rules will be picked up.
-        This will cause a loop on item piles that ends if the item doesn't match
-        the rules.
+        To choose items for auto-pickup press '&' to enter auto-inscriptions
+        screen and toggle auto-pickup/auto-destroy with 'a' key per item.
+        This option causes a loop on item piles that ends if item matches
+        no more rules or there are no more items under the character.
         Option could be toggled through slash command '/apickup', this allows
         creating macros for fast toggling as you usually don't want to
-        always pick up items(if you are in a fight or walking in you house).
+        always pick up items (if you are in a fight or in your house).
 
-    Destroy item if it don't match auto-pickup rules (destroy_on_auto_pickup)
-        Only works if 'auto_pickup' option is on.
-        If you don't want to destroy some items(like chests) you can create
-        a "no-pickup rule": if the rule starts with '!P' this item will not be
-        pick-upped nor destroyed.
+    Destroy item if it matches auto-destroy rules (auto_destroy)
+        Enables auto-destroy. Auto-destroy uses the auto-inscriptions rules
+        list and the same matching algorithm.
+        To choose items for auto-pickup press '&' to enter auto-inscriptions
+        screen and toggle auto-pickup/auto-destroy with 'a' key per item.
         This option causes a loop on item piles that ends if item matches
-        no-pickup rule or cannot be destroyed, or there are no more items under
+        no more rules or cannot be destroyed, or there are no more items under
         the character.
-        Option could be toggled through slash command '/adestroy'.
+        Option could be toggled through slash command '/adestroy', this allows
+        creating macros for fast toggling as you usually don't want to
+        always destroy up items (if you are in a fight or in your house).
+        Note that the item is destroyed on the floor and not picked up first,
+        so this is feasible to use against curse-no-drop items too.
 
  (8) Check Server Options
     Displays a list of the server rules and configuration.

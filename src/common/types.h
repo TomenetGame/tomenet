@@ -3979,7 +3979,7 @@ struct client_opts {
 	bool no_house_magic;
 	bool no_lite_fainting;
 	bool auto_pickup;
-	bool destroy_on_auto_pickup;
+	bool auto_destroy;
 };
 
 /*
