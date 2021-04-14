@@ -40,8 +40,8 @@
 /* MAJOR/MINOR/PATCH version should be 0-15. BUILD == 1 means 'test build' */
 #define VERSION_MAJOR		4
 #define VERSION_MINOR		7
-#define VERSION_PATCH		3
-#define VERSION_EXTRA		3
+#define VERSION_PATCH		4
+#define VERSION_EXTRA		0
 #define VERSION_BRANCH		0
 #define VERSION_BUILD		0
 
@@ -66,11 +66,11 @@
 
 /* Server release version tag (such as "a", "b" etc):
    Minimum client version tag required to "play 100%". */
-#define SERVER_VERSION_TAG	"a"
+#define SERVER_VERSION_TAG	""
 
 /* Client-side only: Client release version tag
    (such as "a", "b" etc) used in window title and file dumps */
-#define CLIENT_TAG		"a"
+#define CLIENT_TAG		""
 #ifndef TEST_CLIENT
  #define CLIENT_VERSION_TAG	CLIENT_TAG
 #else
