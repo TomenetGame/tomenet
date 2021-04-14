@@ -4629,6 +4629,12 @@ void apply_auto_pickup(char *item_name) {
 		/* do nothing if match is not set to auto-pickup (for items we dont want to pickup nor destroy, mainly for chests) */
 		if (!auto_inscription_autopickup[i] && !auto_inscription_autodestroy[i]) continue;
 
+		/* 'all items' super wildcard? */
+		if (!strcmp(match, "#") || !strcmp(match, "!#")) {
+			found = TRUE;
+			break;
+		}
+
 		/* '#' wildcard allowed: a random number (including 0) of random chars */
 		/* prepare */
 		strcpy(ex_buf, match);
@@ -4758,6 +4764,9 @@ void apply_auto_inscriptions(int slot, bool force) {
 			if (!strcmp(auto_inscription_tag[i], tag_buf)) return;
 		} else if (match[0] == '!') match++;
  #endif
+
+		/* 'all items' super wildcard? - this only works for auto-pickup/destroy, not for auto-inscribing */
+		if (!strcmp(match, "#")) continue;
 
 		/* found a matching inscription? */
  #if 0 /* no '#' wildcard allowed */

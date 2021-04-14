@@ -3898,6 +3898,8 @@ self-explaining or that are especially important are listed in detail here:
         and the same matching algorithm.
         To choose items for auto-pickup press '&' to enter auto-inscriptions
         screen and toggle auto-pickup/auto-destroy with 'a' key per item.
+        A green 'a' means the item will be automatically picked up.
+        A special match with just '#' can be created to pick up ALL items.
         This option causes a loop on item piles that ends if item matches
         no more rules or there are no more items under the character.
         Option could be toggled through slash command '/apickup', this allows
@@ -3909,6 +3911,8 @@ self-explaining or that are especially important are listed in detail here:
         list and the same matching algorithm.
         To choose items for auto-pickup press '&' to enter auto-inscriptions
         screen and toggle auto-pickup/auto-destroy with 'a' key per item.
+        A red 'A' means the item will be automatically destroyed!
+        A special match with just '#' can be created to destroy up ALL items.
         This option causes a loop on item piles that ends if item matches
         no more rules or cannot be destroyed, or there are no more items under
         the character.

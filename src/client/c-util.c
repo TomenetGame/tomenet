@@ -7197,11 +7197,16 @@ void auto_inscriptions(void) {
 			strcpy(buf, auto_inscription_match[cur_page * AUTOINS_PAGESIZE + cur_line]);
 			/* Get a new matching string */
 			if (!askfor_aux(buf, 40, 0)) continue;
-			/* hack: remove leading/trailing wild cards since they are obsolete.
-			   Especially trailing ones currently make it not work. */
+
 			buf_ptr = buf;
-			while (*buf_ptr == '#') buf_ptr++;
-			while (*(buf_ptr + strlen(buf_ptr) - 1) == '#') *(buf_ptr + strlen(buf_ptr) - 1) = '\0';
+			/* special hack: allow just a '#' match */
+			if (strcmp(buf, "#") && strcmp(buf, "!#")) {
+				/* hack: remove leading/trailing wild cards since they are obsolete.
+				   Especially trailing ones currently make it not work. */
+				while (*buf_ptr == '#') buf_ptr++;
+				while (*(buf_ptr + strlen(buf_ptr) - 1) == '#') *(buf_ptr + strlen(buf_ptr) - 1) = '\0';
+			}
+
 			Term_putstr(10, cur_line + 1, -1, TERM_L_GREEN, "                                         ");
 			Term_putstr(11, cur_line + 1, -1, TERM_WHITE, buf_ptr);
 			/* ok */
