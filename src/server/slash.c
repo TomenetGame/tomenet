@@ -10550,6 +10550,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (!tk) k = Ind;
 				else k = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
+				if (!k) return;
 				p_ptr = Players[k];
 
 				msg_format(Ind, "\377yQuest item info for player %s (%d):", p_ptr->name, k);
@@ -11287,6 +11288,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				int days = elapsed / 86400, hours = (elapsed % 86400) / 3600, minutes = (elapsed % 3600) / 60, seconds = (elapsed % 60);
 
 				msg_format(Ind, "\377sUptime: %d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
+				return;
+			}
+			else if (prefix(messagelc, "/pversion") || prefix(messagelc, "/pver")) {
+				if (!tk) k = Ind;
+				else k = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
+				if (!k) return;
+				p_ptr = Players[k];
+
+				msg_format(Ind, "\377yClient version of player %s (%d): %d.%d.%d.%d.%d.%d, OS %d.", p_ptr->name, k,
+				    p_ptr->version.major, p_ptr->version.minor, p_ptr->version.patch, p_ptr->version.extra, p_ptr->version.branch, p_ptr->version.build, p_ptr->version.os);
 				return;
 			}
 		}
