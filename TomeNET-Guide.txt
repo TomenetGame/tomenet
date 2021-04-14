@@ -2146,6 +2146,8 @@ You can use '#' as wildcard in the search string (was '?' before v4.7.1a).
 For example if you want to distinguish between Rod(s) of Healing and Potion(s)
 of Healing, you can use 'Rod#Healing' and 'Potion#Healing' respectively.
 So '#' stands for any number (including zero) or sequence of characters.
+Wildcards cannot be used as prefix or suffix and not on their own, except for
+the auto-pickup and auto-destroy features (see below).
 
 If you put a '!' as first character of a search string, it will force the
 inscription to overwrite existing inscriptions in any case (usually it only
@@ -2165,6 +2167,11 @@ NOTE: In addition to this user-defined client-side auto-inscription list, there
       client option 'auto_inscribe'.
       This option will add a predefined set of auto-inscriptions that might be
       generally useful for all types of characters, see (2.3) for details.
+
+By pressing 'a' you can toggle auto-pickup (green 'a') and auto-destroy (red
+'A') features. These two will actually allow specifying a "#" wildcard on its
+own, which means that ALL items will be picked up or destroyed and subsequent
+rules will be ignored accordingly. (The sole '#' will not work for inscribing).
 
 
 
