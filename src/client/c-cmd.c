@@ -4575,20 +4575,26 @@ void cmd_message(void) {
 			return;
 		}
 		/* Handle local slash command - C. Blue */
-		if (!strcasecmp(buf, "/ctime")) {
+		else if (!strcasecmp(buf, "/ctime")) {
 			time_t ct = time(NULL);
 			struct tm* ctl = localtime(&ct);
 
 			c_msg_format("\374\376\377yYour current local time: %04d/%02d/%02d - %02d:%02d:%02dh", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
 			inkey_msg = FALSE;
 			return;
+		} else if (!strcasecmp(buf, "/cver") || !strcasecmp(buf, "/cversion")) {
+			c_msg_format("Client version: %d.%d.%d.%d.%d.%d%s, OS %d.", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD, CLIENT_VERSION_TAG, VERSION_OS);
+			inkey_msg = FALSE;
+			return;
 		} else if (!strcasecmp(buf, "/apickup")) {
 			c_cfg.auto_pickup = !c_cfg.auto_pickup;
 			c_msg_format("Auto-pickup mode is %s.", c_cfg.auto_pickup ? "on" : "off");
+			inkey_msg = FALSE;
 			return;
 		} else if (!strcasecmp(buf, "/adestroy")) {
 			c_cfg.destroy_on_auto_pickup = !c_cfg.destroy_on_auto_pickup;
 			c_msg_format("Destroy-on-auto-pickup mode is %s.", c_cfg.auto_pickup ? "on" : "off");
+			inkey_msg = FALSE;
 			return;
 		}
 

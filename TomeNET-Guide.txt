@@ -1197,6 +1197,9 @@ They all start with a slash '/' hence they're called slash commands:
 /ctime      Tells you your local time (this command is executed locally on your
             client, actually). Also see /ctime and /stime.
 
+/cversion
+/cver       Displays the client's version information in detail.
+
 /shuffle [32|52 <jokers>]
             Prepares a new deck of cards.
             If you specify no arguments it will shuffle a deck of 52 cards
