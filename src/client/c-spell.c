@@ -1998,7 +1998,7 @@ static int get_breath(int *br) {
 					Term_load();
 					Flush_queue();
 				}
-				return;
+				continue;
 			}
 			buf[49] = 0;
 

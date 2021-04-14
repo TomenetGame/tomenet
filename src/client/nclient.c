@@ -4617,7 +4617,7 @@ void apply_auto_pickup(char *item_name) {
 	int i;
 	char *ex, ex_buf[ONAME_LEN];
 	char *ex2, ex_buf2[ONAME_LEN];
-	char *match, tag_buf[ONAME_LEN];
+	char *match;
 	bool found, skip_if_match;
 
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
