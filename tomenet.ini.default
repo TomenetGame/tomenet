@@ -1,25 +1,25 @@
 [Online]
-;Metaserver address
+; - Metaserver address
 meta=meta.tomenet.eu
 
-;Pick a host, unlike the UNIX version of TomeNET, this version gets the
+; - Pick a host, unlike the UNIX version of TomeNET, this version gets the
 ;host name from the INI file instead of from the command line.
 host=europe.tomenet.eu
 
-;Game host's port
+; - Game host's port
 port=18348
 
-;Pick a name.  Spaces are allowed.  The name should be no longer than
+; - Pick a name.  Spaces are allowed.  The name should be no longer than
 ;15 characters and shouldn't contain any "special" characters.
 nick=
 
-;Pick a password.  It should not be more than 15 characters long.  Also,
+; - Pick a password.  It should not be more than 15 characters long.  Also,
 ;you shouldn't use a password that you use anywhere else, because it is 
 ;not encrypted.
 pass=
 
 
-;Client-side FPS changes how often the game checks for keyboard input.
+; - Client-side FPS changes how often the game checks for keyboard input.
 ;Increase it if you like. (Recommended: 100)
 fps=100
 
@@ -27,21 +27,10 @@ fps=100
 [Base]
 LibPath=.\lib
 
-; do not move lib\scpt, lib\user and sound/music live configs to the user's
-; system home folder but keep using the folder where TomeNET is installed.
-DontMoveUser=0
-
-; - disable num lock key on starting up (1 = do so)
-DisableNumlock=1
-
-; - Use lighter 'dark blue' colour to increase readability on some screens
-; Sets blue to #0033ff instead of #0000ff
-LighterDarkBlue=1
-
-; Full color remapping
-; 0 = black, 1 = white, 2 = gray, 3 = orange, 4 = red, 5 = green, 6 = blue
-; 7 = umber, 8 = dark gray, 9 = light gray, 10 = violet, 11 = yellow
-; 12 = light red, 13 = light green, 14 = light blue, 15 = light umber
+; - Full color remapping (except black aka 0, which is immutable)
+;0 = black, 1 = white, 2 = gray, 3 = orange, 4 = red, 5 = green, 6 = blue
+;7 = umber, 8 = dark gray, 9 = light gray, 10 = violet, 11 = yellow
+;12 = light red, 13 = light green, 14 = light blue, 15 = light umber
 ;Colormap_0=#000000
 ;Colormap_1=#ffffff
 ;Colormap_2=#9d9d9d
@@ -59,25 +48,32 @@ LighterDarkBlue=1
 ;Colormap_14=#00ffff
 ;Colormap_15=#c79d55
 
-; - enable graphics in general (0 = off)
+; - Do not move lib\scpt, lib\user and sound/music live configs to the user's
+;system home folder but keep using the folder where TomeNET is installed.
+DontMoveUser=0
+
+; - Disable num lock key on starting up (1 = do so)
+DisableNumlock=1
+
+; - Use lighter 'dark blue' colour to increase readability on some screens
+; Sets blue to #0033ff instead of #0000ff
+LighterDarkBlue=1
+
+; - Enable graphics in general (0 = off)
 Graphics=0
 
-; - enable audio in general (0 = off, 1 = on)
+; - Enable audio in general (0 = off, 1 = on)
 Sound=1
 
-; - subfolders within lib/xtra folder that contain audio packs
-SoundpackFolder=sound
-MusicpackFolder=music
-
-; pre-cache audio (defaults to on; recommended)
+; - Pre-cache audio (defaults to on; recommended)
 CacheAudio=1
 
-; - mixer sample rate, default is 44100 (best left disabled)
+; - Mixer sample rate, default is 44100 (best left disabled)
 ;   It is highly recommended to not changed this to
 ;   avoid wrongly pitched audio on some systems.
 SampleRate=44100
 
-; - number of mixer channels, ie the number of sound effects
+; - Number of mixer channels, ie the number of sound effects
 ;   that can be played simultaneously. (4..32)
 MaxChannels=32
 
@@ -85,13 +81,17 @@ MaxChannels=32
 ;   smaller = skipping on slow machines. 128..8192)
 AudioBuffer=1024
 
-; - turn various things on(1) or off(0)
+; - Subfolders within lib/xtra folder that contain audio packs
+SoundpackFolder=sound
+MusicpackFolder=music
+
+; - Turn various things on(1) or off(0)
 AudioMaster=1
 AudioMusic=1
 AudioSound=1
 AudioWeather=1
 
-; - mixer values for various things (0..100)
+; - Mixer values for various things (0..100)
 AudioVolumeMaster=75
 AudioVolumeMusic=100
 AudioVolumeSound=100
@@ -104,8 +104,8 @@ PositionX=0
 PositionY=1
 Columns=80
 Rows=24
-Font=9X15.FON
-Graf=9X15.BMP
+Font=8X13.FON
+Graf=8X13.BMP
 
 [Mirror window]
 WindowNumber=1
@@ -115,7 +115,7 @@ PositionX=0
 PositionY=522
 Columns=80
 Rows=24
-Font=8X13.FON
+Font=6X10.FON
 Graf=8X13.BMP
 
 [Recall window]
@@ -126,7 +126,7 @@ PositionX=484
 PositionY=359
 Columns=80
 Rows=24
-Font=8X13.FON
+Font=6X10.FON
 Graf=8X13.BMP
 
 [Choice window]
@@ -137,7 +137,7 @@ PositionX=652
 PositionY=1
 Columns=80
 Rows=22
-Font=8X13.FON
+Font=5X8.FON
 Graf=8X13.BMP
 
 [Term-4 window]
@@ -148,7 +148,7 @@ PositionX=652
 PositionY=183
 Columns=80
 Rows=17
-Font=8X13.FON
+Font=6X10.FON
 Graf=8X13.BMP
 
 [Term-5 window]
@@ -159,7 +159,7 @@ PositionX=484
 PositionY=622
 Columns=80
 Rows=14
-Font=8X13.FON
+Font=6X10.FON
 Graf=8X13.BMP
 
 [Term-6 window]
@@ -170,7 +170,7 @@ PositionX=184
 PositionY=549
 Columns=80
 Rows=24
-Font=8X13.FON
+Font=5X8.FON
 Graf=8X13.BMP
 
 [Term-7 window]
@@ -181,5 +181,5 @@ PositionX=676
 PositionY=548
 Columns=80
 Rows=24
-Font=8X13.FON
+Font=5X8.FON
 Graf=8X13.BMP
