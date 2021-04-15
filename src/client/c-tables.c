@@ -474,8 +474,6 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "flush_disturb",		"(broken) Flush input whenever disturbed" },
 	{ &c_cfg.fresh_after,           FALSE,  6,      0, 24, FALSE,
 	    "fresh_after",		"(obsolete) Flush output after every command" },
-	{ &c_cfg.auto_destroy,		FALSE,	3,	0, 63, FALSE,
-	    "auto_destroy",		"(broken) No query to destroy known junks" },
     //todo: check shopkeeper speakage
 	{ &c_cfg.speak_unique,		TRUE,	6,	0, xx, TRUE,
 	    "speak_unique",		"Allow shopkeepers and uniques to speak" },
@@ -545,15 +543,11 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "no_lite_fainting",		"Disable shading effect for fainting light source" },
 
 	{ &c_cfg.auto_pickup,	FALSE,	8,	0, 139, TRUE,
-	  "auto_pickup",	"Automatically pickup items (see '/apickup')" },
+	  "auto_pickup",		"Automatically pickup items (see '/apickup')" },
 	{ &c_cfg.auto_destroy,	FALSE,	8,	0, 140, TRUE,
-	  "auto_destroy",	"Automatically destroy items (see '/adestroy')" },
-
-#if 0 /* todo this maybe. (Page 3 has space left for exactly one more option atm) */
-    /* 4.7.3 */
-	{ &c_cfg.extra_indicators,	FALSE,	6,	0, 1XX, TRUE,
-	    "extra_indicators",		"Flicker status bar elements to indicate temp buffs" },
-#endif
+	  "auto_destroy",		"Automatically destroy items (see '/adestroy')" },
+	{ &c_cfg.destroy_all_unmatched,	FALSE,	8,	0, 141, TRUE,
+	  "destroy_all_unmatched",	"Destroys ALL unmatched items. (Like A'#' in &.)" },
 };
 
 

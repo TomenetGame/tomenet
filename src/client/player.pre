@@ -260,7 +260,6 @@ struct player_type {
 	bool easy_disarm;
 	bool easy_disarm_montraps;
 	bool easy_tunnel;
-	//bool auto_destroy;
 	bool clear_inscr;
 	bool auto_inscribe;
 	bool taciturn_messages;

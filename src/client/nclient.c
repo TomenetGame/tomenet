@@ -4618,7 +4618,7 @@ void apply_auto_pickup(char *item_name) {
 	char *ex, ex_buf[ONAME_LEN];
 	char *ex2, ex_buf2[ONAME_LEN];
 	char *match;
-	bool found;
+	bool found = FALSE, dau = c_cfg.destroy_all_unmatched && c_cfg.auto_destroy;
 
 	for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 		match = auto_inscription_match[i];
@@ -4627,7 +4627,7 @@ void apply_auto_pickup(char *item_name) {
 		if (!strlen(match)) continue;
 
 		/* do nothing if match is not set to auto-pickup (for items we dont want to pickup nor destroy, mainly for chests) */
-		if (!auto_inscription_autopickup[i] && !auto_inscription_autodestroy[i]) continue;
+		if (!(c_cfg.auto_pickup && auto_inscription_autopickup[i]) && !(c_cfg.auto_destroy && auto_inscription_autodestroy[i]) && !dau) continue;
 
 		/* 'all items' super wildcard? */
 		if (!strcmp(match, "#") || !strcmp(match, "!#")) {
@@ -4672,7 +4672,12 @@ void apply_auto_pickup(char *item_name) {
 	}
 
 	/* no match found? */
-	if (!found) return;
+	if (!found) {
+		/* destroy all unmatched items? */
+		if (dau) Send_msg("/xdis fa");
+		/* done */
+		return;
+	}
 
 	/* destroy or pick up */
 	if (c_cfg.auto_destroy && auto_inscription_autodestroy[i])

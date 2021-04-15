@@ -4596,6 +4596,11 @@ void cmd_message(void) {
 			c_msg_format("Auto-destroy mode is %s.", c_cfg.auto_destroy ? "on" : "off");
 			inkey_msg = FALSE;
 			return;
+		} else if (!strcasecmp(buf, "/daunmatched")) {
+			c_cfg.destroy_all_unmatched = !c_cfg.destroy_all_unmatched;
+			c_msg_format("Destroy-all-unmatched mode (requires auto_destroy) is %s.", c_cfg.destroy_all_unmatched ? "on" : "off");
+			inkey_msg = FALSE;
+			return;
 		}
 
 		Send_msg(buf);

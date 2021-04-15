@@ -2624,7 +2624,6 @@ struct player_type {
 	bool easy_disarm;
 	bool easy_disarm_montraps;
 	bool easy_tunnel;
-	//bool auto_destroy;
 	bool clear_inscr;
 	bool auto_inscribe;
 	bool taciturn_messages;
@@ -3925,7 +3924,6 @@ struct client_opts {
 	bool flush_failure;
 	bool flush_disturb;
 	bool fresh_after;
-	bool auto_destroy;
 	bool last_words;
 	bool speak_unique;
 
@@ -3980,6 +3978,7 @@ struct client_opts {
 	bool no_lite_fainting;
 	bool auto_pickup;
 	bool auto_destroy;
+	bool destroy_all_unmatched;
 };
 
 /*

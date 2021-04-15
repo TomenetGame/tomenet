@@ -7254,6 +7254,8 @@ void auto_inscriptions(void) {
 			for (i = 0; i < MAX_AUTO_INSCRIPTIONS; i++) {
 				strcpy(auto_inscription_match[i], "");
 				strcpy(auto_inscription_tag[i], "");
+				auto_inscription_autopickup[i] = FALSE;
+				auto_inscription_autodestroy[i] = FALSE;
 			}
 			/* comfort hack - jump to first line */
 			Term_putstr(1, cur_line + 1, -1, TERM_ORANGE, "   ");

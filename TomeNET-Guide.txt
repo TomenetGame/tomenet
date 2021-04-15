@@ -1097,7 +1097,8 @@ They all start with a slash '/' hence they're called slash commands:
 
 /adestroy   This toggles the client option 'auto_destroy' manually.
             Destroy item (on the floor) if matches auto-destroy rules.
-            Also see slash command '/apickup' which goes with this one.
+            Also see slash command '/apickup' and '/daunmatched' which
+            go with this one.
 
 /afk        toggle AFK (away from keyboard) mode if you have to take a
             quick break from playing.
@@ -2178,6 +2179,9 @@ rules will be ignored accordingly. (The sole '#' will not work for inscribing).
 The client options 'auto_pickup' and 'auto_destroy' must be enabled for these
 functions to work. This can also be done via slash commands '/apickup' (toggles
 auto_pickup option) and '/adestroy' (toggls auto_destroy option).
+Instead of using a '#' wildcard-rule, you can also toggle the option
+'destroy_all_unmatched' (which can also be toggled via '/daunmatched' slash
+command), this option requires 'auto_destroy' option to be enabled.
 
 
 
@@ -3925,7 +3929,9 @@ self-explaining or that are especially important are listed in detail here:
         To choose items for auto-pickup press '&' to enter auto-inscriptions
         screen and toggle auto-pickup/auto-destroy with 'a' key per item.
         A red 'A' means the item will be automatically destroyed!
-        A special match with just '#' can be created to destroy up ALL items.
+        A special match with just '#' can be created to destroy up ALL items,
+        the same effect can alternatively be invoked by enabling the option
+        'destroy_all_unmatched' (see below).
         This option causes a loop on item piles that ends if item matches
         no more rules or cannot be destroyed, or there are no more items under
         the character.
@@ -3934,6 +3940,16 @@ self-explaining or that are especially important are listed in detail here:
         always destroy up items (if you are in a fight or in your house).
         Note that the item is destroyed on the floor and not picked up first,
         so this is feasible to use against curse-no-drop items too.
+
+    Destroy all items that didn't match any rule (destroy_all_unmatched)
+        This requires 'auto_destroy' option to be enabled and will do the same
+        thing as '#' wildcard in & list set to auto-destroy:
+        It will destroy all items on the floor that do not match any rule in
+        the auto-inscriptions list.
+        This optioncauses a loop on item piles that ends if item cannot be
+        destroyed, or there are no more items under the character.
+        Option could be toggled through slash command '/daunmatched', this
+        allows creating macros for fast toggling.
 
  (8) Check Server Options
     Displays a list of the server rules and configuration.

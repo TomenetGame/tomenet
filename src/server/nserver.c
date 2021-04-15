@@ -2203,7 +2203,6 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->easy_open = options[60];
 		p_ptr->easy_disarm = options[61];
 		p_ptr->easy_tunnel = options[62];
-		//p_ptr->auto_destroy = options[63];
 		p_ptr->clear_inscr = options[63];
 		p_ptr->auto_inscribe = options[64];
 		if (!is_newer_than(&p_ptr->version, 4, 5, 7, 2, 0, 0)) {
@@ -2442,7 +2441,6 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->idle_starve_kick = options[51];
 		p_ptr->safe_float = options[52];
 
-		//p_ptr->auto_destroy = options[];
 		p_ptr->auto_untag = options[54];
 		p_ptr->clear_inscr = options[55];
 		p_ptr->auto_inscribe = options[56];
