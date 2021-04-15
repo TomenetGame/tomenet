@@ -5002,16 +5002,16 @@ static bool process_player_end_aux(int Ind) {
 			regenmana(Ind, ((regen_amount * 5) * (p_ptr->regen_mana ? 2 : 1)) / 3);
 	}
 
-	/* Regeneration ability */
+	/* Regeneration ability - in pvp, damage taken is greatly reduced, so regen must not nullify the remaining damage easily */
 #ifdef TROLL_REGENERATION
 	/* Experimental - Trolls are super-regenerators (hard-coded) */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) regen_amount *= 4;
-	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) regen_amount *= 3;
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'T' && p_ptr->body_monster != RI_HALF_TROLL) regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
+	else if (p_ptr->prace == RACE_HALF_TROLL || p_ptr->body_monster == RI_HALF_TROLL) regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 3;
 	else
 #endif
 #ifdef HYDRA_REGENERATION
 	/* Experimental - Hydras are super-regenerators aka regrowing heads */
-	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') regen_amount *= 4;
+	if (p_ptr->body_monster && r_info[p_ptr->body_monster].d_char == 'M') regen_amount *= (p_ptr->mode & MODE_PVP) ? 2 : 4;
 	else
 #endif
 	if (p_ptr->regenerate) regen_amount *= 2;
