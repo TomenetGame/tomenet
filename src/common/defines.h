@@ -1760,13 +1760,13 @@
 /*
  * Misc constants ( see bst(), do_cmd_time() )
  */
-#define DAY			(10 * 384 * cfg.fps)	/* Number of turns per day (192) times cfg.fps */
+#define DAY			(10 * 384 * cfg.fps)	/* Number of turns per day (10 * 384) times cfg.fps */
 #define HOUR			(DAY / 24)		/* Number of turns per hour */
 #define MINUTE			(HOUR / 60)		/* Number of turns per minute */
 #define YEAR			(DAY * 365)		/* Number of turns per year */
 
-#define SUNRISE			6			/* Sunrise */
-#define NIGHTFALL		20			/* Nightfall */
+#define SUNRISE			5			/* Sunrise */
+#define NIGHTFALL		21			/* Nightfall */
 
 /* Macros for determing if it is night or day */
 
@@ -1780,12 +1780,13 @@
  #define	IS_DAY		(!IS_NIGHT)
 #endif	/* 0 */
 /* For new quests */
- #define	IS_MORNING	((bst(HOUR, turn) >= SUNRISE) && (bst(HOUR, turn) < 9))
- #define	IS_FORENOON	((bst(HOUR, turn) >= 9) && (bst(HOUR, turn) < 12))
- #define	IS_NOON		((bst(HOUR, turn) >= 12) && (bst(HOUR, turn) < 14))
- #define	IS_AFTERNOON	((bst(HOUR, turn) >= 14) && (bst(HOUR, turn) < 19))
- #define	IS_EVENING	((bst(HOUR, turn) >= 19) && (bst(HOUR, turn) <= 23))
- #define	IS_MIDNIGHT	((bst(HOUR, turn) >= 0) && (bst(HOUR, turn) < 1))
+ #define	IS_MORNING	((bst(HOUR, turn) >= SUNRISE) && (bst(HOUR, turn) <= 9))
+ #define	IS_FORENOON	((bst(HOUR, turn) >= 10) && (bst(HOUR, turn) <= 11))
+ #define	IS_NOON		((bst(HOUR, turn) >= 12) && (bst(HOUR, turn) <= 13))
+ #define	IS_AFTERNOON	((bst(HOUR, turn) >= 14) && (bst(HOUR, turn) <= 17))
+ #define	IS_EVENING	((bst(HOUR, turn) >= 18) && (bst(HOUR, turn) <= 21))
+ //#define	IS_NIGHT	((bst(HOUR, turn) >= 22) && (bst(HOUR, turn) <= 23)) -- already defined as opposite of day (+events)
+ #define	IS_MIDNIGHT	(bst(HOUR, turn) == 0)
  #define	IS_DEEPNIGHT	((bst(HOUR, turn) >= 1) && (bst(HOUR, turn) < SUNRISE))
 
 

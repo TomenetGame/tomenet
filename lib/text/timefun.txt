@@ -11,27 +11,38 @@ E:0459
 D:Only TomeNET players are up now!
 
 S:0100
-E:0459
+#E:0459
+E:0359
 D:It's really *very* late!
 
-S:0500
-E:0558
+#S:0500
+#E:0558
+S:0400
+E:0458
 D:Aren't you sleepy yet?
 
-S:0559
-E:0559
+#S:0559
+#E:0559
+S:0459
+E:0459
 D:It doesn't matter what you found!
 
-S:0600
-E:0759
+#S:0600
+#E:0759
+S:0500
+E:0659
 D:The sun is up. Time to have fun!
 
-S:0601
-E:0800
+#S:0601
+#E:0800
+S:0501
+E:0700
 D:Are you having fun yet?
 
-S:0600
-E:0630
+#S:0600
+#E:0615
+S:0500
+E:0515
 D:The morning sun vanquishes the horrible night.
 
 S:0800
@@ -74,19 +85,26 @@ S:1745
 E:1759
 D:Tornado Warning!
 
-S:1955
-E:1959
+#S:1955
+#E:1959
+S:2055
+E:2059
 D:Night is coming. Danger! Danger!
 
-S:2000
-E:2059
+#S:2000
+#E:2059
+S:2100
+E:2159
 D:Take a Vampire out for dinner!
 
-S:2000
-E:2030
+#S:2000
+#E:2015
+S:2100
+E:2115
 D:What a horrible night to have a curse.
 
-S:2100
+#S:2100
+S:2115
 E:2159
 D:Warp Nine. Engage!
 

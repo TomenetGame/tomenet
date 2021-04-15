@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. April 2021 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 15. April 2021 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.4 - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9114,8 +9114,8 @@ Three time systems are relevant for the players' game experience:
  When NPCs inform you about anything time related, they will do so in in-game
  time, effectively speaking to your character, not to you as a player.
  In-game time passes 20x as fast as real-time (see below for more info).
- This time also controls day/night changes, where the sun rises at 6am and
- night falls at 8pm.
+ This time also controls day/night changes, where the sun rises at 5am and
+ night falls at 9pm.
 
 -in-game 'turns' (the /ex command tells you how fast you can move, ie how much
                  you can move each turn)
@@ -9151,7 +9151,7 @@ and runs at about 20x speed of real time and also features day/night change:
 
 Usually a whole day (day + night, ie full 24h in-game time cycle) will last for
 slightly more than one hour real time.
-The sun will usually rise at around 6am, while night falls at around 8pm, so
+The sun will usually rise at around 5am, while night falls at around 9pm, so
 the in-game night lasts for slightly less than half an hour real time.
 An in-game hour lasts for about 160 seconds in real-time.
 Extermination orders (see (4.13)) usually have a time limit of two full in-game
