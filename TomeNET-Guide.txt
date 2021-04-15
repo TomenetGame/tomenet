@@ -1198,7 +1198,7 @@ They all start with a slash '/' hence they're called slash commands:
             make it less deep..
 
 /ctime      Tells you your local time (this command is executed locally on your
-            client, actually). Also see /ctime and /stime.
+            client, actually). Also see /stime and /time.
 
 /cversion
 /cver       Displays the client's version information in detail.
