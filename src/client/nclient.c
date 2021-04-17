@@ -5001,7 +5001,7 @@ int Receive_whats_under_you_feet(void) {
 	if (is_atleast(&server_version, 4, 7, 4, 1, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%I", &ch, &crossmod_item, &cant_see, &on_pile, o_name)) <= 0) return n;
 	} else {
-		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%c", &ch, &crossmod_item, &cant_see, &on_pile, o_name)) <= 0) return n;
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%c%s", &ch, &crossmod_item, &cant_see, &on_pile, o_name)) <= 0) return n;
 	}
 
 	prt_whats_under_your_feet(o_name, crossmod_item, cant_see, on_pile);
