@@ -11823,6 +11823,8 @@ Codex, Spellbook, Grimoire
                     Codices can carry the least amount of spells (3),
                     spellbooks being intermediate (4), while Grimoires have
                     the most space (5).
+                    Tip: You can stack multiple of these books if they have the
+                    exact same spells in the exact same sequence in them.
                     (Note that you cannot use these books if your game client
                     version is below 4.4.2!)
 Sprig of Athelas    Eat this one to cure Black Breath (see (1.3a) for more
