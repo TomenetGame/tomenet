@@ -6276,6 +6276,7 @@ Chain_Macro:
 								Term_putstr(15, l++, -1, TERM_L_GREEN, "b) recall to a specific, fixed depth (or back out again)");
 								Term_putstr(15, l++, -1, TERM_L_GREEN, "c) world-travel recall, ie recall across the world surface");
 								Term_putstr(15, l++, -1, TERM_L_GREEN, "d) world-travel recall, specifically to Bree, aka (32,32)");
+								Term_putstr(15, l++, -1, TERM_L_GREEN, "e) Manual recall, will prompt you to enter destination each time");
 								while (TRUE) {
 									switch (choice = inkey()) {
 									case ESCAPE:
@@ -6289,7 +6290,7 @@ Chain_Macro:
 										continue;
 									default:
 										/* invalid action -> exit wizard */
-										if (choice < 'a' || choice > 'd') {
+										if (choice < 'a' || choice > 'e') {
 											//i = -1;
 											continue;
 										}
@@ -6323,6 +6324,7 @@ Chain_Macro:
 									strcat(buf2, buf);
 									strcat(buf2, "\\r");
 									break;
+								case 'e': strcpy(buf2, ":/rec "); break;
 								}
 								break;
 							}
