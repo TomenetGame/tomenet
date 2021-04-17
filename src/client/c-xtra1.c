@@ -1176,20 +1176,49 @@ void prt_esp(bool is_full_esp) {
 	Term_gotoxy(x, y);
 }
 
+#define PWUYF_LEN 79 /* accomodate for 1 leading space for indentation (see function below) */
 void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, bool on_pile) {
+	char line[MSG_LEN], *lptr = line, *c;
+
+	/* Note that so far the under-your-feet msgs used to be sent by msg_print() which would
+	   split long item names up into several Send_message() calls so the client displays the
+	   item as multiple lines in the message windows.
+	   We emulate this split-up here now on client-side so we can immediately see the full
+	   item name in our message windows: */
 
 	if (crossmod_item) {
 		if (cant_see)
-			c_msg_format("\377DYou feel %s%s here.", o_name, on_pile ? " on a pile" : "");
+			sprintf(line, "\377DYou feel %s%s here.", o_name, on_pile ? " on a pile" : "");
 		else
-			c_msg_format("\377DYou see %s%s.", o_name, on_pile ? " on a pile" : "");
+			sprintf(line, "\377DYou see %s%s.", o_name, on_pile ? " on a pile" : "");
 	} else {
 		if (cant_see)
-			c_msg_format("You feel %s%s here.", o_name, on_pile ? " on a pile" : "");
+			sprintf(line, "You feel %s%s here.", o_name, on_pile ? " on a pile" : "");
 		else
-			c_msg_format("You see %s%s.", o_name, on_pile ? " on a pile" : "");
+			sprintf(line, "You see %s%s.", o_name, on_pile ? " on a pile" : "");
 	}
 
+	while (strlen(lptr) > PWUYF_LEN) {
+		strcpy(o_name, lptr);
+
+		/* Don't split words/inscription tags if possible.. */
+		c = o_name + PWUYF_LEN - 1;
+		while (c > o_name + PWUYF_LEN - 10 && (
+		    (isalpha(*c) && *(c + 1) >= 'a' && *(c + 1) <= 'z') ||
+		    *c == '~' || *c == '+' || *c == '*' || *c == '-' || *c == '_' || *c == '^' || *c == '{' || *c == '(' || *c == '[' || *c == '!'))
+			c--;
+		/* If we'd have to backtrace too far, just ignore the problem and split it anyway at the original line end */
+		if (c == o_name + PWUYF_LEN - 10) c = o_name + PWUYF_LEN - 1;
+		*(c + 1) = 0;
+
+		/* Indent subsequent lines with a leading space */
+		if (lptr == line) c_msg_print(o_name);
+		else c_msg_format(" %s", o_name);
+
+		lptr += c - o_name + 1;
+	}
+	if (lptr == line) c_msg_print(lptr);
+	else c_msg_format(" %s", lptr);
 }
 
 /*

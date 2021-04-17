@@ -8983,7 +8983,10 @@ int Send_whats_under_you_feet(int Ind, char *o_name, bool crossmod_item, bool ca
 		return 0;
 	}
 
-	return Packet_printf(&connp->c, "%c%c%c%c%s", PKT_WHATS_UNDER_YOUR_FEET, crossmod_item, cant_see, on_pile, o_name);
+	if (is_atleast(&connp->version, 4, 7, 4, 1, 0, 0))
+		return Packet_printf(&connp->c, "%c%c%c%c%I", PKT_WHATS_UNDER_YOUR_FEET, crossmod_item, cant_see, on_pile, o_name);
+	else
+		return Packet_printf(&connp->c, "%c%c%c%c%s", PKT_WHATS_UNDER_YOUR_FEET, crossmod_item, cant_see, on_pile, o_name);
 }
 
 /*
