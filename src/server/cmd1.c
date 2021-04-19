@@ -5581,7 +5581,7 @@ bool do_prob_travel(int Ind, int dir) {
 		}
 
 		/* Still in rock ? continue */
-		if ((!cave_empty_bold(zcave, y, x)) || (zcave[y][x].info & CAVE_ICKY)
+		if ((!cave_empty_bold(zcave, y, x)) || (zcave[y][x].info & (CAVE_ICKY | CAVE_STCK)) /* <- sometimes vault space gets overwritten by normal rooms, retaining no-tele property */
 		    /* don't prob into sickbay area - drawback: also can't prob into inns; also not into shops (and occupy them! harhar) */
 		     || zcave[y][x].feat == FEAT_PROTECTED || zcave[y][x].feat == FEAT_SHOP) {
 			y += ddy[dir];
