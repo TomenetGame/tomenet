@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 17. April 2021 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 21. April 2021 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.4a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -16963,7 +16963,7 @@ Hobbits         Dexterity bonus of +2 for not wearing shoes. (Or 'Halflings'.)
 Gnomes          Free action.
 (Dwarves        Blindness resistance, climbing at level 30.)
 (High-Elves     Resist light, see invisible.)
-Yeeks           Feather falling.
+Yeeks           Feather falling. Pass trees (from their ANIMAL flag).
 (Ents           Slow digestion, speed - 2, sensitive to fire, see invisible at
                 level 4, can swim easily, pass trees.)
 All animals     Able to pass trees.
