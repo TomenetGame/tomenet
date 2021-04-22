@@ -636,7 +636,7 @@ void wipe_o_list(struct worldpos *wpos) {
 	monster_type *m_ptr;
 	bool flag = FALSE;
 
-	if((zcave = getcave(wpos))) flag = TRUE;
+	if ((zcave = getcave(wpos))) flag = TRUE;
 
 
 	/* Delete the existing objects */
@@ -877,6 +877,43 @@ void wipe_o_list_special(struct worldpos *wpos) {
 
 	/* Compact the object list */
 	compact_objects(0, FALSE);
+}
+
+/* Wipe all non-arts and non-questitems. Doesn't work on world surface. */
+void wipe_o_list_nonarts(struct worldpos *wpos) {
+	int i;
+	cave_type **zcave;
+	object_type *o_ptr;
+
+	if (!wpos->wz) return;
+	if (!(zcave = getcave(wpos))) return;
+
+	/* Delete the existing objects */
+	for (i = 1; i < o_max; i++) {
+		o_ptr = &o_list[i];
+
+		/* Skip dead objects */
+		if (!o_ptr->k_idx) continue;
+
+		/* Skip objects not on this depth */
+		if (!inarea(&o_ptr->wpos, wpos)) continue;
+
+		if (artifact_p(o_ptr)) continue;
+		if (o_ptr->questor || (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST)) continue;
+		// && o_ptr->quest)) continue;
+		if (o_ptr->embed) continue;
+#ifdef MONSTER_INVENTORY
+		if (o_ptr->held_m_idx) continue;
+#endif
+
+		if (in_bounds_array(o_ptr->iy, o_ptr->ix)) zcave[o_ptr->iy][o_ptr->ix].o_idx = 0;
+
+		/* Wipe the object */
+		WIPE(o_ptr, object_type);
+	}
+
+	/* Compact the object list */
+	//compact_objects(0, FALSE);
 }
 
 
@@ -6406,7 +6443,8 @@ void determine_level_req(int level, object_type *o_ptr) {
 			}
 
 			/* level of randarts tends to be outrageous */
-			base = a_ptr->level / 1;/* was 2*/
+			if (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) base = a_ptr->level / 2;
+			else base = a_ptr->level / 1; /* was 2*/
 		}
 		/* Normal artifacts */
 		else {
@@ -6637,7 +6675,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 		j = base;
 	} else {
 		i = level - base;
-		j = (((i * (i > 0 ? 2 : 2)) / 12  + base) * rand_range(95,105)) / 100;/* was 1:2 / 4 */
+		j = (((i * (i > 0 ? 2 : 2)) / 12  + base) * rand_range(95, 105)) / 100;/* was 1:2 / 4 */
 	}
 
 	/* Level must be between 1 and 100 inclusively */

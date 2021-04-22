@@ -6224,6 +6224,7 @@ bool monster_death(int Ind, int m_idx) {
 				if (is_admin(p_ptr)) {
 					/* the hack works by using weapon's inscription! */
 					char *k_tval, *k_sval;
+
 					if (p_ptr->inventory[INVEN_WIELD].tval &&
 					    p_ptr->inventory[INVEN_WIELD].note &&
 					    (k_tval = strchr(quark_str(p_ptr->inventory[INVEN_WIELD].note), '%')) &&
@@ -6236,6 +6237,10 @@ bool monster_death(int Ind, int m_idx) {
 						/* catch invalid items */
 						if (!tmp_luck) resf_drops &= ~RESF_DEBUG_ITEM;
 					}
+					if (p_ptr->inventory[INVEN_WIELD].tval &&
+					    p_ptr->inventory[INVEN_WIELD].note &&
+					    check_guard_inscription(p_ptr->inventory[INVEN_WIELD].note, 'R'))
+						resf_drops |= RESF_FORCERANDART;
 				}
 
 #if FORCED_DROPS != 0

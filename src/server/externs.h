@@ -1303,6 +1303,7 @@ extern void delete_object(struct worldpos *wpos, int y, int x, bool unfound_art)
 extern void wipe_o_list(struct worldpos *wpos);
 extern void wipe_o_list_safely(struct worldpos *wpos);
 extern void wipe_o_list_special(struct worldpos *wpos);
+extern void wipe_o_list_nonarts(struct worldpos *wpos);
 extern void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf);
 extern void apply_magic_depth(int Depth, object_type *o_ptr, int lev, bool okay, bool good, bool great, bool verygreat, u32b resf);
 extern void determine_level_req(int level, object_type *o_ptr);

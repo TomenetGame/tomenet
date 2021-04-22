@@ -5618,6 +5618,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "\377rItems on %s are cleared.", wpos_format(Ind, &wp));
 				return;
 			}
+			/* erase all non-artifacts on the floor */
+			else if (prefix(messagelc, "/clear-narts") || prefix(messagelc, "/nacli")) {
+				wipe_o_list_nonarts(&wp);
+
+				msg_format(Ind, "\377rNon-artifact items on %s are cleared.", wpos_format(Ind, &wp));
+				return;
+			}
 			else if (prefix(messagelc, "/cp")) {
 				party_check(Ind);
 				account_check(Ind);
