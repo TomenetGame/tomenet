@@ -2359,6 +2359,10 @@ void randart_name(object_type *o_ptr, char *buffer, char *raw_buffer) {
 	char tmp[MAX_CHARS];
 
 	/* Set the RNG seed. It this correct. Should it be restored??? XXX */
+#ifdef INVERSE_CURSED_RANDARTS
+	if (o_ptr->pval2) Rand_value = o_ptr->pval3;
+	else
+#endif
 	Rand_value = o_ptr->name3;
 	Rand_quick = TRUE;
 

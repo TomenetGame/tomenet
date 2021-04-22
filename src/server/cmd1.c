@@ -2002,9 +2002,6 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 			/* Cursed! */
 			if (cursed_p(o_ptr)) {
-				/* Warn the player */
-				msg_print(Ind, "Oops! It feels deathly cold!");
-
 #ifdef VAMPIRES_INV_CURSED
 				if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
  #ifdef ENABLE_HELLKNIGHT
@@ -2014,11 +2011,14 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) inverse_cursed(o_ptr);
  #endif
 #endif
+				if (cursed_p(o_ptr)) { //in case INVERSE_CURSED_RANDARTS triggered
+					/* Warn the player */
+					msg_print(Ind, "Oops! It feels deathly cold!");
+					/* Note the curse */
+					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 
-				/* Note the curse */
-				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
-
-				note_toggle_cursed(o_ptr, TRUE);
+					note_toggle_cursed(o_ptr, TRUE);
+				}
 			}
 
 			/* Structure copy to insert the new item */
@@ -2086,9 +2086,6 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 			/* Cursed! */
 			if (cursed_p(o_ptr)) {
-				/* Warn the player */
-				msg_print(Ind, "Oops! It feels deathly cold!");
-
 #ifdef VAMPIRES_INV_CURSED
 				if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
  #ifdef ENABLE_HELLKNIGHT
@@ -2098,11 +2095,14 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) inverse_cursed(o_ptr);
  #endif
 #endif
+				if (cursed_p(o_ptr)) { //in case INVERSE_CURSED_RANDARTS triggered
+					/* Warn the player */
+					msg_print(Ind, "Oops! It feels deathly cold!");
+					/* Note the curse */
+					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 
-				/* Note the curse */
-				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
-
-				note_toggle_cursed(o_ptr, TRUE);
+					note_toggle_cursed(o_ptr, TRUE);
+				}
 			}
 
 			/* Structure copy to insert the new item */

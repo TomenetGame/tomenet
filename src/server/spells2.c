@@ -1319,7 +1319,15 @@ int remove_curse_aux(int Ind, int all, int pInd) {
 #endif
 
 #ifdef VAMPIRES_INV_CURSED
-		if (i >= INVEN_WIELD) reverse_cursed(o_ptr);
+		if (i >= INVEN_WIELD) {
+			if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+			else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+			else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
+ #endif
+		}
 #endif
 
 		/* Uncurse it */

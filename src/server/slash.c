@@ -7059,6 +7059,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (ta < 0) ta = -ta;
 #endif
 
+				/* Remove "cursed" inscription */
+				if (o_ptr->note && streq(quark_str(o_ptr->note), "cursed")) o_ptr->note = 0;
+
 				while (--tries) {
 					/* Piece together a 32-bit random seed */
 					o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;

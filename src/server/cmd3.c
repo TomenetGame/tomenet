@@ -360,13 +360,15 @@ int inven_drop(int Ind, int item, int amt) {
 #endif
 
 #ifdef VAMPIRES_INV_CURSED
-	if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+	if (item >= INVEN_WIELD) {
+		if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
  #ifdef ENABLE_HELLKNIGHT
-	else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+		else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
  #endif
  #ifdef ENABLE_CPRIEST
-	else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
+		else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
  #endif
+	}
 #endif
 
 	/* Make a "fake" object */
@@ -953,8 +955,6 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		if (f3 & TR3_AUTO_CURSE) o_ptr->ident |= ID_CURSED;
 		if (cursed_p(o_ptr)) {
-			msg_print(Ind, "Oops! It feels deathly cold!");
-			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 #ifdef VAMPIRES_INV_CURSED
 			if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
  #ifdef ENABLE_HELLKNIGHT
@@ -964,19 +964,21 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) inverse_cursed(o_ptr);
  #endif
 #endif
-			note_toggle_cursed(o_ptr, TRUE);
-			/* Force dual-hand mode if wielding cursed weapon(s) */
-			if (get_skill(p_ptr, SKILL_DUAL)) {
-				p_ptr->dual_mode = TRUE;
-				p_ptr->redraw |= PR_STATE;
+			if (cursed_p(o_ptr)) { //in case INVERSE_CURSED_RANDARTS triggered
+				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+				msg_print(Ind, "Oops! It feels deathly cold!");
+				note_toggle_cursed(o_ptr, TRUE);
+				/* Force dual-hand mode if wielding cursed weapon(s) */
+				if (get_skill(p_ptr, SKILL_DUAL)) {
+					p_ptr->dual_mode = TRUE;
+					p_ptr->redraw |= PR_STATE;
+				}
 			}
 		}
 		o_ptr = &p_ptr->inventory[INVEN_ARM];
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		if (f3 & TR3_AUTO_CURSE) o_ptr->ident |= ID_CURSED;
 		if (cursed_p(o_ptr)) {
-			msg_print(Ind, "Oops! It feels deathly cold!");
-			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 #ifdef VAMPIRES_INV_CURSED
 			if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
  #ifdef ENABLE_HELLKNIGHT
@@ -986,11 +988,15 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) inverse_cursed(o_ptr);
  #endif
 #endif
-			note_toggle_cursed(o_ptr, TRUE);
-			/* Force dual-hand mode if wielding cursed weapon(s) */
-			if (get_skill(p_ptr, SKILL_DUAL)) {
-				p_ptr->dual_mode = TRUE;
-				p_ptr->redraw |= PR_STATE;
+			if (cursed_p(o_ptr)) { //in case INVERSE_CURSED_RANDARTS triggered
+				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
+				msg_print(Ind, "Oops! It feels deathly cold!");
+				note_toggle_cursed(o_ptr, TRUE);
+				/* Force dual-hand mode if wielding cursed weapon(s) */
+				if (get_skill(p_ptr, SKILL_DUAL)) {
+					p_ptr->dual_mode = TRUE;
+					p_ptr->redraw |= PR_STATE;
+				}
 			}
 		}
 
@@ -1441,12 +1447,6 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		default: act = "You are wearing";
 		}
 
-		/* Describe the result */
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
-
-		/* Message */
-		msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(slot));
-
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		/* Auto Curse */
@@ -1455,15 +1455,8 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 			o_ptr->ident |= ID_CURSED;
 		}
 
-		/* Cursed! */
-		if (cursed_p(o_ptr)) {
-			/* Warn the player */
-			msg_print(Ind, "Oops! It feels deathly cold!");
-
-			/* Note the curse */
-			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
-
 #ifdef VAMPIRES_INV_CURSED
+		if (cursed_p(o_ptr)) {
 			if (p_ptr->prace == RACE_VAMPIRE) inverse_cursed(o_ptr);
  #ifdef ENABLE_HELLKNIGHT
 			else if (p_ptr->pclass == CLASS_HELLKNIGHT) inverse_cursed(o_ptr); //them too!
@@ -1471,7 +1464,21 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
  #ifdef ENABLE_CPRIEST
 			else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) inverse_cursed(o_ptr);
  #endif
+		}
 #endif
+
+		/* Describe the result */
+		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+
+		/* Message */
+		msg_format(Ind, "%^s %s (%c).", act, o_name, index_to_label(slot));
+
+		/* Cursed! */
+		if (cursed_p(o_ptr)) { //in case INVERSE_CURSED_RANDARTS triggered
+			/* Warn the player */
+			msg_print(Ind, "Oops! It feels deathly cold!");
+			/* Note the curse */
+			o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 
 			note_toggle_cursed(o_ptr, TRUE);
 

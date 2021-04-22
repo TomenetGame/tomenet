@@ -12553,6 +12553,74 @@ void inverse_cursed(object_type *o_ptr) {
 	if (!(f3 & TR3_HEAVY_CURSE)) return;
 	if ((f4 & TR4_NEVER_BLOW)) return; /* Weapons of Nothingness */
 
+ #ifdef INVERSE_CURSED_RANDARTS
+	if (o_ptr->name1 == ART_RANDART) {
+		int tries = 0;
+		s32b old_owner, swap;
+		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
+		player_type player;
+
+		if (o_ptr->pval2) return; //paranoia?
+		swap = o_ptr->pval3; /* remember the flipped randart in the future */
+		o_ptr->pval3 = o_ptr->name3; /* Use unused pval3 to store original randart seed */
+		o_ptr->pval2 = 1; /* Mark as flipped (this is just for choosing the original artifact name) */
+
+		player.resist_lite = TRUE;
+		player.prace = RACE_VAMPIRE;
+		player.suscep_life = TRUE;
+  #ifdef ENABLE_HELLKNIGHT
+		player.pclass = CLASS_HELLKNIGHT;
+		player.demon = TRUE;
+  #endif
+
+		/* Randart loop. Try until an allowed randart was made */
+		old_owner = o_ptr->owner;
+		while (tries++ < 20) {
+			/* first time this randart gets flipped? */
+			if (!swap) {
+				/* Piece together a new 32-bit random seed */
+				o_ptr->name3 = (u32b)rand_int(0xFFFF) << 16;
+				o_ptr->name3 += rand_int(0xFFFF);
+			} else {
+				/* consistently re-create the same flipping as before */
+				o_ptr->name3 = swap;
+			}
+			randart_make(o_ptr);
+			/* hack: RESF_NORANDART will prevent calling make_artifact() in apply_magic(), which would re-roll the seed again which is unnecessary as we just did that already */
+			apply_magic(&wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
+
+			/* Forbid some flags and being cursed AGAIN or this was pointless */
+			if (cursed_p(o_ptr)) continue;
+			//if (((resf & RESF_LIFE) || !(a_ptr->flags1 & TR1_LIFE)) break;  -- allow for now, in general
+			if (anti_undead(o_ptr, &player)) continue;
+  #ifdef ENABLE_HELLKNIGHT
+			if (anti_demon(o_ptr, &player)) continue;
+  #endif
+			break; /* Success */
+		}
+		o_ptr->owner = old_owner;
+
+		/* Check for super-rare failure (rather theoretical) */
+		if (tries == 20) {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("inverse_cursed() failed: %s\n", o_name);
+
+			/* restore item */
+			reverse_cursed(o_ptr);
+			return;
+		}
+
+		/* Remove no longer correct "cursed" tag */
+		if (o_ptr->note && streq(quark_str(o_ptr->note), "cursed")) o_ptr->note = 0;
+
+		//p_ptr->update |= (PU_BONUS);
+		//p_ptr->window |= (PW_EQUIP | PW_PLAYER);
+		return;
+	}
+ #endif
+
 	/* reverse to-hit, but body armour reverts to its normal "bulkiness" to-hit penalty */
 	if (o_ptr->tval == TV_DRAG_ARMOR || o_ptr->tval == TV_HARD_ARMOR || o_ptr->tval == TV_SOFT_ARMOR) {
 		o_ptr->to_h_org = o_ptr->to_h;
@@ -12576,13 +12644,13 @@ void inverse_cursed(object_type *o_ptr) {
 	}
 	/* ammo doesn't get exaggerating hit/dam boni */
 	if (is_ammo(o_ptr->tval)) {
-#if 0
+ #if 0
 		if (o_ptr->to_h > 12) o_ptr->to_h = 12;
 		if (o_ptr->to_d > 6) o_ptr->to_d = 6;
-#else /* extra-reduced power */
+ #else /* extra-reduced power */
 		o_ptr->to_h /= 4; //+7
 		o_ptr->to_d /= 7; //+4
-#endif
+ #endif
 	}
 
 	/* reverse AC */
@@ -12628,6 +12696,30 @@ void inverse_cursed(object_type *o_ptr) {
    counterpart function to inverse_cursed(). */
 void reverse_cursed(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
+
+ #ifdef INVERSE_CURSED_RANDARTS
+	if (o_ptr->name1 == ART_RANDART) {
+		s32b old_owner, swap;
+		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
+
+		if (!o_ptr->pval3 || !o_ptr->pval2) return; //paranoia?
+		swap = o_ptr->name3;
+		o_ptr->name3 = o_ptr->pval3; /* Restore original randart seed */
+		o_ptr->pval3 = swap; /* Consistently remember the flipped artifact for the future */
+		o_ptr->pval2 = 0; /* Mark as unflipped (this is just for choosing the original artifact name) */
+
+		/* Restore the original randart */
+		old_owner = o_ptr->owner;
+		randart_make(o_ptr);
+
+		/* hack: RESF_NORANDART will prevent calling make_artifact() in apply_magic(), which would re-roll the seed randomly */
+		apply_magic(&wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
+
+		o_ptr->owner = old_owner;
+		//p_ptr->window |= (PW_INVEN | PW_PLAYER);
+		return;
+	}
+ #endif
 
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 	if (!(f3 & TR3_HEAVY_CURSE)) return;
