@@ -6614,7 +6614,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_GOGGLES_DM:
 			identify_pack(Ind);
-			break;
+			return; //doesn't recharge, so we mustn't break here!
 		case ART_AMUGROM:
 			msg_print(Ind, "The amulet sparkles in scintillating colours...");
 			o_ptr->recharging = 150 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 100);
