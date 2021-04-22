@@ -5918,8 +5918,10 @@ static bool process_player_end_aux(int Ind) {
 			if (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_BLOOD) cooling += o_ptr->number;
 		}
 		/* Calc % chance for extra preservation turn and cap it */
-		cooling = (50 * iced) / (3 * cooling); //require n snowballs to optimally cool 1 potion
-		if (cooling > 50) cooling = 50;
+		if (cooling) {
+			cooling = (50 * iced) / (3 * cooling); //require n snowballs to optimally cool 1 potion
+			if (cooling > 50) cooling = 50;
+		}
 		/* Calc % chance for snow to preserve itself and cap it */
 		iced = 100 - (iced * 10 + 1990) / (iced + 19);
 		if (iced > 67) iced = 67;
