@@ -11404,9 +11404,9 @@ void process_objects(void) {
 			case TV_LITE:
 				//don't decrement, they don't time out in player inventory either
 				break;
-			case TV_POTION: case TV_FOOD: //SV_POTION_BLOOD going bad
-				/* cold places prolong duration by up to 3x */
-				if (cold_place(&o_ptr->wpos) && rand_int(3)) continue;
+			case TV_POTION: //SV_POTION_BLOOD going bad
+				/* cold places prolong duration */
+				if (cold_place(&o_ptr->wpos) && rand_int(6)) continue;
 
 				o_ptr->timeout--;
 				/* poof */
@@ -11422,8 +11422,13 @@ void process_objects(void) {
 			}
 		}
 		/* SV_SNOWBALL melts */
-		if (o_ptr->tval == TV_GAME && o_ptr->pval) {
-			if (cold_place(&o_ptr->wpos)) continue;
+		if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) {
+			if (cold_place(&o_ptr->wpos) && !o_ptr->embed) {
+				/* We assume that houses are slightly warm even in a cold_place() */
+				if (inside_house(&o_ptr->wpos, o_ptr->ix, o_ptr->iy)) {
+					if (rand_int(3)) continue;
+				} else continue;
+			}
 
 			o_ptr->pval--;
 			/* poof */
@@ -11467,9 +11472,12 @@ void process_objects(void) {
 				case TV_LITE:
 					//don't decrement, they don't time out in player inventory either
 					break;
-				case TV_POTION: case TV_FOOD: //basically just SV_POTION_BLOOD
+				case TV_POTION: //basically just SV_POTION_BLOOD
+					/* We assume that houses are slightly warm even in a cold_place() */
+					if (cold_place(&h_ptr->wpos) && rand_int(3)) continue;
+
 					Ind = pick_player(h_ptr);
-					/* (Note: We assume that houses are never cold_place(), hence they tick down just normally here.) */
+
 					o_ptr->timeout--;
 					/* poof */
 					if (!(o_ptr->timeout)) {
@@ -11491,9 +11499,9 @@ void process_objects(void) {
 				}
 			}
 			/* SV_SNOWBALL melts */
-			if (o_ptr->tval == TV_GAME && o_ptr->pval) {
-				/* Note: We assume that houses are never cold_place(), hence they tick down just normally here: */
-				//if (cold_place(&o_ptr->wpos)) continue;
+			if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) {
+				/* We assume that houses are slightly warm even in a cold_place() */
+				if (cold_place(&h_ptr->wpos) && rand_int(3)) continue;
 
 				Ind = pick_player(h_ptr);
 				o_ptr->pval--;

@@ -5906,8 +5906,23 @@ static bool process_player_end_aux(int Ind) {
 		}
 	}
 
-	if (rand_int(86) <= k - 8) { /* cold effects prolong the duration to up to 2x */
-		int iced = 0, iced_total = 0;
+	if (rand_int(86) > k - 8) { /* cold effects prolong the duration to up to 2x */
+		int iced = 0, cooling = 0;
+
+		/* Check if we carry ice/snow for extra backpack cooling */
+		for (i = INVEN_PACK - 1; i >= 0; i--) {
+			o_ptr = &p_ptr->inventory[i];
+			if (!o_ptr->k_idx) continue;
+
+			if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) iced += o_ptr->number;
+			if (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_BLOOD) cooling += o_ptr->number;
+		}
+		/* Calc % chance for extra preservation turn and cap it */
+		cooling = (50 * iced) / (3 * cooling); //require n snowballs to optimally cool 1 potion
+		if (cooling > 50) cooling = 50;
+		/* Calc % chance for snow to preserve itself and cap it */
+		iced = 100 - (iced * 10 + 1990) / (iced + 19);
+		if (iced > 67) iced = 67;
 
 		/* Process inventory (blood potions, snowballs).
 		   We use inverse order so we can check for snowballs first,
@@ -5920,16 +5935,12 @@ static bool process_player_end_aux(int Ind) {
 			if (!o_ptr->k_idx) continue;
 
 			/* SV_POTION_BLOOD going bad */
-			if (o_ptr->tval == TV_POTION || o_ptr->tval == TV_FOOD) {
+			if (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_BLOOD) {
 				/* Carrying enough snow will prolong potions by another 50% */
-				if (iced_total) {
-					iced_total = (iced_total - o_ptr->number * 3) + 1;
-					if (iced_total < 0) iced_total = 0;
-				}
-				if (o_ptr->timeout && (!iced_total || rand_int(3))) {
+				if (o_ptr->timeout && !magik(cooling)) {
 					o_ptr->timeout--;
 					/* Heat accelerates the process */
-					if (o_ptr->timeout && ((p_ptr->sh_fire && !p_ptr->sh_cold) || p_ptr->ptrait == TRAIT_RED) && !rand_int(2)) o_ptr->timeout--;
+					if (o_ptr->timeout && (p_ptr->sh_fire || p_ptr->ptrait == TRAIT_RED) && !p_ptr->sh_cold && !rand_int(2)) o_ptr->timeout--;
 #ifdef LIVE_TIMEOUTS
 					if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
 #endif
@@ -5950,17 +5961,11 @@ static bool process_player_end_aux(int Ind) {
 			}
 
 			/* SV_SNOWBALL melting */
-			if (o_ptr->tval == TV_GAME && o_ptr->pval) {
-				iced++;
-				iced_total += o_ptr->number;
-				//if (warm_place && !rand_int(7 - 133 / (20 + o_ptr->number + iced)) { /* x1..x7 */
-				//if (warm_place && !rand_int(5 - 68 / (15 + o_ptr->number + iced)) { /* x1..x5 */
-				//if (warm_place && !rand_int(4 - 55 / (15 + o_ptr->number + iced)) { /* x1..x4 */
-				//if (warm_place && !rand_int(3 - 38 / (12 + o_ptr->number + iced)) { /* x1..x3 */
-				if (warm_place && magik((380 / (12 + o_ptr->number + iced)) * 3 + 25)) { /* fine x1..x3 */
+			if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) {
+				if (warm_place && !magik(iced)) { /* snowballs can also preserve each other */
 					o_ptr->pval--;
 					/* Heat accelerates the process */
-					if (o_ptr->pval && ((p_ptr->sh_fire && !p_ptr->sh_cold) || p_ptr->ptrait == TRAIT_RED)) o_ptr->pval--;
+					if (o_ptr->pval && (p_ptr->sh_fire || p_ptr->ptrait == TRAIT_RED) && !p_ptr->sh_cold && !rand_int(2)) o_ptr->pval--;
 #ifdef LIVE_TIMEOUTS
 					if (p_ptr->live_timeouts) p_ptr->window |= PW_INVEN;
 #endif
