@@ -4472,6 +4472,7 @@
 #define ENCH_TODAM	0x02
 #define ENCH_TOAC	0x04
 #define ENCH_STOLEN	0x08
+#define ENCH_EQUIP	0x10
 
 
 /*

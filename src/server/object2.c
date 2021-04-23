@@ -12651,7 +12651,8 @@ void inverse_cursed(object_type *o_ptr) {
 		}
 
 		/* Remove no longer correct "cursed" tag */
-		if (o_ptr->note && streq(quark_str(o_ptr->note), "cursed")) o_ptr->note = 0;
+		//if (o_ptr->note && streq(quark_str(o_ptr->note), "cursed")) o_ptr->note = 0;
+		note_toggle_cursed(o_ptr, FALSE);
 
 		//p_ptr->update |= (PU_BONUS);
 		//p_ptr->window |= (PW_EQUIP | PW_PLAYER);
@@ -12749,6 +12750,7 @@ void reverse_cursed(object_type *o_ptr) {
 		/* Restore the original randart */
 		old_owner = o_ptr->owner;
 		randart_make(o_ptr);
+		//note_toggle_cursed(o_ptr, TRUE); -- not needed, it gets already added
 
 		/* hack: RESF_NORANDART will prevent calling make_artifact() in apply_magic(), which would re-roll the seed randomly */
 		apply_magic(&wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);

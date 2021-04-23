@@ -269,7 +269,7 @@ static void brand_weapon(int Ind) {
 
 		msg_format(Ind, "Your %s %s", o_name, act);
 
-		enchant(Ind, o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM);
+		enchant(Ind, o_ptr, rand_int(3) + 4, ENCH_TOHIT | ENCH_TODAM | ENCH_EQUIP);
 
 		/* Hack -- you don't sell the wep blessed by your god, do you? :) */
 		o_ptr->discount = 100;

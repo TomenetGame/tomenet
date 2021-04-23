@@ -3543,9 +3543,7 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 	prob = o_ptr->number * 100;
 
 	/* Missiles are easy to enchant */
-	if (is_ammo(o_ptr->tval)) {
-		prob = prob / 20;
-	}
+	if (is_ammo(o_ptr->tval)) prob = prob / 20;
 
 	/* Try "n" times */
 	for (i = 0; i < n; i++) {
@@ -3576,6 +3574,19 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				    //(o_ptr->to_h >= 0) && (rand_int(100) < 25))
 				    (rand_int(100) < 10 + 10 * o_ptr->to_h)) {
 					msg_print(Ind, "The curse is broken!");
+
+#ifdef VAMPIRES_INV_CURSED
+					if (eflag & ENCH_EQUIP) {
+						if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+						else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+						else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
+ #endif
+					}
+#endif
+
 					o_ptr->ident &= ~ID_CURSED;
 					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 					note_toggle_cursed(o_ptr, FALSE);
@@ -3605,9 +3616,21 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				if (cursed_p(o_ptr) &&
 				    (!(f3 & TR3_PERMA_CURSE)) &&
 				    //(o_ptr->to_d >= 0) && (rand_int(100) < 25))
-				    (rand_int(100) < 10 + 10 * o_ptr->to_d))
-				{
+				    (rand_int(100) < 10 + 10 * o_ptr->to_d)) {
 					msg_print(Ind, "The curse is broken!");
+
+#ifdef VAMPIRES_INV_CURSED
+					if (eflag & ENCH_EQUIP) {
+						if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+						else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+						else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
+ #endif
+					}
+#endif
+
 					o_ptr->ident &= ~ID_CURSED;
 					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 					note_toggle_cursed(o_ptr, FALSE);
@@ -3638,6 +3661,19 @@ bool enchant(int Ind, object_type *o_ptr, int n, int eflag) {
 				    (!(f3 & TR3_PERMA_CURSE)) &&
 				    (o_ptr->to_a >= 0) && (rand_int(100) < 25)) {
 					msg_print(Ind, "The curse is broken!");
+
+#ifdef VAMPIRES_INV_CURSED
+					if (eflag & ENCH_EQUIP) {
+						if (p_ptr->prace == RACE_VAMPIRE) reverse_cursed(o_ptr);
+ #ifdef ENABLE_HELLKNIGHT
+						else if (p_ptr->pclass == CLASS_HELLKNIGHT) reverse_cursed(o_ptr); //them too!
+ #endif
+ #ifdef ENABLE_CPRIEST
+						else if (p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) reverse_cursed(o_ptr);
+ #endif
+					}
+#endif
+
 					o_ptr->ident &= ~ID_CURSED;
 					o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
 					note_toggle_cursed(o_ptr, FALSE);
@@ -3921,9 +3957,10 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	    ((o_ptr->number > 1) ? "" : "s"));
 
 	/* Enchant */
-	if (enchant(Ind, o_ptr, num_hit, ENCH_TOHIT)) okay = TRUE;
-	if (enchant(Ind, o_ptr, num_dam, ENCH_TODAM)) okay = TRUE;
-	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC)) okay = TRUE;
+	flags |= (item >= INVEN_WIELD ? ENCH_EQUIP : 0x0);
+	if (enchant(Ind, o_ptr, num_hit, ENCH_TOHIT | flags)) okay = TRUE;
+	if (enchant(Ind, o_ptr, num_dam, ENCH_TODAM | flags)) okay = TRUE;
+	if (enchant(Ind, o_ptr, num_ac, ENCH_TOAC | flags)) okay = TRUE;
 
 	/* Artifacts cannot be enchanted. */
 	//if (artifact_p(o_ptr)) msg_format(Ind,"Your %s %s unaffected.",o_name,((o_ptr->number != 1) ? "are" : "is"));
