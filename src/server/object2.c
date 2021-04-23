@@ -6702,7 +6702,11 @@ void determine_level_req(int level, object_type *o_ptr) {
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_FIRE) && (o_ptr->level < 30)) o_ptr->level = 30;
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_ICE) && (o_ptr->level < 30)) o_ptr->level = 30;
 	if ((o_ptr->tval == TV_SCROLL) && (o_ptr->sval == SV_SCROLL_CHAOS) && (o_ptr->level < 30)) o_ptr->level = 30;
-	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED
+	/* Make randart +SPEED rings consistent with normal rings of speed.. */
+	if (o_ptr->tval == TV_RING && o_ptr->name1 == ART_RANDART && (a_ptr->flags1 & TR1_SPEED) && o_ptr->pval) {
+		if (o_ptr->level < SPEED_RING_BASE_LEVEL + o_ptr->pval)
+			o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->pval;
+	} else if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPEED
 	    && o_ptr->level && o_ptr->bpval > 0
 	    && o_ptr->level != SPEED_RING_BASE_LEVEL + o_ptr->bpval)
 		o_ptr->level = SPEED_RING_BASE_LEVEL + o_ptr->bpval;
