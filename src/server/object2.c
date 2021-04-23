@@ -12584,6 +12584,14 @@ void hack_particular_item(void) {
 #ifdef VAMPIRES_INV_CURSED
 /* Reverse negative boni on a cursed item while equipped by a true undead (RACE_VAMPIRE) player,
    provided the item is eligible (HEAVY_CURSE). - C. Blue */
+/* Will randarts retain their positive abilities on flipping? (mostly for auto-id) */
+ #define INVERSE_CURSED_RETAIN
+ #ifdef INVERSE_CURSED_RETAIN
+  //TR3_BLESSED -- cursed items cannot have BLESSED flag, TR3_PERMA_CURSE -- not happening on randarts
+  #define TR3_BAD_MASK (TR3_AUTO_CURSE | TR3_NO_TELE | TR3_NO_MAGIC | TR3_TY_CURSE | TR3_DRAIN_EXP | TR3_TELEPORT | TR3_AGGRAVATE | TR3_CURSED | TR3_HEAVY_CURSE)
+  #define TR4_BAD_MASK (TR4_NEVER_BLOW | TR4_BLACK_BREATH | TR4_DG_CURSE | TR4_CLONE | TR4_CURSE_NO_DROP)
+  #define TR5_BAD_MASK (TR5_DRAIN_MANA | TR5_DRAIN_HP)
+ #endif
 void inverse_cursed(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
 
@@ -12593,15 +12601,20 @@ void inverse_cursed(object_type *o_ptr) {
 
  #ifdef INVERSE_CURSED_RANDARTS
 	if (o_ptr->name1 == ART_RANDART) {
-		int tries = 0;
 		s32b old_owner, swap;
 		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
 		player_type player;
+  #ifdef INVERSE_CURSED_RETAIN
+		artifact_type a_org, *a_ptr;
+		bool anti_undead_org;
+		bool anti_demon_org;
+		int tries = 1000;
+  #else
+		int tries = 20;
+  #endif
+		int tries_org = tries;
 
-		if (o_ptr->pval2) return; //paranoia?
-		swap = o_ptr->pval3; /* remember the flipped randart in the future */
-		o_ptr->pval3 = o_ptr->name3; /* Use unused pval3 to store original randart seed */
-		o_ptr->pval2 = 1; /* Mark as flipped (this is just for choosing the original artifact name) */
+		if (o_ptr->pval2) return;
 
 		player.resist_lite = TRUE;
 		player.prace = RACE_VAMPIRE;
@@ -12611,9 +12624,22 @@ void inverse_cursed(object_type *o_ptr) {
 		player.demon = TRUE;
   #endif
 
+  #ifdef INVERSE_CURSED_RETAIN
+		a_org = *randart_make(o_ptr);
+		a_org.flags3 &= ~TR3_BAD_MASK;
+		a_org.flags4 &= ~TR4_BAD_MASK;
+		a_org.flags5 &= ~TR5_BAD_MASK;
+		anti_undead_org = anti_undead(o_ptr, &player);
+		anti_demon_org = anti_demon(o_ptr, &player);
+  #endif
+
+		swap = o_ptr->pval3; /* remember the flipped randart in the future */
+		o_ptr->pval3 = o_ptr->name3; /* Use unused pval3 to store original randart seed */
+		o_ptr->pval2 = 1; /* Mark as flipped (this is just for choosing the original artifact name) */
+
 		/* Randart loop. Try until an allowed randart was made */
 		old_owner = o_ptr->owner;
-		while (tries++ < 20) {
+		while (tries--) {
 			/* first time this randart gets flipped? */
 			if (!swap) {
 				/* Piece together a new 32-bit random seed */
@@ -12623,36 +12649,82 @@ void inverse_cursed(object_type *o_ptr) {
 				/* consistently re-create the same flipping as before */
 				o_ptr->name3 = swap;
 			}
+  #ifdef INVERSE_CURSED_RETAIN
+			a_ptr = 
+  #endif
 			randart_make(o_ptr);
+
 			/* hack: RESF_NORANDART will prevent calling make_artifact() in apply_magic(), which would re-roll the seed again which is unnecessary as we just did that already */
 			apply_magic(&wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
 
 			/* Forbid some flags and being cursed AGAIN or this was pointless */
 			if (cursed_p(o_ptr)) continue;
 			//if (((resf & RESF_LIFE) || !(a_ptr->flags1 & TR1_LIFE)) break;  -- allow for now, in general
+
+  #ifdef INVERSE_CURSED_RETAIN
+			if ((a_ptr->flags1 & a_org.flags1) != a_org.flags1) continue;
+			if ((a_ptr->flags2 & a_org.flags2) != a_org.flags2) continue;
+			if ((a_ptr->flags3 & a_org.flags3) != a_org.flags3) continue;
+			if ((a_ptr->flags4 & a_org.flags4) != a_org.flags4) continue;
+			if ((a_ptr->flags5 & a_org.flags5) != a_org.flags5) continue;
+			if ((a_ptr->flags6 & a_org.flags6) != a_org.flags6) continue;
+			if (!anti_undead_org && anti_undead(o_ptr, &player)) continue;
+   #ifdef ENABLE_HELLKNIGHT
+			if (!anti_demon_org && anti_demon(o_ptr, &player)) continue;
+   #endif
+  #else
 			if (anti_undead(o_ptr, &player)) continue;
-  #ifdef ENABLE_HELLKNIGHT
+   #ifdef ENABLE_HELLKNIGHT
 			if (anti_demon(o_ptr, &player)) continue;
+   #endif
   #endif
 			break; /* Success */
 		}
 		o_ptr->owner = old_owner;
 
 		/* Check for super-rare failure (rather theoretical) */
-		if (tries == 20) {
+		if (!tries) {
 			char o_name[ONAME_LEN];
 
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("inverse_cursed() failed: %s\n", o_name);
+			s_printf("inverse_cursed() failed after %d tries: %s\n", tries_org, o_name);
 
 			/* restore item */
 			reverse_cursed(o_ptr);
+
+			o_ptr->pval2 = 2; /* Mark as failed forever, so players don't just re-equip it all the time trying to reroll */
 			return;
+		} else {
+			char o_name[ONAME_LEN];
+
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("inverse_cursed() succeeded after %d tries: %s\n", tries_org - tries, o_name);
 		}
 
-		/* Remove no longer correct "cursed" tag */
-		//if (o_ptr->note && streq(quark_str(o_ptr->note), "cursed")) o_ptr->note = 0;
-		note_toggle_cursed(o_ptr, FALSE);
+		/* Remove no longer correct "cursed" tag, partial copy-paste from note_toggle_cursed(): */
+		if (o_ptr->note) {
+			char *cn, note2[ONAME_LEN], *cnp;
+
+			strcpy(note2, quark_str(o_ptr->note));
+
+			/* remove old 'cursed' inscription */
+			if ((cn = strstr(note2, "cursed"))) {
+				while (note2[0] && (cn = strstr(note2, "cursed"))) {
+					cnp = cn + 5;
+					if (cn > note2 && //the 'cursed' does not start on the first character of note2?
+					    *(cn - 1) == '-') cn--; /* cut out leading '-' delimiter before "cursed" */
+
+					/* strip formerly trailing delimiter if it'd end up on first position in the new inscription */
+					if (cn == note2 && *(cnp + 1) == '-') cnp++;
+
+					do {
+						cnp++;
+						*cn = *cnp;
+						cn++;
+					} while (*cnp);
+				}
+			}
+		}
 
 		//p_ptr->update |= (PU_BONUS);
 		//p_ptr->window |= (PW_EQUIP | PW_PLAYER);
@@ -12741,7 +12813,7 @@ void reverse_cursed(object_type *o_ptr) {
 		s32b old_owner, swap;
 		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
 
-		if (!o_ptr->pval3 || !o_ptr->pval2) return; //paranoia?
+		if (!o_ptr->pval3 || o_ptr->pval2 != 1) return; //paranoia @ pval3?
 		swap = o_ptr->name3;
 		o_ptr->name3 = o_ptr->pval3; /* Restore original randart seed */
 		o_ptr->pval3 = swap; /* Consistently remember the flipped artifact for the future */

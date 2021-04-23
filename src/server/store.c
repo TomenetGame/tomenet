@@ -3845,7 +3845,7 @@ void store_sell(int Ind, int item, int amt) {
 
 
 #ifdef INVERSE_CURSED_RANDARTS
-	if (o_ptr->name1 == ART_RANDART && o_ptr->pval2) {
+	if (o_ptr->name1 == ART_RANDART && o_ptr->pval2 == 1) {
 		msg_print(Ind, "Hmmm, could you please unequip that item first, so I may scrutinize it..");
 		return;
 	}
@@ -3854,7 +3854,7 @@ void store_sell(int Ind, int item, int amt) {
 	/* Specifically for Mathom house which doesn't run store_will_buy() checks! */
 	if ((cursed_p(o_ptr)
 #ifdef INVERSE_CURSED_RANDARTS
-	    || (o_ptr->name1 == ART_RANDART && o_ptr->pval2)
+	    || (o_ptr->name1 == ART_RANDART && o_ptr->pval2 == 1)
 #endif
 	    ) && !is_admin(p_ptr)) {
 		u32b f4, fx;
@@ -4018,7 +4018,7 @@ void store_confirm(int Ind) {
 	}
 
 #ifdef INVERSE_CURSED_RANDARTS
-	if (o_ptr->name1 == ART_RANDART && o_ptr->pval2) {
+	if (o_ptr->name1 == ART_RANDART && o_ptr->pval2 == 1) {
 		msg_print(Ind, "Hmmm, could you please unequip that item first, so I may scrutinize it..");
 		return;
 	}
@@ -4027,7 +4027,7 @@ void store_confirm(int Ind) {
 	/* Specifically for Mathom house which doesn't run store_will_buy() checks! */
 	if ((cursed_p(o_ptr)
 #ifdef INVERSE_CURSED_RANDARTS
-	    || (o_ptr->name1 == ART_RANDART && o_ptr->pval2)
+	    || (o_ptr->name1 == ART_RANDART && o_ptr->pval2 == 1)
 #endif
 	    ) && !is_admin(p_ptr)) {
 		u32b f4, fx;
