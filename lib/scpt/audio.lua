@@ -453,9 +453,17 @@ audio_bgm = {
     "extra",
 
     "specialunique_slain",
-    "Nazgul_slain",
+    "Nazgul_slain",--100
     "all_Nazgul_slain",
     "tomb_insanity",
+    "wilderness_spring_day",
+    "wilderness_spring_night",
+    "wilderness_summer_day",
+    "wilderness_summer_night",
+    "wilderness_autumn_day",
+    "wilderness_autumn_night",
+    "wilderness_winter_day",
+    "wilderness_winter_night",--110
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end
