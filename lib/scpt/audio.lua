@@ -442,8 +442,8 @@ audio_bgm = {
     "winner",
     "ghost",
     "dungeonboss_slain",--90
-    "sauron_slain",
-    "zuaon_slain",
+    "Sauron_slain",
+    "ZuAon_slain",
 
     "store_town",
     "store_blackmarket",
@@ -451,6 +451,11 @@ audio_bgm = {
     "store_casino",
     "store_service",
     "extra",
+
+    "specialunique_slain",
+    "Nazgul_slain",
+    "all_Nazgul_slain",
+    "tomb_insanity",
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end
