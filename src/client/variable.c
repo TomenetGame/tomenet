@@ -681,3 +681,4 @@ int bookmark_line[GUIDE_BOOKMARKS];
 char bookmark_name[GUIDE_BOOKMARKS][60];
 #endif
 unsigned char lamp_fainting = 0;
+bool insanity_death = FALSE;

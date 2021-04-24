@@ -4003,6 +4003,9 @@ void client_init(char *argv1, bool skip) {
  #endif
 #endif
 
+	/* For different tomb stone music if this character dies to insanity */
+	insanity_death = FALSE;
+
 	/* Main loop */
 #ifdef RETRY_LOGIN
 	rl_connection_state = 1;

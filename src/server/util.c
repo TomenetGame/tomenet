@@ -2033,12 +2033,42 @@ void handle_music(int Ind) {
 			    || p_ptr->music_current == tmus_inverse)
 				Send_music(Ind, tmus, night_surface ? tmus_inverse : tmus_reserve);
 			/* Wilderness music */
-			else if (night_surface) Send_music(Ind, 10, 0);
-			else Send_music(Ind, 9, 0);
+			else if (night_surface) {
+				/* Nightly wilderness music */
+				switch (season) {
+				case SEASON_SPRING: Send_music(Ind, 104, 10);
+				case SEASON_SUMMER: Send_music(Ind, 106, 10);
+				case SEASON_AUTUMN: Send_music(Ind, 108, 10);
+				case SEASON_WINTER: Send_music(Ind, 110, 10);
+				}
+			} else {
+				/* Daily wilderness music */
+				switch (season) {
+				case SEASON_SPRING: Send_music(Ind, 103, 9);
+				case SEASON_SUMMER: Send_music(Ind, 105, 9);
+				case SEASON_AUTUMN: Send_music(Ind, 107, 9);
+				case SEASON_WINTER: Send_music(Ind, 109, 9);
+				}
+			}
 			return;
-		} else {
-			if (night_surface) Send_music(Ind, 10, 0);
-			else Send_music(Ind, 9, 0);
+		} else { /* Not a town, so it's wilderness */
+			if (night_surface) {
+				/* Nightly wilderness music */
+				switch (season) {
+				case SEASON_SPRING: Send_music(Ind, 104, 10);
+				case SEASON_SUMMER: Send_music(Ind, 106, 10);
+				case SEASON_AUTUMN: Send_music(Ind, 108, 10);
+				case SEASON_WINTER: Send_music(Ind, 110, 10);
+				}
+			} else {
+				/* Daily wilderness music */
+				switch (season) {
+				case SEASON_SPRING: Send_music(Ind, 103, 9);
+				case SEASON_SUMMER: Send_music(Ind, 105, 9);
+				case SEASON_AUTUMN: Send_music(Ind, 107, 9);
+				case SEASON_WINTER: Send_music(Ind, 109, 9);
+				}
+			}
 			return;
 		}
 	/* in the dungeon */

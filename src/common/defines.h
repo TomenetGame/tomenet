@@ -1375,6 +1375,18 @@
 #define RI_OREMORJ		843	/* note: jokeangband */
 #define RI_SAURON		860
 #define RI_MORGOTH		862
+
+/* The Nazgul */
+#define RI_UVATHA		946
+#define RI_ADUNAPHEL		947
+#define RI_AKHORAHIL		948
+#define RI_REN			949
+#define RI_JI			950
+#define RI_DWAR			951
+#define RI_HOARMUTH		952
+#define RI_KHAMUL		953
+#define RI_WITCHKING		954
+
 #define RI_TIK_SRVZLLAT		1032
 #define RI_LIVING_LIGHTNING	1147
 #define RI_HELLRAISER		1067
@@ -7490,7 +7502,7 @@ extern int PlayerUID;
 
 #ifdef USE_SOUND_2010
  #define SOUND_MAX_2010	400 /*for experimenting purpose - C. Blue*/
- #define MUSIC_MAX	100 /*for experimenting purpose - C. Blue*/
+ #define MUSIC_MAX	200 /*for experimenting purpose - C. Blue*/
 
  /* for ovl_sfx_.. client options */
  #define SFX_TYPE_ATTACK	0

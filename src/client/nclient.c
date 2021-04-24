@@ -2473,6 +2473,9 @@ int Receive_message(void) {
 	/* Ultra-hack for light-source fainting. (First two bytes are "\377w".) */
 	if (!c_cfg.no_lite_fainting && !strcmp(buf + 2, "Your light is growing faint.")) lamp_fainting = 30; //deciseconds
 
+	/* Hack for tombstone music from insanity-deaths. (First four bytes are "\377w\377v".) */
+	if (!strcmp(buf + 4, "You turn into an unthinking vegetable.")) insanity_death = TRUE;
+
 	/* Hack to clear topline: It's a translation of the former msg_print(Ind, NULL) hack, as we cannot transmit the NULL. */
 	if (buf[0] == '\377' && !buf[1]) {
 		if (screen_icky && (!shopping || perusing)) Term_switch(0);

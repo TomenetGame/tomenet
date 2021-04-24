@@ -6884,6 +6884,22 @@ if (cfg.unikill_format) {
 			s_printf("..dropped.\n");
 		}
 	}
+#ifdef USE_SOUND_2010
+	/* else if not a dungeon boss but a special unique or Nazgul.. */
+	else if (r_ptr->flags1 & RF1_UNIQUE) {
+		/* Special-unique-slain music if available client-side */
+		if (r_ptr->level >= 98 && !is_Sauron && !is_Morgoth && !is_ZuAon) Send_music(Ind, 99, -1);
+
+		/* all-Nazgul-slain or Nazgul-slain music if available client-side */
+		else if (r_ptr->flags7 & RF7_NAZGUL) {
+			if (p_ptr->r_killed[RI_UVATHA] == 1 && p_ptr->r_killed[RI_ADUNAPHEL] == 1 && p_ptr->r_killed[RI_AKHORAHIL] == 1 &&
+			    p_ptr->r_killed[RI_REN] == 1 && p_ptr->r_killed[RI_JI] == 1 && p_ptr->r_killed[RI_DWAR] == 1 &&
+			    p_ptr->r_killed[RI_HOARMUTH] == 1 && p_ptr->r_killed[RI_KHAMUL] == 1 && p_ptr->r_killed[RI_WITCHKING] == 1)
+				Send_music(Ind, 101, -1);
+			else Send_music(Ind, 100, -1);
+		}
+	}
+#endif
 
 	if (r_ptr->flags1 & (RF1_DROP_CHOSEN)) {
 		/* Mega-Hack -- drop "winner" treasures */

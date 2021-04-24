@@ -1121,3 +1121,4 @@ extern int bookmark_line[GUIDE_BOOKMARKS];
 extern char bookmark_name[GUIDE_BOOKMARKS][60];
 #endif
 extern unsigned char lamp_fainting;
+extern bool insanity_death;

@@ -9182,10 +9182,19 @@ static void print_tomb(cptr reason) {
 	if (use_sound) {
    #if 0
 		/* switch to login screen music if available, or fade music out */
-		if (!music(exec_lua(0, "return get_music_index(\"tomb\")"))) music(-4);
+		if (insanity_death) {
+			if (!music(exec_lua(0, "return get_music_index(\"tomb_insanity\")")))
+				if (!music(exec_lua(0, "return get_music_index(\"tomb\")")))
+					music(-4);
+		} else {
+			if (!music(exec_lua(0, "return get_music_index(\"tomb\")"))) music(-4);
+		}
    #else
 		/* switch to login screen music if available; otherwise just continue playing the current in-game music */
-		music(exec_lua(0, "return get_music_index(\"tomb\")"));
+		if (insanity_death) {
+			if (!music(exec_lua(0, "return get_music_index(\"tomb_insanity\")")))
+				music(exec_lua(0, "return get_music_index(\"tomb_insanity\")"));
+		} else music(exec_lua(0, "return get_music_index(\"tomb\")"));
    #endif
 	}
   #endif
