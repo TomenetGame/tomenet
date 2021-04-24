@@ -12643,7 +12643,7 @@ void inverse_cursed(object_type *o_ptr) {
 
 		/* Randart loop. Try until an allowed randart was made */
 		old_owner = o_ptr->owner;
-		while (tries--) {
+		while (--tries) {
 			/* first time this randart gets flipped? */
 			if (!swap) {
 				/* Piece together a new 32-bit random seed */
