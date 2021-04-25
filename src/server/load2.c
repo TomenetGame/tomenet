@@ -781,9 +781,9 @@ static void rd_item(object_type *o_ptr) {
 	/* Shop-enchanted cheeze - fix level */
 
 	/* fix armour ruined by formerly buggy code */
-	if (is_armour(o_ptr->tval) && (o_ptr->level < 0 || o_ptr->level > 200)) o_ptr->level = (k_info[o_ptr->k_idx].level + 1) / 2;
+	//if (is_armour(o_ptr->tval) && (o_ptr->level < 0 || o_ptr->level > 200)) o_ptr->level = (k_info[o_ptr->k_idx].level + 1) / 2;
 	/* fix ruined royal armour */
-	if (is_armour(o_ptr->tval) /* && o_ptr->tval != TV_SHIELD */ && !o_ptr->level && (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY)) o_ptr->level = 51;
+	//if (is_armour(o_ptr->tval) /* && o_ptr->tval != TV_SHIELD */ && !o_ptr->level && (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY)) o_ptr->level = 51;
 	/* fix low level dsms etc */
 	if (is_armour(o_ptr->tval) && o_ptr->level && o_ptr->level <= 20 && k_info[o_ptr->k_idx].cost > 2000) determine_level_req(-9999, o_ptr);
 
@@ -802,16 +802,18 @@ static void rd_item(object_type *o_ptr) {
 		if (o_ptr->level > 20) o_ptr->level = 20; //don't exaggerate - for early mithril helmet finds etc
 	}
 
+ #if 0
 	/* fix shields previously ruined by formerly buggy code above */
 	if (o_ptr->tval == TV_SHIELD && !o_ptr->name1 && !o_ptr->name2 && !o_ptr->level && o_ptr->level <= 50) {
-		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51;
-		else o_ptr->level = 3;//whatever..
+		//if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51; else
+		o_ptr->level = 3;//whatever..
 	}
 	/* fix royal armour and dsms etc.. Basically all armour that had a level > 20 but < to_a. */
 	if (is_armour(o_ptr->tval) && o_ptr->tval != TV_SHIELD && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level == 20 && k_info[o_ptr->k_idx].cost > 3000) {
-		if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51;
-		else determine_level_req(-9999, o_ptr);
+		//if (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) o_ptr->level = 51; else
+		determine_level_req(-9999, o_ptr);
 	}
+ #endif
 	/* fix weapons too while at it.. */
 	if (is_melee_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level == 20 && k_info[o_ptr->k_idx].cost > 1000)
 		determine_level_req(-9999, o_ptr);

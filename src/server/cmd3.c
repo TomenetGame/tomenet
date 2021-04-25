@@ -1075,6 +1075,20 @@ void do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	/* Extract the flags */
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
+#if 0 /* For now disabled because of the following problem: Instant-resurrection users would get to keep their stuff equipped, but others would be unable to re-equip! */
+	/* Royalties only? */
+	if ((f5 & TR5_WINNERS_ONLY) &&
+ #ifdef FALLEN_WINNERSONLY
+	    !p_ptr->once_winner
+ #else
+	    !p_ptr->total_winner
+ #endif
+	    ) {
+		msg_print(Ind, "Only royalties are powerful enough to use that item!");
+		if (!is_admin(p_ptr)) return;
+	}
+#endif
+
 	/* check whether the item to wield is fit for dual-wielding */
 	if ((o_ptr->weight <= DUAL_MAX_WEIGHT) &&
 	    !(f4 & (TR4_MUST2H | TR4_SHOULD2H))) item_fits_dual = TRUE;

@@ -6771,10 +6771,12 @@ void determine_level_req(int level, object_type *o_ptr) {
 		o_ptr->level -= rand_int(3);
 #endif
 
+#if 0 /* no need actually, since +LIFE will only work on royalties anyway */
 	/* Special limit for +LIFE randarts */
 	if ((o_ptr->name1 == ART_RANDART) &&
 	    (a_ptr->flags1 & TR1_LIFE) && (o_ptr->level <= 50))
 		o_ptr->level = 51 + rand_int(2);
+#endif
 
 #if 1 /* experimental */
 	/* Tone down some very high true artifact levels to make them more tradable */
@@ -6796,9 +6798,11 @@ void determine_level_req(int level, object_type *o_ptr) {
 	/* Ring of Phasing (not set here, so this is 'dead' code, but keep consistent with xtra2.c anyway) */
 	if (o_ptr->name1 == ART_PHASING && (o_ptr->level < 60 || o_ptr->level > 65)) o_ptr->level = 60 + rand_int(6);
 
+#if 0 /* no need actually, as you can get Morgoth credit at 40 already */
 	/* Special limit for WINNERS_ONLY items */
 	if ((k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY) && (o_ptr->level <= 50))
 		o_ptr->level = 51 + rand_int(5);
+#endif
 }
 #else /* new way, quite reworked */
 void determine_level_req(int level, object_type *o_ptr) {
