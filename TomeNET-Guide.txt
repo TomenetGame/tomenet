@@ -1007,9 +1007,12 @@ CTRL+P  view previous messages.
         forwards).
         Press CTRL+K in here to copy the bottom-most line to the OS clipboard.
         On Linux/OSX this requires 'xclip' to be installed.
+        Hint: Tapping CTRL+K twice will try to extract an URL from the bottom-
+        most line and copy that to the OS clipboard instead, if it finds one.
 
 CTRL+O  view previous chat messages.
-        Press CTRL+K in here to copy the bottom-most line to the OS clipboard.
+        Press CTRL+K in here to copy the bottom-most line to the OS clipboard
+        (or double-tap to try and extract a URL and copy that one instead).
         On Linux/OSX this requires 'xclip' to be installed.
 
 CTRL+Q  save your character & quit the game. (You should do this in town!)
@@ -1079,7 +1082,8 @@ CTRL+C      Search history of chat messages you typed. Press CTRL+C again for
 CTRL+K      Copies currently typed chat line to clipboard.
             Note that CTRL+K can also be used inside message recall screen,
             which is invoked by CTRL+O/P (important/all messages). There it
-            will copy the bottom-most displayed line to the clipboard.
+            will copy the bottom-most displayed line to the clipboard, or - if
+            double-tapped - tries to extract a URL and copy that one instead.
 CTRL+L      Pastes current OS clipboard as chat line (erasing any existing
             text you might have been typing in).
             On Linux/OSX this requires 'xclip' to be installed.

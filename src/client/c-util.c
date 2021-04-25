@@ -1548,6 +1548,7 @@ void copy_to_clipboard(char *buf) {
 	size_t len;
 	int pos = 0;
 	char *c, *c2, buf_esc[MSG_LEN + 10];
+	static char buf_prev[MSG_LEN + 10];
 
 	/* escape all ' (up to 10 before overflow) */
 	c = buf;
@@ -1597,6 +1598,26 @@ void copy_to_clipboard(char *buf) {
 	}
 	*c2 = 0;
 
+	/* Hack: Double-tapping 'copy2clipboard' tries to extract an URL */
+	if (buf_esc[0] && !strcmp(buf_prev, buf_esc) && ((c = strstr(buf_esc, "http")) || (c2 = strstr(buf_esc, "www.")))) {
+		if (!c || (c[4] != ':' && c[5] != ':')) c = NULL; else c2 = NULL;
+		if (!c) c = c2;
+		if (c) {
+			if (prefix(c, "https://")) c2 = c + 8;
+			else if (prefix(c, "http://")) c2 = c + 7;
+			else if (prefix(c, "www.")) c2 = c + 4;
+
+			if (strcspn(c2, ".") < strcspn(c2, " ,/\\?*:;+}{][()!\"$%&'~|<>=")) { /* only hyphen is allowed in domain names */
+				pos = strcspn(c2, " ,\\*;:}{][()!\"$'~|<>"); /* chars not allowed in any part of the URL, thereby terminating it */
+				strcpy(buf_esc, c);
+				buf_esc[pos + (c2 - c)] = 0;
+
+				/* 'Reset' double-tapping */
+				buf_prev[0] = 0;
+			}
+		}
+	}
+
 	len = strlen(buf_esc) + 1;
 	HGLOBAL hMem =  GlobalAlloc(GMEM_MOVEABLE, len);
 	memcpy(GlobalLock(hMem), buf_esc, len);
@@ -1605,11 +1626,13 @@ void copy_to_clipboard(char *buf) {
 	EmptyClipboard();
 	SetClipboardData(CF_TEXT, hMem);
 	CloseClipboard();
+	strcpy(buf_prev, buf_esc);
 #endif
 
 #ifdef USE_X11 /* relies on xclip being installed! */
 	int r, pos = 0;
 	char *c, *c2, buf_esc[MSG_LEN + 10];
+	static char buf_prev[MSG_LEN + 10];
 
 	/* escape all ' (up to 10 before overflow) */
 	c = buf;
@@ -1663,8 +1686,29 @@ void copy_to_clipboard(char *buf) {
 	}
 	*c2 = 0;
 
+	/* Hack: Double-tapping 'copy2clipboard' tries to extract an URL */
+	if (buf_esc[0] && !strcmp(buf_prev, buf_esc) && ((c = strstr(buf_esc, "http")) || (c2 = strstr(buf_esc, "www.")))) {
+		if (!c || (c[4] != ':' && c[5] != ':')) c = NULL; else c2 = NULL;
+		if (!c) c = c2;
+		if (c) {
+			if (prefix(c, "https://")) c2 = c + 8;
+			else if (prefix(c, "http://")) c2 = c + 7;
+			else if (prefix(c, "www.")) c2 = c + 4;
+
+			if (strcspn(c2, ".") < strcspn(c2, " ,/\\?*:;+}{][()!\"$%&'~|<>=")) { /* only hyphen is allowed in domain names */
+				pos = strcspn(c2, " ,\\*;:}{][()!\"$'~|<>"); /* chars not allowed in any part of the URL, thereby terminating it */
+				strcpy(buf_esc, c);
+				buf_esc[pos + (c2 - c)] = 0;
+
+				/* 'Reset' double-tapping */
+				buf_prev[0] = 0;
+			}
+		}
+	}
+
 	r = system(format("echo -n $'%s' | xclip -sel clip", buf_esc));
 	if (r) c_message_add("Copy failed, make sure xclip is installed.");
+	else strcpy(buf_prev, buf_esc);
 #endif
 }
 /* paste current clipboard into active chat input */
