@@ -1548,13 +1548,31 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
  #include <regex.h>
  #define REGEXP_ARRAY_SIZE 1
 #endif
-static void extract_url(char *buf_esc, char *buf_prev) {
-	char *c, *c2;
+static void extract_url(char *buf_esc, char *buf_prev, int end_of_name) {
+	char *c, *c2, *be = NULL;
+
+#if 0
+c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
+    buf_esc[0], buf_esc[1], buf_esc[2], buf_esc[3], buf_esc[4], buf_esc[5], buf_esc[6], buf_esc[7],
+    buf_esc[8], buf_esc[9], buf_esc[10], buf_esc[11], buf_esc[12], buf_esc[13], buf_esc[14], buf_esc[15]);
+#endif
+
+	/* Catch chat messages (the usual case) because the player's name might have sort of "url form" :-p
+	   Problem: /me messages don't have a closing ']' after the name, so we use a hack by marking the end of the name with a '{-' neutral colour code,
+	   however, this hack is currently disablde as it's a bit annoying that we cannot separate forged messages from real '/me' messages anyway.
+	   So let's just go with "extract_url() doesn't work for /me messages" for now.. -_- */
+	if (end_of_name) be = buf_esc + end_of_name; // <- ^ disabled atm
+	else {
+		if (buf_esc[0] == '[') be = strchr(buf_esc, ']');
+		if (be == buf_esc + strlen(buf_esc) - 1) be = NULL; //catch '/me' messages where the ']' is at the very end of the message
+		if (!be) be = buf_esc; else be++;
+	}
 
 	/* Hack: Double-tapping 'copy2clipboard' tries to extract an URL */
-	if (!buf_esc[0] || strcmp(buf_prev, buf_esc)) return;
+	if (!be[0] || strcmp(buf_prev, buf_esc)) return;
 
-	if ((c = strstr(buf_esc, "http")) || (c2 = strstr(buf_esc, "www."))) {
+	/* First try a simple method for easy to recognize ULRs */
+	if ((c = strstr(be, "http")) || (c2 = strstr(be, "www."))) {
 		if (!c || (c[4] != ':' && c[5] != ':')) c = NULL; else c2 = NULL;
 		if (!c) c = c2;
 		if (c) {
@@ -1567,8 +1585,9 @@ static void extract_url(char *buf_esc, char *buf_prev) {
 				int pos;
 
 				pos = strcspn(c2, " "); /* not allowed in any part of the URL, thereby terminating it */
-				strcpy(buf_esc, c);
-				buf_esc[pos + (c2 - c)] = 0;
+				strcpy(buf_prev, c); //swap strings so we don't do overlapping copying..
+				buf_prev[pos + (c2 - c)] = 0;
+				strcpy(buf_esc, buf_prev);
 
 				/* 'Reset' double-tapping */
 				buf_prev[0] = 0;
@@ -1586,7 +1605,7 @@ static void extract_url(char *buf_esc, char *buf_prev) {
 		status = regcomp(&re, "[a-z0-9][a-z0-9]*\\.[a-z0-9][a-z0-9]*(/[^ ]*)?", REG_EXTENDED|REG_ICASE);
 		if (status != 0) return; //error
 
-		status = regexec(&re, buf_esc, REGEXP_ARRAY_SIZE, pmatch, 0);
+		status = regexec(&re, be, REGEXP_ARRAY_SIZE, pmatch, 0);
 		if (status) {
 			regfree(&re);
 			return; //not found
@@ -1597,7 +1616,7 @@ static void extract_url(char *buf_esc, char *buf_prev) {
 		}
 
 		/* Just take the first match of the line.. */
-		strcpy(buf_prev, buf_esc); //swap strings so we don't do overlapping copying..
+		strcpy(buf_prev, be); //swap strings so we don't do overlapping copying..
 		strcpy(buf_esc, buf_prev + pmatch[0].rm_so);
 		buf_esc[pmatch[0].rm_eo - pmatch[0].rm_so] = 0;
 
@@ -1614,7 +1633,7 @@ static void extract_url(char *buf_esc, char *buf_prev) {
 void copy_to_clipboard(char *buf) {
 #ifdef WINDOWS
 	size_t len;
-	int pos = 0;
+	int pos = 0, end_of_name = 0;
 	char *c, *c2, buf_esc[MSG_LEN + 10];
 	static char buf_prev[MSG_LEN + 10];
 
@@ -1650,6 +1669,12 @@ void copy_to_clipboard(char *buf) {
 		/* strip colour codes */
 		case '\377':
 			switch (*(c + 1)) {
+#if 0 /* disabled for now, as we need to check whether a message is '/me' style but those could be forged anyway, so it's all not really clean -_- */
+			case '-': /* hack: '/me' marker for end-of-name, in case the name is url-like so we know to skip it */
+				end_of_name = c - buf;
+				c++;
+				continue;
+#endif
 			case 0: /* broken colour code (paranoia) */
 				c++;
 				continue;
@@ -1666,7 +1691,7 @@ void copy_to_clipboard(char *buf) {
 	}
 	*c2 = 0;
 
-	extract_url(buf_esc, buf_prev);
+	extract_url(buf_esc, buf_prev, end_of_name);
 
 	len = strlen(buf_esc) + 1;
 	HGLOBAL hMem =  GlobalAlloc(GMEM_MOVEABLE, len);
@@ -1680,7 +1705,7 @@ void copy_to_clipboard(char *buf) {
 #endif
 
 #ifdef USE_X11 /* relies on xclip being installed! */
-	int r, pos = 0;
+	int r, pos = 0, end_of_name = 0;
 	char *c, *c2, buf_esc[MSG_LEN + 10];
 	static char buf_prev[MSG_LEN + 10];
 
@@ -1720,6 +1745,12 @@ void copy_to_clipboard(char *buf) {
 		/* strip colour codes */
 		case '\377':
 			switch (*(c + 1)) {
+#if 0 /* disabled for now, as we need to check whether a message is '/me' style but those could be forged anyway, so it's all not really clean -_- */
+			case '-': /* hack: '/me' marker for end-of-name, in case the name is url-like so we know to skip it */
+				end_of_name = c - buf;
+				c++;
+				continue;
+#endif
 			case 0: /* broken colour code (paranoia) */
 				c++;
 				continue;
@@ -1736,7 +1767,7 @@ void copy_to_clipboard(char *buf) {
 	}
 	*c2 = 0;
 
-	extract_url(buf_esc, buf_prev);
+	extract_url(buf_esc, buf_prev, end_of_name);
 
 	r = system(format("echo -n $'%s' | xclip -sel clip", buf_esc));
 	if (r) c_message_add("Copy failed, make sure xclip is installed.");
