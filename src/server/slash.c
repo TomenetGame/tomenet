@@ -1467,6 +1467,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			Send_Guide(Ind, 3, 0, class_info[p_ptr->pclass].title);
 			return;
 		}
+		else if (prefix(messagelc, "/?t")) { /* guide chapter search for our trait */
+			if (!p_ptr->ptrait) {
+				msg_print(Ind, "You don't have a specific trait.");
+				return;
+			}
+			if (p_ptr->ptrait >= TRAIT_BLUE && p_ptr->ptrait <= TRAIT_POWER)
+				Send_Guide(Ind, 3, 0, "lineage");
+			else if (p_ptr->ptrait == TRAIT_ENLIGHTENED)
+				Send_Guide(Ind, 3, 0, "enlightened");
+			else if (p_ptr->ptrait == TRAIT_CORRUPTED)
+				Send_Guide(Ind, 3, 0, "corrupted");
+			else msg_print(Ind, "There is no specific information about your trait."); //paranoia
+			return;
+		}
 		else if (prefix(messagelc, "/help") || prefix(messagelc, "/he") || prefix(messagelc, "/?")) {
 			char path[MAX_PATH_LENGTH];
 
