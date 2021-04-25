@@ -1542,7 +1542,75 @@ static void c_prt_n(byte attr, char *str, int y, int x, int n) {
 	Term_putstr(x, y, -1, attr, tmp);
 }
 
-/* copy a line of text to clipboard */
+/* Helper function for copy_to_clipboard */
+#define REGEX_URL
+#ifdef REGEX_URL
+ #include <regex.h>
+ #define REGEXP_ARRAY_SIZE 1
+#endif
+static void extract_url(char *buf_esc, char *buf_prev) {
+	char *c, *c2;
+
+	/* Hack: Double-tapping 'copy2clipboard' tries to extract an URL */
+	if (!buf_esc[0] || strcmp(buf_prev, buf_esc)) return;
+
+	if ((c = strstr(buf_esc, "http")) || (c2 = strstr(buf_esc, "www."))) {
+		if (!c || (c[4] != ':' && c[5] != ':')) c = NULL; else c2 = NULL;
+		if (!c) c = c2;
+		if (c) {
+			if (prefix(c, "https://")) c2 = c + 8;
+			else if (prefix(c, "http://")) c2 = c + 7;
+			else if (prefix(c, "www.")) c2 = c + 4;
+			else c2 = NULL; //kill compiler warning
+
+			if (c2 && strcspn(c2, ".") < strcspn(c2, " ,/\\?*:;+}{][()!\"$%&'~|<>=")) { /* only hyphen is allowed in domain names */
+				int pos;
+
+				pos = strcspn(c2, " "); /* not allowed in any part of the URL, thereby terminating it */
+				strcpy(buf_esc, c);
+				buf_esc[pos + (c2 - c)] = 0;
+
+				/* 'Reset' double-tapping */
+				buf_prev[0] = 0;
+				return;
+			}
+		}
+	}
+#ifdef REGEX_URL
+	/* Also try to catch less clear URLs */
+	else {
+		regmatch_t pmatch[REGEXP_ARRAY_SIZE + 1]; /* take out the heavy calibre (´ `) */
+		regex_t re;
+		int status = -999;
+
+		status = regcomp(&re, "[a-z0-9][a-z0-9]*\\.[a-z0-9][a-z0-9]*(/[^ ]*)?", REG_EXTENDED|REG_ICASE);
+		if (status != 0) return; //error
+
+		status = regexec(&re, buf_esc, REGEXP_ARRAY_SIZE, pmatch, 0);
+		if (status) {
+			regfree(&re);
+			return; //not found
+		}
+		if (pmatch[0].rm_so == -1) {
+			regfree(&re);
+			return; //paranoia
+		}
+
+		/* Just take the first match of the line.. */
+		strcpy(buf_prev, buf_esc); //swap strings so we don't do overlapping copying..
+		strcpy(buf_esc, buf_prev + pmatch[0].rm_so);
+		buf_esc[pmatch[0].rm_eo - pmatch[0].rm_so] = 0;
+
+		/* 'Reset' double-tapping */
+		buf_prev[0] = 0;
+
+		regfree(&re);
+		return;
+	}
+#endif
+}
+
+/* copy a line of text to clipboard - C. Blue */
 void copy_to_clipboard(char *buf) {
 #ifdef WINDOWS
 	size_t len;
@@ -1598,25 +1666,7 @@ void copy_to_clipboard(char *buf) {
 	}
 	*c2 = 0;
 
-	/* Hack: Double-tapping 'copy2clipboard' tries to extract an URL */
-	if (buf_esc[0] && !strcmp(buf_prev, buf_esc) && ((c = strstr(buf_esc, "http")) || (c2 = strstr(buf_esc, "www.")))) {
-		if (!c || (c[4] != ':' && c[5] != ':')) c = NULL; else c2 = NULL;
-		if (!c) c = c2;
-		if (c) {
-			if (prefix(c, "https://")) c2 = c + 8;
-			else if (prefix(c, "http://")) c2 = c + 7;
-			else if (prefix(c, "www.")) c2 = c + 4;
-
-			if (strcspn(c2, ".") < strcspn(c2, " ,/\\?*:;+}{][()!\"$%&'~|<>=")) { /* only hyphen is allowed in domain names */
-				pos = strcspn(c2, " ,\\*;:}{][()!\"$'~|<>"); /* chars not allowed in any part of the URL, thereby terminating it */
-				strcpy(buf_esc, c);
-				buf_esc[pos + (c2 - c)] = 0;
-
-				/* 'Reset' double-tapping */
-				buf_prev[0] = 0;
-			}
-		}
-	}
+	extract_url(buf_esc, buf_prev);
 
 	len = strlen(buf_esc) + 1;
 	HGLOBAL hMem =  GlobalAlloc(GMEM_MOVEABLE, len);
@@ -1686,25 +1736,7 @@ void copy_to_clipboard(char *buf) {
 	}
 	*c2 = 0;
 
-	/* Hack: Double-tapping 'copy2clipboard' tries to extract an URL */
-	if (buf_esc[0] && !strcmp(buf_prev, buf_esc) && ((c = strstr(buf_esc, "http")) || (c2 = strstr(buf_esc, "www.")))) {
-		if (!c || (c[4] != ':' && c[5] != ':')) c = NULL; else c2 = NULL;
-		if (!c) c = c2;
-		if (c) {
-			if (prefix(c, "https://")) c2 = c + 8;
-			else if (prefix(c, "http://")) c2 = c + 7;
-			else if (prefix(c, "www.")) c2 = c + 4;
-
-			if (strcspn(c2, ".") < strcspn(c2, " ,/\\?*:;+}{][()!\"$%&'~|<>=")) { /* only hyphen is allowed in domain names */
-				pos = strcspn(c2, " ,\\*;:}{][()!\"$'~|<>"); /* chars not allowed in any part of the URL, thereby terminating it */
-				strcpy(buf_esc, c);
-				buf_esc[pos + (c2 - c)] = 0;
-
-				/* 'Reset' double-tapping */
-				buf_prev[0] = 0;
-			}
-		}
-	}
+	extract_url(buf_esc, buf_prev);
 
 	r = system(format("echo -n $'%s' | xclip -sel clip", buf_esc));
 	if (r) c_message_add("Copy failed, make sure xclip is installed.");
