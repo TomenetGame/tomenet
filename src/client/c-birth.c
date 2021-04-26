@@ -246,8 +246,8 @@ static bool choose_sex(void) {
 #endif
 
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a sex (* for random, \377B#\377s/\377B%\377s to reincarnate, Q to quit): ", 20, 2);
-		else c_put_str(TERM_SLATE, "Choose a sex (* for random, Q to quit): ", 20, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose sex (* for random, \377B#\377s/\377B%\377s to reincarnate, Q to quit): ", 20, 0);
+		else c_put_str(TERM_SLATE, "Choose sex (* for random, Q to quit): ", 20, 0);
 
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -393,8 +393,8 @@ race_redraw:
 #endif
 
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a race (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
-		else c_put_str(TERM_SLATE, "Choose a race (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8): ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose race (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, ? guide):", n, 0);
+		else c_put_str(TERM_SLATE, "Choose race (* random, Q quit, BACKSPACE back, 2/4/6/8, ? guide):", n, 0);
 		display_race_diz(sel);
 
 		Term->scr->cx = Term->wid;
@@ -410,6 +410,11 @@ race_redraw:
 			clear_diz();
 			clear_from(n);
 			return FALSE;
+		}
+
+		if (c == '?') {
+			cmd_the_guide(0, 0, NULL);
+			continue;
 		}
 
 		/* Allow 'navigating', to highlight and display the descriptive text */
@@ -651,8 +656,8 @@ trait_redraw:
 
 	/* Get a trait */
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a trait (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8): ", n, 2);
-		else c_put_str(TERM_SLATE, "Choose a trait (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose trait (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, ? guide):", n, 0);
+		else c_put_str(TERM_SLATE, "Choose trait (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8, ? guide):", n, 0);
 		display_trait_diz(sel);
 
 		Term->scr->cx = Term->wid;
@@ -664,6 +669,12 @@ trait_redraw:
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return FALSE;
 #endif
+
+		if (c == '?') {
+			cmd_the_guide(0, 0, NULL);
+			continue;
+		}
+
 		if (c == '\b') {
 			clear_diz();
 			clear_from(n);
@@ -868,8 +879,8 @@ class_redraw:
 
 	/* Get a class */
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a class (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, 2/4/6/8):  ", n, 2);
-		else c_put_str(TERM_SLATE, "Choose a class (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8):  ", n, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose class (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, ? guide):", n, 0);
+		else c_put_str(TERM_SLATE, "Choose class (* for random, Q to quit, BACKSPACE to go back, 2/4/6/8, ? guide):", n, 0);
 		display_class_diz(sel);
 
 		Term->scr->cx = Term->wid;
@@ -885,6 +896,11 @@ class_redraw:
 			clear_diz();
 			clear_from(n - 3);
 			return FALSE;
+		}
+
+		if (c == '?') {
+			cmd_the_guide(0, 0, NULL);
+			continue;
 		}
 
 		/* Allow 'navigating', to highlight and display the descriptive text */
@@ -1065,7 +1081,7 @@ static bool choose_stat_order(void) {
 
 			/* Get a stat */
 			while (1) {
-				put_str("Choose your stat order (* for random, Q to quit): ", 20, 2);
+				put_str("Choose your stat order (* for random, Q to quit): ", 20, 0);
 				if (hazard) {
 					j = rand_int(6);
 				} else {
@@ -1158,7 +1174,8 @@ static bool choose_stat_order(void) {
 		else c_put_str(TERM_L_WHITE, "Current:   (Base)        Recommended min:", 15, col2);
 #endif
 
-		if (valid_dna) c_put_str(TERM_SLATE, "Press \377B#\377s/\377B%\377s to reincarnate.", 15, col1);
+		//if (valid_dna) c_put_str(TERM_SLATE, "Press \377B#\377s/\377B%\377s to reincarnate.", 15, col1);
+		if (valid_dna) c_put_str(TERM_SLATE, "Press \377B#\377s/\377B%\377s to reincarnate.", 16, col1);
 #if 0
 		c_put_str(TERM_SLATE, "Use keys '+', '-', 'RETURN'", 16, col1);
 		c_put_str(TERM_SLATE, "or 8/2/4/6 or arrow keys to", 17, col1);
@@ -1167,12 +1184,12 @@ static bool choose_stat_order(void) {
 		c_put_str(TERM_SLATE, "points, press ESC to proceed.", 20, col1);
 		c_put_str(TERM_SLATE, "'Q' = quit, BACKSPACE = back.", 21, col1);
 #else
-		c_put_str(TERM_WHITE, "RETURN\377s/\377w8\377s/\377w2\377s/\377wUp\377s/\377wDown\377s:", 16, col1);
-		c_put_str(TERM_SLATE, " Select a stat.", 17, col1);
-		c_put_str(TERM_WHITE, "-\377s/\377w+\377s/\377w4\377s/\377w6\377s/\377wLeft\377s/\377wRight\377s:", 18, col1);
-		c_put_str(TERM_SLATE, " Modify the selected stat.", 19, col1);
-		c_put_str(TERM_WHITE, "ESC\377s to proceed when done.", 20, col1);
-		c_put_str(TERM_WHITE, "Q\377s quits, \377wBACKSPACE\377s goes back.", 21, col1);
+		c_put_str(TERM_WHITE, "\377w8\377s/\377w2\377s/\377wUp\377s/\377wDown\377s: Select a stat.", 17, col1);
+		//c_put_str(TERM_SLATE, " Select a stat.", 17, col1);
+		c_put_str(TERM_WHITE, "-\377s/\377w+\377s/\377w4\377s/\377w6\377s/\377wLeft\377s/\377wRight\377s: Modify.", 18, col1);
+		//c_put_str(TERM_SLATE, " Modify the selected stat.", 19, col1);
+		c_put_str(TERM_WHITE, "RETURN\377s/\377wESC\377s: Proceed when done.", 19, col1);
+		c_put_str(TERM_WHITE, "Q\377s quit, \377wBACKSPC\377s back, \377w?\377s guide.", 20, col1);
 #endif
 
 #ifndef SHOW_BPR
@@ -1301,6 +1318,12 @@ static bool choose_stat_order(void) {
 			Term->scr->cu = 1;
 
 			if (!auto_reincarnation) c = inkey();
+
+			if (c == '?') {
+				cmd_the_guide(0, 0, NULL);
+				continue;
+			}
+
 			crb = cp_ptr->c_adj[j] + rp_ptr->r_adj[j];
 			if (c == '-' || c == '4' || c == 'h') {
 				if (stat_order[j] > STAT_MOD_MIN &&
@@ -1348,9 +1371,9 @@ static bool choose_stat_order(void) {
 					}
 				}
 			}
-			if (c == '\r' || c == '2' || c == 'j') j = (j+1) % 6;
+			if (c == '2' || c == 'j') j = (j+1) % 6;
 			if (c == '8' || c == 'k') j = (j+5) % 6;
-			if (c == '\r' || c == '2' || c == '8' || c == 'j' || c == 'k') {
+			if (c == '2' || c == '8' || c == 'j' || c == 'k') {
 				switch (j) {
 				case 0:	c_put_str(TERM_L_UMBER,"   - Strength -    ", DIZ_ROW, 30);
 					c_put_str(TERM_YELLOW, "   How quickly you can strike.                  ", DIZ_ROW + 1, 30);
@@ -1414,7 +1437,7 @@ static bool choose_stat_order(void) {
 					break;
 				}
 			}
-			if (c == '\e') {
+			if (c == '\e' || c == '\r') {
 				if (k > 0) {
 					c_put_str(TERM_NUKE, format("%2d", k), rowA, col3);
 					if (get_check2(format("You still have %d stat points left to distribute! Really continue?", k), FALSE)) break;
@@ -1502,8 +1525,8 @@ static bool choose_mode(void) {
 #endif
 
 		while (1) {
-			if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
-			else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to quit, BACKSPACE to go back): ", 15, 2);
+			if (valid_dna) c_put_str(TERM_SLATE, "Choose mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, ? guide): ", 15, 0);
+			else c_put_str(TERM_SLATE, "Choose mode (* for random, Q to quit, BACKSPACE to go back, ? guide): ", 15, 0);
 
 			Term->scr->cx = Term->wid;
 			Term->scr->cu = 1;
@@ -1514,6 +1537,12 @@ static bool choose_mode(void) {
 #ifdef RETRY_LOGIN
 			if (rl_connection_destroyed) return FALSE;
 #endif
+
+			if (c == '?') {
+				cmd_the_guide(0, 0, NULL);
+				continue;
+			}
+
 			if (c == '\b') {
 				clear_from(15);
 				return FALSE;
@@ -1632,8 +1661,8 @@ static bool choose_mode(void) {
 #endif
 
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose a mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 15, 2);
-		else c_put_str(TERM_SLATE, "Choose a mode (* for random, Q to quit, BACKSPACE to go back): ", 15, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose mode (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back, ? guide): ", 15, 0);
+		else c_put_str(TERM_SLATE, "Choose mode (* for random, Q to quit, BACKSPACE to go back, ? guide): ", 15, 0);
 
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -1652,6 +1681,12 @@ static bool choose_mode(void) {
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return FALSE;
 #endif
+
+		if (c == '?') {
+			cmd_the_guide(0, 0, NULL);
+			continue;
+		}
+
 		if (c == '\b') {
 			clear_from(15);
 			return FALSE;
@@ -1782,8 +1817,8 @@ static bool choose_body_modification(void) {
 #endif
 
 	while (1) {
-		if (valid_dna) c_put_str(TERM_SLATE, "Choose body modification (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPACE back): ", 19, 2);
-		else c_put_str(TERM_SLATE, "Choose body modification (* for random, Q to quit, BACKSPACE to go back): ", 19, 2);
+		if (valid_dna) c_put_str(TERM_SLATE, "Choose body mod (* random, \377B#\377s/\377B%\377s reincarnate, Q quit, BACKSPC back, ? guide):", 19, 0);
+		else c_put_str(TERM_SLATE, "Choose body modification (* for random, Q quit, BACKSPACE to go back, ? guide): ", 19, 0);
 
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
@@ -1794,6 +1829,12 @@ static bool choose_body_modification(void) {
 #ifdef RETRY_LOGIN
 		if (rl_connection_destroyed) return FALSE;
 #endif
+
+		if (c == '?') {
+			cmd_the_guide(0, 0, NULL);
+			continue;
+		}
+
 		if (c == '\b') {
 			clear_from(19);
 			return FALSE;
