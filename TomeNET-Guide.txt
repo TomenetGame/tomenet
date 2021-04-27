@@ -11170,8 +11170,8 @@ REFLECT ('It reflects bolts and arrows.')
         Reflected attacks will hit grids closely around their origin, possibly
         damaging/killing the monster who shot at you.
 RETURNING ('It returns to you when thrown.')
-        Will automatically return to you when you throw it while you have it
-        equipped.
+        Will automatically return to you when you throw it (via 'v') while you
+        have it equipped.
 
 Weapons of Spinning
         On activatin spin around, hitting every monster around you in a
