@@ -11,7 +11,9 @@
 
 #ifdef COPY_MULTILINE
 /* helper function */
-static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int i, int s, int n) {
+static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int i, int s, int n, int nn) {
+	if (msg_raw[0] == '\376') msg_raw++;
+
 	/* Is this the following-up line of a multiline message? */
 	if (msg_raw[0] == ' ' || (msg_raw[0] == '\377' && msg_raw[2] == ' ')) {
 		int j;
@@ -27,26 +29,52 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 		/* avoid duplicate ' ' */
 		if (xmsg[strlen(xmsg) - 1] == ' ') xmsg[strlen(xmsg) - 1] = 0;
 
-		for (j = 1; (j < 20 + HGT_PLUS) && (i + j + s < n); j++) {
-			c = message_recall[i + j + s];
-			if (!c) continue;
+		if (s == -1) { /* message_important */
+			for (j = 0 + 1; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
+				c = message_recall[nn - 1 - (i + j)]; /* because of inverted traversal direction */
+				if (!c) continue;
+				if (*c == '\376') c++;
 
-			/* End at the initial line of the multiline message */
-			if (c[0] != ' ' && (c[0] != '\377' || c[2] != ' ')) end = TRUE;
+				/* End at the initial line of the multiline message */
+				if (c[0] != ' ' && (c[0] != '\377' || c[2] != ' ')) end = TRUE;
 
-			if (!end) {
-				if (*c == '\377') c += 2;
-				while (*c == ' ') c++;
-				strcpy(xmsg_reverse, " ");
-			} else xmsg_reverse[0] = 0;
+				if (!end) {
+					if (*c == '\377') c += 2;
+					while (*c == ' ') c++;
+					strcpy(xmsg_reverse, " ");
+				} else xmsg_reverse[0] = 0;
 
-			strcat(xmsg_reverse, c);
-			/* avoid duplicate ' ' */
-			if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
-			strcat(xmsg_reverse, xmsg);
-			strcpy(xmsg, xmsg_reverse);
+				strcat(xmsg_reverse, c);
+				/* avoid duplicate ' ' */
+				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
+				strcat(xmsg_reverse, xmsg);
+				strcpy(xmsg, xmsg_reverse);
 
-			if (end) break;
+				if (end) break;
+			}
+		} else { /* message_recall */
+			for (j = 0 + 1; (j < 20 + HGT_PLUS) && (i + j + s < n); j++) {
+				c = message_recall[i + j + s];
+				if (!c) continue;
+				if (*c == '\376') c++;
+
+				/* End at the initial line of the multiline message */
+				if (c[0] != ' ' && (c[0] != '\377' || c[2] != ' ')) end = TRUE;
+
+				if (!end) {
+					if (*c == '\377') c += 2;
+					while (*c == ' ') c++;
+					strcpy(xmsg_reverse, " ");
+				} else xmsg_reverse[0] = 0;
+
+				strcat(xmsg_reverse, c);
+				/* avoid duplicate ' ' */
+				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
+				strcat(xmsg_reverse, xmsg);
+				strcpy(xmsg, xmsg_reverse);
+
+				if (end) break;
+			}
 		}
 		(void)copy_to_clipboard(xmsg);
 	} else (void)copy_to_clipboard((char*)msg_raw);
@@ -344,7 +372,7 @@ void do_cmd_messages(void) {
 		/* Copy to clipboard o_o */
 		if (k == KTRL('K') && msg != NULL) {
 #ifdef COPY_MULTILINE
-			copy_to_clipboard_multiline(msg_raw, message_recall, i, s, n);
+			copy_to_clipboard_multiline(msg_raw, message_recall, i, s, n, -1);
 #else
 			(void)copy_to_clipboard((char*)msg_raw);
 #endif
@@ -646,7 +674,7 @@ void do_cmd_messages_important(void) {
 		/* Copy to clipboard o_o */
 		if (k == KTRL('K') && msg_raw != NULL) {
 #ifdef COPY_MULTILINE
-			copy_to_clipboard_multiline(msg_raw, message_important, i, 0, n);
+			copy_to_clipboard_multiline(msg_raw, message_important, i, -1, n, nn);
 #else
 			(void)copy_to_clipboard((char*)msg_raw);
 #endif
