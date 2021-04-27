@@ -3,6 +3,56 @@
 
 #include "angband.h"
 
+
+/* When copying to clipboard, attempt to combine long chat messages that got
+   split up into multiple lines together again. (msg_print() breaks them up.) */
+#define COPY_MULTILINE
+
+
+#ifdef COPY_MULTILINE
+/* helper function */
+static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int i, int s, int n) {
+	/* Is this the following-up line of a multiline message? */
+	if (msg_raw[0] == ' ' || (msg_raw[0] == '\377' && msg_raw[2] == ' ')) {
+		int j;
+		char xmsg[MSG_LEN], xmsg_reverse[MSG_LEN];
+		const char *c;
+		bool end = FALSE;
+
+		c = msg_raw;
+		if (*c == '\377') c += 2;
+		while (*c == ' ') c++;
+		strcpy(xmsg, " ");
+		strcat(xmsg, c);
+		/* avoid duplicate ' ' */
+		if (xmsg[strlen(xmsg) - 1] == ' ') xmsg[strlen(xmsg) - 1] = 0;
+
+		for (j = 1; (j < 20 + HGT_PLUS) && (i + j + s < n); j++) {
+			c = message_recall[i + j + s];
+			if (!c) continue;
+
+			/* End at the initial line of the multiline message */
+			if (c[0] != ' ' && (c[0] != '\377' || c[2] != ' ')) end = TRUE;
+
+			if (!end) {
+				if (*c == '\377') c += 2;
+				while (*c == ' ') c++;
+				strcpy(xmsg_reverse, " ");
+			} else xmsg_reverse[0] = 0;
+
+			strcat(xmsg_reverse, c);
+			/* avoid duplicate ' ' */
+			if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
+			strcat(xmsg_reverse, xmsg);
+			strcpy(xmsg, xmsg_reverse);
+
+			if (end) break;
+		}
+		(void)copy_to_clipboard(xmsg);
+	} else (void)copy_to_clipboard((char*)msg_raw);
+}
+#endif
+
 /*
  * Show previous messages to the user   -BEN-
  *
@@ -86,7 +136,7 @@ void do_cmd_messages(void) {
 
 			msg2 = msg;
 			msg = message_recall[i + j + s];
-			if (!j) msg_raw = msg;
+			if (!j) msg_raw = msg; //remember the bottom-most line
 
 			/* Handle repeated messages
 			   (Minor glitch note: if the first msgs after joining the server are repeated 'searching' msgs, the first one will not combine) */
@@ -293,7 +343,11 @@ void do_cmd_messages(void) {
 
 		/* Copy to clipboard o_o */
 		if (k == KTRL('K') && msg != NULL) {
+#ifdef COPY_MULTILINE
+			copy_to_clipboard_multiline(msg_raw, message_recall, i, s, n);
+#else
 			(void)copy_to_clipboard((char*)msg_raw);
+#endif
 			continue;
 		}
 
@@ -391,7 +445,7 @@ void do_cmd_messages_important(void) {
 		/* Dump up to 20 lines of messages */
 		for (j = 0; (j < 20 + HGT_PLUS) && (i + j < n); j++) {
 			msg = message_important[nn - 1 - (i + j)]; /* because of inverted traversal direction, see further above */
-			if (!j) msg_raw = msg;
+			if (!j) msg_raw = msg; //remember the bottom-most line
 			//cptr msg = message_important[i + j];
 			a = ab = ap = TERM_WHITE;
 
@@ -591,7 +645,11 @@ void do_cmd_messages_important(void) {
 
 		/* Copy to clipboard o_o */
 		if (k == KTRL('K') && msg_raw != NULL) {
+#ifdef COPY_MULTILINE
+			copy_to_clipboard_multiline(msg_raw, message_important, i, 0, n);
+#else
 			(void)copy_to_clipboard((char*)msg_raw);
+#endif
 			continue;
 		}
 
