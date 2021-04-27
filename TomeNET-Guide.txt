@@ -9735,6 +9735,12 @@ things to know about throwing:
   - Spears and tridents.
 - Flasks of oil can also be thrown for an extra fire damage effect.
 
+Damage of thrown items depends on their damage dice, to-damage enchantment and
+the thrower's strength. Throwing distance depends on item weight and strength.
+Effective throwing weapons can be thrown especially far and will also deal
+somewhat more damage if they weigh more. While under the effect of Berserk,
+the range is further increased. Note that the max range is capped, however.
+
 The effect a shattered potion applies is in general the same that a fumes trap
 loaded with that potion would cause, just that the fumes from the trap are
 usually more potent.
