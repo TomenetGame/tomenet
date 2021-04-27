@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 26. April 2021 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 27. April 2021 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.4a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11169,6 +11169,8 @@ REFLECT ('It reflects bolts and arrows.')
         to deflect any physical projectile from traps you triggered.
         Reflected attacks will hit grids closely around their origin, possibly
         damaging/killing the monster who shot at you.
+RETURNING ('It returns to you when thrown.')
+        Will automatically return to you when you throw it.
 
 Weapons of Spinning
         On activatin spin around, hitting every monster around you in a
