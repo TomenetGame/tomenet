@@ -119,8 +119,7 @@ void flush_now(void) {
 
 	/* Cancel "macro" info */
 //#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
-if (c_cfg.keep_topline)
-	restore_prompt();
+	if (c_cfg.keep_topline) restore_prompt();
 //#endif
 	parse_macro = after_macro = FALSE;
 
@@ -672,8 +671,7 @@ static char inkey_aux(void) {
 	/* End of internal macro */
 	if (ch == 29) {
 //#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
-if (c_cfg.keep_topline)
-		restore_prompt();
+		if (c_cfg.keep_topline) restore_prompt();
 //#endif
 		parse_macro = FALSE;
 	}
@@ -931,8 +929,7 @@ char inkey(void) {
 
 		/* Cancel "macro" info */
 //#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
-if (c_cfg.keep_topline)
-		restore_prompt();
+		if (c_cfg.keep_topline) restore_prompt();
 //#endif
 		parse_macro = after_macro = FALSE;
 
@@ -2692,17 +2689,15 @@ void request_command() {
 	clear_topline();
 
 //#ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
-if (!c_cfg.keep_topline)
 	/* Clear top line */
-	clear_topline();
+	if (!c_cfg.keep_topline) clear_topline();
 //#endif
 
 	/* Bypass "keymap" */
 	if (cmd == '\\') {
 //#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
-if (c_cfg.keep_topline)
 		/* Clear top line */
-		clear_topline();
+		if (c_cfg.keep_topline) clear_topline();
 //#endif
 
 		/* Get a char to use without casting */
@@ -2718,9 +2713,8 @@ if (c_cfg.keep_topline)
 		}
 
 //#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
-if (c_cfg.keep_topline)
 		/* Clear top line */
-		clear_topline();
+		if (c_cfg.keep_topline) clear_topline();
 //#endif
 
 		/* Use the key directly */
@@ -2729,9 +2723,8 @@ if (c_cfg.keep_topline)
 		/* Hack -- allow "control chars" to be entered */
 		if (cmd == '^') {
 //#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
-if (c_cfg.keep_topline)
 			/* Clear top line */
-			clear_topline();
+			if (c_cfg.keep_topline) clear_topline();
 //#endif
 
 			/* Get a char to "cast" into a control char */
@@ -2741,9 +2734,8 @@ if (c_cfg.keep_topline)
 			cmd = KTRL(cmd);
 
 //#ifdef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
-if (c_cfg.keep_topline)
 			/* Clear top line */
-			clear_topline();
+			if (c_cfg.keep_topline) clear_topline();
 //#endif
 		}
 
@@ -2756,9 +2748,8 @@ if (c_cfg.keep_topline)
 	if (!command_cmd) command_cmd = ESCAPE;
 
 //#ifndef DONT_CLEAR_TOPLINE_IF_AVOIDABLE
-if (!c_cfg.keep_topline)
 	/* Hack -- erase the message line. */
-	clear_topline();
+	if (!c_cfg.keep_topline) clear_topline();
 //#endif
 }
 
