@@ -201,7 +201,7 @@
  * TODO: best if timed ... ie. the longer a monster holds it, the more
  * the chance of consuming.
  */
-#define		MONSTER_ITEM_CONSUME	30
+#define		MONSTER_ITEM_CONSUME	20
 
 /* Notes on Qs:
  * Quylthulgs do have spell-frequency (1_IN_n), but since they never use
