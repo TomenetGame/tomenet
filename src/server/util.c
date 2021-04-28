@@ -6314,10 +6314,19 @@ int get_playerind_loose(char *name) {
 
 	if (len == 0) return(-1);
 	if (name == (char*)NULL) return(-1);
-	for(i = 1; i <= NumPlayers; i++) {
-		if(Players[i]->conn == NOT_CONNECTED) continue;
+
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (!strncasecmp(Players[i]->name, name, len)) return(i);
 	}
+
+	/* New, since this function is only used in misc lua functions anyway:
+	   Also check for account name if no such character name */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Players[i]->conn == NOT_CONNECTED) continue;
+		if (!strncasecmp(Players[i]->accountname, name, len)) return(i);
+	}
+
 	return(-1);
 }
 
