@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 27. April 2021 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 29. April 2021 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.4a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4793,6 +4793,11 @@ $:      Sends the following text to your current guild.
 +:      Sends the following text to the last person who whispered us a private
         message, so it's sort of a 'reply' function.
 
+Last but not last you can use the following slash commands for chat effects:
+/me     Sends an 'emote' chat message, eg "/me frowns".
+/s      short form of "/say", will say something locally that is only "audible"
+        aka visible to other players that are close to  your current location.
+        Eg "/s hello there, so we meet in this place!".
 
 Similar to message scrollback (CTRL+O/P), you can copy/paste while in the chat
 prompt, too:
@@ -4800,8 +4805,8 @@ CTRL+K will copy the currently written text in your active chat prompt to the
 OS clipboard (requires xclip to be installed on Linux/OSX), and CTRL+K will
 paste the current OS clipboard into your chat prompt )thereby erasing anything
 you were aleady typing in).
-Doubl-tapping CTRL+K will specifically attempt to extract an URL from your chat
-input and copy that one to the clipboard.
+Double-tapping CTRL+K will specifically attempt to extract an URL from your
+chat input and copy that one to the clipboard.
 
 
 
