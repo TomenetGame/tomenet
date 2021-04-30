@@ -47,8 +47,7 @@ static s16b tokenize(char *buf, s16b num, char **tokens) {
 			if ((*t == ':') || (*t == '/')) break;
 
 			/* Handle single quotes */
-			if (*t == '\'')
-			{
+			if (*t == '\'') {
 				/* Advance */
 				t++;
 
@@ -117,104 +116,69 @@ static int dehex(char c) {
  * parsing "\xFF" into a (signed) char.  Whoever thought of making
  * the "sign" of a "char" undefined is a complete moron.  Oh well.
  */
-void text_to_ascii(char *buf, cptr str)
-{
+void text_to_ascii(char *buf, cptr str) {
 	char *s = buf;
 
 	/* Analyze the "ascii" string */
-	while (*str)
-	{
+	while (*str) {
 		/* Backslash codes */
-		if (*str == '\\')
-		{
+		if (*str == '\\') {
 			/* Skip the backslash */
 			str++;
 
 			/* Hex-mode XXX */
-			if (*str == 'x')
-			{
+			if (*str == 'x') {
 				*s = 16 * dehex(*++str);
 				*s++ += dehex(*++str);
 			}
 
 			/* Specialty: Asynchronous delay for usage in complex macros - C. Blue */
-			else if (*str == 'w')
-			{
-				*s++ = MACRO_WAIT;
-			}
+			else if (*str == 'w') *s++ = MACRO_WAIT;
 
 			/* Hack -- simple way to specify "backslash" */
-			else if (*str == '\\')
-			{
-				*s++ = '\\';
-			}
+			else if (*str == '\\') *s++ = '\\';
 
 			/* Hack -- simple way to specify "caret" */
-			else if (*str == '^')
-			{
-				*s++ = '^';
-			}
+			else if (*str == '^') *s++ = '^';
 
 			/* Hack -- simple way to specify "space" */
-			else if (*str == 's')
-			{
-				*s++ = ' ';
-			}
+			else if (*str == 's') *s++ = ' ';
 
 			/* Hack -- simple way to specify Escape */
-			else if (*str == 'e')
-			{
-				*s++ = ESCAPE;
-			}
+			else if (*str == 'e') *s++ = ESCAPE;
 
 			/* Backspace */
-			else if (*str == 'b')
-			{
-				*s++ = '\b';
-			}
+			else if (*str == 'b') *s++ = '\b';
 
 			/* Newline */
-			else if (*str == 'n')
-			{
-				*s++ = '\n';
-			}
+			else if (*str == 'n') *s++ = '\n';
 
 			/* Return */
-			else if (*str == 'r')
-			{
-				*s++ = '\r';
-			}
+			else if (*str == 'r') *s++ = '\r';
 
 			/* Tab */
-			else if (*str == 't')
-			{
-				*s++ = '\t';
-			}
+			else if (*str == 't') *s++ = '\t';
 
 			/* Octal-mode */
-			else if (*str == '0')
-			{
+			else if (*str == '0') {
 				*s = 8 * deoct(*++str);
 				*s++ += deoct(*++str);
 			}
 
 			/* Octal-mode */
-			else if (*str == '1')
-			{
+			else if (*str == '1') {
 				*s = 64 + 8 * deoct(*++str);
 				*s++ += deoct(*++str);
 			}
 
 			/* Octal-mode */
-			else if (*str == '2')
-			{
+			else if (*str == '2') {
 				*s = 64 * 2 + 8 * deoct(*++str);
 				*s++ += deoct(*++str);
 			}
 
 			/* Octal-mode */
-			else if (*str == '3')
-			{
+			else if (*str == '3') {
 				*s = 64 * 3 + 8 * deoct(*++str);
 				*s++ += deoct(*++str);
 			}
@@ -224,17 +188,13 @@ void text_to_ascii(char *buf, cptr str)
 		}
 
 		/* Normal Control codes */
-		else if (*str == '^')
-		{
+		else if (*str == '^') {
 			str++;
 			*s++ = (*str++ & 037);
 		}
 
 		/* Normal chars */
-		else
-		{
-			*s++ = *str++;
-		}
+		else *s++ = *str++;
 	}
 
 	/* Terminate */
@@ -248,8 +208,7 @@ void text_to_ascii(char *buf, cptr str)
  * Replace "~user/" by the home directory of the user named "user"
  * Replace "~/" by the home directory of the current user
  */
-static errr path_parse(char *buf, cptr file)
-{
+static errr path_parse(char *buf, cptr file) {
 #ifndef WIN32
 #ifndef AMIGA
 	cptr	    u, s;
@@ -266,8 +225,7 @@ static errr path_parse(char *buf, cptr file)
 	if (!file) return (-1);
 
 	/* File needs no parsing */
-	if (file[0] != '~')
-	{
+	if (file[0] != '~') {
 		strcpy(buf, file);
 		return (0);
 	}
@@ -286,8 +244,7 @@ static errr path_parse(char *buf, cptr file)
 	if (s && (s >= u + sizeof(user))) return (1);
 
 	/* Extract a user name */
-	if (s)
-	{
+	if (s) {
 		int i;
 		for (i = 0; u < s; ++i) user[i] = *u++;
 		user[i] = '\0';
@@ -321,8 +278,7 @@ static errr path_parse(char *buf, cptr file)
 /*
  * Hack -- replacement for "fopen()"
  */
-FILE *my_fopen(cptr file, cptr mode)
-{
+FILE *my_fopen(cptr file, cptr mode) {
 	char		buf[1024];
 
 	/* Hack -- Try to parse the path */
@@ -336,8 +292,7 @@ FILE *my_fopen(cptr file, cptr mode)
 /*
  * Hack -- replacement for "fclose()"
  */
-errr my_fclose(FILE *fff)
-{
+errr my_fclose(FILE *fff) {
 	/* Require a file */
 	if (!fff) return (-1);
 
@@ -351,8 +306,7 @@ errr my_fclose(FILE *fff)
 /*
  * MetaHack -- check if the specified file already exists	- Jir -
  */
-bool my_freadable(cptr file)
-{
+bool my_freadable(cptr file) {
 	FILE *fff;
 	fff = my_fopen(file, "rb");
 
@@ -369,23 +323,17 @@ bool my_freadable(cptr file)
  *
  * Process tabs, strip internal non-printables
  */
-errr my_fgets(FILE *fff, char *buf, huge n)
-{
+errr my_fgets(FILE *fff, char *buf, huge n) {
 	huge i = 0;
-
 	char *s;
-
 	char tmp[1024];
 
 	/* Read a line */
-	if (fgets(tmp, 1024, fff))
-	{
+	if (fgets(tmp, 1024, fff)) {
 		/* Convert weirdness */
-		for (s = tmp; *s; s++)
-		{
+		for (s = tmp; *s; s++) {
 			/* Handle newline */
-			if (*s == '\n')
-			{
+			if (*s == '\n') {
 				/* Terminate */
 				buf[i] = '\0';
 
@@ -394,8 +342,7 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 			}
 
 			/* Handle tabs */
-			else if (*s == '\t')
-			{
+			else if (*s == '\t') {
 				/* Hack -- require room */
 				if (i + 8 >= n) break;
 
@@ -407,8 +354,7 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 			}
 
 			/* Handle printables */
-			else if (isprint(*s))
-			{
+			else if (isprint(*s)) {
 				/* Copy */
 				buf[i++] = *s;
 
@@ -433,8 +379,7 @@ errr my_fgets(FILE *fff, char *buf, huge n)
 static char my_fgetc_buf[4096];
 static FILE *my_fgetc_fp;
 static long my_fgetc_pos = 4096, my_fgetc_len = 0;
-static int my_fgetc(FILE *fff)
-{
+static int my_fgetc(FILE *fff) {
 	/* Check if the file has changed */
 	if (my_fgetc_fp != fff) {
 		if (my_fgetc_fp) {
@@ -472,8 +417,7 @@ static int my_fgetc(FILE *fff)
  * Return the next character without incrementing the internal counter.
  * - mikaelh
  */
-static int my_fpeekc(FILE *fff)
-{
+static int my_fpeekc(FILE *fff) {
 	if (my_fgetc_pos >= 4096) {
 		/* Fill the buffer */
 		my_fgetc_len = fread(my_fgetc_buf, 1, 4096, fff);
@@ -495,8 +439,7 @@ static int my_fpeekc(FILE *fff)
  * the allocated memory.
  * - mikaelh
  */
-errr my_fgets2(FILE *fff, char **line, int *n)
-{
+errr my_fgets2(FILE *fff, char **line, int *n) {
 	int c;
 	int done = FALSE;
 	long len = 0;
@@ -513,103 +456,93 @@ errr my_fgets2(FILE *fff, char **line, int *n)
 		return 2;
 	}
 
-	while (TRUE)
-	{
+	while (TRUE) {
 		c = my_fgetc(fff);
 
 		switch (c) {
+		/* Handle EOF */
+		case EOF: {
+			/* Terminate */
+			buf[len] = '\0';
 
-			/* Handle EOF */
-			case EOF:
-			{
-				/* Terminate */
-				buf[len] = '\0';
+			/* Check if nothing has been read */
+			if (len == 0) {
+				/* Free the memory */
+				mem_free(buf);
 
-				/* Check if nothing has been read */
-				if (len == 0)
-				{
-					/* Free the memory */
-					mem_free(buf);
+				/* Set the pointer to NULL and count to zero */
+				*line = NULL;
+				*n = 0;
+
+				/* Return 1 */
+				return 1;
+			}
+
+			/* Done */
+			done = TRUE;
+			break;
+		}
+
+		/* Handle newline */
+		case '\n':
+		case '\r': {
+			int c2;
+
+			/* Peek at the next character to eliminate a possible \n */
+			c2 = my_fpeekc(fff);
+
+			if (c2 == '\n') {
+				/* Skip the \n */
+				my_fgetc(fff);
+			}
+
+			/* Terminate */
+			buf[len] = '\0';
+
+			/* Done */
+			done = TRUE;
+			break;
+		}
+
+		/* Handle tabs */
+		case '\t': {
+			int i;
+
+			/* Make sure that we have enough space */
+			if (len + 8 > alloc) {
+				buf = mem_realloc(buf, alloc + 4096);
+				alloc += 4096;
+
+				if (buf == NULL) {
+					/* Free the old memory */
+					mem_free(tmp);
 
 					/* Set the pointer to NULL and count to zero */
 					*line = NULL;
 					*n = 0;
 
-					/* Return 1 */
-					return 1;
+					/* Grave error */
+					return 2;
 				}
-
-				/* Done */
-				done = TRUE;
-				break;
+				tmp = buf;
 			}
 
-			/* Handle newline */
-			case '\n':
-			case '\r':
-			{
-				int c2;
+			/* Add 8 spaces */
+			for (i = 0; i < 8; i++) buf[len++] = ' ';
 
-				/* Peek at the next character to eliminate a possible \n */
-				c2 = my_fpeekc(fff);
+			break;
+		}
 
-				if (c2 == '\n') {
-					/* Skip the \n */
-					my_fgetc(fff);
-				}
-
-				/* Terminate */
-				buf[len] = '\0';
-
-				/* Done */
-				done = TRUE;
-				break;
-			}
-
-			/* Handle tabs */
-			case '\t':
-			{
-				int i;
-
-				/* Make sure that we have enough space */
-				if (len + 8 > alloc) {
-					buf = mem_realloc(buf, alloc + 4096);
-					alloc += 4096;
-
-					if (buf == NULL) {
-						/* Free the old memory */
-						mem_free(tmp);
-
-						/* Set the pointer to NULL and count to zero */
-						*line = NULL;
-						*n = 0;
-
-						/* Grave error */
-						return 2;
-					}
-					tmp = buf;
-				}
-
-				/* Add 8 spaces */
-				for (i = 0; i < 8; i++) buf[len++] = ' ';
-
-				break;
-			}
-
-			/* Handle printables */
-			default:
-			{
-				if (isprint(c)) buf[len++] = c;
-
-				break;
-			}
+		/* Handle printables */
+		default:
+			if (isprint(c)) buf[len++] = c;
+			break;
 		}
 
 		if (done) break;
 
 		/* Make sure we have enough space for at least one more character */
-		if (len + 1 > alloc)
-		{
+		if (len + 1 > alloc) {
 			buf = mem_realloc(buf, alloc + 4096);
 			alloc += 4096;
 
