@@ -33,65 +33,60 @@ static int MACRO_WAIT = 96; //hack: ASCII 96 ("`") is unused in the game's key l
  *
  * Hack -- We will always extract at least one token
  */
-static s16b tokenize(char *buf, s16b num, char **tokens)
-{
-        int i = 0;
+static s16b tokenize(char *buf, s16b num, char **tokens) {
+	int i = 0;
+	char *s = buf;
 
-        char *s = buf;
+	/* Process */
+	while (i < num - 1) {
+		char *t;
 
+		/* Scan the string */
+		for (t = s; *t; t++) {
+			/* Found a delimiter */
+			if ((*t == ':') || (*t == '/')) break;
 
-        /* Process */
-        while (i < num - 1)
-        {
-                char *t;
+			/* Handle single quotes */
+			if (*t == '\'')
+			{
+				/* Advance */
+				t++;
 
-                /* Scan the string */
-                for (t = s; *t; t++)
-                {
-                        /* Found a delimiter */
-                        if ((*t == ':') || (*t == '/')) break;
+				/* Handle backslash */
+				if (*t == '\\') t++;
 
-                        /* Handle single quotes */
-                        if (*t == '\'')
-                        {
-                                /* Advance */
-                                t++;
+				/* Require a character */
+				if (!*t) break;
 
-                                /* Handle backslash */
-                                if (*t == '\\') t++;
+				/* Advance */
+				t++;
 
-                                /* Require a character */
-                                if (!*t) break;
+				/* Hack -- Require a close quote */
+				if (*t != '\'') *t = '\'';
+			}
 
-                                /* Advance */
-                                t++;
+			/* Handle back-slash */
+			if (*t == '\\') t++;
+		}
 
-                                /* Hack -- Require a close quote */
-                                if (*t != '\'') *t = '\'';
-                        }
+		/* Nothing left */
+		if (!*t) break;
 
-                        /* Handle back-slash */
-                        if (*t == '\\') t++;
-                }
+		/* Nuke and advance */
+		*t++ = '\0';
 
-                /* Nothing left */
-                if (!*t) break;
+		/* Save the token */
+		tokens[i++] = s;
 
-                /* Nuke and advance */
-                *t++ = '\0';
+		/* Advance */
+		s = t;
+	}
 
-                /* Save the token */
-                tokens[i++] = s;
+	/* Save the token */
+	tokens[i++] = s;
 
-                /* Advance */
-                s = t;
-        }
-
-        /* Save the token */
-        tokens[i++] = s;
-
-        /* Number found */
-        return (i);
+	/* Number found */
+	return (i);
 }
 
 
@@ -99,21 +94,19 @@ static s16b tokenize(char *buf, s16b num, char **tokens)
 /*
  * Convert a octal-digit into a decimal
  */
-static int deoct(char c)
-{
-        if (isdigit(c)) return (D2I(c));
-        return (0);
+static int deoct(char c) {
+	if (isdigit(c)) return (D2I(c));
+	return (0);
 }
 
 /*
  * Convert a hexidecimal-digit into a decimal
  */
-static int dehex(char c)
-{
-        if (isdigit(c)) return (D2I(c));
-        if (islower(c)) return (A2I(c) + 10);
-        if (isupper(c)) return (A2I(tolower(c)) + 10);
-        return (0);
+static int dehex(char c) {
+	if (isdigit(c)) return (D2I(c));
+	if (islower(c)) return (A2I(c) + 10);
+	if (isupper(c)) return (A2I(tolower(c)) + 10);
+	return (0);
 }
 
 
@@ -126,126 +119,126 @@ static int dehex(char c)
  */
 void text_to_ascii(char *buf, cptr str)
 {
-        char *s = buf;
+	char *s = buf;
 
-        /* Analyze the "ascii" string */
-        while (*str)
-        {
-                /* Backslash codes */
-                if (*str == '\\')
-                {
-                        /* Skip the backslash */
-                        str++;
+	/* Analyze the "ascii" string */
+	while (*str)
+	{
+		/* Backslash codes */
+		if (*str == '\\')
+		{
+			/* Skip the backslash */
+			str++;
 
-                        /* Hex-mode XXX */
-                        if (*str == 'x')
-                        {
-                                *s = 16 * dehex(*++str);
-                                *s++ += dehex(*++str);
-                        }
+			/* Hex-mode XXX */
+			if (*str == 'x')
+			{
+				*s = 16 * dehex(*++str);
+				*s++ += dehex(*++str);
+			}
 
-                        /* Specialty: Asynchronous delay for usage in complex macros - C. Blue */
-                        else if (*str == 'w')
-                        {
-                                *s++ = MACRO_WAIT;
-                        }
+			/* Specialty: Asynchronous delay for usage in complex macros - C. Blue */
+			else if (*str == 'w')
+			{
+				*s++ = MACRO_WAIT;
+			}
 
-                        /* Hack -- simple way to specify "backslash" */
-                        else if (*str == '\\')
-                        {
-                                *s++ = '\\';
-                        }
+			/* Hack -- simple way to specify "backslash" */
+			else if (*str == '\\')
+			{
+				*s++ = '\\';
+			}
 
-                        /* Hack -- simple way to specify "caret" */
-                        else if (*str == '^')
-                        {
-                                *s++ = '^';
-                        }
+			/* Hack -- simple way to specify "caret" */
+			else if (*str == '^')
+			{
+				*s++ = '^';
+			}
 
-                        /* Hack -- simple way to specify "space" */
-                        else if (*str == 's')
-                        {
-                                *s++ = ' ';
-                        }
+			/* Hack -- simple way to specify "space" */
+			else if (*str == 's')
+			{
+				*s++ = ' ';
+			}
 
-                        /* Hack -- simple way to specify Escape */
-                        else if (*str == 'e')
-                        {
-                                *s++ = ESCAPE;
-                        }
+			/* Hack -- simple way to specify Escape */
+			else if (*str == 'e')
+			{
+				*s++ = ESCAPE;
+			}
 
-                        /* Backspace */
-                        else if (*str == 'b')
-                        {
-                                *s++ = '\b';
-                        }
+			/* Backspace */
+			else if (*str == 'b')
+			{
+				*s++ = '\b';
+			}
 
-                        /* Newline */
-                        else if (*str == 'n')
-                        {
-                                *s++ = '\n';
-                        }
+			/* Newline */
+			else if (*str == 'n')
+			{
+				*s++ = '\n';
+			}
 
-                        /* Return */
-                        else if (*str == 'r')
-                        {
-                                *s++ = '\r';
-                        }
+			/* Return */
+			else if (*str == 'r')
+			{
+				*s++ = '\r';
+			}
 
-                        /* Tab */
-                        else if (*str == 't')
-                        {
-                                *s++ = '\t';
-                        }
+			/* Tab */
+			else if (*str == 't')
+			{
+				*s++ = '\t';
+			}
 
-                        /* Octal-mode */
-                        else if (*str == '0')
-                        {
-                                *s = 8 * deoct(*++str);
-                                *s++ += deoct(*++str);
-                        }
+			/* Octal-mode */
+			else if (*str == '0')
+			{
+				*s = 8 * deoct(*++str);
+				*s++ += deoct(*++str);
+			}
 
-                        /* Octal-mode */
-                        else if (*str == '1')
-                        {
-                                *s = 64 + 8 * deoct(*++str);
-                                *s++ += deoct(*++str);
-                        }
+			/* Octal-mode */
+			else if (*str == '1')
+			{
+				*s = 64 + 8 * deoct(*++str);
+				*s++ += deoct(*++str);
+			}
 
-                        /* Octal-mode */
-                        else if (*str == '2')
-                        {
-                                *s = 64 * 2 + 8 * deoct(*++str);
-                                *s++ += deoct(*++str);
-                        }
+			/* Octal-mode */
+			else if (*str == '2')
+			{
+				*s = 64 * 2 + 8 * deoct(*++str);
+				*s++ += deoct(*++str);
+			}
 
-                        /* Octal-mode */
-                        else if (*str == '3')
-                        {
-                                *s = 64 * 3 + 8 * deoct(*++str);
-                                *s++ += deoct(*++str);
-                        }
+			/* Octal-mode */
+			else if (*str == '3')
+			{
+				*s = 64 * 3 + 8 * deoct(*++str);
+				*s++ += deoct(*++str);
+			}
 
-                        /* Skip the final char */
-                        str++;
-                }
+			/* Skip the final char */
+			str++;
+		}
 
-                /* Normal Control codes */
-                else if (*str == '^')
-                {
-                        str++;
-                        *s++ = (*str++ & 037);
-                }
+		/* Normal Control codes */
+		else if (*str == '^')
+		{
+			str++;
+			*s++ = (*str++ & 037);
+		}
 
-                /* Normal chars */
-                else
-                {
-                        *s++ = *str++;
-                }
-        }
+		/* Normal chars */
+		else
+		{
+			*s++ = *str++;
+		}
+	}
 
-        /* Terminate */
-        *s = '\0';
+	/* Terminate */
+	*s = '\0';
 }
 
 /*
@@ -259,68 +252,68 @@ static errr path_parse(char *buf, cptr file)
 {
 #ifndef WIN32
 #ifndef AMIGA
-        cptr            u, s;
-        struct passwd   *pw;
-        char            user[128];
+	cptr	    u, s;
+	struct passwd   *pw;
+	char	    user[128];
 #endif
 #endif /* WIN32 */
 
 
-        /* Assume no result */
-        buf[0] = '\0';
+	/* Assume no result */
+	buf[0] = '\0';
 
-        /* No file? */
-        if (!file) return (-1);
+	/* No file? */
+	if (!file) return (-1);
 
-        /* File needs no parsing */
-        if (file[0] != '~')
-        {
-                strcpy(buf, file);
-                return (0);
-        }
+	/* File needs no parsing */
+	if (file[0] != '~')
+	{
+		strcpy(buf, file);
+		return (0);
+	}
 
 	/* Windows should never have ~ in filename */
 #ifndef WIN32
 #ifndef AMIGA
 
-        /* Point at the user */
-        u = file+1;
+	/* Point at the user */
+	u = file+1;
 
-        /* Look for non-user portion of the file */
-        s = strstr(u, PATH_SEP);
+	/* Look for non-user portion of the file */
+	s = strstr(u, PATH_SEP);
 
-        /* Hack -- no long user names */
-        if (s && (s >= u + sizeof(user))) return (1);
+	/* Hack -- no long user names */
+	if (s && (s >= u + sizeof(user))) return (1);
 
-        /* Extract a user name */
-        if (s)
-        {
-                int i;
-                for (i = 0; u < s; ++i) user[i] = *u++;
-                user[i] = '\0';
-                u = user;
-        }
+	/* Extract a user name */
+	if (s)
+	{
+		int i;
+		for (i = 0; u < s; ++i) user[i] = *u++;
+		user[i] = '\0';
+		u = user;
+	}
 
-        /* Look up the "current" user */
-        if (u[0] == '\0') u = getlogin();
+	/* Look up the "current" user */
+	if (u[0] == '\0') u = getlogin();
 
-        /* Look up a user (or "current" user) */
-        if (u) pw = getpwnam(u);
-        else pw = getpwuid(getuid());
+	/* Look up a user (or "current" user) */
+	if (u) pw = getpwnam(u);
+	else pw = getpwuid(getuid());
 
-        /* Nothing found? */
-        if (!pw) return (1);
+	/* Nothing found? */
+	if (!pw) return (1);
 
-        /* Make use of the info */
-        (void)strcpy(buf, pw->pw_dir);
+	/* Make use of the info */
+	(void)strcpy(buf, pw->pw_dir);
 
-        /* Append the rest of the filename, if any */
-        if (s) (void)strcat(buf, s);
+	/* Append the rest of the filename, if any */
+	if (s) (void)strcat(buf, s);
 
 #endif
 #endif /* WIN32 */
-        /* Success */
-        return (0);
+	/* Success */
+	return (0);
 }
 
 
@@ -330,13 +323,13 @@ static errr path_parse(char *buf, cptr file)
  */
 FILE *my_fopen(cptr file, cptr mode)
 {
-        char                buf[1024];
+	char		buf[1024];
 
-        /* Hack -- Try to parse the path */
-        if (path_parse(buf, file)) return (NULL);
+	/* Hack -- Try to parse the path */
+	if (path_parse(buf, file)) return (NULL);
 
-        /* Attempt to fopen the file anyway */
-        return (fopen(buf, mode));
+	/* Attempt to fopen the file anyway */
+	return (fopen(buf, mode));
 }
 
 
@@ -345,14 +338,14 @@ FILE *my_fopen(cptr file, cptr mode)
  */
 errr my_fclose(FILE *fff)
 {
-        /* Require a file */
-        if (!fff) return (-1);
+	/* Require a file */
+	if (!fff) return (-1);
 
-        /* Close, check for error */
-        if (fclose(fff) == EOF) return (1);
+	/* Close, check for error */
+	if (fclose(fff) == EOF) return (1);
 
-        /* Success */
-        return (0);
+	/* Success */
+	return (0);
 }
 
 /*
@@ -378,58 +371,58 @@ bool my_freadable(cptr file)
  */
 errr my_fgets(FILE *fff, char *buf, huge n)
 {
-        huge i = 0;
+	huge i = 0;
 
-        char *s;
+	char *s;
 
-        char tmp[1024];
+	char tmp[1024];
 
-        /* Read a line */
-        if (fgets(tmp, 1024, fff))
-        {
-                /* Convert weirdness */
-                for (s = tmp; *s; s++)
-                {
-                        /* Handle newline */
-                        if (*s == '\n')
-                        {
-                                /* Terminate */
-                                buf[i] = '\0';
+	/* Read a line */
+	if (fgets(tmp, 1024, fff))
+	{
+		/* Convert weirdness */
+		for (s = tmp; *s; s++)
+		{
+			/* Handle newline */
+			if (*s == '\n')
+			{
+				/* Terminate */
+				buf[i] = '\0';
 
-                                /* Success */
-                                return (0);
-                        }
+				/* Success */
+				return (0);
+			}
 
-                        /* Handle tabs */
-                        else if (*s == '\t')
-                        {
-                                /* Hack -- require room */
-                                if (i + 8 >= n) break;
+			/* Handle tabs */
+			else if (*s == '\t')
+			{
+				/* Hack -- require room */
+				if (i + 8 >= n) break;
 
-                                /* Append a space */
-                                buf[i++] = ' ';
+				/* Append a space */
+				buf[i++] = ' ';
 
-                                /* Append some more spaces */
-                                while (!(i % 8)) buf[i++] = ' ';
-                        }
+				/* Append some more spaces */
+				while (!(i % 8)) buf[i++] = ' ';
+			}
 
-                        /* Handle printables */
-                        else if (isprint(*s))
-                        {
-                                /* Copy */
-                                buf[i++] = *s;
+			/* Handle printables */
+			else if (isprint(*s))
+			{
+				/* Copy */
+				buf[i++] = *s;
 
-                                /* Check length */
-                                if (i >= n) break;
-                        }
-                }
-        }
+				/* Check length */
+				if (i >= n) break;
+			}
+		}
+	}
 
-        /* Nothing */
-        buf[0] = '\0';
+	/* Nothing */
+	buf[0] = '\0';
 
-        /* Failure */
-        return (1);
+	/* Failure */
+	return (1);
 }
 
 /*
