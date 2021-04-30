@@ -662,7 +662,7 @@ static char inkey_aux(void) {
 	char	ch = 0;
 	cptr	pat, act;
 	char	buf[1024];
-	char	buf_atoi[4];
+	char	buf_atoi[5];
 	bool	inkey_max_line_set;
 	int net_fd;
 
@@ -696,7 +696,8 @@ static char inkey_aux(void) {
 			buf_atoi[0] = '0';
 			buf_atoi[1] = '0';
 			buf_atoi[2] = '0';
-			buf_atoi[3] = '\0';
+			buf_atoi[3] = '0';
+			buf_atoi[4] = '\0';
 			(void)(Term_inkey(&ch, TRUE, TRUE));
 			if (ch) buf_atoi[0] = ch;
 			(void)(Term_inkey(&ch, TRUE, TRUE));
@@ -704,7 +705,7 @@ static char inkey_aux(void) {
 			(void)(Term_inkey(&ch, TRUE, TRUE));
 			if (ch) buf_atoi[2] = ch;
 			w = atoi(buf_atoi);
-			sync_xsleep(w * 1000L); /* w seconds */
+			sync_xsleep(w * 100L); /* w/10 seconds */
 			ch = 0;
 			w = 0;
 
@@ -772,7 +773,8 @@ static char inkey_aux(void) {
 				buf_atoi[0] = '0';
 				buf_atoi[1] = '0';
 				buf_atoi[2] = '0';
-				buf_atoi[3] = '\0';
+				buf_atoi[3] = '0';
+				buf_atoi[4] = '\0';
 				(void)(Term_inkey(&ch, TRUE, TRUE));
 				if (ch) buf_atoi[0] = ch;
 				(void)(Term_inkey(&ch, TRUE, TRUE));
@@ -780,7 +782,7 @@ static char inkey_aux(void) {
 				(void)(Term_inkey(&ch, TRUE, TRUE));
 				if (ch) buf_atoi[2] = ch;
 				w = atoi(buf_atoi);
-				sync_xsleep(w * 1000L); /* w seconds */
+				sync_xsleep(w * 100L); /* w/10 seconds */
 				ch = 0;
 				w = 0;
 

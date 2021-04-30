@@ -5891,10 +5891,9 @@ Miscellanous escape sequences:
                 a network connection that suffers of continuous lag spikes it
                 might even be an advantage to crank up the \w times. Actually
                 you should just switch your ISP though.
-\W???           Similar to \w?? but differs as follows:
-                It takes three digits instead of two and waits for number of
-                seconds instead of deciseconds allowing for much longer delays.
-                Also, the delays are interruptible manually, in two ways:
+\W????          Similar to \w?? but differs as follows:
+                It takes four digits instead of two, allowing for much longer
+                delays, and the delays are interruptible manually, in two ways:
                 Press ESC to cancel and abort the running macro.
                 Press SPACE to cancel the delay and resume the running macro.
 
