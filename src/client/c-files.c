@@ -16,6 +16,7 @@
 
 
 static int MACRO_WAIT = 96; //hack: ASCII 96 ("`") is unused in the game's key layout
+static int MACRO_XWAIT = 26; //hack: ASCII 26 (SUB/Substitute) which is unused is now abused for new client-side wait function that is indepdendant of the server, allows for long waits, and can be cancelled by keypress.
 
 /*
  * Extract the first few "tokens" from a buffer
@@ -134,6 +135,8 @@ void text_to_ascii(char *buf, cptr str) {
 
 			/* Specialty: Asynchronous delay for usage in complex macros - C. Blue */
 			else if (*str == 'w') *s++ = MACRO_WAIT;
+			/* Specialty: Asynchronous delay for usage in complex macros - C. Blue */
+			else if (*str == 'W') *s++ = MACRO_XWAIT;
 
 			/* Hack -- simple way to specify "backslash" */
 			else if (*str == '\\') *s++ = '\\';

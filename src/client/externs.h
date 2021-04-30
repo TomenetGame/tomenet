@@ -627,6 +627,7 @@ extern void restore_prompt(void); /* DONT_CLEAR_TOPLINE_IF_AVOIDABLE */
 extern u32b parse_color_code(const char *str);
 extern void handle_process_font_file(void);
 extern void sync_sleep(int milliseconds);
+extern void sync_xsleep(int milliseconds);
 extern char original_commands(char command);
 extern char roguelike_commands(char command);
 extern void copy_to_clipboard(char *buf);

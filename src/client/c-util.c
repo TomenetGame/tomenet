@@ -78,6 +78,7 @@ int usleep(long microSeconds) {
 
 
 static int MACRO_WAIT = 96; //hack: ASCII 96 ("`") is unused in the game's key layout
+static int MACRO_XWAIT = 26; //hack: ASCII 26 (SUB/Substitute) which is unused is now abused for new client-side wait function that is indepdendant of the server, allows for long waits, and can be cancelled by keypress.
 
 static void ascii_to_text(char *buf, cptr str);
 
@@ -357,10 +358,8 @@ void sync_sleep(int milliseconds) {
 #ifdef ACCEPT_KEYS
 	/* HACK - Create a new key queue so we can receive fresh key presses */
 	Term->keys_old = Term->keys;
-
 	MAKE(Term->keys, key_queue);
 	C_MAKE(Term->keys->queue, Term->key_size_orig, char);
-
 	Term->keys->size = Term->key_size_orig;
 #endif
 
@@ -483,6 +482,157 @@ void sync_sleep(int milliseconds) {
 		window_stuff();
 	}
 }
+void sync_xsleep(int milliseconds) {
+	static char animation[4] = { '-', '\\', '|', '/' };
+	int result, net_fd;
+	struct timeval begin, now;
+	int time_spent;
+	char ch;
+
+	command_confirmed = -1;
+	inkey_sleep = TRUE;
+
+#ifdef WINDOWS
+	/* Use the multimedia timer function */
+	DWORD systime_ms = timeGetTime();
+	begin.tv_sec = systime_ms / 1000;
+	begin.tv_usec = (systime_ms % 1000) * 1000;
+#else
+	gettimeofday(&begin, NULL);
+#endif
+	net_fd = Net_fd();
+
+	/* HACK - Create a new key queue so we can receive fresh key presses */
+	Term->keys_old = Term->keys;
+
+	MAKE(Term->keys, key_queue);
+	C_MAKE(Term->keys->queue, Term->key_size_orig, char);
+
+	Term->keys->size = Term->key_size_orig;
+
+	while (TRUE) {
+		/* Check for fresh key presses */
+		while (Term_inkey(&ch, FALSE, TRUE) == 0) {
+			if (ch == ESCAPE) {
+				/* Forget key presses */
+				Term->keys->head = 0;
+				Term->keys->tail = 0;
+				Term->keys->length = 0;
+
+				if (Term->keys_old) {
+					/* Destroy the old queue */
+					C_KILL(Term->keys_old->queue, Term->keys_old->size, char);
+					KILL(Term->keys_old, key_queue);
+				}
+
+				/* Erase the spinner */
+				Term_erase(Term->wid - 1, 0, 1);
+
+				/* Abort */
+				inkey_sleep = FALSE;
+				return;
+			} else if (ch == ' ') {
+				if (Term->keys_old) {
+					/* Destroy the temporary key queue */
+					C_KILL(Term->keys->queue, Term->keys->size, char);
+					KILL(Term->keys, key_queue);
+
+					/* Restore the old queue */
+					Term->keys = Term->keys_old;
+					Term->keys_old = NULL;
+				}
+
+				/* Erase the spinner */
+				Term_erase(Term->wid - 1, 0, 1);
+				inkey_sleep = FALSE;
+
+				/* Cancel sleep and resume */
+				return;
+			} else {
+				if (Term->keys_old) {
+					/* Add it to the old queue */
+					Term_keypress_aux(Term->keys_old, ch);
+				}
+			}
+		}
+
+#ifdef WINDOWS
+		/* Use the multimedia timer function */
+		DWORD systime_ms = timeGetTime();
+		now.tv_sec = systime_ms / 1000;
+		now.tv_usec = (systime_ms % 1000) * 1000;
+#else
+		gettimeofday(&now, NULL);
+#endif
+
+		/* Check if we have waited long enough */
+		time_spent = diff_ms(&begin, &now);
+		if (time_spent >= milliseconds
+		    /* hack: Net_input() might've caused command-processing that in turn calls inkey(),
+		       then we'd already be continuing processing the part of the macro that comes after
+		       a \wXX directive that we're still waiting for to complete here,
+		       causing a inkey->sync_sleep->Net_input->inkey.. recursion from macros.
+		       So in that case if a server-reply came in before we're done waiting, we can just
+		       stop waiting now, because usually the purpose of \wXX is to actually wait for an
+		       (item) input request from the server. - C. Blue */
+		    || inkey_sleep_semaphore
+		    /* hack: For commands where the server doesn't conveniently sends us another input
+		       request as described above, starting at 4.6.2 the server might send us a special
+		       PKT_CONFIRM though to signal that we can stop sleeping now. */
+		    || command_confirmed != -1) {
+			if (Term->keys_old) {
+				/* Destroy the temporary key queue */
+				C_KILL(Term->keys->queue, Term->keys->size, char);
+				KILL(Term->keys, key_queue);
+
+				/* Restore the old queue */
+				Term->keys = Term->keys_old;
+				Term->keys_old = NULL;
+			}
+
+			/* Erase the spinner */
+			Term_erase(Term->wid - 1, 0, 1);
+			inkey_sleep = FALSE;
+			return;
+		}
+
+		/* Do a little animation in the upper right corner */
+		Term_putch(Term->wid - 1, 0, TERM_WHITE, animation[time_spent / 100 % 4]);
+
+		/* Flush output - maintain flickering/multi-hued characters */
+		do_flicker();
+
+		/* Update our timer and if neccecary send a keepalive packet
+		 */
+		update_ticks();
+		if (!c_quit) {
+			do_keepalive();
+			do_ping();
+		}
+
+		/* Flush the network output buffer */
+		Net_flush();
+
+		/* Wait for .001 sec, or until there is net input */
+		SetTimeout(0, 1000);
+
+		/* Update the screen */
+		Term_fresh();
+
+		if (c_quit) {
+			usleep(1000);
+			continue;
+		}
+
+		/* Parse net input if we got any */
+		if (SocketReadable(net_fd)) {
+			if ((result = Net_input()) == -1) quit("Net_input failed.");
+		}
+
+		/* Redraw windows if necessary */
+		window_stuff();
+	}
+}
 
 /*
  * Helper function called only from "inkey()"
@@ -512,7 +662,7 @@ static char inkey_aux(void) {
 	char	ch = 0;
 	cptr	pat, act;
 	char	buf[1024];
-	char	buf_atoi[3];
+	char	buf_atoi[4];
 	bool	inkey_max_line_set;
 	int net_fd;
 
@@ -527,7 +677,7 @@ static char inkey_aux(void) {
 		/* Wait for a keypress */
 		(void)(Term_inkey(&ch, TRUE, TRUE));
 
-		if (parse_macro && (ch == MACRO_WAIT)) {
+		if (parse_macro && ch == MACRO_WAIT) {
 			buf_atoi[0] = '0';
 			buf_atoi[1] = '0';
 			buf_atoi[2] = '\0';
@@ -537,6 +687,24 @@ static char inkey_aux(void) {
 			if (ch) buf_atoi[1] = ch;
 			w = atoi(buf_atoi);
 			sync_sleep(w * 100L); /* w 1/10th seconds */
+			ch = 0;
+			w = 0;
+
+			/* continue with the next 'real' key */
+			(void)(Term_inkey(&ch, TRUE, TRUE));
+		} else if (parse_macro && ch == MACRO_XWAIT) {
+			buf_atoi[0] = '0';
+			buf_atoi[1] = '0';
+			buf_atoi[2] = '0';
+			buf_atoi[3] = '\0';
+			(void)(Term_inkey(&ch, TRUE, TRUE));
+			if (ch) buf_atoi[0] = ch;
+			(void)(Term_inkey(&ch, TRUE, TRUE));
+			if (ch) buf_atoi[1] = ch;
+			(void)(Term_inkey(&ch, TRUE, TRUE));
+			if (ch) buf_atoi[2] = ch;
+			w = atoi(buf_atoi);
+			sync_xsleep(w * 1000L); /* w seconds */
 			ch = 0;
 			w = 0;
 
@@ -585,7 +753,7 @@ static char inkey_aux(void) {
 			/* Look for a keypress */
 			(void)(Term_inkey(&ch, FALSE, TRUE));
 
-			if (parse_macro && (ch == MACRO_WAIT)) {
+			if (parse_macro && ch == MACRO_WAIT) {
 				buf_atoi[0] = '0';
 				buf_atoi[1] = '0';
 				buf_atoi[2] = '\0';
@@ -595,6 +763,24 @@ static char inkey_aux(void) {
 				if (ch) buf_atoi[1] = ch;
 				w = atoi(buf_atoi);
 				sync_sleep(w * 100L); /* w 1/10th seconds */
+				ch = 0;
+				w = 0;
+
+				/* continue with the next 'real' key */
+				continue;
+			} else if (parse_macro && ch == MACRO_XWAIT) {
+				buf_atoi[0] = '0';
+				buf_atoi[1] = '0';
+				buf_atoi[2] = '0';
+				buf_atoi[3] = '\0';
+				(void)(Term_inkey(&ch, TRUE, TRUE));
+				if (ch) buf_atoi[0] = ch;
+				(void)(Term_inkey(&ch, TRUE, TRUE));
+				if (ch) buf_atoi[1] = ch;
+				(void)(Term_inkey(&ch, TRUE, TRUE));
+				if (ch) buf_atoi[2] = ch;
+				w = atoi(buf_atoi);
+				sync_xsleep(w * 1000L); /* w seconds */
 				ch = 0;
 				w = 0;
 
@@ -4043,6 +4229,9 @@ static void ascii_to_text(char *buf, cptr str) {
 		} else if (i == MACRO_WAIT) {
 			*s++ = '\\';
 			*s++ = 'w';
+		} else if (i == MACRO_XWAIT) {
+			*s++ = '\\';
+			*s++ = 'W';
 		} else if (i == ' ') {
 			*s++ = '\\';
 			*s++ = 's';
