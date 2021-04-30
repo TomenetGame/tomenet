@@ -1111,61 +1111,42 @@ char inkey(void) {
 
 		/* Handle some special keys */
 		switch (ch) {
-			/* Hack -- convert back-quote into escape */
-			case '`':
-
+		/* Hack -- convert back-quote into escape */
+		case '`':
 			/* Convert to "Escape" */
 			ch = ESCAPE;
-
-			/* Done */
 			break;
 
-			/* Hack -- strip "control-right-bracket" end-of-macro-action */
-			case 29:
-
+		/* Hack -- strip "control-backslash" special-fallback-strings */
+		case 28:
 			/* Strip this key */
 			ch = 0;
-
-			/* Done */
-			break;
-
-			/* Hack -- strip "control-caret" special-keypad-indicator */
-			case 30:
-
-			/* Strip this key */
-			ch = 0;
-
-			/* Done */
-			break;
-
-			/* Hack -- strip "control-underscore" special-macro-triggers */
-			case 31:
-
-			/* Strip this key */
-			ch = 0;
-
-			/* Inside a "underscore" sequence */
-			parse_under = TRUE;
-
-			/* Strip chars (always) */
-			strip_chars = TRUE;
-
-			/* Done */
-			break;
-
-			/* Hack -- strip "control-backslash" special-fallback-strings */
-			case 28:
-
-			/* Strip this key */
-			ch = 0;
-
 			/* Inside a "control-backslash" sequence */
 			parse_slash = TRUE;
-
 			/* Strip chars (sometimes) */
 			strip_chars = after_macro;
+			break;
 
-			/* Done */
+		/* Hack -- strip "control-right-bracket" end-of-macro-action */
+		case 29:
+			/* Strip this key */
+			ch = 0;
+			break;
+
+		/* Hack -- strip "control-caret" special-keypad-indicator */
+		case 30:
+			/* Strip this key */
+			ch = 0;
+			break;
+
+		/* Hack -- strip "control-underscore" special-macro-triggers */
+		case 31:
+			/* Strip this key */
+			ch = 0;
+			/* Inside a "underscore" sequence */
+			parse_under = TRUE;
+			/* Strip chars (always) */
+			strip_chars = TRUE;
 			break;
 		}
 
