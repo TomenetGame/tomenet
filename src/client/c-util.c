@@ -218,8 +218,7 @@ static int macro_ready(cptr buf) {
  * If "cmd_flag" is set then this macro is only active when
  * the user is being asked for a command (see below).
  */
-void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
-{
+void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag) {
 	int n;
 
 	/* Paranoia -- require data */
@@ -227,11 +226,9 @@ void macro_add(cptr pat, cptr act, bool cmd_flag, bool hyb_flag)
 
 
 	/* Look for a re-usable slot */
-	for (n = 0; n < macro__num; n++)
-	{
+	for (n = 0; n < macro__num; n++) {
 		/* Notice macro redefinition */
-		if (streq(macro__pat[n], pat))
-		{
+		if (streq(macro__pat[n], pat)) {
 			/* Free the old macro action */
 			string_free(macro__act[n]);
 
@@ -738,8 +735,7 @@ static char inkey_aux(void) {
 	buf[p] = '\0';
 
 	/* Wait for a macro, or a timeout */
-	while (TRUE)
-	{
+	while (TRUE) {
 		/* Check for possible macros */
 		k = macro_maybe(buf, k);
 
@@ -747,8 +743,7 @@ static char inkey_aux(void) {
 		if (k < 0) break;
 
 		/* Check for (and remove) a pending key */
-		if (0 == Term_inkey(&ch, FALSE, TRUE))
-		{
+		if (0 == Term_inkey(&ch, FALSE, TRUE)) {
 			/* Append the key */
 			buf[p++] = ch;
 			buf[p] = '\0';
@@ -758,10 +753,8 @@ static char inkey_aux(void) {
 		}
 
 		/* No key ready */
-		else
-		{
-			if (multi_key_macros)
-			{
+		else {
+			if (multi_key_macros) {
 				/* Increase "wait" */
 				w += 10;
 
@@ -770,9 +763,7 @@ static char inkey_aux(void) {
 
 				/* Delay */
 				Term_xtra(TERM_XTRA_DELAY, w);
-			}
-			else
-			{
+			} else {
 				/* No waiting */
 				break;
 			}
@@ -783,11 +774,9 @@ static char inkey_aux(void) {
 	k = macro_ready(buf);
 
 	/* No macro available */
-	if (k < 0)
-	{
+	if (k < 0) {
 		/* Push all the keys back on the queue */
-		while (p > 0)
-		{
+		while (p > 0) {
 			/* Push the key, notice over-flow */
 			if (Term_key_push(buf[--p])) return (0);
 		}
@@ -808,8 +797,7 @@ static char inkey_aux(void) {
 
 
 	/* Push the "extra" keys back on the queue */
-	while (p > n)
-	{
+	while (p > n) {
 		if (Term_key_push(buf[--p])) return (0);
 	}
 
@@ -833,8 +821,7 @@ static char inkey_aux(void) {
 
 #if 0
 	/* Push the macro "action" onto the key queue */
-	while (n > 0)
-	{
+	while (n > 0) {
 		/* Push the key, notice over-flow */
 		if (Term_key_push(act[--n])) return (0);
 	}
@@ -1920,11 +1907,8 @@ bool askfor_aux(char *buf, int len, char mode) {
 	bool nohist = (mode & ASKFOR_PRIVATE) || len < 20;
 	int cur_hist;
 
-	if (mode & ASKFOR_CHATTING) {
-		cur_hist = hist_chat_end;
-	} else {
-		cur_hist = hist_end;
-	}
+	if (mode & ASKFOR_CHATTING) cur_hist = hist_chat_end;
+	else cur_hist = hist_end;
 
 	/* Handle wrapping */
 	if (cur_hist >= MSG_HISTORY_MAX) cur_hist = 0;
@@ -2953,8 +2937,7 @@ byte get_3way(cptr prompt, bool default_no) {
 /*
  * Recall the "text" of a saved message
  */
-cptr message_str(s32b age)
-{
+cptr message_str(s32b age) {
 	s32b x;
 	s32b o;
 	cptr s;
@@ -2974,8 +2957,7 @@ cptr message_str(s32b age)
 	/* Return the message text */
 	return (s);
 }
-cptr message_str_chat(s32b age)
-{
+cptr message_str_chat(s32b age) {
 	s32b x;
 	s32b o;
 	cptr s;
@@ -2995,8 +2977,7 @@ cptr message_str_chat(s32b age)
 	/* Return the message text */
 	return (s);
 }
-cptr message_str_msgnochat(s32b age)
-{
+cptr message_str_msgnochat(s32b age) {
 	s32b x;
 	s32b o;
 	cptr s;
@@ -3016,8 +2997,7 @@ cptr message_str_msgnochat(s32b age)
 	/* Return the message text */
 	return (s);
 }
-cptr message_str_impscroll(s32b age)
-{
+cptr message_str_impscroll(s32b age) {
 	s32b x;
 	s32b o;
 	cptr s;
@@ -3064,8 +3044,7 @@ s32b message_num(void) {
 	/* Return the result */
 	return (n);
 }
-s32b message_num_chat(void)
-{
+s32b message_num_chat(void) {
 	int last, next, n;
 
 	/* Extract the indexes */
@@ -3081,8 +3060,7 @@ s32b message_num_chat(void)
 	/* Return the result */
 	return (n);
 }
-s32b message_num_msgnochat(void)
-{
+s32b message_num_msgnochat(void) {
 	int last, next, n;
 
 	/* Extract the indexes */
@@ -3098,8 +3076,7 @@ s32b message_num_msgnochat(void)
 	/* Return the result */
 	return (n);
 }
-s32b message_num_impscroll(void)
-{
+s32b message_num_impscroll(void) {
 	int last, next, n;
 
 	/* Extract the indexes */
@@ -3145,10 +3122,8 @@ void c_message_add(cptr str) {
 	if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
 
 	/* Check the last few messages (if any to count) */
-	for (i = message__next; k; k--)
-	{
+	for (i = message__next; k; k--) {
 		u32b q;
-
 		cptr old;
 
 		/* Back up and wrap if needed */
@@ -3201,11 +3176,9 @@ void c_message_add(cptr str) {
 	/*** Step 3 -- Ensure space before end of buffer ***/
 
 	/* Kill messages and Wrap if needed */
-	if (message__head + n + 1 >= MESSAGE_BUF)
-	{
+	if (message__head + n + 1 >= MESSAGE_BUF) {
 		/* Kill all "dead" messages */
-		for (i = message__last; TRUE; i++)
-		{
+		for (i = message__last; TRUE; i++) {
 			/* Wrap if needed */
 			if (i == MESSAGE_MAX) i = 0;
 
@@ -3231,8 +3204,7 @@ void c_message_add(cptr str) {
 	/*** Step 4 -- Ensure space before next message ***/
 
 	/* Kill messages if needed */
-	if (message__head + n + 1 > message__tail)
-	{
+	if (message__head + n + 1 > message__tail) {
 		/* Grab new "tail" */
 		message__tail = message__head + n + 1;
 
@@ -3240,8 +3212,7 @@ void c_message_add(cptr str) {
 		while (message__buf[message__tail-1]) message__tail++;
 
 		/* Kill all "dead" messages */
-		for (i = message__last; TRUE; i++)
-		{
+		for (i = message__last; TRUE; i++) {
 			/* Wrap if needed */
 			if (i == MESSAGE_MAX) i = 0;
 
@@ -3282,10 +3253,8 @@ void c_message_add(cptr str) {
 
 	/* Append the new part of the message */
 	for (i = 0; i < n; i++)
-	{
 		/* Copy the message */
 		message__buf[message__head + i] = str[i];
-	}
 
 	/* Terminate */
 	message__buf[message__head + i] = '\0';
@@ -3330,10 +3299,8 @@ void c_message_add_chat(cptr str) {
 	if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
 
 	/* Check the last few messages (if any to count) */
-	for (i = message__next_chat; k; k--)
-	{
+	for (i = message__next_chat; k; k--) {
 		u32b q;
-
 		cptr old;
 
 		/* Back up and wrap if needed */
@@ -3380,11 +3347,9 @@ void c_message_add_chat(cptr str) {
 	/*** Step 3 -- Ensure space before end of buffer ***/
 
 	/* Kill messages and Wrap if needed */
-	if (message__head_chat + n + 1 >= MESSAGE_BUF)
-	{
+	if (message__head_chat + n + 1 >= MESSAGE_BUF) {
 		/* Kill all "dead" messages */
-		for (i = message__last_chat; TRUE; i++)
-		{
+		for (i = message__last_chat; TRUE; i++) {
 			/* Wrap if needed */
 			if (i == MESSAGE_MAX) i = 0;
 
@@ -3393,10 +3358,8 @@ void c_message_add_chat(cptr str) {
 
 			/* Kill "dead" messages */
 			if (message__ptr_chat[i] >= message__head_chat)
-			{
 				/* Track oldest message */
 				message__last_chat = i + 1;
-			}
 		}
 
 		/* Wrap "tail" if needed */
@@ -3410,8 +3373,7 @@ void c_message_add_chat(cptr str) {
 	/*** Step 4 -- Ensure space before next message ***/
 
 	/* Kill messages if needed */
-	if (message__head_chat + n + 1 > message__tail_chat)
-	{
+	if (message__head_chat + n + 1 > message__tail_chat) {
 		/* Grab new "tail" */
 		message__tail_chat = message__head_chat + n + 1;
 
@@ -3419,8 +3381,7 @@ void c_message_add_chat(cptr str) {
 		while (message__buf_chat[message__tail_chat-1]) message__tail_chat++;
 
 		/* Kill all "dead" messages */
-		for (i = message__last_chat; TRUE; i++)
-		{
+		for (i = message__last_chat; TRUE; i++) {
 			/* Wrap if needed */
 			if (i == MESSAGE_MAX) i = 0;
 
@@ -3429,8 +3390,7 @@ void c_message_add_chat(cptr str) {
 
 			/* Kill "dead" messages */
 			if ((message__ptr_chat[i] >= message__head_chat) &&
-			    (message__ptr_chat[i] < message__tail_chat))
-			{
+			    (message__ptr_chat[i] < message__tail_chat)) {
 				/* Track oldest message */
 				message__last_chat = i + 1;
 			}
@@ -3461,10 +3421,8 @@ void c_message_add_chat(cptr str) {
 
 	/* Append the new part of the message */
 	for (i = 0; i < n; i++)
-	{
 		/* Copy the message */
 		message__buf_chat[message__head_chat + i] = str[i];
-	}
 
 	/* Terminate */
 	message__buf_chat[message__head_chat + i] = '\0';
@@ -3501,10 +3459,8 @@ void c_message_add_msgnochat(cptr str) {
 	if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
 
 	/* Check the last few _msgnochatmessages (if any to count) */
-	for (i = message__next_msgnochat; k; k--)
-	{
+	for (i = message__next_msgnochat; k; k--) {
 		u32b q;
-
 		cptr old;
 
 		/* Back up and wrap if needed */
@@ -3551,11 +3507,9 @@ void c_message_add_msgnochat(cptr str) {
 	/*** Step 3 -- Ensure space before end of buffer ***/
 
 	/* Kill messages and Wrap if needed */
-	if (message__head_msgnochat + n + 1 >= MESSAGE_BUF)
-	{
+	if (message__head_msgnochat + n + 1 >= MESSAGE_BUF) {
 		/* Kill all "dead" messages */
-		for (i = message__last_msgnochat; TRUE; i++)
-		{
+		for (i = message__last_msgnochat; TRUE; i++) {
 			/* Wrap if needed */
 			if (i == MESSAGE_MAX) i = 0;
 
@@ -3581,8 +3535,7 @@ void c_message_add_msgnochat(cptr str) {
 	/*** Step 4 -- Ensure space before next message ***/
 
 	/* Kill messages if needed */
-	if (message__head_msgnochat + n + 1 > message__tail_msgnochat)
-	{
+	if (message__head_msgnochat + n + 1 > message__tail_msgnochat) {
 		/* Grab new "tail" */
 		message__tail_msgnochat = message__head_msgnochat + n + 1;
 
@@ -3590,8 +3543,7 @@ void c_message_add_msgnochat(cptr str) {
 		while (message__buf_msgnochat[message__tail_msgnochat-1]) message__tail_msgnochat++;
 
 		/* Kill all "dead" messages */
-		for (i = message__last_msgnochat; TRUE; i++)
-		{
+		for (i = message__last_msgnochat; TRUE; i++) {
 			/* Wrap if needed */
 			if (i == MESSAGE_MAX) i = 0;
 
@@ -3600,8 +3552,7 @@ void c_message_add_msgnochat(cptr str) {
 
 			/* Kill "dead" messages */
 			if ((message__ptr_msgnochat[i] >= message__head_msgnochat) &&
-			    (message__ptr_msgnochat[i] < message__tail_msgnochat))
-			{
+			    (message__ptr_msgnochat[i] < message__tail_msgnochat)) {
 				/* Track oldest message */
 				message__last_msgnochat = i + 1;
 			}
@@ -3632,10 +3583,8 @@ void c_message_add_msgnochat(cptr str) {
 
 	/* Append the new part of the message */
 	for (i = 0; i < n; i++)
-	{
 		/* Copy the message */
 		message__buf_msgnochat[message__head_msgnochat + i] = str[i];
-	}
 
 	/* Terminate */
 	message__buf_msgnochat[message__head_msgnochat + i] = '\0';
@@ -3671,10 +3620,8 @@ void c_message_add_impscroll(cptr str) {
 	if (k > MESSAGE_MAX / 32) k = MESSAGE_MAX / 32;
 
 	/* Check the last few messages (if any to count) */
-	for (i = message__next_impscroll; k; k--)
-	{
+	for (i = message__next_impscroll; k; k--) {
 		u32b q;
-
 		cptr old;
 
 		/* Back up and wrap if needed */
@@ -3727,11 +3674,9 @@ void c_message_add_impscroll(cptr str) {
 	/*** Step 3 -- Ensure space before end of buffer ***/
 
 	/* Kill messages and Wrap if needed */
-	if (message__head_impscroll + n + 1 >= MESSAGE_BUF)
-	{
+	if (message__head_impscroll + n + 1 >= MESSAGE_BUF) {
 		/* Kill all "dead" messages */
-		for (i = message__last_impscroll; TRUE; i++)
-		{
+		for (i = message__last_impscroll; TRUE; i++) {
 			/* Wrap if needed */
 			if (i == MESSAGE_MAX) i = 0;
 
@@ -3757,8 +3702,7 @@ void c_message_add_impscroll(cptr str) {
 	/*** Step 4 -- Ensure space before next message ***/
 
 	/* Kill messages if needed */
-	if (message__head_impscroll + n + 1 > message__tail_impscroll)
-	{
+	if (message__head_impscroll + n + 1 > message__tail_impscroll) {
 		/* Grab new "tail" */
 		message__tail_impscroll = message__head_impscroll + n + 1;
 
@@ -3766,8 +3710,7 @@ void c_message_add_impscroll(cptr str) {
 		while (message__buf_impscroll[message__tail_impscroll-1]) message__tail_impscroll++;
 
 		/* Kill all "dead" messages */
-		for (i = message__last_impscroll; TRUE; i++)
-		{
+		for (i = message__last_impscroll; TRUE; i++) {
 			/* Wrap if needed */
 			if (i == MESSAGE_MAX) i = 0;
 
@@ -3776,8 +3719,7 @@ void c_message_add_impscroll(cptr str) {
 
 			/* Kill "dead" messages */
 			if ((message__ptr_impscroll[i] >= message__head_impscroll) &&
-			    (message__ptr_impscroll[i] < message__tail_impscroll))
-			{
+			    (message__ptr_impscroll[i] < message__tail_impscroll)) {
 				/* Track oldest message */
 				message__last_impscroll = i + 1;
 			}
@@ -3808,10 +3750,8 @@ void c_message_add_impscroll(cptr str) {
 
 	/* Append the new part of the message */
 	for (i = 0; i < n; i++)
-	{
 		/* Copy the message */
 		message__buf_impscroll[message__head_impscroll + i] = str[i];
-	}
 
 	/* Terminate */
 	message__buf_impscroll[message__head_impscroll + i] = '\0';
@@ -3943,10 +3883,8 @@ void c_msg_print(cptr msg) {
 /*
  * Display a formatted message, using "vstrnfmt()" and "c_msg_print()".
  */
-void c_msg_format(cptr fmt, ...)
-{
+void c_msg_format(cptr fmt, ...) {
 	va_list vp;
-
 	char buf[1024];
 
 	/* Begin the Varargs Stuff */
@@ -4082,110 +4020,80 @@ s32b c_get_quantity(cptr prompt, s32b max) {
 	return (amt);
 }
 
-void clear_from(int row)
-{
+void clear_from(int row) {
 	int y;
 
 	/* Erase requested rows */
 	for (y = row; y < Term->hgt; y++)
-	{
 		/* Erase part of the screen */
 		Term_erase(0, y, 255);
-	}
 }
 
-void prt_num(cptr header, int num, int row, int col, byte color)
-{
+void prt_num(cptr header, int num, int row, int col, byte color) {
 	int len = strlen(header);
 	char out_val[32];
+
 	put_str(header, row, col);
 	put_str("   ", row, col + len);
 	(void)sprintf(out_val, "%6d", num);
 	c_put_str(color, out_val, row, col + len + 3);
 }
 
-void prt_lnum(cptr header, s32b num, int row, int col, byte color)
-{
+void prt_lnum(cptr header, s32b num, int row, int col, byte color) {
 	int len = strlen(header);
 	char out_val[32];
+
 	put_str(header, row, col);
 	(void)sprintf(out_val, "%9d", (int)num);
 	c_put_str(color, out_val, row, col + len);
 }
 
 
-static void ascii_to_text(char *buf, cptr str)
-{
+static void ascii_to_text(char *buf, cptr str) {
 	char *s = buf;
 
 	/* Analyze the "ascii" string */
-	while (*str)
-	{
+	while (*str) {
 		byte i = (byte)(*str++);
 
-		if (i == ESCAPE)
-		{
+		if (i == ESCAPE) {
 			*s++ = '\\';
 			*s++ = 'e';
-		}
-		else if (i == MACRO_WAIT)
-		{
+		} else if (i == MACRO_WAIT) {
 			*s++ = '\\';
 			*s++ = 'w';
-		}
-		else if (i == ' ')
-		{
+		} else if (i == ' ') {
 			*s++ = '\\';
 			*s++ = 's';
-		}
-		else if (i == '\b')
-		{
+		} else if (i == '\b') {
 			*s++ = '\\';
 			*s++ = 'b';
-		}
-		else if (i == '\t')
-		{
+		} else if (i == '\t') {
 			*s++ = '\\';
 			*s++ = 't';
-		}
-		else if (i == '\n')
-		{
+		} else if (i == '\n') {
 			*s++ = '\\';
 			*s++ = 'n';
-		}
-		else if (i == '\r')
-		{
+		} else if (i == '\r') {
 			*s++ = '\\';
 			*s++ = 'r';
-		}
-		else if (i == '^')
-		{
+		} else if (i == '^') {
 			*s++ = '\\';
 			*s++ = '^';
-		}
-		else if (i == '\\')
-		{
+		} else if (i == '\\') {
 			*s++ = '\\';
 			*s++ = '\\';
-		}
-		else if (i < 32)
-		{
+		} else if (i < 32) {
 			*s++ = '^';
 			*s++ = i + 64;
-		}
-		else if (i < 127)
-		{
+		} else if (i < 127)
 			*s++ = i;
-		}
-		else if (i < 64)
-		{
+		else if (i < 64) {
 			*s++ = '\\';
 			*s++ = '0';
 			*s++ = octify(i / 8);
 			*s++ = octify(i % 8);
-		}
-		else
-		{
+		} else {
 			*s++ = '\\';
 			*s++ = 'x';
 			*s++ = hexify(i / 16);
@@ -4197,8 +4105,7 @@ static void ascii_to_text(char *buf, cptr str)
 	*s = '\0';
 }
 
-static errr macro_dump(cptr fname)
-{
+static errr macro_dump(cptr fname) {
 	int i, j, n;
 
 	FILE *fff;
@@ -4236,8 +4143,7 @@ static errr macro_dump(cptr fname)
 	fprintf(fff, "# Automatic macro dump\n\n");
 
 	/* Dump them */
-	for (i = 0; i < macro__num; i++)
-	{
+	for (i = 0; i < macro__num; i++) {
 		/* Start the macro */
 		fprintf(fff, "# Macro '%d'\n\n", i);
 
@@ -4251,8 +4157,7 @@ static errr macro_dump(cptr fname)
 		/* Support really long macros - mikaelh */
 		fprintf(fff, "A:");
 
-		for (j = 0, n = strlen(macro__act[i]); j < n; j += 1023)
-		{
+		for (j = 0, n = strlen(macro__act[i]); j < n; j += 1023) {
 			/* Take a piece of the action */
 			strncpy(buf, &macro__act[i][j], 1023);
 			buf[1023] = '\0';
@@ -4290,10 +4195,8 @@ static errr macro_dump(cptr fname)
 	return (0);
 }
 
-static void get_macro_trigger(char *buf)
-{
+static void get_macro_trigger(char *buf) {
 	int i, n = 0;
-
 	char tmp[1024];
 
 	/* Flush */
@@ -4306,8 +4209,7 @@ static void get_macro_trigger(char *buf)
 	i = inkey();
 
 	/* Read the pattern */
-	while (i)
-	{
+	while (i) {
 		/* Save the key */
 		buf[n++] = i;
 
@@ -7459,85 +7361,85 @@ static void do_cmd_options_aux(int page, cptr info) {
 
 		/* Analyze */
 		switch (ch) {
-			case ESCAPE:
-			case KTRL('Q'):
-				/* Next time on this options page, restore our position */
-				k_lasttime[page] = k_no_advance;
-				return;
+		case ESCAPE:
+		case KTRL('Q'):
+			/* Next time on this options page, restore our position */
+			k_lasttime[page] = k_no_advance;
+			return;
 
-			case KTRL('T'):
-				/* Take a screenshot */
-				xhtml_screenshot("screenshot????");
-				break;
+		case KTRL('T'):
+			/* Take a screenshot */
+			xhtml_screenshot("screenshot????");
+			break;
 
-			case ':':
-				/* specialty: allow chatting from within here */
-				cmd_message();
-				break;
+		case ':':
+			/* specialty: allow chatting from within here */
+			cmd_message();
+			break;
 
-			case '-':
-			case '8':
-			case 'k':
-			case '\010': //backspace
-				k = (n + k - 1) % n;
+		case '-':
+		case '8':
+		case 'k':
+		case '\010': //backspace
+			k = (n + k - 1) % n;
+			k_no_advance = k;
+			break;
+
+		case '+':
+		case '2':
+		case 'j':
+		case '\n':
+		case '\r':
+		case ' ':
+			k = (k + 1) % n;
+			k_no_advance = k;
+			break;
+
+		case 'y':
+		case '6':
+		case 'l':
+		case 's': //set
+			(*option_info[opt[k]].o_var) = TRUE;
+			Client_setup.options[opt[k]] = TRUE;
+			check_immediate_options(opt[k], TRUE, TRUE);
+			k_no_advance = k;
+			k = (k + 1) % n;
+			break;
+
+		case 'n':
+		case '4':
+		case 'h':
+		case 'u': //unset
+			(*option_info[opt[k]].o_var) = FALSE;
+			Client_setup.options[opt[k]] = FALSE;
+			check_immediate_options(opt[k], FALSE, TRUE);
+			k_no_advance = k;
+			k = (k + 1) % n;
+			break;
+
+		case 't':
+		case '5':
+		case 'w': //switch
+			tmp = 1 - (*option_info[opt[k]].o_var);
+			(*option_info[opt[k]].o_var) = tmp;
+			Client_setup.options[opt[k]] = tmp;
+			check_immediate_options(opt[k], tmp, TRUE);
+			k_no_advance = k;
+			k = (k + 1) % n;
+			break;
+		default:
+			/* directly toggle a specific option */
+			if (ch >= 'A' && ch <= 'A' + n - 1) {
+				k = ch - 'A';
 				k_no_advance = k;
-				break;
-
-			case '+':
-			case '2':
-			case 'j':
-			case '\n':
-			case '\r':
-			case ' ':
-				k = (k + 1) % n;
-				k_no_advance = k;
-				break;
-
-			case 'y':
-			case '6':
-			case 'l':
-			case 's': //set
-				(*option_info[opt[k]].o_var) = TRUE;
-				Client_setup.options[opt[k]] = TRUE;
-				check_immediate_options(opt[k], TRUE, TRUE);
-				k_no_advance = k;
-				k = (k + 1) % n;
-				break;
-
-			case 'n':
-			case '4':
-			case 'h':
-			case 'u': //unset
-				(*option_info[opt[k]].o_var) = FALSE;
-				Client_setup.options[opt[k]] = FALSE;
-				check_immediate_options(opt[k], FALSE, TRUE);
-				k_no_advance = k;
-				k = (k + 1) % n;
-				break;
-
-			case 't':
-			case '5':
-			case 'w': //switch
 				tmp = 1 - (*option_info[opt[k]].o_var);
 				(*option_info[opt[k]].o_var) = tmp;
 				Client_setup.options[opt[k]] = tmp;
 				check_immediate_options(opt[k], tmp, TRUE);
-				k_no_advance = k;
-				k = (k + 1) % n;
 				break;
-			default:
-				/* directly toggle a specific option */
-				if (ch >= 'A' && ch <= 'A' + n - 1) {
-					k = ch - 'A';
-					k_no_advance = k;
-					tmp = 1 - (*option_info[opt[k]].o_var);
-					(*option_info[opt[k]].o_var) = tmp;
-					Client_setup.options[opt[k]] = tmp;
-					check_immediate_options(opt[k], tmp, TRUE);
-					break;
-				}
-				bell();
-				break;
+			}
+			bell();
+			break;
 		}
 	}
 }
@@ -7570,9 +7472,7 @@ void display_account_information(void) {
 		if (acc_flags & ACC_VQUIET) c_prt(TERM_ORANGE, "Your account is silenced.", l, 2);
 		else if (acc_flags & ACC_QUIET) c_prt(TERM_YELLOW, "Your account is partially silenced.", l, 2);
 #endif
-	} else {
-		c_prt(TERM_SLATE, "Retrieving data...", l, 2);
-	}
+	} else c_prt(TERM_SLATE, "Retrieving data...", l, 2);
 
 	/* Added in 4.7.3 */
 	l = 10;
@@ -8279,9 +8179,7 @@ static void do_cmd_options_mus(void) {
 
 errr options_dump(cptr fname) {
 	int i, j;
-
 	FILE *fff;
-
 	char buf[1024];
 
 
@@ -8335,20 +8233,17 @@ errr options_dump(cptr fname) {
 	fprintf(fff, "\n");
 
 	/* Dump window flags */
-	for (i = 1; i < ANGBAND_TERM_MAX; i++)
-	{
+	for (i = 1; i < ANGBAND_TERM_MAX; i++) {
 		/* Require a real window */
 		if (!ang_term_name[i]) continue;
 
 		/* Check each flag */
-		for (j = 0; j < NR_OPTIONS_SHOWN; j++)
-		{
+		for (j = 0; j < NR_OPTIONS_SHOWN; j++) {
 			/* Require a real flag */
 			if (!window_flag_desc[j]) continue;
 
 			/* Dump the flag */
-			if (window_flag[i] & (1L << j))
-			{
+			if (window_flag[i] & (1L << j)) {
 				/* Comment */
 				fprintf(fff, "# Window '%s', Flag '%s'\n",
 						ang_term_name[i], window_flag_desc[j]);
@@ -9598,10 +9493,9 @@ void my_memfrob(void *s, int n) {
 
 	str = (char*) s;
 
-	for (i = 0; i < n; i++) {
+	for (i = 0; i < n; i++)
 		/* XOR every byte with 42 */
 		str[i] ^= 42;
-	}
 }
 
 /* dummy */
