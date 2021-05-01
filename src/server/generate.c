@@ -830,10 +830,12 @@ static void place_between(struct worldpos *wpos, int y, int x) {
 		if (tries-- == 0) {
 			/* Failure */
 #ifdef DEATH_FATE_SPECIAL
-			struct dun_level *l_ptr = getfloor(wpos);
+			struct dun_level *l_ptr;
 			cave_type **zcave;
 
-			if (!(rand_int(1)) && l_ptr && !(l_ptr->flags2 & LF2_BROKEN) && ((zcave = getcave(wpos))) && (zcave[y][x].info & CAVE_STCK)) {
+			if (!(rand_int(1)) && !in_irondeepdive(wpos)
+			    && ((l_ptr = getfloor(wpos))) && !(l_ptr->flags2 & LF2_BROKEN)
+			    && ((zcave = getcave(wpos))) && (zcave[y][x].info & CAVE_STCK)) {
 				l_ptr->flags2 |= LF2_BROKEN;
 				cave_set_feat(wpos, y, x, FEAT_IRID_GATE);
 				s_printf("Broken Gate (%d,%d,%d - %d,%d).\n", wpos->wx,  wpos->wy,  wpos->wz, x, y);
