@@ -342,9 +342,9 @@ char music_vol = 100;
 int weather_sound_change, weather_fading, ambient_fading;
 bool cfg_audio_master = TRUE, cfg_audio_music = TRUE, cfg_audio_sound = TRUE, cfg_audio_weather = TRUE, weather_resume = FALSE, ambient_resume = FALSE;
 int cfg_audio_master_volume = 75, cfg_audio_music_volume = 100, cfg_audio_sound_volume = 100, cfg_audio_weather_volume = 100;
-#if 1 /* WEATHER_VOL_PARTICLES */
+ #if 1 /* WEATHER_VOL_PARTICLES */
 int weather_vol_smooth, weather_vol_smooth_anti_oscill, weather_smooth_avg[20];
-#endif
+ #endif
 int grid_weather_volume = 100, grid_ambient_volume = 100, grid_weather_volume_goal = 100, grid_ambient_volume_goal = 100, grid_weather_volume_step, grid_ambient_volume_step;
 
 /* sounds that are hard-coded on client-side, because they won't be transmitted from the server: */
@@ -355,6 +355,8 @@ bool sound_hint = TRUE;
 
 /* Don't cache audio */
 bool no_cache_audio = FALSE;
+
+bool skip_received_music = FALSE;
 #endif
 bool wind_noticable = FALSE; /* This is now also used for lamp-flickering, not just for sound */
 int weather_particles_seen; /* ..and this is used for wind_noticable! */

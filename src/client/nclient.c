@@ -3692,6 +3692,12 @@ int Receive_music(void) {
 	}
 
 #ifdef USE_SOUND_2010
+	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
+	if (skip_received_music) {
+		skip_received_music = FALSE;
+		return 1;
+	}
+
 	/* Play background music (if enabled) */
 	if (!use_sound) return 1;
 	/* Try to play music, if fails try alternative music, if fails too stop playing any music.
@@ -3708,6 +3714,12 @@ int Receive_music_vol(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c", &ch, &m, &m2, &v)) <= 0) return n;
 
 #ifdef USE_SOUND_2010
+	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
+	if (skip_received_music) {
+		skip_received_music = FALSE;
+		return 1;
+	}
+
 	/* Play background music (if enabled) */
 	if (!use_sound) return 1;
 	/* Try to play music, if fails try alternative music, if fails too stop playing any music.

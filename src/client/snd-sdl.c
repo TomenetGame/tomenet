@@ -1907,6 +1907,9 @@ static bool play_music(int event) {
 	/* Check there are samples for this event */
 	if (!songs[event].num) return FALSE;
 
+	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
+	if (event == 89 && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
+
 	/* if music event is the same as is already running, don't do anything */
 	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) {
 		/* Just change volume if requested */
@@ -2009,6 +2012,9 @@ static bool play_music_vol(int event, char vol) {
 
 	/* Check there are samples for this event */
 	if (!songs[event].num) return FALSE;
+
+	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
+	if (event == 89 && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
 
 	/* if music event is the same as is already running, don't do anything */
 	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) {

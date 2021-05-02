@@ -10217,6 +10217,8 @@ void resurrect_player(int Ind, int loss_factor) {
 	/* Reset ghost flag */
 	p_ptr->ghost = 0;
 #ifdef USE_SOUND_2010
+	/* Hack to accomodate for the client-side ghost music hack */
+	p_ptr->music_current = 0;
 	handle_music(Ind); //possibly no longer ghostly music
 #endif
 

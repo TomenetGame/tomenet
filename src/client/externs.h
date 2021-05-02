@@ -1011,6 +1011,8 @@ extern int re_init_sound();
  extern void do_cmd_options_mus_sdl(void);
  #endif
 
+extern bool skip_received_music;
+
 //z-files.h:
 //extern bool my_fexists(const char *fname);
 #endif

@@ -1779,6 +1779,7 @@ void sound_near_monster_atk(int m_idx, int Ind, cptr name, cptr alternative, int
  *     dungeons - generic/ironman/forcedownhellish
  *     towns - generic day/night (used for Menegroth/Nargothrond at times)
  * Note - dun-gen-iron and dun-gen-fdhell are currently swapped. */
+#define GHOST_MUSIC_HACK Send_music(Ind, -1, -1);
 void handle_music(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	dun_level *l_ptr = NULL;
@@ -1896,14 +1897,20 @@ void handle_music(int Ind) {
 		return;
 	}
 
-	/* Ghost-specific music if available client-side */
-	if (p_ptr->ghost) Send_music(Ind, 89, -1);
+	/* Ghost-specific music if available client-side --
+	   note that this follows-up with a client-side hack necessary to ensure that ghost music
+	   won't get overriden by the next subsequent Send_music() call from those below here.
+	   If another Send_music() is not called, GHOST_MUSIC_HACK is used as dummy replacement
+	   to satisfy the client's expectation. (Client 4.7.4b+ handle the ghost music.) */
+	if (p_ptr->ghost && !p_ptr->admin_dm) Send_music(Ind, 89, -1);
 
 	/* rest of the music has lower priority than already running, boss-specific music */
 	if (p_ptr->music_monster != -1
 	    /* hacks for sickbay, tavern and jail music */
-	    && p_ptr->music_monster != -3 && p_ptr->music_monster != -4 && p_ptr->music_monster != -5)
+	    && p_ptr->music_monster != -3 && p_ptr->music_monster != -4 && p_ptr->music_monster != -5) {
+		GHOST_MUSIC_HACK
 		return;
+	}
 
 	/* Shopping music ^^ */
 	if (p_ptr->store_num >= 0) {
