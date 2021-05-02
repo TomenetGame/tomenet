@@ -180,7 +180,7 @@ REGENERATION = add_spell {
 			set_tim_regen(Ind, randint(10) + 5 + get_level(Ind, REGENERATION, 50), 300 + get_level(Ind, REGENERATION, 700))
 	end,
 	["info"] = 	function()
-			return "dur "..(5 + get_level(Ind, REGENERATION, 50)).."+d10 power "..(300 + get_level(Ind, REGENERATION, 700))
+			return "dur "..(5 + get_level(Ind, REGENERATION, 50)).."+d10 power +"..(300 + get_level(Ind, REGENERATION, 700)).."%"
 	end,
 	["desc"] = 	{ "Increases your body's regeneration rate.", }
 }
