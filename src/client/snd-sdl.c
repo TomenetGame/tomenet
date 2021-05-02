@@ -2019,14 +2019,14 @@ static bool play_music_vol(int event, char vol) {
 	/* if music event is the same as is already running, don't do anything */
 	if (music_cur == event && Mix_PlayingMusic() && Mix_FadingMusic() != MIX_FADING_OUT) {
 		/* Just change volume if requested */
-		if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[vol]) / MIX_MAX_VOLUME));
+		if (music_vol != vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME));
 		music_vol = vol;
 		return TRUE; //pretend we played it
 	}
 
 	music_next = event;
 	music_vol = vol;
-	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[vol]) / MIX_MAX_VOLUME));
+	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)vol]) / MIX_MAX_VOLUME));
 	/* handle 'initial' songs with priority */
 	for (n = 0; n < songs[music_next].num; n++) if (songs[music_next].initial[n]) initials++;
 	/* no initial songs - just pick a song normally */
@@ -2255,7 +2255,7 @@ static void set_mixing_sdl(void) {
 	}
 #endif
 	//Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
-	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[music_vol]) / MIX_MAX_VOLUME));
+	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)music_vol]) / MIX_MAX_VOLUME));
 #ifdef DISABLE_MUTED_AUDIO
 	if (!cfg_audio_master || !cfg_audio_music) {
 		if (Mix_PlayingMusic()) Mix_HaltMusic();
