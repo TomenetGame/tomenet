@@ -4373,236 +4373,230 @@ static bool summon_specific_okay(int r_idx) {
 
 	/* Check our requirements */
 	switch (summon_specific_type) {
-		case SUMMON_ALL_U98:
-			okay = (r_ptr->level <= 98 ||
-			    !(r_ptr->flags1 & RF1_UNIQUE));
-			break;
-		case SUMMON_MONSTER:
-			okay = (!(r_ptr->flags1 & RF1_UNIQUE) &&
-			    (r_ptr->d_char != 'A')); //hm, actually disallow Angels for generic monster summoning..
-			break;
-		case SUMMON_ANT:
-			okay = ((r_ptr->d_char == 'a') &&
-				!(r_ptr->flags1 & RF1_UNIQUE));
-			break;
-		case SUMMON_SPIDER:
-			okay = ((r_ptr->d_char == 'S') &&
-				!(r_ptr->flags1 & RF1_UNIQUE));
-			break;
-		case SUMMON_HOUND:
-			okay = (((r_ptr->d_char == 'C') || (r_ptr->d_char == 'Z')) &&
-				!(r_ptr->flags1 & RF1_UNIQUE));
-			break;
-		case SUMMON_HYDRA:
-			okay = ((r_ptr->d_char == 'M') &&
-				!(r_ptr->flags1 & RF1_UNIQUE));
-			break;
-		case SUMMON_ANGEL:
-			okay = ((r_ptr->d_char == 'A') &&
-				!(r_ptr->flags1 & RF1_UNIQUE));
-			break;
-		case SUMMON_DEMON:
-			okay = ((r_ptr->flags3 & RF3_DEMON) &&
-				!(r_ptr->flags1 & RF1_UNIQUE));
-			break;
-		case SUMMON_UNDEAD:
-			okay = ((r_ptr->flags3 & RF3_UNDEAD) &&
-				!(r_ptr->flags1 & RF1_UNIQUE));
-			break;
-		case SUMMON_DRAGON:
-			okay = ((r_ptr->flags3 & RF3_DRAGON) &&
-				!(r_ptr->flags1 & RF1_UNIQUE));
-			break;
-		case SUMMON_HI_UNDEAD:
-			okay = (((r_ptr->d_char == 'L') ||
-				(r_ptr->d_char == 'V') ||
-				(r_ptr->d_char == 'W')) &&
-				(r_ptr->level >= 45)
+	case SUMMON_ALL_U98:
+		okay = (r_ptr->level <= 98 ||
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_MONSTER:
+		okay = (!(r_ptr->flags1 & RF1_UNIQUE) &&
+		    r_ptr->d_char != 'A'); //hm, actually disallow Angels for generic monster summoning..
+		break;
+	case SUMMON_ANT:
+		okay = (r_ptr->d_char == 'a' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_SPIDER:
+		okay = (r_ptr->d_char == 'S' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_HOUND:
+		okay = ((r_ptr->d_char == 'C' || r_ptr->d_char == 'Z') &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_HYDRA:
+		okay = (r_ptr->d_char == 'M' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_ANGEL:
+		okay = (r_ptr->d_char == 'A' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_DEMON:
+		okay = ((r_ptr->flags3 & RF3_DEMON) &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_UNDEAD:
+		okay = ((r_ptr->flags3 & RF3_UNDEAD) &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_DRAGON:
+		okay = ((r_ptr->flags3 & RF3_DRAGON) &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_HI_UNDEAD:
+		okay = ((r_ptr->d_char == 'L' || r_ptr->d_char == 'V' || r_ptr->d_char == 'W') &&
+		    r_ptr->level >= 45
 #ifdef EXPLICITE_UNIQUE_SUMMONING
-				&& (!(r_ptr->flags1 & RF1_UNIQUE)
-				    || (r_ptr->flags7 & RF7_NAZGUL)) /* exception: allow Nazgul! */
+		    && (!(r_ptr->flags1 & RF1_UNIQUE)
+		    || (r_ptr->flags7 & RF7_NAZGUL)) /* exception: allow Nazgul! */
 #endif
-				);
-			break;
-		case SUMMON_HI_DRAGON:
-			okay = (r_ptr->d_char == 'D'
+		    );
+		break;
+	case SUMMON_HI_DRAGON:
+		okay = (r_ptr->d_char == 'D'
 #ifdef EXPLICITE_UNIQUE_SUMMONING
-				&& !(r_ptr->flags1 & RF1_UNIQUE)
+		    && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
-				);
-			break;
-		case SUMMON_NAZGUL:
-			okay = ((r_ptr->flags7 & RF7_NAZGUL));
-			break;
-		case SUMMON_UNIQUE:
-			okay = ((r_ptr->flags1 & RF1_UNIQUE));
-			break;
+		    );
+		break;
+	case SUMMON_NAZGUL:
+		okay = (r_ptr->flags7 & RF7_NAZGUL);
+		break;
+	case SUMMON_UNIQUE:
+		okay = (r_ptr->flags1 & RF1_UNIQUE);
+		break;
 
-		/* PernA-addition
-		 * many of them are unused for now.	- Jir -
-		 * */
-		case SUMMON_BIZARRE1:
-			okay = ((r_ptr->d_char == 'm') &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_BIZARRE2:
-			okay = ((r_ptr->d_char == 'b') &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_BIZARRE3:
-			okay = ((r_ptr->d_char == 'Q') &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_BIZARRE4:
-			okay = ((r_ptr->d_char == 'v') &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_BIZARRE5:
-			okay = ((r_ptr->d_char == '$') &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_BIZARRE6:
-			okay = (((r_ptr->d_char == '!') ||
-			         (r_ptr->d_char == '?') ||
-			         (r_ptr->d_char == '=') ||
-			         (r_ptr->d_char == '$') ||
-			         (r_ptr->d_char == '|') ||
-				(r_ptr->flags9 & (RF9_MIMIC)) ) &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
+	/* PernA-addition
+	 * many of them are unused for now.	- Jir -
+	 * */
+	case SUMMON_BIZARRE1:
+		okay = (r_ptr->d_char == 'm' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_BIZARRE2:
+		okay = (r_ptr->d_char == 'b' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_BIZARRE3:
+		okay = (r_ptr->d_char == 'Q' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_BIZARRE4:
+		okay = (r_ptr->d_char == 'v' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_BIZARRE5:
+		okay = (r_ptr->d_char == '$' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_BIZARRE6:
+		okay = ((r_ptr->d_char == '!' || r_ptr->d_char == '?' || r_ptr->d_char == '=' ||
+		    r_ptr->d_char == '$' || r_ptr->d_char == '|' || (r_ptr->flags9 & RF9_MIMIC)) &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
                 case SUMMON_HI_DEMON:
-			okay = ((r_ptr->flags3 & (RF3_DEMON)) &&
-			        (r_ptr->d_char == 'U') &&
-				(r_ptr->level >= 49) &&
-			       !(r_ptr->flags1 & RF1_UNIQUE));
-			break;
+		okay = ((r_ptr->flags3 & RF3_DEMON) &&
+		    r_ptr->d_char == 'U' &&
+		    r_ptr->level >= 49 &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
 #if 1	// welcome, Julian Lighton Hack ;)
-		case SUMMON_KIN:
-			okay = ((r_ptr->d_char == summon_kin_type) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)) &&
-			       (r_ptr->flags8 & (RF8_DUNGEON))); //<-hack: rat king shouldn't summon wild rabbits
-			break;
+	case SUMMON_KIN:
+		okay = (r_ptr->d_char == summon_kin_type &&
+		    !(r_ptr->flags1 & RF1_UNIQUE) &&
+		    (r_ptr->flags8 & RF8_DUNGEON)); //<-hack: rat king shouldn't summon wild rabbits
+		break;
 #endif	// 0
-		case SUMMON_DAWN:
-			okay = ((strstr((r_name + r_ptr->name),"the Dawn")) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_ANIMAL:
-			okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_ANIMAL_RANGER:
-			okay = ((r_ptr->flags3 & (RF3_ANIMAL)) &&
-			       (strchr("abcflqrwBCIJKMRS", r_ptr->d_char)) &&
-			       !(r_ptr->flags3 & (RF3_DRAGON))&&
-			       !(r_ptr->flags3 & (RF3_EVIL)) &&
-			       !(r_ptr->flags3 & (RF3_UNDEAD))&&
-			       !(r_ptr->flags3 & (RF3_DEMON)) &&
-			       !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_HI_UNDEAD_NO_UNIQUES:
-			okay = (((r_ptr->d_char == 'L') ||
-			         (r_ptr->d_char == 'V') ||
-			         (r_ptr->d_char == 'W')) &&
-				 (r_ptr->level >= 45) &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_HI_DRAGON_NO_UNIQUES:
-			okay = ((r_ptr->d_char == 'D') &&
-			       !(r_ptr->flags1 &(RF1_UNIQUE)));
-			break;
-		case SUMMON_NO_UNIQUES:
-			okay = (!(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_PHANTOM:
-			okay = ((strstr((r_name + r_ptr->name),"Phantom")) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_ELEMENTAL:
-			okay = ((strstr((r_name + r_ptr->name),"lemental")) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_DRAGONRIDER:
-			okay = ((r_ptr->flags3 & RF3_DRAGONRIDER)
+	case SUMMON_DAWN:
+		okay = (strstr(r_name + r_ptr->name, "the Dawn") &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_ANIMAL:
+		okay = ((r_ptr->flags3 & RF3_ANIMAL) &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_ANIMAL_RANGER:
+		okay = ((r_ptr->flags3 & RF3_ANIMAL) &&
+		    strchr("abcflqrwBCIJKMRS", r_ptr->d_char) &&
+		    !(r_ptr->flags3 & RF3_DRAGON) &&
+		    !(r_ptr->flags3 & RF3_EVIL) &&
+		    !(r_ptr->flags3 & RF3_UNDEAD)&&
+		    !(r_ptr->flags3 & RF3_DEMON) &&
+		    !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6) &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_HI_UNDEAD_NO_UNIQUES:
+		okay = ((r_ptr->d_char == 'L' || r_ptr->d_char == 'V' || r_ptr->d_char == 'W') &&
+		    r_ptr->level >= 45 &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_HI_DRAGON_NO_UNIQUES:
+		okay = (r_ptr->d_char == 'D' &&
+		    !(r_ptr->flags1 &RF1_UNIQUE));
+		break;
+	case SUMMON_NO_UNIQUES:
+		okay = (!(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_PHANTOM:
+		okay = (strstr(r_name + r_ptr->name, "hantom") &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_ELEMENTAL:
+		okay = (strstr(r_name + r_ptr->name , "lemental") &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_DRAGONRIDER:
+		okay = ((r_ptr->flags3 & RF3_DRAGONRIDER)
 #ifdef EXPLICITE_UNIQUE_SUMMONING
-			       && !(r_ptr->flags1 & RF1_UNIQUE)
+		    && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
-			       && (r_ptr->level < 70) /* Don't summon Gold DRs, too easy to obtain mimicry form */
-				);
-			break;
-		case SUMMON_BLUE_HORROR:
-			okay = ((strstr((r_name + r_ptr->name),"lue horror")) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_BUG:
-			okay = ((strstr((r_name + r_ptr->name),"Software bug")) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_RNG:
-			okay = ((strstr((r_name + r_ptr->name),"Random Number Generator")) &&
-			       !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_IMMOBILE:
-			okay = ((r_ptr->flags1 & RF1_NEVER_MOVE)
+		    && r_ptr->level < 70 /* Don't summon Gold DRs, too easy to obtain mimicry form */
+		    );
+		break;
+	case SUMMON_BLUE_HORROR:
+		okay = (strstr(r_name + r_ptr->name, "lue horror") &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_BUG:
+		okay = (strstr(r_name + r_ptr->name, "Software bug") &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_RNG:
+		okay = (strstr(r_name + r_ptr->name, "Random Number Generator") &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_IMMOBILE:
+		okay = ((r_ptr->flags1 & RF1_NEVER_MOVE)
 #ifdef EXPLICITE_UNIQUE_SUMMONING
-				&& !(r_ptr->flags1 & RF1_UNIQUE)
+		    && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
-				);
-			break;
-		case SUMMON_HUMAN:
-			okay = ((r_ptr->d_char == 'p') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_SHADOW:
-			okay = ((r_ptr->d_char == 'G') &&
-			        !(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_QUYLTHULG:
-			okay = ((r_ptr->d_char == 'Q') &&
-				!(r_ptr->flags1 & (RF1_UNIQUE)));
-			break;
-		case SUMMON_VERMIN:
-			okay = ((r_ptr->flags7 & RF7_MULTIPLY)
+		    );
+		break;
+	case SUMMON_HUMAN:
+		okay = (r_ptr->d_char == 'p' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_SHADOW:
+		okay = (r_ptr->d_char == 'G' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_QUYLTHULG:
+		okay = (r_ptr->d_char == 'Q' &&
+		    !(r_ptr->flags1 & RF1_UNIQUE));
+		break;
+	case SUMMON_VERMIN:
+		okay = ((r_ptr->flags7 & RF7_MULTIPLY)
 #ifdef EXPLICITE_UNIQUE_SUMMONING /* paranoia - there cannot be unique multiplying vermin, but whatever */
-			       && !(r_ptr->flags1 & RF1_UNIQUE)
+		    && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
-				);
-			break;
-		case SUMMON_PATIENT:
-			okay = ((r_ptr->flags1 & RF1_NEVER_MOVE) &&
-				!(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6 || (r_ptr->flags0 & RF0_ACTIVE_MASK))
+		    );
+		break;
+	case SUMMON_PATIENT:
+		okay = ((r_ptr->flags1 & RF1_NEVER_MOVE) &&
+		    !(r_ptr->flags4 || r_ptr->flags5 || r_ptr->flags6 || (r_ptr->flags0 & RF0_ACTIVE_MASK))
 #ifdef EXPLICITE_UNIQUE_SUMMONING
-				&& !(r_ptr->flags1 & RF1_UNIQUE)
+		    && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
-				);
-			break;
+		    );
+		break;
 #ifdef USE_LUA
 #if 0	// let's leave it to DG :)
-		case SUMMON_LUA:
-			okay = summon_lua_okay(r_idx);
-			break;
+	case SUMMON_LUA:
+		okay = summon_lua_okay(r_idx);
+		break;
 #endif
 #endif
-		case SUMMON_HI_MONSTER:
-			okay = (r_ptr->level >= 60
+	case SUMMON_HI_MONSTER:
+		okay = (r_ptr->level >= 60
+		    //&& r_ptr->d_char != 'A' /* this would be ok if enabled, because SUMMON_HI_MONSTER is only called by Sauron, Morgoth, Tzeentch, but not by Michael. */
 #ifdef EXPLICITE_UNIQUE_SUMMONING
-				&& !(r_ptr->flags1 & RF1_UNIQUE)
+		    && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
-				);
-			break;
-		case SUMMON_HI_UNIQUE:
-			okay = ((r_ptr->flags1 & RF1_UNIQUE)
-				&& (r_ptr->level >= 60));
-			break;
-		case SUMMON_SPOOK:
-			okay = ((r_ptr->d_char == 'G')
-				&& (r_ptr->flags2 & RF2_INVISIBLE) /* hm, no phantom warriors (also excludes spectres) */
+		    );
+		break;
+	case SUMMON_HI_UNIQUE:
+		okay = ((r_ptr->flags1 & RF1_UNIQUE)
+		    && r_ptr->d_char != 'A' /* this is ok because SUMMON_HI_UNIQUE is only called by Sauron, Morgoth, Tik, but not by Michael. */
+		    && r_ptr->level >= 60);
+		break;
+	case SUMMON_SPOOK:
+		okay = ((r_ptr->d_char == 'G')
+		    && (r_ptr->flags2 & RF2_INVISIBLE) /* hm, no phantom warriors (also excludes spectres) */
 #ifdef EXPLICITE_UNIQUE_SUMMONING
-			       && !(r_ptr->flags1 & RF1_UNIQUE)
+		    && !(r_ptr->flags1 & RF1_UNIQUE)
 #endif
-				&& (r_ptr->level <= 31)); /* 31 for Ghost, 33 also allows Shade (somewhat nasty) */
-			break;
+		    && r_ptr->level <= 31); /* 31 for Ghost, 33 also allows Shade (somewhat nasty) */
+		break;
 	}
 
 	/* Result */
