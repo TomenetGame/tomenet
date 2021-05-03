@@ -3917,7 +3917,7 @@ int Receive_special_line(void) {
 			for (p = 0; p < cur_col; p++) {
 				if (buf[p] != '\377') continue;
 				if (buf[p + 1] == '.') attr = ap;
-				else if (isalpha(buf[p + 1]) || isdigit(buf[p + 1])) {
+				else if (isalphanum(buf[p + 1])) {
 					ap = ab;
 					attr = ab = color_char_to_attr(buf[p + 1]);
 				}

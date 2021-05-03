@@ -7712,7 +7712,7 @@ bool backup_estate(bool partial) {
 		for (j = 0; name[j]; j++) {
 			c = name[j];
 			/* Accept some letters */
-			if (isalpha(c) || isdigit(c)) savefile[k++] = c;
+			if (isalphanum(c)) savefile[k++] = c;
 			/* Convert space, dot, and underscore to underscore */
 			else if (strchr(SF_BAD_CHARS, c)) savefile[k++] = '_';
 		}
@@ -7876,7 +7876,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	for (j = 0; name[j]; j++) {
 		c = name[j];
 		/* Accept some letters */
-		if (isalpha(c) || isdigit(c)) savefile[k++] = c;
+		if (isalphanum(c)) savefile[k++] = c;
 		/* Convert space, dot, and underscore to underscore */
 		else if (strchr(SF_BAD_CHARS, c)) savefile[k++] = '_';
 	}
@@ -8954,7 +8954,7 @@ plog(format("condense: n='%s'", name));
 		current = tolower(*ptr);
 
 		//discard non-alphanumeric characters
-		if (!isalpha(current) && !isdigit(current)) continue;
+		if (!isalphanum(current)) continue;
 
 		//condense multiples of the same character
 		if (multiple == current) continue;
@@ -9207,7 +9207,7 @@ plog(format("similar: n1='%s',n2='%s'", name1, name2));
 	}
 	while (*ptr) {
 		if (tolower(*ptr) != tolower(*ptr2)) break;
-		if (!isalpha(*ptr) && !isdigit(*ptr)) words = TRUE;
+		if (!isalphanum(*ptr)) words = TRUE;
 		ptr++;
 		ptr2++;
 		//REVERSE diff here

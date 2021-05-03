@@ -4682,7 +4682,7 @@ void sf_delete(const char *name) {
 		char c = name[i];
 
 		/* Accept some letters */
-		if (isalpha(c) || isdigit(c)) temp[k++] = c;
+		if (isalphanum(c)) temp[k++] = c;
 
 		/* Convert space, dot, and underscore to underscore */
 		else if (strchr(SF_BAD_CHARS, c)) temp[k++] = '_';
@@ -4702,7 +4702,7 @@ void sf_rename(const char *name, bool keep_copy) {
 		char c = name[i];
 
 		/* Accept some letters */
-		if (isalpha(c) || isdigit(c)) temp[k++] = c;
+		if (isalphanum(c)) temp[k++] = c;
 
 		/* Convert space, dot, and underscore to underscore */
 		else if (strchr(SF_BAD_CHARS, c)) temp[k++] = '_';
@@ -4799,7 +4799,7 @@ void ef_rename(const char *name) {
 		char c = name[i];
 
 		/* Accept some letters */
-		if (isalpha(c) || isdigit(c)) temp[k++] = c;
+		if (isalphanum(c)) temp[k++] = c;
 
 		/* Convert space, dot, and underscore to underscore */
 		else if (strchr(SF_BAD_CHARS, c)) temp[k++] = '_';

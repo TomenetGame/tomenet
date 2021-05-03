@@ -4793,7 +4793,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					c_at = TRUE;
 				}
 				/* Only allow -_.~ for non-alphanum characters */
-				else if (!isalpha(*c) && !isdigit(*c)
+				else if (!isalphanum(*c)
 				    && *c != '-' && *c != '_' && *c != '.' && *c != '~')
 					break;
 				c++;

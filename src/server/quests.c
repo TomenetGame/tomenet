@@ -3887,7 +3887,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 	/* treat non-alphanum as spaces */
 	c = str;
 	while (*c) {
-		if (!isalpha(*c) && !isdigit(*c) && *c >= 32) //don't accidentally mask ESC character..
+		if (!isalphanum(*c) && *c >= 32) //don't accidentally mask ESC character..
 			*c = ' ';
 		c++;
 	}
