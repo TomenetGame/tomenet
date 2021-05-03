@@ -41,13 +41,22 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 				if (!end) {
 					if (*c == '\377') c += 2;
 					while (*c == ' ') c++;
+					/* Inserting this space could break an URL, so we'll check for it later again and possibly remove it */
 					strcpy(xmsg_reverse, " ");
 				} else xmsg_reverse[0] = 0;
 
 				strcat(xmsg_reverse, c);
 				/* avoid duplicate ' ' */
 				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
-				strcat(xmsg_reverse, xmsg);
+#if 0
+				/* remove the first space too if the previous line didn't end on an alphanum char, to avoid breaking URLs.
+				   Note that this can still break URLs because words might get broken down inbetween instead of at a hyphen (would need fixing in util.c) */
+				if (xmsg[0] == ' ' && !isalphanum(xmsg_reverse[strlen(xmsg_reverse) - 1])) strcat(xmsg_reverse, xmsg + 1);
+#else
+				/* never insert spaces? (we do, but we delete it here again) - URLs are perfectly safe this way, but words might get concatinated wrongly */
+				if (xmsg[0] == ' ') strcat(xmsg_reverse, xmsg + 1);
+#endif
+				else strcat(xmsg_reverse, xmsg);
 				strcpy(xmsg, xmsg_reverse);
 
 				if (end) break;
@@ -70,7 +79,15 @@ static void copy_to_clipboard_multiline(cptr msg_raw, cptr *message_recall, int 
 				strcat(xmsg_reverse, c);
 				/* avoid duplicate ' ' */
 				if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
-				strcat(xmsg_reverse, xmsg);
+#if 0
+				/* remove the first space too if the previous line didn't end on an alphanum char, to avoid breaking URLs.
+				   Note that this can still break URLs because words might get broken down inbetween instead of at a hyphen (would need fixing in util.c) */
+				if (xmsg[0] == ' ' && !isalphanum(xmsg_reverse[strlen(xmsg_reverse) - 1])) strcat(xmsg_reverse, xmsg + 1);
+#else
+				/* never insert spaces? (we do, but we delete it here again) - URLs are perfectly safe this way, but words might get concatinated wrongly */
+				if (xmsg[0] == ' ') strcat(xmsg_reverse, xmsg + 1);
+#endif
+				else strcat(xmsg_reverse, xmsg);
 				strcpy(xmsg, xmsg_reverse);
 
 				if (end) break;
