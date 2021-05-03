@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 30. April 2021 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 3. May 2021 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.4a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12840,8 +12840,15 @@ If an item is heavily cursed and it is NOT the "of nothingness" type (weapons)
 then if a vampire or Hell Knight (true one, not mimicked) equips it its
 negative boni will flip to positive numbers. Also vampires tend to greatly
 resist certain bad effects that heavily cursed items may exert, making for
-example Morgul weapons and some heavily cursed artifacts quite useful.
-Note that the curse must be heavy, not normal, for this bonus-flipping to work.
+example Morgul weapons and some heavily cursed true artifacts quite useful.
+For randarts, those will not get 'flipped' but rather rerolled completely! This
+follows three rules:
+a) the resulting randart won't be cursed,
+b) the resulting randart won't drain hitpoints of undead or demon users,
+c) the resulting randart keeps all 'good' abilities it might have had.
+In rare cases rerolling the randart might fail and it will stay cursed, oops!
+Note that the curse must be heavy, not normal, for all of this bonus-flipping
+and rerolling to work.
 Look up the Vampire race description in (6.4) for more information.
 
 
@@ -15429,7 +15436,8 @@ create a character!):
     such as Morgul weapons and benefit from them, turning their negative boni
     into positive ones! The only exception are weapons of Nothingness, which
     won't do them any good either. Since Vampires are immune to Black Breath,
-    using a Morgul weapon will not pose a problem to them.
+    using a Morgul weapon will not pose a problem to them. Heavily cursed
+    randarts will even get rerolled mostly, see the end of (5.14) for details.
     Vampires are good fighters and decent mages. However, they are unable to
     conjure holy fire or utilize magic of water or nature school. Neither can
     they make use of mimicry techniques (with the exception of vampire bat and
@@ -15919,7 +15927,7 @@ create a character!):
     Similar to Vampires, Hell Knights can wield some heavily cursed items to
     great effect, flipping their negative boni to positive ones. (With the same
     exception as for vampires: Weapons "of nothingness" will do them no good
-    either.)
+    either.) See the end of (5.14) for details on item-flipping.
     Hell Knights have a very high chance to resist the adverse effects of
     encountering an eldritch horror (see (6.3) under 'Saving Throw' for details
     on those).
