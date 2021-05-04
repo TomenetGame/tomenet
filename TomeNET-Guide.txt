@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. May 2021 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 4. May 2021 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.7.4a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -23056,6 +23056,8 @@ Solution:   TomeNET uses basic Linux system fonts (and allows you to switch to
             Install the necessary fonts packages on your system, using the
             system's package manager. It should usually be 'xorg-fonts-misc' or
             'linux-fonts-misc'.
+            On some distros (Archlinux too probably) you might have to install
+            the 'xorg-mkfontscale' package.
             After installation, reboot your system to ensure they work.
             If there is still a problem, you could try installing
             xorg-fonts-type1 or awesome-terminal-fonts too. Maybe it helps.
