@@ -12695,7 +12695,7 @@ void inverse_cursed(object_type *o_ptr) {
 			char o_name[ONAME_LEN];
 
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("inverse_cursed() failed after %d tries: %s\n", tries_org, o_name);
+			s_printf("inverse_cursed() (%s) failed after %d tries: %s\n", swap ? "sw" : "NEW", tries_org, o_name);
 
 			/* restore item */
 			reverse_cursed(o_ptr);
@@ -12706,7 +12706,7 @@ void inverse_cursed(object_type *o_ptr) {
 			char o_name[ONAME_LEN];
 
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("inverse_cursed() succeeded after %d tries: %s\n", tries_org - tries, o_name);
+			s_printf("inverse_cursed() (%s) succeeded after %d tries: %s\n", swap ? "sw" : "NEW", tries_org - tries, o_name);
 		}
 
 		/* Remove no longer correct "cursed" tag, partial copy-paste from note_toggle_cursed(): */
