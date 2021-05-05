@@ -1980,7 +1980,8 @@ bool paste_from_clipboard(char *buf) {
 #ifdef USE_X11 /* relies on xclip being installed! */
 	FILE *fp;
 	int r, pos = 0;
-	char *c, *c2, buf_esc[MSG_LEN + 15];
+	char *c, *c2, buf_esc[MSG_LEN + 15], buf_line[MSG_LEN];
+	bool max_length_reached = FALSE;
 
 	r = system("xclip -sel clip -o > __clipboard__");
 	if (r) {
@@ -1991,7 +1992,19 @@ bool paste_from_clipboard(char *buf) {
 		c_message_add("Paste failed, make sure xclip is installed.");
 		return FALSE;
 	}
-	if (!fgets(buf_esc, MSG_LEN - NAME_LEN - 13, fp)) buf_esc[0] = 0; //just accomodate for some colour codes and spacing, not really calculated it
+
+	/* combine multi-line text into one line, replacing the RETURNs by spaces if needed */
+	buf_esc[0] = 0;
+	while (!max_length_reached && fgets(buf_line, MSG_LEN - NAME_LEN - 13, fp)) { //just accomodate for some colour codes and spacing, not really calculated it
+		/* limit total length of message */
+		if (strlen(buf_esc) + strlen(buf_line) > MSG_LEN - 1) {
+			buf_line[MSG_LEN - 1 - strlen(buf_esc)] = 0;
+			max_length_reached = TRUE;
+		}
+
+		if (buf_esc[0] && buf_esc[strlen(buf_esc) - 1] != ' ') strcat(buf_esc, " ");
+		strcat(buf_esc, buf_line);
+	}
 	//else buf_esc[strlen(buf_esc) - 1] = 0; //remove trailing newline -- there is no trailing newline!
 
 	/* treat { and : and also strip away all control chars (like 0x0A aka RETURN) */
