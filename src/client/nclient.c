@@ -2476,6 +2476,19 @@ int Receive_message(void) {
 	/* Hack for tombstone music from insanity-deaths. (First four bytes are "\377w\377v".) */
 	if (!strcmp(buf + 4, "You turn into an unthinking vegetable.")) insanity_death = TRUE;
 
+	/* Hack for storing private messages to disk, in case we miss them */
+	if (!strncmp(buf + 6, "Note from ", 10)) {
+		FILE *fp;
+		char path[1024];
+
+		path_build(path, 1024, ANGBAND_DIR_USER, format("notes-%s.txt", nick));
+		fp = fopen(path, "a");
+		if (fp) {
+			fprintf(fp, "%s\n", buf + 6 + 10);
+			fclose(fp);
+		}
+	}
+
 	/* Hack to clear topline: It's a translation of the former msg_print(Ind, NULL) hack, as we cannot transmit the NULL. */
 	if (buf[0] == '\377' && !buf[1]) {
 		if (screen_icky && (!shopping || perusing)) Term_switch(0);
