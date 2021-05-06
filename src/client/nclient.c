@@ -2484,7 +2484,34 @@ int Receive_message(void) {
 		path_build(path, 1024, ANGBAND_DIR_USER, format("notes-%s.txt", nick));
 		fp = fopen(path, "a");
 		if (fp) {
-			fprintf(fp, "%s\n", buf + 6 + 10);
+			char buf2[MSG_LEN], *c = buf + 6 + 10, *c2 = buf2;
+
+			while (*c) {
+				switch (*c) {
+				/* skip special markers */
+				case '\376':
+				case '\375':
+				case '\374':
+					c++;
+					continue;
+				/* strip colour codes */
+				case '\377':
+					switch (*(c + 1)) {
+					case 0: /* broken colour code (paranoia) */
+						c++;
+						continue;
+					default: /* assume colour code and discard */
+						c += 2;
+						continue;
+					}
+					break;
+				}
+				*c2 = *c;
+				c++;
+				c2++;
+			}
+
+			fprintf(fp, "%s\n", buf2);
 			fclose(fp);
 		}
 	}
