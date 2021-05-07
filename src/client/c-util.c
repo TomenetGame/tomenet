@@ -7299,7 +7299,10 @@ void auto_inscriptions(void) {
 			strcat(match_buf, "\377s>");
 			strcpy(tag_buf, "\377y");
 			strcat(tag_buf, auto_inscription_tag[cur_page * AUTOINS_PAGESIZE + cur_line]);
-			sprintf(tmp, "\377sAuto-inscription %3d: %s <%s\377s>", cur_page * AUTOINS_PAGESIZE + cur_line + 1, match_buf, tag_buf);
+			sprintf(tmp, "\377sAuto-inscription %3d: %s%s<%s\377s>", cur_page * AUTOINS_PAGESIZE + cur_line + 1,
+			    match_buf,
+			    auto_inscription_autodestroy[cur_page * AUTOINS_PAGESIZE + cur_line] ? "\377RA\377s" : (auto_inscription_autopickup[cur_page * AUTOINS_PAGESIZE + cur_line] ? "\377Ga\377s" : " "),
+			    tag_buf);
 			Send_paste_msg(tmp);
 			redraw = FALSE;
 			break;
