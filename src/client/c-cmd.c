@@ -4291,7 +4291,7 @@ void cmd_check_misc(void) {
 
 				/* allow specifying minlev? */
 				if (is_newer_than(&server_version, 4, 5, 4, 0, 0, 0)) {
-					row = c_get_quantity("Specify minimum level? (ESC for none): ", 0);
+					row = c_get_quantity("Specify minimum level? (ESC for none): ", 255);
 					if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0))
 						Send_special_line(SPECIAL_FILE_MONSTER, choice + row * 100000 + (uniques ? 100000000 : 0));
 					else
