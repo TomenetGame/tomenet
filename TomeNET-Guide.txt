@@ -16605,7 +16605,7 @@ rough approximations of 'power levels', trying to give an idea how strong each
 class is at its different game stages.
 
 Note: For some classes the power curve can depend heavily on the way you
-      distribute skill points so this is only an hand-picked estimate of the
+      distribute skill points so this is only a hand-picked estimate of the
       most average builds (not necessarily the most interesting ones).
 
       Also, some classes and builds might shine in parties rather than solo,
