@@ -42,6 +42,9 @@
    averaging calculations. It already improves enchantment/ego/art chances, so maybe zero is best.) */
 #define GOOD_OLEV_BONUS 0
 
+/* Broken items cannot have ego/randart powers? (Exception: If created via artifact creation scroll) */
+#define NO_BROKEN_EGO_RANDART
+
 
 //#if FORCED_DROPS == 1  --now also required for tc_bias
 static int which_theme(int tval);
@@ -4425,6 +4428,20 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u32b resf) 
 		/* Randart ammo should be very rare! */
 		if (!(resf & RESF_FORCERANDART) && is_ammo(o_ptr->tval) && magik(80)) return(FALSE); /* was 95 */
 
+#ifdef NO_BROKEN_EGO_RANDART
+		switch (o_ptr->tval) {
+		case TV_SWORD:
+			if (o_ptr->sval == SV_BROKEN_DAGGER || o_ptr->sval == SV_BROKEN_SWORD) return FALSE;
+			break;
+		case TV_HARD_ARMOR:
+			if (o_ptr->sval == SV_RUSTY_CHAIN_MAIL) return FALSE;
+			break;
+		case TV_SOFT_ARMOR:
+			if (o_ptr->sval == SV_FILTHY_RAG) return FALSE;
+			break;
+		}
+#endif
+
 		/* We turn this item into a randart! */
 		o_ptr->name1 = ART_RANDART;
 
@@ -4483,6 +4500,20 @@ static bool make_ego_item(int level, object_type *o_ptr, bool good, u32b resf) {
 	byte tval = o_ptr->tval;
 
 	if (artifact_p(o_ptr) || o_ptr->name2) return (FALSE);
+
+#ifdef NO_BROKEN_EGO_RANDART
+	switch (o_ptr->tval) {
+	case TV_SWORD:
+		if (o_ptr->sval == SV_BROKEN_DAGGER || o_ptr->sval == SV_BROKEN_SWORD) return FALSE;
+		break;
+	case TV_HARD_ARMOR:
+		if (o_ptr->sval == SV_RUSTY_CHAIN_MAIL) return FALSE;
+		break;
+	case TV_SOFT_ARMOR:
+		if (o_ptr->sval == SV_FILTHY_RAG) return FALSE;
+		break;
+	}
+#endif
 
 	C_MAKE(ok_ego, e_tval_size[tval], int);
 
