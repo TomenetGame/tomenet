@@ -3791,7 +3791,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
-				s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
+				//s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.mode = p_ptr->mode;
 				forge.iron_trade = p_ptr->iron_trade;
@@ -3839,7 +3839,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
-				s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
+				//s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.mode = p_ptr->mode;
 				forge.iron_trade = p_ptr->iron_trade;
@@ -3910,7 +3910,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_WOOD_CHIPS));
-				s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
+				//s_printf("CHEMICAL: %s found wood chips.\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.mode = p_ptr->mode;
 				forge.iron_trade = p_ptr->iron_trade;
@@ -4101,7 +4101,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
-				s_printf("CHEMICAL: %s found saltpetre.\n", p_ptr->name);
+				//s_printf("CHEMICAL: %s found saltpetre.\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.mode = p_ptr->mode;
 				forge.iron_trade = p_ptr->iron_trade;
@@ -4121,7 +4121,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, rand_int(3) ? SV_SULFUR : SV_VITRIOL));
-				s_printf("CHEMICAL: %s found %s.\n", p_ptr->name, forge.sval == SV_SULFUR ? "sulfur" : "vitriol");
+				//s_printf("CHEMICAL: %s found %s.\n", p_ptr->name, forge.sval == SV_SULFUR ? "sulfur" : "vitriol");
 				forge.owner = p_ptr->id;
 				forge.mode = p_ptr->mode;
 				forge.iron_trade = p_ptr->iron_trade;
@@ -4141,7 +4141,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 				object_type forge;
 
 				invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_METAL_POWDER));
-				s_printf("CHEMICAL: %s found Reactive Metal Powder.\n", p_ptr->name);
+				//s_printf("CHEMICAL: %s found Reactive Metal Powder.\n", p_ptr->name);
 				forge.owner = p_ptr->id;
 				forge.mode = p_ptr->mode;
 				forge.iron_trade = p_ptr->iron_trade;
