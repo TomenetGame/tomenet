@@ -7821,10 +7821,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "Usage: /acclist <account name>");
 					return;
 				}
-				msg_format(Ind, "Looking up account %s.", message3);
 				if (Admin_GetAccount(&acc, message3)) {
-					msg_format(Ind, " (Normalised name is <%s>, privileges: %d)", acc.name_normalised, (acc.flags & ACC_VPRIVILEGED) ? 2 : (acc.flags & ACC_PRIVILEGED) ? 1 : 0);
 					n = player_id_list(&id_list, acc.id);
+					msg_format(Ind, "Account '%s' has %d/%d (%d+%d+%d) characters%c", message3, n, MAX_CHARS_PER_ACCOUNT + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS, MAX_CHARS_PER_ACCOUNT, MAX_DED_IDDC_CHARS, MAX_DED_PVP_CHARS, n ? ':' : '.');
+					msg_format(Ind, " (Normalised name is <%s>, privileges: %d)", acc.name_normalised, (acc.flags & ACC_VPRIVILEGED) ? 2 : (acc.flags & ACC_PRIVILEGED) ? 1 : 0);
 					/* Display all account characters here */
 					for (i = 0; i < n; i++) {
 						tmpm = lookup_player_mode(id_list[i]);
@@ -7847,7 +7847,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (n) C_KILL(id_list, n, int);
 					WIPE(&acc, struct account);
 				} else {
-					msg_print(Ind, "Account not found.");
+					msg_format(Ind, "Account '%s' not found.", message3);
 				}
 				return;
 			}
