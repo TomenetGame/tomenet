@@ -2786,7 +2786,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN]) {
 #else /* split into two lines, same as on item inspection */
 		if (wearable_p(o_ptr)) {
 			strcpy(paste_lines[++pl], format("\377%cWhen equipped, it can be activated for..", a_key));
-			Term_putstr(1, 7 + (++l), -1, ta_key, "When equipped, it Can be activated for..");
+			Term_putstr(1, 7 + (++l), -1, ta_key, "When equipped, it can be activated for..");
 		} else {
 			strcpy(paste_lines[++pl], format("\377%cIt can be activated for..", a_key));
 			Term_putstr(1, 7 + (++l), -1, ta_key, "It can be activated for..");
