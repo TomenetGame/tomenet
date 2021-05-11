@@ -12638,6 +12638,9 @@ void inverse_cursed(object_type *o_ptr) {
 	if (!(f3 & TR3_HEAVY_CURSE)) return;
 	if ((f4 & TR4_NEVER_BLOW)) return; /* Weapons of Nothingness */
 
+	/* Exempt Rings of Power - they are supposed to be heavily cursed */
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL) return;
+
  #ifdef INVERSE_CURSED_RANDARTS
 	if (o_ptr->name1 == ART_RANDART) {
 		s32b old_owner, swap;
@@ -12846,6 +12849,9 @@ void inverse_cursed(object_type *o_ptr) {
    counterpart function to inverse_cursed(). */
 void reverse_cursed(object_type *o_ptr) {
 	u32b f1, f2, f3, f4, f5, f6, esp;
+
+	/* Exempt Rings of Power - they are supposed to be heavily cursed */
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL) return;
 
  #ifdef INVERSE_CURSED_RANDARTS
 	if (o_ptr->name1 == ART_RANDART) {
