@@ -1927,7 +1927,7 @@ Other !-inscriptions:
                 use, since non-winners cannot generate +LIFE on randarts
                 anyway.
     !U          This item will be displayed in dark grey colour in your
-                inventory. Can be useful for sorting loot.
+                inventory or equipment. Can be useful for sorting loot.
 Mainly for consumable items:
     !Q          will not print a message how many you have left after consuming
                 one (like if 'taciturn_messages' were enabled). For example use

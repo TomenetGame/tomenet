@@ -6183,14 +6183,13 @@ void display_inven(int Ind) {
 			if (o_ptr->tval == TV_BOOK) attr = get_book_name_color(o_ptr);
 			/* all other items */
 			else attr = get_attr_from_tval(o_ptr);
-		}
-		else attr = TERM_L_DARK;
-
-		/* Hack -- fake monochrome */
-		if (!use_color) attr = TERM_WHITE;
+		} else attr = TERM_L_DARK; /* unusable item */
 
 		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
 		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
+
+		/* Hack -- fake monochrome */
+		if (!use_color) attr = TERM_WHITE;
 
 		/* Display the weight if needed */
 		wgt = o_ptr->weight; //* o_ptr->number;
@@ -6275,6 +6274,9 @@ void display_equip(int Ind) {
 		/* Get the color */
 		attr = get_attr_from_tval(o_ptr);
 
+		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
+		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
+
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
 
@@ -6334,11 +6336,11 @@ void display_invenequip(int Ind) {
 		}
 		else attr = TERM_L_DARK;
 
-		/* Hack -- fake monochrome */
-		if (!use_color) attr = TERM_WHITE;
-
 		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
 		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
+
+		/* Hack -- fake monochrome */
+		if (!use_color) attr = TERM_WHITE;
 
 		/* Display the weight if needed */
 		wgt = o_ptr->weight; //* o_ptr->number;
@@ -6374,6 +6376,9 @@ void display_invenequip(int Ind) {
 
 		/* Get the color */
 		attr = get_attr_from_tval(o_ptr);
+
+		/* You can inscribe with !U to force TERM_L_DARK colouring (more visibility tuning!) */
+		if (check_guard_inscription(o_ptr->note, 'U')) attr = TERM_L_DARK;
 
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
