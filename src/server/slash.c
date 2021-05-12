@@ -4940,6 +4940,43 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_print(Ind, "Breath element set.");
 			p_ptr->breath_element = k;
 			return;
+		} else if (prefix(messagelc, "/characters") || prefix(messagelc, "/chars")) { /* list all characters of the player's account (user-version of /acclist) */
+			int *id_list, i, n;
+			struct account acc;
+			byte tmpm;
+			u16b ptype;
+			char colour_sequence[3 + 1]; /* colour + dedicated slot marker */
+			struct worldpos wpos;
+			char tmps[MAX_CHARS];
+
+			if (!Admin_GetAccount(&acc, p_ptr->accountname)) return; //paranoia
+
+			n = player_id_list(&id_list, acc.id);
+			msg_format(Ind, "You have %d of a maximum of %d (%d + %d IDDC-only + %d PVP-only) character%s:", n, MAX_CHARS_PER_ACCOUNT + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS,
+			    MAX_CHARS_PER_ACCOUNT, MAX_DED_IDDC_CHARS, MAX_DED_PVP_CHARS, n == 1 ? "" : "s");
+			/* Display all account characters here */
+			for (i = 0; i < n; i++) {
+				tmpm = lookup_player_mode(id_list[i]);
+				wpos = lookup_player_wpos(id_list[i]);
+				ptype = lookup_player_type(id_list[i]);
+
+				if (tmpm & MODE_EVERLASTING) strcpy(colour_sequence, "\377B");
+				else if (tmpm & MODE_PVP) strcpy(colour_sequence, format("\377%c", COLOUR_MODE_PVP));
+				else if (tmpm & MODE_SOLO) strcpy(colour_sequence, "\377s");
+				else if (tmpm & MODE_NO_GHOST) strcpy(colour_sequence, "\377D");
+				else if (tmpm & MODE_HARD) strcpy(colour_sequence, "\377s");//deprecated
+				else strcpy(colour_sequence, "\377W");
+
+				sprintf(tmps, "  %s%2d: %s%s, the level %d %s %s", (lookup_player_winner(id_list[i]) & 0x01) ? "\377v" : "\377w", i + 1, colour_sequence, lookup_player_name(id_list[i]),
+				    lookup_player_level(id_list[i]),
+				    special_prace_lookup[ptype & 0xff], class_info[ptype >> 8].title);
+
+				msg_format(Ind, "%-62s %-4s (%d,%d) %5dft", tmps, (tmpm & MODE_DED_IDDC) ? "IDDC" : ((tmpm & MODE_DED_PVP) ? "PVP" : ""),
+				    wpos.wx, wpos.wy, wpos.wz * 50);
+			}
+			if (n) C_KILL(id_list, n, int);
+			WIPE(&acc, struct account);
+			return;
 		}
 
 
@@ -7823,7 +7860,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				if (Admin_GetAccount(&acc, message3)) {
 					n = player_id_list(&id_list, acc.id);
-					msg_format(Ind, "Account '%s' has %d/%d (%d+%d+%d) characters%c", message3, n, MAX_CHARS_PER_ACCOUNT + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS, MAX_CHARS_PER_ACCOUNT, MAX_DED_IDDC_CHARS, MAX_DED_PVP_CHARS, n ? ':' : '.');
+					msg_format(Ind, "Account '%s' has %d/%d (%d+%d+%d) character%s%c", message3, n, MAX_CHARS_PER_ACCOUNT + MAX_DED_IDDC_CHARS + MAX_DED_PVP_CHARS,
+					    MAX_CHARS_PER_ACCOUNT, MAX_DED_IDDC_CHARS, MAX_DED_PVP_CHARS, n == 1 ? "" : "s", n ? ':' : '.');
 					msg_format(Ind, " (Normalised name is <%s>, privileges: %d)", acc.name_normalised, (acc.flags & ACC_VPRIVILEGED) ? 2 : (acc.flags & ACC_PRIVILEGED) ? 1 : 0);
 					/* Display all account characters here */
 					for (i = 0; i < n; i++) {
