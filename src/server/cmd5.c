@@ -694,7 +694,8 @@ static void do_mimic_power(int Ind, int power, int dir) {
 
 // RF6_HASTE			0x00000001	/* Speed self */
     case 64:
-	if(!p_ptr->fast) set_fast(Ind, 3 + rlev / 6 + randint(2 + rlev / 4), 10);
+	if (!p_ptr->fast || p_ptr->fast_mod <= 10)
+		set_fast(Ind, 3 + rlev / 6 + randint(2 + rlev / 4), 10);
 	break;
 // RF6_HAND_DOOM		0x00000002	/* Should we...? */ /* YES! */
     case 65:
