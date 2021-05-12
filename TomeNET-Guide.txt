@@ -1928,6 +1928,8 @@ Other !-inscriptions:
                 anyway.
     !U          This item will be displayed in dark grey colour in your
                 inventory or equipment. Can be useful for sorting loot.
+                (A warning: You cannot visually distinguish this colour for
+                items that are greyed out because they are unusable to you.)
 Mainly for consumable items:
     !Q          will not print a message how many you have left after consuming
                 one (like if 'taciturn_messages' were enabled). For example use
