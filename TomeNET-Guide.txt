@@ -7481,9 +7481,10 @@ Will this be the end of you as you cannot seem to spot a way to escape?
  into 'Noteworthy Occurances' list.
 -Extermination orders in the Halls of Mandos will (same as for the IDDC) have
  its monster level depend on the floor level rather than on the player's level.
--Also same as in IDDC, minimum floor depth vs character level regarding
- experience gain is not enforced: Normal experience is gained on any depth
- regardless of your character's level.
+-Similar to IDDC, minimum floor depth vs character level regarding experience
+ gain is not enforced: Normal experience is gained on any depth regardless of
+ your character's level. But unlike in IDDC this is only true for characters
+ up to level 49. Characters of level 50+ will receive depth-restricted XP.
 -The Halls of Mandos are barred to any unique monsters!
 
 

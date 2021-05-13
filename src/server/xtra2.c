@@ -11160,7 +11160,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			else {
 				/* Higher characters who farm monsters on low levels compared to
 				   their clvl will gain less exp. */
-				if (!in_irondeepdive(&p_ptr->wpos) && !in_hallsofmandos(&p_ptr->wpos))
+				if (!in_irondeepdive(&p_ptr->wpos) && (!in_hallsofmandos(&p_ptr->wpos) || p_ptr->lev >= 50))
 					tmp_exp = det_exp_level(tmp_exp, p_ptr->lev, getlevel(&p_ptr->wpos));
 
 				/* Give some experience, undo 2 extra digits */

@@ -3583,7 +3583,7 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		}
 
 		/* dungeon floor specific reduction if player dives too shallow */
-		if (not_in_iddc && !in_hallsofmandos(wpos)) new_amount = det_exp_level(new_amount, hlev, dlev);
+		if (not_in_iddc && (!in_hallsofmandos(wpos) || q_ptr->lev >= 50)) new_amount = det_exp_level(new_amount, hlev, dlev);
 
 		/* Never get too much exp off a monster
 		   due to high level difference,
