@@ -541,6 +541,8 @@ SHIFT+<direction key>
 ;       ;       The 'walk' command, it allows you to walk one step. This is not
                 really needed for anything usually, since you can just press
                 the directional keys given above instead for walking.
+                NOTE: The ';' key is by default overridden with a macro
+                to provide a quick guide search instead of its normal function.
 
 i       i       display your inventory. You can then press SHIFT + inventory
                 slot letter to paste that item name into chat.
@@ -627,7 +629,7 @@ g       g       pick up an item from the floor. You have to stand on the item
                 picked up automatically.
                 If you stand on a pile of different items, the top-most type of
                 item will be picked.
-                Note that ',' key has by default a "reply to last private chat"
+                NOTE: The ',' key has by default a "reply to last private chat"
                 macro on it, so you'll have to use 'g' key instead or delete
                 the macro from the comma key, if you want to use it to pick up
                 items.
