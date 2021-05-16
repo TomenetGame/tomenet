@@ -4465,7 +4465,7 @@ void interact_macros(void) {
 		/* Selections */
 		l = 2;
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
-		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B) Save macros to a pref file");
+		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B) Save macros to a pref file / to the global.prf file");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w) Load macros from a pref file");
 		l++;
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
@@ -4536,7 +4536,7 @@ void interact_macros(void) {
 		/* Save a 'macro' file */
 		else if (i == 's') {
 			/* Prompt */
-			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file");
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Save a macro file ('global.prf' for account-wide)");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
@@ -7363,7 +7363,7 @@ void auto_inscriptions(void) {
 		case 's':
 			/* Prompt */
 			clear_from(21);
-			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Save an .ins file ***");
+			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Save an .ins file ('global.ins' for account-wide) ***");
 
 			/* Get a filename, handle ESCAPE */
 			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
@@ -9204,7 +9204,7 @@ void do_cmd_options(void) {
 		/* Save a 'option' file */
 		else if (k == 's') {
 			/* Get a filename, handle ESCAPE */
-			Term_putstr(0, 23, -1, TERM_YELLOW, "Save to file: ");
+			Term_putstr(0, 23, -1, TERM_YELLOW, "Save to file ('global.opt' for account-wide): ");
 
 			/* Default filename */
 			//sprintf(tmp, "global.opt");
