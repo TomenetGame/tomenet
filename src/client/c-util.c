@@ -7256,7 +7256,7 @@ void auto_inscriptions(void) {
 			Term_putstr(15,  0, -1, TERM_L_UMBER, format("*** Current Auto-Inscriptions List, page %d/%d ***", cur_page + 1, max_page + 1));
 			Term_putstr(2, 21, -1, TERM_L_UMBER, "(2/8) go down/up, (SPACE/BKSP or p) page down/up, (P) chat-paste, (ESC) exit");
 			Term_putstr(2, 22, -1, TERM_L_UMBER, "(e/d/c) Edit (# wildcard, ! force)/Delete/CLEAR ALL  (a) Auto-pickup/destroy");
-			Term_putstr(12, 23, -1, TERM_L_UMBER, "(l/s) Load/save auto-inscriptions from/to an '.ins' file");
+			Term_putstr(2, 23, -1, TERM_L_UMBER, "(l/s/S) Load/save auto-inscriptions from/to an '.ins' file / to 'global.ins'");
 
 			for (i = 0; i < AUTOINS_PAGESIZE; i++) {
 				/* build a whole line */
@@ -7369,6 +7369,22 @@ void auto_inscriptions(void) {
 			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
 
 			sprintf(tmp, "%s.ins", cname);
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Dump the macros */
+			save_auto_inscriptions(tmp);
+			break;
+		case 'S':
+			/* Prompt */
+			clear_from(21);
+			Term_putstr(0, 22, -1, TERM_L_GREEN, "*** Save to account-wide 'global.ins' file ***");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 23, -1, TERM_WHITE, "File: ");
+
+			strcpy(tmp, "global.ins");
 
 			/* Ask for a file */
 			if (!askfor_aux(tmp, 70, 0)) continue;
@@ -9142,7 +9158,7 @@ void do_cmd_options(void) {
 		Term_putstr(3,  3, -1, TERM_WHITE, "(\377y5\377w)       Audio options");
 		Term_putstr(3,  4, -1, TERM_WHITE, "(\377y6\377w/\377y7\377w/\377y8\377w)   Game-play options 1/2/3");
 		Term_putstr(3,  5, -1, TERM_WHITE, "(\377yw\377w)       Window flags");
-		Term_putstr(3,  7, -1, TERM_WHITE, "(\377os\377w)       Save all options & flags");
+		Term_putstr(3,  7, -1, TERM_WHITE, "(\377os\377w/\377oS\377w)     Save all options & flags / Save to global.opt file (account-wide)");
 		Term_putstr(3,  8, -1, TERM_WHITE, "(\377ol\377w)       Load all options & flags");
 
 		Term_putstr(3, 10, -1, TERM_L_DARK, "----------------------------------------------------------------------------");
@@ -9207,12 +9223,22 @@ void do_cmd_options(void) {
 			Term_putstr(0, 23, -1, TERM_YELLOW, "Save to file ('global.opt' for account-wide): ");
 
 			/* Default filename */
-			//sprintf(tmp, "global.opt");
 			sprintf(tmp, "%s.opt", cname);
 
 			/* Ask for a file */
-			if (!askfor_aux(tmp, 70, 0))
-				continue;
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Dump the macros */
+			(void)options_dump(tmp);
+		} else if (k == 'S') {
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, 23, -1, TERM_YELLOW, "Save to file 'global.opt' (account-wide): ");
+
+			/* Default filename */
+			strcpy(tmp, "global.opt");
+
+			/* Ask for a file */
+			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Dump the macros */
 			(void)options_dump(tmp);
