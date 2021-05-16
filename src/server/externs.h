@@ -2606,7 +2606,7 @@ extern int netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_wpos_z, netherrea
 extern int valinor_wpos_x, valinor_wpos_y, valinor_wpos_z;
 extern int hallsofmandos_wpos_x, hallsofmandos_wpos_y, hallsofmandos_wpos_z;
 extern int mtdoom_wpos_x, mtdoom_wpos_y, mtdoom_wpos_z;
-extern bool nether_realm_collapsing;
+extern unsigned char nether_realm_collapsing;
 extern int nrc_x, nrc_y, netherrealm_end_wz;
 
 extern bool sauron_weakened, sauron_weakened_iddc;

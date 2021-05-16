@@ -7207,11 +7207,62 @@ static void process_various(void) {
 			}
 		}
 
+#ifdef TEST_SERVER /* Enable NR collapse? (Possibly either teleporting everyone out or killing everyone who didn't on his own teleport out?) */
+ #warning "Collapsing Nether Realm"
+		/* Nether Realm completely collapses? -- To prohibit using this bottom floor as save operations base maybe */
+		if (nether_realm_collapsing) {
+			struct worldpos wpos = {netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_end_wz};
+
+			nether_realm_collapsing--;
+
+			/* Give warning in the meantime */
+			if (nether_realm_collapsing == 10) floor_msg_format(&wpos, "\377RThis plane of the nether realm seems to be in the process of collapsing..");
+			else if (nether_realm_collapsing == 5) floor_msg_format(&wpos, "\377RThis plane of the nether realm seems to be on the verge of collapsing, beware!");
+			else if (nether_realm_collapsing == 1) floor_msg_format(&wpos, "\377lThis plane of the nether realm will collapse any moment, get out while you can!");
+
+			/* Eventually collapse! */
+			if (!nether_realm_collapsing) {
+				int i;
+				player_type *p_ptr;
+
+ #ifdef USE_SOUND_2010
+				sound_floor_vol(&wpos, "destruction", NULL, SFX_TYPE_AMBIENT, 100); //ambient for impied lightning visuals, yet not weather-related
+ #endif
+
+				for (i = 1; i <= NumPlayers; i++) {
+					p_ptr = Players[i];
+					if (!inarea(&p_ptr->wpos, &wpos)) continue;
+
+ #if 1 /* Recall players out? */
+					p_ptr->recall_pos.wx = WPOS_SECTOR00_X;
+					p_ptr->recall_pos.wy = WPOS_SECTOR00_Y;
+					p_ptr->recall_pos.wz = WPOS_SECTOR00_Z;
+					p_ptr->new_level_method = LEVEL_RAND;
+					recall_player(i, "");
+  #ifdef USE_SOUND_2010
+					//handle_music(i); //superfluous? */
+  #endif
+ #else /* Kill players who didn't leave on their own? */
+					strcpy(p_ptr->died_from,"collapsing nether plane");
+					p_ptr->died_from_ridx = 0;
+					p_ptr->deathblow = 0;
+					player_death(i);
+ #endif
+				}
+
+				/* Unstatic the bottom floor as it collapsed */
+				unstatic_level(&wpos);
+				if (getcave(&wpos)) dealloc_dungeon_level(&wpos);
+			}
+		}
+#endif
+
 		if (season_xmas) { /* XMAS */
 			if (santa_claus_timer > 0) santa_claus_timer--;
 			if (santa_claus_timer == 0) {
 				struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
 				cave_type **zcave = getcave(&wpos);
+
 				if (zcave) { /* anyone in town? */
 					int x, y, tries = 50;
 

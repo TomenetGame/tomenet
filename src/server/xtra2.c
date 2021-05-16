@@ -7568,7 +7568,7 @@ if (cfg.unikill_format) {
 			dun_level *l_ptr = getfloor(&p_ptr->wpos);
 
 			l_ptr->flags2 |= LF2_COLLAPSING;
-			nether_realm_collapsing = TRUE;
+			nether_realm_collapsing = 15; /* Minutes until collapse, if implemented/enabled */
 			nrc_x = m_ptr->fx;
 			nrc_y = m_ptr->fy;
 
