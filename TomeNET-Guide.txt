@@ -1055,6 +1055,8 @@ TAB or CTRL+I
         (Currently targets the most hurt player who is in your party, or the
         most wounded player in general if you aren't in a party.)
 
+[       Predefined "repeat last message/slash command" macro.
+
 
 (0.2a) Text editing keys
 ------------------------

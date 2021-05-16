@@ -56,14 +56,13 @@ C:X
 A::+:
 H:,
 
-# Changed 'reply to whisper' macro from command to hybrid,
-# just so it will work within CTRL+O/P (chat) message histories.
-A::/? 
-H:;
-
 # Hybrid macro to allow the text-editing CTRL+Q key to work: Exit the game.
 A:\e\e)^Q
 H:^Q
+
+# Combo Guide Search macro
+A::/? 
+H:;
 
 # Taking staircases is often an emergency action and therefore should
 # cancel/override other prompts.
@@ -71,5 +70,9 @@ A:\e\e)>
 H:>
 A:\e\e)<
 H:<
+
+# Repeat last chat message / slash command
+A::^P\r
+C:[
 
 # Note: A standard shooting macro is also put on F1 key, in pref-<SYS>.prf
