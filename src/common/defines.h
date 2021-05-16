@@ -6582,7 +6582,7 @@
 #define DF3_NO_EMPTY		0x00400000L	/* don't build empty levels (arenas) */
 #define DF3_NO_DESTROYED	0x00800000L	/* don't build 'destroyed' levels */
 
-#define DF3_NO_TELE		0x01000000L	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering) */
+#define DF3_NO_TELE		0x01000000L	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering). Implies LF1_NO_MAGIC! */
 #define DF3_NO_ESP		0x02000000L	/* Disallow any ESP */
 #define DF3_NO_SUMMON		0x04000000L	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) */
 #define DF3_LIMIT_ESP		0x08000000L	/* All ESP gets its range limited */

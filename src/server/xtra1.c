@@ -8824,7 +8824,7 @@ static void process_global_event(int ge_id) {
 			sector00separation++; /* separate sector 0,0 from the worldmap - participants have access ONLY */
 			sector00music = 64;
 			sector00musicalt = 46; /* terrifying (notele) music */
-			sector00flags1 = LF1_NO_MAGIC_MAP;
+			sector00flags1 = LF1_NO_MAGIC_MAP | LF1_NO_MAGIC;
 			sector00flags2 = LF2_NO_RUN | LF2_NO_TELE | LF2_NO_DETECT | LF2_NO_ESP | LF2_NO_SPEED | LF2_NO_RES_HEAL | LF2_FAIR_TERRAIN_DAM | LF2_INDOORS;
 			sector00wall = FEAT_PERM_INNER; //FEAT_PERM_SOLID gets shaded to slate :/
 			wipe_m_list(&wpos); /* clear any (powerful) spawns */
