@@ -8969,7 +8969,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	}
 
 	/* debug log */
-	s_printf(" REWARD_RAW: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d%s)\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, go_heavy ? " go_heavy" : "");
+	s_printf(" REWARD_RAW: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d%s)", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, go_heavy ? " go_heavy" : "");
 	if (is_admin(p_ptr))
 		msg_format(Ind, "Reward: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d%s)", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, go_heavy ? " go_heavy" : "");
 
@@ -8979,11 +8979,11 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (k_info[i].tval == reward_tval && k_info[i].weight <= reward_maxweight) {
 				if (!(resf & RESF_WINNER) && (k_info[i].flags5 & TR5_WINNERS_ONLY)) continue;
 				reward_sval = k_info[i].sval;
-				s_printf(" REWARD_HACK: sval:=%d.\n", reward_sval);
+				s_printf("\n REWARD_HACK: sval:=%d.", reward_sval);
 				break;
 			}
 		invcopy(o_ptr, lookup_kind(reward_tval, reward_sval));
-		s_printf(" REWARD_UGLY (%d,%d)\n", o_ptr->tval, o_ptr->sval);
+		s_printf("\n REWARD_UGLY (%d,%d)", o_ptr->tval, o_ptr->sval);
 	}
 
 	/* are we definitely going to use spells? (used for AM/MPDrain check) */
@@ -9010,11 +9010,12 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 
 	/* apply_magic to that item, until we find a fitting one */
-	tries = 0;
+	tries = verygreat ? 25 : 100;
 	i = o_ptr->k_idx;
 	invwipe(&forge_fallback);
 	do {
-		tries++;
+		s_printf("\n");
+		tries--;
 		invwipe(o_ptr);
 		invcopy(o_ptr, i);
 
@@ -9026,6 +9027,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		}
 		s_printf(" REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d), resf %d\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, resf);
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+		s_printf(" REWARD_PASSING: 0-"); //REWARD_PASSING
 
 
 		/* --- Note: None of the following checks will actually increase the item's pval.
@@ -9057,7 +9059,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if ((resf & RESF_NOHIVALUE) && (object_value_real(0, o_ptr) > 250000)) continue;
 		}
 
-		s_printf(" REWARD_PASSING (0)\n");
+		s_printf("1-"); //REWARD_PASSING
 
 		/* Don't generate cursed randarts.. */
 		if (cursed_p(o_ptr)) continue;
@@ -9119,7 +9121,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		//EGO_POWER is treated as generically beneficial
 		}
 
-		s_printf(" REWARD_PASSING (1)\n");
+		s_printf("2-"); //REWARD_PASSING
 
 		/* analyze class (so far nothing is done here, but everything is determined by skills instead) -
 		   headgear ego: */
@@ -9168,6 +9170,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			if (o_ptr->name2 == EGO_INTELLIGENCE && !o_ptr->name2b) continue;
 			break;
 		}
+		s_printf("3-"); //REWARD_PASSING
 
 		/* no anti-undead items for vampires */
 		if (anti_undead(o_ptr, p_ptr)) continue;
@@ -9196,7 +9199,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 		/* Don't generate problematic items at all */
 		if (f3 & (TR3_AGGRAVATE | TR3_DRAIN_EXP | TR3_NO_TELE)) continue;
 
-		s_printf(" REWARD_PASSING (2)\n");
+		s_printf("4-"); //REWARD_PASSING
 
 		/* Don't generate too useless rewards depending on intrinsic character abilities */
 		if ((p_ptr->hold_life || p_ptr->free_act) &&
@@ -9258,8 +9261,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			}
 		}
 #endif
-
-		s_printf(" REWARD_PASSING (3)\n");
+		s_printf("5-"); //REWARD_PASSING
 
 
 		/* If the item is a dragon scale mail and we're draconian or vampire, prevent redundant lineage/immunity.
@@ -9367,7 +9369,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			/* correct +CON */
 			o_ptr->bpval = k_info[o_ptr->k_idx].pval;
 		}
-
+		s_printf("6-"); //REWARD_PASSING
 
 		/* If the item only has high resistance, and no immunity (that we don't already have),
 		   make sure that we don't already resist all the high resistances (or are immune to them) already too. */
@@ -9480,6 +9482,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 			if (hres && pres == hres) continue;
 		}
+		s_printf("7-"); //REWARD_PASSING
 
 
 		/* Limit items to not substitute endgame (Morgoth) gear (part 2/2) */
@@ -9563,13 +9566,16 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 				continue;
 			}
 		}
+		s_printf("PASSED"); //REWARD_PASSING
 
 		/* Passed all checks (even the ridiculous Runemaster-resistance one)! */
 		break;
-	} while (tries < (verygreat ? 25 : 100));
+	} while (tries);
+	if (!tries) s_printf("FAILED");
+	s_printf("\n"); //REWARD_PASSING
 
 	/* Did a silly check make us fail? Fallback to another non-terrible solution then. */
-	if (tries == (verygreat ? 25 : 100)) {
+	if (!tries) {
 		s_printf(" create_reward() FALLBACK!\n");
 		*o_ptr = forge_fallback;
 
