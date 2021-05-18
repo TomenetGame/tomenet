@@ -712,6 +712,7 @@ extern int cloud_x1[10], cloud_y1[10], cloud_x2[10], cloud_y2[10], cloud_dsum[10
 extern int cloud_xm100[10], cloud_ym100[10], cloud_xfrac[10], cloud_yfrac[10];
 
 extern void fix_playerlist(void);
+extern void do_animate_lightning(bool reset);
 
 /* c-xtra2.c */
 extern void do_cmd_messages(void);

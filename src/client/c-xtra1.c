@@ -3616,6 +3616,116 @@ void window_stuff(void) {
 	}
 }
 
+#define AL_OFFSET 16 /* palette index offset for animated colours (might need to be 0 for Windows if PALANIM_SWAP is ever used) */
+/* Animate not just the extended 'outside world' colours, that are used for day/night lightning,
+   but also the classic static colours that are used for everything else, allowing this to work inside a dungeon: */
+#define AL_FULL_PALETTE_ANIM
+#define AL_END 12 /* duration of the lightning flash */
+#define AL_DECOUPLED /* because thunderclap happens too quickly, so decouple it from lightning animation speed */
+void do_animate_lightning(bool reset) {
+	int i;
+	static bool active = FALSE; /* Don't overwrite palette backup from overlapping lightning strikes */
+	static byte or[16], og[16], ob[16];
+#ifdef AL_FULL_PALETTE_ANIM
+	static byte or0[16], og0[16], ob0[16];
+#endif
+#ifdef AL_DECOUPLED
+	int d;
+#endif
+
+	/* Prematurely end lightning animation? */
+	if (reset) {
+		if (active) {
+			if (c_cfg.palette_animation) for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
+#ifdef AL_FULL_PALETTE_ANIM
+			for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
+#endif
+			set_palette(128, 0, 0, 0); //refresh
+			active = FALSE;
+		}
+		return;
+	}
+
+	/* Animate palette */
+	if (!c_cfg.disable_lightning && !animate_lightning_icky && c_cfg.palette_animation) switch (animate_lightning) {
+	case 1:
+		/* First thing: Backup all colours before temporarily manipulating them */
+		if (!active) {
+			if (c_cfg.palette_animation) for (i = 1; i < 16; i++) get_palette(i + AL_OFFSET, &or[i], &og[i], &ob[i]);
+#ifdef AL_FULL_PALETTE_ANIM
+			for (i = 1; i < 16; i++) get_palette(i, &or0[i], &og0[i], &ob0[i]);
+#endif
+			active = TRUE;
+		}
+
+		if (c_cfg.palette_animation) {
+			//set_palette(1 + AL_OFFSET, 0x99, 0x99, 0x99); //white(17)
+			set_palette(2 + AL_OFFSET, 0xCC, 0xCC, 0xFF); //slate(18)
+			set_palette(4 + AL_OFFSET, 0xFF, 0x77, 0x88); //red(20)
+			set_palette(5 + AL_OFFSET, 0x33, 0xFF, 0x33); //green(21)
+			set_palette(6 + AL_OFFSET, 0x44, 0x66, 0xFF); //blue(22)
+			set_palette(7 + AL_OFFSET, 0xAD, 0x88, 0x33); //umber(23)
+			set_palette(8 + AL_OFFSET, 0x88, 0x88, 0x88); //ldark(24)
+			set_palette(9 + AL_OFFSET, 0xEE, 0xEE, 0xEE); //lwhite(25)
+			set_palette(13 + AL_OFFSET, 0xBB, 0xFF, 0xBB); //lgreen(29)
+			set_palette(15 + AL_OFFSET, 0xF7, 0xCD, 0x85); //lumber(31)
+		}
+
+#ifdef AL_FULL_PALETTE_ANIM
+		//set_palette(1, 0x99, 0x99, 0x99); //white(17)
+		set_palette(2, 0xCC, 0xCC, 0xFF); //slate(18)
+		set_palette(4, 0xFF, 0x77, 0x88); //red(20)
+		set_palette(5, 0x33, 0xFF, 0x33); //green(21)
+		set_palette(6, 0x44, 0x66, 0xFF); //blue(22)
+		set_palette(7, 0xAD, 0x88, 0x33); //umber(23)
+		set_palette(8, 0x88, 0x88, 0x88); //ldark(24)
+		set_palette(9, 0xEE, 0xEE, 0xEE); //lwhite(25)
+		set_palette(13, 0xBB, 0xFF, 0xBB); //lgreen(29)
+		set_palette(15, 0xF7, 0xCD, 0x85); //lumber(31)
+#endif
+
+		set_palette(128, 0, 0, 0); //refresh
+		break;
+	case AL_END:
+		/* Restore all colours to what they were before */
+		if (active) {
+			if (c_cfg.palette_animation) for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
+#ifdef AL_FULL_PALETTE_ANIM
+			for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
+#endif
+			set_palette(128, 0, 0, 0); //refresh
+			active = FALSE;
+		}
+		break;
+	default: break;
+	}
+
+	/* thunderclap follows up */
+#ifndef AL_DECOUPLED
+	if (animate_lightning == AL_END - animate_lightning_vol / ((100 + AL_END - 1) / AL_END)) {
+#else
+	d = (animate_lightning_vol >= 85) ? 100 : animate_lightning_vol + 15;
+	if (animate_lightning == 101 - d) {
+#endif
+		if (use_sound) {
+#ifndef USE_SOUND_2010
+			//Term_xtra(TERM_XTRA_SOUND, ..some-sound..);
+#else
+			sound(thunder_sound_idx, animate_lightning_type, animate_lightning_vol, 0);
+#endif
+		}
+	}
+
+	/* Continue for a couple steps */
+	animate_lightning++;
+#ifndef AL_DECOUPLED
+	if (animate_lightning == AL_END + 1) animate_lightning = 0;
+#else
+	d = AL_END > 101 - d ? AL_END : 101 - d;
+	if (animate_lightning == d + 1) animate_lightning = 0;
+#endif
+}
+
 /* Handle weather (rain and snow) client-side - C. Blue
  * Note: keep following defines in sync with nclient.c, beginning of file.
  * do_weather() is called by do_ping() which is called every frame.
@@ -3647,100 +3757,7 @@ void do_weather(bool no_weather) {
 	/* --- experimental stuff --- */
 
 		/* Testing: lightning lighting via palette animation */
-		if (animate_lightning) {
-#define AL_OFFSET 16 /* palette index offset for animated colours (might need to be 0 for Windows if PALANIM_SWAP is ever used) */
-/* Animate not just the extended 'outside world' colours, that are used for day/night lightning,
-   but also the classic static colours that are used for everything else, allowing this to work inside a dungeon: */
-#define AL_FULL_PALETTE_ANIM
-#define AL_END 12 /* duration of the lightning flash */
-#define AL_DECOUPLED /* because thunderclap happens too quickly, so decouple it from lightning animation speed */
-			static bool active = FALSE; /* Don't overwrite palette backup from overlapping lightning strikes */
-			static byte or[16], og[16], ob[16];
-#ifdef AL_FULL_PALETTE_ANIM
-			static byte or0[16], og0[16], ob0[16];
-#endif
-#ifdef AL_DECOUPLED
-			int d;
-#endif
-			/* Animate palette */
-			if (!c_cfg.disable_lightning && !animate_lightning_icky && c_cfg.palette_animation) switch (animate_lightning) {
-			case 1:
-				/* First thing: Backup all colours before temporarily manipulating them */
-				if (!active) {
-					if (c_cfg.palette_animation) for (i = 1; i < 16; i++) get_palette(i + AL_OFFSET, &or[i], &og[i], &ob[i]);
-#ifdef AL_FULL_PALETTE_ANIM
-					for (i = 1; i < 16; i++) get_palette(i, &or0[i], &og0[i], &ob0[i]);
-#endif
-					active = TRUE;
-				}
-
-				if (c_cfg.palette_animation) {
-					//set_palette(1 + AL_OFFSET, 0x99, 0x99, 0x99); //white(17)
-					set_palette(2 + AL_OFFSET, 0xCC, 0xCC, 0xFF); //slate(18)
-					set_palette(4 + AL_OFFSET, 0xFF, 0x77, 0x88); //red(20)
-					set_palette(5 + AL_OFFSET, 0x33, 0xFF, 0x33); //green(21)
-					set_palette(6 + AL_OFFSET, 0x44, 0x66, 0xFF); //blue(22)
-					set_palette(7 + AL_OFFSET, 0xAD, 0x88, 0x33); //umber(23)
-					set_palette(8 + AL_OFFSET, 0x88, 0x88, 0x88); //ldark(24)
-					set_palette(9 + AL_OFFSET, 0xEE, 0xEE, 0xEE); //lwhite(25)
-					set_palette(13 + AL_OFFSET, 0xBB, 0xFF, 0xBB); //lgreen(29)
-					set_palette(15 + AL_OFFSET, 0xF7, 0xCD, 0x85); //lumber(31)
-				}
-
-#ifdef AL_FULL_PALETTE_ANIM
-				//set_palette(1, 0x99, 0x99, 0x99); //white(17)
-				set_palette(2, 0xCC, 0xCC, 0xFF); //slate(18)
-				set_palette(4, 0xFF, 0x77, 0x88); //red(20)
-				set_palette(5, 0x33, 0xFF, 0x33); //green(21)
-				set_palette(6, 0x44, 0x66, 0xFF); //blue(22)
-				set_palette(7, 0xAD, 0x88, 0x33); //umber(23)
-				set_palette(8, 0x88, 0x88, 0x88); //ldark(24)
-				set_palette(9, 0xEE, 0xEE, 0xEE); //lwhite(25)
-				set_palette(13, 0xBB, 0xFF, 0xBB); //lgreen(29)
-				set_palette(15, 0xF7, 0xCD, 0x85); //lumber(31)
-#endif
-
-				set_palette(128, 0, 0, 0); //refresh
-				break;
-			case AL_END:
-				/* Restore all colours to what they were before */
-				if (active) {
-					if (c_cfg.palette_animation) for (i = 1; i < 16; i++) set_palette(i + AL_OFFSET, or[i], og[i], ob[i]);
-#ifdef AL_FULL_PALETTE_ANIM
-					for (i = 1; i < 16; i++) set_palette(i, or0[i], og0[i], ob0[i]);
-#endif
-					set_palette(128, 0, 0, 0); //refresh
-					active = FALSE;
-				}
-				break;
-			default: break;
-			}
-
-			/* thunderclap follows up */
-#ifndef AL_DECOUPLED
-			if (animate_lightning == AL_END - animate_lightning_vol / ((100 + AL_END - 1) / AL_END)) {
-#else
-			d = (animate_lightning_vol >= 85) ? 100 : animate_lightning_vol + 15;
-			if (animate_lightning == 101 - d) {
-#endif
-				if (use_sound) {
-#ifndef USE_SOUND_2010
-					//Term_xtra(TERM_XTRA_SOUND, ..some-sound..);
-#else
-					sound(thunder_sound_idx, animate_lightning_type, animate_lightning_vol, 0);
-#endif
-				}
-			}
-
-			/* Continue for a couple steps */
-			animate_lightning++;
-#ifndef AL_DECOUPLED
-			if (animate_lightning == AL_END + 1) animate_lightning = 0;
-#else
-			d = AL_END > 101 - d? AL_END : 101 - d;
-			if (animate_lightning == d + 1) animate_lightning = 0;
-#endif
-		}
+		if (animate_lightning) do_animate_lightning(FALSE);
 	}
 	if (no_weather) return;
 

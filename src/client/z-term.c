@@ -2226,6 +2226,9 @@ errr Term_clear(void) {
 	byte a = Term->attr_blank;
 	char c = Term->char_blank;
 
+
+	do_animate_lightning(TRUE);
+
 	/* Cursor usable */
 	Term->scr->cu = 0;
 
@@ -2806,6 +2809,8 @@ errr Term_save(void) {
 	int h = Term->hgt;
 
  	if (screen_icky > 3) return(0);
+
+	//do_animate_lightning(TRUE); - done in Term_clear() instead
 
  	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
 
