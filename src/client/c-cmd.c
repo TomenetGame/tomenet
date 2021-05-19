@@ -2535,6 +2535,44 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					continue;
 				}
 				/* Note: 'rop' is already ring of power (slang paragraph) */
+				/* Slaying/Nothingness/Morgul weapons */
+				if (!strcasecmp("slaying", buf)) {
+					strcpy(buf, "WEAPONS OF SLAYING");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
+				if (!strcasecmp("nothing", buf)) {
+					strcpy(buf, "WEAPONS OF NOTHINGNESS");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
+				if (!strcasecmp("morgul", buf)) {
+					strcpy(buf, "WEAPONS OF MORGUL");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
+				/* Ethereal/magic/silver ammo */
+				if (my_strcasestr("amm", buf)) {
+					if (my_strcasestr(buf, "mag")) {
+						strcpy(buf, "MAGIC AMMUNITION");
+						fallback = TRUE;
+						fallback_uppercase = 4;
+						continue;
+					} else if (my_strcasestr(buf, "sil")) {
+						strcpy(buf, "SILVER AMMUNITION");
+						fallback = TRUE;
+						fallback_uppercase = 4;
+						continue;
+					} else if (my_strcasestr(buf, "eth")) {
+						strcpy(buf, "ETHEREAL AMMUNITION");
+						fallback = TRUE;
+						fallback_uppercase = 4;
+						continue;
+					}
+				}
 
 				/* Maia initiation (could just chapter-search "init", but somehow this seems more intuitive..) */
 				if (!strncasecmp(buf, "enl", 3) && my_strcasestr("Enlightened:", buf)) {
