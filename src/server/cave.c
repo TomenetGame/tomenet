@@ -4813,12 +4813,14 @@ static void wild_display_map(int Ind, char mode) {
 					if (!x && !y) dun = tow = NULL;
 					/* Skip special stuff */
 					if (dun) {
-						if (dun->type == DI_VALINOR) dun = NULL;
-						if (!dun->type && dun->theme == DI_DEATH_FATE) dun = NULL;
+						if (dun->type == DI_VALINOR ||
+						    (!dun->type && dun->theme == DI_DEATH_FATE))
+							dun = NULL;
 					}
 					if (tow) {
-						if (tow->type == DI_VALINOR) tow = NULL;
-						if (!tow->type && tow->theme == DI_DEATH_FATE) tow = NULL;
+						if (tow->type == DI_VALINOR ||
+						    (!tow->type && tow->theme == DI_DEATH_FATE))
+							tow = NULL;
 					}
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 					if (dun && !dun->known) dun = NULL;
