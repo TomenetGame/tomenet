@@ -4974,6 +4974,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "%-62s %-4s (%d,%d) %5dft", tmps, (tmpm & MODE_DED_IDDC) ? "IDDC" : ((tmpm & MODE_DED_PVP) ? "PVP" : ""),
 				    wpos.wx, wpos.wy, wpos.wz * 50);
 			}
+			msg_print(Ind, NULL); //clear topline
 			if (n) C_KILL(id_list, n, int);
 			WIPE(&acc, struct account);
 			return;
