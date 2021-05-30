@@ -1800,7 +1800,7 @@ Extra slash commands for role-playing that have no further effect:
 /knock      Knock on a house door next to you (sfx).
 /pat        Pat someone next to you.
 /poke       Poke someone next to you.
-/slap       Slap someone next to you.
+/slap       Slap someone next to you (sfx).
 
 Aside from slash commands there are also item-paste shortcuts, which can be
 incorporated into any text you type in chat:
