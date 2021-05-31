@@ -1556,6 +1556,8 @@ static void display_inven(void) {
 /*
  * Choice window "shadow" of the "show_equip()" function.
  */
+#define EQUIP_TEXT_COLOUR TERM_WHITE
+#define EQUIP_TEXT_COLOUR2 TERM_YELLOW
 static void display_equip(void) {
 	int	i, n;
 	long int	wgt;
@@ -1580,7 +1582,7 @@ static void display_equip(void) {
 		}
 
 		/* Display the index (or blank space) */
-		Term_putstr(0, i - INVEN_WIELD, 3, TERM_WHITE, tmp_val);
+		Term_putstr(0, i - INVEN_WIELD, 3, c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR, tmp_val);
 
 		/* Describe the object */
 		strcpy(o_name, inventory_name[i]);
@@ -1606,7 +1608,7 @@ static void display_equip(void) {
 			if (o_ptr->attr == TERM_L_DARK)
 				Term_putstr(71, i - INVEN_WIELD, -1, TERM_L_DARK, tmp_val);
 			else
-				Term_putstr(71, i - INVEN_WIELD, -1, TERM_WHITE, tmp_val);
+				Term_putstr(71, i - INVEN_WIELD, -1, c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR, tmp_val);
 		}
 	}
 

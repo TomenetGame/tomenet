@@ -542,12 +542,15 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.no_lite_fainting,	FALSE,	1,	0, 138, TRUE,
 	    "no_lite_fainting",		"Disable shading effect for fainting light source" },
 
-	{ &c_cfg.auto_pickup,	FALSE,	8,	0, 139, TRUE,
-	  "auto_pickup",		"Automatically pickup items (see '/apickup')" },
-	{ &c_cfg.auto_destroy,	FALSE,	8,	0, 140, TRUE,
-	  "auto_destroy",		"Automatically destroy items (see '/adestroy')" },
-	{ &c_cfg.destroy_all_unmatched,	FALSE,	8,	0, 141, TRUE,
-	  "destroy_all_unmatched",	"Destroys ALL unmatched items. (Like A'#' in &.)" },
+	{ &c_cfg.auto_pickup,	FALSE,	8,	0,	139, TRUE,
+	    "auto_pickup",		"Automatically pickup items (see '/apickup')" },
+	{ &c_cfg.auto_destroy,	FALSE,	8,	0,	140, TRUE,
+	    "auto_destroy",		"Automatically destroy items (see '/adestroy')" },
+	{ &c_cfg.destroy_all_unmatched,	FALSE,	8, 0,	141, TRUE,
+	    "destroy_all_unmatched",	"Destroys ALL unmatched items. (Like A'#' in &.)" },
+
+	{ &c_cfg.equip_text_colour,	FALSE,	4, 0,	142, TRUE,
+	    "equip_text_colour",	"Display equipment indices/weight in yellow" },
 };
 
 

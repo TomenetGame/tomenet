@@ -9137,6 +9137,7 @@ void do_cmd_options(void) {
 
 	bool changed1 = c_cfg.exp_need, changed2 = c_cfg.exp_bar, changed3 = c_cfg.font_map_solid_walls;
 	bool changed4a = c_cfg.hp_bar, changed4b = c_cfg.mp_bar, changed4c = c_cfg.st_bar;
+	bool changed5 = c_cfg.equip_text_colour;
 
 	/* Save the screen */
 	Term_save();
@@ -9319,6 +9320,7 @@ void do_cmd_options(void) {
 		prt_sp(sp_max, sp_cur, sp_bar);
 		prt_stamina(st_max, st_cur, st_bar);
 	}
+	if (changed5 != c_cfg.equip_text_colour) p_ptr->window |= (PW_EQUIP);
 
 	inkey_msg = inkey_msg_old;
 
