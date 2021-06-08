@@ -7846,7 +7846,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	struct worldpos *wpos;
 	object_type *o_ptr;
 
-	s_printf("Backing up one real estate...\n");
+	s_printf("Backing up a house (%d,%d,%d - %d,%d - %d)... ", hwpos->wx, hwpos->wy, hwpos->wz, hx, hy, id);
 	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
 
 	/* create folder lib/save/estate if not existing */
@@ -7859,14 +7859,14 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	/* scan house on which door we're sitting */
 	i = pick_house(hwpos, hy, hx);
 	if (i == -1) {
-		s_printf("Error: No estate here.\n");
+		s_printf(" error: No estate here.\n");
 		return FALSE;
 	}
 	h_ptr = &houses[i];
 	wpos = &h_ptr->wpos;
 	name = lookup_player_name(id);
 	if (!name) {
-		s_printf("  warning: couldn't fetch player name of id %d.\n", id);
+		s_printf(" warning: couldn't fetch player name of id %d.\n", id);
 		return FALSE;
 	}
 
@@ -7890,7 +7890,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 		fclose(fp);
 	}
 	if ((fp = fopen(buf, "ab")) == NULL) {
-		s_printf("  error: cannot open file '%s'.\n", buf);
+		s_printf(" error: cannot open file '%s'.\n", buf);
 		return FALSE;
 	} else if (newly_created) {
 		newly_created = FALSE;
@@ -7931,7 +7931,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 			alloc_dungeon_level(wpos);
 			wilderness_gen(wpos);
 			if (!(zcave = getcave(wpos))) {
-				s_printf("  error: cannot getcave(%d,%d,%d).\nfailed.\n", wpos->wx, wpos->wy, wpos->wz);
+				s_printf(" error: cannot getcave(%d,%d,%d).\nfailed.\n", wpos->wx, wpos->wy, wpos->wz);
 				fclose(fp);
 				return FALSE;
 			}
@@ -7971,7 +7971,7 @@ bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	/* done with this particular house */
 	fclose(fp);
 
-	s_printf("done.\n");
+	s_printf(" done.\n");
 	return TRUE;
 }
 
