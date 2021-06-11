@@ -12649,6 +12649,7 @@ void inverse_cursed(object_type *o_ptr) {
 
  #ifdef INVERSE_CURSED_RANDARTS
 	if (o_ptr->name1 == ART_RANDART) {
+		object_type forge_bak, *o_ptr_bak = &forge_bak;
 		s32b old_owner, swap;
 		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
 		player_type player;
@@ -12687,7 +12688,9 @@ void inverse_cursed(object_type *o_ptr) {
 
 		/* Randart loop. Try until an allowed randart was made */
 		old_owner = o_ptr->owner;
+		object_copy(o_ptr_bak, o_ptr);
 		while (--tries) {
+			object_copy(o_ptr, o_ptr_bak);
 			/* first time this randart gets flipped? */
 			if (!swap) {
 				/* Piece together a new 32-bit random seed */
