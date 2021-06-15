@@ -5825,6 +5825,7 @@ void interact_macros(void) {
 #define mw_slash 'n'
 #define mw_custom 'N'
 #define mw_load 'o'
+#define mw_option 'O'
 #define mw_equip 'p'
 #define mw_dir_run 'q'
 #define mw_dir_tunnel 'r'
@@ -5892,7 +5893,7 @@ Chain_Macro:
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "l\377w/\377GL) Use a basic ability ('m') without \377w/\377G with target (Draconian breath).");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "m\377w/\377GM) Common commands and functions. \377w/\377G Pick breath element (Draconians).");
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "n\377w/\377GN) Enter a slash command. \377w/\377G Enter a custom action (same as % a).");
-					Term_putstr(8, l++, -1, TERM_L_GREEN, "o\377w/\377Gp) Load a macro file. \377w/\377G Change equipment (wield/takeoff/swap).");
+					Term_putstr(6, l++, -1, TERM_L_GREEN, "o\377w/\377GO\377w/\377Gp) Load a macro file. \377w/\377G Modify an option. \377w/\377G Change equipment.");
 					Term_putstr(2, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt\377w/\377Gu) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing \377w/\377G closing.");
 
 					while (TRUE) {
@@ -5911,7 +5912,7 @@ Chain_Macro:
 							if ((choice < 'a' || choice > mw_LAST) &&
 							    choice != 'C' && choice != 'D' && choice != 'E' &&
 							    choice != 'G' && choice != 'H' && choice != 'I' && choice != 'J' &&
-							    choice != 'K' && choice != 'L' && choice != 'M' && choice != 'N') {
+							    choice != 'K' && choice != 'L' && choice != 'M' && choice != 'N' && choice != 'O') {
 								//i = -1;
 								continue;
 							}
@@ -6326,6 +6327,48 @@ Chain_Macro:
 						Term_putstr(5, 16, -1, TERM_L_GREEN, "Exact file name:");
 						break;
 
+					case mw_option:
+						Term_putstr(5, 10, -1, TERM_GREEN, "Do you want to enable, disable or toggle (flip) an option?");
+						Term_putstr(5, 11, -1, TERM_L_GREEN, "    y\377g) enable an option");
+						Term_putstr(5, 12, -1, TERM_L_GREEN, "    n\377g) disable an option");
+						Term_putstr(5, 13, -1, TERM_L_GREEN, "    t\377g) toggle an option");
+						Term_putstr(5, 15, -1, TERM_L_GREEN, "    Y\377g) enable an option and display feedback message");
+						Term_putstr(5, 16, -1, TERM_L_GREEN, "    N\377g) disable an option and display feedback message");
+						Term_putstr(5, 17, -1, TERM_L_GREEN, "    T\377g) toggle an option and display feedback message");
+						/* hack: hide cursor */
+						Term->scr->cx = Term->wid;
+						Term->scr->cu = 1;
+
+						while (TRUE) {
+							switch (choice = inkey()) {
+							case ESCAPE:
+							case 'p':
+							case '\010': /* backspace */
+								i = -2; /* leave */
+								break;
+							case KTRL('T'):
+								/* Take a screenshot */
+								xhtml_screenshot("screenshot????");
+								continue;
+							case 'y': case 'n': case 't':
+							case 'Y': case 'N': case 'T':
+								break;
+							default:
+								continue;
+							}
+							break;
+						}
+						/* exit? */
+						if (i == -2) continue;
+
+						clear_from(10);
+						Term_putstr(5, 10, -1, TERM_GREEN, "Now please enter the exact name of an option, for example: \377Gbig_map");
+						Term_putstr(5, 12, -1, TERM_L_GREEN, "Enter exact option name: ");
+
+						j = choice;
+						choice = mw_option;
+						break;
+
 					case mw_equip:
 						Term_putstr(5, 10, -1, TERM_GREEN, "Do you want to wear/wield, take off or swap an item?");
 						Term_putstr(5, 11, -1, TERM_L_GREEN, "    w\377g) primary wear/wield");
@@ -6703,6 +6746,7 @@ Chain_Macro:
 					    choice != mw_dir_disarm && choice != mw_dir_bash && choice != mw_dir_close && choice != mw_prfele) {
 						if (choice == mw_load) Term_gotoxy(23, 16);
 						else if (choice == mw_poly) Term_gotoxy(47, 19);
+						else if (choice == mw_option) Term_gotoxy(30, 12);
 						else Term_gotoxy(47, 16);
 
 						/* Get an item/spell name */
@@ -6903,6 +6947,42 @@ Chain_Macro:
 						buf2[l] = '\\';
 						buf2[l + 1] = 'e';
 						buf2[l + 2] = 0;
+						break;
+
+					case mw_option:
+#if 0 /* actually invoke the options menu? */
+						buf2[3] = '%';
+						buf2[4] = 'z';
+						... implement locating the desired option ...
+						buf2[l] = '\\';
+						buf2[l + 1] = 'e';
+						buf2[l + 2] = '\\';
+						buf2[l + 3] = 'e';
+						buf2[l + 4] = 0;
+#else /* use client-side option-toggling slash command? */
+						switch (j) {
+						case 'y':
+							strcat(buf2, ":/opty ");
+							break;
+						case 'n':
+							strcat(buf2, ":/optn ");
+							break;
+						case 't':
+							strcat(buf2, ":/optt ");
+							break;
+						case 'Y':
+							strcat(buf2, ":/optvy ");
+							break;
+						case 'N':
+							strcat(buf2, ":/optvn ");
+							break;
+						case 'T':
+							strcat(buf2, ":/optvt ");
+							break;
+						}
+						strcat(buf2, buf);
+						strcat(buf2, "\\n");
+#endif
 						break;
 
 					case mw_equip:
@@ -7503,6 +7583,35 @@ void auto_inscriptions(void) {
 	inkey_msg = FALSE;
 }
 
+/* Helper function for option manipulation - check before and after, and refresh stuff if the changes made require it */
+void options_immediate(bool init) {
+	static bool changed1, changed2, changed3;
+	static bool changed4a, changed4b, changed4c;
+	static bool changed5;
+
+	if (init) {
+		changed1 = c_cfg.exp_need; changed2 = c_cfg.exp_bar; changed3 = c_cfg.font_map_solid_walls;
+		changed4a = c_cfg.hp_bar; changed4b = c_cfg.mp_bar; changed4c = c_cfg.st_bar;
+		changed5 = c_cfg.equip_text_colour;
+		return;
+	}
+
+	/* for exp_need option changes: */
+	if (changed1 != c_cfg.exp_need || changed2 != c_cfg.exp_bar || changed3 != c_cfg.font_map_solid_walls)
+		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
+	/* in case hp/mp/st are displayed as bars,
+	   or hp/mp/st have just been switched between number form and bar form */
+	if (changed3 != c_cfg.font_map_solid_walls ||
+	    changed4a != c_cfg.hp_bar || changed4b != c_cfg.mp_bar || changed4c != c_cfg.st_bar) {
+		if (changed4a != c_cfg.hp_bar) hp_bar = c_cfg.hp_bar;
+		if (changed4b != c_cfg.mp_bar) sp_bar = c_cfg.mp_bar;
+		if (changed4c != c_cfg.st_bar) st_bar = c_cfg.st_bar;
+		prt_hp(hp_max, hp_cur, hp_bar, hp_boosted);
+		prt_sp(sp_max, sp_cur, sp_bar);
+		prt_stamina(st_max, st_cur, st_bar);
+	}
+	if (changed5 != c_cfg.equip_text_colour) p_ptr->window |= (PW_EQUIP);
+}
 
 /*
  * Interact with some options
@@ -9135,9 +9244,7 @@ void do_cmd_options(void) {
 	int k;
 	char tmp[1024];
 
-	bool changed1 = c_cfg.exp_need, changed2 = c_cfg.exp_bar, changed3 = c_cfg.font_map_solid_walls;
-	bool changed4a = c_cfg.hp_bar, changed4b = c_cfg.mp_bar, changed4c = c_cfg.st_bar;
-	bool changed5 = c_cfg.equip_text_colour;
+	options_immediate(TRUE);
 
 	/* Save the screen */
 	Term_save();
@@ -9306,21 +9413,7 @@ void do_cmd_options(void) {
 	/* Verify the keymap */
 	keymap_init();
 
-	/* for exp_need option changes: */
-	if (changed1 != c_cfg.exp_need || changed2 != c_cfg.exp_bar || changed3 != c_cfg.font_map_solid_walls)
-		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
-	/* in case hp/mp/st are displayed as bars,
-	   or hp/mp/st have just been switched between number form and bar form */
-	if (changed3 != c_cfg.font_map_solid_walls ||
-	    changed4a != c_cfg.hp_bar || changed4b != c_cfg.mp_bar || changed4c != c_cfg.st_bar) {
-		if (changed4a != c_cfg.hp_bar) hp_bar = c_cfg.hp_bar;
-		if (changed4b != c_cfg.mp_bar) sp_bar = c_cfg.mp_bar;
-		if (changed4c != c_cfg.st_bar) st_bar = c_cfg.st_bar;
-		prt_hp(hp_max, hp_cur, hp_bar, hp_boosted);
-		prt_sp(sp_max, sp_cur, sp_bar);
-		prt_stamina(st_max, st_cur, st_bar);
-	}
-	if (changed5 != c_cfg.equip_text_colour) p_ptr->window |= (PW_EQUIP);
+	options_immediate(FALSE);
 
 	inkey_msg = inkey_msg_old;
 

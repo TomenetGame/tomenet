@@ -4639,6 +4639,135 @@ void cmd_message(void) {
 			c_msg_format("Destroy-all-unmatched mode (requires auto_destroy) is %s.", c_cfg.destroy_all_unmatched ? "on" : "off");
 			inkey_msg = FALSE;
 			return;
+		} else if (!strncasecmp(buf, "/opty", 5) || !strncasecmp(buf, "/optvy", 6)) {
+			bool redundant = FALSE, verbose;
+			int offset;
+
+			if (!strncasecmp(buf, "/opty", 5)) {
+				verbose = FALSE;
+				offset = 6;
+				if (buf[offset - 1] != ' ' || !buf[offset]) {
+					c_msg_print("Usage: /opty <option name>");
+					inkey_msg = FALSE;
+					return;
+				}
+			} else {
+				verbose = TRUE;
+				offset = 7;
+				if (buf[offset - 1] != ' ' || !buf[offset]) {
+					c_msg_print("Usage: /optvy <option name>");
+					inkey_msg = FALSE;
+					return;
+				}
+			}
+
+			for (i = 0; i < OPT_MAX; i++) {
+				if (!option_info[i].o_desc) continue;
+				if (strcmp(buf + offset, option_info[i].o_text)) continue;
+
+				if (*option_info[i].o_var) redundant = TRUE;
+				else {
+					options_immediate(TRUE);
+					*option_info[i].o_var = TRUE;
+					Client_setup.options[i] = TRUE;
+					options_immediate(FALSE);
+				}
+				break;
+			}
+			if (i == OPT_MAX) c_msg_format("Option '%s' does not exist.", buf + offset);
+			else if (redundant) {
+				if (verbose) c_msg_format("Option '%s' is already enabled.", buf + offset);
+			} else {
+				if (verbose) c_msg_format("Option '%s' has been enabled.", buf + offset);
+				check_immediate_options(i, *option_info[i].o_var, TRUE);
+				Send_options();
+			}
+			inkey_msg = FALSE;
+			return;
+		} else if (!strncasecmp(buf, "/optn", 5) || !strncasecmp(buf, "/optvn", 6)) {
+			bool redundant = FALSE, verbose;
+			int offset;
+
+			if (!strncasecmp(buf, "/optn", 5)) {
+				verbose = FALSE;
+				offset = 6;
+				if (buf[offset - 1] != ' ' || !buf[offset]) {
+					c_msg_print("Usage: /optn <option name>");
+					inkey_msg = FALSE;
+					return;
+				}
+			} else {
+				verbose = TRUE;
+				offset = 7;
+				if (buf[offset - 1] != ' ' || !buf[offset]) {
+					c_msg_print("Usage: /optvn <option name>");
+					inkey_msg = FALSE;
+					return;
+				}
+			}
+
+			for (i = 0; i < OPT_MAX; i++) {
+				if (!option_info[i].o_desc) continue;
+				if (strcmp(buf + offset, option_info[i].o_text)) continue;
+
+				if (!*option_info[i].o_var) redundant = TRUE;
+				else {
+					options_immediate(TRUE);
+					*option_info[i].o_var = FALSE;
+					Client_setup.options[i] = FALSE;
+					options_immediate(FALSE);
+				}
+				break;
+			}
+			if (i == OPT_MAX) c_msg_format("Option '%s' does not exist.", buf + offset);
+			else if (redundant) {
+				if (verbose) c_msg_format("Option '%s' is already disabled.", buf + offset);
+			} else {
+				if (verbose) c_msg_format("Option '%s' has been disabled.", buf + offset);
+				check_immediate_options(i, *option_info[i].o_var, TRUE);
+				Send_options();
+			}
+			inkey_msg = FALSE;
+			return;
+		} else if (!strncasecmp(buf, "/optt", 5) || !strncasecmp(buf, "/optvt", 6)) {
+			bool verbose;
+			int offset;
+
+			if (!strncasecmp(buf, "/optt", 5)) {
+				verbose = FALSE;
+				offset = 6;
+				if (buf[offset - 1] != ' ' || !buf[offset]) {
+					c_msg_print("Usage: /optt <option name>");
+					inkey_msg = FALSE;
+					return;
+				}
+			} else {
+				verbose = TRUE;
+				offset = 7;
+				if (buf[offset - 1] != ' ' || !buf[offset]) {
+					c_msg_print("Usage: /optt <option name>");
+					inkey_msg = FALSE;
+					return;
+				}
+			}
+
+			for (i = 0; i < OPT_MAX; i++) {
+				if (!option_info[i].o_desc) continue;
+				if (strcmp(buf + offset, option_info[i].o_text)) continue;
+				options_immediate(TRUE);
+				*option_info[i].o_var = !(*option_info[i].o_var);
+				Client_setup.options[i] = *option_info[i].o_var;
+				options_immediate(FALSE);
+				break;
+			}
+			if (i == OPT_MAX) c_msg_format("Option '%s' does not exist.", buf + offset);
+			else {
+				if (verbose) c_msg_format("Option '%s' has been toggled (%s).", buf + offset, *option_info[i].o_var ? "enabled" : "disabled");
+				check_immediate_options(i, *option_info[i].o_var, TRUE);
+				Send_options();
+			}
+			inkey_msg = FALSE;
+			return;
 		}
 
 		Send_msg(buf);

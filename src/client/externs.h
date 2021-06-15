@@ -595,6 +595,7 @@ extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 extern void interact_macros(void);
 extern void auto_inscriptions(void);
 extern void display_account_information(void);
+extern void options_immediate(bool init);
 extern void do_cmd_options(void);
 extern void c_close_game(cptr reason);
 extern void my_memfrob(void *s, int n);
