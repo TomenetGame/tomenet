@@ -788,6 +788,9 @@ bool place_between_targetted(struct worldpos *wpos, int y, int x, int ty, int tx
 	cave_type *c_ptr, *c1_ptr;
 	c_special *cs_ptr;
 
+	/* The two gates must be placed on different locations - apparently this actually happened! ^^ */
+	if (x == tx && y == ty) return FALSE;
+
 	if (!(zcave = getcave(wpos))) return FALSE;
 
 	/* Require "naked" floor grid */
