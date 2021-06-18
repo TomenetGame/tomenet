@@ -2920,7 +2920,7 @@ bool detect_bounty(int Ind, int rad) {
 					if (kit_o_ptr->owner == Players[p]->id) break;
 				}
 
-				if (p != NumPlayers && !cs_ptr->sc.montrap.found && check_hostile(Ind, p)) {
+				if (p != NumPlayers + 1 && !cs_ptr->sc.montrap.found && check_hostile(Ind, p)) {
 					if (magik(chance)) {
 						cs_ptr->sc.montrap.found = TRUE;
 						note_spot_depth(wpos, i, j);
@@ -2945,7 +2945,7 @@ bool detect_bounty(int Ind, int rad) {
 					if (cs_ptr->sc.rune.id == Players[p]->id) break;
 				}
 
-				if (p != NumPlayers && !cs_ptr->sc.rune.found && check_hostile(Ind, p)) {
+				if (p != NumPlayers + 1 && !cs_ptr->sc.rune.found && check_hostile(Ind, p)) {
 					if (magik(chance)) {
 						cs_ptr->sc.rune.found = TRUE;
 						note_spot_depth(wpos, i, j);
