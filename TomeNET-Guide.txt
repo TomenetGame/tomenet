@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 15. June 2021 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 4. July 2021 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2745,8 +2745,9 @@ Apart from downloading the game client and playing, you can also get in contact
 with other players and developers via the following media:
 
 -The forum at https://www.tomenet.eu/.
--IRC: Channel #tomenet on server irc.freenode.net (port 6667)
-      (For help on Internet Relay Chat visit www.irchelp.org).
+-IRC: Channel #tomenet on server irc.libera.chat (port 6667, or 6697 for TLS)
+      (Official web site is https://libera.chat/ and info about
+      Internet Relay Chat in general is at www.irchelp.org).
       The channel #tomenet relays chat from and to the game server, allowing
       you to read what's going on in-game, and to chat with players simply
       with any IRC client.
@@ -2763,11 +2764,14 @@ with other players and developers via the following media:
 
 (1.1b) How to set up IRC chat
 -----------------------------
-Easiest method: Use the official webclient provided by the 'Freenode' IRC
-server. Start your internet browser and enter this URL:
-  https://webchat.freenode.net/?channels=%23tomenet
-You will be prompted to enter a chat name of your choice and to click the box
-saying "I'm not a robot", then you can click the "Connect" button and voila.
+If you are already familiar with IRC, just see (1.1a) above for the IRC specs,
+otherwise read on here.
+
+Easiest method is to just use the lightweight webclient provided on the
+libera.chat website. Start your internet browser and enter this URL:
+  https://web.libera.chat/?channels=#tomenet
+You can change the predefined random 'guest' nick name to anything of your
+choice provided it's not already reserved by someone else, then click 'Start'.
 (The channel name "#tomenet" should have already been filled in for you.)
 
 If you prefer to use a stand-alone IRC chat client instead of using a browser-
@@ -2782,11 +2786,11 @@ Linux: Popular IRC clients for Linux are Pidgin (actually rather a multi-
 Mac OS X: For example Colloquy, X-Chat Aqua or Linkinus.
 
 After installing your preferred IRC chat client, enter an username of your
-choice and set it up to connect to the "Freenode" IRC network, see the freenode
-website at https://freenode.net/ for info.
+choice and set it up to connect to the "Libera" IRC network, see the Libera
+website at https://libera.chat/ for info.
 (For detailed help on Internet Relay Chat visit www.irchelp.org.)
 
-After you established a connection to Freenode, have your client join the
+After you established a connection to Libera, have your client join the
 so-called "channel" (all chat channels on IRC networks are denoted by a
 hashtag in front of them) named:
 
@@ -2799,7 +2803,7 @@ messages are not.)
 See (0.2c) for commands you can send to the TomeNET IRC bot.
 
 Usually all IRC clients offer a possibility to configure them to connect a
-specific network (Freenode) and to join specific channels (#tomenet etc.)
+specific network (Libera) and to join specific channels (#tomenet etc.)
 automatically on startup, so you don't have to do it manually each time you
 start the IRC client.
 
@@ -13661,10 +13665,16 @@ stated.
                                 the chance to score critical hits and adds
                                 to critical-hit bonus from your equipment.
 
+
                                 NOTES ABOUT CRITICAL-STRIKE SKILL:
-                                Critical-strike skill only helps light swords,
-                                not heavier than 10.0 lb., while critical-hits
-                                items will work with all weapons.
+
+                                Critical-strike skill only helps light swords
+                                or light polearms, not heavier than 10.0 lbs.
+
+                                (Non-weapon items that increase your critical
+                                hits chance however will work with all kinds
+                                of weapons and martial arts too.)
+
                                 The weight limit counts per weapon, so you may
                                 dual-wield two 10.0lb weapons just fine.
                                 If you dual-wield one eligible weapon (ie sword
@@ -13673,32 +13683,38 @@ stated.
                                 eligible weapon will still get Critical-strike
                                 skill applied for its hits, and the other
                                 weapon won't.
+
                                 (The skill effect does not depend on how heavy
                                 exactly the weapon is, as long as it's not
                                 above 10.0 lb, so that weight threshold is
                                 basically an on/off toggle for the skill to
                                 apply to your attacks.)
+
                                 Also, Critical-strike skill will not give you
                                 any benefits if your armour is so heavy that
                                 you get a flexibility warning (compare (5.5)).
 
+
                                 NOTES ABOUT CRITICAL HITS IN GENERAL:
+
                                 You can always score critical hits,
                                 independent on weapon class and crit-skill.
-                                Martial artists can score critical hits too,
-                                although the Critical-strike skill won't do
-                                anything for them (it only helps light SWORDS
-                                not heavier than 10.0 lb).
                                 The probability to land a critical hit will be
                                 small though, if you don't have +critical hit
-                                items or this skill to help out. Critical hit
-                                bonus on items counts slightly more than the
-                                skill.
+                                items. Critical hit bonus on items counts
+                                slightly more than this skill.
+
+                                Martial artists can score critical hits too,
+                                although the Critical-strike skill won't do
+                                anything for them (it only helps light swords
+                                and polearms not heavier than 10.0 lb).
+
                                 Crit boni on weapons only apply to the weapon
                                 itself, while bonus on other items such as
                                 gloves or rings count for all kind of physical
                                 attacks. (Same goes for slaying/brand mods on
                                 items by the way.)
+
                                 For weapon users, the weight of their weapon
                                 affects their critical hits:
                                 If your weapon is lighter than 10.0 lb, your
@@ -13709,6 +13725,7 @@ stated.
                                 Above 10.0 lb, the chance to hit your target
                                 critically won't be worse than with a 10.0 lb
                                 weapon.
+
                                 Although your chance of hitting critical spots
                                 is better with lighter weapons, the damage of
                                 your critical strike -IF you manage to execute
