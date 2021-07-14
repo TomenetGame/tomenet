@@ -2007,12 +2007,16 @@ Ammunition:
                 will be averaged and rounded downwards. (Doesn't work for
                 cursed or artifact ammo.) Wield the !M stack first, then also
                 wield the stack you want to merge with the equipped ammo.
+
+Ammunition and boomerangs:
     !L          Inscribe stacks of ammo in your inventory !L to make them be
                 automatically reloaded into your quiver as soon as the ammo
                 you're currently using runs out.
                 Note that you can place ammo in your inventory in the desired
                 order for reloading by dropping it/picking it up again!
-                The !L inscription also works for boomerangs.
+
+                The !L inscription also works for boomerangs (eg in case your
+                boomerang drops to the floor instead of returning to you).
 
 Sling ammunition and boomerangs:
     !R          Prevents ricochetting.
