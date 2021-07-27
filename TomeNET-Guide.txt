@@ -20196,7 +20196,8 @@ The techniques are as follows:
     Taunt               2 stamina
         Attempts to draw attention of humanoid mobs, causing them to attack
         you. Might require more than one try sometimes until they fall for it,
-        depending on the monster. Some won't be affected at all even.
+        depending on the monster. Some, mostly mages, won't be affected at all
+        even.
         Most common targets are typically shaman and priest class monsters.
         Note that this can also be used to make scared monsters agressive,
         and -if you and an ally both stand next to the same monster- to draw
