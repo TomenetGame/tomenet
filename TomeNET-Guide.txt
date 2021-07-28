@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 27. July 2021 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 28. July 2021 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -30,7 +30,7 @@
 Contents
 --------
 (0) Quickstart (If you don't like to read much :)
-    (0.1)   Start & play, character validation
+    (0.1)   Start & play, character validation, character timeout
     (0.1a)  Colours and colour blindness
     (0.1b)  Photosensitivity / Epilepsy issues
     (0.2)   Command reference & key sets
@@ -87,6 +87,7 @@ Contents
     (3.10)  Experience, level-ups and skill points
     (3.10a) Experience point table
     (3.11)  Death, ghosts and looting
+    (3.12)  Character timeout and account timeout
 (4) The world
     (4.1)   Running, picking up items, fighting
     (4.1a)  Auto-retaliation
@@ -212,8 +213,15 @@ This chapter is basically the heavily compressed version of chapters (2) which
 are about installing and chapters (3) which are about logging on and creating a
 character. If you like to read in more detail, maybe switch to (2) now instead.
 
-(0.1) Start & play, character validation
-----------------------------------------
+(0.1) Start & play, character validation, character timeout
+-----------------------------------------------------------
+A warning first, about character timeout:
+If you do not log in a character at least once every 365 days the system will
+automatically delete it along with its houses, to keep the database clean.
+So make sure you don't let your characters time out this way!
+(There will be an expiry warning about 60 days before this happens when you
+log on with any of your characters, to remind you.)
+
 If you are using Linux, you will find additional information about how to
 compile the game under '(2.1) Installing/updating TomeNET'.
 
@@ -6361,6 +6369,21 @@ Make sure your ghost is in a safe spot, preferably within walls, so most
 monsters will be unable to attack you. Avoid moving around until the player you
 called for a rescue confirms that he has cleared out the monsters and tells you
 where you should move next.
+
+
+
+(3.12) Character timeout and account timeout
+--------------------------------------------
+Character timeout:
+If you do not log in a character at least once every 365 days the system will
+automatically delete it along with its houses, to keep the database clean.
+So make sure you don't let your characters time out this way!
+(There will be an expiry warning about 60 days before this happens when you
+log on with any of your characters, to remind you.)
+
+Account timeout:
+If your account holds no characters for 30 days the account itself will be
+deleted and thereby freed up again.
 
 
 
