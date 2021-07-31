@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 28. July 2021 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 1. August 2021 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -16926,6 +16926,7 @@ B: attack method : attack effect : damage
       receive HOLD_LIFE (resist life-draining attacks) from this form.
     SHATTER will result in a bonus to player's STRength attribute.
     LOSE_xxx will give the according sustenance.
+    SEDUCE will grant charisma sustenance.
 
     Monster effects (like poisoning or paralyzing) are applied to
     the player's attacks with a probability that corresponds to their

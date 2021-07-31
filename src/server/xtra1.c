@@ -2019,6 +2019,10 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 			   Great casters who can also inflict power-drain are themselves resistant to it. */
 			if (r_ptr->freq_innate >= 50) p_ptr->resist_discharge = TRUE; //unofficial resistance =p
 			break;
+		case RBE_SEDUCE: /* ah well ^^ */
+			p_ptr->sustain_chr = TRUE;
+			csheet_boni->cb[11] |= CB12_RSCHR;
+			break;
 		}
 
 		d += (j * 2);
