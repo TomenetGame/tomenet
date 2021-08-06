@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 1. August 2021 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 6. August 2021 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2119,8 +2119,8 @@ wrongly treated as @@@ inscription. For example like this:
     "@@ @S" or "@@-@x0"
 
 
-"Word of Recall", provided by items (scrolls and rods) or spells:
------------------------------------------------------------------
+Word of Recall, provided by items (scrolls and rods) or spells:
+---------------------------------------------------------------
 If you use these without inscription, they will just teleport you back into the
 dungeon you came from, to the deepest possible floor. If you use them on the
 world surface without inscription and there is no dungeon at your location that
@@ -2377,7 +2377,7 @@ Ironman     This typically describes a gameplay scenario where you cannot
             2) The normal TomeNET server has a few Ironman dungeons too, which
                are just dubbed 'Wilderness' in the dungeon list when found.
                These dungeons can only be traversed one-way. To leave them you
-               must reach the final floor and then use word-of-recall there.
+               must reach the final floor and then use 'word of recall' there.
                There is one 'named' Ironman dungeon: 'The Halls of Mandos',
                which goes from level 1 to 100 and as a specialy (no other
                dungeon has this restriction) has no unique monsters in it.
@@ -3948,7 +3948,7 @@ self-explaining or that are especially important are listed in detail here:
             Potions of Healing:         @q1
             Potions of Speed:           @q2
             Potions of Resistance:      @q3
-            Potions of Restore-L-Lev:   @q4
+            Potions of Restore L.Lev.:  @q4
         Note: Already inscribed items are not touched.
 
     Thin down screen flush signals to avoid freezing (thin_down_flush)
@@ -7713,7 +7713,7 @@ give it away.
 Another very early indication for a vault on your dungeon level are the floor
 feelings displayed in yellow colour, see (4.8).
 Among the most dangerous vaults are "no-teleport" (or for short "no-tele")
-vaults. These prohibit all teleportation effects including word-of-recall.
+vaults. These prohibit all teleportation effects including 'word of recall'.
 That means when you get into a bad situation you cannot easily escape!
 No-tele areas will give you certain warning indicators when you enter them,
 see "Vault feelings" in (4.8), the first one listed ("still air").
