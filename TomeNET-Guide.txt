@@ -2556,6 +2556,10 @@ Res         Resistance.
 RFE         A request for enhancement, ie a suggestion, that players can send
             to the game admins using the "/rfe" command.
 
+rll         Restore Life Levels. A potion (can be bought in the temple) or
+            magic that will restore drained experience points. (If drained xp
+            can be restored this will be indicated by a yellow XP bar/value).
+
 rlevel      See mlevel.
 
 Room        The dungeon contains many rooms connected by passages. Some of the
