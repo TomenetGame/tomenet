@@ -2534,6 +2534,13 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					fallback_uppercase = 4;
 					continue;
 				}
+				/* Expand 'wor' to 'Word of Recall' and fall back to caps-search */
+				if (!strcasecmp(buf, "wor")) {
+					strcpy(buf, "WORD OF RECALL");
+					fallback = TRUE;
+					fallback_uppercase = 4;
+					continue;
+				}
 				/* Note: 'rop' is already ring of power (slang paragraph) */
 				/* Slaying/Nothingness/Morgul weapons */
 				if (!strcasecmp("slaying", buf)) {
