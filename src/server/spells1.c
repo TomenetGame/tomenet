@@ -997,7 +997,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	/* No empty field on this map o_O */
 	if (!tries) {
 		s_printf("%s TELEPORT_FAIL: No empty field found for %s.\n", showtime(), p_ptr->name);
-		msg_print(Ind, "oThe teleportation spell strangely fizzles!");
+		msg_print(Ind, "\377oThe teleportation spell strangely fizzles!");
 		return FALSE;
 	}
 
