@@ -1158,17 +1158,31 @@ void teleport_player_to(int Ind, int ny, int nx, bool forced) {
 
 	l_ptr = getfloor(wpos);
 	if (!forced) {
-		if (p_ptr->anti_tele) return;
-		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) return;
+		bool fail = FALSE;
 
-		if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return;
+		if (p_ptr->anti_tele) fail = TRUE;
+		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) fail = TRUE;
+#if 1
+		/* Prevent teleporting someone onto a vault grid - this was allowed but poses the following problem:
+		   A player entering a level via staircase into a vault can get teleported off the staircase.
+		   Even if the vault isn't no-tele he can still fail to teleport out if the vault occupies the whole map.
+		   Since this seems too harsh, let's just keep teleportation consistent in the way that you cannot tele onto icky grids in general. */
+		if (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY) fail = TRUE;
+#endif
 
-		if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return;
-		if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) return;
+		if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) fail = TRUE;
+
+		if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) fail = TRUE;
+		if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_NO_TELE)) fail = TRUE;
 		//if (p_ptr->wpos.wz && (l_ptr->flags1 & LF1_NO_MAGIC)) return;
 
 		/* Space/Time Anchor */
-		if (check_st_anchor2(wpos, p_ptr->py, p_ptr->px, ny, nx)) return;
+		if (check_st_anchor2(wpos, p_ptr->py, p_ptr->px, ny, nx)) fail = TRUE;
+
+		if (fail) {
+			msg_print(Ind, "There is a static discharge in the air around you.");
+			return;
+		}
 	}
 
 	/* Find a usable location */
