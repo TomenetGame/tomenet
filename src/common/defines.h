@@ -3511,6 +3511,7 @@
 #define SV_BROAD_SPEAR			7	/* 1d9 */
 #define SV_PIKE				8	/* 2d5 */
 #define SV_RHOMPHAIA			9	/* 2d4 */
+#define SV_DRAGON_LANCE			10	/* 4d10 */
 #define SV_GLAIVE			13	/* 2d6 */
 #define SV_HALBERD			15	/* 3d4 */
 #define SV_GUISARME			16	/* 2d5 */
