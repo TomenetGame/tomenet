@@ -7601,6 +7601,9 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 	player_type *p_ptr2 = NULL;
 	connection_t *connp2 = NULL;
 
+	/* Catch extremely rare crash: Player gets item on birth, sound attempts to play, but connection is already gone again */
+	if (!connp) return 0;
+
 	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) {
 		/* actually allow some critical sfx to pass */
 		if (sound != __sfx_bell && sound != __sfx_page && sound != __sfx_warning) return 0;
