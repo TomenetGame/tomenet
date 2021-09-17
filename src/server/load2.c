@@ -1740,7 +1740,15 @@ static bool rd_extra(int Ind) {
 #if 0
 	strip_bytes(20);	/* transient stats - these get ignored by both save and load atm. */
 #else
-	strip_bytes(8); //unused
+	strip_bytes(7); //unused
+
+ #ifdef ENABLE_DEMOLITIONIST
+	rd_byte(&tmp8u);
+	p_ptr->suppress_ingredients = tmp8u;
+ #else
+	strip_bytes(1);
+ #endif
+
 	rd_u16b(&p_ptr->house_num);
 	rd_s16b(&p_ptr->mutedtemp);
 	rd_s32b(&p_ptr->iron_trade);

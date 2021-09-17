@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 19. August 2021 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 17. September 2021 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1242,6 +1242,12 @@ They all start with a slash '/' hence they're called slash commands:
             Hand over your current deck of cards to someone else. If that
             player already shuffled a deck of his own, that one will be erased
             aka overwritten by the one he receives from you.
+
+/demolitionist
+/demo       Disable (and reenable) any ingredient drops for demolitionist perk.
+            This setting is saved between logins. When you login on a character
+            that has drops disabled you will see a message reminding you of it:
+       "Ingredient drops for your demolitionist perk are currently suppressed."
 
 /dice       Roll some dice, you must specify a number of dice from 1 to 100.
             The result is random and can be seen by other players who stand
@@ -11453,6 +11459,7 @@ Chauve-Souris   Turns you into a fruit bat. Quaff another one to be restored
                 Make sure you don't resist nexus if someone tries to polymorph
                 you back. Or just use 'Morph Restoration' service.
                 Characters with 'Fruit Bat' body modification are immune.
+                Mimicry users can simply polymorph out to any form they like.
 Cure Light Wounds
                 Cures blindness and cuts; heals 3d8 HP.
 Cure Serious Wounds
@@ -14867,6 +14874,10 @@ stated.
                                 At 10.000 Digging, if Demolitionist is enabled,
                                 you will learn the fighting technique
                                 'Steam Blast' which can blast open doors.
+
+                                If you don't want ingredients to drop to reduce
+                                loot clutter, You can turn them off (and on
+                                again) with the /demo command.
 
 The abilities Swimming, Digging and Climbing are also granted by items you
 can find. Those are for example items that grants you levitation, so you may

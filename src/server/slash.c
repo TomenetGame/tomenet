@@ -4978,6 +4978,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (n) C_KILL(id_list, n, int);
 			WIPE(&acc, struct account);
 			return;
+#ifdef ENABLE_DEMOLITIONIST
+		} else if (prefix(messagelc, "/demo") || prefix(messagelc, "/demolitionist")) { /* toggle item-finding part of the Demolitionist perk */
+			if (get_skill(p_ptr, SKILL_DIG) < ENABLE_DEMOLITIONIST) {
+				msg_print(Ind, "\377yThis command can only be used by demolitionists.");
+				return;
+			}
+			p_ptr->suppress_ingredients = !p_ptr->suppress_ingredients;
+			if (p_ptr->suppress_ingredients) msg_print(Ind, "You won't find ingredients for your demolitionist perk.");
+			else msg_print(Ind, "You will find ingredients for your demolitionist perk.");
+			return;
+#endif
 		}
 
 

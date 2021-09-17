@@ -336,12 +336,24 @@
 /* 'Necromancy' skill gives an additional chance to keep hold of your life force */
 #define NECROMANCY_HOLDS_LIFE
 
-/* TESTING/EXPERIMENTAL - Allow creation of demolition charges for 'Digging' skill.
+/* Allow creation of demolition charges for 'Digging' skill.
    Consider renaming 'Digging' to 'Excavation'.
    Also designates minimum required 'Digging' skill to be active [5]. */
 #define ENABLE_DEMOLITIONIST 5
 /* Restrict finding ENABLE_DEMOLITIONIST items to within the IDDC. Usage of found items is not restricted however. */
 //#define DEMOLITIONIST_IDDC_ONLY
+
+/* --------------------- TESTING/EXPERIMENTAL - This stuff is hot alpha/beta.. --------------------- */
+
+/* Finally create some usage for the so far functionless altars - C. Blue
+   Ideas: Pray (1) or Sacrifice item (2).
+   1) Gain extra quirks/buffs, but apply a behavioral restriction too? (Eg +luck, but mustn't kill GOOD monsters)
+   2) Gain extra item type drop chance/quality/both. Gain +luck for itemvalue^.5 / 100 (fraction-fine scale), maybe add rarity bonus to luck too.
+      Or determine duration by item rarity.
+   Keep the effect for specific time, and even prolong it indefinitely while player doesn't change staircase/float direction and doesn't log out.
+   Problem: lotr.fandom.com/wiki/Religion -> Ilúvatarism and Melkorism. But even if vamp/hk pray to Melkor, they still will kill him -_-. */
+//#define ALTARS_2021
+
 
 
 /* --------------------- Server-type dependant features -------------------- */

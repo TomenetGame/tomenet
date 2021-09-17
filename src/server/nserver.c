@@ -2603,6 +2603,7 @@ static void sync_options(int Ind, bool *options) {
 	}
 
 	if (p_ptr->limit_chat) msg_print(Ind, "\377yYou have enabled '\377olimit_chat\377y' in \377o=2\377y. Your chat is not globally visible!");
+	if (p_ptr->suppress_ingredients) msg_print(Ind, "Ingredient drops for your demolitionist perk are currently suppressed.");
 }
 
 /* Set font/graf visuals mapping according to the player's wishes,

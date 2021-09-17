@@ -6286,7 +6286,7 @@ bool monster_death(int Ind, int m_idx) {
 	bool found_chemical = FALSE;
 
 	if ((r_ptr->flags4 & RF4_BR_FIRE) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
-		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && rand_int(7) < r_ptr->weight / 1000) {
+		if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
 			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SULFUR));
@@ -6304,7 +6304,7 @@ bool monster_death(int Ind, int m_idx) {
 		}
 	}
 	if ((r_ptr->flags4 & RF4_BR_ACID) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
-		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 10 && rand_int(7) < r_ptr->weight / 1000) {
+		if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 10 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
 			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_VITRIOL));
@@ -6322,7 +6322,7 @@ bool monster_death(int Ind, int m_idx) {
 		}
 	}
 	if ((r_ptr->flags4 & RF4_BR_POIS) && r_ptr->weight >= 4000 && !p_ptr->IDDC_logscum) { // Dragon-league basically
-		if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && rand_int(7) < r_ptr->weight / 1000) {
+		if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST + 5 && rand_int(7) < r_ptr->weight / 1000) {
 			object_type forge;
 
 			invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));
@@ -6346,7 +6346,7 @@ bool monster_death(int Ind, int m_idx) {
 			/* Saltpetre (guano: bats/birds) + newbie 'spell components' as per k_info diz */
 			if (r_ptr->d_char == 'b' || r_ptr->d_char == 'B' || r_ptr->d_char == 'H'
 			    || (!rand_int(2) && (r_idx == RI_NOVICE_MAGE || r_idx == RI_NOVICE_MAGE_F))) { /* '..leaving behind a trail of dropped spell components' */
-				if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && !rand_int(3)) {
+				if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && !rand_int(3)) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_SALTPETRE));
@@ -6366,7 +6366,7 @@ bool monster_death(int Ind, int m_idx) {
 
 			/* Ammonia Salt (dung: whatever has hooves..) */
 			else if (r_ptr->d_char == 'q' || r_ptr->d_char == 'C' || r_ptr->d_char == 'M' || r_ptr->d_char == 'Y') {
-				if (get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && !rand_int(3)) {
+				if (!p_ptr->suppress_ingredients && get_skill(p_ptr, SKILL_DIG) >= ENABLE_DEMOLITIONIST && !rand_int(3)) {
 					object_type forge;
 
 					invcopy(&forge, lookup_kind(TV_CHEMICAL, SV_AMMONIA_SALT));

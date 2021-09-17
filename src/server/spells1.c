@@ -4461,7 +4461,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifdef ENABLE_DEMOLITIONIST
 			/* Possibly drop ingredients: Charcoal */
-			if (!quiet &&
+			if (!quiet && !p_ptr->suppress_ingredients &&
  #ifdef DEMOLITIONIST_IDDC_ONLY
 			    in_irondeepdive(wpos) &&
  #endif
@@ -5638,7 +5638,7 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 #ifdef ENABLE_DEMOLITIONIST
 				/* May create charcoal from burned wood */
-				if (!quiet &&
+				if (!quiet && !p_ptr->suppress_ingredients &&
  #ifdef DEMOLITIONIST_IDDC_ONLY
 				    in_iddc &&
  #endif
