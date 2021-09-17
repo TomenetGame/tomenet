@@ -36,5 +36,5 @@ s  Search      S  Search mode   }  Uninscribe        \{B(auto-save window layout
 u  Use staff   T  Tunnel (dig)  '  Inspect nearby/lowbie players/party members
 v  Throw       V  Cloak         _  Sip from fountain/show item on the floor
 \{Bw  Wear/Wield\{w  W  Wear/Wield 2  =  Options
-x  Swap        X  Predefined    <  Go up           (*) Use X to quickly switch
-z  Zap rod        x0-macro (*)  >  Go down         equipment inscribed @x0.
+x  Swap        X  Predefined    \{B<  Go up\{w           (*) Use X to quickly switch
+z  Zap rod        x0-macro (*)  \{B>  Go down\{w         equipment inscribed @x0.
