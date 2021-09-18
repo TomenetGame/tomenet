@@ -1792,6 +1792,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (!strcmp(message, "/d") || !strcmp(message, "/r")) k = 2;
 			else if (!strcmp(message, "/die")) {
 				if (tk) {
+					token[1][0] = tolower(token[1][0]);
+					if (token[1][0]) token[1][1] = tolower(token[1][1]);
+
 					if (token[1][0] == 'd') s = atoi(&token[1][1]);
 					else s = k;
 					if ((s < 1) || (s > 100)) {
@@ -1808,6 +1811,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oShortcut to throw 2 dice:  /d");
 					return;
 				}
+
+				token[1][0] = tolower(token[1][0]);
+				if (token[1][0]) token[1][1] = tolower(token[1][1]);
 
 				if (token[1][0] == 'd') {
 					k = 1;
