@@ -1808,7 +1808,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oUsage:     /dice <number of dice>");
 					msg_print(Ind, "\377oUsage #2:  /dice <number of dice>d<number of sides>");
 					msg_print(Ind, "\377oUsage #3:  /dice d<number of sides>");
-					msg_print(Ind, "\377oShortcut to throw 2 dice:  /d");
+					msg_print(Ind, "\377oVariant to throw a single die:     /die");
+					msg_print(Ind, "\377oVariant to throw a single die #2:  /die <number of sides>");
+					msg_print(Ind, "\377oShortcut to throw 2 6-sided dice:  /d");
 					return;
 				}
 
