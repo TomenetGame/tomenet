@@ -17804,7 +17804,8 @@ school.
                     Temporary resistance to heat, cold, lightning and acid.
                     Shared spell (see above): Fire, Water, Earth, Air.
 
-    Fiery Shield    Creates a shield of flames around you.
+    Fiery Shield    Creates a shield of flames around you that damages monsters
+                    that attack you in melee.
                     Required skill level for first spell level: 16.
 
                     Tier II: Level 36.
@@ -17871,7 +17872,8 @@ school.
 
                     Tier II: Level 36.
 
-    Frost Barrier   Engulfs you in a storm of roaring cold.
+    Frost Barrier   Engulfs you in a storm of roaring cold that damages
+                    all monsters standing next to you.
                     Lv16: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
 
@@ -18744,7 +18746,8 @@ spell failure rate. All Unlife spells use WIS.)
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 39.
 
-    Robes of Havoc  Envelops you in hellfire, burning your opponents to ashes.
+    Robes of Havoc  Envelops you in hellfire, burning all opponents that are
+                    standing close to you to ashes.
                     (This spell uses INTELLIGENCE to determine fail-rates!)
                     Required skill level for first spell level: 44.
 
