@@ -1777,7 +1777,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		    prefix(messagelc, "/roll") || !strcmp(message, "/r")
 		    || prefix(messagelc, "/die"))
 		    && !prefix(messagelc, "/rollchar")) {
-			int rn = 0, first;
+			int rn = 0, first_digit, s = 6;
+			char *d;
 
 			if (p_ptr->body_monster) {
 				monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -1789,15 +1790,36 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 			if (!strcmp(message, "/d") || !strcmp(message, "/r")) k = 2;
-			else if (!strcmp(message, "/die")) k = 1;
-			else {
+			else if (!strcmp(message, "/die")) {
+				if (tk) {
+					if (token[1][0] == 'd') s = atoi(&token[1][1]);
+					else s = k;
+					if ((s < 1) || (s > 100)) {
+						msg_print(Ind, "\377oNumber of sides must be between 1 and 100!");
+						return;
+					}
+				}
+				k = 1;
+			} else {
 				if (tk < 1) {
-					msg_print(Ind, "\377oUsage:  /dice <number of dice>");
+					msg_print(Ind, "\377oUsage:     /dice <number of dice>");
+					msg_print(Ind, "\377oUsage #2:  /dice <number of dice>d<number of sides>");
+					msg_print(Ind, "\377oUsage #3:  /dice d<number of sides>");
 					msg_print(Ind, "\377oShortcut to throw 2 dice:  /d");
 					return;
 				}
+
+				if (token[1][0] == 'd') {
+					k = 1;
+					s = atoi(&token[1][1]);
+				} else if ((d = strchr(token[1], 'd'))) s = atoi(d + 1);
+
 				if ((k < 1) || (k > 100)) {
 					msg_print(Ind, "\377oNumber of dice must be between 1 and 100!");
+					return;
+				}
+				if ((s < 1) || (s > 100)) {
+					msg_print(Ind, "\377oNumber of sides must be between 1 and 100!");
 					return;
 				}
 			}
@@ -1805,11 +1827,27 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			for (i = 0; i < k; i++) rn += randint(6);
-			first = rn;
-			while (first >= 10) first /= 10;
-			msg_format(Ind, "\374\377%cYou throw %d dice and get a%s %d", COLOUR_GAMBLE, k, (first == 8 || rn == 11) ? "n" : "", rn);
-			msg_format_near(Ind, "\374\377%c%s throws %d dice and gets a%s %d", COLOUR_GAMBLE, p_ptr->name, k, (first == 8 || rn == 11) ? "n" : "", rn);
+			for (i = 0; i < k; i++) rn += randint(s);
+			first_digit = rn;
+			while (first_digit >= 10) first_digit /= 10;
+
+			if (s == 6) {
+				if (k == 1) {
+					msg_format(Ind, "\374\377%cYou cast a die and get a%s %d", COLOUR_GAMBLE, (first_digit == 8 || rn == 11 || rn == 18) ? "n" : "", rn);
+					msg_format_near(Ind, "\374\377%c%s casts a die and gets a%s %d", COLOUR_GAMBLE, p_ptr->name, (first_digit == 8 || rn == 11 || rn == 18) ? "n" : "", rn);
+				} else {
+					msg_format(Ind, "\374\377%cYou cast %d dice and get a%s %d", COLOUR_GAMBLE, k, (first_digit == 8 || rn == 11 || rn == 18) ? "n" : "", rn);
+					msg_format_near(Ind, "\374\377%c%s casts %d dice and gets a%s %d", COLOUR_GAMBLE, p_ptr->name, k, (first_digit == 8 || rn == 11 || rn == 18) ? "n" : "", rn);
+				}
+			} else {
+				if (k == 1) {
+					msg_format(Ind, "\374\377%cYou cast a D%d and get a%s %d", COLOUR_GAMBLE, s, (first_digit == 8 || rn == 11 || rn == 18) ? "n" : "", rn);
+					msg_format_near(Ind, "\374\377%c%s casts a D%d and gets a%s %d", COLOUR_GAMBLE, p_ptr->name, s, (first_digit == 8 || rn == 11 || rn == 18) ? "n" : "", rn);
+				} else {
+					msg_format(Ind, "\374\377%cYou cast %dD%d and get a%s %d", COLOUR_GAMBLE, k, s, (first_digit == 8 || rn == 11 || rn == 18) ? "n" : "", rn);
+					msg_format_near(Ind, "\374\377%c%s casts %dD%d and gets a%s %d", COLOUR_GAMBLE, p_ptr->name, k, s, (first_digit == 8 || rn == 11 || rn == 18) ? "n" : "", rn);
+				}
+			}
 #ifdef USE_SOUND_2010
 			sound(Ind, "dice_roll", NULL, SFX_TYPE_MISC, TRUE);
 #endif
@@ -1835,8 +1873,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
-			msg_format(Ind, "\374\377%cYou flip a coin and get %s.", COLOUR_GAMBLE, coin ? "heads" : "tails");
-			msg_format_near(Ind, "\374\377%c%s flips a coin and gets %s.", COLOUR_GAMBLE, p_ptr->name, coin ? "heads" : "tails");
+			msg_format(Ind, "\374\377%cYou flip a coin and get %s", COLOUR_GAMBLE, coin ? "heads" : "tails");
+			msg_format_near(Ind, "\374\377%c%s flips a coin and gets %s", COLOUR_GAMBLE, p_ptr->name, coin ? "heads" : "tails");
 #ifdef USE_SOUND_2010
 			sound(Ind, "coin_flip", NULL, SFX_TYPE_MISC, TRUE);
 #endif

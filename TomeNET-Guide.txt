@@ -1249,11 +1249,19 @@ They all start with a slash '/' hence they're called slash commands:
             that has drops disabled you will see a message reminding you of it:
        "Ingredient drops for your demolitionist perk are currently suppressed."
 
-/dice       Roll some dice, you must specify a number of dice from 1 to 100.
+/dice       Roll some dice, you must at least specify a number of dice or a
+            number of sides, each from 1 to 100.
             The result is random and can be seen by other players who stand
             nearby.
-/d          Rolls two dice, shortcut for "/dice 2".
+            Examples of possible usage variants:
+              /dice 2     - rolls two 6-sided dice
+              /dice d20   - rolls a 20-sided die
+              /dice 3d6   - rolls three 6-sided dice
 /die        Rolls one die, shortcut for "/dice 1".
+            Examples of possible usage variants:
+              /die 20     - rolls a 20-sided die
+              /die d12    - rolls a 12-sided die
+/d          Rolls two 6-sided dice, shortcut for "/dice 2".
 
 /dispose
 /dis        DESTROYS every item in your inventory that has one of these
