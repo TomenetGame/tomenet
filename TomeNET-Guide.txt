@@ -17806,6 +17806,7 @@ school.
 
     Fiery Shield    Creates a shield of flames around you that damages monsters
                     that attack you in melee.
+                    (It does not reduce damage you take from attacks.)
                     Required skill level for first spell level: 16.
 
                     Tier II: Level 36.
@@ -17874,6 +17875,7 @@ school.
 
     Frost Barrier   Engulfs you in a storm of roaring cold that damages
                     all monsters standing next to you.
+                    (It does not reduce damage you take from attacks.)
                     Lv16: Turns into a storm of shards of ice.
                     Required skill level for first spell level: 22.
 
