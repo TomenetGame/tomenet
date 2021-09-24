@@ -5817,7 +5817,10 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 	}
 
-
+	if (r_idx == RI_MIRROR) {
+		msg_broadcast_format(0, "\374\377c**\377w%s has defeated %s mirror image!\377c**", p_ptr->name, p_ptr->male ? "his" : "her");
+		s_printf("MIRROR: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
+	}
 
 	/*
 	 * Mega^3-hack: killing a 'Warrior of the Dawn' is likely to
@@ -10750,6 +10753,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 
 				msg_print_near_monster(m_idx, "calls it a day..");
 				m_ptr->extra = 2;
+
+				s_printf("MIRROR2: %s (%d/%d) won.\n", p_ptr->name, p_ptr->max_plv, p_ptr->max_lev);
 				return FALSE;
 			}
 			m_ptr->extra = 0;
@@ -11543,7 +11548,7 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 	monster_race    *r_ptr = race_inf(m_ptr);
 	s64b		new_exp;
 
-	if (m_ptr->r_idx == RI_MIRROR) return FALSE; /* Golem may not help here (maybe except as meat shield?) */
+	if (m_ptr->r_idx == RI_MIRROR || m_ptr->r_idx == RI_BLUE) return FALSE; /* Golem may not help here (maybe except as meat shield?) */
 
 	/* Redraw (later) if needed */
 	update_health(m_idx);
