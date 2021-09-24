@@ -8625,6 +8625,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		//setup_monsters();
 		level_generation_time = FALSE;
 		p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
+
+		if (watch_df) for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
+		}
 		return;
 	} else if (d_ptr && !d_ptr->type && d_ptr->theme == DI_DEATH_FATE) {
 		p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
@@ -8660,7 +8665,6 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			s_printf("DF-party (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
 		} else process_dungeon_file("t_balcony.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		level_generation_time = FALSE;
-		return;
 	}
 	/* Always generate basic death fate from template for a bit more visuals, instead of the auto-generated, basically empty floor? */
 	/* The 'useless' death fate, starvation incoming: */
@@ -8685,6 +8689,11 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		process_dungeon_file("t_ruins.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		level_generation_time = FALSE;
 		s_printf("DF-ruins (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
+
+		if (watch_df) for (i = 1; i <= NumPlayers; i++) {
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (Players[i]->admin_dm && !Players[i]->afk) Players[i]->paging = 2;
+		}
 		return;
 	}
 

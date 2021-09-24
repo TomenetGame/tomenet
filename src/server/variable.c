@@ -851,8 +851,7 @@ unsigned char runtime_server = 0;
    Dungeon masters will be paged if they're not AFK or if they have
    'watch' as AFK reason! */
 bool watch_morgoth = 0;
-bool watch_cp = 0;
-bool watch_nr = 0;
+bool watch_cp = 0, watch_nr = 0, watch_df = 0;
 
 /* for lua_bind.c */
 bool first_player_joined = TRUE;

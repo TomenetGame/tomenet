@@ -2471,8 +2471,7 @@ extern void quest_questor_reverts(int q_idx, int questor_idx, struct worldpos *w
    Dungeon masters will be paged if they're not AFK or if they have
    'watch' as AFK reason! */
 extern bool watch_morgoth;
-extern bool watch_cp;
-extern bool watch_nr;
+extern bool watch_cp, watch_nr, watch_df;
 
 /* lua-dependant 'constants' */
 extern int __lua_HHEALING;

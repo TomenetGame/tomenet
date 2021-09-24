@@ -22,7 +22,9 @@ function server_startup(timestamp, h, m, s, dwd, dd, dm, dy)
 	cur_year = dy
 
 	-- Admin parameters */
+	watch_cp = 0
 	watch_nr = 1
+	watch_df = 1
 	watch_morgoth = 1
 
 	-- Server changes like rearranging arrays. Should NOT be changed here!
