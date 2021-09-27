@@ -1742,6 +1742,9 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 				buf_prev[pos + (c2 - c)] = 0;
 				strcpy(buf_esc, buf_prev);
 
+				/* Trim trailing dot, if any - in case someone wrote an URL and 'terminated' his line grammatically with a dot, like a normal sentence. */
+				if (buf_esc[strlen(buf_esc) - 1] == '.') buf_esc[strlen(buf_esc) - 1] = 0;
+
 				/* 'Reset' double-tapping */
 				buf_prev[0] = 0;
 				return;
@@ -1772,6 +1775,9 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 		strcpy(buf_prev, be); //swap strings so we don't do overlapping copying..
 		strcpy(buf_esc, buf_prev + pmatch[0].rm_so);
 		buf_esc[pmatch[0].rm_eo - pmatch[0].rm_so] = 0;
+
+		/* Trim trailing dot, if any - in case someone wrote an URL and 'terminated' his line grammatically with a dot, like a normal sentence. */
+		if (buf_esc[strlen(buf_esc) - 1] == '.') buf_esc[strlen(buf_esc) - 1] = 0;
 
 		/* 'Reset' double-tapping */
 		buf_prev[0] = 0;
