@@ -3514,7 +3514,7 @@ P:2:1d1:0:0:11
 F:SPEED | ACTIVATE
 D:Taking seven leagues per stride seems outrageous. Whether doing so be possible
 D:or not, it cannot be denied that the wearer of this magical footwear gains
-D:great speed. The seven miles however might just be a teleportation trick!
+D:great speed. The seven leagues however might just be a teleportation trick!
 
 
 
