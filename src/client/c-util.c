@@ -1755,7 +1755,7 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 		regex_t re;
 		int status = -999;
 
-		status = regcomp(&re, "[a-z0-9][a-z0-9]*\\.[a-z0-9][a-z0-9]*(/[^ ]*)?", REG_EXTENDED|REG_ICASE);
+		status = regcomp(&re, "[a-z0-9][a-z0-9]*\\.[a-z0-9][.a-z0-9]*(/[^ ]*)?", REG_EXTENDED|REG_ICASE);
 		if (status != 0) return; //error
 
 		status = regexec(&re, be, REGEXP_ARRAY_SIZE, pmatch, 0);
