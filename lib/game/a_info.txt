@@ -3509,7 +3509,7 @@ D:but as you try and take a step it feels surprisingly swift and sure!
 
 N:283:'Seven-league Boots'
 I:30:2:7
-W:50:80:20:200000
+W:50:50:20:200000
 P:2:1d1:0:0:11
 F:SPEED | ACTIVATE
 D:Taking seven leagues per stride seems outrageous. Whether doing so be possible
