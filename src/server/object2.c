@@ -3451,13 +3451,17 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	    && (!Ind || !object_known_p(Ind, o_ptr) || !object_known_p(Ind, j_ptr));
 
 
+	/* In general, incompatible modes never stack.
+	   Also takes care of unowned everlasting items in shops after a now-dead
+	   everlasting player sold an item to the shop before he died :) */
+	if (compat_omode(o_ptr, j_ptr)) return (FALSE);
+
 	/* Hack -- gold always merge */
 	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) {
 		/* special exception: pile colour from coin-type monsters is immutable! */
 		if (o_ptr->sval != j_ptr->sval && (o_ptr->xtra2 || j_ptr->xtra2)) return FALSE;
 		return(TRUE);
 	}
-
 
 	/* Don't EVER stack questors oO */
 	if (o_ptr->questor) return FALSE;
@@ -3497,10 +3501,6 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 		/* A non-everlasting player won't have his items stacked w/ everlasting stuff */
 		if (compat_pomode(Ind, j_ptr)) return (FALSE);
 	} else {
-		/* no stacks of unowned everlasting items in shops after a now-dead
-		   everlasting player sold an item to the shop before he died :) */
-		if (compat_omode(o_ptr, j_ptr)) return (FALSE);
-
 		/* Hack: Dead owner? Allow to convert to us as owner if our level is high enough */
 		if (j_ptr->owner == 65537) {
 			if (j_ptr->level > lookup_player_level(o_ptr->owner))
