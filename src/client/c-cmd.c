@@ -2708,7 +2708,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "Death Fate   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Mand") || my_strcasestr(buf, "Halls") || !strcasecmp(buf, "hom")) {
+				if (my_strcasestr(buf, "Mandos") || my_strcasestr(buf, "Halls") || !strcasecmp(buf, "hom")) {
 					strcpy(chapter, "The Halls of Mandos   ");
 					continue;
 				}
