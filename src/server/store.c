@@ -605,7 +605,7 @@ static bool store_object_similar(object_type *o_ptr, object_type *j_ptr) {
 	if (o_ptr->k_idx != j_ptr->k_idx) return (0);
 
 	/* Different modes cannot be stacked */
-	if (compat_omode(o_ptr, j_ptr)) return (0);
+	if (o_ptr->owner && j_ptr->owner && compat_omode(o_ptr, j_ptr)) return (0);
 
 	/* Different charges (etc) cannot be stacked */
 	if (o_ptr->pval != j_ptr->pval &&
@@ -5226,7 +5226,7 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	/* In general, incompatible modes never stack.
 	   Also no stacks of unowned everlasting items in shops after a now-dead
 	   everlasting player sold an item to the shop before he died :) */
-	if (compat_omode(o_ptr, j_ptr)) return(FALSE);
+	if (o_ptr->owner && j_ptr->owner && compat_omode(o_ptr, j_ptr)) return(FALSE);
 
 	/* Hack -- gold always merge */
 	//if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) return(TRUE);

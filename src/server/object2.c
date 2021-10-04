@@ -3454,7 +3454,7 @@ bool object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolera
 	/* In general, incompatible modes never stack.
 	   Also takes care of unowned everlasting items in shops after a now-dead
 	   everlasting player sold an item to the shop before he died :) */
-	if (compat_omode(o_ptr, j_ptr)) return (FALSE);
+	if (o_ptr->owner && j_ptr->owner && compat_omode(o_ptr, j_ptr)) return (FALSE);
 
 	/* Hack -- gold always merge */
 	if (o_ptr->tval == TV_GOLD && j_ptr->tval == TV_GOLD) {
