@@ -3251,9 +3251,9 @@ Go into '/tomenet/src' where the file 'makefile' is located.
 
 Dependencies, that you must make sure you have installed:
 C-devel, X11-devel, ncurses, ncurses-devel and crypt libraries.
-The package names are usually:
-build-essential, xorg-dev, libncurses5, libncurses5-dev, libgcrypt11,
-libc6-dev.
+The package names are usually (may vary depending on the build system):
+build-essential, xorg-dev, libncurses5, libncurses5-dev, libgcrypt11 (or
+libgcrypt-dev), libc6-dev.
 
 Since version 4.4.5 which supports music and sound via SDL, you also need
 libsdl-mixer-devel, libsdl, libsmpeg. Usual package names (SDL version 1.2):
