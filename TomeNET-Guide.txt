@@ -3209,9 +3209,10 @@ need a regexp lib, mingw-libgnurx should work fine.
 
 Next, for sound support you will have to download at least SDL v1.2.15 and
 SDL-mixer v1.2.12. Optionally you can get SMPEG for MP3-support or MikMod for
-various mod-file suport, not required. Make sure you do _not_ download the
-designated 'mingw32' tar.gz from the libsdl.org page but get the generic src
-tarball at the top of that page instead.
+various mod-file suport, and libogg/libvorbis, but it's not required.
+Make sure you do _not_ download the designated 'mingw32' tar.gz from the
+libsdl.org page but get the generic src tarball at the top of that page
+instead.
 Detailed instructions for installing SDL are provided by Mikael here:
 https://muuttuja.org/tomenet/howto-install-sdl.txt
 
@@ -3259,15 +3260,16 @@ Since version 4.4.5 which supports music and sound via SDL, you also need
 libsdl-mixer-devel, libsdl, libsmpeg. Usual package names (SDL version 1.2):
 libsdl-mixer1.2, libsdl-mixer1.2-dev, libsdl1.2debian, libsdl1.2-dev,
 (preferably libsdl1.2debian-pulseaudio, eg under Ubuntu), libsmpeg0,
-libsmpeg-dev. Sometimes instead of the libsdl* packages your system might
+libsmpeg-dev and optionally more formats like libogg/libvorbis.
+Sometimes instead of the libsdl* packages your system might
 provide the packages simply named 'sdl' and 'sdl_mixer' instead.
 If you don't want to use audio, edit the makefile and compare the two
 paragraphs titled 'Without SDL' and 'With SDL' and edit the makefile
 accordingly, to compile it without SDL audio support.
 NOTE: If you are compiling the above packages yourself, make sure that you
-install the specific audio format libs (smpeg, ogg..) _before_ you install
-libsdl-mixer, so its configure script will recognize those formats and enable
-support for the according file types.
+install the specific audio format libs (smpeg, ogg/vorbis/..) _before_ you
+install libsdl-mixer, so its configure script will recognize those formats
+and enable support for the according file types.
 
 Enter these two lines:
         make clean
