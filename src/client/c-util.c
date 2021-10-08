@@ -2083,6 +2083,10 @@ bool askfor_aux(char *buf, int len, char mode) {
 	int l_old = l;
 	bool modify_ok = TRUE;
 
+	/* For clipboard pasting */
+	char tmpbuf[MSG_LEN];
+	int tmpl;
+
 	/* Terminal width */
 	int wid = 80;
 
@@ -2533,8 +2537,40 @@ bool askfor_aux(char *buf, int len, char mode) {
 			copy_to_clipboard(buf);
 			break;
 		case KTRL('L'): /* paste current clipboard to chat */
-			if (!paste_from_clipboard(buf)) break;
-			k = l = strlen(buf);
+			if (!paste_from_clipboard(tmpbuf)) {
+				bell();
+				break;
+			}
+
+			/* Ensure line length isn't exceeded */
+			if (strlen(buf) >= MSG_LEN - 1) {
+				bell();
+				break;
+			}
+			tmpl = strlen(tmpbuf);
+			if (strlen(buf) + tmpl >= MSG_LEN) {
+				bell(); //still warn, as stuff got cut off..
+				tmpbuf[MSG_LEN - strlen(buf)] = 0;
+			}
+
+			/* Paste at end of line and increment k and l */
+			if (k == l) {
+				if (k < len) {
+					strcat(buf, tmpbuf);
+					k += tmpl;
+					l += tmpl;
+				}
+			}
+			/* Paste at current cursor position after moving
+			   the rest of the line forward */
+			else if (k > l) {
+				if (k < len) {
+					for (j = k; j >= l; j--) buf[j + tmpl] = buf[j];
+					strncpy(&buf[l], tmpbuf, tmpl); //exclude terminating 0
+					l += tmpl; //maybe keep cursor position instead of moving forward? but this seems better for now
+					k += tmpl;
+				}
+			}
 			break;
 
 		default:
@@ -2552,7 +2588,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 					l++;
 				}
 			}
-			/* Place character at currect cursor position after moving
+			/* Place character at current cursor position after moving
 			   the rest of the line one step forward */
 			else if (k > l) {
 				if ((k < len) && (isprint(i))) {
@@ -2561,7 +2597,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 					k++;
 				}
 			}
-			else bell();
+			else bell(); //paranoia? line length should never be < cursor position
 			break;
 		}
 
