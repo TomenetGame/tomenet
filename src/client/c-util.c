@@ -1934,7 +1934,7 @@ void copy_to_clipboard(char *buf) {
 #endif
 }
 /* paste current clipboard into active chat input */
-bool paste_from_clipboard(char *buf) {
+bool paste_from_clipboard(char *buf, bool global) {
 #ifdef WINDOWS
 	char *c, *c2, buf_esc[MSG_LEN + 15];
 	int pos = 0;
@@ -1958,7 +1958,7 @@ bool paste_from_clipboard(char *buf) {
 
 					switch (*c) {
 					case ':':
-						if (pos != 0 && pos <= NAME_LEN) {
+						if (pos != 0 && pos <= NAME_LEN && global) {
 							*c2 = ':';
 							c2++;
 						}
@@ -2024,7 +2024,7 @@ bool paste_from_clipboard(char *buf) {
 
 		switch (*c) {
 		case ':':
-			if (pos != 0 && pos <= NAME_LEN) {
+			if (pos != 0 && pos <= NAME_LEN && global) {
 				*c2 = ':';
 				c2++;
 			}
@@ -2084,7 +2084,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 	bool modify_ok = TRUE;
 
 	/* For clipboard pasting */
-	char tmpbuf[MSG_LEN];
+	char tmpbuf[MSG_LEN], *tmpc;
 	int tmpl;
 
 	/* Terminal width */
@@ -2537,7 +2537,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			copy_to_clipboard(buf);
 			break;
 		case KTRL('L'): /* paste current clipboard to chat */
-			if (!paste_from_clipboard(tmpbuf)) {
+			if (!paste_from_clipboard(tmpbuf, chat_mode == CHAT_MODE_NORMAL && !((tmpc = strchr(buf, ':')) && tmpc - buf < l))) { //emulate strnstr()
 				bell();
 				break;
 			}

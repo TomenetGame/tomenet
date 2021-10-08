@@ -632,7 +632,7 @@ extern void sync_xsleep(int milliseconds);
 extern char original_commands(char command);
 extern char roguelike_commands(char command);
 extern void copy_to_clipboard(char *buf);
-extern bool paste_from_clipboard(char *buf);
+extern bool paste_from_clipboard(char *buf, bool global);
 
 /* c-store.c */
 extern bool leave_store;
