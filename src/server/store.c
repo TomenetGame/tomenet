@@ -6655,6 +6655,8 @@ void view_exploration_history(int Ind) {
 			    dungeon_y[i] == WPOS_IRONDEEPDIVE_Y &&
 			    dungeon_tower[i] == (WPOS_IRONDEEPDIVE_Z > 0))
 				strcpy(bn, " various guardians");
+			else if (dungeon_x[i] == WPOS_DF_X && dungeon_y[i] == WPOS_DF_Y)
+				strcpy(bn, " ???");
 			else strcpy(bn, " no guardian");
 		}
 
