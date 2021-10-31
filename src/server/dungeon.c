@@ -2181,6 +2181,12 @@ static unsigned int colour_std[16] = {
 static void get_world_surface_palette_state(int *sky, int *sub, int *halfhours, bool fill) {
 	int t = (turn / (HOUR / PALANIM_HOUR_DIV)) % (24 * PALANIM_HOUR_DIV); //5 minute intervals, ie 1/12 hour
 
+	/* Halloween is permanently 'midnight': */
+	if (season_halloween) {
+		t = 0;
+		fill = TRUE;
+	}
+
 	/* Check for smooth dark/light transitions every 5 minutes (in-game time). (6h..20h is daylight) */
 	/* 4:00h..5:00h - getting less dark */
 	if (t >= 4 * PALANIM_HOUR_DIV && t < 5 * PALANIM_HOUR_DIV) {
