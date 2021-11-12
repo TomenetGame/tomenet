@@ -17756,7 +17756,7 @@ school.
     Disperse Magic  Removes magical influences.
                     Required skill level for first spell level: 15.
                     Lv1: Blindness/Confusion.
-                    Lv10: Confusion/Hallucination.
+                    Lv10: Hallucination.
                     Lv15: Speed/Slowness/Stun.
                     This spell can be used even while confused or blind.
 
