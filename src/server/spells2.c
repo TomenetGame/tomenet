@@ -97,6 +97,8 @@ void divine_vengeance(int Ind, int power) {
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
 		int i;
 
+		msg_print(Ind, "You invoke a divine summoning.");
+
 		/* players TELE_TO */
 		if (p_ptr->party) {
 			//..else msg_print(Ind, "You can only teleport-to party members.");
@@ -132,6 +134,7 @@ void divine_vengeance(int Ind, int power) {
 					(void)summon_specific(&p_ptr->wpos, p_ptr->py, p_ptr->px, getlevel(&p_ptr->wpos), 100, SUMMON_MONSTER, 0, 100);
 #endif
 
+				msg_print(i, "You are called by a divine summoning.");
 				teleport_player_to(i, p_ptr->py, p_ptr->px, FALSE);
 			}
 		}
@@ -208,7 +211,7 @@ void divine_gateway(int Ind) {
 		// Send some audio feedback
 		//Send_beep(Ind);
 
-		msg_print(Ind, "\377oYou invoke divine recall..");
+		msg_print(Ind, "\377oYou invoke astral recall..");
 		set_recall_timer(Ind, 1);
 
 		for (i = 1; i <= NumPlayers; i++) {
@@ -222,7 +225,7 @@ void divine_gateway(int Ind) {
 			/* must be in the same party */
 			if (!Players[i]->party || p_ptr->party != Players[i]->party) continue;
 
-			msg_print(i, "\377oYou are imbued by a divine recall spell..");
+			msg_print(i, "\377oYou are imbued by an astral recall..");
 			set_recall_timer(i, 1);
 		}
 
@@ -276,7 +279,7 @@ void do_autokinesis_to(int Ind, int dis) {
 	}
 
 	/* fail */
-	msg_print(Ind, "You couldn't make out any destination within your mental reach.");
+	msg_print(Ind, "\377yYou couldn't make out any destination within your mental reach.");
 }
 
 /*
