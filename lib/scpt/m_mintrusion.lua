@@ -352,35 +352,75 @@ MMAP = add_spell {
 
 -- Monsters will ignore you (and often your party members too ;)
 MCHARM = add_spell {
-	["name"] = 	"Charm",
-	["name2"] = 	"Charm",
+	["name"] = 	"Charm I",
+	["name2"] = 	"Charm I",
 	["school"] = 	{SCHOOL_MINTRUSION},
 	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	33,
-	["mana"] = 	10,
-	["mana_max"] = 	10,
+	["mana"] = 	6,
+	["mana_max"] = 	6,
 	["fail"] = 	10,
 	["stat"] = 	A_CHR,
-	["direction"] = function () if get_level(Ind, MCHARM, 50) >= 13 then return FALSE else return TRUE end end,
+	["direction"] = TRUE,
 	["spell"] = 	function(args)
-			--cast charm!
-			if get_level(Ind, MCHARM, 50) >= 13 then
-				project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, MCHARM, 150), "focusses")
-			elseif get_level(Ind, MCHARM, 50) >= 7 then
-				fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, MCHARM, 150), 3, "focusses")
-			else
-				fire_grid_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, MCHARM, 150), "focusses")
-			end
+			fire_grid_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, MCHARM, 150), "focusses")
 	end,
 	["info"] = 	function()
---			return "power "..(10 + get_level(Ind, MCHARM, 150))
+			--return "power "..(10 + get_level(Ind, MCHARM, 150))
 			return ""
 	end,
 	["desc"] = 	{
-			"Tries to manipulate the mind of a monster to make it ignore you.",
-			"At level 7 it turns into a ball.",
-			"At level 13 it affects all monsters in sight.",
+			"Tries to manipulate the mind of a monster",
+			" to make them ignore you at the cost of your mana.",
+	}
+}
+MCHARM_II = add_spell {
+	["name"] = 	"Charm II",
+	["name2"] = 	"Charm II",
+	["school"] = 	{SCHOOL_MINTRUSION},
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] = 	39,
+	["mana"] = 	8,
+	["mana_max"] = 	8,
+	["fail"] = 	-8,
+	["stat"] = 	A_CHR,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, MCHARM, 150), 3, "focusses")
+	end,
+	["info"] = 	function()
+			--return "power "..(10 + get_level(Ind, MCHARM, 150))
+			return ""
+	end,
+	["desc"] = 	{
+			"Tries to manipulate the mind of your target and others around it",
+			" to make them ignore you at the cost of your mana.",
+	}
+}
+MCHARM_III = add_spell {
+	["name"] = 	"Charm III",
+	["name2"] = 	"Charm III",
+	["school"] = 	{SCHOOL_MINTRUSION},
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] = 	45,
+	["mana"] = 	10,
+	["mana_max"] = 	10,
+	["fail"] = 	-26,
+	["stat"] = 	A_CHR,
+	["direction"] = FALSE,
+	["spell"] = 	function(args)
+			project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, MCHARM, 150), "focusses")
+	end,
+	["info"] = 	function()
+			--return "power "..(10 + get_level(Ind, MCHARM, 150))
+			return ""
+	end,
+	["desc"] = 	{
+			"Tries to manipulate the mind of all monsters in sight",
+			" to make them ignore you at the cost of your mana.",
 	}
 }
 

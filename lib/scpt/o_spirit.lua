@@ -453,34 +453,75 @@ TRANCE = add_spell {
 }
 
 POSSESS = add_spell {
-	["name"] = 	"Possess",
-	["name2"] = 	"Poss",
+	["name"] = 	"Possess I",
+	["name2"] = 	"Poss I",
 	["school"] = 	{SCHOOL_OSPIRIT},
 	["am"] = 	50,
 	["spell_power"] = 0,
 	["level"] = 	23,
+	["mana"] = 	6,
+	["mana_max"] = 	6,
+	["stat"] = 	A_WIS,
+	["fail"] = 	-30,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_grid_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
+	end,
+	["info"] = 	function()
+		--return "power "..(10 + get_level(Ind, POSSESS, 150))
+		return ""
+	end,
+	["desc"] =	{
+		"Tries to manipulate the mind of a monster",
+		" to make it ignore you at the cost of your mana.",
+	}
+}
+POSSESS_II = add_spell {
+	["name"] = 	"Possess II",
+	["name2"] = 	"Poss II",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] = 	31,
+	["mana"] = 	8,
+	["mana_max"] = 	8,
+	["stat"] = 	A_WIS,
+	["fail"] = 	-42,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+		fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), 3, "focusses")
+	end,
+	["info"] = 	function()
+		--return "power "..(10 + get_level(Ind, POSSESS, 150))
+		return ""
+	end,
+	["desc"] =	{
+		"Tries to manipulate the mind of your target and others around it",
+		" to make them ignore you at the cost of your mana.",
+	}
+}
+POSSESS_III = add_spell {
+	["name"] = 	"Possess III",
+	["name2"] = 	"Poss III",
+	["school"] = 	{SCHOOL_OSPIRIT},
+	["am"] = 	50,
+	["spell_power"] = 0,
+	["level"] = 	39,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
 	["stat"] = 	A_WIS,
-	["fail"] = 	-30,
-	["direction"] = function () if get_level(Ind, POSSESS, 50) >= 17 then return FALSE else return TRUE end end,
+	["fail"] = 	-66,
+	["direction"] = FALSE,
 	["spell"] = 	function(args)
-		--cast charm!
-		if get_level(Ind, POSSESS, 50) >= 17 then
-			project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, POSSESS, 150), "focusses")
-		elseif get_level(Ind, POSSESS, 50) >= 9 then
-			fire_ball(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), 3, "focusses")
-		else
-			fire_grid_bolt(Ind, GF_CHARMIGNORE, args.dir, 10 + get_level(Ind, POSSESS, 150), "focusses")
-		end
+		project_los(Ind, GF_CHARMIGNORE, 10 + get_level(Ind, POSSESS, 150), "focusses")
 	end,
 	["info"] = 	function()
-		return "power "..(10 + get_level(Ind, POSSESS, 150))
+		--return "power "..(10 + get_level(Ind, POSSESS, 150))
+		return ""
 	end,
 	["desc"] =	{
-		"Tries to manipulate the mind of a monster to make it ignore you.",
-		"At level 9 it turns into a ball.",
-		"At level 17 it affects all monsters in sight.",
+		"Tries to manipulate the mind of all monsters in sight",
+		" to make them ignore you at the cost of your mana.",
 	}
 }
 

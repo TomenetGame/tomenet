@@ -18644,8 +18644,8 @@ spell failure rate. All Unlife spells use WIS.)
                     Tier II: Level 35.
                     Removes all normal and heavy curses. Also see (5.14).
 
-    Possess         Makes a monster in sight believe that you aren't an enemy,
-                    preventing them most of the time from attacking you.
+    Possess         Makes a monster believe that you aren't an enemy,
+                    preventing it most of the time from attacking you.
                     Monsters may resist or be immune to the initial cast.
                     While active, the spell drains your mana. The more monsters
                     you try to keep under control, the faster your mana is
@@ -18659,9 +18659,13 @@ spell failure rate. All Unlife spells use WIS.)
                     their r-level is and the more of the following abilities
                     they possess:
                     Being smart, resisting confusion, being powerful.
-                    Lv9: Turns into a ball.
-                    Lv17: Affects all monsters in sight.
                     Required skill level for first spell level: 23.
+
+                    Tier II: Level 31.
+                    Spell turns into a ball.
+
+                    Tier III: Level 39.
+                    Spell affects all monsters in sight.
 
     Stop Possess    Stops active possession of monster minds.
 
@@ -19125,8 +19129,8 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Required skill level for first spell level: 20.
                     Shared spell (see above): Attunement / Mental Intrusion.
 
-    Charm           Makes a monster in sight believe that you aren't an enemy,
-                    preventing them most of the time from attacking you.
+    Charm           Makes a monster believe that you aren't an enemy,
+                    preventing it most of the time from attacking you.
                     Monsters may resist or be immune to the initial cast.
                     While active, the spell drains your mana. The more monsters
                     you try to keep under control, the faster your mana is
@@ -19141,9 +19145,14 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     they possess:
                     Being smart, resisting confusion, being powerful.
                     (This spell uses CHARISMA to determine fail-rates!)
-                    Lv7: Turns into a ball.
-                    Lv13: Affects all monsters in sight.
                     Required skill level for first spell level: 33.
+
+                    Tier II: Level 39.
+                    Spell turns into a ball.
+
+                    Tier III: Level 45.
+                    Spell affects all monsters in sight.
+
     Stop Charm      Cease currently active charming effects.
 
 
