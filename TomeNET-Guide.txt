@@ -17989,8 +17989,8 @@ school.
 
                     Tier III: Level 40.
 
-    Vermin Control  Prevents vermin from breeding any further on
-                    your current level.
+    Vermin Control  Prevents vermin from breeding any further on your
+                    current floor. Doesn't work on unnatural creatures.
                     Required skill level for first spell level: 10.
 
     Recovery        Neutralizes poison, heals cuts, cures confusion,
@@ -18025,13 +18025,13 @@ school.
 
 - Conveyance
 
-    Phase Door      Teleports you on a small scale range.
+    Phase Door      Teleports you randomly on a small scale range.
                     Required skill level for first spell level: 2.
 
     Disarm          Destroys traps and reveals and unlocks doors around you.
                     Required skill level for first spell level: 5.
 
-    Teleport        Teleports you within the level.
+    Teleport        Teleports you randomly within the floor.
                     Required skill level for first spell level: 10.
 
     Wings of Wind   Grants feather falling.
@@ -18111,7 +18111,7 @@ school.
                     Required skill level for first spell level: 18.
 
                     Tier II: Level 40. (Also dubbed "Clairvoyance".)
-                    Maps and lights the whole level.
+                    Maps and lights the whole floor.
 
     Greater Identify
                     *Identifies* an item.
@@ -18160,7 +18160,7 @@ school.
 
                     Tier II: Level 40.
 
-    Genocide        Genocides all monsters of a race on the level.
+    Genocide        Genocides all monsters of a race on your dungeon level.
                     For details on the effect "genocide" of this spell,
                     please see (5.9) scroll of geno/oblit.
                     (This spell uses WISDOM to determine fail-rates!
@@ -18301,7 +18301,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     repelled, thereby preventing them from actually hitting
                     you.
                     Works very well, as long as the creature isn't of a higher
-                    level than you (same as the scroll effect).
+                    r-level than you (same as the scroll effect).
                     Required skill level for first spell level: 12.
 
     Dispel Magic    Removes magical influences.
@@ -18358,7 +18358,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
     BONI:           Protects the player from undead at 30, from demons at 40
                     and from evil in general at 50. Works similar to the
                     'protection from evil' spell, but has better effect on
-                    monsters of higher level.
+                    monsters of higher r-level.
                     (This effect does not stack with the spell/scroll, but
                     overrides them, so there is no need to cast the spell
                     anymore once you acquire this bonus.)
@@ -18644,8 +18644,8 @@ spell failure rate. All Unlife spells use WIS.)
                     Tier II: Level 35.
                     Removes all normal and heavy curses. Also see (5.14).
 
-    Possess         Tries to manipulate the mind of a monster to make it ignore
-                    you.
+    Possess         Makes a monster in sight believe that you aren't an enemy,
+                    preventing them most of the time from attacking you.
                     Monsters may resist or be immune to the initial cast.
                     While active, the spell drains your mana. The more monsters
                     you try to keep under control, the faster your mana is
@@ -18655,8 +18655,9 @@ spell failure rate. All Unlife spells use WIS.)
                     Monsters which have already been hurt cannot be possessed.
                     Psi-immune, unique, undead, empty-minded or non-living
                     monsters cannot be possessed either.
-                    Monsters may have a chance to resist the attack, the higher
-                    the more of the following abilities they possess:
+                    Monsters may have a chance to resist the spell, the higher
+                    their r-level is and the more of the following abilities
+                    they possess:
                     Being smart, resisting confusion, being powerful.
                     Lv9: Turns into a ball.
                     Lv17: Affects all monsters in sight.
@@ -18804,6 +18805,7 @@ spell failure rate. All Unlife spells use WIS.)
 
     Tainted Grounds Prevents any vermin from multiplying any further,
                     effective on the whole dungeon level.
+                    Doesn't work on unnatural creatures.
                     Required skill level for first spell level: 17.
 
     Nether Sap      Draws from nether undercurrents to continuously replenish
@@ -18814,8 +18816,8 @@ spell failure rate. All Unlife spells use WIS.)
                     --- This spell is only usable by true vampires! ---
 
     Subjugation     Attempt to place all undead within sight and of lesser
-                    level than you under your control. If successful, the
-                    undead creatures will enter stasis for a while.
+                    r-level than you under your control. If successful,
+                    the undead creatures will enter stasis for a while.
                     The stasis is broken immediately if they take damage.
                     Required skill level for first spell level: 26.
                     Shared spell (see above): O.Unlife, Necromancy.
@@ -18888,7 +18890,7 @@ spell failure rate. All Unlife spells use WIS.)
 
     Call of the Forest
                     Dispels all animals from your line of sight.
-                    Animals have a chance to resist, depending on their level.
+                    Each one has a chance to resist, depending on its r-level.
                     (You do not get experience as they do not count as kills,
                     because this spell internally works like genocide and not
                     like actual dispel-class spells - which deal damage.)
@@ -18987,7 +18989,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     has a good chance to repel physical attacks or projectiles,
                     draining your mana each time.
                     For repelling physical attacks the mana cost depends on the
-                    attacker's level and the damage the attack would inflict.
+                    attacker's m-level and the damage the attack would inflict.
                     Required skill level for first spell level: 40.
 
 
@@ -19092,8 +19094,8 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     to cast spells temporarily, effectively silencing it for a
                     short period of time.
                     Chance to be successful depends on school skill vs monster
-                    level. Also, monsters that can't cast any spells as well as
-                    unique monsters of level 98 or above are unaffected.
+                    r-level. Also, monsters that can't cast any spells as well
+                    as unique monsters of level 98 or above are unaffected.
                     Monsters that are unique or powerful have an increased
                     chance to resist.
                     The target cannot be silenced again for a short while,
@@ -19123,7 +19125,7 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Required skill level for first spell level: 20.
                     Shared spell (see above): Attunement / Mental Intrusion.
 
-    Charm           Makes monsters in sight believe that you aren't an enemy,
+    Charm           Makes a monster in sight believe that you aren't an enemy,
                     preventing them most of the time from attacking you.
                     Monsters may resist or be immune to the initial cast.
                     While active, the spell drains your mana. The more monsters
@@ -19134,10 +19136,13 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Monsters which have already been hurt cannot be charmed.
                     Psi-immune, unique, undead, empty-minded or non-living
                     monsters cannot be charmed either.
-                    Monsters may have a chance to resist the attack, the higher
-                    the more of the following abilities they possess:
+                    Monsters may have a chance to resist the spell, the higher
+                    their r-level is and the more of the following abilities
+                    they possess:
                     Being smart, resisting confusion, being powerful.
                     (This spell uses CHARISMA to determine fail-rates!)
+                    Lv7: Turns into a ball.
+                    Lv13: Affects all monsters in sight.
                     Required skill level for first spell level: 33.
     Stop Charm      Cease currently active charming effects.
 
