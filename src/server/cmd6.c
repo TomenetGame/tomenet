@@ -5756,6 +5756,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (o_ptr->tval == TV_JUNK && o_ptr->sval == SV_GLASS_SHARD) {
 		struct dungeon_type *d_ptr;
 		d_ptr = getdungeon(&p_ptr->wpos);
+
 		if (d_ptr->type == DI_DEATH_FATE) {
 			msg_print(Ind, "The glass shard disintegrates in a flurry of colours...");
 			inven_item_increase(Ind, item, -1);

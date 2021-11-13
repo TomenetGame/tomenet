@@ -1820,6 +1820,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			int chance = 10 + glev / 2;
 			//bool message = FALSE;
 
+			if (p_ptr->ghost) break;
+
 			if (chance > 50) chance = 50;
 
 			/* Send him/her back to home :) */
@@ -1831,7 +1833,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				int delay = 120 - glev / 2;
 				if (delay < 1) delay = 1;
 
-				//				p_ptr->word_recall = rand_int(20) + 15;
+				//p_ptr->word_recall = rand_int(20) + 15;
 				set_recall_timer(Ind, rand_int(delay) + 40);
 				ident = TRUE;
 			}

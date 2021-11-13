@@ -19222,12 +19222,12 @@ though, as all other magic schools do, not the astral level.)
 
     Sphere of Destruction
                     Enlightened: Conjures up a mana storm.
-                    Corrupted: Conjures up raging inferno, which deals the
-                               same damage type as rockets do.
+                    Corrupted: Conjures up raging inferno, which deals
+                               the same damage type as rockets do.
                     Required skill level for first spell level: 50.
 
     Gateway         Enlightened: Nigh-instantaneous Word of Recall for all
-                                 party members on your dungeon level.
+                                 alive party members on your dungeon level.
                     Corrupted: Creates a pair of connected void jump gates.
                     (This spell uses WISDOM to determine fail-rates!)
                     Required skill level for first spell level: 50.

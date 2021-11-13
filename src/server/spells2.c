@@ -195,7 +195,9 @@ int py_create_gateway(int Ind) {
  */
 void divine_gateway(int Ind) {
 	player_type *p_ptr = Players[Ind];
+
 	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) {
+		int i;
 
 		//XXX call set_recall ?
 		if (istown(&p_ptr->wpos) || !p_ptr->wpos.wz) {
@@ -204,14 +206,15 @@ void divine_gateway(int Ind) {
 		}
 
 		// Send some audio feedback
-		Send_beep(Ind);
+		//Send_beep(Ind);
 
+		msg_print(Ind, "\377oYou invoke divine recall..");
 		set_recall_timer(Ind, 1);
 
-		int i;
 		for (i = 1; i <= NumPlayers; i++) {
 			if (i == Ind) continue;
 			if (Players[i]->conn == NOT_CONNECTED) continue;
+			if (Players[i]->ghost) continue;
 
 			/* on the same dungeon floor */
 			if (!inarea(&p_ptr->wpos, &Players[i]->wpos)) continue;
@@ -219,8 +222,10 @@ void divine_gateway(int Ind) {
 			/* must be in the same party */
 			if (!Players[i]->party || p_ptr->party != Players[i]->party) continue;
 
+			msg_print(i, "\377oYou are imbued by a divine recall spell..");
 			set_recall_timer(i, 1);
 		}
+
 	} else if (p_ptr->ptrait == TRAIT_CORRUPTED)
 		(void)py_create_gateway(Ind);
 }

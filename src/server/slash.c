@@ -1261,7 +1261,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Paralyzed or just not enough energy left to perform a move? */
 
 				/* this also prevents recalling while resting, too harsh maybe */
-//				if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
+				//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 				if (p_ptr->paralyzed) return;
 
 				/* Don't drain energy far below zero - mikaelh */
@@ -10352,6 +10352,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (!pwpos.wz) continue;
 					if (is_admin(p_ptr)) continue;
 
+					/* Don't recall ghosts, potentially deleting their death loot.. */
+					if (p_ptr->ghost) {
+						msg_print(i, "\377OServer is restarting...");
+						Destroy_connection(p_ptr->conn, "Server is restarting");
+						i--;
+						continue;
+					}
 					if (in_irondeepdive(&pwpos)) {
 						msg_print(i, "\377OServer is restarting...");
 						Destroy_connection(p_ptr->conn, "Server is restarting");
