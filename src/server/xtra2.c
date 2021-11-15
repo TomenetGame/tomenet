@@ -10214,6 +10214,7 @@ void resurrect_player(int Ind, int loss_factor) {
 	int reduce;
 	bool has_exp = p_ptr->max_exp != 0;
 
+	if (!p_ptr->ghost) return;
 	/* Hack -- the dungeon master can not resurrect */
 	if (p_ptr->admin_dm) return;	// TRUE;
 
