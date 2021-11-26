@@ -458,14 +458,14 @@ extern u16b max_wf_idx;
 extern s16b max_set_idx;
 extern u16b max_q_idx;
 
-extern char priv_note[MAX_NOTES][MAX_CHARS_WIDE], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN], priv_note_u[MAX_NOTES][MAX_CHARS_WIDE];
-extern char party_note[MAX_PARTYNOTES][MAX_CHARS_WIDE], party_note_target[MAX_PARTYNOTES][NAME_LEN], party_note_u[MAX_PARTYNOTES][MAX_CHARS_WIDE];
-extern char guild_note[MAX_GUILDNOTES][MAX_CHARS_WIDE], guild_note_target[MAX_GUILDNOTES][NAME_LEN], guild_note_u[MAX_GUILDNOTES][MAX_CHARS_WIDE];
+extern char priv_note[MAX_NOTES][MSG_LEN], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN], priv_note_u[MAX_NOTES][MSG_LEN];
+extern char party_note[MAX_PARTYNOTES][MSG_LEN], party_note_target[MAX_PARTYNOTES][NAME_LEN], party_note_u[MAX_PARTYNOTES][MSG_LEN];
+extern char guild_note[MAX_GUILDNOTES][MSG_LEN], guild_note_target[MAX_GUILDNOTES][NAME_LEN], guild_note_u[MAX_GUILDNOTES][MSG_LEN];
 extern char admin_note[MAX_ADMINNOTES][MAX_CHARS], server_warning[MSG_LEN];
 
-extern char bbs_line[BBS_LINES][MAX_CHARS_WIDE], bbs_line_u[BBS_LINES][MAX_CHARS_WIDE];
-extern char pbbs_line[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE], pbbs_line_u[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE];
-extern char gbbs_line[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE], gbbs_line_u[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE];
+extern char bbs_line[BBS_LINES][MSG_LEN], bbs_line_u[BBS_LINES][MSG_LEN];
+extern char pbbs_line[MAX_PARTIES][BBS_LINES][MSG_LEN], pbbs_line_u[MAX_PARTIES][BBS_LINES][MSG_LEN];
+extern char gbbs_line[MAX_GUILDS][BBS_LINES][MSG_LEN], gbbs_line_u[MAX_GUILDS][BBS_LINES][MSG_LEN];
 
 extern auction_type *auctions;
 extern u32b auction_alloc;
@@ -2234,7 +2234,7 @@ extern s64b det_exp_level(s64b exp, int plev, int dlev);
 extern void shape_Maia_skills(int Ind, bool live);
 
 #ifdef ENABLE_MERCHANT_MAIL
-void merchant_mail_death(const char pname[NAME_LEN]);
+void merchant_mail_death(const char pname[CNAME_LEN]);
 #endif
 
 extern byte Morgoth_x, Morgoth_y, Morgoth_z;
@@ -2624,9 +2624,9 @@ extern int num_randart_names;
 
 #ifdef ENABLE_MERCHANT_MAIL
 extern object_type mail_forge[MAX_MERCHANT_MAILS];
-extern char mail_sender[MAX_MERCHANT_MAILS][NAME_LEN];
-extern char mail_target[MAX_MERCHANT_MAILS][NAME_LEN];
-extern char mail_target_acc[MAX_MERCHANT_MAILS][NAME_LEN];
+extern char mail_sender[MAX_MERCHANT_MAILS][CNAME_LEN];
+extern char mail_target[MAX_MERCHANT_MAILS][CNAME_LEN];
+extern char mail_target_acc[MAX_MERCHANT_MAILS][ACCNAME_LEN];
 extern s16b mail_duration[MAX_MERCHANT_MAILS];
 extern s32b mail_timeout[MAX_MERCHANT_MAILS];
 extern bool mail_COD[MAX_MERCHANT_MAILS];

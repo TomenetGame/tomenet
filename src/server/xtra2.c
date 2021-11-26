@@ -8087,9 +8087,9 @@ static void check_killing_reward(int Ind) {
 /* Return any pending mail this character hasn't picked up yet to its senders.
    Erase any mail that was returned to this character already because the original receipient also no longer existed.
    Set any MERCHANT_MAIL_INFINITE mode mail to actually expire in case we who just died were the original sender! */
-void merchant_mail_death(const char pname[NAME_LEN]) {
+void merchant_mail_death(const char pname[CNAME_LEN]) {
 	int i;
-	char tmp[NAME_LEN];
+	char tmp[CNAME_LEN];
 	u32b pid;
 
 	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {

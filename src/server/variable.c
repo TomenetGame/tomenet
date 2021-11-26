@@ -816,16 +816,16 @@ int gametype;
 /* Private notes for fellow players
  * see '/note' command in util.c. -C. Blue
  */
-char priv_note[MAX_NOTES][MAX_CHARS_WIDE], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN], priv_note_u[MAX_NOTES][MAX_CHARS_WIDE];
-char party_note[MAX_PARTYNOTES][MAX_CHARS_WIDE], party_note_target[MAX_PARTYNOTES][NAME_LEN], party_note_u[MAX_PARTYNOTES][MAX_CHARS_WIDE];
-char guild_note[MAX_GUILDNOTES][MAX_CHARS_WIDE], guild_note_target[MAX_GUILDNOTES][NAME_LEN], guild_note_u[MAX_GUILDNOTES][MAX_CHARS_WIDE];
+char priv_note[MAX_NOTES][MSG_LEN], priv_note_sender[MAX_NOTES][NAME_LEN], priv_note_target[MAX_NOTES][NAME_LEN], priv_note_u[MAX_NOTES][MSG_LEN];
+char party_note[MAX_PARTYNOTES][MSG_LEN], party_note_target[MAX_PARTYNOTES][NAME_LEN], party_note_u[MAX_PARTYNOTES][MSG_LEN];
+char guild_note[MAX_GUILDNOTES][MSG_LEN], guild_note_target[MAX_GUILDNOTES][NAME_LEN], guild_note_u[MAX_GUILDNOTES][MSG_LEN];
 char admin_note[MAX_ADMINNOTES][MAX_CHARS], server_warning[MSG_LEN];
 
 /* in-game bbs :) - C. Blue */
-char bbs_line[BBS_LINES][MAX_CHARS_WIDE], bbs_line_u[BBS_LINES][MAX_CHARS_WIDE];
+char bbs_line[BBS_LINES][MSG_LEN], bbs_line_u[BBS_LINES][MSG_LEN];
 /* party/guild-internal bbs'es: */
-char pbbs_line[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE], pbbs_line_u[MAX_PARTIES][BBS_LINES][MAX_CHARS_WIDE];
-char gbbs_line[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE], gbbs_line_u[MAX_GUILDS][BBS_LINES][MAX_CHARS_WIDE];
+char pbbs_line[MAX_PARTIES][BBS_LINES][MSG_LEN], pbbs_line_u[MAX_PARTIES][BBS_LINES][MSG_LEN];
+char gbbs_line[MAX_GUILDS][BBS_LINES][MSG_LEN], gbbs_line_u[MAX_GUILDS][BBS_LINES][MSG_LEN];
 
 int global_luck = 0;
 int regen_boost_stamina = 4;
@@ -1049,9 +1049,9 @@ int num_randart_names;
 
 #ifdef ENABLE_MERCHANT_MAIL
 object_type mail_forge[MAX_MERCHANT_MAILS];
-char mail_sender[MAX_MERCHANT_MAILS][NAME_LEN];
-char mail_target[MAX_MERCHANT_MAILS][NAME_LEN];
-char mail_target_acc[MAX_MERCHANT_MAILS][NAME_LEN];
+char mail_sender[MAX_MERCHANT_MAILS][CNAME_LEN];
+char mail_target[MAX_MERCHANT_MAILS][CNAME_LEN];
+char mail_target_acc[MAX_MERCHANT_MAILS][ACCNAME_LEN];
 s16b mail_duration[MAX_MERCHANT_MAILS];
 s32b mail_timeout[MAX_MERCHANT_MAILS];
 bool mail_COD[MAX_MERCHANT_MAILS];
