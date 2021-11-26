@@ -887,7 +887,7 @@ void Receive_login(void) {
 
 		while (1) {
 			c_put_str(TERM_YELLOW, "New name: ", offset, COL_CHARS);
-			if (!askfor_aux(c_name, CHARACTERNAME_LEN - 1, 0)) {
+			if (!askfor_aux(c_name, CNAME_LEN - 1, 0)) {
 				if (total_cpa <= 15) {
 					Term_erase(0, offset, 80);
 					Term_erase(0, offset + 1, 80);

@@ -57,7 +57,7 @@
  * Choose the character's name
  */
 static void choose_name(void) {
-	char tmp[ACCOUNTNAME_LEN], fmt[ACCOUNTNAME_LEN], *cp;
+	char tmp[ACCNAME_LEN], fmt[ACCNAME_LEN], *cp;
 
 	/* Prompt and ask */
 #ifndef SIMPLE_LOGIN
@@ -120,7 +120,7 @@ static void choose_name(void) {
 		if (rl_password) rl_password = FALSE;
 		else
 #endif
-		if (askfor_aux(tmp, ACCOUNTNAME_LEN - 1, 0)) strcpy(nick, tmp);
+		if (askfor_aux(tmp, ACCNAME_LEN - 1, 0)) strcpy(nick, tmp);
 		/* at this point: ESC = quit game */
 		else exit(0);
 
@@ -149,7 +149,7 @@ static void choose_name(void) {
 	nick[0] = toupper(nick[0]);
 
 	/* Pad the name (to clear junk) */
-	sprintf(fmt, "%%-%d.%ds", ACCOUNTNAME_LEN - 1, ACCOUNTNAME_LEN - 1);
+	sprintf(fmt, "%%-%d.%ds", ACCNAME_LEN - 1, ACCNAME_LEN - 1);
 	sprintf(tmp, fmt, nick);
 
 	/* Re-Draw the name (in light blue) */

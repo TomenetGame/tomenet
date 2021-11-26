@@ -6906,8 +6906,8 @@ void store_debug_stock() {
 /* Inscription on mass cheques, ie cheques handling items sold partially from item stacks. */
  #define MASS_CHEQUE_NOTE "various piled items"
 
-static bool notify_owner(char cname[NAME_LEN], char msg[MSG_LEN]) {
-	char tname[NAME_LEN];
+static bool notify_owner(char cname[CNAME_LEN], char msg[MSG_LEN]) {
+	char tname[ACCNAME_LEN];
 	int i, found_note = 0;
 	struct account acc;
 	player_type *p_ptr;
@@ -7346,7 +7346,7 @@ static bool player_store_handle_purchase(int Ind, object_type *o_ptr, object_typ
 	cave_type **zcave, *c_ptr = NULL;
 	char o_name[ONAME_LEN], o0_name[ONAME_LEN];
 	u32b old_value;
-	char owner_name[MAX_CHARS];
+	char owner_name[CNAME_LEN];
 
 	/* paranoia */
 	if (!o_ptr->number || !s_ptr->number) return FALSE;

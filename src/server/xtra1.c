@@ -9843,7 +9843,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 	case RID_SEND_ITEM: {
 		int i;
 		object_type *o_ptr = &p_ptr->inventory[p_ptr->mail_item];
-		char accname[ACCOUNTNAME_LEN];
+		char accname[ACCNAME_LEN];
 		cptr comp;
 		cptr acc;
 		u32b pid;
@@ -10020,7 +10020,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		return; }
 	case RID_SEND_GOLD: {
 		int i;
-		char accname[ACCOUNTNAME_LEN];
+		char accname[ACCNAME_LEN];
 		cptr comp;
 		cptr acc;
 		u32b pid, total = p_ptr->mail_gold;

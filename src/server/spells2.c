@@ -1476,7 +1476,7 @@ void self_knowledge(int Ind) {
 	int		k;
 	u32b	f1 = 0L, f2 = 0L, f3 = 0L, f4 = 0L, f5 = 0L, f6 = 0L;	//, esp = 0L;
 	object_type	*o_ptr;
-//	cptr	*info = p_ptr->info;
+	//cptr	*info = p_ptr->info;
 	bool	life = FALSE;
 	FILE *fff;
 #if 0
@@ -1486,6 +1486,12 @@ void self_knowledge(int Ind) {
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
 	strcpy(p_ptr->infofile, file_name);
 #endif	// 0
+
+	/* Slay warnings for unused flags */
+	(void)(f2);
+	(void)(f4);
+	(void)(f6);
+
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "wb");
 	/* Current file viewing */

@@ -7662,7 +7662,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 #define ESTATE_BACKUP_VERSION "v4"
 bool backup_estate(bool partial) {
 	FILE *fp;
-	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CHARACTERNAME_LEN], c;
+	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
 	cptr name;
 	int i, j, k;
 	int sy, sx, ey,ex , x, y;
@@ -7836,7 +7836,7 @@ bool backup_char_estate(int Ind, s32b h_id, s32b id) {
 /* Backup one house and give content ownership to a specific character */
 bool backup_one_estate(struct worldpos *hwpos, int hx, int hy, s32b id) {
 	FILE *fp;
-	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CHARACTERNAME_LEN], c;
+	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
 	cptr name;
 	int i, j, k;
 	int sy, sx, ey,ex , x, y;

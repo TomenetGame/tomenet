@@ -2353,10 +2353,10 @@ typedef struct player_type player_type;
 struct player_type {
 	int conn;			/* Connection number */
 	int Ind;			/* Self-reference */
-	char name[CHARACTERNAME_LEN];	/* Character name */
-	char basename[CHARACTERNAME_LEN];	/* Character name without special characters (used for save files on Mac/Win/Amiga) */
+	char name[CNAME_LEN];	/* Character name */
+	char basename[CNAME_LEN];	/* Character name without special characters (used for save files on Mac/Win/Amiga) */
 	char realname[REALNAME_LEN];	/* Userid (local machine's user name, default is 'PLAYER') */
-	char accountname[ACCOUNTNAME_LEN];
+	char accountname[ACCNAME_LEN];
 	char hostname[HOSTNAME_LEN];	/* His hostname */
 	char addr[MAX_CHARS];		/* His IP address */
 	//unsigned int version;		/* His version */

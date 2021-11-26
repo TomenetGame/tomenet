@@ -780,7 +780,7 @@ bool Admin_GetcaseAccount(struct account *c_acc, cptr name, char *correct_name) 
 //#define SIMILAR_CHARNAMES_OK
 bool lookup_similar_account(cptr name, cptr accname) {
 	FILE *fp;
-	char buf[1024], tmpname[ACCOUNTNAME_LEN > CHARACTERNAME_LEN ? ACCOUNTNAME_LEN : CHARACTERNAME_LEN];
+	char buf[1024], tmpname[ACCNAME_LEN > CNAME_LEN ? ACCNAME_LEN : CNAME_LEN];
 	struct account acc;
 
 
@@ -857,7 +857,7 @@ bool lookup_similar_account(cptr name, cptr accname) {
 //#define SIMILAR_CHARNAMES_OK
 bool lookup_similar_character(cptr name, cptr accname) {
 	FILE *fp;
-	char buf[1024], tmpname[ACCOUNTNAME_LEN > CHARACTERNAME_LEN ? ACCOUNTNAME_LEN : CHARACTERNAME_LEN];
+	char buf[1024], tmpname[ACCNAME_LEN > CNAME_LEN ? ACCNAME_LEN : CNAME_LEN];
 	struct account acc;
 return FALSE; //TODO: Implement
 
@@ -998,7 +998,7 @@ static char *t_crypt(char *inbuf, cptr salt) {
 	    (salt[1] >= 'a' && salt[1] <= 'z') ||
 	    (salt[1] >= '0' && salt[1] <= '9') ||
 	    salt[1] == '.')) {
-		char fixed_name[ACCOUNTNAME_LEN];
+		char fixed_name[ACCNAME_LEN];
 		strcpy(fixed_name, salt);
 		fixed_name[1] = '.';
 		strcpy(out, (char*)crypt(inbuf, fixed_name));
@@ -5973,7 +5973,7 @@ void init_account_order(int Ind, s32b acc_id) {
 	int i, j, processed = 0, imprinted = 0;
 	int ids, *id_list;
 	hash_entry *ptr, *ptr2;
-	char acc_name[ACCOUNTNAME_LEN];
+	char acc_name[ACCNAME_LEN];
 	bool found = FALSE;
 
 	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
@@ -6046,7 +6046,7 @@ void show_account_order(int Ind, s32b acc_id) {
 	int i, j, processed = 0;
 	int ids, *id_list;
 	hash_entry *ptr, *ptr2;
-	char acc_name[ACCOUNTNAME_LEN];
+	char acc_name[ACCNAME_LEN];
 
 	for (i = 0; i < NUM_HASH_ENTRIES; i++) {
 		/* Acquire this chain */

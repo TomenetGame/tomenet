@@ -5563,7 +5563,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				   unbanall just erases the whole banlist. */
 				struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
 				bool unban_ip = FALSE, unban_acc = FALSE, found = FALSE;
-				char ip[MAX_CHARS], account[ACCOUNTNAME_LEN + 5];//paranoia-reserve if admin makes input error. todo: proper length check
+				char ip[MAX_CHARS], account[ACCNAME_LEN + 5];//paranoia-reserve if admin makes input error. todo: proper length check
 
 				if (prefix(messagelc, "/unbanall")) {
 					struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
@@ -10928,7 +10928,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/addreservedname")) { /* admin-hack: manually add a name to the reserved-names list for 60 minutes */
-				char name[NAME_LEN], account[ACCOUNTNAME_LEN], *ca;
+				char name[NAME_LEN], account[ACCNAME_LEN], *ca;
 
 				ca = strchr(message3, ':');
 				if (!ca) {
@@ -10953,7 +10953,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/delreservedname")) { /* admin-hack: manually add a name to the reserved-names list for 60 minutes */
-				char name[NAME_LEN], account[ACCOUNTNAME_LEN], *ca;
+				char name[NAME_LEN], account[ACCNAME_LEN], *ca;
 
 				ca = strchr(message3, ':');
 				if (!ca) {

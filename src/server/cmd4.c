@@ -3407,7 +3407,7 @@ void do_cmd_show_houses(int Ind, bool local, bool own, s32b id) {
 		}
 
 		if (admin) {
-			/* note: 16 = CHARACTERNAME_LEN */
+			/* note: 16 = CNAME_LEN */
 #if 0
 			name = lookup_player_name(houses[i].dna->creator);
 			if (name) fprintf(fff, "  Creator:%s", name);

@@ -202,14 +202,14 @@
 /* max length of monster names (with pronominum etc) */
 #define MNAME_LEN		80
 
-/* max length of character/party/guild names + 1 */
+/* max length of party/guild names + 1 */
 #define NAME_LEN		20
 /* max length of login info + 1 */
-#define ACCOUNTNAME_LEN		16
+#define ACCNAME_LEN		16
 #define PASSWORD_LEN		16
 #define REALNAME_LEN		20 /* realname is replaced by "PLAYER" anyway */
 #define HOSTNAME_LEN		20
-#define CHARACTERNAME_LEN	16
+#define CNAME_LEN	16
 
 /* Minimum length of account and character names */
 #define ACC_CHAR_MIN_LEN	2

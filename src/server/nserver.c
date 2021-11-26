@@ -1185,7 +1185,7 @@ static void Contact(int fd, int arg) {
 	host_name[sizeof(host_name) - 1] = '\0';
 
 	/* server-side limit checks */
-	nick_name[ACCOUNTNAME_LEN - 1] = '\0';
+	nick_name[ACCNAME_LEN - 1] = '\0';
 	real_name[REALNAME_LEN - 1] = '\0';
 	host_name[HOSTNAME_LEN - 1] = '\0';
 
@@ -2969,8 +2969,8 @@ static int Handle_login(int ind) {
 	p_ptr->realname[REALNAME_LEN - 1] = 0;
 	strncpy(p_ptr->hostname, connp->host, HOSTNAME_LEN - 1); /* cap ridiculously long hostnames - C. Blue */
 	p_ptr->hostname[HOSTNAME_LEN - 1] = 0;
-	strncpy(p_ptr->accountname, connp->nick, ACCOUNTNAME_LEN - 1);
-	p_ptr->accountname[ACCOUNTNAME_LEN - 1] = 0;
+	strncpy(p_ptr->accountname, connp->nick, ACCNAME_LEN - 1);
+	p_ptr->accountname[ACCNAME_LEN - 1] = 0;
 	strcpy(p_ptr->addr, connp->addr);
 	p_ptr->version = connp->version; /* this actually copies the extended version structure */
 	p_ptr->v_unknown = is_newer_than(&p_ptr->version, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, !VERSION_BUILD ? 1 : VERSION_BUILD); /* +1: account for 'test' client! */
@@ -4329,7 +4329,7 @@ static int Receive_login(int ind) {
 
 	if (strlen(choice) == 0) { /* we have entered an account name */
 		u32b p_id;
-		char tmp_name[ACCOUNTNAME_LEN], tmp_name2[ACCOUNTNAME_LEN];
+		char tmp_name[ACCNAME_LEN], tmp_name2[ACCNAME_LEN];
 		char tmp_name_wide[MAX_CHARS_WIDE];
 
 		/* Added this anti-check particularly for "***" reorder hack above,
@@ -4608,13 +4608,13 @@ static int Receive_login(int ind) {
 	} else if (connp->password_verified) { /* we have entered a character name */
 		int check_account_reason = 0, err_Ind;
 		bool took_reservation = FALSE;
-		char tmp_name[CHARACTERNAME_LEN];
+		char tmp_name[CNAME_LEN];
 
 #if 0
 		/* just in case - some places can't handle a longer name and a valid client shouldn't supply a name this long anyway - mikaelh */
 		choice[NAME_LEN - 1] = '\0';
 #else
-		choice[CHARACTERNAME_LEN - 1] = '\0';
+		choice[CNAME_LEN - 1] = '\0';
 #endif
 
 		/* Prevent EXPLOIT (adding a SPACE to foreign charname) */
