@@ -1481,6 +1481,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 	bool using_free_mimic = FALSE;
 	bool admin = is_admin(p_ptr);
 	int skill_mimic = get_skill_scale(p_ptr, SKILL_MIMIC, 100);
+	monster_race *r_ptr = NULL;
 
 	/* should it..? */
 	//dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -1514,6 +1515,8 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 
 			if (j >= MAX_R_IDX - 1) j = 0;
 
+			r_ptr = &r_info[j];
+
 			if (p_ptr->pclass == CLASS_DRUID) {
 				if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
 					/* (S)he is no longer afk */
@@ -1533,43 +1536,43 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				} else continue;
 			}
 
-			if (r_info[j].level > skill_mimic) continue;
-			if (r_info[j].flags1 & RF1_UNIQUE) continue;
-			if (r_info[j].flags8 & RF8_PSEUDO_UNIQUE) continue;
-			if (p_ptr->r_mimicry[j] < r_info[j].level) continue;
+			if (r_ptr->level > skill_mimic) continue;
+			if (r_ptr->flags1 & RF1_UNIQUE) continue;
+			if (r_ptr->flags8 & RF8_PSEUDO_UNIQUE) continue;
+			if (p_ptr->r_mimicry[j] < r_ptr->level) continue;
 			if (p_ptr->r_mimicry[j] < 1 && j) continue;
-			if (strlen(r_info[j].name + r_name) <= 1) continue;
-			//if (!r_info[j].level && !mon_allowed(&r_info[j])) continue;
+			if (strlen(r_ptr->name + r_name) <= 1) continue;
+			//if (!r_ptr->level && !mon_allowed(&r_info[j])) continue;
 			if (!mon_allowed_chance(&r_info[j])) continue;
 			if ((j != 0) && ((p_ptr->pclass == CLASS_SHAMAN) && !mimic_shaman(j))) continue;
 
 			/* Don't accidentally poly into a form that suppresses polymorphing,
 			   to do so you need to use 'Polymorph into...' */
-			if (r_info[j].flags7 & RF7_DISBELIEVE) continue;
+			if (r_ptr->flags7 & RF7_DISBELIEVE) continue;
 
 			if (spell == 1) { /* check for extremities matching? */
 				if ((p_ptr->inventory[INVEN_HEAD].tval || p_ptr->inventory[INVEN_NECK].tval)
-				    && !r_info[j].body_parts[BODY_HEAD]) continue;
+				    && !r_ptr->body_parts[BODY_HEAD]) continue;
 				if (p_ptr->inventory[INVEN_ARM].tval
-				    && !r_info[j].body_parts[BODY_ARMS]) continue;
+				    && !r_ptr->body_parts[BODY_ARMS]) continue;
 				if (p_ptr->inventory[INVEN_HANDS].tval
-				    && !(r_info[j].body_parts[BODY_ARMS] && r_info[j].body_parts[BODY_FINGER])) continue;
+				    && !(r_ptr->body_parts[BODY_ARMS] && r_ptr->body_parts[BODY_FINGER])) continue;
 				if ((p_ptr->inventory[INVEN_WIELD].tval || p_ptr->inventory[INVEN_BOW].tval)
-				    && !r_info[j].body_parts[BODY_WEAPON]) continue;
+				    && !r_ptr->body_parts[BODY_WEAPON]) continue;
 				if (p_ptr->inventory[INVEN_RIGHT].tval
-				    && !r_info[j].body_parts[BODY_FINGER]) continue;
+				    && !r_ptr->body_parts[BODY_FINGER]) continue;
 				if (p_ptr->inventory[INVEN_LEFT].tval
-				    && r_info[j].body_parts[BODY_FINGER] < 2) continue;
+				    && r_ptr->body_parts[BODY_FINGER] < 2) continue;
 				if ((p_ptr->inventory[INVEN_BODY].tval || p_ptr->inventory[INVEN_OUTER].tval || p_ptr->inventory[INVEN_AMMO].tval)
-				    && !r_info[j].body_parts[BODY_TORSO]) continue;
+				    && !r_ptr->body_parts[BODY_TORSO]) continue;
 				if (p_ptr->inventory[INVEN_FEET].tval
-				    && !r_info[j].body_parts[BODY_LEGS]) continue;
+				    && !r_ptr->body_parts[BODY_LEGS]) continue;
 				/* combined stuff */
 				if (p_ptr->inventory[INVEN_TOOL].tval && !(
-				    r_info[j].body_parts[BODY_ARMS] || r_info[j].body_parts[BODY_WEAPON])) continue;
+				    r_ptr->body_parts[BODY_ARMS] || r_ptr->body_parts[BODY_WEAPON])) continue;
 				if (p_ptr->inventory[INVEN_LITE].tval && !(
-				    r_info[j].body_parts[BODY_ARMS] || r_info[j].body_parts[BODY_WEAPON] ||
-				    r_info[j].body_parts[BODY_FINGER] || r_info[j].body_parts[BODY_HEAD])) continue;
+				    r_ptr->body_parts[BODY_ARMS] || r_ptr->body_parts[BODY_WEAPON] ||
+				    r_ptr->body_parts[BODY_FINGER] || r_ptr->body_parts[BODY_HEAD])) continue;
 			}
 
 			/* Ok we found */
@@ -1587,6 +1590,8 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 
 		if (spell == 32767) j = p_ptr->body_monster_prev; /* hack: 32767 marks 'poly into previous' */
 		else j = spell - 20000;
+
+		r_ptr = &r_info[j];
 
 		if (p_ptr->pclass == CLASS_DRUID) { /* SPecial ^^ */
 			if (mimic_druid(j, p_ptr->lev) || (j == 0)) {
@@ -1619,11 +1624,14 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				msg_print(Ind, "You are already using that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
-			} else if (r_info[j].flags1 & RF1_UNIQUE) {
+			} else if (r_ptr->flags1 & RF1_UNIQUE) {
 				msg_print(Ind, "That form is unique!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
-			} else if (r_info[j].flags8 & RF8_PSEUDO_UNIQUE) {
+			} else if ((r_ptr->flags8 & RF8_PSEUDO_UNIQUE) ||
+			    /* For free_mimic, prevent forms that are not normally accessible either: */
+			    (r_ptr->flags9 & RF9_NO_CREDIT) ||
+			    (r_ptr->flags7 & RF7_NO_DEATH)) {
 				msg_print(Ind, "That form is unlearnable!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
@@ -1635,7 +1643,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 					Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 					return;
 				} else using_free_mimic = TRUE;
-			} else if (p_ptr->r_mimicry[j] < r_info[j].level
+			} else if (p_ptr->r_mimicry[j] < r_ptr->level
 			    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
 			    && !admin) {
 				if (!p_ptr->free_mimic) {
@@ -1645,13 +1653,12 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				} else using_free_mimic = TRUE;
 			}
 
-			if (strlen(r_info[j].name + r_name) <= 1) {	/* <- ??? */
+			if (strlen(r_ptr->name + r_name) <= 1) {	/* <- ??? */
 				msg_print(Ind, "You cannot use that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
 			}
-			//if (!r_info[j].level && !mon_allowed(&r_info[j])){	/* <- ? */
-			else if (!mon_allowed_chance(&r_info[j])) {	/* ! - C. Blue */
+			else if (!mon_allowed_chance(&r_info[j])) {
 				msg_print(Ind, "You cannot use that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
@@ -1659,7 +1666,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				msg_print(Ind, "You cannot use that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
-			} else if (r_info[j].level > skill_mimic) {
+			} else if (r_ptr->level > skill_mimic) {
 				msg_print(Ind, "You are not powerful enough to change into that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
@@ -1669,11 +1676,11 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			if (j && using_free_mimic) {
 				p_ptr->free_mimic--;
 				/* ..and actually learn the form, in case we get polymorphed so it isn't lost: */
-				p_ptr->r_mimicry[j] = r_info[j].level;
+				p_ptr->r_mimicry[j] = r_ptr->level;
 			}
 
 			/* Activation tax */
-			else if (j && p_ptr->r_mimicry[j] < r_info[j].level
+			else if (j && p_ptr->r_mimicry[j] < r_ptr->level
 			    && p_ptr->tim_mimic_what == j && p_ptr->tim_mimic > 10)
 				p_ptr->tim_mimic -= 10;
 
