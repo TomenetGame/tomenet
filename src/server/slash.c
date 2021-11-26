@@ -2382,8 +2382,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				/* Limit */
-				message2[j + MAX_CHARS_WIDE - 1] = '\0';
-				message2_u[j + MAX_CHARS_WIDE - 1] = '\0';
+				message2[j + MSG_LEN - 1] = '\0';
+				message2_u[j + MSG_LEN - 1] = '\0';
 
 				if (i < MAX_PARTYNOTES) {
 					/* change existing party note to new text */
@@ -2481,7 +2481,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				if (i < MAX_GUILDNOTES) {
 					/* change existing guild note to new text */
-					message2[j + MAX_CHARS_WIDE - 1] = '\0'; /* Limit */
+					message2[j + MSG_LEN - 1] = '\0'; /* Limit */
 					strcpy(guild_note[i], &message2[j]);
 					strcpy(guild_note_u[i], &message2_u[j]);
 					//msg_print(Ind, "\377yNote has been stored.");
@@ -2719,7 +2719,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 			/* limit */
-			message2[j + MAX_CHARS_WIDE - 1] = '\0';
+			message2[j + MSG_LEN - 1] = '\0';
 
 			/* Check whether target is actually online by now :) */
 			if ((i = name_lookup_loose(Ind, tname, FALSE, FALSE, TRUE))

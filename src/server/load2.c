@@ -1080,17 +1080,17 @@ static errr rd_store(store_type *st_ptr) {
 static void rd_bbs() {
 	int i, j;
 	s16b saved_lines, parties, guilds;
-	char dummy[MAX_CHARS_WIDE];
+	char dummy[MSG_LEN];
 
 	rd_s16b(&saved_lines);
 
 	for (i = 0; i < saved_lines; i++)
 		if (i >= BBS_LINES) {
-			rd_string(dummy, MAX_CHARS_WIDE);
-			if (!s_older_than(4, 7, 10)) rd_string(dummy, MAX_CHARS_WIDE);
+			rd_string(dummy, MSG_LEN);
+			if (!s_older_than(4, 7, 10)) rd_string(dummy, MSG_LEN);
 		} else {
-			rd_string(bbs_line[i], MAX_CHARS_WIDE);
-			if (!s_older_than(4, 7, 10)) rd_string(bbs_line_u[i], MAX_CHARS_WIDE);
+			rd_string(bbs_line[i], MSG_LEN);
+			if (!s_older_than(4, 7, 10)) rd_string(bbs_line_u[i], MSG_LEN);
 		}
 
 	/* load pbbs & gbbs - C. Blue */
@@ -1101,16 +1101,16 @@ static void rd_bbs() {
 			if (j < MAX_PARTIES) {
 				for (i = 0; i < saved_lines; i++)
 					if (i >= BBS_LINES) {
-						rd_string(dummy, MAX_CHARS_WIDE);
-						if (!s_older_than(4, 7, 10)) rd_string(dummy, MAX_CHARS_WIDE);
+						rd_string(dummy, MSG_LEN);
+						if (!s_older_than(4, 7, 10)) rd_string(dummy, MSG_LEN);
 					} else {
-						rd_string(pbbs_line[j][i], MAX_CHARS_WIDE);
-						if (!s_older_than(4, 7, 10)) rd_string(pbbs_line_u[j][i], MAX_CHARS_WIDE);
+						rd_string(pbbs_line[j][i], MSG_LEN);
+						if (!s_older_than(4, 7, 10)) rd_string(pbbs_line_u[j][i], MSG_LEN);
 					}
 			} else {
 				for (i = 0; i < saved_lines; i++) {
-					rd_string(dummy, MAX_CHARS_WIDE);
-					if (!s_older_than(4, 7, 10)) rd_string(dummy, MAX_CHARS_WIDE);
+					rd_string(dummy, MSG_LEN);
+					if (!s_older_than(4, 7, 10)) rd_string(dummy, MSG_LEN);
 				}
 			}
 		/* read old guilds */
@@ -1119,16 +1119,16 @@ static void rd_bbs() {
 			if (j < MAX_GUILDS) {
 				for (i = 0; i < saved_lines; i++)
 					if (i >= BBS_LINES) {
-						rd_string(dummy, MAX_CHARS_WIDE);
-						if (!s_older_than(4, 7, 10)) rd_string(dummy, MAX_CHARS_WIDE);
+						rd_string(dummy, MSG_LEN);
+						if (!s_older_than(4, 7, 10)) rd_string(dummy, MSG_LEN);
 					} else {
-						rd_string(gbbs_line[j][i], MAX_CHARS_WIDE);
-						if (!s_older_than(4, 7, 10)) rd_string(gbbs_line_u[j][i], MAX_CHARS_WIDE);
+						rd_string(gbbs_line[j][i], MSG_LEN);
+						if (!s_older_than(4, 7, 10)) rd_string(gbbs_line_u[j][i], MSG_LEN);
 					}
 			} else {
 				for (i = 0; i < saved_lines; i++) {
-					rd_string(dummy, MAX_CHARS_WIDE);
-					if (!s_older_than(4, 7, 10)) rd_string(dummy, MAX_CHARS_WIDE);
+					rd_string(dummy, MSG_LEN);
+					if (!s_older_than(4, 7, 10)) rd_string(dummy, MSG_LEN);
 				}
 			}
 	}
@@ -1137,19 +1137,19 @@ static void rd_bbs() {
 static void rd_notes() {
 	int i;
 	s16b j;
-	char dummy[MAX_CHARS_WIDE];
+	char dummy[MSG_LEN];
 
 	rd_s16b(&j);
 	for (i = 0; i < j; i++) {
 		if (i >= MAX_NOTES) {
-			rd_string(dummy, MAX_CHARS_WIDE);
-			if (!s_older_than(4, 7, 10)) rd_string(dummy, MAX_CHARS_WIDE);
+			rd_string(dummy, MSG_LEN);
+			if (!s_older_than(4, 7, 10)) rd_string(dummy, MSG_LEN);
 			rd_string(dummy, NAME_LEN);
 			rd_string(dummy, NAME_LEN);
 			continue;
 		}
-		rd_string(priv_note[i], MAX_CHARS_WIDE);
-		if (!s_older_than(4, 7, 10)) rd_string(priv_note_u[i], MAX_CHARS_WIDE);
+		rd_string(priv_note[i], MSG_LEN);
+		if (!s_older_than(4, 7, 10)) rd_string(priv_note_u[i], MSG_LEN);
 		rd_string(priv_note_sender[i], NAME_LEN);
 		rd_string(priv_note_target[i], NAME_LEN);
 	}
@@ -1157,26 +1157,26 @@ static void rd_notes() {
 	rd_s16b(&j);
 	for (i = 0; i < j; i++) {
 		if (i >= MAX_PARTYNOTES) {
-			rd_string(dummy, MAX_CHARS_WIDE);
-			if (!s_older_than(4, 7, 10)) rd_string(dummy, MAX_CHARS_WIDE);
+			rd_string(dummy, MSG_LEN);
+			if (!s_older_than(4, 7, 10)) rd_string(dummy, MSG_LEN);
 			rd_string(dummy, NAME_LEN);
 			continue;
 		}
-		rd_string(party_note[i], MAX_CHARS_WIDE);
-		if (!s_older_than(4, 7, 10)) rd_string(party_note_u[i], MAX_CHARS_WIDE);
+		rd_string(party_note[i], MSG_LEN);
+		if (!s_older_than(4, 7, 10)) rd_string(party_note_u[i], MSG_LEN);
 		rd_string(party_note_target[i], NAME_LEN);
 	}
 
 	rd_s16b(&j);
 	for (i = 0; i < j; i++) {
 		if (i >= MAX_GUILDNOTES) {
-			rd_string(dummy, MAX_CHARS_WIDE);
-			if (!s_older_than(4, 7, 10)) rd_string(dummy, MAX_CHARS_WIDE);
+			rd_string(dummy, MSG_LEN);
+			if (!s_older_than(4, 7, 10)) rd_string(dummy, MSG_LEN);
 			rd_string(dummy, NAME_LEN);
 			continue;
 		}
-		rd_string(guild_note[i], MAX_CHARS_WIDE);
-		if (!s_older_than(4, 7, 10)) rd_string(guild_note_u[i], MAX_CHARS_WIDE);
+		rd_string(guild_note[i], MSG_LEN);
+		if (!s_older_than(4, 7, 10)) rd_string(guild_note_u[i], MSG_LEN);
 		rd_string(guild_note_target[i], NAME_LEN);
 	}
 	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
