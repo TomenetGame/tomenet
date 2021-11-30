@@ -8596,7 +8596,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 		/* add the arena */
 		//keep objects that may be on the floor...... but get rid of monsters
-		process_dungeon_file("t_arena_mirror.txt", wpos, &y1, &x1, 22, 66, TRUE);
+		i = process_dungeon_file("t_arena_mirror.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		if (p_ptr->temp_misc_1 & 0x80) {
 			int startx, starty;
 
@@ -8605,7 +8605,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			starty = level_down_y(wpos);
 
 			y1 = 0; x1 = 53;
-			process_dungeon_file("t_way.txt", wpos, &y1, &x1, 22, 66, TRUE);
+			i = process_dungeon_file("t_way.txt", wpos, &y1, &x1, 22, 66, TRUE);
 			zcave[2][65].feat = 29; zcave[2][65].info = 7;
 			zcave[11][33].feat = 235; zcave[11][33].info = 7;
 			x = 33; y = 11;
@@ -8615,8 +8615,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 			new_level_down_x(wpos, startx);
 			new_level_down_y(wpos, starty);
-			s_printf("DF-way (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
-		} else s_printf("DF-mirror (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
+			s_printf("DF-way (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
+		} else s_printf("DF-mirror (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
 		//wipe_m_list(&p_ptr->wpos);
 
 		/* reattach objects and monsters */
@@ -8655,14 +8655,14 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* add the party */
 		if (wpos->wz == 1 || wpos->wz == -1) {
 			//keep objects that may be on the floor...... but get rid of monsters
-			process_dungeon_file("t_party.txt", wpos, &y1, &x1, 22, 66, TRUE);
+			i = process_dungeon_file("t_party.txt", wpos, &y1, &x1, 22, 66, TRUE);
 			//wipe_m_list(&p_ptr->wpos);
 			zcave[0][32].feat = 79; zcave[0][32].info = 7;
 			zcave[0][33].feat = 79; zcave[0][33].info = 7;
 			zcave[0][34].feat = 79; zcave[0][34].info = 7;
 			zcave[15][65].feat = 79; zcave[15][65].info = 7;
 			zcave[16][65].feat = 79; zcave[16][65].info = 7;
-			s_printf("DF-party (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
+			s_printf("DF-party (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
 		} else process_dungeon_file("t_balcony.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		level_generation_time = FALSE;
 	}
@@ -8686,9 +8686,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 
 		if (!(zcave = getcave(wpos))) return;
 		level_generation_time = TRUE;
-		process_dungeon_file("t_ruins.txt", wpos, &y1, &x1, 22, 66, TRUE);
+		i = process_dungeon_file("t_ruins.txt", wpos, &y1, &x1, 22, 66, TRUE);
 		level_generation_time = FALSE;
-		s_printf("DF-ruins (%s(%s)L%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev);
+		s_printf("DF-ruins (%s(%s)L%d:%d)\n", p_ptr->name, p_ptr->accountname, p_ptr->lev, i);
 
 		if (watch_df) for (i = 1; i <= NumPlayers; i++) {
 			if (Players[i]->conn == NOT_CONNECTED) continue;
