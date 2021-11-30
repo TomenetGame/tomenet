@@ -2346,7 +2346,12 @@ void process_ambient_sfx(void) {
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Only on world surface atm */
 		if (p_ptr->wpos.wz) continue;
+		/* for Dungeon Keeper event, considered indoors */
+		//if (l_ptr && (l_ptr->flags2 & LF2_INDOORS)) continue;
+		if (in_sector00(&p_ptr->wpos) && (sector00flags2 & LF2_INDOORS)) continue;
 
 		w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
 		if (w_ptr->ambient_sfx_counteddown) continue;
