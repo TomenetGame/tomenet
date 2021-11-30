@@ -8046,9 +8046,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				//process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, 20+1, 32+34, TRUE);
-				process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
+				i = process_dungeon_file(format("t_%s.txt", message3), &p_ptr->wpos, &ystart, &xstart, MAX_HGT, MAX_WID, TRUE);
 				wpos_apply_season_daytime(&p_ptr->wpos, getcave(&p_ptr->wpos));
-				msg_print(Ind, "done.");
+				msg_format(Ind, "done (%d).", i);
 				return;
 			}
 			else if (prefix(messagelc, "/lqm")) { //load quest map
