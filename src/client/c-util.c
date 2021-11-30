@@ -1712,7 +1712,7 @@ c_msg_format("%c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c - %c/%c/%c/%c",
 
 	/* Catch chat messages (the usual case) because the player's name might have sort of "url form" :-p
 	   Problem: /me messages don't have a closing ']' after the name, so we use a hack by marking the end of the name with a '{-' neutral colour code,
-	   however, this hack is currently disablde as it's a bit annoying that we cannot separate forged messages from real '/me' messages anyway.
+	   however, this hack is currently disabled as it's a bit annoying that we cannot separate forged messages from real '/me' messages anyway.
 	   So let's just go with "extract_url() doesn't work for /me messages" for now.. -_- */
 	if (end_of_name) be = buf_esc + end_of_name; // <- ^ disabled atm
 	else {
@@ -1805,6 +1805,10 @@ void copy_to_clipboard(char *buf) {
 			if (pos != 0 && pos <= NAME_LEN) {
 				if (*(c + 1) == ':') c++;
 			}
+			/* Catch URLs pasted with double :: too */
+			else if (pos != 0) {
+				if (*(c + 1) == ':') c++;
+			}
 			break;
 		case '{':
 			switch (*(c + 1)) {
@@ -1879,6 +1883,10 @@ void copy_to_clipboard(char *buf) {
 			break;
 		case ':':
 			if (pos != 0 && pos <= NAME_LEN) {
+				if (*(c + 1) == ':') c++;
+			}
+			/* Catch URLs pasted with double :: too */
+			else if (pos != 0) {
 				if (*(c + 1) == ':') c++;
 			}
 			break;
