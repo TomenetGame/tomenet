@@ -4156,10 +4156,10 @@ static void monster_lore(void) {
 		for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
 
 		if (show_lore) {
-			monster_lore_aux(selected, selected_list, paste_lines);
+			monster_lore_aux(selected, selected_list, paste_lines, FALSE);
 			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for stats, c/C to chat-paste --");
 		} else {
-			monster_stats_aux(selected, selected_list, paste_lines);
+			monster_stats_aux(selected, selected_list, paste_lines, FALSE);
 			Term_putstr(5,  23, -1, TERM_WHITE, "-- press ESC/Backspace to exit, SPACE for lore, c/C to chat-paste --");
 		}
 		/* hack: hide cursor */
@@ -4209,20 +4209,32 @@ static void monster_lore(void) {
 				break;
 			}
 			if (c == 'c') {
-				/* paste currently displayed monster information into chat:
-				   scan line #5 for title, lines 7..22 for info. */
-				for (i = 0; i < 18; i++) {
-					if (!paste_lines[i][0]) break;
-					//if (i == 6 || i == 12) usleep(10000000);
-					if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
-						paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
-					Send_paste_msg(paste_lines[i]);
+				/* paste currently displayed monster information into chat */
+				if (show_lore) {
+					for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+					monster_lore_aux(selected, selected_list, paste_lines, TRUE);
+					for (i = 0; i < 18; i++) {
+						if (!paste_lines[i][0]) break;
+						if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
+							paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
+						Send_paste_msg(paste_lines[i]);
+					}
+				} else {
+					for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
+					monster_stats_aux(selected, selected_list, paste_lines, TRUE);
+					for (i = 0; i < 18; i++) {
+						if (!paste_lines[i][0]) break;
+						if (paste_lines[i][strlen(paste_lines[i]) - 1] == ' ')
+							paste_lines[i][strlen(paste_lines[i]) - 1] = '\0';
+						Send_paste_msg(paste_lines[i]);
+					}
 				}
+				break;
 			}
 			if (c == 'C') {
 				/* paste lore AND stats into chat */
 				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
-				monster_lore_aux(selected, selected_list, paste_lines);
+				monster_lore_aux(selected, selected_list, paste_lines, TRUE);
 				for (i = 0; i < 18; i++) {
 					if (!paste_lines[i][0]) break;
 					//if (i == 6 || i == 12) usleep(10000000);
@@ -4232,7 +4244,7 @@ static void monster_lore(void) {
 				}
 				/* don't double-post the title: skip paste line 0 */
 				for (i = 0; i < 18; i++) paste_lines[i][0] = '\0';
-				monster_stats_aux(selected, selected_list, paste_lines);
+				monster_stats_aux(selected, selected_list, paste_lines, TRUE);
 				for (i = 1; i < 18; i++) {
 					if (!paste_lines[i][0]) break;
 					//if (i == 6 || i == 12) usleep(10000000);
