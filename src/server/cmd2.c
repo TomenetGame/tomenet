@@ -3520,7 +3520,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 			}
 
 			/* Finally, quake maybe! */
-			if (impact && magik(QUAKE_CHANCE)) {
+			if (impact && magik(QUAKE_CHANCE) && !quiet_borer) {
 				//sound(Ind, NULL, NULL, SFX_TYPE_STOP, TRUE); /* Stop "hit_floor"/"tunnel_rock" sfx */
 				earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 7);
 			}
@@ -4459,7 +4459,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 		else if (magik(impact_power)) impact = TRUE;
 
 		/* Finally, quake maybe! */
-		if (impact && magik(QUAKE_CHANCE)) {
+		if (impact && magik(QUAKE_CHANCE) && !quiet_borer) {
 			earthquake(&p_ptr->wpos, p_ptr->py, p_ptr->px, 7);
 			more = FALSE;
 		}
