@@ -87,7 +87,7 @@ I:13:0:r:0
 
 N:14:Research item
 C:3000:2500:2000
-I:1:0:a:2
+I:1:0:a:10
 
 N:15:Town history
 C:0:0:0
@@ -218,12 +218,12 @@ I:42:0:v:0
 #for The Mirror
 N:44:Research item
 C:3500:3500:3500
-I:1:0:a:2
+I:1:0:a:10
 
 #for library in gondol
 N:45:Research item
 C:5000:5000:5000
-I:1:0:a:2
+I:1:0:a:10
 
 #for Star-Dome
 N:46:Identify possessions
