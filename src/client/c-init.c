@@ -529,7 +529,7 @@ static void init_monster_list() {
 
 	my_fclose(fff);
 }
-void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
+void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool to_chat) {
 	char buf[1024], *p1, *p2;
 	FILE *fff;
 	int l = 0, pl = -1, cl = strlen(cname);
@@ -572,12 +572,23 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, L%d, %d) ", /* need 1 space at the end to overwrite 'search result' */
-			monster_list_name[rlidx],
-			monster_list_symbol[rlidx][0],
-			monster_list_symbol[rlidx][1],
-			monster_list_level[rlidx],
-			ridx));
+		if (Client_setup.r_char[monster_list_code[rlidx]] && (to_chat == FALSE)) {
+			strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y/\377%c%c\377y, L%d, %d) ", /* need 1 space at the end to overwrite 'search result' */
+				 monster_list_name[rlidx],
+				 monster_list_symbol[rlidx][0],
+				 monster_list_symbol[rlidx][1],
+				 monster_list_symbol[rlidx][0],
+				 Client_setup.r_char[monster_list_code[rlidx]],
+				 monster_list_level[rlidx],
+				 ridx));
+		} else {
+			strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, L%d, %d) ", /* need 1 space at the end to overwrite 'search result' */
+				 monster_list_name[rlidx],
+				 monster_list_symbol[rlidx][0],
+				 monster_list_symbol[rlidx][1],
+				 monster_list_level[rlidx],
+				 ridx));
+		}
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 
 		/* fetch diz */
@@ -870,7 +881,7 @@ static void mon_highlight_flags(char *info) {
 		f++;
 	}
 }
-void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
+void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool to_chat) {
 	char buf[1024], *p1, *p2, info[MSG_LEN], info_tmp[MSG_LEN];
 	FILE *fff;
 	int l = 0, info_val, pl = -1, drops = 0;
@@ -922,12 +933,23 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN]) {
 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
-		strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, L%d, %d) ", /* need 1 space at the end to overwrite 'search result' */
-			monster_list_name[rlidx],
-			monster_list_symbol[rlidx][0],
-			monster_list_symbol[rlidx][1],
-			monster_list_level[rlidx],
-			ridx));
+		if (Client_setup.r_char[monster_list_code[rlidx]] && (to_chat == FALSE)) {
+			strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y/\377%c%c\377y, L%d, %d) ", /* need 1 space at the end to overwrite 'search result' */
+				 monster_list_name[rlidx],
+				 monster_list_symbol[rlidx][0],
+				 monster_list_symbol[rlidx][1],
+				 monster_list_symbol[rlidx][0],
+				 Client_setup.r_char[monster_list_code[rlidx]],
+				 monster_list_level[rlidx],
+				 ridx));
+		} else {
+			strcpy(paste_lines[++pl], format("\377y%s (\377%c%c\377y, L%d, %d) ", /* need 1 space at the end to overwrite 'search result' */
+				 monster_list_name[rlidx],
+				 monster_list_symbol[rlidx][0],
+				 monster_list_symbol[rlidx][1],
+				 monster_list_level[rlidx],
+				 ridx));
+		}
 		Term_putstr(5, 5, -1, TERM_YELLOW, paste_lines[pl] + 2); /* no need for \377y */
 
 		/* specialty: tentacles count as finger-limbs (for rings) + hand-limbs (for weapon-wielding) + arm-limbs (shields)
