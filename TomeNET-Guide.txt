@@ -13590,13 +13590,15 @@ Constitution (CON)
     -Increases your stamina regeneration rate.
     -Reduces drowning (also for aquatic forms outside of water) effects.
 Charisma (CHR)
-    -Do you get good prices in shops? :)
-     Note that shop prices also depend on racial preferences of the
-     shopkeepers vs their customers. It is said, that Half-Trolls have an
-     especially hard time.
-     While prices of items are affected by charisma, fees for shop
-     services are not.
-    -Also affects house prices.
+    -Helps getting good prices in shops for both buying and selling.
+     Shop prices also depend on racial preferences of the shopkeepers vs their
+     customers. It is said, that Half-Trolls have an especially hard time.
+     Shop prices have certain limits though that you might hit when your race
+     is already liked by the shop keeper, where even more CHR won't further
+     improve your bargains.
+     Certain shops also provide services for a fee. Unlike item prices, these
+     fees are not affected by charisma.
+    -Also affects house prices, buying and selling.
     -Allows you to resist getting seduced.
     -Affects mindcrafters' mana pool somewhat.
 

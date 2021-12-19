@@ -1426,7 +1426,7 @@ static bool choose_stat_order(void) {
 					c_put_str(TERM_YELLOW, "   Helps your character not to drown too easily.", DIZ_ROW + 8, 30);
 					break;
 				case 5:	c_put_str(TERM_L_UMBER,"   - Charisma -    ", DIZ_ROW, 30);
-					c_put_str(TERM_YELLOW, "   Shops will offer you wares at better prices. ", DIZ_ROW + 1, 30);
+					c_put_str(TERM_YELLOW, "   Shops will buy and sell at better prices.    ", DIZ_ROW + 1, 30);
 					c_put_str(TERM_YELLOW, "    (Note that shop keepers are also influenced ", DIZ_ROW + 2, 30);
 					c_put_str(TERM_YELLOW, "    by your character's race.)                  ", DIZ_ROW + 3, 30);
 					c_put_str(TERM_YELLOW, "   Also affects house prices.                   ", DIZ_ROW + 4, 30);
