@@ -3413,7 +3413,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	/* No tunnelling through empty air, but allow 'tunneling' the floor we're standing on to cause quakes */
 	if ((cave_floor_bold(zcave, y, x)) || (cfeat == FEAT_PERM_CLEAR)) {
 		/* Hack: Allow causing earthquakes with appropriate weapons (!) or diggers or p_ptr->impact (unavailable atm) by hitting the empty floor */
-		if (dir == 5 && cfeat != FEAT_PERM_CLEAR && !quiet_borer) {
+		if (dir == 5 && cfeat != FEAT_PERM_CLEAR) {
 			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
 				msg_print(Ind, "The floor around the town area seems very solid.");
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
@@ -4443,19 +4443,24 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 
 	/* Apply Earthquakes */
 	if (!no_quake) { /* don't quake from digging rather soft stuff */
-		/* As we are digging and not just hitting the ground, pick our digging tool over our weapon.
-		   As for weapons used as digging tools - these do not concern feats that are hard enough to cause quakes (but only fibre/wood/webs etc). */
-		if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
-			if (magik(impact_power_tool)) impact = TRUE;
-		}
+		if (!quiet_borer) {
+			/* As we are digging and not just hitting the ground, pick our digging tool over our weapon.
+			   As for weapons used as digging tools - these do not concern feats that are hard enough to cause quakes (but only fibre/wood/webs etc). */
+			if (o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
+				if (magik(impact_power_tool)) impact = TRUE;
+			}
 #if 0 /* no, weapons only really help with fiber and wood, which are 'soft' aka no_quake. This gets too crazy. */
-		/* We are digging with a weapon? */
-		else if (o2_ptr->k_idx || (o3_ptr->k_idx && is_weapon(o3_ptr->tval))) {
-			if (impact_power_weapon2 > impact_power_weapon) impact_power_weapon = impact_power_weapon2;
-			if (magik(impact_power_weapon)) impact = TRUE;
-		}
+			/* We are digging with a weapon? */
+			else if (o2_ptr->k_idx || (o3_ptr->k_idx && is_weapon(o3_ptr->tval))) {
+				if (impact_power_weapon2 > impact_power_weapon) impact_power_weapon = impact_power_weapon2;
+				if (magik(impact_power_weapon)) impact = TRUE;
+			}
 #endif
-		/* Bare-handed o_o */
+			/* Bare-handed o_o */
+			else if (magik(impact_power)) impact = TRUE;
+		}
+		/* Bare-handed o_o - will even trigger as KILL_WALL form as this impact is
+		   intrinsic/automatically utilized as it is not from weapon nor digging tool. */
 		else if (magik(impact_power)) impact = TRUE;
 
 		/* Finally, quake maybe! */
