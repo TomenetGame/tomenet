@@ -796,6 +796,14 @@ static char *t_crypt(char *inbuf, const char *salt) {
   #endif
 		strcpy(out, (char*)crypt(inbuf, fixed_name));
 	} else
+  #if 1 /* 2021-12-22 - suddenly crypt() returns a null pointer if 3rd character is a space, wth */
+	if (TRUE) {
+		char fixed_name[ACCNAME_LEN];
+
+		strcpy(fixed_name, salt);
+		fixed_name[2] = 0; //just terminate, as we only use 2 chars for salt anyway (!)
+	} else
+  #endif
  #endif
 	strcpy(out, (char*)crypt(inbuf, salt));
 	return(out);
