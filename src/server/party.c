@@ -993,14 +993,36 @@ static char *t_crypt(char *inbuf, cptr salt) {
 		strcpy(out, (char*)crypt(inbuf, setting));
 	} else
  #endif
+ #if 0 /* 2021-12-22 - suddenly crypt() returns a null pointer if 3rd character is a space, wth */
+	if (FALSE) {
+		char fixed_name[ACCNAME_LEN];
+		int n;
+
+		strcpy(fixed_name, salt);
+		for (n = 0; n < strlen(fixed_name); n++) {
+			if (!fixed_name[n]) break;
+			if (!((fixed_name[n] >= 'A' && fixed_name[n] <= 'Z') ||
+			    (fixed_name[n] >= 'a' && fixed_name[n] <= 'z') ||
+			    (fixed_name[n] >= '0' && fixed_name[n] <= '9')
+			    //||fixed_name[n] == '.'))
+			    ))
+				fixed_name[n] = 'x';
+		}
+		strcpy(out, (char*)crypt(inbuf, fixed_name));
+	} else
+ #endif
  #if 1 /* SPACE _ ! - ' , and probably more as _2nd character_ cause crypt() to return a null pointer ('.' is ok) */
 	if (!((salt[1] >= 'A' && salt[1] <= 'Z') ||
 	    (salt[1] >= 'a' && salt[1] <= 'z') ||
 	    (salt[1] >= '0' && salt[1] <= '9') ||
 	    salt[1] == '.')) {
 		char fixed_name[ACCNAME_LEN];
+
 		strcpy(fixed_name, salt);
 		fixed_name[1] = '.';
+  #if 1 /* 2021-12-22 - suddenly crypt() returns a null pointer if 3rd character is a space, wth */
+		fixed_name[2] = 0; //just terminate, as we only use 2 chars for salt anyway (!)
+  #endif
 		strcpy(out, (char*)crypt(inbuf, fixed_name));
 	} else
  #endif
