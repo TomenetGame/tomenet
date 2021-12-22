@@ -4750,12 +4750,12 @@ int handle_ml_censor(int Ind, char *line) {
 
 //s_printf("ML_CENSOR called.\n");
 	/* Attempt single-line censor first and quit if that already succeeds */
-	l = handle_censor(line);
-	if (l) {
+	cl = handle_censor(line);
+	if (cl) {
 		/* We have to clear the buffer after a successful detection */
 		for (l = 0; l < NAME_LEN; l++) p_ptr->prev_chat_line[l][0] = 0;
 
-		return l;
+		return cl;
 	}
 
 //s_printf("ML_CENSOR processing..\n");
@@ -4776,8 +4776,8 @@ int handle_ml_censor(int Ind, char *line) {
 //s_printf("ML_CENSOR: %s\n", multiline);
 
 	/* Check if we pass just fine */
-	l = handle_censor(multiline);
-	if (!l) return 0;
+	cl = handle_censor(multiline);
+	if (!cl) return 0;
 
 	/* Problem: the already written lines cannot be retracted/censored anymore.
 	   So as "alleviation" we simply increase the punishment :D.
@@ -4786,7 +4786,7 @@ int handle_ml_censor(int Ind, char *line) {
 	/* We have to clear the buffer after a successful detection */
 	for (l = 0; l < NAME_LEN; l++) p_ptr->prev_chat_line[l][0] = 0;
 
-	return (l + 1);
+	return (cl + 1);
 }
  #endif
 
