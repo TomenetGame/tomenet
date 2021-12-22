@@ -2007,6 +2007,7 @@ extern cptr timediff(struct timeval *begin, struct timeval *end);
 extern void strip_control_codes(char *ss, char *s);
 extern cptr flags_str(u32b flags);
 extern int handle_censor(char *message);
+extern int handle_ml_censor(int Ind, char *message);
 extern void handle_punish(int Ind, int level);
 extern char *get_dun_name(int x, int y, bool tower, dungeon_type *d_ptr, int type, bool extra);
 extern bool gain_au(int Ind, u32b amt, bool quiet, bool exempt);

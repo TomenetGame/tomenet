@@ -3544,6 +3544,8 @@ struct player_type {
 	s16b steamblast_x, steamblast_y, steamblast_timer;
 
 	bool destroyed_floor_item;
+
+	char prev_chat_line[NAME_LEN][MSG_LEN]; //ENABLE_MULTILINE_CENSOR
 };
 
 typedef struct boni_col boni_col;

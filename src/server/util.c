@@ -20,6 +20,9 @@ static void console_talk_aux(char *message);
 /* Ignore roman number suffix when checking for similar names? */
 #define SIMILAR_ROMAN
 
+/* Attempt to concatenate multiple chat lines to spot broken-up swear words? */
+#define ENABLE_MULTILINE_CENSOR
+
 
 #ifndef HAS_MEMSET
 
@@ -4739,6 +4742,54 @@ int handle_censor(char *line) {
 	return i;
 }
 
+ #ifdef ENABLE_MULTILINE_CENSOR
+int handle_ml_censor(int Ind, char *line) {
+	int l, cl, effl = MSG_LEN / NAME_LEN - 1; // - 1: accomodate for spacers
+	char multiline[MSG_LEN];
+	player_type *p_ptr = Players[Ind];
+
+//s_printf("ML_CENSOR called.\n");
+	/* Attempt single-line censor first and quit if that already succeeds */
+	l = handle_censor(line);
+	if (l) {
+		/* We have to clear the buffer after a successful detection */
+		for (l = 0; l < NAME_LEN; l++) p_ptr->prev_chat_line[l][0] = 0;
+
+		return l;
+	}
+
+//s_printf("ML_CENSOR processing..\n");
+	/* Add chat line to array.. */
+	for (l = 0; l < NAME_LEN - 1; l++)
+		strcpy(p_ptr->prev_chat_line[l], p_ptr->prev_chat_line[l + 1]);
+	strcpy(p_ptr->prev_chat_line[NAME_LEN - 1], line);
+
+	/* Construct relevant line to check, from the ending parts of chat input lines */
+	multiline[0] = 0;
+	for (l = 0; l < NAME_LEN; l++) {
+		cl = strlen(p_ptr->prev_chat_line[l]);
+		if (cl < effl) strcat(multiline, p_ptr->prev_chat_line[l]);
+		else strcat(multiline, &p_ptr->prev_chat_line[l][cl - effl]);
+		/* add spacer. This is done because otherwise eg "hi" + "a" + "s" + "s" would just pass as it is "one word" */
+		strcat(multiline, " ");
+	}
+//s_printf("ML_CENSOR: %s\n", multiline);
+
+	/* Check if we pass just fine */
+	l = handle_censor(multiline);
+	if (!l) return 0;
+
+	/* Problem: the already written lines cannot be retracted/censored anymore.
+	   So as "alleviation" we simply increase the punishment :D.
+	   Plus, we can at least censor the final line */
+	strcpy(line, " ***"); //whatever, just start on a space in case this was a slash command, to ensure it still is processed as one, as intended.
+	/* We have to clear the buffer after a successful detection */
+	for (l = 0; l < NAME_LEN; l++) p_ptr->prev_chat_line[l][0] = 0;
+
+	return (l + 1);
+}
+ #endif
+
 /* Handle punishment after running handle_censor() to determine the severity of a swearing word =p */
 void handle_punish(int Ind, int level) {
 	switch (level) {
@@ -5143,6 +5194,8 @@ static void player_talk_aux(int Ind, char *message) {
 	if (//is_public &&
 	    (!slash_command || slash_command_msg || slash_command_censorable)) {
 		char *c = strchr(message, ' ');
+
+#ifndef ENABLE_MULTILINE_CENSOR
 		/* Apply censorship and its penalty and keep uncensored version for those who wish to get uncensored information */
 		/* Censor and get level of punishment. (Note: This if/else isn't really needed, we could just censor the complete message always..) */
 		if (!slash_command) censor_punish = handle_censor(message); /* For chat, censor the complete message. */
@@ -5151,6 +5204,10 @@ static void player_talk_aux(int Ind, char *message) {
 		/* The actual handle_punish() will be called right before returning from this function, so it appears _after_
 		   the censored (or uncensored, depending on the receiving player's setting) output has been displayed,
 		   not now, as that would be the wrong visual order. */
+#else
+		if (!slash_command) censor_punish = handle_ml_censor(Ind, message); /* For chat, censor the complete message. */
+		else censor_punish = handle_ml_censor(Ind, rp_me ? message + 4 : (c ? c : message));
+#endif
 	}
 
 	if (slash_command) {
