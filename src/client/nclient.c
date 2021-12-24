@@ -3579,7 +3579,9 @@ int Receive_store_info(void) {
 	byte store_attr = TERM_SLATE;
 	char store_char = '?';
 
-	if (is_newer_than(&server_version, 4, 4, 4, 0, 0, 0)) {
+	if (is_newer_than(&server_version, 4, 7, 4, 2, 0, 0)) {
+		if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d%c%c%c", &ch, &store_num, store_name, owner_name, &num_items, &max_cost, &store_attr, &store_char, &store_price_mul)) <= 0) return n;
+	} else if (is_newer_than(&server_version, 4, 4, 4, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d%c%c", &ch, &store_num, store_name, owner_name, &num_items, &max_cost, &store_attr, &store_char)) <= 0) return n;
 	} else {
 		if ((n = Packet_scanf(&rbuf, "%c%hd%s%s%hd%d", &ch, &store_num, store_name, owner_name, &num_items, &max_cost)) <= 0) return n;

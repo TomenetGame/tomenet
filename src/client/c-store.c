@@ -337,8 +337,10 @@ void store_paste_where(char *where) {
 	    color_attr_to_char(c_store.store_attr),
 	    c_store.store_char);
 }
+/* price, 2x colour code, " Au": */
+#define PRICE_LEN (16 + 4 + 3)
 void store_paste_item(char *out_val, int item) {
-	char	price[16];
+	char price[PRICE_LEN];
 
 	/* Get shop price if any */
 	/* Home doesn't price items */
@@ -350,16 +352,30 @@ void store_paste_item(char *out_val, int item) {
 		else sprintf(out_val, " %s", store_names[item]);
 	/* Normal [player-]store */
 	} else {
+		char price_col[3], price_col2[3];
+
+		/* Indicate blacklist pricing (40x) */
+		if (store_price_mul > 10) {  //we're blacklisted
+			strcpy(price_col, "\377r");
+			strcpy(price_col2, "\377s");
+		} else if (store_price_mul < 10) { //doesn't exist actually
+			strcpy(price_col, "\377g");
+			strcpy(price_col2, "\377s");
+		} else { //normal price
+			price_col[0] = 0;
+			price_col2[0] = 0;
+		}
+
 		/* Convert the price to more readable format */
 		if (store_prices[item] >= 10000000)
-			snprintf(price, 16, "%dM", store_prices[item] / 1000000);
+			snprintf(price, PRICE_LEN, "%s%dM Au%s", price_col, store_prices[item] / 1000000, price_col2);
 		else if (store_prices[item] >= 10000)
-			snprintf(price, 16, "%dk", store_prices[item] / 1000);
+			snprintf(price, PRICE_LEN, "%s%dk Au%s", price_col, store_prices[item] / 1000, price_col2);
 		else
-			snprintf(price, 16, "%d", store_prices[item]);
+			snprintf(price, PRICE_LEN, "%s%d Au%s", price_col, store_prices[item], price_col2);
 
-		if (store_powers[item][0]) sprintf(out_val, "%s (%s Au) (%s)", store_names[item], price, store_powers[item]);
-		else sprintf(out_val, "%s (%s Au)", store_names[item], price);
+		if (store_powers[item][0]) sprintf(out_val, "%s (%s) (%s)", store_names[item], price, store_powers[item]);
+		else sprintf(out_val, "%s (%s)", store_names[item], price);
 	}
 }
 

@@ -150,6 +150,7 @@ extern int subinventory_inscription_len[MAX_SUBINVEN][INVEN_TOTAL];
 
 extern store_type store;
 extern c_store_extra c_store;
+extern unsigned char store_price_mul;
 extern int store_prices[STORE_INVEN_MAX];
 extern char store_names[STORE_INVEN_MAX][ONAME_LEN];
 extern char store_powers[STORE_INVEN_MAX][MAX_CHARS];

@@ -43,6 +43,7 @@ int subinventory_inscription_len[MAX_SUBINVEN][INVEN_TOTAL];
 
 store_type store;			/* The general info about the current store */
 c_store_extra c_store;	/* Extra info about the current store */
+unsigned char store_price_mul;
 int store_prices[STORE_INVEN_MAX];			/* The prices of the items in the store */
 char store_names[STORE_INVEN_MAX][ONAME_LEN];		/* The names of the stuff in the store */
 char store_powers[STORE_INVEN_MAX][MAX_CHARS];		/* For chat-pasting: Add '@@'-info so everyone knows what the store item can do. Equippables only, hidden-powers-egos only. */

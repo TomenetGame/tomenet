@@ -7459,14 +7459,16 @@ int Send_store_special_clr(int Ind, char line_start, char line_end) {
  * like 'buy' 'identify' 'heal' 'bid to an auction'		- Jir -
  */
 int Send_store_info(int Ind, int num, cptr store, cptr owner, int items, int purse, byte attr, char c) {
+	player_type *p_ptr = Players[Ind];
 	connection_t *connp = Conn[Players[Ind]->conn];
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
 	player_type *p_ptr2 = NULL; /*, *p_ptr = Players[Ind];*/
 #endif
+	int store_mul = (p_ptr->tim_blacklist && !(num == STORE_HOME || num == STORE_HOME_DUN || num < 0)) ? 40 : 10; //home and pstoes don't have blacklisting
 
 	/* don't segfault old clients which use STORE_INVEN_MAX = 48 */
-	if (is_older_than(&Players[Ind]->version, 4, 4, 9, 0, 0, 0)) {
+	if (is_older_than(&p_ptr->version, 4, 4, 9, 0, 0, 0)) {
 		if (items > 48) items = 48;
 		if ((num == STORE_HOME || num == STORE_HOME_DUN)
 		    && purse > 48) purse = 48;
@@ -7482,7 +7484,9 @@ int Send_store_info(int Ind, int num, cptr store, cptr owner, int items, int pur
 #ifdef MINDLINK_STORE
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&connp2->version, 4, 4, 4, 0, 0, 0)) {
+		if (is_newer_than(&connp2->version, 4, 7, 4, 2, 0, 0)) {
+			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d%c%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c, store_mul);
+		} else if (is_newer_than(&connp2->version, 4, 4, 4, 0, 0, 0)) {
 			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c);
 		} else {
 			Packet_printf(&connp2->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
@@ -7490,7 +7494,9 @@ int Send_store_info(int Ind, int num, cptr store, cptr owner, int items, int pur
 	}
 #endif
 
-	if (is_newer_than(&connp->version, 4, 4, 4, 0, 0, 0)) {
+	if (is_newer_than(&connp->version, 4, 7, 4, 2, 0, 0)) {
+		return Packet_printf(&connp->c, "%c%hd%s%s%hd%d%c%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c, store_mul);
+	} else if (is_newer_than(&connp->version, 4, 4, 4, 0, 0, 0)) {
 		return Packet_printf(&connp->c, "%c%hd%s%s%hd%d%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c);
 	} else {
 		return Packet_printf(&connp->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
