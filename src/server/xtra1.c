@@ -9841,13 +9841,13 @@ void handle_request_return_str(int Ind, int id, char *str) {
 #endif
 #ifdef ENABLE_MERCHANT_MAIL
 	case RID_SEND_ITEM: {
-		int i;
+		int i, plev, olev;
 		object_type *o_ptr = &p_ptr->inventory[p_ptr->mail_item];
 		char accname[ACCNAME_LEN];
 		cptr comp;
 		cptr acc;
 		u32b pid;
-		byte w;
+		byte w, pmode;
 		bool total_winner, once_winner;
 		char o_name[ONAME_LEN];
 		dungeon_type *d_ptr;
@@ -9875,6 +9875,9 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		w = lookup_player_winner(pid);
 		total_winner = (w & 0x1);
 		once_winner = (w & 0x2);
+		plev = lookup_player_level(pid);
+		pmode = lookup_player_mode(pid);
+		olev = o_ptr->level;
 
 		if (p_ptr->au < p_ptr->mail_fee && !p_ptr->mail_COD) {
 			msg_format(Ind, "\377yYou do not carry enough money to pay the fee of %d Au!", p_ptr->mail_fee);
@@ -9882,12 +9885,12 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		}
 
 		if (!admin_p(Ind)) {
-			if ((p_ptr->mode & MODE_SOLO) || (lookup_player_mode(pid) & MODE_SOLO)) {
+			if ((p_ptr->mode & MODE_SOLO) || (pmode & MODE_SOLO)) {
 				msg_print(Ind, "\377ySoloists cannot exchange goods or money with other players.");
 				return;
 			}
 
-			comp = compat_mode(p_ptr->mode, lookup_player_mode(pid));
+			comp = compat_mode(p_ptr->mode, pmode);
 			if (comp) {
 				msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
 				return;
@@ -9957,8 +9960,27 @@ void handle_request_return_str(int Ind, int id, char *str) {
 					msg_print(Ind, "\377yRoyalties may not own true artifacts.");
 					return;
 				}
-				if (cfg.anti_arts_pickup && o_ptr->level > lookup_player_level(pid)) {
-					msg_print(Ind, "\377yThe receipient must match the level of a true artifact.");
+				if (cfg.anti_arts_pickup) {
+					if (olev > plev) {
+						msg_print(Ind, "\377yThe receipient must match the level of a true artifact.");
+						return;
+					}
+					if (!olev) {
+						msg_print(Ind, "\377yA receipient may not receive a zero-level artifact.");
+						return;
+					}
+
+				}
+			}
+
+			/* Check if the player is powerful enough for that item */
+			if (cfg.anti_cheeze_pickup) {
+				if (olev > plev) {
+					msg_print(Ind, "\377yThe receipient must match the level of the item.");
+					return;
+				}
+				else if (!olev){
+					msg_print(Ind, "\377yA recipient may not receive a your zero-level item.");
 					return;
 				}
 			}
@@ -10020,6 +10042,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		return; }
 	case RID_SEND_GOLD: {
 		int i;
+		byte pmode;
 		char accname[ACCNAME_LEN];
 		cptr comp;
 		cptr acc;
@@ -10050,14 +10073,15 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			msg_format(Ind, "\377ySorry, that character does not have an account.");
 			return;
 		}
+		pmode = lookup_player_mode(pid);
 
 		if (!admin_p(Ind)) {
-			if ((p_ptr->mode & MODE_SOLO) || (lookup_player_mode(pid) & MODE_SOLO)) {
+			if ((p_ptr->mode & MODE_SOLO) || (pmode & MODE_SOLO)) {
 				msg_print(Ind, "\377ySoloists cannot exchange goods or money with other players.");
 				return;
 			}
 
-			comp = compat_mode(p_ptr->mode, lookup_player_mode(pid));
+			comp = compat_mode(p_ptr->mode, pmode);
 			if (comp) {
 				msg_format(Ind, "\377yYou cannot send anything to %s characters.", comp);
 				return;
