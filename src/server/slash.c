@@ -11302,13 +11302,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #ifdef ENABLE_MERCHANT_MAIL
 			else if (prefix(messagelc, "/mgmail")) { //debug merchants guild mail
 				int i;
+				char cd, cto;
+				char o_name_short[ONAME_LEN];
 
 				msg_print(Ind, "Currently active merchants guild mail:");
 				for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
 					if (!mail_sender[i][0]) continue;
-					if (mail_xfee[i]) msg_format(Ind, " %s->%s (%s) dur %d timeout %d%s, extra fee %d:", mail_sender[i], mail_target[i], mail_target_acc[i], mail_duration[i], mail_timeout[i], mail_COD[i] ? ", COD" : "", mail_xfee[i]);
-					else msg_format(Ind, " %s->%s (%s) dur %d timeout %d%s:", mail_sender[i], mail_target[i], mail_target_acc[i], mail_duration[i], mail_timeout[i], mail_COD[i] ? ", COD" : "");
-					msg_format(Ind, "  T%d,S%d,A%d,L%d,M%d,OID%d.", mail_forge[i].tval, mail_forge[i].sval, mail_forge[i].name1, mail_forge[i].level, mail_forge[i].mode, mail_forge[i].owner);
+
+					object_desc(0, o_name_short, &mail_forge[i], TRUE, 256);
+
+					cd = mail_duration[i] < 0 ? 'y' : (mail_duration[i] == 0 ? 'G' : 'w');
+					cto = mail_timeout[i] == -1 ? 'r' : (mail_timeout[i] == -2 ? 'o' : (mail_timeout[i] < -2 ? 'y' : 'w'));
+
+					if (mail_xfee[i]) msg_format(Ind, " %3d: %s->%s (%s) dur \377%c%d\377w, timeout \377%c%d\377w%s, extra fee %d:", i, mail_sender[i], mail_target[i], mail_target_acc[i], cd, mail_duration[i], cto, mail_timeout[i], mail_COD[i] ? ", COD" : "", mail_xfee[i]);
+					else msg_format(Ind, " %3d: %s->%s (%s) dur \377%c%d\377w timeout \377%c%d\377w%s:", i, mail_sender[i], mail_target[i], mail_target_acc[i], cd, mail_duration[i], cto, mail_timeout[i], mail_COD[i] ? ", COD" : "");
+					if (mail_forge[i].name1 == ART_RANDART) msg_format(Ind, "      \377st%d,s%d,\377URA\377s,lv%d,m%d,o%d <%s>", mail_forge[i].tval, mail_forge[i].sval, mail_forge[i].level, mail_forge[i].mode, mail_forge[i].owner, o_name_short);
+					else if (mail_forge[i].name1) msg_format(Ind, "      \377st%d,s%d,\377U%d\377s,lv%d,m%d,o%d <%s>", mail_forge[i].tval, mail_forge[i].sval, mail_forge[i].name1, mail_forge[i].level, mail_forge[i].mode, mail_forge[i].owner, o_name_short);
+					else msg_format(Ind, "      \377st%d,s%d,lv%d,m%d,o%d <%s>", mail_forge[i].tval, mail_forge[i].sval, mail_forge[i].level, mail_forge[i].mode, mail_forge[i].owner, o_name_short);
 				}
 				msg_print(Ind, "End of merchants guild mail list.");
 				return;
