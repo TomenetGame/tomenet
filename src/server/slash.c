@@ -11306,7 +11306,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "Currently active merchants guild mail:");
 				for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
 					if (!mail_sender[i][0]) continue;
-					msg_format(Ind, " %s->%s dur %d timeout %d", mail_sender[i], mail_target[i], mail_duration[i], mail_timeout[i]);
+					if (mail_xfee[i]) msg_format(Ind, " %s->%s (%s) dur %d timeout %d%s, extra fee %d:", mail_sender[i], mail_target[i], mail_target_acc[i], mail_duration[i], mail_timeout[i], mail_COD[i] ? ", COD" : "", mail_xfee[i]);
+					else msg_format(Ind, " %s->%s (%s) dur %d timeout %d%s:", mail_sender[i], mail_target[i], mail_target_acc[i], mail_duration[i], mail_timeout[i], mail_COD[i] ? ", COD" : "");
+					msg_format(Ind, "  T%d,S%d,A%d,L%d,M%d,OID%d.", mail_forge[i].tval, mail_forge[i].sval, mail_forge[i].name1, mail_forge[i].level, mail_forge[i].mode, mail_forge[i].owner);
 				}
 				msg_print(Ind, "End of merchants guild mail list.");
 				return;
