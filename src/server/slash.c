@@ -7888,6 +7888,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "done.");
 				return;
 			}
+			/* Locate or ERASE an artifact ANYWHERE in the game really */
+			else if (prefix(messagelc, "/locateart") || prefix(messagelc, "/eraseart")) {
+				bool erase = prefix(messagelc, "/eraseart");
+
+				if (tk < 1) {
+					msg_print(Ind, "Usage: /locateart <a_idx>");
+					msg_print(Ind, " -or-: /eraseart <a_idx>");
+					return;
+				}
+
+				i = atoi(token[1]);
+				if (erase_or_locate_artifact(i, erase)) msg_format(Ind, "Artifact has been successfully %s.", erase ? "erased" : "located");
+				else msg_print(Ind, "That artifact is nowhere to be found!");
+				return;
+			}
 			else if (prefix(messagelc, "/debug-store")) {
 				/* Debug store size - C. Blue */
 				store_type *st_ptr;

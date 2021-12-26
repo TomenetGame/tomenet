@@ -6765,7 +6765,7 @@ if (cfg.unikill_format) {
 		    ) {
 #ifdef RING_OF_PHASING_NO_TIMEOUT
 			/* remove current ring of phasing, so it can be dropped anew */
-			if (a_info[a_idx].cur_num) erase_artifact(a_idx);
+			if (a_info[a_idx].cur_num) erase_or_locate_artifact(a_idx, TRUE);
 #endif
 			s_printf("preparing FINAL_ARTIFACT %d", a_idx);
 			a_ptr = &a_info[a_idx];
