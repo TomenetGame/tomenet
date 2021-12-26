@@ -12305,7 +12305,7 @@ bool erase_or_locate_artifact(int a_idx, bool erase) {
 
 	/* Check merchant mail */
 	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
-		if (mail_sender[i][0]) continue;
+		if (!mail_sender[i][0]) continue;
 		if (mail_forge[i].name1 != a_idx) continue;
 
 		if (!erase) {
@@ -12587,7 +12587,7 @@ void hack_particular_item(void) {
 
 	/* Check merchant mail */
 	for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
-		if (mail_sender[i][0]) continue;
+		if (!mail_sender[i][0]) continue;
 		if (hack_particular_item_cmp(&mail_forge[i])) continue;
 
 		s_printf(" found in merchant mail of '%s'\n", mail_target[i]);
