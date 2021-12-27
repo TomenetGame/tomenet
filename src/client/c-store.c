@@ -374,6 +374,69 @@ void store_paste_item(char *out_val, int item) {
 		else
 			snprintf(price, PRICE_LEN, "%s%d Au%s", price_col, store_prices[item], price_col2);
 
+		/* Paste store_powers if available (randarts etc) or -specialty!- for books, their spells */
+		if (store.stock[item].tval == TV_BOOK) {
+			char powins[1024]; //even more than just MAX_CHARS_WIDE, let's play it safe..
+
+			powins[0] = 0;
+			if (is_custom_tome(store.stock[item].sval)) {
+				//if (redux) {
+				if (TRUE) {
+					if (store.stock[item].xtra1) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", store.stock[item].xtra1 - 1))));
+					if (store.stock[item].xtra2) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", store.stock[item].xtra2 - 1))));
+					if (store.stock[item].xtra3) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", store.stock[item].xtra3 - 1))));
+					if (store.stock[item].xtra4) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", store.stock[item].xtra4 - 1))));
+					if (store.stock[item].xtra5) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", store.stock[item].xtra5 - 1))));
+					if (store.stock[item].xtra6) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", store.stock[item].xtra6 - 1))));
+					if (store.stock[item].xtra7) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", store.stock[item].xtra7 - 1))));
+					if (store.stock[item].xtra8) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", store.stock[item].xtra8 - 1))));
+					if (store.stock[item].xtra9) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", store.stock[item].xtra9 - 1))));
+				} else {
+					if (store.stock[item].xtra1) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", store.stock[item].xtra1 - 1))));
+					if (store.stock[item].xtra2) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", store.stock[item].xtra2 - 1))));
+					if (store.stock[item].xtra3) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", store.stock[item].xtra3 - 1))));
+					if (store.stock[item].xtra4) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", store.stock[item].xtra4 - 1))));
+					if (store.stock[item].xtra5) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", store.stock[item].xtra5 - 1))));
+					if (store.stock[item].xtra6) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", store.stock[item].xtra6 - 1))));
+					if (store.stock[item].xtra7) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", store.stock[item].xtra7 - 1))));
+					if (store.stock[item].xtra8) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", store.stock[item].xtra8 - 1))));
+					if (store.stock[item].xtra9) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", store.stock[item].xtra9 - 1))));
+				}
+			} else if (store.stock[item].sval != SV_SPELLBOOK) { /* Predefined book (handbook or tome) */
+				int i, num = 0, spell;
+				char out_val[160];
+
+				/* Find amount of spells in this book */
+				sprintf(out_val, "return book_spells_num2(%d, %d)", -1, store.stock[item].sval);
+				num = exec_lua(0, out_val);
+
+				/* Iterate through them and display their [short] names */
+				for (i = 0; i < num; i++) {
+					/* Get the spell */
+					if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
+						/* no longer supported! to make s_aux.lua slimmer */
+						spell = exec_lua(0, format("return spell_x(%d, %d, %d)", store.stock[item].sval, -1, i));
+					} else {
+						spell = exec_lua(0, format("return spell_x2(%d, %d, %d, %d)", -1, store.stock[item].sval, -1, i));
+					}
+
+					/* Book doesn't contain a spell in the selected slot */
+					if (spell == -1) continue;
+
+					/* Hack: For now, always use redux format because it'd become toooooo much */
+					//if (redux || TRUE) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", spell))));
+					if (TRUE) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", spell))));
+					else strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", spell))));
+				}
+			}
+
+			if (powins[0] && powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
+
+			if (powins[0]) sprintf(out_val, "%s (%s) (%s)", store_names[item], price, powins);
+			else sprintf(out_val, "%s (%s)", store_names[item], price);
+			return;
+		}
+
 		if (store_powers[item][0]) sprintf(out_val, "%s (%s) (%s)", store_names[item], price, store_powers[item]);
 		else sprintf(out_val, "%s (%s)", store_names[item], price);
 	}

@@ -2236,28 +2236,59 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 	/* specialty: recognize custom spell books and inscribe with their spell names! */
-	if (o_ptr->tval == TV_BOOK && is_custom_tome(o_ptr->sval)) {
-		if (redux) {
-			if (o_ptr->xtra1) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra1 - 1))));
-			if (o_ptr->xtra2) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra2 - 1))));
-			if (o_ptr->xtra3) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra3 - 1))));
-			if (o_ptr->xtra4) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra4 - 1))));
-			if (o_ptr->xtra5) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra5 - 1))));
-			if (o_ptr->xtra6) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra6 - 1))));
-			if (o_ptr->xtra7) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra7 - 1))));
-			if (o_ptr->xtra8) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra8 - 1))));
-			if (o_ptr->xtra9) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra9 - 1))));
-		} else {
-			if (o_ptr->xtra1) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1))));
-			if (o_ptr->xtra2) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1))));
-			if (o_ptr->xtra3) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1))));
-			if (o_ptr->xtra4) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1))));
-			if (o_ptr->xtra5) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1))));
-			if (o_ptr->xtra6) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1))));
-			if (o_ptr->xtra7) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1))));
-			if (o_ptr->xtra8) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1))));
-			if (o_ptr->xtra9) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1))));
+	if (o_ptr->tval == TV_BOOK) {
+		if (is_custom_tome(o_ptr->sval)) {
+			if (redux) {
+				if (o_ptr->xtra1) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra1 - 1))));
+				if (o_ptr->xtra2) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra2 - 1))));
+				if (o_ptr->xtra3) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra3 - 1))));
+				if (o_ptr->xtra4) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra4 - 1))));
+				if (o_ptr->xtra5) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra5 - 1))));
+				if (o_ptr->xtra6) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra6 - 1))));
+				if (o_ptr->xtra7) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra7 - 1))));
+				if (o_ptr->xtra8) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra8 - 1))));
+				if (o_ptr->xtra9) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", o_ptr->xtra9 - 1))));
+			} else {
+				if (o_ptr->xtra1) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra1 - 1))));
+				if (o_ptr->xtra2) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra2 - 1))));
+				if (o_ptr->xtra3) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra3 - 1))));
+				if (o_ptr->xtra4) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra4 - 1))));
+				if (o_ptr->xtra5) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra5 - 1))));
+				if (o_ptr->xtra6) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra6 - 1))));
+				if (o_ptr->xtra7) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra7 - 1))));
+				if (o_ptr->xtra8) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra8 - 1))));
+				if (o_ptr->xtra9) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", o_ptr->xtra9 - 1))));
+			}
+		} else if (o_ptr->sval != SV_SPELLBOOK) { /* Predefined book (handbook or tome) */
+			int i, num = 0, spell;
+			char out_val[160];
+
+			/* Find amount of spells in this book */
+			sprintf(out_val, "return book_spells_num2(%d, %d)", -1, o_ptr->sval);
+			num = exec_lua(0, out_val);
+
+			/* Iterate through them and display their [short] names */
+			for (i = 0; i < num; i++) {
+				/* Get the spell */
+				if (MY_VERSION < (4 << 12 | 4 << 8 | 1U << 4 | 8)) {
+					/* no longer supported! to make s_aux.lua slimmer */
+					spell = exec_lua(0, format("return spell_x(%d, %d, %d)", o_ptr->sval, -1, i));
+				} else {
+					spell = exec_lua(0, format("return spell_x2(%d, %d, %d, %d)", -1, o_ptr->sval, -1, i));
+				}
+
+				/* Book doesn't contain a spell in the selected slot */
+				if (spell == -1) continue;
+
+				/* Hack: For now, always use redux format because it'd become toooooo much */
+				if (redux || TRUE) strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name2)", spell))));
+				else strcat(powins, format("%s,", string_exec_lua(0, format("return(__tmp_spells[%d].name)", spell))));
+			}
 		}
+
+		if (powins[0] && powins[strlen(powins) - 1] == ',') powins[strlen(powins) - 1] = 0;
+		/* Don't show actual magical properties of books */
+		return;
 	}
 
 	/* -- stats -- */
