@@ -1176,9 +1176,9 @@ void prt_esp(bool is_full_esp) {
 	Term_gotoxy(x, y);
 }
 
-#define PWUYF_LEN 79 /* accomodate for 1 leading space for indentation (see function below) */
+#define PWUYF_LEN (MAX_CHARS - 1) /* accomodate for 1 leading space for indentation (see function below) */
 void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, bool on_pile) {
-	char line[MSG_LEN], *lptr = line, *c;
+	char line[MSG_LEN], *lptr = line, *c, tmp[MSG_LEN];
 
 	/* Note that so far the under-your-feet msgs used to be sent by msg_print() which would
 	   split long item names up into several Send_message() calls so the client displays the
@@ -1198,27 +1198,32 @@ void prt_whats_under_your_feet(char *o_name, bool crossmod_item, bool cant_see, 
 			sprintf(line, "You see %s%s.", o_name, on_pile ? " on a pile" : "");
 	}
 
+	/* Cut into 1-line chunks */
 	while (strlen(lptr) > PWUYF_LEN) {
-		strcpy(o_name, lptr);
+		strcpy(tmp, lptr);
 
 		/* Don't split words/inscription tags if possible.. */
-		c = o_name + PWUYF_LEN - 1;
-		while (c > o_name + PWUYF_LEN - 10 && (
+		c = tmp + PWUYF_LEN - 1;
+		while (c > tmp + PWUYF_LEN - 10 && (
 		    (isalpha(*c) && *(c + 1) >= 'a' && *(c + 1) <= 'z') ||
 		    *c == '~' || *c == '+' || *c == '*' || *c == '-' || *c == '_' || *c == '^' || *c == '{' || *c == '(' || *c == '[' || *c == '!'))
 			c--;
 		/* If we'd have to backtrace too far, just ignore the problem and split it anyway at the original line end */
-		if (c == o_name + PWUYF_LEN - 10) c = o_name + PWUYF_LEN - 1;
+		if (c == tmp + PWUYF_LEN - 10) c = tmp + PWUYF_LEN - 1;
 		*(c + 1) = 0;
 
-		/* Indent subsequent lines with a leading space */
-		if (lptr == line) c_msg_print(o_name);
-		else c_msg_format(" %s", o_name);
+		if (lptr == line) /* Indent subsequent lines with a leading space */
+			c_msg_format("%s%s", crossmod_item ? "\377D" : "", tmp);
+		else
+			c_msg_format(" %s%s", crossmod_item ? "\377D" : "", tmp);
 
-		lptr += c - o_name + 1;
+		lptr += c - tmp + 1;
 	}
-	if (lptr == line) c_msg_print(lptr);
-	else c_msg_format(" %s", lptr);
+	/* Dump only/remaining line */
+	if (lptr == line) /* Indent subsequent lines with a leading space */
+		c_msg_format("%s%s", crossmod_item ? "\377D" : "", lptr);
+	else
+		c_msg_format(" %s%s", crossmod_item ? "\377D" : "", lptr);
 }
 
 /*
