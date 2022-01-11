@@ -701,6 +701,7 @@ extern void do_cmd_locate(int Ind, int dir);
 extern void do_cmd_query_symbol(int Ind, char sym);
 extern bool item_tester_hook_wear(int Ind, int slot);
 extern void power_inscribe(object_type *o_ptr, bool redux, char *powins);
+extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr inscription);
 
 /* cmd4.c */
 extern void do_cmd_check_artifacts(int Ind, int line);

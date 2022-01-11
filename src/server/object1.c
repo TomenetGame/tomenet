@@ -1741,7 +1741,16 @@ static char *object_desc_chr(char *t, char c) {
  */
 static char *object_desc_str(char *t, cptr s) {
 	/* Copy the string */
-	while (*s) *t++ = *s++;
+	while (*s) {
+#if defined(POWINS_DYNAMIC) && !defined(POWINS_DYNAMIC_CLIENTSIDE)
+		/* Hide the internal server-side markers */
+		if (*s == '@' && *(s + 1) == '&') {
+			s += 2;
+			continue;
+		}
+#endif
+		*t++ = *s++;
+	}
 
 	/* Terminate */
 	*t = '\0';
@@ -4479,9 +4488,10 @@ static void display_shooter_handling(int Ind, object_type *o_ptr, FILE *fff) {
 
 /* New helper function for @@/@@@ inscriptions: Check if item might have hidden powers (in which case the inscription is declined).
   ignore_id: If true, the function will return TRUE independantly of whether the item has already been *identified*. Added for shop-pasting.
+  Ind is allowed to be 0 for the edge case of power-inscribing when curse-flipping.
 */
 bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
-	bool aware = object_aware_p(Ind, o_ptr);
+	bool aware = !Ind || object_aware_p(Ind, o_ptr);
 	ego_item_type *e_ptr;
 	int j;
 
@@ -4493,7 +4503,7 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id) {
 	if (o_ptr->name1) return TRUE;
 
 	/* Unidentified items always qualify (if they're not easily known anyway and don't need ID, eg flavoured items) */
-	if (!object_known_p(Ind, o_ptr)) return TRUE;
+	if (Ind && !object_known_p(Ind, o_ptr)) return TRUE;
 
 	/* be strict: unknown AM field counts too.
 	   Arts can have deviant AM fields. For non-arts however they're obvious by just normal ID, to reveal +hit,+dam values. */

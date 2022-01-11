@@ -1855,6 +1855,9 @@ int Receive_inven(void) {
 	char pos, attr, tval, sval, uses_dir = 0;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN], *insc;
+#if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	char tmp[ONAME_LEN];
+#endif
 
 	if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1, &uses_dir, name)) <= 0)
@@ -1887,6 +1890,19 @@ int Receive_inven(void) {
 	inventory[pos - 'a'].uses_dir = uses_dir & 0x1;
 	inventory[pos - 'a'].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
 
+#if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	/* Strip "@&" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@&"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+	/* Strip "@^" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@^"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+#endif
+
 	/* check for special "fake-artifact" inscription using '#' char */
 	if ((insc = strchr(name, '\373'))) {
 		inventory_inscription[pos - 'a'] = insc - name;
@@ -1915,6 +1931,9 @@ int Receive_inven_wide(void) {
 	byte xtra1b, xtra2b, xtra3b, xtra4b, xtra5b, xtra6b, xtra7b, xtra8b, xtra9b;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
+#if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	char tmp[ONAME_LEN];
+#endif
 
 	if (is_newer_than(&server_version, 4, 7, 1, 1, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1,
@@ -1973,6 +1992,19 @@ int Receive_inven_wide(void) {
 	inventory[pos - 'a'].xtra8 = xtra8;
 	inventory[pos - 'a'].xtra9 = xtra9;
 
+#if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	/* Strip "@&" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@&"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+	/* Strip "@^" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@^"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+#endif
+
 	/* check for special "fake-artifact" inscription using '#' char */
 	if ((insc = strchr(name, '\373'))) {
 		inventory_inscription[pos - 'a'] = insc - name;
@@ -2030,6 +2062,9 @@ int Receive_equip(void) {
 	char pos, attr, tval, sval, uses_dir;
 	s16b wgt, amt, pval, name1 = 0;
 	char name[ONAME_LEN];
+#if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	char tmp[ONAME_LEN];
+#endif
 
 	if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hu%hd%c%c%hd%hd%c%I", &ch, &pos, &attr, &wgt, &amt, &tval, &sval, &pval, &name1, &uses_dir, name)) <= 0)
@@ -2057,6 +2092,19 @@ int Receive_equip(void) {
 	inventory[pos - 'a' + INVEN_WIELD].number = amt;
 	inventory[pos - 'a' + INVEN_WIELD].uses_dir = uses_dir & 0x1;
 	inventory[pos - 'a' + INVEN_WIELD].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
+
+#if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
+	/* Strip "@&" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@&"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+	/* Strip "@^" markers, as these are a purely server-side thing */
+	while ((insc = strstr(name, "@&"))) {
+		strcpy(tmp, insc + 2);
+		strcpy(insc, tmp);
+	}
+#endif
 
 	if (!strcmp(name, "(nothing)"))
 		strcpy(inventory_name[pos - 'a' + INVEN_WIELD], equipment_slot_names[pos - 'a']);

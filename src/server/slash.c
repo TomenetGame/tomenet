@@ -867,7 +867,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					strcpy(powins, token[2]);
 					powins[pi_pos - token[2]] = 0;
 
+#ifdef POWINS_DYNAMIC
+					strcat(powins, redux ? "@^" : "@&");
+#endif
 					power_inscribe(o_ptr, redux, powins);
+#ifdef POWINS_DYNAMIC
+					strcat(powins, redux ? "@^" : "@&");
+#endif
 
 					/* Append the rest of the inscription, if any */
 					strcat(powins, pi_pos + (redux ? 3 : 2));

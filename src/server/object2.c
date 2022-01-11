@@ -12684,6 +12684,7 @@ void inverse_cursed(object_type *o_ptr) {
 		s32b old_owner, swap;
 		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
 		player_type player;
+		u16b ident = (o_ptr->ident & ~ID_CURSED); /* Resulting item is not allowed to be cursed, so we need to drop this ident state */
   #ifdef INVERSE_CURSED_RETAIN
 		artifact_type a_org, *a_ptr;
 		bool anti_undead_org;
@@ -12740,6 +12741,7 @@ void inverse_cursed(object_type *o_ptr) {
 
 			/* hack: RESF_NORANDART will prevent calling make_artifact() in apply_magic(), which would re-roll the seed again which is unnecessary as we just did that already */
 			apply_magic(&wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
+			o_ptr->ident = ident; /* Keep identification states, a little bonus QoL.. */
 
 			/* Forbid some flags and being cursed AGAIN or this was pointless */
 			if (cursed_p(o_ptr)) continue;
@@ -12784,10 +12786,38 @@ void inverse_cursed(object_type *o_ptr) {
 			o_ptr->pval2 = -1; /* Mark as failed forever, so players don't just re-equip it all the time trying to reroll */
 			return;
 		} else {
-			char o_name[ONAME_LEN];
+			char o_name[ONAME_LEN + 1], *istart, *iend; /* +1: we might replace @^ by @@@, thereby extending the string 1 too much potentially */
 
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_printf("inverse_cursed() (%s) succeeded after %d tries: %s\n", swap ? "sw" : "NEW", tries_org - tries, o_name);
+
+#ifdef POWINS_DYNAMIC
+			/* Erase old power inscription, as the item powers have just changed */
+			if (o_ptr->note) {
+				char tmp[ONAME_LEN];
+
+				strcpy(o_name, quark_str(o_ptr->note)); /* abuse o_name */
+				while ((istart = strstr(o_name, "@&"))) {
+					strcpy(tmp, istart + 2);
+					/* Replace former power inscription result with a new power inscription */
+					strcpy(istart, "@@");
+					/* Append the remaining inscription if any */
+					if ((iend = strstr(tmp, "@&"))) strcat(o_name, iend + 2);
+				}
+				while ((istart = strstr(o_name, "@^"))) {
+					strcpy(tmp, istart + 2);
+					/* Replace former power inscription result with a new power inscription */
+					strcpy(istart, "@@@");
+					/* Append the remaining inscription if any */
+					if ((iend = strstr(tmp, "@^"))) strcat(o_name, iend + 2);
+				}
+				/* Catch the potential +1 string overflow and fix it */
+				if (o_name[ONAME_LEN - 1]) o_name[ONAME_LEN - 1] = 0;
+
+				/* -- Apply new power inscription if there was one -- */
+				(void)check_power_inscribe(0, o_ptr, NULL, o_name);
+			}
+#endif
 		}
 
 		/* Remove no longer correct "cursed" tag, partial copy-paste from note_toggle_cursed(): */
@@ -12903,6 +12933,7 @@ void reverse_cursed(object_type *o_ptr) {
  #ifdef INVERSE_CURSED_RANDARTS
 	if (o_ptr->name1 == ART_RANDART) {
 		s32b old_owner, swap, lev;
+		u16b ident = o_ptr->ident;
 		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
 
 		if (!o_ptr->pval3 || o_ptr->pval2 <= 1) return; //paranoia @ pval3?
@@ -12919,9 +12950,40 @@ void reverse_cursed(object_type *o_ptr) {
 
 		/* hack: RESF_NORANDART will prevent calling make_artifact() in apply_magic(), which would re-roll the seed randomly */
 		apply_magic(&wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
-		o_ptr->level = lev;
+		o_ptr->level = lev; /* Restore original level requirements! */
+		o_ptr->ident = ident | ID_CURSED; /* Keep identification states (and restore original cursed state!), a little bonus QoL.. */
 
 		o_ptr->owner = old_owner;
+
+#ifdef POWINS_DYNAMIC
+		/* Erase flipped power inscription, as the item powers have just reversed */
+		if (o_ptr->note) {
+			char o_name[ONAME_LEN + 1], *istart, *iend; /* +1: we might replace @^ by @@@, thereby extending the string 1 too much potentially */
+			char tmp[ONAME_LEN];
+
+			strcpy(o_name, quark_str(o_ptr->note)); /* abuse o_name */
+			while ((istart = strstr(o_name, "@&"))) {
+				strcpy(tmp, istart + 2);
+				/* Replace former power inscription result with a new power inscription */
+				strcpy(istart, "@@");
+				/* Append the remaining inscription if any */
+				if ((iend = strstr(tmp, "@&"))) strcat(o_name, iend + 2);
+			}
+			while ((istart = strstr(o_name, "@^"))) {
+				strcpy(tmp, istart + 2);
+				/* Replace former power inscription result with a new power inscription */
+				strcpy(istart, "@@@");
+				/* Append the remaining inscription if any */
+				if ((iend = strstr(tmp, "@^"))) strcat(o_name, iend + 2);
+			}
+			/* Catch the potential +1 string overflow and fix it */
+			if (o_name[ONAME_LEN - 1]) o_name[ONAME_LEN - 1] = 0;
+
+			/* -- Apply new power inscription if there was one -- */
+			(void)check_power_inscribe(0, o_ptr, NULL, o_name);
+		}
+#endif
+
 		//p_ptr->window |= (PW_INVEN | PW_PLAYER);
 		return;
 	}

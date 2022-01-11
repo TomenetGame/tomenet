@@ -2594,6 +2594,75 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	}
 }
 
+bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr inscription) {
+	char *pi_pos;
+
+	bool redux = FALSE;
+	char o_name[ONAME_LEN], powins[1024], *pir_pos; //even more than just MAX_CHARS_WIDE, let's play it safe..
+	player_type *p_ptr;
+
+
+	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
+	   Side note: If @@@ is present, an additional @@ will simply be ignored. */
+	if (!(pi_pos = strstr(inscription, "@@"))) return FALSE;
+
+	if (maybe_hidden_powers(Ind, o_ptr, FALSE)) {
+		if (Ind) msg_print(Ind, "\377yThis item may have hidden powers. You must *identify* it first.");
+		return TRUE; /* Still, we found the "@@" inscription, despite being unable to complete the request. */
+	}
+
+	/* Check for redux version of power inscription */
+	if ((pir_pos = strstr(inscription, "@@@"))) {
+		pi_pos = pir_pos;
+		redux = TRUE;
+	}
+	//reduxx = strstr(inscription, "@@@@");
+
+	if (Ind) {
+		msg_format(Ind, "Power-inscribing %s.", o_name_old);
+		msg_print(Ind, NULL);
+	}
+
+	/* Copy part of the inscription before @@/@@@ */
+	strcpy(powins, inscription);
+	powins[pi_pos - inscription] = 0;
+
+#ifdef POWINS_DYNAMIC
+	strcat(powins, redux ? "@^" : "@&"); /* Insert a 'start marker' for POWINS_DYNAMIC */
+#endif
+	power_inscribe(o_ptr, redux, powins);
+#ifdef POWINS_DYNAMIC
+	strcat(powins, redux ? "@^" : "@&"); /* Insert an 'end marker' for POWINS_DYNAMIC */
+#endif
+
+	/* Append the rest of the inscription, if any */
+	strcat(powins, pi_pos + (redux ? 3 : 2));
+
+	/* Watch total object name length */
+	o_ptr->note = o_ptr->note_utag = 0;
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia -- item name not too long already, leaving no room for an inscription at all? */
+		/* inscription too long? cut it down */
+		if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
+
+		/* Save the inscription */
+		o_ptr->note = quark_add(powins);
+		o_ptr->note_utag = 0;
+	}
+
+	if (Ind) {
+		p_ptr = Players[Ind];
+
+		/* Combine the pack */
+		p_ptr->notice |= (PN_COMBINE);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP);
+	}
+
+	return TRUE;
+}
+
 /*
  * Remove the inscription from an object
  * XXX Mention item (when done)?
@@ -2654,7 +2723,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN], modins[MAX_CHARS];
 	const char *qins;
-	char *c, *pi_pos, *pir_pos;
+	char *c;
 
 
 	/* Get the item (in the pack) */
@@ -2682,65 +2751,17 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	/* Describe the object */
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
-	   Side note: If @@@ is present, an additional @@ will simply be ignored. */
-	if ((pi_pos = strstr(inscription, "@@"))) {
-		bool redux = FALSE;
-		char powins[1024]; //even more than just MAX_CHARS_WIDE, let's play it safe..
-
-		if (maybe_hidden_powers(Ind, o_ptr, FALSE)) {
-			msg_print(Ind, "\377yThis item may have hidden powers. You must *identify* it first.");
-			return;
-		}
-
-		/* Check for redux version of power inscription */
-		if ((pir_pos = strstr(inscription, "@@@"))) {
-			pi_pos = pir_pos;
-			redux = TRUE;
-		}
-		//reduxx = strstr(inscription, "@@@@");
-
-		msg_format(Ind, "Power-inscribing %s.", o_name);
-		msg_print(Ind, NULL);
-
-		/* Copy part of the inscription before @@/@@@ */
-		strcpy(powins, inscription);
-		powins[pi_pos - inscription] = 0;
-
-		power_inscribe(o_ptr, redux, powins);
-
-		/* Append the rest of the inscription, if any */
-		strcat(powins, pi_pos + (redux ? 3 : 2));
-
-		/* Watch total object name length */
-		o_ptr->note = o_ptr->note_utag = 0;
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
-		if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia -- item name not too long already, leaving no room for an inscription at all? */
-			/* inscription too long? cut it down */
-			if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
-
-			/* Save the inscription */
-			o_ptr->note = quark_add(powins);
-			o_ptr->note_utag = 0;
-		}
-
-		/* Combine the pack */
-		p_ptr->notice |= (PN_COMBINE);
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
-		return;
-	}
-
-	/* Message */
-	msg_format(Ind, "Inscribing %s.", o_name);
-	msg_print(Ind, NULL);
-
 	/* small hack to prevent using colour codes in inscriptions:
 	   convert \{ to just {, compare nserver.c:Send_special_line()!
 	   Note: Colour codes in inscriptions/item names aren't implemented anyway. */
 	if (!is_admin(p_ptr)) while ((c = strstr(inscription, "\\{")))
 		c[0] = '{';
+
+	if (check_power_inscribe(Ind, o_ptr, o_name, inscription)) return;
+
+	/* Message */
+	msg_format(Ind, "Inscribing %s.", o_name);
+	msg_print(Ind, NULL);
 
 	/* hack to fix auto-inscriptions: convert empty inscription to a #-type inscription */
 	if (inscription[0] == '\0') inscription = "#";

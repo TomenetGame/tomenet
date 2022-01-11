@@ -1262,6 +1262,11 @@
  #define HALLOWEEN_IDDC_DLEV 10
 #endif
 
+/* Power inscriptions aren't "hard-coded" but can change when an item is curse-flipped? */
+#define POWINS_DYNAMIC
+/* Handle marker hiding on client side? Drawback: Requires new client version. Advantage: It's cleaner. Pft. */
+//#define POWINS_DYNAMIC_CLIENTSIDE
+
 
 /* ----------------------------------------------------------------------- (End of 'features')  ----------------------------------------------------------------------- */
 
