@@ -12716,6 +12716,8 @@ void inverse_cursed(object_type *o_ptr) {
 		swap = o_ptr->pval3; /* remember the flipped randart in the future */
 		o_ptr->pval3 = o_ptr->name3; /* Use unused pval3 to store original randart seed */
 		o_ptr->pval2 = 1; /* Mark as flipped (this is just for choosing the original artifact name) */
+		/* Also store original level, since apply_magic() might apply a higher level on reversing (!) */
+		o_ptr->pval2 += o_ptr->level;
 
 		/* Randart loop. Try until an allowed randart was made */
 		old_owner = o_ptr->owner;
@@ -12732,7 +12734,7 @@ void inverse_cursed(object_type *o_ptr) {
 				o_ptr->name3 = swap;
 			}
   #ifdef INVERSE_CURSED_RETAIN
-			a_ptr = 
+			a_ptr =
   #endif
 			randart_make(o_ptr);
 
@@ -12772,9 +12774,14 @@ void inverse_cursed(object_type *o_ptr) {
 			s_printf("inverse_cursed() (%s) failed after %d tries: %s\n", swap ? "sw" : "NEW", tries_org, o_name);
 
 			/* restore item */
-			reverse_cursed(o_ptr);
+#if 0
+			reverse_cursed(o_ptr); /* not enough, as ac/thit/tdam won't be restored this way */
+#else
+			object_copy(o_ptr, o_ptr_bak); /* ..this works fine */
+			o_ptr->pval3 = 0; /* unused again */
+#endif
 
-			o_ptr->pval2 = 2; /* Mark as failed forever, so players don't just re-equip it all the time trying to reroll */
+			o_ptr->pval2 = -1; /* Mark as failed forever, so players don't just re-equip it all the time trying to reroll */
 			return;
 		} else {
 			char o_name[ONAME_LEN];
@@ -12895,13 +12902,14 @@ void reverse_cursed(object_type *o_ptr) {
 
  #ifdef INVERSE_CURSED_RANDARTS
 	if (o_ptr->name1 == ART_RANDART) {
-		s32b old_owner, swap;
+		s32b old_owner, swap, lev;
 		struct worldpos wpos = {cfg.town_x, cfg.town_y, 0};
 
-		if (!o_ptr->pval3 || o_ptr->pval2 != 1) return; //paranoia @ pval3?
+		if (!o_ptr->pval3 || o_ptr->pval2 <= 1) return; //paranoia @ pval3?
 		swap = o_ptr->name3;
 		o_ptr->name3 = o_ptr->pval3; /* Restore original randart seed */
 		o_ptr->pval3 = swap; /* Consistently remember the flipped artifact for the future */
+		lev = o_ptr->pval2 - 1; /* Extract original level, as apply_magic() below might increase it above what it used to be */
 		o_ptr->pval2 = 0; /* Mark as unflipped (this is just for choosing the original artifact name) */
 
 		/* Restore the original randart */
@@ -12911,6 +12919,7 @@ void reverse_cursed(object_type *o_ptr) {
 
 		/* hack: RESF_NORANDART will prevent calling make_artifact() in apply_magic(), which would re-roll the seed randomly */
 		apply_magic(&wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_FORCERANDART | RESF_NOTRUEART | RESF_LIFE | RESF_NORANDART);
+		o_ptr->level = lev;
 
 		o_ptr->owner = old_owner;
 		//p_ptr->window |= (PW_INVEN | PW_PLAYER);

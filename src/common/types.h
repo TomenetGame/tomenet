@@ -694,10 +694,8 @@ struct object_type {
 
 	s32b bpval;			/* Base item extra-parameter */
 	s32b pval;			/* Extra enchantment item extra-parameter (name1 or name2) */
-#if 1 /* existing but currently not in use */
 	s32b pval2;			/* Item extra-parameter for some special items - this was only used in old, disabled code. Using it now for INVERSE_CURSED_RANDARTS */
-	s32b pval3;			/* Item extra-parameter for some special items - this was unnused. Using it now for INVERSE_CURSED_RANDARTS - C. Blue */
-#endif
+	s32b pval3;			/* Item extra-parameter for some special items - this was unused. Using it now for INVERSE_CURSED_RANDARTS - C. Blue */
 
 	/* VAMPIRES_INV_CURSED */
 	s32b pval_org, bpval_org;
