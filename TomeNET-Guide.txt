@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 24. November 2021 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 11. January 2022 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.7.4b - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15054,14 +15054,14 @@ Acid                  |         |                      | Crafting
 Wood chips            | Trees,  |                      | Grinding
                       | bushes  |                      |
 Charcoal              |         |                      | Burning wood, crafting
-Sulfur                | Magma   | Medium firebreathers |
+Sulfur                | Magma   | Medium firebreathers (or bigger)
 Saltpetre             | Sandwall| Bats, Birds, Hybrids, Novice Mages (rarely)
 Ammonia salt          |         | Quadrupeds, Canines, Hydras, Yetis,
-                      |         | Medium poisonbreathers
+                      |         | Medium poisonbreathers (or bigger)
 Reactive metal powder | Quartz  |                      | Grinding
 Caustic metal ash     |         |                      | Crafting
 Caustic salt          |         |                      | Crafting
-Vitriol               | Magma   | Medium acidbreathers |
+Vitriol               | Magma   | Medium acidbreathers (or bigger)
 
 Note that in order to find some of these you need a minimum digging skill,
 just for reactive metal powder you can circumvent it via grinding tool usage:
@@ -15073,7 +15073,7 @@ Vitriol                 at least 15.000 in 'Digging'
 
 Crafting ingredients from raw materials:
 ----------------------------------------
-- Wood chips can be processed into charcoal (needs a fire-based light source).
+- Wood chips can be processed into charcoal (requires fire-based light source).
 - Sulfur + saltpetre + water = flask of acid.
 - Vitriol + water or salt water = flask of acid.
 - Reactive metal powder + salt water or ammonia salt = caustic metal ash.
@@ -15127,7 +15127,7 @@ Underground     |   1    2     2                              1          |  7s
 Aside from blast charges it's possible to craft fireworks:
 ----------------------------------------------------------
 Charcoal + sulfur + 2x saltpetre + 2x reactive metal powder
- + scroll of light or scroll of fire = scroll of firework (random outcome)
+ + scroll of light or scroll of fire = scroll of firework (of random type)
 
 
 
