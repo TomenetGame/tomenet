@@ -3328,10 +3328,15 @@ errr rd_server_savefile() {
 			if (a_info[i].timeout == -2) determine_artifact_timeout(i, NULL);
 			/* Glitch fix: Sometimes artifacts that are held by someone get zero timeout, probably due to server kill/restart issues, fix it on startup here: */
 			if (a_info[i].carrier && !a_info[i].timeout) {
-				determine_artifact_timeout(i, NULL);
-				/* Reduce slightly, since chances are high that we just did a full timer reset */
-				if (a_info[i].timeout > 0) a_info[i].timeout = (a_info[i].timeout * 3 + 3) / 4;
-				s_printf("FIX_ART_NOTIMEOUT: %d (%d:'%s').\n", i, a_info[i].carrier, lookup_player_name(a_info[i].carrier));
+				/* Check if player actually is still alive, because carrier is not reset on artifact reset, only timeout is! */
+				cptr p = lookup_player_name(a_info[i].carrier);
+
+				if (p) {
+					determine_artifact_timeout(i, NULL);
+					/* Reduce slightly, since chances are high that we just did a full timer reset */
+					if (a_info[i].timeout > 0) a_info[i].timeout = (a_info[i].timeout * 3 + 3) / 4;
+					s_printf("FIX_ART_NOTIMEOUT: %d (%d:'%s').\n", i, a_info[i].carrier, p);
+				}
 			}
 			/* Glitch fix: Sometimes (test server =p) artifacts have no carrier (not even a dead one), yet the timeout is set and their cur_num is > 0. */
 			if (!a_info[i].carrier && a_info[i].timeout) {
