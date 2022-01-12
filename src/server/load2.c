@@ -3326,6 +3326,22 @@ errr rd_server_savefile() {
 #ifdef FLUENT_ARTIFACT_RESETS
 			/* fluent-artifact-timeout was temporarily disabled? reset timer now then */
 			if (a_info[i].timeout == -2) determine_artifact_timeout(i, NULL);
+			/* Glitch fix: Sometimes artifacts that are held by someone get zero timeout, probably due to server kill/restart issues, fix it on startup here: */
+			if (a_info[i].carrier && !a_info[i].timeout) {
+				determine_artifact_timeout(i, NULL);
+				/* Reduce slightly, since chances are high that we just did a full timer reset */
+				if (a_info[i].timeout > 0) a_info[i].timeout = (a_info[i].timeout * 3 + 3) / 4;
+				s_printf("FIX_ART_NOTIMEOUT: %d (%d:'%s').\n", i, a_info[i].carrier, lookup_player_name(a_info[i].carrier));
+			}
+			/* Glitch fix: Sometimes (test server =p) artifacts have no carrier (not even a dead one), yet the timeout is set and their cur_num is > 0. */
+			if (!a_info[i].carrier && a_info[i].timeout) {
+				a_info[i].timeout = 1; /* grace period in case there is really a legit owner, to transfer it instead of freeing it for everyone to find */
+				s_printf("FIX_ART_NOCARRIER: %d.\n", i);
+			}
+			/* (Note that on the test server there might be another glitch: Arts that are cur_num != 0
+			   but have no timeout, no owner, and don't lie on the floor -> limbo forever.
+			   We cannot fix this automatically here because we don't have the o_list loaded yet, but it doesn't matter really,
+			   admin just uses /sart to fix the cur_num, as this is not a case that happens on a normal server anyway.) */
 #else
 			a_info[i].timeout = -2;
 #endif
