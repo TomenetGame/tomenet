@@ -253,6 +253,9 @@
 /* Allow vampires to polymorph into vampiric mist at 40, obtaining some special feats? */
 #define VAMPIRIC_MIST
 
+/* Specialty: Do vampire istari gain access to occult Shadow school? */
+#define VAMP_ISTAR_SHADOW
+
 /* Allow ordering a specific item in a store */
 #define ENABLE_ITEM_ORDER
 

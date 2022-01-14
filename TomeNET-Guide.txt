@@ -15585,6 +15585,7 @@ create a character!):
     conjure holy fire or utilize magic of water or nature school. Neither can
     they make use of mimicry techniques (with the exception of vampire bat and
     vampiric mist, see below) or holy or spirit spells.
+    As a specialty, vampire istari are able to learn the occult shadow school.
     They are unable to train in anti-magic in order to suppress magic, but they
     can make use of items that provide anti-magic effects.
     Aside from darkness they also resist sanity-draining effects somewhat,
@@ -15627,9 +15628,9 @@ create a character!):
     this any further.
     Vampires hate 'Blunt' weapons, are very bad at 'Swimming', cannot use
     certain magic schools at all as described above, get a large penalty on
-    'Divination' magic but receive a bonus on 'Mental Intrusion' and a large
-    bonus on 'Shadow', 'Unlife', 'Necromancy', all aura skills and a small
-    bonus on 'Traumaturgy'.
+    'Divination' magic but receive a bonus on 'Mental Intrusion' and 'Mind'
+    and a large bonus on 'Shadow', 'Unlife', 'Necromancy', all aura skills
+    and a small bonus on 'Traumaturgy'.
     As undead, Vampires gain a moderate skill bonus for 'Nether' runes but in
     turn find it extremely hard to improve in 'Light' runes.
 

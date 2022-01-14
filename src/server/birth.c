@@ -3670,6 +3670,18 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	   just to clean up and avoid newbies accidentally putting points into them. */
 	if (p_ptr->fruit_bat == 1) fruit_bat_skills(p_ptr);
 
+#ifdef VAMP_ISTAR_SHADOW
+	/* Hack: Vampire Istari gain access to Shadow school */
+	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->pclass == CLASS_MAGE &&
+	    /* fix old chars: add the skill */
+	    !p_ptr->s_info[SKILL_OSHADOW].mod) {
+		p_ptr->s_info[SKILL_OSHADOW].value = 0;
+		p_ptr->s_info[SKILL_OSHADOW].mod = 1600 + 160; /* "bonus", they supposedly gain 15% on OSHADOW in tables.c, we give 10% for istari */
+		p_ptr->s_info[SKILL_SCHOOL_OCCULT].dev = TRUE;
+		Send_skill_info(Ind, SKILL_OSHADOW, TRUE);
+	}
+#endif
+
 	/* special outfits for admin (pack overflows!) */
 	if (is_admin(p_ptr)) {
 		admin_outfit(Ind, 0);
