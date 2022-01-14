@@ -2373,8 +2373,8 @@ HP          Hit points, the amount of damage your character can take before it
             drop below 0.
             The starter HP are different for each race and class and can be
             viewed in the tables in chapters (6.4) and (6.5) respectively;
-            quick-access these tables by using the guide-search commands
-            "/? race tab" and "/? class tab" in chat, respectively.
+            quick-access these tables by searching the guide for chapter key
+            words (or "/?" command) "race tab" and "class tab" respectively.
 
 ID, *ID*    Identify and *Identify* magic respectively, which is used to
             reveal magic properties of unknown items. Scrolls of ID can be
